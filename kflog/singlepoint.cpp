@@ -20,9 +20,9 @@
 #include <kstddirs.h>
 
 SinglePoint::SinglePoint(QString n, QString gps, unsigned int t,
-      QPoint pos)
+      QPoint pos, unsigned int elev)
   : BaseMapElement(n, t),
-    position(pos), gpsName(gps), curPos(pos)
+    position(pos), gpsName(gps), curPos(pos), elevation(elev)
 {
 
 }
@@ -32,7 +32,7 @@ SinglePoint::~SinglePoint()
 
 }
 
-void SinglePoint::printMapElement(QPainter* printPainter) const
+void SinglePoint::printMapElement(QPainter* printPainter, bool isText) const
 {
   if(!__isVisible()) return;
 
@@ -98,3 +98,5 @@ QPoint SinglePoint::getPosition() const { return position; }
 QPoint SinglePoint::getMapPosition() const  { return curPos;  }
 
 QString SinglePoint::getInfoString() const  {  return QString();  }
+
+unsigned int SinglePoint::getElevation() const { return elevation; }

@@ -22,8 +22,8 @@
 
 Airport::Airport(QString n, QString i, QString abbr, unsigned int t,
   QPoint pos, unsigned int e, const char* f, bool v)
-: RadioPoint(n, i, abbr, t, pos, f),
-  elevation(e), vdf(v)
+  : RadioPoint(n, i, abbr, t, pos, f, e),
+    vdf(v)
 {
 
 }
@@ -56,7 +56,7 @@ QString Airport::getInfoString() const
   return text;
 }
 
-void Airport::printMapElement(QPainter* printPainter) const
+void Airport::printMapElement(QPainter* printPainter, bool isText) const
 {
   if(!__isVisible()) return;
 
@@ -103,7 +103,6 @@ void Airport::printMapElement(QPainter* printPainter) const
             printPos.x() + iconSize / 2, printPos.y());
         printPainter->drawEllipse(printPos.x() - iconSize/2,
             printPos.y() - iconSize/2, iconSize, iconSize);
-        printPainter->drawText(printPos.x() - 10, printPos.y() + iconSize + 4, name);
         break;
       case MilAirport:
         printPainter->setPen(whiteP);
@@ -119,7 +118,6 @@ void Airport::printMapElement(QPainter* printPainter) const
         printPainter->setPen(smallBlackP);
         printPainter->drawEllipse(printPos.x() - iconSize/4,
             printPos.y() - iconSize/4, iconSize/2, iconSize/2);
-        printPainter->drawText(printPos.x() - 10, printPos.y() + iconSize + 4, name);
         break;
       case CivMilAirport:
         printPainter->setPen(whiteP);
@@ -149,7 +147,6 @@ void Airport::printMapElement(QPainter* printPainter) const
             printPos.y() - iconSize/2, iconSize, iconSize);
         printPainter->drawEllipse(printPos.x() - iconSize/4,
             printPos.y() - iconSize/4, iconSize/2, iconSize/2);
-        printPainter->drawText(printPos.x() - 10, printPos.y() + iconSize + 4, name);
         break;
       case Airfield:
         iconSize += 2;
@@ -164,10 +161,10 @@ void Airport::printMapElement(QPainter* printPainter) const
             printPos.y() - iconSize/2, iconSize, iconSize);
         printPainter->drawLine(printPos.x() - iconSize + 4, printPos.y(),
             printPos.x() + iconSize - 4, printPos.y());
-        printPainter->drawText(printPos.x() - 10, printPos.y() + iconSize + 4, name);
         break;
       case ClosedAirfield:
         warning("ClosedAirfield");
+        isText = false;
         break;
       case CivHeliport:
         printPainter->setPen(QPen(QColor(255,255,255), 5));
@@ -179,6 +176,7 @@ void Airport::printMapElement(QPainter* printPainter) const
             printPos.y() - iconSize/2, iconSize, iconSize);
         printPainter->setFont(QFont("helvetica", 13, QFont::Bold));
         printPainter->drawText(printPos.x() - 5, printPos.y() + 5, "H");
+        isText = false;
         break;
       case MilHeliport:
         iconSize += 2;
@@ -197,6 +195,7 @@ void Airport::printMapElement(QPainter* printPainter) const
             printPos.y() - iconSize/2, iconSize, iconSize);
         printPainter->setFont(QFont("helvetica", 9, QFont::Bold));
         printPainter->drawText(printPos.x() - 3, printPos.y() + 3, "H");
+        isText = false;
         break;
       case AmbHeliport:
         printPainter->setPen(QPen(QColor(255,255,255), 1));
@@ -209,6 +208,11 @@ void Airport::printMapElement(QPainter* printPainter) const
         printPainter->setPen(QPen(QColor(255,255,255), 1));
         printPainter->setFont(QFont("helvetica", 13, QFont::Bold));
         printPainter->drawText(printPos.x() - 5, printPos.y() + 5, "H");
+        isText = false;
         break;
     }
+
+  if(isText)
+      printPainter->drawText(printPos.x() - 10,
+          printPos.y() + iconSize + 4, name);
 }

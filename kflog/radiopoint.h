@@ -59,7 +59,7 @@ class RadioPoint : public SinglePoint
      * @param  frequency  The frequency
      */
     RadioPoint(QString name, QString icao, QString gps, unsigned int typeID,
-        QPoint pos, const char* frequency);
+        QPoint pos, const char* frequency, int elevation = 0);
     /**
      * Destructor
      */
@@ -68,8 +68,11 @@ class RadioPoint : public SinglePoint
      * Prints the element. Reimplemented from BaseMapElement.
      *
      * @param  printP  The painter to draw the element into.
+     *
+     * @param  isText  Shows, if the text of some mapelements should
+     *                 be printed.
      */
-    virtual void printMapElement(QPainter* printPainter) const;
+    virtual void printMapElement(QPainter* printPainter, bool isText) const;
 
     /* return frequency */
     virtual QString getFrequency() const;

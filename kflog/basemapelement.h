@@ -62,8 +62,11 @@ class BaseMapElement
      *
      * The function must be implemented in the child-classes.
      * @param  printP  The painter to draw the element into.
+     *
+     * @param  isText  Shows, if the text of some mapelements should
+     *                 be printed.
      */
-    virtual void printMapElement(QPainter* printP) const;
+    virtual void printMapElement(QPainter* printP, bool isText) const;
     /**
      * @return the name of the element.
      */

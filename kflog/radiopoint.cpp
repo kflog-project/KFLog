@@ -18,8 +18,8 @@
 #include "radiopoint.h"
 
 RadioPoint::RadioPoint(QString n, QString i, QString g, unsigned int t,
-    QPoint pos, const char* f)
-  : SinglePoint(n, g, t, pos),
+    QPoint pos, const char* f, int elev)
+  : SinglePoint(n, g, t, pos, elev),
     frequency(f), icao(i)
 {
 
@@ -30,7 +30,7 @@ RadioPoint::~RadioPoint()
 
 }
 
-void RadioPoint::printMapElement(QPainter* printPainter) const
+void RadioPoint::printMapElement(QPainter* printPainter, bool isText) const
 {
 
 }

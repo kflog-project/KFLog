@@ -40,7 +40,7 @@ void BaseMapElement::initMapElement(MapMatrix* matrix, MapConfig* config)
   glConfig = config;
 }
 
-void BaseMapElement::printMapElement(QPainter* printP) const {  }
+void BaseMapElement::printMapElement(QPainter* printP, bool isT) const {  }
 
 void BaseMapElement::drawMapElement(QPainter* pP, QPainter* mP) {  }
 

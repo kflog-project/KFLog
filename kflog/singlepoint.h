@@ -27,7 +27,6 @@
  *
  * @see BaseMapElement#objectType
  * @see Airport
- * @see ElevPoint
  * @see GliderSite
  * @see RadioPoint
  *
@@ -45,7 +44,8 @@ class SinglePoint : public BaseMapElement
 	   * @param  typeID  The typeid
 	   * @param  pos  The position
      */
-    SinglePoint(QString name, QString gps, unsigned int typeID, QPoint pos);
+    SinglePoint(QString name, QString gps, unsigned int typeID, QPoint pos,
+        unsigned int elevation = 0);
     /**
 	   * Destructor
 	   */
@@ -62,8 +62,11 @@ class SinglePoint : public BaseMapElement
      * Prints the element. Reimplemented from BaseMapElement.
      *
      * @param  printP  The painter to draw the element into.
+     *
+     * @param  isText  Shows, if the text of some mapelements should
+     *                 be printed.
      */
-    virtual void printMapElement(QPainter* printP) const;
+    virtual void printMapElement(QPainter* printP, bool isText) const;
     /**
      * @return the position of the element.
      */
@@ -81,6 +84,10 @@ class SinglePoint : public BaseMapElement
      * Should be reimplemented in subclasses.
      */
     virtual QString getInfoString() const;
+    /**
+     * @return the elevation of the element.
+     */
+    unsigned int getElevation() const;
 
   protected:
     /**
@@ -101,6 +108,10 @@ class SinglePoint : public BaseMapElement
      * The current draw-position of the element.
      */
     QPoint curPos;
+    /**
+     * The elevation.
+     */
+    unsigned int elevation;
 };
 
 #endif

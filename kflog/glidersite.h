@@ -77,8 +77,11 @@ class GliderSite : public RadioPoint
      * Prints the element. Reimplemented from BaseMapElement.
      *
      * @param  printP  The painter to draw the element into.
+     *
+     * @param  isText  Shows, if the text of some mapelements should
+     *                 be printed.
      */
-    virtual void printMapElement(QPainter* printP) const;
+    virtual void printMapElement(QPainter* printP, bool isText) const;
     /**
      * @return the elevation of the element.
      */

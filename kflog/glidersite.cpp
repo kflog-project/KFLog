@@ -22,8 +22,8 @@
 
 GliderSite::GliderSite(QString n, QString icao, QString gps, QPoint pos,
         unsigned int elev, const char* f, bool w)
-: RadioPoint(n, icao, gps, BaseMapElement::Glidersite, pos, f),
-  elevation(elev), winch(w)
+: RadioPoint(n, icao, gps, BaseMapElement::Glidersite, pos, f, elev),
+  winch(w)
 {
 
 }
@@ -58,7 +58,7 @@ QString GliderSite::getInfoString() const
   return text;
 }
 
-void GliderSite::printMapElement(QPainter* printPainter) const
+void GliderSite::printMapElement(QPainter* printPainter, bool isText) const
 {
   if(!__isVisible()) return;
 
@@ -95,7 +95,12 @@ void GliderSite::printMapElement(QPainter* printPainter) const
   printPainter->setPen(blackP);
   printPainter->drawPolyline(pointArray);
 
-  printPainter->setFont(QFont("helvetica", 10, QFont::Bold));
-  printPainter->drawText(printPos.x() - 15, printPos.y() + iconSize + 4, name);
-  printPainter->drawText(printPos.x() - 15, printPos.y() + iconSize + 14, frequency);
+  if(isText)
+    {
+      printPainter->setFont(QFont("helvetica", 10, QFont::Bold));
+      printPainter->drawText(printPos.x() - 15,
+          printPos.y() + iconSize + 4, name);
+      printPainter->drawText(printPos.x() - 15,
+          printPos.y() + iconSize + 14, frequency);
+    }
 }
