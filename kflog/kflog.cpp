@@ -259,25 +259,25 @@ void KFLogApp::initActions()
 
   // zoom & pan with Numpad keys (in the case of NumLock on)
   mapMoveMenu->insert(new KAction(0, "zoom_in_key",Key_Plus, &_globalMapMatrix,
-    SLOT(slotZoomIn()),actionCollection()));
+    SLOT(slotZoomIn()),actionCollection(),"zoom_in_key"));
   mapMoveMenu->insert(new KAction(0, "zoom_out_key",Key_Minus, &_globalMapMatrix,
-    SLOT(slotZoomOut()),actionCollection()));
+    SLOT(slotZoomOut()),actionCollection(),"zoom_out_key"));
   mapMoveMenu->insert(new KAction(0, "movemap_s_key",Key_2, &_globalMapMatrix,
-    SLOT(slotMoveMapS()),actionCollection()));
+    SLOT(slotMoveMapS()),actionCollection(),"movemap_s_key"));
   mapMoveMenu->insert(new KAction(0, "movemap_se_key",Key_3, &_globalMapMatrix,
-    SLOT(slotMoveMapSE()),actionCollection()));
+    SLOT(slotMoveMapSE()),actionCollection(),"movemap_se_key"));
   mapMoveMenu->insert(new KAction(0, "movemap_sw_key",Key_1, &_globalMapMatrix,
-    SLOT(slotMoveMapSW()),actionCollection()));
+    SLOT(slotMoveMapSW()),actionCollection(),"movemap_sw_key"));
   mapMoveMenu->insert(new KAction(0, "movemap_n_key",Key_8, &_globalMapMatrix,
-    SLOT(slotMoveMapN()),actionCollection()));
+    SLOT(slotMoveMapN()),actionCollection(),"movemap_n_key"));
   mapMoveMenu->insert(new KAction(0, "movemap_ne_key",Key_9, &_globalMapMatrix,
-    SLOT(slotMoveMapNE()),actionCollection()));
+    SLOT(slotMoveMapNE()),actionCollection(),"movemap_ne_key"));
   mapMoveMenu->insert(new KAction(0, "movemap_nw_key",Key_7, &_globalMapMatrix,
-    SLOT(slotMoveMapNW()),actionCollection()));
+    SLOT(slotMoveMapNW()),actionCollection(),"movemap_nw_key"));
   mapMoveMenu->insert(new KAction(0, "movemap_w_key",Key_4, &_globalMapMatrix,
-    SLOT(slotMoveMapW()),actionCollection()));
+    SLOT(slotMoveMapW()),actionCollection(),"movemap_w_key"));
   mapMoveMenu->insert(new KAction(0, "movemap_e_key",Key_6, &_globalMapMatrix,
-    SLOT(slotMoveMapE()),actionCollection()));
+    SLOT(slotMoveMapE()),actionCollection(),"movemap_e_key"));
 
   /*
    * we urgently need icons for this actions in order to
@@ -297,9 +297,9 @@ void KFLogApp::initActions()
   viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()),
       actionCollection());
 
-  flightEvaluation = new KAction(i18n("Evaluation"), "flightevaluation",
-      CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
-      "evaluate_flight");
+//  flightEvaluation = new KAction(i18n("Evaluation"), "flightevaluation",
+//      CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
+//      "evaluate_flight");
 
   // We can't use CTRL-W, because this shortcut is reserved for closing a file ...
   viewWaypoints = new KToggleAction(i18n("Show waypoints"), "waypoint",
