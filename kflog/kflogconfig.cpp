@@ -441,7 +441,7 @@ void KFLogConfig::__addScaleTab()
   uLimitN->display(ul);
 
   QGroupBox* borderBox = new QGroupBox(scalePage, "borderBox");
-  borderBox->setTitle("Scale-Borders:");
+  borderBox->setTitle("Scale-Thresholds:");
 
   QLabel* switchText = new QLabel(i18n("use small icons"), scalePage);
 
@@ -452,7 +452,7 @@ void KFLogConfig::__addScaleTab()
   switchScale->setValue(__getScaleValue(sw));
   switchScaleN->display(sw);
 
-  QLabel* reduce1Text = new QLabel(i18n("border #1"), scalePage);
+  QLabel* reduce1Text = new QLabel(i18n("threshold #1"), scalePage);
   reduce1 = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
   reduce1->setMinimumHeight(reduce1->sizeHint().height() + 5);
   reduce1->setMaximumHeight(reduce1->sizeHint().height() + 20);
@@ -460,7 +460,7 @@ void KFLogConfig::__addScaleTab()
   reduce1->setValue(__getScaleValue(b1));
   reduce1N->display(b1);
 
-  QLabel* reduce2Text = new QLabel(i18n("border #2"), scalePage);
+  QLabel* reduce2Text = new QLabel(i18n("threshold #2"), scalePage);
   reduce2 = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
   reduce2->setMinimumHeight(reduce2->sizeHint().height() + 5);
   reduce2->setMaximumHeight(reduce2->sizeHint().height() + 20);
@@ -468,7 +468,7 @@ void KFLogConfig::__addScaleTab()
   reduce2->setValue(__getScaleValue(b2));
   reduce2N->display(b2);
 
-  QLabel* reduce3Text = new QLabel(i18n("border #3"), scalePage);
+  QLabel* reduce3Text = new QLabel(i18n("threshold #3"), scalePage);
   reduce3 = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
   reduce3->setMinimumHeight(reduce3->sizeHint().height() + 5);
   reduce3->setMaximumHeight(reduce3->sizeHint().height() + 20);

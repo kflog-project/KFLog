@@ -164,6 +164,8 @@ void Waypoints::addPopupMenu()
   wayPointPopup->insertSeparator();
   idWaypointCopy2Task = wayPointPopup->insertItem(SmallIcon("editcopy"), i18n("Copy to &task"), this,
     SLOT(slotCopyWaypoint2Task()));
+  idWaypointCenterMap = wayPointPopup->insertItem(SmallIcon("centerwaypoint"), i18n("Center map on waypoint"), this,
+    SLOT(slotCenterMap()));
 }
 
 /** open a catalog and set it active */
@@ -658,6 +660,19 @@ void Waypoints::slotCopyWaypoint2Task()
 
     emit copyWaypoint2Task(w);
   }
+}
+
+void Waypoints::slotCenterMap()
+{
+  QListViewItem *item = waypoints->currentItem();
+
+  if (item != 0)
+    {
+      WaypointList *wl = &waypointCatalogs.current()->wpList;
+      wayPoint *w = wl->find(item->text(colName));
+
+      emit centerMap(w->origP.lat(), w->origP.lon());
+    }
 }
 
 void Waypoints::getFilterData()

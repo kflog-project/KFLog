@@ -272,6 +272,8 @@ class MapMatrix : public QObject
     void slotMoveMapSE();
     /** */
     void slotSetScale(double);
+    /** */
+    void slotCenterTo(int latitude, int longitude);
 
   signals:
     /** */

@@ -67,6 +67,7 @@ private: // Private attributes
   int idWaypointEdit;
   int idWaypointDelete;
   int idWaypointCopy2Task;
+  int idWaypointCenterMap;
   /** all loaded catalogs */
   QList<WaypointCatalog> waypointCatalogs;
   /**  */
@@ -106,6 +107,7 @@ private slots: // Private slots
   void showWaypointPopup(QListViewItem *, const QPoint &, int);
   void slotImportWaypointFromMap();
   void slotCopyWaypoint2Task();
+  void slotCenterMap();
 public slots: // Public slots
   /** filter waypoints to display */
   void slotFilterWaypoints();
@@ -118,6 +120,7 @@ signals: // Signals
   void copyWaypoint2Task(wayPoint *);
   /** signal to emit when current waypointcatalog has changed. */
   void waypointCatalogChanged(WaypointCatalog *);
+  void centerMap(int, int);
 };
 
 #endif

@@ -335,6 +335,12 @@ void MapMatrix::centerToLatLon(QPoint center)
   centerToLatLon(center.x(), center.y());
 }
 
+void MapMatrix::slotCenterTo(int latitude, int longitude)
+{
+  centerToLatLon(latitude, longitude);
+  emit matrixChanged();
+}
+
 void MapMatrix::centerToLatLon(int latitude, int longitude)
 {
   mapCenterLat = latitude;

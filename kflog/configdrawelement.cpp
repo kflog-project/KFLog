@@ -443,9 +443,9 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
 
   config->setGroup(0);
 
-  border1 = new QCheckBox(i18n("border #1"), parent);
-  border2 = new QCheckBox(i18n("border #2"), parent);
-  border3 = new QCheckBox(i18n("border #3"), parent);
+  border1 = new QCheckBox(i18n("threshold #1"), parent);
+  border2 = new QCheckBox(i18n("threshold #2"), parent);
+  border3 = new QCheckBox(i18n("threshold #3"), parent);
   border4 = new QCheckBox(i18n("scale-limit"), parent);
 
   QString picDir = KGlobal::dirs()->findResource("appdata", "pics/");

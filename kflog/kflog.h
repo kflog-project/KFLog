@@ -101,6 +101,7 @@ class KFLogApp : public KDockMainWindow
     void initTypes();
     /* ask for outstanding changes */
     bool queryClose();
+
   public slots:
     /**
      * Displays the position of the mousecursor and some info (time,
@@ -250,15 +251,19 @@ class KFLogApp : public KDockMainWindow
     /** */
     void slotOpenRecorderDialog();
     /**
-      *  olc Declaration
-      **/
+     *  olc Declaration
+     **/
     void slotOlcDeclaration();
     /** No descriptions */
     void slotImportFlightGearFile();
-  /** Import a file from Gardown (DOS)  */
-  void slotImportGardownFile();
-  /** No descriptions */
-  void slotTaskOpen();
+    /** Import a file from Gardown (DOS)  */
+    void slotImportGardownFile();
+    /** No descriptions */
+    void slotTaskOpen();
+    /**
+     * Display dialog to ask for coordinates and center map on that point.
+     */
+    void slotCenterTo();
 
   private:
     /**
@@ -383,6 +388,10 @@ class KFLogApp : public KDockMainWindow
      * flight is loaded.
      */
     KAction* viewCenterFlight;
+    /**
+     * Action to center the map on a location to be chosen by the user in a dialog.
+     */
+    KAction* viewCenterTo;
     /**
      * Action to handle the dataview.
      */

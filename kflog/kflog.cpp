@@ -40,6 +40,7 @@
 
 // application specific includes
 #include "kflog.h"
+#include <centertodialog.h>
 #include <dataview.h>
 #include <evaluationdialog.h>
 #include <flight.h>
@@ -170,11 +171,11 @@ void KFLogApp::initActions()
       SLOT(slotOpenRecorderDialog()), actionCollection(),
       "recorderdialog");
 
-  fileImportFlightGearFile = new KAction(i18n("Import FlightGear File"), "import_flightgear",
+  fileImportFlightGearFile = new KAction(i18n("Import FlightGear File"), "fileopen",
       0, this, SLOT(slotImportFlightGearFile()), actionCollection(),
       "file_import_flightgear");
 
-  fileImportGardownFile = new KAction(i18n("Import Gardown File"), "import_gardown",
+  fileImportGardownFile = new KAction(i18n("Import Gardown File"), "fileopen",
       0, this, SLOT(slotImportGardownFile()), actionCollection(),
       "file_import_gardown");
 
@@ -207,6 +208,9 @@ void KFLogApp::initActions()
   new KAction(i18n("Center to &Homesite"), "gohome",
       KStdAccel::key(KStdAccel::Home), &_globalMapMatrix,
       SLOT(slotCenterToHome()), actionCollection(), "view_fit_to_width");
+
+  viewCenterTo = new KAction(i18n("Center to..."), "centerto", Key_F8, this,
+      SLOT(slotCenterTo()), actionCollection(), "view_fit_to_height");
 
   mapMoveMenu->insert(new KAction(i18n("move map north-west"), "movemap_nw", 0,
       &_globalMapMatrix, SLOT(slotMoveMapNW()), actionCollection(), "move_map_nw"));
@@ -502,6 +506,8 @@ void KFLogApp::initView()
   connect(&_globalMapContents, SIGNAL(newTaskAdded(FlightTask *)), tasks,
       SLOT(slotAppendTask(FlightTask *)));
 
+  connect(waypoints, SIGNAL(centerMap(int, int)), &_globalMapMatrix,
+      SLOT(slotCenterTo(int, int)));
 }
 
 void KFLogApp::slotShowPointInfo(const QPoint pos,
@@ -800,6 +806,18 @@ void KFLogApp::slotEvaluateFlight()
       SLOT(slotDrawCursor(QPoint, QPoint)));
 
 //  evaluation->show();
+}
+
+void KFLogApp::slotCenterTo()
+{
+  CenterToDialog* center = new CenterToDialog(this, i18n("center-to-dialog"));
+
+  extern MapMatrix _globalMapMatrix;
+
+  connect(center, SIGNAL(centerTo(int,int)), &_globalMapMatrix,
+    SLOT(slotCenterTo(int, int)));
+
+  center->show();
 }
 
 void KFLogApp::slotOptimizeFlight()

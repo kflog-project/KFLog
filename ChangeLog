@@ -1,6 +1,10 @@
 $Id$
 
 
+2002-06-30 Heiner <heiner@kflog.org>
+
+  * Added Andrees patch (CenterToDialog) to HEAD.
+
 2002-06-26 Harry <harry@kflog.org>
 
   * Dock Widget for task handling added
