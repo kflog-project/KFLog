@@ -55,7 +55,7 @@ class MapMatrix : public QObject
      *
      * @return the projected point
      */
-    QPoint wgsToMap(QPoint point) const;
+    QPoint wgsToMap(const QPoint& point) const;
     /**
      * Converts the given geographic-data into the current map-projection.
      *
@@ -75,7 +75,7 @@ class MapMatrix : public QObject
      *
      * @return the projected rectangle
      */
-    QRect wgsToMap(QRect rect) const;
+    QRect wgsToMap(const QRect& rect) const;
     /**
      * Maps the given projected pointarray into the current map-matrix.
      *
@@ -83,7 +83,7 @@ class MapMatrix : public QObject
      *
      * @return the mapped pointarray
      */
-    QPointArray map(QPointArray pArray) const;
+    QPointArray map(const QPointArray& pArray) const;
     /**
      * Maps the given projected point into the current map-matrix.
      *
@@ -91,7 +91,7 @@ class MapMatrix : public QObject
      *
      * @return the mapped point
      */
-    QPoint map(QPoint point) const;
+    QPoint map(const QPoint& point) const;
     /**
      * Maps the given projected point into the current map-matrix.
      *
@@ -99,7 +99,7 @@ class MapMatrix : public QObject
      *
      * @return the mapped point
      */
-    QPoint map(QPoint *point) const;
+//    QPoint map(QPoint *point) const;
     /**
      * Maps the given bearing into the current map-matrix.
      *
@@ -116,7 +116,7 @@ class MapMatrix : public QObject
     QPoint print(int latitude, int longitude, double dX, double dY) const;
     /**
      */
-    QPoint print(QPoint p) const;
+    QPoint print(const QPoint& p) const;
     /**
      */
     double print(double bearing) const;
@@ -127,7 +127,7 @@ class MapMatrix : public QObject
      *
      * @return the mapped pointarray
      */
-    QPointArray print(QPointArray pArray) const;
+    QPointArray print(const QPointArray& pArray) const;
     /**
      * @param  type  The type of scale to be returned.
      *
@@ -150,20 +150,20 @@ class MapMatrix : public QObject
     /**
      * Initializes the matrix for printing the map.
      */
-    void createPrintMatrix(double scale, QSize pS, int dX = 0, int dY = 0,
+    void createPrintMatrix(double scale, const QSize& pS, int dX = 0, int dY = 0,
         bool rotate = false);
     /**
      * Initializes the matrix for displaying the map.
      */
-    void createMatrix(QSize newSize);
+    void createMatrix(const QSize& newSize);
     /**
      * @return "true", if the given point in visible in the current map.
      */
-    bool isVisible(QPoint pos) const;
+    bool isVisible(const QPoint& pos) const;
     /**
      * @return "true", if the given rectangle intersects with the current map.
      */
-    bool isVisible(QRect itemBorder) const;
+    bool isVisible(const QRect& itemBorder) const;
     /** */
     enum MoveDirection {NotSet = 0, North = 1, West = 2, East = 4,
         South = 8, Home = 16};
@@ -175,7 +175,7 @@ class MapMatrix : public QObject
     /**
      * Centers the map to the given point.
      */
-    void centerToPoint(QPoint);
+    void centerToPoint(const QPoint&);
     /**
      * Centers the map to the given rectangle and scales the map, so that
      * the rectangle will be seen completly.
@@ -183,9 +183,9 @@ class MapMatrix : public QObject
      * @param QSize
      * @param addBorder Adds a border of 6.5 km if true.
      */
-    double centerToRect(QRect, QSize = QSize(0,0), bool addBorder = true);
+    double centerToRect(const QRect&, const QSize& = QSize(0,0), bool addBorder = true);
     /** */
-    QPoint mapToWgs(QPoint pos) const;
+    QPoint mapToWgs(const QPoint& pos) const;
     /**
      *
      */
@@ -199,7 +199,7 @@ class MapMatrix : public QObject
      */
     QPoint getMapCenter(bool isPrint = false) const;
     /** */
-    void centerToLatLon(QPoint center);
+    void centerToLatLon(const QPoint& center);
     /** */
     void centerToLatLon(int latitude, int longitude);
     /** */
@@ -272,7 +272,7 @@ class MapMatrix : public QObject
 //    int __invert_Lambert_Lon(double x, double y) const;
     /**
      */
-    QPoint __mapToWgs(QPoint) const;
+    QPoint __mapToWgs(const QPoint&) const;
     /**
      */
     QPoint __mapToWgs(int x, int y) const;

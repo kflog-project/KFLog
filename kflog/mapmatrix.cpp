@@ -119,7 +119,7 @@ void MapMatrix::writeMatrixOptions()
   config->setGroup(0);
 }
 
-QPoint MapMatrix::wgsToMap(QPoint origPoint) const
+QPoint MapMatrix::wgsToMap(const QPoint& origPoint) const
 {
    return wgsToMap(origPoint.x(), origPoint.y());
 }
@@ -137,12 +137,12 @@ QPoint MapMatrix::wgsToMap(int lat, int lon) const
 //                    RADIUS / MAX_SCALE);
 }
 
-QRect MapMatrix::wgsToMap(QRect rect) const
+QRect MapMatrix::wgsToMap(const QRect& rect) const
 {
   return QRect(wgsToMap(rect.topLeft()), wgsToMap(rect.bottomRight()));
 }
 
-QPoint MapMatrix::__mapToWgs(QPoint origPoint) const
+QPoint MapMatrix::__mapToWgs(const QPoint& origPoint) const
 {
   return __mapToWgs(origPoint.x(), origPoint.y());
 }
@@ -162,12 +162,12 @@ QPoint MapMatrix::__mapToWgs(int x, int y) const
   return QPoint((int)lon, (int)lat);
 }
 
-bool MapMatrix::isVisible(QPoint pos) const
+bool MapMatrix::isVisible(const QPoint& pos) const
 {
   return (mapBorder.contains(pos));
 }
 
-bool MapMatrix::isVisible(QRect itemBorder) const
+bool MapMatrix::isVisible(const QRect& itemBorder) const
 {
   // Grenze: Nahe 15Bit
   // Vereinfachung kann zu Fehlern führen ...
@@ -197,32 +197,34 @@ bool MapMatrix::isSwitchScale() const
   return cScale <= scaleBorders[SwitchScale];
 }
 
-QPointArray MapMatrix::map(QPointArray origArray) const
+QPointArray MapMatrix::map(const QPointArray& origArray) const
 {
   return worldMatrix.map(origArray);
 }
 
-QPoint MapMatrix::map(QPoint origPoint) const
+QPoint MapMatrix::map(const QPoint& origPoint) const
 {
   return worldMatrix.map(origPoint);
 }
 
-QPoint MapMatrix::map(QPoint *origPoint) const
+/*
+QPoint MapMatrix::map(const QPoint *origPoint) const
 {
   return worldMatrix.map(*origPoint);
 }
+*/
 
 double MapMatrix::map(double arc) const
 {
   return (arc + rotationArc);
 }
 
-QPointArray MapMatrix::print(QPointArray pArray) const
+QPointArray MapMatrix::print(const QPointArray& pArray) const
 {
   return printMatrix.map(pArray);
 }
 
-QPoint MapMatrix::print(QPoint p) const
+QPoint MapMatrix::print(const QPoint& p) const
 {
   return printMatrix.map(p);
 }
@@ -322,7 +324,7 @@ double MapMatrix::getScale(unsigned int type)
   return 0.0;
 }
 
-void MapMatrix::centerToPoint(QPoint center)
+void MapMatrix::centerToPoint(const QPoint& center)
 {
   bool result = true;
   QWMatrix invertMatrix = worldMatrix.invert(&result);
@@ -335,7 +337,7 @@ void MapMatrix::centerToPoint(QPoint center)
   mapCenterLon = projCenter.x();
 }
 
-void MapMatrix::centerToLatLon(QPoint center)
+void MapMatrix::centerToLatLon(const QPoint& center)
 {
   centerToLatLon(center.x(), center.y());
 }
@@ -352,7 +354,7 @@ void MapMatrix::centerToLatLon(int latitude, int longitude)
   mapCenterLon = longitude;
 }
 
-double MapMatrix::centerToRect(QRect center, QSize pS, bool addBorder)
+double MapMatrix::centerToRect(const QRect& center, const QSize& pS, bool addBorder)
 {
   const int centerX = (center.left() + center.right()) / 2;
   const int centerY = (center.top() + center.bottom()) / 2;
@@ -398,7 +400,7 @@ double MapMatrix::centerToRect(QRect center, QSize pS, bool addBorder)
   return cScale;
 }
 
-QPoint MapMatrix::mapToWgs(QPoint pos) const
+QPoint MapMatrix::mapToWgs(const QPoint& pos) const
 {
   bool result = true;
   QWMatrix invertMatrix = worldMatrix.invert(&result);
@@ -454,7 +456,7 @@ void MapMatrix::__moveMap(int dir)
   emit matrixChanged();
 }
 
-void MapMatrix::createMatrix(QSize newSize)
+void MapMatrix::createMatrix(const QSize& newSize)
 {
   const QPoint tempPoint(wgsToMap(mapCenterLat, mapCenterLon));
 
@@ -507,7 +509,7 @@ void MapMatrix::createMatrix(QSize newSize)
 //  emit matrixChanged();
 }
 
-void MapMatrix::createPrintMatrix(double printScale, QSize pSize, int dX,
+void MapMatrix::createPrintMatrix(double printScale, const QSize& pSize, int dX,
     int dY, bool rotate)
 {
   pScale = printScale;
