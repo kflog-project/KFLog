@@ -17,7 +17,9 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kdeversion.h>
-#ifndef KDE_IS_VERSION(3,2,0)
+#if KDE_IS_VERSION(3,2,0)
+  #undef OLDVERSION   //workaround for older KDE versions that lack kinputdialog
+#else
   #define OLDVERSION 1    //workaround for older KDE versions that lack kinputdialog
 #endif
 
