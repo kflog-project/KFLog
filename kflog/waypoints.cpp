@@ -412,14 +412,17 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
 /** No descriptions */
 void Waypoints::slotDeleteWaypoint(Waypoint* wp)
 {
-  if (KMessageBox::warningContinueCancel (this,
+  if (wp)
+  {
+    if (KMessageBox::warningContinueCancel (this,
         i18n("<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>").arg(wp->name),
         i18n("Delete waypoint?"),
         i18n("&Delete")) == KMessageBox::Continue)
-  {      
-    waypointCatalogs.current()->wpList.remove(wp->name);
-    waypointCatalogs.current()->modified = true;
-    fillWaypoints();
+    {      
+      waypointCatalogs.current()->wpList.remove(wp->name);
+      waypointCatalogs.current()->modified = true;
+      fillWaypoints();
+    }
   }
 }
 
@@ -430,8 +433,10 @@ void Waypoints::slotDeleteWaypoint()
 
   if (item != 0) {
     QString tmp = item->text(colName);
-    if (KMessageBox::questionYesNo (this,
-        i18n("Waypoint %1 will be deleted.\nAre you sure?").arg(tmp)) == KMessageBox::Yes)
+    if (KMessageBox::warningContinueCancel (this,
+        i18n("<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>").arg(tmp),
+        i18n("Delete waypoint?"),
+        i18n("&Delete")) == KMessageBox::Continue)
     {
       waypointCatalogs.current()->wpList.remove(tmp);
       waypointCatalogs.current()->modified = true;
