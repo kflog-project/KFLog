@@ -196,7 +196,6 @@ int MapControlView::__getScaleValue(double scale)
   else return (((int) scale - 2000) / 100 + 125);
 }
 
-
 void MapControlView::slotShowScaleChange(int value)
 {
   extern double _scale[];

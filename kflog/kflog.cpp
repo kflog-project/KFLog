@@ -60,7 +60,7 @@
 //  a->setIndent(10);
 
 KFLogApp::KFLogApp(QWidget* , const char* name)
-  : KDockMainWindow(0, "KFLog-MainWindow"), showStartLogo(false)
+  : KDockMainWindow(0, name), showStartLogo(false)
 {
   config = kapp->config();
 

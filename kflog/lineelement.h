@@ -24,9 +24,11 @@
  * PEN_THICKNESS füllt den Array mit den Strichstärken ...
  */
 #define PEN_THICKNESS(a, b, c, d, e, f, g, h, i) \
-    drawThickness[0] = a; drawThickness[1] = b; drawThickness[2] = c; \
-    drawThickness[3] = d; drawThickness[4] = e; drawThickness[5] = f; \
-    drawThickness[6] = g; drawThickness[7] = h; drawThickness[8] = i;
+    drawPenSize[0] = a; drawPenSize[1] = b; drawPenSize[2] = c; \
+    drawPenSize[3] = d; drawPenSize[4] = e;
+
+#include <qlist.h>
+#include <qpen.h>
 
 /**
  * Class used for all elements, which consist of a pointarray.
@@ -69,8 +71,6 @@ class LineElement : public BaseMapElement
     /** */
     virtual bool __isVisible() const;
     /** */
-    QColor drawColor;
-    /** */
     Qt::PenStyle drawPenStyle;
     /** */
     Qt::BrushStyle fillBrushStyle;
@@ -78,8 +78,6 @@ class LineElement : public BaseMapElement
     QColor fillColor;
     /** */
 //    QBrush fillBrush;
-    /** */
-    int* drawThickness;
     /**
      * Contains the projected positions of the item.
      */
@@ -90,6 +88,14 @@ class LineElement : public BaseMapElement
     bool valley;
     /** */
     bool closed;
+    /** */
+    bool* border;
+    /**
+     * This array (size: 5) contains the linewidth used for drawing the
+     * element.
+     */
+    int* drawPenSize;
+    QColor* drawColor;
 };
 
 /*************************************************************************
