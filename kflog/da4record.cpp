@@ -249,11 +249,11 @@ void DA4WPRecord::setWaypoint (Waypoint* wp)
 
 short DA4TaskRecord::pntind (char inx)
 {
-  return U16Swap (_buffer->pntind [inx]);
+  return U16Swap (_buffer->pntind [(int)inx]);
 }
 
 void DA4TaskRecord::setInd (char wp, short inx)
 {
-  _buffer->pnttype [wp] = 1;
-  _buffer->pntind [wp] = U16Swap (inx);
+  _buffer->pnttype [(int)wp] = 1;
+  _buffer->pntind [(int)wp] = U16Swap (inx);
 }
