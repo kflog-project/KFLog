@@ -172,6 +172,8 @@ class MapContents : public QObject
     static int degreeToNum(QString degree);
   /** No descriptions */
   bool importFlightGearFile(QFile flightgearFile);
+  /** Imports a file downloaded with Gardown in DOS  */
+  bool importGardownFile(QFile gardownFile);
     /**
 		 * Get the contents of the next FlightPoint after number 'index'
 	   */

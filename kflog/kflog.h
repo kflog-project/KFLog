@@ -243,6 +243,8 @@ class KFLogApp : public KDockMainWindow
     void slotOlcDeclaration();
     /** No descriptions */
     void slotImportFlightGearFile();
+  /** Import a file from Gardown (DOS)  */
+  void slotImportGardownFile();
 
   private:
     /**
@@ -390,6 +392,8 @@ class KFLogApp : public KDockMainWindow
     KAction* fileRecorder;
     /** */
     KAction* fileImportFlightGearFile;
+    /** */
+    KAction* fileImportGardownFile;
     /** */
     KToggleAction* viewWaypoints;
 		/**

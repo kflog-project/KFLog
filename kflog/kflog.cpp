@@ -187,6 +187,11 @@ void KFLogApp::initActions()
       0, this, SLOT(slotImportFlightGearFile()), actionCollection(),
       "flightgear");
 
+  fileImportGardownFile = new KAction(i18n("Import Gardown File"), "import_gardown",
+      0, this, SLOT(slotImportGardownFile()), actionCollection(),
+      "gardown");
+
+
   KStdAction::print(this, SLOT(slotFilePrint()), actionCollection());
 
   flightPrint = new KAction(i18n("Print Flightdata"), "fileprint",
@@ -1148,6 +1153,7 @@ void KFLogApp::initTypes()
 
   waypointTypes.sort();
 }
+
 /** No descriptions */
 void KFLogApp::slotImportFlightGearFile(){
   slotStatusMsg(i18n("Opening file..."));
@@ -1175,6 +1181,38 @@ void KFLogApp::slotImportFlightGearFile(){
   flightDir = fInfo.dirPath();
   extern MapContents _globalMapContents;
   if(_globalMapContents.importFlightGearFile(fName))
+      fileOpenRecent->addURL(fUrl);
+
+  slotStatusMsg(i18n("Ready."));
+}
+
+/** Import a file from Gardown (DOS)  */
+void KFLogApp::slotImportGardownFile(){
+  slotStatusMsg(i18n("Opening file..."));
+
+  KFileDialog* dlg = new KFileDialog(flightDir, "*.gdn *.GDN *.trk *TRK", this,
+      i18n("Select Gardown File"), true);
+  dlg->exec();
+
+  KURL fUrl = dlg->selectedURL();
+
+//  KURL fUrl = KFileDialog::getOpenURL(flightDir, "*.igc *.IGC", this);
+
+  if(fUrl.isEmpty())  return;
+
+  QString fName;
+  if(fUrl.isLocalFile())
+      fName = fUrl.path();
+  else if(!KIO::NetAccess::download(fUrl, fName))
+    {
+      KNotifyClient::event(i18n("Can not download file %1").arg(fUrl.url()));
+      return;
+    }
+
+  QFileInfo fInfo(fName);
+  flightDir = fInfo.dirPath();
+  extern MapContents _globalMapContents;
+  if(_globalMapContents.importGardownFile(fName))
       fileOpenRecent->addURL(fUrl);
 
   slotStatusMsg(i18n("Ready."));
