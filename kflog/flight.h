@@ -227,6 +227,14 @@ class Flight : public BaseFlightElement
   bool isAnimationActive(void);
   /** No descriptions */
   int getAnimationIndex();
+  /** No descriptions */
+  void setLastAnimationPixmap(QPixmap pix);
+  /** No descriptions */
+  QPixmap getLastAnimationPixmap(void);
+  /** No descriptions */
+  QPoint getLastAnimationPos(void);
+  /** No descriptions */
+  void setLastAnimationPos(QPoint pos);
     /**
      * The waypoint-types.
      */
@@ -297,6 +305,8 @@ class Flight : public BaseFlightElement
     int nAnimationIndex;
     /**  */
     bool bAnimationActive;
+    QPoint preAnimationPos;
+    QPixmap pixAnimate;
 };
 
 #endif

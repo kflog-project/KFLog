@@ -110,8 +110,8 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   bitPlanMask.resize( PIX_WIDTH, PIX_HEIGHT );
   bitFlightMask.resize( PIX_WIDTH, PIX_HEIGHT );
 
-  pixAnimate.resize(32,32);
-  pixAnimate.fill(white);
+//  pixAnimate.resize(32,32);
+//  pixAnimate.fill(white);
 
   airspaceRegList = new QList<QRegion>;
   airspaceRegList->setAutoDelete(true);
@@ -1270,11 +1270,14 @@ void Map::slotAnimateFlightStart()
 {
   extern MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
+  QPoint pos;
+  QPixmap pix;
+  flightPoint cP;
+
   Flight *f = (Flight *)_globalMapContents.getFlight();
   if (f){
   	// save this one to speed up timeout code
-    flightToAnimate = f;
-
+    this->flightToAnimate = f;
     switch(f->getTypeID()) {
     case BaseMapElement::Flight:
       f->setAnimationIndex(0);
@@ -1285,11 +1288,11 @@ void Map::slotAnimateFlightStart()
 		  QList<Flight> flightList = ((FlightGroup *)f)->getFlightList();
   		for(unsigned int loop = 0; loop < flightList.count(); loop++){
   		  f = flightList.at(loop);
-        f->setAnimationIndex(0);
-        f->setAnimationActive(true);
-      }
+          f->setAnimationIndex(0);
+          f->setAnimationActive(true);
+        }
       break;
-		}
+	}
 	// force redraw
 	// flights will not be visible as nAnimationIndex is zero for all flights to animate.
 	slotRedrawFlight();
@@ -1299,18 +1302,38 @@ void Map::slotAnimateFlightStart()
 //     __showLayer();
 
 	// save what will be under the flag
-    flightPoint cP = f->getPoint(0);
-    prePos = _globalMapMatrix.map(cP.projP);
-    preAnimationPos = prePos;
-	bitBlt(&pixAnimate, 0, 0, &pixBuffer, prePos.x(), prePos.y()-32, 32, 32, CopyROP );
-	// put flag
-	bitBlt(&pixBuffer, prePos.x(), prePos.y()-32, &pixCursor2 );
+    switch(f->getTypeID()) {
+    case BaseMapElement::Flight:
+		cP = f->getPoint(0);
+       	prePos = _globalMapMatrix.map(cP.projP);
+       	pos = _globalMapMatrix.map(cP.projP);
+        pix = f->getLastAnimationPixmap();
+ 	   	bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
+        f->setLastAnimationPos(pos);
+        f->setLastAnimationPixmap(pix);
+   		// put flag
+   		bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2 );
+       break;
+    case BaseMapElement::FlightGroup:
+		  // loop through all and set animation index to start
+		  QList<Flight> flightList = ((FlightGroup *)f)->getFlightList();
+  		for(unsigned int loop = 0; loop < flightList.count(); loop++){
+          cP = f->getPoint(0);
+          pos = _globalMapMatrix.map(cP.projP);
+          pix = f->getLastAnimationPixmap();
+          bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
+          f->setLastAnimationPos(pos);
+          f->setLastAnimationPixmap(pix);
+          // put flag
+          bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2 );
+		}
+      break;
+	}
 
     // 50ms multi-shot timer
     timerAnimate->start( 50, FALSE );
   }
 }
-
 /**
  * Animation slot.
  * Called for every timeout of the animation timer.
@@ -1318,12 +1341,11 @@ void Map::slotAnimateFlightStart()
 void Map::slotAnimateFlightTimeout()
 {
   extern MapMatrix _globalMapMatrix;
-//  extern MapContents _globalMapContents;
   flightPoint cP; //, prevP;
-  Flight *f  = flightToAnimate; // = (Flight *)_globalMapContents.getFlight();
+  Flight *f  = this->flightToAnimate; // = (Flight *)_globalMapContents.getFlight();
   bool bDone = true;
-//  int index;
-//  static QPixmap pixUnderLastCursor = QPixmap( 75, 75, -1, QPixmap::DefaultOptim );
+  QPoint lastpos, pos;
+  QPixmap pix;
 
   if (f){
     switch(f->getTypeID()) {
@@ -1331,38 +1353,56 @@ void Map::slotAnimateFlightTimeout()
       f->setAnimationNextIndex();
       if (f->isAnimationActive())
 	      bDone = false;
+      //write info from current point on statusbar
+      cP = f->getPoint((f->getAnimationIndex()));
+      pos = _globalMapMatrix.map(cP.projP);
+      lastpos = f->getLastAnimationPos();
+      pix = f->getLastAnimationPixmap();
+      emit showFlightPoint(pos, cP);
+      // erase prev indicator-flag
+      bitBlt(&pixBuffer, lastpos.x(), lastpos.y()-32, &pix);
+
+//  bitBlt(&pixBuffer, lastpos.x()-100, lastpos.y()-32, &pix);
+    	// redraw flight up to this point, blt the pixmap onto the already created pixmap
+      __drawFlight();
+      pixFlight.setMask(bitFlightMask);
+      bitBlt(&pixBuffer, 0, 0, &pixFlight);
+      //save for next timeout
+      bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
+      f->setLastAnimationPixmap(pix);
+      f->setLastAnimationPos(pos);
+      // add indicator-flag
+      bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2);
       break;
     case BaseMapElement::FlightGroup:
 		  // loop through all and set animation index to start
 		  QList<Flight> flightList = ((FlightGroup*)flightToAnimate)->getFlightList();
   		for(unsigned int loop = 0; loop < flightList.count(); loop++){
   		  f = flightList.at(loop);
-        f->setAnimationNextIndex();
-        if (f->isAnimationActive())
+          f->setAnimationNextIndex();
+          if (f->isAnimationActive())
  		      bDone = false;
-      }
+          //write info from current point on statusbar
+          cP = f->getPoint((f->getAnimationIndex()));
+          pos = _globalMapMatrix.map(cP.projP);
+          lastpos = f->getLastAnimationPos();
+          pix = f->getLastAnimationPixmap();
+          emit showFlightPoint(pos, cP);
+          // erase prev indicator-flag
+          bitBlt(&pixBuffer, lastpos.x(), lastpos.y()-32, &pix);
+        	// redraw flight up to this point, blt the pixmap onto the already created pixmap
+          __drawFlight();
+          pixFlight.setMask(bitFlightMask);
+          bitBlt(&pixBuffer, 0, 0, &pixFlight);
+          //save for next timeout
+          bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
+          f->setLastAnimationPixmap(pix);
+          f->setLastAnimationPos(pos);
+          // add indicator-flag
+          bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2);
+        }
       break;
 		}
-      //write info from current point on statusbar
-      cP = f->getPoint((f->getAnimationIndex()));
-      prePos = _globalMapMatrix.map(cP.projP);
-
-      emit showFlightPoint(prePos, cP);
-
-      // erase prev indicator-flag
-      bitBlt(&pixBuffer, preAnimationPos.x(), preAnimationPos.y()-32, &pixAnimate);
-
-    	// redraw flight up to this point, blt the pixmap onto the already created pixmap
-      __drawFlight();
-      pixFlight.setMask(bitFlightMask);
-      bitBlt(&pixBuffer, 0, 0, &pixFlight);
-
-      //save for next timeout
-      bitBlt(&pixAnimate, 0, 0, &pixBuffer, prePos.x(), prePos.y()-32, 32, 32, CopyROP);
-      preAnimationPos = prePos;
-
-      // add indicator-flag
-      bitBlt(&pixBuffer, prePos.x(), prePos.y()-32, &pixCursor2);
   }
   // force paint event
   paintEvent();

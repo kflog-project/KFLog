@@ -29,6 +29,7 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <qpixmap.h>
 
 /* Anzahl der zu merkenden besten Flüge */
 #define NUM_TASKS 3
@@ -81,6 +82,11 @@ Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName
 
   __checkMaxMin();
   __flightState();
+
+  // size and clear animation pixbuffer
+  pixAnimate.resize(32,32);
+  pixAnimate.fill(QPixmap::white);
+
 }
 
 Flight::~Flight()
@@ -1039,3 +1045,20 @@ int Flight::getAnimationIndex()
 {
   return nAnimationIndex;
 }
+/** No descriptions */
+void Flight::setLastAnimationPos(QPoint pos){
+  this->preAnimationPos = pos;
+}
+/** No descriptions */
+QPoint Flight::getLastAnimationPos(void){
+  return this->preAnimationPos;
+}
+/** No descriptions */
+QPixmap Flight::getLastAnimationPixmap(void){
+  return this->pixAnimate;
+}
+/** No descriptions */
+void Flight::setLastAnimationPixmap(QPixmap pix){
+  this->pixAnimate = pix;
+}
+
