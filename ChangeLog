@@ -1,11 +1,25 @@
 $Id$
 
 
+2002-03-10 Heiner <heiner@kflog.org>
+
+  * Fixed a bug in MapContents::loadFlight(), that causes KFLog to crash
+    after loading an igc-file, that does not contain a flight.
+
+  * Added recognition of the recorder-manufactorer and ID, as given in
+    the igc-file.
+
+
 2002-03-04 Harry <harry@kflog.org>
 
   * Some improvements in waypoint handling/filtering
 
   * First version of task dialog
+
+
+2002-02-24 Heiner <heiner@kflog.org>
+
+  * Tagged and released KFLog 2.0.4
 
 
 2002-02-22 Heiner <heiner@kflog.org>
