@@ -51,12 +51,13 @@ private:
 
     GLuint boxObject;
     QValueList<GLuint> flightList;
-    GLfloat xRot, yRot, zRot, deltaX, deltaY, scale;
+    GLfloat xRot, yRot, zRot, deltaX, deltaY, deltaZ, scale, heightExaggerate;
     void slotRotateUp();
     void    mouseMoveEvent ( QMouseEvent * e );
     void    mousePressEvent ( QMouseEvent * e );
     void    wheelEvent ( QWheelEvent * e );
     QPoint  mouse_last;
+    long minx, maxx, miny, maxy, minz, maxz;
 };
 
 
