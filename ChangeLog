@@ -1,5 +1,9 @@
 $Id$
 
+2002-02-12 Thomas <thomas@kflog.org>
+
+  * Added zoom, tilt and rotate functionallity to 3DIgc dialog.
+
 
 2002-02-10 Heiner <heiner@kflog.org>
 
