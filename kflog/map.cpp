@@ -1295,8 +1295,8 @@ void Map::slotAnimateFlightStart()
 	slotRedrawFlight();
 
 	// prepare the pixmap for next timeout
-	__drawFlight();
-     __showLayer();
+//	__drawFlight();
+//     __showLayer();
 
 	// save what will be under the flag
     flightPoint cP = f->getPoint(0);

@@ -1,5 +1,10 @@
 $Id$
 
+2002-04-08 Harry <harry@kflog.org>
+
+  * Fixed bug in setting animation index
+	
+
 2002-04-05 Thomas <thomas@kflog.org>
 
   * Added indicator showing current point in flight animation.

@@ -1011,16 +1011,16 @@ QString Flight::getFlightInfoString()
 
 /** Sets the nAnimationIndex member to 'n' */
 void Flight::setAnimationIndex(int n){
-  if ((n >= 0) && (getRouteLength() >= (unsigned int)n))
+  if ((n >= 0) && (getRouteLength() > (unsigned int)n))
 	  nAnimationIndex = n;
 }
 
 /** Increments the nAnimationIndex member */
 void Flight::setAnimationNextIndex(void){
-	if (getRouteLength() >= (unsigned int)nAnimationIndex+1)
+	if (getRouteLength() > (unsigned int)nAnimationIndex+1)
 	  nAnimationIndex++;
   else {
-		nAnimationIndex = (int)getRouteLength();
+		nAnimationIndex = (int)getRouteLength()-1;
     bAnimationActive = false;	//stop the animation of this flight
   }
 }
