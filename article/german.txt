@@ -1,3 +1,4 @@
+$Id$
 
 Das Projekt wurde 1998 von einem Geographie Studenten und
 einem Segelflieger ins Leben gerufen. Urspruenglich war
