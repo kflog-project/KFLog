@@ -102,6 +102,7 @@ KFLogApp::KFLogApp()
   viewCenterTask->setEnabled(false);
   viewCenterFlight->setEnabled(false);
   flightEvaluation->setEnabled(false);
+  flightPrint->setEnabled(false);
   animateFlightStart->setEnabled(false);
   animateFlightStop->setEnabled(false);
   stepFlightNext->setEnabled(false);
@@ -471,6 +472,7 @@ void KFLogApp::slotFileClose()
       viewCenterTask->setEnabled(false);
       viewCenterFlight->setEnabled(false);
       flightEvaluation->setEnabled(false);
+      flightPrint->setEnabled(false);
       animateFlightStart->setEnabled(false);
       animateFlightStop->setEnabled(false);
 			stepFlightNext->setEnabled(false);
@@ -517,6 +519,7 @@ void KFLogApp::slotFileOpen()
       viewCenterTask->setEnabled(true);
       viewCenterFlight->setEnabled(true);
       flightEvaluation->setEnabled(true);
+      flightPrint->setEnabled(true);
       animateFlightStart->setEnabled(true);
       animateFlightStop->setEnabled(true);
 		  stepFlightNext->setEnabled(true);
