@@ -1,5 +1,14 @@
 $Id$
 
+2003-05-20 Eggert Ehmke <eggert@kflog.org>
+
+  * Added a wait cursor for time consuming operations in RecorderDialog
+
+  * Improved display of serial number of Filser recorders
+
+  * Improved GCC 3.3 / ISO C++ compatibility
+
+  
 2003-05-03 André Somers <andre@kflog.org>
 
   * Added a Tip of the Day
