@@ -651,7 +651,7 @@ void RecorderDialog::slotConnectRecorder()
   //check if we have valid parameters, is so, try to connect!
   switch (activeRecorder->getTransferMode()) {
   case FlightRecorderPluginBase::serial:
-    if(portName == 0) {
+    if(portName.isEmpty()) {
       warning(i18n("No port given!"));
       isConnected=false;
       break;
