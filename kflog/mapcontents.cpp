@@ -1115,7 +1115,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
       QPointArray tA;
 
       gesamt_elemente++;
-      qDebug("type: %d", typeIn);
+      //qDebug("type: %d", typeIn);
 
       switch (typeIn)
         {
@@ -1151,7 +1151,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
           case BaseMapElement::PackIce:
             // is currently not being used
             // stays anyway because of errors in the MapBin in the Data
-            qDebug("filepointer: %d", eingabe.at());
+            //qDebug("filepointer: %d", eingabe.at());
             READ_POINT_LIST
             if(formatID >= FILE_FORMAT_ID) in >> name;
             break;
