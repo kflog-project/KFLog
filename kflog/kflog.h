@@ -261,6 +261,8 @@ class KFLogApp : public KDockMainWindow
   void slotSavePixmap(KURL url, int width, int height);
   /** */
   void slotFlightViewIgc3D();
+  /** */
+  void slotFlightViewIgcOpenGL();
   /**
    * Hides the Waypoints-widget. Called, when the user has closed or
    * undocked the widget.
@@ -532,6 +534,10 @@ class KFLogApp : public KDockMainWindow
    * The igc3d dialog
    */
   KAction* viewIgc3D;
+  /**
+   * The OpenGL dialog
+   */
+  KAction* viewIgcOpenGL;
   /** */
   KAction* olcDeclaration;
   /**

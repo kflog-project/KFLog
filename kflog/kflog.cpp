@@ -17,6 +17,7 @@
 
 #include <unistd.h>
 #include <pwd.h>
+#include <dlfcn.h>
 
 // include files for QT
 #include <qdir.h>
@@ -24,6 +25,7 @@
 #include <qprinter.h>
 #include <qregexp.h>
 #include <qtextstream.h>
+#include <qgl.h>
 
 // include files for KDE
 #include <kconfig.h>
@@ -357,6 +359,13 @@ void KFLogApp::initActions()
 			CTRL+Key_R, this, SLOT(slotFlightViewIgc3D()), actionCollection(),
 			"view_flight_3D");
 			
+	/**
+	 * OpenGL action
+	 */
+	viewIgcOpenGL = new KAction(i18n("View flight in 3D (OpenGL)"), "openglgfx",
+			0, this, SLOT(slotFlightViewIgcOpenGL()), actionCollection(),
+			"view_flight_opengl");
+
   KSelectAction* viewFlightDataType = new KSelectAction(
       i18n("Show Flightdata"), "idea", 0,
       actionCollection(), "view_flight_data");
@@ -383,6 +392,7 @@ void KFLogApp::initActions()
   //  flightMenu->insert(viewWaypoints);
   flightMenu->insert(viewFlightDataType);
   flightMenu->insert(viewIgc3D);
+  flightMenu->insert(viewIgcOpenGL);
   flightMenu->insert(olcDeclaration);
 //  flightMenu->insert(mapPlanning);
   flightMenu->popupMenu()->insertSeparator();
@@ -1038,6 +1048,37 @@ void KFLogApp::slotFlightViewIgc3D()
   extern MapContents _globalMapContents;
 }
 
+void KFLogApp::slotFlightViewIgcOpenGL()
+{
+  #define CHECK_ERROR_EXIT  error = (char *)dlerror(); \
+    if(error != NULL) \
+      { \
+        warning(error); \
+        return; \
+      }
+
+  char *error;
+  qWarning("KFLogApp::slotFlightViewIgcOpenGL()");
+
+  void* libHandle = dlopen("libopengl_igc.so", RTLD_NOW);
+  CHECK_ERROR_EXIT
+  char* (*getCaption)();
+  getCaption = (char* (*) ()) dlsym(libHandle, "getCaption");
+  CHECK_ERROR_EXIT
+  qWarning((*getCaption)());
+
+  QWidget* (*run)();
+  run = (QWidget* (*) ()) dlsym(libHandle, "getMainWidget");
+  CHECK_ERROR_EXIT
+  QWidget* glWidget = (QWidget*)(*run)();
+  
+  void (*addFlight)(Flight*);
+  addFlight = (void (*) (Flight*)) dlsym(libHandle, "addFlight");
+  CHECK_ERROR_EXIT
+  extern MapContents _globalMapContents;
+  (void)(*addFlight)((Flight*)_globalMapContents.getFlight());
+}
+
 bool KFLogApp::queryClose()
 {
   saveOptions();
@@ -1094,6 +1135,7 @@ void KFLogApp::slotModifyMenu()
             stepFlightHome->setEnabled(true);
             stepFlightEnd->setEnabled(true);
             viewIgc3D->setEnabled(true);
+            viewIgcOpenGL->setEnabled(true);
 //            mapPlanning->setEnabled(false);
             windowMenu->setEnabled(true);
             break;
@@ -1116,6 +1158,7 @@ void KFLogApp::slotModifyMenu()
             stepFlightHome->setEnabled(false);
             stepFlightEnd->setEnabled(false);
             viewIgc3D->setEnabled(false);
+            viewIgcOpenGL->setEnabled(false);
 //            mapPlanning->setEnabled(true);
             windowMenu->setEnabled(true);
             break;
@@ -1137,6 +1180,7 @@ void KFLogApp::slotModifyMenu()
             stepFlightHome->setEnabled(true);
             stepFlightEnd->setEnabled(true);
             viewIgc3D->setEnabled(true);
+            viewIgcOpenGL->setEnabled(true);
 //            mapPlanning->setEnabled(false);
             windowMenu->setEnabled(true);
             break;
@@ -1161,6 +1205,7 @@ void KFLogApp::slotModifyMenu()
       stepFlightHome->setEnabled(false);
       stepFlightEnd->setEnabled(false);
       viewIgc3D->setEnabled(false);
+      viewIgcOpenGL->setEnabled(false);
 //     mapPlanning->setEnabled(false);
       windowMenu->setEnabled(false);
     }
