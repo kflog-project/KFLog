@@ -47,6 +47,8 @@ WaypointDialog::WaypointDialog(QWidget *parent, const char *name)
     surface->insertItem(te->text);
   }
   setSurface(Airport::NotSet);
+  setWaypointType(BaseMapElement::Landmark);
+  
   
 }
 
