@@ -137,11 +137,11 @@ bool WaypointCatalog::read(QString &catalog)
 
     }
     else {
-      KMessageBox::error(0, i18n("<B>%1</B><BR>permission denied!").arg(catalog), i18n("Error occurred!"));
+      KMessageBox::error(0, "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(catalog) + "</qt>", i18n("Error occurred!"));
     }
   }
   else {
-    KMessageBox::error(0, i18n("<B>%1</B><BR>not found!").arg(catalog), i18n("Error occurred!"));
+    KMessageBox::error(0, "<qt>" + i18n("<B>%1</B><BR>not found!").arg(catalog) + "</qt>", i18n("Error occurred!"));
   }
 
   return ok;
@@ -206,7 +206,7 @@ bool WaypointCatalog::write()
     onDisc = true;
   }
   else {
-    KMessageBox::error(0, i18n("<B>%1</B><BR>permission denied!").arg(fName), i18n("Error occurred!"));
+    KMessageBox::error(0, "<qt>"+ i18n("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", i18n("Error occurred!"));
   }
 
   QApplication::restoreOverrideCursor();
@@ -283,7 +283,7 @@ bool WaypointCatalog::writeBinairy()
     onDisc = true;
   }
   else {
-    KMessageBox::error(0, i18n("<B>%1</B><BR>permission denied!").arg(fName), i18n("Error occurred!"));
+    KMessageBox::error(0, "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", i18n("Error occurred!"));
   }
   return ok;
 }
@@ -296,13 +296,13 @@ bool WaypointCatalog::importVolkslogger(QString & filename){
   if(!fInfo.exists())
     {
       KMessageBox::error(0,
-          i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(filename));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(filename) + "</qt>");
       return false;
     }
   if(!fInfo.size())
     {
       KMessageBox::sorry(0,
-          i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(filename));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(filename) + "</qt>");
       return false;
     }
   //
@@ -311,14 +311,14 @@ bool WaypointCatalog::importVolkslogger(QString & filename){
   if(((QString)fInfo.extension()).lower() != "dbt")
     {
       KMessageBox::error(0,
-          i18n("The selected file<BR><B>%1</B><BR>is not a Volkslogger-file!").arg(filename));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is not a Volkslogger-file!").arg(filename) + "</qt>");
       return false;
     }
 
   if(!f.open(IO_ReadOnly))
     {
       KMessageBox::error(0,
-          i18n("You don't have permission to access file<BR><B>%1</B>").arg(filename),
+          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(filename) + "</qt>",
           i18n("No permission"));
       return false;
     }
@@ -327,7 +327,7 @@ bool WaypointCatalog::importVolkslogger(QString & filename){
 
   importProgress.setCaption(i18n("Import file ..."));
   importProgress.setLabelText(
-      i18n("Please wait while loading file<BR><B>%1</B>").arg(filename));
+      "<qt>" + i18n("Please wait while loading file<BR><B>%1</B>").arg(filename) + "</qt>");
   importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
   importProgress.setTotalSteps(200);
   importProgress.show();
@@ -582,11 +582,11 @@ bool WaypointCatalog::readBinairy(QString &catalog)
           writeBinairy();
     }
     else {
-      KMessageBox::error(0, QObject::tr("<B>%1</B><BR>permission denied!").arg(catalog), QObject::tr("Error occurred!"));
+      KMessageBox::error(0, "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(catalog) + "</qt>", i18n("Error occurred!"));
     }
   }
   else {
-    //KMessageBox::error(0, i18n("<B>%1</B><BR>not found!").arg(catalog), i18n("Error occurred!"));
+    //KMessageBox::error(0, i18n("<qt><B>%1</B><BR>not found!</qt>").arg(catalog), i18n("Error occurred!"));
     qDebug("Waypoint catalog not found.");
   }
 

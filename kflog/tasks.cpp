@@ -196,7 +196,7 @@ void Tasks::slotSaveTask()
       path = fName;
     }
     else {
-      KMessageBox::error(0, i18n("<B>%1</B><BR>permission denied!").arg(fName), i18n("Error occurred!"));
+      KMessageBox::error(0, "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", i18n("Error occurred!"));
     }
 
     QApplication::restoreOverrideCursor();
@@ -268,7 +268,7 @@ void Tasks::slotSaveAllTask()
       path = fName;
     }
     else {
-      KMessageBox::error(0, i18n("<B>%1</B><BR>permission denied!").arg(fName), i18n("Error occurred!"));
+      KMessageBox::error(0, "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", i18n("Error occurred!"));
     }
     
     QApplication::restoreOverrideCursor();

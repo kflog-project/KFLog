@@ -35,7 +35,7 @@ bool WaypointDict::insertItem(Waypoint *e)
   bool ins = true;
 
   if ((tmp = find(e->name)) != 0) {
-    switch (KMessageBox::warningYesNoCancel(0, i18n("Waypoint<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Overwrite it?").arg(e->name))) {
+    switch (KMessageBox::warningYesNoCancel(0, "<qt>" + i18n("Waypoint<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Overwrite it?").arg(e->name) + "</qt>")) {
     case KMessageBox::Yes:
       remove(e->name);
       insert(e->name, e);

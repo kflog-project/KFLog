@@ -1158,13 +1158,13 @@ bool MapContents::loadFlight(QFile& igcFile)
   if(!fInfo.exists())
     {
       KMessageBox::error(0,
-          i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(igcFile.name()));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(igcFile.name()) + "</qt>");
       return false;
     }
   if(!fInfo.size())
     {
       KMessageBox::sorry(0,
-          i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(igcFile.name()));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(igcFile.name()) + "</qt>");
       return false;
     }
   //
@@ -1173,14 +1173,14 @@ bool MapContents::loadFlight(QFile& igcFile)
   if(((QString)fInfo.extension()).lower() != "igc")
   {
       KMessageBox::error(0,
-          i18n("The selected file<BR><B>%1</B><BR>is not an igc-file!").arg(igcFile.name()));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is not an igc-file!").arg(igcFile.name()) + "</qt>");
       return false;
   }
 
   if(!igcFile.open(IO_ReadOnly))
     {
       KMessageBox::error(0,
-          i18n("You don't have permission to access file<BR><B>%1</B>").arg(igcFile.name()),
+          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(igcFile.name() + "</qt>"),
           i18n("No permission"));
       return false;
     }
@@ -1189,7 +1189,7 @@ bool MapContents::loadFlight(QFile& igcFile)
 
   importProgress.setCaption(i18n("Import mapfile ..."));
   importProgress.setLabelText(
-      i18n("Please wait while loading file<BR><B>%1</B>").arg(igcFile.name()));
+      "<qt>" + i18n("Please wait while loading file<BR><B>%1</B>").arg(igcFile.name()) + "</qt>");
   importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
   importProgress.setTotalSteps(200);
   importProgress.show();
@@ -1353,8 +1353,8 @@ bool MapContents::loadFlight(QFile& igcFile)
               QString lineNr;
               lineNr.sprintf("%d", lineCount);
               KMessageBox::error(0,
-                  i18n("Syntax-error while loading igc-file"
-                      "<BR><B>%1</B><BR>Aborting!").arg(igcFile.name()),
+                  "<qt>" + i18n("Syntax-error while loading igc-file"
+                      "<BR><B>%1</B><BR>Aborting!").arg(igcFile.name()) + "</qt>",
                   i18n("Error in IGC-file"));
               warning("KFLog: Error in reading line %d in igc-file %s",
                   lineCount, (const char*)igcFile.name());
@@ -1601,7 +1601,7 @@ bool MapContents::loadFlight(QFile& igcFile)
   if(!launched || !flightRoute.count())
     {
       KMessageBox::error(0,
-          i18n("The selected file<BR><B>%1</B><BR>contains no flight!").arg(igcFile.name()));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>contains no flight!").arg(igcFile.name()) + "</qt>");
       return false;
     }
 
@@ -1647,7 +1647,7 @@ void MapContents::proofeSection(bool isPrint)
         {
           emit errorOnMapLoading();
           KMessageBox::error(0,
-            i18n("The directory for the airspace-files does not exist:\n%1").arg(airspaceDir.path()),
+            "<qt>" + i18n("The directory for the airspace-files does not exist:<br><b>%1</b></qt>").arg(airspaceDir.path() + "</qt>"),
             i18n("Directory not found"));
         }
       else
@@ -1676,7 +1676,7 @@ void MapContents::proofeSection(bool isPrint)
         {
           emit errorOnMapLoading();
           KMessageBox::error(0,
-            i18n("The directory for the airfield-files does not exist:\n%1").arg(airspaceDir.path()),
+            i18n("<qt>The directory for the airfield-files does not exist:<br><b>%1</b></qt>").arg(airspaceDir.path()),
             i18n("Directory not found"));
         }
       else
@@ -1715,7 +1715,7 @@ void MapContents::proofeSection(bool isPrint)
       // Directory does not exist!
       emit errorOnMapLoading();
       KMessageBox::error(0,
-        i18n("The directory for the map-files does not exist:\n%1").arg(QDir(mapDir).path()),
+        i18n("<qt>The directory for the map-files does not exist:<br><b>%1</b></qt>").arg(QDir(mapDir).path()),
         i18n("Directory not found"));
     }
   else if(QDir(mapDir).entryList("*.kfl").isEmpty())
@@ -2239,13 +2239,13 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
   if(!fInfo.exists())
     {
       KMessageBox::error(0,
-          i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(flightgearFile.name()));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(flightgearFile.name()) + "</qt>");
       return false;
     }
   if(!fInfo.size())
     {
       KMessageBox::sorry(0,
-          i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(flightgearFile.name()));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(flightgearFile.name()) + "</qt>");
       return false;
     }
   //
@@ -2254,14 +2254,14 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
   if(((QString)fInfo.extension()).lower() != "flightgear")
     {
       KMessageBox::error(0,
-          i18n("The selected file<BR><B>%1</B><BR>is not an flightgear-file!").arg(flightgearFile.name()));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is not an flightgear-file!").arg(flightgearFile.name()) + "</qt>");
       return false;
     }
 
   if(!flightgearFile.open(IO_ReadOnly))
     {
       KMessageBox::error(0,
-          i18n("You don't have permission to access file<BR><B>%1</B>").arg(flightgearFile.name()),
+          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(flightgearFile.name()) + "</qt>",
           i18n("No permission"));
       return false;
     }
@@ -2270,7 +2270,7 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
 
   importProgress.setCaption(i18n("Import mapfile ..."));
   importProgress.setLabelText(
-      i18n("Please wait while loading file<BR><B>%1</B>").arg(flightgearFile.name()));
+      "<qt>" + i18n("Please wait while loading file<BR><B>%1</B>").arg(flightgearFile.name()) + "</qt>");
   importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
   importProgress.setTotalSteps(200);
   importProgress.show();
@@ -2425,7 +2425,7 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
           else if(s.mid(14,1) == "V")
               isValid = false;
           else
-              fatal("FEHLER!");
+              fatal("ERROR!");
 
           if(isFirst)
             {
@@ -2469,7 +2469,7 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
 
           if(prePoint.bearing > PI || prePoint.bearing < -PI)
             {
-              warning("Wir haben ein Problem --- Bearing > 180");
+              warning("We have a problem --- Bearing > 180");
             }
 
           temp_bearing = getBearing(prePoint,newPoint);
@@ -2538,7 +2538,7 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
   if(!launched || !flightRoute.count())
     {
       KMessageBox::error(0,
-          i18n("The selected file<BR><B>%1</B><BR>contains no flight!").arg(flightgearFile.name()));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>contains no flight!").arg(flightgearFile.name()) + "</qt>");
       return false;
     }
 
@@ -2562,13 +2562,13 @@ bool MapContents::importGardownFile(QFile& gardownFile){
   if(!fInfo.exists())
     {
       KMessageBox::error(0,
-          i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(gardownFile.name()));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(gardownFile.name()) + "</qt>");
       return false;
     }
   if(!fInfo.size())
     {
       KMessageBox::sorry(0,
-          i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(gardownFile.name()));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(gardownFile.name()) + "</qt>");
       return false;
     }
   //
@@ -2577,14 +2577,14 @@ bool MapContents::importGardownFile(QFile& gardownFile){
   if((((QString)fInfo.extension()).lower() != "gdn") && (((QString)fInfo.extension()).lower() != "trk"))
     {
       KMessageBox::error(0,
-          i18n("The selected file<BR><B>%1</B><BR>is not an gardown-file!").arg(gardownFile.name()));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is not an gardown-file!").arg(gardownFile.name()) + "</qt>");
       return false;
     }
 
   if(!gardownFile.open(IO_ReadOnly))
     {
       KMessageBox::error(0,
-          i18n("You don't have permission to access file<BR><B>%1</B>").arg(gardownFile.name()),
+          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(gardownFile.name()) + "</qt>",
           i18n("No permission"));
       return false;
     }
@@ -2593,7 +2593,7 @@ bool MapContents::importGardownFile(QFile& gardownFile){
 
   importProgress.setCaption(i18n("Import file ..."));
   importProgress.setLabelText(
-      i18n("Please wait while loading file<BR><B>%1</B>").arg(gardownFile.name()));
+      "<qt>" + i18n("Please wait while loading file<BR><B>%1</B>").arg(gardownFile.name()) + "</qt>");
   importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
   importProgress.setTotalSteps(200);
   importProgress.show();
@@ -2765,7 +2765,7 @@ bool MapContents::importGardownFile(QFile& gardownFile){
 
           if(prePoint.bearing > PI || prePoint.bearing < -PI)
             {
-              warning("Wir haben ein Problem --- Bearing > 180");
+              warning("We have a problem --- Bearing > 180");
             }
 
           temp_bearing = getBearing(prePoint,newPoint);
@@ -2812,7 +2812,7 @@ bool MapContents::importGardownFile(QFile& gardownFile){
   if(!launched || !flightRoute.count())
     {
       KMessageBox::error(0,
-          i18n("The selected file<BR><B>%1</B><BR>contains no flight!").arg(gardownFile.name()));
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>contains no flight!").arg(gardownFile.name()) + "</qt>");
       return false;
     }
 
@@ -2838,17 +2838,17 @@ bool MapContents::loadTask(QFile& path)
   extern const MapMatrix _globalMapMatrix;
 
   if(!fInfo.exists()) {
-    KMessageBox::error(0,  i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(path.name()));
+    KMessageBox::error(0,  "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(path.name()) + "</qt>");
     return false;
   }
   
   if(!fInfo.size()) {
-    KMessageBox::sorry(0, i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(path.name()));
+    KMessageBox::sorry(0, "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(path.name()) + "</qt>");
     return false;
   }
 
   if(!path.open(IO_ReadOnly)) {
-    KMessageBox::error(0, i18n("You don't have permission to access file<BR><B>%1</B>").arg(path.name()));
+    KMessageBox::error(0, "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(path.name()) + "</qt>");
     return false;
   }
 

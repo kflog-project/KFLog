@@ -1092,10 +1092,10 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
   if (time_error && showWarnings)
     {
       KMessageBox::error(0,
-                         i18n("The time intervall between two points<BR>"
+                         "<qt>" + i18n("The time intervall between two points<BR>"
                               "of the flight is more than 70 sec.!<BR>"
                               "Due to Code Sportif 3, Nr. 1.9.2.1,<BR>"
-                              "the flight can not be valued!"));
+                              "the flight can not be valued!") + "</qt>");
     }
 
 }
