@@ -42,12 +42,12 @@ Igc3DDialog::Igc3DDialog(QList<Flight>* fList)
 //  QLabel* label = new QLabel( this, 0, 0 );
 
 	igc3dView->setMinimumWidth( 500 );
-	igc3dView->setMinimumHeight( 500 );
+	igc3dView->setMinimumHeight( 650 );
 
   // get the current ViewState from igc3dView and change its values
   Igc3DViewState* vs = new Igc3DViewState();
   vs = igc3dView->getState();
-	vs->height = 500;
+	vs->height = 650;
   vs->width = 500;
 
 //  label->setText( i18n("  Toolbar will\n  go here.") );
