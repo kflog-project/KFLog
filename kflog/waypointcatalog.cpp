@@ -617,7 +617,7 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
   return false;
 }
 
-/** read a waypoint catalog from a filser binary file */
+/** read a waypoint catalog from a filser da4 file */
 bool WaypointCatalog::readFilserDA4 (const QString& catalog)
 {
   qDebug ("WaypointCatalog::readFilserDA4 (%s)", catalog.latin1());
@@ -628,30 +628,17 @@ bool WaypointCatalog::readFilserDA4 (const QString& catalog)
     if (f.open(IO_ReadOnly))
     {
       QDataStream in(&f);
-      while (!in.eof())
+      DA4Buffer buffer;
+      in.readRawBytes ((char*)&buffer, sizeof (DA4Buffer));
+      for (int RecordNumber = 0; RecordNumber < WAYPOINT_MAX; RecordNumber++)
       {
-        DA4Record buffer;
-        in.readRawBytes ((char*)buffer.buffer(), buffer.size());
+        DA4WPRecord record (&buffer.waypoints[RecordNumber]);
 
-        if (buffer.type() != BaseMapElement::NotSelected)
+        if (record.type() != BaseMapElement::NotSelected)
         {
-          if (buffer.name().stripWhiteSpace().isEmpty())
+          if (record.name().stripWhiteSpace().isEmpty())
             continue;
-          Waypoint *w = new Waypoint;
-          w->type = buffer.type();
-          w->name = buffer.name();
-          w->description = "";
-          w->icao = "";
-          w->origP.setLat((int)(buffer.lat()*600000.0));
-          w->origP.setLon((int)(buffer.lon()*600000.0));
-          w->elevation = (int)(buffer.elev() * 0.3048); // don't we have conversion constants ?
-          w->frequency = buffer.freq();
-          w->isLandable = false;
-          w->length = buffer.len(); // length ?!
-          w->runway = buffer.dir(); // direction ?!
-          w->surface = buffer.surface();
-          w->comment = i18n("Imported from %1").arg(catalog);
-          w->importance = 3;
+          Waypoint *w = record.newWaypoint();
 
           if (!wpList.insertItem(w))
           {
@@ -668,7 +655,7 @@ bool WaypointCatalog::readFilserDA4 (const QString& catalog)
   return false;
 }
 
-/** write a waypoint catalog into a filser txt file */
+/** write a waypoint catalog into a filser da4 file */
 bool WaypointCatalog::writeFilserDA4 (const QString& catalog)
 {
   qDebug ("WaypointCatalog::writeFilserDA4 (%s)", catalog.latin1());
@@ -678,21 +665,35 @@ bool WaypointCatalog::writeFilserDA4 (const QString& catalog)
   {
     QDataStream out (&f);
     QDictIterator<Waypoint> it(wpList);
+    DA4Buffer buffer;
+    int RecordNumber = 0;
     for (Waypoint* w = it.current(); w != 0; w = ++it)
     {
-      DA4Record buffer;
-      buffer.setType((BaseMapElement::objectType)w->type);
-      buffer.setName(w->name);
-      buffer.setLat(w->origP.lat()/600000.0);
-      buffer.setLon(w->origP.lon()/600000.0);
-      buffer.setElev((short int) round(w->elevation/0.3048));
-      buffer.setFreq(w->frequency);
-      buffer.setLen(w->length);
-      buffer.setDir(w->runway);
-      buffer.setSurface((Airport::SurfaceType)w->surface);
-      buffer.setFiller();
-      out.writeRawBytes ((char*)buffer.buffer(), buffer.size());
+      DA4WPRecord record (&buffer.waypoints[RecordNumber++]);
+      record.setWaypoint(w);
     }
+
+    // fill rest of waypoints
+    while (RecordNumber < WAYPOINT_MAX)
+    {
+      DA4WPRecord record (&buffer.waypoints[RecordNumber++]);
+      record.clear();
+    }
+
+    // write empty tasks
+    RecordNumber = 0;
+    while (RecordNumber < TASK_MAX)
+    {
+      DA4TaskRecord record (&buffer.tasks[RecordNumber++]);
+      record.clear();
+    }
+
+    out.writeRawBytes ((char*)&buffer, sizeof(DA4Buffer));
+
+    // fill buffer with empty task names
+    char buf [MAXTSKNAME] = "                                    ";
+    for (RecordNumber = 0; RecordNumber < TASK_MAX; RecordNumber++)
+      out.writeRawBytes (buf, MAXTSKNAME);
     return true;
   }
   return false;
