@@ -18,7 +18,6 @@
 #ifndef FILSER_H
 #define FILSER_H
 
-#include <qmap.h>
 #include <qptrlist.h>
 
 #include "../frstructs.h"
@@ -29,11 +28,10 @@
   *@author Christian Fughe, Harald Maier
   */
 
-#define FLIGHT_INDEX_WIDTH 96 /* Bytes per record of the flight  */
-                              /* index.                          */
-#define LX_MEM_RET 7          /* Number of bytes returned by     */
-                              /* wb(STX), wb(Q).                 */
-#define LX_DATA_WIDTH 671
+#define FLIGHT_INDEX_WIDTH 0x60 /* Bytes per record of the flight  */
+                                /* index. (96)                          */
+#define LX_MEM_RET 7            /* Number of bytes returned by     */
+                                /* wb(STX), wb(Q).                 */
                               
 struct flightTable {
   unsigned char record[FLIGHT_INDEX_WIDTH];
@@ -47,7 +45,7 @@ public:
   /**
    * Returns the name of the lib.
    */
-  virtual QString getLibName() const;
+  virtual QString getLibName() const {  return "libkfrfil";  };
   /**
    * Returns the transfermode this plugin supports.
    */
@@ -101,6 +99,8 @@ public:
    */
   virtual int writeWaypoints(QPtrList<Waypoint> *waypoints);
 
+  static char calcCrcBuf(const char *buf, unsigned int count);
+
 private:
   /**
    * try to find a filser device
@@ -113,25 +113,22 @@ private:
   /**
    * read byte
    */
-  int rb();
+  char rb();
   /**
    * Calculate the check sum
    */
-  char calcCrc(char d, char crc);
+  static char calcCrc(char d, char crc);
   /**
    * Calculate the check sum on a buffer of bytes
    */
-  char calcCrcBuf(char *buf, unsigned int count);
-  int readMemSetting();
-  int defMem(struct flightTable *ft);
-  int getMemSection(char *memSection, int size);
-  int getLoggerData(char *memSection, int sectionSize, char **memContents, int *contentSize);
-  QString getData(const QString& key);
-  int convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last);
+  bool readMemSetting();
+  bool defMem(struct flightTable *ft);
+  bool getMemSection(char *memSection, int size);
+  bool getLoggerData(char *memSection, int sectionSize, char **memContents, int *contentSize);
+  bool convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last);
   char *readData(char *buf_p, int count);
   QPtrList <flightTable> flightIndex;
   char *wordtoserno(unsigned int Binaer);
-  QMap<QString,QString> valueMap;
 };
 
 #endif

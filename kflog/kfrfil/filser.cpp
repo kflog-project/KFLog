@@ -16,9 +16,6 @@
 ***********************************************************************/
 
 #define _GNU_SOURCE
-#include <time.h>
-#include <string.h>
-#include <stdio.h>
 #include <fcntl.h>
 #include <termios.h>
 #include <signal.h>
@@ -26,6 +23,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#include <qregexp.h>
+#include <qstring.h>
+#include <qstringlist.h>
 #include <klocale.h>
 
 #include "../airport.h"
@@ -42,8 +42,10 @@
 #define START        128	/* 80 */
 #define ORIGIN       160	/* a0 */
 
-#define POSITION_OK  191	/* bf */
-#define POSITION_BAD 195	/* c3 */
+#define POSITION_OK        191  /* bf */
+#define POSITION_BAD       195  /* c3 */
+#define REQ_BASIC_DATA     0xc4
+#define REQ_FLIGHT_DATA    0xc9
 
 
 #define SECURITY           240	/* f0 */
@@ -100,11 +102,11 @@ unsigned char STX = 0x02, /* Command prefix like AT for modems      */
   f = 'f' | 0x80;  /* get_logger_data()  - first block         */
                    /* f++ get_logger_data()  - next block          */
 
-#define BUFSIZE 1024          /* Genaral buffer size             */
+#define BUFSIZE 1024          /* General buffer size             */
 
-void debugHex (const char* buf)
+void debugHex (const char* buf, unsigned int size)
 {
-  for (int ix1=0; ix1<0x100; ix1+=0x10)
+  for (unsigned int ix1=0; ix1 < size; ix1+=0x10)
   {
     QString line;
     line.sprintf ("%03X:  ", ix1);
@@ -176,27 +178,17 @@ FlightRecorderPluginBase::TransferMode Filser::getTransferMode() const
   return FlightRecorderPluginBase::serial;
 }
 
-QString Filser::getLibName() const {  return "libkfrfil";  }
-
 int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
 {
-  int flightCount;
+  int flightCount = 0;
   int indexByte = 1;
   int rc;
   char *bufP;
   char buf[BUFSIZE + 1];
-  struct tm startTime, stopTime;
-  time_t startTime_t, stopTime_t;
-  struct tm lastDate;
-  lastDate.tm_year = 0;
-  lastDate.tm_mon = 0;
-  lastDate.tm_mday = 1;
-
-  struct flightTable *ft;
 
   dirList->clear();
 
-  if (!check4Device() || !readMemSetting()) {
+  if (!readMemSetting()) {
     return FR_ERROR;
   }
 
@@ -215,6 +207,8 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
       bufP = readData(bufP, (FLIGHT_INDEX_WIDTH + buf - bufP));
     }
 
+    indexByte = buf[0];
+
     if ((bufP - buf) != FLIGHT_INDEX_WIDTH) {
       _errorinfo = i18n("read_flight_index(): Wrong amount of bytes from LX-device");
       rc = FR_ERROR;
@@ -225,11 +219,15 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
       rc = FR_ERROR;
       break;
     }
+    else if (buf[0] == 0)
+    {
+      break;
+    }
     else {
-      ft = new struct flightTable;
+      struct flightTable *ft = new struct flightTable;
 
       // uncomment this if you want to analyze the buffer
-      // debugHex (buf);
+      // debugHex (buf, FLIGHT_INDEX_WIDTH);
       
       memcpy(ft->record, buf, bufP - buf);
 
@@ -237,34 +235,37 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
 
       // remove \0 between date and time
       ft->record[17] = ' ';
-      startTime_t = stopTime_t = 0;
-      startTime = *gmtime(&startTime_t);
-      stopTime = *gmtime(&stopTime_t);
-      strptime((char *)ft->record + 9, "%d.%m.%y %T", &startTime);
-      strptime((char *)ft->record + 27, "%T", &stopTime);
 
-      startTime_t = mktime(&startTime);
-      stopTime_t = mktime(&stopTime);
+      struct tm startTime, stopTime;
+
+      strptime((char *)ft->record + 9, "%d.%m.%y %T", &startTime);
+      // here we might get into trouble when we have flights from australia
+      stopTime = startTime;
+      strptime((char *)ft->record + 0x1b, "%T", &stopTime);
+
+      time_t startTime_t = mktime(&startTime);
+      time_t stopTime_t = mktime(&stopTime);
 
       FRDirEntry* entry = new FRDirEntry;
 
-      if(lastDate.tm_year == startTime.tm_year &&
-         lastDate.tm_mon == startTime.tm_mon &&
-         lastDate.tm_mday == startTime.tm_mday) {
-        flightCount++;
-      }
-      else {
-        flightCount = 1;
-      }
+      flightCount++;
 
       entry->pilotName = (const char *)ft->record + 40;
 //      entry->gliderID = "n.a.";
-      // the glider type seems not to be in the flight list; we take it from logger data
+      // the glider type is not contained in the flight list; we take it from basic data
       entry->gliderID = _basicData.gliderType;
 
+      entry->duration = stopTime_t - startTime_t;
+      if (entry->duration < 0)
+      {
+        // lets handle the aussie flights
+        stopTime_t += 24*60*60;
+        entry->duration += 24*60*60;
+        // yes use localtime here ! The stopTime is already UTC
+        localtime_r (&stopTime_t, &stopTime);
+      }
       entry->firstTime = startTime;
       entry->lastTime = stopTime;
-      entry->duration = stopTime_t - startTime_t;
       entry->shortFileName.sprintf("%c%c%cf%s%c.igc",
                                    c36[entry->firstTime.tm_year % 10],
                                    c36[entry->firstTime.tm_mon + 1],
@@ -279,9 +280,7 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
                                   flightCount);
       warning(entry->longFileName);
       dirList->append(entry);
-      lastDate = startTime;
 
-      indexByte = buf[0];
       if (indexByte != 0 && indexByte != 1) {
         _errorinfo = i18n("read_flight_index(): Wrong index byte");
         rc = FR_ERROR;
@@ -289,13 +288,26 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
       }
     }
   }
+  if (flightIndex.isEmpty())
+  {
+    _errorinfo = i18n("read_flight_index(): no flights available in LX-device");
+    rc = FR_ERROR;
+  }
+
   return rc;
 }
 
+/**
+  * This function retrieves the basic recorder data from the LX device
+  * currently supported are: serial number, devive type, pilot name, glider type, glider id, competition id.
+  * The structure of the data was analyzed on a Windows2000 box using the Filser LXe application.
+  * It has been verified with two LX20 devices, Version 5.11 and 5.2, at speeds 9600 and 19200 bps.
+  * Written by Eggert Ehmke <eggert.ehmke@berlin.de>, <eggert@kflog.org>
+  */
 int Filser::getBasicData(FR_BasicData& data)
 {
-  // if the valueMap contains data, take them
-  if (!valueMap.empty())
+  // if the serialNumber contains data, take them
+  if (!_basicData.serialNumber.isEmpty())
   {
     data = _basicData;
     return FR_OK;
@@ -305,7 +317,7 @@ int Filser::getBasicData(FR_BasicData& data)
   char *bufP;
   char buf[BUFSIZE + 1];
 
-  if (!check4Device() || !readMemSetting()) {
+  if (!check4Device()) {
     return FR_ERROR;
   }
 
@@ -314,72 +326,93 @@ int Filser::getBasicData(FR_BasicData& data)
   tcflush(portID, TCIOFLUSH);
 
   wb(STX);
-  wb(f);
+  wb(REQ_BASIC_DATA);
+
+  int buffersize = 0x130;
+  // actually, depending on the version of the LX device, a different amount of bytes are sent.
+  // this value is close enough to the real number
+  // V5.11: 0x131 bytes
+  // V5.2:  0x140 bytes
 
   bufP = buf;
-  while ((LX_DATA_WIDTH + buf - bufP) > 0) {
-    bufP = readData(bufP, (LX_DATA_WIDTH + buf - bufP));
+  while ((buffersize + buf - bufP) > 0) {
+    bufP = readData(bufP, (buffersize + buf - bufP));
   }
  
   // uncomment this if you want to analyze the buffer
-  debugHex (buf);
+  debugHex (buf, buffersize);
 
-  if ((bufP - buf) != LX_DATA_WIDTH) {
+  if ((bufP - buf) != buffersize) {
     _errorinfo = i18n("get_logger_data(): Wrong amount of bytes from LX-device");
     rc = FR_ERROR;
   }
-  else if (calcCrcBuf(buf, LX_DATA_WIDTH - 1) != buf[LX_DATA_WIDTH - 1])
+  /*
+  // we cannot calculate a checksum because we ignored the rest of the data
+  else if (calcCrcBuf(buf, buffersize - 1) != buf[buffersize - 1])
   {
     _errorinfo = i18n("get_logger_data(): Bad CRC");
     rc = FR_ERROR;
   }
+  */
   else
   {
-    // the serial number is at fixed position ?!
-    // it starts at 0x10 as FIL123450; we go directly to the digits
-    _basicData.serialNumber = &buf[19];
-    // at position 25 begins a sequence of interesting items
-    bufP = buf + 25;
-    for (int i = 0; i < 14; i++)
+    QStringList list = QStringList::split (QRegExp("[\n\r]"), buf);
+    for (int i = 0; i < list.size(); i++)
     {
-      // each item is initiated by its length
-      int len = *bufP++;
-      // some bytes have special meaning ...
-      if (len == 0x7f)
-      {
-        // ignore them, skip
-        bufP += 2;
-        len = *bufP++;
-      }
-      QString txt;
-      for (int i=0; i < len; i++)
-        txt += *bufP++;
-      // a colon separates key and value
-      int pos = txt.find (':');
-      valueMap.insert (txt.left (pos), txt.mid(pos+1));
+      // Example: Version LX20 V5.11
+      if (list [i].left(7).upper() == "VERSION")
+        _basicData.recorderType = list[i].mid(8);
+      // Example: SN12969,HW3.0
+      else if (list[i].left(2) == "SN")
+        _basicData.serialNumber = list[i].mid(2);
     }
-    // to verify the recognized items, uncomment this:
-    // for (QMap<QString, QString>::Iterator it = valueMap.begin(); it!=valueMap.end();it++)
-    // {
-    //   qDebug ("%s = %s", it.key().latin1(), it.data().latin1());
-    // }
-    /*
-    * These Filser specific keys are used (values are examples):
-    * HFCCLCOMPETITIONCLASS = STANDARD
-    * HFCIDCOMPETITIONID = 56
-    * HFDTM100DATUM = WGS-1984
-    * HFFTYFRTYPE = FILSER,LX20
-    * HFFXA100 = HFFXA100
-    * HFGIDGLIDERID = 5256
-    * HFGPSGPS = JRC/CCA-450
-    * HFGTYGLIDERTYPE = LS4
-    * HFPLTPILOT = EGGERT.EHMKE
-    */
-    _basicData.recorderType = getData("HFFTYFRTYPE");;
-    _basicData.pilotName = getData("HFPLTPILOT");
-    _basicData.gliderType = getData("HFGTYGLIDERTYPE");
-    _basicData.gliderID = getData("HFGIDGLIDERID");
-    _basicData.competitionID = getData("HFCIDCOMPETITIONID");
+  }
+
+  // during sleep, hopefully the extra bytes will arrive and can be flushed savely.
+  sleep (1);
+  tcflush(portID, TCIOFLUSH);
+
+  if (!check4Device()) {
+    return FR_ERROR;
+  }
+
+  tcflush(portID, TCIOFLUSH);
+
+  wb(STX);
+  wb(REQ_FLIGHT_DATA);
+
+  // again, there are more bytes to be expected from the device. They will be flushed
+  bufP = buf;
+  while ((0x40 + buf - bufP) > 0) {
+    bufP = readData(bufP, (0x40 + buf - bufP));
+  }
+  // uncomment this if you want to analyze the buffer
+  debugHex (buf, 0x40);
+
+  if ((bufP - buf) != 0x40) {
+    _errorinfo = i18n("get_logger_data(): Wrong amount of bytes from LX-device");
+    rc = FR_ERROR;
+  }
+  /*
+  // we cannot calculate a checksum because we ignored the rest of the data
+  else if (calcCrcBuf(buf, 0x40 - 1) != buf[0x40 - 1])
+  {
+    _errorinfo = i18n("get_logger_data(): Bad CRC");
+    rc = FR_ERROR;
+  }
+  */
+  else if ((buf[2] != 0) || (buf[0x15] != 0) || (buf[0x21] != 0) || (buf[0x29] != 0))
+  {
+    _errorinfo = i18n("get_logger_data(): wrong format");
+    rc = FR_ERROR;
+  }
+  else
+  {
+    // hopefully, Filser will not change size or position of data fields ...
+    _basicData.pilotName = &buf[3];
+    _basicData.gliderType = &buf[0x16];
+    _basicData.gliderID = &buf[0x22];
+    _basicData.competitionID = &buf[0x2a];
     data = _basicData;
   }
   return rc;
@@ -388,7 +421,6 @@ int Filser::getBasicData(FR_BasicData& data)
 int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileName)
 {
   int rc;
-  struct flightTable *ft;
   char memSection[0x20];  /* Information received from the   */
                           /* logger about the memory         */
                           /* blocks of a specific flight     */
@@ -401,7 +433,7 @@ int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileNam
 
   _errorinfo = "";
   
-  ft = flightIndex.at(flightID);
+  struct flightTable *ft = flightIndex.at(flightID);
   if (!check4Device() || !defMem(ft) || 
       !getMemSection(memSection, sizeof(memSection)) ||
       !getLoggerData(memSection, sizeof(memSection), &memContents, &contentSize)) {
@@ -427,16 +459,6 @@ int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileNam
   delete memContents;
 
   return rc;
-}
-
-
-QString Filser::getData(const QString& key)
-{
-  QMap<QString,QString>::Iterator hit = valueMap.find(key);
-  if (hit == valueMap.end())
-    return "???";
-  else
-    return hit.data();
 }
 
 int Filser::openRecorder(const QString& pName, int baud)
@@ -519,7 +541,7 @@ int Filser::openRecorder(const QString& pName, int baud)
   }
 }
 
-int Filser::defMem(struct flightTable *ft)
+bool Filser::defMem(struct flightTable *ft)
 {
   unsigned char	address_buf[7];
   int flight_start_adr, flight_end_adr;
@@ -532,7 +554,7 @@ int Filser::defMem(struct flightTable *ft)
 
   if(ft->record[3]) {
     _errorinfo = i18n("Invalid memory size in the flight table from the LX-device.");
-    return 0;
+    return false;
   }
 
   /* The discussion about flight_table->record[3] holds as well for   */
@@ -541,7 +563,7 @@ int Filser::defMem(struct flightTable *ft)
 
   if(ft->record[7]) {
     _errorinfo = i18n("Invalid memory size in the flight table from the LX-device.");
-    return 0;
+    return false;
   }
 
   memcpy(address_buf, &flight_start_adr, 3);
@@ -557,12 +579,12 @@ int Filser::defMem(struct flightTable *ft)
   }
   if (rb() != ACK) {
     _errorinfo = i18n("Invalid response from LX-device.");
-    return 0;
+    return false;
   }
-  return 1;
+  return true;
 }
 
-int Filser::getMemSection(char *memSection, int size)
+bool Filser::getMemSection(char *memSection, int size)
 {
   int i;
 
@@ -576,21 +598,19 @@ int Filser::getMemSection(char *memSection, int size)
 
   if(calcCrcBuf(memSection, size) != memSection[size]) {
     _errorinfo = i18n("get_mem_sections(): Bad CRC");
-    return 0;
+    return false;
   }
-  return 1;
+  return true;
 }
 
-int Filser::getLoggerData(char *memSection, int sectionSize, char **memContents, int *contentSize)
+bool Filser::getLoggerData(char *memSection, int sectionSize, char **memContents, int *contentSize)
 {
-  int i;
-  int count;
   char *bufP, *bufP2;
   /*
    * Calculate the size the of the memory buffer
    */
   *contentSize = 0; 
-  for(i = 0; i < (sectionSize / 2); i++) {
+  for(int i = 0; i < (sectionSize / 2); i++) {
     if(!(memSection[2 * i] | memSection[(2 * i) + 1])) {
       break;
     }
@@ -610,11 +630,11 @@ int Filser::getLoggerData(char *memSection, int sectionSize, char **memContents,
   bufP = bufP2 = *memContents;
 
   // read each memory section
-  for(i = 0; i < (sectionSize / 2); i++) {
+  for(int i = 0; i < (sectionSize / 2); i++) {
     if(!(memSection[2 * i] | memSection[(2 * i) + 1])) {
       break;
     }
-    count = ((unsigned char)memSection[2 * i] << 8) + (unsigned char)memSection[(2 * i) + 1];
+    int count = ((unsigned char)memSection[2 * i] << 8) + (unsigned char)memSection[(2 * i) + 1];
 
     tcflush(portID, TCIOFLUSH);
     wb(STX);
@@ -627,13 +647,13 @@ int Filser::getLoggerData(char *memSection, int sectionSize, char **memContents,
       delete *memContents;
       *memContents = 0;
       *contentSize = 0;
-      return 0;
+      return false;
     }
     bufP2 += count;
     bufP = bufP2;
   }
 
-  return 1;  
+  return true;  
 }
 
 /*
@@ -644,7 +664,7 @@ int Filser::getLoggerData(char *memSection, int sectionSize, char **memContents,
  *
  * The resulting .igc-file is written to the open FILE pointer *figc.
  */
-int Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last)
+bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last)
 {
   int i, j, l, ftab[16], etab[16], time, time_orig, fix_lat, fix_lat_orig, fix_lon, fix_lon_orig, tp;
   unsigned char flight_no, *fil_p_ev;
@@ -815,7 +835,7 @@ int Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_
         fil_p++;
         if(fil_p > fil_p_last) {
           _errorinfo = i18n("unexpected end of '.fil'-file");
-          return 0;
+          return false;
         }
       }
       fprintf(figc, "LFILEMPTY%d\r\n", i);
@@ -1199,12 +1219,12 @@ int Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_
       fprintf(figc, "LFILUNKNOWN%#x\r\n", fil_p[0]);         
       fil_p++;
       _errorinfo = i18n("unexpected record id in '.fil'-file");
-      return 0;
+      return false;
       break;                
     }
   }
 
-  return 1;
+  return true;
 }
 
 /**
@@ -1227,7 +1247,7 @@ char Filser::calcCrc(char d, char crc)
 /**
  * Calculate the check sum on a buffer of bytes
  */
-char Filser::calcCrcBuf(char *buf, unsigned int count)
+char Filser::calcCrcBuf(const char *buf, unsigned int count)
 {
   unsigned int i;
   char crc = (char)0xff;
@@ -1252,13 +1272,14 @@ char *Filser::readData(char *bufP, int count)
     warning("read_data(): ERROR");
     break;
   default:
+//    qDebug ("readData: %x(%x)", rc, count);
     bufP += rc;
     break;
   }
   return bufP;  
 }
 
-int Filser::readMemSetting()
+bool Filser::readMemSetting()
 {
   char *bufP;
   char buf[BUFSIZE + 1];
@@ -1266,7 +1287,7 @@ int Filser::readMemSetting()
   memset(buf, '\0', sizeof(buf));
 
   if (!check4Device()) {
-    return 0;
+    return false;
   }
 
   tcflush(portID, TCIOFLUSH);
@@ -1282,7 +1303,7 @@ int Filser::readMemSetting()
   if(calcCrcBuf(buf, LX_MEM_RET-1) != buf[LX_MEM_RET-1])
   {
     warning("read_mem_setting(): Bad CRC");
-    return 0;
+    return false;
   }  
 
   /*
@@ -1298,7 +1319,7 @@ int Filser::readMemSetting()
    */
   warning("read_mem_setting(): all fine!!");
 
-  return 1;
+  return true;
 }
 
 /**
@@ -1311,7 +1332,6 @@ int Filser::readMemSetting()
 bool Filser::check4Device()
 {
   bool rc = false;
-  int ret;
   time_t t1;
   _errorinfo = "";
 
@@ -1319,16 +1339,17 @@ bool Filser::check4Device()
   tcflush(portID, TCIOFLUSH);
   while (!breakTransfer) {
     wb(SYN);
-    ret = rb();
+    int ret = rb();
     if (ret == ACK) {
       warning("connected");
       rc = true;
       break;
     }
     else {
-      // waiting 5 secs. for response
+      // waiting 10 secs. for response
+//      qDebug ("ret = %x", ret);
       if (time(NULL) - t1 > 10) {
-        _errorinfo = i18n("No response from recorder within 10 seconds!\nDid you press READ/WRITE?");
+        _errorinfo = i18n("No response from recorder within 10 seconds!\nDid you press WRITE/RTE?");
         rc = false;
         break;
       }      
@@ -1352,9 +1373,9 @@ int Filser::wb(unsigned char c)
 /*
  * read byte
  */
-int Filser::rb()
+char Filser::rb()
 {
-  char buf;
+  unsigned char buf;
 
   if (read(portID, &buf, 1) != 1) {
     return -1;
