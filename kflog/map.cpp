@@ -172,10 +172,16 @@ void Map::mouseMoveEvent(QMouseEvent* event)
   Waypoint *w;
 
   QPoint vector = event->pos()-mapInfoTimerStartpoint;
-  if(vector.manhattanLength()>4) {
+  if(vector.manhattanLength()>4)
+  {
     mapInfoTimer->stop();
-    mapInfoTimer->start(MAP_INFO_DELAY, true);
-    mapInfoTimerStartpoint=event->pos();
+    // don't start the timer when in planning mode
+    if ((planning != 1) &&
+        (planning != 3))
+    {
+      mapInfoTimer->start(MAP_INFO_DELAY, true);
+      mapInfoTimerStartpoint=event->pos();
+    }
   }
   
   if(planning == 1 || planning == 3)
