@@ -949,7 +949,7 @@ void Map::slotRedrawMap()
   extern MapMatrix _globalMapMatrix;
   _globalMapMatrix.createMatrix(this->size());
 
-//  emit changed(this->size());
+  emit changed(this->size());
 
   __redrawMap();
 }
