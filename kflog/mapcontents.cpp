@@ -81,7 +81,6 @@
   }
 
 #define READ_POINT_LIST  in >> locLength; \
-  warning("locLenght %d",locLength); \
   tA.resize(locLength); \
   for(unsigned int i = 0; i < locLength; i++) { \
     in >> lat_temp;          in >> lon_temp; \
@@ -1219,6 +1218,12 @@ bool MapContents::loadFlight(QFile igcFile)
   wayPoint* newWP;
   wayPoint* preWP;
   bool isValid = true;
+
+  newPoint.dS = 0;
+  newPoint.dH = 0;
+  prePoint.dS = 0;
+  prePoint.dH = 0;
+
   //
   // This regexp is used to check the syntax of the position-lines in
   // the igc-file.
