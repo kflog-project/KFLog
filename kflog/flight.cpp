@@ -712,7 +712,7 @@ QList<wayPoint> Flight::getWPList(bool isOrig)
 
 bool Flight::optimizeTask()
 {
-  if( route.count() < 10)  return;
+  if( route.count() < 10)  return false;
 
   unsigned int curNumSteps = 0, temp, step = 0, minNumSteps = 400000000;
   unsigned int numStepsA = 0, numStepsB = 0, minA = 0, minB = 0;

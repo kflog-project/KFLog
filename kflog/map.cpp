@@ -184,7 +184,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                   preSitePos = _globalMapMatrix.map(
                       taskPoints.at(moveWPindex - 1)->getPosition());
 
-              if(moveWPindex + 1 < taskPoints.size())
+              if(moveWPindex + 1 < (int)taskPoints.size())
                   nextSitePos = _globalMapMatrix.map(
                       taskPoints.at(moveWPindex + 1)->getPosition());
             }
@@ -228,7 +228,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                   planP.drawLine(preSitePos.x(),preSitePos.y(),
                       prePlanPos.x(),prePlanPos.y());
                 }
-              if((planning == 3) && moveWPindex + 1 != taskPoints.size())
+              if((planning == 3) && moveWPindex + 1 != (int)taskPoints.size())
                 {
                   planP.drawLine(nextSitePos.x(),nextSitePos.y(),
                       prePlanPos.x(),prePlanPos.y());
@@ -244,7 +244,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                   planP.drawLine(preSitePos.x(),preSitePos.y(),
                       point.x(),point.y());
                 }
-              if((planning == 3) && moveWPindex + 1 != taskPoints.size())
+              if((planning == 3) && moveWPindex + 1 != (int)taskPoints.size())
                 {                                 
                   planP.drawLine(nextSitePos.x(),nextSitePos.y(),
                       point.x(),point.y());
@@ -893,7 +893,6 @@ void Map::__drawFlight()
 void Map::__drawPlannedTask()
 {
   extern const MapMatrix _globalMapMatrix;
-  extern MapContents _globalMapContents;
 
   // Strecke zeichnen
   //  pixPlan.fill(white);  

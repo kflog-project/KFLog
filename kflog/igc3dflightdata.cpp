@@ -431,7 +431,7 @@ void Igc3DFlightData::load(QList<Flight>* fList)
 
 	struct flightPoint cP;
 
-  for (i=0; i < fList->current()->getRouteLength()-2; i++){
+  for (i=0; i < ((int)fList->current()->getRouteLength())-2; i++){
 
 		fList->current()->searchGetNextPoint(i, cP);
     hightlocal = cP.height;

@@ -268,8 +268,8 @@ bool MapContents::__readAsciiFile(const char* fileName)
   int lat_temp = 0, lon_temp = 0;
   int* latitude;
   int* longitude;
-  unsigned int posLength;
-  unsigned int runLength;
+  unsigned int posLength = 0;
+  unsigned int runLength = 0;
 
   QString alias = 0;
   QString abbr = 0;
@@ -277,7 +277,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
   QString frequency = 0;
   QString name;
   unsigned int type = 0;
-  bool vdf, winch, isWayP;
+  bool vdf = false, winch = false, isWayP = false;
   int sortID = 0;
 
   QPointArray tA;
@@ -1122,7 +1122,7 @@ bool MapContents::loadFlight(QFile igcFile)
   QList<wayPoint> wpList;
   wayPoint* newWP;
   wayPoint* preWP;
-  bool isValid;
+  bool isValid = true;
   //
   // This regexp is used to check the syntax of the position-lines in
   // the igc-file.

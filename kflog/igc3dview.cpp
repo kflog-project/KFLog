@@ -200,27 +200,27 @@ void Igc3DView::keyPressEvent ( QKeyEvent * k )
 			state->polyhedron_front = (state->polyhedron_front + 1)%2;
 			break;
 		case Key_Down:
-			n = state->alpha-5;
+			n = (int)state->alpha-5;
 			change_alpha(n);
 			break;
 		case Key_Up:
-			n = state->alpha+5;
+			n = (int)state->alpha+5;
 			change_alpha(n);
 			break;
 		case Key_Left:
-			n = state->gamma+5;
+			n = (int)state->gamma+5;
 			change_gamma(n);
 			break;
 		case Key_Right:
-			n = state->gamma-5;
+			n = (int)state->gamma-5;
 			change_gamma(n);
 			break;
 		case Key_Plus:
-			n = state->mag+2;
+			n = (int)state->mag+2;
 			change_mag(n);
 			break;
 		case Key_Minus:
-			n = state->mag-2;
+			n = (int)state->mag-2;
 			change_mag(n);
 			break;
 	}
