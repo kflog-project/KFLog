@@ -15,6 +15,9 @@
 **
 ***********************************************************************/
 
+#ifndef GLIDERS_H
+#define GLIDERS_H
+
 struct olc_glider
 {
   char value[30];
@@ -335,3 +338,5 @@ struct olc_glider gliderList[]=
     {"ZUGVOGELIV","Zugvogel IV",86},
     {"EOF","EOF", -1} // end marker
 };
+
+#endif

@@ -166,6 +166,7 @@ Setting will be overwritten by commandline switch */
     QLCDNumber* reduce3N;
     KComboBox* elementSelect;
     KComboBox* projectionSelect;
+    KComboBox* contestType;
     LatEdit* firstParallel;
     LatEdit* secondParallel;
     LongEdit* originLongitude;

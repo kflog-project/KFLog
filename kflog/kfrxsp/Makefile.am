@@ -12,10 +12,10 @@ libkfrxsp_la_LDFLAGS = -version-info 0:0:0
 
 libkfrxsp_la_METASOURCES = AUTO
 
-libkfrxsp_la_SOURCES = soaringpilot.cpp flightrecorder.cpp 
+libkfrxsp_la_SOURCES = flightrecorder.cpp soaringpilot.cpp 
 
 
-EXTRA_DIST = flightrecorder.cpp xsp.desktop soaringpilot.cpp soaringpilot.h 
+EXTRA_DIST = xsp.desktop soaringpilot.cpp soaringpilot.h flightrecorder.cpp 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_datadir)/kflog/logger/

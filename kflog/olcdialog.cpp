@@ -34,9 +34,10 @@
 #include <qpushbutton.h>
 #include <qregexp.h>
 
-// for the initialisation of the KComboBox
+// for the initialisation of the KComboBoxes
 #include "gliders.h"
 #include "contests.h"
+#include "contestlist.h"
 
 #define POS_STRINGS(point) \
   latitude = point.lat(); \
@@ -253,6 +254,7 @@ void OLCDialog::__fillDataFields()
   KConfig* config = KGlobal::config();
   config->setGroup("Personal Data");
   birthday->setText(config->readEntry("Birthday", ""));
+  olcName->setCurrentItem(config->readNumEntry("Contest", 0));
 
   QList<Waypoint> wpList = currentFlight->getWPList();
 

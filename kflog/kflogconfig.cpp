@@ -46,6 +46,7 @@
 #include <qradiobutton.h>
 
 #include <guicontrols/coordedit.h>
+#include <contests.h>
 
 KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
   : KDialogBase(IconList, i18n("KFlog Setup"), Ok|Cancel, Ok,
@@ -110,6 +111,7 @@ void KFLogConfig::slotOk()
   config->writeEntry("PreName", preNameE->text());
   config->writeEntry("SurName", surNameE->text());
   config->writeEntry("Birthday", dateOfBirthE->text());
+  config->writeEntry("Contest", contestType->currentItem());
 
   config->setGroup("Waypoints");
   config->writeEntry("DefaultWaypointCatalog", waypointButtonGroup->id(waypointButtonGroup->selected()));
@@ -725,6 +727,21 @@ void KFLogConfig::__addIDTab()
   idLayout->addWidget(new QLabel(i18n("Longitude"), idPage), 15, 1);
   idLayout->addWidget(homeLonE, 15, 3);
 
+  QGroupBox* contestGroup = new QGroupBox(idPage, "contestGroup");
+  contestGroup->setTitle(i18n("Contest Type") + ":");
+  idLayout->addMultiCellWidget(contestGroup, 17, 20, 0, 4);
+  contestType = new KComboBox(idPage, "contestType");
+  contestType->setEditable(false);
+  int count=0;
+  while( contestList[count].index != -1)
+  {
+    QString temp_str=QString("OLC-%1").arg(contestList[count].name);
+    contestType->insertURL(temp_str,count);
+    count++;
+  }
+  idLayout->addWidget(new QLabel(i18n("Contest Type"), idPage), 18, 1);
+  idLayout->addWidget(contestType, 18, 3);  
+  
   idLayout->addColSpacing(0, 10);
   idLayout->addColSpacing(2, 10);
   idLayout->addColSpacing(4, 10);
@@ -745,6 +762,10 @@ void KFLogConfig::__addIDTab()
   idLayout->addRowSpacing(14, 10);
 //  idLayout->addRowSpacing(15, 10);
   idLayout->addRowSpacing(16, 20);
+  idLayout->addRowSpacing(17, 20);
+  idLayout->addRowSpacing(18, 20);
+  idLayout->addRowSpacing(19, 20);
+  idLayout->addRowSpacing(20, 20);
 
   idLayout->setRowStretch(17, 1);
 
@@ -760,6 +781,7 @@ void KFLogConfig::__addIDTab()
   preNameE->setText(config->readEntry("PreName", ""));
   surNameE->setText(config->readEntry("SurName", ""));
   dateOfBirthE->setText(config->readEntry("Birthday", ""));
+  contestType->setCurrentItem(config->readNumEntry("Contest", 0));
 
   config->setGroup(0);
 }

@@ -15,17 +15,13 @@
 **
 ***********************************************************************/
 
-#ifndef CONTESTS_H
-#define CONTESTS_H
-
-struct olc_contest
+struct olc_contest contestList[]=
 {
-  char name[30];
-  char URL[5];
-  int index;
+  {"International","i",0},
+  {"Austria","at",1},
+  {"Germany","d",2},
+// to be continued...
+  {"EOL","EOL",-1}
 };
 
-extern olc_contest contestList[];
-
-#endif
 
