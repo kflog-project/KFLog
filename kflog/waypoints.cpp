@@ -106,7 +106,7 @@ void Waypoints::addWaypointWindow(QWidget *parent)
 
   // header
   QHBoxLayout *header = new QHBoxLayout(5);
-  QLabel *l = new QLabel(i18n("%1:").arg("Waypoints"), parent);
+  QLabel *l = new QLabel(QString("%1:").arg(i18n("Waypoints")), parent);
   l->setMaximumWidth(l->sizeHint().width() + 5);
 
   catalogName = new QComboBox(false, parent);
