@@ -437,6 +437,18 @@ void Map::mousePressEvent(QMouseEvent* event)
           prePlanPos.setY(-999);
           planning = 2;
         }
+      else
+        {
+        /*
+         * Segelflugplätze, soweit vorhanden, kommen als erster Eintrag
+         */
+        for(unsigned int loop = 0;
+              loop < _globalMapContents.getListLength(
+                      MapContents::GliderList); loop++)
+          {
+            hitElement = (SinglePoint*)_globalMapContents.getElement(
+                    MapContents::GliderList, loop);
+            sitePos = hitElement->getMapPosition();
 
       bool show = false, isAirport = false;
 
