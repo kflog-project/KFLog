@@ -388,19 +388,20 @@ void EvaluationCanvas::__drawCsystem(QPainter* painter)
     while(time / (int)secWidth < breite - 2*KOORD_DISTANCE)
       {
       	n++;
-	QCanvasLine* timeLine_$n =  new QCanvasLine(canvas);
-	timeLine_$n->setPen(QPen(QColor(0,0,0), 2));
-  	timeLine_$n->setPoints(X_ABSTAND + (time / secWidth), hoehe - Y_ABSTAND,
+	QCanvasLine* timeLine =  new QCanvasLine(canvas);
+	timeLine->setPen(QPen(QColor(0,0,0), 2));
+  	timeLine->setPoints(X_ABSTAND + (time / secWidth), hoehe - Y_ABSTAND,
                     X_ABSTAND + (time / secWidth), hoehe - Y_ABSTAND + 10);
-  	timeLine_$n->show();
+  	timeLine->show();
 
 
-	QCanvasText* timeText_$n = new QCanvasText(printTime(startTime + time,true,false), 	canvas);
-        timeText_$n->setColor(QColor(0,0,0));
-	timeText_$n->setTextFlags(AlignCenter);
-	timeText_$n->setX(X_ABSTAND + (time / secWidth) - 40);
-	timeText_$n->setY(hoehe - 21, 80, 20);
-	timeText_$n->show();
+	QCanvasText* timeText = new QCanvasText(printTime(startTime + time,true,false), 	canvas);
+        timeText->setColor(QColor(0,0,0));
+	timeText->setTextFlags(AlignCenter);
+	timeText->setX(X_ABSTAND + (time / secWidth) - 40);
+//	timeText->setY(hoehe - 21, 80, 20);
+  timeText->setY(hoehe - 21);
+	timeText->show();
 
         time += time_plus;
       }
@@ -410,11 +411,11 @@ void EvaluationCanvas::__drawCsystem(QPainter* painter)
     while(time_small / (int)secWidth < breite - 2*KOORD_DISTANCE)
       {
       	n++;
-	QCanvasLine* timeLineSmall_$n =  new QCanvasLine(canvas);
-	timeLineSmall_$n->setPen(QPen(QColor(0,0,0), 1));
-  	timeLineSmall_$n->setPoints(X_ABSTAND + (time_small / secWidth), hoehe - Y_ABSTAND,
+	QCanvasLine* timeLineSmall =  new QCanvasLine(canvas);
+	timeLineSmall->setPen(QPen(QColor(0,0,0), 1));
+  	timeLineSmall->setPoints(X_ABSTAND + (time_small / secWidth), hoehe - Y_ABSTAND,
                     X_ABSTAND + (time_small / secWidth), hoehe - Y_ABSTAND + 5);
-  	timeLineSmall_$n->show();
+  	timeLineSmall->show();
 
         time_small += time_small_plus;
       }
@@ -446,33 +447,34 @@ void EvaluationCanvas::__drawCsystem(QPainter* painter)
         while(h / scale_h < hoehe - (Y_ABSTAND * 2))
           {
 	    n++;
-	    QCanvasText* baroText_$n = new QCanvasText(canvas);
-	    baroText_$n->setFont(QFont("helvetica",10));
-            baroText_$n->setColor(QColor(100,100,255));
-            baroText_$n->setTextFlags(Qt::AlignRight | Qt::AlignVCenter,text);
-
-            text.sprintf("%d m",h);
-	    baroText_$n->setText(text);
-	    baroText_$n->setX(0);
-	    baroText_$n->setY(hoehe - (int)( h / scale_h ) - Y_ABSTAND - 10);
-	    baroText_$n->show();
+	    QCanvasText* baroText = new QCanvasText(canvas);
+	    baroText->setFont(QFont("helvetica",10));
+      baroText->setColor(QColor(100,100,255));
+//      baroText->setTextFlags(Qt::AlignRight | Qt::AlignVCenter,text);
+      baroText->setTextFlags(Qt::AlignRight | Qt::AlignVCenter);
+      
+      text.sprintf("%d m",h);
+	    baroText->setText(text);
+	    baroText->setX(0);
+	    baroText->setY(hoehe - (int)( h / scale_h ) - Y_ABSTAND - 10);
+	    baroText->show();
 
 //            painterText.drawText(0,hoehe - (int)( h / scale_h ) - Y_ABSTAND - 10,
 //                             KOORD_DISTANCE - 3,20,Qt::AlignRight | Qt::AlignVCenter,text);
 
 
-            QCanvasLine* baroLine_$n = new QCanvasLine(canvas);
+            QCanvasLine* baroLine = new QCanvasLine(canvas);
 
             if(h == 1000 || h == 2000 || h == 3000 || h == 4000 ||
                   h == 5000 || h == 6000 || h == 7000 || h == 8000 || h == 9000)
-                baroLine_$n->setPen(QPen(QColor(200,200,255), 2));
+                baroLine->setPen(QPen(QColor(200,200,255), 2));
             else
-                baroLine_$n->setPen(QPen(QColor(200,200,255), 1));
+                baroLine->setPen(QPen(QColor(200,200,255), 1));
 
-            baroLine_$n->setPoints(KOORD_DISTANCE - 3,
+            baroLine->setPoints(KOORD_DISTANCE - 3,
                         hoehe - (int)( h / scale_h ) - Y_ABSTAND,
                         breite - 20,hoehe - (int)( h / scale_h ) - Y_ABSTAND);
-	    baroLine_$n->show();
+	    baroLine->show();
 
             h += dh;
           }
@@ -493,32 +495,48 @@ void EvaluationCanvas::__drawCsystem(QPainter* painter)
 
         float va = 0;
 	QCanvasText* varioText = new QCanvasText(canvas);
-        varioText->setFont(QFont("helvetica",8));
+  varioText->setFont(QFont("helvetica",8));
 
 	n = 0;
+
+  
         while(va / scale_va < (hoehe / 2) - Y_ABSTAND)
           {
-            text.sprintf("%.1f m/s",va);
-            painterText.setPen(QPen(QColor(255,100,100), 1));
-            painterText.drawText(0,(hoehe / 2) - (int)( va / scale_va ) - 10,
-                             KOORD_DISTANCE - 3,20,Qt::AlignRight | Qt::AlignVCenter,text);
+            n++;
+            QCanvasText* painterText = new QCanvasText(canvas);
+            painterText->setFont(QFont("helvetica",8));
 
-            painter->setPen(QPen(QColor(255,200,200), 1));
+            text.sprintf("%.1f m/s",va);
+            painterText->setColor(QColor(255,100,100));
+            painterText->setText(text);
+            painterText->setX(0);
+            painterText->setY((hoehe / 2) - (int)( va / scale_va ) - 10);
+            painterText->setTextFlags(Qt::AlignRight | Qt::AlignVCenter);
+            // KOORD_DISTANCE - 3,20);
+
+                             
+            QCanvasLine* painterLine = new QCanvasLine(canvas);                 
+//            painterLine->setColor(QColor(255,200,200));
             int y=(hoehe / 2) - (int)( va / scale_va );
-            painter->drawLine(KOORD_DISTANCE - 3, y, breite - 20, y);
+            painterLine->setPoints(KOORD_DISTANCE - 3, y, breite - 20, y);
+            painterLine->show();
 
             if(va != 0)
               {
                 text.sprintf("-%.1f m/s",va);
-                painterText.setPen(QPen(QColor(255,100,100), 1));
+                painterText->setColor(QColor(255,100,100));
 
-                painterText.drawText(0,(hoehe / 2) + (int)( va / scale_va ) -10,
+/*                painterText->drawText(0,(hoehe / 2) + (int)( va / scale_va ) -10,
                            KOORD_DISTANCE - 3,20,Qt::AlignRight | Qt::AlignVCenter,text);
 
-                painter->setPen(QPen(QColor(255,200,200), 1));
-                painter->drawLine(KOORD_DISTANCE,(hoehe / 2) + (int)( va / scale_va ) ,
-                        breite - 20,(hoehe / 2) + (int)( va / scale_va ));
 
+                QCanvasLine* painterLineB = new QCanvasLine(canvas);
+                painterLineB->setPen(QPen(QColor(255,200,200), 1));
+                int y=(hoehe / 2) - (int)( va / scale_va );
+                painterLineB->setPoints(KOORD_DISTANCE,(hoehe / 2) + (int)( va / scale_va ) ,
+                        breite - 20,(hoehe / 2) + (int)( va / scale_va ));
+                painterLineB->show();                        
+*/
               }
             va += dva;
           }
@@ -526,7 +544,7 @@ void EvaluationCanvas::__drawCsystem(QPainter* painter)
     else if(!baro && !vario && speed)
       {
         // Speedogramm
-
+/*
         int dv = 10;
         if(scale_v > 0.9)     dv = 40;
         else if(scale_v > 0.6) dv = 25;
@@ -549,11 +567,12 @@ void EvaluationCanvas::__drawCsystem(QPainter* painter)
 
             v += dv;
           }
+        */
       }
 
-      painterText.end();
+//      painterText.end();
 
-      */
+      
 
       canvas->update();
 
