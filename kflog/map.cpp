@@ -19,6 +19,8 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <kstddirs.h>
+#include <kfiledialog.h>
+#include <knotifyclient.h>
 
 #include <qdragobject.h>
 #include <qpainter.h>
@@ -1222,6 +1224,28 @@ void Map::__redrawMap()
   mainApp->slotSetProgress(100);
 
   slotDrawCursor(temp1,temp2);
+}
+
+void Map::slotSavePixmap()
+{
+  KFileDialog* dlg = new KFileDialog(0, "*.png *.PNG", this,
+      i18n("Select PNG-File"), true);
+  dlg->exec();
+
+  KURL fUrl = dlg->selectedURL();
+  if(fUrl.isEmpty())  return;
+
+  QString fName;
+  if(fUrl.isLocalFile())
+      fName = fUrl.path();
+  else
+    {
+      KNotifyClient::event(i18n("Can not save to file %1").arg(fUrl.url()));
+      return;
+    }
+
+	QImage image = QImage(pixBuffer.convertToImage());
+	image.save(fName,"PNG");
 }
 
 void Map::slotRedrawFlight()

@@ -199,6 +199,10 @@ void KFLogApp::initActions()
 
   KStdAction::print(this, SLOT(slotFilePrint()), actionCollection());
 
+  savePixmap = new KAction(i18n("Export to PNG..."), "savetopixmap",
+      0, map,
+      SLOT(slotSavePixmap()), actionCollection(), "file_close");
+
   flightPrint = new KAction(i18n("Print Flightdata"), "fileprint",
       0, this, SLOT(slotFlightPrint()), actionCollection(), "flight_print");
 
@@ -1001,6 +1005,7 @@ void KFLogApp::slotFlightViewIgc3D()
   extern MapContents _globalMapContents;
   connect(&_globalMapContents, SIGNAL(currentFlightChanged()), igc3d,
       SLOT(slotShowFlightData()));
+  extern MapContents _globalMapContents;
 }
 
 bool KFLogApp::queryClose()

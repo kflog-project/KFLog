@@ -95,6 +95,7 @@ class Map : public QWidget
     void slotFlightHome();
     void slotFlightEnd();
 
+    void slotSavePixmap();
     void slotActivatePlanning();
     /** No descriptions */
     void slotShowCurrentFlight();

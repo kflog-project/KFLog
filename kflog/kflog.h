@@ -413,7 +413,8 @@ class KFLogApp : public KDockMainWindow
 		KAction* stepFlightEnd;
  		KAction* stepFlightStepNext;
  		KAction* stepFlightStepPrev;
-		/**
+    KAction* savePixmap;
+     /**
      * The igc3d dialog
      */
  	  KAction* viewIgc3D;
