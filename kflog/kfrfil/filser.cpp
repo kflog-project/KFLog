@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <cmath>
+#include <string.h>
 
 #include <qregexp.h>
 #include <qstring.h>
@@ -110,6 +111,20 @@ unsigned char STX = 0x02, /* Command prefix like AT for modems        */
                    /* f++ get_logger_data()  - next block             */
 
 #define BUFSIZE 1024          /* General buffer size                  */
+
+  // @AP: Set a manufacture key that also Posigraph SDI logger files can be
+  // converted in the right manner. They use the keyword SDI.
+  //
+  // 09.03.2005 Fughe: Today we know and support three manufactures: 
+  //                          
+  //                          FIL   Filser
+  //                          SDI   Streamline Data Instruments
+  //                          LXN   LX Navigation
+
+  char manufactureShortKey = 'X';
+  char manufactureKey[] = "xxx";  // Let's start with an empty key. If 'xxx' 
+                                  // appears, then reading the 'A'-record
+                                  // failed.
 
 void debugHex (const void* buf, unsigned int size)
 {
@@ -220,6 +235,7 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
   int rc;
   unsigned char *bufP;
   unsigned char buf[BUFSIZE + 1];
+  int i;
 
   dirList->clear();
 
@@ -303,19 +319,6 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
       }
       entry->firstTime = startTime;
       entry->lastTime = stopTime;
-      entry->shortFileName.sprintf("%c%c%cf%s%c.igc",
-                                   c36[entry->firstTime.tm_year % 10],
-                                   c36[entry->firstTime.tm_mon + 1],
-                                   c36[entry->firstTime.tm_mday],
-                                   wordtoserno((ft->record[91] << 8) + ft->record[92]),
-                                   c36[flightCount]);
-      entry->longFileName.sprintf("%d-%.2d-%.2d-fil-%s-%.2d.igc",
-                                  entry->firstTime.tm_year + 1900,
-                                  entry->firstTime.tm_mon + 1,
-                                  entry->firstTime.tm_mday,
-                                  wordtoserno((ft->record[91] << 8) + ft->record[92]),
-                                  flightCount);
-      warning(entry->longFileName);
       dirList->append(entry);
 
       if (indexByte != 0 && indexByte != 1) {
@@ -329,6 +332,46 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
   {
     _errorinfo = i18n("getFlightDir(): no flights available in LX-device");
     rc = FR_ERROR;
+  }
+
+  //
+  // 09.03.2005 Fughe: Use the manufacture key as well in file names.
+  //
+
+  // 09.03.2005 Fughe: We need to retrieve one flight, to set
+  //                   'manufactureShortKey', and 'manufactureKey'. As soon
+  //                   as anybody identifies a logger function for this
+  //                   purpose, the time consuming retrieval can be
+  //                   removed.
+  else {
+    downloadFlight(0,0,"/tmp/tmp.igc");
+    unlink("/tmp/tmp.igc");
+  
+    for (i=0; i<flightCount; i++) {
+      dirList->at(i)->shortFileName.sprintf("%c%c%c%c%s%c.igc",
+                                   c36[dirList->at(i)->firstTime.tm_year % 10],
+                                   c36[dirList->at(i)->firstTime.tm_mon + 1],
+                                   c36[dirList->at(i)->firstTime.tm_mday],
+                                   manufactureShortKey,
+                                   wordtoserno((flightIndex.at(i)->record[91] << 8) 
+                                              + flightIndex.at(i)->record[92]),
+                                   c36[flightIndex.at(i)->record[94]]); // 09.03.2005 Fughe: This is
+                                                                        // the counter of the flight
+                                                                        // of the day (IGC tech specs).
+                                                                        // Please, keep it this way.
+      dirList->at(i)->longFileName.sprintf("%d-%.2d-%.2d-%s-%s-%.2d.igc",
+                                  dirList->at(i)->firstTime.tm_year + 1900,
+                                  dirList->at(i)->firstTime.tm_mon + 1,
+                                  dirList->at(i)->firstTime.tm_mday,
+                                  manufactureKey,
+                                  wordtoserno((flightIndex.at(i)->record[91] << 8)
+                                             + flightIndex.at(i)->record[92]),
+                                  flightIndex.at(i)->record[94]); // 09.03.2005 Fughe: This is
+                                                                  // the counter of the flight
+                                                                  // of the day (IGC tech specs).
+                                                                  // Please, keep it this way.
+      warning(dirList->at(i)->longFileName + "   " + dirList->at(i)->shortFileName);
+    }
   }
 
   _keepalive->blockSignals(false);
@@ -405,7 +448,7 @@ int Filser::getBasicData(FR_BasicData& data)
   tcsetattr(portID, TCSANOW, &newTermEnv);
 
   // uncomment this if you want to analyze the buffer
-  debugHex (buf, buffersize);
+  // debugHex (buf, buffersize);
 
   if ((bufP - buf) < min_data) {
     _errorinfo = i18n("getBasicData(): Wrong amount of bytes from LX-device");
@@ -912,7 +955,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
           return false;
         }
       }
-      fprintf(figc, "LFILEMPTY%d\r\n", i);
+      fprintf(figc, "L%sEMPTY%d\r\n", i, manufactureKey );
     }
     else if((fil_p[0] <= MAX_LSTRING) && (fil_p[0] > 0)) {
       fprintf(figc, "%.*s\r\n", fil_p[0], fil_p + 1);
@@ -948,6 +991,27 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       /* 1   byte, flight of the day */
       fil_p++;
       fprintf(figc, "A%s", fil_p);
+
+      // @AP: save the right manufacture key from the A record
+      strncpy(manufactureKey, (const char*) fil_p, 3);
+      manufactureKey[3] = '\0';
+
+      // 09.03.2005 Fughe: Define the short manufacture key for use with file names.
+      //                   New manufactures have to be added here!
+      if      (!strcmp( manufactureKey, "SDI")) {
+        manufactureShortKey = 'S';
+      }
+      else if (!strcmp( manufactureKey, "LXN")) {
+        manufactureShortKey = 'L';
+      }
+      else if (!strcmp( manufactureKey, "FIL")) {
+        manufactureShortKey = 'F';
+      }
+      else {
+        manufactureShortKey = 'X';
+      }
+      qDebug("Manufacture Key Code is %s   %c", manufactureKey, manufactureShortKey);
+
       fil_p += 9;
       fprintf(figc, "FLIGHT:%d\r\n", flight_no);
       fprintf(figc, "HFDTE%s\r\n", HFDTE);
@@ -1151,7 +1215,21 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       fil_p += 3;
       fprintf(figc, "%02d%02d%02d", fil_p[0], fil_p[1], fil_p[2]);
       fil_p += 3;
-      fprintf(figc, "%04d%02d\r\n", (fil_p[0] << 8) + fil_p[1], fil_p[2]);
+
+      // @AP: num_of_tp seems to be a signed char
+      //
+      // 09.03.2005 Fughe: Reenabling the '(signed char)' patch. It violates
+      //                   the tech spec of IGC-files from 12 December 2004,
+      //                   but LXe is doing so and the patch is necessary for
+      //                   validation of a flight from Markus for OLC. The
+      //                   recorder has no task defined and is a LX7000,
+      //                   FW: 2.0, HW: 1.0 from LX Navigation. The patch
+      //                   does not interfere with normal behaviour where a
+      //                   number of turn points from 0 to 8 is expected.
+      //
+      //fprintf(figc, "%04d%02d\r\n", (fil_p[0] << 8) + fil_p[1], fil_p[2]);
+      //
+      fprintf(figc, "%04d%02d\r\n", (fil_p[0] << 8) + fil_p[1], (signed char) fil_p[2]);
       fil_p += 3;
 
       // get usage
@@ -1223,7 +1301,20 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       fprintf(figc, "B%02d%02d%02d", time / 3600, time % 3600 / 60, time % 60);
       fprintf(figc, "%02d%05d%c", abs( fix_lat / 60000), abs(fix_lat % 60000), fix_lat >= 0 ? 'N' : 'S');
       fprintf(figc, "%03d%05d%c", abs(fix_lon / 60000), abs(fix_lon % 60000), fix_lon >= 0 ? 'E' : 'W'); fprintf(figc, "%c", fix_stat);
-      fprintf(figc, "%05d", (fil_p[0] << 8) + fil_p[1]);
+
+      // @AP: we have to cast the output data to short that negative
+      // altitude values are considered. In this case the altitude
+      // must be given out as -1234. The problem happened by me due to
+      // a forgotten altitude calibration. I started with -15m. But
+      // the download routine converted all to 65xxx and that was not
+      // useable for the flight duration calculation. Download with
+      // SeeYou showed the problem.
+      //
+      // 09.03.2005 Fughe: The pressure altitude may have a dash, '-' for 
+      //                   negative hights according the tech specs of IGC-files
+      //                   from 31 December 2004.
+
+      fprintf(figc, "%05d", (short) (fil_p[0] << 8) + fil_p[1]);
       fil_p += 2;
       fprintf(figc, "%05d", (fil_p[0] << 8) + fil_p[1]);
       fil_p += 2;
@@ -1240,7 +1331,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       fil_p++;
       time = (fil_p[0] << 24) + (fil_p[1] << 16) + (fil_p[2] << 8) + fil_p[3];
       fil_p += 4;
-      fprintf(figc, "LFILORIGIN%02d%02d%02d", time / 3600, time % 3600 / 60, time % 60 );
+      fprintf(figc, "L%sORIGIN%02d%02d%02d", manufactureKey, time / 3600, time % 3600 / 60, time % 60 );
 
       fix_lat= ((char) fil_p[0] << 24) + (fil_p[1] << 16) + (fil_p[2] <<8 ) + fil_p[3];
       fil_p += 4;
@@ -1310,7 +1401,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       fil_p+=0x83;
       break;
     default:        /* ???? */
-      fprintf(figc, "LFILUNKNOWN%#x\r\n", fil_p[0]);
+      fprintf(figc, "L%sUNKNOWN%#x\r\n", manufactureKey, fil_p[0]);
       fil_p++;
       _errorinfo = i18n("unexpected record id in '.fil'-file");
       return false;
@@ -1413,7 +1504,7 @@ bool Filser::readMemSetting()
     bufP = readData(bufP, LX_MEM_RET + buf - bufP);
   }
   // uncomment the next statement to analyze the buffer
-  debugHex (buf, LX_MEM_RET);
+  // debugHex (buf, LX_MEM_RET);
 
   if(calcCrcBuf(buf, LX_MEM_RET-1) != buf[LX_MEM_RET-1])
   {
