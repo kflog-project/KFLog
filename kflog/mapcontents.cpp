@@ -3076,12 +3076,11 @@ isoListEntry::~isoListEntry() {
 
 /** Re-projects any flights and tasks that may be loaded. */
 void MapContents::reProject(){
-  QListIterator<BaseFlightElement> it(flightList); // iterator for employee list
+  QListIterator<BaseFlightElement> it(flightList); // iterator for flightlist
   extern MapMatrix _globalMapMatrix;
   
   for ( ; it.current(); ++it ) {
-      Flight *flight = (Flight*)it.current();
-      flight->reProject();
+      BaseFlightElement *fe = it.current();
+      fe->reProject();
   }
-
 }

@@ -1210,8 +1210,10 @@ void Map::__drawPlannedTask(bool solid)
 
   if(solid)
       task = (FlightTask*)_globalMapContents.getFlight();
-  else
-       task = &tempTask;
+  else {
+    task = &tempTask;
+    task->reProject();
+  }   
 
   if(task && task->getTypeID() == BaseMapElement::Task)
     {

@@ -44,3 +44,7 @@ void BaseFlightElement::printMapElement(QPainter* printP, bool isT)
 }
 
 //QStrList BaseFlightElement::getHeader()  {  return header;  }
+
+void BaseFlightElement::reProject() {
+  warning("BaseFlightElement::reProject()");
+}

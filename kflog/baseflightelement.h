@@ -73,6 +73,10 @@ public:
    *                 be printed.
    */
   virtual void printMapElement(QPainter* printP, bool isText);
+  /**
+   * Virtual function to trigger re-projecting of the coordinates of the object.
+   */
+  virtual void reProject();
 
 protected:
   /** */
