@@ -22,12 +22,14 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <cmath>
 
 #include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
 
 #include "../airport.h"
+#include "../da4record.h"
 #include "filser.h"
 
 #define MAX_LSTRING    63
@@ -90,19 +92,21 @@ struct termios newTermEnv;
 /*
  * Command bytes for communication with the lx device
  */
-unsigned char STX = 0x02, /* Command prefix like AT for modems      */
-  ACK = 0x06,      /* Response OK, if the crc check is ok           */
-  SYN = 0x16,      /* Request for CONNECT                           */
-  K = 'K' | 0x80,  /* get_extra_data()   - trailing fix sized block */
-  L = 'L' | 0x80,  /* get_mem_sections() - the flight data is       */
-                   /*                      retrieved in blocks      */
-  M = 'M' | 0x80,  /* read_flight_index()- table of flights           */
+unsigned char STX = 0x02, /* Command prefix like AT for modems        */
+  ACK = 0x06,      /* Response OK, if the crc check is ok             */
+  SYN = 0x16,      /* Request for CONNECT                             */
+  K = 'K' | 0x80,  /* get_extra_data()   - trailing fix sized block   */
+  L = 'L' | 0x80,  /* get_mem_sections() - the flight data is         */
+                   /*                      retrieved in blocks        */
+  M = 'M' | 0x80,  /* getFlightDir()-      table of flights           */
   N = 'N' | 0x80,  /* def_mem()          - memory range of one flight */
-  Q = 'Q' | 0x80,  /* read_mem_setting()                       */
-  f = 'f' | 0x80;  /* get_logger_data()  - first block         */
-                   /* f++ get_logger_data()  - next block          */
+  Q = 'Q' | 0x80,  /* read_mem_setting()                              */
+  R = 'R',         /* readWaypoints()                                 */
+  W = 'W',         /* writeWaypoints()                                */
+  f = 'f' | 0x80;  /* get_logger_data()  - first block                */
+                   /* f++ get_logger_data()  - next block             */
 
-#define BUFSIZE 1024          /* General buffer size             */
+#define BUFSIZE 1024          /* General buffer size                  */
 
 void debugHex (const unsigned char* buf, unsigned int size)
 {
@@ -138,6 +142,7 @@ void releaseTTY(int /* signal*/)
   //exit(-1);
 }
 
+
 Filser::Filser()
 {
   //Set Flightrecorders capabilities. Defaults are 0 and false.
@@ -146,8 +151,8 @@ Filser::Filser()
   _capabilities.maxNrWaypointsPerTask = 10; //maximum number of waypoints per task
   _capabilities.maxNrPilots = 1;            //maximum number of pilots
 
-  //_capabilities.supDlWaypoint = true;      //supports downloading of waypoints?
-  //_capabilities.supUlWaypoint = true;      //supports uploading of waypoints?
+  _capabilities.supDlWaypoint = true;      //supports downloading of waypoints?
+  _capabilities.supUlWaypoint = true;      //supports uploading of waypoints?
   _capabilities.supDlFlight = true;        //supports downloading of flights?
   //_capabilities.supUlFlight = true;        //supports uploading of flights?
   _capabilities.supSignedFlight = true;    //supports downloading in of signed flights?
@@ -211,12 +216,12 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
     indexByte = buf[0];
 
     if ((bufP - buf) != FLIGHT_INDEX_WIDTH) {
-      _errorinfo = i18n("read_flight_index(): Wrong amount of bytes from LX-device");
+      _errorinfo = i18n("getFlightDir(): Wrong amount of bytes from LX-device");
       rc = FR_ERROR;
       break;
     }
     else if (calcCrcBuf(buf, FLIGHT_INDEX_WIDTH - 1) != buf[FLIGHT_INDEX_WIDTH - 1]) {
-      _errorinfo = i18n("read_flight_index(): Bad CRC");
+      _errorinfo = i18n("getFlightDir(): Bad CRC");
       rc = FR_ERROR;
       break;
     }
@@ -283,7 +288,7 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
       dirList->append(entry);
 
       if (indexByte != 0 && indexByte != 1) {
-        _errorinfo = i18n("read_flight_index(): Wrong index byte");
+        _errorinfo = i18n("getFlightDir(): Wrong index byte");
         rc = FR_ERROR;
         break;
       }
@@ -291,7 +296,7 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
   }
   if (flightIndex.isEmpty())
   {
-    _errorinfo = i18n("read_flight_index(): no flights available in LX-device");
+    _errorinfo = i18n("getFlightDir(): no flights available in LX-device");
     rc = FR_ERROR;
   }
 
@@ -1276,7 +1281,23 @@ unsigned char *Filser::readData(unsigned char *bufP, int count)
     warning("read_data(): ERROR");
     break;
   default:
-//    qDebug ("readData: %x(%x)", rc, count);
+    // qDebug ("readData: %x(%x)", rc, count);
+    bufP += rc;
+    break;
+  }
+  return bufP;
+}
+
+unsigned char *Filser::writeData(unsigned char *bufP, int count)
+{
+  int rc;
+  switch (rc = write(portID, bufP, count))
+  {
+  case -1:
+    warning("write_data(): ERROR");
+    break;
+  default:
+    // qDebug ("writeData: %x(%x)", rc, count);
     bufP += rc;
     break;
   }
@@ -1368,6 +1389,7 @@ bool Filser::check4Device()
  */
 int Filser::wb(unsigned char c)
 {
+  // qDebug ("wb (%x)", c);
   if (write(portID, &c, 1) != 1) {
     return -1;
   }
@@ -1442,14 +1464,100 @@ int Filser::writeTasks(QPtrList<FlightTask> * /*tasks*/)
   return FR_NOTSUPPORTED;
 }
 
-int Filser::readWaypoints(QPtrList<Waypoint>* )
+int Filser::readWaypoints(QPtrList<Waypoint>* wpList)
 {
-  return FR_NOTSUPPORTED;
+  qDebug ("Filser::readWaypoints");
+  
+  int rc = FR_OK;
+
+  if (!readMemSetting()) {
+    return FR_ERROR;
+  }
+
+  _errorinfo = "";
+
+  tcflush(portID, TCIOFLUSH);
+
+  wb(STX);
+  wb(R);
+
+  while (true)
+  {
+    DA4Record buffer;
+    unsigned char *bufP = buffer.buffer();
+
+    while ((bufP - buffer.buffer()) < buffer.size())
+    {
+      bufP = readData(bufP, (buffer.size() + buffer.buffer() - bufP));
+    }
+    // debugHex (buffer.buffer(), buffer.size());
+    if (buffer.type() == 0 && buffer.name().isEmpty())
+      break;
+
+    if (buffer.type() != BaseMapElement::NotSelected)
+    {
+      if (buffer.name().stripWhiteSpace().isEmpty())
+        continue;
+      Waypoint *w = new Waypoint;
+      w->type = buffer.type();
+      w->name = buffer.name();
+      w->description = "";
+      w->icao = "";
+      w->origP.setLat((int)(buffer.lat() * 600000.0));
+      w->origP.setLon((int)(buffer.lon() * 600000.0));
+      w->elevation = (int)(buffer.elev() * 0.3048); // don't we have conversion constants ?
+      w->frequency = buffer.freq();
+      w->isLandable = false;
+      w->length = buffer.len(); // length ?!
+      w->runway = buffer.dir(); // direction ?!
+      w->surface = buffer.surface();
+      w->comment = i18n("Imported from Filser");
+      w->importance = 3;
+      wpList->append(w);
+    }
+  }
+    
+  return rc;
 }
 
-int Filser::writeWaypoints(QPtrList<Waypoint>* )
+int Filser::writeWaypoints(QPtrList<Waypoint>* wpList)
 {
-  return FR_NOTSUPPORTED;
+  qDebug ("Filser::writeWaypoints");
+  int rc = FR_OK;
+
+  if (!readMemSetting()) {
+    return FR_ERROR;
+  }
+
+  _errorinfo = "";
+
+  tcflush(portID, TCIOFLUSH);
+
+  wb(STX);
+  wb(W);
+
+  for (Waypoint* wp = wpList->first(); wp; wp = wpList->next())
+  {
+    DA4Record buffer;
+    buffer.setType ((BaseMapElement::objectType)wp->type);
+    buffer.setName (wp->name);
+    buffer.setLat (wp->origP.lat()/600000.0);
+    buffer.setLon (wp->origP.lon()/600000.0);
+    buffer.setElev ((short int)round(wp->elevation/0.3048));
+    buffer.setFreq(wp->frequency);
+    buffer.setLen(wp->length);
+    buffer.setDir(wp->runway);
+    buffer.setSurface((Airport::SurfaceType)wp->surface);
+    buffer.setFiller();
+
+    unsigned char *bufP = buffer.buffer();
+    while ((bufP - buffer.buffer()) < buffer.size())
+    {
+      bufP = writeData(bufP, (buffer.size() + buffer.buffer() - bufP));
+    }
+  }
+
+  return FR_OK;
 }
 
 /**

@@ -55,7 +55,7 @@
 #endif
 
 #define FLIGHT_INDEX_WIDTH 0x60 /* Bytes per record of the flight  */
-                                /* index. (96)                          */
+                                /* index. (96)                     */
 #define LX_MEM_RET 7            /* Number of bytes returned by     */
                                 /* wb(STX), wb(Q).                 */
                               
@@ -153,6 +153,7 @@ private:
   bool getLoggerData(unsigned char *memSection, int sectionSize, unsigned char **memContents, int *contentSize);
   bool convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last);
   unsigned char *readData(unsigned char *buf_p, int count);
+  unsigned char *writeData(unsigned char *buf_p, int count);
   QPtrList <flightTable> flightIndex;
   char *wordtoserno(unsigned int Binaer);
 };
