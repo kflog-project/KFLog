@@ -108,22 +108,22 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
   QString htmlText;
 
   htmlText = (QString)"<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>"+
-           "<TR><TD WIDTH=100 ALIGN=center><FONT COLOR=green><B>" + printTime(p1.time, true) +
-           "</B></TD><TD WIDTH=70 ALIGN=right>";
+            "<TR><TD WIDTH=100 ALIGN=center><FONT COLOR=#00bb00><B>" +
+            printTime(p1.time, true) + "</B></TD><TD WIDTH=70 ALIGN=right>";
   text.sprintf("%5d m", p1.height);
   htmlText += text + "</TD><TD WIDTH=80 ALIGN=right>";
-  text.sprintf("%.1f m/s", getVario(&p1));
+  text.sprintf("%.1f m/s", getVario(p1));
   htmlText += text + "</TD><TD WIDTH=100 ALIGN=right>";
-  text.sprintf("%.1f km/h", getSpeed(&p1));
+  text.sprintf("%.1f km/h", getSpeed(p1));
   htmlText += text + "</TD>";
 
-  htmlText += (QString) "<TD WIDTH=100 ALIGN=center><FONT COLOR=red><B>" + printTime(p2.time, true) +
-           "</B></TD><TD WIDTH=70 ALIGN=right>";
+  htmlText += (QString) "<TD WIDTH=100 ALIGN=center><FONT COLOR=#bb0000><B>" +
+            printTime(p2.time, true) + "</B></TD><TD WIDTH=70 ALIGN=right>";
   text.sprintf("%5d m", p2.height);
   htmlText += text + "</TD><TD WIDTH=80 ALIGN=right>";
-  text.sprintf("%.1f m/s", getVario(&p2));
+  text.sprintf("%.1f m/s", getVario(p2));
   htmlText += text + "</TD><TD WIDTH=100 ALIGN=right>";
-  text.sprintf("%.1f km/h", getSpeed(&p2));
+  text.sprintf("%.1f km/h", getSpeed(p2));
   htmlText += text + "</TD></TR>";
 
   emit textChanged(htmlText);

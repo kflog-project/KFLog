@@ -18,7 +18,7 @@
 #include "basemapelement.h"
 
 BaseMapElement::BaseMapElement(const char* n, unsigned int tID)
-  : name(n), typeID(tID), section(0)
+  : name(n), typeID(tID)
 {
 
 }
@@ -43,11 +43,6 @@ void BaseMapElement::initMapElement(MapMatrix* matrix, MapConfig* config)
 void BaseMapElement::printMapElement(QPainter* printP) const {  }
 
 void BaseMapElement::drawMapElement(QPainter* pP, QPainter* mP) {  }
-
-QRegion* BaseMapElement::drawRegion(QPainter* targetP, QPainter* maskP)
-{
-  return (new QRegion(0,0,1,1));
-}
 
 QString BaseMapElement::getName() const { return name; }
 

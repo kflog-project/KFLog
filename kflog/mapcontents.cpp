@@ -82,6 +82,23 @@
     CHECK_BORDER \
   }
 
+#define READ_CONTACT_DATA in >> contactCount; \
+  for(unsigned int loop = 0; loop < contactCount; loop++) \
+    { \
+      in >> frequency; \
+      in >> contactType; \
+      in >> callSign; \
+    }
+
+#define READ_RUNWAY_DATA in >> rwCount; \
+  for(unsigned int loop = 0; loop < rwCount; loop++) \
+    { \
+      in >> rwDirection; \
+      in >> rwLength; \
+      in >> rwMaterial; \
+      in >> rwOpen; \
+    }
+
 MapContents::MapContents()
   : isFirst(true)
 {
@@ -115,10 +132,6 @@ MapContents::MapContents()
   roadList.setAutoDelete(true);
   stationList.setAutoDelete(true);
   topoList.setAutoDelete(true);
-
-  waypointNumber = 0;
-  waypointList = new unsigned int[waypointNumber];
-  waypointIndex = new unsigned int[waypointNumber];
 }
 
 MapContents::~MapContents()
@@ -589,8 +602,134 @@ bool MapContents::__readTerrainFile(const int fileSecID,
           if(isoLines[pos] == elevation)
               sort_temp = ISO_LINE_NUM * sort_temp + pos;
 
-      Isohypse* newItem = new Isohypse(tA, elevation, valley, sort_temp);
-      isoList.at(newItem->sortID())->append(newItem);
+      Isohypse* newItem = new Isohypse(tA, elevation, valley);
+      isoList.at(sort_temp)->append(newItem);
+    }
+
+  return true;
+}
+
+bool MapContents::__readAirfieldFile(const char* pathName)
+{
+
+  if(pathName == 0)
+      // Datei existiert nicht ...
+      return false;
+
+  QFile eingabe(pathName);
+  if(!eingabe.open(IO_ReadOnly))
+    {
+      // Datei existiert, kann aber nicht gelesen werden:
+      // Infofenster wäre nötig ...
+      warning("KFLog: Can not open mapfile %s", (const char*)pathName);
+      return false;
+    }
+
+  QDataStream in(&eingabe);
+  in.setVersion(2);
+
+  Q_UINT8 typeIn;
+  Q_INT8 loadTypeID;
+  Q_UINT16 formatID;
+  Q_INT32 lat_temp, lon_temp;
+  Q_UINT32 magic;
+  QDateTime createDateTime;
+
+  QString name;
+  QString idString;
+  QString icao;
+  Q_INT16 elevation;
+  Q_INT8 isWinsh;
+
+  QString frequency;
+  Q_INT8 contactType;
+  QString callSign;
+  Q_UINT8 contactCount;
+
+  Q_UINT8 rwCount;
+  // 0 -> 36
+  Q_UINT8 rwDirection;
+  Q_UINT16 rwLength;
+  Q_UINT8 rwMaterial;
+  Q_INT8 rwOpen;
+
+  in >> magic;
+  if(magic != KFLOG_FILE_MAGIC)  return false;
+
+  in >> loadTypeID;
+  if(loadTypeID != FILE_TYPE_AERO)  return false;
+
+  in >> formatID;
+  if(formatID < FILE_FORMAT_ID)
+    {
+      // zu alt ...
+    }
+  else if(formatID > FILE_FORMAT_ID)
+    {
+      // zu neu ...
+    }
+
+  in >> createDateTime;
+
+  while(!in.eof())
+    {
+      in >> typeIn;
+
+      switch (typeIn)
+        {
+          case BaseMapElement::IntAirport:
+          case BaseMapElement::Airport:
+          case BaseMapElement::MilAirport:
+          case BaseMapElement::CivMilAirport:
+          case BaseMapElement::Airfield:
+            in >> name;
+            in >> idString;
+            in >> icao;
+            in >> lat_temp;
+            in >> lon_temp;
+            in >> elevation;
+
+            READ_CONTACT_DATA
+
+            READ_RUNWAY_DATA
+
+            break;
+          case BaseMapElement::ClosedAirfield:
+            in >> name;
+            in >> idString;
+            in >> icao;
+            in >> lat_temp;
+            in >> lon_temp;
+            in >> elevation;
+            break;
+          case BaseMapElement::CivHeliport:
+          case BaseMapElement::MilHeliport:
+          case BaseMapElement::AmbHeliport:
+            in >> name;
+            in >> idString;
+            in >> icao;
+            in >> lat_temp;
+            in >> lon_temp;
+            in >> elevation;
+
+            READ_CONTACT_DATA
+
+            break;
+          case BaseMapElement::Glidersite:
+            in >> name;
+            in >> idString;
+            in >> icao;
+            in >> lat_temp;
+            in >> lon_temp;
+            in >> elevation;
+            in >> isWinsh;
+
+            READ_CONTACT_DATA
+
+            READ_RUNWAY_DATA
+
+            break;
+        }
     }
 
   return true;
@@ -630,21 +769,10 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   QDateTime createDateTime;
 
   in >> magic;
-  if(magic != KFLOG_FILE_MAGIC)
-    {
-      // falsches Dateiformat !!!
-      warning("KFLog: Trying to open old map-file; aborting!");
-      warning(pathName);
-      return false;
-    }
+  if(magic != KFLOG_FILE_MAGIC)  return false;
 
   in >> loadTypeID;
-  if(loadTypeID != fileTypeID)
-    {
-      // falschen Datentyp geladen ...
-//      warning("<------------------ Falsche Typ-ID");
-      return false;
-    }
+  if(loadTypeID != fileTypeID)  return false;
 
   in >> formatID;
   if(formatID < FILE_FORMAT_ID)
@@ -655,13 +783,10 @@ bool MapContents::__readBinaryFile(const int fileSecID,
     {
       // zu neu ...
     }
+
   in >> loadSecID;
-  if(loadSecID != fileSecID)
-    {
-      // Problem!!!
-//      warning("<------------------- Falsche Kachel-ID");
-      return false;
-    }
+  if(loadSecID != fileSecID)  return false;
+
   in >> createDateTime;
 
   while(!in.eof())
@@ -793,6 +918,7 @@ bool MapContents::loadFlight(QFile igcFile)
   QList<struct wayPoint> wpList;
   struct wayPoint* newWP;
   struct wayPoint* preWP;
+  bool isValid;
   /*
    * This regexp is used to check the syntax of the position-lines in
    * the igc-file.
@@ -865,11 +991,12 @@ bool MapContents::loadFlight(QFile igcFile)
           newPoint.time = curTime;
           newPoint.origP = QPoint(latTemp, lonTemp);
           newPoint.projP = _globalMapMatrix.wgsToMap(newPoint.origP);
+          newPoint.f_state = Flight::Straight;
 
           if(s.mid(24,1) == "A")
-              newPoint.isValid = true;
+              isValid = true;
           else if(s.mid(24,1) == "V")
-              newPoint.isValid = false;
+              isValid = false;
           else
               fatal("FEHLER!");
 
@@ -933,7 +1060,7 @@ bool MapContents::loadFlight(QFile igcFile)
               flightRoute.append(new flightPoint);
               *(flightRoute.last()) = newPoint;
 
-              if(!newPoint.isValid)  continue;
+              if(!isValid)  continue;
               if(!append)
                 {
                   /*
@@ -974,7 +1101,7 @@ bool MapContents::loadFlight(QFile igcFile)
           /*
            * We only want to compare with valid points ...
            */
-          if(newPoint.isValid)
+          if(isValid)
             {
               prePoint = newPoint;
               preTime = curTime;
@@ -1060,10 +1187,15 @@ bool MapContents::loadFlight(QFile igcFile)
   return true;
 }
 
-void MapContents::proofeSection()
+void MapContents::proofeSection(bool isPrint)
 {
   extern MapMatrix _globalMapMatrix;
-  QRect mapBorder = _globalMapMatrix.getViewBorder();
+  QRect mapBorder;
+
+  if(isPrint)
+      mapBorder = _globalMapMatrix.getPrintBorder();
+  else
+      mapBorder = _globalMapMatrix.getViewBorder();
 
   int westCorner = ( ( mapBorder.left() / 600000 / 2 ) * 2 + 180 ) / 2;
   int eastCorner = ( ( mapBorder.right() / 600000 / 2 ) * 2 + 180 ) / 2;
@@ -1085,6 +1217,7 @@ void MapContents::proofeSection()
       airfields = globalDirs->findAllResources("appdata", "mapdata/airfields/*.out");
       for ( QStringList::Iterator it = airfields.begin(); it != airfields.end(); ++it )
         {
+//          __readAirfieldFile((*it).latin1());
           __readAsciiFile((*it).latin1());
 //          warning( "%s", (*it).latin1() );
         }
@@ -1221,40 +1354,54 @@ BaseMapElement* MapContents::getElement(int listIndex, unsigned int index)
 
 SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
 {
-  switch(listIndex) {
-    case AirportList:
-      return airportList.at(index);
-    case GliderList:
-      return gliderList.at(index);
-    case OutList:
-      return outList.at(index);
-    case NavList:
-      return navList.at(index);
-    case ObstacleList:
-      return obstacleList.at(index);
-    case ReportList:
-      return reportList.at(index);
-//    case VillageList:
-//      return villageList.at(index);
-    case LandmarkList:
-      return landmarkList.at(index);
-    case StationList:
-      return stationList.at(index);
-    default:
-      return 0;
-  }
+  switch(listIndex)
+    {
+      case AirportList:
+        return airportList.at(index);
+      case GliderList:
+        return gliderList.at(index);
+      case OutList:
+        return outList.at(index);
+      case NavList:
+        return navList.at(index);
+      case ObstacleList:
+        return obstacleList.at(index);
+      case ReportList:
+        return reportList.at(index);
+//      case VillageList:
+//        return villageList.at(index);
+      case LandmarkList:
+        return landmarkList.at(index);
+      case StationList:
+        return stationList.at(index);
+      default:
+        return 0;
+    }
 }
 
 void MapContents::printContents(QPainter* targetPainter)
 {
-  for(unsigned int loop = 0; loop < airportList.count(); loop++)
-      airportList.at(loop)->printMapElement(targetPainter);
+  proofeSection(true);
 
-  for(unsigned int loop = 0; loop < gliderList.count(); loop++)
-      gliderList.at(loop)->printMapElement(targetPainter);
 
-  for(unsigned int loop = 0; loop < outList.count(); loop++)
-      outList.at(loop)->printMapElement(targetPainter);
+  for(unsigned int loop = 0; loop < topoList.count(); loop++)
+      topoList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < hydroList.count(); loop++)
+      hydroList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < railList.count(); loop++)
+      railList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < roadList.count(); loop++)
+      roadList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < cityList.count(); loop++)
+      cityList.at(loop)->printMapElement(targetPainter);
+
+//  for(unsigned int loop = 0; loop < villageList.count(); loop++)
+//      villageList.at(loop)->drawMapElement(targetPainter);
+
 
   for(unsigned int loop = 0; loop < navList.count(); loop++)
       navList.at(loop)->printMapElement(targetPainter);
@@ -1268,26 +1415,19 @@ void MapContents::printContents(QPainter* targetPainter)
   for(unsigned int loop = 0; loop < reportList.count(); loop++)
       reportList.at(loop)->printMapElement(targetPainter);
 
-  for(unsigned int loop = 0; loop < cityList.count(); loop++)
-      cityList.at(loop)->printMapElement(targetPainter);
-
-//  for(unsigned int loop = 0; loop < villageList.count(); loop++)
-//      villageList.at(loop)->drawMapElement(targetPainter);
-
   for(unsigned int loop = 0; loop < landmarkList.count(); loop++)
       landmarkList.at(loop)->printMapElement(targetPainter);
 
-  for(unsigned int loop = 0; loop < roadList.count(); loop++)
-      roadList.at(loop)->printMapElement(targetPainter);
 
-  for(unsigned int loop = 0; loop < railList.count(); loop++)
-      railList.at(loop)->printMapElement(targetPainter);
+  for(unsigned int loop = 0; loop < airportList.count(); loop++)
+      airportList.at(loop)->printMapElement(targetPainter);
 
-  for(unsigned int loop = 0; loop < hydroList.count(); loop++)
-      hydroList.at(loop)->printMapElement(targetPainter);
+  for(unsigned int loop = 0; loop < gliderList.count(); loop++)
+      gliderList.at(loop)->printMapElement(targetPainter);
 
-  for(unsigned int loop = 0; loop < topoList.count(); loop++)
-      topoList.at(loop)->printMapElement(targetPainter);
+  for(unsigned int loop = 0; loop < outList.count(); loop++)
+      outList.at(loop)->printMapElement(targetPainter);
+
 
   for(unsigned int loop = 0; loop < flightList.count(); loop++)
       flightList.at(loop)->printMapElement(targetPainter);
@@ -1362,128 +1502,13 @@ void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
         return;
     }
 }
-void MapContents::__setPainterColor(QPainter* targetPainter, int height)
-{
-  /* Frühere Werte:
-   *
-   *  height <    0 ( 96, 128, 248);
-   *  height <   10 (174, 208, 129);
-   *  height <   50 (201, 230, 178);
-   *  height <  100 (231, 255, 231);
-   *  height <  250 (221, 245, 183);
-   *  height <  500 (240, 240, 168);
-   *  height <  750 (240, 223, 140);
-   *  height < 1000 (235, 185, 128);
-   *  height < 2000 (235, 155,  98);
-   *  height < 3000 (210, 115,  50);
-   *  height < 4000 (180,  75,  25);
-   *  height > 4000 (130,  65,  20);
-   *                 -34
-   * Definierte Farbwerte bei (dazwischen linear ändern):
-   *
-   *   <0 m :    96 / 128 / 248
-   *    0 m :   174 / 208 / 129 *
-   *   10 m :   201 / 230 / 178 *
-   *   50 m :   231 / 255 / 231 *
-   *  100 m :   221 / 245 / 183 *
-   *  250 m :   240 / 240 / 168 *
-   * 1000 m :   235 / 155 /  98 *
-   * 4000 m :   130 /  65 /  20 *
-   * 9000 m :    96 /  43 /  16 *
-   */
-#define H00_R  96
-#define H00_G 128
-#define H00_B 248
 
-#define H0_R 165
-#define H0_G 214
-#define H0_B 126
-
-#define H10_R 185
-#define H10_G 220
-#define H10_B 131
-
-#define H50_R 245
-#define H50_G 244
-#define H50_B 164
-
-#define H100_R 237
-#define H100_G 252
-#define H100_B 178
-
-#define H200_R 235
-#define H200_G 226
-#define H200_B 156
-
-#define H1000_R 235
-#define H1000_G 155
-#define H1000_B  98
-
-#define H4000_R 130
-#define H4000_G  65
-#define H4000_B  20
-
-  double rot = 0, gruen = 0, blau = 0;
-
-  if(height < -1)
-    {
-      rot = H00_R;
-      gruen = H00_G;
-      blau = H00_B;
-    }
-  else if(height <= 10)
-    {
-      rot = H0_R + ( height / 10.0 * (H10_R - H0_R) );
-      gruen = H0_G + ( height / 10.0 * (H10_G - H0_G) );
-      blau = H0_B + ( height / 10.0 * (H10_B - H0_B) );
-    }
-/*  else if(height <= 50)
-    {
-      rot = H10_R + ( ( height - 10 ) / 40.0 * (H100_R - H50_R) );
-      gruen = H10_G + ( ( height - 10 ) / 40.0 * (H100_G - H50_G) );
-      blau = H10_B + ( ( height - 10 ) / 40.0 * (H100_B - H50_B) );
-    }
-*/
-  else if(height <= 100)
-    {
-      rot = H10_R + ( ( height - 10 ) / 90.0 * (H100_R - H10_R) );
-      gruen = H10_G + ( ( height - 10) / 90.0 * (H100_G - H10_G) );
-      blau = H10_B + ( ( height - 10 ) / 90.0 * (H100_B - H10_B) );
-    }
-/*  else if(height <= 250)
-    {
-      rot = H100_R + ( ( height - 80 ) / 170.0 * (H200_R - H100_R) );
-      gruen = H100_G + ( ( height - 80 ) / 170.0 * (H200_G - H100_G) );
-      blau = H100_B + ( ( height - 80 ) / 170.0 * (H200_B - H100_B) );
-    }
-    */
-  else if(height <= 1000)
-    {
-      rot = H100_R + ( ( height - 100 ) / 900.0 * (H1000_R - H100_R) );
-      gruen = H100_G + ( ( height - 100 ) / 900.0 * (H1000_G - H100_G) );
-      blau = H100_B + ( ( height - 100 ) / 900.0 * (H1000_B - H100_B) );
-    }
-  else if(height <= 4000)
-    {
-      rot = H1000_R + ( ( height - 1000 ) / 3000.0 * (H4000_R - H1000_R) );
-      gruen = H1000_G + ( ( height - 1000 ) / 3000.0 * (H4000_G - H1000_G) );
-      blau = H1000_B + ( ( height - 1000 ) / 3000.0 * (H4000_B - H1000_B) );
-    }
-  else if(height <= 9000)
-    {
-      rot = H4000_R + ( ( height - 4000 ) / 5000.0 * (96 - H4000_R) );
-      gruen = H4000_G + ( ( height - 4000 ) / 5000.0 * (43 - H4000_G) );
-      blau = H4000_B + ( ( height - 4000 ) / 5000.0 * (16 - H4000_B) );
-    }
-
-  targetPainter->setPen(QPen(QColor(rot, gruen, blau), 0));
-  targetPainter->setBrush(QBrush(QColor(rot, gruen, blau),
-      QBrush::SolidPattern));
-}
-
-void MapContents::drawIsoList(QPainter* targetPainter, QPainter* maskPainter)
+void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
 {
   int height = 0;
+
+  extern MapConfig _globalMapConfig;
+
   for(unsigned int loop = 0; loop < isoList.count(); loop++)
     {
       if(isoList.at(loop)->count() == 0) continue;
@@ -1492,18 +1517,15 @@ void MapContents::drawIsoList(QPainter* targetPainter, QPainter* maskPainter)
           if(isoLines[pos] == isoList.at(loop)->getFirst()->getElevation())
             {
               if(isoList.at(loop)->getFirst()->isValley())
-                {
-                  if(pos) height = isoLines[pos - 1];
-                  else height = -1;
-                }
+                  height = pos + 1;
               else
-                height = isoLines[pos];
+                  height = pos + 2;
             }
         }
-      __setPainterColor(targetPainter, height);
-
+      targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 0));
+      targetP->setBrush(QBrush(_globalMapConfig.getIsoColor(height),
+          QBrush::SolidPattern));
       for(unsigned int loop2 = 0; loop2 < isoList.at(loop)->count(); loop2++)
-          isoList.at(loop)->at(loop2)->drawMapElement(targetPainter,
-              maskPainter);
+          isoList.at(loop)->at(loop2)->drawMapElement(targetP, maskP);
     }
 }

@@ -19,28 +19,17 @@
 ***********************************************************************/
 
 #include <cmath>
-#include <stdlib.h>
-#include <unistd.h>
 
 #include "flight.h"
 
-#include <kflog.h>
 #include <mapcalc.h>
 #include <mapmatrix.h>
 #include <wp.h>
 
 #include <kapp.h>
 #include <kconfig.h>
-#include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <qlist.h>
-#include <qpointarray.h>
-#include <qregion.h>
-#include <qtextstream.h>
-#include <qtimer.h>
-
-#include <qfileinfo.h>
 
 #define PRE_ID loop - 1
 #define CUR_ID loop
@@ -121,31 +110,6 @@ bool Flight::__isFAI(double d_wp, double d1, double d2, double d3)
   return false;
 }
 
-double Flight::__polar(double x, double y)
-{
-  double angle = 0.0;
-
-  /*
-   *          Fallunterscheidung, falls dX = 0
-   */
-  if(x >= -0.001 && x <= 0.001)
-    {
-      if(y < 0.0) return ( 1.5 * PI );
-      else  return ( 0.5 * PI );
-    }
-
-  // Punkt liegt auf der neg. X-Achse
-  if(x < 0.0)  angle = atan( y / x ) + PI;
-  else  angle = atan( y / x );
-
-  // Neg. value not allowed.
-  if(angle < 0.0)  angle = 2 * PI + angle;
-
-  if(angle > (2 * PI))  angle = angle - (2 * PI);
-
-  return angle;
-}
-
 void Flight::__moveOptimizePoint(unsigned int idList[], double taskValue[],
     unsigned int id)
 {
@@ -201,8 +165,6 @@ void Flight::__flightState()
 
       // Überprüfen ob man rausgefallen ist !!!
 
-
-
       // Bedingungen für Kreisflug müssen noch geprüft werden !!!
       // Bei kleinen Zeitabständen extra Abfrage
       // Noch mehr Zeitabschnitte einfügen ab ca 25° - 35° Kursänderung
@@ -213,17 +175,11 @@ void Flight::__flightState()
         {
 
           weiter = 0;
-//warning("##################################################################");
-//          warning("Kreisflug %s",(const char*)printTime(route.at(n)->time));
           // Drehrichtung
           if(route.at(n)->bearing > 0)
-            {
               dreh++;
-            }
           else
-            {
               dreh--;
-            }
 
           // Kreisflug eingeleitet
           if(s_point < 0)
@@ -234,9 +190,9 @@ void Flight::__flightState()
       else if(s_point > -1 &&
               route.at(n)->time - route.at(n - weiter)->time  >= 20 &&
               route.at(n - weiter)->time - route.at(s_point)->time > 20)
+        {
           // Zeit eines Kreisfluges mindestens 20s
           // Zeit zwischen zwei Kreisflügen höchstens 20s
-        {
 
 //          warning("Wir fliegen im Kreis");
           // Endpunkt des Kreisfluges
@@ -248,17 +204,17 @@ void Flight::__flightState()
             {
               if((e_point - s_point) * 0.8 <= dreh)
                 {
-                  route.at(n)->f_state = Flight::Rechts;
+                  route.at(n)->f_state = Flight::RightTurn;
                 }
-               else if((e_point - s_point) * 0.8 >= - dreh)
-                 {
-                   route.at(n)->f_state = Flight::Links;
-                 }
-               else
-                 {
-                   // vermischt
-                   route.at(n)->f_state = Flight::Vermischt;
-                 }
+              else if((e_point - s_point) * 0.8 >= - dreh)
+                {
+                  route.at(n)->f_state = Flight::LeftTurn;
+                }
+              else
+                {
+                  // vermischt
+                  route.at(n)->f_state = Flight::MixedTurn;
+                }
             }
           s_point = - 1;
           e_point = - 1;
@@ -280,7 +236,6 @@ void Flight::__flightState()
 
         }
     }
-
 }
 
 unsigned int Flight::__calculateBestTask(unsigned int start[],
@@ -353,17 +308,17 @@ double Flight::__sectorangle(int loop, bool isDraw)
     {
       case Begin:
         // directions to the next point
-        sectorAngle = __polar(
+        sectorAngle = polar(
             ( wpList.at(CUR_ID)->projP.x() - wpList.at(NEXT_ID)->projP.x() ),
             ( wpList.at(CUR_ID)->projP.y() - wpList.at(NEXT_ID)->projP.y() ) );
         break;
       case RouteP:
         // directions to the previous point
-        preAngle = __polar(
+        preAngle = polar(
             ( wpList.at(CUR_ID)->projP.x() - wpList.at(PRE_ID)->projP.x() ),
             ( wpList.at(CUR_ID)->projP.y() - wpList.at(PRE_ID)->projP.y() ) );
         // direction to the following point:
-        nextAngle = __polar(
+        nextAngle = polar(
             ( wpList.at(CUR_ID)->projP.x() - wpList.at(NEXT_ID)->projP.x() ),
             ( wpList.at(CUR_ID)->projP.y() - wpList.at(NEXT_ID)->projP.y() ) );
 
@@ -374,7 +329,7 @@ double Flight::__sectorangle(int loop, bool isDraw)
         break;
       case End:
         // direction to the previous point:
-        sectorAngle = __polar(
+        sectorAngle = polar(
             ( wpList.at(CUR_ID)->projP.x() - wpList.at(PRE_ID)->projP.x() ),
             ( wpList.at(CUR_ID)->projP.y() - wpList.at(PRE_ID)->projP.y() ) );
         break;
@@ -403,6 +358,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
   struct flightPoint* pointA;
   struct flightPoint* pointB;
+  struct flightPoint* pointC;
   QPoint curPointA, curPointB;
   double w1;
 
@@ -572,11 +528,10 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                 maskPainter->setBrush(QBrush::NoBrush);
                 break;
             }
-
         }
     }
 
-        // Strecke bei Start auf Schenkel
+    // Strecke bei Start auf Schenkel
     if(flightType == FAI_S || flightType == Dreieck_S)
       {
         targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
@@ -587,8 +542,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
             glMapMatrix->map(wpList.at(wpList.count() - 3)->projP));
       }
 
-
-// Flugweg
+  // Flugweg
 
   unsigned int delta = 1;
   if(!glMapMatrix->isSwitchScale())  delta = 8;
@@ -603,6 +557,10 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
     {
       pointA = route.at(n - delta);
       pointB = route.at(n);
+      if(n + delta < route.count())
+          pointC = route.at(n + delta);
+      else
+          pointC = route.last();
 
       curPointB = glMapMatrix->map(pointB->projP);
 
@@ -611,42 +569,11 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       bBoxFlight.setRight(MAX(curPointB.x(), bBoxFlight.right()));
       bBoxFlight.setBottom(MIN(curPointB.y(), bBoxFlight.bottom()));
 
-      maskPainter->setPen(QPen(Qt::color1, 4));
-      if(glMapMatrix->isSwitchScale())
-        {
-          /*******************************************************************
-           **
-           ** Dynamische Farben im Flug:
-           **
-           **   Zur Zeit nur für Vario. Sollte für alle wichtigen Werte
-           **   möglich sein. Dazu muss der Wert wählbar sein. Farben
-           **   als Legende ausgeben ???
-           **
-           ******************************************************************/
-
-           if(pointA->dH < 0)
-            {
-//            targetPainter->setPen(QPen(QColor(255,
-//              MIN((int)(10.0 * -pointA->dH), 255),
-//              MIN((int)(5.0 * -pointA->dH), 255)), 4));
-                targetPainter->setPen(QPen(QColor(255,0,0), 4));
-            }
-           else
-            {
- //         targetPainter->setPen(QPen(QColor(MIN((int)(5.0 * pointA->dH), 255),
- //             MIN((int)(10.0 * pointA->dH), 255), 255), 4));
-
-              targetPainter->setPen(QPen(QColor(0,255,0), 4));
-             }
-        }
-
-//          targetPainter->setPen(QPen(QColor(0,0,200), 4));
-      else
-        {
-          maskPainter->setPen(QPen(Qt::color1, 3));
-          targetPainter->setPen(QPen(QColor(0,0,200), 3));
-        }
-
+      QPen drawP = glConfig->getDrawPen(pointB);
+      drawP.setCapStyle(Qt::SquareCap);
+      targetPainter->setPen(drawP);
+      maskPainter->setPen(QPen(Qt::color1, drawP.width(),
+          Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
 
       targetPainter->drawLine(curPointA, curPointB);
       maskPainter->drawLine(curPointA, curPointB);
@@ -787,8 +714,8 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
     {
       switch(route.at(n)->f_state)
         {
-          case Flight::Rechts:
-//            warning("Rechts");
+          case Flight::RightTurn:
+//            warning("RightTurn");
             if(route.at(n)->dH > 0)
               {
                 k_height_pos_r += (float)route.at(n)->dH;
@@ -800,7 +727,7 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
 
             kurbel_r += route.at(n)->dT;
             break;
-          case Flight::Links:
+          case Flight::LeftTurn:
             if(route.at(n)->dH > 0)
               {
                 k_height_pos_l += (float)route.at(n)->dH;
@@ -812,8 +739,8 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
 
             kurbel_l += route.at(n)->dT;
             break;
-          case Flight::Vermischt:
-//          warning("vermischt:");
+          case Flight::MixedTurn:
+//          warning("MixedTurn:");
             if(route.at(n)->dH > 0)
               {
                 k_height_pos_v += (float)route.at(n)->dH;
@@ -844,9 +771,9 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
     QStrList ergebnis;
     QString text;
 
-//  warning("Rechts: %d", kurbel_r);
-//  warning("Links: %d", kurbel_l);
-//  warning("Vermischt: %d", kurbel_v);
+//  warning("RightTurn: %d", kurbel_r);
+//  warning("LeftTurn: %d", kurbel_l);
+//  warning("MixedTurn: %d", kurbel_v);
 
     // Kreisflug
     text.sprintf("%s (%.1f %%)", (const char*)printTime(kurbel_r),
@@ -1093,9 +1020,7 @@ void Flight::__setWaypointType()
   wpList.at(1)->type = Flight::Begin;
 
   for(unsigned int n = 2; n + 2 < wpList.count(); n++)
-  {
-    wpList.at(n)->type = Flight::RouteP;
-  }
+      wpList.at(n)->type = Flight::RouteP;
 
   wpList.at(wpList.count() - 2)->type = Flight::End;
   wpList.at(wpList.count() - 1)->type = Flight::Landing;
@@ -1388,7 +1313,7 @@ void Flight::__checkWaypoints()
                     }
                 }
 
-              pointAngle = __polar(
+              pointAngle = polar(
                   ( wpList.at(loop)->projP.x() - route.at(pLoop)->projP.x() ),
                   ( wpList.at(loop)->projP.y() - route.at(pLoop)->projP.y() ) );
 

@@ -21,9 +21,9 @@
 #include <singlepoint.h>
 
 /**
- * This class is used for all mapelements, that have a elevation-value.
+ * This class is used for all mapelements, that have an elevation-value.
  * The object can be one of: Outlanding, Obstacle, LightObstacle,
- * ObstacleGroup, LightObstacleGroup, Spot, Pass.
+ * ObstacleGroup, LightObstacleGroup and Spot.
  *
  * @see BaseMapElement#objectType
  *
@@ -35,30 +35,38 @@ class ElevPoint : public SinglePoint
   public:
     /**
      * Creates a new elevpoint.
+     * @param  name  The name
+     * @param  abbr  The abbreviation, used for the gps-logger
+     * @param  pos  The position
+     * @param  elevation The elevation
+     * @param  wP  "true", if the element is a waypoint
      */
-    ElevPoint(QString n, QString abbr, unsigned int t, QPoint pos,
-        unsigned int e, bool wP = false);
+    ElevPoint(QString name, QString abbr, unsigned int typdID, QPoint pos,
+        unsigned int elevation, bool wP = false);
     /**
-     * Destructor, does nothing special.
+     * Destructor
      */
     ~ElevPoint();
     /**
-     * Draws the element into the given painter.
+     * Draws the element into the given painter. Reimplemented from
+     * BaseMapElement.
+     * @param  targetP  The painter to draw the element into.
+     * @param  maskP  The maskpainter for targetP
      */
-    virtual void drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
-    /** */
-    virtual void printMapElement(QPainter* printPainter);
+    virtual void drawMapElement(QPainter* targetP, QPainter* maskP);
     /**
-     * Returns the elevation of the element.
+     * Prints the element. Reimplemented from BaseMapElement.
+     * @param  printP  The painter to draw the element into.
+     */
+    virtual void printMapElement(QPainter* printP);
+    /**
+     * @return the elevation of the element.
      */
     unsigned int getElevation() const;
-    /**
-     */
-    void setValues(int elevation, QPoint pos);
 
   protected:
     /**
-     * Contains the elevation.
+     * The elevation.
      */
     unsigned int elevation;
 };

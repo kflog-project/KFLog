@@ -48,7 +48,8 @@
 #include <mapconfig.h>
 #include <mapcontents.h>
 #include <mapcontrolview.h>
-#include <mapmatrix.h>
+#include <printdialog.h>
+#include <taskandwaypoint.h>
 
 #define STATUS_LABEL(a,b,c) \
   a = new KStatusBarLabel( "", 0, statusBar() ); \
@@ -59,8 +60,8 @@
   a->setLineWidth(0); \
   a->setAlignment( c | AlignVCenter );
 
-KFLogApp::KFLogApp(QWidget* , const char* name)
-  : KDockMainWindow(0, name), showStartLogo(false)
+KFLogApp::KFLogApp()
+  : KDockMainWindow(0, "KFLogMainWindow"), showStartLogo(false)
 {
   config = kapp->config();
 
@@ -73,10 +74,24 @@ KFLogApp::KFLogApp(QWidget* , const char* name)
       startLogo->show();
     }
 
+  extern MapConfig _globalMapConfig;
+  extern MapMatrix _globalMapMatrix;
+
+  connect(&_globalMapMatrix, SIGNAL(displayMatrixValues(int, bool)),
+      &_globalMapConfig, SLOT(slotSetMatrixValues(int, bool)));
+  connect(&_globalMapMatrix, SIGNAL(printMatrixValues(int)),
+      &_globalMapConfig, SLOT(slotSetPrintMatrixValues(int)));
+  connect(&_globalMapConfig, SIGNAL(configChanged()), &_globalMapMatrix,
+      SLOT(slotInitMatrix()));
+  connect(this, SIGNAL(flightDataTypeChanged(int)), &_globalMapConfig,
+      SLOT(slotSetFlightDataType(int)));
+
+  _globalMapConfig.slotReadConfig();
+
   initStatusBar();
   initView();
   initActions();
-	
+
   if(showStartLogo)
       startLogo->raise();
 
@@ -87,21 +102,29 @@ KFLogApp::KFLogApp(QWidget* , const char* name)
   viewCenterFlight->setEnabled(false);
   flightEvaluation->setEnabled(false);
 
-  readDockConfig(config, "Window Layout");
   activateDock();
 
   slotCheckDockWidgetStatus();
+  // Heavy workaround! MapConfig should tell KFLogApp, which type is selected!
+  slotSelectFlightData(0);
 
-  config->setGroup(0);
+  connect(&_globalMapMatrix, SIGNAL(matrixChanged()), map,
+      SLOT(slotRedrawMap()));
+  connect(map, SIGNAL(showFlightPoint(const QPoint, const struct flightPoint&)),
+      this, SLOT(slotShowPointInfo(const QPoint, const struct flightPoint&)));
+  connect(map, SIGNAL(showPoint(const QPoint)),
+      this, SLOT(slotShowPointInfo(const QPoint)));
 }
 
 KFLogApp::~KFLogApp()
 {
-  writeDockConfig(config, "Window Layout");
+
 }
 
 void KFLogApp::initActions()
 {
+  extern MapMatrix _globalMapMatrix;
+
   new KAction(i18n("&Open Flight"), "fileopen",
       KStdAccel::key(KStdAccel::Open), this, SLOT(slotFileOpen()),
       actionCollection(), "file_open");
@@ -119,7 +142,7 @@ void KFLogApp::initActions()
       actionCollection(), "move_map");
   mapMoveMenu->setDelayed(false);
 
-  viewRedraw = KStdAction::redisplay(map, SLOT(slotRedrawMap()),
+  KAction* viewRedraw = KStdAction::redisplay(map, SLOT(slotRedrawMap()),
       actionCollection());
   viewRedraw->setAccel(Key_F5);
 
@@ -131,28 +154,28 @@ void KFLogApp::initActions()
       SLOT(slotCenterToFlight()), actionCollection(), "view_center_flight");
 
   new KAction(i18n("Center to &Homesite"), "gohome",
-      KStdAccel::key(KStdAccel::Home), map,
+      KStdAccel::key(KStdAccel::Home), &_globalMapMatrix,
       SLOT(slotCenterToHome()), actionCollection(), "view_center_home");
 
   mapMoveMenu->insert(new KAction(i18n("move map north-west"), "movemap_nw", 0,
-      map, SLOT(slotMoveMapNW()), actionCollection(), "move_map_nw"));
+      &_globalMapMatrix, SLOT(slotMoveMapNW()), actionCollection(), "move_map_nw"));
   mapMoveMenu->insert(new KAction(i18n("move map north"), "movemap_n", 0,
-      map, SLOT(slotMoveMapN()), actionCollection(), "move_map_n"));
+      &_globalMapMatrix, SLOT(slotMoveMapN()), actionCollection(), "move_map_n"));
   mapMoveMenu->insert(new KAction(i18n("move map northeast"), "movemap_ne", 0,
-      map, SLOT(slotMoveMapNE()), actionCollection(), "move_map_ne"));
+      &_globalMapMatrix, SLOT(slotMoveMapNE()), actionCollection(), "move_map_ne"));
   mapMoveMenu->insert(new KAction(i18n("move map west"), "movemap_w", 0,
-      map, SLOT(slotMoveMapW()), actionCollection(), "move_map_w"));
+      &_globalMapMatrix, SLOT(slotMoveMapW()), actionCollection(), "move_map_w"));
   mapMoveMenu->insert(new KAction(i18n("move map east"), "movemap_e", 0,
-      map, SLOT(slotMoveMapE()), actionCollection(), "move_map_e"));
+      &_globalMapMatrix, SLOT(slotMoveMapE()), actionCollection(), "move_map_e"));
   mapMoveMenu->insert(new KAction(i18n("move map south-west"), "movemap_sw", 0,
-      map, SLOT(slotMoveMapSW()), actionCollection(), "move_map_sw"));
+      &_globalMapMatrix, SLOT(slotMoveMapSW()), actionCollection(), "move_map_sw"));
   mapMoveMenu->insert(new KAction(i18n("move map south"), "movemap_s", 0,
-      map, SLOT(slotMoveMapS()), actionCollection(), "move_map_s"));
+      &_globalMapMatrix, SLOT(slotMoveMapS()), actionCollection(), "move_map_s"));
   mapMoveMenu->insert(new KAction(i18n("move map south-east"), "movemap_se", 0,
-      map, SLOT(slotMoveMapSE()), actionCollection(), "move_map_se"));
+      &_globalMapMatrix, SLOT(slotMoveMapSE()), actionCollection(), "move_map_se"));
 
-  KStdAction::zoomIn(map, SLOT(slotZoomIn()), actionCollection());
-  KStdAction::zoomOut(map, SLOT(slotZoomOut()), actionCollection());
+  KStdAction::zoomIn(&_globalMapMatrix, SLOT(slotZoomIn()), actionCollection());
+  KStdAction::zoomOut(&_globalMapMatrix, SLOT(slotZoomOut()), actionCollection());
   /*
    * Wir brauchen dringend Icons für diese beiden Aktionen, damit man
    * es auch in die Werkzeugleisten packen kann!
@@ -173,12 +196,35 @@ void KFLogApp::initActions()
       CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
       "evaluate_flight");
 
+  taskAndWaypoint = new KAction(i18n("Task && Waypoints"), "waypoint",
+      CTRL+Key_T, this, SLOT(slotTaskAndWaypoint()), actionCollection(),
+      "task_and_waypoint");
+
 //  new KAction(i18n("Optimize"), "flight_optimize", 0, map,
 //      SLOT(slotOptimzeFlight()), actionCollection(), "optimize_flight");
+
+  KSelectAction* viewFlightDataType = new KSelectAction(
+      i18n("Show Flightdata"), "idea", 0,
+      actionCollection(), "view_flight_data");
+
+  connect(viewFlightDataType, SIGNAL(activated(int)), this,
+      SLOT(slotSelectFlightData(int)));
+
+  QStringList dataList;
+  dataList.append(i18n("Altitude"));
+  dataList.append(i18n("Cycling"));
+  dataList.append(i18n("Speed"));
+  dataList.append(i18n("Vario"));
+
+  viewFlightDataType->setItems(dataList);
+  // Heavy workaround! MapConfig should tell KFLogApp, which type is selected!
+  viewFlightDataType->setCurrentItem(0);
 
   KActionMenu* flightMenu = new KActionMenu(i18n("F&light"),
       actionCollection(), "flight");
   flightMenu->insert(flightEvaluation);
+  flightMenu->insert(taskAndWaypoint);
+  flightMenu->insert(viewFlightDataType);
 
   KStdAction::configureToolbars(this,
       SLOT(slotConfigureToolbars()), actionCollection());
@@ -208,7 +254,7 @@ void KFLogApp::initStatusBar()
   statusLabel->setLineWidth(0);
 
   STATUS_LABEL(statusTimeL, 80, AlignHCenter);
-  STATUS_LABEL(statusHeightL, 80, AlignRight);
+  STATUS_LABEL(statusAltitudeL, 80, AlignRight);
   STATUS_LABEL(statusVarioL, 80, AlignRight);
   STATUS_LABEL(statusSpeedL, 100, AlignRight);
   STATUS_LABEL(statusLatL, 110, AlignHCenter);
@@ -216,7 +262,7 @@ void KFLogApp::initStatusBar()
 
   statusBar()->addWidget( statusLabel, 1, false );
   statusBar()->addWidget( statusTimeL, 0, false );
-  statusBar()->addWidget( statusHeightL, 0, false );
+  statusBar()->addWidget( statusAltitudeL, 0, false );
   statusBar()->addWidget( statusSpeedL, 0, false );
   statusBar()->addWidget( statusVarioL, 0, false );
   statusBar()->addWidget( statusProgress, 0,  false );
@@ -255,7 +301,7 @@ void KFLogApp::initView()
   mapLayout->activate();
 
   QFrame* mapControlFrame = new QFrame(mapControlDock);
-  mapControl = new MapControlView(mapControlFrame, map);
+  mapControl = new MapControlView(mapControlFrame);
   mapControlDock->setWidget(mapControlFrame);
 
   mapViewDock->setWidget(mapViewFrame);
@@ -269,36 +315,40 @@ void KFLogApp::initView()
   dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );
   mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 75 );
 
-  connect(map, SIGNAL(changed(QSize)), mapControl, SLOT(slotShowMapData(QSize)));
-  connect(mapControl, SIGNAL(scaleChanged()), map, SLOT(slotRedrawMap()));
+  connect(map, SIGNAL(changed(QSize)), mapControl,
+      SLOT(slotShowMapData(QSize)));
 
-  connect(dataView, SIGNAL(wpSelected(const int)), map,
-      SLOT(slotCenterToWaypoint(const int)));
+  extern MapMatrix _globalMapMatrix;
+  connect(mapControl, SIGNAL(scaleChanged(double)), &_globalMapMatrix,
+      SLOT(slotSetScale(double)));
 
+  connect(dataView, SIGNAL(wpSelected(const unsigned int)), map,
+      SLOT(slotCenterToWaypoint(const unsigned int)));
 }
 
-void KFLogApp::showPointInfo(const QPoint pos, const struct flightPoint& point)
+void KFLogApp::slotShowPointInfo(const QPoint pos,
+    const struct flightPoint& point)
 {
   statusBar()->clear();
   QString text;
   text.sprintf("%s", (const char*)printTime(point.time, true));
   statusTimeL->setText(text);
   text.sprintf("%4d m  ", point.height);
-  statusHeightL->setText(text);
-  text.sprintf("%3.1f km/h  ", (float)point.dS / (float)point.dT);
+  statusAltitudeL->setText(text);
+  text.sprintf("%3.1f km/h  ", getSpeed(point));
   statusSpeedL->setText(text);
-  text.sprintf("%2.1f m/s  ", (float)point.dH / (float)point.dT);
+  text.sprintf("%2.1f m/s  ", getVario(point));
   statusVarioL->setText(text);
 
   statusLatL->setText(printPos(pos.y()));
   statusLonL->setText(printPos(pos.x(), false));
 }
 
-void KFLogApp::clearPointInfo(QPoint pos)
+void KFLogApp::slotShowPointInfo(QPoint pos)
 {
   statusBar()->clear();
   statusTimeL->setText("");
-  statusHeightL->setText("");
+  statusAltitudeL->setText("");
   statusSpeedL->setText("");
   statusVarioL->setText("");
 
@@ -307,13 +357,15 @@ void KFLogApp::clearPointInfo(QPoint pos)
 }
 
 void KFLogApp::saveOptions()
-{	
+{
   config->setGroup("General Options");
   config->writeEntry("Geometry", size());
   config->writeEntry("Show Toolbar", viewToolBar->isChecked());
   config->writeEntry("Show Statusbar",viewStatusBar->isChecked());
   config->writeEntry("ToolBarPos", (int) toolBar("mainToolBar")->barPos());
   config->setGroup(0);
+
+  writeDockConfig(config, "Window Layout");
 
   fileOpenRecent->saveEntries(config,"Recent Files");
 }
@@ -350,18 +402,7 @@ void KFLogApp::readOptions()
 
   if(!size.isEmpty())  resize(size);
 
-  mapConfig = new MapConfig(config);
-
-  extern MapMatrix _globalMapMatrix;
-  _globalMapMatrix.initMatrix(mapConfig);
-
-  BaseMapElement::initMapElement(&_globalMapMatrix, mapConfig);
-}
-
-bool KFLogApp::queryExit()
-{
-  saveOptions();
-  return true;
+  readDockConfig(config, "Window Layout");
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -389,7 +430,7 @@ void KFLogApp::slotFileOpen()
 
   KFileDialog* dlg = new KFileDialog(flightDir, "*.igc *.IGC", this,
       i18n("Select IGC-File"), true);
-  IGCPreview* preview = new IGCPreview(dlg, "OpenIGC");
+  IGCPreview* preview = new IGCPreview(dlg);
   dlg->setPreviewWidget(preview);
   dlg->exec();
 
@@ -421,10 +462,10 @@ void KFLogApp::slotFileOpen()
 
       fileOpenRecent->addURL(fUrl);
 
-      // Hier wird die Karte leider 2x neu gezeichnet, denn erst
-      // beim ersten Zeichnen werden die Rahmen von Flug und Aufgabe
+      // Hier wird der Flug 2x neu gezeichnet, denn erst beim
+      // ersten Zeichnen werden die Rahmen von Flug und Aufgabe
       // bestimmt.
-      map->slotRedrawMap();
+      map->slotRedrawFlight();
       map->slotCenterToFlight();
     }
 
@@ -445,7 +486,7 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
           viewCenterTask->setEnabled(true);
           viewCenterFlight->setEnabled(true);
           flightEvaluation->setEnabled(true);
-          map->slotRedrawMap();
+          map->slotRedrawFlight();
           map->slotCenterToFlight();
 
           // Just a workaround. It's the only way to not have the item
@@ -465,7 +506,8 @@ void KFLogApp::slotFilePrint()
 
 //  QPrinter printer;
 //  if (printer.setup(this))
-      map->slotPrintMap();
+  PrintDialog pD(this, true);
+  pD.openMapPrintDialog();
 
   slotStatusMsg(i18n("Ready."));
 }
@@ -527,6 +569,26 @@ void KFLogApp::slotToggleMapControl() { mapControlDock->changeHideShowState(); }
 
 void KFLogApp::slotToggleMap() { mapViewDock->changeHideShowState(); }
 
+void KFLogApp::slotSelectFlightData(int id)
+{
+  switch(id)
+    {
+      case 0:    // Altitude
+        emit flightDataTypeChanged(MapConfig::Altitude);
+        break;
+      case 1:    // Cycling
+        emit flightDataTypeChanged(MapConfig::Cycling);
+        break;
+      case 2:    // Speed
+        emit flightDataTypeChanged(MapConfig::Speed);
+        break;
+      case 3:    // Vario
+        emit flightDataTypeChanged(MapConfig::Vario);
+        break;
+    }
+  map->slotRedrawFlight();
+}
+
 void KFLogApp::slotEvaluateFlight()
 {
   extern MapContents _globalMapContents;
@@ -561,13 +623,13 @@ void KFLogApp::slotConfigureKFLog()
   connect(confDlg, SIGNAL(scaleChanged(int, int)), mapControl,
       SLOT(slotSetMinMaxValue(int, int)));
 
-  if(confDlg->exec())
-    {
-      extern MapMatrix _globalMapMatrix;
-      mapConfig->readConfig();
-      _globalMapMatrix.initMatrix(mapConfig);
-      map->slotRedrawMap();
-    }
+  extern MapConfig _globalMapConfig;
+  connect(confDlg, SIGNAL(configOk()), &_globalMapConfig,
+      SLOT(slotReadConfig()));
+
+  connect(confDlg, SIGNAL(configOk()), map, SLOT(slotRedrawMap()));
+
+  confDlg->exec();
 
   delete confDlg;
 }
@@ -578,3 +640,9 @@ void KFLogApp::slotNewToolbarConfig()
 }
 
 void KFLogApp::slotStartComplete()  { if(showStartLogo)  delete startLogo; }
+
+void KFLogApp::slotTaskAndWaypoint()
+{
+  TaskAndWaypoint d(this);
+  d.exec();
+}

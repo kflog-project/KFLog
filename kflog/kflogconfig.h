@@ -57,12 +57,12 @@ class KFLogConfig : public KDialogBase
   signals:
     /** */
     void scaleChanged(int min, int max);
+    /** */
+    void configOk();
 
   public slots:
     /** */
     void slotOk();
-    /** */
-    void slotDefaultElements();
     /** */
     void slotDefaultPath();
     /** */
@@ -74,21 +74,7 @@ class KFLogConfig : public KDialogBase
     /** */
     void slotSearchTaskPath();
     /** */
-    void slotSelectElement(int);
-    /** */
-    void slotToggleFirst(bool);
-    /** */
-    void slotToggleSecond(bool);
-    /** */
-    void slotToggleThird(bool);
-    /** */
-    void slotToggleForth(bool);
-    /** */
-    void slotSetSecond();
-    /** */
-    void slotSetThird();
-    /** */
-    void slotSetForth();
+    void slotSearchWaypointPath();
     /** */
     void slotShowLowerLimit(int value);
     /** */
@@ -110,7 +96,7 @@ class KFLogConfig : public KDialogBase
     /** */
     void __addPathTab();
     /** */
-    void __addPrintTab();
+    void __addTopographyTab();
     /** */
     void __addScaleTab();
     /** */
@@ -124,7 +110,7 @@ class KFLogConfig : public KDialogBase
     /** */
     QFrame* pathPage;
     /** */
-    QFrame* printPage;
+    QFrame* topoPage;
     /** */
     QFrame* scalePage;
     /** */
@@ -132,6 +118,7 @@ class KFLogConfig : public KDialogBase
     /** */
     QLineEdit* igcPathE;
     QLineEdit* taskPathE;
+    QLineEdit* waypointPathE;
     QLineEdit* mapPathE;
     QLineEdit* homeLatE;
     QLineEdit* homeLonE;
@@ -150,91 +137,7 @@ class KFLogConfig : public KDialogBase
     QLCDNumber* reduce2N;
     QLCDNumber* reduce3N;
 
-    QCheckBox* border1;
-    QCheckBox* border2;
-    QCheckBox* border3;
-    QCheckBox* border4;
-
-    KColorButton* border1Color;
-    KColorButton* border2Color;
-    KColorButton* border3Color;
-    KColorButton* border4Color;
-
-    QSpinBox* border1Pen;
-    QSpinBox* border2Pen;
-    QSpinBox* border3Pen;
-    QSpinBox* border4Pen;
-
-    QPushButton* border1Button;
-    QPushButton* border2Button;
-    QPushButton* border3Button;
-
-    KComboBox* border1PenStyle;
-    KComboBox* border2PenStyle;
-    KComboBox* border3PenStyle;
-    KComboBox* border4PenStyle;
-
-    KColorButton* border1BrushColor;
-    KColorButton* border2BrushColor;
-    KColorButton* border3BrushColor;
-    KColorButton* border4BrushColor;
-
-    KComboBox* border1BrushStyle;
-    KComboBox* border2BrushStyle;
-    KComboBox* border3BrushStyle;
-    KComboBox* border4BrushStyle;
-
     KComboBox* elementSelect;
-
-    QList<QPen> airCPenList;
-    QList<QBrush> airCBrushList;
-    QList<QPen> airDPenList;
-    QList<QBrush> airDBrushList;
-    QList<QPen> airElPenList;
-    QList<QBrush> airElBrushList;
-    QList<QPen> airEhPenList;
-    QList<QBrush> airEhBrushList;
-    QList<QPen> airFPenList;
-    QList<QBrush> airFBrushList;
-    QList<QPen> ctrCPenList;
-    QList<QBrush> ctrCBrushList;
-    QList<QPen> ctrDPenList;
-    QList<QBrush> ctrDBrushList;
-    QList<QPen> lowFPenList;
-    QList<QBrush> lowFBrushList;
-    QList<QPen> dangerPenList;
-    QList<QBrush> dangerBrushList;
-    QList<QPen> restrPenList;
-    QList<QBrush> restrBrushList;
-    QList<QPen> tmzPenList;
-    QList<QBrush> tmzBrushList;
-
-    QList<QPen> roadPenList;
-    QList<QPen> railPenList;
-    QList<QPen> riverPenList;
-    QList<QPen> highwayPenList;
-    QList<QPen> cityPenList;
-    QList<QBrush> cityBrushList;
-
-    bool* airCBorder;
-    bool* airDBorder;
-    bool* airElBorder;
-    bool* airEhBorder;
-    bool* airFBorder;
-    bool* ctrCBorder;
-    bool* ctrDBorder;
-    bool* dangerBorder;
-    bool* lowFBorder;
-    bool* restrBorder;
-    bool* tmzBorder;
-
-    bool* roadBorder;
-    bool* highwayBorder;
-    bool* railBorder;
-    bool* riverBorder;
-    bool* cityBorder;
-
-    int oldElement;
 };
 
 #endif

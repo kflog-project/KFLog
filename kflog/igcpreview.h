@@ -36,15 +36,23 @@ class IGCPreview : public KPreviewWidgetBase
   Q_OBJECT
 
   public:
-    /** */
-    IGCPreview(QWidget* parent, const char* name);
-    /** */
+    /**
+     * Creates a preview-widget.
+     *
+     * @param  parent  The parent widget of the preview-widget
+     */
+    IGCPreview(QWidget* parent);
+    /**
+     * Destructor
+     */
     ~IGCPreview();
 
   public slots:
     /**
-     * This slot is called everytime the user selects another file in
+     * This slot is called every time the user selects another file in
      * the file dialog. Reimplemented from KPreviewWidgetBase.
+     *
+     * @param  url  The url of the selected file
      */
     virtual void showPreview(const KURL &url);
     /**
@@ -55,6 +63,9 @@ class IGCPreview : public KPreviewWidgetBase
     virtual void clearPreview();
 
   private:
+    /**
+     * The text-label in which the preview will be shown.
+     */
     QLabel* textLabel;
 };
 

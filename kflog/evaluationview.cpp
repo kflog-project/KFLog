@@ -18,6 +18,8 @@
 #include "evaluationview.h"
 
 #include <kapp.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 #include <qcheckbox.h>
 #include <qspinbox.h>
 #include <qslider.h>
@@ -29,15 +31,24 @@
 #include <resource.h>
 #include <mapcalc.h>
 
-#define X_ABSTAND 60
+#define X_ABSTAND 100
 #define Y_ABSTAND 30
+// auch in evalutionFrame ändern!!
+#define KOORD_DISTANCE 60
 
 EvaluationView::EvaluationView(QScrollView* parent, EvaluationDialog* dialog)
 : QWidget(parent, "EvaluationView", false),
   startTime(0), secWidth(5), scrollFrame(parent), evalDialog(dialog)
 {
   pixBuffer = new QPixmap;
-  pixBuffer->resize(scrollFrame->viewport()->size());
+  pixBuffer->resize(1,1);
+
+  pixBufferYAxis = new QPixmap;
+  pixBufferYAxis->resize(1,1);
+
+  pixBufferKurve = new QPixmap;
+  pixBufferKurve->resize(1,1);
+
 
   mouseB = NoButton | NotReached;
   cursor1 = 0;
@@ -54,27 +65,10 @@ EvaluationView::EvaluationView(QScrollView* parent, EvaluationDialog* dialog)
 
 EvaluationView::~EvaluationView()
 {
-
   delete pixBuffer;
 }
 
-//void EvaluationView::resizeEvent(QResizeEvent* event)
-//{
-//  warning("EvaluationView::resizeEvent");
-//
-//
-//      pixBuffer->resize((landTime - startTime) / secWidth + X_ABSTAND * 2,
-//                    scrollFrame->viewport()->height());
-//
-//
-//
-//
-//      scrollFrame->addChild(this);
-//
-//     scrollFrame->resizeContents((landTime - startTime) / secWidth + X_ABSTAND * 2,
-//       scrollFrame->viewport()->height());
-//
-//}
+
 
 QSize EvaluationView::sizeHint()
 {
@@ -83,14 +77,23 @@ QSize EvaluationView::sizeHint()
 
 void EvaluationView::paintEvent(QPaintEvent* event = 0)
 {
-  bitBlt(this, 0, 0, pixBuffer);
-}
+  bitBlt(pixBuffer, 0, 0, pixBufferKurve);
 
+  if(!((vario && speed) || (vario && baro) || (baro && speed)))
+    {
+      bitBlt(pixBuffer, scrollFrame->contentsX(),0, pixBufferYAxis);
+    }
+  bitBlt(this, 0, 0, pixBuffer);
+
+//  warning("paintEvent");
+}
 
 void EvaluationView::mousePressEvent(QMouseEvent* event)
 {
-  int x1 = ( cursor1 - startTime ) / secWidth + X_ABSTAND;
-  int x2 = ( cursor2 - startTime ) / secWidth + X_ABSTAND;
+  int x1 = ( cursor1 - startTime ) / secWidth
+             + X_ABSTAND ;
+  int x2 = ( cursor2 - startTime ) / secWidth
+             + X_ABSTAND ;
 
   if(event->pos().x() < x1 + 5 && event->pos().x() > x1 - 5)
     {
@@ -151,7 +154,7 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
                 ( event->pos().x() - X_ABSTAND ) * secWidth + startTime).time;
 
       if(cursor1 > cursor2) cursor1 = cursor2;
-      x = ( cursor1 - startTime ) / secWidth + X_ABSTAND;
+      x = ( cursor1 - startTime ) / secWidth + X_ABSTAND ;
     }
   else if(cursor == 2)
     {
@@ -159,21 +162,25 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
                  ( event->pos().x() - X_ABSTAND ) * secWidth + startTime).time;
 
       if(cursor2 < cursor1) cursor2 = cursor1;
-      x = ( cursor2 - startTime ) / secWidth + X_ABSTAND;
+      x = ( cursor2 - startTime ) / secWidth + X_ABSTAND ;
     }
   else return;
 
   evalDialog->updateText(flight->getPointByTime_i(cursor1),
                          flight->getPointByTime_i(cursor2), true);
 
-  __paintCursor(x,(time_alt - startTime ) / secWidth + X_ABSTAND,0,cursor);
-  bitBlt(this, 0, 0, pixBuffer);
+  __draw();
+
+  paintEvent(0);
 }
 
 void EvaluationView::mouseMoveEvent(QMouseEvent* event)
 {
-  int x1 = ( cursor1 - startTime ) / secWidth + X_ABSTAND;
-  int x2 = ( cursor2 - startTime ) / secWidth + X_ABSTAND;
+  int x1 = (( cursor1 - startTime ) / secWidth)
+             + X_ABSTAND ;
+  int x2 = (( cursor2 - startTime ) / secWidth)
+             + X_ABSTAND ;
+
 
   if(mouseB == (NoButton | NotReached))
     {
@@ -194,10 +201,13 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
       int cursor = flight->getPointByTime((event->pos().x() - X_ABSTAND )
                            * secWidth + startTime).time;
 
-      __paintCursor(( cursor - startTime ) / secWidth + X_ABSTAND,
-                    ( cursor_alt - startTime ) / secWidth + X_ABSTAND,1,0);
+      __paintCursor(( cursor - startTime ) / secWidth
+                        + X_ABSTAND ,
+                    ( cursor_alt - startTime ) / secWidth
+                        + X_ABSTAND ,1,0);
 
-      cursor_alt = flight->getPointByTime((event->pos().x() - X_ABSTAND ) *
+      cursor_alt = flight->getPointByTime((event->pos().x() - X_ABSTAND
+                           ) *
                           secWidth + startTime).time;
 
       //  kontinuierliches Update der Anzeige
@@ -230,12 +240,13 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
       evalDialog->updateText(flight->getPointByTime_i(cursor_1),
                              flight->getPointByTime_i(cursor_2));
     }
+
 }
 
 
 QPoint EvaluationView::__baroPoint(int height, int durch[], int gn, int i)
 {
-  int x = ( curTime - startTime ) / secWidth + X_ABSTAND;
+  int x = ( curTime - startTime ) / secWidth + X_ABSTAND ;
 
   int gesamt = 0;
 
@@ -250,7 +261,8 @@ QPoint EvaluationView::__baroPoint(int height, int durch[], int gn, int i)
 
 QPoint EvaluationView::__speedPoint(float speed, float durch[], int gn, int i)
 {
-  int x = ( curTime - startTime ) / secWidth + X_ABSTAND;
+  int x = ( curTime - startTime ) / secWidth + X_ABSTAND ;
+  //  = Abstand am Anfang der Kurve
 
   float gesamt = 0;
   /*
@@ -270,7 +282,8 @@ QPoint EvaluationView::__speedPoint(float speed, float durch[], int gn, int i)
 
 QPoint EvaluationView::__varioPoint(float vario, float durch[], int gn, int i)
 {
-  int x = ( curTime - startTime ) / secWidth + X_ABSTAND;
+  int x = ( curTime - startTime ) / secWidth + X_ABSTAND ;
+  // PRE_GRAPH_DISTANCE = Abstand am Anfang der Kurve
 
   float gesamt = 0;
   for(int loop = 0; loop < MIN(gn, (i * 2 + 1)); loop++)
@@ -281,54 +294,99 @@ QPoint EvaluationView::__varioPoint(float vario, float durch[], int gn, int i)
   return QPoint(x, y);
 }
 
-void EvaluationView::__drawCsystem(QPainter* painter, bool vario, bool speed, bool baro)
+void EvaluationView::__drawCsystem(QPainter* painter)
 {
   /*
    * Die Schleife unten kann nicht terminieren, wenn scale_h negativ ist!
    */
+
+  pixBufferYAxis->fill(white);
+  QPainter painterText(pixBufferYAxis);
+
   if(scale_h < 0.0) return;
-  if(!baro && !vario && !speed) return;
+//  if(!baro && !vario && !speed) return;
 
   QString text;
 
-  int breite = (landTime - startTime) / secWidth + X_ABSTAND * 2;
+  int breite = ((landTime - startTime) / secWidth)
+                 + (KOORD_DISTANCE * 2) ;
   int hoehe = scrollFrame->viewport()->height();
 
   //Koordinatenachsen
   painter->setPen(QPen(QColor(0,0,0), 1));
-  painter->drawLine(X_ABSTAND,hoehe - Y_ABSTAND, breite - 20,hoehe - Y_ABSTAND);
-  painter->drawLine(X_ABSTAND,hoehe - Y_ABSTAND, X_ABSTAND, 20);
+  painter->drawLine(KOORD_DISTANCE,hoehe - Y_ABSTAND, breite,hoehe - Y_ABSTAND);
+  painter->drawLine(KOORD_DISTANCE,hoehe - Y_ABSTAND, KOORD_DISTANCE, Y_ABSTAND);
+  // Vario Null Linie
   if(vario)
     {
       painter->setPen(QPen(QColor(255,100,100), 2));
-      painter->drawLine(X_ABSTAND, hoehe / 2, breite, hoehe / 2);
+      painter->drawLine(KOORD_DISTANCE, hoehe / 2, breite, hoehe / 2);
     }
 
-  int time = ((startTime / 900) + 1) * 900 - startTime;
 
   // Zeitachse
-  while(time / (int)secWidth < breite - 2*X_ABSTAND)
+  int time_plus, time_small_plus;
+  if(secWidth > 22)
+    {
+      time_plus = 3600;
+      time_small_plus = 1800;
+    }
+  else if (secWidth > 14)
+    {
+      time_plus = 1800;
+      time_small_plus = 900;
+    }
+  else if (secWidth > 10)
+    {
+      time_plus = 900;
+      time_small_plus = 300;
+    }
+  else
+    {
+      time_plus = 600;
+      time_small_plus = 60;
+    }
+
+  int time = (((startTime - 1) / time_plus) + 1) * time_plus - startTime;
+  int time_small = (((startTime - 1) / time_small_plus) + 1)
+                       * time_small_plus - startTime;
+
+  while(time / (int)secWidth < breite - 2*KOORD_DISTANCE)
     {
       painter->setPen(QPen(QColor(0,0,0), 2));
-      painter->drawLine(X_ABSTAND + time / secWidth,hoehe - Y_ABSTAND,
-                  X_ABSTAND + time / secWidth,hoehe - Y_ABSTAND + 10);
+      painter->drawLine(X_ABSTAND + (time / secWidth) ,
+                  hoehe - Y_ABSTAND,
+                  X_ABSTAND + (time / secWidth) ,
+                  hoehe - Y_ABSTAND + 10);
 
-      time += 900;
-    }
-  time = ((startTime / 900) + 1) * 900 - startTime;
-  while(time / (int)secWidth < breite - 2*X_ABSTAND)
-    {
       painter->setPen(QPen(QColor(0,0,0), 1));
       text = printTime(startTime + time,false,false);
-      painter->drawText(X_ABSTAND + time / secWidth - 27,hoehe - 5, text);
+      painter->drawText(X_ABSTAND + (time / secWidth) - 40
+                          ,
+                         hoehe - 21,80,20, AlignCenter,text);
 
-      if(secWidth > 22)
-          time += 3600;
-      else if (secWidth > 14)
-          time += 1800;
-      else
-          time += 900;
+      time += time_plus;
     }
+
+  while(time_small / (int)secWidth < breite - 2*KOORD_DISTANCE)
+    {
+      // "kleine" Striche (min)
+      painter->setPen(QPen(QColor(0,0,0), 1));
+      painter->drawLine(X_ABSTAND + (time_small / secWidth)
+                ,
+             hoehe - Y_ABSTAND,
+             X_ABSTAND + (time_small / secWidth) ,
+             hoehe - Y_ABSTAND + 5);
+
+      time_small += time_small_plus;
+    }
+
+
+
+  // Y Achsen
+  painterText.setPen(QPen(QColor(0,0,0), 1));
+  painterText.drawLine(KOORD_DISTANCE,hoehe - Y_ABSTAND,
+                       KOORD_DISTANCE, Y_ABSTAND);
 
 
   if(!vario && !speed && baro)
@@ -340,24 +398,24 @@ void EvaluationView::__drawCsystem(QPainter* painter, bool vario, bool speed, bo
       else if(scale_h > 3) dh = 200;
 
       int h = dh;
-      painter->setFont(QFont("helvetica",10));
+      painterText.setFont(QFont("helvetica",10));
 
       while(h / scale_h < hoehe - (Y_ABSTAND * 2))
         {
-          painter->setPen(QPen(QColor(100,100,255), 1));
+          painterText.setPen(QPen(QColor(100,100,255), 1));
           text.sprintf("%d m",h);
-          painter->drawText(3, hoehe - (int)( h / scale_h )
-                      - Y_ABSTAND + 3, text);
+          painterText.drawText(0,hoehe - (int)( h / scale_h ) - Y_ABSTAND - 10,
+                           KOORD_DISTANCE - 3,20,Qt::AlignRight | Qt::AlignVCenter,text);
+
 
           if(h == 1000 || h == 2000 || h == 3000)
               painter->setPen(QPen(QColor(200,200,255), 2));
           else
               painter->setPen(QPen(QColor(200,200,255), 1));
 
-          painter->drawLine(X_ABSTAND - 3,
+          painter->drawLine(KOORD_DISTANCE - 3,
                       hoehe - (int)( h / scale_h ) - Y_ABSTAND,
-                      breite - 20,hoehe - (int)( h / scale_h )
-                            - Y_ABSTAND);
+                      breite - 20,hoehe - (int)( h / scale_h ) - Y_ABSTAND);
 
           h += dh;
         }
@@ -366,7 +424,7 @@ void EvaluationView::__drawCsystem(QPainter* painter, bool vario, bool speed, bo
     {
       // Variogramm
       painter->setPen(QPen(QColor(255,100,100), 1));
-      painter->drawLine(X_ABSTAND, (hoehe / 2), breite - 20, (hoehe / 2));
+      painter->drawLine(KOORD_DISTANCE, (hoehe / 2), breite - 20, (hoehe / 2));
 
       float dva = 2.0;
       if(scale_va > 0.15)      dva = 5.0;
@@ -374,26 +432,28 @@ void EvaluationView::__drawCsystem(QPainter* painter, bool vario, bool speed, bo
       else if(scale_va > 0.08) dva = 2.5;
 
       float va = 0;
-      painter->setFont(QFont("helvetica",8));
+      painterText.setFont(QFont("helvetica",8));
 
       while(va / scale_va < (hoehe / 2) - Y_ABSTAND)
         {
-          text.sprintf("%.2f m/s",va);
-          painter->setPen(QPen(QColor(255,100,100), 1));
-          painter->drawText(3, (hoehe / 2) - (int)( va / scale_va ) + 3, text);
+          text.sprintf("%.1f m/s",va);
+          painterText.setPen(QPen(QColor(255,100,100), 1));
+          painterText.drawText(0,(hoehe / 2) - (int)( va / scale_va ) - 10,
+                           KOORD_DISTANCE - 3,20,Qt::AlignRight | Qt::AlignVCenter,text);
 
           painter->setPen(QPen(QColor(255,200,200), 1));
-          painter->drawLine(X_ABSTAND - 3,(hoehe / 2) - (int)( va / scale_va ),
+          painter->drawLine(KOORD_DISTANCE - 3,(hoehe / 2) - (int)( va / scale_va ),
                    breite - 20,(hoehe / 2) - (int)( va / scale_va ));
 
           if(va != 0)
             {
-              text.sprintf("-%.2f m/s",va);
-              painter->setPen(QPen(QColor(255,100,100), 1));
-              painter->drawText(3, (hoehe / 2) + (int)( va / scale_va ) + 3, text);
+              text.sprintf("-%.1f m/s",va);
+              painterText.setPen(QPen(QColor(255,100,100), 1));
+              painterText.drawText(0,(hoehe / 2) + (int)( va / scale_va ) -20,
+                         KOORD_DISTANCE - 3,20,Qt::AlignRight | Qt::AlignVCenter,text);
 
               painter->setPen(QPen(QColor(255,200,200), 1));
-              painter->drawLine(X_ABSTAND,(hoehe / 2) + (int)( va / scale_va ) - 3,
+              painter->drawLine(KOORD_DISTANCE,(hoehe / 2) + (int)( va / scale_va ) - 3,
                       breite - 20,(hoehe / 2) + (int)( va / scale_va ));
 
             }
@@ -410,27 +470,34 @@ void EvaluationView::__drawCsystem(QPainter* painter, bool vario, bool speed, bo
       else if(scale_v > 0.3) dv = 20;
 
       int v = dv;
-      painter->setFont(QFont("helvetica",10));
+      painterText.setFont(QFont("helvetica",8));
 
       while(v / scale_v < hoehe - (Y_ABSTAND * 2))
         {
           text.sprintf("%d km/h",v);
-          painter->setPen(QPen(QColor(0,0,0), 1));
-          painter->drawText(3, hoehe - (int)( v / scale_v ) - Y_ABSTAND + 3, text);
+          painterText.setPen(QPen(QColor(0,0,0), 1));
+          painterText.drawText(0,hoehe - (int)( v / scale_v ) - Y_ABSTAND - 10,
+                     KOORD_DISTANCE - 3,20,Qt::AlignRight | Qt::AlignVCenter,text);
 
           painter->setPen(QPen(QColor(200,200,200), 1));
-          painter->drawLine(X_ABSTAND + 3,
+          painter->drawLine(KOORD_DISTANCE - 3,
                       hoehe - (int)( v / scale_v ) - Y_ABSTAND,
                       breite - 20,hoehe - (int)( v / scale_v ) - Y_ABSTAND);
+
           v += dv;
         }
     }
+
+    painterText.end();
+
 }
+
 
 void EvaluationView::drawCurve(Flight* current, bool arg_vario, bool arg_speed,
             bool arg_baro, unsigned int arg_glatt_va, unsigned int arg_glatt_v,
             unsigned int arg_glatt_h, unsigned int secW)
 {
+  warning("drawCurve");
   isFlight = true;
 
   setMouseTracking(true);
@@ -453,15 +520,24 @@ void EvaluationView::drawCurve(Flight* current, bool arg_vario, bool arg_speed,
 
   secWidth = secW;
 
-  this->resize((landTime - startTime) / secWidth + X_ABSTAND * 2,
+  this->resize((landTime - startTime) / secWidth
+      + (KOORD_DISTANCE * 2)  ,
       scrollFrame->viewport()->height());
 
-  pixBuffer->resize((landTime - startTime) / secWidth + X_ABSTAND * 2,
-                    scrollFrame->viewport()->height());
+  pixBuffer->resize((landTime - startTime) / secWidth + (KOORD_DISTANCE * 2),
+      scrollFrame->viewport()->height());
+  pixBufferKurve->resize((landTime - startTime) / secWidth
+       + (KOORD_DISTANCE * 2) ,
+      scrollFrame->viewport()->height());
+  pixBufferYAxis->resize(KOORD_DISTANCE + 1,
+      scrollFrame->viewport()->height());
+
 
   scrollFrame->addChild(this);
 
   __draw();
+
+  paintEvent(0);
 }
 
 void EvaluationView::__draw()
@@ -555,24 +631,39 @@ void EvaluationView::__draw()
 
 
 
-  pixBuffer->fill(white);
-  QPainter paint(pixBuffer);
+  pixBufferKurve->fill(white);
+  QPainter paint(pixBufferKurve);
 
-  __drawCsystem(&paint, vario, speed, baro);
+  __drawCsystem(&paint);
 
   int xpos = 0;
 
   // Wendepunkte
   QList<struct wayPoint>* wP;
+  QString timeText = 0;
 
   wP = flight->getWPList();
   for(unsigned int n = 1; n < wP->count() - 1; n++)
     {
-      xpos = (wP->at(n)->sector1 - startTime ) / secWidth + X_ABSTAND ;
+      xpos = (wP->at(n)->sector1 - startTime ) / secWidth
+          + X_ABSTAND  ;
+
       paint.setPen(QPen(QColor(100,100,100), 3));
-      paint.drawLine(xpos, this->height() - Y_ABSTAND + 5, xpos, Y_ABSTAND);
+      paint.drawLine(xpos, this->height() - Y_ABSTAND, xpos, Y_ABSTAND + 5);
       paint.setPen(QPen(QColor(0,0,0), 3));
-      paint.drawText(xpos - 30, Y_ABSTAND - 10, wP->at(n)->name);
+      paint.setFont(QFont("helvetica",8));
+      paint.drawText (xpos - 40, Y_ABSTAND - 20 - 5,80,10, AlignCenter,
+             wP->at(n)->name);
+//      paint.drawText(xpos - 25, Y_ABSTAND - 5, wP->at(n)->name);
+      if(wP->at(n)->sector1 != 0)
+          timeText = printTime(wP->at(n)->sector1);
+      else if(wP->at(n)->sector2 != 0)
+          timeText = printTime(wP->at(n)->sector2);
+      else if(wP->at(n)->sectorFAI != 0)
+          timeText = printTime(wP->at(n)->sectorFAI);
+      paint.setFont(QFont("helvetica",7));
+      paint.drawText (xpos - 40, Y_ABSTAND - 10 - 5,80,10,
+                          AlignCenter,timeText);
     }
 
 
@@ -593,11 +684,16 @@ void EvaluationView::__draw()
       paint.drawPolyline(baroArray);
     }
 
+
+
+
   paint.end();
 
-   __paintCursor(( cursor1 - startTime ) / secWidth + X_ABSTAND,-2000,0,1);
-   __paintCursor(( cursor2 - startTime ) / secWidth + X_ABSTAND,-2000,0,2);
-  bitBlt(this, 0, 0, pixBuffer);
+   __paintCursor(( cursor1 - startTime ) / secWidth
+        + X_ABSTAND ,-2000,0,1);
+   __paintCursor(( cursor2 - startTime ) / secWidth
+        + X_ABSTAND ,-2000,0,2);
+
 }
 
 void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
@@ -605,13 +701,20 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
   // Bildschirmkoordinaten !!
   QPainter paint;
 
+  //
+  //  Bislang werden die Cursor durch Rasteroperationen gelöscht.
+  //  Das klappt aber mit den Icons nicht, daher sollte ein
+  //  Puffer-Speicher eingeführt werden, der dann wieder zurückkopiert
+  //  wird.
+  //
+
   if(move == 1)
     {
       paint.begin(this);
       if(cursor == 1)
-          paint.setPen(QPen(QColor(0,255,0), 1));
+          paint.setPen(QPen(QColor(0,200,0), 1));
       else
-          paint.setPen(QPen(QColor(255,0,0), 1));
+          paint.setPen(QPen(QColor(200,0,0), 1));
 
       paint.setRasterOp(XorROP);
       paint.drawLine(calt,this->height() - Y_ABSTAND, calt,Y_ABSTAND);
@@ -620,53 +723,37 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
     }
    else
     {
-      paint.begin(pixBuffer);
-      paint.setRasterOp(XorROP);
-      // Gemalt wird die komplementär-Farbe ...
+      paint.begin(pixBufferKurve);
+
       if(cursor == 1)
         {
-          paint.setPen(QPen(QColor(255,0,255), 1));
-          paint.setBrush(QBrush(QColor(255,0,255), SolidPattern));
+          paint.setPen(QPen(QColor(0,200,0), 1));
+          paint.setBrush(QBrush(QColor(0,200,0), SolidPattern));
         }
       else
         {
-          paint.setPen(QPen(QColor(0,255,255), 1));
-          paint.setBrush(QBrush(QColor(0,255,255), SolidPattern));
+          paint.setPen(QPen(QColor(200,0,0), 1));
+          paint.setBrush(QBrush(QColor(200,0,0), SolidPattern));
         }
 
-      QPointArray flagArray(3);
+    QPixmap pixCursor1 = QPixmap(KGlobal::dirs()->findResource("appdata",
+      "pics/flag_green.png"));
+    QPixmap pixCursor2 = QPixmap(KGlobal::dirs()->findResource("appdata",
+      "pics/flag_red.png"));
+
+
       // alte Linie übermalen
-      paint.drawLine(calt, this->height() - Y_ABSTAND, calt, Y_ABSTAND);
-      if(cursor == 1)
-        {
-          flagArray.setPoint(0, QPoint(calt - 10, Y_ABSTAND));
-          flagArray.setPoint(1, QPoint(calt - 4, Y_ABSTAND - 5));
-          flagArray.setPoint(2, QPoint(calt - 10, Y_ABSTAND - 10));
-        }
-      else
-        {
-          flagArray.setPoint(0, QPoint(calt + 10, Y_ABSTAND));
-          flagArray.setPoint(1, QPoint(calt + 4, Y_ABSTAND - 5));
-          flagArray.setPoint(2, QPoint(calt + 10, Y_ABSTAND - 10));
-        }
-      paint.drawPolygon(flagArray);
+//      paint.drawLine(calt, this->height() - Y_ABSTAND, calt, Y_ABSTAND);
 
       // neue Linie malen
       paint.drawLine(xpos, this->height() - Y_ABSTAND, xpos, Y_ABSTAND);
-      flagArray.setPoint(1, QPoint(xpos, Y_ABSTAND - 5));
+
+      // Flaggen malen
       if(cursor == 1)
-        {
-          flagArray.setPoint(0, QPoint(xpos - 10, Y_ABSTAND));
-          flagArray.setPoint(1, QPoint(xpos - 4, Y_ABSTAND - 5));
-          flagArray.setPoint(2, QPoint(xpos - 10, Y_ABSTAND - 10));
-        }
+          paint.drawPixmap(xpos - 32, Y_ABSTAND - 30,pixCursor1);
       else
-        {
-          flagArray.setPoint(0, QPoint(xpos + 10, Y_ABSTAND));
-          flagArray.setPoint(1, QPoint(xpos + 4, Y_ABSTAND - 5));
-          flagArray.setPoint(2, QPoint(xpos + 10, Y_ABSTAND - 10));
-        }
-      paint.drawPolygon(flagArray);
+          paint.drawPixmap(xpos, Y_ABSTAND - 30,pixCursor2);
+
       paint.end();
     }
 }

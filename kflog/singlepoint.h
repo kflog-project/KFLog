@@ -19,14 +19,11 @@
 #define SINGLEPOINT_H
 
 #include <basemapelement.h>
-#include <wp.h>
 
 /**
  * Mapelement used for small objects. The object can be one of:
- * ClosedAirfield, UltraLight, HangGlider, Parachute, Ballon, Village,
- * Oiltank, Factory, Castle, Church, Tower, HighwayEntry, RailwayBridge,
- * Station, Dam, Lock.
- * Consists only of a name and a position.
+ * UltraLight, HangGlider, Parachute, Ballon, Village
+ * or Landmark. Consists only of a name and a position.
  *
  * @see BaseMapElement#objectType
  * @see Airport
@@ -41,23 +38,36 @@ class SinglePoint : public BaseMapElement
 {
   public:
 	  /**
-	   * Creates a new "SinglePoint". n is the name of the element, t is the
-     * typeID, latPos and lonPos give the position of the element.
+	   * Creates a new "SinglePoint".
+	   *
+	   * @param  name  The name
+	   * @param  alias  An alias-name, used for the gps-logger
+	   * @param  typeID  The typeid
+	   * @param  pos  The position
+	   * @param  wP  "true", if the element is a waypoint
      */
-    SinglePoint(QString n, QString alias, unsigned int t, QPoint pos,
+    SinglePoint(QString name, QString alias, unsigned int typeID, QPoint pos,
         bool wP = false);
     /**
-	   * Destructor, does nothing special.
+	   * Destructor
 	   */
     ~SinglePoint();
     /**
-     * Draws the element into the given painter.
+     * Draws the element into the given painter. Reimplemented from
+     * BaseMapElement.
+     *
+     * @param  targetP  The painter to draw the element into.
+     * @param  maskP  The maskpainter for targetP
      */
     virtual void drawMapElement(QPainter* targetP, QPainter* maskP);
-    /** */
+    /**
+     * Prints the element. Reimplemented from BaseMapElement.
+     *
+     * @param  printP  The painter to draw the element into.
+     */
     virtual void printMapElement(QPainter* printP) const;
     /**
-     * Returns the position of the element.
+     * @return the position of the element.
      */
     virtual QPoint getPosition() const;
     /**
@@ -65,30 +75,44 @@ class SinglePoint : public BaseMapElement
      */
     virtual void setWaypoint(bool isW);
     /**
-     * Returns <TT>true</TT>, if the element is a waypoint.
+     * @return <TT>true</TT>, if the element is a waypoint, otherwise
+     * <TT>false</TT>.
      */
     virtual bool isWayPoint() const;
     /**
-     * Returns the gps-name of the element.
+     * @return the gps-name of the element.
      */
     virtual QString getWPName() const;
-    /** */
+    /**
+     * @return the position in the current map.
+     */
     virtual QPoint getMapPosition() const;
-    /** */
+    /**
+     * Used to return a little info-string about the element.
+     * Should be reimplemented in subclasses.
+     */
     virtual QString getInfoString() const;
 
   protected:
-    /** */
+    /**
+     * Proofes, if the object is in the drawing-area of the map.
+     *
+     * @return "true", if the element is in the drawing-area of the map.
+     */
     virtual bool __isVisible() const;
-    /** */
+    /**
+     * The lat/lon-position of the element
+     */
     QPoint position;
     /** <TT>true</TT>, if the element is used as a waypoint. */
     bool isWaypoint;
-    /** The abbreviation used for the GPS-logger. */
+    /**
+     * The abbreviation used for the GPS-logger.
+     */
     QString abbrev;
-    /** */
-    QString iconName;
-    /** */
+    /**
+     * The current draw-position of the element.
+     */
     QPoint curPos;
 };
 

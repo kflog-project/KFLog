@@ -84,6 +84,9 @@ class EvaluationFrame : public QFrame
     int glatt_h;
 
     int secWidth;
+    int secWidthOld;
+
+    int centerTime;
 
     Flight* flight;
 

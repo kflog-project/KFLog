@@ -45,6 +45,7 @@ AC_OUTPUT( \
 doc/Makefile \
 doc/en/Makefile \
 kflog/Makefile \
+kflog/guicontrols/Makefile \
 kflog/map-icons/Makefile \
 kflog/map-icons/small/Makefile \
 kflog/pics/Makefile \

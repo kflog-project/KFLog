@@ -112,5 +112,5 @@ void DataView::setFlightData(Flight* cF)
 
 void DataView::slotWPSelected(const QString &url)
 {
-  emit wpSelected(url.toInt());
+  emit wpSelected(url.toUInt());
 }

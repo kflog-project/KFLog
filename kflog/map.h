@@ -19,14 +19,10 @@
 #define MAP_H
 
 #include <kflog.h>
-#include <mapcontents.h>
-#include <mapmatrix.h>
 
 #include <qregion.h>
 #include <qwidget.h>
 #include <qbitmap.h>
-
-class MapView;
 
 /**
  * This class provides basic functions for displaying the map.
@@ -48,24 +44,8 @@ class Map : public QWidget
      * Destroys the Map-object.
      */
     ~Map();
-    /**
-     * Draws only the flights after optimizing the task.
-     */
-    void showFlightLayer(bool redrawFlight = false);
 
   public slots:
-    /**
-     * Forces increasing the scale.
-     * @see #scaleAdd
-     * @see #scale
-     */
-    void slotZoomIn();
-    /**
-     * Forces decreasing the scale.
-     * @see #scaleSub
-     * @see #scale
-     */
-    void slotZoomOut();
     /** */
     void slotRedrawMap();
     /** */
@@ -73,37 +53,25 @@ class Map : public QWidget
     /** */
     void slotCenterToTask();
     /** */
-    void slotCenterToHome();
-    /** */
-    void slotCenterToWaypoint(const int id);
-    /** */
-    void slotMoveMapNW();
-    /** */
-    void slotMoveMapN();
-    /** */
-    void slotMoveMapNE();
-    /** */
-    void slotMoveMapW();
-    /** */
-    void slotMoveMapE();
-    /** */
-    void slotMoveMapSW();
-    /** */
-    void slotMoveMapS();
-    /** */
-    void slotMoveMapSE();
-    /** */
-    void slotPrintMap();
+    void slotCenterToWaypoint(const unsigned int id);
     /** */
     void slotDrawCursor(QPoint p1, QPoint p2);
     /** Löscht den Fluglayer */
     void slotDeleteFlightLayer();
+    /** */
+    void slotRedrawFlight();
     /** */
     void slotOptimzeFlight();
 
   signals:
     /** */
     void changed(QSize);
+    /** */
+    void showFlightPoint(const QPoint pos, const struct flightPoint& point);
+    /** */
+    void showPoint(const QPoint pos);
+    /** */
+    void pointClicked(QPoint);
 
   protected:
     /**
@@ -147,6 +115,9 @@ class Map : public QWidget
      * @see #slotConfigureMap
      */
     void __drawMap();
+    /**
+     */
+    void __drawFlight();
     /**
      * Draws the grid tino the map.
      */

@@ -25,7 +25,6 @@ class Flight;
 
 /**
  * Provides widgets for displaying the flight-data.
- *
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
@@ -38,21 +37,31 @@ class DataView : public QFrame
      * Creates a new DataView object
      */
     DataView(QWidget* parent);
-    /** */
+    /**
+     * Destructor
+     */
     ~DataView();
-    /** */
+    /**
+     * Writes the task and some headerinfo about the flight into the widget.
+     */
     void setFlightData(Flight*);
 
   signals:
-    /** Emitted whe the user selects one waypoint in the list. */
-    void wpSelected(const int id);
+    /**
+     * Emitted when the user selects one waypoint in the list.
+     */
+    void wpSelected(const unsigned int id);
 
   public slots:
-    /** */
+    /**
+     * Called when the user clickes on one of the waypoint-links.
+     */
     void slotWPSelected(const QString &url);
 
   private:
-    /** */
+    /**
+     * The textwidget
+     */
     KTextBrowser* flightDataText;
 };
 

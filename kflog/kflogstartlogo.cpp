@@ -18,11 +18,12 @@
 #include "kflogstartlogo.h"
 #include <kapp.h>
 #include <kstddirs.h>
+#include <qpixmap.h>
 
 KFLogStartLogo::KFLogStartLogo()
-    : QWidget(0,0,WStyle_NoBorder | WStyle_Customize | WStyle_StaysOnTop)
+    : QWidget(0, 0,WStyle_NoBorder | WStyle_Customize | WStyle_StaysOnTop)
 {
-  setBackgroundMode(NoBackground);
+//  setBackgroundMode(NoBackground);
   QString icon = KGlobal::dirs()->findResource("appdata", "pics/splash.png");
   QPixmap pm;
   pm.load(icon);

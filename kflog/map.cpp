@@ -15,27 +15,13 @@
 **
 ***********************************************************************/
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <cmath>
-
 #include <kapp.h>
 #include <kconfig.h>
 #include <klocale.h>
-#include <kmenubar.h>
-#include <kmessagebox.h>
 #include <kstddirs.h>
-#include <ktoolbarbutton.h>
 
-#include <qbitmap.h>
-#include <qdatetime.h>
 #include <qdragobject.h>
-#include <qfont.h>
-#include <qfileinfo.h>
 #include <qpainter.h>
-#include <qprogressdialog.h>
-#include <qregexp.h>
-#include <qtextstream.h>
 #include <qwhatsthis.h>
 
 #include <airspace.h>
@@ -45,14 +31,7 @@
 #include <mapcalc.h>
 #include <mapcontents.h>
 #include <mapmatrix.h>
-#include <printdialog.h>
 #include <singlepoint.h>
-#include <resource.h>
-
-#define MATRIX_MOVE(a) extern MapMatrix _globalMapMatrix; \
-    _globalMapMatrix.moveMap(a); \
-    _globalMapMatrix.createMatrix(this->size()); \
-  __redrawMap();
 
 // Festlegen der Größe der Pixmaps auf Desktop-Grösse
 #define PIX_WIDTH  QApplication::desktop()->width()
@@ -163,13 +142,13 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
   if(_globalMapContents.searchFlightPoint(event->pos(), cP) != -1)
     {
-      mainApp->showPointInfo(_globalMapMatrix.mapToWgs(event->pos()), cP);
+      emit showFlightPoint(_globalMapMatrix.mapToWgs(event->pos()), cP);
       prePos = _globalMapMatrix.map(cP.projP);
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
     }
   else
     {
-      mainApp->clearPointInfo(_globalMapMatrix.mapToWgs(event->pos()));
+      emit showPoint(_globalMapMatrix.mapToWgs(event->pos()));
 
       prePos.setX(-50);
       prePos.setY(-50);
@@ -184,13 +163,12 @@ void Map::mousePressEvent(QMouseEvent* event)
           prePos.x() - 20, prePos.y() - 20, 40, 40);
 
   extern MapContents _globalMapContents;
-  extern const MapMatrix _globalMapMatrix;
+  extern MapMatrix _globalMapMatrix;
 
   const QPoint current = event->pos();
 
   if(event->button() == MidButton)
     {
-      extern MapMatrix _globalMapMatrix;
       _globalMapMatrix.centerToPoint(event->pos());
       _globalMapMatrix.createMatrix(this->size());
       __redrawMap();
@@ -496,11 +474,9 @@ void Map::__drawMap()
 {
   QPainter aeroP(&pixAero);
   QPainter airSpaceP(&pixAirspace);
-  QPainter flightP(&pixFlight);
   QPainter uMapP(&pixUnderMap);
   QPainter isoMapP(&pixIsoMap);
   QPainter mapMaskP(&bitMapMask);
-  QPainter flightMaskP(&bitFlightMask);
   QPainter airspaceMaskP(&bitAirspaceMask);
 
   airspaceRegList->clear();
@@ -561,14 +537,15 @@ void Map::__drawMap()
 
   mainApp->slotSetProgress(65);
 
+  Airspace* currentAirS;
   for(unsigned int loop = 0; loop < _globalMapContents.getListLength(
               MapContents::AirspaceList); loop++)
     {
-      _current = _globalMapContents.getElement(
+      currentAirS = (Airspace*)_globalMapContents.getElement(
           MapContents::AirspaceList, loop);
         // wir sollten nur die Lufträume in der Liste speichern, die
         // tatsächlich gezeichnet werden. Dann geht die Suche schneller.
-      airspaceRegList->append(_current->drawRegion(&airSpaceP,
+      airspaceRegList->append(currentAirS->drawRegion(&airSpaceP,
             &airspaceMaskP));
     }
 
@@ -592,14 +569,23 @@ void Map::__drawMap()
 
   mainApp->slotSetProgress(95);
 
-  _globalMapContents.drawList(&flightP, &flightMaskP, MapContents::FlightList);
-
   // Closing the painter ...
   aeroP.end();
   airSpaceP.end();
-  flightP.end();
   uMapP.end();
   airspaceMaskP.end();
+}
+
+void Map::__drawFlight()
+{
+  QPainter flightP(&pixFlight);
+  QPainter flightMaskP(&bitFlightMask);
+
+  extern MapContents _globalMapContents;
+
+  _globalMapContents.drawList(&flightP, &flightMaskP, MapContents::FlightList);
+
+  flightP.end();
   flightMaskP.end();
 }
 
@@ -614,7 +600,6 @@ void Map::resizeEvent(QResizeEvent* event)
 
       __redrawMap();
     }
-
   emit changed(event->size());
 }
 
@@ -665,6 +650,7 @@ void Map::__redrawMap()
 
   __drawGrid();
   __drawMap();
+  __drawFlight();
 
   __showLayer();
 
@@ -673,12 +659,20 @@ void Map::__redrawMap()
   slotDrawCursor(temp1,temp2);
 }
 
+void Map::slotRedrawFlight()
+{
+  pixFlight.fill(white);
+  bitFlightMask.fill(Qt::color0);
+  __drawFlight();
+  __showLayer();
+}
+
 void Map::slotRedrawMap()
 {
   extern MapMatrix _globalMapMatrix;
   _globalMapMatrix.createMatrix(this->size());
 
-  emit changed(this->size());
+//  emit changed(this->size());
 
   __redrawMap();
 }
@@ -691,7 +685,6 @@ void Map::__showLayer()
   bitBlt(&pixBuffer, 0, 0, &pixIsoMap);
   bitBlt(&pixBuffer, 0, 0, &pixUnderMap);
   bitBlt(&pixBuffer, 0, 0, &pixAero, 0, 0, -1, -1, NotEraseROP);
-//  bitBlt(&pixBuffer, 0, 0, &pixAirspace, 0, 0, -1, -1, NotEraseROP);
 
   pixAirspace.setMask(bitAirspaceMask);
   bitBlt(&pixBuffer, 0, 0, &pixAirspace);
@@ -700,24 +693,6 @@ void Map::__showLayer()
   bitBlt(&pixBuffer, 0, 0, &pixGrid, 0, 0, -1, -1, NotEraseROP);
 
   paintEvent();
-}
-
-void Map::slotZoomIn()
-{
-  extern MapMatrix _globalMapMatrix;
-  _globalMapMatrix.scaleAdd(this->size());
-
-  __redrawMap();
-  emit changed(this->size());
-}
-
-void Map::slotZoomOut()
-{
-  extern MapMatrix _globalMapMatrix;
-  _globalMapMatrix.scaleSub(this->size());
-
-  __redrawMap();
-  emit changed(this->size());
 }
 
 void Map::slotDrawCursor(QPoint p1, QPoint p2)
@@ -773,13 +748,7 @@ void Map::slotDrawCursor(QPoint p1, QPoint p2)
   preCur2 = p2;
 }
 
-void Map::slotPrintMap()
-{
-  PrintDialog pD(mainApp, true);
-  pD.openMapPrintDialog();
-}
-
-void Map::slotCenterToWaypoint(const int id)
+void Map::slotCenterToWaypoint(const unsigned int id)
 {
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
@@ -792,10 +761,7 @@ void Map::slotCenterToWaypoint(const int id)
 
   _globalMapMatrix.centerToPoint(_globalMapMatrix.map(
       _globalMapContents.getFlight()->getWPList()->at(id)->projP));
-  _globalMapMatrix.setScale(_globalMapMatrix.getScale(MapMatrix::LowerLimit));
-  _globalMapMatrix.createMatrix(this->size());
-
-  __redrawMap();
+  _globalMapMatrix.slotSetScale(_globalMapMatrix.getScale(MapMatrix::LowerLimit));
 
   emit changed(this->size());
 }
@@ -824,35 +790,6 @@ void Map::slotCenterToTask()
   __redrawMap();
 
   emit changed(this->size());
-}
-
-void Map::slotCenterToHome()  { MATRIX_MOVE( MapMatrix::Home ) }
-
-void Map::slotMoveMapNW() { MATRIX_MOVE( MapMatrix::North | MapMatrix::West ) }
-
-void Map::slotMoveMapN()  { MATRIX_MOVE( MapMatrix::North ) }
-
-void Map::slotMoveMapNE() { MATRIX_MOVE( MapMatrix::North | MapMatrix::East ) }
-
-void Map::slotMoveMapW()  { MATRIX_MOVE( MapMatrix::West ) }
-
-void Map::slotMoveMapE()  { MATRIX_MOVE( MapMatrix::East ) }
-
-void Map::slotMoveMapSW() { MATRIX_MOVE( MapMatrix::South | MapMatrix::West ) }
-
-void Map::slotMoveMapS()  { MATRIX_MOVE( MapMatrix::South ) }
-
-void Map::slotMoveMapSE() { MATRIX_MOVE( MapMatrix::South | MapMatrix::East ) }
-
-void Map::showFlightLayer(bool redrawFlight)
-{
-  if(redrawFlight)
-    {
-      pixFlight.fill(white);
-//      __drawFlight();
-    }
-
-  __showLayer();
 }
 
 /** Löscht den Fluglayer */

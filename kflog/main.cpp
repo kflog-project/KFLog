@@ -20,6 +20,8 @@
 #include <klocale.h>
 
 #include "kflog.h"
+#include <kflogstartlogo.h>
+#include <mapconfig.h>
 #include <mapcontents.h>
 #include <mapmatrix.h>
 
@@ -33,6 +35,11 @@ MapContents _globalMapContents;
  * Used for transforming the mapitems.
  */
 MapMatrix _globalMapMatrix;
+
+/**
+ * Contains all configuration-info for drawing and printing the elements.
+ */
+MapConfig _globalMapConfig;
 
 /**
  * List of commandline-options
@@ -50,22 +57,21 @@ static KCmdLineOptions options[] =
  */
 int main(int argc, char *argv[])
 {
-  /**
-   * Short description of what KFLog is.
-   */
-  const char* description =
-      I18N_NOOP("KFLog - The K-Flight-Logger");
-
 	KAboutData aboutData( "kflog", I18N_NOOP("KFLog"),
-		VERSION, description, KAboutData::License_GPL,
+		VERSION, I18N_NOOP("KFLog - The K-Flight-Logger"), KAboutData::License_GPL,
 		"(c) 2001, The KFLog-Team", 0, "http://www.kflog.org",
 		"bugs@kflog.org");
 	aboutData.addAuthor("Heiner Lamprecht", 0, "heiner@kflog.org");
 	aboutData.addAuthor("Florian Ehinger", 0, "florian@kflog.org");
+	aboutData.addAuthor("Harald Maier", 0, "harry@kflog.org");
+	aboutData.setTranslator(I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"),
+	  I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails"));
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options );
 
   KApplication app;
+
+  BaseMapElement::initMapElement(&_globalMapMatrix, &_globalMapConfig);
 
   if (app.isRestored())
     {

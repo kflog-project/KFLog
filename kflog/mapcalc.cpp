@@ -17,7 +17,6 @@
 
 #include <cmath>
 #include <mapcalc.h>
-#include <qregexp.h>
 
 double dist(double lat1, double lon1, double lat2, double lon2)
 {
@@ -26,6 +25,7 @@ double dist(double lat1, double lon1, double lat2, double lon2)
   double dlon = lon1 - lon2;
 
   // lat is used to calculate the earth-radius. We use the average here.
+  // Otherwise, the result would depend on the order of the parameters.
   double lat = ( lat1 + lat2 ) / 2.0;
 
   double dist = RADIUS * sqrt( ( pi_180 * dlat * pi_180 * dlat )
@@ -121,52 +121,28 @@ QString printTime(int time, bool isZero, bool isSecond)
   if(ss < 10)  sec.sprintf("0%d", ss);
   else  sec.sprintf("%d", ss);
 
-  if(isSecond)
-    {
-      return (hour + ":" + min + ":" + sec);
-    }
-  return (hour + ":" + min );
+  if(isSecond)  return (hour + ":" + min + ":" + sec);
+
+  return ( hour + ":" + min );
 }
 
-float getSpeed(struct flightPoint* p)
-{
-  return (float)p->dS / (float)p->dT * 3.6;
-}
+float getSpeed(struct flightPoint p) { return (float)p.dS / (float)p.dT * 3.6; }
 
-float getSpeed(struct flightPoint p)
-{
-  return (float)p.dS / (float)p.dT * 3.6;
-}
-
-float getVario(struct flightPoint* p)
-{
-  return (float)p->dH / (float)p->dT;
-}
-
-float getVario(struct flightPoint p)
-{
-  return (float)p.dH / (float)p.dT;
-}
-
+float getVario(struct flightPoint p) { return (float)p.dH / (float)p.dT; }
 
 float getBearing(struct flightPoint p1, struct flightPoint p2)
 {
-  double angle;
-  angle = __polar(
-    ( p2.projP.x() - p1.projP.x() ),
-    ( p2.projP.y() - p1.projP.y() ) );
-
-  return (float)angle;
+  return (float)polar( ( p2.projP.x() - p1.projP.x() ),
+                       ( p2.projP.y() - p1.projP.y() ) );
 }
 
 
-double __polar(double x, double y)
+double polar(double x, double y)
 {
   double angle = 0.0;
-
-  /*
-   *          Fallunterscheidung, falls dX = 0
-   */
+  //
+  //  dX = 0 ???
+  //
   if(x >= -0.001 && x <= 0.001)
     {
       if(y < 0.0) return ( 1.5 * PI );

@@ -22,62 +22,6 @@
 #include <qstring.h>
 
 /**
- * This struct contains one point. The struct is used to represent the
- * Cartesian-coordinates. The resolution used in KFLog is 1/10,000th of a
- * minute (approx. 0.1852m on a great circle).
- * <P>
- * We decided to use minutes
- * instead of seconds as base unit, because our GPS-Logger used
- * them likewise ;-)
- * </P>
- * <P>
- * <TABLE>
- * <TR><TD>Therefore:</TD>
- *     <TD>1 second</TD><TD>=</TD><TD ALIGN="right"><TT>~167</TT></TD></TR>
- * <TR><TD></TD>
- *     <TD>1 minute</TD><TD>=</TD><TD ALIGN="right"><TT>10,000</TT></TD></TR>
- * <TR><TD></TD>
- *     <TD>1 degree</TD><TD>=</TD><TD ALIGN="right"><TT>600,000</TT></TD></TR>
- * </TABLE>
- * </P>
- * <P>
- * The Earth's circumference (1 degree * 360) is 216,000,000, so
- * we can use 32 bit integer vars to represent these values!
- * Positive values mean North or East and negative values South
- * or West.
- * </P>
- */
-//struct point
-//{
-//  /** The latitude ;-) */
-//  int latitude;
-//  /** The longitude ;-) */
-//  int longitude;
-//};
-
-/**
- *
- */
-struct elementBorder
-{
-  int north;
-  int east;
-  int west;
-  int south;
-};
-
-/**
- * Contains the two coordinates for drawing the point into the map.
- */
-struct drawPoint
-{
-  /** */
-  double x;
-  /** */
-  double y;
-};
-
-/**
  * This struct contains one flightpoint.
  */
 struct flightPoint
@@ -86,8 +30,6 @@ struct flightPoint
   QPoint origP;
   /** The projected position of the point. */
   QPoint projP;
-  /** */
-  QPoint drawP;
   /** The barometrical height, registered by the logger. */
   int height;
   /** The gps-height, registered by the logger. */
@@ -104,27 +46,19 @@ struct flightPoint
   float bearing;
   /** Kreisflug 0 oder Streckenflug 1*/
   unsigned int f_state;
-  /**
-   * true, if logger says, point is valid.
-   */
-  bool isValid;
 };
 
 /**
- * This struct contains the data of one waypoint given to the logger.
+ * This struct contains the data of one waypoint given from the logger.
  */
 struct wayPoint
 {
   /** The name of the waypoint. */
   QString name;
-  /** The original position of the waypoint. */
+  /** The original lat/lon-position of the waypoint. */
   QPoint origP;
   /** The projected position of the waypoint. */
   QPoint projP;
-  /** The latitude ;-) */
-  int latitude;
-  /** The longitude ;-) */
-  int longitude;
   /** The time, sector 1 has been reached. */
   unsigned int sector1;
   /** The time, sector 2 has been reached. */

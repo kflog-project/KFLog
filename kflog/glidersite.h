@@ -22,8 +22,7 @@
 #include <runway.h>
 
 /**
- * This class provides handling the glider-sites. This class inherites
- * "ElevPoint".
+ * This class provides handling the glider-sites.
  *
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
@@ -32,38 +31,56 @@ class GliderSite : public RadioPoint
 {
   public:
     /**
-     * Creates a new GliderSite-object. n is the name of the site,
-     * latPos and lonPos give the position, elev is the elevation and f the
-	   * frequency, winch indicates the type of launching available.
+     * Creates a new GliderSite-object.
+     *
+     * @param  name  The name
+     * @param  abbr  The abbreviation, used for the gps-logger
+     * @param  pos  The position
+     * @param  elevation  The elevation
+     * @param  frequency  The frequency
+     * @param  winsh  "true", if only winsh-launch is available
+     * @param  wP  "true", if the element is a waypoint
      */
-    GliderSite(QString n, QString abbr, QPoint pos, unsigned int elev,
-        const char* f, bool w, bool wP);
+    GliderSite(QString name, QString abbr, QPoint pos, unsigned int elevation,
+        const char* frequency, bool winch, bool wP);
     /**
-     * Destructor, does nothing special.
+     * Destructor.
      */
     ~GliderSite();
     /**
-     * Returns the frequency of the glidersite.
+     * @return the frequency of the glidersite.
      */
     QString getFrequency() const;
     /**
-     * Returns a runway-struct, containing the data of the given runway.
+     * @return a runway-struct, containing the data of the given runway.
      */
     struct runway getRunway(int index = 0) const;
     /**
-     * Returns the number of runways.
+     * @return the number of runways.
      */
     unsigned int getRunwayNumber() const;
     /**
-     * true, if only winch launching is available.
+     * @return "true", if only winch launching is available.
      */
     bool isWinch() const;
-    /** */
-    virtual QString getInfoString() const;
-    /** */
-    virtual void printMapElement(QPainter* printPainter) const;
     /**
-     * Returns the elevation of the element.
+     * Return a short html-info-string about the airport, containg the
+     * name, the alias, the elevation and the frequency as well as a small
+     * icon of the airporttype.
+     *
+     * Reimplemented from SinglePoint.
+     *
+     * @return the infostring
+     */
+    virtual QString getInfoString() const;
+    /**
+     * Prints the element. Reimplemented from BaseMapElement.
+     *
+     * @param  printP  The painter to draw the element into.
+     */
+    virtual void printMapElement(QPainter* printP) const;
+    /**
+     * @return the elevation of the element.
      */
     unsigned int getElevation() const;
 
@@ -77,9 +94,13 @@ class GliderSite : public RadioPoint
      * if aero tow is also available.
      */
     bool winch;
-    /** Contains the runway-data. */
+    /**
+     * Contains the runway-data.
+     */
     struct runway* rwData;
-    /** Contains the number of runways. */
+    /**
+     * Contains the number of runways.
+     */
     unsigned int rwNum;
 };
 

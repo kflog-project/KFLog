@@ -25,7 +25,6 @@
 #include <qwidget.h>
 
 class KFLogApp;
-class Map;
 
 /**
  * Creates widgets for controling the mapview. The class will create
@@ -44,7 +43,7 @@ class MapControlView : public QWidget
     /**
      * Creates all needed widgets.
      */
-    MapControlView(QWidget *parent, Map* map);
+    MapControlView(QWidget *parent);
     /**
      * Destructor, does nothing special.
      */
@@ -68,7 +67,7 @@ class MapControlView : public QWidget
 
   signals:
     /** */
-    void scaleChanged();
+    void scaleChanged(double);
 
   private:
     /** */

@@ -22,8 +22,6 @@
 
 #include "mapmatrix.h"
 
-#include <mapconfig.h>
-
 #define VAR1   ( cos(v1) * cos(v1) )
 #define VAR2   ( sin(v1) + sin(v2) )
 
@@ -35,6 +33,9 @@
 
 #define MAX(a,b)   ( ( a > b ) ? a : b )
 #define MIN(a,b)   ( ( a < b ) ? a : b )
+
+#define MATRIX_MOVE(a)  \
+    __moveMap(a);
 
 // Mit welchem Radius müssen wir rechnen ???
 #define RADIUS 6370289.509
@@ -61,11 +62,25 @@ MapMatrix::MapMatrix()
   viewBorder.setBottom(25000000);
   viewBorder.setLeft(2000000);
   viewBorder.setRight(7000000);
+
+  printBorder.setTop(32000000);
+  printBorder.setBottom(25000000);
+  printBorder.setLeft(2000000);
+  printBorder.setRight(7000000);
 }
 
 MapMatrix::~MapMatrix()
 {
+/*
+  KConfig *config = kapp->config();
 
+  config->setGroup("Map Data");
+  config->writeEntry("Center Latitude", mapCenterLat);
+  config->writeEntry("Center Longitude", mapCenterLon);
+  config->writeEntry("Map Scale", cScale);
+
+  config->setGroup(0);
+*/
 }
 
 QPoint MapMatrix::wgsToMap(QPoint origPoint) const
@@ -81,7 +96,7 @@ QPoint MapMatrix::wgsToMap(int lat, int lon) const
                     RADIUS / MAX_SCALE);
 }
 
-QRect MapMatrix::wgsToMap(QRect rect)
+QRect MapMatrix::wgsToMap(QRect rect) const
 {
   return QRect(wgsToMap(rect.topLeft()), wgsToMap(rect.bottomRight()));
 }
@@ -186,6 +201,8 @@ QPoint MapMatrix::print(int lat, int lon, double dX, double dY) const
 
 QRect MapMatrix::getViewBorder() const  { return viewBorder; }
 
+QRect MapMatrix::getPrintBorder() const  { return printBorder; }
+
 QRect MapMatrix::getPrintBorder(double a1, double a2, double b1, double b2,
         double c1, double c2, double d1, double d2) const
 {
@@ -238,7 +255,6 @@ void MapMatrix::centerToRect(QRect center)
   int centerX = (center.left() + center.right()) / 2;
   int centerY = (center.top() + center.bottom()) / 2;
 
-  // Was passiert mit dem Maßstab ???
   double xScaleDelta = (double)(sqrt(center.width() * center.width())) /
       (double)mapViewSize.width();
   double yScaleDelta = (double)(sqrt(center.height() * center.height())) /
@@ -267,7 +283,7 @@ QPoint MapMatrix::mapToWgs(QPoint pos) const
   return __mapToWgs(invertMatrix.map(pos));
 }
 
-void MapMatrix::moveMap(int dir)
+void MapMatrix::__moveMap(int dir)
 {
   switch(dir)
     {
@@ -303,6 +319,9 @@ void MapMatrix::moveMap(int dir)
         mapCenterLat = homeLat;
         mapCenterLon = homeLon;
     }
+
+  createMatrix(matrixSize);
+  emit matrixChanged();
 }
 
 void MapMatrix::createMatrix(QSize newSize)
@@ -324,18 +343,18 @@ void MapMatrix::createMatrix(QSize newSize)
 
   worldMatrix = worldMatrix * translateMatrix;
 
-  /* Set the viewBorder */
+  // Setting the viewBorder
   bool result = true;
   QWMatrix invertMatrix = worldMatrix.invert(&result);
   if(!result)
       // Houston, wir haben ein Problem !!!
       qFatal("KFLog: Cannot invert worldmatrix!");
 
-  /*
-   * Die Berechnung der Kartengrenze funktioniert so nur auf der
-   * Nordhalbkugel. Auf der Südhalbkugel stimmen die Werte nur
-   * näherungsweise.
-   */
+  //
+  // Die Berechnung der Kartengrenze funktioniert so nur auf der
+  // Nordhalbkugel. Auf der Südhalbkugel stimmen die Werte nur
+  // näherungsweise.
+  //
   QPoint tCenter = __mapToWgs(invertMatrix.map(QPoint(newSize.width() / 2, 0)));
   QPoint tlCorner = __mapToWgs(invertMatrix.map(QPoint(0, 0)));
   QPoint trCorner = __mapToWgs(invertMatrix.map(QPoint(newSize.width(), 0)));
@@ -351,13 +370,23 @@ void MapMatrix::createMatrix(QSize newSize)
   mapBorder = invertMatrix.map(QRect(0,0, newSize.width(), newSize.height()));
   mapViewSize = newSize;
 
-  mapConfig->setMatrixValues(getScaleRange(), isSwitchScale());
+  emit displayMatrixValues(getScaleRange(), isSwitchScale());
+//  emit matrixChanged();
 }
 
 QWMatrix* MapMatrix::createPrintMatrix(double printScale, QSize pSize, int dX,
     int dY, bool rotate)
 {
   pScale = printScale;
+
+  //
+  // We must devide the scale by 2.0, because all printing is done
+  // with a scaled matrix to get a better resolution in the printout.
+  //
+  if(pScale <= 500.0 / 72 * 25.4 / 2.0)          /* 1:500.000   */
+      emit printMatrixValues(0);
+  else
+      emit printMatrixValues(1);
 
   const QPoint tempPoint(wgsToMap(mapCenterLat, mapCenterLon));
   printMatrix.reset();
@@ -386,27 +415,76 @@ QWMatrix* MapMatrix::createPrintMatrix(double printScale, QSize pSize, int dX,
       printMatrix = printMatrix * translateMatrix;
     }
 
+  /* Set the viewBorder */
+  bool result = true;
+  QWMatrix invertMatrix = printMatrix.invert(&result);
+  if(!result)
+      // Houston, wir haben ein Problem !!!
+      qFatal("KFLog: Cannot invert worldmatrix!");
+
+  /*
+   * Die Berechnung der Kartengrenze funktioniert so nur auf der
+   * Nordhalbkugel. Auf der Südhalbkugel stimmen die Werte nur
+   * näherungsweise.
+   */
+  QPoint tCenter = __mapToWgs(invertMatrix.map(QPoint(pSize.width() / 2, 0)));
+  QPoint tlCorner = __mapToWgs(invertMatrix.map(QPoint(0, 0)));
+  QPoint trCorner = __mapToWgs(invertMatrix.map(QPoint(pSize.width(), 0)));
+  QPoint blCorner = __mapToWgs(invertMatrix.map(QPoint(0, pSize.height())));
+  QPoint brCorner = __mapToWgs(invertMatrix.map(QPoint(pSize.width(),
+      pSize.height())));
+
+  printBorder.setTop(tCenter.y());
+  printBorder.setLeft(tlCorner.x());
+  printBorder.setRight(trCorner.x());
+  printBorder.setBottom(MIN(blCorner.y(), brCorner.y()));
+
   return &printMatrix;
 }
 
-void MapMatrix::scaleAdd(QSize mapSize)
+void MapMatrix::slotCenterToHome()  { MATRIX_MOVE( MapMatrix::Home ) }
+
+void MapMatrix::slotMoveMapNW() { MATRIX_MOVE( MapMatrix::North | MapMatrix::West ) }
+
+void MapMatrix::slotMoveMapN()  { MATRIX_MOVE( MapMatrix::North ) }
+
+void MapMatrix::slotMoveMapNE() { MATRIX_MOVE( MapMatrix::North | MapMatrix::East ) }
+
+void MapMatrix::slotMoveMapW()  { MATRIX_MOVE( MapMatrix::West ) }
+
+void MapMatrix::slotMoveMapE()  { MATRIX_MOVE( MapMatrix::East ) }
+
+void MapMatrix::slotMoveMapSW() { MATRIX_MOVE( MapMatrix::South | MapMatrix::West ) }
+
+void MapMatrix::slotMoveMapS()  { MATRIX_MOVE( MapMatrix::South ) }
+
+void MapMatrix::slotMoveMapSE() { MATRIX_MOVE( MapMatrix::South | MapMatrix::East ) }
+
+void MapMatrix::slotZoomIn()
 {
   cScale = MAX( ( cScale / 1.25 ), MAX_SCALE);
-  createMatrix(mapSize);
+  createMatrix(matrixSize);
+  emit matrixChanged();
 }
 
-void MapMatrix::scaleSub(QSize mapSize)
+void MapMatrix::slotZoomOut()
 {
   cScale = MIN( ( cScale * 1.25 ), MIN_SCALE);
-  createMatrix(mapSize);
+  createMatrix(matrixSize);
+  emit matrixChanged();
 }
 
-void MapMatrix::setScale(double nScale)  {  if (nScale > 0)  cScale = nScale;  }
-
-void MapMatrix::initMatrix(MapConfig* mConf)
+void MapMatrix::slotSetScale(double nScale)
 {
-  mapConfig = mConf;
+  if (nScale <= 0)  return;
 
+  cScale = nScale;
+  createMatrix(matrixSize);
+  emit matrixChanged();
+}
+
+void MapMatrix::slotInitMatrix()
+{
   KConfig *config = kapp->config();
 
   config->setGroup("Map Data");
@@ -441,30 +519,6 @@ void MapMatrix::initMatrix(MapConfig* mConf)
 
   var1 = cos(v1)*cos(v1);
   var2 = sin(v1)+sin(v2);
-
-  config->setGroup(0);
-}
-
-void MapMatrix::saveMatrix()
-{
-  KConfig *config = kapp->config();
-
-  config->setGroup("Map Data");
-  config->writeEntry("Center Latitude", mapCenterLat);
-  config->writeEntry("Center Longitude", mapCenterLon);
-  config->writeEntry("Map Scale", cScale);
-  config->writeEntry("Parallel1", v1);
-  config->writeEntry("Parallel2", v2);
-  config->writeEntry("Homesite Latitude", homeLat);
-  config->writeEntry("Homesite Longitude", homeLon);
-
-  config->setGroup("Scale");
-  config->writeEntry("Lower Limit", scaleBorders[LowerLimit]);
-  config->writeEntry("Border 1", scaleBorders[Border1]);
-  config->writeEntry("Border 2", scaleBorders[Border2]);
-  config->writeEntry("Border 3", scaleBorders[Border3]);
-  config->writeEntry("Switch Scale", scaleBorders[SwitchScale]);
-  config->writeEntry("Upper Limit", scaleBorders[UpperLimit]);
 
   config->setGroup(0);
 }

@@ -18,7 +18,6 @@
 #include "mapcontrolview.h"
 
 #include <kflog.h>
-#include <map.h>
 #include <mapcalc.h>
 #include <mapmatrix.h>
 
@@ -31,7 +30,7 @@
 
 #define DELTA 4
 
-MapControlView::MapControlView(QWidget* parent, Map* map)
+MapControlView::MapControlView(QWidget* parent)
   : QWidget(parent, "mapcontrolview")
 {
   QLabel* mapControl = new QLabel("<B>" + i18n("Map-control:") + "</B>",
@@ -157,15 +156,16 @@ MapControlView::MapControlView(QWidget* parent, Map* map)
   connect(currentScaleSlider, SIGNAL(sliderReleased()),
             SLOT(slotSetScale()));
 
-  connect(nwB, SIGNAL(clicked()), map, SLOT(slotMoveMapNW()));
-  connect(nB, SIGNAL(clicked()), map, SLOT(slotMoveMapN()));
-  connect(neB, SIGNAL(clicked()), map, SLOT(slotMoveMapNE()));
-  connect(wB, SIGNAL(clicked()), map, SLOT(slotMoveMapW()));
-  connect(cenB, SIGNAL(clicked()), map, SLOT(slotCenterToHome()));
-  connect(eB, SIGNAL(clicked()), map, SLOT(slotMoveMapE()));
-  connect(swB, SIGNAL(clicked()), map, SLOT(slotMoveMapSW()));
-  connect(sB, SIGNAL(clicked()), map, SLOT(slotMoveMapS()));
-  connect(seB, SIGNAL(clicked()), map, SLOT(slotMoveMapSE()));
+  extern MapMatrix _globalMapMatrix;
+  connect(nwB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapNW()));
+  connect(nB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapN()));
+  connect(neB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapNE()));
+  connect(wB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapW()));
+  connect(cenB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotCenterToHome()));
+  connect(eB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapE()));
+  connect(swB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapSW()));
+  connect(sB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapS()));
+  connect(seB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapSE()));
 }
 
 MapControlView::~MapControlView()
@@ -197,13 +197,7 @@ void MapControlView::slotSetMinMaxValue(int min, int max)
 
 void MapControlView::slotSetScale()
 {
-  extern MapMatrix _globalMapMatrix;
-
-  if( _globalMapMatrix.getScale() != __getScaleValue(currentScaleValue->value()) )
-    {
-      _globalMapMatrix.setScale(currentScaleValue->value());
-      emit(scaleChanged());
-    }
+  emit(scaleChanged(currentScaleValue->value()));
 }
 
 int MapControlView::__setScaleValue(int value)

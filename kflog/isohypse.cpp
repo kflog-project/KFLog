@@ -19,9 +19,9 @@
 
 #include <mapmatrix.h>
 
-Isohypse::Isohypse(QPointArray pA, unsigned int elev, bool isV, int s_ID)
+Isohypse::Isohypse(QPointArray pA, unsigned int elev, bool isV)
 : LineElement(0, BaseMapElement::Isohypse, pA, isV),
-  elevation(elev), sort_ID(s_ID)
+  elevation(elev)
 {
 
 }
@@ -38,5 +38,3 @@ void Isohypse::drawMapElement(QPainter* targetP, QPainter* maskP)
 }
 
 int Isohypse::getElevation() const { return elevation; }
-
-int Isohypse::sortID() const { return sort_ID; }

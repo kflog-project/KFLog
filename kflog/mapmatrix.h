@@ -18,83 +18,136 @@
 #ifndef MAPMATRIX_H
 #define MAPMATRIX_H
 
+#include <qobject.h>
 #include <qwmatrix.h>
-
-class MapConfig;
 
 /**
  * This class provides functions for converting coordinates between
- * several coordinate-systems.
+ * several coordinate-systems. It takes control over the mapscale
+ * and the pfijection-type. To avoid problems, there should be only
+ * one element per application.
  *
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
-class MapMatrix
+class MapMatrix : public QObject
 {
+  Q_OBJECT
+
   public:
     /**
-     *
+     * Creates a new mapmatrix-object.
      */
     MapMatrix();
     /**
-     *
+     * Destructor
      */
     ~MapMatrix();
     /**
-     * Converts the given geographic-data into the current
-     * maptype.
+     * Converts the given geographic-data into the current map-projection.
+     *
+     * @param  point  The point to be converted. The point must be in
+     *                the internal format of 1/10.000 minutes.
+     *
+     * @return the projected point
      */
-    QPoint wgsToMap(QPoint) const;
+    QPoint wgsToMap(QPoint point) const;
     /**
-     * Converts the given geographic-data into the current
-     * maptype.
+     * Converts the given geographic-data into the current map-projection.
+     *
+     * @param  lat  The latitude of the point to be converted. The point must
+     *              be in the internal format of 1/10.000 minutes.
+     * @param  lon  The longitude of the point to be converted. The point must
+     *              be in the internal format of 1/10.000 minutes.
+     *
+     * @return the projected point
      */
     QPoint wgsToMap(int lat, int lon) const;
-    /** */
-    QRect wgsToMap(QRect rect);
     /**
+     * Converts the given geographic-data into the current map-projection.
      *
+     * @param  rect  The rectangle to be converted. The points must
+     *              be in the internal format of 1/10.000 minutes.
+     *
+     * @return the projected rectangle
      */
-    QPointArray map(QPointArray) const;
-    /** */
-    QPoint map(QPoint) const;
-    /** */
-    double map(double) const;
+    QRect wgsToMap(QRect rect) const;
+    /**
+     * Maps the given projected pointarray into the current map-matrix.
+     *
+     * @param  pArray  The pointarray to be mapped
+     *
+     * @return the mapped pointarray
+     */
+    QPointArray map(QPointArray pArray) const;
+    /**
+     * Maps the given projected point into the current map-matrix.
+     *
+     * @param  point  The point to be mapped
+     *
+     * @return the mapped point
+     */
+    QPoint map(QPoint point) const;
+    /**
+     * Maps the given bearing into the current map-matrix.
+     *
+     * @param  bearing  The bearing to be mapped
+     *
+     * @return the mapped bearing
+     */
+    double map(double bearing) const;
     /**
      * Zur Zeit erwartet die Funktion noch originale Daten. Das ist
      * inkonsequent, da die andere print-Funktion bereits die
      * projezierten Daten haben will ...
      */
     QPoint print(int latitude, int longitude, double dX, double dY) const;
-    /** */
+    /**
+     */
     QPoint print(QPoint p) const;
-    /** */
+    /**
+     * Maps the given pointarray into the current print-matrix.
+     *
+     * @param  pArray  The pointarray to be mapped
+     *
+     * @return the mapped pointarray
+     */
     QPointArray print(QPointArray pArray) const;
     /**
+     * @param  type  The type of scale to be returned.
      *
+     * @return the selected scale
      */
-    void createMatrix(QSize newSize);
-    /** */
     double getScale(unsigned int type = MapMatrix::CurrentScale);
-    /** */
+    /**
+     * @return the lat/lon-border of the current map.
+     */
     QRect getViewBorder() const;
-    /** */
+    /**
+     * @return the lat/lon-border of the current print-map.
+     */
+    QRect getPrintBorder() const;
+    /**
+     * @return the lat/lon-border of the current map.
+     */
     QRect getPrintBorder(double a1, double a2, double b1, double b2,
         double c1, double c2, double d1, double d2) const;
-    /** */
-    void initMatrix(MapConfig* mConf);
-    /** */
-    void saveMatrix();
-    /** */
+    /**
+     * Initializes the matrix for printing the map.
+     */
     QWMatrix* createPrintMatrix(double scale, QSize pS, int dX = 0, int dY = 0,
         bool rotate = false);
-    /** */
-    void scaleAdd(QSize mapSize);
-    /** */
-    void scaleSub(QSize mapSize);
-    /** */
+    /**
+     * Initializes the matrix for displaying the map.
+     */
+    void createMatrix(QSize newSize);
+    /**
+     * @return "true", if the given point in visible in the current map.
+     */
     bool isVisible(QPoint pos) const;
-    /** */
+    /**
+     * @return "true", if the given rectangle intersects with the current map.
+     */
     bool isVisible(QRect itemBorder) const;
     /** */
     enum MoveDirection {NotSet = 0, North = 1, West = 2, East = 4,
@@ -104,24 +157,73 @@ class MapMatrix
      */
     enum ScaleType {LowerLimit = 0, Border1 = 1, Border2 = 2, Border3 = 3,
         UpperLimit = 4, SwitchScale = 5, CurrentScale = 6};
-    /** */
-    void moveMap(int dir);
-    /** */
+    /**
+     * Centers the map to the given point.
+     */
     void centerToPoint(QPoint);
-    /** */
+    /**
+     * Centers the map to the given rectangle and scales the map, so that
+     * the rectangle will be seen completly.
+     */
     void centerToRect(QRect);
     /** */
     QPoint mapToWgs(QPoint pos) const;
-    /** */
-    void setScale(double);
-    /** */
+    /**
+     *
+     */
     int getScaleRange() const;
-    /** */
+    /**
+     * @return "true", if the current scale is smaller than the switch-scale.
+     */
     bool isSwitchScale() const;
-
+    /**
+     * @return the lat/lon-position of the map-center.
+     */
     QPoint getMapCenter() const;
 
+  public slots:
+    /** */
+    void slotInitMatrix();
+    /** */
+    void slotZoomIn();
+    /** */
+    void slotZoomOut();
+    /** */
+    void slotCenterToHome();
+    /** */
+    void slotMoveMapNW();
+    /** */
+    void slotMoveMapN();
+    /** */
+    void slotMoveMapNE();
+    /** */
+    void slotMoveMapW();
+    /** */
+    void slotMoveMapE();
+    /** */
+    void slotMoveMapSW();
+    /** */
+    void slotMoveMapS();
+    /** */
+    void slotMoveMapSE();
+    /** */
+    void slotSetScale(double);
+
+  signals:
+    /** */
+    void displayMatrixValues(int, bool);
+    /** */
+    void printMatrixValues(int);
+    /**
+     * Emitted each time the matrix has changed.
+     */
+    void matrixChanged();
+
   private:
+    /**
+     * Moves the map into the given direction.
+     */
+    void __moveMap(int dir);
     /**
      * Returns the x-coordinate for the Lambert-projection.
      */
@@ -182,6 +284,7 @@ class MapMatrix
      * Contains the geographical border of the map (lat/lon).
      */
     QRect viewBorder;
+    QRect printBorder;
     QRect mapBorder;
     /** */
     QSize mapViewSize;
@@ -194,7 +297,7 @@ class MapMatrix
     /** */
     int scaleBorders[6];
     /** */
-    MapConfig* mapConfig;
+    QSize matrixSize;
 };
 
 #endif

@@ -30,6 +30,7 @@ ElevPoint::ElevPoint(QString n, QString abbr, unsigned int t, QPoint pos,
 : SinglePoint(n, abbr, t, pos, wP),
   elevation(e)
 {
+/*
   switch(typeID)
     {
       case Outlanding:
@@ -48,6 +49,7 @@ ElevPoint::ElevPoint(QString n, QString abbr, unsigned int t, QPoint pos,
         iconName = "obst_group_light.xpm";
         break;
     }
+*/
 }
 
 ElevPoint::~ElevPoint()

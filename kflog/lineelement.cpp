@@ -18,8 +18,8 @@
 #include "lineelement.h"
 
 LineElement::LineElement(QString n, unsigned int t, QPointArray pA, bool isV)
-: BaseMapElement(n, t),
-  projPointArray(pA), bBox(pA.boundingRect()), valley(isV), closed(false)
+  : BaseMapElement(n, t),
+    projPointArray(pA), bBox(pA.boundingRect()), valley(isV), closed(false)
 {
   if(typeID == BaseMapElement::Lake || typeID == BaseMapElement::City)
       closed = true;
@@ -32,6 +32,8 @@ LineElement::~LineElement()
 
 void LineElement::printMapElement(QPainter* printPainter) const
 {
+  if(!glConfig->isPrintBorder(typeID)) return;
+
   printPainter->setPen(glConfig->getPrintPen(typeID));
 
   if(closed)
@@ -47,9 +49,10 @@ void LineElement::printMapElement(QPainter* printPainter) const
 
 void LineElement::drawMapElement(QPainter* targetP, QPainter* maskP)
 {
-  /* If the element-type should not be drawn in the actual scale, or if the
-   * element is not visible, return.
-   */
+  //
+  // If the element-type should not be drawn in the actual scale, or if the
+  // element is not visible, return.
+  //
   if(!glConfig->isBorder(typeID) || !__isVisible()) return;
 
   QPen drawP(glConfig->getDrawPen(typeID));
@@ -69,11 +72,11 @@ void LineElement::drawMapElement(QPainter* targetP, QPainter* maskP)
 
   if(typeID == BaseMapElement::City)
     {
-      /*
-       * We do not draw the outline of the city directly, because otherwise
-       * we will get into trouble with cities lying at the edge of a
-       * map-section. So we use a thicker draw a line into the mask-painter.
-       */
+      //
+      // We do not draw the outline of the city directly, because otherwise
+      // we will get into trouble with cities lying at the edge of a
+      // map-section. So we use a thicker draw a line into the mask-painter.
+      //
       maskP->setPen(QPen(Qt::color1, drawP.width() * 2));
       maskP->drawPolygon(pA);
 
@@ -89,8 +92,10 @@ void LineElement::drawMapElement(QPainter* targetP, QPainter* maskP)
 
   if(closed)
     {
+      //
       // Lakes do not have a brush, because they are devided into normal
       // sections and we do not want to see section-borders in a lake ...
+      //
       if(typeID == BaseMapElement::Lake)
           targetP->setBrush(QBrush(drawP.color(), QBrush::SolidPattern));
       else
@@ -105,13 +110,13 @@ void LineElement::drawMapElement(QPainter* targetP, QPainter* maskP)
       targetP->drawPolyline(pA);
       if(typeID == Highway && drawP.width() > 4)
         {
-          // Mittellinie zeichnen
+          // draw the white line in the middle
           targetP->setPen(QPen(QColor(255,255,255), 1));
           targetP->drawPolyline(pA);
         }
     }
 }
 
-bool LineElement::__isVisible() const  {  return glMapMatrix->isVisible(bBox);  }
+bool LineElement::__isVisible() const {  return glMapMatrix->isVisible(bBox);  }
 
 bool LineElement::isValley() const  {  return valley;  }

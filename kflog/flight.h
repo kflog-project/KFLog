@@ -18,12 +18,9 @@
 #ifndef FLIGHT_H
 #define FLIGHT_H
 
-#include <mapcontents.h>
-#include <flighttask.h>
 #include <basemapelement.h>
 #include <wp.h>
 
-#include <qfile.h>
 #include <qlist.h>
 #include <qstring.h>
 #include <qstrlist.h>
@@ -39,98 +36,165 @@ class Flight : public BaseMapElement
   public:
 	  /**
 	   * Creates a new flight-object.
+	   * @param  fileName  The name of the igc-file
+	   * @param  route  The logged flight-points
+	   * @param  pName  The name of the pilot
+	   * @param  gType  The type of the glider
+	   * @param  gIG  The id of the glider
+	   * @param  wpL  The list of waypoints of the task
+	   * @param  date  The date of the flight
 	   */
     Flight(QString fileName,
   	    QList<flightPoint> route, QString pName, QString gType,
-        QString gID, QList<struct wayPoint> wpL, QString d);
+        QString gID, QList<struct wayPoint> wpL, QString date);
 	  /**
 	   * Destroys the flight-object.
 	   */
   	~Flight();
 	  /**
-	   * Returns the name of the pilot.
+	   * @return the name of the pilot.
 	   */
   	QString getPilot() const;
 	  /**
-	   * Returns the type of the glider.
+	   * @return the type of the glider.
 	   */
   	QString getType() const;
 	  /**
-	   * Returns the id of the glider.
+	   * @return the id of the glider.
 	   */
   	QString getID() const;
 	  /**
-	   * Returns the route-type of the flight
+	   * @param  isOrig  "true", if the original-task should be returned.
+	   *                 The default is "false". If the flight has not been
+	   *                 optimized, the original-task will be returned in any
+	   *                 case.
+	   * @return the route-type of the flight
 	   */
   	QString getRouteType(bool isOrig = false) const;
 	  /**
-	   * Returns the distance between all reached waypoints
+	   * @param  isOrig  "true", if the original-task should be used.
+	   *                 The default is "false". If the flight has not been
+	   *                 optimized, the original-task will be used in any case.
+	   * @return the distance between all reached waypoints
 	   */
     QString getDistance(bool isOrig = false) const;
 	  /**
-	   * Returns the distance of the task
+	   * @param  isOrig  "true", if the original-task should be used.
+	   *                 The default is "false". If the flight has not been
+	   *                 optimized, the original-task will be used in any case.
+	   * @return the distance of the task
 	   */
     QString getTaskDistance(bool isOrig = false) const;
     /**
-     * Returns the dmst-points of the flight.
+	   * @param  isOrig  "true", if the original-task should be used.
+	   *                 The default is "false". If the flight has not been
+	   *                 optimized, the original-task will be used in any case.
+	   * @return the dmst-points of the flight.
      */
     QString getPoints(bool isOrig = false) const;
 	  /**
-	   * Returns the starttime.
+	   * @return the starttime.
 	   */
   	int getStartTime() const;
 	  /**
-	   * Returns the start-site.
+	   * @return the start-site.
 	   */
     QString getStartSite() const;
     /**
-     * Returns the landing time.
+     * @return the landing time.
      */
     int getLandTime() const;
-    /** */
+    /**
+     * @return the number of logged points.
+     */
     unsigned int getRouteLength() const;
     /**
-     * Returns the site, where the glider has landed.
+     * @return the site, where the glider has landed.
      */
     QString getLandSite() const;
     /**
-      * Gibt das mittlere Steigen zwischen Zwei Punkten zurück
-      */
+     * Creates a stringlist, that contains several info about the part
+     * between the two given points.
+     * @return the info-string
+     * @param  start  the index of the first point of the section. If the
+     *                index is 0, the first point of the flight will be
+     *                used.
+     * @param  end  the index of the last point of the section. If the index
+     *              is 0, the last point of the flight will be used.
+     */
     QStrList getFlightValues(unsigned int start = 0, unsigned int end = 0);
     /**
-     *
+     * @return the date of the flight.
      */
     QString getDate() const;
     /**
-     * Returns the Point with the next time
+     * Searches the point of the flight, which time is the nearest
+     * to the given time.
+     * @return the point
      */
     struct flightPoint getPointByTime(int time);
+    /**
+     * Searches the point of the flight, which time is the nearest
+     * to the given time.
+     * @return the index of the point
+     */
     int getPointByTime_i(int time);
     /**
-     * Draws the element into the given painter.
+     * Draws the flight an the task into the given painter. Reimplemented
+     * from BaseMapElement.
+     * @param  targetP  The painter to draw the element into.
+     * @param  maskP  The maskpainter for targetP
      */
-    virtual void drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
-    /** */
+    virtual void drawMapElement(QPainter* targetP, QPainter* maskP);
+    /**
+     * @return the point with the index "n"
+     */
     struct flightPoint getPoint(int n);
     /**
-     * Contains the list of waypoints
+	   * @param  isOrig  "true", if the original-task should be used.
+	   *                 The default is "false". If the flight has not been
+	   *                 optimized, the original-task will be used in any case.
+	   * @return the list of waypoints
      */
     QList<struct wayPoint>* getWPList(bool isOrig = false);
-    /** */
+    /**
+     * @return the filename of the igc-file
+     */
     const char* getFileName() const;
-    /** */
+    /**
+     * @return the type of the task
+     */
     unsigned int getTaskType() const;
-    /** */
+    /**
+     * Optimizes the task.
+     * @return  "true", if the user wants to use the optimized task.
+     */
     bool optimizeTask();
-    /** */
+    /**
+     * Searches the first point of the flight, which distance to the
+     * mousecursor is less than 30 pixel. If no point is found, -1 is
+     * returned.
+     * @param  cPoint  The map-position of the mousecursor.
+     * @param  searchPoint  A pointer to a flightpoint. Will be filled
+     *                      with the flightpoint found.
+     * @return the index of the flightpoint or -1 if no point is found.
+     */
     int searchPoint(QPoint cPoint, struct flightPoint& searchPoint);
-    /** */
+    /**
+     * @return "true" if the flight has been optimized.
+     */
     bool isOptimized() const;
-    /** */
+    /**
+     * @return the bounding-box of the flight.
+     */
     QRect getFlightRect() const;
-    /** */
+    /**
+     * @return the bounding-box of the task.
+     */
     QRect getTaskRect() const;
-    /** */
+    /**
+     * @return the header-info of the igc-file (date, pilot-name, ...)
+     */
     QStrList getHeader();
     /**
      * The waypoint-types.
@@ -144,24 +208,21 @@ class Flight : public BaseMapElement
                    Dreieck_S = 6, Abgebrochen = 7, Unknown = 8, FAI_2 = 9,
                    FAI_S2 = 10, FAI_3 = 11, FAI_S3 = 12, Vieleck = 13};
     /**
-     * Return Values for the Min/Max Points
+     * Return values for the Min/Max Points
      */
     enum MaxPoints {V_MAX = -1, H_MAX = -2, VA_MAX=-3, VA_MIN = -4};
-
     /**
-      *  Flight State
-      */
-    enum FlightState {Strecke = 0, Links = 1, Rechts = 2, Vermischt = 3};
+     *  Flight State
+     */
+    enum FlightState {Straight = 0, LeftTurn = 1, RightTurn = 2, MixedTurn = 3};
 
   private:
     /**
-      *  Setzt den Status der WendePunkte
-      *
-      */
+     * Proofes the type of the task and sets the status of thewaypoints.
+     */
     void __setWaypointType();
-
     /**
-     * Prueft, ob Dreieck FAI ist.
+     * Proofes, if the task is a FAI-triangle
      */
     bool __isFAI(double distance_wp, double dist1, double dist2, double dist3);
     /**
@@ -191,8 +252,6 @@ class Flight : public BaseMapElement
   	void __checkMaxMin();
   	/** */
   	virtual bool __isVisible() const;
-  	/** */
-  	double __polar(double x, double y);
   	/** Kreisflug?? */
   	void __flightState();
 
@@ -226,7 +285,6 @@ class Flight : public BaseMapElement
     unsigned int va_max;
 
     QList<flightPoint> route;
-    FlightTask origTask;
 
     QRect bBoxFlight;
     QRect bBoxTask;

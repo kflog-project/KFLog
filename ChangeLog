@@ -1,6 +1,43 @@
 $Id$
 
 
+2002-01-04 Harry <harry@kflog.org>
+
+  * Added first version of waypoint-dialog and -handling.
+
+
+2001-12-28 Heiner <heiner@kflog.org>
+
+  * Did some api-documentation.
+
+
+2001-12-26 Heiner <heiner@kflog.org>
+
+  * Changed the flight-drawing slightly, so that the line looks a bit
+    smoother.
+
+  * Did some garbage-collection throughout the code and changed some
+    member-functions into slots to make communication between classes
+    easier.
+
+
+2001-12-25 Heiner <heiner@kflog.org>
+
+  * Added configuration of print-styles.
+
+  * Made MapConfig a global object.
+
+  * Now, different values of a flight-point can be displayed in the map.
+    The type can be selected via menu. Possible types are: altitude,
+    cycling, speed and vario.
+
+
+2001-12-23 Heiner <heiner@kflog.org>
+
+  * Added proofe of mapcontents before printing, so that new mapsection
+    will be loaded if neaded.
+
+
 2001-12-20 Florian <florian@kflog.org>
 
   * Added saving of window- and drawing-settings of the evaluation-dialog.

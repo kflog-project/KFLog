@@ -50,7 +50,7 @@ QString GliderSite::getInfoString() const
 
   text.sprintf("%d", elevation);
   text = "<TABLE BORDER=0><TR><TD>"
-      "<IMG SRC=" + path + iconName + ">" +
+      "<IMG SRC=" + path + glConfig->getPixmapName(typeID) + ">" +
       "</TD><TD>" + name + " (" + alias + ")</TD></TR>" +
       "<TR><TD></TD><TD><FONT SIZE=-1>" + text + "m" +
       "<BR>" + frequency + "</FONT></TD></TR></TABLE>";
@@ -62,36 +62,40 @@ void GliderSite::printMapElement(QPainter* printPainter) const
 {
   if(!__isVisible()) return;
 
-  struct drawPoint printPos;
+  QPoint printPos(glMapMatrix->print(position));
 
   int iconSize = 20;
 
+  QPen whiteP = QPen(QColor(255,255,255), 7, Qt::SolidLine,
+      Qt::SquareCap, Qt::MiterJoin);
+  QPen blackP = QPen(QColor(0, 0, 0), 3, Qt::SolidLine,
+      Qt::SquareCap, Qt::MiterJoin);
   QPointArray pointArray(5);
 
   printPainter->setBrush(QBrush::NoBrush);
 
-  printPainter->setPen(QPen(QColor(255,255,255), 7));
-  printPainter->drawEllipse(printPos.x - (iconSize / 2),
-        printPos.y - (iconSize / 2), iconSize, iconSize);
+  printPainter->setPen(whiteP);
+  printPainter->drawEllipse(printPos.x() - (iconSize / 2),
+        printPos.y() - (iconSize / 2), iconSize, iconSize);
 
-  printPainter->setPen(QPen(QColor(0,0,0), 3));
-  printPainter->drawEllipse(printPos.x - (iconSize / 2),
-        printPos.y - (iconSize / 2), iconSize, iconSize);
+  printPainter->setPen(blackP);
+  printPainter->drawEllipse(printPos.x() - (iconSize / 2),
+        printPos.y() - (iconSize / 2), iconSize, iconSize);
 
-  printPainter->setPen(QPen(QColor(255,255,255), 7));
-  pointArray.setPoint(0, printPos.x - iconSize , printPos.y + 2);
-  pointArray.setPoint(1, printPos.x - (iconSize / 2),
-                    printPos.y - (iconSize / 2) + 4);
-  pointArray.setPoint(2, printPos.x, printPos.y + 2);
-  pointArray.setPoint(3, printPos.x + (iconSize / 2),
-                    printPos.y - (iconSize / 2) + 4);
-  pointArray.setPoint(4, printPos.x + iconSize , printPos.y + 2);
+  printPainter->setPen(whiteP);
+  pointArray.setPoint(0, printPos.x() - iconSize , printPos.y() + 2);
+  pointArray.setPoint(1, printPos.x() - (iconSize / 2),
+                    printPos.y() - (iconSize / 2) + 4);
+  pointArray.setPoint(2, printPos.x(), printPos.y() + 2);
+  pointArray.setPoint(3, printPos.x() + (iconSize / 2),
+                    printPos.y() - (iconSize / 2) + 4);
+  pointArray.setPoint(4, printPos.x() + iconSize , printPos.y() + 2);
 
   printPainter->drawPolyline(pointArray);
-  printPainter->setPen(QPen(QColor(0, 0, 0), 3));
+  printPainter->setPen(blackP);
   printPainter->drawPolyline(pointArray);
 
   printPainter->setFont(QFont("helvetica", 10, QFont::Bold));
-  printPainter->drawText(printPos.x - 15, printPos.y + iconSize + 4, name);
-  printPainter->drawText(printPos.x - 15, printPos.y + iconSize + 14, frequency);
+  printPainter->drawText(printPos.x() - 15, printPos.y() + iconSize + 4, name);
+  printPainter->drawText(printPos.x() - 15, printPos.y() + iconSize + 14, frequency);
 }

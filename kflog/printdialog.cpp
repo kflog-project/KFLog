@@ -77,7 +77,6 @@ void PrintDialog::__drawGrid(const double selectedScale, QPainter* gridP,
     const double dX, const double dY, const double gridLeft,
     const double gridRight, const double gridTop, const double gridBot)
 {
-
   extern const MapMatrix _globalMapMatrix;
 
   gridP->setBrush(NoBrush);
@@ -85,8 +84,8 @@ void PrintDialog::__drawGrid(const double selectedScale, QPainter* gridP,
   QString text;
   if(mapCenterLon > 0)
     {
-      const int lon1 = mapBorder.left() / 600000;
-      const int lon2 = mapBorder.right() / 600000;
+      const int lon1 = mapBorder.left() / 600000 - 1;
+      const int lon2 = mapBorder.right() / 600000 + 1;
       const int lat1 = mapBorder.top() / 600000 + 1;
       const int lat2 = mapBorder.bottom() / 600000 - 1;
 
@@ -304,9 +303,7 @@ QString PrintDialog::__createMapPrint()
 
   __getMargin();
   QRect mapBorder;
-  QPoint delta;
-
-  delta = _globalMapMatrix.print(mapCenterLat, mapCenterLon, 0, 0);
+  QPoint delta(_globalMapMatrix.print(mapCenterLat, mapCenterLon, 0, 0));
 
   if(pageOrient == QPrinter::Portrait)
     {
@@ -520,7 +517,8 @@ QString PrintDialog::__createMapPrint()
           AlignTop | AlignRight, scaleText);
   printPainter.setFont(QFont("helvetica", 12, QFont::Normal, true));
   printPainter.drawText(rightTextX, rightTextY + 30, 296, 30,
-          AlignBottom | AlignRight, "printed by KFLog");
+          AlignBottom | AlignRight,
+          (QString)"printed by KFLog " + VERSION);
 
   /*
    * Wenn die druckbare Fläche zu klein ist, wird der Maßstabsbalken nicht
@@ -591,9 +589,9 @@ void PrintDialog::__printPositionData(QPainter* painter,
 {
   QString temp;
   painter->drawText(50, yPos, text);
-  painter->drawText(125, yPos, printPos(cPoint->drawP.x(), true));
+  painter->drawText(125, yPos, printPos(cPoint->origP.x(), true));
   painter->drawText(200, yPos, "/");
-  painter->drawText(210, yPos, printPos(cPoint->drawP.y(), false));
+  painter->drawText(210, yPos, printPos(cPoint->origP.y(), false));
 
   painter->drawText(270, yPos - 18, 55, 20, AlignBottom | AlignRight,
             printTime(cPoint->time));
@@ -620,9 +618,9 @@ void PrintDialog::__printPositionData(QPainter* painter,
    */
   QString temp;
   painter->drawText(50, yPos, cPoint->name);
-  painter->drawText(125, yPos, printPos(cPoint->latitude, true));
+  painter->drawText(125, yPos, printPos(cPoint->origP.x(), true));
   painter->drawText(200, yPos, "/");
-  painter->drawText(210, yPos, printPos(cPoint->longitude, false));
+  painter->drawText(210, yPos, printPos(cPoint->origP.y(), false));
 
   if(cPoint->sector1 != 0)
       painter->drawText(270, yPos - 18, 55, 20, AlignBottom | AlignRight,
@@ -787,7 +785,7 @@ void PrintDialog::__createLayout(bool isMap)
   printerCommandE->setMinimumHeight(printerCommandE->sizeHint().height() + 2);
   printerCommandE->setMaximumHeight(printerCommandE->sizeHint().height() + 5);
   QLabel* printerQueueL = new QLabel(i18n("Printer:"), this);
-  printerQueueL->setAlignment(AlignRight);
+  printerQueueL->setAlignment(AlignRight | AlignVCenter);
   printerQueueL->setMinimumWidth(printerQueueL->sizeHint().width() + 5);
   printerQueueE = new QLineEdit(this);
   printerQueueE->setMinimumHeight(printerQueueE->sizeHint().height() + 2);
@@ -1148,7 +1146,8 @@ void PrintDialog::slotPreview()
 
   // Jetzt darf angezeigt werden ...
   previewProc.clearArguments();
-  previewProc << "ghostview" << "-magstep" << "-2" <<  fileName;
+//  previewProc << "ghostview" << "-magstep" << "-2" <<  fileName;
+  previewProc << "kghostview" << fileName;
 //  previewProc << previewCommand <<  fileName;
 
   // Hier wird nicht gewartet, ob der Prozess irgendwann beendet wird.
@@ -1186,7 +1185,6 @@ void PrintDialog::slotPrint()
                       KProcess::Communication(KProcess::All));
     }
 }
-
 
 void PrintDialog::slotReadPrintStderr(KProcess* proc, char* str, int str_len)
 {

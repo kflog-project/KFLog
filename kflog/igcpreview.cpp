@@ -26,8 +26,8 @@
 #include <mapcalc.h>
 #include <wp.h>
 
-IGCPreview::IGCPreview(QWidget* parent, const char* name)
-  : KPreviewWidgetBase(parent, name)
+IGCPreview::IGCPreview(QWidget* parent)
+  : KPreviewWidgetBase(parent, "IGC-PreviewWidget")
 {
   textLabel = new QLabel(this);
   QVBoxLayout* layout = new QVBoxLayout(this, 5, 1);

@@ -17,6 +17,8 @@
 
 #include "evaluationframe.h"
 #include <evaluationdialog.h>
+#include <flight.h>
+#include <mapcalc.h>
 
 #include <kconfig.h>
 #include <kglobal.h>
@@ -24,13 +26,18 @@
 #include <qlayout.h>
 #include <qsplitter.h>
 
+#define X_ABSTAND 100
+
 EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   : QFrame(parent)
 {
 
+
+
   // variable Kontrolle
   QSplitter* kontSplitter = new QSplitter(QSplitter::Horizontal, this);
 
+  // View
   graphFrame = new QScrollView(kontSplitter);
   graphFrame->setResizePolicy(QScrollView::AutoOne);
   graphFrame->setHScrollBarMode(QScrollView::AlwaysOn);
@@ -198,6 +205,13 @@ void EvaluationFrame::slotShowGraph()
   evalView->drawCurve(flight, check_vario->isChecked(),
                 check_speed->isChecked(), check_baro->isChecked(),
                 glatt_va, glatt_v, glatt_h, secWidth);
+
+
+
+  int contentsX = (( centerTime - flight->getStartTime() ) / secWidth)
+             + X_ABSTAND ;
+  graphFrame->center(contentsX,0);
+warning("Setze auf X: %d",centerTime);
 }
 
 
@@ -229,6 +243,12 @@ void EvaluationFrame::slotScale(int g)
 {
   // gibt den Scalierungsfaktor zurück
   secWidth = g;
+
+  int contentsX = graphFrame->contentsX() + ( graphFrame->width() / 2 );
+  centerTime = flight->getPointByTime((contentsX - X_ABSTAND) *
+                          secWidthOld + flight->getStartTime()).time;
+
+  secWidthOld = secWidth;
 
   slotShowGraph();
 }

@@ -23,12 +23,10 @@
 /**
  * This class is used for the several airspaces. The object can be
  * one of: AirC, AirCtemp, AirD, AirDtemp, ControlD, AirElow, AirEhigh,
- *  AirF, Restricted, Danger, LowFlight
- *
- * @see BaseMapElement#objectType
- *
+ * AirF, Restricted, Danger, LowFlight
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
+ * @see BaseMapElement#objectType
  */
 class Airspace : public LineElement
 {
@@ -47,9 +45,12 @@ class Airspace : public LineElement
      */
     ~Airspace();
     /**
-     * Draws the element into the given painter.
+     * Draws the airspace into the given painter.
+     * Return a pointer to the drawn region.
+     * @param  targetP  The painter to draw the element into.
+     * @param  maskP  The maskpainter for targetP
      */
-    virtual QRegion* drawRegion(QPainter* targetP, QPainter* maskP);
+    QRegion* drawRegion(QPainter* targetP, QPainter* maskP);
     /**
      * Returns the upper limit of the airspace.
      */
@@ -74,7 +75,11 @@ class Airspace : public LineElement
      * The three types of elevation-data used in the maps.
      */
     enum LimitType {NotSet, MSL, GND, FL};
-    /** */
+    /**
+     * Returns a html-text-string about the airspace containing the name,
+     * the type and the borders.
+     * @return the infostring
+     */
     QString getInfoString() const;
 
   private:

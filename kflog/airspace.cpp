@@ -24,7 +24,8 @@ Airspace::Airspace(QString n, unsigned int t, QPointArray pA, unsigned int upper
   : LineElement(n, t, pA),
     lLimit(lower), lLimitType(lowerType), uLimit(upper), uLimitType(upperType)
 {
-
+  // All Airspaces are closed regions ...
+  closed = true;
 }
 
 Airspace::~Airspace()
@@ -34,7 +35,7 @@ Airspace::~Airspace()
 
 QRegion* Airspace::drawRegion(QPainter* targetP, QPainter* maskP)
 {
-  if(!__isVisible()) return (new QRegion());
+  if(!glConfig->isBorder(typeID) || !__isVisible()) return (new QRegion());
 
   QPointArray tA = glMapMatrix->map(projPointArray);
 

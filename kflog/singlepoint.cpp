@@ -36,9 +36,7 @@ void SinglePoint::printMapElement(QPainter* printPainter) const
 {
   if(!__isVisible()) return;
 
-  struct drawPoint printPos;
-
-  QPoint printPoint = glMapMatrix->print(position);
+  QPoint printPos(glMapMatrix->print(position));
 
   int iconSize = 16;
 
@@ -49,19 +47,15 @@ void SinglePoint::printMapElement(QPainter* printPainter) const
    * Hier sollte mal für eine bessere Qualität der Icons gesorgt werden.
    * Eventuell kann man die Icons ja hier zeichnen lassen ?!?
    */
-  if(iconName == 0)
+  if(typeID == BaseMapElement::Village)
     {
-      switch(typeID)
-        {
-          case Village:
-            printPainter->setPen(QPen(QColor(0,0,0), 2));
-            printPainter->setBrush(QBrush::NoBrush);
-            printPainter->drawEllipse(printPos.x - 5, printPos.y - 5, 10, 10);
-            return;
-        }
+      printPainter->setPen(QPen(QColor(0,0,0), 2));
+      printPainter->setBrush(QBrush::NoBrush);
+      printPainter->drawEllipse(printPos.x() - 5, printPos.y() - 5, 10, 10);
+      return;
     }
 
-  printPainter->drawPixmap(printPoint.x() - iconSize, printPoint.x() - iconSize,
+  printPainter->drawPixmap(printPos.x() - iconSize, printPos.x() - iconSize,
       glConfig->getPixmap(typeID));
 }
 
@@ -81,33 +75,21 @@ void SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
   targetP->setPen(QPen(QColor(0,0,0), 2));
   int iconSize = 16;
 
-  if(iconName == 0)
+  if(typeID == BaseMapElement::Village)
     {
-      /* Hier ist eine weitere virtuelle Funktion nötig, die
-       * das Element zeichnet!
-       */
-      switch(typeID)
-        {
-          case Village:
-            targetP->setBrush(QBrush::NoBrush);
-            targetP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
-            return;
-        }
+      targetP->setBrush(QBrush::NoBrush);
+      targetP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
+      return;
     }
 
   curPos = glMapMatrix->map(position);
 
   if(glMapMatrix->isSwitchScale())
-    {
       targetP->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
           glConfig->getPixmap(typeID));
-    }
   else
-    {
-      targetP->drawPixmap(curPos.x() - iconSize / 2, curPos.y() - iconSize / 2,
-      QPixmap(KGlobal::dirs()->findResource("appdata", "mapicons/small/") +
-          iconName));
-    }
+      targetP->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
+          glConfig->getPixmap(typeID));
 }
 
 void SinglePoint::setWaypoint(bool isW)  {  isWaypoint = isW;  }

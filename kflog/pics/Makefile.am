@@ -1,7 +1,7 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
 
-EXTRA_DIST = brush0.png brush1.png brush10.png brush11.png brush12.png brush2.png brush3.png brush4.png brush5.png brush6.png brush7.png brush8.png brush9.png dashdot.png dashdotdot.png dashed.png dotted.png flag_green.png flag_red.png solid.png splash.png 
+EXTRA_DIST = brush0.png brush1.png brush10.png brush11.png brush12.png brush2.png brush3.png brush4.png brush5.png brush6.png brush7.png brush8.png brush9.png dashdot.png dashdotdot.png dashed.png dotted.png flag_green.png flag_red.png solid.png splash.png brush13.png 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_datadir)/kflog/pics/
@@ -46,6 +46,8 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/solid.png $(kde_datadir)/kflog/pics/solid.png
 	$(mkinstalldirs) $(kde_datadir)/kflog/pics/
 	$(INSTALL_DATA) $(srcdir)/splash.png $(kde_datadir)/kflog/pics/splash.png
+	$(mkinstalldirs) $(kde_datadir)/kflog/pics/
+	$(INSTALL_DATA) $(srcdir)/brush13.png $(kde_datadir)/kflog/pics/brush13.png
 
 uninstall-local:
 	-rm -f $(kde_datadir)/kflog/pics/brush0.png
@@ -69,5 +71,6 @@ uninstall-local:
 	-rm -f $(kde_datadir)/kflog/pics/flag_red.png
 	-rm -f $(kde_datadir)/kflog/pics/solid.png
 	-rm -f $(kde_datadir)/kflog/pics/splash.png
+	-rm -f $(kde_datadir)/kflog/pics/brush13.png
 
 ####### kdevelop will overwrite this part!!! (end)############

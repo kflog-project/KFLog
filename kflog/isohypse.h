@@ -21,29 +21,47 @@
 #include <lineelement.h>
 
 /**
+ * This class is used for isohypses.
+ *
  * @author Heiner Lamprecht, Florian Ehinger
  */
 class Isohypse : public LineElement
 {
   public:
-    /** */
-    Isohypse(QPointArray pA, unsigned int elev, bool isValley, int s_ID);
-    /** */
+    /**
+     * Creates a new isohypse.
+     *
+     * @param  pA  The pointarray containing the positions.
+     * @param  elev  The elevation
+     * @param  isValles "true", if the area is a valley
+     */
+    Isohypse(QPointArray pA, unsigned int elev, bool isValley);
+    /**
+     * Destructor
+     */
     ~Isohypse();
-   /** */
+    /**
+     * Draws the element into the given painter. Reimplemented from
+     * BaseMapElement.
+     *
+     * @param  targetP  The painter to draw the element into.
+     * @param  maskP  The maskpainter for targetP
+     */
     virtual void drawMapElement(QPainter* targetP, QPainter* maskP);
-    /** */
+    /**
+     * @return the elevation of the line
+     */
     int getElevation() const;
-    /** */
-    int sortID() const;
 
   private:
-    /** */
+    /**
+     * The elevation
+     */
     int elevation;
-    /** true, wenn Element ein Tal ist */
+    /**
+     * "true", if element is a valley.
+     */
     bool valley;
-    /** Enthält den Index der Liste, in die das Element gehört ... */
-    int sort_ID;
 };
 
 #endif

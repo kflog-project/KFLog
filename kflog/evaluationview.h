@@ -18,9 +18,9 @@
 #ifndef EVALUATIONVIEW_H
 #define EVALUATIONVIEW_H
 
-#include <qwidget.h>
+#include <qpixmap.h>
 #include <qscrollview.h>
-
+#include <qwidget.h>
 
 class Flight;
 class EvaluationDialog;
@@ -66,7 +66,7 @@ class EvaluationView : public QWidget
   virtual void mouseReleaseEvent(QMouseEvent* event);
 
  private:
-  void __drawCsystem(QPainter* painter, bool vario, bool speed, bool baro);
+  void __drawCsystem(QPainter* painter);
   /** */
   QPoint __baroPoint(int height, int baro_d[], int gn, int i);
   /** */
@@ -77,10 +77,13 @@ class EvaluationView : public QWidget
   void __paintCursor(int xpos, int calt, int move, int cursor);
   /** Zeichnet die Kurven */
   void __draw();
-
+  /** Zeichnet die Y Achse */
+  void __drawYAxis();
 
   /** Behält den Inhalt der Zeichnung. */
   QPixmap* pixBuffer;
+  QPixmap* pixBufferYAxis;
+  QPixmap* pixBufferKurve;
   /* Wieso meckert der Compiler, wenn hier nur "QPixmap" statt eines
    * Pointers steht ?????
    */
@@ -119,6 +122,9 @@ class EvaluationView : public QWidget
   Flight* flight;
 
   bool isFlight;
+
+//  QPixmap pixCursor1;
+//  QPixmap pixCursor2;
 };
 
 #endif
