@@ -16,12 +16,12 @@
  ***************************************************************************/
 
 #include "waypoints.h"
-#include "basemapelement.h"
 #include "wp.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "airport.h"
 #include "glidersite.h"
+#include "kflog.h"
 
 #include <pwd.h>
 #include <stdlib.h>
@@ -38,6 +38,7 @@
 #include <kmessagebox.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <kapp.h>
 
 extern MapContents _globalMapContents;
 extern MapMatrix _globalMapMatrix;
@@ -45,10 +46,6 @@ extern MapMatrix _globalMapMatrix;
 Waypoints::Waypoints(QWidget *parent, const char *name )
   : QFrame(parent, name)
 {
-  TranslationElement *te;
-
-  initSurfaces();
-  initTypes();
   addWaypointWindow(this);
   addPopupMenu();
 
@@ -59,66 +56,10 @@ Waypoints::Waypoints(QWidget *parent, const char *name )
   connect(waypointDlg, SIGNAL(addWaypoint()), SLOT(slotAddWaypoint()));
 
   importFilterDlg = new WaypointImpFilterDialog(this);
-
-  // init comboboxes
-  for (te = waypointTypes.first(); te != 0; te = waypointTypes.next()) {
-    waypointDlg->waypointType->insertItem(te->text);
-  }
-
-  for (te = surfaces.first(); te != 0; te = surfaces.next()) {
-    waypointDlg->surface->insertItem(te->text);
-  }
 }
 
 Waypoints::~Waypoints()
 {
-}
-
-void Waypoints::initSurfaces()
-{
-  surfaces.setAutoDelete(true);
-
-  surfaces.append(new TranslationElement(Airport::NotSet, i18n("Unknown")));
-  surfaces.append(new TranslationElement(Airport::Grass, i18n("Grass")));
-  surfaces.append(new TranslationElement(Airport::Asphalt, i18n("Asphalt")));
-  surfaces.append(new TranslationElement(Airport::Concrete, i18n("Concrete")));
-
-  surfaces.sort();
-}
-
-void Waypoints::initTypes()
-{
-  waypointTypes.setAutoDelete(true);
-
-  // don't know if we really need all of them
-  waypointTypes.append(new TranslationElement(BaseMapElement::AerialRailway, i18n("Aerial railway")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Airfield, i18n("Airfield")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Airport, i18n("Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::AmbHeliport, i18n("Ambul. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Ballon, i18n("Ballon")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::City, i18n("City")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::CivHeliport, i18n("Civil Heliport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::IntAirport, i18n("Int. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::MilAirport, i18n("Mil. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::CivMilAirport, i18n("Civil/Mil. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::ClosedAirfield, i18n("Closed Airfield")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Glidersite, i18n("Glider site")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::HangGlider, i18n("Hang glider")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Highway, i18n("Highway")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Landmark, i18n("Landmark")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::MilHeliport, i18n("Mil. Heliport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::UltraLight, i18n("Ultralight")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Parachute, i18n("Parachute")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Outlanding, i18n("Outlanding")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Obstacle, i18n("Obstacle")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::ObstacleGroup, i18n("Obstacle group")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacleGroup, i18n("Obstacle group (lighted)")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacle, i18n("Obstacle (lighted)")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Railway, i18n("Railway")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Road, i18n("Road")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Village, i18n("Village")));
-
-  waypointTypes.sort();
 }
 
 /** No descriptions */
@@ -319,16 +260,12 @@ bool Waypoints::saveChanges()
 /** insert waypoint from waypoint dialog */
 void Waypoints::slotAddWaypoint()
 {
-  int comboIdx;
-
   if (!waypointDlg->name->text().isEmpty()) {
     // insert a new waypoint to current catalog
     wayPoint *w = new wayPoint;
     w->name = waypointDlg->name->text().upper();
     w->description = waypointDlg->description->text();
-    comboIdx = waypointDlg->waypointType->currentItem();
-    // translate to id
-    w->type = comboIdx != -1 ? waypointTypes.at(comboIdx)->id : -1;
+    w->type = waypointDlg->getWaypointType();
     w->origP.setX(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
     w->origP.setY(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
     w->elevation = waypointDlg->elevation->text().toInt();
@@ -336,9 +273,7 @@ void Waypoints::slotAddWaypoint()
     w->frequency = waypointDlg->frequency->text().toDouble();
     w->runway = waypointDlg->runway->text().toInt();
     w->length = waypointDlg->length->text().toInt();
-    comboIdx = waypointDlg->surface->currentItem();
-    // translate to id
-    w->surface = comboIdx != -1 ? surfaces.at(comboIdx)->id : -1;
+    w->surface = waypointDlg->getSurface();
     w->isLandable = waypointDlg->isLandable->isChecked();
     w->comment = waypointDlg->comment->text();
 
@@ -353,7 +288,6 @@ void Waypoints::slotAddWaypoint()
 void Waypoints::slotEditWaypoint()
 {
   QListViewItem *item = waypoints->currentItem();
-  int comboIdx;
   QString tmp, oldName;
 
   if (item != 0) {
@@ -365,7 +299,7 @@ void Waypoints::slotEditWaypoint()
     waypointDlg->name->setText(w->name);
     waypointDlg->description->setText(w->description);
     // translate id to index
-    waypointDlg->waypointType->setCurrentItem(waypointTypes.idxById(w->type));
+    waypointDlg->setWaypointType(w->type);
     waypointDlg->longitude->setText(printPos(w->origP.x(), false));
     waypointDlg->latitude->setText(printPos(w->origP.y(), true));
     tmp.sprintf("%d", w->elevation);
@@ -378,7 +312,7 @@ void Waypoints::slotEditWaypoint()
     tmp.sprintf("%d", w->length);
     waypointDlg->length->setText(tmp);
     // translate to id
-    waypointDlg->surface->setCurrentItem(surfaces.idxById(w->surface));
+    waypointDlg->setSurface(w->surface);
     waypointDlg->comment->setText(w->comment);
     waypointDlg->isLandable->setChecked(w->isLandable);
 
@@ -386,9 +320,7 @@ void Waypoints::slotEditWaypoint()
       if (!waypointDlg->name->text().isEmpty()) {
         w->name = waypointDlg->name->text().left(6).upper();
         w->description = waypointDlg->description->text();
-        comboIdx = waypointDlg->waypointType->currentItem();
-        // translate to id
-        w->type = comboIdx != -1 ? waypointTypes.at(comboIdx)->id : -1;
+        w->type = waypointDlg->getWaypointType();
         w->origP.setX(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
         w->origP.setY(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
         w->elevation = waypointDlg->elevation->text().toInt();
@@ -396,9 +328,7 @@ void Waypoints::slotEditWaypoint()
         w->frequency = waypointDlg->frequency->text().toDouble();
         w->runway = waypointDlg->runway->text().toInt();
         w->length = waypointDlg->length->text().toInt();
-        comboIdx = waypointDlg->surface->currentItem();
-        // translate to id
-        w->surface = comboIdx != -1 ? surfaces.at(comboIdx)->id : -1;
+        w->surface = waypointDlg->getSurface();
         w->comment = waypointDlg->comment->text();
         w->isLandable = waypointDlg->isLandable->isChecked();
 
@@ -437,6 +367,8 @@ void Waypoints::fillWaypoints()
   QListViewItem *item;
   QDictIterator<wayPoint> it(c->wpList);
   bool filterRadius, filterArea;
+  extern TranslationList surfaces;
+  extern TranslationList waypointTypes;
 
   waypoints->clear();
 

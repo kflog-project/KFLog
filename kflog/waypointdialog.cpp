@@ -16,6 +16,8 @@
 ***********************************************************************/
 
 #include "waypointdialog.h"
+#include "translationlist.h"
+#include "kflog.h"
 
 #include <qlayout.h>
 #include <qlabel.h>
@@ -23,12 +25,26 @@
 
 #include <klocale.h>
 #include <kseparator.h>
+#include <kapp.h>
+
+extern TranslationList surfaces;
+extern TranslationList waypointTypes;
 
 WaypointDialog::WaypointDialog(QWidget *parent, const char *name)
  : KDialog(parent, name, true)
 {
   setCaption(i18n("Waypoint definition"));
   __initDialog();
+
+  TranslationElement *te;
+  // init comboboxes
+  for (te = waypointTypes.first(); te != 0; te = waypointTypes.next()) {
+    waypointType->insertItem(te->text);
+  }
+
+  for (te = surfaces.first(); te != 0; te = surfaces.next()) {
+    surface->insertItem(te->text);
+  }
 }
 
 WaypointDialog::~WaypointDialog()
@@ -150,4 +166,48 @@ void WaypointDialog::slotAddWaypoint()
 {
   emit addWaypoint();
   clear();
+}
+
+/** return internal type of waypoint */
+int WaypointDialog::getWaypointType()
+{
+  int type = waypointType->currentItem();
+
+  if (type != -1) {
+    type = waypointTypes.at(type)->id;
+  }
+
+  return type;
+}
+
+/** return interna type of surface */
+int WaypointDialog::getSurface()
+{
+  int s = surface->currentItem();
+
+  if (s != -1) {
+    s = surfaces.at(s)->id;
+  }
+
+  return s;
+}
+
+/** set waypoint type in combo box
+translate internal id to index */
+void WaypointDialog::setWaypointType(int type)
+{
+  if (type != -1) {
+    type = waypointTypes.idxById(type);
+  }
+  waypointType->setCurrentItem(type);
+}
+
+/** set surface type in combo box
+translate internal id to index */
+void WaypointDialog::setSurface(int s)
+{
+  if (s != -1) {
+    s = surfaces.idxById(s);
+  }
+  surface->setCurrentItem(s);
 }

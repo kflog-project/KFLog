@@ -1,5 +1,12 @@
 $Id$
 
+2002-04-19 Harry <harry@kflog.org>
+
+  * Adding free waypoint to graphical planning
+	
+  * format display of task in dataview
+
+
 2002-04-16 Harry <harry@kflog.org>
 
   * Show current flight in 3D

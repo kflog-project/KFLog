@@ -1016,7 +1016,7 @@ QString FlightTask::getFlightInfoString()
         <TR><TD WIDTH=15></TD>\
         <TD>" + printPos(wpList.at(loop)->origP.x()) + "</TD>\
         <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.y(), false) +
-        "</TD></TR></TABLE>";
+        "</TD></TR>";
     }
 
     htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +

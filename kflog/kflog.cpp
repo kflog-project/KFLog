@@ -54,6 +54,8 @@
 #include <recorderdialog.h>
 #include <waypoints.h>
 #include <igc3ddialog.h>
+#include "basemapelement.h"
+#include "airport.h"
 
 #define STATUS_LABEL(a,b,c) \
   a = new KStatusBarLabel( "", 0, statusBar() ); \
@@ -63,6 +65,9 @@
   a->setMargin(0); \
   a->setLineWidth(0); \
   a->setAlignment( c | AlignVCenter );
+
+TranslationList surfaces;
+TranslationList waypointTypes;
 
 KFLogApp::KFLogApp()
   : KDockMainWindow(0, "KFLogMainWindow"), showStartLogo(false)
@@ -81,6 +86,10 @@ KFLogApp::KFLogApp()
       startLogo = new KFLogStartLogo();
       startLogo->show();
     }
+
+  // initialize internal translation lists
+  initSurfaces();
+  initTypes();
 
   connect(&_globalMapMatrix, SIGNAL(displayMatrixValues(int, bool)),
       &_globalMapConfig, SLOT(slotSetMatrixValues(int, bool)));
@@ -427,6 +436,10 @@ void KFLogApp::initView()
       SLOT(slotShowCurrentFlight()));
   connect(&_globalMapContents, SIGNAL(currentFlightChanged()), dataView,
       SLOT(setFlightData()));
+
+  connect(waypoints, SIGNAL(copyWaypoint2Task(wayPoint *)), map,
+    SLOT(slotAppendWaypoint2Task(wayPoint *)));
+
 }
 
 void KFLogApp::slotShowPointInfo(const QPoint pos,
@@ -878,3 +891,51 @@ void KFLogApp::slotOpenRecorderDialog()
   RecorderDialog* dlg = new RecorderDialog(this, config, "recorderDialog");
   dlg->exec();
 }
+
+void KFLogApp::initSurfaces()
+{
+  surfaces.setAutoDelete(true);
+
+  surfaces.append(new TranslationElement(Airport::NotSet, i18n("Unknown")));
+  surfaces.append(new TranslationElement(Airport::Grass, i18n("Grass")));
+  surfaces.append(new TranslationElement(Airport::Asphalt, i18n("Asphalt")));
+  surfaces.append(new TranslationElement(Airport::Concrete, i18n("Concrete")));
+
+  surfaces.sort();
+}
+
+void KFLogApp::initTypes()
+{
+  waypointTypes.setAutoDelete(true);
+
+  // don't know if we really need all of them
+  waypointTypes.append(new TranslationElement(BaseMapElement::AerialRailway, i18n("Aerial railway")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Airfield, i18n("Airfield")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Airport, i18n("Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::AmbHeliport, i18n("Ambul. Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Ballon, i18n("Ballon")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::City, i18n("City")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::CivHeliport, i18n("Civil Heliport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::IntAirport, i18n("Int. Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::MilAirport, i18n("Mil. Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::CivMilAirport, i18n("Civil/Mil. Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::ClosedAirfield, i18n("Closed Airfield")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Glidersite, i18n("Glider site")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::HangGlider, i18n("Hang glider")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Highway, i18n("Highway")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Landmark, i18n("Landmark")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::MilHeliport, i18n("Mil. Heliport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::UltraLight, i18n("Ultralight")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Parachute, i18n("Parachute")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Outlanding, i18n("Outlanding")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Obstacle, i18n("Obstacle")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::ObstacleGroup, i18n("Obstacle group")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacleGroup, i18n("Obstacle group (lighted)")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacle, i18n("Obstacle (lighted)")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Railway, i18n("Railway")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Road, i18n("Road")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Village, i18n("Village")));
+
+  waypointTypes.sort();
+}
+

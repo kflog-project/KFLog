@@ -16,8 +16,6 @@
 ***********************************************************************/
 
 #include "kfloglistview.h"
-
-
 #include <qheader.h>
 
 #include <kconfig.h>

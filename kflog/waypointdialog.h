@@ -36,6 +36,16 @@ class WaypointDialog : public KDialog  {
 public: 
 	WaypointDialog(QWidget *parent=0, const char *name=0);
 	~WaypointDialog();
+  /** return interna type of surface */
+  int getSurface();
+  /** return internal type of waypoint */
+  int getWaypointType();
+  /** set surface type in combo box
+translate internal id to index */
+  void setSurface(int s);
+  /** set waypoint type in combo box
+translate internal id to index */
+  void setWaypointType(int type);
 private: // Private methods
   /** No descriptions */
   void __initDialog();
@@ -44,8 +54,6 @@ public: // Public attributes
   QLineEdit *name;
   /**  */
   QLineEdit *description;
-  /**  */
-  KComboBox *waypointType;
   /**  */
   QLineEdit *elevation;
   /**  */
@@ -56,8 +64,6 @@ public: // Public attributes
   QLineEdit *runway;
   /**  */
   QLineEdit *length;
-  /**  */
-  KComboBox *surface;
   /**  */
   QLineEdit *comment;
   /**  */
@@ -75,6 +81,11 @@ signals: // Signals
 private slots: // Private slots
   /** No descriptions */
   void slotAddWaypoint();
+private:
+  /**  */
+  KComboBox *waypointType;
+  /**  */
+  KComboBox *surface;
 };
 
 #endif

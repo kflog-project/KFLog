@@ -94,6 +94,8 @@ class Map : public QWidget
     void slotActivatePlanning();
   /** No descriptions */
   void slotShowCurrentFlight();
+  /** append a waypoint to the current task */
+  void slotAppendWaypoint2Task(wayPoint *p);
   signals:
     /** */
     void changed(QSize);
@@ -180,6 +182,10 @@ class Map : public QWidget
       * graphical planning
       */
     void __graphicalPlanning(QPoint current, QMouseEvent* event);
+    /** search for a waypoint
+        First look in task itself
+        Second look in map contents */
+    bool __getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint> &taskPointList);
 
     /**
      * This pixmap is used to store the currently displayed map.

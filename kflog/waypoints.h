@@ -21,7 +21,6 @@
 #include "waypointimpfilterdialog.h"
 #include "waypointdialog.h"
 #include "waypointcatalog.h"
-#include "translationlist.h"
 #include "guicontrols/kfloglistview.h"
 #include "wp.h"
 
@@ -45,10 +44,6 @@ public:
   bool saveChanges();
 private: // Private methods
   /** No descriptions */
-  void initSurfaces();
-  /** No descriptions */
-  void initTypes();
-  /** No descriptions */
   void addWaypointWindow(QWidget *parent);
   /** No descriptions */
   void addPopupMenu();
@@ -57,8 +52,6 @@ private: // Private methods
   /** read filter and store in catalog */
   void getFilterData();
 private: // Private attributes
-  TranslationList surfaces;
-  TranslationList waypointTypes;
   /** popup menu for waypoint's */
   KPopupMenu *wayPointPopup;
   /**  */

@@ -37,6 +37,7 @@
 #include <singlepoint.h>
 #include <radiopoint.h>
 #include "wp.h"
+#include "waypointdialog.h"
 
 #include <iostream.h>
 
@@ -152,269 +153,220 @@ Map::~Map()
 
 }
 
+
 void Map::mouseMoveEvent(QMouseEvent* event)
 {
   extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
   int index;
   BaseFlightElement *f = _globalMapContents.getFlight();
+  const QPoint current = event->pos();
+  struct wayPoint wp;
+  if (planning == 1 || planning == 3) {
+    QList<wayPoint> taskPointList = f->getWPList();
+    QList<wayPoint> tempTaskPointList = f->getWPList();
+    bool found = __getTaskWaypoint(current, &wp, taskPointList);
+    // 3: Task beendet verschieben eines Punktes
+//    SinglePoint* hitElement;
 
-  if(planning == 1 || planning == 3)
-    {
-      // 3: Task beendet verschieben eines Punktes
-      const QPoint current = event->pos();
-      QList<wayPoint> taskPointList = f->getWPList();
-      QList<wayPoint> tempTaskPointList = f->getWPList();
-      SinglePoint* hitElement;
+//    QPoint sitePos, preSitePos, nextSitePos;
+    QPoint preSitePos, nextSitePos;
+    QPoint point = current;
+    double dX, dY, delta(8.0);
 
-      QPoint sitePos, preSitePos, nextSitePos;
-      QPoint point = current;
-      double dX, dY, delta(8.0);
+    bool drawWP = false;
 
-      bool drawWP = false;
-
-      if(_globalMapMatrix.isSwitchScale()) delta = 16.0;
-
-
-      if(!taskPointList.isEmpty())
-        {
-          double dX_old = delta + 10.0;
-          double dY_old = delta + 10.0;
-          /*
-           *  Muss für alle Punktdaten durchgeführt werden
-           */
-          if(planning == 1)
-            {
-              preSitePos = _globalMapMatrix.map(
-                  taskPointList.getLast()->projP);
-            }
-          else if(planning == 3)
-            {
-              if(moveWPindex > 0)
-                  preSitePos = _globalMapMatrix.map(
-                      taskPointList.at(moveWPindex - 1)->projP);
-
-              if(moveWPindex + 1 < (int)taskPointList.count())
-                  nextSitePos = _globalMapMatrix.map(
-                      taskPointList.at(moveWPindex + 1)->projP);
-            }
-
-          point.setX(current.x());
-          point.setY(current.y());
+    if (_globalMapMatrix.isSwitchScale()) delta = 16.0;
 
 
-
-          QPainter planP(this);
-          planP.setRasterOp(XorROP);
-          planP.setBrush(NoBrush);
-          planP.setPen(QPen(QColor(255,0,0), 5));
-
-
-
-          if(isSnapping)
-            {
-              // Snapping Bereich verlassen?
-              if( (abs(prePlanPos.x() - current.x()) > delta) ||
-                  (abs(prePlanPos.y() - current.y()) > delta) )
-                {
-                  isSnapping = false;
-
-                  // delete temp WP
-//                  taskPointList.removeLast();
-//                  warning("lösche letzten Punkt - Länge: %d",taskPointList.count());
-//                  ((FlightTask *)f)->setWaypointList(taskPointList);
-                  __drawPlannedTask();
-                  __showLayer();
-                }
-            }
-
-          if(!isSnapping)
-            {
-
-              // Alle Listen mit Punktdaten durchgehen!
-              QArray<int> contentArray(2);
-              contentArray.at(0) = MapContents::GliderList;
-              contentArray.at(1) = MapContents::AirportList;
-
-              for(unsigned int n = 0; n < contentArray.count(); n++)
-                {
-                  for(unsigned int loop = 0;
-                        loop < _globalMapContents.getListLength(
-				    		            contentArray.at(n)); loop++)
-                    {
-                      hitElement = (SinglePoint*)_globalMapContents.getElement(
-				    		                           contentArray.at(n), loop);
-		    			
-                      sitePos = hitElement->getMapPosition();
-
-                      dX = abs(sitePos.x() - current.x());
-                      dY = abs(sitePos.y() - current.y());
-
-//                  if((( dX < delta )  && ( dY < delta )) &&
-//                     (( dX < dX_old ) && ( dY < dY_old )))
-                      if(( dX < delta ) && ( dY < delta ))
-                        {
-                          // im Snapping Bereich
-                          isSnapping = true;
-
-//                      dX_old = dX;
-//                      dY_old = dY;
-
-                          point.setX(sitePos.x());
-                          point.setY(sitePos.y());
-                          break;
-                        }
-                    }
-                  if(isSnapping) break;
-                }
-
-              if(isSnapping)
-                {
-                  // temporärer Weg
-                  // add temp WP
-
-                  if(planning == 3)
-                    {
-                      //verschieben
-                      tempTaskPointList.insert(moveWPindex,new wayPoint);
-                      tempTaskPointList.at(moveWPindex)->name = hitElement->getWPName();
-                      tempTaskPointList.at(moveWPindex)->origP = hitElement->getWGSPosition();
-                      tempTaskPointList.at(moveWPindex)->elevation = hitElement->getElevation();
-                      tempTaskPointList.at(moveWPindex)->projP = hitElement->getPosition();
-                      // hier müssen noch mehr Sachen übergeben werden
-                    }
-                   else
-                    {
-                      //anhängen
-                      tempTaskPointList.append(new wayPoint);
-                      tempTaskPointList.last()->name = hitElement->getWPName();
-                      tempTaskPointList.last()->origP = hitElement->getWGSPosition();
-                      tempTaskPointList.last()->elevation = hitElement->getElevation();
-                      tempTaskPointList.last()->projP = hitElement->getPosition();
-                      // hier müssen noch mehr Sachen übergeben werden
-
-                    }
-                  tempTask.setWaypointList(tempTaskPointList);
-                  __drawPlannedTask(false);
-
-                  // alte Linien löschen
-/*                  if(!(planning == 3 && moveWPindex == 0))
-                    {
-                      planP.drawLine(preSitePos.x(),preSitePos.y(),
-                          prePlanPos.x(),prePlanPos.y());
-                    }
-                  if((planning == 3) && moveWPindex + 1 != (int)taskPointList.count())
-                    {
-                      planP.drawLine(nextSitePos.x(),nextSitePos.y(),
-                          prePlanPos.x(),prePlanPos.y());
-                    }
-*/
-                  if((current.x() > 0 && current.x() < this->width()) &&
-                     (current.y() > 0 && current.y() < this->height()))
-                    {
-                      // Linien zeichnen
-/*                      if(!(planning == 3 && moveWPindex == 0))
-                        {
-                          planP.drawLine(preSitePos.x(),preSitePos.y(),
-                                          point.x(),point.y());
-                        }
-                      if((planning == 3) && moveWPindex + 1 != (int)taskPointList.count())
-                        {
-                          planP.drawLine(nextSitePos.x(),nextSitePos.y(),
-                                            point.x(),point.y());
-                        }
-*/
-                      prePlanPos = point;
-                    }
-                  else
-                    {
-                      // außerhalb der Karte
-                      prePlanPos.setX(-999);
-                      prePlanPos.setY(-999);
-                    }
-
-
-                  warning(hitElement->getWPName());
-                }
-            }
-
-          if(!isSnapping)
-            {
-/*              if(prePlanPos.x() >= 0)
-                {
-                  // alte Linien löschen
-                  if(!(planning == 3 && moveWPindex == 0))
-                    {
-                      planP.drawLine(preSitePos.x(),preSitePos.y(),
-                          prePlanPos.x(),prePlanPos.y());
-                    }
-                  if((planning == 3) && moveWPindex + 1 != (int)taskPointList.count())
-                    {
-                      planP.drawLine(nextSitePos.x(),nextSitePos.y(),
-                          prePlanPos.x(),prePlanPos.y());
-                    }
-                }
-*/
-              if((current.x() > 0 && current.x() < this->width()) &&
-                 (current.y() > 0 && current.y() < this->height()))
-                {
-                  // Linien zeichnen
-  /*                if(!(planning == 3 && moveWPindex == 0))
-                    {
-                      planP.drawLine(preSitePos.x(),preSitePos.y(),
-                          point.x(),point.y());
-                    }
-                  if((planning == 3) && moveWPindex + 1 != (int)taskPointList.count())
-                    {
-                      planP.drawLine(nextSitePos.x(),nextSitePos.y(),
-                          point.x(),point.y());
-                    }
-*/
-                  prePlanPos = point;
-
-                }
-              else
-                {
-                  // außerhalb der Karte
-                  prePlanPos.setX(-999);
-                  prePlanPos.setY(-999);
-                }
-            }
-           planP.end();
-         }
-
-//      emit showTaskText(task,_globalMapMatrix.mapToWgs(point));
-
-//
-// Planen ende
-//
-//////////////
-    }
-
-  if (!timerAnimate->isActive())
-    {
-      if(prePos.x() >= 0)
-          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-              prePos.x() - 20, prePos.y() - 20, 40, 40);
-
-      flightPoint cP;
-
-      if (f) {
-        if((index = f->searchPoint(event->pos(), cP)) != -1)
-          {
-            emit showFlightPoint(_globalMapMatrix.mapToWgs(event->pos()), cP);
-            prePos = _globalMapMatrix.map(cP.projP);
-            preIndex = index;
-            bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
-          }
-        else
-          {
-            emit showPoint(_globalMapMatrix.mapToWgs(event->pos()));
-            prePos.setX(-50);
-            prePos.setY(-50);
-          }
+    if (!taskPointList.isEmpty()) {
+      double dX_old = delta + 10.0;
+      double dY_old = delta + 10.0;
+      /*
+       *  Muss für alle Punktdaten durchgeführt werden
+       */
+      if(planning == 1) {
+        preSitePos = _globalMapMatrix.map(taskPointList.getLast()->projP);
+      }
+      else if(planning == 3) {
+        if(moveWPindex > 0) {
+          preSitePos = _globalMapMatrix.map(taskPointList.at(moveWPindex - 1)->projP);
         }
+        if(moveWPindex + 1 < (int)taskPointList.count()) {
+          nextSitePos = _globalMapMatrix.map(taskPointList.at(moveWPindex + 1)->projP);
+        }
+      }
+
+      point.setX(current.x());
+      point.setY(current.y());
+
+      QPainter planP(this);
+      planP.setRasterOp(XorROP);
+      planP.setBrush(NoBrush);
+      planP.setPen(QPen(QColor(255,0,0), 5));
+
+      if(isSnapping) {
+        // Snapping Bereich verlassen?
+        if( (abs(prePlanPos.x() - current.x()) > delta) ||
+            (abs(prePlanPos.y() - current.y()) > delta) ) {
+          isSnapping = false;
+
+          // delete temp WP
+          //                  taskPointList.removeLast();
+          //                  warning("lösche letzten Punkt - Länge: %d",taskPointList.count());
+          //                  ((FlightTask *)f)->setWaypointList(taskPointList);
+          __drawPlannedTask();
+          __showLayer();
+        }
+      }
+
+      if(!isSnapping) {
+        if (found) {
+          isSnapping = true;
+
+          //                      dX_old = dX;
+          //                      dY_old = dY;
+        point = _globalMapMatrix.map(_globalMapMatrix.wgsToMap(wp.origP.y(), wp.origP.x()));
+//          point.setX(sitePos.x());
+//          point.setY(sitePos.y());
+        }
+
+        if(isSnapping) {
+          // temporärer Weg
+          // add temp WP
+
+          if(planning == 3) {
+            //verschieben
+            tempTaskPointList.insert(moveWPindex,new wayPoint);
+            tempTaskPointList.at(moveWPindex)->name = wp.name;
+            tempTaskPointList.at(moveWPindex)->origP = wp.origP;
+            tempTaskPointList.at(moveWPindex)->elevation = wp.elevation;
+            tempTaskPointList.at(moveWPindex)->projP = wp.projP;
+            // hier müssen noch mehr Sachen übergeben werden
+          }
+          else {
+            //anhängen
+            tempTaskPointList.append(new wayPoint);
+            tempTaskPointList.last()->name = wp.name;
+            tempTaskPointList.last()->origP = wp.origP;
+            tempTaskPointList.last()->elevation = wp.elevation;
+            tempTaskPointList.last()->projP = wp.projP;
+            // hier müssen noch mehr Sachen übergeben werden
+
+          }
+          tempTask.setWaypointList(tempTaskPointList);
+          __drawPlannedTask(false);
+
+          // alte Linien löschen
+          /*                  if(!(planning == 3 && moveWPindex == 0))
+                              {
+                              planP.drawLine(preSitePos.x(),preSitePos.y(),
+                              prePlanPos.x(),prePlanPos.y());
+                              }
+                              if((planning == 3) && moveWPindex + 1 != (int)taskPointList.count())
+                              {
+                              planP.drawLine(nextSitePos.x(),nextSitePos.y(),
+                              prePlanPos.x(),prePlanPos.y());
+                              }
+          */
+          if((current.x() > 0 && current.x() < this->width()) &&
+             (current.y() > 0 && current.y() < this->height())) {
+            // Linien zeichnen
+            /*                      if(!(planning == 3 && moveWPindex == 0))
+                                    {
+                                    planP.drawLine(preSitePos.x(),preSitePos.y(),
+                                    point.x(),point.y());
+                                    }
+                                    if((planning == 3) && moveWPindex + 1 != (int)taskPointList.count())
+                                    {
+                                    planP.drawLine(nextSitePos.x(),nextSitePos.y(),
+                                    point.x(),point.y());
+                                    }
+            */
+            prePlanPos = point;
+          }
+          else {
+            // außerhalb der Karte
+            prePlanPos.setX(-999);
+            prePlanPos.setY(-999);
+          }
+
+
+          warning(wp.name);
+        }
+      }
+
+      if(!isSnapping) {
+        /*              if(prePlanPos.x() >= 0)
+                        {
+                        // alte Linien löschen
+                        if(!(planning == 3 && moveWPindex == 0))
+                        {
+                        planP.drawLine(preSitePos.x(),preSitePos.y(),
+                        prePlanPos.x(),prePlanPos.y());
+                        }
+                        if((planning == 3) && moveWPindex + 1 != (int)taskPointList.count())
+                        {
+                        planP.drawLine(nextSitePos.x(),nextSitePos.y(),
+                        prePlanPos.x(),prePlanPos.y());
+                        }
+                        }
+        */
+        if((current.x() > 0 && current.x() < this->width()) &&
+           (current.y() > 0 && current.y() < this->height())) {
+          // Linien zeichnen
+          /*                if(!(planning == 3 && moveWPindex == 0))
+                            {
+                            planP.drawLine(preSitePos.x(),preSitePos.y(),
+                            point.x(),point.y());
+                            }
+                            if((planning == 3) && moveWPindex + 1 != (int)taskPointList.count())
+                            {
+                            planP.drawLine(nextSitePos.x(),nextSitePos.y(),
+                            point.x(),point.y());
+                            }
+          */
+          prePlanPos = point;
+          
+        }
+        else {
+          // außerhalb der Karte
+          prePlanPos.setX(-999);
+          prePlanPos.setY(-999);
+        }
+      }
+      planP.end();
     }
+
+    //      emit showTaskText(task,_globalMapMatrix.mapToWgs(point));
+
+    //
+    // Planen ende
+    //
+    //////////////
+  }
+
+  if (!timerAnimate->isActive()) {
+    if(prePos.x() >= 0) {
+      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+             prePos.x() - 20, prePos.y() - 20, 40, 40);
+    }
+    flightPoint cP;
+
+    if (f) {
+      if ((index = f->searchPoint(event->pos(), cP)) != -1) {
+        emit showFlightPoint(_globalMapMatrix.mapToWgs(event->pos()), cP);
+        prePos = _globalMapMatrix.map(cP.projP);
+        preIndex = index;
+        bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+      }
+      else {
+        emit showPoint(_globalMapMatrix.mapToWgs(event->pos()));
+        prePos.setX(-50);
+        prePos.setY(-50);
+      }
+    }
+  }
 }
 
 void Map::__displayMapInfo(QPoint current)
@@ -522,6 +474,7 @@ void Map::__displayMapInfo(QPoint current)
                   timeText = printTime(wpList.at(loop)->sector2);
                   tmpText = i18n("Sector 2");
                 }
+
               else if(wpList.at(loop)->sectorFAI != 0)
                 {
                   timeText = printTime(wpList.at(loop)->sectorFAI);
@@ -598,181 +551,155 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
   BaseFlightElement *baseFlight = _globalMapContents.getFlight();
   QList<wayPoint> taskPointList = baseFlight->getWPList();
   QList<wayPoint> tempTaskPointList = baseFlight->getWPList();
-
-  SinglePoint *hitElement;
-
-  QPoint sitePos;
-  double dX, dY;
-  // Radius for Mouse Snapping
-  double delta(16.0);
-
+  struct wayPoint wp;
   QString text;
 
-  if(event->button() == LeftButton)
-    {
-      /**
-        * Planen
-        *
-        **/
-       double dX_old = delta + 10;
-       double dY_old = delta + 10;
-       /*
-        *  Muss für alle Punktdaten durchgeführt werden
-        */
-       QArray<int> contentArray(2);
-       contentArray.at(0) = MapContents::GliderList;
-       contentArray.at(1) = MapContents::AirportList;
+  bool found = __getTaskWaypoint(current, &wp, taskPointList);
 
-       for(unsigned int n = 0; n < contentArray.count(); n++)
-         {
-           for(unsigned int loop = 0;
-               loop < _globalMapContents.getListLength(
-			  	      contentArray.at(n)); loop++)
-             {
-               hitElement = (SinglePoint*)_globalMapContents.getElement(
-						                           contentArray.at(n), loop);
-					
-               sitePos = hitElement->getMapPosition();
-
-               dX = abs(sitePos.x() - current.x());
-               dY = abs(sitePos.y() - current.y());
-
-               // Abstand entspricht der Icon-Größe.
-               if( ( ( dX < delta )  && ( dY < delta ) ) &&
-                   ( ( dX < dX_old ) && ( dY < dY_old ) ) )
-                 {
-               // im Bereich eines WP
-               dX_old = dX;
-               dY_old = dY;
-
-
-
-
-               if(planning == 1)
-                 {
-                   if(!taskPointList.isEmpty() && event->state() == QEvent::ControlButton)
-                     {
-                       // gleicher Punkt --> löschen
-                       for(unsigned int n = 0; n < taskPointList.count(); n++)
-                         {
-                            if(hitElement->getPosition().x() == taskPointList.at(n)->projP.x() &&
-                               hitElement->getPosition().y() == taskPointList.at(n)->projP.y())
-                              {
-                                warning("lösche Punkt %d", n);
-                                taskPointList.remove(n);
-                                pixPlan.fill(white);
-                              }
-                         }
-                     }
-                   else
-                     {
-                       // neuen Punkt an Task Liste anhängen
-                       warning("hänge Punkt an");
-
-                       taskPointList.append(new wayPoint);
-                       taskPointList.last()->name = hitElement->getWPName();
-                       taskPointList.last()->origP = hitElement->getWGSPosition();
-                       taskPointList.last()->elevation = hitElement->getElevation();
-                       taskPointList.last()->projP = hitElement->getPosition();
-                       // hier müssen noch mehr Sachen übergeben werden
-                     }
-
-
-                   // Aufgabe zeichnen
-                   if(taskPointList.count() > 0)
-                     {
-                       warning("zeichne...");
-                       ((FlightTask *)baseFlight)->setWaypointList(taskPointList);
-                       __drawPlannedTask();
-
-
-                      __showLayer();
-//                          pixFlight.fill(white);
-//                          bitFlightMask.fill(white);
-
-                    }
-                }
-              else if(planning == 2)
-                {
-                  // Punkt wird verschoben
-                  for(unsigned int n = 0; n < taskPointList.count(); n++)
-                   {
-                      if(hitElement->getPosition().x() == taskPointList.at(n)->projP.x() &&
-                         hitElement->getPosition().y() == taskPointList.at(n)->projP.y())
-                        {
-                          warning("verschiebe Punkt %d", n);
-                          taskPointList.remove(n);
-                          ((FlightTask *)baseFlight)->setWaypointList(taskPointList);
-                          planning = 3;
-//                          pixPlan.fill(white);
-                          moveWPindex = n;
-                          prePlanPos.setX(-999);
-                          prePlanPos.setY(-999);
-                          break;
-
-                        }
-                   }
-
-                }
-              else if(planning == 3)
-                {
-                  planning = 2;
-                  warning("insert - verschiebe Punkt?");
-                  taskPointList.insert(moveWPindex,new wayPoint);
-
-     							taskPointList.at(moveWPindex)->name = hitElement->getWPName();
-		            	taskPointList.at(moveWPindex)->origP = hitElement->getWGSPosition();
-     							taskPointList.at(moveWPindex)->elevation = hitElement->getElevation();
-     							taskPointList.at(moveWPindex)->projP = hitElement->getPosition();
-		            	// hier müssen noch mehr Sachen übergeben werden
-
-
-                  // Aufgabe zeichnen
-                  if(taskPointList.count() > 1)
-                    {
-                      pixPlan.fill(white);
-                      ((FlightTask *)baseFlight)->setWaypointList(taskPointList);
-                      __drawPlannedTask();
-                      __showLayer();
-                    }
-                }
+  if(event->button() == LeftButton) {
+    if (found) {
+      if(planning == 1) {
+        if(!taskPointList.isEmpty() && event->state() == QEvent::ControlButton) {
+          // gleicher Punkt --> löschen
+          for(unsigned int n = 0; n < taskPointList.count(); n++) {
+            if(wp.projP == taskPointList.at(n)->projP) {
+              warning("lösche Punkt %d", n);
+              taskPointList.remove(n);
+              pixPlan.fill(white);
             }
+          }
+        }
+        else {
+          // neuen Punkt an Task Liste anhängen
+          warning("hänge Punkt an");
+
+          taskPointList.append(new wayPoint);
+          taskPointList.last()->name = wp.name;
+          taskPointList.last()->origP = wp.origP;
+          taskPointList.last()->elevation = wp.elevation;
+          taskPointList.last()->projP = wp.projP;
+          // hier müssen noch mehr Sachen übergeben werden
+        }
+
+        // Aufgabe zeichnen
+        if(taskPointList.count() > 0) {
+          warning("zeichne...");
+          ((FlightTask *)baseFlight)->setWaypointList(taskPointList);
+          __drawPlannedTask();
+          __showLayer();
+          //                          pixFlight.fill(white);
+          //                          bitFlightMask.fill(white);
+
         }
       }
-    } // ende for Array
-  else if(event->button() == RightButton)
-    {
-      QPoint preSitePos, nextSitePos;
-      // Strecke löschen
-      moveWPindex = -999;
+      else if(planning == 2) {
+        // Punkt wird verschoben
+        for(unsigned int n = 0; n < taskPointList.count(); n++) {
+          if (wp.projP == taskPointList.at(n)->projP) {
+            warning("verschiebe Punkt %d", n);
+            taskPointList.remove(n);
+            ((FlightTask *)baseFlight)->setWaypointList(taskPointList);
+            planning = 3;
+            //                          pixPlan.fill(white);
+            moveWPindex = n;
+            prePlanPos.setX(-999);
+            prePlanPos.setY(-999);
+            break;
+          }
+        }
+      }
+      else if(planning == 3) {
+        planning = 2;
+        warning("insert - verschiebe Punkt?");
+        taskPointList.insert(moveWPindex,new wayPoint);
 
-      QPainter planP(this);
-      planP.setRasterOp(XorROP);
-      planP.setBrush(NoBrush);
-      planP.setPen(QPen(QColor(255,0,0), 5));
+        taskPointList.at(moveWPindex)->name = wp.name;
+        taskPointList.at(moveWPindex)->origP = wp.origP;
+        taskPointList.at(moveWPindex)->elevation = wp.elevation;
+        taskPointList.at(moveWPindex)->projP = wp.projP;
+        // hier müssen noch mehr Sachen übergeben werden
 
-/*  	  if(prePlanPos.x() >= 0)
-        {
-          // alte Linien löschen
-          preSitePos = _globalMapMatrix.map(taskPointList.getLast()->projP);
-          if(planning == 3)
-            {
-              preSitePos = _globalMapMatrix.map(taskPointList.at(moveWPindex - 1)->projP);
-              nextSitePos = _globalMapMatrix.map(taskPointList.at(moveWPindex + 1)->projP);
+        // Aufgabe zeichnen
+        if(taskPointList.count() > 1) {
+          pixPlan.fill(white);
+          ((FlightTask *)baseFlight)->setWaypointList(taskPointList);
+          __drawPlannedTask();
+          __showLayer();
+        }
+      } //planning == 3
+    } // found
+    else {
+      // nothing found, try to create a free waypoint
+      WaypointDialog *waypointDlg = new WaypointDialog(this);
+      QPoint p = _globalMapMatrix.mapToWgs(current);
 
-              planP.drawLine(nextSitePos.x(),nextSitePos.y(),
-              prePlanPos.x(),prePlanPos.y());
-            }
-          planP.drawLine(preSitePos.x(),preSitePos.y(),
-              prePlanPos.x(),prePlanPos.y());
-  	    }
-*/
-      planP.end();
+      // initialize dialg
+      waypointDlg->setWaypointType(BaseMapElement::Landmark);
+      waypointDlg->longitude->setText(printPos(p.x(), false));
+      waypointDlg->latitude->setText(printPos(p.y(), true));
+      waypointDlg->setSurface(-1);
 
-      prePlanPos.setX(-999);
-      prePlanPos.setY(-999);
-      planning = 2;
+      if (waypointDlg->exec() == QDialog::Accepted) {
+        if (!waypointDlg->name->text().isEmpty()) {
+          struct wayPoint *w = new wayPoint;
+
+          w->name = waypointDlg->name->text().left(6).upper();
+          w->description = waypointDlg->description->text();
+          w->type = waypointDlg->getWaypointType();
+          w->origP.setX(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
+          w->origP.setY(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+          w->projP = _globalMapMatrix.wgsToMap(w->origP.y(), w->origP.x());
+          w->elevation = waypointDlg->elevation->text().toInt();
+          w->icao = waypointDlg->icao->text().upper();
+          w->frequency = waypointDlg->frequency->text().toDouble();
+          w->runway = waypointDlg->runway->text().toInt();
+          w->length = waypointDlg->length->text().toInt();
+          w->surface = waypointDlg->getSurface();
+          w->comment = waypointDlg->comment->text();
+          w->isLandable = waypointDlg->isLandable->isChecked();
+
+          taskPointList.append(w);
+          ((FlightTask *)baseFlight)->setWaypointList(taskPointList);
+          __drawPlannedTask();
+          __showLayer();
+        }
+      }
+
+      delete waypointDlg;
     }
+  } // left button
+  else if(event->button() == RightButton) {
+    QPoint preSitePos, nextSitePos;
+    // Strecke löschen
+    moveWPindex = -999;
+
+    QPainter planP(this);
+    planP.setRasterOp(XorROP);
+    planP.setBrush(NoBrush);
+    planP.setPen(QPen(QColor(255,0,0), 5));
+    
+    /*  	  if(prePlanPos.x() >= 0)
+                  {
+                  // alte Linien löschen
+                  preSitePos = _globalMapMatrix.map(taskPointList.getLast()->projP);
+                  if(planning == 3)
+                  {
+                  preSitePos = _globalMapMatrix.map(taskPointList.at(moveWPindex - 1)->projP);
+                  nextSitePos = _globalMapMatrix.map(taskPointList.at(moveWPindex + 1)->projP);
+
+                  planP.drawLine(nextSitePos.x(),nextSitePos.y(),
+                  prePlanPos.x(),prePlanPos.y());
+                  }
+                  planP.drawLine(preSitePos.x(),preSitePos.y(),
+                  prePlanPos.x(),prePlanPos.y());
+                  }
+    */
+    planP.end();
+
+    prePlanPos.setX(-999);
+    prePlanPos.setY(-999);
+    planning = 2;
+  }
 }
 
 
@@ -800,11 +727,10 @@ void Map::mousePressEvent(QMouseEvent* event)
 
   if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
 
-  BaseFlightElement *f = NULL;
-  f = _globalMapContents.getFlight();
-
-  if (f != NULL)
+  BaseFlightElement *f = _globalMapContents.getFlight();
+  if (f != 0) {
     QList<wayPoint> taskPointList = f->getWPList();
+  }
 
   if(event->button() == MidButton)
     {
@@ -815,11 +741,12 @@ void Map::mousePressEvent(QMouseEvent* event)
     }
 
   if(planning)
+
     {
       // graphical Planning
       __graphicalPlanning(current, event);
     }
-  if(event->button() == LeftButton)
+  else if(event->button() == LeftButton)
     {
       if (event->state() == QEvent::ShiftButton)
         {
@@ -836,17 +763,18 @@ void Map::mousePressEvent(QMouseEvent* event)
         	            searchList[l], loop);
           	      sitePos = hitElement->getMapPosition();
 
-        	        dX = sitePos.x() - current.x();
-  	              dY = sitePos.y() - current.y();
+        	        dX = abs(sitePos.x() - current.x());
+  	              dY = abs(sitePos.y() - current.y());
   	
   	              // Abstand entspricht der Icon-Größe.
-        	        if( ( ( dX < delta ) && ( dX > -delta ) ) && ( ( dY < delta ) && ( dY > -delta ) ) )
+        	        if (dX < delta && dY < delta)
         	          {
           	          wayPoint *w = new wayPoint;
   	                  w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
                       w->description = hitElement->getName();
           	          w->type = hitElement->getTypeID();
-          	          w->origP = _globalMapMatrix.mapToWgs(_globalMapMatrix.map(hitElement->getPosition()));
+//          	          w->origP = _globalMapMatrix.mapToWgs(_globalMapMatrix.map(hitElement->getPosition()));
+          	          w->origP = hitElement->getWGSPosition();
                       w->elevation = hitElement->getElevation();
                       w->icao = ((RadioPoint *)hitElement)->getICAO();
                       w->frequency = ((RadioPoint *)hitElement)->getFrequency().toDouble();
@@ -915,6 +843,7 @@ void Map::__drawGrid()
       const int lat2 = mapBorder.bottom() / 600000 - 1;
 
       // Step between two degree-lines (in 1/60 degree)
+
       int step = 60;
       int gridStep = 1;
       int lineWidth = 1;
@@ -1799,4 +1728,79 @@ void Map::slotShowCurrentFlight()
       break;
     }
   }
+}
+/** append a waypoint to the current task */
+void Map::slotAppendWaypoint2Task(wayPoint *p)
+{
+  extern MapContents _globalMapContents;
+  extern MapMatrix _globalMapMatrix;
+
+  FlightTask *f = (FlightTask *)_globalMapContents.getFlight();
+  if (f && f->getTypeID() == BaseMapElement::Task && planning) {
+    QList<wayPoint> taskPointList = f->getWPList();
+    p->projP = _globalMapMatrix.wgsToMap(p->origP.y(), p->origP.x());
+    taskPointList.append(p);
+    f->setWaypointList(taskPointList);
+    __drawPlannedTask(true);
+    __showLayer();
+  }
+}
+
+/** search for a waypoint
+First look in task itself
+Second look in map contents */
+bool Map::__getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint> &taskPointList)
+{
+  unsigned int i;
+  struct wayPoint *tmpPoint;
+  QPoint sitePos;
+  double dX, dY;
+  // Radius for Mouse Snapping
+  double delta(16.0);
+  extern MapContents _globalMapContents;
+  extern MapMatrix _globalMapMatrix;
+  bool found = false;
+  SinglePoint *hitElement;
+
+  for (i = 0; i < taskPointList.count(); i++) {
+    tmpPoint = taskPointList.at(i);
+    sitePos = _globalMapMatrix.map(_globalMapMatrix.wgsToMap(tmpPoint->origP.y(), tmpPoint->origP.x()));
+    dX = abs(sitePos.x() - current.x());
+    dY = abs(sitePos.y() - current.y());
+
+    // Abstand entspricht der Icon-Größe.
+    if (dX < delta && dY < delta) {
+      *wp = *tmpPoint;
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {
+    /*
+    *  Muss für alle Punktdaten durchgeführt werden
+    */
+    QArray<int> contentArray(2);
+    contentArray.at(0) = MapContents::GliderList;
+    contentArray.at(1) = MapContents::AirportList;
+
+    for(unsigned int n = 0; n < contentArray.count(); n++) {
+      for(unsigned int loop = 0; loop < _globalMapContents.getListLength(contentArray.at(n)); loop++) {
+        hitElement = (SinglePoint*)_globalMapContents.getElement(contentArray.at(n), loop);			
+        sitePos = hitElement->getMapPosition();
+        dX = abs(sitePos.x() - current.x());
+        dY = abs(sitePos.y() - current.y());
+
+        if (dX < delta && dY < delta) {
+          wp->name = hitElement->getWPName();
+          wp->origP = hitElement->getWGSPosition();
+          wp->elevation = hitElement->getElevation();
+          wp->projP = hitElement->getPosition();
+          found = true;
+          break;
+        }
+      }
+    }
+  }
+  return found;
 }

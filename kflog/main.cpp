@@ -80,7 +80,6 @@ int main(int argc, char *argv[])
   else 
     {
       KFLogApp *kflog = new KFLogApp();
-
       KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
       if (args->count())

@@ -22,6 +22,8 @@
 #include <config.h>
 #endif
 
+#include "translationlist.h"
+
 #include <kapp.h>
 #include <kdockwidget.h>
 #include <kmainwindow.h>
@@ -45,6 +47,7 @@ class EvaluationDialog;
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
+
 class KFLogApp : public KDockMainWindow
 {
   Q_OBJECT
@@ -90,6 +93,10 @@ class KFLogApp : public KDockMainWindow
      * Initializes the mainwindow.
      */
     void initView();
+    /** No descriptions */
+    void initSurfaces();
+    /** No descriptions */
+    void initTypes();
     /* ask for outstanding changes */
     bool queryClose();
   public slots:
