@@ -1475,7 +1475,7 @@ void Map::__showLayer()
   paintEvent();
 }
 
-void Map::slotDrawCursor(QPoint p1, QPoint p2)
+void Map::slotDrawCursor(const QPoint& p1, const QPoint& p2)
 {
   extern const MapMatrix _globalMapMatrix;
 
@@ -2176,13 +2176,11 @@ bool Map::__getTaskWaypoint(QPoint current, Waypoint *wp, QList<Waypoint> &taskP
 }
 /** Puts the waypoints of the active waypoint catalog to the map */
 void Map::__drawWaypoints(){
-  int i, n;
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
   extern MapConfig _globalMapConfig;
-  
+
   QList<Waypoint> * wpList;
-  Waypoint * wp;
   QPoint p;
 
   wpList = _globalMapContents.getWaypointList();
@@ -2194,9 +2192,7 @@ void Map::__drawWaypoints(){
   wpPainter.setPen(QPen(QColor(0,0,0), 2, SolidLine));
 
   // now do complete list
-  n =  wpList->count();
-  for (i=0; i < n; i++){
-    wp = wpList->at(i);
+  for (Waypoint* wp = wpList->first(); wp; wp = wpList->next()){
     // make sure projection is ok, and map to screen
     wp->projP = _globalMapMatrix.wgsToMap(wp->origP.lat(), wp->origP.lon());
     p = _globalMapMatrix.map(wp->projP);

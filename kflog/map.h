@@ -67,7 +67,7 @@ class Map : public QWidget
     /** */
     void slotCenterToWaypoint(const unsigned int id);
     /** */
-    void slotDrawCursor(QPoint p1, QPoint p2);
+    void slotDrawCursor(const QPoint& p1, const QPoint& p2);
     /** */
     void slotRedrawFlight();
     /**
