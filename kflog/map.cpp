@@ -83,9 +83,9 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   pixCursor.setMask(bitCursorMask);
 
   pixCursor1 = QPixmap(KGlobal::dirs()->findResource("appdata",
-      "pics/flag_green.png"));
+						     "pics/flag_green.png"));
   pixCursor2 = QPixmap(KGlobal::dirs()->findResource("appdata",
-      "pics/flag_red.png"));
+						     "pics/flag_red.png"));
 
   pixCursorBuffer1.resize(32,32);
   pixCursorBuffer1.fill(white);
@@ -123,20 +123,20 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   prePlanPos.setY(-999);  
 
   QWhatsThis::add(this, i18n("<B>The map</B>"
-         "<P>To move or scale the map, please use the buttons in the "
-         "<B>Map-control</B>-area. Or center the map to the current "
-         "cursor-positon by using the right mouse-button.</P>"
-         "<P>To zoom in or out, use the slider or the two buttons on the "
-         "toolbar. You can also zoom with \"&lt;Ctrl&gt;&lt;+&gt;\" (zoom in) "
-         "and \"&lt;Ctrl&gt;&lt;-&gt;\" (zoom out).</P>"
-         "<P>With the menu-item \"Options\" -> \"Configure KFLog\" you can "
-         "configure, which map elements should be displayed at which "
-         "scale.</P>"));
+			     "<P>To move or scale the map, please use the buttons in the "
+			     "<B>Map-control</B>-area. Or center the map to the current "
+			     "cursor-positon by using the right mouse-button.</P>"
+			     "<P>To zoom in or out, use the slider or the two buttons on the "
+			     "toolbar. You can also zoom with \"&lt;Ctrl&gt;&lt;+&gt;\" (zoom in) "
+			     "and \"&lt;Ctrl&gt;&lt;-&gt;\" (zoom out).</P>"
+			     "<P>With the menu-item \"Options\" -> \"Configure KFLog\" you can "
+			     "configure, which map elements should be displayed at which "
+			     "scale.</P>"));
 
   // create the animation timer
   timerAnimate = new QTimer( this );
   connect( timerAnimate, SIGNAL(timeout()), this,
-      SLOT(slotAnimateFlightTimeout()) );      
+	   SLOT(slotAnimateFlightTimeout()) );      
 }
 
 Map::~Map()
@@ -173,25 +173,25 @@ void Map::mouseMoveEvent(QMouseEvent* event)
            */
           if(planning == 1)
             {
-               preSitePos = _globalMapMatrix.map(taskPoints.at(taskPoints.size() - 1)->getPosition());
-             }
+	      preSitePos = _globalMapMatrix.map(taskPoints.at(taskPoints.size() - 1)->getPosition());
+	    }
           else if(planning == 3)
             {
               if(moveWPindex > 0)
-                  preSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex - 1)->getPosition());
+		preSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex - 1)->getPosition());
               if(moveWPindex < taskPoints.size() - 1)  
-                  nextSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex + 1)->getPosition());              
+		nextSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex + 1)->getPosition());              
             }
                  
           point.setX(current.x());
           point.setY(current.y());
         
           for(unsigned int loop = 0;
-                loop < _globalMapContents.getListLength(
-                        MapContents::GliderList); loop++)
+	      loop < _globalMapContents.getListLength(
+						      MapContents::GliderList); loop++)
             {
               hitElement = _globalMapContents.getElement(
-                      MapContents::GliderList, loop);
+							 MapContents::GliderList, loop);
               sitePos = ((SinglePoint*)hitElement)->getMapPosition();
               
               dX = abs(sitePos.x() - current.x());
@@ -207,27 +207,27 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                   point.setX(sitePos.x());
                   point.setY(sitePos.y());
                 }
-             }
+	    }
                 
           QPainter planP(this);
-           planP.setRasterOp(XorROP);
+	  planP.setRasterOp(XorROP);
           planP.setBrush(NoBrush);
           planP.setPen(QPen(QColor(255,0,0), 5));
 
-           if(prePlanPos.x() >= 0)
-             {
+	  if(prePlanPos.x() >= 0)
+	    {
               // alte Linien löschen
               if(!(planning == 3 && moveWPindex == 0))
                 {  
-                   planP.drawLine(preSitePos.x(),preSitePos.y(),
+		  planP.drawLine(preSitePos.x(),preSitePos.y(),
                                  prePlanPos.x(),prePlanPos.y());
                 }
               if((planning == 3) && moveWPindex != taskPoints.size() - 1)
                 {
-                   planP.drawLine(nextSitePos.x(),nextSitePos.y(),
-                                  prePlanPos.x(),prePlanPos.y());
+		  planP.drawLine(nextSitePos.x(),nextSitePos.y(),
+				 prePlanPos.x(),prePlanPos.y());
                 }
-             }
+	    }
 
           if((current.x() > 0 && current.x() < this->width()) &&
              (current.y() > 0 && current.y() < this->height()))
@@ -236,7 +236,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
               if(!(planning == 3 && moveWPindex == 0))
                 {
                   planP.drawLine(preSitePos.x(),preSitePos.y(),
-                                  point.x(),point.y());
+				 point.x(),point.y());
                 }
               if((planning == 3) && moveWPindex != taskPoints.size() - 1)
                 {                                 
@@ -262,8 +262,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
     
   if (!timerAnimate->isActive()){
     if(prePos.x() >= 0)
-        bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-            prePos.x() - 20, prePos.y() - 20, 40, 40);
+      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+	     prePos.x() - 20, prePos.y() - 20, 40, 40);
 
     flightPoint cP;
 
@@ -280,15 +280,15 @@ void Map::mouseMoveEvent(QMouseEvent* event)
         prePos.setX(-50);
         prePos.setY(-50);
       }
-   }
+  }
 }
 
 void Map::mousePressEvent(QMouseEvent* event)
 {
   // First: delete the cursor, if visible:
   if(prePos.x() >= 0)
-      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-          prePos.x() - 20, prePos.y() - 20, 40, 40);
+    bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+	   prePos.x() - 20, prePos.y() - 20, 40, 40);
 
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
@@ -315,7 +315,7 @@ void Map::mousePressEvent(QMouseEvent* event)
     }
   else if(event->button() == LeftButton)
     {
-//    _start = event->pos();
+      //    _start = event->pos();
 
       if(planning == 1 || planning == 2 || planning == 3)
         {
@@ -326,11 +326,11 @@ void Map::mousePressEvent(QMouseEvent* event)
            *  Muss für alle Punktdaten durchgeführt werden
            */
           for(unsigned int loop = 0;
-                loop < _globalMapContents.getListLength(
-                        MapContents::GliderList); loop++)
+	      loop < _globalMapContents.getListLength(
+						      MapContents::GliderList); loop++)
             {
               hitElement = (SinglePoint*)_globalMapContents.getElement(
-                      MapContents::GliderList, loop);
+								       MapContents::GliderList, loop);
               sitePos = hitElement->getMapPosition();
     
               dX = abs(sitePos.x() - current.x());
@@ -338,7 +338,7 @@ void Map::mousePressEvent(QMouseEvent* event)
 
               // Abstand entspricht der Icon-Größe.
               if( (( dX < delta )  && ( dY < delta )) &&
-                   (( dX < dX_old ) && ( dY < dY_old )) )
+		  (( dX < dX_old ) && ( dY < dY_old )) )
                 {
                   // im Bereich eines WP
                   dX_old = dX;
@@ -351,10 +351,10 @@ void Map::mousePressEvent(QMouseEvent* event)
                          taskPoints.at(taskPoints.size() - 1)->getPosition().x())
                         {
                           // gleicher Punkt --> löschen
-//                          taskPoints.at(taskPoints.size()) == ;                    
+			  //                          taskPoints.at(taskPoints.size()) == ;                    
                           pixPlan.fill(white);
                           taskPoints.resize(taskPoints.size() - 1);
-                         // __redrawMap();
+			  // __redrawMap();
                         }
                       else
                         {
@@ -376,12 +376,12 @@ void Map::mousePressEvent(QMouseEvent* event)
                       for(unsigned int n = 0; n < taskPoints.size(); n++)
                         {
                           if(hitElement->getPosition().x() ==
-                                taskPoints.at(n)->getPosition().x())
+			     taskPoints.at(n)->getPosition().x())
                             {
                               planning = 3;                            
                               moveWPindex = n;
                               prePlanPos.setX(-999);
-                               prePlanPos.setY(-999);                              
+			      prePlanPos.setY(-999);                              
                               break;
                             }
                         }
@@ -389,7 +389,7 @@ void Map::mousePressEvent(QMouseEvent* event)
                   else if(planning == 3)
                     {
                       planning = 2;
-                       taskPoints.at(moveWPindex) = hitElement;
+		      taskPoints.at(moveWPindex) = hitElement;
                 
                       // Aufgabe zeichnen
                       if(taskPoints.size() > 1)
@@ -439,302 +439,301 @@ void Map::mousePressEvent(QMouseEvent* event)
         }
       else
         {
+	  /*
+	   * Segelflugplätze, soweit vorhanden, kommen als erster Eintrag
+	   */
+	  for(unsigned int loop = 0;
+	      loop < _globalMapContents.getListLength(
+						      MapContents::GliderList); loop++)
+	    {
+	      hitElement = (SinglePoint*)_globalMapContents.getElement(
+								       MapContents::GliderList, loop);
+	      sitePos = hitElement->getMapPosition();
+	      
+	      dX = sitePos.x() - current.x();
+	      dY = sitePos.y() - current.y();
+	      
+	      // Abstand entspricht der Icon-Größe.
+	      if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+		  ( ( dY < delta ) && ( dY > -delta ) ) )
+		{
+		  text = text + ((SinglePoint*)hitElement)->getInfoString();
+		  // Text anzeigen
+		  QWhatsThis::enterWhatsThisMode();
+		  QWhatsThis::leaveWhatsThisMode(text);
+		  isAirport = true;
+		}
+	    }
 
-      /*
-       * Segelflugplätze, soweit vorhanden, kommen als erster Eintrag
-       */
-      for(unsigned int loop = 0;
-            loop < _globalMapContents.getListLength(
-                    MapContents::GliderList); loop++)
-        {
-          hitElement = _globalMapContents.getElement(
-                  MapContents::GliderList, loop);
-          sitePos = ((SinglePoint*)hitElement)->getMapPosition();
+	  //      text = "";    // Wir wollen _nur_ Flugplätze anzeigen!
 
-          dX = sitePos.x() - current.x();
-          dY = sitePos.y() - current.y();
+	  if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
 
-          // Abstand entspricht der Icon-Größe.
-          if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-              ( ( dY < delta ) && ( dY > -delta ) ) )
-            {
-              text = text + ((SinglePoint*)hitElement)->getInfoString();
-              // Text anzeigen
-              QWhatsThis::enterWhatsThisMode();
-              QWhatsThis::leaveWhatsThisMode(text);
-              isAirport = true;
-            }
-        }
+	  for(unsigned int loop = 0;
+	      loop < _globalMapContents.getListLength(
+						      MapContents::AirportList); loop++)
+	    {
+	      hitElement = _globalMapContents.getElement(
+							 MapContents::AirportList, loop);
+	      sitePos = ((SinglePoint*)hitElement)->getMapPosition();
 
-//      text = "";    // Wir wollen _nur_ Flugplätze anzeigen!
+	      dX = sitePos.x() - current.x();
+	      dY = sitePos.y() - current.y();
 
-      if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
+	      // Abstand entspricht der Icon-Größe.
+	      if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+		  ( ( dY < delta ) && ( dY > -delta ) ) )
+		{
+		  text = text + ((SinglePoint*)hitElement)->getInfoString();
+		  // Text anzeigen
+		  QWhatsThis::enterWhatsThisMode();
+		  QWhatsThis::leaveWhatsThisMode(text);
+		  isAirport = true;
+		}
+	    }
 
-      for(unsigned int loop = 0;
-            loop < _globalMapContents.getListLength(
-                  MapContents::AirportList); loop++)
-        {
-          hitElement = _globalMapContents.getElement(
-                  MapContents::AirportList, loop);
-          sitePos = ((SinglePoint*)hitElement)->getMapPosition();
+	  if(_globalMapContents.getFlightList()->count() > 0)
+	    {
+	      QList<wayPoint> wpList =
+		_globalMapContents.getFlight()->getWPList();
 
-          dX = sitePos.x() - current.x();
-          dY = sitePos.y() - current.y();
+	      delta = 25;
+	      bool isWP = false;
+	      QString wpText;
+	      wpText = "<B>Waypoint:</B><UL>";
 
-          // Abstand entspricht der Icon-Größe.
-          if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-              ( ( dY < delta ) && ( dY > -delta ) ) )
-            {
-              text = text + ((SinglePoint*)hitElement)->getInfoString();
-              // Text anzeigen
-              QWhatsThis::enterWhatsThisMode();
-              QWhatsThis::leaveWhatsThisMode(text);
-              isAirport = true;
-            }
-        }
+	      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+		{
+		  sitePos = _globalMapMatrix.map(wpList.at(loop)->projP);
 
-      if(_globalMapContents.getFlightList()->count() > 0)
-        {
-          QList<wayPoint> wpList =
-              _globalMapContents.getFlight()->getWPList();
+		  dX = sitePos.x() - current.x();
+		  dY = sitePos.y() - current.y();
 
-          delta = 25;
-          bool isWP = false;
-          QString wpText;
-          wpText = "<B>Waypoint:</B><UL>";
+		  // We do not search for the sector ...
+		  if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+		      ( ( dY < delta ) && ( dY > -delta ) ) )
+		    {
+		      isWP = true;
 
-          for(unsigned int loop = 0; loop < wpList.count(); loop++)
-            {
-              sitePos = _globalMapMatrix.map(wpList.at(loop)->projP);
+		      QString tmpText, timeText;
 
-              dX = sitePos.x() - current.x();
-              dY = sitePos.y() - current.y();
+		      if(wpList.at(loop)->sector1 != 0)
+			{
+			  timeText = printTime(wpList.at(loop)->sector1);
+			  tmpText = i18n("Sector 1");
+			}
+		      else if(wpList.at(loop)->sector2 != 0)
+			{
+			  timeText = printTime(wpList.at(loop)->sector2);
+			  tmpText = i18n("Sector 2");
+			}
+		      else if(wpList.at(loop)->sectorFAI != 0)
+			{
+			  timeText = printTime(wpList.at(loop)->sectorFAI);
+			  tmpText = i18n("FAI-Sector");
+			}
+		      else
+			{
+			  timeText = "&nbsp;" + i18n("not reached");
+			}
 
-              // We do not search for the sector ...
-              if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-                  ( ( dY < delta ) && ( dY > -delta ) ) )
-                {
-                  isWP = true;
+		      switch(wpList.at(loop)->type)
+			{
+			case FlightTask::TakeOff:
+			  tmpText = i18n("Take Off");
+			  break;
+			case FlightTask::Begin:
+			  tmpText = i18n("Begin of task");
+			  break;
+			case FlightTask::End:
+			  tmpText = i18n("End of task");
+			  break;
+			case FlightTask::Landing:
+			  tmpText = i18n("Landing");
+			  break;
+			}
 
-                  QString tmpText, timeText;
+		      wpText = wpText + "<LI><B>" + wpList.at(loop)->name +
+			"</B>  " +
+			"&nbsp;" + timeText + " / " + tmpText + "<BR>" +
+			printPos(wpList.at(loop)->origP.x()) + " / " +
+			printPos(wpList.at(loop)->origP.y(), false) + "</LI>";
+		    }
+		}
 
-                  if(wpList.at(loop)->sector1 != 0)
-                    {
-                      timeText = printTime(wpList.at(loop)->sector1);
-                      tmpText = i18n("Sector 1");
-                    }
-                  else if(wpList.at(loop)->sector2 != 0)
-                    {
-                      timeText = printTime(wpList.at(loop)->sector2);
-                      tmpText = i18n("Sector 2");
-                    }
-                  else if(wpList.at(loop)->sectorFAI != 0)
-                    {
-                      timeText = printTime(wpList.at(loop)->sectorFAI);
-                      tmpText = i18n("FAI-Sector");
-                    }
-                  else
-                    {
-                      timeText = "&nbsp;" + i18n("not reached");
-                    }
+	      if(isWP)
+		{
+		  wpText = wpText + "</UL>";
+		  text = text + wpText;
+		  // Text anzeigen
+		  QWhatsThis::enterWhatsThisMode();
+		  QWhatsThis::leaveWhatsThisMode(text);
+		  isAirport = true;
+		}
+	    }
 
-                  switch(wpList.at(loop)->type)
-                    {
-                      case FlightTask::TakeOff:
-                        tmpText = i18n("Take Off");
-                        break;
-                      case FlightTask::Begin:
-                        tmpText = i18n("Begin of task");
-                        break;
-                      case FlightTask::End:
-                        tmpText = i18n("End of task");
-                        break;
-                      case FlightTask::Landing:
-                        tmpText = i18n("Landing");
-                        break;
-                    }
+	  if(isAirport)  return;
 
-                  wpText = wpText + "<LI><B>" + wpList.at(loop)->name +
-                      "</B>  " +
-                      "&nbsp;" + timeText + " / " + tmpText + "<BR>" +
-                      printPos(wpList.at(loop)->origP.x()) + " / " +
-                      printPos(wpList.at(loop)->origP.y(), false) + "</LI>";
-                }
-            }
+	  text = text + "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
 
-          if(isWP)
-            {
-              wpText = wpText + "</UL>";
-              text = text + wpText;
-              // Text anzeigen
-              QWhatsThis::enterWhatsThisMode();
-              QWhatsThis::leaveWhatsThisMode(text);
-              isAirport = true;
-            }
-        }
+	  for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
+	    {
+	      if(airspaceRegList->at(loop)->contains(current))
+		{
+		  hitElement = _globalMapContents.getElement(
+							     MapContents::AirspaceList, loop);
 
-      if(isAirport)  return;
+		  text = text + "<LI>" + ((Airspace*)hitElement)->getInfoString()
+		    + "</LI>";
+		  show = true;
+		}
+	    }
+	  text = text + "</UL>";
 
-      text = text + "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
-
-      for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
-        {
-          if(airspaceRegList->at(loop)->contains(current))
-            {
-              hitElement = _globalMapContents.getElement(
-                    MapContents::AirspaceList, loop);
-
-              text = text + "<LI>" + ((Airspace*)hitElement)->getInfoString()
-                  + "</LI>";
-              show = true;
-            }
-        }
-      text = text + "</UL>";
-
-      if(show)
-        {
-          //  Text anzeigen
-          QWhatsThis::enterWhatsThisMode();
-          QWhatsThis::leaveWhatsThisMode(text);
-        }
+	  if(show)
+	    {
+	      //  Text anzeigen
+	      QWhatsThis::enterWhatsThisMode();
+	      QWhatsThis::leaveWhatsThisMode(text);
+	    }
+	}
     }
-}
 
-void Map::paintEvent(QPaintEvent* event = 0)
-{
-  if(event == 0)
-      bitBlt(this, 0, 0, &pixBuffer);
-  else
-      bitBlt(this, event->rect().topLeft(), &pixBuffer, event->rect());
-
-  /* Cursor-Position zurücksetzen! */
-  prePos.setX(-50);
-  prePos.setY(-50);
-}
-
-void Map::__drawGrid()
-{
-  extern const MapMatrix _globalMapMatrix;
-  const QRect mapBorder = _globalMapMatrix.getViewBorder();
-
-  QPainter gridP(&pixGrid);
-  gridP.setBrush(NoBrush);
-
-  // die Kanten des Bereichs
-  const int lon1 = mapBorder.left() / 600000 - 1;
-  const int lon2 = mapBorder.right() / 600000 + 1;
-  const int lat1 = mapBorder.top() / 600000 + 1;
-  const int lat2 = mapBorder.bottom() / 600000 - 1;
-
-  // Step between two degree-lines (in 1/60 degree)
-  int step = 60;
-  int gridStep = 1;
-  int lineWidth = 1;
-
-  switch(_globalMapMatrix.getScaleRange())
+  void Map::paintEvent(QPaintEvent* event = 0)
     {
-      case 0:
-        step = 10;
-        break;
-      case 1:
-        step = 30;
-        break;
-      case 2:
-        gridStep = 2;
-        break;
-      default:
-        gridStep = 4;
+      if(event == 0)
+	bitBlt(this, 0, 0, &pixBuffer);
+      else
+	bitBlt(this, event->rect().topLeft(), &pixBuffer, event->rect());
+
+      /* Cursor-Position zurücksetzen! */
+      prePos.setX(-50);
+      prePos.setY(-50);
     }
 
-  QPoint cP, cP2;
-
-  // First the latitudes:
-  for(int loop = 0; loop < (lat1 - lat2 + 1) ; loop += gridStep)
+  void Map::__drawGrid()
     {
-      int size = (lon2 - lon1 + 1) * 10;
-      QPointArray pointArray(size);
+      extern const MapMatrix _globalMapMatrix;
+      const QRect mapBorder = _globalMapMatrix.getViewBorder();
 
-      for(int lonloop = 0; lonloop < size; lonloop++)
-        {
-          cP = _globalMapMatrix.wgsToMap( ( lat2 + loop ) * 600000,
-                 ( lon1 + ( lonloop * 0.1 ) ) * 600000);
-          pointArray.setPoint(lonloop, cP);
-        }
+      QPainter gridP(&pixGrid);
+      gridP.setBrush(NoBrush);
 
-      // Draw the small lines between:
-      int number = (int) (60.0 / step);
-      for(int loop2 = 1; loop2 < number; loop2++)
-        {
-          QPointArray pointArraySmall(size);
+      // die Kanten des Bereichs
+      const int lon1 = mapBorder.left() / 600000 - 1;
+      const int lon2 = mapBorder.right() / 600000 + 1;
+      const int lat1 = mapBorder.top() / 600000 + 1;
+      const int lat2 = mapBorder.bottom() / 600000 - 1;
 
-          for(int lonloop = 0; lonloop < size; lonloop++)
-            {
-              cP = _globalMapMatrix.wgsToMap(
-                  ( lat2 + loop + ( loop2 * ( step / 60.0 ) ) ) * 600000,
-                  (lon1 + (lonloop * 0.1)) * 600000);
-              pointArraySmall.setPoint(lonloop, cP);
-            }
-          if(loop2 == (number / 2.0))
-            {
-              gridP.setPen(QPen(QColor(0,0,0), 1, DashLine));
-              gridP.drawPolyline(_globalMapMatrix.map(pointArraySmall));
-            }
-          else
-            {
-              gridP.setPen(QPen(QColor(0,0,0), 1, DotLine));
-              gridP.drawPolyline(_globalMapMatrix.map(pointArraySmall));
-            }
-        }
-      // Draw the main lines
-      gridP.setPen(QPen(QColor(0,0,0), 1));
-      gridP.drawPolyline(_globalMapMatrix.map(pointArray));
+      // Step between two degree-lines (in 1/60 degree)
+      int step = 60;
+      int gridStep = 1;
+      int lineWidth = 1;
+
+      switch(_globalMapMatrix.getScaleRange())
+	{
+	case 0:
+	  step = 10;
+	  break;
+	case 1:
+	  step = 30;
+	  break;
+	case 2:
+	  gridStep = 2;
+	  break;
+	default:
+	  gridStep = 4;
+	}
+
+      QPoint cP, cP2;
+
+      // First the latitudes:
+      for(int loop = 0; loop < (lat1 - lat2 + 1) ; loop += gridStep)
+	{
+	  int size = (lon2 - lon1 + 1) * 10;
+	  QPointArray pointArray(size);
+
+	  for(int lonloop = 0; lonloop < size; lonloop++)
+	    {
+	      cP = _globalMapMatrix.wgsToMap( ( lat2 + loop ) * 600000,
+					      ( lon1 + ( lonloop * 0.1 ) ) * 600000);
+	      pointArray.setPoint(lonloop, cP);
+	    }
+
+	  // Draw the small lines between:
+	  int number = (int) (60.0 / step);
+	  for(int loop2 = 1; loop2 < number; loop2++)
+	    {
+	      QPointArray pointArraySmall(size);
+
+	      for(int lonloop = 0; lonloop < size; lonloop++)
+		{
+		  cP = _globalMapMatrix.wgsToMap(
+						 ( lat2 + loop + ( loop2 * ( step / 60.0 ) ) ) * 600000,
+						 (lon1 + (lonloop * 0.1)) * 600000);
+		  pointArraySmall.setPoint(lonloop, cP);
+		}
+	      if(loop2 == (number / 2.0))
+		{
+		  gridP.setPen(QPen(QColor(0,0,0), 1, DashLine));
+		  gridP.drawPolyline(_globalMapMatrix.map(pointArraySmall));
+		}
+	      else
+		{
+		  gridP.setPen(QPen(QColor(0,0,0), 1, DotLine));
+		  gridP.drawPolyline(_globalMapMatrix.map(pointArraySmall));
+		}
+	    }
+	  // Draw the main lines
+	  gridP.setPen(QPen(QColor(0,0,0), 1));
+	  gridP.drawPolyline(_globalMapMatrix.map(pointArray));
+	}
+
+      // Now the longitudes:
+      for(int loop = lon1; loop <= lon2; loop += gridStep)
+	{
+	  cP = _globalMapMatrix.wgsToMap(lat1 * 600000, (loop * 600000));
+	  cP2 = _globalMapMatrix.wgsToMap(lat2 * 600000, (loop * 600000));
+
+	  // Draw the main longitudes:
+	  gridP.setPen(QPen(QColor(0,0,0), 1));
+	  gridP.drawLine(_globalMapMatrix.map(cP), _globalMapMatrix.map(cP2));
+
+	  // Draw the small lines between:
+	  int number = (int) (60.0 / step);
+
+	  for(int loop2 = 1; loop2 < number; loop2++)
+	    {
+	      cP = _globalMapMatrix.wgsToMap((lat1 * 600000),
+					     ((loop + (loop2 * step / 60.0)) * 600000));
+
+	      cP2 = _globalMapMatrix.wgsToMap((lat2 * 600000),
+					      ((loop + (loop2 * step / 60.0)) * 600000));
+
+	      if(loop2 == (number / 2.0))
+		gridP.setPen(QPen(QColor(0,0,0), 1, DashLine));
+	      else
+		gridP.setPen(QPen(QColor(0,0,0), lineWidth, DotLine));
+	      gridP.drawLine(_globalMapMatrix.map(cP), _globalMapMatrix.map(cP2));
+	    }
+	}
+      gridP.end();
     }
 
-  // Now the longitudes:
-  for(int loop = lon1; loop <= lon2; loop += gridStep)
+  void Map::__drawMap()
     {
-      cP = _globalMapMatrix.wgsToMap(lat1 * 600000, (loop * 600000));
-      cP2 = _globalMapMatrix.wgsToMap(lat2 * 600000, (loop * 600000));
+      QPainter aeroP(&pixAero);
+      QPainter airSpaceP(&pixAirspace);
+      QPainter uMapP(&pixUnderMap);
+      QPainter isoMapP(&pixIsoMap);
+      QPainter mapMaskP(&bitMapMask);
+      QPainter airspaceMaskP(&bitAirspaceMask);
 
-      // Draw the main longitudes:
-      gridP.setPen(QPen(QColor(0,0,0), 1));
-      gridP.drawLine(_globalMapMatrix.map(cP), _globalMapMatrix.map(cP2));
+      airspaceRegList->clear();
 
-      // Draw the small lines between:
-      int number = (int) (60.0 / step);
+      extern MapContents _globalMapContents;
 
-      for(int loop2 = 1; loop2 < number; loop2++)
-        {
-          cP = _globalMapMatrix.wgsToMap((lat1 * 600000),
-                  ((loop + (loop2 * step / 60.0)) * 600000));
-
-          cP2 = _globalMapMatrix.wgsToMap((lat2 * 600000),
-                  ((loop + (loop2 * step / 60.0)) * 600000));
-
-          if(loop2 == (number / 2.0))
-              gridP.setPen(QPen(QColor(0,0,0), 1, DashLine));
-          else
-              gridP.setPen(QPen(QColor(0,0,0), lineWidth, DotLine));
-          gridP.drawLine(_globalMapMatrix.map(cP), _globalMapMatrix.map(cP2));
-        }
-    }
-  gridP.end();
-}
-
-void Map::__drawMap()
-{
-  QPainter aeroP(&pixAero);
-  QPainter airSpaceP(&pixAirspace);
-  QPainter uMapP(&pixUnderMap);
-  QPainter isoMapP(&pixIsoMap);
-  QPainter mapMaskP(&bitMapMask);
-  QPainter airspaceMaskP(&bitAirspaceMask);
-
-  airspaceRegList->clear();
-
-  extern MapContents _globalMapContents;
-
-  pixIsoMap.fill(QColor(96,128,248));
+      pixIsoMap.fill(QColor(96,128,248));
 
   _globalMapContents.drawIsoList(&isoMapP, &mapMaskP);
 
