@@ -1257,7 +1257,7 @@ void KFLogApp::initSurfaces()
 {
   surfaces.setAutoDelete(true);
 
-  surfaces.append(new TranslationElement(Airport::NotSet, i18n("Unknown")));
+  surfaces.append(new TranslationElement(Airport::Unknown, i18n("Unknown")));
   surfaces.append(new TranslationElement(Airport::Grass, i18n("Grass")));
   surfaces.append(new TranslationElement(Airport::Asphalt, i18n("Asphalt")));
   surfaces.append(new TranslationElement(Airport::Concrete, i18n("Concrete")));
@@ -1270,6 +1270,7 @@ void KFLogApp::initTypes()
   waypointTypes.setAutoDelete(true);
 
   // don't know if we really need all of them
+  waypointTypes.append(new TranslationElement(BaseMapElement::NotSelected, i18n("(not selected)")));
   waypointTypes.append(new TranslationElement(BaseMapElement::AerialRailway, i18n("Aerial railway")));
   waypointTypes.append(new TranslationElement(BaseMapElement::Airfield, i18n("Airfield")));
   waypointTypes.append(new TranslationElement(BaseMapElement::Airport, i18n("Airport")));
