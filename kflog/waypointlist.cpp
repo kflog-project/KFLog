@@ -30,9 +30,9 @@ WaypointList::~WaypointList()
 }
 
 /** insert a new item into the list and check if waypoint already exist */
-bool WaypointList::insertItem(WaypointElement *e)
+bool WaypointList::insertItem(wayPoint *e)
 {
-  WaypointElement *tmp;
+  wayPoint *tmp;
   bool ins = true;
 
   if ((tmp = find(e->name)) != 0) {

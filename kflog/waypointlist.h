@@ -18,21 +18,21 @@
 #ifndef WAYPOINTLIST_H
 #define WAYPOINTLIST_H
 
-#include "waypointelement.h"
+#include "wp.h"
 
 #include <qdict.h>
 
 /**
   *@author Harald Maier
   */
-typedef QDict<WaypointElement> WaypointListBase;
+typedef QDict<wayPoint> WaypointListBase;
 
 class WaypointList :public WaypointListBase {
 public: 
 	WaypointList();
 	~WaypointList();
   /** No descriptions */
-  bool insertItem(WaypointElement *e);
+  bool insertItem(wayPoint *e);
 };
 
 #endif

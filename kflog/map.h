@@ -30,7 +30,6 @@
 #include <flighttask.h>
 
 // class SinglePoint;
-class WaypointElement;
 class Flight;
 
 /**
@@ -111,7 +110,7 @@ class Map : public QWidget
     /** */
     void pointClicked(QPoint);
   /** is emited when shift + left button click on the map */
-  void waypointSelected(WaypointElement *);
+  void waypointSelected(wayPoint *);
 
   protected:
     /**

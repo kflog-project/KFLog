@@ -52,8 +52,7 @@
 #include <mapcontrolview.h>
 #include <mapprint.h>
 #include <recorderdialog.h>
-#include <taskandwaypoint.h>
-#include <tasks.h>
+#include <waypoints.h>
 #include <igc3ddialog.h>
 
 #define STATUS_LABEL(a,b,c) \
@@ -217,9 +216,9 @@ void KFLogApp::initActions()
       CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
       "evaluate_flight");
 
-  viewTaskAndWaypoint = new KToggleAction(i18n("Task && Waypoints"), "waypoint",
-      CTRL+Key_T, this, SLOT(slotToggleTaskAndWaypointDock()), actionCollection(),
-      "task_and_waypoint");
+  viewWaypoints = new KToggleAction(i18n("Task && Waypoints"), "waypoint",
+      CTRL+Key_T, this, SLOT(slotToggleWaypointsDock()), actionCollection(),
+      "waypoints");
 
   flightOptimization = new KAction(i18n("Optimize"), "wizard", 0,
       this, SLOT(slotOptimizeFlight()), actionCollection(), "optimize_flight");
@@ -281,7 +280,7 @@ void KFLogApp::initActions()
       actionCollection(), "flight");
   flightMenu->insert(flightEvaluation);
   flightMenu->insert(flightOptimization);
-  flightMenu->insert(viewTaskAndWaypoint);
+  flightMenu->insert(viewWaypoints);
   flightMenu->insert(viewFlightDataType);
   flightMenu->insert(viewIgc3D);
   flightMenu->insert(mapPlanning);
@@ -354,7 +353,7 @@ void KFLogApp::initView()
   mapViewDock = createDockWidget("Map", 0, 0, i18n("Map"));
   dataViewDock = createDockWidget("Flight-Data", 0, 0, i18n("Flight-Data"));
   mapControlDock = createDockWidget("Map-Control", 0, 0, i18n("Map-Control"));
-  taskAndWaypointDock = createDockWidget("Waypoints", 0, 0, i18n("Waypoints"));
+  waypointsDock = createDockWidget("Waypoints", 0, 0, i18n("Waypoints"));
 //  taskDock = createDockWidget("Tasks", 0, 0, i18n("Tasks"));
   evaluation = new EvaluationDialog(this);
 
@@ -372,10 +371,10 @@ void KFLogApp::initView()
       SLOT(slotHideDataViewDock()));
   connect(dataViewDock, SIGNAL(hasUndocked()),
       SLOT(slotHideDataViewDock()));
-  connect(taskAndWaypointDock, SIGNAL(iMBeingClosed()),
-      SLOT(slotHideTaskAndWaypointDock()));
-  connect(taskAndWaypointDock, SIGNAL(hasUndocked()),
-      SLOT(slotHideTaskAndWaypointDock()));
+  connect(waypointsDock, SIGNAL(iMBeingClosed()),
+      SLOT(slotHideWaypointsDock()));
+  connect(waypointsDock, SIGNAL(hasUndocked()),
+      SLOT(slotHideWaypointsDock()));
 
   setView(mapViewDock);
   setMainDockWidget(mapViewDock);
@@ -396,25 +395,21 @@ void KFLogApp::initView()
   dataView = new DataView(dataViewDock);
   dataViewDock->setWidget(dataView);
 
-  taskAndWaypoint = new TaskAndWaypoint(taskAndWaypointDock);
-  taskAndWaypointDock->setWidget(taskAndWaypoint);
-
-//  taskView = new Tasks(taskDock);
-//  taskDock->setWidget(taskView);
+  waypoints = new Waypoints(waypointsDock);
+  waypointsDock->setWidget(waypoints);
 
   /* Argumente für manualDock():
    * dock target, dock side, relation target/this (in percent)
    */
   dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );
-//  taskDock->manualDock( dataViewDock, KDockWidget::DockBottom, 20);
   mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 75 );
-  taskAndWaypointDock->manualDock(mapViewDock, KDockWidget::DockBottom, 71);
+  waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 71);
 
   connect(map, SIGNAL(changed(QSize)), mapControl,
       SLOT(slotShowMapData(QSize)));
 
-  connect(map, SIGNAL(waypointSelected(WaypointElement *)), taskAndWaypoint,
-    SLOT(slotAddWaypoint(WaypointElement *)));
+  connect(map, SIGNAL(waypointSelected(wayPoint *)), waypoints,
+    SLOT(slotAddWaypoint(wayPoint *)));
 
   extern MapMatrix _globalMapMatrix;
   connect(mapControl, SIGNAL(scaleChanged(double)), &_globalMapMatrix,
@@ -652,14 +647,14 @@ void KFLogApp::slotHideMapViewDock()  { viewMap->setChecked(false); }
 
 void KFLogApp::slotHideDataViewDock()  { viewData->setChecked(false); }
 
-void KFLogApp::slotHideTaskAndWaypointDock() { viewTaskAndWaypoint->setChecked(false); }
+void KFLogApp::slotHideWaypointsDock() { viewWaypoints->setChecked(false); }
 
 void KFLogApp::slotCheckDockWidgetStatus()
 {
   viewMapControl->setChecked(mapControlDock->isVisible());
   viewMap->setChecked(mapViewDock->isVisible());
   viewData->setChecked(dataViewDock->isVisible());
-  viewTaskAndWaypoint->setChecked(taskAndWaypointDock->isVisible());
+  viewWaypoints->setChecked(waypointsDock->isVisible());
 }
 
 void KFLogApp::slotToggleDataView()  { dataViewDock->changeHideShowState(); }
@@ -668,7 +663,7 @@ void KFLogApp::slotToggleMapControl() { mapControlDock->changeHideShowState(); }
 
 void KFLogApp::slotToggleMap() { mapViewDock->changeHideShowState(); }
 
-void KFLogApp::slotToggleTaskAndWaypointDock() { taskAndWaypointDock->changeHideShowState(); }
+void KFLogApp::slotToggleWaypointsDock() { waypointsDock->changeHideShowState(); }
 
 void KFLogApp::slotSelectFlightData(int id)
 {
@@ -763,7 +758,7 @@ void KFLogApp::slotFlightViewIgc3D()
 
 bool KFLogApp::queryClose()
 {
-  return taskAndWaypoint->saveChanges();
+  return waypoints->saveChanges();
 }
 /** insert available flights into menu */
 void KFLogApp::slotWindowsMenuAboutToShow()

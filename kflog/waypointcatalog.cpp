@@ -63,14 +63,14 @@ bool WaypointCatalog::read(QString &catalog)
 
         for (uint i = 0; i < nl.count(); i++) {
           QDomNamedNodeMap nm =  nl.item(i).attributes();
-          WaypointElement *w = new WaypointElement;
+          wayPoint *w = new wayPoint;
 
           w->name = nm.namedItem("Name").toAttr().value().left(6).upper();
           w->description = nm.namedItem("Description").toAttr().value();
           w->icao = nm.namedItem("ICAO").toAttr().value().upper();
           w->type = nm.namedItem("Type").toAttr().value().toInt();
-          w->pos.setY(nm.namedItem("Latitude").toAttr().value().toInt());
-          w->pos.setX(nm.namedItem("Longitude").toAttr().value().toInt());
+          w->origP.setY(nm.namedItem("Latitude").toAttr().value().toInt());
+          w->origP.setX(nm.namedItem("Longitude").toAttr().value().toInt());
           w->elevation = nm.namedItem("Elevation").toAttr().value().toInt();
           w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
           w->isLandable = nm.namedItem("Landable").toAttr().value().toInt();
@@ -111,10 +111,10 @@ bool WaypointCatalog::write()
   QDomDocument doc("KFLogWaypoint");
   QDomElement root = doc.createElement("KFLogWaypoint");
   QDomElement child;
-  WaypointElement *w;
+  wayPoint *w;
   QFile f;
   QString fName = path;
-  QDictIterator<WaypointElement> it(wpList);
+  QDictIterator<wayPoint> it(wpList);
 
   if (!onDisc) {
     fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)", 0, i18n("Save waypoint catalog"));
@@ -139,8 +139,8 @@ bool WaypointCatalog::write()
     child.setAttribute("Description", w->description);
     child.setAttribute("ICAO", w->icao);
     child.setAttribute("Type", w->type);
-    child.setAttribute("Latitude", w->pos.y());
-    child.setAttribute("Longitude", w->pos.x());
+    child.setAttribute("Latitude", w->origP.y());
+    child.setAttribute("Longitude", w->origP.x());
     child.setAttribute("Elevation", w->elevation);
     child.setAttribute("Frequency", w->frequency);
     child.setAttribute("Landable", w->isLandable);

@@ -1,5 +1,12 @@
 $Id$
 
+2002-04-10 Harry <harry@kflog.org>
+
+  * Cleanup of old classes
+	
+  * Rename TaskAndWaypoint to Waypoints
+
+	
 2002-04-09 Thomas <thomas@kflog.org>
 
   * Corrected handling of igcfiles not containing waypoints

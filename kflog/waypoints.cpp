@@ -1,5 +1,5 @@
 /***************************************************************************
-                          taskandwaypoint.cpp  -  description
+                          waypoints.cpp  -  description
                              -------------------
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier
@@ -15,9 +15,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "taskandwaypoint.h"
+#include "waypoints.h"
 #include "basemapelement.h"
-#include "waypointelement.h"
+#include "wp.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "airport.h"
@@ -42,7 +42,7 @@
 extern MapContents _globalMapContents;
 extern MapMatrix _globalMapMatrix;
 
-TaskAndWaypoint::TaskAndWaypoint(QWidget *parent, const char *name )
+Waypoints::Waypoints(QWidget *parent, const char *name )
   : QFrame(parent, name)
 {
   TranslationElement *te;
@@ -70,11 +70,11 @@ TaskAndWaypoint::TaskAndWaypoint(QWidget *parent, const char *name )
   }
 }
 
-TaskAndWaypoint::~TaskAndWaypoint()
+Waypoints::~Waypoints()
 {
 }
 
-void TaskAndWaypoint::initSurfaces()
+void Waypoints::initSurfaces()
 {
   surfaces.setAutoDelete(true);
 
@@ -86,7 +86,7 @@ void TaskAndWaypoint::initSurfaces()
   surfaces.sort();
 }
 
-void TaskAndWaypoint::initTypes()
+void Waypoints::initTypes()
 {
   waypointTypes.setAutoDelete(true);
 
@@ -123,7 +123,7 @@ void TaskAndWaypoint::initTypes()
 
 /** No descriptions */
 
-void TaskAndWaypoint::addWaypointWindow(QWidget *parent)
+void Waypoints::addWaypointWindow(QWidget *parent)
 {
   waypoints =  new KFLogListView("Waypoints", parent, "waypoints");
   waypoints->setShowSortIndicator(true);
@@ -188,7 +188,7 @@ void TaskAndWaypoint::addWaypointWindow(QWidget *parent)
 }
 
 /** No descriptions */
-void TaskAndWaypoint::addPopupMenu()
+void Waypoints::addPopupMenu()
 {
   wayPointPopup = new KPopupMenu(waypoints);
   wayPointPopup->insertTitle(SmallIcon("waypoint"), "Waypoint's", 0);
@@ -222,7 +222,7 @@ void TaskAndWaypoint::addPopupMenu()
 }
 
 /** open a catalog and set it active */
-void TaskAndWaypoint::slotOpenWaypointCatalog()
+void Waypoints::slotOpenWaypointCatalog()
 {
   KConfig* config = KGlobal::config();
   config->setGroup("Path");
@@ -253,12 +253,12 @@ void TaskAndWaypoint::slotOpenWaypointCatalog()
 }
 
 /** No descriptions */
-void TaskAndWaypoint::slotNotHandledItem()
+void Waypoints::slotNotHandledItem()
 {
   KMessageBox::sorry(this, "This function is not yet available!", "ooops");
 }
 
-void TaskAndWaypoint::showWaypointPopup(QListViewItem *it, const QPoint &, int)
+void Waypoints::showWaypointPopup(QListViewItem *it, const QPoint &, int)
 {
   wayPointPopup->setItemEnabled(idWaypointCatalogSave, waypointCatalogs.count() && waypointCatalogs.current()->modified);
   wayPointPopup->setItemEnabled(idWaypointCatalogClose, waypointCatalogs.count() > 1);
@@ -273,7 +273,7 @@ void TaskAndWaypoint::showWaypointPopup(QListViewItem *it, const QPoint &, int)
   wayPointPopup->exec(QCursor::pos());
 }
 
-void TaskAndWaypoint::slotNewWaypoint()
+void Waypoints::slotNewWaypoint()
 {
   waypointDlg->clear();
 
@@ -283,7 +283,7 @@ void TaskAndWaypoint::slotNewWaypoint()
 }
 
 /** create a new catalog */
-void TaskAndWaypoint::slotNewWaypointCatalog()
+void Waypoints::slotNewWaypointCatalog()
 {
   int newItem = catalogName->count();
   WaypointCatalog *w = new WaypointCatalog;
@@ -296,7 +296,7 @@ void TaskAndWaypoint::slotNewWaypointCatalog()
 }
 
 /* save changes in catalogs, return success */
-bool TaskAndWaypoint::saveChanges()
+bool Waypoints::saveChanges()
 {
   WaypointCatalog *w;
   for (w = waypointCatalogs.first(); w != 0; w = waypointCatalogs.next()) {
@@ -317,20 +317,20 @@ bool TaskAndWaypoint::saveChanges()
 }
 
 /** insert waypoint from waypoint dialog */
-void TaskAndWaypoint::slotAddWaypoint()
+void Waypoints::slotAddWaypoint()
 {
   int comboIdx;
 
   if (!waypointDlg->name->text().isEmpty()) {
     // insert a new waypoint to current catalog
-    WaypointElement *w = new WaypointElement;
+    wayPoint *w = new wayPoint;
     w->name = waypointDlg->name->text().upper();
     w->description = waypointDlg->description->text();
     comboIdx = waypointDlg->waypointType->currentItem();
     // translate to id
     w->type = comboIdx != -1 ? waypointTypes.at(comboIdx)->id : -1;
-    w->pos.setX(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
-    w->pos.setY(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+    w->origP.setX(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
+    w->origP.setY(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
     w->elevation = waypointDlg->elevation->text().toInt();
     w->icao = waypointDlg->icao->text().upper();
     w->frequency = waypointDlg->frequency->text().toDouble();
@@ -350,7 +350,7 @@ void TaskAndWaypoint::slotAddWaypoint()
 }
 
 /** No descriptions */
-void TaskAndWaypoint::slotEditWaypoint()
+void Waypoints::slotEditWaypoint()
 {
   QListViewItem *item = waypoints->currentItem();
   int comboIdx;
@@ -359,15 +359,15 @@ void TaskAndWaypoint::slotEditWaypoint()
   if (item != 0) {
     WaypointList *wl = &waypointCatalogs.current()->wpList;
     oldName = item->text(colName);
-    WaypointElement *w = wl->find(oldName);
+    wayPoint *w = wl->find(oldName);
 
     // initialize dialg
     waypointDlg->name->setText(w->name);
     waypointDlg->description->setText(w->description);
     // translate id to index
     waypointDlg->waypointType->setCurrentItem(waypointTypes.idxById(w->type));
-    waypointDlg->longitude->setText(printPos(w->pos.x(), false));
-    waypointDlg->latitude->setText(printPos(w->pos.y(), true));
+    waypointDlg->longitude->setText(printPos(w->origP.x(), false));
+    waypointDlg->latitude->setText(printPos(w->origP.y(), true));
     tmp.sprintf("%d", w->elevation);
     waypointDlg->elevation->setText(tmp);
     waypointDlg->icao->setText(w->icao);
@@ -389,8 +389,8 @@ void TaskAndWaypoint::slotEditWaypoint()
         comboIdx = waypointDlg->waypointType->currentItem();
         // translate to id
         w->type = comboIdx != -1 ? waypointTypes.at(comboIdx)->id : -1;
-        w->pos.setX(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
-        w->pos.setY(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+        w->origP.setX(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
+        w->origP.setY(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
         w->elevation = waypointDlg->elevation->text().toInt();
         w->icao = waypointDlg->icao->text().upper();
         w->frequency = waypointDlg->frequency->text().toDouble();
@@ -416,7 +416,7 @@ void TaskAndWaypoint::slotEditWaypoint()
 }
 
 /** No descriptions */
-void TaskAndWaypoint::slotDeleteWaypoint()
+void Waypoints::slotDeleteWaypoint()
 {
   QListViewItem *item = waypoints->currentItem();
 
@@ -429,13 +429,13 @@ void TaskAndWaypoint::slotDeleteWaypoint()
 }
 
 /** No descriptions */
-void TaskAndWaypoint::fillWaypoints()
+void Waypoints::fillWaypoints()
 {
   QString tmp;
-  WaypointElement *w;
+  wayPoint *w;
   WaypointCatalog *c = waypointCatalogs.current();
   QListViewItem *item;
-  QDictIterator<WaypointElement> it(c->wpList);
+  QDictIterator<wayPoint> it(c->wpList);
   bool filterRadius, filterArea;
 
   waypoints->clear();
@@ -472,13 +472,13 @@ void TaskAndWaypoint::fillWaypoints()
     }
 
      if (filterArea) {
-       if (w->pos.x() < c->areaLong1 || w->pos.x() > c->areaLong2 ||
-           w->pos.y() < c->areaLat1 || w->pos.y() > c->areaLat2) {
+       if (w->origP.x() < c->areaLong1 || w->origP.x() > c->areaLong2 ||
+           w->origP.y() < c->areaLat1 || w->origP.y() > c->areaLat2) {
            continue;
        }
      }
      else if (filterRadius) {
-       if (dist(c->radiusLat, c->radiusLong, w->pos.y(), w->pos.x()) > c->radiusSize) {
+       if (dist(c->radiusLat, c->radiusLong, w->origP.y(), w->origP.x()) > c->radiusSize) {
          continue;
        }
      }
@@ -488,8 +488,8 @@ void TaskAndWaypoint::fillWaypoints()
     item->setText(colDesc, w->description);
     item->setText(colICAO, w->icao);
     item->setText(colType, w->type == -1 ? QString::null : waypointTypes.itemById(w->type)->text);
-    item->setText(colLat, printPos(w->pos.y(), true));
-    item->setText(colLong, printPos(w->pos.x(), false));
+    item->setText(colLat, printPos(w->origP.y(), true));
+    item->setText(colLong, printPos(w->origP.x(), false));
     tmp.sprintf("%d", w->elevation);
     item->setText(colElev, tmp);
     tmp.sprintf("%.3f", w->frequency);
@@ -505,13 +505,13 @@ void TaskAndWaypoint::fillWaypoints()
 }
 
 /** No descriptions */
-void TaskAndWaypoint::slotSwitchWaypointCatalog(int idx)
+void Waypoints::slotSwitchWaypointCatalog(int idx)
 {
   waypointCatalogs.at(idx);
   fillWaypoints();
 }
 
-void TaskAndWaypoint::slotSaveWaypointCatalog()
+void Waypoints::slotSaveWaypointCatalog()
 {
   WaypointCatalog *w = waypointCatalogs.current();
   if (w->write()) {
@@ -519,7 +519,7 @@ void TaskAndWaypoint::slotSaveWaypointCatalog()
   }
 }
 
-void TaskAndWaypoint::slotImportWaypointCatalog()
+void Waypoints::slotImportWaypointCatalog()
 {
   KConfig* config = KGlobal::config();
   config->setGroup("Path");
@@ -538,7 +538,7 @@ void TaskAndWaypoint::slotImportWaypointCatalog()
   }
 }
 
-void TaskAndWaypoint::slotCloseWaypointCatalog()
+void Waypoints::slotCloseWaypointCatalog()
 {
   WaypointCatalog *w = waypointCatalogs.current();
   int idx = waypointCatalogs.at();
@@ -569,10 +569,10 @@ void TaskAndWaypoint::slotCloseWaypointCatalog()
   slotSwitchWaypointCatalog(idx);
 }
 
-void TaskAndWaypoint::slotImportWaypointFromMap()
+void Waypoints::slotImportWaypointFromMap()
 {
   SinglePoint *s;
-  WaypointElement *w;
+  wayPoint *w;
   WaypointCatalog *c = waypointCatalogs.current();
   WaypointList *wl = &(c->wpList);
   unsigned int i;
@@ -633,7 +633,7 @@ void TaskAndWaypoint::slotImportWaypointFromMap()
           }
         }
 
-        w = new WaypointElement;
+        w = new wayPoint;
 
         w->name = s->getName().replace(blank, QString::null).left(6).upper();
         loop = 0;
@@ -644,9 +644,13 @@ void TaskAndWaypoint::slotImportWaypointFromMap()
         w->description = s->getName();
         type = s->getTypeID();
         w->type = type;
+        w->runway = 0;
+        w->length = 0;
+        w->surface = -1;
+        w->frequency = 0.0;
 
-        w->pos.setX(p.x());
-        w->pos.setY(p.y());
+        w->origP.setX(p.x());
+        w->origP.setY(p.y());
 
         w->elevation = s->getElevation();
 
@@ -682,7 +686,7 @@ void TaskAndWaypoint::slotImportWaypointFromMap()
   }
 }
 /** filter waypoints to display */
-void TaskAndWaypoint::slotFilterWaypoints()
+void Waypoints::slotFilterWaypoints()
 {
   if (importFilterDlg->exec() == QDialog::Accepted) {
     getFilterData();
@@ -690,7 +694,7 @@ void TaskAndWaypoint::slotFilterWaypoints()
   }
 }
 /** add a new waypoint from outside */
-void TaskAndWaypoint::slotAddWaypoint(WaypointElement *w)
+void Waypoints::slotAddWaypoint(wayPoint *w)
 {
   WaypointList *wl = &waypointCatalogs.current()->wpList;
   int loop = 1;
@@ -707,19 +711,19 @@ void TaskAndWaypoint::slotAddWaypoint(WaypointElement *w)
   }
 }
 
-void TaskAndWaypoint::slotCopyWaypoint2Task()
+void Waypoints::slotCopyWaypoint2Task()
 {
   QListViewItem *item = waypoints->currentItem();
 
   if (item != 0) {
     WaypointList *wl = &waypointCatalogs.current()->wpList;
-    WaypointElement *w = wl->find(item->text(colName));
+    wayPoint *w = wl->find(item->text(colName));
 
     emit copyWaypoint2Task(w);
   }
 }
 
-void TaskAndWaypoint::getFilterData()
+void Waypoints::getFilterData()
 {
   QPoint p;
   KConfig* config = KGlobal::config();

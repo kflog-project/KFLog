@@ -1,5 +1,5 @@
 /***************************************************************************
-                          taskandwaypoint.h  -  description
+                          waypoints.h  -  description
                              -------------------
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier
@@ -15,14 +15,15 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef TASKANDWAYPOINT_H
-#define TASKANDWAYPOINT_H
+#ifndef WAYPOINTS_H
+#define WAYPOINTS_H
 
 #include "waypointimpfilterdialog.h"
 #include "waypointdialog.h"
 #include "waypointcatalog.h"
 #include "translationlist.h"
 #include "guicontrols/kfloglistview.h"
+#include "wp.h"
 
 #include <qframe.h>
 #include <qsplitter.h>
@@ -35,11 +36,11 @@
   *@author Harald Maier
   */
 
-class TaskAndWaypoint : public QFrame  {
+class Waypoints : public QFrame  {
    Q_OBJECT
 public:
-	TaskAndWaypoint(QWidget *parent=0, const char *name=0);
-	~TaskAndWaypoint();
+	Waypoints(QWidget *parent=0, const char *name=0);
+	~Waypoints();
 	/* save changes in catalogs, return success */
   bool saveChanges();
 private: // Private methods
@@ -115,10 +116,10 @@ public slots: // Public slots
   /** filter waypoints to display */
   void slotFilterWaypoints();
   /** add a new waypoint from outside */
-  void slotAddWaypoint(WaypointElement *w);
+  void slotAddWaypoint(wayPoint *w);
 signals: // Signals
   /** No descriptions */
-  void copyWaypoint2Task(WaypointElement *);
+  void copyWaypoint2Task(wayPoint *);
 };
 
 #endif

@@ -35,7 +35,7 @@ class Map;
 class MapControlView;
 class KFLogConfig;
 class KFLogStartLogo;
-class TaskAndWaypoint;
+class Waypoints;
 class Tasks;
 class EvaluationDialog;
 
@@ -155,9 +155,9 @@ class KFLogApp : public KDockMainWindow
      */
     void slotToggleMap();
      /**
-     * Shows or hides the taskandwaypoint-widget.
+     * Shows or hides the taskandwaypoints-widget.
      */
-    void slotToggleTaskAndWaypointDock();
+    void slotToggleWaypointsDock();
     /**
      * Opens a dialog for configuration of the toolbar.
      */
@@ -221,10 +221,10 @@ class KFLogApp : public KDockMainWindow
     /** */
     void slotFlightViewIgc3D();
     /**
-     * Hides the taskAndWaypoint-widget. Called, when the user has closed or
+     * Hides the Waypoints-widget. Called, when the user has closed or
      * undocked the widget.
      */
-    void slotHideTaskAndWaypointDock();
+    void slotHideWaypointsDock();
     /** set menu items enabled/disabled */
     void slotModifyMenu();
     /** */
@@ -254,11 +254,11 @@ class KFLogApp : public KDockMainWindow
      */
     KDockWidget* dataViewDock;
     /**
-     * Dockwidget to handle the waypoint-widget.
+     * Dockwidget to handle the waypoints-widget.
      *
      * @see taskAndWaypoint
      */
-    KDockWidget* taskAndWaypointDock;
+    KDockWidget* waypointsDock;
     /**
      * Dockwidget to handle the task-widget.
      *
@@ -379,7 +379,7 @@ class KFLogApp : public KDockMainWindow
     /** */
     KAction* fileRecorder;
     /** */
-    KToggleAction* viewTaskAndWaypoint;
+    KToggleAction* viewWaypoints;
 		/**
 		 * Action to start the animation
 		 */		
@@ -414,9 +414,9 @@ class KFLogApp : public KDockMainWindow
      */
     QString flightDir;
 		/**
-     * The waypoint-widget.
+     * The waypoints-widget.
      */
-    TaskAndWaypoint *taskAndWaypoint;
+    Waypoints *waypoints;
 		/**
      * The taskt-widget.
      */

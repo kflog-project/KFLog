@@ -18,6 +18,7 @@
    <Action name="toggle_map_control" />
    <Action name="toggle_map" />
   </Menu>
+  <Action name="window" />
  </MenuBar>
  <ToolBar noMerge="1" name="mainToolBar" >
   <text>Main Toolbar</text>
@@ -32,6 +33,6 @@
   <Action name="view_center_flight" />
   <Separator weakSeparator="1" name="separator_0" />
   <Action name="evaluate_flight" />
-  <Action name="task_and_waypoint" />
+  <Action name="waypoints" />
  </ToolBar>
 </kpartgui>

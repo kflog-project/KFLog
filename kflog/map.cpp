@@ -36,7 +36,7 @@
 #include <mapmatrix.h>
 #include <singlepoint.h>
 #include <radiopoint.h>
-#include "waypointelement.h"
+#include "wp.h"
 
 #include <iostream.h>
 
@@ -383,15 +383,19 @@ void Map::mousePressEvent(QMouseEvent* event)
   	              // Abstand entspricht der Icon-Größe.
         	        if( ( ( dX < delta ) && ( dX > -delta ) ) && ( ( dY < delta ) && ( dY > -delta ) ) )
         	          {
-          	          WaypointElement *w = new WaypointElement;
-  	                  w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
+          	          wayPoint *w = new wayPoint;
+  	                   w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
                       w->description = hitElement->getName();
           	          w->type = hitElement->getTypeID();
-          	          w->pos = _globalMapMatrix.mapToWgs(_globalMapMatrix.map(hitElement->getPosition()));
+          	          w->origP = _globalMapMatrix.mapToWgs(_globalMapMatrix.map(hitElement->getPosition()));
                       w->elevation = hitElement->getElevation();
                       w->icao = ((RadioPoint *)hitElement)->getICAO();
                       w->frequency = ((RadioPoint *)hitElement)->getFrequency().toDouble();
                       w->isLandable = true;
+                      w->surface = -1;
+                      w->runway = 0;
+                      w->length = 0;
+
                       emit waypointSelected(w);
                       found = true;
                       break;
@@ -403,11 +407,17 @@ void Map::mousePressEvent(QMouseEvent* event)
   	      if (!found)
   	        {
       	      // add an 'free' waypoint
-              WaypointElement *w = new WaypointElement;
+              wayPoint *w = new wayPoint;
               // leave name empty, this will generate an syntetic name
               w->type = BaseMapElement::Landmark;
-              w->pos = _globalMapMatrix.mapToWgs(current);
+              w->origP = _globalMapMatrix.mapToWgs(current);
               w->isLandable = false;
+              w->elevation = 0;
+              w->frequency = 0.0;
+              w->surface = -1;
+              w->runway = 0;
+              w->length = 0;
+
               emit waypointSelected(w);
   	        }
         }
