@@ -1,20 +1,32 @@
 $Id$
 
+
+Segelflieger mögen ihre Freiheit und endlich ist nun auch ihre Software
+frei!
+
+
+Ein Motto, das sich die Mitglieder des KFLog Teams zu Herzen genommen haben.
+Was ist KFLog? Nun KFLog ist eine weitere Software für den Segelflieger um seine
+Flüge zu Planen, Visualiesieren und auszuwerten.
 (1)
 
+[
 KFLOG ist eine (nicht ganz neue), jedoch noch recht unbekannte Software
 für Segelflieger. Für wen KFLOG gedacht ist, und was damit gemacht werden 
-kann soll hiermit kurz vorgestellt werden.
+kann soll hiermit kurz vorgestellt werden. ]
 
 KFLog (sprich: Kaa Äf Log :-) steht für KDE Flight LOGger. KDE ist die
 Benutzeroberfläche unter Linux, für welche KFLog programiert ist.
 
 Dies ist auch gleich einer der Hauptunterschiede zu den bekannten
 Programmen StrePla, SeeYou ..., welche für Microsoft Windows programiert
-sind. Ein weiterer Unterschied (und großer Vorteil) ist, dass KFLog als
+sind. Ein weiterer Unterschied  ist, dass KFLog als
 Opensource entwickelt wird. Dies bedeutet unter anderem, dass das Programm
-kostenlos erhältlich ist und es neuen Mistreitern sehr einfach macht bei
-ist dem Projekt mitzuhelfen.
+kostenlos erhältlich ist.
+
+KFLog läßt also die Herzen aller Linux Nutzer Höher schlagen, dank der Knoppix
+Distribution brauchen aber auch Windowsnutzer nicht verzagen. Hiermit lässt sich
+KFLog einfach von CD starten.
 
 Linux hat zwar leider immer noch den Ruf, ein Betriebsystem für Freaks zu
 sein. Durch die Modernen Oberflächen wie KDE und der einfachen
@@ -23,13 +35,8 @@ Windows aber keinesfalls mehr zu verstecken.
 
 
 (2)
-[
-	Das Projekt wurde 1998 von einem Geographie Studenten und
-	einem Segelflieger ins Leben gerufen. Urspruenglich war
-	das Projekt nur dafuer gedacht ein bisschen programmieren
-	zu lernen ... bla bla bla
-]
-
+Das Projekt wurde 1998 von einem Geographie Studenten und
+einem Segelflieger ins Leben gerufen.
 [
 
 _Open Source Linux_
@@ -209,6 +216,11 @@ den Einsatz auf PDAs ausgerichtet:
 
 Und wie KFlog selbst: Völlig frei zum benützen und auf seine Bedürfnisse
 anzupasssen
+
+die Power von OpenSource macht es möglich ihre induviduellen Vorlieben zu
+realisieren! Sollten sie die aktive Crew von KFLog jedoch nicht für ihre
+Änderungswünsche begeistern können, dann greifen sie selbst zur Tastatur.
+Wir freuen uns immer über neue Mitstreiter.
 
 Des weiteren ist ein Programm zum Verwalten von Flügen (Desktop, PDA) Eine
 Schnittstelle zum Flugsimulator FlightGear (Animation von Flügen) und
