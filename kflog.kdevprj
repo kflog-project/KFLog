@@ -1,457 +1,1329 @@
--less "rename" dialog, and return
- a result code, as well as the new dest. Much easier to use than the
- class <A HREF="KIO__RenameDlg.html">RenameDlg</A> directly.
-</p>
-<p></p>
-<p> The following parameters bring optionnal information about <code>src</code> and <code>dest</code>
-</p>
-<p>   </p>
-<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
-<TR><TD align="left" valign="top"><i>caption</i></TD><TD align="left" valign="top">the caption for the dialog box
-</TD></TR>
-<TR><TD align="left" valign="top"><i>src</i></TD><TD align="left" valign="top">the file/dir we're trying to copy, as it's part of the text message
-</TD></TR>
-<TR><TD align="left" valign="top"><i>dest</i></TD><TD align="left" valign="top">the destination file/dir, i.e. the one that already exists
-</TD></TR>
-<TR><TD align="left" valign="top"><i>mode</i></TD><TD align="left" valign="top">parameters for the dialog (which buttons to show...),
-</TD></TR>
-<TR><TD align="left" valign="top"><i>newDest</i></TD><TD align="left" valign="top">the new destination path, valid if R_RENAME was returned.
-</TD></TR>
-<TR><TD align="left" valign="top"><i>sizeSrc</i></TD><TD align="left" valign="top">size of source file
-</TD></TR>
-<TR><TD align="left" valign="top"><i>sizeDest</i></TD><TD align="left" valign="top">size of destination file
-</TD></TR>
-<TR><TD align="left" valign="top"><i>ctimeSrc</i></TD><TD align="left" valign="top">creation time of source file
-</TD></TR>
-<TR><TD align="left" valign="top"><i>ctimeDest</i></TD><TD align="left" valign="top">creation time of destination file
-</TD></TR>
-<TR><TD align="left" valign="top"><i>mtimeSrc</i></TD><TD align="left" valign="top">modification time of source file
-</TD></TR>
-<TR><TD align="left" valign="top"><i>mtimeDest</i></TD><TD align="left" valign="top">modification time of destination file
-</TD></TR>
-</TABLE></P>
-<p><b>See also</b>: RenameDlg_Mode</p>
-<A NAME="KIO__SlaveConfig.html"></A><A NAME="ref91"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>SlaveConfig</strong> <small>(class)</small></td><td align="right"><h3><strong>SlaveConfig</strong></h3></td></tr></table><p></p><p>
- SlaveConfig
-</p>
-<p> This class manages the configuration for io-slaves based on protocol
- and host. The Scheduler makes use of this class to configure the slave
- whenever it has to connect to a new host.
-</p>
-<p> You only need to use this class if you want to override specific
- configuration items of an io-slave when the io-slave is used by
- your application. 
-</p>
-<p> Normally io-slaves are being configured by "kio_<protocol>rc" 
- configuration files. Groups defined in such files are treated as host 
- or domain specification. Configuration items defined in a group are 
- only applied when the slave is connecting with a host that matches with 
- the host and/or domain specified by the group.
-     </p>
-<A NAME="KIO__SessionData.html"></A><A NAME="ref92"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>SessionData</strong> <small>(class)</small></td><td align="right"><h3><strong>SessionData</strong></h3></td></tr></table><p></p><p>
- This class hanldes static io-slave config information.  Static
- config information are options that rarely change and even when
- they do they require user intervention. These kinds of options
- are mostly modifiable by the end user from the control panel and
- as such do not change as much as per session options, those that
- can be modified programtically.  Some examples of static config
- information are things such as locale settings, location of caching
- directories, and state of the cookiejar.
-</p>
-<p> Note that this class is only concerned with KDE configurations
- that are needed by the io-slaves.
-</p>
-<p></p>
-<p></p>
-<A NAME="KIO__Scheduler.html"></A><A NAME="ref93"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>Scheduler</strong> <small>(class)</small></td><td align="right"><h3><strong>Scheduler</strong></h3></td></tr></table><p></p><p>
- The KIO::Scheduler manages io-slaves for the application.
- It also queues jobs and assigns the job to a slave when one
- becomes available.
-</p>
-<p> There are 3 possible ways for a job to get a slave:
-</p>
-<p> 1) Direct.
- This is the default. When you create a job the
- KIO::Scheduler will be notified and will find either an existing
- slave that is idle or it will create a new slave for the job.
-</p>
-<p> Example:
-    TransferJob *job = KIO::get(KURL("http://www.kde.org"));
-</p>
-<p></p>
-<p> 2) Scheduled
- If you create a lot of jobs, you might want not want to have a
- slave for each job. If you schedule a job, a maximum number
- of slaves will be created. When more jobs arrive, they will be
- queued. When a slave is finished with a job, it will be assigned
- a job from the queue.
-</p>
-<p> Example:
-    TransferJob *job = KIO::get(KURL("http://www.kde.org"));
-    KIO::Scheduler::scheduleJob(job);
-</p>
-<p> 3) Connection Oriented
- For some operations it is important that multiple jobs use
- the same connection. This can only be ensured if all these jobs
- use the same slave.
-</p>
-<p> You can ask the scheduler to open a slave for connection oriented
- operations. You can then use the scheduler to assign jobs to this
- slave. The jobs will be queued and the slave will handle these jobs
- one after the other.
-</p>
-<p> Example:
-    Slave *slave = KIO::Scheduler::getConnectedSlave(
-            KURL("pop3://bastian:password@mail.kde.org"));
-    TransferJob *job1 = KIO::get(
-            KURL("pop3://bastian:password@mail.kde.org/msg1"));
-    KIO::Scheduler::assignJobToSlave(slave, job1);
-    TransferJob *job2 = KIO::get(
-            KURL("pop3://bastian:password@mail.kde.org/msg2"));
-    KIO::Scheduler::assignJobToSlave(slave, job2);
-    TransferJob *job3 = KIO::get(
-            KURL("pop3://bastian:password@mail.kde.org/msg3"));
-    KIO::Scheduler::assignJobToSlave(slave, job3);
-</p>
-<p>    ... Wait for jobs to finish...
-</p>
-<p>    KIO::Scheduler::disconnectSlave(slave);
-</p>
-<A NAME="SkipDlg_Result"></A><A NAME="ref94"></A><table width="100%"><tr bgcolor="#eeeeee"><td>enum <strong>SkipDlg_Result</strong> { S_SKIP = 1, S_AUTO_SKIP = 2, S_CANCEL = 0 }
-</td><td align="right"><h3><strong>SkipDlg_Result</strong></h3></td></tr></table><p></p><A NAME="open_SkipDlg"></A><A NAME="ref95"></A><table width="100%"><tr bgcolor="#eeeeee"><td>SkipDlg_Result &nbsp;<strong>open_SkipDlg</strong> ( bool _multi, const <A HREF="../../packages/qt/html/qstring.html">QString</A>& _error_text = QString::null )
-<br></td><td align="right"><h3><strong>open_SkipDlg</strong></h3></td></tr></table><p></p><A NAME="KIO__SkipDlg.html"></A><A NAME="ref96"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>SkipDlg</strong> <small>(class)</small></td><td align="right"><h3><strong>SkipDlg</strong></h3></td></tr></table><p></p><A NAME="KIO__SlaveBase.html"></A><A NAME="ref98"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>SlaveBase</strong> <small>(class)</small></td><td align="right"><h3><strong>SlaveBase</strong></h3></td></tr></table><p></p><p>
- There are two classes that specifies the protocol between application (job)
- and kioslave. SlaveInterface is the class to use on the application end,
- SlaveBase is the one to use on the slave end.
-</p>
-<p> Slave implementations should simply inherit SlaveBase
-</p>
-<p> A call to foo() results in a call to slotFoo() on the other end.
- </p>
-<A NAME="Command"></A><A NAME="ref101"></A><table width="100%"><tr bgcolor="#eeeeee"><td>enum <strong>Command</strong> {   CMD_HOST = '0',
-   CMD_CONNECT = '1',
-   CMD_DISCONNECT = '2',
-   CMD_SLAVE_STATUS = '3',
-   CMD_SLAVE_CONNECT = '4',
-   CMD_NONE = 'A', 
-   CMD_TESTDIR = 'B', 
-   CMD_GET = 'C', 
-   CMD_PUT = 'D', 
-   CMD_STAT = 'E', 
-   CMD_MIMETYPE = 'F', 
-   CMD_LISTDIR = 'G', 
-   CMD_MKDIR = 'H', 
-   CMD_RENAME = 'I', 
-   CMD_COPY = 'J', 
-   CMD_DEL = 'K', 
-   CMD_CHMOD = 'L', 
-   CMD_SPECIAL = 'M', 
-   CMD_USERPASS = 'N', 
-   CMD_REPARSECONFIGURATION = 'O', 
-   CMD_META_DATA = 'P', 
-   CMD_SYMLINK = 'Q', 
-   CMD_SUBURL = 'R', 
-   CMD_MESSAGEBOXANSWER = 'S', 
-   CMD_RESUMEANSWER = 'T', 
-   CMD_CONFIG = 'U' 
- }
-</td><td align="right"><h3><strong>Command</strong></h3></td></tr></table><p></p><p>
- Commands that can be invoked by a job.
- </p>
-<A NAME="Info"></A><A NAME="ref102"></A><table width="100%"><tr bgcolor="#eeeeee"><td>enum <strong>Info</strong> {   INF_TOTAL_SIZE = 10,
-   INF_PROCESSED_SIZE = 11,
-   INF_SPEED,
-   INF_REDIRECTION = 20,
-   INF_MIME_TYPE,
-   INF_ERROR_PAGE,
-   INF_WARNING,
-   INF_GETTING_FILE, 
-   INF_NEED_PASSWD,
-   INF_INFOMESSAGE,
-   INF_META_DATA,
-   INF_NETWORK_STATUS,
-   INF_MESSAGEBOX
- }
-</td><td align="right"><h3><strong>Info</strong></h3></td></tr></table><p></p><p>
- Identifiers for KIO informational messages.
-  </p>
-<A NAME="Message"></A><A NAME="ref103"></A><table width="100%"><tr bgcolor="#eeeeee"><td>enum <strong>Message</strong> {   MSG_DATA = 100,
-   MSG_DATA_REQ,
-   MSG_ERROR,
-   MSG_CONNECTED,
-   MSG_FINISHED,
-   MSG_STAT_ENTRY,
-   MSG_LIST_ENTRIES,
-   MSG_RENAMED, 
-   MSG_RESUME,
-   MSG_SLAVE_STATUS,
-   MSG_SLAVE_ACK,
-   MSG_NET_REQUEST,
-   MSG_NET_DROP,
-   MSG_NEED_SUBURL_DATA,
-   MSG_CANRESUME,
-   MSG_AUTH_KEY,
-   MSG_DEL_AUTH_KEY
- }
-</td><td align="right"><h3><strong>Message</strong></h3></td></tr></table><p></p><p>
- Identifiers for KIO data messages.
-  </p>
-<A NAME="KIO__TCPSlaveBase.html"></A><A NAME="ref104"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>TCPSlaveBase</strong> <small>(class)</small></td><td align="right"><h3><strong>TCPSlaveBase</strong></h3></td></tr></table><p></p><p>
- There are two classes that specifies the protocol between application (job)
- and kioslave. SlaveInterface is the class to use on the application end,
- SlaveBase is the one to use on the slave end.
-</p>
-<p> Slave implementations should simply inherit SlaveBase
-</p>
-<p> A call to foo() results in a call to slotFoo() on the other end.
- </p>
-<HR>
-	<table>
-	<tr><td><small>Generated by: root on Fatou on Sun Jan 27 17:41:07 2002, using kdoc 2.0a53.</small></td></tr>
-	</table>
-</BODY>
-</HTML>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <HTML>
-<HEAD>
-<TITLE>class SlaveBase</TITLE>
+[AUTHORS]
+dist=true
+install=false
+install_location=
+type=DATA
 
-<META NAME="Generator" CONTENT="KDOC ">
-</HEAD>
-<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
-<TABLE WIDTH="100%" BORDER="0">
-<TR>
-<TD>
-	<TABLE BORDER="0">
-		<TR><TD valign="top" align="left" cellspacing="10">
-		<h1>class SlaveBase</h1>
-		</TD>
-		<TD valign="top" align="right" colspan="1">
- There are two classes that specifies the protocol between application (job)
- and kioslave. <small><A HREF="#longdesc">More...</A></small></TD></TR>
-	</TABLE>
-	<HR>
-	<TABLE BORDER="0">
-		<TR><TH>Full name</TH><TD><code><A HREF="KIO.html">KIO</A>::SlaveBase</code></TD></TR>
-<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="slavebase_h.html">slavebase.h</A>&gt;</code></TD></TR>
-<TR><TH>Inherited by</TH><TD><A HREF="KIO__TCPSlaveBase.html">TCPSlaveBase</A></TD></TR>
-<TR><TH><A HREF="full-list-KIO__SlaveBase.html">List of all Methods</A></TH></TR>
-	</TABLE>
-	</TD>
-<TD align="right"><TABLE BORDER="0"><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
-<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
-<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
-<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
-<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
-</TABLE></TD></TR></TABLE>
-<h4>Public Types</h4><ul><LI>enum <A HREF="#ref26"></A> { QuestionYesNo = 1, WarningYesNo = 2, WarningContinueCancel = 3, WarningYesNoCancel = 4, Information = 5, SSLMessageBox = 6 }
-</LI>
-</ul><h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref1">SlaveBase</A></b> ( const <A HREF="../../packages/qt/html/qcstring.html">QCString</A> &protocol, const <A HREF="../../packages/qt/html/qcstring.html">QCString</A> &pool_socket, const <A HREF="../../packages/qt/html/qcstring.html">QCString</A> &app_socket) 
-</LI>
-<LI>virtual  &nbsp;<b><A HREF="#ref2">~SlaveBase</A></b> () 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref3">dispatchLoop</A></b> () 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref4">setConnection</A></b> ( Connection* connection ) 
-</LI>
-<LI>Connection *&nbsp;<b><A HREF="#ref5">connection</A></b> ()  const
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref6">data</A></b> ( const <A HREF="../../packages/qt/html/qbytearray.html">QByteArray</A> &data ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref7">dataReq</A></b> ( ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref8">error</A></b> ( int _errid, const <A HREF="../../packages/qt/html/qstring.html">QString</A> &_text ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref9">connected</A></b> () 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref10">finished</A></b> () 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref11">needSubURLData</A></b> () 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref12">slaveStatus</A></b> (const <A HREF="../../packages/qt/html/qstring.html">QString</A> &host, bool connected) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref13">statEntry</A></b> ( const UDSEntry& _entry ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref14">listEntries</A></b> ( const UDSEntryList& _entry ) 
-</LI>
-<LI>bool &nbsp;<b><A HREF="#ref15">canResume</A></b> ( unsigned long offset ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref16">canResume</A></b> () 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref17">totalSize</A></b> ( unsigned long _bytes ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref18">processedSize</A></b> ( unsigned long _bytes ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref19">speed</A></b> ( unsigned long _bytes_per_second ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref20">redirection</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A> &_url ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref21">errorPage</A></b> () 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref22">mimeType</A></b> ( const <A HREF="../../packages/qt/html/qstring.html">QString</A> &_type ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref23">gettingFile</A></b> ( const <A HREF="../../packages/qt/html/qstring.html">QString</A> &_file ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref24">warning</A></b> ( const <A HREF="../../packages/qt/html/qstring.html">QString</A> &msg ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref25">infoMessage</A></b> ( const <A HREF="../../packages/qt/html/qstring.html">QString</A> &msg ) 
-</LI>
-<LI>int &nbsp;<b><A HREF="#ref27">messageBox</A></b> ( int type, const <A HREF="../../packages/qt/html/qstring.html">QString</A> &text,
-                    const <A HREF="../../packages/qt/html/qstring.html">QString</A> &caption = QString::null,
-                    const <A HREF="../../packages/qt/html/qstring.html">QString</A> &buttonYes = QString::null,
-                    const <A HREF="../../packages/qt/html/qstring.html">QString</A> &buttonNo = QString::null ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref28">setMetaData</A></b> (const <A HREF="../../packages/qt/html/qstring.html">QString</A> &key, const <A HREF="../../packages/qt/html/qstring.html">QString</A> &value) 
-</LI>
-<LI>bool &nbsp;<b><A HREF="#ref29">hasMetaData</A></b> (const <A HREF="../../packages/qt/html/qstring.html">QString</A> &key) 
-</LI>
-<LI><A HREF="../../packages/qt/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref30">metaData</A></b> (const <A HREF="../../packages/qt/html/qstring.html">QString</A> &key) 
-</LI>
-<LI><A HREF="../kdecore/KConfigBase.html">KConfigBase</A>* &nbsp;<b><A HREF="#ref31">config</A></b> () 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref32">setHost</A></b> (const <A HREF="../../packages/qt/html/qstring.html">QString</A>& host, int port, const <A HREF="../../packages/qt/html/qstring.html">QString</A>& user, const <A HREF="../../packages/qt/html/qstring.html">QString</A>& pass) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref33">setSubURL</A></b> (const <A HREF="../kdecore/KURL.html">KURL</A>&url) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref34">openConnection</A></b> () 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref35">closeConnection</A></b> () 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref36">get</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A>& url ) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref37">put</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A>& url, int permissions, bool overwrite, bool resume ) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref38">stat</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A>& url ) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref39">mimetype</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A>& url ) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref40">listDir</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A>& url ) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref41">mkdir</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A>&url, int permissions ) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref42">rename</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A>& src, const <A HREF="../kdecore/KURL.html">KURL</A>& dest, bool overwrite ) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref43">symlink</A></b> ( const <A HREF="../../packages/qt/html/qstring.html">QString</A>& target, const <A HREF="../kdecore/KURL.html">KURL</A>& dest, bool overwrite ) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref44">chmod</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A>& url, int permissions ) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref45">copy</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A> &src, const <A HREF="../kdecore/KURL.html">KURL</A> &dest, int permissions, bool overwrite ) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref46">del</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A> &url, bool isfile) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref47">special</A></b> ( const <A HREF="../../packages/qt/html/qbytearray.html">QByteArray</A> & ) 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref48">slave_status</A></b> () 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref49">reparseConfiguration</A></b> () 
-</LI>
-<LI>int &nbsp;<b><A HREF="#ref50">connectTimeout</A></b> () 
-</LI>
-<LI>int &nbsp;<b><A HREF="#ref51">proxyConnectTimeout</A></b> () 
-</LI>
-<LI>int &nbsp;<b><A HREF="#ref52">responseTimeout</A></b> () 
-</LI>
-<LI>int &nbsp;<b><A HREF="#ref53">readTimeout</A></b> () 
-</LI>
-<LI>virtual  bool &nbsp;<b><A HREF="#ref56">dispatch</A></b> () 
-</LI>
-<LI>virtual  void &nbsp;<b><A HREF="#ref57">dispatch</A></b> ( int command, const <A HREF="../../packages/qt/html/qbytearray.html">QByteArray</A> &data ) 
-</LI>
-<LI>int &nbsp;<b><A HREF="#ref58">readData</A></b> ( <A HREF="../../packages/qt/html/qbytearray.html">QByteArray</A> &buffer ) 
-</LI>
-</ul><h4>Public Static Methods</h4><ul><LI>static  void &nbsp;<b><A HREF="#ref54">sigsegv_handler</A></b> (int) 
-</LI>
-<LI>static  void &nbsp;<b><A HREF="#ref55">sigpipe_handler</A></b> (int) 
-</LI>
-</ul><h4>Protected Methods</h4><ul><LI>void &nbsp;<b><A HREF="#ref59">listEntry</A></b> ( const UDSEntry& _entry, bool ready) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref60">connectSlave</A></b> (const <A HREF="../../packages/qt/html/qstring.html">QString</A>& path) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref61">disconnectSlave</A></b> () 
-</LI>
-<LI>bool &nbsp;<b><A HREF="#ref62">pingCacheDaemon</A></b> ()  const
-</LI>
-<LI>bool &nbsp;<b><A HREF="#ref63">openPassDlg</A></b> ( <A HREF="KIO__AuthInfo.html">KIO::AuthInfo</A>& info ) 
-</LI>
-<LI>bool &nbsp;<b><A HREF="#ref64">openPassDlg</A></b> ( const <A HREF="../../packages/qt/html/qstring.html">QString</A>& msg, <A HREF="../../packages/qt/html/qstring.html">QString</A>& user,
-                      <A HREF="../../packages/qt/html/qstring.html">QString</A>& passwd, bool lock = false ) 
-</LI>
-<LI>bool &nbsp;<b><A HREF="#ref65">checkCachedAuthentication</A></b> ( AuthInfo& info ) 
-</LI>
-<LI>bool &nbsp;<b><A HREF="#ref66">checkCachedAuthentication</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A>& url,
-                                    <A HREF="../../packages/qt/html/qstring.html">QString</A>& user,
-                                    <A HREF="../../packages/qt/html/qstring.html">QString</A>& passwd,
-                                    <A HREF="../../packages/qt/html/qstring.html">QString</A>& realm,
-                                    <A HREF="../../packages/qt/html/qstring.html">QString</A>& extra,
-                                    bool verify = true ) 
-</LI>
-<LI>bool &nbsp;<b><A HREF="#ref67">checkCachedAuthentication</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A>& url,
-                                    <A HREF="../../packages/qt/html/qstring.html">QString</A>& user,
-                                    <A HREF="../../packages/qt/html/qstring.html">QString</A>& passwd) 
-</LI>
-<LI>bool &nbsp;<b><A HREF="#ref68">cacheAuthentication</A></b> ( const AuthInfo& info ) 
-</LI>
-<LI>bool &nbsp;<b><A HREF="#ref69">cacheAuthentication</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A>& url,
-                              const <A HREF="../../packages/qt/html/qstring.html">QString</A>& user,
-                              const <A HREF="../../packages/qt/html/qstring.html">QString</A>& passwd,
-                              const <A HREF="../../packages/qt/html/qstring.html">QString</A>& realm = QString::null,
-                              const <A HREF="../../packages/qt/html/qstring.html">QString</A>& extra = QString::null ) 
-</LI>
-<LI><A HREF="../../packages/qt/html/qstring.html">QString</A> &nbsp;<b><A HREF="#ref70">createAuthCacheKey</A></b> ( const <A HREF="../kdecore/KURL.html">KURL</A>& url ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref71">sendAuthenticationKey</A></b> ( const <A HREF="../../packages/qt/html/qcstring.html">QCString</A>& gKey, const <A HREF="../../packages/qt/html/qcstring.html">QCString</A>& key, bool keep ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref72">delCachedAuthentication</A></b> ( const <A HREF="../../packages/qt/html/qstring.html">QString</A>& key ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref73">setMultipleAuthCaching</A></b> ( bool enable ) 
-</LI>
-<LI>bool &nbsp;<b><A HREF="#ref74">multipleAuthCaching</A></b> ()  const
-</LI>
-<LI>bool &nbsp;<b><A HREF="#ref75">requestNetwork</A></b> (const <A HREF="../../packages/qt/html/qstring.html">QString</A>& host = QString::null) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref76">dropNetwork</A></b> (const <A HREF="../../packages/qt/html/qstring.html">QString</A>& host = QString::null) 
-</LI>
-<LI>int &nbsp;<b><A HREF="#ref77">waitForAnswer</A></b> ( int expected1, int expected2, <A HREF="../../packages/qt/html/qbytearray.html">QByteArray</A> & data, int * pCmd = 0 ) 
-</LI>
-<LI>void &nbsp;<b><A HREF="#ref78">sendMetaData</A></b> () 
-</LI>
-</ul><h4>Protected Members</h4><ul><LI>QCString <b><A HREF="#ref79">mProtocol</A></b></LI>
-<LI>Connection * <b><A HREF="#ref80">m_pConnection</A></b></LI>
-<LI>MetaData <b><A HREF="#ref81">mOutgoingMetaData</A></b></LI>
-<LI>MetaData <b><A HREF="#ref82">mIncomingMetaData</A></b></LI>
-</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
- There are two classes that specifies the protocol between application (job)
- and kioslave. SlaveInterface is the class to use on the application end,
- SlaveBase is the one to use on the slave end.
-</p>
-<p> Slave implementations should simply inherit SlaveBase
-</p>
-<p> A call to foo() results in a call to slotFoo() on the other end.
- </p>
-<A NAME="SlaveBase"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>SlaveBase</strong> ( const <A HREF="../../packages/qt/html/qcstring.html">QCString</A> &protocol, const <A HREF="../../packages/qt/html/qcstring.html">QCString</A> &pool_socket, const <A HREF="../../packages/qt/html/qcstring.html">QCString</A> &app_socket)
-<br></td><td align="right"><h3><strong>SlaveBase</strong></h3></td></tr></table><p></p><A NAME="~SlaveBase"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~SlaveBase</strong> ()
-<br></td><td align="right"><h3><strong>~SlaveBase</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="dispatchLoop"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>dispatchLoop</strong> ()
-<br></td><td align="right"><h3><strong>dispatchLoop</strong></h3></td></tr></table><p></p><p>
-     </p>
-<A NAME="setConnection"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>setConnection</strong> ( Connection* connection )
-<br></td><td align="right"><h3><strong>setConnection</strong></h3></td></tr></table><p></p><p>
-     </p>
-<A NAME="connection"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Connection *&nbsp;<strong>connection</strong> ()
-<br></td><td align="right"><h3><strong>connection</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
-     </p>
-<A NAME="data"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>data</strong> ( const <A HREF="../../packages/qt/html/qbytearray.html">QByteArray</A> &data )
-<br></td><td align="right"><h3><strong>data</strong></h3></td></tr></table><p></p><p>
- Sends data in the slave to the job (i.e. in get).
-</p>
-<p> To signal end of data, simply send an empty
- QByteArray().
-</p>
-<p></p>
-<p><b>Parameters</b>:<TABLE BORDER="0" CELLPADDING="5">
-<TR><TD align="left" valign="top"><i>data</i></TD><TD align="left" valign="top">the data read by the slave
-     </TD></TR>
-</TABLE></P>
-<A NAME="dataReq"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>dataReq</strong> ( )
-<br></td><td align="right"><h3><strong>dataReq</strong></h3></td></tr></table><p></p><p>
- Asks for data from the job.
-</p>
-<p><b>See also</b>: readDat
+[COPYING]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[ChangeLog]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[Config for BinMakefileAm]
+addcxxflags=
+bin_program=kflog
+cxxflags=\s-O1 -g3 -pg -Wall
+ldadd=-lkdeprint -lm $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
+ldflags=
+
+[General]
+AMChanged=false
+author=Heiner Lamprecht
+configure_args=--enable-debug --disable-mt --prefix=/opt/kde2
+email=heiner@kflog.org
+kdevprj_version=1.3
+lfv_open_groups=GNU,User Interface
+make_options=\s-j1
+makefiles=Makefile.am,kflog/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,po/Makefile.am,kflog/map-icons/Makefile.am,kflog/map-icons/small/Makefile.am,kflog/pics/Makefile.am,kflog/guicontrols/Makefile.am
+modifyMakefiles=true
+project_name=KFLog
+project_type=normal_kde2
+sgml_file=/home/heiner/Entwicklung/kflog2/doc/en/index.docbook
+short_info=
+sub_dir=kflog/
+version=2.0.4
+version_control=CVS
+workspace=1
+
+[INSTALL]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[KPP]
+kpp_appgrp=
+kpp_bldroot=/tmp/test/
+kpp_icon=0
+kpp_license=5
+kpp_summary=Gutes Programm
+kpp_url=http://www.kflog.org/
+kpp_version=2.0.2
+
+[LFV Groups]
+GNU=AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,NEWS
+Headers=*.h,*.hh,*.hxx,*.hpp,*.H
+Icons=*.png,*.xpm
+Others=*
+Sources=*.cpp,*.c,*.cc,*.C,*.cxx,*.ec,*.ecpp,*.lxx,*.l++,*.ll,*.l
+Translations=*.po,*.gmo
+User Interface=*.kdevdlg,*.ui,*.rc
+groups=Icons,Headers,Sources,User Interface,Translations,GNU,Others
+
+[Makefile.am]
+files=kflog.kdevprj,AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,kflog.lsm,kflog.spec,README-MAP
+sub_dirs=kflog,po,doc
+type=normal
+
+[README]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[README-MAP]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapdata/README
+type=DATA
+
+[TODO]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[doc/Makefile.am]
+sub_dirs=en
+type=normal
+
+[doc/en/Makefile.am]
+files=doc/en/index.docbook
+sub_dirs=
+type=normal
+
+[doc/en/index.docbook]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog.kdevprj]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog.lsm]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog.spec]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/Makefile.am]
+files=kflog/main.cpp,kflog/kflog.cpp,kflog/kflog.h,kflog/kflogui.rc,kflog/kflog.desktop,kflog/mapcontrolview.h,kflog/mapcontrolview.cpp,kflog/mapcalc.cpp,kflog/mapcalc.h,kflog/wp.h,kflog/dataview.cpp,kflog/dataview.h,kflog/map.cpp,kflog/map.h,kflog/basemapelement.cpp,kflog/basemapelement.h,kflog/mapcontents.cpp,kflog/mapcontents.h,kflog/resource.h,kflog/airport.cpp,kflog/airport.h,kflog/airspace.cpp,kflog/airspace.h,kflog/glidersite.cpp,kflog/glidersite.h,kflog/isohypse.cpp,kflog/isohypse.h,kflog/lineelement.cpp,kflog/lineelement.h,kflog/radiopoint.cpp,kflog/radiopoint.h,kflog/singlepoint.cpp,kflog/singlepoint.h,kflog/mapmatrix.cpp,kflog/mapmatrix.h,kflog/flight.cpp,kflog/flight.h,kflog/flighttask.cpp,kflog/flighttask.h,kflog/kflogstartlogo.cpp,kflog/kflogstartlogo.h,kflog/kflogconfig.cpp,kflog/kflogconfig.h,kflog/mapdefaults.h,kflog/evaluationdialog.cpp,kflog/evaluationdialog.h,kflog/evaluationview.cpp,kflog/evaluationview.h,kflog/hi16-app-kflog.png,kflog/hi32-app-kflog.png,kflog/hi48-app-kflog.png,kflog/hi16-mimetype-igc.png,kflog/hi32-mimetype-igc.png,kflog/hi48-mimetype-igc.png,kflog/igc.desktop,kflog/hi22-action-movemap_e.png,kflog/hi22-action-movemap_n.png,kflog/hi22-action-movemap_ne.png,kflog/hi22-action-movemap_nw.png,kflog/hi22-action-movemap_s.png,kflog/hi22-action-movemap_se.png,kflog/hi22-action-movemap_sw.png,kflog/hi22-action-movemap_w.png,kflog/hi16-action-flightevaluation.png,kflog/hi22-action-flightevaluation.png,kflog/hi32-action-flightevaluation.png,kflog/hi16-action-centerflight.png,kflog/hi16-action-centertask.png,kflog/hi22-action-centerflight.png,kflog/hi22-action-centertask.png,kflog/mapconfig.cpp,kflog/mapconfig.h,kflog/evaluationframe.cpp,kflog/evaluationframe.h,kflog/igcpreview.cpp,kflog/igcpreview.h,kflog/configdrawelement.cpp,kflog/configdrawelement.h,kflog/configprintelement.cpp,kflog/configprintelement.h,kflog/taskandwaypoint.cpp,kflog/taskandwaypoint.h,kflog/translationelement.cpp,kflog/translationelement.h,kflog/translationlist.cpp,kflog/translationlist.h,kflog/waypointcatalog.cpp,kflog/waypointcatalog.h,kflog/waypointdialog.cpp,kflog/waypointdialog.h,kflog/waypointelement.cpp,kflog/waypointelement.h,kflog/waypointlist.cpp,kflog/waypointlist.h,kflog/hi22-action-waypoint.png,kflog/hi16-action-waypoint.png,kflog/runway.h,kflog/mapprint.cpp,kflog/mapprint.h,kflog/waypointimpfilterdialog.cpp,kflog/waypointimpfilterdialog.h,kflog/flightdataprint.cpp,kflog/flightdataprint.h,kflog/hi16-action-stepback.png,kflog/hi16-action-stepforward.png,kflog/hi22-action-stepback.png,kflog/hi22-action-stepforward.png,kflog/igc3ddialog.cpp,kflog/igc3ddialog.h,kflog/igc3dflightdata.cpp,kflog/igc3dflightdata.h,kflog/igc3dpolyhedron.cpp,kflog/igc3dpolyhedron.h,kflog/igc3dview.cpp,kflog/igc3dview.h,kflog/igc3dviewstate.cpp,kflog/igc3dviewstate.h
+sub_dirs=map-icons,pics,guicontrols
+type=prog_main
+
+[kflog/airport.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/airport.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/airspace.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/airspace.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/basemapelement.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/basemapelement.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/configdrawelement.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/configdrawelement.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/configprintelement.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/configprintelement.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/dataview.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/dataview.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/evaluationdialog.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/evaluationdialog.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/evaluationframe.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/evaluationframe.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/evaluationview.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/evaluationview.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/flight.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/flight.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/flightdataprint.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/flightdataprint.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/flighttask.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/flighttask.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/glidersite.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/glidersite.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/guicontrols/Makefile.am]
+files=kflog/guicontrols/coordedit.cpp,kflog/guicontrols/coordedit.h,kflog/guicontrols/kflogtable.cpp,kflog/guicontrols/kflogtable.h
+type=static_library
+
+[kflog/guicontrols/coordedit.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/guicontrols/coordedit.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/guicontrols/kflogtable.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/guicontrols/kflogtable.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/hi16-action-centerflight.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/16x16/actions/centerflight.png
+type=DATA
+
+[kflog/hi16-action-centertask.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/16x16/actions/centertask.png
+type=DATA
+
+[kflog/hi16-action-flightevaluation.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
+type=DATA
+
+[kflog/hi16-action-stepback.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/16x16/actions/stepback.png
+type=DATA
+
+[kflog/hi16-action-stepforward.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/16x16/actions/stepforward.png
+type=DATA
+
+[kflog/hi16-action-waypoint.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/16x16/actions/waypoint.png
+type=DATA
+
+[kflog/hi16-app-kflog.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/16x16/apps/kflog.png
+type=DATA
+
+[kflog/hi16-mimetype-igc.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/16x16/mimetypes/igc.png
+type=DATA
+
+[kflog/hi22-action-centerflight.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/centerflight.png
+type=DATA
+
+[kflog/hi22-action-centertask.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/centertask.png
+type=DATA
+
+[kflog/hi22-action-flightevaluation.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
+type=DATA
+
+[kflog/hi22-action-movemap_e.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/movemap_e.png
+type=DATA
+
+[kflog/hi22-action-movemap_n.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/movemap_n.png
+type=DATA
+
+[kflog/hi22-action-movemap_ne.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/movemap_ne.png
+type=DATA
+
+[kflog/hi22-action-movemap_nw.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/movemap_nw.png
+type=DATA
+
+[kflog/hi22-action-movemap_s.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/movemap_s.png
+type=DATA
+
+[kflog/hi22-action-movemap_se.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/movemap_se.png
+type=DATA
+
+[kflog/hi22-action-movemap_sw.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/movemap_sw.png
+type=DATA
+
+[kflog/hi22-action-movemap_w.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/movemap_w.png
+type=DATA
+
+[kflog/hi22-action-stepback.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/stepback.png
+type=DATA
+
+[kflog/hi22-action-stepforward.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/stepforward.png
+type=DATA
+
+[kflog/hi22-action-waypoint.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/22x22/actions/waypoint.png
+type=DATA
+
+[kflog/hi32-action-flightevaluation.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
+type=DATA
+
+[kflog/hi32-app-kflog.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/32x32/apps/kflog.png
+type=DATA
+
+[kflog/hi32-mimetype-igc.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/32x32/mimetypes/igc.png
+type=DATA
+
+[kflog/hi48-app-kflog.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/48x48/apps/kflog.png
+type=DATA
+
+[kflog/hi48-mimetype-igc.png]
+dist=true
+install=true
+install_location=$$(kde_icondir)/hicolor/48x48/mimetypes/igc.png
+type=DATA
+
+[kflog/igc.desktop]
+dist=true
+install=true
+install_location=$$(kde_mimedir)/application/igc.desktop
+type=DATA
+
+[kflog/igc3ddialog.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/igc3ddialog.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/igc3dflightdata.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/igc3dflightdata.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/igc3dpolyhedron.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/igc3dpolyhedron.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/igc3dview.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/igc3dview.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/igc3dviewstate.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/igc3dviewstate.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/igcpreview.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/igcpreview.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/isohypse.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/isohypse.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/kflog.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/kflog.desktop]
+dist=true
+install=true
+install_location=$$(kde_appsdir)/Applications/kflog.desktop
+type=DATA
+
+[kflog/kflog.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/kflogconfig.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/kflogconfig.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/kflogstartlogo.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/kflogstartlogo.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/kflogui.rc]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/kflogui.rc
+type=DATA
+
+[kflog/lineelement.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/lineelement.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/main.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/map-icons/Makefile.am]
+dist=true
+files=kflog/map-icons/airfield_g.xpm,kflog/map-icons/airport.xpm,kflog/map-icons/airspace.xpm,kflog/map-icons/ambheliport.xpm,kflog/map-icons/civheliport.xpm,kflog/map-icons/civmilair.xpm,kflog/map-icons/closed.xpm,kflog/map-icons/glider.xpm,kflog/map-icons/glider2.xpm,kflog/map-icons/jump.xpm,kflog/map-icons/milairport.xpm,kflog/map-icons/milheliport.xpm,kflog/map-icons/Makefile.am,kflog/map-icons/obst_group.xpm,kflog/map-icons/obst_group_light.xpm,kflog/map-icons/obst_light.xpm,kflog/map-icons/obstacle.xpm,kflog/map-icons/outlanding.xpm,kflog/map-icons/paraglider.xpm,kflog/map-icons/routepoint.xpm,kflog/map-icons/ul.xpm,kflog/map-icons/vortac.xpm,kflog/map-icons/waypoint.xpm,kflog/map-icons/airfield_c.xpm
+install=false
+install_location=
+sub_dirs=small
+type=DATA
+
+[kflog/map-icons/airfield_c.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/airfield_c.xpm
+type=DATA
+
+[kflog/map-icons/airfield_g.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/airfield_g.xpm
+type=DATA
+
+[kflog/map-icons/airport.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/airport.xpm
+type=DATA
+
+[kflog/map-icons/airspace.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/airspace.xpm
+type=DATA
+
+[kflog/map-icons/ambheliport.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/ambheliport.xpm
+type=DATA
+
+[kflog/map-icons/civheliport.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/civheliport.xpm
+type=DATA
+
+[kflog/map-icons/civmilair.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/civmilair.xpm
+type=DATA
+
+[kflog/map-icons/closed.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/closed.xpm
+type=DATA
+
+[kflog/map-icons/glider.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/glider.xpm
+type=DATA
+
+[kflog/map-icons/glider2.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/glider2.xpm
+type=DATA
+
+[kflog/map-icons/jump.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/jump.xpm
+type=DATA
+
+[kflog/map-icons/milairport.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/milairport.xpm
+type=DATA
+
+[kflog/map-icons/milheliport.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/milheliport.xpm
+type=DATA
+
+[kflog/map-icons/obst_group.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/obst_group.xpm
+type=DATA
+
+[kflog/map-icons/obst_group_light.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/obst_group_light.xpm
+type=DATA
+
+[kflog/map-icons/obst_light.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/obst_light.xpm
+type=DATA
+
+[kflog/map-icons/obstacle.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/obstacle.xpm
+type=DATA
+
+[kflog/map-icons/outlanding.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/outlanding.xpm
+type=DATA
+
+[kflog/map-icons/paraglider.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/paraglider.xpm
+type=DATA
+
+[kflog/map-icons/routepoint.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/routepoint.xpm
+type=DATA
+
+[kflog/map-icons/small/Makefile.am]
+dist=true
+files=kflog/map-icons/small/airfield_c.xpm,kflog/map-icons/small/airport.xpm,kflog/map-icons/small/ambheliport.xpm,kflog/map-icons/small/civheliport.xpm,kflog/map-icons/small/civmilair.xpm,kflog/map-icons/small/closed.xpm,kflog/map-icons/small/glider.xpm,kflog/map-icons/small/glider2.xpm,kflog/map-icons/small/jump.xpm,kflog/map-icons/small/Makefile.am,kflog/map-icons/small/milairport.xpm,kflog/map-icons/small/milheliport.xpm,kflog/map-icons/small/obst_group.xpm,kflog/map-icons/small/obstacle.xpm,kflog/map-icons/small/outlanding.xpm,kflog/map-icons/small/paraglider.xpm,kflog/map-icons/small/routepoint.xpm,kflog/map-icons/small/ulf.xpm,kflog/map-icons/small/vortac.xpm,kflog/map-icons/small/waypoint.xpm
+install=false
+install_location=
+sub_dirs=
+type=DATA
+
+[kflog/map-icons/small/airfield_c.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/airfield_c.xpm
+type=DATA
+
+[kflog/map-icons/small/airport.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/airport.xpm
+type=DATA
+
+[kflog/map-icons/small/ambheliport.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/ambheliport.xpm
+type=DATA
+
+[kflog/map-icons/small/civheliport.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/civheliport.xpm
+type=DATA
+
+[kflog/map-icons/small/civmilair.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/civmilair.xpm
+type=DATA
+
+[kflog/map-icons/small/closed.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/closed.xpm
+type=DATA
+
+[kflog/map-icons/small/glider.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/glider.xpm
+type=DATA
+
+[kflog/map-icons/small/glider2.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/glider2.xpm
+type=DATA
+
+[kflog/map-icons/small/jump.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/jump.xpm
+type=DATA
+
+[kflog/map-icons/small/milairport.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/milairport.xpm
+type=DATA
+
+[kflog/map-icons/small/milheliport.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/milheliport.xpm
+type=DATA
+
+[kflog/map-icons/small/obst_group.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/obst_group.xpm
+type=DATA
+
+[kflog/map-icons/small/obstacle.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/obstacle.xpm
+type=DATA
+
+[kflog/map-icons/small/outlanding.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/outlanding.xpm
+type=DATA
+
+[kflog/map-icons/small/paraglider.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/paraglider.xpm
+type=DATA
+
+[kflog/map-icons/small/routepoint.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/routepoint.xpm
+type=DATA
+
+[kflog/map-icons/small/ulf.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/ul.xpm
+type=DATA
+
+[kflog/map-icons/small/vortac.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/vortac.xpm
+type=DATA
+
+[kflog/map-icons/small/waypoint.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/waypoint.xpm
+type=DATA
+
+[kflog/map-icons/ul.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/ul.xpm
+type=DATA
+
+[kflog/map-icons/vortac.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/vortac.xpm
+type=DATA
+
+[kflog/map-icons/waypoint.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/waypoint.xpm
+type=DATA
+
+[kflog/map.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/map.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/mapcalc.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/mapcalc.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/mapconfig.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/mapconfig.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/mapcontents.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/mapcontents.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/mapcontrolview.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/mapcontrolview.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/mapdefaults.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/mapmatrix.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/mapmatrix.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/mapprint.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/mapprint.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/pics/Makefile.am]
+files=kflog/pics/brush0.png,kflog/pics/brush1.png,kflog/pics/brush10.png,kflog/pics/brush11.png,kflog/pics/brush12.png,kflog/pics/brush2.png,kflog/pics/brush3.png,kflog/pics/brush4.png,kflog/pics/brush5.png,kflog/pics/brush6.png,kflog/pics/brush7.png,kflog/pics/brush8.png,kflog/pics/brush9.png,kflog/pics/dashdot.png,kflog/pics/dashdotdot.png,kflog/pics/dashed.png,kflog/pics/dotted.png,kflog/pics/flag_green.png,kflog/pics/flag_red.png,kflog/pics/solid.png,kflog/pics/splash.png,kflog/pics/brush13.png,kflog/pics/splash_mask.png
+sub_dirs=
+type=normal
+
+[kflog/pics/brush0.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush0.png
+type=DATA
+
+[kflog/pics/brush1.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush1.png
+type=DATA
+
+[kflog/pics/brush10.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush10.png
+type=DATA
+
+[kflog/pics/brush11.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush11.png
+type=DATA
+
+[kflog/pics/brush12.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush12.png
+type=DATA
+
+[kflog/pics/brush13.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush13.png
+type=DATA
+
+[kflog/pics/brush2.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush2.png
+type=DATA
+
+[kflog/pics/brush3.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush3.png
+type=DATA
+
+[kflog/pics/brush4.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush4.png
+type=DATA
+
+[kflog/pics/brush5.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush5.png
+type=DATA
+
+[kflog/pics/brush6.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush6.png
+type=DATA
+
+[kflog/pics/brush7.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush7.png
+type=DATA
+
+[kflog/pics/brush8.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush8.png
+type=DATA
+
+[kflog/pics/brush9.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/brush9.png
+type=DATA
+
+[kflog/pics/dashdot.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/dashdot.png
+type=DATA
+
+[kflog/pics/dashdotdot.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/dashdotdot.png
+type=DATA
+
+[kflog/pics/dashed.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/dashed.png
+type=DATA
+
+[kflog/pics/dotted.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/dotted.png
+type=DATA
+
+[kflog/pics/flag_green.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/flag_green.png
+type=DATA
+
+[kflog/pics/flag_red.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/flag_red.png
+type=DATA
+
+[kflog/pics/solid.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/solid.png
+type=DATA
+
+[kflog/pics/splash.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/splash.png
+type=DATA
+
+[kflog/pics/splash_mask.png]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/pics/splash_mask.png
+type=DATA
+
+[kflog/radiopoint.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/radiopoint.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/resource.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/runway.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/singlepoint.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/singlepoint.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/taskandwaypoint.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/taskandwaypoint.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/translationelement.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/translationelement.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/translationlist.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/translationlist.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/waypointcatalog.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/waypointcatalog.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/waypointdialog.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/waypointdialog.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/waypointelement.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/waypointelement.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/waypointimpfilterdialog.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/waypointimpfilterdialog.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/waypointlist.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/waypointlist.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/wp.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[po/Makefile.am]
+files=po/de.po,po/de.gmo,po/kflog.pot,po/no.gmo,po/no.po,po/sv.gmo,po/sv.po,po/fr.po,po/fr.gmo
+sub_dirs=
+type=po
+
+[po/de.gmo]
+dist=true
+install=true
+install_location=$$(kde_locale)/de/kflog.mo
+type=DATA
+
+[po/de.po]
+dist=false
+install=false
+install_location=
+type=PO
+
+[po/fr.gmo]
+dist=true
+install=true
+install_location=$$(kde_locale)/fr/kflog.mo
+type=DATA
+
+[po/fr.po]
+dist=false
+install=false
+install_location=
+type=PO
+
+[po/kflog.pot]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[po/no.gmo]
+dist=true
+install=true
+install_location=$$(kde_locale)/no/kflog.mo
+type=DATA
+
+[po/no.po]
+dist=false
+install=false
+install_location=
+type=PO
+
+[po/sv.gmo]
+dist=true
+install=true
+install_location=$$(kde_locale)/sv/kflog.mo
+type=DATA
+
+[po/sv.po]
+dist=false
+install=false
+install_location=
+type=PO
