@@ -30,7 +30,7 @@
 #include "opengl_igc.h"
 #include "openglwidget.h"
 
-static const char caption[]="KFLog OpenGL IGC file viewer";
+static const char* caption = "KFLog OpenGL IGC file viewer";
 OpenGLWidget* openGLWidget;
 
 extern "C"
