@@ -107,7 +107,7 @@ int GarminFR::downloadFlight(int flightID, int secMode, QString fileName){
  * get recorder info serial id
  */
 QString GarminFR::getRecorderSerialNo(){
-  return QString("Cumulus");       //TODO: replace with something more sensible, like Cumulus version?
+  return QString("");      //
 }
 
 
@@ -144,15 +144,7 @@ int GarminFR::closeRecorder(){
  * Read tasks from recorder
  */
 int GarminFR::readTasks(QList<FlightTask> *tasks){
-  int res=FR_NOTSUPPORTED;
-  if (!_isConnected) {                  //check if we are connected
-    _errorinfo=i18n("Not connected to PDA!");
-    return FR_ERROR;
-  }
-
-
-
-  return res;
+  return FR_NOTSUPPORTED;
 }
 
 
@@ -268,3 +260,5 @@ int openRecorder(char* pName)
   return 0;
 }
    */
+
+   
