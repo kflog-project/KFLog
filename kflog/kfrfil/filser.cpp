@@ -558,12 +558,12 @@ int Filser::getBasicData(FR_BasicData& data)
 int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileName)
 {
   int rc;
-  unsigned char memSection[0x20];  /* Information received from the   */
-                          /* logger about the memory         */
-                          /* blocks of a specific flight     */
-                          /* for download. The table is      */
-                          /* 0x20 bytes long. Two bytes for  */
-                          /* a block.                        */
+  unsigned char memSection[0x21];/* Information received from the   */
+                                 /* logger about the memory         */
+                                 /* blocks of a specific flight     */
+                                 /* for download. The table is      */
+                                 /* 0x20 bytes long. Two bytes for  */
+                                 /* a block. Plus one byte for CRC. */
   FILE *f;
 
   _errorinfo = "";
@@ -735,11 +735,11 @@ bool Filser::getMemSection(unsigned char *memSection, int size)
   wb(STX);
   wb(L);
   tcdrain (portID);
-  for(i = 0; i < (size + 1); i++) {
+  for(i = 0; i < size; i++) {
     memSection[i] = rb();
   }
 
-  if(calcCrcBuf(memSection, size) != memSection[size]) {
+  if(calcCrcBuf(memSection, size-1) != memSection[size-1]) {
     _errorinfo = i18n("get_mem_sections(): Bad CRC");
     return false;
   }
@@ -753,7 +753,7 @@ bool Filser::getLoggerData(unsigned char *memSection, int sectionSize)
    * Calculate the size the of the memory buffer
    */
   contentSize = 0;
-  for(int i = 0; i < (sectionSize / 2); i++) {
+  for(int i = 0; i < ((sectionSize - 1) / 2); i++) {
     if(!(memSection[2 * i] | memSection[(2 * i) + 1])) {
       break;
     }
@@ -773,7 +773,7 @@ bool Filser::getLoggerData(unsigned char *memSection, int sectionSize)
   bufP = bufP2 = memContents;
 
   // read each memory section
-  for(int i = 0; i < (sectionSize / 2); i++) {
+  for(int i = 0; i < ((sectionSize - 1) / 2); i++) {
     if(!(memSection[2 * i] | memSection[(2 * i) + 1])) {
       break;
     }
