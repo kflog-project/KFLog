@@ -29,6 +29,7 @@
 #include <kmessagebox.h>
 #include <kstddirs.h>
 
+#include <qapplication.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
 #include <qlayout.h>
@@ -308,7 +309,8 @@ void RecorderDialog::__addFlightPage()
   QPushButton* listB = new QPushButton(i18n("load list"), flightPage);
   QPushButton* fileB = new QPushButton(i18n("save flight"), flightPage);
   useLongNames = new QCheckBox(i18n("long filenames"), flightPage);
-  useLongNames->setChecked(true);
+  // let's prefer short filenames. These are needed for OLC
+  useLongNames->setChecked(false);
   useFastDownload = new QCheckBox(i18n("fast download"), flightPage);
   useFastDownload->setChecked(true);
 
@@ -444,7 +446,7 @@ void RecorderDialog::__addTaskPage()
 
   QVBoxLayout *top = new QVBoxLayout(taskPage, 5);
   QHBoxLayout *buttons = new QHBoxLayout(10);
-  QPushButton *b;
+//  QPushButton *b;
 
   taskList = new KFLogListView("recorderTaskList", taskPage, "taskList");
 
@@ -509,7 +511,7 @@ void RecorderDialog::__addWaypointPage()
                                                                  KIcon::SizeLarge));
   QVBoxLayout *top = new QVBoxLayout(waypointPage, 5);
   QHBoxLayout *buttons = new QHBoxLayout(10);
-  QPushButton *b;
+//  QPushButton *b;
 
   waypointList = new KFLogListView("recorderWaypointList", waypointPage,
                                    "waypointList");
@@ -642,9 +644,11 @@ void RecorderDialog::slotReadFlightList()
   // Now we need to read the flightdeclaration from the logger!
   QString errorDetails;
 
+  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
   flightList->clear();
 
   if (__fillDirList() == FR_ERROR) {
+    QApplication::restoreOverrideCursor();
     if ((errorDetails = activeRecorder->lastError()) != "") {
       KMessageBox::detailedError(this,
                                  i18n("There was an error reading the flight list!"),
@@ -681,6 +685,8 @@ void RecorderDialog::slotReadFlightList()
                  e->lastTime.tm_sec);
     item->setText(colLastPoint, KGlobal::locale()->formatTime(time, true));
   }
+  QApplication::restoreOverrideCursor();
+  serID->setText(activeRecorder->getRecorderSerialNo());
 }
 
 void RecorderDialog::slotDownloadFlight()
@@ -722,8 +728,11 @@ void RecorderDialog::slotDownloadFlight()
   ret = ((int (*)(int, int, char*))funcH)(flightID, !useFastDownload->isChecked(), (char *)(const char*)fileName);
   */
   if (!activeRecorder) return;
+
+  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
   ret = activeRecorder->downloadFlight(flightID,!useFastDownload->isChecked(),fileName);
   
+  QApplication::restoreOverrideCursor();
   if (ret == FR_ERROR) {
     warning("ERROR");
     if ((errorDetails = activeRecorder->lastError()) != "") {
@@ -1039,8 +1048,11 @@ void RecorderDialog::slotReadWaypoints()
     return;
   }
   
+  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
   ret = activeRecorder->readWaypoints(&frWaypoints);
   if (ret<FR_OK) {
+    QApplication::restoreOverrideCursor();
+
     if ((errorDetails=activeRecorder->lastError())!="") {
       KMessageBox::detailedError(this,
                          i18n("Cannot read waypoints from recorder"),
@@ -1060,6 +1072,7 @@ void RecorderDialog::slotReadWaypoints()
       cnt++;
     }
 
+    QApplication::restoreOverrideCursor();
     emit addCatalog(w);
     KMessageBox::information(this,
                        i18n("%1 waypoints have been downloaded from the recorder.").arg(cnt),
@@ -1087,6 +1100,7 @@ void RecorderDialog::slotWriteWaypoints()
     return;
   
   if (!activeRecorder) return;
+
   if (!activeRecorder->capabilities().supUlWaypoint) {
     KMessageBox::sorry(this,
                        i18n("Function not implemented"),
@@ -1120,7 +1134,10 @@ void RecorderDialog::slotWriteWaypoints()
     }
 
     if (!activeRecorder) return;
+
+    QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
     if (!activeRecorder->writeWaypoints(&frWaypoints)) {
+      QApplication::restoreOverrideCursor();
       if ((errorDetails=activeRecorder->lastError())!="") {
         KMessageBox::detailedError(this,
                            i18n("Cannot write waypoints to recorder."),
@@ -1132,6 +1149,8 @@ void RecorderDialog::slotWriteWaypoints()
                            i18n("Library Error"));
       }
     } else {
+      QApplication::restoreOverrideCursor();
+
       KMessageBox::information(this,
                          QString(i18n("%1 waypoints have been uploaded to the recorder.")).arg(cnt),
                          i18n("Waypoint upload"),
