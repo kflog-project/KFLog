@@ -74,6 +74,7 @@
 #define FILE_TYPE_GROUND  0x47
 #define FILE_TYPE_TERRAIN 0x54
 #define FILE_TYPE_MAP     0x4d
+#define FILE_TYPE_LM      0x4c
 #define FILE_TYPE_AERO    0x41
 #define FILE_FORMAT_ID    101
 
@@ -91,12 +92,11 @@
   tA.resize(locLength); \
   if (locLength == 0) { \
     qDebug("zero length pointlist!"); \
-  } else { \
-    for(unsigned int i = 0; i < locLength; i++) { \
-      in >> lat_temp;          in >> lon_temp; \
-      tA.setPoint(i, _globalMapMatrix.wgsToMap(lat_temp, lon_temp)); \
-    } \
-  }
+  } \
+  for(unsigned int i = 0; i < locLength; i++) { \
+    in >> lat_temp;          in >> lon_temp; \
+    tA.setPoint(i, _globalMapMatrix.wgsToMap(lat_temp, lon_temp)); \
+ }
 
 #define READ_CONTACT_DATA in >> contactCount; \
   for(unsigned int loop = 0; loop < contactCount; loop++) \
@@ -684,10 +684,10 @@ bool MapContents::__readTerrainFile(const int fileSecID,
       // the groundlines 0m do not need a sort id
       if(elevation <= 0)
         {
-	  sort = 0;
-	  valley = 0;
+      sort = 0;
+      valley = 0;
         }
-	   
+
       if(sort >= 0 && sort <= 3)
         {
           for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
@@ -696,14 +696,14 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 
           // If sort_temp is -1 here, we have an unused elevation and
           // must ignore it!
-      
+
           if(sort_temp != -1)
             {
               Isohypse* newItem = new Isohypse(tA, elevation, valley);
               isoList.at(sort_temp)->append(newItem);
             }
         }
-      
+
     }
 
   return true;
@@ -1043,8 +1043,6 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   QString pathName;
   pathName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
   pathName = mapDir + "/" + pathName;
-  qDebug("loading file %s", pathName.latin1());
-
   if(pathName == 0)
       // File does not exist ...
       return false;
@@ -1062,7 +1060,6 @@ bool MapContents::__readBinaryFile(const int fileSecID,
 
       return false;
     }
-
 
   QDataStream in(&eingabe);
   in.setVersion(2);
@@ -1115,7 +1112,6 @@ bool MapContents::__readBinaryFile(const int fileSecID,
       QPointArray tA;
 
       gesamt_elemente++;
-      //qDebug("type: %d", typeIn);
 
       switch (typeIn)
         {
@@ -1167,8 +1163,6 @@ bool MapContents::__readBinaryFile(const int fileSecID,
             if(formatID >= FILE_FORMAT_ID) in >> name;
             in >> lat_temp;
             in >> lon_temp;
-
-            in >> index;
             populationList.append(new SinglePoint(name, "", typeIn,
                 WGSPoint(lat_temp, lon_temp),
                 _globalMapMatrix.wgsToMap(lat_temp, lon_temp)));
@@ -1191,7 +1185,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
             in >> lon_temp;
             landmarkList.append(new SinglePoint(name, "", typeIn,
               WGSPoint(lat_temp, lon_temp),
-              _globalMapMatrix.wgsToMap(lat_temp, lon_temp)));
+              _globalMapMatrix.wgsToMap(lat_temp, lon_temp),0,lm_typ));
             break;
         }
     }
@@ -1379,7 +1373,7 @@ bool MapContents::loadFlight(QFile& igcFile)
   // G : Digital signature of the file
   //
   ElevationFinder * ef=ElevationFinder::instance();
-  
+
   while (!stream.eof())
     {
       if(importProgress.wasCancelled()) return false;
@@ -1868,6 +1862,7 @@ void MapContents::proofeSection(bool isPrint)
                   __readTerrainFile(secID, FILE_TYPE_GROUND);
                   __readTerrainFile(secID, FILE_TYPE_TERRAIN);
                   __readBinaryFile(secID, FILE_TYPE_MAP);
+                  __readBinaryFile(secID, FILE_TYPE_LM);
                   sectionArray.setBit( secID, true );
                 }
             }
@@ -2271,7 +2266,7 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
       targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1, Qt::SolidLine));
       targetP->setBrush(QBrush(_globalMapConfig.getIsoColor(height),
           QBrush::SolidPattern));
-      
+
       for(Isohypse* iso2 = iso->first(); iso2; iso2 = iso->next())
         {
           QRegion * reg = iso2->drawRegion(targetP, maskP);
@@ -3206,7 +3201,7 @@ QString MapContents::genTaskName(QString suggestion)
       }
     }
   }
-  return suggestion;     
+  return suggestion;
 }
 
 
@@ -3249,8 +3244,8 @@ void MapContents::slotReSendFlightChanged()
  */
 int MapContents::getElevation(QPoint coord)
 {
-  extern MapConfig _globalMapConfig;
-  
+//   extern MapConfig _globalMapConfig;
+
   isoListEntry* entry;
   int height=-1; //default 'unknown' value
 
