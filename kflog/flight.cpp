@@ -36,8 +36,8 @@
 #include <qpixmap.h>
 #include <qptrlist.h>
 
-/* Anzahl der zu merkenden besten Flüge */
-#define NUM_TASKS 3
+/* Number of tasks to be handled during optimization */
+#define NUM_TASKS 25
 #define NUM_TASKS_POINTS ( NUM_TASKS * 3 )
 #define MAX_TASK_ID NUM_TASKS - 1
 
@@ -827,7 +827,10 @@ bool Flight::optimizeTaskOLC(Map* map)
       return true;
 }
 
-
+/*
+ * The optimization is done in two runs. During the first run, we go
+ * with a special step-width, which is calculated
+ */
 bool Flight::optimizeTask()
 {
   if( route.count() < 10)  return false;
@@ -839,9 +842,9 @@ bool Flight::optimizeTask()
   for(unsigned int curStep = 1; curStep < 100; curStep++)
     {
       /*
-       * ( route.count / curStep ) gibt die Anzahl der Punkte an, die
-       * zur Optimierung im ersten Anlauf verwendet werden. Wenn dieser
-       * Wert unter 3 sinkt, kann kein Dreieck mehr bestimmt werden ...
+       * ( route.count / curStep ) is the number of points used for the
+       * first optimization-run. If this number is smaller than 3, we
+       * cannot create a triangle.
        */
       if((route.count() / curStep) < 3) break;
 
@@ -851,7 +854,7 @@ bool Flight::optimizeTask()
       temp = 1;
 
       /*
-       * Berechnung der Rechenschritte für den ersten Durchlauf
+       * Calculating the step-width for the first run.
        */
       for(unsigned int loop = 3; loop < ( route.count() / curStep ); loop++)
         {
@@ -863,7 +866,7 @@ bool Flight::optimizeTask()
       temp = 1;
 
       /*
-       * Berechnung der Rechenschritte für den zweiten Durchlauf
+       * Calculating the number of steps for the second run.
        */
       for(unsigned int loop = 3; loop < ( curStep - 1 ) * 6; loop++)
         {
