@@ -19,6 +19,7 @@
    <Action name="toggle_help_window" />    
    <Action name="waypoints" />  
    <Action name="tasks" />
+   <Separator weakSeparator="1" name="separator_3" />
    <Action name="reset_confirmations" />
   </Menu>
   <Action name="window" />
