@@ -342,10 +342,13 @@ void GLView::mouseMoveEvent ( QMouseEvent * e )
 {
   if (e->state() & LeftButton){  // left button means translation
     float phi=zRot/180.0*M_PI;
+    qWarning(QString("phi:%1").arg(phi));
     float dx=(mouse_last.x()-e->x())/100.0/scale;
     float dy=(mouse_last.y()-e->y())/100.0/scale;
-    deltaX-=dx*cos(phi)-dy*sin(phi);
-    deltaY+=dx*sin(phi)+dy*cos(phi);
+    if (((int)xRot % 360)>-90)
+      dy=-dy;
+    deltaX-=dx*cos(phi)+dy*sin(phi);
+    deltaY+=dx*sin(phi)-dy*cos(phi);
     mouse_last=e->pos();
     updateGL();
   }
@@ -354,7 +357,7 @@ void GLView::mouseMoveEvent ( QMouseEvent * e )
     xRot-=mouse_last.y()-e->y();
     mouse_last=e->pos();
     updateGL();
-    qWarning(QString("zRot:%1 xRot:%2").arg(zRot).arg(xRot));
+//    qWarning(QString("zRot:%1 xRot:%2").arg(zRot).arg(xRot));
   }
 }
 
