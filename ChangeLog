@@ -3,7 +3,7 @@ $Id$
 2002-06-15 Thomas <thomas@kflog.org>
 
   * Added printing of waypoints from active WaypointCatalog. 
-
+  * Added printing of planned task.
 
 2002-06-13 Thomas <thomas@kflog.org>
 
