@@ -577,12 +577,13 @@ void KFLogApp::saveOptions()
   config->writeEntry("ToolBarPos", (int) toolBar("mainToolBar")->barPos());
 
   config->setGroup("Waypoints");
-
+  qDebug("saving options...");
   if (config->readNumEntry("DefaultWaypointCatalog", KFLogConfig::LastUsed) ==
       KFLogConfig::LastUsed && waypoints->getCurrentCatalog() != NULL)
     {
       // Only write the path, if a waypoint-catalog is opened.
       // Otherwise KFLog crashes on a clean installation.
+      qDebug("saving catalog name");
       config->writeEntry("DefaultCatalogName", waypoints->getCurrentCatalog()->path);
     }
 
@@ -959,8 +960,8 @@ void KFLogApp::slotFlightViewIgc3D()
 
 bool KFLogApp::queryClose()
 {
+  saveOptions();
   if (waypoints->saveChanges()) {
-    saveOptions();
     return true;
   }
   return false;
