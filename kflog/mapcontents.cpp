@@ -544,14 +544,14 @@ bool MapContents::__readTerrainFile(const int fileSecID,
   pathName = mapDir + "/" + pathName;
 
   if(pathName == 0)
-      // Datei existiert nicht ...
+      // Data does not exist ...
       return false;
 
   QFile eingabe(pathName);
   if(!eingabe.open(IO_ReadOnly))
     {
-      // Datei existiert, kann aber nicht gelesen werden:
-      // Infofenster wäre nötig ...
+      // Data exists, but can't be read:
+      // We need a messagebox
       warning("KFLog: Can not open mapfile %s", (const char*)pathName);
       return false;
     }
@@ -568,8 +568,8 @@ bool MapContents::__readTerrainFile(const int fileSecID,
   in >> magic;
   if(magic != KFLOG_FILE_MAGIC)
     {
-      // falsches Dateiformat !!!
-      warning("KFLog: Trying to open old map-file; aborting!");
+      // wrong dataformat !!!
+      warning("KFLog: Trying to open old or invalid map-file; aborting!");
       warning(pathName);
       return false;
     }
@@ -577,7 +577,7 @@ bool MapContents::__readTerrainFile(const int fileSecID,
   in >> loadTypeID;
   if(loadTypeID != fileTypeID)
     {
-      // falschen Datentyp geladen ...
+      // loaded wrong datatype ...
 //      warning("<------------------ Falsche Typ-ID");
       return false;
     }
@@ -585,11 +585,11 @@ bool MapContents::__readTerrainFile(const int fileSecID,
   in >> formatID;
   if(formatID < FILE_FORMAT_ID)
     {
-      // zu alt ...
+      // to old ...
     }
   else if(formatID > FILE_FORMAT_ID)
     {
-      // zu neu ...
+      // to new ...
       warning("KFLog: Fileformat too new. Aborting ...");
       return false;
     }
@@ -601,7 +601,7 @@ bool MapContents::__readTerrainFile(const int fileSecID,
       return false;
     }
   in >> createDateTime;
-
+  
   while(!in.eof())
     {
       int sort_temp;
@@ -659,16 +659,16 @@ bool MapContents::__readAirfieldFile(const char* pathName)
   extern const MapMatrix _globalMapMatrix;
 
   if(pathName == 0)
-      // Datei existiert nicht ...
+      // Data does not exist
       return false;
 
 
   QFile eingabe(pathName);
   if(!eingabe.open(IO_ReadOnly))
     {
-      // Datei existiert, kann aber nicht gelesen werden:
-      // Infofenster wäre nötig ...
-      warning("KFLog: Can not open mapfile %s", (const char*)pathName);
+      // Data exists, but can't be read:
+      // We need a messagebox
+     warning("KFLog: Can not open mapfile %s", (const char*)pathName);
       return false;
     }
 
@@ -833,7 +833,7 @@ bool MapContents::__readAirspaceFile(const char* pathName)
   extern const MapMatrix _globalMapMatrix;
 
   if(pathName == 0)
-      // Datei existiert nicht ...
+      // Data does not exist...
       return false;
 
   Q_UINT8 typeIn;
@@ -863,8 +863,8 @@ bool MapContents::__readAirspaceFile(const char* pathName)
   QFile eingabe(pathName);
   if(!eingabe.open(IO_ReadOnly))
     {
-      // Datei existiert, kann aber nicht gelesen werden:
-      // Infofenster wäre nötig ...
+      // Data exists, but can't be read:
+      // We need a messagebox
       warning("KFLog: Can not open mapfile %s", (const char*)pathName);
       return false;
     }
@@ -982,8 +982,8 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   QFile eingabe(pathName);
   if(!eingabe.open(IO_ReadOnly))
     {
-      // File exists, but is not readable:
-      // We should open a messagebox ...
+      // Data exists, but can't be read:
+      // We need a messagebox
       warning("KFLog: Can not open mapfile %s", (const char*)pathName);
       return false;
     }
@@ -1074,8 +1074,8 @@ bool MapContents::__readBinaryFile(const int fileSecID,
             hydroList.append(new LineElement(name, typeIn, tA, sort));
             break;
           case BaseMapElement::PackIce:
-            // wird im Moment nicht verwendet
-            // steht jedoch durch Fehler in MapBin in Dateien
+            // is currently not being used
+            // stays anyway because of errors in the MapBin in the Data
             READ_POINT_LIST
             break;
           case BaseMapElement::Forest:
@@ -2060,6 +2060,7 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
             }
         }
 
+      
       targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1, Qt::NoPen));
       targetP->setBrush(QBrush(_globalMapConfig.getIsoColor(height),
           QBrush::SolidPattern));
