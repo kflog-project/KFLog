@@ -995,8 +995,8 @@ void RecorderDialog::slotWriteTasks()
         }
 
         wpListCopy.append(wp);
-        cnt++;
       }
+      cnt++;
       frTasks.append(new FlightTask(wpListCopy, true, task->getFileName()));
 
     }
@@ -1195,7 +1195,7 @@ void RecorderDialog::slotEnablePages()
 
     //declarationpage
     if (cap.supUlDeclaration) {
-      taskPage->setEnabled(true);
+      declarationPage->setEnabled(true);
     }
 
     //pilotpage  -  not available yet
