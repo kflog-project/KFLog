@@ -408,6 +408,10 @@ void Waypoints::slotDeleteWaypoint()
     waypointCatalogs.current()->wpList.remove(tmp);
     waypointCatalogs.current()->modified = true;
     delete item;
+
+    // eggert@kflog.org
+    // this must be done to make the deletion effective immediatly (map display)
+    fillWaypoints();
   }
 }
 
