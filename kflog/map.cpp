@@ -570,10 +570,16 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
 
   QList<wayPoint> taskPointList = baseFlight->getWPList();
   QList<wayPoint> tempTaskPointList = baseFlight->getWPList();
+  QList<wayPoint> * wpList = _globalMapContents.getWaypointList();
   struct wayPoint wp;
   QString text;
+  bool found;
 
-  bool found = __getTaskWaypoint(current, &wp, taskPointList);
+  // is the point already in the flight?
+  found  = __getTaskWaypoint(current, &wp, taskPointList);
+
+  if (!found) 	// try the wpcatalog
+	found = __getTaskWaypoint(current, &wp, *wpList);
 
   if(!taskPointList.isEmpty() && event->state() == QEvent::ControlButton)
     {
