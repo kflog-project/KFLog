@@ -58,14 +58,16 @@ double Optimization::optimizationResult(unsigned int retList[LEGS+3], double *re
   if (!optimized)
     return -1.0;
   int i=0;
+  int j=0;
   retList[i++]=start;
   for (i;i<=LEGS+1;i++){
-    retList[i]=original_route.find(route.at(pointList[i]));
-    if (pointList[i]>original_route.count()){
+    retList[i]=original_route.find(route.at(pointList[j]));
+    if (pointList[j]>original_route.count()){
       qWarning(QString("##k:%1\tstart:%2\t\tpointList[k]:%3").arg(i).arg(start).arg(pointList[i]));
       KMessageBox::error(0,"Sorry optimization fault. Report error (including IGC-File) to <christof.bodner@gmx.net>");
       return -1.0;
     }
+    j++;
   }
   retList[i]=stop;
   *retPoints=points;
