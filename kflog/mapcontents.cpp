@@ -89,9 +89,13 @@
 
 #define READ_POINT_LIST  in >> locLength; \
   tA.resize(locLength); \
-  for(unsigned int i = 0; i < locLength; i++) { \
-    in >> lat_temp;          in >> lon_temp; \
-    tA.setPoint(i, _globalMapMatrix.wgsToMap(lat_temp, lon_temp)); \
+  if (locLength == 0) { \
+    qDebug("zero length pointlist!"); \
+  } else { \
+    for(unsigned int i = 0; i < locLength; i++) { \
+      in >> lat_temp;          in >> lon_temp; \
+      tA.setPoint(i, _globalMapMatrix.wgsToMap(lat_temp, lon_temp)); \
+    } \
   }
 
 #define READ_CONTACT_DATA in >> contactCount; \
@@ -560,7 +564,7 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
 
   if (wait)
     {
-      KIO::NetAccess::copy(src, dest); // waits until file is transmitted
+      KIO::NetAccess::copy(src, dest, 0); // waits until file is transmitted
       QString errorString = KIO::NetAccess::lastErrorString();
       if (errorString!="")
           KMessageBox::error(0,errorString);
@@ -1039,6 +1043,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   QString pathName;
   pathName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
   pathName = mapDir + "/" + pathName;
+  qDebug("loading file %s", pathName.latin1());
 
   if(pathName == 0)
       // File does not exist ...
@@ -1110,7 +1115,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
       QPointArray tA;
 
       gesamt_elemente++;
-
+      qDebug("type: %d", typeIn);
 
       switch (typeIn)
         {
@@ -1146,7 +1151,9 @@ bool MapContents::__readBinaryFile(const int fileSecID,
           case BaseMapElement::PackIce:
             // is currently not being used
             // stays anyway because of errors in the MapBin in the Data
+            qDebug("filepointer: %d", eingabe.at());
             READ_POINT_LIST
+            if(formatID >= FILE_FORMAT_ID) in >> name;
             break;
           case BaseMapElement::Forest:
           case BaseMapElement::Glacier:
