@@ -32,10 +32,13 @@
 class DataView;
 class Map;
 class MapControlView;
+class MapConfig;
 class KFLogConfig;
 class KFLogStartLogo;
 
 /**
+ * Mainwindow for KFLog.
+ *
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
@@ -43,7 +46,7 @@ class KFLogApp : public KDockMainWindow
 {
   Q_OBJECT
 
-  friend class KFLogView;
+//  friend class KFLogView;
 
   public:
     /** */
@@ -166,6 +169,7 @@ class KFLogApp : public KDockMainWindow
     QString flightDir;
     KFLogStartLogo* startLogo;
     bool showStartLogo;
+    MapConfig* mapConfig;
 };
  
 #endif // KFLOG_H

@@ -49,6 +49,7 @@
 #include <kflogstartlogo.h>
 #include <map.h>
 #include <mapcalc.h>
+#include <mapconfig.h>
 #include <mapcontents.h>
 #include <mapcontrolview.h>
 #include <mapmatrix.h>
@@ -316,10 +317,12 @@ void KFLogApp::readOptions()
 
   if(!size.isEmpty())  resize(size);
 
-  extern MapMatrix _globalMapMatrix;
-  _globalMapMatrix.initMatrix();
+  mapConfig = new MapConfig(config);
 
-  BaseMapElement::glMapMatrix = &_globalMapMatrix;
+  extern MapMatrix _globalMapMatrix;
+  _globalMapMatrix.initMatrix(mapConfig);
+
+  BaseMapElement::initMapElement(&_globalMapMatrix, mapConfig);
 }
 
 bool KFLogApp::queryExit()
@@ -510,9 +513,11 @@ void KFLogApp::slotConfigureKeyBindings()
 
 void KFLogApp::slotConfigureKFLog()
 {
-  KFLogConfig configDlg(this, "kflog_setup");
-
-  configDlg.exec();
+  if(KFLogConfig(this, config, "kflogconfig").exec())
+    {
+      mapConfig->readConfig();
+      map->slotRedrawMap();
+    }
 }
 
 void KFLogApp::slotNewToolbarConfig()
@@ -523,10 +528,5 @@ void KFLogApp::slotNewToolbarConfig()
 
 void KFLogApp::slotStartComplete()
 {
-  if(showStartLogo)
-      delete startLogo;
-
-  // Methode wird nur aufgerufen, wenn ein FLug per Kommandozeile
-  // übergeben wurde. In diesem Fall muss die Karte neu gezeichnet werden
-//  map->slotRedrawMap();
+  if(showStartLogo)  delete startLogo;
 }

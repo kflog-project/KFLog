@@ -43,11 +43,13 @@ class KFLogConfig : public KDialogBase
 
   public:
     /** */
-    KFLogConfig(QWidget* parent, const char* name);
+    KFLogConfig(QWidget* parent, KConfig* config, const char* name);
     /** */
     ~KFLogConfig();
     /** */
-    enum ElementType {Road = 0, Highway, Railway, River, City};
+    enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
+        AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
+        LowFlight, Restricted, TMZ};
 
   public slots:
     /** */
@@ -74,8 +76,6 @@ class KFLogConfig : public KDialogBase
     void slotToggleThird(bool);
     /** */
     void slotToggleForth(bool);
-    /** */
-    void slotToggleOutline(bool);
     /** */
     void slotSetSecond();
     /** */
@@ -129,6 +129,7 @@ class KFLogConfig : public KDialogBase
     QLineEdit* mapPathE;
     QLineEdit* homeLatE;
     QLineEdit* homeLonE;
+    QLineEdit* homeNameE;
 
     QSlider* lLimit;
     QSlider* uLimit;
@@ -165,13 +166,59 @@ class KFLogConfig : public KDialogBase
     QPushButton* border2Button;
     QPushButton* border3Button;
 
+    KComboBox* border1PenStyle;
+    KComboBox* border2PenStyle;
+    KComboBox* border3PenStyle;
+    KComboBox* border4PenStyle;
+
+    KColorButton* border1BrushColor;
+    KColorButton* border2BrushColor;
+    KColorButton* border3BrushColor;
+    KColorButton* border4BrushColor;
+
+    KComboBox* border1BrushStyle;
+    KComboBox* border2BrushStyle;
+    KComboBox* border3BrushStyle;
+    KComboBox* border4BrushStyle;
+
     KComboBox* elementSelect;
+
+    QList<QPen> airCPenList;
+    QList<QBrush> airCBrushList;
+    QList<QPen> airDPenList;
+    QList<QBrush> airDBrushList;
+    QList<QPen> airElPenList;
+    QList<QBrush> airElBrushList;
+    QList<QPen> airEhPenList;
+    QList<QBrush> airEhBrushList;
+    QList<QPen> ctrCPenList;
+    QList<QBrush> ctrCBrushList;
+    QList<QPen> ctrDPenList;
+    QList<QBrush> ctrDBrushList;
+    QList<QPen> dangerPenList;
+    QList<QBrush> dangerBrushList;
+    QList<QPen> restrPenList;
+    QList<QBrush> restrBrushList;
+    QList<QPen> tmzPenList;
+    QList<QBrush> tmzBrushList;
 
     QList<QPen> roadPenList;
     QList<QPen> railPenList;
     QList<QPen> riverPenList;
     QList<QPen> highwayPenList;
     QList<QPen> cityPenList;
+    QList<QBrush> cityBrushList;
+
+    bool* airCBorder;
+    bool* airDBorder;
+    bool* airElBorder;
+    bool* airEhBorder;
+    bool* ctrCBorder;
+    bool* ctrDBorder;
+    bool* dangerBorder;
+    bool* restrBorder;
+    bool* tmzBorder;
+
     bool* roadBorder;
     bool* highwayBorder;
     bool* railBorder;

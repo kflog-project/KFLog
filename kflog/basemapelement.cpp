@@ -32,7 +32,13 @@ bool BaseMapElement::__isVisible() const { return true; }
 
 static MapMatrix* BaseMapElement::glMapMatrix;
 
-void BaseMapElement::readConfig()  { }
+static MapConfig* BaseMapElement::glConfig;
+
+void BaseMapElement::initMapElement(MapMatrix* matrix, MapConfig* config)
+{
+  glMapMatrix = matrix;
+  glConfig = config;
+}
 
 void BaseMapElement::printMapElement(QPainter* printP, const double dX,
       const double dY, const int mapCenterLon, const double scale,

@@ -24,6 +24,7 @@
 #include <qpainter.h>
 
 #include <mapmatrix.h>
+#include <mapconfig.h>
 
 /**
  * Baseclass for all mapelements. The class will be inherited by all
@@ -35,7 +36,7 @@
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
-    class BaseMapElement
+class BaseMapElement
 {
   public:
     /**
@@ -72,8 +73,6 @@
      * Returns the typeID of the element.
      */
     virtual unsigned int getTypeID() const;
-    /** */
-    virtual void readConfig();
     /**
      * List of all accessable element-types:
      * @see #typeID
@@ -142,9 +141,8 @@
      * The three types of elevation-data used in the maps.
      */
     enum elevationType {NotSet, MSL, GND, FL};
-
     /** */
-    static MapMatrix* glMapMatrix;
+    static void initMapElement(MapMatrix* matrix, MapConfig* config);
 
   protected:
     /**
@@ -170,6 +168,10 @@
      * The index-number of the mapsection of the element.
      */
     unsigned int section;
+    /** */
+    static MapMatrix* glMapMatrix;
+    /** */
+    static MapConfig* glConfig;
 };
 
 #endif

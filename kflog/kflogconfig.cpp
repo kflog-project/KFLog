@@ -40,29 +40,57 @@
     b[0] = border1->isChecked(); \
     a.at(0)->setColor(border1Color->color()); \
     a.at(0)->setWidth(border1Pen->value()); \
+    a.at(0)->setStyle((Qt::PenStyle)(border1PenStyle->currentItem() + 1)); \
     b[1] = border2->isChecked(); \
     a.at(1)->setColor(border2Color->color()); \
     a.at(1)->setWidth(border2Pen->value()); \
+    a.at(1)->setStyle((Qt::PenStyle)(border2PenStyle->currentItem() + 1)); \
     b[2] = border3->isChecked(); \
     a.at(2)->setColor(border3Color->color()); \
     a.at(2)->setWidth(border3Pen->value()); \
+    a.at(2)->setStyle((Qt::PenStyle)(border3PenStyle->currentItem() + 1)); \
     b[3] = border4->isChecked(); \
     a.at(3)->setColor(border4Color->color()); \
-    a.at(3)->setWidth(border4Pen->value());
+    a.at(3)->setWidth(border4Pen->value()); \
+    a.at(3)->setStyle((Qt::PenStyle)(border4PenStyle->currentItem() + 1)); \
+
+#define SAVE_BRUSH(a) \
+    a.at(0)->setColor(border1BrushColor->color()); \
+    a.at(0)->setStyle((Qt::BrushStyle)border1BrushStyle->currentItem()); \
+    a.at(1)->setColor(border2BrushColor->color()); \
+    a.at(1)->setStyle((Qt::BrushStyle)border2BrushStyle->currentItem()); \
+    a.at(2)->setColor(border3BrushColor->color()); \
+    a.at(2)->setStyle((Qt::BrushStyle)border3BrushStyle->currentItem()); \
+    a.at(3)->setColor(border4BrushColor->color()); \
+    a.at(3)->setStyle((Qt::BrushStyle)border4BrushStyle->currentItem());
 
 #define SHOW_PEN(a,b) \
     border1->setChecked(b[0]); \
     border1Color->setColor(a.at(0)->color()); \
     border1Pen->setValue(a.at(0)->width()); \
+    border1PenStyle->setCurrentItem(a.at(0)->style() - 1); \
     border2->setChecked(b[1]); \
     border2Color->setColor(a.at(1)->color()); \
     border2Pen->setValue(a.at(1)->width()); \
+    border2PenStyle->setCurrentItem(a.at(1)->style() - 1); \
     border3->setChecked(b[2]); \
     border3Color->setColor(a.at(2)->color()); \
     border3Pen->setValue(a.at(2)->width()); \
+    border3PenStyle->setCurrentItem(a.at(2)->style() - 1); \
     border4->setChecked(b[3]); \
     border4Color->setColor(a.at(3)->color()); \
-    border4Pen->setValue(a.at(3)->width());
+    border4Pen->setValue(a.at(3)->width()); \
+    border4PenStyle->setCurrentItem(a.at(3)->style() - 1);
+
+#define SHOW_BRUSH(a) \
+    border1BrushColor->setColor(a.at(0)->color()); \
+    border1BrushStyle->setCurrentItem(a.at(0)->style()); \
+    border2BrushColor->setColor(a.at(1)->color()); \
+    border2BrushStyle->setCurrentItem(a.at(1)->style()); \
+    border3BrushColor->setColor(a.at(2)->color()); \
+    border3BrushStyle->setCurrentItem(a.at(2)->style()); \
+    border4BrushColor->setColor(a.at(3)->color()); \
+    border4BrushStyle->setCurrentItem(a.at(3)->style());
 
 #define READ_BORDER(a) \
     a[0] = config->readBoolEntry("Border 1", true); \
@@ -70,6 +98,30 @@
     a[2] = config->readBoolEntry("Border 3", true); \
     a[3] = config->readBoolEntry("Border 4", true); \
     a[4] = config->readBoolEntry("Border 5", true);
+
+#define READ_PEN(A, C1, C2, C3, C4, P1, P2, P3, P4, S1, S2, S3, S4) \
+  A.append(new QPen(config->readColorEntry("Color 1", new C1), \
+        config->readNumEntry("Pen Size 1", P1), \
+        (Qt::PenStyle)config->readNumEntry("Pen Style 1", S1))); \
+  A.append(new QPen(config->readColorEntry("Color 2", new C2), \
+        config->readNumEntry("Pen Size 2", P2), \
+        (Qt::PenStyle)config->readNumEntry("Pen Style 2", S2))); \
+  A.append(new QPen(config->readColorEntry("Color 3", new C3), \
+        config->readNumEntry("Pen Size 3", P3), \
+        (Qt::PenStyle)config->readNumEntry("Pen Style 3", S3))); \
+  A.append(new QPen(config->readColorEntry("Color 4", new C4), \
+        config->readNumEntry("Pen Size 4", P4), \
+        (Qt::PenStyle)config->readNumEntry("Pen Style 4", S4)));
+
+#define READ_BRUSH(A, C1, C2, C3, C4, S1, S2, S3, S4) \
+  A.append(new QBrush(config->readColorEntry("Brush Color 1", new C1), \
+        (Qt::BrushStyle)config->readNumEntry("Brush Style 1", S1))); \
+  A.append(new QBrush(config->readColorEntry("Brush Color 2", new C2), \
+        (Qt::BrushStyle)config->readNumEntry("Brush Style 2", S2))); \
+  A.append(new QBrush(config->readColorEntry("Brush Color 3", new C3), \
+        (Qt::BrushStyle)config->readNumEntry("Brush Style 3", S3))); \
+  A.append(new QBrush(config->readColorEntry("Brush Color 4", new C4), \
+        (Qt::BrushStyle)config->readNumEntry("Brush Style 4", S4))); \
 
 #define WRITE_DRAW_VALUES(a,b) \
     config->writeEntry("Color 1", a.at(0)->color()); \
@@ -85,32 +137,130 @@
     config->writeEntry("Border 3", b[2]); \
     config->writeEntry("Border 4", b[3]);
 
+#define WRITE_BRUSH_VALUES(a) \
+    config->writeEntry("Brush Color 1", a.at(0)->color()); \
+    config->writeEntry("Brush Color 2", a.at(1)->color()); \
+    config->writeEntry("Brush Color 3", a.at(2)->color()); \
+    config->writeEntry("Brush Color 4", a.at(3)->color()); \
+    config->writeEntry("Brush Style 1", a.at(0)->style()); \
+    config->writeEntry("Brush Style 2", a.at(1)->style()); \
+    config->writeEntry("Brush Style 3", a.at(2)->style()); \
+    config->writeEntry("Brush Style 4", a.at(3)->style());
+
 #define DEFAULT_PEN(a,b,C_1,C_2,C_3,C_4,P_1,P_2,P_3,P_4) \
     a.at(0)->setColor(C_1); \
-    a.at(1)->setColor(C_2); \
-    a.at(2)->setColor(C_3); \
-    a.at(3)->setColor(C_4); \
     a.at(0)->setWidth(P_1); \
+    a.at(1)->setColor(C_2); \
     a.at(1)->setWidth(P_2); \
+    a.at(2)->setColor(C_3); \
     a.at(2)->setWidth(P_3); \
+    a.at(3)->setColor(C_4); \
     a.at(3)->setWidth(P_4); \
     b[0] = true; \
     b[1] = true; \
     b[2] = true; \
     b[3] = true;
 
-KFLogConfig::KFLogConfig(QWidget* parent, const char* name)
+#define DEFAULT_BRUSH(a, C_1, C_2, C_3, C_4, S_1, S_2, S_3, S_4) \
+    a.at(0)->setColor(C_1); \
+    a.at(0)->setStyle(S_1); \
+    a.at(1)->setColor(C_2); \
+    a.at(1)->setStyle(S_2); \
+    a.at(2)->setColor(C_3); \
+    a.at(2)->setStyle(S_3); \
+    a.at(3)->setColor(C_4); \
+    a.at(3)->setStyle(S_4);
+
+// Qt::PenStyle-Enum starts with NoPen = 0, therefor we reduce the
+// value by 1. We must use the same order as Qt::PenStyle.
+// Qt::BrushStyle "NoBrush" is allowed ...
+#define FILLSTYLE(pen,brush) \
+  pen->insertItem(QPixmap(picDir + "solid.png"), Qt::SolidLine - 1); \
+  pen->insertItem(QPixmap(picDir + "dashed.png"), Qt::DashLine - 1); \
+  pen->insertItem(QPixmap(picDir + "dotted.png"), Qt::DotLine - 1); \
+  pen->insertItem(QPixmap(picDir + "dashdot.png"), Qt::DashDotLine - 1); \
+  pen->insertItem(QPixmap(picDir + "dashdotdot.png"), Qt::DashDotDotLine - 1); \
+  brush->insertItem("no", Qt::NoBrush); \
+  brush->insertItem(QPixmap(picDir + "brush0.png"), Qt::SolidPattern); \
+  brush->insertItem(QPixmap(picDir + "brush1.png"), Qt::Dense1Pattern); \
+  brush->insertItem(QPixmap(picDir + "brush2.png"), Qt::Dense2Pattern); \
+  brush->insertItem(QPixmap(picDir + "brush3.png"), Qt::Dense3Pattern); \
+  brush->insertItem(QPixmap(picDir + "brush4.png"), Qt::Dense4Pattern); \
+  brush->insertItem(QPixmap(picDir + "brush5.png"), Qt::Dense5Pattern); \
+  brush->insertItem(QPixmap(picDir + "brush6.png"), Qt::Dense6Pattern); \
+  brush->insertItem(QPixmap(picDir + "brush7.png"), Qt::Dense7Pattern); \
+  brush->insertItem(QPixmap(picDir + "brush8.png"), Qt::HorPattern); \
+  brush->insertItem(QPixmap(picDir + "brush9.png"), Qt::VerPattern); \
+  brush->insertItem(QPixmap(picDir + "brush10.png"), Qt::CrossPattern); \
+  brush->insertItem(QPixmap(picDir + "brush11.png"), Qt::BDiagPattern); \
+  brush->insertItem(QPixmap(picDir + "brush12.png"), Qt::FDiagPattern);
+
+#define BUTTONROW(penC, penW, penS, brushC, brushS, row) \
+  penC = new KColorButton(mapPage); \
+  penC->setMaximumWidth(35); \
+  penW = new QSpinBox(1, 9, 1, mapPage); \
+  penW->setMaximumWidth(40); \
+  penS = new KComboBox(mapPage); \
+  penS->setMaximumWidth(45); \
+  brushC = new KColorButton(mapPage); \
+  brushC->setMaximumWidth(35); \
+  brushS = new KComboBox(mapPage); \
+  brushS->setMaximumWidth(45); \
+  FILLSTYLE(penS, brushS) \
+  penC->setMaximumHeight(brushS->sizeHint().height()); \
+  brushC->setMaximumHeight(brushS->sizeHint().height()); \
+  elLayout->addWidget(penC, row, 3); \
+  elLayout->addWidget(penW, row, 5); \
+  elLayout->addWidget(penS, row, 7); \
+  elLayout->addWidget(brushC, row, 9); \
+  elLayout->addWidget(brushS, row, 11);
+
+
+KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
   : KDialogBase(IconList, i18n("KFlog Setup"), Ok|Cancel, Ok,
       parent, name, true, true),
-    oldElement(-1)
+    config(cnf), oldElement(-1)
 {
-  config = KGlobal::config();
+  airCBorder = new bool[5];
+  airDBorder = new bool[5];
+  airElBorder = new bool[5];
+  airEhBorder = new bool[5];
+  ctrCBorder = new bool[5];
+  ctrDBorder = new bool[5];
+  dangerBorder = new bool[5];
+  restrBorder = new bool[5];
+  tmzBorder = new bool[5];
 
   roadBorder = new bool[5];
   highwayBorder = new bool[5];
   railBorder = new bool[5];
   riverBorder = new bool[5];
   cityBorder = new bool[5];
+
+  airCPenList.setAutoDelete(true);
+  airCBrushList.setAutoDelete(true);
+  airDPenList.setAutoDelete(true);
+  airDBrushList.setAutoDelete(true);
+  airElPenList.setAutoDelete(true);
+  airElBrushList.setAutoDelete(true);
+  airEhPenList.setAutoDelete(true);
+  airEhBrushList.setAutoDelete(true);
+  ctrCPenList.setAutoDelete(true);
+  ctrCBrushList.setAutoDelete(true);
+  ctrDPenList.setAutoDelete(true);
+  ctrDBrushList.setAutoDelete(true);
+  dangerPenList.setAutoDelete(true);
+  dangerBrushList.setAutoDelete(true);
+  restrPenList.setAutoDelete(true);
+  restrBrushList.setAutoDelete(true);
+  tmzPenList.setAutoDelete(true);
+  tmzBrushList.setAutoDelete(true);
+
+  roadPenList.setAutoDelete(true);
+  highwayPenList.setAutoDelete(true);
+  riverPenList.setAutoDelete(true);
+  railPenList.setAutoDelete(true);
+  cityPenList.setAutoDelete(true);
 
   __addIDTab();
   __addPathTab();
@@ -130,6 +280,9 @@ void KFLogConfig::slotOk()
 {
   // Die aktuell angezeigten Angaben müssen noch gespeichert werden ...
   slotSelectElement(oldElement);
+
+  config->setGroup("General Options");
+  config->writeEntry("Version", "2.0.2");
 
   config->setGroup("Path");
   config->writeEntry("DefaultFlightDirectory", igcPathE->text());
@@ -158,9 +311,10 @@ void KFLogConfig::slotOk()
 
   config->setGroup("City");
   WRITE_DRAW_VALUES(cityPenList, cityBorder);
-  config->writeEntry("Outline Color", cityPenList.at(4)->color());
-  config->writeEntry("Outline Size", cityPenList.at(4)->width()); \
-  config->writeEntry("Border 5", cityBorder[4]); \
+
+  config->setGroup("Airspace C");
+  WRITE_DRAW_VALUES(airCPenList, airCBorder);
+  WRITE_BRUSH_VALUES(airCBrushList);
 
   config->setGroup("Map Data");
   config->writeEntry("Homesite Latitude",
@@ -169,10 +323,7 @@ void KFLogConfig::slotOk()
       MapContents::degreeToNum(homeLonE->text()));
   config->sync();
 
-  extern MapContents _globalMapContents;
-  _globalMapContents.readConfig();
-
-  close();
+  accept();
 }
 
 void KFLogConfig::slotSearchFlightPath()
@@ -201,29 +352,50 @@ void KFLogConfig::slotSearchTaskPath()
 
 void KFLogConfig::slotSelectElement(int elementID)
 {
-  if(oldElement != -1)
+  switch(oldElement)
     {
-      switch(oldElement)
-        {
-          case Road:
-            SAVE_PEN(roadPenList, roadBorder)
-            break;
-          case Highway:
-            SAVE_PEN(highwayPenList, highwayBorder)
-            break;
-          case Railway:
-            SAVE_PEN(railPenList, railBorder)
-            break;
-          case River:
-            SAVE_PEN(riverPenList, riverBorder)
-            break;
-          case City:
-            SAVE_PEN(cityPenList, cityBorder)
-            cityBorder[4] = outLine->isChecked();
-            cityPenList.at(4)->setColor(outLineColor->color());
-            cityPenList.at(4)->setWidth(outLinePen->value());
-            break;
-        }
+      case Road:
+        SAVE_PEN(roadPenList, roadBorder)
+        break;
+      case Highway:
+        SAVE_PEN(highwayPenList, highwayBorder)
+        break;
+      case Railway:
+        SAVE_PEN(railPenList, railBorder)
+        break;
+      case River:
+        SAVE_PEN(riverPenList, riverBorder)
+        break;
+      case City:
+        SAVE_PEN(cityPenList, cityBorder)
+        SAVE_BRUSH(cityBrushList)
+        break;
+      case AirC:
+        SAVE_PEN(airCPenList, airCBorder)
+        SAVE_BRUSH(airCBrushList)
+        break;
+      case AirD:
+        SAVE_PEN(airDPenList, airDBorder)
+        SAVE_BRUSH(airDBrushList)
+        break;
+      case AirElow:
+        SAVE_PEN(airElPenList, airElBorder)
+        SAVE_BRUSH(airElBrushList)
+        break;
+      case AirEhigh:
+        SAVE_PEN(airEhPenList, airEhBorder)
+        SAVE_BRUSH(airEhBrushList)
+        break;
+      case ControlC:
+        SAVE_PEN(ctrCPenList, ctrCBorder)
+        SAVE_BRUSH(ctrCBrushList)
+        break;
+      case ControlD:
+        SAVE_PEN(ctrDPenList, ctrDBorder)
+        SAVE_BRUSH(ctrDBrushList)
+        break;
+      default:
+        break;
     }
 
   switch(elementID)
@@ -242,8 +414,31 @@ void KFLogConfig::slotSelectElement(int elementID)
         break;
       case City:
         SHOW_PEN(cityPenList, cityBorder)
-        outLine->setChecked(cityBorder[4]);
-        outLineColor->setColor(cityPenList.at(4)->color());
+        SHOW_BRUSH(cityBrushList)
+        break;
+      case AirC:
+        SHOW_PEN(airCPenList, airCBorder)
+        SHOW_BRUSH(airCBrushList)
+        break;
+      case AirD:
+        SHOW_PEN(airDPenList, airDBorder)
+        SHOW_BRUSH(airDBrushList)
+        break;
+      case AirElow:
+        SHOW_PEN(airElPenList, airElBorder)
+        SHOW_BRUSH(airElBrushList)
+        break;
+      case AirEhigh:
+        SHOW_PEN(airEhPenList, airEhBorder)
+        SHOW_BRUSH(airEhBrushList)
+        break;
+      case ControlC:
+        SHOW_PEN(ctrCPenList, ctrCBorder)
+        SHOW_BRUSH(ctrCBrushList)
+        break;
+      case ControlD:
+        SHOW_PEN(ctrDPenList, ctrDBorder)
+        SHOW_BRUSH(ctrDBrushList)
         break;
     }
 
@@ -254,21 +449,26 @@ void KFLogConfig::slotSelectElement(int elementID)
 void KFLogConfig::slotToggleFirst(bool toggle)
 {
   border1Button->setEnabled(toggle);
+  border1Pen->setEnabled(toggle);
   border1Color->setEnabled(toggle);
   border2->setEnabled(toggle);
 
-  if(elementSelect->currentItem() == City)
+  switch(elementSelect->currentItem())
     {
-      border1Pen->setEnabled(false);
-      outLine->setEnabled(toggle);
-      slotToggleOutline(outLine->isChecked() && toggle);
-    }
-  else
-    {
-      border1Pen->setEnabled(toggle);
-      outLine->setEnabled(false);
-      outLine->setChecked(false);
-      slotToggleOutline(false);
+      case City:
+        border1PenStyle->setEnabled(false);
+        border1BrushColor->setEnabled(toggle);
+        border1BrushStyle->setEnabled(false);
+        break;
+      case AirC:
+        border1PenStyle->setEnabled(toggle);
+        border1BrushColor->setEnabled(toggle);
+        border1BrushStyle->setEnabled(toggle);
+        break;
+      default:
+        border1PenStyle->setEnabled(toggle);
+        border1BrushColor->setEnabled(false);
+        border1BrushStyle->setEnabled(false);
     }
 
   if(!toggle)
@@ -280,13 +480,27 @@ void KFLogConfig::slotToggleFirst(bool toggle)
 void KFLogConfig::slotToggleSecond(bool toggle)
 {
   border2Button->setEnabled(toggle);
+  border2Pen->setEnabled(toggle);
   border2Color->setEnabled(toggle);
   border3->setEnabled(toggle);
 
-  if(elementSelect->currentItem() == City)
-      border2Pen->setEnabled(false);
-  else
-      border2Pen->setEnabled(toggle);
+  switch(elementSelect->currentItem())
+    {
+      case City:
+        border2PenStyle->setEnabled(false);
+        border2BrushColor->setEnabled(toggle);
+        border2BrushStyle->setEnabled(false);
+        break;
+      case AirC:
+        border2PenStyle->setEnabled(toggle);
+        border2BrushColor->setEnabled(toggle);
+        border2BrushStyle->setEnabled(toggle);
+        break;
+      default:
+        border2PenStyle->setEnabled(toggle);
+        border2BrushColor->setEnabled(false);
+        border2BrushStyle->setEnabled(false);
+    }
 
   if(!toggle)
       slotToggleThird(false);
@@ -297,13 +511,27 @@ void KFLogConfig::slotToggleSecond(bool toggle)
 void KFLogConfig::slotToggleThird(bool toggle)
 {
   border3Button->setEnabled(toggle);
+  border3Pen->setEnabled(toggle);
   border3Color->setEnabled(toggle);
   border4->setEnabled(toggle);
 
-  if(elementSelect->currentItem() == City)
-      border3Pen->setEnabled(false);
-  else
-      border3Pen->setEnabled(toggle);
+  switch(elementSelect->currentItem())
+    {
+      case City:
+        border3PenStyle->setEnabled(false);
+        border3BrushColor->setEnabled(toggle);
+        border3BrushStyle->setEnabled(false);
+        break;
+      case AirC:
+        border3PenStyle->setEnabled(toggle);
+        border3BrushColor->setEnabled(toggle);
+        border3BrushStyle->setEnabled(toggle);
+        break;
+      default:
+        border3PenStyle->setEnabled(toggle);
+        border3BrushColor->setEnabled(false);
+        border3BrushStyle->setEnabled(false);
+    }
 
   if(!toggle)
       slotToggleForth(false);
@@ -314,17 +542,25 @@ void KFLogConfig::slotToggleThird(bool toggle)
 void KFLogConfig::slotToggleForth(bool toggle)
 {
   border4Color->setEnabled(toggle);
+  border4Pen->setEnabled(toggle);
 
-  if(elementSelect->currentItem() == City)
-      border4Pen->setEnabled(false);
-  else
-      border4Pen->setEnabled(toggle);
-}
-
-void KFLogConfig::slotToggleOutline(bool toggle)
-{
-  outLineColor->setEnabled(toggle);
-  outLinePen->setEnabled(toggle);
+  switch(elementSelect->currentItem())
+    {
+      case City:
+        border4PenStyle->setEnabled(false);
+        border4BrushColor->setEnabled(toggle);
+        border4BrushStyle->setEnabled(false);
+        break;
+      case AirC:
+        border4PenStyle->setEnabled(toggle);
+        border4BrushColor->setEnabled(toggle);
+        border4BrushStyle->setEnabled(toggle);
+        break;
+      default:
+        border4PenStyle->setEnabled(toggle);
+        border4BrushColor->setEnabled(false);
+        border4BrushStyle->setEnabled(false);
+    }
 }
 
 void KFLogConfig::slotSetSecond()
@@ -378,24 +614,59 @@ void KFLogConfig::slotShowReduceScaleC(int value)
 void KFLogConfig::slotDefaultElements()
 {
   DEFAULT_PEN(roadPenList, roadBorder, ROAD_COLOR_1, ROAD_COLOR_2,
-    ROAD_COLOR_3, ROAD_COLOR_4, ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4)
+      ROAD_COLOR_3, ROAD_COLOR_4, ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4)
 
   DEFAULT_PEN(highwayPenList, highwayBorder, HIGH_COLOR_1, HIGH_COLOR_2,
-    HIGH_COLOR_3, HIGH_COLOR_4, HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4)
+      HIGH_COLOR_3, HIGH_COLOR_4, HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4)
 
   DEFAULT_PEN(riverPenList, riverBorder, RIVER_COLOR_1, RIVER_COLOR_2,
-    RIVER_COLOR_3, RIVER_COLOR_4, RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3,
-    RIVER_PEN_4)
+      RIVER_COLOR_3, RIVER_COLOR_4, RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3,
+      RIVER_PEN_4)
 
   DEFAULT_PEN(railPenList, railBorder, RAIL_COLOR_1, RAIL_COLOR_2, RAIL_COLOR_3,
       RAIL_COLOR_4, RAIL_PEN_1, RAIL_PEN_2, RAIL_PEN_3, RAIL_PEN_4)
 
   DEFAULT_PEN(cityPenList, cityBorder, CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3,
-      CITY_COLOR_4, 1, 1, 1, 1)
+      CITY_COLOR_4, CITY_PEN_1, CITY_PEN_2, CITY_PEN_3, CITY_PEN_4)
+  DEFAULT_BRUSH(cityBrushList, CITY_BRUSH_COLOR_1, CITY_BRUSH_COLOR_2,
+      CITY_BRUSH_COLOR_3, CITY_BRUSH_COLOR_4, CITY_BRUSH_STYLE_1,
+      CITY_BRUSH_STYLE_2, CITY_BRUSH_STYLE_3, CITY_BRUSH_STYLE_4)
 
-  cityPenList.at(4)->setColor(CITY_COLOR_5);
-  cityPenList.at(4)->setWidth(CITY_OUTLINE);
-  cityBorder[4] = true;
+  DEFAULT_PEN(airCPenList, airCBorder, AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3,
+      AIRC_COLOR_4, AIRC_PEN_1, AIRC_PEN_2, AIRC_PEN_3, AIRC_PEN_4)
+  DEFAULT_BRUSH(airCBrushList, AIRC_BRUSH_COLOR_1, AIRC_BRUSH_COLOR_2,
+      AIRC_BRUSH_COLOR_3, AIRC_BRUSH_COLOR_4, AIRC_BRUSH_STYLE_1,
+      AIRC_BRUSH_STYLE_2, AIRC_BRUSH_STYLE_3, AIRC_BRUSH_STYLE_4)
+
+  DEFAULT_PEN(airDPenList, airDBorder, AIRD_COLOR_1, AIRD_COLOR_2, AIRD_COLOR_3,
+      AIRD_COLOR_4, AIRD_PEN_1, AIRD_PEN_2, AIRD_PEN_3, AIRD_PEN_4)
+  DEFAULT_BRUSH(airDBrushList, AIRD_BRUSH_COLOR_1, AIRD_BRUSH_COLOR_2,
+      AIRD_BRUSH_COLOR_3, AIRD_BRUSH_COLOR_4, AIRD_BRUSH_STYLE_1,
+      AIRD_BRUSH_STYLE_2, AIRD_BRUSH_STYLE_3, AIRD_BRUSH_STYLE_4)
+
+  DEFAULT_PEN(airElPenList, airElBorder, AIREL_COLOR_1, AIREL_COLOR_2, AIREL_COLOR_3,
+      AIREL_COLOR_4, AIREL_PEN_1, AIREL_PEN_2, AIREL_PEN_3, AIREL_PEN_4)
+  DEFAULT_BRUSH(airElBrushList, AIREL_BRUSH_COLOR_1, AIREL_BRUSH_COLOR_2,
+      AIREL_BRUSH_COLOR_3, AIREL_BRUSH_COLOR_4, AIREL_BRUSH_STYLE_1,
+      AIREL_BRUSH_STYLE_2, AIREL_BRUSH_STYLE_3, AIREL_BRUSH_STYLE_4)
+
+  DEFAULT_PEN(airEhPenList, airEhBorder, AIREH_COLOR_1, AIREH_COLOR_2, AIREH_COLOR_3,
+      AIREH_COLOR_4, AIREH_PEN_1, AIREH_PEN_2, AIREH_PEN_3, AIREH_PEN_4)
+  DEFAULT_BRUSH(airEhBrushList, AIREH_BRUSH_COLOR_1, AIREH_BRUSH_COLOR_2,
+      AIREH_BRUSH_COLOR_3, AIREH_BRUSH_COLOR_4, AIREH_BRUSH_STYLE_1,
+      AIREH_BRUSH_STYLE_2, AIREH_BRUSH_STYLE_3, AIREH_BRUSH_STYLE_4)
+
+  DEFAULT_PEN(ctrCPenList, ctrCBorder, CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3,
+      CTRC_COLOR_4, CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4)
+  DEFAULT_BRUSH(ctrCBrushList, CTRC_BRUSH_COLOR_1, CTRC_BRUSH_COLOR_2,
+      CTRC_BRUSH_COLOR_3, CTRC_BRUSH_COLOR_4, CTRC_BRUSH_STYLE_1,
+      CTRC_BRUSH_STYLE_2, CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4)
+
+  DEFAULT_PEN(ctrDPenList, ctrDBorder, CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3,
+      CTRD_COLOR_4, CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4)
+  DEFAULT_BRUSH(ctrDBrushList, CTRD_BRUSH_COLOR_1, CTRD_BRUSH_COLOR_2,
+      CTRD_BRUSH_COLOR_3, CTRD_BRUSH_COLOR_4, CTRD_BRUSH_STYLE_1,
+      CTRD_BRUSH_STYLE_2, CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4)
 
   oldElement = -1;
   slotSelectElement(elementSelect->currentItem());
@@ -427,82 +698,113 @@ void KFLogConfig::slotDefaultPath()
 void KFLogConfig::__addMapTab()
 {
   config->setGroup("Road");
-  roadPenList.append(new QPen(config->readColorEntry("Color 1",
-        new ROAD_COLOR_1),
-        config->readNumEntry("Pen Size 1", ROAD_PEN_1)));
-  roadPenList.append(new QPen(config->readColorEntry("Color 2",
-        new ROAD_COLOR_2),
-        config->readNumEntry("Pen Size 2", ROAD_PEN_2)));
-  roadPenList.append(new QPen(config->readColorEntry("Color 3",
-        new ROAD_COLOR_3),
-        config->readNumEntry("Pen Size 3", ROAD_PEN_3)));
-  roadPenList.append(new QPen(config->readColorEntry("Color 4",
-        new ROAD_COLOR_4),
-        config->readNumEntry("Pen Size 4", ROAD_PEN_4)));
+  READ_PEN(roadPenList, ROAD_COLOR_1, ROAD_COLOR_2, ROAD_COLOR_3, ROAD_COLOR_4,
+        ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4,
+        ROAD_PEN_STYLE_1, ROAD_PEN_STYLE_2, ROAD_PEN_STYLE_3, ROAD_PEN_STYLE_4)
   READ_BORDER(roadBorder);
 
   config->setGroup("River");
-  riverPenList.append(new QPen(config->readColorEntry("Color 1",
-        new RIVER_COLOR_1),
-        config->readNumEntry("Pen Size 1", RIVER_PEN_1)));
-  riverPenList.append(new QPen(config->readColorEntry("Color 2",
-        new RIVER_COLOR_2),
-        config->readNumEntry("Pen Size 2", RIVER_PEN_2)));
-  riverPenList.append(new QPen(config->readColorEntry("Color 3",
-        new RIVER_COLOR_3),
-        config->readNumEntry("Pen Size 3", RIVER_PEN_3)));
-  riverPenList.append(new QPen(config->readColorEntry("Color 4",
-        new RIVER_COLOR_4),
-        config->readNumEntry("Pen Size 4", RIVER_PEN_4)));
+  READ_PEN(riverPenList, RIVER_COLOR_1, RIVER_COLOR_2, RIVER_COLOR_2,
+        RIVER_COLOR_4, RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4,
+        RIVER_PEN_STYLE_1, RIVER_PEN_STYLE_2, RIVER_PEN_STYLE_3, RIVER_PEN_STYLE_4)
   READ_BORDER(riverBorder);
 
   config->setGroup("Rail");
-  railPenList.append(new QPen(config->readColorEntry("Color 1",
-        new RAIL_COLOR_1),
-        config->readNumEntry("Pen Size 1", RAIL_PEN_1)));
-  railPenList.append(new QPen(config->readColorEntry("Color 2",
-        new RAIL_COLOR_2),
-        config->readNumEntry("Pen Size 2", RAIL_PEN_2)));
-  railPenList.append(new QPen(config->readColorEntry("Color 3",
-        new RAIL_COLOR_3),
-        config->readNumEntry("Pen Size 3", RAIL_PEN_3)));
-  railPenList.append(new QPen(config->readColorEntry("Color 4",
-        new RAIL_COLOR_4),
-        config->readNumEntry("Pen Size 4", RAIL_PEN_4)));
+  READ_PEN(railPenList, RAIL_COLOR_1, RAIL_COLOR_2, RAIL_COLOR_3, RAIL_COLOR_4,
+        RAIL_PEN_1, RAIL_PEN_2, RAIL_PEN_3, RAIL_PEN_4,
+        RAIL_PEN_STYLE_1, RAIL_PEN_STYLE_2, RAIL_PEN_STYLE_3, RAIL_PEN_STYLE_4)
   READ_BORDER(railBorder);
 
   config->setGroup("Highway");
-  highwayPenList.append(new QPen(config->readColorEntry("Color 1",
-        new HIGH_COLOR_1),
-        config->readNumEntry("Pen Size 1", HIGH_PEN_1)));
-  highwayPenList.append(new QPen(config->readColorEntry("Color 2",
-        new HIGH_COLOR_2),
-        config->readNumEntry("Pen Size 2", HIGH_PEN_2)));
-  highwayPenList.append(new QPen(config->readColorEntry("Color 3",
-        new HIGH_COLOR_3),
-        config->readNumEntry("Pen Size 3", HIGH_PEN_3)));
-  highwayPenList.append(new QPen(config->readColorEntry("Color 4",
-        new HIGH_COLOR_4),
-        config->readNumEntry("Pen Size 4", HIGH_PEN_4)));
+  READ_PEN(highwayPenList, HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
+        HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4,
+        HIGH_PEN_STYLE_1, HIGH_PEN_STYLE_2, HIGH_PEN_STYLE_3, HIGH_PEN_STYLE_4)
   READ_BORDER(highwayBorder);
 
-  config->setGroup("City");
-  cityPenList.append(new QPen(config->readColorEntry("Color 1",
-        new CITY_COLOR_1),
-        config->readNumEntry("Pen Size 1", 1)));
-  cityPenList.append(new QPen(config->readColorEntry("Color 2",
-        new CITY_COLOR_2),
-        config->readNumEntry("Pen Size 2", 1)));
-  cityPenList.append(new QPen(config->readColorEntry("Color 3",
-        new CITY_COLOR_3),
-        config->readNumEntry("Pen Size 3", 1)));
-  cityPenList.append(new QPen(config->readColorEntry("Color 4",
-        new CITY_COLOR_4),
-        config->readNumEntry("Pen Size 4", 1)));
-  cityPenList.append(new QPen(config->readColorEntry("Outline Color",
-        new CITY_COLOR_5),
-        config->readNumEntry("Outline Size", CITY_OUTLINE)));
+  /*
+   * In version <= 2.0.1, the fillcolor of cities is called "Color" instead
+   * of "Brush Color", so we must look, which version of configfile we read.
+   */
+  config->setGroup("General Options");
+  if(config->hasKey("Version") && config->readEntry("Version") >= "2.0.2")
+    {
+      config->setGroup("City");
+      // PenStyle and BrushStyle are not used for cities ...
+      READ_PEN(cityPenList, CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3,
+            CITY_COLOR_4, CITY_PEN_1, CITY_PEN_2, CITY_PEN_3, CITY_PEN_4,
+            Qt::SolidLine, Qt::SolidLine, Qt::SolidLine, Qt::SolidLine)
+      READ_BRUSH(cityBrushList, CITY_BRUSH_COLOR_1, CITY_BRUSH_COLOR_2,
+          CITY_BRUSH_COLOR_3, CITY_BRUSH_COLOR_4, Qt::SolidPattern,
+          Qt::SolidPattern, Qt::SolidPattern, Qt::SolidPattern)
+    }
+  else
+    {
+      // We assume to have an old configfile ...
+      config->setGroup("City");
+      cityPenList.append(new QPen(CITY_COLOR_1, 1));
+      cityPenList.append(new QPen(CITY_COLOR_2, 1));
+      cityPenList.append(new QPen(CITY_COLOR_3, 1));
+      cityPenList.append(new QPen(CITY_COLOR_4, 1));
+      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_1, Qt::SolidPattern));
+      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_2, Qt::SolidPattern));
+      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_3, Qt::SolidPattern));
+      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_4, Qt::SolidPattern));
+    }
   READ_BORDER(cityBorder);
+
+  config->setGroup("Airspace C");
+  READ_PEN(airCPenList, AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
+        AIRC_PEN_1, AIRC_PEN_2, AIRC_PEN_3, AIRC_PEN_4,
+        AIRC_PEN_STYLE_1, AIRC_PEN_STYLE_2, AIRC_PEN_STYLE_3, AIRC_PEN_STYLE_4)
+  READ_BRUSH(airCBrushList, AIRC_BRUSH_COLOR_1, AIRC_BRUSH_COLOR_2,
+        AIRC_BRUSH_COLOR_3, AIRC_BRUSH_COLOR_4, AIRC_BRUSH_STYLE_1,
+        AIRC_BRUSH_STYLE_2, AIRC_BRUSH_STYLE_3, AIRC_BRUSH_STYLE_4)
+  READ_BORDER(airCBorder);
+
+  config->setGroup("Airspace D");
+  READ_PEN(airDPenList, AIRD_COLOR_1, AIRD_COLOR_2, AIRD_COLOR_3, AIRD_COLOR_4,
+        AIRD_PEN_1, AIRD_PEN_2, AIRD_PEN_3, AIRD_PEN_4,
+        AIRD_PEN_STYLE_1, AIRD_PEN_STYLE_2, AIRD_PEN_STYLE_3, AIRD_PEN_STYLE_4)
+  READ_BRUSH(airDBrushList, AIRD_BRUSH_COLOR_1, AIRD_BRUSH_COLOR_2,
+        AIRD_BRUSH_COLOR_3, AIRD_BRUSH_COLOR_4, AIRD_BRUSH_STYLE_1,
+        AIRD_BRUSH_STYLE_2, AIRD_BRUSH_STYLE_3, AIRD_BRUSH_STYLE_4)
+  READ_BORDER(airDBorder);
+
+  config->setGroup("Airspace E low");
+  READ_PEN(airElPenList, AIREL_COLOR_1, AIREL_COLOR_2, AIREL_COLOR_3,
+        AIREL_COLOR_4, AIREL_PEN_1, AIREL_PEN_2, AIREL_PEN_3, AIREL_PEN_4,
+        AIREL_PEN_STYLE_1, AIREL_PEN_STYLE_2, AIREL_PEN_STYLE_3, AIREL_PEN_STYLE_4)
+  READ_BRUSH(airElBrushList, AIREL_BRUSH_COLOR_1, AIREL_BRUSH_COLOR_2,
+        AIREL_BRUSH_COLOR_3, AIREL_BRUSH_COLOR_4, AIREL_BRUSH_STYLE_1,
+        AIREL_BRUSH_STYLE_2, AIREL_BRUSH_STYLE_3, AIREL_BRUSH_STYLE_4)
+  READ_BORDER(airElBorder);
+
+  config->setGroup("Airspace E high");
+  READ_PEN(airEhPenList, AIREH_COLOR_1, AIREH_COLOR_2, AIREH_COLOR_3,
+        AIREH_COLOR_4, AIREH_PEN_1, AIREH_PEN_2, AIREH_PEN_3, AIREH_PEN_4,
+        AIREH_PEN_STYLE_1, AIREH_PEN_STYLE_2, AIREH_PEN_STYLE_3, AIREH_PEN_STYLE_4)
+  READ_BRUSH(airEhBrushList, AIREH_BRUSH_COLOR_1, AIREH_BRUSH_COLOR_2,
+        AIREH_BRUSH_COLOR_3, AIREH_BRUSH_COLOR_4, AIREH_BRUSH_STYLE_1,
+        AIREH_BRUSH_STYLE_2, AIREH_BRUSH_STYLE_3, AIREH_BRUSH_STYLE_4)
+  READ_BORDER(airEhBorder);
+
+  config->setGroup("Control C");
+  READ_PEN(ctrCPenList, CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
+        CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
+        CTRC_PEN_STYLE_1, CTRC_PEN_STYLE_2, CTRC_PEN_STYLE_3, CTRC_PEN_STYLE_4)
+  READ_BRUSH(ctrCBrushList, CTRC_BRUSH_COLOR_1, CTRC_BRUSH_COLOR_2,
+        CTRC_BRUSH_COLOR_3, CTRC_BRUSH_COLOR_4, CTRC_BRUSH_STYLE_1,
+        CTRC_BRUSH_STYLE_2, CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4)
+  READ_BORDER(ctrCBorder);
+
+  config->setGroup("Control D");
+  READ_PEN(ctrDPenList, CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
+        CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4,
+        CTRD_PEN_STYLE_1, CTRD_PEN_STYLE_2, CTRD_PEN_STYLE_3, CTRD_PEN_STYLE_4)
+  READ_BRUSH(ctrDBrushList, CTRD_BRUSH_COLOR_1, CTRD_BRUSH_COLOR_2,
+        CTRD_BRUSH_COLOR_3, CTRD_BRUSH_COLOR_4, CTRD_BRUSH_STYLE_1,
+        CTRD_BRUSH_STYLE_2, CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4)
+  READ_BORDER(ctrDBorder);
 
   mapPage = addPage(i18n("Map-Elements"),i18n("Map Configuration"),
       KGlobal::instance()->iconLoader()->loadIcon("kflog", KIcon::NoGroup,
@@ -512,31 +814,30 @@ void KFLogConfig::__addMapTab()
   elementBox->setTitle(i18n("visible Map-Elements"));
 
   elementSelect = new KComboBox(mapPage, "elementBox");
-  // Diese Reihenfolge muss mit der von "ElementType" übereinstimmen
-  // (siehe kflogconfig.h)
-  elementSelect->insertItem(i18n("Road"));
-  elementSelect->insertItem(i18n("Highway"));
-  elementSelect->insertItem(i18n("Railway"));
-  elementSelect->insertItem(i18n("River / Lake"));
-  elementSelect->insertItem(i18n("City"));
+  elementSelect->insertItem(i18n("Road"), Road);
+  elementSelect->insertItem(i18n("Highway"), Highway);
+  elementSelect->insertItem(i18n("Railway"), Railway);
+  elementSelect->insertItem(i18n("River / Lake"), River);
+  elementSelect->insertItem(i18n("Canal"), Canal);
+  elementSelect->insertItem(i18n("City"), City);
+  elementSelect->insertItem(i18n("Airspace C"), AirC);
+  elementSelect->insertItem(i18n("Airspace D"), AirD);
+  elementSelect->insertItem(i18n("Airspace E (low)"), AirElow);
+  elementSelect->insertItem(i18n("Airspace E (high)"), AirEhigh);
+  elementSelect->insertItem(i18n("Airspace F"), AirF);
+  elementSelect->insertItem(i18n("Control C"), ControlC);
+  elementSelect->insertItem(i18n("Control D"), ControlD);
+  elementSelect->insertItem(i18n("Danger"), Danger);
+  elementSelect->insertItem(i18n("Low flight area"), LowFlight);
+  elementSelect->insertItem(i18n("Restricted"), Restricted);
+  elementSelect->insertItem(i18n("TMZ"), TMZ);
 
-  border1 = new QCheckBox(i18n("draw up to border #1"), mapPage);
-  border2 = new QCheckBox(i18n("draw up to border #2"), mapPage);
-  border3 = new QCheckBox(i18n("draw up to border #3"), mapPage);
-  border4 = new QCheckBox(i18n("draw up to scale-limit"), mapPage);
-  outLine = new QCheckBox(i18n("draw outline"), mapPage);
+  border1 = new QCheckBox(i18n("border #1"), mapPage);
+  border2 = new QCheckBox(i18n("border #2"), mapPage);
+  border3 = new QCheckBox(i18n("border #3"), mapPage);
+  border4 = new QCheckBox(i18n("scale-limit"), mapPage);
 
-  border1Color = new KColorButton(mapPage);
-  border2Color = new KColorButton(mapPage);
-  border3Color = new KColorButton(mapPage);
-  border4Color = new KColorButton(mapPage);
-  outLineColor = new KColorButton(mapPage);
-
-  border1Pen = new QSpinBox(1, 9, 1, mapPage);
-  border2Pen = new QSpinBox(1, 9, 1, mapPage);
-  border3Pen = new QSpinBox(1, 9, 1, mapPage);
-  border4Pen = new QSpinBox(1, 9, 1, mapPage);
-  outLinePen = new QSpinBox(1, 9, 1, mapPage);
+  QString picDir = KGlobal::dirs()->findResource("appdata", "pics/");
 
   border1Button = new QPushButton(mapPage);
   border1Button->setPixmap(BarIcon("down"));
@@ -556,46 +857,63 @@ void KFLogConfig::__addMapTab()
   defaultElements->setMaximumWidth(defaultElements->sizeHint().width() + 10);
   defaultElements->setMinimumHeight(defaultElements->sizeHint().height() + 2);
 
-  QGridLayout* elLayout = new QGridLayout(mapPage, 15, 9, 12, 1);
-  elLayout->addMultiCellWidget(elementBox, 0, 12, 0, 8);
+  QGridLayout* elLayout = new QGridLayout(mapPage, 15, 15, 12, 1);
+  elLayout->addMultiCellWidget(elementBox, 0, 12, 0, 14);
   elLayout->addWidget(elementSelect, 1, 1);
-  elLayout->addWidget(border1, 3, 1);
-  elLayout->addWidget(border1Color, 3, 3);
-  elLayout->addWidget(border1Pen, 3, 5);
-  elLayout->addWidget(border1Button, 3, 7);
-  elLayout->addWidget(border2, 5, 1);
-  elLayout->addWidget(border2Color, 5, 3);
-  elLayout->addWidget(border2Pen, 5, 5);
-  elLayout->addWidget(border2Button, 5, 7);
-  elLayout->addWidget(border3, 7, 1);
-  elLayout->addWidget(border3Color, 7, 3);
-  elLayout->addWidget(border3Pen, 7, 5);
-  elLayout->addWidget(border3Button, 7, 7);
-  elLayout->addWidget(border4, 9, 1);
-  elLayout->addWidget(border4Color, 9, 3);
-  elLayout->addWidget(border4Pen, 9, 5);
-  elLayout->addWidget(outLine, 11, 1);
-  elLayout->addWidget(outLineColor, 11, 3);
-  elLayout->addWidget(outLinePen, 11, 5);
+  elLayout->addWidget(new QLabel(i18n("draw up to"), mapPage), 3, 1);
+  elLayout->addMultiCellWidget(new QLabel(i18n("Pen"), mapPage), 3, 3, 3, 7);
+  elLayout->addMultiCellWidget(new QLabel(i18n("Brush"), mapPage), 3, 3, 9, 11);
+  elLayout->addWidget(border1, 5, 1);
+  elLayout->addWidget(border1Button, 5, 13);
+  elLayout->addWidget(border2, 7, 1);
+  elLayout->addWidget(border2Button, 7, 13);
+  elLayout->addWidget(border3, 9, 1);
+  elLayout->addWidget(border3Button, 9, 13);
+  elLayout->addWidget(border4, 11, 1);
+
+  BUTTONROW(border1Color, border1Pen, border1PenStyle, border1BrushColor,
+      border1BrushStyle, 5);
+
+  BUTTONROW(border2Color, border2Pen, border2PenStyle, border2BrushColor,
+      border2BrushStyle, 7);
+
+  BUTTONROW(border3Color, border3Pen, border3PenStyle, border3BrushColor,
+      border3BrushStyle, 9);
+
+  BUTTONROW(border4Color, border4Pen, border4PenStyle, border4BrushColor,
+      border4BrushStyle, 11);
+
   elLayout->addMultiCellWidget(defaultElements, 14, 14, 0, 1, AlignLeft);
 
   elLayout->addRowSpacing(0, 25);
-  elLayout->addRowSpacing(10, 12);
+  elLayout->addRowSpacing(2, 5);
+  elLayout->setRowStretch(2, 1);
+  elLayout->setRowStretch(4, 1);
+  elLayout->setRowStretch(6, 1);
+  elLayout->setRowStretch(8, 1);
+  elLayout->setRowStretch(10, 1);
   elLayout->addRowSpacing(12, 10);
-  elLayout->addRowSpacing(13, 10);
-  elLayout->setRowStretch(13, 1);
+  elLayout->addRowSpacing(13, 15);
+  elLayout->setRowStretch(13, 3);
 
   elLayout->addColSpacing(0, 10);
-  elLayout->setColStretch(2, 2);
-  elLayout->setColStretch(4, 1);
-  elLayout->setColStretch(6, 1);
-  elLayout->addColSpacing(8, 10);
+  elLayout->setColStretch(2, 3);
+  elLayout->setColStretch(4, 0);
+  elLayout->addColSpacing(4, 5);
+  elLayout->setColStretch(6, 0);
+  elLayout->addColSpacing(6, 5);
+  elLayout->setColStretch(8, 2);
+  elLayout->addColSpacing(8, 8);
+  elLayout->setColStretch(10, 0);
+  elLayout->addColSpacing(10, 5);
+  elLayout->setColStretch(12, 1);
+  elLayout->addColSpacing(12, 8);
+  elLayout->addColSpacing(14, 10);
 
   connect(border1, SIGNAL(toggled(bool)), SLOT(slotToggleFirst(bool)));
   connect(border2, SIGNAL(toggled(bool)), SLOT(slotToggleSecond(bool)));
   connect(border3, SIGNAL(toggled(bool)), SLOT(slotToggleThird(bool)));
   connect(border4, SIGNAL(toggled(bool)), SLOT(slotToggleForth(bool)));
-  connect(outLine, SIGNAL(toggled(bool)), SLOT(slotToggleOutline(bool)));
   connect(border1Button, SIGNAL(clicked()), SLOT(slotSetSecond()));
   connect(border2Button, SIGNAL(clicked()), SLOT(slotSetThird()));
   connect(border3Button, SIGNAL(clicked()), SLOT(slotSetForth()));
@@ -628,7 +946,7 @@ void KFLogConfig::__addScaleTab()
   lLimit = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
   lLimit->setMinimumHeight(lLimit->sizeHint().height() + 5);
   lLimit->setMaximumHeight(lLimit->sizeHint().height() + 20);
-  lLimit->setMinimumWidth(250);
+  lLimit->setMinimumWidth(200);
   lLimitN = new QLCDNumber(5, scalePage);
   lLimitN->setMinimumWidth(lLimitN->sizeHint().width() + 10);
   lLimit->setValue(__getScaleValue(ll));
@@ -752,7 +1070,7 @@ void KFLogConfig::__addPathTab()
   igcGroup->setTitle(i18n("Flight-directory:"));
 
   igcPathE  = new QLineEdit(pathPage, "igcPathE");
-  igcPathE->setMinimumWidth(200);
+  igcPathE->setMinimumWidth(150);
   igcPathE->setText(flightDir);
 
   QPushButton* igcPathSearch = new QPushButton(pathPage);
@@ -773,12 +1091,13 @@ void KFLogConfig::__addPathTab()
   pathLayout->addRowSpacing(2, 10);
 
   pathLayout->addRowSpacing(3, 20);
+  pathLayout->setRowStretch(3, 1);
 
   QGroupBox* taskGroup = new QGroupBox(pathPage, "taskGroup");
   taskGroup->setTitle(i18n("Task-directory:"));
 
   taskPathE = new QLineEdit(pathPage, "taskPathE");
-  taskPathE->setMinimumWidth(200);
+  taskPathE->setMinimumWidth(150);
   taskPathE->setText(taskDir);
 
   QPushButton* taskPathSearch = new QPushButton(pathPage);
@@ -795,12 +1114,13 @@ void KFLogConfig::__addPathTab()
   pathLayout->addRowSpacing(6, 10);
 
   pathLayout->addRowSpacing(7, 20);
+  pathLayout->setRowStretch(7, 1);
 
   QGroupBox* mapGroup = new QGroupBox(pathPage, "mapGroup");
   mapGroup->setTitle(i18n("Map-directory:"));
 
   mapPathE = new QLineEdit(pathPage, "mapPathE");
-  mapPathE->setMinimumWidth(200);
+  mapPathE->setMinimumWidth(150);
   mapPathE->setText(mapDir);
 
   QPushButton* mapPathSearch = new QPushButton(pathPage);
@@ -842,8 +1162,9 @@ void KFLogConfig::__addPrintTab()
 void KFLogConfig::__addIDTab()
 {
   config->setGroup("Map Data");
-  int homeLat = config->readNumEntry("Homesite Latitude", 0);
-  int homeLon = config->readNumEntry("Homesite Longitude", 0);
+  int homeLat = config->readNumEntry("Homesite Latitude", HOME_DEFAULT_LAT);
+  int homeLon = config->readNumEntry("Homesite Longitude", HOME_DEFAULT_LON);
+  QString homeName = config->readEntry("Homesite", "");
 
   idPage = addPage(i18n("Identity"),i18n("Personal Information"),
       KGlobal::instance()->iconLoader()->loadIcon("identity", KIcon::NoGroup,
@@ -854,18 +1175,22 @@ void KFLogConfig::__addIDTab()
   QGroupBox* homeGroup = new QGroupBox(idPage, "homeGroup");
   homeGroup->setTitle(i18n("Homesite:"));
 
+  homeNameE = new QLineEdit(idPage, "homeNameE");
+  homeNameE->setMinimumWidth(150);
   homeLatE  = new QLineEdit(idPage, "homeLatE");
-  homeLatE->setMinimumWidth(200);
+  homeLatE->setMinimumWidth(150);
   homeLatE->setText(printPos(homeLat, true));
   homeLonE  = new QLineEdit(idPage, "homeLonE");
-  homeLonE->setMinimumWidth(200);
+  homeLonE->setMinimumWidth(150);
   homeLonE->setText(printPos(homeLon, false));
 
-  idLayout->addMultiCellWidget(homeGroup, 0, 4, 0, 4);
-  idLayout->addWidget(new QLabel(i18n("Latitude"), idPage), 1, 1);
-  idLayout->addWidget(homeLatE, 1, 3);
-  idLayout->addWidget(new QLabel(i18n("Longitude"), idPage), 3, 1);
-  idLayout->addWidget(homeLonE, 3, 3);
+  idLayout->addMultiCellWidget(homeGroup, 0, 6, 0, 4);
+  idLayout->addWidget(new QLabel(i18n("Homesite"), idPage), 1, 1);
+  idLayout->addWidget(homeNameE, 1, 3);
+  idLayout->addWidget(new QLabel(i18n("Latitude"), idPage), 3, 1);
+  idLayout->addWidget(homeLatE, 3, 3);
+  idLayout->addWidget(new QLabel(i18n("Longitude"), idPage), 5, 1);
+  idLayout->addWidget(homeLonE, 5, 3);
 
   idLayout->addColSpacing(0, 10);
   idLayout->addColSpacing(2, 10);

@@ -52,8 +52,7 @@ class LineElement : public BaseMapElement
     /**
      * Draws the element into the given painter.
      */
-    virtual void drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
-        bool isFirst = true);
+    virtual void drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
     /** */
     virtual void printMapElement(QPainter* printPainter, const double dX,
         const double dY, const int mapCenterLon, const double scale,
@@ -62,8 +61,6 @@ class LineElement : public BaseMapElement
     virtual void printMapElement(QPainter* printPainter);
     /** */
     virtual bool isValley() const;
-    /** */
-    virtual void readConfig();
 
   protected:
     /** */
