@@ -420,7 +420,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
     }
 
     //warning("dragzoomrect: %d, event->state: %d (leftbutton=%d)", dragZoomRect, event->state(), LeftButton);
-    if ((!dragZoomRect) && (event->state() && LeftButton)){
+    if ((!dragZoomRect) && (event->state() == LeftButton)){
       //start dragZoom
       setCursor(CrossCursor);
       isZoomRect = true;
