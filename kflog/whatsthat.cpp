@@ -72,6 +72,7 @@ WhatsThat::WhatsThat( QWidget* w, const QString& txt, QWidget* parent, const cha
 WhatsThat::~WhatsThat()
 {
   delete doc;
+  if (suggestedPos) delete suggestedPos;
 }
 
 void WhatsThat::hide()
