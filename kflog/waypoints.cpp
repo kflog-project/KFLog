@@ -720,16 +720,20 @@ void Waypoints::slotImportWaypointFromFile(){
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory",
       getpwuid(getuid())->pw_dir);
 
-  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt) \n *.gdn *.GDN|Waypoint file (Garmin format, *.gdn) \n *|All files", this, i18n("Import waypoints from file"));
+  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT) \n *.gdn *.GDN|Waypoint file (Garmin format, *.gdn *.GDN) \n *|All files", this, i18n("Import waypoints from file"));
 
   if(!fName.isEmpty()) {
     WaypointCatalog *w = waypointCatalogs.current();
 
     // read from disk
-
-//    w->importGarmin(fName);
-	w->importVolkslogger(fName);
     w->modified = true;
+    if (fName.right(4).lower() == ".dbt"){
+  	  w->importVolkslogger(fName);
+//    } else if (fName.right(4).lower() == "*.gdn"){
+//    w->importGarmin(fName);
+    } else {
+      w->modified = false;
+    }
     fillWaypoints();
   }
 }
