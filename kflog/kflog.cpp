@@ -81,6 +81,8 @@ KFLogApp::KFLogApp(QWidget* , const char* name)
   filePrint->setEnabled(false);
   viewData->setChecked(true);
   viewMapControl->setChecked(true);
+  viewCenterTask->setEnabled(false);
+  viewCenterFlight->setEnabled(false);
 }
 
 KFLogApp::~KFLogApp()
@@ -430,7 +432,13 @@ void KFLogApp::slotFileOpen()
       if(_globalMapContents.loadFlight(fName))
         {
           dataView->setFlightData(_globalMapContents.getFlight());
+          viewCenterTask->setEnabled(true);
+          viewCenterFlight->setEnabled(true);
+          // Hier wird die Karte leider 2x neu gezeichnet, denn erst
+          // beim ersten Zeichnen werden die Rahmen von Flug und Aufgabe
+          // bestimmt.
           map->slotRedrawMap();
+          map->slotCenterToFlight();
         }
     }
 

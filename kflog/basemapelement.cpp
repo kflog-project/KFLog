@@ -37,12 +37,12 @@ void BaseMapElement::printMapElement(QPainter* printP, const double dX,
   warning("BaseMapElement::printMapElement()");
 }
 
-void BaseMapElement::drawMapElement(QPainter* printP)
+void BaseMapElement::drawMapElement(QPainter* printP, QPainter* maskP)
 {
   warning("BaseMapElement::drawMapElement()");
 }
 
-QRegion* BaseMapElement::drawRegion(QPainter* targetP)
+QRegion* BaseMapElement::drawRegion(QPainter* targetP, QPainter* maskPainter)
 {
   return (new QRegion(0,0,1,1));
 }

@@ -42,8 +42,8 @@ class Flight : public BaseMapElement
 	  /**
 	   * Creates a new flight-object.
 	   */
-  	Flight(QList<flightPoint> route, QRect bBF, QString pName, QString gType,
-        QString gID, QList<struct wayPoint> wpL, QRect bBT, QString d);
+  	Flight(QList<flightPoint> route, QString pName, QString gType,
+        QString gID, QList<struct wayPoint> wpL, QString d);
 	  /**
 	   * Destroys the flight-object.
 	   */
@@ -105,7 +105,7 @@ class Flight : public BaseMapElement
     /**
      * Draws the element into the given painter.
      */
-    virtual void  drawMapElement(QPainter* targetPainter);
+    virtual void drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
     /** */
     struct flightPoint getPoint(int n);
     /**

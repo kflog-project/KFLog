@@ -50,9 +50,9 @@ class BaseMapElement
      * QRegion when drawn (e.g. AreaElement).
      * The function must be implemented in the child-classes.
      */
-    virtual void drawMapElement(QPainter* targetPainter);
+    virtual void drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
     /** */
-    virtual QRegion* drawRegion(QPainter* targetPainter);
+    virtual QRegion* drawRegion(QPainter* targetPainter, QPainter* maskPainter);
     /** */
     virtual void printMapElement(QPainter* printPainter, const double dX,
           const double dY, const int mapCenterLon, const double scale,

@@ -78,6 +78,7 @@
   }
 
 MapContents::MapContents()
+  : isFirst(true)
 {
   // Liste der Höhenstufen (insg. 46 Stufen):
   // Compiler gibt hier eine Warnung aus. Gibt es eine andere Möglichkeit?
@@ -402,8 +403,10 @@ bool MapContents::__readAsciiFile(const char* fileName)
           else if(line.mid(0,9) == "FREQUENCY")
               frequency = line.mid(10,100);
           else if(line.mid(0,8) == "MOUNTAIN")
+            {
               if(line.mid(9,10).toInt() == 1)
                   isValley = true;
+            }
           else if(line.mid(0,4) == "NAME")
               name = line.mid(5,1000);
           else if(line.mid(0,4) == "SORT")
@@ -524,7 +527,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   case BaseMapElement::BigCity:
                   case BaseMapElement::MidCity:
                   case BaseMapElement::SmallCity:
-                    cityList.append(new LineElement(name, type, tA));
+                    cityList.append(new LineElement(name, type, tA, sortID));
                     break;
                   case BaseMapElement::Oiltank:
                   case BaseMapElement::Factory:
@@ -561,7 +564,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   case BaseMapElement::BigRiver:
                   case BaseMapElement::MidRiver:
                   case BaseMapElement::SmallRiver:
-                    hydroList.append(new LineElement(name, type, tA));
+                    hydroList.append(new LineElement(name, type, tA, sortID));
                     break;
                   case BaseMapElement::Dam:
                   case BaseMapElement::Lock:
@@ -583,7 +586,8 @@ bool MapContents::__readAsciiFile(const char* fileName)
             }
           else
             {
-//        warning("KFLog: Unknown field detected: \"%s\"", (const char*)line);
+              warning("KFLog: Unknown field detected: \"%s\"",
+                (const char*)line);
             }
         }
     }
@@ -1168,7 +1172,6 @@ bool MapContents::loadFlight(QFile igcFile)
   QList<struct wayPoint> wpList;
   struct wayPoint* newWP;
   struct wayPoint* preWP;
-  QRect bBoxF, bBoxT;
 
   extern const MapMatrix _globalMapMatrix;
 
@@ -1223,20 +1226,9 @@ bool MapContents::loadFlight(QFile igcFile)
               speed = 0;
               v = 0;
 
-              bBoxF.setTop(newPoint.origP.x());
-              bBoxF.setBottom(newPoint.origP.x());
-              bBoxF.setLeft(newPoint.origP.y());
-              bBoxF.setRight(newPoint.origP.y());
-
               continue;
             }
-          else
-            {
-              bBoxF.setTop(MAX(newPoint.origP.x(), bBoxF.top()));
-              bBoxF.setBottom(MIN(newPoint.origP.x(), bBoxF.bottom()));
-              bBoxF.setLeft(MIN(newPoint.origP.y(), bBoxF.left()));
-              bBoxF.setRight(MAX(newPoint.origP.y(), bBoxF.right()));
-            }
+
           /* dtime may change, even if the intervall, in wich the
            * logger gets the position, is allways the same. If the
            * intervall is f.e. 10 sec, dtime may change to 11 or 9 sec.
@@ -1317,22 +1309,10 @@ bool MapContents::loadFlight(QFile igcFile)
               newWP->angle = -100;
               newWP->type = Flight::NotSet;
               if(isFirstWP)
-                {
                   newWP->distance = 0;
-                  bBoxT.setTop(newWP->origP.x());
-                  bBoxT.setBottom(newWP->origP.x());
-                  bBoxT.setLeft(newWP->origP.y());
-                  bBoxT.setRight(newWP->origP.y());
-                }
               else
-                {
                   newWP->distance = dist(latTemp, lonTemp,
                       preWP->origP.y(), preWP->origP.x());
-                  bBoxT.setTop(MAX(newWP->origP.x(), bBoxT.top()));
-                  bBoxT.setBottom(MIN(newWP->origP.x(), bBoxT.bottom()));
-                  bBoxT.setLeft(MIN(newWP->origP.y(), bBoxT.left()));
-                  bBoxT.setRight(MAX(newWP->origP.y(), bBoxT.right()));
-                }
 
               if(!isFirstWP && newWP->distance <= 0.1)  continue;
 
@@ -1343,12 +1323,16 @@ bool MapContents::loadFlight(QFile igcFile)
         }
       else if(s.mid(0,1) == "L")
         {
-          // We have a comment. Let's ignore it ...
+          if(s.mid(13,16) == "TAKEOFF DETECTED")
+            {
+              // Der Logger hat den Start erkannt !
+              launched = true;
+            }
         }
     }
 
-  flightList.append(new Flight(flightRoute, bBoxF, pilotName, gliderType,
-      gliderID, wpList, bBoxT, date));
+  flightList.append(new Flight(flightRoute, pilotName, gliderType,
+      gliderID, wpList, date));
 
   return true;
 }
@@ -1367,6 +1351,13 @@ void MapContents::proofeSection()
   if(mapBorder.right() < 0)  eastCorner -= 1;
   if(mapBorder.top() < 0) northCorner -= 1;
   if(mapBorder.bottom() < 0) southCorner -= 1;
+
+  if(isFirst)
+    {
+//      __readAsciiFile("/home/heiner/Entwicklung/import/luftraume.out");
+//      __readAsciiFile("/home/heiner/Entwicklung/KFLog_Daten/karte/kflog_sites.out");
+      isFirst = false;
+    }
 
   for(int row = northCorner; row <= southCorner; row++) {
     for(int col = westCorner; col <= eastCorner; col++) {
@@ -1419,6 +1410,10 @@ void MapContents::proofeSection()
               latID_S  + "_" + lonID_S + ".river.out";
            __readAsciiFile(asciiName);
 
+           asciiName = "/data/KartenDaten/KFLog-Karten/Seen_Kachel/europa_seen." +
+              latID_S  + "_" + lonID_S + ".dnnet.out";
+           __readAsciiFile(asciiName);
+
 //            warning("    Kachel geladen: %s", (const char*)demSecName);
             sectionArray.setBit( row + ( col + ( row * 89 ) ), true );
           }
@@ -1427,6 +1422,7 @@ void MapContents::proofeSection()
       }
     }
   }
+
 }
 
 unsigned int MapContents::getListLength(int listIndex) const
@@ -1565,73 +1561,76 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
   }
 }
 
-void MapContents::drawList(QPainter* targetPainter, unsigned int listID)
+void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
+    unsigned int listID)
 {
   switch(listID)
     {
       case AirportList:
         for(unsigned int loop = 0; loop < airportList.count(); loop++)
-            airportList.at(loop)->drawMapElement(targetPainter);
+            airportList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case GliderList:
         for(unsigned int loop = 0; loop < gliderList.count(); loop++)
-            gliderList.at(loop)->drawMapElement(targetPainter);
+            gliderList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case OutList:
         for(unsigned int loop = 0; loop < outList.count(); loop++)
-            outList.at(loop)->drawMapElement(targetPainter);
+            outList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case NavList:
         for(unsigned int loop = 0; loop < navList.count(); loop++)
-            navList.at(loop)->drawMapElement(targetPainter);
+            navList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case AirspaceList:
         for(unsigned int loop = 0; loop < airspaceList.count(); loop++)
-            airspaceList.at(loop)->drawMapElement(targetPainter);
+            airspaceList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case ObstacleList:
         for(unsigned int loop = 0; loop < obstacleList.count(); loop++)
-            obstacleList.at(loop)->drawMapElement(targetPainter);
+            obstacleList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case ReportList:
         for(unsigned int loop = 0; loop < reportList.count(); loop++)
-            reportList.at(loop)->drawMapElement(targetPainter);
+            reportList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case CityList:
         for(unsigned int loop = 0; loop < cityList.count(); loop++)
-            cityList.at(loop)->drawMapElement(targetPainter);
+            cityList.at(loop)->drawMapElement(targetPainter, maskPainter);
+        for(unsigned int loop = 0; loop < cityList.count(); loop++)
+            cityList.at(loop)->drawMapElement(targetPainter, maskPainter, false);
         break;
 //      case VillageList:
 //        for(unsigned int loop = 0; loop < villageList.count(); loop++)
-//            villageList.at(loop)->drawMapElement(targetPainter);
+//            villageList.at(loop)->drawMapElement(targetPainter, maskPainter);
 //        break;
       case LandmarkList:
         for(unsigned int loop = 0; loop < landmarkList.count(); loop++)
-            landmarkList.at(loop)->drawMapElement(targetPainter);
+            landmarkList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case HighwayList:
         for(unsigned int loop = 0; loop < highwayList.count(); loop++)
-            highwayList.at(loop)->drawMapElement(targetPainter);
+            highwayList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case RoadList:
         for(unsigned int loop = 0; loop < roadList.count(); loop++)
-            roadList.at(loop)->drawMapElement(targetPainter);
+            roadList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case RailList:
         for(unsigned int loop = 0; loop < railList.count(); loop++)
-            railList.at(loop)->drawMapElement(targetPainter);
+            railList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case HydroList:
         for(unsigned int loop = 0; loop < hydroList.count(); loop++)
-            hydroList.at(loop)->drawMapElement(targetPainter);
+            hydroList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case TopoList:
         for(unsigned int loop = 0; loop < topoList.count(); loop++)
-            topoList.at(loop)->drawMapElement(targetPainter);
+            topoList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case FlightList:
         for(unsigned int loop = 0; loop < flightList.count(); loop++)
-            flightList.at(loop)->drawMapElement(targetPainter);
+            flightList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       default:
         return;
@@ -1756,7 +1755,7 @@ void MapContents::__setPainterColor(QPainter* targetPainter, int height)
       QBrush::SolidPattern));
 }
 
-void MapContents::drawIsoList(QPainter* targetPainter)
+void MapContents::drawIsoList(QPainter* targetPainter, QPainter* maskPainter)
 {
   int height = 0;
   for(unsigned int loop = 0; loop < isoList.count(); loop++)
@@ -1778,6 +1777,7 @@ void MapContents::drawIsoList(QPainter* targetPainter)
       __setPainterColor(targetPainter, height);
 
       for(unsigned int loop2 = 0; loop2 < isoList.at(loop)->count(); loop2++)
-          isoList.at(loop)->at(loop2)->drawMapElement(targetPainter);
+          isoList.at(loop)->at(loop2)->drawMapElement(targetPainter,
+              maskPainter);
     }
 }

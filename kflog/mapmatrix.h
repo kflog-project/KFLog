@@ -48,6 +48,8 @@ class MapMatrix
      * maptype.
      */
     QPoint wgsToMap(int lat, int lon) const;
+    /** */
+    QRect wgsToMap(QRect rect);
     /**
      *
      */
@@ -144,10 +146,12 @@ class MapMatrix
     /** */
     int homeLon;
     /**
-     *
+     * Contains the geographical border of the map (lat/lon).
      */
     QRect viewBorder;
     QRect mapBorder;
+    /** */
+    QSize mapViewSize;
     /** */
     double cScale;
     /** */

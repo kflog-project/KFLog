@@ -75,6 +75,8 @@ class Airspace : public LineElement
     /** */
     void setValues(unsigned int upper = 0, unsigned int upperType = 0,
             unsigned int lower = 0, unsigned int lowerType = 0);
+    /** */
+    QString getInfoString();
 
   private:
     /**

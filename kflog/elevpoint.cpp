@@ -110,7 +110,7 @@ void ElevPoint::printMapElement(QPainter* printPainter, const double dX,
   }
 }
 
-void ElevPoint::drawMapElement(QPainter* targetPainter)
+void ElevPoint::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
   if(!__isVisible())  return;
 

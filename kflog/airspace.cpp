@@ -31,7 +31,7 @@ Airspace::Airspace(QString n, unsigned int t, QPointArray pA)
   switch(typeID)
     {
       case AirC:
-        PEN_THICKNESS(1,1,1,1,1,1,1,1,1)
+        PEN_THICKNESS(3,3,3,3,3,3,3,3,3)
         drawColor = QColor(0,120,0);
         fillBrush = QBrush(QBrush::NoBrush);
         break;
@@ -53,12 +53,12 @@ Airspace::Airspace(QString n, unsigned int t, QPointArray pA)
         fillBrush = QBrush(QColor(120,255,120), QBrush::FDiagPattern);
         break;
       case AirElow:
-        PEN_THICKNESS(4,4,4,4,4,4,4,4,4)
+        PEN_THICKNESS(3,3,3,3,2,2,2,2,2)
         drawColor = QColor(200,100,100);
         fillBrush = QBrush(QBrush::NoBrush);
         break;
       case AirEhigh:
-        PEN_THICKNESS(4,4,4,4,4,4,4,4,4)
+        PEN_THICKNESS(3,3,3,3,2,2,2,2,2)
         drawColor = QColor(100,100,175);
         fillBrush = QBrush(QBrush::NoBrush);
         break;
@@ -104,6 +104,86 @@ unsigned int Airspace::getLowerL() const { return lLimit; }
 unsigned int Airspace::getUpperT() const { return uLimitType; }
 
 unsigned int Airspace::getLowerT() const { return lLimitType; }
+
+QString Airspace::getInfoString()
+{
+  QString text, tempL, tempU;
+
+  switch(lLimitType)
+    {
+      case MSL:
+        tempL.sprintf("%d MSL", lLimit);
+        break;
+      case GND:
+        if(lLimit)
+            tempL.sprintf("%d GND", lLimit);
+        else
+            tempL = "GND";
+        break;
+      case FL:
+        tempL.sprintf("FL %d", lLimit);
+        break;
+      default: ;
+    }
+
+  switch(uLimitType)
+    {
+      case MSL:
+        if(uLimit >= 99999)
+            tempU = "unlimited";
+        else
+            tempU.sprintf("%d MSL", uLimit);
+        break;
+      case GND:
+        tempU.sprintf("%d GND", uLimit);
+        break;
+      case FL:
+        tempU.sprintf("FL %d", uLimit);
+        break;
+      default: ;
+    }
+
+  switch(typeID)
+   {
+      case BaseMapElement::AirC:
+      case BaseMapElement::AirCtemp:
+        text = "C";
+        break;
+      case BaseMapElement::AirD:
+      case BaseMapElement::AirDtemp:
+        text = "D";
+        break;
+      case BaseMapElement::AirElow:
+        text = "E (low)";
+        break;
+      case BaseMapElement::AirEhigh:
+        text = "E (high)";
+        break;
+      case BaseMapElement::AirF:
+        text = "F";
+        break;
+      case BaseMapElement::Restricted:
+        text = "Restricted";
+        break;
+      case BaseMapElement::Danger:
+        text = "Danger";
+        break;
+      case BaseMapElement::ControlD:
+        text = "Control";
+        break;
+      case BaseMapElement::LowFlight:
+        text = "LowFlight";
+        break;
+      default:
+        text = "<B><EM>unknown</EM></B>";
+        break;
+    }
+
+    text = text + " " + name + "<BR>" +
+        "<FONT SIZE=-1>" + tempL + " / " + tempU + "</FONT>";
+
+    return text;
+}
 
 void Airspace::setValues(unsigned int upper, unsigned int upperType,
             unsigned int lower, unsigned int lowerType)

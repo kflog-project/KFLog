@@ -42,7 +42,7 @@ class LineElement : public BaseMapElement
     /**
      * Creates a new mapelement.
      */
-    LineElement(QString n, unsigned int t, QPointArray pA);
+    LineElement(QString n, unsigned int t, QPointArray pA, bool isVal = false);
     /**
      * Destructor, does nothing special.
      */
@@ -50,15 +50,18 @@ class LineElement : public BaseMapElement
     /**
      * Draws the element into the given painter.
      */
-    virtual QRegion* drawRegion(QPainter* targetPainter);
+    virtual QRegion* drawRegion(QPainter* targetPainter, QPainter* maskPainter);
     /**
      * Draws the element into the given painter.
      */
-    virtual void drawMapElement(QPainter* targetPainter);
+    virtual void drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
+        bool isFirst = true);
     /** */
     virtual void printMapElement(QPainter* printPainter, const double dX,
         const double dY, const int mapCenterLon, const double scale,
         const struct elementBorder mapBorder);
+    /** */
+    virtual bool isValley() const;
 
   protected:
     /** */
@@ -79,6 +82,10 @@ class LineElement : public BaseMapElement
     QPointArray projPointArray;
     /** */
     QRect bBox;
+    /** */
+    bool valley;
+    /** */
+    bool closed;
 };
 
 /*************************************************************************

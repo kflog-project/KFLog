@@ -53,7 +53,7 @@ class SinglePoint : public BaseMapElement
     /**
      * Draws the element into the given painter.
      */
-    virtual void drawMapElement(QPainter* targetPainter);
+    virtual void drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
     /** */
     virtual void printMapElement(QPainter* printPainter, const double dX,
         const double dY, const int mapCenterLon, const double scale,
@@ -76,6 +76,8 @@ class SinglePoint : public BaseMapElement
     virtual QString getWPName() const;
     /** */
     virtual QPoint getMapPosition() const;
+    /** */
+    virtual QString getInfoString() const;
 
   protected:
     /** */

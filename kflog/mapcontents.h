@@ -83,9 +83,10 @@ class MapContents
      */
     SinglePoint* getSinglePoint(int listIndex, unsigned int index);
     /** Zeichnet die angegebene Liste in den übergebenen Painter */
-    void drawList(QPainter* targetPainter, unsigned int listID);
+    void drawList(QPainter* targetPainter, QPainter* maskPainter,
+        unsigned int listID);
     /** Zeichnet die Höhenlinien */
-    void drawIsoList(QPainter* targetPainter);
+    void drawIsoList(QPainter* targetPainter, QPainter* maskPainter);
     /**
      * Loads a new flight-file.
      */
@@ -219,6 +220,9 @@ class MapContents
     QBitArray sectionArray;
     /** */
     int* isoLines;
+
+    /** nur temporär ... */
+    bool isFirst;
 };
 
 #endif

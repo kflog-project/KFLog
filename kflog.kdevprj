@@ -16,8 +16,8 @@ type=DATA
 [Config for BinMakefileAm]
 addcxxflags=
 bin_program=kflog
-cxxflags= -O0 -g3 -pg -Wall
-ldadd= -lm -lkfile -lkdeui -lkdecore $(LIB_QT)
+cxxflags=-O0 -g3 -pg -Wall
+ldadd=-lm -lkfile -lkdeui -lkdecore $(LIB_QT)
 ldflags=
 [General]
 AMChanged=false
@@ -26,7 +26,7 @@ configure_args=--with-qt-dir=/usr/lib/qt2 --prefix=/opt/kde2
 email=heiner@kflog.de
 kdevprj_version=1.3
 lfv_open_groups=GNU,User Interface
-make_options= -j1
+make_options=-j1
 makefiles=Makefile.am,kflog/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,po/Makefile.am
 modifyMakefiles=true
 project_name=KFLog

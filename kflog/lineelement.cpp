@@ -26,9 +26,10 @@
 #include <qfile.h>
 #include <qtextstream.h>
 
-LineElement::LineElement(QString n, unsigned int t, QPointArray pA)
+LineElement::LineElement(QString n, unsigned int t, QPointArray pA,
+    bool isV = false)
 : BaseMapElement(n, t), drawPenStyle(QPen::SolidLine),
-  projPointArray(pA), bBox(pA.boundingRect())
+  projPointArray(pA), bBox(pA.boundingRect()), valley(isV), closed(false)
 {
   fillColor.setRgb(0, 0, 0);
 
@@ -61,50 +62,61 @@ LineElement::LineElement(QString n, unsigned int t, QPointArray pA)
         drawColor.setRgb(50, 200, 255);
         break;
       case BigLake:
+        closed = true;
       case BigRiver:
         PEN_THICKNESS(3, 3, 3, 2, 2, 1, 1, 1, 1)
         drawColor.setRgb(70, 70, 195);
-        fillColor.setRgb(0, 0, 235);
+        fillColor.setRgb(96,128,248);
         break;
       case MidLake:
+        closed = true;
       case MidRiver:
         PEN_THICKNESS(2, 2, 2, 1, 1, 1, 1, 1, 1)
         drawColor.setRgb(70, 70, 195);
-        fillColor.setRgb(0, 0, 235);
+        fillColor.setRgb(96,128,248);
         break;
       case SmallLake:
+        closed = true;
       case SmallRiver:
         PEN_THICKNESS(1, 1, 1, 1, 1, 1, 1, 1, 1)
         drawColor.setRgb(70, 70, 195);
-        fillColor.setRgb(0, 0, 235);
+        fillColor.setRgb(96,128,248);
         break;
       case HugeCity:
         PEN_THICKNESS(1, 1, 1, 1, 1, 1, 1, 1, 1)
         drawColor.setRgb(0, 0, 0);
+        fillColor.setRgb(245,240,0);
 //        fillBrush = QBrush(QColor(245,220,0),QBrush::Dense3Pattern);
 //        fillBrush = QBrush(QColor(255,255,0), QBrush::SolidPattern);
         fillBrush = QBrush(QColor(245,240,0), QBrush::SolidPattern);
+        closed = true;
         break;
       case BigCity:
         PEN_THICKNESS(1, 1, 1, 1, 1, 1, 1, 1, 1)
         drawColor.setRgb(0, 0, 0);
+        fillColor.setRgb(245,240,0);
 //        fillBrush = QBrush(QColor(245,220,0),QBrush::Dense3Pattern);
 //        fillBrush = QBrush(QColor(255,255,0), QBrush::SolidPattern);
         fillBrush = QBrush(QColor(245,240,0), QBrush::SolidPattern);
+        closed = true;
         break;
       case MidCity:
         PEN_THICKNESS(1, 1, 1, 1, 1, 1, 1, 1, 1)
         drawColor.setRgb(0, 0, 0);
+        fillColor.setRgb(245,240,0);
 //        fillBrush = QBrush(QColor(245,220,0),QBrush::Dense3Pattern);
 //        fillBrush = QBrush(QColor(255,255,0), QBrush::SolidPattern);
         fillBrush = QBrush(QColor(245,240,0), QBrush::SolidPattern);
+        closed = true;
         break;
       case SmallCity:
         PEN_THICKNESS(1, 1, 1, 1, 1, 1, 1, 1, 1)
         drawColor.setRgb(0, 0, 0);
+        fillColor.setRgb(245,240,0);
 //        fillBrush = QBrush(QColor(245,220,0),QBrush::Dense3Pattern);
 //        fillBrush = QBrush(QColor(255,255,0), QBrush::SolidPattern);
         fillBrush = QBrush(QColor(245,240,0), QBrush::SolidPattern);
+        closed = true;
         break;
     }
 }
@@ -248,8 +260,10 @@ void LineElement::printMapElement(QPainter* printPainter, const double dX,
   }
 }
 
-QRegion* LineElement::drawRegion(QPainter* targetPainter)
+QRegion* LineElement::drawRegion(QPainter* targetPainter, QPainter* maskPainter)
 {
+  if(!__isVisible()) return (new QRegion());
+
   extern const MapMatrix _globalMapMatrix;
 
   QPointArray tA = _globalMapMatrix.map(projPointArray);
@@ -266,25 +280,36 @@ QRegion* LineElement::drawRegion(QPainter* targetPainter)
   else if(_currentScale <= _scale[8]) index = 7;
   else index = 8;
 
+  if(valley)
+    {
+      maskPainter->setBrush(QBrush(Qt::color0, QBrush::SolidPattern));
+    }
+  else
+    {
+      maskPainter->setBrush(QBrush(Qt::color1, QBrush::SolidPattern));
+    }
+//  maskPainter->setPen(QPen(Qt::color1, drawThickness[index], drawPenStyle));
+  maskPainter->setPen(QPen(Qt::color1, 2, drawPenStyle));
+  maskPainter->drawPolygon(tA);
+
   targetPainter->setBrush(fillBrush);
-  targetPainter->setPen(QPen(drawColor, drawThickness[index], drawPenStyle));
+  targetPainter->setPen(QPen(QColor(245,240,0), 0, drawPenStyle));
   targetPainter->drawPolygon(tA);
+
+//  targetPainter->setBrush(QBrush::NoBrush);
+//  targetPainter->setPen(QPen(drawColor, drawThickness[index], drawPenStyle));
+//  targetPainter->drawPolyline(tA);
 
   return (new QRegion(tA));
 }
 
-void LineElement::drawMapElement(QPainter* targetPainter)
+void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
+    bool isFirst)
 {
+  if(!__isVisible()) return;
+
   extern const MapMatrix _globalMapMatrix;
-
-//  if(!__isVisible(mapBorder)) return;
-
   extern const double _currentScale, _scale[];
-  extern const int _scaleBorder[];
-
-  bool show = true;
-  bool highwayShow = false;
-  bool isClosed = false;
 
   int index = 0;
   if(_currentScale <= _scale[2]) index = 1;
@@ -296,48 +321,64 @@ void LineElement::drawMapElement(QPainter* targetPainter)
   else if(_currentScale <= _scale[8]) index = 7;
   else index = 8;
 
-  targetPainter->setPen(QPen(drawColor, drawThickness[index]));
-
-  if(typeID == Highway && _currentScale < _scale[5]) highwayShow = true;
-
-  if(_currentScale > _scale[_scaleBorder[typeID]])
-      show = false;
-
-  // Kann mal in den Konstruktor wandern ...
-  if(typeID == BigLake || typeID == MidLake || typeID == SmallLake
-                       || typeID == Glacier)
+  if(valley)
     {
-      isClosed = true;
-      targetPainter->setBrush(QBrush(fillColor, QBrush::SolidPattern));
+      maskPainter->setPen(QPen(Qt::color0, drawThickness[index]));
+      maskPainter->setBrush(QBrush(Qt::color0, QBrush::SolidPattern));
+    }
+  else
+    {
+      maskPainter->setPen(QPen(Qt::color1, drawThickness[index]));
+      maskPainter->setBrush(QBrush(Qt::color1, QBrush::SolidPattern));
     }
 
-  if(show)
+  targetPainter->setPen(QPen(drawColor, drawThickness[index]));
+  targetPainter->setBrush(QBrush(fillColor, QBrush::SolidPattern));
+
+  QPointArray pArray = _globalMapMatrix.map(projPointArray);
+
+  /********************************/
+  if(typeID == 37 && isFirst)
     {
-      QPointArray pArray = _globalMapMatrix.map(projPointArray);
-      if(isClosed)
+//      targetPainter->setPen(QPen(drawColor, drawThickness[index]));
+      targetPainter->setPen(QPen(drawColor, 3));
+      maskPainter->setPen(QPen(Qt::color1, 3));
+      maskPainter->drawPolygon(pArray);
+      targetPainter->drawPolyline(pArray);
+
+      return;
+    }
+  else if(typeID == 37 && !isFirst)
+    {
+      targetPainter->setPen(QPen(fillColor, 0));
+      targetPainter->drawPolygon(pArray);
+
+      return;
+    }
+  /********************************/
+
+  if(closed)
+    {
+      maskPainter->drawPolygon(pArray);
+      targetPainter->drawPolygon(pArray);
+    }
+  else
+    {
+      maskPainter->drawPolyline(pArray);
+      targetPainter->drawPolyline(pArray);
+      if(typeID == Highway && _currentScale < _scale[5])
         {
-          targetPainter->drawPolygon(pArray);
-        }
-      else
-        {
+          // Mittellinie zeichnen
+          targetPainter->setPen(QPen(QColor(255,255,255), 1));
           targetPainter->drawPolyline(pArray);
-          if(highwayShow)
-            {
-              // Mittellinie zeichnen
-              targetPainter->setPen(QPen(QColor(255,255,255), 1));
-              targetPainter->drawPolyline(pArray);
-            }
         }
     }
 }
-
-//void LineElement::setPoints(QPointArray newPA)
-//{
-//  projPointArray = newPA;
-//}
 
 bool LineElement::__isVisible() const
 {
   extern const MapMatrix _globalMapMatrix;
   return _globalMapMatrix.isVisible(bBox);
 }
+
+bool LineElement::isValley() const  {  return valley;  }

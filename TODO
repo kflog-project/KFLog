@@ -1,11 +1,53 @@
 
 * Kartenfehler:
 
-  Die Höhenlinien in England scheinen in die falschen Dateien gerückt
-  zu sein. Zumindest der Bereich zwischen 2°W und 0°W ( >52° Nord ) der
-  Höhen über 0M ist in den 0°E Dateien ...
+  -> Die Höhenlinien in England scheinen in die falschen Dateien gerückt
+     zu sein. Zumindest der Bereich zwischen 2°W und 0°W ( >52° Nord ) der
+     Höhen über 0M ist in den 0°E Dateien ...
+
+  -> Die 0-Meter-Linie ist in vielen Fällen noch falsch.
+
+  -> Die Grundhöhe einzelner Kacheln ist zu niedrig.
+
+  -> "Kaputte Länder":
+     -> Spanien (Flüsse)
+     -> Russland (komplett, leider auch Küste ...)
+
+  -> Lufträume zum Teil falsch oder doppelt
+
+  -> weitere Luftraumtypen einführen. Darstellung ändern.
+
+  -> Flusskacheln prüfen
 
 
 * Welche Variablen und Funktionen werden tatsächlich benutzt ???
 
-* "Village" rausschmeissen (Liste bereits gelöscht ...)
+* Flug Darstellung:
+
+  -> Auf einzelne Wendepunkte zoomen
+
+  -> Farbe des Fluges nach Steigrate, Höhe, ... dynamisch einfärben
+
+  -> Textdarstellung überarbeiten
+
+* Flug schliessen
+
+* Was passiert, wenn Maßstab negativ wird ???
+
+* Maßstabs-Angabe nach Zentrieren auf Flug/Aufgabe zunächst nicht richtig.
+  Maßstab müsste zunächst "geprüft" werden ...
+
+* alle Icons erzeugen !!!
+
+* Beim Suchen nach Flugplätzen, ... tauchen "weit weg gezeichnete" Punkte
+  plötzlich wieder auf ...
+
+
+/**************************************************************************
+ **                                                                      **
+ ** Nach der nächsten Release:                                           **
+ **                                                                      **
+ **************************************************************************/
+
+* Die Kartenelemente werden in der Regel zweimal gezeichnet: in den Layer
+  und in die Maske. Das sollte vereinfacht werden !!!

@@ -64,6 +64,11 @@ QPoint MapMatrix::wgsToMap(int lat, int lon) const
                     RADIUS / MAX_SCALE);
 }
 
+QRect MapMatrix::wgsToMap(QRect rect)
+{
+  return QRect(wgsToMap(rect.topLeft()), wgsToMap(rect.bottomRight()));
+}
+
 QPoint MapMatrix::__mapToWgs(QPoint origPoint) const
 {
   return __mapToWgs(origPoint.x(), origPoint.y());
@@ -86,7 +91,15 @@ bool MapMatrix::isVisible(QPoint pos) const
 
 bool MapMatrix::isVisible(QRect itemBorder) const
 {
-  return (mapBorder.intersects(itemBorder));
+  // Grenze: Nahe 15Bit
+  // Vereinfachung kann zu Fehlern führen ...
+  return ( ( mapBorder.intersects(itemBorder) ) &&
+           ( itemBorder.width() * ( MAX_SCALE / cScale ) < 30000 ) &&
+           ( itemBorder.height() * ( MAX_SCALE / cScale ) < 30000 ) );
+
+//  return ( ( mapBorder.intersects(itemBorder) ) &&
+//           ( itemBorder.width() * ( MAX_SCALE / cScale ) > 2 ) &&
+//           ( itemBorder.height() * ( MAX_SCALE / cScale ) > 2 ) );
 }
 
 QPointArray MapMatrix::map(QPointArray origArray) const
@@ -125,6 +138,17 @@ void MapMatrix::centerToRect(QRect center)
 {
   int centerX = (center.left() + center.right()) / 2;
   int centerY = (center.top() + center.bottom()) / 2;
+
+  // Was passiert mit dem Maßstab ???
+  double xScaleDelta = (double)(sqrt(center.width() * center.width())) /
+      (double)mapViewSize.width();
+  double yScaleDelta = (double)(sqrt(center.height() * center.height())) /
+      (double)mapViewSize.height();
+
+  // Änderung nur, wenn Unterschied zu gross:
+  double tempScale = cScale * MAX(xScaleDelta, yScaleDelta) * 1.05;
+  if((tempScale / cScale) > 1.1 || (tempScale / cScale) < 0.8)
+      cScale = tempScale;
 
   centerToMouse(QPoint(centerX, centerY));
 }
@@ -225,7 +249,8 @@ void MapMatrix::createMatrix(QSize newSize)
   viewBorder.setRight(trCorner.x());
   viewBorder.setBottom(MIN(blCorner.y(), brCorner.y()));
 
-  mapBorder = worldMatrix.map(viewBorder);
+  mapBorder = invertMatrix.map(QRect(0,0, newSize.width(), newSize.height()));
+  mapViewSize = newSize;
 }
 
 void MapMatrix::scaleAdd(QSize mapSize)

@@ -63,6 +63,8 @@ class Airport : public RadioPoint
         const struct elementBorder mapBorder);
     /** */
     unsigned int getElevation() const;
+    /** */
+    virtual QString getInfoString() const;
     /**
      * Used for defining the surface of a runway.
      */

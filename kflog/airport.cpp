@@ -21,6 +21,7 @@
 
 #include <kapp.h>
 #include <kiconloader.h>
+#include <klocale.h>
 #include <qdatastream.h>
 #include <qfile.h>
 #include <qtextstream.h>
@@ -71,6 +72,20 @@ unsigned int Airport::getElevation() const { return elevation; }
 struct runway Airport::getRunway(int index) const { return rwData[index]; }
 
 unsigned int Airport::getRunwayNumber() const { return rwNum; }
+
+QString Airport::getInfoString() const
+{
+  QString text, temp;
+
+  temp.sprintf("%d", elevation);
+  text = "<TABLE BORDER=0><TR><TD>"
+      "<IMG SRC=/opt/kde/share/apps/kflog/map_icons/" + iconName + ">" +
+      "</TD><TD>" + name + " (" + alias + ")</TD></TR>" +
+      "<TR><TD></TD><TD><FONT SIZE=-1>" + temp + "m" +
+      "<BR>" + frequency + "</FONT></TD></TR></TABLE>";
+
+  return text;
+}
 
 void Airport::printMapElement(QPainter* printPainter, const double dX,
         const double dY, const int mapCenterLon, const double scale,

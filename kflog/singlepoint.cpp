@@ -136,10 +136,11 @@ bool SinglePoint::__isVisible() const
 {
   extern const MapMatrix _globalMapMatrix;
 
-  return _globalMapMatrix.isVisible(_globalMapMatrix.map(position));
+//  return _globalMapMatrix.isVisible(_globalMapMatrix.map(position));
+  return _globalMapMatrix.isVisible(position);
 }
 
-void SinglePoint::drawMapElement(QPainter* targetPainter)
+void SinglePoint::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
   if(!__isVisible())  return;
 
@@ -150,11 +151,11 @@ void SinglePoint::drawMapElement(QPainter* targetPainter)
   char* kflog_dir = "/kflog/map/";
   int iconSize = 16;
 
-  if(_currentScale > _scale[ID_BORDER_SMALL])
-    {
-      kflog_dir = "/kflog/map/small/";
-      iconSize = 8;
-    }
+//  if(_currentScale > _scale[ID_BORDER_SMALL])
+//    {
+//      kflog_dir = "/kflog/map/small/";
+//      iconSize = 8;
+//    }
 
   bool show = true;
 
@@ -182,9 +183,12 @@ void SinglePoint::drawMapElement(QPainter* targetPainter)
 
   show = _showElements[typeID];
 
+  extern MapMatrix _globalMapMatrix;
+  curPos = _globalMapMatrix.map(position);
+//  targetPainter->drawEllipse(curPos.x() - 4, curPos.y() - 4, 8, 8);
 //  if(show)
-//    targetPainter->drawPixmap(curPos.x - iconSize, curPos.y - iconSize,
-//          Icon(KApplication::kde_datadir() + kflog_dir + iconName));
+    targetPainter->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
+          QPixmap("/opt/kde/share/apps/kflog/map_icons/" + iconName));
 }
 
 void SinglePoint::setWaypoint(bool isW)
@@ -198,4 +202,11 @@ QString SinglePoint::getWPName() const { return abbrev; }
 
 QPoint SinglePoint::getPosition() const { return position; }
 
-QPoint SinglePoint::getMapPosition() const { return curPos; }
+QPoint SinglePoint::getMapPosition() const  { return curPos;  }
+
+QString SinglePoint::getInfoString() const
+{
+  QString text;
+
+  return text;
+}

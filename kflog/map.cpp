@@ -36,6 +36,8 @@
 #include <qtextstream.h>
 #include <qwhatsthis.h>
 
+#include <airspace.h>
+#include <flight.h>
 #include <kflog.h>
 #include <map.h>
 #include <mapcalc.h>
@@ -120,6 +122,8 @@ Map::Map(KFLogApp *m, QFrame* parent)
   pixGrid.resize( PIX_WIDTH, PIX_HEIGHT );
   pixWaypoints.resize( PIX_WIDTH, PIX_HEIGHT );
   pixUnderMap.resize( PIX_WIDTH, PIX_HEIGHT );
+  pixIsoMap.resize( PIX_WIDTH, PIX_HEIGHT );
+  bitMask.resize( PIX_WIDTH, PIX_HEIGHT );
 
   indexList = new unsigned int[1];
   xPos = new int[1];
@@ -194,17 +198,17 @@ Map::Map(KFLogApp *m, QFrame* parent)
   SET_BORDER(MidCity,            "MidCity",4)
   SET_BORDER(SmallCity,          "SmallCity",3)
   SET_BORDER(Village,            "Village",3)
-  SET_BORDER(AirC,               "Airspace",6)
-  SET_BORDER(AirCtemp,           "Airspace",6)
-  SET_BORDER(AirD,               "Airspace",6)
-  SET_BORDER(AirDtemp,           "Airspace",6)
-  SET_BORDER(ControlD,           "Airspace",6)
-  SET_BORDER(AirElow,            "Airspace",6)
-  SET_BORDER(AirEhigh,           "Airspace",6)
-  SET_BORDER(AirF,               "Airspace",6)
-  SET_BORDER(Restricted,         "Airspace",6)
-  SET_BORDER(Danger,             "Airspace",6)
-  SET_BORDER(LowFlight,          "Airspace",6)
+  SET_BORDER(AirC,               "Airspace",9)
+  SET_BORDER(AirCtemp,           "Airspace",9)
+  SET_BORDER(AirD,               "Airspace",9)
+  SET_BORDER(AirDtemp,           "Airspace",9)
+  SET_BORDER(ControlD,           "Airspace",9)
+  SET_BORDER(AirElow,            "Airspace",9)
+  SET_BORDER(AirEhigh,           "Airspace",9)
+  SET_BORDER(AirF,               "Airspace",9)
+  SET_BORDER(Restricted,         "Airspace",9)
+  SET_BORDER(Danger,             "Airspace",9)
+  SET_BORDER(LowFlight,          "Airspace",9)
   SET_BORDER(VOR,                "Radio",4)
   SET_BORDER(VORDME,             "Radio",4)
   SET_BORDER(VORTAC,             "Radio",4)
@@ -418,6 +422,7 @@ void Map::mousePressEvent(QMouseEvent* event)
 
   	  KPopupMenu* helpMenu = new KPopupMenu("Info");
 	    bool show = false;
+	    bool isAirport = false;
 
       QRegion* testReg;
       BaseMapElement* hitElement;
@@ -490,7 +495,7 @@ void Map::mousePressEvent(QMouseEvent* event)
             }
         }
 
-      if(showAirport)
+//      if(showAirport)
         {
           QPoint sitePos;
           double dX, dY, delta;
@@ -507,92 +512,54 @@ void Map::mousePressEvent(QMouseEvent* event)
                       MapContents::AirportList, loop);
               sitePos = ((SinglePoint*)hitElement)->getMapPosition();
 
-            dX = sitePos.x() - current.x();
-            dY = sitePos.y() - current.y();
+              dX = sitePos.x() - current.x();
+              dY = sitePos.y() - current.y();
 
-            // Abstand entspricht der Icon-Größe.
-            if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-                ( ( dY < delta ) && ( dY > -delta ) ) )
-              {
-                text = i18n("Airport:");
-                text = text + ' ' + hitElement->getName();
-                /*
-                 * Hier wird nicht nach Typ unterschieden.
-                 */
-//                helpMenu->insertItem(Icon(KApplication::kde_datadir() +
-//                    "/kflog/map/small/airport.xpm"), text);
-                helpMenu->connectItem(helpMenu->count() - 1, this,
-                    SLOT(slotShowMapElement()));
-                // helpMenu enthält auf jeden Fall den Titel und
-                // zwei Linien, also 3 Einträge !!!
-                indexLength = helpMenu->count() - 3;
-                indexList = (unsigned int*) realloc(indexList,
-                          (2 * indexLength * sizeof(int)));
-                indexList[2 * indexLength - 2] =
-                        (unsigned int)hitElement->getTypeID();
-                indexList[2 * indexLength - 1] = loop;
+              // Abstand entspricht der Icon-Größe.
+              if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+                  ( ( dY < delta ) && ( dY > -delta ) ) )
+                {
+                  text = ((SinglePoint*)hitElement)->getInfoString();
+                  /*
+                   * Text anzeigen
+                   */
+                  QWhatsThis::enterWhatsThisMode();
+                  QWhatsThis::leaveWhatsThisMode(text);
+                  isAirport = true;
+                }
+            }
+        }
 
-                show = true;
-              }
-          }
-      }
+        if(isAirport)  return;
+//      if(showAirspace)
+        {
+          Airspace* tempAir;
 
-    if(showAirspace)
-      {
-        for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
-          {
-            testReg = airspaceRegList->at(loop);
-            if(testReg->contains(current))
-              {
-                hitElement = _globalMapContents.getElement(
-                      MapContents::AirspaceList, loop);
-              // Icon könnte "Aufgabe" der Klasse "Airspace" werden ...
-                switch(hitElement->getTypeID())
-                  {
-                    case BaseMapElement::AirC:
-                    case BaseMapElement::AirCtemp:
-                      text = "C";
-                      break;
-                    case BaseMapElement::AirD:
-                    case BaseMapElement::AirDtemp:
-                      text = "D";
-                      break;
-                    case BaseMapElement::AirElow:
-                    case BaseMapElement::AirEhigh:
-                      text = "E";
-                      break;
-                    case BaseMapElement::AirF:
-                      text = "F";
-                      break;
-                    case BaseMapElement::Restricted:
-                    case BaseMapElement::Danger:
-                      text = "Danger";
-                      break;
-                    case BaseMapElement::ControlD:
-                      text = "Control";
-                      break;
-                    default:
-                      text = "?";
-                      break;
-                  }
-                text = text + ' ' + hitElement->getName();
-//                helpMenu->insertItem(Icon(KApplication::kde_datadir() +
-//                  "/kflog/map/small/airspace.xpm"), text);
-                helpMenu->connectItem(helpMenu->count() - 1, this,
-                    SLOT(slotShowMapElement()));
-                indexLength = helpMenu->count() - 3;
-                indexList = (unsigned int*) realloc(indexList,
-                          (2 * indexLength * sizeof(int)));
-                indexList[2 * indexLength - 2] = hitElement->getTypeID();
-                indexList[2 * indexLength - 1] = loop;
-                show = true;
-              }
-          }
-      }
+          text = text + "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
+          for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
+            {
+              testReg = airspaceRegList->at(loop);
+              if(testReg->contains(current))
+                {
+                  hitElement = _globalMapContents.getElement(
+                        MapContents::AirspaceList, loop);
+                  tempAir = (Airspace*)hitElement;
+                  text = text + "<LI>" + tempAir->getInfoString() + "</LI>";
+                  show = true;
+                }
+            }
+          text = text + "</UL>";
+        }
 
-    if(show) helpMenu->exec(event->globalPos());
-    else indexLength = 0;
-  }
+      if(show)
+        {
+          /*
+           * Text anzeigen
+           */
+          QWhatsThis::enterWhatsThisMode();
+          QWhatsThis::leaveWhatsThisMode(text);
+        }
+    }
 }
 
 void Map::paintEvent(QPaintEvent* event = 0)
@@ -709,19 +676,17 @@ void Map::__drawGrid()
 
 void Map::__drawMap()
 {
-  QPainter allSitesP(&pixAllSites);
+  QPainter aSitesP(&pixAllSites);
   QPainter airSpaceP(&pixAirspace);
   QPainter flightP(&pixFlight);
   QPainter gliderP(&pixGlider);
   QPainter waypointP(&pixWaypoints);
-  QPainter underMapP(&pixUnderMap);
+  QPainter uMapP(&pixUnderMap);
+  QPainter isoMapP(&pixIsoMap);
+  QPainter bitMaskP(&bitMask);
 
-  delete airspaceRegList;
-  delete cityRegList;
-  airspaceRegList = new QList<QRegion>;
-  cityRegList = new QList<QRegion>;
-  airspaceRegList->setAutoDelete(true);
-  cityRegList->setAutoDelete(true);
+  airspaceRegList->clear();
+  cityRegList->clear();
 
   extern double _currentScale, _scale[];
   extern int _scaleBorder[];
@@ -740,77 +705,80 @@ void Map::__drawMap()
   // Statusbar noch nicht "genial" eingestellt ...
   mainApp->slotSetProgress(0);
 
-  pixUnderMap.fill(QColor(96,128,248));
+  pixIsoMap.fill(QColor(96,128,248));
 
-  _globalMapContents.drawIsoList(&underMapP);
+  _globalMapContents.drawIsoList(&isoMapP, &bitMaskP);
 
   if(_currentScale <= _scale[_scaleBorder[ID_GLACIER]])
-      _globalMapContents.drawList(&underMapP, MapContents::TopoList);
+      _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::TopoList);
 
   mainApp->slotSetProgress(5);
 
-  _globalMapContents.drawList(&underMapP, MapContents::HydroList);
+  _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::HydroList);
 
   mainApp->slotSetProgress(10);
 
-  _globalMapContents.drawList(&underMapP, MapContents::RoadList);
+  _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::RoadList);
 
   mainApp->slotSetProgress(15);
 
   if(_currentScale <= _scale[_scaleBorder[ID_HIGHWAY]])
-      _globalMapContents.drawList(&underMapP, MapContents::HighwayList);
+      _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::HighwayList);
 
   mainApp->slotSetProgress(20);
 
   mainApp->slotSetProgress(25);
 
-  _globalMapContents.drawList(&underMapP, MapContents::RailList);
+  _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::RailList);
 
   mainApp->slotSetProgress(30);
 
   mainApp->slotSetProgress(35);
 
-  for(unsigned int loop = 0; loop < _globalMapContents.getListLength(
-          MapContents::CityList); loop++)
-    {
-      _current = _globalMapContents.getElement(MapContents::CityList, loop);
-      cityRegList->append(_current->drawRegion(&underMapP));
-    }
+  _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::CityList);
+//  for(unsigned int loop = 0; loop < _globalMapContents.getListLength(
+//          MapContents::CityList); loop++)
+//    {
+//      _current = _globalMapContents.getElement(MapContents::CityList, loop);
+//      cityRegList->append(_current->drawRegion(&uMapP, &bitMaskP));
+//    }
 
   mainApp->slotSetProgress(40);
 
 //  if(_currentScale <= _scale[_scaleBorder[ID_VILLAGE]])
-//      _globalMapContents.drawList(&underMapP, MapContents::VillageList);
+//      _globalMapContents.drawList(&uMapP, MapContents::VillageList);
 
   mainApp->slotSetProgress(45);
 
   if(_currentScale <= _scale[_scaleBorder[ID_LANDMARK]])
-      _globalMapContents.drawList(&underMapP, MapContents::LandmarkList);
+      _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::LandmarkList);
 
   mainApp->slotSetProgress(50);
 
   if(_currentScale <= _scale[_scaleBorder[ID_OBSTACLE]])
-      _globalMapContents.drawList(&underMapP, MapContents::ObstacleList);
+      _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::ObstacleList);
 
   mainApp->slotSetProgress(55);
 
   if(_currentScale <= _scale[_scaleBorder[ID_RADIO]])
-      _globalMapContents.drawList(&allSitesP, MapContents::ReportList);
+      _globalMapContents.drawList(&aSitesP, &bitMaskP, MapContents::ReportList);
 
   mainApp->slotSetProgress(60);
 
   if(_currentScale <= _scale[_scaleBorder[ID_RADIO]])
-      _globalMapContents.drawList(&allSitesP, MapContents::NavList);
+      _globalMapContents.drawList(&aSitesP, &bitMaskP, MapContents::NavList);
 
   mainApp->slotSetProgress(65);
 
-  if(_currentScale <= _scale[_scaleBorder[ID_AIRSPACE]])
+//  if(_currentScale <= _scale[_scaleBorder[ID_AIRSPACE]])
     for(unsigned int loop = 0; loop < _globalMapContents.getListLength(
               MapContents::AirspaceList); loop++)
       {
         _current = _globalMapContents.getElement(
             MapContents::AirspaceList, loop);
-        airspaceRegList->append(_current->drawRegion(&airSpaceP));
+        // wir sollten nur die Lufträume in der Liste speichern, die
+        // tatsächlich gezeichnet werden. Dann geht die Suche schneller.
+        airspaceRegList->append(_current->drawRegion(&airSpaceP, &bitMaskP));
       }
 
   mainApp->slotSetProgress(70);
@@ -821,42 +789,42 @@ void Map::__drawMap()
       {
         _current = _globalMapContents.getElement(
               MapContents::IntAirportList, loop);
-        _current->drawRegion(&allSitesP);
+        _current->drawRegion(&aSitesP, &bitMaskP);
       }
 
   mainApp->slotSetProgress(75);
 
   if(_currentScale <= _scale[_scaleBorder[ID_AIRPORT]])
-      _globalMapContents.drawList(&allSitesP, MapContents::AirportList);
+      _globalMapContents.drawList(&aSitesP, &bitMaskP, MapContents::AirportList);
 
   mainApp->slotSetProgress(80);
 
   if(_currentScale <= _scale[_scaleBorder[ID_ADDSITES]])
-      _globalMapContents.drawList(&allSitesP, MapContents::AddSitesList);
+      _globalMapContents.drawList(&aSitesP, &bitMaskP, MapContents::AddSitesList);
 
   mainApp->slotSetProgress(85);
 
   if(_currentScale <= _scale[_scaleBorder[ID_OUTLANDING]])
-      _globalMapContents.drawList(&allSitesP, MapContents::OutList);
+      _globalMapContents.drawList(&aSitesP, &bitMaskP, MapContents::OutList);
 
   mainApp->slotSetProgress(90);
 
   if(_currentScale <= _scale[_scaleBorder[ID_GLIDERSITE]])
-      _globalMapContents.drawList(&gliderP, MapContents::GliderList);
+      _globalMapContents.drawList(&gliderP, &bitMaskP, MapContents::GliderList);
 
   mainApp->slotSetProgress(95);
 
-  _globalMapContents.drawList(&underMapP, MapContents::FlightList);
+  _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::FlightList);
 
   mainApp->slotSetProgress(100);
 
   // Closing the painter ...
-  allSitesP.end();
+  aSitesP.end();
   airSpaceP.end();
   flightP.end();
   gliderP.end();
   waypointP.end();
-  underMapP.end();
+  uMapP.end();
 }
 
 void Map::resizeEvent(QResizeEvent* event)
@@ -878,8 +846,11 @@ void Map::__redrawMap()
   pixAirspace.fill(white);
   pixGlider.fill(white);
   pixGrid.fill(white);
-  pixUnderMap.fill(white);
+  pixUnderMap.fill(black);
+  pixIsoMap.fill(white);
   pixWaypoints.fill(white);
+  bitMask.fill(black);
+//  pixBuffer.fill(white);
 
   extern MapContents _globalMapContents;
   _globalMapContents.proofeSection();
@@ -919,12 +890,18 @@ void Map::slotShowLayer()
 
 //  pixBuffer.fill(QColor(239,238,236));
   /* Wg. der Höhenlinien mal geändert ... */
-  pixBuffer.fill(white);
+//  pixBuffer.fill(white);
 
-  // deleting the current pixmap and displaying the grid:
+//  bitBlt(&pixBuffer, 0, 0, &bitMask);
 
+  pixUnderMap.setMask(bitMask);
+  bitBlt(&pixBuffer, 0, 0, &pixIsoMap);
+//  bitBlt(&pixBuffer, 0, 0, &bitMask, 0, 0, -1, -1, NotEraseROP);
+//  bitBlt(&pixBuffer, 0, 0, &pixUnderMap, 0, 0, -1, -1, NotEraseROP);
   bitBlt(&pixBuffer, 0, 0, &pixUnderMap);
-  bitBlt(&pixBuffer, 0, 0, &pixGrid, 0, 0, -1, -1, NotEraseROP);
+//  bitBlt(&pixBuffer, 0, 0, &pixAllSites, 0, 0, -1, -1, NotEraseROP);
+//  bitBlt(&pixBuffer, 0, 0, &pixAirspace, 0, 0, -1, -1, NotEraseROP);
+//  bitBlt(&pixBuffer, 0, 0, &pixGrid, 0, 0, -1, -1, NotEraseROP);
 
   paintEvent();
 }
@@ -1016,12 +993,34 @@ void Map::slotCenterToItem(int listIndex, int elementIndex)
   mapCenterLat = hitEl->getPosition().x();
   mapCenterLon = hitEl->getPosition().y();
 
-  __redrawMap();
+  slotRedrawMap();
 }
 
-void Map::slotCenterToFlight()  {  }
+void Map::slotCenterToFlight()
+{
+  extern MapContents _globalMapContents;
+  extern MapMatrix _globalMapMatrix;
 
-void Map::slotCenterToTask()    {  }
+  _globalMapMatrix.centerToRect(
+          _globalMapContents.getFlight()->getFlightRect());
+  _globalMapMatrix.createMatrix(this->size());
+  __redrawMap();
+
+  emit changed(this->size());
+}
+
+void Map::slotCenterToTask()
+{
+  extern MapContents _globalMapContents;
+  extern MapMatrix _globalMapMatrix;
+
+  _globalMapMatrix.centerToRect(
+          _globalMapContents.getFlight()->getTaskRect());
+  _globalMapMatrix.createMatrix(this->size());
+  __redrawMap();
+
+  emit changed(this->size());
+}
 
 void Map::slotCenterToWaypoint(struct wayPoint* centerP)
 {

@@ -36,21 +36,21 @@ class Isohypse : public LineElement
     /** */
     ~Isohypse();
    /** */
-    virtual void drawMapElement(QPainter* targetPainter);
+    virtual void drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
     /** */
     int getElevation() const;
     /** */
-    bool isValley() const;
+//    bool isValley() const;
     /** */
-    void setValley(bool isV);
+//    void setValley(bool isV);
     /** */
     int sortID() const;
     /** */
-    void setElevation(int elevation);
+//    void setElevation(int elevation);
     /** */
-    void setSortID(int sort);
+//    void setSortID(int sort);
     /** */
-    void setValues(int height, int sort, bool isV);
+//    void setValues(int height, int sort, bool isV);
 
   protected:
     /** */

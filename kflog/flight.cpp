@@ -64,11 +64,10 @@
 /* Maximale Vergrößerung beim Prüfen! */
 #define SCALE 10.0
 
-Flight::Flight(QList<flightPoint> r, QRect bBF, QString pName, QString gType,
-    QString gID, QList<struct wayPoint> wpL, QRect bBT, QString d)
+Flight::Flight(QList<flightPoint> r, QString pName, QString gType,
+    QString gID, QList<struct wayPoint> wpL, QString d)
   : BaseMapElement("flight", BaseMapElement::Flight),
-    pilotName(pName), gliderType(gType), gliderID(gID), date(d), route(r),
-    bBoxFlight(bBF), bBoxTask(bBT)
+    pilotName(pName), gliderType(gType), gliderID(gID), date(d), route(r)
 {
   routeLength = 0;
 
@@ -291,7 +290,7 @@ bool Flight::__isVisible() const
 //  return _globalMapMatrix.isVisible(bBox);
 }
 
-void Flight::drawMapElement(QPainter* targetPainter)
+void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
   if(!__isVisible()) return;
 
@@ -306,6 +305,7 @@ void Flight::drawMapElement(QPainter* targetPainter)
   if(wpList.count() > 1)
     {
       extern const MapMatrix _globalMapMatrix;
+      QPoint tempP;
 
       for(unsigned int loop = 0; loop < wpList.count(); loop++)
         {
@@ -316,10 +316,26 @@ void Flight::drawMapElement(QPainter* targetPainter)
           w1 = ( ( _globalMapMatrix.map(wpList.at(loop)->angle) + PI ) / PI )
                   * 180.0 * 16.0 * -1.0;
 
-          double qx = -R1 + _globalMapMatrix.map(wpList.at(loop)->projP).x();
-          double qy = -R1 + _globalMapMatrix.map(wpList.at(loop)->projP).y();
-          double gx = -R2 + _globalMapMatrix.map(wpList.at(loop)->projP).x();
-          double gy = -R2 + _globalMapMatrix.map(wpList.at(loop)->projP).y();
+          tempP = _globalMapMatrix.map(wpList.at(loop)->projP);
+          double qx = -R1 + tempP.x();
+          double qy = -R1 + tempP.y();
+          double gx = -R2 + tempP.x();
+          double gy = -R2 + tempP.y();
+
+          if(loop)
+            {
+              bBoxTask.setLeft(MIN(tempP.x(), bBoxTask.left()));
+              bBoxTask.setTop(MAX(tempP.y(), bBoxTask.top()));
+              bBoxTask.setRight(MAX(tempP.x(), bBoxTask.right()));
+              bBoxTask.setBottom(MIN(tempP.y(), bBoxTask.bottom()));
+            }
+          else
+            {
+              bBoxTask.setLeft(tempP.x());
+              bBoxTask.setTop(tempP.y());
+              bBoxTask.setRight(tempP.x());
+              bBoxTask.setBottom(tempP.y());
+            }
 
           switch(wpList.at(loop)->type)
             {
@@ -400,6 +416,10 @@ void Flight::drawMapElement(QPainter* targetPainter)
   else if(_currentScale > _scale[ID_BORDER_SMALL - 1]) delta = 4;
 
   curPointA = _globalMapMatrix.map(route.at(0)->projP);
+  bBoxFlight.setLeft(curPointA.x());
+  bBoxFlight.setTop(curPointA.y());
+  bBoxFlight.setRight(curPointA.x());
+  bBoxFlight.setBottom(curPointA.y());
 
   for(unsigned int n = delta; n < route.count(); n = n + delta)
     {
@@ -407,6 +427,11 @@ void Flight::drawMapElement(QPainter* targetPainter)
       pointB = route.at(n);
 
       curPointB = _globalMapMatrix.map(pointB->projP);
+
+      bBoxFlight.setLeft(MIN(curPointB.x(), bBoxFlight.left()));
+      bBoxFlight.setTop(MAX(curPointB.y(), bBoxFlight.top()));
+      bBoxFlight.setRight(MAX(curPointB.x(), bBoxFlight.right()));
+      bBoxFlight.setBottom(MIN(curPointB.y(), bBoxFlight.bottom()));
 
       // Strecke einzeichnen
       if(_currentScale < _scale[ID_BORDER_SMALL - 1])
@@ -421,16 +446,39 @@ void Flight::drawMapElement(QPainter* targetPainter)
       else
           targetPainter->setPen(QPen(QColor(0,0,200), 3));
 
+      /*******************************************************************
+       **
+       ** Dynamische Farben im Flug:
+       **
+       **   Zur Zeit nur für Vario. Sollte für alle wichtigen Werte
+       **   möglich sein. Dazu muss der Wert wählbar sein. Farben
+       **   als Legende ausgeben ???
+       **
+       ******************************************************************/
+      /*
+      if(pointA->dH < 0)
+        {
+          targetPainter->setPen(QPen(QColor(255,
+              MIN((int)(10.0 * -pointA->dH), 255),
+              MIN((int)(5.0 * -pointA->dH), 255)), 4));
+        }
+      else
+        {
+          targetPainter->setPen(QPen(QColor(MIN((int)(5.0 * pointA->dH), 255),
+              MIN((int)(10.0 * pointA->dH), 255), 255), 4));
+        }
+      */
+
       targetPainter->drawLine(curPointA, curPointB);
 
       // Wenn die Kringel beibehalten werden, müsste eine weitere
       // Grenze eingeführt werden ...
-      if(_currentScale < _scale[1])
-        {
-          targetPainter->setBrush(QBrush::NoBrush);
-          targetPainter->setPen(QPen(QColor(150,0,150), 1));
-          targetPainter->drawEllipse(curPointB.x() - 4, curPointB.y() - 4,8,8);
-        }
+//      if(_currentScale < _scale[1])
+//        {
+//          targetPainter->setBrush(QBrush::NoBrush);
+//          targetPainter->setPen(QPen(QColor(150,0,150), 1));
+//          targetPainter->drawEllipse(curPointB.x() - 4, curPointB.y() - 4,8,8);
+//        }
 
       curPointA = curPointB;
     }
