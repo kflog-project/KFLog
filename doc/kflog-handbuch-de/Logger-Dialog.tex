@@ -1,0 +1,50 @@
+\subsection{Der Logger-Dialog}
+Die Kommunikation mit dem Logger wird durch den Logger-Dialog ermöglicht. In diesem Dialog sind alle Funktionen enthalten, die notwendig sind, um Daten vom Logger zu lesen oder auf den Logger zu laden.
+Diesen Dialog ruft man über das Menü ''Datei'' mit dem Eintrag ''Logger öffnen'' auf. 
+
+\subsubsection{Logger mit dem Computer verbinden}
+Um die Daten aus einem Logger zu lesen, wird der Logger in der Regel durch ein Datenkabel mit dem Computer verbunden.
+\\Nach dem Öffnen des Loggerdialoges gelangt man zuerst zu dem Teil des Dialoges, in dem die Einstellungen vorgenommen werden können.
+Hier kann nun der Logger und die Schnittstelle, über die der Logger mit dem Computer verbunden ist, eingestellt werden.
+\begin{figure}[htpb]
+\begin{center}
+\includegraphics[scale=1]{Bilder/fertig/Loggerdialog.ps} 
+\\
+\caption{Verbindung mit einem Logger}
+\end{center}
+\end{figure}
+Z.Z. werden die Logger vom Typ Volkslogger,Filser und Garmin unterstützt.
+Weiterhin ist es möglich Flüge, die mit dem Cumulus-System (http://cumulus.kflog.org/) aufgezeichnet worden sind, einzulesen.
+\\Der Verbindungsaufbau erfolgt im wesentlichen in 3 Schritten:
+\begin{enumerate}
+\item Verbindungskabel an den Computer anschließen
+\item Im Loggerdialog die Schnittstelle konfigurieren und den Logger auswählen
+\item Anschließen des Loggers an das Kabel und drücken des Knopfes ''Logger anschließen''
+\end{enumerate}
+Auf dem Logger sollte die entsprechende Meldung auf dem Display zu lesen sein, z.B. erscheint bei einem Volkslogger dann die Meldung ''data-transfer ready!'' aud dem Display. Damit ist die Konfiguration abgeschlossen und das System ist zum Datenaustausch bereit.
+\subsubsection{Flüge aus dem Logger lesen}
+Durch Klick auf das Symbol mit der Bezeichnung ''Flüge'' wird der Einlesedialog aufgerufen.
+Hier kann man zunächst eine Liste mit allen auf dem Logger aufgezeichneten Flügen laden, indem man den Knopf ''Liste Laden'' betätigt.
+\begin{figure}[htpb]
+\begin{center}
+\includegraphics[scale=1]{Bilder/fertig/Loggerdialog-Flüge.ps} 
+\\
+\caption{Loggerdialog-Flüge herunterladen}
+\end{center}
+\end{figure}
+\\Diese Liste wird dann in einer Übersicht, chronologisch geordnet, angezeigt (s. Abb. 29). 
+Nun kann der gewünschte Flug mit der Maus makiert und vom Logger gelesen werden (Klick auf ''Flug sichern''), wobei eine IGC-Datei erzeugt wird.
+Diese Datei wird im Verzeichnis für die Flüge abgelegt.
+\subsubsection{Aufgaben in den Logger laden}
+Um für eine Aufgabe die maximal mögliche Punktzahl zu erhalten, ist es notwendig, den Flug vor Beginn zu deklarieren, d.h. die Anmeldung und die Aufgabe müssen vor dem Start an den Logger übermittelt werden.
+\\Die Anmeldung erfolgt im Loggerdialog indem man auf das Symbol Anmeldung klickt.
+In diesem Dialog kann man die Aufgabe auswählen (diese Aufgabe muss vorher erstellt bzw. in KFlog eingegleladen worden sein). Die Ausgewählte Aufgabe wird als Übersicht mit den Wendepunkten und der Entfernung angezeigt. Vor dem Übertragen sind im unterern Bereich noch die Namen der Piloten sowie die Wettbewerbsklasse in die freien Felder einzutragen und der Flugzeugtyp ist einzustellen.
+\\Anschließend kann der Knopf ''Anmeldung an Logger übertragen'' geklickt werden und die Daten werden in den Logger transferiert.
+\begin{figure}[htpb]
+\begin{center}
+\includegraphics[scale=1]{Bilder/fertig/Loggerdialog-Anmeldung.ps} 
+\\
+\caption{Anmeldung einer Aufgabe in den Logger}
+\end{center}
+\end{figure}  
+
