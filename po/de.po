@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
-"POT-Creation-Date: 2003-07-10 11:14+0200\n"
-"PO-Revision-Date: 2003-07-10 11:15+0200\n"
+"POT-Creation-Date: 2003-07-11 18:26+0200\n"
+"PO-Revision-Date: 2003-07-11 18:29+0200\n"
 "Last-Translator: Eggert Ehmke <eggert.ehmke@berlin.de>\n"
 "Language-Team: deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -106,7 +106,7 @@ msgstr "FAI Länge"
 msgid "Task-Type: "
 msgstr "Aufgaben Typ:"
 
-#: dataview.cpp:197 map.cpp:604
+#: dataview.cpp:197 map.cpp:639
 msgid "Begin of task"
 msgstr "Beginn der Aufgabe"
 
@@ -159,7 +159,7 @@ msgstr "Kreisflug"
 msgid "Time"
 msgstr "Zeit"
 
-#: evaluationdialog.cpp:189 kflog.cpp:388
+#: evaluationdialog.cpp:189 kflog.cpp:390
 msgid "Vario"
 msgstr "Vario"
 
@@ -179,7 +179,7 @@ msgstr "Geradeausflug"
 msgid "tot. Distance"
 msgstr "Ges. Distanz"
 
-#: evaluationdialog.cpp:203 kflog.cpp:387
+#: evaluationdialog.cpp:203 kflog.cpp:389
 msgid "Speed"
 msgstr "Geschwindigkeit"
 
@@ -271,7 +271,7 @@ msgstr "Ende der Aufgabe"
 msgid "End of Soaring"
 msgstr "Segelflugende"
 
-#: flight.cpp:821 flight.cpp:992 flightdataprint.cpp:208 map.cpp:610
+#: flight.cpp:821 flight.cpp:992 flightdataprint.cpp:208 map.cpp:645
 #: taskdialog.cpp:292 tasklistviewitem.cpp:86
 msgid "Landing"
 msgstr "Landung"
@@ -357,7 +357,7 @@ msgid "Flight selection"
 msgstr "Flugauswahl"
 
 #: flightselectiondialog.cpp:61 igc3dview.cpp:55 taskdialog.cpp:67
-#: waypointdialog.cpp:74 waypointimpfilterdialog.cpp:139
+#: waypointdialog.cpp:72 waypointimpfilterdialog.cpp:139
 msgid "&Ok"
 msgstr "&Ok"
 
@@ -405,7 +405,7 @@ msgstr "OLC optimiert (Regeln 2003)"
 msgid "???"
 msgstr "???"
 
-#: flighttask.cpp:337 kflog.cpp:1254
+#: flighttask.cpp:337 kflog.cpp:1259
 msgid "Unknown"
 msgstr "Unbekannt"
 
@@ -458,438 +458,438 @@ msgstr ""
 msgid "no task given"
 msgstr "Keine Aufgabe angegeben"
 
-#: kflog.cpp:181
+#: kflog.cpp:183
 msgid "&Open Flight"
 msgstr "&Flug öffnen"
 
-#: kflog.cpp:184
+#: kflog.cpp:186
 msgid "&Open Task"
 msgstr "Aufgabe &öffnen"
 
-#: kflog.cpp:189
+#: kflog.cpp:191
 msgid "Close Flight"
 msgstr "Flug schließen"
 
-#: kflog.cpp:193
+#: kflog.cpp:195
 msgid "Open Recorder"
 msgstr "Logger öffnen"
 
-#: kflog.cpp:197
+#: kflog.cpp:199
 msgid "Import FlightGear File"
 msgstr "FlightGear-Datei importieren"
 
-#: kflog.cpp:201
+#: kflog.cpp:203
 msgid "Import Gardown File"
 msgstr "Gardown-Datei importieren"
 
-#: kflog.cpp:207
+#: kflog.cpp:209
 msgid "Export to PNG..."
 msgstr "Export nach PNG ..."
 
-#: kflog.cpp:210
+#: kflog.cpp:212
 msgid "Print Flightdata"
 msgstr "Drucke Flugdaten"
 
-#: kflog.cpp:215
+#: kflog.cpp:217
 msgid "Move map"
 msgstr "Karte verschieben"
 
-#: kflog.cpp:223
+#: kflog.cpp:225
 msgid "Center to &Task"
 msgstr "auf &Aufgabe zentrieren"
 
-#: kflog.cpp:227
+#: kflog.cpp:229
 msgid "Center to &Flight"
 msgstr "auf &Flug zentrieren"
 
-#: kflog.cpp:231
+#: kflog.cpp:233
 msgid "Center to &Homesite"
 msgstr "auf &Heimatflugplatz zentrieren"
 
-#: kflog.cpp:235
+#: kflog.cpp:237
 msgid "Center to..."
 msgstr "Zentrieren auf ..."
 
-#: kflog.cpp:243
+#: kflog.cpp:245
 msgid "move map north-west"
 msgstr "Nord-West"
 
-#: kflog.cpp:247
+#: kflog.cpp:249
 msgid "move map north"
 msgstr "Nord"
 
-#: kflog.cpp:251
+#: kflog.cpp:253
 msgid "move map northeast"
 msgstr "Nord-Ost"
 
-#: kflog.cpp:255
+#: kflog.cpp:257
 msgid "move map west"
 msgstr "West"
 
-#: kflog.cpp:259
+#: kflog.cpp:261
 msgid "move map east"
 msgstr "Ost"
 
-#: kflog.cpp:263
+#: kflog.cpp:265
 msgid "move map south-west"
 msgstr "Süd-West"
 
-#: kflog.cpp:267
+#: kflog.cpp:269
 msgid "move map south"
 msgstr "Süd"
 
-#: kflog.cpp:271
+#: kflog.cpp:273
 msgid "move map south-east"
 msgstr "Süd-Ost"
 
-#: kflog.cpp:289
+#: kflog.cpp:291
 msgid "Show Flight&data"
 msgstr "&Flugdaten zeigen"
 
-#: kflog.cpp:292
+#: kflog.cpp:294
 msgid "Show &HelpWindow"
 msgstr "&Hilfefenster anzeigen"
 
-#: kflog.cpp:296
+#: kflog.cpp:298
 msgid "Show &EvaluationWindow"
 msgstr "&Auswertung zeigen"
 
-#: kflog.cpp:300
+#: kflog.cpp:302
 msgid "Show Map&control"
 msgstr "&Kartenkontrolle zeigen"
 
-#: kflog.cpp:303
+#: kflog.cpp:305
 msgid "Show &Map"
 msgstr "&Karte anzeigen"
 
-#: kflog.cpp:307
+#: kflog.cpp:309
 msgid "Show &Waypoints"
 msgstr "Zeige &Wegpunkte"
 
-#: kflog.cpp:311
+#: kflog.cpp:313
 msgid "Show &Legend"
 msgstr "Höhen&legende anzeigen"
 
-#: kflog.cpp:315
+#: kflog.cpp:317
 msgid "Show KFLog&Browser"
 msgstr "KFLog &Browser zeigen"
 
-#: kflog.cpp:319
+#: kflog.cpp:321
 msgid "Optimize"
 msgstr "Optimieren"
 
-#: kflog.cpp:323
+#: kflog.cpp:325
 msgid "Optimize (OLC)"
 msgstr "Optimieren (OLC)"
 
-#: kflog.cpp:328
+#: kflog.cpp:330
 msgid "send OLC-Declaration"
 msgstr "OLC Anmeldung senden"
 
-#: kflog.cpp:332
+#: kflog.cpp:334
 msgid "Reset confirmations"
 msgstr "Bestätigungen zurücksetzen"
 
-#: kflog.cpp:337
+#: kflog.cpp:339
 msgid "&Start Flight Animation"
 msgstr "&Starte Animation"
 
-#: kflog.cpp:340
+#: kflog.cpp:342
 msgid "Stop Flight &Animation"
 msgstr "&Beende Animation"
 
-#: kflog.cpp:344
+#: kflog.cpp:346
 msgid "Next Flight Point"
 msgstr "nächster Flugpunkt"
 
-#: kflog.cpp:347
+#: kflog.cpp:349
 msgid "Prev Flight Point"
 msgstr "vorheriger Flugpunkt"
 
-#: kflog.cpp:350
+#: kflog.cpp:352
 msgid "First Flight Point"
 msgstr "erster Flugpunkt"
 
-#: kflog.cpp:353
+#: kflog.cpp:355
 msgid "Last Flight Point"
 msgstr "letzter Flugpunkt"
 
-#: kflog.cpp:356
+#: kflog.cpp:358
 msgid "Step +10 Flight Points"
 msgstr "+10 Flugpunkte"
 
-#: kflog.cpp:359
+#: kflog.cpp:361
 msgid "Step -10 Flight Points"
 msgstr "-10 Flugpunkte"
 
-#: kflog.cpp:366
+#: kflog.cpp:368
 msgid "View flight in 3D"
 msgstr "Zeige Flug in 3D"
 
-#: kflog.cpp:373
+#: kflog.cpp:375
 msgid "View flight in 3D (OpenGL)"
 msgstr "Zeige Flug in 3D (OpenGL)"
 
-#: kflog.cpp:378
+#: kflog.cpp:380
 msgid "Show Flightdata"
 msgstr "Flugdaten zeigen"
 
-#: kflog.cpp:385
+#: kflog.cpp:387
 msgid "Altitude"
 msgstr "Höhe"
 
-#: kflog.cpp:386
+#: kflog.cpp:388
 msgid "Cycling"
 msgstr "Kreisflug"
 
-#: kflog.cpp:389
+#: kflog.cpp:391
 msgid "Solid"
 msgstr "einfarbig"
 
-#: kflog.cpp:395
+#: kflog.cpp:397
 msgid "F&light"
 msgstr "F&lug"
 
-#: kflog.cpp:425
+#: kflog.cpp:427
 msgid "&Window"
 msgstr "&Fenster"
 
-#: kflog.cpp:431
+#: kflog.cpp:433
 msgid "&New"
 msgstr "&Neu"
 
-#: kflog.cpp:432
+#: kflog.cpp:434
 msgid "&Waypoint"
 msgstr "&Wendepunkt"
 
-#: kflog.cpp:433 taskdialog.cpp:122
+#: kflog.cpp:435 taskdialog.cpp:122
 msgid "&Task"
 msgstr "&Aufgabe"
 
-#: kflog.cpp:434
+#: kflog.cpp:436
 msgid "&Flight group"
 msgstr "Flug&gruppe"
 
-#: kflog.cpp:476 map.cpp:2408 mapprint.cpp:59 map.moc.cpp:34 map.moc.cpp:42
+#: kflog.cpp:478 map.cpp:2452 mapprint.cpp:59 map.moc.cpp:34 map.moc.cpp:42
 msgid "Map"
 msgstr "Karte"
 
-#: kflog.cpp:477
+#: kflog.cpp:479
 msgid "Flight-Data"
 msgstr "Flug-Daten"
 
-#: kflog.cpp:479
+#: kflog.cpp:481
 msgid "Evaluation"
 msgstr "Auswertung"
 
-#: kflog.cpp:480
+#: kflog.cpp:482
 msgid "Map-Control"
 msgstr "Karten-Kontrolle"
 
-#: kflog.cpp:481 kflogconfig.cpp:834 recorderdialog.cpp:581
+#: kflog.cpp:483 kflogconfig.cpp:834 recorderdialog.cpp:581
 #: tasklistviewitem.cpp:77 waypoints.moc.cpp:34 waypoints.moc.cpp:42
 msgid "Waypoints"
 msgstr "Wegpunkte"
 
-#: kflog.cpp:482
+#: kflog.cpp:484
 msgid "Legend"
 msgstr "Legende"
 
-#: kflog.cpp:483
+#: kflog.cpp:485
 msgid "KFLog Browser"
 msgstr "KFLog Browser"
 
-#: kflog.cpp:726 kflog.cpp:762 kflog.cpp:1299 kflog.cpp:1332 kflog.cpp:1370
+#: kflog.cpp:728 kflog.cpp:764 kflog.cpp:1304 kflog.cpp:1337 kflog.cpp:1375
 msgid "Opening file..."
 msgstr "öffne Datei..."
 
-#: kflog.cpp:729
+#: kflog.cpp:731
 msgid "Select IGC-File"
 msgstr "IGC-Datei wählen"
 
-#: kflog.cpp:732
+#: kflog.cpp:734
 msgid "Open flight"
 msgstr "Flug öffnen"
 
-#: kflog.cpp:746 kflog.cpp:1316 kflog.cpp:1349 kflog.cpp:1388
+#: kflog.cpp:748 kflog.cpp:1321 kflog.cpp:1354 kflog.cpp:1393
 msgid "Can not download file %1"
 msgstr "Kann Datei %1 nicht herunterladen"
 
-#: kflog.cpp:757 kflog.cpp:785 kflog.cpp:795 kflog.cpp:841 kflog.cpp:861
-#: kflog.cpp:873 kflog.cpp:1327 kflog.cpp:1360 kflog.cpp:1399
+#: kflog.cpp:759 kflog.cpp:787 kflog.cpp:797 kflog.cpp:843 kflog.cpp:863
+#: kflog.cpp:875 kflog.cpp:1332 kflog.cpp:1365 kflog.cpp:1404
 msgid "Ready."
 msgstr "Fertig."
 
-#: kflog.cpp:790 kflog.cpp:821
+#: kflog.cpp:792 kflog.cpp:823
 msgid "Printing..."
 msgstr "Drucke..."
 
-#: kflog.cpp:809
+#: kflog.cpp:811
 msgid "You can only send flights to the OLC!"
 msgstr "Sie können nur Flüge an den OLC senden!"
 
-#: kflog.cpp:810
+#: kflog.cpp:812
 msgid "No flight found"
 msgstr "Keine Flüge gefunden"
 
-#: kflog.cpp:837
+#: kflog.cpp:839
 #, c-format
 msgid "Not yet available for type : %d"
 msgstr "Noch nicht möglich für Typ: %d"
 
-#: kflog.cpp:846
+#: kflog.cpp:848
 msgid "Exiting..."
 msgstr "Programm wird beendet..."
 
-#: kflog.cpp:854
+#: kflog.cpp:856
 msgid "Toggling toolbar..."
 msgstr "Werkzeugleiste (de)aktivieren..."
 
-#: kflog.cpp:866
+#: kflog.cpp:868
 msgid "Toggle the statusbar..."
 msgstr "Statusleiste (de)aktivieren..."
 
-#: kflog.cpp:974
+#: kflog.cpp:979
 msgid "center-to-dialog"
 msgstr "Zentrieren auf"
 
-#: kflog.cpp:1255
+#: kflog.cpp:1260
 msgid "Grass"
 msgstr "Graß"
 
-#: kflog.cpp:1256
+#: kflog.cpp:1261
 msgid "Asphalt"
 msgstr "Asphalt"
 
-#: kflog.cpp:1257
+#: kflog.cpp:1262
 msgid "Concrete"
 msgstr "Beton"
 
-#: kflog.cpp:1267
+#: kflog.cpp:1272
 msgid "Aerial railway"
 msgstr "Seilbahn"
 
-#: kflog.cpp:1268 waypointimpfilterdialog.cpp:99
+#: kflog.cpp:1273 waypointimpfilterdialog.cpp:99
 msgid "Airfield"
 msgstr "Flugplatz"
 
-#: kflog.cpp:1269
+#: kflog.cpp:1274
 msgid "Airport"
 msgstr "Flughafen"
 
-#: kflog.cpp:1270
+#: kflog.cpp:1275
 msgid "Ambul. Airport"
 msgstr "Amb. Hubschrauberplatz"
 
-#: kflog.cpp:1271
-msgid "Ballon"
+#: kflog.cpp:1276
+msgid "Balloon"
 msgstr "Ballonstartplatz"
 
-#: kflog.cpp:1272 kflogconfig.cpp:284
+#: kflog.cpp:1277 kflogconfig.cpp:284
 msgid "City"
 msgstr "Stadt"
 
-#: kflog.cpp:1273
+#: kflog.cpp:1278
 msgid "Civil Heliport"
 msgstr "Ziv. Hubschrauberplatz"
 
-#: kflog.cpp:1274
+#: kflog.cpp:1279
 msgid "Int. Airport"
 msgstr "Internat. Flughafen"
 
-#: kflog.cpp:1275
+#: kflog.cpp:1280
 msgid "Mil. Airport"
 msgstr "Mil. Flughafen"
 
-#: kflog.cpp:1276
+#: kflog.cpp:1281
 msgid "Civil/Mil. Airport"
 msgstr "Ziv./Mil. Flughafen"
 
-#: kflog.cpp:1277
+#: kflog.cpp:1282
 msgid "Closed Airfield"
 msgstr "geschlossener Flughafen"
 
-#: kflog.cpp:1278
+#: kflog.cpp:1283
 msgid "Glider site"
 msgstr "Segelflugplatz"
 
-#: kflog.cpp:1279
+#: kflog.cpp:1284
 msgid "Hang glider"
 msgstr "Hängegleitergelände"
 
-#: kflog.cpp:1280 kflogconfig.cpp:280
+#: kflog.cpp:1285 kflogconfig.cpp:280
 msgid "Highway"
 msgstr "Autobahn"
 
-#: kflog.cpp:1281
+#: kflog.cpp:1286
 msgid "Landmark"
 msgstr "Landschaftsmerkmal"
 
-#: kflog.cpp:1282
+#: kflog.cpp:1287
 msgid "Mil. Heliport"
 msgstr "Mil. Hubschrauberplatz"
 
-#: kflog.cpp:1283
+#: kflog.cpp:1288
 msgid "Ultralight"
 msgstr "Ultraleichtflugbetrieb"
 
-#: kflog.cpp:1284
+#: kflog.cpp:1289
 msgid "Parachute"
 msgstr "Fallschirmabsprunggelände"
 
-#: kflog.cpp:1285
+#: kflog.cpp:1290
 msgid "Outlanding"
 msgstr "Außenlandefeld"
 
-#: kflog.cpp:1286
+#: kflog.cpp:1291
 msgid "Obstacle"
 msgstr "Hindernis"
 
-#: kflog.cpp:1287
+#: kflog.cpp:1292
 msgid "Obstacle group"
 msgstr "Hindernisgruppe"
 
-#: kflog.cpp:1288
+#: kflog.cpp:1293
 msgid "Obstacle group (lighted)"
 msgstr "Hindernisgruppe (beleuchtet)"
 
-#: kflog.cpp:1289
+#: kflog.cpp:1294
 msgid "Obstacle (lighted)"
 msgstr "Hindernis (beleuchtet)"
 
-#: kflog.cpp:1290 kflogconfig.cpp:281
+#: kflog.cpp:1295 kflogconfig.cpp:281
 msgid "Railway"
 msgstr "Eisenbahn"
 
-#: kflog.cpp:1291 kflogconfig.cpp:279
+#: kflog.cpp:1296 kflogconfig.cpp:279
 msgid "Road"
 msgstr "Straße"
 
-#: kflog.cpp:1292
+#: kflog.cpp:1297
 msgid "Village,City"
 msgstr "Dorf, Stadt"
 
-#: kflog.cpp:1302
+#: kflog.cpp:1307
 msgid "Select FlightGear File"
 msgstr "Wähle FlightGear Datei"
 
-#: kflog.cpp:1335
+#: kflog.cpp:1340
 msgid "Select Gardown File"
 msgstr "Wähle Gardown Datei"
 
-#: kflog.cpp:1373
+#: kflog.cpp:1378
 msgid "Select Task-File"
 msgstr "Wähle Aufgabendatei"
 
-#: kflog.cpp:1374
+#: kflog.cpp:1379
 msgid "Open task"
 msgstr "Aufgabe öffnen"
 
-#: kflog.cpp:1413
+#: kflog.cpp:1418
 msgid "Traditional Route"
 msgstr "Traditionelle Aufgabe"
 
-#: kflog.cpp:1414
+#: kflog.cpp:1419
 msgid "FAI Area"
 msgstr "FAI Flächen"
 
@@ -1282,79 +1282,87 @@ msgstr ""
 "-> \"KFLog einrichten\" können Sie einrichten, welche Kartenelemente bei "
 "welchem Maßstab dargestellt werden sollen. </P>"
 
-#: map.cpp:539
+#: map.cpp:475
 msgid "Waypoint:"
 msgstr "Wegpunkt:"
 
-#: map.cpp:580
+#: map.cpp:615
 msgid "Sector 1"
 msgstr "Sektor 1"
 
-#: map.cpp:585
+#: map.cpp:620
 msgid "Sector 2"
 msgstr "Sektor 2"
 
-#: map.cpp:591
+#: map.cpp:626
 msgid "FAI-Sector"
 msgstr "FAI-Sektor"
 
-#: map.cpp:595
+#: map.cpp:630
 msgid "not reached"
 msgstr "nicht erreicht"
 
-#: map.cpp:601 taskdialog.cpp:277
+#: map.cpp:636 taskdialog.cpp:277
 msgid "Take Off"
 msgstr "Start"
 
-#: map.cpp:607
+#: map.cpp:642
 msgid "End of task"
 msgstr "Ende der Aufgabe"
 
-#: map.cpp:634
+#: map.cpp:678
 msgid "Airspace-Structure"
 msgstr "Luftraumstruktur"
 
-#: map.cpp:1420
+#: map.cpp:1464
 msgid "Can not save to file %1"
 msgstr "Kann Datei %1 nicht speichern"
 
-#: map.cpp:1440
+#: map.cpp:1484
 msgid "%1 with %2 (%3) on %4"
 msgstr "%1 mit %2 (%3) am %4"
 
-#: map.cpp:1442
+#: map.cpp:1486
 msgid "created by KFLog (www.kflog.org)"
 msgstr "erzeugt von KFLog (www.kflog.org)"
 
-#: map.cpp:1460
+#: map.cpp:1504
 msgid "Select PNG-File"
 msgstr "Wähle PNG-Datei"
 
-#: map.cpp:1494
+#: map.cpp:1538
 msgid "To finish the planing, press <STRG> and the right mouse button!"
 msgstr "Um das Planen zu beenden, drücken Sie <STRG> und die rechte Maustaste!"
 
-#: map.cpp:2409
+#: map.cpp:2453
 msgid "&New waypoint"
 msgstr "Neuer &Wegpunkt"
 
-#: map.cpp:2410
+#: map.cpp:2454 waypoints.cpp:167
+msgid "&Edit waypoint"
+msgstr "Wegpunkt &editieren"
+
+#: map.cpp:2455 waypoints.cpp:169
+msgid "&Delete waypoint"
+msgstr "We&gpunkt löschen"
+
+#: map.cpp:2459
 msgid "&End taskplanning"
 msgstr "&Ende der Flugplanung"
 
-#: map.cpp:2411
+#: map.cpp:2460
 msgid "&Show map info..."
 msgstr "&Karteninformation zeigen"
 
-#: map.cpp:2414
+#: map.cpp:2464
 msgid "&Center map"
 msgstr "Verschiebe &Mittelpunkt der Karte"
 
-#: map.cpp:2416
+#: map.cpp:2466
 msgid "Zoom &In"
 msgstr "Ver&größern"
 
-#: map.cpp:2417
+#: map.cpp:2467
 msgid "Zoom &Out"
 msgstr "Ver&kleinern"
 
@@ -2287,7 +2295,7 @@ msgstr ""
 msgid "label used for normal level in legend"
 msgstr ""
 
-#: waypointcatalog.cpp:63 waypoints.cpp:706
+#: waypointcatalog.cpp:63 waypoints.cpp:729
 msgid "unnamed"
 msgstr "Unbenannt"
 
@@ -2307,22 +2315,22 @@ msgstr "Speichere Wegpunkt-Katalog"
 msgid "Waypoint definition"
 msgstr "Wendepunkt Definition"
 
-#: waypointdialog.cpp:86 waypointdialog.cpp:91 waypointdialog.cpp:97
-#: waypointdialog.cpp:102 waypointdialog.cpp:107 waypointdialog.cpp:122
-#: waypointdialog.cpp:130 waypointdialog.cpp:140 waypointdialog.cpp:145
+#: waypointdialog.cpp:84 waypointdialog.cpp:89 waypointdialog.cpp:95
+#: waypointdialog.cpp:100 waypointdialog.cpp:105 waypointdialog.cpp:120
+#: waypointdialog.cpp:128 waypointdialog.cpp:138 waypointdialog.cpp:143
 #: waypoints.cpp:109
 msgid "%1:"
 msgstr "%1:"
 
-#: waypointdialog.cpp:112 waypointdialog.cpp:135
+#: waypointdialog.cpp:110 waypointdialog.cpp:133
 msgid "%1 (m):"
 msgstr "%1 (m):"
 
-#: waypointdialog.cpp:117
+#: waypointdialog.cpp:115
 msgid "&ICAO:"
 msgstr "&ICAO:"
 
-#: waypointdialog.cpp:125
+#: waypointdialog.cpp:123
 msgid "L&andable"
 msgstr "Landung &möglich"
 
@@ -2506,14 +2514,6 @@ msgstr "Katalog s&chließen"
 msgid "New &waypoint"
 msgstr "Neuer &Wegpunkt"
 
-#: waypoints.cpp:167
-msgid "&Edit waypopint"
-msgstr "Wegpunkt &editieren"
-
-#: waypoints.cpp:169
-msgid "&Delete waypoint"
-msgstr "We&gpunkt löschen"
-
 #: waypoints.cpp:171
 msgid "Copy to &catalog"
 msgstr "zum Katalog &kopieren"
@@ -2548,19 +2548,19 @@ msgstr ""
 msgid "Save changes?"
 msgstr "Änderungen speichern?"
 
-#: waypoints.cpp:538
+#: waypoints.cpp:561
 msgid "Import waypoint catalog"
 msgstr "Wegpunkt-Katalog importieren"
 
-#: waypoints.cpp:557
+#: waypoints.cpp:580
 msgid "Save changes to<BR><B>%1</B>"
 msgstr "Änderungen speichern unter<BR><B>%1</B>"
 
-#: waypoints.cpp:835
+#: waypoints.cpp:858
 msgid "*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT)"
 msgstr ""
 
-#: waypoints.cpp:835
+#: waypoints.cpp:858
 msgid "Import waypoints from file"
 msgstr "Importiere Wegpunkte aus Datei"
 
