@@ -97,15 +97,48 @@ void ObjectTree::slotSelected(QListViewItem * itm){
 
 /** This slot is called if the currently selected flight has changed. */
 void ObjectTree::slotSelectedFlightChanged(BaseFlightElement * bfe){
+  QListViewItem * itm=findFlightElement(bfe);
+
+  if (itm) {
+    if (!itm->isSelected()) setSelected(itm,true);
+    ensureItemVisible(itm);
+    return;
+  }
+}
+
+/** Signaled if the current flight was somehow changed.  */
+void ObjectTree::slotFlightChanged(){
+  extern MapContents _globalMapContents;
+  QListViewItem * itm=findFlightElement(_globalMapContents.getFlight());
+
+  if (itm) {
+    switch (itm->rtti()) { //the rtti (Run Time Type Identification is used to see what kind of listview item we are dealing with
+      case FLIGHTLISTVIEWITEM_TYPEID:
+        ((FlightListViewItem*)itm)->update();
+        break;
+      case TASKLISTVIEWITEM_TYPEID:
+        //(TaskListViewItem*)itm->update();
+        break;
+      default:
+        warning("Listviewitem of unknown type");
+    }
+  }
+    
+}
+
+/**
+ * Searches the objecttree for the node representing the baseflightelement
+ * given as an argument.
+ * @returns a pointer to the QListViewItem if found, 0 otherwise.
+ */
+QListViewItem * ObjectTree::findFlightElement(BaseFlightElement * bfe){
   QListViewItem * itm=0;
-  
+
   if (FlightRoot->childCount()!=0) {
     itm = FlightRoot->firstChild();
     while (itm!=0) {
       if (((FlightListViewItem*)itm)->flight==bfe) {
-        if (!itm->isSelected()) setSelected(itm,true);
-        ensureItemVisible(itm);
-        return;
+        return itm;
       }
       itm=itm->nextSibling();
     }
@@ -115,15 +148,11 @@ void ObjectTree::slotSelectedFlightChanged(BaseFlightElement * bfe){
     itm = TaskRoot->firstChild();
     while (itm!=0) {
       if (((TaskListViewItem*)itm)->task==bfe) {
-        if (!itm->isSelected()) setSelected(itm,true);
-        ensureItemVisible(itm);
-        return;
+        return itm;
       }
       itm=itm->nextSibling();
     }
   }
-
   
-           
-
+  return 0;
 }

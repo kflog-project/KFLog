@@ -83,17 +83,28 @@ public slots: // Public slots
    * This slot is called if the currently selected flight has changed.
    */
   void slotSelectedFlightChanged(BaseFlightElement *);
+  /** Signaled if the current flight was somehow changed.  */
+  void slotFlightChanged();
 
 signals: // Signals
   /**
    * Send out whenever the user selects a flight, task, or flightgroup
    */
   void selectedFlight(BaseFlightElement *);
+
 private slots: // Private slots
   /**
    * Called if the selection has changed.
    */
   void slotSelected(QListViewItem *);
+
+protected: // Protected methods
+  /**
+   * Searches the objecttree for the node representing the baseflightelement
+   * given as an argument.
+   * @returns a pointer to the QListViewItem if found, 0 otherwise.
+   */
+  QListViewItem * findFlightElement(BaseFlightElement * bfe);
 };
 
 #endif

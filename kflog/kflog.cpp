@@ -959,6 +959,7 @@ void KFLogApp::slotOptimizeFlight()
           // Okay, update flightdata and redraw map
           dataView->setFlightData();
           map->slotRedrawFlight();
+          objectTree->slotFlightChanged();
         }
     }
 }
@@ -973,6 +974,7 @@ void KFLogApp::slotOptimizeFlightOLC()
           // Okay, update flightdata and redraw map
           dataView->setFlightData();
           map->slotRedrawFlight();
+          objectTree->slotFlightChanged();
         }
   }
 }

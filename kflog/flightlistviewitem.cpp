@@ -25,9 +25,41 @@
 
 FlightListViewItem::FlightListViewItem(QListViewItem * parent, Flight * flight):QListViewItem(parent){
   this->flight=flight;
+
+  createChildren();
+  
+}
+
+FlightListViewItem::~FlightListViewItem(){
+}
+
+/**
+ * Called to make the item update itself, for example because the flight was optimized.
+ */
+void FlightListViewItem::update(){
+  /* This funtion updates the flightnode after something has changed. It would be better
+     to check what was changed, and react accordingly. This is pretty complex though, and
+     even just resetting the text for each childnode is more work than just deleting them
+     and then re-creating them. f*/
+     
+  
+  //first, delete all childnodes
+  QListViewItem * itm = firstChild();
+  while (itm!=0) {
+    delete itm;
+    itm=firstChild();
+  }
+
+  //now, recreate them
+  createChildren();
+
+}
+
+/** Creates the childnodes for this flightnode. */
+void FlightListViewItem::createChildren(){
   QUrl url(flight->getFileName());
   KLocale loc("");
-  
+
   setText(0,url.fileName());
   setText(1,loc.formatDate(flight->getDate(),true) + ": " + flight->getPilot());
   //setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup, KIcon::SizeSmall));
@@ -51,11 +83,7 @@ FlightListViewItem::FlightListViewItem(QListViewItem * parent, Flight * flight):
   subItem->setSelectable(false);
   if (flight->isOptimized()){
     subItem=new TaskListViewItem((QListViewItem*)this, &flight->getTask(false), subItem);
+    subItem->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("task", KIcon::NoGroup, KIcon::SizeSmall));
     subItem->setSelectable(false);
   }
-  
-  
-}
-
-FlightListViewItem::~FlightListViewItem(){
 }
