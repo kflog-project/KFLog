@@ -1,0 +1,38 @@
+Plugin system for KFLog fileloading and saving
+
+Status: proposal
+
+Version: 1
+
+Author: André Somers <andre@kflog.org>
+
+Description of plugin system.
+
+Target:
+The target of the proposed system is twofold: on the hand, it should clear up the architectural design of KFLog, to allow KFLog to accept a multitude of filetype without getting cluttered. On the other hand, it should make adding new filetypes to the system easier, and make them available troughout KFLog in one single go, even if the one implementing the plugin is not really familiar with the KFLog code. KFLog deals with a lot of different objects (flights, tasks, waypoints, maps), all of which may be loaded and saved using different fileformats. There is a demand to support more filetypes. With the current design, this would lead to complications and clutter in the code.
+
+Structure:
+The basic design consists of three parts: the FileFilterManager, one or more plugins, and FileFilters.
+A FileFilter is an object that provides methods to load and/or save a specific object from/to a specific fileformat. These are provided by a Plugin, wich provides one or more FileFilters. A plugin takes the form of a shared library. The Plugins are registered with the FileFilterManager, wich keeps tracks of the available filters and provides the appropriate filter objects to the calling function if asked for it.
+
+The mode of operation is the following:
+1) some function wants to load or save an object
+2) it calls the FileFilterManager (FFM) with a request to provide a FileFilter (FF), thereby providing the type(s) of objects (flights, tasks, etc.) and the operation (loading, saving) it wants to perform.
+3) the FFM checks wich FF's are available for the requested object and operation
+4) the FFM constructs a FileDialog to let the user select the file, and provides the available types in the Filter dropdown.
+5) the FFM checks the permissions on the file (OPEN FOR DISCUSSION)
+5) the FFM loads the correct library (plugin) and checks the availabilty of the selected filter
+6) the FFM creates a FileFilter of the selected type, and sets the needed properties (filename)
+7) the FFM returns the FF object to the calling function
+8) the function uses the FF's load or safe function operate on the data
+9) the function destroys the FF, wich signals the FFM
+10) the FFM checks to see if it can unload the lib.
+
+As can be seen above, the calling function doesn't need to know anything about the actual filters, all it needs to do is call the FFM and use the returned object's save or load function.
+
+Additional provisions should be made in the FFM to make it possible to:
+-modify properties of the filedialog
+-make previews possible for filetypes
+-make it possible to save a file with a known filetype and name without futher intervention.
+These are minor details that don't affect the overal design.
+
