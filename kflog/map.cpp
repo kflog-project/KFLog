@@ -767,6 +767,7 @@ void Map::__drawMap()
 {
   QPainter allSitesP(&pixAllSites);
   QPainter airSpaceP(&pixAirspace);
+  QPainter flightP(&pixFlight);
   QPainter gliderP(&pixGlider);
   QPainter waypointP(&pixWaypoints);
   QPainter underMapP(&pixUnderMap);
@@ -909,13 +910,17 @@ void Map::__drawMap()
   if(isWaypoint && (_currentScale <= _scale[_scaleBorder[ID_WAYPOINTS]]))
       DRAW_LOOP(MapContents::WaypointList, &mapP)
 */
-  if(displayFlights) __drawFlight();
+//  if(displayFlights) __drawFlight();
+
+  _globalMapContents.drawList(&underMapP, MapContents::FlightList);
+
 
   mainApp->slotSetProgress(100);
 
   // Closing the painter ...
   allSitesP.end();
   airSpaceP.end();
+  flightP.end();
   gliderP.end();
   waypointP.end();
   underMapP.end();
@@ -1219,7 +1224,7 @@ void Map::showFlightLayer(bool redrawFlight)
   if(redrawFlight)
     {
       pixFlight.fill(white);
-      __drawFlight();
+//      __drawFlight();
     }
 
   if(!showFlight)
@@ -1227,24 +1232,18 @@ void Map::showFlightLayer(bool redrawFlight)
 
   slotShowLayer();
 }
-
+/*
 void Map::__drawFlight()
 {
-/*
+  extern MapContents _globalMapContents;
+
   QPainter flightP(&pixFlight);
 
-  extern const double _currentScale;
+  _globalMapContents.drawList(&flightP, MapContents::FlightList);
 
-  QList<Flight>* flightList = view->getFlightDataView()->getFlightList();
-  for(unsigned int loop = 0; loop < flightList->count(); loop++)
-    {
-      flightList->at(loop)->drawMapElement(&flightP, DELTA_X, DELTA_Y,
-          mapCenterLon, mapBorder);
-    }
   flightP.end();
-*/
 }
-
+*/
 void Map::loadWaypoint(QString waypointFileName)
 {
   QFile* waypointFile = new QFile(waypointFileName);

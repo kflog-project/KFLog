@@ -100,7 +100,7 @@ class BaseMapElement
      * AirC             : 20,   Church             : 44,   WayPoint         : 68,
      * AirCtemp         : 21,   Tower              : 45,   Flight           : 69,
      * AirD             : 22,   Highway            : 46,   Isohypse         : 70,
-     * AirDtemp         : 23,   HighwayEntry       : 47,   Canal            : 71
+     * AirDtemp         : 23,   HighwayEntry       : 47,   Task             : 71
      *
      */
     enum objectType {NotSelected, IntAirport, Airport, MilAirport,
@@ -114,14 +114,12 @@ class BaseMapElement
         SmallRoad, RoadBridge, RoadTunnel, Railway, RailwayBridge, Station,
         AerialRailway, Coast, BigLake, MidLake, SmallLake, BigRiver,
         MidRiver, SmallRiver, Dam, Lock, Spot, Pass, Glacier, WayPoint,
-        Flight, Isohypse};
+        Flight, Isohypse, Task};
     /**
      * The three types of elevation-data used in the maps.
      */
     enum elevationType {NotSet, MSL, GND, FL};
     /** */
-//    virtual void setName(const char* n);
-//    virtual void setType(int t);
 
   protected:
     /**
@@ -140,9 +138,13 @@ class BaseMapElement
      */
     unsigned int typeID;
     /**
-     *
+     * ist das hier nötig? reicht das nicht bei SinglePoint ???
      */
     QPoint curPos;
+    /**
+     * The index-number of the mapsection of the element.
+     */
+    unsigned int section;
 };
 
 #endif

@@ -62,7 +62,7 @@ class LineElement : public BaseMapElement
 
   protected:
     /** */
-    bool __isVisible();
+    virtual bool __isVisible() const;
     /** */
     QColor drawColor;
     /** */

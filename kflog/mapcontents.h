@@ -113,8 +113,10 @@ class MapContents
     void drawList(QPainter* targetPainter, unsigned int listID);
     /** Zeichnet die Höhenlinien */
     void drawIsoList(QPainter* targetPainter);
-    /** */
-    void loadFlight(QFile);
+    /**
+     * Loads a new flight-file.
+     */
+    bool loadFlight(QFile);
     /**
      * The listid.
      */
@@ -122,7 +124,7 @@ class MapContents
          OutList, NavList, AirspaceList, ObstacleList, ReportList, CityList,
          VillageList, LandmarkList, HighwayList, HighwayEntryList, RoadList,
          RailList, StationList, HydroList, TopoList, IsohypseList, WaypointList,
-         DigitList};
+         DigitList, FlightList};
 
   private:
     /** reads a new binary-map-file */

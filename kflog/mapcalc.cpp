@@ -63,11 +63,11 @@ int degreeToNum(const char* degree)
         break;
       case 3:
         deg = 100 * (degree[0] - '0') + 10 * (degree[1] - '0')
-              + (degree[2] - '0');
+            + (degree[2] - '0');
         degree += 4;
         break;
       default:
-        if(deg1.match(degree) > 3) return 0;    // << degree is not correct!
+        if(deg1.match(degree) > 3)  return 0;    // << degree is not correct!
         switch(strlen(degree))
           {
             case 1:
@@ -85,7 +85,7 @@ int degreeToNum(const char* degree)
           }
     }
 
-  if(deg2.match(degree) != -1)
+  if( deg2.match(degree) != -1 )
     {
       // Minuten mit Nachkommastellen!
       switch(deg2.match(degree))
@@ -93,7 +93,7 @@ int degreeToNum(const char* degree)
           case 1:
             min = degree[0] - '0';
             for(unsigned int loop = 2; loop < strlen(degree); loop++)
-              if((degree[loop] >= '0') && (degree[loop] <= '9'))
+              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
                 {
                   sec = 10 * sec + (degree[loop] - '0');
                   count++;
@@ -102,27 +102,26 @@ int degreeToNum(const char* degree)
           case 2:
             min = 10 * (degree[0] - '0') + (degree[1] -'0');
             for(unsigned int loop = 3; loop < strlen(degree); loop++)
-              if((degree[loop] >= '0') && (degree[loop] <= '9'))
+              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
                 {
                   sec = (degree[loop] - '0') + (sec / 10);
                   count++;
                 }
             break;
           default:
-            if((deg2.match(degree) > 2) ||
-               (deg2.match(degree) == 0))
-              return 0;    // << degree is not correct!
+            if( ( deg2.match(degree) > 2 ) || ( deg2.match(degree) == 0 ) )
+                return 0;    // << degree is not correct!
         }
     }
-  else if(deg3.match(degree) != -1)
+  else if( deg3.match(degree) != -1 )
     {
       // es folgen "echte" Sekunden
-      switch(deg3.match(degree))
+      switch( deg3.match(degree) )
         {
           case 1:
             min = degree[0] - '0';
             for(unsigned int loop = 2; loop < strlen(degree); loop++)
-              if((degree[loop] >= '0') && (degree[loop] <= '9'))
+              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
                 {
                   sec = sec * 10 + (degree[loop] - '0');
                   count++;
@@ -131,145 +130,27 @@ int degreeToNum(const char* degree)
           case 2:
             min = 10 * (degree[0] - '0') + (degree[1] -'0');
             for(unsigned int loop = 3; loop < strlen(degree); loop++)
-              if((degree[loop] >= '0') && (degree[loop] <= '9'))
+              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
                 {
                   sec = sec * 10 + (degree[loop] - '0');
                   count++;
                 }
             break;
           default:
-            if((deg2.match(degree) > 2) ||
-               (deg2.match(degree) == 0))
-              return 0;    // << degree is not correct!
+            if( ( deg2.match(degree) > 2 ) || ( deg2.match(degree) == 0 ) )
+                return 0;    // << degree is not correct!
         }
     }
   result = (int) ((600000 * deg) + (10000 * (min + (sec * pow(10,-count)))));
+
   if(dir.match(degree) >= 0) return -result;
 
   return result;
 }
 
-double numToRad(int internal)
-{
-  return ( PI * internal ) / 108000000.0;
-}
+double numToRad(int internal) { return ( PI * internal ) / 108000000.0; }
 
-int radToNum(double radial)
-{
-  return (int) (radial * 108000000.0 / PI );
-}
-//
-//struct drawPoint calcLambert(struct point curPoint,
-//        int mapCenterLon, double dX, double dY, double scale)
-//{
-//  return ( calcLambert(curPoint.latitude, curPoint.longitude,
-//      mapCenterLon, dX, dY, scale) );
-//}
-//
-//struct drawPoint calcLambert(struct flightPoint curPoint,
-//        int mapCenterLon, double dX, double dY, double scale)
-//{
-//  return ( calcLambert(curPoint.latitude, curPoint.longitude,
-//      mapCenterLon, dX, dY, scale) );
-//}
-//
-//struct drawPoint calcLambert(int latitude, int longitude,
-//        int mapCenterLon, double dX, double dY, double scale)
-//{
-//  extern double _currentScale;
-//  struct drawPoint newPoint;
-//
-//  double projX, projY, projLat, projLon;
-//
-//  projLat = numToRad(latitude);
-//  projLon = numToRad(longitude - mapCenterLon);
-//
-//  projX = calc_X_Lambert(projLat, projLon);
-//  projY = calc_Y_Lambert(projLat, projLon);
-//
-//  if(scale == 0)
-//    {
-//      newPoint.x = projX * RADIUS / _currentScale + dX;
-//      newPoint.y = projY * RADIUS / _currentScale + dY;
-//    }
-//  else
-//    {
-//      newPoint.x = projX * RADIUS / scale + dX;
-//      newPoint.y = projY * RADIUS / scale + dY;
-//    }
-//
-//  return newPoint;
-//}
-
-//double calc_Y_Lambert(double latitude, double longitude)
-//{
-//  extern double _v1, _var1, _var2;
-//  double y1;
-//
-//  y1 = 2 * ( sqrt( _var1 + ( sin(_v1) - sin(latitude) ) *_var2 )
-//             / _var2 )
-//         * cos( _var2 * longitude / 2 );
-//
-//  return y1;
-//}
-
-//double calc_X_Lambert(double latitude, double longitude)
-//{
-//  extern double _v1, _var1, _var2;
-//  double x1;
-//
-//  x1 = 2 * ( sqrt( _var1 + ( sin(_v1) - sin(latitude) ) * _var2 )
-//            / _var2 )
-//         * sin( _var2 * longitude / 2 );
-//
-//  return x1;
-//}
-
-//void map2Lambert(double x, double y, struct point* loc)
-//{
-//  extern double _v1, _v2;
-//  double lat, lon;
-//
-//  lat = -asin(
-//              ( -4.0 * pow(cos(_v1), 2.0) - 4.0 * pow(sin(_v1), 2.0)
-//                -4.0 * sin(_v1) * sin(_v2)
-//                + y * y * pow(sin(_v1), 2.0) + pow(sin(_v1), 2.0)* x * x
-//                + 2.0 * y * y * sin(_v1) * sin(_v2) + 2.0 * sin(_v1)
-//                * sin(_v2) * x * x + y * y * pow(sin(_v2), 2.0)
-//                + pow(sin(_v2), 2.0) * x * x
-//                ) /
-//              ( sin(_v1) + sin(_v2) ) / 4 );
-//
-//  lon = 2.0 * atan( y / x ) / ( sin(_v1) + sin(_v2) );
-//
-//  loc->latitude = radToNum(lat);
-//  loc->longitude = radToNum(lon);
-//}
-
-//int map2LambertLat(double x, double y)
-//{
-//  extern double _v1, _v2;
-//  double lat;
-//  lat = -asin(
-//              ( -4.0 * pow(cos(_v1), 2.0) - 4.0 * pow(sin(_v1), 2.0)
-//                -4.0 * sin(_v1) * sin(_v2)
-//                + y * y * pow(sin(_v1), 2.0) + pow(sin(_v1), 2.0)* x * x
-//                + 2.0 * y * y * sin(_v1) * sin(_v2) + 2.0 * sin(_v1)
-//                * sin(_v2) * x * x + y * y * pow(sin(_v2), 2.0)
-//                + pow(sin(_v2), 2.0) * x * x
-//                ) /
-//              ( sin(_v1) + sin(_v2) ) / 4 );
-//  return radToNum(lat);
-//}
-
-//int map2LambertLon(double x, double y)
-//{
-//  extern double _v1, _v2;
-//  double lon;
-
-//  lon = 2.0 * atan( y / x ) / ( sin(_v1) + sin(_v2) );
-//  return radToNum(lon);
-//}
+int radToNum(double radial) { return (int) (radial * 108000000.0 / PI ); }
 
 double dist(double lat1, double lon1, double lat2, double lon2)
 {
@@ -277,30 +158,29 @@ double dist(double lat1, double lon1, double lat2, double lon2)
   double dlat = lat1 - lat2;
   double dlon = lon1 - lon2;
 
-  double dist = RADIUS * sqrt(
-      ((pi_180) * dlat * (pi_180) * dlat)
-      + ((pi_180) * cos(pi_180 * lat1)* dlon
-        * (pi_180) * cos(pi_180 * lat1)* dlon) );
+  double dist = RADIUS * sqrt( ( pi_180 * dlat * pi_180 * dlat )
+    + ( pi_180 * cos( pi_180 * lat1 ) * dlon *
+        pi_180 * cos( pi_180 * lat1 ) * dlon ) );
 
   return dist / 1000.0;
 }
 
 double dist(struct wayPoint* wp1, struct wayPoint* wp2)
 {
-  return (dist(wp1->latitude, wp1->longitude,
-               wp2->latitude, wp2->longitude));
+  return ( dist( wp1->origP.x(), wp1->origP.y(),
+                 wp2->origP.x(), wp2->origP.y() ) );
 }
 
 double dist(struct wayPoint* wp, struct flightPoint* fp)
 {
-  return (dist(wp->latitude, wp->longitude,
-               fp->latitude, fp->longitude));
+  return ( dist( wp->origP.x(), wp->origP.y(),
+                 fp->origP.x(), fp->origP.y() ) );
 }
 
 double dist(struct flightPoint* fp1, struct flightPoint* fp2)
 {
-  return (dist(fp1->latitude, fp1->longitude,
-               fp2->latitude, fp2->longitude));
+  return ( dist( fp1->origP.x(), fp1->origP.y(),
+                 fp2->origP.x(), fp2->origP.y() ) );
 }
 
 double polar(double x, double y)
@@ -312,32 +192,24 @@ double polar(double x, double y)
    */
   if(x >= -0.001 && x <= 0.001)
     {
-      if(y < 0.0)
-        // angle = 270°
-        return ( 1.5 * PI );
-      else
-        // angle = 90°
-        return ( 0.5 * PI );
+      if(y < 0.0) return ( 1.5 * PI );
+      else  return ( 0.5 * PI );
     }
 
-  if(x < 0.0)
-    // Punkt liegt auf der neg. X-Achse
-    angle = atan( y / x ) + PI;
-  else
-    angle = atan( y / x );
+  // Punkt liegt auf der neg. X-Achse
+  if(x < 0.0)  angle = atan( y / x ) + PI;
+  else  angle = atan( y / x );
 
   // Neg. value not allowed.
-  if(angle < 0.0)
-    angle = 2 * PI + angle;
+  if(angle < 0.0)  angle = 2 * PI + angle;
 
-  if(angle > (2 * PI))
-    angle = angle - (2 * PI);
+  if(angle > (2 * PI))  angle = angle - (2 * PI);
 
   return angle;
 }
 
 /*
- * Die Funktion schein noch Probleme zu haben, wenn die Position nahe an
+ * Die Funktion scheint noch Probleme zu haben, wenn die Position nahe an
  * 0° W/E liegt.
  */
 QString printPos(int coord, bool isLat)
@@ -350,16 +222,12 @@ QString printPos(int coord, bool isLat)
   sec = (sec * 60) / 10000;
 
   min = (int)sqrt(min * min);
-  if(min < 10)
-    posMin.sprintf(" 0%d'", min);
-  else
-    posMin.sprintf(" %d'", min);
+  if(min < 10)  posMin.sprintf(" 0%d'", min);
+  else  posMin.sprintf(" %d'", min);
 
   sec = (int)sqrt(sec * sec);
-  if(sec < 10)
-    posSec.sprintf(" 0%d\"", sec);
-  else
-    posSec.sprintf(" %d\"", sec);
+  if(sec < 10)  posSec.sprintf(" 0%d\"", sec);
+  else  posSec.sprintf(" %d\"", sec);
 
   if(isLat)
     {
@@ -399,60 +267,44 @@ QString printTime(int time, bool isZero)
   int mm = (time - (hh * 3600)) / 60;
   int ss = time - (hh * 3600) - mm * 60;
 
-  if(isZero && hh < 10)
-    hour.sprintf("0%d", hh);
-  else
-    hour.sprintf("%d", hh);
+  if(isZero && hh < 10)  hour.sprintf("0%d", hh);
+  else  hour.sprintf("%d", hh);
 
-  if(mm < 10)
-    min.sprintf("0%d", mm);
-  else
-    min.sprintf("%d", mm);
+  if(mm < 10)  min.sprintf("0%d", mm);
+  else  min.sprintf("%d", mm);
 
-  if(ss < 10)
-    sec.sprintf("0%d", ss);
-  else
-    sec.sprintf("%d", ss);
+  if(ss < 10)  sec.sprintf("0%d", ss);
+  else  sec.sprintf("%d", ss);
 
   return (hour + ":" + min + ":" + sec);
 }
 
 int setScaleValue(int value)
 {
-  if(value <= 40)
-    return (value * 5);
-  else if(value <= 70)
-    return (200 + (value - 40) * 10);
-  else if(value <= 95)
-    return (500 + (value - 70) * 20);
-  else if(value <= 105)
-    return (1000 + (value - 95) * 50);
-  else
-    return (2000 + (value - 105) * 100);
+  if(value <= 40) return (value * 5);
+  else if(value <= 70) return (200 + (value - 40) * 10);
+  else if(value <= 95) return (500 + (value - 70) * 20);
+  else if(value <= 105) return (1000 + (value - 95) * 50);
+  else return (2000 + (value - 105) * 100);
 }
 
 int getScaleValue(double scale)
 {
-  if(scale <= 200)
-    return ((int) scale / 5);
-  else if (scale <= 500)
-    return (((int) scale - 200) / 10 + 40);
-  else if (scale <= 1000)
-    return (((int) scale - 500) / 20 + 70);
-  else if(scale <= 2000)
-    return (((int) scale - 1000) / 50 + 95);
-  else
-    return (((int) scale - 2000) / 100 + 125);
+  if(scale <= 200) return ((int) scale / 5);
+  else if(scale <= 500) return (((int) scale - 200) / 10 + 40);
+  else if(scale <= 1000) return (((int) scale - 500) / 20 + 70);
+  else if(scale <= 2000) return (((int) scale - 1000) / 50 + 95);
+  else return (((int) scale - 2000) / 100 + 125);
 }
 
 float getSpeed(struct flightPoint* p)
 {
-  return (float)p->distance / (float)p->dt * 3.6;
+  return (float)p->dS / (float)p->dt * 3.6;
 }
 
 float getSpeed(struct flightPoint p)
 {
-  return (float)p.distance / (float)p.dt * 3.6;
+  return (float)p.dS / (float)p.dt * 3.6;
 }
 
 float getVario(struct flightPoint* p)

@@ -18,7 +18,7 @@
 #include "basemapelement.h"
 
 BaseMapElement::BaseMapElement(const char* n, unsigned int tID)
-  : name(n), typeID(tID), curPos(-1000, -1000)
+  : name(n), typeID(tID), curPos(-1000, -1000), section(0)
 {
 
 }

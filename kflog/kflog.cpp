@@ -352,16 +352,17 @@ void KFLogApp::slotFileOpen()
 {
   slotStatusMsg(i18n("Opening file..."));
 
-  QString fileName = KFileDialog::getOpenFileName(flightDir,
-      "*.igc *.IGC", this);
+  QString fName = KFileDialog::getOpenFileName(flightDir, "*.igc *.IGC", this);
 
-  if(fileName != NULL)
+  if(fName != NULL)
     {
-      QFileInfo fInfo(fileName);
+      QFileInfo fInfo(fName);
       flightDir = fInfo.dirPath();
       extern MapContents _globalMapContents;
-      _globalMapContents.loadFlight(fileName);
+      _globalMapContents.loadFlight(fName);
     }
+
+  map->slotRedrawMap();
 
   slotStatusMsg(i18n("Ready."));
 }
@@ -369,6 +370,10 @@ void KFLogApp::slotFileOpen()
 void KFLogApp::slotFileOpenRecent(const KURL& url)
 {
   slotStatusMsg(i18n("Opening file..."));
+
+  extern MapContents _globalMapContents;
+  if(url.isLocalFile())
+      _globalMapContents.loadFlight(url.fileName());
 
   slotStatusMsg(i18n("Ready."));
 }

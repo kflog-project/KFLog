@@ -18,6 +18,7 @@
 #ifndef WP_STRUCT
 #define WP_STRUCT
 
+#include <qpoint.h>
 #include <qstring.h>
 
 /**
@@ -81,10 +82,10 @@ struct drawPoint
  */
 struct flightPoint
 {
-  /** The latitude, registered by the logger. */
-  int latitude;
-  /** The longitude, registered by the logger. */
-  int longitude;
+  /** The original position of the point. Given in the internal format. */
+  QPoint origP;
+  /** The projected position of the point. */
+  QPoint projP;
   /** The barometrical height, registered by the logger. */
   int height;
   /** The gps-height, registered by the logger. */
@@ -92,17 +93,17 @@ struct flightPoint
   /** The time, the point was registered by the logger. */
   unsigned int time;
   /** The elevation difference to the previous Point*/
-  int dh;
+  int dH;
   /** The time difference to the previous Point*/
-  int dt;
+  int dT;
   /** The distance between the Points*/
+  int dS;
+
+  int latitude;
+  int longitude;
+  int dh;
+  int dt;
   int distance;
-  /** The speed, calculated by KFLog. */
-//  float speed;
-  /** The vario, calculated by KFLog. */
-//  float vario;
-  /** <tt>true</tt>, if the flightpoint is near to one waypoint. */
-//  bool nearWP;
 };
 
 /**
@@ -112,6 +113,10 @@ struct wayPoint
 {
   /** The name of the waypoint. */
   QString name;
+  /** The original position of the waypoint. */
+  QPoint origP;
+  /** The projected position of the waypoint. */
+  QPoint projP;
   /** The latitude ;-) */
   int latitude;
   /** The longitude ;-) */

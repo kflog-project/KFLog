@@ -150,7 +150,7 @@ class Map : public QWidget
     /**
      * Draws the flight into the map.
      */
-    void __drawFlight();
+//    void __drawFlight();
     /**
      * Draws the grid tino the map.
      */

@@ -15,12 +15,12 @@
 **
 ***********************************************************************/
 
+#include <cmath>
 #include <stdlib.h>
 
 #include "mapcontents.h"
 #include <mapcalc.h>
 
-//#include <kapp.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -46,6 +46,7 @@
 #include <lineelement.h>
 #include <radiopoint.h>
 #include <singlepoint.h>
+//#include <flighttask.h>
 
 #define MAX_FILE_COUNT 16200
 #define ISO_LINE_NUM 46
@@ -945,7 +946,7 @@ return true;
 	// In welche Liste ??????
 	/*
         addElement(MapContents::List,
-            new SinglePoint(0, type, abbr, at_lat, at_lon));     	         */
+            new SinglePoint(0, type, abbr, at_lat, at_lon));     	   */
         break;
       case BaseMapElement::Spot:
       case BaseMapElement::Pass:
@@ -1026,7 +1027,7 @@ void MapContents::addElement(RadioPoint* newElement)
   navList.append(newElement);
 }
 
-void MapContents::loadFlight(QFile igcFile)
+bool MapContents::loadFlight(QFile igcFile)
 {
   warning("MapContents::loadFlight(%s)", (const char*)igcFile.name());
 
@@ -1035,13 +1036,13 @@ void MapContents::loadFlight(QFile igcFile)
     {
       KMessageBox::error(0, i18n("The selected file") + "<BR><B>"
           + igcFile.name() + "</B><BR>" + i18n("does not exist!"));
-      return;
+      return false;
     }
   if(!fInfo.size())
     {
       KMessageBox::sorry(0, i18n("The selected file") + "<BR><B>"
           + igcFile.name() + "</B><BR>" + i18n("is empty!"));
-      return;
+      return false;
     }
   /*
    * Wir brauchen eine bessere Formatprüfung als nur die
@@ -1051,14 +1052,14 @@ void MapContents::loadFlight(QFile igcFile)
     {
       KMessageBox::error(0, i18n("The selected file") + "<BR><B>"
           + igcFile.name() + "</B><BR>" + i18n("is not an igc-file!"));
-      return;
+      return false;
     }
 
   if(!igcFile.open(IO_ReadOnly))
     {
       KMessageBox::error(0, i18n("You don't have permission to access file")
           + "<BR><B>" + igcFile.name() + "</B>", i18n("No permission"));
-      return;
+      return false;
     }
 
   QProgressDialog importProgress(0,0,true);
@@ -1080,15 +1081,25 @@ void MapContents::loadFlight(QFile igcFile)
 
   QString pilotName, gliderType, gliderID, date;
   char latChar, lonChar;
-  bool launched = false, append = true, isFirst = true;
-  int dt, lat, latmin, latTemp, lon, lonmin, lonTemp;
+  bool launched = false, append = true, isFirst = true, isFirstWP = true;
+  int dT, lat, latmin, latTemp, lon, lonmin, lonTemp;
   int hh = 0, mm = 0, ss = 0, curTime = 0, preTime = 0;
 
-  float vario, speed;
+  float v, speed;
+
+  struct flightPoint newPoint;
+  struct flightPoint prePoint;
+  QList<flightPoint> flightRoute;
+  QList<struct wayPoint> wpList;
+  struct wayPoint* newWP;
+  struct wayPoint* preWP;
+  QRect bBoxF, bBoxT;
+
+  extern const MapMatrix _globalMapMatrix;
 
   while (!stream.eof())
     {
-      if(importProgress.wasCancelled()) return;
+      if(importProgress.wasCancelled()) return false;
 
       s = stream.readLine();
       filePos += s.length();
@@ -1116,104 +1127,143 @@ void MapContents::loadFlight(QFile igcFile)
           lonTemp = lon * 600000 + lonmin * 10;
 
           if(latChar == 'S') latTemp = -latTemp;
-
           if(lonChar == 'W') lonTemp = -lonTemp;
 
           curTime = 3600 * hh + 60 * mm + ss;
-//          current.time = curTime;
-//          current.latitude = latTemp;
-//          current.longitude = lonTemp;
 
-//          sscanf(s.mid(25,10), "%5d%5d", &current.height, &current.gpsHeight);
+          newPoint.time = curTime;
+          newPoint.origP = QPoint(latTemp, lonTemp);
+          newPoint.projP = _globalMapMatrix.wgsToMap(newPoint.origP);
+
+          sscanf(s.mid(25,10),"%5d%5d", &newPoint.height, &newPoint.gpsHeight);
 
           if(isFirst)
             {
-//              oldPoint = current;
+              prePoint = newPoint;
               preTime = curTime;
               isFirst = false;
-//              current.distance = 0;
-//              current.dh = 0;
-//              current.dt = 0;
-//              speed = 0;
-//              vario = 0;
+              newPoint.dS = 0;
+              newPoint.dH = 0;
+              newPoint.dT = 0;
+              speed = 0;
+              v = 0;
+
+              bBoxF.setTop(newPoint.origP.x());
+              bBoxF.setBottom(newPoint.origP.x());
+              bBoxF.setLeft(newPoint.origP.y());
+              bBoxF.setRight(newPoint.origP.y());
+
               continue;
-            }
-          //
-          // dtime may change, even if the intervall, in wich the
-          // logger gets the position, is allways the same. If the
-          // intervall is f.e. 10 sec, dtime may change to 11 or 9 sec.
-          //
-          dt = curTime - preTime;
-//          current.dt = dt;
-//          current.dh = current.height - oldPoint.height;
-
-//          current.distance = (int)(dist(current.latitude, current.longitude,
-//                oldPoint.latitude, oldPoint.longitude) * 1000.0);
-
-
-          // prüfen ob noch nötig!!!
-//          double ddist = dist(current.latitude, current.longitude,
-//                  oldPoint.latitude, oldPoint.longitude);
-//          float dheight = current.height - oldPoint.height;
-
-//          speed = 3600 * ddist / dt;  // [km/h]
-//          vario = dheight / dt * 1.0; // [m/s]
-
-          if(launched)
-            {
-//              routeLength++;
-//              flightRoute = (struct flightPoint*) realloc(flightRoute,
-//                                     routeLength * sizeof(flightPoint));
-//              flightRoute[routeLength - 1] = current;
-              if(!append)
-                {
-                  if( ( speed > 10 ) &&
-                      ( ( vario > 0.5 ) || ( vario < -0.5 ) ) )
-                    {
-                      append = true;
-                    }
-                  else
-                    {
-                      // We are realy back on the ground, again.
-                      // Now we can stop reading the file!
-                      break;
-                    }
-                }
-              /*
-               * Die Landebedingungen sind, besonders bei einem großen
-               * Zeitabstand der Messungen noch nicht korrekt !
-               *
-               * Bedingung sollte über mehrere Punkte gehen
-               *
-               */
-              if( ( speed < 10 ) &&
-                  ( ( vario < 0.5 ) && ( vario > -0.5 ) ) )
-                {
-                  // We might be back on the ground, again.
-                  append = false;
-                }
             }
           else
             {
-              if((speed > 20) && (vario > 1.5))
+              bBoxF.setTop(MAX(newPoint.origP.x(), bBoxF.top()));
+              bBoxF.setBottom(MIN(newPoint.origP.x(), bBoxF.bottom()));
+              bBoxF.setLeft(MIN(newPoint.origP.y(), bBoxF.left()));
+              bBoxF.setRight(MAX(newPoint.origP.y(), bBoxF.right()));
+            }
+          /* dtime may change, even if the intervall, in wich the
+           * logger gets the position, is allways the same. If the
+           * intervall is f.e. 10 sec, dtime may change to 11 or 9 sec.
+           */
+          dT = curTime - preTime;
+          newPoint.dT = dT;
+          newPoint.dH = newPoint.height - prePoint.height;
+          newPoint.dS = (int)(dist(latTemp, lonTemp,
+              prePoint.origP.y(), prePoint.origP.x()) * 1000.0);
+
+          speed = 3600 * newPoint.dS / dT;  // [km/h]
+          v = newPoint.dH / dT * 1.0;       // [m/s]
+
+          if(launched)
+            {
+              flightRoute.append(new flightPoint);
+              *(flightRoute.last()) = newPoint;
+
+              if(!append)
+                {
+                  if( ( speed > 10 ) && ( ( v > 0.5 ) || ( v < -0.5 ) ) )
+                      append = true;
+                  else
+                      /* We are realy back on the ground, again.
+                       * Now we can stop reading the file!           */
+                      break;
+                }
+              /*
+               * Die Landebedingungen sind, besonders bei einem großen
+               * Zeitabstand der Messungen noch nicht korrekt!
+               *
+               * Bedingung sollte über mehrere Punkte gehen. Ausserdem
+               * eventuell anhand dS und dH erfolgen.
+               *
+               */
+              if( ( speed < 10 ) && ( ( v < 0.5 ) && ( v > -0.5 ) ) )
+                  /* We might be back on the ground, again. But
+                   * we wait for the next point.                     */
+                  append = false;
+            }
+          else
+            {
+              if( ( speed > 20 ) && ( v > 1.5 ) )
                 {
                   launched = true;
-//                  flightRoute = new flightPoint[2];
-//                  flightRoute[0] = oldPoint;
-//                  flightRoute[1] = current;
-//                  routeLength = 2;
+                  flightRoute.append(new flightPoint);
+                  *(flightRoute.last()) = prePoint;
+
+                  flightRoute.append(new flightPoint);
+                  *(flightRoute.last()) = newPoint;
                 }
             }
-//          oldPoint = current;
+          prePoint = newPoint;
           preTime = curTime;
         }
       else if(s.mid(0,1) == "C")
         {
           if( ( ( ( s.mid( 8,1) == "N" ) || ( s.mid( 8,1) == "S" ) ) ||
                 ( ( s.mid(17,1) == "W" ) || ( s.mid(17,1) == "E" ) ) ) &&
-              ( s.mid(18,20 ) != 0 ) )
+              ( s.mid(18,20) != 0 ) )
             {
               // We have a waypoint
+              sscanf(s.mid(1,17), "%2d%5d%1c%3d%5d%1c",
+                  &lat, &latmin, &latChar, &lon, &lonmin, &lonChar);
+              latTemp = lat * 600000 + latmin * 10;
+              lonTemp = lon * 600000 + lonmin * 10;
+
+              if(latChar == 'S') latTemp = -latTemp;
+              if(lonChar == 'W') lonTemp = -lonTemp;
+
+              newWP = new wayPoint;
+              newWP->name = s.mid(18,20);
+              newWP->origP = QPoint(latTemp, lonTemp);
+              newWP->projP = _globalMapMatrix.wgsToMap(newWP->origP);
+              newWP->sector1 = 0;
+              newWP->sector2 = 0;
+              newWP->sectorFAI = 0;
+              newWP->angle = -100;
+              newWP->type = Flight::NotSet;
+              if(isFirstWP)
+                {
+                  newWP->distance = 0;
+                  bBoxT.setTop(newWP->origP.x());
+                  bBoxT.setBottom(newWP->origP.x());
+                  bBoxT.setLeft(newWP->origP.y());
+                  bBoxT.setRight(newWP->origP.y());
+                }
+              else
+                {
+                  newWP->distance = dist(latTemp, lonTemp,
+                      preWP->origP.y(), preWP->origP.x());
+                  bBoxT.setTop(MAX(newWP->origP.x(), bBoxT.top()));
+                  bBoxT.setBottom(MIN(newWP->origP.x(), bBoxT.bottom()));
+                  bBoxT.setLeft(MIN(newWP->origP.y(), bBoxT.left()));
+                  bBoxT.setRight(MAX(newWP->origP.y(), bBoxT.right()));
+                }
+
+              if(!isFirstWP && newWP->distance <= 0.1)  continue;
+
+              wpList.append(newWP);
+              isFirstWP = false;
+              preWP = newWP;
             }
         }
       else if(s.mid(0,1) == "L")
@@ -1221,6 +1271,11 @@ void MapContents::loadFlight(QFile igcFile)
           // We have a comment. Let's ignore it ...
         }
     }
+
+  flightList.append(new Flight(flightRoute, bBoxF, pilotName, gliderType,
+      gliderID, wpList, bBoxT));
+
+  return true;
 }
 
 void MapContents::proofeSection()
@@ -1537,6 +1592,10 @@ void MapContents::drawList(QPainter* targetPainter, unsigned int listID)
       case TopoList:
         for(unsigned int loop = 0; loop < topoList.count(); loop++)
             topoList.at(loop)->drawMapElement(targetPainter);
+        break;
+      case FlightList:
+        for(unsigned int loop = 0; loop < flightList.count(); loop++)
+            flightList.at(loop)->drawMapElement(targetPainter);
         break;
       default:
         return;

@@ -336,7 +336,7 @@ void LineElement::drawMapElement(QPainter* targetPainter)
 //  projPointArray = newPA;
 //}
 
-bool LineElement::__isVisible()
+bool LineElement::__isVisible() const
 {
   extern const MapMatrix _globalMapMatrix;
   return _globalMapMatrix.isVisible(bBox);
