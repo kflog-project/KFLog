@@ -28,9 +28,12 @@ const int vMargin = 8;
 const int hMargin = 12;
 
 WhatsThat::WhatsThat( QWidget* w, const QString& txt, QWidget* parent, const char* name, int timeout, const QPoint * pos)
-    : QWidget( parent, name, WType_Popup ), text( txt ), pressed( FALSE ), widget( w ), suggestedPos(pos)
+    : QWidget( parent, name, WType_Popup ), text( txt ), pressed( FALSE ), widget( w )
 {
-
+    suggestedPos=0;
+    if (pos) {
+      suggestedPos=new QPoint(*pos);
+    }  
     setBackgroundMode( NoBackground );
     setPalette( QToolTip::palette() );
     setMouseTracking( TRUE );
