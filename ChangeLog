@@ -10,6 +10,8 @@ $Id$
 2003-04-27 André <andre@kflog.org>
   
   * Cleaned up and fixed handling of new waypoints.
+  
+  * Fixed crash on changing the projection with loaded tasks.
 
 
 2003-04-26 André <andre@kflog.org>
