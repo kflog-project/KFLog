@@ -36,6 +36,9 @@ struct flightPoint
   int height;
   /** The gps-height, registered by the logger. */
   int gpsHeight;
+  /** The elevation of the surface of the earth beyond this point.
+      will be filled when drawn on map */
+  int surfaceHeight;
   /** The time, the point was registered by the logger. */
   unsigned int time;
   /** The elevation difference to the previous Point*/

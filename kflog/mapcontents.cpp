@@ -1050,7 +1050,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   QDataStream in(&eingabe);
   in.setVersion(2);
 
-  Q_UINT8 typeIn, lm_typ;
+  Q_UINT8 typeIn, lm_typ, index;
   Q_INT8 loadTypeID, sort, elev;
   Q_UINT16 loadSecID, formatID;
   Q_INT32 lat_temp, lon_temp;
@@ -1143,13 +1143,16 @@ bool MapContents::__readBinaryFile(const int fileSecID,
             READ_POINT_LIST
             topoList.append(new LineElement(name, typeIn, tA, sort));
             break;
-          case BaseMapElement::Village:
+          case BaseMapElement::PopulationPlace:
+          // Maybe there is a problem because of the new field index for singlepoints
             if(formatID >= FILE_FORMAT_ID) in >> name;
             in >> lat_temp;
             in >> lon_temp;
-            villageList.append(new SinglePoint(name, "", typeIn,
-              WGSPoint(lat_temp, lon_temp),
-              _globalMapMatrix.wgsToMap(lat_temp, lon_temp)));
+
+            in >> index;
+            populationList.append(new SinglePoint(name, "", typeIn,
+                WGSPoint(lat_temp, lon_temp),
+                _globalMapMatrix.wgsToMap(lat_temp, lon_temp)));
             break;
           case BaseMapElement::Spot:
             if(formatID >= FILE_FORMAT_ID) in >> elev;
@@ -1157,7 +1160,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
             in >> lon_temp;
             obstacleList.append(new SinglePoint("Spot", "", typeIn,
               WGSPoint(lat_temp, lon_temp),
-              _globalMapMatrix.wgsToMap(lat_temp, lon_temp)));
+              _globalMapMatrix.wgsToMap(lat_temp, lon_temp), 0, index));
             break;
           case BaseMapElement::Landmark:
             if(formatID >= FILE_FORMAT_ID)
@@ -1866,8 +1869,8 @@ unsigned int MapContents::getListLength(int listIndex) const
       return reportList.count();
     case CityList:
       return cityList.count();
-    case VillageList:
-      return villageList.count();
+    case PopulationList:
+      return populationList.count();
     case LandmarkList:
       return landmarkList.count();
     case RoadList:
@@ -1922,8 +1925,8 @@ BaseMapElement* MapContents::getElement(int listIndex, unsigned int index)
       return reportList.at(index);
     case CityList:
       return cityList.at(index);
-    case VillageList:
-      return villageList.at(index);
+    case PopulationList:
+      return populationList.at(index);
     case LandmarkList:
       return landmarkList.at(index);
     case RoadList:
@@ -1959,8 +1962,8 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
         return obstacleList.at(index);
       case ReportList:
         return reportList.at(index);
-      case VillageList:
-        return villageList.at(index);
+      case PopulationList:
+        return populationList.at(index);
       case LandmarkList:
         return landmarkList.at(index);
 //      case StationList:
@@ -1987,7 +1990,7 @@ void MapContents::slotReloadMapData()
   obstacleList.clear();
   reportList.clear();
   cityList.clear();
-  villageList.clear();
+  populationList.clear();
   landmarkList.clear();
   roadList.clear();
   railList.clear();
@@ -2024,9 +2027,8 @@ void MapContents::printContents(QPainter* targetPainter, bool isText)
   for(unsigned int loop = 0; loop < cityList.count(); loop++)
       cityList.at(loop)->printMapElement(targetPainter, isText);
 
-//  for(unsigned int loop = 0; loop < villageList.count(); loop++)
-//      villageList.at(loop)->drawMapElement(targetPainter, isText);
-
+  for(unsigned int loop = 0; loop < populationList.count(); loop++)
+      populationList.at(loop)->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < navList.count(); loop++)
       navList.at(loop)->printMapElement(targetPainter, isText);
@@ -2093,10 +2095,10 @@ void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
         for(unsigned int loop = 0; loop < cityList.count(); loop++)
             cityList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
-//      case VillageList:
-//        for(unsigned int loop = 0; loop < villageList.count(); loop++)
-//            villageList.at(loop)->drawMapElement(targetPainter, maskPainter);
-//        break;
+      case PopulationList:
+        for(unsigned int loop = 0; loop < populationList.count(); loop++)
+            populationList.at(loop)->drawMapElement(targetPainter, maskPainter);
+        break;
       case LandmarkList:
         for(unsigned int loop = 0; loop < landmarkList.count(); loop++)
             landmarkList.at(loop)->drawMapElement(targetPainter, maskPainter);

@@ -22,7 +22,7 @@
 
 /**
  * Mapelement used for small objects. The object can be one of:
- * UltraLight, HangGlider, Parachute, Ballon, Village
+ * UltraLight, HangGlider, Parachute, Ballon, PopulationPlace
  * or Landmark. Consists only of a name and a position.
  *
  * @see BaseMapElement#objectType
@@ -44,10 +44,12 @@ class SinglePoint : public BaseMapElement
      * @param  typeID  The typeid
      * @param  pos  The projected position
      * @param  wgsPos  The original WGS-position
-     * @param elevation The elevation of the point when avaible
+     * @param  elevation The elevation of the point when avaible
+     * @param  index Additional field (eg. for the population index for cities)
      */
     SinglePoint(QString name, QString gps, unsigned int typeID,
-        WGSPoint wgsPos, QPoint pos, unsigned int elevation = 0);
+        WGSPoint wgsPos, QPoint pos, unsigned int elevation = 0,
+        unsigned int index = 0);
     /**
 	   * Destructor
 	   */
@@ -121,6 +123,10 @@ class SinglePoint : public BaseMapElement
      * The elevation.
      */
     unsigned int elevation;
+    /**
+     * Additional field
+     */
+    unsigned int index;
 };
 
 #endif

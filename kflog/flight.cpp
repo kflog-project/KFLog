@@ -413,6 +413,9 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       targetPainter->drawLine(curPointA, curPointB);
       maskPainter->drawLine(curPointA, curPointB);
 
+      /* tries to find the elevation of the surface under the point */
+      // send a signal with the curPointA, and the index of the point [ n * delta - (delta - 1) ] */
+      
       curPointA = curPointB;
     }
 }

@@ -113,7 +113,7 @@ class BaseMapElement
         Restricted = RESTRICTED, Tmz = TMZ, Obstacle = OBSTACLE,
         LightObstacle = LIGHT_OBSTACLE,
         ObstacleGroup = 36, LightObstacleGroup = 37, Spot = 38, Isohypse = 39,
-        Glacier = 40, PackIce = PACK_ICE, Border = 41, City = 42, Village = 43, Landmark = 44,
+        Glacier = 40, PackIce = PACK_ICE, Border = 41, City = 42, PopulationPlace = 43, Landmark = 44,
         Highway = 45, Road = 46, Railway = 47, AerialRailway = 48, Lake = 49,
         River = 50, Canal = 51, Flight = 52, Task = 53, FlightGroup = 54,
         Trail = TRAIL, Railway_D = RAILWAY_D, Aerial_Cable = AERIAL_CABLE,

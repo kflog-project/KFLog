@@ -234,7 +234,7 @@ switch to first task in file */
      */
     enum MapContentsListID {NotSet = 0, AirportList, GliderList,
         AddSitesList, OutList, NavList, AirspaceList, ObstacleList, ReportList,
-        CityList, VillageList, LandmarkList, HighwayList, HighwayEntryList,
+        CityList, PopulationList, LandmarkList, HighwayList, HighwayEntryList,
         RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
         WaypointList, DigitList, FlightList};
 
@@ -372,13 +372,13 @@ switch to first task in file */
      */
     QList<SinglePoint> reportList;
     /**
-     * cityList contails all cities.
+     * cityList contails all cities (areas).
      */
     QList<LineElement> cityList;
     /**
-     * villageList contains all villages.
+     * populationList contains all villages, towns & cities (points).
      */
-    QList<SinglePoint> villageList;
+    QList<SinglePoint> populationList;
     /**
      * landmarkList contains all landmarks.
      */

@@ -20,9 +20,10 @@
 #include <kstddirs.h>
 
 SinglePoint::SinglePoint(QString n, QString gps, unsigned int t,
-      WGSPoint wgsP, QPoint pos, unsigned int elev)
+      WGSPoint wgsP, QPoint pos, unsigned int elev, unsigned int ind)
   : BaseMapElement(n, t),
-    wgsPosition(wgsP), position(pos), gpsName(gps), curPos(pos), elevation(elev)
+    wgsPosition(wgsP), position(pos), gpsName(gps), curPos(pos), elevation(elev),
+    index(ind)
 {
 
 }
@@ -48,7 +49,7 @@ void SinglePoint::printMapElement(QPainter* printPainter, bool isText) const
    * Hier sollte mal für eine bessere Qualität der Icons gesorgt werden.
    * Eventuell kann man die Icons ja hier zeichnen lassen ?!?
    */
-  if(typeID == BaseMapElement::Village)
+  if(typeID == BaseMapElement::PopulationPlace)
     {
       printPainter->setPen(QPen(QColor(0,0,0), 2));
       printPainter->setBrush(QBrush::NoBrush);
@@ -76,7 +77,7 @@ void SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
   targetP->setPen(QPen(QColor(0,0,0), 2));
   int iconSize = 8;
 
-  if(typeID == BaseMapElement::Village)
+  if(typeID == BaseMapElement::PopulationPlace)
     {
       targetP->setBrush(QBrush::NoBrush);
       targetP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);

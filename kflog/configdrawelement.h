@@ -44,6 +44,7 @@ class ConfigDrawElement : public QFrame
     ~ConfigDrawElement();
     /** */
     enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
+        PPl_1, PPl_2, PPl_3, PPl_4, PPl_5,
         AirA, AirB, AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
         LowFlight, Restricted, TMZ, Forest, Trail, Railway_D, Aerial_Cable, River_T,
         Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500};
@@ -154,6 +155,13 @@ class ConfigDrawElement : public QFrame
     QList<QPen> canalPenList;
     QList<QPen> cityPenList;
     QList<QBrush> cityBrushList;
+    QList<QPen> ppl_1PenList;
+    QList<QPen> ppl_2PenList;
+    QList<QPen> ppl_3PenList;
+    QList<QPen> ppl_4PenList;
+    QList<QPen> ppl_5PenList;                
+
+    
     QList<QPen> forestPenList;
     QList<QPen> glacierPenList;
     QList<QPen> packicePenList;
@@ -197,6 +205,11 @@ class ConfigDrawElement : public QFrame
     bool* river_tBorder;
     bool* canalBorder;
     bool* cityBorder;
+    bool* ppl_1Border;
+    bool* ppl_2Border;
+    bool* ppl_3Border;
+    bool* ppl_4Border;
+    bool* ppl_5Border;                
 
     bool* forestBorder;
     bool* glacierBorder;

@@ -50,6 +50,7 @@
   width = (int)(( p_w / 25.4 ) * 72.0); \
   height = (int)(( p_h / 25.4 ) * 72.0);
 
+  
 MapPrintDialogPage::MapPrintDialogPage(QStringList sList, QWidget *parent,
     const char *name, bool printFlight)
   : KPrintDialogPage(parent,name),
@@ -180,10 +181,11 @@ MapPrint::MapPrint(bool flightLoaded)
 
   dialogPage = new MapPrintDialogPage(scaleList, 0, "MapPrintDialogPage", false);
 
+  
   KPrinter printer;
   printer.addDialogPage(dialogPage);
 
-  if(!printer.setup())  return;
+  if(!printer.setup(0, i18n("Map print"), true))  return;
 
   scaleRange = new double[6];
   scaleRange[0] = 1000.0 / 72 * 25.4;          /* 1:1.000.000 */
