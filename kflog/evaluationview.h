@@ -22,6 +22,7 @@
 #include <qpixmap.h>
 #include <qscrollview.h>
 #include <qwidget.h>
+#include "wp.h"
 
 class Flight;
 class EvaluationDialog;
@@ -81,12 +82,45 @@ class EvaluationView : public QWidget
   /** */
   QPoint __speedPoint(float speed_d[], int gn, int i);
 
+  /**
+   * Prepares the buffers for the pointer.
+   */
+  void preparePointer();
+  /**
+   * Draws a pointer to indicate the current position
+   */
+  void drawPointer(const flightPoint * p);
+  /**
+   * Removes the pointer
+   */
+  void removePointer(bool);
+  /**
+   * Returns whether currently a pointer is being displayed
+   */
+  bool isShowingPointer();
+  /**
+   * Coordinates of last pointer position
+   */
+  QPoint lastPointerPosition;
+   /**
+    * Contains a reference to a buffer that contains the pointer for the current position, so we only need to draw it once
+    */
+  QPixmap* pixPointer;
+   /**
+    * Contains a reference to the mask for @ref pixPointer
+    */
+  QBitmap* bitPointerMask;
+   /**
+    * Contains a reference to a buffer that contains the contents of the graph under the position where the pointer was drawn
+    */
+  QPixmap* pixPointerBuffer;
+  
   void __paintCursor(int xpos, int calt, int move, int cursor);
   /** Zeichnet die Kurven */
   void __draw();
   /** Zeichnet die Y Achse */
   void __drawYAxis();
-
+  
   /** Behält den Inhalt der Zeichnung. */
   QPixmap* pixBuffer;
   QPixmap* pixBufferYAxis;
@@ -126,6 +160,11 @@ class EvaluationView : public QWidget
 
 //  QPixmap pixCursor1;
 //  QPixmap pixCursor2;
+public slots: // Public slots
+  /** Shows a pointer under the time axis to indicate the position of flightPoint fp in the graph. If fp=0, then the flightpoint is removed. */
+  void slotShowPointer(const flightPoint * fp=0);
+
+  
 };
 
 #endif

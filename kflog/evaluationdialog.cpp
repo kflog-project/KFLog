@@ -301,3 +301,13 @@ void EvaluationDialog::hide()
 warning("EvaluationDialog::hide()");
 //  this->EvaluationDialog::~EvaluationDialog();
 }
+
+/** No descriptions */
+void EvaluationDialog::slotShowFlightPoint(const QPoint&, const flightPoint& fp){
+  emit(showFlightPoint(&fp));
+}
+
+/** No descriptions */
+void EvaluationDialog::slotRemoveFlightPoint(){
+  emit(showFlightPoint(0));
+}

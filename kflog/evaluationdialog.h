@@ -68,11 +68,17 @@ class EvaluationDialog : public QWidget
   void flightChanged();
   /** */
   void textChanged(QString);
+  /** No descriptions */
+  void showFlightPoint(const flightPoint* fp);
 
  public slots:
   /** */
   void slotShowFlightData();
   void hide();
+  /** No descriptions */
+  void slotShowFlightPoint(const QPoint&, const flightPoint&);
+  /** No descriptions */
+  void slotRemoveFlightPoint();
 
  protected:
   /**

@@ -43,7 +43,6 @@ class KFLogConfig;
 class KFLogStartLogo;
 class Waypoints;
 class flightPoint;
-class Tasks;
 class EvaluationDialog;
 class TopoLegend;
 class ObjectTree;
@@ -184,10 +183,6 @@ class KFLogApp : public KDockMainWindow
    */
   void slotToggleWaypointsDock();
   /**
-   * Shows or hides the tasks-widget.
-   */
-  void slotToggleTasksDock();
-  /**
    * Shows or hides the legend-widget.
    */
   void slotToggleObjectTreeDock();
@@ -288,11 +283,6 @@ class KFLogApp : public KDockMainWindow
    * undocked the widget.
    */
   void slotHideObjectTreeDock();
-  /**
-   * Hides the Tasks-widget. Called, when the user has closed or
-   * undocked the widget.
-   */
-  void slotHideTasksDock();
   /** set menu items enabled/disabled */
   void slotModifyMenu();
   /** */
@@ -362,12 +352,6 @@ class KFLogApp : public KDockMainWindow
    * @see taskAndWaypoint
    */
   KDockWidget* waypointsDock;
-  /**
-   * Dockwidget to handle the task-widget.
-   *
-   * @see tasks
-   */
-  KDockWidget* tasksDock;
   /**
    * Dockwidget to handle the legend-widget.
    *
@@ -535,9 +519,7 @@ class KFLogApp : public KDockMainWindow
   KAction* fileImportGardownFile;
   /** */
   KToggleAction* viewWaypoints;
-  /** */
-  KToggleAction* viewTasks;
-  /**
+   /**
    * Action to start the animation
    */		
   KAction* animateFlightStart;
@@ -585,10 +567,6 @@ class KFLogApp : public KDockMainWindow
    * The waypoints-widget.
    */
   Waypoints *waypoints;
-  /**
-   * The task-widget.
-   */
-  Tasks *tasks;
   /**
    * True, when the startup-window should be displayed.
    */

@@ -20,13 +20,15 @@
 
 #include <qwidget.h>
 #include <qlistview.h>
+#include <kpopupmenu.h>
+#include <kurl.h>
 
 class BaseFlightElement;
 class Flight;
 class FlightTask;
 
 /**
-  * @short Displays all currently loaded objects.
+  * @short KFLogBrowser - Displays all currently loaded objects.
   * @author André Somers
   *
   * This object is used to give the user an overview of the objects he has
@@ -46,6 +48,8 @@ public:
    * Destructor
    */
   ~ObjectTree();
+  void dragEnterEvent(QDragEnterEvent* event);
+  void dropEvent(QDropEvent* event);
 
 private:
   /**
@@ -69,7 +73,26 @@ private:
    * Contains a reference to the rootnode for tasks
    */
   QListViewItem * TaskRoot;
-  
+
+  KPopupMenu *taskPopup;
+  /**
+   * References for task-related items in the popupmenu
+   */
+  int idTaskEdit;
+  int idTaskDelete;
+  int idTaskSave;
+  int idTaskSaveAll;
+  /**
+   * References for flight-related items in the popupmenu
+   */
+  int idFlightClose;
+  int idFlightOptimize;
+  int idFlightOptimizeOLC;
+
+  BaseFlightElement* currentFlightElement;
+  int currentFlightElementType();
+  QString path;
+   
 public slots: // Public slots
   /**
    * Called if a new flight has been added.
@@ -85,18 +108,57 @@ public slots: // Public slots
   void slotSelectedFlightChanged(BaseFlightElement *);
   /** Signaled if the current flight was somehow changed.  */
   void slotFlightChanged();
+  void slotNewTask();
+  /** Signaled if a flightelement is going to be closed. Used to remove the item from the list. */
+  void slotCloseFlight(BaseFlightElement*);
+
+private slots: // Private slots
+  /** No descriptions */
+  void slotOpenTask();
+  void slotEditTask();
+  void slotDeleteTask();
+  void slotSaveTask();
+  void slotSaveAllTask();
+  //void slotSelectTask(QListViewItem *item);
+  void showTaskPopup(QListViewItem *it, const QPoint &, int);
+  /**
+   * Called if the selection has changed.
+   */
+  void slotSelected(QListViewItem *);
 
 signals: // Signals
   /**
    * Send out whenever the user selects a flight, task, or flightgroup
    */
   void selectedFlight(BaseFlightElement *);
-
-private slots: // Private slots
   /**
-   * Called if the selection has changed.
+   * indicate that a new task should be created
    */
-  void slotSelected(QListViewItem *);
+  void newTask();
+  /**
+   * indicate that a task should be opened. Is used to show the OpenTask dialog
+   */
+  void openTask();
+  /**
+   * indicate that a baseflightelement should be closed
+   */
+  void closeTask();
+  /**
+   * indicate that a flight should be opened. Is used to show the OpenFlight dialog
+   */
+  void openFlight();
+  /**
+   * Indicate that a file should be opened
+   */
+  void openFile(const KURL&);
+  /**
+   * Indicate that the current flight should be optimized
+   */
+  void optimizeFlight();
+  /**
+   * Indicate that the current flight should be optimized for OLC declaration
+   */
+  void optimizeFlightOLC();
 
 protected: // Protected methods
   /**
@@ -105,6 +167,9 @@ protected: // Protected methods
    * @returns a pointer to the QListViewItem if found, 0 otherwise.
    */
   QListViewItem * findFlightElement(BaseFlightElement * bfe);
+  /** No descriptions */
+  void addTaskWindow(QWidget *parent);
+  void addPopupMenu();
 };
 
 #endif

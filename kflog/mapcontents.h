@@ -307,7 +307,11 @@ switch to first task in file */
      * Emitted if the current flight has changed.
      */
     void currentFlightChanged(BaseFlightElement*);
-
+    /**
+     * Emitted if a flight (task/group) is about to be closed
+     */
+    void closingFlight(BaseFlightElement*);
+    
   private:
 
     // Short structure to handle the optional entries in an igc file

@@ -63,7 +63,6 @@
 #include "recorderdialog.h"
 #include "taskdataprint.h"
 #include "waypoints.h"
-#include "tasks.h"
 #include "igc3ddialog.h"
 #include "basemapelement.h"
 #include "airport.h"
@@ -161,7 +160,9 @@ KFLogApp::KFLogApp()
       this, SLOT(slotShowPointInfo(const QPoint&)));
   connect(&_globalMapContents, SIGNAL(contentsChanged()),map, SLOT(slotRedrawMap()));
   slotModifyMenu();
-
+  connect(map, SIGNAL(showPoint(const QPoint&)), evaluationWindow, SLOT(slotRemoveFlightPoint()));
+  connect(map, SIGNAL(showFlightPoint(const QPoint&, const flightPoint&)),
+      evaluationWindow, SLOT(slotShowFlightPoint(const QPoint&, const flightPoint&)));
   KTipDialog::showTip(this, "kflog/tips");
 }
 
@@ -180,6 +181,8 @@ void KFLogApp::initActions()
   new KAction(i18n("&Open Flight"), "fileopen",
       KStdAccel::key(KStdAccel::Open), this, SLOT(slotFileOpen()),
       actionCollection(), "file_open");
+  new KAction(i18n("&Open Task"), "fileopen",  CTRL+Key_T,
+      this, SLOT(slotTaskOpen()), actionCollection(), "file_open_task");
 
   fileOpenRecent = KStdAction::openRecent(this,
       SLOT(slotFileOpenRecent(const KURL&)), actionCollection());
@@ -278,38 +281,39 @@ void KFLogApp::initActions()
    * we urgently need icons for this actions in order to
    * place them in the toolbar!!!
    */
-  viewData = new KToggleAction(i18n("Show Flightdata"), 0, this,
-      SLOT(slotToggleDataView()), actionCollection(), "toggle_data_view");
-  viewHelpWindow = new KToggleAction(i18n("Show HelpWindow"), 0,
-      CTRL+Key_H, this, SLOT(slotToggleHelpWindow()), actionCollection(),
-      "toggle_help_window");
-  viewEvaluationWindow = new KToggleAction(i18n("Show EvaluationWindow"), 0,
-      CTRL+Key_E, this, SLOT(slotToggleEvaluationWindow()), actionCollection(),
-      "toggle_evaluation_window");      
-  viewMapControl = new KToggleAction(i18n("Show Mapcontrol"), 0, this,
-      SLOT(slotToggleMapControl()), actionCollection(), "toggle_map_control");
-  viewMap = new KToggleAction(i18n("Show Map"), 0, this,
-      SLOT(slotToggleMap()), actionCollection(), "toggle_map");
   viewToolBar = KStdAction::showToolbar(this, SLOT(slotViewToolBar()),
       actionCollection());
   viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()),
       actionCollection());
 
+  viewData = new KToggleAction(i18n("Show Flight&data"), "view_detailed", 0, this,
+      SLOT(slotToggleDataView()), actionCollection(), "toggle_data_view");
+
+  viewHelpWindow = new KToggleAction(i18n("Show &HelpWindow"), "info",
+      CTRL+Key_H, this, SLOT(slotToggleHelpWindow()), actionCollection(),
+      "toggle_help_window");
+
+  viewEvaluationWindow = new KToggleAction(i18n("Show &EvaluationWindow"), "history",
+      CTRL+Key_E, this, SLOT(slotToggleEvaluationWindow()), actionCollection(),
+      "toggle_evaluation_window");      
+
+  viewMapControl = new KToggleAction(i18n("Show Map&control"), 0, this,
+      SLOT(slotToggleMapControl()), actionCollection(), "toggle_map_control");
+
+  viewMap = new KToggleAction(i18n("Show &Map"), 0, this,
+      SLOT(slotToggleMap()), actionCollection(), "toggle_map");
+
   // We can't use CTRL-W, because this shortcut is reserved for closing a file ...
-  viewWaypoints = new KToggleAction(i18n("Show waypoints"), "waypoint",
+  viewWaypoints = new KToggleAction(i18n("Show &Waypoints"), "waypoint",
       CTRL+Key_R, this, SLOT(slotToggleWaypointsDock()), actionCollection(),
       "waypoints");
 
-  viewTasks = new KToggleAction(i18n("Show tasks"), "task",
-      CTRL+Key_T, this, SLOT(slotToggleTasksDock()), actionCollection(),
-      "tasks");
-
-  viewLegend = new KToggleAction(i18n("Show legend"), 0,
+  viewLegend = new KToggleAction(i18n("Show &Legend"), "blend",
       CTRL+Key_L, this, SLOT(slotToggleLegendDock()), actionCollection(),
       "toggle_legend");
 
-  viewObjectTree = new KToggleAction(i18n("Show object tree"), "view_tree",
-      CTRL+Key_O, this, SLOT(slotToggleObjectTreeDock()), actionCollection(),
+  viewObjectTree = new KToggleAction(i18n("Show KFLog&Browser"), "view_tree",
+      CTRL+Key_B, this, SLOT(slotToggleObjectTreeDock()), actionCollection(),
       "toggle_objectTree");
 
   flightOptimization = new KAction(i18n("Optimize"), "wizard", 0,
@@ -426,7 +430,7 @@ void KFLogApp::initActions()
 
   KActionMenu *m = new KActionMenu(i18n("&New"), "filenew", actionCollection(), "file_new");
   m->popupMenu()->insertItem(SmallIcon("waypoint"), i18n("&Waypoint"), waypoints, SLOT(slotNewWaypoint()));
-  m->popupMenu()->insertItem(SmallIcon("task"), i18n("&Task"), &_globalMapContents, SLOT(slotNewTask()));
+  m->popupMenu()->insertItem(SmallIcon("task"), i18n("&Task"), &_globalMapContents, SLOT(slotNewTask()), CTRL+Key_N);
   m->popupMenu()->insertItem(i18n("&Flight group"), &_globalMapContents, SLOT(slotNewFlightGroup()));
 
   createGUI();
@@ -475,7 +479,6 @@ void KFLogApp::initView()
   evaluationWindowDock = createDockWidget("Evaluation", 0, 0, i18n("Evaluation"));    
   mapControlDock = createDockWidget("Map-Control", 0, 0, i18n("Map-Control"));
   waypointsDock = createDockWidget("Waypoints", 0, 0, i18n("Waypoints"));
-  tasksDock = createDockWidget("Tasks", 0, 0, i18n("Tasks"));
   legendDock = createDockWidget("Legend", 0, 0, i18n("Legend"));
   objectTreeDock = createDockWidget("LoadedObjects", 0, 0, i18n("KFLog Browser"));
   extern MapContents _globalMapContents;
@@ -505,11 +508,7 @@ void KFLogApp::initView()
       SLOT(slotHideWaypointsDock()));
   connect(waypointsDock, SIGNAL(hasUndocked()),
       SLOT(slotHideWaypointsDock()));
-  connect(tasksDock, SIGNAL(iMBeingClosed()),
-      SLOT(slotHideTasksDock()));
-  connect(tasksDock, SIGNAL(hasUndocked()),
-      SLOT(slotHideTasksDock()));
-  connect(legendDock, SIGNAL(iMBeingClosed()),
+   connect(legendDock, SIGNAL(iMBeingClosed()),
       SLOT(slotHideLegendDock()));
   connect(legendDock, SIGNAL(hasUndocked()),
       SLOT(slotHideLegendDock()));
@@ -546,9 +545,6 @@ void KFLogApp::initView()
   waypoints = new Waypoints(waypointsDock);
   waypointsDock->setWidget(waypoints);
 
-  tasks = new Tasks(tasksDock);
-  tasksDock->setWidget(tasks);
-
   legend = new TopoLegend(legendDock);
   legendDock->setWidget(legend);
 
@@ -567,14 +563,11 @@ void KFLogApp::initView()
   evaluationWindowDock->manualDock( mapViewDock, KDockWidget::DockDesktop);      
   waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 70);
   legendDock->manualDock(waypointsDock, KDockWidget::DockRight, 90);
-  tasksDock->manualDock(waypointsDock, KDockWidget::DockCenter, 50 );  
   
   connect(map, SIGNAL(changed(QSize)), mapControl,
       SLOT(slotShowMapData(QSize)));
   connect(map, SIGNAL(waypointSelected(Waypoint *)), waypoints,
     SLOT(slotAddWaypoint(Waypoint *)));
-  connect(map, SIGNAL(taskPlanningEnd()), tasks,
-    SLOT(slotUpdateTask()));
   connect(map, SIGNAL(elevation(int)), legend, SLOT(highlightLevel(int)));
   connect(map, SIGNAL(regWaypointDialog(QWidget *)), this, SLOT(slotRegisterWaypointDialog(QWidget *)));
   
@@ -595,8 +588,6 @@ void KFLogApp::initView()
       SLOT(slotShowCurrentFlight()));
   connect(&_globalMapContents, SIGNAL(currentFlightChanged()), dataView,
       SLOT(setFlightData()));
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), tasks,
-      SLOT(setCurrentTask()));
   connect(&_globalMapContents, SIGNAL(newFlightAdded(Flight*)), objectTree,
       SLOT(slotNewFlightAdded(Flight*)));
   connect(&_globalMapContents, SIGNAL(newTaskAdded(FlightTask*)), objectTree,
@@ -610,21 +601,21 @@ void KFLogApp::initView()
   connect(waypoints, SIGNAL(waypointCatalogChanged( WaypointCatalog * )),
       map, SLOT(slotWaypointCatalogChanged( WaypointCatalog * )));
 
-  connect(tasks, SIGNAL(newTask()), &_globalMapContents,
-      SLOT(slotNewTask()));
-  connect(tasks, SIGNAL(openTask()), this, SLOT(slotTaskOpen()));
-  connect(tasks, SIGNAL(closeTask()), &_globalMapContents, SLOT(closeFlight()));
-  connect(tasks, SIGNAL(flightSelected(BaseFlightElement *)),
-      &_globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
-  connect(&_globalMapContents, SIGNAL(newTaskAdded(FlightTask *)),
-      tasks, SLOT(slotAppendTask(FlightTask *)));
-
   connect(waypoints, SIGNAL(centerMap(int, int)),
       &_globalMapMatrix, SLOT(slotCenterTo(int, int)));
 
-  connect(objectTree, SIGNAL(selectedFlight(BaseFlightElement *)),
-      &_globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
+  connect(objectTree, SIGNAL(selectedFlight(BaseFlightElement *)), &_globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
+  connect(objectTree, SIGNAL(newTask()), &_globalMapContents, SLOT(slotNewTask()));
+  connect(objectTree, SIGNAL(openTask()), this, SLOT(slotTaskOpen()));
+  connect(objectTree, SIGNAL(closeTask()), &_globalMapContents, SLOT(closeFlight()));
+  connect(objectTree, SIGNAL(openFlight()), this, SLOT(slotFileOpen()));
+  connect(objectTree, SIGNAL(openFile(const KURL&)), this, SLOT(slotFileOpenRecent(const KURL&)));
+  connect(objectTree, SIGNAL(optimizeFlight()), this, SLOT(slotOptimizeFlight()));
+  connect(objectTree, SIGNAL(optimizeFlightOLC()), this, SLOT(slotOptimizeFlightOLC()));
 
+  connect(&_globalMapContents, SIGNAL(closingFlight(BaseFlightElement*)),
+      objectTree, SLOT(slotCloseFlight(BaseFlightElement*)));
+  
   connect(&_globalMapContents, SIGNAL(currentFlightChanged()),
       evaluationWindow, SLOT(slotShowFlightData()));
 
@@ -738,6 +729,7 @@ void KFLogApp::slotFileOpen()
       i18n("Select IGC-File"), true);
   IGCPreview* preview = new IGCPreview(dlg);
   dlg->setPreviewWidget(preview);
+  dlg->setCaption(i18n("Open flight"));
   dlg->exec();
 
   KURL fUrl = dlg->selectedURL();
@@ -773,14 +765,22 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
   if(url.isLocalFile())
     {
       QFile file (url.path());
-      if(_globalMapContents.loadFlight(file))
-        {
-          // Just a workaround. It's the only way to not have the item
-          // checked after loading the flight. Otherwise we had to take
-          // care that the item is unchecked, when the flight is closed ...
+      if (url.filename().right(9).lower()==".kflogtsk") {
+        //this is probably a taskfile. Try to open it as a task
+        if (_globalMapContents.loadTask(file))
           fileOpenRecent->setCurrentItem(-1);
-        }
-    }
+
+      } else {
+        //try to open as flight      
+        if(_globalMapContents.loadFlight(file))
+          {
+            // Just a workaround. It's the only way to not have the item
+            // checked after loading the flight. Otherwise we had to take
+            // care that the item is unchecked, when the flight is closed ...
+            fileOpenRecent->setCurrentItem(-1);
+          } //loadFile
+       } // .kflogtsk
+    } //isLocalFile
 
   slotStatusMsg(i18n("Ready."));
 }
@@ -891,8 +891,6 @@ void KFLogApp::slotHideEvaluationWindowDock()  { viewEvaluationWindow->setChecke
 
 void KFLogApp::slotHideWaypointsDock() { viewWaypoints->setChecked(false); }
 
-void KFLogApp::slotHideTasksDock() { viewTasks->setChecked(false); }
-
 void KFLogApp::slotHideLegendDock() { viewLegend->setChecked(false); }
 
 void KFLogApp::slotHideObjectTreeDock() { viewObjectTree->setChecked(false); }
@@ -905,8 +903,8 @@ void KFLogApp::slotCheckDockWidgetStatus()
   viewHelpWindow->setChecked(helpWindowDock->isVisible());
   viewEvaluationWindow->setChecked(evaluationWindowDock->isVisible());    
   viewWaypoints->setChecked(waypointsDock->isVisible());
-  viewTasks->setChecked(tasksDock->isVisible());
   viewLegend->setChecked(legendDock->isVisible());
+  viewObjectTree->setChecked(objectTreeDock->isVisible());
 }
 
 void KFLogApp::slotToggleDataView()  { dataViewDock->changeHideShowState(); }
@@ -920,8 +918,6 @@ void KFLogApp::slotToggleMapControl() { mapControlDock->changeHideShowState(); }
 void KFLogApp::slotToggleMap() { mapViewDock->changeHideShowState(); }
 
 void KFLogApp::slotToggleWaypointsDock() { waypointsDock->changeHideShowState(); }
-
-void KFLogApp::slotToggleTasksDock() { tasksDock->changeHideShowState(); }
 
 void KFLogApp::slotToggleLegendDock() { legendDock->changeHideShowState(); }
 
@@ -1375,6 +1371,7 @@ void KFLogApp::slotTaskOpen()
 
   KFileDialog* dlg = new KFileDialog(flightDir, "*.kflogtsk *.KFLOGTSK", this,
       i18n("Select Task-File"), true);
+  dlg->setCaption(i18n("Open task"));
   dlg->exec();
 
   KURL fUrl = dlg->selectedURL();
@@ -1396,7 +1393,8 @@ void KFLogApp::slotTaskOpen()
   flightDir = fInfo.dirPath();
   extern MapContents _globalMapContents;
   QFile file(fName);
-  _globalMapContents.loadTask(file);
+  if (_globalMapContents.loadTask(file))
+      fileOpenRecent->addURL(fUrl);
 
   slotStatusMsg(i18n("Ready."));
 }

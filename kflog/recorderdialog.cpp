@@ -102,14 +102,6 @@ RecorderDialog::RecorderDialog(QWidget *parent, KConfig* cnf, const char *name)
 
   setMinimumWidth(500);
   setMinimumHeight(350);
-
-  // First: disable all pages but the first, for we must connect
-  // to the recorder prior any other action
-
-  flightPage->setEnabled( false );
-  waypointPage->setEnabled( false );
-  taskPage->setEnabled( false );
-  declarationPage->setEnabled( false );
 }
 
 RecorderDialog::~RecorderDialog()
@@ -159,6 +151,7 @@ void RecorderDialog::__addSettingsPage()
   selectBaud->insertItem("38400");
   selectBaud->insertItem("19200");
   selectBaud->insertItem("9600");
+  selectBaud->insertItem("4800");
 
   cmdConnect = new QPushButton(i18n("Connect recorder"), settingsPage);
   cmdConnect->setMaximumWidth(cmdConnect->sizeHint().width() + 5);
@@ -256,13 +249,14 @@ void RecorderDialog::__addSettingsPage()
                        i18n("There are no recorder-libraries installed."),
                        i18n("No recorders installed."));
   }
-
+  
   libNameList.clear();
 
   config->setGroup("Recorder Dialog");
   selectPort->setCurrentItem(config->readNumEntry("Port", 0));
   selectBaud->setCurrentItem(config->readNumEntry("Baud", 0));
   QString name(config->readEntry("Name", 0));
+  QString pluginName;
   selectURL->setText(config->readEntry("URL", ""));
   config->setGroup(0);
 
@@ -276,15 +270,16 @@ void RecorderDialog::__addSettingsPage()
       warning(i18n("Configfile %1 is corrupt!").arg((*it).latin1()));
     }
     loggerConf->setGroup("Logger Data");
-    selectType->insertItem(loggerConf->readEntry("Name"));
-    if(loggerConf->readEntry("Name") == name) {
-      typeID = typeLoop;
-    }
-    libNameList.append(loggerConf->readEntry("LibName"));
+    pluginName=loggerConf->readEntry("Name");
+    selectType->insertItem(pluginName);
+    libNameList.insert(pluginName, new QString(loggerConf->readEntry("LibName")));
     typeLoop++;
   }
 
-  selectType->setCurrentItem(typeID);
+  //sort if this style uses a listbox for the combobox
+  if (selectType->listBox()) selectType->listBox()->sort();
+  
+  selectType->setCurrentText(name);
   slotRecorderTypeChanged(selectType->text(typeID));
 
   connect(cmdConnect, SIGNAL(clicked()), SLOT(slotConnectRecorder()));
@@ -637,8 +632,9 @@ void RecorderDialog::slotConnectRecorder()
   if (!activeRecorder)
     return;
   portName = "/dev/" + selectPort->currentText();
-  QStringList::Iterator it = libNameList.at(selectType->currentItem());
-  QString name = (*it).latin1();
+  //QStringList::Iterator it = libNameList.at(selectType->currentItem());
+  //QString name = (*it).latin1();
+  QString name=*libNameList[selectType->currentText()];
   int baud = selectBaud->currentText().toInt();
 
   if(!__openLib(name)) {
@@ -1316,9 +1312,9 @@ void RecorderDialog::slotEnablePages()
 /** No descriptions */
 void RecorderDialog::slotRecorderTypeChanged(const QString&) // name)
 {
-  QStringList::Iterator it = libNameList.at(selectType->currentItem());
-  QString name = (*it).latin1();
-
+  //QStringList::Iterator it = libNameList.at(selectType->currentItem());
+  //QString name = (*it).latin1();
+  QString name = *libNameList[selectType->currentText()];
   if(isOpen && libName != name) {
     // closing old lib
     dlclose(libHandle);

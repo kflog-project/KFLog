@@ -27,6 +27,7 @@
 #include <qpushbutton.h>
 #include <qstringlist.h>
 #include <qwidget.h>
+#include <qdict.h>
 
 #include "frstructs.h"
 #include "waypointcatalog.h"
@@ -46,38 +47,66 @@ class RecorderDialog : public KDialogBase
   Q_OBJECT
 
   public:
-    /** */
+    /**
+     * Constructor
+     */
     RecorderDialog(QWidget *parent, KConfig* cnf, const char *name);
-    /** */
+    /**
+     * Destructor
+     */
     ~RecorderDialog();
 
   public slots:
-    /** */
+    /**
+     * Connects the currently selected recorder using the information entered (bautrate, port, URL, etc.)
+     */
     void slotConnectRecorder();
-    /** */
+    /**
+     * Read the flightlist from the recorder
+     */
     void slotReadFlightList();
-    /** */
+    /**
+     * Downloads the currently selected flight from the recorder. You need to call slotReadFlightList before calling this slot.
+     */
     void slotDownloadFlight();
-    /** */
+    /**
+     * Sends a declaration to the recorder
+     */
     void slotWriteDeclaration();
-    /** */
+    /**
+     * Reads the tasks from the recorder
+     */
     void slotReadTasks();
-    /** */
+    /**
+     * Writes the tasks to the recorder
+     */
     void slotWriteTasks();
-    /** */
+    /**
+     * Close the connection with the recorder
+     */
     void slotCloseRecorder();
-    /** */
+    /**
+     * Reads the data on things like pilotnames from the flightrecorder
+     */
     void slotReadDatabase();
-    /** */
+    /**
+     * Reads the waypointlist from the recorder
+     */
     void slotReadWaypoints();
-    /** */
+    /**
+     * Writes the waypointlist to the recorder
+     */
     void slotWriteWaypoints();
   private:
     /** */
     int __fillDirList();
-    /** */
+    /**
+     * Opens the library with the indicated name
+     */
     int __openLib(const QString& libN);
-    /** */
+    /**
+     * Creates and add the Settings page (the first page) to the dialog
+     */
     void __addSettingsPage();
     void __setRecorderConnectionType(FlightRecorderPluginBase::TransferMode);
     void __setRecorderCapabilities();
@@ -161,8 +190,10 @@ class RecorderDialog : public KDialogBase
     QPtrList<FRDirEntry> dirList;
     QPtrList<FlightTask> *tasks;
     WaypointList *waypoints;
-    /** */
-    QStringList libNameList;
+    /**
+     * Contains a list of librarynames wich can be accessed using the displayed name from the dropdown as a key
+     */
+    QDict<QString> libNameList;
     /** */
     int colID;
     int colDate;

@@ -222,6 +222,7 @@ void MapContents::closeFlight()
   BaseFlightElement *f = flightList.current();
   if(f != 0)
     {
+      emit closingFlight(f);
       for (unsigned int i = 0; i < flightList.count(); i++)
         {
           FlightGroup *fg = (FlightGroup *) flightList.at(i);
@@ -232,7 +233,7 @@ void MapContents::closeFlight()
 
       flightList.remove(f);
       if (flightList.current() == 0) flightList.last();
-
+  
       emit currentFlightChanged();
     }
 }

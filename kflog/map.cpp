@@ -373,6 +373,10 @@ void Map::mouseMoveEvent(QMouseEvent* event)
               preIndex = index;
               bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
             }
+          else
+            {
+              emit showPoint(_globalMapMatrix.mapToWgs(event->pos()));
+            } 
         }
       else
         {
