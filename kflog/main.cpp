@@ -95,6 +95,8 @@ int main(int argc, char *argv[])
       qstrdup(i18n("Developer (Waypoint-Dialog, Task-handling)")), "harry@kflog.org");
   aboutData.addAuthor("Thomas Nielsen",
       qstrdup(i18n("Developer (3D-Dialog)")), "thomas@kflog.org");
+  aboutData.addAuthor("Christof Bodner",
+      qstrdup(i18n("Developer (OLC Optimization)")), "christof@kflog.org");
 
   aboutData.setTranslator(qstrdup(i18n("_: NAME OF TRANSLATORS\nYour names")),
     qstrdup(i18n("_: EMAIL OF TRANSLATORS\nYour emails")));

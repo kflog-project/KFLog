@@ -44,6 +44,10 @@ class OLCDialog : public QDialog
     OLCDialog(QWidget* parent, const char* name, Flight* currentFlight);
     /** */
     ~OLCDialog();
+    /** Returns the number of days after the 1.1.1601.
+        This function is proposed in http://www.lalue.de/StrePla2/OLC/index.html
+     */
+    static unsigned int date_julian(QDate date);
 
   public slots:
     /**
@@ -68,7 +72,7 @@ class OLCDialog : public QDialog
     /** */
     KListView* taskList;
     /** */
-    KRestrictedLine* daec;
+//    KRestrictedLine* daec;
     /** */
     QCheckBox* pureGlider;
     /** */

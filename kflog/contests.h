@@ -21,7 +21,7 @@
 struct olc_contest
 {
   char name[30];
-  char URL[5];
+  char URL[100];
   int index;
 };
 

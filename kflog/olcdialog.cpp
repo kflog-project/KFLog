@@ -111,13 +111,13 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
   pilotB->setMaximumWidth(pilotB->sizeHint().width() + 10);
   pilotB->setMaximumHeight(pilotB->sizeHint().height() + 10);
 
-  QPushButton* gliderB = new QPushButton(midFrame);
-  gliderB->setPixmap(BarIcon("find"));
-  gliderB->setMaximumWidth(pilotB->sizeHint().width() + 10);
-  gliderB->setMaximumHeight(pilotB->sizeHint().height() + 10);
+//  QPushButton* gliderB = new QPushButton(midFrame);
+//  gliderB->setPixmap(BarIcon("find"));
+//  gliderB->setMaximumWidth(pilotB->sizeHint().width() + 10);
+//  gliderB->setMaximumHeight(pilotB->sizeHint().height() + 10);
   gliderType=new KComboBox(midFrame);
   gliderID = new KLineEdit(midFrame);
-  daec = new KRestrictedLine(midFrame, "daec", "0123456789");
+//  daec = new KRestrictedLine(midFrame, "daec", "0123456789");
 
   pureGlider = new QCheckBox(i18n("pure glider"), midFrame);
   classSelect = new KComboBox(midFrame);
@@ -162,11 +162,11 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
 
   dlgLayout->addWidget(new QLabel(i18n("Glidertype"), midFrame), 8, 1);
   dlgLayout->addWidget(new QLabel(i18n("Glider-ID"), midFrame), 8, 5);
-  dlgLayout->addWidget(new QLabel(i18n("DAEC-Index"), midFrame), 8, 9);
+//  dlgLayout->addWidget(new QLabel(i18n("DAEC-Index"), midFrame), 8, 9);
   dlgLayout->addWidget(gliderType, 8, 3);
   dlgLayout->addWidget(gliderID, 8, 7);
-  dlgLayout->addWidget(daec, 8, 11);
-  dlgLayout->addWidget(gliderB, 8, 13, Qt::AlignLeft);
+//  dlgLayout->addWidget(daec, 8, 11);
+//  dlgLayout->addWidget(gliderB, 8, 13, Qt::AlignLeft);
   dlgLayout->addWidget(new QLabel(i18n("Class"), midFrame), 10, 1);
   dlgLayout->addMultiCellWidget(classSelect, 10, 10, 3, 5);
   dlgLayout->addMultiCellWidget(pureGlider, 10, 10, 9, 11);
@@ -278,7 +278,11 @@ void OLCDialog::__fillDataFields()
       item->setText(taskColDist, temp);
 
       unsigned int time;
-      if(wpList.at(loop)->sectorFAI != 0)
+      if (wpList.at(loop)->fixTime != 0)
+        {
+          time = wpList.at(loop)->fixTime;
+        }
+      else if(wpList.at(loop)->sectorFAI != 0)
         {
           time = wpList.at(loop)->sectorFAI;
         }
@@ -354,7 +358,7 @@ void OLCDialog::slotSend()
   QString link;
 
   // ungeklärte Felder:
-  QString index(daec->text());
+//  QString index(daec->text());
 //  QString index("100");     // Sollte sowieso mal in eine Config-Datei ...
   QString glider("0");
   if(pureGlider->isChecked()) {  glider = "1";  }    // "1" for pure glider
@@ -417,8 +421,8 @@ void OLCDialog::slotSend()
 
   // glider info
 //  link = link + "&gty=" + currentFlight->getHeader().at(2)
-    link += "&gty=" + QString(gliderList[gliderType->currentItem()].value)
-      + "&ind=" + QString("%1").arg(gliderList[gliderType->currentItem()].index)
+    link += "&igty=" + QString(gliderList[gliderType->currentItem()].value)
+//      + "&ind=" + QString("%1").arg(gliderList[gliderType->currentItem()].index)
 //      + "&gid=" + currentFlight->getHeader().at(1)
       + "&gid=" + gliderID->text()
       + "&klasse=" + compClass + "&flugzeug=" + glider;
@@ -431,7 +435,9 @@ void OLCDialog::slotSend()
   link += "&igcfn=" + currentFlight->getFileName().section("/",-1,-1) + // strip path
           "&sta=" + startPoint->text() +
           // the following is a hack! it's probably only valid in 2003
-          "&ft=" + QString("%1").arg(-flightDate.daysTo(QDate( 2003, 1, 1 ))+146827);
+//          "&ft=" + QString("%1").arg(-flightDate.daysTo(QDate( 2003, 1, 1 ))+146827);
+          "&ft=" + QString("%1").arg(date_julian(flightDate));
+          
 
   QString latH("N"), latG, latM, latMD;
   QString lonH("E"), lonG, lonM, lonMD;
@@ -476,7 +482,8 @@ void OLCDialog::slotSend()
       link += "&s4=" + printTime(currentFlight->getLandTime(), true);
       break;
   case (FlightTask::OLC2003) :
-      link += "&s0=" + printTime(t.getWPList().at(1)->sectorFAI,true);
+      link += "&t0=" + printTime(t.getWPList().at(0)->sectorFAI,true);
+      link += "&s0=" + printTime(t.getWPList().at(1)->fixTime,true);
       POS_STRINGS(t.getWPList().at(2)->origP)
       link += "&w0bh=" + latH + "&w0bg=" + latG + "&w0bm=" + latM + "&w0bmd=" + latMD
       + "&w0lh=" + lonH + "&w0lg=" + lonG + "&w0lm=" + lonM + "&w0lmd=" + lonMD;
@@ -508,7 +515,7 @@ void OLCDialog::slotSend()
       link += "&w6bh=" + latH + "&w6bg=" + latG + "&w6bm=" + latM + "&w6bmd=" + latMD
           + "&w6lh=" + lonH + "&w6lg=" + lonG + "&w6lm=" + lonM + "&w6lmd=" + lonMD;
 
-      link += "&s6=" + printTime(t.getWPList().at(9)->sectorFAI,true);
+      link += "&s6=" + printTime(t.getWPList().at(9)->fixTime,true);
       break;
   default :
       // the beginning of the task should allways be the second point ...
@@ -539,7 +546,7 @@ void OLCDialog::slotSend()
 //    }
 
   // IGC File
-  link = link + "&software=" + "kflog-" + VERSION + "&IGCigcIGC=" + igcString;
+  link = link + "&software=" + "kflog-" + VERSION + "&IGCigcIGC=" + KURL::encode_string(igcString);
 
   // Link für Hängegleiter:
   //   http://www.segelflugszene.de/olc-cgi/holc-d/olc
@@ -550,7 +557,7 @@ void OLCDialog::slotSend()
 //  link = "http://www.segelflugszene.de/olc-i/olcfile.html?" + link;
 
 //  link = QString("http://www.segelflugszene.de/olc-%1/olc?").arg(contestList[olcName->currentItem()].URL) + link;
-  link = QString("http://www.segelflugszene.de/olc-cgi/olc-%1/olc?").arg(contestList[olcName->currentItem()].URL) + link;
+  link = QString(contestList[olcName->currentItem()].URL) +"?" + link;
 
 //  KProcess browser;
 
@@ -573,3 +580,12 @@ void OLCDialog::slotSend()
 //                      pointer_to_my_object, SLOT(my_objects_slot(KProcess *)));
   proc->start();
 }
+
+/** @return the number of days after the 1.1.1601.
+This function is proposed in http://www.lalue.de/StrePla2/OLC/index.html
+ */
+unsigned int OLCDialog::date_julian(QDate date){
+  QDate reference(1,1,1601);
+  return reference.daysTo( date )-2305814;
+}
+
