@@ -40,14 +40,6 @@ void BaseMapElement::initMapElement(MapMatrix* matrix, MapConfig* config)
   glConfig = config;
 }
 
-void BaseMapElement::printMapElement(QPainter* printP, bool isT)
-{
-//  warning("BaseMapElement::printMapElement");
-}
-
-
-void BaseMapElement::drawMapElement(QPainter* pP, QPainter* mP) {  }
-
 QString BaseMapElement::getName() const { return name; }
 
 unsigned int BaseMapElement::getTypeID() const { return typeID; }
