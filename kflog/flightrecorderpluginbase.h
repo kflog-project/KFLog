@@ -28,7 +28,7 @@
  */
 
 #include <qstring.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qobject.h>
 
 #include "frstructs.h"
@@ -39,23 +39,6 @@
 #define FR_ERROR -1          // Error
 #define FR_NOTSUPPORTED -2   // Function not supported
 #define FR_OK 1              // OK, no problem.
-
-// FlightRecorder capabilities
-struct FR_Capabilities {
-  unsigned int maxNrTasks;             //maximum number of tasks
-  unsigned int maxNrWaypoints;         //maximum number of waypoints
-  unsigned int maxNrWaypointsPerTask;  //maximum number of waypoints per task
-  unsigned int maxNrPilots;            //maximum number of pilots
-
-  bool supDlWaypoint;      //supports downloading of waypoints?
-  bool supUlWaypoint;      //supports uploading of waypoints?
-  bool supDlFlight;        //supports downloading of flights?
-  bool supUlFlight;        //supports uploading of flights?
-  bool supSignedFlight;    //supports downloading in of signed flights?
-  bool supDlTask;          //supports downloading of tasks?
-  bool supUlTask;          //supports uploading of tasks?
-  bool supUlDeclaration;   //supports uploading of declarations?
-};
 
 /**
  * @short Baseclass for all flightrecorder plugins
@@ -78,6 +61,40 @@ public:
   /* The none option is pretty useless, but is included for completeness
      sake. It _is_ used in the flightrecorder dialog though! */
 
+  // FlightRecorder capabilities
+  struct FR_Capabilities
+  {
+    unsigned int maxNrTasks;             //maximum number of tasks
+    unsigned int maxNrWaypoints;         //maximum number of waypoints
+    unsigned int maxNrWaypointsPerTask;  //maximum number of waypoints per task
+    unsigned int maxNrPilots;            //maximum number of pilots
+
+    bool supDlWaypoint;      //supports downloading of waypoints?
+    bool supUlWaypoint;      //supports uploading of waypoints?
+    bool supDlFlight;        //supports downloading of flights?
+    bool supUlFlight;        //supports uploading of flights?
+    bool supSignedFlight;    //supports downloading in of signed flights?
+    bool supDlTask;          //supports downloading of tasks?
+    bool supUlTask;          //supports uploading of tasks?
+    bool supUlDeclaration;   //supports uploading of declarations?
+    bool supDspPilotName;    //supports display of pilot name
+    bool supDspRecorderType; //supports display of logger type
+    bool supDspSerialNumber; //supports display of serial number
+    bool supDspGliderID;     //supports display of glider ID
+    bool supDspGliderType;   //supports display of glider type
+    bool supDspCompetitionID;//supports display of competition ID
+  };
+
+  struct FR_BasicData
+  {
+    QString serialNumber;
+    QString recorderType;
+    QString pilotName;
+    QString gliderType;
+    QString gliderID;
+    QString competitionID;
+  };
+  
   FlightRecorderPluginBase();
   virtual ~FlightRecorderPluginBase();
 
@@ -92,15 +109,15 @@ public:
   /**
    * Returns a list of recorded flights in this device.
    */
-  virtual int getFlightDir(QList<FRDirEntry>*)=0;
+  virtual int getFlightDir(QPtrList<FRDirEntry>*)=0;
   /**
    * Downloads a specific flight.
    */
   virtual int downloadFlight(int flightID, int secMode, const QString& fileName)=0;
   /**
-   * get recorder info serial id
+   * get recorder basic data
    */
-  virtual QString getRecorderSerialNo()=0;
+  virtual int getBasicData(FR_BasicData&) = 0;
   /**
    * Opens the recorder for serial communication.
    */
@@ -116,23 +133,23 @@ public:
   /**
    * Write flight declaration to recorder
    */
-  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint> *taskPoints)=0; 
+  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QPtrList<Waypoint> *taskPoints)=0; 
   /**
    * Read tasks from recorder
    */
-  virtual int readTasks(QList<FlightTask> *tasks)=0;
+  virtual int readTasks(QPtrList<FlightTask> *tasks)=0;
   /**
    * Write tasks to recorder
    */
-  virtual int writeTasks(QList<FlightTask> *tasks)=0;
+  virtual int writeTasks(QPtrList<FlightTask> *tasks)=0;
   /**
    * Read waypoints from recorder
    */
-  virtual int readWaypoints(QList<Waypoint> *waypoints)=0;
+  virtual int readWaypoints(QPtrList<Waypoint> *waypoints)=0;
   /**
    * Write waypoints to recorder
    */
-  virtual int writeWaypoints(QList<Waypoint> *waypoints)=0;
+  virtual int writeWaypoints(QPtrList<Waypoint> *waypoints)=0;
   /**
    * Returns whether the flighrecorder is connected.
    */
@@ -160,6 +177,11 @@ protected:
    * To be set in the constructor of depending classes.
    */
   FR_Capabilities _capabilities;
+  /**
+   * The flightrecorders basic data.
+   * To be set in the constructor of depending classes.
+   */
+  FR_BasicData _basicData;
 
   /**
    * Optionally contains additional info about an error.

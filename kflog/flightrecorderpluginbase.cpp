@@ -21,7 +21,7 @@ FlightRecorderPluginBase::FlightRecorderPluginBase(){
   _isConnected=false;
   _errorinfo="";
 
-  //initialize capabilities to none.
+  //initialize capabilities to none. This class is never instanciated, so this could be skipped
   _capabilities.maxNrTasks = 0;             //maximum number of tasks
   _capabilities.maxNrWaypoints = 0;         //maximum number of waypoints
   _capabilities.maxNrWaypointsPerTask = 0;  //maximum number of waypoints per task
@@ -35,7 +35,12 @@ FlightRecorderPluginBase::FlightRecorderPluginBase(){
   _capabilities.supDlTask = false;          //supports downloading of tasks?
   _capabilities.supUlTask = false;          //supports uploading of tasks?
   _capabilities.supUlDeclaration = false;   //supports uploading of declarations?
-
+  _capabilities.supDspPilotName = false;    //supports display of pilot name
+  _capabilities.supDspRecorderType = false; //supports display of recorder type
+  _capabilities.supDspSerialNumber = false; //supports display of serial number
+  _capabilities.supDspGliderID = false;     //supports display of glider ID
+  _capabilities.supDspGliderType = false;   //supports display of glider type
+  _capabilities.supDspCompetitionID = false;//supports display of competition ID
 }
 
 
