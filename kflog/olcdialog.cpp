@@ -17,16 +17,42 @@
 
 #include "olcdialog.h"
 
+#include <config.h>
+#include <flight.h>
+#include <mapcalc.h>
+
+#include <kconfig.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kseparator.h>
 
+#include <qfile.h>
 #include <qgroupbox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 
-OLCDialog::OLCDialog(QWidget* parent, const char* name)
-  : QDialog(parent, name)
+#define POS_STRINGS(point) \
+  latitude = point.lat(); \
+  longitude = point.lon(); \
+  if(latitude < 0) latH = "S"; \
+  if(longitude < 0) lonH = "W"; \
+  degree = latitude / 600000; \
+  min = (latitude - (degree * 600000)) / 10000; \
+  min_deg = (latitude - (degree * 600000) - (min * 10000)); \
+  min_deg = min_deg / 1000; \
+  latG.sprintf("%d", degree); \
+  latM.sprintf("%d", min); \
+  latMD.sprintf("%d", min_deg); \
+  degree = longitude / 600000; \
+  min = (longitude - (degree * 600000)) / 10000; \
+  min_deg = (longitude - (degree * 600000) - (min * 10000)); \
+  min_deg = min_deg / 1000; \
+  lonG.sprintf("%d", degree); \
+  lonM.sprintf("%d", min); \
+  lonMD.sprintf("%d", min_deg);
+
+OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
+  : QDialog(parent, name), currentFlight(cF)
 {
   setCaption(i18n("OLC-Declaration"));
 
@@ -114,11 +140,12 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name)
   startPos->setBackgroundMode( PaletteLight );
 
   taskList = new KListView(midFrame);
-  taskList->addColumn(i18n("Waypoint"));
-  taskList->addColumn(i18n("Latitude"));
-  taskList->addColumn(i18n("Longitude"));
-  taskList->addColumn(i18n("Distance"));
-  taskList->addColumn(i18n("Time"));
+  taskColID = taskList->addColumn(i18n("ID"));
+  taskColWP = taskList->addColumn(i18n("Waypoint"));
+  taskColLat = taskList->addColumn(i18n("Latitude"));
+  taskColLon = taskList->addColumn(i18n("Longitude"));
+  taskColDist = taskList->addColumn(i18n("Distance"));
+  taskColTime = taskList->addColumn(i18n("Time"));
 
   routeLength = new QLabel(midFrame);
   routeLength->setFrameStyle( QFrame::Panel | QFrame::Sunken );
@@ -191,9 +218,266 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name)
   dlgLayout->addRowSpacing(21, 8);
 
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(okButton, SIGNAL(clicked()), this, SLOT(slotSend()));
+
+  __fillDataFields();
 }
 
 OLCDialog::~OLCDialog()
 {
+
+}
+
+void OLCDialog::__fillDataFields()
+{
+  gliderID->setText(currentFlight->getID());
+  gliderType->setText(currentFlight->getType());
+  routePoints->setText(currentFlight->getPoints());
+  routeLength->setText(currentFlight->getTaskDistance());
+
+  QList<wayPoint> wpList = currentFlight->getWPList();
+
+  startPoint->setText(wpList.at(0)->name);
+  startPos->setText(printPos(wpList.at(0)->origP.lat(), true) + " / " +
+    printPos(wpList.at(0)->origP.lon(), false));
+
+  QString temp;
+  QListViewItem* item;
+  for(unsigned int loop = 1; loop < wpList.count(); loop++)
+    {
+      temp.sprintf("%d", loop);
+
+      item = new QListViewItem(taskList);
+      item->setText(taskColID, temp);
+      item->setText(taskColWP, wpList.at(loop)->name);
+      item->setText(taskColLat, printPos(wpList.at(loop)->origP.lat()));
+      item->setText(taskColLon, printPos(wpList.at(loop)->origP.lon(), false));
+      temp.sprintf("%.2f km", wpList.at(loop)->distance);
+      item->setText(taskColDist, temp);
+
+      unsigned int time;
+      if(wpList.at(loop)->sectorFAI != 0)
+        {
+          time = wpList.at(loop)->sectorFAI;
+        }
+      else if(wpList.at(loop)->sector1 != 0)
+        {
+          time = wpList.at(loop)->sector1;
+        }
+      else if(wpList.at(loop)->sector2 != 0)
+        {
+          time = wpList.at(loop)->sector2;
+        }
+      else
+        {
+          // should never happen ...
+          time = 0;
+        }
+
+      item->setText(taskColTime, printTime(time));
+    }
+
+  switch(currentFlight->getCompetitionClass())
+    {
+      case Flight::PW5:
+        classSelect->setCurrentItem(1);
+        break;
+      case Flight::Club:
+        classSelect->setCurrentItem(2);
+        break;
+      case Flight::Standard:
+        classSelect->setCurrentItem(3);
+        break;
+      case Flight::FifteenMeter:
+        classSelect->setCurrentItem(4);
+        break;
+      case Flight::EightteenMeter:
+        classSelect->setCurrentItem(5);
+        break;
+      case Flight::DoubleSitter:
+        classSelect->setCurrentItem(6);
+        break;
+      case Flight::OpenClass:
+        classSelect->setCurrentItem(7);
+        break;
+      case Flight::HGFlexWing:
+        classSelect->setCurrentItem(1);
+        break;
+      case Flight::HGRigidWing:
+        classSelect->setCurrentItem(2);
+        break;
+      case Flight::ParaGlider:
+        classSelect->setCurrentItem(10);
+        break;
+      case Flight::ParaOpen:
+        classSelect->setCurrentItem(3);
+        break;
+      case Flight::ParaSport:
+        classSelect->setCurrentItem(4);
+        break;
+      case Flight::ParaTandem:
+        classSelect->setCurrentItem(5);
+        break;
+    }
+}
+
+void OLCDialog::slotSend()
+{
+  FlightTask t = currentFlight->getTask();
+
+  KConfig* config = KGlobal::config();
+
+  config->setGroup("Personal Data");
+
+  QString link;
+
+  // ungeklärte Felder:
+  QString index("100");     // Sollte sowieso mal in eine Config-Datei ...
+  QString glider("0");
+  if(pureGlider->isChecked()) {  glider = "1";  }    // "1" for pure glider
+
+  QString dateString;
+  dateString.sprintf("%d", currentFlight->getDate().year() +
+    currentFlight->getDate().dayOfYear());
+
+  QString compClass("0");
+  switch(currentFlight->getCompetitionClass())
+    {
+      case Flight::PW5:
+        compClass = "1";
+        break;
+      case Flight::Club:
+        compClass = "2";
+        break;
+      case Flight::Standard:
+        compClass = "3";
+        break;
+      case Flight::FifteenMeter:
+        compClass = "4";
+        break;
+      case Flight::EightteenMeter:
+        compClass = "5";
+        break;
+      case Flight::DoubleSitter:
+        compClass = "6";
+        break;
+      case Flight::OpenClass:
+        compClass = "7";
+        break;
+      case Flight::HGFlexWing:
+        compClass = "1";
+        break;
+      case Flight::HGRigidWing:
+        compClass = "2";
+        break;
+      case Flight::ParaGlider:
+        compClass = "10";
+        break;
+      case Flight::ParaOpen:
+        compClass = "3";
+        break;
+      case Flight::ParaSport:
+        compClass = "4";
+        break;
+      case Flight::ParaTandem:
+        compClass = "5";
+        break;
+    }
+
+  // personal info
+  link = "OLCvnolc=" + config->readEntry("PreName", "")
+      + "&na=" + config->readEntry("SurName", "")
+      + "&geb=" + config->readEntry("Birthday", "");
+
+  // glider info
+  link = link + "&gty=" + currentFlight->getHeader().at(2)
+      + "&gid=" + currentFlight->getHeader().at(1)
+      + "&ind=" + index
+      + "&klasse=" + compClass + "&flugzeug=" + glider;
+
+  // The olc need an "offical" filename. So we have to create it here ...
+  link += "&igcfn=" + currentFlight->getFileName() +
+          "&sta=" + t.getWPList().first()->name +
+          "&ft=" + dateString +
+          "&s0=" + printTime(currentFlight->getStartTime(), true);
+
+  QString latH("N"), latG, latM, latMD;
+  QString lonH("E"), lonG, lonM, lonMD;
+
+  int latitude, longitude;
+  int degree, min, min_deg;
+
+  // the beginning of the task should allways be the second point ...
+  POS_STRINGS(t.getWPList().at(1)->origP)
+
+  // Abflugpunkt
+  link += "&w0bh=" + latH + "&w0bg=" + latG + "&w0bm=" + latM + "&w0bmd=" + latMD
+      + "&w0lh=" + lonH + "&w0lg=" + lonG + "&w0lm=" + lonM + "&w0lmd=" + lonMD;
+
+  if(t.getTaskType() == FlightTask::FAI || t.getTaskType() == FlightTask::Dreieck ||
+      t.getTaskType() == FlightTask::FAI_S || t.getTaskType() == FlightTask::Dreieck_S)
+    {
+      // we have a triangle ...
+      POS_STRINGS(t.getWPList().at(2)->origP)
+
+      link += "&w1bh=" + latH + "&w1bg=" + latG + "&w1bm=" + latM + "&w1bmd=" + latMD
+          + "&w1lh=" + lonH + "&w1lg=" + lonG + "&w1lm=" + lonM + "&w1lmd=" + lonMD;
+
+      POS_STRINGS(t.getWPList().at(3)->origP)
+      link += "&w2bh=" + latH + "&w2bg=" + latG + "&w2bm=" + latM + "&w2bmd=" + latMD
+          + "&w2lh=" + lonH + "&w2lg=" + lonG + "&w2lm=" + lonM + "&w2lmd=" + lonMD;
+
+      POS_STRINGS(t.getWPList().at(4)->origP)
+      link += "&w3bh=" + latH + "&w3bg=" + latG + "&w3bm=" + latM + "&w3bmd=" + latMD
+          + "&w3lh=" + lonH + "&w3lg=" + lonG + "&w3lm=" + lonM + "&w3lmd=" + lonMD;
+    }
+
+  // Endpunkt
+  POS_STRINGS(t.getWPList().at(t.getWPList().count() - 2)->origP)
+  link += "&w4bh=" + latH + "&w4bg=" + latG + "&w4bm=" + latM + "&w4bmd=" + latMD
+      + "&w4lh=" + lonH + "&w4lg=" + lonG + "&w4lm=" + lonM + "&w4lmd=" + lonMD;
+
+  link += "&s4=" + printTime(currentFlight->getLandTime(), true);
+
+  QFile igcFile(currentFlight->getFileName());
+
+//  if(!igcFile.open(IO_ReadOnly))
+//    {
+//      KMessageBox::error(0,
+//          i18n("You don't have permission to access file<BR><B>%1</B>").arg(igcFile.name()),
+//          i18n("No permission"));
+//      return;
+//    }
+
+//  QTextStream igcStream(&igcFile);
+  QString igcString;
+
+//  while(!igcStream.eof())
+//    {
+//      igcString += igcStream.readLine();
+//    }
+
+  // IGC File
+  link = link + "&software=" + "kflog-" + VERSION + "&IGCigcIGC=" + igcString;
+
+  // Link für Hängegleiter:
+  //   http://www.segelflugszene.de/olc-cgi/holc-d/olc
+  // Link für Segelflüge:
+  //   http://www.segelflugszene.de/olc-cgi/olc-d/olc
+  // Ausserdem muss das Land noch konfigurierbar sein.
+  link = "http://www.segelflugszene.de/olc-cgi/olc-d/olc?" + link;
+
+  warning(link);
+
+//    KProcess browser;
+
+  // Because "%" is used as a placeholder in a string, we have to add it this way ...
+  char prozent = 0x25;
+  QString spaceString = QString(QChar(prozent)) + "20";
+  link.replace(QRegExp("[ ]"), spaceString);
+
+//  browser.clearArguments();
+//  browser << "konqueror" << link;
+//  browser.start();
 
 }

@@ -582,6 +582,8 @@ bool MapContents::__readTerrainFile(const int fileSecID,
   else if(formatID > FILE_FORMAT_ID)
     {
       // zu neu ...
+      warning("KFLog: Fileformat too new. Aborting ...");
+      return false;
     }
   in >> loadSecID;
   if(loadSecID != fileSecID)
@@ -702,6 +704,8 @@ bool MapContents::__readAirfieldFile(const char* pathName)
   else if(formatID > FILE_FORMAT_ID)
     {
       // zu neu ...
+      warning("KFLog: Fileformat too new. Aborting ...");
+      return false;
     }
 
   in >> createDateTime;
@@ -871,6 +875,8 @@ bool MapContents::__readAirspaceFile(const char* pathName)
   else if(formatID > FILE_FORMAT_ID)
     {
       // zu neu ...
+      warning("KFLog: Fileformat too new. Aborting ...");
+      return false;
     }
 
   in >> createDateTime;
@@ -995,6 +1001,8 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   else if(formatID > FILE_FORMAT_ID)
     {
       // to young ...
+      warning("KFLog: Fileformat too new. Aborting ...");
+      return false;
     }
 
   in >> loadSecID;
@@ -1232,40 +1240,6 @@ bool MapContents::loadFlight(QFile igcFile)
             i18n("unknown manufactorer"));
           recorderID = recorderID + " (" + s.mid(4,3) + ")";
           KGlobal::config()->setGroup(0);
-//          if(s.mid(1,3).upper() == "GCS")
-//              recorderID = "Volkslogger (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "BOR")
-//              recorderID = "Borgelt (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "CAM")
-//              recorderID = "Cambridge (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "DEL")
-//              recorderID = "Delver (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "EWA")
-//              recorderID = "EW (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "FIL")
-//              recorderID = "Filser (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "GRI")
-//              recorderID = "Griffin (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "SCH")
-//              recorderID = "Scheffel (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "IEC")
-//              recorderID = "Ilec (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "LXN")
-//              recorderID = "LX Navigation (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "PES")
-//              recorderID = "Peschges (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "PRT")
-//              recorderID = "Print Technik (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "SDI")
-//              recorderID = "Streamline Digital Instruments (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "BVI")
-//              recorderID = "Ball Variometer Inc (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "WES")
-//              recorderID = "Westerboer (" + s.mid(4,3) + ")";
-//          else if(s.mid(1,3).upper() == "ZAN")
-//              recorderID = "Zander (" + s.mid(4,3) + ")";
-//          else
-//              recorderID = "unknown (" + s.mid(4,3) + ")";
         }
       else if(s.mid(0,1) == "H" && isHeader)
         {
@@ -1335,7 +1309,7 @@ bool MapContents::loadFlight(QFile igcFile)
           else if(s.mid(24,1) == "V")
               isValid = false;
           else
-              fatal("FEHLER!");
+              fatal("KFLog: Wrong value found in igc-line!");
 
           sscanf(s.mid(25,10),"%5d%5d", &newPoint.height, &newPoint.gpsHeight);
 
@@ -1409,6 +1383,15 @@ bool MapContents::loadFlight(QFile igcFile)
               *(flightRoute.last()) = newPoint;
 
               if(!isValid)  continue;
+
+              ////////////////////////////////////////////////////////////
+              //
+              // We disable landing-detection, because it makes trouble
+              // if there is no altitude in the file ...
+              //
+              ////////////////////////////////////////////////////////////
+
+              /*
               if(!append)
                 {
                   //
@@ -1433,10 +1416,18 @@ bool MapContents::loadFlight(QFile igcFile)
                   // We might be back on the ground, again. But
                   // we wait for the next point.
                   append = false;
+              */
             }
           else
             {
-              if( ( speed > 20 ) && ( v > 1.5 ) )
+              ////////////////////////////////////////////////////////////
+              //
+              // We disable take-off-detection, because it makes trouble
+              // if there is no altitude in the file ...
+              //
+              ////////////////////////////////////////////////////////////
+
+              //if( ( speed > 20 ) && ( v > 1.5 ) )
                 {
                   launched = true;
                   flightRoute.append(new flightPoint);
@@ -1831,6 +1822,8 @@ void MapContents::slotReloadMapData()
       isoList.append(new QList<Isohypse>);
 
   sectionArray.fill(false);
+
+  isFirst = true;
 }
 
 void MapContents::printContents(QPainter* targetPainter, bool isText)

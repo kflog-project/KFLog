@@ -78,8 +78,6 @@ Map
 
 * use of vmap1 (improved dcw Data)
 
-* other projections (mercator)
-
 * rasterimage support (scanned maps ...)
 
 * Customise colours for elevation data

@@ -29,7 +29,6 @@
 #include <kmainwindow.h>
 #include <kaccel.h>
 #include <kaction.h>
-#include <kprocess.h>
 #include <kprogress.h>
 #include <kpopupmenu.h>
 #include <kstatusbar.h>
@@ -470,8 +469,6 @@ class KFLogApp : public KDockMainWindow
      */
     bool showStartLogo;
     KPopupMenu* windowMenu;
-
-    KProcess browser;
 
   private slots: // Private slots
     /** insert available flights into menu */

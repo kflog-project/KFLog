@@ -26,6 +26,8 @@
 #include <qdialog.h>
 #include <qlabel.h>
 
+class Flight;
+
 /**
  * This class provides a dialog for the OLC-declaration.
  *
@@ -34,13 +36,24 @@
  */
 class OLCDialog : public QDialog
 {
+  Q_OBJECT
+
   public:
     /** */
-    OLCDialog(QWidget* parent, const char* name);
+    OLCDialog(QWidget* parent, const char* name, Flight* currentFlight);
     /** */
     ~OLCDialog();
 
+  public slots:
+    /**
+     */
+    void slotSend();
+
   private:
+    /**
+     * Reads the data from the flight and the task and fills the fields.
+     */
+    void __fillDataFields();
     /** */
     KLineEdit* preName;
     /** */
@@ -69,6 +82,20 @@ class OLCDialog : public QDialog
     QLabel* routePoints;
     /** */
     KComboBox* olcName;
+    /** */
+    Flight* currentFlight;
+    /** */
+    int taskColID;
+    /** */
+    int taskColWP;
+    /** */
+    int taskColLat;
+    /** */
+    int taskColLon;
+    /** */
+    int taskColDist;
+    /** */
+    int taskColTime;
 };
 
 #endif
