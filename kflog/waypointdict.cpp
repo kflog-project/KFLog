@@ -39,16 +39,12 @@ bool WaypointDict::insertItem(Waypoint *e)
   
   if ((tmp = find(e->name)) != 0) {
     switch (KMessageBox::warningYesNoCancel(0,
-                                                                       "<qt>" + i18n("Waypoint<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Do you want to overwrite it or rename the waypoint you are adding?").arg(e->name) + "</qt>",
+                                                                       "<qt>" + i18n("A waypoint with the name<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Do you want to rename the waypoint you are adding or overwrite the existing waypoint?").arg(e->name) + "</qt>",
                                                                        i18n("Add waypoint"),
-                                                                        i18n("Overwrite"),
-                                                                        i18n("Rename")
+                                                                        i18n("&Rename"),
+                                                                        i18n("&Overwrite")
                                                                       )) {
-    case KMessageBox::Yes:   //overwrite
-      remove(e->name);
-      insert(e->name, e);
-      break;
-    case KMessageBox::No:    //rename
+    case KMessageBox::Yes:   //rename
        newName=KLineEditDlg::getText(i18n("Waypoint name"), i18n("Please enter a new name for the waypoint"), e->name, &OK);
        if (OK) {
          e->name=newName;
@@ -59,6 +55,10 @@ bool WaypointDict::insertItem(Waypoint *e)
     case KMessageBox::Cancel:   //cancel
       delete e;
       ins = false;
+      break;
+    case KMessageBox::No:    //overwrite
+      remove(e->name);
+      insert(e->name, e);
       break;
     }
   }
