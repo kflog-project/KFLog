@@ -64,18 +64,18 @@ double ProjectionCylindric::projectY(double latitude, double longitude) const
   return -latitude;
 }
 
-double ProjectionCylindric::invertLat(double x, double y) const
+double ProjectionCylindric::invertLat(double /*x*/, double y) const
 {
   return -y;
 }
 
-double ProjectionCylindric::invertLon(double x, double y) const
+double ProjectionCylindric::invertLon(double x, double /*y*/) const
 {
   return x / cos_v1;
 }
 
 // We do not rotate the map at all ...
-double ProjectionCylindric::getRotationArc(int x, int y) const  {  return 0;  }
+double ProjectionCylindric::getRotationArc(int /*x*/, int /*y*/) const  {  return 0;  }
 
 int ProjectionCylindric::getTranslationX(int width, int x) const
 {
