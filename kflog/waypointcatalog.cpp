@@ -554,7 +554,7 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
             default:  w->surface = Airport::Unknown;
           }
           w->comment = i18n("Imported from %1").arg(catalog);
-          w->importance = 3;
+          w->importance = 1;
 
           if (!wpList.insertItem(w))
           {
@@ -869,6 +869,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
           Waypoint *w = new Waypoint;
 
           w->isLandable = false;
+	  w->importance = 0;
 
 	  if( list[0].length() ) // long name of waypoint
 	    {
@@ -904,18 +905,22 @@ bool WaypointCatalog::readCup (const QString& catalog)
 	      w->type = BaseMapElement::Airfield;
 	      w->surface = Airport::Grass;
 	      w->isLandable = true;
+	      w->importance = 1;
 	      break;
 	    case 3:
 	      w->type = BaseMapElement::Outlanding;
+	      w->importance = 1;
 	      break;
 	    case 4:
 	      w->type = BaseMapElement::Glidersite;
 	      w->isLandable = true;
+	      w->importance = 1;
 	      break;
 	    case 5:
 	      w->type = BaseMapElement::Airfield;
 	      w->surface = Airport::Concrete;
 	      w->isLandable = true;
+	      w->importance = 1;
 	      break;
 	    case 6:
 	      w->type = BaseMapElement::Landmark;
@@ -1046,8 +1051,6 @@ bool WaypointCatalog::readCup (const QString& catalog)
 	    {
 	      w->comment += list[10].replace( QRegExp("\""), "" );
 	    }
-
-          w->importance = 3;
 
           if (!wpList.insertItem(w))
           {
