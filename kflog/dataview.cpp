@@ -17,13 +17,17 @@
 
 #include "dataview.h"
 
+#include <kglobal.h>
 #include <klocale.h>
+
 #include <qlayout.h>
 #include <qstrlist.h>
+#include <qfileinfo.h>
 
 #include <flight.h>
 #include <mapcalc.h>
 #include <flighttask.h>
+#include <flightgroup.h>
 #include <mapcontents.h>
 
 #include <kmessagebox.h>
@@ -135,48 +139,84 @@ void DataView::setFlightData()
 {
   extern MapContents _globalMapContents;
   BaseFlightElement* e = _globalMapContents.getFlight();
+  QString htmlText;
+  QString idString;
+  QList<Flight> fl;
+  QStrList h;
+  FlightTask fTask("");
+  QFileInfo fi;
 
   slotClearView();
 
-  if(e && e->getTypeID() == BaseMapElement::Flight)
+  if(e)
     {
-      QString htmlText;
-
-      QStrList h = ((Flight*)e)->getHeader();
-      FlightTask fTask = ((Flight*)e)->getTask();
-
-      htmlText = (QString)"<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-          <TR><TD>" + i18n("Date") + ":</TD><TD>" + h.at(3) + "</TD></TR>\
-          <TR><TD>" + i18n("Pilot") + ":</TD><TD> " + h.at(0) + "</TD></TR>\
-          <TR><TD>" + i18n("Glider") + ":</TD><TD>" + h.at(2) +
-          " / " + h.at(1) + "</TD></TR>" +
-          "</TABLE><HR NOSHADE>";
-
-      if(fTask.getWPList().count())
-          htmlText += __writeTaskInfo(&fTask);
-      else
-          htmlText += "<EM>" + i18n("Flight contains no waypoints") + "</EM>";
-
-      flightDataText->setText(htmlText);
-    }
-  else if(e && e->getTypeID() == BaseMapElement::Task)
-    {
-      if(e->getWPList().count())
-          flightDataText->setText(__writeTaskInfo((FlightTask*)e));
-      else
+      switch (e->getTypeID())
         {
-          flightDataText->setText(i18n(
-            "You can select waypoints with the left mouse button."
-            "You can also select free waypoints by clicking anywhere in the map."
-            "<br><br>"
-            "When you press &lt;CTRL&gt; and click with the left mouse button on a taskpoint, "
-            "it will be deleted.<br>"
-            "You can compute the task up to your current mouse position by pressing &lt;SHIFT&gt;."
-            "<br>"
-            "To finish the task, press &lt;CTRL&gt; and click the right mouse button.<br>"
-            "It's possible to move and delete taskpoints from the finished task."
-            ));
+          case BaseMapElement::Flight:
+            h = ((Flight*)e)->getHeader();
+            fTask = ((Flight*)e)->getTask();
+
+            htmlText = (QString)"<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+                <TR><TD>" + i18n("Date") + ":</TD><TD>" + h.at(3) + "</TD></TR>\
+                <TR><TD>" + i18n("Pilot") + ":</TD><TD> " + h.at(0) + "</TD></TR>\
+                <TR><TD>" + i18n("Glider") + ":</TD><TD>" + h.at(2) +
+                " / " + h.at(1) + "</TD></TR>" +
+                "</TABLE><HR NOSHADE>";
+
+            if(fTask.getWPList().count())
+                htmlText += __writeTaskInfo(&fTask);
+            else
+                htmlText += "<EM>" + i18n("Flight contains no waypoints") + "</EM>";
+            break;
+          case BaseMapElement::Task:
+            if(e->getWPList().count())
+                flightDataText->setText(__writeTaskInfo((FlightTask*)e));
+            else
+              {
+                flightDataText->setText(i18n(
+                  "You can select waypoints with the left mouse button."
+                  "You can also select free waypoints by clicking anywhere in the map."
+                  "<br><br>"
+                  "When you press &lt;CTRL&gt; and click with the left mouse button on a taskpoint, "
+                  "it will be deleted.<br>"
+                  "You can compute the task up to your current mouse position by pressing &lt;SHIFT&gt;."
+                  "<br>"
+                  "To finish the task, press &lt;CTRL&gt; and click the right mouse button.<br>"
+                  "It's possible to move and delete taskpoints from the finished task."
+                  ));
+              }
+            break;
+          case BaseMapElement::FlightGroup:
+            htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+                <TR><TD>" + i18n("Flight group") + ":</TD><TD><A HREF=EDITGROUP>" +
+                e->getFileName() +  + "</A></TD></TR>\
+                </TABLE><HR NOSHADE>";
+            fl = ((FlightGroup*)e)->getFlightList();
+            if(fl.count()) {
+              htmlText += "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+                <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
+                 i18n("Flights") + ":</B></TD></TR>";
+
+              for (unsigned int loop = 0; loop < fl.count(); loop++) {
+                Flight *flight = fl.at(loop);
+                // store pointer of flight instead of index
+                // flight list of mapcontents will change
+                idString.sprintf("%d", (int)flight);
+                fi.setFile(flight->getFileName());
+
+                htmlText += "<TR><TD><A HREF=" + idString + ">" +
+                  fi.fileName() + "</A></TD><TD ALIGN=right>" +
+                  KGlobal::locale()->formatDate(flight->getDate(), true) + "</TD></TR>\
+                  <TR><TD>" + flight->getDistance() + "</TD><TD ALIGN=right>" +
+                  printTime(flight->getLandTime() - flight->getStartTime()) + "</TD></TR>";
+              }
+            }
+            else {
+              htmlText += i18n("Click on the group name to start editing");
+            }
+            break;
         }
+      flightDataText->setText(htmlText);
     }
 }
 
@@ -199,7 +239,7 @@ void DataView::slotWPSelected(const QString &url)
       break;
     case BaseMapElement::FlightGroup:
       if (url == "EDITGROUP") {
-        KMessageBox::information(0, "This will bring up the flight group editing dialog");
+        emit editFlightGroup();
       }
       else {
         emit flightSelected((BaseFlightElement *)url.toUInt());

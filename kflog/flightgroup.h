@@ -47,6 +47,8 @@ public:
   /** No descriptions */
   QList<Flight::Flight> getFlightList();
   void removeFlight(BaseFlightElement *f);
+  /** No descriptions */
+  void setFlightList(QList <Flight::Flight> fl);
 
 private:
   QList<Flight::Flight> flightList;

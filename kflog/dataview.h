@@ -52,6 +52,8 @@ class DataView : public QFrame
     void wpSelected(const unsigned int id);
     /** No descriptions */
     void flightSelected(BaseFlightElement *);
+    /** No descriptions */
+    void editFlightGroup();
 
   public slots:
     /**

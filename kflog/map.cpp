@@ -1344,19 +1344,42 @@ void Map::slotCenterToFlight()
 {
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
+  unsigned int i;
 
- Flight *f = (Flight *)_globalMapContents.getFlight();
- if (f && f->getTypeID() == BaseMapElement::Flight) {
-   // check if the Rectangle is zero
-   // is it necessary here?
-   if (!f->getFlightRect().isNull())
-    {
-      _globalMapMatrix.centerToRect(f->getFlightRect());
+  Flight *f = (Flight *)_globalMapContents.getFlight();
+  if (f) {
+    QRect r;
+    QRect r2;
+    QList<Flight> fl;
+
+    switch (f->getTypeID()) {
+      case BaseMapElement::Flight:
+        r = f->getFlightRect();
+        break;
+      case BaseMapElement::FlightGroup:
+        fl = ((FlightGroup *)f)->getFlightList();
+        r = fl.at(0)->getFlightRect();
+        for (i = 1; i < fl.count(); i++) {
+          r2 = fl.at(i)->getFlightRect();
+          r.setLeft(QMIN(r.left(), r2.left()));
+          r.setTop(QMIN(r.top(), r2.top()));
+          r.setRight(QMAX(r.right(), r2.right()));
+          r.setBottom(QMAX(r.bottom(), r2.bottom()));
+        }
+        break;
+      default:
+        return;
+    }
+
+    // check if the Rectangle is zero
+    // is it necessary here?
+    if (!r.isNull()) {
+      _globalMapMatrix.centerToRect(r);
       _globalMapMatrix.createMatrix(this->size());
       __redrawMap();
     }
 
-    emit changed(this->size());
+  emit changed(this->size());
   }
 }
 
@@ -1364,12 +1387,15 @@ void Map::slotCenterToTask()
 {
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
-
+  unsigned int i;
   BaseFlightElement *f = _globalMapContents.getFlight();
 
   if(f)
     {
       QRect r;
+      QRect r2;
+      QList<Flight> fl;
+
       switch (f->getTypeID())
         {
           case BaseMapElement::Flight:
@@ -1377,6 +1403,17 @@ void Map::slotCenterToTask()
             break;
           case BaseMapElement::Task:
             r = ((FlightTask *)f)->getRect();
+            break;
+          case BaseMapElement::FlightGroup:
+            fl = ((FlightGroup *)f)->getFlightList();
+            r = fl.at(0)->getTaskRect();
+            for (i = 1; i < fl.count(); i++) {
+              r2 = fl.at(i)->getTaskRect();
+              r.setLeft(QMIN(r.left(), r2.left()));
+              r.setTop(QMIN(r.top(), r2.top()));
+              r.setRight(QMAX(r.right(), r2.right()));
+              r.setBottom(QMAX(r.bottom(), r2.bottom()));
+            }
             break;
           default:
             return;
@@ -1775,6 +1812,8 @@ void Map::slotShowCurrentFlight()
       switch(f->getTypeID())
         {
           case BaseMapElement::Flight:
+            // fall through
+          case BaseMapElement::FlightGroup:
             slotCenterToFlight();
             break;
           case BaseMapElement::Task:

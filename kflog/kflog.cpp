@@ -472,6 +472,8 @@ void KFLogApp::initView()
       SLOT(slotCenterToWaypoint(const unsigned int)));
   connect(dataView, SIGNAL(flightSelected(BaseFlightElement *)), &_globalMapContents,
       SLOT(slotSetFlight(BaseFlightElement *)));
+  connect(dataView, SIGNAL(editFlightGroup()), &_globalMapContents,
+      SLOT(slotEditFlightGroup()));
 
   connect(&_globalMapContents, SIGNAL(currentFlightChanged()), this,
       SLOT(slotModifyMenu()));

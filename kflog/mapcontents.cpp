@@ -20,6 +20,7 @@
 
 #include "mapcontents.h"
 #include <mapcalc.h>
+#include "flightselectiondialog.h"
 
 #include <kconfig.h>
 #include <kglobal.h>
@@ -2027,21 +2028,30 @@ void MapContents::slotNewFlightGroup()
 {
   static int gCount = 1;
   QList <Flight> fl;
-  Flight *f;
+  BaseFlightElement *f;
   unsigned int i;
   QString tmp;
 
+  FlightSelectionDialog *fsd = new FlightSelectionDialog(0, "flight selection dialog");
+
   for (i = 0; i < flightList.count(); i++) {
-    f = (Flight *)flightList.at(i);
+    f = flightList.at(i);
     if (f->getTypeID() == BaseMapElement::Flight) {
-      fl.append(f);
+      fsd->availableFlights.append(f);
     }
   }
 
-  tmp.sprintf("GROUP%03d", gCount++);
+  if (fsd->exec() == QDialog::Accepted) {
+    for (i = 0; i < fsd->selectedFlights.count(); i++) {
+      fl.append((Flight *)fsd->selectedFlights.at(i));
+    }
 
-  flightList.append(new FlightGroup(fl, tmp));
-  emit currentFlightChanged();
+    tmp.sprintf("GROUP%03d", gCount++);
+
+    flightList.append(new FlightGroup(fl, tmp));
+    emit currentFlightChanged();
+  }
+  delete fsd;
 }
 /** No descriptions */
 void MapContents::slotSetFlight(int id)
@@ -2058,6 +2068,48 @@ void MapContents::slotSetFlight(BaseFlightElement *f)
     flightList.findRef(f);
     emit currentFlightChanged();
   }
+}
+
+/** No descriptions */
+void MapContents::slotEditFlightGroup()
+{
+  QList <Flight> fl;
+  BaseFlightElement *f;
+  BaseFlightElement *fg;
+  unsigned int i;
+  QString tmp;
+
+  FlightSelectionDialog *fsd = new FlightSelectionDialog(0, "flight selection dialog");
+  fg = getFlight();
+
+  if (fg->getTypeID() == BaseMapElement::FlightGroup) {
+    fl = ((FlightGroup *)fg)->getFlightList();
+    for (i = 0; i < flightList.count(); i++) {
+      f = flightList.at(i);
+      if (f->getTypeID() == BaseMapElement::Flight) {
+        if (fl.containsRef((Flight *)f)) {
+          fsd->selectedFlights.append(f);
+        }
+        else {
+          fsd->availableFlights.append(f);
+        }
+      }
+    }
+
+    if (fsd->exec() == QDialog::Accepted) {
+      fl.clear();
+      for (i = 0; i < fsd->selectedFlights.count(); i++) {
+        fl.append((Flight *)fsd->selectedFlights.at(i));
+      }
+      ((FlightGroup *)fg)->setFlightList(fl);
+    }
+  }
+  else {
+    // oooops
+  }
+
+  emit currentFlightChanged();
+  delete fsd;
 }
 
 /** No descriptions */
@@ -2657,3 +2709,4 @@ bool MapContents::importGardownFile(QFile gardownFile){
   emit currentFlightChanged();
   return true;
 }
+
