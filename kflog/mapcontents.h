@@ -242,6 +242,10 @@ switch to first task in file */
     /** */
     void slotReloadMapData();
 
+    /*
+    *  automatic download has finished
+    */
+    void slotDownloadFinished();
   signals:
     /**
      * emitted during maploading to display a message f.e. in the
@@ -263,6 +267,11 @@ switch to first task in file */
       * Activates the graphical planning
       */
     void activatePlanning();
+
+    /*
+    *  Map contents have changed
+    */
+    void contentsChanged();
 
   private:
     /**
