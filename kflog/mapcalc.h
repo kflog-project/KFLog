@@ -63,7 +63,7 @@ QString printPos(int coord, bool isLat = true);
  */
 QString printTime(time_t time, bool isZero = false, bool isSecond = true);
 
-// Convesion for time delays
+// Conversion for time delays
 QString printTime(int time, bool isZero = false, bool isSecond = true);
 
 // Compute the time_t equivalent from  year [1970 - ...], month  [ 1-12], day [1-31]
