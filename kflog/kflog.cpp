@@ -1083,6 +1083,7 @@ void KFLogApp::slotModifyMenu()
             flightEvaluation->setEnabled(true);
             flightOptimization->setEnabled(true);
             flightOptimizationOLC->setEnabled(true);
+            olcDeclaration->setEnabled(true);
             animateFlightStart->setEnabled(true);
             animateFlightStop->setEnabled(true);
             stepFlightNext->setEnabled(true);
@@ -1104,6 +1105,7 @@ void KFLogApp::slotModifyMenu()
             flightEvaluation->setEnabled(false);
             flightOptimization->setEnabled(false);
             flightOptimizationOLC->setEnabled(false);
+            olcDeclaration->setEnabled(false);
             animateFlightStart->setEnabled(false);
             animateFlightStop->setEnabled(false);
             stepFlightNext->setEnabled(false);
@@ -1124,6 +1126,7 @@ void KFLogApp::slotModifyMenu()
             flightEvaluation->setEnabled(true);
             flightOptimization->setEnabled(true);
             flightOptimizationOLC->setEnabled(true);
+            olcDeclaration->setEnabled(true);
             animateFlightStart->setEnabled(true);
             animateFlightStop->setEnabled(true);
             stepFlightNext->setEnabled(true);
@@ -1147,6 +1150,7 @@ void KFLogApp::slotModifyMenu()
       flightEvaluation->setEnabled(false);
       flightOptimization->setEnabled(false);
       flightOptimizationOLC->setEnabled(false);
+      olcDeclaration->setEnabled(false);
       animateFlightStart->setEnabled(false);
       animateFlightStop->setEnabled(false);
       stepFlightNext->setEnabled(false);
