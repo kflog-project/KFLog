@@ -112,7 +112,8 @@ void TaskDialog::__initDialog()
   route->setShowSortIndicator(false);
   route->setSorting(-1);
   route->setAllColumnsShowFocus(true);
-
+  connect(route, SIGNAL(currentChanged(QListViewItem *)), SLOT(enableWaypointButtons()));
+  
   colType = route->addColumn(i18n("Type"));
   colWaypoint = route->addColumn(i18n("Waypoint"));
   colDist = route->addColumn(i18n("Distance"));
@@ -414,31 +415,21 @@ void TaskDialog::setTask(FlightTask *orig)
 /** No descriptions */
 void TaskDialog::enableWaypointButtons()
 {
-  int cnt = wpList.count();
+  unsigned int cnt = wpList.count();
   unsigned int pos = route->itemIndex(route->selectedItem());
 
   switch (pTask->getPlanningType()) {
   case FlightTask::Route:
     // disable add button for start, landing, end
     // enable for takeoff, we cann append to it
-    if (pos > 0 && pos < cnt - 2) {
-      back->setEnabled(true);
-    }
-    else {
-      back->setEnabled(false);
-    }
+    back->setEnabled(pos > 0 && pos < cnt - 2);
 
     // disable remove button for start, takeoff, landing, end
-    if (pos > 1 && pos < cnt - 2) {
-      forward->setEnabled(true);
-    }
-    else {
-      forward->setEnabled(false);
-    }
+    forward->setEnabled(pos > 1 && pos < cnt - 2);
     break;
   case FlightTask::FAIArea:
-    forward->setEnabled(cnt > 4);
-    back->setEnabled(cnt == 4);
+    forward->setEnabled(cnt > 4 && pos == 2);
+    back->setEnabled(pos > 0 && pos < cnt - 2 && cnt == 4);
     break;
   }
 }

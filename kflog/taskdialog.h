@@ -48,10 +48,10 @@ private: // Private methods
   /** No descriptions */
   void __initDialog();
   void fillWaypoints();
-  /** No descriptions */
-  void enableWaypointButtons();
 public: // Public attributes
 private slots: // Private slots
+  /** No descriptions */
+  void enableWaypointButtons();
   /** No descriptions */
   void slotSetPlanningType(int);
   /** No descriptions */

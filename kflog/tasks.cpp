@@ -305,6 +305,7 @@ void Tasks::slotAppendTask(FlightTask *f)
   item = new QListViewItem(tasks);
   item->setText(colName, f->getFileName());
   item->setText(colDesc, f->getTaskTypeString());
+  item->setText(colTaskType, f->getPlanningTypeString());
   item->setText(colTaskDist, f->getTaskDistanceString());
   item->setText(colTotalDist, f->getTotalDistanceString());
 
