@@ -407,30 +407,30 @@ void Map::mousePressEvent(QMouseEvent* event)
     {
       if(planning == 1 || planning == 3)
         {
-            QPoint preSitePos, nextSitePos;
-          // Strecke löschen
-          moveWPindex = -999;
+	  QPoint preSitePos, nextSitePos;
+	  // Strecke löschen
+	  moveWPindex = -999;
 
           QPainter planP(this);
-           planP.setRasterOp(XorROP);
+	  planP.setRasterOp(XorROP);
           planP.setBrush(NoBrush);
           planP.setPen(QPen(QColor(255,0,0), 5));
-
-           if(prePlanPos.x() >= 0)
-             {
+	  
+	  if(prePlanPos.x() >= 0)
+	    {
               // alte Linien löschen
               preSitePos = _globalMapMatrix.map(taskPoints.at(taskPoints.size() - 1)->getPosition());
               if(planning == 3)
                 {
                   preSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex - 1)->getPosition());
                   nextSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex + 1)->getPosition());
-                  
-                   planP.drawLine(nextSitePos.x(),nextSitePos.y(),
-                                  prePlanPos.x(),prePlanPos.y());
+
+		  planP.drawLine(nextSitePos.x(),nextSitePos.y(),
+				 prePlanPos.x(),prePlanPos.y());
                 }           
-               planP.drawLine(preSitePos.x(),preSitePos.y(),
+	      planP.drawLine(preSitePos.x(),preSitePos.y(),
                              prePlanPos.x(),prePlanPos.y());
-             }
+	    }
           planP.end();                      
           
           prePlanPos.setX(-999);
@@ -439,26 +439,6 @@ void Map::mousePressEvent(QMouseEvent* event)
         }
       else
         {
-        /*
-         * Segelflugplätze, soweit vorhanden, kommen als erster Eintrag
-         */
-        for(unsigned int loop = 0;
-              loop < _globalMapContents.getListLength(
-                      MapContents::GliderList); loop++)
-          {
-            hitElement = (SinglePoint*)_globalMapContents.getElement(
-                    MapContents::GliderList, loop);
-            sitePos = hitElement->getMapPosition();
-
-      bool show = false, isAirport = false;
-
-      BaseMapElement* hitElement;
-      QString text;
-
-      QPoint sitePos;
-      double dX, dY, delta(16.0);
-
-      if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
 
       /*
        * Segelflugplätze, soweit vorhanden, kommen als erster Eintrag
