@@ -460,23 +460,25 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 QString getInfoString (Waypoint* wp)
 {
   extern MapConfig _globalMapConfig;
+  extern TranslationList waypointTypes;
 
   QString path = KGlobal::dirs()->findResource("appdata", "mapicons/");
 
   QString text = "<TABLE BORDER=0><TR>";
 
   // we don't have a pixmap for landmarks ?!
-  if (wp->type != BaseMapElement::Landmark)
+  if (wp->type != BaseMapElement::Landmark && !_globalMapConfig.getPixmapName(wp->type).isEmpty())
     text += QString ("<TD><IMG SRC= %1%2></TD>").arg(path).arg(_globalMapConfig.getPixmapName(wp->type));
   else
     text += "<TD></TD>";
 
-  qDebug (text);  
-
-  text += QString ("<TD>%1").arg(wp->name);
+  text += "<TD>" + i18n("Waypoint:") + " " + wp->name;
   if (!wp->icao.isEmpty())
     text += QString (" (%1)").arg(wp->icao);
   text += "</TD></TR>";
+
+  if (wp->type >= 0)
+    text += "<TR><TD></TD><TD>" + waypointTypes.itemById(wp->type)->text + "</TD></TR>";
   
   text += QString ("<TR><TD></TD><TD><FONT SIZE=-1> %1 m").arg(wp->elevation);
   
