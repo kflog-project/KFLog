@@ -106,6 +106,13 @@ $Id$
   * Optimization: several class parameters are now const class&
 
   * more optimizations have been backported from Cumulus
+
+
+2003-05-20 Helmut Rohs <helmut@kflog.org>
+
+  * Add ENL facility, display a white track on the map for engine powered flight
+
+  * Changed time base type to analyse flights crossing the 0:00 UTC boarder
   
 
 2003-05-20 Eggert Ehmke <eggert@kflog.org>
