@@ -318,7 +318,7 @@ void KFLogConfig::__addMapTab()
   elLayout->addMultiCellWidget(elementSelect, 1, 1, 1, 2, AlignLeft);
   elLayout->addMultiCellWidget(tabView, 3, 3, 1, 3);
   elLayout->addMultiCellWidget(defaultElements, 6, 6, 0, 1, AlignLeft);
-
+  
   elLayout->addRowSpacing(0, 20);
   elLayout->addRowSpacing(2, 5);
   elLayout->setRowStretch(3, 1);

@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
     }
   else 
     {
-      KFLogApp *kflog = new KFLogApp();
+      KFLogApp * kflog = new KFLogApp();
       KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
       KConfig* config = KGlobal::config();
 

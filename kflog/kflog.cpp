@@ -87,7 +87,8 @@ KFLogApp::KFLogApp()
   config = kapp->config();
 
   config->setGroup("General Options");
-
+  showStartLogo=false;
+  
   if (config->readBoolEntry("Logo", true) && (!kapp->isRestored() ) )
     {
       showStartLogo = true;
@@ -117,9 +118,12 @@ KFLogApp::KFLogApp()
 
   initStatusBar();
   initView();
+  if(showStartLogo && startLogo!=0) 
+      startLogo->raise();
+
   initActions();
 
-  if(showStartLogo)
+  if(showStartLogo && startLogo!=0)
       startLogo->raise();
 
   readOptions();
@@ -942,10 +946,11 @@ void KFLogApp::slotNewToolbarConfig()
 
 void KFLogApp::slotStartComplete()
 {
-  if(showStartLogo && startLogo != NULL)
+  if(showStartLogo && (startLogo != 0L))
     {
       delete startLogo;
       startLogo = 0L;
+      showStartLogo=false;
     }
 }
 

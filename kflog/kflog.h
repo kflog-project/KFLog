@@ -285,6 +285,10 @@ class KFLogApp : public KDockMainWindow
 
  private:
   /**
+   * The startup-window.
+   */
+  KFLogStartLogo* startLogo;
+  /**
    * The configuration object of the application
    */
   KConfig *config;
@@ -505,10 +509,6 @@ class KFLogApp : public KDockMainWindow
    */
   Tasks *tasks;
   /**
-   * The startup-window.
-   */
-  KFLogStartLogo* startLogo;
-  /**
    * True, when the startup-window should be displayed.
    */
   bool showStartLogo;
@@ -517,6 +517,7 @@ class KFLogApp : public KDockMainWindow
   private slots: // Private slots
     /** insert available flights into menu */
     void slotWindowsMenuAboutToShow();
+
 };
  
 #endif // KFLOG_H

@@ -22,12 +22,14 @@
 #include "mapcontents.h"
 #include <mapcalc.h>
 #include "flightselectiondialog.h"
+#include "kflog.h"
 
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstddirs.h>
+#include <kdirselectdialog.h>
 #include <qdatastream.h>
 #include <qdatetime.h>
 #include <qdir.h>
@@ -634,7 +636,7 @@ bool MapContents::__readTerrainFile(const int fileSecID,
       // We must ignore it, when sort is more than 3 or less than 0!
 
 //      valley = 0;
-
+      
       if(sort >= 0 && sort <= 3)
         {
           for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
@@ -1623,6 +1625,20 @@ void MapContents::proofeSection(bool isPrint)
   mapDir = config->readEntry("DefaultMapDirectory",
       globalDirs->findResource("appdata", "mapdata"));
 
+  if(mapDir.isEmpty()) {
+    /* We don't have a mapdir configured. This is a problem, as the user will be
+       flooded with errordialogs and no maps will be loaded. Therefore, it is a
+       better strategy to just ask the user. */
+    warning("Mapdir not set.");
+    //extern KFLogApp * kflog;
+    //if (kflog->startLogo!=0) kflog->startLogo->hide(); //hide splashscreen.
+    
+    KMessageBox::sorry(0, i18n("<qt>The directory for maps has not been set.<br>Please select the directory where you have installed your maps.</qt>"),
+                          i18n("Mapdirectory not set."));
+    mapDir=KDirSelectDialog::selectDirectory(QString::null,true,0,i18n("Select map directory...")).path();
+    config->writeEntry("DefaultMapDirectory", mapDir);
+  }
+      
   if(isPrint)
       mapBorder = _globalMapMatrix.getPrintBorder();
   else

@@ -23,9 +23,12 @@
 #include <qbitmap.h>
 #include <qpixmap.h>
 
+//KFLogStartLogo::KFLogStartLogo()
+//    : QWidget( 0, "KFlogStartWindow",  WStyle_Customize | WStyle_StaysOnTop |
+//             WStyle_NoBorder )
+//{
 KFLogStartLogo::KFLogStartLogo()
-    : QWidget( 0, "KFlogStartWindow",  WStyle_Customize | WStyle_StaysOnTop |
-             WStyle_NoBorder )
+    : QWidget( 0, "KFlogStartWindow",  WStyle_Customize | WStyle_NoBorder )
 {
 //  QPixmap pm(locate("appdata", "pics/entwurf_splash.png"));
   QPixmap pm(locate("appdata", "pics/splash.png"));

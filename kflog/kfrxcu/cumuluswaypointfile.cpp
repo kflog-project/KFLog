@@ -130,13 +130,11 @@ int CumulusWaypointFile::load(QString file, QList<Waypoint> *waypoints){
 
     }
     else {
-      //KMessageBox::error(0, QObject::tr("<B>%1</B><BR>permission denied!").arg(catalog), QObject::tr("Error occurred!"));
       warning("Access to waypointfile denied.");
       ret=FO_ERROR;
     }
   }
   else {
-    //KMessageBox::error(0, i18n("<B>%1</B><BR>not found!").arg(catalog), i18n("Error occurred!"));
     warning("Waypoint catalog not found.");
     ret=FO_ERROR;
   }
@@ -210,7 +208,6 @@ int CumulusWaypointFile::save(QString file, QList<Waypoint> *waypoints){
     ret=FO_OK;
   }
   else {
-    //KMessageBox::error(0, i18n("<B>%1</B><BR>permission denied!").arg(fName), i18n("Error occurred!"));
     warning("Permission denied!");
     ret=FO_ERROR;
   }
