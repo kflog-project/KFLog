@@ -50,7 +50,7 @@ class FlightTask : public BaseFlightElement
   /**
    * Creates an empty task and sets isOrig to false.
    */
-  FlightTask(QString fName);
+  FlightTask(const QString& fName);
   /**
    * Creates a task with the given points.
    *
@@ -58,7 +58,7 @@ class FlightTask : public BaseFlightElement
    * @param  isOrig  true, if the task is the original task
    *                 of a flight.
    */
-  FlightTask(QList<Waypoint> wpList, bool isOrig, QString fName);
+  FlightTask(const QList<Waypoint>& wpList, bool isOrig, const QString& fName);
   /**
    */
   ~FlightTask();
@@ -100,7 +100,7 @@ class FlightTask : public BaseFlightElement
   void printMapElement(QPainter* targetP, bool isText, double dX, double dY);
   /** */
   void checkWaypoints(QList<flightPoint> route,
-                      QString gliderType);
+                      const QString& gliderType);
   /** */
   double getOlcPoints();
   /** */
@@ -110,7 +110,7 @@ class FlightTask : public BaseFlightElement
   /** */
   double getAverageSpeed();
     /** */
-  QString getTaskDistanceString() ;
+  QString getTaskDistanceString();
   /** calc min and max distance for FAI triangles*/
   QString getFAIDistanceString() ;
   /** */
@@ -120,14 +120,14 @@ class FlightTask : public BaseFlightElement
   /** */
   struct faiRange getFAIDistance(double leg);
   void setOptimizedTask(double points, double distance);
-  void setWaypointList(QList<Waypoint> wpL);
+  void setWaypointList(const QList<Waypoint>& wpL);
   /** No descriptions */
   void setPlanningType(int type);
-  int getPlanningType() { return __planningType; };
+  int getPlanningType() const { return __planningType; };
   void setPlanningDirection(int dir);
-  int getPlanningDirection() { return __planningDirection; };
+  int getPlanningDirection() const { return __planningDirection; };
   /** set new task name */
-  void setTaskName(QString fName);
+  void setTaskName(const QString& fName);
   /** No descriptions */
   QString getPlanningTypeString();
   /**

@@ -49,9 +49,9 @@ class Flight : public BaseFlightElement
 	   * @param  wpL  The list of waypoints of the task
 	   * @param  date  The date of the flight
 	   */
-    Flight(QString fileName, QString recID,
-  	    QList<flightPoint> route, QString pName, QString gType,
-        QString gID, int cClass, QList<Waypoint> wpL, QDate date);
+    Flight(const QString& fileName, const QString& recID,
+  	    const QList<flightPoint>& route, const QString& pName, const QString& gType,
+        const QString& gID, int cClass, const QList<Waypoint>& wpL, const QDate& date);
 	  /**
 	   * Destroys the flight-object.
 	   */
@@ -84,7 +84,7 @@ class Flight : public BaseFlightElement
 	   */
     QString getDistance(bool isOrig = false);
     /** */
-    FlightTask getTask(bool isOrig = false);
+    FlightTask getTask(bool isOrig = false) const;
 	  /**
 	   * @param  isOrig  "true", if the original-task should be used.
 	   *                 The default is "false". If the flight has not been

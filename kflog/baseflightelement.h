@@ -34,8 +34,8 @@ public:
   BaseFlightElement(QString name, unsigned int typeID, QString fName);
   /** */
   ~BaseFlightElement();
-  virtual QList<Waypoint> getWPList() = 0;
-  QString getFileName() { return sourceFileName; }
+  virtual QList<Waypoint> getWPList() = 0 ;
+  QString getFileName() const { return sourceFileName; }
   /**
    * Searches the first point of the flight, which distance to the
    * mousecursor is less than 30 pixel. If no point is found, -1 is

@@ -75,8 +75,8 @@
       wpL.current()->angle = -100; \
       wpL.current()->fixTime = route.at( a )->time;
 
-Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName,
-   QString gType, QString gID, int cClass, QList<Waypoint> wpL, QDate d)
+Flight::Flight(const QString& fName, const QString& recID, const QList<flightPoint>& r, const QString& pName,
+   const QString& gType, const QString& gID, int cClass, const QList<Waypoint>& wpL, const QDate& d)
   : BaseFlightElement("flight", BaseMapElement::Flight, fName),
     recorderID(recID),
     pilotName(pName),
@@ -654,7 +654,7 @@ QString Flight::getDistance(bool isOrig)
       return optimizedTask.getTotalDistanceString();
 }
 
-FlightTask Flight::getTask(bool isOrig)
+FlightTask Flight::getTask(bool isOrig) const
 {
   if(isOrig || !optimized)
       return origTask;
@@ -777,7 +777,7 @@ QList<Waypoint> Flight::getWPList()
     return optimizedTask.getWPList();
 }
 
-QList<Waypoint> Flight::getOriginalWPList()  {  return origTask.getWPList();  }
+QList<Waypoint> Flight::getOriginalWPList() {  return origTask.getWPList();  }
 
 bool Flight::optimizeTaskOLC(Map* map)
 {

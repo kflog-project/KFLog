@@ -44,7 +44,7 @@
 #define R1 (3000.0 / glMapMatrix->getScale())
 #define R2 (500.0 / glMapMatrix->getScale())
 
-FlightTask::FlightTask(QString fName)
+FlightTask::FlightTask(const QString& fName)
   : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(false),
     flightType(FlightTask::NotSet),
@@ -57,7 +57,7 @@ FlightTask::FlightTask(QString fName)
 }
 
 
-FlightTask::FlightTask(QList<Waypoint> wpL, bool isO, QString fName)
+FlightTask::FlightTask(const QList<Waypoint>& wpL, bool isO, const QString& fName)
   : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(isO),
 //    wpList(wpL),
@@ -801,7 +801,7 @@ double FlightTask::getOlcPoints()
 }
 
 void FlightTask::checkWaypoints(QList<flightPoint> route,
-                                QString gliderType)
+                                const QString& gliderType)
 {
   /*
    *   Å‹berprÅ¸ft, ob die Sektoren der Wendepunkte erreicht wurden
@@ -1000,7 +1000,7 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
           // Landung auf letztem Wegpunkt
         }
       else
-        // AuÅﬂenlandung -- Wertung: + 1Punkt bis zur AuÅﬂenlandung
+        // Auﬂenlandung -- Wertung: + 1Punkt bis zur Auﬂenlandung
         aussenlande = dist(wpList.at(1 + dmstCount), route.last());
     }
   else
@@ -1142,7 +1142,7 @@ QString FlightTask::getPointsString()
 
 QRect FlightTask::getRect() const  {  return bBoxTask;  }
 
-void FlightTask::setWaypointList(QList<Waypoint> wpL)
+void FlightTask::setWaypointList(const QList<Waypoint>& wpL)
 {
   warning("setWaypointList(QList<wayPoint> wpL)");
   wpList = wpL;
@@ -1665,7 +1665,7 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
   }
 }  
 /** set new task name */
-void FlightTask::setTaskName(QString fName)
+void FlightTask::setTaskName(const QString& fName)
 {
   sourceFileName = fName;
 }
