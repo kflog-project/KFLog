@@ -60,7 +60,7 @@ EvaluationDialog::EvaluationDialog(QList<Flight>* fList)
 
   // Auswahl
   QFrame* oben = new QFrame(this);
-  QLabel* o1 = new QLabel("Flug:", oben);
+  QLabel* o1 = new QLabel(i18n("Flight:"), oben);
   o1->setAlignment(AlignRight);
   combo_flight = new QComboBox(oben);
   o1->setMinimumHeight(o1->sizeHint().height() + 10);
@@ -280,7 +280,7 @@ void EvaluationDialog::updateListBox()
 
 void EvaluationDialog::slotShowFlightData(int n)
 {
-  this->setCaption(i18n("Flightevaluation: ") + flightList->at(n)->getPilot()
+  this->setCaption(i18n("Flightevaluation:") + flightList->at(n)->getPilot()
                     + "  " + flightList->at(n)->getDate());
   // GRUNDWERTE setzen
   updateText(0,flightList->at(n)->getRouteLength() - 1, true);

@@ -93,11 +93,6 @@ Flight::Flight(QString fName, QList<flightPoint> r, QString pName,
   wpList.setAutoDelete(true);
   origList.setAutoDelete(true);
 
-
-  // Die Wegpunkte müssen einzeln übergeben werden, da sie gleichzeitig
-  // geprüft werden ...
-//  warning("Länge: %d", wpL.count());
-
   wpList = wpL;
 
   __setWaypointType();
@@ -108,16 +103,16 @@ Flight::Flight(QString fName, QList<flightPoint> r, QString pName,
   __checkMaxMin();
   __flightState();
 
-int links = 0;
-int rechts = 0;
-int vermischt = 0;
+//int links = 0;
+//int rechts = 0;
+//int vermischt = 0;
 
-  for(unsigned int n = 0; n < route.count(); n++)
-    {
-      if(route.at(n)->f_state == Links) links++;
-      else if(route.at(n)->f_state == Rechts) rechts++;
-      else if(route.at(n)->f_state == Vermischt) vermischt++;
-    }
+//  for(unsigned int n = 0; n < route.count(); n++)
+//    {
+//      if(route.at(n)->f_state == Links) links++;
+//      else if(route.at(n)->f_state == Rechts) rechts++;
+//      else if(route.at(n)->f_state == Vermischt) vermischt++;
+//    }
 
 //  warning("Rechts:    %d \nLinks:     %d \nVermischt: %d", rechts, links,vermischt);
 //  warning("Gesamtanzahl: %d", route.count());
@@ -1146,23 +1141,17 @@ void Flight::__setWaypointType()
 
 }
 
-
-
 void Flight::__appendWaypoint(struct wayPoint* newPoint)
 {
-warning("Flight::__appendWaypoint");
   if(wpList.count() && dist(wpList.last(), newPoint) <= 0.1) return;
-//warning("------------------------> 1");
   wpList.append(newPoint);
 
   if(tEnd == 0 && wpList.count() > 2)
     {
-//warning("------------------------> 2");
       int loop = 0;
 
       for(int n = wpList.count() - 3; n >= 0; n--)
         {
-// warning("------------------------> 3 (%d)", loop);
           loop++;
           if(newPoint->origP == wpList.at(n)->origP)
             {
@@ -1170,7 +1159,6 @@ warning("Flight::__appendWaypoint");
 
               tEnd = wpList.count() - 1;
               tBegin = n;
-//warning("Begin: %d / Ende: %d", tBegin, tEnd);
               wpList.at(tEnd)->type = Flight::End;
               wpList.at(tBegin)->type = Flight::Begin;
 
@@ -1219,12 +1207,10 @@ warning("Flight::__appendWaypoint");
 void Flight::__checkType()
 {
   /**
-    * Findet den Typ der Strecke heraus
-    *
-    *
-    **/
-
-warning("Flight::__checkType()");
+   * Findet den Typ der Strecke heraus
+   *
+   *
+   **/
   distance_tot = 0;
   double distance_tot_d = 0;
 /// Nicht gesetzt wird vermutlich auch nicht mehr gebraucht!!
@@ -1427,12 +1413,9 @@ void Flight::__checkWaypoints()
    *   SOLLTE NOCHMALS ÜBERARBEITET WERDEN
    *
    */
-
-
   bool time_error = false;
 
   if(flightType == NotSet) return;
-warning("Flight::__checkWaypoints()");
 
   int gliderIndex = 100, preTime = 0;
   KConfig* config = kapp->config();
@@ -1477,12 +1460,6 @@ warning("Flight::__checkWaypoints()");
     {
       wpList.last()->sector1 = route.last()->time;
     }
-
-
-
-
-
-
 
   unsigned int startIndex = 0, dummy = 0;
 
@@ -1588,7 +1565,7 @@ warning("Flight::__checkWaypoints()");
   if(wpList.at(tBegin)->sector1 == 0)
     {
       KMessageBox::information(0,
-          i18n("You have not reached the first point of your task!"));
+          i18n("You have not reached the first waypoint of your task."));
       return;
     }
 
@@ -1646,10 +1623,10 @@ warning("Flight::__checkWaypoints()");
     }
 
   // FAI erreicht?
-  if(faiCount == tEnd - tBegin)
-    {
-      cerr << "Nach FAI Regeln erfüllt!\n";
-    }
+//  if(faiCount == tEnd - tBegin)
+//    {
+//      cerr << "Nach FAI Regeln erfüllt!\n";
+//    }
 
   double wertDist = 0, F = 1;
 
@@ -1706,15 +1683,15 @@ warning("Flight::__checkWaypoints()");
        * Optimierter Flug: 10% abziehen
        */
       taskPoints -= ( taskPoints * (malusValue / 100.0) );
-      cerr << "reduziere Punkte um 10%\n";
+//      cerr << "reduziere Punkte um 10%\n";
     }
 
-  cerr << "dmstCount " << dmstCount << endl;
-  cerr << "Punkte/km " << F << endl;
-  cerr << "malus: " << dmstMalus << endl;
-  cerr << "Index: " << gliderIndex << endl;
-  cerr << "Entfernung: " << wertDist << endl;
-  cerr << "Punkte: " << taskPoints << endl;
+//  cerr << "dmstCount " << dmstCount << endl;
+//  cerr << "Punkte/km " << F << endl;
+//  cerr << "malus: " << dmstMalus << endl;
+//  cerr << "Index: " << gliderIndex << endl;
+//  cerr << "Entfernung: " << wertDist << endl;
+//  cerr << "Punkte: " << taskPoints << endl;
 
 
   if (time_error)

@@ -21,6 +21,7 @@
 
 #include <kapp.h>
 #include <kiconloader.h>
+#include <kstddirs.h>
 #include <qdatastream.h>
 #include <qfile.h>
 #include <qtextstream.h>
@@ -56,13 +57,14 @@ void GliderSite::printMapElement(QPainter* printPainter)
 
 QString GliderSite::getInfoString() const
 {
-  QString text, temp;
+  QString text;
+  QString path = KGlobal::dirs()->findResource("appdata", "mapicons/");
 
-  temp.sprintf("%d", elevation);
+  text.sprintf("%d", elevation);
   text = "<TABLE BORDER=0><TR><TD>"
-      "<IMG SRC=/opt/kde2/share/apps/kflog/mapicons/" + iconName + ">" +
+      "<IMG SRC=" + path + iconName + ">" +
       "</TD><TD>" + name + " (" + alias + ")</TD></TR>" +
-      "<TR><TD></TD><TD><FONT SIZE=-1>" + temp + "m" +
+      "<TR><TD></TD><TD><FONT SIZE=-1>" + text + "m" +
       "<BR>" + frequency + "</FONT></TD></TR></TABLE>";
 
   return text;

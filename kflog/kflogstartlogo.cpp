@@ -17,13 +17,15 @@
 
 #include "kflogstartlogo.h"
 #include <kapp.h>
+#include <kstddirs.h>
 
 KFLogStartLogo::KFLogStartLogo()
     : QWidget(0,0,WStyle_NoBorder | WStyle_Customize | WStyle_StaysOnTop)
 {
   setBackgroundMode(NoBackground);
+  QString icon = KGlobal::dirs()->findResource("appdata", "pics/splash.png");
   QPixmap pm;
-  pm.load("/home/heiner/Entwicklung/kflog2/kflog/pics/splash.png");
+  pm.load(icon);
   setBackgroundPixmap(pm);
 
   setGeometry( ( ( QApplication::desktop()->width() - pm.width() ) / 2 ),

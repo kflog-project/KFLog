@@ -444,8 +444,8 @@ bool MapContents::__readAsciiFile(const char* fileName)
   QProgressDialog importProgress(0,0,true);
 
   importProgress.setCaption(i18n("Import mapfile ..."));
-  importProgress.setLabelText((QString)i18n("Please wait while loading file")
-          + "<BR><B>" + fileName + "</B>");
+  importProgress.setLabelText(
+      i18n("Please wait while loading file<BR><B>%1</B>").arg(fileName));
   importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
   importProgress.show();
   importProgress.setMinimumDuration(0);
@@ -730,8 +730,8 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 
   KStandardDirs* globalDirs = KGlobal::dirs();
   QString pathName;
-  pathName.sprintf("kflog/mapdata/%c_%.5d.kfl", fileTypeID, fileSecID);
-  pathName = globalDirs->findResource("data", pathName);
+  pathName.sprintf("mapdata/%c_%.5d.kfl", fileTypeID, fileSecID);
+  pathName = globalDirs->findResource("appdata", pathName);
 
   if(pathName == 0)
       // Datei existiert nicht ...
@@ -768,7 +768,7 @@ bool MapContents::__readTerrainFile(const int fileSecID,
   if(loadTypeID != fileTypeID)
     {
       // falschen Datentyp geladen ...
-      warning("<------------------ Falsche Typ-ID");
+//      warning("<------------------ Falsche Typ-ID");
       return false;
     }
 
@@ -785,7 +785,7 @@ bool MapContents::__readTerrainFile(const int fileSecID,
   if(loadSecID != fileSecID)
     {
       // Problem!!!
-      warning("<------------------- Falsche Kachel-ID");
+//      warning("<------------------- Falsche Kachel-ID");
       return false;
     }
   in >> createDateTime;
@@ -835,8 +835,8 @@ bool MapContents::__readBinaryFile(const int fileSecID,
 
   KStandardDirs* globalDirs = KGlobal::dirs();
   QString pathName;
-  pathName.sprintf("kflog/mapdata/%c_%.5d.kfl", fileTypeID, fileSecID);
-  pathName = globalDirs->findResource("data", pathName);
+  pathName.sprintf("mapdata/%c_%.5d.kfl", fileTypeID, fileSecID);
+  pathName = globalDirs->findResource("appdata", pathName);
 
   if(pathName == 0)
       // Datei existiert nicht ...
@@ -874,7 +874,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   if(loadTypeID != fileTypeID)
     {
       // falschen Datentyp geladen ...
-      warning("<------------------ Falsche Typ-ID");
+//      warning("<------------------ Falsche Typ-ID");
       return false;
     }
 
@@ -891,7 +891,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   if(loadSecID != fileSecID)
     {
       // Problem!!!
-      warning("<------------------- Falsche Kachel-ID");
+//      warning("<------------------- Falsche Kachel-ID");
       return false;
     }
   in >> createDateTime;
@@ -938,383 +938,6 @@ bool MapContents::__readBinaryFile(const int fileSecID,
         }
     }
 
-return true;
-
-//  Airspace* newAir;
-//  QPoint position;
-//
-//  while(!in.eof()) {
-//    anzahl++;
-//    name = 0;
-//    in >> typeIn;
-//    type = typeIn;
-//    length = 0;
-//    countObject++;
-//    winch = 0;
-//    abbr = "";
-//    isValley = 0;
-//
-//    QPointArray tA;
-//
-//    switch (type) {
-//      case BaseMapElement::IntAirport:
-//        in >> name;
-//        in >> alias;
-//        in >> elev;
-//        in >> frequency;
-//        in >> vdf;
-//        in >> rwNum;
-//        irwData = new intrunway[rwNum];
-//        for(unsigned int i = 0; i < rwNum; i++) {
-//          in >> rwdir;
-//          in >> rwlength;
-//          in >> rwsur;
-//          in >> latA;
-//          in >> lonA;
-//          in >> latB;
-//          in >> lonB;
-//
-//          irwData[i].direction = rwdir;
-//          irwData[i].length = rwlength;
-//          irwData[i].surface = rwsur;
-//          irwData[i].latitudeA = latA;
-//          irwData[i].longitudeA = lonA;
-//          irwData[i].latitudeB = latB;
-//          irwData[i].longitudeB = lonB;
-//        }
-//        break;
-//      case BaseMapElement::Airport:
-//      case BaseMapElement::MilAirport:
-//      case BaseMapElement::CivMilAirport:
-//      case BaseMapElement::Airfield:
-//        in >> name;
-//        in >> abbr;
-//        in >> alias;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> isW;
-//        in >> elev;
-//        in >> frequency;
-//        in >> vdf;
-//        in >> rwNum;
-//        rwData = new runway[rwNum];
-//        for(unsigned int i = 0; i < rwNum; i++)
-//          {
-//            in >> rwdir;
-//            in >> rwlength;
-//            in >> rwsur;
-//
-//            rwData[i].direction = rwdir;
-//            rwData[i].length = rwlength;
-//            rwData[i].surface = rwsur;
-//          }
-////        airportList.append(new Airport(name, alias, abbr, type, position, elev,
-////            frequency, vdf));
-//        break;
-//      case BaseMapElement::ClosedAirfield:
-//        in >> name;
-//        in >> abbr;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> isW;
-////        airportList.append(new Airport(name, 0, abbr, type, position, 0, 0, 0));
-//        break;
-//      case BaseMapElement::CivHeliport:
-//      case BaseMapElement::MilHeliport:
-//      case BaseMapElement::AmbHeliport:
-//        in >> name;
-//        in >> abbr;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> isW;
-//        in >> elev;
-//        in >> frequency;
-////        airportList(new Airport(name, alias, abbr, type, at_lat, at_lon, elev,
-////                          frequency));
-//        break;
-//      case BaseMapElement::Glidersite:
-//        in >> name;
-//        in >> abbr;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> elev;
-//        in >> frequency;
-//        in >> winch;
-//        in >> isW;
-//        in >> rwNum;
-//        rwData = new runway[rwNum];
-//        for(unsigned int i = 0; i < rwNum; i++)
-//          {
-//            in >> rwdir;
-//            in >> rwlength;
-//            in >> rwsur;
-//
-//            rwData[i].direction = rwdir;
-//            rwData[i].length = rwlength;
-//            rwData[i].surface = rwsur;
-//          }
-////        gliderList.append(new GliderSite(name, abbr, at_lat, at_lon, elev,
-////                          frequency, winch, isW, rwData, rwNum));
-//        break;
-//      case BaseMapElement::UltraLight:
-//      case BaseMapElement::HangGlider:
-//      case BaseMapElement::Parachute:
-//      case BaseMapElement::Ballon:
-//        in >> name;
-//        in >> abbr;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> isW;
-////        addSitesList.append(new SinglePoint(name, abbr, type, at_lat, at_lon));
-//        break;
-//      case BaseMapElement::Outlanding:
-//        in >> name;
-//        in >> abbr;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> isW;
-//        in >> elev;
-////        outList.append(new ElevPoint(name, abbr, type, at_lat, at_lon, elev));
-//        break;
-//      case BaseMapElement::VOR:
-//      case BaseMapElement::VORDME:
-//      case BaseMapElement::VORTAC:
-//      case BaseMapElement::NDB:
-//        in >> name;
-//        in >> abbr;
-//        in >> alias;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> frequency;
-////        navList.append(new RadioPoint(name, abbr, type, at_lat, at_lon,
-////                          frequency, alias));
-//        break;
-//      case BaseMapElement::AirC:
-//      case BaseMapElement::AirCtemp:
-//      case BaseMapElement::AirD:
-//      case BaseMapElement::AirDtemp:
-//        in >> name;
-//        in >> llimit;
-//        in >> llimitType;
-//        in >> ulimit;
-//        in >> ulimitType;
-//        in >> length;
-//
-//        READ_POINT_LIST
-//
-//        newAir = new Airspace(name, type, tA);
-//        newAir->setValues(ulimit, ulimitType, llimit, llimitType);
-//        airspaceList.append(newAir);
-//        break;
-//      case BaseMapElement::ControlD:
-//        in >> name;
-//        in >> ulimit;
-//        in >> ulimitType;
-//        in >> length;
-//
-//        READ_POINT_LIST
-//
-//        newAir = new Airspace(name, type, tA);
-//        newAir->setValues(ulimit, ulimitType, llimit, llimitType);
-//        airspaceList.append(newAir);
-//        break;
-//      case BaseMapElement::AirElow:
-//      case BaseMapElement::AirEhigh:
-//        in >> name;
-//        in >> length;
-//
-//        READ_POINT_LIST
-//
-//        newAir = new Airspace(name, type, tA);
-//        newAir->setValues(ulimit, ulimitType, llimit, llimitType);
-//        airspaceList.append(newAir);
-//        break;
-//      case BaseMapElement::AirF:
-//      case BaseMapElement::Restricted:
-//      case BaseMapElement::Danger:
-//        in >> name;
-//        in >> llimit;
-//        in >> llimitType;
-//        in >> ulimit;
-//        in >> ulimitType;
-//        in >> length;
-//
-//        READ_POINT_LIST
-//
-//        newAir = new Airspace(name, type, tA);
-//        newAir->setValues(ulimit, ulimitType, llimit, llimitType);
-//        airspaceList.append(newAir);
-//        break;
-//      case BaseMapElement::LowFlight:
-//        in >> name;
-//        in >> length;
-//
-//        READ_POINT_LIST
-//
-//        newAir = new Airspace(name, type, tA);
-//        newAir->setValues(ulimit, ulimitType, llimit, llimitType);
-//        airspaceList.append(newAir);
-//        break;
-//      case BaseMapElement::Obstacle:
-//      case BaseMapElement::LightObstacle:
-//      case BaseMapElement::ObstacleGroup:
-//      case BaseMapElement::LightObstacleGroup:
-//        in >> abbr;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> isW;
-//        in >> elev;
-//        obstacleList.append(new ElevPoint(name, abbr, type, position, elev));
-//        break;
-//      case BaseMapElement::CompPoint:
-//        in >> name;
-//        in >> abbr;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> isW;
-//        reportList.append(new SinglePoint(name, abbr, type, position));
-//        break;
-//      case BaseMapElement::HugeCity:
-//      case BaseMapElement::BigCity:
-//      case BaseMapElement::MidCity:
-//      case BaseMapElement::SmallCity:
-//        in >> name;
-//        in >> length;
-//
-//        READ_POINT_LIST
-//
-//        cityList.append(new LineElement(name, type, tA));
-//        break;
-//      case BaseMapElement::Oiltank:
-//      case BaseMapElement::Factory:
-//      case BaseMapElement::Castle:
-//      case BaseMapElement::Church:
-//      case BaseMapElement::Tower:
-//        in >> name;
-//        in >> abbr;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> isW;
-//        landmarkList.append(new SinglePoint(name, abbr, type, position));
-//        break;
-//      case BaseMapElement::Highway:
-//        in >> length;
-//
-//        READ_POINT_LIST
-//
-//        highwayList.append(new LineElement(name, type, tA));
-//        break;
-//      case BaseMapElement::HighwayEntry:
-//        in >> name;
-//        in >> abbr;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> isW;
-//        highEntryList.append(new SinglePoint(name, abbr, type, position));
-//        break;
-//      case BaseMapElement::MidRoad:
-//      case BaseMapElement::SmallRoad:
-//        in >> length;
-//
-//        READ_POINT_LIST
-//
-//        roadList.append(new LineElement(name, type, tA));
-//        break;
-//      case BaseMapElement::RoadBridge:
-//      case BaseMapElement::RoadTunnel:
-//        in >> abbr;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> isW;
-//        // Bislang falsche Liste (Eintrag wird ignoriert) !!!
-//        break;
-//      case BaseMapElement::Railway:
-//        in >> length;
-//
-//        READ_POINT_LIST
-//
-//        railList.append(new LineElement(name, type, tA));
-//        break;
-//      case BaseMapElement::RailwayBridge:
-//      case BaseMapElement::Station:
-//        in >> name;
-//        in >> abbr;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> isW;
-//        stationList.append(new SinglePoint(name, abbr, type, position));
-//        break;
-//      case BaseMapElement::AerialRailway:
-//        in >> length;
-//
-//        READ_POINT_LIST
-//
-//        railList.append(new LineElement(name, type, tA));
-//        break;
-//      case BaseMapElement::Coast:
-//        in >> length;
-//
-//        READ_POINT_LIST
-//
-//        hydroList.append(new LineElement(name, type, tA));
-//        break;
-//      case BaseMapElement::BigLake:
-//      case BaseMapElement::MidLake:
-//      case BaseMapElement::SmallLake:
-//        in >> name; /* weiter mit Länge */
-//      case BaseMapElement::BigRiver:
-//      case BaseMapElement::MidRiver:
-//      case BaseMapElement::SmallRiver:
-//        in >> length;
-//
-//        READ_POINT_LIST
-//
-//        hydroList.append(new LineElement(name, type, tA));
-//        break;
-//      case BaseMapElement::Dam:
-//      case BaseMapElement::Lock:
-//        in >> abbr;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> isW;
-//        break;
-//      case BaseMapElement::Spot:
-//      case BaseMapElement::Pass:
-//        in >> name;
-//        in >> abbr;
-//        in >> at_lat;
-//        in >> at_lon;
-//        in >> isW;
-//        in >> elev;
-//        obstacleList.append(new ElevPoint(name, abbr, type, position, elev));
-//        break;
-//      case BaseMapElement::Glacier:
-//        in >> length;
-//
-//        READ_POINT_LIST
-//
-//        topoList.append(new LineElement(name, type, tA));
-//        break;
-//      case BaseMapElement::Isohypse:
-//        in >> elev;
-//        in >> isValley;
-//        in >> isoLength;
-//
-//        READ_POINT_LIST
-//
-//        if(isoLength >= 3)
-//          {
-////          addElement(new Isohypse(isoLength, latList, lonList, elev,
-////              border, isValley, 0));
-//          }
-//        break;
-//    }
-//  }
-//  eingabe.close();
-
-//  warning("KFlog: %d mapelements found in binary-file %s", anzahl, fileName);
-//  warning("Dauer: %d", readT.restart());
-
   return true;
 }
 
@@ -1343,14 +966,14 @@ bool MapContents::loadFlight(QFile igcFile)
   QFileInfo fInfo(igcFile);
   if(!fInfo.exists())
     {
-      KMessageBox::error(0, i18n("The selected file") + "<BR><B>"
-          + igcFile.name() + "</B><BR>" + i18n("does not exist!"));
+      KMessageBox::error(0,
+          i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(igcFile.name()));
       return false;
     }
   if(!fInfo.size())
     {
-      KMessageBox::sorry(0, i18n("The selected file") + "<BR><B>"
-          + igcFile.name() + "</B><BR>" + i18n("is empty!"));
+      KMessageBox::sorry(0,
+          i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(igcFile.name()));
       return false;
     }
   /*
@@ -1359,23 +982,24 @@ bool MapContents::loadFlight(QFile igcFile)
    */
   if((fInfo.extension() != "igc") && (fInfo.extension() != "IGC"))
     {
-      KMessageBox::error(0, i18n("The selected file") + "<BR><B>"
-          + igcFile.name() + "</B><BR>" + i18n("is not an igc-file!"));
+      KMessageBox::error(0,
+          i18n("The selected file<BR><B>%1</B><BR>is not an igc-file!").arg(igcFile.name()));
       return false;
     }
 
   if(!igcFile.open(IO_ReadOnly))
     {
-      KMessageBox::error(0, i18n("You don't have permission to access file")
-          + "<BR><B>" + igcFile.name() + "</B>", i18n("No permission"));
+      KMessageBox::error(0,
+          i18n("You don't have permission to access file<BR><B>%1</B>").arg(igcFile.name()),
+          i18n("No permission"));
       return false;
     }
 
   QProgressDialog importProgress(0,0,true);
 
   importProgress.setCaption(i18n("Import mapfile ..."));
-  importProgress.setLabelText((QString)i18n("Please wait while loading file")
-          + "<BR><B>" + igcFile.name() + "</B>");
+  importProgress.setLabelText(
+      i18n("Please wait while loading file<BR><B>%1</B>").arg(igcFile.name()));
   importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
   importProgress.setTotalSteps(200);
   importProgress.show();
@@ -1453,9 +1077,9 @@ bool MapContents::loadFlight(QFile igcFile)
               // IO-Error !!!
               QString lineNr;
               lineNr.sprintf("%d", lineCount);
-              KMessageBox::error(0, i18n("Syntax-error while loading igc-file")
-                  + "<BR><B>" + igcFile.name() + "</B><BR>"
-                  + i18n("Aborting!"),
+              KMessageBox::error(0,
+                  i18n("Syntax-error while loading igc-file"
+                      "<BR><B>%1</B><BR>Aborting!").arg(igcFile.name()),
                   i18n("Error in IGC-file"));
               warning("KFLog: Error in reading line %d in igc-file %s",
                   lineCount, (const char*)igcFile.name());

@@ -6,9 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  1999, 2000 by Jan Max Walter Krueger
-**                                 ( jkrueger@physics.otago.ac.nz )
-**                           Heiner Lamprecht ( heiner@kijumfo.de )
+**   Copyright (c):  2001 Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.

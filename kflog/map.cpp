@@ -48,14 +48,6 @@
 #include <singlepoint.h>
 #include <resource.h>
 
-//#define NUM_TO_RAD(a) ( PI * a ) / 108000000.0 )
-//
-//#define MAP_X calc_X_Lambert(NUM_TO_RAD(mapCenterLat), 0)
-//#define MAP_Y calc_Y_Lambert(NUM_TO_RAD(mapCenterLat), 0)
-//
-//#define DELTA_X ( ( this->width() / 2 ) - ( MAP_X / _currentScale * RADIUS ) )
-//#define DELTA_Y ( ( this->height() / 2 ) - ( MAP_Y / _currentScale * RADIUS ) )
-
 #define MATRIX_MOVE(a) extern MapMatrix _globalMapMatrix; \
     _globalMapMatrix.moveMap(a); \
     _globalMapMatrix.createMatrix(this->size()); \
@@ -158,26 +150,12 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
          "<P>To zoom in or out, use the slider or the two buttons on the "
          "toolbar. You can also zoom with \"&lt;Ctrl&gt;&lt;+&gt;\" (zoom in) "
          "and \"&lt;Ctrl&gt;&lt;-&gt;\" (zoom out).</P>"
-         "<P>With the menu-item \"Options\" -> \"Configure map\" you can "
+         "<P>With the menu-item \"Options\" -> \"Configure KFLog\" you can "
          "configure, which map elements should be displayed at which "
          "scale.</P>"));
 }
 
-Map::~Map()
-{
-//  extern const double _currentScale;
-//
-//  KConfig *config = kapp->config();
-//
-//  config->setGroup("General");
-//  config->writeEntry("MapScale",   _currentScale);
-//  config->writeEntry("MapCenterX", mapCenterLon);
-//  config->writeEntry("MapCenterY", mapCenterLat);
-//
-//  config->setGroup(0);
-
-  delete[] indexList;
-}
+Map::~Map()  {  delete[] indexList;  }
 
 void Map::mouseMoveEvent(QMouseEvent* event)
 {

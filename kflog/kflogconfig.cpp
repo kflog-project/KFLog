@@ -421,7 +421,7 @@ void KFLogConfig::slotDefaultPath()
 {
   igcPathE->setText(getpwuid(getuid())->pw_dir);
   taskPathE->setText(getpwuid(getuid())->pw_dir);
-  mapPathE->setText(KGlobal::dirs()->findResource("data", "kflog/mapdata/"));
+  mapPathE->setText(KGlobal::dirs()->findResource("appdata", "mapdata/"));
 }
 
 void KFLogConfig::__addMapTab()
@@ -740,7 +740,7 @@ void KFLogConfig::__addPathTab()
   QString taskDir = config->readEntry("DefaultTaskDirectory",
       getpwuid(getuid())->pw_dir);
   QString mapDir = config->readEntry("DefaultMapDirectory",
-      KGlobal::dirs()->findResource("data", "kflog/mapdata/"));
+      KGlobal::dirs()->findResource("appdata", "mapdata/"));
 
   pathPage = addPage(i18n("Path"),i18n("Path Configuration"),
       KGlobal::instance()->iconLoader()->loadIcon("fileopen", KIcon::NoGroup,
@@ -852,7 +852,7 @@ void KFLogConfig::__addIDTab()
   QGridLayout* idLayout = new QGridLayout(idPage, 13, 5, 12, 1);
 
   QGroupBox* homeGroup = new QGroupBox(idPage, "homeGroup");
-  homeGroup->setTitle(i18n("Home-site:"));
+  homeGroup->setTitle(i18n("Homesite:"));
 
   homeLatE  = new QLineEdit(idPage, "homeLatE");
   homeLatE->setMinimumWidth(200);

@@ -29,7 +29,7 @@ author=Heiner Lamprecht
 configure_args=--prefix=/opt/kde2
 email=heiner@kflog.de
 kdevprj_version=1.3
-lfv_open_groups=GNU,Icons,Others,Translations,User Interface
+lfv_open_groups=GNU,Others,Translations,User Interface
 make_options=\s-j1
 makefiles=Makefile.am,kflog/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,po/Makefile.am
 modifyMakefiles=true
@@ -96,7 +96,7 @@ type=normal
 [doc/en/index.docbook]
 dist=true
 install=false
-install_location=$$(kde_icondir)/locolor/16x16/apps/kflog.png
+install_location=$$$$(kde_icondir)/locolor/16x16/apps/kflog.png
 type=DATA
 
 [kflog.kdevprj]
@@ -244,128 +244,128 @@ type=HEADER
 
 [kflog/hi16-action-centerflight.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/16x16/action/centerflight.png
 type=DATA
 
 [kflog/hi16-action-centertask.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/16x16/action/centertask.png
 type=DATA
 
 [kflog/hi16-action-flightevaluation.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/16x16/action/flightevaluation.png
 type=DATA
 
 [kflog/hi16-app-kflog.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/16x16/apps/kflog.png
 type=DATA
 
 [kflog/hi16-mimetype-x-igc.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/16x16/mimetypes/x-igc.png
 type=DATA
 
 [kflog/hi22-action-centerflight.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/22x22/action/centerflight.png
 type=DATA
 
 [kflog/hi22-action-centertask.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/22x22/action/centertask.png
 type=DATA
 
 [kflog/hi22-action-flightevaluation.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/22x22/action/flightevaluation.png
 type=DATA
 
 [kflog/hi22-action-movemap_e.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/22x22/action/movemap_e.png
 type=DATA
 
 [kflog/hi22-action-movemap_n.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/22x22/action/movemap_n.png
 type=DATA
 
 [kflog/hi22-action-movemap_ne.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/22x22/action/movemap_ne.png
 type=DATA
 
 [kflog/hi22-action-movemap_nw.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/22x22/action/movemap_nw.png
 type=DATA
 
 [kflog/hi22-action-movemap_s.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/22x22/action/movemap_s.png
 type=DATA
 
 [kflog/hi22-action-movemap_se.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/22x22/action/movemap_se.png
 type=DATA
 
 [kflog/hi22-action-movemap_sw.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/22x22/action/movemap_sw.png
 type=DATA
 
 [kflog/hi22-action-movemap_w.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/22x22/action/movemap_w.png
 type=DATA
 
 [kflog/hi32-action-flightevaluation.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/32x32/action/flightevaluation.png
 type=DATA
 
 [kflog/hi32-app-kflog.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/32x32/apps/kflog.png
 type=DATA
 
 [kflog/hi32-mimetype-x-igc.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/32x32/mimetypes/x-igc.png
 type=DATA
 
 [kflog/hi48-app-kflog.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/48x48/apps/kflog.png
 type=DATA
 
 [kflog/hi48-mimetype-x-igc.png]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$$$(kde_icondir)/hicolor/48x48/mimetypes/x-igc.png
 type=DATA
 
 [kflog/isohypse.cpp]
@@ -389,7 +389,7 @@ type=SOURCE
 [kflog/kflog.desktop]
 dist=true
 install=true
-install_location=$$(kde_appsdir)/Applications/kflog.desktop
+install_location=$$$$(kde_appsdir)/Applications/kflog.desktop
 type=DATA
 
 [kflog/kflog.h]

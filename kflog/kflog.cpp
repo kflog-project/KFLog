@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2001 by Heiner Lamprecht
+**   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -159,12 +159,7 @@ void KFLogApp::initActions()
   flightEvaluation = new KAction(i18n("Evaluation"), "flightevaluation",
       CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
       "evaluate_flight");
-/*
-  new KAction(i18n("Evaluation"),
-      "/opt/kde2/share/apps/kflog/toolbar/auswertung.png",
-      CTRL+Key_E, this,
-      SLOT(slotEvaluateFlight()), actionCollection(), "evaluate_flight");
-*/
+
 //  new KAction(i18n("Optimize"), 0, 0, map,
 //      SLOT(slotOptimzeFlight()), actionCollection(), "optimize_flight");
 
@@ -355,7 +350,6 @@ void KFLogApp::slotFileOpen()
 {
   slotStatusMsg(i18n("Opening file..."));
 
-//  QString fName = KFileDialog::getOpenFileName(flightDir, "*.igc *.IGC", this);
   KURL fUrl = KFileDialog::getOpenURL(flightDir, "*.igc *.IGC", this);
 
   if(fUrl.isEmpty())  return;

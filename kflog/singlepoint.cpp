@@ -20,6 +20,7 @@
 
 #include <kapp.h>
 #include <kiconloader.h>
+#include <kstddirs.h>
 #include <qdatastream.h>
 #include <qfile.h>
 #include <qtextstream.h>
@@ -74,7 +75,6 @@ void SinglePoint::printMapElement(QPainter* printPainter, const double dX,
   struct drawPoint printPos;// = __projectElement(dX, dY, mapCenterLon, scale);
 
   printPainter->setPen(QPen(QColor(0,0,0), 2));
-  char* kflog_dir = "/kflog/map/";
   int iconSize = 16;
 
   QString iconName;
@@ -114,7 +114,6 @@ void SinglePoint::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
     }
 
   targetPainter->setPen(QPen(QColor(0,0,0), 2));
-  char* kflog_dir = "/kflog/map/";
   int iconSize = 16;
   bool show = true;
 
@@ -135,7 +134,7 @@ void SinglePoint::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   curPos = glMapMatrix->map(position);
 
   targetPainter->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
-      QPixmap("/opt/kde2/share/apps/kflog/mapicons/" + iconName));
+    QPixmap(KGlobal::dirs()->findResource("appdata", "mapicons/") + iconName));
 }
 
 void SinglePoint::setWaypoint(bool isW)

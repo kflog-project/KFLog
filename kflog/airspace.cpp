@@ -22,6 +22,7 @@
 
 #include <kapp.h>
 #include <kiconloader.h>
+#include <klocale.h>
 #include <qdatastream.h>
 #include <qfile.h>
 #include <qtextstream.h>
@@ -101,13 +102,10 @@ QRegion* Airspace::drawRegion(QPainter* targetPainter, QPainter* maskPainter)
   int index = glMapMatrix->getScaleRange();
 
   if(valley)
-    {
       maskPainter->setBrush(QBrush(Qt::color0, fillBrushStyle));
-    }
   else
-    {
       maskPainter->setBrush(QBrush(Qt::color1, fillBrushStyle));
-    }
+
   maskPainter->setPen(QPen(Qt::color1, drawPenSize[index], drawPenStyle));
   maskPainter->drawPolygon(tA);
 
@@ -196,7 +194,7 @@ QString Airspace::getInfoString()
         text = "LowFlight";
         break;
       default:
-        text = "<B><EM>unknown</EM></B>";
+        text = "<B><EM>" + i18n("unknown") + "</EM></B>";
         break;
     }
 

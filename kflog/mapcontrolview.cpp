@@ -32,7 +32,8 @@
 MapControlView::MapControlView(QWidget* parent, Map* map)
 : QWidget(parent)
 {
-  QLabel* mapControl = new QLabel(i18n("<B>Map-control:</B>"), parent);
+  QLabel* mapControl = new QLabel("<B>" + i18n("Map-control:") + "</B>",
+      parent);
   mapControl->setMinimumHeight(mapControl->sizeHint().height() + 5);
 
   QFrame* navFrame = new QFrame(parent);
@@ -113,7 +114,7 @@ MapControlView::MapControlView(QWidget* parent, Map* map)
   currentScaleSlider->setMinimumHeight(
           currentScaleSlider->sizeHint().height());
 
-  QGridLayout* controlLayout = new QGridLayout(parent,5,4,5,5,"controlLayout");
+  QGridLayout* controlLayout = new QGridLayout(parent,5,4,5,5, "controlLayout");
 
   controlLayout->addMultiCellWidget(mapControl,0,0,0,3);
   controlLayout->addMultiCellWidget(navFrame,1,3,0,1);

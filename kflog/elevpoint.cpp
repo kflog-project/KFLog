@@ -88,7 +88,6 @@ void ElevPoint::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   }
 
   targetPainter->setPen(QPen(QColor(0,0,0), 2));
-  char* kflog_dir = "/kflog/map/";
   int iconHeight = 28;  // Positionierung des Punktes im Icon
   int iconWidth = 15;   // auf die richtige Stelle
 }
