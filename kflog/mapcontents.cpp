@@ -146,6 +146,7 @@ MapContents::MapContents()
   wpList.setAutoDelete(false);
   regIsoLines.setAutoDelete(true);
   downloadList = new DownloadList();
+  connect(downloadList,SIGNAL(allDownloadsFinished()),this,SLOT(slotDownloadFinished()));
 }
 
 MapContents::~MapContents()
@@ -560,7 +561,6 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
   }
   else{
     downloadList->copyKURL(&src,&dest);
-    connect(downloadList,SIGNAL(allDownloadsFinished()),this,SLOT(slotDownloadFinished()));
   }
 }
 
@@ -1989,7 +1989,7 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
 
 void MapContents::slotDownloadFinished()
 {
-//  qWarning("slotDownloadFinished()");
+  qWarning("slotDownloadFinished()");
   slotReloadMapData();
   emit contentsChanged();
 }

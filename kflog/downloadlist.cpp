@@ -28,12 +28,19 @@ DownloadList::DownloadList(){
   srcList.setAutoDelete(true);
   destList.setAutoDelete(true);
   downloadRunning=false;
+//  banList.append("EOL");
 }
 
 DownloadList::~DownloadList(){
 }
 
 void DownloadList::copyKURL(KURL* src, KURL* dest){
+  QStringList::Iterator it = banList.find(src->fileName());
+  qWarning(QString("it:%1").arg(*it));
+  if ((*it)!=""){ // URL found in banList
+//    qWarning("found.");
+    return;
+  }
   srcList.append(new KURL(src->url()));
   destList.append(new KURL (dest->url()));
   __schedule();
@@ -44,22 +51,10 @@ void DownloadList::slotDownloadFinished(KIO::Job* job){
   downloadRunning=false;
   int error;
   error=job->error();
-  if (error){
-//    job->showErrorDialog(0);
-    int ret=QMessageBox::warning(0,i18n("Error downloading files"),job->errorString()+"\n"+
-      i18n("Do you want to continue to download the map files?\n")+
-      i18n("Warning: If you press \"Continue\" you may end in an endless loop"),
-      "&Continue", "&Stop",
-        0,      // Enter == button 0
-        1 );    // Escape == button 1
-    if (ret==1){
-      KConfig* config = KGlobal::config();
-      config->setGroup("General Options");
-      config->writeEntry("Automatic Map Download",Inhibited,false);
-      srcList.clear();
-      destList.clear();
-    }
-  }
+  KConfig* config = KGlobal::config();
+  config->setGroup("General Options");
+  if (error)
+    banList.prepend(actualURL);
   emit downloadFinished();
   __schedule();
 }
@@ -71,6 +66,8 @@ void DownloadList::__schedule(){
     downloadRunning=true;
     KURL* src = srcList.take(0);
     KURL* dest = destList.take(0);
+    actualURL=src->fileName();
+    qWarning(QString("actualURL:%1").arg(actualURL));
     KIO::Job* job = new KIO::FileCopyJob(*src, *dest, 0644, false, false, false, true);
 //    delete src;
 //    delete dest;

@@ -83,6 +83,14 @@ class DownloadList : public QObject{
     */
     QPtrList<KURL> destList;
    /**
+    * List of URL's which cannot be retrieved
+    */
+    QStringList banList;
+   /**
+    * actual processed URL
+    */
+    QString actualURL;
+   /**
     * Is a download running or not?
     */
     bool downloadRunning;
