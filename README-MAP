@@ -3,7 +3,9 @@ $Id$
 This directory is used for the map-files. The airspace-files are stored in the
 subdirectory "airspace/", the airfield-files in "airfields/".
 
-If You want to obtain a map, please visit the KFLog-Homepage.
+If you want to obtain maps manually, please visit the KFLog-Homepage.
+To enable the automatic map download for the users, change the permissions
+for this directory and its subdirectories. (chmod -R a+w .)
 
 You can find the map-files at:
 
