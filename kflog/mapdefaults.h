@@ -350,18 +350,18 @@
 #define FRST_PEN_STYLE_3 Qt::SolidLine
 #define FRST_PEN_STYLE_4 Qt::SolidLine
 
-#define FRST_BRUSH_COLOR_1 QColor(255,250,100)
-#define FRST_BRUSH_COLOR_2 QColor(255,250,100)
-#define FRST_BRUSH_COLOR_3 QColor(255,250,100)
-#define FRST_BRUSH_COLOR_4 QColor(255,250,100)
+#define FRST_BRUSH_COLOR_1 QColor(12,86,35)
+#define FRST_BRUSH_COLOR_2 QColor(12,86,35)
+#define FRST_BRUSH_COLOR_3 QColor(12,86,35)
+#define FRST_BRUSH_COLOR_4 QColor(12,86,35)
 
-#define FRST_BRUSH_STYLE_1 Qt::SolidPattern
-#define FRST_BRUSH_STYLE_2 Qt::SolidPattern
-#define FRST_BRUSH_STYLE_3 Qt::SolidPattern
-#define FRST_BRUSH_STYLE_4 Qt::SolidPattern
+#define FRST_BRUSH_STYLE_1 Qt::CrossPattern
+#define FRST_BRUSH_STYLE_2 Qt::CrossPattern
+#define FRST_BRUSH_STYLE_3 Qt::CrossPattern
+#define FRST_BRUSH_STYLE_4 Qt::CrossPattern
 
-#define PRINT_FRST_COLOR_1 QColor(255,250,100)
-#define PRINT_FRST_COLOR_2 QColor(255,250,100)
+#define PRINT_FRST_COLOR_1 QColor(12,86,35)
+#define PRINT_FRST_COLOR_2 QColor(12,86,35)
 
 #define PRINT_FRST_PEN_1 2
 #define PRINT_FRST_PEN_2 2
@@ -372,14 +372,14 @@
 #define PRINT_FRST_BRUSH_COLOR_1 QColor(255,250,100)
 #define PRINT_FRST_BRUSH_COLOR_2 QColor(255,250,100)
 
-#define PRINT_FRST_BRUSH_STYLE_1 Qt::SolidPattern
-#define PRINT_FRST_BRUSH_STYLE_2 Qt::SolidPattern
+#define PRINT_FRST_BRUSH_STYLE_1 Qt::CrossPattern
+#define PRINT_FRST_BRUSH_STYLE_2 Qt::CrossPattern
 
 // [Glacier]
-#define GLACIER_COLOR_1 QColor(255,250,100)
-#define GLACIER_COLOR_2 QColor(255,250,100)
-#define GLACIER_COLOR_3 QColor(255,250,100)
-#define GLACIER_COLOR_4 QColor(255,250,100)
+#define GLACIER_COLOR_1 QColor(255,250,250)
+#define GLACIER_COLOR_2 QColor(255,250,250)
+#define GLACIER_COLOR_3 QColor(255,250,250)
+#define GLACIER_COLOR_4 QColor(255,250,250)
 
 #define GLACIER_PEN_1 2
 #define GLACIER_PEN_2 2
@@ -391,18 +391,18 @@
 #define GLACIER_PEN_STYLE_3 Qt::SolidLine
 #define GLACIER_PEN_STYLE_4 Qt::SolidLine
 
-#define GLACIER_BRUSH_COLOR_1 QColor(255,250,100)
-#define GLACIER_BRUSH_COLOR_2 QColor(255,250,100)
-#define GLACIER_BRUSH_COLOR_3 QColor(255,250,100)
-#define GLACIER_BRUSH_COLOR_4 QColor(255,250,100)
+#define GLACIER_BRUSH_COLOR_1 QColor(255,250,250)
+#define GLACIER_BRUSH_COLOR_2 QColor(255,250,250)
+#define GLACIER_BRUSH_COLOR_3 QColor(255,250,250)
+#define GLACIER_BRUSH_COLOR_4 QColor(255,250,250)
 
-#define GLACIER_BRUSH_STYLE_1 Qt::SolidPattern
-#define GLACIER_BRUSH_STYLE_2 Qt::SolidPattern
-#define GLACIER_BRUSH_STYLE_3 Qt::SolidPattern
-#define GLACIER_BRUSH_STYLE_4 Qt::SolidPattern
+#define GLACIER_BRUSH_STYLE_1 Qt::CrossPattern
+#define GLACIER_BRUSH_STYLE_2 Qt::CrossPattern
+#define GLACIER_BRUSH_STYLE_3 Qt::CrossPattern
+#define GLACIER_BRUSH_STYLE_4 Qt::CrossPattern
 
-#define PRINT_GLACIER_COLOR_1 QColor(255,250,100)
-#define PRINT_GLACIER_COLOR_2 QColor(255,250,100)
+#define PRINT_GLACIER_COLOR_1 QColor(255,250,250)
+#define PRINT_GLACIER_COLOR_2 QColor(255,250,250)
 
 #define PRINT_GLACIER_PEN_1 2
 #define PRINT_GLACIER_PEN_2 2
@@ -410,11 +410,11 @@
 #define PRINT_GLACIER_PEN_STYLE_1 Qt::SolidLine
 #define PRINT_GLACIER_PEN_STYLE_2 Qt::SolidLine
 
-#define PRINT_GLACIER_BRUSH_COLOR_1 QColor(255,250,100)
-#define PRINT_GLACIER_BRUSH_COLOR_2 QColor(255,250,100)
+#define PRINT_GLACIER_BRUSH_COLOR_1 QColor(255,250,250)
+#define PRINT_GLACIER_BRUSH_COLOR_2 QColor(255,250,250)
 
-#define PRINT_GLACIER_BRUSH_STYLE_1 Qt::SolidPattern
-#define PRINT_GLACIER_BRUSH_STYLE_2 Qt::SolidPattern
+#define PRINT_GLACIER_BRUSH_STYLE_1 Qt::CrossPattern
+#define PRINT_GLACIER_BRUSH_STYLE_2 Qt::CrossPattern
 
 // [Pack Ice]
 #define PACK_ICE_COLOR_1 QColor(255,250,100)
