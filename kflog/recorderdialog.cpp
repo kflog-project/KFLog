@@ -283,7 +283,7 @@ void RecorderDialog::__addSettingsPage()
 
   //sort if this style uses a listbox for the combobox
   if (selectType->listBox()) selectType->listBox()->sort();
-  
+
   selectType->setCurrentText(name);
   slotRecorderTypeChanged(selectType->text(typeID));
 
@@ -952,6 +952,7 @@ int RecorderDialog::__fillDirList()
 
 int RecorderDialog::__openLib(const QString& libN)
 {
+  warning("__openLib(%s)", (const char*) libN);
   char* error;
 
   if (libName==libN) {
@@ -1417,9 +1418,10 @@ void RecorderDialog::slotEnablePages()
 /** No descriptions */
 void RecorderDialog::slotRecorderTypeChanged(const QString&) // name)
 {
-  //QStringList::Iterator it = libNameList.at(selectType->currentItem());
-  //QString name = (*it).latin1();
-  QString name = *libNameList[selectType->currentText()];
+  if(selectType->currentText().isEmpty())  return;
+
+  QString name = *(libNameList[selectType->currentText()]);
+
   if(isOpen && libName != name) {
     // closing old lib
     dlclose(libHandle);
