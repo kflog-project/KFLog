@@ -1,6 +1,13 @@
 $Id$
 
 
+2003-04-26 André <andre@kflog.org>
+  
+  * Removed bug where KFLog would crash if you tried to add a waypoint from 
+    the map and there was no catalog opened. Fixed by creating a new catalog
+    if this happens.
+
+
 2003-04-26 Heiner <heiner@kflog.org>
 
   * Updated the messages-catalog
@@ -18,6 +25,7 @@ $Id$
   
   * Free rectangular zoom added
 
+  
 2003-04-25 Florian <florian@kflog.org>
   
   * Changed the MapdirectorySelect Dialog to a KFileDialog

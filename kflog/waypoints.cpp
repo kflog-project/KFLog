@@ -739,6 +739,11 @@ void Waypoints::slotFilterWaypoints()
 /** add a new waypoint from outside */
 void Waypoints::slotAddWaypoint(Waypoint *w)
 {
+  if (!waypointCatalogs.current()) { //let's make sure we have a waypointcatalog
+    WaypointCatalog * wpc=new WaypointCatalog(i18n("unnamed"));
+    slotAddCatalog(wpc);
+  }
+  
   WaypointDict *wl = &waypointCatalogs.current()->wpList;
   int loop = 1;
   if (w->name.isEmpty()) {
