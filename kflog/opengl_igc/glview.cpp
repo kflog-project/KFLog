@@ -149,7 +149,7 @@ void GLView::addFlight(Flight* flight)
         acty=-fPoint.projP.y();
         actz=fPoint.height;
         
-        QPen drawP = _globalMapConfig.getDrawPen(&fPoint);
+        QPen drawP = _globalMapConfig.getDrawPen(&fPoint,true);
         qglColor(drawP.color());
         glVertex3i(  actx,  acty, actz );
         if (actx>maxx)

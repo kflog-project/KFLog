@@ -71,10 +71,11 @@ class MapConfig : public QObject
     /**
      * @param  fP  The flightpoint, which is used to determine the color
      *             of the line.
-     *
+     * @param  overrideSwitch always return the color if true, regardless of
+     *                        the zoom factor
      * @return the pen for drawing a line between two flightpoints of a flight.
      */
-    QPen getDrawPen(flightPoint* fP);
+    QPen getDrawPen(flightPoint* fP, bool overrideSwitch=false);
     /**
      * @param  type  The typeID of the element.
      *
