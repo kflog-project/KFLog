@@ -494,7 +494,7 @@ void Map::mousePressEvent(QMouseEvent* event)
 
 	  if(_globalMapContents.getFlightList()->count() > 0)
 	    {
-	      QList<wayPoint>* wpList =
+	      QList<wayPoint> wpList =
                 _globalMapContents.getFlight()->getWPList();
 
 	      delta = 25;

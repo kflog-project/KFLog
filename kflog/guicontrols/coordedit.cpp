@@ -105,3 +105,8 @@ LongEdit::LongEdit(QWidget *parent, const char *name ) : CoordEdit(parent, name)
   mask = "000° 00' 00\" E";
   validDirection = "WE";
 }
+/** No descriptions */
+void CoordEdit::clear()
+{
+  setText(mask);
+}

@@ -18,29 +18,31 @@
 #ifndef TASKANDWAYPOINT_H
 #define TASKANDWAYPOINT_H
 
+#include "waypointimpfilterdialog.h"
 #include "waypointdialog.h"
 #include "waypointcatalog.h"
 #include "translationlist.h"
 #include "guicontrols/kflogtable.h"
 
-#include <qwidget.h>
+#include <qframe.h>
 #include <qsplitter.h>
 #include <qcombobox.h>
 #include <qlist.h>
 
 #include <kconfig.h>
-#include <kdialog.h>
 #include <kpopupmenu.h>
 
 /**
   *@author Harald Maier
   */
 
-class TaskAndWaypoint : public KDialog  {
+class TaskAndWaypoint : public QFrame  {
    Q_OBJECT
 public: 
 	TaskAndWaypoint(QWidget *parent=0, const char *name=0);
 	~TaskAndWaypoint();
+	/* save changes in catalogs, return success */
+  bool saveChanges();
 private: // Private methods
   /** No descriptions */
   void initSurfaces();
@@ -77,6 +79,29 @@ private: // Private attributes
   QList<WaypointCatalog> waypointCatalogs;
   /**  */
   WaypointDialog *waypointDlg;
+  WaypointImpFilterDialog *importFilterDlg;
+
+  /** filter for display */
+  bool showAll;
+  bool showAirports;
+  bool showGliderSites;
+  bool showOtherSites;
+  bool showObstacle;
+  bool showLandmark;
+  bool showOutlanding;
+  bool showStation;
+
+  int areaLat1;
+  int areaLat2;
+  int areaLong1;
+  int areaLong2;
+  int radiusLat;
+  int radiusLong;
+
+  bool filterRadius;
+  bool filterArea;
+
+  double radiusSize;
 private slots: // Private slots
   void slotNotHandledItem();
   void slotNewWaypoint();
@@ -84,7 +109,6 @@ private slots: // Private slots
   void slotEditWaypoint();
   /** insert waypoint from waypoint dialog */
   void slotAddWaypoint();
-  void reject();
   /** create a new catalog */
   void slotNewWaypointCatalog();
   /** open a catalog and set it active */
@@ -97,6 +121,8 @@ private slots: // Private slots
   void showWaypointPopup(int row, int col, int button, const QPoint &mousePos);
   void slotImportWaypointFromMap();
 public slots: // Public slots
+  /** filter waypoints to display */
+  void slotFilterWaypoints();
 };
 
 #endif

@@ -27,7 +27,7 @@
 
 #include <qpointarray.h>
 
-Class SinglePoint;
+class SinglePoint;
 
 /**
  * This class provides basic functions for displaying the map.

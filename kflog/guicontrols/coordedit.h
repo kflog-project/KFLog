@@ -38,6 +38,9 @@ protected:
   /** No descriptions */
 	QString mask;
 	QString validDirection;
+public slots: // Public slots
+  /** No descriptions */
+  void clear();
 };
 
 class LatEdit : public CoordEdit  {

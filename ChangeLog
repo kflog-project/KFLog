@@ -1,5 +1,11 @@
 $Id$
 
+2002-02-13 Harry <harry@kflog.org>
+
+  * Added waypoints as dockable widget
+
+  * Added filter for import and display of waypoints
+	
 2002-02-12 Thomas <thomas@kflog.org>
 
   * Added zoom, tilt and rotate functionallity to 3DIgc dialog.
@@ -32,6 +38,11 @@ $Id$
 
   * Added printing of the flight and the task. The printout
     can be centered to the flight or the task.
+
+
+2002-02-01 Harry <harry@kflog.org>
+
+  * Added import waypoints from map
 
 
 2002-01-27 Heiner <heiner@kflog.org>

@@ -35,8 +35,6 @@ Airport::~Airport()
 
 QString Airport::getFrequency() const { return frequency; }
 
-unsigned int Airport::getElevation() const { return elevation; }
-
 runway Airport::getRunway(int index) const { return rwData[index]; }
 
 unsigned int Airport::getRunwayNumber() const { return rwNum; }

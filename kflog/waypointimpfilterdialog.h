@@ -21,6 +21,7 @@
 #include <guicontrols/coordedit.h>
 
 #include <qcheckbox.h>
+#include <qcombobox.h>
 
 #include <kdialog.h>
 
@@ -47,8 +48,15 @@ public:
   LongEdit *fromLong;
   LatEdit *toLat;
   LongEdit *toLong;
+  LatEdit *posLat;
+  LongEdit *posLong;
+
+  QComboBox *radius;
 protected slots:
   void slotChangeUseAll();
+public slots: // Public slots
+  /** reset all dialog items to default values */
+  void slotClear();
 };
 
 #endif

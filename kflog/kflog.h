@@ -34,7 +34,7 @@ class Map;
 class MapControlView;
 class KFLogConfig;
 class KFLogStartLogo;
-
+class TaskAndWaypoint;
 /**
  * Mainwindow for KFLog.
  *
@@ -86,7 +86,8 @@ class KFLogApp : public KDockMainWindow
      * Initializes the mainwindow.
      */
     void initView();
-
+    /* ask for outstanding changes */
+    bool queryClose();
   public slots:
     /**
      * Displays the position of the mousecursor and some info (time,
@@ -153,6 +154,10 @@ class KFLogApp : public KDockMainWindow
      * Shows or hides the map-widget.
      */
     void slotToggleMap();
+     /**
+     * Shows or hides the taskandwaypoint-widget.
+     */
+    void slotToggleTaskAndWaypointDock();
     /**
      * Opens a dialog for configuration of the toolbar.
      */
@@ -214,11 +219,12 @@ class KFLogApp : public KDockMainWindow
     /** */
     void slotOptimizeFlight();
     /** */
-    void slotTaskAndWaypoint();
-
-    /** */
     void slotFlightViewIgc3D();
-
+    /**
+     * Hides the taskAndWaypoint-widget. Called, when the user has closed or
+     * undocked the widget.
+     */
+    void slotHideTaskAndWaypointDock();
   private:
     /**
      * The configuration object of the application
@@ -242,6 +248,12 @@ class KFLogApp : public KDockMainWindow
      * @see dataView
      */
     KDockWidget* dataViewDock;
+    /**
+     * Dockwidget to handle the task&waypoint-widget.
+     *
+     * @see taskAndWaypoint
+     */
+    KDockWidget* taskAndWaypointDock;
     /**
      * The mapcontrol-widget. Embedded in mapControlDock
      *
@@ -350,7 +362,7 @@ class KFLogApp : public KDockMainWindow
     /** */
     KAction* flightPrint;
     /** */
-    KAction* taskAndWaypoint;
+    KToggleAction* viewTaskAndWaypoint;
 		/**
 		 * Action to start the animation
 		 */		
@@ -380,6 +392,10 @@ class KFLogApp : public KDockMainWindow
      * The flight-directory.
      */
     QString flightDir;
+		/**
+     * The taskandwaypoint-widget.
+     */
+    TaskAndWaypoint *taskAndWaypoint;
     /**
      * The startup-window.
      */

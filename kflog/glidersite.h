@@ -82,16 +82,8 @@ class GliderSite : public RadioPoint
      *                 be printed.
      */
     virtual void printMapElement(QPainter* printP, bool isText) const;
-    /**
-     * @return the elevation of the element.
-     */
-    unsigned int getElevation() const;
 
   private:
-    /**
-     * Contains the elevation.
-     */
-    unsigned int elevation;
     /**
      * The launching-type. "true" if the site only has a winch, "false",
      * if aero tow is also available.

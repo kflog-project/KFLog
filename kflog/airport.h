@@ -71,10 +71,6 @@ class Airport : public RadioPoint
      */
     virtual void printMapElement(QPainter* printP, bool isText) const;
     /**
-     * @return the elevation of the airport
-     */
-    unsigned int getElevation() const;
-    /**
      * Return a short html-info-string about the airport, containg the
      * name, the alias, the elevation and the frequency as well as a small
      * icon of the airporttype.
@@ -89,10 +85,6 @@ class Airport : public RadioPoint
     enum SurfaceType {Unknown = 0, Grass = 1, Asphalt = 2, Concrete = 3};
 
   private:
-    /**
-     * The elevation of the airport.
-     */
-    unsigned int elevation;
     /**
      */
     bool vdf;

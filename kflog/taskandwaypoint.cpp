@@ -23,7 +23,6 @@
 #include "mapcontents.h"
 #include "airport.h"
 #include "glidersite.h"
-#include "waypointimpfilterdialog.h"
 
 #include <pwd.h>
 #include <stdlib.h>
@@ -57,40 +56,30 @@ extern MapContents _globalMapContents;
 extern MapMatrix _globalMapMatrix;
 
 TaskAndWaypoint::TaskAndWaypoint(QWidget *parent, const char *name )
-  : KDialog(parent, name, true)
+  : QFrame(parent, name)
 {
   TranslationElement *te;
 
-  setCaption(i18n("Task & Waypoints"));
-
   QVBoxLayout *layout = new QVBoxLayout(this);
-  QHBoxLayout *buttons = new QHBoxLayout(10);
   QSplitter *split = new QSplitter(this);
   split->setOrientation(Vertical);
 
   initSurfaces();
   initTypes();
-  addTaskWindow(split);
+//  addTaskWindow(split);
   addWaypointWindow(split);
   addPopupMenu();
 
-  QPushButton* close = new QPushButton(i18n("Close"), this);
-  connect(close, SIGNAL(clicked()), SLOT(reject()));
-
-  buttons->addStretch();
-  buttons->addWidget(close);
-  buttons->addSpacing(5);
-
   layout->addWidget(split);
-  layout->addLayout(buttons);
-  layout->addSpacing(5);
-  setMinimumSize(800, 500);
+  //setMinimumSize(800, 200);
 
   waypointCatalogs.setAutoDelete(true);
   slotNewWaypointCatalog();
 
   waypointDlg = new WaypointDialog(this);
   connect(waypointDlg, SIGNAL(addWaypoint()), SLOT(slotAddWaypoint()));
+
+  importFilterDlg = new WaypointImpFilterDialog(this);
 
   // init comboboxes
   for (te = waypointTypes.first(); te != 0; te = waypointTypes.next()) {
@@ -101,6 +90,11 @@ TaskAndWaypoint::TaskAndWaypoint(QWidget *parent, const char *name )
     waypointDlg->surface->insertItem(te->text);
   }
 
+  showAll = true;
+  showAirports = showGliderSites = showOtherSites = showObstacle = showLandmark = showOutlanding =
+  showStation = false;
+
+  filterRadius = filterArea = false;
 }
 
 TaskAndWaypoint::~TaskAndWaypoint()
@@ -211,9 +205,16 @@ void TaskAndWaypoint::addWaypointWindow(QSplitter *s)
   fileOpen->setSizePolicy(sp);
   connect(fileOpen, SIGNAL(clicked()), SLOT(slotOpenWaypointCatalog()));
 
+  QPushButton *filter = new QPushButton(i18n("Filter"), w);
+  sp = filter->sizePolicy();
+  sp.setHorData(QSizePolicy::Fixed);
+  filter->setSizePolicy(sp);
+  connect(filter, SIGNAL(clicked()), SLOT(slotFilterWaypoints()));
+
   header->addWidget(l);
   header->addWidget(catalogName);
   header->addWidget(fileOpen);
+  header->addWidget(filter);
 
   QVBoxLayout *layout = new QVBoxLayout(w, 5, 5);
 
@@ -321,7 +322,7 @@ void TaskAndWaypoint::slotNewWaypoint()
 {
   waypointDlg->clear();
 
-  if (waypointDlg->exec() == Accepted) {
+  if (waypointDlg->exec() == QDialog::Accepted) {
     slotAddWaypoint();
   }
 }
@@ -339,7 +340,8 @@ void TaskAndWaypoint::slotNewWaypointCatalog()
   slotSwitchWaypointCatalog(newItem);
 }
 
-void TaskAndWaypoint::reject()
+/* save changes in catalogs, return success */
+bool TaskAndWaypoint::saveChanges()
 {
   WaypointCatalog *w;
   for (w = waypointCatalogs.first(); w != 0; w = waypointCatalogs.next()) {
@@ -347,16 +349,16 @@ void TaskAndWaypoint::reject()
       switch(KMessageBox::warningYesNoCancel(this, i18n("Save changes to<BR><B>%1</B>").arg(w->path))) {
       case KMessageBox::Yes:
         if (!w->write()) {
-          return;
+          return false;
         }
         break;
       case KMessageBox::Cancel:
-        return;
+        return false;
       }
     }
   }
 
-  KDialog::reject();
+  return true;
 }
 
 /** insert waypoint from waypoint dialog */
@@ -424,7 +426,7 @@ void TaskAndWaypoint::slotEditWaypoint()
     waypointDlg->comment->setText(w->comment);
     waypointDlg->isLandable->setChecked(w->isLandable);
 
-    if (waypointDlg->exec() == Accepted) {
+    if (waypointDlg->exec() == QDialog::Accepted) {
       if (!waypointDlg->name->text().isEmpty()) {
         w->name = waypointDlg->name->text().left(6).upper();
         w->description = waypointDlg->description->text();
@@ -473,10 +475,33 @@ void TaskAndWaypoint::fillWaypoints()
   WaypointElement *w;
   QDictIterator<WaypointElement> it(waypointCatalogs.current()->wpList);
   int row = 0;
+  int maxRows = it.count();
 
-  waypoints->setNumRows(it.count());
+  waypoints->setNumRows(maxRows);
 
   for (w = it.current(); w != 0; w = ++it) {
+    if (!showAll) {
+      if ((w->type == BaseMapElement::Airport && !showAirports) ||
+          (w->type == BaseMapElement::Glidersite && !showGliderSites)) {
+         maxRows--;
+         continue;
+      }
+    }
+
+     if (filterArea) {
+       if (w->pos.x() < areaLong1 || w->pos.x() > areaLong2 ||
+           w->pos.y() < areaLat1 || w->pos.y() > areaLat2) {
+           maxRows--;
+           continue;
+       }
+     }
+     else if (filterRadius) {
+       if (dist(radiusLat, radiusLong, w->pos.y(), w->pos.x()) > radiusSize) {
+         maxRows--;
+         continue;
+       }
+     }
+
     waypoints->setItem(row, COL_WAYPOINT_NAME, new QTableItem(waypoints, QTableItem::Never, w->name));
     waypoints->setItem(row, COL_WAYPOINT_DESCRIPTION, new QTableItem(waypoints, QTableItem::Never, w->description));
     waypoints->setItem(row, COL_WAYPOINT_ICAO, new QTableItem(waypoints, QTableItem::Never, w->icao));
@@ -502,6 +527,7 @@ void TaskAndWaypoint::fillWaypoints()
 
     row++;
   }
+  waypoints->setNumRows(maxRows);
   waypoints->sort();
 }
 
@@ -584,28 +610,30 @@ void TaskAndWaypoint::slotImportWaypointFromMap()
   unsigned int i;
   int type, loop;
   bool useAll, useAirports, useGliderSites, useOtherSites, useObstacle;
-  bool useLandmark, useOutlanding, useStation, useArea;
-  int fromLat, fromLong, toLat, toLong;
+  bool useLandmark, useOutlanding, useStation, useArea, useRadius;
+  int fromLat, fromLong, toLat, toLong, posLat, posLong;
+  double radius;
   QPoint p;
   QString tmp;
   QRegExp blank("[ ]");
 
-  WaypointImpFilterDialog d;
+  if (importFilterDlg->exec() == QDialog::Accepted) {
+    useAll = importFilterDlg->useAll->isChecked();
+    useAirports = importFilterDlg->airports->isChecked();
+    useGliderSites = importFilterDlg->gliderSites->isChecked();
+    useOtherSites = importFilterDlg->otherSites->isChecked();
+    useObstacle = importFilterDlg->obstacle->isChecked();
+    useLandmark = importFilterDlg->landmark->isChecked();
+    useOutlanding = importFilterDlg->outlanding->isChecked();
+    useStation = importFilterDlg->station->isChecked();
 
-  if (d.exec() == Accepted) {
-    useAll = d.useAll->isChecked();
-    useAirports = d.airports->isChecked();
-    useGliderSites = d.gliderSites->isChecked();
-    useOtherSites = d.otherSites->isChecked();
-    useObstacle = d.obstacle->isChecked();
-    useLandmark = d.landmark->isChecked();
-    useOutlanding = d.outlanding->isChecked();
-    useStation = d.station->isChecked();
-
-    fromLat = _globalMapContents.degreeToNum(d.fromLat->text());
-    toLat = _globalMapContents.degreeToNum(d.toLat->text());
-    fromLong = _globalMapContents.degreeToNum(d.fromLong->text());
-    toLong = _globalMapContents.degreeToNum(d.toLong->text());
+    fromLat = _globalMapContents.degreeToNum(importFilterDlg->fromLat->text());
+    toLat = _globalMapContents.degreeToNum(importFilterDlg->toLat->text());
+    fromLong = _globalMapContents.degreeToNum(importFilterDlg->fromLong->text());
+    toLong = _globalMapContents.degreeToNum(importFilterDlg->toLong->text());
+    posLat = _globalMapContents.degreeToNum(importFilterDlg->posLat->text());
+    posLong = _globalMapContents.degreeToNum(importFilterDlg->posLong->text());
+    radius = importFilterDlg->radius->currentText().toDouble();
 
     // normalize coordinates
     if (fromLat > toLat) {
@@ -620,7 +648,8 @@ void TaskAndWaypoint::slotImportWaypointFromMap()
       toLong = tmp;
     }
 
-    useArea = (toLat > 1 && toLong > 1);
+    useRadius = (posLat > 1  || posLong > 1);
+    useArea = (toLat > 1 && toLong > 1 && !useRadius);
 
     if (useAll || useAirports) {
       for (i = 0; i < _globalMapContents.getListLength(MapContents::AirportList); i++) {
@@ -633,6 +662,11 @@ void TaskAndWaypoint::slotImportWaypointFromMap()
           if (p.x() < fromLong || p.x() > toLong ||
               p.y() < fromLat || p.y() > toLat) {
               continue;
+          }
+        }
+        else if (useRadius) {
+          if (dist(posLat, posLong, p.y(), p.x()) > radius) {
+            continue;
           }
         }
 
@@ -665,9 +699,13 @@ void TaskAndWaypoint::slotImportWaypointFromMap()
         default:
           w->isLandable = false;
         }
-    //    w->runway = ;
-    //    w->length = ;
-    //    w->surface = ;
+
+//        if (a->getRunwayNumber()) {
+//          runway r = a->getRunway(0);
+//          w->runway = r.direction;
+//          w->length = r.length;
+//          w->surface = r.surface;
+//        }
 
         if (!wl->insertItem(w)) {
           break;
@@ -685,6 +723,11 @@ void TaskAndWaypoint::slotImportWaypointFromMap()
           if (p.x() < fromLong || p.x() > toLong ||
               p.y() < fromLat || p.y() > toLat) {
               continue;
+          }
+        }
+        else if (useRadius) {
+          if (dist(posLat, posLong, p.y(), p.x()) > radius) {
+            continue;
           }
         }
 
@@ -707,9 +750,12 @@ void TaskAndWaypoint::slotImportWaypointFromMap()
         w->frequency = g->getFrequency().toDouble();
 
         w->isLandable = true;
-    //    w->runway = ;
-    //    w->length = ;
-    //    w->surface = ;
+//        if (g->getRunwayNumber()) {
+//          runway r = g->getRunway(0);
+//          w->runway = r.direction;
+//          w->length = r.length;
+//          w->surface = r.surface;
+//        }
 
         if (!wl->insertItem(w)) {
           break;
@@ -718,6 +764,46 @@ void TaskAndWaypoint::slotImportWaypointFromMap()
     }
 
     waypointCatalogs.current()->modified = true;
+    fillWaypoints();
+  }
+}
+/** filter waypoints to display */
+void TaskAndWaypoint::slotFilterWaypoints()
+{
+  if (importFilterDlg->exec() == QDialog::Accepted) {
+    showAll = importFilterDlg->useAll->isChecked();
+    showAirports = importFilterDlg->airports->isChecked();
+    showGliderSites = importFilterDlg->gliderSites->isChecked();
+    showOtherSites = importFilterDlg->otherSites->isChecked();
+    showObstacle = importFilterDlg->obstacle->isChecked();
+    showLandmark = importFilterDlg->landmark->isChecked();
+    showOutlanding = importFilterDlg->outlanding->isChecked();
+    showStation = importFilterDlg->station->isChecked();
+
+    areaLat1 = _globalMapContents.degreeToNum(importFilterDlg->fromLat->text());
+    areaLat2 = _globalMapContents.degreeToNum(importFilterDlg->toLat->text());
+    areaLong1 = _globalMapContents.degreeToNum(importFilterDlg->fromLong->text());
+    areaLong2 = _globalMapContents.degreeToNum(importFilterDlg->toLong->text());
+    radiusLat = _globalMapContents.degreeToNum(importFilterDlg->posLat->text());
+    radiusLong = _globalMapContents.degreeToNum(importFilterDlg->posLong->text());
+    radiusSize = importFilterDlg->radius->currentText().toDouble();
+
+    // normalize coordinates
+    if (areaLat1 > areaLat2) {
+      int tmp = areaLat1;
+      areaLat1 = areaLat2;
+      areaLat2 = tmp;
+    }
+
+    if (areaLong1 > areaLong2) {
+      int tmp = areaLong1;
+      areaLong1 = areaLong2;
+      areaLong2 = tmp;
+    }
+
+    filterRadius = (radiusLat > 1  || radiusLong > 1);
+    filterArea = (areaLat2 > 1 && areaLong2 > 1 && !filterRadius);
+
     fillWaypoints();
   }
 }
