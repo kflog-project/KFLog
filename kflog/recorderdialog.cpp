@@ -81,7 +81,7 @@ RecorderDialog::~RecorderDialog()
 void RecorderDialog::__addSettingsPage()
 {
   settingsPage = addPage(i18n("Recorder"), i18n("Recorder Settings"),
-      KGlobal::instance()->iconLoader()->loadIcon("configure", KIcon::NoGroup,
+      KGlobal::instance()->iconLoader()->loadIcon("connect_no", KIcon::NoGroup,
           KIcon::SizeLarge));
 
   settingsPage->setMinimumWidth(500);
@@ -247,9 +247,49 @@ void RecorderDialog::__addTaskPage()
   taskList = new KListView(taskPage, "flightList");
   taskList->setShowSortIndicator(true);
   taskList->setAllColumnsShowFocus(true);
-  taskColID = flightList->addColumn(i18n("Nr"));
-  taskColName = flightList->addColumn(i18n("Name"));
-  taskColPosition = flightList->addColumn(i18n("Position"));
+  taskColID = taskList->addColumn(i18n("Nr"));
+  taskColName = taskList->addColumn(i18n("Name"));
+  taskColPosition = taskList->addColumn(i18n("Position"));
+
+  pilotName = new KLineEdit(taskPage, "pilotName");
+  copilotName = new KLineEdit(taskPage, "copilotName");
+  gliderID = new KComboBox(taskPage, "gliderID");
+  gliderID->setEditable(true);
+  gliderType = new KLineEdit(taskPage, "gliderType");
+  compClass = new KLineEdit(taskPage, "compClass");
+  compID = new KLineEdit(taskPage, "compID");
+
+  QPushButton* writeTask = new QPushButton(i18n("write task to recorder"), taskPage);
+  writeTask->setMaximumWidth(writeTask->sizeHint().width() + 15);
+
+  tLayout->addMultiCellWidget(taskList, 0, 0, 0, 6);
+  tLayout->addWidget(new QLabel(i18n("Pilot") + "1:", taskPage), 2, 0);
+  tLayout->addWidget(pilotName, 2, 2);
+  tLayout->addWidget(new QLabel(i18n("Pilot") + "2:", taskPage), 2, 4);
+  tLayout->addWidget(copilotName, 2, 6);
+  tLayout->addWidget(new QLabel(i18n("Glider-ID"), taskPage), 4, 0);
+  tLayout->addWidget(gliderID, 4, 2);
+  tLayout->addWidget(new QLabel(i18n("Glidertype"), taskPage), 4, 4);
+  tLayout->addWidget(gliderType, 4, 6);
+  tLayout->addWidget(new QLabel(i18n("Comp. ID"), taskPage), 6, 0);
+  tLayout->addWidget(compClass, 6, 2);
+  tLayout->addWidget(new QLabel(i18n("Comp. Class"), taskPage), 6, 4);
+  tLayout->addWidget(compID, 6, 6);
+  tLayout->addMultiCellWidget(writeTask, 8, 8, 4, 6, Qt::AlignRight);
+
+  tLayout->addColSpacing(1, 5);
+  tLayout->addColSpacing(3, 10);
+  tLayout->addColSpacing(5, 5);
+
+  tLayout->addRowSpacing(1, 10);
+  tLayout->addRowSpacing(3, 5);
+  tLayout->addRowSpacing(5, 5);
+  tLayout->addRowSpacing(7, 10);
+
+  config->setGroup("Personal Data");
+  pilotName->setText(config->readEntry("PilotName", ""));
+
+  config->setGroup(0);
 
   extern MapContents _globalMapContents;
   BaseFlightElement* task = _globalMapContents.getFlight();
@@ -273,29 +313,10 @@ void RecorderDialog::__addTaskPage()
   else
     {
       warning("Keine Aufgaben geplant ...");
+      writeTask->setEnabled(false);
     }
 
-  tLayout->addWidget(taskList, 0, 0);
-
-//  for(unsigned int loop = 0; loop < dirList.count(); loop++)
-//    {
-//      idS.sprintf("%.3d", loop + 1);
-//      item->setText(colID, idS);
-//      day.sprintf("%d-%.2d-%.2d", e->firstTime.tm_year + 1900,
-//          e->firstTime.tm_mon + 1, e->firstTime.tm_mday);
-//      item->setText(colDate, day);
-//      item->setText(colPilot, e->pilotName);
-//      item->setText(colGlider, e->gliderID);
-//      time = QTime(e->firstTime.tm_hour, e->firstTime.tm_min,
-//          e->firstTime.tm_sec);
-//      item->setText(colFirstPoint, KGlobal::locale()->formatTime(time, true));
-//      time = QTime(e->lastTime.tm_hour, e->lastTime.tm_min,
-//          e->lastTime.tm_sec);
-//      item->setText(colLastPoint, KGlobal::locale()->formatTime(time, true));
-//  taskcolGlider = flightList->addColumn(i18n("Glider"));
-//  taskColFirstPoint = flightList->addColumn(i18n("first Point"));
-//  taskColLastPoint = flightList->addColumn(i18n("last Point"));
-
+  connect(writeTask, SIGNAL(clicked()), SLOT(slotWriteTask()));
 }
 
 void RecorderDialog::slotConnectRecorder()
@@ -406,11 +427,14 @@ void RecorderDialog::slotReadFlightList()
 
 void RecorderDialog::slotDownloadFlight()
 {
+  QListViewItem *item = flightList->currentItem();
+
+  if(item == NULL)  return;
+
   QStringList::Iterator it = libNameList.at(selectType->currentItem());
+
   libName = (*it).latin1();
   portName = "/dev/" + selectPort->currentText();
-
-  QListViewItem *item = flightList->currentItem();
 
   QString fileName;
   config->setGroup("Path");
@@ -423,13 +447,9 @@ void RecorderDialog::slotDownloadFlight()
   warning(dirList.at(flightID)->shortFileName);
 
   if(useLongNames->isChecked())
-    {
       fileName += dirList.at(flightID)->longFileName;
-    }
   else
-    {
       fileName += dirList.at(flightID)->shortFileName;
-    }
 
   warning(fileName);
 
@@ -443,6 +463,49 @@ void RecorderDialog::slotDownloadFlight()
   int ret;
   ret = ((int (*)(char*, int, int, char*)) funcH)(qstrdup(portName),
       flightID, !useFastDownload->isChecked(), qstrdup(fileName));
+}
+
+void RecorderDialog::slotWriteTask()
+{
+  FRTaskDeclaration taskDecl;
+  taskDecl.pilotA = pilotName->text();
+  taskDecl.pilotB = copilotName->text();
+  taskDecl.gliderID = gliderID->currentText();
+  taskDecl.gliderType = gliderType->text();
+  taskDecl.compID = compID->text();
+  taskDecl.compClass = compClass->text();
+
+  QList<FRTaskPoint> taskPointList;
+
+  extern MapContents _globalMapContents;
+  BaseFlightElement* task = _globalMapContents.getFlight();
+
+  if(task && task->getTypeID() == BaseFlightElement::Task)
+    {
+      QList<wayPoint> wpList = ((FlightTask*)task)->getWPList();
+      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+        {
+          taskPointList.append(new FRTaskPoint);
+          taskPointList.last()->name = wpList.at(loop)->name;
+          taskPointList.last()->latPos = wpList.at(loop)->projP.x();
+          taskPointList.last()->lonPos = wpList.at(loop)->projP.y();
+        }
+    }
+
+  QStringList::Iterator it = libNameList.at(selectType->currentItem());
+  libName = (*it).latin1();
+  portName = "/dev/" + selectPort->currentText();
+
+  char* error;
+  void* funcH;
+
+  funcH = dlsym(libHandle, "writeTask");
+
+  CHECK_ERROR
+
+  int ret;
+  ret = ((int (*)(FRTaskDeclaration*, QList<FRTaskPoint>, char*)) funcH)(
+      &taskDecl, taskPointList, qstrdup(portName));
 }
 
 int RecorderDialog::__fillDirList()

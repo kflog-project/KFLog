@@ -23,6 +23,7 @@
 #include <kcombobox.h>
 #include <kconfig.h>
 #include <kdialogbase.h>
+#include <klineedit.h>
 #include <klistview.h>
 
 #include <qcheckbox.h>
@@ -52,6 +53,8 @@ class RecorderDialog : public KDialogBase
     void slotReadFlightList();
     /** */
     void slotDownloadFlight();
+    /** */
+    void slotWriteTask();
 
   private:
     /** */
@@ -111,6 +114,13 @@ class RecorderDialog : public KDialogBase
     int taskColID;
     int taskColName;
     int taskColPosition;
+    /** */
+    KLineEdit* pilotName;
+    KLineEdit* copilotName;
+    KComboBox* gliderID;
+    KLineEdit* gliderType;
+    KLineEdit* compClass;
+    KLineEdit* compID;
 };
 
 #endif

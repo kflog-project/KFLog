@@ -61,3 +61,22 @@ struct FRDirEntry
    */
   int duration;
 };
+
+/** */
+struct FRTaskDeclaration
+{
+  QString pilotA;
+  QString pilotB;
+  QString gliderID;
+  QString gliderType;
+  QString compID;
+  QString compClass;
+};
+
+/** */
+struct FRTaskPoint
+{
+  QString name;
+  int latPos;
+  int lonPos;
+};

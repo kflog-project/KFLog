@@ -45,6 +45,8 @@
 #include <qlineedit.h>
 #include <qpushbutton.h>
 
+#include <guicontrols/coordedit.h>
+
 KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
   : KDialogBase(IconList, i18n("KFlog Setup"), Ok|Cancel, Ok,
       parent, name, true, true),
@@ -89,6 +91,9 @@ void KFLogConfig::slotOk()
       MapContents::degreeToNum(homeLatE->text()));
   config->writeEntry("Homesite Longitude",
       MapContents::degreeToNum(homeLonE->text()));
+
+  config->setGroup("Personal Data");
+  config->writeEntry("PilotName", pilotNameE->text());
 
   config->sync();
   config->setGroup(0);
@@ -529,46 +534,70 @@ void KFLogConfig::__addTopographyTab()
 
 void KFLogConfig::__addIDTab()
 {
-  config->setGroup("Map Data");
-  int homeLat = config->readNumEntry("Homesite Latitude", HOME_DEFAULT_LAT);
-  int homeLon = config->readNumEntry("Homesite Longitude", HOME_DEFAULT_LON);
-
   idPage = addPage(i18n("Identity"),i18n("Personal Information"),
       KGlobal::instance()->iconLoader()->loadIcon("identity", KIcon::NoGroup,
           KIcon::SizeLarge));
 
-  QGridLayout* idLayout = new QGridLayout(idPage, 13, 5, 8, 1);
+  QGridLayout* idLayout = new QGridLayout(idPage, 14, 5, 8, 1);
+
+  QGroupBox* pilotGroup = new QGroupBox(idPage, "pilotGroup");
+  pilotGroup->setTitle(i18n("Pilot") + ":");
+
+  pilotNameE = new QLineEdit(idPage, "pilotNameE");
+
+  idLayout->addMultiCellWidget(pilotGroup, 0, 3, 0, 4);
+  idLayout->addWidget(new QLabel(i18n("Your Name"), idPage), 2, 1);
+  idLayout->addWidget(pilotNameE, 2, 3);
 
   QGroupBox* homeGroup = new QGroupBox(idPage, "homeGroup");
-  homeGroup->setTitle(i18n("Homesite:"));
+  homeGroup->setTitle(i18n("Homesite") + ":");
 
   homeNameE = new QLineEdit(idPage, "homeNameE");
   homeNameE->setMinimumWidth(150);
-  homeNameE->setText(config->readEntry("Homesite", ""));
-  homeLatE  = new QLineEdit(idPage, "homeLatE");
+  homeLatE = new LatEdit(idPage, "homeLatE");
   homeLatE->setMinimumWidth(150);
-  homeLatE->setText(printPos(homeLat, true));
-  homeLonE  = new QLineEdit(idPage, "homeLonE");
+  homeLonE = new LongEdit(idPage, "homeLonE");
   homeLonE->setMinimumWidth(150);
-  homeLonE->setText(printPos(homeLon, false));
 
-  idLayout->addMultiCellWidget(homeGroup, 0, 6, 0, 4);
-  idLayout->addWidget(new QLabel(i18n("Homesite"), idPage), 1, 1);
-  idLayout->addWidget(homeNameE, 1, 3);
-  idLayout->addWidget(new QLabel(i18n("Latitude"), idPage), 3, 1);
-  idLayout->addWidget(homeLatE, 3, 3);
-  idLayout->addWidget(new QLabel(i18n("Longitude"), idPage), 5, 1);
-  idLayout->addWidget(homeLonE, 5, 3);
+  idLayout->addMultiCellWidget(homeGroup, 5, 12, 0, 4);
+  idLayout->addWidget(new QLabel(i18n("Homesite"), idPage), 7, 1);
+  idLayout->addWidget(homeNameE, 7, 3);
+  idLayout->addWidget(new QLabel(i18n("Latitude"), idPage), 9, 1);
+  idLayout->addWidget(homeLatE, 9, 3);
+  idLayout->addWidget(new QLabel(i18n("Longitude"), idPage), 11, 1);
+  idLayout->addWidget(homeLonE, 11, 3);
 
   idLayout->addColSpacing(0, 10);
   idLayout->addColSpacing(2, 10);
   idLayout->addColSpacing(4, 10);
 
   idLayout->addRowSpacing(0, 20);
-  idLayout->addRowSpacing(1, 10);
-  idLayout->addRowSpacing(2, 10);
-
+  idLayout->addRowSpacing(1, 5);
   idLayout->addRowSpacing(3, 20);
+
+  idLayout->addRowSpacing(4, 25);
+
+  idLayout->addRowSpacing(5, 20);
+  idLayout->addRowSpacing(6, 5);
+  idLayout->addRowSpacing(7, 10);
+  idLayout->addRowSpacing(8, 10);
+  idLayout->addRowSpacing(9, 10);
+  idLayout->addRowSpacing(10, 10);
+//  idLayout->addRowSpacing(11, 10);
+  idLayout->addRowSpacing(12, 20);
+
+  idLayout->setRowStretch(13, 1);
+
+  config->setGroup("Map Data");
+
+  homeLatE->setText(printPos(config->readNumEntry("Homesite Latitude",
+      HOME_DEFAULT_LAT), true));
+  homeLonE->setText(printPos(config->readNumEntry("Homesite Longitude",
+      HOME_DEFAULT_LON), false));
+  homeNameE->setText(config->readEntry("Homesite", ""));
+
+  config->setGroup("Personal Data");
+  pilotNameE->setText(config->readEntry("PilotName", ""));
 
   config->setGroup(0);
 }

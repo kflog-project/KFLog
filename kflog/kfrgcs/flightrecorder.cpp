@@ -58,6 +58,9 @@ extern "C"
   QString getRecorderName(char* portName);
   /** */
   int openRecorder(char* portName);
+  /** */
+  int writeTask(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> taskPoints,
+      char* portName);
 }
 
 /*************************************************************************
@@ -253,6 +256,25 @@ int openRecorder(char* pName)
   if(vl.open(0,5,0) != VLA_ERR_NOERR)
     {
       warning(i18n("No logger found!"));
+      return -1;
+    }
+
+  return 0;
+}
+
+int writeTask(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> taskPoints,
+      char* pName)
+{
+  extern char* portName;
+  portName = pName;
+
+  if(vl.open(0,5,0) != VLA_ERR_NOERR)
+    {
+      // Restoring the old port-settings
+      tcsetattr(portID, TCSANOW, &oldTermEnv);
+
+      warning(i18n("No logger found!"));
+
       return -1;
     }
 

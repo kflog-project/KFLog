@@ -33,6 +33,8 @@
 #include <qwidget.h>
 
 class KFLogApp;
+class LatEdit;
+class LongEdit;
 
 /**
  * This class provides the config-dialog for KFLog.
@@ -120,9 +122,10 @@ class KFLogConfig : public KDialogBase
     QLineEdit* taskPathE;
     QLineEdit* waypointPathE;
     QLineEdit* mapPathE;
-    QLineEdit* homeLatE;
-    QLineEdit* homeLonE;
+    LatEdit* homeLatE;
+    LongEdit* homeLonE;
     QLineEdit* homeNameE;
+    QLineEdit* pilotNameE;
 
     QSlider* lLimit;
     QSlider* uLimit;
