@@ -67,7 +67,11 @@ QString DataView::__writeTaskInfo(FlightTask* task)
   for(unsigned int loop = 0; loop < wpList.count(); loop++) {
     wp1 = wpList.at(loop);
       
-    if(wp1->sector1 != 0) {
+    if(wp1->fixTime != 0) {
+      timeString = printTime(wp1->fixTime);
+      t1 = wp1->fixTime;
+    }
+    else if(wp1->sector1 != 0) {
       timeString = printTime(wp1->sector1);
       t1 = wp1->sector1;
     }
@@ -86,7 +90,10 @@ QString DataView::__writeTaskInfo(FlightTask* task)
 
     if(loop > 0) {
       wp2 = wpList.at(loop - 1);
-      if(wp2->sector1 != 0) {
+      if(wp2->fixTime != 0) {
+        t2 = wp2->fixTime;
+      }
+      else if(wp2->sector1 != 0) {
         t2 = wp2->sector1;
       }
       else if(wp2->sector2 != 0) {

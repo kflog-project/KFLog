@@ -110,6 +110,14 @@ class Flight : public BaseFlightElement
      * @return the landing time.
      */
     int getLandTime() const;
+    /**
+     * @return the index to the landing point.
+     */
+    int getLandIndex() const;
+    /**
+     * @return the index to the take-off point.
+     */
+    int getStartIndex() const;
    /**
     * @return the route
     */
@@ -315,6 +323,8 @@ class Flight : public BaseFlightElement
     QRect bBoxFlight;
     int landTime;
     int startTime;
+    unsigned int startIndex; // index to take-off point
+    unsigned int landIndex;  // index to landing point
     int taskBegin; //index to begin of task
     int taskEnd;   //index to end of task
 

@@ -60,7 +60,20 @@
       wpL.current()->sector1 = 0; \
       wpL.current()->sector2 = 0; \
       wpL.current()->sectorFAI = 0; \
-      wpL.current()->angle = -100;
+      wpL.current()->angle = -100; \
+      wpL.current()->fixTime = 0;
+
+#define APPEND_WAYPOINT_OLC2003(a, b, c) \
+      wpL.append(new Waypoint); \
+      wpL.current()->origP = route.at( a )->origP; \
+      wpL.current()->projP = route.at( a )->projP; \
+      wpL.current()->distance = ( b ); \
+      wpL.current()->name = c; \
+      wpL.current()->sector1 = 0; \
+      wpL.current()->sector2 = 0; \
+      wpL.current()->sectorFAI = 0; \
+      wpL.current()->angle = -100; \
+      wpL.current()->fixTime = route.at( a )->time;
 
 Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName,
     QString gType, QString gID, int cClass, QList<Waypoint> wpL, QDate d)
@@ -77,6 +90,8 @@ Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName
     va_max(0),
     route(r),
     landTime(route.last()->time),
+    landIndex(route.count()-1),
+    startIndex(0),
     startTime(route.at(0)->time),
     origTask(FlightTask(wpL, true, QString::null)),
     optimizedTask(FlightTask(QString::null)),
@@ -658,6 +673,10 @@ QString Flight::getPilot() const { return pilotName; }
 
 int Flight::getStartTime() const { return startTime; }
 
+int Flight::getStartIndex() const { return startIndex; }
+
+int Flight::getLandIndex() const { return landIndex; }
+
 QString Flight::getType() const { return gliderType; }
 
 QDate Flight::getDate() const { return date; }
@@ -764,26 +783,27 @@ bool Flight::optimizeTaskOLC(Map* map)
 
       QList<Waypoint> wpL;
 
-      APPEND_WAYPOINT(0, 0, i18n("Take-Off"))
-      APPEND_WAYPOINT(idList[0], dist(route.at(idList[0]), route.at(0)),
+      APPEND_WAYPOINT_OLC2003(startIndex, 0, i18n("Take-Off"))
+      APPEND_WAYPOINT_OLC2003(idList[0], dist(route.at(idList[0]), route.at(0)),
           i18n("Begin of Soaring"))
-      APPEND_WAYPOINT(idList[1], dist(route.at(idList[1]), route.at(1)),
+      APPEND_WAYPOINT_OLC2003(idList[1], dist(route.at(idList[1]), route.at(1)),
           i18n("Begin of Task"))
-      APPEND_WAYPOINT(idList[2], dist(route.at(idList[2]),
+      APPEND_WAYPOINT_OLC2003(idList[2], dist(route.at(idList[2]),
           route.at(idList[1])), i18n("Optimize 1"))
-      APPEND_WAYPOINT(idList[3], dist(route.at(idList[3]),
+      APPEND_WAYPOINT_OLC2003(idList[3], dist(route.at(idList[3]),
           route.at(idList[2])), i18n("Optimize 2"))
-      APPEND_WAYPOINT(idList[4], dist(route.at(idList[4]),
+      APPEND_WAYPOINT_OLC2003(idList[4], dist(route.at(idList[4]),
           route.at(idList[3])), i18n("Optimize 3"))
-      APPEND_WAYPOINT(idList[5], dist(route.at(idList[5]),
+      APPEND_WAYPOINT_OLC2003(idList[5], dist(route.at(idList[5]),
           route.at(idList[4])), i18n("Optimize 4"))
-      APPEND_WAYPOINT(idList[6], dist(route.at(idList[6]),
+      APPEND_WAYPOINT_OLC2003(idList[6], dist(route.at(idList[6]),
           route.at(idList[5])), i18n("Optimize 5"))
-      APPEND_WAYPOINT(idList[7], dist(route.at(idList[7]),
+      APPEND_WAYPOINT_OLC2003(idList[7], dist(route.at(idList[7]),
           route.at(idList[6])), i18n("End of Task"))
-      APPEND_WAYPOINT(idList[8], dist(route.at(idList[8]),
+      APPEND_WAYPOINT_OLC2003(idList[8], dist(route.at(idList[8]),
           route.at(idList[7])), i18n("End of Soaring"))
-      APPEND_WAYPOINT(0, 0, i18n("Landing"))
+      APPEND_WAYPOINT_OLC2003(landIndex, dist(route.getLast(),
+          route.at(idList[8])), i18n("Landing"))
 
       optimizedTask.setWaypointList(wpL);
       optimizedTask.checkWaypoints(route, gliderType);

@@ -20,7 +20,7 @@
 Waypoint::Waypoint(QString nam, WGSPoint oP, int typ, QString _icao, QString _comment,
   int surf, int runw, int leng, int elev, double freq, bool isLand, QPoint pP,
   unsigned int s1, unsigned int s2, unsigned int sFAI,
-  double ang, double dist, QString desc, unsigned int import)
+  double ang, double dist, QString desc, unsigned int import, unsigned int GPSFixTime)
 {
   name = nam;
   origP = oP;
@@ -40,7 +40,8 @@ Waypoint::Waypoint(QString nam, WGSPoint oP, int typ, QString _icao, QString _co
   elevation = elev;
   frequency = freq;
   isLandable = isLand;
-  importance = import;  
+  importance = import;
+  fixTime = GPSFixTime;  
 }
 
 Waypoint::~Waypoint()

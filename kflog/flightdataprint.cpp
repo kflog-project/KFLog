@@ -37,6 +37,8 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
   printer.setDocName("kflog-map.ps");
   printer.setCreator((QString)"KFLog " + VERSION);
 
+  lasttime=0;
+
   // We have to set the real page size. KPrinter knows the
   // pageformat, but reports a wrong pagesize ...
   int width = 0, height = 0;
@@ -184,10 +186,10 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
   painter.drawText(125, 190,
       printTime(currentFlight->getLandTime() - currentFlight->getStartTime()));
 
-  cPoint = currentFlight->getPoint(0);
+  cPoint = currentFlight->getPoint(currentFlight->getStartIndex());
   __printPositionData(&painter, &cPoint, 210, i18n("Takeoff") + ":");
 
-  cPoint = currentFlight->getPoint(currentFlight->getRouteLength() - 1);
+  cPoint = currentFlight->getPoint(currentFlight->getLandIndex());
   __printPositionData(&painter, &cPoint, 223, i18n("Landing") + ":");
 
   cPoint = currentFlight->getPoint(Flight::H_MAX);
@@ -233,7 +235,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
       wpList = currentFlight->getWPList();
       yPos += 20;
       painter.setFont(QFont("helvetica", 12, QFont::Bold));
-      painter.drawText(50, yPos, i18n("optimized Task") + ":");
+      painter.drawText(50, yPos, i18n("Optimized Task") + ":");
       yPos += 5;
 
       painter.setPen(QPen(QColor(0,0,0), 1));
@@ -272,9 +274,9 @@ void FlightDataPrint::__printPositionData(QPainter* painter,
 {
   QString temp;
   painter->drawText(50, yPos, text);
-  painter->drawText(125, yPos, printPos(cPoint->origP.lat(), true));
-  painter->drawText(190, yPos, "/");
-  painter->drawText(200, yPos, printPos(cPoint->origP.lon(), false));
+  painter->drawText(135, yPos, printPos(cPoint->origP.lat(), true));
+  painter->drawText(200, yPos, "/");
+  painter->drawText(210, yPos, printPos(cPoint->origP.lon(), false));
 
   painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
             printTime(cPoint->time));
@@ -297,37 +299,63 @@ void FlightDataPrint::__printPositionData(QPainter* painter,
         Waypoint* cPoint, int yPos)
 {
   /*
-   * Wenn Punkt nicht erreicht wurde, sollte alles in italic sein.
+   * Use italic font if waypoint was not reached
    */
   QString temp;
+  bool nospeed;
   painter->drawText(50, yPos, cPoint->name);
-  painter->drawText(125, yPos, printPos(cPoint->origP.lat(), true));
-  painter->drawText(190, yPos, "/");
-  painter->drawText(200, yPos, printPos(cPoint->origP.lon(), false));
+  painter->drawText(135, yPos, printPos(cPoint->origP.lat(), true));
+  painter->drawText(200, yPos, "/");
+  painter->drawText(210, yPos, printPos(cPoint->origP.lon(), false));
 
-  if(cPoint->sector1 != 0)
+  if(cPoint->fixTime != 0){
+      time=cPoint->fixTime;
+      painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
+              printTime(cPoint->fixTime));
+      nospeed=false;
+  }
+  else if(cPoint->sector1 != 0){
+      time=cPoint->sector1;
       painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
               printTime(cPoint->sector1));
+      nospeed=false;
+  }
   else if(cPoint->sector2 != 0)
     {
+      time=cPoint->sector2;
       painter->setFont(QFont("helvetica", 11, QFont::Normal, true));
       painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
               printTime(cPoint->sector2));
       painter->setFont(QFont("helvetica", 11));
+      nospeed=false;
     }
   else
       painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight, "-");
 
-  if(cPoint->sectorFAI != 0)
+  if(cPoint->sectorFAI != 0){
       painter->drawText(330, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
               printTime(cPoint->sectorFAI));
-  else
+      nospeed=false;
+  }
+  else{
       painter->drawText(330, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight, "-");
+      nospeed=true;
+  }
 
   if(cPoint->distance != 0)
     {
       temp.sprintf("%.1f km", cPoint->distance);
       painter->drawText(390, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
             temp);
+    if(time && lasttime && !nospeed)
+      {
+        float speed = cPoint->distance/(time-lasttime)*3600.0;
+        if ( (speed>0.0) && (speed<500.0)){ // suppress nonsense values
+          temp.sprintf("%.1f km/h", speed);
+          painter->drawText(450, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
+                temp);
+        }
+      }
     }
+  lasttime=time;
 }

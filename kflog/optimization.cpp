@@ -102,7 +102,8 @@ void Optimization::run(){
 
   unsigned int i,j,k;               // loop variables
   unsigned int n;                   // number of points
-  double c;                         // temp variable
+  double c;                         // temp variables
+  unsigned int index;
 
   n=route.count()+1;
   qWarning(QString("Number of points to optimize: %1").arg(n));
@@ -131,13 +132,14 @@ void Optimization::run(){
       }
       if(progress)
         progress->setProgress(i+k*n);
-      L[i+k*n]=0;
+      index=i+k*n;
+      L[index]=0;
       c=0;
       for (j=0;j<i;j++){
         c=L[j+(k-1)*n]+weight(k)*dist(route.at(j),route.at(i));
-        if (c>L[i+k*n]){
-          L[i+k*n]=c;
-          w[i+k*n]=j;
+        if (c>L[index]){
+          L[index]=c;
+          w[index]=j;
         }
       }
     }

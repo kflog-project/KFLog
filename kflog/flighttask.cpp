@@ -1085,7 +1085,10 @@ QString FlightTask::getTotalDistanceString()
   if(flightType == FlightTask::NotSet)  return "--";
 
   QString distString;
-  distString.sprintf("%.2f km", distance_total);
+  if (flightType == OLC2003)
+    distString.sprintf("%.2f km",distance_wert);
+  else
+    distString.sprintf("%.2f km", distance_total);
 
   return distString;
 }

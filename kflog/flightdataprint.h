@@ -42,6 +42,8 @@ class FlightDataPrint
   /** */
   void __printPositionData(QPainter* painter, Waypoint* cPoint,
           int yPos);
+  unsigned int time;
+  unsigned int lasttime;
 };
 
 #endif
