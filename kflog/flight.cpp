@@ -694,7 +694,7 @@ QString Flight::getDate() const { return date; }
 
 unsigned int Flight::getTaskType() const { return flightType; }
 
-unsigned int Flight::getRouteLength() const { return routeLength; }
+unsigned int Flight::getRouteLength() const { return route.count(); }
 
 const char* Flight::getFileName() const { return sourceFileName; }
 
@@ -758,16 +758,19 @@ QStrList Flight::getHeader()
 
 void Flight::__appendWaypoint(struct wayPoint* newPoint)
 {
+warning("Flight::__appendWaypoint");
   if(wpList.count() && dist(wpList.last(), newPoint) <= 0.1) return;
-
+warning("------------------------> 1");
   wpList.append(newPoint);
 
   if(tEnd == 0 && wpList.count() > 2)
     {
+warning("------------------------> 2");
       int loop = 0;
 
       for(int n = wpList.count() - 3; n >= 0; n--)
         {
+warning("------------------------> 3 (%d)", loop);
           loop++;
           if(newPoint->origP == wpList.at(n)->origP)
             {
@@ -775,6 +778,7 @@ void Flight::__appendWaypoint(struct wayPoint* newPoint)
 
               tEnd = wpList.count() - 1;
               tBegin = n;
+warning("Begin: %d / Ende: %d", tBegin, tEnd);
               wpList.at(tEnd)->type = Flight::End;
               wpList.at(tBegin)->type = Flight::Begin;
 
@@ -820,12 +824,16 @@ void Flight::__appendWaypoint(struct wayPoint* newPoint)
 
 void Flight::__checkType()
 {
+warning("Flight::__checkType()");
   distance_tot = 0;
+warning("tBegin: %d / tEnd: %d", tBegin, tEnd);
   for(int loop = tBegin + 1; loop <= tEnd; loop++)
     {
+warning("Durchlauf: %d", loop);
       wpList.at(loop)->distance = dist(wpList.at(loop - 1), wpList.at(loop));
       distance_tot = distance_tot + wpList.at(loop)->distance;
     }
+warning("hallo");
   switch(tEnd - tBegin)
     {
       case 0:
@@ -868,7 +876,7 @@ void Flight::__checkMaxMin()
   va_max = 0;
   va_min = 0;
 
-  for(unsigned int loop = 0; loop < routeLength; loop++)
+  for(unsigned int loop = 0; loop < route.count(); loop++)
     {
       if(loop)
         {
@@ -891,6 +899,7 @@ void Flight::__checkMaxMin()
 void Flight::__checkWaypoints()
 {
   if(flightType == NotSet) return;
+warning("Flight::__checkWaypoints()");
 
   int gliderIndex = 100, preTime = 0;
   KConfig* config = kapp->config();
@@ -925,6 +934,8 @@ void Flight::__checkWaypoints()
                        "of the flight is more than 70 sec.!<BR>"
                        "Due to Code Sportif 3, Nr. 1.9.2.1,<BR>"
                        "the flight can not be valued!"));
+
+              warning("   hier drinnen");
               return;
               ////////////////////////////////////////////////////////////////
               // sonstige Reaktion ????

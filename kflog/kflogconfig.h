@@ -127,6 +127,8 @@ class KFLogConfig : public KDialogBase
     QLineEdit* igcPathE;
     QLineEdit* taskPathE;
     QLineEdit* mapPathE;
+    QLineEdit* homeLatE;
+    QLineEdit* homeLonE;
 
     QSlider* lLimit;
     QSlider* uLimit;

@@ -59,6 +59,10 @@
   a->setAlignment( c | AlignVCenter );
 //  a->setIndent(10);
 
+
+#define HOME_DEFAULT_LAT 29125200
+#define HOME_DEFAULT_LON 5364500
+
 KFLogApp::KFLogApp(QWidget* , const char* name)
   : KDockMainWindow(0, name), showStartLogo(false)
 {
@@ -406,8 +410,8 @@ void KFLogApp::readOptions()
   double scale = config->readDoubleNumEntry("Map Scale", 200);
   double v1 = config->readDoubleNumEntry("Parallel1", 32400000);
   double v2 = config->readDoubleNumEntry("Parallel2", 30000000);
-  int homeLat = config->readNumEntry("Home Latitude", 29125200);
-  int homeLon = config->readNumEntry("Home Longitude", 5364500);
+  int homeLat = config->readNumEntry("Homesite Latitude", HOME_DEFAULT_LAT);
+  int homeLon = config->readNumEntry("Homesite Longitude", HOME_DEFAULT_LON);
 
   extern MapMatrix _globalMapMatrix;
   _globalMapMatrix.initMatrix(mapCenterLat, mapCenterLon, scale, v1, v2,

@@ -116,6 +116,8 @@ class MapContents
         RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
         WaypointList, DigitList, FlightList};
 
+    static int degreeToNum(const char* degree);
+
   private:
     /**
      * Converts the longitute or latitute into the internal format

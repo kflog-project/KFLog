@@ -16,6 +16,7 @@
 ***********************************************************************/
 
 #include "kflogconfig.h"
+#include <mapcalc.h>
 #include <mapcontents.h>
 #include <mapdefaults.h>
 
@@ -111,7 +112,7 @@ KFLogConfig::KFLogConfig(QWidget* parent, const char* name)
   riverBorder = new bool[5];
   cityBorder = new bool[5];
 
-//  __addIDTab();
+  __addIDTab();
   __addPathTab();
   __addScaleTab();
   __addMapTab();
@@ -161,6 +162,11 @@ void KFLogConfig::slotOk()
   config->writeEntry("Outline Size", cityPenList.at(4)->width()); \
   config->writeEntry("Border 5", cityBorder[4]); \
 
+  config->setGroup("Map Data");
+  config->writeEntry("Homesite Latitude",
+      MapContents::degreeToNum(homeLatE->text()));
+  config->writeEntry("Homesite Longitude",
+      MapContents::degreeToNum(homeLonE->text()));
   config->sync();
 
   extern MapContents _globalMapContents;
@@ -835,9 +841,41 @@ void KFLogConfig::__addPrintTab()
 
 void KFLogConfig::__addIDTab()
 {
+  config->setGroup("Map Data");
+  int homeLat = config->readNumEntry("Homesite Latitude", 0);
+  int homeLon = config->readNumEntry("Homesite Longitude", 0);
+
   idPage = addPage(i18n("Identity"),i18n("Personal Information"),
       KGlobal::instance()->iconLoader()->loadIcon("identity", KIcon::NoGroup,
           KIcon::SizeLarge));
+
+  QGridLayout* idLayout = new QGridLayout(idPage, 13, 5, 12, 1);
+
+  QGroupBox* homeGroup = new QGroupBox(idPage, "homeGroup");
+  homeGroup->setTitle(i18n("Home-site:"));
+
+  homeLatE  = new QLineEdit(idPage, "homeLatE");
+  homeLatE->setMinimumWidth(200);
+  homeLatE->setText(printPos(homeLat, true));
+  homeLonE  = new QLineEdit(idPage, "homeLonE");
+  homeLonE->setMinimumWidth(200);
+  homeLonE->setText(printPos(homeLon, false));
+
+  idLayout->addMultiCellWidget(homeGroup, 0, 4, 0, 4);
+  idLayout->addWidget(new QLabel(i18n("Latitude"), idPage), 1, 1);
+  idLayout->addWidget(homeLatE, 1, 3);
+  idLayout->addWidget(new QLabel(i18n("Longitude"), idPage), 3, 1);
+  idLayout->addWidget(homeLonE, 3, 3);
+
+  idLayout->addColSpacing(0, 10);
+  idLayout->addColSpacing(2, 10);
+  idLayout->addColSpacing(4, 10);
+
+  idLayout->addRowSpacing(0, 20);
+  idLayout->addRowSpacing(1, 10);
+  idLayout->addRowSpacing(2, 10);
+
+  idLayout->addRowSpacing(3, 20);
 }
 
 int KFLogConfig::__setScaleValue(int value)

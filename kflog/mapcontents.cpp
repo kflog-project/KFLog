@@ -141,6 +141,142 @@ MapContents::~MapContents()
   topoList.~QList();
 }
 
+int MapContents::degreeToNum(const char* degree)
+{
+warning(degree);
+  int deg = 0, min = 0, sec = 0;
+  int result;
+  int count = 0;
+
+  QString temp = degree;
+  temp.replace( QRegExp(" "), "" );
+
+  degree = temp;
+warning(degree);
+
+  QRegExp number("^-?[0-9]+$");
+  QRegExp deg1("[°.]");
+  QRegExp deg2(",");
+  QRegExp deg3("'");
+  QRegExp dir("[swSW]$");
+  if(number.match(degree) != -1)
+    {
+      unsigned int id = 1;
+      if(degree[0] == '-')
+        {
+          result = degree[1] - '0';
+          id++;
+        }
+      else
+        result = degree[0] - '0';
+
+      for(unsigned int loop = id ; loop < strlen(degree); loop++)
+        result = 10 * result + (degree[loop] - '0');
+
+      if(id == 2) return -result;
+
+      return result;
+    }
+
+  switch(deg1.match(degree))
+    {
+      case 1:
+        deg = degree[0] - '0';
+        degree += 2;
+        break;
+      case 2:
+        deg = 10 * (degree[0] - '0') + (degree[1] - '0');
+        degree += 3;
+        break;
+      case 3:
+        deg = 100 * (degree[0] - '0') + 10 * (degree[1] - '0')
+            + (degree[2] - '0');
+        degree += 4;
+        break;
+      default:
+        if(deg1.match(degree) > 3)  return 0;    // << degree is not correct!
+        switch(strlen(degree))
+          {
+            case 1:
+              deg = degree[0] - '0';
+              break;
+            case 2:
+              deg = 10 * (degree[0] - '0') + (degree[1] -'0');
+              break;
+            case 3:
+              deg = 100 * (degree[0] - '0') + 10 * (degree[1] - '0')
+                    + (degree[2] - '0');
+              break;
+            default:
+              return 0;                           // << degree is not correct!
+          }
+    }
+
+  if( deg2.match(degree) != -1 )
+    {
+      // Minuten mit Nachkommastellen!
+      switch(deg2.match(degree))
+        {
+          case 1:
+            min = degree[0] - '0';
+            for(unsigned int loop = 2; loop < strlen(degree); loop++)
+              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
+                {
+                  sec = 10 * sec + (degree[loop] - '0');
+                  count++;
+                }
+            break;
+          case 2:
+            min = 10 * (degree[0] - '0') + (degree[1] -'0');
+            for(unsigned int loop = 3; loop < strlen(degree); loop++)
+              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
+                {
+                  sec = (degree[loop] - '0') + (sec / 10);
+                  count++;
+                }
+            break;
+          default:
+            if( ( deg2.match(degree) > 2 ) || ( deg2.match(degree) == 0 ) )
+                return 0;    // << degree is not correct!
+        }
+    }
+  else if( deg3.match(degree) != -1 )
+    {
+warning("es folgen \"echte\" Sekunden");
+      // es folgen "echte" Sekunden
+      switch( deg3.match(degree) )
+        {
+          case 1:
+            min = degree[0] - '0';
+            for(unsigned int loop = 2; loop < strlen(degree); loop++)
+              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
+                {
+                  sec = sec * 10 + (degree[loop] - '0');
+                  count++;
+                }
+            break;
+          case 2:
+            min = 10 * (degree[0] - '0') + (degree[1] -'0');
+            for(unsigned int loop = 3; loop < strlen(degree); loop++)
+              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
+                {
+                  sec = sec * 10 + (degree[loop] - '0');
+                  count++;
+                }
+            break;
+          default:
+            if( ( deg2.match(degree) > 2 ) || ( deg2.match(degree) == 0 ) )
+                return 0;    // << degree is not correct!
+        }
+    }
+  result = (int) ((600000 * deg) + (10000 * (min + (sec * pow(10,-count)))));
+
+  if(dir.match(degree) >= 0) return -result;
+warning("Ergebins: %d", result);
+  return result;
+
+}
+
 int MapContents::__degreeToNum(const char* degree)
 {
   int deg = 0, min = 0, sec = 0;
