@@ -22,6 +22,7 @@
 #include <qdir.h>
 #include <qlayout.h>
 #include <qprinter.h>
+#include <qregexp.h>
 #include <qtextstream.h>
 
 // include files for KDE

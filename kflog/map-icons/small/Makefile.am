@@ -1,7 +1,7 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
 
-EXTRA_DIST = airfield_c.xpm airport.xpm ambheliport.xpm civheliport.xpm civmilair.xpm closed.xpm glider.xpm glider2.xpm jump.xpm Makefile.am milairport.xpm milheliport.xpm obst_group.xpm obstacle.xpm outlanding.xpm paraglider.xpm routepoint.xpm ulf.xpm vortac.xpm waypoint.xpm 
+EXTRA_DIST = airfield_c.xpm airport.xpm ambheliport.xpm civheliport.xpm civmilair.xpm closed.xpm glider.xpm glider2.xpm jump.xpm milairport.xpm milheliport.xpm obst_group.xpm obstacle.xpm outlanding.xpm paraglider.xpm routepoint.xpm ulf.xpm vortac.xpm waypoint.xpm 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/

@@ -23,28 +23,25 @@ cflags=
 cppflags=
 cxxflags=\s-O0 -g3 -Wall
 ldadd=-lkdeprint -lm $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
-ldflags=\s\s
+ldflags=\s \s
 
 [General]
-AMChanged=true
+AMChanged=false
 author=Heiner Lamprecht
-configure_args=--prefix=/opt/kde2 --enable-debug\s
-debug_args=--export-png file:123.png "file://home/bodner/Fliegerei/Saison 2002/26ea0gp1.igc"
+configure_args=\s--build=i386-linux --host=i386-linux --target=i386-linux --prefix=/opt/kde2 --with-qt-dir=/usr/lib/qt2\s
 email=heiner@kflog.org
-execute_args=--export-png 123.png "/home/bodner/Fliegerei/Saison 2002/26ea0gp1.igc"
 kdevprj_version=1.3
-lfv_open_groups=User Interface
+lfv_open_groups=
 make_options=\s-j1
-makefiles=Makefile.am,kflog/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,po/Makefile.am,kflog/map-icons/Makefile.am,kflog/map-icons/small/Makefile.am,kflog/pics/Makefile.am,kflog/guicontrols/Makefile.am,kflog/kfrgcs/Makefile.am
+makefiles=Makefile.am,kflog/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,po/Makefile.am,kflog/guicontrols/Makefile.am,kflog/kfrgcs/Makefile.am,kflog/map-icons/Makefile.am,kflog/map-icons/small/Makefile.am,kflog/pics/Makefile.am
 modifyMakefiles=true
 project_name=KFLog
-project_type=normal_kde2
-sgml_file=/home/heiner/Entwicklung/kflog2/doc/en/index.docbook
+project_type=mini_kde2
+sgml_file=/home/heiner/tmp/kflog_neu/doc/en/index.docbook
 short_info=
 sub_dir=kflog/
-version=2.0.6
-version_control=CVS
-workspace=1
+version=2.0.7
+version_control=None
 
 [INSTALL]
 dist=true
@@ -52,27 +49,18 @@ install=false
 install_location=
 type=DATA
 
-[KPP]
-kpp_appgrp=
-kpp_bldroot=/tmp/test/
-kpp_icon=0
-kpp_license=5
-kpp_summary=Gutes Programm
-kpp_url=http://www.kflog.org/
-kpp_version=2.0.2
-
 [LFV Groups]
+Andere=*
+Benutzerschnittstelle=*.kdevdlg,*.ui,*.rc
 GNU=AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,NEWS
-Headers=*.h,*.hh,*.hxx,*.hpp,*.H
+Header=*.h,*.hh,*.hxx,*.hpp,*.H
 Icons=*.png,*.xpm
-Others=*
-Sources=*.cpp,*.c,*.cc,*.C,*.cxx,*.ec,*.ecpp,*.lxx,*.l++,*.ll,*.l
-Translations=*.po,*.gmo
-User Interface=*.kdevdlg,*.ui,*.rc
-groups=Icons,Headers,Sources,User Interface,Translations,GNU,Others
+Quellen=*.cpp,*.c,*.cc,*.C,*.cxx,*.ec,*.ecpp,*.lxx,*.l++,*.ll,*.l
+groups=Icons,Header,Quellen,Benutzerschnittstelle,Übersetzungen,GNU,Andere
+Übersetzungen=*.po
 
 [Makefile.am]
-files=kflog.kdevprj,AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,kflog.lsm,kflog.spec,README-MAP
+files=kflog.kdevprj,admin,AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,kflog.lsm,README-MAP
 sub_dirs=kflog,po,doc
 type=normal
 
@@ -84,11 +72,17 @@ type=DATA
 
 [README-MAP]
 dist=true
-install=true
-install_location=$$(kde_datadir)/kflog/mapdata/README
+install=false
+install_location=
 type=DATA
 
 [TODO]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[admin]
 dist=true
 install=false
 install_location=
@@ -106,7 +100,7 @@ type=normal
 [doc/en/index.docbook]
 dist=true
 install=false
-install_location=
+install_location=$$(kde_icondir)/locolor/16x16/apps/kflog.png
 type=DATA
 
 [kflog.kdevprj]
@@ -121,15 +115,9 @@ install=false
 install_location=
 type=DATA
 
-[kflog.spec]
-dist=true
-install=false
-install_location=
-type=DATA
-
 [kflog/Makefile.am]
-files=kflog/main.cpp,kflog/kflog.cpp,kflog/kflog.h,kflog/kflogui.rc,kflog/kflog.desktop,kflog/mapcontrolview.h,kflog/mapcontrolview.cpp,kflog/mapcalc.cpp,kflog/mapcalc.h,kflog/wp.h,kflog/dataview.cpp,kflog/dataview.h,kflog/map.cpp,kflog/map.h,kflog/basemapelement.cpp,kflog/basemapelement.h,kflog/mapcontents.cpp,kflog/mapcontents.h,kflog/resource.h,kflog/airport.cpp,kflog/airport.h,kflog/airspace.cpp,kflog/airspace.h,kflog/glidersite.cpp,kflog/glidersite.h,kflog/isohypse.cpp,kflog/isohypse.h,kflog/lineelement.cpp,kflog/lineelement.h,kflog/radiopoint.cpp,kflog/radiopoint.h,kflog/singlepoint.cpp,kflog/singlepoint.h,kflog/mapmatrix.cpp,kflog/mapmatrix.h,kflog/flight.cpp,kflog/flight.h,kflog/flighttask.cpp,kflog/flighttask.h,kflog/kflogstartlogo.cpp,kflog/kflogstartlogo.h,kflog/kflogconfig.cpp,kflog/kflogconfig.h,kflog/mapdefaults.h,kflog/evaluationdialog.cpp,kflog/evaluationdialog.h,kflog/evaluationview.cpp,kflog/evaluationview.h,kflog/hi16-app-kflog.png,kflog/hi32-app-kflog.png,kflog/hi48-app-kflog.png,kflog/hi16-mimetype-igc.png,kflog/hi32-mimetype-igc.png,kflog/hi48-mimetype-igc.png,kflog/igc.desktop,kflog/hi22-action-movemap_e.png,kflog/hi22-action-movemap_n.png,kflog/hi22-action-movemap_ne.png,kflog/hi22-action-movemap_nw.png,kflog/hi22-action-movemap_s.png,kflog/hi22-action-movemap_se.png,kflog/hi22-action-movemap_sw.png,kflog/hi22-action-movemap_w.png,kflog/hi16-action-flightevaluation.png,kflog/hi22-action-flightevaluation.png,kflog/hi32-action-flightevaluation.png,kflog/hi16-action-centerflight.png,kflog/hi16-action-centertask.png,kflog/hi22-action-centerflight.png,kflog/hi22-action-centertask.png,kflog/mapconfig.cpp,kflog/mapconfig.h,kflog/evaluationframe.cpp,kflog/evaluationframe.h,kflog/igcpreview.cpp,kflog/igcpreview.h,kflog/configdrawelement.cpp,kflog/configdrawelement.h,kflog/configprintelement.cpp,kflog/configprintelement.h,kflog/waypoints.cpp,kflog/waypoints.h,kflog/translationelement.cpp,kflog/translationelement.h,kflog/translationlist.cpp,kflog/translationlist.h,kflog/waypointcatalog.cpp,kflog/waypointcatalog.h,kflog/waypointdialog.cpp,kflog/waypointdialog.h,kflog/waypointlist.cpp,kflog/waypointlist.h,kflog/hi22-action-waypoint.png,kflog/hi16-action-waypoint.png,kflog/runway.h,kflog/mapprint.cpp,kflog/mapprint.h,kflog/waypointimpfilterdialog.cpp,kflog/waypointimpfilterdialog.h,kflog/flightdataprint.cpp,kflog/flightdataprint.h,kflog/hi16-action-stepback.png,kflog/hi16-action-stepforward.png,kflog/hi22-action-stepback.png,kflog/hi22-action-stepforward.png,kflog/igc3ddialog.cpp,kflog/igc3ddialog.h,kflog/igc3dflightdata.cpp,kflog/igc3dflightdata.h,kflog/igc3dpolyhedron.cpp,kflog/igc3dpolyhedron.h,kflog/igc3dview.cpp,kflog/igc3dview.h,kflog/igc3dviewstate.cpp,kflog/igc3dviewstate.h,kflog/baseflightelement.cpp,kflog/baseflightelement.h,kflog/flightgroup.cpp,kflog/flightgroup.h,kflog/recorderdialog.cpp,kflog/recorderdialog.h,kflog/frstructs.h,kflog/taskdataprint.cpp,kflog/taskdataprint.h,kflog/kflogrc,kflog/olcdialog.cpp,kflog/olcdialog.h,kflog/projectionbase.cpp,kflog/projectionbase.h,kflog/projectionlambert.cpp,kflog/projectionlambert.h,kflog/flightselectiondialog.cpp,kflog/flightselectiondialog.h,kflog/projectioncylindric.cpp,kflog/projectioncylindric.h,kflog/hi32-action-projection.png
-sub_dirs=map-icons,pics,guicontrols,kfrgcs
+files=kflog/main.cpp,kflog/kflog.cpp,kflog/kflog.h,kflog/kflog.desktop,kflog/airport.cpp,kflog/airport.h,kflog/airspace.cpp,kflog/airspace.h,kflog/baseflightelement.cpp,kflog/baseflightelement.h,kflog/basemapelement.cpp,kflog/basemapelement.h,kflog/configdrawelement.cpp,kflog/configdrawelement.h,kflog/configprintelement.cpp,kflog/configprintelement.h,kflog/dataview.cpp,kflog/dataview.h,kflog/evaluationdialog.cpp,kflog/evaluationdialog.h,kflog/evaluationframe.cpp,kflog/evaluationframe.h,kflog/evaluationview.cpp,kflog/evaluationview.h,kflog/flight.cpp,kflog/flight.h,kflog/flightdataprint.cpp,kflog/flightdataprint.h,kflog/flightgroup.cpp,kflog/flightgroup.h,kflog/flightselectiondialog.cpp,kflog/flightselectiondialog.h,kflog/flighttask.cpp,kflog/flighttask.h,kflog/glidersite.cpp,kflog/glidersite.h,kflog/frstructs.h,kflog/hi16-action-centerflight.png,kflog/hi16-action-centertask.png,kflog/hi16-action-flightevaluation.png,kflog/hi16-action-stepback.png,kflog/hi16-action-stepforward.png,kflog/hi16-action-waypoint.png,kflog/hi16-app-kflog.png,kflog/hi16-mimetype-igc.png,kflog/hi22-action-centerflight.png,kflog/hi22-action-centertask.png,kflog/hi22-action-flightevaluation.png,kflog/hi22-action-movemap_e.png,kflog/hi22-action-movemap_n.png,kflog/hi22-action-movemap_ne.png,kflog/hi22-action-movemap_nw.png,kflog/hi22-action-movemap_s.png,kflog/hi22-action-movemap_se.png,kflog/hi22-action-movemap_sw.png,kflog/hi22-action-movemap_w.png,kflog/hi22-action-stepback.png,kflog/hi22-action-waypoint.png,kflog/hi22-action-stepforward.png,kflog/hi32-action-flightevaluation.png,kflog/hi32-action-projection.png,kflog/hi32-app-kflog.png,kflog/hi32-mimetype-igc.png,kflog/hi48-app-kflog.png,kflog/hi48-mimetype-igc.png,kflog/igc3ddialog.cpp,kflog/igc3ddialog.h,kflog/igc3dflightdata.cpp,kflog/igc3dflightdata.h,kflog/igc3dpolyhedron.cpp,kflog/igc3dpolyhedron.h,kflog/igc3dview.cpp,kflog/igc3dview.h,kflog/igc3dviewstate.cpp,kflog/igc3dviewstate.h,kflog/igcpreview.h,kflog/igcpreview.cpp,kflog/isohypse.cpp,kflog/isohypse.h,kflog/kflogconfig.cpp,kflog/kflogconfig.h,kflog/kflogrc,kflog/kflogstartlogo.cpp,kflog/kflogstartlogo.h,kflog/kflogui.rc,kflog/lineelement.cpp,kflog/lineelement.h,kflog/map.cpp,kflog/map.h,kflog/mapcalc.cpp,kflog/mapcalc.h,kflog/mapconfig.cpp,kflog/mapconfig.h,kflog/mapcontents.cpp,kflog/mapcontents.h,kflog/mapcontrolview.cpp,kflog/mapcontrolview.h,kflog/mapdefaults.h,kflog/mapmatrix.h,kflog/mapmatrix.cpp,kflog/mapprint.cpp,kflog/mapprint.h,kflog/olcdialog.cpp,kflog/olcdialog.h,kflog/projectionbase.cpp,kflog/projectioncylindric.cpp,kflog/projectionbase.h,kflog/projectioncylindric.h,kflog/projectionlambert.cpp,kflog/projectionlambert.h,kflog/radiopoint.cpp,kflog/radiopoint.h,kflog/recorderdialog.cpp,kflog/recorderdialog.h,kflog/resource.h,kflog/runway.h,kflog/singlepoint.cpp,kflog/singlepoint.h,kflog/taskdataprint.cpp,kflog/taskdataprint.h,kflog/translationelement.cpp,kflog/translationelement.h,kflog/translationlist.cpp,kflog/translationlist.h,kflog/waypointcatalog.cpp,kflog/waypointcatalog.h,kflog/waypointdialog.cpp,kflog/waypointdialog.h,kflog/waypointimpfilterdialog.cpp,kflog/waypointimpfilterdialog.h,kflog/waypointlist.cpp,kflog/waypointlist.h,kflog/waypoints.cpp,kflog/waypoints.h,kflog/wp.h
+sub_dirs=guicontrols,kfrgcs,map-icons,pics
 type=prog_main
 
 [kflog/airport.cpp]
@@ -332,6 +320,9 @@ type=HEADER
 
 [kflog/guicontrols/Makefile.am]
 files=kflog/guicontrols/coordedit.cpp,kflog/guicontrols/coordedit.h,kflog/guicontrols/kfloglistview.cpp,kflog/guicontrols/kfloglistview.h
+sharedlib_LDFLAGS=-version-info 0:0:0
+sharedlib_rootname=guicontrols
+sub_dirs=
 type=static_library
 
 [kflog/guicontrols/coordedit.cpp]
@@ -526,12 +517,6 @@ install=true
 install_location=$$(kde_icondir)/hicolor/48x48/mimetypes/igc.png
 type=DATA
 
-[kflog/igc.desktop]
-dist=true
-install=true
-install_location=$$(kde_mimedir)/application/igc.desktop
-type=DATA
-
 [kflog/igc3ddialog.cpp]
 dist=true
 install=false
@@ -648,8 +633,8 @@ type=HEADER
 
 [kflog/kflogrc]
 dist=true
-install=true
-install_location=$$(kde_confdir)/kflogrc
+install=false
+install_location=
 type=DATA
 
 [kflog/kflogstartlogo.cpp]
@@ -666,12 +651,12 @@ type=HEADER
 
 [kflog/kflogui.rc]
 dist=true
-install=true
-install_location=$$(kde_datadir)/kflog/kflogui.rc
+install=false
+install_location=
 type=DATA
 
 [kflog/kfrgcs/Makefile.am]
-files=kflog/kfrgcs/vlapi2.cpp,kflog/kfrgcs/vlapi2.h,kflog/kfrgcs/vlapihlp.cpp,kflog/kfrgcs/vlapisys_linux.cpp,kflog/kfrgcs/vlconv.cpp,kflog/kfrgcs/utils.cpp,kflog/kfrgcs/grecord.cpp,kflog/kfrgcs/flightrecorder.cpp,kflog/kfrgcs/dbbconv.cpp,kflog/kfrgcs/dbbconv.h,kflog/kfrgcs/grecord.h,kflog/kfrgcs/utils.h,kflog/kfrgcs/vla_support.h,kflog/kfrgcs/vlapierr.h,kflog/kfrgcs/vlapihlp.h,kflog/kfrgcs/vlapityp.h,kflog/kfrgcs/vlconv.h,kflog/kfrgcs/README,kflog/kfrgcs/gcs.desktop
+files=kflog/kfrgcs/dbbconv.cpp,kflog/kfrgcs/dbbconv.h,kflog/kfrgcs/flightrecorder.cpp,kflog/kfrgcs/gcs.desktop,kflog/kfrgcs/grecord.cpp,kflog/kfrgcs/grecord.h,kflog/kfrgcs/README,kflog/kfrgcs/utils.cpp,kflog/kfrgcs/utils.h,kflog/kfrgcs/vla_support.h,kflog/kfrgcs/vlapi2.cpp,kflog/kfrgcs/vlapi2.h,kflog/kfrgcs/vlapierr.h,kflog/kfrgcs/vlapihlp.cpp,kflog/kfrgcs/vlapihlp.h,kflog/kfrgcs/vlapisys_linux.cpp,kflog/kfrgcs/vlapityp.h,kflog/kfrgcs/vlconv.cpp,kflog/kfrgcs/vlconv.h
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=kfrgcs
 sub_dirs=
@@ -703,8 +688,8 @@ type=SOURCE
 
 [kflog/kfrgcs/gcs.desktop]
 dist=true
-install=true
-install_location=$$(kde_datadir)/kflog/logger/gcs.desktop
+install=false
+install_location=
 type=DATA
 
 [kflog/kfrgcs/grecord.cpp]
@@ -810,12 +795,9 @@ install_location=
 type=SOURCE
 
 [kflog/map-icons/Makefile.am]
-dist=true
-files=kflog/map-icons/airfield_g.xpm,kflog/map-icons/airport.xpm,kflog/map-icons/airspace.xpm,kflog/map-icons/ambheliport.xpm,kflog/map-icons/civheliport.xpm,kflog/map-icons/civmilair.xpm,kflog/map-icons/closed.xpm,kflog/map-icons/glider.xpm,kflog/map-icons/glider2.xpm,kflog/map-icons/jump.xpm,kflog/map-icons/milairport.xpm,kflog/map-icons/milheliport.xpm,kflog/map-icons/Makefile.am,kflog/map-icons/obst_group.xpm,kflog/map-icons/obst_group_light.xpm,kflog/map-icons/obst_light.xpm,kflog/map-icons/obstacle.xpm,kflog/map-icons/outlanding.xpm,kflog/map-icons/paraglider.xpm,kflog/map-icons/routepoint.xpm,kflog/map-icons/ul.xpm,kflog/map-icons/vortac.xpm,kflog/map-icons/waypoint.xpm,kflog/map-icons/airfield_c.xpm
-install=false
-install_location=
+files=kflog/map-icons/airfield_c.xpm,kflog/map-icons/airfield_g.xpm,kflog/map-icons/airport.xpm,kflog/map-icons/airspace.xpm,kflog/map-icons/ambheliport.xpm,kflog/map-icons/civheliport.xpm,kflog/map-icons/civmilair.xpm,kflog/map-icons/closed.xpm,kflog/map-icons/glider.xpm,kflog/map-icons/glider2.xpm,kflog/map-icons/jump.xpm,kflog/map-icons/milairport.xpm,kflog/map-icons/milheliport.xpm,kflog/map-icons/obst_group.xpm,kflog/map-icons/obst_group_light.xpm,kflog/map-icons/obst_light.xpm,kflog/map-icons/obstacle.xpm,kflog/map-icons/outlanding.xpm,kflog/map-icons/paraglider.xpm,kflog/map-icons/routepoint.xpm,kflog/map-icons/ul.xpm,kflog/map-icons/vortac.xpm,kflog/map-icons/waypoint.xpm
 sub_dirs=small
-type=DATA
+type=normal
 
 [kflog/map-icons/airfield_c.xpm]
 dist=true
@@ -938,12 +920,9 @@ install_location=$$(kde_datadir)/kflog/mapicons/routepoint.xpm
 type=DATA
 
 [kflog/map-icons/small/Makefile.am]
-dist=true
-files=kflog/map-icons/small/airfield_c.xpm,kflog/map-icons/small/airport.xpm,kflog/map-icons/small/ambheliport.xpm,kflog/map-icons/small/civheliport.xpm,kflog/map-icons/small/civmilair.xpm,kflog/map-icons/small/closed.xpm,kflog/map-icons/small/glider.xpm,kflog/map-icons/small/glider2.xpm,kflog/map-icons/small/jump.xpm,kflog/map-icons/small/Makefile.am,kflog/map-icons/small/milairport.xpm,kflog/map-icons/small/milheliport.xpm,kflog/map-icons/small/obst_group.xpm,kflog/map-icons/small/obstacle.xpm,kflog/map-icons/small/outlanding.xpm,kflog/map-icons/small/paraglider.xpm,kflog/map-icons/small/routepoint.xpm,kflog/map-icons/small/ulf.xpm,kflog/map-icons/small/vortac.xpm,kflog/map-icons/small/waypoint.xpm
-install=false
-install_location=
+files=kflog/map-icons/small/airfield_c.xpm,kflog/map-icons/small/airport.xpm,kflog/map-icons/small/ambheliport.xpm,kflog/map-icons/small/civheliport.xpm,kflog/map-icons/small/civmilair.xpm,kflog/map-icons/small/closed.xpm,kflog/map-icons/small/glider.xpm,kflog/map-icons/small/glider2.xpm,kflog/map-icons/small/jump.xpm,kflog/map-icons/small/milairport.xpm,kflog/map-icons/small/milheliport.xpm,kflog/map-icons/small/obst_group.xpm,kflog/map-icons/small/obstacle.xpm,kflog/map-icons/small/outlanding.xpm,kflog/map-icons/small/paraglider.xpm,kflog/map-icons/small/routepoint.xpm,kflog/map-icons/small/ulf.xpm,kflog/map-icons/small/vortac.xpm,kflog/map-icons/small/waypoint.xpm
 sub_dirs=
-type=DATA
+type=normal
 
 [kflog/map-icons/small/airfield_c.xpm]
 dist=true
@@ -1180,7 +1159,7 @@ install_location=
 type=HEADER
 
 [kflog/pics/Makefile.am]
-files=kflog/pics/brush0.png,kflog/pics/brush1.png,kflog/pics/brush10.png,kflog/pics/brush11.png,kflog/pics/brush12.png,kflog/pics/brush2.png,kflog/pics/brush3.png,kflog/pics/brush4.png,kflog/pics/brush5.png,kflog/pics/brush6.png,kflog/pics/brush7.png,kflog/pics/brush8.png,kflog/pics/brush9.png,kflog/pics/dashdot.png,kflog/pics/dashdotdot.png,kflog/pics/dashed.png,kflog/pics/dotted.png,kflog/pics/flag_green.png,kflog/pics/flag_red.png,kflog/pics/solid.png,kflog/pics/splash.png,kflog/pics/brush13.png,kflog/pics/splash_mask.png
+files=kflog/pics/brush0.png,kflog/pics/brush1.png,kflog/pics/brush10.png,kflog/pics/brush11.png,kflog/pics/brush12.png,kflog/pics/brush13.png,kflog/pics/brush2.png,kflog/pics/brush3.png,kflog/pics/brush4.png,kflog/pics/brush5.png,kflog/pics/brush6.png,kflog/pics/brush7.png,kflog/pics/brush8.png,kflog/pics/brush9.png,kflog/pics/dashdot.png,kflog/pics/dashdotdot.png,kflog/pics/dashed.png,kflog/pics/dotted.png,kflog/pics/flag_green.png,kflog/pics/flag_red.png,kflog/pics/solid.png,kflog/pics/splash.png,kflog/pics/splash_mask.png
 sub_dirs=
 type=normal
 
@@ -1509,14 +1488,14 @@ install_location=
 type=HEADER
 
 [po/Makefile.am]
-files=po/de.po,po/de.gmo,po/kflog.pot,po/no.gmo,po/no.po,po/sv.gmo,po/sv.po,po/fr.po,po/fr.gmo,po/it.po,po/nl.po,po/it.gmo,po/nl.gmo
+files=po/de.gmo,po/de.po,po/fr.gmo,po/fr.po,po/it.gmo,po/it.po,po/kflog.pot,po/nl.gmo,po/nl.po,po/no.gmo,po/no.po,po/sv.gmo,po/sv.po
 sub_dirs=
 type=po
 
 [po/de.gmo]
 dist=true
-install=true
-install_location=$$(kde_locale)/de/kflog.mo
+install=false
+install_location=
 type=DATA
 
 [po/de.po]
@@ -1527,8 +1506,8 @@ type=PO
 
 [po/fr.gmo]
 dist=true
-install=true
-install_location=$$(kde_locale)/fr/kflog.mo
+install=false
+install_location=
 type=DATA
 
 [po/fr.po]
@@ -1557,8 +1536,8 @@ type=DATA
 
 [po/nl.gmo]
 dist=true
-install=true
-install_location=$$(kde_locale)/nl/kflog.mo
+install=false
+install_location=
 type=DATA
 
 [po/nl.po]
@@ -1569,8 +1548,8 @@ type=PO
 
 [po/no.gmo]
 dist=true
-install=true
-install_location=$$(kde_locale)/no/kflog.mo
+install=false
+install_location=
 type=DATA
 
 [po/no.po]
@@ -1581,8 +1560,8 @@ type=PO
 
 [po/sv.gmo]
 dist=true
-install=true
-install_location=$$(kde_locale)/sv/kflog.mo
+install=false
+install_location=
 type=DATA
 
 [po/sv.po]

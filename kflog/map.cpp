@@ -24,6 +24,8 @@
 
 #include <qdragobject.h>
 #include <qpainter.h>
+#include <qregexp.h>
+#include <qtimer.h>
 #include <qwhatsthis.h>
 #include <ctype.h>
 #include <stdlib.h>

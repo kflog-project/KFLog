@@ -2,9 +2,11 @@
 
 SUBDIRS = small 
 
-EXTRA_DIST = airfield_g.xpm airport.xpm airspace.xpm ambheliport.xpm civheliport.xpm civmilair.xpm closed.xpm glider.xpm glider2.xpm jump.xpm milairport.xpm milheliport.xpm Makefile.am obst_group.xpm obst_group_light.xpm obst_light.xpm obstacle.xpm outlanding.xpm paraglider.xpm routepoint.xpm ul.xpm vortac.xpm waypoint.xpm airfield_c.xpm 
+EXTRA_DIST = airfield_c.xpm airfield_g.xpm airport.xpm airspace.xpm ambheliport.xpm civheliport.xpm civmilair.xpm closed.xpm glider.xpm glider2.xpm jump.xpm milairport.xpm milheliport.xpm obst_group.xpm obst_group_light.xpm obst_light.xpm obstacle.xpm outlanding.xpm paraglider.xpm routepoint.xpm ul.xpm vortac.xpm waypoint.xpm 
 
 install-data-local:
+	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/
+	$(INSTALL_DATA) $(srcdir)/airfield_c.xpm $(kde_datadir)/kflog/mapicons/airfield_c.xpm
 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/
 	$(INSTALL_DATA) $(srcdir)/airfield_g.xpm $(kde_datadir)/kflog/mapicons/airfield_g.xpm
 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/
@@ -49,10 +51,9 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/vortac.xpm $(kde_datadir)/kflog/mapicons/vortac.xpm
 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/
 	$(INSTALL_DATA) $(srcdir)/waypoint.xpm $(kde_datadir)/kflog/mapicons/waypoint.xpm
-	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/
-	$(INSTALL_DATA) $(srcdir)/airfield_c.xpm $(kde_datadir)/kflog/mapicons/airfield_c.xpm
 
 uninstall-local:
+	-rm -f $(kde_datadir)/kflog/mapicons/airfield_c.xpm
 	-rm -f $(kde_datadir)/kflog/mapicons/airfield_g.xpm
 	-rm -f $(kde_datadir)/kflog/mapicons/airport.xpm
 	-rm -f $(kde_datadir)/kflog/mapicons/airspace.xpm
@@ -75,6 +76,5 @@ uninstall-local:
 	-rm -f $(kde_datadir)/kflog/mapicons/ul.xpm
 	-rm -f $(kde_datadir)/kflog/mapicons/vortac.xpm
 	-rm -f $(kde_datadir)/kflog/mapicons/waypoint.xpm
-	-rm -f $(kde_datadir)/kflog/mapicons/airfield_c.xpm
 
 ####### kdevelop will overwrite this part!!! (end)############

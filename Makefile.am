@@ -2,14 +2,7 @@
 
 SUBDIRS = kflog po doc 
 
-EXTRA_DIST = kflog.kdevprj AUTHORS COPYING ChangeLog INSTALL README TODO kflog.lsm kflog.spec README-MAP 
-
-install-data-local:
-	$(mkinstalldirs) $$(kde_datadir)/kflog/mapdata/
-	$(INSTALL_DATA) $(srcdir)/README-MAP $$(kde_datadir)/kflog/mapdata/README
-
-uninstall-local:
-	-rm -f $$(kde_datadir)/kflog/mapdata/README
+EXTRA_DIST = kflog.kdevprj admin AUTHORS COPYING ChangeLog INSTALL README TODO kflog.lsm README-MAP 
 
 ####### kdevelop will overwrite this part!!! (end)############
 # not a GNU package. You can remove this line, if 
@@ -31,10 +24,6 @@ package-messages:
 	$(MAKE) -f admin/Makefile.common package-messages
 	$(MAKE) -C po merge
 
-EXTRA_DIST = admin 
-
 dist-hook:
 	cd $(top_distdir) && perl admin/am_edit -padmin
 	cd $(top_distdir) && $(MAKE) -f admin/Makefile.common subdirs
-	
-KDE_ICON = AUTO

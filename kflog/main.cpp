@@ -20,6 +20,8 @@
 #include <klocale.h>
 #include <kconfig.h>
 
+#include <qtimer.h>
+
 #include "kflog.h"
 #include <kflogstartlogo.h>
 #include <mapconfig.h>

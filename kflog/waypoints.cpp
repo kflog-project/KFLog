@@ -27,10 +27,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <qcursor.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qsizepolicy.h>
 #include <qpushbutton.h>
+#include <qregexp.h>
 
 #include <klocale.h>
 #include <kiconloader.h>

@@ -32,6 +32,8 @@
 #include <kprocess.h>
 #include <kprogress.h>
 #include <kpopupmenu.h>
+#include <kstatusbar.h>
+#include <kurl.h>
 
 class DataView;
 class Map;

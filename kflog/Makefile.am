@@ -1,31 +1,37 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 bin_PROGRAMS = kflog
-kflog_SOURCES = projectioncylindric.cpp flightselectiondialog.cpp projectionlambert.cpp projectionbase.cpp olcdialog.cpp taskdataprint.cpp recorderdialog.cpp flightgroup.cpp baseflightelement.cpp igc3dviewstate.cpp igc3dview.cpp igc3dpolyhedron.cpp igc3dflightdata.cpp igc3ddialog.cpp flightdataprint.cpp waypointimpfilterdialog.cpp mapprint.cpp waypointlist.cpp waypointdialog.cpp waypointcatalog.cpp translationlist.cpp translationelement.cpp waypoints.cpp configprintelement.cpp configdrawelement.cpp igcpreview.cpp evaluationframe.cpp mapconfig.cpp evaluationview.cpp evaluationdialog.cpp kflogconfig.cpp kflogstartlogo.cpp flighttask.cpp flight.cpp mapmatrix.cpp singlepoint.cpp radiopoint.cpp lineelement.cpp isohypse.cpp glidersite.cpp airspace.cpp airport.cpp mapcontents.cpp basemapelement.cpp map.cpp dataview.cpp mapcalc.cpp mapcontrolview.cpp kflog.cpp main.cpp 
+kflog_SOURCES = waypoints.cpp waypointlist.cpp waypointimpfilterdialog.cpp waypointdialog.cpp waypointcatalog.cpp translationlist.cpp translationelement.cpp taskdataprint.cpp singlepoint.cpp recorderdialog.cpp radiopoint.cpp projectionlambert.cpp projectioncylindric.cpp projectionbase.cpp olcdialog.cpp mapprint.cpp mapmatrix.cpp mapcontrolview.cpp mapcontents.cpp mapconfig.cpp mapcalc.cpp map.cpp lineelement.cpp kflogstartlogo.cpp kflogconfig.cpp isohypse.cpp igcpreview.cpp igc3dviewstate.cpp igc3dview.cpp igc3dpolyhedron.cpp igc3dflightdata.cpp igc3ddialog.cpp glidersite.cpp flighttask.cpp flightselectiondialog.cpp flightgroup.cpp flightdataprint.cpp flight.cpp evaluationview.cpp evaluationframe.cpp evaluationdialog.cpp dataview.cpp configprintelement.cpp configdrawelement.cpp basemapelement.cpp baseflightelement.cpp airspace.cpp airport.cpp kflog.cpp main.cpp 
 kflog_LDADD   = ./guicontrols/libguicontrols.a ./kfrgcs/libkfrgcs.la -lkdeprint -lm $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
 
-SUBDIRS = map-icons pics guicontrols kfrgcs 
+SUBDIRS = guicontrols kfrgcs map-icons pics 
 
-EXTRA_DIST = main.cpp kflog.cpp kflog.h kflogui.rc kflog.desktop mapcontrolview.h mapcontrolview.cpp mapcalc.cpp mapcalc.h wp.h dataview.cpp dataview.h map.cpp map.h basemapelement.cpp basemapelement.h mapcontents.cpp mapcontents.h resource.h airport.cpp airport.h airspace.cpp airspace.h glidersite.cpp glidersite.h isohypse.cpp isohypse.h lineelement.cpp lineelement.h radiopoint.cpp radiopoint.h singlepoint.cpp singlepoint.h mapmatrix.cpp mapmatrix.h flight.cpp flight.h flighttask.cpp flighttask.h kflogstartlogo.cpp kflogstartlogo.h kflogconfig.cpp kflogconfig.h mapdefaults.h evaluationdialog.cpp evaluationdialog.h evaluationview.cpp evaluationview.h hi16-app-kflog.png hi32-app-kflog.png hi48-app-kflog.png hi16-mimetype-igc.png hi32-mimetype-igc.png hi48-mimetype-igc.png igc.desktop hi22-action-movemap_e.png hi22-action-movemap_n.png hi22-action-movemap_ne.png hi22-action-movemap_nw.png hi22-action-movemap_s.png hi22-action-movemap_se.png hi22-action-movemap_sw.png hi22-action-movemap_w.png hi16-action-flightevaluation.png hi22-action-flightevaluation.png hi32-action-flightevaluation.png hi16-action-centerflight.png hi16-action-centertask.png hi22-action-centerflight.png hi22-action-centertask.png mapconfig.cpp mapconfig.h evaluationframe.cpp evaluationframe.h igcpreview.cpp igcpreview.h configdrawelement.cpp configdrawelement.h configprintelement.cpp configprintelement.h waypoints.cpp waypoints.h translationelement.cpp translationelement.h translationlist.cpp translationlist.h waypointcatalog.cpp waypointcatalog.h waypointdialog.cpp waypointdialog.h waypointlist.cpp waypointlist.h hi22-action-waypoint.png hi16-action-waypoint.png runway.h mapprint.cpp mapprint.h waypointimpfilterdialog.cpp waypointimpfilterdialog.h flightdataprint.cpp flightdataprint.h hi16-action-stepback.png hi16-action-stepforward.png hi22-action-stepback.png hi22-action-stepforward.png igc3ddialog.cpp igc3ddialog.h igc3dflightdata.cpp igc3dflightdata.h igc3dpolyhedron.cpp igc3dpolyhedron.h igc3dview.cpp igc3dview.h igc3dviewstate.cpp igc3dviewstate.h baseflightelement.cpp baseflightelement.h flightgroup.cpp flightgroup.h recorderdialog.cpp recorderdialog.h frstructs.h taskdataprint.cpp taskdataprint.h kflogrc olcdialog.cpp olcdialog.h projectionbase.cpp projectionbase.h projectionlambert.cpp projectionlambert.h flightselectiondialog.cpp flightselectiondialog.h projectioncylindric.cpp projectioncylindric.h hi32-action-projection.png 
+EXTRA_DIST = main.cpp kflog.cpp kflog.h kflog.desktop airport.cpp airport.h airspace.cpp airspace.h baseflightelement.cpp baseflightelement.h basemapelement.cpp basemapelement.h configdrawelement.cpp configdrawelement.h configprintelement.cpp configprintelement.h dataview.cpp dataview.h evaluationdialog.cpp evaluationdialog.h evaluationframe.cpp evaluationframe.h evaluationview.cpp evaluationview.h flight.cpp flight.h flightdataprint.cpp flightdataprint.h flightgroup.cpp flightgroup.h flightselectiondialog.cpp flightselectiondialog.h flighttask.cpp flighttask.h glidersite.cpp glidersite.h frstructs.h hi16-action-centerflight.png hi16-action-centertask.png hi16-action-flightevaluation.png hi16-action-stepback.png hi16-action-stepforward.png hi16-action-waypoint.png hi16-app-kflog.png hi16-mimetype-igc.png hi22-action-centerflight.png hi22-action-centertask.png hi22-action-flightevaluation.png hi22-action-movemap_e.png hi22-action-movemap_n.png hi22-action-movemap_ne.png hi22-action-movemap_nw.png hi22-action-movemap_s.png hi22-action-movemap_se.png hi22-action-movemap_sw.png hi22-action-movemap_w.png hi22-action-stepback.png hi22-action-waypoint.png hi22-action-stepforward.png hi32-action-flightevaluation.png hi32-action-projection.png hi32-app-kflog.png hi32-mimetype-igc.png hi48-app-kflog.png hi48-mimetype-igc.png igc3ddialog.cpp igc3ddialog.h igc3dflightdata.cpp igc3dflightdata.h igc3dpolyhedron.cpp igc3dpolyhedron.h igc3dview.cpp igc3dview.h igc3dviewstate.cpp igc3dviewstate.h igcpreview.h igcpreview.cpp isohypse.cpp isohypse.h kflogconfig.cpp kflogconfig.h kflogrc kflogstartlogo.cpp kflogstartlogo.h kflogui.rc lineelement.cpp lineelement.h map.cpp map.h mapcalc.cpp mapcalc.h mapconfig.cpp mapconfig.h mapcontents.cpp mapcontents.h mapcontrolview.cpp mapcontrolview.h mapdefaults.h mapmatrix.h mapmatrix.cpp mapprint.cpp mapprint.h olcdialog.cpp olcdialog.h projectionbase.cpp projectioncylindric.cpp projectionbase.h projectioncylindric.h projectionlambert.cpp projectionlambert.h radiopoint.cpp radiopoint.h recorderdialog.cpp recorderdialog.h resource.h runway.h singlepoint.cpp singlepoint.h taskdataprint.cpp taskdataprint.h translationelement.cpp translationelement.h translationlist.cpp translationlist.h waypointcatalog.cpp waypointcatalog.h waypointdialog.cpp waypointdialog.h waypointimpfilterdialog.cpp waypointimpfilterdialog.h waypointlist.cpp waypointlist.h waypoints.cpp waypoints.h wp.h 
 
 install-data-local:
-	$(mkinstalldirs) $(kde_datadir)/kflog/
-	$(INSTALL_DATA) $(srcdir)/kflogui.rc $(kde_datadir)/kflog/kflogui.rc
 	$(mkinstalldirs) $(kde_appsdir)/Applications/
 	$(INSTALL_DATA) $(srcdir)/kflog.desktop $(kde_appsdir)/Applications/kflog.desktop
+	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
+	$(INSTALL_DATA) $(srcdir)/hi16-action-centerflight.png $(kde_icondir)/hicolor/16x16/actions/centerflight.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
+	$(INSTALL_DATA) $(srcdir)/hi16-action-centertask.png $(kde_icondir)/hicolor/16x16/actions/centertask.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
+	$(INSTALL_DATA) $(srcdir)/hi16-action-flightevaluation.png $(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
+	$(INSTALL_DATA) $(srcdir)/hi16-action-stepback.png $(kde_icondir)/hicolor/16x16/actions/stepback.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
+	$(INSTALL_DATA) $(srcdir)/hi16-action-stepforward.png $(kde_icondir)/hicolor/16x16/actions/stepforward.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
+	$(INSTALL_DATA) $(srcdir)/hi16-action-waypoint.png $(kde_icondir)/hicolor/16x16/actions/waypoint.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/apps/
 	$(INSTALL_DATA) $(srcdir)/hi16-app-kflog.png $(kde_icondir)/hicolor/16x16/apps/kflog.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/32x32/apps/
-	$(INSTALL_DATA) $(srcdir)/hi32-app-kflog.png $(kde_icondir)/hicolor/32x32/apps/kflog.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/apps/
-	$(INSTALL_DATA) $(srcdir)/hi48-app-kflog.png $(kde_icondir)/hicolor/48x48/apps/kflog.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/mimetypes/
 	$(INSTALL_DATA) $(srcdir)/hi16-mimetype-igc.png $(kde_icondir)/hicolor/16x16/mimetypes/igc.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/32x32/mimetypes/
-	$(INSTALL_DATA) $(srcdir)/hi32-mimetype-igc.png $(kde_icondir)/hicolor/32x32/mimetypes/igc.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/mimetypes/
-	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-igc.png $(kde_icondir)/hicolor/48x48/mimetypes/igc.png
-	$(mkinstalldirs) $(kde_mimedir)/application/
-	$(INSTALL_DATA) $(srcdir)/igc.desktop $(kde_mimedir)/application/igc.desktop
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-centerflight.png $(kde_icondir)/hicolor/22x22/actions/centerflight.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-centertask.png $(kde_icondir)/hicolor/22x22/actions/centertask.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-flightevaluation.png $(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_e.png $(kde_icondir)/hicolor/22x22/actions/movemap_e.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
@@ -42,47 +48,38 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_sw.png $(kde_icondir)/hicolor/22x22/actions/movemap_sw.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_w.png $(kde_icondir)/hicolor/22x22/actions/movemap_w.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
-	$(INSTALL_DATA) $(srcdir)/hi16-action-flightevaluation.png $(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-flightevaluation.png $(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/32x32/actions/
-	$(INSTALL_DATA) $(srcdir)/hi32-action-flightevaluation.png $(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
-	$(INSTALL_DATA) $(srcdir)/hi16-action-centerflight.png $(kde_icondir)/hicolor/16x16/actions/centerflight.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
-	$(INSTALL_DATA) $(srcdir)/hi16-action-centertask.png $(kde_icondir)/hicolor/16x16/actions/centertask.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-centerflight.png $(kde_icondir)/hicolor/22x22/actions/centerflight.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-centertask.png $(kde_icondir)/hicolor/22x22/actions/centertask.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-waypoint.png $(kde_icondir)/hicolor/22x22/actions/waypoint.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
-	$(INSTALL_DATA) $(srcdir)/hi16-action-waypoint.png $(kde_icondir)/hicolor/16x16/actions/waypoint.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
-	$(INSTALL_DATA) $(srcdir)/hi16-action-stepback.png $(kde_icondir)/hicolor/16x16/actions/stepback.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
-	$(INSTALL_DATA) $(srcdir)/hi16-action-stepforward.png $(kde_icondir)/hicolor/16x16/actions/stepforward.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 	$(INSTALL_DATA) $(srcdir)/hi22-action-stepback.png $(kde_icondir)/hicolor/22x22/actions/stepback.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-waypoint.png $(kde_icondir)/hicolor/22x22/actions/waypoint.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 	$(INSTALL_DATA) $(srcdir)/hi22-action-stepforward.png $(kde_icondir)/hicolor/22x22/actions/stepforward.png
-	$(mkinstalldirs) $(kde_confdir)/
-	$(INSTALL_DATA) $(srcdir)/kflogrc $(kde_confdir)/kflogrc
+	$(mkinstalldirs) $(kde_icondir)/hicolor/32x32/actions/
+	$(INSTALL_DATA) $(srcdir)/hi32-action-flightevaluation.png $(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/32x32/actions/
 	$(INSTALL_DATA) $(srcdir)/hi32-action-projection.png $(kde_icondir)/hicolor/32x32/actions/projection.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/32x32/apps/
+	$(INSTALL_DATA) $(srcdir)/hi32-app-kflog.png $(kde_icondir)/hicolor/32x32/apps/kflog.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/32x32/mimetypes/
+	$(INSTALL_DATA) $(srcdir)/hi32-mimetype-igc.png $(kde_icondir)/hicolor/32x32/mimetypes/igc.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/apps/
+	$(INSTALL_DATA) $(srcdir)/hi48-app-kflog.png $(kde_icondir)/hicolor/48x48/apps/kflog.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/mimetypes/
+	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-igc.png $(kde_icondir)/hicolor/48x48/mimetypes/igc.png
 
 uninstall-local:
-	-rm -f $(kde_datadir)/kflog/kflogui.rc
 	-rm -f $(kde_appsdir)/Applications/kflog.desktop
+	-rm -f $(kde_icondir)/hicolor/16x16/actions/centerflight.png
+	-rm -f $(kde_icondir)/hicolor/16x16/actions/centertask.png
+	-rm -f $(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
+	-rm -f $(kde_icondir)/hicolor/16x16/actions/stepback.png
+	-rm -f $(kde_icondir)/hicolor/16x16/actions/stepforward.png
+	-rm -f $(kde_icondir)/hicolor/16x16/actions/waypoint.png
 	-rm -f $(kde_icondir)/hicolor/16x16/apps/kflog.png
-	-rm -f $(kde_icondir)/hicolor/32x32/apps/kflog.png
-	-rm -f $(kde_icondir)/hicolor/48x48/apps/kflog.png
 	-rm -f $(kde_icondir)/hicolor/16x16/mimetypes/igc.png
-	-rm -f $(kde_icondir)/hicolor/32x32/mimetypes/igc.png
-	-rm -f $(kde_icondir)/hicolor/48x48/mimetypes/igc.png
-	-rm -f $(kde_mimedir)/application/igc.desktop
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/centerflight.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/centertask.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_e.png
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_n.png
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_ne.png
@@ -91,35 +88,37 @@ uninstall-local:
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_se.png
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_sw.png
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_w.png
-	-rm -f $(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
-	-rm -f $(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
-	-rm -f $(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
-	-rm -f $(kde_icondir)/hicolor/16x16/actions/centerflight.png
-	-rm -f $(kde_icondir)/hicolor/16x16/actions/centertask.png
-	-rm -f $(kde_icondir)/hicolor/22x22/actions/centerflight.png
-	-rm -f $(kde_icondir)/hicolor/22x22/actions/centertask.png
-	-rm -f $(kde_icondir)/hicolor/22x22/actions/waypoint.png
-	-rm -f $(kde_icondir)/hicolor/16x16/actions/waypoint.png
-	-rm -f $(kde_icondir)/hicolor/16x16/actions/stepback.png
-	-rm -f $(kde_icondir)/hicolor/16x16/actions/stepforward.png
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/stepback.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/waypoint.png
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/stepforward.png
-	-rm -f $(kde_confdir)/kflogrc
+	-rm -f $(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
 	-rm -f $(kde_icondir)/hicolor/32x32/actions/projection.png
+	-rm -f $(kde_icondir)/hicolor/32x32/apps/kflog.png
+	-rm -f $(kde_icondir)/hicolor/32x32/mimetypes/igc.png
+	-rm -f $(kde_icondir)/hicolor/48x48/apps/kflog.png
+	-rm -f $(kde_icondir)/hicolor/48x48/mimetypes/igc.png
 
 ####### kdevelop will overwrite this part!!! (end)############
-# this 10 paths are KDE specific. Use them:
-# kde_htmldir       Where your docs should go to. (contains lang subdirs)
-# kde_appsdir       Where your application file (.kdelnk) should go to. 
-# kde_icondir       Where your icon should go to.
-# kde_minidir       Where your mini icon should go to.
-# kde_datadir       Where you install application data. (Use a subdir)
-# kde_locale        Where translation files should go to.(contains lang subdirs)
-# kde_cgidir        Where cgi-bin executables should go to.
-# kde_confdir       Where config files should go to.
-# kde_mimedir       Where mimetypes should go to.
-# kde_toolbardir    Where general toolbar icons should go to.
-# kde_wallpaperdir  Where general wallpapers should go to.
+# These paths are KDE specific. Use them:
+# kde_appsdir         Where your application's menu entry (.desktop) should go to.
+# kde_icondir         Where your icon should go to - better use KDE_ICON.
+# kde_sounddir        Where your sounds should go to.
+# kde_htmldir         Where your docs should go to. (contains lang subdirs)
+# kde_datadir         Where you install application data. (Use a subdir)
+# kde_locale          Where translation files should go to. (contains lang subdirs)
+# kde_cgidir          Where cgi-bin executables should go to.
+# kde_confdir         Where config files should go to (system-wide ones with default values).
+# kde_mimedir         Where mimetypes .desktop files should go to.
+# kde_servicesdir     Where services .desktop files should go to.
+# kde_servicetypesdir Where servicetypes .desktop files should go to.
+# kde_toolbardir      Where general toolbar icons should go to (deprecated, use KDE_ICON).
+# kde_wallpaperdir    Where general wallpapers should go to.
+# kde_templatesdir    Where templates for the "New" menu (Konqueror/KDesktop) should go to.
+# kde_bindir          Where executables should go to. Use bin_PROGRAMS or bin_SCRIPTS.
+# kde_libdir          Where shared libraries should go to. Use lib_LTLIBRARIES.
+# kde_moduledir       Where modules (e.g. parts) should go to. Use kde_module_LTLIBRARIES.
+# kde_styledir        Where Qt/KDE widget styles should go to (new in KDE 3).
+# kde_designerdir     Where Qt Designer plugins should go to (new in KDE 3).
 
 # set the include path for X, qt and KDE
 INCLUDES= $(all_includes)
@@ -129,10 +128,20 @@ METASOURCES = AUTO
 # the library search path. 
 kflog_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
-rcdir = $(kde_datadir)/kflog
-rc_DATA = kflogui.rc
+# Uncomment the following two lines if you add a ui.rc file for your application to make use of
+# KDE
+#rcdir = $(kde_datadir)/kflog
+#rc_DATA = kflogui.rc
 
-messages: rc.cpp
+#WARNING: if you use a ui.rc file above, use:
+
+# messages: rc.cpp
+
+# instead of 
+
+# messages:
+
+messages: 
 	LIST=`find . -name \*.h -o -name \*.hh -o -name \*.H -o -name \*.hxx -o -name \*.hpp -o -name \*.cpp -o -name \*.cc -o -name \*.cxx -o -name \*.ecpp -o -name \*.C`; \
 	if test -n "$$LIST"; then \
 	 $(XGETTEXT) $$LIST -o $(podir)/kflog.pot; \
