@@ -73,6 +73,14 @@ Allways a Topic
 Nice To Have
 ============
 
+* Implement plugin-architecture across KFLog: all non-native KFLog
+  fileformats should be in plugins so it's easy to add/modify other
+  fileformats. All load/safe tasks in KFLog should support plugins
+  so we can load/save any object in any filetype as long as we have
+  the appropriate plugin for it.
+
+* related to the above: make it possible to read airspace
+  files in other formats.
 
 
 Planning
