@@ -101,24 +101,6 @@ void Igc3DView::paintEvent(QPaintEvent* event = 0)
 //  warning("paintEvent");
 }
 
-void Igc3DView::change_zfactor(int i)
-{
-	state->zfactor = i;
-
-	if(flight->flight_opened_flag){
-		flight->change_zfactor();
-//		state->deltay = state->deltayoffset - Dial2->value();
-		flightbox->adjust_size();
-	}
-	if(state->centering){
-		flight->centre_data_to_marker();
-		flight->calculate_min_max();
-//		state->deltay = state->deltayoffset - Dial2->value();
-		flightbox->adjust_size();
-	}
-	__draw();
-}
-
 /** No descriptions */
 void Igc3DView::__draw(void)
 {
@@ -186,6 +168,36 @@ void Igc3DView::slotRedraw(){
 	this->__draw();
 }
 
+void Igc3DView::keyPressEvent ( QKeyEvent * k )
+{
+	switch ( k->key() ) {
+		case Key_R:
+			reset();
+			break;
+		case Key_T:
+			state->flight_trace = (state->flight_trace + 1)%2;
+			break;
+		case Key_S:
+			state->flight_shadow = (state->flight_shadow + 1)%2;
+			break;
+		case Key_B:
+			state->polyhedron_back = (state->polyhedron_back + 1)%2;
+			break;
+		case Key_F:
+			state->polyhedron_front = (state->polyhedron_front + 1)%2;
+			break;
+	}
+	__draw();
+}
+
+void Igc3DView::reset()
+{
+	change_centering(0);
+	state->reset();
+
+	//startTimer( state->ms_timer );
+}
+
 Igc3DViewState* Igc3DView::getState()
 {
 	return this->state;
@@ -201,4 +213,98 @@ Igc3DViewState* Igc3DView::setState(Igc3DViewState* vs)
   return rs;
 }
 
+void Igc3DView::change_mag(int i)
+{
+	state->mag = i;
+	__draw();
+}
 
+void Igc3DView::change_dist(int i)
+{
+	// Make sure deltay will never be less than offset (-> display would look funny)
+	state->deltay = state->deltayoffset - i;
+	__draw();
+}
+
+void Igc3DView::change_alpha(int i)
+{
+	state->alpha = i;
+	__draw();
+}
+
+void Igc3DView::change_beta(int i)
+{
+	state->beta = i;
+	__draw();
+}
+
+void Igc3DView::change_gamma(int i)
+{
+	state->gamma = i;
+	__draw();
+}
+
+void Igc3DView::change_zfactor(int i)
+{
+	state->zfactor = i;
+	if(flight->flight_opened_flag){
+		flight->change_zfactor();
+		//state->deltay = state->deltayoffset - Dial2->value();
+		flightbox->adjust_size();
+	}
+	if(state->centering){
+		flight->centre_data_to_marker();
+		flight->calculate_min_max();
+		//state->deltay = state->deltayoffset - Dial2->value();
+		flightbox->adjust_size();
+	}
+	__draw();
+}
+
+void Igc3DView::change_fps(int i)
+{
+	state->ms_timer = (int) (1000.0/i);
+	if(state->timerflag == 1){
+		killTimers();
+		startTimer( state->ms_timer );
+	}
+}
+
+void Igc3DView::change_rotation_factor(int i)
+{
+	state->rotate_fract = i;
+	__draw();
+}
+
+void Igc3DView::change_centering(int i)
+{
+	state->centering = i;
+	if(i == 0 && flight->flight_opened_flag){
+		flight->calculate_min_max();
+		flight->flatten_data();
+		flight->calculate_min_max();
+//		state->deltay = state->deltayoffset - Dial2->value();
+		flightbox->adjust_size();
+	
+	} else if(flight->flight_opened_flag){
+		flight->centre_data_to_marker();
+		flight->calculate_min_max();
+//		state->deltay = state->deltayoffset - Dial2->value();
+		flightbox->adjust_size();
+	}
+	__draw();
+}
+
+void Igc3DView::set_flight_marker(int i)
+{
+	state->flight_marker_position = i;
+	if(state->centering && flight->flight_opened_flag){
+		flight->centre_data_to_marker();
+		flight->calculate_min_max();
+//		state->deltay = state->deltayoffset - Dial2->value();
+		flightbox->adjust_size();
+	}
+	if(state->timerflag == 0){
+		__draw();
+	}
+}
