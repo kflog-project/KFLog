@@ -17,6 +17,25 @@
 
 #include "flightrecorderpluginbase.h"
 
+FlightRecorderPluginBase::transferStruct FlightRecorderPluginBase::transferData [] =
+{
+    {bps00075,     75,     B75},
+    {bps00150,    150,    B150},
+    {pbs00200,    200,    B200},
+    {bps00300,    300,    B300},
+    {bps00600,    600,    B600},
+    {bps01200,   1200,   B1200},
+    {bps01800,   1800,   B1800},
+    {bps02400,   2400,   B2400},
+    {bps04800,   4800,   B4800},
+    {bps09600,   9600,   B9600},
+    {bps19200,  19200,  B19200},
+    {bps38400,  38400,  B38400},
+    {bps57600,  57600,  B57600},
+    {bps115200,115200, B115200}
+};
+int FlightRecorderPluginBase::transferDataMax = 14;
+
 FlightRecorderPluginBase::FlightRecorderPluginBase(){
   _isConnected=false;
   _errorinfo="";
@@ -26,7 +45,8 @@ FlightRecorderPluginBase::FlightRecorderPluginBase(){
   _capabilities.maxNrWaypoints = 0;         //maximum number of waypoints
   _capabilities.maxNrWaypointsPerTask = 0;  //maximum number of waypoints per task
   _capabilities.maxNrPilots = 0;            //maximum number of pilots
-
+  _capabilities.transferSpeeds = bps00000;  //supported transfer speeds (all)
+  
   _capabilities.supDlWaypoint = false;      //supports downloading of waypoints?
   _capabilities.supUlWaypoint = false;      //supports uploading of waypoints?
   _capabilities.supDlFlight = false;        //supports downloading of flights?
@@ -41,6 +61,7 @@ FlightRecorderPluginBase::FlightRecorderPluginBase(){
   _capabilities.supDspGliderID = false;     //supports display of glider ID
   _capabilities.supDspGliderType = false;   //supports display of glider type
   _capabilities.supDspCompetitionID = false;//supports display of competition ID
+  _capabilities.supAutoSpeed = false;       //supports automatic transfer speed detection
 }
 
 

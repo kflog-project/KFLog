@@ -18,7 +18,9 @@
 #ifndef FILSER_H
 #define FILSER_H
 
+#include <termios.h>
 #include <stdio.h>
+#include <qtimer.h>
 
 #include <qglobal.h>
 #if QT_VERSION < 0x030000
@@ -41,6 +43,7 @@
 
 #endif
 
+
 /**
   *@author Christian Fughe, Harald Maier
   */
@@ -61,12 +64,21 @@
 #define LX_MEM_RET 7            /* Number of bytes returned by     */
                                 /* wb(STX), wb(Q).                 */
                               
+#define INFO_SIZE       118     /* Size of the s_hdrinfo struct */
+#define TASK_SIZE       230     /* Size of the s_hdrtask struct */
+#define BASIC_LENGTH    (1 + INFO_SIZE + TASK_SIZE)
+                                /* 1 undocumented byte ahead    */
+#define EXTENDED_LENGTH BASIC_LENGTH + 9
+                                /* 9 characters class name      */
+
 struct flightTable {
   unsigned char record[FLIGHT_INDEX_WIDTH];
 };
 
 class Filser : public FlightRecorderPluginBase
 {
+  Q_OBJECT
+
 public: 
   Filser();
   virtual ~Filser();
@@ -129,6 +141,9 @@ public:
 
   static unsigned char calcCrcBuf(const void* buf, unsigned int count);
 
+public slots:
+  void slotTimeout();
+
 private:
   /**
    * try to find a filser device
@@ -164,6 +179,8 @@ private:
   int readDA4Buffer();
   int writeDA4Buffer();
   int findWaypoint (Waypoint* wp);
+  QTimer* _keepalive;
+  speed_t _speed;
 };
 
 #endif

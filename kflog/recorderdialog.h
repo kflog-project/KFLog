@@ -101,6 +101,9 @@ class RecorderDialog : public KDialogBase
     /**
      */
     void slotDisablePages();
+    /**
+     */
+    void slotNewSpeed(int);
     
   private:
     /** */
@@ -151,8 +154,8 @@ class RecorderDialog : public KDialogBase
     KComboBox* selectType;
     KComboBox* selectPort;
     QLabel* selectPortLabel;
-    KComboBox* selectBaud;
-    QLabel* selectBaudLabel;
+    KComboBox* _selectSpeed;
+    QLabel* selectSpeedLabel;
     KLineEdit* selectURL;
     QLabel* selectURLLabel;
     QPushButton* cmdConnect;

@@ -27,6 +27,8 @@
  * @author André Somers
  */
 
+#include <termios.h>
+
 #include <qstring.h>
 #include <qptrlist.h>
 #include <qobject.h>
@@ -61,6 +63,32 @@ public:
   /* The none option is pretty useless, but is included for completeness
      sake. It _is_ used in the flightrecorder dialog though! */
 
+  enum TransferBps  {bps00000 = 0x0000,
+                     bps00075 = 0x0001,
+                     bps00150 = 0x0002,
+                     pbs00200 = 0x0004,
+                     bps00300 = 0x0008,
+                     bps00600 = 0x0010,
+                     bps01200 = 0x0020,
+                     bps01800 = 0x0040,
+                     bps02400 = 0x0080,
+                     bps04800 = 0x0100,
+                     bps09600 = 0x0200,
+                     bps19200 = 0x0400,
+                     bps38400 = 0x0800,
+                     bps57600 = 0x1000,
+                     bps115200= 0x2000};
+
+  struct transferStruct
+  {
+    TransferBps _bps;
+    int         _speed;
+    speed_t     _tspeed;
+  };
+
+  static transferStruct transferData[];
+  static int transferDataMax;
+
   // FlightRecorder capabilities
   struct FR_Capabilities
   {
@@ -68,6 +96,7 @@ public:
     unsigned int maxNrWaypoints;         //maximum number of waypoints
     unsigned int maxNrWaypointsPerTask;  //maximum number of waypoints per task
     unsigned int maxNrPilots;            //maximum number of pilots
+    unsigned int transferSpeeds;         //the set of actual supported speeds
 
     bool supDlWaypoint;      //supports downloading of waypoints?
     bool supUlWaypoint;      //supports uploading of waypoints?
@@ -83,6 +112,7 @@ public:
     bool supDspGliderID;     //supports display of glider ID
     bool supDspGliderType;   //supports display of glider type
     bool supDspCompetitionID;//supports display of competition ID
+    bool supAutoSpeed;       //supports automatic transfer speed detection
   };
 
   struct FR_BasicData
@@ -196,7 +226,11 @@ signals:
    *  int total is the total progress to be made, for instance the total number of bytes to transfer
    * May be used to display a progress dialog.
    */
-  void progress(bool finished, int progress, int total);
+  virtual void progress(bool finished, int progress, int total);
+  /**
+   * May be emited when the actual transfer speed has changed
+   */
+  virtual void newSpeed (int speed);
 };
 
 #endif

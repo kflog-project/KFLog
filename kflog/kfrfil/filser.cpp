@@ -17,7 +17,6 @@
 
 #define _GNU_SOURCE
 #include <fcntl.h>
-#include <termios.h>
 #include <signal.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -150,7 +149,12 @@ Filser::Filser()
   _capabilities.maxNrWaypoints = WAYPOINT_MAX;     //maximum number of waypoints
   _capabilities.maxNrWaypointsPerTask = MAXTSKPNT; //maximum number of waypoints per task
   _capabilities.maxNrPilots = 1;             //maximum number of pilots
-
+  _capabilities.transferSpeeds = bps02400 |  //supported transfer speeds
+                                 bps04800 |
+                                 bps09600 |
+                                 bps19200 |
+                                 bps38400;
+  
   _capabilities.supDlWaypoint = true;        //supports downloading of waypoints?
   _capabilities.supUlWaypoint = true;        //supports uploading of waypoints?
   _capabilities.supDlFlight = true;          //supports downloading of flights?
@@ -165,15 +169,35 @@ Filser::Filser()
   _capabilities.supDspGliderType = true;
   _capabilities.supDspGliderID = true;
   _capabilities.supDspCompetitionID = true;
+  _capabilities.supAutoSpeed = true;       //supports automatic transfer speed detection
   //End set capabilities.
 
   portID = -1;
   flightIndex.setAutoDelete(true);
   _da4BufferValid = false;
+  _keepalive = new QTimer (this, "keepalive");
+  connect (_keepalive, SIGNAL(timeout()), this, SLOT(slotTimeout()));
 }
 
 Filser::~Filser()
 {
+}
+
+/**
+  * this function will be called each second to keep the connection to LX device alive
+  */
+void Filser::slotTimeout()
+{
+  tcflush(portID, TCIOFLUSH); // Make sure the next ACK comes from the
+                              // following wb(SYN). And remove the
+                              // position data, that might have been
+                              // arrived.
+  wb(SYN);
+  tcdrain (portID);
+  int ret = rb();
+  if (ret != ACK) {
+    qDebug ("keepalive failed: ret = %x", ret);
+  }
 }
 
 /**
@@ -201,6 +225,8 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
 
   _errorinfo = "";
 
+  _keepalive->blockSignals(true);
+  
   tcflush(portID, TCIOFLUSH);
 
   wb(STX);
@@ -301,6 +327,8 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
     rc = FR_ERROR;
   }
 
+  _keepalive->blockSignals(false);
+  
   return rc;
 }
 
@@ -320,9 +348,21 @@ int Filser::getBasicData(FR_BasicData& data)
     return FR_OK;
   }
 
+  _keepalive->blockSignals(true);
+
   int rc = FR_OK;
   unsigned char *bufP;
+  unsigned char *bufP_o;
   unsigned char buf[BUFSIZE + 1];
+  int buffersize = BUFSIZE;
+  int min_data   = 0x80;
+  // actually, depending on the version of the LX device, a different
+  // amount of bytes are sent.
+  // this value is close enough to the real number
+  // V5.0:  0x12F bytes
+  // V5.11: 0x131 bytes
+  // V5.2:  0x140 bytes
+
 
   if (!check4Device()) {
     return FR_ERROR;
@@ -335,29 +375,44 @@ int Filser::getBasicData(FR_BasicData& data)
   wb(STX);
   wb(REQ_BASIC_DATA);
 
-  int buffersize = 0x130;
-  // actually, depending on the version of the LX device, a different amount of bytes are sent.
-  // this value is close enough to the real number
-  // V5.11: 0x131 bytes
-  // V5.2:  0x140 bytes
-
   bufP = buf;
+  // ( - Christian - )
+  // Read until no more data is comming in, bufP == bufP_o.
+  // LX20 V5.0 starts writing Position data on the serial line when leaving
+  // the CONNECT mode after the timeout of 10 sec. There is less than 1
+  // second between end-of-data and start of sending the position data.
+  // I suggest VTIME = 1 !
+  //
+  // Eggert, reading 0x130 bytes into the buffer failed with my recorder,
+  // because it sends 0x12F bytes only. The remaining byte was filled from
+  // the position data after the 10 sec timeout of the CONNECT mode. The
+  // following check4Device() below failed too of course and terminated this
+  // function.
+  //
+  newTermEnv.c_cc[VTIME] = 20; // wait at least 2 sec for no more data.
+  tcsetattr(portID, TCSANOW, &newTermEnv);
   while ((buffersize + buf - bufP) > 0) {
     bufP = readData(bufP, (buffersize + buf - bufP));
+    if (bufP == bufP_o) // No more data 
+      break;
+    bufP_o = bufP;
   }
+  newTermEnv.c_cc[VTIME] = 1; // reset the wait time to 0.1 sec.
+  tcsetattr(portID, TCSANOW, &newTermEnv);
 
   // uncomment this if you want to analyze the buffer
   // debugHex (buf, buffersize);
 
-  if ((bufP - buf) != buffersize) {
-    _errorinfo = i18n("get_logger_data(): Wrong amount of bytes from LX-device");
-    rc = FR_ERROR;
+  if ((bufP - buf) < min_data) {
+    _errorinfo = i18n("getBasicData(): Wrong amount of bytes from LX-device");
+    _basicData.recorderType = QString("n.a.");
+    _basicData.serialNumber = QString("n.a.");
   }
   /*
   // we cannot calculate a checksum because we ignored the rest of the data
   else if (calcCrcBuf(buf, buffersize - 1) != buf[buffersize - 1])
   {
-    _errorinfo = i18n("get_logger_data(): Bad CRC");
+    _errorinfo = i18n("getBasicData(): Bad CRC");
     rc = FR_ERROR;
   }
   */
@@ -380,39 +435,42 @@ int Filser::getBasicData(FR_BasicData& data)
   tcflush(portID, TCIOFLUSH);
 
   if (!check4Device()) {
+    _keepalive->blockSignals(false);
     return FR_ERROR;
   }
-
+  
   tcflush(portID, TCIOFLUSH);
 
   wb(STX);
   wb(REQ_FLIGHT_DATA);
 
-  // again, there are more bytes to be expected from the device. They will be flushed
+  // again, there are more bytes to be expected from the device. They will
+  // be flushed
+  //
+  // ( - Christian - )
+  // The documentations says there are BASIC_LENGTH bytes. And in case of a
+  // class descriptor you can get 9 bytes more with another function
+  // ('I' | 0x80).
+  //
   bufP = buf;
-  while ((0x40 + buf - bufP) > 0) {
-    bufP = readData(bufP, (0x40 + buf - bufP));
+  while ((BASIC_LENGTH + buf - bufP + 1 ) > 0) {
+    bufP = readData(bufP, (BASIC_LENGTH + buf - bufP +1 ));
   }
   // uncomment this if you want to analyze the buffer
-  // debugHex (buf, 0x40);
+  // debugHex (buf, BASIC_LENGTH);
 
-  if ((bufP - buf) != 0x40) {
-    _errorinfo = i18n("get_logger_data(): Wrong amount of bytes from LX-device");
-    rc = FR_ERROR;
-  }
-  /*
-  // we cannot calculate a checksum because we ignored the rest of the data
-  else if (calcCrcBuf(buf, 0x40 - 1) != buf[0x40 - 1])
+  if (calcCrcBuf(buf, BASIC_LENGTH) != buf[BASIC_LENGTH])
   {
-    _errorinfo = i18n("get_logger_data(): Bad CRC");
+    _errorinfo = i18n("getBasicData(): Bad CRC");
     rc = FR_ERROR;
   }
-  */
-  else if ((buf[2] != 0) || (buf[0x15] != 0) || (buf[0x21] != 0) || (buf[0x29] != 0))
-  {
-    _errorinfo = i18n("get_logger_data(): wrong format");
-    rc = FR_ERROR;
-  }
+  //
+  // ( - Christian - )
+  //
+  // I rely on the Filser structure here as documented, no integrity check.
+  //
+  // Today Filser recorders can exchange this data among themselves.
+  //
   else
   {
     // hopefully, Filser will not change size or position of data fields ...
@@ -422,6 +480,9 @@ int Filser::getBasicData(FR_BasicData& data)
     _basicData.competitionID = (char*)&buf[0x2a];
     data = _basicData;
   }
+
+  _keepalive->blockSignals(false);
+
   return rc;
 }
 
@@ -470,7 +531,6 @@ int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileNam
 
 int Filser::openRecorder(const QString& pName, int baud)
 {
-  speed_t speed;
   portName = (char *)pName.latin1();
 
   portID = open(portName, O_RDWR | O_NOCTTY);
@@ -516,30 +576,30 @@ int Filser::openRecorder(const QString& pName, int baud)
     newTermEnv.c_cc[VMIN] = 0; // don't wait for a character
     newTermEnv.c_cc[VTIME] = 1; // wait at least 1 msec.
 
-    if(baud >= 115200) speed = B115200;
-    else if(baud >= 57600) speed = B57600;
-    else if(baud >= 38400) speed = B38400;
-    else if(baud >= 19200) speed = B19200;
-    else if(baud >=  9600) speed = B9600;
-    else if(baud >=  4800) speed = B4800;
-    else if(baud >=  2400) speed = B2400;
-    else if(baud >=  1800) speed = B1800;
-    else if(baud >=  1200) speed = B1200;
-    else if(baud >=   600) speed = B600;
-    else if(baud >=   300) speed = B300;
-    else if(baud >=   200) speed = B200;
-    else if(baud >=   150) speed = B150;
-    else if(baud >=   110) speed = B110;
-    else speed = B75;
+//    if(baud >= 115200) speed = B115200;
+//    else if(baud >= 57600) speed = B57600;
+//    else 
+//  
+//  ( - Christian - )
+//  2400 - 38400 bps
+//  These are the only speeds known by Filser devices, right?
+//  Does anybody have different experiences?
+    if(baud >= 38400) _speed = B38400;
+    else if(baud >= 19200) _speed = B19200;
+    else if(baud >=  9600) _speed = B9600;
+    else if(baud >=  4800) _speed = B4800;
+    else                   _speed = B2400;
 
-    cfsetospeed(&newTermEnv, speed);
-    cfsetispeed(&newTermEnv, speed);
+    cfsetospeed(&newTermEnv, _speed);
+    cfsetispeed(&newTermEnv, _speed);
 
     // Activating the port-settings
     tcsetattr(portID, TCSANOW, &newTermEnv);
 
     _isConnected = true;
     _da4BufferValid = false;
+
+    _keepalive->start (1000); // one second timer
     return FR_OK;
     }
   else {
@@ -1241,6 +1301,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
 /**
  * Calculate the check sum
  */
+
 // use unsigned char instead of char ! On arm architecture, char is unsigned, on desktop it is signed !!!
 unsigned char Filser::calcCrc(unsigned char d, unsigned char crc)
 {
@@ -1362,13 +1423,25 @@ bool Filser::readMemSetting()
  */
 bool Filser::check4Device()
 {
+  speed_t autospeed;
+  int     autobaud = 38400;
   bool rc = false;
   time_t t1;
   _errorinfo = "";
 
+  // ( - Christian - )
+  // Give the recorder the time of 1 sec to answer.
+  //
+  // It is not the delay, it is the position of tcflush, that is good
+  // medicine for my LX20 not to whistle. Tcflush belongs after while() and
+  // before wb(SYN).
+
   t1 = time(NULL);
-  tcflush(portID, TCIOFLUSH);
   while (!breakTransfer) {
+    tcflush(portID, TCIOFLUSH); // Make sure the next ACK comes from the
+                                // following wb(SYN). And remove the
+                                // position data, that might have been
+                                // arrived.
     wb(SYN);
     tcdrain (portID);
     int ret = rb();
@@ -1385,6 +1458,49 @@ bool Filser::check4Device()
         break;
       }      
     }
+
+    //
+    // ( - Christian - )
+    // 
+    // Autobauding :-)
+    //
+    // this way we do autobauding each time this function is called.
+    // Shouldn't we do it in OpenRecorder?
+    if     (autobaud >= 38400) { autobaud = 19200; autospeed = B38400; }
+    else if(autobaud >= 19200) { autobaud =  9600; autospeed = B19200; }
+    else if(autobaud >=  9600) { autobaud =  4800; autospeed = B9600; }
+    else if(autobaud >=  4800) { autobaud =  2400; autospeed = B4800; }
+    else                       { autobaud = 38400; autospeed = B2400; }
+
+    cfsetospeed(&newTermEnv, autospeed);
+    cfsetispeed(&newTermEnv, autospeed);
+    if (_speed != autospeed)
+    {
+      _speed = autospeed;
+      switch (_speed)
+      {
+        case B2400:
+          emit newSpeed (2400);
+          break;
+        case B4800:
+          emit newSpeed (4800);
+          break;
+        case B9600:
+          emit newSpeed (9600);
+          break;
+        case B19200:
+          emit newSpeed (19200);
+          break;
+        case B38400:
+          emit newSpeed (38400);
+          break;
+        default:
+          qDebug ("illegal value");
+      }
+    }
+
+    tcsetattr(portID, TCSANOW, &newTermEnv);
+
   }
   return rc;
 }
@@ -1435,6 +1551,7 @@ char *Filser::wordtoserno(unsigned int Binaer)
 int Filser::closeRecorder()
 {
   if (portID != -1) {
+    _keepalive->stop();
     tcsetattr(portID, TCSANOW, &oldTermEnv);
     close(portID);
     _isConnected = false;
@@ -1475,6 +1592,7 @@ int Filser::readTasks(QPtrList<FlightTask> * tasks)
 
   for (int RecordNumber = 0; RecordNumber < _capabilities.maxNrTasks; RecordNumber++)
   {
+    emit progress (false, RecordNumber, _capabilities.maxNrTasks);
     if (_da4Buffer.tasks[RecordNumber].prg)
     {
       DA4TaskRecord record (&_da4Buffer.tasks[RecordNumber]);
@@ -1509,6 +1627,7 @@ int Filser::readTasks(QPtrList<FlightTask> * tasks)
       tasks->append (new FlightTask (wplist, true, QString("TSK%1").arg(RecordNumber)));
     }
   }
+  emit progress (true, 100, 100);
     
   return FR_OK;
 }

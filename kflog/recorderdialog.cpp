@@ -114,7 +114,7 @@ RecorderDialog::~RecorderDialog()
   config->setGroup("Recorder Dialog");
   config->writeEntry("Name", selectType->currentText());
   config->writeEntry("Port", selectPort->currentItem());
-  config->writeEntry("Baud", selectBaud->currentItem());
+  config->writeEntry("Baud", _selectSpeed->currentItem());
   config->writeEntry("URL",  selectURL->text());
   config->setGroup(0);
   slotCloseRecorder();
@@ -141,8 +141,8 @@ void RecorderDialog::__addSettingsPage()
 
   selectPort = new KComboBox(settingsPage, "port-selection");
   selectPortLabel = new QLabel(i18n("Port"), settingsPage);
-  selectBaud = new KComboBox(settingsPage, "baud-selection");
-  selectBaudLabel = new QLabel(i18n("Baud"), settingsPage);
+  _selectSpeed = new KComboBox(settingsPage, "baud-selection");
+  selectSpeedLabel = new QLabel(i18n("Transfer speed"), settingsPage);
   selectURL = new KLineEdit(settingsPage, "URL-selection");
   selectURLLabel = new QLabel(i18n("URL"), settingsPage);
 
@@ -150,13 +150,6 @@ void RecorderDialog::__addSettingsPage()
   selectPort->insertItem("ttyS1");
   selectPort->insertItem("ttyS2");
   selectPort->insertItem("ttyS3");
-
-  selectBaud->insertItem("115200");
-  selectBaud->insertItem("57600");
-  selectBaud->insertItem("38400");
-  selectBaud->insertItem("19200");
-  selectBaud->insertItem("9600");
-  selectBaud->insertItem("4800");
 
   cmdConnect = new QPushButton(i18n("Connect recorder"), settingsPage);
   cmdConnect->setMaximumWidth(cmdConnect->sizeHint().width() + 5);
@@ -203,8 +196,8 @@ void RecorderDialog::__addSettingsPage()
   sLayout->addMultiCellWidget(selectType, 1, 1, 2, 6);
   sLayout->addWidget(selectPortLabel, 3, 1, AlignRight);
   sLayout->addMultiCellWidget(selectPort, 3, 3, 2, 3);
-  sLayout->addWidget(selectBaudLabel, 3, 4, AlignRight);
-  sLayout->addMultiCellWidget(selectBaud, 3, 3, 5, 6);
+  sLayout->addWidget(selectSpeedLabel, 3, 4, AlignRight);
+  sLayout->addMultiCellWidget(_selectSpeed, 3, 3, 5, 6);
   sLayout->addWidget(selectURLLabel, 3, 1, AlignRight);
   sLayout->addMultiCellWidget(selectURL, 3, 3, 2, 6);
   __setRecorderConnectionType(FlightRecorderPluginBase::none);
@@ -259,7 +252,7 @@ void RecorderDialog::__addSettingsPage()
 
   config->setGroup("Recorder Dialog");
   selectPort->setCurrentItem(config->readNumEntry("Port", 0));
-  selectBaud->setCurrentItem(config->readNumEntry("Baud", 0));
+  _selectSpeed->setCurrentItem(config->readNumEntry("Baud", 0));
   QString name(config->readEntry("Name", 0));
   QString pluginName;
   selectURL->setText(config->readEntry("URL", ""));
@@ -293,8 +286,8 @@ void RecorderDialog::__addSettingsPage()
 void RecorderDialog::__setRecorderConnectionType(FlightRecorderPluginBase::TransferMode mode){
   selectPort->hide();
   selectPortLabel->hide();
-  selectBaud->hide();
-  selectBaudLabel->hide();
+  _selectSpeed->hide();
+  selectSpeedLabel->hide();
   selectURL->hide();
   selectURLLabel->hide();
   cmdConnect->setEnabled(false);
@@ -303,8 +296,8 @@ void RecorderDialog::__setRecorderConnectionType(FlightRecorderPluginBase::Trans
     case FlightRecorderPluginBase::serial:
       selectPort->show();
       selectPortLabel->show();
-      selectBaud->show();
-      selectBaudLabel->show();
+      _selectSpeed->show();
+      selectSpeedLabel->show();
       cmdConnect->setEnabled(true);
       break;
     case FlightRecorderPluginBase::URL:
@@ -359,6 +352,21 @@ void RecorderDialog::__setRecorderCapabilities()
     compID->show();
   } else {
     compID->hide();
+  }
+
+  if (cap.supAutoSpeed)
+    selectSpeedLabel->setText(i18n("Transfer speed:\n(automatic)"));
+  else
+    selectSpeedLabel->setText(i18n("Transfer speed:"));
+  _selectSpeed->setEnabled (!cap.supAutoSpeed);
+  
+  _selectSpeed->clear();
+  // insert highest speed first
+  for (int i = FlightRecorderPluginBase::transferDataMax-1; i >= 0; i--)
+  {
+    if ((FlightRecorderPluginBase::transferData[i]._bps & cap.transferSpeeds) ||
+        (cap.transferSpeeds == FlightRecorderPluginBase::bps00000))
+      _selectSpeed->insertItem(QString("%1").arg(FlightRecorderPluginBase::transferData[i]._speed));
   }
 }
 
@@ -641,7 +649,7 @@ void RecorderDialog::slotConnectRecorder()
   //QStringList::Iterator it = libNameList.at(selectType->currentItem());
   //QString name = (*it).latin1();
   QString name=*libNameList[selectType->currentText()];
-  int baud = selectBaud->currentText().toInt();
+  int speed = _selectSpeed->currentText().toInt();
 
   if(!__openLib(name)) {
     warning(i18n("Could not open lib!"));
@@ -658,7 +666,7 @@ void RecorderDialog::slotConnectRecorder()
       isConnected=false;
       break;
     }
-    isConnected=(activeRecorder->openRecorder(portName.latin1(),baud)>=FR_OK);
+    isConnected=(activeRecorder->openRecorder(portName.latin1(),speed)>=FR_OK);
     break;
   case FlightRecorderPluginBase::URL:
   {
@@ -679,12 +687,15 @@ void RecorderDialog::slotConnectRecorder()
     return; //If it's not one of the above, we don't know the connection method, so how can we connect?!
   }
 
-  if (isConnected) {
+  if (isConnected)
+  {
+    connect (activeRecorder, SIGNAL(newSpeed(int)),this,SLOT(slotNewSpeed(int)));
     slotEnablePages();
     slotReadDatabase();
     QApplication::restoreOverrideCursor();
   }
-  else {
+  else
+  {
     QApplication::restoreOverrideCursor();
     QString errorDetails = errorDetails=activeRecorder->lastError();
 
@@ -1447,6 +1458,15 @@ void RecorderDialog::slotRecorderTypeChanged(const QString&) // name)
   __setRecorderConnectionType(activeRecorder->getTransferMode());
   __setRecorderCapabilities();
 
+}
+
+/**
+  *  If the recorder supports auto-detection of transfer speed,
+  *  it will signal the new speed to adjust the gui
+  */
+void RecorderDialog::slotNewSpeed (int speed)
+{
+  _selectSpeed->setCurrentText(QString("%1").arg(speed));
 }
 
 /** No descriptions */
