@@ -15,6 +15,13 @@
 **
 ***********************************************************************/
 
+/***********************************************************************
+**
+**  Attention: y values have to be passed negative to OpenGL functions!
+**
+***********************************************************************/
+
+
 #include "glview.h"
 
 #include <math.h>
@@ -23,6 +30,7 @@
 #include "klocale.h"
 #include "flight.h"
 #include "resource.h"
+#include "mapcontents.h"
 
 
 /*!
@@ -33,7 +41,9 @@ GLView::GLView( QWidget* parent, const char* name )
     : QGLWidget( parent, name )
 {
     // These values should be stored KConfig
-    xRot = yRot = zRot = -45.0;		// default object rotation
+    xRot = -45.0;
+    yRot = 0.0;
+    zRot = -30.0;		// default object rotation
     scale = 1.25;			// default object scale
     heightExaggerate=2.0;   //  exaggerates the heights
 
@@ -59,6 +69,45 @@ GLView::~GLView()
       glDeleteLists((*it),1);
 }
 
+void GLView::addShadow(Flight* flight)
+{
+    GLuint list;
+    unsigned int length;
+
+    if (flight){
+      length=flight->getRouteLength();
+      extern MapMatrix _globalMapMatrix;
+      QPoint point;
+      list = glGenLists( 1 );
+
+      glNewList( list, GL_COMPILE );
+
+      qglColor( gray );		      // Shorthand for glColor3f or glIndex
+      glLineWidth( 2.0 );
+
+      flightPoint fPoint;
+      int actx, acty, actz;
+      fPoint=flight->getPoint(0);
+      actx=fPoint.projP.x();
+      acty=-fPoint.projP.y();  // Attention!
+      actz=minz;
+      glVertex3i(  actx,  acty, actz );
+      minx=actx; maxx=actx; miny=acty; maxy=acty; minz=actz; maxz=actz;
+
+      glBegin( GL_LINE_LOOP );
+      for (int i=1;i<length;i++){
+        fPoint=flight->getPoint(i);
+        actx=fPoint.projP.x();
+        acty=-fPoint.projP.y();
+        glVertex3i(  actx,  acty, actz );
+      }
+      glEnd();
+      glEndList();
+
+      flightList.append(list);
+    }
+}
+
 void GLView::addFlight(Flight* flight)
 {
     GLuint list;
@@ -69,22 +118,10 @@ void GLView::addFlight(Flight* flight)
       qWarning(QString("Adding %1 points").arg(length));
 
       extern MapMatrix _globalMapMatrix;
-
-  //    QPoint topLeft = _globalMapMatrix.mapToWgs(QPoint(flight->getFlightRect().left(),flight->getFlightRect().top()));
-  //    QPoint bottomRight = _globalMapMatrix.mapToWgs(QPoint(flight->getFlightRect().right(),flight->getFlightRect().bottom()));
-  //
-
-
+      extern MapConfig _globalMapConfig;
+      
       QPoint point;
         
-//      QRect taskRect = flight->getFlightRect();
-//      QPoint topLeft = _globalMapMatrix.mapToWgs(taskRect.topLeft());
-//      QPoint bottomRight = _globalMapMatrix.mapToWgs(taskRect.bottomRight());
-//
-//      qWarning(QString("1. point: x:%1 y:%2 z:%3").arg(point.x()).arg(point.y()).arg(0));
-//      qWarning(QString("bBoxFlight: l:%1 r:%2 t:%3 b:%4")
-//        .arg(topLeft.x()).arg(bottomRight.x()).arg(topLeft.y()).arg(bottomRight.y()));
-
       list = glGenLists( 1 );
 
       glNewList( list, GL_COMPILE );
@@ -98,24 +135,20 @@ void GLView::addFlight(Flight* flight)
       int actx, acty, actz;
       fPoint=flight->getPoint(0);
       actx=fPoint.projP.x();
-      acty=fPoint.projP.y();
+      acty=-fPoint.projP.y();  // Attention!
       actz=fPoint.height;
       glVertex3i(  actx,  acty, actz );
       minx=actx; maxx=actx; miny=acty; maxy=acty; minz=actz; maxz=actz;
-      qWarning(QString("minx:%1").arg(minx));
-      qWarning(QString("maxx:%1").arg(maxx));
-      qWarning(QString("miny:%1").arg(miny));
-      qWarning(QString("maxy:%1").arg(maxy));
-      qWarning(QString("minz:%1").arg(minz));
-      qWarning(QString("maxz:%1").arg(maxz));
-      qWarning("Calculating...");
 
       glBegin( GL_LINE_LOOP );
       for (int i=1;i<length;i++){
         fPoint=flight->getPoint(i);
         actx=fPoint.projP.x();
-        acty=fPoint.projP.y();
+        acty=-fPoint.projP.y();
         actz=fPoint.height;
+        
+        QPen drawP = _globalMapConfig.getDrawPen(&fPoint);
+        qglColor(drawP.color());
         glVertex3i(  actx,  acty, actz );
         if (actx>maxx)
           maxx=actx;
@@ -144,17 +177,7 @@ void GLView::addFlight(Flight* flight)
       if (boxObject)
         glDeleteLists( boxObject, 1 );
       boxObject = makeBoxObject();
-
-      qWarning(QString("minx:%1").arg(minx));
-      qWarning(QString("maxx:%1").arg(maxx));
-      qWarning(QString("miny:%1").arg(miny));
-      qWarning(QString("maxy:%1").arg(maxy));
-      qWarning(QString("minz:%1").arg(minz));
-      qWarning(QString("maxz:%1").arg(maxz));
-      qWarning(QString("deltaX:%1").arg(deltaX));
-      qWarning(QString("deltaY:%1").arg(deltaY));
-      qWarning(QString("deltaZ:%1").arg(deltaZ));
-      qWarning(QString("scale:%1").arg(scale));
+      addShadow(flight);
     }
 }
 
@@ -297,7 +320,7 @@ void GLView::mousePressEvent ( QMouseEvent * e )
 void GLView::mouseMoveEvent ( QMouseEvent * e )
 {
   if (e->state() & LeftButton){
-    float phi=zRot/1800.0*M_PI;
+    float phi=zRot/180.0*M_PI;
     float dx=(mouse_last.x()-e->x())/100.0/scale;
     float dy=(mouse_last.y()-e->y())/100.0/scale;
     deltaX-=dx*cos(phi)-dy*sin(phi);
@@ -310,6 +333,7 @@ void GLView::mouseMoveEvent ( QMouseEvent * e )
     xRot-=mouse_last.y()-e->y();
     mouse_last=e->pos();
     updateGL();
+    qWarning(QString("zRot:%1 xRot:%2").arg(zRot).arg(xRot));
   }
 }
 

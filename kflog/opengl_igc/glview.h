@@ -32,6 +32,7 @@ public:
     GLView( QWidget* parent, const char* name );
     ~GLView();
     virtual void addFlight(Flight* flight);
+    virtual void addShadow(Flight* flight);
 
 public slots:
 
