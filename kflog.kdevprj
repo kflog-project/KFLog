@@ -31,7 +31,7 @@ author=Heiner Lamprecht
 configure_args=\s--prefix=/opt/kde3 --enable-mt  --enable-debug=full
 email=heiner@kflog.org
 kdevprj_version=1.3
-lfv_open_groups=Übersetzungen
+lfv_open_groups=GNU,Übersetzungen
 make_options=\s-j1
 makefiles=Makefile.am,kflog/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,po/Makefile.am,kflog/guicontrols/Makefile.am,kflog/kfrgcs/Makefile.am,kflog/kfrgmn/Makefile.am,kflog/map-icons/Makefile.am,kflog/map-icons/small/Makefile.am,kflog/pics/Makefile.am,kflog/kfrfil/Makefile.am
 modifyMakefiles=true
