@@ -105,6 +105,8 @@ class Map : public QWidget
     void slotMoveMapSE();
     /** */
     void slotPrintMap();
+    /** */
+    void slotDrawCursor(QPoint p1, QPoint p2);
 
   signals:
     /** */
@@ -162,6 +164,14 @@ class Map : public QWidget
      * to be drawn, this buffer is used to get the content.
      */
     QPixmap pixBuffer;
+    /**
+      * Contains the Map under the CursorA to erase them later
+      *
+      */
+    QPixmap pixCursorBuffer1;
+    QPixmap pixCursorBuffer2;
+    QPixmap pixCursor1;
+    QPixmap pixCursor2;
     /**
      * Contains the grid, needed as the basis.
      */
@@ -247,6 +257,11 @@ class Map : public QWidget
     int* yPos;
 
     /** */
+    QPoint prePos;
+    QPoint preCur1;
+    QPoint preCur2;
+
+    /** */
     unsigned int posNum;
     QList<QRegion>* airspaceRegList;
     QList<QRegion>* cityRegList;
@@ -261,8 +276,6 @@ class Map : public QWidget
      * Contains the number of entries in the popupmenu of the map.
      */
     unsigned int indexLength;
-    /** */
-    QPoint prePos;
 };
 
 #endif

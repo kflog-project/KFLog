@@ -67,25 +67,60 @@
 Flight::Flight(QString fName, QList<flightPoint> r, QString pName,
     QString gType, QString gID, QList<struct wayPoint> wpL, QString d)
   : BaseMapElement("flight", BaseMapElement::Flight),
-    pilotName(pName), gliderType(gType), gliderID(gID), date(d),
-    tBegin(0), tEnd(0), sourceFileName(fName), route(r)
+    pilotName(pName),
+    gliderType(gType),
+    gliderID(gID),
+    date(d),
+    tBegin(0),
+    tEnd(0),
+    distance_tot(0),
+    distance_wp(0),
+    flightType(0),
+    origType(0),
+    origDistanceWP(0),
+    origDistanceTot(0),
+    origPoints(0),
+    taskPoints(0),
+    sourceFileName(fName),
+    v_max(0),
+    h_max(0),
+    va_min(0),
+    va_max(0),
+    route(r),
+    landTime(route.last()->time),
+    startTime(route.at(0)->time)
 {
-  routeLength = 0;
-
   wpList.setAutoDelete(true);
   origList.setAutoDelete(true);
+
 
   // Die Wegpunkte müssen einzeln übergeben werden, da sie gleichzeitig
   // geprüft werden ...
   for(unsigned int loop = 0; loop < wpL.count(); loop++)
-      __appendWaypoint(wpL.at(loop));
+      wpList.append(wpL.at(loop));
+
+
+  __setWaypointType();
 
   __checkType();
   __checkWaypoints();
   __checkMaxMin();
+  __flightState();
 
-  landTime = route.last()->time;
-  startTime = route.at(0)->time;
+int links = 0;
+int rechts = 0;
+int vermischt = 0;
+
+  for(unsigned int n = 0; n < route.count(); n++)
+    {
+      if(route.at(n)->f_state == Links) links++;
+      else if(route.at(n)->f_state == Rechts) rechts++;
+      else if(route.at(n)->f_state == Vermischt) vermischt++;
+    }
+
+  warning("Rechts:    %d \nLinks:     %d \nVermischt: %d", rechts, links,vermischt);
+  warning("Gesamtanzahl: %d", route.count());
+
 }
 
 Flight::~Flight()
@@ -154,7 +189,7 @@ void Flight::__setOptimizeRange(unsigned int start[], unsigned int stop[],
    */
   start[0] = MAX(idList[id], step) - step;
   start[1] = idList[id + 1] - step;
-  start[2] = MIN(idList[id + 2] + step, routeLength) - ( 2 * step );
+  start[2] = MIN(idList[id + 2] + step, route.count()) - ( 2 * step );
 
   stop[0] = start[0] + ( 2 * step );
   stop[1] = start[1] + ( 2 * step );
@@ -172,6 +207,102 @@ double Flight::__calculateOptimizePoints(struct flightPoint* fp1,
   if(__isFAI(tDist, dist1, dist2, dist3)) return tDist * FAI_POINT;
 
   return tDist * NORMAL_POINT;
+}
+
+void Flight::__flightState()
+{
+  int s_point = -1;
+  int e_point = -1;
+
+  int weiter = 0;
+
+  int dreh = 0;
+
+  for(unsigned int n = 0; n < route.count(); n++)
+    {
+
+      // Überprüfen ob man rausgefallen ist !!!
+
+      warning("Bearing %d", route.at(n)->bearing);
+
+      // Bedingungen für Kreisflug müssen noch geprüft werden !!!
+      // Bei kleinen Zeitabständen extra Abfrage
+      // Noch mehr Zeitabschnitte einfügen ab ca 25° - 35° Kursänderung
+      if(( abs(route.at(n)->bearing) > route.at(n)->dT * PI / 20.0))
+//         getSpeed(route.at(n)) < 107.0 && route.at(n)->dT > 5 ))
+//         ( abs(route.at(n)->bearing) > route.at(n)->dT * PI / 25.0 &&
+//         getSpeed(route.at(n)) < 107.0 && route.at(n)->dT <= 5 ))
+        {
+
+          weiter = 0;
+warning("##################################################################");
+          warning("Kreisflug %s",(const char*)printTime(route.at(n)->time));
+          // Drehrichtung
+          if(route.at(n)->bearing > 0)
+            {
+              dreh++;
+            }
+          else
+            {
+              dreh--;
+            }
+
+          // Kreisflug eingeleitet
+          if(s_point < 0)
+            {
+              s_point = n;
+            }
+        }
+      else if(s_point > -1 &&
+              route.at(n)->time - route.at(n - weiter)->time  >= 20 &&
+              route.at(n - weiter)->time - route.at(s_point)->time > 20)
+          // Zeit eines Kreisfluges mindestens 20s
+          // Zeit zwischen zwei Kreisflügen höchstens 20s
+        {
+
+          warning("Wir fliegen im Kreis");
+          // Endpunkt des Kreisfluges
+
+          e_point = n - weiter - 1;
+
+          // Punkte zwischen s_point und e_point setzen
+          for(int n = s_point; n <=  e_point; n++)
+            {
+              if((e_point - s_point) * 0.8 <= dreh)
+                {
+                  route.at(n)->f_state = Flight::Rechts;
+                }
+               else if((e_point - s_point) * 0.8 >= - dreh)
+                 {
+                   route.at(n)->f_state = Flight::Links;
+                 }
+               else
+                 {
+                   // vermischt
+                   route.at(n)->f_state = Flight::Vermischt;
+                 }
+            }
+          s_point = - 1;
+          e_point = - 1;
+          dreh = 0;
+          weiter = 0;
+        }
+      else
+        {
+          if(route.at(n)->time - route.at(n - weiter)->time  >= 20)
+            {
+              // Kreisflug war unter 20s und wird daher nicht gewertet
+              s_point = - 1;
+              e_point = - 1;
+              dreh = 0;
+              weiter = 0;
+            }
+          // 4 Punkte warten bis wir endgültig rausgehen ;-)
+          weiter++;
+
+        }
+    }
+
 }
 
 unsigned int Flight::__calculateBestTask(unsigned int start[],
@@ -313,6 +444,9 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
           /*
            * w1 ist die Winkelhalbierende des Sektors!!!
            *      (Angaben in 1/16 Grad)
+           *
+           *
+           *    schein noch nicht immer zu stimmen!!!
            */
           w1 = ( ( _globalMapMatrix.map(wpList.at(loop)->angle) + PI ) / PI )
                   * 180.0 * 16.0 * -1.0;
@@ -537,9 +671,17 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       // Grenze eingeführt werden ...
 //      if(_currentScale < _scale[1])
 //        {
-//          targetPainter->setBrush(QBrush::NoBrush);
-//          targetPainter->setPen(QPen(QColor(150,0,150), 1));
-//          targetPainter->drawEllipse(curPointB.x() - 4, curPointB.y() - 4,8,8);
+        if(route.at(n)->f_state == Rechts ||
+           route.at(n)->f_state == Links ||
+           route.at(n)->f_state == Vermischt)
+           {
+              targetPainter->setBrush(QBrush::NoBrush);
+              targetPainter->setPen(QPen(QColor(255,255,0), 2));
+              targetPainter->drawEllipse(curPointB.x() - 10,
+                  curPointB.y() - 10,20,20);
+              maskPainter->drawEllipse(curPointB.x() - 10,
+                  curPointB.y() - 10,20,20);
+            }
 //        }
 
       curPointA = curPointB;
@@ -577,20 +719,20 @@ struct flightPoint Flight::getPointByTime(int time)
   if(getLandTime() - time < time - getStartTime())
     {
       n = -1;
-      sp = routeLength - 1;
+      sp = route.count() - 1;
       ep = 0;
     }
   else
     {
       n = 1;
       sp = 0;
-      ep = routeLength - 1;
+      ep = route.count() - 1;
     }
 
   diff = getPoint(sp).time - time;
   diff = ABS(diff);
 
-  for(int l = sp + n; l < (int)routeLength && l >= 0; l += n)
+  for(int l = sp + n; l < (int)route.count() && l >= 0; l += n)
     {
       int a = getPoint(l).time - time;
       if(ABS(a) > diff)
@@ -599,7 +741,43 @@ struct flightPoint Flight::getPointByTime(int time)
       diff = getPoint(l).time - time;
       diff = ABS(diff);
     }
+
   return getPoint(ep);
+}
+
+int Flight::getPointByTime_i(int time)
+{
+  // Muss noch vereinfacht werden !!
+  // als Ersatz für getPointByTime
+  int diff, n, sp, ep;
+
+  if(getLandTime() - time < time - getStartTime())
+    {
+      n = -1;
+      sp = route.count() - 1;
+      ep = 0;
+    }
+  else
+    {
+      n = 1;
+      sp = 0;
+      ep = route.count() - 1;
+    }
+
+  diff = getPoint(sp).time - time;
+  diff = ABS(diff);
+
+  for(int l = sp + n; l < (int)route.count() && l >= 0; l += n)
+    {
+      int a = getPoint(l).time - time;
+      if(ABS(a) > diff)
+          return l - n;
+
+      diff = getPoint(l).time - time;
+      diff = ABS(diff);
+    }
+
+  return ep;
 }
 
 struct flightPoint Flight::getPoint(int n)
@@ -618,6 +796,187 @@ struct flightPoint Flight::getPoint(int n)
         ret.height = 0;
         return ret;
     }
+}
+
+QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
+{
+  float k_height_pos_r = 0;
+  float k_height_neg_r = 0;
+  float k_height_pos_l = 0;
+  float k_height_neg_l = 0;
+  float k_height_pos_v = 0;
+  float k_height_neg_v = 0;
+  int kurbel_r = 0;
+  int kurbel_l = 0;
+  int kurbel_v = 0;
+  float distance = 0;
+  float s_height_pos = 0;
+  float s_height_neg = 0;
+
+//  noch abchecken, dass start => 0 und end <= fluglänge
+  if(end > route.count() - 1) end = route.count() - 1;
+  if(start < 0) start = 0;
+
+  for(unsigned int n = start; n < end; n++)
+    {
+      switch(route.at(n)->f_state)
+        {
+          case Flight::Rechts:
+//            warning("Rechts");
+            if(route.at(n)->dH > 0)
+              {
+                k_height_pos_r += (float)route.at(n)->dH;
+              }
+            else
+              {
+                k_height_neg_r += (float)route.at(n)->dH;
+              }
+
+            kurbel_r += route.at(n)->dT;
+            break;
+          case Flight::Links:
+            if(route.at(n)->dH > 0)
+              {
+                k_height_pos_l += (float)route.at(n)->dH;
+              }
+            else
+              {
+                k_height_neg_l += (float)route.at(n)->dH;
+              }
+
+            kurbel_l += route.at(n)->dT;
+            break;
+          case Flight::Vermischt:
+//          warning("vermischt:");
+            if(route.at(n)->dH > 0)
+              {
+                k_height_pos_v += (float)route.at(n)->dH;
+              }
+            else
+              {
+                k_height_neg_v += (float)route.at(n)->dH;
+              }
+
+            kurbel_v += route.at(n)->dT;
+            break;
+          default:
+           // immer oder bloß auf Strecke ??
+           distance += (float)route.at(n)->dS;
+
+           if(route.at(n)->dH > 0)
+              {
+                s_height_pos += (float)route.at(n)->dH;
+              }
+            else
+              {
+                s_height_neg += (float)route.at(n)->dH;
+              }
+         }
+    }
+
+
+    QStrList ergebnis;
+    QString text;
+
+  warning("Rechts: %d", kurbel_r);
+  warning("Links: %d", kurbel_l);
+  warning("Vermischt: %d", kurbel_v);
+
+    // Kreisflug
+    text.sprintf("%s (%.1f %%)", (const char*)printTime(kurbel_r),
+        (float)kurbel_r /
+            (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
+    ergebnis.append(text);
+    text.sprintf("%s (%.1f %%)", (const char*)printTime(kurbel_l),
+        (float)kurbel_l /
+            (float)( route.at(end)->time - route.at(start)->time) * 100.0);
+    ergebnis.append(text);
+    text.sprintf("%s (%.1f %%)", (const char*)printTime(kurbel_v),
+        (float)kurbel_v /
+            (float)(route.at(end)->time - route.at(start)->time ) * 100.0);
+    ergebnis.append(text);
+    text.sprintf("%s (%.1f %%)",
+        (const char*)printTime((kurbel_r + kurbel_l + kurbel_v)),
+        (float)(kurbel_r + kurbel_l + kurbel_v) /
+            (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
+    ergebnis.append(text);
+
+
+    text.sprintf("%.2f m/s",(k_height_pos_r + k_height_neg_r) /
+             (route.at(end)->time - route.at(start)->time));
+    ergebnis.append(text);
+    text.sprintf("%.2f m/s",(k_height_pos_l + k_height_neg_l) /
+             (route.at(end)->time - route.at(start)->time));
+    ergebnis.append(text);
+    text.sprintf("%.2f m/s",(k_height_pos_v + k_height_neg_v) /
+             (route.at(end)->time - route.at(start)->time));
+    ergebnis.append(text);
+    text.sprintf("%.2f m/s",
+             (k_height_pos_r + k_height_pos_l + k_height_pos_v +
+              k_height_neg_r + k_height_neg_l + k_height_neg_v) /
+             (route.at(end)->time - route.at(start)->time));
+    ergebnis.append(text);
+
+    text.sprintf("%.0f m",k_height_pos_r);
+    ergebnis.append(text);
+    text.sprintf("%.0f m",k_height_pos_l);
+    ergebnis.append(text);
+    text.sprintf("%.0f m",k_height_pos_v);
+    ergebnis.append(text);
+    text.sprintf("%.0f m",k_height_pos_r + k_height_pos_l + k_height_pos_v);
+    ergebnis.append(text);
+    text.sprintf("%.0f m",k_height_neg_r);
+    ergebnis.append(text);
+    text.sprintf("%.0f m",k_height_neg_l);
+    ergebnis.append(text);
+    text.sprintf("%.0f m",k_height_neg_v);
+    ergebnis.append(text);
+    text.sprintf("%.0f m",k_height_neg_r + k_height_neg_l + k_height_neg_v);
+    ergebnis.append(text);
+
+
+    // Strecke
+    text.sprintf("%.0f",distance / (s_height_pos + s_height_pos));
+    ergebnis.append(text);
+    text.sprintf("%.1f km/h",distance /
+          ((float)(route.at(end)->time - route.at(start)->time -
+          (kurbel_r + kurbel_l + kurbel_v))) * 3.6);
+    ergebnis.append(text);
+    text.sprintf("%.0f m",s_height_pos);
+    ergebnis.append(text);
+    text.sprintf("%.0f m",s_height_neg);
+    ergebnis.append(text);
+    text.sprintf("%.0f km",distance / 1000);
+    ergebnis.append(text);
+    text.sprintf("%s (%.1f %%)",
+        (const char*)printTime( ( route.at(end)->time - route.at(start)->time -
+            ( kurbel_r + kurbel_l + kurbel_v ) ) ),
+        (float)( route.at(end)->time - route.at(start)->time -
+                ( kurbel_r + kurbel_l + kurbel_v ) ) /
+            (float)( route.at(end)->time - route.at(start)->time ) * 100.0 );
+    ergebnis.append(text);
+    text.sprintf("%s",
+        (const char*)printTime(route.at(end)->time - route.at(start)->time));
+    ergebnis.append(text);
+    text.sprintf("%.0f m",s_height_pos   + k_height_pos_r
+                        + k_height_pos_l + k_height_pos_v);
+    ergebnis.append(text);
+    text.sprintf("%.0f m",s_height_neg   + k_height_neg_r
+                        + k_height_neg_l + k_height_neg_v);
+    ergebnis.append(text);
+
+
+    // Rückgabe:
+    // kurbelanteil r - l - v - g
+    // mittleres Steigen r - l - v - g
+    // Höhengewinn r - l - v - g
+    // Höhenverlust r - l - v - g
+    // Gleitzahl - miitlere Geschw. - Höhengewinn - höhenverlust
+    // Distanz - StreckenZeit - Gesamtzeit - Ges. Höhengewinn - Ges Höhenverlust
+
+
+
+    return ergebnis;
 }
 
 QString Flight::getDistance(bool isOrig) const
@@ -756,6 +1115,26 @@ QStrList Flight::getHeader()
   return header;
 }
 
+void Flight::__setWaypointType()
+{
+  /*
+   * Setzt den Status der Wendepunkte
+   *
+   */
+  wpList.at(0)->type = Flight::TakeOff;
+  wpList.at(1)->type = Flight::Begin;
+  wpList.at(wpList.count() - 2)->type = Flight::End;
+  wpList.at(wpList.count() - 1)->type = Flight::Landing;
+
+  for(unsigned int n = 2; n < wpList.count() - 2; n++)
+  {
+    wpList.at(n)->type = Flight::RouteP;
+  }
+
+}
+
+
+
 void Flight::__appendWaypoint(struct wayPoint* newPoint)
 {
 warning("Flight::__appendWaypoint");
@@ -782,6 +1161,8 @@ warning("Begin: %d / Ende: %d", tBegin, tEnd);
               wpList.at(tEnd)->type = Flight::End;
               wpList.at(tBegin)->type = Flight::Begin;
 
+
+              // Wenn wpList.count() < 4 -> keine Aufgabe deklariert
               ///// Müll rausfiltern
               if(tEnd - tBegin == 2)
                 {
@@ -934,8 +1315,6 @@ warning("Flight::__checkWaypoints()");
                        "of the flight is more than 70 sec.!<BR>"
                        "Due to Code Sportif 3, Nr. 1.9.2.1,<BR>"
                        "the flight can not be valued!"));
-
-              warning("   hier drinnen");
               return;
               ////////////////////////////////////////////////////////////////
               // sonstige Reaktion ????
@@ -1094,7 +1473,7 @@ warning("Flight::__checkWaypoints()");
               // Wendepunkt nicht erreicht!!
               if(loop == tBegin + 1)
                 {
-                  KMessageBox::error(0,
+                  KMessageBox::information(0,
                       i18n("You have not reached the first waypoint of your task."));
                   return;
                 }
@@ -1217,11 +1596,11 @@ bool Flight::optimizeTask()
   for(unsigned int curStep = 1; curStep < 100; curStep++)
     {
       /*
-       * ( routeLength / curStep ) gibt die Anzahl der Punkte an, die
+       * ( route.count / curStep ) gibt die Anzahl der Punkte an, die
        * zur Optimierung im ersten Anlauf verwendet werden. Wenn dieser
        * Wert unter 3 sinkt, kann kein Dreieck mehr bestimmt werden ...
        */
-      if((routeLength / curStep) < 3) break;
+      if((route.count() / curStep) < 3) break;
 
       curNumSteps = 1;
       numStepsA = 1;
@@ -1231,7 +1610,7 @@ bool Flight::optimizeTask()
       /*
        * Berechnung der Rechenschritte für den ersten Durchlauf
        */
-      for(unsigned int loop = 3; loop < ( routeLength / curStep ); loop++)
+      for(unsigned int loop = 3; loop < ( route.count() / curStep ); loop++)
         {
           curNumSteps += temp + loop;
           temp += loop;
@@ -1273,9 +1652,9 @@ bool Flight::optimizeTask()
       taskValue[loop] = 0;
 
   start[0] = step - 1;
-  stop[0] = routeLength - ( 2 * step );
-  stop[1] = routeLength - step;
-  stop[2] = routeLength;
+  stop[0] = route.count() - ( 2 * step );
+  stop[1] = route.count() - step;
+  stop[2] = route.count();
 
   numSteps = __calculateBestTask(start, stop, step, idList, taskValue, true);
   totalSteps = numSteps;

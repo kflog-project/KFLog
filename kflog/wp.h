@@ -18,7 +18,6 @@
 #ifndef WP_STRUCT
 #define WP_STRUCT
 
-#include <qpen.h>
 #include <qpoint.h>
 #include <qstring.h>
 
@@ -101,6 +100,10 @@ struct flightPoint
   int dT;
   /** The distance between the Points*/
   int dS;
+  /** The Bearing to the previous Point */
+  float bearing;
+  /** Kreisflug 0 oder Streckenflug 1*/
+  unsigned int f_state;
 };
 
 /**

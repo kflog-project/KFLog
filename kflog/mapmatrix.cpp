@@ -195,8 +195,12 @@ void MapMatrix::centerToRect(QRect center)
   double yScaleDelta = (double)(sqrt(center.height() * center.height())) /
       (double)mapViewSize.height();
 
-  // Änderung nur, wenn Unterschied zu gross:
   double tempScale = cScale * MAX(xScaleDelta, yScaleDelta) * 1.05;
+  // Maximale Vergrößerung
+  if(tempScale < MAX_SCALE)
+      tempScale = MAX_SCALE;
+
+  // Änderung nur, wenn Unterschied zu gross:
   if((tempScale / cScale) > 1.1 || (tempScale / cScale) < 0.8)
       cScale = tempScale;
 

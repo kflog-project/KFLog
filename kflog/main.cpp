@@ -103,11 +103,11 @@ int main(int argc, char *argv[])
 		  if (args->count())
     		{
 //          kflog->openDocumentFile(args->arg(0));
-    		  kflog->slotStartComplete();
+          kflog->slotStartComplete();
     		}
 		  else
     		{
-          QTimer::singleShot(3000, kflog, SLOT(slotStartComplete()));
+          QTimer::singleShot(300, kflog, SLOT(slotStartComplete()));
     		}
   		args->clear();
     }

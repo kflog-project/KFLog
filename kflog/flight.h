@@ -42,7 +42,7 @@ class Flight : public BaseMapElement
 	  /**
 	   * Creates a new flight-object.
 	   */
-  	Flight(QString fileName,
+    Flight(QString fileName,
   	    QList<flightPoint> route, QString pName, QString gType,
         QString gID, QList<struct wayPoint> wpL, QString d);
 	  /**
@@ -96,6 +96,10 @@ class Flight : public BaseMapElement
      */
     QString getLandSite() const;
     /**
+      * Gibt das mittlere Steigen zwischen Zwei Punkten zurück
+      */
+    QStrList getFlightValues(unsigned int start = 0, unsigned int end = 0);
+    /**
      *
      */
     QString getDate() const;
@@ -103,6 +107,7 @@ class Flight : public BaseMapElement
      * Returns the Point with the next time
      */
     struct flightPoint getPointByTime(int time);
+    int getPointByTime_i(int time);
     /**
      * Draws the element into the given painter.
      */
@@ -144,11 +149,25 @@ class Flight : public BaseMapElement
      */
     enum MaxPoints {V_MAX = -1, H_MAX = -2, VA_MAX=-3, VA_MIN = -4};
 
+    /**
+      *  Flight State
+      */
+    enum FlightState {Strecke = 0, Links = 1, Rechts = 2, Vermischt = 3};
+
   private:
     /**
      * Appends a new waypoint to the list.
+     *
+     *  NICHT MEHR BENÖTIGT LÖSCHEN !!!
      */
     void __appendWaypoint(struct wayPoint* newPoint);
+
+    /**
+      *  Setzt den Status der WendePunkte
+      *
+      */
+    void __setWaypointType();
+
     /**
      * Prueft, ob Dreieck FAI ist.
      */
@@ -182,6 +201,8 @@ class Flight : public BaseMapElement
   	virtual bool __isVisible() const;
   	/** */
   	double __polar(double x, double y);
+  	/** Kreisflug?? */
+  	void __flightState();
 
 	  QString pilotName;
     QString gliderType;
@@ -189,11 +210,10 @@ class Flight : public BaseMapElement
     QString startSite;
     QString landSite;
 
-    int dtime;
+//    int dtime;
     QString date;
 
 //    MapContents* mapContents;
-    unsigned int routeLength;
     QList<struct wayPoint> wpList;
     QList<struct wayPoint> origList;
     int tBegin;

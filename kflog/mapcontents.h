@@ -127,7 +127,9 @@ class MapContents
      */
     int __degreeToNum(const char* degree);
     /** reads a new binary-map-file */
-    bool __readBinaryFile(const char* fileName);
+    bool __readBinaryFile(const int fileSecID, const char fileTypeID);
+    /** */
+    bool __readTerrainFile(const int fileSecID, const char fileTypeID);
     /** */
     bool __readAsciiFile(const char* fileName);
     /** */

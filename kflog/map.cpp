@@ -84,7 +84,8 @@
 
 Map::Map(KFLogApp *m, QFrame* parent)
 : QWidget(parent),
-  mainApp(m), posNum(1), indexLength(0), prePos(-50, -50)
+  mainApp(m), prePos(-50, -50), preCur1(-50, -50), preCur2(-50, -50), posNum(1),
+    indexLength(0)
 {
   extern double _scale[];
   extern int _scaleBorder[];
@@ -115,6 +116,31 @@ Map::Map(KFLogApp *m, QFrame* parent)
   cursor.setPen(QPen(QColor(255,0,255), 3));
   cursor.drawEllipse(10, 10, 20, 20);
   cursor.end();
+
+  pixCursor1.resize(40,40);
+  pixCursor1.fill(white);
+  QPainter cursor1(&pixCursor1);
+  cursor1.setPen(QPen(QColor(0,255,0), 3));
+  cursor1.drawLine(0,0,40,40);
+  cursor1.drawLine(0,40,40,0);
+//  cursor1.setPen(QPen(QColor(255,0,255), 3));
+//  cursor.drawEllipse(10, 10, 20, 20);
+  cursor1.end();
+
+  pixCursor2.resize(40,40);
+  pixCursor2.fill(white);
+  QPainter cursor2(&pixCursor2);
+  cursor2.setPen(QPen(QColor(255,0,0), 3));
+  cursor2.drawLine(0,0,40,40);
+  cursor2.drawLine(0,40,40,0);
+//  cursor2.setPen(QPen(QColor(255,0,255), 3));
+//  cursor.drawEllipse(10, 10, 20, 20);
+  cursor2.end();
+
+  pixCursorBuffer1.resize(40,40);
+  pixCursorBuffer1.fill(white);
+  pixCursorBuffer2.resize(40,40);
+  pixCursorBuffer2.fill(white);
 
   pixAllSites.resize( PIX_WIDTH, PIX_HEIGHT );
   pixAirspace.resize( PIX_WIDTH, PIX_HEIGHT );
@@ -869,6 +895,13 @@ void Map::__redrawMap()
   bitFlightMask.fill(Qt::color0);
   bitAirspaceMask.fill(Qt::color0);
 
+  //
+  QPoint temp1(preCur1);
+  QPoint temp2(preCur2);
+
+  preCur1.setX(-50);
+  preCur2.setX(-50);
+
   extern MapContents _globalMapContents;
   _globalMapContents.proofeSection();
 
@@ -876,6 +909,8 @@ void Map::__redrawMap()
   __drawMap();
 
   slotShowLayer();
+
+  slotDrawCursor(temp1,temp2);
 }
 
 void Map::slotRedrawMap()
@@ -950,6 +985,47 @@ void Map::slotDrawFlight()
 
 //  __drawFlight();
 //  slotShowLayer();
+}
+
+
+void Map::slotDrawCursor(QPoint p1, QPoint p2)
+{
+  extern const MapMatrix _globalMapMatrix;
+
+  QPoint pos1(_globalMapMatrix.map(p1)), pos2(_globalMapMatrix.map(p2));
+
+  QPoint prePos1(_globalMapMatrix.map(preCur1)),
+         prePos2(_globalMapMatrix.map(preCur2));
+  if(preCur1.x() >= 0)
+    {
+      bitBlt(&pixBuffer, prePos1.x() - 20, prePos1.y() - 20, &pixCursorBuffer1);
+      bitBlt(this, prePos1.x() - 20, prePos1.y() - 20, &pixCursorBuffer1);
+    }
+  if(preCur2.x() >= 0)
+    {
+      bitBlt(&pixBuffer, prePos2.x() - 20, prePos2.y() - 20, &pixCursorBuffer2);
+      bitBlt(this, prePos2.x() - 20, prePos2.y() - 20, &pixCursorBuffer2);
+    }
+
+  // erstmal Karte sichern
+  bitBlt(&pixCursorBuffer1, 0, 0, &pixBuffer,
+          pos1.x() - 20, pos1.y() - 20, 40, 40);
+  bitBlt(&pixCursorBuffer2, 0, 0, &pixBuffer,
+          pos2.x() - 20, pos2.y() - 20, 40, 40);
+
+  bitBlt(this, pos1.x() - 20, pos1.y() - 20, &pixCursor1,
+          0, 0, -1, -1, NotEraseROP);
+  bitBlt(&pixBuffer, pos1.x() - 20, pos1.y() - 20, &pixCursor1,
+          0, 0, -1, -1, NotEraseROP);
+
+  bitBlt(this, pos2.x() - 20, pos2.y() - 20, &pixCursor2,
+          0, 0, -1, -1, NotEraseROP);
+  bitBlt(&pixBuffer, pos2.x() - 20, pos2.y() - 20, &pixCursor2,
+          0, 0, -1, -1, NotEraseROP);
+
+  preCur1 = p1;
+  preCur2 = p2;
+
 }
 
 void Map::slotShowMapElement()

@@ -103,7 +103,7 @@ QString printPos(int coord, bool isLat)
   return pos;
 }
 
-QString printTime(int time, bool isZero)
+QString printTime(int time, bool isZero, bool isSecond)
 {
   QString hour, min, sec;
 
@@ -120,5 +120,66 @@ QString printTime(int time, bool isZero)
   if(ss < 10)  sec.sprintf("0%d", ss);
   else  sec.sprintf("%d", ss);
 
-  return (hour + ":" + min + ":" + sec);
+  if(isSecond)
+    {
+      return (hour + ":" + min + ":" + sec);
+    }
+  return (hour + ":" + min );
+}
+
+float getSpeed(struct flightPoint* p)
+{
+  return (float)p->dS / (float)p->dT * 3.6;
+}
+
+float getSpeed(struct flightPoint p)
+{
+  return (float)p.dS / (float)p.dT * 3.6;
+}
+
+float getVario(struct flightPoint* p)
+{
+  return (float)p->dH / (float)p->dT;
+}
+
+float getVario(struct flightPoint p)
+{
+  return (float)p.dH / (float)p.dT;
+}
+
+
+float getBearing(struct flightPoint p1, struct flightPoint p2)
+{
+  double angle;
+  angle = __polar(
+    ( p2.projP.x() - p1.projP.x() ),
+    ( p2.projP.y() - p1.projP.y() ) );
+
+  return (float)angle;
+}
+
+
+double __polar(double x, double y)
+{
+  double angle = 0.0;
+
+  /*
+   *          Fallunterscheidung, falls dX = 0
+   */
+  if(x >= -0.001 && x <= 0.001)
+    {
+      if(y < 0.0) return ( 1.5 * PI );
+      else  return ( 0.5 * PI );
+    }
+
+  // Punkt liegt auf der neg. X-Achse
+  if(x < 0.0)  angle = atan( y / x ) + PI;
+  else  angle = atan( y / x );
+
+  // Neg. value not allowed.
+  if(angle < 0.0)  angle = 2 * PI + angle;
+
+  if(angle > (2 * PI))  angle = angle - (2 * PI);
+
+  return angle;
 }

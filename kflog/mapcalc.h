@@ -58,6 +58,23 @@ QString printPos(int coord, bool isLat = true);
   * Converts the given time (in sec.) into a readable string.
   * ( hh:mm:ss )
   */
-QString printTime(int time, bool isZero = false);
+QString printTime(int time, bool isZero = false, bool isSecond = true);
+
+/**
+  * Calculates the Vario of a given Point
+  */
+float getVario(struct flightPoint* p);
+float getVario(struct flightPoint p);
+/**
+  * Calculates the Speed of a given Point
+  */
+float getSpeed(struct flightPoint* p);
+float getSpeed(struct flightPoint p);
+
+/**
+  * Calculates the Bearing to the previous Point
+  */
+float getBearing(struct flightPoint p1, struct flightPoint p2);
+double __polar(double x, double y);
 
 #endif

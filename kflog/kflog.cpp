@@ -48,6 +48,7 @@
 #include <mapcontents.h>
 #include <mapcontrolview.h>
 #include <mapmatrix.h>
+#include <evaluationdialog.h>
 
 #define STATUS_LABEL(a,b,c) \
   a = new KStatusBarLabel( "", 0, statusBar() ); \
@@ -550,7 +551,14 @@ void KFLogApp::slotToggleMapControl()
 
 void KFLogApp::slotEvaluateFlight()
 {
+  extern MapContents _globalMapContents;
+  EvaluationDialog* eval =
+    new EvaluationDialog(_globalMapContents.getFlightList());
 
+  map->connect(eval, SIGNAL(showCursor(QPoint, QPoint)),
+  SLOT(slotDrawCursor(QPoint, QPoint)));
+  eval->slotShowFlightData(0);  // <- hier wird angenommen, dass mindestens
+                                // ein Element vorhanden ist ...
 }
 
 void KFLogApp::slotConfigureToolbars()
