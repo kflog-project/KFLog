@@ -125,10 +125,9 @@ bool WaypointCatalog::read(const QString& catalog)
             w->runway = w->length = -1;
             needConvert = true;
           }
-
           if (!wpList.insertItem(w))
           {
-            delete w;
+            //delete w;
             break;
           }
         }
@@ -143,7 +142,6 @@ bool WaypointCatalog::read(const QString& catalog)
       }
 
       f.close();
-
       if (needConvert) {
         write();
       }
@@ -158,7 +156,6 @@ bool WaypointCatalog::read(const QString& catalog)
   else {
     KMessageBox::error(0, QString("<qt><B>%1</B><BR>").arg(catalog) + i18n("not found!") + "</qt>", i18n("Error occurred!"));
   }
-
   return ok;
 }
 
