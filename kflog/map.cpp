@@ -154,6 +154,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
       {
         emit showFlightPoint(_globalMapMatrix.mapToWgs(event->pos()), cP);
         prePos = _globalMapMatrix.map(cP.projP);
+				preIndex = index;
         bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
       }
     else
@@ -839,10 +840,10 @@ void Map::slotAnimateFlightStart()
    	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
   							 prePos.x() - 20, prePos.y() - 20, 40, 40);
 		// go to the start
-		index = _globalMapContents.searchGetPrevFlightPoint(1, cP);
- 		if (index != -1){
+		if ((index = _globalMapContents.searchGetPrevFlightPoint(1, cP)) != -1){
       emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
       prePos = _globalMapMatrix.map(cP.projP);
+			preIndex = index;
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
    		timerAnimate->start( 50, FALSE );                 // 50ms multi-shot timer
      	nAnimateIndex = 0;
@@ -869,6 +870,7 @@ void Map::slotAnimateFlightTimeout()
   		nAnimateIndex = _globalMapContents.searchGetNextFlightPoint(nAnimateIndex, cP);
       emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
       prePos = _globalMapMatrix.map(cP.projP);
+			preIndex = nAnimateIndex;
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
     } else {
 			// last flightPoint reached, stop animation
@@ -900,16 +902,15 @@ void Map::slotFlightNext()
   extern MapContents _globalMapContents;
   flightPoint cP;
   int index;
-  int preindex;
 
   if (prePos.x() >= 0){ 	// only step if crosshair is shown in map.
-    preindex = _globalMapContents.searchFlightPoint(prePos, cP);
    	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
   							 prePos.x() - 20, prePos.y() - 20, 40, 40);
     // get the next point, preIndex now holds last point
-		if ((index = _globalMapContents.searchGetNextFlightPoint(preindex, cP)) != -1){
+		if ((index = _globalMapContents.searchGetNextFlightPoint(preIndex, cP)) != -1){
       emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
       prePos = _globalMapMatrix.map(cP.projP);
+			preIndex = index;
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
 	  }
   }
@@ -921,16 +922,15 @@ void Map::slotFlightPrev()
   extern MapContents _globalMapContents;
   flightPoint cP;
   int index;
-  int preindex;
 
   if (prePos.x() >= 0){ 	// only step if crosshair is shown in map.
-    preindex = _globalMapContents.searchFlightPoint(prePos, cP);
    	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
   							 prePos.x() - 20, prePos.y() - 20, 40, 40);
     // get the next point, preIndex now holds last point
-		if ((index = _globalMapContents.searchGetPrevFlightPoint(preindex, cP)) != -1){
+		if ((index = _globalMapContents.searchGetPrevFlightPoint(preIndex, cP)) != -1){
       emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
       prePos = _globalMapMatrix.map(cP.projP);
+			preIndex = index;
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
 	  }
   }
@@ -941,16 +941,15 @@ void Map::slotFlightStepNext()
   extern MapContents _globalMapContents;
   flightPoint cP;
   int index;
-  int preindex;
 
   if (prePos.x() >= 0){ 	// only step if crosshair is shown in map.
-    preindex = _globalMapContents.searchFlightPoint(prePos, cP);
    	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
   							 prePos.x() - 20, prePos.y() - 20, 40, 40);
     // get the next point, preIndex now holds last point
-		if ((index = _globalMapContents.searchStepNextFlightPoint(preindex, cP, 10)) != -1){
+		if ((index = _globalMapContents.searchStepNextFlightPoint(preIndex, cP, 10)) != -1){
       emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
       prePos = _globalMapMatrix.map(cP.projP);
+			preIndex = index;
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
 	  }
   }
@@ -962,16 +961,15 @@ void Map::slotFlightStepPrev()
   extern MapContents _globalMapContents;
   flightPoint cP;
   int index;
-  int preindex;
 
   if (prePos.x() >= 0){ 	// only step if crosshair is shown in map.
-    preindex = _globalMapContents.searchFlightPoint(prePos, cP);
    	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
   							 prePos.x() - 20, prePos.y() - 20, 40, 40);
     // get the next point, preIndex now holds last point
-		if ((index = _globalMapContents.searchStepPrevFlightPoint(preindex, cP,10)) != -1){
+		if ((index = _globalMapContents.searchStepPrevFlightPoint(preIndex, cP,10)) != -1){
       emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
       prePos = _globalMapMatrix.map(cP.projP);
+			preIndex = index;
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
 	  }
   }
@@ -983,15 +981,14 @@ void Map::slotFlightHome()
   extern MapContents _globalMapContents;
   flightPoint cP;
   int index;
-  int preindex;
 
   if (prePos.x() >= 0){ 	// only step if crosshair is shown in map.
-    preindex = _globalMapContents.searchFlightPoint(prePos, cP);
    	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
   							 prePos.x() - 20, prePos.y() - 20, 40, 40);
 		if ((index = _globalMapContents.searchGetNextFlightPoint(0, cP)) != -1){
       emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
       prePos = _globalMapMatrix.map(cP.projP);
+			preIndex = index;
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
 		}
   }
@@ -1003,16 +1000,14 @@ void Map::slotFlightEnd()
   extern MapContents _globalMapContents;
   flightPoint cP;
   int index;
-  int preindex;
 
   if (prePos.x() >= 0){ 	// only step if crosshair is shown in map.
-    preindex = _globalMapContents.searchFlightPoint(prePos, cP);
    	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
   							 prePos.x() - 20, prePos.y() - 20, 40, 40);
-    index = _globalMapContents.getFlight()->getRouteLength()-1;
-		if ((index = _globalMapContents.searchGetNextFlightPoint(index, cP)) != -1){
+		if ((index = _globalMapContents.searchGetNextFlightPoint(_globalMapContents.getFlight()->getRouteLength()-1, cP)) != -1){
       emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
       prePos = _globalMapMatrix.map(cP.projP);
+			preIndex = index;
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
 		}
   }
