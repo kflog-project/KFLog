@@ -14,6 +14,9 @@
 **   $Id$
 **
 ***********************************************************************/
+/*
+*    3D view was recycled from '3digc' (c) 2001 by Jan Max Krueger
+*/
 
 #ifndef IGC3DFLIGHTDATA_H
 #define IGC3DFLIGHTDATA_H
@@ -73,9 +76,9 @@ class Igc3DFlightData
 		Igc3DViewState *state;
 		//int arraylength;
 	
-private: // Private methods
-  /** reset data structures */
-  void reset();
+	private: // Private methods
+		// reset data structures
+		void reset();
 };
 
 #endif
