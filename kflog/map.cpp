@@ -405,6 +405,39 @@ void Map::mousePressEvent(QMouseEvent* event)
     }
   else if(event->button() == RightButton)
     {
+      if(planning == 1 || planning == 3)
+        {
+            QPoint preSitePos, nextSitePos;
+          // Strecke löschen
+          moveWPindex = -999;
+
+          QPainter planP(this);
+           planP.setRasterOp(XorROP);
+          planP.setBrush(NoBrush);
+          planP.setPen(QPen(QColor(255,0,0), 5));
+
+           if(prePlanPos.x() >= 0)
+             {
+              // alte Linien löschen
+              preSitePos = _globalMapMatrix.map(taskPoints.at(taskPoints.size() - 1)->getPosition());
+              if(planning == 3)
+                {
+                  preSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex - 1)->getPosition());
+                  nextSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex + 1)->getPosition());
+                  
+                   planP.drawLine(nextSitePos.x(),nextSitePos.y(),
+                                  prePlanPos.x(),prePlanPos.y());
+                }           
+               planP.drawLine(preSitePos.x(),preSitePos.y(),
+                             prePlanPos.x(),prePlanPos.y());
+             }
+          planP.end();                      
+          
+          prePlanPos.setX(-999);
+          prePlanPos.setY(-999);
+          planning = 2;
+        }
+
       bool show = false, isAirport = false;
 
       BaseMapElement* hitElement;
