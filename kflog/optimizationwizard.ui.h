@@ -11,26 +11,10 @@
 
 void OptimizationWizard::init()
 {
-//  KDialog* dialog = new KDialog(this,"Evaluation Dialog");
-//  EvaluationDialog* evaluation =  new EvaluationDialog(dialog);
-//  QBoxLayout * l = new QVBoxLayout( dialog );
-//  l->addWidget(evaluation);
-//
-////  EvaluationDialog* evaluation =  new EvaluationDialog(this);
-//  extern MapContents _globalMapContents;
-//  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), evaluation,
-//      SLOT(slotShowFlightData()));
-//  connect(evaluation, SIGNAL(showCursor(QPoint, QPoint)), map,
-//      SLOT(slotDrawCursor(QPoint, QPoint)));
-//
-////  evaluation->show();
-//  dialog->show();
-//  dialog->resize(640,480);
+//  next two lines are a hack to fix initial evaluation widget size bug
+  showMaximized();
+  showNormal();
 
-//  evaluation =  new EvaluationDialog(QWizard::page(0));
-////  addPage(evaluation,"");
-//  QBoxLayout * l = new QVBoxLayout( QWizard::page(0) );
-//  l->addWidget(evaluation);
   resize(640,520);
   
   flight=(Flight*)_globalMapContents.getFlight();

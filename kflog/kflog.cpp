@@ -148,7 +148,6 @@ KFLogApp::KFLogApp()
   connect(map, SIGNAL(showPoint(const QPoint)),
       this, SLOT(slotShowPointInfo(const QPoint)));
   connect(&_globalMapContents, SIGNAL(contentsChanged()),map, SLOT(slotRedrawMap()));
-
   slotModifyMenu();
 }
 

@@ -116,6 +116,8 @@ void Optimization::run(){
   // allocate memory
   L=(double *) malloc((n+1)*(LEGS+1)*sizeof(double));
   w=(unsigned int *) malloc((n+1)*(LEGS+1)*sizeof(unsigned int));
+  Q_CHECK_PTR(L);
+  Q_CHECK_PTR(w);
   
   for (i=0;i<=n-1;i++){
     L[i+0*n]=0;

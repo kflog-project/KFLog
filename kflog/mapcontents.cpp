@@ -562,7 +562,7 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
   }
   else{
     downloadList->copyKURL(&src,&dest);
-    connect(downloadList,SIGNAL(downloadFinished()),this,SLOT(slotDownloadFinished()));
+    connect(downloadList,SIGNAL(allDownloadsFinished()),this,SLOT(slotDownloadFinished()));
   }
 }
 
@@ -1972,6 +1972,7 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
 
 void MapContents::slotDownloadFinished()
 {
+  slotReloadMapData();
   emit contentsChanged();
 }
 
