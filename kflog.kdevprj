@@ -19,18 +19,18 @@ type=DATA
 [Config for BinMakefileAm]
 addcxxflags=
 bin_program=kflog
-cxxflags=\s-O0 -g3 -Wall
+cxxflags=\s-O0 -g3 -pg -Wall
 ldadd=\s-lm $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
 ldflags=
 
 [General]
 AMChanged=false
 author=Heiner Lamprecht
-configure_args=--prefix=/opt/kde2/
+configure_args=--enable-mt  --enable-debug --enable-profile --prefix=/opt/kde2/
 email=heiner@kflog.org
 kdevprj_version=1.3
 lfv_open_groups=GNU,Translations,User Interface
-make_options=\s-j1
+make_options=\s-k -s -j1
 makefiles=Makefile.am,kflog/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,po/Makefile.am,kflog/map-icons/Makefile.am,kflog/map-icons/small/Makefile.am,kflog/pics/Makefile.am,kflog/guicontrols/Makefile.am
 modifyMakefiles=true
 project_name=KFLog

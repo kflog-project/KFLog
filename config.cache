@@ -53,6 +53,7 @@ ac_cv_prog_RANLIB=${ac_cv_prog_RANLIB=ranlib}
 ac_cv_prog_STRIP=${ac_cv_prog_STRIP=strip}
 ac_cv_prog_cc_can_build_shared=${ac_cv_prog_cc_can_build_shared=yes}
 ac_cv_prog_cc_cross=${ac_cv_prog_cc_cross=no}
+ac_cv_prog_cc_g=${ac_cv_prog_cc_g=yes}
 ac_cv_prog_cc_no_builtin=${ac_cv_prog_cc_no_builtin=}
 ac_cv_prog_cc_pic=${ac_cv_prog_cc_pic=$' -fPIC -DPIC'}
 ac_cv_prog_cc_pic_works=${ac_cv_prog_cc_pic_works=yes}
@@ -62,6 +63,7 @@ ac_cv_prog_cc_static_works=${ac_cv_prog_cc_static_works=yes}
 ac_cv_prog_cc_wl=${ac_cv_prog_cc_wl=-Wl,}
 ac_cv_prog_cc_works=${ac_cv_prog_cc_works=yes}
 ac_cv_prog_cxx_cross=${ac_cv_prog_cxx_cross=no}
+ac_cv_prog_cxx_g=${ac_cv_prog_cxx_g=yes}
 ac_cv_prog_cxx_works=${ac_cv_prog_cxx_works=yes}
 ac_cv_prog_gcc=${ac_cv_prog_gcc=yes}
 ac_cv_prog_gxx=${ac_cv_prog_gxx=yes}
@@ -81,6 +83,7 @@ kde_cv_path_kde_config=${kde_cv_path_kde_config=/opt/kde2//bin/kde-config}
 kde_cv_path_mcopidl=${kde_cv_path_mcopidl=/opt/kde2//bin/mcopidl}
 kde_cv_path_moc=${kde_cv_path_moc=/usr/lib/qt-2.3.1/bin/moc}
 kde_cv_path_uic=${kde_cv_path_uic=/usr/lib/qt-2.3.1/bin/uic}
+kde_cv_prog_cc_pg=${kde_cv_prog_cc_pg=yes}
 kde_cv_prog_cxx_Wno_long_long=${kde_cv_prog_cxx_Wno_long_long=yes}
 kde_cv_prog_cxx_Wnon_virtual_dtor=${kde_cv_prog_cxx_Wnon_virtual_dtor=yes}
 kde_cv_prog_cxx_fexceptions=${kde_cv_prog_cxx_fexceptions=yes}
@@ -89,6 +92,7 @@ kde_cv_prog_cxx_fno_check_new=${kde_cv_prog_cxx_fno_check_new=yes}
 kde_cv_prog_cxx_fno_exceptions=${kde_cv_prog_cxx_fno_exceptions=yes}
 kde_cv_prog_cxx_frepo=${kde_cv_prog_cxx_frepo=yes}
 kde_cv_prog_cxx_frtti=${kde_cv_prog_cxx_frtti=yes}
+kde_cv_prog_cxx_pg=${kde_cv_prog_cxx_pg=yes}
 kde_cv_qt_direct=${kde_cv_qt_direct=no}
 lt_cv_deplibs_check_method=${lt_cv_deplibs_check_method=pass_all}
 lt_cv_dlopen=${lt_cv_dlopen=dlopen}
