@@ -967,6 +967,7 @@ void Map::__showLayer()
   bitBlt(&pixBuffer, 0, 0, &pixAirspace);
 
   bitBlt(&pixBuffer, 0, 0, &pixFlight);
+  bitBlt(&pixBuffer, 0, 0, &pixPlan, 0, 0, -1, -1, NotEraseROP);
   bitBlt(&pixBuffer, 0, 0, &pixGrid, 0, 0, -1, -1, NotEraseROP);
 
   paintEvent();
