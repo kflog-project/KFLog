@@ -130,6 +130,15 @@ class MapConfig : public QObject
      */
     QString getPixmapName(unsigned int type, bool isWinch = true);
     /**
+     * @return pen color for isolines
+     */
+    QColor getIsoPenColor() {return QColor(80,80,80);}
+    /**
+     * @param  height height of isoline
+     * @return PenStyle of isoline
+     */
+    Qt::PenStyle getIsoPenStyle(int height);
+    /**
      * The possible datatypes, that could be drawn.
      *
      * @see #slotSetFlightDataType

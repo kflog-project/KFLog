@@ -2228,8 +2228,9 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
             }
         }
 
-      
-      targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1, Qt::NoPen));
+      targetP->setPen(QPen(_globalMapConfig.getIsoPenColor(), 1,
+        _globalMapConfig.getIsoPenStyle(iso->getFirst()->getElevation())));  // make configurable
+//      targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1, Qt::NoPen));
       targetP->setBrush(QBrush(_globalMapConfig.getIsoColor(height),
           QBrush::SolidPattern));
       for(Isohypse* iso2 = iso->first(); iso2; iso2 = iso->next()) {

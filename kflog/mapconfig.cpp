@@ -20,6 +20,7 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kstddirs.h>
+#include <qnamespace.h>
 
 #include "basemapelement.h"
 #include "flight.h"
@@ -1087,4 +1088,26 @@ bool MapConfig::useSmallIcons(){
 bool MapConfig::drawWpLabels(){
   extern MapMatrix _globalMapMatrix;
   return (_globalMapMatrix.getScale(MapMatrix::CurrentScale)<=_drawWpLabelScale);
+}
+
+Qt::PenStyle MapConfig::getIsoPenStyle(int height)
+{
+  // choose isoline style
+  extern MapMatrix _globalMapMatrix;
+  PenStyle style=Qt::NoPen;
+
+  if (_globalMapMatrix.getScale()<100.0)   // make configurable
+  {
+    if (height%1000==0)
+      style=Qt::SolidLine;
+    else if (height%500==0)
+      style=Qt::DashLine;
+    else if (height%250==0)
+      style=Qt::DotLine;
+    else if (height%100==0)
+      style=Qt::DashDotLine;
+    else if (height%50==0)
+      style=Qt::DashDotDotLine;
+  }
+  return style;
 }
