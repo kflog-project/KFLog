@@ -76,6 +76,12 @@ SoaringPilot::SoaringPilot()
   _capabilities.supDlTask = true;          //supports downloading of tasks?
   _capabilities.supUlTask = true;          //supports uploading of tasks?
   //_capabilities.supUlDeclaration = true;   //supports uploading of declarations?
+  _capabilities.supDspSerialNumber = true;
+  _capabilities.supDspRecorderType = true;
+  //_capabilities.supDspPilotName = true;
+  //_capabilities.supDspGliderType = true;
+  //_capabilities.supDspGliderID = true;
+  //_capabilities.supDspCompetitionID = true;
   //End set capabilities.
 
   portID = -1;
@@ -259,7 +265,7 @@ FlightRecorderPluginBase::TransferMode SoaringPilot::getTransferMode() const
  * Returns a list of recorded flights in this device.
  */
 
-int SoaringPilot::getFlightDir(QList<FRDirEntry> *dirList)
+int SoaringPilot::getFlightDir(QPtrList<FRDirEntry> *dirList)
 {
   /* André: I don't quite get this one. Shouldn't this return some FRDirEntries? */
   // SearingPilot is something "special". It doesn't provide a flight directory
@@ -349,12 +355,12 @@ int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QStrin
 
           if (shortName) {
             _fileName.sprintf("%d%c%cX%s%c.IGC", year, c36[month], c36[day],
-                             (const char *)getRecorderSerialNo(), c36[*fc]);
+                             (const char *)_basicData.serialNumber.latin1(), c36[*fc]);
           }
           else {
             _fileName.sprintf("20%.2d-%.2d-%.2d-XSP-%s-%.2d.IGC",
                              year, month, day, 
-                             (const char *)getRecorderSerialNo(), *fc);
+                             (const char *)_basicData.serialNumber.latin1(), *fc);
           }
         }
         else {
@@ -379,11 +385,18 @@ int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QStrin
 }
 
 /**
- * get recorder info serial id
- */
-QString SoaringPilot::getRecorderSerialNo()
+  * get recorder basic data
+  */
+int SoaringPilot::getBasicData(FR_BasicData& data)
 {
-  return "000";
+  _basicData.serialNumber = "000";
+  _basicData.recorderType = "SoaringPilot";
+  _basicData.pilotName = "???";
+  _basicData.gliderType = "???";
+  _basicData.gliderID = "???";
+  _basicData.competitionID = "???";
+  data = _basicData;
+  return FR_OK;
 }
 
 /**
@@ -505,7 +518,7 @@ int SoaringPilot::closeRecorder() {
 /**
  * Read tasks from recorder
  */
-int SoaringPilot::readTasks(QList<FlightTask> *tasks)
+int SoaringPilot::readTasks(QPtrList<FlightTask> *tasks)
 {
   QStringList file;
   QStringList::iterator line;
@@ -514,7 +527,7 @@ int SoaringPilot::readTasks(QList<FlightTask> *tasks)
   QString nam;
   int ret;
   Waypoint *wp;
-  QList <Waypoint> wpList;
+  QPtrList <Waypoint> wpList;
   unsigned int nrPoints;
   bool takeoff, landing;
   _errorinfo = "";
@@ -590,13 +603,13 @@ int SoaringPilot::readTasks(QList<FlightTask> *tasks)
 /**
  * Write tasks to recorder
  */
-int SoaringPilot::writeTasks(QList<FlightTask> *tasks)
+int SoaringPilot::writeTasks(QPtrList<FlightTask> *tasks)
 {
   QStringList file;
   QString tmp, typ;
   FlightTask *task;
   Waypoint *wp;
-  QList <Waypoint> wpList;
+  QPtrList <Waypoint> wpList;
   int nrPoints;
   // ** -------------------------------------------------------------
   // **      SOARINGPILOT Version 1.8.8 Tasks
@@ -640,7 +653,7 @@ int SoaringPilot::writeTasks(QList<FlightTask> *tasks)
 /**
  * Read waypoints from recorder
  */
-int SoaringPilot::readWaypoints(QList<Waypoint> *waypoints)
+int SoaringPilot::readWaypoints(QPtrList<Waypoint> *waypoints)
 {
   QStringList file;
   QStringList::iterator line;
@@ -682,7 +695,7 @@ int SoaringPilot::readWaypoints(QList<Waypoint> *waypoints)
 /**
  * Write waypoints to recorder
  */
-int SoaringPilot::writeWaypoints(QList<Waypoint> *waypoints)
+int SoaringPilot::writeWaypoints(QPtrList<Waypoint> *waypoints)
 {
   QStringList file;
   QString tmp, typ;
@@ -736,7 +749,7 @@ int SoaringPilot::openRecorder(const QString& /*URL*/)
  /**
  * Write flight declaration to recorder
  */
-int SoaringPilot::writeDeclaration(FRTaskDeclaration * /*taskDecl*/, QList<Waypoint> * /*taskPoints*/)
+int SoaringPilot::writeDeclaration(FRTaskDeclaration * /*taskDecl*/, QPtrList<Waypoint> * /*taskPoints*/)
 {
   return FR_NOTSUPPORTED;
 }

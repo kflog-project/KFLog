@@ -49,6 +49,12 @@ Cumulus::Cumulus(){
   _capabilities.supDlTask = true;          //supports downloading of tasks?
   //_capabilities.supUlTask = true;          //supports uploading of tasks?
   //_capabilities.supUlDeclaration = true;   //supports uploading of declarations?
+  //_capabilities.supDspSerialNumber = true;
+  _capabilities.supDspRecorderType = true;
+  //_capabilities.supDspPilotName = true;
+  //_capabilities.supDspGliderType = true;
+  //_capabilities.supDspGliderID = true;
+  //_capabilities.supDspCompetitionID = true;
   //End set capabilities.
 
   _tmpWaypointFile="";
@@ -79,7 +85,7 @@ FlightRecorderPluginBase::TransferMode Cumulus::getTransferMode() const
 /**
  * Returns a list of recorded flights in this device.
  */
-int Cumulus::getFlightDir(QList<FRDirEntry>*){
+int Cumulus::getFlightDir(QPtrList<FRDirEntry>*){
   return FR_NOTSUPPORTED;  
 }
 
@@ -93,12 +99,19 @@ int Cumulus::downloadFlight(int /*flightID*/, int /*secMode*/, const QString& /*
 
 
 /**
- * get recorder info serial id
- */
-QString Cumulus::getRecorderSerialNo(){
-  return QString("Cumulus");       //TODO: replace with something more sensible, like Cumulus version?
+  * get recorder basic data
+  */
+int Cumulus::getBasicData(FR_BasicData& data)
+{
+  _basicData.serialNumber = "???";
+  _basicData.recorderType = "Cumulus";
+  _basicData.pilotName = "???";
+  _basicData.gliderType = "???";
+  _basicData.gliderID = "???";
+  _basicData.competitionID = "???";
+  data = _basicData;
+  return FR_OK;
 }
-
 
 /**
  * Opens the recorder for other communication.
@@ -132,7 +145,7 @@ int Cumulus::closeRecorder(){
 /**
  * Read tasks from recorder
  */
-int Cumulus::readTasks(QList<FlightTask> *tasks){
+int Cumulus::readTasks(QPtrList<FlightTask> *tasks){
   int res=FR_NOTSUPPORTED;
   if (!_isConnected) {                  //check if we are connected
     _errorinfo=i18n("Not connected to PDA!");
@@ -148,7 +161,7 @@ int Cumulus::readTasks(QList<FlightTask> *tasks){
 /**
  * Write tasks to recorder
  */
-int Cumulus::writeTasks(QList<FlightTask> *tasks){
+int Cumulus::writeTasks(QPtrList<FlightTask> *tasks){
   return FR_NOTSUPPORTED;
 }
 
@@ -156,7 +169,7 @@ int Cumulus::writeTasks(QList<FlightTask> *tasks){
 /**
  * Read waypoints from recorder
  */
-int Cumulus::readWaypoints(QList<Waypoint> *waypoints){
+int Cumulus::readWaypoints(QPtrList<Waypoint> *waypoints){
   int ret=0;
   
   if (!_isConnected) {                  //check if we are connected
@@ -190,7 +203,7 @@ int Cumulus::readWaypoints(QList<Waypoint> *waypoints){
 /**
  * Write waypoints to recorder
  */
-int Cumulus::writeWaypoints(QList<Waypoint> *waypoints){
+int Cumulus::writeWaypoints(QPtrList<Waypoint> *waypoints){
   int ret=FR_NOTSUPPORTED;
   if (!_isConnected) {                  //check if we are connected
     _errorinfo=i18n("Not connected to PDA!");
@@ -232,7 +245,7 @@ int Cumulus::openRecorder(const QString& portName, int baud) {
  /**
  * Write flight declaration to recorder
  */
-int Cumulus::writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint> *taskPoints) {
+int Cumulus::writeDeclaration(FRTaskDeclaration *taskDecl, QPtrList<Waypoint> *taskPoints) {
   return FR_NOTSUPPORTED;
 }
 
