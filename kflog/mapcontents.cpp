@@ -1549,14 +1549,14 @@ void MapContents::proofeSection(bool isPrint)
       QStringList airfields;
       airfields = airfieldDir.entryList("*.kfl");
       for(QStringList::Iterator it = airfields.begin(); it != airfields.end(); it++)
-          __readAirfieldFile((*it).latin1());
+          __readAirfieldFile(airfieldDir.path() + "/" + (*it).latin1());
 
       emit loadingMessage(i18n("Loading airspacedata ..."));
 
       QStringList airspace;
       airspace = airspaceDir.entryList("*.kfl");
       for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
-          __readAirspaceFile((*it).latin1());
+          __readAirspaceFile(airspaceDir.path() + "/" + (*it).latin1());
 
 //      airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.out");
 //      for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
