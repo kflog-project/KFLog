@@ -29,9 +29,6 @@ ldflags=\s        \s
 AMChanged=true
 author=Heiner Lamprecht
 configure_args=--prefix=/opt/kde3 --enable-mt --enable-debug=full
-
-
-
 email=heiner@kflog.org
 kdevprj_version=1.3
 lfv_open_groups=GNU,Übersetzungen
@@ -223,18 +220,6 @@ install=false
 install_location=
 type=HEADER
 
-[kflog/contestlist.h]
-dist=true
-install=false
-install_location=
-type=HEADER
-
-[kflog/contests.h]
-dist=true
-install=false
-install_location=
-type=HEADER
-
 [kflog/dataview.cpp]
 dist=true
 install=false
@@ -356,12 +341,6 @@ install_location=
 type=HEADER
 
 [kflog/frstructs.h]
-dist=true
-install=false
-install_location=
-type=HEADER
-
-[kflog/gliders.h]
 dist=true
 install=false
 install_location=
@@ -1018,7 +997,7 @@ install_location=
 type=DATA
 
 [kflog/kfrxsp/Makefile.am]
-files=kflog/kfrxsp/xsp.desktop,kflog/kfrxsp/soaringpilot.cpp,kflog/kfrxsp/soaringpilot.h,kflog/kfrxsp/flightrecorder.cpp
+files=kflog/kfrxsp/flightrecorder.cpp,kflog/kfrxsp/xsp.desktop,kflog/kfrxsp/soaringpilot.cpp,kflog/kfrxsp/soaringpilot.h
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=kfrxsp
 sub_dirs=
