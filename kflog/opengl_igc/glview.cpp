@@ -152,18 +152,12 @@ void GLView::addFlight(Flight* flight)
         QPen drawP = _globalMapConfig.getDrawPen(&fPoint,true);
         qglColor(drawP.color());
         glVertex3i(  actx,  acty, actz );
-        if (actx>maxx)
-          maxx=actx;
-        if (actx<minx)
-          minx=actx;
-        if (acty>maxy)
-          maxy=acty;
-        if (acty<miny)
-          miny=acty;
-        if (actz>maxz)
-          maxz=actz;
-        if (actz<minz)
-          minz=actz;
+        maxx=MAX(actx,maxx);
+        minx=MIN(actx,minx);
+        maxy=MAX(acty,maxy);
+        miny=MIN(acty,miny);
+        maxz=MAX(actz,maxz);
+        minz=MIN(actz,minz);
       }
       glEnd();
       glEndList();
