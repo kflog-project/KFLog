@@ -79,3 +79,15 @@ void FlightGroup::setFlightList(QList <Flight::Flight> fl)
 {
   flightList = fl;
 }
+
+/** re-project the flights in this flightgroup. Reimplemented from BaseFlightElement. */
+void FlightGroup::reProject() {
+  QListIterator<Flight::Flight> it(flightList);
+
+  for ( ; it.current(); ++it ) {
+      Flight::Flight *f = it.current();
+      f->reProject();
+  }
+
+}
+
