@@ -986,22 +986,22 @@ bool WaypointCatalog::readCup (const QString& catalog)
           w->origP.setLat((int) rint(latTmp));
           w->origP.setLon((int) rint(lonTmp));
 
-	  if( list[5].length() ) // elevation in meter or feet
+	  if( list[5].length() > 1 ) // elevation in meter or feet
 	    {
 	      double tmpElev = (int) rint((list[5].left(list[5].length()-1)).toDouble(&ok));
 
 	      if( ! ok )
 		{
-			qDebug("Error reading elevation.");
-		  delete w; continue;
+			qDebug("Error reading elevation '%s'.",list[5].left(list[5].length()-1).latin1());
+			delete w; continue;
 		}
 
 	      if( list[5].right(1).lower() == "f" )
 		{
-		  w->elevation = (int) rint(tmpElev * 0.3048);
+			w->elevation = (int) rint(tmpElev * 0.3048);
 		} else {
-      w->elevation = (int) rint(tmpElev);
-    }
+			w->elevation = (int) rint(tmpElev);
+		}
 	    }
 
 	  if( list[9].stripWhiteSpace().length() ) // airport frequency
@@ -1062,7 +1062,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
           if (!wpList.insertItem(w))
           {
-            delete w;
+            //delete w; //even if inserting fails, the dict will delete the waypoint!
             qDebug("Error inserting waypoint in catalog");
             break;
           }
