@@ -112,7 +112,7 @@ class Waypoints : public QFrame  {
   int colComment;
 
   private slots: // Private slots
-    void slotDeleteWaypoint();
+  void slotDeleteWaypoint();
   void slotEditWaypoint();
   /** create a new catalog */
   void slotNewWaypointCatalog();
@@ -143,8 +143,13 @@ class Waypoints : public QFrame  {
    */
   void slotNewWaypoint();
   /**
+   * A waypoint has been deleted
+   */
+  void slotDeleteWaypoint(Waypoint*);
+  /**
    * filter waypoints to display
    */
+  void slotEditWaypoint(Waypoint*);
   void slotFilterWaypoints();
   /**
    * add a new waypoint
