@@ -1,6 +1,11 @@
 $Id$
 
 
+2002-02-22 Heiner <heiner@kflog.org>
+
+  * Fixed a bug in Map::mousePressEvent()
+
+
 2002-02-17 Heiner <heiner@kflog.org>
 
   * Fixed a bug in KFLogApp::slotFileQuit(), that caused KFLog to crash

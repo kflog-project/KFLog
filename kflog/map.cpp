@@ -633,10 +633,8 @@ void Map::mousePressEvent(QMouseEvent* event)
             {
               if(airspaceRegList->at(loop)->contains(current))
                 {
-                  hitElement = (SinglePoint*)_globalMapContents.getElement(
-                      MapContents::AirspaceList, loop);
-
-                  text = text + "<LI>" + hitElement->getInfoString() + "</LI>";
+                  text = text + "<LI>" + ((Airspace*)_globalMapContents.getElement(
+                      MapContents::AirspaceList, loop))->getInfoString() + "</LI>";
                   show = true;
                 }
             }
