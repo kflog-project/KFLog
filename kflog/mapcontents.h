@@ -263,6 +263,8 @@ switch to first task in file */
     *  automatic download has finished
     */
     void slotDownloadFinished();
+  /** Re-projects any flights and tasks that may be loaded. */
+  void reProject();
   signals:
     /**
      * emitted during maploading to display a message f.e. in the

@@ -3068,3 +3068,14 @@ isoListEntry::~isoListEntry() {
   if(region) delete region;
 }
 
+/** Re-projects any flights and tasks that may be loaded. */
+void MapContents::reProject(){
+  QListIterator<BaseFlightElement> it(flightList); // iterator for employee list
+  extern MapMatrix _globalMapMatrix;
+  
+  for ( ; it.current(); ++it ) {
+      Flight *flight = (Flight*)it.current();
+      flight->reProject();
+  }
+
+}

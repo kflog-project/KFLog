@@ -211,6 +211,9 @@ class FlightTask : public BaseFlightElement
   int __planningDirection;
   /* Route of flight */
   QList<flightPoint> flightRoute;
+public slots: // Public slots
+  /** re-projects the points along the route to make sure the route is drawn correctly if the projection changes. */
+  void reProject();
 };
 
 #endif

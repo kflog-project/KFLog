@@ -963,6 +963,10 @@ void KFLogApp::slotConfigureKFLog()
   connect(confDlg, SIGNAL(configOk()), &_globalMapConfig,
       SLOT(slotReadConfig()));
 
+  extern MapContents _globalMapContents;
+  connect(confDlg, SIGNAL(configOk()), &_globalMapContents,
+      SLOT(reProject()));
+  
   connect(confDlg, SIGNAL(configOk()), map, SLOT(slotRedrawMap()));
 
   confDlg->exec();

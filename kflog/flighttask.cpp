@@ -1675,3 +1675,22 @@ QString FlightTask::getPlanningTypeString()
   extern TranslationList taskTypes;
   return taskTypes.itemById(__planningType)->text;
 }
+
+/** re-projects the points along the route to make sure the route is drawn correctly if the projection changes. */
+void FlightTask::reProject(){
+  QListIterator<flightPoint> it(flightRoute); 
+  extern MapMatrix _globalMapMatrix;
+
+  for ( ; it.current(); ++it ) {
+      flightPoint *fp = it.current();
+      fp->projP = _globalMapMatrix.wgsToMap(fp->origP);
+  }
+
+  QListIterator<Waypoint> it2(wpList); 
+  extern MapMatrix _globalMapMatrix;
+
+  for ( ; it2.current(); ++it2 ) {
+      Waypoint *wp = it2.current();
+      wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
+  }
+}

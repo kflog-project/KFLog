@@ -260,6 +260,8 @@ class Flight : public BaseFlightElement
     void setLastAnimationPos(QPoint pos);
     /** Sets task begin and end time */
     void setTaskByTimes(int timeBegin,int timeEnd);
+    /** Re-calculates all projections for this flight. */
+    void reProject();
     /**
      * The flight-types.
      */
