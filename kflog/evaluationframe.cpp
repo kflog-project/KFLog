@@ -211,7 +211,7 @@ void EvaluationFrame::slotShowGraph()
   int contentsX = (( centerTime - flight->getStartTime() ) / secWidth)
              + X_ABSTAND ;
   graphFrame->center(contentsX,0);
-warning("Setze auf X: %d",centerTime);
+//warning("Setze auf X: %d",centerTime);
 }
 
 

@@ -497,7 +497,7 @@ void EvaluationView::drawCurve(Flight* current, bool arg_vario, bool arg_speed,
             bool arg_baro, unsigned int arg_glatt_va, unsigned int arg_glatt_v,
             unsigned int arg_glatt_h, unsigned int secW)
 {
-  warning("drawCurve");
+//  warning("drawCurve");
   isFlight = true;
 
   setMouseTracking(true);
