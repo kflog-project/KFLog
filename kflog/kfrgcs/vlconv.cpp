@@ -133,7 +133,7 @@ public:
 			    packed[12];
       koord.lon = (packed[6] & 0x80 ? -koord.lon : koord.lon);
     }
-    void print(int version, FILE *aus, char *descr) {
+    void print(int version, FILE *aus, const char *descr) {
       fprintf(aus,"C");
       koord.print(aus);
       igc_filter(name);

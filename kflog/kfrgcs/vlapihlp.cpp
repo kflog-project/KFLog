@@ -29,7 +29,7 @@ Filtern einer Zeile:
   - Entfernen von Leer- und Sonderzeichen am Ende (strtrim)
 */
 char *igc_filter(char *st) {
- static char* alphabet = " \"#%&\'()+-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]_\140abcdefghijklmnopqrstuvwxyz{|}";
+ static const char* alphabet = " \"#%&\'()+-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]_\140abcdefghijklmnopqrstuvwxyz{|}";
  int alphabet_l = strlen(alphabet);
  int l = strlen(st);
  int i,j;

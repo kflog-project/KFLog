@@ -310,7 +310,7 @@ int16 VLA_SYS::clear_user_break()
 
 // text for the status line
 //
-char *statustext[] = {
+const char *statustext[] = {
   "sending command to FR",
   "command is being processed",
   "datatransfer in progress ... (press <Q> to abort)",
