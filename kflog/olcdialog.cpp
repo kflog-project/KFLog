@@ -24,12 +24,19 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kseparator.h>
+#include <kmessagebox.h>
+#include <kprocess.h>
+#include <qdatetime.h>
 
 #include <qfile.h>
 #include <qgroupbox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qregexp.h>
+
+// for the initialisation of the KComboBox
+#include "gliders.h"
+#include "contests.h"
 
 #define POS_STRINGS(point) \
   latitude = point.lat(); \
@@ -39,17 +46,17 @@
   degree = latitude / 600000; \
   min = (latitude - (degree * 600000)) / 10000; \
   min_deg = (latitude - (degree * 600000) - (min * 10000)); \
-  min_deg = min_deg / 1000; \
-  latG.sprintf("%d", degree); \
-  latM.sprintf("%d", min); \
-  latMD.sprintf("%d", min_deg); \
+  min_deg = min_deg / 10; \
+  latG.sprintf("%02d", degree); \
+  latM.sprintf("%02d", min); \
+  latMD.sprintf("%03d", min_deg); \
   degree = longitude / 600000; \
   min = (longitude - (degree * 600000)) / 10000; \
   min_deg = (longitude - (degree * 600000) - (min * 10000)); \
-  min_deg = min_deg / 1000; \
-  lonG.sprintf("%d", degree); \
-  lonM.sprintf("%d", min); \
-  lonMD.sprintf("%d", min_deg);
+  min_deg = min_deg / 10; \
+  lonG.sprintf("%03d", degree); \
+  lonM.sprintf("%02d", min); \
+  lonMD.sprintf("%03d", min_deg);
 
 OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
   : QDialog(parent, name), currentFlight(cF)
@@ -64,17 +71,6 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
 
   olcName = new KComboBox(this);
   olcName->setEditable(false);
-  olcName->insertItem("OLC-" + i18n("International"));
-  olcName->insertItem("OLC-" + i18n("Australia"));
-  olcName->insertItem("OLC-" + i18n("Austria"));
-  olcName->insertItem("OLC-" + i18n("Africa"));
-  olcName->insertItem("OLC-" + i18n("Brasil"));
-  olcName->insertItem("OLC-" + i18n("Canada"));
-  olcName->insertItem("OLC-" + i18n("CZ/SK"));
-  olcName->insertItem("OLC-" + i18n("France"));
-  olcName->insertItem("OLC-" + i18n("Germany"));
-  olcName->insertItem("OLC-" + i18n("Italy"));
-  // to be continued ...
 
   QPushButton* okButton = new QPushButton(i18n("Send"), this);
   QPushButton* saveButton = new QPushButton(i18n("Save as"), this);
@@ -98,13 +94,16 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
 
   QGridLayout* dlgLayout = new QGridLayout(midFrame, 13, 14);
 
+  dlgLayout->addMultiCellWidget(new QGroupBox(i18n("Contest"), midFrame),
+      0, 2, 0, 14);
   dlgLayout->addMultiCellWidget(new QGroupBox(i18n("Pilot"), midFrame),
-      0, 5, 0, 14);
+      2, 5, 0, 14);
   dlgLayout->addMultiCellWidget(new QGroupBox(i18n("Glider"), midFrame),
       7, 13, 0, 14);
   dlgLayout->addMultiCellWidget(new QGroupBox(i18n("Task"), midFrame),
       15, 21, 0, 14);
 
+//  olcName = new KComboBox(midFrame);    
   preName = new KLineEdit(midFrame);
   surName = new KLineEdit(midFrame);
   birthday = new KRestrictedLine(midFrame, "birthday", "0123456789.-");
@@ -118,8 +117,7 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
   gliderB->setPixmap(BarIcon("find"));
   gliderB->setMaximumWidth(pilotB->sizeHint().width() + 10);
   gliderB->setMaximumHeight(pilotB->sizeHint().height() + 10);
-
-  gliderType = new KLineEdit(midFrame);
+  gliderType=new KComboBox(midFrame);
   gliderID = new KLineEdit(midFrame);
   daec = new KRestrictedLine(midFrame, "daec", "0123456789");
 
@@ -131,10 +129,11 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
   classSelect->insertItem(i18n("Standard"));
   classSelect->insertItem(i18n("15 Meter"));
   classSelect->insertItem(i18n("18 Meter"));
-  classSelect->insertItem(i18n("double sitter"));
+  classSelect->insertItem(i18n("double seater"));
   classSelect->insertItem(i18n("open"));
 
   startPoint = new KLineEdit(midFrame);
+  startTime = new KRestrictedLine(midFrame,"startTime","0123456789:");
   startPos = new QLabel(midFrame);
   startPos->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   startPos->setBackgroundMode( PaletteLight );
@@ -155,17 +154,17 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
   routePoints->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   routePoints->setBackgroundMode( PaletteLight );
 
-  dlgLayout->addWidget(new QLabel(i18n("Prename"), midFrame), 1, 1);
-  dlgLayout->addWidget(new QLabel(i18n("Surname"), midFrame), 1, 5);
-  dlgLayout->addWidget(new QLabel(i18n("Birthday"), midFrame), 1, 9);
-  dlgLayout->addWidget(preName, 1, 3);
-  dlgLayout->addWidget(surName, 1, 7);
-  dlgLayout->addWidget(birthday, 1, 11);
-  dlgLayout->addWidget(pilotB, 1, 13, Qt::AlignLeft);
+  dlgLayout->addWidget(olcName, 1, 1);
+  dlgLayout->addWidget(new QLabel(i18n("Prename"), midFrame), 2, 1);
+  dlgLayout->addWidget(new QLabel(i18n("Surname"), midFrame), 2, 5);
+  dlgLayout->addWidget(new QLabel(i18n("Birthday (dd.mm.yyyy)"), midFrame), 2, 9);
+  dlgLayout->addWidget(preName, 2, 3);
+  dlgLayout->addWidget(surName, 2, 7);
+  dlgLayout->addWidget(birthday, 2, 11);
+  dlgLayout->addWidget(pilotB, 2, 13, Qt::AlignLeft);
 
   dlgLayout->addWidget(new QLabel(i18n("Glidertype"), midFrame), 8, 1);
   dlgLayout->addWidget(new QLabel(i18n("Glider-ID"), midFrame), 8, 5);
-  // Was machen wir mit diesem Eintrag ???
   dlgLayout->addWidget(new QLabel(i18n("DAEC-Index"), midFrame), 8, 9);
   dlgLayout->addWidget(gliderType, 8, 3);
   dlgLayout->addWidget(gliderID, 8, 7);
@@ -177,7 +176,8 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
 
   dlgLayout->addWidget(new QLabel(i18n("Startpoint"), midFrame), 16, 1);
   dlgLayout->addMultiCellWidget(startPoint, 16, 16, 3, 5);
-  dlgLayout->addMultiCellWidget(startPos, 16, 16, 7, 13);
+  dlgLayout->addMultiCellWidget(startPos, 16, 16, 7, 9);
+  dlgLayout->addMultiCellWidget(startTime, 16, 16, 11, 13);
   dlgLayout->addMultiCellWidget(taskList, 18, 18, 1, 13);
   dlgLayout->addMultiCellWidget(new QLabel(i18n("Task-Length"), midFrame),
       20, 20, 3, 5, Qt::AlignRight);
@@ -230,14 +230,37 @@ OLCDialog::~OLCDialog()
 
 void OLCDialog::__fillDataFields()
 {
+  int count;
+  count=0;
+  while( gliderList[count].index != -1)
+  {
+    QString temp_str=QString("%1 (%2)").arg(gliderList[count].name).arg(gliderList[count].index);
+    gliderType->insertURL(temp_str,count);
+    if (temp_str.find(currentFlight->getHeader().at(2),0,false)!=-1)
+      gliderType->setCurrentItem(count);
+    count++;
+  }
+
+  while( contestList[count].index != -1)
+  {
+    QString temp_str=QString("OLC-%1").arg(contestList[count].name);
+    olcName->insertURL(temp_str,count);
+    count++;
+  }
+
   gliderID->setText(currentFlight->getID());
-  gliderType->setText(currentFlight->getType());
   routePoints->setText(currentFlight->getPoints());
   routeLength->setText(currentFlight->getTaskDistance());
+  surName->setText(currentFlight->getPilot().section(' ',1,1));
+  preName->setText(currentFlight->getPilot().section(' ',0,0));
+  KConfig* config = KGlobal::config();
+  config->setGroup("Personal Data");
+  birthday->setText(config->readEntry("Birthday", ""));
 
   QList<Waypoint> wpList = currentFlight->getWPList();
 
   startPoint->setText(wpList.at(0)->name);
+  startTime->setText(printTime(currentFlight->getStartTime(),true));
   startPos->setText(printPos(wpList.at(0)->origP.lat(), true) + " / " +
     printPos(wpList.at(0)->origP.lon(), false));
 
@@ -332,13 +355,14 @@ void OLCDialog::slotSend()
   QString link;
 
   // ungeklärte Felder:
-  QString index("100");     // Sollte sowieso mal in eine Config-Datei ...
+  QString index(daec->text());
+//  QString index("100");     // Sollte sowieso mal in eine Config-Datei ...
   QString glider("0");
   if(pureGlider->isChecked()) {  glider = "1";  }    // "1" for pure glider
 
-  QString dateString;
-  dateString.sprintf("%d", currentFlight->getDate().year() +
-    currentFlight->getDate().dayOfYear());
+//  QString dateString;
+//  dateString.sprintf("%d", currentFlight->getDate().year() +
+//    currentFlight->getDate().dayOfYear());
 
   QString compClass("0");
   switch(currentFlight->getCompetitionClass())
@@ -385,21 +409,30 @@ void OLCDialog::slotSend()
     }
 
   // personal info
-  link = "OLCvnolc=" + config->readEntry("PreName", "")
-      + "&na=" + config->readEntry("SurName", "")
-      + "&geb=" + config->readEntry("Birthday", "");
+//  link = "OLCvnolc=" + config->readEntry("PreName", "")
+//      + "&na=" + config->readEntry("SurName", "")
+//      + "&geb=" + config->readEntry("Birthday", "");
+  link = "OLCvnolc=" + preName->text()
+      + "&na=" + surName->text()
+      + "&geb=" + birthday->text();
 
   // glider info
-  link = link + "&gty=" + currentFlight->getHeader().at(2)
-      + "&gid=" + currentFlight->getHeader().at(1)
-      + "&ind=" + index
+//  link = link + "&gty=" + currentFlight->getHeader().at(2)
+    link += "&gty=" + QString(gliderList[gliderType->currentItem()].value)
+      + "&ind=" + QString("%1").arg(gliderList[gliderType->currentItem()].index)
+//      + "&gid=" + currentFlight->getHeader().at(1)
+      + "&gid=" + gliderID->text()
       + "&klasse=" + compClass + "&flugzeug=" + glider;
 
   // The olc need an "offical" filename. So we have to create it here ...
-  link += "&igcfn=" + currentFlight->getFileName() +
-          "&sta=" + t.getWPList().first()->name +
-          "&ft=" + dateString +
-          "&s0=" + printTime(currentFlight->getStartTime(), true);
+//  link += "&igcfn=" + currentFlight->getFileName() +
+//          "&sta=" + t.getWPList().first()->name +
+//          "&ft=" + dateString;
+          QDate flightDate(currentFlight->getDate().year(),currentFlight->getDate().month(),currentFlight->getDate().day());
+  link += "&igcfn=" + currentFlight->getFileName().section("/",-1,-1) + // strip path
+          "&sta=" + startPoint->text() +
+          // the following is a hack! it's probably only valid in 2003
+          "&ft=" + QString("%1").arg(-flightDate.daysTo(QDate( 2003, 1, 1 ))+146827);
 
   QString latH("N"), latG, latM, latMD;
   QString lonH("E"), lonG, lonM, lonMD;
@@ -407,17 +440,22 @@ void OLCDialog::slotSend()
   int latitude, longitude;
   int degree, min, min_deg;
 
-  // the beginning of the task should allways be the second point ...
-  POS_STRINGS(t.getWPList().at(1)->origP)
+  qWarning(QString("TaskType:%1").arg(t.getTaskType()));
 
-  // Abflugpunkt
-  link += "&w0bh=" + latH + "&w0bg=" + latG + "&w0bm=" + latM + "&w0bmd=" + latMD
+  switch (t.getTaskType()){
+  case (FlightTask::FAI) :
+  case (FlightTask::FAI_S) :
+  case (FlightTask::Dreieck) :
+  case (FlightTask::Dreieck_S) :
+      link += "&s0=" + printTime(currentFlight->getStartTime(), true);
+      // the beginning of the task should allways be the second point ...
+      POS_STRINGS(t.getWPList().at(1)->origP)
+
+      // Abflugpunkt
+      link += "&w0bh=" + latH + "&w0bg=" + latG + "&w0bm=" + latM + "&w0bmd=" + latMD
       + "&w0lh=" + lonH + "&w0lg=" + lonG + "&w0lm=" + lonM + "&w0lmd=" + lonMD;
 
-  if(t.getTaskType() == FlightTask::FAI || t.getTaskType() == FlightTask::Dreieck ||
-      t.getTaskType() == FlightTask::FAI_S || t.getTaskType() == FlightTask::Dreieck_S)
-    {
-      // we have a triangle ...
+      // we have a a triangle...
       POS_STRINGS(t.getWPList().at(2)->origP)
 
       link += "&w1bh=" + latH + "&w1bg=" + latG + "&w1bm=" + latM + "&w1bmd=" + latMD
@@ -430,17 +468,62 @@ void OLCDialog::slotSend()
       POS_STRINGS(t.getWPList().at(4)->origP)
       link += "&w3bh=" + latH + "&w3bg=" + latG + "&w3bm=" + latM + "&w3bmd=" + latMD
           + "&w3lh=" + lonH + "&w3lg=" + lonG + "&w3lm=" + lonM + "&w3lmd=" + lonMD;
-    }
 
-  // Endpunkt
-  POS_STRINGS(t.getWPList().at(t.getWPList().count() - 2)->origP)
-  link += "&w4bh=" + latH + "&w4bg=" + latG + "&w4bm=" + latM + "&w4bmd=" + latMD
-      + "&w4lh=" + lonH + "&w4lg=" + lonG + "&w4lm=" + lonM + "&w4lmd=" + lonMD;
+      POS_STRINGS(t.getWPList().at(t.getWPList().count() - 2)->origP)
+      link += "&w4bh=" + latH + "&w4bg=" + latG + "&w4bm=" + latM + "&w4bmd=" + latMD
+          + "&w4lh=" + lonH + "&w4lg=" + lonG + "&w4lm=" + lonM + "&w4lmd=" + lonMD;
 
-  link += "&s4=" + printTime(currentFlight->getLandTime(), true);
+      // Endpunkt
+      link += "&s4=" + printTime(currentFlight->getLandTime(), true);
+      break;
+  case (FlightTask::OLC2003) :
+      // the beginning of the task should allways be the second point ...
+      link += "&s0=" + printTime(t.getWPList().at(1)->sectorFAI,true);
+      POS_STRINGS(t.getWPList().at(1)->origP)
+      link += "&w0bh=" + latH + "&w0bg=" + latG + "&w0bm=" + latM + "&w0bmd=" + latMD
+      + "&w0lh=" + lonH + "&w0lg=" + lonG + "&w0lm=" + lonM + "&w0lmd=" + lonMD;
 
-  QFile igcFile(currentFlight->getFileName());
+      qWarning(latMD);
+      
+      // we have 5 turnpoints
+      POS_STRINGS(t.getWPList().at(2)->origP)
+      link += "&w1bh=" + latH + "&w1bg=" + latG + "&w1bm=" + latM + "&w1bmd=" + latMD
+          + "&w1lh=" + lonH + "&w1lg=" + lonG + "&w1lm=" + lonM + "&w1lmd=" + lonMD;
 
+      POS_STRINGS(t.getWPList().at(3)->origP)
+      link += "&w2bh=" + latH + "&w2bg=" + latG + "&w2bm=" + latM + "&w2bmd=" + latMD
+          + "&w2lh=" + lonH + "&w2lg=" + lonG + "&w2lm=" + lonM + "&w2lmd=" + lonMD;
+
+      POS_STRINGS(t.getWPList().at(4)->origP)
+      link += "&w3bh=" + latH + "&w3bg=" + latG + "&w3bm=" + latM + "&w3bmd=" + latMD
+          + "&w3lh=" + lonH + "&w3lg=" + lonG + "&w3lm=" + lonM + "&w3lmd=" + lonMD;
+
+      POS_STRINGS(t.getWPList().at(5)->origP)
+      link += "&w4bh=" + latH + "&w4bg=" + latG + "&w4bm=" + latM + "&w4bmd=" + latMD
+          + "&w4lh=" + lonH + "&w4lg=" + lonG + "&w4lm=" + lonM + "&w4lmd=" + lonMD;
+
+      POS_STRINGS(t.getWPList().at(6)->origP)
+      link += "&w5bh=" + latH + "&w5bg=" + latG + "&w5bm=" + latM + "&w5bmd=" + latMD
+          + "&w5lh=" + lonH + "&w5lg=" + lonG + "&w5lm=" + lonM + "&w5lmd=" + lonMD;
+
+      POS_STRINGS(t.getWPList().at(7)->origP)
+      link += "&w6bh=" + latH + "&w6bg=" + latG + "&w6bm=" + latM + "&w6bmd=" + latMD
+          + "&w6lh=" + lonH + "&w6lg=" + lonG + "&w6lm=" + lonM + "&w6lmd=" + lonMD;
+
+      link += "&s6=" + printTime(t.getWPList().at(7)->sectorFAI,true);
+      break;
+  default :
+      // the beginning of the task should allways be the second point ...
+      POS_STRINGS(t.getWPList().at(1)->origP)
+
+      // Abflugpunkt
+      link += "&w0bh=" + latH + "&w0bg=" + latG + "&w0bm=" + latM + "&w0bmd=" + latMD
+      + "&w0lh=" + lonH + "&w0lg=" + lonG + "&w0lm=" + lonM + "&w0lmd=" + lonMD;
+      // Endpunkt
+      link += "&s4=" + printTime(currentFlight->getLandTime(), true);
+  }
+//  QFile igcFile(currentFlight->getFileName());
+//
 //  if(!igcFile.open(IO_ReadOnly))
 //    {
 //      KMessageBox::error(0,
@@ -448,10 +531,10 @@ void OLCDialog::slotSend()
 //          i18n("No permission"));
 //      return;
 //    }
-
+//
 //  QTextStream igcStream(&igcFile);
   QString igcString;
-
+//
 //  while(!igcStream.eof())
 //    {
 //      igcString += igcStream.readLine();
@@ -465,19 +548,30 @@ void OLCDialog::slotSend()
   // Link für Segelflüge:
   //   http://www.segelflugszene.de/olc-cgi/olc-d/olc
   // Ausserdem muss das Land noch konfigurierbar sein.
-  link = "http://www.segelflugszene.de/olc-cgi/olc-d/olc?" + link;
+//  link = "http://www.segelflugszene.de/olc-cgi/olc-at/olc?" + link;
+//  link = "http://www.segelflugszene.de/olc-i/olcfile.html?" + link;
 
-  warning(link);
+//  link = QString("http://www.segelflugszene.de/olc-%1/olc?").arg(contestList[olcName->currentItem()].URL) + link;
+  link = QString("http://www.segelflugszene.de/olc-cgi/olc-%1/olc?").arg(contestList[olcName->currentItem()].URL) + link;
 
-//    KProcess browser;
+//  KProcess browser;
 
   // Because "%" is used as a placeholder in a string, we have to add it this way ...
   char prozent = 0x25;
   QString spaceString = QString(QChar(prozent)) + "20";
   link.replace(QRegExp("[ ]"), spaceString);
 
+  warning(link);
+
 //  browser.clearArguments();
 //  browser << "konqueror" << link;
 //  browser.start();
 
+  KProcess *proc = new KProcess;
+
+  *proc << "konqueror";
+  *proc << link;
+//  QApplication::connect(proc, SIGNAL(processExited(KProcess *)),
+//                      pointer_to_my_object, SLOT(my_objects_slot(KProcess *)));
+  proc->start();
 }

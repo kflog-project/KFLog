@@ -42,25 +42,32 @@ void OptimizationWizard::slotStartOptimization()
   rawPointText.sprintf(" %.2f", points);
   distText.sprintf(" %.2f km  ", distance);
   text = i18n("The task has been optimized for the OLC.\nThe best task found is:\n\n");
-  text = text + "\t1:  "
+  text = text + "\tBOT:  "
+      + printTime(route.at(idList[0])->time,true) + " : \t"
       + printPos(route.at(idList[0])->origP.lat()) + " / "
       + printPos(route.at(idList[0])->origP.lon(), false)
-      + QString("\n\t2:  ")
+      + QString("\n\t1.TP:  ")
+      + printTime(route.at(idList[1])->time,true) + " : \t"
       + printPos(route.at(idList[1])->origP.lat()) + " / "
       + printPos(route.at(idList[1])->origP.lon(), false)
-      + QString(" (%1km)\n\t3:  ").arg(dist(route.at(idList[0]),route.at(idList[1])),0,'f',2)
+      + QString(" (%1km)\n\t2.TP:  ").arg(dist(route.at(idList[0]),route.at(idList[1])),0,'f',2)
+      + printTime(route.at(idList[2])->time,true) + " : \t"
       + printPos(route.at(idList[2])->origP.lat()) + " / "
       + printPos(route.at(idList[2])->origP.lon(), false)
-      + QString(" (%1km)\n\t4:  ").arg(dist(route.at(idList[1]),route.at(idList[2])),0,'f',2)
+      + QString(" (%1km)\n\t3.TP:  ").arg(dist(route.at(idList[1]),route.at(idList[2])),0,'f',2)
+      + printTime(route.at(idList[3])->time,true) + " : \t"
       + printPos(route.at(idList[3])->origP.lat()) + " / "
       + printPos(route.at(idList[3])->origP.lon(), false)
-      + QString(" (%1km)\n\t5:  ").arg(dist(route.at(idList[2]),route.at(idList[3])),0,'f',2)
+      + QString(" (%1km)\n\t4.TP:  ").arg(dist(route.at(idList[2]),route.at(idList[3])),0,'f',2)
+      + printTime(route.at(idList[4])->time,true) + " : \t"
       + printPos(route.at(idList[4])->origP.lat()) + " / "
       + printPos(route.at(idList[4])->origP.lon(), false)
-      + QString(" (%1km)\n\t6:  ").arg(dist(route.at(idList[3]),route.at(idList[4])),0,'f',2)
+      + QString(" (%1km)\n\t5.TP:  ").arg(dist(route.at(idList[3]),route.at(idList[4])),0,'f',2)
+      + printTime(route.at(idList[5])->time,true) + " : \t"
       + printPos(route.at(idList[5])->origP.lat()) + " / "
       + printPos(route.at(idList[5])->origP.lon(), false)
-      + QString(" (%1km)\n\t7:  ").arg(dist(route.at(idList[4]),route.at(idList[5])),0,'f',2)
+      + QString(" (%1km)\n\tEOT:  ").arg(dist(route.at(idList[4]),route.at(idList[5])),0,'f',2)
+      + printTime(route.at(idList[6])->time,true) + " : \t"
       + printPos(route.at(idList[6])->origP.lat()) + " / "
       + printPos(route.at(idList[6])->origP.lon(), false)
       + QString(" (%1km):  ").arg(dist(route.at(idList[5]),route.at(idList[6])),0,'f',2)
@@ -79,6 +86,8 @@ void OptimizationWizard::slotStopOptimization()
 
 void OptimizationWizard::slotSetTimes()
 {
+  if (!evaluation)
+    return;
   unsigned int start=evaluation->getTaskStart();
   unsigned int stop=evaluation->getTaskEnd();
   flightPoint startPoint=flight->getPoint(start);

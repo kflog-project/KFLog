@@ -351,7 +351,7 @@ QString FlightTask::getTaskTypeString() const
     case FlightTask::Dreieck:      return i18n("Triangle");
     case FlightTask::FAI_S:        return i18n("FAI Triangle Start on leg");
     case FlightTask::Dreieck_S:    return i18n("Triangle Start on leg");
-    case FlightTask::OLC:          return i18n("OLC optimized");
+    case FlightTask::OLC2003:      return i18n("OLC optimized (2003 rules)");
     case FlightTask::Abgebrochen:  return i18n("???");
     }
 
@@ -1117,7 +1117,7 @@ QString FlightTask::getTaskDistanceString()
 
   QString distString;
 
-  if (flightType == OLC)
+  if (flightType == OLC2003)
     distString.sprintf("%.2f km",distance_wert);
   else
     if (getPlanningType() == Route) {
@@ -1144,7 +1144,7 @@ QString FlightTask::getPointsString()
 
   QString pointString;
 
-  if (flightType == OLC)
+  if (flightType == OLC2003)
     pointString.sprintf("%.2f", olcPoints);
   else{    
     int points1 = (int) taskPoints;
@@ -1180,7 +1180,7 @@ void FlightTask::setOptimizedTask(double points, double distance)
 {
   distance_wert=distance;
   olcPoints=points;
-  flightType=OLC;
+  flightType=OLC2003;
 }
 
 void FlightTask::__setDMSTPoints()

@@ -762,38 +762,6 @@ bool Flight::optimizeTaskOLC(Map* map)
   if (distance<0.0) // optimization was canceled
     return false;
 
-//  QString text, distText, rawPointText;
-//  rawPointText.sprintf(" %.2f", points);
-//  distText.sprintf(" %.2f km  ", distance);
-//  text = i18n("The task has been optimized for the OLC.\nThe best task found is:\n\n");
-//  text = text + "\t1:  "
-//      + printPos(route.at(idList[0])->origP.lat()) + " / "
-//      + printPos(route.at(idList[0])->origP.lon(), false)
-//      + QString("\n\t2:  ")
-//      + printPos(route.at(idList[1])->origP.lat()) + " / "
-//      + printPos(route.at(idList[1])->origP.lon(), false)
-//      + QString(" (%1km)\n\t3:  ").arg(dist(route.at(idList[0]),route.at(idList[1])),0,'f',2)
-//      + printPos(route.at(idList[2])->origP.lat()) + " / "
-//      + printPos(route.at(idList[2])->origP.lon(), false)
-//      + QString(" (%1km)\n\t4:  ").arg(dist(route.at(idList[1]),route.at(idList[2])),0,'f',2)
-//      + printPos(route.at(idList[3])->origP.lat()) + " / "
-//      + printPos(route.at(idList[3])->origP.lon(), false)
-//      + QString(" (%1km)\n\t5:  ").arg(dist(route.at(idList[2]),route.at(idList[3])),0,'f',2)
-//      + printPos(route.at(idList[4])->origP.lat()) + " / "
-//      + printPos(route.at(idList[4])->origP.lon(), false)
-//      + QString(" (%1km)\n\t6:  ").arg(dist(route.at(idList[3]),route.at(idList[4])),0,'f',2)
-//      + printPos(route.at(idList[5])->origP.lat()) + " / "
-//      + printPos(route.at(idList[5])->origP.lon(), false)
-//      + QString(" (%1km)\n\t7:  ").arg(dist(route.at(idList[4]),route.at(idList[5])),0,'f',2)
-//      + printPos(route.at(idList[6])->origP.lat()) + " / "
-//      + printPos(route.at(idList[6])->origP.lon(), false)
-//      + QString(" (%1km):  ").arg(dist(route.at(idList[5]),route.at(idList[6])),0,'f',2)
-//      + i18n("\n\nDistance:\t") + distText + "\n" + i18n("Points(raw):\t") + rawPointText + "\n\n"
-//      + i18n("Do You want to use this task and replace the old?");
-//
-//  if(KMessageBox::questionYesNo(0, text, i18n("Optimizing")) ==
-//        KMessageBox::Yes)
-//    {
       QList<Waypoint> wpL;
 
       APPEND_WAYPOINT(0, 0, i18n("Take-Off"))
@@ -820,10 +788,6 @@ bool Flight::optimizeTaskOLC(Map* map)
 
       delete wizard;
       return true;
-//    }
-//
-//  delete wizard;
-//  return false;
 }
 
 

@@ -21,6 +21,7 @@
 #include <kcombobox.h>
 #include <klistview.h>
 #include <krestrictedline.h>
+#include <kcombobox.h>
 
 #include <qcheckbox.h>
 #include <qdialog.h>
@@ -61,7 +62,7 @@ class OLCDialog : public QDialog
     /** */
     KRestrictedLine* birthday;
     /** */
-    KLineEdit* gliderType;
+    KComboBox* gliderType;
     /** */
     KLineEdit* gliderID;
     /** */
@@ -74,6 +75,8 @@ class OLCDialog : public QDialog
     KComboBox* classSelect;
     /** */
     KLineEdit* startPoint;
+    /** */
+    KRestrictedLine* startTime;
     /** */
     QLabel* startPos;
     /** */

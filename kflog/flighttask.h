@@ -136,7 +136,7 @@ class FlightTask : public BaseFlightElement
    */
   enum FlightType {ZielS = 1, ZielR = 2, FAI = 3, Dreieck = 4, FAI_S = 5,
                    Dreieck_S = 6, Abgebrochen = 7, Unknown = 8, FAI_2 = 9,
-                   FAI_S2 = 10, FAI_3 = 11, FAI_S3 = 12, Vieleck = 13, OLC = 14};
+                   FAI_S2 = 10, FAI_3 = 11, FAI_S3 = 12, Vieleck = 13, OLC2003 = 14};
   /*
    * The task-types
    */
@@ -184,9 +184,9 @@ class FlightTask : public BaseFlightElement
   /** */
   QList<Waypoint> wpList;
   /** */
-  unsigned int task_end;
+//  unsigned int task_end;
   /** */
-  unsigned int task_begin;
+//  unsigned int task_begin;
   /** */
   QRect bBoxTask;
   /** */
@@ -205,6 +205,8 @@ class FlightTask : public BaseFlightElement
   QList<faiAreaSector> FAISectList;
   /* direction of area planning */
   int __planningDirection;
+  /* Route of flight */
+  QList<flightPoint> flightRoute;
 };
 
 #endif

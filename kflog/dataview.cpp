@@ -121,7 +121,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       "</TD></TR>";
   }
   
-  if (task->getTaskType() == FlightTask::OLC){
+  if (task->getTaskType() == FlightTask::OLC2003){
     txt.sprintf("%.2f", task->getOlcPoints());
     speed.sprintf("%.2f",task->getAverageSpeed());
     htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Total Distance") +
