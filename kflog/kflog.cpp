@@ -48,6 +48,7 @@
 #include <mapconfig.h>
 #include <mapcontents.h>
 #include <mapcontrolview.h>
+#include <mapprint.h>
 #include <printdialog.h>
 #include <taskandwaypoint.h>
 
@@ -575,10 +576,12 @@ void KFLogApp::slotFilePrint()
 {
   slotStatusMsg(i18n("Printing..."));
 
+  MapPrint::MapPrint();
+
 //  QPrinter printer;
 //  if (printer.setup(this))
-  PrintDialog pD(this, true);
-  pD.openMapPrintDialog();
+//  PrintDialog pD(this, true);
+//  pD.openMapPrintDialog();
 
   slotStatusMsg(i18n("Ready."));
 }
