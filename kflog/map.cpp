@@ -544,7 +544,7 @@ void Map::__displayMapInfo(QPoint current)
         {
           wpText = wpText + "</UL>";
           text = text + wpText;
-          // Text anzeigen
+          // Show text
           QWhatsThis::enterWhatsThisMode();
           QWhatsThis::leaveWhatsThisMode(text);
           isAirport = true;
@@ -568,7 +568,7 @@ void Map::__displayMapInfo(QPoint current)
 
   if(show)
     {
-      //  Text anzeigen
+      //  Show text
       QWhatsThis::enterWhatsThisMode();
       QWhatsThis::leaveWhatsThisMode(text);
     }
@@ -1117,8 +1117,8 @@ void Map::__drawMap()
     {
       currentAirS = (Airspace*)_globalMapContents.getElement(
           MapContents::AirspaceList, loop);
-        // wir sollten nur die Lufträume in der Liste speichern, die
-        // tatsächlich gezeichnet werden. Dann geht die Suche schneller.
+        // We should only add airspaces to the list that really have been
+        // drawn. Searching will be faster.
       airspaceRegList->append(currentAirS->drawRegion(&airSpaceP,
             &airspaceMaskP));
     }
