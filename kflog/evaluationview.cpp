@@ -63,6 +63,31 @@ EvaluationView::EvaluationView(QScrollView* parent, EvaluationDialog* dialog)
   setBackgroundColor(QColor(white));
 }
 
+/*
+EvaluationView::EvaluationView_new(QScrollView* parent, EvaluationDialog* dialog)
+: QWidget(parent, "EvaluationView", false),
+  startTime(0), secWidth(5), scrollFrame(parent), evalDialog(dialog)
+{
+
+  canvas = new QCanvas();
+  
+
+
+  mouseB = NoButton | NotReached;
+  cursor1 = 0;
+  cursor2 = 0;
+
+  cursor_alt = 0;
+
+  flight = NULL;
+
+  setMouseTracking(true);
+
+  setBackgroundColor(QColor(white));
+}
+
+*/
+
 EvaluationView::~EvaluationView()
 {
   delete pixBuffer;
@@ -116,7 +141,7 @@ void EvaluationView::mousePressEvent(QMouseEvent* event)
 void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
 {
 
-  time_t time_alt, x;
+  time_t time_alt;
   int cursor = -1;
 
   if (flight) {
@@ -149,23 +174,23 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
     mouseB = NoButton | NotReached;
     this->setCursor(arrowCursor);
 
+
+
     if(cursor == 1)
       {
         cursor1 =  flight->getPointByTime(
-                  (time_t)(( event->pos().x() - X_ABSTAND ) * secWidth + startTime)).time;
-
-        if(cursor1 > cursor2) cursor1 = cursor2;
-        x = ( cursor1 - startTime ) / secWidth + X_ABSTAND ;
+                    (time_t)(( event->pos().x() - X_ABSTAND ) * secWidth + startTime)).time;
+        if(cursor1 > cursor2) cursor1 = cursor2;                    
       }
     else if(cursor == 2)
       {
         cursor2 =  flight->getPointByTime(
-                   (time_t)(( event->pos().x() - X_ABSTAND ) * secWidth + startTime)).time;
-
-        if(cursor2 < cursor1) cursor2 = cursor1;
-        x = ( cursor2 - startTime ) / secWidth + X_ABSTAND ;
+                     (time_t)(( event->pos().x() - X_ABSTAND ) * secWidth + startTime)).time;
+                     
+        if(cursor1 > cursor2) cursor2 = cursor1;
       }
     else return;
+
 
     flight->setTaskByTimes(cursor1,cursor2);
     evalDialog->updateText(flight->getPointIndexByTime(cursor1),
@@ -201,19 +226,9 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
     else if(mouseB != (LeftButton | NotReached) &&
             mouseB != (NoButton | Reached))
       {
-        // Koordinaten in Bildschirm Koordinaten
-        int cursor = flight->getPointByTime((time_t)((event->pos().x() - X_ABSTAND )
-                             * secWidth + startTime)).time - startTime;
+        time_t cursor = flight->getPointByTime(
+                          (time_t)((event->pos().x() - X_ABSTAND ) * secWidth + startTime)).time;
 
-        __paintCursor( cursor  / secWidth + X_ABSTAND,
-                           (int)( cursor_alt - startTime ) / secWidth + X_ABSTAND,
-                           1,0 );
-
-        cursor_alt = flight->getPointByTime((time_t)((event->pos().x() - X_ABSTAND ) *
-                            secWidth + startTime)).time;
-
-        //  kontinuierliches Update der Anzeige
-        // was wird in Mouse Release noch gebraucht??
         time_t cursor_1 = cursor1;
         time_t cursor_2 = cursor2;
 
@@ -230,6 +245,18 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
             else
                 cursor_2 = cursor;
           }
+
+        // don't move cursor1 behind cursor2
+        if(cursor_1 > cursor_2) return;
+
+        __paintCursor( ( cursor  - startTime ) / secWidth + X_ABSTAND,
+                       (int)( cursor_alt - startTime ) / secWidth + X_ABSTAND,
+                       1,0 );
+
+        cursor_alt = flight->getPointByTime((time_t)((event->pos().x() - X_ABSTAND ) *
+                            secWidth + startTime)).time;
+
+                              
         evalDialog->updateText(flight->getPointIndexByTime(cursor_1),
                                flight->getPointIndexByTime(cursor_2));
       }
@@ -666,6 +693,7 @@ void EvaluationView::__draw()
                           AlignCenter,timeText);
     }
 
+    
   if(vario)
     {
       paint.setPen(QPen(QColor(255,100,100), 1));

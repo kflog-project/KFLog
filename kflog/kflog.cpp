@@ -46,6 +46,7 @@
 #include "centertodialog.h"
 #include "dataview.h"
 #include "evaluationdialog.h"
+#include "evaluationview.h"
 #include "flight.h"
 #include "flightdataprint.h"
 #include "helpwindow.h"
@@ -231,9 +232,9 @@ void KFLogApp::initActions()
   viewCenterTo = new KAction(i18n("Center to..."), "centerto", Key_F8, this,
       SLOT(slotCenterTo()), actionCollection(), "view_fit_to_height");
 
-  flightEvaluation = new KAction(i18n("Evaluation"), "flightevaluation",
-      CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
-      "evaluate_flight");
+//  flightEvaluation = new KAction(i18n("Evaluation"), "flightevaluation",
+//      CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
+//      "evaluate_flight");
 
 
   mapMoveMenu->insert(new KAction(i18n("move map north-west"), "movemap_nw",
@@ -282,6 +283,9 @@ void KFLogApp::initActions()
   viewHelpWindow = new KToggleAction(i18n("Show HelpWindow"), 0,
       CTRL+Key_H, this, SLOT(slotToggleHelpWindow()), actionCollection(),
       "toggle_help_window");
+  viewEvaluationWindow = new KToggleAction(i18n("Show EvaluationWindow"), 0,
+      CTRL+Key_E, this, SLOT(slotToggleEvaluationWindow()), actionCollection(),
+      "toggle_evaluation_window");      
   viewMapControl = new KToggleAction(i18n("Show Mapcontrol"), 0, this,
       SLOT(slotToggleMapControl()), actionCollection(), "toggle_map_control");
   viewMap = new KToggleAction(i18n("Show Map"), 0, this,
@@ -386,7 +390,7 @@ void KFLogApp::initActions()
 
   KActionMenu* flightMenu = new KActionMenu(i18n("F&light"),
       actionCollection(), "flight");
-  flightMenu->insert(flightEvaluation);
+  flightMenu->insert(viewEvaluationWindow);
   flightMenu->insert(flightOptimization);
   flightMenu->insert(flightOptimizationOLC);
   //  flightMenu->insert(viewWaypoints);
@@ -467,7 +471,8 @@ void KFLogApp::initView()
   // wir könnten mal Icons für die einzelnen Bereiche gebrauchen ...
   mapViewDock = createDockWidget("Map", 0, 0, i18n("Map"));
   dataViewDock = createDockWidget("Flight-Data", 0, 0, i18n("Flight-Data"));
-  helpWindowDock = createDockWidget("Help", 0, 0, i18n("Help"));  
+  helpWindowDock = createDockWidget("Help", 0, 0, i18n("Help"));
+  evaluationWindowDock = createDockWidget("Evaluation", 0, 0, i18n("Evaluation"));    
   mapControlDock = createDockWidget("Map-Control", 0, 0, i18n("Map-Control"));
   waypointsDock = createDockWidget("Waypoints", 0, 0, i18n("Waypoints"));
   tasksDock = createDockWidget("Tasks", 0, 0, i18n("Tasks"));
@@ -491,7 +496,11 @@ void KFLogApp::initView()
   connect(helpWindowDock, SIGNAL(iMBeingClosed()),
       SLOT(slotHideHelpWindowDock()));
   connect(helpWindowDock, SIGNAL(hasUndocked()),
-      SLOT(slotHideHelpWindowDock()));      
+      SLOT(slotHideHelpWindowDock()));
+  connect(evaluationWindowDock, SIGNAL(iMBeingClosed()),
+      SLOT(slotHideEvaluationWindowDock()));
+  connect(evaluationWindowDock, SIGNAL(hasUndocked()),
+      SLOT(slotHideEvaluationWindowDock()));      
   connect(waypointsDock, SIGNAL(iMBeingClosed()),
       SLOT(slotHideWaypointsDock()));
   connect(waypointsDock, SIGNAL(hasUndocked()),
@@ -531,6 +540,9 @@ void KFLogApp::initView()
   helpWindow = new HelpWindow(helpWindowDock);
   helpWindowDock->setWidget(helpWindow);  
 
+  evaluationWindow = new EvaluationDialog(evaluationWindowDock);
+  evaluationWindowDock->setWidget(evaluationWindow);  
+
   waypoints = new Waypoints(waypointsDock);
   waypointsDock->setWidget(waypoints);
 
@@ -551,7 +563,8 @@ void KFLogApp::initView()
   objectTreeDock->manualDock( mapViewDock, KDockWidget::DockRight, 67 );
   dataViewDock->manualDock( objectTreeDock, KDockWidget::DockBottom, 67 );
   mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 62 );
-  helpWindowDock->manualDock( mapControlDock, KDockWidget::DockCenter);    
+  helpWindowDock->manualDock( mapControlDock, KDockWidget::DockCenter);
+  evaluationWindowDock->manualDock( mapViewDock, KDockWidget::DockDesktop);      
   waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 70);
   legendDock->manualDock(waypointsDock, KDockWidget::DockRight, 90);
   tasksDock->manualDock(waypointsDock, KDockWidget::DockCenter, 50 );  
@@ -591,30 +604,36 @@ void KFLogApp::initView()
   connect(&_globalMapContents, SIGNAL(currentFlightChanged(BaseFlightElement*)), objectTree,
       SLOT(slotSelectedFlightChanged(BaseFlightElement*)));
 
-  connect(waypoints, SIGNAL(copyWaypoint2Task(Waypoint *)), map,
-      SLOT(slotAppendWaypoint2Task(Waypoint *)));
+  connect(waypoints, SIGNAL(copyWaypoint2Task(Waypoint *)),
+      map, SLOT(slotAppendWaypoint2Task(Waypoint *)));
 
-  connect(waypoints, SIGNAL(waypointCatalogChanged( WaypointCatalog * )), map,
-      SLOT(slotWaypointCatalogChanged( WaypointCatalog * )));
+  connect(waypoints, SIGNAL(waypointCatalogChanged( WaypointCatalog * )),
+      map, SLOT(slotWaypointCatalogChanged( WaypointCatalog * )));
 
   connect(tasks, SIGNAL(newTask()), &_globalMapContents,
       SLOT(slotNewTask()));
   connect(tasks, SIGNAL(openTask()), this, SLOT(slotTaskOpen()));
   connect(tasks, SIGNAL(closeTask()), &_globalMapContents, SLOT(closeFlight()));
-  connect(tasks, SIGNAL(flightSelected(BaseFlightElement *)), &_globalMapContents,
-      SLOT(slotSetFlight(BaseFlightElement *)));
-  connect(&_globalMapContents, SIGNAL(newTaskAdded(FlightTask *)), tasks,
-      SLOT(slotAppendTask(FlightTask *)));
+  connect(tasks, SIGNAL(flightSelected(BaseFlightElement *)),
+      &_globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
+  connect(&_globalMapContents, SIGNAL(newTaskAdded(FlightTask *)),
+      tasks, SLOT(slotAppendTask(FlightTask *)));
 
-  connect(waypoints, SIGNAL(centerMap(int, int)), &_globalMapMatrix,
-      SLOT(slotCenterTo(int, int)));
+  connect(waypoints, SIGNAL(centerMap(int, int)),
+      &_globalMapMatrix, SLOT(slotCenterTo(int, int)));
 
-  connect(objectTree, SIGNAL(selectedFlight(BaseFlightElement *)), &_globalMapContents,
-      SLOT(slotSetFlight(BaseFlightElement *)));
+  connect(objectTree, SIGNAL(selectedFlight(BaseFlightElement *)),
+      &_globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
+
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()),
+      evaluationWindow, SLOT(slotShowFlightData()));
+
+  connect(evaluationWindow, SIGNAL(showCursor(const QPoint&, const QPoint&)),
+      map, SLOT(slotDrawCursor(const QPoint&, const QPoint&)));      
+
 }
 
-void KFLogApp::slotShowPointInfo(const QPoint pos,
-    const flightPoint& point)
+void KFLogApp::slotShowPointInfo(const QPoint pos, const flightPoint& point)
 {
   statusBar()->clear();
   statusTimeL->setText(printTime(point.time, true));
@@ -868,6 +887,8 @@ void KFLogApp::slotHideDataViewDock()  { viewData->setChecked(false); }
 
 void KFLogApp::slotHideHelpWindowDock()  { viewHelpWindow->setChecked(false); }
 
+void KFLogApp::slotHideEvaluationWindowDock()  { viewEvaluationWindow->setChecked(false); }
+
 void KFLogApp::slotHideWaypointsDock() { viewWaypoints->setChecked(false); }
 
 void KFLogApp::slotHideTasksDock() { viewTasks->setChecked(false); }
@@ -881,7 +902,8 @@ void KFLogApp::slotCheckDockWidgetStatus()
   viewMapControl->setChecked(mapControlDock->isVisible());
   viewMap->setChecked(mapViewDock->isVisible());
   viewData->setChecked(dataViewDock->isVisible());
-  viewHelpWindow->setChecked(helpWindowDock->isVisible());  
+  viewHelpWindow->setChecked(helpWindowDock->isVisible());
+  viewEvaluationWindow->setChecked(evaluationWindowDock->isVisible());    
   viewWaypoints->setChecked(waypointsDock->isVisible());
   viewTasks->setChecked(tasksDock->isVisible());
   viewLegend->setChecked(legendDock->isVisible());
@@ -890,6 +912,8 @@ void KFLogApp::slotCheckDockWidgetStatus()
 void KFLogApp::slotToggleDataView()  { dataViewDock->changeHideShowState(); }
 
 void KFLogApp::slotToggleHelpWindow()  { helpWindowDock->changeHideShowState(); }
+
+void KFLogApp::slotToggleEvaluationWindow()  { evaluationWindowDock->changeHideShowState(); }
 
 void KFLogApp::slotToggleMapControl() { mapControlDock->changeHideShowState(); }
 
@@ -926,7 +950,10 @@ void KFLogApp::slotSelectFlightData(int id)
   map->slotRedrawFlight();
 }
 
-void KFLogApp::slotEvaluateFlight()
+/*
+ * Now as a Dockwidget
+ 
+ void KFLogApp::slotEvaluateFlight()
 {
   KDialog* dialog = new KDialog(this,"Evaluation Dialog");
   EvaluationDialog* evaluation =  new EvaluationDialog(dialog);
@@ -944,6 +971,7 @@ void KFLogApp::slotEvaluateFlight()
   dialog->show();
   dialog->resize(640,480);
 }
+*/
 
 void KFLogApp::slotCenterTo()
 {
@@ -1122,7 +1150,7 @@ void KFLogApp::slotModifyMenu()
             flightPrint->setEnabled(true);
             viewCenterTask->setEnabled(true);
             viewCenterFlight->setEnabled(true);
-            flightEvaluation->setEnabled(true);
+//            flightEvaluation->setEnabled(true);
             flightOptimization->setEnabled(true);
             flightOptimizationOLC->setEnabled(true);
             olcDeclaration->setEnabled(true);
@@ -1144,8 +1172,7 @@ void KFLogApp::slotModifyMenu()
             flightPrint->setEnabled(true);
             viewCenterTask->setEnabled(true);
             viewCenterFlight->setEnabled(false);
-            flightEvaluation->setEnabled(false);
-            flightEvaluation->setEnabled(false);
+//            flightEvaluation->setEnabled(false);
             flightOptimization->setEnabled(false);
             flightOptimizationOLC->setEnabled(false);
             olcDeclaration->setEnabled(false);
@@ -1167,7 +1194,7 @@ void KFLogApp::slotModifyMenu()
             flightPrint->setEnabled(true);
             viewCenterTask->setEnabled(true);
             viewCenterFlight->setEnabled(true);
-            flightEvaluation->setEnabled(true);
+//            flightEvaluation->setEnabled(true);
             flightOptimization->setEnabled(true);
             flightOptimizationOLC->setEnabled(true);
             olcDeclaration->setEnabled(true);
@@ -1192,7 +1219,7 @@ void KFLogApp::slotModifyMenu()
       flightPrint->setEnabled(false);
       viewCenterTask->setEnabled(false);
       viewCenterFlight->setEnabled(false);
-      flightEvaluation->setEnabled(false);
+//      flightEvaluation->setEnabled(false);
       flightOptimization->setEnabled(false);
       flightOptimizationOLC->setEnabled(false);
       olcDeclaration->setEnabled(false);

@@ -33,6 +33,7 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   : QFrame(parent),
   flight(0)
 {
+warning("EvaluationFrame::EvaluationFrame");
   // variable Kontrolle
   QSplitter* kontSplitter = new QSplitter(QSplitter::Horizontal, this);
 
@@ -170,6 +171,7 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
 
 EvaluationFrame::~EvaluationFrame()
 {
+ warning("EvaluationFrame::~EvaluationFrame()");
   // Save settings
   KConfig* config = KGlobal::config();
 
@@ -192,7 +194,7 @@ void EvaluationFrame::slotShowFlight()
 
 void EvaluationFrame::slotShowGraph()
 {
-  // draw the curve
+  // draw the curves
   evalView->drawCurve(check_vario->isChecked(), check_speed->isChecked(),
     check_baro->isChecked(), glatt_va, glatt_v, glatt_h, secWidth);
 

@@ -1477,6 +1477,9 @@ void Map::__showLayer()
 
 void Map::slotDrawCursor(const QPoint& p1, const QPoint& p2)
 {
+
+//warning("Map::slotDrawCursor");
+
   extern const MapMatrix _globalMapMatrix;
 
   QPoint pos1(_globalMapMatrix.map(p1)), pos2(_globalMapMatrix.map(p2));

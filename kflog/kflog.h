@@ -36,6 +36,7 @@
 
 class DataView;
 class HelpWindow;
+class EvaluationDialog;
 class Map;
 class MapControlView;
 class KFLogConfig;
@@ -165,7 +166,11 @@ class KFLogApp : public KDockMainWindow
   /**
    * Shows or hides the Help Window.
    */
-  void slotToggleHelpWindow();  
+  void slotToggleHelpWindow();
+  /**
+    * Shows or hides the Evaluation window
+    */
+  void slotToggleEvaluationWindow();
   /**
    * Shows or hides the mapcontrol-widget.
    */
@@ -217,9 +222,9 @@ class KFLogApp : public KDockMainWindow
    */
   void slotStartComplete();
   /**
-   * Opens an evaluation-dialog.
+   * Opens an evaluation-dialog. // Now as a Dockwidget
    */
-  void slotEvaluateFlight();
+//   void slotEvaluateFlight();
   /**
    * Hides the mapcontrol-widget. Called, when the user has closed or
    * undocked the widget.
@@ -240,7 +245,11 @@ class KFLogApp : public KDockMainWindow
    * undocked the widget.
    */
   void slotHideHelpWindowDock();
-  
+  /**
+    * Hides the EvaluationWindow. Called, when the user has closed or
+    * undocked the widget.
+    */
+  void slotHideEvaluationWindowDock();
   /**
    * Checks the status of all dock-widgets and updates the menu.
    */
@@ -341,7 +350,12 @@ class KFLogApp : public KDockMainWindow
    * @see helpWindow
    */
   KDockWidget* helpWindowDock;
-  
+  /**
+   * Dockwidget to handle the EvaluationWindow.
+   *
+   * @see evaluationWindow
+   */
+  KDockWidget* evaluationWindowDock;  
   /**
    * Dockwidget to handle the waypoints-widget.
    *
@@ -386,7 +400,13 @@ class KFLogApp : public KDockMainWindow
    *
    * @see helpWindowDock
    */
-  HelpWindow* helpWindow;  
+  HelpWindow* helpWindow;
+  /**
+   * The evalutionWindow. Embedded in evaluationWindowDock
+   *
+   * @see evaluationWindowDock
+   */
+  EvaluationDialog* evaluationWindow;    
   /**
    * The progessbar in the statusbar. Used during drawing the map to display
    * the percentage of what is allready drawn.
@@ -474,7 +494,11 @@ class KFLogApp : public KDockMainWindow
   /**
    * Action to handle the helpWindow.
    */
-  KToggleAction* viewHelpWindow;  
+  KToggleAction* viewHelpWindow;
+  /**
+   * Action to handle the evalutionWindow.
+   */
+  KToggleAction* viewEvaluationWindow;  
   /**
    * Action to handle the mapcontrol.
    */
@@ -494,7 +518,7 @@ class KFLogApp : public KDockMainWindow
   /**
    * Action to show the evaluationdialog.
    */
-  KAction* flightEvaluation;
+//  KAction* flightEvaluation;
   KAction* resetConfirmations;
   /**
    * Action to optimize flight for OLC declaration.

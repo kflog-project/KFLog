@@ -34,8 +34,11 @@
 #include "mapcalc.h"
 #include <klocale.h>
 
-EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[]) : QWidget(parent,name)
+EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[])
+  : QWidget(parent, name)
 {
+  warning("EvaluationDialog::EvaluationDialog");
+
   setCaption(i18n("Flightevaluation:"));
 
 //  if (staysOnTop)
@@ -49,11 +52,15 @@ EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[]) : QWidget
   o1->setMinimumHeight(o1->sizeHint().height() + 10);
   combo_flight->setMinimumWidth(120);
 */
+
+
   // variable Textanzeige
   QSplitter* textSplitter = new QSplitter(QSplitter::Vertical, this, "splitter");
 
   // Diagrammfenster - Mitte
   evalFrame = new EvaluationFrame(textSplitter, this);
+
+  
 
   connect(this, SIGNAL(flightChanged()), evalFrame,
       SLOT(slotShowFlight()));
@@ -81,30 +88,43 @@ EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[]) : QWidget
 //  updateListBox();
 
   // Setting default-values for the splitter
-  typedef QValueList<int> testList;
+/*  typedef QValueList<int> testList;
   testList list;
   list.append(100);
   list.append(60);
   textSplitter->setSizes(list);
-
+*/
+  
+ /* No longer necessary with the KDockWidget  
   KConfig* config = KGlobal::config();
 
   config->setGroup("Evaluation");
+
+
   int dlgWidth, dlgHeight;
   dlgWidth = config->readNumEntry("Dialog Width", 800);
   dlgHeight = config->readNumEntry("Dialog Height", 600);
 
   resize(dlgWidth, dlgHeight);
+
+  */
+
   
 //  connect(combo_flight, SIGNAL(activated(int)),
 //        SLOT(slotShowFlightData()));
 //  connect(close, SIGNAL(clicked()), SLOT(reject()));
-  show();
-  slotShowFlightData();
+
+
+// Changes because of the KDockWidget
+//  show();
+//  slotShowFlightData(); // <-- will be executed when loading a flight
 }
+
 
 EvaluationDialog::~EvaluationDialog()
 {
+
+  warning(" EvaluationDialog::~EvaluationDialog()");
   // delete Cursor
   emit(showCursor(QPoint(-100,-100), QPoint(-100,-100)));
 
@@ -118,6 +138,9 @@ EvaluationDialog::~EvaluationDialog()
 
 void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
 {
+
+// warning("EvaluationDialog::updateText(%d, %d, %d)",index1,index2,updateAll);
+
   QString htmlText;
   QString text;
   flightPoint p1;
@@ -195,6 +218,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
                           "</TD></TR></TABLE>";
       }
 
+      
     emit(showCursor(p1.projP,p2.projP));
     break;
   case BaseMapElement::Task:
@@ -274,6 +298,6 @@ Flight* EvaluationDialog::getFlight()
 
 void EvaluationDialog::hide()
 {
-//warning("EvaluationDialog::hide()");
-  this->EvaluationDialog::~EvaluationDialog();
+warning("EvaluationDialog::hide()");
+//  this->EvaluationDialog::~EvaluationDialog();
 }

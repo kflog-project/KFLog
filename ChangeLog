@@ -1,5 +1,11 @@
 $Id$
 
+2003-05-29 Florian Ehinger <florian@kflog.org>
+  * Fixed Bugs in EvaluationDialog
+     (Flags in the map are shown again, cursor text is shown again)
+  * it's no longer possible to move cursor1 behind cursor2
+  * Changed the evaluation Dialog to a KDockwiget
+
 2003-05-27 Eggert Ehmke <eggert@kflog.org>
 
     * Extended flight recorder capabilities for basic data

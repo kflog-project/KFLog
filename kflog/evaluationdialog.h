@@ -63,7 +63,7 @@ class EvaluationDialog : public QWidget
 
  signals:
   /** */
-  void showCursor(QPoint p1, QPoint p2);
+  void showCursor(const QPoint& p1, const QPoint& p2);
   /** */
   void flightChanged();
   /** */
