@@ -22,8 +22,8 @@ bin_program=kflog
 cflags=
 cppflags=
 cxxflags=\s-O0 -Wall
-ldadd=-lkdeprint -lm $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
-ldflags=\s            \s
+ldadd=-lkdeprint -lGL -lm $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
+ldflags=\s             \s
 
 [General]
 AMChanged=true
