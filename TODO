@@ -1,1 +1,50 @@
+/*
+  MapCanvas::slotZoomOut()
+  MapMatrix::scaleSub()
+  MapCanvas::slotRedrawMap()
+  MapCanvas::proofeSection()
+*/
 
+Kartenfehler:
+
+Die Höhenlinien in England scheinen in die falschen Dateien gerückt
+zu sein. Zumindest der Bereich zwischen 2°W und 0°W ( >52° Nord ) der
+Höhen über 0M ist in den 0°E Dateien ...
+
+
+Handhabung der Kartenelemente:
+=============================
+
+Alle Kartenelemente werden von QCanvasPolygonalItem oder QCanvasItem
+abgeleitet. Beim Erzeugen der Elemente werden die Positionen bereits
+projeziert. Zum Malen wird nur eine Matrix definiert, die die Drehung,
+Skalierung und Verschiebung der Punkte durchführt.
+
+Für das Einlesen und Ausgeben der Elemente müssen entsprechende
+Operatoren definiert werden.
+
+Da alle CanvasItems eine "Höhe" haben, ist die Sortierung der Höhenlinien
+nicht mehr nötig.
+
+Wie erfolgt der Zugriff auf einzelne Informationen der Elemente?
+
+So:
+
+    QCanvasItem* item;
+    // Find an item, eg. with QCanvasItem::collisions().
+    ...
+    if (item->rtti() == MySprite::rtti()) {
+        MySprite* s = (MySprite*)item;
+        if (s->isDamagable()) s->loseHitPoints(1000);
+        if (s->isHot()) myself->loseHitPoints(1000);
+        ...
+    }
+
+Die Pointarrays der Kartenelemente können 32bit-Zahlen enthalten. Gemalt
+werden dürfen so große Werte jedoch nicht. Daher muss das MapMatrix-Objekt
+dafür sorgen, dass immer nur erlaubte Werte gezeichnet werden.
+
+Das Neuzeichnen der Items muss kontrolliet werden. Bislang wird die
+Funktion noch zu oft ausgeführt. Bei vielen Items dürfte das zu Problemen
+führen. Daher muss eine Zwischenspeicherung per Pixmap implementiert
+werden.

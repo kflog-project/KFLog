@@ -1,8 +1,16 @@
 <!DOCTYPE kpartgui>
 <kpartgui name="kflog" version="2.0.1">
 <MenuBar>
-  <Menu name="file"><text>&amp;File</text>
-    <Action name="file_new_window"/>
+  <Menu name="view"><text>&amp;View</text>
+    <Action name="view_center_task"/>
+    <Action name="view_center_flight"/>
+    <Action name="view_center_home"/>
+    <Separator name="separator_0" />
+    <Action name="toggle_data_view"/>
+    <Action name="toggle_map_control"/>
+  </Menu>
+  <Menu name="settings"><text>&amp;Settings</text>
+    <Action name="configure_map"/>
   </Menu>
 </MenuBar>
 </kpartgui>
