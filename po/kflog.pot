@@ -1,0 +1,168 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2001-03-10 16:47+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+
+#: kflog.cpp:69
+msgid "New &Window"
+msgstr ""
+
+#: kflog.cpp:84
+msgid "Opens a new application window"
+msgstr ""
+
+#: kflog.cpp:85
+msgid "Creates a new document"
+msgstr ""
+
+#: kflog.cpp:86
+msgid "Opens an existing document"
+msgstr ""
+
+#: kflog.cpp:87
+msgid "Opens a recently used file"
+msgstr ""
+
+#: kflog.cpp:88
+msgid "Saves the actual document"
+msgstr ""
+
+#: kflog.cpp:89
+msgid "Saves the actual document as..."
+msgstr ""
+
+#: kflog.cpp:90
+msgid "Closes the actual document"
+msgstr ""
+
+#: kflog.cpp:91
+msgid "Prints out the actual document"
+msgstr ""
+
+#: kflog.cpp:92
+msgid "Quits the application"
+msgstr ""
+
+#: kflog.cpp:93
+msgid "Cuts the selected section and puts it to the clipboard"
+msgstr ""
+
+#: kflog.cpp:94
+msgid "Copies the selected section to the clipboard"
+msgstr ""
+
+#: kflog.cpp:95
+msgid "Pastes the clipboard contents to actual position"
+msgstr ""
+
+#: kflog.cpp:96
+msgid "Enables/disables the toolbar"
+msgstr ""
+
+#: kflog.cpp:97
+msgid "Enables/disables the statusbar"
+msgstr ""
+
+#: kflog.cpp:110 kflog.cpp:138 kflog.cpp:259 kflog.cpp:277 kflog.cpp:300
+#: kflog.cpp:317 kflog.cpp:326 kflog.cpp:342 kflog.cpp:351 kflog.cpp:364
+#: kflog.cpp:384 kflog.cpp:391 kflog.cpp:398 kflog.cpp:405 kflog.cpp:422
+#: kflog.cpp:439
+msgid "Ready."
+msgstr ""
+
+#: kflog.cpp:134 kflog.cpp:282 kflog.cpp:305
+msgid "Opening file..."
+msgstr ""
+
+#: kflog.cpp:254
+msgid "Opening a new application window..."
+msgstr ""
+
+#: kflog.cpp:264
+msgid "Creating new document..."
+msgstr ""
+
+#: kflog.cpp:292 kflog.cpp:334
+msgid "*|All files"
+msgstr ""
+
+#: kflog.cpp:292
+msgid "Open File..."
+msgstr ""
+
+#: kflog.cpp:322
+msgid "Saving file..."
+msgstr ""
+
+#: kflog.cpp:331
+msgid "Saving file with a new filename..."
+msgstr ""
+
+#: kflog.cpp:347
+msgid "Closing file..."
+msgstr ""
+
+#: kflog.cpp:356
+msgid "Printing..."
+msgstr ""
+
+#: kflog.cpp:369
+msgid "Exiting..."
+msgstr ""
+
+#: kflog.cpp:389
+msgid "Cutting selection..."
+msgstr ""
+
+#: kflog.cpp:396
+msgid "Copying selection to clipboard..."
+msgstr ""
+
+#: kflog.cpp:403
+msgid "Inserting clipboard contents..."
+msgstr ""
+
+#: kflog.cpp:410
+msgid "Toggling toolbar..."
+msgstr ""
+
+#: kflog.cpp:427
+msgid "Toggle the statusbar..."
+msgstr ""
+
+#: _translatorinfo.cpp:1 _translatorinfo.cpp:1
+msgid ""
+"_: NAME OF TRANSLATORS\n"
+"Your names"
+msgstr ""
+
+#: _translatorinfo.cpp:3 _translatorinfo.cpp:3
+msgid ""
+"_: EMAIL OF TRANSLATORS\n"
+"Your emails"
+msgstr ""
+
+#: main.cpp:25 main.cpp:39
+msgid "KFLog"
+msgstr ""
+
+#: main.cpp:31
+msgid "file to open"
+msgstr ""
+
+#: kflogdoc.cpp:90
+msgid ""
+"The current file has been modified.\n"
+"Do you want to save it?"
+msgstr ""
