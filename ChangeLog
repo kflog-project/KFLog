@@ -1,5 +1,11 @@
 $Id$
 
+2003-02-24 Heiner <heiner@kflog.org>
+
+  * The evaluation-dialog saves the window-size in the config-files and
+    redas it
+
+
 2003-02-19 Harry <harry@kflog.org>
 
   * Support for SoaringPilot added
