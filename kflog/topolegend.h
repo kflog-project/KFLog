@@ -29,16 +29,30 @@
 
 class TopoLegend : public QScrollView  {
    Q_OBJECT
-public: 
+public:
+ /**
+  * Constructor. Normal QWidget parameters are used.
+  */
 	TopoLegend(QWidget *parent=0, const char *name=0);
+ /**
+  * Destructor
+  */
 	~TopoLegend();
 
 protected:
+ /**
+  * Contains a list of the labels that have been created
+  */
   QList<QLabel> labelList;
+ /**
+  * Index of the currently highlighted elevation label
+  */
   int currentHighlight;
   
 public slots: // Public slots
-  /** Makes sure the indicated level is visible. */
+  /**
+   * Makes sure the indicated level is visible.
+   */
   void highlightLevel(int level);
 
 };
