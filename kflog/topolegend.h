@@ -20,7 +20,7 @@
 
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qscrollview.h>
 
 /**Generates a legend for the topography levels used on the map.
@@ -43,7 +43,7 @@ protected:
  /**
   * Contains a list of the labels that have been created
   */
-  QList<QLabel> labelList;
+  QPtrList<QLabel> labelList;
  /**
   * Index of the currently highlighted elevation label
   */

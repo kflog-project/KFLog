@@ -27,7 +27,7 @@
 #include <qframe.h>
 #include <qsplitter.h>
 #include <qcombobox.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 #include <kpopupmenu.h>
 
@@ -91,7 +91,7 @@ class Waypoints : public QFrame  {
   int idWaypointMove2Catalog;
 
   /** all loaded catalogs */
-  QList<WaypointCatalog> waypointCatalogs;
+  QPtrList<WaypointCatalog> waypointCatalogs;
   /**  */
   WaypointDialog *waypointDlg;
   WaypointImpFilterDialog *importFilterDlg;

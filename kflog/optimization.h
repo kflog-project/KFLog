@@ -19,7 +19,7 @@
 #define OPTIMIZATION_H
 
 #include <qthread.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qvaluelist.h>
 #include <kprogress.h>
 #include "wp.h"
@@ -46,7 +46,7 @@ public:
   * @param route List of flightpoints that together consitute the route this flight used.
   * @param progressBar optional reference to a progressbar to indicate optimisation progress.
   */
-  Optimization(unsigned int firstPoint, unsigned int lastPoint, QList<flightPoint> route,KProgress* progressBar=0);
+  Optimization(unsigned int firstPoint, unsigned int lastPoint, QPtrList<flightPoint> route,KProgress* progressBar=0);
  /**
   * Destructor
   */ 

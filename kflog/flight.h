@@ -25,7 +25,7 @@
 #include "map.h"
 
 #include <qdatetime.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qstring.h>
 #include <qstrlist.h>
 #include <qptrlist.h>
@@ -50,8 +50,8 @@ class Flight : public BaseFlightElement
 	   * @param  date  The date of the flight
 	   */
     Flight(const QString& fileName, const QString& recID,
-  	    const QList<flightPoint>& route, const QString& pName, const QString& gType,
-        const QString& gID, int cClass, const QList<Waypoint>& wpL, const QDate& date);
+  	    const QPtrList<flightPoint>& route, const QString& pName, const QString& gType,
+        const QString& gID, int cClass, const QPtrList<Waypoint>& wpL, const QDate& date);
 	  /**
 	   * Destroys the flight-object.
 	   */
@@ -122,7 +122,7 @@ class Flight : public BaseFlightElement
    /**
     * @return the route
     */
-    QList<flightPoint> getRoute() const;
+    QPtrList<flightPoint> getRoute() const;
     /**
      * @return the number of logged points.
      */
@@ -174,11 +174,11 @@ class Flight : public BaseFlightElement
     /**
 	   * @return the list of optimized waypoints if task is optimized else then orig waypoints
      */
-    virtual QList<Waypoint> getWPList();
+    virtual QPtrList<Waypoint> getWPList();
     /**
 	   * @return the original list of waypoints
      */
-    QList<Waypoint> getOriginalWPList();
+    QPtrList<Waypoint> getOriginalWPList();
     /**
      * @return the type of the task
      */
@@ -321,7 +321,7 @@ class Flight : public BaseFlightElement
     unsigned int va_min;
     unsigned int va_max;
 
-    QList<flightPoint> route;
+    QPtrList<flightPoint> route;
 
     QRect bBoxFlight;
     time_t startTime;

@@ -181,7 +181,7 @@ void TaskDialog::polish()
 
   // load current waypoint list from mapcontents
   extern MapContents _globalMapContents;
-  QList<Waypoint>* wpList = _globalMapContents.getWaypointList();
+  QPtrList<Waypoint>* wpList = _globalMapContents.getWaypointList();
   Waypoint *wp;
   waypoints->clear();
   QString t;

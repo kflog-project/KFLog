@@ -23,7 +23,7 @@
 #include <qstring.h>
 #include <qptrcollection.h>
 #include <qvaluevector.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include "mapmatrix.h"
 
 /**

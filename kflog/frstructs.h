@@ -19,7 +19,7 @@
 
 #include <time.h>
 #include <qstring.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 /**
  *

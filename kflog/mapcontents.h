@@ -20,7 +20,7 @@
 
 #include <qbitarray.h>
 #include <qfile.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qobject.h>
 #include <qstrlist.h>
 #include <kio/jobclasses.h>
@@ -68,7 +68,7 @@ class isoListEntry {
 /**
  * This class provides functions for accessing the contents of the map.
  * It takes control over loading all needed map-files.
- * The class contains several QLists holding the mapelements.
+ * The class contains several QPtrLists holding the mapelements.
  *
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
@@ -175,11 +175,11 @@ class MapContents : public QObject
     /**
      * @returns the flightList
      */
-    QList<BaseFlightElement>* getFlightList();
+    QPtrList<BaseFlightElement>* getFlightList();
     /**
      * @returns the wpList
      */
-	QList<Waypoint>* getWaypointList();
+	QPtrList<Waypoint>* getWaypointList();
     /**
      * Searches the first point of the current flight, which distance to the
      * mousecursor is less than 30 pixel. If no point is found, -1 is
@@ -237,7 +237,7 @@ switch to first task in file */
         CityList, PopulationList, LandmarkList, HighwayList, HighwayEntryList,
         RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
         WaypointList, DigitList, FlightList};
-    inline QList<isoListEntry>* getIsohypseRegions(){return &regIsoLines;};
+    inline QPtrList<isoListEntry>* getIsohypseRegions(){return &regIsoLines;};
 
   public slots:
     /**
@@ -365,82 +365,82 @@ switch to first task in file */
     /**
      * airportList contains all airports.
      */
-    QList<Airport> airportList;
+    QPtrList<Airport> airportList;
     /**
      * gliderList contains all glider-sites.
      */
-    QList<GliderSite> gliderList;
+    QPtrList<GliderSite> gliderList;
     /**
      * addSitesList contains all, ultra-light,
      * hang-glider-sites, free-ballon-sites, parachute-jumping-sites.
      */
-    QList<SinglePoint> addSitesList;
+    QPtrList<SinglePoint> addSitesList;
     /**
      * outList contains all outlanding-fields.
      */
-    QList<SinglePoint> outList;
+    QPtrList<SinglePoint> outList;
     /**
      * navList contains all radio navigation facilities.
      */
-    QList<RadioPoint> navList;
+    QPtrList<RadioPoint> navList;
     /**
      * airspaceList contails all airspaces.
      */
-    QList<Airspace> airspaceList;
+    QPtrList<Airspace> airspaceList;
     /**
      * obstacleList contains all obstacles and -groups, as well
      * as the spots and passes.
      */
-    QList<SinglePoint> obstacleList;
+    QPtrList<SinglePoint> obstacleList;
     /**
      * reportList contains all reporting points.
      */
-    QList<SinglePoint> reportList;
+    QPtrList<SinglePoint> reportList;
     /**
      * cityList contails all cities (areas).
      */
-    QList<LineElement> cityList;
+    QPtrList<LineElement> cityList;
     /**
      * populationList contains all villages, towns & cities (points).
      */
-    QList<SinglePoint> populationList;
+    QPtrList<SinglePoint> populationList;
     /**
      * landmarkList contains all landmarks.
      */
-    QList<SinglePoint> landmarkList;
+    QPtrList<SinglePoint> landmarkList;
     /**
      * roadList contails all roads.
      */
-    QList<LineElement> roadList;
+    QPtrList<LineElement> roadList;
     /**
      * railList contains all railways and aerial railways.
      */
-    QList<LineElement> railList;
+    QPtrList<LineElement> railList;
     /**
      * stationList contains all stations.
      */
-//    QList<SinglePoint> stationList;
+//    QPtrList<SinglePoint> stationList;
     /**
      * hydroList contains all shorelines, rivers, lakes, ...
      */
-    QList<LineElement> hydroList;
+    QPtrList<LineElement> hydroList;
     /**
      * topoList contains all topographical objects.
      */
-    QList<LineElement> topoList;
+    QPtrList<LineElement> topoList;
     /**
      * isohypseList contains all isohypses.
      */
-    QList< QList<Isohypse> > isoList;
+    QPtrList< QPtrList<Isohypse> > isoList;
     /**
      * Contains list of all loaded Flight and FlightTask objects, wich are
      * both subclasses of BaseFlightElement.
      */
-    QList<BaseFlightElement> flightList;
+    QPtrList<BaseFlightElement> flightList;
     /*
 	   * This list is reset every time the current WaypointCatalog is changed.
 	   */
-    QList<Waypoint> wpList;
+    QPtrList<Waypoint> wpList;
     /**
      * List of all map-section. Contains a "1" for all loaded section-files,
      * otherwise "0".
@@ -463,7 +463,7 @@ switch to first task in file */
     /**
      * List of all drawn isohypses.
      */
-    QList<isoListEntry> regIsoLines;
+    QPtrList<isoListEntry> regIsoLines;
 
     /**
      * downloads File from www.kflog.org, optionally waits until finished (blocking operation)

@@ -259,7 +259,7 @@ void OLCDialog::__fillDataFields()
   birthday->setText(config->readEntry("Birthday", ""));
   olcName->setCurrentItem(config->readNumEntry("Contest", 0));
 
-  QList<Waypoint> wpList = currentFlight->getWPList();
+  QPtrList<Waypoint> wpList = currentFlight->getWPList();
 
   if (wpList.count()) {
     startPoint->setText(wpList.at(0)->name);

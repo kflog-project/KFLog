@@ -116,7 +116,7 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
 //  pixAnimate.resize(32,32);
 //  pixAnimate.fill(white);
 
-  airspaceRegList = new QList<QRegion>;
+  airspaceRegList = new QPtrList<QRegion>;
   airspaceRegList->setAutoDelete(true);
 
   __setCursor();
@@ -175,9 +175,9 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
       if(!f)  return;
 
-      QList<Waypoint> taskPointList = f->getWPList();
-      QList<Waypoint> tempTaskPointList = f->getWPList();
-      QList<Waypoint> *wpList = _globalMapContents.getWaypointList();
+      QPtrList<Waypoint> taskPointList = f->getWPList();
+      QPtrList<Waypoint> tempTaskPointList = f->getWPList();
+      QPtrList<Waypoint> *wpList = _globalMapContents.getWaypointList();
 
       // 3: Task beendet verschieben eines Punktes
 
@@ -504,7 +504,7 @@ void Map::__displayMapInfo(QPoint current)
 
   if(baseFlight && baseFlight->getTypeID() == BaseMapElement::Flight)
     {
-      QList<Waypoint> wpList = baseFlight->getWPList();
+      QPtrList<Waypoint> wpList = baseFlight->getWPList();
 
       delta = 25;
       bool isWP = false;
@@ -613,9 +613,9 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
   BaseFlightElement *baseFlight = _globalMapContents.getFlight();
   if(baseFlight == NULL)  return;
 
-  QList<Waypoint> taskPointList = baseFlight->getWPList();
-  QList<Waypoint> tempTaskPointList = baseFlight->getWPList();
-  QList<Waypoint> * wpList = _globalMapContents.getWaypointList();
+  QPtrList<Waypoint> taskPointList = baseFlight->getWPList();
+  QPtrList<Waypoint> tempTaskPointList = baseFlight->getWPList();
+  QPtrList<Waypoint> * wpList = _globalMapContents.getWaypointList();
   Waypoint wp, *w;
   QString text;
   bool found;
@@ -1242,7 +1242,7 @@ void Map::__drawPlannedTask(bool solid)
 
   if(task && task->getTypeID() == BaseMapElement::Task)
     {
-      QList<Waypoint> WPList = task->getWPList();
+      QPtrList<Waypoint> WPList = task->getWPList();
 
       // Strecke zeichnen
       if(solid)
@@ -1562,7 +1562,7 @@ void Map::slotCenterToFlight()
   if (f) {
     QRect r;
     QRect r2;
-    QList<Flight> fl;
+    QPtrList<Flight> fl;
 
     switch (f->getTypeID()) {
       case BaseMapElement::Flight:
@@ -1607,7 +1607,7 @@ void Map::slotCenterToTask()
     {
       QRect r;
       QRect r2;
-      QList<Flight> fl;
+      QPtrList<Flight> fl;
 
       switch (f->getTypeID())
         {
@@ -1671,7 +1671,7 @@ void Map::slotAnimateFlightStart()
             break;
           case BaseMapElement::FlightGroup:
 		        // loop through all and set animation index to start
-      		  QList<Flight> flightList = ((FlightGroup *)f)->getFlightList();
+      		  QPtrList<Flight> flightList = ((FlightGroup *)f)->getFlightList();
   		      for(unsigned int loop = 0; loop < flightList.count(); loop++)
               {
           		  f = flightList.at(loop);
@@ -1704,7 +1704,7 @@ void Map::slotAnimateFlightStart()
            break;
           case BaseMapElement::FlightGroup:
 		        // loop through all and set animation index to start
-      		  QList<Flight> flightList = ((FlightGroup *)f)->getFlightList();
+      		  QPtrList<Flight> flightList = ((FlightGroup *)f)->getFlightList();
     	    	for(unsigned int loop = 0; loop < flightList.count(); loop++)
               {
                 cP = f->getPoint(0);
@@ -1768,7 +1768,7 @@ void Map::slotAnimateFlightTimeout()
             break;
           case BaseMapElement::FlightGroup:
 		        // loop through all and set animation index to start
-      		  QList<Flight> flightList = ((FlightGroup*)flightToAnimate)->getFlightList();
+      		  QPtrList<Flight> flightList = ((FlightGroup*)flightToAnimate)->getFlightList();
         		for(unsigned int loop = 0; loop < flightList.count(); loop++)
               {
           		  f = flightList.at(loop);
@@ -1813,7 +1813,7 @@ void Map::slotAnimateFlightStop()
 {
   extern MapContents _globalMapContents;
   Flight *f = (Flight *)_globalMapContents.getFlight();
-  QList<Flight> flightList;
+  QPtrList<Flight> flightList;
 
   if(!f) return;
 
@@ -2090,7 +2090,7 @@ void Map::slotAppendWaypoint2Task(Waypoint *p)
   FlightTask *f = (FlightTask *)_globalMapContents.getFlight();
   if(f && f->getTypeID() == BaseMapElement::Task && planning)
     {
-      QList<Waypoint> taskPointList = f->getWPList();
+      QPtrList<Waypoint> taskPointList = f->getWPList();
       p->projP = _globalMapMatrix.wgsToMap(p->origP);
       taskPointList.append(p);
       f->setWaypointList(taskPointList);
@@ -2102,7 +2102,7 @@ void Map::slotAppendWaypoint2Task(Waypoint *p)
 /** search for a waypoint
 First look in task itself
 Second look in map contents */
-bool Map::__getTaskWaypoint(QPoint current, Waypoint *wp, QList<Waypoint> &taskPointList)
+bool Map::__getTaskWaypoint(QPoint current, Waypoint *wp, QPtrList<Waypoint> &taskPointList)
 {
   unsigned int i;
   Waypoint *tmpPoint;
@@ -2180,7 +2180,7 @@ void Map::__drawWaypoints(){
   extern MapMatrix _globalMapMatrix;
   extern MapConfig _globalMapConfig;
 
-  QList<Waypoint> * wpList;
+  QPtrList<Waypoint> * wpList;
   QPoint p;
 
   wpList = _globalMapContents.getWaypointList();
@@ -2247,7 +2247,7 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
   Waypoint *newWP;
   QDictIterator<Waypoint> it(c->wpList);
   bool filterRadius, filterArea;
-  QList<Waypoint> * wpList;
+  QPtrList<Waypoint> * wpList;
 
   wpList = _globalMapContents.getWaypointList();
   wpList->clear();
@@ -2309,7 +2309,7 @@ void Map::__findElevation(QPoint coord){
   isoListEntry* entry;
   int height=0;
   
-  QList<isoListEntry>* list=_globalMapContents.getIsohypseRegions();
+  QPtrList<isoListEntry>* list=_globalMapContents.getIsohypseRegions();
 
   for(int i=0; i<list->count();i++) {
     entry=list->at(i);

@@ -57,14 +57,14 @@ FlightTask::FlightTask(const QString& fName)
 }
 
 
-FlightTask::FlightTask(const QList<Waypoint>& wpL, bool isO, const QString& fName)
+FlightTask::FlightTask(const QPtrList<Waypoint>& wpL, bool isO, const QString& fName)
   : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(isO),
 //    wpList(wpL),
     __planningType(Route),
     __planningDirection(leftOfRoute)
 {
-  warning("FlightTask(QList<wayPoint> wpL, bool isO, QString fName)");
+  warning("FlightTask(QPtrList<wayPoint> wpL, bool isO, QString fName)");
   setWaypointList(wpL);
   FAISectList.setAutoDelete(true); 
 }
@@ -800,7 +800,7 @@ double FlightTask::getOlcPoints()
   return  olcPoints;
 }
 
-void FlightTask::checkWaypoints(QList<flightPoint> route,
+void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
                                 const QString& gliderType)
 {
   /*
@@ -1142,9 +1142,9 @@ QString FlightTask::getPointsString()
 
 QRect FlightTask::getRect() const  {  return bBoxTask;  }
 
-void FlightTask::setWaypointList(const QList<Waypoint>& wpL)
+void FlightTask::setWaypointList(const QPtrList<Waypoint>& wpL)
 {
-  warning("setWaypointList(QList<wayPoint> wpL)");
+  warning("setWaypointList(QPtrList<wayPoint> wpL)");
   wpList = wpL;
 
   isOrig = false;
@@ -1678,7 +1678,7 @@ QString FlightTask::getPlanningTypeString()
 
 /** re-projects the points along the route to make sure the route is drawn correctly if the projection changes. */
 void FlightTask::reProject(){
-  QListIterator<flightPoint> it(flightRoute); 
+  QPtrListIterator<flightPoint> it(flightRoute); 
   extern MapMatrix _globalMapMatrix;
 
   for ( ; it.current(); ++it ) {
@@ -1686,7 +1686,7 @@ void FlightTask::reProject(){
       fp->projP = _globalMapMatrix.wgsToMap(fp->origP);
   }
 
-  QListIterator<Waypoint> it2(wpList); 
+  QPtrListIterator<Waypoint> it2(wpList); 
   extern MapMatrix _globalMapMatrix;
 
   for ( ; it2.current(); ++it2 ) {

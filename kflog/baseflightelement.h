@@ -34,7 +34,7 @@ public:
   BaseFlightElement(QString name, unsigned int typeID, QString fName);
   /** */
   ~BaseFlightElement();
-  virtual QList<Waypoint> getWPList() = 0 ;
+  virtual QPtrList<Waypoint> getWPList() = 0 ;
   QString getFileName() const { return sourceFileName; }
   /**
    * Searches the first point of the flight, which distance to the

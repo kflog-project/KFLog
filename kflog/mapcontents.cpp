@@ -126,7 +126,7 @@ MapContents::MapContents()
 
   // Wir nehmen zunächst 4 Schachtelungstiefen an ...
   for(unsigned int loop = 0; loop < ( ISO_LINE_NUM * 4 ); loop++)
-      isoList.append(new QList<Isohypse>);
+      isoList.append(new QPtrList<Isohypse>);
 
   airportList.setAutoDelete(true);
   airspaceList.setAutoDelete(true);
@@ -153,21 +153,21 @@ MapContents::MapContents()
 MapContents::~MapContents()
 {
   // Hier müssen ALLE Listen gelöscht werden!!!
-/*  airportList.~QList();
-  airspaceList.~QList();
-  cityList.~QList();
-  gliderList.~QList();
-  flightList.~QList();
-  hydroList.~QList();
-  landmarkList.~QList();
-  navList.~QList();
-  obstacleList.~QList();
-  outList.~QList();
-  railList.~QList();
-  reportList.~QList();
-  roadList.~QList();
-  stationList.~QList();
-  topoList.~QList();
+/*  airportList.~QPtrList();
+  airspaceList.~QPtrList();
+  cityList.~QPtrList();
+  gliderList.~QPtrList();
+  flightList.~QPtrList();
+  hydroList.~QPtrList();
+  landmarkList.~QPtrList();
+  navList.~QPtrList();
+  obstacleList.~QPtrList();
+  outList.~QPtrList();
+  railList.~QPtrList();
+  reportList.~QPtrList();
+  roadList.~QPtrList();
+  stationList.~QPtrList();
+  topoList.~QPtrList();
 */
 }
 
@@ -899,7 +899,7 @@ bool MapContents::__readAirspaceFile(const char* pathName)
   Q_INT8 exception = 0;
   QString exceptionText;
 
-//  QList<radioContact> contactList;
+//  QPtrList<radioContact> contactList;
 
   Q_UINT32 locLength;
 
@@ -1202,12 +1202,12 @@ BaseFlightElement* MapContents::getFlight()
   return flightList.current();
 }
 
-QList<BaseFlightElement>* MapContents::getFlightList()
+QPtrList<BaseFlightElement>* MapContents::getFlightList()
 {
   return &flightList;
 }
 
-QList<Waypoint>* MapContents::getWaypointList()  {  return &wpList;  }
+QPtrList<Waypoint>* MapContents::getWaypointList()  {  return &wpList;  }
 
 bool MapContents::loadFlight(QFile& igcFile)
 {
@@ -1274,8 +1274,8 @@ bool MapContents::loadFlight(QFile& igcFile)
 
   flightPoint newPoint;
   flightPoint prePoint;
-  QList<flightPoint> flightRoute;
-  QList<Waypoint> wpList;
+  QPtrList<flightPoint> flightRoute;
+  QPtrList<Waypoint> wpList;
   Waypoint* newWP;
   Waypoint* preWP;
   bool isValid = true;
@@ -2077,7 +2077,7 @@ void MapContents::slotReloadMapData()
 
   // We assume a depth of 4 so far
   for(unsigned int loop = 0; loop < ( ISO_LINE_NUM * 4 ); loop++)
-      isoList.append(new QList<Isohypse>);
+      isoList.append(new QPtrList<Isohypse>);
 
   sectionArray.fill(false);
 }
@@ -2211,7 +2211,7 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
 
   regIsoLines.clear();
 
-  for(QList<Isohypse>* iso = isoList.first(); iso; iso = isoList.next())
+  for(QPtrList<Isohypse>* iso = isoList.first(); iso; iso = isoList.next())
     {
       if(iso->count() == 0) continue;
 
@@ -2331,7 +2331,7 @@ void MapContents::slotAppendTask(FlightTask *f)
 void MapContents::slotNewFlightGroup()
 {
   static int gCount = 1;
-  QList <Flight> fl;
+  QPtrList <Flight> fl;
   BaseFlightElement *f;
   unsigned int i;
   QString tmp;
@@ -2377,7 +2377,7 @@ void MapContents::slotSetFlight(BaseFlightElement *f)
 /** No descriptions */
 void MapContents::slotEditFlightGroup()
 {
-  QList <Flight> fl;
+  QPtrList <Flight> fl;
   BaseFlightElement *f;
   BaseFlightElement *fg;
   unsigned int i;
@@ -2482,8 +2482,8 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
 
   flightPoint newPoint;
   flightPoint prePoint;
-  QList<flightPoint> flightRoute;
-  QList<Waypoint> wpList;
+  QPtrList<flightPoint> flightRoute;
+  QPtrList<Waypoint> wpList;
 //unused  Waypoint* newWP;
 //unused  Waypoint* preWP;
   bool isValid = true;
@@ -2819,8 +2819,8 @@ bool MapContents::importGardownFile(QFile& gardownFile){
 
   flightPoint newPoint;
   flightPoint prePoint;
-  QList<flightPoint> flightRoute;
-  QList<Waypoint> wpList;
+  QPtrList<flightPoint> flightRoute;
+  QPtrList<Waypoint> wpList;
 //unused  Waypoint* newWP;
 //unused  Waypoint* preWP;
   bool isValid = true;
@@ -3065,7 +3065,7 @@ bool MapContents::loadTask(QFile& path)
   }
 
   QDomDocument doc;
-  QList<Waypoint> wpList;
+  QPtrList<Waypoint> wpList;
   FlightTask *f, *firstTask = 0;
 
   doc.setContent(&path);
@@ -3150,7 +3150,7 @@ isoListEntry::~isoListEntry() {
 
 /** Re-projects any flights and tasks that may be loaded. */
 void MapContents::reProject(){
-  QListIterator<BaseFlightElement> it(flightList); // iterator for flightlist
+  QPtrListIterator<BaseFlightElement> it(flightList); // iterator for flightlist
   
   for ( ; it.current(); ++it ) {
       BaseFlightElement *fe = it.current();

@@ -26,7 +26,7 @@
 #include <qcheckbox.h>
 #include <qlcdnumber.h>
 #include <qlineedit.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qpen.h>
 #include <qslider.h>
 #include <qspinbox.h>

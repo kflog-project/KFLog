@@ -21,7 +21,7 @@
 #include "baseflightelement.h"
 #include "lineelement.h"
 
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qrect.h>
 
 struct faiRange {
@@ -58,7 +58,7 @@ class FlightTask : public BaseFlightElement
    * @param  isOrig  true, if the task is the original task
    *                 of a flight.
    */
-  FlightTask(const QList<Waypoint>& wpList, bool isOrig, const QString& fName);
+  FlightTask(const QPtrList<Waypoint>& wpList, bool isOrig, const QString& fName);
   /**
    */
   ~FlightTask();
@@ -80,7 +80,7 @@ class FlightTask : public BaseFlightElement
   /**
    * Returns the waypointlist.
    */
-  QList<Waypoint> getWPList() { return wpList; };
+  QPtrList<Waypoint> getWPList() { return wpList; };
   /**
    * Returns the type of the task.
    * @see #TaskType
@@ -99,7 +99,7 @@ class FlightTask : public BaseFlightElement
   void printMapElement(QPainter* targetP, bool isText);
   void printMapElement(QPainter* targetP, bool isText, double dX, double dY);
   /** */
-  void checkWaypoints(QList<flightPoint> route,
+  void checkWaypoints(QPtrList<flightPoint> route,
                       const QString& gliderType);
   /** */
   double getOlcPoints();
@@ -120,7 +120,7 @@ class FlightTask : public BaseFlightElement
   /** */
   struct faiRange getFAIDistance(double leg);
   void setOptimizedTask(double points, double distance);
-  void setWaypointList(const QList<Waypoint>& wpL);
+  void setWaypointList(const QPtrList<Waypoint>& wpL);
   /** No descriptions */
   void setPlanningType(int type);
   int getPlanningType() const { return __planningType; };
@@ -186,7 +186,7 @@ class FlightTask : public BaseFlightElement
    */
   bool isOrig;
   /** */
-  QList<Waypoint> wpList;
+  QPtrList<Waypoint> wpList;
   /** */
 //  unsigned int task_end;
   /** */
@@ -206,11 +206,11 @@ class FlightTask : public BaseFlightElement
   /** Aufgaben Länge*/
   double distance_task;
   int __planningType;
-  QList<faiAreaSector> FAISectList;
+  QPtrList<faiAreaSector> FAISectList;
   /* direction of area planning */
   int __planningDirection;
   /* Route of flight */
-  QList<flightPoint> flightRoute;
+  QPtrList<flightPoint> flightRoute;
 public slots: // Public slots
   /** re-projects the points along the route to make sure the route is drawn correctly if the projection changes. */
   void reProject();

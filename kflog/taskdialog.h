@@ -66,7 +66,7 @@ private: // Private attributes
   /**  */
   KListBox *waypoints;
   QDict<Waypoint> waypointDict;
-  QList<Waypoint> wpList;
+  QPtrList<Waypoint> wpList;
   FlightTask *pTask;
   /**  */
   QLineEdit *name;

@@ -33,9 +33,9 @@ class FlightSelectionDialog : public KDialog  {
    Q_OBJECT
 public: // Public attributes
   /**  */
-  QList<BaseFlightElement> availableFlights;
+  QPtrList<BaseFlightElement> availableFlights;
   /**  */
-  QList<BaseFlightElement> selectedFlights;
+  QPtrList<BaseFlightElement> selectedFlights;
   FlightSelectionDialog(QWidget *parent=0, const char *name=0);
   ~FlightSelectionDialog();
 private: // Private methods

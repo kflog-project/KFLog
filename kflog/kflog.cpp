@@ -1092,8 +1092,8 @@ bool KFLogApp::queryClose()
 void KFLogApp::slotWindowsMenuAboutToShow()
 {
   extern MapContents _globalMapContents;
-  QList<BaseFlightElement> flights = *(_globalMapContents.getFlightList());
-  QListIterator<BaseFlightElement> it(flights);
+  QPtrList<BaseFlightElement> flights = *(_globalMapContents.getFlightList());
+  QPtrListIterator<BaseFlightElement> it(flights);
   BaseFlightElement *flight;
 
   windowMenu->clear();

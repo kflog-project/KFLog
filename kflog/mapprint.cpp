@@ -790,7 +790,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
 void MapPrint::__drawWaypoints(const double selectedScale, QPainter* wpP, const QSize pS, const QRect mapBorder, const int mapCenterLon,     const double dX, const double dY, const double gridLeft,     const double gridRight, const double gridTop, const double gridBot){
   extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
-  QList<Waypoint> *wpList;
+  QPtrList<Waypoint> *wpList;
   Waypoint *wp;
   int i,n;
   QPoint p;
@@ -814,7 +814,7 @@ void MapPrint::__drawWaypoints(const double selectedScale, QPainter* wpP, const 
 /* void MapPrint::__drawTask(const double selectedScale, QPainter* taskP, const QSize pS, const QRect mapBorder, const int mapCenterLon,     const double dX, const double dY, const double gridLeft,     const double gridRight, const double gridTop, const double gridBot){
  extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
-  QList<wayPoint> *wpList;
+  QPtrList<wayPoint> *wpList;
   wayPoint *wp;
   int i,n;
   QPoint p;

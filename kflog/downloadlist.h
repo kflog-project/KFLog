@@ -31,7 +31,7 @@
   */
 
 #include <qobject.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <kurl.h>
 #include <kio/jobclasses.h>
 

@@ -21,7 +21,7 @@
 #include <qlayout.h>
 #include <qdom.h>
 #include <qapplication.h>
-#include <qlist.h>
+#include <qptrlist.h>
 
 #include <klocale.h>
 #include <kconfig.h>

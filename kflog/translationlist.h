@@ -20,14 +20,14 @@
 
 #include "translationelement.h"
 
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qintdict.h>
 
 /**
   *@author Harald Maier
   */
 
-typedef QList<TranslationElement> TranslationListBase;
+typedef QPtrList<TranslationElement> TranslationListBase;
 
 class TranslationList : public TranslationListBase {
 public: 

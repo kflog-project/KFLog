@@ -25,7 +25,7 @@ FlightGroup::FlightGroup(QString fName)
 {
 }
 
-FlightGroup::FlightGroup(QList <Flight::Flight> fList, QString fName)
+FlightGroup::FlightGroup(QPtrList <Flight::Flight> fList, QString fName)
   : BaseFlightElement("flight group", BaseMapElement::FlightGroup, fName),
     flightList(fList)
 {
@@ -35,9 +35,9 @@ FlightGroup::~FlightGroup()
 {
 }
 
-QList<Waypoint> FlightGroup::getWPList()
+QPtrList<Waypoint> FlightGroup::getWPList()
 {
-  QList<Waypoint> tmp;
+  QPtrList<Waypoint> tmp;
   return tmp;
 }
 
@@ -61,7 +61,7 @@ void FlightGroup::printMapElement(QPainter* targetP, bool isText)
   }
 }
 /** No descriptions */
-QList<Flight::Flight> FlightGroup::getFlightList()
+QPtrList<Flight::Flight> FlightGroup::getFlightList()
 {
   return flightList;
 }
@@ -75,14 +75,14 @@ void FlightGroup::removeFlight(BaseFlightElement *f)
 }
 
 /** No descriptions */
-void FlightGroup::setFlightList(QList <Flight::Flight> fl)
+void FlightGroup::setFlightList(QPtrList <Flight::Flight> fl)
 {
   flightList = fl;
 }
 
 /** re-project the flights in this flightgroup. Reimplemented from BaseFlightElement. */
 void FlightGroup::reProject() {
-  QListIterator<Flight::Flight> it(flightList);
+  QPtrListIterator<Flight::Flight> it(flightList);
 
   for ( ; it.current(); ++it ) {
       Flight::Flight *f = it.current();

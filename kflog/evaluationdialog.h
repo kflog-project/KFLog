@@ -22,7 +22,7 @@
 #include <qcombobox.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qscrollview.h>
 #include <qspinbox.h>
 #include <qslider.h>

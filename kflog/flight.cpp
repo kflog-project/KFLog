@@ -75,8 +75,8 @@
       wpL.current()->angle = -100; \
       wpL.current()->fixTime = route.at( a )->time;
 
-Flight::Flight(const QString& fName, const QString& recID, const QList<flightPoint>& r, const QString& pName,
-   const QString& gType, const QString& gID, int cClass, const QList<Waypoint>& wpL, const QDate& d)
+Flight::Flight(const QString& fName, const QString& recID, const QPtrList<flightPoint>& r, const QString& pName,
+   const QString& gType, const QString& gID, int cClass, const QPtrList<Waypoint>& wpL, const QDate& d)
   : BaseFlightElement("flight", BaseMapElement::Flight, fName),
     recorderID(recID),
     pilotName(pName),
@@ -479,7 +479,7 @@ int Flight::getPointIndexByTime(time_t time)
   return ep;
 }
 
-QList<flightPoint> Flight::getRoute() const{
+QPtrList<flightPoint> Flight::getRoute() const{
   return route;
 }
 
@@ -748,7 +748,7 @@ void Flight::__checkMaxMin()
   va_min = 0;
   float tmp, refv = .0, refh = .0, refva1 = .0 , refva2 = 500.;
 
-  QListIterator<flightPoint> fp(route);
+  QPtrListIterator<flightPoint> fp(route);
   for( unsigned int loop = 0; (*fp); ++fp, loop++ )
     {
       if(loop)
@@ -769,7 +769,7 @@ void Flight::__checkMaxMin()
     }
 }
 
-QList<Waypoint> Flight::getWPList()
+QPtrList<Waypoint> Flight::getWPList()
 {
   if(!optimized)
     return origTask.getWPList();
@@ -777,7 +777,7 @@ QList<Waypoint> Flight::getWPList()
     return optimizedTask.getWPList();
 }
 
-QList<Waypoint> Flight::getOriginalWPList() {  return origTask.getWPList();  }
+QPtrList<Waypoint> Flight::getOriginalWPList() {  return origTask.getWPList();  }
 
 bool Flight::optimizeTaskOLC(Map* map)
 {
@@ -796,7 +796,7 @@ bool Flight::optimizeTaskOLC(Map* map)
   if (distance<0.0) // optimization was canceled
     return false;
 
-      QList<Waypoint> wpL;
+      QPtrList<Waypoint> wpL;
 
       APPEND_WAYPOINT_OLC2003(startIndex, 0, i18n("Take-Off"))
       APPEND_WAYPOINT_OLC2003(idList[0], dist(route.at(idList[0]), route.at(0)),
@@ -977,7 +977,7 @@ bool Flight::optimizeTask()
   if(KMessageBox::questionYesNo(0, text, i18n("Optimizing")) ==
         KMessageBox::Yes)
     {
-      QList<Waypoint> wpL;
+      QPtrList<Waypoint> wpL;
 
       APPEND_WAYPOINT(0, 0, i18n("Take-Off"))
       APPEND_WAYPOINT(0, 0, i18n("Begin of Task"))
@@ -1104,7 +1104,7 @@ void Flight::setLastAnimationPixmap(QPixmap pix)  {  pixAnimate = pix;  }
 /** Re-calculates all projections for this flight. */
 void Flight::reProject(){
 
-  QListIterator<flightPoint> it(route);
+  QPtrListIterator<flightPoint> it(route);
   extern MapMatrix _globalMapMatrix;
 
   for ( ; it.current(); ++it ) {

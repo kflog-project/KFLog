@@ -62,7 +62,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
       i18n("Task") + ":</B></TD></TR>";
 
-  QList<Waypoint> wpList = task->getWPList();
+  QPtrList<Waypoint> wpList = task->getWPList();
 
   for(unsigned int loop = 0; loop < wpList.count(); loop++) {
     wp1 = wpList.at(loop);
@@ -178,7 +178,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
   
 void DataView::slotShowTaskText(FlightTask* task)
 {
-  QList<Waypoint> taskPointList = task->getWPList();
+  QPtrList<Waypoint> taskPointList = task->getWPList();
   QString htmlText = "";
   QString tmp;
 
@@ -210,7 +210,7 @@ void DataView::setFlightData()
   BaseFlightElement* e = _globalMapContents.getFlight();
   QString htmlText;
   QString idString;
-  QList<Flight> fl;
+  QPtrList<Flight> fl;
   QStrList h;
   FlightTask fTask("");
   QFileInfo fi;

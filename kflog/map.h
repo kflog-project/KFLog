@@ -216,7 +216,7 @@ class Map : public QWidget
      *   First look in task itself
      *   Second look in map contents
      */
-    bool __getTaskWaypoint(QPoint current, Waypoint *wp, QList<Waypoint> &taskPointList);
+    bool __getTaskWaypoint(QPoint current, Waypoint *wp, QPtrList<Waypoint> &taskPointList);
   /** Tries to locate the elevation for the given point, and emits a signal elevation if found. */
   void __findElevation(QPoint coord);
     /**
@@ -291,7 +291,7 @@ class Map : public QWidget
      * Contains the regions of all visible airspaces. The list is needed to
      * find the airspace-data when the users selects a airspace in the map.
      */
-    QList<QRegion>* airspaceRegList;
+    QPtrList<QRegion>* airspaceRegList;
     /**
      * Animation timer
      */
@@ -304,7 +304,7 @@ class Map : public QWidget
      * contains planning task points
      * enthält die Punkte!!!
      */
- //   QList<wayPoint> taskPointList;
+ //   QPtrList<wayPoint> taskPointList;
     // 0 keine Planung 1 Planung 2 Planung Aufgabe Abgeschlossen
 //    enum planning {NoPlanning = 0, Planning = 1, TaskFinished = 2};
     int planning;
