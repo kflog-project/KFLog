@@ -53,6 +53,11 @@ class OLCDialog : public QDialog
     /**
      */
     void slotSend();
+    void slotSave();
+    /** Compose String for OLC declaration
+     * @param withURL prepend OLC URL if true (default value=false)
+     */
+    QString composeOLCString(bool withURL=false);
 
   private:
     /**

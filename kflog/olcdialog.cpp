@@ -27,6 +27,7 @@
 #include <kmessagebox.h>
 #include <kprocess.h>
 #include <qdatetime.h>
+#include <kfiledialog.h>
 
 #include <qfile.h>
 #include <qgroupbox.h>
@@ -75,7 +76,7 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
 
   QPushButton* okButton = new QPushButton(i18n("Send"), this);
   QPushButton* saveButton = new QPushButton(i18n("Save as"), this);
-  QPushButton* cancelButton = new QPushButton(i18n("Cancel"), this);
+  QPushButton* cancelButton = new QPushButton(i18n("Close"), this);
 
   QFrame* midFrame = new QFrame(this, "midFrame");
 
@@ -216,6 +217,7 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
 
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
   connect(okButton, SIGNAL(clicked()), this, SLOT(slotSend()));
+  connect(saveButton, SIGNAL(clicked()), this, SLOT(slotSave()));
 
   __fillDataFields();
 }
@@ -349,7 +351,78 @@ void OLCDialog::__fillDataFields()
     }
 }
 
+void OLCDialog::slotSave()
+{
+  if (currentFlight->getTask().getTaskType()!=FlightTask::OLC2003){
+    KMessageBox::error(0,
+        i18n("The flight has not been optimized for the OLC!"),
+        i18n("Not optimized for OLC"));
+    return;
+  }
+
+  QString link = composeOLCString(false);
+  QString olcFileName = KFileDialog::getSaveFileName();
+  
+  QFile igcFile(currentFlight->getFileName());
+  if(!igcFile.open(IO_ReadOnly))
+    {
+      KMessageBox::error(0,
+          i18n("You don't have permission to access file<BR><B>%1</B>").arg(igcFile.name()),
+          i18n("No permission"));
+      return;
+    }
+  QFile olcFile(olcFileName);
+  if (!olcFile.open( IO_WriteOnly ))
+    {
+      KMessageBox::error(0,
+          i18n("You don't have permission to access file<BR><B>%1</B>").arg(olcFile.name()),
+          i18n("No permission"));
+      return;
+    }
+
+  QTextStream igcStream(&igcFile);
+  QTextStream olcStream(&olcFile);
+  olcStream << link << "\n";
+  while (!igcStream.atEnd())
+    olcStream << igcStream.readLine() << "\n";
+  igcFile.close();
+  olcFile.close();
+}
+
 void OLCDialog::slotSend()
+{
+  if (currentFlight->getTask().getTaskType()!=FlightTask::OLC2003){
+    KMessageBox::error(0,
+        i18n("The flight has not been optimized for the OLC!"),
+        i18n("Not optimized for OLC"));
+    return;
+  }
+
+  QString link = composeOLCString(true);
+
+//  KProcess browser;
+
+  // Because "%" is used as a placeholder in a string, we have to add it this way ...
+  char prozent = 0x25;
+  QString spaceString = QString(QChar(prozent)) + "20";
+  link.replace(QRegExp("[ ]"), spaceString);
+
+  warning(link);
+
+//  browser.clearArguments();
+//  browser << "konqueror" << link;
+//  browser.start();
+
+  KProcess *proc = new KProcess;
+
+  *proc << "konqueror";
+  *proc << link;
+//  QApplication::connect(proc, SIGNAL(processExited(KProcess *)),
+//                      pointer_to_my_object, SLOT(my_objects_slot(KProcess *)));
+  proc->start();
+}
+  
+QString OLCDialog::composeOLCString(bool withURL)
 {
   FlightTask t = currentFlight->getTask();
 
@@ -447,88 +520,40 @@ void OLCDialog::slotSend()
   int latitude, longitude;
   int degree, min, min_deg;
 
-  qWarning(QString("TaskType:%1").arg(t.getTaskType()));
+  link += "&t0=" + printTime(t.getWPList().at(0)->sectorFAI,true);
+  link += "&s0=" + printTime(t.getWPList().at(1)->fixTime,true);
+  POS_STRINGS(t.getWPList().at(2)->origP)
+  link += "&w0bh=" + latH + "&w0bg=" + latG + "&w0bm=" + latM + "&w0bmd=" + latMD
+  + "&w0lh=" + lonH + "&w0lg=" + lonG + "&w0lm=" + lonM + "&w0lmd=" + lonMD;
 
-  switch (t.getTaskType()){
-  case (FlightTask::FAI) :
-  case (FlightTask::FAI_S) :
-  case (FlightTask::Dreieck) :
-  case (FlightTask::Dreieck_S) :
-      link += "&s0=" + printTime(currentFlight->getStartTime(), true);
-      // the beginning of the task should allways be the second point ...
-      POS_STRINGS(t.getWPList().at(1)->origP)
+  qWarning(latMD);
 
-      // Abflugpunkt
-      link += "&w0bh=" + latH + "&w0bg=" + latG + "&w0bm=" + latM + "&w0bmd=" + latMD
-      + "&w0lh=" + lonH + "&w0lg=" + lonG + "&w0lm=" + lonM + "&w0lmd=" + lonMD;
+  // we have 5 turnpoints
+  POS_STRINGS(t.getWPList().at(3)->origP)
+  link += "&w1bh=" + latH + "&w1bg=" + latG + "&w1bm=" + latM + "&w1bmd=" + latMD
+      + "&w1lh=" + lonH + "&w1lg=" + lonG + "&w1lm=" + lonM + "&w1lmd=" + lonMD;
 
-      // we have a a triangle...
-      POS_STRINGS(t.getWPList().at(2)->origP)
+  POS_STRINGS(t.getWPList().at(4)->origP)
+  link += "&w2bh=" + latH + "&w2bg=" + latG + "&w2bm=" + latM + "&w2bmd=" + latMD
+      + "&w2lh=" + lonH + "&w2lg=" + lonG + "&w2lm=" + lonM + "&w2lmd=" + lonMD;
 
-      link += "&w1bh=" + latH + "&w1bg=" + latG + "&w1bm=" + latM + "&w1bmd=" + latMD
-          + "&w1lh=" + lonH + "&w1lg=" + lonG + "&w1lm=" + lonM + "&w1lmd=" + lonMD;
+  POS_STRINGS(t.getWPList().at(5)->origP)
+  link += "&w3bh=" + latH + "&w3bg=" + latG + "&w3bm=" + latM + "&w3bmd=" + latMD
+      + "&w3lh=" + lonH + "&w3lg=" + lonG + "&w3lm=" + lonM + "&w3lmd=" + lonMD;
 
-      POS_STRINGS(t.getWPList().at(3)->origP)
-      link += "&w2bh=" + latH + "&w2bg=" + latG + "&w2bm=" + latM + "&w2bmd=" + latMD
-          + "&w2lh=" + lonH + "&w2lg=" + lonG + "&w2lm=" + lonM + "&w2lmd=" + lonMD;
+  POS_STRINGS(t.getWPList().at(6)->origP)
+  link += "&w4bh=" + latH + "&w4bg=" + latG + "&w4bm=" + latM + "&w4bmd=" + latMD
+      + "&w4lh=" + lonH + "&w4lg=" + lonG + "&w4lm=" + lonM + "&w4lmd=" + lonMD;
 
-      POS_STRINGS(t.getWPList().at(4)->origP)
-      link += "&w3bh=" + latH + "&w3bg=" + latG + "&w3bm=" + latM + "&w3bmd=" + latMD
-          + "&w3lh=" + lonH + "&w3lg=" + lonG + "&w3lm=" + lonM + "&w3lmd=" + lonMD;
+  POS_STRINGS(t.getWPList().at(7)->origP)
+  link += "&w5bh=" + latH + "&w5bg=" + latG + "&w5bm=" + latM + "&w5bmd=" + latMD
+      + "&w5lh=" + lonH + "&w5lg=" + lonG + "&w5lm=" + lonM + "&w5lmd=" + lonMD;
 
-      POS_STRINGS(t.getWPList().at(t.getWPList().count() - 2)->origP)
-      link += "&w4bh=" + latH + "&w4bg=" + latG + "&w4bm=" + latM + "&w4bmd=" + latMD
-          + "&w4lh=" + lonH + "&w4lg=" + lonG + "&w4lm=" + lonM + "&w4lmd=" + lonMD;
+  POS_STRINGS(t.getWPList().at(8)->origP)
+  link += "&w6bh=" + latH + "&w6bg=" + latG + "&w6bm=" + latM + "&w6bmd=" + latMD
+      + "&w6lh=" + lonH + "&w6lg=" + lonG + "&w6lm=" + lonM + "&w6lmd=" + lonMD;
 
-      // Endpunkt
-      link += "&s4=" + printTime(currentFlight->getLandTime(), true);
-      break;
-  case (FlightTask::OLC2003) :
-      link += "&t0=" + printTime(t.getWPList().at(0)->sectorFAI,true);
-      link += "&s0=" + printTime(t.getWPList().at(1)->fixTime,true);
-      POS_STRINGS(t.getWPList().at(2)->origP)
-      link += "&w0bh=" + latH + "&w0bg=" + latG + "&w0bm=" + latM + "&w0bmd=" + latMD
-      + "&w0lh=" + lonH + "&w0lg=" + lonG + "&w0lm=" + lonM + "&w0lmd=" + lonMD;
-
-      qWarning(latMD);
-      
-      // we have 5 turnpoints
-      POS_STRINGS(t.getWPList().at(3)->origP)
-      link += "&w1bh=" + latH + "&w1bg=" + latG + "&w1bm=" + latM + "&w1bmd=" + latMD
-          + "&w1lh=" + lonH + "&w1lg=" + lonG + "&w1lm=" + lonM + "&w1lmd=" + lonMD;
-
-      POS_STRINGS(t.getWPList().at(4)->origP)
-      link += "&w2bh=" + latH + "&w2bg=" + latG + "&w2bm=" + latM + "&w2bmd=" + latMD
-          + "&w2lh=" + lonH + "&w2lg=" + lonG + "&w2lm=" + lonM + "&w2lmd=" + lonMD;
-
-      POS_STRINGS(t.getWPList().at(5)->origP)
-      link += "&w3bh=" + latH + "&w3bg=" + latG + "&w3bm=" + latM + "&w3bmd=" + latMD
-          + "&w3lh=" + lonH + "&w3lg=" + lonG + "&w3lm=" + lonM + "&w3lmd=" + lonMD;
-
-      POS_STRINGS(t.getWPList().at(6)->origP)
-      link += "&w4bh=" + latH + "&w4bg=" + latG + "&w4bm=" + latM + "&w4bmd=" + latMD
-          + "&w4lh=" + lonH + "&w4lg=" + lonG + "&w4lm=" + lonM + "&w4lmd=" + lonMD;
-
-      POS_STRINGS(t.getWPList().at(7)->origP)
-      link += "&w5bh=" + latH + "&w5bg=" + latG + "&w5bm=" + latM + "&w5bmd=" + latMD
-          + "&w5lh=" + lonH + "&w5lg=" + lonG + "&w5lm=" + lonM + "&w5lmd=" + lonMD;
-
-      POS_STRINGS(t.getWPList().at(8)->origP)
-      link += "&w6bh=" + latH + "&w6bg=" + latG + "&w6bm=" + latM + "&w6bmd=" + latMD
-          + "&w6lh=" + lonH + "&w6lg=" + lonG + "&w6lm=" + lonM + "&w6lmd=" + lonMD;
-
-      link += "&s6=" + printTime(t.getWPList().at(9)->fixTime,true);
-      break;
-  default :
-      // the beginning of the task should allways be the second point ...
-      POS_STRINGS(t.getWPList().at(1)->origP)
-
-      // Abflugpunkt
-      link += "&w0bh=" + latH + "&w0bg=" + latG + "&w0bm=" + latM + "&w0bmd=" + latMD
-      + "&w0lh=" + lonH + "&w0lg=" + lonG + "&w0lm=" + lonM + "&w0lmd=" + lonMD;
-      // Endpunkt
-      link += "&s4=" + printTime(currentFlight->getLandTime(), true);
-  }
+  link += "&s6=" + printTime(t.getWPList().at(9)->fixTime,true);
 //  QFile igcFile(currentFlight->getFileName());
 //
 //  if(!igcFile.open(IO_ReadOnly))
@@ -559,28 +584,10 @@ void OLCDialog::slotSend()
 //  link = "http://www.segelflugszene.de/olc-i/olcfile.html?" + link;
 
 //  link = QString("http://www.segelflugszene.de/olc-%1/olc?").arg(contestList[olcName->currentItem()].URL) + link;
-  link = QString(contestList[olcName->currentItem()].URL) +"?" + link;
 
-//  KProcess browser;
-
-  // Because "%" is used as a placeholder in a string, we have to add it this way ...
-  char prozent = 0x25;
-  QString spaceString = QString(QChar(prozent)) + "20";
-  link.replace(QRegExp("[ ]"), spaceString);
-
-  warning(link);
-
-//  browser.clearArguments();
-//  browser << "konqueror" << link;
-//  browser.start();
-
-  KProcess *proc = new KProcess;
-
-  *proc << "konqueror";
-  *proc << link;
-//  QApplication::connect(proc, SIGNAL(processExited(KProcess *)),
-//                      pointer_to_my_object, SLOT(my_objects_slot(KProcess *)));
-  proc->start();
+  if (withURL) // add OLC URL
+    link = QString(contestList[olcName->currentItem()].URL) +"?" + link;
+  return link;
 }
 
 /** @return the number of days after the 1.1.1601.
