@@ -346,7 +346,8 @@ void Map::mousePressEvent(QMouseEvent* event)
   if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
 
   BaseFlightElement *f = _globalMapContents.getFlight();
-  QList<wayPoint> taskPointList = f->getWPList();
+  if (f != 0)
+    QList<wayPoint> taskPointList = f->getWPList();
 
   if(event->button() == MidButton)
     {
@@ -1295,12 +1296,12 @@ void Map::slotAnimateFlightStart()
 void Map::slotAnimateFlightTimeout()
 {
   extern MapMatrix _globalMapMatrix;
-  extern MapContents _globalMapContents;
-  flightPoint cP, prevP;
+//  extern MapContents _globalMapContents;
+  flightPoint cP; //, prevP;
   Flight *f  = flightToAnimate; // = (Flight *)_globalMapContents.getFlight();
   bool bDone = true;
-  int index;
-  static QPixmap pixUnderLastCursor = QPixmap( 75, 75, -1, QPixmap::DefaultOptim );
+//  int index;
+//  static QPixmap pixUnderLastCursor = QPixmap( 75, 75, -1, QPixmap::DefaultOptim );
 
   if (f){
     switch(f->getTypeID()) {
@@ -1320,6 +1321,9 @@ void Map::slotAnimateFlightTimeout()
       }
       break;
 		}
+      //write info from current point on statusbar
+      cP = f->getPoint(f->getAnimationIndex());
+      emit showFlightPoint(_globalMapMatrix.map(cP.projP), cP);
   }
 	// redraw flight up to this point, blt the pixmap onto the already created pixmap
 	// and force the repaint of the map.
@@ -1327,6 +1331,7 @@ void Map::slotAnimateFlightTimeout()
 
   pixFlight.setMask(bitFlightMask);
   bitBlt(&pixBuffer, 0, 0, &pixFlight);
+
 
 /*
   if ((index = f->searchGetNextPoint(f->getAnimationIndex()-1, cP)) != -1){
