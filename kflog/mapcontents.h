@@ -345,6 +345,8 @@ class MapContents : public QObject
      * Array containing the evevations of all possible isohypses.
      */
     static const int isoLines[];
+    /** */
+    QString mapDir;
 
     /** Should be deleted somtime ... */
     bool isFirst;

@@ -21,12 +21,14 @@
 #include "mapcontents.h"
 #include <mapcalc.h>
 
+#include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstddirs.h>
 #include <qdatastream.h>
 #include <qdatetime.h>
+#include <qdir.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qprogressdialog.h>
@@ -539,10 +541,9 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 {
   extern const MapMatrix _globalMapMatrix;
 
-  KStandardDirs* globalDirs = KGlobal::dirs();
   QString pathName;
-  pathName.sprintf("mapdata/%c_%.5d.kfl", fileTypeID, fileSecID);
-  pathName = globalDirs->findResource("appdata", pathName);
+  pathName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
+  pathName = mapDir + "/" + pathName;
 
   if(pathName == 0)
       // Datei existiert nicht ...
@@ -946,10 +947,9 @@ bool MapContents::__readBinaryFile(const int fileSecID,
 {
   extern const MapMatrix _globalMapMatrix;
 
-  KStandardDirs* globalDirs = KGlobal::dirs();
   QString pathName;
-  pathName.sprintf("mapdata/%c_%.5d.kfl", fileTypeID, fileSecID);
-  pathName = globalDirs->findResource("appdata", pathName);
+  pathName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
+  pathName = mapDir + "/" + pathName;
 
   if(pathName == 0)
       // File does not exist ...
@@ -1504,6 +1504,15 @@ void MapContents::proofeSection(bool isPrint)
   extern MapMatrix _globalMapMatrix;
   QRect mapBorder;
 
+  KStandardDirs* globalDirs = KGlobal::dirs();
+  KConfig* config = KGlobal::config();
+  config->setGroup("Path");
+  mapDir = config->readEntry("DefaultMapDirectory",
+      globalDirs->findResource("appdata", "mapdata"));
+
+  QDir mapfileDir(mapDir);
+  QDir(mapDir).entryList("*.kfl").isEmpty();
+
   if(isPrint)
       mapBorder = _globalMapMatrix.getPrintBorder();
   else
@@ -1521,21 +1530,29 @@ void MapContents::proofeSection(bool isPrint)
 
   if(isFirst)
     {
-      KStandardDirs* globalDirs = KGlobal::dirs();
-      QString pathName;
-      pathName = globalDirs->findResource("appdata", "mapdata/");
+      QDir airspaceDir(mapDir + "/airspace/");
+      QDir airfieldDir(mapDir + "/airfields/");
+
+      if(!airspaceDir.exists())
+        {
+          // directory does not exist!
+        }
+      if(!airfieldDir.exists())
+        {
+          // directory does not exist!
+        }
 
       emit loadingMessage(i18n("Loading airfielddata ..."));
 
       QStringList airfields;
-      airfields = globalDirs->findAllResources("appdata", "mapdata/airfields/*.kfl");
+      airfields = airfieldDir.entryList("*.kfl");
       for(QStringList::Iterator it = airfields.begin(); it != airfields.end(); it++)
           __readAirfieldFile((*it).latin1());
 
       emit loadingMessage(i18n("Loading airspacedata ..."));
 
       QStringList airspace;
-      airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.kfl");
+      airspace = airspaceDir.entryList("*.kfl");
       for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
           __readAirspaceFile((*it).latin1());
 

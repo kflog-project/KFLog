@@ -1,5 +1,11 @@
 $Id$
 
+
+2002-04-08 Heiner <heiner@kflog.org>
+
+  * Fixed handling of the path to the installed mapfiles.
+
+
 2002-04-08 Harry <harry@kflog.org>
 
   * Fixed bug in setting animation index
