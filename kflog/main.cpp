@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
   aboutData.addAuthor("Christof Bodner",
       qstrdup(i18n("Developer (OLC Optimization)")), "christof@kflog.org");      
   aboutData.addAuthor("Eggert Ehmke",
-      qstrdup(i18n("Developer")), "eggert.ehmke@berlin.de");      
+      qstrdup(i18n("Developer")), "eggert@kflog.org");      
   aboutData.addAuthor("Harald Maier",
       qstrdup(i18n("Developer (Waypoint-Dialog, Task-handling)")), "harry@kflog.org");
   aboutData.addAuthor("Thomas Nielsen",
