@@ -1876,6 +1876,14 @@ void Map::slotFlightStepNext()
           // get the next point, preIndex now holds last point
           if((index = f->searchStepNextPoint(preIndex, cP, 10)) != -1)
             {
+			  // if close to edge, recenter map to next point
+			  prePos = _globalMapMatrix.map(cP.projP);
+			  if ((prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
+				  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
+     				_globalMapMatrix.centerToPoint(prePos);
+     	            _globalMapMatrix.createMatrix(this->size());
+     			    __redrawMap();
+              }			 		
               emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
               prePos = _globalMapMatrix.map(cP.projP);
               preIndex = index;
@@ -1903,6 +1911,14 @@ void Map::slotFlightStepPrev()
           // get the next point, preIndex now holds last point
           if ((index = f->searchStepPrevPoint(preIndex, cP,10)) != -1)
             {
+			  // if close to edge, recenter map to next point
+			  prePos = _globalMapMatrix.map(cP.projP);
+			  if ((prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
+				  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
+     				_globalMapMatrix.centerToPoint(prePos);
+     	            _globalMapMatrix.createMatrix(this->size());
+     			    __redrawMap();
+              }			 		
               emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
               prePos = _globalMapMatrix.map(cP.projP);
               preIndex = index;
