@@ -628,7 +628,7 @@ QPen MapConfig::getPrintPen(unsigned int typeID)
   return __getPen(typeID, printScaleIndex);
 }
 
-QPen MapConfig::getDrawPen(flightPoint* fP,bool overrideSwitch=false)
+QPen MapConfig::getDrawPen(flightPoint* fP,bool overrideSwitch/*=false*/)
 {
   //
   // Dynamische Farben im Flug:
@@ -639,7 +639,8 @@ QPen MapConfig::getDrawPen(flightPoint* fP,bool overrideSwitch=false)
   //   I would prefer colors adjusted for each flights histogram.
   //
 
-  if(!isSwitch && !overrideSwitch)  return QPen(QColor(0,100,200), 3);
+  if(!isSwitch && !overrideSwitch)
+    return QPen(QColor(0,100,200), 3);
 
   int red = 0, green = 0, blue = 0;
   int width = 4;
