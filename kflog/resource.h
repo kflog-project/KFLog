@@ -39,7 +39,7 @@
  *
  * Name der Ausgabedatei:
  *
- *   X_iiii.kfl
+ *   X_iiiii.kfl
  *
  *
  *   X:    Typ der enthaltenen Daten
@@ -48,7 +48,7 @@
  *         "T" für restliche Höhenlinien ("Terrain")
  *         "M" für allgemeine Karteninformationen
  *
- *   iiii: Kennzahl der Kachel, Angabe vierstellig
+ *   iiiii: Kennzahl der Kachel, Angabe vierstellig
  *         (Zahl liegt zwischen 0 und 8190)
  *
  *   Typkennung und Kachel-ID werden ebenfalls im Header der Datei angegeben.
@@ -73,6 +73,7 @@
 #define TYPE_GROUND     0x47
 #define TYPE_TERRAIN    0x54
 #define TYPE_MAP        0x4d
+#define TYPE_LM         0x4c
 #define TYPE_AERO       0x41
 #define FORMAT_VERSION  100
 
@@ -98,15 +99,13 @@
 #define ULTRALIGHT       11
 #define HANGGLIDER       12
 #define PARACHUTE        13
-#define BALLOON           14
+#define BALLOON          14
 #define OUTLANDING       15
-
 #define VOR              16
 #define VORDME           17
 #define VORTAC           18
 #define NDB              19
 #define COMPPOINT        20
-
 #define AIR_A            21
 #define AIR_B            22
 #define AIR_C            23
@@ -120,49 +119,37 @@
 #define LOW_FLIGHT       31
 #define RESTRICTED       32
 #define TMZ              33
-
 #define OBSTACLE         34
 #define LIGHT_OBSTACLE   35
 #define OBSTACLE_GROUP   36
 #define LIGHT_OBSTACLE_GROUP  37
 #define SPOT             38
-
 #define ISOHYPSE         39
 #define GLACIER          40
-
 #define BORDER           41
-
 #define CITY             42
 #define VILLAGE          43
-
 #define LANDMARK         44
-
 #define HIGHWAY          45
 #define ROAD             46
-
 #define RAILWAY          47
 #define AERIAL_CABLE     48
-
-
 #define LAKE             49
-
 #define RIVER            50
 #define CANAL            51
-
-// #define WAYPOINT           (als Flag bei SinglePoint)
-
 #define FLIGHT           52
-#define FLIGHT_TASK             53
-
-
-#define RAILWAY_D        57
-#define LAKE_T           55
+#define FLIGHT_TASK      53
 #define RIVER_T          54
+#define LAKE_T           55
 #define PACK_ICE         56
+#define RAILWAY_D        57
 #define TRAIL            58
 #define FOREST           60
 #define TURNPOINT        61
 #define THERMAL          62
+#define FLIGHT_GROUP     63
+#define FAI_AREA_LOW     64
+#define FAI_AREA_HIGH    65
 
 /*
  * In einigen ASCII-Dateien taucht der Typ 71 für Kanäle auf,
@@ -181,16 +168,24 @@
  *
  */
 
-#define LM_DAM         0
-#define LM_MINE        1
-#define LM_INDUSTRY    2
-#define LM_DEPOT       3
-#define LM_TOWER       4
-#define LM_SETTLEMENT  5
-#define LM_CASTLE      6
-#define LM_LIGHTHOUSE  7
-#define LM_STATION     9
-#define LM_BRIDGE     10
-#define LM_FERRY      11
+#define LM_UNKNOWN     0
+#define LM_DAM         1
+#define LM_LOCK        2
+#define LM_MINE        3
+#define LM_INDUSTRY    4
+#define LM_DEPOT       5
+#define LM_SALT        6
+#define LM_OILFIELD    7
+#define LM_TOWER       8
+#define LM_SETTLEMENT  9
+#define LM_BUILDING   10
+#define LM_CASTLE     11
+#define LM_RUIN       12
+#define LM_MONUMENT   13
+#define LM_LIGHTHOUSE 14
+#define LM_STATION    15
+#define LM_BRIDGE     16
+#define LM_FERRY      17
+
 
 #endif // RESOURCE_H
