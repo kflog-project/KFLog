@@ -27,8 +27,13 @@
 #include <kcombobox.h>
 #include <kdialog.h>
 
-/**Create and edit waypoints
+/**
+  *@short Create and edit waypoints
+  *
+  * Create and/or modify waypoints and their attributes.
+  *
   *@author Harald Maier
+  *@version  $Id$
   */
 
 class WaypointDialog : public KDialog  {
@@ -36,15 +41,21 @@ class WaypointDialog : public KDialog  {
 public: 
 	WaypointDialog(QWidget *parent=0, const char *name=0);
 	~WaypointDialog();
-  /** return interna type of surface */
+  /**
+   * return interna type of surface
+   */
   int getSurface();
-  /** return internal type of waypoint */
+  /**
+   * return internal type of waypoint
+   */
   int getWaypointType();
-  /** set surface type in combo box
-translate internal id to index */
+  /**
+   * set surface type in combo box translate internal id to index
+   */
   void setSurface(int s);
-  /** set waypoint type in combo box
-translate internal id to index */
+  /**
+   * set waypoint type in combo box translate internal id to index
+   */
   void setWaypointType(int type);
 private: // Private methods
   /** No descriptions */

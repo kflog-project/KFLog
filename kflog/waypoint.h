@@ -22,7 +22,12 @@
 #include <qstring.h>
 
 /**
+  *@short Class to contain waypoints
+  *
+  * This class is used to store a waypoint.
+  *
   *@author Heiner Lamprecht
+  *@version $Id$
   */
 
 class Waypoint {
@@ -34,48 +39,86 @@ public:
   Waypoint(Waypoint *p);
   Waypoint(Waypoint &p);
   ~Waypoint();
-  /** The name of the waypoint. */
+  /**
+   * The name of the waypoint.
+   */
   QString name;
-  /** The original lat/lon-position of the waypoint. */
+  /**
+   * The original lat/lon-position of the waypoint.
+   */
   WGSPoint origP;
-  /** The projected position of the waypoint. */
+  /**
+   * The projected position of the waypoint.
+   */
   QPoint projP;
-  /** The time, sector 1 has been reached. */
+  /**
+   * The time, sector 1 has been reached.
+   */
   unsigned int sector1;
-  /** The time, sector 2 has been reached. */
+  /**
+   * The time, sector 2 has been reached.
+   */
   unsigned int sector2;
-  /** The time, the fai-sector has been reached. */
+  /**
+   * The time, the fai-sector has been reached.
+   */
   unsigned int sectorFAI;
-  /** The angle for the sector */
+  /**
+   * The angle for the sector
+   */
   double angle;
-  /** The type of the waypoint */
+  /**
+   * The type of the waypoint
+   */
   int type;
-  /** The distance to the previous waypoint */
+  /**
+   * The distance to the previous waypoint
+   */
   double distance;
 
   /** Improvements for planning */
-  /** long name or description (internal only) */
+  /**
+   * long name or description (internal only)
+   */
   QString description;
-  /** ICAO name */
+  /**
+   * ICAO name
+   */
   QString icao;
-  /** */
+  /**
+   * Comment
+   */
   QString comment;
-  /** internal surface id */
+  /**
+   * internal surface id
+   */
   int surface;
-  /** */
+  /**
+   *
+   */
   int runway;
-  /** */
+  /**
+   *
+   */
   int length;
-  /** */
+  /**
+   *
+   */
   int elevation;
-  /** */
+  /**
+   *
+   */
   double frequency;
-  /** flag for landable*/
+  /**
+   * flag for landable
+   */
   bool isLandable;
-  /** contains an importance indidation for the waypoint
+  /**
+    * contains an importance indidation for the waypoint
     * 0=low
     * 1=normal
-    * 2=high  */
+    * 2=high
+    */
   unsigned int importance;
 };
 

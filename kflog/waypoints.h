@@ -32,7 +32,10 @@
 #include <kpopupmenu.h>
 
 /**
+ *@short Waypoint-frame for display in interface
+ *
  *@author Harald Maier
+ *@version (unkown)
  */
 
 class Waypoints : public QFrame  {
@@ -40,18 +43,26 @@ class Waypoints : public QFrame  {
     public:
   Waypoints(QWidget *parent = 0, const char *name = 0, QString *catalog = 0);
   ~Waypoints();
-  /* save changes in catalogs, return success */
+  /**
+   * save changes in catalogs, return success
+   */
   bool saveChanges();
-  /** return the current waypoint catalog */
+  /**
+   * @return the current waypoint catalog
+   */
   WaypointCatalog *getCurrentCatalog();
  private: // Private methods
-  /** No descriptions */
+  /**
+   * No descriptions
+   */
   void addWaypointWindow(QWidget *parent);
   /** No descriptions */
   void addPopupMenu();
   /** No descriptions */
   void fillWaypoints();
-  /** read filter and store in catalog */
+  /**
+   * read filter and store in catalog
+   */
   void getFilterData();
   void openCatalog(QString &catalog);
  private: // Private attributes
@@ -111,23 +122,44 @@ class Waypoints : public QFrame  {
   void slotImportWaypointFromMap();
   void slotCopyWaypoint2Task();
   void slotCenterMap();
+
   public slots: // Public slots
-    void slotNewWaypoint();
-  /** filter waypoints to display */
+  /**
+   * A waypoint has been added to the catalog
+   */
+  void slotNewWaypoint();
+  /**
+   * filter waypoints to display
+   */
   void slotFilterWaypoints();
-  /** add a new waypoint from outside */
+  /**
+   * add a new waypoint from outside
+   */
   void slotAddWaypoint(Waypoint *w);
-  /** add a new waypoint from outside */
+  /**
+   * add a new waypoint from outside
+   */
   void slotAddCatalog(WaypointCatalog *w);
-  /** No descriptions */
+  /**
+   * No description
+   */
   void slotImportWaypointFromFile();
-  /* No descriptions */
-  void slotSetWaypointCatalogName(QString catalog);
+  /**
+   * No description
+   */
+   void slotSetWaypointCatalogName(QString catalog);
  signals: // Signals
-  /** No descriptions */
+  /**
+   * Request to copy the referenced waypoint into the current task
+   */
   void copyWaypoint2Task(Waypoint *);
-  /** signal to emit when current waypointcatalog has changed. */
+  /**
+   * signal to emit when current waypointcatalog has changed.
+   */
   void waypointCatalogChanged(WaypointCatalog *);
+  /**
+   * Request to center the map on the given coordinates
+   */
   void centerMap(int, int);
 };
 

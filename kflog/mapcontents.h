@@ -37,10 +37,28 @@ class LineElement;
 class RadioPoint;
 class SinglePoint;
 
+/**
+ * @short Entry in the isolist
+ *
+ * This class contains a @ref QRegion and a height. A list of entries
+ * like this is created when the map is drawn, and is used to detect the
+ * elevation at a given position, for instance under the mousecursor.
+ *
+ * @author André Somers
+ * @version $Id$
+ */
+ 
 class isoListEntry {
   public:
-  
+    /**
+     * Constructor.
+     * @param region Region in coordinate system of the map-object, not in KFLog system
+     * @param height the elevation of the isoline in meters
+     */
     isoListEntry(QRegion* region=0, int height=0);
+    /**
+     * Destructor
+     */
     ~isoListEntry();
   
     QRegion* region;
@@ -407,7 +425,9 @@ switch to first task in file */
     /** */
     QString mapDir;
 
-    /** Should be deleted somtime ... */
+    /**
+     * Depreciated. Should be deleted somtime ...
+     */
     bool isFirst;
 
     /**
