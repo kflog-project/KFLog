@@ -589,9 +589,9 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
 QString Flight::getDistance(bool isOrig) const
 {
   if(isOrig || !optimized)
-      return origTask.getDistanceString();
+      return origTask.getTotalDistanceString();
   else
-      return optimizedTask.getDistanceString();
+      return optimizedTask.getTotalDistanceString();
 }
 
 QString Flight::getTaskDistance(bool isOrig) const

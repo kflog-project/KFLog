@@ -86,7 +86,7 @@ class FlightTask : public BaseFlightElement
     /** */
     QString getRouteType() const;
     /** */
-    QString getDistanceString() const;
+    QString getTotalDistanceString() const;
     /** */
     QString getTaskDistanceString() const;
     /** */
@@ -122,6 +122,10 @@ class FlightTask : public BaseFlightElement
      */
     void __setWaypointType();
     /**
+     * Set the DMST_Points
+     */
+    void __setDMSTPoints();
+    /**
      * true, if the task is the original task of a flight as read from
      * the igc-file.
      */
@@ -138,10 +142,12 @@ class FlightTask : public BaseFlightElement
     double taskPoints;
     /** */
     unsigned int flightType;
-    /** */
-    double distance_tot;
-    /** */
-    double distance_wp;
+    /** Gesamte Länge*/
+    double distance_total;
+    /** WertungsDistanz für DMST*/
+    double distance_wert;
+    /** Aufgaben Länge*/
+    double distance_task;
 };
 
 #endif

@@ -354,14 +354,14 @@ void Map::mousePressEvent(QMouseEvent* event)
 
   if(event->button() == MidButton)
     {
-      warning(" -> 1");
+//      warning(" -> 1");
       _globalMapMatrix.centerToPoint(event->pos());
       _globalMapMatrix.createMatrix(this->size());
       __redrawMap();
     }
   else if(event->button() == LeftButton)
     {
-      warning(" -> 2");
+//      warning(" -> 2");
       //    _start = event->pos();
       if (shiftButton)
         {
@@ -530,7 +530,7 @@ void Map::mousePressEvent(QMouseEvent* event)
     }
   else if(event->button() == RightButton)
     {
-      warning(" -> 3");
+//      warning(" -> 3");
       if(planning == 1 || planning == 3)
         {
           QPoint preSitePos, nextSitePos;
@@ -982,7 +982,7 @@ warning("Map::__drawPlannedTask()");
     planP.setPen(drawP);
 
     QPointArray points(taskPointList.count());
-    cout << "Anzahl WP: " << taskPointList.count() << endl;
+//    cout << "Anzahl WP: " << taskPointList.count() << endl;
     QPoint temp;
 
   //  points = _globalMapMatrix.map(taskPointList);
@@ -1217,9 +1217,14 @@ void Map::slotCenterToFlight()
 
  Flight *f = (Flight *)_globalMapContents.getFlight();
  if (f && f->getTypeID() == BaseMapElement::Flight) {
-   _globalMapMatrix.centerToRect(f->getFlightRect());
-   _globalMapMatrix.createMatrix(this->size());
-   __redrawMap();
+   // check if the Rectangle is zero
+   // is it necessary here?
+   if (!f->getFlightRect().isNull())
+    {
+      _globalMapMatrix.centerToRect(f->getFlightRect());
+      _globalMapMatrix.createMatrix(this->size());
+      __redrawMap();
+    }
 
     emit changed(this->size());
   }
@@ -1244,11 +1249,16 @@ void Map::slotCenterToTask()
     default:
       return;
     }
-    _globalMapMatrix.centerToRect(r);
-    _globalMapMatrix.createMatrix(this->size());
-    __redrawMap();
 
-    emit changed(this->size());
+    // check if the Rectangle is zero
+    if (!r.isNull())
+      {
+        _globalMapMatrix.centerToRect(r);
+        _globalMapMatrix.createMatrix(this->size());
+        __redrawMap();
+
+        emit changed(this->size());
+      }
   }
 }
 

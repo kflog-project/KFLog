@@ -42,14 +42,17 @@ FlightTask::FlightTask(QString fName)
   : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(false)
 {
+warning("FlightTask(QString fName)");
 
 }
+
 
 FlightTask::FlightTask(QList<wayPoint> wpL, bool isO, QString fName)
   : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(isO),
     wpList(wpL)
 {
+warning("FlightTask(QList<wayPoint> wpL, bool isO, QString fName)");
   __setWaypointType();
 
   __checkType();
@@ -68,8 +71,16 @@ void FlightTask::__checkType()
   /**
    * Prooves the type of the task.
    **/
-  distance_tot = 0;
-  double distance_tot_d = 0;
+  distance_task = 0;
+  distance_total = 0;
+  double distance_task_d = 0;
+
+  for(unsigned int loop = 1; loop <= wpList.count() - 1; loop++)
+  {
+warning("distance: %f",wpList.at(loop)->distance);
+      distance_total += wpList.at(loop)->distance;
+  }
+warning("Total Distance: %f",distance_total);
 
   if(wpList.count() < 4)
     {
@@ -77,8 +88,9 @@ void FlightTask::__checkType()
       return;
     }
 
-  for(unsigned int loop = 2; loop <= wpList.count() - 2; loop++)
-      distance_tot = distance_tot + wpList.at(loop)->distance;
+
+  distance_task = distance_total - wpList.at(1)->distance
+                                 - wpList.at(wpList.count() - 1)->distance;
 
   if(dist(wpList.at(1),wpList.at(wpList.count() - 2)) < 1.0)
     {
@@ -94,7 +106,7 @@ void FlightTask::__checkType()
             break;
           case 2:
             // FAI Dreieck
-            if(isFAI(distance_tot,wpList.at(2)->distance,
+            if(isFAI(distance_task,wpList.at(2)->distance,
                 wpList.at(3)->distance, wpList.at(4)->distance))
                flightType = FlightTask::FAI;
             else
@@ -108,53 +120,53 @@ void FlightTask::__checkType()
             //
             // Erste Abfrage je nachdem ob Vieleck oder Dreieck mehr Punkte geben
             // würde
-            distance_tot_d = distance_tot - wpList.at(2)->distance
+            distance_task_d = distance_task - wpList.at(2)->distance
                  - wpList.at(5)->distance + dist(wpList.at(2), wpList.at(4));
 
-            if(isFAI(distance_tot_d, dist(wpList.at(2), wpList.at(4)),
+            if(isFAI(distance_task_d, dist(wpList.at(2), wpList.at(4)),
                   wpList.at(3)->distance, wpList.at(4)->distance))
               {
-                if(distance_tot > distance_tot_d * (1.0 + 1.0/3.0))
+                if(distance_task > distance_task_d * (1.0 + 1.0/3.0))
                     flightType = FlightTask::Vieleck;
                 else
                   {
                     flightType = FlightTask::FAI_S;
-                    distance_tot = distance_tot_d;
+                    distance_task = distance_task_d;
                   }
               }
             else
               {
-                if(distance_tot > distance_tot_d * (1.0 + 1.0/6.0))
+                if(distance_task > distance_task_d * (1.0 + 1.0/6.0))
                     flightType = FlightTask::Vieleck;
                 else
                   {
                     flightType = FlightTask::Dreieck_S;
-                    distance_tot = distance_tot_d;
+                    distance_task = distance_task_d;
                   }
               }
             break;
           case 5:
             // 2x Dreieck nur als FAI gültig
             flightType = Unknown;
-            if( (distance_tot / 2 <= 100) && (wpList.at(1) == wpList.at(4)) &&
+            if( (distance_task / 2 <= 100) && (wpList.at(1) == wpList.at(4)) &&
                     (wpList.at(2) == wpList.at(5)) &&
                     (wpList.at(3) == wpList.at(6)) &&
-                    isFAI(distance_tot / 2, wpList.at(2)->distance,
+                    isFAI(distance_task / 2, wpList.at(2)->distance,
                             wpList.at(3)->distance, wpList.at(4)->distance))
                 flightType = FlightTask::FAI_2;
             break;
           case 6:
             // 2x Dreieck auf Schenkel FAI
             flightType = FlightTask::Unknown;
-            distance_tot = distance_tot - wpList.at(2)->distance
+            distance_task = distance_task - wpList.at(2)->distance
                  - wpList.at(5)->distance
                  + dist(wpList.at(2), wpList.at(4)) * 2;
 
-            if( (distance_tot / 2 <= 100) &&
+            if( (distance_task / 2 <= 100) &&
                     (wpList.at(2) == wpList.at(5)) &&
                     (wpList.at(3) == wpList.at(6)) &&
                     (wpList.at(4) == wpList.at(7)) &&
-                    isFAI(distance_tot, dist(wpList.at(2), wpList.at(4)),
+                    isFAI(distance_task, dist(wpList.at(2), wpList.at(4)),
                       wpList.at(3)->distance, wpList.at(4)->distance))
               flightType = FlightTask::FAI_S2;
 
@@ -162,32 +174,32 @@ void FlightTask::__checkType()
           case 8:
             // 3x FAI Dreieck
             flightType = Unknown;
-            if( (distance_tot / 3 <= 100) &&
+            if( (distance_task / 3 <= 100) &&
                     (wpList.at(1) == wpList.at(4)) &&
                     (wpList.at(2) == wpList.at(5)) &&
                     (wpList.at(3) == wpList.at(6)) &&
                     (wpList.at(1) == wpList.at(7)) &&
                     (wpList.at(2) == wpList.at(8)) &&
                     (wpList.at(3) == wpList.at(9)) &&
-                    isFAI(distance_tot / 3, wpList.at(2)->distance,
+                    isFAI(distance_task / 3, wpList.at(2)->distance,
                         wpList.at(3)->distance, wpList.at(4)->distance))
                 flightType = FlightTask::FAI_3;
             break;
           case 9:
             // 3x FAI Dreieck Start auf Schenkel
-            distance_tot = distance_tot - wpList.at(2)->distance
+            distance_task = distance_task - wpList.at(2)->distance
                  - wpList.at(5)->distance
                  + dist(wpList.at(2), wpList.at(4)) * 3;
 
             flightType = Unknown;
-            if( (distance_tot / 3 <= 100) &&
+            if( (distance_task / 3 <= 100) &&
                     (wpList.at(2) == wpList.at(5)) &&
                     (wpList.at(3) == wpList.at(6)) &&
                     (wpList.at(4) == wpList.at(7)) &&
                     (wpList.at(2) == wpList.at(8)) &&
                     (wpList.at(3) == wpList.at(9)) &&
                     (wpList.at(4) == wpList.at(10)) &&
-                     isFAI(distance_tot, dist(wpList.at(2), wpList.at(4)),
+                     isFAI(distance_task, dist(wpList.at(2), wpList.at(4)),
                         wpList.at(3)->distance, wpList.at(4)->distance))
               flightType = FlightTask::FAI_S3;
           default:
@@ -256,8 +268,16 @@ double FlightTask::__sectorangle(int loop, bool isDraw)
 void FlightTask::__setWaypointType()
 {
   /*
-   * Setzt den Status der Wendepunkte
+   * Setzt den Status der Wendepunkte und die Distanzen
    */
+
+  // Distances
+  for(unsigned int n = 1; n  < wpList.count(); n++)
+    {
+      wpList.at(n)->distance = dist(wpList.at(n-1),wpList.at(n));
+      warning("n: %f",wpList.at(n)->distance);
+    }
+
 
   // Kein Wendepunkt definiert
   if (wpList.count() < 4) return;
@@ -266,8 +286,9 @@ void FlightTask::__setWaypointType()
   wpList.at(0)->type = FlightTask::TakeOff;
   wpList.at(1)->type = FlightTask::Begin;
 
+
   for(unsigned int n = 2; n + 2 < wpList.count(); n++)
-      wpList.at(n)->type = FlightTask::RouteP;
+    wpList.at(n)->type = FlightTask::RouteP;
 
   wpList.at(wpList.count() - 2)->type = FlightTask::End;
   wpList.at(wpList.count() - 1)->type = FlightTask::Landing;
@@ -298,6 +319,7 @@ void FlightTask::drawMapElement(QPainter* targetPainter,
   if(flightType != 99999)
     {
       QPoint tempP;
+
 
       for(unsigned int loop = 0; loop < wpList.count(); loop++)
         {
@@ -393,8 +415,8 @@ void FlightTask::drawMapElement(QPainter* targetPainter,
                     maskPainter->drawLine(
                         glMapMatrix->map(wpList.at(loop - 1)->projP),
                         glMapMatrix->map(wpList.at(loop)->projP));
-                   warning("zeichne Linie zum Beginn loop: %d",loop);
-                   cout << "von " << wpList.at(loop - 1)->name << " nach: " << wpList.at(loop)->name << endl;
+//                   warning("zeichne Linie zum AufgabenBeginn loop: %d",loop);
+//                   cout << "von " << wpList.at(loop - 1)->name << " nach: " << wpList.at(loop)->name << endl;
                   }
                 break;
 
@@ -814,21 +836,24 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
       home = true;
     }
 
-  double wertDist = 0, F = 1;
+
+// jetzt in __setDistance noch übernehmen
+  distance_wert = 0;
+  double F = 1;
 
   if(dmstCount != wpList.count() - 2)
     {
       if(home)
         {
-          wertDist = dist(wpList.at(wpList.count() - 1),
+          distance_wert = dist(wpList.at(wpList.count() - 1),
               wpList.at(dmstCount));
           for(unsigned int loop = 1; loop < 1 + dmstCount; loop++)
-              wertDist = wertDist + wpList.at(loop)->distance;
+              distance_wert = distance_wert + wpList.at(loop)->distance;
         }
       else
         {
           for(unsigned int loop = 1; loop <= 1 + dmstCount; loop++)
-              wertDist = wertDist + wpList.at(loop)->distance;
+              distance_wert = distance_wert + wpList.at(loop)->distance;
         }
     }
   else
@@ -856,10 +881,10 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
           default:
             F = 0.0;
         }
-      wertDist = distance_tot;
+      distance_wert = distance_task;
     }
 
-  taskPoints = (wertDist * F * 100) / gliderIndex * dmstMalus +
+  taskPoints = (distance_wert * F * 100) / gliderIndex * dmstMalus +
                       (aussenlande * pointCancel * 100) / gliderIndex;
 
   if(!isOrig)
@@ -869,6 +894,9 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
        */
       taskPoints -= ( taskPoints * (malusValue / 100.0) );
     }
+///
+
+
 
   if (time_error)
    {
@@ -900,22 +928,23 @@ QString FlightTask::getRouteType() const
     }
 }
 
-QString FlightTask::getDistanceString() const
+QString FlightTask::getTotalDistanceString() const
 {
   if(flightType == FlightTask::NotSet)  return "--";
 
   QString distString;
-  distString.sprintf("%.2f km", distance_tot);
+  distString.sprintf("%.2f km", distance_total);
 
   return distString;
 }
+
 
 QString FlightTask::getTaskDistanceString() const
 {
   if(flightType == FlightTask::NotSet)  return "--";
 
   QString distString;
-  distString.sprintf("%.2f km ", distance_wp);
+  distString.sprintf("%.2f km ", distance_task);
 
   return distString;
 }
@@ -937,16 +966,16 @@ QRect FlightTask::getRect() const  {  return bBoxTask;  }
 
 void FlightTask::setWaypointList(QList<wayPoint> wpL)
 {
+  warning("setWaypointList(QList<wayPoint> wpL)");
   wpList = wpL;
 
   isOrig = false;
 
+  __setWaypointType();
   __checkType();
 
   for(unsigned int loop = 0; loop < wpList.count(); loop++)
       __sectorangle(loop, false);
-
-  __setWaypointType();
 }
 /** No descriptions */
 QString FlightTask::getFlightInfoString()
@@ -986,7 +1015,7 @@ QString FlightTask::getFlightInfoString()
     }
 
     htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
-      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + getDistanceString() + "</TD></TR>\
+      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + getTotalDistanceString() + "</TD></TR>\
       </TABLE>";
   }
   else {
@@ -994,4 +1023,65 @@ QString FlightTask::getFlightInfoString()
   }
 
   return htmlText;
+}
+
+
+
+void FlightTask::__setDMSTPoints()
+{
+//  double F = 1;
+//
+//  if(dmstCount != wpList.count() - 2)
+//    {
+//      if(home)
+//        {
+//          distance_wert = dist(wpList.at(wpList.count() - 1),
+//              wpList.at(dmstCount));
+//          for(unsigned int loop = 1; loop < 1 + dmstCount; loop++)
+//              distance_wert = distance_wert + wpList.at(loop)->distance;
+//        }
+//      else
+//        {
+//          for(unsigned int loop = 1; loop <= 1 + dmstCount; loop++)
+//              distance_wert = distance_wert + wpList.at(loop)->distance;
+//        }
+//    }
+//  else
+//    {
+//      /*
+//       *  Aufgabe vollständig erfüllt
+//       *        F: Punkte/km
+//       *        I: Index des Flugzeuges
+//       *        f & I noch abfragen !!!!
+//       */
+//      switch(flightType)
+//        {
+//          case FlightTask::ZielS:
+//            F = pointZielS;
+//            break;
+//          case FlightTask::ZielR:
+//          case FlightTask::Dreieck:
+//          case FlightTask::Dreieck_S:
+//            F = pointNormal;
+//            break;
+//          case FlightTask::FAI:
+//          case FlightTask::FAI_S:
+//            F = pointFAI;
+//            break;
+//          default:
+//            F = 0.0;
+//        }
+//       distance_wert = distance_tot;
+//    }
+//
+//  taskPoints = (distance_wert * F * 100) / gliderIndex * dmstMalus +
+//                      (aussenlande * pointCancel * 100) / gliderIndex;
+//
+//  if(!isOrig)
+//    {
+//      /*
+//       * Optimierter Flug: x% abziehen
+//       */
+//      taskPoints -= ( taskPoints * (malusValue / 100.0) );
+//    }
 }
