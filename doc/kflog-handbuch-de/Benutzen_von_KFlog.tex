@@ -2,11 +2,11 @@
 \subsection{Einrichten der Wendepunkte}
 
 Auf der Karte erscheinen beim ersten Start von KFlog die Straßen, Luftraumstrukturen usw..
-Leider sind die Wegpunkte bzw. Wendepunkte wie z.B. Flugplätze nicht beschriftet. Damit aber eine Streckenaufgabe erstellt werden kann sind diese Punkte notwendig.
+Standartmäßig sind die Wegpunkte bzw. Wendepunkte wie z.B. Flugplätze nicht beschriftet. Damit aber eine Streckenaufgabe erstellt werden kann sind diese Punkte notwendig.
 \\Als Wendepunkt werden z.B. alle Flugplätze und Segelfluggelände aber auch verschiedene Landschaftsmekmale angesehen. Die Wegpunkte werden in der Karte durch ein kleines Quadrat dargestellt.
 \\Um einen neuen Wendepunktkatalog zu erstellen klickt man mit der rechten Maustaste in die Wegpunktliste und wählt aus dem Menü den Punkt ''Neuen Katalog'' aus. 
 In der Pfadangabe wird nun ein neuer Katalog angezeigt.
-\\Anschließend ruft man dieses Menü noch einmal auf und wählt z.B. den Punkt  ''von Karte
+\\ Anschließend ruft man dieses Menü noch einmal auf und wählt z.B. den Punkt  ''von Karte
  importieren''. 
 \begin{figure}[htpb]
 \begin{center}
@@ -15,8 +15,8 @@ In der Pfadangabe wird nun ein neuer Katalog angezeigt.
 \caption{Wendepunkte aus Karte importieren}
 \end{center}
 \end{figure}
-Es wird nun ein Dialog geöffnet, mit dem das Gebiet festgelegt wird, aus dem die Wendepunkte aus der Karte eingelesen werden sollen. In diesem Fall wird das Gebiet, das durch den Radius von 500km um den Heimatflugplatz begrenzt wird, ausgewählt (s. Abb. 10).
-\\Nach dem Bestätigen sollten nun alle Flugplätze auf der Karte in dem vorher gewählten Gebiet beschriftet sein und in der Wendepunktliste sollten diese Wegpunkte jetzt aufgeführt sein (s. Abb. 11).
+Es wird nun ein Dialog geöffnet, mit dem das Gebiet festgelegt wird, aus dem die Wendepunkte aus der Karte eingelesen werden sollen. In diesem Fall wird das Gebiet, das durch den Radius von 500km um den Heimatflugplatz begrenzt wird, ausgewählt (s. Abb. 12).
+\\Nach dem Bestätigen sollten nun alle Flugplätze auf der Karte in dem vorher gewählten Gebiet beschriftet sein und in der Wendepunktliste sollten diese Wegpunkte jetzt aufgeführt sein (s. Abb. 13).
 \\Diesen Katalog kann man nun speichern, indem man wieder mit der rechten Maustaste in die Wendepunktliste klickt und den Punkt ''Katalog speichern'' oder ''Katalog speichern als'' auswählt.
 \begin{figure}[htpb]
 \begin{center}
@@ -25,7 +25,12 @@ Es wird nun ein Dialog geöffnet, mit dem das Gebiet festgelegt wird, aus dem die
 \caption{Ansicht mit eingefügten Wendepunkten}
 \end{center}
 \end{figure}
-Wegpunkte können aber auch manuell in einen Katalog eingefügt werden.  Mit der rechten Maustaste klickt man in die Wendepunktliste und wählt im Menü ''Neuer Wegpunkt'' oder man wählt einen beliebigen Punkt in der Karte und klickt mit gehaltener SHIFT-Taste in die Karte.
+Wegpunkte können aber auch manuell in einen Katalog eingefügt werden.
+Mit der rechten Maustaste klickt man in die Wendepunktliste und wählt
+im Menü ''Neuer Wegpunkt'' oder man wählt einen beliebigen Punkt in
+der Karte und klickt mit gehaltener SHIFT-Taste in die Karte. Außerdem
+ist es möglich neue Wendepunkte in der Karte über das Kontextmenü, 
+welches mit einem rechten Mausklick in die Karte aufgerufen wird  hinzuzufügen.
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/Wendepunkt_hinzufügen.png} 
@@ -34,13 +39,15 @@ Wegpunkte können aber auch manuell in einen Katalog eingefügt werden.  Mit der r
 \end{center}
 \end{figure}
 Wenn der Wegpunkt ein Flugfeld ist,wird dieses Flugfeld mit seinen Eigenschaften aus der Datenbank in die Wegpunktliste eingefügt, ohne dass sich ein Dialog öffnet. Falls der Wegpunkt nicht auf einem Flugfeld liegt, wird ein Eingabedialog geöffnet
-\\ In der Eingabemaske (Abb. 12) können dann verschiedene Eigenschaften für den neuen Wegpunkt hinzugefügt werden Nach dem Bestätigen wird der Wendepunkt in die Liste eingefügt und erscheint in der Karte.
+\\ In der Eingabemaske (Abb. 14) können dann verschiedene Eigenschaften für den neuen Wegpunkt hinzugefügt werden Nach dem Bestätigen wird der Wendepunkt in die Liste eingefügt und erscheint in der Karte.
 \\Nach dem Einfügen der Wendepunkte kann der Katalog gespeichert werden, indem man mit einem Rechtsklick in die Wendepunktliste ein Menü öffnet und den Eintrag ''Katalog speichern'' oder ''Katalog speichern als'' wählt.
-Es ist darauf zu achten, dass der aktuelle Wendepunktkatalog in dem voreingestellten Verzeichnis für die Wendepunkte gesichert wird.
+\\
+\textit{Man kann Wendepunktkataloge aus jedem beliebigen Verzeichnis laden!!}
+
+
 \newpage
 \subsection{Erstellen einer neuen Aufgabe}
-Um eine neue Flugaufgabe zu erstellen klickt man mit der rechten Maustaste in die Aufgabenliste. 
-Aus dem Menü wählt man nun den Punkt ''Neue Aufgabe'' aus (Abb. 13).
+Um eine neue Flugaufgabe zu erstellen klickt man mit der rechten Maustaste in den KFLog-Browser. Aus dem Menü wählt man nun den Punkt ''Neue Aufgabe'' aus (Abb. 15).
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/Neue_Aufgabe.png} 
@@ -58,25 +65,24 @@ Im Detailfenster erscheint nun grau hinterlegt die Zusammenfassung der Aufgabe.
 \item vorletzter Punkt entspricht dm Endpunkt der Aufgabe
 \item letzter Punkt entspricht dem Landeplatz
 \end{enumerate}
-Außerdem ist es möglich, durch klicken in die Karte und gleichzeitigem Drücken der Shift Taste , einen freien Wendepunkt auszuwählen.
+Außerdem ist es möglich, durch klicken in die Karte und gleichzeitigem Drücken der <SHIFT> Taste , einen freien Wendepunkt auszuwählen.
 Das Löschen eines Wendepunktes erfolgt durch drücken von <STRG> und einem Klick auf den Wendepunkt gelöscht werden. 
 \\ Die Aufgabe kann bis zur aktuellen Mausposition berechnet werden, indem die Taste <SHIFT> gedrückt wird.
-Um die Aufgabe zu beenden bitte <STRG> und die rechte Maustaste drücken.
-Es ist möglich Wendepunkte von der fertigen Aufgabe zu löschen oder zu verschieben.
+Um die Aufgabe zu beenden bitte <STRG> und die rechte Maustaste drücken. Die Aufgabenerstellung kann aber auch durch das Menü, das mit einem Rechtsklick auf die Karte aufgerufen wird, mit dem Punkt ''Flugplanung beenden'' abgeschlossen werden.
 In der Karte werden die Wegpunkte und die Kurslinie dargestellt. Im Detailfenster werden die Wegpunkte der Aufgabe mit den Koordinaten dargestellt und die Gesamtdistanz und die Punktzahl für den Index 100 errechnet. Weiterhin werden auch die Kurse von einem Wegpunkt zum anderen berechnet.
 \begin{figure}[htpb]
 \begin{center}
-\includegraphics[scale=.34]{Bilder/fertig/Aufgabe.png} 
+\includegraphics[scale=.33]{Bilder/fertig/Aufgabe.png} 
 \\
 \caption{Aufgabe}
 \end{center}
 \end{figure}
-\\Die Aufgabe kann auch geändert werden, indem man mit einem Rechtsklick die Aufgabe wählt.
-Es wird nun Aufgabe bearbeiten gewählt und damit der Änderungsdialog geöffnet.
+\\Am einfachsten kann die Aufgabe verändert werden indem die einzelnen Wendepunkte in der Karte angeklickt und mit der Maus auf einen in der Karte verzeichneten neuen Wendepunkt verschoben werden. Dabei wird gleichzeitig der Bereich um den neuen Punkt gezoomt und dann kann durch einen einfachen Klick der neue Punkt festgelegt werden. 
+\\Die Aufgabe kann auch geändert werden, indem man mit einem Rechtsklick die Aufgabe im KFlog-Browser wählt. Es wird nun ''Aufgabe bearbeiten'' geklickt und damit der Änderungsdialog geöffnet.
 \\ In diesem Dialog können die Wegpunkte in der Liste  mit Hilfe der Pfeiltasten verschoben werden.
 \begin{figure}[htpb]
 \begin{center}
-\includegraphics[scale=.34]{Bilder/fertig/Aufgabe_editieren.png} 
+\includegraphics[scale=.33]{Bilder/fertig/Aufgabe_editieren.png} 
 \\
 \caption{Aufgabe ändern}
 \end{center}
@@ -84,10 +90,12 @@ Es wird nun Aufgabe bearbeiten gewählt und damit der Änderungsdialog geöffnet.
 \newpage
 Es können aber auch neue Wendepunkte eingefügt werden, indem man aus der Liste der rechten Seite einen Punkt auswählt und auf die Pfeiltaste mit dem Pfeil nach links drückt.
 Die Streckenplanung wird neu dargestellt und alle Kurse werden neu berechnet.
-Die Änderungen werden durch die Bestätigung mit der OK-Taste wirksam.
-\\ In diesem Dialog kann aber auch die Art der Strecke ausgewählt werden (traditionell und FAI-Flächen).
-\\ Bei der Auswahl der FAI-Flächen wird zu zwei Wendepunkten eine Fläche generiert, in der letzte Wendepunkt des Dreiecks liegt. 
-\\ Wählt der Pilot dann einen freien Wendepunkt innerhalb dieser Fläche, ist das geflogene Dreieck also immer ein FAI-Dreieck. Mit den Schaltern für die Seite der FAI-Fläche kann die Lage dieser Fläche vom definierten Schenkel festgelegt werden(s. Abb. 15).
+Die Änderungen werden durch die Bestätigung mit der OK-Taste wirksam (s. Abb. 17).
+\\ In diesem Dialog kann auch die Art der Strecke ausgewählt werden (traditionell und FAI-Flächen).
+\\ Bei der Auswahl der FAI-Flächen wird zu zwei Wendepunkten eine
+Fläche generiert, in der letzte Wendepunkt des Dreiecks liegen muss,
+damit die Strecke nach den Regeln für FAI-Dreiecke gewertet werden kann. 
+\\ Wählt der Pilot dann einen freien Wendepunkt innerhalb dieser Fläche, ist das geflogene Dreieck also immer ein FAI-Dreieck. Mit den Schaltern für die Seite der FAI-Fläche kann die Lage dieser Fläche vom definierten Schenkel festgelegt werden(s. Abb. 17).
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/Aufgabe_mit_FAI-Flächen.png} 
@@ -95,15 +103,16 @@ Die Änderungen werden durch die Bestätigung mit der OK-Taste wirksam.
 \caption{Aufgabe mit FAI-Flächen}
 \end{center}
 \end{figure}
-\\ Die FAI-Flächen werden in der Karte rot schraffiert eingezeichnet und in der Aufgabenzusammenfassung wird die  minimale sowie die maximale Streckenlänge für das FAI-Dreieck angegeben (s. Abb. 16).
+\\ Die FAI-Flächen werden in der Karte rot schraffiert eingezeichnet und in der Aufgabenzusammenfassung wird die  minimale sowie die maximale Streckenlänge für das FAI-Dreieck angegeben (s. Abb. 18).
+\\Viele Logger können derzeit noch nicht mit dieser Form der Streckenplanung umgehen, aber durch einen Kartenausdruck mit den FAI-Flächen hat der Pilot während des Fluges diese Informationen zur Verfügung.
 \\ Wenn die Aufgabe fertig erstellt ist kann sie analog der Wegpunkte gesichert werden.
 \newpage
 \subsection{Drucken unter KFlog}
 Unter KFlog gibt es zwei verschiedene Druckmodi. Es können die Flugdaten als Zusammenfassung zu Papier gebracht werden und es kann einfach eine Karte gedruckt werden. \\ Die Karte wird aus der Anzeige im Kartenfenster generiert d.h., dass ein geladener Flug mit in die Karte gedruckt wird.
 \\
-Der Kartendruck wird im Menü ''Datei'' mit dem Punkt ''Drucken ...'' oder durch die Tastenkombination <STRG> + <P> und der Druck der Flugdaten mit dem Punkt ''Drucke Flugdaten'' im selben Menü gestartet. \\
-Es wird der KDE-Druckmanager geöffnet, der durch die Kartenoptionen erweitert worden ist (nur beim Kartendruck). Hier können der Katenmaßtab für den Druck und die Option ''drucke Text'' gesetzt werden. Die Kartenelemente werden nun nach den Voreinstellungen entsprechend zu Papier gebracht. Mit der Option ''drucke Text'' werden die Flugplätze und Wendepunkte entsprechend der Datenbank beschriftet.
-
+Der Kartendruck wird im Menü ''Datei'' mit dem Punkt ''Drucken ...'' oder durch die Tastenkombination <STRG> + <P> und der Druck der Flugdaten mit dem Punkt ''Drucke Flugdaten'' im selben Menü gestartet (s.Abb. 19). Der Punkt ''Drucke Flugdaten'' ist nur bei einer erstellten Aufgabe oder einem göffneten Flug verfügbar.
+\\
+Es wird der KDE-Druckmanager geöffnet, der durch die Kartenoptionen erweitert worden ist (nur beim Kartendruck). Hier können der Katenmaßtab für den Druck und die Option ''drucke Text'' gesetzt werden. Die Kartenelemente werden nun nach den Voreinstellungen entsprechend zu Papier gebracht. Mit der Option ''drucke Text'' werden die Flugplätze und Wendepunkte entsprechend der Datenbank beschriftet (s. Abb. 20).
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/Druck_starten.png} 
@@ -111,12 +120,10 @@ Es wird der KDE-Druckmanager geöffnet, der durch die Kartenoptionen erweitert wo
 \caption{Das Datei-Menü}
 \end{center}
 \end{figure}
-
-
 \begin{figure}[htpb]
 \begin{center}
-\includegraphics[scale=.34]{Bilder/fertig/Karte_drucken.png} 
+\includegraphics[scale=.34]{Bilder/fertig/Druckmanager_Kartendruck.png} 
 \\
-\caption{Druckmanager mit Erweiterung für den Kartendruck}
+\caption{Das Datei-Menü}
 \end{center}
 \end{figure}

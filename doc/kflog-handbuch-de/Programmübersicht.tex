@@ -9,21 +9,25 @@ Nach dem Start des Programms erscheint das Hauptfenster von KFlog.
 \end{figure}
 \\ Dieses Fenster gliedert sich in folgende Bereiche:
 \begin{enumerate}
-\item Menü- und Wekzeugleiste
+\item Menü- und Werkzeugleiste
 \item Kartenfenster
 \item KFlog-Browser
 \item Detailfenster für die gewählte Aufgabe
 \item Kartenkontrolle
 \item Anzeige für Geländehöhe der aktuellen Mauszeiger-Position
-\item Fenster für Aufgaben- / Wegpunktlisten
+\item Wegpunktliste
 \end{enumerate}
 
 Über die \textbf{Menü- und Werkzeugleiste (1.)} erreicht man alle Haupt-Funktionen des Programms mit der Maus (Datei-,Logger-, Ansichts- und Einstellungsfunktionen) und über die frei konfigurierbare Werkzeugleiste können verschiedene, oft benötigte Programmfunktionen sofort über Symbole zur Verfügung gestellt werden.
-\\ \textbf{Im Kartenfenster (2.)} werden alle geographische Daten, Flugweg, Aufgabenstellung, Wendepunkte usw. dargestellt.
+\\
+Die Symbole der Werkzeugleiste sind selbsterklärend, wenn der Mauszeiger eine längere Zeit über dem jeweiligen Knopf verweilt (s. Abb. 4).
+\\
+\textbf{Im Kartenfenster (2.)} werden alle geographische Daten, Flugweg, Aufgabenstellung, Wendepunkte usw. dargestellt.
 Mit dem \textbf{KFlog Browser (3.)} kann einfach zwischen den verschiedenen Aufgaben und Flügen ausgewählt werden.
-Im \textbf{Detailfenster (4.)} werden die Wendepunkte der aus der \textbf{Aufgabenliste (7.)} oder im Browser gewählten Strecke ausgewählt.
-\\ Die Kartenanzeige kann über die \textbf{Kartenkontrolle (5.)} und über die Werkzeugleiste manipuliert werden 
-\\ Die Symbole der Werkzeugleiste sind selbsterklärend, wenn der Mauszeiger eine längere Zeit über dem jeweiligen Knopf verweilt (s. Abb. 4).
+Im \textbf{Detailfenster (4.)} werden alle wichtigen Informationen der im Browser gewählten Strecke angezeigt.\\
+In der \texbf{Wegpunktliste (7.)} werden alle im aktuellen Katalog verzeichneten Punkte dargestellt.
+\\
+Die Kartenanzeige kann über die \textbf{Kartenkontrolle (5.)} und über die Werkzeugleiste manipuliert werden. Der Kartenausschnitt kann weiterhin durch Klicken mit der mittleren Maustaste auf den Rand der Karte verschoben werden. Dabei erfolgt die Verschiebung in Richtung der Seite, die beim Klicken gewählt wurde. Es besteht auch die Möglichkeit die Karte mit der Tastatur zu manipulieren. Die entsprechenden Tasten können vom Benutzer selbst definiert werden (s. Einrichtung des Programmes).  
 \\
 \begin{figure}[htpb]
 \begin{center}
@@ -32,10 +36,16 @@ Im \textbf{Detailfenster (4.)} werden die Wendepunkte der aus der \textbf{Aufgab
 \caption{Werkzeugleiste}
 \end{center}
 \end{figure}
-\\ Wenn der Maus-Zeiger über das Kartenfenster bewegt wird, kann zu der aktuellen Zeigerposition die jeweilige Geländehöhe im \textbf{Gländehöhenfenster (6.)} abgelesen werden.
-\\ Alle Fenster können aus dem Hauptfenster heraus gelöst und übereinander gelegt werden, das hat den Vorteil, dass z.B. das Kartenfenster auf volle Bildschirmgröße gebracht werden kann (s. Abb. 5).
-\\ Das Herauslösen eines Fensters erfolgt durch Klicken des Pfeils, der diagonal nach links oben zeigt.
-\\ Das Einfügen des gelösten Fensters in die Hauptansicht erfolgt wieder durch Klicken des Pfeils der nach links unten zeigt.
+\\
+Wenn der Maus-Zeiger über das Kartenfenster bewegt wird, kann zu der aktuellen Zeigerposition die jeweilige Geländehöhe im \textbf{Gländehöhenfenster (6.)} abgelesen werden.
+\\
+Alle Fenster können aus dem Hauptfenster heraus gelöst und übereinander gelegt werden, das hat den Vorteil, dass z.B. das Kartenfenster auf volle Bildschirmgröße gebracht werden kann (s. Abb. 5).
+\\
+Das Herauslösen eines Fensters erfolgt durch Klicken des Pfeils, der diagonal nach links oben zeigt.
+\\ 
+Das Einfügen des gelösten Fensters in die Hauptansicht erfolgt wieder durch Klicken des Pfeils der nach links unten zeigt. 
+\\
+Diese Funktion ist für alle Fenster möglich, an denen sich die entsprechenden Symbole für das Herauslösen und Einfügen vorhanden sind. Die vorgenommenen Fenstereinstellungen werden von KFlog beim schließen automatisch gespeichert und beim erneuten Programmstart berücksichtigt.
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/Hauptfenster_mit_herausgelöster_Kartenanzeige.png} 
@@ -43,7 +53,9 @@ Im \textbf{Detailfenster (4.)} werden die Wendepunkte der aus der \textbf{Aufgab
 \caption{Hauptfenster mit herausgelöster Kartenanzeige}
 \end{center}
 \end{figure}
+\newpage
 \section{Einrichtung des Programms}
+\subsection{Der Einrichtungsdialog}
 Alle Einstellungen für das Programm können über den Einstellungsdialog vorgenommen werden.
 Diesen Dialog erreicht man über das Menü Einstellungen (s. Abb. 6).
 \begin{figure}[htpb]
@@ -86,3 +98,26 @@ Gegebenenfalls ist der Dialog abzubrechen und die Pfadangabe korrekt einzustelle
 \end{center}
 \end{figure}
 Weiterhin können in diesem Dialog noch die Kartenmaßstäbe, die Kartenelemente für die anzeige und den Druck sowie die Kartenprojektion und der bei Programmstart zu verwendende Wendepunktkatalog eingestellt werden. Diese Einstellungsmöglichkeiten sind selbsterklärend, so dass hier nicht weiter darauf eingegangen wird.
+\subsection{Einstellen der Tastenfunktionen}
+Die Tastenfunktionen unter KFlog sind durch den Benutzer wie von der KDE-Umgebung gewohnt, frei definierbar. Die Einstellungen erfolgen durch Aufruf des Punktes ''Kurzbefehle festlegen'' im Menü ''Einstellungen''.
+Es erscheint zunächst eine Übersicht über die eingestellten Kurzbefehle (s. Abb. 10).
+\begin{figure}[htpb]
+\begin{center}
+\includegraphics[scale=.34]{Bilder/fertig/Kurzbefehle_Übersicht.png} 
+\\
+\caption{Übersicht Kurzbefehle}
+\end{center}
+\end{figure}
+Um einen Kurzbefehl zu ändern, muss dieser in der Übersicht mit der Maus ausgewählt werden. Die gewählte Funktion wird hervorgehoben und in dem Tastensymbol erscheint die zugehörige Tastenkombination. \\
+Durch Klicken auf das Tastensymbol gelangt man in das Fenster, in dem der neue Kurzbefehl definiert werden kann (s. Abb. 11). Nun kann zwischen der primären und der sekundären Tastenkombination gewählt werden. Dann betätigt man einfach eine Taste für den neuen Kurzbefehl. \\
+Wenn die Option ''mehrereTasten'' angewählt ist, kann man Tastenkombinationen erstellen wie z.B. <Alt> + <P> . Falls die neue Tastenkombination schon vergeben ist, wird dem Benutzer eine Warnung angezeigt und man wird aufgefordert eine ander Tastenkombination zu wählen.\\
+\begin{figure}[htpb]
+\begin{center}
+\includegraphics[scale=.34]{Bilder/fertig/Kurzbefehle_Definieren.png} 
+\\
+\caption{Kurzbefehle definieren}
+\end{center}
+\end{figure}
+\\
+Alle wesentlichen Funktionen besitzen schon vordefinierte Werte, die so gewählt worden sind, dass sie dem KDE-Standard entsprechen oder logisch erscheinen.\\
+Mit dem Knopf ''Voreinstellungen'' lassen sich die Werte wieder auf die vordefinierten Werte zurücksetzen. Im Anhang der Dokumentation ist eine Übersicht über die vordefinierten Kurzbefehle zusdammengestellt.
