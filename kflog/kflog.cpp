@@ -566,10 +566,10 @@ void KFLogApp::initView()
   waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 70);
   legendDock->manualDock(waypointsDock, KDockWidget::DockRight, 90);
   
-  connect(map, SIGNAL(changed(QSize)), mapControl,
-      SLOT(slotShowMapData(QSize)));
-  connect(map, SIGNAL(waypointSelected(Waypoint *)), waypoints,
-    SLOT(slotAddWaypoint(Waypoint *)));
+  connect(map, SIGNAL(changed(QSize)), mapControl, SLOT(slotShowMapData(QSize)));
+  connect(map, SIGNAL(waypointSelected(Waypoint *)), waypoints, SLOT(slotAddWaypoint(Waypoint *)));
+  connect(map, SIGNAL(waypointDeleted(Waypoint *)), waypoints, SLOT(slotDeleteWaypoint(Waypoint *)));
+  connect(map, SIGNAL(waypointEdited(Waypoint *)), waypoints, SLOT(slotEditWaypoint(Waypoint *)));
   connect(map, SIGNAL(elevation(int)), legend, SLOT(highlightLevel(int)));
   connect(map, SIGNAL(regWaypointDialog(QWidget *)), this, SLOT(slotRegisterWaypointDialog(QWidget *)));
   
