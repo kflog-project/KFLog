@@ -27,7 +27,7 @@
 SinglePoint::SinglePoint(QString n, QString abbr, unsigned int t,
   QPoint pos, bool wP)
 : BaseMapElement(n, t),
-  position(pos), isWaypoint(wP), abbrev(abbr)
+  position(pos), isWaypoint(wP), abbrev(abbr), curPos(pos)
 {
   switch(typeID)
     {
@@ -197,3 +197,5 @@ bool SinglePoint::isWayPoint() const { return isWaypoint; }
 QString SinglePoint::getWPName() const { return abbrev; }
 
 QPoint SinglePoint::getPosition() const { return position; }
+
+QPoint SinglePoint::getMapPosition() const { return curPos; }

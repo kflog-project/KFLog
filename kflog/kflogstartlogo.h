@@ -18,7 +18,7 @@
 #ifndef KFLOGSTARTLOGO_H
 #define KFLOGSTARTLOGO_H
 
-#include <qframe.h>
+#include <qwidget.h>
 
 /**
   * Creates the startup-window displaying the logo.
@@ -26,7 +26,7 @@
   * @author Heiner Lamprecht, Florian Ehinger
   * @version $Id$
   */
-class KFLogStartLogo : public QFrame
+class KFLogStartLogo : public QWidget
 {
   Q_OBJECT
 

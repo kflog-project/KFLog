@@ -18,7 +18,7 @@
 #include "basemapelement.h"
 
 BaseMapElement::BaseMapElement(const char* n, unsigned int tID)
-  : name(n), typeID(tID), curPos(-1000, -1000), section(0)
+  : name(n), typeID(tID), section(0)
 {
 
 }
@@ -51,4 +51,4 @@ QString BaseMapElement::getName() const { return name; }
 
 unsigned int BaseMapElement::getTypeID() const { return typeID; }
 
-QPoint BaseMapElement::getMapPosition() const { return curPos; }
+//QPoint BaseMapElement::getMapPosition() const { return curPos; }

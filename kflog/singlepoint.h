@@ -74,6 +74,8 @@ class SinglePoint : public BaseMapElement
      * Returns the gps-name of the element.
      */
     virtual QString getWPName() const;
+    /** */
+    virtual QPoint getMapPosition() const;
 
   protected:
     /** */
@@ -86,6 +88,8 @@ class SinglePoint : public BaseMapElement
     QString abbrev;
     /** */
     QString iconName;
+    /** */
+    QPoint curPos;
 };
 
 /*************************************************************************

@@ -462,7 +462,7 @@ void Map::mousePressEvent(QMouseEvent* event)
             {
               hitElement = _globalMapContents.getElement(
                         MapContents::GliderList, loop);
-              gliderPos = hitElement->getMapPosition();
+              gliderPos = ((SinglePoint*)hitElement)->getMapPosition();
 
               dX = gliderPos.x() - current.x();
               dY = gliderPos.y() - current.y();
@@ -505,7 +505,7 @@ void Map::mousePressEvent(QMouseEvent* event)
             {
               hitElement = _globalMapContents.getElement(
                       MapContents::AirportList, loop);
-              sitePos = hitElement->getMapPosition();
+              sitePos = ((SinglePoint*)hitElement)->getMapPosition();
 
             dX = sitePos.x() - current.x();
             dY = sitePos.y() - current.y();

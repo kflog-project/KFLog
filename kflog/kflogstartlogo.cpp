@@ -19,7 +19,7 @@
 #include <kapp.h>
 
 KFLogStartLogo::KFLogStartLogo()
-    : QFrame(0,0,WStyle_NoBorder | WStyle_Customize)
+    : QWidget(0,0,WStyle_NoBorder | WStyle_Customize | WStyle_StaysOnTop)
 {
   setBackgroundMode(NoBackground);
   QPixmap pm;
@@ -40,6 +40,6 @@ void KFLogStartLogo::mousePressEvent(QMouseEvent*)  {  close();  }
 
 bool KFLogStartLogo::event(QEvent* ev)
 {
-  raise();
+//  raise();
   return QWidget::event(ev);
 }

@@ -20,8 +20,6 @@
 
 #include <qwmatrix.h>
 
-//#include <wp.h>
-
 /**
  * This class provides functions for converting coordinates between
  * several coordinate-systems.

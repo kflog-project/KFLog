@@ -72,7 +72,7 @@ class BaseMapElement
      * Returns the position of the map-object in the current map.
      * The position will be set to (-1000,-1000) during contruction.
      */
-    virtual QPoint getMapPosition() const;
+//    virtual QPoint getMapPosition() const;
     /**
      * List of all accessable element-types:
      * @see #typeID

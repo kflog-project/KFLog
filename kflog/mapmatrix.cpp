@@ -53,15 +53,15 @@ MapMatrix::~MapMatrix()
 
 QPoint MapMatrix::wgsToMap(QPoint origPoint) const
 {
-  return wgsToMap(origPoint.x(), origPoint.y());
+   return wgsToMap(origPoint.x(), origPoint.y());
 }
 
 QPoint MapMatrix::wgsToMap(int lat, int lon) const
 {
-  double projX = __calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon));
-  double projY = __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon));
-
-  return QPoint(projX * RADIUS / MAX_SCALE, projY * RADIUS / MAX_SCALE);
+  return QPoint(__calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
+                    RADIUS / MAX_SCALE,
+                __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
+                    RADIUS / MAX_SCALE);
 }
 
 QPoint MapMatrix::__mapToWgs(QPoint origPoint) const
@@ -273,7 +273,6 @@ double MapMatrix::__calc_X_Lambert(double latitude, double longitude) const
                / var2 )
              * sin( var2 * longitude / 2 ) );
 }
-
 
 int MapMatrix::__invert_Lambert_Lat(double x, double y) const
 {
