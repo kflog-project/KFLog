@@ -18,6 +18,7 @@
 #include "waypointdialog.h"
 #include "translationlist.h"
 #include "kflog.h"
+#include "airport.h"
 
 #include <qlayout.h>
 #include <qlabel.h>
@@ -45,6 +46,8 @@ WaypointDialog::WaypointDialog(QWidget *parent, const char *name)
   for (te = surfaces.first(); te != 0; te = surfaces.next()) {
     surface->insertItem(te->text);
   }
+  setSurface(Airport::NotSet);
+  
 }
 
 WaypointDialog::~WaypointDialog()
