@@ -412,9 +412,13 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
 /** No descriptions */
 void Waypoints::slotDeleteWaypoint(Waypoint* wp)
 {
-  waypointCatalogs.current()->wpList.remove(wp->name);
-  waypointCatalogs.current()->modified = true;
-  fillWaypoints();
+  if (KMessageBox::questionYesNo (this,
+        i18n("Waypoint %1 will be deleted.\nAre you sure?").arg(wp->name)) == KMessageBox::Yes)
+  {      
+    waypointCatalogs.current()->wpList.remove(wp->name);
+    waypointCatalogs.current()->modified = true;
+    fillWaypoints();
+  }
 }
 
 /** No descriptions */
