@@ -201,7 +201,7 @@ qt_libraries = @qt_libraries@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
 
-EXTRA_DIST = kflog.pot 
+EXTRA_DIST = kflog.pot sv.gmo 
 
 ####### kdevelop will overwrite this part!!! (end)############
 #>- POFILES = AUTO
@@ -216,7 +216,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 #>- DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 #>+ 4
-KDE_DIST=de.gmo sv.gmo no.gmo no.po de.po sv.po 
+KDE_DIST=no.po de.po sv.po 
 
 #>- DISTFILES= $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST) $(KDE_DIST)
 #>+ 1

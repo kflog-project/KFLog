@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-11-09 22:33+0100\n"
+"POT-Creation-Date: 2001-12-17 22:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,127 +14,139 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: ENCODING\n"
 
-#: airspace.cpp:197
+#: airspace.cpp:137
 msgid "unknown"
 msgstr ""
 
-#: dataview.cpp:36
-msgid "Flight"
-msgstr ""
-
-#: dataview.cpp:60
+#: dataview.cpp:52
 msgid "Date"
 msgstr ""
 
-#: dataview.cpp:61
+#: dataview.cpp:53
 msgid "Pilot"
 msgstr ""
 
-#: dataview.cpp:62
+#: dataview.cpp:54
 msgid "Glider"
 msgstr ""
 
-#: dataview.cpp:70
+#: dataview.cpp:66
 msgid "Task"
 msgstr ""
 
-#: dataview.cpp:93
+#: dataview.cpp:99
 msgid "total Distance"
 msgstr ""
 
-#: dataview.cpp:99
+#: dataview.cpp:101
+msgid "Points"
+msgstr ""
+
+#: dataview.cpp:107
 msgid "Flight contains no waypoints"
 msgstr ""
 
-#: evaluationdialog.cpp:41 evaluationdialog.cpp:283
+#: evaluationdialog.cpp:38 evaluationdialog.cpp:204
 msgid "Flightevaluation:"
 msgstr ""
 
-#: evaluationdialog.cpp:63
+#: evaluationdialog.cpp:44
 msgid "Flight:"
 msgstr ""
 
-#: evaluationdialog.cpp:87
-msgid "Close"
-msgstr ""
-
-#: evaluationdialog.cpp:219
+#: evaluationdialog.cpp:135
 msgid "Circling"
 msgstr ""
 
-#: evaluationdialog.cpp:220 evaluationdialog.cpp:231
+#: evaluationdialog.cpp:136 evaluationdialog.cpp:147
 msgid "Time"
 msgstr ""
 
-#: evaluationdialog.cpp:221
+#: evaluationdialog.cpp:137
 msgid "Vario"
 msgstr ""
 
-#: evaluationdialog.cpp:222 evaluationdialog.cpp:233
+#: evaluationdialog.cpp:138 evaluationdialog.cpp:149
 msgid "Alt. Gain"
 msgstr ""
 
-#: evaluationdialog.cpp:223 evaluationdialog.cpp:234
+#: evaluationdialog.cpp:139 evaluationdialog.cpp:150
 msgid "Alt. Loss"
 msgstr ""
 
-#: evaluationdialog.cpp:230
+#: evaluationdialog.cpp:146
 msgid "Straight"
 msgstr ""
 
-#: evaluationdialog.cpp:232
+#: evaluationdialog.cpp:148
 msgid "tot. Distance"
 msgstr ""
 
-#: evaluationdialog.cpp:235
+#: evaluationdialog.cpp:151
 msgid "Speed"
 msgstr ""
 
-#: evaluationdialog.cpp:236
+#: evaluationdialog.cpp:152
 msgid "L/D ratio"
 msgstr ""
 
-#: evaluationdialog.cpp:245
+#: evaluationdialog.cpp:161
 msgid "Total:"
 msgstr ""
 
-#: flight.cpp:1188
-msgid "The task is not valid.<BR>All waypoints are the same point."
+#: evaluationframe.cpp:58
+msgid "Zeitskalierung:"
 msgstr ""
 
-#: flight.cpp:1568 flight.cpp:1591
+#: evaluationframe.cpp:65
+msgid "Glättung:"
+msgstr ""
+
+#: evaluationframe.cpp:82
+msgid "V"
+msgstr ""
+
+#: evaluationframe.cpp:83
+msgid "H"
+msgstr ""
+
+#: evaluationframe.cpp:84
+msgid "S"
+msgstr ""
+
+#: flight.cpp:1516 flight.cpp:1538
 msgid "You have not reached the first waypoint of your task."
 msgstr ""
 
-#: flight.cpp:1608
+#: flight.cpp:1556
 msgid "You have not reached the last point of your task."
 msgstr ""
 
-#: flight.cpp:1700
+#: flight.cpp:1639
 msgid ""
 "The time intervall between two points<BR>of the flight is more than 70 sec.!"
 "<BR>Due to Code Sportif 3, Nr. 1.9.2.1,<BR>the flight can not be valued!"
 msgstr ""
 
-#: flight.cpp:1819
+#: flight.cpp:1758
 msgid ""
 "The task has been optimized. The best task found is:\n"
 "\n"
 msgstr ""
 
-#: flight.cpp:1827
+#: flight.cpp:1766
 msgid "Distance:"
 msgstr ""
 
-#: flight.cpp:1827
+#: flight.cpp:1766
 msgid "Points:"
 msgstr ""
 
-#: flight.cpp:1828
+#: flight.cpp:1767
 msgid "Do You want to use this task and replace the old?"
 msgstr ""
 
-#: kflog.cpp:104
+#: kflog.cpp:103
 msgid "&Open Flight"
 msgstr ""
 
@@ -142,232 +154,320 @@ msgstr ""
 msgid "Close Flight"
 msgstr ""
 
-#: kflog.cpp:123
+#: kflog.cpp:116
+msgid "Move map"
+msgstr ""
+
+#: kflog.cpp:124
 msgid "Center to &Task"
 msgstr ""
 
-#: kflog.cpp:126
+#: kflog.cpp:127
 msgid "Center to &Flight"
 msgstr ""
 
-#: kflog.cpp:130
+#: kflog.cpp:131
 msgid "Center to &Homesite"
 msgstr ""
 
-#: kflog.cpp:142
+#: kflog.cpp:135
+msgid "move map north-west"
+msgstr ""
+
+#: kflog.cpp:137
+msgid "move map north"
+msgstr ""
+
+#: kflog.cpp:139
+msgid "move map northeast"
+msgstr ""
+
+#: kflog.cpp:141
+msgid "move map west"
+msgstr ""
+
+#: kflog.cpp:143
+msgid "move map east"
+msgstr ""
+
+#: kflog.cpp:145
+msgid "move map south-west"
+msgstr ""
+
+#: kflog.cpp:147
+msgid "move map south"
+msgstr ""
+
+#: kflog.cpp:149
+msgid "move map south-east"
+msgstr ""
+
+#: kflog.cpp:158
 msgid "Show Flightdata"
 msgstr ""
 
-#: kflog.cpp:144
+#: kflog.cpp:160
 msgid "Show Mapcontrol"
 msgstr ""
 
-#: kflog.cpp:159
+#: kflog.cpp:162
+msgid "Show Map"
+msgstr ""
+
+#: kflog.cpp:170
 msgid "Evaluation"
 msgstr ""
 
-#: kflog.cpp:166
-msgid "Open flight"
+#: kflog.cpp:177
+msgid "F&light"
 msgstr ""
 
-#: kflog.cpp:209
+#: kflog.cpp:228
 msgid "Map"
 msgstr ""
 
-#: kflog.cpp:210
+#: kflog.cpp:229
 msgid "Flight-Data"
 msgstr ""
 
-#: kflog.cpp:211
+#: kflog.cpp:230
 msgid "Map-Control"
 msgstr ""
 
-#: kflog.cpp:351 kflog.cpp:390
+#: kflog.cpp:385 kflog.cpp:425
 msgid "Opening file..."
 msgstr ""
 
-#: kflog.cpp:362
+#: kflog.cpp:396
 #, c-format, ycp-format
 msgid "Can not download file %1"
 msgstr ""
 
-#: kflog.cpp:385 kflog.cpp:406 kflog.cpp:418 kflog.cpp:438 kflog.cpp:450
+#: kflog.cpp:420 kflog.cpp:447 kflog.cpp:459 kflog.cpp:479 kflog.cpp:491
 msgid "Ready."
 msgstr ""
 
-#: kflog.cpp:412 printdialog.cpp:799 printdialog.cpp:1096 printdialog.cpp:1121
+#: kflog.cpp:453 printdialog.cpp:762 printdialog.cpp:1059 printdialog.cpp:1084
 msgid "Printing..."
 msgstr ""
 
-#: kflog.cpp:423
+#: kflog.cpp:464
 msgid "Exiting..."
 msgstr ""
 
-#: kflog.cpp:431
+#: kflog.cpp:472
 msgid "Toggling toolbar..."
 msgstr ""
 
-#: kflog.cpp:443
+#: kflog.cpp:484
 msgid "Toggle the statusbar..."
 msgstr ""
 
-#: kflogconfig.cpp:103
+#: kflogconfig.cpp:223
 msgid "KFlog Setup"
 msgstr ""
 
-#: kflogconfig.cpp:181
+#: kflogconfig.cpp:380
 msgid "Select Default-Directory for the IGC-Files"
 msgstr ""
 
-#: kflogconfig.cpp:189
+#: kflogconfig.cpp:388
 msgid "Select Directory for the Map-Files"
 msgstr ""
 
-#: kflogconfig.cpp:197
+#: kflogconfig.cpp:396
 msgid "Select Default-Directory for the Task-Files"
 msgstr ""
 
-#: kflogconfig.cpp:507
+#: kflogconfig.cpp:991
 msgid "Map-Elements"
 msgstr ""
 
-#: kflogconfig.cpp:507
+#: kflogconfig.cpp:991
 msgid "Map Configuration"
 msgstr ""
 
-#: kflogconfig.cpp:512
+#: kflogconfig.cpp:996
 msgid "visible Map-Elements"
 msgstr ""
 
-#: kflogconfig.cpp:517
+#: kflogconfig.cpp:1000
 msgid "Road"
 msgstr ""
 
-#: kflogconfig.cpp:518
+#: kflogconfig.cpp:1001
 msgid "Highway"
 msgstr ""
 
-#: kflogconfig.cpp:519
+#: kflogconfig.cpp:1002
 msgid "Railway"
 msgstr ""
 
-#: kflogconfig.cpp:520
+#: kflogconfig.cpp:1003
 msgid "River / Lake"
 msgstr ""
 
-#: kflogconfig.cpp:521
+#: kflogconfig.cpp:1004
+msgid "Canal"
+msgstr ""
+
+#: kflogconfig.cpp:1005
 msgid "City"
 msgstr ""
 
-#: kflogconfig.cpp:523
-msgid "draw up to border #1"
+#: kflogconfig.cpp:1006
+msgid "Airspace C"
 msgstr ""
 
-#: kflogconfig.cpp:524
-msgid "draw up to border #2"
+#: kflogconfig.cpp:1007
+msgid "Airspace D"
 msgstr ""
 
-#: kflogconfig.cpp:525
-msgid "draw up to border #3"
+#: kflogconfig.cpp:1008
+msgid "Airspace E (low)"
 msgstr ""
 
-#: kflogconfig.cpp:526
-msgid "draw up to scale-limit"
+#: kflogconfig.cpp:1009
+msgid "Airspace E (high)"
 msgstr ""
 
-#: kflogconfig.cpp:527
-msgid "draw outline"
+#: kflogconfig.cpp:1010
+msgid "Airspace F"
 msgstr ""
 
-#: kflogconfig.cpp:554 kflogconfig.cpp:681 kflogconfig.cpp:819
-msgid "Default"
+#: kflogconfig.cpp:1011
+msgid "Control C"
 msgstr ""
 
-#: kflogconfig.cpp:620
-msgid "Map-Scales"
+#: kflogconfig.cpp:1012
+msgid "Control D"
 msgstr ""
 
-#: kflogconfig.cpp:620
-msgid "Map-Scale Configuration"
+#: kflogconfig.cpp:1013
+msgid "Danger"
 msgstr ""
 
-#: kflogconfig.cpp:625
-msgid "Scale-Range:"
+#: kflogconfig.cpp:1014
+msgid "Low flight area"
 msgstr ""
 
-#: kflogconfig.cpp:627
-msgid "lower limit"
+#: kflogconfig.cpp:1015
+msgid "Restricted"
 msgstr ""
 
-#: kflogconfig.cpp:637
-msgid "upper limit"
+#: kflogconfig.cpp:1016
+msgid "TMZ"
 msgstr ""
 
-#: kflogconfig.cpp:648
-msgid "use small icons"
-msgstr ""
-
-#: kflogconfig.cpp:657
+#: kflogconfig.cpp:1018 kflogconfig.cpp:1158
 msgid "border #1"
 msgstr ""
 
-#: kflogconfig.cpp:665
+#: kflogconfig.cpp:1019 kflogconfig.cpp:1166
 msgid "border #2"
 msgstr ""
 
-#: kflogconfig.cpp:673
+#: kflogconfig.cpp:1020 kflogconfig.cpp:1174
 msgid "border #3"
 msgstr ""
 
-#: kflogconfig.cpp:745
+#: kflogconfig.cpp:1021
+msgid "scale-limit"
+msgstr ""
+
+#: kflogconfig.cpp:1038 kflogconfig.cpp:1182 kflogconfig.cpp:1322
+msgid "Default"
+msgstr ""
+
+#: kflogconfig.cpp:1046
+msgid "draw up to"
+msgstr ""
+
+#: kflogconfig.cpp:1047
+msgid "Pen"
+msgstr ""
+
+#: kflogconfig.cpp:1048
+msgid "Brush"
+msgstr ""
+
+#: kflogconfig.cpp:1121
+msgid "Map-Scales"
+msgstr ""
+
+#: kflogconfig.cpp:1121
+msgid "Map-Scale Configuration"
+msgstr ""
+
+#: kflogconfig.cpp:1126
+msgid "Scale-Range:"
+msgstr ""
+
+#: kflogconfig.cpp:1128
+msgid "lower limit"
+msgstr ""
+
+#: kflogconfig.cpp:1138
+msgid "upper limit"
+msgstr ""
+
+#: kflogconfig.cpp:1149
+msgid "use small icons"
+msgstr ""
+
+#: kflogconfig.cpp:1246
 msgid "Path"
 msgstr ""
 
-#: kflogconfig.cpp:745
+#: kflogconfig.cpp:1246
 msgid "Path Configuration"
 msgstr ""
 
-#: kflogconfig.cpp:752
+#: kflogconfig.cpp:1253
 msgid "Flight-directory:"
 msgstr ""
 
-#: kflogconfig.cpp:778
+#: kflogconfig.cpp:1280
 msgid "Task-directory:"
 msgstr ""
 
-#: kflogconfig.cpp:800
+#: kflogconfig.cpp:1303
 msgid "Map-directory:"
 msgstr ""
 
-#: kflogconfig.cpp:837
+#: kflogconfig.cpp:1340
 msgid "Print"
 msgstr ""
 
-#: kflogconfig.cpp:837
+#: kflogconfig.cpp:1340
 msgid "Printer Configuration"
 msgstr ""
 
-#: kflogconfig.cpp:848
+#: kflogconfig.cpp:1352
 msgid "Identity"
 msgstr ""
 
-#: kflogconfig.cpp:848
+#: kflogconfig.cpp:1352
 msgid "Personal Information"
 msgstr ""
 
-#: kflogconfig.cpp:855
+#: kflogconfig.cpp:1359
 msgid "Homesite:"
 msgstr ""
 
-#: kflogconfig.cpp:865
+#: kflogconfig.cpp:1371
+msgid "Homesite"
+msgstr ""
+
+#: kflogconfig.cpp:1373
 msgid "Latitude"
 msgstr ""
 
-#: kflogconfig.cpp:867
+#: kflogconfig.cpp:1375
 msgid "Longitude"
 msgstr ""
 
-#: map.cpp:146
+#: map.cpp:136
 msgid ""
 "<B>The map</B><P>To move or scale the map, please use the buttons in the "
 "<B>Map-control</B>-area. Or center the map to the current cursor-positon by "
@@ -378,166 +478,194 @@ msgid ""
 "elements should be displayed at which scale.</P>"
 msgstr ""
 
-#: map.cpp:234
-msgid "City:"
+#: map.cpp:295
+msgid "Sector 1"
 msgstr ""
 
-#: map.cpp:351
+#: map.cpp:300
+msgid "Sector 2"
+msgstr ""
+
+#: map.cpp:305
+msgid "FAI-Sector"
+msgstr ""
+
+#: map.cpp:309
+msgid "not reached"
+msgstr ""
+
+#: map.cpp:315
+msgid "Take Off"
+msgstr ""
+
+#: map.cpp:318
+msgid "Begin of task"
+msgstr ""
+
+#: map.cpp:321
+msgid "End of task"
+msgstr ""
+
+#: map.cpp:324
+msgid "Landing"
+msgstr ""
+
+#: map.cpp:349
 msgid "Airspace-Structure"
 msgstr ""
 
-#: mapcontents.cpp:446 mapcontents.cpp:1000
+#: mapcontents.cpp:308 mapcontents.cpp:857
 msgid "Import mapfile ..."
 msgstr ""
 
-#: mapcontents.cpp:448 mapcontents.cpp:1002
+#: mapcontents.cpp:310 mapcontents.cpp:859
 #, ycp-format
 msgid "Please wait while loading file<BR><B>%1</B>"
 msgstr ""
 
-#: mapcontents.cpp:970
+#: mapcontents.cpp:827
 #, ycp-format
 msgid "The selected file<BR><B>%1</B><BR>does not exist!"
 msgstr ""
 
-#: mapcontents.cpp:976
+#: mapcontents.cpp:833
 #, ycp-format
 msgid "The selected file<BR><B>%1</B><BR>is empty!"
 msgstr ""
 
-#: mapcontents.cpp:986
+#: mapcontents.cpp:843
 #, ycp-format
 msgid "The selected file<BR><B>%1</B><BR>is not an igc-file!"
 msgstr ""
 
-#: mapcontents.cpp:993
+#: mapcontents.cpp:850
 #, ycp-format
 msgid "You don't have permission to access file<BR><B>%1</B>"
 msgstr ""
 
-#: mapcontents.cpp:994
+#: mapcontents.cpp:851
 msgid "No permission"
 msgstr ""
 
-#: mapcontents.cpp:1081
+#: mapcontents.cpp:938
 #, ycp-format
 msgid "Syntax-error while loading igc-file<BR><B>%1</B><BR>Aborting!"
 msgstr ""
 
-#: mapcontents.cpp:1083
+#: mapcontents.cpp:940
 msgid "Error in IGC-file"
 msgstr ""
 
-#: mapcontrolview.cpp:35
+#: mapcontrolview.cpp:37
 msgid "Map-control:"
 msgstr ""
 
-#: mapcontrolview.cpp:96
+#: mapcontrolview.cpp:111
 msgid "Height / Width [km]:"
 msgstr ""
 
-#: mapcontrolview.cpp:104
+#: mapcontrolview.cpp:119
 msgid "Scale:"
 msgstr ""
 
-#: mapcontrolview.cpp:109
+#: mapcontrolview.cpp:124
 msgid "Set scale:"
 msgstr ""
 
-#: printdialog.cpp:713
+#: printdialog.cpp:676
 msgid "file"
 msgstr ""
 
-#: printdialog.cpp:805
+#: printdialog.cpp:768
 msgid "Printer Output"
 msgstr ""
 
-#: printdialog.cpp:806
+#: printdialog.cpp:769
 msgid "Paper Format"
 msgstr ""
 
-#: printdialog.cpp:810
+#: printdialog.cpp:773
 msgid "Map scale"
 msgstr ""
 
-#: printdialog.cpp:820
+#: printdialog.cpp:783
 msgid "Print to Printer:"
 msgstr ""
 
-#: printdialog.cpp:821
+#: printdialog.cpp:784
 msgid "Command:"
 msgstr ""
 
-#: printdialog.cpp:826
+#: printdialog.cpp:789
 msgid "Printer:"
 msgstr ""
 
-#: printdialog.cpp:833
+#: printdialog.cpp:796
 msgid "Print to File:"
 msgstr ""
 
-#: printdialog.cpp:846
+#: printdialog.cpp:809
 msgid "Portrait"
 msgstr ""
 
-#: printdialog.cpp:847
+#: printdialog.cpp:810
 msgid "Landscape"
 msgstr ""
 
-#: printdialog.cpp:868
+#: printdialog.cpp:831
 msgid "Grey"
 msgstr ""
 
-#: printdialog.cpp:869
+#: printdialog.cpp:832
 msgid "Color"
 msgstr ""
 
-#: printdialog.cpp:959
+#: printdialog.cpp:922
 msgid "&Print"
 msgstr ""
 
-#: printdialog.cpp:962
+#: printdialog.cpp:925
 msgid "Pre&view"
 msgstr ""
 
-#: printdialog.cpp:964
+#: printdialog.cpp:927
 msgid "Cancel"
 msgstr ""
 
-#: printdialog.cpp:1098
+#: printdialog.cpp:1061
 msgid "Printing Map"
 msgstr ""
 
-#: printdialog.cpp:1123
+#: printdialog.cpp:1086
 msgid "Printing Flight-data"
 msgstr ""
 
-#: printdialog.cpp:1212
+#: printdialog.cpp:1175
 msgid ""
 "\n"
 "The file has been created!\n"
 msgstr ""
 
-#: printdialog.cpp:1213
+#: printdialog.cpp:1176
 msgid "File created!"
 msgstr ""
 
-#: printdialog.cpp:1230
+#: printdialog.cpp:1193
 msgid ""
 "Could not send the map to the printer!\n"
 "The spooler send the following message:"
 msgstr ""
 
-#: printdialog.cpp:1232
+#: printdialog.cpp:1195
 msgid "Error occurred!"
 msgstr ""
 
-#: printdialog.cpp:1242
+#: printdialog.cpp:1205
 msgid ""
 "\n"
 "The file was sent to the printer!\n"
 msgstr ""
 
-#: printdialog.cpp:1242
+#: printdialog.cpp:1205
 msgid "File spooled!"
 msgstr ""
