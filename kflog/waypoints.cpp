@@ -750,20 +750,30 @@ void Waypoints::openCatalog(QString &catalog)
   if(!catalog.isEmpty()) {
     int newItem = catalogName->count();
     WaypointCatalog *w = new WaypointCatalog;
+    QFile f(catalog);
 
-    // read from disk
-    if (!w->read(catalog)) {
-      delete w;
-    }
-    else {
-      w->onDisc = true;
-      w->path = catalog;
+     if (f.exists()) {
+       // read from disk
+       if (!w->read(catalog)) {
+         delete w;
+       }
+       else {
+         w->onDisc = true;
+         w->path = catalog;
 
-      waypointCatalogs.append(w);
-      catalogName->insertItem(w->path);
+         waypointCatalogs.append(w);
+         catalogName->insertItem(w->path);
 
-      catalogName->setCurrentItem(newItem);
-      slotSwitchWaypointCatalog(newItem);
-    }
+         catalogName->setCurrentItem(newItem);
+         slotSwitchWaypointCatalog(newItem);
+       }
+     }  else {
+		delete w;
+     }
   }
+}
+
+/* slot to set name of catalog and open it without a file selection dialog */
+void Waypoints::slotSetWaypointCatalogName(QString catalog){
+	this->openCatalog(catalog);
 }

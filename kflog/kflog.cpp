@@ -1157,3 +1157,8 @@ void KFLogApp::slotTaskOpen()
 
   slotStatusMsg(i18n("Ready."));
 }
+
+/* Slot to set filename for WaypointCatalog */
+void KFLogApp::slotSetWaypointCatalog(QString catalog){
+  waypoints->slotSetWaypointCatalogName( catalog );
+}

@@ -60,6 +60,7 @@ static KCmdLineOptions options[] =
   { "nocomment", I18N_NOOP("suppress comment"), 0 },
   { "b", 0, 0 },
   { "batch", I18N_NOOP("quit after export (batch mode)"), 0 },
+  { "waypoints ", I18N_NOOP("waypoint-catalog to open"), 0 },
   { "+[File]", I18N_NOOP("igc-file to open"), 0 },
   { 0, 0, 0 }
 };
@@ -114,6 +115,12 @@ int main(int argc, char *argv[])
       KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
       KConfig* config = KGlobal::config();
 
+      QString waypointsOptionArg = args->getOption("waypoints");
+      if (waypointsOptionArg != ""){
+        warning("WaypointCatalog specified at startup : " + waypointsOptionArg );
+        kflog->slotSetWaypointCatalog( waypointsOptionArg);
+      }
+
       if (args->count()){
           if (args->isSet("export-png")){
             config->setGroup("General Options");
@@ -135,6 +142,7 @@ int main(int argc, char *argv[])
             warning("Exiting.");
             return 0;
           }
+
       }
       QTimer::singleShot(700, kflog, SLOT(slotStartComplete()));
 

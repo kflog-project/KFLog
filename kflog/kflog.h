@@ -260,10 +260,13 @@ class KFLogApp : public KDockMainWindow
     void slotImportGardownFile();
     /** No descriptions */
     void slotTaskOpen();
+    /** No descriptions */
+    void slotSetWaypointCatalog(QString catalog);
     /**
      * Display dialog to ask for coordinates and center map on that point.
      */
     void slotCenterTo();
+
 
   private:
     /**

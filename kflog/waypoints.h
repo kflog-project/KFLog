@@ -116,6 +116,8 @@ public slots: // Public slots
   void slotAddWaypoint(wayPoint *w);
   /** No descriptions */
   void slotImportWaypointFromFile();
+  /* No descriptions */
+  void slotSetWaypointCatalogName(QString catalog);
 signals: // Signals
   /** No descriptions */
   void copyWaypoint2Task(wayPoint *);
