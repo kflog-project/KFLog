@@ -57,7 +57,6 @@
       wpL.current()->sectorFAI = 0; \
       wpL.current()->angle = -100;
 
-
 Flight::Flight(QString fName, QList<flightPoint> r, QString pName,
     QString gType, QString gID, QList<wayPoint> wpL, QString d)
   : BaseMapElement("flight", BaseMapElement::Flight),
