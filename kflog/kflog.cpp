@@ -128,7 +128,7 @@ KFLogApp::KFLogApp()
   // Heavy workaround! MapConfig should tell KFLogApp, which type is selected!
   slotSelectFlightData(0);
 
-    connect(&_globalMapMatrix, SIGNAL(matrixChanged()), map,
+  connect(&_globalMapMatrix, SIGNAL(matrixChanged()), map,
       SLOT(slotRedrawMap()));
   connect(map, SIGNAL(showFlightPoint(const QPoint, const struct flightPoint&)),
       this, SLOT(slotShowPointInfo(const QPoint, const struct flightPoint&)));
@@ -911,8 +911,8 @@ void KFLogApp::slotWindowsMenuAboutToShow()
       int id = windowMenu->insertItem(flight->getFileName(), &_globalMapContents,
           SLOT(slotSetFlight(int)));
 
-     	windowMenu->setItemParameter(id, i);
-    	windowMenu->setItemChecked(id, _globalMapContents.getFlightIndex() == i);
+      windowMenu->setItemParameter(id, i);
+      windowMenu->setItemChecked(id, _globalMapContents.getFlightIndex() == i);
     }
 }
 

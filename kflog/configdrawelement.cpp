@@ -948,12 +948,15 @@ void ConfigDrawElement::slotSelectElement(int elementID)
       case Forest:
         SAVE_PEN(forestPenList, forestBorder);
         SAVE_BRUSH(forestBrushList);
+        break;
       case Glacier:
         SAVE_PEN(glacierPenList, glacierBorder);
         SAVE_BRUSH(glacierBrushList);
+        break;
       case PackIce:
         SAVE_PEN(packicePenList, packiceBorder);
         SAVE_BRUSH(packiceBrushList);
+        break;
       default:
         break;
     }
@@ -1046,9 +1049,11 @@ void ConfigDrawElement::slotSelectElement(int elementID)
       case Forest:
         SHOW_PEN(forestPenList, forestBorder);
         SHOW_BRUSH(forestBrushList);
+        break;
       case Glacier:
         SHOW_PEN(glacierPenList, glacierBorder);
         SHOW_BRUSH(glacierBrushList);
+        break;
       case PackIce:
         SHOW_PEN(packicePenList, packiceBorder);
         SHOW_BRUSH(packiceBrushList);

@@ -464,11 +464,11 @@ class KFLogApp : public KDockMainWindow
      * The task and waypoints directory.
      */
     QString taskDir;
-		/**
+    /**
      * The waypoints-widget.
      */
     Waypoints *waypoints;
-		/**
+    /**
      * The taskt-widget.
      */
     Tasks *tasks;

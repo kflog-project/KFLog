@@ -22,7 +22,8 @@ LineElement::LineElement(QString name, unsigned int t, QPointArray pA, bool isV)
     projPointArray(pA), bBox(pA.boundingRect()), valley(isV), closed(false)
 {
   if(typeID == BaseMapElement::Lake || typeID == BaseMapElement::City ||
-      typeID == BaseMapElement::Forest)
+      typeID == BaseMapElement::Forest || typeID == BaseMapElement::Glacier ||
+      typeID == BaseMapElement::PackIce || typeID == BaseMapElement::Lake_T)
       closed = true;
 }
 

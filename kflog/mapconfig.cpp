@@ -367,7 +367,6 @@ void MapConfig::slotReadConfig()
         PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4,
         PRINT_PACK_ICE_BRUSH_STYLE_1, PRINT_PACK_ICE_BRUSH_STYLE_2)
 
-
   READ_PEN_BRUSH("River_T", river_tPenList, river_tBorder, river_tBrushList,
         RIVER_T_COLOR_1, RIVER_T_COLOR_2, RIVER_T_COLOR_3, RIVER_T_COLOR_4,
         PRINT_RIVER_T_COLOR_1, PRINT_RIVER_T_COLOR_2,
@@ -381,8 +380,6 @@ void MapConfig::slotReadConfig()
         RIVER_T_BRUSH_STYLE_1, RIVER_T_BRUSH_STYLE_2,
         RIVER_T_BRUSH_STYLE_3, RIVER_T_BRUSH_STYLE_4,
         PRINT_RIVER_T_BRUSH_STYLE_1, PRINT_RIVER_T_BRUSH_STYLE_2)
-
-
 
   READ_PEN_BRUSH("Airspace A", airAPenList, airABorder, airABrushList,
         AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
@@ -879,6 +876,8 @@ QBrush MapConfig::__getBrush(unsigned int typeID, int sIndex)
           return *cityBrushList.at(sIndex);
       case BaseMapElement::Lake:
           return QBrush(riverPenList.at(sIndex)->color(), Qt::SolidPattern);
+      case BaseMapElement::Lake_T:
+          return *river_tBrushList.at(sIndex);
       case BaseMapElement::AirA:
           return *airABrushList.at(sIndex);
       case BaseMapElement::AirB:
@@ -907,6 +906,11 @@ QBrush MapConfig::__getBrush(unsigned int typeID, int sIndex)
           return *tmzBrushList.at(sIndex);
       case BaseMapElement::Forest:
           return *forestBrushList.at(sIndex);
+      case BaseMapElement::Glacier:
+          return *glacierBrushList.at(sIndex);
+      case BaseMapElement::PackIce:
+          return *packiceBrushList.at(sIndex);
+
     }
   return QBrush();
 }

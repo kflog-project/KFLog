@@ -32,6 +32,7 @@ public:
   bool read(QString &catalog);
   /** No descriptions */
   bool write();
+  bool writeBinary();
   /** No descriptions */
   bool importVolkslogger(QString & filename);
 

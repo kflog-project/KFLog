@@ -234,19 +234,22 @@ void Waypoints::slotNewWaypointCatalog()
 bool Waypoints::saveChanges()
 {
   WaypointCatalog *w;
-  for (w = waypointCatalogs.first(); w != 0; w = waypointCatalogs.next()) {
-    if (w->modified) {
-      switch(KMessageBox::warningYesNoCancel(this, i18n("Save changes to<BR><B>%1</B>").arg(w->path))) {
-      case KMessageBox::Yes:
-        if (!w->write()) {
-          return false;
+  for (w = waypointCatalogs.first(); w != 0; w = waypointCatalogs.next())
+    {
+      if (w->modified)
+        {
+          switch(KMessageBox::warningYesNoCancel(this, i18n("Save changes to<BR><B>%1</B>").arg(w->path)))
+            {
+              case KMessageBox::Yes:
+                // Hier zwischenzeitlich auf binärformat umgestellt ...
+                if (!w->writeBinary())
+                    return false;
+                break;
+              case KMessageBox::Cancel:
+                  return false;
+            }
         }
-        break;
-      case KMessageBox::Cancel:
-        return false;
-      }
     }
-  }
 
   return true;
 }

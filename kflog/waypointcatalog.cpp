@@ -43,6 +43,10 @@
 #include <qtextstream.h>
 
 
+#define KFLOG_FILE_MAGIC    0x404b464c
+#define FILE_TYPE_WAYPOINTS 0x50
+#define FILE_FORMAT_ID      100
+
 
 WaypointCatalog::WaypointCatalog()
   : modified(false), onDisc(false)
@@ -187,6 +191,88 @@ bool WaypointCatalog::write()
   return ok;
 }
 
+bool WaypointCatalog::writeBinary()
+{
+  bool ok = true;
+
+  QString wpName="";
+  QString wpDescription="";
+  QString wpICAO="";
+  Q_INT8 wpType;
+  Q_INT32 wpLatitude;
+  Q_INT32 wpLongitude;
+  Q_INT16 wpElevation;
+  double wpFrequency;
+  Q_INT8 wpLandable;
+  Q_INT16 wpRunway;
+  Q_INT16 wpLength;
+  Q_INT8 wpSurface;
+  QString wpComment="";
+
+  wayPoint *w;
+  QFile f;
+  QString fName = path;
+  QDictIterator<wayPoint> it(wpList);
+
+  if (!onDisc)
+    {
+      //temporary, just create a waypointfile
+      fName="/home/heiner/cumulus.kwp";
+    }
+
+  f.setName(fName);
+  if (f.open(IO_WriteOnly))
+    {
+      QDataStream out(&f);
+
+      out << (Q_UINT32)KFLOG_FILE_MAGIC;
+      out << (Q_INT8)FILE_TYPE_WAYPOINTS;
+      out << (Q_INT16)FILE_FORMAT_ID;
+
+      for (w = it.current(); w != 0; w = ++it)
+        {
+
+          wpName=w->name;
+          wpDescription=w->description;
+          wpICAO=w->icao;
+          wpType=w->type;
+          wpLatitude=w->origP.lat();
+          wpLongitude=w->origP.lon();
+          wpElevation=w->elevation;
+          wpFrequency=w->frequency;
+          wpLandable=w->isLandable;
+          wpRunway=w->runway;
+          wpLength=w->length;
+          wpSurface=w->surface;
+          wpComment=w->comment;
+
+          out << wpName;
+          out << wpDescription;
+          out << wpICAO;
+          out << wpType;
+          out << wpLatitude;
+          out << wpLongitude;
+          out << wpElevation;
+          out << wpFrequency;
+          out << wpLandable;
+          out << wpRunway;
+          out << wpLength;
+          out << wpSurface;
+          out << wpComment;
+        }
+
+      f.close();
+      path = fName;
+      modified = false;
+      onDisc = true;
+    }
+  else
+    {
+      KMessageBox::error(0, i18n("<B>%1</B><BR>permission denied!").arg(fName), i18n("Error occurred!"));
+    }
+
+  return ok;
+}
 /** No descriptions */
 bool WaypointCatalog::importVolkslogger(QString & filename){
  QFileInfo fInfo(filename);

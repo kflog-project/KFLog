@@ -73,23 +73,23 @@ class Map : public QWidget
     /** */
     void slotRedrawFlight();
     /**
-		 * Animation slot.
-		 * Called for every timeout of the animation timer. Advances the crosshair one single step.
-		 */
+     * Animation slot.
+     * Called for every timeout of the animation timer. Advances the crosshair one single step.
+     */
     void slotAnimateFlightTimeout();
     /**
-		 * Animation slot.
-		 * Called to start the animation timer
-		 */
+     * Animation slot.
+     * Called to start the animation timer
+     */
     void slotAnimateFlightStart();
-	  /**
-		 * Animation slot.
-		 * Called to stop the animation timer
-		 */
+    /**
+     * Animation slot.
+     * Called to stop the animation timer
+     */
     void slotAnimateFlightStop();
-		/**
-		 * Stepping slots.
-		 */
+    /**
+     * Stepping slots.
+     */
     void slotFlightNext();
     void slotFlightPrev();
     void slotFlightStepNext();
@@ -103,8 +103,8 @@ class Map : public QWidget
     void slotShowCurrentFlight();
     /** append a waypoint to the current task */
     void slotAppendWaypoint2Task(wayPoint *p);
-  /** Slot signalled when user selects another waypointcatalog.  */
-  void slotWaypointCatalogChanged(WaypointCatalog* c);
+    /** Slot signalled when user selects another waypointcatalog.  */
+    void slotWaypointCatalogChanged(WaypointCatalog* c);
 
   signals:
     /** */
@@ -112,8 +112,8 @@ class Map : public QWidget
     /** */
     void showFlightPoint(const QPoint pos, const struct flightPoint& point);
     /**
-    	*
-    	*/
+     *
+     */
     void showTaskText(FlightTask* task);
     /** */
     void taskPlanningEnd();
@@ -250,10 +250,10 @@ class Map : public QWidget
      *
      */
     QPixmap pixCursor;
-  	/*
-	 * Pixmap to hold waypoints of active WaypointsCatalog
-	 */
-  	QPixmap pixWaypoints;
+    /**
+     * Pixmap to hold waypoints of active WaypointsCatalog
+     */
+    QPixmap pixWaypoints;
     /** */
     QBitmap bitMapMask;
     /** */
@@ -261,8 +261,8 @@ class Map : public QWidget
     /** */
     QBitmap bitFlightMask;
     QBitmap bitPlanMask;
-	/** **/
-	QBitmap bitWaypointsMask;
+    /** */
+    QBitmap bitWaypointsMask;
     /** */
     QPoint prePos;
     QPoint prePlanPos;
@@ -275,32 +275,32 @@ class Map : public QWidget
      * find the airspace-data when the users selects a airspace in the map.
      */
     QList<QRegion>* airspaceRegList;
-		/**
-		 * Animation timer
-		 */
-		QTimer* timerAnimate;
-		/**
-		 * FlightList to animate
-		 */
-  	Flight* flightToAnimate;
-		/**
-			* contains planning task points
-			* enthält die Punkte!!!
-			*/
+    /**
+     * Animation timer
+     */
+    QTimer* timerAnimate;
+    /**
+     * FlightList to animate
+     */
+    Flight* flightToAnimate;
+    /**
+     * contains planning task points
+     * enthält die Punkte!!!
+     */
  //   QList<wayPoint> taskPointList;
-		// 0 keine Planung 1 Planung 2 Planung Aufgabe Abgeschlossen
-//		enum planning {NoPlanning = 0, Planning = 1, TaskFinished = 2};
-		int planning;
-		// Index des WP welcher verschoben wird bei planning == 3
-		int moveWPindex;
+    // 0 keine Planung 1 Planung 2 Planung Aufgabe Abgeschlossen
+//    enum planning {NoPlanning = 0, Planning = 1, TaskFinished = 2};
+    int planning;
+    // Index des WP welcher verschoben wird bei planning == 3
+    int moveWPindex;
     // indicates if a WP was Added in Snapping Mode (Planning)
-		bool lastAdd;
+    bool lastAdd;
     // indicates if the mouse is in a snapping area
     bool isSnapping;
     // temp task (snapping)
     FlightTask tempTask;
 
-public: // Public attributes
+  public: // Public attributes
     //
     QPoint preSnapPoint;
 };

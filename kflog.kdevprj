@@ -26,7 +26,7 @@ ldadd=-lkdeprint -lm $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
 ldflags=\s  \s
 
 [General]
-AMChanged=true
+AMChanged=false
 author=Heiner Lamprecht
 configure_args=--prefix=/opt/aiv/kde3 --enable-debug --enable-mt
 email=heiner@kflog.org
