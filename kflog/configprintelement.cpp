@@ -184,7 +184,9 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
   riverBorder = new bool[2];
   cityBorder = new bool[2];
   forestBorder = new bool[2];
-
+  glacierBorder = new bool[2];
+  packiceBorder = new bool[2];
+  
   faiAreaLow500Border = new bool[2];
   faiAreaHigh500Border = new bool[2];
 
@@ -220,6 +222,11 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
   cityPenList.setAutoDelete(true);
   forestPenList.setAutoDelete(true);
   forestBrushList.setAutoDelete(true);
+  glacierPenList.setAutoDelete(true);
+  glacierBrushList.setAutoDelete(true);
+  packicePenList.setAutoDelete(true);
+  packiceBrushList.setAutoDelete(true);
+  
 
   faiAreaLow500PenList.setAutoDelete(true);
   faiAreaLow500BrushList.setAutoDelete(true);
@@ -282,6 +289,20 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
         PRINT_FRST_PEN_STYLE_1, PRINT_FRST_PEN_STYLE_2,
         PRINT_FRST_BRUSH_COLOR_1, PRINT_FRST_BRUSH_COLOR_2,
         PRINT_FRST_BRUSH_STYLE_1, PRINT_FRST_BRUSH_STYLE_2)
+
+  READ_PEN_BRUSH("Glacier", glacierPenList, glacierBorder, glacierBrushList,
+        PRINT_GLACIER_COLOR_1, PRINT_GLACIER_COLOR_2,
+        PRINT_GLACIER_PEN_1, PRINT_GLACIER_PEN_2,
+        PRINT_GLACIER_PEN_STYLE_1, PRINT_GLACIER_PEN_STYLE_2,
+        PRINT_GLACIER_BRUSH_COLOR_1, PRINT_GLACIER_BRUSH_COLOR_2,
+        PRINT_GLACIER_BRUSH_STYLE_1, PRINT_GLACIER_BRUSH_STYLE_2)
+
+  READ_PEN_BRUSH("Pack Ice", packicePenList, packiceBorder, packiceBrushList,
+        PRINT_PACK_ICE_COLOR_1, PRINT_PACK_ICE_COLOR_2,
+        PRINT_PACK_ICE_PEN_1, PRINT_PACK_ICE_PEN_2,
+        PRINT_PACK_ICE_PEN_STYLE_1, PRINT_PACK_ICE_PEN_STYLE_2,
+        PRINT_PACK_ICE_BRUSH_COLOR_1, PRINT_PACK_ICE_BRUSH_COLOR_2,
+        PRINT_PACK_ICE_BRUSH_STYLE_1, PRINT_PACK_ICE_BRUSH_STYLE_2)
 
   READ_PEN_BRUSH("Airspace A", airAPenList, airABorder, airABrushList,
         PRINT_AIRA_COLOR_1, PRINT_AIRA_COLOR_2,
@@ -491,6 +512,10 @@ void ConfigPrintElement::slotOk()
   WRITE_BRUSH("TMZ", tmzBrushList, tmzPenList, tmzBorder);
 
   WRITE_BRUSH("Forest", forestBrushList, forestPenList, forestBorder);
+
+  WRITE_BRUSH("Glacier", glacierBrushList, glacierPenList, glacierBorder);
+
+  WRITE_BRUSH("Pack Ice", packiceBrushList, packicePenList, packiceBorder);
 
   WRITE_BRUSH("FAIAreaLow500", faiAreaLow500BrushList, faiAreaLow500PenList, faiAreaLow500Border);
 
@@ -717,6 +742,14 @@ void ConfigPrintElement::slotSelectElement(int elementID)
         SAVE_PEN(forestPenList, forestBorder)
         SAVE_BRUSH(forestBrushList)
         break;
+      case Glacier:
+        SAVE_PEN(glacierPenList, glacierBorder)
+        SAVE_BRUSH(glacierBrushList)
+        break;
+      case PackIce:
+        SAVE_PEN(packicePenList, packiceBorder)
+        SAVE_BRUSH(packiceBrushList)
+        break;
       case FAIAreaLow500:
         SAVE_PEN(faiAreaLow500PenList, faiAreaLow500Border);
         SAVE_BRUSH(faiAreaLow500BrushList);
@@ -803,6 +836,14 @@ void ConfigPrintElement::slotSelectElement(int elementID)
         SHOW_PEN(forestPenList, forestBorder)
         SHOW_BRUSH(forestBrushList)
         break;
+      case Glacier:
+        SHOW_PEN(glacierPenList, glacierBorder)
+        SHOW_BRUSH(glacierBrushList)
+        break;
+      case PackIce:
+        SHOW_PEN(packicePenList, packiceBorder)
+        SHOW_BRUSH(packiceBrushList)
+        break;
       case FAIAreaLow500:
         SHOW_PEN(faiAreaLow500PenList, faiAreaLow500Border);
         SHOW_BRUSH(faiAreaLow500BrushList);
@@ -843,11 +884,19 @@ void ConfigPrintElement::slotToggleFirst(bool toggle)
       case LowFlight:
       case Danger:
       case Restricted:
+      case Glacier:
+      case PackIce:
       case TMZ:
-      case Forest:
       case FAIAreaLow500:
       case FAIAreaHigh500:
         border1PenStyle->setEnabled(toggle);
+        border1BrushColor->setEnabled(toggle);
+        border1BrushStyle->setEnabled(toggle);
+        break;
+      case Forest:
+        border1Color->setEnabled(false);
+        border1Pen->setEnabled(false);
+        border1PenStyle->setEnabled(false);
         border1BrushColor->setEnabled(toggle);
         border1BrushStyle->setEnabled(toggle);
         break;
@@ -888,10 +937,18 @@ void ConfigPrintElement::slotToggleSecond(bool toggle)
       case Danger:
       case Restricted:
       case TMZ:
-      case Forest:
+      case Glacier:
+      case PackIce:
       case FAIAreaLow500:
       case FAIAreaHigh500:
         border2PenStyle->setEnabled(toggle);
+        border2BrushColor->setEnabled(toggle);
+        border2BrushStyle->setEnabled(toggle);
+        break;
+      case Forest:
+        border2Color->setEnabled(false);
+        border2Pen->setEnabled(false);
+        border2PenStyle->setEnabled(false);
         border2BrushColor->setEnabled(toggle);
         border2BrushStyle->setEnabled(toggle);
         break;

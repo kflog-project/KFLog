@@ -119,6 +119,10 @@ class ConfigPrintElement : public QFrame
     QList<QBrush> cityBrushList;
     QList<QPen> forestPenList;
     QList<QBrush> forestBrushList;
+    QList<QPen> glacierPenList;
+    QList<QBrush> glacierBrushList;
+    QList<QPen> packicePenList;
+    QList<QBrush> packiceBrushList;
 
     QList<QPen> faiAreaLow500PenList;
     QList<QBrush> faiAreaLow500BrushList;
@@ -145,6 +149,9 @@ class ConfigPrintElement : public QFrame
     bool* riverBorder;
     bool* cityBorder;
     bool* forestBorder;
+    bool* glacierBorder;
+    bool* packiceBorder;
+
 
     bool* faiAreaLow500Border;
     bool* faiAreaHigh500Border;

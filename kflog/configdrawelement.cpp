@@ -1101,7 +1101,7 @@ void ConfigDrawElement::slotSelectElement(int elementID)
         SHOW_BRUSH(tmzBrushList)
         break;
       case Forest:
-        SHOW_PEN(forestPenList, forestBorder);
+        //SHOW_PEN(forestPenList, forestBorder);
         SHOW_BRUSH(forestBrushList);
         break;
       case Glacier:
@@ -1153,13 +1153,19 @@ void ConfigDrawElement::slotToggleFirst(bool toggle)
       case Danger:
       case Restricted:
       case TMZ:
-      case Forest:
       case Glacier:
       case PackIce:
       case River_T:
       case FAIAreaLow500:
       case FAIAreaHigh500:
         border1PenStyle->setEnabled(toggle);
+        border1BrushColor->setEnabled(toggle);
+        border1BrushStyle->setEnabled(toggle);
+        break;
+      case Forest:
+        border1Color->setEnabled(false);
+        border1Pen->setEnabled(false);
+        border1PenStyle->setEnabled(false);
         border1BrushColor->setEnabled(toggle);
         border1BrushStyle->setEnabled(toggle);
         break;
@@ -1202,13 +1208,19 @@ void ConfigDrawElement::slotToggleSecond(bool toggle)
       case Danger:
       case Restricted:
       case TMZ:
-      case Forest:
       case Glacier:
       case PackIce:
       case River_T:
       case FAIAreaLow500:
       case FAIAreaHigh500:
         border2PenStyle->setEnabled(toggle);
+        border2BrushColor->setEnabled(toggle);
+        border2BrushStyle->setEnabled(toggle);
+        break;
+      case Forest:
+        border2Color->setEnabled(false);
+        border2Pen->setEnabled(false);
+        border2PenStyle->setEnabled(false);
         border2BrushColor->setEnabled(toggle);
         border2BrushStyle->setEnabled(toggle);
         break;
@@ -1251,13 +1263,19 @@ void ConfigDrawElement::slotToggleThird(bool toggle)
       case Danger:
       case Restricted:
       case TMZ:
-      case Forest:
       case Glacier:
       case PackIce:
       case River_T:
       case FAIAreaLow500:
       case FAIAreaHigh500:
         border3PenStyle->setEnabled(toggle);
+        border3BrushColor->setEnabled(toggle);
+        border3BrushStyle->setEnabled(toggle);
+        break;
+      case Forest:
+        border3Color->setEnabled(false);
+        border3Pen->setEnabled(false);
+        border3PenStyle->setEnabled(false);
         border3BrushColor->setEnabled(toggle);
         border3BrushStyle->setEnabled(toggle);
         break;
@@ -1298,13 +1316,19 @@ void ConfigDrawElement::slotToggleForth(bool toggle)
       case Danger:
       case Restricted:
       case TMZ:
-      case Forest:
       case Glacier:
       case PackIce:
       case River_T:
       case FAIAreaLow500:
       case FAIAreaHigh500:
         border4PenStyle->setEnabled(toggle);
+        border4BrushColor->setEnabled(toggle);
+        border4BrushStyle->setEnabled(toggle);
+        break;
+      case Forest:
+        border4Color->setEnabled(false);
+        border4Pen->setEnabled(false);
+        border4PenStyle->setEnabled(false);
         border4BrushColor->setEnabled(toggle);
         border4BrushStyle->setEnabled(toggle);
         break;
