@@ -1,5 +1,8 @@
 $Id$
 
+2003-06-12 Eggert Ehmke <eggert@kflog.org>
+  * Bugfix: coordinates during flight animation are shown correctly now in status bar
+
 2003-06-04 Heiner Lamprecht <heiner@kflog.org>
 
   * Changed the fonts in the printout of the flightdata.

@@ -112,7 +112,7 @@ class Map : public QWidget
     /** */
     void changed(QSize);
     /** */
-    void showFlightPoint(const QPoint pos, const flightPoint& point);
+    void showFlightPoint(const QPoint& pos, const flightPoint& point);
     /**
      *
      */
@@ -120,9 +120,9 @@ class Map : public QWidget
     /** */
     void taskPlanningEnd();
     /** */
-    void showPoint(const QPoint pos);
+    void showPoint(const QPoint& pos);
     /** */
-    void pointClicked(QPoint);
+    void pointClicked(const QPoint&);
     /** is emited when shift + left button click on the map */
     void waypointSelected(Waypoint *);
     /** Emitted when the mouse hits a new elevation. The argument is the level. */

@@ -1752,7 +1752,7 @@ void Map::slotAnimateFlightTimeout()
             pos = _globalMapMatrix.map(cP.projP);
             lastpos = f->getLastAnimationPos();
             pix = f->getLastAnimationPixmap();
-            emit showFlightPoint(pos, cP);
+            emit showFlightPoint(_globalMapMatrix.mapToWgs(pos), cP);
             // erase prev indicator-flag
             bitBlt(&pixBuffer, lastpos.x(), lastpos.y()-32, &pix);
 
@@ -1782,7 +1782,7 @@ void Map::slotAnimateFlightTimeout()
                 pos = _globalMapMatrix.map(cP.projP);
                 lastpos = f->getLastAnimationPos();
                 pix = f->getLastAnimationPixmap();
-                emit showFlightPoint(pos, cP);
+                emit showFlightPoint(_globalMapMatrix.mapToWgs(pos), cP);
                 // erase prev indicator-flag
                 bitBlt(&pixBuffer, lastpos.x(), lastpos.y()-32, &pix);
               	// redraw flight up to this point, blt the pixmap onto the already created pixmap

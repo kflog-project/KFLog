@@ -118,13 +118,13 @@ class KFLogApp : public KDockMainWindow
      * @param mouseP   The lat/lon position under the mousecursor.
      * @param flightP  Pointer to the flightpoint.
      */
-    void slotShowPointInfo(const QPoint mousePosition,
+    void slotShowPointInfo(const QPoint& mousePosition,
                            const flightPoint& point);
   /**
    * Displays the position of the mousecursor in the statusbar and
    * deletes the text of the other statusbar-fields.
    */
-  void slotShowPointInfo(const QPoint);
+  void slotShowPointInfo(const QPoint&);
   /**
    * Opens a file-open-dialog.
    */
