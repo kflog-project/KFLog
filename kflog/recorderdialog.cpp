@@ -129,8 +129,12 @@ void RecorderDialog::__addSettingsPage()
   selectPort->insertItem("ttyS1");
   selectPort->insertItem("ttyS2");
   selectPort->insertItem("ttyS3");
-  selectPort->insertItem("ttyUSB0");
-  selectPort->insertItem("ttyUSB1");
+  // the following devices are used for usb adapters
+  selectPort->insertItem("ttyUSB0");   // classical device
+  selectPort->insertItem("tts/USB0");  // devfs
+  selectPort->insertItem("usb/tts/0"); // udev
+  // we never know if the device name will change again; let the user have a chance 
+  selectPort->setEditable(true);
 
   cmdConnect = new QPushButton(i18n("Connect recorder"), settingsPage);
   cmdConnect->setMaximumWidth(cmdConnect->sizeHint().width() + 5);
