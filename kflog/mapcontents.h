@@ -221,6 +221,11 @@ class MapContents : public QObject
         RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
         WaypointList, DigitList, FlightList};
     inline QPtrList<isoListEntry>* getIsohypseRegions(){return &regIsoLines;};
+    /**
+     * find the terrain elevation for the given point
+     * @returns the elevation in meters or -1 if the elevation could not be found.
+     */
+    int getElevation(QPoint);
 
   public slots:
     /**
@@ -447,8 +452,14 @@ class MapContents : public QObject
     int isFirstLoad;
     /**
      * List of all drawn isohypses.
+     * Used to find the elevation belonging to a point on the map.
      */
     QPtrList<isoListEntry> regIsoLines;
+    /**
+     * List of all loaded isohypses (in world coordinates).
+     * Used to find the elevation belonging to a flightpoint.
+     */
+    QPtrList<isoListEntry> regIsoLinesWorld;
     /**
      * downloads File from www.kflog.org, optionally waits until finished (blocking operation)
      */

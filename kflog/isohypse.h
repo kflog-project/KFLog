@@ -53,6 +53,14 @@ class Isohypse : public LineElement
      * @return the elevation of the line
      */
     int getElevation() const;
+    /**
+     * @return the region for this line (projected)
+     */
+    QRegion* getRegion();
+    /**
+     * Is this isoline's region allready stored in our list?
+     */
+    bool regionStored;
 
   private:
     /**

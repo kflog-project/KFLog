@@ -23,7 +23,7 @@ Isohypse::Isohypse(QPointArray pA, unsigned int elev, bool isV)
 : LineElement(0, BaseMapElement::Isohypse, pA, isV),
   elevation(elev)
 {
-
+  regionStored=false;
 }
 
 Isohypse::~Isohypse()
@@ -42,3 +42,12 @@ QRegion* Isohypse::drawRegion(QPainter* targetP, QPainter* maskP)
 }
 
 int Isohypse::getElevation() const { return elevation; }
+
+
+/*!
+    \fn Isohypse::getRegion
+ */
+QRegion* Isohypse::getRegion()
+{
+  return new QRegion(projPointArray);
+}

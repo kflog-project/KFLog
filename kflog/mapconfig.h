@@ -24,6 +24,12 @@
 #include <qpen.h>
 #include <qpixmap.h>
 
+    //These are the levels used.
+    //For internal reasons, -1 and 10000 are added to the list.
+    const int topoLevels[] = {
+      -1,0,10,25,50,75,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,
+      1250,1500,1750,2000,2250,2500,2750,3000,3250,3500,3750,4000,4250,4500,4750,
+      5000,5250,5500,5750,6000,6250,6500,6750,7000,7250,7500,7750,8000,8250,8500,8750,10000};
 
 class flightPoint;
 
@@ -174,7 +180,6 @@ class MapConfig : public QObject
     void slotSetPrintMatrixValues(int index);
     bool useSmallIcons();
     bool drawWpLabels();
-
   signals:
     /**
      * Emitted each time, the config has changed.

@@ -158,6 +158,7 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   connect (mapInfoTimer, SIGNAL(timeout()), this, SLOT(slotMapInfoTimeout()));
 
   isZoomRect=false;
+  dragZoomRect=false;
 }
 
 Map::~Map()

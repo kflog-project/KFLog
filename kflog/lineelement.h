@@ -68,7 +68,7 @@ class LineElement : public BaseMapElement
    * @see #valley
    */
   virtual bool isValley() const;
-  /** No descriptions */
+  /** @returns the bounding box for the lineelement */
   QRect getBoundingBox() { return bBox; }
   QPointArray getPointArray() { return projPointArray; }
  protected:

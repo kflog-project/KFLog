@@ -143,6 +143,7 @@ MapContents::MapContents()
   topoList.setAutoDelete(true);
   wpList.setAutoDelete(false);
   regIsoLines.setAutoDelete(true);
+  regIsoLinesWorld.setAutoDelete(true);
   downloadList = new DownloadList();
 
   connect(downloadList,SIGNAL(allDownloadsFinished()),this,SLOT(slotDownloadFinished()));
@@ -1492,6 +1493,8 @@ bool MapContents::loadFlight(QFile& igcFile)
           newPoint.time = curTime;
           newPoint.origP = WGSPoint(latTemp, lonTemp);
           newPoint.projP = _globalMapMatrix.wgsToMap(newPoint.origP);
+	  newPoint.surfaceHeight = getElevation(newPoint.projP);
+	  qDebug("  terrain elevation: %d",newPoint.surfaceHeight);
           newPoint.f_state = Flight::Straight;
           newPoint.height = baroAltTemp;
           newPoint.gpsHeight = gpsAltTemp;
@@ -2251,6 +2254,12 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
               isoListEntry* entry=new isoListEntry(reg, height);
               regIsoLines.append(entry);
             }
+	  if( !(iso2 -> regionStored) )
+	  {
+		iso2->regionStored = true;
+		isoListEntry* entry=new isoListEntry( iso2->getRegion(), height );
+		regIsoLinesWorld.append( entry );
+	  }
         }
     }
 }
@@ -3189,4 +3198,25 @@ void MapContents::reProject()
 void MapContents::slotReSendFlightChanged()
 {
     emit currentFlightChanged(getFlight());
+}
+
+
+/*!
+    \fn MapContents::getElevation(QPoint)
+ */
+int MapContents::getElevation(QPoint coord)
+{
+  extern MapConfig _globalMapConfig;
+  
+  isoListEntry* entry;
+  int height=-1; //default 'unknown' value
+
+  for(unsigned int i = 0; i < regIsoLinesWorld.count(); i++) {
+    entry = regIsoLinesWorld.at(i);
+    if (entry->region->contains(coord))
+      height=MAX(height,entry->height);
+  }
+  if (height == -1)
+    return height;
+  return topoLevels[height];
 }

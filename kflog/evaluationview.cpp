@@ -596,6 +596,8 @@ void EvaluationView::__draw()
 
   int*   baro_d       = new int[gn_h];
   int*   baro_d_last  = new int[gn_h];
+  int*   elev_d       = new int[gn_h];
+  int*   elev_d_last  = new int[gn_h];
   float* speed_d      = new float[gn_v];
   float* speed_d_last = new float[gn_v];
   float* vario_d      = new float[gn_va];
@@ -605,6 +607,8 @@ void EvaluationView::__draw()
     {
       baro_d[loop] = flight->getPoint(loop).height;
       baro_d_last[loop] = flight->getPoint(flight->getRouteLength() - loop - 1).height;
+      elev_d[loop] = flight->getPoint(loop).surfaceHeight;
+      elev_d_last[loop] = flight->getPoint(flight->getRouteLength() - loop - 1).surfaceHeight;
     }
   for(unsigned int loop = 0; loop < gn_v; loop++)
     {
@@ -619,6 +623,7 @@ void EvaluationView::__draw()
     }
 
   QPointArray baroArray(flight->getRouteLength());
+  QPointArray elevArray(flight->getRouteLength()+2);
   QPointArray varioArray(flight->getRouteLength());
   QPointArray speedArray(flight->getRouteLength());
 
@@ -634,9 +639,11 @@ void EvaluationView::__draw()
        * ( -4, -3, -2, -1, 0, 1) genommen, statt (-2, -1, 0, 1, 2). Das ist vermutlich
        * die Ursache dafür, dass die Kurve "wandert".
        */
-      if(loop < flight->getRouteLength() - glatt_h && loop > glatt_h)
-          baro_d[(loop - glatt_h - 1) % gn_h] = flight->getPoint(loop + glatt_h).height;
-
+      if(loop < flight->getRouteLength() - glatt_h && loop > glatt_h) {
+          baro_d[(loop - glatt_h - 1) % gn_h] = flight->getPoint(loop + glatt_h).height; 
+          elev_d[(loop - glatt_h - 1) % gn_h] = flight->getPoint(loop + glatt_h).surfaceHeight;
+      }
+      
       if(loop < flight->getRouteLength() - glatt_v && loop > glatt_v)
           speed_d[(loop - glatt_v - 1) % gn_v] = getSpeed(flight->getPoint(loop + glatt_v));
 
@@ -646,11 +653,15 @@ void EvaluationView::__draw()
       /* Wenn das Glätten wie bei __speedPoint() erfolgt, können gn_? und loop auch als
        * unsigned übergeben werden ...
        */
-      if(loop < flight->getRouteLength() - glatt_h)
+      if(loop < flight->getRouteLength() - glatt_h) {
           baroArray.setPoint(loop, __baroPoint(baro_d, gn_h, loop));
-      else
+          elevArray.setPoint(loop, __baroPoint(elev_d, gn_h, loop));
+      } else {
           baroArray.setPoint(loop, __baroPoint(baro_d_last, gn_h,
                         flight->getRouteLength() - loop - 1));
+          elevArray.setPoint(loop, __baroPoint(elev_d_last, gn_h,
+                        flight->getRouteLength() - loop - 1));
+      }
       if(loop < flight->getRouteLength() - glatt_va)
           varioArray.setPoint(loop,
               __varioPoint(vario_d, gn_va, loop));
@@ -670,6 +681,23 @@ void EvaluationView::__draw()
 
   pixBufferKurve->fill(white);
   QPainter paint(pixBufferKurve);
+  if(baro)
+    { //draw elevation
+      paint.setBrush(QColor(35, 120, 20));
+      paint.setPen(QPen(QColor(35, 120, 20), 1));
+      //add two points so we can draw a filled area
+      
+      elevArray.setPoint(flight->getRouteLength(), 
+        QPoint( 
+	  elevArray[flight->getRouteLength()-1].x(), 
+	  scrollFrame->viewport()->height() - Y_ABSTAND ) );
+	
+      elevArray.setPoint( flight->getRouteLength()+1, 
+        QPoint( 
+	  X_ABSTAND, 
+	  scrollFrame->viewport()->height() - Y_ABSTAND ) );
+      paint.drawPolygon(elevArray);
+    }
 
   __drawCsystem(&paint);
 
@@ -716,7 +744,7 @@ void EvaluationView::__draw()
     }
   if(baro)
     {
-      paint.setPen(QPen(QColor(100,100, 255), 1));
+      paint.setPen(QPen(QColor(100, 100, 255), 1));
       paint.drawPolyline(baroArray);
     }
 

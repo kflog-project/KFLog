@@ -75,6 +75,8 @@
   A.append(new QBrush(config->readColorEntry("Print Brush Color 2", new C12), \
         (Qt::BrushStyle)config->readNumEntry("Print Brush Style 2", S12)));
 
+
+
 MapConfig::MapConfig()
   : scaleIndex(0), printScaleIndex(0), isSwitch(false),
     drawFType(MapConfig::Vario)
@@ -226,6 +228,7 @@ void MapConfig::slotReadConfig()
   READ_TOPO("8250M", LEVEL_8250)
   READ_TOPO("8500M", LEVEL_8500)
   READ_TOPO("8750M", LEVEL_8750)
+  
 
   READ_PEN("Road", roadPenList, roadBorder,
         ROAD_COLOR_1, ROAD_COLOR_2, ROAD_COLOR_3, ROAD_COLOR_4,

@@ -68,7 +68,7 @@ flightPoint::flightPoint(void)
   height = 0;
   gpsHeight = 0;
   engineNoise  = -1; // indicates not measured
-  surfaceHeight = 0;
+  surfaceHeight = -1; // indicates unknown
   time  = 0;
   dH = 0;
   dT = 0;
