@@ -178,6 +178,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
       QList<wayPoint> taskPointList = f->getWPList();
       QList<wayPoint> tempTaskPointList = f->getWPList();
+      QList<wayPoint> *wpList = _globalMapContents.getWaypointList();
+
       // 3: Task beendet verschieben eines Punktes
 
       QPoint preSitePos, nextSitePos;
@@ -221,7 +223,11 @@ void Map::mouseMoveEvent(QMouseEvent* event)
           if(!isSnapping)
             {
               struct wayPoint wp;
-              if(__getTaskWaypoint(current, &wp, taskPointList))
+              bool found = __getTaskWaypoint(current, &wp, taskPointList);
+			  if (!found) // check wp catalog
+				found = __getTaskWaypoint(current, &wp, *wpList);
+              if(found)
+//              if(__getTaskWaypoint(current, &wp, taskPointList))
                 {
                   isSnapping = true;
 
