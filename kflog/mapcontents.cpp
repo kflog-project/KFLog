@@ -1422,10 +1422,12 @@ void MapContents::proofeSection(bool isPrint)
       for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
           __readAirspaceFile((*it).latin1());
 
-//        {
-//          __readAsciiFile((*it).latin1());
-//          warning( "%s", (*it).latin1() );
-//        }
+      airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.out");
+      for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
+        {
+          __readAsciiFile((*it).latin1());
+          warning( "%s", (*it).latin1() );
+        }
 
       isFirst = false;
     }
