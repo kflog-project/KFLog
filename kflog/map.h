@@ -164,11 +164,6 @@ class Map : public QWidget
      * Redifinition of the dropEvent.
      */
     virtual void dropEvent(QDropEvent* event);
-    // for the rectangular zoom
-    bool isZoomRect;
-    bool dragZoomRect;
-    QPoint beginDrag;
-    QPoint tmpDrag;
 
   private:
   // defining the cursor for the map:
@@ -321,6 +316,11 @@ class Map : public QWidget
     bool isSnapping;
     // temp task (snapping)
     FlightTask tempTask;
+    // for the rectangular zoom
+    bool isZoomRect;
+    bool dragZoomRect;
+    QPoint beginDrag;
+    QPoint sizeDrag;
 
     /**
      * Added for a Workaround: There are not two messages

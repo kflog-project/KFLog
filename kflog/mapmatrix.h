@@ -180,7 +180,7 @@ class MapMatrix : public QObject
      * Centers the map to the given rectangle and scales the map, so that
      * the rectangle will be seen completly.
      */
-    double centerToRect(QRect, QSize = QSize(0,0));
+    double centerToRect(QRect, QSize = QSize(0,0), bool addBorder = true);
     /** */
     QPoint mapToWgs(QPoint pos) const;
     /**

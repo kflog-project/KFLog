@@ -387,16 +387,32 @@ void Map::mouseMoveEvent(QMouseEvent* event)
         zoomPainter.begin(this);
         zoomPainter.setRasterOp( Qt::XorROP );
 
+        double width = event->pos().x() - beginDrag.x();
+        double height = event->pos().y() - beginDrag.y();
+        const double widthRatio = width / this->width();
+        const double heightRatio = height / this->height();
+
+        if(widthRatio > heightRatio)
+          {
+            height = this->height() * widthRatio;
+          }
+        else
+          {
+            width = this->width() * heightRatio;
+          }
+
+        if(event->pos().x() < beginDrag.x()) {  width *= -1;  }
+        if(event->pos().y() < beginDrag.y()) {  height *= -1;  }
+
         zoomPainter.setPen(QPen(QColor(255, 255, 255), 1, DashLine));
         // Delete the old rectangle:
-        zoomPainter.drawRect( beginDrag.x(), beginDrag.y(),
-            tmpDrag.x() - beginDrag.x(), tmpDrag.y() - beginDrag.y());
+        zoomPainter.drawRect( beginDrag.x(), beginDrag.y(), sizeDrag.x(), sizeDrag.y());
         // Draw the new one:
-        zoomPainter.drawRect( beginDrag.x(), beginDrag.y(),
-            event->pos().x() - beginDrag.x(), event->pos().y() - beginDrag.y());
+        zoomPainter.drawRect( beginDrag.x(), beginDrag.y(), (int)width, (int)height);
         zoomPainter.end();
 
-        tmpDrag = event->pos();
+        sizeDrag.setX((int)width);
+        sizeDrag.setY((int)height);
     }
 }
 
@@ -787,18 +803,39 @@ warning("key Release");
 void Map::mouseReleaseEvent(QMouseEvent* event)
 {
   extern MapMatrix _globalMapMatrix;
-  if (isZoomRect){
-    dragZoomRect=false;
-    isZoomRect=false; 
-    __setCursor();
-    if (abs(beginDrag.x()-event->pos().x())>10 && // don't zoom if rect is too small
-        abs(beginDrag.y()-event->pos().y())>10 &&
-        event->button()==LeftButton){             // or other than left button was pressed
-      _globalMapMatrix.centerToRect(QRect(beginDrag,event->pos()));
-      _globalMapMatrix.createMatrix(this->size());
-      __redrawMap();
+  if (isZoomRect)
+    {
+      dragZoomRect=false;
+      isZoomRect=false; 
+      __setCursor();
+
+      if(abs(beginDrag.x()-event->pos().x())>10 && // don't zoom if rect is too small
+            abs(beginDrag.y()-event->pos().y())>10 && event->button()==LeftButton) // or other than left button was pressed
+        {
+          double width = event->pos().x() - beginDrag.x();
+          double height = event->pos().y() - beginDrag.y();
+          const double widthRatio = width / this->width();
+          const double heightRatio = height / this->height();
+
+          if(widthRatio > heightRatio)
+            {
+              height = this->height() * widthRatio;
+            }
+          else
+            {
+              width = this->width() * heightRatio;
+            }
+
+          if(event->pos().x() < beginDrag.x()) {  width *= -1;  }
+          if(event->pos().y() < beginDrag.y()) {  height *= -1;  }
+
+          _globalMapMatrix.centerToRect(QRect(beginDrag,
+              QPoint(beginDrag.x() + (int)width, beginDrag.y() + (int)height)), QSize(0,0), false);
+          _globalMapMatrix.createMatrix(this->size());
+          __redrawMap();
+          emit changed(this->size());
+        }
     }
-  }
 }
 
 void Map::mousePressEvent(QMouseEvent* event)
@@ -811,7 +848,7 @@ warning("Map::mousePressEvent: planning=%d", planning);
 
   if (isZoomRect){ // Zooming
     beginDrag = event->pos();
-    tmpDrag = event->pos();
+    sizeDrag = QPoint(0,0);
     dragZoomRect=true;
   }
   else
@@ -924,7 +961,6 @@ warning("Map::mousePressEvent: planning=%d", planning);
 
 void Map::paintEvent(QPaintEvent* event = 0)
 {
-  warning("Map::paintEvent()");
   if(event == 0)
       bitBlt(this, 0, 0, &pixBuffer);
   else
@@ -1467,7 +1503,7 @@ void Map::slotDrawCursor(QPoint p1, QPoint p2)
 
 void Map::slotZoomRect()
 {
-  setCursor(SizeAllCursor);
+  setCursor(CrossCursor);
   isZoomRect=true;
 }
 

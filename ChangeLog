@@ -1,6 +1,12 @@
 $Id$
 
 
+2003-04-27 Heiner <heiner@kflog.org>
+
+  * Completed the mouse-zoomig. Now the side-ratio of the current map-window
+    is used and now additional border is added to the rectangle.
+
+
 2003-04-27 André <andre@kflog.org>
   
   * Cleaned up and fixed handling of new waypoints.

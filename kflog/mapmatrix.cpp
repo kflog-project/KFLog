@@ -352,18 +352,27 @@ void MapMatrix::centerToLatLon(int latitude, int longitude)
   mapCenterLon = longitude;
 }
 
-double MapMatrix::centerToRect(QRect center, QSize pS)
+double MapMatrix::centerToRect(QRect center, QSize pS, bool addBorder)
 {
   const int centerX = (center.left() + center.right()) / 2;
   const int centerY = (center.top() + center.bottom()) / 2;
 
   // We add 6.5 km to ensure, that the sectors will be visible,
   // when the user centers to the task.
-  const double width = sqrt(center.width() * center.width()) +
-      (6.5 * 1000.0 / cScale);
-  const double height = sqrt(center.height() * center.height()) +
-      (6.5 * 1000.0 / cScale);
-
+  double width, height;
+  if(addBorder)
+    {
+      width = sqrt(center.width() * center.width()) +
+          (6.5 * 1000.0 / cScale);
+      height = sqrt(center.height() * center.height()) +
+          (6.5 * 1000.0 / cScale);
+    }
+  else
+    {
+      width = center.width();
+      height = center.height();
+    }
+    
   double xScaleDelta, yScaleDelta;
 
   if(pS == QSize(0,0))
