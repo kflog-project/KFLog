@@ -1510,8 +1510,10 @@ void MapContents::proofeSection(bool isPrint)
   mapDir = config->readEntry("DefaultMapDirectory",
       globalDirs->findResource("appdata", "mapdata"));
 
-  QDir mapfileDir(mapDir);
-  QDir(mapDir).entryList("*.kfl").isEmpty();
+  if(QDir(mapDir).entryList("*.kfl").isEmpty())
+    {
+      // No mapfiles installed!
+    }
 
   if(isPrint)
       mapBorder = _globalMapMatrix.getPrintBorder();
