@@ -41,9 +41,11 @@ QRegion* Airspace::drawRegion(QPainter* targetP, QPainter* maskP)
 
   QBrush drawB = glConfig->getDrawBrush(typeID);
   QPen drawP = glConfig->getDrawPen(typeID);
+  drawP.setJoinStyle(Qt::RoundJoin);
 
   maskP->setBrush(QBrush(Qt::color1, drawB.style()));
-  maskP->setPen(QPen(Qt::color1, drawP.width(), drawP.style()));
+  maskP->setPen(QPen(Qt::color1, drawP.width(), drawP.style(),
+      drawP.capStyle(), drawP.joinStyle()));
   maskP->drawPolygon(tA);
 
   targetP->setBrush(drawB);
