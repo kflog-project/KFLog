@@ -26,6 +26,21 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
+#include <kconfig.h>
+#include <kglobal.h>
+#include <kstddirs.h>
+#include <qdatastream.h>
+#include <qdatetime.h>
+#include <qdir.h>
+#include <qfile.h>
+#include <qfileinfo.h>
+#include <qprogressdialog.h>
+#include <qregexp.h>
+#include <qstring.h>
+#include <qtextstream.h>
+
+
+
 WaypointCatalog::WaypointCatalog()
   : modified(false), onDisc(false)
 {
@@ -167,5 +182,116 @@ bool WaypointCatalog::write()
 
   QApplication::restoreOverrideCursor();
   return ok;
+}
+
+/** No descriptions */
+bool WaypointCatalog::importVolkslogger(QString & filename){
+ QFileInfo fInfo(filename);
+ QFile f(filename);
+
+  if(!fInfo.exists())
+    {
+      KMessageBox::error(0,
+          i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(filename));
+      return false;
+    }
+  if(!fInfo.size())
+    {
+      KMessageBox::sorry(0,
+          i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(filename));
+      return false;
+    }
+  //
+  // We need a better format-identification then only the extension ...
+  //
+  if(((QString)fInfo.extension()).lower() != "dbt")
+    {
+      KMessageBox::error(0,
+          i18n("The selected file<BR><B>%1</B><BR>is not a Volkslogger-file!").arg(filename));
+      return false;
+    }
+
+  if(!f.open(IO_ReadOnly))
+    {
+      KMessageBox::error(0,
+          i18n("You don't have permission to access file<BR><B>%1</B>").arg(filename),
+          i18n("No permission"));
+      return false;
+    }
+
+  QProgressDialog importProgress(0,0,true);
+
+  importProgress.setCaption(i18n("Import file ..."));
+  importProgress.setLabelText(
+      i18n("Please wait while loading file<BR><B>%1</B>").arg(filename));
+  importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
+  importProgress.setTotalSteps(200);
+  importProgress.show();
+  importProgress.setMinimumDuration(0);
+
+  importProgress.setProgress(0);
+
+  unsigned int fileLength = fInfo.size();
+  unsigned int filePos = 0;
+
+  QString s;
+  QTextStream stream(&f);
+
+  QString wpname;
+  int lat, lon, latTemp, lonTemp, latmin, lonmin;
+  char latChar, lonChar;
+  int lineCount;
+
+  while (!stream.eof())
+    {
+      if(importProgress.wasCancelled()) return false;
+
+      lineCount++;
+
+      s = stream.readLine();
+      filePos += s.length();
+      importProgress.setProgress(( filePos * 200 ) / fileLength);
+      wayPoint *w = new wayPoint;
+
+	  //
+	  // File is a collection of WPs.
+	  //
+      latChar = 'N';
+      lonChar = 'E';
+
+	 wpname = s.mid(4,6);
+
+      QString t = s.mid(11,16);
+      sscanf(t,  "%2d%5d,%3d%5d",  &lat, &latmin, &lon, &lonmin);
+
+	  latTemp = lat * 600000 + latmin * 10;
+      lonTemp = lon * 600000 + lonmin * 10;
+
+      if(latChar == 'S') latTemp = -latTemp;
+      if(lonChar == 'W') lonTemp = -lonTemp;
+
+      w->name = wpname;
+      w->description = "<unknown>";
+      w->icao = "<unknown>";
+      w->type = -1;
+      w->origP.setLat(latTemp);
+      w->origP.setLon(lonTemp);
+      w->elevation =0;
+      w->frequency = 0;
+      w->isLandable = 0;
+      w->runway = 0;
+      w->length = 0;
+      w->surface = 0;
+      w->comment = "<no comment>";
+
+      if (!wpList.insertItem(w)) {
+        break;
+      }
+   }
+
+  // close the import dialog, clean up and add the FlightRoute we just created
+  importProgress.close();
+
+  return true;
 }
 

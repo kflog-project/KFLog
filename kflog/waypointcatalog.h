@@ -32,6 +32,8 @@ public:
   bool read(QString &catalog);
   /** No descriptions */
   bool write();
+  /** No descriptions */
+  bool importVolkslogger(QString & filename);
 
   /** filter for display/import */
   bool showAll;
