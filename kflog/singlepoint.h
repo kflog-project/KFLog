@@ -47,7 +47,7 @@ class SinglePoint : public BaseMapElement
      * @param  elevation The elevation of the point when avaible
      * @param  index Additional field (eg. for the population index for cities)
      */
-    SinglePoint(QString name, QString gps, unsigned int typeID,
+    SinglePoint(const QString& name, const QString& gps, unsigned int typeID,
         WGSPoint wgsPos, QPoint pos, unsigned int elevation = 0,
         unsigned int index = 0);
     /**

@@ -17,8 +17,8 @@
 
 #include "baseflightelement.h"
 
-BaseFlightElement::BaseFlightElement(QString name, unsigned int typeID,
-      QString fName)
+BaseFlightElement::BaseFlightElement(const QString& name, unsigned int typeID,
+      const QString& fName)
   : BaseMapElement(name, typeID),
     sourceFileName(fName)
 {
@@ -28,7 +28,7 @@ BaseFlightElement::BaseFlightElement(QString name, unsigned int typeID,
 BaseFlightElement::~BaseFlightElement(){
 }
 
-int BaseFlightElement::searchPoint(QPoint, flightPoint&)  {  return -1;  }
+int BaseFlightElement::searchPoint(const QPoint&, flightPoint&)  {  return -1;  }
 
 int BaseFlightElement::searchGetPrevPoint(int, flightPoint&)  {  return -1;  }
 

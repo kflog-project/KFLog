@@ -698,7 +698,7 @@ unsigned int Flight::getRouteLength() const { return route.count(); }
 
 bool Flight::isOptimized() const { return optimized; }
 
-int Flight::searchPoint(QPoint cPoint, flightPoint& searchPoint)
+int Flight::searchPoint(const QPoint& cPoint, flightPoint& searchPoint)
 {
   unsigned int delta = 1;
   int index = -1;

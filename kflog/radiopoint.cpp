@@ -17,8 +17,8 @@
 
 #include "radiopoint.h"
 
-RadioPoint::RadioPoint(QString n, QString i, QString g, unsigned int t,
-    WGSPoint wgsP, QPoint pos, const char* f, int elev)
+RadioPoint::RadioPoint(const QString& n, const QString& i, const QString& g, unsigned int t,
+    const WGSPoint& wgsP, const QPoint& pos, const char* f, int elev)
   : SinglePoint(n, g, t, wgsP, pos, elev),
     frequency(f), icao(i)
 {

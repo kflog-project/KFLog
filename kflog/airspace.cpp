@@ -19,7 +19,7 @@
 
 #include <klocale.h>
 
-Airspace::Airspace(QString n, unsigned int t, QPointArray pA, unsigned int u,
+Airspace::Airspace(const QString& n, unsigned int t, const QPointArray& pA, unsigned int u,
       unsigned int uType, unsigned int l, unsigned int lType)
   : LineElement(n, t, pA),
     lLimit(l), lLimitType(lType), uLimit(u), uLimitType(uType)

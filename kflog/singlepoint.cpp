@@ -19,7 +19,7 @@
 
 #include <kstddirs.h>
 
-SinglePoint::SinglePoint(QString n, QString gps, unsigned int t,
+SinglePoint::SinglePoint(const QString& n, const QString& gps, unsigned int t,
       WGSPoint wgsP, QPoint pos, unsigned int elev, unsigned int ind)
   : BaseMapElement(n, t),
     wgsPosition(wgsP), position(pos), gpsName(gps), curPos(pos), elevation(elev),

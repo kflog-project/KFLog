@@ -20,12 +20,12 @@
 
 #include <klocale.h>
 
-FlightGroup::FlightGroup(QString fName)
+FlightGroup::FlightGroup(const QString& fName)
   : BaseFlightElement("flight group", BaseMapElement::FlightGroup, fName)
 {
 }
 
-FlightGroup::FlightGroup(QPtrList <Flight::Flight> fList, QString fName)
+FlightGroup::FlightGroup(const QPtrList <Flight::Flight>& fList, const QString& fName)
   : BaseFlightElement("flight group", BaseMapElement::FlightGroup, fName),
     flightList(fList)
 {

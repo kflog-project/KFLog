@@ -59,8 +59,8 @@ class RadioPoint : public SinglePoint
      * @param  wgsPos  The original WGS-position
      * @param  frequency  The frequency
      */
-    RadioPoint(QString name, QString icao, QString gps, unsigned int typeID,
-        WGSPoint wgsP, QPoint pos, const char* frequency, int elevation = 0);
+    RadioPoint(const QString& name, const QString& icao, const QString& gps, unsigned int typeID,
+        const WGSPoint& wgsP, const QPoint& pos, const char* frequency, int elevation = 0);
     /**
      * Destructor
      */

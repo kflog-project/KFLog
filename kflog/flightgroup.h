@@ -37,7 +37,7 @@ class FlightGroup : public BaseFlightElement
    * @param fName name of new flightgroup
    * @returns new @ref FlightGroup object.
    */
-  FlightGroup(QString fName);
+  FlightGroup(const QString& fName);
   /**
    * Constructor
    *
@@ -46,7 +46,7 @@ class FlightGroup : public BaseFlightElement
    * @param fList @ref QPtrList of flights to be included in the FlightGroup.
    * @returns new @ref FlightGroup object.
    */
-  FlightGroup(QPtrList <Flight::Flight> fList, QString fName);
+  FlightGroup(const QPtrList <Flight::Flight>& fList, const QString& fName);
   /**
    * Destructor
    */

@@ -31,7 +31,7 @@ class BaseFlightElement : public BaseMapElement
 {
 public:
   /** */
-  BaseFlightElement(QString name, unsigned int typeID, QString fName);
+  BaseFlightElement(const QString& name, unsigned int typeID, const QString& fName);
   /** */
   ~BaseFlightElement();
   virtual QPtrList<Waypoint> getWPList() = 0 ;
@@ -45,7 +45,7 @@ public:
    *                      with the flightpoint found.
    * @return the index of the flightpoint or -1 if no point is found.
    */
-  virtual int searchPoint(QPoint cPoint, flightPoint& searchPoint);
+  virtual int searchPoint(const QPoint& cPoint, flightPoint& searchPoint);
   /**
    * Get the previous FlightPoint before number 'index'
    */

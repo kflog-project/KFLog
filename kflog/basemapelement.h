@@ -44,7 +44,7 @@ class BaseMapElement
      * @param  name  The name of the element.
      * @param  typeID  The typeid of the element.
      */
-    BaseMapElement(const char* name = 0, unsigned int typeID = 0);
+    BaseMapElement(const QString& name = QString::null, unsigned int typeID = 0);
     /**
      * Destructor
      */

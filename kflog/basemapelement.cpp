@@ -17,7 +17,7 @@
 
 #include "basemapelement.h"
 
-BaseMapElement::BaseMapElement(const char* n, unsigned int tID)
+BaseMapElement::BaseMapElement(const QString& n, unsigned int tID)
   : name(n), typeID(tID)
 {
 

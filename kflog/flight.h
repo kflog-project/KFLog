@@ -202,7 +202,7 @@ class Flight : public BaseFlightElement
      *                      with the flightpoint found.
      * @return the index of the flightpoint or -1 if no point is found.
      */
-    int searchPoint(QPoint cPoint, flightPoint& searchPoint);
+    int searchPoint(const QPoint& cPoint, flightPoint& searchPoint);
     /**
 		 * Get the previous FlightPoint before number 'index'
 		 */

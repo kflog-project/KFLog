@@ -37,7 +37,7 @@ class Airspace : public LineElement
      * of the airspace and the type of value (MSL, GND, FL); lower and
      * lowerType give the value for the lower limit.
      */
-    Airspace(QString n, unsigned int t, QPointArray pA,
+    Airspace(const QString& n, unsigned int t, const QPointArray& pA,
             unsigned int upper, unsigned int upperType,
             unsigned int lower, unsigned int lowerType);
     /**
