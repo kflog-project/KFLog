@@ -37,6 +37,8 @@
 #include <radiopoint.h>
 #include "waypointelement.h"
 
+#include <iostream.h>
+
 // Festlegen der Größe der Pixmaps auf Desktop-Grösse
 #define PIX_WIDTH  QApplication::desktop()->width()
 #define PIX_HEIGHT QApplication::desktop()->height()
@@ -166,7 +168,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
       if(_globalMapMatrix.isSwitchScale()) delta = 32.0;
 
 
-      if(taskPoints.size() > 0)
+      if(!taskPoints.isEmpty())
         {
           double dX_old = delta + 10.0;
           double dY_old = delta + 10.0;
@@ -176,17 +178,17 @@ void Map::mouseMoveEvent(QMouseEvent* event)
           if(planning == 1)
             {
               preSitePos = _globalMapMatrix.map(
-                  taskPoints.at(taskPoints.size() - 1)->getPosition());
+                  taskPoints.getLast()->projP);
             }
           else if(planning == 3)
             {
               if(moveWPindex > 0)
                   preSitePos = _globalMapMatrix.map(
-                      taskPoints.at(moveWPindex - 1)->getPosition());
+                      taskPoints.at(moveWPindex - 1)->projP);
 
-              if(moveWPindex + 1 < (int)taskPoints.size())
+              if(moveWPindex + 1 < (int)taskPoints.count())
                   nextSitePos = _globalMapMatrix.map(
-                      taskPoints.at(moveWPindex + 1)->getPosition());
+                      taskPoints.at(moveWPindex + 1)->projP);
             }
                  
           point.setX(current.x());
@@ -228,7 +230,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                   planP.drawLine(preSitePos.x(),preSitePos.y(),
                       prePlanPos.x(),prePlanPos.y());
                 }
-              if((planning == 3) && moveWPindex + 1 != (int)taskPoints.size())
+              if((planning == 3) && moveWPindex + 1 != (int)taskPoints.count())
                 {
                   planP.drawLine(nextSitePos.x(),nextSitePos.y(),
                       prePlanPos.x(),prePlanPos.y());
@@ -239,12 +241,15 @@ void Map::mouseMoveEvent(QMouseEvent* event)
              (current.y() > 0 && current.y() < this->height()))
             {
               // Linien zeichnen
+    cout << "Punkt: " <<
+          printPos(preSitePos.y()) << " / " <<
+          printPos(preSitePos.x()) << endl;
               if(!(planning == 3 && moveWPindex == 0))
                 {
                   planP.drawLine(preSitePos.x(),preSitePos.y(),
                       point.x(),point.y());
                 }
-              if((planning == 3) && moveWPindex + 1 != (int)taskPoints.size())
+              if((planning == 3) && moveWPindex + 1 != (int)taskPoints.count())
                 {                                 
                   planP.drawLine(nextSitePos.x(),nextSitePos.y(),
                       point.x(),point.y());
@@ -261,7 +266,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
             }
           planP.end();            
         }
-      emit showTaskText(taskPoints,_globalMapMatrix.mapToWgs(point));
+//      emit showTaskText(taskPoints,_globalMapMatrix.mapToWgs(point));
     }
 
   if (!timerAnimate->isActive())
@@ -305,6 +310,7 @@ void Map::mousePressEvent(QMouseEvent* event)
   bool show = false, isAirport = false;
 
   SinglePoint *hitElement;
+  wayPoint  *tempWP = new wayPoint;
   QString text;
 
   QPoint sitePos;
@@ -373,7 +379,10 @@ void Map::mousePressEvent(QMouseEvent* event)
         }
       else if(planning == 1 || planning == 2 || planning == 3)
         {
-          ////////// Planen
+          /**
+            * Planen
+            *
+            **/
           double dX_old = delta + 10;
           double dY_old = delta + 10;
           /*
@@ -385,6 +394,13 @@ void Map::mousePressEvent(QMouseEvent* event)
             {
               hitElement = (SinglePoint*)_globalMapContents.getElement(
 								       MapContents::GliderList, loop);
+							
+							tempWP->name = hitElement->getWPName();
+							tempWP->origP = hitElement->getWGSPosition();
+							tempWP->elevation = hitElement->getElevation();
+							tempWP->projP = hitElement->getPosition();
+							// hier müssen noch mehr Sachen übergeben werden
+							
               sitePos = hitElement->getMapPosition();
     
               dX = abs(sitePos.x() - current.x());
@@ -400,24 +416,25 @@ void Map::mousePressEvent(QMouseEvent* event)
                   
                   if(planning == 1)
                     {
-                      if(taskPoints.size() > 0 &&
-                         hitElement->getPosition().x() ==
-                         taskPoints.at(taskPoints.size() - 1)->getPosition().x())
+                      if(!taskPoints.isEmpty() &&
+                         hitElement->getPosition().x() == taskPoints.getLast()->projP.x())
                         {
                           // gleicher Punkt --> löschen
-//                          taskPoints.at(taskPoints.size()) == ;
+                          taskPoints.removeLast();
                           pixPlan.fill(white);
-                          taskPoints.resize(taskPoints.size() - 1);
                         }
                       else
                         {
                           // neuen Punkt an Task Liste anhängen
-                          taskPoints.resize(taskPoints.size() + 1);
-                          taskPoints.at(taskPoints.size() - 1) = hitElement;
+                          taskPoints.append(tempWP);
+
+                          cout << "Punkt: " << tempWP->name << " - " <<
+                                  printPos(taskPoints.getLast()->projP.y()) << " / " <<
+                                   printPos(taskPoints.getLast()->projP.x()) << "\n\n" << endl;
                         }
                     
                       // Aufgabe zeichnen
-                      if(taskPoints.size() > 1)
+                      if(taskPoints.count() > 1)
                         {
                           __drawPlannedTask();
                           __showLayer();
@@ -426,10 +443,10 @@ void Map::mousePressEvent(QMouseEvent* event)
                   else if(planning == 2)
                     {
                       // Punkt wird verschoben
-                      for(unsigned int n = 0; n < taskPoints.size(); n++)
+                      for(unsigned int n = 0; n < taskPoints.count(); n++)
                         {
                           if(hitElement->getPosition().x() ==
-                                  taskPoints.at(n)->getPosition().x())
+                                  taskPoints.at(n)->projP.x())
                             {
                               planning = 3;                            
                               moveWPindex = n;
@@ -442,10 +459,10 @@ void Map::mousePressEvent(QMouseEvent* event)
                   else if(planning == 3)
                     {
                       planning = 2;
-                      taskPoints.at(moveWPindex) = hitElement;
+                      taskPoints.insert(moveWPindex,tempWP);
                 
                       // Aufgabe zeichnen
-                      if(taskPoints.size() > 1)
+                      if(taskPoints.count() > 1)
                         {
                           pixPlan.fill(white);                        
                           __drawPlannedTask();
@@ -472,11 +489,11 @@ void Map::mousePressEvent(QMouseEvent* event)
       	  if(prePlanPos.x() >= 0)
 	          {
               // alte Linien löschen
-              preSitePos = _globalMapMatrix.map(taskPoints.at(taskPoints.size() - 1)->getPosition());
+              preSitePos = _globalMapMatrix.map(taskPoints.getLast()->projP);
               if(planning == 3)
                 {
-                  preSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex - 1)->getPosition());
-                  nextSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex + 1)->getPosition());
+                  preSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex - 1)->projP);
+                  nextSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex + 1)->projP);
 
                   planP.drawLine(nextSitePos.x(),nextSitePos.y(),
                   prePlanPos.x(),prePlanPos.y());
@@ -900,11 +917,11 @@ void Map::__drawPlannedTask()
   planP.setBrush(NoBrush);
   planP.setPen(drawP);
 
-  QPointArray points(taskPoints.size());
+  QPointArray points(taskPoints.count());
   QPoint temp;
-  for(unsigned int n = 0; n < taskPoints.size(); n++)
+  for(unsigned int n = 0; n < taskPoints.count(); n++)
     {
-      temp = _globalMapMatrix.map(taskPoints.at(n)->getPosition());
+      temp = _globalMapMatrix.map(taskPoints.at(n)->projP);
 
       points.setPoint(n,temp.x(),temp.y());
     }
