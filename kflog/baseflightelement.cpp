@@ -38,12 +38,12 @@ int BaseFlightElement::searchStepNextPoint(int, flightPoint&, int) {  return -1;
 
 int BaseFlightElement::searchStepPrevPoint(int,  flightPoint&, int) {  return -1;  }
 
+/*
 void BaseFlightElement::printMapElement(QPainter* printP, bool isT)
 {
   warning("BaseFlightElement::printMapElement");
 }
-
-//QStrList BaseFlightElement::getHeader()  {  return header;  }
+*/
 
 void BaseFlightElement::reProject() {
   warning("BaseFlightElement::reProject()");

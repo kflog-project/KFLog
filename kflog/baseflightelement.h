@@ -72,7 +72,7 @@ public:
    * @param  isText  Shows, if the text of some mapelements should
    *                 be printed.
    */
-  virtual void printMapElement(QPainter* printP, bool isText);
+  virtual void printMapElement(QPainter* printP, bool isText) = 0;
   /**
    * Virtual function to trigger re-projecting of the coordinates of the object.
    */
