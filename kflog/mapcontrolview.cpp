@@ -54,7 +54,7 @@ MapControlView::MapControlView(QWidget* parent)
   neB->setFixedWidth(neB->sizeHint().width() + DELTA);
 
   QPushButton* wB = new QPushButton(navFrame);
-  wB->setPixmap(BarIcon("movemap_e"));
+  wB->setPixmap(BarIcon("movemap_w"));
   wB->setFixedHeight(wB->sizeHint().height() + DELTA);
   wB->setFixedWidth(wB->sizeHint().width() + DELTA);
 
@@ -64,7 +64,7 @@ MapControlView::MapControlView(QWidget* parent)
   cenB->setFixedWidth(cenB->sizeHint().width() + DELTA);
 
   QPushButton* eB = new QPushButton(navFrame);
-  eB->setPixmap(BarIcon("movemap_w"));
+  eB->setPixmap(BarIcon("movemap_e"));
   eB->setFixedHeight(eB->sizeHint().height() + DELTA);
   eB->setFixedWidth(eB->sizeHint().width() + DELTA);
 
