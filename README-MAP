@@ -1,7 +1,10 @@
-This directory is used for the map-files.
+$Id$
+
+This directory is used for the map-files. The airspace-files are stored in the
+subdirectory "airspace/", the airfield-files in "airfields/".
 
 If You want to obtain a map, please visit the KFLog-Homepage.
 
 You can find the map-files at:
 
-http://www.kflog.de/maproom/
+http://maproom.kflog.org/
