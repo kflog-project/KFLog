@@ -1,5 +1,10 @@
 $Id$
 
+2003-06-05 Eggert Ehmke <eggert@kflog.org>
+  * improved Filser interface, tested with different versions of lx devices
+  * fixed bug: last entry in flight list is not doubled anymore
+  * added duration column in flight list
+
 2003-05-29 Florian Ehinger <florian@kflog.org>
   * Fixed Bugs in EvaluationDialog
      (Flags in the map are shown again, cursor text is shown again)
