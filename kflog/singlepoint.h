@@ -45,7 +45,7 @@ class SinglePoint : public BaseMapElement
      * @param  pos  The projected position
      * @param  wgsPos  The original WGS-position
      * @param  elevation The elevation of the point when avaible
-     * @param  index Additional field (eg. for the population index for cities or the lm_typ)
+     * @param  lmtyp Additional field (eg. for the population index for cities or the lm_typ)
      */
     SinglePoint(const QString& name, const QString& gps, unsigned int typeID,
         WGSPoint wgsPos, QPoint pos, unsigned int elevation = 0,

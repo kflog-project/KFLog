@@ -33,10 +33,6 @@
 MapControlView::MapControlView(QWidget* parent)
   : QWidget(parent, "mapcontrolview")
 {
-  QLabel* mapControl = new QLabel("<B>" + i18n("Map-control:") + "</B>",
-      parent);
-  mapControl->setMinimumHeight(mapControl->sizeHint().height() + 5);
-
   QFrame* navFrame = new QFrame(parent);
   QPushButton* nwB = new QPushButton(navFrame);
   nwB->setPixmap(BarIcon("movemap_nw"));
@@ -130,14 +126,14 @@ MapControlView::MapControlView(QWidget* parent)
 
   QGridLayout* controlLayout = new QGridLayout(parent,6,4,5,5, "controlLayout");
 
-  controlLayout->addMultiCellWidget(mapControl,0,0,0,3);
-  controlLayout->addMultiCellWidget(navFrame,1,3,0,1);
-  controlLayout->addMultiCellWidget(dimLabel,1,1,2,3);
-  controlLayout->addMultiCellWidget(dimText,2,2,2,3);
-  controlLayout->addWidget(currentScaleLabel,3,2);
-  controlLayout->addWidget(currentScaleValue,3,3);
-  controlLayout->addWidget(setScaleLabel,4,0);
-  controlLayout->addMultiCellWidget(currentScaleSlider,4,4,1,3);
+//   controlLayout->addMultiCellWidget(mapControl,0,0,0,3);
+  controlLayout->addMultiCellWidget(navFrame,0,2,0,1);
+  controlLayout->addMultiCellWidget(dimLabel,0,0,2,3);
+  controlLayout->addMultiCellWidget(dimText,1,1,2,3);
+  controlLayout->addWidget(currentScaleLabel,2,2);
+  controlLayout->addWidget(currentScaleValue,2,3);
+  controlLayout->addWidget(setScaleLabel,3,0);
+  controlLayout->addMultiCellWidget(currentScaleSlider,3,3,1,3);
 
   controlLayout->setColStretch(0,0);
   controlLayout->setColStretch(1,0);
@@ -146,8 +142,7 @@ MapControlView::MapControlView(QWidget* parent)
   controlLayout->setRowStretch(1,0);
   controlLayout->setRowStretch(2,0);
   controlLayout->setRowStretch(3,0);
-  controlLayout->setRowStretch(4,0);
-  controlLayout->setRowStretch(5,2);
+  controlLayout->setRowStretch(4,2);
 
   controlLayout->activate();
 

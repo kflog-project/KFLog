@@ -172,8 +172,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
   const QPoint current = event->pos();
   Waypoint *w;
 
-  QPoint vector = event->pos()-mapInfoTimerStartpoint;
-  if(vector.manhattanLength()>4)
+  QPoint vector = event->pos() - mapInfoTimerStartpoint;
+  if(vector.manhattanLength() > 4)
   {
     mapInfoTimer->stop();
     // don't start the timer when in planning mode
@@ -181,7 +181,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
         (planning != 3))
     {
       mapInfoTimer->start(MAP_INFO_DELAY, true);
-      mapInfoTimerStartpoint=event->pos();
+      mapInfoTimerStartpoint = event->pos();
     }
   }
 
@@ -560,13 +560,12 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
       {
         text += hitElement->getInfoString();
         // Text anzeigen
-        WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &current);
+        WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &mapToGlobal(current));
         box->show();
+
         isAirport = true;
       }
     }
-
-//          text = "";    // Wir wollen _nur_ Flugplätze anzeigen!
 
   if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
 
@@ -586,7 +585,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
       {
         text += hitElement->getInfoString();
         // Text anzeigen
-        WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &current);
+        WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &mapToGlobal(current));
         box->show();
 
         isAirport = true;
@@ -665,7 +664,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
         {
           wpText += "</UL>";
           // Show text
-          WhatsThat * box=new WhatsThat(this, wpText, this, "", timeout, &current);
+          WhatsThat * box=new WhatsThat(this, wpText, this, "", timeout, &mapToGlobal(current));
           box->show();
           isAirport = true;
         }
@@ -677,7 +676,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
   Waypoint* wp = findWaypoint (current);
   if (wp)
   {
-    WhatsThat * box=new WhatsThat(this, getInfoString(wp), this, "", timeout, &current);
+    WhatsThat * box=new WhatsThat(this, getInfoString(wp), this, "", timeout, &mapToGlobal(current));
     box->show();
     return;
   }
@@ -698,7 +697,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
   if(show)
     {
       //  Show text
-      WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &current);
+      WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &mapToGlobal(current));
       box->show();
     }
 }
@@ -2617,12 +2616,11 @@ void Map::slotMpShowMapInfo(){
 
 void Map::leaveEvent ( QEvent * ){
   mapInfoTimer->stop();
-  mapInfoTimerStartpoint=QPoint(-999,-999);
+  mapInfoTimerStartpoint = QPoint(-999,-999);
 }
 
 void Map::slotMapInfoTimeout() {
   __displayMapInfo(mapInfoTimerStartpoint, true);
-
 }
 
 /** Draws a scale indicator on the pixmap. */

@@ -360,7 +360,7 @@ bool FlightTask::isFAI(double d_wp, double d1, double d2, double d3)
 void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
   double w1;
-  unsigned int loop, i;
+  unsigned int loop;
   struct faiAreaSector *sect;
   QPoint tempP;
   QRect r;
@@ -407,27 +407,26 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
             case FlightTask::RouteP:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 2));
               targetPainter->setBrush(QColor(255, 110, 110));
-              targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 1440, 2880);
+              targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 1440), 2880);
               targetPainter->setBrush(QColor(110, 255, 110));
-              targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
-              targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+              targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
+              targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
               // Inneren Sektor erneut zeichnen, damit Trennlinien
               // zwischen Sekt. 1 und Zylinder verschwinden
               targetPainter->setPen(QPen::NoPen);
-              targetPainter->drawEllipse(gx + 2, gy + 2,
-                                         (2 * R2) - 4, (2 * R2) - 4);
+              targetPainter->drawEllipse((int)(gx + 2), (int)(gy + 2),
+                                         (int)((2 * R2) - 4), (int)((2 * R2) - 4));
 
               maskPainter->setPen(QPen(Qt::color1, 2));
               maskPainter->setBrush(QBrush(Qt::color1));
-              maskPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 1440, 2880);
-              maskPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
-              maskPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+              maskPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 1440), 2880);
+              maskPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
+              maskPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
               if(loop)
                 {
-                  if((flightType == FAI_S || flightType == Dreieck_S) &&
-                     loop == 2)
+                  if((flightType == FAI_S || flightType == Dreieck_S) && loop == 2)
                     targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
                   else
                     targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
@@ -446,13 +445,13 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
               targetPainter->setPen(QPen(QColor(50, 50, 50), 2));
               targetPainter->setBrush(QBrush(QColor(255, 0, 0),
                                              QBrush::BDiagPattern));
-              targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
-              targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+              targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
+              targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
               maskPainter->setPen(QPen(Qt::color1, 2));
               maskPainter->setBrush(QBrush(Qt::color1, QBrush::BDiagPattern));
-              maskPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
-              maskPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+              maskPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
+              maskPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
               // Linie von Startpunkt zum Aufgaben Beginn
               //
@@ -479,16 +478,15 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
               maskPainter->setBrush(QBrush(Qt::color1,
                                            QBrush::FDiagPattern));
 
-              targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
-              targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+              targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
+              targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
               targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
-              targetPainter->drawLine(
-                                      glMapMatrix->map(wpList.at(loop-1)->projP),
+              targetPainter->drawLine(glMapMatrix->map(wpList.at(loop-1)->projP),
                                       glMapMatrix->map(wpList.at(loop)->projP));
 
-              maskPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
-              maskPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+              maskPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
+              maskPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
               // Strecke
               if(flightType == FAI_S || flightType == Dreieck_S)
@@ -497,11 +495,9 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                 targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
 
               maskPainter->setPen(QPen(Qt::color1, 3));
-              targetPainter->drawLine(
-                                      glMapMatrix->map(wpList.at(loop - 1)->projP),
+              targetPainter->drawLine(glMapMatrix->map(wpList.at(loop - 1)->projP),
                                       glMapMatrix->map(wpList.at(loop)->projP));
-              maskPainter->drawLine(
-                                    glMapMatrix->map(wpList.at(loop - 1)->projP),
+              maskPainter->drawLine(glMapMatrix->map(wpList.at(loop - 1)->projP),
                                     glMapMatrix->map(wpList.at(loop)->projP));
               break;
 
@@ -618,28 +614,25 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
             case FlightTask::RouteP:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 1));
               targetPainter->setBrush(QColor(255, 110, 110));
-              targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 1440, 2880);
+              targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 1440), 2880);
               targetPainter->setBrush(QColor(110, 255, 110));
-              targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
-              targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+              targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
+              targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
               // Inneren Sektor erneut zeichnen, damit Trennlinien
               // zwischen Sekt. 1 und Zylinder verschwinden
               targetPainter->setPen(QPen::NoPen);
-              targetPainter->drawEllipse(gx + 2, gy + 2,
-                                         (2 * R2) - 4, (2 * R2) - 4);
+              targetPainter->drawEllipse((int)(gx + 2), (int)(gy + 2),
+                                         (int)((2 * R2) - 4), (int)((2 * R2) - 4));
 
               if(loop)
                 {
-                  if((flightType == FAI_S || flightType == Dreieck_S) &&
-                     loop == 2)
-                    targetPainter->setPen(QPen(QColor(0, 0, 0), 2,
-                                               Qt::DashLine));
+                  if((flightType == FAI_S || flightType == Dreieck_S) && loop == 2)
+                    targetPainter->setPen(QPen(QColor(0, 0, 0), 2, Qt::DashLine));
                   else
                     targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
 
-                  targetPainter->drawLine(
-                                          glMapMatrix->print(wpList.at(loop - 1)->projP),
+                  targetPainter->drawLine(glMapMatrix->print(wpList.at(loop - 1)->projP),
                                           glMapMatrix->print(wpList.at(loop)->projP));
                 }
               break;
@@ -647,16 +640,15 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
               targetPainter->setPen(QPen(QColor(50, 50, 50), 1));
               targetPainter->setBrush(QBrush(QColor(255, 0, 0),
                                              QBrush::BDiagPattern));
-              targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
-              targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+              targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
+              targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
               // Linie von Startpunkt zum Aufgaben Beginn
               //
               if(loop)
                 {
                   targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
-                  targetPainter->drawLine(
-                                          glMapMatrix->print(wpList.at(loop - 1)->projP),
+                  targetPainter->drawLine(glMapMatrix->print(wpList.at(loop - 1)->projP),
                                           glMapMatrix->print(wpList.at(loop)->projP));
                 }
               break;
@@ -666,8 +658,8 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
               targetPainter->setBrush(QBrush(QColor(0, 0, 255),
                                              QBrush::FDiagPattern));
 
-              targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
-              targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+              targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
+              targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
               // Hier wird die Linie vom letzten Wegpunkt
               // zum Endpunkt gemalt. Die gleiche Linie wird weiter
@@ -679,13 +671,11 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
 
               // Strecke
               if(flightType == FAI_S || flightType == Dreieck_S)
-                targetPainter->setPen(QPen(QColor(0, 0, 0), 2,
-                                           Qt::DashLine));
+                targetPainter->setPen(QPen(QColor(0, 0, 0), 2, Qt::DashLine));
               else
                 targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
 
-              targetPainter->drawLine(
-                                      glMapMatrix->print(wpList.at(loop - 1)->projP),
+              targetPainter->drawLine(glMapMatrix->print(wpList.at(loop - 1)->projP),
                                       glMapMatrix->print(wpList.at(loop)->projP));
               break;
 
@@ -696,13 +686,11 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
               if(loop)
                 {
                   if(flightType == FAI_S || flightType == Dreieck_S)
-                    targetPainter->setPen(QPen(QColor(0, 0, 0), 2,
-                                               Qt::DashLine));
+                    targetPainter->setPen(QPen(QColor(0, 0, 0), 2, Qt::DashLine));
                   else
                     targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
 
-                  targetPainter->drawLine(
-                                          glMapMatrix->print(wpList.at(loop - 1)->projP),
+                  targetPainter->drawLine(glMapMatrix->print(wpList.at(loop - 1)->projP),
                                           glMapMatrix->print(wpList.at(loop)->projP));
                 }
 
@@ -1262,56 +1250,50 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
             case FlightTask::RouteP:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 1));
               targetPainter->setBrush(QColor(255, 110, 110));
-              targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 1440, 2880);
+              targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 1440), 2880);
               targetPainter->setBrush(QColor(110, 255, 110));
-              targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
-              targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+              targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
+              targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
               // Inneren Sektor erneut zeichnen, damit Trennlinien
               // zwischen Sekt. 1 und Zylinder verschwinden
               targetPainter->setPen(QPen::NoPen);
-              targetPainter->drawEllipse(gx + 2, gy + 2,
-                                         (2 * R2) - 4, (2 * R2) - 4);
+              targetPainter->drawEllipse((int)(gx + 2), (int)(gy + 2),
+                                         (int)((2 * R2) - 4), (int)((2 * R2) - 4));
 
               if(loop)
                 {
-                  if((flightType == FAI_S || flightType == Dreieck_S) &&
-                     loop == 2)
-                    targetPainter->setPen(QPen(QColor(0, 0, 0), 2,
-                                               Qt::DashLine));
+                  if((flightType == FAI_S || flightType == Dreieck_S) && loop == 2)
+                    targetPainter->setPen(QPen(QColor(0, 0, 0), 2, Qt::DashLine));
                   else
                     targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
 
-                  targetPainter->drawLine(
-                                          glMapMatrix->print(wpList.at(loop - 1)->origP.lat(),wpList.at(loop - 1)->origP.lon() , dX, dY),
+                  targetPainter->drawLine( glMapMatrix->print(wpList.at(loop - 1)->origP.lat(),wpList.at(loop - 1)->origP.lon() , dX, dY),
                                           glMapMatrix->print(wpList.at(loop)->origP.lat(),wpList.at(loop)->origP.lon() , dX, dY));
                 }
               break;
             case FlightTask::Begin:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 1));
-              targetPainter->setBrush(QBrush(QColor(255, 0, 0),
-                                             QBrush::BDiagPattern));
-              targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
-              targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+              targetPainter->setBrush(QBrush(QColor(255, 0, 0), QBrush::BDiagPattern));
+              targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
+              targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
               // Linie von Startpunkt zum Aufgaben Beginn
               //
               if(loop)
                 {
                   targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
-                  targetPainter->drawLine(
-                                          glMapMatrix->print(wpList.at(loop - 1)->origP.lat(),wpList.at(loop - 1)->origP.lon() , dX, dY),
+                  targetPainter->drawLine(glMapMatrix->print(wpList.at(loop - 1)->origP.lat(),wpList.at(loop - 1)->origP.lon() , dX, dY),
                                           glMapMatrix->print(wpList.at(loop)->origP.lat(),wpList.at(loop)->origP.lon() , dX, dY));
                 }
               break;
 
             case FlightTask::End:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 1));
-              targetPainter->setBrush(QBrush(QColor(0, 0, 255),
-                                             QBrush::FDiagPattern));
+              targetPainter->setBrush(QBrush(QColor(0, 0, 255), QBrush::FDiagPattern));
 
-              targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
-              targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+              targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
+              targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
               // Hier wird die Linie vom letzten Wegpunkt
               // zum Endpunkt gemalt. Die gleiche Linie wird weiter
@@ -1323,13 +1305,11 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
 
               // Strecke
               if(flightType == FAI_S || flightType == Dreieck_S)
-                targetPainter->setPen(QPen(QColor(0, 0, 0), 2,
-                                           Qt::DashLine));
+                targetPainter->setPen(QPen(QColor(0, 0, 0), 2, Qt::DashLine));
               else
                 targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
 
-              targetPainter->drawLine(
-                                      glMapMatrix->print(wpList.at(loop - 1)->origP.lat(),wpList.at(loop - 1)->origP.lon() , dX, dY),
+              targetPainter->drawLine(glMapMatrix->print(wpList.at(loop - 1)->origP.lat(),wpList.at(loop - 1)->origP.lon() , dX, dY),
                                       glMapMatrix->print(wpList.at(loop)->origP.lat(),wpList.at(loop)->origP.lon() , dX, dY));
               break;
 
@@ -1340,13 +1320,11 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
               if(loop)
                 {
                   if(flightType == FAI_S || flightType == Dreieck_S)
-                    targetPainter->setPen(QPen(QColor(0, 0, 0), 2,
-                                               Qt::DashLine));
+                    targetPainter->setPen(QPen(QColor(0, 0, 0), 2, Qt::DashLine));
                   else
                     targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
 
-                  targetPainter->drawLine(
-                                          glMapMatrix->print(wpList.at(loop - 1)->origP.lat(),wpList.at(loop - 1)->origP.lon() , dX, dY),
+                  targetPainter->drawLine(glMapMatrix->print(wpList.at(loop - 1)->origP.lat(),wpList.at(loop - 1)->origP.lon() , dX, dY),
                                           glMapMatrix->print(wpList.at(loop)->origP.lat(),wpList.at(loop)->origP.lon() , dX, dY));
                 }
 
@@ -1362,8 +1340,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
   if(flightType == FAI_S || flightType == Dreieck_S)
     {
       targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
-      targetPainter->drawLine(
-                              glMapMatrix->print(wpList.at(2)->origP.lat(), wpList.at(2)->origP.lon(), dX, dY),
+      targetPainter->drawLine(glMapMatrix->print(wpList.at(2)->origP.lat(), wpList.at(2)->origP.lon(), dX, dY),
                               glMapMatrix->print(wpList.at(wpList.count() - 3)->origP.lat(), wpList.at(wpList.count() - 3)->origP.lon() , dX, dY));
     }
 

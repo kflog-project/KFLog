@@ -1,5 +1,19 @@
 $Id$
 
+2005-04-03 Heiner Lamprecht <heiner@kflog.org>
+
+  * Fixed a bug in map.cpp:  The tooltipinfo is now displayed at the
+    currect position.
+
+2005-04-02 Heiner Lamprecht <heiner@kflog.org>
+
+  * Did some code-cleanups to reduce comiler warnings due to type casts.
+
+2005-03-26 Florian Ehinger <florian@kflog.org>
+
+  * Added support for landmarks.
+
+
 2004-03-14 Heiner Lamprecht <heiner@kflog.org>
 
   * Changed the behavior of the startup process. Now the process

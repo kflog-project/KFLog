@@ -8,7 +8,7 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define if you have libjpeg */
-#define HAVE_LIBJPEG 1
+/* #undef HAVE_LIBJPEG */
 
 /* Define if you have libpng */
 #define HAVE_LIBPNG 1
