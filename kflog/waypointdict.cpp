@@ -16,7 +16,15 @@
 ***********************************************************************/
 #include <kmessagebox.h>
 #include <klocale.h>
-#include "kinputdialog.h"
+#include <kdeversion.h>
+#ifdef KDE_IS_VERSION(3,2,0)
+  #define OLDVERSION 1    //workaround for older KDE versions that lack kinputdialog
+#endif
+
+#ifndef OLDVERSION
+  #include "kinputdialog.h"
+#endif
+
 
 #include "waypointdict.h"
 
@@ -62,12 +70,21 @@ bool WaypointDict::insertItem(Waypoint *e)
   {
     if (notEqual (*tmp, *e))
     {
+#ifdef OLDVERSION
+      switch (KMessageBox::warningContinueCancel(0,
+            "<qt>" + i18n("A waypoint with the name<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Do you want to overwrite the existing waypoint?").arg(e->name) + "</qt>",
+            i18n("Add waypoint"),
+            i18n("&Overwrite")
+           )) {
+#endif
+#ifndef OLDVERSION
       switch (KMessageBox::warningYesNoCancel(0,
             "<qt>" + i18n("A waypoint with the name<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Do you want to rename the waypoint you are adding or overwrite the existing waypoint?").arg(e->name) + "</qt>",
             i18n("Add waypoint"),
             i18n("&Rename"),
             i18n("&Overwrite")
            )) {
+
       case KMessageBox::Yes:   //rename
         newName=KInputDialog::getText(i18n("Waypoint name"), i18n("Please enter a new name for the waypoint"), e->name, &OK);
         if (OK) {
@@ -76,11 +93,13 @@ bool WaypointDict::insertItem(Waypoint *e)
           break;
         }
         //no break!
+#endif
       case KMessageBox::Cancel:   //cancel
         delete e;
         ins = false;
         break;
-      case KMessageBox::No:    //overwrite
+      case KMessageBox::No:          //overwrite, new version
+      case KMessageBox::Continue:    //overwrite, old version
         remove(e->name);
         insert(e->name, e);
         break;
@@ -93,3 +112,8 @@ bool WaypointDict::insertItem(Waypoint *e)
 
   return ins;
 }
+
+#ifdef OLDVERSION
+  //make sure we are not messing up something else elsewhere
+  #undef OLDVERSION
+#endif
