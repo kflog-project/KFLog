@@ -200,7 +200,7 @@ void Filser::slotTimeout()
   tcdrain (portID);
   int ret = rb();
   if (ret != ACK) {
-    qDebug ("keepalive failed: ret = %x", ret);
+    qDebug ("Filser::keepalive failed: ret = %x", ret);
   }
 }
 
@@ -405,7 +405,7 @@ int Filser::getBasicData(FR_BasicData& data)
   tcsetattr(portID, TCSANOW, &newTermEnv);
 
   // uncomment this if you want to analyze the buffer
-  // debugHex (buf, buffersize);
+  debugHex (buf, buffersize);
 
   if ((bufP - buf) < min_data) {
     _errorinfo = i18n("getBasicData(): Wrong amount of bytes from LX-device");
@@ -1413,7 +1413,7 @@ bool Filser::readMemSetting()
     bufP = readData(bufP, LX_MEM_RET + buf - bufP);
   }
   // uncomment the next statement to analyze the buffer
-  // debugHex (buf, LX_MEM_RET);
+  debugHex (buf, LX_MEM_RET);
 
   if(calcCrcBuf(buf, LX_MEM_RET-1) != buf[LX_MEM_RET-1])
   {
@@ -1504,21 +1504,26 @@ bool Filser::check4Device()
       {
         case B2400:
           emit newSpeed (2400);
+          qDebug ("autospeed: %d", 2400);
           break;
         case B4800:
           emit newSpeed (4800);
+          qDebug ("autospeed: %d", 4800);
           break;
         case B9600:
           emit newSpeed (9600);
+          qDebug ("autospeed: %d", 9600);
           break;
         case B19200:
           emit newSpeed (19200);
+          qDebug ("autospeed: %d", 19200);
           break;
         case B38400:
           emit newSpeed (38400);
+          qDebug ("autospeed: %d", 38400);
           break;
         default:
-          qDebug ("illegal value");
+          qDebug ("autospeed: illegal value");
       }
     }
 
