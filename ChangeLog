@@ -1,5 +1,13 @@
 $Id$
 
+2003-04-26 Christof <christof@kflog.org>
+
+  * Automatic download of map tiles
+
+  * Optimization for OLC contest (www.onlinecontest.org)
+
+  * Added keyboard shortcuts for panning & zooming with numpad (NumLock=on)
+
 2003-04-25 Florian <florian@kflog.org>
   
   * Changed the MapdirectorySelect Dialog to a KFileDialog
