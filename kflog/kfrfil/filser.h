@@ -87,6 +87,30 @@ public:
    * Write waypoints to recorder
    */
   virtual int writeWaypoints(QList<Waypoint> *waypoints);
+
+private:
+  /**
+   * try to find a filser device
+   */
+  bool check4Device();
+  /**
+   * write byte
+   */
+  int wb(char c);
+  /**
+   * read byte
+   */
+  int rb();
+  /**
+   * Calculate the check sum
+   */
+  char calc_crc(char d, char crc);
+  /**
+   * Calculate the check sum on a buffer of bytes
+   */
+  char calc_crc_buf(char *buf, unsigned int count);
+  int read_mem_setting();
+  char *read_data(char *buf_p, int count);
 };
 
 #endif
