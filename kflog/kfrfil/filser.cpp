@@ -142,12 +142,12 @@ Filser::~Filser()
 /**
  * Returns the transfermode this plugin supports.
  */
-FlightRecorderPluginBase::TransferMode Filser::getTransferMode()
+FlightRecorderPluginBase::TransferMode Filser::getTransferMode() const
 {
   return FlightRecorderPluginBase::serial;
 }
 
-QString Filser::getLibName()  {  return "libkfrfil";  }
+QString Filser::getLibName() const {  return "libkfrfil";  }
 
 int Filser::getFlightDir(QList<FRDirEntry>* dirList)
 {
