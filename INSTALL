@@ -172,3 +172,32 @@ operates.
 
 `configure' also accepts some other, not widely useful, options.
 
+Troubleshooting the build process
+=================================
+
+-- undefined macro: AC_Dest
+
+How to spot: automake outputs
+  configure.in:63: error: m4_popdef: undefined macro: AC_Dest
+  autoconf/status.m4:844: AC_CONFIG_FILES is expanded from...
+  configure.in:63: the top level
+
+How to solve:
+  replace .../admin/acinclude.m4.in with .../admin/acinclude.m4.in-kdevelop-2.1.5
+  OR
+  refer to http://www.kdevelop.org/forum/read.php?f=2&i=8582&t=8557
+
+  
+-- ld: cannot find -lart_lgpl_2
+
+How to spot:
+  When compiling code you get a linker failure:
+  "/usr/bin/ld: cannot find -lart_lgpl_2"
+  and the linker exits in failure.
+
+How to solve:
+  Refer to http://www.kdevelop.org/forum/read.php?f=2&i=8744&t=8023
+
+    
+
+
