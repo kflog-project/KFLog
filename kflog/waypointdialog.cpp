@@ -81,33 +81,33 @@ void WaypointDialog::__initDialog()
   name = new QLineEdit(this);
   name->setFocus();
   layout->addWidget(name, 1, 0);
-  l = new QLabel(name, i18n("%1:").arg("&Name"), this);
+  l = new QLabel(name, QString("%1:").arg(i18n("&Name")), this);
   layout->addWidget(l, 0, 0);
 
   description = new QLineEdit(this);
   layout->addWidget(description, 1, 1);
-  l = new QLabel(description, i18n("%1:").arg("&Description"), this);
+  l = new QLabel(description, QString("%1:").arg(i18n("&Description")), this);
   layout->addWidget(l, 0, 1);
 
   waypointType = new KComboBox(false, this);
   waypointType->setCompletionMode(KGlobalSettings::CompletionAuto);
   layout->addWidget(waypointType, 1, 2);
-  l = new QLabel(waypointType, i18n("%1:").arg("&Type"), this);
+  l = new QLabel(waypointType, QString("%1:").arg(i18n("&Type")), this);
   layout->addWidget(l, 0, 2);
 
   latitude = new LatEdit(this);
   layout->addWidget(latitude, 3, 0);
-  l = new QLabel(latitude, i18n("%1:").arg("&Latitude"), this);
+  l = new QLabel(latitude, QString("%1:").arg(i18n("&Latitude")), this);
   layout->addWidget(l, 2, 0);
 
   longitude = new LongEdit(this);
   layout->addWidget(longitude, 3, 1);
-  l = new QLabel(longitude, i18n("%1:").arg("L&ongitude"), this);
+  l = new QLabel(longitude, QString("%1:").arg(i18n("L&ongitude")), this);
   layout->addWidget(l, 2, 1);
 
   elevation = new QLineEdit(this);
   layout->addWidget(elevation, 3, 2);
-  l = new QLabel(elevation, i18n("%1 (m):").arg("&Elevation"), this);
+  l = new QLabel(elevation, i18n("%1 (m):").arg(i18n("&Elevation")), this);
   layout->addWidget(l, 2, 2);
 
   icao = new QLineEdit(this);
@@ -117,7 +117,7 @@ void WaypointDialog::__initDialog()
 
   frequency = new QLineEdit(this);
   layout->addWidget(frequency, 5, 1);
-  l = new QLabel(frequency, i18n("%1:").arg("&Frequency"), this);
+  l = new QLabel(frequency, QString("%1:").arg(i18n("&Frequency")), this);
   layout->addWidget(l, 4, 1);
 
   isLandable = new QCheckBox(i18n("L&andable"), this);
@@ -125,22 +125,22 @@ void WaypointDialog::__initDialog()
 
   runway = new QLineEdit(this);
   layout->addWidget(runway, 7, 0);
-  l = new QLabel(runway, i18n("%1:").arg("&Runnway"), this);
+  l = new QLabel(runway, QString("%1:").arg(i18n("&Runway")), this);
   layout->addWidget(l, 6, 0);
 
   length = new QLineEdit(this);
   layout->addWidget(length, 7, 1);
-  l = new QLabel(length, i18n("%1 (m):").arg("Len&gth"), this);
+  l = new QLabel(length, i18n("%1 (m):").arg(i18n("Len&gth")), this);
   layout->addWidget(l, 6, 1);
 
   surface = new KComboBox(false, this);
   layout->addWidget(surface, 7, 2);
-  l = new QLabel(surface, i18n("%1:").arg("&Surface"), this);
+  l = new QLabel(surface, QString("%1:").arg(i18n("&Surface")), this);
   layout->addWidget(l, 6, 2);
 
   comment = new QLineEdit(this);
   layout->addMultiCellWidget(comment, 9, 9, 0, 2);
-  l = new QLabel(comment, i18n("%1:").arg("&Comment"), this);
+  l = new QLabel(comment, QString("%1:").arg(i18n("&Comment")), this);
   layout->addWidget(l, 8, 0);
 
   topLayout->addLayout(layout);
