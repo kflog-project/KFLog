@@ -81,13 +81,17 @@ class ProjectionLambert : public ProjectionBase
      */
     double v2;
     /**
-     * Value used for fasten up projecting.
+     * Values used for fasten up projecting.
      */
     double var1;
-    /**
-     * Value used for fasten up projecting.
-     */
     double var2;
+    double var3;
+    double sin_v1;
+    double sin_v2;
+    double cos_v1;
+    double sin_v1_2;
+    double sin_v2_2;
+    double cos_v1_2;
     /** */
     double origin;
 };

@@ -56,8 +56,15 @@ bool ProjectionLambert::initProjection(int v1_new, int v2_new, int orig_new)
       v2 = NUM_TO_RAD(v2_new);
     }
 
-  var1 = cos(v1) * cos(v1);
-  var2 = sin(v1) + sin(v2);
+  sin_v1 = sin(v1);
+  sin_v1_2 = sin_v1 * sin_v1;
+  sin_v2 = sin(v2);
+  sin_v2_2 = sin_v2 * sin_v2;
+  cos_v1 = cos(v1);
+  cos_v1_2 = cos_v1 * cos_v1;
+  var1 = cos_v1 * cos_v1;
+  var2 = sin_v1 + sin_v2;
+  var3 = sin_v1 * sin_v2;
 
   changed = changed || ( origin == NUM_TO_RAD(orig_new) );
   origin = NUM_TO_RAD(orig_new);
@@ -69,7 +76,7 @@ double ProjectionLambert::projectX(double latitude, double longitude) const
 {
   longitude -= origin;
 
-  return ( 2 * ( sqrt( var1 + ( sin(v1) - sin(latitude) ) * var2 ) / var2 )
+  return ( 2 * ( sqrt( var1 + ( sin_v1 - sin(latitude) ) * var2 ) / var2 )
              * sin( var2 * longitude / 2 ) );
 }
 
@@ -77,28 +84,28 @@ double ProjectionLambert::projectY(double latitude, double longitude) const
 {
   longitude -= origin;
 
-  return ( 2 * ( sqrt( var1 + ( sin(v1) - sin(latitude) ) * var2 ) / var2 )
+  return ( 2 * ( sqrt( var1 + ( sin_v1 - sin(latitude) ) * var2 ) / var2 )
              * cos( var2 * longitude / 2 ) );
 }
 
 double ProjectionLambert::invertLat(double x, double y) const
 {
   double lat = -asin(
-              ( -4.0 * pow(cos(v1), 2.0) - 4.0 * pow(sin(v1), 2.0)
-                -4.0 * sin(v1) * sin(v2)
-                + x * x * pow(sin(v1), 2.0) + pow(sin(v1), 2.0)* y * y
-                + 2.0 * x * x * sin(v1) * sin(v2) + 2.0 * sin(v1)
-                * sin(v2) * y * y + x * x * pow(sin(v2), 2.0)
-                + pow(sin(v2), 2.0) * y * y
+              ( -4.0 * cos_v1_2 - 4.0 * sin_v1_2
+                -4.0 * var3
+                + x * x * sin_v1_2 + sin_v1_2 * y * y
+                + 2.0 * x * x * var3 + 2.0 * sin_v1
+                * sin_v2 * y * y + x * x * sin_v2_2
+                + sin_v2_2 * y * y
                 ) /
-              ( sin(v1) + sin(v2) ) / 4 );
+              var2 / 4 );
 
   return lat;
 }
 
 double ProjectionLambert::invertLon(double x, double y) const
 {
-  double lon = 2.0 * atan( x / y ) / ( sin(v1) + sin(v2) );
+  double lon = 2.0 * atan( x / y ) / var2;
 
   return lon + origin;
 }
