@@ -94,6 +94,11 @@ class DownloadList : public QObject{
     * Is a download running or not?
     */
     bool downloadRunning;
+   /**
+    * List used to prevent multiple display of same error,
+    * which annoys the user (what we obviously do not want)
+    */
+    QValueList<int> errorList;
 };
 
 #endif

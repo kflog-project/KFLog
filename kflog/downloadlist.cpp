@@ -18,7 +18,7 @@
 #include "downloadlist.h"
 #include <kio/netaccess.h>
 #include <kio/scheduler.h>
-#include <qmessagebox.h>
+#include <kmessagebox.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include "map.h"
@@ -28,7 +28,6 @@ DownloadList::DownloadList(){
   srcList.setAutoDelete(true);
   destList.setAutoDelete(true);
   downloadRunning=false;
-//  banList.append("EOL");
 }
 
 DownloadList::~DownloadList(){
@@ -53,8 +52,13 @@ void DownloadList::slotDownloadFinished(KIO::Job* job){
   error=job->error();
   KConfig* config = KGlobal::config();
   config->setGroup("General Options");
-  if (error)
+  if (error){
+    if (errorList.findIndex(error)==-1){
+      job->showErrorDialog();
+      errorList.append(error);
+    }
     banList.prepend(actualURL);
+  }
   emit downloadFinished();
   __schedule();
 }
