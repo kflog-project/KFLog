@@ -14,7 +14,7 @@
 #define HAVE_LIBPNG 1
 
 /* Define if you have a working libpthread (will enable threaded code) */
-/* #undef HAVE_LIBPTHREAD */
+#define HAVE_LIBPTHREAD 1
 
 /* Define if you have libz */
 #define HAVE_LIBZ 1

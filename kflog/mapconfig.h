@@ -110,6 +110,17 @@ class MapConfig : public QObject
      * @param  isWinch  Used only for glidersites to determine, if the
      *                  icon should indicate that only winch-launch is
      *                  available.
+     * @param  smallIcon  Used to select the size of the returned pixmap.
+     *                  if true, a small pixmap is returned, otherwise the larger
+     *                  version is returned.
+     * @returns the icon-pixmap of the element.
+     */
+    QPixmap getPixmap(unsigned int typeID, bool isWinch, bool smallIcon);
+    /**
+     * @param  type  The typeID of the element.
+     * @param  isWinch  Used only for glidersites to determine, if the
+     *                  icon should indicate that only winch-launch is
+     *                  available.
      *
      * @return the name of the pixmap of the element.
      */

@@ -22,6 +22,7 @@
 #include "airport.h"
 #include "glidersite.h"
 #include "kflog.h"
+#include "mapconfig.h"
 
 #include <pwd.h>
 #include <stdlib.h>
@@ -366,6 +367,7 @@ void Waypoints::fillWaypoints()
   bool filterRadius, filterArea;
   extern TranslationList surfaces;
   extern TranslationList waypointTypes;
+  extern MapConfig _globalMapConfig;
 
   waypoints->clear();
 
@@ -430,6 +432,7 @@ void Waypoints::fillWaypoints()
     item->setText(colLength, tmp);
     item->setText(colSurface, w->surface == -1 ? QString::null : surfaces.itemById(w->surface)->text);
     item->setText(colComment, w->comment);
+    item->setPixmap(0, _globalMapConfig.getPixmap(w->type,false,true));
   }
 
   emit waypointCatalogChanged( waypointCatalogs.current() );

@@ -5702,16 +5702,16 @@ echo "${ECHO_T}found xgettext programs is not GNU xgettext; ignore it" >&6
 	fi
       fi
 
-if test -z "2"; then
+if test -z "3"; then
   kde_qtver=3
   kde_qtsubver=1
 else
-  kde_qtsubver=`echo "2" | sed -e 's#[0-9][0-9]*\.\([0-9][0-9]*\).*#\1#'`
+  kde_qtsubver=`echo "3" | sed -e 's#[0-9][0-9]*\.\([0-9][0-9]*\).*#\1#'`
   # following is the check if subversion isn´t found in passed argument
-  if test "$kde_qtsubver" = "2"; then
+  if test "$kde_qtsubver" = "3"; then
     kde_qtsubver=1
   fi
-  kde_qtver=`echo "2" | sed -e 's#^\([0-9][0-9]*\)\..*#\1#'`
+  kde_qtver=`echo "3" | sed -e 's#^\([0-9][0-9]*\)\..*#\1#'`
   if test "$kde_qtver" = "1"; then
     kde_qtsubver=42
   fi
@@ -11383,7 +11383,7 @@ else
 
 fi
 
-#MIN_CONFIG(2)
+#MIN_CONFIG(3)
 
 DO_NOT_COMPILE="$DO_NOT_COMPILE CVS debian bsd-port admin"
 
@@ -12443,6 +12443,10 @@ cat >>$CONFIG_STATUS <<\EOF
 
 { (exit 0); exit 0; }
 EOF
+if test "x$with_fast_perl" = "xyes" ; then
+  perl -i.bak $ac_aux_dir/conf.change.pl $CONFIG_STATUS || mv $CONFIG_STATUS.bak $CONFIG_STATUS; 
+  rm -f $CONFIG_STATUS.bak;
+fi 
 chmod +x $CONFIG_STATUS
 ac_clean_files=$ac_clean_files_save
 
