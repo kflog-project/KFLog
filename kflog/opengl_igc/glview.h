@@ -46,7 +46,6 @@ protected:
     void		resizeGL( int w, int h );
 
     virtual GLuint 	makeBoxObject();
-    virtual GLuint makeFlightObject();
     
 private:
 

@@ -52,7 +52,45 @@ GLView::~GLView()
 
 void GLView::addFlight(Flight* flight)
 {
-  flightList.append(makeFlightObject());
+    GLuint list;
+    unsigned int length;
+
+    if (flight){
+      length=flight->getRouteLength();
+      qWarning(QString("Adding %1 points").arg(length));
+
+      extern MapMatrix _globalMapMatrix;
+
+  //    QPoint topLeft = _globalMapMatrix.mapToWgs(QPoint(flight->getFlightRect().left(),flight->getFlightRect().top()));
+  //    QPoint bottomRight = _globalMapMatrix.mapToWgs(QPoint(flight->getFlightRect().right(),flight->getFlightRect().bottom()));
+  //
+
+
+      QPoint point;
+      point=flight->getPoint(0).projP;
+      QRect taskRect = flight->getFlightRect();
+
+      qWarning(QString("1. point: x:%1 y:%2 z:%3").arg(point.x()).arg(point.y()).arg(0));
+      qWarning(QString("bBoxFlight: l:%1 r:%2 t:%3 b:%4")
+        .arg(taskRect.left()).arg(taskRect.right()).arg(taskRect.top()).arg(taskRect.bottom()));
+
+      list = glGenLists( 1 );
+
+      glNewList( list, GL_COMPILE );
+
+      qglColor( blue );		      // Shorthand for glColor3f or glIndex
+
+      glLineWidth( 2.0 );
+
+      glBegin( GL_LINE_LOOP );
+      glVertex3f(  0.5,  0.5, -0.4 );   glVertex3f(  1.0,  0.5, 0.4 );
+      glVertex3f(  0.5, -0.5, -0.4 );   glVertex3f(  1.0, -0.5, 0.4 );
+      glEnd();
+
+      glEndList();
+
+      flightList.append(list);
+    }
 }
 
 /*!
@@ -146,28 +184,6 @@ GLuint GLView::makeBoxObject()
     glVertex3f(  1.0, -1.0, -0.4 );   glVertex3f(  1.0, -1.0, 0.4 );
     glVertex3f( -1.0, -1.0, -0.4 );   glVertex3f( -1.0, -1.0, 0.4 );
     glVertex3f( -1.0,  1.0, -0.4 );   glVertex3f( -1.0,  1.0, 0.4 );
-    glEnd();
-
-    glEndList();
-
-    return list;
-}
-
-GLuint GLView::makeFlightObject()
-{
-    GLuint list;
-
-    list = glGenLists( 1 );
-
-    glNewList( list, GL_COMPILE );
-
-    qglColor( blue );		      // Shorthand for glColor3f or glIndex
-
-    glLineWidth( 2.0 );
-
-    glBegin( GL_LINE_LOOP );
-    glVertex3f(  0.5,  0.5, -0.4 );   glVertex3f(  1.0,  0.5, 0.4 );
-    glVertex3f(  0.5, -0.5, -0.4 );   glVertex3f(  1.0, -0.5, 0.4 );
     glEnd();
 
     glEndList();
