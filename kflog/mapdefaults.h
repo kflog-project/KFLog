@@ -372,8 +372,8 @@
 #define PRINT_FRST_BRUSH_COLOR_1 QColor(12,86,35)
 #define PRINT_FRST_BRUSH_COLOR_2 QColor(12,86,35)
 
-#define PRINT_FRST_BRUSH_STYLE_1 Qt::CrossPattern
-#define PRINT_FRST_BRUSH_STYLE_2 Qt::CrossPattern
+#define PRINT_FRST_BRUSH_STYLE_1 Qt::Dense5Pattern
+#define PRINT_FRST_BRUSH_STYLE_2 Qt::Dense5Pattern
 
 // [Glacier]
 #define GLACIER_COLOR_1 QColor(255,250,250)
@@ -519,10 +519,10 @@
 #define AIRA_BRUSH_COLOR_3 QColor(0,120,0)
 #define AIRA_BRUSH_COLOR_4 QColor(0,120,0)
 
-#define AIRA_BRUSH_STYLE_1 Qt::Dense5Pattern
-#define AIRA_BRUSH_STYLE_2 Qt::Dense5Pattern
-#define AIRA_BRUSH_STYLE_3 Qt::Dense5Pattern
-#define AIRA_BRUSH_STYLE_4 Qt::Dense5Pattern
+#define AIRA_BRUSH_STYLE_1 Qt::BDiagPattern
+#define AIRA_BRUSH_STYLE_2 Qt::BDiagPattern
+#define AIRA_BRUSH_STYLE_3 Qt::BDiagPattern
+#define AIRA_BRUSH_STYLE_4 Qt::BDiagPattern
 
 #define PRINT_AIRA_PEN_1 4
 #define PRINT_AIRA_PEN_2 3
@@ -560,10 +560,10 @@
 #define AIRB_BRUSH_COLOR_3 QColor(0,120,0)
 #define AIRB_BRUSH_COLOR_4 QColor(0,120,0)
 
-#define AIRB_BRUSH_STYLE_1 Qt::Dense5Pattern
-#define AIRB_BRUSH_STYLE_2 Qt::Dense5Pattern
-#define AIRB_BRUSH_STYLE_3 Qt::Dense5Pattern
-#define AIRB_BRUSH_STYLE_4 Qt::Dense5Pattern
+#define AIRB_BRUSH_STYLE_1 Qt::FDiagPattern
+#define AIRB_BRUSH_STYLE_2 Qt::FDiagPattern
+#define AIRB_BRUSH_STYLE_3 Qt::FDiagPattern
+#define AIRB_BRUSH_STYLE_4 Qt::FDiagPattern
 
 #define PRINT_AIRB_PEN_1 4
 #define PRINT_AIRB_PEN_2 3
@@ -601,10 +601,10 @@
 #define AIRC_BRUSH_COLOR_3 QColor(0,120,0)
 #define AIRC_BRUSH_COLOR_4 QColor(0,120,0)
 
-#define AIRC_BRUSH_STYLE_1 Qt::Dense5Pattern
-#define AIRC_BRUSH_STYLE_2 Qt::Dense5Pattern
-#define AIRC_BRUSH_STYLE_3 Qt::Dense5Pattern
-#define AIRC_BRUSH_STYLE_4 Qt::Dense5Pattern
+#define AIRC_BRUSH_STYLE_1 Qt::CrossPattern
+#define AIRC_BRUSH_STYLE_2 Qt::CrossPattern
+#define AIRC_BRUSH_STYLE_3 Qt::CrossPattern
+#define AIRC_BRUSH_STYLE_4 Qt::CrossPattern
 
 #define PRINT_AIRC_PEN_1 4
 #define PRINT_AIRC_PEN_2 3
@@ -618,8 +618,8 @@
 #define PRINT_AIRC_BRUSH_COLOR_1 QColor(0,120,0)
 #define PRINT_AIRC_BRUSH_COLOR_2 QColor(0,120,0)
 
-#define PRINT_AIRC_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_AIRC_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_AIRC_BRUSH_STYLE_1 Qt::CrossPattern
+#define PRINT_AIRC_BRUSH_STYLE_2 Qt::CrossPattern
 
 // [Airspace D]
 #define AIRD_PEN_1 4
