@@ -14,6 +14,9 @@
 **   $Id$
 **
 ***********************************************************************/
+/*
+*    3D view was recycled from '3digc' (c) 2001 by Jan Max Krueger
+*/
 
 #include <math.h>
 #include <ctype.h>
@@ -361,20 +364,35 @@ void Igc3DFlightData::read_igc_file(QString st)  // Cleanly handled with QString
 
 	float hh, mm, ss, lat, latmin, latmindez, lon, lonmin, lonmindez, hightlocal, gpshightlocal;
 	char NS, AV, EW;	//flags for North/South, A=Valid/V=navwarning, East/West
-	
+
 	linenum = 0;
-	
-	
+
+
 	if ( IGCFile.open(IO_ReadOnly) ) {    // file opened successfully
 		QTextStream t( &IGCFile );        // use a text stream
         	while ( !t.atEnd() ) {        // until end of file...
 			line = t.readLine();       // line of text excluding '\n'
 			++linenum;
-			sscanf ((const char *) line, "%1s", &startchar);
+			startchar = line[0].latin1();
+			//sscanf ((const char *) line, "%1s", &startchar);
 			if (startchar == 'B') {
-				sscanf ((const char *) line, "%*c%2f%2f%2f%2f%2f%3f%c%3f%2f%3f%c%c%5f%5f",
-					&hh, &mm, &ss, &lat, &latmin, &latmindez, &NS, &lon,
-					&lonmin, &lonmindez, &EW, &AV, &hightlocal, &gpshightlocal);
+				//sscanf ((const char *) line, "%*c%2f%2f%2f%2f%2f%3f%c%3f%2f%3f%c%c%5f%5f",
+				//	&hh, &mm, &ss, &lat, &latmin, &latmindez, &NS, &lon,
+				//	&lonmin, &lonmindez, &EW, &AV, &hightlocal, &gpshightlocal);
+				hh = line.mid(1,2).toInt();
+				mm = line.mid(3,2).toInt();
+				ss = line.mid(5,2).toInt();
+				lat = line.mid(7,2).toInt();
+				latmin = line.mid(9,2).toInt();
+				latmindez = line.mid(11,3).toInt();
+				NS = line[14].latin1();
+				lon = line.mid(15,3).toInt();
+				lonmin = line.mid(18,2).toInt();
+				lonmindez = line.mid(20,3).toInt();
+				EW = line[23].latin1();
+				AV = line[24].latin1();
+				hightlocal = line.mid(25,5).toInt();
+				gpshightlocal = line.mid(30,5).toInt();
 				if (AV == 'V'){ // Unsicherer Wert
 					continue;
 				}
@@ -388,13 +406,13 @@ void Igc3DFlightData::read_igc_file(QString st)  // Cleanly handled with QString
 					tmpDataPoint->next->runningnumber = tmpDataPoint->runningnumber + 1;
 					tmpDataPoint = tmpDataPoint->next;
 				}
-				
+
 				tmpDataPoint->z = hightlocal / 1000.0;
 				tmpDataPoint->pressureheight = hightlocal;
 				tmpDataPoint->gpsheight = gpshightlocal;
-				
+
 				tmpDataPoint->timesec = hh * 3600 + mm * 60 + ss;
-				
+
 				tmpDataPoint->y = lat + (latmin / 60.0) + (latmindez / 60000.0);
 				if (NS == 'S'){
 					tmpDataPoint->y =  tmpDataPoint->y * (-1.0);
@@ -406,7 +424,7 @@ void Igc3DFlightData::read_igc_file(QString st)  // Cleanly handled with QString
 					 tmpDataPoint->x = tmpDataPoint->x * (-1.0);
 				}
 				tmpDataPoint->londeg = tmpDataPoint->x;
-				
+
 				fixlines++;
 			}
 		}
@@ -422,77 +440,73 @@ void Igc3DFlightData::read_igc_file(QString st)  // Cleanly handled with QString
 
 void Igc3DFlightData::load(Flight* flight)
 {
-  int linenum = 0;
-  int fixlines = 0;
-  int i;
-  QString r,s,t;
+	int linenum = 0;
+	int fixlines = 0;
+	int i;
+	QString r,s,t;
 
-  float hh, mm, ss, lat, latmin, latmindez, lon, lonmin, lonmindez, hightlocal, gpshightlocal;
-  char NS, AV, EW;	//flags for North/South, A=Valid/V=navwarning, East/West
+	float hh, mm, ss, lat, latmin, latsec, lon, lonmin, lonsec, hightlocal, gpshightlocal;
+	char NS, AV, EW;	//flags for North/South, A=Valid/V=navwarning, East/West
 	
-  linenum = 0;
+	linenum = 0;
 
-  struct flightPoint cP;
+	struct flightPoint cP;
 
-  reset();
+	reset();
 
-  if (flight && flight->getTypeID() == BaseMapElement::Flight) {
-    for (i=0; i < ((int)flight->getRouteLength())-2; i++){
-       flight->searchGetNextPoint(i, cP);
-       hightlocal = cP.height;
-       gpshightlocal = cP.gpsHeight;
-       //time
-       t = printTime(cP.time, false, true);
-       sscanf ((const char *) t, "%02f:%02f:%02f", &hh, &mm, &ss);
+	if (flight && flight->getTypeID() == BaseMapElement::Flight) {
+		for (i=0; i < ((int)flight->getRouteLength())-2; i++){
+			flight->searchGetNextPoint(i, cP);
+			hightlocal = cP.height;
+			gpshightlocal = cP.gpsHeight;
+			//time
+			t = printTime(cP.time, false, true);
+			sscanf ((const char *) t, "%02f:%02f:%02f", &hh, &mm, &ss);
 
-       r = printPos(cP.origP.lat(),true);
-//	std::cout << r << endl;
-       sscanf ((const char *) r, "%2f%c %2f%c %2f%c %c", &lat, &AV, &latmin, &AV, &latmindez, &AV, &NS);
-       s = printPos(cP.origP.lon(),false);
-//	std::cout << s << endl;
-       sscanf ((const char *) s, "%3f%c %2f%c %2f%c %c",&lon, &AV, &lonmin, &AV, &lonmindez, &AV, &EW);
+			r = printPos(cP.origP.lat(),true);
+			//std::cout << r << endl;
+			sscanf ((const char *) r, "%2f%c %2f%c %2f%c %c",
+			  &lat, &AV, &latmin, &AV, &latsec, &AV, &NS);
+			s = printPos(cP.origP.lon(),false);
+			//std::cout << s << endl;
+			sscanf ((const char *) s, "%3f%c %2f%c %2f%c %c",
+			  &lon, &AV, &lonmin, &AV, &lonsec, &AV, &EW);
 
-       if(firstDataPoint == NULL){
-         firstDataPoint = new Igc3DFlightDataPoint;
-         tmpDataPoint = firstDataPoint;
-         tmpDataPoint->runningnumber = 1;
-       }
-       else {
-         tmpDataPoint->next = new Igc3DFlightDataPoint;
-         tmpDataPoint->next->previous = tmpDataPoint;
-         tmpDataPoint->next->runningnumber = tmpDataPoint->runningnumber + 1;
-         tmpDataPoint = tmpDataPoint->next;
-       }
- 				
-       tmpDataPoint->z = hightlocal / 1000.0;
-       tmpDataPoint->pressureheight = hightlocal;
-       tmpDataPoint->gpsheight = gpshightlocal;
-       				
-       tmpDataPoint->timesec = hh * 3600 + mm * 60 + ss;
-       				
-       tmpDataPoint->y = lat + (latmin / 60.0) + (latmindez / 3600.0);
-       if (NS == 'S'){
-         tmpDataPoint->y =  tmpDataPoint->y * (-1.0);
-       }
-       tmpDataPoint->latdeg = tmpDataPoint->y;
+			if(firstDataPoint == NULL){
+				  firstDataPoint = new Igc3DFlightDataPoint;
+				  tmpDataPoint = firstDataPoint;
+				  tmpDataPoint->runningnumber = 1;
+			} else {
+				tmpDataPoint->next = new Igc3DFlightDataPoint;
+				tmpDataPoint->next->previous = tmpDataPoint;
+				tmpDataPoint->next->runningnumber = tmpDataPoint->runningnumber + 1;
+				tmpDataPoint = tmpDataPoint->next;
+			}
 
-       tmpDataPoint->x = lon + (lonmin / 60.0) + (lonmindez / 3600.0);
-       if (EW == 'W'){
-         tmpDataPoint->x = tmpDataPoint->x * (-1.0);
-       }
-       tmpDataPoint->londeg = tmpDataPoint->x;
-
-//	std::cout << "lat = " << tmpDataPoint->latdeg << ", lon = " <<
-//		tmpDataPoint->londeg << endl;
-	fixlines++;
+			tmpDataPoint->z = hightlocal / 1000.0;
+			tmpDataPoint->pressureheight = hightlocal;
+			tmpDataPoint->gpsheight = gpshightlocal;
+			tmpDataPoint->timesec = hh * 3600 + mm * 60 + ss;
+			tmpDataPoint->y = lat + (latmin / 60.0) + (latsec / 3600.0);
+			if (NS == 'S'){
+				tmpDataPoint->y =  tmpDataPoint->y * (-1.0);
+			}
+			tmpDataPoint->latdeg = tmpDataPoint->y;
+			tmpDataPoint->x = lon + (lonmin / 60.0) + (lonsec / 3600.0);
+			if (EW == 'W'){
+				tmpDataPoint->x = tmpDataPoint->x * (-1.0);
+			}
+			tmpDataPoint->londeg = tmpDataPoint->x;
+			//std::cout << "lat = " << tmpDataPoint->latdeg << ", lon = " <<
+			//  tmpDataPoint->londeg << endl;
+			fixlines++;
+		}
+		tmpDataPoint->next = firstDataPoint;
+		firstDataPoint->previous = tmpDataPoint; // Closing the loop.
+		flightlength = fixlines;
+		//arraylength = flightlength;
+		flight_opened_flag = 1;
 	}
-  tmpDataPoint->next = firstDataPoint;
-  firstDataPoint->previous = tmpDataPoint; // Closing the loop.
-
-  flightlength = fixlines;
-  //arraylength = flightlength;
-  flight_opened_flag = 1;
-  }
 }
 
 /** reset data structures */
