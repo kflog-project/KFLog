@@ -47,6 +47,11 @@ Next Steps
   things in the evaluation-dialog, too. And a list of each upwind, with some
   statistical data, would also be nice (including the possibility to center and zoom
   the map to each upwind by selecting it).
+  
+  Drawing of airspaces and the groundelevation in the barogramm.
+
+  Changing the evaluationDialog to dockable widget.
+  Changing the graph to a QCanvas. This will provide an easier way of handling.
 
   The printout of the flight-data is a bit short, perhaps we can add some more
   things here. We should also printout the data for a flight group.
@@ -55,6 +60,8 @@ Next Steps
 * OLC-declaration:
 
   Finishing the online-declaration for the OLC.
+
+  Add support for DMST-Online
 
 
 * 3D-View:
