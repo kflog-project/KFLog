@@ -4552,7 +4552,7 @@ m4_define([mm_car], [[$1]])
 m4_define([mm_car2], [[$@]])
 m4_define([_mm_foreach],
 [m4_if(m4_quote($2), [], [],
-       [m4_define([$1], [mm_car($2)])$3[]_mm_foreach([$1],
+       [m4_define([$1], mm_car($2))$3[]_mm_foreach([$1],
                                                      mm_car2(m4_shift($2)),
                                                      [$3])])])
 m4_define([AC_FOREACH],

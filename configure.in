@@ -36,7 +36,7 @@ dnl Perform program name transformation
 AC_ARG_PROGRAM
 
 dnl Automake doc recommends to do this only here. (Janos)
-AM_INIT_AUTOMAKE(kflog, 2.1.0) dnl searches for some needed programs
+AM_INIT_AUTOMAKE(kflog, 2.1.2-beta) dnl searches for some needed programs
 
 KDE_SET_PREFIX
 
@@ -74,7 +74,6 @@ kflog/kfrxsp/Makefile \
 kflog/map-icons/Makefile \
 kflog/map-icons/small/Makefile \
 kflog/opengl_igc/Makefile \
-kflog/opengl_igc_save/Makefile \
 kflog/pics/Makefile \
 po/Makefile \
 )

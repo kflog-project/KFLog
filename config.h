@@ -90,7 +90,7 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "2.1.0"
+#define VERSION "2.1.2-beta"
 
 /* Compatibility define */
 #define ksize_t socklen_t
