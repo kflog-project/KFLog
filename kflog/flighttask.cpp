@@ -16,6 +16,7 @@
  ***********************************************************************/
 
 #include "flighttask.h"
+#include "translationlist.h"
 
 #include <mapcalc.h>
 
@@ -1667,4 +1668,10 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
 void FlightTask::setTaskName(QString fName)
 {
   sourceFileName = fName;
+}
+/** No descriptions */
+QString FlightTask::getPlanningTypeString()
+{
+  extern TranslationList taskTypes;
+  return taskTypes.itemById(__planningType)->text;
 }

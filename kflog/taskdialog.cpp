@@ -342,17 +342,17 @@ void TaskDialog::slotReplaceWaypoint()
 
 void TaskDialog::slotAddWaypoint()
 {
-  unsigned int cnt = wpList.count();
   QString selText = waypoints->currentText();
-
+  unsigned int pos = route->itemIndex(route->selectedItem());
+  
   if (!selText.isEmpty()) {
     Waypoint *wp = new Waypoint;
     *wp = *waypointDict[selText];
 
-    wpList.insert(cnt - 2, wp);
+    wpList.insert(pos + 1, wp);
     pTask->setWaypointList(wpList);
     fillWaypoints();
-    route->setSelected(route->itemAtIndex(cnt - 1), true);
+    route->setSelected(route->itemAtIndex(pos + 1), true);
     enableWaypointButtons();
   }
 }
@@ -414,13 +414,29 @@ void TaskDialog::setTask(FlightTask *orig)
 /** No descriptions */
 void TaskDialog::enableWaypointButtons()
 {
+  int cnt = wpList.count();
+  unsigned int pos = route->itemIndex(route->selectedItem());
+
   switch (pTask->getPlanningType()) {
   case FlightTask::Route:
-    forward->setEnabled(true);
-    back->setEnabled(true);
+    // disable add button for start, landing, end
+    // enable for takeoff, we cann append to it
+    if (pos > 0 && pos < cnt - 2) {
+      back->setEnabled(true);
+    }
+    else {
+      back->setEnabled(false);
+    }
+
+    // disable remove button for start, takeoff, landing, end
+    if (pos > 1 && pos < cnt - 2) {
+      forward->setEnabled(true);
+    }
+    else {
+      forward->setEnabled(false);
+    }
     break;
   case FlightTask::FAIArea:
-    int cnt = wpList.count();
     forward->setEnabled(cnt > 4);
     back->setEnabled(cnt == 4);
     break;

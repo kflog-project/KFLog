@@ -61,7 +61,7 @@ Waypoints::Waypoints(QWidget *parent, const char *name, QString *catalog)
     }
   */
   waypointDlg = new WaypointDialog(this);
-  connect(waypointDlg, SIGNAL(addWaypoint()), SLOT(slotAddWaypoint()));
+  connect(waypointDlg, SIGNAL(addWaypoint(Waypoint *)), SLOT(slotAddWaypoint(Waypoint *)));
 
   importFilterDlg = new WaypointImpFilterDialog(this);
 }
@@ -258,37 +258,37 @@ bool Waypoints::saveChanges()
 /** insert waypoint from waypoint dialog */
 void Waypoints::slotAddWaypoint()
 {
-  QString text;
-  
-  if (!waypointDlg->name->text().isEmpty()) {
-    // insert a new waypoint to current catalog
-    Waypoint *w = new Waypoint;
-    w->name = waypointDlg->name->text().upper();
-    w->description = waypointDlg->description->text();
-    w->type = waypointDlg->getWaypointType();
-    w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
-    w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
-    w->elevation = waypointDlg->elevation->text().toInt();
-    w->icao = waypointDlg->icao->text().upper();
-    w->frequency = waypointDlg->frequency->text().toDouble();
-    text = waypointDlg->runway->text();
-    if (!text.isEmpty()) {
-      w->runway = text.toInt();
-    }
-
-    text = waypointDlg->length->text();
-    if (!text.isEmpty()) {
-      w->length = text.toInt();
-    }    
-    w->surface = waypointDlg->getSurface();
-    w->isLandable = waypointDlg->isLandable->isChecked();
-    w->comment = waypointDlg->comment->text();
-
-    if (waypointCatalogs.current()->wpList.insertItem(w)) {
-      waypointCatalogs.current()->modified = true;
-      fillWaypoints();
-    }
-  }
+//  QString text;
+//
+//  if (!waypointDlg->name->text().isEmpty()) {
+//    // insert a new waypoint to current catalog
+//    Waypoint *w = new Waypoint;
+//    w->name = waypointDlg->name->text().upper();
+//    w->description = waypointDlg->description->text();
+//    w->type = waypointDlg->getWaypointType();
+//    w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+//    w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
+//    w->elevation = waypointDlg->elevation->text().toInt();
+//    w->icao = waypointDlg->icao->text().upper();
+//    w->frequency = waypointDlg->frequency->text().toDouble();
+//    text = waypointDlg->runway->text();
+//    if (!text.isEmpty()) {
+//      w->runway = text.toInt();
+//    }
+//
+//    text = waypointDlg->length->text();
+//    if (!text.isEmpty()) {
+//      w->length = text.toInt();
+//    }
+//    w->surface = waypointDlg->getSurface();
+//    w->isLandable = waypointDlg->isLandable->isChecked();
+//    w->comment = waypointDlg->comment->text();
+//
+//    if (waypointCatalogs.current()->wpList.insertItem(w)) {
+//      waypointCatalogs.current()->modified = true;
+//      fillWaypoints();
+//    }
+//  }
 }
 
 /** No descriptions */
@@ -820,7 +820,7 @@ void Waypoints::openCatalog(QString &catalog)
 {
   if(!catalog.isEmpty()) {
     int newItem = catalogName->count();
-    WaypointCatalog *w = new WaypointCatalog;
+    WaypointCatalog *w = new WaypointCatalog("");
     QFile f(catalog);
 
     if (f.exists()) {

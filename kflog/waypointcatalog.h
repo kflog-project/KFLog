@@ -68,6 +68,8 @@ public: // Public attributes
   WaypointDict wpList;
   QString path;
   bool modified;
+  /**  */
+  QString catalogName;
 private: // Private attributes
   /**  */
   bool onDisc;

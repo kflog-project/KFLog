@@ -19,10 +19,12 @@
 #define WAYPOINTDIALOG_H
 
 #include "guicontrols/coordedit.h"
+#include "waypoint.h"
 
 #include <qwidget.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
+#include <qpushbutton.h>
 
 #include <kcombobox.h>
 #include <kdialog.h>
@@ -57,6 +59,8 @@ public:
    * set waypoint type in combo box translate internal id to index
    */
   void setWaypointType(int type);
+  /** No descriptions */
+  void enableApplyButton(bool enable = true);
 private: // Private methods
   /** No descriptions */
   void __initDialog();
@@ -88,7 +92,7 @@ public slots: // Public slots
   void clear();
 signals: // Signals
   /** No descriptions */
-  void addWaypoint();
+  void addWaypoint(Waypoint *);
 private slots: // Private slots
   /** No descriptions */
   void slotAddWaypoint();
@@ -97,6 +101,7 @@ private:
   KComboBox *waypointType;
   /**  */
   KComboBox *surface;
+  QPushButton *applyButton;
 };
 
 #endif

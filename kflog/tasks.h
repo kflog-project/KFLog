@@ -46,7 +46,8 @@ private: // Private attributes
   int colDesc;
   int colTaskDist;
   int colTotalDist;
-
+  int colTaskType;
+  
   int idTaskEdit;
   int idTaskDelete;
   int idTaskSave;

@@ -258,10 +258,12 @@ void OLCDialog::__fillDataFields()
 
   QList<Waypoint> wpList = currentFlight->getWPList();
 
-  startPoint->setText(wpList.at(0)->name);
-  startTime->setText(printTime(currentFlight->getStartTime(),true));
-  startPos->setText(printPos(wpList.at(0)->origP.lat(), true) + " / " +
-    printPos(wpList.at(0)->origP.lon(), false));
+  if (wpList.count()) {
+    startPoint->setText(wpList.at(0)->name);
+    startTime->setText(printTime(currentFlight->getStartTime(),true));
+    startPos->setText(printPos(wpList.at(0)->origP.lat(), true) + " / " +
+                      printPos(wpList.at(0)->origP.lon(), false));
+  }
 
   QString temp;
   QListViewItem* item;

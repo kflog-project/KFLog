@@ -1286,7 +1286,7 @@ void KFLogApp::initTaskTypes()
 
   taskTypes.append(new TranslationElement(FlightTask::Route, i18n("Traditional Route")));
   taskTypes.append(new TranslationElement(FlightTask::FAIArea, i18n("FAI Area")));
-  taskTypes.append(new TranslationElement(FlightTask::AAT, i18n("Area Assigned")));
+  //taskTypes.append(new TranslationElement(FlightTask::AAT, i18n("Area Assigned")));
 
   taskTypes.sort();
 }

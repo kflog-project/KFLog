@@ -40,6 +40,7 @@
 #include <mapmatrix.h>
 #include <singlepoint.h>
 #include <radiopoint.h>
+#include "waypoints.h"
 #include "waypointdialog.h"
 
 #include <iostream>
@@ -158,12 +159,12 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   // create the animation timer
   timerAnimate = new QTimer( this );
   connect( timerAnimate, SIGNAL(timeout()), this,
-	   SLOT(slotAnimateFlightTimeout()) );      
+	   SLOT(slotAnimateFlightTimeout()) );
+
 }
 
 Map::~Map()
 {
-
 }
 
 void Map::mouseMoveEvent(QMouseEvent* event)
@@ -858,6 +859,8 @@ warning("Map::mousePressEvent: planning=%d", planning);
               warning("new waypoint");
 
               WaypointDialog *waypointDlg = new WaypointDialog(this);
+              waypointDlg->enableApplyButton(false);
+              
               QPoint p = _globalMapMatrix.mapToWgs(current);
 
               // initialize dialog

@@ -29,6 +29,8 @@
 
 #include <qfile.h>
 #include <qstringlist.h>
+#include <qdict.h>
+
 #include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
@@ -294,16 +296,21 @@ int SoaringPilot::downloadFlight(int flightID, int secMode, QString fileName)
   QString A;
   QString tmp;
   QString dir;
+  QString key;
+  QDict<int> flightCount;
+  int *fc;
   int ret;
   QFile f;
   int day, month, year;
+
+  flightCount.setAutoDelete(true);
 
   KConfig* config = KGlobal::config();
   config->setGroup("Path");
   dir = config->readEntry("DefaultFlightDirectory") + "/";
   config->setGroup(0);
 
-  bool shortName = (fileName.upper().find("SHORT.IGC") == -1);
+  bool shortName = (fileName.upper().find("SHORT.IGC") != -1);
 
   // IGC File structure
   ret = readFile(file);
@@ -319,7 +326,7 @@ int SoaringPilot::downloadFlight(int flightID, int secMode, QString fileName)
         A = *line;
         ++line;
         tmp = *line;
-        warning(tmp);
+
         if (tmp.left(5) == "HFDTE") {
           if (tmp.length() >= 11) {
             day = tmp.mid(5, 2).toInt();
@@ -330,14 +337,23 @@ int SoaringPilot::downloadFlight(int flightID, int secMode, QString fileName)
             day = month = year = 0;
           }
 
-          if (shortName) {
-            fileName.sprintf("%d%c%cx%s1.igc", year, c36[month], c36[day],
-                             (const char *)getRecorderSerialNo());
+          key.sprintf("%02d%02d%02d", day, month, year);
+          if ((fc = flightCount.find(key)) != 0) {
+            (*fc)++;
           }
           else {
-            fileName.sprintf("20%.2d-%.2d-%.2d-xsp-%s-%.2d.igc",
+            fc = new int(1);
+            flightCount.insert(key, fc);
+          }
+
+          if (shortName) {
+            fileName.sprintf("%d%c%cX%s%c.IGC", year, c36[month], c36[day],
+                             (const char *)getRecorderSerialNo(), c36[*fc]);
+          }
+          else {
+            fileName.sprintf("20%.2d-%.2d-%.2d-XSP-%s-%.2d.IGC",
                              year, month, day, 
-                             (const char *)getRecorderSerialNo(), 1);
+                             (const char *)getRecorderSerialNo(), *fc);
           }
         }
         else {
@@ -500,6 +516,7 @@ int SoaringPilot::readTasks(QList<FlightTask> *tasks)
   QList <Waypoint> wpList;
   unsigned int nrPoints;
   bool takeoff, landing;
+  _errorinfo = "";
 
   // ** -------------------------------------------------------------
   // **      SOARINGPILOT Version 1.8.8 Tasks
@@ -517,7 +534,6 @@ int SoaringPilot::readTasks(QList<FlightTask> *tasks)
   if (ret == FR_OK) {
     for (line = file.begin(); line != file.end(); ++line) {
       tokens = QStringList::split(",", *line, true);
-      warning(*line);
 
       if (tokens.size() >= 3 && tokens[0] == "TS") {
         wpList.clear();
@@ -528,7 +544,6 @@ int SoaringPilot::readTasks(QList<FlightTask> *tasks)
         landing = (tokens.size() >= 4 && tokens[3].contains("L"));
 
         while (++line != file.end()) {
-          warning(*line);
           tokens = QStringList::split(",", *line, true);
           if (tokens.size() >= 5 && tokens[0] == "TW") {
             wp = new Waypoint;
@@ -541,7 +556,9 @@ int SoaringPilot::readTasks(QList<FlightTask> *tasks)
           else if (tokens.size() >= 1 && tokens[0] == "TE") {
             // check with declaration
             if (nrPoints != wpList.count()) {
-              return 0;
+              _errorinfo = i18n("invalid task definition in task ") +
+                nam + "\n" + i18n("Nr of waypoints differ from task header");
+              return FR_ERROR;
             }
             break;
           }

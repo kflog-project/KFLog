@@ -18,11 +18,11 @@
 #include "waypointdialog.h"
 #include "translationlist.h"
 #include "kflog.h"
+#include "mapcontents.h"
 #include "airport.h"
 
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qpushbutton.h>
 
 #include <klocale.h>
 #include <kseparator.h>
@@ -66,9 +66,9 @@ void WaypointDialog::__initDialog()
 
   buttons->addStretch();
 
-  b = new QPushButton(i18n("&Add"), this);
-  connect(b, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
-  buttons->addWidget(b);
+  applyButton = new QPushButton(i18n("&Apply"), this);
+  connect(applyButton, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
+  buttons->addWidget(applyButton);
   b = new QPushButton(i18n("&Ok"), this);
   b->setDefault(true);
   connect(b, SIGNAL(clicked()), SLOT(accept()));
@@ -167,8 +167,36 @@ void WaypointDialog::clear()
 /** No descriptions */
 void WaypointDialog::slotAddWaypoint()
 {
-  emit addWaypoint();
-  clear();
+  QString text;
+  extern MapContents _globalMapContents;
+
+  if (!name->text().isEmpty()) {
+    // insert a new waypoint to current catalog
+    Waypoint *w = new Waypoint;
+    w->name = name->text().upper();
+    w->description = description->text();
+    w->type = getWaypointType();
+    w->origP.setLat(_globalMapContents.degreeToNum(latitude->text()));
+    w->origP.setLon(_globalMapContents.degreeToNum(longitude->text()));
+    w->elevation = elevation->text().toInt();
+    w->icao = icao->text().upper();
+    w->frequency = frequency->text().toDouble();
+    text = runway->text();
+    if (!text.isEmpty()) {
+      w->runway = text.toInt();
+    }
+
+    text = length->text();
+    if (!text.isEmpty()) {
+      w->length = text.toInt();
+    }
+    w->surface = getSurface();
+    w->isLandable = isLandable->isChecked();
+    w->comment = comment->text();
+
+    emit addWaypoint(w);
+    clear();
+  }
 }
 
 /** return internal type of waypoint */
@@ -213,4 +241,9 @@ void WaypointDialog::setSurface(int s)
     s = surfaces.idxById(s);
   }
   surface->setCurrentItem(s);
+}
+/** No descriptions */
+void WaypointDialog::enableApplyButton(bool enable)
+{
+  applyButton->setEnabled(enable);
 }

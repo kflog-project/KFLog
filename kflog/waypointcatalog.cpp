@@ -52,12 +52,17 @@
 WaypointCatalog::WaypointCatalog(QString name)
   : modified(false), onDisc(false)
 {
+  static int catalogNr = 1;
+  
   KConfig* config = KGlobal::config();
   config->setGroup("Path");
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory", getpwuid(getuid())->pw_dir);
   if (name == QString::null) {
-    name = i18n("unnamed");
+    QString t;
+    t.setNum(catalogNr++);
+    name = i18n("unnamed") + t;
   }
+  catalogName = name;
   path = wayPointDir + "/" + name + ".kflogwp";
 
   showAll = true;

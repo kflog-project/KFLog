@@ -58,6 +58,7 @@ void Tasks::addTaskWindow(QWidget *parent)
 
   colName = tasks->addColumn(i18n("Name"));
   colDesc = tasks->addColumn(i18n("Description"));
+  colTaskType = tasks->addColumn(i18n("Task Type"));
   colTaskDist = tasks->addColumn(i18n("Task dist."));
   colTotalDist = tasks->addColumn(i18n("Total dist."));
 
@@ -351,6 +352,7 @@ void Tasks::slotUpdateTask()
   if (item != 0) {
     ft = taskList.find(item->text(colName));
     item->setText(colDesc, ft->getTaskTypeString());
+    item->setText(colTaskType, ft->getPlanningTypeString());
     item->setText(colTaskDist, ft->getTaskDistanceString());
     item->setText(colTotalDist, ft->getTotalDistanceString());
   }
