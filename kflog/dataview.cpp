@@ -46,56 +46,69 @@ DataView::~DataView()
 
 }
 
-void DataView::slotShowTaskText( FlightTask* task)
+QString DataView::__writeTaskInfo(FlightTask* task)
+{
+  QString htmlText;
+
+  htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+      <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
+      i18n("Task") + ":</B></TD></TR>";
+
+  QList<wayPoint> wpList = task->getWPList();
+
+  for(unsigned int loop = 0; loop < wpList.count(); loop++)
+    {
+      if(loop > 0)
+        {
+          QString tmp;
+          tmp.sprintf("%.2f km",wpList.at(loop)->distance);
+
+          htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
+              tmp + "</TD></TR>";
+        }
+      QString idString;
+      idString.sprintf("%d", loop);
+
+      htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
+          wpList.at(loop)->name + "</A></TD>\
+          <TD ALIGN=right>--</TD></TR>\
+          <TR><TD WIDTH=15></TD>\
+          <TD>" + printPos(wpList.at(loop)->origP.x()) + "</TD>\
+          <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.y(), false) +
+          "</TD></TR>";
+    }
+
+  QString pointString;
+  pointString.sprintf("%d", task->getPlannedPoints());
+
+  htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
+      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+      task->getTotalDistanceString() + "</TD></TR>\
+      <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Task Distance") +
+      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+      task->getTaskDistanceString() + "</TD></TR>\
+      <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Points") +
+      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+      pointString + "</TD></TR></TABLE>";
+
+  return htmlText;
+}
+
+void DataView::slotShowTaskText(FlightTask* task)
 {
   QList<wayPoint> taskPointList = task->getWPList();
   QString htmlText = "";
   QString tmp;
 
-  if(taskPointList.count() > 0)
-  {
-    QPoint pre_position, position;
+  htmlText = "<B>" + i18n("Task-Type: ") + "</B>";
 
-    pre_position = taskPointList.at(0)->origP;
-    QString name;
-
-    for(unsigned int n = 0; n < taskPointList.count(); n++)
-    	{
-  	  	position = taskPointList.at(n)->origP;
-			
-  		 	name = taskPointList.at(n)->name;
-	  		htmlText += (QString)"<b>" + name + "</b>" + "<br>" +
-		  							printPos(position.x(), false) + " / " + printPos(position.y()) + "<br>";
-			  pre_position = position;
-			
-    	}
-  }
-
-  // Frage
-  if(taskPointList.count() == 0)
-    {
-      htmlText += "Bitte wählen Sie den <b>Starort</b> der Aufgabe in der Karte<br>";
-    }
-  else if(taskPointList.count() == 1)
-    {
-      htmlText += "<br><b>Abflugpunkt?</b><br>";
-    }
-  else
-    {
-      htmlText += "<br><b>Nächster WendePunkt (End-/LandePunkt)?</b><br>";
-    }
-
-  htmlText += "<hline><br><br><b>Entfernung: " + task->getTotalDistanceString();
-  htmlText += "<hline><br><br><b>Entfernung Wertung: " + task->getTaskDistanceString();
-
-  htmlText += "<br><br>Aufgabenart: ";
   switch(task->getTaskType())
     {
       case FlightTask::ZielS:
         htmlText += i18n("Zielstrecke");
         break;
       case FlightTask::ZielR:
-        htmlText += i18n("ZielRückkehrstrecke");
+        htmlText += i18n("Zielrückkehrstrecke");
         break;
       case FlightTask::FAI:
         htmlText += i18n("FAI Dreieck");
@@ -110,10 +123,26 @@ void DataView::slotShowTaskText( FlightTask* task)
         htmlText += i18n("Dreieck Start auf Schenkel");
         break;
       default:
-        htmlText += i18n("Unbekannt");
+        htmlText += i18n("Unknown");
     }
-  htmlText += "<br>";
 
+  htmlText += "<BR>";
+
+  if(task->getWPList().count() > 0)  htmlText += __writeTaskInfo(task);
+
+  // Frage
+  if(taskPointList.count() == 0)
+    {
+      htmlText += "Bitte wählen Sie den <b>Startort</b> der Aufgabe in der Karte<br>";
+    }
+  else if(taskPointList.count() == 1)
+    {
+      htmlText += "<b>" + i18n("Begin of task") + "?</b>";
+    }
+  else
+    {
+      htmlText += "<b>" + i18n("Next waypoint") + "?</b>";
+    }
 
   flightDataText->setText(htmlText);
 }
@@ -124,9 +153,52 @@ void DataView::setFlightData()
   BaseFlightElement* e = _globalMapContents.getFlight();
 
   slotClearView();
-  if (e) {
-    flightDataText->setText(e->getFlightInfoString());
-  }
+
+  if(e && e->getTypeID() == BaseMapElement::Flight)
+    {
+      QString htmlText;
+
+      QStrList h = ((Flight*)e)->getHeader();
+      FlightTask fTask = ((Flight*)e)->getTask();
+
+      htmlText = (QString)"<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+          <TR><TD>" + i18n("Date") + ":</TD><TD>" + h.at(3) + "</TD></TR>\
+          <TR><TD>" + i18n("Pilot") + ":</TD><TD> " + h.at(0) + "</TD></TR>\
+          <TR><TD>" + i18n("Glider") + ":</TD><TD>" + h.at(2) +
+          " / " + h.at(1) + "</TD></TR>" +
+          "</TABLE><HR NOSHADE>";
+
+      if(fTask.getWPList().count())
+          htmlText += __writeTaskInfo(&fTask);
+      else
+          htmlText += "<EM>" + i18n("Flight contains no waypoints") + "</EM>";
+
+      flightDataText->setText(htmlText);
+    }
+  else if(e && e->getTypeID() == BaseMapElement::Task)
+    {
+      QString htmlText;
+//      QList<wayPoint> wpList = e->getWPList();
+
+      if(e->getWPList().count())
+          htmlText += __writeTaskInfo((FlightTask*)e);
+      else
+        {
+          htmlText += i18n(
+            "You can select waypoints with the left mouse button."
+            "You can also select free waypoints by clicking anywhere in the map."
+            "<br><br>"
+            "When you press &lt;STRG&gt; and click with the left mouse button on a taskpoint, "
+            "it will be deleted.<br>"
+            "You can compute the task up to your current mouse position by pressing &lt;SHIFT&gt;."
+            "<br>"
+            "Finish the task with the rigth mouse button.<br>"
+            "It's possible to move and delete taskpoints from the finished task."
+            );
+        }
+
+      flightDataText->setText(htmlText);
+    }
 }
 
 void DataView::slotWPSelected(const QString &url)

@@ -63,9 +63,13 @@ class RecorderDialog : public KDialogBase
     /** */
     void __addFlightPage();
     /** */
+    void __addTaskPage();
+    /** */
     QFrame* flightPage;
     /** */
     QFrame* settingsPage;
+    /** */
+    QFrame* taskPage;
     /** */
     KConfig* config;
     /** */
@@ -78,6 +82,8 @@ class RecorderDialog : public KDialogBase
     QLabel* apiID;
     /** */
     KListView* flightList;
+    /** */
+    KListView* taskList;
     /** */
     QCheckBox* useFastDownload;
     /** */
@@ -101,6 +107,10 @@ class RecorderDialog : public KDialogBase
     int colGlider;
     int colFirstPoint;
     int colLastPoint;
+    /** */
+    int taskColID;
+    int taskColName;
+    int taskColPosition;
 };
 
 #endif

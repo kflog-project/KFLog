@@ -87,6 +87,16 @@ Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName
   pixAnimate.resize(32,32);
   pixAnimate.fill(QPixmap::white);
 
+  // Die Liste könnte doch eigentlich permanent gespeichert werden ...
+  header.append(pilotName);
+  header.append(gliderID);
+  header.append(gliderType);
+  header.append(date);
+  header.append(printTime(route.last()->time - route.at(0)->time));
+  header.append(getRouteType());
+  header.append(getDistance());
+  header.append(getPoints());
+  header.append(recorderID);
 }
 
 Flight::~Flight()
@@ -600,6 +610,14 @@ QString Flight::getDistance(bool isOrig) const
       return optimizedTask.getTotalDistanceString();
 }
 
+FlightTask Flight::getTask(bool isOrig)
+{
+  if(isOrig || !optimized)
+      return origTask;
+  else
+      return optimizedTask;
+}
+
 QString Flight::getTaskDistance(bool isOrig) const
 {
   if(isOrig || !optimized)
@@ -672,23 +690,6 @@ QRect Flight::getTaskRect() const
       return origTask.getRect();
 }
 
-QStrList Flight::getHeader()
-{
-  QStrList header;
-  // Die Liste könnte doch eigentlich permanent gespeichert werden ...
-  header.append(pilotName);
-  header.append(gliderID);
-  header.append(gliderType);
-  header.append(date);
-  header.append(printTime(route.last()->time - route.at(0)->time));
-  header.append(getRouteType());
-  header.append(getDistance());
-  header.append(getPoints());
-  header.append(recorderID);
-
-  return header;
-}
-
 void Flight::__checkMaxMin()
 {
   v_max = 0;
@@ -724,10 +725,7 @@ QList<wayPoint> Flight::getWPList()
     return optimizedTask.getWPList();
 }
 
-QList<wayPoint> Flight::getOriginalWPList()
-{
-  return origTask.getWPList();
-}
+QList<wayPoint> Flight::getOriginalWPList()  {  return origTask.getWPList();  }
 
 bool Flight::optimizeTask()
 {
@@ -926,12 +924,11 @@ int Flight::searchGetPrevPoint(int index, flightPoint& searchPoint)
  */
 int Flight::searchStepNextPoint(int index, flightPoint & fP, int step)
 {
-  if (index + step < (int)getRouteLength() - 1) {
-    index += step;
-  }
-  else {
-  	index = getRouteLength() - 1;
-  }
+  if (index + step < (int)getRouteLength() - 1)
+      index += step;
+  else
+  	  index = getRouteLength() - 1;
+
   return searchGetNextPoint(index, fP);
 }
 
@@ -940,14 +937,15 @@ int Flight::searchStepNextPoint(int index, flightPoint & fP, int step)
  */
 int Flight::searchStepPrevPoint(int index,  flightPoint & fP, int step)
 {
-  if (index - step > 0) {
-    index -= step;
-  }
-  else {
-  	index = 1;
-  }
+  if (index - step > 0)
+      index -= step;
+  else
+  	  index = 1;
+
   return searchGetPrevPoint(index, fP);
-};
+}
+
+QStrList Flight::getHeader()  {  return header;  }
 
 /** No descriptions */
 QString Flight::getFlightInfoString()
@@ -964,101 +962,94 @@ QString Flight::getFlightInfoString()
 
   QList<wayPoint> wpList = getWPList();
 
-  if(wpList.count()) {
-    htmlText += "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-      <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
-       i18n("Task") + ":</B></TD></TR>";
+  if(wpList.count())
+    {
+      htmlText += "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+          <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
+          i18n("Task") + ":</B></TD></TR>";
 
-    for(unsigned int loop = 0; loop < wpList.count(); loop++) {
-      if(loop > 0) {
-        QString tmp;
-        tmp.sprintf("%.2f km",wpList.at(loop)->distance);
+      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+        {
+          if(loop > 0)
+            {
+              QString tmp;
+              tmp.sprintf("%.2f km",wpList.at(loop)->distance);
 
-        htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
-          tmp + "</TD></TR>";
-      }
-      QString timeText;
-      QString idString;
-      idString.sprintf("%d", loop);
-      if(wpList.at(loop)->sector1 != 0) {
-        timeText = printTime(wpList.at(loop)->sector1);
-      }
-      else if(wpList.at(loop)->sector2 != 0) {
-        timeText = printTime(wpList.at(loop)->sector2);
-      }
-      else if(wpList.at(loop)->sectorFAI != 0) {
-        timeText = printTime(wpList.at(loop)->sectorFAI);
-      }
-      else {
-       timeText = "--";
-      }
+              htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
+                  tmp + "</TD></TR>";
+            }
+          QString timeText;
+          QString idString;
+          idString.sprintf("%d", loop);
+          if(wpList.at(loop)->sector1 != 0)
+              timeText = printTime(wpList.at(loop)->sector1);
+          else if(wpList.at(loop)->sector2 != 0)
+              timeText = printTime(wpList.at(loop)->sector2);
+          else if(wpList.at(loop)->sectorFAI != 0)
+              timeText = printTime(wpList.at(loop)->sectorFAI);
+          else
+             timeText = "--";
 
-      htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
-        wpList.at(loop)->name + "</A></TD>\
-        <TD ALIGN=right>" + timeText + "</TD></TR>\
-        <TR><TD WIDTH=15></TD>\
-        <TD>" + printPos(wpList.at(loop)->origP.x()) + "</TD>\
-        <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.y(), false) +
-        "</TD></TR>";
+          htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
+              wpList.at(loop)->name + "</A></TD>\
+              <TD ALIGN=right>" + timeText + "</TD></TR>\
+              <TR><TD WIDTH=15></TD>\
+              <TD>" + printPos(wpList.at(loop)->origP.x()) + "</TD>\
+              <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.y(), false) +
+              "</TD></TR>";
+        }
+
+      htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
+          ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + getDistance() + "</TD></TR>\
+          <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Points") +
+          ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + getPoints() +
+          "</TD></TR></TABLE>";
     }
-
-    htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
-      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + getDistance() + "</TD></TR>\
-      <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Points") +
-      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + getPoints() +
-      "</TD></TR></TABLE>";
-  }
-  else {
-    htmlText += "<EM>" + i18n("Flight contains no waypoints") + "</EM>";
-  }
+  else
+    {
+      htmlText += "<EM>" + i18n("Flight contains no waypoints") + "</EM>";
+    }
 
   return htmlText;
 }
 
 /** Sets the nAnimationIndex member to 'n' */
-void Flight::setAnimationIndex(int n){
+void Flight::setAnimationIndex(int n)
+{
   if ((n >= 0) && (getRouteLength() > (unsigned int)n))
-	  nAnimationIndex = n;
+  	  nAnimationIndex = n;
 }
 
 /** Increments the nAnimationIndex member */
-void Flight::setAnimationNextIndex(void){
+void Flight::setAnimationNextIndex(void)
+{
 	if (getRouteLength() > (unsigned int)nAnimationIndex+1)
-	  nAnimationIndex++;
-  else {
-		nAnimationIndex = (int)getRouteLength()-1;
-    bAnimationActive = false;	//stop the animation of this flight
-  }
+  	  nAnimationIndex++;
+  else
+    {
+		  nAnimationIndex = (int)getRouteLength()-1;
+      bAnimationActive = false;	//stop the animation of this flight
+    }
 }
 
 /** sets the bAnimationActive flag */
-void Flight::setAnimationActive(bool b){
-  bAnimationActive = b;
-}
+void Flight::setAnimationActive(bool b)  {  bAnimationActive = b;  }
 
 /** returns the bAnimationActive flag */
-bool Flight::isAnimationActive(void){
-  return bAnimationActive;
-}
+bool Flight::isAnimationActive(void)  {  return bAnimationActive;  }
+
 /** No descriptions */
-int Flight::getAnimationIndex()
-{
-  return nAnimationIndex;
-}
+int Flight::getAnimationIndex()  {  return nAnimationIndex;  }
+
 /** No descriptions */
-void Flight::setLastAnimationPos(QPoint pos){
-  this->preAnimationPos = pos;
-}
+void Flight::setLastAnimationPos(QPoint pos)  {  preAnimationPos = pos;  }
+
 /** No descriptions */
-QPoint Flight::getLastAnimationPos(void){
-  return this->preAnimationPos;
-}
+QPoint Flight::getLastAnimationPos(void)  {  return preAnimationPos;  }
+
 /** No descriptions */
-QPixmap Flight::getLastAnimationPixmap(void){
-  return this->pixAnimate;
-}
+QPixmap Flight::getLastAnimationPixmap(void)  {  return pixAnimate;  }
+
 /** No descriptions */
-void Flight::setLastAnimationPixmap(QPixmap pix){
-  this->pixAnimate = pix;
-}
+void Flight::setLastAnimationPixmap(QPixmap pix)  {  pixAnimate = pix;  }
 

@@ -71,6 +71,8 @@ class FlightTask : public BaseFlightElement
      * @see #TaskType
      */
     int getTaskType() const;
+    /** */
+    QString getTastTypeString() const;
     /**
      * Draws the flight an the task into the given painter. Reimplemented
      * from BaseMapElement.
@@ -83,6 +85,8 @@ class FlightTask : public BaseFlightElement
     /** */
     void checkWaypoints(QList<flightPoint> route,
         QString gliderType);
+    /** */
+    int getPlannedPoints() const;
     /** */
     QString getRouteType() const;
     /** */

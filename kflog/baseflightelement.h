@@ -66,7 +66,7 @@ class BaseFlightElement : public BaseMapElement
 	   */
     virtual int searchStepPrevPoint(int index,  flightPoint & fP, int step);
 
-  private:
+  protected:
     /** */
     QString sourceFileName;
 };

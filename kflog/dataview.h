@@ -72,6 +72,8 @@ class DataView : public QFrame
     void slotClearView();
 
   private:
+    /** */
+    QString __writeTaskInfo(FlightTask*);
     /**
      * The textwidget
      */

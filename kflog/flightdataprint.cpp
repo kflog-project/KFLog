@@ -21,7 +21,6 @@
 #include <flight.h>
 #include <mapcalc.h>
 
-#include <kiconloader.h>
 #include <klocale.h>
 #include <kprinter.h>
 

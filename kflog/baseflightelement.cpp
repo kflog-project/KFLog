@@ -17,32 +17,25 @@
 
 #include "baseflightelement.h"
 
-BaseFlightElement::BaseFlightElement(QString name, unsigned int typeID, QString fName)
- : BaseMapElement(name, typeID),
- sourceFileName(fName)
+BaseFlightElement::BaseFlightElement(QString name, unsigned int typeID,
+      QString fName)
+  : BaseMapElement(name, typeID),
+    sourceFileName(fName)
 {
+
 }
 
 BaseFlightElement::~BaseFlightElement(){
 }
 
-int BaseFlightElement::searchPoint(QPoint, flightPoint&)
-{
-  return -1;
-}
-int BaseFlightElement::searchGetPrevPoint(int, flightPoint&)
-{
-  return -1;
-}
-int BaseFlightElement::searchGetNextPoint(int, flightPoint&)
-{
-  return -1;
-}
-int BaseFlightElement::searchStepNextPoint(int, flightPoint&, int)
-{
-  return -1;
-}
-int BaseFlightElement::searchStepPrevPoint(int,  flightPoint&, int)
-{
-  return -1;
-}
+int BaseFlightElement::searchPoint(QPoint, flightPoint&)  {  return -1;  }
+
+int BaseFlightElement::searchGetPrevPoint(int, flightPoint&)  {  return -1;  }
+
+int BaseFlightElement::searchGetNextPoint(int, flightPoint&)  {  return -1;  }
+
+int BaseFlightElement::searchStepNextPoint(int, flightPoint&, int) {  return -1;  }
+
+int BaseFlightElement::searchStepPrevPoint(int,  flightPoint&, int) {  return -1;  }
+
+//QStrList BaseFlightElement::getHeader()  {  return header;  }

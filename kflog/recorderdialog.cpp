@@ -34,6 +34,10 @@
 #include <qstringlist.h>
 #include <qwhatsthis.h>
 
+#include <flighttask.h>
+#include <mapcalc.h>
+#include <mapcontents.h>
+
 #define CHECK_ERROR_EXIT  error = dlerror(); \
   if(error != NULL) \
     { \
@@ -63,6 +67,7 @@ RecorderDialog::RecorderDialog(QWidget *parent, KConfig* cnf, const char *name)
 {
   __addSettingsPage();
   __addFlightPage();
+  __addTaskPage();
 }
 
 RecorderDialog::~RecorderDialog()
@@ -75,7 +80,7 @@ RecorderDialog::~RecorderDialog()
 
 void RecorderDialog::__addSettingsPage()
 {
-  settingsPage = addPage(i18n("Recorder"),i18n("Recorder Settings"),
+  settingsPage = addPage(i18n("Recorder"), i18n("Recorder Settings"),
       KGlobal::instance()->iconLoader()->loadIcon("configure", KIcon::NoGroup,
           KIcon::SizeLarge));
 
@@ -187,8 +192,8 @@ void RecorderDialog::__addSettingsPage()
 
 void RecorderDialog::__addFlightPage()
 {
-  flightPage = addPage(i18n("Flights"),i18n("Flights"),
-      KGlobal::instance()->iconLoader()->loadIcon("x-igc", KIcon::NoGroup,
+  flightPage = addPage(i18n("Flights"), i18n("Flights"),
+      KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup,
           KIcon::SizeLarge));
 
   QGridLayout* fLayout = new QGridLayout(flightPage, 13, 5, 10, 1);
@@ -229,6 +234,68 @@ void RecorderDialog::__addFlightPage()
 
   connect(listB, SIGNAL(clicked()), SLOT(slotReadFlightList()));
   connect(fileB, SIGNAL(clicked()), SLOT(slotDownloadFlight()));
+}
+
+void RecorderDialog::__addTaskPage()
+{
+  taskPage = addPage(i18n("Task"), i18n("Task"),
+      KGlobal::instance()->iconLoader()->loadIcon("waypoint", KIcon::NoGroup,
+          KIcon::SizeLarge));
+
+  QGridLayout* tLayout = new QGridLayout(taskPage, 13, 5, 10, 1);
+
+  taskList = new KListView(taskPage, "flightList");
+  taskList->setShowSortIndicator(true);
+  taskList->setAllColumnsShowFocus(true);
+  taskColID = flightList->addColumn(i18n("Nr"));
+  taskColName = flightList->addColumn(i18n("Name"));
+  taskColPosition = flightList->addColumn(i18n("Position"));
+
+  extern MapContents _globalMapContents;
+  BaseFlightElement* task = _globalMapContents.getFlight();
+
+  QListViewItem* item;
+  QString idS;
+
+  if(task && task->getTypeID() == BaseFlightElement::Task)
+    {
+      QList<wayPoint> wpList = ((FlightTask*)task)->getWPList();
+      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+        {
+          item = new QListViewItem(taskList);
+          idS.sprintf("%.2d", loop + 1);
+          item->setText(taskColID, idS);
+          item->setText(taskColName, wpList.at(loop)->name);
+          item->setText(taskColPosition, printPos(wpList.at(loop)->origP.x()) +
+              " / " + printPos(wpList.at(loop)->origP.x()));
+        }
+    }
+  else
+    {
+      warning("Keine Aufgaben geplant ...");
+    }
+
+  tLayout->addWidget(taskList, 0, 0);
+
+//  for(unsigned int loop = 0; loop < dirList.count(); loop++)
+//    {
+//      idS.sprintf("%.3d", loop + 1);
+//      item->setText(colID, idS);
+//      day.sprintf("%d-%.2d-%.2d", e->firstTime.tm_year + 1900,
+//          e->firstTime.tm_mon + 1, e->firstTime.tm_mday);
+//      item->setText(colDate, day);
+//      item->setText(colPilot, e->pilotName);
+//      item->setText(colGlider, e->gliderID);
+//      time = QTime(e->firstTime.tm_hour, e->firstTime.tm_min,
+//          e->firstTime.tm_sec);
+//      item->setText(colFirstPoint, KGlobal::locale()->formatTime(time, true));
+//      time = QTime(e->lastTime.tm_hour, e->lastTime.tm_min,
+//          e->lastTime.tm_sec);
+//      item->setText(colLastPoint, KGlobal::locale()->formatTime(time, true));
+//  taskcolGlider = flightList->addColumn(i18n("Glider"));
+//  taskColFirstPoint = flightList->addColumn(i18n("first Point"));
+//  taskColLastPoint = flightList->addColumn(i18n("last Point"));
+
 }
 
 void RecorderDialog::slotConnectRecorder()

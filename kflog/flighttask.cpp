@@ -54,14 +54,22 @@ FlightTask::FlightTask(QList<wayPoint> wpL, bool isO, QString fName)
 {
 warning("FlightTask(QList<wayPoint> wpL, bool isO, QString fName)");
   //only do this if wpList is not empty!
-  if (wpList.count()  != 0){
-     __setWaypointType();
+  if (wpList.count()  != 0)
+    {
+      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+        {
+          wpList.at(loop)->type = FlightTask::FreeP;
+          wpList.at(loop)->sector1 = 0;
+          wpList.at(loop)->sector2 = 0;
+          wpList.at(loop)->sectorFAI = 0;
+        }
 
-    __checkType();
+      __setWaypointType();
 
-    for(unsigned int loop = 0; loop < wpList.count(); loop++)
-       __sectorangle(loop, false);
+      __checkType();
 
+      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+         __sectorangle(loop, false);
    }
 }
 
@@ -284,12 +292,7 @@ void FlightTask::__setWaypointType()
     }
 
   // Kein Wendepunkt definiert
-  if (wpList.count() < 4)
-    {
-      for(unsigned int loop = 0; loop < wpList.count(); loop++)
-          wpList.at(loop)->type = FlightTask::FreeP;
-      return;
-    }
+  if (wpList.count() < 4)  return;
 
   // warning("WendePunkte: %d",wpList.count());
   wpList.at(0)->type = FlightTask::TakeOff;
@@ -304,6 +307,11 @@ void FlightTask::__setWaypointType()
 }
 
 int FlightTask::getTaskType() const  {  return flightType;  }
+
+QString FlightTask::getTastTypeString() const
+{
+  return "hallo";
+}
 
 bool FlightTask::isFAI(double d_wp, double d1, double d2, double d3)
 {
@@ -640,6 +648,48 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
     }
 }
 
+int FlightTask::getPlannedPoints() const
+{
+
+  KConfig* config = KGlobal::config();
+  config->setGroup("FlightPoints");
+
+  double pointFAI = config->readDoubleNumEntry("FAIPoint", 2.0);
+  double pointNormal = config->readDoubleNumEntry("NormalPoint", 1.75);
+  double pointZielS = config->readDoubleNumEntry("ZielSPoint", 1.5);
+
+  /*
+   * Aufgabe vollständig erfüllt
+   *        F: Punkte/km
+   *        I: Index des Flugzeuges
+   *        f & I noch abfragen !!!!
+   */
+  double F;
+  switch(flightType)
+    {
+      case FlightTask::ZielS:
+        F = pointZielS;
+        break;
+      case FlightTask::ZielR:
+      case FlightTask::Dreieck:
+      case FlightTask::Dreieck_S:
+        F = pointNormal;
+        break;
+      case FlightTask::FAI:
+      case FlightTask::FAI_S:
+        F = pointFAI;
+        break;
+      default:
+        F = 0.0;
+    }
+
+  return (int)((double)distance_task * F);
+//  distance_wert = distance_task;
+
+//  taskPoints = (distance_wert * F * 100) / gliderIndex * dmstMalus +
+//                      (aussenlande * pointCancel * 100) / gliderIndex;
+}
+
 void FlightTask::checkWaypoints(QList<flightPoint> route,
     QString gliderType)
 {
@@ -954,7 +1004,7 @@ QString FlightTask::getTaskDistanceString() const
   if(flightType == FlightTask::NotSet)  return "--";
 
   QString distString;
-  distString.sprintf("%.2f km ", distance_task);
+  distString.sprintf("%.2f km", distance_task);
 
   return distString;
 }

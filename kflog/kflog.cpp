@@ -52,6 +52,7 @@
 #include <mapcontrolview.h>
 #include <mapprint.h>
 #include <recorderdialog.h>
+#include <taskdataprint.h>
 #include <waypoints.h>
 #include <igc3ddialog.h>
 #include "basemapelement.h"
@@ -101,7 +102,6 @@ KFLogApp::KFLogApp()
       SLOT(slotStartComplete()));
   connect(this, SIGNAL(flightDataTypeChanged(int)), &_globalMapConfig,
       SLOT(slotSetFlightDataType(int)));
-
 
   _globalMapConfig.slotReadConfig();
 
@@ -273,7 +273,6 @@ void KFLogApp::initActions()
 	viewIgc3D = new KAction(i18n("View flight in 3D"), "vectorgfx",
 			CTRL+Key_R, this, SLOT(slotFlightViewIgc3D()), actionCollection(),
 			"view_flight_3D");
-
 			
   KSelectAction* viewFlightDataType = new KSelectAction(
       i18n("Show Flightdata"), "idea", 0,
@@ -444,8 +443,7 @@ void KFLogApp::initView()
       SLOT(setFlightData()));
 
   connect(waypoints, SIGNAL(copyWaypoint2Task(wayPoint *)), map,
-    SLOT(slotAppendWaypoint2Task(wayPoint *)));
-
+      SLOT(slotAppendWaypoint2Task(wayPoint *)));
 }
 
 void KFLogApp::slotShowPointInfo(const QPoint pos,
@@ -562,9 +560,7 @@ void KFLogApp::slotFileOpen()
   flightDir = fInfo.dirPath();
   extern MapContents _globalMapContents;
   if(_globalMapContents.loadFlight(fName))
-    {
       fileOpenRecent->addURL(fUrl);
-    }
 
   slotStatusMsg(i18n("Ready."));
 }
@@ -604,17 +600,22 @@ void KFLogApp::slotFlightPrint()
 
   extern MapContents _globalMapContents;
   BaseFlightElement *f = _globalMapContents.getFlight();
-  if (f) {
-    switch (f->getTypeID()) {
-    case BaseMapElement::Flight:
-      FlightDataPrint::FlightDataPrint((Flight *)f);
-      break;
-    default:
-      QString tmp;
-      tmp.sprintf(i18n("Not yet available for type : %d"), f->getTypeID());
-      KMessageBox::sorry(0, tmp);
+  if(f)
+    {
+      switch (f->getTypeID())
+        {
+          case BaseMapElement::Flight:
+            FlightDataPrint::FlightDataPrint((Flight *)f);
+            break;
+          case BaseMapElement::Task:
+            TaskDataPrint::TaskDataPrint((FlightTask*)f);
+            break;
+          default:
+            QString tmp;
+            tmp.sprintf(i18n("Not yet available for type : %d"), f->getTypeID());
+            KMessageBox::sorry(0, tmp);
+        }
     }
-  }
   slotStatusMsg(i18n("Ready."));
 }
 
@@ -721,11 +722,12 @@ void KFLogApp::slotOptimizeFlight()
   Flight *f = (Flight *)_globalMapContents.getFlight();
   if(f && f->getTypeID() == BaseMapElement::Flight)
     {
-      if (f->optimizeTask()) {
-        // Okay, update flightdata and redraw map
-        dataView->setFlightData();
-        map->slotRedrawFlight();
-      }
+      if(f->optimizeTask())
+        {
+          // Okay, update flightdata and redraw map
+          dataView->setFlightData();
+          map->slotRedrawFlight();
+        }
     }
 }
 
@@ -797,14 +799,15 @@ void KFLogApp::slotWindowsMenuAboutToShow()
 
   windowMenu->clear();
 
-  for (int i = 0 ; it.current(); ++it , i++) {
-    flight = it.current();
-    int id = windowMenu->insertItem(flight->getFileName(), &_globalMapContents,
-      SLOT(slotSetFlight(int)));
-   	
-   	windowMenu->setItemParameter(id, i);
-  	windowMenu->setItemChecked(id, _globalMapContents.getFlightIndex() == i);
-  }
+  for (int i = 0 ; it.current(); ++it , i++)
+    {
+      flight = it.current();
+      int id = windowMenu->insertItem(flight->getFileName(), &_globalMapContents,
+          SLOT(slotSetFlight(int)));
+
+     	windowMenu->setItemParameter(id, i);
+    	windowMenu->setItemChecked(id, _globalMapContents.getFlightIndex() == i);
+    }
 }
 
 /** set menu items enabled/disabled */
@@ -948,4 +951,3 @@ void KFLogApp::initTypes()
 
   waypointTypes.sort();
 }
-

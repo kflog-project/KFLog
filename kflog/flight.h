@@ -78,6 +78,8 @@ class Flight : public BaseFlightElement
 	   * @return the distance between all reached waypoints
 	   */
     QString getDistance(bool isOrig = false) const;
+    /** */
+    FlightTask getTask(bool isOrig = false);
 	  /**
 	   * @param  isOrig  "true", if the original-task should be used.
 	   *                 The default is "false". If the flight has not been
@@ -302,6 +304,8 @@ class Flight : public BaseFlightElement
     bool bAnimationActive;
     QPoint preAnimationPos;
     QPixmap pixAnimate;
+    /** */
+    QStrList header;
 };
 
 #endif

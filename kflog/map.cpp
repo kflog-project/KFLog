@@ -153,7 +153,6 @@ Map::~Map()
 
 }
 
-
 void Map::mouseMoveEvent(QMouseEvent* event)
 {
   extern const MapMatrix _globalMapMatrix;
@@ -162,165 +161,168 @@ void Map::mouseMoveEvent(QMouseEvent* event)
   BaseFlightElement *f = _globalMapContents.getFlight();
   const QPoint current = event->pos();
   struct wayPoint wp;
-  if (planning == 1 || planning == 3) {
-    QList<wayPoint> taskPointList = f->getWPList();
-    QList<wayPoint> tempTaskPointList = f->getWPList();
-    bool found = __getTaskWaypoint(current, &wp, taskPointList);
-    // 3: Task beendet verschieben eines Punktes
-//    SinglePoint* hitElement;
 
-//    QPoint sitePos, preSitePos, nextSitePos;
-    QPoint preSitePos, nextSitePos;
-    QPoint point = current;
-    double dX, dY, delta(8.0);
+  if (planning == 1 || planning == 3)
+    {
+      QList<wayPoint> taskPointList = f->getWPList();
+      QList<wayPoint> tempTaskPointList = f->getWPList();
+      bool found = __getTaskWaypoint(current, &wp, taskPointList);
+      // 3: Task beendet verschieben eines Punktes
 
-    bool drawWP = false;
+      QPoint preSitePos, nextSitePos;
+      QPoint point = current;
+//      double dX, dY;
+      double delta(8.0);
 
-    if (_globalMapMatrix.isSwitchScale()) delta = 16.0;
+//      bool drawWP = false;
 
+      if (_globalMapMatrix.isSwitchScale()) delta = 16.0;
 
-    if (!taskPointList.isEmpty()) {
-      double dX_old = delta + 10.0;
-      double dY_old = delta + 10.0;
-      /*
-       *  Muss für alle Punktdaten durchgeführt werden
-       */
-      if(planning == 1) {
-        preSitePos = _globalMapMatrix.map(taskPointList.getLast()->projP);
-      }
-      else if(planning == 3) {
-        if(moveWPindex > 0) {
-          preSitePos = _globalMapMatrix.map(taskPointList.at(moveWPindex - 1)->projP);
-        }
-        if(moveWPindex + 1 < (int)taskPointList.count()) {
-          nextSitePos = _globalMapMatrix.map(taskPointList.at(moveWPindex + 1)->projP);
-        }
-      }
-
-      point.setX(current.x());
-      point.setY(current.y());
-
-      QPainter planP(this);
-      planP.setRasterOp(XorROP);
-      planP.setBrush(NoBrush);
-      planP.setPen(QPen(QColor(255,0,0), 5));
-
-
-
-
-      if(isSnapping) {
-        // Snapping Bereich verlassen?
-        if( (abs(prePlanPos.x() - current.x()) > delta) ||
-            (abs(prePlanPos.y() - current.y()) > delta) ) {
-          isSnapping = false;
-
-          // delete temp WP
-          __drawPlannedTask();
-          __showLayer();
-        }
-      }
-
-      if(!isSnapping) {
-        if (found) {
-          isSnapping = true;
-
-          //                      dX_old = dX;
-          //                      dY_old = dY;
-        point = _globalMapMatrix.map(_globalMapMatrix.wgsToMap(wp.origP.y(), wp.origP.x()));
-//          point.setX(sitePos.x());
-//          point.setY(sitePos.y());
-        }
-
-        if(isSnapping) {
-          // temporärer Weg
-          // add temp WP
-
-          if(planning == 3) {
-            //verschieben
-            tempTaskPointList.insert(moveWPindex,new wayPoint);
-            tempTaskPointList.at(moveWPindex)->name = wp.name;
-            tempTaskPointList.at(moveWPindex)->origP = wp.origP;
-            tempTaskPointList.at(moveWPindex)->elevation = wp.elevation;
-            tempTaskPointList.at(moveWPindex)->projP = wp.projP;
-            // hier müssen noch mehr Sachen übergeben werden
-          }
-          else {
-            //anhängen
-            tempTaskPointList.append(new wayPoint);
-            tempTaskPointList.last()->name = wp.name;
-            tempTaskPointList.last()->origP = wp.origP;
-            tempTaskPointList.last()->elevation = wp.elevation;
-            tempTaskPointList.last()->projP = wp.projP;
-            // hier müssen noch mehr Sachen übergeben werden
-
-          }
-          tempTask.setWaypointList(tempTaskPointList);
-          __drawPlannedTask(false);
-
-          if((current.x() > 0 && current.x() < this->width()) &&
-             (current.y() > 0 && current.y() < this->height())) {
-            prePlanPos = point;
-          }
-          else {
-            // außerhalb der Karte
-            prePlanPos.setX(-999);
-            prePlanPos.setY(-999);
-          }
-
-
-          warning(wp.name);
-        }
-      }
-
-      if(!isSnapping)
+      if (!taskPointList.isEmpty())
         {
-          if((current.x() > 0 && current.x() < this->width()) &&
-             (current.y() > 0 && current.y() < this->height()))
+//          double dX_old = delta + 10.0;
+//          double dY_old = delta + 10.0;
+          /*
+           *  Muss für alle Punktdaten durchgeführt werden
+           */
+          if(planning == 1)
+              preSitePos = _globalMapMatrix.map(taskPointList.getLast()->projP);
+          else if(planning == 3)
             {
-              // delete temp WP
-              __drawPlannedTask();
-              __showLayer();
+              if(moveWPindex > 0)
+                  preSitePos = _globalMapMatrix.map(taskPointList.at(moveWPindex - 1)->projP);
 
-              if(event->state() == QEvent::ShiftButton)
+              if(moveWPindex + 1 < (int)taskPointList.count())
+                  nextSitePos = _globalMapMatrix.map(taskPointList.at(moveWPindex + 1)->projP);
+            }
+
+          point.setX(current.x());
+          point.setY(current.y());
+
+          QPainter planP(this);
+          planP.setRasterOp(XorROP);
+          planP.setBrush(NoBrush);
+          planP.setPen(QPen(QColor(255,0,0), 5));
+
+          if(isSnapping)
+            {
+              // Snapping Bereich verlassen?
+              if( (abs(prePlanPos.x() - current.x()) > delta) ||
+                  (abs(prePlanPos.y() - current.y()) > delta) )
+                {
+                  isSnapping = false;
+
+                  // delete temp WP
+                  __drawPlannedTask();
+                  __showLayer();
+                }
+            }
+
+          if(!isSnapping)
+            {
+              if (found)
+                {
+                  isSnapping = true;
+
+//                  dX_old = dX;
+//                  dY_old = dY;
+                  point = _globalMapMatrix.map(_globalMapMatrix.wgsToMap(wp.origP.y(), wp.origP.x()));
+//                  point.setX(sitePos.x());
+//                  point.setY(sitePos.y());
+                }
+
+              if(isSnapping)
                 {
                   // temporärer Weg
+                  // add temp WP
+
                   if(planning == 3)
                     {
                       //verschieben
                       tempTaskPointList.insert(moveWPindex,new wayPoint);
-                      tempTaskPointList.at(moveWPindex)->name = "";
-                      tempTaskPointList.at(moveWPindex)->origP = _globalMapMatrix.mapToWgs(event->pos());
-                      tempTaskPointList.at(moveWPindex)->projP =
-                            _globalMapMatrix.wgsToMap(tempTaskPointList.at(moveWPindex)->origP.y(),
-                                                      tempTaskPointList.at(moveWPindex)->origP.x());
+                      tempTaskPointList.at(moveWPindex)->name = wp.name;
+                      tempTaskPointList.at(moveWPindex)->origP = wp.origP;
+                      tempTaskPointList.at(moveWPindex)->elevation = wp.elevation;
+                      tempTaskPointList.at(moveWPindex)->projP = wp.projP;
                       // hier müssen noch mehr Sachen übergeben werden
                     }
                   else
                     {
                       //anhängen
                       tempTaskPointList.append(new wayPoint);
-                      tempTaskPointList.last()->name = "test";
-                      tempTaskPointList.last()->origP = _globalMapMatrix.mapToWgs(event->pos());
-                      tempTaskPointList.last()->projP =
-                            _globalMapMatrix.wgsToMap(tempTaskPointList.last()->origP.y(),
-                                                      tempTaskPointList.last()->origP.x());
+                      tempTaskPointList.last()->name = wp.name;
+                      tempTaskPointList.last()->origP = wp.origP;
+                      tempTaskPointList.last()->elevation = wp.elevation;
+                      tempTaskPointList.last()->projP = wp.projP;
                       // hier müssen noch mehr Sachen übergeben werden
                     }
-                tempTask.setWaypointList(tempTaskPointList);
-                __drawPlannedTask(false);
+                  tempTask.setWaypointList(tempTaskPointList);
+                  __drawPlannedTask(false);
+
+                  if((current.x() > 0 && current.x() < this->width()) &&
+                     (current.y() > 0 && current.y() < this->height()))
+                    {
+                        prePlanPos = point;
+                    }
+                  else
+                    {
+                      // außerhalb der Karte
+                      prePlanPos.setX(-999);
+                      prePlanPos.setY(-999);
+                    }
+
+                  warning(wp.name);
+                }
+            }
+
+          if(!isSnapping)
+            {
+              if((current.x() > 0 && current.x() < this->width()) &&
+                 (current.y() > 0 && current.y() < this->height()))
+                {
+                  // delete temp WP
+                  __drawPlannedTask();
+                  __showLayer();
+
+                  if(event->state() == QEvent::ShiftButton)
+                    {
+                      // temporärer Weg
+                      if(planning == 3)
+                        {
+                          //verschieben
+                          tempTaskPointList.insert(moveWPindex,new wayPoint);
+                          tempTaskPointList.at(moveWPindex)->name = "";
+                          tempTaskPointList.at(moveWPindex)->origP = _globalMapMatrix.mapToWgs(event->pos());
+                          tempTaskPointList.at(moveWPindex)->projP =
+                                _globalMapMatrix.wgsToMap(tempTaskPointList.at(moveWPindex)->origP.y(),
+                                                      tempTaskPointList.at(moveWPindex)->origP.x());
+                          // hier müssen noch mehr Sachen übergeben werden
+                        }
+                      else
+                        {
+                          //anhängen
+                          tempTaskPointList.append(new wayPoint);
+                          tempTaskPointList.last()->name = "test";
+                          tempTaskPointList.last()->origP = _globalMapMatrix.mapToWgs(event->pos());
+                          tempTaskPointList.last()->projP =
+                                _globalMapMatrix.wgsToMap(tempTaskPointList.last()->origP.y(),
+                                                      tempTaskPointList.last()->origP.x());
+                          // hier müssen noch mehr Sachen übergeben werden
+                        }
+                    tempTask.setWaypointList(tempTaskPointList);
+                    __drawPlannedTask(false);
+                  }
+                prePlanPos = point;
               }
-            prePlanPos = point;
-          
+            else
+              {
+                // außerhalb der Karte
+                prePlanPos.setX(-999);
+                prePlanPos.setY(-999);
+              }
           }
-        else
-          {
-            // außerhalb der Karte
-            prePlanPos.setX(-999);
-            prePlanPos.setY(-999);
-          }
+        planP.end();
       }
-      planP.end();
-    }
 
     //      emit showTaskText(task,_globalMapMatrix.mapToWgs(point));
 
@@ -330,27 +332,32 @@ void Map::mouseMoveEvent(QMouseEvent* event)
     //////////////
   }
 
-  if (!timerAnimate->isActive()) {
-    if(prePos.x() >= 0) {
-      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+  if (!timerAnimate->isActive())
+    {
+      if(prePos.x() >= 0)
+        {
+          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
              prePos.x() - 20, prePos.y() - 20, 40, 40);
-    }
-    flightPoint cP;
+        }
+      flightPoint cP;
 
-    if (f) {
-      if ((index = f->searchPoint(event->pos(), cP)) != -1) {
-        emit showFlightPoint(_globalMapMatrix.mapToWgs(event->pos()), cP);
-        prePos = _globalMapMatrix.map(cP.projP);
-        preIndex = index;
-        bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
-      }
-      else {
-        emit showPoint(_globalMapMatrix.mapToWgs(event->pos()));
-        prePos.setX(-50);
-        prePos.setY(-50);
-      }
+      if(f)
+        {
+          if ((index = f->searchPoint(event->pos(), cP)) != -1)
+            {
+              emit showFlightPoint(_globalMapMatrix.mapToWgs(event->pos()), cP);
+              prePos = _globalMapMatrix.map(cP.projP);
+              preIndex = index;
+              bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+            }
+          else
+            {
+              emit showPoint(_globalMapMatrix.mapToWgs(event->pos()));
+              prePos.setX(-50);
+              prePos.setY(-50);
+            }
+        }
     }
-  }
 }
 
 void Map::__displayMapInfo(QPoint current)
@@ -540,7 +547,6 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
 
   bool found = __getTaskWaypoint(current, &wp, taskPointList);
 
-
   if(!taskPointList.isEmpty() && event->state() == QEvent::ControlButton)
     {
       // gleicher Punkt --> löschen
@@ -553,8 +559,6 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
             }
         }
      }
-
-
 
   if(event->button() == LeftButton)
     {
@@ -570,6 +574,9 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
               taskPointList.last()->origP = wp.origP;
               taskPointList.last()->elevation = wp.elevation;
               taskPointList.last()->projP = wp.projP;
+              taskPointList.at(moveWPindex)->sector1 = 1;
+              taskPointList.at(moveWPindex)->sector2 = 1;
+              taskPointList.at(moveWPindex)->sectorFAI = 1;
               // hier müssen noch mehr Sachen übergeben werden
             }
           else if(planning == 2)
@@ -600,6 +607,9 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
               taskPointList.at(moveWPindex)->origP = wp.origP;
               taskPointList.at(moveWPindex)->elevation = wp.elevation;
               taskPointList.at(moveWPindex)->projP = wp.projP;
+              taskPointList.at(moveWPindex)->sector1 = 1;
+              taskPointList.at(moveWPindex)->sector2 = 1;
+              taskPointList.at(moveWPindex)->sectorFAI = 1;
               // hier müssen noch mehr Sachen übergeben werden
             } //planning == 3
         } // found
@@ -635,6 +645,9 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
                   w->surface = waypointDlg->getSurface();
                   w->comment = waypointDlg->comment->text();
                   w->isLandable = waypointDlg->isLandable->isChecked();
+                  w->sector1 = 1;
+                  w->sector2 = 1;
+                  w->sectorFAI = 1;
 
                   taskPointList.append(w);
                 }
@@ -649,6 +662,9 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
       prePlanPos.setX(-999);
       prePlanPos.setY(-999);
       planning = 2;
+
+      emit taskPlanningEnd();
+      return;
     }
 
   // Aufgabe zeichnen
@@ -660,10 +676,7 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
       __drawPlannedTask();
       __showLayer();
     }
-
-
 }
-
 
 void Map::mousePressEvent(QMouseEvent* event)
 {
@@ -672,14 +685,10 @@ void Map::mousePressEvent(QMouseEvent* event)
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
           prePos.x() - 20, prePos.y() - 20, 40, 40);
 
-
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
 
   const QPoint current = event->pos();
-
-//  bool shiftButton = event->state() & ShiftButton;
-
 
   SinglePoint *hitElement;
   QString text;
@@ -690,9 +699,8 @@ void Map::mousePressEvent(QMouseEvent* event)
   if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
 
   BaseFlightElement *f = _globalMapContents.getFlight();
-  if (f != 0) {
-    QList<wayPoint> taskPointList = f->getWPList();
-  }
+  if (f != 0)
+      QList<wayPoint> taskPointList = f->getWPList();
 
   if(event->button() == MidButton)
     {
@@ -703,7 +711,6 @@ void Map::mousePressEvent(QMouseEvent* event)
     }
 
   if(planning)
-
     {
       // graphical Planning
       __graphicalPlanning(current, event);
@@ -798,122 +805,123 @@ void Map::__drawGrid()
   QPainter gridP(&pixGrid);
   gridP.setBrush(NoBrush);
 
-      // die Kanten des Bereichs
-      const int lon1 = mapBorder.left() / 600000 - 1;
-      const int lon2 = mapBorder.right() / 600000 + 1;
-      const int lat1 = mapBorder.top() / 600000 + 1;
-      const int lat2 = mapBorder.bottom() / 600000 - 1;
+  // die Kanten des Bereichs
+  const int lon1 = mapBorder.left() / 600000 - 1;
+  const int lon2 = mapBorder.right() / 600000 + 1;
+  const int lat1 = mapBorder.top() / 600000 + 1;
+  const int lat2 = mapBorder.bottom() / 600000 - 1;
 
-      // Step between two degree-lines (in 1/60 degree)
+  // Step between two degree-lines (in 1/60 degree)
+  int step = 60;
+  int gridStep = 1;
+  int lineWidth = 1;
 
-      int step = 60;
-      int gridStep = 1;
-      int lineWidth = 1;
+  switch(_globalMapMatrix.getScaleRange())
+  	{
+	    case 0:
+    	  step = 10;
+	      break;
+    	case 1:
+	      step = 30;
+    	  break;
+    	case 2:
+	      gridStep = 2;
+    	  break;
+    	default:
+	      gridStep = 4;
+  	}
 
-      switch(_globalMapMatrix.getScaleRange())
-	{
-	case 0:
-	  step = 10;
-	  break;
-	case 1:
-	  step = 30;
-	  break;
-	case 2:
-	  gridStep = 2;
-	  break;
-	default:
-	  gridStep = 4;
-	}
+  QPoint cP, cP2;
 
-      QPoint cP, cP2;
+  // First the latitudes:
+  for(int loop = 0; loop < (lat1 - lat2 + 1) ; loop += gridStep)
+	  {
+	    int size = (lon2 - lon1 + 1) * 10;
+  	  QPointArray pointArray(size);
 
-      // First the latitudes:
-      for(int loop = 0; loop < (lat1 - lat2 + 1) ; loop += gridStep)
-	{
-	  int size = (lon2 - lon1 + 1) * 10;
-	  QPointArray pointArray(size);
-
-	  for(int lonloop = 0; lonloop < size; lonloop++)
-	    {
-	      cP = _globalMapMatrix.wgsToMap( ( lat2 + loop ) * 600000,
+	    for(int lonloop = 0; lonloop < size; lonloop++)
+	      {
+	        cP = _globalMapMatrix.wgsToMap( ( lat2 + loop ) * 600000,
 					      ( lon1 + ( lonloop * 0.1 ) ) * 600000);
-	      pointArray.setPoint(lonloop, cP);
-	    }
+	        pointArray.setPoint(lonloop, cP);
+  	    }
 
-	  // Draw the small lines between:
-	  int number = (int) (60.0 / step);
-	  for(int loop2 = 1; loop2 < number; loop2++)
-	    {
-	      QPointArray pointArraySmall(size);
+	    // Draw the small lines between:
+	    int number = (int) (60.0 / step);
+  	  for(int loop2 = 1; loop2 < number; loop2++)
+	      {
+	        QPointArray pointArraySmall(size);
 
-	      for(int lonloop = 0; lonloop < size; lonloop++)
-		{
-		  cP = _globalMapMatrix.wgsToMap(
-						 ( lat2 + loop + ( loop2 * ( step / 60.0 ) ) ) * 600000,
-						 (lon1 + (lonloop * 0.1)) * 600000);
-		  pointArraySmall.setPoint(lonloop, cP);
-		}
-	      if(loop2 == (number / 2.0))
-		{
-		  gridP.setPen(QPen(QColor(0,0,0), 1, DashLine));
-		  gridP.drawPolyline(_globalMapMatrix.map(pointArraySmall));
-		}
-	      else
-		{
-		  gridP.setPen(QPen(QColor(0,0,0), 1, DotLine));
-		  gridP.drawPolyline(_globalMapMatrix.map(pointArraySmall));
-		}
-	    }
-	  // Draw the main lines
-	  gridP.setPen(QPen(QColor(0,0,0), 1));
-	  gridP.drawPolyline(_globalMapMatrix.map(pointArray));
-	}
+  	      for(int lonloop = 0; lonloop < size; lonloop++)
+	        	{
+        		  cP = _globalMapMatrix.wgsToMap(
+				    		 ( lat2 + loop + ( loop2 * ( step / 60.0 ) ) ) * 600000,
+						     (lon1 + (lonloop * 0.1)) * 600000);
+        		  pointArraySmall.setPoint(lonloop, cP);
+        		}
+  	
+          if(loop2 == (number / 2.0))
+    		    {
+        		  gridP.setPen(QPen(QColor(0,0,0), 1, DashLine));
+        		  gridP.drawPolyline(_globalMapMatrix.map(pointArraySmall));
+        		}
+	        else
+        		{
+        		  gridP.setPen(QPen(QColor(0,0,0), 1, DotLine));
+        		  gridP.drawPolyline(_globalMapMatrix.map(pointArraySmall));
+        		}
+  	    }
+	    // Draw the main lines
+  	  gridP.setPen(QPen(QColor(0,0,0), 1));
+	    gridP.drawPolyline(_globalMapMatrix.map(pointArray));
+  	}
 
-      // Now the longitudes:
-      for(int loop = lon1; loop <= lon2; loop += gridStep)
-	{
-	  cP = _globalMapMatrix.wgsToMap(lat1 * 600000, (loop * 600000));
-	  cP2 = _globalMapMatrix.wgsToMap(lat2 * 600000, (loop * 600000));
+  // Now the longitudes:
+  for(int loop = lon1; loop <= lon2; loop += gridStep)
+	  {
+  	  cP = _globalMapMatrix.wgsToMap(lat1 * 600000, (loop * 600000));
+	    cP2 = _globalMapMatrix.wgsToMap(lat2 * 600000, (loop * 600000));
 
-	  // Draw the main longitudes:
-	  gridP.setPen(QPen(QColor(0,0,0), 1));
-	  gridP.drawLine(_globalMapMatrix.map(cP), _globalMapMatrix.map(cP2));
+  	  // Draw the main longitudes:
+	    gridP.setPen(QPen(QColor(0,0,0), 1));
+	    gridP.drawLine(_globalMapMatrix.map(cP), _globalMapMatrix.map(cP2));
 
-	  // Draw the small lines between:
-	  int number = (int) (60.0 / step);
+  	  // Draw the small lines between:
+	    int number = (int) (60.0 / step);
 
-	  for(int loop2 = 1; loop2 < number; loop2++)
-	    {
-	      cP = _globalMapMatrix.wgsToMap((lat1 * 600000),
-					     ((loop + (loop2 * step / 60.0)) * 600000));
+  	  for(int loop2 = 1; loop2 < number; loop2++)
+	      {
+	        cP = _globalMapMatrix.wgsToMap((lat1 * 600000),
+			  	    ((loop + (loop2 * step / 60.0)) * 600000));
 
-	      cP2 = _globalMapMatrix.wgsToMap((lat2 * 600000),
+  	      cP2 = _globalMapMatrix.wgsToMap((lat2 * 600000),
 					      ((loop + (loop2 * step / 60.0)) * 600000));
 
-	      if(loop2 == (number / 2.0))
-		gridP.setPen(QPen(QColor(0,0,0), 1, DashLine));
-	      else
-		gridP.setPen(QPen(QColor(0,0,0), lineWidth, DotLine));
-	      gridP.drawLine(_globalMapMatrix.map(cP), _globalMapMatrix.map(cP2));
-	    }
-	}
-      gridP.end();
-    }
+  	      if(loop2 == (number / 2.0))
+              gridP.setPen(QPen(QColor(0,0,0), 1, DashLine));
+	        else
+              gridP.setPen(QPen(QColor(0,0,0), lineWidth, DotLine));
+	
+          gridP.drawLine(_globalMapMatrix.map(cP), _globalMapMatrix.map(cP2));
+  	    }
+	  }
+  gridP.end();
+}
 
-  void Map::__drawMap()
-    {
-      QPainter aeroP(&pixAero);
-      QPainter airSpaceP(&pixAirspace);
-      QPainter uMapP(&pixUnderMap);
-      QPainter isoMapP(&pixIsoMap);
-      QPainter mapMaskP(&bitMapMask);
-      QPainter airspaceMaskP(&bitAirspaceMask);
+void Map::__drawMap()
+{
+  QPainter aeroP(&pixAero);
+  QPainter airSpaceP(&pixAirspace);
+  QPainter uMapP(&pixUnderMap);
+  QPainter isoMapP(&pixIsoMap);
+  QPainter mapMaskP(&bitMapMask);
+  QPainter airspaceMaskP(&bitAirspaceMask);
 
-      airspaceRegList->clear();
+  airspaceRegList->clear();
 
-      extern MapContents _globalMapContents;
+  extern MapContents _globalMapContents;
 
-      pixIsoMap.fill(QColor(96,128,248));
+  pixIsoMap.fill(QColor(96,128,248));
 
   _globalMapContents.drawIsoList(&isoMapP, &mapMaskP);
 
@@ -1020,52 +1028,44 @@ void Map::__drawFlight()
 void Map::__drawPlannedTask(bool solid)
 {
 //warning("Map::__drawPlannedTask()");
-  extern const MapMatrix _globalMapMatrix;
+//  extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
 
   QPainter planP;
   FlightTask* task;
 
   if(solid)
-    {
       task = (FlightTask *)_globalMapContents.getFlight();
-    }
   else
-    {
        task = &tempTask;
+
+  if (task && task->getTypeID() == BaseMapElement::Task)
+    {
+      QList<wayPoint> WPList = task->getWPList();
+
+      // Strecke zeichnen
+      if(solid)
+          planP.begin(&pixPlan);
+      else
+          planP.begin(this);
+
+      QPainter planPMask(&bitPlanMask);
+      bitPlanMask.fill(Qt::color0);
+      bitFlightMask.fill(Qt::color0);
+      pixPlan.fill(white);
+      pixFlight.fill(white);
+
+      QPen drawP(QColor(170,0,0), 5);
+      drawP.setJoinStyle(Qt::MiterJoin);
+      planP.setBrush(NoBrush);
+      planP.setPen(drawP);
+
+      // Aufgabe mit Sektoren
+      task->drawMapElement(&planP,&planPMask);
+      emit showTaskText(task);
+      planPMask.end();
+      planP.end();
     }
-
-  if (task && task->getTypeID() == BaseMapElement::Task) {
-    QList<wayPoint> WPList = task->getWPList();
-
-    // Strecke zeichnen
-
-
-    if(solid)
-      {
-        planP.begin(&pixPlan);
-      }
-    else
-      {
-        planP.begin(this);
-      }
-    QPainter planPMask(&bitPlanMask);
-    bitPlanMask.fill(Qt::color0);
-    bitFlightMask.fill(Qt::color0);
-    pixPlan.fill(white);
-    pixFlight.fill(white);
-
-    QPen drawP(QColor(170,0,0), 5);
-    drawP.setJoinStyle(Qt::MiterJoin);
-    planP.setBrush(NoBrush);
-    planP.setPen(drawP);
-
-    // Aufgabe mit Sektoren
-    task->drawMapElement(&planP,&planPMask);
-    emit showTaskText(task);
-    planPMask.end();
-    planP.end();
-  }
 }
 
 void Map::resizeEvent(QResizeEvent* event)
@@ -1302,29 +1302,31 @@ void Map::slotCenterToTask()
 
   BaseFlightElement *f = _globalMapContents.getFlight();
 
-  if (f) {
-    QRect r;
-    switch (f->getTypeID()) {
-    case BaseMapElement::Flight:
-      r = ((Flight *)f)->getTaskRect();
-      break;
-    case BaseMapElement::Task:
-      r = ((FlightTask *)f)->getRect();
-      break;
-    default:
-      return;
+  if(f)
+    {
+      QRect r;
+      switch (f->getTypeID())
+        {
+          case BaseMapElement::Flight:
+            r = ((Flight *)f)->getTaskRect();
+            break;
+          case BaseMapElement::Task:
+            r = ((FlightTask *)f)->getRect();
+            break;
+          default:
+            return;
+        }
+
+      // check if the Rectangle is zero
+      if(!r.isNull())
+        {
+          _globalMapMatrix.centerToRect(r);
+          _globalMapMatrix.createMatrix(this->size());
+          __redrawMap();
+
+          emit changed(this->size());
+        }
     }
-
-    // check if the Rectangle is zero
-    if (!r.isNull())
-      {
-        _globalMapMatrix.centerToRect(r);
-        _globalMapMatrix.createMatrix(this->size());
-        __redrawMap();
-
-        emit changed(this->size());
-      }
-  }
 }
 
 /**
@@ -1340,65 +1342,72 @@ void Map::slotAnimateFlightStart()
   flightPoint cP;
 
   Flight *f = (Flight *)_globalMapContents.getFlight();
-  if (f){
-  	// save this one to speed up timeout code
-    this->flightToAnimate = f;
-    switch(f->getTypeID()) {
-    case BaseMapElement::Flight:
-      f->setAnimationIndex(0);
-      f->setAnimationActive(true);
-      break;
-    case BaseMapElement::FlightGroup:
-		  // loop through all and set animation index to start
-		  QList<Flight> flightList = ((FlightGroup *)f)->getFlightList();
-  		for(unsigned int loop = 0; loop < flightList.count(); loop++){
-  		  f = flightList.at(loop);
-          f->setAnimationIndex(0);
-          f->setAnimationActive(true);
-        }
-      break;
-	}
-	// force redraw
-	// flights will not be visible as nAnimationIndex is zero for all flights to animate.
-	slotRedrawFlight();
+  if(f)
+    {
+  	  // save this one to speed up timeout code
+      flightToAnimate = f;
 
-	// prepare the pixmap for next timeout
-//	__drawFlight();
-//     __showLayer();
+      switch(f->getTypeID())
+        {
+          case BaseMapElement::Flight:
+            f->setAnimationIndex(0);
+            f->setAnimationActive(true);
+            break;
+          case BaseMapElement::FlightGroup:
+		        // loop through all and set animation index to start
+      		  QList<Flight> flightList = ((FlightGroup *)f)->getFlightList();
+  		      for(unsigned int loop = 0; loop < flightList.count(); loop++)
+              {
+          		  f = flightList.at(loop);
+                f->setAnimationIndex(0);
+                f->setAnimationActive(true);
+              }
+            break;
+      	}
+    	// force redraw
+    	// flights will not be visible as nAnimationIndex is zero for all flights to animate.
+    	slotRedrawFlight();
 
-	// save what will be under the flag
-    switch(f->getTypeID()) {
-    case BaseMapElement::Flight:
-		cP = f->getPoint(0);
-       	prePos = _globalMapMatrix.map(cP.projP);
-       	pos = _globalMapMatrix.map(cP.projP);
-        pix = f->getLastAnimationPixmap();
- 	   	bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
-        f->setLastAnimationPos(pos);
-        f->setLastAnimationPixmap(pix);
-   		// put flag
-   		bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2 );
-       break;
-    case BaseMapElement::FlightGroup:
-		  // loop through all and set animation index to start
-		  QList<Flight> flightList = ((FlightGroup *)f)->getFlightList();
-  		for(unsigned int loop = 0; loop < flightList.count(); loop++){
-          cP = f->getPoint(0);
-          pos = _globalMapMatrix.map(cP.projP);
-          pix = f->getLastAnimationPixmap();
-          bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
-          f->setLastAnimationPos(pos);
-          f->setLastAnimationPixmap(pix);
-          // put flag
-          bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2 );
-		}
-      break;
-	}
+    	// prepare the pixmap for next timeout
+//	    __drawFlight();
+//      __showLayer();
 
-    // 50ms multi-shot timer
-    timerAnimate->start( 50, FALSE );
-  }
+    	// save what will be under the flag
+      switch(f->getTypeID())
+        {
+          case BaseMapElement::Flight:
+            cP = f->getPoint(0);
+           	prePos = _globalMapMatrix.map(cP.projP);
+           	pos = _globalMapMatrix.map(cP.projP);
+            pix = f->getLastAnimationPixmap();
+       	   	bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
+            f->setLastAnimationPos(pos);
+            f->setLastAnimationPixmap(pix);
+   	      	// put flag
+         		bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2 );
+           break;
+          case BaseMapElement::FlightGroup:
+		        // loop through all and set animation index to start
+      		  QList<Flight> flightList = ((FlightGroup *)f)->getFlightList();
+    	    	for(unsigned int loop = 0; loop < flightList.count(); loop++)
+              {
+                cP = f->getPoint(0);
+                pos = _globalMapMatrix.map(cP.projP);
+                pix = f->getLastAnimationPixmap();
+                bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
+                f->setLastAnimationPos(pos);
+                f->setLastAnimationPixmap(pix);
+                // put flag
+                bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2 );
+          		}
+            break;
+      	}
+
+      // 50ms multi-shot timer
+      timerAnimate->start( 50, FALSE );
+    }
 }
+
 /**
  * Animation slot.
  * Called for every timeout of the animation timer.
@@ -1412,69 +1421,72 @@ void Map::slotAnimateFlightTimeout()
   QPoint lastpos, pos;
   QPixmap pix;
 
-  if (f){
-    switch(f->getTypeID()) {
-    case BaseMapElement::Flight:
-      f->setAnimationNextIndex();
-      if (f->isAnimationActive())
-	      bDone = false;
-      //write info from current point on statusbar
-      cP = f->getPoint((f->getAnimationIndex()));
-      pos = _globalMapMatrix.map(cP.projP);
-      lastpos = f->getLastAnimationPos();
-      pix = f->getLastAnimationPixmap();
-      emit showFlightPoint(pos, cP);
-      // erase prev indicator-flag
-      bitBlt(&pixBuffer, lastpos.x(), lastpos.y()-32, &pix);
+  if(f)
+    {
+      switch(f->getTypeID())
+        {
+          case BaseMapElement::Flight:
+            f->setAnimationNextIndex();
+            if (f->isAnimationActive())
+	              bDone = false;
+            //write info from current point on statusbar
+            cP = f->getPoint((f->getAnimationIndex()));
+            pos = _globalMapMatrix.map(cP.projP);
+            lastpos = f->getLastAnimationPos();
+            pix = f->getLastAnimationPixmap();
+            emit showFlightPoint(pos, cP);
+            // erase prev indicator-flag
+            bitBlt(&pixBuffer, lastpos.x(), lastpos.y()-32, &pix);
 
-//  bitBlt(&pixBuffer, lastpos.x()-100, lastpos.y()-32, &pix);
-    	// redraw flight up to this point, blt the pixmap onto the already created pixmap
-      __drawFlight();
-      pixFlight.setMask(bitFlightMask);
-      bitBlt(&pixBuffer, 0, 0, &pixFlight);
-      //save for next timeout
-      bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
-      f->setLastAnimationPixmap(pix);
-      f->setLastAnimationPos(pos);
-      // add indicator-flag
-      bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2);
-      break;
-    case BaseMapElement::FlightGroup:
-		  // loop through all and set animation index to start
-		  QList<Flight> flightList = ((FlightGroup*)flightToAnimate)->getFlightList();
-  		for(unsigned int loop = 0; loop < flightList.count(); loop++){
-  		  f = flightList.at(loop);
-          f->setAnimationNextIndex();
-          if (f->isAnimationActive())
- 		      bDone = false;
-          //write info from current point on statusbar
-          cP = f->getPoint((f->getAnimationIndex()));
-          pos = _globalMapMatrix.map(cP.projP);
-          lastpos = f->getLastAnimationPos();
-          pix = f->getLastAnimationPixmap();
-          emit showFlightPoint(pos, cP);
-          // erase prev indicator-flag
-          bitBlt(&pixBuffer, lastpos.x(), lastpos.y()-32, &pix);
-        	// redraw flight up to this point, blt the pixmap onto the already created pixmap
-          __drawFlight();
-          pixFlight.setMask(bitFlightMask);
-          bitBlt(&pixBuffer, 0, 0, &pixFlight);
-          //save for next timeout
-          bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
-          f->setLastAnimationPixmap(pix);
-          f->setLastAnimationPos(pos);
-          // add indicator-flag
-          bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2);
-        }
-      break;
-		}
-  }
+//            bitBlt(&pixBuffer, lastpos.x()-100, lastpos.y()-32, &pix);
+          	// redraw flight up to this point, blt the pixmap onto the already created pixmap
+            __drawFlight();
+            pixFlight.setMask(bitFlightMask);
+            bitBlt(&pixBuffer, 0, 0, &pixFlight);
+            //save for next timeout
+            bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
+            f->setLastAnimationPixmap(pix);
+            f->setLastAnimationPos(pos);
+            // add indicator-flag
+            bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2);
+            break;
+          case BaseMapElement::FlightGroup:
+		        // loop through all and set animation index to start
+      		  QList<Flight> flightList = ((FlightGroup*)flightToAnimate)->getFlightList();
+        		for(unsigned int loop = 0; loop < flightList.count(); loop++)
+              {
+          		  f = flightList.at(loop);
+                f->setAnimationNextIndex();
+                if (f->isAnimationActive())
+ 		                bDone = false;
+                //write info from current point on statusbar
+                cP = f->getPoint((f->getAnimationIndex()));
+                pos = _globalMapMatrix.map(cP.projP);
+                lastpos = f->getLastAnimationPos();
+                pix = f->getLastAnimationPixmap();
+                emit showFlightPoint(pos, cP);
+                // erase prev indicator-flag
+                bitBlt(&pixBuffer, lastpos.x(), lastpos.y()-32, &pix);
+              	// redraw flight up to this point, blt the pixmap onto the already created pixmap
+                __drawFlight();
+                pixFlight.setMask(bitFlightMask);
+                bitBlt(&pixBuffer, 0, 0, &pixFlight);
+                //save for next timeout
+                bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
+                f->setLastAnimationPixmap(pix);
+                f->setLastAnimationPos(pos);
+                // add indicator-flag
+                bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2);
+              }
+            break;
+    		}
+    }
   // force paint event
   paintEvent();
 
 	// if one of the flights still is active, bDone will be false
   if (bDone)
-   timerAnimate->stop();
+    timerAnimate->stop();
 }
 
 /**
@@ -1487,30 +1499,30 @@ void Map::slotAnimateFlightStop()
   Flight *f = (Flight *)_globalMapContents.getFlight();
   QList<Flight> flightList;
 
-  if (!f) {
-    return;
-  }
+  if(!f) return;
 
-  switch (f->getTypeID()) {
-  case BaseMapElement::Flight:
-    flightList.append(f);
-    break;
-  case BaseMapElement::FlightGroup:
-    flightList = ((FlightGroup *)f)->getFlightList();
-    break;
-  default:
-    return;
-  }
+  switch (f->getTypeID())
+    {
+      case BaseMapElement::Flight:
+        flightList.append(f);
+        break;
+      case BaseMapElement::FlightGroup:
+        flightList = ((FlightGroup *)f)->getFlightList();
+        break;
+      default:
+        return;
+    }
 
   // stop animation on user request.
-  if (timerAnimate->isActive()){
-    timerAnimate->stop();
-	  // loop through all and increment animation index
-	  for(unsigned int loop = 0; loop < flightList.count(); loop++){
-      flightList.at(loop)->setAnimationActive(false);
+  if(timerAnimate->isActive())
+    {
+      timerAnimate->stop();
+  	  // loop through all and increment animation index
+	    for(unsigned int loop = 0; loop < flightList.count(); loop++)
+          flightList.at(loop)->setAnimationActive(false);
+
+      slotRedrawFlight();
     }
-    slotRedrawFlight();
-  }
 }
 
 /**
@@ -1525,19 +1537,22 @@ void Map::slotFlightNext()
 
   BaseFlightElement *f = _globalMapContents.getFlight();
 
-  if (f) {
-    if (prePos.x() >= 0){   // only step if crosshair is shown in map.
-       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+  if(f)
+    {
+      if(prePos.x() >= 0)   // only step if crosshair is shown in map.
+        {
+           bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
                    prePos.x() - 20, prePos.y() - 20, 40, 40);
-      // get the next point, preIndex now holds last point
-      if ((index = f->searchGetNextPoint(preIndex, cP)) != -1){
-        emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
-        prePos = _globalMapMatrix.map(cP.projP);
-        preIndex = index;
-        bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
-      }
+          // get the next point, preIndex now holds last point
+          if ((index = f->searchGetNextPoint(preIndex, cP)) != -1)
+            {
+              emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
+              prePos = _globalMapMatrix.map(cP.projP);
+              preIndex = index;
+              bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+            }
+        }
     }
-  }
 }
 
 void Map::slotFlightPrev()
@@ -1549,19 +1564,22 @@ void Map::slotFlightPrev()
 
   BaseFlightElement *f = _globalMapContents.getFlight();
 
-  if (f) {
-    if (prePos.x() >= 0){   // only step if crosshair is shown in map.
-       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-                   prePos.x() - 20, prePos.y() - 20, 40, 40);
-      // get the next point, preIndex now holds last point
-      if ((index = f->searchGetPrevPoint(preIndex, cP)) != -1){
-        emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
-        prePos = _globalMapMatrix.map(cP.projP);
-        preIndex = index;
-        bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
-      }
+  if(f)
+    {
+      if (prePos.x() >= 0)   // only step if crosshair is shown in map.
+        {
+          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+            prePos.x() - 20, prePos.y() - 20, 40, 40);
+          // get the next point, preIndex now holds last point
+          if ((index = f->searchGetPrevPoint(preIndex, cP)) != -1)
+            {
+              emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
+              prePos = _globalMapMatrix.map(cP.projP);
+              preIndex = index;
+              bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+            }
+        }
     }
-  }
 }
 void Map::slotFlightStepNext()
 {
@@ -1572,19 +1590,22 @@ void Map::slotFlightStepNext()
 
   BaseFlightElement *f = _globalMapContents.getFlight();
 
-  if (f) {
-    if (prePos.x() >= 0){   // only step if crosshair is shown in map.
-       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+  if(f)
+    {
+      if (prePos.x() >= 0)   // only step if crosshair is shown in map.
+        {
+          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
                    prePos.x() - 20, prePos.y() - 20, 40, 40);
-      // get the next point, preIndex now holds last point
-      if ((index = f->searchStepNextPoint(preIndex, cP, 10)) != -1){
-        emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
-        prePos = _globalMapMatrix.map(cP.projP);
-        preIndex = index;
-        bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
-      }
+          // get the next point, preIndex now holds last point
+          if((index = f->searchStepNextPoint(preIndex, cP, 10)) != -1)
+            {
+              emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
+              prePos = _globalMapMatrix.map(cP.projP);
+              preIndex = index;
+              bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+            }
+        }
     }
-  }
 }
 
 void Map::slotFlightStepPrev()
@@ -1596,19 +1617,22 @@ void Map::slotFlightStepPrev()
 
   BaseFlightElement *f = _globalMapContents.getFlight();
 
-  if (f) {
-    if (prePos.x() >= 0){   // only step if crosshair is shown in map.
-       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+  if(f)
+    {
+      if (prePos.x() >= 0)   // only step if crosshair is shown in map.
+        {
+          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
                    prePos.x() - 20, prePos.y() - 20, 40, 40);
-      // get the next point, preIndex now holds last point
-      if ((index = f->searchStepPrevPoint(preIndex, cP,10)) != -1){
-        emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
-        prePos = _globalMapMatrix.map(cP.projP);
-        preIndex = index;
-        bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
-      }
+          // get the next point, preIndex now holds last point
+          if ((index = f->searchStepPrevPoint(preIndex, cP,10)) != -1)
+            {
+              emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
+              prePos = _globalMapMatrix.map(cP.projP);
+              preIndex = index;
+              bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+            }
+        }
     }
-  }
 }
 
 void Map::slotFlightHome()
@@ -1620,18 +1644,21 @@ void Map::slotFlightHome()
 
   BaseFlightElement *f = _globalMapContents.getFlight();
 
-  if (f) {
-    if (prePos.x() >= 0){   // only step if crosshair is shown in map.
-       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+  if(f)
+    {
+      if (prePos.x() >= 0)   // only step if crosshair is shown in map.
+        {
+          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
                    prePos.x() - 20, prePos.y() - 20, 40, 40);
-      if ((index = f->searchGetNextPoint(0, cP)) != -1){
-        emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
-        prePos = _globalMapMatrix.map(cP.projP);
-        preIndex = index;
-        bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
-      }
+          if ((index = f->searchGetNextPoint(0, cP)) != -1)
+            {
+              emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
+              prePos = _globalMapMatrix.map(cP.projP);
+              preIndex = index;
+              bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+            }
+        }
     }
-  }
 }
 
 void Map::slotFlightEnd()
@@ -1642,22 +1669,26 @@ void Map::slotFlightEnd()
   int index;
   BaseFlightElement *f = _globalMapContents.getFlight();
 
-  if (f) {
-    if (prePos.x() >= 0){   // only step if crosshair is shown in map.
-       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+  if(f)
+    {
+      if (prePos.x() >= 0)   // only step if crosshair is shown in map.
+        {
+          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
                    prePos.x() - 20, prePos.y() - 20, 40, 40);
 
-      // just a workaround !!!!!!!!!!!!!
-      if (f->getTypeID() == BaseMapElement::Flight) {
-        if ((index = f->searchGetNextPoint(((Flight *)f)->getRouteLength()-1, cP)) != -1){
-          emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
-          prePos = _globalMapMatrix.map(cP.projP);
-          preIndex = index;
-          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+          // just a workaround !!!!!!!!!!!!!
+          if(f->getTypeID() == BaseMapElement::Flight)
+            {
+              if((index = f->searchGetNextPoint(((Flight *)f)->getRouteLength()-1, cP)) != -1)
+                {
+                  emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
+                  prePos = _globalMapMatrix.map(cP.projP);
+                  preIndex = index;
+                  bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+                }
+            }
         }
-      }
     }
-  }
 }
 
 /** No descriptions */
@@ -1671,16 +1702,18 @@ void Map::slotShowCurrentFlight()
   // ersten Zeichnen werden die Rahmen von Flug und Aufgabe
   // bestimmt.
   slotRedrawFlight();
-  if (f) {
-    switch(f->getTypeID()) {
-    case BaseMapElement::Flight:
-      slotCenterToFlight();
-      break;
-    case BaseMapElement::Task:
-      slotCenterToTask();
-      break;
+  if(f)
+    {
+      switch(f->getTypeID())
+        {
+          case BaseMapElement::Flight:
+            slotCenterToFlight();
+            break;
+          case BaseMapElement::Task:
+            slotCenterToTask();
+            break;
+        }
     }
-  }
 }
 /** append a waypoint to the current task */
 void Map::slotAppendWaypoint2Task(wayPoint *p)
@@ -1689,14 +1722,15 @@ void Map::slotAppendWaypoint2Task(wayPoint *p)
   extern MapMatrix _globalMapMatrix;
 
   FlightTask *f = (FlightTask *)_globalMapContents.getFlight();
-  if (f && f->getTypeID() == BaseMapElement::Task && planning) {
-    QList<wayPoint> taskPointList = f->getWPList();
-    p->projP = _globalMapMatrix.wgsToMap(p->origP.y(), p->origP.x());
-    taskPointList.append(p);
-    f->setWaypointList(taskPointList);
-    __drawPlannedTask(true);
-    __showLayer();
-  }
+  if(f && f->getTypeID() == BaseMapElement::Task && planning)
+    {
+      QList<wayPoint> taskPointList = f->getWPList();
+      p->projP = _globalMapMatrix.wgsToMap(p->origP.y(), p->origP.x());
+      taskPointList.append(p);
+      f->setWaypointList(taskPointList);
+      __drawPlannedTask(true);
+      __showLayer();
+    }
 }
 
 /** search for a waypoint
@@ -1715,45 +1749,51 @@ bool Map::__getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint>
   bool found = false;
   SinglePoint *hitElement;
 
-  for (i = 0; i < taskPointList.count(); i++) {
-    tmpPoint = taskPointList.at(i);
-    sitePos = _globalMapMatrix.map(_globalMapMatrix.wgsToMap(tmpPoint->origP.y(), tmpPoint->origP.x()));
-    dX = abs(sitePos.x() - current.x());
-    dY = abs(sitePos.y() - current.y());
+  for(i = 0; i < taskPointList.count(); i++)
+    {
+      tmpPoint = taskPointList.at(i);
+      sitePos = _globalMapMatrix.map(_globalMapMatrix.wgsToMap(tmpPoint->origP.y(), tmpPoint->origP.x()));
+      dX = abs(sitePos.x() - current.x());
+      dY = abs(sitePos.y() - current.y());
 
-    // Abstand entspricht der Icon-Größe.
-    if (dX < delta && dY < delta) {
-      *wp = *tmpPoint;
-      found = true;
-      break;
-    }
-  }
-
-  if (!found) {
-    /*
-    *  Muss für alle Punktdaten durchgeführt werden
-    */
-    QArray<int> contentArray(2);
-    contentArray.at(0) = MapContents::GliderList;
-    contentArray.at(1) = MapContents::AirportList;
-
-    for(unsigned int n = 0; n < contentArray.count(); n++) {
-      for(unsigned int loop = 0; loop < _globalMapContents.getListLength(contentArray.at(n)); loop++) {
-        hitElement = (SinglePoint*)_globalMapContents.getElement(contentArray.at(n), loop);			
-        sitePos = hitElement->getMapPosition();
-        dX = abs(sitePos.x() - current.x());
-        dY = abs(sitePos.y() - current.y());
-
-        if (dX < delta && dY < delta) {
-          wp->name = hitElement->getWPName();
-          wp->origP = hitElement->getWGSPosition();
-          wp->elevation = hitElement->getElevation();
-          wp->projP = hitElement->getPosition();
+      // Abstand entspricht der Icon-Größe.
+      if (dX < delta && dY < delta)
+        {
+          *wp = *tmpPoint;
           found = true;
           break;
         }
-      }
     }
-  }
+
+  if(!found)
+    {
+      /*
+       *  Muss für alle Punktdaten durchgeführt werden
+       */
+      QArray<int> contentArray(2);
+      contentArray.at(0) = MapContents::GliderList;
+      contentArray.at(1) = MapContents::AirportList;
+
+      for(unsigned int n = 0; n < contentArray.count(); n++)
+        {
+          for(unsigned int loop = 0; loop < _globalMapContents.getListLength(contentArray.at(n)); loop++)
+            {
+              hitElement = (SinglePoint*)_globalMapContents.getElement(contentArray.at(n), loop);			
+              sitePos = hitElement->getMapPosition();
+              dX = abs(sitePos.x() - current.x());
+              dY = abs(sitePos.y() - current.y());
+
+              if (dX < delta && dY < delta)
+                {
+                  wp->name = hitElement->getWPName();
+                  wp->origP = hitElement->getWGSPosition();
+                  wp->elevation = hitElement->getElevation();
+                  wp->projP = hitElement->getPosition();
+                  found = true;
+                  break;
+                }
+            }
+        }
+    }
   return found;
 }
