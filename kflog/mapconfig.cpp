@@ -553,6 +553,12 @@ QPen MapConfig::getDrawPen(struct flightPoint* fP)
               break;
           }
         break;
+      case MapConfig::Solid:
+      default:
+        red = 0;
+        green = 100;
+        blue = 200;
+        break;
     }
 
   return QPen(QColor(red, green, blue), width);

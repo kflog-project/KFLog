@@ -119,7 +119,7 @@ class MapConfig : public QObject
      *
      * @see #slotSetFlightDataType
      */
-    enum DrawFlightPoint {Vario, Speed, Altitude, Cycling, Quality};
+    enum DrawFlightPoint {Vario, Speed, Altitude, Cycling, Solid};
 
   public slots:
     /**

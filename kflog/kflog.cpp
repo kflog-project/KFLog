@@ -244,8 +244,6 @@ void KFLogApp::initActions()
 			Key_PageDown, map, SLOT(slotFlightStepPrev()), actionCollection(),
 			"prev_step_flight_point");
 
-
-
   KSelectAction* viewFlightDataType = new KSelectAction(
       i18n("Show Flightdata"), "idea", 0,
       actionCollection(), "view_flight_data");
@@ -258,6 +256,7 @@ void KFLogApp::initActions()
   dataList.append(i18n("Cycling"));
   dataList.append(i18n("Speed"));
   dataList.append(i18n("Vario"));
+  dataList.append(i18n("Solid"));
 
   viewFlightDataType->setItems(dataList);
   // Heavy workaround! MapConfig should tell KFLogApp, which type is selected!
@@ -267,9 +266,10 @@ void KFLogApp::initActions()
       actionCollection(), "flight");
   flightMenu->insert(flightEvaluation);
   flightMenu->insert(taskAndWaypoint);
+  flightMenu->insert(viewFlightDataType);
+  flightMenu->popupMenu()->insertSeparator();
   flightMenu->insert(animateFlightStart);
   flightMenu->insert(animateFlightStop);
-
   flightMenu->insert(stepFlightNext);
   flightMenu->insert(stepFlightPrev);
   flightMenu->insert(stepFlightStepNext);
@@ -669,6 +669,9 @@ void KFLogApp::slotSelectFlightData(int id)
         break;
       case 3:    // Vario
         emit flightDataTypeChanged(MapConfig::Vario);
+        break;
+      case 4:    // Solid color
+        emit flightDataTypeChanged(MapConfig::Solid);
         break;
     }
   map->slotRedrawFlight();
