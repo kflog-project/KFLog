@@ -20,6 +20,8 @@
 #include <dlfcn.h>
 
 #include <sys/stat.h>
+#include <unistd.h>
+#include <pwd.h>
 
 #include <kglobal.h>
 #include <kiconloader.h>
@@ -695,7 +697,8 @@ void RecorderDialog::slotDownloadFlight()
   }
 
   config->setGroup("Path");
-  fileName = config->readEntry("DefaultFlightDirectory") + "/";
+  // If no DefaultFlightDirectory is configured, we must use $HOME instead of the root-directory
+  fileName = config->readEntry("DefaultFlightDirectory", getpwuid(getuid())->pw_dir) + "/";
 
   int flightID(item->text(colID).toInt() - 1);
 

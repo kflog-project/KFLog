@@ -1,5 +1,19 @@
 $Id$
 
+
+2003-04-10 Heiner <heiner@kflog.org>
+
+  * Fixed a small bug in RecorderDialog, which occurred while downloading a
+    flight when no default flight directory was configured.
+
+
+2003-04-09 Florian <florian@kflog.org>
+
+  * Added Helpwindow.
+
+  * Changed the printer-dialog the way, that the configuration-tabs are opened.
+
+
 2003-02-28 Harry <harry@kflog.org>
 
   * Replaced wayPoint struct with Waypoint class
