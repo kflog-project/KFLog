@@ -1,8 +1,6 @@
 <tip category="KFLog|General">
 <html>
-<p>...that KFLog desperately needs some documentation, and that these
-tips are just a simple way of getting at least <i>some</i> information
-to the user?</p>
+<p>...that a real usermanual for KFLog is underway?</p>
 </html>
 </tip>
 
@@ -146,7 +144,9 @@ and a gliderpilot to get some programming experience back in 1998?</p>
   <li>cycling.</li>
 </ul>
 You can also use a plain solid line of course.<br>
-Choose Show Flightdata from the Flight menu to select one of these options.</p>
+Choose Show Flightdata from the Flight menu to select one of these options.
+Be aware though that this function is not enabled if you zoom out too far.
+If you don't see any colors, just zoom in on a detail of the flight.</p>
 </html>
 
 </tip>
