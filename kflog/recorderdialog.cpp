@@ -148,7 +148,7 @@ void RecorderDialog::__addSettingsPage()
   selectBaudLabel = new QLabel(i18n("Baud"), settingsPage);
   selectURL = new KLineEdit(settingsPage, "URL-selection");
   selectURLLabel = new QLabel(i18n("URL"), settingsPage);
-  
+
   selectPort->insertItem("ttyS0");
   selectPort->insertItem("ttyS1");
   selectPort->insertItem("ttyS2");
@@ -210,7 +210,7 @@ void RecorderDialog::__addSettingsPage()
   sLayout->addWidget(selectURLLabel, 3, 1, AlignRight);
   sLayout->addMultiCellWidget(selectURL, 3, 3, 2, 6);
   __setRecorderConnectionType(FlightRecorderPluginBase::none);
-  
+
   sLayout->addWidget(cmdConnect, 5, 6, AlignRight);
 
   sLayout->addMultiCellWidget(infoGroup, 8, 14, 0, 7);
@@ -676,7 +676,7 @@ void RecorderDialog::slotConnectRecorder()
     isConnected=false;
     return; //If it's not one of the above, we don't know the connection method, so how can we connect?!
   }
-  
+
   if (isConnected) {
     slotEnablePages();
     slotReadDatabase();
@@ -722,7 +722,7 @@ void RecorderDialog::slotReadFlightList()
 {
   if (!activeRecorder)
     return;
-    
+
   // Jetzt muss das Flugverzeichnis vom Logger gelesen werden!
   // Now we need to read the flightdeclaration from the logger!
 
@@ -771,8 +771,6 @@ void RecorderDialog::slotReadFlightList()
 void RecorderDialog::slotDownloadFlight()
 {
   QListViewItem *item = flightList->currentItem();
-  //char* error;
-  //void* funcH;
   int ret;
   QString errorDetails;
 
@@ -798,18 +796,11 @@ void RecorderDialog::slotDownloadFlight()
   }
   warning(fileName);
 
-  /*
-  funcH = dlsym(libHandle, "downloadFlight");
-
-  CHECK_ERROR
-
-  ret = ((int (*)(int, int, char*))funcH)(flightID, !useFastDownload->isChecked(), (char *)(const char*)fileName);
-  */
   if (!activeRecorder) return;
 
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
   ret = activeRecorder->downloadFlight(flightID,!useFastDownload->isChecked(),fileName);
-  
+
   QApplication::restoreOverrideCursor();
   if (ret == FR_ERROR) {
     warning("ERROR");
@@ -830,7 +821,6 @@ void RecorderDialog::slotDownloadFlight()
 
 void RecorderDialog::slotWriteDeclaration()
 {
-  //void* funcH;
   int ret;
   FRTaskDeclaration taskDecl;
   taskDecl.pilotA = pilotName->text();
@@ -849,7 +839,7 @@ void RecorderDialog::slotWriteDeclaration()
     return;
   }
 
-  
+
   if (taskSelection->currentItem() >= 0) {
     QPtrList<Waypoint> wpList = tasks->at(taskSelection->currentItem())->getWPList();
 
@@ -878,14 +868,14 @@ void RecorderDialog::slotWriteDeclaration()
       }
       return;
     }
-    
+
     warning("   ... ready (%d)", ret);
     KMessageBox::information(this,
                        i18n("The declaration was uploaded to the recorder."),
                        i18n("Declaration upload"),
                        "ShowDeclarationUploadSuccesReport");
   }
-   
+
 }
 
 int RecorderDialog::__fillDirList()
@@ -901,14 +891,13 @@ int RecorderDialog::__fillDirList()
 int RecorderDialog::__openLib(const QString& libN)
 {
   char* error;
-  //void* funcH;
 
   if (libName==libN) {
     warning("OK, Lib allready open.");
     return 1;
   }
   qDebug("Opening lib %s...",libN.latin1());
-  
+
   libName = "";
   apiID->setText("");
   serID->setText("");
@@ -917,7 +906,7 @@ int RecorderDialog::__openLib(const QString& libN)
   gldType->setText("");
   gldID->setText("");
   compID->setText("");
-  
+
   libHandle = dlopen(KGlobal::dirs()->findResource("lib", libN), RTLD_NOW);
 
   CHECK_ERROR_RETURN
@@ -935,12 +924,12 @@ int RecorderDialog::__openLib(const QString& libN)
     warning("No recorder object returned!");
     return 0;
   }
-  
+
   apiID->setText(activeRecorder->getLibName());
-  
+
   isOpen = true;
   libName=libN;
-  
+
   return 1;
 }
 
@@ -982,7 +971,7 @@ void RecorderDialog::slotReadTasks()
                        i18n("Task download"));
     return;
   }
-    
+
   ret = activeRecorder->readTasks(tasks);
   if (ret<FR_OK) {
     if ((errorDetails=activeRecorder->lastError())!="") {
@@ -1031,7 +1020,7 @@ void RecorderDialog::slotWriteTasks()
   frTasks.setAutoDelete(true);
   int cnt=0;
   QString errorDetails;
-  
+
   if (!activeRecorder) return;
   if (!activeRecorder->capabilities().supUlTask) {
     KMessageBox::sorry(this,
@@ -1041,7 +1030,7 @@ void RecorderDialog::slotWriteTasks()
   }
 
   maxNrTasks = activeRecorder->capabilities().maxNrTasks;
-  
+
   maxNrWayPointsPerTask = activeRecorder->capabilities().maxNrWaypointsPerTask;
 
   if (maxNrTasks == 0) {
@@ -1119,7 +1108,7 @@ void RecorderDialog::slotReadWaypoints()
   QPtrList<Waypoint> frWaypoints;
   Waypoint *wp;
   QString errorDetails;
-  
+
   if (!activeRecorder) return;
   if (!activeRecorder->capabilities().supDlWaypoint) {
     KMessageBox::sorry(this,
@@ -1127,7 +1116,7 @@ void RecorderDialog::slotReadWaypoints()
                        i18n("Waypoint download"));
     return;
   }
-  
+
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
   ret = activeRecorder->readWaypoints(&frWaypoints);
   if (ret<FR_OK) {
@@ -1158,7 +1147,7 @@ void RecorderDialog::slotReadWaypoints()
                        i18n("%1 waypoints have been downloaded from the recorder.").arg(cnt),
                        i18n("Waypoint download"),
                        "ShowWaypointDownloadSuccesReport");
-    
+
   }
 
 }
@@ -1178,7 +1167,7 @@ void RecorderDialog::slotWriteWaypoints()
                                          i18n("Upload"),
                                          "showWaypointUploadConfirmation") == KMessageBox::Cancel)
     return;
-  
+
   if (!activeRecorder) return;
 
   if (!activeRecorder->capabilities().supUlWaypoint) {
@@ -1305,7 +1294,7 @@ void RecorderDialog::slotEnablePages()
       cmdUploadWaypoints->setEnabled (cap.supUlWaypoint);
       cmdDownloadWaypoints->setEnabled (cap.supDlWaypoint);
     }
-    
+
     //taskpage
     if (cap.supDlTask || cap.supUlTask ) {
       taskPage->setEnabled(true);
@@ -1321,7 +1310,7 @@ void RecorderDialog::slotEnablePages()
     //pilotpage  -  not available yet
     //configpage -  not available yet
   }
-    
+
 }
 
 /** No descriptions */
@@ -1345,7 +1334,7 @@ void RecorderDialog::slotRecorderTypeChanged(const QString&) // name)
   }
   __setRecorderConnectionType(activeRecorder->getTransferMode());
   __setRecorderCapabilities();
-  
+
 }
 
 /** No descriptions */
@@ -1353,10 +1342,10 @@ void RecorderDialog::__addPilotPage()
 {
 
   return; //We are not going to do that now, since there is nothing to display
-  
+
 /*  pilotPage = addPage(i18n("Pilots"), i18n("List of pilots"),
                       KGlobal::instance()->iconLoader()->loadIcon("pilot", KIcon::NoGroup, KIcon::SizeLarge));
-*/                      
+*/
   pilotPage = addPage(i18n("Pilots"), i18n("List of pilots"),
                       KGlobal::instance()->iconLoader()->loadIcon("identity",
                                                                   KIcon::NoGroup,
