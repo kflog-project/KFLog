@@ -150,6 +150,10 @@ private:
    */
   bool check4Device();
   /**
+   * try to sync the transfer rate with connected recorder
+   */
+  bool AutoBaud();
+  /**
    * write byte
    */
   int wb(unsigned char c);
@@ -167,7 +171,7 @@ private:
   bool readMemSetting();
   bool defMem(struct flightTable *ft);
   bool getMemSection(unsigned char *memSection, int size);
-  bool getLoggerData(unsigned char *memSection, int sectionSize, unsigned char **memContents, int *contentSize);
+  bool getLoggerData(unsigned char *memSection, int sectionSize);
   bool convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last);
   unsigned char *readData(unsigned char *buf_p, int count);
   unsigned char *writeData(unsigned char *buf_p, int count);

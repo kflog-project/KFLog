@@ -127,6 +127,10 @@ unsigned char STX = 0x02, /* Command prefix like AT for modems        */
                                   // appears, then reading the 'A'-record
                                   // failed.
 
+  unsigned char *memContents; /* buffer to hold igc contents */
+  int contentSize;            /* length of igc file buffer   */
+
+
 void debugHex (const void* buf, unsigned int size)
 {
   for (unsigned int ix1=0; ix1 < size; ix1+=0x10)
@@ -353,7 +357,7 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
     }
 
     downloadFlight(0,0,tmpigc.name());
-
+  
     for (i=0; i<flightCount; i++) {
       dirList->at(i)->shortFileName.sprintf("%c%c%c%c%s%c.igc",
                                    c36[dirList->at(i)->firstTime.tm_year % 10],
@@ -423,6 +427,7 @@ int Filser::getBasicData(FR_BasicData& data)
   }
 
   _errorinfo = "";
+  int lc = 0 ;
 
   tcflush(portID, TCIOFLUSH);
 
@@ -443,16 +448,20 @@ int Filser::getBasicData(FR_BasicData& data)
   // following check4Device() below failed too of course and terminated this
   // function.
   //
-  newTermEnv.c_cc[VTIME] = 20; // wait at least 2 sec for no more data.
-  tcsetattr(portID, TCSANOW, &newTermEnv);
+  // newTermEnv.c_cc[VTIME] = 20; // wait at least 2 sec for no more data.
+                               // 13.03.2005 Fughe: Maybe to long and newer
+                               // recorders like the LX7000 from Markus start
+                               // sending NMEA data. Keep it to the default value.
+  // tcsetattr(portID, TCSANOW, &newTermEnv);
   while ((buffersize + buf - bufP) > 0) {
     bufP = readData(bufP, (buffersize + buf - bufP));
     if (bufP == bufP_o) // No more data
       break;
     bufP_o = bufP;
   }
-  newTermEnv.c_cc[VTIME] = 1; // reset the wait time to 0.1 sec.
-  tcsetattr(portID, TCSANOW, &newTermEnv);
+  // newTermEnv.c_cc[VTIME] = 1; // reset the wait time to 0.1 sec.
+                                 // 13.03.2005 Fughe: Keep it default.
+  // tcsetattr(portID, TCSANOW, &newTermEnv);
 
   // uncomment this if you want to analyze the buffer
   // debugHex (buf, buffersize);
@@ -485,8 +494,14 @@ int Filser::getBasicData(FR_BasicData& data)
   }
 
   // during sleep, hopefully the extra bytes will arrive and can be flushed savely.
-  sleep (1);
-  tcflush(portID, TCIOFLUSH);
+  //sleep (1);
+  //tcflush(portID, TCIOFLUSH);
+  //
+  // 13.03.05 Fughe: Maybe it is saver to throw them away.
+  //                 check4Device() is doing this now too by 'while(0xff != rb());'.
+  while(0xff != rb())
+    lc++;
+  warning ("while _basicData: %d + %d (%d)", bufP - buf, lc, BUFSIZE);
 
   if (!check4Device()) {
     _keepalive->blockSignals(false);
@@ -549,8 +564,6 @@ int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileNam
                           /* for download. The table is      */
                           /* 0x20 bytes long. Two bytes for  */
                           /* a block.                        */
-  unsigned char *memContents = 0; /* buffer to hold igc contents */
-  int contentSize; /* length of igc file buffer */
   FILE *f;
 
   _errorinfo = "";
@@ -558,7 +571,7 @@ int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileNam
   struct flightTable *ft = flightIndex.at(flightID);
   if (!check4Device() || !defMem(ft) ||
       !getMemSection(memSection, sizeof(memSection)) ||
-      !getLoggerData(memSection, sizeof(memSection), &memContents, &contentSize)) {
+      !getLoggerData(memSection, sizeof(memSection))) {
     rc = FR_ERROR;
   }
   else {
@@ -653,6 +666,12 @@ int Filser::openRecorder(const QString& pName, int baud)
     _isConnected = true;
     _da4BufferValid = false;
 
+    if(!AutoBaud()){
+      warning(i18n("No baudrate found!"));
+      _isConnected = false;
+      return FR_ERROR;
+    };
+    
     _keepalive->start (1000); // one second timer
     return FR_OK;
     }
@@ -727,18 +746,18 @@ bool Filser::getMemSection(unsigned char *memSection, int size)
   return true;
 }
 
-bool Filser::getLoggerData(unsigned char *memSection, int sectionSize, unsigned char **memContents, int *contentSize)
+bool Filser::getLoggerData(unsigned char *memSection, int sectionSize)
 {
   unsigned char *bufP, *bufP2;
   /*
    * Calculate the size the of the memory buffer
    */
-  *contentSize = 0;
+  contentSize = 0;
   for(int i = 0; i < (sectionSize / 2); i++) {
     if(!(memSection[2 * i] | memSection[(2 * i) + 1])) {
       break;
     }
-    *contentSize += (memSection[2 * i] << 8) + memSection[(2 * i) + 1];
+    contentSize += (memSection[2 * i] << 8) + memSection[(2 * i) + 1];
   }
   /*
    * plus 0x100 bytes for the extra data of get_extra_data()
@@ -750,8 +769,8 @@ bool Filser::getLoggerData(unsigned char *memSection, int sectionSize, unsigned 
    * plus one byte for the CRC byte.
    */
 
-  *memContents = new unsigned char [(*contentSize) + 1]; // for CRC
-  bufP = bufP2 = *memContents;
+  memContents = new unsigned char [(contentSize) + 1]; // for CRC
+  bufP = bufP2 = memContents;
 
   // read each memory section
   for(int i = 0; i < (sectionSize / 2); i++) {
@@ -768,9 +787,9 @@ bool Filser::getLoggerData(unsigned char *memSection, int sectionSize, unsigned 
     }
     if (calcCrcBuf(bufP2, count) != bufP2[count]) {
       _errorinfo = i18n("get_logger_data(): Bad CRC");
-      delete *memContents;
-      *memContents = 0;
-      *contentSize = 0;
+      delete memContents;
+      memContents = 0;
+      contentSize = 0;
       return false;
     }
     bufP2 += count;
@@ -1542,13 +1561,14 @@ bool Filser::readMemSetting()
  * if the LX-device is in TIMEOUT countdown
  * mode waiting for CONNECT.
  */
-bool Filser::check4Device()
+bool Filser::AutoBaud()
 {
   speed_t autospeed;
   int     autobaud = 38400;
   bool rc = false;
   time_t t1;
   _errorinfo = "";
+  int lc = 0 ;
 
   // ( - Christian - )
   // Give the recorder the time of 1 sec to answer.
@@ -1565,6 +1585,13 @@ bool Filser::check4Device()
                                 // arrived.
     wb(SYN);
     tcdrain (portID);
+
+    while(0xff != rb())       // 12.03.2005 Fughe: Make the stream really
+      lc++;                   //                   empty!
+    warning ("while _AB: %d", lc);
+    wb(SYN);
+    tcdrain (portID);
+
     int ret = rb();
     if (ret == ACK) {
       rc = true;
@@ -1626,6 +1653,110 @@ bool Filser::check4Device()
     }
 
     tcsetattr(portID, TCSANOW, &newTermEnv);
+
+  }
+  return rc;
+}
+
+/**
+ * Check presence of LX-device and make CONNECT
+ *
+ * Necessary wakeup before a command
+ * if the LX-device is in TIMEOUT countdown
+ * mode waiting for CONNECT.
+ */
+bool Filser::check4Device()
+{
+  //speed_t autospeed;
+  //int     autobaud = 38400;
+  bool rc = false;
+  time_t t1;
+  _errorinfo = "";
+  int lc = 0 ;
+
+  // ( - Christian - )
+  // Give the recorder the time of 1 sec to answer.
+  //
+  // It is not the delay, it is the position of tcflush, that is good
+  // medicine for my LX20 not to whistle. Tcflush belongs after while() and
+  // before wb(SYN).
+
+  t1 = time(NULL);
+  while (!breakTransfer) {
+    tcflush(portID, TCIOFLUSH); // Make sure the next ACK comes from the
+                                // following wb(SYN). And remove the
+                                // position data, that might have been
+                                // arrived.
+    wb(SYN);
+    tcdrain (portID);
+
+    while(0xff != rb())         // 12.03.2005 Fughe: Make the stream really
+      lc++;                     //                   empty!
+    warning ("while c4d: %d", lc);
+    wb(SYN);
+    tcdrain (portID);
+
+    int ret = rb();
+    if (ret == ACK) {
+      rc = true;
+      break;
+    }
+    else {
+      // waiting 10 secs. for response
+//      qDebug ("ret = %x", ret);
+      if (time(NULL) - t1 > 10) {
+        _errorinfo = i18n("No response from recorder within 10 seconds!\nDid you press WRITE/RTE?");
+        rc = false;
+        break;
+      }
+    }
+
+//    //
+//    // ( - Christian - )
+//    //
+//    // Autobauding :-)
+//    //
+//    // this way we do autobauding each time this function is called.
+//    // Shouldn't we do it in OpenRecorder?
+//    if     (autobaud >= 38400) { autobaud = 19200; autospeed = B38400; }
+//    else if(autobaud >= 19200) { autobaud =  9600; autospeed = B19200; }
+//    else if(autobaud >=  9600) { autobaud =  4800; autospeed = B9600; }
+//    else if(autobaud >=  4800) { autobaud =  2400; autospeed = B4800; }
+//    else                       { autobaud = 38400; autospeed = B2400; }
+//
+//    cfsetospeed(&newTermEnv, autospeed);
+//    cfsetispeed(&newTermEnv, autospeed);
+//    if (_speed != autospeed)
+//    {
+//      _speed = autospeed;
+//      switch (_speed)
+//      {
+//        case B2400:
+//          emit newSpeed (2400);
+//          qDebug ("autospeed: %d", 2400);
+//          break;
+//        case B4800:
+//          emit newSpeed (4800);
+//          qDebug ("autospeed: %d", 4800);
+//          break;
+//        case B9600:
+//          emit newSpeed (9600);
+//          qDebug ("autospeed: %d", 9600);
+//          break;
+//        case B19200:
+//          emit newSpeed (19200);
+//          qDebug ("autospeed: %d", 19200);
+//          break;
+//        case B38400:
+//          emit newSpeed (38400);
+//          qDebug ("autospeed: %d", 38400);
+//          break;
+//        default:
+//          qDebug ("autospeed: illegal value");
+//      }
+//    }
+//
+//    tcsetattr(portID, TCSANOW, &newTermEnv);
 
   }
   return rc;
