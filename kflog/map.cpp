@@ -2232,7 +2232,7 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
 void Map::__findElevation(QPoint coord){
   extern MapContents _globalMapContents;
   isoListEntry* entry;
-  int height=-1;
+  int height=0;
   
   QList<isoListEntry>* list=_globalMapContents.getIsohypseRegions();
 
@@ -2242,6 +2242,6 @@ void Map::__findElevation(QPoint coord){
       height=MAX(height,entry->height);
   }
 
-  if (height>-1) emit elevation(height);
+  emit elevation(height);
  
 }
