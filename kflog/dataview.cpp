@@ -91,9 +91,6 @@ void DataView::slotShowTaskText( FlightTask* task, QPoint current)
   tmp.sprintf("<hline><br><br><b>Entfernung: %.2f km<b>",distance);
   htmlText += tmp;
 
-  tmp.sprintf("<br><br>Aufgabenart: %d",task->getTaskType());
-  htmlText += tmp;
-
   htmlText += "<br><hline><br><b>pos:<b>" + printPos(current.y()) + " / "
                                           + printPos(current.x(),true);
   flightDataText->setText(htmlText);
