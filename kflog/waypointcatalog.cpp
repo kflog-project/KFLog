@@ -315,9 +315,12 @@ bool WaypointCatalog::importVolkslogger(QString & filename){
           w->isLandable = false;
           w->surface = 0;
         }
-        w->origP.setLat(latTemp);
-        w->origP.setLon(lonTemp);
-        w->elevation =0;
+		// use WGSPoint() instead
+        // w->origP.setLat(latTemp);
+        //w->origP.setLon(lonTemp);
+		w->origP = WGSPoint(latTemp, lonTemp);
+
+		w->elevation =0;
         w->frequency = 0;
         w->runway = 0;
         w->length = 0;
