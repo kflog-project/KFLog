@@ -227,58 +227,44 @@ void KFLogApp::initActions()
   flightEvaluation = new KAction(i18n("Evaluation"), "flightevaluation",
       CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
       "evaluate_flight");
-      
-      
+
+
   mapMoveMenu->insert(new KAction(i18n("move map north-west"), "movemap_nw",
-      0,
+      KShortcut("7"),
       &_globalMapMatrix, SLOT(slotMoveMapNW()), actionCollection(), "move_map_nw"));
+
   mapMoveMenu->insert(new KAction(i18n("move map north"), "movemap_n",
-      Key_Up,
+      KShortcut("Up;8"),
       &_globalMapMatrix, SLOT(slotMoveMapN()), actionCollection(), "move_map_n"));
+
   mapMoveMenu->insert(new KAction(i18n("move map northeast"), "movemap_ne",
-      0,
+      KShortcut("9"),
       &_globalMapMatrix, SLOT(slotMoveMapNE()), actionCollection(), "move_map_ne"));
+
   mapMoveMenu->insert(new KAction(i18n("move map west"), "movemap_w",
-      Key_Left,
+      KShortcut("Left;4"),
       &_globalMapMatrix, SLOT(slotMoveMapW()), actionCollection(), "move_map_w"));
+
   mapMoveMenu->insert(new KAction(i18n("move map east"), "movemap_e",
-      Key_Right,
+      KShortcut("Right;6"),
       &_globalMapMatrix, SLOT(slotMoveMapE()), actionCollection(), "move_map_e"));
+
   mapMoveMenu->insert(new KAction(i18n("move map south-west"), "movemap_sw",
-      0,
+      KShortcut("1"),
       &_globalMapMatrix, SLOT(slotMoveMapSW()), actionCollection(), "move_map_sw"));
+
   mapMoveMenu->insert(new KAction(i18n("move map south"), "movemap_s",
-      Key_Down,
+      KShortcut("Down;2"),
       &_globalMapMatrix, SLOT(slotMoveMapS()), actionCollection(), "move_map_s"));
+
   mapMoveMenu->insert(new KAction(i18n("move map south-east"), "movemap_se",
-      0,
+      KShortcut("3"),
       &_globalMapMatrix, SLOT(slotMoveMapSE()), actionCollection(), "move_map_se"));
 
   KStdAction::zoomIn(&_globalMapMatrix, SLOT(slotZoomIn()), actionCollection());
   KStdAction::zoomOut(&_globalMapMatrix, SLOT(slotZoomOut()), actionCollection());
   KStdAction::zoom(map, SLOT(slotZoomRect()), actionCollection());
 
-  // zoom & pan with Numpad keys (in the case of NumLock on)
-  mapMoveMenu->insert(new KAction(0, "zoom_in_key",Key_Plus, &_globalMapMatrix,
-    SLOT(slotZoomIn()),actionCollection(),"zoom_in_key"));
-  mapMoveMenu->insert(new KAction(0, "zoom_out_key",Key_Minus, &_globalMapMatrix,
-    SLOT(slotZoomOut()),actionCollection(),"zoom_out_key"));
-  mapMoveMenu->insert(new KAction(0, "movemap_s_key",Key_2, &_globalMapMatrix,
-    SLOT(slotMoveMapS()),actionCollection(),"movemap_s_key"));
-  mapMoveMenu->insert(new KAction(0, "movemap_se_key",Key_3, &_globalMapMatrix,
-    SLOT(slotMoveMapSE()),actionCollection(),"movemap_se_key"));
-  mapMoveMenu->insert(new KAction(0, "movemap_sw_key",Key_1, &_globalMapMatrix,
-    SLOT(slotMoveMapSW()),actionCollection(),"movemap_sw_key"));
-  mapMoveMenu->insert(new KAction(0, "movemap_n_key",Key_8, &_globalMapMatrix,
-    SLOT(slotMoveMapN()),actionCollection(),"movemap_n_key"));
-  mapMoveMenu->insert(new KAction(0, "movemap_ne_key",Key_9, &_globalMapMatrix,
-    SLOT(slotMoveMapNE()),actionCollection(),"movemap_ne_key"));
-  mapMoveMenu->insert(new KAction(0, "movemap_nw_key",Key_7, &_globalMapMatrix,
-    SLOT(slotMoveMapNW()),actionCollection(),"movemap_nw_key"));
-  mapMoveMenu->insert(new KAction(0, "movemap_w_key",Key_4, &_globalMapMatrix,
-    SLOT(slotMoveMapW()),actionCollection(),"movemap_w_key"));
-  mapMoveMenu->insert(new KAction(0, "movemap_e_key",Key_6, &_globalMapMatrix,
-    SLOT(slotMoveMapE()),actionCollection(),"movemap_e_key"));
 
   /*
    * we urgently need icons for this actions in order to
@@ -297,10 +283,6 @@ void KFLogApp::initActions()
       actionCollection());
   viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()),
       actionCollection());
-
-//  flightEvaluation = new KAction(i18n("Evaluation"), "flightevaluation",
-//      CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
-//      "evaluate_flight");
 
   // We can't use CTRL-W, because this shortcut is reserved for closing a file ...
   viewWaypoints = new KToggleAction(i18n("Show waypoints"), "waypoint",
@@ -536,11 +518,11 @@ void KFLogApp::initView()
 
   /* Standard positions for the docking windows
    * Arguments for manualDock():
-   * dock target, dock side, relation target/this (in percent)
+   * dock target, dock side, remaining space in target (in percent)
    */
-  dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 40 );
-  mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 40 );
-  helpWindowDock->manualDock( mapControlDock, KDockWidget::DockCenter, 50);    
+  dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 67 );
+  mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 62 );
+  helpWindowDock->manualDock( mapControlDock, KDockWidget::DockCenter);    
   waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 70);
   legendDock->manualDock(waypointsDock, KDockWidget::DockRight, 90);
   tasksDock->manualDock(waypointsDock, KDockWidget::DockCenter, 50 );  
@@ -666,7 +648,7 @@ void KFLogApp::readOptions()
   toolBarPos=(KToolBar::BarPosition) config->readNumEntry("ToolBarPos",
       KToolBar::Top);
   toolBar("mainToolBar")->setBarPos(toolBarPos);
-  QSize size=config->readSizeEntry("Geometry");
+  QSize size=config->readSizeEntry("Geometry", new QSize(950,700));
 
   // initialize the recent file list
   fileOpenRecent->loadEntries(config,"Recent Files");

@@ -3,7 +3,7 @@
 # the error to ian geiser <geiseri@msoe.edu>
 Summary:   Soaring-pilot-software for KDE
 Name:      kflog
-Version:   2.0.7
+Version:   2.0.8
 Release:   1
 Copyright: GPL
 Vendor:    Heiner Lamprecht <heiner@kflog.org>
@@ -11,13 +11,13 @@ Url:       http://www.kflog.org/
 
 Packager:  Heiner Lamprecht <heiner@kflog.org>
 Group:     X11/KDE/Applications
-Source:    kflog-2.0.7.tar.gz
+Source:    kflog-2.0.8.tar.gz
 BuildRoot: /tmp/build/
 
 %description
 KFLog is used to display, analyze and evaluate flights logged with a
-gps-logger. It displays the flight in a map. KFLog now supports a large
-free vector-map, completly covering europe and including terrain-data.
+gps-logger. It displays the flight in a map. KFLog supports a large
+free vector-map of the whole, including terrain-data.
 The map is not part of this package. You can download the map from
 the KFLog-website at http://maproom.kflog.org/
 

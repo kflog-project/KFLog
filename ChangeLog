@@ -1,5 +1,13 @@
 $Id$
 
+
+2003-04-26 Heiner <heiner@kflog.org>
+
+  * Updated the messages-catalog
+
+  * Merged the different actions for map-moving into one set.
+
+
 2003-04-26 Christof <christof@kflog.org>
 
   * Automatic download of map tiles

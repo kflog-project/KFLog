@@ -1674,36 +1674,22 @@ void MapContents::proofeSection(bool isPrint)
   KConfig* config = KGlobal::config();
   config->setGroup("Path");
   mapDir = config->readEntry("DefaultMapDirectory",
-      globalDirs->findResource("appdata", "mapdata"));
+      globalDirs->findResource("data", "kflog/mapdata/"));
 
 
   /*
-   * Currently there is commited a QResizeEvent 2times during the start
+   * Currently a QResizeEvent is commited 2times during the start
    * which will lead to display to Informaion Dialogs during the first start.
    *
    * Workaround with a global variable: firstStart
    */
       
   if(mapDir.isEmpty()) {
-    if (firstStart)
-      {
-        firstStart = false;  
-        return;
-      }
 
-    /* We don't have a mapdir configured. This is a problem, as the user will be
-       flooded with errordialogs and no maps will be loaded. Therefore, it is a
-       better strategy to just ask the user. */
-    warning("Mapdir not set.");
-    //extern KFLogApp * kflog;
-    //if (kflog->startLogo!=0) kflog->startLogo->hide(); //hide splashscreen.
-    
-    KMessageBox::sorry(0, i18n("<qt>The directory for maps has not been set.<br>Please select the directory where you have installed your maps.</qt>"),
-                          i18n("Mapdirectory not set."));
-    // set a defaultdirectory
-    mapDir = KFileDialog::getExistingDirectory(
-      "/opt/kde3/share/apps/kflog/mapdata/",
-      0,i18n("Select map directory...") );
+    /* The mapdirectory does not exist. Ask the user */
+    KMessageBox::sorry(0, i18n("<qt>The mapdirectory does not exist.<br>Please select the directory where you have installed your maps.</qt>"),
+                          i18n("Mapdirectory does not exist."));
+    mapDir = KFileDialog::getExistingDirectory(0,0,i18n("Select map directory...") );
 
     config->writeEntry("DefaultMapDirectory", mapDir);
   }
@@ -1761,7 +1747,7 @@ void MapContents::proofeSection(bool isPrint)
         {
           emit errorOnMapLoading();
           KMessageBox::error(0,
-            i18n("<qt>The directory for the airfield-files does not exist:<br><b>%1</b></qt>").arg(airspaceDir.path()),
+            i18n("<qt>The directory for the airfield-files does not exist:<br><b>%1</b></qt>").arg(airfieldDir.path()),
             i18n("Directory not found"));
         }
       else
