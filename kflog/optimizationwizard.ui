@@ -440,7 +440,7 @@
 </slots>
 <functions>
     <function>init()</function>
-    <function returnType="double">optimizationResult( unsigned int pointList[LEGS+3], double * points )</function>
+    <function returnType="double">optimizationResult( unsigned int* pointList, double * points )</function>
 </functions>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>

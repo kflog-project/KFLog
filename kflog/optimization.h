@@ -54,7 +54,7 @@ public:
  /**
   * @return the indices, the points awarded and the distance of the optimized task
   */
-  double optimizationResult(unsigned int pointList[LEGS+3],double *points);  //where is the distance returned?
+  double optimizationResult(unsigned int* pointList,double *points);  //where is the distance returned?
 public slots:
  /**
   * Starts optimisation of the given route

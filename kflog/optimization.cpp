@@ -54,7 +54,7 @@ Optimization::Optimization(unsigned int firstPoint, unsigned int lastPoint, QPtr
 Optimization::~Optimization(){
 }
 
-double Optimization::optimizationResult(unsigned int retList[LEGS+3], double *retPoints){
+double Optimization::optimizationResult(unsigned int* retList, double *retPoints){
   if (!optimized)
     return -1.0;
   int i=0;
