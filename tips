@@ -66,7 +66,7 @@ from the Flight menu, or by pressing CTRL-R?</p>
 <tip category="KFLog|General">
 <html>
 <p>...that KFLog can communicate with a lot of flightrecorders, and support
-for others can be easily added if documentation for that recorder is available?</p>
+for others can be easily added if documentation for that recorder becomes available?</p>
 </html>
 </tip>
 
@@ -148,8 +148,8 @@ Choose Show Flightdata from the Flight menu to select one of these options.
 Be aware though that this function is not enabled if you zoom out too far.
 If you don't see any colors, just zoom in on a detail of the flight.</p>
 </html>
-
 </tip>
+
 <tip category="KFLog|Waypoints">
 <html>
 <p>...that you can filter the waypoints in your catalog to only display the
