@@ -1,4 +1,4 @@
 #MIN_CONFIG
 
-AM_INIT_AUTOMAKE(kflog,2.0.3)
+AM_INIT_AUTOMAKE(kflog,2.0.4)
 

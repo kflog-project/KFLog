@@ -38,7 +38,7 @@ project_type=normal_kde2
 sgml_file=/home/heiner/Entwicklung/kflog2/doc/en/index.docbook
 short_info=
 sub_dir=kflog/
-version=2.0.3
+version=2.0.4
 version_control=CVS
 workspace=1
 
