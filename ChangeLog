@@ -1,6 +1,11 @@
 $Id$
 
 
+2002-04-09 Heiner <heiner@kflog.org>
+
+  * Added first flush of Volkslogger-support and the RecorderDialog.
+
+
 2002-04-08 Heiner <heiner@kflog.org>
 
   * Fixed handling of the path to the installed mapfiles.

@@ -225,8 +225,11 @@ class KFLogApp : public KDockMainWindow
      * undocked the widget.
      */
     void slotHideTaskAndWaypointDock();
-  /** set menu items enabled/disabled */
-  void slotModifyMenu();
+    /** set menu items enabled/disabled */
+    void slotModifyMenu();
+    /** */
+    void slotOpenRecorderDialog();
+
   private:
     /**
      * The configuration object of the application
@@ -373,6 +376,8 @@ class KFLogApp : public KDockMainWindow
     KAction* flightOptimization;
     /** */
     KAction* flightPrint;
+    /** */
+    KAction* fileRecorder;
     /** */
     KToggleAction* viewTaskAndWaypoint;
 		/**

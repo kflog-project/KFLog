@@ -51,6 +51,7 @@
 #include <mapcontents.h>
 #include <mapcontrolview.h>
 #include <mapprint.h>
+#include <recorderdialog.h>
 #include <taskandwaypoint.h>
 #include <tasks.h>
 #include <igc3ddialog.h>
@@ -140,6 +141,10 @@ void KFLogApp::initActions()
   fileClose = new KAction(i18n("Close Flight"), "fileclose",
       KStdAccel::key(KStdAccel::Close), &_globalMapContents, SLOT(closeFlight()),
       actionCollection(), "file_close");
+
+  fileRecorder = new KAction(i18n("Open Recorder"), "connect_no",
+      0, this, SLOT(slotOpenRecorderDialog()), actionCollection(),
+      "recorderdialog");
 
   KStdAction::print(this, SLOT(slotFilePrint()), actionCollection());
 
@@ -779,34 +784,76 @@ void KFLogApp::slotWindowsMenuAboutToShow()
   	windowMenu->setItemChecked(id, _globalMapContents.getFlightIndex() == i);
   }
 }
+
 /** set menu items enabled/disabled */
 void KFLogApp::slotModifyMenu()
 {
   extern MapContents _globalMapContents;
-  if (_globalMapContents.getFlightList()->count() > 0) {
-    switch(_globalMapContents.getFlight()->getTypeID()) {
-    case BaseMapElement::Flight:
-      fileClose->setEnabled(true);
-      flightPrint->setEnabled(true);
-      viewCenterTask->setEnabled(true);
-      viewCenterFlight->setEnabled(true);
-      flightEvaluation->setEnabled(true);
-      flightOptimization->setEnabled(true);
-      animateFlightStart->setEnabled(true);
-      animateFlightStop->setEnabled(true);
-      stepFlightNext->setEnabled(true);
-      stepFlightPrev->setEnabled(true);
-      stepFlightStepNext->setEnabled(true);
-      stepFlightStepPrev->setEnabled(true);
-      stepFlightHome->setEnabled(true);
-      stepFlightEnd->setEnabled(true);
-      viewIgc3D->setEnabled(true);
-      mapPlanning->setEnabled(false);
-      break;
-    case BaseMapElement::Task:
-      fileClose->setEnabled(true);
-      flightPrint->setEnabled(true);
-      viewCenterTask->setEnabled(true);
+  if (_globalMapContents.getFlightList()->count() > 0)
+    {
+      switch(_globalMapContents.getFlight()->getTypeID())
+        {
+          case BaseMapElement::Flight:
+            fileClose->setEnabled(true);
+            flightPrint->setEnabled(true);
+            viewCenterTask->setEnabled(true);
+            viewCenterFlight->setEnabled(true);
+            flightEvaluation->setEnabled(true);
+            flightOptimization->setEnabled(true);
+            animateFlightStart->setEnabled(true);
+            animateFlightStop->setEnabled(true);
+            stepFlightNext->setEnabled(true);
+            stepFlightPrev->setEnabled(true);
+            stepFlightStepNext->setEnabled(true);
+            stepFlightStepPrev->setEnabled(true);
+            stepFlightHome->setEnabled(true);
+            stepFlightEnd->setEnabled(true);
+            viewIgc3D->setEnabled(true);
+            mapPlanning->setEnabled(false);
+            break;
+          case BaseMapElement::Task:
+            fileClose->setEnabled(true);
+            flightPrint->setEnabled(true);
+            viewCenterTask->setEnabled(true);
+            viewCenterFlight->setEnabled(false);
+            flightEvaluation->setEnabled(false);
+            flightOptimization->setEnabled(false);
+            animateFlightStart->setEnabled(false);
+            animateFlightStop->setEnabled(false);
+            stepFlightNext->setEnabled(false);
+            stepFlightPrev->setEnabled(false);
+            stepFlightStepNext->setEnabled(false);
+            stepFlightStepPrev->setEnabled(false);
+            stepFlightHome->setEnabled(false);
+            stepFlightEnd->setEnabled(false);
+            viewIgc3D->setEnabled(false);
+            mapPlanning->setEnabled(true);
+            break;
+          case BaseMapElement::FlightGroup:
+            fileClose->setEnabled(true);
+            flightPrint->setEnabled(true);
+            viewCenterTask->setEnabled(true);
+            viewCenterFlight->setEnabled(true);
+            flightEvaluation->setEnabled(true);
+            flightOptimization->setEnabled(true);
+            animateFlightStart->setEnabled(true);
+            animateFlightStop->setEnabled(true);
+            stepFlightNext->setEnabled(true);
+            stepFlightPrev->setEnabled(true);
+            stepFlightStepNext->setEnabled(true);
+            stepFlightStepPrev->setEnabled(true);
+            stepFlightHome->setEnabled(true);
+            stepFlightEnd->setEnabled(true);
+            viewIgc3D->setEnabled(true);
+            mapPlanning->setEnabled(false);
+            break;
+        }
+    }
+  else
+    {
+      fileClose->setEnabled(false);
+      flightPrint->setEnabled(false);
+      viewCenterTask->setEnabled(false);
       viewCenterFlight->setEnabled(false);
       flightEvaluation->setEnabled(false);
       flightOptimization->setEnabled(false);
@@ -819,44 +866,12 @@ void KFLogApp::slotModifyMenu()
       stepFlightHome->setEnabled(false);
       stepFlightEnd->setEnabled(false);
       viewIgc3D->setEnabled(false);
-      mapPlanning->setEnabled(true);
-      break;
-    case BaseMapElement::FlightGroup:
-      fileClose->setEnabled(true);
-      flightPrint->setEnabled(true);
-      viewCenterTask->setEnabled(true);
-      viewCenterFlight->setEnabled(true);
-      flightEvaluation->setEnabled(true);
-      flightOptimization->setEnabled(true);
-      animateFlightStart->setEnabled(true);
-      animateFlightStop->setEnabled(true);
-      stepFlightNext->setEnabled(true);
-      stepFlightPrev->setEnabled(true);
-      stepFlightStepNext->setEnabled(true);
-      stepFlightStepPrev->setEnabled(true);
-      stepFlightHome->setEnabled(true);
-      stepFlightEnd->setEnabled(true);
-      viewIgc3D->setEnabled(true);
       mapPlanning->setEnabled(false);
-      break;
     }
-  }
-  else {
-    fileClose->setEnabled(false);
-    flightPrint->setEnabled(false);
-    viewCenterTask->setEnabled(false);
-    viewCenterFlight->setEnabled(false);
-    flightEvaluation->setEnabled(false);
-    flightOptimization->setEnabled(false);
-    animateFlightStart->setEnabled(false);
-    animateFlightStop->setEnabled(false);
-    stepFlightNext->setEnabled(false);
-    stepFlightPrev->setEnabled(false);
-    stepFlightStepNext->setEnabled(false);
-    stepFlightStepPrev->setEnabled(false);
-    stepFlightHome->setEnabled(false);
-    stepFlightEnd->setEnabled(false);
-    viewIgc3D->setEnabled(false);
-    mapPlanning->setEnabled(false);
-  }
+}
+
+void KFLogApp::slotOpenRecorderDialog()
+{
+  RecorderDialog* dlg = new RecorderDialog(this, config, "recorderDialog");
+  dlg->exec();
 }
