@@ -834,9 +834,9 @@ void RecorderDialog::slotDownloadFlight()
 
   if(fUrl.isLocalFile())
     fileName = fUrl.path();
-  else if(!KIO::NetAccess::download(fUrl, fileName))
+  else if(!KIO::NetAccess::download(fUrl, fileName, this))
    {
-     KNotifyClient::event(i18n("Can not download file %1").arg(fUrl.url()));
+     KNotifyClient::event(this->winId(), i18n("Can not download file %1").arg(fUrl.url()));
      return;
    }
 
