@@ -8,21 +8,22 @@ $Id$
     distance and speed.
 
   * Fixed some bugs in parsing an igc-file. Now a negative height will be
-    read without giving an error-message.
+    read without generating an syntax-error.
 
 
-2001-11-18 Heiner <heiner@kflog.org>
+2001-11-18 Göran Källqvist <kjellqvist@nordkalak.se>
 
   * Added swedish translation
-    (provided by Göran Källqvist <kjellqvist@nordkalak.se>)
+
+
+2001-11-17 Thomas Nielsen <thomanie@stud.ntnu.no>
+
+  * Added norwegian translation
 
 
 2001-11-17 Heiner <heiner@kflog.org>
 
   * Fixed some minor bugs.
-
-  * Added norwegian translation
-    (provided by Thomas Nielsen <thomanie@stud.ntnu.no>)
 
 
 2001-11-14 Heiner <heiner@kflog.org>
