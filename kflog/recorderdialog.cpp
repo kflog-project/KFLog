@@ -724,17 +724,15 @@ void RecorderDialog::slotCloseRecorder()
 
 void RecorderDialog::slotReadFlightList()
 {
-  QMessageBox* statusDlg = new QMessageBox ( i18n("downloading flightlist"), i18n("downloading flightlist"),
+ 
+  if (!activeRecorder)
+    return;
+
+    QMessageBox* statusDlg = new QMessageBox ( i18n("downloading flightlist"), i18n("downloading flightlist"),
       QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
       QMessageBox::NoButton, this, "statusDialog", true);
 
-
-
   statusDlg->show();
-
-  
-  if (!activeRecorder)
-    return;
 
   // Jetzt muss das Flugverzeichnis vom Logger gelesen werden!
   // Now we need to read the flightdeclaration from the logger!
@@ -762,6 +760,15 @@ void RecorderDialog::slotReadFlightList()
   QString day;
   QString idS;
 
+  if (dirList.count()==0) {
+    delete statusDlg;
+    QApplication::restoreOverrideCursor();
+    KMessageBox::sorry(this,
+                            i18n("There were no flights recorded in the recorder."),
+                            i18n("Download result"));
+    return;
+  }   
+    
   for(unsigned int loop = 0; loop < dirList.count(); loop++) {
     FRDirEntry* e = dirList.at(loop);
     QListViewItem* item = new QListViewItem(flightList);
@@ -1183,11 +1190,6 @@ void RecorderDialog::slotWriteTasks()
 
 void RecorderDialog::slotReadWaypoints()
 {
-  QMessageBox* statusDlg = new QMessageBox ( "Lese Wendepunkte", "Lese Wendepunkte",
-      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
-      QMessageBox::NoButton, this, "statusDialog", true);
-  statusDlg->show();
-  
   int ret;
   int cnt=0;
   QString e;
@@ -1203,7 +1205,14 @@ void RecorderDialog::slotReadWaypoints()
     return;
   }
 
+  QMessageBox* statusDlg = new QMessageBox (i18n("Reading waypoints"), i18n("Reading Waypoints"),
+      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
+      QMessageBox::NoButton, this, "statusDialog", true);
+  statusDlg->show();
+
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+  kapp->processEvents();
+  
   ret = activeRecorder->readWaypoints(&frWaypoints);
   if (ret<FR_OK) {
     QApplication::restoreOverrideCursor();
