@@ -62,6 +62,11 @@ class Map : public QWidget
     void slotRedrawFlight();
     /** */
     void slotOptimzeFlight();
+    /**
+		 * Animation slot.
+		 * Called for every timeout of the animation timer. Advances the crosshair one single step.
+		 */
+    void slotAnimateFlight();
 
   signals:
     /** */
@@ -190,6 +195,14 @@ class Map : public QWidget
      * find the airspace-data when the users selects a airspace in the map.
      */
     QList<QRegion>* airspaceRegList;
+		/**
+		 * Animation timer
+		 */
+		QTimer* timerAnimate;
+		/**
+     * Animation index
+		 */
+		int nAnimateIndex;
 };
 
 #endif

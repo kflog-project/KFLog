@@ -2,6 +2,8 @@ $Id$
 
 2002-01-24 Thomas <thomas@kflog.org>
 
+  * Added start/stop of animation of current flight using F12/F11 keys.
+  * Jump to start/end of flight with Home/End keys.
   * Enabled multi-stepping through flight using PgUp/PgDn keys.
 
 
