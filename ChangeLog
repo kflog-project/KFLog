@@ -1,6 +1,9 @@
 $Id$
 
-
+2003-04-12 André <andre@kflog.org>
+  * Waypoints can now be copied and moved between catalogs.
+  
+  
 2003-04-10 Heiner <heiner@kflog.org>
 
   * Fixed a small bug in RecorderDialog, which occurred while downloading a
@@ -14,6 +17,11 @@ $Id$
   * Changed the printer-dialog the way, that the configuration-tabs are opened.
 
 
+2003-03-09 André <andre@kflog.org>
+
+  * Added a legend for the elevations.
+  
+  
 2003-02-28 Harry <harry@kflog.org>
 
   * Replaced wayPoint struct with Waypoint class
