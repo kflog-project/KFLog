@@ -193,6 +193,12 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                  
           point.setX(current.x());
           point.setY(current.y());
+
+          QPainter planP(this);
+          planP.setRasterOp(XorROP);
+          planP.setBrush(NoBrush);
+          planP.setPen(QPen(QColor(255,0,0), 5));
+
         
           for(unsigned int loop = 0;
                 loop < _globalMapContents.getListLength(
@@ -214,13 +220,28 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                     
                   point.setX(sitePos.x());
                   point.setY(sitePos.y());
+                  // temporärer Weg
+                  QList<wayPoint> tempList;
+                  tempList = taskPointList;
+                  wayPoint tempWP;
+                  tempWP.origP = _globalMapMatrix.mapToWgs(point);
+                  tempWP.projP = _globalMapMatrix.wgsToMap(tempWP.origP);
+                  tempList.append(&tempWP);
+
+                  QPainter planP(&pixFlight);
+                  QPainter planPMask(&bitFlightMask);
+
+                  FlightTask task(tempList, true);
+                  task.drawMapElement(&planP,&planPMask);
+                  planP.end();
+                  planPMask.end();
+
+                  bitBlt(this,0,0,&pixFlight,0,0,-1,-1,NotEraseROP);
+//                  pixFlight.fill(white);
+//                  bitFlightMask.fill(white);
                 }
             }
                 
-          QPainter planP(this);
-          planP.setRasterOp(XorROP);
-          planP.setBrush(NoBrush);
-          planP.setPen(QPen(QColor(255,0,0), 5));
 
           if(prePlanPos.x() >= 0)
             {
