@@ -94,16 +94,13 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
 
   QGridLayout* dlgLayout = new QGridLayout(midFrame, 13, 14);
 
-  dlgLayout->addMultiCellWidget(new QGroupBox(i18n("Contest"), midFrame),
-      0, 2, 0, 14);
   dlgLayout->addMultiCellWidget(new QGroupBox(i18n("Pilot"), midFrame),
-      2, 5, 0, 14);
+      0, 5, 0, 14);
   dlgLayout->addMultiCellWidget(new QGroupBox(i18n("Glider"), midFrame),
       7, 13, 0, 14);
   dlgLayout->addMultiCellWidget(new QGroupBox(i18n("Task"), midFrame),
       15, 21, 0, 14);
 
-//  olcName = new KComboBox(midFrame);    
   preName = new KLineEdit(midFrame);
   surName = new KLineEdit(midFrame);
   birthday = new KRestrictedLine(midFrame, "birthday", "0123456789.-");
@@ -154,14 +151,13 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
   routePoints->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   routePoints->setBackgroundMode( PaletteLight );
 
-  dlgLayout->addWidget(olcName, 1, 1);
-  dlgLayout->addWidget(new QLabel(i18n("Prename"), midFrame), 2, 1);
-  dlgLayout->addWidget(new QLabel(i18n("Surname"), midFrame), 2, 5);
-  dlgLayout->addWidget(new QLabel(i18n("Birthday (dd.mm.yyyy)"), midFrame), 2, 9);
-  dlgLayout->addWidget(preName, 2, 3);
-  dlgLayout->addWidget(surName, 2, 7);
-  dlgLayout->addWidget(birthday, 2, 11);
-  dlgLayout->addWidget(pilotB, 2, 13, Qt::AlignLeft);
+  dlgLayout->addWidget(new QLabel(i18n("Prename"), midFrame), 1, 1);
+  dlgLayout->addWidget(new QLabel(i18n("Surname"), midFrame), 1, 5);
+  dlgLayout->addWidget(new QLabel(i18n("Birthday (dd.mm.yyyy)"), midFrame), 1, 9);
+  dlgLayout->addWidget(preName, 1, 3);
+  dlgLayout->addWidget(surName, 1, 7);
+  dlgLayout->addWidget(birthday, 1, 11);
+  dlgLayout->addWidget(pilotB, 1, 13, Qt::AlignLeft);
 
   dlgLayout->addWidget(new QLabel(i18n("Glidertype"), midFrame), 8, 1);
   dlgLayout->addWidget(new QLabel(i18n("Glider-ID"), midFrame), 8, 5);
@@ -241,6 +237,7 @@ void OLCDialog::__fillDataFields()
     count++;
   }
 
+  count=0;
   while( contestList[count].index != -1)
   {
     QString temp_str=QString("OLC-%1").arg(contestList[count].name);
