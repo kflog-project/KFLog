@@ -87,7 +87,13 @@ class MapPrint
         const double gridLeft, const double gridRight,
         const double gridTop, const double gridBot);
     /** Prints the waypointlist to the supplied QPainter */
-    void __drawWaypoints(const double selectedScale, QPainter* gridP, const QSize pS,
+    void __drawWaypoints(const double selectedScale, QPainter* wpP, const QSize pS,
+		const QRect mapBorder, const int mapCenterLon,
+		const double dX, const double dY,
+		const double gridLeft, const double gridRight,
+		const double gridTop, const double gridBot);
+    /** Prints the task, if defined, to the supplied QPainter */
+    void __drawTask(const double selectedScale, QPainter* taskP, const QSize pS,
 		const QRect mapBorder, const int mapCenterLon,
 		const double dX, const double dY,
 		const double gridLeft, const double gridRight,

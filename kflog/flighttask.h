@@ -82,6 +82,7 @@ class FlightTask : public BaseFlightElement
     void drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
     /** */
     void printMapElement(QPainter* targetP, bool isText);
+    void printMapElement(QPainter* targetP, bool isText, double dX, double dY);
     /** */
     void checkWaypoints(QList<flightPoint> route,
         QString gliderType);

@@ -1158,3 +1158,139 @@ void FlightTask::__setDMSTPoints()
 //      taskPoints -= ( taskPoints * (malusValue / 100.0) );
 //    }
 }
+
+//TEST
+void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX, double dY)
+{
+  double w1;
+
+  // Strecke und Sektoren zeichnen
+  if(flightType != FlightTask::NotSet)
+    {
+      QPoint tempP;
+
+      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+        {
+          /*
+           * w1 ist die Winkelhalbierende des Sektors!!!
+           *      (Angaben in 1/16 Grad)
+           */
+          w1 = ( ( glMapMatrix->print(wpList.at(loop)->angle) + PI ) / PI )
+                  * 180.0 * 16.0 * -1.0;
+
+          tempP = glMapMatrix->print(wpList.at(loop)->origP.lat(), wpList.at(loop)->origP.lon() , dX, dY);
+          double qx = -R1 + tempP.x();
+          double qy = -R1 + tempP.y();
+          double gx = -R2 + tempP.x();
+          double gy = -R2 + tempP.y();
+
+          switch(wpList.at(loop)->type)
+            {
+              case FlightTask::RouteP:
+                targetPainter->setPen(QPen(QColor(50, 50, 50), 1));
+                targetPainter->setBrush(QColor(255, 110, 110));
+                targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 1440, 2880);
+                targetPainter->setBrush(QColor(110, 255, 110));
+                targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
+                targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+
+                // Inneren Sektor erneut zeichnen, damit Trennlinien
+                // zwischen Sekt. 1 und Zylinder verschwinden
+                targetPainter->setPen(QPen::NoPen);
+                targetPainter->drawEllipse(gx + 2, gy + 2,
+                    (2 * R2) - 4, (2 * R2) - 4);
+
+                if(loop)
+                  {
+                    if((flightType == FAI_S || flightType == Dreieck_S) &&
+                            loop == 2)
+                        targetPainter->setPen(QPen(QColor(0, 0, 0), 2,
+                            Qt::DashLine));
+                    else
+                        targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
+
+                    targetPainter->drawLine(
+                        glMapMatrix->print(wpList.at(loop - 1)->origP.lat(),wpList.at(loop - 1)->origP.lon() , dX, dY),
+                        glMapMatrix->print(wpList.at(loop)->origP.lat(),wpList.at(loop)->origP.lon() , dX, dY));
+                  }
+                break;
+              case FlightTask::Begin:
+                targetPainter->setPen(QPen(QColor(50, 50, 50), 1));
+                targetPainter->setBrush(QBrush(QColor(255, 0, 0),
+                    QBrush::BDiagPattern));
+                targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
+                targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+
+                // Linie von Startpunkt zum Aufgaben Beginn
+                //
+                if(loop)
+                  {
+                    targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
+                    targetPainter->drawLine(
+                        glMapMatrix->print(wpList.at(loop - 1)->origP.lat(),wpList.at(loop - 1)->origP.lon() , dX, dY),
+                        glMapMatrix->print(wpList.at(loop)->origP.lat(),wpList.at(loop)->origP.lon() , dX, dY));
+                  }
+                break;
+
+              case FlightTask::End:
+                targetPainter->setPen(QPen(QColor(50, 50, 50), 1));
+                targetPainter->setBrush(QBrush(QColor(0, 0, 255),
+                    QBrush::FDiagPattern));
+
+                targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
+                targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+
+                // Hier wird die Linie vom letzten Wegpunkt
+                // zum Endpunkt gemalt. Die gleiche Linie wird weiter
+                // unten erneut gezeichnet !!!
+//                targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
+//                targetPainter->drawLine(
+//                    glMapMatrix->print(wpList.at(loop-1)->projP),
+//                    glMapMatrix->print(wpList.at(loop)->projP));
+
+                // Strecke
+                if(flightType == FAI_S || flightType == Dreieck_S)
+                    targetPainter->setPen(QPen(QColor(0, 0, 0), 2,
+                        Qt::DashLine));
+                else
+                    targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
+
+                    targetPainter->drawLine(
+                        glMapMatrix->print(wpList.at(loop - 1)->origP.lat(),wpList.at(loop - 1)->origP.lon() , dX, dY),
+                        glMapMatrix->print(wpList.at(loop)->origP.lat(),wpList.at(loop)->origP.lon() , dX, dY));
+                break;
+
+              default:
+                // Kann noch Start und Landepunkt sein.
+
+                // Linie von Startpunkt zum Aufgaben Beginn
+                if(loop)
+                  {
+                    if(flightType == FAI_S || flightType == Dreieck_S)
+                        targetPainter->setPen(QPen(QColor(0, 0, 0), 2,
+                            Qt::DashLine));
+                    else
+                        targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
+
+                    targetPainter->drawLine(
+                        glMapMatrix->print(wpList.at(loop - 1)->origP.lat(),wpList.at(loop - 1)->origP.lon() , dX, dY),
+                        glMapMatrix->print(wpList.at(loop)->origP.lat(),wpList.at(loop)->origP.lon() , dX, dY));
+                  }
+
+                // Linie Um Start Lande Punkt
+                targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
+                targetPainter->setBrush(QBrush::NoBrush);
+                break;
+            }
+        }
+    }
+
+  // Strecke bei Start auf Schenkel
+  if(flightType == FAI_S || flightType == Dreieck_S)
+    {
+      targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
+      targetPainter->drawLine(
+			glMapMatrix->print(wpList.at(2)->origP.lat(), wpList.at(2)->origP.lon(), dX, dY),
+          	glMapMatrix->print(wpList.at(wpList.count() - 3)->origP.lat(), wpList.at(wpList.count() - 3)->origP.lon() , dX, dY));
+    }
+}

@@ -375,6 +375,11 @@ MapPrint::MapPrint(bool flightLoaded)
       dX, dY, TOP_LEFT_X + 30, TOP_RIGHT_X - 30, TOP_LEFT_Y + 30,
       BOT_LEFT_Y - 95);
 
+  // draw task
+  __drawTask(selectedScale, &printPainter, pS, mapBorder, mapCenter.y(),
+      dX, dY, TOP_LEFT_X + 30, TOP_RIGHT_X - 30, TOP_LEFT_Y + 30,
+      BOT_LEFT_Y - 95);
+
   printPainter.setClipRect(leftMargin + 15, topMargin + 15,
       pS.width() - leftMargin - rightMargin - 30,
       pS.height() - topMargin - bottomMargin - 63);
@@ -780,7 +785,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
     }
 }
 /** Prints the waypointlist to the supplied QPainter */
-void MapPrint::__drawWaypoints(const double selectedScale, QPainter* gridP, const QSize pS, const QRect mapBorder, const int mapCenterLon,     const double dX, const double dY, const double gridLeft,     const double gridRight, const double gridTop, const double gridBot){
+void MapPrint::__drawWaypoints(const double selectedScale, QPainter* wpP, const QSize pS, const QRect mapBorder, const int mapCenterLon,     const double dX, const double dY, const double gridLeft,     const double gridRight, const double gridTop, const double gridBot){
   extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
   QList<wayPoint> *wpList;
@@ -788,8 +793,8 @@ void MapPrint::__drawWaypoints(const double selectedScale, QPainter* gridP, cons
   int i,n;
   QPoint p;
 
-  gridP->setBrush(Qt::NoBrush);
-  gridP->setPen(QPen(QColor(0,0,0), 1, Qt::SolidLine));
+  wpP->setBrush(Qt::NoBrush);
+  wpP->setPen(QPen(QColor(0,0,0), 1, Qt::SolidLine));
 
  wpList = _globalMapContents.getWaypointList() ;
 
@@ -798,7 +803,26 @@ void MapPrint::__drawWaypoints(const double selectedScale, QPainter* gridP, cons
      wp = (wayPoint*)wpList->at(i);
      p = _globalMapMatrix.print(wp->origP.lat(), wp->origP.lon(), dX, dY);
 	 // draw marker and name
-     gridP->drawRect(p.x() - 4,p.y() - 4, 8, 8);
-     gridP->drawText(p.x()+6, p.y(), wp->name, -1);
+     wpP->drawRect(p.x() - 4,p.y() - 4, 8, 8);
+     wpP->drawText(p.x()+6, p.y(), wp->name, -1);
   }
+}
+
+/** Prints the task, if defined, to the supplied QPainter */
+void MapPrint::__drawTask(const double selectedScale, QPainter* taskP, const QSize pS, const QRect mapBorder, const int mapCenterLon,     const double dX, const double dY, const double gridLeft,     const double gridRight, const double gridTop, const double gridBot){
+ extern const MapMatrix _globalMapMatrix;
+  extern MapContents _globalMapContents;
+  QList<wayPoint> *wpList;
+  wayPoint *wp;
+  int i,n;
+  QPoint p;
+  FlightTask* task;
+
+  task = (FlightTask*)_globalMapContents.getFlight();
+
+  if(task && task->getTypeID() == BaseMapElement::Task) {
+    taskP->setBrush(Qt::NoBrush);
+    taskP->setPen(QPen(QColor(170,0,0), 5, Qt::SolidLine));
+    task->printMapElement( taskP, false, dX, dY);
+   }
 }
