@@ -5,7 +5,7 @@ lib_LTLIBRARIES = libkfrfil.la
 INCLUDES = $(all_includes)
 
 
-LDFLAGS =              
+LDFLAGS =               
 
 
 libkfrfil_la_LDFLAGS = -version-info 0:0:0
@@ -15,13 +15,16 @@ libkfrfil_la_METASOURCES = AUTO
 libkfrfil_la_SOURCES = filser.cpp flightrecorder.cpp 
 
 
-EXTRA_DIST = fil.desktop flightrecorder.cpp filser.cpp filser.h 
+EXTRA_DIST = fil.desktop flightrecorder.cpp filser.cpp filser.h spg.desktop 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_datadir)/kflog/logger/
 	$(INSTALL_DATA) $(srcdir)/fil.desktop $(kde_datadir)/kflog/logger/fil.desktop
+	$(mkinstalldirs) $(kde_datadir)/kflog/logger/
+	$(INSTALL_DATA) $(srcdir)/spg.desktop $(kde_datadir)/kflog/logger/spg.desktop
 
 uninstall-local:
 	-rm -f $(kde_datadir)/kflog/logger/fil.desktop
+	-rm -f $(kde_datadir)/kflog/logger/spg.desktop
 
 ####### kdevelop will overwrite this part!!! (end)############

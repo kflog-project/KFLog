@@ -1,7 +1,7 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
 
-EXTRA_DIST = airfield_c.xpm airport.xpm ambheliport.xpm civheliport.xpm civmilair.xpm closed.xpm glider.xpm glider2.xpm jump.xpm milairport.xpm milheliport.xpm obst_group.xpm obstacle.xpm outlanding.xpm paraglider.xpm routepoint.xpm ulf.xpm vortac.xpm waypoint.xpm 
+EXTRA_DIST = airfield_c.xpm airport.xpm ambheliport.xpm civheliport.xpm civmilair.xpm closed.xpm glider.xpm glider2.xpm jump.xpm milairport.xpm milheliport.xpm obst_group.xpm obstacle.xpm outlanding.xpm paraglider.xpm routepoint.xpm ulf.xpm vortac.xpm waypoint.xpm balloon.xpm 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
@@ -42,6 +42,8 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/vortac.xpm $(kde_datadir)/kflog/mapicons/small/vortac.xpm
 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 	$(INSTALL_DATA) $(srcdir)/waypoint.xpm $(kde_datadir)/kflog/mapicons/small/waypoint.xpm
+	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/balloon.xpm $(kde_datadir)/kflog/mapicons/small/balloon.xpm
 
 uninstall-local:
 	-rm -f $(kde_datadir)/kflog/mapicons/small/airfield_c.xpm
@@ -63,5 +65,6 @@ uninstall-local:
 	-rm -f $(kde_datadir)/kflog/mapicons/small/ul.xpm
 	-rm -f $(kde_datadir)/kflog/mapicons/small/vortac.xpm
 	-rm -f $(kde_datadir)/kflog/mapicons/small/waypoint.xpm
+	-rm -f $(kde_datadir)/kflog/mapicons/small/balloon.xpm
 
 ####### kdevelop will overwrite this part!!! (end)############
