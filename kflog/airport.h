@@ -69,7 +69,7 @@ class Airport : public RadioPoint
      * @param  isText  Shows, if the text of some mapelements should
      *                 be printed.
      */
-    virtual void printMapElement(QPainter* printP, bool isText) const;
+    virtual void printMapElement(QPainter* printP, bool isText);
     /**
      * Return a short html-info-string about the airport, containg the
      * name, the alias, the elevation and the frequency as well as a small

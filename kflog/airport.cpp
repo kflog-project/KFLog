@@ -54,7 +54,7 @@ QString Airport::getInfoString() const
   return text;
 }
 
-void Airport::printMapElement(QPainter* printPainter, bool isText) const
+void Airport::printMapElement(QPainter* printPainter, bool isText)
 {
   if(!__isVisible()) return;
 
