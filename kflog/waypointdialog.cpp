@@ -48,8 +48,6 @@ WaypointDialog::WaypointDialog(QWidget *parent, const char *name)
   }
   setSurface(Airport::NotSet);
   setWaypointType(BaseMapElement::Landmark);
-  
-  
 }
 
 WaypointDialog::~WaypointDialog()
@@ -198,7 +196,9 @@ void WaypointDialog::slotAddWaypoint()
     w->comment = comment->text();
 
     emit addWaypoint(w);
-    clear();
+    // clear should not be called when apply was pressed ...
+    // and when ok is pressed, the dialog is closed anyway.
+    // clear();
   //}
 }
 
