@@ -1,6 +1,19 @@
 $Id$
 
+2003-07-04 André Somers <andre@kflog.org>
+
+  * Added a contextmenu to the map
+
+  * Added the KFLogBrowser that replaces the old Tasks list
+
+  * Added a pointer to the evaluation dialog that indicates the position currently
+    selected on the map. Also very nice in animations!
+
+  * Fixed a small bug in the Evaluation dialog
+
+  
 2003-06-12 Eggert Ehmke <eggert@kflog.org>
+
   * Bugfix: coordinates during flight animation are shown correctly now in status bar
 
 2003-06-04 Heiner Lamprecht <heiner@kflog.org>
