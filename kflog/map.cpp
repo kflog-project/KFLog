@@ -767,7 +767,6 @@ void Map::slotDrawFlight()
 //  slotShowLayer();
 }
 
-
 void Map::slotDrawCursor(QPoint p1, QPoint p2)
 {
   extern const MapMatrix _globalMapMatrix;
@@ -776,6 +775,7 @@ void Map::slotDrawCursor(QPoint p1, QPoint p2)
 
   QPoint prePos1(_globalMapMatrix.map(preCur1)),
          prePos2(_globalMapMatrix.map(preCur2));
+
   if(preCur1.x() >= 0)
     {
       bitBlt(&pixBuffer, prePos1.x() - 20, prePos1.y() - 20, &pixCursorBuffer1);
@@ -787,25 +787,41 @@ void Map::slotDrawCursor(QPoint p1, QPoint p2)
       bitBlt(this, prePos2.x() - 20, prePos2.y() - 20, &pixCursorBuffer2);
     }
 
-  // erstmal Karte sichern
-  bitBlt(&pixCursorBuffer1, 0, 0, &pixBuffer,
+  //
+  // copying the pixmaps can crash the x-server, if the coordinates
+  // are out of range.
+  //
+  //                                                Fixed 2001-12-01
+  //
+  if(preCur1.x() > -50 && preCur1.x() < width() + 50 &&
+          preCur1.y() > -50 && preCur1.y() < height() + 50)
+      bitBlt(&pixCursorBuffer1, 0, 0, &pixBuffer,
           pos1.x() - 20, pos1.y() - 20, 40, 40);
-  bitBlt(&pixCursorBuffer2, 0, 0, &pixBuffer,
+  if(preCur2.x() > -50 && preCur2.x() < width() + 50 &&
+          preCur2.y() > -50 && preCur2.y() < height() + 50)
+      bitBlt(&pixCursorBuffer2, 0, 0, &pixBuffer,
           pos2.x() - 20, pos2.y() - 20, 40, 40);
 
-  bitBlt(this, pos1.x() - 20, pos1.y() - 20, &pixCursor1,
+  if(pos1.x() > -50 && pos1.x() < width() + 50 &&
+          pos1.y() > -50 && pos1.y() < height() + 50)
+    {
+      bitBlt(this, pos1.x() - 20, pos1.y() - 20, &pixCursor1,
           0, 0, -1, -1, NotEraseROP);
-  bitBlt(&pixBuffer, pos1.x() - 20, pos1.y() - 20, &pixCursor1,
+      bitBlt(&pixBuffer, pos1.x() - 20, pos1.y() - 20, &pixCursor1,
           0, 0, -1, -1, NotEraseROP);
+    }
 
-  bitBlt(this, pos2.x() - 20, pos2.y() - 20, &pixCursor2,
+  if(pos2.x() > -50 && pos2.x() < width() + 50 &&
+          pos2.y() > -50 && pos2.y() < height() + 50)
+    {
+      bitBlt(this, pos2.x() - 20, pos2.y() - 20, &pixCursor2,
           0, 0, -1, -1, NotEraseROP);
-  bitBlt(&pixBuffer, pos2.x() - 20, pos2.y() - 20, &pixCursor2,
+      bitBlt(&pixBuffer, pos2.x() - 20, pos2.y() - 20, &pixCursor2,
           0, 0, -1, -1, NotEraseROP);
+    }
 
   preCur1 = p1;
   preCur2 = p2;
-
 }
 
 void Map::slotShowMapElement()
