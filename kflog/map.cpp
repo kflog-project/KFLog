@@ -113,7 +113,7 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   setCursor(crossCursor);
   setAcceptDrops(true);
 
-	setFocusPolicy( QWidget::StrongFocus );
+//	setFocusPolicy( QWidget::StrongFocus );
 
   QWhatsThis::add(this, i18n("<B>The map</B>"
          "<P>To move or scale the map, please use the buttons in the "

@@ -3,27 +3,7 @@ $Id$
 
 /*************************************************************************
  *
- * Florian
  *
- */
-
-* Beim Zoomen in Evaluations-Dialog: Verschieben der Darstellung, so dass
-  aktueller Bereich der gleiche bleibt.
-
-
-* Höhe des Cursor-Textes im Eval-Dialog ist fest und nicht von der
-  Schrift abhängig! Das sollte noch geändert werden!
-
-
-* Defaultwerte für Lufträume
-
-
-* Lufträume zum Teil falsch oder doppelt
-
-
-/*************************************************************************
- *
- * Heiner
  *
  */
 
@@ -46,35 +26,5 @@ $Id$
   werden. pixBuffer muss nur gross genug sein ...
 
 
-* Welche Variablen und Funktionen werden tatsächlich benutzt ???
-
-
 * Maßstabs-Angabe nach Zentrieren auf Flug/Aufgabe zunächst nicht richtig.
   Maßstab müsste zunächst "geprüft" werden ...
-
-
-/*************************************************************************
- *
- * Kartenfehler
- *
- */
-
--> Die Höhenlinien in England scheinen in die falschen Dateien gerückt
-   zu sein. Zumindest der Bereich zwischen 2°W und 0°W ( >52° Nord ) der
-   Höhen über 0M ist in den 0°E Dateien ...
-
--> Die 0-Meter-Linie ist in vielen Fällen noch falsch.
-
--> "Kaputte Länder":
-   -> Spanien (Flüsse)
-   -> Russland (komplett, leider auch Küste ...)
-
--> Flusskacheln prüfen
-
--> Türkei: Städte
-
--> GB, Irland, Niederlande: Seen
-
--> Niederlande: Flüsse
-
--> Donau und Rhein lückenhaft

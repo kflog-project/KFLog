@@ -194,13 +194,15 @@ void KFLogConfig::__addMapTab()
   elementBox->setTitle(i18n("visible Map-Elements"));
 
   elementSelect = new KComboBox(mapPage, "elementBox");
-  elementSelect->setMaximumWidth(300);
+//  elementSelect->setMaximumWidth(300);
   elementSelect->insertItem(i18n("Road"), Road);
   elementSelect->insertItem(i18n("Highway"), Highway);
   elementSelect->insertItem(i18n("Railway"), Railway);
   elementSelect->insertItem(i18n("River / Lake"), River);
   elementSelect->insertItem(i18n("Canal"), Canal);
   elementSelect->insertItem(i18n("City"), City);
+  elementSelect->insertItem(i18n("Airspace A"), AirA);
+  elementSelect->insertItem(i18n("Airspace B"), AirB);
   elementSelect->insertItem(i18n("Airspace C"), AirC);
   elementSelect->insertItem(i18n("Airspace D"), AirD);
   elementSelect->insertItem(i18n("Airspace E (low)"), AirElow);

@@ -6,12 +6,6 @@
 **
 ************************************************************************
 **
-**   mapdefaults.h
-**
-**   This file is part of KFLog2.
-**
-************************************************************************
-**
 **   Copyright (c):  2001 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
@@ -260,6 +254,89 @@
 
 #define PRINT_CITY_BRUSH_COLOR_1 QColor(255,250,100)
 #define PRINT_CITY_BRUSH_COLOR_2 QColor(255,250,100)
+
+// [Airspace A]
+#define AIRA_PEN_1 4
+#define AIRA_PEN_2 3
+#define AIRA_PEN_3 3
+#define AIRA_PEN_4 2
+
+#define AIRA_PEN_STYLE_1 Qt::SolidLine
+#define AIRA_PEN_STYLE_2 Qt::SolidLine
+#define AIRA_PEN_STYLE_3 Qt::SolidLine
+#define AIRA_PEN_STYLE_4 Qt::SolidLine
+
+#define AIRA_COLOR_1 QColor(0,123,0)
+#define AIRA_COLOR_2 QColor(0,120,0)
+#define AIRA_COLOR_3 QColor(0,120,0)
+#define AIRA_COLOR_4 QColor(0,120,0)
+
+#define AIRA_BRUSH_COLOR_1 QColor(0,120,0)
+#define AIRA_BRUSH_COLOR_2 QColor(0,120,0)
+#define AIRA_BRUSH_COLOR_3 QColor(0,120,0)
+#define AIRA_BRUSH_COLOR_4 QColor(0,120,0)
+
+#define AIRA_BRUSH_STYLE_1 Qt::Dense5Pattern
+#define AIRA_BRUSH_STYLE_2 Qt::Dense5Pattern
+#define AIRA_BRUSH_STYLE_3 Qt::Dense5Pattern
+#define AIRA_BRUSH_STYLE_4 Qt::Dense5Pattern
+
+#define PRINT_AIRA_PEN_1 4
+#define PRINT_AIRA_PEN_2 3
+
+#define PRINT_AIRA_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_AIRA_PEN_STYLE_2 Qt::SolidLine
+
+#define PRINT_AIRA_COLOR_1 QColor(0,120,0)
+#define PRINT_AIRA_COLOR_2 QColor(0,120,0)
+
+#define PRINT_AIRA_BRUSH_COLOR_1 QColor(0,120,0)
+#define PRINT_AIRA_BRUSH_COLOR_2 QColor(0,120,0)
+
+#define PRINT_AIRA_BRUSH_STYLE_1 Qt::NoBrush
+#define PRINT_AIRA_BRUSH_STYLE_2 Qt::NoBrush
+
+
+// [Airspace B]
+#define AIRB_PEN_1 4
+#define AIRB_PEN_2 3
+#define AIRB_PEN_3 3
+#define AIRB_PEN_4 2
+
+#define AIRB_PEN_STYLE_1 Qt::SolidLine
+#define AIRB_PEN_STYLE_2 Qt::SolidLine
+#define AIRB_PEN_STYLE_3 Qt::SolidLine
+#define AIRB_PEN_STYLE_4 Qt::SolidLine
+
+#define AIRB_COLOR_1 QColor(0,123,0)
+#define AIRB_COLOR_2 QColor(0,120,0)
+#define AIRB_COLOR_3 QColor(0,120,0)
+#define AIRB_COLOR_4 QColor(0,120,0)
+
+#define AIRB_BRUSH_COLOR_1 QColor(0,120,0)
+#define AIRB_BRUSH_COLOR_2 QColor(0,120,0)
+#define AIRB_BRUSH_COLOR_3 QColor(0,120,0)
+#define AIRB_BRUSH_COLOR_4 QColor(0,120,0)
+
+#define AIRB_BRUSH_STYLE_1 Qt::Dense5Pattern
+#define AIRB_BRUSH_STYLE_2 Qt::Dense5Pattern
+#define AIRB_BRUSH_STYLE_3 Qt::Dense5Pattern
+#define AIRB_BRUSH_STYLE_4 Qt::Dense5Pattern
+
+#define PRINT_AIRB_PEN_1 4
+#define PRINT_AIRB_PEN_2 3
+
+#define PRINT_AIRB_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_AIRB_PEN_STYLE_2 Qt::SolidLine
+
+#define PRINT_AIRB_COLOR_1 QColor(0,120,0)
+#define PRINT_AIRB_COLOR_2 QColor(0,120,0)
+
+#define PRINT_AIRB_BRUSH_COLOR_1 QColor(0,120,0)
+#define PRINT_AIRB_BRUSH_COLOR_2 QColor(0,120,0)
+
+#define PRINT_AIRB_BRUSH_STYLE_1 Qt::NoBrush
+#define PRINT_AIRB_BRUSH_STYLE_2 Qt::NoBrush
 
 // [Airspace C]
 #define AIRC_PEN_1 4

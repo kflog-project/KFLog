@@ -44,7 +44,7 @@ class ConfigDrawElement : public QFrame
     ~ConfigDrawElement();
     /** */
     enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
-        AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
+        AirA, AirB, AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
         LowFlight, Restricted, TMZ};
 
   public slots:
@@ -105,6 +105,10 @@ class ConfigDrawElement : public QFrame
     KComboBox* border3BrushStyle;
     KComboBox* border4BrushStyle;
 
+    QList<QPen> airAPenList;
+    QList<QBrush> airABrushList;
+    QList<QPen> airBPenList;
+    QList<QBrush> airBBrushList;
     QList<QPen> airCPenList;
     QList<QBrush> airCBrushList;
     QList<QPen> airDPenList;
@@ -135,6 +139,8 @@ class ConfigDrawElement : public QFrame
     QList<QPen> cityPenList;
     QList<QBrush> cityBrushList;
 
+    bool* airABorder;
+    bool* airBBorder;
     bool* airCBorder;
     bool* airDBorder;
     bool* airElBorder;

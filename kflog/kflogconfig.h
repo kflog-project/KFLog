@@ -51,7 +51,7 @@ class KFLogConfig : public KDialogBase
     ~KFLogConfig();
     /** */
     enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
-        AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
+        AirA, AirB, AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
         LowFlight, Restricted, TMZ};
 
   signals:

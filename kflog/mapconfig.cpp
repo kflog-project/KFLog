@@ -80,6 +80,8 @@ MapConfig::MapConfig()
   : scaleIndex(0), printScaleIndex(0), isSwitch(false),
     drawFType(MapConfig::Vario)
 {
+  airABorder = new bool[6];
+  airBBorder = new bool[6];
   airCBorder = new bool[6];
   airDBorder = new bool[6];
   airElBorder = new bool[6];
@@ -112,6 +114,10 @@ void MapConfig::slotReadConfig()
    */
   while(topographyColorList.remove());
 
+  while(airAPenList.remove());
+  while(airABrushList.remove());
+  while(airBPenList.remove());
+  while(airBBrushList.remove());
   while(airCPenList.remove());
   while(airCBrushList.remove());
   while(airDPenList.remove());
@@ -261,6 +267,34 @@ void MapConfig::slotReadConfig()
       cityBrushList.append(new QBrush(PRINT_CITY_BRUSH_COLOR_2, Qt::SolidPattern));
       READ_BORDER(cityBorder);
     }
+
+  READ_PEN_BRUSH("Airspace A", airAPenList, airABorder, airABrushList,
+        AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
+        PRINT_AIRA_COLOR_1, PRINT_AIRA_COLOR_2,
+        AIRA_PEN_1, AIRA_PEN_2, AIRA_PEN_3, AIRA_PEN_4,
+        PRINT_AIRA_PEN_1, PRINT_AIRA_PEN_2,
+        AIRA_PEN_STYLE_1, AIRA_PEN_STYLE_2, AIRA_PEN_STYLE_3, AIRA_PEN_STYLE_4,
+        PRINT_AIRA_PEN_STYLE_1, PRINT_AIRA_PEN_STYLE_2,
+        AIRA_BRUSH_COLOR_1, AIRA_BRUSH_COLOR_2,
+        AIRA_BRUSH_COLOR_3, AIRA_BRUSH_COLOR_4,
+        PRINT_AIRA_BRUSH_COLOR_1, PRINT_AIRA_BRUSH_COLOR_2,
+        AIRA_BRUSH_STYLE_1, AIRA_BRUSH_STYLE_2,
+        AIRA_BRUSH_STYLE_3, AIRA_BRUSH_STYLE_4,
+        PRINT_AIRA_BRUSH_STYLE_1, PRINT_AIRA_BRUSH_STYLE_2)
+
+  READ_PEN_BRUSH("Airspace B", airBPenList, airBBorder, airBBrushList,
+        AIRB_COLOR_1, AIRB_COLOR_2, AIRB_COLOR_3, AIRB_COLOR_4,
+        PRINT_AIRB_COLOR_1, PRINT_AIRB_COLOR_2,
+        AIRB_PEN_1, AIRB_PEN_2, AIRB_PEN_3, AIRB_PEN_4,
+        PRINT_AIRB_PEN_1, PRINT_AIRB_PEN_2,
+        AIRB_PEN_STYLE_1, AIRB_PEN_STYLE_2, AIRB_PEN_STYLE_3, AIRB_PEN_STYLE_4,
+        PRINT_AIRB_PEN_STYLE_1, PRINT_AIRB_PEN_STYLE_2,
+        AIRB_BRUSH_COLOR_1, AIRB_BRUSH_COLOR_2,
+        AIRB_BRUSH_COLOR_3, AIRB_BRUSH_COLOR_4,
+        PRINT_AIRB_BRUSH_COLOR_1, PRINT_AIRB_BRUSH_COLOR_2,
+        AIRB_BRUSH_STYLE_1, AIRB_BRUSH_STYLE_2,
+        AIRB_BRUSH_STYLE_3, AIRB_BRUSH_STYLE_4,
+        PRINT_AIRB_BRUSH_STYLE_1, PRINT_AIRB_BRUSH_STYLE_2)
 
   READ_PEN_BRUSH("Airspace C", airCPenList, airCBorder, airCBrushList,
         AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
@@ -443,7 +477,7 @@ QPen MapConfig::getPrintPen(unsigned int typeID)
   return __getPen(typeID, printScaleIndex);
 }
 
-QPen MapConfig::getDrawPen(flightPoint* fP)
+QPen MapConfig::getDrawPen(struct flightPoint* fP)
 {
   //
   // Dynamische Farben im Flug:
@@ -544,6 +578,10 @@ QPen MapConfig::__getPen(unsigned int typeID, int sIndex)
           return *riverPenList.at(sIndex);
       case BaseMapElement::City:
           return *cityPenList.at(sIndex);
+      case BaseMapElement::AirA:
+          return *airAPenList.at(sIndex);
+      case BaseMapElement::AirB:
+          return *airBPenList.at(sIndex);
       case BaseMapElement::AirC:
           return *airCPenList.at(sIndex);
       case BaseMapElement::AirD:
@@ -586,6 +624,10 @@ bool MapConfig::isBorder(unsigned int typeID)
           return riverBorder[scaleIndex];
       case BaseMapElement::City:
           return cityBorder[scaleIndex];
+      case BaseMapElement::AirA:
+          return airABorder[scaleIndex];
+      case BaseMapElement::AirB:
+          return airBBorder[scaleIndex];
       case BaseMapElement::AirC:
           return airCBorder[scaleIndex];
       case BaseMapElement::AirD:
@@ -657,6 +699,10 @@ QBrush MapConfig::__getBrush(unsigned int typeID, int sIndex)
           return *cityBrushList.at(sIndex);
       case BaseMapElement::Lake:
           return QBrush(riverPenList.at(sIndex)->color(), Qt::SolidPattern);
+      case BaseMapElement::AirA:
+          return *airABrushList.at(sIndex);
+      case BaseMapElement::AirB:
+          return *airBBrushList.at(sIndex);
       case BaseMapElement::AirC:
           return *airCBrushList.at(sIndex);
       case BaseMapElement::AirD:

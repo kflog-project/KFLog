@@ -164,6 +164,8 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
   : QFrame(parent, "ConfigPrintelement"),
     config(cnf), oldElement(-1)
 {
+  airABorder = new bool[2];
+  airBBorder = new bool[2];
   airCBorder = new bool[2];
   airDBorder = new bool[2];
   airElBorder = new bool[2];
@@ -182,6 +184,10 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
   riverBorder = new bool[2];
   cityBorder = new bool[2];
 
+  airAPenList.setAutoDelete(true);
+  airABrushList.setAutoDelete(true);
+  airBPenList.setAutoDelete(true);
+  airBBrushList.setAutoDelete(true);
   airCPenList.setAutoDelete(true);
   airCBrushList.setAutoDelete(true);
   airDPenList.setAutoDelete(true);
@@ -258,6 +264,20 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
       cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_4, Qt::SolidPattern));
       READ_BORDER(cityBorder);
     }
+
+  READ_PEN_BRUSH("Airspace A", airAPenList, airABorder, airABrushList,
+        PRINT_AIRA_COLOR_1, PRINT_AIRA_COLOR_2,
+        PRINT_AIRA_PEN_1, PRINT_AIRA_PEN_2,
+        PRINT_AIRA_PEN_STYLE_1, PRINT_AIRA_PEN_STYLE_2,
+        PRINT_AIRA_BRUSH_COLOR_1, PRINT_AIRA_BRUSH_COLOR_2,
+        PRINT_AIRA_BRUSH_STYLE_1, PRINT_AIRA_BRUSH_STYLE_2)
+
+  READ_PEN_BRUSH("Airspace B", airBPenList, airBBorder, airBBrushList,
+        PRINT_AIRB_COLOR_1, PRINT_AIRB_COLOR_2,
+        PRINT_AIRB_PEN_1, PRINT_AIRB_PEN_2,
+        PRINT_AIRB_PEN_STYLE_1, PRINT_AIRB_PEN_STYLE_2,
+        PRINT_AIRB_BRUSH_COLOR_1, PRINT_AIRB_BRUSH_COLOR_2,
+        PRINT_AIRB_BRUSH_STYLE_1, PRINT_AIRB_BRUSH_STYLE_2)
 
   READ_PEN_BRUSH("Airspace C", airCPenList, airCBorder, airCBrushList,
         PRINT_AIRC_COLOR_1, PRINT_AIRC_COLOR_2,
@@ -412,6 +432,10 @@ void ConfigPrintElement::slotOk()
 
   WRITE_PEN("City", cityPenList, cityBorder);
 
+  WRITE_BRUSH("Airspace A", airABrushList, airAPenList, airABorder);
+
+  WRITE_BRUSH("Airspace B", airBBrushList, airBPenList, airBBorder);
+
   WRITE_BRUSH("Airspace C", airCBrushList, airCPenList, airCBorder);
 
   WRITE_BRUSH("Airspace D", airDBrushList, airDPenList, airDBorder);
@@ -466,6 +490,20 @@ void ConfigPrintElement::slotDefaultElements()
       Qt::SolidLine, Qt::SolidLine,
       PRINT_CITY_BRUSH_COLOR_1, PRINT_CITY_BRUSH_COLOR_2,
       PRINT_CITY_BRUSH_STYLE_1, PRINT_CITY_BRUSH_STYLE_2)
+
+  DEFAULT_PEN_BRUSH(airAPenList, airABorder, airABrushList,
+      PRINT_AIRA_COLOR_1, PRINT_AIRA_COLOR_2,
+      PRINT_AIRA_PEN_1, PRINT_AIRA_PEN_2,
+      PRINT_AIRA_PEN_STYLE_1, PRINT_AIRA_PEN_STYLE_2,
+      PRINT_AIRA_BRUSH_COLOR_1, PRINT_AIRA_BRUSH_COLOR_2,
+      PRINT_AIRA_BRUSH_STYLE_1, PRINT_AIRA_BRUSH_STYLE_2)
+
+  DEFAULT_PEN_BRUSH(airBPenList, airBBorder, airBBrushList,
+      PRINT_AIRB_COLOR_1, PRINT_AIRB_COLOR_2,
+      PRINT_AIRB_PEN_1, PRINT_AIRB_PEN_2,
+      PRINT_AIRB_PEN_STYLE_1, PRINT_AIRB_PEN_STYLE_2,
+      PRINT_AIRB_BRUSH_COLOR_1, PRINT_AIRB_BRUSH_COLOR_2,
+      PRINT_AIRB_BRUSH_STYLE_1, PRINT_AIRB_BRUSH_STYLE_2)
 
   DEFAULT_PEN_BRUSH(airCPenList, airCBorder, airCBrushList,
       PRINT_AIRC_COLOR_1, PRINT_AIRC_COLOR_2,
@@ -563,6 +601,14 @@ void ConfigPrintElement::slotSelectElement(int elementID)
         SAVE_PEN(cityPenList, cityBorder)
         SAVE_BRUSH(cityBrushList)
         break;
+      case AirA:
+        SAVE_PEN(airAPenList, airABorder)
+        SAVE_BRUSH(airABrushList)
+        break;
+      case AirB:
+        SAVE_PEN(airBPenList, airBBorder)
+        SAVE_BRUSH(airBBrushList)
+        break;
       case AirC:
         SAVE_PEN(airCPenList, airCBorder)
         SAVE_BRUSH(airCBrushList)
@@ -629,6 +675,14 @@ void ConfigPrintElement::slotSelectElement(int elementID)
         SHOW_PEN(cityPenList, cityBorder)
         SHOW_BRUSH(cityBrushList)
         break;
+      case AirA:
+        SHOW_PEN(airAPenList, airABorder)
+        SHOW_BRUSH(airABrushList)
+        break;
+      case AirB:
+        SHOW_PEN(airBPenList, airBBorder)
+        SHOW_BRUSH(airBBrushList)
+        break;
       case AirC:
         SHOW_PEN(airCPenList, airCBorder)
         SHOW_BRUSH(airCBrushList)
@@ -693,6 +747,8 @@ void ConfigPrintElement::slotToggleFirst(bool toggle)
         border1BrushColor->setEnabled(toggle);
         border1BrushStyle->setEnabled(false);
         break;
+      case AirA:
+      case AirB:
       case AirC:
       case AirD:
       case AirElow:
@@ -732,6 +788,8 @@ void ConfigPrintElement::slotToggleSecond(bool toggle)
         border2BrushColor->setEnabled(toggle);
         border2BrushStyle->setEnabled(false);
         break;
+      case AirA:
+      case AirB:
       case AirC:
       case AirD:
       case AirElow:

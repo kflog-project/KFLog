@@ -218,6 +218,8 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
   : QFrame(parent, "configdrawelement"),
     config(cnf), oldElement(-1)
 {
+  airABorder = new bool[4];
+  airBBorder = new bool[4];
   airCBorder = new bool[4];
   airDBorder = new bool[4];
   airElBorder = new bool[4];
@@ -236,6 +238,10 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
   riverBorder = new bool[4];
   cityBorder = new bool[4];
 
+  airAPenList.setAutoDelete(true);
+  airABrushList.setAutoDelete(true);
+  airBPenList.setAutoDelete(true);
+  airBBrushList.setAutoDelete(true);
   airCPenList.setAutoDelete(true);
   airCBrushList.setAutoDelete(true);
   airDPenList.setAutoDelete(true);
@@ -317,6 +323,24 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
       cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_4, Qt::SolidPattern));
     }
   READ_BORDER(cityBorder);
+
+  config->setGroup("Airspace A");
+  READ_PEN(airAPenList, AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
+        AIRA_PEN_1, AIRA_PEN_2, AIRA_PEN_3, AIRA_PEN_4,
+        AIRA_PEN_STYLE_1, AIRA_PEN_STYLE_2, AIRA_PEN_STYLE_3, AIRA_PEN_STYLE_4)
+  READ_BRUSH(airABrushList, AIRA_BRUSH_COLOR_1, AIRA_BRUSH_COLOR_2,
+        AIRA_BRUSH_COLOR_3, AIRA_BRUSH_COLOR_4, AIRA_BRUSH_STYLE_1,
+        AIRA_BRUSH_STYLE_2, AIRA_BRUSH_STYLE_3, AIRA_BRUSH_STYLE_4)
+  READ_BORDER(airABorder);
+
+  config->setGroup("Airspace B");
+  READ_PEN(airBPenList, AIRB_COLOR_1, AIRB_COLOR_2, AIRB_COLOR_3, AIRB_COLOR_4,
+        AIRB_PEN_1, AIRB_PEN_2, AIRB_PEN_3, AIRB_PEN_4,
+        AIRB_PEN_STYLE_1, AIRB_PEN_STYLE_2, AIRB_PEN_STYLE_3, AIRB_PEN_STYLE_4)
+  READ_BRUSH(airBBrushList, AIRB_BRUSH_COLOR_1, AIRB_BRUSH_COLOR_2,
+        AIRB_BRUSH_COLOR_3, AIRB_BRUSH_COLOR_4, AIRB_BRUSH_STYLE_1,
+        AIRB_BRUSH_STYLE_2, AIRB_BRUSH_STYLE_3, AIRB_BRUSH_STYLE_4)
+  READ_BORDER(airBBorder);
 
   config->setGroup("Airspace C");
   READ_PEN(airCPenList, AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
@@ -517,6 +541,10 @@ void ConfigDrawElement::slotOk()
 
   WRITE_PEN("City", cityPenList, cityBorder);
 
+  WRITE_BRUSH("Airspace A", airABrushList, airAPenList, airABorder);
+
+  WRITE_BRUSH("Airspace B", airBBrushList, airBPenList, airBBorder);
+
   WRITE_BRUSH("Airspace C", airCBrushList, airCPenList, airCBorder);
 
   WRITE_BRUSH("Airspace D", airDBrushList, airDPenList, airDBorder);
@@ -568,6 +596,22 @@ void ConfigDrawElement::slotDefaultElements()
       CITY_BRUSH_COLOR_3, CITY_BRUSH_COLOR_4,
       CITY_BRUSH_STYLE_1, CITY_BRUSH_STYLE_2,
       CITY_BRUSH_STYLE_3, CITY_BRUSH_STYLE_4)
+
+  DEFAULT_PEN_BRUSH(airAPenList, airABorder, airABrushList,
+      AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
+      AIRA_PEN_1, AIRA_PEN_2, AIRA_PEN_3, AIRA_PEN_4,
+      AIRA_BRUSH_COLOR_1, AIRA_BRUSH_COLOR_2,
+      AIRA_BRUSH_COLOR_3, AIRA_BRUSH_COLOR_4,
+      AIRA_BRUSH_STYLE_1, AIRA_BRUSH_STYLE_2,
+      AIRA_BRUSH_STYLE_3, AIRA_BRUSH_STYLE_4)
+
+  DEFAULT_PEN_BRUSH(airBPenList, airBBorder, airBBrushList,
+      AIRB_COLOR_1, AIRB_COLOR_2, AIRB_COLOR_3, AIRB_COLOR_4,
+      AIRB_PEN_1, AIRB_PEN_2, AIRB_PEN_3, AIRB_PEN_4,
+      AIRB_BRUSH_COLOR_1, AIRB_BRUSH_COLOR_2,
+      AIRB_BRUSH_COLOR_3, AIRB_BRUSH_COLOR_4,
+      AIRB_BRUSH_STYLE_1, AIRB_BRUSH_STYLE_2,
+      AIRB_BRUSH_STYLE_3, AIRB_BRUSH_STYLE_4)
 
   DEFAULT_PEN_BRUSH(airCPenList, airCBorder, airCBrushList,
       AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
@@ -675,6 +719,14 @@ void ConfigDrawElement::slotSelectElement(int elementID)
         SAVE_PEN(cityPenList, cityBorder)
         SAVE_BRUSH(cityBrushList)
         break;
+      case AirA:
+        SAVE_PEN(airAPenList, airABorder)
+        SAVE_BRUSH(airABrushList)
+        break;
+      case AirB:
+        SAVE_PEN(airBPenList, airBBorder)
+        SAVE_BRUSH(airBBrushList)
+        break;
       case AirC:
         SAVE_PEN(airCPenList, airCBorder)
         SAVE_BRUSH(airCBrushList)
@@ -741,6 +793,14 @@ void ConfigDrawElement::slotSelectElement(int elementID)
         SHOW_PEN(cityPenList, cityBorder)
         SHOW_BRUSH(cityBrushList)
         break;
+      case AirA:
+        SHOW_PEN(airAPenList, airABorder)
+        SHOW_BRUSH(airABrushList)
+        break;
+      case AirB:
+        SHOW_PEN(airBPenList, airBBorder)
+        SHOW_BRUSH(airBBrushList)
+        break;
       case AirC:
         SHOW_PEN(airCPenList, airCBorder)
         SHOW_BRUSH(airCBrushList)
@@ -805,6 +865,8 @@ void ConfigDrawElement::slotToggleFirst(bool toggle)
         border1BrushColor->setEnabled(toggle);
         border1BrushStyle->setEnabled(false);
         break;
+      case AirA:
+      case AirB:
       case AirC:
       case AirD:
       case AirElow:
@@ -846,6 +908,8 @@ void ConfigDrawElement::slotToggleSecond(bool toggle)
         border2BrushColor->setEnabled(toggle);
         border2BrushStyle->setEnabled(false);
         break;
+      case AirA:
+      case AirB:
       case AirC:
       case AirD:
       case AirElow:
@@ -887,6 +951,8 @@ void ConfigDrawElement::slotToggleThird(bool toggle)
         border3BrushColor->setEnabled(toggle);
         border3BrushStyle->setEnabled(false);
         break;
+      case AirA:
+      case AirB:
       case AirC:
       case AirD:
       case AirElow:
@@ -926,6 +992,8 @@ void ConfigDrawElement::slotToggleForth(bool toggle)
         border4BrushColor->setEnabled(toggle);
         border4BrushStyle->setEnabled(false);
         break;
+      case AirA:
+      case AirB:
       case AirC:
       case AirD:
       case AirElow:

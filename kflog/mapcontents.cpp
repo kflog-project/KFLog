@@ -450,6 +450,8 @@ bool MapContents::__readAsciiFile(const char* fileName)
                     navList.append(new RadioPoint(name, alias, abbr, type,
                         position, frequency));
                     break;
+                  case BaseMapElement::AirA:
+                  case BaseMapElement::AirB:
                   case BaseMapElement::AirC:
                   case BaseMapElement::AirD:
                   case BaseMapElement::ControlD:
@@ -864,16 +866,27 @@ bool MapContents::__readAirspaceFile(const char* pathName)
 
       locLength = 0;
 
+      name = "";
+      idString = "";
+      icaoName = "";
+      lLimitType = 0;
+      lLimit = 0;
+      uLimitType = 0;
+      uLimit = 0;
+      exception = 0;
+      exceptionText = "";
+      contactFrequency = "";
+      contactType = 0;
+      contactCallSign = "";
+
       QPointArray tA;
 
       count++;
 
-      //
-      //  Die Werte müssen wieder zurückgesetzt werden!
-      //
-
       switch (typeIn)
         {
+          case BaseMapElement::AirA:
+          case BaseMapElement::AirB:
           case BaseMapElement::AirC:
           case BaseMapElement::AirD:
           case BaseMapElement::AirElow:
@@ -928,14 +941,14 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   pathName = globalDirs->findResource("appdata", pathName);
 
   if(pathName == 0)
-      // Datei existiert nicht ...
+      // File does not exist ...
       return false;
 
   QFile eingabe(pathName);
   if(!eingabe.open(IO_ReadOnly))
     {
-      // Datei existiert, kann aber nicht gelesen werden:
-      // Infofenster wäre nötig ...
+      // File exists, but is not readable:
+      // We should open a messagebox ...
       warning("KFLog: Can not open mapfile %s", (const char*)pathName);
       return false;
     }

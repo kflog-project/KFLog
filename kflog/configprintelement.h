@@ -44,7 +44,7 @@ class ConfigPrintElement : public QFrame
     ~ConfigPrintElement();
     /** */
     enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
-        AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
+        AirA, AirB, AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
         LowFlight, Restricted, TMZ};
 
   public slots:
@@ -83,6 +83,10 @@ class ConfigPrintElement : public QFrame
     KComboBox* border1BrushStyle;
     KComboBox* border2BrushStyle;
 
+    QList<QPen> airAPenList;
+    QList<QBrush> airABrushList;
+    QList<QPen> airBPenList;
+    QList<QBrush> airBBrushList;
     QList<QPen> airCPenList;
     QList<QBrush> airCBrushList;
     QList<QPen> airDPenList;
@@ -113,6 +117,8 @@ class ConfigPrintElement : public QFrame
     QList<QPen> cityPenList;
     QList<QBrush> cityBrushList;
 
+    bool* airABorder;
+    bool* airBBorder;
     bool* airCBorder;
     bool* airDBorder;
     bool* airElBorder;

@@ -1,7 +1,7 @@
 # KDE tags expanded automatically by am_edit - $Revision$ 
-# Makefile.in generated automatically by automake 1.4-p5 from Makefile.am
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
-# Copyright (C) 1994, 1995-8, 1999, 2001 Free Software Foundation, Inc.
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -297,7 +297,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 #>- DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 #>+ 4
-KDE_DIST=kflog_meta_unload.cpp kflog 
+KDE_DIST=hi16-action-stepback.png hi16-action-stepforward.png hi22-action-stepback.png hi22-action-stepforward.png 
 
 DISTFILES= $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST) $(KDE_DIST)
 
@@ -490,7 +490,7 @@ maintainer-clean-recursive:
 	dot_seen=no; \
 	rev=''; list='$(SUBDIRS)'; for subdir in $$list; do \
 	  rev="$$subdir $$rev"; \
-	  test "$$subdir" != "." || dot_seen=yes; \
+	  test "$$subdir" = "." && dot_seen=yes; \
 	done; \
 	test "$$dot_seen" = "no" && rev=". $$rev"; \
 	target=`echo $@ | sed s/-recursive//`; \
@@ -1059,7 +1059,7 @@ clean-moc-classes:
 	-rm -f  kflog_meta_unload.cpp
 
 #>+ 11
-kflog.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/waypointlist.cpp $(srcdir)/waypointelement.cpp $(srcdir)/waypointdialog.cpp $(srcdir)/waypointcatalog.cpp $(srcdir)/translationlist.cpp $(srcdir)/translationelement.cpp $(srcdir)/taskandwaypoint.cpp $(srcdir)/configprintelement.cpp $(srcdir)/configdrawelement.cpp $(srcdir)/igcpreview.cpp $(srcdir)/evaluationframe.cpp $(srcdir)/mapconfig.cpp $(srcdir)/evaluationview.cpp $(srcdir)/evaluationdialog.cpp $(srcdir)/kflogconfig.cpp $(srcdir)/printdialog.cpp $(srcdir)/kflogstartlogo.cpp $(srcdir)/flighttask.cpp $(srcdir)/flight.cpp $(srcdir)/mapmatrix.cpp $(srcdir)/singlepoint.cpp $(srcdir)/radiopoint.cpp $(srcdir)/lineelement.cpp $(srcdir)/isohypse.cpp $(srcdir)/glidersite.cpp $(srcdir)/elevpoint.cpp $(srcdir)/airspace.cpp $(srcdir)/airport.cpp $(srcdir)/mapcontents.cpp $(srcdir)/basemapelement.cpp $(srcdir)/map.cpp $(srcdir)/dataview.cpp $(srcdir)/mapcalc.cpp $(srcdir)/mapcontrolview.cpp $(srcdir)/kflog.cpp $(srcdir)/main.cpp $(srcdir)/kflog_meta_unload.cpp  mapcontents.moc.cpp evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp dataview.moc.cpp configdrawelement.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp configprintelement.moc.cpp mapconfig.moc.cpp igcpreview.moc.cpp mapmatrix.moc.cpp kflogconfig.moc.cpp waypointdialog.moc.cpp taskandwaypoint.moc.cpp mapcontrolview.moc.cpp
+kflog.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/waypointlist.cpp $(srcdir)/waypointelement.cpp $(srcdir)/waypointdialog.cpp $(srcdir)/waypointcatalog.cpp $(srcdir)/translationlist.cpp $(srcdir)/translationelement.cpp $(srcdir)/taskandwaypoint.cpp $(srcdir)/configprintelement.cpp $(srcdir)/configdrawelement.cpp $(srcdir)/igcpreview.cpp $(srcdir)/evaluationframe.cpp $(srcdir)/mapconfig.cpp $(srcdir)/evaluationview.cpp $(srcdir)/evaluationdialog.cpp $(srcdir)/kflogconfig.cpp $(srcdir)/printdialog.cpp $(srcdir)/kflogstartlogo.cpp $(srcdir)/flighttask.cpp $(srcdir)/flight.cpp $(srcdir)/mapmatrix.cpp $(srcdir)/singlepoint.cpp $(srcdir)/radiopoint.cpp $(srcdir)/lineelement.cpp $(srcdir)/isohypse.cpp $(srcdir)/glidersite.cpp $(srcdir)/elevpoint.cpp $(srcdir)/airspace.cpp $(srcdir)/airport.cpp $(srcdir)/mapcontents.cpp $(srcdir)/basemapelement.cpp $(srcdir)/map.cpp $(srcdir)/dataview.cpp $(srcdir)/mapcalc.cpp $(srcdir)/mapcontrolview.cpp $(srcdir)/kflog.cpp $(srcdir)/main.cpp kflog_meta_unload.cpp  mapcontents.moc.cpp evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp dataview.moc.cpp configdrawelement.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp configprintelement.moc.cpp mapconfig.moc.cpp igcpreview.moc.cpp mapmatrix.moc.cpp kflogconfig.moc.cpp waypointdialog.moc.cpp taskandwaypoint.moc.cpp mapcontrolview.moc.cpp
 	@echo 'creating kflog.all_cpp.cpp ...'; \
 	rm -f kflog.all_cpp.files kflog.all_cpp.final; \
 	echo "#define KDE_USE_FINAL 1" >> kflog.all_cpp.final; \

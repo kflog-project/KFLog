@@ -98,7 +98,7 @@ class BaseMapElement
     /**
      * The three types of elevation-data used in the maps.
      */
-    enum elevationType {NotSet, MSL, GND, FL};
+    enum elevationType {NotSet, MSL, GND, FL, UNLTD};
 
   protected:
     /**

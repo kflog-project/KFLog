@@ -182,6 +182,10 @@ class MapConfig : public QObject
 
     QList<QColor> topographyColorList;
 
+    QList<QPen> airAPenList;
+    QList<QBrush> airABrushList;
+    QList<QPen> airBPenList;
+    QList<QBrush> airBBrushList;
     QList<QPen> airCPenList;
     QList<QBrush> airCBrushList;
     QList<QPen> airDPenList;
@@ -213,6 +217,8 @@ class MapConfig : public QObject
     QList<QBrush> cityBrushList;
     /**
      */
+    bool* airABorder;
+    bool* airBBorder;
     bool* airCBorder;
     bool* airDBorder;
     bool* airElBorder;

@@ -556,12 +556,12 @@ void EvaluationView::__draw()
   unsigned int gn_va = glatt_va * 2 + 1;
   unsigned int gn_h = glatt_h * 2 + 1;
 
-  int   *baro_d       = new int[gn_h];
-  int   *baro_d_last  = new int[gn_h];
-  float *speed_d      = new float[gn_v];
-  float *speed_d_last = new float[gn_v];
-  float *vario_d      = new float[gn_va];
-  float *vario_d_last = new float[gn_va];
+  int*   baro_d       = new int[gn_h];
+  int*   baro_d_last  = new int[gn_h];
+  float* speed_d      = new float[gn_v];
+  float* speed_d_last = new float[gn_v];
+  float* vario_d      = new float[gn_va];
+  float* vario_d_last = new float[gn_va];
 
   for(unsigned int loop = 0; loop < gn_h; loop++)
     {
@@ -629,8 +629,6 @@ void EvaluationView::__draw()
                         flight->getRouteLength() - loop - 1));
     }
 
-
-
   pixBufferKurve->fill(white);
   QPainter paint(pixBufferKurve);
 
@@ -645,8 +643,7 @@ void EvaluationView::__draw()
   wP = flight->getWPList();
   for(unsigned int n = 1; n < wP->count() - 1; n++)
     {
-      xpos = (wP->at(n)->sector1 - startTime ) / secWidth
-          + X_ABSTAND  ;
+      xpos = (wP->at(n)->sector1 - startTime ) / secWidth + X_ABSTAND;
 
       paint.setPen(QPen(QColor(100,100,100), 3));
       paint.drawLine(xpos, this->height() - Y_ABSTAND, xpos, Y_ABSTAND + 5);
@@ -666,8 +663,6 @@ void EvaluationView::__draw()
                           AlignCenter,timeText);
     }
 
-
-
   if(vario)
     {
       paint.setPen(QPen(QColor(255,100,100), 1));
@@ -684,15 +679,10 @@ void EvaluationView::__draw()
       paint.drawPolyline(baroArray);
     }
 
-
-
-
   paint.end();
 
-   __paintCursor(( cursor1 - startTime ) / secWidth
-        + X_ABSTAND ,-2000,0,1);
-   __paintCursor(( cursor2 - startTime ) / secWidth
-        + X_ABSTAND ,-2000,0,2);
+   __paintCursor(( cursor1 - startTime ) / secWidth + X_ABSTAND, -2000, 0, 1);
+   __paintCursor(( cursor2 - startTime ) / secWidth + X_ABSTAND, -2000, 0, 2);
 
   delete [] baro_d;
   delete [] baro_d_last;
@@ -700,8 +690,6 @@ void EvaluationView::__draw()
   delete [] speed_d_last;
   delete [] vario_d;
   delete [] vario_d_last;
-
-
 }
 
 void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)

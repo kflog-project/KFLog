@@ -79,6 +79,8 @@ QString Airspace::getInfoString() const
       case FL:
         tempL.sprintf("FL %d", lLimit);
         break;
+      case UNLTD:
+        tempL = i18n("Unlimited");
       default: ;
     }
 
@@ -96,11 +98,19 @@ QString Airspace::getInfoString() const
       case FL:
         tempU.sprintf("FL %d", uLimit);
         break;
+      case UNLTD:
+        tempL = i18n("Unlimited");
       default: ;
     }
 
   switch(typeID)
     {
+      case BaseMapElement::AirA:
+        text = "A";
+        break;
+      case BaseMapElement::AirB:
+        text = "B";
+        break;
       case BaseMapElement::AirC:
         text = "C";
         break;
