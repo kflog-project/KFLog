@@ -52,6 +52,8 @@ class Map : public QWidget
      * Destroys the Map-object.
      */
     ~Map();
+  /** Puts the waypoints of the active waypoint catalog to the map */
+  void __drawWaypoints();
 
   public slots:
     /** */
@@ -241,6 +243,10 @@ class Map : public QWidget
      *
      */
     QPixmap pixCursor;
+  	/*
+	 * Pixmap to hold waypoints of active WaypointsCatalog
+	 */
+  	QPixmap pixWaypoints;
     /** */
     QBitmap bitMapMask;
     /** */
@@ -248,6 +254,8 @@ class Map : public QWidget
     /** */
     QBitmap bitFlightMask;
     QBitmap bitPlanMask;
+	/** **/
+	QBitmap bitWaypointsMask;
     /** */
     QPoint prePos;
     QPoint prePlanPos;
@@ -285,6 +293,7 @@ class Map : public QWidget
     // temp task (snapping)
     FlightTask tempTask;
 
+public: // Public attributes
     //
     QPoint preSnapPoint;
 };

@@ -107,10 +107,12 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   pixGrid.resize( PIX_WIDTH, PIX_HEIGHT );
   pixUnderMap.resize( PIX_WIDTH, PIX_HEIGHT );
   pixIsoMap.resize( PIX_WIDTH, PIX_HEIGHT );
+  pixWaypoints.resize( PIX_WIDTH, PIX_HEIGHT );
   bitMapMask.resize( PIX_WIDTH, PIX_HEIGHT );
   bitAirspaceMask.resize( PIX_WIDTH, PIX_HEIGHT );
   bitPlanMask.resize( PIX_WIDTH, PIX_HEIGHT );
   bitFlightMask.resize( PIX_WIDTH, PIX_HEIGHT );
+  bitWaypointsMask.resize( PIX_WIDTH, PIX_HEIGHT );
 
 //  pixAnimate.resize(32,32);
 //  pixAnimate.fill(white);
@@ -1177,11 +1179,13 @@ void Map::__redrawMap()
   pixUnderMap.fill(black);
   pixIsoMap.fill(white);
   pixFlight.fill(white);
+  pixWaypoints.fill(white);
 
   bitMapMask.fill(Qt::color0);
   bitFlightMask.fill(Qt::color0);
   bitPlanMask.fill(Qt::color0);
   bitAirspaceMask.fill(Qt::color0);
+  bitWaypointsMask.fill(Qt::color0);
 
   QPoint temp1(preCur1);
   QPoint temp2(preCur2);
@@ -1195,6 +1199,7 @@ void Map::__redrawMap()
   __drawGrid();
   __drawMap();
   __drawFlight();
+  __drawWaypoints();
 //  __drawPlannedTask();
   // Linie zum aktuellen Punkt löschen
   prePlanPos.setX(-999);
@@ -1254,6 +1259,7 @@ void Map::__showLayer()
   pixUnderMap.setMask(bitMapMask);
   pixFlight.setMask(bitFlightMask);
   pixPlan.setMask(bitPlanMask);
+  pixWaypoints.setMask(bitWaypointsMask);
 
   bitBlt(&pixBuffer, 0, 0, &pixIsoMap);
   bitBlt(&pixBuffer, 0, 0, &pixUnderMap);
@@ -1264,6 +1270,7 @@ void Map::__showLayer()
 
   bitBlt(&pixBuffer, 0, 0, &pixFlight);
   bitBlt(&pixBuffer, 0, 0, &pixPlan);
+  bitBlt(&pixBuffer, 0, 0, &pixWaypoints);
   bitBlt(&pixBuffer, 0, 0, &pixGrid, 0, 0, -1, -1, NotEraseROP);
 
   paintEvent();
@@ -1904,3 +1911,42 @@ bool Map::__getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint>
     }
   return found;
 }
+/** Puts the waypoints of the active waypoint catalog to the map */
+void Map::__drawWaypoints(){
+ int i, n, x, y;
+  extern MapContents _globalMapContents;
+  wayPoint * wp;
+
+  QPainter wpPainter(&pixWaypoints);
+  QPainter wpMaskPainter(&bitWaypointsMask);
+
+/*
+  // just a test
+  wpPainter.setBrush(NoBrush);
+  wpPainter.setPen(QPen(QColor(0,0,0), 10, SolidLine));
+  wpPainter.drawLine(10,10,1000,1000);
+  wpMaskPainter.drawLine(10,10,1000,1000);
+*/
+/*
+  // test draw a marker
+  wpPainter.drawRect(50,50, 8, 8);
+  wpMaskPainter.drawRect(50, 50, 8, 8);
+*/
+
+/*
+  // now for real
+  n =  _globalMapContents.wpList.count();
+ for (i=0; i < n; i++){
+    wp = (wayPoint*)_globalMapContents.wpList.at(i);
+    // draw marker
+    x =wp->projP.x();
+    y =wp->projP.y();
+   wpPainter.drawRect(x-4,y-4, 8, 8);
+    wpMaskPainter.drawRect(x-4,y-4, 8, 8);
+  }
+*/
+  // clean up
+  wpPainter.end();
+  wpMaskPainter.end();
+}
+
