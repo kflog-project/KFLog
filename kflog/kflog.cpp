@@ -102,6 +102,7 @@ KFLogApp::KFLogApp()
   connect(this, SIGNAL(flightDataTypeChanged(int)), &_globalMapConfig,
       SLOT(slotSetFlightDataType(int)));
 
+
   _globalMapConfig.slotReadConfig();
 
   initStatusBar();
@@ -124,8 +125,11 @@ KFLogApp::KFLogApp()
   connect(map, SIGNAL(showFlightPoint(const QPoint, const struct flightPoint&)),
       this, SLOT(slotShowPointInfo(const QPoint, const struct flightPoint&)));
   // Plannung
-  connect(map, SIGNAL(showTaskText(FlightTask* , QPoint)),
-      dataView, SLOT(slotShowTaskText(FlightTask*, QPoint)));
+  connect(&_globalMapContents, SIGNAL(activatePlanning()),
+     map,SLOT(slotActivatePlanning()));
+
+  connect(map, SIGNAL(showTaskText(FlightTask*)),
+      dataView, SLOT(slotShowTaskText(FlightTask*)));
   connect(map, SIGNAL(taskPlanningEnd()), dataView, SLOT(setFlightData()));
   connect(map, SIGNAL(showPoint(const QPoint)),
       this, SLOT(slotShowPointInfo(const QPoint)));
@@ -216,9 +220,10 @@ void KFLogApp::initActions()
   /**
     * Graphical Planning
     */
+/*
   mapPlanning = new KToggleAction(i18n("graphical Taskplanning"), Key_F4,
       map, SLOT(slotActivatePlanning()), actionCollection(), "activate_planning");
-
+*/
   viewToolBar = KStdAction::showToolbar(this, SLOT(slotViewToolBar()),
       actionCollection());
   viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()),
@@ -295,7 +300,7 @@ void KFLogApp::initActions()
   flightMenu->insert(viewWaypoints);
   flightMenu->insert(viewFlightDataType);
   flightMenu->insert(viewIgc3D);
-  flightMenu->insert(mapPlanning);
+//  flightMenu->insert(mapPlanning);
   flightMenu->popupMenu()->insertSeparator();
   flightMenu->insert(animateFlightStart);
   flightMenu->insert(animateFlightStop);
@@ -313,7 +318,8 @@ void KFLogApp::initActions()
 
   KStdAction::preferences(this, SLOT(slotConfigureKFLog()), actionCollection());
 
-  KActionMenu *w = new KActionMenu(i18n("&Window"), actionCollection(), "window");
+  KActionMenu *w = new KActionMenu(i18n("&Window"), "igc",
+      actionCollection(), "window");
   windowMenu = w->popupMenu();
   windowMenu->setCheckable(true);
   connect(windowMenu, SIGNAL(aboutToShow()), this, SLOT(slotWindowsMenuAboutToShow()));
@@ -825,7 +831,8 @@ void KFLogApp::slotModifyMenu()
             stepFlightHome->setEnabled(true);
             stepFlightEnd->setEnabled(true);
             viewIgc3D->setEnabled(true);
-            mapPlanning->setEnabled(false);
+//            mapPlanning->setEnabled(false);
+            windowMenu->setEnabled(true);
             break;
           case BaseMapElement::Task:
             fileClose->setEnabled(true);
@@ -843,7 +850,8 @@ void KFLogApp::slotModifyMenu()
             stepFlightHome->setEnabled(false);
             stepFlightEnd->setEnabled(false);
             viewIgc3D->setEnabled(false);
-            mapPlanning->setEnabled(true);
+//            mapPlanning->setEnabled(true);
+            windowMenu->setEnabled(true);
             break;
           case BaseMapElement::FlightGroup:
             fileClose->setEnabled(true);
@@ -861,7 +869,8 @@ void KFLogApp::slotModifyMenu()
             stepFlightHome->setEnabled(true);
             stepFlightEnd->setEnabled(true);
             viewIgc3D->setEnabled(true);
-            mapPlanning->setEnabled(false);
+//            mapPlanning->setEnabled(false);
+            windowMenu->setEnabled(true);
             break;
         }
     }
@@ -882,7 +891,8 @@ void KFLogApp::slotModifyMenu()
       stepFlightHome->setEnabled(false);
       stepFlightEnd->setEnabled(false);
       viewIgc3D->setEnabled(false);
-      mapPlanning->setEnabled(false);
+//     mapPlanning->setEnabled(false);
+      windowMenu->setEnabled(false);
     }
 }
 

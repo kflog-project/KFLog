@@ -57,15 +57,32 @@ static KCmdLineOptions options[] =
  */
 int main(int argc, char *argv[])
 {
+  /*
+   * Using qstrdup here seems to be a workaround. Without, some of the
+   * strings are not shown when using i18n. Strange (and against the api),
+   * but this version works!
+   */
   KAboutData aboutData( "kflog", "KFLog",
-    VERSION, i18n("KFLog - The K-Flight-Logger"), KAboutData::License_GPL,
-    "(c) 2001, The KFLog-Team", 0, "http://www.kflog.org",
-    "bugs@kflog.org");
-  aboutData.addAuthor("Heiner Lamprecht", 0, "heiner@kflog.org");
-  aboutData.addAuthor("Florian Ehinger", 0, "florian@kflog.org");
-  aboutData.addAuthor("Harald Maier", 0, "harry@kflog.org");
-  aboutData.setTranslator(i18n("_: NAME OF TRANSLATORS\nYour names"),
-    i18n("_: EMAIL OF TRANSLATORS\nYour emails"));
+      VERSION, qstrdup(i18n("KFLog - The K-Flight-Logger")), KAboutData::License_GPL,
+      "(c) 2001, 2002, The KFLog-Team",
+      qstrdup(i18n("The maps used for KFLog are derived from both\n"
+          "the GTOPO30-data and the Digital Chart of the World.\n"
+          "If You have no mapfiles installed, please visit\n"
+          "our homepage to download the area You need.")),
+      "http://www.kflog.org", "bugs@kflog.org");
+
+  aboutData.addAuthor("Heiner Lamprecht",
+      qstrdup(i18n("Maintenance, Core-developer")), "heiner@kflog.org");
+  aboutData.addAuthor("Florian Ehinger",
+      qstrdup(i18n("Maintenance, Core-developer")), "florian@kflog.org");
+  aboutData.addAuthor("Harald Maier",
+      qstrdup(i18n("Developer (Waypoint-Dialog, Task-handling)")), "harry@kflog.org");
+  aboutData.addAuthor("Thomas Nielsen",
+      qstrdup(i18n("Developer (3D-Dialog)")), "thomas@kflog.org");
+
+  aboutData.setTranslator(qstrdup(i18n("_: NAME OF TRANSLATORS\nYour names")),
+    qstrdup(i18n("_: EMAIL OF TRANSLATORS\nYour emails")));
+
   KCmdLineArgs::init( argc, argv, &aboutData );
   KCmdLineArgs::addCmdLineOptions( options );
 

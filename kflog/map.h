@@ -104,7 +104,7 @@ class Map : public QWidget
     /**
     	*
     	*/
-    void showTaskText(FlightTask* task, QPoint current);
+    void showTaskText(FlightTask* task);
     /** */
     void taskPlanningEnd();
     /** */

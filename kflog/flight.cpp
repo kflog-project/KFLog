@@ -25,8 +25,8 @@
 #include <mapcalc.h>
 #include <mapmatrix.h>
 
-#include <kapp.h>
-#include <kconfig.h>
+//#include <kapp.h>
+//#include <kconfig.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <qpixmap.h>

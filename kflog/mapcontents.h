@@ -223,6 +223,12 @@ class MapContents : public QObject
      */
     void errorOnMapLoading();
 
+    /*
+      *
+      * Activates the graphical planning
+      */
+    void activatePlanning();
+
   private:
     /**
      * Reads a binary map file containing airfields.

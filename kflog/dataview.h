@@ -65,7 +65,7 @@ class DataView : public QFrame
     /**
     	* Setzt die Infos zur gerade aktuellen Aufgabe (Planung)
     	*/
-    void slotShowTaskText(FlightTask* task, QPoint current);
+    void slotShowTaskText(FlightTask* task);
     /**
       * Löscht den Inhalt von Dataview
       */

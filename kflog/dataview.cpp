@@ -46,12 +46,11 @@ DataView::~DataView()
 
 }
 
-void DataView::slotShowTaskText( FlightTask* task, QPoint current)
+void DataView::slotShowTaskText( FlightTask* task)
 {
   QList<wayPoint> taskPointList = task->getWPList();
   QString htmlText = "";
   QString tmp;
-  double distance = 0;
 
   if(taskPointList.count() > 0)
   {
@@ -116,8 +115,6 @@ void DataView::slotShowTaskText( FlightTask* task, QPoint current)
   htmlText += "<br>";
 
 
-  htmlText += "<br><hline><br><b>pos:<b>" + printPos(current.y()) + " / "
-                                          + printPos(current.x(),true);
   flightDataText->setText(htmlText);
 }
 

@@ -1976,6 +1976,8 @@ void MapContents::slotNewTask()
   FlightTask *f = new FlightTask(tmp);
   flightList.append(f);
   emit currentFlightChanged();
+
+  emit activatePlanning();
 }
 
 /** create a new, empty flight group */

@@ -283,9 +283,13 @@ void FlightTask::__setWaypointType()
       warning("n: %f",wpList.at(n)->distance);
     }
 
-
   // Kein Wendepunkt definiert
-  if (wpList.count() < 4)  return;
+  if (wpList.count() < 4)
+    {
+      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+          wpList.at(loop)->type = FlightTask::FreeP;
+      return;
+    }
 
   // warning("WendePunkte: %d",wpList.count());
   wpList.at(0)->type = FlightTask::TakeOff;
@@ -340,6 +344,7 @@ void FlightTask::drawMapElement(QPainter* targetPainter,
           double qy = -R1 + tempP.y();
           double gx = -R2 + tempP.x();
           double gy = -R2 + tempP.y();
+
 
           if(loop)
             {
@@ -1024,7 +1029,18 @@ QString FlightTask::getFlightInfoString()
       </TABLE>";
   }
   else {
-    htmlText += i18n("Select Flight/graphical Taskplanning from the menu and draw your task on the map<BR><EM>or</EM><BR>click on the task name to start editing");
+    htmlText += i18n(
+      "You can select waypoints with the left mouse button."
+      "You can also select free waypoints by clicking anywhere in the map."
+      "<br><br>"
+      "When you press &lt;STRG&gt; and click with the left mouse button on a taskpoint,"
+      "it will be deleted.<br>"
+      "You can compute the task up to your current mouse position by pressing &lt;SHIFT&gt;."
+      "<br>"
+      "Finish the task with the rigth mouse button.<br>"
+      "It's possible to move and delete taskpoints from the finished task."
+      );
+
   }
 
   return htmlText;
