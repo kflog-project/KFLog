@@ -28,7 +28,9 @@
  */
 
 #include <qstring.h>
+#include <qmemarray.h>
 #include "../flightrecorderpluginbase.h"
+class KTempDir;
 
 class Cumulus:public FlightRecorderPluginBase
 {
@@ -96,9 +98,29 @@ protected:
    */
   QString _tmpWaypointFile;
   /**
+   * Contains the path of the temporary local copy of the tasks file from/for Cumulus
+   */
+  QString _tmpTasksFile;
+  /**
    * Contains the base URL for the communication with Cumulus
    */
-  QString _URL;  
+  QString _URL; 
+  QString _home;
+  
+  /**
+   * Returns the home path on the PDA
+   */
+  QString homePath(); 
+  
+  KTempDir* _tmpFlightDir;
+  KTempDir* getTmpFlightDir();
+  
+  /**
+   * Returns an FRDirEntry struct for the igc file
+   */
+  FRDirEntry* getFlightInfo(QString filename);
+  
+  QMemArray<QString> flightList;
 };
 
 #endif
