@@ -283,9 +283,18 @@ int writeTask(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> taskPoints,
 
   vl.read_db_and_declaration();
 
+  // Filling the strings with whitespaces
+  QString pilotA(taskDecl->pilotA.left(32));
+  QString pilotB(taskDecl->pilotB.left(32));
+  pilotA += "                                 ";
+  pilotB += "                                 ";
+
   sprintf(vl.declaration.flightinfo.pilot, "%s%s",
-      (const char*)taskDecl->pilotB.left(32),
-      (const char*)taskDecl->pilotB.left(32));
+      (const char*)pilotA.left(32), (const char*)pilotB.left(32));
+
+warning(taskDecl->pilotA);
+warning(taskDecl->pilotB);
+warning(vl.declaration.flightinfo.pilot);
 
   strcpy(vl.declaration.flightinfo.gliderid,
       taskDecl->gliderID.left(7));
@@ -301,20 +310,20 @@ int writeTask(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> taskPoints,
       taskPoints.first()->name.left(6));
 
   vl.declaration.flightinfo.homepoint.lon =
-      taskPoints.first()->lonPos / 600000.0;
+      taskPoints.first()->lonPos / 60.0;
 
   vl.declaration.flightinfo.homepoint.lat =
-      taskPoints.first()->latPos / 600000.0;
+      taskPoints.first()->latPos / 100.0;
 
   // Begin of Task
   strcpy(vl.declaration.task.startpoint.name,
       taskPoints.at(1)->name.left(6));
 
   vl.declaration.task.startpoint.lat =
-      taskPoints.at(1)->latPos / 600000.0;
+      taskPoints.at(1)->latPos / 600.0;
 
   vl.declaration.task.startpoint.lon =
-      taskPoints.at(1)->lonPos / 600000.0;
+      taskPoints.at(1)->lonPos / 1000.0;
 
   for(unsigned int loop = 2; loop < MIN(taskPoints.count() - 2, 12); loop++)
     {
@@ -322,10 +331,10 @@ int writeTask(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> taskPoints,
           taskPoints.at(loop)->name.left(6));
 
       vl.declaration.task.turnpoints[loop - 2].lat =
-          taskPoints.at(loop)->latPos / 600000.0;
+          taskPoints.at(loop)->latPos / 10.0;
 
       vl.declaration.task.turnpoints[loop - 2].lon =
-          taskPoints.at(loop)->lonPos / 600000.0;
+          taskPoints.at(loop)->lonPos / 10.0;
     }
 
   vl.declaration.task.nturnpoints = MAX(MIN((int)taskPoints.count() - 4, 12), 0);
@@ -335,10 +344,10 @@ int writeTask(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> taskPoints,
       taskPoints.at(taskPoints.count() - 2)->name.left(6));
 
   vl.declaration.task.finishpoint.lat =
-      taskPoints.at(taskPoints.count() - 2)->latPos / 600000.0;
+      taskPoints.at(taskPoints.count() - 2)->latPos / 10.0;
 
   vl.declaration.task.finishpoint.lon =
-      taskPoints.at(taskPoints.count() - 2)->lonPos / 600000.0;
+      taskPoints.at(taskPoints.count() - 2)->lonPos / 10.0;
 
   vl.write_db_and_declaration();
   vl.close(0);

@@ -113,7 +113,8 @@ class RecorderDialog : public KDialogBase
     /** */
     int taskColID;
     int taskColName;
-    int taskColPosition;
+    int taskColLat;
+    int taskColLon;
     /** */
     KLineEdit* pilotName;
     KLineEdit* copilotName;

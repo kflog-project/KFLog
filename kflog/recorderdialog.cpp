@@ -247,17 +247,23 @@ void RecorderDialog::__addTaskPage()
   taskList = new KListView(taskPage, "flightList");
   taskList->setShowSortIndicator(true);
   taskList->setAllColumnsShowFocus(true);
-  taskColID = taskList->addColumn(i18n("Nr"));
-  taskColName = taskList->addColumn(i18n("Name"));
-  taskColPosition = taskList->addColumn(i18n("Position"));
+  taskList->setSelectionMode(QListView::NoSelection);
+
+  taskColID = taskList->addColumn(i18n("Nr"), 50);
+  taskColName = taskList->addColumn(i18n("Name"), 120);
+  taskColLat = taskList->addColumn(i18n("Latitude"), 140);
+  taskColLon = taskList->addColumn(i18n("Longitude"), 140);
+
+  taskList->setColumnAlignment(taskColLat, Qt::AlignRight);
+  taskList->setColumnAlignment(taskColLon, Qt::AlignRight);
 
   pilotName = new KLineEdit(taskPage, "pilotName");
   copilotName = new KLineEdit(taskPage, "copilotName");
   gliderID = new KComboBox(taskPage, "gliderID");
   gliderID->setEditable(true);
   gliderType = new KLineEdit(taskPage, "gliderType");
-  compClass = new KLineEdit(taskPage, "compClass");
   compID = new KLineEdit(taskPage, "compID");
+  compClass = new KLineEdit(taskPage, "compClass");
 
   QPushButton* writeTask = new QPushButton(i18n("write task to recorder"), taskPage);
   writeTask->setMaximumWidth(writeTask->sizeHint().width() + 15);
@@ -272,9 +278,9 @@ void RecorderDialog::__addTaskPage()
   tLayout->addWidget(new QLabel(i18n("Glidertype"), taskPage), 4, 4);
   tLayout->addWidget(gliderType, 4, 6);
   tLayout->addWidget(new QLabel(i18n("Comp. ID"), taskPage), 6, 0);
-  tLayout->addWidget(compClass, 6, 2);
+  tLayout->addWidget(compID, 6, 2);
   tLayout->addWidget(new QLabel(i18n("Comp. Class"), taskPage), 6, 4);
-  tLayout->addWidget(compID, 6, 6);
+  tLayout->addWidget(compClass, 6, 6);
   tLayout->addMultiCellWidget(writeTask, 8, 8, 4, 6, Qt::AlignRight);
 
   tLayout->addColSpacing(1, 5);
@@ -306,8 +312,8 @@ void RecorderDialog::__addTaskPage()
           idS.sprintf("%.2d", loop + 1);
           item->setText(taskColID, idS);
           item->setText(taskColName, wpList.at(loop)->name);
-          item->setText(taskColPosition, printPos(wpList.at(loop)->origP.x()) +
-              " / " + printPos(wpList.at(loop)->origP.x()));
+          item->setText(taskColLat, printPos(wpList.at(loop)->origP.y()));
+          item->setText(taskColLon, printPos(wpList.at(loop)->origP.x(), false));
         }
     }
   else
@@ -495,6 +501,23 @@ void RecorderDialog::slotWriteTask()
   QStringList::Iterator it = libNameList.at(selectType->currentItem());
   libName = (*it).latin1();
   portName = "/dev/" + selectPort->currentText();
+
+  // Filling the strings with whitespaces
+//  QString pilotA((const char*)taskDecl.pilotA.left(32));
+//  QString pilotB((const char*)taskDecl.pilotB.left(32));
+//  pilotA += "                                 ";
+//  pilotB += "                                 ";
+
+//  warning("%s%s",
+//      (const char*)pilotA.left(32), (const char*)pilotB.left(32));
+
+//  return;
+
+  if(__openLib(libName) == -1)
+    {
+      warning(i18n("Could not open lib!"));
+      return;
+    }
 
   char* error;
   void* funcH;

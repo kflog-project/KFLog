@@ -574,9 +574,9 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
               taskPointList.last()->origP = wp.origP;
               taskPointList.last()->elevation = wp.elevation;
               taskPointList.last()->projP = wp.projP;
-              taskPointList.at(moveWPindex)->sector1 = 1;
-              taskPointList.at(moveWPindex)->sector2 = 1;
-              taskPointList.at(moveWPindex)->sectorFAI = 1;
+              taskPointList.last()->sector1 = 1;
+              taskPointList.last()->sector2 = 1;
+              taskPointList.last()->sectorFAI = 1;
               // hier müssen noch mehr Sachen übergeben werden
             }
           else if(planning == 2)
