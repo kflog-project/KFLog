@@ -1,6 +1,11 @@
 $Id$
 
 
+2003-04-27 André <andre@kflog.org>
+  
+  * Cleaned up and fixed handling of new waypoints.
+
+
 2003-04-26 André <andre@kflog.org>
   
   * Removed bug where KFLog would crash if you tried to add a waypoint from 
