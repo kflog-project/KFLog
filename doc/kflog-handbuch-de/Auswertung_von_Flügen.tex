@@ -1,11 +1,14 @@
 \subsection{Auswertung von Flügen}
 \subsubsection{Einlesen der Flüge}
-Für die Auswertung der Flüge wird eine IGC-Datei benötigt. Diese Datei kann von externen Programmen bereitgestellt oder direkt vom Logger erzeugt werden.
-\\ Falls die Datei von einem externen Programm bzw. von einer anderen Quelle stammt muss sie von Hand in das Verzeichnis, das für die Flüge im Einrichtungsdialog eingestellt worden ist, kopiert werden (s. Logger-Dialog).
+Für die Auswertung der Flüge wird eine IGC-Datei benötigt. Diese Datei kann von externen Programmen bereitgestellt oder direkt vom Logger erzeugt werden (s. Logger-Dialog).
+\\
+\\ \textit{Man kann IGC-Dateien aus allen beliebigen Verzeichnissen öffnen!}
 \subsubsection{Laden und Darstellung des Fluges}
 Mittels KFlog ist eine detaillierte Darstellung der Flüge möglich. Die Flugwegdarstellung in der Karte kann nach verschiedenen Parametern eingefärbt werden (Höhe, Vario,Geschwindigkeit, Kreisflug ...).
-Außerdem ist es möglich sich den Flugweg in einer 3D Ansicht anzeigen zu lassen.
-\\ Der auszuwertende Flug kann nun über das Menü ''Datei'' mit dem Eintrag ''Flug öffnen'' oder durch Klick auf das Ordnersymbol in der Werkzeugleiste eingelesen werden. In der Karte sollte nun die Aufgabe und der Flug dargestellt werden. Im Aufgabenfenster wird die Aufgabe wieder mit den Wendepunkten und Koordinaten und der geplanten Länge zusammengefasst (s. Abb. 19).
+Außerdem ist es möglich, sich den Flugweg in einer 3D Ansicht anzeigen zu lassen.
+\\ Der auszuwertende Flug kann nun über das Menü ''Datei'' mit dem Eintrag ''Flug öffnen'' oder durch Klick auf das Ordnersymbol in der Werkzeugleiste eingelesen werden. In der Karte wird nun die Aufgabe und der Flug dargestellt. Im KFlog-Browser wird der Dateiname des geöffneten Fluges dargestellt und im Detailfenster wird die Aufgabe wieder mit den Wendepunkten und Koordinaten und der geplanten Länge zusammengefaßt (s. Abb. 21).
+\\
+Es ist möglich, mehrere Flüge zu öffnen und im KFlog-Browser kann der in der Karte darzustellende Flug ausgewählt werden (diese Auswahl gilt auch für die Optimierung).
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/Flug_eingelesen.png} 
@@ -14,7 +17,7 @@ Außerdem ist es möglich sich den Flugweg in einer 3D Ansicht anzeigen zu lassen.
 \end{center}
 \end{figure} 
 Für die Bearbeitung der Flugdaten gibt es unter KFlog verschiedene Möglichkeiten, die im Menü ''Flug'' zusammengefasst sind. Dieses Menü wird erst nach dem Laden des Fluges aktiviert.
-\\  Im oberen Bereich des Menüs befinden sich die Funktionen für die Auswertung und Optimierung des Fluges und im unteren Bereich die sind die Steuerungsfunktionen für die Animation auf der Karte dargestellt (s. Abb. 20).
+\\  Im oberen Bereich des Menüs befinden sich die Funktionen für die Auswertung und Optimierung des Fluges und im unteren Bereich sind die Steuerungsfunktionen für die Animation auf der Karte dargestellt (s. Abb. 22).
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/Menü-Flug.png} 
@@ -23,7 +26,7 @@ Für die Bearbeitung der Flugdaten gibt es unter KFlog verschiedene Möglichkeiten
 \end{center}
 \end{figure}
 Unter dem Menü ''Flugdaten zeigen'' kann festgelegt werden, nach welchen Parametern der Flugweg eingefärbt werden soll. Möglich sind die Parameter Höhe, Kreisflug, Geschwindigkeit, Vario und die einfarbige Darstellung. Mit dieser Einfärbung ist es möglich, die Streckenabschnitte mit der größten Höhe, dem größten Kreisfluganteil, der höchsten Geschwindigkeit und dem maximalen Steigen sofort zu erkennen.
-\\ Bei großen Strecken ist diese Darstellung nicht gleich offensichtlich, so dass diese Einfärbung erst durch Vergrößerung des Kartenausschnitts sichtbar wird (s. Abb. 21). 
+\\ Bei großem Maßstab wird zwecks der Übersichtlichkeit der Flugweg einfarbig gezeichnet. Durch zoomen wird die Einfärbung nach dem ausgewählten Parameter  jedoch sichtbar. (s. Abb. 23). 
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/Flug_anzeigen_eingefärbt.png} 
@@ -32,9 +35,13 @@ Unter dem Menü ''Flugdaten zeigen'' kann festgelegt werden, nach welchen Paramet
 \end{center}
 \end{figure}
 \\ Das Zoomen erfolgt über die Lupen-Symbole der Werkzeugleiste und der Kartenausschnitt kann mit den Pfeiltasten der Kartenkontrolle bewegt werden.
-\\Mit dem Mauszeiger kann man den Flugweg nachfahren, wobei nahe oder unter dem Maus-Zeiger ein Fadenkreuz auf den Punkten des aufgezeichneten Flugweges entlangläuft. Die Daten des jeweils aktuellen Punktes werden in der Statuszeile unten eingeblendet (Zeit, Höhe, Geschwindigkeit, Steigen und die Koordinaten). Mit dieser Funktion ist es möglich sich einen schnellen Überblick über den Flugweg zu verschaffen.
-\\Der aktuelle Flug kann unter KFlog auch als Animation abgespielt werden. Dazu wählt man im Menü ''Flüge'' den Punkt ''Starte Animation''.
-\\Der Startpunkt des Fluges wird mit einer grünen Fahne gekennzeichnet und der Endpunkt mit einer roten.
+Zusätzlich ist es möglich, durch das aufziehen eines Rechtecks (bei  gedrückter linker Maustaste) in der Karte, einen Bereich auszuwählen, auf den gezoomt werden soll.
+\\
+Mit dem Mauszeiger kann man den Flugweg nachfahren, wobei nahe oder unter dem Maus-Zeiger ein Fadenkreuz auf den Punkten des aufgezeichneten Flugweges entlangläuft. Die Daten des jeweils aktuellen Punktes werden in der Statuszeile unten eingeblendet (Zeit, Höhe, Geschwindigkeit, Steigen und die Koordinaten). Mit dieser Funktion ist es möglich sich einen schnellen Überblick über den Flugweg zu verschaffen.
+\\
+Der aktuelle Flug kann unter KFlog auch als Animation abgespielt werden. Dazu wählt man im Menü ''Flüge'' den Punkt ''Starte Animation''.
+\\
+Der Startpunkt des Fluges wird mit einer grünen Fahne gekennzeichnet und der Endpunkt mit einer roten.
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/Animation.png} 
@@ -42,12 +49,12 @@ Unter dem Menü ''Flugdaten zeigen'' kann festgelegt werden, nach welchen Paramet
 \caption{Animation}
 \end{center}
 \end{figure}
-Dann wird der Flug in die Karte eingezeichnet und die aktuelle Position wird durch eine weitere rote Fahne, die über den Bildschirm wandert, dargestellt. Die Daten des aktuellen Punktes werden in der Statusleiste eingeblendet (s. Abb. 22).
+Dann wird der Flug in die Karte eingezeichnet und die aktuelle Position wird durch eine rote Fahne, die über den Bildschirm wandert, dargestellt. Die Daten des aktuellen Punktes werden in der Statusleiste eingeblendet (s. Abb. 24).
 \subsubsection{Barogramm,Variogramm und Geschwindigkeitsdiagramm}
 
 Mit Auswahl des Menüpunktes ''Auswertung'' im Menü ''Flüge'' wird ein Fenster geöffnet, in dem eine Flugauswertung als Diagramm erfolgt.
 \\In diesem Diagramm kann man sich die Höhe, die Geschwindigkeit und die Steigwerte über der Zeit darstellen lassen. Im unteren Bereich des Fensters kann dann eine Zusammenfassung des Fluges zwischen Start- und Endpunkt abgelesen werden.
-\\ Es werden die Wendepunkte der Aufgabe als senkrechter Strich, sowie der Startpunkt (grüne Fahne) und der Endpunkt (rote Fahne) mit Bezeichnung eingetragen (s. Abb. 23).
+\\ Es werden die Wendepunkte der Aufgabe als senkrechter Strich, sowie der Startpunkt (grüne Fahne) und der Endpunkt (rote Fahne) mit Bezeichnung eingetragen (s. Abb. 25).
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/Auswertefenster.png} 
@@ -56,7 +63,7 @@ Mit Auswahl des Menüpunktes ''Auswertung'' im Menü ''Flüge'' wird ein Fenster ge
 \end{center}
 \end{figure}
 Der Endpunkt kann durch Klicken mit der rechten Maustaste in das Diagramfeld und der Startpunkt durch Klicken mit der mittleren Maustaste im Diagramm verschoben werden. Dadurch wird der in der Zusammenfassung betrachtete Ausschnitt verändert und die Zusamenfasung aktualisiert.
-\\ Um sich den Flug noch besser zu veranschaulichen, ist es unter KFlog möglich, den Flug dreidimensional darzustellen. Dazu wählt man im Menü ''Flug'' den Punkt ''Zeige Flug in 3D''. Dadurch wird das Darstellungsfenster für die 3-D-Ansicht geöffnet (s. Abb. 24). In diesem Fenster kann der Flug gedreht und vergrößert bzw. verkleinert dargestellt werden. Es ist ebenfalls möglich verschiedenen Wände aus der Ansichtsbox auszublenden.
+\\ Um sich den Flug noch besser zu veranschaulichen, ist es unter KFlog möglich, den Flug dreidimensional darzustellen. Dazu wählt man im Menü ''Flug'' den Punkt ''Zeige Flug in 3D''. Dadurch wird das Darstellungsfenster für die 3-D-Ansicht geöffnet (s. Abb. 26). In diesem Fenster kann der Flug gedreht und vergrößert bzw. verkleinert dargestellt werden. Es ist ebenfalls möglich verschiedenen Wände aus der Ansichtsbox auszublenden.
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/3-D-Ansicht.png} 
@@ -64,7 +71,7 @@ Der Endpunkt kann durch Klicken mit der rechten Maustaste in das Diagramfeld und
 \caption{3-D-Ansicht eines Fluges}
 \end{center}
 \end{figure}
-Die notwendigen Tastaturbelegungen zum Verändern der 3-D-Ansicht können mit einem Rechtsklick in das Darstellungsfenster abgefragt werden (s. Abb. 25).
+Die notwendigen Tastaturbelegungen zum Verändern der 3-D-Ansicht können mit einem Rechtsklick in das Darstellungsfenster abgefragt werden (s. Abb. 27).
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/3-D-Ansicht-Hilfe.png} 
@@ -80,7 +87,7 @@ Für die Optimierung eines Fluges stehen unter Kflog momentan zwei Möglichkeiten 
 \item Optimierung nach Regeln für OLC
 \end{enumerate}
 Die Standard-Optimierung wird im Menü ''Flug'' mit dem Menüpunkt ''Optimieren'' aufgerufen. Die Aufgabe wird hierbei so optimiert, dass aus den ''gesammelten Koordinaten'' für einen Flug eine Aufgabe mit maximal möglicher Anzahl von Punkten erstellt wird. 
-Es wird ein Abfragedialog geöffnet, in dem der Benutzer festlegen kann, ob die Aufgabe mit den ermittelten Wendepunkten übernommenwerden soll oder nicht (s. Abb. 26).
+Es wird ein Abfragedialog geöffnet, in dem der Benutzer festlegen kann, ob die Aufgabe mit den ermittelten Wendepunkten übernommenwerden soll oder nicht (s. Abb. 28).
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/Optimierung-Standard.png} 
@@ -92,7 +99,7 @@ Es wird ein Abfragedialog geöffnet, in dem der Benutzer festlegen kann, ob die A
 Der Flug wird zum freien Flug ohne Voranmeldung der Wendepunkte deklariert und anschließend erfolgt die Berechnung der Punktzahl und die Darstellung der angepassten Aufgabe im Kartenfenster.Im Ausgabefenster für die Aufgabe werden die neuen Wendepunkte der Aufgabe, die Distanz und die Punkte angezeigt.
 \\ \\
 Die Optimierung für den Online Contest erfolgt entsprechend den derzeit gültigen Regeln. Sie wird im Menü ''Flug'' mit dem Eintrag ''Optimierung (OLC)'' aufgerufen. Es wird ein Bearbeitungsfenster geöffnet, indem man den Start- und den Endpunkt durch verschieben der Fahnen (mit der linken Maustaste klicken und halten, dann verschieben) definieren kann.
-Das verschieben der Fahnen ist mit dem Klick auf die Taste ''Set Times'' zu bestätigen (s. Abb.25).
+Das verschieben der Fahnen ist mit dem Klick auf die Taste ''Set Times'' zu bestätigen (s. Abb.29).
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/Optimierung-OLC-1.png} 
@@ -100,9 +107,9 @@ Das verschieben der Fahnen ist mit dem Klick auf die Taste ''Set Times'' zu best
 \caption{Optimierung für OLC}
 \end{center}
 \end{figure}
-\\ In diesem Fenster kann man sich dann noch das Baro- und das Variogramm sowie das Geschwindigkeitsdiagramm anzeigen lassen. Die Einstellung erfolgt wie unter 5.3.3 beschrieben.
+\\ In diesem Fenster kann man sich dann noch das Baro- und das Variogramm sowie das Geschwindigkeitsdiagramm anzeigen lassen. Dei Einstellung erfolgt wie unter 5.3.3 beschrieben.
 \\Im unteren Fensterbereich wird dann der zu betrachtende Ausschnitt des Fluges ausgewertet. Dabei wird der Kreisfluganteil und der Geradeausfluganteil gesondert betrachtet. Wenn der gewünschte Bereich eingestellt ist, kann die Optimierung mit der Taste ''Nächster'' fortgeführt werden.
-\\Es wird nun eine Abfrage zum Start der Optimierung angezeigt. Mit der Taste ''Start Optimization'' wird die eigentliche Optimierung gestartet. Der Fortschritt des Optimierungsvorganges wird mit einer Balkenanzeige im unteren Bereich dargestellt (s. Abb. 27).
+\\Es wird nun eine Abfrage zum Start der Optimierung angezeigt. Mit der Taste ''Start Optimization'' wird die eigentliche Optimierung gestartet. Der Fortschritt des Optimierungsvorganges wird mit einer Balkenanzeige im unteren Bereich dargestellt (s. Abb. 30).
 \begin{figure}[htpb]
 \begin{center}
 \includegraphics[scale=.34]{Bilder/fertig/Optimierung-OLC-2.png} 
@@ -110,7 +117,7 @@ Das verschieben der Fahnen ist mit dem Klick auf die Taste ''Set Times'' zu best
 \caption{Dialog zum Start der Optimierung}
 \end{center}
 \end{figure}
-Nach der Berechnung wird im Fenster eine Zusammenfasung mit den Wendepunkten und der erreichten Punktzahl angezeigt. Mit der Taste ''Abschließen'' wird die optimierte Strecke übernommen. Die berechneten Wendepunkte, die Wertungspunkte und die Durchschnittsgeschwindigkeit werden im Detailfenster der Aufgabe dargestellt. 
+Nach der Berechnung wird im Fenster eine Zusammenfassung mit den Wendepunkten und der erreichten Punktzahl angezeigt. Mit der Taste ''Abschließen'' wird die optimierte Strecke übernommen. Die berechneten Wendepunkte, die Wertungspunkte und die Durchschnittsgeschwindigkeit werden im Detailfenster der Aufgabe dargestellt. 
 \\Damit ist die OLC-Optimierung abgeschlossen. Der Flug kann nun an einen OLC-Server übertragen werden. Den Sendedialog erreicht man im Menü ''Flug'' mit dem Menüpunkt ''OLC Anmeldung senden''.
 \\In diesem Dialog können alle relevanten Einstellungen für den OLC vorgenommen werden.
 \begin{figure}[htpb]
@@ -122,6 +129,6 @@ Nach der Berechnung wird im Fenster eine Zusammenfasung mit den Wendepunkten und
 \end{figure} 
 Im oberen Bereich sind die persönlichen Daten des Piloten einzutragen, sofern sie noch nicht aus dem Flug eingelesen worden sind.
 Darunter werden die Daten für das Flugzeug gesetzt (Typ, Klasse, Index, reines Segelflugzeug). Dann wird die geflogene und optimierte Aufgabe nochmals aufgelistet und im linken unteren Bereich kann noch das Land gewählt werden, dem der Flug zugeordnet werden soll.
-\\Wenn alle Felder richtig bearbeitet und die entsprechenden Vorgaben gewählt worden sind, kann der Flug mit dem Knopf ''Sende'' an den OLC-Server verschickt werden. Das Speichern des optimierten Fluges ist mit dem Knopf ''Speichern'' möglich.
-\\Nach dem Betätigen des Sendeknopfes öffnet sich der Webbrowser mit der Seite für die Flugmeldung aerokurier Online-CONTEST. Dort können dann weitere Einstellungen vorgenommen werden. Auf dieser Seite sind entsprechende Hilfedokumente vorhanden, damit der Flug richtig übertragen wird.
+\\Wenn alle Felder richtig bearbeitet und die entsprechenden Vorgaben gewählt worden sind, kann der Flug mit dem Knopf ''Sende'' an den OLC-Server verschickt werden. Das Speichern des optimierten Fluges ist mit dem Knopf ''Speichern'' möglich (s. Abb. 31).
+\\Nach dem Betätigen des Sendeknopfes öffnet sich der Webbrowser mit der Seite für die Flugmeldung Aerokurier Online-CONTEST. Dort können dann weitere Einstellungen vorgenommen werden. Auf dieser Seite sind entsprechende Hilfedokumente vorhanden, damit der Flug richtig übertragen wird.
 
