@@ -28,6 +28,7 @@
   <text>Main Toolbar</text>
   <Action name="file_open" />
   <Separator weakSeparator="1" name="separator_2" />
+  <Action name="view_zoom" />
   <Action name="view_zoom_in" />
   <Action name="view_zoom_out" />
   <Action name="view_redisplay" />
