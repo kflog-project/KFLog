@@ -1,4 +1,8 @@
 $Id$
+2003-07-12 Florian Ehinger <florian@kflog.org>
+
+  * added status windows during downloads / uploads to the recorder
+    (not perfect yet!)
 
 
 2003-07-11 Eggert Ehmke <eggert@kflog.org>

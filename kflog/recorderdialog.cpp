@@ -28,12 +28,17 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstddirs.h>
+#include <kfiledialog.h>
+#include <kio/netaccess.h>
+#include <knotifyclient.h>
 
 #include <qapplication.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
 #include <qlayout.h>
+#include <qmessagebox.h>
 #include <qstringlist.h>
+#include <qtimer.h>
 #include <qwhatsthis.h>
 
 #include "mapcalc.h"
@@ -506,6 +511,7 @@ void RecorderDialog::__addDeclarationPage()
   }
   else {
     warning("No tasks planned ...");
+// Isn't it possible to write an declaration without a task?    
     writeDeclaration->setEnabled(false);
   }
 
@@ -681,6 +687,7 @@ void RecorderDialog::slotConnectRecorder()
   else {
     QApplication::restoreOverrideCursor();
     QString errorDetails = errorDetails=activeRecorder->lastError();
+
     if (!errorDetails.isEmpty()) {
       KMessageBox::detailedSorry(this,
                          i18n("Sorry, could not connect to recorder.\n"
@@ -695,6 +702,7 @@ void RecorderDialog::slotConnectRecorder()
     }
   }
 }
+
 
 void RecorderDialog::slotCloseRecorder()
 {
@@ -716,6 +724,15 @@ void RecorderDialog::slotCloseRecorder()
 
 void RecorderDialog::slotReadFlightList()
 {
+  QMessageBox* statusDlg = new QMessageBox ( i18n("downloading flightlist"), i18n("downloading flightlist"),
+      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
+      QMessageBox::NoButton, this, "statusDialog", true);
+
+
+
+  statusDlg->show();
+
+  
   if (!activeRecorder)
     return;
 
@@ -725,6 +742,7 @@ void RecorderDialog::slotReadFlightList()
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
   flightList->clear();
 
+  kapp->processEvents();
   if (__fillDirList() == FR_ERROR) {
     QApplication::restoreOverrideCursor();
     QString errorDetails = activeRecorder->lastError();
@@ -762,6 +780,8 @@ void RecorderDialog::slotReadFlightList()
     item->setText(colDuration, KGlobal::locale()->formatTime(time, true));
   }
   QApplication::restoreOverrideCursor();
+
+  delete statusDlg;
 }
 
 void RecorderDialog::slotDownloadFlight()
@@ -776,7 +796,9 @@ void RecorderDialog::slotDownloadFlight()
 
   config->setGroup("Path");
   // If no DefaultFlightDirectory is configured, we must use $HOME instead of the root-directory
-  QString fileName = config->readEntry("DefaultFlightDirectory", getpwuid(getuid())->pw_dir) + "/";
+  QString flightDir = config->readEntry("DefaultFlightDirectory", getpwuid(getuid())->pw_dir) + "/";
+
+  QString fileName = flightDir;
 
   int flightID(item->text(colID).toInt() - 1);
 
@@ -784,19 +806,51 @@ void RecorderDialog::slotDownloadFlight()
   warning(dirList.at(flightID)->longFileName);
   warning(dirList.at(flightID)->shortFileName);
 
+//  QTimer::singleShot( 0, this, SLOT(slotDisablePages()) );
+
+
   if(useLongNames->isChecked()) {
     fileName += dirList.at(flightID)->longFileName.upper();
   }
   else {
     fileName += dirList.at(flightID)->shortFileName.upper();
   }
+
+  KFileDialog* dlg = new KFileDialog(flightDir, "*.igc *.IGC ", this,
+         i18n("Select IGC File"), true);
+  dlg->setSelection( fileName );
+  dlg->setOperationMode( KFileDialog::Saving );
+  dlg->exec();
+
+  KURL fUrl = dlg->selectedURL();
+    
+  if(fUrl.isLocalFile())
+    fileName = fUrl.path();
+  else if(!KIO::NetAccess::download(fUrl, fileName))
+   {
+     KNotifyClient::event(i18n("Can not download file %1").arg(fUrl.url()));
+     return;
+   }
+
+
+  QMessageBox* statusDlg = new QMessageBox ( i18n("downloading flight"), i18n("downloading flight"),
+      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
+      QMessageBox::NoButton, this, "statusDialog", true);
+  statusDlg->show();
+  
+  kapp->processEvents();
+  
   warning(fileName);
 
   if (!activeRecorder) return;
 
+
+  kapp->processEvents();
+  
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
   ret = activeRecorder->downloadFlight(flightID,!useFastDownload->isChecked(),fileName);
 
+  kapp->processEvents();
   QApplication::restoreOverrideCursor();
   if (ret == FR_ERROR) {
     warning("ERROR");
@@ -813,10 +867,19 @@ void RecorderDialog::slotDownloadFlight()
     }
   }
   //TODO: handle returnvalues!
+
+  delete statusDlg;
+
+  slotEnablePages();
 }
 
 void RecorderDialog::slotWriteDeclaration()
 {
+  QMessageBox* statusDlg = new QMessageBox ( i18n("send declaration"), i18n("send flightdeclaration to the recorder"),
+      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
+      QMessageBox::NoButton, this, "statusDialog", true);
+  statusDlg->show();
+        
   int ret;
   FRTaskDeclaration taskDecl;
   taskDecl.pilotA = pilotName->text();
@@ -828,6 +891,7 @@ void RecorderDialog::slotWriteDeclaration()
   QString errorDetails;
 
   if (!activeRecorder) return;
+  kapp->processEvents();  
   if (!activeRecorder->capabilities().supUlDeclaration) {
     KMessageBox::sorry(this,
                        i18n("Function not implemented"),
@@ -871,6 +935,8 @@ void RecorderDialog::slotWriteDeclaration()
                        i18n("Declaration upload"),
                        "ShowDeclarationUploadSuccesReport");
   }
+
+  delete statusDlg;
 
 }
 
@@ -951,6 +1017,11 @@ void RecorderDialog::slotSwitchTask(int idx)
 
 void RecorderDialog::slotReadTasks()
 {
+  QMessageBox* statusDlg = new QMessageBox ( "Lade die Aufgaben herunter", "Lade die Aufgaben herunter",
+      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
+      QMessageBox::NoButton, this, "statusDialog", true);
+  statusDlg->show();
+  
   FlightTask *task;
   Waypoint *wp;
   QPtrList<Waypoint> wpList;
@@ -968,6 +1039,7 @@ void RecorderDialog::slotReadTasks()
     return;
   }
 
+  kapp->processEvents();
   ret = activeRecorder->readTasks(tasks);
   if (ret<FR_OK) {
     if ((errorDetails=activeRecorder->lastError())!="") {
@@ -1001,10 +1073,20 @@ void RecorderDialog::slotReadTasks()
                        "ShowTaskDownloadSuccesReport");
 
   }
+
+
+  
+  delete statusDlg;
 }
 
 void RecorderDialog::slotWriteTasks()
 {
+  QMessageBox* statusDlg = new QMessageBox ( i18n("send tasks to recorder"), i18n("send tasks to recorder"),
+      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
+      QMessageBox::NoButton, this, "statusDialog", true);
+  statusDlg->show();
+  
+  
   unsigned int maxNrWayPointsPerTask;
   unsigned int maxNrTasks;
   QString e;
@@ -1094,10 +1176,17 @@ void RecorderDialog::slotWriteTasks()
                          "ShowTaskUploadSuccesReport");
     }
   }
+  
+  delete statusDlg;
 }
 
 void RecorderDialog::slotReadWaypoints()
 {
+  QMessageBox* statusDlg = new QMessageBox ( "Lese Wendepunkte", "Lese Wendepunkte",
+      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
+      QMessageBox::NoButton, this, "statusDialog", true);
+  statusDlg->show();
+  
   int ret;
   int cnt=0;
   QString e;
@@ -1146,10 +1235,16 @@ void RecorderDialog::slotReadWaypoints()
 
   }
 
+  delete statusDlg;
 }
 
 void RecorderDialog::slotWriteWaypoints()
 {
+  QMessageBox* statusDlg = new QMessageBox ( i18n("send waypoints"), i18n("send waypoints"),
+      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
+      QMessageBox::NoButton, this, "statusDialog", true);
+  statusDlg->show();
+  
   unsigned int maxNrWaypoints;
   QString e;
   Waypoint *wp;
@@ -1220,6 +1315,8 @@ void RecorderDialog::slotWriteWaypoints()
                          "ShowWaypointUploadSuccesReport");
     }
   }
+
+  delete statusDlg;
 }
 
 void RecorderDialog::slotReadDatabase()
@@ -1260,6 +1357,14 @@ void RecorderDialog::slotReadDatabase()
                          i18n("Recorder Connection"));       //Using the Sorry box is a bit friendlier than Error...
     }
   }
+}
+
+void RecorderDialog::slotDisablePages()
+{
+  flightPage->setEnabled(false);
+  waypointPage->setEnabled(false);
+  taskPage->setEnabled(false);
+  declarationPage->setEnabled(false);
 }
 
 /** Enable/Disable pages when (not) connected to a recorder */

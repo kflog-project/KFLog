@@ -18,6 +18,7 @@
 #ifndef RECORDERDIALOG_H
 #define RECORDERDIALOG_H
 
+#include <kapp.h>
 #include <kcombobox.h>
 #include <kconfig.h>
 #include <kdialogbase.h>
@@ -97,6 +98,10 @@ class RecorderDialog : public KDialogBase
      * Writes the waypointlist to the recorder
      */
     void slotWriteWaypoints();
+    /**
+     */
+    void slotDisablePages();
+    
   private:
     /** */
     int __fillDirList();

@@ -92,6 +92,8 @@ KFLogApp::KFLogApp()
 
   config = kapp->config();
 
+
+
   config->setGroup("General Options");
   showStartLogo=false;
   
@@ -119,6 +121,7 @@ KFLogApp::KFLogApp()
       SLOT(slotSetFlightDataType(int)));
   connect(&_globalMapMatrix, SIGNAL(projectionChanged()),
       &_globalMapContents, SLOT(slotReloadMapData()));
+
 
   _globalMapConfig.slotReadConfig();
 
@@ -1107,6 +1110,8 @@ void KFLogApp::slotFlightViewIgcOpenGL()
   extern MapContents _globalMapContents;
   (void)(*addFlight)((Flight*)_globalMapContents.getFlight());
 }
+
+
 
 bool KFLogApp::queryClose()
 {
