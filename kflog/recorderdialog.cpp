@@ -738,6 +738,7 @@ void RecorderDialog::slotReadFlightList()
 
   kapp->processEvents();
   if (__fillDirList() == FR_ERROR) {
+    delete statusDlg;  
     QApplication::restoreOverrideCursor();
     QString errorDetails = activeRecorder->lastError();
     if (!errorDetails.isEmpty()) {
@@ -996,6 +997,7 @@ bool RecorderDialog::__openLib(const QString& libN)
     return false;
   }
 
+  activeRecorder->setParent(this);
   apiID->setText(activeRecorder->getLibName());
 
   isOpen = true;
@@ -1026,7 +1028,7 @@ void RecorderDialog::slotSwitchTask(int idx)
 
 void RecorderDialog::slotReadTasks()
 {
-  QMessageBox* statusDlg = new QMessageBox ( "Lade die Aufgaben herunter", "Lade die Aufgaben herunter",
+  QMessageBox* statusDlg = new QMessageBox ( i18n("Downloading tasks"), i18n("Downloading tasks"),
       QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
       QMessageBox::NoButton, this, "statusDialog", true);
   statusDlg->show();
@@ -1065,8 +1067,8 @@ void RecorderDialog::slotReadTasks()
   else {
     for (task = tasks->first(); task; task = tasks->next()) {
       wpList = task->getWPList();
-      // here we overwrite the original task name to get a unique internal name
-      task->setTaskName(_globalMapContents.genTaskName());
+      // here we overwrite the original task name (if needed) to get a unique internal name
+      task->setTaskName(_globalMapContents.genTaskName(task->getFileName()));
       for (wp = wpList.first(); wp; wp = wpList.next()) {
         wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
       }
@@ -1080,10 +1082,7 @@ void RecorderDialog::slotReadTasks()
                        i18n("%1 tasks were downloaded from the recorder.").arg(cnt),
                        i18n("Task download"),
                        "ShowTaskDownloadSuccesReport");
-
   }
-
-
 
   delete statusDlg;
 }
