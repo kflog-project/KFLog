@@ -16,6 +16,10 @@ leicht zu bedienen ist.
 KFLOG war von Anfang an unter die GPL gestellt, das heisst
 als Opensource verfuegbar.
 
+[comment André: I think this is not relevant, nor interesting
+for the target-audience. Who cares we are using C++? Especially
+in the beginning of the article, we should not get too technical.]
+
 Aufschwung hat das Projekt Ende 2000 mit der Entscheidung
 eine eigene Webdomain fuer KFLOG einzurichten erhalten.
 Hierdurch wurde neben der Darstellung des Programms auch
@@ -81,3 +85,22 @@ veraendert werden. Es ist moeglich einezelen
 Teilabschnitte des Fluges auszuwaehlen, und sich hierfuer
 detailierte Informationen anzeigen zu lassen.
 Hoehengewinn, Strecke, Durchschnittsgeschwindigkeit ...
+
+[addition André]
+_Spinoffs_
+
+Allready, two spinoffs of KFLog have seen the light of day.
+Both focussed on the handheld, KFLogEmbedded makes a mini-
+version of KFLog available for reviewing and flights on the
+field, without the need for even a laptop. Cumulus on the
+other hand is providing a flightcomputer based on KFLog 
+with all the functions you'd expect: moving map, waypoints,
+final glide and much more. And, just like KFLog itself:
+completely free to use or modify to fit your needs!
+
+_Conclusion_
+The future for OpenSource software for the soaringcommunity
+is looking bright. Devellopments are rapid, and more and more
+features and optimisations are added every month. Gliderpilots
+like their freedom. Now even their software is free.
+[end addition André]
