@@ -101,3 +101,10 @@ QList<Flight::Flight> FlightGroup::getFlightList()
 {
   return flightList;
 }
+/** remove flight from current group */
+void FlightGroup::removeFlight(BaseFlightElement *f)
+{
+  if (flightList.containsRef((Flight::Flight *)f)) {
+    flightList.take();
+  }
+}

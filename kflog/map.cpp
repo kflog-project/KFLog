@@ -1539,12 +1539,14 @@ void Map::slotShowCurrentFlight()
   // ersten Zeichnen werden die Rahmen von Flug und Aufgabe
   // bestimmt.
   slotRedrawFlight();
-  switch(f->getTypeID()) {
+  if (f) {
+    switch(f->getTypeID()) {
     case BaseMapElement::Flight:
       slotCenterToFlight();
       break;
     case BaseMapElement::Task:
       slotCenterToTask();
       break;
+    }
   }
 }

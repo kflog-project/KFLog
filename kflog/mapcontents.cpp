@@ -220,9 +220,15 @@ void MapContents::closeFlight()
   /*
    * close current flight
    */
-  int idx = flightList.at();
-  if (idx != -1) {
-    flightList.remove();
+  BaseFlightElement *f = flightList.current();
+  if (f != 0) {
+    for (unsigned int i = 0; i < flightList.count(); i++) {
+      FlightGroup *fg = (FlightGroup *) flightList.at(i);
+      if (fg->getTypeID() == BaseMapElement::FlightGroup) {
+        fg->removeFlight(f);
+      }
+    }
+    flightList.remove(f);
     if (flightList.current() == 0) {
       flightList.last();
     }
@@ -1922,6 +1928,7 @@ void MapContents::slotNewFlightGroup()
   }
 
   tmp.sprintf("GROUP%03d", gCount++);
+
   flightList.append(new FlightGroup(fl, tmp));
   emit currentFlightChanged();
 }

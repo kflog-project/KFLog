@@ -46,6 +46,7 @@ public:
   void printMapElement(QPainter* targetP, bool isText);
   /** No descriptions */
   QList<Flight::Flight> getFlightList();
+  void removeFlight(BaseFlightElement *f);
 
 private:
   QList<Flight::Flight> flightList;

@@ -841,4 +841,22 @@ void KFLogApp::slotModifyMenu()
       break;
     }
   }
+  else {
+    fileClose->setEnabled(false);
+    flightPrint->setEnabled(false);
+    viewCenterTask->setEnabled(false);
+    viewCenterFlight->setEnabled(false);
+    flightEvaluation->setEnabled(false);
+    flightOptimization->setEnabled(false);
+    animateFlightStart->setEnabled(false);
+    animateFlightStop->setEnabled(false);
+    stepFlightNext->setEnabled(false);
+    stepFlightPrev->setEnabled(false);
+    stepFlightStepNext->setEnabled(false);
+    stepFlightStepPrev->setEnabled(false);
+    stepFlightHome->setEnabled(false);
+    stepFlightEnd->setEnabled(false);
+    viewIgc3D->setEnabled(false);
+    mapPlanning->setEnabled(false);
+  }
 }
