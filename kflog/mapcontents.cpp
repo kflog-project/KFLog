@@ -113,8 +113,9 @@ MapContents::MapContents()
   : isFirst(true)
 {
   sectionArray.resize(MAX_FILE_COUNT);
-  for(unsigned int loop = 0; loop < MAX_FILE_COUNT; loop++)
-      sectionArray.clearBit(loop);
+  sectionArray.fill(false);
+//  for(unsigned int loop = 0; loop < MAX_FILE_COUNT; loop++)
+//      sectionArray.clearBit(loop);
 
   // Wir nehmen zunächst 4 Schachtelungstiefen an ...
   for(unsigned int loop = 0; loop < ( ISO_LINE_NUM * 4 ); loop++)
@@ -1800,6 +1801,32 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
       default:
         return 0;
     }
+}
+
+void MapContents::slotReloadMapData()
+{
+  airportList.clear();
+  gliderList.clear();
+  addSitesList.clear();
+  outList.clear();
+  navList.clear();
+  airspaceList.clear();
+  obstacleList.clear();
+  reportList.clear();
+  cityList.clear();
+  landmarkList.clear();
+  roadList.clear();
+  railList.clear();
+  stationList.clear();
+  hydroList.clear();
+  topoList.clear();
+  isoList.clear();
+
+  // Wir nehmen zunächst 4 Schachtelungstiefen an ...
+  for(unsigned int loop = 0; loop < ( ISO_LINE_NUM * 4 ); loop++)
+      isoList.append(new QList<Isohypse>);
+
+  sectionArray.fill(false);
 }
 
 void MapContents::printContents(QPainter* targetPainter, bool isText)

@@ -65,7 +65,7 @@ class ProjectionCylindric : public ProjectionBase
      * Sets the standard parallel. If it is too large,
      * the default value (45°N) is used.
      */
-    void initProjection(int v1);
+    bool initProjection(int v1);
 
   private:
     /**

@@ -86,7 +86,7 @@ WGSPoint &WGSPoint::operator=( const QPoint &p )
 
 MapMatrix::MapMatrix()
   : mapCenterLat(0), mapCenterLon(0), printCenterLat(0), printCenterLon(0),
-    cScale(0), rotationArc(0), printArc(0)
+    cScale(0), rotationArc(0), printArc(0), currentProjectionType(-1)
 {
   viewBorder.setTop(32000000);
   viewBorder.setBottom(25000000);
@@ -596,6 +596,8 @@ void MapMatrix::slotSetScale(double nScale)
 
 void MapMatrix::slotInitMatrix()
 {
+  int newProjectionType;
+
   KConfig *config = kapp->config();
 
   config->setGroup("Map Data");
@@ -615,6 +617,31 @@ void MapMatrix::slotInitMatrix()
   homeLat = config->readNumEntry("Homesite Latitude", HOME_DEFAULT_LAT);
   homeLon = config->readNumEntry("Homesite Longitude", HOME_DEFAULT_LON);
 
+  newProjectionType = config->readNumEntry("Projection Type", 0);
+
+  bool projChanged(false), initChanged(false);
+
+  projChanged = (newProjectionType != currentProjectionType &&
+      currentProjectionType >= 0);
+
+  switch(newProjectionType)
+    {
+      case 0:
+        currentProjection = &lambertProjection;
+        break;
+      case 1:
+        currentProjection = &cylindricalProjection;
+        break;
+      default:
+        // fallback is cylindrical
+        currentProjection = &cylindricalProjection;
+        break;
+    }
+
+  currentProjectionType = newProjectionType;
+
+  if(projChanged) emit projectionChanged();
+
   config->setGroup("Scale");
   scaleBorders[LowerLimit] = config->readNumEntry("Lower Limit", VAL_BORDER_L);
   scaleBorders[Border1] = config->readNumEntry("Border 1", VAL_BORDER_1);
@@ -627,12 +654,18 @@ void MapMatrix::slotInitMatrix()
   cScale = MAX(cScale, scaleBorders[LowerLimit]);
 
   config->setGroup("Lambert Projection");
-  lambertProjection.initProjection(config->readNumEntry("Parallel1", 32400000),
-      config->readNumEntry("Parallel2", 30000000),
-      config->readNumEntry("Origin", 0));
+  initChanged = lambertProjection.initProjection(
+              config->readNumEntry("Parallel1", 32400000),
+              config->readNumEntry("Parallel2", 30000000),
+              config->readNumEntry("Origin", 0));
+  projChanged = projChanged || (currentProjectionType = 0 && initChanged);
 
   config->setGroup("Cylindrical Projection");
-  cylindricalProjection.initProjection(config->readNumEntry("Parallel", 27000000));
+  initChanged = cylindricalProjection.initProjection(
+              config->readNumEntry("Parallel", 27000000));
+  projChanged = projChanged || (currentProjectionType = 1 && initChanged);
+
+  if(projChanged) emit projectionChanged();
 
   config->setGroup(0);
 

@@ -125,6 +125,8 @@ KFLogApp::KFLogApp()
       SLOT(slotStartComplete()));
   connect(this, SIGNAL(flightDataTypeChanged(int)), &_globalMapConfig,
       SLOT(slotSetFlightDataType(int)));
+  connect(&_globalMapMatrix, SIGNAL(projectionChanged()),
+      &_globalMapContents, SLOT(slotReloadMapData()));
 
   _globalMapConfig.slotReadConfig();
 

@@ -220,6 +220,8 @@ void KFLogConfig::slotDefaultProjection()
 
   cylinPar = 27000000;
 
+  currentProjType = -1;
+
   projectionSelect->setCurrentItem(0);
   slotSelectProjection(0);
 }

@@ -69,7 +69,7 @@ class ProjectionLambert : public ProjectionBase
      * too large, the default values (54°N and 50°N) are used for both
      * of them.
      */
-    void initProjection(int  v1, int v2, int origin);
+    bool initProjection(int  v1, int v2, int origin);
 
   private:
     /**

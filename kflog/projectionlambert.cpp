@@ -17,6 +17,8 @@
 
 #include <cmath>
 
+#include <iostream.h>
+
 #include "projectionlambert.h"
 
 #define PI 3.141592654
@@ -33,17 +35,23 @@ ProjectionLambert::~ProjectionLambert()
 
 }
 
-void ProjectionLambert::initProjection(int v1_new, int v2_new, int orig_new)
+bool ProjectionLambert::initProjection(int v1_new, int v2_new, int orig_new)
 {
+  bool changed(false);
+
   if(v1_new > 54000000.0 || v1_new < -54000000.0 ||
       v2_new > 54000000.0 || v2_new < -54000000.0)
     {
       // values out of range, resetting to default
+      changed = (v1 == NUM_TO_RAD(32400000.0) || v2 == NUM_TO_RAD(30000000.0));
+
       v1 = NUM_TO_RAD(32400000.0);
       v2 = NUM_TO_RAD(30000000.0);
     }
   else
     {
+      changed = (v1 == NUM_TO_RAD(v1_new) || v2 == NUM_TO_RAD(v2_new));
+
       v1 = NUM_TO_RAD(v1_new);
       v2 = NUM_TO_RAD(v2_new);
     }
@@ -51,17 +59,24 @@ void ProjectionLambert::initProjection(int v1_new, int v2_new, int orig_new)
   var1 = cos(v1) * cos(v1);
   var2 = sin(v1) + sin(v2);
 
+  changed = changed || ( origin == NUM_TO_RAD(orig_new) );
   origin = NUM_TO_RAD(orig_new);
+
+  return changed;
 }
 
 double ProjectionLambert::projectX(double latitude, double longitude) const
 {
+  longitude -= origin;
+
   return ( 2 * ( sqrt( var1 + ( sin(v1) - sin(latitude) ) * var2 ) / var2 )
              * sin( var2 * longitude / 2 ) );
 }
 
 double ProjectionLambert::projectY(double latitude, double longitude) const
 {
+  longitude -= origin;
+
   return ( 2 * ( sqrt( var1 + ( sin(v1) - sin(latitude) ) * var2 ) / var2 )
              * cos( var2 * longitude / 2 ) );
 }
@@ -85,7 +100,7 @@ double ProjectionLambert::invertLon(double x, double y) const
 {
   double lon = 2.0 * atan( x / y ) / ( sin(v1) + sin(v2) );
 
-  return lon;
+  return lon + origin;
 }
 
 double ProjectionLambert::getRotationArc(int x, int y) const

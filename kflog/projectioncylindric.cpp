@@ -32,12 +32,22 @@ ProjectionCylindric::~ProjectionCylindric()
 
 }
 
-void ProjectionCylindric::initProjection(int v1_new)
+bool ProjectionCylindric::initProjection(int v1_new)
 {
+  bool changed(false);
+
   if(v1_new > 54000000 || v1_new < -54000000)
+    {
+      changed = ( v1 == NUM_TO_RAD(27000000) );
       v1 = NUM_TO_RAD(27000000);
+    }
   else
+    {
+      changed = ( v1 == NUM_TO_RAD(v1_new) );
       v1 = NUM_TO_RAD(v1_new);
+    }
+
+  return true;
 }
 
 double ProjectionCylindric::projectX(double latitude, double longitude) const

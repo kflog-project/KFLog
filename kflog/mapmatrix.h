@@ -282,6 +282,10 @@ class MapMatrix : public QObject
      * Emitted each time the matrix has changed.
      */
     void matrixChanged();
+    /**
+     * Emitted each time the projection changed.
+     */
+    void projectionChanged();
 
   private:
     /**
@@ -374,6 +378,8 @@ class MapMatrix : public QObject
     ProjectionLambert lambertProjection;
     /** */
     ProjectionCylindric cylindricalProjection;
+    /** */
+    int currentProjectionType;
 };
 
 #endif

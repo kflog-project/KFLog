@@ -212,8 +212,10 @@ class MapContents : public QObject
     void slotNewFlightGroup();
     /** create a new, empty task */
     void slotNewTask();
-  /** No descriptions */
-  void slotEditFlightGroup();
+    /** No descriptions */
+    void slotEditFlightGroup();
+    /** */
+    void slotReloadMapData();
 
   signals:
     /**

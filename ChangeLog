@@ -1,14 +1,22 @@
 $Id$
 
+
+2002-05-21 Heiner <heiner@kflog.org>
+
+  * Added methods for changing and configuring the map-projection.
+
+
 2002-05-20 Heiner <heiner@kflog.org>
 
   * Added classes for projection-handling.
+
 
 2002-05-19 Harry <harry@kflog.org>
 
   * Added flight selection dialog
 
   * select flights for flightgroup
+
 
 2002-05-18 Heiner <heiner@kflog.org>
 
