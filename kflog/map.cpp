@@ -113,8 +113,6 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   setCursor(crossCursor);
   setAcceptDrops(true);
 
-//	setFocusPolicy( QWidget::StrongFocus );
-
   QWhatsThis::add(this, i18n("<B>The map</B>"
          "<P>To move or scale the map, please use the buttons in the "
          "<B>Map-control</B>-area. Or center the map to the current "
@@ -128,8 +126,8 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
 
 	// create the animation timer
   timerAnimate = new QTimer( this );
-	connect( timerAnimate, SIGNAL(timeout()), this, SLOT(slotAnimateFlightTimeout()) );
-			
+	connect( timerAnimate, SIGNAL(timeout()), this,
+    	SLOT(slotAnimateFlightTimeout()) );			
 }
 
 Map::~Map()
@@ -493,8 +491,6 @@ void Map::__drawMap()
   airspaceRegList->clear();
 
   extern MapContents _globalMapContents;
-
-  BaseMapElement* _current;
 
   pixIsoMap.fill(QColor(96,128,248));
 
