@@ -62,21 +62,6 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
     mainApp(m), prePos(-50, -50), preCur1(-50, -50), preCur2(-50, -50),
     planning(-1), tempTask(""), preSnapPoint(-999, -999)
 {
-  // defining the cursor for the map:
-  static const unsigned char cross_bits[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x01, 0x00,
-    0x00, 0x80, 0x01, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0x98, 0x19, 0x00,
-    0x00, 0x8c, 0x31, 0x00, 0x00, 0x86, 0x61, 0x00, 0x00, 0x83, 0xc1, 0x00,
-    0x00, 0xc1, 0x83, 0x00, 0x80, 0x60, 0x06, 0x01, 0x80, 0x30, 0x0c, 0x01,
-    0xe0, 0x9f, 0xf9, 0x07, 0xe0, 0x9f, 0xf9, 0x07, 0x80, 0x30, 0x0c, 0x01,
-    0x80, 0x60, 0x06, 0x01, 0x00, 0xc1, 0x83, 0x00, 0x00, 0x83, 0xc1, 0x00,
-    0x00, 0x86, 0x61, 0x00, 0x00, 0x8c, 0x31, 0x00, 0x00, 0x98, 0x19, 0x00,
-    0x00, 0xe0, 0x07, 0x00, 0x00, 0x80, 0x01, 0x00, 0x00, 0x80, 0x01, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-  };
-
   QBitmap bitCursorMask;
   bitCursorMask.resize(40,40);
   bitCursorMask.fill(Qt::color0);
@@ -132,12 +117,9 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   airspaceRegList = new QList<QRegion>;
   airspaceRegList->setAutoDelete(true);
 
-  const QBitmap cross(32, 32, cross_bits, true);
-  const QCursor crossCursor(cross, cross);
-
+  __setCursor();
   setMouseTracking(true);
   setBackgroundColor(QColor(255,255,255));
-  setCursor(crossCursor);
   setAcceptDrops(true);
 
   // For Planning
@@ -150,8 +132,10 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
 			     "<B>Map-control</B>-area. Or center the map to the current "
 			     "cursor-positon by using the right mouse-button.</P>"
 			     "<P>To zoom in or out, use the slider or the two buttons on the "
-			     "toolbar. You can also zoom with \"&lt;Ctrl&gt;&lt;+&gt;\" (zoom in) "
-			     "and \"&lt;Ctrl&gt;&lt;-&gt;\" (zoom out).</P>"
+			     "toolbar. You can also zoom with \"&lt;Ctrl&gt;&lt;+&gt;\" or \"+\" (zoom in) "
+			     "and \"&lt;Ctrl&gt;&lt;-&gt;\" or \"-\"(zoom out).</P>"
+           "<P>The cursor keys and the keys on the NumPad can also pan the map, if"
+           "NumLock is switched on.</P>"
 			     "<P>With the menu-item \"Options\" -> \"Configure KFLog\" you can "
 			     "configure, which map elements should be displayed at which "
 			     "scale.</P>"));
@@ -160,7 +144,7 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   timerAnimate = new QTimer( this );
   connect( timerAnimate, SIGNAL(timeout()), this,
 	   SLOT(slotAnimateFlightTimeout()) );
-
+  isZoomRect=false;
 }
 
 Map::~Map()
@@ -397,12 +381,15 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
       __findElevation(current);
     }
+    if (dragZoomRect){
+//      qWarning("dragZoomRect");
+    }
 }
 
 void Map::__displayMapInfo(QPoint current)
 {
   /*
-   * Segelflugplätze, soweit vorhanden, kommen als erster Eintrag
+   * Glider airfields first, if there exist any
    */
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
@@ -783,6 +770,23 @@ warning("key Release");
     }
 }
 
+void Map::mouseReleaseEvent(QMouseEvent* event)
+{
+  extern MapMatrix _globalMapMatrix;
+  if (isZoomRect){
+    dragZoomRect=false;
+    isZoomRect=false; 
+    __setCursor();
+    if (abs(beginDrag.x()-event->pos().x())>10 && // don't zoom if rect is too small
+        abs(beginDrag.y()-event->pos().y())>10 &&
+        event->button()==LeftButton){             // or other than left button was pressed
+      _globalMapMatrix.centerToRect(QRect(beginDrag,event->pos()));
+      _globalMapMatrix.createMatrix(this->size());
+      __redrawMap();
+    }
+  }
+}
+
 void Map::mousePressEvent(QMouseEvent* event)
 {
 warning("Map::mousePressEvent: planning=%d", planning);
@@ -791,138 +795,145 @@ warning("Map::mousePressEvent: planning=%d", planning);
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
           prePos.x() - 20, prePos.y() - 20, 40, 40);
 
-  extern MapContents _globalMapContents;
-  extern MapMatrix _globalMapMatrix;
+  if (isZoomRect){ // Zooming
+    beginDrag=event->pos();
+    dragZoomRect=true;
+  }
+  else
+  {
+    extern MapContents _globalMapContents;
+    extern MapMatrix _globalMapMatrix;
 
-  const QPoint current(event->pos());
+    const QPoint current(event->pos());
 
-  RadioPoint *hitElement;
-  QString text;
+    RadioPoint *hitElement;
+    QString text;
 
-  QPoint sitePos;
-  double dX, dY, delta(16.0);
+    QPoint sitePos;
+    double dX, dY, delta(16.0);
 
-  if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
+    if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
 
-  if(event->button() == MidButton)
-    {
-      // Move Map
-      _globalMapMatrix.centerToPoint(event->pos());
-      _globalMapMatrix.createMatrix(this->size());
-  
-      __redrawMap();
-    }
-  else if(event->button() == LeftButton)
-    {
-      if(event->state() == QEvent::ShiftButton)
-        {
-          // select WayPoint
-          QRegExp blank("[ ]");
-          bool found = false;
+    if(event->button() == MidButton)
+      {
+        // Move Map
+        _globalMapMatrix.centerToPoint(event->pos());
+        _globalMapMatrix.createMatrix(this->size());
 
-          // add WPList !!!
-          int searchList[] = {MapContents::GliderList, MapContents::AirportList};
-          for (int l = 0; l < 2; l++)
-            {
-           	  for(unsigned int loop = 0;
-           	      loop < _globalMapContents.getListLength(searchList[l]); loop++)
-           	    {
-        	        hitElement = (RadioPoint*)_globalMapContents.getElement(
-        	            searchList[l], loop);
-          	      sitePos = hitElement->getMapPosition();
+        __redrawMap();
+      }
+    else if(event->button() == LeftButton)
+      {
+        if(event->state() == QEvent::ShiftButton)
+          {
+            // select WayPoint
+            QRegExp blank("[ ]");
+            bool found = false;
 
-                  dX = abs(sitePos.x() - current.x());
-                  dY = abs(sitePos.y() - current.y());
+            // add WPList !!!
+            int searchList[] = {MapContents::GliderList, MapContents::AirportList};
+            for (int l = 0; l < 2; l++)
+              {
+             	  for(unsigned int loop = 0;
+             	      loop < _globalMapContents.getListLength(searchList[l]); loop++)
+             	    {
+          	        hitElement = (RadioPoint*)_globalMapContents.getElement(
+          	            searchList[l], loop);
+            	      sitePos = hitElement->getMapPosition();
 
-  	              // Abstand entspricht der Icon-Größe.
-        	        if (dX < delta && dY < delta)
-        	          {
-          	          Waypoint *w = new Waypoint;
-  	                  w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
-                      w->description = hitElement->getName();
-          	          w->type = hitElement->getTypeID();
-                      w->origP = hitElement->getWGSPosition();
-                      w->elevation = hitElement->getElevation();
-                      w->icao = hitElement->getICAO();
-                      w->frequency = hitElement->getFrequency().toDouble();
-                      w->isLandable = true;
+                    dX = abs(sitePos.x() - current.x());
+                    dY = abs(sitePos.y() - current.y());
 
-                      emit waypointSelected(w);
-                      found = true;
-                      break;
-        	          }
-      	        }
-      	      if (found)  break;
-      	    }
+    	              // Abstand entspricht der Icon-Größe.
+          	        if (dX < delta && dY < delta)
+          	          {
+            	          Waypoint *w = new Waypoint;
+    	                  w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
+                        w->description = hitElement->getName();
+            	          w->type = hitElement->getTypeID();
+                        w->origP = hitElement->getWGSPosition();
+                        w->elevation = hitElement->getElevation();
+                        w->icao = hitElement->getICAO();
+                        w->frequency = hitElement->getFrequency().toDouble();
+                        w->isLandable = true;
 
-  	      if (!found)
-  	        {
-              warning("new waypoint");
+                        emit waypointSelected(w);
+                        found = true;
+                        break;
+          	          }
+        	        }
+        	      if (found)  break;
+        	    }
 
-              WaypointDialog *waypointDlg = new WaypointDialog(this);
-              waypointDlg->enableApplyButton(false);
-              
-              QPoint p = _globalMapMatrix.mapToWgs(current);
+    	      if (!found)
+    	        {
+                warning("new waypoint");
 
-              // initialize dialog
-              waypointDlg->setWaypointType(BaseMapElement::Landmark);
-              waypointDlg->longitude->setText(printPos(p.x(), false));
-              waypointDlg->latitude->setText(printPos(p.y(), true));
-              waypointDlg->setSurface(-1);
+                WaypointDialog *waypointDlg = new WaypointDialog(this);
+                waypointDlg->enableApplyButton(false);
 
-              if (waypointDlg->exec() == QDialog::Accepted)
-                {
-                  // add an 'free' waypoint
-                  Waypoint *w = new Waypoint;
-                  // leave name empty, this will generate an syntetic name
+                QPoint p = _globalMapMatrix.mapToWgs(current);
 
-                  if(!waypointDlg->name->text().isEmpty())
-                    w->name = waypointDlg->name->text().left(6).upper();
+                // initialize dialog
+                waypointDlg->setWaypointType(BaseMapElement::Landmark);
+                waypointDlg->longitude->setText(printPos(p.x(), false));
+                waypointDlg->latitude->setText(printPos(p.y(), true));
+                waypointDlg->setSurface(-1);
 
-                  w->description = waypointDlg->description->text();
-                  w->type = waypointDlg->getWaypointType();
-                  w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
-                  w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
-                  w->projP = _globalMapMatrix.wgsToMap(w->origP.lat(), w->origP.lon());
-                  w->elevation = waypointDlg->elevation->text().toInt();
-                  w->icao = waypointDlg->icao->text().upper();
-                  w->frequency = waypointDlg->frequency->text().toDouble();
-                  text = waypointDlg->runway->text();
-                  if (!text.isEmpty()) {
-                    w->runway = text.toInt();
+                if (waypointDlg->exec() == QDialog::Accepted)
+                  {
+                    // add an 'free' waypoint
+                    Waypoint *w = new Waypoint;
+                    // leave name empty, this will generate an syntetic name
+
+                    if(!waypointDlg->name->text().isEmpty())
+                      w->name = waypointDlg->name->text().left(6).upper();
+
+                    w->description = waypointDlg->description->text();
+                    w->type = waypointDlg->getWaypointType();
+                    w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+                    w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
+                    w->projP = _globalMapMatrix.wgsToMap(w->origP.lat(), w->origP.lon());
+                    w->elevation = waypointDlg->elevation->text().toInt();
+                    w->icao = waypointDlg->icao->text().upper();
+                    w->frequency = waypointDlg->frequency->text().toDouble();
+                    text = waypointDlg->runway->text();
+                    if (!text.isEmpty()) {
+                      w->runway = text.toInt();
+                    }
+
+                    text = waypointDlg->length->text();
+                    if (!text.isEmpty()) {
+                      w->length = text.toInt();
+                    }
+
+                    w->surface = waypointDlg->getSurface();
+                    w->comment = waypointDlg->comment->text();
+                    w->isLandable = waypointDlg->isLandable->isChecked();
+
+                    emit waypointSelected(w);
                   }
+                delete waypointDlg;
 
-                  text = waypointDlg->length->text();
-                  if (!text.isEmpty()) {
-                    w->length = text.toInt();
-                  }
-                  
-                  w->surface = waypointDlg->getSurface();
-                  w->comment = waypointDlg->comment->text();
-                  w->isLandable = waypointDlg->isLandable->isChecked();
+    	        }
+          }
 
-                  emit waypointSelected(w);
-                }
-              delete waypointDlg;
+        if(planning)  __graphicalPlanning(current, event);
+      }
+    else if(event->button() == RightButton && event->state() == ControlButton)
+      {
+        moveWPindex = -999;
 
-  	        }
-        }
+        prePlanPos.setX(-999);
+        prePlanPos.setY(-999);
+        planning = 2;
 
-      if(planning)  __graphicalPlanning(current, event);
-    }
-  else if(event->button() == RightButton && event->state() == ControlButton)
-    {
-      moveWPindex = -999;
-
-      prePlanPos.setX(-999);
-      prePlanPos.setY(-999);
-      planning = 2;
-
-      emit taskPlanningEnd();
-      return;
-    }
-  else if(event->button() == RightButton)
-      __displayMapInfo(current);
+        emit taskPlanningEnd();
+        return;
+      }
+    else if(event->button() == RightButton)
+        __displayMapInfo(current);
+  }
 }
 
 void Map::paintEvent(QPaintEvent* event = 0)
@@ -1464,6 +1475,12 @@ void Map::slotDrawCursor(QPoint p1, QPoint p2)
 
   preCur1 = p1;
   preCur2 = p2;
+}
+
+void Map::slotZoomRect()
+{
+  setCursor(SizeAllCursor);
+  isZoomRect=true;
 }
 
 void Map::slotCenterToWaypoint(const unsigned int id)
@@ -2256,3 +2273,23 @@ void Map::__findElevation(QPoint coord){
   emit elevation(height);
  
 }
+
+void Map::__setCursor()
+{
+  static const unsigned char cross_bits[] = {
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x01, 0x00,
+    0x00, 0x80, 0x01, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0x98, 0x19, 0x00,
+    0x00, 0x8c, 0x31, 0x00, 0x00, 0x86, 0x61, 0x00, 0x00, 0x83, 0xc1, 0x00,
+    0x00, 0xc1, 0x83, 0x00, 0x80, 0x60, 0x06, 0x01, 0x80, 0x30, 0x0c, 0x01,
+    0xe0, 0x9f, 0xf9, 0x07, 0xe0, 0x9f, 0xf9, 0x07, 0x80, 0x30, 0x0c, 0x01,
+    0x80, 0x60, 0x06, 0x01, 0x00, 0xc1, 0x83, 0x00, 0x00, 0x83, 0xc1, 0x00,
+    0x00, 0x86, 0x61, 0x00, 0x00, 0x8c, 0x31, 0x00, 0x00, 0x98, 0x19, 0x00,
+    0x00, 0xe0, 0x07, 0x00, 0x00, 0x80, 0x01, 0x00, 0x00, 0x80, 0x01, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+  };
+  const QBitmap cross(32, 32, cross_bits, true);
+  const QCursor crossCursor(cross, cross);
+  setCursor(crossCursor);
+}  

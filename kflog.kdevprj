@@ -21,17 +21,17 @@ addcxxflags=
 bin_program=kflog
 cflags=
 cppflags=
-cxxflags=\s-O0 -Wall
+cxxflags=\s-O3 -Wall
 ldadd=-lkdeprint -lm $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
-ldflags=\s           \s
+ldflags=\s            \s
 
 [General]
 AMChanged=false
 author=Heiner Lamprecht
-configure_args=\s--build=i386-linux --host=i386-linux --target=i386-linux --prefix=/opt/kde3 --enable-debug\s
+configure_args=--prefix=/opt/kde3 --enable-debug=full
 email=heiner@kflog.org
 kdevprj_version=1.3
-lfv_open_groups=Quellen,Übersetzungen
+lfv_open_groups=GNU,Übersetzungen
 make_options=\s-j1
 makefiles=Makefile.am,kflog/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,po/Makefile.am,kflog/guicontrols/Makefile.am,kflog/kfrgcs/Makefile.am,kflog/kfrgmn/Makefile.am,kflog/map-icons/Makefile.am,kflog/map-icons/small/Makefile.am,kflog/pics/Makefile.am,kflog/kfrfil/Makefile.am,kflog/kfrxsp/Makefile.am,kflog/kfrxcu/Makefile.am
 modifyMakefiles=true

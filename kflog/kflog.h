@@ -293,7 +293,6 @@ class KFLogApp : public KDockMainWindow
   void slotCenterTo();
   /** Re-enables all messages turned off using "Don't show this dialog again" checkboxes. */
   void slotEnableMessages();
-
  private:
   /**
    * The startup-window.

@@ -103,6 +103,10 @@ class Map : public QWidget
     void slotAppendWaypoint2Task(Waypoint *p);
     /** Slot signalled when user selects another waypointcatalog.  */
     void slotWaypointCatalogChanged(WaypointCatalog* c);
+    /**
+    * Zooms into a rectangular region
+    */
+    void slotZoomRect();
 
   signals:
     /** */
@@ -131,6 +135,10 @@ class Map : public QWidget
      */
     virtual void mousePressEvent(QMouseEvent* event);
     /**
+     * For the rectangular zoom
+     */
+    virtual void mouseReleaseEvent(QMouseEvent* event);
+    /**
      * Displays the coordinates of the mousepointer in the status-bar.
      */
     virtual void mouseMoveEvent(QMouseEvent* event);
@@ -154,8 +162,13 @@ class Map : public QWidget
      * Redifinition of the dropEvent.
      */
     virtual void dropEvent(QDropEvent* event);
+    // for the rectangular zoom
+    bool isZoomRect;
+    bool dragZoomRect;
+    QPoint beginDrag;
 
   private:
+  // defining the cursor for the map:
     /**
      * Redraws the map.
      */
@@ -182,6 +195,10 @@ class Map : public QWidget
      * Draws the grid tino the map.
      */
     void __drawGrid();
+    /**
+     * Sets the crosshair cursor
+     */
+    void __setCursor();
     /** */
 //    void __setMapBorder();
     /**

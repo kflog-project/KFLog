@@ -256,6 +256,7 @@ void KFLogApp::initActions()
 
   KStdAction::zoomIn(&_globalMapMatrix, SLOT(slotZoomIn()), actionCollection());
   KStdAction::zoomOut(&_globalMapMatrix, SLOT(slotZoomOut()), actionCollection());
+  KStdAction::zoom(map, SLOT(slotZoomRect()), actionCollection());
 
   // zoom & pan with Numpad keys (in the case of NumLock on)
   mapMoveMenu->insert(new KAction(0, "zoom_in_key",Key_Plus, &_globalMapMatrix,
@@ -1330,3 +1331,4 @@ void KFLogApp::initTaskTypes()
 void KFLogApp::slotEnableMessages(){
   KMessageBox::enableAllMessages();
 }
+

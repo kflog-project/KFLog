@@ -380,7 +380,7 @@ double MapMatrix::centerToRect(QRect center, QSize pS)
   double tempScale = MAX(cScale * MAX(xScaleDelta, yScaleDelta),
       MAX_SCALE);
 
-  // Änderung nur, wenn Unterschied zu gross:
+  // only change if difference is too large:
   if((tempScale / cScale) > 1.05 || (tempScale / cScale) < 0.95)
       cScale = tempScale;
 
@@ -394,7 +394,7 @@ QPoint MapMatrix::mapToWgs(QPoint pos) const
   bool result = true;
   QWMatrix invertMatrix = worldMatrix.invert(&result);
   if(!result)
-      // Houston, wir haben ein Problem !!!
+      // Houston, we have a problem !!!
       qFatal("KFLog: Cannot invert worldmatrix!");
 
   return __mapToWgs(invertMatrix.map(pos));
