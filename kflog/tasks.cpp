@@ -296,6 +296,7 @@ void Tasks::showTaskPopup(QListViewItem *item, const QPoint &, int)
 /** No descriptions */
 void Tasks::slotAppendTask(FlightTask *f)
 {
+
   QListViewItem *item;
 
   taskList.insert(f->getFileName(), f);

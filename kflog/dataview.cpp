@@ -244,22 +244,7 @@ void DataView::setFlightData()
                 htmlText += "<EM>" + i18n("Flight contains no waypoints") + "</EM>";
             break;
           case BaseMapElement::Task:
-            if(e->getWPList().count())
-                htmlText = __writeTaskInfo((FlightTask*)e);
-            else
-              {
-                htmlText = i18n(
-                  "You can select waypoints with the left mouse button."
-                  "You can also select free waypoints by clicking anywhere in the map."
-                  "<br><br>"
-                  "When you press &lt;CTRL&gt; and click with the left mouse button on a taskpoint, "
-                  "it will be deleted.<br>"
-                  "You can compute the task up to your current mouse position by pressing &lt;SHIFT&gt;."
-                  "<br>"
-                  "To finish the task, press &lt;CTRL&gt; and click the right mouse button.<br>"
-                  "It's possible to move and delete taskpoints from the finished task."
-                  );
-              }
+            htmlText = __writeTaskInfo((FlightTask*)e);
             break;
           case BaseMapElement::FlightGroup:
             htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\

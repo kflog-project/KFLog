@@ -45,6 +45,7 @@
 #include <evaluationdialog.h>
 #include <flight.h>
 #include <flightdataprint.h>
+#include <helpwindow.h>
 #include <igcpreview.h>
 #include <kflogconfig.h>
 #include <kflogstartlogo.h>
@@ -142,6 +143,11 @@ KFLogApp::KFLogApp()
   connect(&_globalMapContents, SIGNAL(activatePlanning()),
      map,SLOT(slotActivatePlanning()));
 
+  connect(&_globalMapContents, SIGNAL(taskHelp(QString)),
+      helpWindow, SLOT(slotShowHelpText(QString)) );
+  connect(map, SIGNAL(taskPlanningEnd()), helpWindow, SLOT(slotClearView()) );
+
+          
   connect(map, SIGNAL(showTaskText(FlightTask*)),
       dataView, SLOT(slotShowTaskText(FlightTask*)));
   connect(map, SIGNAL(taskPlanningEnd()), dataView, SLOT(setFlightData()));
@@ -243,6 +249,9 @@ void KFLogApp::initActions()
    */
   viewData = new KToggleAction(i18n("Show Flightdata"), 0, this,
       SLOT(slotToggleDataView()), actionCollection(), "toggle_data_view");
+  viewHelpWindow = new KToggleAction(i18n("open HelpWindow"), 0,
+      CTRL+Key_M, this, SLOT(slotToggleHelpWindow()), actionCollection(),
+      "toggle_help_window");
   viewMapControl = new KToggleAction(i18n("Show Mapcontrol"), 0, this,
       SLOT(slotToggleMapControl()), actionCollection(), "toggle_map_control");
   viewMap = new KToggleAction(i18n("Show Map"), 0, this,
@@ -426,6 +435,7 @@ void KFLogApp::initView()
   // wir könnten mal Icons für die einzelnen Bereiche gebrauchen ...
   mapViewDock = createDockWidget("Map", 0, 0, i18n("Map"));
   dataViewDock = createDockWidget("Flight-Data", 0, 0, i18n("Flight-Data"));
+  helpWindowDock = createDockWidget("Help", 0, 0, i18n("Help"));  
   mapControlDock = createDockWidget("Map-Control", 0, 0, i18n("Map-Control"));
   waypointsDock = createDockWidget("Waypoints", 0, 0, i18n("Waypoints"));
   tasksDock = createDockWidget("Tasks", 0, 0, i18n("Tasks"));
@@ -445,6 +455,10 @@ void KFLogApp::initView()
       SLOT(slotHideDataViewDock()));
   connect(dataViewDock, SIGNAL(hasUndocked()),
       SLOT(slotHideDataViewDock()));
+  connect(helpWindowDock, SIGNAL(iMBeingClosed()),
+      SLOT(slotHideHelpWindowDock()));
+  connect(helpWindowDock, SIGNAL(hasUndocked()),
+      SLOT(slotHideHelpWindowDock()));      
   connect(waypointsDock, SIGNAL(iMBeingClosed()),
       SLOT(slotHideWaypointsDock()));
   connect(waypointsDock, SIGNAL(hasUndocked()),
@@ -477,6 +491,9 @@ void KFLogApp::initView()
   dataView = new DataView(dataViewDock);
   dataViewDock->setWidget(dataView);
 
+  helpWindow = new HelpWindow(helpWindowDock);
+  helpWindowDock->setWidget(helpWindow);  
+
   waypoints = new Waypoints(waypointsDock);
   waypointsDock->setWidget(waypoints);
 
@@ -490,6 +507,7 @@ void KFLogApp::initView()
    * dock target, dock side, relation target/this (in percent)
    */
   dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );
+  helpWindowDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );  
   tasksDock->manualDock(dataViewDock, KDockWidget::DockBottom, 50);
   mapControlDock->manualDock( tasksDock, KDockWidget::DockBottom, 75 );
   waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 71);
@@ -796,6 +814,8 @@ void KFLogApp::slotHideMapViewDock()  { viewMap->setChecked(false); }
 
 void KFLogApp::slotHideDataViewDock()  { viewData->setChecked(false); }
 
+void KFLogApp::slotHideHelpWindowDock()  { viewHelpWindow->setChecked(false); }
+
 void KFLogApp::slotHideWaypointsDock() { viewWaypoints->setChecked(false); }
 
 void KFLogApp::slotHideTasksDock() { viewTasks->setChecked(false); }
@@ -807,12 +827,15 @@ void KFLogApp::slotCheckDockWidgetStatus()
   viewMapControl->setChecked(mapControlDock->isVisible());
   viewMap->setChecked(mapViewDock->isVisible());
   viewData->setChecked(dataViewDock->isVisible());
+  viewHelpWindow->setChecked(helpWindowDock->isVisible());  
   viewWaypoints->setChecked(waypointsDock->isVisible());
   viewTasks->setChecked(tasksDock->isVisible());
   viewLegend->setChecked(legendDock->isVisible());
 }
 
 void KFLogApp::slotToggleDataView()  { dataViewDock->changeHideShowState(); }
+
+void KFLogApp::slotToggleHelpWindow()  { helpWindowDock->changeHideShowState(); }
 
 void KFLogApp::slotToggleMapControl() { mapControlDock->changeHideShowState(); }
 

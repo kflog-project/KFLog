@@ -2229,6 +2229,22 @@ void MapContents::slotNewTask()
   flightList.append(f);
   emit newTaskAdded(f);
 
+  QString helpText = "";
+
+  helpText = i18n(
+                  "You can select waypoints with the left mouse button."
+                  "You can also select free waypoints by clicking anywhere in the map."
+                  "<br><br>"
+                  "When you press &lt;CTRL&gt; and click with the left mouse button on a taskpoint, "
+                  "it will be deleted.<br>"
+                  "You can compute the task up to your current mouse position by pressing &lt;SHIFT&gt;."
+                  "<br>"
+                  "To finish the task, press &lt;CTRL&gt; and click the right mouse button.<br>"
+                  "It's possible to move and delete taskpoints from the finished task."
+                  );
+  
+  emit taskHelp(helpText);
+
   emit currentFlightChanged();
 //  emit activatePlanning();
 }

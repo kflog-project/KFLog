@@ -35,6 +35,7 @@
 #include <kurl.h>
 
 class DataView;
+class HelpWindow;
 class Map;
 class MapControlView;
 class KFLogConfig;
@@ -160,6 +161,10 @@ class KFLogApp : public KDockMainWindow
    */
   void slotToggleDataView();
   /**
+   * Shows or hides the Help Window.
+   */
+  void slotToggleHelpWindow();  
+  /**
    * Shows or hides the mapcontrol-widget.
    */
   void slotToggleMapControl();
@@ -224,6 +229,12 @@ class KFLogApp : public KDockMainWindow
    * undocked the widget.
    */
   void slotHideDataViewDock();
+  /**
+   * Hides the HelpWindow. Called, when the user has closed or
+   * undocked the widget.
+   */
+  void slotHideHelpWindowDock();
+  
   /**
    * Checks the status of all dock-widgets and updates the menu.
    */
@@ -311,6 +322,13 @@ class KFLogApp : public KDockMainWindow
    */
   KDockWidget* dataViewDock;
   /**
+   * Dockwidget to handle the helpWindow.
+   *
+   * @see helpWindow
+   */
+  KDockWidget* helpWindowDock;
+  
+  /**
    * Dockwidget to handle the waypoints-widget.
    *
    * @see taskAndWaypoint
@@ -342,6 +360,12 @@ class KFLogApp : public KDockMainWindow
    * @see dataViewDock
    */
   DataView* dataView;
+  /**
+   * The helpWindow. Embedded in helpWindowDock
+   *
+   * @see helpWindowDock
+   */
+  HelpWindow* helpWindow;  
   /**
    * The progessbar in the statusbar. Used during drawing the map to display
    * the percentage of what is allready drawn.
@@ -426,6 +450,10 @@ class KFLogApp : public KDockMainWindow
    * Action to handle the dataview.
    */
   KToggleAction* viewData;
+  /**
+   * Action to handle the helpWindow.
+   */
+  KToggleAction* viewHelpWindow;  
   /**
    * Action to handle the mapcontrol.
    */

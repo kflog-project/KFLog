@@ -274,6 +274,8 @@ switch to first task in file */
     void currentFlightChanged();
     /** signal that a new task has been created */
     void newTaskAdded(FlightTask *);
+    /** signal emitted when new task has been created */
+    void taskHelp(QString);
     /**
      * Emitted, when no mapfiles are found, or the when the map-directories
      * do not exists.

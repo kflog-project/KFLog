@@ -1089,11 +1089,7 @@ void Map::__drawMap()
 
   mainApp->slotSetProgress(40);
 
-//  _globalMapContents.drawList(&uMapP, MapContents::PupulationList_1);
-//  _globalMapContents.drawList(&uMapP, MapContents::PupulationList_2);
-//  _globalMapContents.drawList(&uMapP, MapContents::PupulationList_3);
-//  _globalMapContents.drawList(&uMapP, MapContents::PupulationList_4);
-//  _globalMapContents.drawList(&uMapP, MapContents::PupulationList_5);
+  _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::PopulationList);
 
   mainApp->slotSetProgress(45);
 
