@@ -16,7 +16,7 @@
 ***********************************************************************/
 
 #include "garminfr.h"
-#include <iostream.h>
+#include <iostream>
 
 #include <unistd.h>
 

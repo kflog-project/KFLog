@@ -28,7 +28,7 @@
 
 #include <utils.h>
 
-#include <iostream.h>
+#include <iostream>
 
 extern int noninteractive;
 

@@ -30,7 +30,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#include <iostream.h>
+#include <iostream>
 
 int noninteractive;
 
