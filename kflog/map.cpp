@@ -466,13 +466,13 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
   SinglePoint *hitElement;
 
   QPoint sitePos;
-  double dX, dY;
   // Radius for Mouse Snapping
   double delta(16.0);
 
-  QString text;
   int timeout=60000;
   if (automatic) timeout=3500;
+
+  QString text;
   
   bool show = false, isAirport = false;
 
@@ -484,21 +484,18 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
           MapContents::GliderList, loop);
       sitePos = hitElement->getMapPosition();
 
-      dX = sitePos.x() - current.x();
-      dY = sitePos.y() - current.y();
+      double dX = abs (sitePos.x() - current.x());
+      double dY = abs (sitePos.y() - current.y());
 
       // Abstand entspricht der Icon-Größe.
-      if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-          ( ( dY < delta ) && ( dY > -delta ) ) )
-        {
-          text = text + ((SinglePoint*)hitElement)->getInfoString();
-          // Text anzeigen
-         // QWhatsThis::enterWhatsThisMode();
-         // QWhatsThis::leaveWhatsThisMode(text);
-          WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &current);
-          box->show();
-          isAirport = true;
-        }
+      if ( ( dX < delta ) && ( dY < delta ) )
+      {
+        text += hitElement->getInfoString();
+        // Text anzeigen
+        WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &current);
+        box->show();
+        isAirport = true;
+      }
     }
 
 //          text = "";    // Wir wollen _nur_ Flugplätze anzeigen!
@@ -513,23 +510,46 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
           MapContents::AirportList, loop);
       sitePos = hitElement->getMapPosition();
 
-      dX = sitePos.x() - current.x();
-      dY = sitePos.y() - current.y();
+      double dX = abs (sitePos.x() - current.x());
+      double dY = abs (sitePos.y() - current.y());
 
       // Abstand entspricht der Icon-Größe.
-      if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-          ( ( dY < delta ) && ( dY > -delta ) ) )
-        {
-          text = text + hitElement->getInfoString();
-          // Text anzeigen
-          //QWhatsThis::enterWhatsThisMode();
-          //QWhatsThis::leaveWhatsThisMode(text);
-         WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &current);
-         box->show();
+      if ( ( dX < delta ) && ( dY < delta ) )
+      {
+        text += hitElement->getInfoString();
+        // Text anzeigen
+        WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &current);
+        box->show();
 
-          isAirport = true;
-        }
+        isAirport = true;
+      }
     }
+
+  // let's show waypoints
+  for (QPtrListIterator<Waypoint> it (*(_globalMapContents.getWaypointList())); it.current(); ++it)
+  {
+    Waypoint* wp = it.current();
+    QPoint sitePos (_globalMapMatrix.map(_globalMapMatrix.wgsToMap(wp->origP)));
+    double dX = abs(sitePos.x() - current.x());
+    double dY = abs(sitePos.y() - current.y());
+
+    // Abstand entspricht der Icon-Größe.
+    if ( (dX < delta) && (dY < delta) )
+    {
+      QString wpText = "<B>"+i18n("Waypoint:")+"</B><UL>";
+      wpText += "<B>" + wp->name +
+                  "</B><BR>" +
+                  printPos(wp->origP.lat()) + "<BR>" +
+                  printPos(wp->origP.lon(), false);
+      wpText += "</UL>";
+      text += wpText;
+      // Text anzeigen
+      WhatsThat * box=new WhatsThat(this, wpText, this, "", timeout, &current);
+      box->show();
+
+      isAirport = true;
+    }
+  }
 
   if(baseFlight && baseFlight->getTypeID() == BaseMapElement::Flight)
     {
@@ -544,12 +564,11 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
         {
           sitePos = _globalMapMatrix.map(wpList.at(loop)->projP);
 
-          dX = sitePos.x() - current.x();
-          dY = sitePos.y() - current.y();
+          double dX = abs (sitePos.x() - current.x());
+          double dY = abs (sitePos.y() - current.y());
 
           // We do not search for the sector ...
-          if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-              ( ( dY < delta ) && ( dY > -delta ) ) )
+          if ( ( dX < delta ) && ( dY < delta ) )
             {
               isWP = true;
 
@@ -602,12 +621,9 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 
       if(isWP)
         {
-          wpText = wpText + "</UL>";
-          text = text + wpText;
+          wpText += "</UL>";
           // Show text
-          //QWhatsThis::enterWhatsThisMode();
-          //QWhatsThis::leaveWhatsThisMode(text);
-          WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &current);
+          WhatsThat * box=new WhatsThat(this, wpText, this, "", timeout, &current);
           box->show();
           isAirport = true;
         }
@@ -615,24 +631,22 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 
   if(isAirport)  return;
 
-  text = text + "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
+  text += "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
 
   for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
     {
       if(airspaceRegList->at(loop)->contains(current))
         {
-          text = text + "<LI>" + ((Airspace*)_globalMapContents.getElement(
+          text += "<LI>" + ((Airspace*)_globalMapContents.getElement(
               MapContents::AirspaceList, loop))->getInfoString() + "</LI>";
           show = true;
         }
     }
-  text = text + "</UL>";
+  text += "</UL>";
 
   if(show)
     {
       //  Show text
-      // QWhatsThis::enterWhatsThisMode();
-      // QWhatsThis::leaveWhatsThisMode(text);
       WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &current);
       box->show();
     }
@@ -2289,7 +2303,6 @@ void Map::__drawWaypoints(){
 void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
   extern MapContents _globalMapContents;
   Waypoint *w;
-  Waypoint *newWP;
   QDictIterator<Waypoint> it(c->wpList);
   bool filterRadius, filterArea;
   QPtrList<Waypoint> * wpList;
