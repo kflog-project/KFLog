@@ -45,27 +45,6 @@
 #include "mapcontents.h"
 #include "airport.h"
 
-
-#define CHECK_ERROR_EXIT  error = (char *)dlerror(); \
-  if(error != NULL) \
-    { \
-      warning(error); \
-      return; \
-    }
-
-#define CHECK_ERROR_RETURN  error = (char *)dlerror(); \
-  if(error != NULL) \
-    { \
-      warning(error); \
-      return 0; \
-    }
-
-#define CHECK_ERROR  error = (char *)dlerror(); \
-  if(error != NULL) \
-    { \
-      warning(error); \
-    }
-
 RecorderDialog::RecorderDialog(QWidget *parent, KConfig* cnf, const char *name)
   : KDialogBase(IconList, i18n("Flightrecorder-Dialog"), Close, Close,
                 parent, name, true, true),
@@ -968,14 +947,14 @@ int RecorderDialog::__fillDirList()
   }
 }
 
-int RecorderDialog::__openLib(const QString& libN)
+bool RecorderDialog::__openLib(const QString& libN)
 {
   warning("__openLib(%s)", (const char*) libN);
   char* error;
 
   if (libName==libN) {
     warning("OK, Lib allready open.");
-    return 1;
+    return true;
   }
   qDebug("Opening lib %s...",libN.latin1());
 
@@ -990,20 +969,25 @@ int RecorderDialog::__openLib(const QString& libN)
 
   libHandle = dlopen(KGlobal::dirs()->findResource("lib", libN), RTLD_NOW);
 
-  CHECK_ERROR_RETURN
-
+  error = (char *)dlerror();
+  if (error != NULL)
+  {
+    warning(error);
+    return false;
+  }
+  
   FlightRecorderPluginBase* (*getRecorder)();
   getRecorder = (FlightRecorderPluginBase* (*) ()) dlsym(libHandle, "getRecorder");
   if (!getRecorder) {
     warning("getRecorder funtion not defined in lib. Lib can't be used.");
-    return 0;
+    return false;
   }
 
   activeRecorder=getRecorder();
 
   if(!activeRecorder) {
     warning("No recorder object returned!");
-    return 0;
+    return false;
   }
 
   apiID->setText(activeRecorder->getLibName());
@@ -1011,7 +995,7 @@ int RecorderDialog::__openLib(const QString& libN)
   isOpen = true;
   libName=libN;
 
-  return 1;
+  return true;
 }
 
 void RecorderDialog::slotSwitchTask(int idx)
