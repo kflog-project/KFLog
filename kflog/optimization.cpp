@@ -61,7 +61,7 @@ double Optimization::optimizationResult(unsigned int retList[LEGS+1], double *re
     if (pointList[i]>original_route.count()){
       qWarning(QString("##k:%1\tstart:%2\t\tpointList[k]:%3").arg(i).arg(start).arg(pointList[i]));
       KMessageBox::error(0,"Sorry optimization fault. Report error (including IGC-File) to <christof.bodner@gmx.net>");
-      return;
+      return -1.0;
     }
   }
   *retPoints=points;
@@ -91,7 +91,7 @@ void Optimization::enableRun(){
 void Optimization::run(){
 
   double *L;                        // length values
-  int *w;                           // waypoints
+  unsigned int *w;                  // waypoints
   double length;                    // solution length
 
   unsigned int i,j,k;               // loop variables
