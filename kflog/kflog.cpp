@@ -57,6 +57,7 @@
 #include <recorderdialog.h>
 #include <taskdataprint.h>
 #include <waypoints.h>
+#include <tasks.h>
 #include <igc3ddialog.h>
 #include "basemapelement.h"
 #include "airport.h"
@@ -274,9 +275,13 @@ void KFLogApp::initActions()
       CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
       "evaluate_flight");
 
-  viewWaypoints = new KToggleAction(i18n("Waypoints"), "waypoint",
-      CTRL+Key_T, this, SLOT(slotToggleWaypointsDock()), actionCollection(),
+  viewWaypoints = new KToggleAction(i18n("Show waypoints"), "waypoint",
+      CTRL+Key_W, this, SLOT(slotToggleWaypointsDock()), actionCollection(),
       "waypoints");
+
+  viewTasks = new KToggleAction(i18n("Show tasks"), "task",
+      CTRL+Key_T, this, SLOT(slotToggleTasksDock()), actionCollection(),
+      "tasks");
 
   flightOptimization = new KAction(i18n("Optimize"), "wizard", 0,
       this, SLOT(slotOptimizeFlight()), actionCollection(), "optimize_flight");
@@ -340,7 +345,7 @@ void KFLogApp::initActions()
       actionCollection(), "flight");
   flightMenu->insert(flightEvaluation);
   flightMenu->insert(flightOptimization);
-  flightMenu->insert(viewWaypoints);
+  //  flightMenu->insert(viewWaypoints);
   flightMenu->insert(viewFlightDataType);
   flightMenu->insert(viewIgc3D);
   flightMenu->insert(olcDeclaration);
@@ -416,6 +421,7 @@ void KFLogApp::initView()
   dataViewDock = createDockWidget("Flight-Data", 0, 0, i18n("Flight-Data"));
   mapControlDock = createDockWidget("Map-Control", 0, 0, i18n("Map-Control"));
   waypointsDock = createDockWidget("Waypoints", 0, 0, i18n("Waypoints"));
+  tasksDock = createDockWidget("Tasks", 0, 0, i18n("Tasks"));
 
   extern MapContents _globalMapContents;
 
@@ -435,6 +441,10 @@ void KFLogApp::initView()
       SLOT(slotHideWaypointsDock()));
   connect(waypointsDock, SIGNAL(hasUndocked()),
       SLOT(slotHideWaypointsDock()));
+  connect(tasksDock, SIGNAL(iMBeingClosed()),
+      SLOT(slotHideTasksDock()));
+  connect(tasksDock, SIGNAL(hasUndocked()),
+      SLOT(slotHideTasksDock()));
 
   setView(mapViewDock);
   setMainDockWidget(mapViewDock);
@@ -458,18 +468,23 @@ void KFLogApp::initView()
   waypoints = new Waypoints(waypointsDock);
   waypointsDock->setWidget(waypoints);
 
+  tasks = new Tasks(tasksDock);
+  tasksDock->setWidget(tasks);
+
   /* Argumente für manualDock():
    * dock target, dock side, relation target/this (in percent)
    */
   dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );
   mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 75 );
   waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 71);
+  tasksDock->manualDock(waypointsDock, KDockWidget::DockRight, 50);
 
   connect(map, SIGNAL(changed(QSize)), mapControl,
       SLOT(slotShowMapData(QSize)));
-
   connect(map, SIGNAL(waypointSelected(wayPoint *)), waypoints,
     SLOT(slotAddWaypoint(wayPoint *)));
+  connect(map, SIGNAL(taskPlanningEnd()), tasks,
+    SLOT(slotUpdateTask()));
 
   extern MapMatrix _globalMapMatrix;
   connect(mapControl, SIGNAL(scaleChanged(double)), &_globalMapMatrix,
@@ -488,12 +503,23 @@ void KFLogApp::initView()
       SLOT(slotShowCurrentFlight()));
   connect(&_globalMapContents, SIGNAL(currentFlightChanged()), dataView,
       SLOT(setFlightData()));
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), tasks,
+      SLOT(setCurrentTask()));
 
   connect(waypoints, SIGNAL(copyWaypoint2Task(wayPoint *)), map,
       SLOT(slotAppendWaypoint2Task(wayPoint *)));
 
   connect(waypoints, SIGNAL(waypointCatalogChanged( WaypointCatalog * )), map,
       SLOT(slotWaypointCatalogChanged( WaypointCatalog * )));
+
+  connect(tasks, SIGNAL(newTask()), &_globalMapContents,
+      SLOT(slotNewTask()));
+  connect(tasks, SIGNAL(openTask()), this, SLOT(slotTaskOpen()));
+  connect(tasks, SIGNAL(closeTask()), &_globalMapContents, SLOT(closeFlight()));
+  connect(tasks, SIGNAL(flightSelected(BaseFlightElement *)), &_globalMapContents,
+      SLOT(slotSetFlight(BaseFlightElement *)));
+  connect(&_globalMapContents, SIGNAL(newTaskAdded(FlightTask *)), tasks,
+      SLOT(slotAppendTask(FlightTask *)));
 
 }
 
@@ -565,6 +591,8 @@ void KFLogApp::readOptions()
   fileOpenRecent->loadEntries(config,"Recent Files");
   config->setGroup("Path");
   flightDir = config->readEntry("DefaultFlightDirectory",
+      getpwuid(getuid())->pw_dir);
+  taskDir = config->readEntry("DefaultWaypointDirectory",
       getpwuid(getuid())->pw_dir);
 
   config->setGroup("Scale");
@@ -888,12 +916,15 @@ void KFLogApp::slotHideDataViewDock()  { viewData->setChecked(false); }
 
 void KFLogApp::slotHideWaypointsDock() { viewWaypoints->setChecked(false); }
 
+void KFLogApp::slotHideTasksDock() { viewTasks->setChecked(false); }
+
 void KFLogApp::slotCheckDockWidgetStatus()
 {
   viewMapControl->setChecked(mapControlDock->isVisible());
   viewMap->setChecked(mapViewDock->isVisible());
   viewData->setChecked(dataViewDock->isVisible());
   viewWaypoints->setChecked(waypointsDock->isVisible());
+  viewTasks->setChecked(tasksDock->isVisible());
 }
 
 void KFLogApp::slotToggleDataView()  { dataViewDock->changeHideShowState(); }
@@ -903,6 +934,8 @@ void KFLogApp::slotToggleMapControl() { mapControlDock->changeHideShowState(); }
 void KFLogApp::slotToggleMap() { mapViewDock->changeHideShowState(); }
 
 void KFLogApp::slotToggleWaypointsDock() { waypointsDock->changeHideShowState(); }
+
+void KFLogApp::slotToggleTasksDock() { tasksDock->changeHideShowState(); }
 
 void KFLogApp::slotSelectFlightData(int id)
 {
@@ -1242,4 +1275,36 @@ void KFLogApp::slotImportGardownFile(){
 /** No descriptions */
 void KFLogApp::slotSavePixmap( KURL url, int width, int height ){
   map->slotSavePixmap(url,width,height);
+}
+
+/** No descriptions */
+void KFLogApp::slotTaskOpen()
+{
+  slotStatusMsg(i18n("Opening file..."));
+
+  KFileDialog* dlg = new KFileDialog(flightDir, "*.kflogtsk *.KFLOGTSK", this,
+      i18n("Select Task-File"), true);
+  dlg->exec();
+
+  KURL fUrl = dlg->selectedURL();
+
+//  KURL fUrl = KFileDialog::getOpenURL(flightDir, "*.igc *.IGC", this);
+
+  if(fUrl.isEmpty())  return;
+
+  QString fName;
+  if(fUrl.isLocalFile())
+      fName = fUrl.path();
+  else if(!KIO::NetAccess::download(fUrl, fName))
+    {
+      KNotifyClient::event(i18n("Can not download file %1").arg(fUrl.url()));
+      return;
+    }
+
+  QFileInfo fInfo(fName);
+  flightDir = fInfo.dirPath();
+  extern MapContents _globalMapContents;
+  _globalMapContents.loadTask(fName);
+
+  slotStatusMsg(i18n("Ready."));
 }

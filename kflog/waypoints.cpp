@@ -270,8 +270,8 @@ void Waypoints::slotAddWaypoint()
     w->name = waypointDlg->name->text().upper();
     w->description = waypointDlg->description->text();
     w->type = waypointDlg->getWaypointType();
-    w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
-    w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+    w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+    w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
     w->elevation = waypointDlg->elevation->text().toInt();
     w->icao = waypointDlg->icao->text().upper();
     w->frequency = waypointDlg->frequency->text().toDouble();
@@ -304,8 +304,8 @@ void Waypoints::slotEditWaypoint()
     waypointDlg->description->setText(w->description);
     // translate id to index
     waypointDlg->setWaypointType(w->type);
-    waypointDlg->longitude->setText(printPos(w->origP.lon(), true));
-    waypointDlg->latitude->setText(printPos(w->origP.lat(), false));
+    waypointDlg->longitude->setText(printPos(w->origP.lon(), false));
+    waypointDlg->latitude->setText(printPos(w->origP.lat(), true));
     tmp.sprintf("%d", w->elevation);
     waypointDlg->elevation->setText(tmp);
     waypointDlg->icao->setText(w->icao);
@@ -438,6 +438,8 @@ void Waypoints::fillWaypoints()
     item->setText(colSurface, w->surface == -1 ? QString::null : surfaces.itemById(w->surface)->text);
     item->setText(colComment, w->comment);
   }
+
+  emit waypointCatalogChanged( waypointCatalogs.current() );
 }
 
 /** No descriptions */
@@ -445,7 +447,6 @@ void Waypoints::slotSwitchWaypointCatalog(int idx)
 {
   waypointCatalogs.at(idx);
   fillWaypoints();
-  emit waypointCatalogChanged( waypointCatalogs.current() );
 }
 
 void Waypoints::slotSaveWaypointCatalog()

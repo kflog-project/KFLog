@@ -24,7 +24,7 @@
 #include <qobject.h>
 #include <qstrlist.h>
 
-#include <baseflightelement.h>
+#include <flighttask.h>
 
 class Airport;
 class Airspace;
@@ -178,6 +178,9 @@ class MapContents : public QObject
   bool importFlightGearFile(QFile flightgearFile);
   /** Imports a file downloaded with Gardown in DOS  */
   bool importGardownFile(QFile gardownFile);
+  /** read a task file and append all tasks to flight list
+switch to first task in file */
+  bool loadTask(QFile path);
     /**
 		 * Get the contents of the next FlightPoint after number 'index'
 	   */
@@ -229,6 +232,8 @@ class MapContents : public QObject
     void loadingMessage(QString message);
     /** signal that a new flight/task/flight group become active */
     void currentFlightChanged();
+    /** signal that a new task has been created */
+    void newTaskAdded(FlightTask *);
     /**
      * Emitted, when no mapfiles are found, or the when the map-directories
      * do not exists.
@@ -377,6 +382,8 @@ class MapContents : public QObject
 
     /** Should be deleted somtime ... */
     bool isFirst;
+    /** generate new task name */
+    QString genTaskName();
 };
 
 #endif

@@ -165,9 +165,13 @@ class KFLogApp : public KDockMainWindow
      */
     void slotToggleMap();
      /**
-     * Shows or hides the taskandwaypoints-widget.
+     * Shows or hides the waypoints-widget.
      */
     void slotToggleWaypointsDock();
+     /**
+     * Shows or hides the tasks-widget.
+     */
+    void slotToggleTasksDock();
     /**
      * Opens a dialog for configuration of the toolbar.
      */
@@ -237,6 +241,11 @@ class KFLogApp : public KDockMainWindow
      * undocked the widget.
      */
     void slotHideWaypointsDock();
+    /**
+     * Hides the Tasks-widget. Called, when the user has closed or
+     * undocked the widget.
+     */
+    void slotHideTasksDock();
     /** set menu items enabled/disabled */
     void slotModifyMenu();
     /** */
@@ -249,6 +258,8 @@ class KFLogApp : public KDockMainWindow
     void slotImportFlightGearFile();
   /** Import a file from Gardown (DOS)  */
   void slotImportGardownFile();
+  /** No descriptions */
+  void slotTaskOpen();
 
   private:
     /**
@@ -284,7 +295,7 @@ class KFLogApp : public KDockMainWindow
      *
      * @see tasks
      */
-    KDockWidget* taskDock;
+    KDockWidget* tasksDock;
     /**
      * The mapcontrol-widget. Embedded in mapControlDock
      *
@@ -400,6 +411,8 @@ class KFLogApp : public KDockMainWindow
     KAction* fileImportGardownFile;
     /** */
     KToggleAction* viewWaypoints;
+    /** */
+    KToggleAction* viewTasks;
 		/**
 		 * Action to start the animation
 		 */		
@@ -436,6 +449,10 @@ class KFLogApp : public KDockMainWindow
      * The flight-directory.
      */
     QString flightDir;
+    /**
+     * The task and waypoints directory.
+     */
+    QString taskDir;
 		/**
      * The waypoints-widget.
      */
@@ -443,7 +460,7 @@ class KFLogApp : public KDockMainWindow
 		/**
      * The taskt-widget.
      */
-    Tasks *taskView;
+    Tasks *tasks;
     /**
      * The startup-window.
      */

@@ -295,25 +295,30 @@ void FlightTask::__setWaypointType()
   /*
    * Setzt den Status der Wendepunkte und die Distanzen
    */
+  int cnt = wpList.count();
+
+  if (cnt > 0) {
+    wpList.at(0)->type = FlightTask::FreeP;
+  }
 
   // Distances
-  for(unsigned int n = 1; n  < wpList.count(); n++)
+  for(unsigned int n = 1; n  < cnt; n++)
     {
       wpList.at(n)->distance = dist(wpList.at(n-1),wpList.at(n));
       wpList.at(n)->type = FlightTask::FreeP;
     }
 
   // Kein Wendepunkt definiert
-  if (wpList.count() < 4)  return;
+  if (cnt < 4)  return;
 
   wpList.at(0)->type = FlightTask::TakeOff;
   wpList.at(1)->type = FlightTask::Begin;
+  wpList.at(cnt - 2)->type = FlightTask::End;
+  wpList.at(cnt - 1)->type = FlightTask::Landing;
 
-  for(unsigned int n = 2; n + 2 < wpList.count(); n++)
-      wpList.at(n)->type = FlightTask::RouteP;
-
-  wpList.at(wpList.count() - 2)->type = FlightTask::End;
-  wpList.at(wpList.count() - 1)->type = FlightTask::Landing;
+  for(unsigned int n = 2; n + 2 < cnt; n++) {
+    wpList.at(n)->type = FlightTask::RouteP;
+  }
 }
 
 int FlightTask::getTaskType() const  {  return flightType;  }

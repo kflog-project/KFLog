@@ -1,6 +1,15 @@
 $Id$
 
 
+2002-06-26 Harry <harry@kflog.org>
+
+  * Dock Widget for task handling added
+    Saving and loading of task files
+
+  * Redraw waypoint markers on map when adding/updating
+    a waypoint
+
+
 2002-06-22 Heiner <heiner@kflog.org>
 
   * Changed the sources to new versions of autoconf and automake.

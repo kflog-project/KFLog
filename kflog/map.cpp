@@ -164,6 +164,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
   extern MapContents _globalMapContents;
   extern const MapMatrix _globalMapMatrix;
   const QPoint current = event->pos();
+  struct wayPoint *w;
 
   if(planning == 1 || planning == 3)
     {
@@ -253,28 +254,32 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                     {
                       //verschieben
                       tempTaskPointList.insert(moveWPindex,new wayPoint);
-                      tempTaskPointList.at(moveWPindex)->name = wp.name;
-                      tempTaskPointList.at(moveWPindex)->origP = wp.origP;
-                      tempTaskPointList.at(moveWPindex)->elevation = wp.elevation;
-                      tempTaskPointList.at(moveWPindex)->projP = wp.projP;
-                      tempTaskPointList.at(moveWPindex)->sectorFAI = 0;
-                      tempTaskPointList.at(moveWPindex)->sector1 = 0;
-                      tempTaskPointList.at(moveWPindex)->sector2 = 0;
-                      // hier müssen noch mehr Sachen übergeben werden
+                      w = tempTaskPointList.at(moveWPindex);
                     }
                   else
                     {
                       //anhängen
                       tempTaskPointList.append(new wayPoint);
-                      tempTaskPointList.last()->name = wp.name;
-                      tempTaskPointList.last()->origP = wp.origP;
-                      tempTaskPointList.last()->elevation = wp.elevation;
-                      tempTaskPointList.last()->projP = wp.projP;
-                      tempTaskPointList.last()->sectorFAI = 0;
-                      tempTaskPointList.last()->sector1 = 0;
-                      tempTaskPointList.last()->sector2 = 0;
-                      // hier müssen noch mehr Sachen übergeben werden
+                      w = tempTaskPointList.last();
                     }
+
+                   w->name = wp.name;
+                   w->origP = wp.origP;
+                   w->elevation = wp.elevation;
+                   w->projP = wp.projP;
+                   w->description = wp.description;
+                   w->type = wp.type;
+                   w->elevation = wp.elevation;
+                   w->icao = wp.icao;
+                   w->frequency = wp.frequency;
+                   w->runway = wp.runway;
+                   w->length = wp.length;
+                   w->surface = wp.surface;
+                   w->comment = wp.comment;
+                   w->isLandable = wp.isLandable;
+                   w->sectorFAI = 0;
+                   w->sector1 = 0;
+                   w->sector2 = 0;
 
                   tempTask.setWaypointList(tempTaskPointList);
                   __drawPlannedTask(false);
@@ -581,7 +586,7 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
   QList<wayPoint> taskPointList = baseFlight->getWPList();
   QList<wayPoint> tempTaskPointList = baseFlight->getWPList();
   QList<wayPoint> * wpList = _globalMapContents.getWaypointList();
-  struct wayPoint wp;
+  struct wayPoint wp, *w;
   QString text;
   bool found;
 
@@ -625,13 +630,25 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
               warning("hänge Punkt an");
 
               taskPointList.append(new wayPoint);
-              taskPointList.last()->name = wp.name;
-              taskPointList.last()->origP = wp.origP;
-              taskPointList.last()->elevation = wp.elevation;
-              taskPointList.last()->projP = wp.projP;
-              taskPointList.last()->sector1 = 0;
-              taskPointList.last()->sector2 = 0;
-              taskPointList.last()->sectorFAI = 0;
+              w = taskPointList.last();
+
+              w->name = wp.name;
+              w->origP = wp.origP;
+              w->elevation = wp.elevation;
+              w->projP = wp.projP;
+              w->description = wp.description;
+              w->type = wp.type;
+              w->elevation = wp.elevation;
+              w->icao = wp.icao;
+              w->frequency = wp.frequency;
+              w->runway = wp.runway;
+              w->length = wp.length;
+              w->surface = wp.surface;
+              w->comment = wp.comment;
+              w->isLandable = wp.isLandable;
+              w->sector1 = 0;
+              w->sector2 = 0;
+              w->sectorFAI = 0;
               // hier müssen noch mehr Sachen übergeben werden
             }
           else if(planning == 2)
@@ -657,14 +674,25 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
               planning = 2;
               warning("insert - verschiebe Punkt?");
               taskPointList.insert(moveWPindex,new wayPoint);
+              w = taskPointList.at(moveWPindex);
 
-              taskPointList.at(moveWPindex)->name = wp.name;
-              taskPointList.at(moveWPindex)->origP = wp.origP;
-              taskPointList.at(moveWPindex)->elevation = wp.elevation;
-              taskPointList.at(moveWPindex)->projP = wp.projP;
-              taskPointList.at(moveWPindex)->sector1 = 0;
-              taskPointList.at(moveWPindex)->sector2 = 0;
-              taskPointList.at(moveWPindex)->sectorFAI = 0;
+              w->name = wp.name;
+              w->origP = wp.origP;
+              w->elevation = wp.elevation;
+              w->projP = wp.projP;
+              w->description = wp.description;
+              w->type = wp.type;
+              w->elevation = wp.elevation;
+              w->icao = wp.icao;
+              w->frequency = wp.frequency;
+              w->runway = wp.runway;
+              w->length = wp.length;
+              w->surface = wp.surface;
+              w->comment = wp.comment;
+              w->isLandable = wp.isLandable;
+              w->sector1 = 0;
+              w->sector2 = 0;
+              w->sectorFAI = 0;
               // hier müssen noch mehr Sachen übergeben werden
             } //planning == 3
         } // found
@@ -684,7 +712,6 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
             {
               if (!waypointDlg->name->text().isEmpty())
                 {
-                  struct wayPoint *w;
                   if(planning == 3)
                     {
                       // insert a moved point
@@ -767,7 +794,7 @@ warning("Map::mousePressEvent: planning=%d", planning);
 
   const QPoint current(event->pos());
 
-  SinglePoint *hitElement;
+  RadioPoint *hitElement;
   QString text;
 
   QPoint sitePos;
@@ -797,7 +824,7 @@ warning("Map::mousePressEvent: planning=%d", planning);
            	  for(unsigned int loop = 0;
            	      loop < _globalMapContents.getListLength(searchList[l]); loop++)
            	    {
-        	        hitElement = (SinglePoint*)_globalMapContents.getElement(
+        	        hitElement = (RadioPoint*)_globalMapContents.getElement(
         	            searchList[l], loop);
           	      sitePos = hitElement->getMapPosition();
 
@@ -808,13 +835,13 @@ warning("Map::mousePressEvent: planning=%d", planning);
         	        if (dX < delta && dY < delta)
         	          {
           	          wayPoint *w = new wayPoint;
-  	                  w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
+  	                   w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
                       w->description = hitElement->getName();
           	          w->type = hitElement->getTypeID();
                       w->origP = hitElement->getWGSPosition();
                       w->elevation = hitElement->getElevation();
-                      w->icao = ((RadioPoint *)hitElement)->getICAO();
-                      w->frequency = ((RadioPoint *)hitElement)->getFrequency().toDouble();
+                      w->icao = hitElement->getICAO();
+                      w->frequency = hitElement->getFrequency().toDouble();
                       w->isLandable = true;
                       w->surface = -1;
                       w->runway = 0;
@@ -1935,7 +1962,7 @@ bool Map::__getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint>
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
   bool found = false;
-  SinglePoint *hitElement;
+  RadioPoint *hitElement;
 
   for(i = 0; i < taskPointList.count(); i++)
     {
@@ -1966,7 +1993,7 @@ bool Map::__getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint>
         {
           for(unsigned int loop = 0; loop < _globalMapContents.getListLength(contentArray.at(n)); loop++)
             {
-              hitElement = (SinglePoint*)_globalMapContents.getElement(contentArray.at(n), loop);			
+              hitElement = (RadioPoint*)_globalMapContents.getElement(contentArray.at(n), loop);			
               sitePos = hitElement->getMapPosition();
               dX = abs(sitePos.x() - current.x());
               dY = abs(sitePos.y() - current.y());
@@ -1977,6 +2004,17 @@ bool Map::__getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint>
                   wp->origP = hitElement->getWGSPosition();
                   wp->elevation = hitElement->getElevation();
                   wp->projP = hitElement->getPosition();
+                  wp->description = hitElement->getName();
+                  wp->type = hitElement->getTypeID();
+                  wp->elevation = hitElement->getElevation();
+                  wp->icao = hitElement->getICAO();
+                  wp->frequency = hitElement->getFrequency().toDouble();
+                  wp->runway = 0;
+                  wp->length = 0;
+                  wp->surface = 0;
+                  wp->comment = "";
+                  wp->isLandable = true;
+
                   found = true;
                   break;
                 }

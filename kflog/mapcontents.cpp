@@ -36,6 +36,7 @@
 #include <qregexp.h>
 #include <qstring.h>
 #include <qtextstream.h>
+#include <qdom.h>
 
 #include <mapmatrix.h>
 
@@ -135,7 +136,7 @@ MapContents::MapContents()
   roadList.setAutoDelete(true);
   stationList.setAutoDelete(true);
   topoList.setAutoDelete(true);
-  wpList.setAutoDelete(true);
+  wpList.setAutoDelete(false);
 }
 
 MapContents::~MapContents()
@@ -2041,14 +2042,11 @@ int MapContents::searchStepPrevFlightPoint(int index, flightPoint & fP, int step
 /** create a new, empty task */
 void MapContents::slotNewTask()
 {
-  static int tCount = 1;
-  QString tmp;
-
-  tmp.sprintf("TASK%03d", tCount++);
-  FlightTask *f = new FlightTask(tmp);
+  FlightTask *f = new FlightTask(genTaskName());
   flightList.append(f);
-  emit currentFlightChanged();
+  emit newTaskAdded(f);
 
+  emit currentFlightChanged();
   emit activatePlanning();
 }
 
@@ -2739,3 +2737,87 @@ bool MapContents::importGardownFile(QFile gardownFile){
   return true;
 }
 
+/** read a task file and append all tasks to flight list
+switch to first task in file */
+bool MapContents::loadTask(QFile path)
+{
+  QFileInfo fInfo(path);
+
+  extern const MapMatrix _globalMapMatrix;
+
+  if(!fInfo.exists()) {
+    KMessageBox::error(0,  i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(path.name()));
+    return false;
+  }
+  
+  if(!fInfo.size()) {
+    KMessageBox::sorry(0, i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(path.name()));
+    return false;
+  }
+
+  if(!path.open(IO_ReadOnly)) {
+    KMessageBox::error(0, i18n("You don't have permission to access file<BR><B>%1</B>").arg(path.name()));
+    return false;
+  }
+
+  QDomDocument doc;
+  QList<wayPoint> wpList;
+  FlightTask *f, *firstTask = 0;
+
+  doc.setContent(&path);
+
+  if (doc.doctype().name() == "KFLogTask") {
+    QDomNodeList nl = doc.elementsByTagName("Task");
+
+    for (uint i = 0; i < nl.count(); i++) {
+      QDomNodeList childNodes = nl.item(i).childNodes();
+      wpList.clear();
+      for (uint childIdx = 0; childIdx < childNodes.count(); childIdx++) {
+        QDomNamedNodeMap nm =  childNodes.item(childIdx).attributes();
+
+        wayPoint *w = new wayPoint;
+
+        w->name = nm.namedItem("Name").toAttr().value().left(6).upper();
+        w->description = nm.namedItem("Description").toAttr().value();
+        w->icao = nm.namedItem("ICAO").toAttr().value().upper();
+        w->origP.setLat(nm.namedItem("Latitude").toAttr().value().toInt());
+        w->origP.setLon(nm.namedItem("Longitude").toAttr().value().toInt());
+        w->projP = _globalMapMatrix.wgsToMap(w->origP);
+        w->elevation = nm.namedItem("Elevation").toAttr().value().toInt();
+        w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
+        w->isLandable = nm.namedItem("Landable").toAttr().value().toInt();
+        w->runway = nm.namedItem("Runway").toAttr().value().toInt();
+        w->length = nm.namedItem("Length").toAttr().value().toInt();
+        w->surface = nm.namedItem("Surface").toAttr().value().toInt();
+        w->comment = nm.namedItem("Comment").toAttr().value();
+
+        wpList.append(w);
+      }
+      f = new FlightTask(wpList, false, genTaskName());
+      // remember first task in file
+      if (firstTask == 0) {
+        firstTask = f;
+      }
+      flightList.append(f);
+      emit newTaskAdded(f);
+    }
+
+    if (firstTask) {
+      slotSetFlight(firstTask);
+    }
+    return true;
+  }
+  else {
+    KMessageBox::error(0, i18n("wrong doctype ") + doc.doctype().name(), i18n("Error occurred!"));
+    return false;
+  }
+}
+
+QString MapContents::genTaskName()
+{
+  static int tCount = 1;
+  QString tmp;
+
+  tmp.sprintf("TASK%03d", tCount++);
+  return tmp;
+}
