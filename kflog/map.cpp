@@ -159,7 +159,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
       BaseMapElement* hitElement;
 
 
-      QPoint sitePos, preSitePos, nextSitePos, point;
+      QPoint sitePos, preSitePos, nextSitePos;
+      QPoint point = current;
       double dX, dY, delta(32.0);
 
       if(_globalMapMatrix.isSwitchScale()) delta = 32.0;
@@ -258,9 +259,9 @@ void Map::mouseMoveEvent(QMouseEvent* event)
               prePlanPos.setY(-999);
 
             }
-          emit showTaskText(taskPoints,_globalMapMatrix.mapToWgs(point));
           planP.end();            
         }
+      emit showTaskText(taskPoints,_globalMapMatrix.mapToWgs(point));
     }
 
   if (!timerAnimate->isActive())
@@ -1010,10 +1011,20 @@ void Map::slotActivatePlanning()
   if(planning == 0)
     {
       planning = 1;
+
+      pixPlan.fill(white);
+      prePlanPos.setX(-999);
+      prePlanPos.setY(-999);
     }
   else
     {
+      // Planen "ausschalten"
       planning = 0;
+      __showLayer();
+/*	  pixPlan.fill(white);
+  	prePlanPos.setX(-999);
+	  prePlanPos.setY(-999);
+*/
     }
 }
 

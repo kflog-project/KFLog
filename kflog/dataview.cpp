@@ -47,26 +47,46 @@ void DataView::slotShowTaskText(QArray<SinglePoint*> taskPoints, QPoint current)
   QString tmp;
   double distance = 0;
 
-  QPoint pre_position, position;
-  pre_position = taskPoints.at(0)->getWGSPosition();
-  QString name;
+  if(taskPoints.size() > 0)
+  {
+    QPoint pre_position, position;
 
-  for(unsigned int n = 0; n < taskPoints.size(); n++)
-  	{
-  		position = taskPoints.at(n)->getWGSPosition();
-		 	distance += dist(pre_position.y(),pre_position.x(),position.y(),position.x());			
+    pre_position = taskPoints.at(0)->getWGSPosition();
+    QString name;
+
+    for(unsigned int n = 0; n < taskPoints.size(); n++)
+    	{
+  	  	position = taskPoints.at(n)->getWGSPosition();
+		 	  distance += dist(pre_position.y(),pre_position.x(),position.y(),position.x());			
 			
-		 	name = taskPoints.at(n)->getWPName();
-			htmlText += (QString)"<b>" + name + "</b>" + "<br>" +
-									printPos(position.x(), false) + " / " + printPos(position.y()) + "<br>";
-			pre_position = position;
+  		 	name = taskPoints.at(n)->getWPName();
+	  		htmlText += (QString)"<b>" + name + "</b>" + "<br>" +
+		  							printPos(position.x(), false) + " / " + printPos(position.y()) + "<br>";
+			  pre_position = position;
 			
-  	}
- 	distance += dist(pre_position.y(),pre_position.x(),current.y(),current.x());
-  	
+    	}
+
+   	distance += dist(pre_position.y(),pre_position.x(),current.y(),current.x());
+  }
+
+  // Frage
+  if(taskPoints.size() == 0)
+    {
+      htmlText += "Bitte wählen Sie den <b>Starort</b> der Aufgabe in der Karte<br>";
+    }
+  else if(taskPoints.size() == 1)
+    {
+      htmlText += "<br><b>Abflugpunkt?</b><br>";
+    }
+  else
+    {
+      htmlText += "<br><b>Nächster WendePunkt (End-/LandePunkt)?</b><br>";
+    }
 
   tmp.sprintf("<hline><br><br><b>Entfernung: %.2f km<b>",distance);
   htmlText += tmp;
+
+
   htmlText += "<br><hline><br><b>pos:<b>" + printPos(current.y()) + " / "
                                           + printPos(current.x(),true);
   flightDataText->setText(htmlText);
