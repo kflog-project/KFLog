@@ -25,6 +25,8 @@
 #include <qfile.h>
 #include <qtextstream.h>
 
+#include <kflogconfig.h>
+
 SinglePoint::SinglePoint(QString n, QString abbr, unsigned int t,
   QPoint pos, bool wP)
 : BaseMapElement(n, t),
@@ -135,8 +137,11 @@ void SinglePoint::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
   if(glMapMatrix->isSwitchScale())
     {
+//      targetPainter->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
+//      QPixmap(KGlobal::dirs()->findResource("appdata", "mapicons/") + iconName));
       targetPainter->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
-      QPixmap(KGlobal::dirs()->findResource("appdata", "mapicons/") + iconName));
+          glConfig->getPixmap(typeID));
+
     }
   else
     {

@@ -1,5 +1,31 @@
 $Id$
 
+
+2001-12-06 Heiner <heiner@kflog.org>
+
+  * Added more airspaces to the config-dialog. The default-values
+    for pens and brushes need to be fixed.
+
+
+2001-12-04 Heiner <heiner@kflog.org>
+
+  * Changed the meaning of the configdata for cities. From now on,
+    "Color [1234]" is used for the outline, not for filling. Filling
+    is configured by "Brush Color [1234]". Therfore, we must look at the
+    version of the configfile. Due to the way, cities are drawn, one can
+    not set brushstyle or penstyle.
+
+  * Changed the way, cities will be drawn into the map. Now a city
+    is drawn only one time without having mistakes even when the city
+    lies at the edge of a map-section.
+
+
+2001-12-02 Heiner <heiner@kflog.org>
+
+  * Extended configuration-dialog and added widgets for configure penstyle
+    and brushes.
+
+
 2001-12-02 Florian <florian@kflog.org>
 
   * Extended the evaluation-dialog. Adden two splitters to allow the

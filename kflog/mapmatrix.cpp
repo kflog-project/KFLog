@@ -22,6 +22,8 @@
 
 #include "mapmatrix.h"
 
+#include <mapconfig.h>
+
 #define VAR1   ( cos(v1) * cos(v1) )
 #define VAR2   ( sin(v1) + sin(v2) )
 
@@ -217,7 +219,8 @@ double MapMatrix::getScale(unsigned int type)
       return scaleBorders[type];
   else
       qFatal("MapMatrix::getScale(): Value too large!");
-      return 0.0;
+
+  return 0.0;
 }
 
 void MapMatrix::centerToMouse(QPoint center)
@@ -350,6 +353,8 @@ void MapMatrix::createMatrix(QSize newSize)
 
   mapBorder = invertMatrix.map(QRect(0,0, newSize.width(), newSize.height()));
   mapViewSize = newSize;
+
+  mapConfig->setMatrixValues(getScaleRange(), isSwitchScale());
 }
 
 QWMatrix* MapMatrix::createPrintMatrix(double printScale, QSize pSize, int dX,
@@ -369,7 +374,7 @@ QWMatrix* MapMatrix::createPrintMatrix(double printScale, QSize pSize, int dX,
   if(rotate)
       printMatrix.rotate(90);
 
-  /* Set the tranlation */
+  /* Set the translation */
   if(dX == 0 && dY == 0)
     {
       QWMatrix translateMatrix(1, 0, 0, 1, pSize.width() / 2 + dX,
@@ -401,8 +406,10 @@ void MapMatrix::scaleSub(QSize mapSize)
 
 void MapMatrix::setScale(double nScale)  {  cScale = nScale;  }
 
-void MapMatrix::initMatrix()
+void MapMatrix::initMatrix(MapConfig* mConf)
 {
+  mapConfig = mConf;
+
   KConfig *config = kapp->config();
 
   config->setGroup("Map Data");

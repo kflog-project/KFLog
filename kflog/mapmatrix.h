@@ -20,6 +20,8 @@
 
 #include <qwmatrix.h>
 
+class MapConfig;
+
 /**
  * This class provides functions for converting coordinates between
  * several coordinate-systems.
@@ -78,7 +80,7 @@ class MapMatrix
     QRect getPrintBorder(double a1, double a2, double b1, double b2,
         double c1, double c2, double d1, double d2) const;
     /** */
-    void initMatrix();
+    void initMatrix(MapConfig* mConf);
     /** */
     void saveMatrix();
     /** */
@@ -189,6 +191,8 @@ class MapMatrix
     double rotationArc;
     /** */
     int scaleBorders[6];
+    /** */
+    MapConfig* mapConfig;
 };
 
 #endif

@@ -1319,14 +1319,14 @@ void MapContents::proofeSection()
       QStringList airfields;
       airfields = globalDirs->findAllResources("appdata", "mapdata/airfields/*.out");
       for ( QStringList::Iterator it = airfields.begin(); it != airfields.end(); ++it ) {
-//        __readAsciiFile((*it).latin1());
+        __readAsciiFile((*it).latin1());
 //        warning( "%s", (*it).latin1() );
       }
 
       QStringList airspace;
       airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.out");
       for ( QStringList::Iterator it = airspace.begin(); it != airspace.end(); ++it ) {
-//        __readAsciiFile((*it).latin1());
+        __readAsciiFile((*it).latin1());
 //        warning( "%s", (*it).latin1() );
       }
 
@@ -1583,8 +1583,6 @@ void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
       case CityList:
         for(unsigned int loop = 0; loop < cityList.count(); loop++)
             cityList.at(loop)->drawMapElement(targetPainter, maskPainter);
-        for(unsigned int loop = 0; loop < cityList.count(); loop++)
-            cityList.at(loop)->drawMapElement(targetPainter, maskPainter, false);
         break;
 //      case VillageList:
 //        for(unsigned int loop = 0; loop < villageList.count(); loop++)
@@ -1762,19 +1760,4 @@ void MapContents::drawIsoList(QPainter* targetPainter, QPainter* maskPainter)
           isoList.at(loop)->at(loop2)->drawMapElement(targetPainter,
               maskPainter);
     }
-}
-
-void MapContents::readConfig()
-{
-  for(unsigned int loop = 0; loop < roadList.count(); loop++)
-      roadList.at(loop)->readConfig();
-
-  for(unsigned int loop = 0; loop < railList.count(); loop++)
-      railList.at(loop)->readConfig();
-
-  for(unsigned int loop = 0; loop < hydroList.count(); loop++)
-      hydroList.at(loop)->readConfig();
-
-  for(unsigned int loop = 0; loop < cityList.count(); loop++)
-      cityList.at(loop)->readConfig();
 }

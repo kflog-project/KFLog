@@ -19,8 +19,6 @@
 #include <mapcalc.h>
 #include <qregexp.h>
 
-#include <iostream>
-
 double dist(double lat1, double lon1, double lat2, double lon2)
 {
   double pi_180 = PI / 108000000.0;

@@ -129,7 +129,7 @@ MapControlView::MapControlView(QWidget* parent, Map* map)
   currentScaleSlider->setMinimumHeight(
           currentScaleSlider->sizeHint().height());
 
-  QGridLayout* controlLayout = new QGridLayout(parent,5,4,5,5, "controlLayout");
+  QGridLayout* controlLayout = new QGridLayout(parent,6,4,5,5, "controlLayout");
 
   controlLayout->addMultiCellWidget(mapControl,0,0,0,3);
   controlLayout->addMultiCellWidget(navFrame,1,3,0,1);
@@ -143,6 +143,12 @@ MapControlView::MapControlView(QWidget* parent, Map* map)
   controlLayout->setColStretch(0,0);
   controlLayout->setColStretch(1,0);
   controlLayout->setColStretch(3,4);
+  controlLayout->setRowStretch(0,0);
+  controlLayout->setRowStretch(1,0);
+  controlLayout->setRowStretch(2,0);
+  controlLayout->setRowStretch(3,0);
+  controlLayout->setRowStretch(4,0);
+  controlLayout->setRowStretch(5,2);
 
   controlLayout->activate();
 
