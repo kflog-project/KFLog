@@ -26,12 +26,12 @@ ldadd=-lkdeprint -lm $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
 ldflags=\s           \s
 
 [General]
-AMChanged=false
+AMChanged=true
 author=Heiner Lamprecht
 configure_args=--prefix=/opt/kde3 --enable-debug=full
 email=heiner@kflog.org
 kdevprj_version=1.3
-lfv_open_groups=Quellen,Übersetzungen
+lfv_open_groups=Quellen
 make_options=\s-j1
 makefiles=Makefile.am,kflog/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,po/Makefile.am,kflog/guicontrols/Makefile.am,kflog/kfrgcs/Makefile.am,kflog/kfrgmn/Makefile.am,kflog/map-icons/Makefile.am,kflog/map-icons/small/Makefile.am,kflog/pics/Makefile.am,kflog/kfrfil/Makefile.am,kflog/kfrxsp/Makefile.am,kflog/kfrxcu/Makefile.am,kflog/opengl_igc/Makefile.am
 modifyMakefiles=true
@@ -828,7 +828,7 @@ install_location=$$(kde_datadir)/kflog/kflogui.rc
 type=DATA
 
 [kflog/kfrfil/Makefile.am]
-files=kflog/kfrfil/fil.desktop,kflog/kfrfil/flightrecorder.cpp,kflog/kfrfil/filser.cpp,kflog/kfrfil/filser.h
+files=kflog/kfrfil/fil.desktop,kflog/kfrfil/flightrecorder.cpp,kflog/kfrfil/filser.cpp,kflog/kfrfil/filser.h,kflog/kfrfil/spg.desktop
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=kfrfil
 sub_dirs=
@@ -857,6 +857,12 @@ dist=true
 install=false
 install_location=
 type=SOURCE
+
+[kflog/kfrfil/spg.desktop]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/logger/spg.desktop
+type=DATA
 
 [kflog/kfrgcs/Makefile.am]
 files=kflog/kfrgcs/dbbconv.cpp,kflog/kfrgcs/dbbconv.h,kflog/kfrgcs/flightrecorder.cpp,kflog/kfrgcs/gcs.desktop,kflog/kfrgcs/grecord.cpp,kflog/kfrgcs/grecord.h,kflog/kfrgcs/README,kflog/kfrgcs/utils.cpp,kflog/kfrgcs/utils.h,kflog/kfrgcs/vla_support.h,kflog/kfrgcs/vlapi2.cpp,kflog/kfrgcs/vlapi2.h,kflog/kfrgcs/vlapierr.h,kflog/kfrgcs/vlapihlp.cpp,kflog/kfrgcs/vlapihlp.h,kflog/kfrgcs/vlapisys_linux.cpp,kflog/kfrgcs/vlapityp.h,kflog/kfrgcs/vlconv.cpp,kflog/kfrgcs/vlconv.h,kflog/kfrgcs/volkslogger.cpp,kflog/kfrgcs/volkslogger.h
@@ -1697,382 +1703,299 @@ type=DATA
 [kflog/pics/dotted.png]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/pics/dotted.png
+install_location=$$(kde_datadir
 type=DATA
 
 [kflog/pics/flag_green.png]
-dist=true
-install=true
-install_location=$$(kde_datadir)/kflog/pics/flag_green.png
+dist=false
+install=false
+install_location=
 type=DATA
 
 [kflog/pics/flag_red.png]
-dist=true
-install=true
-install_location=$$(kde_datadir)/kflog/pics/flag_red.png
+dist=false
+install=false
+install_location=
 type=DATA
 
 [kflog/pics/solid.png]
-dist=true
-install=true
-install_location=$$(kde_datadir)/kflog/pics/solid.png
+dist=false
+install=false
+install_location=
 type=DATA
 
 [kflog/pics/splash.png]
-dist=true
-install=true
-install_location=$$(kde_datadir)/kflog/pics/splash.png
+dist=false
+install=false
+install_location=
 type=DATA
 
 [kflog/pics/splash_mask.png]
-dist=true
-install=true
-install_location=$$(kde_datadir)/kflog/pics/splash_mask.png
+dist=false
+install=false
+install_location=
 type=DATA
 
 [kflog/projectionbase.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/projectionbase.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/projectioncylindric.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/projectioncylindric.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/projectionlambert.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/projectionlambert.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/radiopoint.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/radiopoint.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/recorderdialog.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/recorderdialog.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/resource.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/runway.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/singlepoint.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/singlepoint.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/taskdataprint.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/taskdataprint.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/taskdialog.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/taskdialog.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/tasklistviewitem.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/tasklistviewitem.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/tasks.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/tasks.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/topolegend.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/topolegend.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/translationelement.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/translationelement.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/translationlist.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/translationlist.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/waypoint.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/waypoint.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/waypointcatalog.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/waypointcatalog.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/waypointdialog.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/waypointdialog.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/waypointdict.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/waypointdict.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/waypointimpfilterdialog.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/waypointimpfilterdialog.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/waypointlist.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/waypointlist.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/waypoints.cpp]
-dist=true
+dist=false
 install=false
 install_location=
-type=SOURCE
+type=DATA
 
 [kflog/waypoints.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/wgspoint.h]
-dist=true
+dist=false
 install=false
 install_location=
-type=HEADER
+type=DATA
 
 [kflog/wp.h]
-dist=true
-install=false
-install_location=
-type=HEADER
-
-[po/Makefile.am]
-files=po/de.gmo,po/de.po,po/fr.gmo,po/fr.po,po/it.gmo,po/it.po,po/kflog.pot,po/nl.gmo,po/nl.po,po/no.gmo,po/no.po,po/sv.gmo,po/sv.po
-sub_dirs=
-type=po
-
-[po/de.gmo]
-dist=true
-install=false
-install_location=
-type=DATA
-
-[po/de.po]
 dist=false
 install=false
 install_location=
-type=PO
-
-[po/fr.gmo]
-dist=true
-install=false
-install_location=
 type=DATA
-
-[po/fr.po]
-dist=false
-install=false
-install_location=
-type=PO
-
-[po/it.gmo]
-dist=true
-install=false
-install_location=
-type=DATA
-
-[po/it.po]
-dist=false
-install=false
-install_location=
-type=PO
-
-[po/kflog.pot]
-dist=true
-install=false
-install_location=
-type=DATA
-
-[po/nl.gmo]
-dist=true
-install=false
-install_location=
-type=DATA
-
-[po/nl.po]
-dist=false
-install=false
-install_location=
-type=PO
-
-[po/no.gmo]
-dist=true
-install=false
-install_location=
-type=DATA
-
-[po/no.po]
-dist=false
-install=false
-install_location=
-type=PO
-
-[po/sv.gmo]
-dist=true
-install=false
-install_location=
-type=DATA
-
-[po/sv.po]
-dist=false
-install=false
-install_location=
-type=PO

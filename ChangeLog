@@ -1,5 +1,10 @@
 $Id$
 
+2003-05-23 André Somers <andre@kflog.org>
+
+  * Added separate desktop entry for SDI posigraph
+
+  
 2003-05-21 Eggert Ehmke <eggert@kflog.org>
 
   * Bugfix: list of waypoints in OLCDialog was sorted wrong if more than 9 entries
