@@ -202,12 +202,12 @@ x_includes = @x_includes@
 x_libraries = @x_libraries@
 
 bin_PROGRAMS = kflog
-kflog_SOURCES = evaluationframe.cpp evaluationview.cpp evaluationdialog.cpp kflogconfig.cpp printdialog.cpp kflogstartlogo.cpp flighttask.cpp flight.cpp mapmatrix.cpp singlepoint.cpp radiopoint.cpp lineelement.cpp isohypse.cpp glidersite.cpp elevpoint.cpp airspace.cpp airport.cpp mapcontents.cpp basemapelement.cpp map.cpp dataview.cpp mapcalc.cpp mapcontrolview.cpp kflog.cpp main.cpp 
+kflog_SOURCES = evaluationframe.cpp mapconfig.cpp evaluationview.cpp evaluationdialog.cpp kflogconfig.cpp printdialog.cpp kflogstartlogo.cpp flighttask.cpp flight.cpp mapmatrix.cpp singlepoint.cpp radiopoint.cpp lineelement.cpp isohypse.cpp glidersite.cpp elevpoint.cpp airspace.cpp airport.cpp mapcontents.cpp basemapelement.cpp map.cpp dataview.cpp mapcalc.cpp mapcontrolview.cpp kflog.cpp main.cpp 
 kflog_LDADD = -lm $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
 
-SUBDIRS = map-icons 
+SUBDIRS = map-icons pics 
 
-EXTRA_DIST = main.cpp kflog.cpp kflog.h kflogui.rc kflog.desktop mapcontrolview.h mapcontrolview.cpp mapcalc.cpp mapcalc.h wp.h dataview.cpp dataview.h map.cpp map.h basemapelement.cpp basemapelement.h mapcontents.cpp mapcontents.h resource.h airport.cpp airport.h airspace.cpp airspace.h elevpoint.cpp elevpoint.h glidersite.cpp glidersite.h isohypse.cpp isohypse.h lineelement.cpp lineelement.h radiopoint.cpp radiopoint.h singlepoint.cpp singlepoint.h mapmatrix.cpp mapmatrix.h flight.cpp flight.h flighttask.cpp flighttask.h kflogstartlogo.cpp kflogstartlogo.h printdialog.h printdialog.cpp kflogconfig.cpp kflogconfig.h mapdefaults.h evaluationdialog.cpp evaluationdialog.h evaluationview.cpp evaluationview.h hi16-app-kflog.png hi32-app-kflog.png hi48-app-kflog.png hi16-mimetype-igc.png hi32-mimetype-igc.png hi48-mimetype-igc.png igc.desktop hi22-action-movemap_e.png hi22-action-movemap_n.png hi22-action-movemap_ne.png hi22-action-movemap_nw.png hi22-action-movemap_s.png hi22-action-movemap_se.png hi22-action-movemap_sw.png hi22-action-movemap_w.png hi16-action-flightevaluation.png hi22-action-flightevaluation.png hi32-action-flightevaluation.png hi16-action-centerflight.png hi16-action-centertask.png hi22-action-centerflight.png hi22-action-centertask.png evaluationframe.cpp evaluationframe.h 
+EXTRA_DIST = main.cpp kflog.cpp kflog.h kflogui.rc kflog.desktop mapcontrolview.h mapcontrolview.cpp mapcalc.cpp mapcalc.h wp.h dataview.cpp dataview.h map.cpp map.h basemapelement.cpp basemapelement.h mapcontents.cpp mapcontents.h resource.h airport.cpp airport.h airspace.cpp airspace.h elevpoint.cpp elevpoint.h glidersite.cpp glidersite.h isohypse.cpp isohypse.h lineelement.cpp lineelement.h radiopoint.cpp radiopoint.h singlepoint.cpp singlepoint.h mapmatrix.cpp mapmatrix.h flight.cpp flight.h flighttask.cpp flighttask.h kflogstartlogo.cpp kflogstartlogo.h printdialog.h printdialog.cpp kflogconfig.cpp kflogconfig.h mapdefaults.h evaluationdialog.cpp evaluationdialog.h evaluationview.cpp evaluationview.h hi16-app-kflog.png hi32-app-kflog.png hi48-app-kflog.png hi16-mimetype-igc.png hi32-mimetype-igc.png hi48-mimetype-igc.png igc.desktop hi22-action-movemap_e.png hi22-action-movemap_n.png hi22-action-movemap_ne.png hi22-action-movemap_nw.png hi22-action-movemap_s.png hi22-action-movemap_se.png hi22-action-movemap_sw.png hi22-action-movemap_w.png hi16-action-flightevaluation.png hi22-action-flightevaluation.png hi32-action-flightevaluation.png hi16-action-centerflight.png hi16-action-centertask.png hi22-action-centerflight.png hi22-action-centertask.png mapconfig.cpp mapconfig.h evaluationframe.cpp evaluationframe.h 
 
 ####### kdevelop will overwrite this part!!! (end)############
 # this 10 paths are KDE specific. Use them:
@@ -244,27 +244,29 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-#>- kflog_OBJECTS =  evaluationframe.$(OBJEXT) evaluationview.$(OBJEXT) \
-#>- evaluationdialog.$(OBJEXT) kflogconfig.$(OBJEXT) printdialog.$(OBJEXT) \
-#>- kflogstartlogo.$(OBJEXT) flighttask.$(OBJEXT) flight.$(OBJEXT) \
-#>- mapmatrix.$(OBJEXT) singlepoint.$(OBJEXT) radiopoint.$(OBJEXT) \
-#>- lineelement.$(OBJEXT) isohypse.$(OBJEXT) glidersite.$(OBJEXT) \
-#>- elevpoint.$(OBJEXT) airspace.$(OBJEXT) airport.$(OBJEXT) \
-#>- mapcontents.$(OBJEXT) basemapelement.$(OBJEXT) map.$(OBJEXT) \
-#>- dataview.$(OBJEXT) mapcalc.$(OBJEXT) mapcontrolview.$(OBJEXT) \
-#>- kflog.$(OBJEXT) main.$(OBJEXT)
-#>+ 14
+#>- kflog_OBJECTS =  evaluationframe.$(OBJEXT) mapconfig.$(OBJEXT) \
+#>- evaluationview.$(OBJEXT) evaluationdialog.$(OBJEXT) \
+#>- kflogconfig.$(OBJEXT) printdialog.$(OBJEXT) kflogstartlogo.$(OBJEXT) \
+#>- flighttask.$(OBJEXT) flight.$(OBJEXT) mapmatrix.$(OBJEXT) \
+#>- singlepoint.$(OBJEXT) radiopoint.$(OBJEXT) lineelement.$(OBJEXT) \
+#>- isohypse.$(OBJEXT) glidersite.$(OBJEXT) elevpoint.$(OBJEXT) \
+#>- airspace.$(OBJEXT) airport.$(OBJEXT) mapcontents.$(OBJEXT) \
+#>- basemapelement.$(OBJEXT) map.$(OBJEXT) dataview.$(OBJEXT) \
+#>- mapcalc.$(OBJEXT) mapcontrolview.$(OBJEXT) kflog.$(OBJEXT) \
+#>- main.$(OBJEXT)
+#>+ 15
 kflog_final_OBJECTS = kflog.all_cpp.o 
-kflog_nofinal_OBJECTS = evaluationframe.$(OBJEXT) evaluationview.$(OBJEXT) \
-evaluationdialog.$(OBJEXT) kflogconfig.$(OBJEXT) printdialog.$(OBJEXT) \
-kflogstartlogo.$(OBJEXT) flighttask.$(OBJEXT) flight.$(OBJEXT) \
-mapmatrix.$(OBJEXT) singlepoint.$(OBJEXT) radiopoint.$(OBJEXT) \
-lineelement.$(OBJEXT) isohypse.$(OBJEXT) glidersite.$(OBJEXT) \
-elevpoint.$(OBJEXT) airspace.$(OBJEXT) airport.$(OBJEXT) \
-mapcontents.$(OBJEXT) basemapelement.$(OBJEXT) map.$(OBJEXT) \
-dataview.$(OBJEXT) mapcalc.$(OBJEXT) mapcontrolview.$(OBJEXT) \
-kflog.$(OBJEXT) main.$(OBJEXT)\
-evaluationframe.moc.o evaluationview.moc.o map.moc.o evaluationdialog.moc.o printdialog.moc.o kflog.moc.o kflogconfig.moc.o kflogstartlogo.moc.o mapcontrolview.moc.o  \
+kflog_nofinal_OBJECTS = evaluationframe.$(OBJEXT) mapconfig.$(OBJEXT) \
+evaluationview.$(OBJEXT) evaluationdialog.$(OBJEXT) \
+kflogconfig.$(OBJEXT) printdialog.$(OBJEXT) kflogstartlogo.$(OBJEXT) \
+flighttask.$(OBJEXT) flight.$(OBJEXT) mapmatrix.$(OBJEXT) \
+singlepoint.$(OBJEXT) radiopoint.$(OBJEXT) lineelement.$(OBJEXT) \
+isohypse.$(OBJEXT) glidersite.$(OBJEXT) elevpoint.$(OBJEXT) \
+airspace.$(OBJEXT) airport.$(OBJEXT) mapcontents.$(OBJEXT) \
+basemapelement.$(OBJEXT) map.$(OBJEXT) dataview.$(OBJEXT) \
+mapcalc.$(OBJEXT) mapcontrolview.$(OBJEXT) kflog.$(OBJEXT) \
+main.$(OBJEXT)\
+evaluationframe.moc.o evaluationview.moc.o map.moc.o dataview.moc.o evaluationdialog.moc.o printdialog.moc.o kflog.moc.o kflogconfig.moc.o kflogstartlogo.moc.o mapcontrolview.moc.o  \
 kflog_meta_unload.o 
 @KDE_USE_FINAL_FALSE@kflog_OBJECTS = $(kflog_nofinal_OBJECTS)
 @KDE_USE_FINAL_TRUE@kflog_OBJECTS = $(kflog_final_OBJECTS)
@@ -287,7 +289,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 #>- DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 #>+ 4
-KDE_DIST=wgs.cpp messages.po README_MAP flightpoint.h flightpoint.cpp kflog_meta_unload.cpp runway.h wgs.h 
+KDE_DIST=kflog_meta_unload.cpp runway.h 
 
 DISTFILES= $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST) $(KDE_DIST)
 
@@ -299,27 +301,27 @@ GZIP_ENV = --best
 #>- .deps/evaluationframe.P .deps/evaluationview.P .deps/flight.P \
 #>- .deps/flighttask.P .deps/glidersite.P .deps/isohypse.P .deps/kflog.P \
 #>- .deps/kflogconfig.P .deps/kflogstartlogo.P .deps/lineelement.P \
-#>- .deps/main.P .deps/map.P .deps/mapcalc.P .deps/mapcontents.P \
-#>- .deps/mapcontrolview.P .deps/mapmatrix.P .deps/printdialog.P \
-#>- .deps/radiopoint.P .deps/singlepoint.P
+#>- .deps/main.P .deps/map.P .deps/mapcalc.P .deps/mapconfig.P \
+#>- .deps/mapcontents.P .deps/mapcontrolview.P .deps/mapmatrix.P \
+#>- .deps/printdialog.P .deps/radiopoint.P .deps/singlepoint.P
 #>+ 18
-@KDE_USE_FINAL_TRUE@DEP_FILES =  $(DEPDIR)/evaluationframe.moc.P $(DEPDIR)/evaluationview.moc.P $(DEPDIR)/map.moc.P $(DEPDIR)/evaluationdialog.moc.P $(DEPDIR)/printdialog.moc.P $(DEPDIR)/kflog.moc.P $(DEPDIR)/kflogconfig.moc.P $(DEPDIR)/kflogstartlogo.moc.P $(DEPDIR)/mapcontrolview.moc.P $(DEPDIR)/kflog_meta_unload.P  $(DEPDIR)/kflog.all_cpp.P \
+@KDE_USE_FINAL_TRUE@DEP_FILES =  $(DEPDIR)/evaluationframe.moc.P $(DEPDIR)/evaluationview.moc.P $(DEPDIR)/map.moc.P $(DEPDIR)/dataview.moc.P $(DEPDIR)/evaluationdialog.moc.P $(DEPDIR)/printdialog.moc.P $(DEPDIR)/kflog.moc.P $(DEPDIR)/kflogconfig.moc.P $(DEPDIR)/kflogstartlogo.moc.P $(DEPDIR)/mapcontrolview.moc.P $(DEPDIR)/kflog_meta_unload.P  $(DEPDIR)/kflog.all_cpp.P \
 	  .deps/airport.P .deps/airspace.P .deps/basemapelement.P \
 .deps/dataview.P .deps/elevpoint.P .deps/evaluationdialog.P \
 .deps/evaluationframe.P .deps/evaluationview.P .deps/flight.P \
 .deps/flighttask.P .deps/glidersite.P .deps/isohypse.P .deps/kflog.P \
 .deps/kflogconfig.P .deps/kflogstartlogo.P .deps/lineelement.P \
-.deps/main.P .deps/map.P .deps/mapcalc.P .deps/mapcontents.P \
-.deps/mapcontrolview.P .deps/mapmatrix.P .deps/printdialog.P \
-.deps/radiopoint.P .deps/singlepoint.P
-@KDE_USE_FINAL_FALSE@DEP_FILES =  $(DEPDIR)/evaluationframe.moc.P $(DEPDIR)/evaluationview.moc.P $(DEPDIR)/map.moc.P $(DEPDIR)/evaluationdialog.moc.P $(DEPDIR)/printdialog.moc.P $(DEPDIR)/kflog.moc.P $(DEPDIR)/kflogconfig.moc.P $(DEPDIR)/kflogstartlogo.moc.P $(DEPDIR)/mapcontrolview.moc.P $(DEPDIR)/kflog_meta_unload.P   .deps/airport.P .deps/airspace.P .deps/basemapelement.P \
+.deps/main.P .deps/map.P .deps/mapcalc.P .deps/mapconfig.P \
+.deps/mapcontents.P .deps/mapcontrolview.P .deps/mapmatrix.P \
+.deps/printdialog.P .deps/radiopoint.P .deps/singlepoint.P
+@KDE_USE_FINAL_FALSE@DEP_FILES =  $(DEPDIR)/evaluationframe.moc.P $(DEPDIR)/evaluationview.moc.P $(DEPDIR)/map.moc.P $(DEPDIR)/dataview.moc.P $(DEPDIR)/evaluationdialog.moc.P $(DEPDIR)/printdialog.moc.P $(DEPDIR)/kflog.moc.P $(DEPDIR)/kflogconfig.moc.P $(DEPDIR)/kflogstartlogo.moc.P $(DEPDIR)/mapcontrolview.moc.P $(DEPDIR)/kflog_meta_unload.P   .deps/airport.P .deps/airspace.P .deps/basemapelement.P \
 .deps/dataview.P .deps/elevpoint.P .deps/evaluationdialog.P \
 .deps/evaluationframe.P .deps/evaluationview.P .deps/flight.P \
 .deps/flighttask.P .deps/glidersite.P .deps/isohypse.P .deps/kflog.P \
 .deps/kflogconfig.P .deps/kflogstartlogo.P .deps/lineelement.P \
-.deps/main.P .deps/map.P .deps/mapcalc.P .deps/mapcontents.P \
-.deps/mapcontrolview.P .deps/mapmatrix.P .deps/printdialog.P \
-.deps/radiopoint.P .deps/singlepoint.P
+.deps/main.P .deps/map.P .deps/mapcalc.P .deps/mapconfig.P \
+.deps/mapcontents.P .deps/mapcontrolview.P .deps/mapmatrix.P \
+.deps/printdialog.P .deps/radiopoint.P .deps/singlepoint.P
 
 SOURCES = $(kflog_SOURCES)
 OBJECTS = $(kflog_OBJECTS)
@@ -935,6 +937,10 @@ map.moc.cpp: $(srcdir)/map.h
 	$(MOC) $(srcdir)/map.h -o map.moc.cpp
 
 #>+ 3
+dataview.moc.cpp: $(srcdir)/dataview.h
+	$(MOC) $(srcdir)/dataview.h -o dataview.moc.cpp
+
+#>+ 3
 evaluationdialog.moc.cpp: $(srcdir)/evaluationdialog.h
 	$(MOC) $(srcdir)/evaluationdialog.h -o evaluationdialog.moc.cpp
 
@@ -960,7 +966,7 @@ mapcontrolview.moc.cpp: $(srcdir)/mapcontrolview.h
 
 #>+ 3
 clean-metasources:
-	-rm -f  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp
+	-rm -f  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp dataview.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp
 
 #>+ 2
 docs-am:
@@ -972,11 +978,11 @@ force-reedit:
 
 
 #>+ 10
-kflog_meta_unload.cpp:  kflog.moc.cpp evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp evaluationdialog.moc.cpp kflogstartlogo.moc.cpp kflogconfig.moc.cpp mapcontrolview.moc.cpp printdialog.moc.cpp
+kflog_meta_unload.cpp:  evaluationframe.moc.cpp evaluationview.moc.cpp dataview.moc.cpp map.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogstartlogo.moc.cpp kflogconfig.moc.cpp mapcontrolview.moc.cpp
 	@echo 'creating kflog_meta_unload.cpp'
 	-rm -f kflog_meta_unload.cpp
 	@echo 'static const char * _metalist_kflog[] = {' > kflog_meta_unload.cpp
-	cat  kflog.moc.cpp evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp evaluationdialog.moc.cpp kflogstartlogo.moc.cpp kflogconfig.moc.cpp mapcontrolview.moc.cpp printdialog.moc.cpp | grep 'char.*className' | sed -e 's/.*[^A-Za-z0-9_:]\([A-Za-z0-9_:]*\)::className.*$$/\"\1\",/' | sort | uniq >> kflog_meta_unload.cpp
+	cat  evaluationframe.moc.cpp evaluationview.moc.cpp dataview.moc.cpp map.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogstartlogo.moc.cpp kflogconfig.moc.cpp mapcontrolview.moc.cpp | grep 'char.*className' | sed -e 's/.*[^A-Za-z0-9_:]\([A-Za-z0-9_:]*\)::className.*$$/\"\1\",/' | sort | uniq >> kflog_meta_unload.cpp
 	@echo '0};' >> kflog_meta_unload.cpp
 	@echo '#include <kunload.h>' >> kflog_meta_unload.cpp
 	@echo '_UNLOAD(kflog)' >> kflog_meta_unload.cpp
@@ -987,11 +993,11 @@ clean-moc-classes:
 	-rm -f  kflog_meta_unload.cpp
 
 #>+ 11
-kflog.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/evaluationframe.cpp $(srcdir)/evaluationview.cpp $(srcdir)/evaluationdialog.cpp $(srcdir)/kflogconfig.cpp $(srcdir)/printdialog.cpp $(srcdir)/kflogstartlogo.cpp $(srcdir)/flighttask.cpp $(srcdir)/flight.cpp $(srcdir)/mapmatrix.cpp $(srcdir)/singlepoint.cpp $(srcdir)/radiopoint.cpp $(srcdir)/lineelement.cpp $(srcdir)/isohypse.cpp $(srcdir)/glidersite.cpp $(srcdir)/elevpoint.cpp $(srcdir)/airspace.cpp $(srcdir)/airport.cpp $(srcdir)/mapcontents.cpp $(srcdir)/basemapelement.cpp $(srcdir)/map.cpp $(srcdir)/dataview.cpp $(srcdir)/mapcalc.cpp $(srcdir)/mapcontrolview.cpp $(srcdir)/kflog.cpp $(srcdir)/main.cpp $(srcdir)/kflog_meta_unload.cpp  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp
+kflog.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/evaluationframe.cpp $(srcdir)/mapconfig.cpp $(srcdir)/evaluationview.cpp $(srcdir)/evaluationdialog.cpp $(srcdir)/kflogconfig.cpp $(srcdir)/printdialog.cpp $(srcdir)/kflogstartlogo.cpp $(srcdir)/flighttask.cpp $(srcdir)/flight.cpp $(srcdir)/mapmatrix.cpp $(srcdir)/singlepoint.cpp $(srcdir)/radiopoint.cpp $(srcdir)/lineelement.cpp $(srcdir)/isohypse.cpp $(srcdir)/glidersite.cpp $(srcdir)/elevpoint.cpp $(srcdir)/airspace.cpp $(srcdir)/airport.cpp $(srcdir)/mapcontents.cpp $(srcdir)/basemapelement.cpp $(srcdir)/map.cpp $(srcdir)/dataview.cpp $(srcdir)/mapcalc.cpp $(srcdir)/mapcontrolview.cpp $(srcdir)/kflog.cpp $(srcdir)/main.cpp $(srcdir)/kflog_meta_unload.cpp  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp dataview.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp
 	@echo 'creating kflog.all_cpp.cpp ...'; \
 	rm -f kflog.all_cpp.files kflog.all_cpp.final; \
 	echo "#define KDE_USE_FINAL 1" >> kflog.all_cpp.final; \
-	for file in evaluationframe.cpp evaluationview.cpp evaluationdialog.cpp kflogconfig.cpp printdialog.cpp kflogstartlogo.cpp flighttask.cpp flight.cpp mapmatrix.cpp singlepoint.cpp radiopoint.cpp lineelement.cpp isohypse.cpp glidersite.cpp elevpoint.cpp airspace.cpp airport.cpp mapcontents.cpp basemapelement.cpp map.cpp dataview.cpp mapcalc.cpp mapcontrolview.cpp kflog.cpp main.cpp kflog_meta_unload.cpp  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp; do \
+	for file in evaluationframe.cpp mapconfig.cpp evaluationview.cpp evaluationdialog.cpp kflogconfig.cpp printdialog.cpp kflogstartlogo.cpp flighttask.cpp flight.cpp mapmatrix.cpp singlepoint.cpp radiopoint.cpp lineelement.cpp isohypse.cpp glidersite.cpp elevpoint.cpp airspace.cpp airport.cpp mapcontents.cpp basemapelement.cpp map.cpp dataview.cpp mapcalc.cpp mapcontrolview.cpp kflog.cpp main.cpp kflog_meta_unload.cpp  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp dataview.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp; do \
 	  echo "#include \"$$file\"" >> kflog.all_cpp.files; \
 	  test ! -f $(srcdir)/$$file || egrep '^#pragma +implementation' $(srcdir)/$$file >> kflog.all_cpp.final; \
 	done; \

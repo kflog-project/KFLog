@@ -264,80 +264,84 @@ void Map::mousePressEvent(QMouseEvent* event)
             }
         }
 
-      QList<struct wayPoint>* wpList =
-          _globalMapContents.getFlight()->getWPList();
-
-      delta = 25;
-      bool isWP = false;
-      QString wpText;
-      wpText = "<B>Waypoint:</B><UL>";
-
-      for(unsigned int loop = 0; loop < wpList->count(); loop++)
+      if(_globalMapContents.getFlightList()->count() > 0)
         {
-          sitePos = _globalMapMatrix.map(wpList->at(loop)->projP);
+          QList<struct wayPoint>* wpList =
+              _globalMapContents.getFlight()->getWPList();
 
-          dX = sitePos.x() - current.x();
-          dY = sitePos.y() - current.y();
+          delta = 25;
+          bool isWP = false;
+          QString wpText;
+          wpText = "<B>Waypoint:</B><UL>";
 
-          // We do not search for the sector ...
-          if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-              ( ( dY < delta ) && ( dY > -delta ) ) )
+          for(unsigned int loop = 0; loop < wpList->count(); loop++)
             {
-              isWP = true;
+              sitePos = _globalMapMatrix.map(wpList->at(loop)->projP);
 
-              QString tmpText, timeText;
+              dX = sitePos.x() - current.x();
+              dY = sitePos.y() - current.y();
 
-              if(wpList->at(loop)->sector1 != 0)
+              // We do not search for the sector ...
+              if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+                  ( ( dY < delta ) && ( dY > -delta ) ) )
                 {
-                  timeText = printTime(wpList->at(loop)->sector1);
-                  tmpText = i18n("Sector 1");
-                }
-              else if(wpList->at(loop)->sector2 != 0)
-                {
-                  timeText = printTime(wpList->at(loop)->sector2);
-                  tmpText = i18n("Sector 2");
-                }
-              else if(wpList->at(loop)->sectorFAI != 0)
-                {
-                  timeText = printTime(wpList->at(loop)->sectorFAI);
-                  tmpText = i18n("FAI-Sector");
-                }
-              else
-                {
-                  timeText = "&nbsp;" + i18n("not reached");
-                }
+                  isWP = true;
 
-              switch(wpList->at(loop)->type)
-                {
-                  case Flight::TakeOff:
-                    tmpText = i18n("Take Off");
-                    break;
-                  case Flight::Begin:
-                    tmpText = i18n("Begin of task");
-                    break;
-                  case Flight::End:
-                    tmpText = i18n("End of task");
-                    break;
-                  case Flight::Landing:
-                    tmpText = i18n("Landing");
-                    break;
-                }
+                  QString tmpText, timeText;
 
-              wpText = wpText + "<LI><B>" + wpList->at(loop)->name + "</B>  " +
-                  "&nbsp;" + timeText + " / " + tmpText + "<BR>" +
-                  printPos(wpList->at(loop)->origP.x()) + " / " +
-                  printPos(wpList->at(loop)->origP.y(), false) + "</LI>";
+                  if(wpList->at(loop)->sector1 != 0)
+                    {
+                      timeText = printTime(wpList->at(loop)->sector1);
+                      tmpText = i18n("Sector 1");
+                    }
+                  else if(wpList->at(loop)->sector2 != 0)
+                    {
+                      timeText = printTime(wpList->at(loop)->sector2);
+                      tmpText = i18n("Sector 2");
+                    }
+                  else if(wpList->at(loop)->sectorFAI != 0)
+                    {
+                      timeText = printTime(wpList->at(loop)->sectorFAI);
+                      tmpText = i18n("FAI-Sector");
+                    }
+                  else
+                    {
+                      timeText = "&nbsp;" + i18n("not reached");
+                    }
+
+                  switch(wpList->at(loop)->type)
+                    {
+                      case Flight::TakeOff:
+                        tmpText = i18n("Take Off");
+                        break;
+                      case Flight::Begin:
+                        tmpText = i18n("Begin of task");
+                        break;
+                      case Flight::End:
+                        tmpText = i18n("End of task");
+                        break;
+                      case Flight::Landing:
+                        tmpText = i18n("Landing");
+                        break;
+                    }
+
+                  wpText = wpText + "<LI><B>" + wpList->at(loop)->name +
+                      "</B>  " +
+                      "&nbsp;" + timeText + " / " + tmpText + "<BR>" +
+                      printPos(wpList->at(loop)->origP.x()) + " / " +
+                      printPos(wpList->at(loop)->origP.y(), false) + "</LI>";
+                }
             }
-        }
 
-      if(isWP)
-        {
-          wpText = wpText + "</UL>";
-          text = text + wpText;
-          // Text anzeigen
-          QWhatsThis::enterWhatsThisMode();
-          QWhatsThis::leaveWhatsThisMode(text);
-          isAirport = true;
+          if(isWP)
+            {
+              wpText = wpText + "</UL>";
+              text = text + wpText;
+              // Text anzeigen
+              QWhatsThis::enterWhatsThisMode();
+              QWhatsThis::leaveWhatsThisMode(text);
+              isAirport = true;
+            }
         }
 
       if(isAirport)  return;

@@ -1102,68 +1102,6 @@ void Flight::__setWaypointType()
 
 }
 
-void Flight::__appendWaypoint(struct wayPoint* newPoint)
-{
-//  wpList.append(newPoint);
-//
-//  if(tEnd == 0 && wpList.count() > 2)
-//    {
-//      int loop = 0;
-//
-//      for(int n = wpList.count() - 3; n >= 0; n--)
-//        {
-//          loop++;
-//          if(newPoint->origP == wpList.at(n)->origP)
-//            {
-//              bool noTask = false;
-//
-//              tEnd = wpList.count() - 1;
-//              tBegin = n;
-//              wpList.at(tEnd)->type = Flight::End;
-//              wpList.at(tBegin)->type = Flight::Begin;
-//
-//
-//              // Wenn wpList.count() < 4 -> keine Aufgabe deklariert
-//              ///// Müll rausfiltern
-//              if(tEnd - tBegin == 2)
-//                {
-//                  if(wpList.at(tBegin)->origP == wpList.at(tBegin + 1)->origP)
-//                      noTask = true;
-//                }
-//              else
-//                {
-//                  for(int loop = tBegin + 2; loop < tEnd; loop++)
-//                    {
-//                      if(wpList.at(loop - 1)->origP == wpList.at(loop)->origP)
-//                          noTask = true;
-//                    }
-//                }
-//
-//              if(noTask)
-//                {
-//                  for(int m = 0; m < tEnd; m++)
-//                      wpList.at(m)->type = Flight::FreeP;
-//
-//                  flightType = Flight::Abgebrochen;
-//                  KMessageBox::error(0, i18n("The task is not valid.<BR>"
-//                           "All waypoints are the same point."));
-//                }
-//              else
-//                {
-//                  for(int m = 0; m < tBegin; m++)
-//                      wpList.at(m)->type = Flight::FreeP;
-//
-//                  for(int m = tBegin + 1; m < tEnd; m++)
-//                      wpList.at(m)->type = Flight::RouteP;
-//                }
-//              break;
-//            }
-//        }
-//    }
-//  else
-//      newPoint->type = Flight::FreeP;
-}
-
 void Flight::__checkType()
 {
   /**

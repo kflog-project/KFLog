@@ -224,7 +224,7 @@ configure configure.in
 
 #>- DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 #>+ 4
-KDE_DIST=Makefile.dist kflog.spec configure.in.in README-MAP kflog.lsm kflog.kdevses kflog-2.0.1.tar.gz kflog.kdevprj 
+KDE_DIST=Makefile.dist kflog.spec configure.in.in README-MAP kflog.lsm kflog.kdevprj 
 
 DISTFILES= $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST) $(KDE_DIST)
 

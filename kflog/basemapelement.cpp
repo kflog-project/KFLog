@@ -30,9 +30,9 @@ BaseMapElement::~BaseMapElement()
 
 bool BaseMapElement::__isVisible() const { return true; }
 
-static MapMatrix* BaseMapElement::glMapMatrix;
+MapMatrix* BaseMapElement::glMapMatrix;
 
-static MapConfig* BaseMapElement::glConfig;
+MapConfig* BaseMapElement::glConfig;
 
 void BaseMapElement::initMapElement(MapMatrix* matrix, MapConfig* config)
 {

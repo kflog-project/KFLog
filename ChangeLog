@@ -1,6 +1,45 @@
 $Id$
 
 
+2001-12-16 Heiner <heiner@kflog.org>
+
+  * Added Map::slotCenterToWaypoint(). When the user selects a waypoint
+    in the dataview, the map is centered to the selected waypoint and
+    zoomed to the lower scale-limit.
+
+
+2001-12-15 Heiner <heiner@kflog.org>
+
+  * Added tooltips for the waypoints.
+
+
+2001-12-14 Heiner <heiner@kflog.org>
+
+  * Added reloading the mapscale after configuring KFLog. Also fixed
+    a minor bug in MapMatrix::initMatrix(), so that the current scale
+    will only change if the lower limit is larger or the upper limit
+    is smaler as the current scale.
+
+
+2001-12-09 Heiner <heiner@kflog.org>
+
+  * Reduced the number of pixmaps used for drawing. "allSites", "airports"
+    and "glider" are drawn into the same pixmap now.
+
+  * Now, the position and size of the dockwidgets will be saved and
+    restored, so that the user will get the same window-layout again
+    the next time he starts KFLog.
+
+
+2001-12-07 Heiner <heiner@kflog.org>
+
+  * Added all airspace-types to kflogconfig.
+
+  * Reactivated printing. By now, all elements are printed the same way as
+    displayed on the screen. We should add a seperate way to configure the
+    printing.
+
+
 2001-12-06 Heiner <heiner@kflog.org>
 
   * Added more airspaces to the config-dialog. The default-values
@@ -28,10 +67,20 @@ $Id$
 
 2001-12-02 Florian <florian@kflog.org>
 
-  * Extended the evaluation-dialog. Adden two splitters to allow the
+  * Extended the evaluation-dialog. Added two splitters to allow the
     user to change the size of the text below the graph.
 
   * Added the waypoints to the evaluation-graph.
+
+
+2001-12-01 Heiner <heiner@kflog.org>
+
+  * Fixed a bug in map.cpp, that could crash the X-Server.
+
+
+2001-11-27 Heiner <heiner@kflog.org>
+
+  * Added MapConfig as central configuration-object.
 
 
 2001-11-25 Heiner <heiner@kflog.org>

@@ -13,7 +13,7 @@ AC_CANONICAL_SYSTEM
 AC_ARG_PROGRAM
 
 dnl Automake doc recommends to do this only here. (Janos)
-AM_INIT_AUTOMAKE(kflog, 2.0.1) dnl searches for some needed programs
+AM_INIT_AUTOMAKE(kflog, 2.0.2) dnl searches for some needed programs
 
 KDE_SET_PREFIX
 
@@ -47,5 +47,6 @@ doc/en/Makefile \
 kflog/Makefile \
 kflog/map-icons/Makefile \
 kflog/map-icons/small/Makefile \
+kflog/pics/Makefile \
 po/Makefile \
 )

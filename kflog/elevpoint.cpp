@@ -81,8 +81,6 @@ void ElevPoint::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   }
 
   targetPainter->setPen(QPen(QColor(0,0,0), 2));
-  int iconHeight = 28;  // Positionierung des Punktes im Icon
-  int iconWidth = 15;   // auf die richtige Stelle
 }
 
 unsigned int ElevPoint::getElevation() const { return elevation; }

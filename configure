@@ -858,7 +858,7 @@ fi
 
 PACKAGE=kflog
 
-VERSION=2.0.1
+VERSION=2.0.2
 
 if test "`cd $srcdir && pwd`" != "`pwd`" && test -f $srcdir/config.status; then
   { echo "configure: error: source directory already configured; run "make distclean" there first" 1>&2; exit 1; }
@@ -7102,6 +7102,7 @@ doc/en/Makefile \
 kflog/Makefile \
 kflog/map-icons/Makefile \
 kflog/map-icons/small/Makefile \
+kflog/pics/Makefile \
 po/Makefile \
  config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
@@ -7305,6 +7306,7 @@ doc/en/Makefile \
 kflog/Makefile \
 kflog/map-icons/Makefile \
 kflog/map-icons/small/Makefile \
+kflog/pics/Makefile \
 po/Makefile \
 "}
 EOF

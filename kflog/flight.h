@@ -155,13 +155,6 @@ class Flight : public BaseMapElement
 
   private:
     /**
-     * Appends a new waypoint to the list.
-     *
-     *  NICHT MEHR BENÖTIGT LÖSCHEN !!!
-     */
-    void __appendWaypoint(struct wayPoint* newPoint);
-
-    /**
       *  Setzt den Status der WendePunkte
       *
       */
