@@ -212,29 +212,29 @@ void KFLogApp::initActions()
 //      SLOT(slotOptimzeFlight()), actionCollection(), "optimize_flight");
 
   //Animation actions
-  animateFlightStart = new KAction(i18n("&Start Flight Animation"), "Start Animation",
+  animateFlightStart = new KAction(i18n("&Start Flight Animation"), "1rightarrow",
 			Key_F12, map, SLOT(slotAnimateFlightStart()), actionCollection(),
 			"start_animate");
-  animateFlightStop = new KAction(i18n("Stop Flight &Animation"), "Stop Animation",
+  animateFlightStop = new KAction(i18n("Stop Flight &Animation"), "player_stop",
 			Key_F11, map, SLOT(slotAnimateFlightStop()), actionCollection(),
 			"stop_animate");
 	//Stepping actions
-	stepFlightNext = new KAction(i18n("Next Flight Point"), "Next Flight Point",
+	stepFlightNext = new KAction(i18n("Next Flight Point"), "forward",
 			Key_Up, map, SLOT(slotFlightNext()), actionCollection(),
 		  "next_flight_point");
-	stepFlightPrev = new KAction(i18n("Prev Flight Point"), "Previous Flight Point",
+	stepFlightPrev = new KAction(i18n("Prev Flight Point"), "back",
 			Key_Down, map, SLOT(slotFlightPrev()), actionCollection(),
 			"prev_flight_point");
-	stepFlightHome = new KAction(i18n("First Flight Point"), "Jump to First Flight Point",
+	stepFlightHome = new KAction(i18n("First Flight Point"), "start",
 			Key_Home, map, SLOT(slotFlightHome()), actionCollection(),
 			"first_flight_point");
-	stepFlightEnd = new KAction(i18n("Last Flight Point"), "Jump to Last Flight Point",
+	stepFlightEnd = new KAction(i18n("Last Flight Point"), "finish",
 			Key_End, map, SLOT(slotFlightEnd()), actionCollection(),
 			"last_flight_point");
-	stepFlightStepNext = new KAction(i18n("Step +10 Flight Points"), "Step forward 10 Flight Points",
+	stepFlightStepNext = new KAction(i18n("Step +10 Flight Points"), "stepforward",
 			Key_PageUp, map, SLOT(slotFlightStepNext()), actionCollection(),
 			"next_step_flight_point");
-	stepFlightStepPrev = new KAction(i18n("Step -10 Flight Points"), "Step back 10 Flight Points",
+	stepFlightStepPrev = new KAction(i18n("Step -10 Flight Points"), "stepback",
 			Key_PageDown, map, SLOT(slotFlightStepPrev()), actionCollection(),
 			"prev_step_flight_point");
 
