@@ -39,6 +39,8 @@ public:
   /** No descriptions */
   bool readFilserDA4 (const QString& catalog);
   /** No descriptions */
+  bool writeFilserDA4 (const QString& catalog);
+  /** No descriptions */
   bool write();
   /** No descriptions */
   bool writeBinary();

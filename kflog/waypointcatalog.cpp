@@ -16,6 +16,7 @@
 ***********************************************************************/
 #include <pwd.h>
 #include <unistd.h>
+#include <cmath>
 
 #include "waypointcatalog.h"
 #include "airport.h"
@@ -439,6 +440,8 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
 bool WaypointCatalog::save(bool alwaysAskName){
   QString fName = path;
 
+  // check for unsupported file types - currently none
+  /*
   if (fName.right(4).lower() == ".da4")
     if (KMessageBox::warningYesNoCancel(
                 NULL,
@@ -447,14 +450,20 @@ bool WaypointCatalog::save(bool alwaysAskName){
                 i18n("Save"),
                 i18n("Discard")) == KMessageBox::Yes)
               alwaysAskName = true;
+  */
   
   if (!onDisc || alwaysAskName) {
     fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n"
                                                "*.kwp *.KWP|Cumulus and KFLogEmbedded waypoints (*.kwp)\n"
-                                               "*.txt *.TXT|Filser txt waypoints (*.txt)",
+                                               "*.txt *.TXT|Filser txt waypoints (*.txt)\n"
+                                               "*.da4 *.DA4|Filser da4 waypoints (*.da4)",
                                                0, i18n("Save waypoint catalog"));
     if(!fName.isEmpty()) {
-      if ((fName.right(8) != ".kflogwp") && (fName.right(4) != ".kwp") && (fName.right(4) != ".txt")) {
+      if ((fName.right(8) != ".kflogwp") &&
+          (fName.right(4) != ".kwp") &&
+          (fName.right(4) != ".da4") &&
+          (fName.right(4) != ".txt"))
+      {
         fName += ".kflogwp";
       }
       path = fName;
@@ -468,6 +477,8 @@ bool WaypointCatalog::save(bool alwaysAskName){
     return write();
   else if (fName.right(4) == ".txt")
     return writeFilserTXT (fName);
+  else if (fName.right(4) == ".da4")
+    return writeFilserDA4 (fName);
   else  
     return writeBinary();    
 }
@@ -608,7 +619,7 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
   * This helper function converts floating point numbers that are stored in filser binary files
   * into normal float numbers.
   */
-float FloatFromSwappedBits(Q_UINT32 bits)
+float FloatFromSwappedU32(Q_UINT32 u32)
 {
   // the numbers are 32 bit float values with reversed byte order
   union
@@ -619,12 +630,41 @@ float FloatFromSwappedBits(Q_UINT32 bits)
   } u;
 
   // put in the reversed bytes
-  u.u32 = bits;
+  u.u32 = u32;
   // swap them into normal order
   Q_UINT8 tmp = u.bytes[0]; u.bytes[0] = u.bytes[3]; u.bytes[3] = tmp;
   tmp = u.bytes[1]; u.bytes[1] = u.bytes[2]; u.bytes[2] = tmp;
   // read out the float value
   return u.f32;
+}
+
+/**
+  * This helper function converts floating point numbers
+  * into float numbers to be stored in filser binary files.
+  */
+Q_UINT32 U32fromFloat (float f32)
+{
+  union
+  {
+    float    f32;
+    Q_UINT32 u32;
+  } u;
+  u.f32 = f32;  
+  return u.u32;
+}
+
+Q_UINT16 U16Swap (Q_UINT16 u16)
+{
+  union
+  {
+    Q_UINT16 u16;
+    Q_UINT8 bytes [2];
+  } u;
+  u.u16 = u16;
+  Q_UINT8 tmp = u.bytes[0];
+  u.bytes[0] = u.bytes[1];
+  u.bytes[1] = tmp;
+  return u.u16;
 }
 
 /** read a waypoint catalog from a filser binary file */
@@ -683,10 +723,10 @@ bool WaypointCatalog::readFilserDA4 (const QString& catalog)
                      break;
             default: w->type = BaseMapElement::Landmark;
           }
-          w->origP.setLat((int)(FloatFromSwappedBits(ulat)*600000.0));
-          w->origP.setLon((int)(FloatFromSwappedBits(ulon)*600000.0));
+          w->origP.setLat((int)(FloatFromSwappedU32(ulat)*600000.0));
+          w->origP.setLon((int)(FloatFromSwappedU32(ulon)*600000.0));
           w->elevation = (int)(elev * 0.3048); // don't we have conversion constants ?
-          w->frequency = FloatFromSwappedBits (freq);
+          w->frequency = FloatFromSwappedU32 (freq);
           w->isLandable = false;
           w->length = len; // length ?!
           w->runway = dir; // direction ?!
@@ -712,6 +752,76 @@ bool WaypointCatalog::readFilserDA4 (const QString& catalog)
       path = catalog;
       return true;
     }
+  }
+  return false;
+}
+
+/** write a waypoint catalog into a filser txt file */
+bool WaypointCatalog::writeFilserDA4 (const QString& catalog)
+{
+  qDebug ("WaypointCatalog::writeFilserDA4 (%s)", catalog.latin1());
+  QFile f(catalog);
+
+  if (f.open(IO_WriteOnly))
+  {
+    QDataStream out (&f);
+    QDictIterator<Waypoint> it(wpList);
+    for (Waypoint* w = it.current(); w != 0; w = ++it)
+    {
+      char buffer [31];
+      Q_UINT8 type;
+      switch (w->type)
+      {
+        case BaseMapElement::Landmark:
+          type = 1;
+          break;
+        case BaseMapElement::Airfield:
+          type = 2;
+          break;
+        case BaseMapElement::Outlanding:
+          type = 3;
+          break;
+        default:
+          type = 4;
+      }
+      buffer [0] = type;
+      QCString sName (w->name);
+      qstrncpy (&buffer[1], sName.leftJustify (8, ' ', true), 9);
+      Q_UINT32 lat = U32fromFloat (w->origP.lat()/600000.0);
+      Q_UINT32 lon = U32fromFloat (w->origP.lon()/600000.0);
+      memcpy (&buffer[10], &lat, 4);
+      memcpy (&buffer[14], &lon, 4);
+      Q_INT16 elev = U16Swap ((short int)round(w->elevation/0.3048));
+      memcpy (&buffer[18], &elev, 2);
+      Q_UINT32 freq = U32fromFloat(w->frequency);
+      memcpy (&buffer[20], &freq, 4);
+      Q_UINT16 len;
+      if (w->length == -1)
+        len = 0;
+      else
+        len = U16Swap (w->length);
+      memcpy (&buffer[24], &len, 2);
+      if (w->runway == -1)
+        buffer[26] = 0;
+      else
+        buffer[26] = w->runway;
+      switch (w->surface)
+      {
+        case Airport::Grass:
+          buffer[27] = 'G';
+          break;
+        case Airport::Concrete:
+          buffer[27] = 'C';
+          break;
+        default:
+          buffer[27] = 'U';
+      }
+      buffer[28] = 'I';
+      buffer[29] = 0;
+      buffer[30] = 0;
+      out.writeRawBytes (buffer, 31);
+    }
+    return true;
   }
   return false;
 }
