@@ -302,7 +302,7 @@ void RecorderDialog::__addFlightPage()
   colFirstPoint = flightList->addColumn(i18n("first Point"));
   colLastPoint = flightList->addColumn(i18n("last Point"));
 
-  flightList->setColumnAlignment(colID, AlignRight);
+//  flightList->setColumnAlignment(colID, AlignRight);
 
   flightList->loadConfig();
 
@@ -481,15 +481,13 @@ void RecorderDialog::__addTaskPage()
 
 void RecorderDialog::fillTaskList()
 {
-  FlightTask *task;
   int loop = 1;
   QString idS;
-  QListViewItem *item;
 
   taskList->clear();
-  for (task = tasks->first(); task != 0; task = tasks->next()){
-    item = new QListViewItem(taskList);
-    idS.sprintf("%.3d", loop++);
+  for (FlightTask* task = tasks->first(); task != 0; task = tasks->next()){
+    QListViewItem *item = new QListViewItem(taskList);
+    idS.sprintf("%3d", loop++);
     item->setText(taskColID, idS);
     item->setText(taskColName, task->getFileName());
     item->setText(taskColDesc, task->getTaskTypeString());
@@ -568,13 +566,14 @@ void RecorderDialog::slotConnectRecorder()
     return;
   }
 
-  setCursor(WaitCursor);
+  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
   //check if we have valid parameters, is so, try to connect!
   switch (activeRecorder->getTransferMode()) {
   case FlightRecorderPluginBase::serial:
     if(portName == 0) {
       warning(i18n("No port given!"));
+      QApplication::restoreOverrideCursor();
       setCursor(ArrowCursor);
       isConnected=false;
       break;
@@ -586,14 +585,14 @@ void RecorderDialog::slotConnectRecorder()
     URL=selectURL->text();
     if (URL.isEmpty()) {
       warning(i18n("No URL entered!"));
-      setCursor(ArrowCursor);
+      QApplication::restoreOverrideCursor();
       isConnected=false;
       break;
     };
     isConnected=(activeRecorder->openRecorder(URL)>=FR_OK);
     break;
   default:
-    setCursor(ArrowCursor);
+      QApplication::restoreOverrideCursor();
     isConnected=false;
     return; //If it's not one of the above, we don't know the connection method, so how can we connect?!
   }
@@ -601,7 +600,7 @@ void RecorderDialog::slotConnectRecorder()
   
   if (isConnected) {
    // isConnected = true;
-    setCursor(ArrowCursor);
+    QApplication::restoreOverrideCursor();
     slotEnablePages();
     slotReadDatabase();
   }
@@ -671,7 +670,7 @@ void RecorderDialog::slotReadFlightList()
   for(unsigned int loop = 0; loop < dirList.count(); loop++) {
     e = dirList.at(loop);
     item = new QListViewItem(flightList);
-    idS.sprintf("%.3d", loop + 1);
+    idS.sprintf("%3d", loop + 1);
     item->setText(colID, idS);
     day.sprintf("%d-%.2d-%.2d", e->firstTime.tm_year + 1900,
                 e->firstTime.tm_mon + 1, e->firstTime.tm_mday);
