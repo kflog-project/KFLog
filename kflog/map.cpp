@@ -1230,6 +1230,7 @@ void Map::__redrawMap()
 void Map::slotSavePixmap(KURL fUrl, int width, int height){
 
   int w_orig,h_orig;
+  extern MapContents _globalMapContents;
 
   if(fUrl.isEmpty())  return;
 
@@ -1244,14 +1245,34 @@ void Map::slotSavePixmap(KURL fUrl, int width, int height){
 	if (width && height){
 	  w_orig=pixBuffer.width();
 	  h_orig=pixBuffer.height();
-  	pixBuffer.resize(width,height);
-  	slotCenterToFlight();
+	  resize(width,height);
+  	slotCenterToFlight(); 	
   }
+	
+  KConfig* config = KGlobal::config();
+  config->setGroup("CommentSettings");
+  if (config->readBoolEntry("ShowComment"))
+  {
+  	Flight* flight = (Flight*)_globalMapContents.getFlight();
+    QPainter bufferP(&pixBuffer);
+    bufferP.setPen( Qt::white );
+    QFont font;
+    int by=pixBuffer.height()-35;
+    int bw=pixBuffer.width()-10;
+    QString text=i18n("%1 with %2 (%3) on %4").arg(flight->getPilot()).arg(flight->getType()).arg(flight->getID()).arg(flight->getDate().toString());
+    bufferP.setFont(font);
+  	bufferP.drawText(10,by+15,bw,25,AlignLeft,i18n("created by KFLog (www.kflog.org)"));
+    font.setBold(true);
+    font.setPointSize( 18 );
+    bufferP.setFont(font);
+  	bufferP.drawText(10,by,bw,25,AlignLeft,text);
+  }
+	
 	QImage image = QImage(pixBuffer.convertToImage());
 	image.save(fName,"PNG");
 	if (width && height){
-  	pixBuffer.resize(w_orig,h_orig);
-  	__redrawMap();
+  	resize(w_orig,h_orig);
+  	slotCenterToFlight(); 	
   }
 }
 

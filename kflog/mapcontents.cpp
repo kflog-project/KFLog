@@ -1097,11 +1097,11 @@ bool MapContents::loadFlight(QFile igcFile)
   // We need a better format-identification then only the extension ...
   //
   if(((QString)fInfo.extension()).lower() != "igc")
-    {
+  {
       KMessageBox::error(0,
           i18n("The selected file<BR><B>%1</B><BR>is not an igc-file!").arg(igcFile.name()));
       return false;
-    }
+  }
 
   if(!igcFile.open(IO_ReadOnly))
     {

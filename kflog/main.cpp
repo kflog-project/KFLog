@@ -54,6 +54,8 @@ static KCmdLineOptions options[] =
   { "width ", I18N_NOOP("width of pixmap"), "640" },
   { "h", 0, 0 },
   { "height ", I18N_NOOP("height of pixmap"), "480" },
+  { "c", 0, 0 },
+  { "nocomment", I18N_NOOP("suppress comment"), 0 },
   { "b", 0, 0 },
   { "batch", I18N_NOOP("quit after export (batch mode)"), 0 },
   { "+[File]", I18N_NOOP("igc-file to open"), 0 },
@@ -108,10 +110,10 @@ int main(int argc, char *argv[])
     {
       KFLogApp *kflog = new KFLogApp();
       KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+      KConfig* config = KGlobal::config();
 
       if (args->count()){
           if (args->isSet("export-png")){
-            KConfig* config = KGlobal::config();
             config->setGroup("General Options");
             config->writeEntry("ShowWaypointWarnings",false,false);
           }
@@ -119,6 +121,8 @@ int main(int argc, char *argv[])
           kflog->slotFileOpenRecent((QString)args->arg(0));
 
           if (args->isSet("export-png")){
+            config->setGroup("CommentSettings");
+            config->writeEntry("ShowComment",args->isSet("comment"),false);
             warning("Writing PNG...");
             KURL url((QString)args->getOption("export-png"));
             kflog->slotSavePixmap(url,args->getOption("width").toInt(),args->getOption("height").toInt());
