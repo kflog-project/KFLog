@@ -49,10 +49,23 @@
 #define LEVEL_50 QColor(208, 234, 151)
 #define LEVEL_75 QColor(222, 243, 164)
 #define LEVEL_100 QColor(237, 252, 178)
+
+#define LEVEL_150 QColor(237, 248, 175)
+
 #define LEVEL_200 QColor(236, 241, 169)
+
+#define LEVEL_250 QColor(236, 235, 165)
+
 #define LEVEL_300 QColor(236, 230, 160)
+
+#define LEVEL_350 QColor(236, 225, 156)
+
 #define LEVEL_400 QColor(236, 219, 151)
+
+#define LEVEL_450 QColor(236, 214, 147)
+
 #define LEVEL_500 QColor(236, 208, 142)
+
 #define LEVEL_600 QColor(235, 198, 133)
 #define LEVEL_700 QColor(235, 187, 124)
 #define LEVEL_800 QColor(235, 176, 115)

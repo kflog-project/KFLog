@@ -50,7 +50,7 @@
 #include <singlepoint.h>
 
 #define MAX_FILE_COUNT 16200
-#define ISO_LINE_NUM 46
+#define ISO_LINE_NUM 50
 
 //#define KFLOG_FILE_MAGIC   0x404b464c
 //
@@ -101,19 +101,16 @@
       in >> rwOpen; \
     }
 
-// Liste der Höhenstufen (insg. 47 Stufen):
-// Last value only for a correct ending ...
-const int MapContents::isoLines[] = { 0, 10, 25, 50, 75, 100, 200, 300, 400,
-          500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500,
-          2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250,
-          5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750,
-          8000, 8250, 8500, 8750, 9000};
-
+// Liste der Höhenstufen (insg. 50 Stufen):
+const int MapContents::isoLines[] = { 0, 10, 25, 50, 75, 100, 150, 200, 250,
+          300, 350, 400, 450, 500, 600, 700, 800, 900, 1000, 1250, 1500, 1750,
+          2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500,
+          4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250,
+          7500, 7750, 8000, 8250, 8500, 8750};
 
 MapContents::MapContents()
   : isFirst(true)
 {
-
   sectionArray.resize(MAX_FILE_COUNT);
   for(unsigned int loop = 0; loop < MAX_FILE_COUNT; loop++)
       sectionArray.clearBit(loop);
@@ -616,16 +613,26 @@ bool MapContents::__readTerrainFile(const int fileSecID,
           tA.setPoint(i, _globalMapMatrix.wgsToMap(latList_temp,
               lonList_temp));
         }
-      sort_temp = (int)sort;
+      sort_temp = -1;
 
-      // Adding "1" to sort_temp, because, otherwise the 10m-line
-      // will not be displayed correctly
-      for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
-          if(isoLines[pos] == elevation)
-              sort_temp = ISO_LINE_NUM * sort_temp + pos + 1;
+//      valley -= 1;
+//      valley *= -1;
 
-      Isohypse* newItem = new Isohypse(tA, elevation, valley);
-      isoList.at(sort_temp)->append(newItem);
+      // We must ignore it, when sort is more than 3 or less than 0!
+      if(sort >= 0 && sort <= 3)
+        {
+          for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
+              if(isoLines[pos] == elevation)
+                  sort_temp = ISO_LINE_NUM * (int)sort + pos + 0;
+
+          // If sort_temp is -1 here, we have an unused elevation and
+          // must ignore it!
+          if(sort_temp != -1)
+            {
+              Isohypse* newItem = new Isohypse(tA, elevation, valley);
+              isoList.at(sort_temp)->append(newItem);
+            }
+        }
     }
 
   return true;
@@ -1927,6 +1934,7 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
   for(unsigned int loop = 0; loop < isoList.count(); loop++)
     {
       if(isoList.at(loop)->count() == 0) continue;
+
       for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
         {
           if(isoLines[pos] == isoList.at(loop)->getFirst()->getElevation())
@@ -1935,6 +1943,8 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
                   height = pos + 1;
               else
                   height = pos + 2;
+
+              break;
             }
         }
 

@@ -239,6 +239,8 @@ class MapMatrix : public QObject
     void centerToLatLon(QPoint center);
     /** */
     void centerToLatLon(int latitude, int longitude);
+    /** */
+    void writeMatrixOptions();
 
   public slots:
     /** */

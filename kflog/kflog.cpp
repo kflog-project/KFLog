@@ -162,7 +162,9 @@ KFLogApp::KFLogApp()
 
 KFLogApp::~KFLogApp()
 {
+  extern MapMatrix _globalMapMatrix;
 
+  _globalMapMatrix.writeMatrixOptions();
 }
 
 void KFLogApp::initActions()

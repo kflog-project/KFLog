@@ -104,7 +104,11 @@ MapMatrix::MapMatrix()
 
 MapMatrix::~MapMatrix()
 {
-/*
+
+}
+
+void MapMatrix::writeMatrixOptions()
+{
   KConfig *config = kapp->config();
 
   config->setGroup("Map Data");
@@ -113,7 +117,6 @@ MapMatrix::~MapMatrix()
   config->writeEntry("Map Scale", cScale);
 
   config->setGroup(0);
-*/
 }
 
 QPoint MapMatrix::wgsToMap(QPoint origPoint) const
