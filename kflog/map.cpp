@@ -43,19 +43,20 @@
 #include <mapcalc.h>
 #include <mapcontents.h>
 #include <mapmatrix.h>
+#include <printdialog.h>
 #include <singlepoint.h>
 #include <resource.h>
 
 #define PROOF_LAYER(a,b,c) if(a){bitBlt(&b,0,0,&c,0,0,-1,-1,NotEraseROP);}
 #define PROOF_BUTTON(a,b) if(a){mainApp->toolBar()->getButton(b)->toggle();}
 
-#define NUM_TO_RAD(a) ( PI * a ) / 108000000.0 )
-
-#define MAP_X calc_X_Lambert(NUM_TO_RAD(mapCenterLat), 0)
-#define MAP_Y calc_Y_Lambert(NUM_TO_RAD(mapCenterLat), 0)
-
-#define DELTA_X ( ( this->width() / 2 ) - ( MAP_X / _currentScale * RADIUS ) )
-#define DELTA_Y ( ( this->height() / 2 ) - ( MAP_Y / _currentScale * RADIUS ) )
+//#define NUM_TO_RAD(a) ( PI * a ) / 108000000.0 )
+//
+//#define MAP_X calc_X_Lambert(NUM_TO_RAD(mapCenterLat), 0)
+//#define MAP_Y calc_Y_Lambert(NUM_TO_RAD(mapCenterLat), 0)
+//
+//#define DELTA_X ( ( this->width() / 2 ) - ( MAP_X / _currentScale * RADIUS ) )
+//#define DELTA_Y ( ( this->height() / 2 ) - ( MAP_Y / _currentScale * RADIUS ) )
 
 #define DRAW_LOOP(a,b) for(unsigned int loop = 0; loop < \
     _globalMapContents.getListLength(a); loop++) { \
@@ -995,8 +996,8 @@ void Map::slotShowMapElement()
 
 void Map::slotPrintMap()
 {
-//  PrintDialog pD(mainApp, true);
-//  pD.openMapPrintDialog(mapCenterLat, mapCenterLon);
+  PrintDialog pD(mainApp, true);
+  pD.openMapPrintDialog();
 }
 
 void Map::slotCenterToItem(int listIndex, int elementIndex)

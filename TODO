@@ -1,4 +1,14 @@
 
+* Drucken:
+
+  -> Das Bild ist auf dem Papier noch verschoben.
+
+  -> Die Auswahl des Papierformates hat keinerlei Einfluss auf
+     das QPrinter-Objekt
+
+  -> Die einzelnen Kartenobjekte müssen noch gedruckt werden.
+     Das sollte auch direkt über MapContents laufen ...
+
 * Kartenfehler:
 
   -> Die Höhenlinien in England scheinen in die falschen Dateien gerückt

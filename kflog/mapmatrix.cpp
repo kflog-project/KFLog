@@ -119,6 +119,15 @@ double MapMatrix::map(double arc) const
 
 QRect MapMatrix::getViewBorder() const  { return viewBorder; }
 
+void MapMatrix::getMatrixValues(double* v_1, double* v_2, int* centerLat,
+        int* centerLon)
+{
+  *v_1 = v1;
+  *v_2 = v2;
+  *centerLat = mapCenterLat;
+  *centerLon = mapCenterLon;
+}
+
 double MapMatrix::scale() const  { return cScale; }
 
 void MapMatrix::centerToMouse(QPoint center)
@@ -278,7 +287,7 @@ void MapMatrix::initMatrix(int centerLat, int centerLon, double scale,
 
   mapCenterLat = centerLat;
   mapCenterLon = centerLon;
-
+warning("Mitte: %d / %d", mapCenterLat, mapCenterLon);
   homeLat = hLat;
   homeLon = hLon;
 

@@ -1411,7 +1411,7 @@ void MapContents::proofeSection()
            __readAsciiFile(asciiName);
 
            asciiName = "/data/KartenDaten/KFLog-Karten/Seen_Kachel/europa_seen." +
-              latID_S  + "_" + lonID_S + ".dnnet.out";
+              latID_S  + "_" + lonID_S + "_kor.dnnet.out";
            __readAsciiFile(asciiName);
 
 //            warning("    Kachel geladen: %s", (const char*)demSecName);

@@ -90,6 +90,9 @@ class MapMatrix
     QPoint mapToWgs(QPoint pos) const;
     /** */
     void setScale(double);
+    /** */
+    void getMatrixValues(double* v_1, double* v_2, int* centerLat,
+        int* centerLon);
 
   private:
     /**

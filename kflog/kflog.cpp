@@ -78,7 +78,7 @@ KFLogApp::KFLogApp(QWidget* , const char* name)
 
   readOptions();
 
-  filePrint->setEnabled(false);
+  filePrint->setEnabled(true);
   viewData->setChecked(true);
   viewMapControl->setChecked(true);
   viewCenterTask->setEnabled(false);
@@ -463,10 +463,12 @@ void KFLogApp::slotFileClose()
 
 void KFLogApp::slotFilePrint()
 {
+warning("KFLogApp::slotFilePrint()");
   slotStatusMsg(i18n("Printing..."));
 
-  QPrinter printer;
-  if (printer.setup(this)) {  }
+//  QPrinter printer;
+//  if (printer.setup(this))
+      map->slotPrintMap();
 
   slotStatusMsg(i18n("Ready."));
 }
