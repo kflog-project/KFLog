@@ -26,6 +26,10 @@
 #include <qslider.h>
 #include <qcombobox.h>
 #include <qlayout.h>
+#include <qmessagebox.h>
+
+// KDE headers
+#include <klocale.h>
 
 // Application headers
 #include "igc3ddialog.h"
@@ -205,6 +209,19 @@ void Igc3DView::keyPressEvent ( QKeyEvent * k )
 		case Key_Minus:
 			n = (int)state->mag-2;
 			change_mag(n);
+			break;
+		case Key_F1:
+			QMessageBox::information( this, i18n("Help for 3D view"),
+                                      i18n("Basic key functions:\n\n"
+												"Left/Right :\t rotate \n"
+												"Up/Down : \t tilt \n"
+												"+/- : \t zoom \n"
+												"S : \t \t toggle shadow \n"
+												"B : \t \t toggle back \n"
+												"F : \t \t toggle front \n"),
+                                      i18n("&Ok"),
+                                      0,      // Enter == button 0
+                                      0 ); // Escape == button 2
 			break;
 	}
 	__draw();
