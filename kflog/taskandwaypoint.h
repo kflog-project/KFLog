@@ -22,14 +22,13 @@
 #include "waypointdialog.h"
 #include "waypointcatalog.h"
 #include "translationlist.h"
-#include "guicontrols/kflogtable.h"
+#include "guicontrols/kfloglistview.h"
 
 #include <qframe.h>
 #include <qsplitter.h>
 #include <qcombobox.h>
 #include <qlist.h>
 
-#include <kconfig.h>
 #include <kpopupmenu.h>
 
 /**
@@ -38,7 +37,7 @@
 
 class TaskAndWaypoint : public QFrame  {
    Q_OBJECT
-public: 
+public:
 	TaskAndWaypoint(QWidget *parent=0, const char *name=0);
 	~TaskAndWaypoint();
 	/* save changes in catalogs, return success */
@@ -49,23 +48,21 @@ private: // Private methods
   /** No descriptions */
   void initTypes();
   /** No descriptions */
-  void addTaskWindow(QSplitter *s);
-  /** No descriptions */
-  void addWaypointWindow(QSplitter *s);
+  void addWaypointWindow(QWidget *parent);
   /** No descriptions */
   void addPopupMenu();
   /** No descriptions */
   void fillWaypoints();
+  /** read filter and store in catalog */
+  void getFilterData();
 private: // Private attributes
   TranslationList surfaces;
   TranslationList waypointTypes;
-  /** popup menu for tasks's */
-  KPopupMenu *taskPointPopup;
   /** popup menu for waypoint's */
   KPopupMenu *wayPointPopup;
   /**  */
   QComboBox *catalogName;
-  KFLogTable *waypoints;
+  KFLogListView *waypoints;
   /** some menu items */
   int idWaypointCatalogSave;
   int idWaypointCatalogImport;
@@ -81,27 +78,21 @@ private: // Private attributes
   WaypointDialog *waypointDlg;
   WaypointImpFilterDialog *importFilterDlg;
 
-  /** filter for display */
-  bool showAll;
-  bool showAirports;
-  bool showGliderSites;
-  bool showOtherSites;
-  bool showObstacle;
-  bool showLandmark;
-  bool showOutlanding;
-  bool showStation;
+  /** column index for waypoints */
+  int colName;
+  int colDesc;
+  int colICAO;
+  int colType;
+  int colLat;
+  int colLong;
+  int colElev;
+  int colFrequency;
+  int colLandable;
+  int colRunway;
+  int colLength;
+  int colSurface;
+  int colComment;
 
-  int areaLat1;
-  int areaLat2;
-  int areaLong1;
-  int areaLong2;
-  int radiusLat;
-  int radiusLong;
-
-  bool filterRadius;
-  bool filterArea;
-
-  double radiusSize;
 private slots: // Private slots
   void slotNotHandledItem();
   void slotNewWaypoint();
@@ -117,14 +108,17 @@ private slots: // Private slots
   void slotCloseWaypointCatalog();
   void slotImportWaypointCatalog();
   void slotSwitchWaypointCatalog(int idx);
-  void showTaskPopup(int row, int col, int button, const QPoint &mousePos);
-  void showWaypointPopup(int row, int col, int button, const QPoint &mousePos);
+  void showWaypointPopup(QListViewItem *, const QPoint &, int);
   void slotImportWaypointFromMap();
+  void slotCopyWaypoint2Task();
 public slots: // Public slots
   /** filter waypoints to display */
   void slotFilterWaypoints();
   /** add a new waypoint from outside */
   void slotAddWaypoint(WaypointElement *w);
+signals: // Signals
+  /** No descriptions */
+  void copyWaypoint2Task(WaypointElement *);
 };
 
 #endif

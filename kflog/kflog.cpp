@@ -52,6 +52,7 @@
 #include <mapcontrolview.h>
 #include <mapprint.h>
 #include <taskandwaypoint.h>
+#include <tasks.h>
 #include <igc3ddialog.h>
 
 #define STATUS_LABEL(a,b,c) \
@@ -352,7 +353,8 @@ void KFLogApp::initView()
   mapViewDock = createDockWidget("Map", 0, 0, i18n("Map"));
   dataViewDock = createDockWidget("Flight-Data", 0, 0, i18n("Flight-Data"));
   mapControlDock = createDockWidget("Map-Control", 0, 0, i18n("Map-Control"));
-  taskAndWaypointDock = createDockWidget("Task & Waypoint", 0, 0, i18n("Task & Waypoint"));
+  taskAndWaypointDock = createDockWidget("Waypoints", 0, 0, i18n("Waypoints"));
+  taskDock = createDockWidget("Tasks", 0, 0, i18n("Tasks"));
 
   connect(mapControlDock, SIGNAL(iMBeingClosed()),
       SLOT(slotHideMapControlDock()));
@@ -393,10 +395,14 @@ void KFLogApp::initView()
   taskAndWaypoint = new TaskAndWaypoint(taskAndWaypointDock);
   taskAndWaypointDock->setWidget(taskAndWaypoint);
 
+  taskView = new Tasks(taskDock);
+  taskDock->setWidget(taskView);
+
   /* Argumente für manualDock():
    * dock target, dock side, relation target/this (in percent)
    */
   dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );
+  taskDock->manualDock( dataViewDock, KDockWidget::DockBottom, 20);
   mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 75 );
   taskAndWaypointDock->manualDock(mapViewDock, KDockWidget::DockBottom, 71);
 

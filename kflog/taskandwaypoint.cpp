@@ -17,7 +17,6 @@
 
 #include "taskandwaypoint.h"
 #include "basemapelement.h"
-#include "airport.h"
 #include "waypointelement.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
@@ -37,20 +36,8 @@
 #include <kiconloader.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
-
-#define COL_WAYPOINT_NAME 0
-#define COL_WAYPOINT_DESCRIPTION 1
-#define COL_WAYPOINT_ICAO 2
-#define COL_WAYPOINT_TYPE 3
-#define COL_WAYPOINT_LAT 4
-#define COL_WAYPOINT_LONG 5
-#define COL_WAYPOINT_ELEV 6
-#define COL_WAYPOINT_FREQ 7
-#define COL_WAYPOINT_IS_LANDABLE 8
-#define COL_WAYPOINT_RUNWAY 9
-#define COL_WAYPOINT_LENGTH 10
-#define COL_WAYPOINT_SURFACE 11
-#define COL_WAYPOINT_COMMENT 12
+#include <kglobal.h>
+#include <kconfig.h>
 
 extern MapContents _globalMapContents;
 extern MapMatrix _globalMapMatrix;
@@ -60,18 +47,10 @@ TaskAndWaypoint::TaskAndWaypoint(QWidget *parent, const char *name )
 {
   TranslationElement *te;
 
-  QVBoxLayout *layout = new QVBoxLayout(this);
-  QSplitter *split = new QSplitter(this);
-  split->setOrientation(Vertical);
-
   initSurfaces();
   initTypes();
-//  addTaskWindow(split);
-  addWaypointWindow(split);
+  addWaypointWindow(this);
   addPopupMenu();
-
-  layout->addWidget(split);
-  //setMinimumSize(800, 200);
 
   waypointCatalogs.setAutoDelete(true);
   slotNewWaypointCatalog();
@@ -89,12 +68,6 @@ TaskAndWaypoint::TaskAndWaypoint(QWidget *parent, const char *name )
   for (te = surfaces.first(); te != 0; te = surfaces.next()) {
     waypointDlg->surface->insertItem(te->text);
   }
-
-  showAll = true;
-  showAirports = showGliderSites = showOtherSites = showObstacle = showLandmark = showOutlanding =
-  showStation = false;
-
-  filterRadius = filterArea = false;
 }
 
 TaskAndWaypoint::~TaskAndWaypoint()
@@ -149,63 +122,55 @@ void TaskAndWaypoint::initTypes()
 }
 
 /** No descriptions */
-void TaskAndWaypoint::addTaskWindow(QSplitter *s)
+
+void TaskAndWaypoint::addWaypointWindow(QWidget *parent)
 {
-  QWidget *w = new QWidget(s);
-  KFLogTable *t =  new KFLogTable(1, 1, w, "tasks");
-  QVBoxLayout *layout = new QVBoxLayout(w, 5, 5);
+  waypoints =  new KFLogListView("Waypoints", parent, "waypoints");
+  waypoints->setShowSortIndicator(true);
+  waypoints->setAllColumnsShowFocus(true);
 
-  connect(t, SIGNAL(clicked(int, int, int, const QPoint &)),
-    SLOT(showTaskPopup(int, int, int, const QPoint &)));
-  connect(t, SIGNAL(doubleClicked(int, int, int, const QPoint &)),
-    SLOT(slotNotHandledItem()));
+  colName = waypoints->addColumn(i18n("Name"));
+  colDesc = waypoints->addColumn(i18n("Description"));
+  colICAO = waypoints->addColumn(i18n("ICAO"));
+  colType = waypoints->addColumn(i18n("Type"));
+  colLat = waypoints->addColumn(i18n("Latitude"));
+  colLong = waypoints->addColumn(i18n("Longitude"));
+  colElev = waypoints->addColumn(i18n("Elevation (m)"));
+  colFrequency = waypoints->addColumn(i18n("Frequency"));
+  colLandable = waypoints->addColumn(i18n("Landable"));
+  colRunway = waypoints->addColumn(i18n("Runway"));
+  colLength = waypoints->addColumn(i18n("Length (m)"));
+  colSurface = waypoints->addColumn(i18n("Surface"));
+  colComment = waypoints->addColumn(i18n("Comment"));
 
-  layout->addWidget(new QLabel(i18n("%1:").arg("Tasks"), w));
-  layout->addWidget(t);
-}
+  waypoints->setColumnAlignment(colElev, AlignRight);
+  waypoints->setColumnAlignment(colFrequency, AlignRight);
+  waypoints->setColumnAlignment(colRunway, AlignRight);
+  waypoints->setColumnAlignment(colLength, AlignRight);
 
-/** No descriptions */
-void TaskAndWaypoint::addWaypointWindow(QSplitter *s)
-{
-  QWidget *w = new QWidget(s);
-  waypoints =  new KFLogTable(0, 13, w, "waypoints");
+  waypoints->loadConfig();
 
-  QHeader *h = waypoints->horizontalHeader();
-  h->setLabel(COL_WAYPOINT_NAME, i18n("Name"));
-  h->setLabel(COL_WAYPOINT_DESCRIPTION, i18n("Description"));
-  h->setLabel(COL_WAYPOINT_ICAO, i18n("ICAO"));
-  h->setLabel(COL_WAYPOINT_TYPE, i18n("Type"));
-  h->setLabel(COL_WAYPOINT_LAT, i18n("Latitude"));
-  h->setLabel(COL_WAYPOINT_LONG, i18n("Longitude"));
-  h->setLabel(COL_WAYPOINT_ELEV, i18n("Elevation (m)"));
-  h->setLabel(COL_WAYPOINT_FREQ, i18n("Frequency"));
-  h->setLabel(COL_WAYPOINT_IS_LANDABLE, i18n("Landable"));
-  h->setLabel(COL_WAYPOINT_RUNWAY, i18n("Runway"));
-  h->setLabel(COL_WAYPOINT_LENGTH, i18n("Length (m)"));
-  h->setLabel(COL_WAYPOINT_SURFACE, i18n("Surface"));
-  h->setLabel(COL_WAYPOINT_COMMENT, i18n("Comment"));
-
-  connect(waypoints, SIGNAL(pressed(int, int, int, const QPoint &)),
-    SLOT(showWaypointPopup(int, int, int, const QPoint &)));
-  connect(waypoints, SIGNAL(doubleClicked(int, int, int, const QPoint &)),
+  connect(waypoints, SIGNAL(rightButtonPressed(QListViewItem *, const QPoint &, int)),
+    SLOT(showWaypointPopup(QListViewItem *, const QPoint &, int)));
+  connect(waypoints, SIGNAL(doubleClicked(QListViewItem *)),
     SLOT(slotEditWaypoint()));
 
   // header
   QHBoxLayout *header = new QHBoxLayout(5);
-  QLabel *l = new QLabel(i18n("%1:").arg("Waypoints"), w);
+  QLabel *l = new QLabel(i18n("%1:").arg("Waypoints"), parent);
   l->setMaximumWidth(l->sizeHint().width() + 5);
 
-  catalogName = new QComboBox(false, w);
+  catalogName = new QComboBox(false, parent);
   connect(catalogName, SIGNAL(activated(int)), SLOT(slotSwitchWaypointCatalog(int)));
 
-  QPushButton *fileOpen = new QPushButton(w);
+  QPushButton *fileOpen = new QPushButton(parent);
   fileOpen->setPixmap(BarIcon("fileopen"));
   QSizePolicy sp = fileOpen->sizePolicy();
   sp.setHorData(QSizePolicy::Fixed);
   fileOpen->setSizePolicy(sp);
   connect(fileOpen, SIGNAL(clicked()), SLOT(slotOpenWaypointCatalog()));
 
-  QPushButton *filter = new QPushButton(i18n("Filter"), w);
+  QPushButton *filter = new QPushButton(i18n("Filter"), parent);
   sp = filter->sizePolicy();
   sp.setHorData(QSizePolicy::Fixed);
   filter->setSizePolicy(sp);
@@ -216,7 +181,7 @@ void TaskAndWaypoint::addWaypointWindow(QSplitter *s)
   header->addWidget(fileOpen);
   header->addWidget(filter);
 
-  QVBoxLayout *layout = new QVBoxLayout(w, 5, 5);
+  QVBoxLayout *layout = new QVBoxLayout(parent, 5, 5);
 
   layout->addLayout(header);
   layout->addWidget(waypoints);
@@ -253,7 +218,7 @@ void TaskAndWaypoint::addPopupMenu()
     SLOT(slotDeleteWaypoint()));
   wayPointPopup->insertSeparator();
   idWaypointCopy2Task = wayPointPopup->insertItem(SmallIcon("editcopy"), i18n("Copy to &task"), this,
-    SLOT(slotNotHandledItem()));
+    SLOT(slotCopyWaypoint2Task()));
 }
 
 /** open a catalog and set it active */
@@ -293,29 +258,19 @@ void TaskAndWaypoint::slotNotHandledItem()
   KMessageBox::sorry(this, "This function is not yet available!", "ooops");
 }
 
-void TaskAndWaypoint::showTaskPopup(int row, int col, int button, const QPoint &)
+void TaskAndWaypoint::showWaypointPopup(QListViewItem *it, const QPoint &, int)
 {
-  slotNotHandledItem();
-}
+  wayPointPopup->setItemEnabled(idWaypointCatalogSave, waypointCatalogs.count() && waypointCatalogs.current()->modified);
+  wayPointPopup->setItemEnabled(idWaypointCatalogClose, waypointCatalogs.count() > 1);
+  wayPointPopup->setItemEnabled(idWaypointCatalogImport, waypointCatalogs.count());
+  wayPointPopup->setItemEnabled(idWaypointImportFromMap,waypointCatalogs.count());
 
-void TaskAndWaypoint::showWaypointPopup(int row, int col, int button, const QPoint &)
-{
-  if (button == RightButton) {
-    wayPointPopup->setItemEnabled(idWaypointCatalogSave, waypointCatalogs.count() && waypointCatalogs.current()->modified);
-    wayPointPopup->setItemEnabled(idWaypointCatalogClose, waypointCatalogs.count());
-    wayPointPopup->setItemEnabled(idWaypointCatalogImport, waypointCatalogs.count());
-    wayPointPopup->setItemEnabled(idWaypointImportFromMap,waypointCatalogs.count());
+  wayPointPopup->setItemEnabled(idWaypointNew,waypointCatalogs.count());
+  wayPointPopup->setItemEnabled(idWaypointEdit, it != 0);
+  wayPointPopup->setItemEnabled(idWaypointDelete, it != 0);
+  wayPointPopup->setItemEnabled(idWaypointCopy2Task, it != 0);
 
-    wayPointPopup->setItemEnabled(idWaypointNew,waypointCatalogs.count());
-    wayPointPopup->setItemEnabled(idWaypointEdit, row != -1);
-    wayPointPopup->setItemEnabled(idWaypointDelete, row != -1);
-    wayPointPopup->setItemEnabled(idWaypointCopy2Task, row != -1);
-
-    if (row != -1) {
-      waypoints->setCurrentCell(row, COL_WAYPOINT_NAME);
-    }
-    wayPointPopup->exec(QCursor::pos());
-  }
+  wayPointPopup->exec(QCursor::pos());
 }
 
 void TaskAndWaypoint::slotNewWaypoint()
@@ -384,6 +339,7 @@ void TaskAndWaypoint::slotAddWaypoint()
     comboIdx = waypointDlg->surface->currentItem();
     // translate to id
     w->surface = comboIdx != -1 ? surfaces.at(comboIdx)->id : -1;
+    w->isLandable = waypointDlg->isLandable->isChecked();
     w->comment = waypointDlg->comment->text();
 
     if (waypointCatalogs.current()->wpList.insertItem(w)) {
@@ -396,13 +352,13 @@ void TaskAndWaypoint::slotAddWaypoint()
 /** No descriptions */
 void TaskAndWaypoint::slotEditWaypoint()
 {
-  int row = waypoints->currentRow();
+  QListViewItem *item = waypoints->currentItem();
   int comboIdx;
   QString tmp, oldName;
 
-  if (row >= 0) {
+  if (item != 0) {
     WaypointList *wl = &waypointCatalogs.current()->wpList;
-    oldName = waypoints->text(row, COL_WAYPOINT_NAME);
+    oldName = item->text(colName);
     WaypointElement *w = wl->find(oldName);
 
     // initialize dialg
@@ -462,10 +418,14 @@ void TaskAndWaypoint::slotEditWaypoint()
 /** No descriptions */
 void TaskAndWaypoint::slotDeleteWaypoint()
 {
-  QString tmp = waypoints->text(waypoints->currentRow(), COL_WAYPOINT_NAME);
-  waypointCatalogs.current()->wpList.remove(tmp);
-  waypointCatalogs.current()->modified = true;
-  fillWaypoints();
+  QListViewItem *item = waypoints->currentItem();
+
+  if (item != 0) {
+    QString tmp = item->text(colName);
+    waypointCatalogs.current()->wpList.remove(tmp);
+    waypointCatalogs.current()->modified = true;
+    delete item;
+  }
 }
 
 /** No descriptions */
@@ -473,28 +433,38 @@ void TaskAndWaypoint::fillWaypoints()
 {
   QString tmp;
   WaypointElement *w;
-  QDictIterator<WaypointElement> it(waypointCatalogs.current()->wpList);
-  int row = 0;
-  int maxRows = it.count();
+  WaypointCatalog *c = waypointCatalogs.current();
+  QListViewItem *item;
+  QDictIterator<WaypointElement> it(c->wpList);
+  bool filterRadius, filterArea;
 
-  waypoints->setNumRows(maxRows);
+  waypoints->clear();
 
-  for (w = it.current(); w != 0; w = ++it) {
-    if (!showAll) {
+  filterRadius = (c->radiusLat != 1  || c->radiusLong != 1);
+  filterArea = (c->areaLat2 != 1 && c->areaLong2 != 1 && !filterRadius);
+
+  for (w = it.toFirst(); w != 0; w = ++it) {
+    if (!c->showAll) {
       switch(w->type) {
       case BaseMapElement::IntAirport:
       case BaseMapElement::Airport:
       case BaseMapElement::MilAirport:
       case BaseMapElement::CivMilAirport:
       case BaseMapElement::Airfield:
-        if (!showAirports) {
-          maxRows--;
+        if (!c->showAirports) {
           continue;
         }
         break;
       case BaseMapElement::Glidersite:
-        if (!showGliderSites) {
-          maxRows--;
+        if (!c->showGliderSites) {
+          continue;
+        }
+        break;
+      case BaseMapElement::UltraLight:
+      case BaseMapElement::HangGlider:
+      case BaseMapElement::Parachute:
+      case BaseMapElement::Ballon:
+        if (!c->showOtherSites) {
           continue;
         }
         break;
@@ -502,46 +472,36 @@ void TaskAndWaypoint::fillWaypoints()
     }
 
      if (filterArea) {
-       if (w->pos.x() < areaLong1 || w->pos.x() > areaLong2 ||
-           w->pos.y() < areaLat1 || w->pos.y() > areaLat2) {
-           maxRows--;
+       if (w->pos.x() < c->areaLong1 || w->pos.x() > c->areaLong2 ||
+           w->pos.y() < c->areaLat1 || w->pos.y() > c->areaLat2) {
            continue;
        }
      }
      else if (filterRadius) {
-       if (dist(radiusLat, radiusLong, w->pos.y(), w->pos.x()) > radiusSize) {
-         maxRows--;
+       if (dist(c->radiusLat, c->radiusLong, w->pos.y(), w->pos.x()) > c->radiusSize) {
          continue;
        }
      }
 
-    waypoints->setItem(row, COL_WAYPOINT_NAME, new QTableItem(waypoints, QTableItem::Never, w->name));
-    waypoints->setItem(row, COL_WAYPOINT_DESCRIPTION, new QTableItem(waypoints, QTableItem::Never, w->description));
-    waypoints->setItem(row, COL_WAYPOINT_ICAO, new QTableItem(waypoints, QTableItem::Never, w->icao));
-    waypoints->setItem(row, COL_WAYPOINT_TYPE, new QTableItem(waypoints, QTableItem::Never,
-      w->type == -1 ? QString::null : waypointTypes.itemById(w->type)->text));
-    waypoints->setItem(row, COL_WAYPOINT_LAT, new QTableItem(waypoints, QTableItem::Never,
-      printPos(w->pos.y(), true)));
-    waypoints->setItem(row, COL_WAYPOINT_LONG, new QTableItem(waypoints, QTableItem::Never,
-      printPos(w->pos.x(), false)));
+    item = new QListViewItem(waypoints);
+    item->setText(colName, w->name);
+    item->setText(colDesc, w->description);
+    item->setText(colICAO, w->icao);
+    item->setText(colType, w->type == -1 ? QString::null : waypointTypes.itemById(w->type)->text);
+    item->setText(colLat, printPos(w->pos.y(), true));
+    item->setText(colLong, printPos(w->pos.x(), false));
     tmp.sprintf("%d", w->elevation);
-    waypoints->setItem(row, COL_WAYPOINT_ELEV, new QTableItem(waypoints, QTableItem::Never, tmp));
+    item->setText(colElev, tmp);
     tmp.sprintf("%.3f", w->frequency);
-    waypoints->setItem(row, COL_WAYPOINT_FREQ, new QTableItem(waypoints, QTableItem::Never, tmp));
-    waypoints->setItem(row, COL_WAYPOINT_IS_LANDABLE, new QTableItem(waypoints, QTableItem::Never,
-      w->isLandable == true ? i18n("Yes") : QString::null));
+    item->setText(colFrequency, tmp);
+    item->setText(colLandable, w->isLandable == true ? i18n("Yes") : QString::null);
     tmp.sprintf("%02d", w->runway);
-    waypoints->setItem(row, COL_WAYPOINT_RUNWAY, new QTableItem(waypoints, QTableItem::Never, tmp));
+    item->setText(colRunway, tmp);
     tmp.sprintf("%d", w->length);
-    waypoints->setItem(row, COL_WAYPOINT_LENGTH, new QTableItem(waypoints, QTableItem::Never, tmp));
-    waypoints->setItem(row, COL_WAYPOINT_SURFACE, new QTableItem(waypoints, QTableItem::Never,
-      w->surface == -1 ? QString::null : surfaces.itemById(w->surface)->text));
-    waypoints->setItem(row, COL_WAYPOINT_COMMENT, new QTableItem(waypoints, QTableItem::Never, w->comment));
-
-    row++;
+    item->setText(colLength, tmp);
+    item->setText(colSurface, w->surface == -1 ? QString::null : surfaces.itemById(w->surface)->text);
+    item->setText(colComment, w->comment);
   }
-  waypoints->setNumRows(maxRows);
-  waypoints->sort();
 }
 
 /** No descriptions */
@@ -601,106 +561,94 @@ void TaskAndWaypoint::slotCloseWaypointCatalog()
 
   // activate new catalog
   cnt = catalogName->count();
-  if (!cnt) {
-    waypoints->setNumRows(0);
+  if (idx >= cnt) {
+    idx = cnt -1;
   }
-  else {
-    if (idx >= cnt) {
-      idx = cnt -1;
-    }
 
-    catalogName->setCurrentItem(idx);
-    slotSwitchWaypointCatalog(idx);
-  }
+  catalogName->setCurrentItem(idx);
+  slotSwitchWaypointCatalog(idx);
 }
 
 void TaskAndWaypoint::slotImportWaypointFromMap()
 {
-  Airport *a;
-  GliderSite *g;
+  SinglePoint *s;
   WaypointElement *w;
-  WaypointList *wl = &waypointCatalogs.current()->wpList;
+  WaypointCatalog *c = waypointCatalogs.current();
+  WaypointList *wl = &(c->wpList);
   unsigned int i;
   int type, loop;
-  bool useAll, useAirports, useGliderSites, useOtherSites, useObstacle;
-  bool useLandmark, useOutlanding, useStation, useArea, useRadius;
-  int fromLat, fromLong, toLat, toLong, posLat, posLong;
-  double radius;
   QPoint p;
   QString tmp;
   QRegExp blank("[ ]");
+  QValueList<int> searchLists;
+  QValueList<int>::Iterator searchListsIt;
+  KConfig* config = KGlobal::config();
+  config->setGroup("Map Data");
+  bool filterRadius, filterArea;
 
   if (importFilterDlg->exec() == QDialog::Accepted) {
-    useAll = importFilterDlg->useAll->isChecked();
-    useAirports = importFilterDlg->airports->isChecked();
-    useGliderSites = importFilterDlg->gliderSites->isChecked();
-    useOtherSites = importFilterDlg->otherSites->isChecked();
-    useObstacle = importFilterDlg->obstacle->isChecked();
-    useLandmark = importFilterDlg->landmark->isChecked();
-    useOutlanding = importFilterDlg->outlanding->isChecked();
-    useStation = importFilterDlg->station->isChecked();
+    getFilterData();
 
-    fromLat = _globalMapContents.degreeToNum(importFilterDlg->fromLat->text());
-    toLat = _globalMapContents.degreeToNum(importFilterDlg->toLat->text());
-    fromLong = _globalMapContents.degreeToNum(importFilterDlg->fromLong->text());
-    toLong = _globalMapContents.degreeToNum(importFilterDlg->toLong->text());
-    posLat = _globalMapContents.degreeToNum(importFilterDlg->posLat->text());
-    posLong = _globalMapContents.degreeToNum(importFilterDlg->posLong->text());
-    radius = importFilterDlg->radius->currentText().toDouble();
-
-    // normalize coordinates
-    if (fromLat > toLat) {
-      int tmp = fromLat;
-      fromLat = toLat;
-      toLat = tmp;
+    if (c->showAll || c->showAirports) {
+      searchLists.append(MapContents::AirportList);
+    }
+    if (c->showAll || c->showGliderSites) {
+      searchLists.append(MapContents::GliderList);
+    }
+    if (c->showAll || c->showOtherSites) {
+      searchLists.append(MapContents::AddSitesList);
+    }
+    if (c->showAll || c->showObstacle) {
+      searchLists.append(MapContents::ObstacleList);
+    }
+    if (c->showAll || c->showLandmark) {
+      searchLists.append(MapContents::LandmarkList);
+    }
+    if (c->showAll || c->showOutlanding) {
+      searchLists.append(MapContents::OutList);
+    }
+    if (c->showAll || c->showStation) {
+      searchLists.append(MapContents::StationList);
     }
 
-    if (fromLong > toLong) {
-      int tmp = fromLong;
-      fromLong = toLong;
-      toLong = tmp;
-    }
+    filterRadius = (c->radiusLat != 1  || c->radiusLong != 1);
+    filterArea = (c->areaLat2 != 1 && c->areaLong2 != 1 && !filterRadius);
 
-    useRadius = (posLat > 1  || posLong > 1);
-    useArea = (toLat > 1 && toLong > 1 && !useRadius);
+    for (searchListsIt =searchLists.begin(); searchListsIt != searchLists.end(); ++searchListsIt) {
+      for (i = 0; i < _globalMapContents.getListLength(*searchListsIt); i++) {
 
-    if (useAll || useAirports) {
-      for (i = 0; i < _globalMapContents.getListLength(MapContents::AirportList); i++) {
-        a = _globalMapContents.getAirport(i);
-
-        p = _globalMapMatrix.mapToWgs(_globalMapMatrix.map(a->getPosition()));
+        s = (SinglePoint *)_globalMapContents.getElement(*searchListsIt, i);
+        p = _globalMapMatrix.mapToWgs(_globalMapMatrix.map(s->getPosition()));
 
         // check area
-        if (useArea) {
-          if (p.x() < fromLong || p.x() > toLong ||
-              p.y() < fromLat || p.y() > toLat) {
+        if (filterArea) {
+          if (p.x() < c->areaLong1 || p.x() > c->areaLong2 ||
+              p.y() < c->areaLat1 || p.y() > c->areaLat2) {
               continue;
           }
         }
-        else if (useRadius) {
-          if (dist(posLat, posLong, p.y(), p.x()) > radius) {
+        else if (filterRadius) {
+          if (dist(c->radiusLat, c->radiusLong, p.y(), p.x()) > c->radiusSize) {
             continue;
           }
         }
 
         w = new WaypointElement;
 
-        w->name = a->getName().replace(blank, QString::null).left(6).upper();
+        w->name = s->getName().replace(blank, QString::null).left(6).upper();
         loop = 0;
         while (wl->find(w->name) && loop < 100000) {
           tmp.setNum(loop++);
           w->name = w->name.left(6 - tmp.length()) + tmp;
         }
-        w->description = a->getName();
-        type = a->getTypeID();
+        w->description = s->getName();
+        type = s->getTypeID();
         w->type = type;
 
         w->pos.setX(p.x());
         w->pos.setY(p.y());
 
-        w->elevation = a->getElevation();
-        w->icao = a->getICAO();
-        w->frequency = a->getFrequency().toDouble();
+        w->elevation = s->getElevation();
 
         switch(type) {
         case BaseMapElement::IntAirport:
@@ -708,68 +656,20 @@ void TaskAndWaypoint::slotImportWaypointFromMap()
         case BaseMapElement::MilAirport:
         case BaseMapElement::CivMilAirport:
         case BaseMapElement::Airfield:
+        case BaseMapElement::Glidersite:
+          w->icao = ((RadioPoint *) s)->getICAO();
+          w->frequency = ((RadioPoint *) s)->getFrequency().toDouble();
           w->isLandable = true;
-          break;
-        default:
-          w->isLandable = false;
-        }
-
 //        if (a->getRunwayNumber()) {
 //          runway r = a->getRunway(0);
 //          w->runway = r.direction;
 //          w->length = r.length;
 //          w->surface = r.surface;
 //        }
-
-        if (!wl->insertItem(w)) {
           break;
+        default:
+          w->isLandable = false;
         }
-      }
-    }
-
-    if (useAll || useGliderSites) {
-      for (i = 0; i < _globalMapContents.getListLength(MapContents::GliderList); i++) {
-        g = _globalMapContents.getGlidersite(i);
-
-        p = _globalMapMatrix.mapToWgs(_globalMapMatrix.map(g->getPosition()));
-        // check area
-        if (useArea) {
-          if (p.x() < fromLong || p.x() > toLong ||
-              p.y() < fromLat || p.y() > toLat) {
-              continue;
-          }
-        }
-        else if (useRadius) {
-          if (dist(posLat, posLong, p.y(), p.x()) > radius) {
-            continue;
-          }
-        }
-
-        w = new WaypointElement;
-
-        w->name = g->getName().replace(blank, QString::null).left(6).upper();
-        loop = 0;
-        while (wl->find(w->name) && loop < 100000) {
-          tmp.setNum(loop++);
-          w->name = w->name.left(6 - tmp.length()) + tmp;
-        }
-        w->description = g->getName();
-        w->type = BaseMapElement::Glidersite;
-
-        w->pos.setX(p.x());
-        w->pos.setY(p.y());
-
-        w->elevation = g->getElevation();
-        w->icao = g->getICAO();
-        w->frequency = g->getFrequency().toDouble();
-
-        w->isLandable = true;
-//        if (g->getRunwayNumber()) {
-//          runway r = g->getRunway(0);
-//          w->runway = r.direction;
-//          w->length = r.length;
-//          w->surface = r.surface;
-//        }
 
         if (!wl->insertItem(w)) {
           break;
@@ -785,39 +685,7 @@ void TaskAndWaypoint::slotImportWaypointFromMap()
 void TaskAndWaypoint::slotFilterWaypoints()
 {
   if (importFilterDlg->exec() == QDialog::Accepted) {
-    showAll = importFilterDlg->useAll->isChecked();
-    showAirports = importFilterDlg->airports->isChecked();
-    showGliderSites = importFilterDlg->gliderSites->isChecked();
-    showOtherSites = importFilterDlg->otherSites->isChecked();
-    showObstacle = importFilterDlg->obstacle->isChecked();
-    showLandmark = importFilterDlg->landmark->isChecked();
-    showOutlanding = importFilterDlg->outlanding->isChecked();
-    showStation = importFilterDlg->station->isChecked();
-
-    areaLat1 = _globalMapContents.degreeToNum(importFilterDlg->fromLat->text());
-    areaLat2 = _globalMapContents.degreeToNum(importFilterDlg->toLat->text());
-    areaLong1 = _globalMapContents.degreeToNum(importFilterDlg->fromLong->text());
-    areaLong2 = _globalMapContents.degreeToNum(importFilterDlg->toLong->text());
-    radiusLat = _globalMapContents.degreeToNum(importFilterDlg->posLat->text());
-    radiusLong = _globalMapContents.degreeToNum(importFilterDlg->posLong->text());
-    radiusSize = importFilterDlg->radius->currentText().toDouble();
-
-    // normalize coordinates
-    if (areaLat1 > areaLat2) {
-      int tmp = areaLat1;
-      areaLat1 = areaLat2;
-      areaLat2 = tmp;
-    }
-
-    if (areaLong1 > areaLong2) {
-      int tmp = areaLong1;
-      areaLong1 = areaLong2;
-      areaLong2 = tmp;
-    }
-
-    filterRadius = (radiusLat > 1  || radiusLong > 1);
-    filterArea = (areaLat2 > 1 && areaLong2 > 1 && !filterRadius);
-
+    getFilterData();
     fillWaypoints();
   }
 }
@@ -836,5 +704,75 @@ void TaskAndWaypoint::slotAddWaypoint(WaypointElement *w)
   if (wl->insertItem(w)) {
     waypointCatalogs.current()->modified = true;
     fillWaypoints();
+  }
+}
+
+void TaskAndWaypoint::slotCopyWaypoint2Task()
+{
+  QListViewItem *item = waypoints->currentItem();
+
+  if (item != 0) {
+    WaypointList *wl = &waypointCatalogs.current()->wpList;
+    WaypointElement *w = wl->find(item->text(colName));
+
+    emit copyWaypoint2Task(w);
+  }
+}
+
+void TaskAndWaypoint::getFilterData()
+{
+  QPoint p;
+  KConfig* config = KGlobal::config();
+  config->setGroup("Map Data");
+  WaypointCatalog *c = waypointCatalogs.current();
+
+  c->showAll = importFilterDlg->useAll->isChecked();
+  c->showAirports = importFilterDlg->airports->isChecked();
+  c->showGliderSites = importFilterDlg->gliderSites->isChecked();
+  c->showOtherSites = importFilterDlg->otherSites->isChecked();
+  c->showObstacle = importFilterDlg->obstacle->isChecked();
+  c->showLandmark = importFilterDlg->landmark->isChecked();
+  c->showOutlanding = importFilterDlg->outlanding->isChecked();
+  c->showStation = importFilterDlg->station->isChecked();
+
+  c->areaLat1 = _globalMapContents.degreeToNum(importFilterDlg->fromLat->text());
+  c->areaLat2 = _globalMapContents.degreeToNum(importFilterDlg->toLat->text());
+  c->areaLong1 = _globalMapContents.degreeToNum(importFilterDlg->fromLong->text());
+  c->areaLong2 = _globalMapContents.degreeToNum(importFilterDlg->toLong->text());
+
+  switch (importFilterDlg->getCenterRef()) {
+  case CENTER_POS:
+    c->radiusLat = _globalMapContents.degreeToNum(importFilterDlg->posLat->text());
+    c->radiusLong = _globalMapContents.degreeToNum(importFilterDlg->posLong->text());
+    break;
+  case CENTER_HOMESITE:
+    c->radiusLat = config->readNumEntry("Homesite Latitude");
+    c->radiusLong = config->readNumEntry("Homesite Longitude");
+    break;
+  case CENTER_MAP:
+    p = _globalMapMatrix.getMapCenter(false);
+    c->radiusLat = p.x();
+    c->radiusLong = p.y();
+    break;
+  case CENTER_AIRPORT:
+    p = importFilterDlg->getAirportRef();
+    c->radiusLat = p.y();
+    c->radiusLong = p.x();
+    break;
+  }
+
+  c->radiusSize = importFilterDlg->radius->currentText().toDouble();
+
+  // normalize coordinates
+  if (c->areaLat1 > c->areaLat2) {
+    int tmp = c->areaLat1;
+    c->areaLat1 = c->areaLat2;
+    c->areaLat2 = tmp;
+  }
+
+  if (c->areaLong1 > c->areaLong2) {
+    int tmp = c->areaLong1;
+    c->areaLong1 = c->areaLong2;
+    c->areaLong2 = tmp;
   }
 }

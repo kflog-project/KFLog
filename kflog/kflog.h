@@ -35,6 +35,8 @@ class MapControlView;
 class KFLogConfig;
 class KFLogStartLogo;
 class TaskAndWaypoint;
+class Tasks;
+
 /**
  * Mainwindow for KFLog.
  *
@@ -249,11 +251,17 @@ class KFLogApp : public KDockMainWindow
      */
     KDockWidget* dataViewDock;
     /**
-     * Dockwidget to handle the task&waypoint-widget.
+     * Dockwidget to handle the waypoint-widget.
      *
      * @see taskAndWaypoint
      */
     KDockWidget* taskAndWaypointDock;
+    /**
+     * Dockwidget to handle the task-widget.
+     *
+     * @see tasks
+     */
+    KDockWidget* taskDock;
     /**
      * The mapcontrol-widget. Embedded in mapControlDock
      *
@@ -397,9 +405,13 @@ class KFLogApp : public KDockMainWindow
      */
     QString flightDir;
 		/**
-     * The taskandwaypoint-widget.
+     * The waypoint-widget.
      */
     TaskAndWaypoint *taskAndWaypoint;
+		/**
+     * The taskt-widget.
+     */
+    Tasks *taskView;
     /**
      * The startup-window.
      */

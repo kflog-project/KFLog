@@ -18,10 +18,13 @@
 #ifndef WAYPOINTIMPFILTERDIALOG_H
 #define WAYPOINTIMPFILTERDIALOG_H
 
+#include "singlepoint.h"
 #include <guicontrols/coordedit.h>
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
+#include <qdict.h>
+#include <qpoint.h>
 
 #include <kdialog.h>
 
@@ -29,11 +32,19 @@
   *@author Harald Maier
   */
 
+#define CENTER_POS      0
+#define CENTER_HOMESITE 1
+#define CENTER_MAP      2
+#define CENTER_AIRPORT  3
+
 class WaypointImpFilterDialog : public KDialog  {
    Q_OBJECT
-public: 
+public:
 	WaypointImpFilterDialog(QWidget *parent=0, const char *name=0);
 	~WaypointImpFilterDialog();
+  /** No descriptions */
+  int getCenterRef();
+  QPoint getAirportRef();
 
   QCheckBox *useAll;
   QCheckBox *airports;
@@ -57,6 +68,15 @@ protected slots:
 public slots: // Public slots
   /** reset all dialog items to default values */
   void slotClear();
+private: // Private attributes
+  /**  */
+  int center;
+  QDict<SinglePoint> airportDict;
+  QComboBox *refAirport;
+private slots: // Private slots
+  /** No descriptions */
+  void selectRadius(int n);
+  void polish();
 };
 
 #endif

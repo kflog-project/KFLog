@@ -32,6 +32,26 @@ public:
   bool read(QString &catalog);
   /** No descriptions */
   bool write();
+
+  /** filter for display/import */
+  bool showAll;
+  bool showAirports;
+  bool showGliderSites;
+  bool showOtherSites;
+  bool showObstacle;
+  bool showLandmark;
+  bool showOutlanding;
+  bool showStation;
+
+  int areaLat1;
+  int areaLat2;
+  int areaLong1;
+  int areaLong2;
+  int radiusLat;
+  int radiusLong;
+
+  double radiusSize;
+
 public: // Public attributes
   /**  */
   WaypointList wpList;

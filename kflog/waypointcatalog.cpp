@@ -33,6 +33,12 @@ WaypointCatalog::WaypointCatalog()
   config->setGroup("Path");
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory", getpwuid(getuid())->pw_dir);
   path = wayPointDir + "/" + i18n("unnamed.kflogwp");
+
+  showAll = true;
+  showAirports = showGliderSites = showOtherSites = showObstacle = showLandmark = showOutlanding =
+  showStation = false;
+
+  areaLat1 = areaLat2 = areaLong1 = areaLong2 = radiusLat = radiusLong = 1;
 }
 
 WaypointCatalog::~WaypointCatalog()
