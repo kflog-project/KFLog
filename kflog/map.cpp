@@ -838,6 +838,30 @@ void Map::__drawFlight()
   flightMaskP.end();
 }
 
+void Map::__drawPlannedTask()
+{
+  extern const MapMatrix _globalMapMatrix;
+  extern MapContents _globalMapContents;
+
+  // Strecke zeichnen
+  //  pixPlan.fill(white);  
+  QPainter planP(&pixPlan);
+  QPen drawP(QColor(0,0,0), 5);
+  drawP.setJoinStyle(Qt::MiterJoin);
+  planP.setBrush(NoBrush);
+  planP.setPen(drawP);
+
+  QPointArray points(taskPoints.size());
+  QPoint temp;
+  for(unsigned int n = 0; n < taskPoints.size(); n++)
+    {
+      temp = _globalMapMatrix.map(taskPoints.at(n)->getPosition());
+
+      points.setPoint(n,temp.x(),temp.y());
+    }
+  planP.drawPolyline(points);
+  planP.end();
+}
 void Map::resizeEvent(QResizeEvent* event)
 {
   if(!event->size().isEmpty())
@@ -874,6 +898,8 @@ void Map::__redrawMap()
   // Statusbar noch nicht "genial" eingestellt ...
   mainApp->slotSetProgress(0);
 
+  pixPlan.fill(white);
+
   pixAero.fill(white);
   pixAirspace.fill(white);
   pixGrid.fill(white);
@@ -883,6 +909,7 @@ void Map::__redrawMap()
 
   bitMapMask.fill(Qt::color0);
   bitFlightMask.fill(Qt::color0);
+  bitPlanMask.fill(Qt::color0);
   bitAirspaceMask.fill(Qt::color0);
 
   QPoint temp1(preCur1);
@@ -897,6 +924,10 @@ void Map::__redrawMap()
   __drawGrid();
   __drawMap();
   __drawFlight();
+  __drawPlannedTask();
+  // Linie zum aktuellen Punkt löschen
+  prePlanPos.setX(-999);
+  prePlanPos.setY(-999);  
 
   __showLayer();
 
