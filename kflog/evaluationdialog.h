@@ -18,7 +18,7 @@
 #ifndef EVALUATIONDIALOG_H
 #define EVALUATIONDIALOG_H
 
-#include <qdialog.h>
+#include <kdockwidget.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
@@ -36,13 +36,13 @@ class Flight;
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
-class EvaluationDialog : public QDialog
+class EvaluationDialog : public QWidget
 {
   Q_OBJECT
 
  public:
   /** */
-  EvaluationDialog(QWidget *parent,bool staysOnTop=true);
+  EvaluationDialog(QWidget *parent, const char name[]="");
   /** */
   ~EvaluationDialog();
   /**

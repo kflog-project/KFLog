@@ -755,7 +755,7 @@ bool Flight::optimizeTaskOLC(Map* map)
     return false;
   }
 
-  unsigned int idList[7];
+  unsigned int idList[LEGS+3];
   double points;
   double distance = wizard->optimizationResult(idList,&points);
 
@@ -766,19 +766,23 @@ bool Flight::optimizeTaskOLC(Map* map)
 
       APPEND_WAYPOINT(0, 0, i18n("Take-Off"))
       APPEND_WAYPOINT(idList[0], dist(route.at(idList[0]), route.at(0)),
+          i18n("Begin of Soaring"))
+      APPEND_WAYPOINT(idList[1], dist(route.at(idList[1]), route.at(1)),
           i18n("Begin of Task"))
-      APPEND_WAYPOINT(idList[1], dist(route.at(idList[1]),
-          route.at(idList[0])), i18n("Optimize 1"))
       APPEND_WAYPOINT(idList[2], dist(route.at(idList[2]),
-          route.at(idList[1])), i18n("Optimize 2"))
+          route.at(idList[1])), i18n("Optimize 1"))
       APPEND_WAYPOINT(idList[3], dist(route.at(idList[3]),
-          route.at(idList[2])), i18n("Optimize 3"))
+          route.at(idList[2])), i18n("Optimize 2"))
       APPEND_WAYPOINT(idList[4], dist(route.at(idList[4]),
-          route.at(idList[3])), i18n("Optimize 4"))
+          route.at(idList[3])), i18n("Optimize 3"))
       APPEND_WAYPOINT(idList[5], dist(route.at(idList[5]),
-          route.at(idList[4])), i18n("Optimize 5"))
+          route.at(idList[4])), i18n("Optimize 4"))
       APPEND_WAYPOINT(idList[6], dist(route.at(idList[6]),
-          route.at(idList[5])), i18n("End of Task"))
+          route.at(idList[5])), i18n("Optimize 5"))
+      APPEND_WAYPOINT(idList[7], dist(route.at(idList[7]),
+          route.at(idList[6])), i18n("End of Task"))
+      APPEND_WAYPOINT(idList[8], dist(route.at(idList[8]),
+          route.at(idList[7])), i18n("End of Soaring"))
       APPEND_WAYPOINT(0, 0, i18n("Landing"))
 
       optimizedTask.setWaypointList(wpL);

@@ -47,16 +47,19 @@ Optimization::Optimization(unsigned int firstPoint, unsigned int lastPoint, QPtr
   optimized=false;
   progress = progressBar;
   stopit=false;
+  start=0;
+  stop=original_route.count();
 }
 
 Optimization::~Optimization(){
 }
 
-double Optimization::optimizationResult(unsigned int retList[LEGS+1], double *retPoints){
+double Optimization::optimizationResult(unsigned int retList[LEGS+3], double *retPoints){
   if (!optimized)
     return -1.0;
-  for (int i=0;i<=LEGS;i++){
-//    retList[i]=pointList[i]+start;
+  int i=0;
+  retList[i++]=start;
+  for (i;i<=LEGS+1;i++){
     retList[i]=original_route.find(route.at(pointList[i]));
     if (pointList[i]>original_route.count()){
       qWarning(QString("##k:%1\tstart:%2\t\tpointList[k]:%3").arg(i).arg(start).arg(pointList[i]));
@@ -64,12 +67,14 @@ double Optimization::optimizationResult(unsigned int retList[LEGS+1], double *re
       return -1.0;
     }
   }
+  retList[i]=stop;
   *retPoints=points;
   return distance;
 }
 
 void Optimization::setTimes(unsigned int start_int, unsigned int stop_int){
   start=start_int;
+  stop=stop_int;
   // delete actual route
   while ( route.count() != 0 ) {
     route.removeLast();
@@ -89,7 +94,6 @@ void Optimization::enableRun(){
 }
 
 void Optimization::run(){
- /*
   double *L;                        // length values
   unsigned int *w;                  // waypoints
   double length;                    // solution length
@@ -108,7 +112,7 @@ void Optimization::run(){
   
   // allocate memory
   L=(double *) malloc((n+1)*(LEGS+1)*sizeof(double));
-  w=(uint *) malloc((n+1)*(LEGS+1)*sizeof(uint));
+  w=(unsigned int *) malloc((n+1)*(LEGS+1)*sizeof(unsigned int));
   
   for (i=0;i<=n-1;i++){
     L[i+0*n]=0;
@@ -167,5 +171,5 @@ void Optimization::run(){
 
     if(progress)
       progress->setProgress(0);
-    optimized=true;*/
+    optimized=true;
 }

@@ -844,7 +844,12 @@ void KFLogApp::slotSelectFlightData(int id)
 
 void KFLogApp::slotEvaluateFlight()
 {
-  EvaluationDialog* evaluation =  new EvaluationDialog(this);
+  KDialog* dialog = new KDialog(this,"Evaluation Dialog");
+  EvaluationDialog* evaluation =  new EvaluationDialog(dialog);
+  QBoxLayout * l = new QVBoxLayout( dialog );
+  l->addWidget(evaluation);
+  
+//  EvaluationDialog* evaluation =  new EvaluationDialog(this);
   extern MapContents _globalMapContents;
   connect(&_globalMapContents, SIGNAL(currentFlightChanged()), evaluation,
       SLOT(slotShowFlightData()));
@@ -852,6 +857,8 @@ void KFLogApp::slotEvaluateFlight()
       SLOT(slotDrawCursor(QPoint, QPoint)));
 
 //  evaluation->show();
+  dialog->show();
+  dialog->resize(640,480);
 }
 
 void KFLogApp::slotCenterTo()

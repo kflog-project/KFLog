@@ -261,8 +261,8 @@ void EvaluationFrame::resizeEvent(QResizeEvent* event)
 {
   warning("EvaluationFrame::resizeEvent");
 
-  QFrame::resizeEvent(event);
   slotShowGraph();
+  QFrame::resizeEvent(event);
 }
 
 unsigned int EvaluationFrame::getTaskStart(){

@@ -1,7 +1,7 @@
 /****************************************************************************
-** Form interface generated from reading ui file './optimizationwizard.ui'
+** Form interface generated from reading ui file 'optimizationwizard.ui'
 **
-** Created: Don Mär 6 14:31:21 2003
+** Created: Sam Mär 8 12:18:37 2003
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -11,6 +11,7 @@
 #define OLC_OPTIMIZATION_H
 
 #include <qvariant.h>
+#include <qpixmap.h>
 #include <qwizard.h>
 #include "evaluationdialog.h"
 #include "flight.h"
@@ -20,9 +21,11 @@
 class QVBoxLayout;
 class QHBoxLayout;
 class QGridLayout;
+class EvaluationDialog;
 class KProgress;
 class KPushButton;
 class KTextBrowser;
+class QFrame;
 class QGroupBox;
 class QLabel;
 class QWidget;
@@ -37,7 +40,7 @@ public:
     ~OptimizationWizard();
 
     QWidget* page;
-    KPushButton* kPushButton2;
+    EvaluationDialog* evaluation;
     QGroupBox* groupBox1;
     QLabel* lblStartHeight;
     QLabel* lblStopTime;
@@ -48,15 +51,16 @@ public:
     QLabel* textLabel1_2_2_2;
     QLabel* lblStopHeight;
     QLabel* lblDiffTime;
+    KPushButton* kPushButton2;
     QWidget* page_2;
+    KTextBrowser* kTextBrowser1;
+    QFrame* frame3;
     KProgress* progress;
     KPushButton* btnStart;
     KPushButton* btnStop;
-    QWidget* page_3;
-    KTextBrowser* kTextBrowser1;
 
     virtual void init();
-    virtual double optimizationResult( unsigned int pointList[LEGS+1], double * points );
+    virtual double optimizationResult( unsigned int pointList[LEGS+3], double * points );
 
 public slots:
     virtual void slotStartOptimization();
@@ -66,16 +70,25 @@ public slots:
 
 protected:
     Flight* flight;
-    EvaluationDialog* evaluation;
     QPtrList<flightPoint> route;
     Optimization* optimization;
 
+    QVBoxLayout* pageLayout;
+    QVBoxLayout* layout14;
+    QHBoxLayout* layout12;
     QGridLayout* layout3;
+    QVBoxLayout* pageLayout_2;
+    QVBoxLayout* layout13;
+    QHBoxLayout* layout12_2;
+    QVBoxLayout* frame3Layout;
     QVBoxLayout* layout5;
     QHBoxLayout* layout2;
 
 protected slots:
     virtual void languageChange();
+private:
+    QPixmap image0;
+
 };
 
 #endif // OLC_OPTIMIZATION_H

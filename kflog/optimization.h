@@ -43,7 +43,7 @@ public:
 /**
   returns the indizes, the points and the distance of the optimized task
   */
-  double optimizationResult(unsigned int pointList[LEGS+1],double *points);
+  double optimizationResult(unsigned int pointList[LEGS+3],double *points);
 public slots:
   void run();
   void setTimes(unsigned int start_int, unsigned int stop_int);
@@ -56,7 +56,7 @@ private:
   double distance,points;
   unsigned int pointList[LEGS+1];   // solution points
   unsigned int start;    // first
-//  unsigned int stop;     // last valid point
+  unsigned int stop;     // last valid point
   bool  optimized;
   bool  stopit;
   KProgress* progress;

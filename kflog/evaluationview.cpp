@@ -765,4 +765,5 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
 void EvaluationView::resizeEvent(QResizeEvent* event)
 {
   warning("EvaluationView::Resize Event");
+  QWidget::resizeEvent(event);
 }

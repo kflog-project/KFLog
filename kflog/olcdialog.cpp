@@ -476,40 +476,39 @@ void OLCDialog::slotSend()
       link += "&s4=" + printTime(currentFlight->getLandTime(), true);
       break;
   case (FlightTask::OLC2003) :
-      // the beginning of the task should allways be the second point ...
       link += "&s0=" + printTime(t.getWPList().at(1)->sectorFAI,true);
-      POS_STRINGS(t.getWPList().at(1)->origP)
+      POS_STRINGS(t.getWPList().at(2)->origP)
       link += "&w0bh=" + latH + "&w0bg=" + latG + "&w0bm=" + latM + "&w0bmd=" + latMD
       + "&w0lh=" + lonH + "&w0lg=" + lonG + "&w0lm=" + lonM + "&w0lmd=" + lonMD;
 
       qWarning(latMD);
       
       // we have 5 turnpoints
-      POS_STRINGS(t.getWPList().at(2)->origP)
+      POS_STRINGS(t.getWPList().at(3)->origP)
       link += "&w1bh=" + latH + "&w1bg=" + latG + "&w1bm=" + latM + "&w1bmd=" + latMD
           + "&w1lh=" + lonH + "&w1lg=" + lonG + "&w1lm=" + lonM + "&w1lmd=" + lonMD;
 
-      POS_STRINGS(t.getWPList().at(3)->origP)
+      POS_STRINGS(t.getWPList().at(4)->origP)
       link += "&w2bh=" + latH + "&w2bg=" + latG + "&w2bm=" + latM + "&w2bmd=" + latMD
           + "&w2lh=" + lonH + "&w2lg=" + lonG + "&w2lm=" + lonM + "&w2lmd=" + lonMD;
 
-      POS_STRINGS(t.getWPList().at(4)->origP)
+      POS_STRINGS(t.getWPList().at(5)->origP)
       link += "&w3bh=" + latH + "&w3bg=" + latG + "&w3bm=" + latM + "&w3bmd=" + latMD
           + "&w3lh=" + lonH + "&w3lg=" + lonG + "&w3lm=" + lonM + "&w3lmd=" + lonMD;
 
-      POS_STRINGS(t.getWPList().at(5)->origP)
+      POS_STRINGS(t.getWPList().at(6)->origP)
       link += "&w4bh=" + latH + "&w4bg=" + latG + "&w4bm=" + latM + "&w4bmd=" + latMD
           + "&w4lh=" + lonH + "&w4lg=" + lonG + "&w4lm=" + lonM + "&w4lmd=" + lonMD;
 
-      POS_STRINGS(t.getWPList().at(6)->origP)
+      POS_STRINGS(t.getWPList().at(7)->origP)
       link += "&w5bh=" + latH + "&w5bg=" + latG + "&w5bm=" + latM + "&w5bmd=" + latMD
           + "&w5lh=" + lonH + "&w5lg=" + lonG + "&w5lm=" + lonM + "&w5lmd=" + lonMD;
 
-      POS_STRINGS(t.getWPList().at(7)->origP)
+      POS_STRINGS(t.getWPList().at(8)->origP)
       link += "&w6bh=" + latH + "&w6bg=" + latG + "&w6bm=" + latM + "&w6bmd=" + latMD
           + "&w6lh=" + lonH + "&w6lg=" + lonG + "&w6lm=" + lonM + "&w6lmd=" + lonMD;
 
-      link += "&s6=" + printTime(t.getWPList().at(7)->sectorFAI,true);
+      link += "&s6=" + printTime(t.getWPList().at(9)->sectorFAI,true);
       break;
   default :
       // the beginning of the task should allways be the second point ...
