@@ -71,6 +71,8 @@ ObjectTree::ObjectTree(QWidget *parent, const char *name ) : QListView(parent,na
    
   connect(this, SIGNAL(selectionChanged(QListViewItem*)),SLOT(slotSelected(QListViewItem*)));
   connect(this, SIGNAL(rightButtonPressed(QListViewItem *, const QPoint &, int)), SLOT(showTaskPopup(QListViewItem *, const QPoint &, int)));
+  
+  currentFlightElement=0;
 }
 
 ObjectTree::~ObjectTree(){
