@@ -47,7 +47,7 @@ class SinglePoint;
  * @author André Somers
  * @version $Id$
  */
- 
+
 class isoListEntry {
   public:
     /**
@@ -60,7 +60,7 @@ class isoListEntry {
      * Destructor
      */
     ~isoListEntry();
-  
+
     QRegion* region;
     int height;
 };
@@ -179,7 +179,7 @@ class MapContents : public QObject
     /**
      * @returns the wpList
      */
-	QPtrList<Waypoint>* getWaypointList();
+    QPtrList<Waypoint>* getWaypointList();
     /**
      * Searches the first point of the current flight, which distance to the
      * mousecursor is less than 30 pixel. If no point is found, -1 is
@@ -204,31 +204,14 @@ class MapContents : public QObject
      *                 is one of N, S, E, W.
      */
     static int degreeToNum(QString degree);
-  /** No descriptions */
-  bool importFlightGearFile(QFile& flightgearFile);
-  /** Imports a file downloaded with Gardown in DOS  */
-  bool importGardownFile(QFile& gardownFile);
-  /** read a task file and append all tasks to flight list
-switch to first task in file */
-  bool loadTask(QFile& path);
-  /** generate new task name */
-  QString genTaskName();
-    /**
-		 * Get the contents of the next FlightPoint after number 'index'
-	   */
-//    int searchGetNextFlightPoint(int index, flightPoint & fP);
-    /**
-		 * Get the contents of the previous FlightPoint before number 'index'
-	   */
-//    int searchGetPrevFlightPoint(int index, flightPoint & fP);
-		/**
-		 * Get the contents of the next FlightPoint 'step' indexes after number 'index'
-		 */
-//  	int searchStepNextFlightPoint(int index, flightPoint & fP, int step);
-  	/**
-		 * Get the contents of the previous FlightPoint 'step' indexes before number 'index'
-		 */
-//  	int searchStepPrevFlightPoint(int index,  flightPoint & fP, int step);
+    /** No descriptions */
+    bool importFlightGearFile(QFile& flightgearFile);
+    /** Imports a file downloaded with Gardown in DOS  */
+    bool importGardownFile(QFile& gardownFile);
+    /** read a task file and append all tasks to flight list switch to first task in file */
+    bool loadTask(QFile& path);
+    /** generate new task name */
+    QString genTaskName();
     /**
      * The index of Mapelement-Lists.
      */
@@ -258,13 +241,13 @@ switch to first task in file */
     void slotEditFlightGroup();
     /** */
     void slotReloadMapData();
-
     /*
     *  automatic download has finished
     */
     void slotDownloadFinished();
-  /** Re-projects any flights and tasks that may be loaded. */
-  void reProject();
+    /** Re-projects any flights and tasks that may be loaded. */
+    void reProject();
+
   signals:
     /**
      * emitted during maploading to display a message f.e. in the
@@ -288,11 +271,9 @@ switch to first task in file */
      * do not exists.
      */
     void errorOnMapLoading();
-
-    /*
-      *
-      * Activates the graphical planning
-      */
+    /**
+     * Activates the graphical planning
+     */
     void activatePlanning();
 
     /**
@@ -302,7 +283,7 @@ switch to first task in file */
     /**
      * Emitted if a new flight was added to the flightlist.
      */
-    void newFlightAdded(Flight *);;
+    void newFlightAdded(Flight *);
     /**
      * Emitted if the current flight has changed.
      */
@@ -311,7 +292,7 @@ switch to first task in file */
      * Emitted if a flight (task/group) is about to be closed
      */
     void closingFlight(BaseFlightElement*);
-    
+
   private:
 
     // Short structure to handle the optional entries in an igc file
@@ -320,7 +301,10 @@ switch to first task in file */
         int begin, length;
         char mnemonic[4];
     };
-
+    /**
+     * Displays a messagebox and asks, wether the mapfiles shall be downloaded.
+     */
+    void __askForDownload();
     /**
      * Reads a binary map file containing airfields.
      *
@@ -441,9 +425,9 @@ switch to first task in file */
      * both subclasses of BaseFlightElement.
      */
     QPtrList<BaseFlightElement> flightList;
-    /*
-	   * This list is reset every time the current WaypointCatalog is changed.
-	   */
+    /**
+     * This list is reset every time the current WaypointCatalog is changed.
+     */
     QPtrList<Waypoint> wpList;
     /**
      * List of all map-section. Contains a "1" for all loaded section-files,
@@ -456,30 +440,28 @@ switch to first task in file */
     static const int isoLines[];
     /** */
     QString mapDir;
-
     /**
      * Used to determine, if we must display messageboxes on missing
      * map-directories.
      */
     int isFirstLoad;
-
-
     /**
      * List of all drawn isohypses.
      */
     QPtrList<isoListEntry> regIsoLines;
-
     /**
      * downloads File from www.kflog.org, optionally waits until finished (blocking operation)
      */
     void __downloadFile(QString fileName, QString destString, bool wait=false);
+    /** */
     DownloadList* downloadList;
-private slots: // Private slots
-  /**
-   * Connected to the signal currentFlightChanged, and used to resend
-   * the signal with the current flight as an argument.
-   */
-  void slotReSendFlightChanged();
+
+  private slots: // Private slots
+    /**
+     * Connected to the signal currentFlightChanged, and used to resend
+     * the signal with the current flight as an argument.
+     */
+    void slotReSendFlightChanged();
 };
 
 enum AutoDownloadType {ADT_NotSet = 0, Automatic, Inhibited};

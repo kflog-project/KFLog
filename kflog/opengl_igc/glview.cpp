@@ -45,8 +45,8 @@ GLView::GLView( QWidget* parent, const char* name )
     // These values should be stored KConfig
     xRot = -45.0;
     yRot = 0.0;
-    zRot = -30.0;		        // default object rotation
-    scale = 1.25;			      // default object scale
+    zRot = -30.0;                        // default object rotation
+    scale = 1.25;                              // default object scale
     heightExaggerate=2.0;   //  exaggerates the heights
 
     // Initializations
@@ -78,13 +78,13 @@ void GLView::addShadow(Flight* flight)
 
     if (flight){
       length=flight->getRouteLength();
-      extern MapMatrix _globalMapMatrix;
+//      extern MapMatrix _globalMapMatrix;
       QPoint point;
       list = glGenLists( 1 );
 
       glNewList( list, GL_COMPILE );
 
-      qglColor( gray );		      // Shorthand for glColor3f or glIndex
+      qglColor( gray );                      // Shorthand for glColor3f or glIndex
       glLineWidth( 2.0 );
 
       flightPoint fPoint;
@@ -97,7 +97,7 @@ void GLView::addShadow(Flight* flight)
       minx=actx; maxx=actx; miny=acty; maxy=acty; minz=actz; maxz=actz;
 
       glBegin( GL_LINE_LOOP );
-      for (int i=1;i<length;i++){
+      for (unsigned int i=1;i<length;i++){
         fPoint=flight->getPoint(i);
         actx=fPoint.projP.x();
         acty=-fPoint.projP.y();
@@ -119,20 +119,20 @@ void GLView::addFlight(Flight* flight)
       length=flight->getRouteLength();
       qWarning(QString("Adding %1 points").arg(length));
 
-      extern MapMatrix _globalMapMatrix;
+//      extern MapMatrix _globalMapMatrix;
       extern MapConfig _globalMapConfig;
-      
+
       QPoint point;
-        
+
       list = glGenLists( 1 );
 
       glNewList( list, GL_COMPILE );
 
-      qglColor( blue );		      // Shorthand for glColor3f or glIndex
+      qglColor( blue );                      // Shorthand for glColor3f or glIndex
 
       glLineWidth( 2.0 );
 
-      
+
       flightPoint fPoint;
       int actx, acty, actz;
       fPoint=flight->getPoint(0);
@@ -143,12 +143,12 @@ void GLView::addFlight(Flight* flight)
       minx=actx; maxx=actx; miny=acty; maxy=acty; minz=actz; maxz=actz;
 
       glBegin( GL_LINE_LOOP );
-      for (int i=1;i<length;i++){
+      for (unsigned int i=1;i<length;i++){
         fPoint=flight->getPoint(i);
         actx=fPoint.projP.x();
         acty=-fPoint.projP.y();
         actz=fPoint.height;
-        
+
         QPen drawP = _globalMapConfig.getDrawPen(&fPoint,true);
         qglColor(drawP.color());
         glVertex3i(  actx,  acty, actz );
@@ -198,8 +198,8 @@ void GLView::paintGL()
     glTranslatef( 0.0, 0.0, -10.0 );
 
     // rotate around x-, y- and z-axis
-    glRotatef( xRot, 1.0, 0.0, 0.0 ); 
-    glRotatef( yRot, 0.0, 1.0, 0.0 ); 
+    glRotatef( xRot, 1.0, 0.0, 0.0 );
+    glRotatef( yRot, 0.0, 1.0, 0.0 );
     glRotatef( zRot, 0.0, 0.0, 1.0 );
 
     // scale objects
@@ -225,7 +225,7 @@ void GLView::paintGL()
 void GLView::initializeGL()
 {
     qWarning("GLBox::initializeGL()");
-//    qglClearColor( black ); 		// Let OpenGL clear to black
+//    qglClearColor( black );                 // Let OpenGL clear to black
     qglClearColor(getBackgroundColor());
     glShadeModel( GL_FLAT );    // shading model
 }
@@ -252,7 +252,7 @@ void GLView::resizeGL( int w, int h )
 */
 
 GLuint GLView::makeBoxObject()
-{	
+{
     GLuint list;                // OpenGL objects are referred to as unsigned integers
 
     list = glGenLists( 1 );     // generate new list (empty)
@@ -260,7 +260,7 @@ GLuint GLView::makeBoxObject()
     glNewList( list, GL_COMPILE );  // set mode = compile (=faster in rendering, but
                                     // no changes allowed
 
-    qglColor( white );		      // Shorthand for glColor3f or glIndex
+    qglColor( white );                      // Shorthand for glColor3f or glIndex
 
     glLineWidth( 2.0 );
 

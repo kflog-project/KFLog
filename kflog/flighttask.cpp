@@ -35,8 +35,13 @@
 #define CUR_ID loop
 #define NEXT_ID loop + 1
 
+#ifndef MAX
 #define MAX(a,b)   ( ( a > b ) ? a : b )
+#endif
+
+#ifndef MIN
 #define MIN(a,b)   ( ( a < b ) ? a : b )
+#endif
 
 /* Die Einstellungen können mal in die Voreinstellungsdatei wandern ... */
 #define FAI_POINT 2.0
@@ -53,7 +58,7 @@ FlightTask::FlightTask(const QString& fName)
 {
   warning("FlightTask(QString fName)");
 
-  FAISectList.setAutoDelete(true); 
+  FAISectList.setAutoDelete(true);
 }
 
 
@@ -66,7 +71,7 @@ FlightTask::FlightTask(const QPtrList<Waypoint>& wpL, bool isO, const QString& f
 {
   warning("FlightTask(QPtrList<wayPoint> wpL, bool isO, QString fName)");
   setWaypointList(wpL);
-  FAISectList.setAutoDelete(true); 
+  FAISectList.setAutoDelete(true);
 }
 
 FlightTask::~FlightTask()
@@ -542,7 +547,7 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
     }
 
   // Area based planning
-  if (getPlanningType() == FAIArea && wpList.count() > 3) {    
+  if (getPlanningType() == FAIArea && wpList.count() > 3) {
     for (loop = 0; loop < FAISectList.count(); loop++) {
       sect = FAISectList.at(loop);
       sect->pos->drawMapElement(targetPainter, maskPainter);
@@ -577,7 +582,7 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
         bBoxTask.setBottom(MIN(tempP.y(), bBoxTask.bottom()));
       }
     }
-  }    
+  }
 }
 
 void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
@@ -1128,7 +1133,7 @@ QString FlightTask::getPointsString()
 
   if (flightType == OLC2003)
     pointString.sprintf("%.2f", olcPoints);
-  else{    
+  else{
     int points1 = (int) taskPoints;
     if((int) ( (taskPoints - points1) * 10 ) > 5) points1++;
 
@@ -1228,7 +1233,7 @@ void FlightTask::__setDMSTPoints()
 void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX, double dY)
 {
   double w1;
-  unsigned int loop, i;
+  unsigned int loop;
   struct faiAreaSector *sect;
   QPoint tempP;
   QString label;
@@ -1427,7 +1432,7 @@ struct faiRange FlightTask::getFAIDistance(double leg)
   r.maxLength28 = QMIN(leg + leg / 28.0 * 72.0, 500.0); // maximal 500
   r.minLength25 = QMAX(leg + leg / 45.0 * 55.0, 500.0); // minimal 500
   r.maxLength25 = QMAX(4.0 * leg, 500.0);               // minimal 500
- 
+
   return r;
 }
 
@@ -1471,7 +1476,7 @@ void FlightTask::calcFAIArea()
     if (getPlanningDirection() & rightOfRoute) {
       sides.push_back(true);
     }
-    
+
     for (i = 0; i < sides.size(); i++) {
       pointArray.resize(0);
       isRightOfRoute = sides[i];
@@ -1579,7 +1584,7 @@ void FlightTask::calcFAISector(double leg, double legBearing, double from, doubl
   double w;
   unsigned int i;
   WGSPoint p;
-  
+
   minDist = dist * from / 100.0;
   maxDist = dist * to / 100.0;
 
@@ -1599,13 +1604,13 @@ void FlightTask::calcFAISector(double leg, double legBearing, double from, doubl
       p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, isRightOfRoute ? legBearing - w : legBearing + w, b));
       pA->putPoints(i++, 1, p.lat(), p.lon());
     }
-    
+
     if (upwards) {
       percent += step;
     }
     else {
       percent -= step;
-    }    
+    }
   }
 }
 
@@ -1622,7 +1627,7 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
   WGSPoint p;
 
   i = pA->size();
-  
+
   if (less500) {
     minPercent = 0.28;
     maxPercent = 0.44;
@@ -1649,7 +1654,7 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
       else {
         w = angle(leg, c, b);
       }
-      p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, isRightOfRoute ? legBearing - w : legBearing + w, 
+      p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, isRightOfRoute ? legBearing - w : legBearing + w,
                                                         upwards ? b : c));
       pA->putPoints(i++, 1, p.lat(), p.lon());
     }
@@ -1661,7 +1666,7 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
       dist -= step;
     }
   }
-}  
+}
 /** set new task name */
 void FlightTask::setTaskName(const QString& fName)
 {
@@ -1676,7 +1681,7 @@ QString FlightTask::getPlanningTypeString()
 
 /** re-projects the points along the route to make sure the route is drawn correctly if the projection changes. */
 void FlightTask::reProject(){
-  QPtrListIterator<flightPoint> it(flightRoute); 
+  QPtrListIterator<flightPoint> it(flightRoute);
   extern MapMatrix _globalMapMatrix;
 
   for ( ; it.current(); ++it ) {
@@ -1684,7 +1689,7 @@ void FlightTask::reProject(){
       fp->projP = _globalMapMatrix.wgsToMap(fp->origP);
   }
 
-  QPtrListIterator<Waypoint> it2(wpList); 
+  QPtrListIterator<Waypoint> it2(wpList);
   extern MapMatrix _globalMapMatrix;
 
   for ( ; it2.current(); ++it2 ) {

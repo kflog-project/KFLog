@@ -174,7 +174,7 @@ class MapConfig : public QObject
     void slotSetPrintMatrixValues(int index);
     bool useSmallIcons();
     bool drawWpLabels();
-    
+
   signals:
     /**
      * Emitted each time, the config has changed.

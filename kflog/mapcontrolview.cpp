@@ -225,8 +225,8 @@ void MapControlView::slotShowScaleChange(int value)
   currentScaleValue->display(__setScaleValue(value));
 
   if(currentScaleValue->value() > _globalMapMatrix.getScale(MapMatrix::UpperLimit))
-      currentScaleSlider->setValue(_globalMapMatrix.getScale(MapMatrix::UpperLimit));
+      currentScaleSlider->setValue((int)_globalMapMatrix.getScale(MapMatrix::UpperLimit));
 
   if(currentScaleValue->value() < _globalMapMatrix.getScale(MapMatrix::LowerLimit))
-      currentScaleSlider->setValue(_globalMapMatrix.getScale(MapMatrix::LowerLimit));
+      currentScaleSlider->setValue((int)_globalMapMatrix.getScale(MapMatrix::LowerLimit));
 }

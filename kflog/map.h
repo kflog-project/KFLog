@@ -38,7 +38,7 @@
  * @version $Id$
  */
 class Flight;
- 
+
 class Map : public QWidget
 {
   Q_OBJECT
@@ -366,9 +366,9 @@ class Map : public QWidget
     int idMpAddTaskPoint;
     int idMpZoomIn;
     int idMpZoomOut;
-    
-     
-    
+        /** */
+    bool isDrawing;
+
   public: // Public attributes
 protected slots: // Protected slots
     /**
@@ -412,7 +412,7 @@ protected: // Protected attributes
     //
     QTimer * mapInfoTimer;
     QPoint mapInfoTimerStartpoint;
-    
+
 };
 
 #endif

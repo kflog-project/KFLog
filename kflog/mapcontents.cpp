@@ -11,7 +11,6 @@
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
 **
-
 **
 ***********************************************************************/
 
@@ -233,7 +232,7 @@ void MapContents::closeFlight()
 
       flightList.remove(f);
       if (flightList.current() == 0) flightList.last();
-  
+
       emit currentFlightChanged();
     }
 }
@@ -548,22 +547,24 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
   KConfig* config = KGlobal::config();
   config->setGroup("General Options");
   if (config->readNumEntry("Automatic Map Download")==Inhibited)
-    return;
+      return;
 
   KURL src = KURL(config->readPathEntry("Mapserver","http://maproom.kflog.org/data/"));
   KURL dest = KURL(destString);
   src.addPath(fileName);
   dest.addPath(fileName);
 
-  if (wait){
-    KIO::NetAccess::copy(src, dest); // waits until file is transmitted
-    QString errorString = KIO::NetAccess::lastErrorString();
-    if (errorString!="")
-      KMessageBox::error(0,errorString);
-  }
-  else{
-    downloadList->copyKURL(&src,&dest);
-  }
+  if (wait)
+    {
+      KIO::NetAccess::copy(src, dest); // waits until file is transmitted
+      QString errorString = KIO::NetAccess::lastErrorString();
+      if (errorString!="")
+          KMessageBox::error(0,errorString);
+    }
+  else
+    {
+      downloadList->copyKURL(&src,&dest);
+    }
 }
 
 bool MapContents::__readTerrainFile(const int fileSecID,
@@ -638,7 +639,7 @@ bool MapContents::__readTerrainFile(const int fileSecID,
       return false;
     }
   in >> createDateTime;
-  
+
   while(!in.eof())
     {
       int sort_temp;
@@ -671,7 +672,7 @@ bool MapContents::__readTerrainFile(const int fileSecID,
       // We must ignore it, when sort is more than 3 or less than 0!
 
 //      valley = 0;
-      
+
       if(sort >= 0 && sort <= 3)
         {
           for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
@@ -875,7 +876,7 @@ bool MapContents::__readAirspaceFile(const char* pathName)
 {
   extern const MapMatrix _globalMapMatrix;
   //warning("loading airspace file: %s", (const char*)pathName);
-  
+
   if(pathName == 0)
       // Data does not exist...
       return false;
@@ -1719,9 +1720,57 @@ bool MapContents::loadFlight(QFile& igcFile)
       flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
 
   emit newFlightAdded((Flight*)flightList.last());
-  
+
   emit currentFlightChanged();
   return true;
+}
+
+void MapContents::__askForDownload()
+{
+  KConfig* config = KGlobal::config();
+  config->setGroup("General Options");
+  int ret=0;
+
+  switch (config->readNumEntry("Automatic Map Download",ADT_NotSet))
+    {
+      case (ADT_NotSet):
+        config->writeEntry("Automatic Map Download",Inhibited,false); //this is temporary, will be overwritten later
+        ret = KMessageBox::questionYesNoCancel(0,i18n("<qt>There are no map-files in the directory<br><b>%1"
+            "</b><br>yet. Do you want to download the data automatically?<br>"
+            "(You need to have write permissions. If you want to change the directory, "
+            "press \"Cancel\" and change it in the Settings menu.)</qt>").arg(mapDir));
+        switch (ret)
+          {
+            case KMessageBox::Yes:
+              config->writeEntry("Automatic Map Download",Automatic,false); //this is temporary, will be overwritten later
+              __downloadFile("G_03699.kfl",mapDir,true);
+              if(QFile(mapDir+"/G_03699.kfl").exists())
+                {
+                  config->writeEntry("Automatic Map Download",Automatic);
+                }
+              else
+                {
+                  KMessageBox::information(0,
+                    i18n("<qt>The directory <b>%1</b> is either not writeable<br>"
+                    "or the server <b>%2</b> is not reachable.<br>"
+                    "Please specify the correct path in the Settings dialog and check the internet connection!<br>"
+                    " Restart KFLog afterwards.</qt>").arg(mapDir).arg (config->readPathEntry("Mapserver","http://maproom.kflog.org/data/")));
+                }
+            break;
+          case KMessageBox::No:
+            config->writeEntry("Automatic Map Download",Inhibited);
+            break;
+          }
+        break;
+      case (Inhibited):
+        KMessageBox::information(0,
+            i18n("<qt>The directory for the map-files is empty.<br>"
+                  "To download the files, please visit our homepage:<br>"
+                  "<b>http://maproom.kflog.org/</b></qt>"), i18n("directory empty"), "NoMapFiles");
+        break;
+      case (Automatic):
+        break;
+    }
 }
 
 void MapContents::proofeSection(bool isPrint)
@@ -1750,15 +1799,14 @@ void MapContents::proofeSection(bool isPrint)
   mapDir = config->readEntry("DefaultMapDirectory",
       globalDirs->findResource("data", "kflog/mapdata/"));
 
-  // Checking for the MapFiles    
+  // Checking for the MapFiles
   if(mapDir.isNull() && !(isFirstLoad & MAP_LOADED))
     {
-      isFirstLoad |= MAP_LOADED;
       /* The mapdirectory does not exist. Ask the user */
       KMessageBox::error(0,
         "<qt>" +
         i18n("The directory for the map-files does not exist.") + "<br>" +
-        i18n("Please select the directory where the files are located.") +
+        i18n("Please select the directory in which the files are located.") +
         "</qt>",
         i18n("Directory not found"));
 
@@ -1766,53 +1814,17 @@ void MapContents::proofeSection(bool isPrint)
 
       config->writeEntry("DefaultMapDirectory", mapDir);
 
+      isFirstLoad |= MAP_LOADED;
+
+      if(QDir(mapDir).entryList("*.kfl").isEmpty())
+          __askForDownload();
+
       emit errorOnMapLoading();
     }
   else if(QDir(mapDir).entryList("*.kfl").isEmpty())
     {
       emit errorOnMapLoading();
-      KConfig* config = KGlobal::config();
-      config->setGroup("General Options");
-      int ret=0;
-      switch (config->readNumEntry("Automatic Map Download",ADT_NotSet)){
-        case (ADT_NotSet):
-          config->writeEntry("Automatic Map Download",Inhibited,false); //this is temporary, will be overwritten later
-          ret = KMessageBox::questionYesNoCancel(0,i18n("<qt>There are no map-files in the directory<br><b>%1"
-              "</b></br>yet. Do you want to download the data automatically?<br>"
-              "(You need to have write permissions. If you want to change the directory,"
-              "press \"Cancel\" and change it in the Settings menu.)</qt>").arg(mapDir));
-          switch (ret){
-            case KMessageBox::Yes:
-              config->writeEntry("Automatic Map Download",Automatic,false); //this is temporary, will be overwritten later
-              __downloadFile("G_03699.kfl",mapDir,true);
-              if(QFile(mapDir+"/G_03699.kfl").exists()){
-                config->writeEntry("Automatic Map Download",Automatic);
-//                KMessageBox::information(0,
-//                  i18n("The automatic data download feature is available when "
-//                  "a flight is loaded. Please open a flight."));
-              }
-              else{
-                KMessageBox::information(0,
-                  i18n("<qt>The directory <b>%1</b> is either not writeable<br>"
-                  "or the server <b>%2</b> is not reachable.<br>"
-                  "Please specify the correct path in the Settings dialog and check the internet connection!<br>"
-                  " Restart KFLog afterwards.</qt>").arg(mapDir).arg (config->readPathEntry("Mapserver","http://maproom.kflog.org/data/")));
-              }
-              break;
-            case KMessageBox::No:
-              config->writeEntry("Automatic Map Download",Inhibited);
-              break;
-            }
-          break;
-        case (Inhibited):
-          KMessageBox::information(0,
-            i18n("<qt>The directory for the map-files is empty.<br>"
-                 "To download the files, please visit our homepage:<br>"
-                 "<b>http://maproom.kflog.org/</b></qt>"), i18n("directory empty"), "NoMapFiles");
-          break;
-        case (Automatic):
-          break;
-      }
+      __askForDownload();
     }
   else
     {
@@ -1830,20 +1842,16 @@ void MapContents::proofeSection(bool isPrint)
                   // Nun müssen die korrekten Dateien geladen werden ...
                   __readTerrainFile(secID, FILE_TYPE_GROUND);
                   __readTerrainFile(secID, FILE_TYPE_TERRAIN);
-
-//cout << row << " / " << col << endl;
                   __readBinaryFile(secID, FILE_TYPE_MAP);
-
-
-// cout << "secID " << secID << endl;
                   sectionArray.setBit( secID, true );
                 }
             }
         }
     }
 
-// Checking for Airspaces
-    if (airspaceList.isEmpty()) {
+  // Checking for Airspaces
+  if (airspaceList.isEmpty())
+    {
       //we only need to load the airspaces if the list is still empty.
       QDir airspaceDir(mapDir + "/airspace/");
       if(!airspaceDir.exists())
@@ -1879,10 +1887,11 @@ void MapContents::proofeSection(bool isPrint)
                   __readAirspaceFile(airspaceDir.path() + "/" + (*it).latin1());
             }
         }
-      }
-      
-// Checking for Airfields
-    if (airportList.isEmpty()) {  //we only need to load the airports if the list is still empty.
+    }
+
+  // Checking for Airfields
+  if (airportList.isEmpty())
+    {  //we only need to load the airports if the list is still empty.
       QDir airfieldDir(mapDir + "/airfields/");
       if(!airfieldDir.exists())
         {
@@ -1923,7 +1932,7 @@ void MapContents::proofeSection(bool isPrint)
 //          __readAsciiFile((*it).latin1());
 //          warning( "%s", (*it).latin1() );
 //        }
-      }
+    }
 }
 
 unsigned int MapContents::getListLength(int listIndex) const
@@ -2234,13 +2243,15 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
 //      targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1, Qt::NoPen));
       targetP->setBrush(QBrush(_globalMapConfig.getIsoColor(height),
           QBrush::SolidPattern));
-      for(Isohypse* iso2 = iso->first(); iso2; iso2 = iso->next()) {
-        QRegion * reg = iso2->drawRegion(targetP, maskP);
-        if (reg) {
-          isoListEntry* entry=new isoListEntry(reg, height);
-          regIsoLines.append(entry);
+      for(Isohypse* iso2 = iso->first(); iso2; iso2 = iso->next())
+        {
+          QRegion * reg = iso2->drawRegion(targetP, maskP);
+          if(reg)
+            {
+              isoListEntry* entry=new isoListEntry(reg, height);
+              regIsoLines.append(entry);
+            }
         }
-      }
     }
 }
 
@@ -2251,8 +2262,8 @@ int MapContents::searchGetPrevFlightPoint(int index, flightPoint & fP)
   Flight *f = (Flight *)getFlight();
   if(f && f->getTypeID() == BaseMapElement::Flight) {
     return f->searchGetPrevPoint(index, fP);
-	}
-	return -1;
+        }
+        return -1;
 }
 */
 /** Get the contents of the next FlightPoint after number 'index' */
@@ -2263,7 +2274,7 @@ int MapContents::searchGetNextFlightPoint(int index, flightPoint & fP)
   if(f && f->getTypeID() == BaseMapElement::Flight) {
     return f->searchGetNextPoint(index, fP);
   }
-	return -1;
+        return -1;
 }
 */
 /** Get the contents of the next FlightPoint 'step' indexes after number 'index' */
@@ -2275,10 +2286,10 @@ int MapContents::searchStepNextFlightPoint(int index, flightPoint & fP, int step
     if (index+step < (int)f->getRouteLength()-1)
       index += step;
     else
-			index = f->getRouteLength()-1;
+                        index = f->getRouteLength()-1;
     return f->searchGetNextPoint(index, fP);
-	}
-	return -1;
+        }
+        return -1;
 }
 */
 /** Get the contents of the previous FlightPoint 'step' indexes before number 'index' */
@@ -2290,10 +2301,10 @@ int MapContents::searchStepPrevFlightPoint(int index, flightPoint & fP, int step
     if (index-step > 0)
       index -= step;
     else
-			index = 1;
+                        index = 1;
     return f->searchGetPrevPoint(index, fP);
-	}
-	return -1;
+        }
+        return -1;
 }
 */
 /** create a new, empty task */
@@ -2316,7 +2327,7 @@ void MapContents::slotNewTask()
                   "To finish the task, press &lt;CTRL&gt; and click the right mouse button.<br>"
                   "It's possible to move and delete taskpoints from the finished task."
                   );
-  
+
   emit taskHelp(helpText);
 
   emit currentFlightChanged();
@@ -2340,40 +2351,46 @@ void MapContents::slotNewFlightGroup()
 
   FlightSelectionDialog *fsd = new FlightSelectionDialog(0, "flight selection dialog");
 
-  for (i = 0; i < flightList.count(); i++) {
-    f = flightList.at(i);
-    if (f->getTypeID() == BaseMapElement::Flight) {
-      fsd->availableFlights.append(f);
-    }
-  }
-
-  if (fsd->exec() == QDialog::Accepted) {
-    for (i = 0; i < fsd->selectedFlights.count(); i++) {
-      fl.append((Flight *)fsd->selectedFlights.at(i));
+  for (i = 0; i < flightList.count(); i++)
+    {
+      f = flightList.at(i);
+      if (f->getTypeID() == BaseMapElement::Flight)
+        {
+          fsd->availableFlights.append(f);
+        }
     }
 
-    tmp.sprintf("GROUP%03d", gCount++);
+  if (fsd->exec() == QDialog::Accepted)
+    {
+      for (i = 0; i < fsd->selectedFlights.count(); i++)
+        {
+          fl.append((Flight *)fsd->selectedFlights.at(i));
+        }
 
-    flightList.append(new FlightGroup(fl, tmp));
-    emit currentFlightChanged();
-  }
+      tmp.sprintf("GROUP%03d", gCount++);
+
+      flightList.append(new FlightGroup(fl, tmp));
+      emit currentFlightChanged();
+    }
   delete fsd;
 }
 /** No descriptions */
 void MapContents::slotSetFlight(int id)
 {
-  if (id >= 0 && id < (int)flightList.count()) {
-    flightList.at(id);
-    emit currentFlightChanged();
-  }
+  if (id >= 0 && id < (int)flightList.count())
+    {
+      flightList.at(id);
+      emit currentFlightChanged();
+    }
 }
 
 void MapContents::slotSetFlight(BaseFlightElement *f)
 {
-  if (flightList.containsRef(f)) {
-    flightList.findRef(f);
-    emit currentFlightChanged();
-  }
+  if (flightList.containsRef(f))
+    {
+      flightList.findRef(f);
+      emit currentFlightChanged();
+    }
 }
 
 /** No descriptions */
@@ -2388,38 +2405,43 @@ void MapContents::slotEditFlightGroup()
   FlightSelectionDialog *fsd = new FlightSelectionDialog(0, "flight selection dialog");
   fg = getFlight();
 
-  if (fg->getTypeID() == BaseMapElement::FlightGroup) {
-    fl = ((FlightGroup *)fg)->getFlightList();
-    for (i = 0; i < flightList.count(); i++) {
-      f = flightList.at(i);
-      if (f->getTypeID() == BaseMapElement::Flight) {
-        if (fl.containsRef((Flight *)f)) {
-          fsd->selectedFlights.append(f);
+  if (fg->getTypeID() == BaseMapElement::FlightGroup)
+    {
+      fl = ((FlightGroup *)fg)->getFlightList();
+      for (i = 0; i < flightList.count(); i++)
+        {
+          f = flightList.at(i);
+          if (f->getTypeID() == BaseMapElement::Flight)
+            {
+              if (fl.containsRef((Flight *)f))
+                {
+                  fsd->selectedFlights.append(f);
+                }
+              else
+                {
+                  fsd->availableFlights.append(f);
+                }
+            }
         }
-        else {
-          fsd->availableFlights.append(f);
-        }
-      }
-    }
 
-    if (fsd->exec() == QDialog::Accepted) {
-      fl.clear();
-      for (i = 0; i < fsd->selectedFlights.count(); i++) {
-        fl.append((Flight *)fsd->selectedFlights.at(i));
-      }
-      ((FlightGroup *)fg)->setFlightList(fl);
+      if (fsd->exec() == QDialog::Accepted)
+        {
+          fl.clear();
+          for (i = 0; i < fsd->selectedFlights.count(); i++)
+            {
+              fl.append((Flight *)fsd->selectedFlights.at(i));
+            }
+          ((FlightGroup *)fg)->setFlightList(fl);
+        }
     }
-  }
-  else {
-    // oooops
-  }
 
   emit currentFlightChanged();
   delete fsd;
 }
 
 /** No descriptions */
-bool MapContents::importFlightGearFile(QFile& flightgearFile){
+bool MapContents::importFlightGearFile(QFile& flightgearFile)
+{
   float temp_bearing = 0.0;
 
   QFileInfo fInfo(flightgearFile);
@@ -2470,7 +2492,6 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
   QString s;
   QTextStream stream(&flightgearFile);
 
-
   QString pilotName, gliderType, gliderID, recorderID;
   QDate date;
   char latChar, lonChar, validChar;
@@ -2500,42 +2521,37 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
   // Format spec:
   //
   // all fields comma separated
-  // $GPRMC 	header
-  // 200009		UTC position (hhmmss)
-  // A					status (A= data valid, V data not valid)
-  // 3736.811	Lat (ddmm.mmm)
-  // N					N/S indicator
-  // 12221.432 	Long (ddmm.mmm)
-  // W				E/W indicator
-  // 000.0			Speed over ground
-  // 297.9			Course over ground
-  // 1903102		date (ddmmyy) ..    2002 = 102
-  // 000.0			magnetic deviation
-  //					E/W indicator
-  // *5C			    checksum (*nn)
+  // $GPRMC         header
+  // 200009                UTC position (hhmmss)
+  // A                                        status (A= data valid, V data not valid)
+  // 3736.811        Lat (ddmm.mmm)
+  // N                                        N/S indicator
+  // 12221.432         Long (ddmm.mmm)
+  // W                                E/W indicator
+  // 000.0                        Speed over ground
+  // 297.9                        Course over ground
+  // 1903102                date (ddmmyy) ..    2002 = 102
+  // 000.0                        magnetic deviation
+  //                                        E/W indicator
+  // *5C                            checksum (*nn)
   //
-  // $PGRMZ		Private message
-  // 04				- contents can be ignored
-  // f					- contents can be ignored
-  // 3					- contents can be ignored
-  // *2F				checksum (*nn)
+  // $PGRMZ                Private message
+  // 04                                - contents can be ignored
+  // f                                        - contents can be ignored
+  // 3                                        - contents can be ignored
+  // *2F                                checksum (*nn)
   //
   QRegExp bRecord("^[$]GPRMC,[0-9][0-9][0-9][0-9][0-9][0-9],[AV],[0-9][0-9][0-9][0-9]\\.[0-9][0-9][0-9],[NS],[0-9][0-9][0-9][0-9][0-9]\\.[0-9][0-9][0-9],[EW],[0-9][0-9][0-9]\\.[0-9],[0-9][0-9][0-9]\\.[0-9],[0-9][0-9][0-9][0-9][0-9][0-9][0-9],[0-9][0-9][0-9]\\.[0-9],[EW],[*][0-9][0-9]$");
 
   extern const MapMatrix _globalMapMatrix;
 
   int lineCount = 0;
-//unused  unsigned int wp_count = 0;
-//unused  int last0 = -1;
-//unused  bool isHeader = true;
-//unused  bool isAus = false;
 
   float spd, brng, magdev,fLat, fLon;
-  int day, month, year;	
+  int day, month, year;
   char magdevChar, checksum[2];
 
-
-  while (!stream.eof())
+  while(!stream.eof())
     {
       if(importProgress.wasCancelled()) return false;
 
@@ -2589,7 +2605,6 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
 
           // Convert date into time_t
           time_t timeOfFlightDay = timeToDay(year, month, day);
-
 
           // skip if lat & lon = 000.0N
           if ((lat == 0.0) && (lon == 0.0))
@@ -2727,10 +2742,10 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
             }
         }
       else if(s.mid(0,6) == "$PGRMZ")
-      {
+        {
           // ignore private data for now...
           continue;
-      }
+        }
     }
 
   // close the import dialog, clean up and add the FlightRoute we just created
@@ -2755,6 +2770,7 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
   emit currentFlightChanged();
   return true;
 }
+
 /** Imports a file downloaded with Gardown in DOS  */
 bool MapContents::importGardownFile(QFile& gardownFile){
   float temp_bearing = 0.0;
@@ -2807,7 +2823,6 @@ bool MapContents::importGardownFile(QFile& gardownFile){
   QString s;
   QTextStream stream(&gardownFile);
 
-
   QString pilotName, gliderType, gliderID, recorderID;
   QDate date;
   char latChar, lonChar; //unused , validChar;
@@ -2840,7 +2855,7 @@ bool MapContents::importGardownFile(QFile& gardownFile){
   extern const MapMatrix _globalMapMatrix;
 
   int lineCount = 0;
-  unsigned int wp_count = 0;
+//  unsigned int wp_count = 0;
 //unused  int last0 = -1;
 //unused  bool isHeader = true;
 //unused  bool isAus = false;
@@ -2849,7 +2864,6 @@ bool MapContents::importGardownFile(QFile& gardownFile){
   int day, month, year;
 //unused  char magdevChar, checksum[2];
   time_t timeOfFlightDay;
-
 
   while (!stream.eof())
     {
@@ -3014,10 +3028,11 @@ bool MapContents::importGardownFile(QFile& gardownFile){
               preTime = curTime;
             }
         }
-      else {
-        // ignore other lines in file for now...
-        continue;
-      }
+      else
+        {
+          // ignore other lines in file for now...
+          continue;
+        }
     }
 
   // close the import dialog, clean up and add the FlightRoute we just created
@@ -3051,20 +3066,23 @@ bool MapContents::loadTask(QFile& path)
 
   extern const MapMatrix _globalMapMatrix;
 
-  if(!fInfo.exists()) {
-    KMessageBox::error(0,  "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(path.name()) + "</qt>");
-    return false;
-  }
-  
-  if(!fInfo.size()) {
-    KMessageBox::sorry(0, "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(path.name()) + "</qt>");
-    return false;
-  }
+  if(!fInfo.exists())
+    {
+      KMessageBox::error(0,  "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(path.name()) + "</qt>");
+      return false;
+    }
 
-  if(!path.open(IO_ReadOnly)) {
-    KMessageBox::error(0, "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(path.name()) + "</qt>");
-    return false;
-  }
+  if(!fInfo.size())
+    {
+      KMessageBox::sorry(0, "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(path.name()) + "</qt>");
+      return false;
+    }
+
+  if(!path.open(IO_ReadOnly))
+    {
+      KMessageBox::error(0, "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(path.name()) + "</qt>");
+      return false;
+    }
 
   QDomDocument doc;
   QPtrList<Waypoint> wpList;
@@ -3072,59 +3090,62 @@ bool MapContents::loadTask(QFile& path)
 
   doc.setContent(&path);
 
-  if (doc.doctype().name() == "KFLogTask") {
-    QDomNodeList nl = doc.elementsByTagName("Task");
+  if (doc.doctype().name() == "KFLogTask")
+    {
+      QDomNodeList nl = doc.elementsByTagName("Task");
 
-    for (uint i = 0; i < nl.count(); i++) {
-      QDomNodeList childNodes = nl.item(i).childNodes();
-      QDomNamedNodeMap nmTask =  nl.item(i).attributes();
+      for (uint i = 0; i < nl.count(); i++)
+        {
+          QDomNodeList childNodes = nl.item(i).childNodes();
+          QDomNamedNodeMap nmTask =  nl.item(i).attributes();
 
-      wpList.clear();
-      for (uint childIdx = 0; childIdx < childNodes.count(); childIdx++) {
-        QDomNamedNodeMap nm =  childNodes.item(childIdx).attributes();
+          wpList.clear();
+          for (uint childIdx = 0; childIdx < childNodes.count(); childIdx++)
+            {
+              QDomNamedNodeMap nm =  childNodes.item(childIdx).attributes();
 
-        Waypoint *w = new Waypoint;
+              Waypoint *w = new Waypoint;
 
-        w->name = nm.namedItem("Name").toAttr().value().left(6).upper();
-        w->description = nm.namedItem("Description").toAttr().value();
-        w->icao = nm.namedItem("ICAO").toAttr().value().upper();
-        w->origP.setLat(nm.namedItem("Latitude").toAttr().value().toInt());
-        w->origP.setLon(nm.namedItem("Longitude").toAttr().value().toInt());
-        w->projP = _globalMapMatrix.wgsToMap(w->origP);
-        w->elevation = nm.namedItem("Elevation").toAttr().value().toInt();
-        w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
-        w->isLandable = nm.namedItem("Landable").toAttr().value().toInt();
-        w->runway = nm.namedItem("Runway").toAttr().value().toInt();
-        w->length = nm.namedItem("Length").toAttr().value().toInt();
-        w->surface = nm.namedItem("Surface").toAttr().value().toInt();
-        w->comment = nm.namedItem("Comment").toAttr().value();
+              w->name = nm.namedItem("Name").toAttr().value().left(6).upper();
+              w->description = nm.namedItem("Description").toAttr().value();
+              w->icao = nm.namedItem("ICAO").toAttr().value().upper();
+              w->origP.setLat(nm.namedItem("Latitude").toAttr().value().toInt());
+              w->origP.setLon(nm.namedItem("Longitude").toAttr().value().toInt());
+              w->projP = _globalMapMatrix.wgsToMap(w->origP);
+              w->elevation = nm.namedItem("Elevation").toAttr().value().toInt();
+              w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
+              w->isLandable = nm.namedItem("Landable").toAttr().value().toInt();
+              w->runway = nm.namedItem("Runway").toAttr().value().toInt();
+              w->length = nm.namedItem("Length").toAttr().value().toInt();
+              w->surface = nm.namedItem("Surface").toAttr().value().toInt();
+              w->comment = nm.namedItem("Comment").toAttr().value();
 
-        if (w->runway == 0 && w->length == 0) {
-          w->runway = w->length = -1;
+              if (w->runway == 0 && w->length == 0)
+                  w->runway = w->length = -1;
+
+              wpList.append(w);
+            }
+
+          f = new FlightTask(wpList, false, genTaskName());
+          f->setPlanningType(nmTask.namedItem("PlanningType").toAttr().value().toInt());
+          f->setPlanningDirection(nmTask.namedItem("PlanningDirection").toAttr().value().toInt());
+          // remember first task in file
+          if (firstTask == 0)
+              firstTask = f;
+          flightList.append(f);
+          emit newTaskAdded(f);
         }
-        
-        wpList.append(w);
-      }
-      f = new FlightTask(wpList, false, genTaskName());
-      f->setPlanningType(nmTask.namedItem("PlanningType").toAttr().value().toInt());
-      f->setPlanningDirection(nmTask.namedItem("PlanningDirection").toAttr().value().toInt());
-      // remember first task in file
-      if (firstTask == 0) {
-        firstTask = f;
-      }
-      flightList.append(f);
-      emit newTaskAdded(f);
-    }
 
-    if (firstTask) {
-      slotSetFlight(firstTask);
+      if (firstTask)
+          slotSetFlight(firstTask);
+
+      return true;
     }
-    return true;
-  }
-  else {
-    KMessageBox::error(0, i18n("wrong doctype ") + doc.doctype().name(), i18n("Error occurred!"));
-    return false;
-  }
+  else
+    {
+      KMessageBox::error(0, i18n("wrong doctype ") + doc.doctype().name(), i18n("Error occurred!"));
+      return false;
+    }
 }
 
 QString MapContents::genTaskName()
@@ -3141,26 +3162,31 @@ QString MapContents::genTaskName()
  * isoListEntry
  ***********************************************/
 
-isoListEntry::isoListEntry(QRegion* region, int height) {
+isoListEntry::isoListEntry(QRegion* region, int height)
+{
   this->region=region;
   this->height=height;
 }
-  
-isoListEntry::~isoListEntry() {
+
+isoListEntry::~isoListEntry()
+{
   if(region) delete region;
 }
 
 /** Re-projects any flights and tasks that may be loaded. */
-void MapContents::reProject(){
+void MapContents::reProject()
+{
   QPtrListIterator<BaseFlightElement> it(flightList); // iterator for flightlist
-  
-  for ( ; it.current(); ++it ) {
+
+  for ( ; it.current(); ++it )
+    {
       BaseFlightElement *fe = it.current();
       fe->reProject();
-  }
+    }
 }
 
 /** Connected to the signal currentFlightChanged, and used to resend the signal with the current flight as an argument. */
-void MapContents::slotReSendFlightChanged(){
+void MapContents::slotReSendFlightChanged()
+{
     emit currentFlightChanged(getFlight());
 }

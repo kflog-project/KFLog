@@ -18,7 +18,10 @@
 **
 ***********************************************************************/
 
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
+
 #include <cmath>
 #include <klocale.h>
 #include "da4record.h"

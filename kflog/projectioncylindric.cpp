@@ -26,7 +26,7 @@
 
 ProjectionCylindric::ProjectionCylindric(double v1_new)
 {
-  initProjection(v1_new);
+  initProjection((int)v1_new);
 }
 
 ProjectionCylindric::~ProjectionCylindric()

@@ -92,11 +92,9 @@ KFLogApp::KFLogApp()
 
   config = kapp->config();
 
-
-
   config->setGroup("General Options");
   showStartLogo=false;
-  
+
   if (config->readBoolEntry("Logo", true) && (!kapp->isRestored() ) )
     {
       showStartLogo = true;
@@ -122,12 +120,11 @@ KFLogApp::KFLogApp()
   connect(&_globalMapMatrix, SIGNAL(projectionChanged()),
       &_globalMapContents, SLOT(slotReloadMapData()));
 
-
   _globalMapConfig.slotReadConfig();
 
   initStatusBar();
   initView();
-  if(showStartLogo && startLogo!=0) 
+  if(showStartLogo && startLogo!=0)
       startLogo->raise();
 
   initActions();
@@ -154,7 +151,6 @@ KFLogApp::KFLogApp()
       helpWindow, SLOT(slotShowHelpText(QString)) );
   connect(map, SIGNAL(taskPlanningEnd()), helpWindow, SLOT(slotClearView()) );
 
-          
   connect(map, SIGNAL(showTaskText(FlightTask*)),
       dataView, SLOT(slotShowTaskText(FlightTask*)));
   connect(map, SIGNAL(taskPlanningEnd()), dataView, SLOT(setFlightData()));
@@ -166,8 +162,7 @@ KFLogApp::KFLogApp()
   connect(map, SIGNAL(showFlightPoint(const QPoint&, const flightPoint&)),
       evaluationWindow, SLOT(slotShowFlightPoint(const QPoint&, const flightPoint&)));
 
-
-  slotCheckDockWidgetStatus();      
+  slotCheckDockWidgetStatus();
   KTipDialog::showTip(this, "kflog/tips");
 }
 
@@ -184,7 +179,7 @@ void KFLogApp::initActions()
   extern MapContents _globalMapContents;
 
   new KAction(i18n("&Open Flight"), "fileopen",
-      KStdAccel::key(KStdAccel::Open), this, SLOT(slotFileOpen()),
+      KStdAccel::Open, this, SLOT(slotFileOpen()),
       actionCollection(), "file_open");
   new KAction(i18n("&Open Task"), "fileopen",  CTRL+Key_T,
       this, SLOT(slotTaskOpen()), actionCollection(), "file_open_task");
@@ -192,7 +187,7 @@ void KFLogApp::initActions()
   fileOpenRecent = KStdAction::openRecent(this,
       SLOT(slotFileOpenRecent(const KURL&)), actionCollection());
   fileClose = new KAction(i18n("Close Flight"), "fileclose",
-      KStdAccel::key(KStdAccel::Close), &_globalMapContents, SLOT(closeFlight()),
+      KStdAccel::Close, &_globalMapContents, SLOT(closeFlight()),
       actionCollection(), "file_close");
 
   fileRecorder = new KAction(i18n("Open Recorder"), "connect_no", 0, this,
@@ -234,7 +229,7 @@ void KFLogApp::initActions()
       SLOT(slotCenterToFlight()), actionCollection(), "view_fit_to_page");
 
   new KAction(i18n("Center to &Homesite"), "gohome",
-      KStdAccel::key(KStdAccel::Home), &_globalMapMatrix,
+      KStdAccel::Home, &_globalMapMatrix,
       SLOT(slotCenterToHome()), actionCollection(), "view_fit_to_width");
 
   viewCenterTo = new KAction(i18n("Center to..."), "centerto", Key_F8, this,
@@ -300,7 +295,7 @@ void KFLogApp::initActions()
 
   viewEvaluationWindow = new KToggleAction(i18n("Show &EvaluationWindow"), "history",
       CTRL+Key_E, this, SLOT(slotToggleEvaluationWindow()), actionCollection(),
-      "toggle_evaluation_window");      
+      "toggle_evaluation_window");
 
   viewMapControl = new KToggleAction(i18n("Show Map&control"), 0, this,
       SLOT(slotToggleMapControl()), actionCollection(), "toggle_map_control");
@@ -324,7 +319,7 @@ void KFLogApp::initActions()
   flightOptimization = new KAction(i18n("Optimize"), "wizard", 0,
       this, SLOT(slotOptimizeFlight()), actionCollection(), "optimize_flight");
 
-      
+
   flightOptimizationOLC = new KAction(i18n("Optimize (OLC)"), "wizard", 0,
       this, SLOT(slotOptimizeFlightOLC()), actionCollection(), "optimize_flight_olc");
 
@@ -336,48 +331,48 @@ void KFLogApp::initActions()
   // Reset confirmations
   resetConfirmations = new KAction(i18n("Reset confirmations"), "configure", 0,
       this, SLOT(slotEnableMessages()), actionCollection(), "reset_confirmations");
-      
-  
+
+
   //Animation actions
   animateFlightStart = new KAction(i18n("&Start Flight Animation"), "1rightarrow",
-			Key_F12, map, SLOT(slotAnimateFlightStart()), actionCollection(),
-			"start_animate");
+                        Key_F12, map, SLOT(slotAnimateFlightStart()), actionCollection(),
+                        "start_animate");
   animateFlightStop = new KAction(i18n("Stop Flight &Animation"), "player_stop",
-			Key_F11, map, SLOT(slotAnimateFlightStop()), actionCollection(),
-			"stop_animate");
-	//Stepping actions
-	stepFlightNext = new KAction(i18n("Next Flight Point"), "forward",
-			CTRL+Key_Up, map, SLOT(slotFlightNext()), actionCollection(),
-		  "next_flight_point");
-	stepFlightPrev = new KAction(i18n("Prev Flight Point"), "back",
-			CTRL+Key_Down, map, SLOT(slotFlightPrev()), actionCollection(),
-			"prev_flight_point");
-	stepFlightHome = new KAction(i18n("First Flight Point"), "start",
-			Key_Home, map, SLOT(slotFlightHome()), actionCollection(),
-			"first_flight_point");
-	stepFlightEnd = new KAction(i18n("Last Flight Point"), "finish",
-			Key_End, map, SLOT(slotFlightEnd()), actionCollection(),
-			"last_flight_point");
-	stepFlightStepNext = new KAction(i18n("Step +10 Flight Points"), "stepforward",
-			Key_PageUp, map, SLOT(slotFlightStepNext()), actionCollection(),
-			"next_step_flight_point");
-	stepFlightStepPrev = new KAction(i18n("Step -10 Flight Points"), "stepback",
-			Key_PageDown, map, SLOT(slotFlightStepPrev()), actionCollection(),
-			"prev_step_flight_point");
+                        Key_F11, map, SLOT(slotAnimateFlightStop()), actionCollection(),
+                        "stop_animate");
+        //Stepping actions
+        stepFlightNext = new KAction(i18n("Next Flight Point"), "forward",
+                        CTRL+Key_Up, map, SLOT(slotFlightNext()), actionCollection(),
+                  "next_flight_point");
+        stepFlightPrev = new KAction(i18n("Prev Flight Point"), "back",
+                        CTRL+Key_Down, map, SLOT(slotFlightPrev()), actionCollection(),
+                        "prev_flight_point");
+        stepFlightHome = new KAction(i18n("First Flight Point"), "start",
+                        Key_Home, map, SLOT(slotFlightHome()), actionCollection(),
+                        "first_flight_point");
+        stepFlightEnd = new KAction(i18n("Last Flight Point"), "finish",
+                        Key_End, map, SLOT(slotFlightEnd()), actionCollection(),
+                        "last_flight_point");
+        stepFlightStepNext = new KAction(i18n("Step +10 Flight Points"), "stepforward",
+                        Key_PageUp, map, SLOT(slotFlightStepNext()), actionCollection(),
+                        "next_step_flight_point");
+        stepFlightStepPrev = new KAction(i18n("Step -10 Flight Points"), "stepback",
+                        Key_PageDown, map, SLOT(slotFlightStepPrev()), actionCollection(),
+                        "prev_step_flight_point");
 
-	/**
-	 * Igc3d action
-	 */            	
-	viewIgc3D = new KAction(i18n("View flight in 3D"), "vectorgfx",
-			CTRL+Key_R, this, SLOT(slotFlightViewIgc3D()), actionCollection(),
-			"view_flight_3D");
-			
-	/**
-	 * OpenGL action
-	 */
-	viewIgcOpenGL = new KAction(i18n("View flight in 3D (OpenGL)"), "openglgfx",
-			0, this, SLOT(slotFlightViewIgcOpenGL()), actionCollection(),
-			"view_flight_opengl");
+        /**
+         * Igc3d action
+         */
+        viewIgc3D = new KAction(i18n("View flight in 3D"), "vectorgfx",
+                        CTRL+Key_R, this, SLOT(slotFlightViewIgc3D()), actionCollection(),
+                        "view_flight_3D");
+
+        /**
+         * OpenGL action
+         */
+        viewIgcOpenGL = new KAction(i18n("View flight in 3D (OpenGL)"), "openglgfx",
+                        0, this, SLOT(slotFlightViewIgcOpenGL()), actionCollection(),
+                        "view_flight_opengl");
 
   KSelectAction* viewFlightDataType = new KSelectAction(
       i18n("Show Flightdata"), "idea", 0,
@@ -424,7 +419,7 @@ void KFLogApp::initActions()
       SLOT(slotConfigureKeyBindings()), actionCollection());
   KStdAction::tipOfDay(this,
       SLOT(slotTipOfDay()), actionCollection());
-      
+
   KStdAction::preferences(this, SLOT(slotConfigureKFLog()), actionCollection());
 
   KActionMenu *w = new KActionMenu(i18n("&Window"), "igc",
@@ -477,11 +472,11 @@ void KFLogApp::initStatusBar()
 
 void KFLogApp::initView()
 {
-  // wir könnten mal Icons für die einzelnen Bereiche gebrauchen ...
+  // we need icons for these parts ...
   mapViewDock = createDockWidget("Map", 0, 0, i18n("Map"));
   dataViewDock = createDockWidget("Flight-Data", 0, 0, i18n("Flight-Data"));
   helpWindowDock = createDockWidget("Help", 0, 0, i18n("Help"));
-  evaluationWindowDock = createDockWidget("Evaluation", 0, 0, i18n("Evaluation"));    
+  evaluationWindowDock = createDockWidget("Evaluation", 0, 0, i18n("Evaluation"));
   mapControlDock = createDockWidget("Map-Control", 0, 0, i18n("Map-Control"));
   waypointsDock = createDockWidget("Waypoints", 0, 0, i18n("Waypoints"));
   legendDock = createDockWidget("Legend", 0, 0, i18n("Legend"));
@@ -508,7 +503,7 @@ void KFLogApp::initView()
   connect(evaluationWindowDock, SIGNAL(iMBeingClosed()),
       SLOT(slotHideEvaluationWindowDock()));
   connect(evaluationWindowDock, SIGNAL(hasUndocked()),
-      SLOT(slotHideEvaluationWindowDock()));      
+      SLOT(slotHideEvaluationWindowDock()));
   connect(waypointsDock, SIGNAL(iMBeingClosed()),
       SLOT(slotHideWaypointsDock()));
   connect(waypointsDock, SIGNAL(hasUndocked()),
@@ -527,7 +522,7 @@ void KFLogApp::initView()
 
   QFrame* mapViewFrame = new QFrame(mapViewDock);
   map = new Map(this, mapViewFrame, "KFLog-Map");
- 
+
   QHBoxLayout* mapLayout = new QHBoxLayout(mapViewFrame,2,1);
   mapLayout->addWidget(map);
   mapLayout->activate();
@@ -542,10 +537,10 @@ void KFLogApp::initView()
   dataViewDock->setWidget(dataView);
 
   helpWindow = new HelpWindow(helpWindowDock);
-  helpWindowDock->setWidget(helpWindow);  
+  helpWindowDock->setWidget(helpWindow);
 
   evaluationWindow = new EvaluationDialog(evaluationWindowDock);
-  evaluationWindowDock->setWidget(evaluationWindow);  
+  evaluationWindowDock->setWidget(evaluationWindow);
 
   waypoints = new Waypoints(waypointsDock);
   waypointsDock->setWidget(waypoints);
@@ -556,26 +551,27 @@ void KFLogApp::initView()
   objectTree = new ObjectTree(objectTreeDock);
   objectTreeDock->setWidget(objectTree);
 
-
   /* Standard positions for the docking windows
    * Arguments for manualDock():
    * dock target, dock side, remaining space in target (in percent)
+   *
+   * (hl, 2004-03-12): per default, we want to have every dockwindow within the mainwindow.
    */
   objectTreeDock->manualDock( mapViewDock, KDockWidget::DockRight, 67 );
   dataViewDock->manualDock( objectTreeDock, KDockWidget::DockBottom, 67 );
   mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 62 );
   helpWindowDock->manualDock( mapControlDock, KDockWidget::DockCenter);
-  evaluationWindowDock->manualDock( mapViewDock, KDockWidget::DockDesktop);      
   waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 70);
   legendDock->manualDock(waypointsDock, KDockWidget::DockRight, 90);
-  
+  evaluationWindowDock->manualDock( mapViewDock, KDockWidget::DockCenter);
+
   connect(map, SIGNAL(changed(QSize)), mapControl, SLOT(slotShowMapData(QSize)));
   connect(map, SIGNAL(waypointSelected(Waypoint *)), waypoints, SLOT(slotAddWaypoint(Waypoint *)));
   connect(map, SIGNAL(waypointDeleted(Waypoint *)), waypoints, SLOT(slotDeleteWaypoint(Waypoint *)));
   connect(map, SIGNAL(waypointEdited(Waypoint *)), waypoints, SLOT(slotEditWaypoint(Waypoint *)));
   connect(map, SIGNAL(elevation(int)), legend, SLOT(highlightLevel(int)));
   connect(map, SIGNAL(regWaypointDialog(QWidget *)), this, SLOT(slotRegisterWaypointDialog(QWidget *)));
-  
+
   extern MapMatrix _globalMapMatrix;
   connect(mapControl, SIGNAL(scaleChanged(double)), &_globalMapMatrix,
       SLOT(slotSetScale(double)));
@@ -620,12 +616,12 @@ void KFLogApp::initView()
 
   connect(&_globalMapContents, SIGNAL(closingFlight(BaseFlightElement*)),
       objectTree, SLOT(slotCloseFlight(BaseFlightElement*)));
-  
+
   connect(&_globalMapContents, SIGNAL(currentFlightChanged()),
       evaluationWindow, SLOT(slotShowFlightData()));
 
   connect(evaluationWindow, SIGNAL(showCursor(const QPoint&, const QPoint&)),
-      map, SLOT(slotDrawCursor(const QPoint&, const QPoint&)));      
+      map, SLOT(slotDrawCursor(const QPoint&, const QPoint&)));
 
 }
 
@@ -776,7 +772,7 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
           fileOpenRecent->setCurrentItem(-1);
 
       } else {
-        //try to open as flight      
+        //try to open as flight
         if(_globalMapContents.loadFlight(file))
           {
             // Just a workaround. It's the only way to not have the item
@@ -909,7 +905,7 @@ void KFLogApp::slotCheckDockWidgetStatus()
   viewMap->setChecked(mapViewDock->isShown());
   viewData->setChecked(dataViewDock->isShown());
   viewHelpWindow->setChecked(helpWindowDock->isShown());
-  viewEvaluationWindow->setChecked(evaluationWindowDock->isShown());    
+  viewEvaluationWindow->setChecked(evaluationWindowDock->isShown());
   viewWaypoints->setChecked(waypointsDock->isShown());
   viewLegend->setChecked(legendDock->isShown());
   viewObjectTree->setChecked(objectTreeDock->isShown());
@@ -956,14 +952,14 @@ void KFLogApp::slotSelectFlightData(int id)
 
 /*
  * Now as a Dockwidget
- 
+
  void KFLogApp::slotEvaluateFlight()
 {
   KDialog* dialog = new KDialog(this,"Evaluation Dialog");
   EvaluationDialog* evaluation =  new EvaluationDialog(dialog);
   QBoxLayout * l = new QVBoxLayout( dialog );
   l->addWidget(evaluation);
-  
+
 //  EvaluationDialog* evaluation =  new EvaluationDialog(this);
   extern MapContents _globalMapContents;
   connect(&_globalMapContents, SIGNAL(currentFlightChanged()), evaluation,
@@ -1048,7 +1044,7 @@ void KFLogApp::slotConfigureKFLog()
   extern MapContents _globalMapContents;
   connect(confDlg, SIGNAL(configOk()), &_globalMapContents,
       SLOT(reProject()));
-  
+
   connect(confDlg, SIGNAL(configOk()), map, SLOT(slotRedrawMap()));
 
   confDlg->exec();
@@ -1103,7 +1099,7 @@ void KFLogApp::slotFlightViewIgcOpenGL()
   run = (QWidget* (*) ()) dlsym(libHandle, "getMainWidget");
   CHECK_ERROR_EXIT
   QWidget* glWidget = (QWidget*)(*run)();
-  
+
   void (*addFlight)(Flight*);
   addFlight = (void (*) (Flight*)) dlsym(libHandle, "addFlight");
   CHECK_ERROR_EXIT

@@ -69,7 +69,7 @@ Cumulus::~Cumulus(){
  */
 QString Cumulus::getLibName() const
 {
-  return i18n("Cumulus/KFLog-e plugin, version %1").arg("0.1");  
+  return i18n("Cumulus/KFLog-e plugin, version %1").arg("0.1");
 }
 
 
@@ -78,7 +78,7 @@ QString Cumulus::getLibName() const
  */
 FlightRecorderPluginBase::TransferMode Cumulus::getTransferMode() const
 {
-  return FlightRecorderPluginBase::URL;  
+  return FlightRecorderPluginBase::URL;
 }
 
 
@@ -86,7 +86,7 @@ FlightRecorderPluginBase::TransferMode Cumulus::getTransferMode() const
  * Returns a list of recorded flights in this device.
  */
 int Cumulus::getFlightDir(QPtrList<FRDirEntry>*){
-  return FR_NOTSUPPORTED;  
+  return FR_NOTSUPPORTED;
 }
 
 
@@ -94,7 +94,7 @@ int Cumulus::getFlightDir(QPtrList<FRDirEntry>*){
  *
  */
 int Cumulus::downloadFlight(int /*flightID*/, int /*secMode*/, const QString& /*fileName*/){
-  return FR_NOTSUPPORTED;  
+  return FR_NOTSUPPORTED;
 }
 
 
@@ -128,7 +128,7 @@ int Cumulus::openRecorder(const QString& URL){
     _isConnected=false;
     _errorinfo=i18n("<qt>Could not connect to PDA, or the following file did not exist:<br><br>%1</qt>").arg(URL + "/opt/QtPalmtop/bin/cumulus");
     return FR_ERROR;
-  }  
+  }
 }
 
 
@@ -171,7 +171,7 @@ int Cumulus::writeTasks(QPtrList<FlightTask> *tasks){
  */
 int Cumulus::readWaypoints(QPtrList<Waypoint> *waypoints){
   int ret=0;
-  
+
   if (!_isConnected) {                  //check if we are connected
     _errorinfo=i18n("Not connected to PDA!");
     return FR_ERROR;
@@ -185,7 +185,7 @@ int Cumulus::readWaypoints(QPtrList<Waypoint> *waypoints){
     _errorinfo=i18n("Could not download waypointfile from PDA.");
     return FR_ERROR;
   }
-    
+
   //_tmpWaypointFile now contains the name of our temporary local waypointfile.
   //qDebug("Local waypointfile: %s",_tmpWaypointFile.latin1());
 
@@ -209,7 +209,7 @@ int Cumulus::writeWaypoints(QPtrList<Waypoint> *waypoints){
     _errorinfo=i18n("Not connected to PDA!");
     return FR_ERROR;
   }
-  
+
   KTempFile f;                          //create a temporary file,
   f.setAutoDelete(true);                //  and set autodelete to true.
   if (f.status()!=0) {                  //check to see if a temporary file could be created.
@@ -226,7 +226,7 @@ int Cumulus::writeWaypoints(QPtrList<Waypoint> *waypoints){
       ret=FR_ERROR;
     }
   }
-  
+
   return ret;
 }
 

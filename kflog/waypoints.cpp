@@ -142,8 +142,8 @@ void Waypoints::addPopupMenu()
   wayPointPopup = new KPopupMenu(waypoints);
   catalogCopySubPopup = new KPopupMenu(waypoints);
   catalogMoveSubPopup = new KPopupMenu(waypoints);
-  
-  
+
+
   wayPointPopup->insertTitle(SmallIcon("waypoint"), "Waypoint's", 0);
   wayPointPopup->insertItem(SmallIcon("waypoint"), i18n("&New catalog"), this,
                             SLOT(slotNewWaypointCatalog()));
@@ -170,7 +170,7 @@ void Waypoints::addPopupMenu()
                                                SLOT(slotDeleteWaypoint()));
   idWaypointCopy2Catalog = wayPointPopup->insertItem(SmallIcon("editcopy"), i18n("Copy to &catalog"), catalogCopySubPopup);
   idWaypointMove2Catalog = wayPointPopup->insertItem(SmallIcon("editmove"), i18n("Move to &catalog"), catalogMoveSubPopup);
-  
+
   wayPointPopup->insertSeparator();
   idWaypointCopy2Task = wayPointPopup->insertItem(SmallIcon("editcopy"), i18n("Copy to &task"), this,
                                                   SLOT(slotCopyWaypoint2Task()));
@@ -196,7 +196,7 @@ void Waypoints::slotCopy2Catalog(int id){
     if (waypointCatalogs.at(id)->wpList.insertItem(new Waypoint(wpt)))
       waypointCatalogs.at(id)->modified=true;
   }
-  
+
 }
 
 /**
@@ -205,7 +205,7 @@ void Waypoints::slotCopy2Catalog(int id){
 void Waypoints::slotMove2Catalog(int id){
   QListViewItem *item = waypoints->currentItem();
   Waypoint * wpt;
-  
+
   if (item != 0) {
     QString tmp = item->text(colName);
     wpt=waypointCatalogs.current()->wpList.find(tmp);
@@ -214,7 +214,7 @@ void Waypoints::slotMove2Catalog(int id){
       waypointCatalogs.current()->modified = true;
       waypointCatalogs.at(id)->modified = true;
       delete item;
-    }      
+    }
   }
 
 }
@@ -260,7 +260,7 @@ void Waypoints::showWaypointPopup(QListViewItem *it, const QPoint &, int)
   catalogMoveSubPopup->clear();
   //store current catalog index
   int curCat=waypointCatalogs.at();
-  for (int i=0;i<waypointCatalogs.count();i++) {
+  for (unsigned int i=0;i<waypointCatalogs.count();i++) {
     if (curCat!=i) { //only insert if this catalog is NOT the current catalog...
       catalogCopySubPopup->insertItem(waypointCatalogs.at(i)->path,i);
       catalogMoveSubPopup->insertItem(waypointCatalogs.at(i)->path,i);
@@ -364,7 +364,7 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
     }
     else {
       tmp = QString::null;
-    }    
+    }
     waypointDlg->length->setText(tmp);
     // translate to id
     waypointDlg->setSurface(w->surface);
@@ -394,7 +394,7 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
         }
         else {
           w->length = -1;
-        }        
+        }
         w->surface = waypointDlg->getSurface();
         w->comment = waypointDlg->comment->text();
         w->isLandable = waypointDlg->isLandable->isChecked();
@@ -422,7 +422,7 @@ void Waypoints::slotDeleteWaypoint(Waypoint* wp)
         i18n("<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>").arg(wp->name),
         i18n("Delete waypoint?"),
         i18n("&Delete")) == KMessageBox::Continue)
-    {      
+    {
       waypointCatalogs.current()->wpList.remove(wp->name);
       waypointCatalogs.current()->modified = true;
       fillWaypoints();
@@ -748,7 +748,7 @@ void Waypoints::slotAddWaypoint(Waypoint *w)
     WaypointCatalog * wpc=new WaypointCatalog(i18n("unnamed"));
     slotAddCatalog(wpc);
   }
-  
+
   WaypointDict *wl = &waypointCatalogs.current()->wpList;
   int loop = 1;
   if (w->name.isEmpty()) {
@@ -762,7 +762,7 @@ void Waypoints::slotAddWaypoint(Waypoint *w)
     waypointCatalogs.current()->modified = true;
     fillWaypoints();
   }
-    
+
 }
 
 void Waypoints::slotCopyWaypoint2Task()
@@ -799,7 +799,7 @@ void Waypoints::slotSetHome()
   if (item != 0) {
     WaypointDict *wl = &waypointCatalogs.current()->wpList;
     Waypoint *w = wl->find(item->text(colName));
-    
+
     config->writeEntry("Homesite", w->name);
     config->writeEntry("Homesite Latitude", w->origP.lat());
     config->writeEntry("Homesite Longitude", w->origP.lon());
@@ -872,7 +872,7 @@ void Waypoints::slotImportWaypointFromFile(){
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory",
                                           getpwuid(getuid())->pw_dir);
 
-   // we should not include types we don't support (yet). Also, the strings should be translated.                                       
+   // we should not include types we don't support (yet). Also, the strings should be translated.
 //  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT) \n *.gdn *.GDN|Waypoint file (Garmin format, *.gdn *.GDN) \n *|All files", this, i18n("Import waypoints from file"));
   QString fName = KFileDialog::getOpenFileName(wayPointDir, i18n("*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT)"), this, i18n("Import waypoints from file"));
 
@@ -882,7 +882,7 @@ void Waypoints::slotImportWaypointFromFile(){
     // read from disk
     w->modified = true;
     if (fName.right(4).lower() == ".dbt"){
-  	  w->importVolkslogger(fName);
+            w->importVolkslogger(fName);
       //    } else if (fName.right(4).lower() == "*.gdn"){
       //    w->importGarmin(fName);
     } else {
@@ -911,7 +911,7 @@ void Waypoints::openCatalog(QString &catalog)
         catalogName->setCurrentItem(newItem);
         slotSwitchWaypointCatalog(newItem);
       }
-    }  
+    }
     else {
       delete w;
     }
@@ -921,12 +921,12 @@ void Waypoints::openCatalog(QString &catalog)
 /* slot to set name of catalog and open it without a file selection dialog */
 void Waypoints::slotSetWaypointCatalogName(QString catalog)
 {
-  if (!catalog.isEmpty()) {  
+  if (!catalog.isEmpty()) {
     openCatalog(catalog);
   }
   else {
     slotNewWaypointCatalog();
-  }  
+  }
 }
 
 /** return the current waypoint catalog */

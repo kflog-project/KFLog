@@ -447,7 +447,7 @@ int Flight::getPointIndexByTime(time_t time)
   sp = (time - route.at(0)->time) / diff;
   if ( sp < 0 )
     sp = 0;
-  if ( sp > route.count()-1 )
+  if ( sp > ((int)route.count())-1 )
     sp = route.count()-1;
 
   // sp is now hopefully an index near to the wanted fix time
@@ -1111,8 +1111,8 @@ void Flight::reProject(){
       flightPoint *fp = it.current();
       fp->projP = _globalMapMatrix.wgsToMap(fp->origP);
   }
-  
+
   origTask.reProject();
   optimizedTask.reProject();
-  
+
 }

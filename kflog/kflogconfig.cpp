@@ -121,7 +121,7 @@ void KFLogConfig::slotOk()
   config-> sync();
   config-> setGroup(0);
 
-  emit scaleChanged(lLimitN-> value(), uLimitN->value());
+  emit scaleChanged((int)lLimitN->value(), (int)uLimitN->value());
   emit configOk();
   accept();
 }

@@ -142,10 +142,10 @@ time_t timeToDay(const int year, const int month, const int day, const char *mon
   struct tm bt;
   int mymonth = month;
 
-  bt.tm_sec = 0; /* Seconds.	[0-60] (1 leap second) */
-  bt.tm_min = 0; /* Minutes.	[0-59] */
-  bt.tm_hour = 0; /* Hours.	[0-23] */
-  bt.tm_mday = day; /* Day.		[1-31] */
+  bt.tm_sec = 0; /* Seconds.        [0-60] (1 leap second) */
+  bt.tm_min = 0; /* Minutes.        [0-59] */
+  bt.tm_hour = 0; /* Hours.        [0-23] */
+  bt.tm_mday = day; /* Day.                [1-31] */
   if ( monabb )
   {
     mymonth = 1; // default to Jan
@@ -155,8 +155,8 @@ time_t timeToDay(const int year, const int month, const int day, const char *mon
         break;
       }
   }
-  bt.tm_mon = mymonth - 1; // Month.	[0-11]
-  bt.tm_year = year - 1900;   // Year	- 1900.
+  bt.tm_mon = mymonth - 1; // Month.        [0-11]
+  bt.tm_year = year - 1900;   // Year        - 1900.
 
   // The next two members of the struct are set by the mktime routine
   bt.tm_wday = 0;   // Day of week [0-6]  I am in doubt, seems to be 1-7
@@ -229,7 +229,7 @@ double angle(double a, double b, double c)
   a1 = a / RADIUS * 1000.0;
   b1 = b / RADIUS * 1000.0;
   c1 = c / RADIUS * 1000.0;
-  
+
   tmp = (cos(c1) - cos(a1) * cos(b1)) / sin(a1) / sin(b1);
   if (tmp > 1.0) {
     tmp = 1.0;
@@ -243,9 +243,9 @@ double angle(double a, double b, double c)
 
 double tc(double lat1, double lon1, double lat2, double lon2)
 {
-  return fmod(atan2(sin(lon1-lon2)*cos(lat2), 
-		    cos(lat1)*sin(lat2)-sin(lat1)*cos(lat2)*cos(lon1-lon2)),
-	      2.0 * PI) + PI;
+  return fmod(atan2(sin(lon1-lon2)*cos(lat2),
+                    cos(lat1)*sin(lat2)-sin(lat1)*cos(lat2)*cos(lon1-lon2)),
+              2.0 * PI) + PI;
 }
 
 WGSPoint posOfDistAndBearing(double lat1, double lon1, double bearing, double dist)
@@ -264,14 +264,14 @@ WGSPoint posOfDistAndBearing(double lat1, double lon1, double bearing, double di
   }
 
   tLat = asin(tmp);
-  
+
 
   lon = atan2(sin(bearing) * sin(dist) * cos(lat1),
-	      cos(dist) - sin(lat1) * (sin(lat1) * cos(dist) + 
-				       cos(lat1) * sin(dist) * cos(bearing)));
+              cos(dist) - sin(lat1) * (sin(lat1) * cos(dist) +
+                                       cos(lat1) * sin(dist) * cos(bearing)));
   tLon = -fmod(lon1 - lon + PI, 2.0 * PI) + PI;
 
-  return WGSPoint(rad2int(tLat), rad2int(tLon));
+  return WGSPoint((int)rad2int(tLat), (int)rad2int(tLon));
 }
 
 float getBearing(QPoint p1, QPoint p2)

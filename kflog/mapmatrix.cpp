@@ -126,10 +126,10 @@ QPoint MapMatrix::wgsToMap(const QPoint& origPoint) const
 
 QPoint MapMatrix::wgsToMap(int lat, int lon) const
 {
-  return QPoint(currentProjection->projectX(NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
-                    RADIUS / MAX_SCALE,
-      currentProjection->projectY(NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
-                    RADIUS / MAX_SCALE);
+  return QPoint((int)(currentProjection->projectX(NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
+                    RADIUS / MAX_SCALE),
+      (int)(currentProjection->projectY(NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
+                    RADIUS / MAX_SCALE));
 
 //  return QPoint(__calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
 //                    RADIUS / MAX_SCALE,
@@ -253,18 +253,18 @@ QPoint MapMatrix::print(int lat, int lon, double dX, double dY) const
   if(dX == 0 &&  dY == 0)
     {
       temp = QPoint(
-        ( currentProjection->projectX( NUM_TO_RAD(lat),
-            NUM_TO_RAD(lon - mapCenterLon) ) * RADIUS / pScale ) + dX,
-        ( currentProjection->projectY( NUM_TO_RAD(lat),
-            NUM_TO_RAD(lon - mapCenterLon) ) * RADIUS / pScale ) + dY );
+        (int)(( currentProjection->projectX( NUM_TO_RAD(lat),
+            NUM_TO_RAD(lon - mapCenterLon) ) * RADIUS / pScale ) + dX),
+        (int)(( currentProjection->projectY( NUM_TO_RAD(lat),
+            NUM_TO_RAD(lon - mapCenterLon) ) * RADIUS / pScale ) + dY ));
     }
   else
     {
       temp = QPoint(
-        ( currentProjection->projectX( NUM_TO_RAD(lat),
-            NUM_TO_RAD(lon - mapCenterLon) ) * RADIUS / ( pScale * 0.5 ) ) + dX,
-        ( currentProjection->projectY( NUM_TO_RAD(lat),
-            NUM_TO_RAD(lon - mapCenterLon) ) * RADIUS / ( pScale * 0.5 ) ) + dY );
+        (int)(( currentProjection->projectX( NUM_TO_RAD(lat),
+            NUM_TO_RAD(lon - mapCenterLon) ) * RADIUS / ( pScale * 0.5 ) ) + dX),
+        (int)(( currentProjection->projectY( NUM_TO_RAD(lat),
+            NUM_TO_RAD(lon - mapCenterLon) ) * RADIUS / ( pScale * 0.5 ) ) + dY ));
     }
   return temp;
 }
@@ -374,7 +374,7 @@ double MapMatrix::centerToRect(const QRect& center, const QSize& pS, bool addBor
       width = center.width();
       height = center.height();
     }
-    
+
   double xScaleDelta, yScaleDelta;
 
   if(pS == QSize(0,0))

@@ -14,7 +14,11 @@
 **   $Id$
 **
 ***********************************************************************/
+
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
+
 #include <pwd.h>
 #include <unistd.h>
 #include <cmath>
@@ -56,7 +60,7 @@ WaypointCatalog::WaypointCatalog(const QString& name)
   : modified(false), onDisc(false)
 {
   static int catalogNr = 1;
-  
+
   KConfig* config = KGlobal::config();
   config->setGroup("Path");
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory", getpwuid(getuid())->pw_dir);
@@ -369,9 +373,9 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
       importProgress.setProgress(( filePos * 200 ) / fileLength);
       Waypoint *w = new Waypoint;
 
-	  //
-	  // File is a collection of WPs.
-	  //
+          //
+          // File is a collection of WPs.
+          //
       latChar = 'N';
       lonChar = 'E';
 
@@ -453,7 +457,7 @@ bool WaypointCatalog::save(bool alwaysAskName){
                 i18n("Discard")) == KMessageBox::Yes)
               alwaysAskName = true;
   */
-  
+
   if (!onDisc || alwaysAskName) {
     fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n"
                                                "*.kwp *.KWP|Cumulus and KFLogEmbedded waypoints (*.kwp)\n"
@@ -481,8 +485,8 @@ bool WaypointCatalog::save(bool alwaysAskName){
     return writeFilserTXT (fName);
   else if (fName.right(4) == ".da4")
     return writeFilserDA4 (fName);
-  else  
-    return writeBinary();    
+  else
+    return writeBinary();
 }
 
 /** This function calls either read or readBinary depending on the filename of the catalog. */
@@ -529,7 +533,7 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
             w->type = BaseMapElement::Outlanding;
           else if (list[2].upper() == "MARKER")
             w->type = BaseMapElement::Landmark;
-          else 
+          else
             w->type = BaseMapElement::Landmark;
           w->origP.setLat((int)(list[3].toDouble() * 600000.0));
           w->origP.setLon((int)(list[4].toDouble() * 600000.0));
@@ -549,7 +553,7 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
           }
           w->comment = i18n("Imported from %1").arg(catalog);
           w->importance = 3;
-          
+
           if (!wpList.insertItem(w))
           {
             delete w;
@@ -723,7 +727,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
   Q_INT8 fileType;
   Q_UINT16 fileFormat;
 
-  
+
   QFile f(catalog);
   if (f.exists()) {
     if (f.open(IO_ReadOnly)) {

@@ -31,7 +31,7 @@ CumulusWaypointFile::~CumulusWaypointFile(){
 
 /** loads the waypoints into the QList, and returns the number of loaded waypoints. */
 int CumulusWaypointFile::load(const QString& file, QPtrList<Waypoint> *waypoints){
-  bool ok = false;
+//  bool ok = false;
   int cnt=0;
   int ret=FO_ERROR;
 
@@ -123,8 +123,8 @@ int CumulusWaypointFile::load(const QString& file, QPtrList<Waypoint> *waypoints
 
           waypoints->append(w);
           cnt++;
-          
-          
+
+
         }
         ret=cnt;
 

@@ -11,12 +11,10 @@
     </keywords>
     <version>2.0.8</version>
     <description/>
-    <ignoreparts>
-      <part>KDevPerforce</part>
-      <part>KDevClearCase</part>
-    </ignoreparts>
+    <ignoreparts/>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
+    <secondaryLanguages/>
   </general>
   <kdevautoproject>
     <general>
@@ -47,19 +45,22 @@
       <envvar value="1" name="WANT_AUTOMAKE_1_6" />
     </makeenvvars>
     <run>
-      <mainprogram>./kflog/kflog</mainprogram>
+      <mainprogram>kflog/kflog</mainprogram>
       <programargs/>
       <terminal>false</terminal>
       <envvars/>
+      <directoryradio>executable</directoryradio>
+      <customdirectory>/</customdirectory>
+      <autocompile>true</autocompile>
     </run>
     <envvars/>
     <configurations>
       <default>
         <configargs>--prefix=/opt/kde3 --enable-debug=full</configargs>
         <builddir/>
-        <ccompiler>GccOptions</ccompiler>
-        <cxxcompiler>GppOptions</cxxcompiler>
-        <f77compiler>G77Options</f77compiler>
+        <ccompiler>kdevgccoptions</ccompiler>
+        <cxxcompiler>kdevgppoptions</cxxcompiler>
+        <f77compiler>kdevg77options</f77compiler>
         <ccompilerbinary/>
         <cxxcompilerbinary/>
         <f77compilerbinary/>
@@ -68,7 +69,7 @@
         <f77flags/>
         <topsourcedir/>
         <cppflags/>
-        <ldflags/>
+        <ldflags>-lGL</ldflags>
       </default>
     </configurations>
   </kdevautoproject>
@@ -81,6 +82,7 @@
       <group pattern="*.po" name="Übersetzungen" />
       <group pattern="AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,NEWS" name="GNU" />
       <group pattern="*" name="Andere" />
+      <hidenonprojectfiles>false</hidenonprojectfiles>
     </groups>
     <tree>
       <hidenonprojectfiles>true</hidenonprojectfiles>
@@ -99,6 +101,10 @@
       <userdocDir>/home/hjr/Projekte/kflog3/html/</userdocDir>
       <apidocDir>/home/hjr/Projekte/kflog3/html/</apidocDir>
     </projectdoc>
+    <ignoreqt_xml/>
+    <ignoredoxygen/>
+    <ignorekdocs/>
+    <ignoredevhelp/>
   </kdevdoctreeview>
   <kdevdebugger>
     <general>
@@ -108,6 +114,9 @@
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
     </general>
     <display>
       <staticmembers>true</staticmembers>
@@ -152,4 +161,19 @@
     <filetypes/>
     <useglobaltypes/>
   </kdevfilecreate>
+  <kdevcppsupport>
+    <references/>
+    <codecompletion>
+      <includeGlobalFunctions>true</includeGlobalFunctions>
+      <includeTypes>true</includeTypes>
+      <includeEnums>true</includeEnums>
+      <includeTypedefs>false</includeTypedefs>
+      <automaticCodeCompletion>true</automaticCodeCompletion>
+      <automaticArgumentsHint>true</automaticArgumentsHint>
+      <automaticHeaderCompletion>true</automaticHeaderCompletion>
+      <codeCompletionDelay>250</codeCompletionDelay>
+      <argumentsHintDelay>400</argumentsHintDelay>
+      <headerCompletionDelay>250</headerCompletionDelay>
+    </codecompletion>
+  </kdevcppsupport>
 </kdevelop>

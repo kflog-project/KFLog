@@ -228,7 +228,7 @@ void RecorderDialog::__addSettingsPage()
                        i18n("There are no recorder-libraries installed."),
                        i18n("No recorders installed."));
   }
-  
+
   libNameList.clear();
 
   config->setGroup("Recorder Dialog");
@@ -340,7 +340,7 @@ void RecorderDialog::__setRecorderCapabilities()
   else
     selectSpeedLabel->setText(i18n("Transfer speed:"));
   _selectSpeed->setEnabled (!cap.supAutoSpeed);
-  
+
   _selectSpeed->clear();
   // insert highest speed first
   for (int i = FlightRecorderPluginBase::transferDataMax-1; i >= 0; i--)
@@ -500,7 +500,7 @@ void RecorderDialog::__addDeclarationPage()
   }
   else {
     warning("No tasks planned ...");
-// Isn't it possible to write an declaration without a task?    
+// Isn't it possible to write an declaration without a task?
     writeDeclaration->setEnabled(false);
   }
 
@@ -716,7 +716,7 @@ void RecorderDialog::slotCloseRecorder()
 
 void RecorderDialog::slotReadFlightList()
 {
- 
+
   if (!activeRecorder)
     return;
 
@@ -759,8 +759,8 @@ void RecorderDialog::slotReadFlightList()
                             i18n("There were no flights recorded in the recorder."),
                             i18n("Download result"));
     return;
-  }   
-    
+  }
+
   for(unsigned int loop = 0; loop < dirList.count(); loop++) {
     FRDirEntry* e = dirList.at(loop);
     QListViewItem* item = new QListViewItem(flightList);
@@ -822,7 +822,7 @@ void RecorderDialog::slotDownloadFlight()
   dlg->exec();
 
   KURL fUrl = dlg->selectedURL();
-    
+
   if(fUrl.isLocalFile())
     fileName = fUrl.path();
   else if(!KIO::NetAccess::download(fUrl, fileName))
@@ -836,16 +836,16 @@ void RecorderDialog::slotDownloadFlight()
       QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
       QMessageBox::NoButton, this, "statusDialog", true);
   statusDlg->show();
-  
+
   kapp->processEvents();
-  
+
   warning(fileName);
 
   if (!activeRecorder) return;
 
 
   kapp->processEvents();
-  
+
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
   ret = activeRecorder->downloadFlight(flightID,!useFastDownload->isChecked(),fileName);
 
@@ -878,7 +878,7 @@ void RecorderDialog::slotWriteDeclaration()
       QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
       QMessageBox::NoButton, this, "statusDialog", true);
   statusDlg->show();
-        
+
   int ret;
   FRTaskDeclaration taskDecl;
   taskDecl.pilotA = pilotName->text();
@@ -890,7 +890,7 @@ void RecorderDialog::slotWriteDeclaration()
   QString errorDetails;
 
   if (!activeRecorder) return;
-  kapp->processEvents();  
+  kapp->processEvents();
   if (!activeRecorder->capabilities().supUlDeclaration) {
     KMessageBox::sorry(this,
                        i18n("Function not implemented"),
@@ -977,7 +977,7 @@ bool RecorderDialog::__openLib(const QString& libN)
     warning(error);
     return false;
   }
-  
+
   FlightRecorderPluginBase* (*getRecorder)();
   getRecorder = (FlightRecorderPluginBase* (*) ()) dlsym(libHandle, "getRecorder");
   if (!getRecorder) {
@@ -1026,7 +1026,7 @@ void RecorderDialog::slotReadTasks()
       QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
       QMessageBox::NoButton, this, "statusDialog", true);
   statusDlg->show();
-  
+
   FlightTask *task;
   Waypoint *wp;
   QPtrList<Waypoint> wpList;
@@ -1080,7 +1080,7 @@ void RecorderDialog::slotReadTasks()
   }
 
 
-  
+
   delete statusDlg;
 }
 
@@ -1090,8 +1090,8 @@ void RecorderDialog::slotWriteTasks()
       QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
       QMessageBox::NoButton, this, "statusDialog", true);
   statusDlg->show();
-  
-  
+
+
   unsigned int maxNrWayPointsPerTask;
   unsigned int maxNrTasks;
   QString e;
@@ -1181,7 +1181,7 @@ void RecorderDialog::slotWriteTasks()
                          "ShowTaskUploadSuccesReport");
     }
   }
-  
+
   delete statusDlg;
 }
 
@@ -1209,7 +1209,7 @@ void RecorderDialog::slotReadWaypoints()
 
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
   kapp->processEvents();
-  
+
   ret = activeRecorder->readWaypoints(&frWaypoints);
   if (ret<FR_OK) {
     QApplication::restoreOverrideCursor();
@@ -1251,7 +1251,7 @@ void RecorderDialog::slotWriteWaypoints()
       QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
       QMessageBox::NoButton, this, "statusDialog", true);
   statusDlg->show();
-  
+
   unsigned int maxNrWaypoints;
   QString e;
   Waypoint *wp;
