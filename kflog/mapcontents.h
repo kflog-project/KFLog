@@ -410,11 +410,14 @@ switch to first task in file */
      * isohypseList contains all isohypses.
      */
     QList< QList<Isohypse> > isoList;
-    /** */
+    /**
+     * Contains list of all loaded Flight and FlightTask objects, wich are
+     * both subclasses of BaseFlightElement.
+     */
     QList<BaseFlightElement> flightList;
     /*
-	 * This list is reset every time the current WaypointCatalog is changed.
-	 */
+	   * This list is reset every time the current WaypointCatalog is changed.
+	   */
     QList<Waypoint> wpList;
     /**
      * List of all map-section. Contains a "1" for all loaded section-files,
