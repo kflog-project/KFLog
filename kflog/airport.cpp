@@ -43,7 +43,10 @@ QString Airport::getInfoString() const
 {
   QString text;
   QString path = KGlobal::dirs()->findResource("appdata", "mapicons/");
-
+  //bool isType2=false; //Doesn't work yet, runway info is not read.
+  //if (typeID==BaseMapElement::Airfield)
+  //  isType2=(getRunway().surface==Grass);
+    
   text.sprintf("%d", elevation);
   text = "<TABLE BORDER=0><TR><TD>"
       "<IMG SRC=" + path + glConfig->getPixmapName(typeID) + ">" +
