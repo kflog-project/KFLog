@@ -122,13 +122,12 @@ int getFlightDir(QList<FRDirEntry>* dirList)
 
 int downloadFlight(int flightID, int secMode, char* fileName)
 {
-  //return vl.read_igcfile(fileName, flightID, secMode) == VLA_ERR_NOERR;
   return 1;
 }
 
 QString getRecorderSerialNo()
 {
-  return "n.a.";
+  return "000";
 }
 
 int openRecorder(char* pName, int baud)
@@ -141,8 +140,8 @@ int closeRecorder()
   return sp.closeLogger();
 }
 
-int writeDeclaration(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> *taskPoints)
-{
+//int writeDeclaration(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> *taskPoints)
+//{
 //  unsigned int loop;
 //  FRTaskPoint *tp;
 //
@@ -189,8 +188,8 @@ int writeDeclaration(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> *taskPoints
 //  vl.declaration.task.finishpoint.lon = tp->lonPos / 600000.0;
 //
 //  return vl.write_db_and_declaration() == VLA_ERR_NOERR;
-  return 1;
-}
+//  return 1;
+//}
 
 int readTasks(QList<FRTask> *tasks)
 {
@@ -199,56 +198,7 @@ int readTasks(QList<FRTask> *tasks)
 
 int writeTasks(QList<FRTask> *tasks)
 {
-//  FRTask *task;
-//  FRTaskPoint *tp;
-//  VLAPI_DATA::ROUTE *r;
-//  VLAPI_DATA::WPT *wp;
-//  unsigned int taskCnt;
-//  unsigned int wpCnt;
-//
-//  // delete old tasks
-//  if(vl.database.routes != 0) {
-//    delete[] vl.database.routes;
-//    vl.database.routes = 0;
-//  }
-//  // create new, check max possible tasks
-//  vl.database.nroutes = MIN(tasks->count(), maxNrTasks);
-//  vl.database.routes = new VLAPI_DATA::ROUTE[vl.database.nroutes];
-//
-//  taskCnt = 0;
-//  for (task = tasks->first(); task != 0; task = tasks->next()) {
-//    // should never happen
-//    if (taskCnt >= maxNrTasks) {
-//      break;
-//    }
-//
-//    r = vl.database.routes + taskCnt++;
-//    strcpy(r->name, task->name.leftJustify(14, ' ', true));
-//    wpCnt = 0;
-//    for (tp = task->wayPoints.first(); tp != 0; tp = task->wayPoints.next()) {
-//      // should never happen
-//      if (wpCnt >= maxNrWaypointsPerTask) {
-//        break;
-//      }
-//      // ignore take off and landing
-//      if (tp->type == FlightTask::TakeOff || tp->type == FlightTask::Landing) {
-//        continue;
-//      }
-//      wp = r->wpt + wpCnt++;
-//      strcpy(wp->name, tp->name.leftJustify(6, ' ', true));
-//      wp->lat = tp->latPos / 600000.0;
-//      wp->lon = tp->lonPos / 600000.0;
-//      wp->typ = 0;
-//    }
-//
-//    // fill remaining turnpoints with '0xff'
-//    while (wpCnt < maxNrWaypointsPerTask) {
-//      memset(r->wpt + wpCnt++, 0xff, sizeof(VLAPI_DATA::WPT));
-//    }
-//  }
-//
-//  return vl.write_db_and_declaration() == VLA_ERR_NOERR;
-  return 1;
+  return sp.uploadTasks(tasks);
 }
 
 int readWaypoints(QList<FRWaypoint> *waypoints)

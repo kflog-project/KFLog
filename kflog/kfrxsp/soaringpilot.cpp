@@ -1,19 +1,19 @@
 /***********************************************************************
-**
-**   soaringpilot.cpp
-**
-**   This file is part of KFLog2.
-**
-************************************************************************
-**
-**   Copyright (c):  2003 by Harald Maier
-**
-**   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
-**
-**   $Id$
-**
-***********************************************************************/
+ **
+ **   soaringpilot.cpp
+ **
+ **   This file is part of KFLog2.
+ **
+ ************************************************************************
+ **
+ **   Copyright (c):  2003 by Harald Maier
+ **
+ **   This file is distributed under the terms of the General Public
+ **   Licence. See the file COPYING for more information.
+ **
+ **   $Id$
+ **
+ ***********************************************************************/
 
 #include "soaringpilot.h"
 
@@ -284,20 +284,20 @@ int SoaringPilot::uploadWaypoints(QList<FRWaypoint> *waypoints)
     typ = "";
     if (frWp->isLandable) {
       if (frWp->isHardSurface) {
-	typ += "AL";
+        typ += "AL";
       }
       else {
-	typ += "L";
+        typ += "L";
       }
     }
     tmp.sprintf("%d,%s,%s,%s,%s,%s,%s\r\n", 
-		line++, 
-		degreeToDegMin(tp->latPos, true).latin1(),
-		degreeToDegMin(tp->lonPos, false).latin1(),
-		meterToFeet(tp->elevation).latin1(),
-		typ.latin1(),
-		tp->name.latin1(),
-		frWp->comment.latin1());
+                line++, 
+                degreeToDegMin(tp->latPos, true).latin1(),
+                degreeToDegMin(tp->lonPos, false).latin1(),
+                meterToFeet(tp->elevation).latin1(),
+                typ.latin1(),
+                tp->name.latin1(),
+                frWp->comment.latin1());
     file.append(tmp);
   }
   return writeFile(file);
@@ -312,8 +312,9 @@ int SoaringPilot::downloadTasks(QList<FRTask> *tasks)
   int ret;
   FRTask *task;
   FRTaskPoint *tp;
-  int nrPoints;
-
+  unsigned int nrPoints;
+  bool takeoff, landing;
+  
   // ** -------------------------------------------------------------
   // **      SOARINGPILOT Version 1.8.8 Tasks
   // **      Date: 22 Feb 2003
@@ -331,46 +332,56 @@ int SoaringPilot::downloadTasks(QList<FRTask> *tasks)
     for (line = file.begin(); line != file.end(); ++line) {
       tokens = QStringList::split(",", *line, true);
       warning(*line);
-      if (tokens.size() >= 4 && tokens[0] == "TS") {
-	task = new FRTask;
-	task->name = tokens[1];
-	nrPoints = tokens[2].toInt();
-	while (line != file.end()) {
-	  warning(*line);
-	  tokens = QStringList::split(",", *line, true);
-	  if (tokens.size() >= 5 && tokens[0] == "TW") {
-	    tp = new FRTaskPoint;
-	    tp->name = tokens[4];
-	    tp->latPos = coordToDegree(tokens[1]);
-	    tp->lonPos = coordToDegree(tokens[2]);
-	    tp->elevation = feetToMeter(tokens[3]);
-	    task->wayPoints.append(tp);
-	  }
-	  else if (tokens.size() >= 1 && tokens[0] == "TE") {
-	    // check with declaration
-	    if (nrPoints != task->wayPoints.count()) {
-	      return 0;
-	    }
-	    break;
-	  }
-	  ++line;
-	}
-// 	if (task->wayPoints.count() == 0) {
-// 	  // append take off
-// 	  tp->type = FlightTask::TakeOff;
-// 	}
-// 	if (task->wayPoints.count() == 0) {
-// 	  tp->type = FlightTask::Begin;
-// 	}
-// 	// modify last for end of task
-// 	task->wayPoints.last()->type = FlightTask::End;
-// 	// make copy for landing
-// 	tp = new FRTaskPoint;
-// 	*tp = *(task->wayPoints.last());
-// 	tp->type = FlightTask::Landing;
-// 	task->wayPoints.append(tp);
-	
-	tasks->append(task);
+
+      if (tokens.size() >= 3 && tokens[0] == "TS") {
+        task = new FRTask;
+        task->name = tokens[1];
+        nrPoints = tokens[2].toInt();
+        // check for takeoff and landing
+        takeoff = (tokens.size() >= 4 && tokens[3].contains("T"));
+        landing = (tokens.size() >= 4 && tokens[3].contains("L"));
+
+        while (++line != file.end()) {
+          warning(*line);
+          tokens = QStringList::split(",", *line, true);
+          if (tokens.size() >= 5 && tokens[0] == "TW") {
+            tp = new FRTaskPoint;
+            tp->name = tokens[4];
+            tp->latPos = coordToDegree(tokens[1]);
+            tp->lonPos = coordToDegree(tokens[2]);
+            tp->elevation = feetToMeter(tokens[3]);
+            tp->type = FlightTask::RouteP;
+            task->wayPoints.append(tp);
+          }
+          else if (tokens.size() >= 1 && tokens[0] == "TE") {
+            // check with declaration
+            if (nrPoints != task->wayPoints.count()) {
+              return 0;
+            }
+            break;
+          }
+        }
+
+        if (!takeoff) {// append takeoff, copy of first point
+          tp = new FRTaskPoint;
+          *tp = *(task->wayPoints.first());
+          task->wayPoints.prepend(tp);
+        }
+        if (!landing) {// append landing, copy of last point
+          tp = new FRTaskPoint;
+          *tp = *(task->wayPoints.last());
+          task->wayPoints.append(tp);
+        }
+
+        nrPoints = task->wayPoints.count();
+        if (nrPoints >= 2) {
+          task->wayPoints.at(nrPoints - 1)->type = FlightTask::End;
+          task->wayPoints.at(nrPoints - 2)->type = FlightTask::Landing;
+          task->wayPoints.at(1)->type = FlightTask::Begin;
+          task->wayPoints.at(0)->type = FlightTask::TakeOff;
+        }
+
+        tasks->append(task);
       }
     }
   }
@@ -379,6 +390,11 @@ int SoaringPilot::downloadTasks(QList<FRTask> *tasks)
 
 int SoaringPilot::uploadTasks(QList<FRTask> *tasks)
 {
+  QStringList file;
+  QString tmp, typ;
+  FRTask *task;
+  FRTaskPoint *tp;
+  int nrPoints;
   // ** -------------------------------------------------------------
   // **      SOARINGPILOT Version 1.8.8 Tasks
   // **      Date: 22 Feb 2003
@@ -392,6 +408,29 @@ int SoaringPilot::uploadTasks(QList<FRTask> *tasks)
   // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
   // TE
 
+  for (task = tasks->first(); task != 0; task = tasks->next()) {
+    nrPoints = task->wayPoints.count();
+    if (nrPoints >= 4) {
+      // complete task with takeoff and landing
+      typ = "TL";
+    }
+    else {
+      typ = "";
+    }
+    tmp.sprintf("TS,%s,%d,%s\r\n", task->name.latin1(), nrPoints, typ.latin1());
+    file.append(tmp);
+    for (tp = task->wayPoints.first(); tp != 0; tp = task->wayPoints.next()) {
+      tmp.sprintf("TW,%s,%s,%s,%s\r\n", 
+                  degreeToDegMinSec(tp->latPos, true).latin1(),
+                  degreeToDegMinSec(tp->lonPos, false).latin1(),
+                  meterToFeet(tp->elevation).latin1(),
+                  tp->name.latin1());
+      file.append(tmp);
+    }
+    file.append("TE\r\n");
+  }
+
+  return writeFile(file);
 }
 
 /** No descriptions */
@@ -432,7 +471,7 @@ int SoaringPilot::coordToDegree(QString &s)
 QString SoaringPilot::degreeToDegMin(int d, bool isLat)
 {
   QString tmp;
-  int tmpD = abs(d - 1); // substract 1 from rounding errors
+  int tmpD = abs(d);
   int degree  = tmpD / 600000;
   double minute = (double)(tmpD - (degree * 600000)) / 10000.0;
 
@@ -450,17 +489,16 @@ QString SoaringPilot::degreeToDegMin(int d, bool isLat)
 QString SoaringPilot::degreeToDegMinSec(int d, bool isLat)
 {
   QString tmp;
-  int tmpD = abs(d - 1); // substract 1 from rounding errors
+  int tmpD = abs(d);
   int degree  = tmpD / 600000;
-  double minute = (double)(tmpD - (degree * 600000)) / 10000.0;
-  double seconds = (double)(tmpD - (degree * 600000) - (10000.0 * minute));
-  seconds = (seconds * 60.0) / 1000;
+  int minute = (tmpD - (degree * 600000)) / 10000;
+  int seconds = ((tmpD - (degree * 600000) - (10000 * minute)) * 60) / 10000;
 
   if (isLat) {
-    tmp.sprintf("%02d:%02f:%02.2f%c", degree, minute, seconds, (d < 0 ? 'S' : 'N'));
+    tmp.sprintf("%02d:%02d:%02d.00%c", degree, minute, seconds, (d < 0 ? 'S' : 'N'));
   }
   else {
-    tmp.sprintf("%02d:%02f:%02.2f%c", degree, minute, seconds, (d < 0 ? 'W' : 'E'));
+    tmp.sprintf("%03d:%02d:%02d.00%c", degree, minute, seconds, (d < 0 ? 'W' : 'E'));
   }
 
   return tmp;
