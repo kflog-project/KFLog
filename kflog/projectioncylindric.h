@@ -72,6 +72,10 @@ class ProjectionCylindric : public ProjectionBase
      * The standard parallel.
      */
     double v1;
+    /**
+     * For optimization
+     */
+    double cos_v1;
 };
 
 #endif

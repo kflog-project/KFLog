@@ -49,12 +49,14 @@ bool ProjectionCylindric::initProjection(int v1_new)
       v1 = NUM_TO_RAD(v1_new);
     }
 
+  cos_v1 = cos (v1);
+
   return true;
 }
 
 double ProjectionCylindric::projectX(double latitude, double longitude) const
 {
-  return longitude * cos(v1);
+  return longitude * cos_v1;
 }
 
 double ProjectionCylindric::projectY(double latitude, double longitude) const
@@ -69,7 +71,7 @@ double ProjectionCylindric::invertLat(double x, double y) const
 
 double ProjectionCylindric::invertLon(double x, double y) const
 {
-  return x / cos(v1);
+  return x / cos_v1;
 }
 
 // We do not rotate the map at all ...
