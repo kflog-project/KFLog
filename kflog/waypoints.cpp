@@ -829,7 +829,9 @@ void Waypoints::slotImportWaypointFromFile(){
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory",
                                           getpwuid(getuid())->pw_dir);
 
-  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT) \n *.gdn *.GDN|Waypoint file (Garmin format, *.gdn *.GDN) \n *|All files", this, i18n("Import waypoints from file"));
+   // we should not include types we don't support (yet). Also, the strings should be translated.                                       
+//  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT) \n *.gdn *.GDN|Waypoint file (Garmin format, *.gdn *.GDN) \n *|All files", this, i18n("Import waypoints from file"));
+  QString fName = KFileDialog::getOpenFileName(wayPointDir, i18n("*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT)"), this, i18n("Import waypoints from file"));
 
   if(!fName.isEmpty()) {
     WaypointCatalog *w = waypointCatalogs.current();
