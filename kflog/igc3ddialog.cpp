@@ -38,8 +38,8 @@ Igc3DDialog::Igc3DDialog(QList<Flight>* fList)
 
 	Igc3DView* igc3dView = new Igc3DView(this, flightList);
 
-  QBoxLayout * layout = new QHBoxLayout( this, 0, -1, "vertical" );
-  QLabel* label = new QLabel( this, 0, 0 );
+  QBoxLayout * layout = new QHBoxLayout( this, 0, -1, "horizontal" );
+//  QLabel* label = new QLabel( this, 0, 0 );
 
 	igc3dView->setMinimumWidth( 500 );
 	igc3dView->setMinimumHeight( 500 );
@@ -50,14 +50,11 @@ Igc3DDialog::Igc3DDialog(QList<Flight>* fList)
 	vs->height = 500;
   vs->width = 500;
 
-  label->setText( i18n("  Toolbar will\n  go here.") );
-  label->setFixedWidth( label->sizeHint().width() + 10 );
+//  label->setText( i18n("  Toolbar will\n  go here.") );
+//  label->setFixedWidth( label->sizeHint().width() + 10 );
 
 	layout->addWidget( igc3dView );
-	layout->addWidget( label );
-
-//  connect(combo_flight, SIGNAL(activated(int)),
-//        SLOT(slotShowFlightData(int)));
+//	layout->addWidget( label );
 	
   show();
 }
