@@ -149,7 +149,6 @@ void Optimization::run(){
   // find waypoints
   for (long k=LEGS-1;k>=0;k--){
       qWarning(QString("  k:%1\tpointList[k+1]:%3").arg(k).arg(pointList[k+1]));
-//      pointList[k]=w[pointList[k+1]+k*n];  // if this was the bug, we can delete this line
       pointList[k]=w[pointList[k+1]+(k+1)*n];
       qWarning(QString("->k:%1\tpointList[k]:%3").arg(k).arg(pointList[k]));
   }
