@@ -497,6 +497,7 @@ void KFLogApp::initView()
     SLOT(slotAddWaypoint(Waypoint *)));
   connect(map, SIGNAL(taskPlanningEnd()), tasks,
     SLOT(slotUpdateTask()));
+  connect(map, SIGNAL(elevation(int)), legend, SLOT(highlightLevel(int)));
 
   extern MapMatrix _globalMapMatrix;
   connect(mapControl, SIGNAL(scaleChanged(double)), &_globalMapMatrix,

@@ -35,6 +35,16 @@ class LineElement;
 class RadioPoint;
 class SinglePoint;
 
+class isoListEntry {
+  public:
+  
+    isoListEntry(QRegion* region=0, int height=0);
+    ~isoListEntry();
+  
+    QRegion* region;
+    int height;
+};
+
 /**
  * This class provides functions for accessing the contents of the map.
  * It takes control over loading all needed map-files.
@@ -207,6 +217,8 @@ switch to first task in file */
         CityList, VillageList, LandmarkList, HighwayList, HighwayEntryList,
         RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
         WaypointList, DigitList, FlightList};
+
+    inline QList<isoListEntry>* getIsohypseRegions(){return &regIsoLines;};
 
   public slots:
     /**
@@ -386,6 +398,11 @@ switch to first task in file */
 
     /** Should be deleted somtime ... */
     bool isFirst;
+
+    /**
+     * List of all drawn isohypses.
+     */
+    QList<isoListEntry> regIsoLines; 
 };
 
 #endif

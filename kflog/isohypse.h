@@ -19,6 +19,7 @@
 #define ISOHYPSE_H
 
 #include <lineelement.h>
+#include <qregion.h>
 
 /**
  * This class is used for isohypses.
@@ -41,13 +42,13 @@ class Isohypse : public LineElement
      */
     ~Isohypse();
     /**
-     * Draws the element into the given painter. Reimplemented from
-     * BaseMapElement.
+     * Draws the element into the given painter. 
      *
      * @param  targetP  The painter to draw the element into.
      * @param  maskP  The maskpainter for targetP
+     * @return the region the isohypse covers
      */
-    virtual void drawMapElement(QPainter* targetP, QPainter* maskP);
+    virtual QRegion* drawRegion(QPainter* targetP, QPainter* maskP);
     /**
      * @return the elevation of the line
      */

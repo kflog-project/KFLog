@@ -31,10 +31,14 @@ Isohypse::~Isohypse()
 
 }
 
-void Isohypse::drawMapElement(QPainter* targetP, QPainter* maskP)
+QRegion* Isohypse::drawRegion(QPainter* targetP, QPainter* maskP)
 {
-  if(glMapMatrix->isVisible(bBox))
+  if(glMapMatrix->isVisible(bBox)) {
       targetP->drawPolygon(glMapMatrix->map(projPointArray));
+      QPointArray tA = glMapMatrix->map(projPointArray);
+      return new QRegion(tA);
+  }
+  return 0;
 }
 
 int Isohypse::getElevation() const { return elevation; }

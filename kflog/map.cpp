@@ -405,6 +405,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
           prePos.setX(-50);
           prePos.setY(-50);
         }
+
+      __findElevation(current);
     }
 }
 
@@ -2224,4 +2226,22 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
   // force a update
   emit changed(this->size());
   __redrawMap();
+}
+
+/** Tries to locate the elevation for the given point, and emits a signal elevation if found. */
+void Map::__findElevation(QPoint coord){
+  extern MapContents _globalMapContents;
+  isoListEntry* entry;
+  int height=-1;
+  
+  QList<isoListEntry>* list=_globalMapContents.getIsohypseRegions();
+
+  for(int i=0; i<list->count();i++) {
+    entry=list->at(i);
+    if (entry->region->contains(coord)) 
+      height=MAX(height,entry->height);
+  }
+
+  if (height>-1) emit elevation(height);
+ 
 }

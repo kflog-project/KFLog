@@ -138,6 +138,7 @@ MapContents::MapContents()
 //  stationList.setAutoDelete(true);
   topoList.setAutoDelete(true);
   wpList.setAutoDelete(false);
+  regIsoLines.setAutoDelete(true);
 }
 
 MapContents::~MapContents()
@@ -2036,8 +2037,11 @@ void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
 void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
 {
   int height = 0;
+  QRegion * reg;
 
   extern MapConfig _globalMapConfig;
+
+  regIsoLines.clear();
 
   for(unsigned int loop = 0; loop < isoList.count(); loop++)
     {
@@ -2059,8 +2063,13 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
       targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1, Qt::NoPen));
       targetP->setBrush(QBrush(_globalMapConfig.getIsoColor(height),
           QBrush::SolidPattern));
-      for(unsigned int loop2 = 0; loop2 < isoList.at(loop)->count(); loop2++)
-          isoList.at(loop)->at(loop2)->drawMapElement(targetP, maskP);
+      for(unsigned int loop2 = 0; loop2 < isoList.at(loop)->count(); loop2++) {
+        reg=isoList.at(loop)->at(loop2)->drawRegion(targetP, maskP);
+        if (reg) {
+          isoListEntry* entry=new isoListEntry(reg, height);
+          regIsoLines.append(entry);
+        }
+      }
     }
 }
 
@@ -2912,3 +2921,18 @@ QString MapContents::genTaskName()
   tmp.sprintf("TASK%03d", tCount++);
   return tmp;
 }
+
+
+/***********************************************
+ * isoListEntry
+ ***********************************************/
+
+isoListEntry::isoListEntry(QRegion* region, int height) {
+  this->region=region;
+  this->height=height;
+}
+  
+isoListEntry::~isoListEntry() {
+  if(region) delete region;
+}
+

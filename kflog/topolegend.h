@@ -35,6 +35,7 @@ public:
 
 protected:
   QList<QLabel> labelList;
+  int currentHighlight;
   
 public slots: // Public slots
   /** Makes sure the indicated level is visible. */

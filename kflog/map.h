@@ -121,6 +121,8 @@ class Map : public QWidget
     void pointClicked(QPoint);
     /** is emited when shift + left button click on the map */
     void waypointSelected(Waypoint *);
+    /** Emitted when the mouse hits a new elevation. The argument is the level. */
+    void elevation(int);
 
   protected:
     /**
@@ -200,6 +202,8 @@ class Map : public QWidget
      *   Second look in map contents
      */
     bool __getTaskWaypoint(QPoint current, Waypoint *wp, QList<Waypoint> &taskPointList);
+  /** Tries to locate the elevation for the given point, and emits a signal elevation if found. */
+  void __findElevation(QPoint coord);
     /**
      * This pixmap is used to store the currently displayed map.
      * This painter is about the same size as the map-widget, but is only

@@ -53,6 +53,8 @@ TopoLegend::TopoLegend(QWidget *parent, const char *name ) : QScrollView(parent,
     lbl->setBackgroundColor(_globalMapConfig.getIsoColor(i));  //get the appropriate color from the mapconfig
     labelList.append(lbl);                                     //and add the label to our label list
   }
+
+  currentHighlight=-1;
 }
 
 TopoLegend::~TopoLegend(){
@@ -60,21 +62,29 @@ TopoLegend::~TopoLegend(){
 
 /** Makes sure the indicated level is visible. */
 void TopoLegend::highlightLevel(int level){
-
+  if (level==currentHighlight) return;
+  
   //make sure it's visible, but only if this is a valid level!
   if (level >=0 && level<51) {
     int y=labelList.at(50-level)->y();
     this->ensureVisible(10,y);
+    labelList.at(50-level)->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   }
-  
+
   //highlight the selected label
+  /*
   for (int i=0;i<51;i++) {
     if (i==(50-level)) {
       labelList.at(i)->setFrameStyle( QFrame::Panel | QFrame::Sunken );
     } else {
       labelList.at(i)->setFrameStyle( QFrame::NoFrame );
     }
-  }
+  } */
+
+  if (currentHighlight>=0 && currentHighlight<51)
+    labelList.at(50-currentHighlight)->setFrameStyle( QFrame::NoFrame );
+  currentHighlight=level;
+
 }
 
 
