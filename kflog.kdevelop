@@ -49,9 +49,12 @@
       <programargs/>
       <terminal>false</terminal>
       <envvars/>
-      <directoryradio>build</directoryradio>
+      <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
       <autocompile>true</autocompile>
+      <runarguments>
+        <kflog/>
+      </runarguments>
     </run>
     <envvars/>
     <configurations>
@@ -65,12 +68,11 @@
         <cxxcompilerbinary/>
         <f77compilerbinary/>
         <cflags/>
-        <cxxflags>-g</cxxflags>
+        <cxxflags/>
         <f77flags/>
         <topsourcedir/>
         <cppflags/>
         <ldflags>-lGL</ldflags>
-        <envvars/>
       </default>
     </configurations>
   </kdevautoproject>
@@ -89,7 +91,7 @@
     <tree>
       <hidenonprojectfiles>true</hidenonprojectfiles>
       <hidepatterns>*.o,*.lo,CVS</hidepatterns>
-      <showvcsfields>false</showvcsfields>
+      <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>
   <kdevdoctreeview>
@@ -124,7 +126,6 @@
     <display>
       <staticmembers>true</staticmembers>
       <demanglenames>true</demanglenames>
-      <outputradix>10</outputradix>
     </display>
   </kdevdebugger>
   <cppsupportpart>
@@ -187,11 +188,4 @@
     <recursivewhencommitremove>true</recursivewhencommitremove>
     <revertoptions>-C</revertoptions>
   </kdevcvsservice>
-  <kdevdocumentation>
-    <projectdoc>
-      <docsystem/>
-      <docurl/>
-      <usermanualurl/>
-    </projectdoc>
-  </kdevdocumentation>
 </kdevelop>
