@@ -39,9 +39,20 @@
 #include "kflog.h"
 #include <dataview.h>
 #include <map.h>
+#include <mapcalc.h>
 #include <mapcontents.h>
 #include <mapcontrolview.h>
 #include <mapmatrix.h>
+
+#define STATUS_LABEL(a,b,c) \
+  a = new KStatusBarLabel( "", 0, statusBar() ); \
+  a->setFixedWidth( b ); \
+  a->setFixedHeight( statusLabel->sizeHint().height() ); \
+  a->setFrameStyle( QFrame::NoFrame | QFrame::Plain ); \
+  a->setMargin(0); \
+  a->setLineWidth(0); \
+  a->setAlignment( c | AlignVCenter );
+//  a->setIndent(10);
 
 KFLogApp::KFLogApp(QWidget* , const char* name)
   : KDockMainWindow(0, name)
@@ -235,14 +246,21 @@ void KFLogApp::initStatusBar()
   statusLabel->setMargin(0);
   statusLabel->setLineWidth(0);
 
+  STATUS_LABEL(statusTimeL, 80, AlignHCenter);
+  STATUS_LABEL(statusHeightL, 80, AlignRight);
+  STATUS_LABEL(statusVarioL, 80, AlignRight);
+  STATUS_LABEL(statusSpeedL, 100, AlignRight);
+  STATUS_LABEL(statusLatL, 110, AlignHCenter);
+  STATUS_LABEL(statusLonL, 110, AlignHCenter);
+
   statusBar()->addWidget( statusLabel, 1, false );
-  statusBar()->insertFixedItem(IDS_TIME, ID_STATUS_TIME, true);
-  statusBar()->insertFixedItem(IDS_HEIGHT, ID_STATUS_HEIGHT, true);
-  statusBar()->insertFixedItem(IDS_SPEED, ID_STATUS_SPEED, true);
-  statusBar()->insertFixedItem(IDS_VARIO, ID_STATUS_VARIO, true);
-  statusBar()->addWidget(statusProgress, 0,  true);
-  statusBar()->insertFixedItem(IDS_COORD_DEFAULT_R, ID_STATUS_COORD_R, true);
-  statusBar()->insertFixedItem(IDS_COORD_DEFAULT_H, ID_STATUS_COORD_H, true);
+  statusBar()->addWidget( statusTimeL, 0, false );
+  statusBar()->addWidget( statusHeightL, 0, false );
+  statusBar()->addWidget( statusSpeedL, 0, false );
+  statusBar()->addWidget( statusVarioL, 0, false );
+  statusBar()->addWidget( statusProgress, 0,  false );
+  statusBar()->addWidget( statusLatL, 0, false );
+  statusBar()->addWidget( statusLonL, 0, false );
 }
 
 void KFLogApp::initView()
@@ -281,6 +299,42 @@ void KFLogApp::initView()
       SLOT(slotShowMapData(QSize)));
   connect(mapControl, SIGNAL(scaleChanged(int)), map,
       SLOT(slotScaleChanged(int)));
+}
+
+void KFLogApp::showCoords(QPoint pos)
+{
+  statusBar()->clear();
+  statusLatL->setText(printPos(pos.y()));
+  statusLonL->setText(printPos(pos.x(), false));
+}
+
+void KFLogApp::showPointInfo(QPoint pos, struct flightPoint* point)
+{
+  statusBar()->clear();
+  QString text;
+  text.sprintf("%s", (const char*)printTime(point->time, true));
+  statusTimeL->setText(text);
+  text.sprintf("%4d m  ", point->height);
+  statusHeightL->setText(text);
+  text.sprintf("%3.1f km/h  ", getSpeed(point));
+  statusSpeedL->setText(text);
+  text.sprintf("%2.1f m/s  ", getVario(point));
+  statusVarioL->setText(text);
+
+  statusLatL->setText(printPos(pos.y()));
+  statusLonL->setText(printPos(pos.x(), false));
+}
+
+void KFLogApp::clearPointInfo(QPoint pos)
+{
+  statusBar()->clear();
+  statusTimeL->setText("");
+  statusHeightL->setText("");
+  statusSpeedL->setText("");
+  statusVarioL->setText("");
+
+  statusLatL->setText(printPos(pos.y()));
+  statusLonL->setText(printPos(pos.x(), false));
 }
 
 void KFLogApp::saveOptions()
@@ -359,7 +413,8 @@ void KFLogApp::slotFileOpen()
       QFileInfo fInfo(fName);
       flightDir = fInfo.dirPath();
       extern MapContents _globalMapContents;
-      _globalMapContents.loadFlight(fName);
+      if(_globalMapContents.loadFlight(fName))
+          dataView->setFlightData(_globalMapContents.getFlight());
     }
 
   map->slotRedrawMap();

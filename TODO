@@ -6,11 +6,4 @@
   Höhen über 0M ist in den 0°E Dateien ...
 
 
-* Bei Flügen muss noch bestimmt werden, ob diese sichtbar sind und
-  gezeichnet weden sollen, oder nicht. Hierzu muss dem Konstruktur ein
-  boundingRect übergeben werden.
-
-
-* Die Bestimmung der Wendepunkt-Sektoren erfolgt noch nicht ganz korrekt.
-  Vermutlich ist es besser, diese Berechnung nur einmal durchzuführen und
-  den berechneten Winkel gemäß der Karte mit zu drehen.
+* Welche Variablen und Funktionen werden tatsächlich benutzt ???

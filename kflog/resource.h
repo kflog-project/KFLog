@@ -168,16 +168,16 @@
 #define ID_STATUS_COORD_R           10011
 #define ID_STATUS_COORD_H           10012
 #define ID_STATUS_PROGRESS          10013
-#define IDS_COORD_DEFAULT_R         "                  0"
-#define IDS_COORD_DEFAULT_H         "                  0"
+#define IDS_COORD_DEFAULT_R         "                     "
+#define IDS_COORD_DEFAULT_H         "                     "
 #define ID_STATUS_VARIO             10014
 #define ID_STATUS_HEIGHT            10015
 #define ID_STATUS_SPEED             10016
 #define ID_STATUS_TIME              10017
-#define IDS_VARIO                   "               "
-#define IDS_HEIGHT                  "             "
-#define IDS_SPEED                   "                 "
-#define IDS_TIME                    "             "
+#define IDS_VARIO                   "                 "
+#define IDS_HEIGHT                  "               "
+#define IDS_SPEED                   "                   "
+#define IDS_TIME                    "               "
 
 
 //#define MAP_ICON(n) Icon(KApplication::kde_datadir() + "/kflog/map/" + n)

@@ -79,7 +79,7 @@
 
 Map::Map(KFLogApp *m, QFrame* parent)
 : QWidget(parent),
-  mainApp(m), posNum(1), indexLength(0), preX(-50), preY(-50)
+  mainApp(m), posNum(1), indexLength(0), prePos(-50, -50)
 {
   extern double _scale[];
   extern int _scaleBorder[];
@@ -104,33 +104,18 @@ Map::Map(KFLogApp *m, QFrame* parent)
   pixCursor.fill(white);
 
   QPainter cursor(&pixCursor);
-  cursor.setPen(QPen(QColor(255,0,255), 2));
+  cursor.setPen(QPen(QColor(255,100,255), 2));
   cursor.drawLine(0,0,40,40);
   cursor.drawLine(0,40,40,0);
   cursor.setPen(QPen(QColor(255,0,255), 3));
   cursor.drawEllipse(10, 10, 20, 20);
   cursor.end();
 
-//  pixTempA.resize( PIX_WIDTH, PIX_HEIGHT );
-//  pixTempB.resize( PIX_WIDTH, PIX_HEIGHT );
-//  pixTempC.resize( PIX_WIDTH, PIX_HEIGHT );
-//  pixTempD.resize( PIX_WIDTH, PIX_HEIGHT );
-
   pixAllSites.resize( PIX_WIDTH, PIX_HEIGHT );
-//  pixAirport.resize( PIX_WIDTH, PIX_HEIGHT );
   pixAirspace.resize( PIX_WIDTH, PIX_HEIGHT );
-//  pixCity.resize( PIX_WIDTH, PIX_HEIGHT );
   pixFlight.resize( PIX_WIDTH, PIX_HEIGHT );
   pixGlider.resize( PIX_WIDTH, PIX_HEIGHT );
   pixGrid.resize( PIX_WIDTH, PIX_HEIGHT );
-//  pixHydro.resize( PIX_WIDTH, PIX_HEIGHT );
-//  pixIso.resize( PIX_WIDTH, PIX_HEIGHT );
-//  pixLand.resize( PIX_WIDTH, PIX_HEIGHT );
-//  pixNav.resize( PIX_WIDTH, PIX_HEIGHT );
-//  pixOut.resize( PIX_WIDTH, PIX_HEIGHT );
-//  pixRail.resize( PIX_WIDTH, PIX_HEIGHT );
-//  pixRoad.resize( PIX_WIDTH, PIX_HEIGHT );
-//  pixTopo.resize( PIX_WIDTH, PIX_HEIGHT );
   pixWaypoints.resize( PIX_WIDTH, PIX_HEIGHT );
   pixUnderMap.resize( PIX_WIDTH, PIX_HEIGHT );
 
@@ -378,49 +363,32 @@ Map::~Map()
 
 void Map::mouseMoveEvent(QMouseEvent* event)
 {
-  extern double _currentScale;
-/*
-  // Wird zur Zeit noch nicht benˆtigt, daher erst mal
-  // auskommentieren.
-  // War nur ein erster Test ...
-
-  QPainter window(this);
-  window.setRasterOp(XorROP);
-  window.setPen(QPen(QColor(0,255,0), 2));
-  window.drawLine(_start, _current);
-  window.drawLine(_start, event->pos());
-  window.end();
-*/
-  // remember the current mouse position
+  // keep the current mouse position
   _currentPos = event->pos();
 
-  struct point loc;
-//  map2Lambert((( event->pos().y() - DELTA_Y ) * _currentScale / RADIUS),
-//      (( event->pos().x() - DELTA_X ) * _currentScale / RADIUS), &loc);
+  extern const MapMatrix _globalMapMatrix;
+  extern MapContents _globalMapContents;
 
-//  mainApp->showCoords(loc.latitude, (loc.longitude + mapCenterLon));
-
-  if(preX >= 0)
-    bitBlt(this, preX - 20, preY - 20, &pixBuffer,
-              preX - 20, preY - 20, 40, 40);
+  if(prePos.x() >= 0)
+      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+          prePos.x() - 20, prePos.y() - 20, 40, 40);
 
   struct flightPoint* cP = new struct flightPoint[1];
-  const int index = 0;//view->getFlightDataView()->searchFlightPoint(_currentPos, cP);
-  if(index != -1)
+
+  if(_globalMapContents.searchFlightPoint(_currentPos, cP) != -1)
     {
-//      mainApp->showPointInfo(cP);
-      preX = cP->latitude;
-      preY = cP->longitude;
-      bitBlt(this, preX - 20, preY - 20, &pixCursor, 0, 0, -1, -1, NotEraseROP);
+      mainApp->showPointInfo(_globalMapMatrix.mapToWgs(event->pos()), &cP[0]);
+      prePos = _globalMapMatrix.map(cP[0].projP);
+      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor,
+          0, 0, -1, -1, NotEraseROP);
     }
   else
     {
-//      mainApp->clearPointInfo();
+      mainApp->clearPointInfo(_globalMapMatrix.mapToWgs(event->pos()));
 
-      preX = -50;
-      preY = -50;
+      prePos.setX(-50);
+      prePos.setY(-50);
     }
-  delete cP;
 }
 
 void Map::mousePressEvent(QMouseEvent* event)
@@ -659,8 +627,8 @@ void Map::paintEvent(QPaintEvent* event = 0)
 {
   bitBlt(this, 0, 0, &pixBuffer);
   /* Cursor-Position zur¸cksetzen! */
-  preX = -50;
-  preY = -50;
+  prePos.setX(-50);
+  prePos.setY(-50);
 }
 
 void Map::__drawGrid()
@@ -823,11 +791,7 @@ void Map::__drawMap()
   _globalMapContents.drawList(&underMapP, MapContents::RailList);
 
   mainApp->slotSetProgress(30);
-/*
-  // If needed, here are the stations
-  // Hier stimmt die Liste noch nicht!
-  if(isRail) DRAW_LOOP(MapContents::RailList, &railP)
-*/
+
   mainApp->slotSetProgress(35);
 
   for(unsigned int loop = 0; loop < _globalMapContents.getListLength(
@@ -906,14 +870,7 @@ void Map::__drawMap()
 
   mainApp->slotSetProgress(95);
 
-/*
-  if(isWaypoint && (_currentScale <= _scale[_scaleBorder[ID_WAYPOINTS]]))
-      DRAW_LOOP(MapContents::WaypointList, &mapP)
-*/
-//  if(displayFlights) __drawFlight();
-
   _globalMapContents.drawList(&underMapP, MapContents::FlightList);
-
 
   mainApp->slotSetProgress(100);
 
@@ -934,7 +891,6 @@ void Map::resizeEvent(QResizeEvent* event)
   pixBuffer.resize(event->size());
   pixBuffer.fill(white);
 
-  // Beim Programmstart wird dies einmal zuviel aufgerufen ...
   if(!event->size().isEmpty()) __redrawMap();
 
   emit changed(event->size());
@@ -956,8 +912,6 @@ void Map::__redrawMap()
   __drawMap();
 
   slotShowLayer();
-
-//  view->slotShowMapData(this->width(), this->height());
 }
 
 void Map::slotRedrawMap() { __redrawMap(); }
@@ -982,40 +936,8 @@ void Map::slotShowLayer()
 //  pixBuffer.fill(QColor(239,238,236));
   /* Wg. der Hˆhenlinien mal ge‰ndert ... */
   pixBuffer.fill(white);
-//  pixTempA.fill(white);
-//  pixTempB.fill(white);
-//  pixTempC.fill(QColor(120,120,120));
-//  pixTempD.fill(QColor(50,50,50));
 
   // deleting the current pixmap and displaying the grid:
-//  bitBlt(&pixTempA, 0, 0, &pixGrid, 0, 0, -1, -1, NotEraseROP);
-/*
-  PROOF_LAYER(showHydro,    pixTempA, pixHydro)
-  PROOF_LAYER(showRoad,     pixTempA, pixRoad)
-  PROOF_LAYER(showRail,     pixTempA, pixRail)
-  PROOF_LAYER(showCity,     pixTempA, pixCity)
-  PROOF_LAYER(showLand,     pixTempA, pixLand)
-  PROOF_LAYER(showTopo,     pixTempA, pixTopo)
-  PROOF_LAYER(showAirport,  pixTempB, pixAirport)
-  PROOF_LAYER(showNav,      pixTempB, pixNav)
-  PROOF_LAYER(showAddSites, pixTempB, pixAddSites)
-  PROOF_LAYER(showGlider,   pixTempB, pixGlider)
-  PROOF_LAYER(showOut,      pixTempB, pixOut)
-  PROOF_LAYER(showWaypoint, pixTempB, pixWaypoints)
-  PROOF_LAYER(showAirspace, pixTempB, pixAirspace)
-
-  bitBlt(&pixTempC, 0, 0, &pixTempA, 0, 0, -1, -1, OrROP);
-  bitBlt(&pixTempD, 0, 0, &pixTempB, 0, 0, -1, -1, OrROP);
-
-  bitBlt(&pixBuffer, 0, 0, &pixIso, 0, 0, -1, -1, NotEraseROP);
-  bitBlt(&pixBuffer, 0, 0, &pixTempC, 0, 0, -1, -1, NotEraseROP);
-  bitBlt(&pixBuffer, 0, 0, &pixTempD, 0, 0, -1, -1, NotEraseROP);
-
-//  bitBlt(&pixBuffer, 0, 0, &pixTempC, 0, 0, -1, -1, NotEraseROP);
-//  bitBlt(&pixBuffer, 0, 0, &pixTempD, 0, 0, -1, -1, NotEraseROP);
-
-  PROOF_LAYER(showFlight,   pixBuffer, pixFlight)
-*/
 
   bitBlt(&pixBuffer, 0, 0, &pixUnderMap);
   bitBlt(&pixBuffer, 0, 0, &pixGrid, 0, 0, -1, -1, NotEraseROP);
@@ -1113,81 +1035,9 @@ void Map::slotCenterToItem(int listIndex, int elementIndex)
   __redrawMap();
 }
 
-void Map::slotCenterToFlight()
-{
-/*
-  if(!view->getFlightDataView()->getFlightList()->count()) return;
+void Map::slotCenterToFlight()  {  }
 
-  extern double _currentScale;
-  extern const double _scale[];
-  const struct point* center = view->getFlightDataView()->getFlightCenter();
-
-  int newCenterLat = ( center[1].latitude + center[0].latitude ) / 2;
-  int newCenterLon = ( center[1].longitude + center[0].longitude ) / 2;
-
-  double latScale = dist(center[0].latitude, center[0].longitude,
-          center[1].latitude, center[0].longitude) * 1000.0 / this->height();
-
-  double lonScale =  dist(newCenterLat, center[0].longitude,
-          newCenterLat, center[1].longitude) * 1000.0 / this->width();
-
-  double newScale = ( MAX(latScale, lonScale) + 10.0 ) * 1.05;
-
-  // Wenn Abstand der Punkte zu klein, und Maﬂstab ‰hnlich ist,
-  // wird nicht neu gezeichnet ...
-  if( ( ( dist(newCenterLat, newCenterLon, mapCenterLat, mapCenterLon)
-          * 1000.0 / _currentScale ) < 20 ) &&
-      ((newScale / _currentScale) < 1.1 && (newScale / _currentScale) > 0.75))
-    return;
-
-  mapCenterLat = newCenterLat;
-  mapCenterLon = newCenterLon;
-
-  if(newScale < _scale[0])      newScale = _scale[0];
-  else if(newScale > _scale[9]) newScale = _scale[9];
-
-  _currentScale = newScale;
-  __redrawMap();
-*/
-}
-
-void Map::slotCenterToTask()
-{
-/*
-  if(!view->getFlightDataView()->getFlightList()->count()) return;
-
-  extern double _currentScale;
-  extern const double _scale[];
-  const struct point* center = view->getFlightDataView()->getTaskCenter();
-
-  int newCenterLat = ( center[1].latitude + center[0].latitude ) / 2;
-  int newCenterLon = ( center[1].longitude + center[0].longitude ) / 2;
-
-  double latScale = dist(center[0].latitude, center[0].longitude,
-          center[1].latitude, center[0].longitude) * 1000.0 / this->height();
-
-  double lonScale =  dist(newCenterLat, center[0].longitude,
-          newCenterLat, center[1].longitude) * 1000.0 / this->width();
-
-  double newScale = ( MAX(latScale, lonScale) + 10.0 ) * 1.1;
-
-  // Wenn Abstand der Punkte zu klein, und Maﬂstab ‰hnlich ist,
-  // wird nicht neu gezeichnet ...
-  if( ( ( dist(newCenterLat, newCenterLon, mapCenterLat, mapCenterLon)
-          * 1000.0 / _currentScale ) < 20 ) &&
-      ((newScale / _currentScale) < 1.1 && (newScale / _currentScale) > 0.75))
-    return;
-
-  mapCenterLat = newCenterLat;
-  mapCenterLon = newCenterLon;
-
-  if(newScale < _scale[0])      newScale = _scale[0];
-  else if(newScale > _scale[9]) newScale = _scale[9];
-
-  _currentScale = newScale;
-  __redrawMap();
-*/
-}
+void Map::slotCenterToTask()    {  }
 
 void Map::slotCenterToWaypoint(struct wayPoint* centerP)
 {
@@ -1231,201 +1081,4 @@ void Map::showFlightLayer(bool redrawFlight)
     mainApp->toolBar()->getButton(ID_LAYER_FLIGHT)->toggle();
 
   slotShowLayer();
-}
-/*
-void Map::__drawFlight()
-{
-  extern MapContents _globalMapContents;
-
-  QPainter flightP(&pixFlight);
-
-  _globalMapContents.drawList(&flightP, MapContents::FlightList);
-
-  flightP.end();
-}
-*/
-void Map::loadWaypoint(QString waypointFileName)
-{
-  QFile* waypointFile = new QFile(waypointFileName);
-  QFileInfo file(waypointFileName);
-  if(file.extension() == "wgs")
-    {
-//      importWGS(waypointFile);
-    }
-  else
-    {
-      if(waypointFile->open(IO_ReadOnly))
-        {
-          QTextStream t( waypointFile );
-          // Typen Namen
-          QString s, height, typ, name, frequency, direction,
-                  length, surface, alias;
-          QList<QString> runwayList;
-          bool isObject = false;
-          runwayList.setAutoDelete(true);
-          int latitude = 0, longitude = 0;
-          int list = 1, runway = 0;
-          while(!t.eof())
-            {
-              s = t.readLine().simplifyWhiteSpace();
-              if(s == "")
-                {
-                  if(isObject && (typ != "") && (name != ""))
-                    {
-                      //  write into file;
-                      QFile mapFile("/tmp/kflog_wend.out");
-                      if(!mapFile.open(IO_ReadWrite))
-                        {
-                          KMessageBox::error(parentWidget(),
-                              i18n("Cannot access the mapfile!"));
-                          return;
-                        }
-                      mapFile.at(mapFile.size());
-                      QTextStream mapOut(&mapFile);
-
-                      name = name.replace(QRegExp("\""), "");
-                      mapOut << "[NEW]\n"
-                             << "TYPE=" << typ << endl
-                             << "NAME=" << name << endl
-                             << "LIST=" << list << endl
-                             << "ELEV=" << height << endl;
-                      if(frequency != "")
-                          mapOut << "FREQUENCY=" << frequency << endl;
-                      else if(alias != "")
-                          mapOut << "ALIAS=" << alias << endl;
-
-                      unsigned int length = runwayList.count();
-                      for(unsigned int loop = 0; loop < length; loop++)
-                        {
-                          QString temp = *runwayList.take(0);
-                          mapOut << "RUNWAY=" << temp << endl;
-                        }
-                      mapOut << "AT=" << latitude << " " << longitude << endl
-                             << "[END]" << endl;
-                     // lˆschen der Variablen
-                      isObject = false;
-                      typ = "";
-                      list = 1;
-                      name = "";
-                      height = "";
-                      frequency = "";
-                      alias = "";
-                      latitude = 0;
-                      longitude = 0;
-                   }
-                }
-              else if(s.mid(0,2) == "at")
-                {
-                  isObject = true;
-                  runway = 0;
-                  runwayList.~QList();
-                  // New Object
-                  unsigned int loop = 0;
-                  // Koordinaten
-                  if((s.mid(11,1) == "N") || (s.mid(11,1) == "S"))
-                    {
-                      latitude = degreeToNum(s.mid(3,9));
-                      loop = 13;
-                    }
-                  else if((s.mid(12,1) == "N") || (s.mid(12,1) == "S"))
-                    {
-                      latitude = degreeToNum(s.mid(3,10));
-                      loop = 14;
-                    }
-
-                  if((s.mid(loop + 9,1) == "E") || (s.mid(loop + 9,1) == "W"))
-                    {
-                      longitude = degreeToNum(s.mid(loop,9));
-                      loop += 9;
-                    }
-                  else if((s.mid(loop + 10,1) == "E") ||
-                          (s.mid(loop + 10,1) == "W"))
-                    {
-                      longitude = degreeToNum(s.mid(loop,10));
-                      loop += 10;
-                    }
-                  else if((s.mid(loop + 11,1) == "E") ||
-                          (s.mid(loop + 11,1) == "W"))
-                    {
-                      longitude = degreeToNum(s.mid(loop,11));
-                      loop += 11;
-                    }
-                  else
-                    {
-                    }
-                  //Hoehe
-                  height = s.mid(loop + 6,10);
-                  // Typen
-                }
-              else if(s.mid(0,11) == "GLIDER_SITE")
-                {
-                  typ = "glider";
-                  list = 3;
-                  name = s.mid(12,100);
-                }
-              else if(s.mid(0,15) == "AIRPORT_CIV_MIL")
-                {
-                  typ = "civ-mil-air";
-                  name = s.mid(16,100);
-                }
-              else if(s.mid(0,8) == "AIRFIELD")
-                {
-                  typ = "airfield";
-                  name = s.mid(9,100);
-                }
-              else if(s.mid(0,16) == "SPECIAL_AIRFIELD")
-                {
-                  // ???????????
-                }
-              else if(s.mid(0,11) == "AIRPORT_MIL")
-                {
-                  typ = "mil-air";
-                  name = s.mid(12,25);
-                }
-              else if(s.mid(0,11) == "INTLAIRPORT")
-                {
-                  typ = "int-airport";
-                  name = s.mid(12,25);
-                }
-              else if(s.mid(0,7) == "AIRPORT")
-                {
-                  typ = "airport";
-                  name = s.mid(8,25);
-                }
-              else if(s.mid(0,9) == "frequency")
-                  frequency = s.mid(10,7);
-              else if(s.mid(0,6) == "runway")
-                {
-                  runway++;
-                  QString* temp = 0;
-                  // search for space (hopefully, there will only be one!)
-                  unsigned int loop = 0;
-                  for(loop = 11; loop < strlen(s); loop++)
-                      if(s.mid(loop, 1) == " ") break;
-
-                  direction = s.mid(7,3);
-                  if(direction.mid(0,2) > "36")
-                      direction = "0" + direction.mid(0,1);
-                  else if(direction.mid(0,2) == "00")
-                      direction = "36";
-                  else
-                      direction = direction.mid(0,2);
-
-                  length = s.mid(11,loop - 11);
-
-                  if(s.mid(loop + 1,8) == "CONCRETE")
-                      temp = new QString("C " + direction + " " + length);
-                  else if(s.mid(loop + 1,4) == "GRAS")
-                      temp = new QString("G " + direction + " " + length);
-                  else if(s.mid(loop + 1,7) == "ASPHALT")
-                      temp = new QString("A " + direction + " " + length);
-                  runwayList.append(temp);
-                }
-              else if(s.mid(0,5) == "alias")
-                  alias = s.mid(5,4);
-              else
-                  warning("KFLog: unknown entry found in ascii-map-file");
-            }
-        }
-    }
 }

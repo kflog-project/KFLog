@@ -1027,6 +1027,32 @@ void MapContents::addElement(RadioPoint* newElement)
   navList.append(newElement);
 }
 
+int MapContents::searchFlightPoint(QPoint cPos, struct flightPoint* fP)
+{
+  if(flightList.count())
+      return (flightList.current()->searchPoint(cPos, fP));
+
+  return -1;
+}
+
+Flight* MapContents::getFlight()
+{
+  if(flightList.count())
+      return flightList.current();
+
+  return 0;
+}
+
+QStrList MapContents::getFlightData()
+{
+  QStrList result;
+
+  if(flightList.count())
+      result = flightList.current()->getHeader();
+
+  return result;
+}
+
 bool MapContents::loadFlight(QFile igcFile)
 {
   warning("MapContents::loadFlight(%s)", (const char*)igcFile.name());
@@ -1170,7 +1196,7 @@ bool MapContents::loadFlight(QFile igcFile)
           newPoint.dT = dT;
           newPoint.dH = newPoint.height - prePoint.height;
           newPoint.dS = (int)(dist(latTemp, lonTemp,
-              prePoint.origP.y(), prePoint.origP.x()) * 1000.0);
+              prePoint.origP.x(), prePoint.origP.y()) * 1000.0);
 
           speed = 3600 * newPoint.dS / dT;  // [km/h]
           v = newPoint.dH / dT * 1.0;       // [m/s]
@@ -1273,7 +1299,7 @@ bool MapContents::loadFlight(QFile igcFile)
     }
 
   flightList.append(new Flight(flightRoute, bBoxF, pilotName, gliderType,
-      gliderID, wpList, bBoxT));
+      gliderID, wpList, bBoxT, date));
 
   return true;
 }

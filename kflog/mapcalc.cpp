@@ -299,20 +299,20 @@ int getScaleValue(double scale)
 
 float getSpeed(struct flightPoint* p)
 {
-  return (float)p->dS / (float)p->dt * 3.6;
+  return (float)p->dS / (float)p->dT * 3.6;
 }
 
 float getSpeed(struct flightPoint p)
 {
-  return (float)p.dS / (float)p.dt * 3.6;
+  return (float)p.dS / (float)p.dT * 3.6;
 }
 
 float getVario(struct flightPoint* p)
 {
-  return (float)p->dh / (float)p->dt;
+  return (float)p->dH / (float)p->dT;
 }
 
 float getVario(struct flightPoint p)
 {
-  return (float)p.dh / (float)p.dt;
+  return (float)p.dH / (float)p.dT;
 }

@@ -18,7 +18,10 @@
 #ifndef DATAVIEW_H
 #define DATAVIEW_H
 
+#include <qtextview.h>
 #include <qtabwidget.h>
+
+class Flight;
 
 /**
  * @author Heiner Lamprecht, Florian Ehinger
@@ -33,6 +36,12 @@ class DataView : public QTabWidget
     DataView(QWidget* parent);
     /** */
     ~DataView();
+    /** */
+    void setFlightData(Flight*);
+
+  private:
+    /** */
+    QTextView* flightDataText;
 };
 
 #endif

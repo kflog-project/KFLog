@@ -21,6 +21,7 @@
 #include <qbitarray.h>
 #include <qfile.h>
 #include <qlist.h>
+#include <qstrlist.h>
 
 #include <basemapelement.h>
 
@@ -117,6 +118,14 @@ class MapContents
      * Loads a new flight-file.
      */
     bool loadFlight(QFile);
+    /** */
+    QStrList getFlightData();
+    /** */
+    Flight* getFlight();
+    /**
+     *
+     */
+    int searchFlightPoint(QPoint cPos, struct flightPoint* fP);
     /**
      * The listid.
      */

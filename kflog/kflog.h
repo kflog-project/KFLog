@@ -63,6 +63,12 @@ class KFLogApp : public KDockMainWindow
     KFLogApp(QWidget* parent=0, const char* name=0);
     /** */
     ~KFLogApp();
+    /** */
+    void showPointInfo(QPoint, struct flightPoint* point);
+    /** display the coordinates in the statusbar*/
+    void showCoords(QPoint);
+    /** */
+    void clearPointInfo(QPoint);
 
   protected:
     /** */
@@ -134,6 +140,12 @@ class KFLogApp : public KDockMainWindow
     /** */
     KProgress* statusProgress;
     KStatusBarLabel* statusLabel;
+    KStatusBarLabel* statusTimeL;
+    KStatusBarLabel* statusHeightL;
+    KStatusBarLabel* statusVarioL;
+    KStatusBarLabel* statusSpeedL;
+    KStatusBarLabel* statusLatL;
+    KStatusBarLabel* statusLonL;
     // KAction pointers to enable/disable actions
     KAction* fileOpen;
     KAction* fileClose;

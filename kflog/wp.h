@@ -86,6 +86,8 @@ struct flightPoint
   QPoint origP;
   /** The projected position of the point. */
   QPoint projP;
+  /** */
+  QPoint drawP;
   /** The barometrical height, registered by the logger. */
   int height;
   /** The gps-height, registered by the logger. */

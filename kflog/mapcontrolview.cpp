@@ -31,12 +31,9 @@
 MapControlView::MapControlView(QWidget* parent, Map* map)
 : QWidget(parent)
 {
-//  QFont bold;
-//  bold.setBold(true);
 
   QLabel* mapControl = new QLabel(i18n("<B>Map-control:</B>"), parent);
   mapControl->setMinimumHeight(mapControl->sizeHint().height() + 5);
-//  mapControl->setFont(bold);
 
   QFrame* navFrame = new QFrame(parent);
   QPushButton* nwB = new QPushButton("NW", navFrame);
@@ -96,7 +93,6 @@ MapControlView::MapControlView(QWidget* parent, Map* map)
   dimText = new QLabel("125 / 130", parent);
   dimText->setAlignment( AlignCenter );
 
-//  dimText->setFont( QFont( "Courier" ) );
   dimText->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   dimText->setBackgroundMode( PaletteLight );
 
@@ -160,7 +156,8 @@ void MapControlView::slotShowMapData(QSize mapSize)
 
   QString temp;
 
-  temp.sprintf("<TT>%.1f / %.1f</TT>", mapSize.height() * _currentScale / 1000.0,
+  temp.sprintf("<TT>%.1f / %.1f</TT>",
+      mapSize.height() * _currentScale / 1000.0,
       mapSize.width() * _currentScale / 1000.0);
   dimText->setText(temp);
 

@@ -19,7 +19,6 @@
 #define MAP_H
 
 #include <kflog.h>
-//#include <flight.h>
 #include <mapcontents.h>
 #include <mapmatrix.h>
 
@@ -52,8 +51,6 @@ class Map : public QWidget
      * map, so the map will appear the same, when KFLog is started next.
      */
     ~Map();
-    /** */
-    void loadWaypoint(QString flightDataFileName);
     /**  */
     void showFlightLayer(bool redrawFlight = false);
 
@@ -148,17 +145,11 @@ class Map : public QWidget
      */
     void __drawMap();
     /**
-     * Draws the flight into the map.
-     */
-//    void __drawFlight();
-    /**
      * Draws the grid tino the map.
      */
     void __drawGrid();
     /** */
     void __setMapBorder();
-    /** */
-//    void __moveMap(int dir);
     /**
      * Pointer to the current KFLog-instance.
      */
@@ -265,8 +256,7 @@ class Map : public QWidget
      */
     unsigned int indexLength;
     /** */
-    int preX;
-    int preY;
+    QPoint prePos;
 };
 
 #endif
