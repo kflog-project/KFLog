@@ -431,7 +431,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
     
 }
 
-void Map::__displayMapInfo(QPoint current)
+void Map::__displayMapInfo(const QPoint& current)
 {
   /*
    * Glider airfields first, if there exist any
@@ -605,10 +605,9 @@ void Map::__displayMapInfo(QPoint current)
     }
 }
 
-void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
+void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
 {
   extern MapContents _globalMapContents;
-  extern MapMatrix _globalMapMatrix;
 
   BaseFlightElement *baseFlight = _globalMapContents.getFlight();
   if(baseFlight == NULL)  return;
@@ -2105,7 +2104,7 @@ void Map::slotAppendWaypoint2Task(Waypoint *p)
 /** search for a waypoint
 First look in task itself
 Second look in map contents */
-bool Map::__getTaskWaypoint(QPoint current, Waypoint *wp, QPtrList<Waypoint> &taskPointList)
+bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QPtrList<Waypoint> &taskPointList)
 {
   unsigned int i;
   Waypoint *tmpPoint;
@@ -2307,7 +2306,7 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
 }
 
 /** Tries to locate the elevation for the given point, and emits a signal elevation if found. */
-void Map::__findElevation(QPoint coord){
+void Map::__findElevation(const QPoint& coord){
   extern MapContents _globalMapContents;
   isoListEntry* entry;
   int height=0;

@@ -206,19 +206,19 @@ class Map : public QWidget
     /**
       * Display Infos about MapItems
       */
-    void __displayMapInfo(QPoint current);
+    void __displayMapInfo(const QPoint& current);
     /**
       * graphical planning
       */
-    void __graphicalPlanning(QPoint current, QMouseEvent* event);
+    void __graphicalPlanning(const QPoint& current, QMouseEvent* event);
     /**
      *   search for a waypoint
      *   First look in task itself
      *   Second look in map contents
      */
-    bool __getTaskWaypoint(QPoint current, Waypoint *wp, QPtrList<Waypoint> &taskPointList);
+    bool __getTaskWaypoint(const QPoint& current, Waypoint *wp, QPtrList<Waypoint> &taskPointList);
   /** Tries to locate the elevation for the given point, and emits a signal elevation if found. */
-  void __findElevation(QPoint coord);
+  void __findElevation(const QPoint& coord);
     /**
      * This pixmap is used to store the currently displayed map.
      * This painter is about the same size as the map-widget, but is only
