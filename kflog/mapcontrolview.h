@@ -62,13 +62,18 @@ class MapControlView : public QWidget
     /**
      * Shows the scale in the lcd-label and sets the slider.
      */
-//    void slotShowScaleChange(int value);
+    void slotShowScaleChange(int value);
 
   signals:
     /** */
-    void scaleChanged(int);
+    void scaleChanged();
 
   private:
+    /** */
+    int __setScaleValue(int value);
+    /** */
+    int __getScaleValue(double value);
+
     QSlider* currentScaleSlider;
     QLCDNumber* currentScaleValue;
     QLabel* dimText;

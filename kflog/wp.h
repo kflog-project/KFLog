@@ -47,13 +47,13 @@
  * or West.
  * </P>
  */
-struct point
-{
-  /** The latitude ;-) */
-  int latitude;
-  /** The longitude ;-) */
-  int longitude;
-};
+//struct point
+//{
+//  /** The latitude ;-) */
+//  int latitude;
+//  /** The longitude ;-) */
+//  int longitude;
+//};
 
 /**
  *
@@ -100,12 +100,6 @@ struct flightPoint
   int dT;
   /** The distance between the Points*/
   int dS;
-
-  int latitude;
-  int longitude;
-  int dh;
-  int dt;
-  int distance;
 };
 
 /**

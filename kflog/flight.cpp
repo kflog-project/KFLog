@@ -1,0 +1,1263 @@
+/***********************************************************************
+**
+**   flight.cpp
+**
+**   This file is part of KFLog2.
+**
+************************************************************************
+**
+**   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
+**
+**                :  1999/10/03 Some fixes by Jan Max Walter Krueger
+**                :  ( jkrueger@physics.otago.ac.nz )
+**
+**   This file is distributed under the terms of the General Public
+**   Licence. See the file COPYING for more information.
+**
+**   $Id$
+**
+***********************************************************************/
+
+#include <iostream>
+#include <cmath>
+#include <stdlib.h>
+#include <unistd.h>
+
+#include "flight.h"
+
+#include <kflog.h>
+#include <mapcalc.h>
+#include <mapmatrix.h>
+#include <wp.h>
+
+#include <kapp.h>
+#include <kconfig.h>
+#include <kiconloader.h>
+#include <klocale.h>
+#include <kmessagebox.h>
+#include <qlist.h>
+#include <qpointarray.h>
+#include <qregion.h>
+#include <qtextstream.h>
+#include <qtimer.h>
+
+#include <qfileinfo.h>
+
+#define PRE_ID loop - 1
+#define CUR_ID loop
+#define NEXT_ID loop + 1
+
+/* Anzahl der zu merkenden besten Flüge */
+#define NUM_TASKS 3
+#define NUM_TASKS_POINTS ( NUM_TASKS * 3 )
+#define MAX_TASK_ID NUM_TASKS - 1
+
+/* Die Einstellungen können mal in die Voreinstellungsdatei wandern ... */
+#define FAI_POINT 2.0
+#define NORMAL_POINT 1.75
+#define R1 (3000.0 / _currentScale)
+#define R2 (500.0 / _currentScale)
+
+#define GET_SPEED(a) ( (float)a->dS / (float)a->dT )
+#define GET_VARIO(a) ( (float)a->dH / (float)a->dT )
+
+/* Maximale Vergrößerung beim Prüfen! */
+#define SCALE 10.0
+
+Flight::Flight(QList<flightPoint> r, QRect bBF, QString pName, QString gType,
+    QString gID, QList<struct wayPoint> wpL, QRect bBT, QString d)
+  : BaseMapElement("flight", BaseMapElement::Flight),
+    pilotName(pName), gliderType(gType), gliderID(gID), date(d), route(r),
+    bBoxFlight(bBF), bBoxTask(bBT)
+{
+  routeLength = 0;
+
+  wpList.setAutoDelete(true);
+  origList.setAutoDelete(true);
+
+  // Die Wegpunkte müssen einzeln übergeben werden, da sie gleichzeitig
+  // geprüft werden ...
+  for(unsigned int loop = 0; loop < wpL.count(); loop++)
+      __appendWaypoint(wpL.at(loop));
+
+  __checkType();
+  __checkWaypoints();
+  __checkMaxMin();
+
+  landTime = route.last()->time;
+  startTime = route.at(0)->time;
+}
+
+Flight::~Flight()
+{
+  wpList.~QList();
+  origList.~QList();
+}
+
+bool Flight::__isFAI(double d_wp, double d1, double d2, double d3)
+{
+  if( ( d_wp < 500.0 ) &&
+      ( d1 >= 0.28 * d_wp && d2 >= 0.28 * d_wp && d3 >= 0.28 * d_wp ) )
+      // small FAI
+      return true;
+  else if( ( d1 > 0.25 * d_wp && d2 > 0.25 * d_wp && d3 > 0.25 * d_wp ) &&
+           ( d1 <= 0.45 * d_wp && d2 <= 0.45 * d_wp && d3 <= 0.45 * d_wp ) )
+      // large FAI
+      return true;
+
+  return false;
+}
+
+double Flight::__polar(double x, double y)
+{
+  double angle = 0.0;
+
+  /*
+   *          Fallunterscheidung, falls dX = 0
+   */
+  if(x >= -0.001 && x <= 0.001)
+    {
+      if(y < 0.0) return ( 1.5 * PI );
+      else  return ( 0.5 * PI );
+    }
+
+  // Punkt liegt auf der neg. X-Achse
+  if(x < 0.0)  angle = atan( y / x ) + PI;
+  else  angle = atan( y / x );
+
+  // Neg. value not allowed.
+  if(angle < 0.0)  angle = 2 * PI + angle;
+
+  if(angle > (2 * PI))  angle = angle - (2 * PI);
+
+  return angle;
+}
+
+void Flight::__moveOptimizePoint(unsigned int idList[], double taskValue[],
+    unsigned int id)
+{
+  if(id > MAX_TASK_ID - 1) return;
+
+  taskValue[id + 1] = taskValue[id];
+  idList[3 * id + 3] = idList[3 * id];
+  idList[3 * id + 4] = idList[3 * id + 1];
+  idList[3 * id + 5] = idList[3 * id + 2];
+}
+
+
+void Flight::__setOptimizeRange(unsigned int start[], unsigned int stop[],
+    unsigned int idList[], unsigned int id, unsigned int step)
+{
+  /*
+   * Die benutzten Abschnitte müssen komplett innerhalb des Fluges liegen.
+   * Daher werden sie hier ggf. verschoben.
+   */
+  start[0] = MAX(idList[id], step) - step;
+  start[1] = idList[id + 1] - step;
+  start[2] = MIN(idList[id + 2] + step, routeLength) - ( 2 * step );
+
+  stop[0] = start[0] + ( 2 * step );
+  stop[1] = start[1] + ( 2 * step );
+  stop[2] = start[2] + ( 2 * step );
+}
+
+double Flight::__calculateOptimizePoints(struct flightPoint* fp1,
+    struct flightPoint* fp2, struct flightPoint* fp3)
+{
+  double dist1 = dist(fp1, fp2);
+  double dist2 = dist(fp2, fp3);
+  double dist3 = dist(fp1, fp3);
+  double tDist = dist1 + dist2 + dist3;
+
+  if(__isFAI(tDist, dist1, dist2, dist3)) return tDist * FAI_POINT;
+
+  return tDist * NORMAL_POINT;
+}
+
+unsigned int Flight::__calculateBestTask(unsigned int start[],
+    unsigned int stop[], unsigned int step, unsigned int idList[],
+    double taskValue[], bool isTotal)
+{
+  unsigned int numSteps = 0;
+  double temp = 0;
+  struct flightPoint *pointA, *pointB, *pointC;
+
+  for(unsigned int loopA = start[0]; loopA < stop[0]; loopA += step)
+    {
+      pointA = route.at(loopA);
+
+      if(isTotal) start[1] = loopA + step;
+
+      for(unsigned int loopB = start[1]; loopB < stop[1]; loopB += step)
+        {
+          pointB = route.at(loopB);
+
+          if(isTotal) start[2] = loopB + step;
+
+          for(unsigned int loopC = start[2]; loopC < stop[2]; loopC += step)
+            {
+              pointC = route.at(loopC);
+              temp = __calculateOptimizePoints(pointA, pointB, pointC);
+
+              /* wir behalten die besten Dreiecke ( taskValue[0] := bester ) */
+              if(temp > taskValue[MAX_TASK_ID])
+                {
+                  for(unsigned int loop = MAX_TASK_ID; loop > 0; loop--)
+                    {
+                      if(temp > taskValue[loop - 1])
+                        {
+                          __moveOptimizePoint(idList, taskValue, loop - 1);
+                          if(loop == 1)
+                            {
+                              /* temp ist der weiteste Flug */
+                              taskValue[0] = temp;
+                              idList[0] = loopA;
+                              idList[1] = loopB;
+                              idList[2] = loopC;
+                            }
+                        }
+                      else
+                        {
+                          taskValue[loop] = temp;
+                          idList[ 3 * loop ] = loopA;
+                          idList[( 3 * loop ) + 1] = loopB;
+                          idList[( 3 * loop ) + 2] = loopC;
+                          break;
+                        }
+                    }
+                }
+              numSteps++;
+            }
+        }
+    }
+  return numSteps;
+}
+
+double Flight::__sectorangle(int loop, bool isDraw)
+{
+  /*
+   * Berechnet die Winkelhalbierende des Sektors
+   */
+  double nextAngle = 0.0, preAngle = 0.0, sectorAngle = 0.0;
+  // Art des Wendepunktes
+  switch(wpList.at(loop)->type)
+    {
+      case Begin:
+      case (TakeOff | Begin):
+        // directions to the next point
+        sectorAngle = __polar(
+            ( wpList.at(CUR_ID)->projP.x() - wpList.at(NEXT_ID)->projP.x() ),
+            ( wpList.at(CUR_ID)->projP.y() - wpList.at(NEXT_ID)->projP.y() ) );
+        break;
+      case RouteP:
+        // directions to the previous point
+        preAngle = __polar(
+            ( wpList.at(CUR_ID)->projP.x() - wpList.at(PRE_ID)->projP.x() ),
+            ( wpList.at(CUR_ID)->projP.y() - wpList.at(PRE_ID)->projP.y() ) );
+        // direction to the following point:
+        nextAngle = __polar(
+            ( wpList.at(CUR_ID)->projP.x() - wpList.at(NEXT_ID)->projP.x() ),
+            ( wpList.at(CUR_ID)->projP.y() - wpList.at(NEXT_ID)->projP.y() ) );
+
+        sectorAngle = (preAngle + nextAngle) / 2.0;
+        if( ( preAngle < PI / 2.0 && nextAngle > 1.5 * PI ) ||
+            ( nextAngle < PI / 2.0 && preAngle > 1.5 * PI ) )
+            sectorAngle = sectorAngle - PI;
+        break;
+      case End:
+      case (End | Landing):
+        // direction to the previous point:
+        sectorAngle = __polar(
+            ( wpList.at(CUR_ID)->projP.x() - wpList.at(PRE_ID)->projP.x() ),
+            ( wpList.at(CUR_ID)->projP.y() - wpList.at(PRE_ID)->projP.y() ) );
+        break;
+    }
+
+  // Nur nötig bei der Überprüfung der Wegpunkte,
+  // würde beim Zeichnen zu Fehlern führen
+  if(!isDraw) sectorAngle += PI;
+
+  if(sectorAngle > (2 * PI)) sectorAngle = sectorAngle - (2 * PI);
+
+  wpList.at(CUR_ID)->angle = sectorAngle;
+
+  return sectorAngle;
+}
+
+bool Flight::__isVisible() const
+{
+  return true;
+//  extern const MapMatrix _globalMapMatrix;
+//  return _globalMapMatrix.isVisible(bBox);
+}
+
+void Flight::drawMapElement(QPainter* targetPainter)
+{
+  if(!__isVisible()) return;
+
+  extern const MapMatrix _globalMapMatrix;
+
+  extern double _scale[], _currentScale;
+  struct flightPoint* pointA;
+  struct flightPoint* pointB;
+  QPoint curPointA, curPointB;
+  double w1;
+
+  if(wpList.count() > 1)
+    {
+      extern const MapMatrix _globalMapMatrix;
+
+      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+        {
+          /*
+           * w1 ist die Winkelhalbierende des Sektors!!!
+           *      (Angaben in 1/16 Grad)
+           */
+          w1 = ( ( _globalMapMatrix.map(wpList.at(loop)->angle) + PI ) / PI )
+                  * 180.0 * 16.0 * -1.0;
+
+          double qx = -R1 + _globalMapMatrix.map(wpList.at(loop)->projP).x();
+          double qy = -R1 + _globalMapMatrix.map(wpList.at(loop)->projP).y();
+          double gx = -R2 + _globalMapMatrix.map(wpList.at(loop)->projP).x();
+          double gy = -R2 + _globalMapMatrix.map(wpList.at(loop)->projP).y();
+
+          switch(wpList.at(loop)->type)
+            {
+              case Flight::RouteP:
+                targetPainter->setPen(QPen(QColor(50, 50, 50), 2));
+                targetPainter->setBrush(QColor(255, 100, 100));
+                targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 1440, 2880);
+                targetPainter->setBrush(QColor(100, 255, 100));
+                targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
+                targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+
+                if(loop)
+                  {
+                    targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
+                    targetPainter->drawLine(
+                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
+                        _globalMapMatrix.map(wpList.at(loop)->projP));
+                  }
+                break;
+              case Flight::Begin:
+                targetPainter->setPen(QPen(QColor(50, 50, 50), 2));
+                targetPainter->setBrush(QBrush(QColor(255, 0, 0),
+                    QBrush::BDiagPattern));
+                targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
+                targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+
+                if(loop)
+                  {
+                    targetPainter->setPen(QPen(QColor(50, 50, 50), 3,
+                        QPen::DashLine));
+                    targetPainter->drawLine(
+                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
+                        _globalMapMatrix.map(wpList.at(loop)->projP));
+                  }
+                break;
+              case Flight::End:
+                targetPainter->setPen(QPen(QColor(50, 50, 50), 2));
+                targetPainter->setBrush(QBrush(QColor(0, 0, 255),
+                    QBrush::FDiagPattern));
+                targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
+                targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+                targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
+                targetPainter->drawLine(
+                    _globalMapMatrix.map(wpList.at(loop-1)->projP),
+                    _globalMapMatrix.map(wpList.at(loop)->projP));
+                break;
+              case ( Flight::End | Flight::Landing ):
+                if(loop)
+                  {
+                    targetPainter->setPen(QPen(QColor(50,50,50), 3));
+                    targetPainter->drawLine(
+                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
+                        _globalMapMatrix.map(wpList.at(loop)->projP));
+                  }
+                break;
+              default:
+                if(loop)
+                  {
+                    targetPainter->setPen(QPen(QColor(50, 50, 50), 3,
+                        QPen::DashLine));
+                    targetPainter->drawLine(
+                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
+                        _globalMapMatrix.map(wpList.at(loop)->projP));
+                    targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
+                    targetPainter->setBrush(QBrush::NoBrush);
+                    targetPainter->drawEllipse(
+                        _globalMapMatrix.map(wpList.at(loop)->projP).x() - 8,
+                        _globalMapMatrix.map(wpList.at(loop)->projP).y() - 8,
+                        16, 16);
+                  }
+                break;
+            }
+        }
+    }
+
+  unsigned int delta = 1;
+  if(_currentScale > _scale[ID_BORDER_SMALL])          delta = 8;
+  else if(_currentScale > _scale[ID_BORDER_SMALL - 1]) delta = 4;
+
+  curPointA = _globalMapMatrix.map(route.at(0)->projP);
+
+  for(unsigned int n = delta; n < route.count(); n = n + delta)
+    {
+      pointA = route.at(n - delta);
+      pointB = route.at(n);
+
+      curPointB = _globalMapMatrix.map(pointB->projP);
+
+      // Strecke einzeichnen
+      if(_currentScale < _scale[ID_BORDER_SMALL - 1])
+        {
+          if(pointA->dH < 0)
+              targetPainter->setPen(QPen(QColor(255,0,0), 4));
+          else
+              targetPainter->setPen(QPen(QColor(0,255,0), 4));
+        }
+      else if(_currentScale < _scale[5])
+          targetPainter->setPen(QPen(QColor(0,0,200), 4));
+      else
+          targetPainter->setPen(QPen(QColor(0,0,200), 3));
+
+      targetPainter->drawLine(curPointA, curPointB);
+
+      // Wenn die Kringel beibehalten werden, müsste eine weitere
+      // Grenze eingeführt werden ...
+      if(_currentScale < _scale[1])
+        {
+          targetPainter->setBrush(QBrush::NoBrush);
+          targetPainter->setPen(QPen(QColor(150,0,150), 1));
+          targetPainter->drawEllipse(curPointB.x() - 4, curPointB.y() - 4,8,8);
+        }
+
+      curPointA = curPointB;
+    }
+}
+
+QString Flight::getID() const { return gliderID; }
+
+QString Flight::getRouteType(bool isOrig) const
+{
+  /*
+   * Die Ausgabetexte müssen noch ins Englische übersetzt werden ...
+   */
+  unsigned int type = flightType;
+  if(isOrig && isOptimized())  type = origType;
+
+  switch(type)
+    {
+      case NotSet: return "nicht gesetzt";
+      case ZielS: return "Zielstrecke";
+      case ZielR: return "Zielrückkehr";
+      case FAI: return "FAI-Dreieck";
+      case Dreieck: return "allg. Dreieck";
+      case FAI_S: return "FAI-Dreieck (S)";
+      case Dreieck_S: return "allg. Dreieck (S)";
+      case Abgebrochen: return "abgebrochen";
+      default: return "unbekannt";
+    }
+}
+
+struct flightPoint Flight::getPointByTime(int time)
+{
+  int diff, n, sp, ep;
+
+  if(getLandTime() - time < time - getStartTime())
+    {
+      n = -1;
+      sp = routeLength - 1;
+      ep = 0;
+    }
+  else
+    {
+      n = 1;
+      sp = 0;
+      ep = routeLength - 1;
+    }
+
+  diff = getPoint(sp).time - time;
+  diff = ABS(diff);
+
+  for(int l = sp + n; l < (int)routeLength && l >= 0; l += n)
+    {
+      int a = getPoint(l).time - time;
+      if(ABS(a) > diff)
+          return getPoint(l - n);
+
+      diff = getPoint(l).time - time;
+      diff = ABS(diff);
+    }
+  return getPoint(ep);
+}
+
+struct flightPoint Flight::getPoint(int n)
+{
+  if(n >= 0 && n < (int)route.count())  return *route.at(n);
+
+  switch(n)
+    {
+      case V_MAX: return *route.at(v_max);
+      case H_MAX: return *route.at(h_max);
+      case VA_MAX: return *route.at(va_max);
+      case VA_MIN: return *route.at(va_min);
+      default:
+        flightPoint ret;
+        ret.gpsHeight = 0;
+        ret.height = 0;
+        return ret;
+    }
+}
+
+QString Flight::getDistance(bool isOrig) const
+{
+  unsigned int type = flightType;
+  double dist = distance_tot;
+  if(isOrig && isOptimized())
+    {
+      type = origType;
+      dist = origDistanceTot;
+    }
+
+  if(type == NotSet)  return "--";
+
+  QString distString;
+  distString.sprintf("%.2f km ", dist);
+
+  return distString;
+}
+
+QString Flight::getTaskDistance(bool isOrig) const
+{
+  unsigned int type = flightType;
+  double dist = distance_wp;
+  if(isOrig && isOptimized())
+    {
+      type = origType;
+      dist = origDistanceWP;
+    }
+
+  if(type == NotSet)  return "--";
+
+  QString distString;
+  distString.sprintf("%.2f km ", dist);
+
+  return distString;
+}
+
+QString Flight::getPoints(bool isOrig) const
+{
+  unsigned int type = flightType;
+  double points = taskPoints;
+
+  if(isOrig && isOptimized())
+    {
+      type = origType;
+      points = origPoints;
+    }
+
+  if(type == NotSet)  return "--";
+
+  int points1 = (int) points;
+  if((int) ( (points - points1) * 10 ) > 5) points1++;
+
+  QString pointString;
+  pointString.sprintf("%d", points1);
+
+  return pointString;
+}
+
+QString Flight::getLandSite() const { return landSite; }
+
+int Flight::getLandTime() const { return landTime; }
+
+QString Flight::getPilot() const { return pilotName; }
+
+QString Flight::getStartSite() const { return startSite; }
+
+int Flight::getStartTime() const { return startTime; }
+
+QString Flight::getType() const { return gliderType; }
+
+QString Flight::getDate() const { return date; }
+
+unsigned int Flight::getTaskType() const { return flightType; }
+
+unsigned int Flight::getRouteLength() const { return routeLength; }
+
+const char* Flight::getFileName() const { return sourceFileName; }
+
+bool Flight::isOptimized() const { return (origList.count() != 0); }
+
+int Flight::searchPoint(QPoint cPoint, struct flightPoint* searchPoint)
+{
+  extern const double _currentScale, _scale[];
+  extern const MapMatrix _globalMapMatrix;
+
+  unsigned int delta = 1;
+  int index = -1;
+
+  double minDist = 1000.0, distance = 0.0;
+
+  if(_currentScale > _scale[ID_BORDER_SMALL])          delta = 8;
+  else if(_currentScale > _scale[ID_BORDER_SMALL - 1]) delta = 4;
+
+  QPoint fPoint;
+
+  for(unsigned int loop = 0; loop < route.count(); loop = loop + delta)
+    {
+      fPoint = _globalMapMatrix.map(route.at(loop)->projP);
+      int dX = cPoint.x() - fPoint.x();
+      int dY = cPoint.y() - fPoint.y();
+      distance = sqrt( (dX * dX) + (dY * dY) );
+
+      /* Maximaler Abstand: 30 Punkte */
+      if(distance < 30.0)
+        {
+          if(distance < minDist)
+            {
+              minDist = distance;
+              index = loop;
+              searchPoint[0] = *route.at(index);
+            }
+        }
+    }
+  return index;
+}
+
+QRect Flight::getFlightRect() const { return bBoxFlight; }
+
+QRect Flight::getTaskRect() const { return bBoxTask; }
+
+QStrList Flight::getHeader()
+{
+  QStrList header;
+  // Die Liste könnte doch eigentlich permanent gespeichert werden ...
+  header.append(pilotName);
+  header.append(gliderID);
+  header.append(gliderType);
+  header.append(date);
+  header.append(printTime(route.last()->time - route.at(0)->time));
+  header.append(getRouteType());
+  header.append(getDistance());
+  header.append(getPoints());
+
+  return header;
+}
+
+void Flight::__appendWaypoint(struct wayPoint* newPoint)
+{
+  if(wpList.count() && dist(wpList.last(), newPoint) <= 0.1) return;
+
+  wpList.append(newPoint);
+
+  if(tEnd == 0 && wpList.count() > 2)
+    {
+      int loop = 0;
+
+      for(int n = wpList.count() - 3; n >= 0; n--)
+        {
+          loop++;
+          if(newPoint->origP == wpList.at(n)->origP)
+            {
+              bool noTask = false;
+
+              tEnd = wpList.count() - 1;
+              tBegin = n;
+
+              wpList.at(tEnd)->type = Flight::End;
+              wpList.at(tBegin)->type = Flight::Begin;
+
+              ///// Müll rausfiltern
+              if(tEnd - tBegin == 2)
+                {
+                  if(wpList.at(tBegin)->origP == wpList.at(tBegin + 1)->origP)
+                      noTask = true;
+                }
+              else
+                {
+                  for(unsigned int loop = tBegin + 2; loop < tEnd; loop++)
+                    {
+                      if(wpList.at(loop - 1)->origP == wpList.at(loop)->origP)
+                          noTask = true;
+                    }
+                }
+
+              if(noTask)
+                {
+                  for(unsigned int m = 0; m < tEnd; m++)
+                      wpList.at(m)->type = Flight::FreeP;
+
+                  flightType = Flight::Abgebrochen;
+                  KMessageBox::error(0, i18n("The task is not valid.<BR>"
+                           "All waypoints are the same point."));
+                }
+              else
+                {
+                  for(unsigned int m = 0; m < tBegin; m++)
+                      wpList.at(m)->type = Flight::FreeP;
+
+                  for(unsigned int m = tBegin + 1; m < tEnd; m++)
+                      wpList.at(m)->type = Flight::RouteP;
+                }
+              break;
+            }
+        }
+    }
+  else
+      newPoint->type = Flight::FreeP;
+}
+
+void Flight::__checkType()
+{
+warning("Flight::__checkType()");
+  distance_tot = 0;
+
+  for(unsigned int loop = tBegin + 1; loop <= tEnd; loop++)
+    {
+      wpList.at(loop)->distance = dist(wpList.at(loop - 1), wpList.at(loop));
+      distance_tot = distance_tot + wpList.at(loop)->distance;
+    }
+
+  switch(tEnd - tBegin)
+    {
+      case 0:
+        break;
+      case 1:           // Zielstrecke
+        flightType = ZielS;
+        break;
+      case 2:           // Zielrückkehr
+        flightType = ZielR;
+        break;
+      case 3:
+        if(__isFAI(distance_tot,wpList.at(tBegin + 1)->distance,
+              wpList.at(tBegin + 2)->distance,
+              wpList.at(tBegin + 3)->distance))
+           flightType = FAI;
+        else
+            flightType = Dreieck;
+        break;
+      case 4:           // Start auf Schenkel oder Vieleck
+        distance_tot = distance_tot - wpList.at(tBegin + 1)->distance
+               - wpList.at(tBegin + 4)->distance
+               + dist(wpList.at(tBegin + 1), wpList.at(tBegin + 3));
+
+        if(__isFAI(distance_tot, dist(wpList.at(tBegin + 1),
+                wpList.at(tBegin + 3)), wpList.at(tBegin + 2)->distance,
+              wpList.at(tBegin + 3)->distance))
+            flightType = FAI_S;
+        else
+            flightType = Dreieck_S;
+        break;
+      default:
+        flightType = Unknown;
+    }
+}
+
+void Flight::__checkMaxMin()
+{
+  v_max = 0;
+  h_max = 0;
+  va_max = 0;
+  va_min = 0;
+
+  for(unsigned int loop = 0; loop < routeLength; loop++)
+    {
+      if(loop)
+        {
+          // Maximal Werte finden
+          if(GET_SPEED(route.at(loop)) > GET_SPEED(route.at(v_max)))
+              v_max = loop;
+
+          if(route.at(loop)->height > route.at(h_max)->height)
+              h_max = loop;
+
+          if(GET_VARIO(route.at(loop)) > GET_VARIO(route.at(va_max)))
+              va_max = loop;
+
+          if(GET_VARIO(route.at(loop)) < GET_VARIO(route.at(va_min)))
+              va_min = loop;
+        }
+    }
+}
+
+void Flight::__checkWaypoints()
+{
+  if(flightType == NotSet) return;
+warning("Flight::__checkWaypoints()");
+
+  int gliderIndex = 100, preTime = 0;
+  KConfig* config = kapp->config();
+  config->setGroup("FlightPoints");
+
+  double pointFAI = config->readDoubleNumEntry("FAIPoint", 2.0);
+  double pointNormal = config->readDoubleNumEntry("NormalPoint", 1.75);
+  double pointCancel = config->readDoubleNumEntry("CancelPoint", 1.0);
+  double pointZielS = config->readDoubleNumEntry("ZielSPoint", 1.5);
+  double malusValue = config->readDoubleNumEntry("MalusValue", 15.0);
+  double sectorMalus = config->readDoubleNumEntry("SectorMalus", -0.1);
+
+  if(gliderType != 0)
+    {
+      config->setGroup("GliderTypes");
+      gliderIndex = config->readNumEntry(gliderType, 100);
+      config->setGroup(0);
+    }
+
+  for(unsigned int loop = 0; loop < route.count(); loop++)
+    {
+      if(loop)
+        {
+          if(route.at(loop)->time - preTime > 7)
+            {
+              /*
+               *           Zeitabstand zwischen Loggerpunkten ist zu gross!
+               *                      (vgl. Code Sportif 3, Ziffer 1.9.2.1)
+               */
+              KMessageBox::error(0,
+                  i18n("The time intervall between two points<BR>"
+                       "of the flight is more than 70 sec.!<BR>"
+                       "Due to Code Sportif 3, Nr. 1.9.2.1,<BR>"
+                       "the flight can not be valued!"));
+
+              warning("   hier drinnen");
+              return;
+              ////////////////////////////////////////////////////////////////
+              // sonstige Reaktion ????
+              ////////////////////////////////////////////////////////////////
+            }
+        }
+      preTime = route.at(loop)->time;
+    }
+
+  // Überprüfen von Start und Landung Abstand noch überdenken!!!!!
+  if(dist(wpList.at(0), route.at(1)) < 1.0)
+    {
+      wpList.at(0)->sector1 = route.at(0)->time;
+      if(wpList.at(0)->type == FreeP)  wpList.at(0)->type = ( TakeOff );
+      else  wpList.at(0)->type = ( wpList.at(0)->type | TakeOff );
+    }
+  else
+    {
+      // Was passiert, wenn der Start woanders erfolgte ???
+    }
+
+  if(dist(wpList.last(), route.last()) < 1.0)
+    {
+      wpList.last()->sector1 = route.last()->time;
+      if(wpList.last()->type == FreeP)  wpList.last()->type = ( Landing );
+      else  wpList.last()->type = ( wpList.last()->type | Landing );
+    }
+  else
+    {
+      // Was passiert, wenn die Landung woanders erfolgte ???
+    }
+
+  unsigned int startIndex = 0, dummy = 0;
+
+  for(unsigned int loop = 0; loop < wpList.count(); loop++)
+    {
+      double deltaAngle = 0.0, pointAngle = 0.0, sectorAngle = 0.0;
+      dummy = 0;
+
+      sectorAngle = __sectorangle(loop, false);
+
+      /*
+       * Prüfung, ob Flugpunkte in den Sektoren liegen.
+       *
+       *      Ein Index 0 bei den Sektoren zeigt an, dass der Sektor
+       *      _nicht_ erreicht wurde. Dies führt an Mitternacht zu
+       *      einem möglichen Fehler ...
+       */
+      for(unsigned int pLoop = startIndex + 1; pLoop < route.count(); pLoop++)
+        {
+          if( wpList.at(loop)->projP == route.at(pLoop)->projP )
+            {
+              // Wir sind in allen Sektoren ...
+              if(!wpList.at(loop)->sector1)
+                  wpList.at(loop)->sector1 = route.at(pLoop)->time;
+
+              if(!wpList.at(loop)->sector2)
+                  wpList.at(loop)->sector2 = route.at(pLoop)->time;
+
+              if(!wpList.at(loop)->sectorFAI)
+                  wpList.at(loop)->sectorFAI = route.at(pLoop)->time;
+
+              // ... daher ist ein Abbruch möglich!
+              startIndex = pLoop;
+              break;
+            }
+          else
+            {
+              if(dist(wpList.at(loop), route.at(pLoop)) <= 0.5)
+                {
+                  // Wir sind im kleinen Zylinder ...
+                  if(!wpList.at(loop)->sector1)
+                      wpList.at(loop)->sector1 = route.at(pLoop)->time;
+
+                  if(!wpList.at(loop)->sector2)
+                      wpList.at(loop)->sector2 = route.at(pLoop)->time;
+
+                  if(!dummy)
+                    {
+                      startIndex = pLoop;
+                      dummy = pLoop;
+                    }
+                }
+
+              pointAngle = __polar(
+                  ( wpList.at(loop)->projP.x() - route.at(pLoop)->projP.x() ),
+                  ( wpList.at(loop)->projP.y() - route.at(pLoop)->projP.y() ) );
+
+              deltaAngle = sqrt( ( pointAngle - wpList.at(loop)->angle ) *
+                                 ( pointAngle - wpList.at(loop)->angle ) );
+
+              if(deltaAngle <= (0.25 * PI))
+                {
+                  // Wir sind im FAI-Sektor ...
+                  if(!wpList.at(loop)->sectorFAI)
+                      wpList.at(loop)->sectorFAI = route.at(pLoop)->time;
+
+                  if(dist(wpList.at(loop), route.at(pLoop)) <= 3.0)
+                    {
+                      // ... und in Sektor 1 ...
+                      if(!wpList.at(loop)->sector1)
+                        {
+                          wpList.at(loop)->sector1 = route.at(pLoop)->time;
+                          // ... daher ist ein Abbruch möglich!
+                          startIndex = pLoop;
+                          break;
+                        }
+
+                    }
+                }
+              else if(deltaAngle <= (0.5 * PI))
+                {
+                  // "nur" in Sektor 2
+                  if(!wpList.at(loop)->sector2)
+                      wpList.at(loop)->sector2 = route.at(pLoop)->time;
+
+                  if(!dummy)
+                    {
+                      startIndex = pLoop;
+                      dummy = pLoop;
+                    }
+                }
+            }
+        }
+    }
+
+  /*
+   * Überprüfen der Aufgabe
+   */
+  unsigned int faiCount = 0, dmstCount = 0;
+  double dmstMalus = 1.0, aussenlande = 0.0;
+  bool home, stop = false;
+
+  if(wpList.at(tBegin)->sector1 == 0)
+    {
+      KMessageBox::information(0,
+          i18n("You have not reached the first point of your task!"));
+      return;
+    }
+
+  for(unsigned int loop = tBegin + 1; loop < tEnd; loop++)
+    {
+      if(!stop)
+        {
+          if(wpList.at(loop)->sector1 != 0)
+            {
+              dmstCount++;
+            }
+          else if(wpList.at(loop)->sector2 != 0)
+            {
+              dmstMalus += sectorMalus;
+              dmstCount++;
+            }
+          else
+            {
+              // Wendepunkt nicht erreicht!!
+              if(loop == tBegin + 1)
+                {
+                  KMessageBox::error(0,
+                      i18n("You have not reached the first waypoint of your task."));
+                  return;
+                }
+              /*
+               * Wertung mit 1,5 Punkten, weil Punkt nicht erreicht
+               */
+              stop = true;
+            }
+        }
+
+      if(wpList.at(loop)->sectorFAI != 0) faiCount++;
+    }
+
+  if(wpList.at(tEnd)->sector1 == 0)
+    {
+      home = false;
+      KMessageBox::error(0,
+          i18n("You have not reached the last point of your task."));
+
+      if(dist(wpList.at(tBegin + dmstCount), route.last()) < 1.0)
+        {
+          // Landung auf letztem Wegpunkt
+        }
+      else
+          // Außenlandung -- Wertung: + 1Punkt bis zur Außenlandung
+          aussenlande = dist(wpList.at(tBegin + dmstCount), route.last());
+    }
+  else
+    {
+      dmstCount++;
+      faiCount++;
+      home = true;
+    }
+
+  // FAI erreicht?
+  if(faiCount == tEnd - tBegin)
+    {
+      cerr << "Nach FAI Regeln erfüllt!\n";
+    }
+
+  double wertDist = 0, F;
+
+  if(dmstCount != tEnd - tBegin)
+    {
+      if(home)
+        {
+          wertDist = dist(wpList.at(tEnd),
+              wpList.at(tBegin + dmstCount - 1));
+          for(unsigned int loop = tBegin; loop < tBegin + dmstCount; loop++)
+              wertDist = wertDist + wpList.at(loop)->distance;
+
+        }
+      else
+        {
+          for(unsigned int loop = tBegin; loop <= tBegin + dmstCount; loop++)
+              wertDist = wertDist + wpList.at(loop)->distance;
+
+        }
+    }
+  else
+    {
+      /*
+       * Aufgabe vollständig erfüllt
+       *        F: Punkte/km
+       *        I: Index des Flugzeuges
+       *        f & I noch abfragen !!!!
+       */
+      switch(flightType)
+        {
+          case Flight::ZielS:
+            F = pointZielS;
+            break;
+          case Flight::ZielR:
+          case Flight::Dreieck:
+          case Flight::Dreieck_S:
+            F = pointNormal;
+            break;
+          case Flight::FAI:
+          case Flight::FAI_S:
+            F = pointFAI;
+            break;
+          default:
+            F = 0.0;
+        }
+      wertDist = distance_tot;
+    }
+
+  taskPoints = (wertDist * F * 100) / gliderIndex * dmstMalus +
+                      (aussenlande * pointCancel * 100) / gliderIndex;
+  if(origList.count())
+    {
+      /*
+       * Optimierter Flug: 15% abziehen
+       */
+      taskPoints -= ( taskPoints * (malusValue / 100.0) );
+      cerr << "reduziere Punkte um 15%\n";
+    }
+
+  cerr << "dmstCount " << dmstCount << endl;
+  cerr << "Punkte/km " << F << endl;
+  cerr << "malus: " << dmstMalus << endl;
+  cerr << "Index: " << gliderIndex << endl;
+  cerr << "Entfernung: " << wertDist << endl;
+  cerr << taskPoints << endl;
+}
+
+QList<struct wayPoint>* Flight::getWPList(bool isOrig)
+{
+  if(isOrig && isOptimized()) return &origList;
+
+  return &wpList;
+}
+
+bool Flight::optimizeTask()
+{
+  unsigned int curNumSteps = 0, temp, step = 0, minNumSteps = 400000000;
+  unsigned int numStepsA = 0, numStepsB = 0, minA = 0, minB = 0;
+
+  double length = 0;
+  for(unsigned int curStep = 1; curStep < 100; curStep++)
+    {
+      /*
+       * ( routeLength / curStep ) gibt die Anzahl der Punkte an, die
+       * zur Optimierung im ersten Anlauf verwendet werden. Wenn dieser
+       * Wert unter 3 sinkt, kann kein Dreieck mehr bestimmt werden ...
+       */
+      if((routeLength / curStep) < 3) break;
+
+      curNumSteps = 1;
+      numStepsA = 1;
+      numStepsB = 1;
+      temp = 1;
+
+      /*
+       * Berechnung der Rechenschritte für den ersten Durchlauf
+       */
+      for(unsigned int loop = 3; loop < ( routeLength / curStep ); loop++)
+        {
+          curNumSteps += temp + loop;
+          temp += loop;
+        }
+
+      numStepsA = curNumSteps;
+      temp = 1;
+
+      /*
+       * Berechnung der Rechenschritte für den zweiten Durchlauf
+       */
+      for(unsigned int loop = 3; loop < ( curStep - 1 ) * 6; loop++)
+        {
+          curNumSteps += temp + loop;
+          temp += loop;
+        }
+      numStepsB = curNumSteps - numStepsA;
+
+      if(minNumSteps > curNumSteps)
+        {
+          minNumSteps = curNumSteps;
+          step = curStep;
+
+          minA = numStepsA;
+          minB = numStepsB;
+          length = ( curStep - 1 ) * 6;
+        }
+    }
+
+  unsigned int numSteps = 0, totalSteps = 0, secondSteps = 0,
+      start[3], stop[3];
+  /*
+   * in taskValues stehen jetzt die Längen der längsten Flüge.
+   * in idList die Indizes der drei Punkte dieser Flüge.
+   */
+  unsigned int idList[NUM_TASKS_POINTS], idTempList[NUM_TASKS_POINTS];
+  double taskValue[NUM_TASKS];
+  for(unsigned int loop = 0; loop < NUM_TASKS; loop++)
+      taskValue[loop] = 0;
+
+  start[0] = step - 1;
+  stop[0] = routeLength - ( 2 * step );
+  stop[1] = routeLength - step;
+  stop[2] = routeLength;
+
+  numSteps = __calculateBestTask(start, stop, step, idList, taskValue, true);
+  totalSteps = numSteps;
+
+  /* Sichern der ID's der Favoriten */
+  for(unsigned int loop = 0; loop < NUM_TASKS_POINTS; loop++)
+      idTempList[loop] = idList[loop];
+
+  for(unsigned int loop = 0; loop < NUM_TASKS; loop++)
+    {
+      __setOptimizeRange(start, stop, idTempList, loop * 3, step);
+
+      numSteps = __calculateBestTask(start, stop, 1, idList, taskValue, false);
+      secondSteps += numSteps;
+    }
+
+  totalSteps += secondSteps;
+
+  double dist1 = dist(route.at(idList[0]), route.at(idList[1]));
+  double dist2 = dist(route.at(idList[1]), route.at(idList[2]));
+  double dist3 = dist(route.at(idList[0]), route.at(idList[2]));
+  double totalDist = dist1 + dist2 + dist3;
+
+  /*
+   * Dialogfenster einfügen: Soll Optimierung übernommen werden ???
+   *
+   * Da wir wissen, dass alle Wegpunkte erreicht worden sind, können wir
+   * hier die Berechnung der Punkte vereinfachen!
+   */
+  QString text, distText, pointText;
+  if(__isFAI(dist1, dist2, dist3, totalDist))
+      pointText.sprintf(" %d (FAI)", (int)(totalDist * 2.0 * 0.85));
+  else
+      pointText.sprintf(" %d", (int)(totalDist * 1.75 * 0.85));
+
+  distText.sprintf(" %.2f km  ", totalDist);
+  text = i18n("The task has been optimized. The best task found is:\n\n");
+  text = text + "\t1:  "
+      + printPos(route.at(idList[0])->origP.y(), true) + " / "
+      + printPos(route.at(idList[0])->origP.x()) + "\n\t2:  "
+      + printPos(route.at(idList[1])->origP.y(), true) + " / "
+      + printPos(route.at(idList[1])->origP.x()) + "\n\t3:  "
+      + printPos(route.at(idList[2])->origP.y(), true) + " / "
+      + printPos(route.at(idList[2])->origP.x()) + "\n\n\t"
+      + i18n("Distance:") + distText + i18n("Points:") + pointText + "\n\n"
+      + i18n("Do You want to use this task and replace the old?") + "\n";
+
+//  if(KMsgBox::yesNo(0, i18n("Optimizing"), text, KMsgBox::QUESTION) == 1) {
+//    origList.clear();
+//    struct wayPoint* cPoint;
+//    for(unsigned int loop = 0; loop < wpList.count(); loop++) {
+      /*
+       * Kompliziert, aber wir brauchen eine echte Kopie der Punkte!
+       */
+//      cPoint = new struct wayPoint;
+//      cPoint->angle = wpList.at(loop)->angle;
+//      cPoint->distance = wpList.at(loop)->distance;
+//      cPoint->latitude = wpList.at(loop)->latitude;
+//      cPoint->longitude = wpList.at(loop)->longitude;
+//      cPoint->name = wpList.at(loop)->name;
+//      cPoint->sector1 = wpList.at(loop)->sector1;
+//      cPoint->sector2 = wpList.at(loop)->sector2;
+//      cPoint->sectorFAI = wpList.at(loop)->sectorFAI;
+//      cPoint->type = wpList.at(loop)->type;
+//      origList.append(cPoint);
+//    }
+//    wpList.clear();
+//    tBegin = 0;
+//    tEnd = 0;
+//    origDistanceWP = distance_wp;
+//    origDistanceTot = distance_tot;
+//    origType = flightType;
+//    origPoints = taskPoints;
+//    distance_tot = 0;
+//    distance_wp = 0;
+//    taskPoints = 0.0;
+//    flightType = NotSet;
+
+    /*
+     * Der optimierte Flug hat einen versetzten Start- und Landepunkt.
+     * Daher müssen hier Start und Landung mit eingetragen werden.
+     */
+//    __appendWaypoint("Take-Off", flightRoute[0].latitude,
+//        flightRoute[0].longitude);
+//    __appendWaypoint("Optimize 1", flightRoute[idList[0]].latitude,
+//        flightRoute[idList[0]].longitude);
+//    __appendWaypoint("Optimize 2", flightRoute[idList[1]].latitude,
+//        flightRoute[idList[1]].longitude);
+//    __appendWaypoint("Optimize 3", flightRoute[idList[2]].latitude,
+//        flightRoute[idList[2]].longitude);
+//    __appendWaypoint("Landing", flightRoute[0].latitude,
+//        flightRoute[0].longitude);
+
+//    __checkType();
+//    __checkWaypoints();
+//    return true;
+//  }
+  return false;
+}

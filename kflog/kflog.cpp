@@ -38,6 +38,7 @@
 // application specific includes
 #include "kflog.h"
 #include <dataview.h>
+#include <kflogstartlogo.h>
 #include <map.h>
 #include <mapcalc.h>
 #include <mapcontents.h>
@@ -55,13 +56,26 @@
 //  a->setIndent(10);
 
 KFLogApp::KFLogApp(QWidget* , const char* name)
-  : KDockMainWindow(0, name)
+  : KDockMainWindow(0, name), showStartLogo(false)
 {
-  config=kapp->config();
+  config = kapp->config();
+
+  config->setGroup("General Options");
+
+  if (config->readBoolEntry("Logo",true) && (!kapp->isRestored() ) )
+    {
+      showStartLogo = true;
+      startLogo = new KFLogStartLogo();
+      startLogo->show();
+    }
+
   initStatusBar();
   initView();
   initActions();
 	
+  if(showStartLogo)
+      startLogo->raise();
+
   readOptions();
 
   filePrint->setEnabled(false);
@@ -297,8 +311,8 @@ void KFLogApp::initView()
 
   connect(map, SIGNAL(changed(QSize)), mapControl,
       SLOT(slotShowMapData(QSize)));
-  connect(mapControl, SIGNAL(scaleChanged(int)), map,
-      SLOT(slotScaleChanged(int)));
+  connect(mapControl, SIGNAL(scaleChanged()), map,
+      SLOT(slotRedrawMap()));
 }
 
 void KFLogApp::showCoords(QPoint pos)
@@ -316,9 +330,9 @@ void KFLogApp::showPointInfo(QPoint pos, struct flightPoint* point)
   statusTimeL->setText(text);
   text.sprintf("%4d m  ", point->height);
   statusHeightL->setText(text);
-  text.sprintf("%3.1f km/h  ", getSpeed(point));
+  text.sprintf("%3.1f km/h  ", (float)point->dS / (float)point->dT);
   statusSpeedL->setText(text);
-  text.sprintf("%2.1f m/s  ", getVario(point));
+  text.sprintf("%2.1f m/s  ", (float)point->dH / (float)point->dT);
   statusVarioL->setText(text);
 
   statusLatL->setText(printPos(pos.y()));
@@ -414,10 +428,11 @@ void KFLogApp::slotFileOpen()
       flightDir = fInfo.dirPath();
       extern MapContents _globalMapContents;
       if(_globalMapContents.loadFlight(fName))
+        {
           dataView->setFlightData(_globalMapContents.getFlight());
+          map->slotRedrawMap();
+        }
     }
-
-  map->slotRedrawMap();
 
   slotStatusMsg(i18n("Ready."));
 }
@@ -526,3 +541,5 @@ void KFLogApp::slotNewToolbarConfig()
 //   ...if you use any action list, use plugActionList on each here...
    applyMainWindowSettings( KGlobal::config(), "MainWindow" );
 }
+
+void KFLogApp::slotStartComplete() { if(showStartLogo)  delete startLogo; }

@@ -46,7 +46,6 @@
 #include <lineelement.h>
 #include <radiopoint.h>
 #include <singlepoint.h>
-//#include <flighttask.h>
 
 #define MAX_FILE_COUNT 16200
 #define ISO_LINE_NUM 46
@@ -90,11 +89,11 @@ MapContents::MapContents()
 
   sectionArray.resize(MAX_FILE_COUNT);
   for(unsigned int loop = 0; loop < MAX_FILE_COUNT; loop++)
-    sectionArray.clearBit(loop);
+      sectionArray.clearBit(loop);
 
   // Wir nehmen zunächst 4 Schachtelungstiefen an ...
   for(unsigned int loop = 0; loop < ( ISO_LINE_NUM * 4 ); loop++)
-    isoList.append(new QList<Isohypse>);
+      isoList.append(new QList<Isohypse>);
 
   airportList.setAutoDelete(true);
   airspaceList.setAutoDelete(true);
@@ -112,7 +111,6 @@ MapContents::MapContents()
   roadList.setAutoDelete(true);
   stationList.setAutoDelete(true);
   topoList.setAutoDelete(true);
-  villageList.setAutoDelete(true);
 
   waypointNumber = 0;
   waypointList = new unsigned int[waypointNumber];
@@ -140,7 +138,133 @@ MapContents::~MapContents()
   roadList.~QList();
   stationList.~QList();
   topoList.~QList();
-  villageList.~QList();
+}
+
+int MapContents::__degreeToNum(const char* degree)
+{
+  int deg = 0, min = 0, sec = 0;
+  int result;
+  int count = 0;
+
+  QRegExp number("^-?[0-9]+$");
+  QRegExp deg1("[°.]");
+  QRegExp deg2(",");
+  QRegExp deg3("'");
+  QRegExp dir("[swSW]$");
+  if(number.match(degree) != -1)
+    {
+      unsigned int id = 1;
+      if(degree[0] == '-')
+        {
+          result = degree[1] - '0';
+          id++;
+        }
+      else
+        result = degree[0] - '0';
+
+      for(unsigned int loop = id ; loop < strlen(degree); loop++)
+        result = 10 * result + (degree[loop] - '0');
+
+      if(id == 2) return -result;
+
+      return result;
+    }
+
+  switch(deg1.match(degree))
+    {
+      case 1:
+        deg = degree[0] - '0';
+        degree += 2;
+        break;
+      case 2:
+        deg = 10 * (degree[0] - '0') + (degree[1] - '0');
+        degree += 3;
+        break;
+      case 3:
+        deg = 100 * (degree[0] - '0') + 10 * (degree[1] - '0')
+            + (degree[2] - '0');
+        degree += 4;
+        break;
+      default:
+        if(deg1.match(degree) > 3)  return 0;    // << degree is not correct!
+        switch(strlen(degree))
+          {
+            case 1:
+              deg = degree[0] - '0';
+              break;
+            case 2:
+              deg = 10 * (degree[0] - '0') + (degree[1] -'0');
+              break;
+            case 3:
+              deg = 100 * (degree[0] - '0') + 10 * (degree[1] - '0')
+                    + (degree[2] - '0');
+              break;
+            default:
+              return 0;                           // << degree is not correct!
+          }
+    }
+
+  if( deg2.match(degree) != -1 )
+    {
+      // Minuten mit Nachkommastellen!
+      switch(deg2.match(degree))
+        {
+          case 1:
+            min = degree[0] - '0';
+            for(unsigned int loop = 2; loop < strlen(degree); loop++)
+              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
+                {
+                  sec = 10 * sec + (degree[loop] - '0');
+                  count++;
+                }
+            break;
+          case 2:
+            min = 10 * (degree[0] - '0') + (degree[1] -'0');
+            for(unsigned int loop = 3; loop < strlen(degree); loop++)
+              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
+                {
+                  sec = (degree[loop] - '0') + (sec / 10);
+                  count++;
+                }
+            break;
+          default:
+            if( ( deg2.match(degree) > 2 ) || ( deg2.match(degree) == 0 ) )
+                return 0;    // << degree is not correct!
+        }
+    }
+  else if( deg3.match(degree) != -1 )
+    {
+      // es folgen "echte" Sekunden
+      switch( deg3.match(degree) )
+        {
+          case 1:
+            min = degree[0] - '0';
+            for(unsigned int loop = 2; loop < strlen(degree); loop++)
+              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
+                {
+                  sec = sec * 10 + (degree[loop] - '0');
+                  count++;
+                }
+            break;
+          case 2:
+            min = 10 * (degree[0] - '0') + (degree[1] -'0');
+            for(unsigned int loop = 3; loop < strlen(degree); loop++)
+              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
+                {
+                  sec = sec * 10 + (degree[loop] - '0');
+                  count++;
+                }
+            break;
+          default:
+            if( ( deg2.match(degree) > 2 ) || ( deg2.match(degree) == 0 ) )
+                return 0;    // << degree is not correct!
+        }
+    }
+  result = (int) ((600000 * deg) + (10000 * (min + (sec * pow(10,-count)))));
+
+  if(dir.match(degree) >= 0) return -result;
+
+  return result;
 }
 
 bool MapContents::__readAsciiFile(const char* fileName)
@@ -153,11 +277,12 @@ bool MapContents::__readAsciiFile(const char* fileName)
 
   unsigned int ulimit = 0, llimit = 0, ulimitType = 0, llimitType = 0;
 
-  if(!file.open(IO_ReadOnly)) {
-    // Fehler-Handling bislang nicht ausreichend ...
-    warning("KFLog: No Mapfile found: %s", fileName);
-    return false;
-  }
+  if(!file.open(IO_ReadOnly))
+    {
+      // Fehler-Handling bislang nicht ausreichend ...
+      warning("KFLog: No Mapfile found: %s", fileName);
+      return false;
+    }
 
   warning("KFLog: parsing mapfile %s", fileName);
 
@@ -204,275 +329,264 @@ bool MapContents::__readAsciiFile(const char* fileName)
   Airspace* newAir;
   LineElement* newLine;
 
-  while (!stream.eof()) {
-    if(importProgress.wasCancelled()) break;
+  while (!stream.eof())
+    {
+      if(importProgress.wasCancelled()) break;
 
-    line = stream.readLine();
-    filePos += line.length();
-    importProgress.setProgress(( filePos * 100 ) / fileLength);
-    line = line.simplifyWhiteSpace();
-    // if it is a comment, ignore it!
-    if(line.mid(0,1) == "#") continue;
-    if(line.mid(0,5) == "[NEW]") {
-      // a new object starts here
-      isObject = true;
-      objectCount++;
+      line = stream.readLine();
+      filePos += line.length();
+      importProgress.setProgress(( filePos * 100 ) / fileLength);
+      line = line.simplifyWhiteSpace();
+      // if it is a comment, ignore it!
+      if(line.mid(0,1) == "#") continue;
+      if(line.mid(0,5) == "[NEW]")
+        {
+          // a new object starts here
+          isObject = true;
+          objectCount++;
 
-      l = 0;
-      name = "";
-      type = 0;
-      ulimit = 0;
-      vdf = false;
-      isValley = false;
-      frequency = "";
-      alias = "";
-      elev = 0;
-      winch = false;
-      lat_temp = 0;
-      lon_temp = 0;
-      posLength = 0;
-      runLength = 0;
-      sortID = 0;
-      latitude = new int[1];
-      longitude = new int[1];
-      runwayDir = new int[1];
-      runwayLength = new int[1];
-      runwayType = new int[1];
-      isWayP = false;
+          l = 0;
+          name = "";
+          type = 0;
+          ulimit = 0;
+          vdf = false;
+          isValley = false;
+          frequency = "";
+          alias = "";
+          elev = 0;
+          winch = false;
+          lat_temp = 0;
+          lon_temp = 0;
+          posLength = 0;
+          runLength = 0;
+          sortID = 0;
+          latitude = new int[1];
+          longitude = new int[1];
+          runwayDir = new int[1];
+          runwayLength = new int[1];
+          runwayType = new int[1];
+          isWayP = false;
 
-      tA.resize(0);
-    } else if(isObject) {
-      if(line.mid(0,4) == "TYPE") {
-        type = line.mid(5,2).toUInt();
-      } else if(line.mid(0,5) == "ALIAS") {
-        alias = line.mid(6,100);
-      } else if(line.mid(0,6) == "ABBREV") {
-        abbr = line.mid(7,6);
-      } else if(line.mid(0,2) == "AT") {
-        unsigned int loop;
-        for(loop = 3; loop < strlen(line); loop++) {
-          if(line.mid(loop, 1) == " ") break;
+          tA.resize(0);
         }
-        position = _globalMapMatrix.wgsToMap(
-            degreeToNum( line.mid( 3, ( loop - 3 ) ) ),
-            degreeToNum( line.mid( ( loop + 1 ), 100 ) ) );
-      } else if(line.mid(0,5) == "LTYPE") {
-        llimitType = line.mid(6,1).toUInt();
-      } else if(line.mid(0,5) == "UTYPE") {
-        ulimitType = line.mid(6,1).toUInt();
-      } else if(line.mid(0,5) == "LOWER") {
-        llimit = line.mid(6,100).toUInt();
-      } else if(line.mid(0,5) == "UPPER") {
-        ulimit = line.mid(6,100).toUInt();
-      } else if(line.mid(0,9) == "ELEVATION") {
-        elev = line.mid(10,100).toUInt();
-      } else if(line.mid(0,4) == "ELEV") {
-        elev = line.mid(5,100).toUInt();
-      } else if(line.mid(0,9) == "FREQUENCY") {
-        frequency = line.mid(10,100);
-      } else if(line.mid(0,8) == "MOUNTAIN") {
-        if(line.mid(9,10).toInt() == 1)
-          isValley = true;
-      } else if(line.mid(0,4) == "NAME") {
-        name = line.mid(5,1000);
-      } else if(line.mid(0,4) == "SORT") {
-        sortID = line.mid(5,10).toInt();
-      } else if(line.mid(0,6) == "RUNWAY") {
-        runLength++;
-        runwayDir = (int*)realloc(runwayDir, (runLength * sizeof(int)));
-        runwayLength = (int*)realloc(runwayLength, (runLength * sizeof(int)));
-        runwayType = (int*)realloc(runwayType, (runLength * sizeof(int)));
+      else if(isObject)
+        {
+          if(line.mid(0,4) == "TYPE")
+              type = line.mid(5,2).toUInt();
+          else if(line.mid(0,5) == "ALIAS")
+              alias = line.mid(6,100);
+          else if(line.mid(0,6) == "ABBREV")
+              abbr = line.mid(7,6);
+          else if(line.mid(0,2) == "AT")
+            {
+              unsigned int loop;
+              for(loop = 3; loop < strlen(line); loop++)
+                  if(line.mid(loop, 1) == " ") break;
 
-        unsigned int loop;
-        unsigned int loop2;
-        for(loop = 0; loop < strlen(line); loop++) {
-          if(line.mid(loop, 1) == " ") break;
-        }
-        runwayDir[runLength - 1] = line.mid(7,(loop - 7)).toInt();
-        loop2 = ++loop;
-        for(loop = loop; loop < strlen(line); loop++) {
-          if(line.mid(loop, 1) == " ") break;
-        }
-        runwayLength[runLength - 1] = line.mid(loop2, (loop - loop2)).toInt();
-        runwayType[runLength - 1] = line.mid(++loop,1).toInt();
-      } else if((line.mid(0,1) >= "0") && (line.mid(0,1) <= "9")) {
-        posLength++;
-        tA.resize(posLength);
+              position = _globalMapMatrix.wgsToMap(
+                  __degreeToNum( line.mid( 3, ( loop - 3 ) ) ),
+                  __degreeToNum( line.mid( ( loop + 1 ), 100 ) ) );
+            }
+          else if(line.mid(0,5) == "LTYPE")
+              llimitType = line.mid(6,1).toUInt();
+          else if(line.mid(0,5) == "UTYPE")
+              ulimitType = line.mid(6,1).toUInt();
+          else if(line.mid(0,5) == "LOWER")
+              llimit = line.mid(6,100).toUInt();
+          else if(line.mid(0,5) == "UPPER")
+              ulimit = line.mid(6,100).toUInt();
+          else if(line.mid(0,9) == "ELEVATION")
+              elev = line.mid(10,100).toUInt();
+          else if(line.mid(0,4) == "ELEV")
+              elev = line.mid(5,100).toUInt();
+          else if(line.mid(0,9) == "FREQUENCY")
+              frequency = line.mid(10,100);
+          else if(line.mid(0,8) == "MOUNTAIN")
+              if(line.mid(9,10).toInt() == 1)
+                  isValley = true;
+          else if(line.mid(0,4) == "NAME")
+              name = line.mid(5,1000);
+          else if(line.mid(0,4) == "SORT")
+              sortID = line.mid(5,10).toInt();
+          else if(line.mid(0,6) == "RUNWAY")
+            {
+              runLength++;
+              runwayDir = (int*)realloc(runwayDir,
+                  (runLength * sizeof(int)));
+              runwayLength = (int*)realloc(runwayLength,
+                  (runLength * sizeof(int)));
+              runwayType = (int*)realloc(runwayType,
+                  (runLength * sizeof(int)));
 
-        unsigned int loop;
-        for(loop = 0; loop < strlen(line); loop++) {
-          if(line.mid(loop, 1) == " ") break;
-        }
-        lat_temp = degreeToNum(line.left(loop));
-        lon_temp = degreeToNum(line.mid((loop + 1),100));
-        tA.setPoint(posLength - 1,
-            _globalMapMatrix.wgsToMap(lat_temp, lon_temp));
-      } else if(line.mid(0,3) == "VDF") {
-        vdf = line.mid(4,1).toUInt();
-      } else if(line.mid(0,5) == "WINCH") {
-        winch = line.mid(6,1).toUInt();
-      } else if(line.mid(0,8) == "WAYPOINT") {
-        isWayP = line.mid(9,1).toUInt();
-      } else if(line.mid(0,5) == "[END]") {
-        switch (type) {
-          case BaseMapElement::IntAirport:
-            break;
-          case BaseMapElement::Airport:
-          case BaseMapElement::MilAirport:
-          case BaseMapElement::CivMilAirport:
-          case BaseMapElement::Airfield:
-            addElement(new Airport(name, alias, abbr, type, position,
-                elev, frequency, vdf, isWayP));
-            break;
-          case BaseMapElement::ClosedAirfield:
-            addElement(new Airport(name, 0, abbr, type, position,
-                0, 0, 0, isWayP));
-            break;
-          case BaseMapElement::CivHeliport:
-          case BaseMapElement::MilHeliport:
-          case BaseMapElement::AmbHeliport:
-            addElement(new Airport(name, alias, abbr, type, position,
-                elev, frequency, 0, isWayP));
-            break;
-          case BaseMapElement::Glidersite:
-            // Wieso können hier keine Startbahn-Daten angegeben werden ???
-            addElement(new GliderSite(name, abbr, position,
-                elev, frequency, winch, isWayP));
-            break;
-          case BaseMapElement::UltraLight:
-          case BaseMapElement::HangGlider:
-          case BaseMapElement::Parachute:
-          case BaseMapElement::Ballon:
-            addElement(MapContents::AddSitesList,
-                new SinglePoint(name, abbr, type, position, isWayP));
-            break;
-          case BaseMapElement::Outlanding:
-            addElement(MapContents::OutList, new ElevPoint(name,
-                abbr, type, position, elev, isWayP));
-            break;
-          case BaseMapElement::VOR:
-          case BaseMapElement::VORDME:
-          case BaseMapElement::VORTAC:
-          case BaseMapElement::NDB:
-            addElement(new RadioPoint(name, abbr, type, position,
-                frequency, alias));
-            break;
-          case BaseMapElement::AirC:
-          case BaseMapElement::AirCtemp:
-          case BaseMapElement::AirD:
-          case BaseMapElement::AirDtemp:
-          case BaseMapElement::ControlD:
-          case BaseMapElement::AirElow:
-          case BaseMapElement::AirEhigh:
-          case BaseMapElement::AirF:
-          case BaseMapElement::Restricted:
-          case BaseMapElement::Danger:
-          case BaseMapElement::LowFlight:
-            newAir = new Airspace(name, type, tA);
-            newAir->setValues(ulimit, ulimitType, llimit, llimitType);
-            airspaceList.append(newAir);
-            break;
-          case BaseMapElement::Obstacle:
-          case BaseMapElement::LightObstacle:
-          case BaseMapElement::ObstacleGroup:
-          case BaseMapElement::LightObstacleGroup:
-            addElement(MapContents::ObstacleList,
-                new ElevPoint(0, 0, type, position, elev, isWayP));
-            break;
-          case BaseMapElement::CompPoint:
-            addElement(MapContents::ReportList,
-                new SinglePoint(name, abbr, type, position, isWayP));
-            break;
-          case BaseMapElement::HugeCity:
-          case BaseMapElement::BigCity:
-          case BaseMapElement::MidCity:
-          case BaseMapElement::SmallCity:
-            newLine = new LineElement(name, type, tA);
-            cityList.append(newLine);
-            break;
-          case BaseMapElement::Village:
-            addElement(MapContents::VillageList,
-                new SinglePoint(name, abbr, type, position, isWayP));
-            break;
-          case BaseMapElement::Oiltank:
-          case BaseMapElement::Factory:
-          case BaseMapElement::Castle:
-          case BaseMapElement::Church:
-          case BaseMapElement::Tower:
-            addElement(MapContents::LandmarkList,
-                new SinglePoint(name, abbr, type, position, isWayP));
-            break;
-          case BaseMapElement::Highway:
-            newLine = new LineElement(name, type, tA);
-            highwayList.append(newLine);
-            break;
-          case BaseMapElement::HighwayEntry:
-            addElement(MapContents::HighwayEntryList,
-                new SinglePoint(name, abbr, type, position, isWayP));
-            break;
-          case BaseMapElement::MidRoad:
-          case BaseMapElement::SmallRoad:
-            newLine = new LineElement(name, type, tA);
-            roadList.append(newLine);
-            break;
-          case BaseMapElement::RoadBridge:
-          case BaseMapElement::RoadTunnel:
-            // Bislang falsche Liste (Eintrag wird ignoriert) !!!
-            addElement(MapContents::RoadList,
-               new SinglePoint(name, abbr, type, position, isWayP));
-            break;
-          case BaseMapElement::Railway:
-            newLine = new LineElement(name, type, tA);
-            railList.append(newLine);
-            break;
-          case BaseMapElement::RailwayBridge:
-          case BaseMapElement::Station:
-            addElement(MapContents::StationList,
-               new SinglePoint(0, abbr, type, position, isWayP));
-            break;
-          case BaseMapElement::AerialRailway:
-            newLine = new LineElement(name, type, tA);
-            railList.append(newLine);
-            break;
-          case BaseMapElement::Coast:
-          case BaseMapElement::BigLake:
-          case BaseMapElement::MidLake:
-          case BaseMapElement::SmallLake:
-          case BaseMapElement::BigRiver:
-          case BaseMapElement::MidRiver:
-          case BaseMapElement::SmallRiver:
-            newLine = new LineElement(name, type, tA);
-            hydroList.append(newLine);
-            break;
-          case BaseMapElement::Dam:
-          case BaseMapElement::Lock:
-          	// In welche Liste ??????
-/*
-            addElement(MapContents::List,
-               new SinglePoint(0, type,alias, position));         */
-            break;
-          case BaseMapElement::Spot:
-          case BaseMapElement::Pass:
-            addElement(MapContents::ObstacleList,
-               new ElevPoint(0, 0, type, position, elev, isWayP));
-            break;
-          case BaseMapElement::Glacier:
-            newLine = new LineElement(name, type, tA);
-            topoList.append(newLine);
-            break;
-          case BaseMapElement::Isohypse:
-//            addElement(new Isohypse(posLength, latitude, longitude,
-//                  elev, border, isValley, sortID));
-            break;
-          default:
-            break;
-        }
-        isObject = false;
-      } else {
+              unsigned int loop;
+              unsigned int loop2;
+              for(loop = 0; loop < strlen(line); loop++)
+                  if(line.mid(loop, 1) == " ") break;
+
+              runwayDir[runLength - 1] = line.mid(7,(loop - 7)).toInt();
+              loop2 = ++loop;
+              for(loop = loop; loop < strlen(line); loop++)
+                  if(line.mid(loop, 1) == " ") break;
+
+              runwayLength[runLength - 1] = line.mid(loop2,
+                  (loop - loop2)).toInt();
+              runwayType[runLength - 1] = line.mid(++loop,1).toInt();
+            }
+          else if((line.mid(0,1) >= "0") && (line.mid(0,1) <= "9"))
+            {
+              posLength++;
+              tA.resize(posLength);
+
+              unsigned int loop;
+              for(loop = 0; loop < strlen(line); loop++)
+                  if(line.mid(loop, 1) == " ") break;
+
+              lat_temp = __degreeToNum(line.left(loop));
+              lon_temp = __degreeToNum(line.mid((loop + 1),100));
+              tA.setPoint(posLength - 1,
+                  _globalMapMatrix.wgsToMap(lat_temp, lon_temp));
+            }
+          else if(line.mid(0,3) == "VDF")
+              vdf = line.mid(4,1).toUInt();
+          else if(line.mid(0,5) == "WINCH")
+              winch = line.mid(6,1).toUInt();
+          else if(line.mid(0,8) == "WAYPOINT")
+              isWayP = line.mid(9,1).toUInt();
+          else if(line.mid(0,5) == "[END]")
+            {
+              switch (type)
+                {
+                  case BaseMapElement::IntAirport:
+                    break;
+                  case BaseMapElement::Airport:
+                  case BaseMapElement::MilAirport:
+                  case BaseMapElement::CivMilAirport:
+                  case BaseMapElement::Airfield:
+                    airportList.append(new Airport(name, alias, abbr, type,
+                        position, elev, frequency, vdf, isWayP));
+                    break;
+                  case BaseMapElement::ClosedAirfield:
+                    airportList.append(new Airport(name, 0, abbr, type,
+                        position, 0, 0, 0, isWayP));
+                    break;
+                  case BaseMapElement::CivHeliport:
+                  case BaseMapElement::MilHeliport:
+                  case BaseMapElement::AmbHeliport:
+                    airportList.append(new Airport(name, alias, abbr, type,
+                        position, elev, frequency, 0, isWayP));
+                    break;
+                  case BaseMapElement::Glidersite:
+                    // Wieso können hier keine Startbahn-Daten angegeben werden?
+                    gliderList.append(new GliderSite(name, abbr, position,
+                        elev, frequency, winch, isWayP));
+                    break;
+                  case BaseMapElement::UltraLight:
+                  case BaseMapElement::HangGlider:
+                  case BaseMapElement::Parachute:
+                  case BaseMapElement::Ballon:
+                    break;
+                  case BaseMapElement::Outlanding:
+                    break;
+                  case BaseMapElement::VOR:
+                  case BaseMapElement::VORDME:
+                  case BaseMapElement::VORTAC:
+                  case BaseMapElement::NDB:
+                    navList.append(new RadioPoint(name, abbr, type, position,
+                        frequency, alias));
+                    break;
+                  case BaseMapElement::AirC:
+                  case BaseMapElement::AirCtemp:
+                  case BaseMapElement::AirD:
+                  case BaseMapElement::AirDtemp:
+                  case BaseMapElement::ControlD:
+                  case BaseMapElement::AirElow:
+                  case BaseMapElement::AirEhigh:
+                  case BaseMapElement::AirF:
+                  case BaseMapElement::Restricted:
+                  case BaseMapElement::Danger:
+                  case BaseMapElement::LowFlight:
+                    newAir = new Airspace(name, type, tA);
+                    newAir->setValues(ulimit, ulimitType, llimit, llimitType);
+                    airspaceList.append(newAir);
+                    break;
+                  case BaseMapElement::Obstacle:
+                  case BaseMapElement::LightObstacle:
+                  case BaseMapElement::ObstacleGroup:
+                  case BaseMapElement::LightObstacleGroup:
+                    obstacleList.append(new ElevPoint(0, 0, type, position,
+                        elev, isWayP));
+                    break;
+                  case BaseMapElement::CompPoint:
+//                    reportList.append(
+//                        new SinglePoint(name, abbr, type, position, isWayP));
+                    break;
+                  case BaseMapElement::HugeCity:
+                  case BaseMapElement::BigCity:
+                  case BaseMapElement::MidCity:
+                  case BaseMapElement::SmallCity:
+                    cityList.append(new LineElement(name, type, tA));
+                    break;
+                  case BaseMapElement::Oiltank:
+                  case BaseMapElement::Factory:
+                  case BaseMapElement::Castle:
+                  case BaseMapElement::Church:
+                  case BaseMapElement::Tower:
+                    break;
+                  case BaseMapElement::Highway:
+                    highwayList.append(new LineElement(name, type, tA));
+                    break;
+                  case BaseMapElement::HighwayEntry:
+                    break;
+                  case BaseMapElement::MidRoad:
+                  case BaseMapElement::SmallRoad:
+                    roadList.append(new LineElement(name, type, tA));
+                    break;
+                  case BaseMapElement::RoadBridge:
+                  case BaseMapElement::RoadTunnel:
+                    break;
+                  case BaseMapElement::Railway:
+                    railList.append(new LineElement(name, type, tA));
+                    break;
+                  case BaseMapElement::RailwayBridge:
+                  case BaseMapElement::Station:
+                    break;
+                  case BaseMapElement::AerialRailway:
+                    newLine = new LineElement(name, type, tA);
+                    railList.append(new LineElement(name, type, tA));
+                    break;
+                  case BaseMapElement::Coast:
+                  case BaseMapElement::BigLake:
+                  case BaseMapElement::MidLake:
+                  case BaseMapElement::SmallLake:
+                  case BaseMapElement::BigRiver:
+                  case BaseMapElement::MidRiver:
+                  case BaseMapElement::SmallRiver:
+                    hydroList.append(new LineElement(name, type, tA));
+                    break;
+                  case BaseMapElement::Dam:
+                  case BaseMapElement::Lock:
+                    break;
+                  case BaseMapElement::Spot:
+                  case BaseMapElement::Pass:
+                    obstacleList.append(new ElevPoint(0, 0, type, position,
+                        elev, isWayP));
+                    break;
+                  case BaseMapElement::Glacier:
+                    topoList.append(new LineElement(name, type, tA));
+                    break;
+                  case BaseMapElement::Isohypse:
+                    break;
+                  default:
+                    break;
+                }
+              isObject = false;
+            }
+          else
+            {
 //        warning("KFLog: Unknown field detected: \"%s\"", (const char*)line);
-      }
+            }
+        }
     }
-  }
 
   file.close();
 
@@ -491,10 +605,10 @@ bool MapContents::__readBinaryFile(const char* fileName)
   pathName = globalDirs->findResource("data", pathName);
   QFile eingabe(pathName);
   if(!eingabe.open(IO_ReadOnly))
-  {
-    warning("KFLog: Can not open mapfile %s", (const char*)pathName);
-    return false;
-  }
+    {
+      warning("KFLog: Can not open mapfile %s", (const char*)pathName);
+      return false;
+    }
 
   QDataStream in(&eingabe);
   /******************************************************************
@@ -527,62 +641,67 @@ bool MapContents::__readBinaryFile(const char* fileName)
 
   in >> header;
 
-  if(header != MAP_FILE_FORMAT && header != DEM_FILE_FORMAT) {
-    // falsches Kartenformat !!!
-    warning("KFLog: Trying to open old map-file; aborting!");
-    warning(pathName);
-    warning(header);
-    return false;
-  }
+  if(header != MAP_FILE_FORMAT && header != DEM_FILE_FORMAT)
+    {
+      // falsches Kartenformat !!!
+      warning("KFLog: Trying to open old map-file; aborting!");
+      warning(pathName);
+      warning(header);
+      return false;
+    }
 
   in >> secNumber;
 
   int anzahl = 0;
 
-  if(header == DEM_FILE_FORMAT) {
-    while(!in.eof()) {
-      int sort_temp;
-
-      Q_UINT8 type;
-      Q_INT16 elevation;
-      Q_INT8 valley, sort;
-      Q_INT32 locLength, latList_temp, lonList_temp;
-
-      in >> type;
-      in >> elevation;
-      in >> valley;
-      in >> sort;
-      in >> locLength;
-
-      QPointArray tA(locLength);
-
-      for(int i = 0; i < locLength; i++)
+  if(header == DEM_FILE_FORMAT)
+    {
+      while(!in.eof())
         {
-          in >> latList_temp;
-          in >> lonList_temp;
+          int sort_temp;
 
-          tA.setPoint(i, _globalMapMatrix.wgsToMap(latList_temp, lonList_temp));
+          Q_UINT8 type;
+          Q_INT16 elevation;
+          Q_INT8 valley, sort;
+          Q_INT32 locLength, latList_temp, lonList_temp;
+
+          in >> type;
+          in >> elevation;
+          in >> valley;
+          in >> sort;
+          in >> locLength;
+
+          QPointArray tA(locLength);
+
+          for(int i = 0; i < locLength; i++)
+            {
+              in >> latList_temp;
+              in >> lonList_temp;
+
+              tA.setPoint(i, _globalMapMatrix.wgsToMap(latList_temp,
+                  lonList_temp));
+            }
+          /*
+           * Änderungen zwischen den Formaten:
+           *
+           * -> In den alten Dateien hat der Wert "valley" genau die
+           *    falsche Bedeutung ...
+           *
+           */
+          sort_temp = (int)sort;
+
+          for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
+              if(isoLines[pos] == elevation)
+                  sort_temp = ISO_LINE_NUM * sort_temp + pos;
+
+          Isohypse* newItem = new Isohypse(tA, elevation, !valley, sort_temp);
+          isoList.at(newItem->sortID())->append(newItem);
         }
-      /*
-       * Änderungen zwischen den Formaten:
-       *
-       * -> In den alten Dateien hat der Wert "valley" genau die
-       *    falsche Bedeutung ...
-       *
-       */
-      sort_temp = (int)sort;
-
-      for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
-        if(isoLines[pos] == elevation)
-          sort_temp = ISO_LINE_NUM * sort_temp + pos;
-
-      Isohypse* newItem = new Isohypse(tA, elevation, !valley, sort_temp);
-//      newItem->setValues(elevation, sort_temp, !valley);
-      isoList.at(newItem->sortID())->append(newItem);
     }
-  } else if(header == MAP_FILE_FORMAT) {
+  else if(header == MAP_FILE_FORMAT)
+    {
     // Einlesen einer "normalen" Karte in dieser Form noch nicht implementiert
-  }
+    }
 
   QTime readT;
   readT.restart();
@@ -647,17 +766,18 @@ return true;
         in >> vdf;
         in >> rwNum;
         rwData = new runway[rwNum];
-        for(unsigned int i = 0; i < rwNum; i++) {
-          in >> rwdir;
-          in >> rwlength;
-          in >> rwsur;
+        for(unsigned int i = 0; i < rwNum; i++)
+          {
+            in >> rwdir;
+            in >> rwlength;
+            in >> rwsur;
 
-          rwData[i].direction = rwdir;
-          rwData[i].length = rwlength;
-          rwData[i].surface = rwsur;
-        }
-//        addElement(new Airport(name, alias, abbr, type, position, elev,
-//                          frequency, vdf));
+            rwData[i].direction = rwdir;
+            rwData[i].length = rwlength;
+            rwData[i].surface = rwsur;
+          }
+//        airportList.append(new Airport(name, alias, abbr, type, position, elev,
+//            frequency, vdf));
         break;
       case BaseMapElement::ClosedAirfield:
         in >> name;
@@ -665,7 +785,7 @@ return true;
         in >> at_lat;
         in >> at_lon;
         in >> isW;
-//        addElement(new Airport(name, 0, abbr, type, position, 0, 0, 0));
+//        airportList.append(new Airport(name, 0, abbr, type, position, 0, 0, 0));
         break;
       case BaseMapElement::CivHeliport:
       case BaseMapElement::MilHeliport:
@@ -677,8 +797,7 @@ return true;
         in >> isW;
         in >> elev;
         in >> frequency;
-//        addElement(
-//            new Airport(name, alias, abbr, type, at_lat, at_lon, elev,
+//        airportList(new Airport(name, alias, abbr, type, at_lat, at_lon, elev,
 //                          frequency));
         break;
       case BaseMapElement::Glidersite:
@@ -692,17 +811,17 @@ return true;
         in >> isW;
         in >> rwNum;
         rwData = new runway[rwNum];
-        for(unsigned int i = 0; i < rwNum; i++) {
-          in >> rwdir;
-          in >> rwlength;
-          in >> rwsur;
+        for(unsigned int i = 0; i < rwNum; i++)
+          {
+            in >> rwdir;
+            in >> rwlength;
+            in >> rwsur;
 
-          rwData[i].direction = rwdir;
-          rwData[i].length = rwlength;
-          rwData[i].surface = rwsur;
-        }
-//        addElement(
-//            new GliderSite(name, abbr, at_lat, at_lon, elev,
+            rwData[i].direction = rwdir;
+            rwData[i].length = rwlength;
+            rwData[i].surface = rwsur;
+          }
+//        gliderList.append(new GliderSite(name, abbr, at_lat, at_lon, elev,
 //                          frequency, winch, isW, rwData, rwNum));
         break;
       case BaseMapElement::UltraLight:
@@ -714,8 +833,7 @@ return true;
         in >> at_lat;
         in >> at_lon;
         in >> isW;
-//        addElement(MapContents::AddSitesList,
-//            new SinglePoint(name, abbr, type, at_lat, at_lon));
+//        addSitesList.append(new SinglePoint(name, abbr, type, at_lat, at_lon));
         break;
       case BaseMapElement::Outlanding:
         in >> name;
@@ -724,8 +842,7 @@ return true;
         in >> at_lon;
         in >> isW;
         in >> elev;
-//        addElement(MapContents::OutList,
-//            new ElevPoint(name, abbr, type, at_lat, at_lon, elev));
+//        outList.append(new ElevPoint(name, abbr, type, at_lat, at_lon, elev));
         break;
       case BaseMapElement::VOR:
       case BaseMapElement::VORDME:
@@ -737,8 +854,7 @@ return true;
         in >> at_lat;
         in >> at_lon;
         in >> frequency;
-//        addElement(
-//            new RadioPoint(name, abbr, type, at_lat, at_lon,
+//        navList.append(new RadioPoint(name, abbr, type, at_lat, at_lon,
 //                          frequency, alias));
         break;
       case BaseMapElement::AirC:
@@ -816,8 +932,7 @@ return true;
         in >> at_lon;
         in >> isW;
         in >> elev;
-        addElement(MapContents::ObstacleList,
-            new ElevPoint(name, abbr, type, position, elev));
+        obstacleList.append(new ElevPoint(name, abbr, type, position, elev));
         break;
       case BaseMapElement::CompPoint:
         in >> name;
@@ -825,8 +940,7 @@ return true;
         in >> at_lat;
         in >> at_lon;
         in >> isW;
-        addElement(MapContents::ReportList,
-            new SinglePoint(name, abbr, type, position));
+        reportList.append(new SinglePoint(name, abbr, type, position));
         break;
       case BaseMapElement::HugeCity:
       case BaseMapElement::BigCity:
@@ -839,15 +953,6 @@ return true;
 
         cityList.append(new LineElement(name, type, tA));
         break;
-      case BaseMapElement::Village:
-        in >> name;
-        in >> abbr;
-        in >> at_lat;
-        in >> at_lon;
-        in >> isW;
-        addElement(MapContents::VillageList,
-            new SinglePoint(name, abbr, type, position));
-        break;
       case BaseMapElement::Oiltank:
       case BaseMapElement::Factory:
       case BaseMapElement::Castle:
@@ -858,8 +963,7 @@ return true;
         in >> at_lat;
         in >> at_lon;
         in >> isW;
-        addElement(MapContents::LandmarkList,
-            new SinglePoint(name, abbr, type, position));
+        landmarkList.append(new SinglePoint(name, abbr, type, position));
         break;
       case BaseMapElement::Highway:
         in >> length;
@@ -874,8 +978,7 @@ return true;
         in >> at_lat;
         in >> at_lon;
         in >> isW;
-        addElement(MapContents::HighwayEntryList,
-            new SinglePoint(name, abbr, type, position));
+        highEntryList.append(new SinglePoint(name, abbr, type, position));
         break;
       case BaseMapElement::MidRoad:
       case BaseMapElement::SmallRoad:
@@ -907,8 +1010,7 @@ return true;
         in >> at_lat;
         in >> at_lon;
         in >> isW;
-        addElement(MapContents::StationList,
-            new SinglePoint(name, abbr, type, position));
+        stationList.append(new SinglePoint(name, abbr, type, position));
         break;
       case BaseMapElement::AerialRailway:
         in >> length;
@@ -943,10 +1045,6 @@ return true;
         in >> at_lat;
         in >> at_lon;
         in >> isW;
-	// In welche Liste ??????
-	/*
-        addElement(MapContents::List,
-            new SinglePoint(0, type, abbr, at_lat, at_lon));     	   */
         break;
       case BaseMapElement::Spot:
       case BaseMapElement::Pass:
@@ -956,8 +1054,7 @@ return true;
         in >> at_lon;
         in >> isW;
         in >> elev;
-        addElement(MapContents::ObstacleList,
-            new ElevPoint(name, abbr, type, position, elev));
+        obstacleList.append(new ElevPoint(name, abbr, type, position, elev));
         break;
       case BaseMapElement::Glacier:
         in >> length;
@@ -973,10 +1070,11 @@ return true;
 
         READ_POINT_LIST
 
-        if(isoLength >= 3) {
+        if(isoLength >= 3)
+          {
 //          addElement(new Isohypse(isoLength, latList, lonList, elev,
 //              border, isValley, 0));
-        }
+          }
         break;
     }
   }
@@ -986,45 +1084,6 @@ return true;
   warning("Dauer: %d", readT.restart());
 
   return true;
-}
-
-void MapContents::addElement(unsigned int listIndex, SinglePoint* newElement)
-{
-  switch(listIndex) {
-    case VillageList:
-      villageList.append(newElement);
-      break;
-    default:
-      warning("SinglePoint: Keine Liste ;-((");
-      ; // Do nothing ...
-  }
-}
-
-void MapContents::addElement(unsigned int listIndex, ElevPoint* newElement)
-{
-  switch(listIndex) {
-    case ObstacleList:
-      obstacleList.append(newElement);
-      break;
-    default:
-      warning("ElevPoint: Keine Liste ;-((");
-      ; // Do nothing ...
-  }
-}
-
-void MapContents::addElement(GliderSite* newElement)
-{
-  gliderList.append(newElement);
-}
-
-void MapContents::addElement(Airport* newElement)
-{
-  airportList.append(newElement);
-}
-
-void MapContents::addElement(RadioPoint* newElement)
-{
-  navList.append(newElement);
 }
 
 int MapContents::searchFlightPoint(QPoint cPos, struct flightPoint* fP)
@@ -1041,16 +1100,6 @@ Flight* MapContents::getFlight()
       return flightList.current();
 
   return 0;
-}
-
-QStrList MapContents::getFlightData()
-{
-  QStrList result;
-
-  if(flightList.count())
-      result = flightList.current()->getHeader();
-
-  return result;
 }
 
 bool MapContents::loadFlight(QFile igcFile)
@@ -1401,8 +1450,8 @@ unsigned int MapContents::getListLength(int listIndex) const
       return reportList.count();
     case CityList:
       return cityList.count();
-    case VillageList:
-      return villageList.count();
+//    case VillageList:
+//      return villageList.count();
     case LandmarkList:
       return landmarkList.count();
     case HighwayList:
@@ -1436,13 +1485,7 @@ Airport* MapContents::getAirport(unsigned int index)
 {
   return airportList.at(index);
 }
-///////////////////////////////////////////////////////////////
-//Isohypse* MapContents::getIsohypse(unsigned int index)
-//{
-//  return isohypseList.at(index);
-//  return 0;
-//}
-///////////////////////////////////////////////////////////////
+
 GliderSite* MapContents::getGlidersite(unsigned int index)
 {
   return gliderList.at(index);
@@ -1469,8 +1512,8 @@ BaseMapElement* MapContents::getElement(int listIndex, unsigned int index)
       return reportList.at(index);
     case CityList:
       return cityList.at(index);
-    case VillageList:
-      return villageList.at(index);
+//    case VillageList:
+//      return villageList.at(index);
     case LandmarkList:
       return landmarkList.at(index);
     case HighwayList:
@@ -1509,8 +1552,8 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
       return obstacleList.at(index);
     case ReportList:
       return reportList.at(index);
-    case VillageList:
-      return villageList.at(index);
+//    case VillageList:
+//      return villageList.at(index);
     case LandmarkList:
       return landmarkList.at(index);
     case HighwayEntryList:
@@ -1520,39 +1563,6 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
     default:
       return 0;
   }
-}
-
-SinglePoint* MapContents::getWayPoint(unsigned int index)
-{
-  switch(waypointList[index]) {
-    case AirportList:
-      return airportList.at(waypointIndex[index]);
-    case GliderList:
-      return gliderList.at(waypointIndex[index]);
-    case OutList:
-      return outList.at(waypointIndex[index]);
-    case NavList:
-      return navList.at(waypointIndex[index]);
-    case ObstacleList:
-      return obstacleList.at(waypointIndex[index]);
-    case ReportList:
-      return reportList.at(waypointIndex[index]);
-    case VillageList:
-      return villageList.at(waypointIndex[index]);
-    case LandmarkList:
-      return landmarkList.at(waypointIndex[index]);
-    case HighwayEntryList:
-      return highEntryList.at(waypointIndex[index]);
-    case StationList:
-      return stationList.at(waypointIndex[index]);
-    default:
-      return 0;
-  }
-}
-
-unsigned int MapContents::getWayPointNumber()
-{
-  return waypointNumber;
 }
 
 void MapContents::drawList(QPainter* targetPainter, unsigned int listID)
@@ -1591,10 +1601,10 @@ void MapContents::drawList(QPainter* targetPainter, unsigned int listID)
         for(unsigned int loop = 0; loop < cityList.count(); loop++)
             cityList.at(loop)->drawMapElement(targetPainter);
         break;
-      case VillageList:
-        for(unsigned int loop = 0; loop < villageList.count(); loop++)
-            villageList.at(loop)->drawMapElement(targetPainter);
-        break;
+//      case VillageList:
+//        for(unsigned int loop = 0; loop < villageList.count(); loop++)
+//            villageList.at(loop)->drawMapElement(targetPainter);
+//        break;
       case LandmarkList:
         for(unsigned int loop = 0; loop < landmarkList.count(); loop++)
             landmarkList.at(loop)->drawMapElement(targetPainter);

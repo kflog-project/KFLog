@@ -54,26 +54,6 @@ class MapContents
      */
     ~MapContents();
     /**
-     * Adds a new airport to the airportlist.
-     */
-    void addElement(Airport* newElement);
-    /**
-     * Adds a new glider to the gliderlist.
-     */
-    void addElement(GliderSite* newElement);
-    /**
-     * Adds a new radio-navigation-facility to the radiolist.
-     */
-    void addElement(RadioPoint* newElement);
-    /**
-     * Adds a new singlepoint-element to the given list.
-     */
-    void addElement(unsigned int listIndex, SinglePoint* newElement);
-    /**
-     * Adds a new elevation-element to the given list.
-     */
-    void addElement(unsigned int listIndex, ElevPoint* newElement);
-    /**
      * Returns the current length of the given list.
      */
     unsigned int getListLength(int listIndex) const;
@@ -99,17 +79,9 @@ class MapContents
      */
     Airport* getAirport(unsigned int index);
     /**
-     * Returns a pointer to the given waypoint.
-     */
-    SinglePoint* getWayPoint(unsigned int index);
-    /**
      * Returns a pointer to the given mapelement.
      */
     SinglePoint* getSinglePoint(int listIndex, unsigned int index);
-    /**
-     * Returns the number of waypoints.
-     */
-    unsigned int getWayPointNumber();
     /** Zeichnet die angegebene Liste in den übergebenen Painter */
     void drawList(QPainter* targetPainter, unsigned int listID);
     /** Zeichnet die Höhenlinien */
@@ -119,7 +91,7 @@ class MapContents
      */
     bool loadFlight(QFile);
     /** */
-    QStrList getFlightData();
+//    QStrList getFlightData();
     /** */
     Flight* getFlight();
     /**
@@ -136,6 +108,13 @@ class MapContents
          DigitList, FlightList};
 
   private:
+    /**
+     * Converts the longitute or latitute into the internal format
+     * suitable for the Location-class. "degree" is a string in the
+     * format: [g]gg.mm'ss"X where g,m,s are any digits from 0 to 9
+     * and X is one of N, S, E, W.
+     */
+    int __degreeToNum(const char* degree);
     /** reads a new binary-map-file */
     bool __readBinaryFile(const char* fileName);
     /** */
@@ -183,7 +162,7 @@ class MapContents
     /**
      * villageList contains all villages.
      */
-    QList<SinglePoint> villageList;
+//    QList<SinglePoint> villageList;
     /**
      * landmarkList contains all landmarks.
      */

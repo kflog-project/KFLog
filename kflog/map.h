@@ -107,8 +107,6 @@ class Map : public QWidget
     void slotMoveMapSE();
     /** */
     void slotPrintMap();
-    /** */
-    void slotScaleChanged(int);
 
   signals:
     /** */

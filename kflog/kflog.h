@@ -36,6 +36,7 @@
 class DataView;
 class Map;
 class MapControlView;
+class KFLogStartLogo;
 
 /**
  * The base class for KFLog application windows. It sets up the main
@@ -113,6 +114,8 @@ class KFLogApp : public KDockMainWindow
     void slotNewToolbarConfig();
     /** */
     void slotSetProgress(int value);
+    /** */
+    void slotStartComplete();
 
   private:
     /** the configuration object of the application */
@@ -168,6 +171,8 @@ class KFLogApp : public KDockMainWindow
     Map* map;
     /** */
     QString flightDir;
+    KFLogStartLogo* startLogo;
+    bool showStartLogo;
 };
  
 #endif // KFLOG_H

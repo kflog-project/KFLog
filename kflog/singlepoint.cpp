@@ -136,30 +136,25 @@ bool SinglePoint::__isVisible() const
 {
   extern const MapMatrix _globalMapMatrix;
 
-  return _globalMapMatrix.isVisible(position);
+  return _globalMapMatrix.isVisible(_globalMapMatrix.map(position));
 }
 
 void SinglePoint::drawMapElement(QPainter* targetPainter)
 {
+  if(!__isVisible())  return;
+
   extern const double _currentScale, _scale[];
   extern const bool _showElements[];
-
-//  if(!__isVisible()) {
-//    curPos.x = -1000;
-//    curPos.y = -1000;
-//    return;
-//  }
-
-//  curPos = __projectElement(dX, dY, mapCenterLon, _currentScale);
 
   targetPainter->setPen(QPen(QColor(0,0,0), 2));
   char* kflog_dir = "/kflog/map/";
   int iconSize = 16;
 
-  if(_currentScale > _scale[ID_BORDER_SMALL]) {
-    kflog_dir = "/kflog/map/small/";
-    iconSize = 8;
-  }
+  if(_currentScale > _scale[ID_BORDER_SMALL])
+    {
+      kflog_dir = "/kflog/map/small/";
+      iconSize = 8;
+    }
 
   bool show = true;
 

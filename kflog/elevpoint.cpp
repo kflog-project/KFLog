@@ -30,23 +30,24 @@ ElevPoint::ElevPoint(QString n, QString abbr, unsigned int t, QPoint pos,
 : SinglePoint(n, abbr, t, pos, wP),
   elevation(e)
 {
-  switch(typeID) {
-    case Outlanding:
-      iconName = "outlanding.xpm";
-      break;
-    case Obstacle:
-      iconName = "obstacle.xpm";
-      break;
-    case LightObstacle:
-      iconName = "obst_light.xpm";
-      break;
-    case ObstacleGroup:
-      iconName = "obst_group.xpm";
-      break;
-    case LightObstacleGroup:
-      iconName = "obst_group_light.xpm";
-      break;
-  }
+  switch(typeID)
+    {
+      case Outlanding:
+        iconName = "outlanding.xpm";
+        break;
+      case Obstacle:
+        iconName = "obstacle.xpm";
+        break;
+      case LightObstacle:
+        iconName = "obst_light.xpm";
+        break;
+      case ObstacleGroup:
+        iconName = "obst_group.xpm";
+        break;
+      case LightObstacleGroup:
+        iconName = "obst_group_light.xpm";
+        break;
+    }
 }
 
 ElevPoint::~ElevPoint()
@@ -111,11 +112,7 @@ void ElevPoint::printMapElement(QPainter* printPainter, const double dX,
 
 void ElevPoint::drawMapElement(QPainter* targetPainter)
 {
-//  if(!__isVisible(mapBorder)) {
-//    curPos.x = -1000;
-//    curPos.y = -1000;
-//    return;
-//  }
+  if(!__isVisible())  return;
 
   extern const double _currentScale, _scale[];
   extern const int _scaleBorder[];
@@ -144,18 +141,18 @@ void ElevPoint::drawMapElement(QPainter* targetPainter)
   int iconHeight = 28;  // Positionierung des Punktes im Icon
   int iconWidth = 15;   // auf die richtige Stelle
 
-  if(_currentScale > _scale[ID_BORDER_SMALL]) {
-    kflog_dir = "/kflog/map/small/";
-    iconHeight = 16;
-    iconWidth = 8;
-  }
+  if(_currentScale > _scale[ID_BORDER_SMALL])
+    {
+      kflog_dir = "/kflog/map/small/";
+      iconHeight = 16;
+      iconWidth = 8;
+    }
 
-  if(_currentScale <= _scale[_scaleBorder[typeID]]) {
-//    targetPainter->drawPixmap(curPos.x - iconWidth, curPos.y - iconHeight,
-//         Icon(KApplication::kde_datadir() + kflog_dir + iconName));
-    temp.sprintf("%d", elevation);
-    targetPainter->drawText(curPos.x() - iconWidth, curPos.y() + 15,temp);
-  }
+  if(_currentScale <= _scale[_scaleBorder[typeID]])
+    {
+      temp.sprintf("%d", elevation);
+      targetPainter->drawText(curPos.x() - iconWidth, curPos.y() + 15,temp);
+    }
 }
 
 unsigned int ElevPoint::getElevation() const { return elevation; }

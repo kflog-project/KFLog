@@ -103,26 +103,27 @@ int main(int argc, char *argv[])
   KApplication app;
 
   if (app.isRestored())
-  {
-    RESTORE(KFLogApp);
-  }
+    {
+      RESTORE(KFLogApp);
+    }
   else 
-  {
-    KFLogApp *kflog = new KFLogApp();
-    kflog->show();
+    {
+      KFLogApp *kflog = new KFLogApp();
+      kflog->show();
 
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+      KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 		
-		if (args->count())
-		{
-//        kflog->openDocumentFile(args->arg(0));
-		}
-		else
-		{
-//		  kflog->openDocumentFile();
-		}
-		args->clear();
-  }
+		  if (args->count())
+    		{
+//          kflog->openDocumentFile(args->arg(0));
+    		  kflog->slotStartComplete();
+    		}
+		  else
+    		{
+          QTimer::singleShot(3000, kflog, SLOT(slotStartComplete()));
+    		}
+  		args->clear();
+    }
 
   return app.exec();
 }  

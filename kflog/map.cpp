@@ -47,8 +47,10 @@
 #define PROOF_LAYER(a,b,c) if(a){bitBlt(&b,0,0,&c,0,0,-1,-1,NotEraseROP);}
 #define PROOF_BUTTON(a,b) if(a){mainApp->toolBar()->getButton(b)->toggle();}
 
-#define MAP_X calc_X_Lambert(numToRad(mapCenterLat), 0)
-#define MAP_Y calc_Y_Lambert(numToRad(mapCenterLat), 0)
+#define NUM_TO_RAD(a) ( PI * a ) / 108000000.0 )
+
+#define MAP_X calc_X_Lambert(NUM_TO_RAD(mapCenterLat), 0)
+#define MAP_Y calc_Y_Lambert(NUM_TO_RAD(mapCenterLat), 0)
 
 #define DELTA_X ( ( this->width() / 2 ) - ( MAP_X / _currentScale * RADIUS ) )
 #define DELTA_Y ( ( this->height() / 2 ) - ( MAP_Y / _currentScale * RADIUS ) )
@@ -73,9 +75,9 @@
     _globalMapMatrix.createMatrix(this->size()); \
   __redrawMap();
 
-// Festlegen der Größe der Pixmaps
-#define PIX_WIDTH  1000
-#define PIX_HEIGHT 1000
+// Festlegen der Größe der Pixmaps auf Desktop-Grösse
+#define PIX_WIDTH  QApplication::desktop()->width()
+#define PIX_HEIGHT QApplication::desktop()->height()
 
 Map::Map(KFLogApp *m, QFrame* parent)
 : QWidget(parent),
@@ -440,36 +442,6 @@ void Map::mousePressEvent(QMouseEvent* event)
                   show = true;
                 }
             }
-
-          if(!show)
-            {
-              /*
-               * Es wurde keine Stadt gefunden.
-               * Nun können die Dörfer durchsucht werden.
-               */
-              QPoint villagePos;
-              double dX, dY;
-              for(unsigned int loop = 0;
-                    loop < _globalMapContents.getListLength(
-                              MapContents::VillageList); loop++)
-                {
-                  hitElement = _globalMapContents.getElement(
-                              MapContents::VillageList, loop);
-                  villagePos = hitElement->getMapPosition();
-
-                  dX = villagePos.x() - current.x();
-                  dY = villagePos.y() - current.y();
-                  // Abstand 1 Punkt größer als der Kreis
-                  if( ( ( dX < 6.0 ) && ( dX > -6.0 ) ) &&
-                      ( ( dY < 6.0 ) && ( dY > -6.0 ) ) )
-                    {
-                      text = i18n("Village:");
-                      text = text + ' ' + hitElement->getName();
-                      helpMenu->setTitle(text);
-                      show = true;
-                    }
-                }
-            }
         }
 
       if(showGlider)
@@ -625,7 +597,11 @@ void Map::mousePressEvent(QMouseEvent* event)
 
 void Map::paintEvent(QPaintEvent* event = 0)
 {
-  bitBlt(this, 0, 0, &pixBuffer);
+  if(event == 0)
+      bitBlt(this, 0, 0, &pixBuffer);
+  else
+      bitBlt(this, event->rect().topLeft(), &pixBuffer, event->rect());
+
   /* Cursor-Position zurücksetzen! */
   prePos.setX(-50);
   prePos.setY(-50);
@@ -803,8 +779,8 @@ void Map::__drawMap()
 
   mainApp->slotSetProgress(40);
 
-  if(_currentScale <= _scale[_scaleBorder[ID_VILLAGE]])
-      _globalMapContents.drawList(&underMapP, MapContents::VillageList);
+//  if(_currentScale <= _scale[_scaleBorder[ID_VILLAGE]])
+//      _globalMapContents.drawList(&underMapP, MapContents::VillageList);
 
   mainApp->slotSetProgress(45);
 
@@ -914,7 +890,15 @@ void Map::__redrawMap()
   slotShowLayer();
 }
 
-void Map::slotRedrawMap() { __redrawMap(); }
+void Map::slotRedrawMap()
+{
+  extern MapMatrix _globalMapMatrix;
+  _globalMapMatrix.createMatrix(this->size());
+
+  emit changed(this->size());
+
+  __redrawMap();
+}
 
 void Map::slotShowLayer()
 {
@@ -1063,11 +1047,6 @@ void Map::slotMoveMapSW() { MATRIX_MOVE( MapMatrix::South | MapMatrix::West ) }
 void Map::slotMoveMapS()  { MATRIX_MOVE( MapMatrix::South ) }
 
 void Map::slotMoveMapSE() { MATRIX_MOVE( MapMatrix::South | MapMatrix::East ) }
-
-void Map::slotScaleChanged(int newScale)
-{
-//  warning("Map::slotScaleChanged(%d)", newScale);
-}
 
 void Map::showFlightLayer(bool redrawFlight)
 {

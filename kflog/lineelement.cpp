@@ -37,7 +37,7 @@ LineElement::LineElement(QString n, unsigned int t, QPointArray pA)
   switch(typeID)
     {
       case Highway:
-        PEN_THICKNESS(5, 5, 5, 5, 3, 3, 2, 2, 1);
+        PEN_THICKNESS(5, 5, 5, 5, 3, 2, 2, 2, 1);
         drawColor.setRgb(255, 100, 100);
         break;
       case MidRoad:
@@ -49,8 +49,8 @@ LineElement::LineElement(QString n, unsigned int t, QPointArray pA)
         drawColor.setRgb(200, 50, 50);
         break;
       case Railway:
-        PEN_THICKNESS(2, 2, 2, 2, 2, 2, 2, 1, 1)
-        drawColor.setRgb(75, 75, 75);
+        PEN_THICKNESS(2, 2, 2, 2, 2, 1, 1, 1, 1)
+        drawColor.setRgb(105, 105, 105);
         break;
       case AerialRailway:
         PEN_THICKNESS(2, 2, 2, 2, 2, 2, 2, 1, 1)
@@ -63,20 +63,20 @@ LineElement::LineElement(QString n, unsigned int t, QPointArray pA)
       case BigLake:
       case BigRiver:
         PEN_THICKNESS(3, 3, 3, 2, 2, 1, 1, 1, 1)
-        drawColor.setRgb(100, 120, 255);
-        fillColor.setRgb(100, 120, 255);
+        drawColor.setRgb(70, 70, 195);
+        fillColor.setRgb(0, 0, 235);
         break;
       case MidLake:
       case MidRiver:
         PEN_THICKNESS(2, 2, 2, 1, 1, 1, 1, 1, 1)
-        drawColor.setRgb(100, 120, 255);
-        fillColor.setRgb(100, 120, 255);
+        drawColor.setRgb(70, 70, 195);
+        fillColor.setRgb(0, 0, 235);
         break;
       case SmallLake:
       case SmallRiver:
         PEN_THICKNESS(1, 1, 1, 1, 1, 1, 1, 1, 1)
-        drawColor.setRgb(100, 120, 255);
-        fillColor.setRgb(100, 120, 255);
+        drawColor.setRgb(70, 70, 195);
+        fillColor.setRgb(0, 0, 235);
         break;
       case HugeCity:
         PEN_THICKNESS(1, 1, 1, 1, 1, 1, 1, 1, 1)

@@ -58,7 +58,8 @@ MapControlView::MapControlView(QWidget* parent, Map* map)
   eB->setPixmap(BarIcon("1rightarrow"));
   eB->setFixedHeight(35);
   eB->setFixedWidth(35);
-  QPushButton* swB = new QPushButton("SW", navFrame);
+  QPushButton* swB = new QPushButton(navFrame);
+  swB->setPixmap(BarIcon("1downleftarrow"));
   swB->setFixedHeight(35);
   swB->setFixedWidth(35);
   QPushButton* sB = new QPushButton(navFrame);
@@ -127,7 +128,7 @@ MapControlView::MapControlView(QWidget* parent, Map* map)
   controlLayout->activate();
 
   connect(currentScaleSlider, SIGNAL(valueChanged(int)),
-            SIGNAL(scaleChanged(int)));
+            SLOT(slotShowScaleChange(int)));
   connect(currentScaleSlider, SIGNAL(sliderReleased()),
             SLOT(slotSetScale()));
 
@@ -162,26 +163,49 @@ void MapControlView::slotShowMapData(QSize mapSize)
   dimText->setText(temp);
 
   currentScaleValue->display(_currentScale);
-  currentScaleSlider->setValue(getScaleValue(_currentScale));
+  currentScaleSlider->setValue(__getScaleValue(_currentScale));
 }
 
 void MapControlView::slotSetScale()
 {
   extern double _currentScale;
 
-  if(_currentScale != currentScaleValue->value())
-      _currentScale = currentScaleValue->value();
+  if( _currentScale != __getScaleValue( currentScaleValue->value() ) )
+    {
+      extern MapMatrix _globalMapMatrix;
+      _globalMapMatrix.setScale(currentScaleValue->value());
+      emit(scaleChanged());
+    }
 }
-//
-//void MapControlView::slotShowScaleChange(int value)
-//{
-//  extern double _scale[];
-//
-//  currentScaleValue->display(setScaleValue(value));
-//
-//  if(currentScaleValue->value() > _scale[9])
-//      currentScaleSlider->setValue(getScaleValue(_scale[9]));
-//
-//  if(currentScaleValue->value() < _scale[0])
-//      currentScaleSlider->setValue(getScaleValue(_scale[0]));
-//}
+
+int MapControlView::__setScaleValue(int value)
+{
+  if(value <= 40) return (value * 5);
+  else if(value <= 70) return (200 + (value - 40) * 10);
+  else if(value <= 95) return (500 + (value - 70) * 20);
+  else if(value <= 105) return (1000 + (value - 95) * 50);
+  else return (2000 + (value - 105) * 100);
+}
+
+int MapControlView::__getScaleValue(double scale)
+{
+  if(scale <= 200) return ((int) scale / 5);
+  else if(scale <= 500) return (((int) scale - 200) / 10 + 40);
+  else if(scale <= 1000) return (((int) scale - 500) / 20 + 70);
+  else if(scale <= 2000) return (((int) scale - 1000) / 50 + 95);
+  else return (((int) scale - 2000) / 100 + 125);
+}
+
+
+void MapControlView::slotShowScaleChange(int value)
+{
+  extern double _scale[];
+
+  currentScaleValue->display(__setScaleValue(value));
+
+  if(currentScaleValue->value() > _scale[9])
+      currentScaleSlider->setValue(__getScaleValue(_scale[9]));
+
+  if(currentScaleValue->value() < _scale[0])
+      currentScaleSlider->setValue(__getScaleValue(_scale[0]));
+}
