@@ -57,7 +57,7 @@ public:
   /**
    *
    */
-  virtual int downloadFlight(int flightID, int secMode, const QString fileName);
+  virtual int downloadFlight(int flightID, int secMode, const QString& fileName);
   /**
    * get recorder info serial id
    */
@@ -65,11 +65,11 @@ public:
   /**
    * Opens the recorder for serial communication.
    */
-  virtual int openRecorder(const QString portName, int baud);
+  virtual int openRecorder(const QString& portName, int baud);
   /**
    * Opens the recorder for other communication.
    */
-  virtual int openRecorder(QString URL);
+  virtual int openRecorder(const QString& URL);
   /**
    * Closes the connection with the flightrecorder.
    */
@@ -128,6 +128,7 @@ private:
   char *readData(char *buf_p, int count);
   QPtrList <flightTable> flightIndex;
   char *wordtoserno(unsigned int Binaer);
+  unsigned int serialNo;
 };
 
 #endif

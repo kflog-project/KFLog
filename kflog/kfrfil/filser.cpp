@@ -26,10 +26,10 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#include <klocale.h>
+
 #include "../airport.h"
 #include "filser.h"
-
-#include <klocale.h>
 
 #define MAX_LSTRING    63
 
@@ -106,7 +106,7 @@ unsigned char STX = 0x02, /* Command prefix like AT for modems      */
  * Needed to reset the serial port in any case of unexpected exiting
  * of the programm. Called via signal-handler of the runtime-environment.
  */
-void releaseTTY(int signal)
+void releaseTTY(int /* signal*/)
 {
   tcsetattr(portID, TCSANOW, &oldTermEnv);
   //exit(-1);
@@ -131,6 +131,7 @@ Filser::Filser()
   //End set capabilities.
 
   portID = -1;
+  serialNo = 0xffffffff;
   flightIndex.setAutoDelete(true);
 }
 
@@ -228,11 +229,12 @@ int Filser::getFlightDir(QList<FRDirEntry>* dirList)
       entry->firstTime = startTime;
       entry->lastTime = stopTime;
       entry->duration = stopTime_t - startTime_t;
+      serialNo = (ft->record[91] << 8) + ft->record[92];
       entry->shortFileName.sprintf("%c%c%cf%s%c.igc",
                                    c36[entry->firstTime.tm_year % 10],
                                    c36[entry->firstTime.tm_mon + 1],
                                    c36[entry->firstTime.tm_mday],
-                                   wordtoserno((ft->record[91] << 8) + ft->record[92]),
+                                   wordtoserno(serialNo),
                                    c36[flightCount]);
       entry->longFileName.sprintf("%d-%.2d-%.2d-fil-%s-%.2d.igc",
                                   entry->firstTime.tm_year + 1900,
@@ -255,7 +257,7 @@ int Filser::getFlightDir(QList<FRDirEntry>* dirList)
   return rc;
 }
 
-int Filser::downloadFlight(int flightID, int secMode, QString fileName)
+int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileName)
 {
   int rc;
   struct flightTable *ft;
@@ -294,9 +296,7 @@ int Filser::downloadFlight(int flightID, int secMode, QString fileName)
     }
   }
 
-  if (memContents != 0) {
-    delete memContents;
-  }
+  delete memContents;
 
   return rc;
 }
@@ -304,10 +304,13 @@ int Filser::downloadFlight(int flightID, int secMode, QString fileName)
 
 QString Filser::getRecorderSerialNo()
 {
-  return "???";
+  if (serialNo > 46655L)
+    return "???";
+  else
+    return QString("%1").arg (serialNo);
 }
 
-int Filser::openRecorder(const QString pName, int baud)
+int Filser::openRecorder(const QString& pName, int baud)
 {
   speed_t speed;
   portName = (char *)pName.latin1();
@@ -1231,7 +1234,7 @@ int Filser::rb()
 
 char *Filser::wordtoserno(unsigned int Binaer)
 {
-  char SerNStr[4];
+//  char SerNStr[4];
   static char Seriennummer[4];
   // limitation
   if (Binaer > 46655L) {
@@ -1262,7 +1265,7 @@ int Filser::closeRecorder()
 /** NOT IMLEMENTED
     ============================================*/
 
-int Filser::writeDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint> *taskPoints)
+int Filser::writeDeclaration(FRTaskDeclaration* /*taskDecl*/, QList<Waypoint> * /*taskPoints*/ )
 {
   return FR_NOTSUPPORTED;
 }
@@ -1272,22 +1275,22 @@ int Filser::readDatabase()
   return FR_NOTSUPPORTED;
 }
 
-int Filser::readTasks(QList<FlightTask> *tasks)
+int Filser::readTasks(QList<FlightTask> * /*tasks*/)
 {
   return FR_NOTSUPPORTED;
 }
 
-int Filser::writeTasks(QList<FlightTask> *tasks)
+int Filser::writeTasks(QList<FlightTask> * /*tasks*/)
 {
   return FR_NOTSUPPORTED;
 }
 
-int Filser::readWaypoints(QList<Waypoint> *waypoints)
+int Filser::readWaypoints(QList<Waypoint> * /*waypoints*/)
 {
   return FR_NOTSUPPORTED;
 }
 
-int Filser::writeWaypoints(QList<Waypoint> *waypoints)
+int Filser::writeWaypoints(QList<Waypoint> * /*waypoints*/)
 {
   return FR_NOTSUPPORTED;
 }
@@ -1295,7 +1298,7 @@ int Filser::writeWaypoints(QList<Waypoint> *waypoints)
 /**
  * Opens the recorder for other communication.
  */
-int Filser::openRecorder(QString URL)
+int Filser::openRecorder(const QString& /*URL*/)
 {
   return FR_NOTSUPPORTED;
 }
