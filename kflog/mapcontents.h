@@ -432,9 +432,10 @@ switch to first task in file */
     QString mapDir;
 
     /**
-     * Depreciated. Should be deleted somtime ...
+     * Used to determine, if we must display messageboxes on missing
+     * map-directories.
      */
-    bool isFirst;
+    int isFirstLoad;
 
 
     /**

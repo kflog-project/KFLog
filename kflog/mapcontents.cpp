@@ -18,7 +18,6 @@
 #include <cmath>
 #include <iostream>
 #include <stdlib.h>
-#include <unistd.h>
 
 #include <kconfig.h>
 #include <kfiledialog.h>
@@ -58,17 +57,16 @@
 #include <radiopoint.h>
 #include <singlepoint.h>
 
+/*
+ * Used as bit-masks to determine, if we must display
+ * messageboxes on missing map-directories.
+ */
+#define AIRSPACE_LOADED 2
+#define AIRFIELD_LOADED 4
+#define MAP_LOADED 8
 
 #define MAX_FILE_COUNT 16200
 #define ISO_LINE_NUM 50
-
-//#define KFLOG_FILE_MAGIC   0x404b464c
-//
-//#define TYPE_GROUND     0x47
-//#define TYPE_TERRAIN    0x54
-//#define TYPE_MAP        0x4d
-//#define TYPE_AERO       0x41
-//#define FORMAT_VERSION  100
 
 #define KFLOG_FILE_MAGIC  0x404b464c
 #define FILE_TYPE_GROUND  0x47
@@ -111,9 +109,6 @@
       in >> rwOpen; \
     }
 
-
-
-    
 // Liste der Höhenstufen (insg. 50 Stufen):
 const int MapContents::isoLines[] = { 0, 10, 25, 50, 75, 100, 150, 200, 250,
           300, 350, 400, 450, 500, 600, 700, 800, 900, 1000, 1250, 1500, 1750,
@@ -122,7 +117,7 @@ const int MapContents::isoLines[] = { 0, 10, 25, 50, 75, 100, 150, 200, 250,
           7500, 7750, 8000, 8250, 8500, 8750};
 
 MapContents::MapContents()
-  : isFirst(true)
+  : isFirstLoad(0)
 {
   sectionArray.resize(MAX_FILE_COUNT);
   sectionArray.fill(false);
@@ -1668,7 +1663,6 @@ void MapContents::proofeSection(bool isPrint)
   extern MapMatrix _globalMapMatrix;
   QRect mapBorder;
 
-      
   if(isPrint)
       mapBorder = _globalMapMatrix.getPrintBorder();
   else
@@ -1684,22 +1678,16 @@ void MapContents::proofeSection(bool isPrint)
   if(mapBorder.top() < 0) northCorner += 1;
   if(mapBorder.bottom() < 0) southCorner += 1;
 
-
   KStandardDirs* globalDirs = KGlobal::dirs();
   KConfig* config = KGlobal::config();
   config->setGroup("Path");
   mapDir = config->readEntry("DefaultMapDirectory",
       globalDirs->findResource("data", "kflog/mapdata/"));
 
-
-      
-
-// Checking for the MapFiles    
-  if(mapDir.isNull())
+  // Checking for the MapFiles    
+  if(mapDir.isNull() && !(isFirstLoad & MAP_LOADED))
     {
-    
-      usleep(10 * 1000);
-            
+      isFirstLoad |= MAP_LOADED;
       /* The mapdirectory does not exist. Ask the user */
       KMessageBox::error(0,
         "<qt>" +
@@ -1790,22 +1778,22 @@ void MapContents::proofeSection(bool isPrint)
         }
     }
 
-
-
 // Checking for Airspaces
     if (airspaceList.isEmpty()) {
       //we only need to load the airspaces if the list is still empty.
       QDir airspaceDir(mapDir + "/airspace/");
       if(!airspaceDir.exists())
         {
-        usleep(10 * 1000);
           emit errorOnMapLoading();
-          KMessageBox::error(0,
-            "<qt>" +
-            i18n("The directory for the airspace-files does not exist:") +
-            "<br><b>" + airspaceDir.path() + "</b>"  +
-            "</qt>",
-            i18n("Directory not found"));
+          if(!(isFirstLoad & AIRSPACE_LOADED))
+            {
+              isFirstLoad |= AIRSPACE_LOADED;
+              KMessageBox::error(0,
+                "<qt>" +
+                i18n("The directory for the airspace-files does not exist:") +
+                "<br><b>" + airspaceDir.path() + "</b>"  +
+                "</qt>", i18n("Directory not found"));
+            }
         }
       else
         {
@@ -1834,14 +1822,16 @@ void MapContents::proofeSection(bool isPrint)
       QDir airfieldDir(mapDir + "/airfields/");
       if(!airfieldDir.exists())
         {
-        usleep(10 * 1000);
           emit errorOnMapLoading();
-          KMessageBox::error(0,
-            "<qt>" +
-            i18n("The directory for the airfield-files does not exist:") +
-            "<br><b>" + airfieldDir.path() + "</b>"  +
-            "</qt>",
-            i18n("Directory not found"));
+          if(!(isFirstLoad & AIRFIELD_LOADED))
+            {
+              isFirstLoad |= AIRFIELD_LOADED;
+              KMessageBox::error(0,
+                "<qt>" +
+                i18n("The directory for the airfield-files does not exist:") +
+                "<br><b>" + airfieldDir.path() + "</b>"  +
+                "</qt>", i18n("Directory not found"));
+            }
         }
       else
         {
@@ -1870,8 +1860,6 @@ void MapContents::proofeSection(bool isPrint)
 //          warning( "%s", (*it).latin1() );
 //        }
       }
-
-   
 }
 
 unsigned int MapContents::getListLength(int listIndex) const
@@ -2029,8 +2017,6 @@ void MapContents::slotReloadMapData()
       isoList.append(new QList<Isohypse>);
 
   sectionArray.fill(false);
-
-  isFirst = true;
 }
 
 void MapContents::printContents(QPainter* targetPainter, bool isText)
