@@ -1,5 +1,12 @@
 $Id$
 
+2003-04-24 Florian <florian@kflog.org>
+  * some adjustments for the default layout
+  
+  * added (hopefully) all authors in the about dialog / AUTHORS File
+
+  * added default keys for map handling
+
 2003-04-12 André <andre@kflog.org>
   * Waypoints can now be copied and moved between catalogs.
   

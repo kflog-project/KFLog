@@ -1685,7 +1685,11 @@ void MapContents::proofeSection(bool isPrint)
     
     KMessageBox::sorry(0, i18n("<qt>The directory for maps has not been set.<br>Please select the directory where you have installed your maps.</qt>"),
                           i18n("Mapdirectory not set."));
-    mapDir=KDirSelectDialog::selectDirectory(QString::null,true,0,i18n("Select map directory...")).path();
+    // set a defaultdirectory                          
+    mapDir = KDirSelectDialog::selectDirectory(
+        "/opt/kde3/share/apps/kflog/mapdata/",
+        true,0,i18n("Select map directory...")).path();
+
     config->writeEntry("DefaultMapDirectory", mapDir);
   }
       

@@ -224,21 +224,34 @@ void KFLogApp::initActions()
   viewCenterTo = new KAction(i18n("Center to..."), "centerto", Key_F8, this,
       SLOT(slotCenterTo()), actionCollection(), "view_fit_to_height");
 
-  mapMoveMenu->insert(new KAction(i18n("move map north-west"), "movemap_nw", 0,
+  flightEvaluation = new KAction(i18n("Evaluation"), "flightevaluation",
+      CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
+      "evaluate_flight");
+      
+      
+  mapMoveMenu->insert(new KAction(i18n("move map north-west"), "movemap_nw",
+      0,
       &_globalMapMatrix, SLOT(slotMoveMapNW()), actionCollection(), "move_map_nw"));
-  mapMoveMenu->insert(new KAction(i18n("move map north"), "movemap_n", 0,
+  mapMoveMenu->insert(new KAction(i18n("move map north"), "movemap_n",
+      Key_Up,
       &_globalMapMatrix, SLOT(slotMoveMapN()), actionCollection(), "move_map_n"));
-  mapMoveMenu->insert(new KAction(i18n("move map northeast"), "movemap_ne", 0,
+  mapMoveMenu->insert(new KAction(i18n("move map northeast"), "movemap_ne",
+      0,
       &_globalMapMatrix, SLOT(slotMoveMapNE()), actionCollection(), "move_map_ne"));
-  mapMoveMenu->insert(new KAction(i18n("move map west"), "movemap_w", 0,
+  mapMoveMenu->insert(new KAction(i18n("move map west"), "movemap_w",
+      Key_Left,
       &_globalMapMatrix, SLOT(slotMoveMapW()), actionCollection(), "move_map_w"));
-  mapMoveMenu->insert(new KAction(i18n("move map east"), "movemap_e", 0,
+  mapMoveMenu->insert(new KAction(i18n("move map east"), "movemap_e",
+      Key_Right,
       &_globalMapMatrix, SLOT(slotMoveMapE()), actionCollection(), "move_map_e"));
-  mapMoveMenu->insert(new KAction(i18n("move map south-west"), "movemap_sw", 0,
+  mapMoveMenu->insert(new KAction(i18n("move map south-west"), "movemap_sw",
+      0,
       &_globalMapMatrix, SLOT(slotMoveMapSW()), actionCollection(), "move_map_sw"));
-  mapMoveMenu->insert(new KAction(i18n("move map south"), "movemap_s", 0,
+  mapMoveMenu->insert(new KAction(i18n("move map south"), "movemap_s",
+      Key_Down,
       &_globalMapMatrix, SLOT(slotMoveMapS()), actionCollection(), "move_map_s"));
-  mapMoveMenu->insert(new KAction(i18n("move map south-east"), "movemap_se", 0,
+  mapMoveMenu->insert(new KAction(i18n("move map south-east"), "movemap_se",
+      0,
       &_globalMapMatrix, SLOT(slotMoveMapSE()), actionCollection(), "move_map_se"));
 
   KStdAction::zoomIn(&_globalMapMatrix, SLOT(slotZoomIn()), actionCollection());
@@ -249,21 +262,13 @@ void KFLogApp::initActions()
    */
   viewData = new KToggleAction(i18n("Show Flightdata"), 0, this,
       SLOT(slotToggleDataView()), actionCollection(), "toggle_data_view");
-  viewHelpWindow = new KToggleAction(i18n("open HelpWindow"), 0,
-      CTRL+Key_M, this, SLOT(slotToggleHelpWindow()), actionCollection(),
+  viewHelpWindow = new KToggleAction(i18n("Show HelpWindow"), 0,
+      CTRL+Key_H, this, SLOT(slotToggleHelpWindow()), actionCollection(),
       "toggle_help_window");
   viewMapControl = new KToggleAction(i18n("Show Mapcontrol"), 0, this,
       SLOT(slotToggleMapControl()), actionCollection(), "toggle_map_control");
   viewMap = new KToggleAction(i18n("Show Map"), 0, this,
       SLOT(slotToggleMap()), actionCollection(), "toggle_map");
-
-  /**
-    * Graphical Planning
-    */
-/*
-  mapPlanning = new KToggleAction(i18n("graphical Taskplanning"), Key_F4,
-      map, SLOT(slotActivatePlanning()), actionCollection(), "activate_planning");
-*/
   viewToolBar = KStdAction::showToolbar(this, SLOT(slotViewToolBar()),
       actionCollection());
   viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()),
@@ -275,7 +280,7 @@ void KFLogApp::initActions()
 
   // We can't use CTRL-W, because this shortcut is reserved for closing a file ...
   viewWaypoints = new KToggleAction(i18n("Show waypoints"), "waypoint",
-      CTRL+Key_W, this, SLOT(slotToggleWaypointsDock()), actionCollection(),
+      CTRL+Key_R, this, SLOT(slotToggleWaypointsDock()), actionCollection(),
       "waypoints");
 
   viewTasks = new KToggleAction(i18n("Show tasks"), "task",
@@ -312,10 +317,10 @@ void KFLogApp::initActions()
 			"stop_animate");
 	//Stepping actions
 	stepFlightNext = new KAction(i18n("Next Flight Point"), "forward",
-			Key_Up, map, SLOT(slotFlightNext()), actionCollection(),
+			CTRL+Key_Up, map, SLOT(slotFlightNext()), actionCollection(),
 		  "next_flight_point");
 	stepFlightPrev = new KAction(i18n("Prev Flight Point"), "back",
-			Key_Down, map, SLOT(slotFlightPrev()), actionCollection(),
+			CTRL+Key_Down, map, SLOT(slotFlightPrev()), actionCollection(),
 			"prev_flight_point");
 	stepFlightHome = new KAction(i18n("First Flight Point"), "start",
 			Key_Home, map, SLOT(slotFlightHome()), actionCollection(),
@@ -443,6 +448,7 @@ void KFLogApp::initView()
   
   extern MapContents _globalMapContents;
 
+
   connect(mapControlDock, SIGNAL(iMBeingClosed()),
       SLOT(slotHideMapControlDock()));
   connect(mapControlDock, SIGNAL(hasUndocked()),
@@ -502,16 +508,18 @@ void KFLogApp::initView()
 
   legend = new TopoLegend(legendDock);
   legendDock->setWidget(legend);
-  
-  /* Arguments for manualDock():
+
+
+  /* Standard positions for the docking windows
+   * Arguments for manualDock():
    * dock target, dock side, relation target/this (in percent)
    */
-  dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );
-  helpWindowDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );  
-  tasksDock->manualDock(dataViewDock, KDockWidget::DockBottom, 50);
-  mapControlDock->manualDock( tasksDock, KDockWidget::DockBottom, 75 );
-  waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 71);
+  dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 40 );
+  mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 40 );
+  helpWindowDock->manualDock( mapControlDock, KDockWidget::DockCenter, 50);    
+  waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 70);
   legendDock->manualDock(waypointsDock, KDockWidget::DockRight, 90);
+  tasksDock->manualDock(waypointsDock, KDockWidget::DockCenter, 50 );  
   
   connect(map, SIGNAL(changed(QSize)), mapControl,
       SLOT(slotShowMapData(QSize)));
