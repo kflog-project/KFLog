@@ -548,7 +548,7 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
     return;
 
   config->setGroup("Path");
-  KURL src = KURL("http://maproom.kflog.org/data/");
+  KURL src = KURL(config->readPathEntry("Mapserver","http://maproom.kflog.org/data/"));
   KURL dest = KURL(destString);
   src.addPath(fileName);
   dest.addPath(fileName);
