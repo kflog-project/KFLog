@@ -62,6 +62,8 @@ class Airport : public RadioPoint
         const double dY, const int mapCenterLon, const double scale,
         const struct elementBorder mapBorder);
     /** */
+    virtual void printMapElement(QPainter* printPainter);
+    /** */
     unsigned int getElevation() const;
     /** */
     virtual QString getInfoString() const;

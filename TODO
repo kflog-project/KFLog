@@ -1,13 +1,19 @@
 
 * Drucken:
 
+  -> Die einzelnen Kartenobjekte müssen noch gedruckt werden.
+     Das sollte auch direkt über MapContents laufen ...
+
+  -> Darstellung muss komplett über MapMatrix laufen ...
+
+     * Die Matrix wird noch nicht korrekt erzeugt. Vermutlich
+       wird die Verschiebung nicht richtig durchgeführt ...
+
   -> Das Bild ist auf dem Papier noch verschoben.
 
   -> Die Auswahl des Papierformates hat keinerlei Einfluss auf
      das QPrinter-Objekt
 
-  -> Die einzelnen Kartenobjekte müssen noch gedruckt werden.
-     Das sollte auch direkt über MapContents laufen ...
 
 * Kartenfehler:
 
@@ -31,6 +37,7 @@
 
 
 * Welche Variablen und Funktionen werden tatsächlich benutzt ???
+
 
 * Flug Darstellung:
 

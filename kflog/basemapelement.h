@@ -57,6 +57,8 @@ class BaseMapElement
     virtual void printMapElement(QPainter* printPainter, const double dX,
           const double dY, const int mapCenterLon, const double scale,
           const struct elementBorder mapBorder);
+    /** */
+    virtual void printMapElement(QPainter* printPainter);
     /**
      * Virtual function which returns the name of the object.
      * The name is no member of BaseMapElement, but is needed in several

@@ -61,6 +61,8 @@ class LineElement : public BaseMapElement
         const double dY, const int mapCenterLon, const double scale,
         const struct elementBorder mapBorder);
     /** */
+    virtual void printMapElement(QPainter* printPainter);
+    /** */
     virtual bool isValley() const;
 
   protected:

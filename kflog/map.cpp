@@ -778,8 +778,10 @@ void Map::__drawMap()
   mainApp->slotSetProgress(65);
 
 //  if(_currentScale <= _scale[_scaleBorder[ID_AIRSPACE]])
-    for(unsigned int loop = 0; loop < _globalMapContents.getListLength(
-              MapContents::AirspaceList); loop++)
+    unsigned int max = _globalMapContents.getListLength(
+              MapContents::AirspaceList);
+
+    for(unsigned int loop = 0; loop < max; loop++)
       {
         _current = _globalMapContents.getElement(
             MapContents::AirspaceList, loop);

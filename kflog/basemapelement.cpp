@@ -37,6 +37,11 @@ void BaseMapElement::printMapElement(QPainter* printP, const double dX,
   warning("BaseMapElement::printMapElement()");
 }
 
+void BaseMapElement::printMapElement(QPainter* printP)
+{
+  warning("BaseMapElement::printMapElement()");
+}
+
 void BaseMapElement::drawMapElement(QPainter* printP, QPainter* maskP)
 {
   warning("BaseMapElement::drawMapElement()");

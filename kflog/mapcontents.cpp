@@ -1439,6 +1439,7 @@ unsigned int MapContents::getListLength(int listIndex) const
     case NavList:
       return navList.count();
     case AirspaceList:
+      warning("MapContents::getListLength(%d) -> AirspaceList", listIndex);
       return airspaceList.count();
     case ObstacleList:
       return obstacleList.count();
@@ -1561,40 +1562,122 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
   }
 }
 
-void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
-    unsigned int listID)
+void MapContents::printList(QPainter* targetPainter, unsigned int listID)
 {
   switch(listID)
     {
       case AirportList:
         for(unsigned int loop = 0; loop < airportList.count(); loop++)
+            airportList.at(loop)->printMapElement(targetPainter);
+        break;
+      case GliderList:
+        for(unsigned int loop = 0; loop < gliderList.count(); loop++)
+            gliderList.at(loop)->printMapElement(targetPainter);
+        break;
+      case OutList:
+        for(unsigned int loop = 0; loop < outList.count(); loop++)
+            outList.at(loop)->printMapElement(targetPainter);
+        break;
+      case NavList:
+        for(unsigned int loop = 0; loop < navList.count(); loop++)
+            navList.at(loop)->printMapElement(targetPainter);
+        break;
+      case AirspaceList:
+        for(unsigned int loop = 0; loop < airspaceList.count(); loop++)
+            airspaceList.at(loop)->printMapElement(targetPainter);
+        break;
+      case ObstacleList:
+        for(unsigned int loop = 0; loop < obstacleList.count(); loop++)
+            obstacleList.at(loop)->printMapElement(targetPainter);
+        break;
+      case ReportList:
+        for(unsigned int loop = 0; loop < reportList.count(); loop++)
+            reportList.at(loop)->printMapElement(targetPainter);
+        break;
+      case CityList:
+        for(unsigned int loop = 0; loop < cityList.count(); loop++)
+            cityList.at(loop)->printMapElement(targetPainter);
+        break;
+//      case VillageList:
+//        for(unsigned int loop = 0; loop < villageList.count(); loop++)
+//            villageList.at(loop)->drawMapElement(targetPainter);
+//        break;
+      case LandmarkList:
+        for(unsigned int loop = 0; loop < landmarkList.count(); loop++)
+            landmarkList.at(loop)->printMapElement(targetPainter);
+        break;
+      case HighwayList:
+        for(unsigned int loop = 0; loop < highwayList.count(); loop++)
+            highwayList.at(loop)->printMapElement(targetPainter);
+        break;
+      case RoadList:
+        for(unsigned int loop = 0; loop < roadList.count(); loop++)
+            roadList.at(loop)->printMapElement(targetPainter);
+        break;
+      case RailList:
+        for(unsigned int loop = 0; loop < railList.count(); loop++)
+            railList.at(loop)->printMapElement(targetPainter);
+        break;
+      case HydroList:
+        for(unsigned int loop = 0; loop < hydroList.count(); loop++)
+            hydroList.at(loop)->printMapElement(targetPainter);
+        break;
+      case TopoList:
+        for(unsigned int loop = 0; loop < topoList.count(); loop++)
+            topoList.at(loop)->printMapElement(targetPainter);
+        break;
+      case FlightList:
+        for(unsigned int loop = 0; loop < flightList.count(); loop++)
+            flightList.at(loop)->printMapElement(targetPainter);
+        break;
+      default:
+        return;
+    }
+}
+
+void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
+    unsigned int listID)
+{
+warning("MapContents::drawList(%d)", listID);
+  switch(listID)
+    {
+      case AirportList:
+        warning("AirportList");
+        for(unsigned int loop = 0; loop < airportList.count(); loop++)
             airportList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case GliderList:
+        warning("GliderList");
         for(unsigned int loop = 0; loop < gliderList.count(); loop++)
             gliderList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case OutList:
+        warning("OutList");
         for(unsigned int loop = 0; loop < outList.count(); loop++)
             outList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case NavList:
+        warning("NavList");
         for(unsigned int loop = 0; loop < navList.count(); loop++)
             navList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case AirspaceList:
+        warning("AirspaceList");
         for(unsigned int loop = 0; loop < airspaceList.count(); loop++)
             airspaceList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case ObstacleList:
+        warning("ObstacleList");
         for(unsigned int loop = 0; loop < obstacleList.count(); loop++)
             obstacleList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case ReportList:
+        warning("ReportList");
         for(unsigned int loop = 0; loop < reportList.count(); loop++)
             reportList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case CityList:
+        warning("CityList");
         for(unsigned int loop = 0; loop < cityList.count(); loop++)
             cityList.at(loop)->drawMapElement(targetPainter, maskPainter);
         for(unsigned int loop = 0; loop < cityList.count(); loop++)
@@ -1605,30 +1688,37 @@ void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
 //            villageList.at(loop)->drawMapElement(targetPainter, maskPainter);
 //        break;
       case LandmarkList:
+        warning("LandmarkList");
         for(unsigned int loop = 0; loop < landmarkList.count(); loop++)
             landmarkList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case HighwayList:
+        warning("HighwayList");
         for(unsigned int loop = 0; loop < highwayList.count(); loop++)
             highwayList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case RoadList:
+        warning("RoadList");
         for(unsigned int loop = 0; loop < roadList.count(); loop++)
             roadList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case RailList:
+        warning("RailList");
         for(unsigned int loop = 0; loop < railList.count(); loop++)
             railList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case HydroList:
+        warning("HydroList");
         for(unsigned int loop = 0; loop < hydroList.count(); loop++)
             hydroList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case TopoList:
+        warning("TopoList");
         for(unsigned int loop = 0; loop < topoList.count(); loop++)
             topoList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case FlightList:
+        warning("FlightList");
         for(unsigned int loop = 0; loop < flightList.count(); loop++)
             flightList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;

@@ -48,6 +48,8 @@ class Airspace : public LineElement
     virtual void printMapElement(QPainter* printPainter, const double dX,
         const double dY, const int mapCenterLon, const double scale,
         const struct elementBorder mapBorder);
+    /** */
+    virtual void printMapElement(QPainter* printPainter);
     /**
      * Returns the upper limit of the airspace.
      */

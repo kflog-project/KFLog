@@ -126,6 +126,11 @@ LineElement::~LineElement()
 
 }
 
+void LineElement::printMapElement(QPainter* printPainter)
+{
+
+}
+
 void LineElement::printMapElement(QPainter* printPainter, const double dX,
       const double dY, const int mapCenterLon, const double scale,
       const struct elementBorder mapBorder)

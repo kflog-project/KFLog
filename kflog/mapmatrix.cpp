@@ -34,8 +34,8 @@
 // Mit welchem Radius müssen wir rechnen ???
 #define RADIUS 6370289.509
 #define PI 3.141592654
-#define NUM_TO_RAD(num) ( ( PI * (double)num ) / 108000000.0 )
-#define RAD_TO_NUM(rad) ( (int)(rad * 108000000.0 / PI ) )
+#define NUM_TO_RAD(num) ( ( PI * (double)(num) ) / 108000000.0 )
+#define RAD_TO_NUM(rad) ( (int)((rad) * 108000000.0 / PI ) )
 
 MapMatrix::MapMatrix()
   : cScale(0), rotationArc(0)
@@ -117,15 +117,56 @@ double MapMatrix::map(double arc) const
   return (arc + rotationArc);
 }
 
+QPointArray MapMatrix::print(QPointArray pArray) const
+{
+  return printMatrix.map(pArray);
+}
+
+QPoint MapMatrix::print(int lat, int lon, double dX, double dY) const
+{
+  QPoint temp;
+
+  if(dX == 0 &&  dY == 0)
+    {
+      temp = QPoint(
+      ( __calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
+          * RADIUS / pScale ) + dX,
+      ( __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
+           * RADIUS / pScale ) + dY );
+    }
+  else
+    {
+      temp = QPoint(
+      ( __calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
+          * RADIUS / ( pScale * 0.5 ) ) + dX,
+      ( __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
+           * RADIUS / ( pScale * 0.5 ) ) + dY );
+    }
+  return temp;
+}
+
 QRect MapMatrix::getViewBorder() const  { return viewBorder; }
 
-void MapMatrix::getMatrixValues(double* v_1, double* v_2, int* centerLat,
-        int* centerLon)
+QRect MapMatrix::getPrintBorder(double a1, double a2, double b1, double b2,
+        double c1, double c2, double d1, double d2) const
 {
-  *v_1 = v1;
-  *v_2 = v2;
-  *centerLat = mapCenterLat;
-  *centerLon = mapCenterLon;
+  QRect temp;
+
+  temp.setTop( __invert_Lambert_Lat(a2 * pScale / RADIUS,
+      a1 * pScale / RADIUS) );
+  temp.setBottom( __invert_Lambert_Lat(b2 * pScale / RADIUS,
+      b1 * pScale / RADIUS) );
+  temp.setRight( __invert_Lambert_Lon(c2 * pScale / RADIUS,
+      c1 * pScale / RADIUS) + mapCenterLon );
+  temp.setLeft( __invert_Lambert_Lon(d2 * pScale / RADIUS,
+      d1 * pScale / RADIUS) + mapCenterLon );
+
+  return temp;
+}
+
+QPoint MapMatrix::getMapCenter() const
+{
+  return QPoint(mapCenterLat, mapCenterLon);
 }
 
 double MapMatrix::scale() const  { return cScale; }
@@ -287,24 +328,39 @@ void MapMatrix::initMatrix(int centerLat, int centerLon, double scale,
 
   mapCenterLat = centerLat;
   mapCenterLon = centerLon;
-warning("Mitte: %d / %d", mapCenterLat, mapCenterLon);
+
   homeLat = hLat;
   homeLon = hLon;
 
   cScale = scale;
 }
 
+QWMatrix* MapMatrix::initPrintMatrix(double printScale)
+{
+warning("MapMatrix::initPrintMatrix(%.5f)", printScale);
+  pScale = printScale;
+
+  const QPoint tempPoint(mapCenterLat, mapCenterLon);
+  printMatrix.reset();
+
+  double scale = MAX_SCALE / pScale;
+  double printArc = atan(tempPoint.x() * 1.0 / tempPoint.y() * 1.0);
+
+  printMatrix.setMatrix(cos(printArc) * scale, sin(printArc) * scale,
+      -sin(printArc) * scale, cos(printArc) * scale, 0, 0);
+
+  return &printMatrix;
+}
+
 double MapMatrix::__calc_Y_Lambert(double latitude, double longitude) const
 {
-  return ( 2 * ( sqrt( var1 + ( sin(v1) - sin(latitude) ) * var2 )
-               / var2 )
+  return ( 2 * ( sqrt( var1 + ( sin(v1) - sin(latitude) ) * var2 ) / var2 )
              * cos( var2 * longitude / 2 ) );
 }
 
 double MapMatrix::__calc_X_Lambert(double latitude, double longitude) const
 {
-  return ( 2 * ( sqrt( var1 + ( sin(v1) - sin(latitude) ) * var2 )
-               / var2 )
+  return ( 2 * ( sqrt( var1 + ( sin(v1) - sin(latitude) ) * var2 ) / var2 )
              * sin( var2 * longitude / 2 ) );
 }
 

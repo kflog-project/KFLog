@@ -52,6 +52,11 @@ RadioPoint::~RadioPoint()
 
 }
 
+void RadioPoint::printMapElement(QPainter* printPainter)
+{
+
+}
+
 void RadioPoint::printMapElement(QPainter* printPainter, const double dX,
       const double dY, const int mapCenterLon, const double scale,
       const struct elementBorder mapBorder)

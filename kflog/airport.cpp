@@ -87,6 +87,11 @@ QString Airport::getInfoString() const
   return text;
 }
 
+void Airport::printMapElement(QPainter* printPainter)
+{
+warning("Drucke Luftraum ...");
+}
+
 void Airport::printMapElement(QPainter* printPainter, const double dX,
         const double dY, const int mapCenterLon, const double scale,
         const struct elementBorder mapBorder)

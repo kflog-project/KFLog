@@ -59,6 +59,14 @@ class MapMatrix
     /** */
     double map(double) const;
     /**
+     * Zur Zeit erwartet die Funktion noch originale Daten. Das ist
+     * inkonsequent, da die andere print-Funktion bereits die
+     * projezierten Daten haben will ...
+     */
+    QPoint print(int latitude, int longitude, double dX, double dY) const;
+    /** */
+    QPointArray print(QPointArray pArray) const;
+    /**
      *
      */
     void createMatrix(QSize newSize);
@@ -67,8 +75,13 @@ class MapMatrix
     /** */
     QRect getViewBorder() const;
     /** */
+    QRect getPrintBorder(double a1, double a2, double b1, double b2,
+        double c1, double c2, double d1, double d2) const;
+    /** */
     void initMatrix(int centerLat, int centerLon, double scale,
         double v1, double v2, int hLat, int hLon);
+    /** */
+    QWMatrix* initPrintMatrix(double scale);
     /** */
     void scaleAdd(QSize mapSize);
     /** */
@@ -90,9 +103,8 @@ class MapMatrix
     QPoint mapToWgs(QPoint pos) const;
     /** */
     void setScale(double);
-    /** */
-    void getMatrixValues(double* v_1, double* v_2, int* centerLat,
-        int* centerLon);
+
+    QPoint getMapCenter() const;
 
   private:
     /**
@@ -120,6 +132,9 @@ class MapMatrix
     /**
      */
     QWMatrix worldMatrix;
+    /**
+     */
+    QWMatrix printMatrix;
     /**
      *
      */
@@ -157,6 +172,8 @@ class MapMatrix
     QSize mapViewSize;
     /** */
     double cScale;
+    /** */
+    double pScale;
     /** */
     double rotationArc;
 };

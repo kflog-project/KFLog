@@ -49,6 +49,11 @@ unsigned int GliderSite::getRunwayNumber() const { return rwNum; }
 
 bool GliderSite::isWinch() const { return winch; }
 
+void GliderSite::printMapElement(QPainter* printPainter)
+{
+
+}
+
 void GliderSite::printMapElement(QPainter* printPainter, const double dX,
     const double dY, const int mapCenterLon, const double scale,
     const struct elementBorder mapBorder)

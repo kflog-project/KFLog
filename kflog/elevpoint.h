@@ -50,6 +50,8 @@ class ElevPoint : public SinglePoint
     virtual void printMapElement(QPainter* printPainter, const double dX,
         const double dY, const int mapCenterLon, const double scale,
         const struct elementBorder mapBorder);
+    /** */
+    virtual void printMapElement(QPainter* printPainter);
     /**
      * Returns the elevation of the element.
      */

@@ -18,6 +18,7 @@
 #include "airspace.h"
 
 #include <mapcalc.h>
+#include <mapmatrix.h>
 
 #include <kapp.h>
 #include <kiconloader.h>
@@ -151,7 +152,7 @@ QString Airspace::getInfoString()
     }
 
   switch(typeID)
-   {
+    {
       case BaseMapElement::AirC:
       case BaseMapElement::AirCtemp:
         text = "C";
@@ -186,10 +187,10 @@ QString Airspace::getInfoString()
         break;
     }
 
-    text = text + " " + name + "<BR>" +
-        "<FONT SIZE=-1>" + tempL + " / " + tempU + "</FONT>";
+  text = text + " " + name + "<BR>" +
+      "<FONT SIZE=-1>" + tempL + " / " + tempU + "</FONT>";
 
-    return text;
+  return text;
 }
 
 void Airspace::setValues(unsigned int upper, unsigned int upperType,
@@ -201,58 +202,73 @@ void Airspace::setValues(unsigned int upper, unsigned int upperType,
   uLimitType = upperType;
 }
 
+void Airspace::printMapElement(QPainter* printPainter)
+{
+//  if(!__isPrintable()) return;
+warning("Drucke Luftraum ...");
+
+  extern const MapMatrix _globalMapMatrix;
+  QPointArray temp = _globalMapMatrix.print(projPointArray);
+  printPainter->setPen(QPen(QColor(255,0,0), 4));
+//  printPainter->drawPolygon(_globalMapMatrix.print(projPointArray));
+  printPainter->drawPolygon(temp);
+
+  warning("1. Position: ( %d / %d )",
+    temp.at(0).x(), temp.at(0).y());
+}
+
 void Airspace::printMapElement(QPainter* printPainter, const double dX,
         const double dY, const int mapCenterLon, const double scale,
         struct elementBorder mapBorder)
 {
   if(!__isVisible()) return;
 
-  switch(typeID) {
-    case AirC:
-      printPainter->setBrush(QBrush::NoBrush);
-      printPainter->setPen(QPen(QColor(0,120,0), 3));
-      break;
-    case AirCtemp:
-      printPainter->setBrush(QBrush(QColor(150,150,150), QBrush::HorPattern));
-      printPainter->setPen(QPen(QColor(0,120,0), 3));
-      break;
-    case AirD:
-      printPainter->setBrush(QBrush::NoBrush);
-      printPainter->setPen(QPen(QColor(0,180,0), 3, QPen::DashLine));
-      break;
-    case AirDtemp:
-      printPainter->setBrush(QBrush(QColor(150,150,150), QBrush::VerPattern));
-      printPainter->setPen(QPen(QColor(0,180,0), 3, QPen::DashLine));
-      break;
-    case AirElow:
-      printPainter->setBrush(QBrush::NoBrush);
-      printPainter->setPen(QPen(QColor(200,100,100), 4));
-      break;
-    case AirEhigh:
-      printPainter->setBrush(QBrush::NoBrush);
-      printPainter->setPen(QPen(QColor(100,100,175), 4));
-      break;
-    case AirF:
-      printPainter->setBrush(QBrush(QColor(100,100,100), QBrush::DiagCrossPattern));
-      printPainter->setPen(QPen(QColor(50,50,125), 2));
-      break;
-    case ControlD:
-      printPainter->setBrush(QBrush(QColor(100,100,100), QBrush::DiagCrossPattern));
-      printPainter->setPen(QPen(QColor(0,0,150), 2, QPen::DashLine));
-      break;
-    case Restricted:
-      printPainter->setBrush(QBrush(QColor(150,150,150), QBrush::BDiagPattern));
-      printPainter->setPen(QPen(QColor(50,50,125), 2));
-      break;
-    case Danger:
-      printPainter->setBrush(QBrush(QColor(100,100,100), QBrush::BDiagPattern));
-      printPainter->setPen(QPen(QColor(50,50,125), 2));
-      break;
-    case LowFlight:
-      printPainter->setBrush(QBrush(QColor(100,100,100), QBrush::FDiagPattern));
-      printPainter->setPen(QPen(QColor(150,0,0), 3, QPen::DashLine));
-      break;
-  }
-
+  switch(typeID)
+    {
+      case AirC:
+        printPainter->setBrush(QBrush::NoBrush);
+        printPainter->setPen(QPen(QColor(0,120,0), 3));
+        break;
+      case AirCtemp:
+        printPainter->setBrush(QBrush(QColor(150,150,150), QBrush::HorPattern));
+        printPainter->setPen(QPen(QColor(0,120,0), 3));
+        break;
+      case AirD:
+        printPainter->setBrush(QBrush::NoBrush);
+        printPainter->setPen(QPen(QColor(0,180,0), 3, QPen::DashLine));
+        break;
+      case AirDtemp:
+        printPainter->setBrush(QBrush(QColor(150,150,150), QBrush::VerPattern));
+        printPainter->setPen(QPen(QColor(0,180,0), 3, QPen::DashLine));
+        break;
+      case AirElow:
+        printPainter->setBrush(QBrush::NoBrush);
+        printPainter->setPen(QPen(QColor(200,100,100), 4));
+        break;
+      case AirEhigh:
+        printPainter->setBrush(QBrush::NoBrush);
+        printPainter->setPen(QPen(QColor(100,100,175), 4));
+        break;
+      case AirF:
+        printPainter->setBrush(QBrush(QColor(100,100,100), QBrush::DiagCrossPattern));
+        printPainter->setPen(QPen(QColor(50,50,125), 2));
+        break;
+      case ControlD:
+        printPainter->setBrush(QBrush(QColor(100,100,100), QBrush::DiagCrossPattern));
+        printPainter->setPen(QPen(QColor(0,0,150), 2, QPen::DashLine));
+        break;
+      case Restricted:
+        printPainter->setBrush(QBrush(QColor(150,150,150), QBrush::BDiagPattern));
+        printPainter->setPen(QPen(QColor(50,50,125), 2));
+        break;
+      case Danger:
+        printPainter->setBrush(QBrush(QColor(100,100,100), QBrush::BDiagPattern));
+        printPainter->setPen(QPen(QColor(50,50,125), 2));
+        break;
+      case LowFlight:
+        printPainter->setBrush(QBrush(QColor(100,100,100), QBrush::FDiagPattern));
+        printPainter->setPen(QPen(QColor(150,0,0), 3, QPen::DashLine));
+        break;
+    }
 //  printPainter->drawPolygon(__projectElement(dX, dY, mapCenterLon, scale));
 }

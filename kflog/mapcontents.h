@@ -87,6 +87,8 @@ class MapContents
         unsigned int listID);
     /** Zeichnet die Höhenlinien */
     void drawIsoList(QPainter* targetPainter, QPainter* maskPainter);
+    /** */
+    void printList(QPainter*, unsigned int listID);
     /**
      * Loads a new flight-file.
      */
@@ -102,11 +104,11 @@ class MapContents
     /**
      * The listid.
      */
-    enum listID {NotSet, IntAirportList, AirportList, GliderList, AddSitesList,
-         OutList, NavList, AirspaceList, ObstacleList, ReportList, CityList,
-         VillageList, LandmarkList, HighwayList, HighwayEntryList, RoadList,
-         RailList, StationList, HydroList, TopoList, IsohypseList, WaypointList,
-         DigitList, FlightList};
+    enum listID {NotSet = 0, IntAirportList, AirportList, GliderList,
+        AddSitesList, OutList, NavList, AirspaceList, ObstacleList, ReportList,
+        CityList, VillageList, LandmarkList, HighwayList, HighwayEntryList,
+        RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
+        WaypointList, DigitList, FlightList};
 
   private:
     /**
