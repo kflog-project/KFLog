@@ -35,11 +35,17 @@ TopoLegend::TopoLegend(QWidget *parent, const char *name ) : QScrollView(parent,
   
   QLabel * lbl;
   QVBox* levelLayout = new QVBox(this->viewport());
+
+  //set fontsize:
+  QFont lblFnt=QFont(this->font());
+  lblFnt.setPointSizeFloat(9.5);
+  this->setFont(lblFnt);
+  
   
   this->addChild(levelLayout);        //we are using the QVBox above as our main and single widget
   this->setHScrollBarMode(AlwaysOff); //no horizontal scrollbar 
   this->setResizePolicy(AutoOneFit);  //make sure everything fits nicely
-
+  
   QFontMetrics fm=this->fontMetrics(); //get a QFontMetrics object
   int minwidth=0;
   
