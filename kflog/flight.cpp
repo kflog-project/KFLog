@@ -746,23 +746,25 @@ void Flight::__checkMaxMin()
   h_max = 0;
   va_max = 0;
   va_min = 0;
+  float tmp, refv = .0, refh = .0, refva1 = .0 , refva2 = 500.;
 
-  for(unsigned int loop = 0; loop < route.count(); loop++)
+  QListIterator<flightPoint> fp(route);
+  for( unsigned int loop = 0; (*fp); ++fp, loop++ )
     {
       if(loop)
         {
-          // Maximal Werte finden
-          if(GET_SPEED(route.at(loop)) > GET_SPEED(route.at(v_max)))
-              v_max = loop;
+          // Fetch extreme values
+          if( (tmp=GET_SPEED((*fp))) > refv )
+              { v_max = loop; refv = tmp; }
 
-          if(route.at(loop)->height > route.at(h_max)->height)
-              h_max = loop;
+          if( (tmp=(*fp)->height) > refh )
+              { h_max = loop; refh = tmp; }
 
-          if(GET_VARIO(route.at(loop)) > GET_VARIO(route.at(va_max)))
-              va_max = loop;
+          if( (tmp=GET_VARIO((*fp))) > refva1 )
+              { va_max = loop; refva1 = tmp; }
 
-          if(GET_VARIO(route.at(loop)) < GET_VARIO(route.at(va_min)))
-              va_min = loop;
+          if( (tmp=GET_VARIO((*fp))) < refva2 )
+              { va_min = loop; refva2 = tmp; }
         }
     }
 }
