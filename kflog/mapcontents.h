@@ -217,6 +217,11 @@ class MapContents : public QObject
     void loadingMessage(QString message);
     /** signal that a new flight/task/flight group become active */
     void currentFlightChanged();
+    /**
+     * Emitted, when no mapfiles are found, or the when the map-directories
+     * do not exists.
+     */
+    void errorOnMapLoading();
 
   private:
     /**

@@ -95,8 +95,8 @@ class FlightTask : public BaseFlightElement
     QRect getRect() const;
     /** */
     void setWaypointList(QList<wayPoint> wpL);
-  /** No descriptions */
-  virtual QString getFlightInfoString();
+    /** No descriptions */
+    virtual QString getFlightInfoString();
     /**
      * The waypoint-types.
      */

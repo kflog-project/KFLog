@@ -68,6 +68,7 @@ KFLogApp::KFLogApp()
   : KDockMainWindow(0, "KFLogMainWindow"), showStartLogo(false)
 {
   extern MapConfig _globalMapConfig;
+  extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
 
   config = kapp->config();
@@ -87,6 +88,8 @@ KFLogApp::KFLogApp()
       &_globalMapConfig, SLOT(slotSetPrintMatrixValues(int)));
   connect(&_globalMapConfig, SIGNAL(configChanged()), &_globalMapMatrix,
       SLOT(slotInitMatrix()));
+  connect(&_globalMapContents, SIGNAL(errorOnMapLoading()),
+      SLOT(slotStartComplete()));
   connect(this, SIGNAL(flightDataTypeChanged(int)), &_globalMapConfig,
       SLOT(slotSetFlightDataType(int)));
 
@@ -744,7 +747,14 @@ void KFLogApp::slotNewToolbarConfig()
    applyMainWindowSettings( KGlobal::config(), "MainWindow" );
 }
 
-void KFLogApp::slotStartComplete()  { if(showStartLogo)  delete startLogo; }
+void KFLogApp::slotStartComplete()
+{
+  if(showStartLogo && startLogo != NULL)
+    {
+      delete startLogo;
+      startLogo = 0L;
+    }
+}
 
 void KFLogApp::slotFlightViewIgc3D()
 {

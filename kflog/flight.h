@@ -211,41 +211,36 @@ class Flight : public BaseFlightElement
      * @return the header-info of the igc-file (date, pilot-name, ...)
      */
     QStrList getHeader();
-  /** No descriptions */
-  virtual QString getFlightInfoString();
+    /** No descriptions */
+    virtual QString getFlightInfoString();
     /**
 		 * Increments the nAnimationIndex member
      */
     void setAnimationNextIndex(void);
-  /** sets the bAnimationActive flag */
-  void setAnimationActive(bool b);
+    /** sets the bAnimationActive flag */
+    void setAnimationActive(bool b);
     /**
 		 * Sets the nAnimationIndex member to 'n'
 		 */
     void setAnimationIndex(int n);
-  /** returns the bAnimationActive flag */
-  bool isAnimationActive(void);
-  /** No descriptions */
-  int getAnimationIndex();
-  /** No descriptions */
-  void setLastAnimationPixmap(QPixmap pix);
-  /** No descriptions */
-  QPixmap getLastAnimationPixmap(void);
-  /** No descriptions */
-  QPoint getLastAnimationPos(void);
-  /** No descriptions */
-  void setLastAnimationPos(QPoint pos);
-    /**
-     * The waypoint-types.
-     */
-    enum WaypointType {NotSet = 0, TakeOff = 1, Begin = 2, RouteP = 4,
-                     End = 8, FreeP = 16, Landing = 32};
+    /** returns the bAnimationActive flag */
+    bool isAnimationActive(void);
+    /** No descriptions */
+    int getAnimationIndex();
+    /** No descriptions */
+    void setLastAnimationPixmap(QPixmap pix);
+    /** No descriptions */
+    QPixmap getLastAnimationPixmap(void);
+    /** No descriptions */
+    QPoint getLastAnimationPos(void);
+    /** No descriptions */
+    void setLastAnimationPos(QPoint pos);
     /**
      * The flight-types.
      */
-    enum FlightType {ZielS = 1, ZielR = 2, FAI = 3, Dreieck = 4, FAI_S = 5,
-                   Dreieck_S = 6, Abgebrochen = 7, Unknown = 8, FAI_2 = 9,
-                   FAI_S2 = 10, FAI_3 = 11, FAI_S3 = 12, Vieleck = 13};
+//    enum FlightType {ZielS = 1, ZielR = 2, FAI = 3, Dreieck = 4, FAI_S = 5,
+//                   Dreieck_S = 6, Abgebrochen = 7, Unknown = 8, FAI_2 = 9,
+//                   FAI_S2 = 10, FAI_3 = 11, FAI_S3 = 12, Vieleck = 13};
     /**
      * Return values for the Min/Max Points
      */

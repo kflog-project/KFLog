@@ -645,7 +645,7 @@ install_location=$$(kde_datadir)/kflog/kflogui.rc
 type=DATA
 
 [kflog/kfrgcs/Makefile.am]
-files=kflog/kfrgcs/vlapi2.cpp,kflog/kfrgcs/vlapi2.h,kflog/kfrgcs/vlapihlp.cpp,kflog/kfrgcs/vlapisys_linux.cpp,kflog/kfrgcs/vlconv.cpp,kflog/kfrgcs/utils.cpp,kflog/kfrgcs/grecord.cpp,kflog/kfrgcs/flightrecorder.cpp,kflog/kfrgcs/dbbconv.cpp,kflog/kfrgcs/dbbconv.h,kflog/kfrgcs/flightrecorder.h,kflog/kfrgcs/grecord.h,kflog/kfrgcs/utils.h,kflog/kfrgcs/vla_support.h,kflog/kfrgcs/vlapierr.h,kflog/kfrgcs/vlapihlp.h,kflog/kfrgcs/vlapityp.h,kflog/kfrgcs/vlconv.h,kflog/kfrgcs/gcs.desktop
+files=kflog/kfrgcs/vlapi2.cpp,kflog/kfrgcs/vlapi2.h,kflog/kfrgcs/vlapihlp.cpp,kflog/kfrgcs/vlapisys_linux.cpp,kflog/kfrgcs/vlconv.cpp,kflog/kfrgcs/utils.cpp,kflog/kfrgcs/grecord.cpp,kflog/kfrgcs/flightrecorder.cpp,kflog/kfrgcs/dbbconv.cpp,kflog/kfrgcs/dbbconv.h,kflog/kfrgcs/flightrecorder.h,kflog/kfrgcs/grecord.h,kflog/kfrgcs/utils.h,kflog/kfrgcs/vla_support.h,kflog/kfrgcs/vlapierr.h,kflog/kfrgcs/vlapihlp.h,kflog/kfrgcs/vlapityp.h,kflog/kfrgcs/vlconv.h
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=kfrgcs
 sub_dirs=
@@ -674,12 +674,6 @@ dist=true
 install=false
 install_location=
 type=HEADER
-
-[kflog/kfrgcs/gcs.desktop]
-dist=true
-install=true
-install_location=$$(kde_datadir)/kflog/logger/gcs.desktop
-type=DATA
 
 [kflog/kfrgcs/grecord.cpp]
 dist=true

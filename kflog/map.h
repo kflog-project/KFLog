@@ -183,7 +183,7 @@ class Map : public QWidget
     /**
       * graphical planning
       */
-    void __graphicalPlanning(QPoint current);
+    void __graphicalPlanning(QPoint current, QMouseEvent* event);
 
     /**
      * This pixmap is used to store the currently displayed map.
@@ -270,7 +270,11 @@ class Map : public QWidget
 		int planning;
 		// Index des WP welcher verschoben wird bei planning == 3
 		int moveWPindex;
-			
+
+    // indicates if a WP was Added in Snapping Mode (Planning)
+		bool lastAdd;
+    // indicates if the mouse is in a snapping area
+    bool isSnapping;
 };
 
 #endif

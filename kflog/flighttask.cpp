@@ -279,12 +279,13 @@ void FlightTask::__setWaypointType()
   for(unsigned int n = 1; n  < wpList.count(); n++)
     {
       wpList.at(n)->distance = dist(wpList.at(n-1),wpList.at(n));
+      wpList.at(n)->type = FlightTask::FreeP;
       warning("n: %f",wpList.at(n)->distance);
     }
 
 
   // Kein Wendepunkt definiert
-  if (wpList.count() < 4) return;
+  if (wpList.count() < 4)  return;
 
   // warning("WendePunkte: %d",wpList.count());
   wpList.at(0)->type = FlightTask::TakeOff;
