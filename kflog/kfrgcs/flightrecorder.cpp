@@ -292,10 +292,6 @@ int writeTask(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> taskPoints,
   sprintf(vl.declaration.flightinfo.pilot, "%s%s",
       (const char*)pilotA.left(32), (const char*)pilotB.left(32));
 
-warning(taskDecl->pilotA);
-warning(taskDecl->pilotB);
-warning(vl.declaration.flightinfo.pilot);
-
   strcpy(vl.declaration.flightinfo.gliderid,
       taskDecl->gliderID.left(7));
   strcpy(vl.declaration.flightinfo.glidertype,
