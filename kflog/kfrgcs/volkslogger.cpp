@@ -79,12 +79,12 @@ Volkslogger::~Volkslogger()
 /**
  * Returns the transfermode this plugin supports.
  */
-FlightRecorderPluginBase::TransferMode Volkslogger::getTransferMode()
+FlightRecorderPluginBase::TransferMode Volkslogger::getTransferMode() const
 {
   return FlightRecorderPluginBase::serial;
 }
 
-QString Volkslogger::getLibName()  {  return "libkfrgcs";  }
+QString Volkslogger::getLibName() const {  return "libkfrgcs";  }
 
 int Volkslogger::getFlightDir(QList<FRDirEntry>* dirList)
 {

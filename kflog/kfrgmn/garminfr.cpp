@@ -62,7 +62,8 @@ GarminFR::~GarminFR(){
 /**
  * Returns the name of the lib.
  */
-QString GarminFR::getLibName(){
+QString GarminFR::getLibName() const
+{
   return "libkfrgmn";
 }
 
@@ -70,7 +71,8 @@ QString GarminFR::getLibName(){
 /**
  * Returns the transfermode this plugin supports.
  */
-FlightRecorderPluginBase::TransferMode GarminFR::getTransferMode(){
+FlightRecorderPluginBase::TransferMode GarminFR::getTransferMode() const
+{
   return FlightRecorderPluginBase::serial;
 }
 

@@ -44,12 +44,12 @@ public:
   /**
    * Returns the name of the lib.
    */
-  virtual QString getLibName();
+  virtual QString getLibName() const;
   /**
    * Returns the transfermode this plugin supports.
    * @returns FlightRecorderPluginBase::URL
    */
-  virtual TransferMode getTransferMode();
+  virtual TransferMode getTransferMode() const;
   /**
    * Returns a list of recorded flights in this device. (Not implemented.)
    */
