@@ -14,6 +14,8 @@
 **   $Id$
 **
 ***********************************************************************/
+#ifndef FRSTRUCTS_H
+#define FRSTRUCTS_H
 
 #include <time.h>
 #include <qstring.h>
@@ -99,3 +101,5 @@ struct FRTask
   QList <FRTaskPoint> wayPoints;
 };
 */
+
+#endif
