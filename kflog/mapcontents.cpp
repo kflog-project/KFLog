@@ -1792,12 +1792,10 @@ void MapContents::proofeSection(bool isPrint)
               }
               else{
                 KMessageBox::information(0,
-                  i18n("The directory ") + mapDir
-                  +i18n(" is either not writeable or the server ") +
-                  config->readPathEntry("Mapserver","http://maproom.kflog.org/data/") +
-                  i18n(" is not reachable.") +
-                  i18n(" Please specify the correct path in the Settings dialog and check the Internet connection!") +
-                  i18n(" Restart KFLog afterwards."));
+                  i18n("<qt>The directory <b>%1</b> is either not writeable<br>"
+                  "or the server <b>%2</b> is not reachable.<br>"
+                  "Please specify the correct path in the Settings dialog and check the internet connection!<br>"
+                  " Restart KFLog afterwards.</qt>").arg(mapDir).arg (config->readPathEntry("Mapserver","http://maproom.kflog.org/data/")));
               }
               break;
             case KMessageBox::No:
@@ -1807,9 +1805,9 @@ void MapContents::proofeSection(bool isPrint)
           break;
         case (Inhibited):
           KMessageBox::information(0,
-            i18n("The directory for the map-files is empty.\n"
-                 "To download the files, please visit our homepage:\n") +
-                 "http://maproom.kflog.org/", i18n("directory empty"), "NoMapFiles");
+            i18n("<qt>The directory for the map-files is empty.<br>"
+                 "To download the files, please visit our homepage:<br>"
+                 "<b>http://maproom.kflog.org/</b></qt>"), i18n("directory empty"), "NoMapFiles");
           break;
         case (Automatic):
           break;
