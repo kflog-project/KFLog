@@ -1,6 +1,13 @@
 $Id$
 
 
+2002-03-16 Heienr <heiner@kflog.org>
+
+  * Fixed a bug in main(). Now the splash-screen disappears after all
+    flight are loaded, when the user calls KFLog with igc-files as
+    arguments.
+
+
 2002-03-10 Heiner <heiner@kflog.org>
 
   * Fixed a bug in MapContents::loadFlight(), that causes KFLog to crash

@@ -57,17 +57,17 @@ static KCmdLineOptions options[] =
  */
 int main(int argc, char *argv[])
 {
-	KAboutData aboutData( "kflog", "KFLog",
-		VERSION, i18n("KFLog - The K-Flight-Logger"), KAboutData::License_GPL,
-		"(c) 2001, The KFLog-Team", 0, "http://www.kflog.org",
-		"bugs@kflog.org");
-	aboutData.addAuthor("Heiner Lamprecht", 0, "heiner@kflog.org");
-	aboutData.addAuthor("Florian Ehinger", 0, "florian@kflog.org");
-	aboutData.addAuthor("Harald Maier", 0, "harry@kflog.org");
-	aboutData.setTranslator(i18n("_: NAME OF TRANSLATORS\nYour names"),
-	  i18n("_: EMAIL OF TRANSLATORS\nYour emails"));
-	KCmdLineArgs::init( argc, argv, &aboutData );
-	KCmdLineArgs::addCmdLineOptions( options );
+  KAboutData aboutData( "kflog", "KFLog",
+    VERSION, i18n("KFLog - The K-Flight-Logger"), KAboutData::License_GPL,
+    "(c) 2001, The KFLog-Team", 0, "http://www.kflog.org",
+    "bugs@kflog.org");
+  aboutData.addAuthor("Heiner Lamprecht", 0, "heiner@kflog.org");
+  aboutData.addAuthor("Florian Ehinger", 0, "florian@kflog.org");
+  aboutData.addAuthor("Harald Maier", 0, "harry@kflog.org");
+  aboutData.setTranslator(i18n("_: NAME OF TRANSLATORS\nYour names"),
+    i18n("_: EMAIL OF TRANSLATORS\nYour emails"));
+  KCmdLineArgs::init( argc, argv, &aboutData );
+  KCmdLineArgs::addCmdLineOptions( options );
 
   KApplication app;
 
@@ -82,11 +82,11 @@ int main(int argc, char *argv[])
       KFLogApp *kflog = new KFLogApp();
 
       KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-		
-		  if (args->count())
+
+      if (args->count())
           kflog->slotFileOpenRecent((QString)args->arg(0));
-		  else
-          QTimer::singleShot(700, kflog, SLOT(slotStartComplete()));
+
+      QTimer::singleShot(700, kflog, SLOT(slotStartComplete()));
 
   		args->clear();
     }
