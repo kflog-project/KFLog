@@ -24,6 +24,7 @@
 #include <qobject.h>
 #include <qstrlist.h>
 #include <kio/jobclasses.h>
+#include <downloadlist.h>
 
 #include <flighttask.h>
 
@@ -409,6 +410,7 @@ switch to first task in file */
      * downloads File from www.kflog.org, optionally waits until finished
      */
     void __downloadFile(QString fileName, QString destString, bool wait=false);
+    DownloadList* downloadList;
 };
 
 #endif

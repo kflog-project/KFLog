@@ -56,6 +56,7 @@
 #include <lineelement.h>
 #include <radiopoint.h>
 #include <singlepoint.h>
+#include <downloadlist.h>
 
 #define MAX_FILE_COUNT 16200
 #define ISO_LINE_NUM 50
@@ -144,6 +145,7 @@ MapContents::MapContents()
   topoList.setAutoDelete(true);
   wpList.setAutoDelete(false);
   regIsoLines.setAutoDelete(true);
+  downloadList = new DownloadList();
 }
 
 MapContents::~MapContents()
@@ -551,12 +553,16 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
   src.addPath(fileName);
   dest.addPath(fileName);
 
-  if (wait)
+  if (wait){
     KIO::NetAccess::copy(src, dest); // waits until file is transmitted
+    QString errorString = KIO::NetAccess::lastErrorString();
+    if (errorString!="")
+      KMessageBox::error(0,errorString);
+    slotReloadMapData();
+  }
   else{
-    KIO::CopyJob *job = KIO::copy(src, dest);
-    connect( job, SIGNAL(result(KIO::Job*)),
-         this, SLOT(slotReloadMapData()) );
+    downloadList->copyKURL(&src,&dest);
+    connect(downloadList,SIGNAL(downloadFinished()),this,SLOT(slotReloadMapData()));
   }
 }
 
@@ -1792,14 +1798,14 @@ void MapContents::proofeSection(bool isPrint)
             config->writeEntry("No Automatic Map Download",false);
             KMessageBox::information(0,
               i18n("The automatic data download feature is available when "
-              "a flight is loaded."));
+              "a flight is loaded. Please open a flight."));
             break;
           }
-          else{
-            KMessageBox::information(0,
-              i18n("The directory ") + mapDir
-              +i18n(" is not writeable! Please specify correct path in the Settings dialog!"));
-          }
+//          else{
+//            KMessageBox::information(0,
+//              i18n("The directory ") + mapDir
+//              +i18n(" is not writeable! Please specify correct path in the Settings dialog!"));
+//          }
         case KMessageBox::No:
           config->writeEntry("No Automatic Map Download",false);
           break;
