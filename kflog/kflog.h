@@ -28,6 +28,7 @@
 #include <kaccel.h>
 #include <kaction.h>
 #include <kprogress.h>
+#include <kpopupmenu.h>
 
 class DataView;
 class Map;
@@ -36,6 +37,7 @@ class KFLogConfig;
 class KFLogStartLogo;
 class TaskAndWaypoint;
 class Tasks;
+class EvaluationDialog;
 
 /**
  * Mainwindow for KFLog.
@@ -116,10 +118,6 @@ class KFLogApp : public KDockMainWindow
      * @param  url  The url that the user has selected.
      */
     void slotFileOpenRecent(const KURL& url);
-    /**
-     * Closes all displayed flights.
-     */
-    void slotFileClose();
     /**
      * Opens the printing-dialog to print the map.
      */
@@ -227,6 +225,8 @@ class KFLogApp : public KDockMainWindow
      * undocked the widget.
      */
     void slotHideTaskAndWaypointDock();
+  /** set menu items enabled/disabled */
+  void slotModifyMenu();
   private:
     /**
      * The configuration object of the application
@@ -274,6 +274,10 @@ class KFLogApp : public KDockMainWindow
      * @see dataViewDock
      */
     DataView* dataView;
+    /**
+     * The evaluation dialog
+     */
+    EvaluationDialog* evaluation;
     /**
      * The progessbar in the statusbar. Used during drawing the map to display
      * the percentage of what is allready drawn.
@@ -420,6 +424,10 @@ class KFLogApp : public KDockMainWindow
      * True, when the startup-window should be displayed.
      */
     bool showStartLogo;
+    KPopupMenu* windowMenu;
+private slots: // Private slots
+  /** insert available flights into menu */
+  void slotWindowsMenuAboutToShow();
 };
  
 #endif // KFLOG_H

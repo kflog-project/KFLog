@@ -49,7 +49,7 @@ class Igc3DDialog : public QDialog
 
  public:
   /** */
-  Igc3DDialog(QList<Flight>* fList);
+  Igc3DDialog();
   /** */
   ~Igc3DDialog();
 
@@ -76,7 +76,6 @@ class Igc3DDialog : public QDialog
    *
    */
   Igc3DView* igc3dView;
-  QList<Flight>* flightList;
 };
 
 #endif

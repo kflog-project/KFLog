@@ -17,6 +17,7 @@
    <Action name="toggle_map_control" />
    <Action name="toggle_map" />
   </Menu>
+  <Action name="window" />
  </MenuBar>
  <ToolBar noMerge="1" name="mainToolBar" >
   <text>Main Toolbar</text>

@@ -40,7 +40,7 @@ class EvaluationView : public QWidget
   /** */
   ~EvaluationView();
   /** */
-  void drawCurve(Flight* cFlight, bool vario, bool speed, bool baro,
+  void drawCurve(bool vario, bool speed, bool baro,
            unsigned int glatt_va, unsigned int glatt_v,
            unsigned int glatt_h, unsigned int secWidth);
 
@@ -120,7 +120,7 @@ class EvaluationView : public QWidget
   unsigned int cursor2;
   unsigned int cursor_alt;
 
-  Flight* flight;
+//  Flight* flight;
 
   bool isFlight;
 

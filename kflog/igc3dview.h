@@ -50,7 +50,7 @@ class Igc3DView : public QWidget
 
  public:
   /** */
-  Igc3DView(Igc3DDialog* dialog, QList<Flight>* fList);
+  Igc3DView(Igc3DDialog* dialog);
   /** */
   ~Igc3DView();
   /** */
@@ -103,11 +103,6 @@ class Igc3DView : public QWidget
    * Flight data to display
    */
   Igc3DFlightData* flight;
-  /**
-   * Original flight data
-	 */
-	QList<Flight>* originalflightlist;
-
 	/**
 	 * Flight data?
 	 */

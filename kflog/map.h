@@ -64,8 +64,6 @@ class Map : public QWidget
     void slotCenterToWaypoint(const unsigned int id);
     /** */
     void slotDrawCursor(QPoint p1, QPoint p2);
-    /** Löscht den Fluglayer */
-    void slotDeleteFlightLayer();
     /** */
     void slotRedrawFlight();
     /**
@@ -94,6 +92,8 @@ class Map : public QWidget
     void slotFlightEnd();
 
     void slotActivatePlanning();
+  /** No descriptions */
+  void slotShowCurrentFlight();
   signals:
     /** */
     void changed(QSize);
@@ -245,7 +245,7 @@ class Map : public QWidget
 			* contains planning task points
 			* enthält die Punkte!!!
 			*/
-		QList<wayPoint> taskPointList;
+//		QList<wayPoint> taskPointList;
 		// 0 keine Planung 1 Planung 2 Planung Aufgabe Abgeschlossen
 //		enum planning {NoPlanning = 0, Planning = 1, TaskFinished = 2};
 		int planning;

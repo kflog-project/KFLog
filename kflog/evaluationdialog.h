@@ -42,7 +42,7 @@ class EvaluationDialog : public QDialog
 
  public:
   /** */
-  EvaluationDialog(QList<Flight>* fList);
+  EvaluationDialog(QWidget *parent);
   /** */
   ~EvaluationDialog();
   /**
@@ -55,20 +55,20 @@ class EvaluationDialog : public QDialog
    *
    */
   void updateText(int index1, int index2, bool updateAll = false);
+  /** No descriptions */
+  Flight* getFlight();
 
  signals:
   /** */
   void showCursor(QPoint p1, QPoint p2);
   /** */
-  void flightChanged(Flight* flight);
+  void flightChanged();
   /** */
   void textChanged(QString);
 
  public slots:
   /** */
-  void slotShowFlightData(int n);
-
-  void hide();
+  void slotShowFlightData();
 
  protected:
   /**
@@ -83,7 +83,7 @@ class EvaluationDialog : public QDialog
   QScrollView* graphFrame;
   QTextView* textLabel;
   QComboBox* combo_flight;
-  QList<Flight>* flightList;
+  Flight* flight;
 };
 
 #endif

@@ -54,7 +54,7 @@ class EvaluationFrame : public QFrame
     /** */
     void slotScale(int secWidth);
     /** */
-    void slotShowFlight(Flight* flight);
+    void slotShowFlight();
     /** */
     void slotShowGraph();
     /** */

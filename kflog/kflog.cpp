@@ -101,38 +101,24 @@ KFLogApp::KFLogApp()
 
   readOptions();
 
-  fileClose->setEnabled(false);
-  viewCenterTask->setEnabled(false);
-  viewCenterFlight->setEnabled(false);
-  flightEvaluation->setEnabled(false);
-  flightPrint->setEnabled(false);
-  animateFlightStart->setEnabled(false);
-  animateFlightStop->setEnabled(false);
-  stepFlightNext->setEnabled(false);
-  stepFlightPrev->setEnabled(false);
-  stepFlightStepNext->setEnabled(false);
-  stepFlightStepPrev->setEnabled(false);
-  stepFlightHome->setEnabled(false);
-  stepFlightEnd->setEnabled(false);
-  viewIgc3D->setEnabled(false);
-
-
   activateDock();
 
   slotCheckDockWidgetStatus();
   // Heavy workaround! MapConfig should tell KFLogApp, which type is selected!
   slotSelectFlightData(0);
 
-  connect(&_globalMapMatrix, SIGNAL(matrixChanged()), map,
+    connect(&_globalMapMatrix, SIGNAL(matrixChanged()), map,
       SLOT(slotRedrawMap()));
   connect(map, SIGNAL(showFlightPoint(const QPoint, const struct flightPoint&)),
       this, SLOT(slotShowPointInfo(const QPoint, const struct flightPoint&)));
   // Plannung
   connect(map, SIGNAL(showTaskText(FlightTask* , QPoint)),
       dataView, SLOT(slotShowTaskText(FlightTask*, QPoint)));
-  connect(map, SIGNAL(taskPlanningEnd()), dataView, SLOT(slotClearView()));
+  connect(map, SIGNAL(taskPlanningEnd()), dataView, SLOT(setFlightData()));
   connect(map, SIGNAL(showPoint(const QPoint)),
       this, SLOT(slotShowPointInfo(const QPoint)));
+
+  slotModifyMenu();
 }
 
 KFLogApp::~KFLogApp()
@@ -143,6 +129,7 @@ KFLogApp::~KFLogApp()
 void KFLogApp::initActions()
 {
   extern MapMatrix _globalMapMatrix;
+  extern MapContents _globalMapContents;
 
   new KAction(i18n("&Open Flight"), "fileopen",
       KStdAccel::key(KStdAccel::Open), this, SLOT(slotFileOpen()),
@@ -151,7 +138,7 @@ void KFLogApp::initActions()
   fileOpenRecent = KStdAction::openRecent(this,
       SLOT(slotFileOpenRecent(const KURL&)), actionCollection());
   fileClose = new KAction(i18n("Close Flight"), "fileclose",
-      KStdAccel::key(KStdAccel::Close), this, SLOT(slotFileClose()),
+      KStdAccel::key(KStdAccel::Close), &_globalMapContents, SLOT(closeFlight()),
       actionCollection(), "file_close");
 
   KStdAction::print(this, SLOT(slotFilePrint()), actionCollection());
@@ -303,13 +290,21 @@ void KFLogApp::initActions()
   flightMenu->insert(stepFlightHome);
   flightMenu->insert(stepFlightEnd);
 
-
   KStdAction::configureToolbars(this,
       SLOT(slotConfigureToolbars()), actionCollection());
   KStdAction::keyBindings(this,
       SLOT(slotConfigureKeyBindings()), actionCollection());
 
   KStdAction::preferences(this, SLOT(slotConfigureKFLog()), actionCollection());
+
+  KActionMenu *w = new KActionMenu(i18n("&Window"), actionCollection(), "window");
+  windowMenu = w->popupMenu();
+  windowMenu->setCheckable(true);
+  connect(windowMenu, SIGNAL(aboutToShow()), this, SLOT(slotWindowsMenuAboutToShow()));
+
+  KActionMenu *m = new KActionMenu(i18n("&New"), "filenew", actionCollection(), "file_new");
+  m->popupMenu()->insertItem(i18n("&Task"), &_globalMapContents, SLOT(slotNewTask()));
+  m->popupMenu()->insertItem(i18n("&Flight group"), &_globalMapContents, SLOT(slotNewFlightGroup()));
 
   createGUI();
 }
@@ -355,7 +350,10 @@ void KFLogApp::initView()
   dataViewDock = createDockWidget("Flight-Data", 0, 0, i18n("Flight-Data"));
   mapControlDock = createDockWidget("Map-Control", 0, 0, i18n("Map-Control"));
   taskAndWaypointDock = createDockWidget("Waypoints", 0, 0, i18n("Waypoints"));
-  taskDock = createDockWidget("Tasks", 0, 0, i18n("Tasks"));
+//  taskDock = createDockWidget("Tasks", 0, 0, i18n("Tasks"));
+  evaluation = new EvaluationDialog(this);
+
+  extern MapContents _globalMapContents;
 
   connect(mapControlDock, SIGNAL(iMBeingClosed()),
       SLOT(slotHideMapControlDock()));
@@ -396,14 +394,14 @@ void KFLogApp::initView()
   taskAndWaypoint = new TaskAndWaypoint(taskAndWaypointDock);
   taskAndWaypointDock->setWidget(taskAndWaypoint);
 
-  taskView = new Tasks(taskDock);
-  taskDock->setWidget(taskView);
+//  taskView = new Tasks(taskDock);
+//  taskDock->setWidget(taskView);
 
   /* Argumente für manualDock():
    * dock target, dock side, relation target/this (in percent)
    */
   dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );
-  taskDock->manualDock( dataViewDock, KDockWidget::DockBottom, 20);
+//  taskDock->manualDock( dataViewDock, KDockWidget::DockBottom, 20);
   mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 75 );
   taskAndWaypointDock->manualDock(mapViewDock, KDockWidget::DockBottom, 71);
 
@@ -419,6 +417,20 @@ void KFLogApp::initView()
 
   connect(dataView, SIGNAL(wpSelected(const unsigned int)), map,
       SLOT(slotCenterToWaypoint(const unsigned int)));
+  connect(dataView, SIGNAL(flightSelected(BaseFlightElement *)), &_globalMapContents,
+      SLOT(slotSetFlight(BaseFlightElement *)));
+
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), this,
+      SLOT(slotModifyMenu()));
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), map,
+      SLOT(slotShowCurrentFlight()));
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), dataView,
+      SLOT(setFlightData()));
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), evaluation,
+      SLOT(slotShowFlightData()));
+
+  connect(evaluation, SIGNAL(showCursor(QPoint, QPoint)), map,
+      SLOT(slotDrawCursor(QPoint, QPoint)));
 }
 
 void KFLogApp::slotShowPointInfo(const QPoint pos,
@@ -506,29 +518,6 @@ void KFLogApp::readOptions()
 
 void KFLogApp::slotSetProgress(int value)  { statusProgress->setValue(value); }
 
-void KFLogApp::slotFileClose()
-{
-  map->slotDeleteFlightLayer();
-  extern MapContents _globalMapContents;
-  if(_globalMapContents.getFlightList()->count() == 0)
-    {
-      fileClose->setEnabled(false);
-      viewCenterTask->setEnabled(false);
-      viewCenterFlight->setEnabled(false);
-      flightEvaluation->setEnabled(false);
-      flightPrint->setEnabled(false);
-      animateFlightStart->setEnabled(false);
-      animateFlightStop->setEnabled(false);
-			stepFlightNext->setEnabled(false);
-		  stepFlightPrev->setEnabled(false);
-		  stepFlightStepNext->setEnabled(false);
-		  stepFlightStepPrev->setEnabled(false);
-		  stepFlightHome->setEnabled(false);
-		  stepFlightEnd->setEnabled(false);
-		  viewIgc3D->setEnabled(false);
-    }
-}
-
 void KFLogApp::slotFileOpen()
 {
   slotStatusMsg(i18n("Opening file..."));
@@ -559,29 +548,7 @@ void KFLogApp::slotFileOpen()
   extern MapContents _globalMapContents;
   if(_globalMapContents.loadFlight(fName))
     {
-      dataView->setFlightData(_globalMapContents.getFlight());
-      fileClose->setEnabled(true);
-      viewCenterTask->setEnabled(true);
-      viewCenterFlight->setEnabled(true);
-      flightEvaluation->setEnabled(true);
-      flightPrint->setEnabled(true);
-      animateFlightStart->setEnabled(true);
-      animateFlightStop->setEnabled(true);
-		  stepFlightNext->setEnabled(true);
-		  stepFlightPrev->setEnabled(true);
-		  stepFlightStepNext->setEnabled(true);
-		  stepFlightStepPrev->setEnabled(true);
-		  stepFlightHome->setEnabled(true);
-		  stepFlightEnd->setEnabled(true);
-		  viewIgc3D->setEnabled(true);
-
       fileOpenRecent->addURL(fUrl);
-
-      // Hier wird der Flug 2x neu gezeichnet, denn erst beim
-      // ersten Zeichnen werden die Rahmen von Flug und Aufgabe
-      // bestimmt.
-      map->slotRedrawFlight();
-      map->slotCenterToFlight();
     }
 
   slotStatusMsg(i18n("Ready."));
@@ -596,25 +563,6 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
     {
       if(_globalMapContents.loadFlight(url.path()))
         {
-          dataView->setFlightData(_globalMapContents.getFlight());
-          fileClose->setEnabled(true);
-          viewCenterTask->setEnabled(true);
-          viewCenterFlight->setEnabled(true);
-          flightEvaluation->setEnabled(true);
-          flightPrint->setEnabled(true);
-          animateFlightStart->setEnabled(true);
-          animateFlightStop->setEnabled(true);
-				  stepFlightNext->setEnabled(true);
-				  stepFlightPrev->setEnabled(true);
-				  stepFlightStepNext->setEnabled(true);
-				  stepFlightStepPrev->setEnabled(true);
-				  stepFlightHome->setEnabled(true);
-				  stepFlightEnd->setEnabled(true);
-				  viewIgc3D->setEnabled(true);
-
-          map->slotRedrawFlight();
-          map->slotCenterToFlight();
-
           // Just a workaround. It's the only way to not have the item
           // checked after loading the flight. Otherwise we had to take
           // care that the item is unchecked, when the flight is closed ...
@@ -640,8 +588,18 @@ void KFLogApp::slotFlightPrint()
   slotStatusMsg(i18n("Printing..."));
 
   extern MapContents _globalMapContents;
-  FlightDataPrint::FlightDataPrint(_globalMapContents.getFlight());
-
+  BaseFlightElement *f = _globalMapContents.getFlight();
+  if (f) {
+    switch (f->getTypeID()) {
+    case BaseMapElement::Flight:
+      FlightDataPrint::FlightDataPrint((Flight *)f);
+      break;
+    default:
+      QString tmp;
+      tmp.sprintf(i18n("Not yet available for type : %d"), f->getTypeID());
+      KMessageBox::sorry(0, tmp);
+    }
+  }
   slotStatusMsg(i18n("Ready."));
 }
 
@@ -732,26 +690,20 @@ void KFLogApp::slotSelectFlightData(int id)
 
 void KFLogApp::slotEvaluateFlight()
 {
-  extern MapContents _globalMapContents;
-  EvaluationDialog* eval =
-      new EvaluationDialog(_globalMapContents.getFlightList());
-
-  connect(eval, SIGNAL(showCursor(QPoint, QPoint)), map,
-      SLOT(slotDrawCursor(QPoint, QPoint)));
-
-  eval->slotShowFlightData(0);  // We assume, that at least one flight
-                                // is loaded ...
+  evaluation->show();
 }
 
 void KFLogApp::slotOptimizeFlight()
 {
   extern MapContents _globalMapContents;
-  if(_globalMapContents.getFlightList()->count() &&
-      _globalMapContents.getFlightList()->current()->optimizeTask())
+  Flight *f = (Flight *)_globalMapContents.getFlight();
+  if(f && f->getTypeID() == BaseMapElement::Flight)
     {
-      // Okay, update flightdata and redraw map
-      dataView->setFlightData(_globalMapContents.getFlight());
-      map->slotRedrawFlight();
+      if (f->optimizeTask()) {
+        // Okay, update flightdata and redraw map
+        dataView->setFlightData();
+        map->slotRedrawFlight();
+      }
     }
 }
 
@@ -797,9 +749,9 @@ void KFLogApp::slotStartComplete()  { if(showStartLogo)  delete startLogo; }
 void KFLogApp::slotFlightViewIgc3D()
 {
   extern MapContents _globalMapContents;
-
-  if(_globalMapContents.getFlightList()->count()){
-	  Igc3DDialog * igc3d = new Igc3DDialog(_globalMapContents.getFlightList());
+  Flight *f = (Flight *)_globalMapContents.getFlight();
+  if(f && f->getTypeID() == BaseMapElement::Flight){
+	  Igc3DDialog * igc3d = new Igc3DDialog();
     igc3d->show();
   }
 }
@@ -807,4 +759,86 @@ void KFLogApp::slotFlightViewIgc3D()
 bool KFLogApp::queryClose()
 {
   return taskAndWaypoint->saveChanges();
+}
+/** insert available flights into menu */
+void KFLogApp::slotWindowsMenuAboutToShow()
+{
+  extern MapContents _globalMapContents;
+  QList<BaseFlightElement> flights = *(_globalMapContents.getFlightList());
+  QListIterator<BaseFlightElement> it(flights);
+  BaseFlightElement *flight;
+
+  windowMenu->clear();
+
+  for (int i = 0 ; it.current(); ++it , i++) {
+    flight = it.current();
+    int id = windowMenu->insertItem(flight->getFileName(), &_globalMapContents,
+      SLOT(slotSetFlight(int)));
+   	
+   	windowMenu->setItemParameter(id, i);
+  	windowMenu->setItemChecked(id, _globalMapContents.getFlightIndex() == i);
+  }
+}
+/** set menu items enabled/disabled */
+void KFLogApp::slotModifyMenu()
+{
+  extern MapContents _globalMapContents;
+  if (_globalMapContents.getFlightList()->count() > 0) {
+    switch(_globalMapContents.getFlight()->getTypeID()) {
+    case BaseMapElement::Flight:
+      fileClose->setEnabled(true);
+      flightPrint->setEnabled(true);
+      viewCenterTask->setEnabled(true);
+      viewCenterFlight->setEnabled(true);
+      flightEvaluation->setEnabled(true);
+      flightOptimization->setEnabled(true);
+      animateFlightStart->setEnabled(true);
+      animateFlightStop->setEnabled(true);
+      stepFlightNext->setEnabled(true);
+      stepFlightPrev->setEnabled(true);
+      stepFlightStepNext->setEnabled(true);
+      stepFlightStepPrev->setEnabled(true);
+      stepFlightHome->setEnabled(true);
+      stepFlightEnd->setEnabled(true);
+      viewIgc3D->setEnabled(true);
+      mapPlanning->setEnabled(false);
+      break;
+    case BaseMapElement::Task:
+      fileClose->setEnabled(true);
+      flightPrint->setEnabled(true);
+      viewCenterTask->setEnabled(true);
+      viewCenterFlight->setEnabled(false);
+      flightEvaluation->setEnabled(false);
+      flightOptimization->setEnabled(false);
+      animateFlightStart->setEnabled(false);
+      animateFlightStop->setEnabled(false);
+      stepFlightNext->setEnabled(false);
+      stepFlightPrev->setEnabled(false);
+      stepFlightStepNext->setEnabled(false);
+      stepFlightStepPrev->setEnabled(false);
+      stepFlightHome->setEnabled(false);
+      stepFlightEnd->setEnabled(false);
+      viewIgc3D->setEnabled(false);
+      mapPlanning->setEnabled(true);
+      break;
+    case BaseMapElement::FlightGroup:
+      fileClose->setEnabled(true);
+      flightPrint->setEnabled(true);
+      viewCenterTask->setEnabled(true);
+      viewCenterFlight->setEnabled(true);
+      flightEvaluation->setEnabled(true);
+      flightOptimization->setEnabled(true);
+      animateFlightStart->setEnabled(true);
+      animateFlightStop->setEnabled(true);
+      stepFlightNext->setEnabled(true);
+      stepFlightPrev->setEnabled(true);
+      stepFlightStepNext->setEnabled(true);
+      stepFlightStepPrev->setEnabled(true);
+      stepFlightHome->setEnabled(true);
+      stepFlightEnd->setEnabled(true);
+      viewIgc3D->setEnabled(true);
+      mapPlanning->setEnabled(false);
+      break;
+    }
+  }
 }

@@ -38,15 +38,15 @@
 #define R1 (3000.0 / glMapMatrix->getScale())
 #define R2 (500.0 / glMapMatrix->getScale())
 
-FlightTask::FlightTask()
-  : BaseMapElement("task", BaseMapElement::Task),
+FlightTask::FlightTask(QString fName)
+  : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(false)
 {
 
 }
 
-FlightTask::FlightTask(QList<wayPoint> wpL, bool isO)
-  : BaseMapElement("task", BaseMapElement::Task),
+FlightTask::FlightTask(QList<wayPoint> wpL, bool isO, QString fName)
+  : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(isO),
     wpList(wpL)
 {
@@ -272,8 +272,6 @@ void FlightTask::__setWaypointType()
   wpList.at(wpList.count() - 2)->type = FlightTask::End;
   wpList.at(wpList.count() - 1)->type = FlightTask::Landing;
 }
-
-QList<wayPoint> FlightTask::getWPList() const  {  return wpList;  }
 
 int FlightTask::getTaskType() const  {  return flightType;  }
 
@@ -949,4 +947,51 @@ void FlightTask::setWaypointList(QList<wayPoint> wpL)
       __sectorangle(loop, false);
 
   __setWaypointType();
+}
+/** No descriptions */
+QString FlightTask::getFlightInfoString()
+{
+  QString htmlText;
+
+  htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+      <TR><TD>" + i18n("Task") + ":</TD><TD><A HREF=EDITTASK>" +
+      getFileName() +  + "</A></TD></TR>\
+      </TABLE><HR NOSHADE>";
+
+  QList<wayPoint> wpList = getWPList();
+
+  if(wpList.count()) {
+    htmlText += "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+      <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
+       i18n("Waypoints") + ":</B></TD></TR>";
+
+    for(unsigned int loop = 0; loop < wpList.count(); loop++) {
+      if(loop > 0) {
+        QString tmp;
+        tmp.sprintf("%.2f km",wpList.at(loop)->distance);
+
+        htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
+          tmp + "</TD></TR>";
+      }
+
+      QString idString;
+      idString.sprintf("%d", loop);
+
+      htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
+        wpList.at(loop)->name + "</A></TD>\
+        <TR><TD WIDTH=15></TD>\
+        <TD>" + printPos(wpList.at(loop)->origP.x()) + "</TD>\
+        <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.y(), false) +
+        "</TD></TR></TABLE>";
+    }
+
+    htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
+      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + getDistanceString() + "</TD></TR>\
+      </TABLE>";
+  }
+  else {
+    htmlText += i18n("Select Flight/graphical Taskplanning from the menu and draw your task on the map<BR><EM>or</EM><BR>click on the task name to start editing");
+  }
+
+  return htmlText;
 }

@@ -97,7 +97,7 @@ class BaseMapElement
         ObstacleGroup = 36, LightObstacleGroup = 37, Spot = 38, Isohypse = 39,
         Glacier = 40, Border = 41, City = 42, Village = 43, Landmark = 44,
         Highway = 45, Road = 46, Railway = 47, AerialRailway = 48, Lake = 49,
-        River = 50, Canal = 51, Flight = 52, Task = 52};
+        River = 50, Canal = 51, Flight = 52, Task = 53, FlightGroup = 54};
     /**
      * The three types of elevation-data used in the maps.
      */

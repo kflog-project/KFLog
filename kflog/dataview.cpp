@@ -23,7 +23,9 @@
 
 #include <flight.h>
 #include <mapcalc.h>
+#include <mapcontents.h>
 
+#include <kmessagebox.h>
 #include "iostream.h"
 
 DataView::DataView(QWidget* parent)
@@ -97,79 +99,43 @@ void DataView::slotShowTaskText( FlightTask* task, QPoint current)
   flightDataText->setText(htmlText);
 }
 
-void DataView::setFlightData(Flight* cF)
+void DataView::setFlightData()
 {
-  if(cF == 0)  return;
+  extern MapContents _globalMapContents;
+  BaseFlightElement* e = _globalMapContents.getFlight();
 
-  QStrList h = cF->getHeader();
-  QString htmlText;
-
-  htmlText = (QString)"<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>" +
-      "<TR><TD>" + i18n("Date") + ":</TD><TD>" + h.at(3) + "</TD></TR>" +
-      "<TR><TD>" + i18n("Pilot") + ":</TD><TD> " + h.at(0) + "</TD></TR>" +
-      "<TR><TD>" + i18n("Glider") + ":</TD><TD>" + h.at(2) +
-          " / " + h.at(1) + "</TD></TR>" +
-      "<TR><TD>" + i18n("Recoder") + ":</TD><TD>" + h.at(8) + "</TD></TR>" +
-      "</TABLE>" + "<HR NOSHADE>";
-
-  QList<wayPoint> wpList = cF->getWPList();
-
-  if(wpList.count())
-    {
-//      htmlText += "<B>" + i18n("Task") + ":</B>" +
-//          "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>";
-      htmlText += (QString)"<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>" +
-          "<TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
-          i18n("Task") + ":</B></TD></TR>";
-
-      for(unsigned int loop = 0; loop < wpList.count(); loop++)
-        {
-          if(loop > 0)
-            {
-              QString tmp;
-              tmp.sprintf("%.2f km",wpList.at(loop)->distance);
-
-              htmlText += (QString)"<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
-                    tmp + "</TD></TR>";
-            }
-          QString timeText;
-          QString idString;
-          idString.sprintf("%d", loop);
-          if(wpList.at(loop)->sector1 != 0)
-              timeText = printTime(wpList.at(loop)->sector1);
-          else if(wpList.at(loop)->sector2 != 0)
-              timeText = printTime(wpList.at(loop)->sector2);
-          else if(wpList.at(loop)->sectorFAI != 0)
-              timeText = printTime(wpList.at(loop)->sectorFAI);
-          else
-              timeText = (QString)"--";
-
-          htmlText += (QString)"<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
-              wpList.at(loop)->name + "</A></TD>" +
-              "<TD ALIGN=right>" + timeText + "</TD></TR>"+
-              "<TR><TD WIDTH=15></TD>" +
-              "<TD>" + printPos(wpList.at(loop)->origP.x()) +
-              "</TD>" +
-              "<TD ALIGN=right>" + printPos(wpList.at(loop)->origP.y(), false) +
-              "</TD></TR>";
-        }
-      htmlText += (QString)"<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
-          ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + cF->getDistance() + "</TD></TR>" +
-          "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Points") +
-          ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + cF->getPoints() +
-          "</TD></TR></TABLE></FONT>";
-    }
-  else
-    {
-      htmlText += (QString)"<EM>" + i18n("Flight contains no waypoints") +
-          "</EM>";
-    }
-  flightDataText->setText(htmlText);
+  slotClearView();
+  if (e) {
+    flightDataText->setText(e->getFlightInfoString());
+  }
 }
 
 void DataView::slotWPSelected(const QString &url)
 {
-  emit wpSelected(url.toUInt());
+  extern MapContents _globalMapContents;
+  BaseFlightElement* e = _globalMapContents.getFlight();
+
+  switch(e->getTypeID()) {
+    case BaseMapElement::Flight:
+      emit wpSelected(url.toUInt());
+      break;
+    case BaseMapElement::Task:
+      if (url == "EDITTASK") {
+        KMessageBox::information(0, "This will bring up the task editing dialog");
+      }
+      else {
+        emit wpSelected(url.toUInt());
+      }
+      break;
+    case BaseMapElement::FlightGroup:
+      if (url == "EDITGROUP") {
+        KMessageBox::information(0, "This will bring up the flight group editing dialog");
+      }
+      else {
+        emit flightSelected((BaseFlightElement *)url.toUInt());
+      }
+      break;
+  }
 }
 
 void DataView::slotClearView()
@@ -177,3 +143,4 @@ void DataView::slotClearView()
   QString htmlText = "";
   flightDataText->setText(htmlText);
 }
+

@@ -24,7 +24,6 @@
 
 #include <mapcalc.h>
 #include <mapmatrix.h>
-#include <wp.h>
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -59,13 +58,12 @@
 
 Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName,
     QString gType, QString gID, QList<wayPoint> wpL, QString d)
-  : BaseMapElement("flight", BaseMapElement::Flight),
+  : BaseFlightElement("flight", BaseMapElement::Flight, fName),
     recorderID(recID),
     pilotName(pName),
     gliderType(gType),
     gliderID(gID),
     date(d),
-    sourceFileName(fName),
     v_max(0),
     h_max(0),
     va_min(0),
@@ -73,7 +71,8 @@ Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName
     route(r),
     landTime(route.last()->time),
     startTime(route.at(0)->time),
-    origTask(FlightTask(wpL, true)),
+    origTask(FlightTask(wpL, true, QString::null)),
+    optimizedTask(FlightTask(QString::null)),
     optimized(false),
     nAnimationIndex(0),
     bAnimationActive(false)
@@ -622,8 +621,6 @@ QString Flight::getDate() const { return date; }
 
 unsigned int Flight::getRouteLength() const { return route.count(); }
 
-const char* Flight::getFileName() const { return sourceFileName; }
-
 bool Flight::isOptimized() const { return optimized; }
 
 int Flight::searchPoint(QPoint cPoint, flightPoint& searchPoint)
@@ -712,12 +709,17 @@ void Flight::__checkMaxMin()
     }
 }
 
-QList<wayPoint> Flight::getWPList(bool isOrig)
+QList<wayPoint> Flight::getWPList()
 {
-  if(isOrig || !optimized)
-      return origTask.getWPList();
+  if(!optimized)
+    return origTask.getWPList();
   else
-      return optimizedTask.getWPList();
+    return optimizedTask.getWPList();
+}
+
+QList<wayPoint> Flight::getOriginalWPList()
+{
+  return origTask.getWPList();
 }
 
 bool Flight::optimizeTask()
@@ -912,6 +914,100 @@ int Flight::searchGetPrevPoint(int index, flightPoint& searchPoint)
   return index;
 }
 
+/**
+ * Get the contents of the previous FlightPoint 'step' indexes before number 'index'
+ */
+int Flight::searchStepNextPoint(int index, flightPoint & fP, int step)
+{
+  if (index + step < (int)getRouteLength() - 1) {
+    index += step;
+  }
+  else {
+  	index = getRouteLength() - 1;
+  }
+  return searchGetNextPoint(index, fP);
+}
+
+/**
+ * Get the contents of the previous FlightPoint 'step' indexes before number 'index'
+ */
+int Flight::searchStepPrevPoint(int index,  flightPoint & fP, int step)
+{
+  if (index - step > 0) {
+    index -= step;
+  }
+  else {
+  	index = 1;
+  }
+  return searchGetPrevPoint(index, fP);
+};
+
+/** No descriptions */
+QString Flight::getFlightInfoString()
+{
+  QStrList h = getHeader();
+  QString htmlText;
+
+  htmlText = (QString)"<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+      <TR><TD>" + i18n("Date") + ":</TD><TD>" + h.at(3) + "</TD></TR>\
+      <TR><TD>" + i18n("Pilot") + ":</TD><TD> " + h.at(0) + "</TD></TR>\
+      <TR><TD>" + i18n("Glider") + ":</TD><TD>" + h.at(2) +
+          " / " + h.at(1) + "</TD></TR>" +
+      "</TABLE><HR NOSHADE>";
+
+  QList<wayPoint> wpList = getWPList();
+
+  if(wpList.count()) {
+    htmlText += "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+      <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
+       i18n("Task") + ":</B></TD></TR>";
+
+    for(unsigned int loop = 0; loop < wpList.count(); loop++) {
+      if(loop > 0) {
+        QString tmp;
+        tmp.sprintf("%.2f km",wpList.at(loop)->distance);
+
+        htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
+          tmp + "</TD></TR>";
+      }
+      QString timeText;
+      QString idString;
+      idString.sprintf("%d", loop);
+      if(wpList.at(loop)->sector1 != 0) {
+        timeText = printTime(wpList.at(loop)->sector1);
+      }
+      else if(wpList.at(loop)->sector2 != 0) {
+        timeText = printTime(wpList.at(loop)->sector2);
+      }
+      else if(wpList.at(loop)->sectorFAI != 0) {
+        timeText = printTime(wpList.at(loop)->sectorFAI);
+      }
+      else {
+       timeText = "--";
+      }
+
+      htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
+        wpList.at(loop)->name + "</A></TD>\
+        <TD ALIGN=right>" + timeText + "</TD></TR>\
+        <TR><TD WIDTH=15></TD>\
+        <TD>" + printPos(wpList.at(loop)->origP.x()) + "</TD>\
+        <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.y(), false) +
+        "</TD></TR>";
+    }
+
+    htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
+      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + getDistance() + "</TD></TR>\
+      <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Points") +
+      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + getPoints() +
+      "</TD></TR></TABLE>";
+  }
+  else {
+    htmlText += "<EM>" + i18n("Flight contains no waypoints") + "</EM>";
+  }
+
+  return htmlText;
+}
+
 /** Sets the nAnimationIndex member to 'n' */
 void Flight::setAnimationIndex(int n){
   if ((n >= 0) && (getRouteLength() >= (unsigned int)n))
@@ -936,4 +1032,9 @@ void Flight::setAnimationActive(bool b){
 /** returns the bAnimationActive flag */
 bool Flight::getAnimationActive(void){
   return bAnimationActive;
+}
+/** No descriptions */
+int Flight::getAnimationIndex()
+{
+  return nAnimationIndex;
 }

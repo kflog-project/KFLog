@@ -24,7 +24,7 @@
 #include <qobject.h>
 #include <qstrlist.h>
 
-#include <basemapelement.h>
+#include <baseflightelement.h>
 
 class Airport;
 class Airspace;
@@ -137,11 +137,15 @@ class MapContents : public QObject
     /**
      * @return a pointer to the current flight
      */
-    Flight* getFlight();
+    BaseFlightElement* getFlight();
+    /**
+     * @return a pointer to the current flight index
+     */
+    int getFlightIndex() { return flightList.at(); };
     /**
      * @returns the flightList
      */
-    QList<Flight>* getFlightList();
+    QList<BaseFlightElement>* getFlightList();
     /**
      * Searches the first point of the current flight, which distance to the
      * mousecursor is less than 30 pixel. If no point is found, -1 is
@@ -157,10 +161,6 @@ class MapContents : public QObject
      */
     int searchFlightPoint(QPoint cPos, flightPoint& fP);
     /**
-     * Closes all loaded flights
-     */
-    void closeFlight();
-    /**
      * Converts the longitute or latitute into the internal format.
      *
      * @param  degree  The position to be converted. The string must
@@ -173,19 +173,19 @@ class MapContents : public QObject
     /**
 		 * Get the contents of the next FlightPoint after number 'index'
 	   */
-    int searchGetNextFlightPoint(int index, flightPoint & fP);
+//    int searchGetNextFlightPoint(int index, flightPoint & fP);
     /**
 		 * Get the contents of the previous FlightPoint before number 'index'
 	   */
-    int searchGetPrevFlightPoint(int index, flightPoint & fP);
+//    int searchGetPrevFlightPoint(int index, flightPoint & fP);
 		/**
 		 * Get the contents of the next FlightPoint 'step' indexes after number 'index'
 		 */
-  	int searchStepNextFlightPoint(int index, flightPoint & fP, int step);
+//  	int searchStepNextFlightPoint(int index, flightPoint & fP, int step);
   	/**
 		 * Get the contents of the previous FlightPoint 'step' indexes before number 'index'
 		 */
-  	int searchStepPrevFlightPoint(int index,  flightPoint & fP, int step);
+//  	int searchStepPrevFlightPoint(int index,  flightPoint & fP, int step);
     /**
      * The index of Mapelement-Lists.
      */
@@ -195,12 +195,28 @@ class MapContents : public QObject
         RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
         WaypointList, DigitList, FlightList};
 
+  public slots:
+    /**
+     * Close current flight
+     */
+    void closeFlight();
+    /** No descriptions */
+    void slotSetFlight(int id);
+    /** No descriptions */
+    void slotSetFlight(BaseFlightElement *);
+    /** create a new, empty flight group */
+    void slotNewFlightGroup();
+    /** create a new, empty task */
+    void slotNewTask();
+
   signals:
     /**
      * emitted during maploading to display a message f.e. in the
      * splash-screen of the mainwindow.
      */
     void loadingMessage(QString message);
+    /** signal that a new flight/task/flight group become active */
+    void currentFlightChanged();
 
   private:
     /**
@@ -319,7 +335,7 @@ class MapContents : public QObject
      */
     QList< QList<Isohypse> > isoList;
     /** */
-    QList<Flight> flightList;
+    QList<BaseFlightElement> flightList;
     /**
      * List of all map-section. Contains a "1" for all loaded section-files,
      * otherwise "0".

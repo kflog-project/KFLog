@@ -40,6 +40,7 @@
 #include <airspace.h>
 #include <basemapelement.h>
 #include <flight.h>
+#include <flightgroup.h>
 #include <glidersite.h>
 #include <isohypse.h>
 #include <lineelement.h>
@@ -217,11 +218,16 @@ int MapContents::degreeToNum(QString inDegree)
 void MapContents::closeFlight()
 {
   /*
-   * Schließt alle Flüge
-   *
-   * Später vielleicht Auswahl von Einzelnen
+   * close current flight
    */
-  flightList.clear();
+  int idx = flightList.at();
+  if (idx != -1) {
+    flightList.remove();
+    if (flightList.current() == 0) {
+      flightList.last();
+    }
+    emit currentFlightChanged();
+  }
 }
 
 bool MapContents::__readAsciiFile(const char* fileName)
@@ -1027,15 +1033,16 @@ bool MapContents::__readBinaryFile(const int fileSecID,
 
   return true;
 }
-
+/*
 int MapContents::searchFlightPoint(QPoint cPos, flightPoint& fP)
 {
-  if(flightList.count())
-      return (flightList.current()->searchPoint(cPos, fP));
+  Flight *f = (Flight *)getFlight();
+  if(f && f->getTypeID() == BaseMapElement::Flight)
+      return (f->searchPoint(cPos, fP));
 
   return -1;
 }
-
+*/
 //void MapContents::optimzeFlight()
 //{
 //  if(flightList()->count() &&
@@ -1046,14 +1053,14 @@ int MapContents::searchFlightPoint(QPoint cPos, flightPoint& fP)
 //    }
 //}
 
-Flight* MapContents::getFlight()
+BaseFlightElement* MapContents::getFlight()
 {
   if(flightList.count())  return flightList.current();
 
   return 0;
 }
 
-QList<Flight>* MapContents::getFlightList()  {  return &flightList;  }
+QList<BaseFlightElement>* MapContents::getFlightList()  {  return &flightList;  }
 
 bool MapContents::loadFlight(QFile igcFile)
 {
@@ -1482,6 +1489,7 @@ bool MapContents::loadFlight(QFile igcFile)
   flightList.append(new Flight(QFileInfo(igcFile).fileName(), recorderID,
       flightRoute, pilotName, gliderType, gliderID, wpList, date));
 
+  emit currentFlightChanged();
   return true;
 }
 
@@ -1796,8 +1804,10 @@ void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
             topoList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case FlightList:
-        for(unsigned int loop = 0; loop < flightList.count(); loop++)
-            flightList.at(loop)->drawMapElement(targetPainter, maskPainter);
+//        for(unsigned int loop = 0; loop < flightList.count(); loop++)
+          if (flightList.count() > 0) {
+            flightList.at(getFlightIndex())->drawMapElement(targetPainter, maskPainter);
+          }
         break;
       default:
         return;
@@ -1832,46 +1842,102 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
 }
 
 /** Get the contents of the previous FlightPoint before number 'index' */
+/*
 int MapContents::searchGetPrevFlightPoint(int index, flightPoint & fP)
 {
-	if(flightList.count()){
-		return (flightList.current()->searchGetPrevPoint(index, fP));
+  Flight *f = (Flight *)getFlight();
+  if(f && f->getTypeID() == BaseMapElement::Flight) {
+    return f->searchGetPrevPoint(index, fP);
 	}
 	return -1;
 }
-
+*/
 /** Get the contents of the next FlightPoint after number 'index' */
+/*
 int MapContents::searchGetNextFlightPoint(int index, flightPoint & fP)
 {
-	if(flightList.count())
-      return (flightList.current()->searchGetNextPoint(index, fP));
-
+  Flight *f = (Flight *)getFlight();
+  if(f && f->getTypeID() == BaseMapElement::Flight) {
+    return f->searchGetNextPoint(index, fP);
+  }
 	return -1;
 }
-
+*/
 /** Get the contents of the next FlightPoint 'step' indexes after number 'index' */
+/*
 int MapContents::searchStepNextFlightPoint(int index, flightPoint & fP, int step)
 {
-  if((flightList.count()) && (step > 0)){
-    if (index+step < (int)flightList.current()->getRouteLength()-1)
+  Flight *f = (Flight *)getFlight();
+  if(f && f->getTypeID() == BaseMapElement::Flight && (step > 0)) {
+    if (index+step < (int)f->getRouteLength()-1)
       index += step;
     else
-			index = flightList.current()->getRouteLength()-1;
-    return (flightList.current()->searchGetNextPoint(index, fP));
+			index = f->getRouteLength()-1;
+    return f->searchGetNextPoint(index, fP);
 	}
 	return -1;
 }
-
+*/
 /** Get the contents of the previous FlightPoint 'step' indexes before number 'index' */
+/*
 int MapContents::searchStepPrevFlightPoint(int index, flightPoint & fP, int step)
 {
-  if((flightList.count()) && (step > 0)){
+  Flight *f = (Flight *)getFlight();
+  if(f && f->getTypeID() == BaseMapElement::Flight && (step > 0)) {
     if (index-step > 0)
       index -= step;
     else
 			index = 1;
-    return (flightList.current()->searchGetPrevPoint(index, fP));
+    return f->searchGetPrevPoint(index, fP);
 	}
 	return -1;
 }
+*/
+/** create a new, empty task */
+void MapContents::slotNewTask()
+{
+  static int tCount = 1;
+  QString tmp;
 
+  tmp.sprintf("TASK%03d", tCount++);
+  FlightTask *f = new FlightTask(tmp);
+  flightList.append(f);
+  emit currentFlightChanged();
+}
+
+/** create a new, empty flight group */
+void MapContents::slotNewFlightGroup()
+{
+  static int gCount = 1;
+  QList <Flight> fl;
+  Flight *f;
+  unsigned int i;
+  QString tmp;
+
+  for (i = 0; i < flightList.count(); i++) {
+    f = (Flight *)flightList.at(i);
+    if (f->getTypeID() == BaseMapElement::Flight) {
+      fl.append(f);
+    }
+  }
+
+  tmp.sprintf("GROUP%03d", gCount++);
+  flightList.append(new FlightGroup(fl, tmp));
+  emit currentFlightChanged();
+}
+/** No descriptions */
+void MapContents::slotSetFlight(int id)
+{
+  if (id >= 0 && id < (int)flightList.count()) {
+    flightList.at(id);
+    emit currentFlightChanged();
+  }
+}
+
+void MapContents::slotSetFlight(BaseFlightElement *f)
+{
+  if (flightList.containsRef(f)) {
+    flightList.findRef(f);
+    emit currentFlightChanged();
+  }
+}

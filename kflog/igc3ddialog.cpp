@@ -30,13 +30,12 @@
 #include <mapcalc.h>
 #include <klocale.h>
 
-Igc3DDialog::Igc3DDialog(QList<Flight>* fList)
-: QDialog(0, "Igc3D", false),
-  flightList(fList)
+Igc3DDialog::Igc3DDialog()
+: QDialog(0, "Igc3D", false)
 {
   setCaption( i18n("KFLog - 3D View") );
 
-	Igc3DView* igc3dView = new Igc3DView(this, flightList);
+	Igc3DView* igc3dView = new Igc3DView(this);
 
   QBoxLayout * layout = new QHBoxLayout( this, 0, -1, "horizontal" );
 //  QLabel* label = new QLabel( this, 0, 0 );

@@ -44,18 +44,20 @@ class DataView : public QFrame
      * Destructor
      */
     ~DataView();
-    /**
-     * Writes the task and some headerinfo about the flight into the widget.
-     */
-    void setFlightData(Flight*);
 
   signals:
     /**
      * Emitted when the user selects one waypoint in the list.
      */
     void wpSelected(const unsigned int id);
+    /** No descriptions */
+    void flightSelected(BaseFlightElement *);
 
   public slots:
+    /**
+     * Writes the task and some headerinfo about the flight into the widget.
+     */
+    void setFlightData();
     /**
      * Called when the user clickes on one of the waypoint-links.
      */

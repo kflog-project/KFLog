@@ -18,8 +18,7 @@
 #ifndef FLIGHTTASK_H
 #define FLIGHTTASK_H
 
-#include <basemapelement.h>
-#include <wp.h>
+#include <baseflightelement.h>
 
 #include <qlist.h>
 #include <qrect.h>
@@ -30,13 +29,13 @@
  * @author Heiner Lamprecht
  * @version $Id$
  */
-class FlightTask : public BaseMapElement
+class FlightTask : public BaseFlightElement
 {
   public:
     /**
      * Creates an empty task and sets isOrig to false.
      */
-    FlightTask();
+    FlightTask(QString fName);
     /**
      * Creates a task with the given points.
      *
@@ -44,7 +43,7 @@ class FlightTask : public BaseMapElement
      * @param  isOrig  true, if the task is the original task
      *                 of a flight.
      */
-    FlightTask(QList<wayPoint> wpList, bool isOrig);
+    FlightTask(QList<wayPoint> wpList, bool isOrig, QString fName);
     /**
      */
     ~FlightTask();
@@ -66,7 +65,7 @@ class FlightTask : public BaseMapElement
     /**
      * Returns the waypointlist.
      */
-    QList<wayPoint> getWPList() const;
+    QList<wayPoint> getWPList() { return wpList; };
     /**
      * Returns the type of the task.
      * @see #TaskType
@@ -96,6 +95,8 @@ class FlightTask : public BaseMapElement
     QRect getRect() const;
     /** */
     void setWaypointList(QList<wayPoint> wpL);
+  /** No descriptions */
+  virtual QString getFlightInfoString();
     /**
      * The waypoint-types.
      */

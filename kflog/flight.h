@@ -18,9 +18,8 @@
 #ifndef FLIGHT_H
 #define FLIGHT_H
 
-#include <basemapelement.h>
+#include <baseflightelement.h>
 #include <flighttask.h>
-#include <wp.h>
 
 #include <qlist.h>
 #include <qstring.h>
@@ -32,7 +31,7 @@
  * @author Heiner Lamprecht, Florian Ehinger, Jan Max Walter Krueger
  * @version $Id$
  */
-class Flight : public BaseMapElement
+class Flight : public BaseFlightElement
 {
   public:
 	  /**
@@ -154,16 +153,13 @@ class Flight : public BaseMapElement
      */
     flightPoint getPoint(int n);
     /**
-	   * @param  isOrig  "true", if the original-task should be used.
-	   *                 The default is "false". If the flight has not been
-	   *                 optimized, the original-task will be used in any case.
-	   * @return the list of waypoints
+	   * @return the list of optimized waypoints if task is optimized else then orig waypoints
      */
-    QList<wayPoint> getWPList(bool isOrig = false);
+    virtual QList<wayPoint> getWPList();
     /**
-     * @return the filename of the igc-file
+	   * @return the original list of waypoints
      */
-    const char* getFileName() const;
+    QList<wayPoint> getOriginalWPList();
     /**
      * @return the type of the task
      */
@@ -191,6 +187,14 @@ class Flight : public BaseMapElement
 		 * Get the next FlightPoint after number 'index'
 		 */
     int searchGetNextPoint(int index, flightPoint& searchPoint);
+  	/**
+  	 * Get the contents of the next FlightPoint 'step' indexes after number 'index'
+  	 */
+  	int searchStepNextPoint(int index, flightPoint & fP, int step);
+  	/**
+  	 * Get the contents of the previous FlightPoint 'step' indexes before number 'index'
+  	 */
+  	int searchStepPrevPoint(int index,  flightPoint & fP, int step);
     /**
      * @return "true" if the flight has been optimized.
      */
@@ -207,6 +211,8 @@ class Flight : public BaseMapElement
      * @return the header-info of the igc-file (date, pilot-name, ...)
      */
     QStrList getHeader();
+  /** No descriptions */
+  virtual QString getFlightInfoString();
     /**
 		 * Increments the nAnimationIndex member
      */
@@ -219,6 +225,8 @@ class Flight : public BaseMapElement
     void setAnimationIndex(int n);
   /** returns the bAnimationActive flag */
   bool getAnimationActive(void);
+  /** No descriptions */
+  int getAnimationIndex();
     /**
      * The waypoint-types.
      */
@@ -265,7 +273,6 @@ class Flight : public BaseMapElement
     QString gliderType;
     QString gliderID;
     QString date;
-    QString sourceFileName;
     flightPoint* drawRoute;
     unsigned int drawLength;
     unsigned int v_max;

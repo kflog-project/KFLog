@@ -19,6 +19,7 @@
 #include <evaluationdialog.h>
 #include <flight.h>
 #include <mapcalc.h>
+#include <mapcontents.h>
 
 #include <kconfig.h>
 #include <kglobal.h>
@@ -29,11 +30,9 @@
 #define X_ABSTAND 100
 
 EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
-  : QFrame(parent)
+  : QFrame(parent),
+  flight(0)
 {
-
-
-
   // variable Kontrolle
   QSplitter* kontSplitter = new QSplitter(QSplitter::Horizontal, this);
 
@@ -183,10 +182,10 @@ EvaluationFrame::~EvaluationFrame()
 
 }
 
-void EvaluationFrame::slotShowFlight(Flight* arg_flight)
+void EvaluationFrame::slotShowFlight()
 {
-  flight = arg_flight;
-
+  extern MapContents _globalMapContents;
+  flight = (Flight *)_globalMapContents.getFlight();
   slotShowGraph();
 }
 
@@ -202,15 +201,14 @@ void EvaluationFrame::slotShowGraph()
 //  warning("EvaluationFrame::slotShowGraph");
 
   // Kurve malen
-  evalView->drawCurve(flight, check_vario->isChecked(),
-                check_speed->isChecked(), check_baro->isChecked(),
-                glatt_va, glatt_v, glatt_h, secWidth);
+  evalView->drawCurve(check_vario->isChecked(), check_speed->isChecked(),
+    check_baro->isChecked(), glatt_va, glatt_v, glatt_h, secWidth);
 
-
-
-  int contentsX = (( centerTime - flight->getStartTime() ) / secWidth)
-             + X_ABSTAND ;
-  graphFrame->center(contentsX,0);
+  if (flight && flight->getTypeID() == BaseMapElement::Flight) {
+    int contentsX = (( centerTime - flight->getStartTime() ) / secWidth)
+               + X_ABSTAND ;
+    graphFrame->center(contentsX,0);
+  }
 //warning("Setze auf X: %d",centerTime);
 }
 

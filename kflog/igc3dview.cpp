@@ -34,6 +34,7 @@
 #include <mapcalc.h>
 #include <igc3dpolyhedron.h>
 #include <igc3dviewstate.h>
+#include <mapcontents.h>
 
 
 #define X_ABSTAND 100
@@ -42,12 +43,13 @@
 class Igc3DViewState;
 class Igc3DPolyhedron;
 
-Igc3DView::Igc3DView(Igc3DDialog* dialog, QList<Flight>* fList)
+Igc3DView::Igc3DView(Igc3DDialog* dialog)
  : QWidget(dialog, "Igc3DView", 0),
-  igc3DDialog(dialog), originalflightlist(fList)
+  igc3DDialog(dialog)
 {
   isFlight = false;
   setBackgroundColor(QColor(white));
+  extern MapContents _globalMapContents;
 
 	//
 	setFocusPolicy(QWidget::StrongFocus);
@@ -68,7 +70,7 @@ Igc3DView::Igc3DView(Igc3DDialog* dialog, QList<Flight>* fList)
 	 */
 
   // load the igc3dflightdata list from the original list
-	flight->load(originalflightlist);
+	flight->load((Flight*)_globalMapContents.getFlight());
 
   flight->koord2dist();
 	

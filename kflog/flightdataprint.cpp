@@ -222,7 +222,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
             (const char*)currentFlight->getPoints(true));
   painter.drawText(125, 355, temp);
 
-  QList<wayPoint> wpList = currentFlight->getWPList(true);
+  QList<wayPoint> wpList = currentFlight->getOriginalWPList(); // use original task
   int yPos = 375;
   for(unsigned int loop = 0; loop < wpList.count(); loop++)
     {

@@ -116,60 +116,63 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
 {
   int time_alt, x;
   int cursor = -1;
+  Flight *flight = evalDialog->getFlight();
 
-  if(mouseB == (MidButton | Reached) ||
-     mouseB == (MidButton | NotReached))
-    {
-      time_alt = cursor1;
-      cursor = 1;
-    }
-  else if(mouseB == (RightButton | Reached) ||
-          mouseB == (RightButton | NotReached))
-    {
-      time_alt = cursor2;
-      cursor = 2;
-    }
-  else if(mouseB == (LeftButton | Reached))
-    {
-      if(leftB == 1)
-        {
-          time_alt =  cursor1;
-          cursor = 1;
-        }
-      else
-        {
-          time_alt = cursor2;
-          cursor = 2;
-        }
-    }
+  if (flight) {
+    if(mouseB == (MidButton | Reached) ||
+       mouseB == (MidButton | NotReached))
+      {
+        time_alt = cursor1;
+        cursor = 1;
+      }
+    else if(mouseB == (RightButton | Reached) ||
+            mouseB == (RightButton | NotReached))
+      {
+        time_alt = cursor2;
+        cursor = 2;
+      }
+    else if(mouseB == (LeftButton | Reached))
+      {
+        if(leftB == 1)
+          {
+            time_alt =  cursor1;
+            cursor = 1;
+          }
+        else
+          {
+            time_alt = cursor2;
+            cursor = 2;
+          }
+      }
 
-  mouseB = NoButton | NotReached;
-  this->setCursor(arrowCursor);
+    mouseB = NoButton | NotReached;
+    this->setCursor(arrowCursor);
 
-  if(cursor == 1)
-    {
-      cursor1 =  flight->getPointByTime(
-                ( event->pos().x() - X_ABSTAND ) * secWidth + startTime).time;
+    if(cursor == 1)
+      {
+        cursor1 =  flight->getPointByTime(
+                  ( event->pos().x() - X_ABSTAND ) * secWidth + startTime).time;
 
-      if(cursor1 > cursor2) cursor1 = cursor2;
-      x = ( cursor1 - startTime ) / secWidth + X_ABSTAND ;
-    }
-  else if(cursor == 2)
-    {
-      cursor2 =  flight->getPointByTime(
-                 ( event->pos().x() - X_ABSTAND ) * secWidth + startTime).time;
+        if(cursor1 > cursor2) cursor1 = cursor2;
+        x = ( cursor1 - startTime ) / secWidth + X_ABSTAND ;
+      }
+    else if(cursor == 2)
+      {
+        cursor2 =  flight->getPointByTime(
+                   ( event->pos().x() - X_ABSTAND ) * secWidth + startTime).time;
 
-      if(cursor2 < cursor1) cursor2 = cursor1;
-      x = ( cursor2 - startTime ) / secWidth + X_ABSTAND ;
-    }
-  else return;
+        if(cursor2 < cursor1) cursor2 = cursor1;
+        x = ( cursor2 - startTime ) / secWidth + X_ABSTAND ;
+      }
+    else return;
 
-  evalDialog->updateText(flight->getPointIndexByTime(cursor1),
-                         flight->getPointIndexByTime(cursor2), true);
+    evalDialog->updateText(flight->getPointIndexByTime(cursor1),
+                           flight->getPointIndexByTime(cursor2), true);
 
-  __draw();
+    __draw();
 
-  paintEvent(0);
+    paintEvent(0);
+  }
 }
 
 void EvaluationView::mouseMoveEvent(QMouseEvent* event)
@@ -179,56 +182,59 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
   int x2 = (( cursor2 - startTime ) / secWidth)
              + X_ABSTAND ;
 
+  Flight *flight = evalDialog->getFlight();
 
-  if(mouseB == (NoButton | NotReached))
-    {
-      if(event->pos().x() < x1 + 5 && event->pos().x() > x1 - 5)
-          this->setCursor(sizeHorCursor);
-      else if(event->pos().x() < x2 + 5 && event->pos().x() > x2 - 5)
-          this->setCursor(sizeHorCursor);
-      else
-        {
-          this->setCursor(arrowCursor);
-          return;
-        }
-    }
-  else if(mouseB != (LeftButton | NotReached) &&
-          mouseB != (NoButton | Reached))
-    {
-    // Koordinaten in Bildschirm Koordinaten
-      int cursor = flight->getPointByTime((event->pos().x() - X_ABSTAND )
-                           * secWidth + startTime).time;
+  if (flight) {
+    if(mouseB == (NoButton | NotReached))
+      {
+        if(event->pos().x() < x1 + 5 && event->pos().x() > x1 - 5)
+            this->setCursor(sizeHorCursor);
+        else if(event->pos().x() < x2 + 5 && event->pos().x() > x2 - 5)
+            this->setCursor(sizeHorCursor);
+        else
+          {
+            this->setCursor(arrowCursor);
+            return;
+          }
+      }
+    else if(mouseB != (LeftButton | NotReached) &&
+            mouseB != (NoButton | Reached))
+      {
+      // Koordinaten in Bildschirm Koordinaten
+        int cursor = flight->getPointByTime((event->pos().x() - X_ABSTAND )
+                             * secWidth + startTime).time;
 
-      __paintCursor(( cursor - startTime ) / secWidth
-                        + X_ABSTAND ,
-                    ( cursor_alt - startTime ) / secWidth
-                        + X_ABSTAND ,1,0);
+        __paintCursor(( cursor - startTime ) / secWidth
+                          + X_ABSTAND ,
+                      ( cursor_alt - startTime ) / secWidth
+                          + X_ABSTAND ,1,0);
 
-      cursor_alt = flight->getPointByTime((event->pos().x() - X_ABSTAND ) *
-                          secWidth + startTime).time;
+        cursor_alt = flight->getPointByTime((event->pos().x() - X_ABSTAND ) *
+                            secWidth + startTime).time;
 
-      //  kontinuierliches Update der Anzeige
-      // was wird in Mouse Release noch gebraucht??
-      int cursor_1 = cursor1;
-      int cursor_2 = cursor2;
+        //  kontinuierliches Update der Anzeige
+        // was wird in Mouse Release noch gebraucht??
+        int cursor_1 = cursor1;
+        int cursor_2 = cursor2;
 
-      if(mouseB == (MidButton | Reached) ||
-            mouseB == (MidButton | NotReached))
-          cursor_1 = cursor;
-      else if(mouseB == (RightButton | Reached) ||
-            mouseB == (RightButton | NotReached))
-          cursor_2 = cursor;
-      else if(mouseB == (LeftButton | Reached))
-        {
-          if(leftB == 1)
-              cursor_1 = cursor;
-          else
-              cursor_2 = cursor;
-        }
+        if(mouseB == (MidButton | Reached) ||
+              mouseB == (MidButton | NotReached))
+            cursor_1 = cursor;
+        else if(mouseB == (RightButton | Reached) ||
+              mouseB == (RightButton | NotReached))
+            cursor_2 = cursor;
+        else if(mouseB == (LeftButton | Reached))
+          {
+            if(leftB == 1)
+                cursor_1 = cursor;
+            else
+                cursor_2 = cursor;
+          }
 
-      evalDialog->updateText(flight->getPointIndexByTime(cursor_1),
-                             flight->getPointIndexByTime(cursor_2));
-    }
+        evalDialog->updateText(flight->getPointIndexByTime(cursor_1),
+                               flight->getPointIndexByTime(cursor_2));
+      }
+  }
 }
 
 
@@ -481,55 +487,62 @@ void EvaluationView::__drawCsystem(QPainter* painter)
 }
 
 
-void EvaluationView::drawCurve(Flight* current, bool arg_vario, bool arg_speed,
+void EvaluationView::drawCurve(bool arg_vario, bool arg_speed,
             bool arg_baro, unsigned int arg_glatt_va, unsigned int arg_glatt_v,
             unsigned int arg_glatt_h, unsigned int secW)
 {
 //  warning("drawCurve");
-  isFlight = true;
+  Flight* flight = evalDialog->getFlight();
+  if (flight) {
+    isFlight = true;
 
-  setMouseTracking(true);
+    setMouseTracking(true);
 
-  vario = arg_vario;
-  speed = arg_speed;
-  baro = arg_baro;
-  glatt_va = arg_glatt_va;
-  glatt_v = arg_glatt_v;
-  glatt_h = arg_glatt_h;
+    vario = arg_vario;
+    speed = arg_speed;
+    baro = arg_baro;
+    glatt_va = arg_glatt_va;
+    glatt_v = arg_glatt_v;
+    glatt_h = arg_glatt_h;
 
-  flight = current;
-  startTime = flight->getStartTime();
-  landTime = flight->getLandTime();
+    startTime = flight->getStartTime();
+    landTime = flight->getLandTime();
 
-  cursor1 = MAX(startTime,cursor1);
-  cursor2 = MAX(startTime,cursor2);
-  cursor1 = MIN(landTime,cursor1);
-  cursor2 = MIN(landTime,cursor2);
+    cursor1 = MAX(startTime,cursor1);
+    cursor2 = MAX(startTime,cursor2);
+    cursor1 = MIN(landTime,cursor1);
+    cursor2 = MIN(landTime,cursor2);
 
-  secWidth = secW;
+    secWidth = secW;
 
-  this->resize((landTime - startTime) / secWidth
-      + (KOORD_DISTANCE * 2)  ,
-      scrollFrame->viewport()->height());
+    this->resize((landTime - startTime) / secWidth
+        + (KOORD_DISTANCE * 2)  ,
+        scrollFrame->viewport()->height());
 
-  pixBuffer->resize((landTime - startTime) / secWidth + (KOORD_DISTANCE * 2),
-      scrollFrame->viewport()->height());
-  pixBufferKurve->resize((landTime - startTime) / secWidth
-       + (KOORD_DISTANCE * 2) ,
-      scrollFrame->viewport()->height());
-  pixBufferYAxis->resize(KOORD_DISTANCE + 1,
-      scrollFrame->viewport()->height());
+    pixBuffer->resize((landTime - startTime) / secWidth + (KOORD_DISTANCE * 2),
+        scrollFrame->viewport()->height());
+    pixBufferKurve->resize((landTime - startTime) / secWidth
+         + (KOORD_DISTANCE * 2) ,
+        scrollFrame->viewport()->height());
+    pixBufferYAxis->resize(KOORD_DISTANCE + 1,
+        scrollFrame->viewport()->height());
 
 
-  scrollFrame->addChild(this);
+    scrollFrame->addChild(this);
 
-  __draw();
+    __draw();
 
-  paintEvent(0);
+    paintEvent(0);
+  }
+  else {
+    pixBufferKurve->fill(white);
+    erase();
+  }
 }
 
 void EvaluationView::__draw()
 {
+  Flight* flight = evalDialog->getFlight();
   // Skalierungsfaktor -- vertical
   scale_v = getSpeed(flight->getPoint(Flight::V_MAX)) /
           ((double)(this->height() - 2*Y_ABSTAND));

@@ -330,10 +330,10 @@ MapPrint::MapPrint(bool flightLoaded)
 
   if(scaleList.findIndex(opts["kde-kflog-printscale"]) == 6)
       selectedScale = _globalMapMatrix.centerToRect(
-          _globalMapContents.getFlight()->getFlightRect(), pS - QSize(100,163));
+          ((Flight *)_globalMapContents.getFlight())->getFlightRect(), pS - QSize(100,163));
   else if(scaleList.findIndex(opts["kde-kflog-printscale"]) == 7)
       selectedScale = _globalMapMatrix.centerToRect(
-          _globalMapContents.getFlight()->getTaskRect(), pS - QSize(100,163));
+          ((Flight *)_globalMapContents.getFlight())->getTaskRect(), pS - QSize(100,163));
   else
       selectedScale = scaleRange[scaleList.findIndex(
           opts["kde-kflog-printscale"])];
