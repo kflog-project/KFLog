@@ -516,6 +516,8 @@ void RecorderDialog::slotConnectRecorder()
     return;
   }
 
+  setCursor(WaitCursor);
+ 
   apiID->setText(libName);
 
   funcH = dlsym(libHandle, "openRecorder");
@@ -530,11 +532,13 @@ void RecorderDialog::slotConnectRecorder()
     slotReadDatabase();
   }
   else {
+    setCursor(ArrowCursor);
     KMessageBox::error(this,
                        i18n("Could not connect to recorder!\n"
                             "Check connections and settings."),
                        i18n("Recorder Error"));
   }
+  setCursor(ArrowCursor);
 }
 
 void RecorderDialog::slotCloseRecorder()
