@@ -310,6 +310,7 @@ int Cumulus::writeTasks(QPtrList<FlightTask> *tasks){
   }
   
   KTempFile tmpFile;
+  tmpFile.setAutoDelete(true);
   
   QTextStream * stream;
   stream = tmpFile.textStream();
