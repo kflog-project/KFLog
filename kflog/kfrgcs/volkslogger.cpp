@@ -66,6 +66,12 @@ Volkslogger::Volkslogger()
   _capabilities.supDlTask = true;          //supports downloading of tasks?
   _capabilities.supUlTask = true;          //supports uploading of tasks?
   _capabilities.supUlDeclaration = true;   //supports uploading of declarations?
+  _capabilities.supDspSerialNumber = true;
+  _capabilities.supDspRecorderType = true;
+  //_capabilities.supDspPilotName = true;
+  //_capabilities.supDspGliderType = true;
+  //_capabilities.supDspGliderID = true;
+  //_capabilities.supDspCompetitionID = true;
   //End set capabilities.
 
   portID = -1;
@@ -86,7 +92,7 @@ FlightRecorderPluginBase::TransferMode Volkslogger::getTransferMode() const
 
 QString Volkslogger::getLibName() const {  return "libkfrgcs";  }
 
-int Volkslogger::getFlightDir(QList<FRDirEntry>* dirList)
+int Volkslogger::getFlightDir(QPtrList<FRDirEntry>* dirList)
 {
   dirList->clear();
   int err;
@@ -161,10 +167,20 @@ int Volkslogger::downloadFlight(int flightID, int secMode, const QString& fileNa
 }
 
 
-QString Volkslogger::getRecorderSerialNo()
+/**
+  * get recorder basic data
+  */
+int Volkslogger::getBasicData(FR_BasicData& data)
 {
   vl.read_info();
-  return wordtoserno(vl.vlinfo.vlserno);
+  _basicData.serialNumber = wordtoserno(vl.vlinfo.vlserno);
+  _basicData.recorderType = "Volkslogger";
+  _basicData.pilotName = "???";
+  _basicData.gliderType = "???";
+  _basicData.gliderID = "???";
+  _basicData.competitionID = "???";
+  data = _basicData;
+  return FR_OK;
 }
 
 int Volkslogger::openRecorder(const QString& pName, int baud)
@@ -190,7 +206,7 @@ int Volkslogger::closeRecorder()
   return FR_OK;
 }
 
-int Volkslogger::writeDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint> *taskPoints)
+int Volkslogger::writeDeclaration(FRTaskDeclaration* taskDecl, QPtrList<Waypoint> *taskPoints)
 {
   Waypoint *tp;
   unsigned int loop;
@@ -257,9 +273,9 @@ int Volkslogger::readDatabase()
   }
 }
 
-int Volkslogger::readTasks(QList<FlightTask> *tasks)
+int Volkslogger::readTasks(QPtrList<FlightTask> *tasks)
 {
-  QList<Waypoint> taskPoints;
+  QPtrList<Waypoint> taskPoints;
   Waypoint *tp;
   VLAPI_DATA::ROUTE *r;
   VLAPI_DATA::WPT *wp;
@@ -306,10 +322,10 @@ int Volkslogger::readTasks(QList<FlightTask> *tasks)
   return FR_OK;
 }
 
-int Volkslogger::writeTasks(QList<FlightTask> *tasks)
+int Volkslogger::writeTasks(QPtrList<FlightTask> *tasks)
 {
   FlightTask *task;
-  QList<Waypoint> taskPoints;
+  QPtrList<Waypoint> taskPoints;
   Waypoint *tp;
   VLAPI_DATA::ROUTE *r;
   VLAPI_DATA::WPT *wp;
@@ -367,7 +383,7 @@ int Volkslogger::writeTasks(QList<FlightTask> *tasks)
   return vl.write_db_and_declaration() == VLA_ERR_NOERR ? FR_OK : FR_ERROR;
 }
 
-int Volkslogger::readWaypoints(QList<Waypoint> *waypoints)
+int Volkslogger::readWaypoints(QPtrList<Waypoint> *waypoints)
 {
   int n;
   Waypoint *frWp;
@@ -397,7 +413,7 @@ int Volkslogger::readWaypoints(QList<Waypoint> *waypoints)
   return FR_OK;
 }
 
-int Volkslogger::writeWaypoints(QList<Waypoint> *waypoints)
+int Volkslogger::writeWaypoints(QPtrList<Waypoint> *waypoints)
 {
   Waypoint *frWp;
   VLAPI_DATA::WPT *wp;

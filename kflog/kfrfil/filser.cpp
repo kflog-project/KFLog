@@ -69,9 +69,9 @@
 /**
  * The device-name of the port.
  */
-char* portName = '\0';
+const char* portName = '\0';
 int portID;
-char c36[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+const char* c36 = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 extern int breakTransfer;
 
@@ -102,6 +102,30 @@ unsigned char STX = 0x02, /* Command prefix like AT for modems      */
 
 #define BUFSIZE 1024          /* Genaral buffer size             */
 
+void debugHex (const char* buf)
+{
+  for (int ix1=0; ix1<0x100; ix1+=0x10)
+  {
+    QString line;
+    line.sprintf ("%03X:  ", ix1);
+    for (int ix2=0; ix2<0x10; ix2++)
+    {
+      QString byte;
+      byte.sprintf("%02X ", buf[ix1+ix2]);
+      line += byte;
+    }
+    line += "    ";
+    for (int ix2=0; ix2<0x10; ix2++)
+    {
+      if (isprint (buf [ix1+ix2]))
+        line += buf [ix1+ix2];
+      else
+        line += ' ';
+    }
+    qDebug (line);
+  }
+}
+
 /**
  * Needed to reset the serial port in any case of unexpected exiting
  * of the programm. Called via signal-handler of the runtime-environment.
@@ -128,10 +152,15 @@ Filser::Filser()
   //_capabilities.supDlTask = true;          //supports downloading of tasks?
   //_capabilities.supUlTask = true;          //supports uploading of tasks?
   //_capabilities.supUlDeclaration = true;   //supports uploading of declarations?
+  _capabilities.supDspSerialNumber = true;
+  _capabilities.supDspRecorderType = true;
+  _capabilities.supDspPilotName = true;
+  _capabilities.supDspGliderType = true;
+  _capabilities.supDspGliderID = true;
+  _capabilities.supDspCompetitionID = true;
   //End set capabilities.
 
   portID = -1;
-  serialNo = 0xffffffff;
   flightIndex.setAutoDelete(true);
 }
 
@@ -149,7 +178,7 @@ FlightRecorderPluginBase::TransferMode Filser::getTransferMode() const
 
 QString Filser::getLibName() const {  return "libkfrfil";  }
 
-int Filser::getFlightDir(QList<FRDirEntry>* dirList)
+int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
 {
   int flightCount;
   int indexByte = 1;
@@ -185,20 +214,25 @@ int Filser::getFlightDir(QList<FRDirEntry>* dirList)
     while ((FLIGHT_INDEX_WIDTH + buf - bufP) > 0) {
       bufP = readData(bufP, (FLIGHT_INDEX_WIDTH + buf - bufP));
     }
-      
-    if ((bufP - buf) != FLIGHT_INDEX_WIDTH) {   
+
+    if ((bufP - buf) != FLIGHT_INDEX_WIDTH) {
       _errorinfo = i18n("read_flight_index(): Wrong amount of bytes from LX-device");
       rc = FR_ERROR;
       break;
     }
-    else if (calcCrcBuf((char *)buf, FLIGHT_INDEX_WIDTH - 1) != (char)buf[FLIGHT_INDEX_WIDTH - 1]) {
+    else if (calcCrcBuf(buf, FLIGHT_INDEX_WIDTH - 1) != buf[FLIGHT_INDEX_WIDTH - 1]) {
       _errorinfo = i18n("read_flight_index(): Bad CRC");
       rc = FR_ERROR;
       break;
     }
     else {
       ft = new struct flightTable;
+
+      // uncomment this if you want to analyze the buffer
+      // debugHex (buf);
+      
       memcpy(ft->record, buf, bufP - buf);
+
       flightIndex.append(ft);
 
       // remove \0 between date and time
@@ -213,7 +247,7 @@ int Filser::getFlightDir(QList<FRDirEntry>* dirList)
       stopTime_t = mktime(&stopTime);
 
       FRDirEntry* entry = new FRDirEntry;
- 
+
       if(lastDate.tm_year == startTime.tm_year &&
          lastDate.tm_mon == startTime.tm_mon &&
          lastDate.tm_mday == startTime.tm_mday) {
@@ -224,17 +258,18 @@ int Filser::getFlightDir(QList<FRDirEntry>* dirList)
       }
 
       entry->pilotName = (const char *)ft->record + 40;
-      entry->gliderID = "n.a."; 
+//      entry->gliderID = "n.a.";
+      // the glider type seems not to be in the flight list; we take it from logger data
+      entry->gliderID = _basicData.gliderType;
 
       entry->firstTime = startTime;
       entry->lastTime = stopTime;
       entry->duration = stopTime_t - startTime_t;
-      serialNo = (ft->record[91] << 8) + ft->record[92];
       entry->shortFileName.sprintf("%c%c%cf%s%c.igc",
                                    c36[entry->firstTime.tm_year % 10],
                                    c36[entry->firstTime.tm_mon + 1],
                                    c36[entry->firstTime.tm_mday],
-                                   wordtoserno(serialNo),
+                                   wordtoserno((ft->record[91] << 8) + ft->record[92]),
                                    c36[flightCount]);
       entry->longFileName.sprintf("%d-%.2d-%.2d-fil-%s-%.2d.igc",
                                   entry->firstTime.tm_year + 1900,
@@ -251,8 +286,101 @@ int Filser::getFlightDir(QList<FRDirEntry>* dirList)
         _errorinfo = i18n("read_flight_index(): Wrong index byte");
         rc = FR_ERROR;
         break;
-      } 
+      }
     }
+  }
+  return rc;
+}
+
+int Filser::getBasicData(FR_BasicData& data)
+{
+  // if the valueMap contains data, take them
+  if (!valueMap.empty())
+  {
+    data = _basicData;
+    return FR_OK;
+  }
+
+  int rc = FR_OK;
+  char *bufP;
+  char buf[BUFSIZE + 1];
+
+  if (!check4Device() || !readMemSetting()) {
+    return FR_ERROR;
+  }
+
+  _errorinfo = "";
+
+  tcflush(portID, TCIOFLUSH);
+
+  wb(STX);
+  wb(f);
+
+  bufP = buf;
+  while ((LX_DATA_WIDTH + buf - bufP) > 0) {
+    bufP = readData(bufP, (LX_DATA_WIDTH + buf - bufP));
+  }
+ 
+  // uncomment this if you want to analyze the buffer
+  debugHex (buf);
+
+  if ((bufP - buf) != LX_DATA_WIDTH) {
+    _errorinfo = i18n("get_logger_data(): Wrong amount of bytes from LX-device");
+    rc = FR_ERROR;
+  }
+  else if (calcCrcBuf(buf, LX_DATA_WIDTH - 1) != buf[LX_DATA_WIDTH - 1])
+  {
+    _errorinfo = i18n("get_logger_data(): Bad CRC");
+    rc = FR_ERROR;
+  }
+  else
+  {
+    // the serial number is at fixed position ?!
+    // it starts at 0x10 as FIL123450; we go directly to the digits
+    _basicData.serialNumber = &buf[19];
+    // at position 25 begins a sequence of interesting items
+    bufP = buf + 25;
+    for (int i = 0; i < 14; i++)
+    {
+      // each item is initiated by its length
+      int len = *bufP++;
+      // some bytes have special meaning ...
+      if (len == 0x7f)
+      {
+        // ignore them, skip
+        bufP += 2;
+        len = *bufP++;
+      }
+      QString txt;
+      for (int i=0; i < len; i++)
+        txt += *bufP++;
+      // a colon separates key and value
+      int pos = txt.find (':');
+      valueMap.insert (txt.left (pos), txt.mid(pos+1));
+    }
+    // to verify the recognized items, uncomment this:
+    // for (QMap<QString, QString>::Iterator it = valueMap.begin(); it!=valueMap.end();it++)
+    // {
+    //   qDebug ("%s = %s", it.key().latin1(), it.data().latin1());
+    // }
+    /*
+    * These Filser specific keys are used (values are examples):
+    * HFCCLCOMPETITIONCLASS = STANDARD
+    * HFCIDCOMPETITIONID = 56
+    * HFDTM100DATUM = WGS-1984
+    * HFFTYFRTYPE = FILSER,LX20
+    * HFFXA100 = HFFXA100
+    * HFGIDGLIDERID = 5256
+    * HFGPSGPS = JRC/CCA-450
+    * HFGTYGLIDERTYPE = LS4
+    * HFPLTPILOT = EGGERT.EHMKE
+    */
+    _basicData.recorderType = getData("HFFTYFRTYPE");;
+    _basicData.pilotName = getData("HFPLTPILOT");
+    _basicData.gliderType = getData("HFGTYGLIDERTYPE");
+    _basicData.gliderID = getData("HFGIDGLIDERID");
+    _basicData.competitionID = getData("HFCIDCOMPETITIONID");
+    data = _basicData;
   }
   return rc;
 }
@@ -302,12 +430,13 @@ int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileNam
 }
 
 
-QString Filser::getRecorderSerialNo()
+QString Filser::getData(const QString& key)
 {
-  if (serialNo > 46655L)
+  QMap<QString,QString>::Iterator hit = valueMap.find(key);
+  if (hit == valueMap.end())
     return "???";
   else
-    return QString("%1").arg (serialNo);
+    return hit.data();
 }
 
 int Filser::openRecorder(const QString& pName, int baud)
@@ -458,7 +587,7 @@ int Filser::getLoggerData(char *memSection, int sectionSize, char **memContents,
   int count;
   char *bufP, *bufP2;
   /*
-   * Calculate the size the of the memoty buffer
+   * Calculate the size the of the memory buffer
    */
   *contentSize = 0; 
   for(i = 0; i < (sectionSize / 2); i++) {
@@ -1150,7 +1279,8 @@ int Filser::readMemSetting()
     bufP = readData(bufP, LX_MEM_RET + buf - bufP);
   }
 
-  if(calcCrcBuf(buf, 6) != buf[6]) {
+  if(calcCrcBuf(buf, LX_MEM_RET-1) != buf[LX_MEM_RET-1])
+  {
     warning("read_mem_setting(): Bad CRC");
     return 0;
   }  
@@ -1234,7 +1364,6 @@ int Filser::rb()
 
 char *Filser::wordtoserno(unsigned int Binaer)
 {
-//  char SerNStr[4];
   static char Seriennummer[4];
   // limitation
   if (Binaer > 46655L) {
@@ -1265,7 +1394,7 @@ int Filser::closeRecorder()
 /** NOT IMLEMENTED
     ============================================*/
 
-int Filser::writeDeclaration(FRTaskDeclaration* /*taskDecl*/, QList<Waypoint> * /*taskPoints*/ )
+int Filser::writeDeclaration(FRTaskDeclaration* /*taskDecl*/, QPtrList<Waypoint> * /*taskPoints*/ )
 {
   return FR_NOTSUPPORTED;
 }
@@ -1275,22 +1404,22 @@ int Filser::readDatabase()
   return FR_NOTSUPPORTED;
 }
 
-int Filser::readTasks(QList<FlightTask> * /*tasks*/)
+int Filser::readTasks(QPtrList<FlightTask> * /*tasks*/)
 {
   return FR_NOTSUPPORTED;
 }
 
-int Filser::writeTasks(QList<FlightTask> * /*tasks*/)
+int Filser::writeTasks(QPtrList<FlightTask> * /*tasks*/)
 {
   return FR_NOTSUPPORTED;
 }
 
-int Filser::readWaypoints(QList<Waypoint> * /*waypoints*/)
+int Filser::readWaypoints(QPtrList<Waypoint> * /*waypoints*/)
 {
   return FR_NOTSUPPORTED;
 }
 
-int Filser::writeWaypoints(QList<Waypoint> * /*waypoints*/)
+int Filser::writeWaypoints(QPtrList<Waypoint> * /*waypoints*/)
 {
   return FR_NOTSUPPORTED;
 }

@@ -23,7 +23,7 @@
 #include <klocale.h>
 #include <qarray.h>
 #include <qfile.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qstring.h>
 #include <qtextstream.h>
 
@@ -49,6 +49,12 @@ GarminFR::GarminFR(){
   //_capabilities.supDlTask = true;          //supports downloading of tasks?
   //_capabilities.supUlTask = true;          //supports uploading of tasks?
   //_capabilities.supUlDeclaration = true;   //supports uploading of declarations?
+  //_capabilities.supDspSerialNumber = true;
+  _capabilities.supDspRecorderType = true;
+  //_capabilities.supDspPilotName = true;
+  //_capabilities.supDspGliderType = true;
+  //_capabilities.supDspGliderID = true;
+  //_capabilities.supDspCompetitionID = true;
   //End set capabilities.
 
   portName = '\0';
@@ -80,7 +86,7 @@ FlightRecorderPluginBase::TransferMode GarminFR::getTransferMode() const
 /**
  * Returns a list of recorded flights in this device.
  */
-int GarminFR::getFlightDir(QList<FRDirEntry>* dirList){
+int GarminFR::getFlightDir(QPtrList<FRDirEntry>* dirList){
   dirList->clear();
 
 
@@ -106,12 +112,19 @@ int GarminFR::downloadFlight(int /*flightID*/, int /*secMode*/, const QString& /
 
 
 /**
- * get recorder info serial id
- */
-QString GarminFR::getRecorderSerialNo(){
-  return QString("");      //
+  * get recorder basic data
+  */
+int GarminFR::getBasicData(FR_BasicData& data)
+{
+  _basicData.serialNumber = "???";
+  _basicData.recorderType = "Garmin";
+  _basicData.pilotName = "???";
+  _basicData.gliderType = "???";
+  _basicData.gliderID = "???";
+  _basicData.competitionID = "???";
+  data = _basicData;
+  return FR_OK;
 }
-
 
 /**
  * Opens the recorder for serial communication.
@@ -145,7 +158,7 @@ int GarminFR::closeRecorder(){
 /**
  * Read tasks from recorder
  */
-int GarminFR::readTasks(QList<FlightTask> * /*tasks*/){
+int GarminFR::readTasks(QPtrList<FlightTask> * /*tasks*/){
   return FR_NOTSUPPORTED;
 }
 
@@ -153,7 +166,7 @@ int GarminFR::readTasks(QList<FlightTask> * /*tasks*/){
 /**
  * Write tasks to recorder
  */
-int GarminFR::writeTasks(QList<FlightTask> * /*tasks*/){
+int GarminFR::writeTasks(QPtrList<FlightTask> * /*tasks*/){
   return FR_NOTSUPPORTED;
 }
 
@@ -161,7 +174,7 @@ int GarminFR::writeTasks(QList<FlightTask> * /*tasks*/){
 /**
  * Read waypoints from recorder
  */
-int GarminFR::readWaypoints(QList<Waypoint> * /*waypoints*/){
+int GarminFR::readWaypoints(QPtrList<Waypoint> * /*waypoints*/){
   return FR_NOTSUPPORTED;
 }
 
@@ -169,7 +182,7 @@ int GarminFR::readWaypoints(QList<Waypoint> * /*waypoints*/){
 /**
  * Write waypoints to recorder
  */
-int GarminFR::writeWaypoints(QList<Waypoint> * /*waypoints*/){
+int GarminFR::writeWaypoints(QPtrList<Waypoint> * /*waypoints*/){
   return FR_NOTSUPPORTED;
 }
 
@@ -187,7 +200,7 @@ int GarminFR::openRecorder(const QString& /*URL*/){
  /**
  * Write flight declaration to recorder
  */
-int GarminFR::writeDeclaration(FRTaskDeclaration * /*taskDecl*/, QList<Waypoint> * /*taskPoints*/) {
+int GarminFR::writeDeclaration(FRTaskDeclaration * /*taskDecl*/, QPtrList<Waypoint> * /*taskPoints*/) {
   return FR_NOTSUPPORTED;
 }
 

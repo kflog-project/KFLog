@@ -18,6 +18,7 @@
 #ifndef FILSER_H
 #define FILSER_H
 
+#include <qmap.h>
 #include <qptrlist.h>
 
 #include "../frstructs.h"
@@ -32,7 +33,8 @@
                               /* index.                          */
 #define LX_MEM_RET 7          /* Number of bytes returned by     */
                               /* wb(STX), wb(Q).                 */
-
+#define LX_DATA_WIDTH 671
+                              
 struct flightTable {
   unsigned char record[FLIGHT_INDEX_WIDTH];
 };
@@ -41,7 +43,7 @@ class Filser : public FlightRecorderPluginBase
 {
 public: 
   Filser();
-  ~Filser();
+  virtual ~Filser();
   /**
    * Returns the name of the lib.
    */
@@ -53,15 +55,15 @@ public:
   /**
    * Returns a list of recorded flights in this device.
    */
-  virtual int getFlightDir(QList<FRDirEntry>*);
+  virtual int getFlightDir(QPtrList<FRDirEntry>*);
   /**
    *
    */
   virtual int downloadFlight(int flightID, int secMode, const QString& fileName);
   /**
-   * get recorder info serial id
-   */
-  virtual QString getRecorderSerialNo();
+    * get basic flight recorder data
+    */
+  virtual int getBasicData(FR_BasicData&);
   /**
    * Opens the recorder for serial communication.
    */
@@ -77,7 +79,7 @@ public:
   /**
    * Write flight declaration to recorder
    */
-  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint> *taskPoints);
+  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QPtrList<Waypoint> *taskPoints);
   /**
    * Read waypoint and flight declaration form from recorder into mem
    */
@@ -85,19 +87,19 @@ public:
   /**
    * Read tasks from recorder
    */
-  virtual int readTasks(QList<FlightTask> *tasks);
+  virtual int readTasks(QPtrList<FlightTask> *tasks);
   /**
    * Write tasks to recorder
    */
-  virtual int writeTasks(QList<FlightTask> *tasks);
+  virtual int writeTasks(QPtrList<FlightTask> *tasks);
   /**
    * Read waypoints from recorder
    */
-  virtual int readWaypoints(QList<Waypoint> *waypoints);
+  virtual int readWaypoints(QPtrList<Waypoint> *waypoints);
   /**
    * Write waypoints to recorder
    */
-  virtual int writeWaypoints(QList<Waypoint> *waypoints);
+  virtual int writeWaypoints(QPtrList<Waypoint> *waypoints);
 
 private:
   /**
@@ -124,11 +126,12 @@ private:
   int defMem(struct flightTable *ft);
   int getMemSection(char *memSection, int size);
   int getLoggerData(char *memSection, int sectionSize, char **memContents, int *contentSize);
+  QString getData(const QString& key);
   int convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last);
   char *readData(char *buf_p, int count);
   QPtrList <flightTable> flightIndex;
   char *wordtoserno(unsigned int Binaer);
-  unsigned int serialNo;
+  QMap<QString,QString> valueMap;
 };
 
 #endif

@@ -76,10 +76,11 @@ class RecorderDialog : public KDialogBase
     /** */
     int __fillDirList();
     /** */
-    int __openLib(QString libN);
+    int __openLib(const QString& libN);
     /** */
     void __addSettingsPage();
     void __setRecorderConnectionType(FlightRecorderPluginBase::TransferMode);
+    void __setRecorderCapabilities();
     /** */
     void __addFlightPage();
     /** */
@@ -124,7 +125,18 @@ class RecorderDialog : public KDialogBase
     
     /** */
     QLabel* serID;
+    QLabel* lblSerID;
     QLabel* apiID;
+    QLabel* lblApiID;
+    QLabel* recType;
+    QLabel* lblRecType;
+    QLabel* pltName;
+    QLabel* lblPltName;
+    QLabel* gldType;
+    QLabel* lblGldType;
+    QLabel* gldID;
+    QLabel* lblGldID;
+    QLabel* compID;
     /** */
     KFLogListView* flightList;
     /** */
@@ -146,8 +158,8 @@ class RecorderDialog : public KDialogBase
     /** */
     bool isOpen;
     /** */
-    QList<FRDirEntry> dirList;
-    QList<FlightTask> *tasks;
+    QPtrList<FRDirEntry> dirList;
+    QPtrList<FlightTask> *tasks;
     WaypointList *waypoints;
     /** */
     QStringList libNameList;
@@ -180,7 +192,7 @@ class RecorderDialog : public KDialogBase
     KLineEdit* gliderID;
     KComboBox* gliderType;
     KLineEdit* compClass;
-    KLineEdit* compID;
+    KLineEdit* editCompID;
     KComboBox* taskSelection;
 
     QPushButton* cmdDownloadWaypoints;

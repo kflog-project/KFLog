@@ -1,5 +1,12 @@
 $Id$
 
+2003-05-27 Eggert Ehmke <eggert@kflog.org>
+
+    * Extended flight recorder capabilities for basic data
+      like serial number, pilot name, glider type, competition id and more.
+	  All these data can now be fetched by new function getBasicData.
+
+
 2003-05-23 André Somers <andre@kflog.org>
 
   * Added separate desktop entry for SDI posigraph

@@ -42,15 +42,15 @@ public:
   /**
    * Returns a list of recorded flights in this device.
    */
-  virtual int getFlightDir(QList<FRDirEntry>*);
+  virtual int getFlightDir(QPtrList<FRDirEntry>*);
   /**
    *
    */
   virtual int downloadFlight(int flightID, int secMode, const QString& fileName);
   /**
-   * get recorder info serial id
+   * get recorder basic data
    */
-  virtual QString getRecorderSerialNo();
+  virtual int getBasicData(FR_BasicData&);
   /**
    * Opens the recorder for serial communication.
    */
@@ -66,7 +66,7 @@ public:
   /**
    * Write flight declaration to recorder
    */
-  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint> *taskPoints);
+  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QPtrList<Waypoint> *taskPoints);
   /**
    * Read waypoint and flight declaration form from recorder into mem
    */
@@ -74,19 +74,19 @@ public:
   /**
    * Read tasks from recorder
    */
-  virtual int readTasks(QList<FlightTask> *tasks);
+  virtual int readTasks(QPtrList<FlightTask> *tasks);
   /**
    * Write tasks to recorder
    */
-  virtual int writeTasks(QList<FlightTask> *tasks);
+  virtual int writeTasks(QPtrList<FlightTask> *tasks);
   /**
    * Read waypoints from recorder
    */
-  virtual int readWaypoints(QList<Waypoint> *waypoints);
+  virtual int readWaypoints(QPtrList<Waypoint> *waypoints);
   /**
    * Write waypoints to recorder
    */
-  virtual int writeWaypoints(QList<Waypoint> *waypoints);
+  virtual int writeWaypoints(QPtrList<Waypoint> *waypoints);
 private:
   bool haveDatabase;
 };
