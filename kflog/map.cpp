@@ -25,6 +25,8 @@
 #include <klocale.h>
 #include <knotifyclient.h>
 #include <kstddirs.h>
+#include <kglobal.h>
+#include <kiconloader.h>
 
 #include <qdragobject.h>
 #include <qpainter.h>
@@ -142,6 +144,9 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
 			     "configure, which map elements should be displayed at which "
 			     "scale.</P>"));
 
+
+  __createPopupMenu();
+                       
   // create the animation timer
   timerAnimate = new QTimer( this );
   connect( timerAnimate, SIGNAL(timeout()), this,
@@ -902,6 +907,7 @@ void Map::mousePressEvent(QMouseEvent* event)
 
         __redrawMap();
       }
+
     else if(event->button() == LeftButton)
       {
         if(event->state() == QEvent::ShiftButton)
@@ -967,10 +973,16 @@ void Map::mousePressEvent(QMouseEvent* event)
                 delete waypointDlg;
 
     	        }
+          }  else {
+            __displayMapInfo(current);
           }
 
-        if(planning)  __graphicalPlanning(current, event);
-      }
+        if(planning)  {
+          __graphicalPlanning(current, event);
+        } 
+    }
+
+
     else if(event->button() == RightButton && event->state() == ControlButton)
       {
         moveWPindex = -999;
@@ -982,8 +994,11 @@ void Map::mousePressEvent(QMouseEvent* event)
         emit taskPlanningEnd();
         return;
       }
-    else if(event->button() == RightButton)
-        __displayMapInfo(current);
+    else if(event->button() == RightButton)  {
+        popupPos=event->pos();
+        __showPopupMenu(event);
+    }
+      
   }
 }
 
@@ -2345,4 +2360,120 @@ void Map::__setCursor()
   const QBitmap cross(32, 32, cross_bits, true);
   const QCursor crossCursor(cross, cross);
   setCursor(crossCursor);
+}
+
+/** Creates the popupmenu for the map */
+void Map::__createPopupMenu(){
+  extern MapMatrix _globalMapMatrix;
+  
+  mapPopup=new KPopupMenu(this);
+  
+  mapPopup->insertTitle(/*SmallIcon("task")*/ 0, i18n("Map"), 0);
+  idMpAddWaypoint  = mapPopup->insertItem(SmallIcon("waypoint"), i18n("&New waypoint"), this, SLOT(slotMpNewWaypoint()));
+  idMpEndPlanning = mapPopup->insertItem(i18n("&End taskplanning"), this, SLOT(slotMpEndPlanning()));
+
+  mapPopup->insertSeparator();
+  idMpCenterMap  = mapPopup->insertItem(SmallIcon("centerto"), i18n("&Center map"), this, SLOT(slotMpCenterMap()));
+
+  idMpZoomIn = mapPopup->insertItem(SmallIcon("viewmag+"), i18n("Zoom &In"), &_globalMapMatrix, SLOT(slotZoomIn()));
+  idMpZoomOut = mapPopup->insertItem(SmallIcon("viewmag-"), i18n("Zoom &Out"), &_globalMapMatrix, SLOT(slotZoomOut()));
+  /*
+  idMpAddTaskPoint
+ */  
+}
+
+/** Selects the correct items to show from the menu and then shows it. */
+void Map::__showPopupMenu(QMouseEvent * Event){
+  mapPopup->setItemEnabled(idMpEndPlanning, (planning == 1 || planning == 3));
+  
+  mapPopup->exec(mapToGlobal(Event->pos()));
+
+}
+
+/** called from the MapPopupmenu to add a new waypoint. */
+void Map::slotMpNewWaypoint(){
+   extern MapContents _globalMapContents;
+   extern MapMatrix _globalMapMatrix;
+
+   RadioPoint *hitElement;
+   QString text;
+
+   QPoint sitePos;
+   double dX, dY, delta(16.0);
+    
+   const QPoint current(popupPos);
+
+   // select WayPoint
+   QRegExp blank("[ ]");
+   bool found = false;
+
+    // add WPList !!!
+    int searchList[] = {MapContents::GliderList, MapContents::AirportList};
+    for (int l = 0; l < 2; l++) {
+      for(unsigned int loop = 0; loop < _globalMapContents.getListLength(searchList[l]); loop++) {
+        hitElement = (RadioPoint*)_globalMapContents.getElement(searchList[l], loop);
+        sitePos = hitElement->getMapPosition();
+
+        dX = abs(sitePos.x() - current.x());
+        dY = abs(sitePos.y() - current.y());
+
+        // Abstand entspricht der Icon-Größe.
+        if (dX < delta && dY < delta) {
+          Waypoint *w = new Waypoint;
+          w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
+          w->description = hitElement->getName();
+          w->type = hitElement->getTypeID();
+          w->origP = hitElement->getWGSPosition();
+          w->elevation = hitElement->getElevation();
+          w->icao = hitElement->getICAO();
+          w->frequency = hitElement->getFrequency().toDouble();
+          w->isLandable = true;
+
+          emit waypointSelected(w);
+          found = true;
+          break;
+        }
+      }
+      if (found)  break;
+    }
+
+    if (!found) {
+      warning("new waypoint");
+
+      WaypointDialog *waypointDlg = new WaypointDialog(this);
+      emit regWaypointDialog(waypointDlg); //register the dialog and connect it's signals.
+
+      waypointDlg->enableApplyButton(false);
+
+      QPoint p = _globalMapMatrix.mapToWgs(current);
+
+      // initialize dialog
+      //waypointDlg->setWaypointType(BaseMapElement::Landmark); now set by default.
+      waypointDlg->longitude->setText(printPos(p.x(), false));
+      waypointDlg->latitude->setText(printPos(p.y(), true));
+      waypointDlg->setSurface(-1);
+      waypointDlg->exec(); //we only need to exec the dialog. The dialog can take care of itself now :-)
+
+      delete waypointDlg;
+   }
+}
+
+/** Called from the contextmenu to center the map. */
+void Map::slotMpCenterMap(){
+  extern MapMatrix _globalMapMatrix;
+   // Move Map
+  _globalMapMatrix.centerToPoint(popupPos);
+  _globalMapMatrix.createMatrix(this->size());
+
+  __redrawMap();
+}
+
+void Map::slotMpEndPlanning(){
+  moveWPindex = -999;
+
+  prePlanPos.setX(-999);
+  prePlanPos.setY(-999);
+  planning = 2;
+
+  emit taskPlanningEnd();
 }

@@ -23,6 +23,7 @@
 #include <qregion.h>
 #include <qwidget.h>
 #include <qbitmap.h>
+#include <kpopupmenu.h>
 
 #include <qpointarray.h>
 #include <qtimer.h>
@@ -164,6 +165,10 @@ class Map : public QWidget
      * Redifinition of the dropEvent.
      */
     virtual void dropEvent(QDropEvent* event);
+    /**
+     * Creates the popupmenu for the map
+     */
+    void __createPopupMenu();
 
   private:
   // defining the cursor for the map:
@@ -219,6 +224,8 @@ class Map : public QWidget
     bool __getTaskWaypoint(const QPoint& current, Waypoint *wp, QPtrList<Waypoint> &taskPointList);
   /** Tries to locate the elevation for the given point, and emits a signal elevation if found. */
   void __findElevation(const QPoint& coord);
+  /** Selects the correct items to show from the menu and then shows it. */
+  void __showPopupMenu(QMouseEvent * Event);
     /**
      * This pixmap is used to store the currently displayed map.
      * This painter is about the same size as the map-widget, but is only
@@ -330,12 +337,42 @@ class Map : public QWidget
      * boxes during the first start anymore
      */
     bool firstStart;
-
+    /**
+     * Popupmenu under the right mousebutton
+     */
+    KPopupMenu *mapPopup;
+    /**
+     * ID's of menuitems
+     */
+    int idMpEndPlanning;
+    int idMpCenterMap;
+    int idMpAddWaypoint;
+    int idMpAddTaskPoint;
+    int idMpZoomIn;
+    int idMpZoomOut;
+    
      
     
   public: // Public attributes
+protected slots: // Protected slots
+    /**
+     * Called from the contextmenu to center the map.
+     */
+    void slotMpCenterMap();
+    /**
+     * called from the MapPopupmenu to add a new waypoint.
+     */
+    void slotMpNewWaypoint();
+    /**
+     * called from the MapPopupmenu to end the planning.
+     */
+    void slotMpEndPlanning();
     //
     QPoint preSnapPoint;
+
+protected: // Protected attributes
+  /** Contains the position where the mouse was clicked to show the popupmenu */
+  QPoint popupPos;
 };
 
 #endif
