@@ -71,6 +71,7 @@ WaypointCatalog::~WaypointCatalog()
 bool WaypointCatalog::read(QString &catalog)
 {
   bool ok = false;
+  bool needConvert = false;
   QFile f(catalog);
 
   if (f.exists()) {
@@ -101,15 +102,30 @@ bool WaypointCatalog::read(QString &catalog)
           w->surface = nm.namedItem("Surface").toAttr().value().toInt();
           w->comment = nm.namedItem("Comment").toAttr().value();
 
+          if (w->runway == 0 && w->length == 0) {
+            // old format, convert it to new
+            w->runway = w->length = -1;
+            needConvert = true;
+          }
+
           if (!wpList.insertItem(w)) {
             break;
           }
         }
 
+        onDisc = true;
+        path = catalog;
+
         ok = true;
       }
       else {
         KMessageBox::error(0, i18n("wrong doctype ") + doc.doctype().name(), i18n("Error occurred!"));
+      }
+
+      f.close();
+
+      if (needConvert) {
+        write();
       }
 
       QApplication::restoreOverrideCursor();
@@ -408,8 +424,8 @@ bool WaypointCatalog::importVolkslogger(QString & filename){
 
 		w->elevation =0;
         w->frequency = 0;
-        w->runway = 0;
-        w->length = 0;
+        w->runway = -1;
+        w->length = -1;
 
         //w->comment = "<no comment>";
 

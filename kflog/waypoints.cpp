@@ -156,11 +156,11 @@ void Waypoints::addPopupMenu()
     SLOT(slotSaveWaypointCatalog()));
   idWaypointCatalogClose = wayPointPopup->insertItem(SmallIcon("fileclose"), i18n("&Close catalog"), this,
     SLOT(slotCloseWaypointCatalog()));
-  wayPointPopup->insertSeparator();
-  wayPointPopup->insertItem(i18n("Down&load from logger"), this,
-    SLOT(slotNotHandledItem()));
-  wayPointPopup->insertItem(i18n("&Upload to logger"), this,
-    SLOT(slotNotHandledItem()));
+//  wayPointPopup->insertSeparator();
+//  wayPointPopup->insertItem(i18n("Down&load from logger"), this,
+//    SLOT(slotNotHandledItem()));
+//  wayPointPopup->insertItem(i18n("&Upload to logger"), this,
+//    SLOT(slotNotHandledItem()));
   wayPointPopup->insertSeparator();
   idWaypointNew = wayPointPopup->insertItem(SmallIcon("filenew"), i18n("New &waypoint"), this,
     SLOT(slotNewWaypoint()));
@@ -258,6 +258,8 @@ bool Waypoints::saveChanges()
 /** insert waypoint from waypoint dialog */
 void Waypoints::slotAddWaypoint()
 {
+  QString text;
+  
   if (!waypointDlg->name->text().isEmpty()) {
     // insert a new waypoint to current catalog
     wayPoint *w = new wayPoint;
@@ -269,8 +271,21 @@ void Waypoints::slotAddWaypoint()
     w->elevation = waypointDlg->elevation->text().toInt();
     w->icao = waypointDlg->icao->text().upper();
     w->frequency = waypointDlg->frequency->text().toDouble();
-    w->runway = waypointDlg->runway->text().toInt();
-    w->length = waypointDlg->length->text().toInt();
+    text = waypointDlg->runway->text();
+    if (!text.isEmpty()) {
+      w->runway = text.toInt();
+    }
+    else {
+      w->runway = -1;
+    }
+
+    text = waypointDlg->length->text();
+    if (!text.isEmpty()) {
+      w->length = text.toInt();
+    }    
+    else {
+      w->length = -1;
+    }
     w->surface = waypointDlg->getSurface();
     w->isLandable = waypointDlg->isLandable->isChecked();
     w->comment = waypointDlg->comment->text();
@@ -305,9 +320,19 @@ void Waypoints::slotEditWaypoint()
     waypointDlg->icao->setText(w->icao);
     tmp.sprintf("%.3f", w->frequency);
     waypointDlg->frequency->setText(tmp);
-    tmp.sprintf("%d", w->runway);
+    if (w->runway != -1) {
+      tmp.sprintf("%d", w->runway);
+    }
+    else {
+      tmp = QString::null;
+    }
     waypointDlg->runway->setText(tmp);
-    tmp.sprintf("%d", w->length);
+    if (w->length != -1) {
+      tmp.sprintf("%d", w->length);
+    }
+    else {
+      tmp = QString::null;
+    }    
     waypointDlg->length->setText(tmp);
     // translate to id
     waypointDlg->setSurface(w->surface);
@@ -324,8 +349,20 @@ void Waypoints::slotEditWaypoint()
         w->elevation = waypointDlg->elevation->text().toInt();
         w->icao = waypointDlg->icao->text().upper();
         w->frequency = waypointDlg->frequency->text().toDouble();
-        w->runway = waypointDlg->runway->text().toInt();
-        w->length = waypointDlg->length->text().toInt();
+        tmp = waypointDlg->runway->text();
+        if (!tmp.isEmpty()) {
+          w->runway = tmp.toInt();
+        }
+        else {
+          w->runway = -1;
+        }
+        tmp = waypointDlg->length->text();
+        if (!tmp.isEmpty()) {
+          w->length = tmp.toInt();
+        }
+        else {
+          w->length = -1;
+        }        
         w->surface = waypointDlg->getSurface();
         w->comment = waypointDlg->comment->text();
         w->isLandable = waypointDlg->isLandable->isChecked();
@@ -426,13 +463,25 @@ void Waypoints::fillWaypoints()
     tmp.sprintf("%.3f", w->frequency);
     item->setText(colFrequency, tmp);
     item->setText(colLandable, w->isLandable == true ? i18n("Yes") : QString::null);
-    tmp.sprintf("%02d", w->runway);
+    if (w->runway > -1) {
+      tmp.sprintf("%02d", w->runway);
+    }
+    else {
+      tmp = QString::null;
+    }
     item->setText(colRunway, tmp);
-    tmp.sprintf("%d", w->length);
+
+    if (w->length > -1) {
+      tmp.sprintf("%02d", w->length);
+    }
+    else {
+      tmp = QString::null;
+    }
     item->setText(colLength, tmp);
+
     item->setText(colSurface, w->surface == -1 ? QString::null : surfaces.itemById(w->surface)->text);
     item->setText(colComment, w->comment);
-    item->setPixmap(0, _globalMapConfig.getPixmap(w->type,false,true));
+    item->setPixmap(colName, _globalMapConfig.getPixmap(w->type,false,true));
   }
 
   emit waypointCatalogChanged( waypointCatalogs.current() );
@@ -578,8 +627,8 @@ void Waypoints::slotImportWaypointFromMap()
         w->description = s->getName();
         type = s->getTypeID();
         w->type = type;
-        w->runway = 0;
-        w->length = 0;
+        w->runway = -1;
+        w->length = -1;
         w->surface = -1;
         w->frequency = 0.0;
 
@@ -758,28 +807,31 @@ void Waypoints::openCatalog(QString &catalog)
     WaypointCatalog *w = new WaypointCatalog;
     QFile f(catalog);
 
-     if (f.exists()) {
-       // read from disk
-       if (!w->read(catalog)) {
-         delete w;
-       }
-       else {
-         w->onDisc = true;
-         w->path = catalog;
+    if (f.exists()) {
+      // read from disk
+      if (!w->read(catalog)) {
+        delete w;
+      }
+      else {
+        waypointCatalogs.append(w);
+        catalogName->insertItem(w->path);
 
-         waypointCatalogs.append(w);
-         catalogName->insertItem(w->path);
-
-         catalogName->setCurrentItem(newItem);
-         slotSwitchWaypointCatalog(newItem);
-       }
-     }  else {
-		delete w;
-     }
+        catalogName->setCurrentItem(newItem);
+        slotSwitchWaypointCatalog(newItem);
+      }
+    }  
+    else {
+      delete w;
+    }
   }
 }
 
 /* slot to set name of catalog and open it without a file selection dialog */
 void Waypoints::slotSetWaypointCatalogName(QString catalog){
 	this->openCatalog(catalog);
+}
+/** return the current waypoint catalog */
+WaypointCatalog * Waypoints::getCurrentCatalog()
+{
+  return waypointCatalogs.current();
 }

@@ -360,7 +360,8 @@ void KFLogApp::initActions()
   connect(windowMenu, SIGNAL(aboutToShow()), this, SLOT(slotWindowsMenuAboutToShow()));
 
   KActionMenu *m = new KActionMenu(i18n("&New"), "filenew", actionCollection(), "file_new");
-  m->popupMenu()->insertItem(i18n("&Task"), &_globalMapContents, SLOT(slotNewTask()));
+  m->popupMenu()->insertItem(SmallIcon("waypoint"), i18n("&Waypoint"), waypoints, SLOT(slotNewWaypoint()));
+  m->popupMenu()->insertItem(SmallIcon("task"), i18n("&Task"), &_globalMapContents, SLOT(slotNewTask()));
   m->popupMenu()->insertItem(i18n("&Flight group"), &_globalMapContents, SLOT(slotNewFlightGroup()));
 
   createGUI();
@@ -548,6 +549,13 @@ void KFLogApp::saveOptions()
   config->writeEntry("Show Toolbar", viewToolBar->isChecked());
   config->writeEntry("Show Statusbar",viewStatusBar->isChecked());
   config->writeEntry("ToolBarPos", (int) toolBar("mainToolBar")->barPos());
+
+  config->setGroup("Waypoints");
+  if (config->readNumEntry("DefaultWaypointCatalog", KFLogConfig::LastUsed) ==
+      KFLogConfig::LastUsed) {
+    config->writeEntry("DefaultCatalogName", waypoints->getCurrentCatalog()->path);
+  }
+
   config->setGroup(0);
 
   writeDockConfig(config, "Window Layout");

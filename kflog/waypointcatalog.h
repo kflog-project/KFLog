@@ -60,9 +60,9 @@ public: // Public attributes
   WaypointList wpList;
   QString path;
   bool modified;
+private: // Private attributes
   /**  */
   bool onDisc;
-private: // Private attributes
 };
 
 #endif

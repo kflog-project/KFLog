@@ -42,6 +42,8 @@ public:
 	~Waypoints();
 	/* save changes in catalogs, return success */
   bool saveChanges();
+  /** return the current waypoint catalog */
+  WaypointCatalog * getCurrentCatalog();
 private: // Private methods
   /** No descriptions */
   void addWaypointWindow(QWidget *parent);
@@ -92,7 +94,6 @@ private: // Private attributes
 
 private slots: // Private slots
   void slotNotHandledItem();
-  void slotNewWaypoint();
   void slotDeleteWaypoint();
   void slotEditWaypoint();
   /** insert waypoint from waypoint dialog */
@@ -110,6 +111,7 @@ private slots: // Private slots
   void slotCopyWaypoint2Task();
   void slotCenterMap();
 public slots: // Public slots
+  void slotNewWaypoint();
   /** filter waypoints to display */
   void slotFilterWaypoints();
   /** add a new waypoint from outside */

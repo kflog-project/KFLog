@@ -63,7 +63,6 @@ private: // Private methods
 private slots: // Private slots
   /** No descriptions */
   void slotNotHandledItem();
-  void slotNewTask();
   void slotOpenTask();
   void slotEditTask();
   void slotDeleteTask();
@@ -72,6 +71,7 @@ private slots: // Private slots
   void slotSelectTask(QListViewItem *item);
   void showTaskPopup(QListViewItem *it, const QPoint &, int);
 public slots: // Public slots
+  void slotNewTask();
   /** No descriptions */
   void slotAppendTask(FlightTask *f);
   /** No descriptions */

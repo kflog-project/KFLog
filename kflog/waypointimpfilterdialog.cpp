@@ -229,10 +229,10 @@ void WaypointImpFilterDialog::polish()
   for (int l = 0; l < 2; l++) {
     for(unsigned int loop = 0; loop < _globalMapContents.getListLength(searchList[l]);
       loop++) {
-	    SinglePoint *hitElement = (SinglePoint *)_globalMapContents.getElement(searchList[l], loop);
-	    refAirport->insertItem(hitElement->getName());
-	    airportDict.insert(hitElement->getName(), hitElement);
-	  }
+        SinglePoint *hitElement = (SinglePoint *)_globalMapContents.getElement(searchList[l], loop);
+        refAirport->insertItem(hitElement->getName());
+        airportDict.insert(hitElement->getName(), hitElement);
+      }
   }
   refAirport->listBox()->sort();
 }

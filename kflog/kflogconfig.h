@@ -31,6 +31,8 @@
 #include <qslider.h>
 #include <qspinbox.h>
 #include <qwidget.h>
+#include <qbuttongroup.h>
+#include <qpushbutton.h>
 
 class KFLogApp;
 class LatEdit;
@@ -45,7 +47,7 @@ class LongEdit;
 class KFLogConfig : public KDialogBase
 {
   Q_OBJECT
-
+  
   public:
     /** */
     KFLogConfig(QWidget* parent, KConfig* config, const char* name);
@@ -57,6 +59,7 @@ class KFLogConfig : public KDialogBase
         LowFlight, Restricted, Tmz, Forest, Trail, Railway_D, Aerial_Cable, River_T,
         Glacier, Pack_Ice};
 
+    enum DefaultWaypointCatalog {Empty = 0, LastUsed, Specific};
   signals:
     /** */
     void scaleChanged(int min, int max);
@@ -94,7 +97,12 @@ class KFLogConfig : public KDialogBase
     void slotShowReduceScaleB(int value);
     /** */
     void slotShowReduceScaleC(int value);
-
+    /** */
+    void slotSelectDefaultCatalog(int item);
+    /** */
+    void slotDefaultWaypoint();
+    /** */
+    void slotSearchDefaultWaypoint();
   private:
     /** */
     void __addIDTab();
@@ -112,6 +120,9 @@ class KFLogConfig : public KDialogBase
     int __setScaleValue(int value);
     /** */
     int __getScaleValue(double value);
+  /** Add a tab for waypoint catalog configuration at sartup
+Setting will be overwritten by commandline switch */
+  void __addWaypointTab();
     /** */
     QFrame* idPage;
     /** */
@@ -125,12 +136,15 @@ class KFLogConfig : public KDialogBase
     /** */
     QFrame* scalePage;
     /** */
+    QFrame* waypointPage;
+    /** */
     KConfig* config;
     /** */
     QLineEdit* igcPathE;
     QLineEdit* taskPathE;
     QLineEdit* waypointPathE;
     QLineEdit* mapPathE;
+    QLineEdit* catalogPathE;
     LatEdit* homeLatE;
     LongEdit* homeLonE;
     QLineEdit* homeNameE;
@@ -155,6 +169,8 @@ class KFLogConfig : public KDialogBase
     LatEdit* firstParallel;
     LatEdit* secondParallel;
     LongEdit* originLongitude;
+    QButtonGroup *waypointButtonGroup;
+    QPushButton* catalogPathSearch;
 
     int cylinPar;
     int lambertV1;

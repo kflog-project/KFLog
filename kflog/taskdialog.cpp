@@ -188,15 +188,13 @@ void TaskDialog::slotSetPlanningType(int)
   unsigned int n, cnt;
 
   if (areaBased->isChecked()) {
-    forward->setEnabled(false);
-    back->setEnabled(false);
+    cnt = wpList.count();
+
     left->setEnabled(true);
     right->setEnabled(true);
     left->setChecked(pTask->getPlanningDirection() & FlightTask::leftOfRoute);
     right->setChecked(pTask->getPlanningDirection() & FlightTask::rightOfRoute);
-
-    cnt = wpList.count();
-    if (cnt > 4) {
+    if (cnt > 5) {
       // remove route points
       for(n = cnt - 3; n >= 2; n--) {
         wpList.take(n);
@@ -206,8 +204,6 @@ void TaskDialog::slotSetPlanningType(int)
     pTask->setPlanningType(FlightTask::AreaBased);
   }
   else {
-    forward->setEnabled(true);
-    back->setEnabled(true);
     left->setEnabled(false);
     right->setEnabled(false);
     left->setChecked(false);
@@ -217,6 +213,7 @@ void TaskDialog::slotSetPlanningType(int)
   }
 
   fillWaypoints();
+  enableWaypointButtons();
   route->setSelected(route->firstChild(), true);
 }
 
@@ -344,6 +341,7 @@ void TaskDialog::slotAddWaypoint()
     pTask->setWaypointList(wpList);
     fillWaypoints();
     route->setSelected(route->itemAtIndex(cnt - 1), true);
+    enableWaypointButtons();
   }
 }
 
@@ -358,6 +356,7 @@ void TaskDialog::slotRemoveWaypoint()
       pTask->setWaypointList(wpList);
       fillWaypoints();
       route->setSelected(route->itemAtIndex(curPos), true);
+      enableWaypointButtons();
     }
   }
 }
@@ -407,4 +406,20 @@ void TaskDialog::setTask(FlightTask *orig)
   right->setChecked(pTask->getPlanningDirection() & FlightTask::rightOfRoute);
 
   slotSetPlanningType(-1);
+}
+
+/** No descriptions */
+void TaskDialog::enableWaypointButtons()
+{
+  switch (pTask->getPlanningType()) {
+  case FlightTask::RouteBased:
+    forward->setEnabled(true);
+    back->setEnabled(true);
+    break;
+  case FlightTask::AreaBased:
+    int cnt = wpList.count();
+    forward->setEnabled(cnt > 4);
+    back->setEnabled(cnt == 4);
+    break;
+  }
 }

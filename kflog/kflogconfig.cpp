@@ -43,7 +43,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <qpushbutton.h>
+#include <qradiobutton.h>
 
 #include <guicontrols/coordedit.h>
 
@@ -59,6 +59,7 @@ KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
   __addMapTab();
   __addProjectionTab();
 //  __addTopographyTab();
+  __addWaypointTab();
 
   connect( this, SIGNAL(okClicked()), SLOT(slotOk()) );
 }
@@ -109,6 +110,10 @@ void KFLogConfig::slotOk()
   config->writeEntry("PreName", preNameE->text());
   config->writeEntry("SurName", surNameE->text());
   config->writeEntry("Birthday", dateOfBirthE->text());
+
+  config->setGroup("Waypoints");
+  config->writeEntry("DefaultWaypointCatalog", waypointButtonGroup->id(waypointButtonGroup->selected()));
+  config->writeEntry("DefaultCatalogName", catalogPathE->text());
 
   config->sync();
   config->setGroup(0);
@@ -773,4 +778,90 @@ int KFLogConfig::__getScaleValue(double scale)
   else if(scale <= 1000) return (((int) scale - 500) / 20 + 70);
   else if(scale <= 2000) return (((int) scale - 1000) / 50 + 95);
   else return (((int) scale - 2000) / 100 + 125);
+}
+
+/** Add a tab for waypoint catalog configuration at sartup
+Setting will be overwritten by commandline switch */
+void KFLogConfig::__addWaypointTab()
+{
+  config->setGroup("Waypoints");
+  int catalogType = config->readNumEntry("DefaultWaypointCatalog", LastUsed);
+  QString catalogName = config->readEntry("DefaultCatalogName", "");
+
+  waypointPage = addPage(i18n("Waypoint"), i18n("Catalog Configuration"),
+      KGlobal::instance()->iconLoader()->loadIcon("waypoint", KIcon::NoGroup,
+          KIcon::SizeLarge));
+
+  QVBoxLayout *top = new QVBoxLayout(waypointPage, 5);
+
+  QGroupBox *group = new QGroupBox(i18n("Default Catalog:"), waypointPage, "catalogConfiguration");
+  QGridLayout *grid = new QGridLayout(group, 4, 2, 25, 5);
+
+  waypointButtonGroup = new QButtonGroup(group);
+  waypointButtonGroup->hide();
+  waypointButtonGroup->setExclusive(true);
+  connect(waypointButtonGroup, SIGNAL(clicked(int)), SLOT(slotSelectDefaultCatalog(int)));
+
+  QRadioButton *rb = new QRadioButton(i18n("Empty"), group);
+  waypointButtonGroup->insert(rb, Empty);
+  grid->addWidget(rb, 0, 0);
+  rb = new QRadioButton(i18n("Last used"), group);
+  waypointButtonGroup->insert(rb, LastUsed);
+  grid->addWidget(rb, 1, 0);
+  rb = new QRadioButton(i18n("Specific"), group);
+  waypointButtonGroup->insert(rb, Specific);
+  grid->addWidget(rb, 2, 0);
+  catalogPathE = new QLineEdit(group);
+  grid->addWidget(catalogPathE, 3, 0);
+  catalogPathE->setText(catalogName);
+
+  catalogPathSearch = new QPushButton(group);
+  catalogPathSearch->setPixmap(BarIcon("fileopen"));
+  catalogPathSearch->setMinimumWidth(catalogPathSearch->sizeHint().width() + 5);
+  catalogPathSearch->setMinimumHeight(catalogPathSearch->sizeHint().height() + 5);
+  grid->addWidget(catalogPathSearch, 3, 1);
+
+  connect(catalogPathSearch, SIGNAL(clicked()), SLOT(slotSearchDefaultWaypoint()));
+
+  QPushButton* defaultCatalog = new QPushButton(i18n("Default"), waypointPage,
+      "defaultWaypointPath");
+  defaultCatalog->setMaximumWidth(defaultCatalog->sizeHint().width() + 10);
+  defaultCatalog->setMinimumHeight(defaultCatalog->sizeHint().height() + 2);
+
+  connect(defaultCatalog, SIGNAL(clicked()), SLOT(slotDefaultWaypoint()));
+
+  top->addWidget(group);
+  top->addStretch();
+  top->addWidget(defaultCatalog, AlignLeft);
+
+  slotSelectDefaultCatalog(catalogType);
+  
+  config->setGroup(0);
+}
+
+void KFLogConfig::slotDefaultWaypoint()
+{
+  catalogPathE->setText(QString::null);
+  slotSelectDefaultCatalog(LastUsed);
+}
+
+void KFLogConfig::slotSelectDefaultCatalog(int item)
+{
+  QRadioButton *b = (QRadioButton *)waypointButtonGroup->find(item);
+  if (b != 0) {
+    b->setChecked(true);
+  }
+
+  catalogPathE->setEnabled(item == Specific);
+  catalogPathSearch->setEnabled(item == Specific);
+}
+
+void KFLogConfig::slotSearchDefaultWaypoint()
+{
+  QString temp = KFileDialog::getOpenFileName(catalogPathE->text(), "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)",
+    this, i18n("Select default waypoint catalog"));
+
+    if(temp != 0) {
+      catalogPathE->setText(temp);
+    }
 }

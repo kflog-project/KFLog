@@ -864,8 +864,8 @@ warning("Map::mousePressEvent: planning=%d", planning);
                       w->frequency = hitElement->getFrequency().toDouble();
                       w->isLandable = true;
                       w->surface = -1;
-                      w->runway = 0;
-                      w->length = 0;
+                      w->runway = -1;
+                      w->length = -1;
                       w->sectorFAI = 0;
                       w->sector1 = 0;
                       w->sector2 = 0;
@@ -893,8 +893,7 @@ warning("Map::mousePressEvent: planning=%d", planning);
 
               if (waypointDlg->exec() == QDialog::Accepted)
                 {
-
-          	      // add an 'free' waypoint
+                  // add an 'free' waypoint
                   wayPoint *w = new wayPoint;
                   // leave name empty, this will generate an syntetic name
 
@@ -909,8 +908,20 @@ warning("Map::mousePressEvent: planning=%d", planning);
                   w->elevation = waypointDlg->elevation->text().toInt();
                   w->icao = waypointDlg->icao->text().upper();
                   w->frequency = waypointDlg->frequency->text().toDouble();
-                  w->runway = waypointDlg->runway->text().toInt();
-                  w->length = waypointDlg->length->text().toInt();
+                  text = waypointDlg->runway->text();
+                  if (!text.isEmpty()) {
+                    w->runway = text.toInt();
+                  }
+                  else {
+                    w->runway = -1;
+                  }
+                  text = waypointDlg->length->text();
+                  if (!text.isEmpty()) {
+                    w->length = text.toInt();
+                  }
+                  else {
+                    w->length = 1;
+                  }
                   w->surface = waypointDlg->getSurface();
                   w->comment = waypointDlg->comment->text();
                   w->isLandable = waypointDlg->isLandable->isChecked();
@@ -2098,8 +2109,8 @@ bool Map::__getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint>
                   wp->elevation = hitElement->getElevation();
                   wp->icao = hitElement->getICAO();
                   wp->frequency = hitElement->getFrequency().toDouble();
-                  wp->runway = 0;
-                  wp->length = 0;
+                  wp->runway = -1;
+                  wp->length = -1;
                   wp->surface = 0;
                   wp->comment = "";
                   wp->isLandable = true;

@@ -6,9 +6,8 @@
 //
 
 #ifndef _GARMIN_H
-#define _GARMIN
-#define _POSIX_SOURCE 1	  	// posix compliant source
-
+#define _GARMIN_H
+//#define _POSIX_SOURCE 1	  	// posix compliant source
 
 #include "garmintypes.h"        // Garmin specific types, structs and ready commands
 #include <termios.h>

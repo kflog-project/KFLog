@@ -239,7 +239,7 @@ void RecorderDialog::__addFlightPage()
 void RecorderDialog::__addTaskPage()
 {
   taskPage = addPage(i18n("Task"), i18n("Task"),
-      KGlobal::instance()->iconLoader()->loadIcon("waypoint", KIcon::NoGroup,
+      KGlobal::instance()->iconLoader()->loadIcon("task", KIcon::NoGroup,
           KIcon::SizeLarge));
 
   QGridLayout* tLayout = new QGridLayout(taskPage, 13, 5, 10, 1);

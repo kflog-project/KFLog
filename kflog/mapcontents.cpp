@@ -2862,6 +2862,10 @@ bool MapContents::loadTask(QFile path)
         w->surface = nm.namedItem("Surface").toAttr().value().toInt();
         w->comment = nm.namedItem("Comment").toAttr().value();
 
+        if (w->runway == 0 && w->length == 0) {
+          w->runway = w->length = -1;
+        }
+        
         wpList.append(w);
       }
       f = new FlightTask(wpList, false, genTaskName());

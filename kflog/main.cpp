@@ -23,6 +23,7 @@
 #include <qtimer.h>
 
 #include "kflog.h"
+#include "kflogconfig.h"
 #include <kflogstartlogo.h>
 #include <mapconfig.h>
 #include <mapcontents.h>
@@ -116,9 +117,24 @@ int main(int argc, char *argv[])
       KConfig* config = KGlobal::config();
 
       QString waypointsOptionArg = args->getOption("waypoints");
-      if (waypointsOptionArg != ""){
+      if (!waypointsOptionArg.isEmpty()){
         warning("WaypointCatalog specified at startup : " + waypointsOptionArg );
-        kflog->slotSetWaypointCatalog( waypointsOptionArg);
+        kflog->slotSetWaypointCatalog(waypointsOptionArg);
+      }
+      else {
+        // read the user configuration
+        config->setGroup("Waypoints");
+        int useCatalog = config->readNumEntry("DefaultWaypointCatalog", 
+                                              KFLogConfig::LastUsed);
+        switch (useCatalog) {
+        case KFLogConfig::LastUsed:
+          // no break;
+        case KFLogConfig::Specific:
+          waypointsOptionArg = config->readEntry("DefaultCatalogName", QString::null);
+          if (!waypointsOptionArg.isEmpty()) {
+            kflog->slotSetWaypointCatalog(waypointsOptionArg);
+          } 
+        }
       }
 
       if (args->count()){
