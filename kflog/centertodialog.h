@@ -20,7 +20,7 @@
 
 #include <kdialogbase.h>
 
-#include <guicontrols/coordedit.h>
+#include "guicontrols/coordedit.h"
 /**
  * @short Dialog to enter the coordinates to center the map to
  *

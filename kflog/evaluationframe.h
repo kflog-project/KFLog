@@ -18,7 +18,7 @@
 #ifndef EVALUATIONFRAME_H
 #define EVALUATIONFRAME_H
 
-#include <evaluationview.h>
+#include "evaluationview.h"
 
 #include <qcheckbox.h>
 #include <qframe.h>

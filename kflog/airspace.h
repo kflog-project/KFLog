@@ -18,7 +18,7 @@
 #ifndef AIRSPACE_H
 #define AIRSPACE_H
 
-#include <lineelement.h>
+#include "lineelement.h"
 
 /**
  * This class is used for the several airspaces. The object can be

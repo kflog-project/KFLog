@@ -21,7 +21,7 @@
 #include <ktextbrowser.h>
 #include <qframe.h>
 
-#include <flighttask.h>
+#include "flighttask.h"
 class Flight;
 
 /**
