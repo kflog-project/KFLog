@@ -91,7 +91,7 @@ class Map : public QWidget
     /** */
     void changed(QSize);
     /** */
-    void showFlightPoint(const QPoint pos, const flightPoint& point);
+    void showFlightPoint(const QPoint pos, const struct flightPoint& point);
     /** */
     void showPoint(const QPoint pos);
     /** */
