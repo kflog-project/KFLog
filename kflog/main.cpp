@@ -24,10 +24,10 @@
 
 #include "kflog.h"
 #include "kflogconfig.h"
-#include <kflogstartlogo.h>
-#include <mapconfig.h>
-#include <mapcontents.h>
-#include <mapmatrix.h>
+#include "kflogstartlogo.h"
+#include "mapconfig.h"
+#include "mapcontents.h"
+#include "mapmatrix.h"
 
 /**
  * Contains all mapelements and takes control over drawing or printing

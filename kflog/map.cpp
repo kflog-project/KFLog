@@ -32,16 +32,16 @@
 #include <qtimer.h>
 #include <qwhatsthis.h>
 
-#include <airspace.h>
-#include <flight.h>
-#include <flightgroup.h>
-#include <kflog.h>
-#include <map.h>
-#include <mapcalc.h>
-#include <mapcontents.h>
-#include <mapmatrix.h>
-#include <singlepoint.h>
-#include <radiopoint.h>
+#include "airspace.h"
+#include "flight.h"
+#include "flightgroup.h"
+#include "kflog.h"
+#include "map.h"
+#include "mapcalc.h"
+#include "mapcontents.h"
+#include "mapmatrix.h"
+#include "singlepoint.h"
+#include "radiopoint.h"
 #include "waypoints.h"
 #include "waypointdialog.h"
 #include "resource.h"

@@ -16,10 +16,10 @@
 ***********************************************************************/
 
 #include "evaluationframe.h"
-#include <evaluationdialog.h>
-#include <flight.h>
-#include <mapcalc.h>
-#include <mapcontents.h>
+#include "evaluationdialog.h"
+#include "flight.h"
+#include "mapcalc.h"
+#include "mapcontents.h"
 
 #include <kconfig.h>
 #include <kglobal.h>

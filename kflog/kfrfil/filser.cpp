@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include <../airport.h>
+#include "../airport.h"
 #include "filser.h"
 
 #include <klocale.h>

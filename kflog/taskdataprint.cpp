@@ -17,8 +17,8 @@
 
 #include "taskdataprint.h"
 
-#include <config.h>
-#include <mapcalc.h>
+#include "config.h"
+#include "mapcalc.h"
 
 #include <kiconloader.h>
 #include <klocale.h>

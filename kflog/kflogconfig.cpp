@@ -22,11 +22,11 @@
 ***********************************************************************/
 
 #include "kflogconfig.h"
-#include <configdrawelement.h>
-#include <configprintelement.h>
-#include <mapcalc.h>
-#include <mapcontents.h>
-#include <mapdefaults.h>
+#include "configdrawelement.h"
+#include "configprintelement.h"
+#include "mapcalc.h"
+#include "mapcontents.h"
+#include "mapdefaults.h"
 
 #include <unistd.h>
 #include <pwd.h>
@@ -45,8 +45,8 @@
 #include <qlineedit.h>
 #include <qradiobutton.h>
 
-#include <guicontrols/coordedit.h>
-#include <contests.h>
+#include "guicontrols/coordedit.h"
+#include "contests.h"
 
 KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
   : KDialogBase(IconList, i18n("KFlog Setup"), Ok|Cancel, Ok,

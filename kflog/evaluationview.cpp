@@ -27,9 +27,9 @@
 #include <qlayout.h>
 
 #include "evaluationdialog.h"
-#include <flight.h>
-#include <resource.h>
-#include <mapcalc.h>
+#include "flight.h"
+#include "resource.h"
+#include "mapcalc.h"
 
 #define X_ABSTAND 100
 #define Y_ABSTAND 30

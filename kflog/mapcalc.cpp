@@ -16,7 +16,7 @@
 ***********************************************************************/
 
 #include <cmath>
-#include <mapcalc.h>
+#include "mapcalc.h"
 
 #include "mapmatrix.h"
 

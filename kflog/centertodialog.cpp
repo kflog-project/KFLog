@@ -16,7 +16,7 @@
 ***********************************************************************/
 
 #include "centertodialog.h"
-#include <mapcontents.h>
+#include "mapcontents.h"
 
 #include <klocale.h>
 

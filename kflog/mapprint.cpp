@@ -17,10 +17,10 @@
 
 #include "mapprint.h"
 
-#include <config.h>
-#include <flight.h>
-#include <mapcontents.h>
-#include <mapmatrix.h>
+#include "config.h"
+#include "flight.h"
+#include "mapcontents.h"
+#include "mapmatrix.h"
 //#include <mapprintdialogpage.h>
 
 #include <klocale.h>

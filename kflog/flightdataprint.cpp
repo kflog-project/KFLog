@@ -17,8 +17,8 @@
 
 #include "flightdataprint.h"
 
-#include <config.h>
-#include <mapcalc.h>
+#include "config.h"
+#include "mapcalc.h"
 
 #include <klocale.h>
 #include <kprinter.h>

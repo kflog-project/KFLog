@@ -27,7 +27,7 @@
 #include <qstring.h>
 #include <qtextstream.h>
 
-#include <../frstructs.h>
+#include "../frstructs.h"
 #include <termios.h>
 
 

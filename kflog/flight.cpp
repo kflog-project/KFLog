@@ -23,9 +23,9 @@
 
 #include "flight.h"
 
-#include <mapcalc.h>
-#include <mapmatrix.h>
-#include <optimizationwizard.h>
+#include "mapcalc.h"
+#include "mapmatrix.h"
+#include "optimizationwizard.h"
 
 //#include <kapp.h>
 //#include <kconfig.h>

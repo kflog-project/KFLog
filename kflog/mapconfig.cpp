@@ -21,9 +21,9 @@
 #include <kconfig.h>
 #include <kstddirs.h>
 
-#include <basemapelement.h>
-#include <flight.h>
-#include <mapdefaults.h>
+#include "basemapelement.h"
+#include "flight.h"
+#include "mapdefaults.h"
 
 #define READ_TOPO(a,b) \
   topographyColorList.append(new QColor(config->readColorEntry(a, new b)));

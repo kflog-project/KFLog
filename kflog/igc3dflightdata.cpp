@@ -26,9 +26,9 @@
 
 #include <qstring.h>
 
-#include <igc3dflightdata.h>
-#include <igc3dviewstate.h>
-#include <mapcalc.h>
+#include "igc3dflightdata.h"
+#include "igc3dviewstate.h"
+#include "mapcalc.h"
 
 //using namespace std;
 

@@ -17,7 +17,7 @@
 
 #include "isohypse.h"
 
-#include <mapmatrix.h>
+#include "mapmatrix.h"
 
 Isohypse::Isohypse(QPointArray pA, unsigned int elev, bool isV)
 : LineElement(0, BaseMapElement::Isohypse, pA, isV),

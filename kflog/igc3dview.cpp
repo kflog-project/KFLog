@@ -33,12 +33,12 @@
 
 // Application headers
 #include "igc3ddialog.h"
-#include <flight.h>
-#include <resource.h>
-#include <mapcalc.h>
-#include <igc3dpolyhedron.h>
-#include <igc3dviewstate.h>
-#include <mapcontents.h>
+#include "flight.h"
+#include "resource.h"
+#include "mapcalc.h"
+#include "igc3dpolyhedron.h"
+#include "igc3dviewstate.h"
+#include "mapcontents.h"
 
 
 #define X_ABSTAND 100

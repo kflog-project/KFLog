@@ -35,7 +35,7 @@
 #include <kconfig.h>
 #include <kglobal.h>
 
-#include <../airport.h>
+#include "../airport.h"
 
 extern int breakTransfer;
 char c36[] = "0123456789abcdefghijklmnopqrstuvwxyz";

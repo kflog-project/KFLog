@@ -17,9 +17,9 @@
 
 #include "mapcontrolview.h"
 
-#include <kflog.h>
-#include <mapcalc.h>
-#include <mapmatrix.h>
+#include "kflog.h"
+#include "mapcalc.h"
+#include "mapmatrix.h"
 
 #include <kiconloader.h>
 #include <klocale.h>

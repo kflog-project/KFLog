@@ -15,7 +15,7 @@
 **
 ***********************************************************************/
 
-#include <igc3dviewstate.h>
+#include "igc3dviewstate.h"
 #include <math.h>
 
 /**

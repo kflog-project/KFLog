@@ -17,8 +17,8 @@
 
 #include "olcdialog.h"
 
-#include <config.h>
-#include <mapcalc.h>
+#include "config.h"
+#include "mapcalc.h"
 
 #include <kconfig.h>
 #include <kiconloader.h>

@@ -17,7 +17,7 @@
 
 #include "configdrawelement.h"
 #include "kflogconfig.h"
-#include <mapdefaults.h>
+#include "mapdefaults.h"
 
 #include <kiconloader.h>
 #include <klocale.h>

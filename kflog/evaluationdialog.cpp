@@ -16,9 +16,9 @@
 ***********************************************************************/
 
 #include "evaluationdialog.h"
-#include <evaluationframe.h>
-#include <evaluationview.h>
-#include <mapcontents.h>
+#include "evaluationframe.h"
+#include "evaluationview.h"
+#include "mapcontents.h"
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -30,8 +30,8 @@
 #include <qsplitter.h>
 #include <qvaluelist.h>
 
-#include <flight.h>
-#include <mapcalc.h>
+#include "flight.h"
+#include "mapcalc.h"
 #include <klocale.h>
 
 EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[]) : QWidget(parent,name)

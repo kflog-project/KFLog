@@ -27,7 +27,7 @@
 #include <qvaluelist.h>
 
 // Application headers
-#include <mapcalc.h>
+#include "mapcalc.h"
 #include <klocale.h>
 
 Igc3DDialog::Igc3DDialog(QWidget *parent)

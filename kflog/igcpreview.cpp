@@ -23,7 +23,7 @@
 #include <qlayout.h>
 #include <qtextstream.h>
 
-#include <mapcalc.h>
+#include "mapcalc.h"
 
 IGCPreview::IGCPreview(QWidget* parent)
   : KPreviewWidgetBase(parent, "IGC-PreviewWidget")

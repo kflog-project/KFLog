@@ -15,7 +15,7 @@
 **
 ***********************************************************************/
 
-#include <../airport.h>
+#include "../airport.h"
 
 #include "volkslogger.h"
 #include "vlapi2.h"

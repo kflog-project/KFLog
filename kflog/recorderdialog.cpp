@@ -35,9 +35,9 @@
 #include <qstringlist.h>
 #include <qwhatsthis.h>
 
-#include <mapcalc.h>
-#include <mapcontents.h>
-#include <airport.h>
+#include "mapcalc.h"
+#include "mapcontents.h"
+#include "airport.h"
 
 
 #define CHECK_ERROR_EXIT  error = (char *)dlerror(); \
