@@ -42,6 +42,7 @@ class KFLogStartLogo;
 class Waypoints;
 class Tasks;
 class EvaluationDialog;
+class TopoLegend;
 
 /**
  * Mainwindow for KFLog.
@@ -175,6 +176,10 @@ class KFLogApp : public KDockMainWindow
    */
   void slotToggleTasksDock();
   /**
+   * Shows or hides the legend-widget.
+   */
+  void slotToggleLegendDock();
+  /**
    * Opens a dialog for configuration of the toolbar.
    */
   void slotConfigureToolbars();
@@ -246,6 +251,11 @@ class KFLogApp : public KDockMainWindow
    */
   void slotHideWaypointsDock();
   /**
+   * Hides the Legend-widget. Called, when the user has closed or
+   * undocked the widget.
+   */
+  void slotHideLegendDock();
+  /**
    * Hides the Tasks-widget. Called, when the user has closed or
    * undocked the widget.
    */
@@ -309,10 +319,18 @@ class KFLogApp : public KDockMainWindow
    */
   KDockWidget* tasksDock;
   /**
+   * Dockwidget to handle the legend-widget.
+   *
+   * @see tasks
+   */
+  KDockWidget* legendDock;
+  /**
    * The mapcontrol-widget. Embedded in mapControlDock
    *
    * @see mapControlDock
    */
+  TopoLegend* legend;
+  
   MapControlView* mapControl;
   /**
    * The dataview-widget. Embedded in dataViewDock
@@ -412,6 +430,10 @@ class KFLogApp : public KDockMainWindow
    * Action to handle the map.
    */
   KToggleAction* viewMap;
+  /**
+   * Action to handle the legend.
+   */
+  KToggleAction* viewLegend;
   /**
    * Action to show the evaluationdialog.
    */

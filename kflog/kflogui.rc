@@ -15,6 +15,7 @@
    <Action name="toggle_data_view" />
    <Action name="toggle_map_control" />
    <Action name="toggle_map" />
+   <Action name="toggle_legend" />
    <Action name="waypoints" />
    <Action name="tasks" />
    <Action name="reset_confirmations" />

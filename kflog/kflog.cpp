@@ -62,6 +62,7 @@
 #include <igc3ddialog.h>
 #include "basemapelement.h"
 #include "airport.h"
+#include "topolegend.h"
 
 #define STATUS_LABEL(a,b,c) \
   a = new KStatusBarLabel( "", 0, statusBar() ); \
@@ -268,6 +269,10 @@ void KFLogApp::initActions()
       CTRL+Key_T, this, SLOT(slotToggleTasksDock()), actionCollection(),
       "tasks");
 
+  viewLegend = new KToggleAction(i18n("Show legend"), "legend",
+      CTRL+Key_L, this, SLOT(slotToggleLegendDock()), actionCollection(),
+      "toggle_legend");
+
   flightOptimization = new KAction(i18n("Optimize"), "wizard", 0,
       this, SLOT(slotOptimizeFlight()), actionCollection(), "optimize_flight");
 
@@ -420,7 +425,8 @@ void KFLogApp::initView()
   mapControlDock = createDockWidget("Map-Control", 0, 0, i18n("Map-Control"));
   waypointsDock = createDockWidget("Waypoints", 0, 0, i18n("Waypoints"));
   tasksDock = createDockWidget("Tasks", 0, 0, i18n("Tasks"));
-
+  legendDock = createDockWidget("Legend", 0, 0, i18n("Legend"));
+  
   extern MapContents _globalMapContents;
 
   connect(mapControlDock, SIGNAL(iMBeingClosed()),
@@ -443,14 +449,18 @@ void KFLogApp::initView()
       SLOT(slotHideTasksDock()));
   connect(tasksDock, SIGNAL(hasUndocked()),
       SLOT(slotHideTasksDock()));
+  connect(legendDock, SIGNAL(iMBeingClosed()),
+      SLOT(slotHideLegendDock()));
+  connect(legendDock, SIGNAL(hasUndocked()),
+      SLOT(slotHideLegendDock()));
 
   setView(mapViewDock);
   setMainDockWidget(mapViewDock);
 
   QFrame* mapViewFrame = new QFrame(mapViewDock);
   map = new Map(this, mapViewFrame, "KFLog-Map");
-
-  QVBoxLayout* mapLayout = new QVBoxLayout(mapViewFrame,2,1);
+ 
+  QHBoxLayout* mapLayout = new QHBoxLayout(mapViewFrame,2,1);
   mapLayout->addWidget(map);
   mapLayout->activate();
 
@@ -469,14 +479,19 @@ void KFLogApp::initView()
   tasks = new Tasks(tasksDock);
   tasksDock->setWidget(tasks);
 
-  /* Argumente für manualDock():
+  legend = new TopoLegend(legendDock);
+  legendDock->setWidget(legend);
+  legend->ensureLevelVisible(1);
+  
+  /* Arguments for manualDock():
    * dock target, dock side, relation target/this (in percent)
    */
   dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );
   mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 75 );
   waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 71);
   tasksDock->manualDock(waypointsDock, KDockWidget::DockRight, 50);
-
+  legendDock->manualDock(mapViewDock, KDockWidget::DockRight, 50);
+  
   connect(map, SIGNAL(changed(QSize)), mapControl,
       SLOT(slotShowMapData(QSize)));
   connect(map, SIGNAL(waypointSelected(Waypoint *)), waypoints,
@@ -780,6 +795,8 @@ void KFLogApp::slotHideWaypointsDock() { viewWaypoints->setChecked(false); }
 
 void KFLogApp::slotHideTasksDock() { viewTasks->setChecked(false); }
 
+void KFLogApp::slotHideLegendDock() { viewLegend->setChecked(false); }
+
 void KFLogApp::slotCheckDockWidgetStatus()
 {
   viewMapControl->setChecked(mapControlDock->isVisible());
@@ -787,6 +804,7 @@ void KFLogApp::slotCheckDockWidgetStatus()
   viewData->setChecked(dataViewDock->isVisible());
   viewWaypoints->setChecked(waypointsDock->isVisible());
   viewTasks->setChecked(tasksDock->isVisible());
+  viewLegend->setChecked(legendDock->isVisible());
 }
 
 void KFLogApp::slotToggleDataView()  { dataViewDock->changeHideShowState(); }
@@ -798,6 +816,8 @@ void KFLogApp::slotToggleMap() { mapViewDock->changeHideShowState(); }
 void KFLogApp::slotToggleWaypointsDock() { waypointsDock->changeHideShowState(); }
 
 void KFLogApp::slotToggleTasksDock() { tasksDock->changeHideShowState(); }
+
+void KFLogApp::slotToggleLegendDock() { legendDock->changeHideShowState(); }
 
 void KFLogApp::slotSelectFlightData(int id)
 {
