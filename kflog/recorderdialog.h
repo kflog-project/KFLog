@@ -170,6 +170,7 @@ class RecorderDialog : public KDialogBase
     int colGlider;
     int colFirstPoint;
     int colLastPoint;
+    int colDuration;
     /** */
     int declarationColID;
     int declarationColName;

@@ -381,6 +381,7 @@ void RecorderDialog::__addFlightPage()
   colGlider = flightList->addColumn(i18n("Glider"));
   colFirstPoint = flightList->addColumn(i18n("first Point"));
   colLastPoint = flightList->addColumn(i18n("last Point"));
+  colDuration = flightList->addColumn(i18n("Duration"));
 
 //  flightList->setColumnAlignment(colID, AlignRight);
 
@@ -757,12 +758,12 @@ void RecorderDialog::slotReadFlightList()
     item->setText(colDate, day);
     item->setText(colPilot, e->pilotName);
     item->setText(colGlider, e->gliderID);
-    QTime time (e->firstTime.tm_hour, e->firstTime.tm_min,
-                 e->firstTime.tm_sec);
+    QTime time (e->firstTime.tm_hour, e->firstTime.tm_min,e->firstTime.tm_sec);
     item->setText(colFirstPoint, KGlobal::locale()->formatTime(time, true));
-    time = QTime(e->lastTime.tm_hour, e->lastTime.tm_min,
-                 e->lastTime.tm_sec);
+    time = QTime(e->lastTime.tm_hour, e->lastTime.tm_min,e->lastTime.tm_sec);
     item->setText(colLastPoint, KGlobal::locale()->formatTime(time, true));
+    time = QTime().addSecs (e->duration);
+    item->setText(colDuration, KGlobal::locale()->formatTime(time, true));
   }
   QApplication::restoreOverrideCursor();
 }
