@@ -1030,3 +1030,85 @@
 
 #define PRINT_TMZ_BRUSH_STYLE_1 Qt::NoBrush
 #define PRINT_TMZ_BRUSH_STYLE_2 Qt::NoBrush
+
+// [FAI Area < 500]
+#define FAI_LOW_500_PEN_1 4
+#define FAI_LOW_500_PEN_2 3
+#define FAI_LOW_500_PEN_3 3
+#define FAI_LOW_500_PEN_4 2
+
+#define FAI_LOW_500_PEN_STYLE_1 Qt::SolidLine
+#define FAI_LOW_500_PEN_STYLE_2 Qt::SolidLine
+#define FAI_LOW_500_PEN_STYLE_3 Qt::SolidLine
+#define FAI_LOW_500_PEN_STYLE_4 Qt::SolidLine
+
+#define FAI_LOW_500_COLOR_1 QColor(255,0,0)
+#define FAI_LOW_500_COLOR_2 QColor(255,0,0)
+#define FAI_LOW_500_COLOR_3 QColor(255,0,0)
+#define FAI_LOW_500_COLOR_4 QColor(255,0,0)
+
+#define FAI_LOW_500_BRUSH_COLOR_1 QColor(255,0,0)
+#define FAI_LOW_500_BRUSH_COLOR_2 QColor(255,0,0)
+#define FAI_LOW_500_BRUSH_COLOR_3 QColor(255,0,0)
+#define FAI_LOW_500_BRUSH_COLOR_4 QColor(255,0,0)
+
+#define FAI_LOW_500_BRUSH_STYLE_1 Qt::Dense5Pattern
+#define FAI_LOW_500_BRUSH_STYLE_2 Qt::Dense5Pattern
+#define FAI_LOW_500_BRUSH_STYLE_3 Qt::Dense5Pattern
+#define FAI_LOW_500_BRUSH_STYLE_4 Qt::Dense5Pattern
+
+#define PRINT_FAI_LOW_500_PEN_1 4
+#define PRINT_FAI_LOW_500_PEN_2 3
+
+#define PRINT_FAI_LOW_500_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_FAI_LOW_500_PEN_STYLE_2 Qt::SolidLine
+
+#define PRINT_FAI_LOW_500_COLOR_1 QColor(255,0,0)
+#define PRINT_FAI_LOW_500_COLOR_2 QColor(255,0,0)
+
+#define PRINT_FAI_LOW_500_BRUSH_COLOR_1 QColor(255,0,0)
+#define PRINT_FAI_LOW_500_BRUSH_COLOR_2 QColor(255,0,0)
+
+#define PRINT_FAI_LOW_500_BRUSH_STYLE_1 Qt::NoBrush
+#define PRINT_FAI_LOW_500_BRUSH_STYLE_2 Qt::NoBrush
+
+// [FAI Area >= 500]
+#define FAI_HIGH_500_PEN_1 4
+#define FAI_HIGH_500_PEN_2 3
+#define FAI_HIGH_500_PEN_3 3
+#define FAI_HIGH_500_PEN_4 2
+
+#define FAI_HIGH_500_PEN_STYLE_1 Qt::SolidLine
+#define FAI_HIGH_500_PEN_STYLE_2 Qt::SolidLine
+#define FAI_HIGH_500_PEN_STYLE_3 Qt::SolidLine
+#define FAI_HIGH_500_PEN_STYLE_4 Qt::SolidLine
+
+#define FAI_HIGH_500_COLOR_1 QColor(0,255,0)
+#define FAI_HIGH_500_COLOR_2 QColor(0,255,0)
+#define FAI_HIGH_500_COLOR_3 QColor(0,255,0)
+#define FAI_HIGH_500_COLOR_4 QColor(0,255,0)
+
+#define FAI_HIGH_500_BRUSH_COLOR_1 QColor(0,255,0)
+#define FAI_HIGH_500_BRUSH_COLOR_2 QColor(0,255,0)
+#define FAI_HIGH_500_BRUSH_COLOR_3 QColor(0,255,0)
+#define FAI_HIGH_500_BRUSH_COLOR_4 QColor(0,255,0)
+
+#define FAI_HIGH_500_BRUSH_STYLE_1 Qt::Dense5Pattern
+#define FAI_HIGH_500_BRUSH_STYLE_2 Qt::Dense5Pattern
+#define FAI_HIGH_500_BRUSH_STYLE_3 Qt::Dense5Pattern
+#define FAI_HIGH_500_BRUSH_STYLE_4 Qt::Dense5Pattern
+
+#define PRINT_FAI_HIGH_500_PEN_1 4
+#define PRINT_FAI_HIGH_500_PEN_2 3
+
+#define PRINT_FAI_HIGH_500_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_FAI_HIGH_500_PEN_STYLE_2 Qt::SolidLine
+
+#define PRINT_FAI_HIGH_500_COLOR_1 QColor(0,255,0)
+#define PRINT_FAI_HIGH_500_COLOR_2 QColor(0,255,0)
+
+#define PRINT_FAI_HIGH_500_BRUSH_COLOR_1 QColor(0,255,0)
+#define PRINT_FAI_HIGH_500_BRUSH_COLOR_2 QColor(0,255,0)
+
+#define PRINT_FAI_HIGH_500_BRUSH_STYLE_1 Qt::NoBrush
+#define PRINT_FAI_HIGH_500_BRUSH_STYLE_2 Qt::NoBrush

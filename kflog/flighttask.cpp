@@ -45,7 +45,7 @@ FlightTask::FlightTask(QString fName)
   : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(false),
     flightType(FlightTask::NotSet),
-    __planningType(RouteBased),
+    __planningType(Route),
     __planningDirection(leftOfRoute)
 {
 warning("FlightTask(QString fName)");
@@ -58,7 +58,7 @@ FlightTask::FlightTask(QList<wayPoint> wpL, bool isO, QString fName)
   : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(isO),
     wpList(wpL),
-    __planningType(RouteBased),
+    __planningType(Route),
     __planningDirection(leftOfRoute)
 {
 warning("FlightTask(QList<wayPoint> wpL, bool isO, QString fName)");
@@ -315,7 +315,7 @@ void FlightTask::__setWaypointType()
   }
 
   // Distances
-  for(unsigned int n = 1; n  < cnt; n++)
+  for(int n = 1; n  < cnt; n++)
     {
       wpList.at(n)->distance = dist(wpList.at(n-1),wpList.at(n));
       wpList.at(n)->type = FlightTask::FreeP;
@@ -329,7 +329,7 @@ void FlightTask::__setWaypointType()
   wpList.at(cnt - 2)->type = FlightTask::End;
   wpList.at(cnt - 1)->type = FlightTask::Landing;
 
-  for(unsigned int n = 2; n + 2 < cnt; n++) {
+  for(int n = 2; n + 2 < cnt; n++) {
     wpList.at(n)->type = FlightTask::RouteP;
   }
 }
@@ -556,7 +556,7 @@ void FlightTask::drawMapElement(QPainter* targetPainter,
     }
 
   // Area based planning
-  if (getPlanningType() == AreaBased && wpList.count() > 3) {
+  if (getPlanningType() == FAIArea && wpList.count() > 3) {
     targetPainter->setBrush(QBrush::NoBrush);
     maskPainter->setBrush(QBrush::NoBrush);
     maskPainter->setPen(QPen(Qt::color1, 2));
@@ -569,15 +569,15 @@ void FlightTask::drawMapElement(QPainter* targetPainter,
       else {
         targetPainter->setPen(QPen(Qt::green, 2));
       }
-      for (i = 1; i < sect->pos.count(); i++) {
-        tempP = glMapMatrix->map(sect->pos.at(i - 1));
-        targetPainter->drawLine(tempP, glMapMatrix->map(sect->pos.at(i)));
-        maskPainter->drawLine(tempP, glMapMatrix->map(sect->pos.at(i)));
-        bBoxTask.setLeft(MIN(tempP.x(), bBoxTask.left()));
-        bBoxTask.setTop(MAX(tempP.y(), bBoxTask.top()));
-        bBoxTask.setRight(MAX(tempP.x(), bBoxTask.right()));
-        bBoxTask.setBottom(MIN(tempP.y(), bBoxTask.bottom()));
-      }
+//      for (i = 1; i < sect->pos.count(); i++) {
+//        tempP = glMapMatrix->map(sect->pos.at(i - 1));
+//        targetPainter->drawLine(tempP, glMapMatrix->map(sect->pos.at(i)));
+//        maskPainter->drawLine(tempP, glMapMatrix->map(sect->pos.at(i)));
+//        bBoxTask.setLeft(MIN(tempP.x(), bBoxTask.left()));
+//        bBoxTask.setTop(MAX(tempP.y(), bBoxTask.top()));
+//        bBoxTask.setRight(MAX(tempP.x(), bBoxTask.right()));
+//        bBoxTask.setBottom(MIN(tempP.y(), bBoxTask.bottom()));
+//      }
     }
   }    
 }
@@ -718,7 +718,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
     }
 
   // Area based planning
-  if (getPlanningType() == AreaBased && wpList.count() > 3) {
+  if (getPlanningType() == FAIArea && wpList.count() > 3) {
     targetPainter->setBrush(QBrush::NoBrush);
 
     for (loop = 0; loop < FAISectList.count(); loop++) {
@@ -729,10 +729,10 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
       else {
         targetPainter->setPen(QPen(Qt::green, 2));
       }
-      for (i = 1; i < sect->pos.count(); i++) {
-        tempP = glMapMatrix->print(*sect->pos.at(i - 1));
-        targetPainter->drawLine(tempP, glMapMatrix->print(*sect->pos.at(i)));
-      }
+//      for (i = 1; i < sect->pos.count(); i++) {
+//        tempP = glMapMatrix->print(*sect->pos.at(i - 1));
+//        targetPainter->drawLine(tempP, glMapMatrix->print(*sect->pos.at(i)));
+//      }
     }
   }
 }
@@ -1076,7 +1076,7 @@ QString FlightTask::getTaskDistanceString()
   if(flightType == FlightTask::NotSet)  return "--";
 
   QString distString;
-  if (getPlanningType() == RouteBased) {
+  if (getPlanningType() == Route) {
     distString.sprintf("%.2f km", distance_task);
   }
   else {
@@ -1113,70 +1113,10 @@ void FlightTask::setWaypointList(QList<wayPoint> wpL)
   for(unsigned int loop = 0; loop < wpList.count(); loop++)
       __sectorangle(loop, false);
 
-  if (getPlanningType() == AreaBased) {
+  if (getPlanningType() == FAIArea) {
     calcFAIArea();
   }
 }
-/** No descriptions */
-//QString FlightTask::getFlightInfoString()
-//{
-//  QString htmlText;
-//
-//  htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-//      <TR><TD>" + i18n("Task") + ":</TD><TD><A HREF=EDITTASK>" +
-//      getFileName() +  + "</A></TD></TR>\
-//      </TABLE><HR NOSHADE>";
-//
-//  QList<wayPoint> wpList = getWPList();
-//
-//  if(wpList.count()) {
-//    htmlText += "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-//      <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
-//       i18n("Waypoints") + ":</B></TD></TR>";
-//
-//    for(unsigned int loop = 0; loop < wpList.count(); loop++) {
-//      if(loop > 0) {
-//        QString tmp;
-//        tmp.sprintf("%.2f km",wpList.at(loop)->distance);
-//
-//        htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
-//          tmp + "</TD></TR>";
-//      }
-//
-//      QString idString;
-//      idString.sprintf("%d", loop);
-//
-//      htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
-//        wpList.at(loop)->name + "</A></TD>\
-//        <TR><TD WIDTH=15></TD>\
-//        <TD>" + printPos(wpList.at(loop)->origP.lat()) + "</TD>\
-//        <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.lon(), false) +
-//        "</TD></TR>";
-//    }
-//
-//    htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
-//      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + getTotalDistanceString() + "</TD></TR>\
-//      </TABLE>";
-//  }
-//  else {
-//    htmlText += i18n(
-//      "You can select waypoints with the left mouse button."
-//      "You can also select free waypoints by clicking anywhere in the map."
-//      "<br><br>"
-//      "When you press &lt;STRG&gt; and click with the left mouse button on a taskpoint,"
-//      "it will be deleted.<br>"
-//      "You can compute the task up to your current mouse position by pressing &lt;SHIFT&gt;."
-//      "<br>"
-//      "Finish the task with the rigth mouse button.<br>"
-//      "It's possible to move and delete taskpoints from the finished task."
-//      );
-//
-//  }
-//
-//  return htmlText;
-//}
-
-
 
 void FlightTask::__setDMSTPoints()
 {
@@ -1374,7 +1314,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
     }
 
   // Area based planning
-  if (getPlanningType() == AreaBased && wpList.count() > 3) {
+  if (getPlanningType() == FAIArea && wpList.count() > 3) {
     targetPainter->setBrush(QBrush::NoBrush);
 
     for (loop = 0; loop < FAISectList.count(); loop++) {
@@ -1385,10 +1325,10 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
       else {
         targetPainter->setPen(QPen(Qt::green, 2));
       }
-      for (i = 1; i < sect->pos.count(); i++) {
-        tempP = glMapMatrix->print(sect->pos.at(i - 1)->lat(), sect->pos.at(i - 1)->lon(), dX, dY);
-        targetPainter->drawLine(tempP, glMapMatrix->print(sect->pos.at(i - 1)->lat(), sect->pos.at(i - 1)->lon(), dX, dY));
-      }
+//      for (i = 1; i < sect->pos.count(); i++) {
+//        tempP = glMapMatrix->print(sect->pos.at(i - 1)->lat(), sect->pos.at(i - 1)->lon(), dX, dY);
+//        targetPainter->drawLine(tempP, glMapMatrix->print(sect->pos.at(i - 1)->lat(), sect->pos.at(i - 1)->lon(), dX, dY));
+//      }
     }
   }
 }
@@ -1397,7 +1337,7 @@ void FlightTask::setPlanningType(int type)
 {
   __planningType = type;
   __setWaypointType();
-  if (getPlanningType() == AreaBased) {
+  if (getPlanningType() == FAIArea) {
     calcFAIArea();
   }
 }
@@ -1405,7 +1345,7 @@ void FlightTask::setPlanningType(int type)
 void FlightTask::setPlanningDirection(int dir)
 {
   __planningDirection = dir;
- if (getPlanningType() == AreaBased) {
+ if (getPlanningType() == FAIArea) {
     calcFAIArea();
   }
 }
@@ -1517,14 +1457,14 @@ void FlightTask::calcFAISector(double leg, double legBearing, double from, doubl
 
   if (getPlanningDirection() & leftOfRoute) {
     sect1 = new faiAreaSector;
-    sect1->pos.setAutoDelete(true);
+//    sect1->pos.setAutoDelete(true);
     sect1->dist = dist;
     FAISectList.append(sect1);
   }
 
   if (getPlanningDirection() & rightOfRoute) {
     sect2 = new faiAreaSector;
-    sect2->pos.setAutoDelete(true);
+//    sect2->pos.setAutoDelete(true);
     sect2->dist = dist;
     FAISectList.append(sect2);
   }
@@ -1542,7 +1482,7 @@ void FlightTask::calcFAISector(double leg, double legBearing, double from, doubl
         p = new WGSPoint();
         *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing + w, b));
         // append point to current sector
-        sect1->pos.append(p);
+//        sect1->pos.append(p);
       }
 
       if (getPlanningDirection() & rightOfRoute) {
@@ -1550,7 +1490,7 @@ void FlightTask::calcFAISector(double leg, double legBearing, double from, doubl
         p = new WGSPoint();
         *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing - w, b));
         // append point to current sector
-        sect2->pos.append(p);
+//        sect2->pos.append(p);
       }
     }
   }
@@ -1573,10 +1513,10 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
 
   if (getPlanningDirection() & leftOfRoute) {
     sect1 = new faiAreaSector;
-    sect1->pos.setAutoDelete(true);
+//    sect1->pos.setAutoDelete(true);
     sect1->dist = dist;
     sect3 = new faiAreaSector;
-    sect3->pos.setAutoDelete(true);
+//    sect3->pos.setAutoDelete(true);
     sect3->dist = dist;
     FAISectList.append(sect1);
     FAISectList.append(sect3);
@@ -1584,10 +1524,10 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
 
   if (getPlanningDirection() & rightOfRoute) {
     sect2 = new faiAreaSector;
-    sect2->pos.setAutoDelete(true);
+//    sect2->pos.setAutoDelete(true);
     sect2->dist = dist;
     sect4 = new faiAreaSector;
-    sect4->pos.setAutoDelete(true);
+//    sect4->pos.setAutoDelete(true);
     sect4->dist = dist;
     FAISectList.append(sect2);
     FAISectList.append(sect4);
@@ -1617,13 +1557,13 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
         p = new WGSPoint();
         *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing + w, b));
         // append point to current sector
-        sect1->pos.append(p);
+//        sect1->pos.append(p);
 
         w = angle(leg, c, b);
         p = new WGSPoint();
         *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing + w, c));
         // append point to current sector
-        sect3->pos.append(p);
+//        sect3->pos.append(p);
       }
 
       if (getPlanningDirection() & rightOfRoute) {
@@ -1631,13 +1571,13 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
         p = new WGSPoint();
         *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing - w, b));
         // append point to current sector
-        sect2->pos.append(p);
+//        sect2->pos.append(p);
 
         w = angle(leg, c, b);
         p = new WGSPoint();
         *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing - w, c));
         // append point to current sector
-        sect4->pos.append(p);
+//        sect4->pos.append(p);
       }
     }
   }

@@ -87,6 +87,10 @@ class RecorderDialog : public KDialogBase
     void __addWaypointPage();
     /** */
     void fillTaskList();
+  /** No descriptions */
+  void __addConfigPage();
+  /** No descriptions */
+  void __addPilotPage();
     /** */
     QFrame* flightPage;
     /** */
@@ -97,6 +101,10 @@ class RecorderDialog : public KDialogBase
     QFrame* taskPage;
     /** */
     QFrame* declarationPage;
+    /** */
+    QFrame* pilotPage;
+    /** */
+    QFrame* configPage;
     /** */
     KConfig* config;
     /** */
@@ -165,8 +173,14 @@ class RecorderDialog : public KDialogBase
     KLineEdit* compClass;
     KLineEdit* compID;
     KComboBox* taskSelection;
+  /**  */
+  bool isConnected;
   private slots:
     void slotSwitchTask(int idx);
+  /** Enable/Disable pages when not connected to a recorder */
+  void slotEnablePages();
+  /** No descriptions */
+  void slotRecorderTypeChanged(const QString &name);
 signals: // Signals
   /** No descriptions */
   void addCatalog(WaypointCatalog *w);

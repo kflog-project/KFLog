@@ -46,7 +46,7 @@ class ConfigDrawElement : public QFrame
     enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
         AirA, AirB, AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
         LowFlight, Restricted, TMZ, Forest, Trail, Railway_D, Aerial_Cable, River_T,
-        Glacier, PackIce};
+        Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500};
 
   public slots:
     /** */
@@ -161,6 +161,11 @@ class ConfigDrawElement : public QFrame
     QList<QBrush> glacierBrushList;
     QList<QBrush> packiceBrushList;
 
+    QList<QPen> faiAreaLow500PenList;
+    QList<QBrush> faiAreaLow500BrushList;
+    QList<QPen> faiAreaHigh500PenList;
+    QList<QBrush> faiAreaHigh500BrushList;
+
     bool* airABorder;
     bool* airBBorder;
     bool* airCBorder;
@@ -196,6 +201,9 @@ class ConfigDrawElement : public QFrame
     bool* forestBorder;
     bool* glacierBorder;
     bool* packiceBorder;
+
+    bool* faiAreaLow500Border;
+    bool* faiAreaHigh500Border;
 
     int oldElement;
     int currentElement;

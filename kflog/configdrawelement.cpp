@@ -247,6 +247,9 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
   glacierBorder = new bool[4];
   packiceBorder = new bool[4];
 
+  faiAreaLow500Border = new bool[4];
+  faiAreaHigh500Border = new bool[4];
+    
   airAPenList.setAutoDelete(true);
   airABrushList.setAutoDelete(true);
   airBPenList.setAutoDelete(true);
@@ -292,6 +295,11 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
   glacierBrushList.setAutoDelete(true);
   packiceBrushList.setAutoDelete(true);
 
+  faiAreaLow500PenList.setAutoDelete(true);
+  faiAreaLow500BrushList.setAutoDelete(true);
+  faiAreaHigh500PenList.setAutoDelete(true);
+  faiAreaHigh500BrushList.setAutoDelete(true);
+  
   config->setGroup("Trail");
   READ_PEN(trailPenList, TRAIL_COLOR_1, TRAIL_COLOR_2, TRAIL_COLOR_3, TRAIL_COLOR_4,
         TRAIL_PEN_1, TRAIL_PEN_2, TRAIL_PEN_3, TRAIL_PEN_4,
@@ -531,6 +539,24 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
         TMZ_BRUSH_STYLE_2, TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4)
   READ_BORDER(tmzBorder);
 
+  config->setGroup("FAIAreaLow500");
+  READ_PEN(faiAreaLow500PenList, FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
+        FAI_LOW_500_PEN_1, FAI_LOW_500_PEN_2, FAI_LOW_500_PEN_3, FAI_LOW_500_PEN_4,
+        FAI_LOW_500_PEN_STYLE_1, FAI_LOW_500_PEN_STYLE_2, FAI_LOW_500_PEN_STYLE_3, FAI_LOW_500_PEN_STYLE_4)
+  READ_BRUSH(faiAreaLow500BrushList, FAI_LOW_500_BRUSH_COLOR_1, FAI_LOW_500_BRUSH_COLOR_2,
+        FAI_LOW_500_BRUSH_COLOR_3, FAI_LOW_500_BRUSH_COLOR_4, FAI_LOW_500_BRUSH_STYLE_1,
+        FAI_LOW_500_BRUSH_STYLE_2, FAI_LOW_500_BRUSH_STYLE_3, FAI_LOW_500_BRUSH_STYLE_4)
+  READ_BORDER(faiAreaLow500Border);
+
+  config->setGroup("FAIAreaHigh500");
+  READ_PEN(faiAreaHigh500PenList, FAI_HIGH_500_COLOR_1, FAI_HIGH_500_COLOR_2, FAI_HIGH_500_COLOR_3, FAI_HIGH_500_COLOR_4,
+        FAI_HIGH_500_PEN_1, FAI_HIGH_500_PEN_2, FAI_HIGH_500_PEN_3, FAI_HIGH_500_PEN_4,
+        FAI_HIGH_500_PEN_STYLE_1, FAI_HIGH_500_PEN_STYLE_2, FAI_HIGH_500_PEN_STYLE_3, FAI_HIGH_500_PEN_STYLE_4)
+  READ_BRUSH(faiAreaHigh500BrushList, FAI_HIGH_500_BRUSH_COLOR_1, FAI_HIGH_500_BRUSH_COLOR_2,
+        FAI_HIGH_500_BRUSH_COLOR_3, FAI_HIGH_500_BRUSH_COLOR_4, FAI_HIGH_500_BRUSH_STYLE_1,
+        FAI_HIGH_500_BRUSH_STYLE_2, FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4)
+  READ_BORDER(faiAreaHigh500Border);
+
   config->setGroup(0);
 
   border1 = new QCheckBox(i18n("threshold #1"), parent);
@@ -673,6 +699,10 @@ void ConfigDrawElement::slotOk()
   WRITE_BRUSH("Glacier", glacierBrushList, glacierPenList, glacierBorder);
 
   WRITE_BRUSH("Pack Ice", packiceBrushList, packicePenList, packiceBorder);
+
+  WRITE_BRUSH("FAIAreaLow500", faiAreaLow500BrushList, faiAreaLow500PenList, faiAreaLow500Border);
+
+  WRITE_BRUSH("FAIAreaHigh500", faiAreaHigh500BrushList, faiAreaHigh500PenList, faiAreaHigh500Border);
 
   config->sync();
   config->setGroup(0);
@@ -850,6 +880,22 @@ void ConfigDrawElement::slotDefaultElements()
       TMZ_BRUSH_STYLE_1, TMZ_BRUSH_STYLE_2,
       TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4)
 
+  DEFAULT_PEN_BRUSH(faiAreaLow500PenList, faiAreaLow500Border, faiAreaLow500BrushList,
+      FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
+      FAI_LOW_500_PEN_1, FAI_LOW_500_PEN_2, FAI_LOW_500_PEN_3, FAI_LOW_500_PEN_4,
+      FAI_LOW_500_BRUSH_COLOR_1, FAI_LOW_500_BRUSH_COLOR_2,
+      FAI_LOW_500_BRUSH_COLOR_3, FAI_LOW_500_BRUSH_COLOR_4,
+      FAI_LOW_500_BRUSH_STYLE_1, FAI_LOW_500_BRUSH_STYLE_2,
+      FAI_LOW_500_BRUSH_STYLE_3, FAI_LOW_500_BRUSH_STYLE_4)
+
+  DEFAULT_PEN_BRUSH(faiAreaHigh500PenList, faiAreaHigh500Border, faiAreaHigh500BrushList,
+      FAI_HIGH_500_COLOR_1, FAI_HIGH_500_COLOR_2, FAI_HIGH_500_COLOR_3, FAI_HIGH_500_COLOR_4,
+      FAI_HIGH_500_PEN_1, FAI_HIGH_500_PEN_2, FAI_HIGH_500_PEN_3, FAI_HIGH_500_PEN_4,
+      FAI_HIGH_500_BRUSH_COLOR_1, FAI_HIGH_500_BRUSH_COLOR_2,
+      FAI_HIGH_500_BRUSH_COLOR_3, FAI_HIGH_500_BRUSH_COLOR_4,
+      FAI_HIGH_500_BRUSH_STYLE_1, FAI_HIGH_500_BRUSH_STYLE_2,
+      FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4)
+
   oldElement = -1;
   slotSelectElement(currentElement);
 }
@@ -957,6 +1003,14 @@ void ConfigDrawElement::slotSelectElement(int elementID)
         SAVE_PEN(packicePenList, packiceBorder);
         SAVE_BRUSH(packiceBrushList);
         break;
+      case FAIAreaLow500:
+        SAVE_PEN(faiAreaLow500PenList, faiAreaLow500Border);
+        SAVE_BRUSH(faiAreaLow500BrushList);
+        break;
+      case FAIAreaHigh500:
+        SAVE_PEN(faiAreaHigh500PenList, faiAreaHigh500Border);
+        SAVE_BRUSH(faiAreaHigh500BrushList);
+        break;
       default:
         break;
     }
@@ -1058,6 +1112,14 @@ void ConfigDrawElement::slotSelectElement(int elementID)
         SHOW_PEN(packicePenList, packiceBorder);
         SHOW_BRUSH(packiceBrushList);
         break;
+      case FAIAreaLow500:
+        SHOW_PEN(faiAreaLow500PenList, faiAreaLow500Border);
+        SHOW_BRUSH(faiAreaLow500BrushList);
+        break;
+      case FAIAreaHigh500:
+        SHOW_PEN(faiAreaHigh500PenList, faiAreaHigh500Border);
+        SHOW_BRUSH(faiAreaHigh500BrushList);
+        break;
     }
 
   oldElement = elementID;
@@ -1095,6 +1157,8 @@ void ConfigDrawElement::slotToggleFirst(bool toggle)
       case Glacier:
       case PackIce:
       case River_T:
+      case FAIAreaLow500:
+      case FAIAreaHigh500:
         border1PenStyle->setEnabled(toggle);
         border1BrushColor->setEnabled(toggle);
         border1BrushStyle->setEnabled(toggle);
@@ -1142,6 +1206,8 @@ void ConfigDrawElement::slotToggleSecond(bool toggle)
       case Glacier:
       case PackIce:
       case River_T:
+      case FAIAreaLow500:
+      case FAIAreaHigh500:
         border2PenStyle->setEnabled(toggle);
         border2BrushColor->setEnabled(toggle);
         border2BrushStyle->setEnabled(toggle);
@@ -1189,6 +1255,8 @@ void ConfigDrawElement::slotToggleThird(bool toggle)
       case Glacier:
       case PackIce:
       case River_T:
+      case FAIAreaLow500:
+      case FAIAreaHigh500:
         border3PenStyle->setEnabled(toggle);
         border3BrushColor->setEnabled(toggle);
         border3BrushStyle->setEnabled(toggle);
@@ -1234,6 +1302,8 @@ void ConfigDrawElement::slotToggleForth(bool toggle)
       case Glacier:
       case PackIce:
       case River_T:
+      case FAIAreaLow500:
+      case FAIAreaHigh500:
         border4PenStyle->setEnabled(toggle);
         border4BrushColor->setEnabled(toggle);
         border4BrushStyle->setEnabled(toggle);

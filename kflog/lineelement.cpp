@@ -17,9 +17,9 @@
 
 #include "lineelement.h"
 
-LineElement::LineElement(QString name, unsigned int t, QPointArray pA, bool isV)
+LineElement::LineElement(QString name, unsigned int t, QPointArray pA, bool isV, bool isClosed)
   : BaseMapElement(name, t),
-    projPointArray(pA), bBox(pA.boundingRect()), valley(isV), closed(false)
+    projPointArray(pA), bBox(pA.boundingRect()), valley(isV), closed(isClosed)
 {
   if(typeID == BaseMapElement::Lake || typeID == BaseMapElement::City ||
       typeID == BaseMapElement::Forest || typeID == BaseMapElement::Glacier ||

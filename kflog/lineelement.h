@@ -18,7 +18,7 @@
 #ifndef LINEELEMENT_H
 #define LINEELEMENT_H
 
-#include <basemapelement.h>
+#include "basemapelement.h"
 
 /**
  * Class used for all elements, which consist of a pointarray.
@@ -37,9 +37,10 @@ class LineElement : public BaseMapElement
      * @param  name  The name
      * @param  pA  The pointarray containing the positions
      * @param  isVal  "true", if the element is a "valley".
+     * @param  isClosed "true", if the element is a "closed area"
      */
     LineElement(QString name, unsigned int t, QPointArray pA,
-        bool isVal = false);
+        bool isVal = false, bool isClosed = false);
     /**
      * Destructor.
      */

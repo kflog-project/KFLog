@@ -19,6 +19,7 @@
 #define FLIGHTTASK_H
 
 #include "baseflightelement.h"
+#include "lineelement.h"
 
 #include <qlist.h>
 #include <qrect.h>
@@ -34,7 +35,7 @@ struct faiAreaSector {
   /* total distance with route and this sector */
   double dist;
   /* pos on map */
-  QList<WGSPoint> pos;
+  LineElement *pos;
 };
 
 /**
@@ -133,13 +134,13 @@ class FlightTask : public BaseFlightElement
                    Dreieck_S = 6, Abgebrochen = 7, Unknown = 8, FAI_2 = 9,
                    FAI_S2 = 10, FAI_3 = 11, FAI_S3 = 12, Vieleck = 13};
     /*
-     * The planning-types
+     * The task-types
      */
-    enum PlanningType {RouteBased, AreaBased};
+    enum TaskType {Route, FAIArea};
     /*
-     * The planning-directions
+     * The directions FAIAreas
      */
-    enum PlanningDirection {leftOfRoute = 1, rightOfRoute = 2};
+    enum AreaDirection {leftOfRoute = 1, rightOfRoute = 2};
   private:
     /**
      * Checkes the type of the task.

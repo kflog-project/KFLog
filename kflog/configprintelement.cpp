@@ -185,6 +185,9 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
   cityBorder = new bool[2];
   forestBorder = new bool[2];
 
+  faiAreaLow500Border = new bool[2];
+  faiAreaHigh500Border = new bool[2];
+
   airAPenList.setAutoDelete(true);
   airABrushList.setAutoDelete(true);
   airBPenList.setAutoDelete(true);
@@ -217,6 +220,11 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
   cityPenList.setAutoDelete(true);
   forestPenList.setAutoDelete(true);
   forestBrushList.setAutoDelete(true);
+
+  faiAreaLow500PenList.setAutoDelete(true);
+  faiAreaLow500BrushList.setAutoDelete(true);
+  faiAreaHigh500PenList.setAutoDelete(true);
+  faiAreaHigh500BrushList.setAutoDelete(true);
 
   READ_PEN("Road", roadPenList, roadBorder,
         PRINT_ROAD_COLOR_1, PRINT_ROAD_COLOR_2,
@@ -366,6 +374,20 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
         PRINT_TMZ_BRUSH_COLOR_1, PRINT_TMZ_BRUSH_COLOR_2,
         PRINT_TMZ_BRUSH_STYLE_1, PRINT_TMZ_BRUSH_STYLE_2)
 
+  READ_PEN_BRUSH("FAIAreaLow500", faiAreaLow500PenList, faiAreaLow500Border, faiAreaLow500BrushList,
+        PRINT_FAI_LOW_500_COLOR_1, PRINT_FAI_LOW_500_COLOR_2,
+        PRINT_FAI_LOW_500_PEN_1, PRINT_FAI_LOW_500_PEN_2,
+        PRINT_FAI_LOW_500_PEN_STYLE_1, PRINT_FAI_LOW_500_PEN_STYLE_2,
+        PRINT_FAI_LOW_500_BRUSH_COLOR_1, PRINT_FAI_LOW_500_BRUSH_COLOR_2,
+        PRINT_FAI_LOW_500_BRUSH_STYLE_1, PRINT_FAI_LOW_500_BRUSH_STYLE_2)
+
+  READ_PEN_BRUSH("FAIAreaHigh500", faiAreaHigh500PenList, faiAreaHigh500Border, faiAreaHigh500BrushList,
+        PRINT_FAI_HIGH_500_COLOR_1, PRINT_FAI_HIGH_500_COLOR_2,
+        PRINT_FAI_HIGH_500_PEN_1, PRINT_FAI_HIGH_500_PEN_2,
+        PRINT_FAI_HIGH_500_PEN_STYLE_1, PRINT_FAI_HIGH_500_PEN_STYLE_2,
+        PRINT_FAI_HIGH_500_BRUSH_COLOR_1, PRINT_FAI_HIGH_500_BRUSH_COLOR_2,
+        PRINT_FAI_HIGH_500_BRUSH_STYLE_1, PRINT_FAI_HIGH_500_BRUSH_STYLE_2)
+
   config->setGroup(0);
 
   border1 = new QCheckBox(i18n("1:500.000"), parent);
@@ -469,6 +491,10 @@ void ConfigPrintElement::slotOk()
   WRITE_BRUSH("TMZ", tmzBrushList, tmzPenList, tmzBorder);
 
   WRITE_BRUSH("Forest", forestBrushList, forestPenList, forestBorder);
+
+  WRITE_BRUSH("FAIAreaLow500", faiAreaLow500BrushList, faiAreaLow500PenList, faiAreaLow500Border);
+
+  WRITE_BRUSH("FAIAreaHigh500", faiAreaHigh500BrushList, faiAreaHigh500PenList, faiAreaHigh500Border);
 
   config->sync();
   config->setGroup(0);
@@ -594,6 +620,21 @@ void ConfigPrintElement::slotDefaultElements()
       PRINT_TMZ_BRUSH_COLOR_1, PRINT_TMZ_BRUSH_COLOR_2,
       PRINT_TMZ_BRUSH_STYLE_1, PRINT_TMZ_BRUSH_STYLE_2)
 
+  DEFAULT_PEN_BRUSH(faiAreaLow500PenList, faiAreaLow500Border, faiAreaLow500BrushList,
+      PRINT_FAI_LOW_500_COLOR_1, PRINT_FAI_LOW_500_COLOR_2,
+      PRINT_FAI_LOW_500_PEN_1, PRINT_FAI_LOW_500_PEN_2,
+      PRINT_FAI_LOW_500_PEN_STYLE_1, PRINT_FAI_LOW_500_PEN_STYLE_2,
+      PRINT_FAI_LOW_500_BRUSH_COLOR_1, PRINT_FAI_LOW_500_BRUSH_COLOR_2,
+      PRINT_FAI_LOW_500_BRUSH_STYLE_1, PRINT_FAI_LOW_500_BRUSH_STYLE_2)
+
+  DEFAULT_PEN_BRUSH(faiAreaHigh500PenList, faiAreaHigh500Border, faiAreaHigh500BrushList,
+      PRINT_FAI_HIGH_500_COLOR_1, PRINT_FAI_HIGH_500_COLOR_2,
+      PRINT_FAI_HIGH_500_PEN_1, PRINT_FAI_HIGH_500_PEN_2,
+      PRINT_FAI_HIGH_500_PEN_STYLE_1, PRINT_FAI_HIGH_500_PEN_STYLE_2,
+      PRINT_FAI_HIGH_500_BRUSH_COLOR_1, PRINT_FAI_HIGH_500_BRUSH_COLOR_2,
+      PRINT_FAI_HIGH_500_BRUSH_STYLE_1, PRINT_FAI_HIGH_500_BRUSH_STYLE_2)
+
+      
   oldElement = -1;
   slotSelectElement(currentElement);
 }
@@ -676,6 +717,14 @@ void ConfigPrintElement::slotSelectElement(int elementID)
         SAVE_PEN(forestPenList, forestBorder)
         SAVE_BRUSH(forestBrushList)
         break;
+      case FAIAreaLow500:
+        SAVE_PEN(faiAreaLow500PenList, faiAreaLow500Border);
+        SAVE_BRUSH(faiAreaLow500BrushList);
+        break;
+      case FAIAreaHigh500:
+        SAVE_PEN(faiAreaHigh500PenList, faiAreaHigh500Border);
+        SAVE_BRUSH(faiAreaHigh500BrushList);
+        break;
       default:
         break;
     }
@@ -754,6 +803,14 @@ void ConfigPrintElement::slotSelectElement(int elementID)
         SHOW_PEN(forestPenList, forestBorder)
         SHOW_BRUSH(forestBrushList)
         break;
+      case FAIAreaLow500:
+        SHOW_PEN(faiAreaLow500PenList, faiAreaLow500Border);
+        SHOW_BRUSH(faiAreaLow500BrushList);
+        break;
+      case FAIAreaHigh500:
+        SHOW_PEN(faiAreaHigh500PenList, faiAreaHigh500Border);
+        SHOW_BRUSH(faiAreaHigh500BrushList);
+        break;
     }
 
   oldElement = elementID;
@@ -788,6 +845,8 @@ void ConfigPrintElement::slotToggleFirst(bool toggle)
       case Restricted:
       case TMZ:
       case Forest:
+      case FAIAreaLow500:
+      case FAIAreaHigh500:
         border1PenStyle->setEnabled(toggle);
         border1BrushColor->setEnabled(toggle);
         border1BrushStyle->setEnabled(toggle);
@@ -830,6 +889,8 @@ void ConfigPrintElement::slotToggleSecond(bool toggle)
       case Restricted:
       case TMZ:
       case Forest:
+      case FAIAreaLow500:
+      case FAIAreaHigh500:
         border2PenStyle->setEnabled(toggle);
         border2BrushColor->setEnabled(toggle);
         border2BrushStyle->setEnabled(toggle);

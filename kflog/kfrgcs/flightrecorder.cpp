@@ -287,7 +287,7 @@ int readTasks(QList<FRTask> *tasks)
   VLAPI_DATA::ROUTE *r;
   VLAPI_DATA::WPT *wp;
   int taskCnt;
-  int wpCnt;
+  unsigned int wpCnt;
 
   for (taskCnt = 0; taskCnt < vl.database.nroutes; taskCnt++) {
     r = &(vl.database.routes[taskCnt]);

@@ -117,7 +117,7 @@ class BaseMapElement
         Highway = 45, Road = 46, Railway = 47, AerialRailway = 48, Lake = 49,
         River = 50, Canal = 51, Flight = 52, Task = 53, FlightGroup = 54,
         Trail = TRAIL, Railway_D = RAILWAY_D, Aerial_Cable = AERIAL_CABLE,
-        River_T = RIVER_T, Lake_T = LAKE_T, Forest = FOREST};
+        River_T = RIVER_T, Lake_T = LAKE_T, Forest = FOREST, FAIAreaLow500, FAIAreaHigh500};
     /**
      * The three types of elevation-data used in the maps.
      */

@@ -57,7 +57,7 @@ class KFLogConfig : public KDialogBase
     enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
         AirA, AirB, AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
         LowFlight, Restricted, Tmz, Forest, Trail, Railway_D, Aerial_Cable, River_T,
-        Glacier, Pack_Ice};
+        Glacier, Pack_Ice, FAIAreaLow500, FAIAreaHigh500};
 
     enum DefaultWaypointCatalog {Empty = 0, LastUsed, Specific};
   signals:

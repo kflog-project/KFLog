@@ -38,21 +38,21 @@
 #include <mapcontents.h>
 #include <airport.h>
 
-#define CHECK_ERROR_EXIT  error = dlerror(); \
+#define CHECK_ERROR_EXIT  error = (char *)dlerror(); \
   if(error != NULL) \
     { \
       warning(error); \
       return; \
     }
 
-#define CHECK_ERROR_RETURN  error = dlerror(); \
+#define CHECK_ERROR_RETURN  error = (char *)dlerror(); \
   if(error != NULL) \
     { \
       warning(error); \
       return 0; \
     }
 
-#define CHECK_ERROR  error = dlerror(); \
+#define CHECK_ERROR  error = (char *)dlerror(); \
   if(error != NULL) \
     { \
       warning(error); \
@@ -63,7 +63,8 @@ RecorderDialog::RecorderDialog(QWidget *parent, KConfig* cnf, const char *name)
                 parent, name, true, true),
     config(cnf),
     loggerConf(0),
-    isOpen(false)
+    isOpen(false),
+    isConnected(false)
 {
   extern MapContents _globalMapContents;
   BaseFlightElement *e;
@@ -90,7 +91,11 @@ RecorderDialog::RecorderDialog(QWidget *parent, KConfig* cnf, const char *name)
   __addDeclarationPage();
   __addTaskPage();
   __addWaypointPage();
-
+  __addPilotPage();
+  __addConfigPage();
+  
+  slotEnablePages();
+  
   setMinimumWidth(500);
   setMinimumHeight(350);
 }
@@ -121,6 +126,9 @@ void RecorderDialog::__addSettingsPage()
   sGroup->setTitle(i18n("Settings") + ":");
 
   selectType = new KComboBox(settingsPage, "type-selection");
+  connect(selectType, SIGNAL(activated(const QString &)), this,
+    SLOT(slotRecorderTypeChanged(const QString &)));
+    
   selectPort = new KComboBox(settingsPage, "port-selection");
   selectBaud = new KComboBox(settingsPage, "baud-selection");
 
@@ -498,12 +506,6 @@ void RecorderDialog::slotConnectRecorder()
   void* funcH;
   char* error;
 
-  if(isOpen && libName != name) {
-    // closing old lib
-    dlclose(libHandle);
-    isOpen = false;
-  }
-
   if(portName == 0) {
     warning(i18n("No port given!"));
     return;
@@ -524,7 +526,7 @@ void RecorderDialog::slotConnectRecorder()
     CHECK_ERROR_EXIT
 
     serID->setText(((QString (*)())funcH)());
-    
+    isConnected = true;    
     slotReadDatabase();
   }
   else {
@@ -620,7 +622,6 @@ void RecorderDialog::slotDownloadFlight()
 
 void RecorderDialog::slotWriteDeclaration()
 {
-  char* error;
   void* funcH;
   int ret;
   FRTaskDeclaration taskDecl;
@@ -1016,4 +1017,44 @@ void RecorderDialog::slotReadDatabase()
     }
     warning("read database finish");
   }
+}
+
+/** Enable/Disable pages when not connected to a recorder */
+void RecorderDialog::slotEnablePages()
+{
+  flightPage->setEnabled(isConnected);
+  waypointPage->setEnabled(isConnected);
+  taskPage->setEnabled(isConnected);
+  declarationPage->setEnabled(isConnected);
+  pilotPage->setEnabled(isConnected);
+  configPage->setEnabled(isConnected);
+}
+
+/** No descriptions */
+void RecorderDialog::slotRecorderTypeChanged(const QString &name)
+{
+  if(isOpen && libName != name) {
+    // closing old lib
+    dlclose(libHandle);
+    isConnected = isOpen = false;
+    slotEnablePages();
+  }
+}
+
+/** No descriptions */
+void RecorderDialog::__addPilotPage()
+{
+  pilotPage = addPage(i18n("Pilots"), i18n("List of pilots"),
+                      KGlobal::instance()->iconLoader()->loadIcon("pilot",
+                                                                  KIcon::NoGroup,
+                                                                  KIcon::SizeLarge));
+}
+
+/** No descriptions */
+void RecorderDialog::__addConfigPage()
+{
+  configPage = addPage(i18n("Configuration"), i18n("Recorder configuration"),
+                       KGlobal::instance()->iconLoader()->loadIcon("configure",
+                                                                   KIcon::Panel,
+                                                                   KIcon::SizeLarge));
 }

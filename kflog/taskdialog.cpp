@@ -208,7 +208,7 @@ void TaskDialog::slotSetPlanningType(int)
       }
       pTask->setWaypointList(wpList);
     }        
-    pTask->setPlanningType(FlightTask::AreaBased);
+    pTask->setPlanningType(FlightTask::FAIArea);
   }
   else {
     left->setEnabled(false);
@@ -216,7 +216,7 @@ void TaskDialog::slotSetPlanningType(int)
     left->setChecked(false);
     right->setChecked(false);
 
-    pTask->setPlanningType(FlightTask::RouteBased);
+    pTask->setPlanningType(FlightTask::Route);
   }
 
   fillWaypoints();
@@ -401,10 +401,10 @@ void TaskDialog::setTask(FlightTask *orig)
 
   name->setText(pTask->getFileName());
   switch (pTask->getPlanningType()) {
-  case FlightTask::RouteBased:
+  case FlightTask::Route:
     routeBased->setChecked(true);
     break;
-  case FlightTask::AreaBased:
+  case FlightTask::FAIArea:
     areaBased->setChecked(true);
     break;
   }
@@ -419,11 +419,11 @@ void TaskDialog::setTask(FlightTask *orig)
 void TaskDialog::enableWaypointButtons()
 {
   switch (pTask->getPlanningType()) {
-  case FlightTask::RouteBased:
+  case FlightTask::Route:
     forward->setEnabled(true);
     back->setEnabled(true);
     break;
-  case FlightTask::AreaBased:
+  case FlightTask::FAIArea:
     int cnt = wpList.count();
     forward->setEnabled(cnt > 4);
     back->setEnabled(cnt == 4);

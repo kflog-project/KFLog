@@ -91,7 +91,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
           "</TD></TR>";
     }
 
-  if (task->getPlanningType() == FlightTask::RouteBased) {
+  if (task->getPlanningType() == FlightTask::Route) {
     txt.sprintf("%d", task->getPlannedPoints());
 
     htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
