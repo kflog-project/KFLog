@@ -353,7 +353,7 @@ void Igc3DFlightData::koord2dist(void)
 	// if($centrey>$DECLAT[$i]){ $dist = -$dist; }
 }
 
-void Igc3DFlightData::read_igc_file(QString st)  // Cleanly handled with QString now.
+void Igc3DFlightData::read_igc_file(const QString& st)  // Cleanly handled with QString now.
 {
 /*
 	QString line;

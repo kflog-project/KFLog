@@ -61,7 +61,7 @@ class Igc3DFlightData
 		void draw_shadow(QPainter *p);
 		void draw_marker(QPainter *p);
 		void koord2dist(void);
-		void read_igc_file(QString st);
+		void read_igc_file(const QString& st);
 		void load(Flight *flight);
 		int flight_opened_flag;
 		void centre_data_to_marker(void);
