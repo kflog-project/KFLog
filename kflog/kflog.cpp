@@ -750,7 +750,7 @@ void KFLogApp::slotFlightPrint()
 void KFLogApp::slotFileQuit()
 {
   slotStatusMsg(i18n("Exiting..."));
-  saveOptions();
+  //saveOptions();   //Now done in queryClose
 
   close();
 }
@@ -959,8 +959,13 @@ void KFLogApp::slotFlightViewIgc3D()
 
 bool KFLogApp::queryClose()
 {
-  return waypoints->saveChanges();
+  if (waypoints->saveChanges()) {
+    saveOptions();
+    return true;
+  }
+  return false;
 }
+
 /** insert available flights into menu */
 void KFLogApp::slotWindowsMenuAboutToShow()
 {
