@@ -3,8 +3,7 @@ $Id$
 
 2002-06-12 Thomas <thomas@kflog.org>
 
-  * Added methods and members to class Map for drawing Waypoints on map.
-  * Added signals and slots to notify of WaypointCatalog change.
+  * Added drawing of waypoints for active WaypointCatalog.
 
 
 2002-05-21 Heiner <heiner@kflog.org>
