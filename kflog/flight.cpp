@@ -206,19 +206,19 @@ unsigned int Flight::__calculateBestTask(unsigned int start[],
   double temp = 0;
   flightPoint *pointA, *pointB, *pointC;
 
-  for(unsigned int loopA = start[0]; loopA <= stop[0]; loopA += step)
+  for(unsigned int loopA = start[0]; loopA <= MIN(stop[0], route.count() - 1); loopA += step)
     {
       pointA = route.at(loopA);
 
       if(isTotal) start[1] = loopA + step;
 
-      for(unsigned int loopB = start[1]; loopB <= stop[1]; loopB += step)
+      for(unsigned int loopB = start[1]; loopB <= MIN(stop[1], route.count() - 1); loopB += step)
         {
           pointB = route.at(loopB);
 
           if(isTotal) start[2] = loopB + step;
 
-          for(unsigned int loopC = start[2]; loopC <= stop[2]; loopC += step)
+          for(unsigned int loopC = start[2]; loopC <= MIN(stop[2], route.count() - 1); loopC += step)
             {
               pointC = route.at(loopC);
               temp = __calculateOptimizePoints(pointA, pointB, pointC);
