@@ -19,12 +19,13 @@ KFLog is used to display, analyze and evaluate flights logged with a
 gps-logger. It displays the flight in a map. KFLog supports a large
 free vector-map of the whole, including terrain-data.
 The map is not part of this package. You can download the map from
-the KFLog-website at http://maproom.kflog.org/
+the KFLog-website at http://maproom.kflog.org/ or enable an automatic
+map download.
 
 %prep
 %setup
 CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" ./configure \
-                --prefix=/opt/kde2 --enable-debug \
+                --prefix=/opt/kde3 \
                 $LOCALFLAGS
 %build
 # Setup for parallel builds
