@@ -1,0 +1,21 @@
+How to update an allready existing translation:
+
+* Save the old translation wherever You like
+  (*not* .../kflog2/po/<your_language>.po)
+
+* Open the menuitem Settings / Configure Dictionary / PO-auxiliary
+  and enter the path to the previous saved file.
+
+* Copy kflog.pot to <your_language>.po and open this file in KBabel.
+
+* Select Tools / Rough translation.
+
+* In this dialog, add the PO-auxiliary to the used translation
+  databases.
+
+* Press Start and relax :-)
+
+After that, KBabel tries to translate everything by using the old 
+translation.
+
+Heiner Lamprecht
