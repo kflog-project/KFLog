@@ -55,6 +55,7 @@
 #include <mapmatrix.h>
 #include <radiopoint.h>
 #include <singlepoint.h>
+#include <elevationfinder.h>
 
 /*
  * Used as bit-masks to determine, if we must display
@@ -1358,6 +1359,8 @@ bool MapContents::loadFlight(QFile& igcFile)
   //
   // G : Digital signature of the file
   //
+  ElevationFinder * ef=ElevationFinder::instance();
+  
   while (!stream.eof())
     {
       if(importProgress.wasCancelled()) return false;
@@ -1493,8 +1496,8 @@ bool MapContents::loadFlight(QFile& igcFile)
           newPoint.time = curTime;
           newPoint.origP = WGSPoint(latTemp, lonTemp);
           newPoint.projP = _globalMapMatrix.wgsToMap(newPoint.origP);
-	  newPoint.surfaceHeight = getElevation(newPoint.projP);
-	  qDebug("  terrain elevation: %d",newPoint.surfaceHeight);
+          newPoint.surfaceHeight = ef->elevation(newPoint.origP, newPoint.projP);
+          //qDebug("  terrain elevation: %d",newPoint.surfaceHeight);
           newPoint.f_state = Flight::Straight;
           newPoint.height = baroAltTemp;
           newPoint.gpsHeight = gpsAltTemp;

@@ -68,6 +68,7 @@
 #include "airport.h"
 #include "topolegend.h"
 #include "objecttree.h"
+#include "elevationfinder.h"
 
 #define STATUS_LABEL(a,b,c) \
   a = new KStatusBarLabel( "", 0, statusBar() ); \
@@ -106,7 +107,9 @@ KFLogApp::KFLogApp()
   initSurfaces();
   initTypes();
   initTaskTypes();
-
+  
+  ElevationFinder::instance();
+  
   connect(&_globalMapMatrix, SIGNAL(displayMatrixValues(int, bool)),
       &_globalMapConfig, SLOT(slotSetMatrixValues(int, bool)));
   connect(&_globalMapMatrix, SIGNAL(printMatrixValues(int)),
