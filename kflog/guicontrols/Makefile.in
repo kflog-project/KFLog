@@ -244,7 +244,12 @@ CXXLINK = $(LIBTOOL) --mode=link --tag=CXX $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $
 DIST_COMMON =  Makefile.am Makefile.in
 
 
-DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+#>- DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+#>+ 4
+KDE_DIST=libguicontrols.a libguicontrols_a_meta_unload.cpp 
+
+DISTFILES= $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST) $(KDE_DIST)
+
 
 TAR = tar
 GZIP_ENV = --best
@@ -556,7 +561,7 @@ clean-moc-classes:
 	-rm -f  libguicontrols_a_meta_unload.cpp
 
 #>+ 11
-libguicontrols_a.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/kflogtable.cpp $(srcdir)/coordedit.cpp libguicontrols_a_meta_unload.cpp  kflogtable.moc.cpp coordedit.moc.cpp
+libguicontrols_a.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/kflogtable.cpp $(srcdir)/coordedit.cpp $(srcdir)/libguicontrols_a_meta_unload.cpp  kflogtable.moc.cpp coordedit.moc.cpp
 	@echo 'creating libguicontrols_a.all_cpp.cpp ...'; \
 	rm -f libguicontrols_a.all_cpp.files libguicontrols_a.all_cpp.final; \
 	echo "#define KDE_USE_FINAL 1" >> libguicontrols_a.all_cpp.final; \

@@ -21,30 +21,22 @@
 #include <qwidget.h>
 
 /**
-  * Creates the startup-window displaying the logo.
-  *
-  * @author Heiner Lamprecht, Florian Ehinger
-  * @version $Id$
-  */
+ * Creates the startup-window displaying the logo.
+ *
+ * @author Heiner Lamprecht, Florian Ehinger
+ * @version $Id$
+ */
 class KFLogStartLogo : public QWidget
 {
-  Q_OBJECT
-
   public:
     /**
      * Creates a new startup-window.
      */
     KFLogStartLogo();
     /**
-     * Destructor, does nothing special.
+     * Destructor.
      */
     ~KFLogStartLogo();
-
-  protected:
-    /** */
-    virtual bool event(QEvent*);
-    /** */
-    virtual void mousePressEvent(QMouseEvent*);
 };
 
 #endif

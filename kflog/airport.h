@@ -35,18 +35,17 @@ class Airport : public RadioPoint
     /**
      * Creates a new Airport-object.
      * @param  name  The name
-     * @param  alias  The alias
+     * @param  icao  The icao-name
      * @param  abbr  The abbreviation, used for the gps-logger
      * @param  typeID  The typeid
      * @param  pos  The position
      * @param  elevation  The elevation
      * @param  frequency  The frequency
      * @param  vdf  "true",
-     * @param  wP  "true", if the element is a waypoint
      */
-    Airport(QString name, QString alias, QString abbr, unsigned int typeID,
+    Airport(QString name, QString icao, QString abbr, unsigned int typeID,
         QPoint pos, unsigned int elevation, const char* frequency,
-        bool vdf, bool wP);
+        bool vdf);
     /**
      * Destructor
      */
@@ -84,7 +83,7 @@ class Airport : public RadioPoint
     /**
      * Used to define the surface of a runway.
      */
-    enum Surface {NotSet, Grass, Asphalt, Concrete};
+    enum SurfaceType {Unknown = 0, Grass = 1, Asphalt = 2, Concrete = 3};
 
   private:
     /**

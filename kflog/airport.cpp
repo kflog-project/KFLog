@@ -20,41 +20,12 @@
 #include <klocale.h>
 #include <kstddirs.h>
 
-Airport::Airport(QString n, QString a, QString abbr, unsigned int t,
-  QPoint pos, unsigned int e, const char* f, bool v, bool wP)
-: RadioPoint(n, abbr, t, pos, f, a, wP),
+Airport::Airport(QString n, QString i, QString abbr, unsigned int t,
+  QPoint pos, unsigned int e, const char* f, bool v)
+: RadioPoint(n, i, abbr, t, pos, f),
   elevation(e), vdf(v)
 {
-/*
-  switch(typeID)
-    {
-      case BaseMapElement::Airport:
-      case BaseMapElement::IntAirport:
-        iconName = "airport.xpm";
-        break;
-      case MilAirport:
-        iconName = "milairport.xpm";
-        break;
-      case CivMilAirport:
-        iconName = "civmilair.xpm";
-        break;
-      case Airfield:
-        iconName = "airfield_c.xpm";
-        break;
-      case ClosedAirfield:
-        iconName = "closed.xpm";
-        break;
-      case CivHeliport:
-        iconName = "civheliport.xpm";
-        break;
-      case MilHeliport:
-        iconName = "milheliport.xpm";
-        break;
-      case AmbHeliport:
-        iconName = "ambheliport.xpm";
-        break;
-    }
-*/
+
 }
 
 Airport::~Airport()
@@ -78,7 +49,7 @@ QString Airport::getInfoString() const
   text.sprintf("%d", elevation);
   text = "<TABLE BORDER=0><TR><TD>"
       "<IMG SRC=" + path + glConfig->getPixmapName(typeID) + ">" +
-      "</TD><TD>" + name + " (" + alias + ")</TD></TR>" +
+      "</TD><TD>" + name + " (" + icao + ")</TD></TR>" +
       "<TR><TD></TD><TD><FONT SIZE=-1>" + text + "m" +
       "<BR>" + frequency + "</FONT></TD></TR></TABLE>";
 

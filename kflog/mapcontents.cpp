@@ -50,6 +50,14 @@
 #define MAX_FILE_COUNT 16200
 #define ISO_LINE_NUM 46
 
+//#define KFLOG_FILE_MAGIC   0x404b464c
+//
+//#define TYPE_GROUND     0x47
+//#define TYPE_TERRAIN    0x54
+//#define TYPE_MAP        0x4d
+//#define TYPE_AERO       0x41
+//#define FORMAT_VERSION  100
+
 #define KFLOG_FILE_MAGIC  0x404b464c
 #define FILE_TYPE_GROUND  0x47
 #define FILE_TYPE_TERRAIN 0x54
@@ -71,6 +79,15 @@
   tA.resize(locLength); \
   for(unsigned int i = 0; i < locLength; i++) { \
     in >> lat_temp;          in >> lon_temp; \
+    tA.setPoint(i, _globalMapMatrix.wgsToMap(lat_temp, lon_temp)); \
+  }
+
+#define READ_POINT_LIST_AIR  in >> locLength; \
+  tA.resize(locLength); \
+  for(unsigned int i = 0; i < locLength; i++) { \
+    in >> lat_temp;          in >> lon_temp; \
+    warning("Punkt: %d / %d -> %s / %s", lat_temp, lon_temp, \
+        (const char*)printPos(lat_temp, true), (const char*)printPos(lon_temp, false)); \
     tA.setPoint(i, _globalMapMatrix.wgsToMap(lat_temp, lon_temp)); \
   }
 
@@ -216,7 +233,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
   QTextStream stream(&file);
   QString line;
 
-  unsigned int ulimit = 0, llimit = 0, ulimitType = 0, llimitType = 0;
+  unsigned int uLimit = 0, lLimit = 0, uLimitType = 0, lLimitType = 0;
 
   if(!file.open(IO_ReadOnly))
     {
@@ -286,7 +303,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
           l = 0;
           name = "";
           type = 0;
-          ulimit = 0;
+          uLimit = 0;
           vdf = false;
           isValley = false;
           frequency = "";
@@ -326,13 +343,13 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   degreeToNum( line.mid( ( loop + 1 ), 100 ) ) );
             }
           else if(line.mid(0,5) == "LTYPE")
-              llimitType = line.mid(6,1).toUInt();
+              lLimitType = line.mid(6,1).toUInt();
           else if(line.mid(0,5) == "UTYPE")
-              ulimitType = line.mid(6,1).toUInt();
+              uLimitType = line.mid(6,1).toUInt();
           else if(line.mid(0,5) == "LOWER")
-              llimit = line.mid(6,100).toUInt();
+              lLimit = line.mid(6,100).toUInt();
           else if(line.mid(0,5) == "UPPER")
-              ulimit = line.mid(6,100).toUInt();
+              uLimit = line.mid(6,100).toUInt();
           else if(line.mid(0,9) == "ELEVATION")
               elev = line.mid(10,100).toUInt();
           else if(line.mid(0,4) == "ELEV")
@@ -402,22 +419,22 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   case BaseMapElement::CivMilAirport:
                   case BaseMapElement::Airfield:
                     airportList.append(new Airport(name, alias, abbr, type,
-                        position, elev, frequency, vdf, isWayP));
+                        position, elev, frequency, vdf));
                     break;
                   case BaseMapElement::ClosedAirfield:
                     airportList.append(new Airport(name, 0, abbr, type,
-                        position, 0, 0, 0, isWayP));
+                        position, 0, 0, 0));
                     break;
                   case BaseMapElement::CivHeliport:
                   case BaseMapElement::MilHeliport:
                   case BaseMapElement::AmbHeliport:
                     airportList.append(new Airport(name, alias, abbr, type,
-                        position, elev, frequency, 0, isWayP));
+                        position, elev, frequency, 0));
                     break;
                   case BaseMapElement::Glidersite:
                     // Wieso können hier keine Startbahn-Daten angegeben werden?
-                    gliderList.append(new GliderSite(name, abbr, position,
-                        elev, frequency, winch, isWayP));
+                    gliderList.append(new GliderSite(name, alias, abbr,
+                        position, elev, frequency, winch));
                     break;
                   case BaseMapElement::UltraLight:
                   case BaseMapElement::HangGlider:
@@ -430,8 +447,8 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   case BaseMapElement::VORDME:
                   case BaseMapElement::VORTAC:
                   case BaseMapElement::NDB:
-                    navList.append(new RadioPoint(name, abbr, type, position,
-                        frequency, alias));
+                    navList.append(new RadioPoint(name, alias, abbr, type,
+                        position, frequency));
                     break;
                   case BaseMapElement::AirC:
                   case BaseMapElement::AirD:
@@ -443,14 +460,14 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   case BaseMapElement::Danger:
                   case BaseMapElement::LowFlight:
                     airspaceList.append(new Airspace(name, type, tA,
-                        ulimit, ulimitType, llimit, llimitType));
+                        uLimit, uLimitType, lLimit, lLimitType));
                     break;
                   case BaseMapElement::Obstacle:
                   case BaseMapElement::LightObstacle:
                   case BaseMapElement::ObstacleGroup:
                   case BaseMapElement::LightObstacleGroup:
                     obstacleList.append(new ElevPoint(0, 0, type, position,
-                        elev, isWayP));
+                        elev));
                     break;
                   case BaseMapElement::CompPoint:
 //                    reportList.append(
@@ -477,7 +494,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
                     break;
                   case BaseMapElement::Spot:
                     obstacleList.append(new ElevPoint(0, 0, type, position,
-                        elev, isWayP));
+                        elev));
                     break;
                   case BaseMapElement::Glacier:
                     topoList.append(new LineElement(name, type, tA));
@@ -611,10 +628,12 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 
 bool MapContents::__readAirfieldFile(const char* pathName)
 {
+  extern const MapMatrix _globalMapMatrix;
 
   if(pathName == 0)
       // Datei existiert nicht ...
       return false;
+
 
   QFile eingabe(pathName);
   if(!eingabe.open(IO_ReadOnly))
@@ -636,10 +655,9 @@ bool MapContents::__readAirfieldFile(const char* pathName)
   QDateTime createDateTime;
 
   QString name;
-  QString idString;
-  QString icao;
+  QString idString, icaoName, gpsName;
   Q_INT16 elevation;
-  Q_INT8 isWinsh;
+  Q_INT8 isWinch, vdf;
 
   QString frequency;
   Q_INT8 contactType;
@@ -652,6 +670,7 @@ bool MapContents::__readAirfieldFile(const char* pathName)
   Q_UINT16 rwLength;
   Q_UINT8 rwMaterial;
   Q_INT8 rwOpen;
+  QPoint position;
 
   in >> magic;
   if(magic != KFLOG_FILE_MAGIC)  return false;
@@ -671,10 +690,25 @@ bool MapContents::__readAirfieldFile(const char* pathName)
 
   in >> createDateTime;
 
+  int count = 0;
+
   while(!in.eof())
     {
       in >> typeIn;
 
+      count++;
+
+      //
+      //  Die Werte müssen wieder zurückgesetzt werden!
+      //
+
+      //
+      // Bislang wird immer nur die letzte eingelesene Frequenz an das
+      // Element übergeben, da die Elemente noch nicht mit mehreren
+      // Frequenzen umgehen können.
+      //
+      // Die Landebahndaten werden zwar eingelesen, aber nicht verarbeitet.
+      //
       switch (typeIn)
         {
           case BaseMapElement::IntAirport:
@@ -684,7 +718,8 @@ bool MapContents::__readAirfieldFile(const char* pathName)
           case BaseMapElement::Airfield:
             in >> name;
             in >> idString;
-            in >> icao;
+            in >> icaoName;
+            in >> gpsName;
             in >> lat_temp;
             in >> lon_temp;
             in >> elevation;
@@ -693,40 +728,187 @@ bool MapContents::__readAirfieldFile(const char* pathName)
 
             READ_RUNWAY_DATA
 
+            position = _globalMapMatrix.wgsToMap(lat_temp, lon_temp);
+
+            airportList.append(new Airport(name, icaoName, gpsName, typeIn,
+                position, elevation, frequency, (bool)vdf));
             break;
           case BaseMapElement::ClosedAirfield:
             in >> name;
             in >> idString;
-            in >> icao;
+            in >> icaoName;
+            in >> gpsName;
             in >> lat_temp;
             in >> lon_temp;
             in >> elevation;
+
+            position = _globalMapMatrix.wgsToMap(lat_temp, lon_temp);
+
+            airportList.append(new Airport(name, icaoName, gpsName, typeIn,
+                position, 0, 0, 0));
+
             break;
           case BaseMapElement::CivHeliport:
           case BaseMapElement::MilHeliport:
           case BaseMapElement::AmbHeliport:
             in >> name;
             in >> idString;
-            in >> icao;
+            in >> icaoName;
+            in >> gpsName;
             in >> lat_temp;
             in >> lon_temp;
             in >> elevation;
 
             READ_CONTACT_DATA
 
+            position = _globalMapMatrix.wgsToMap(lat_temp, lon_temp);
+
+            airportList.append(new Airport(name, icaoName, gpsName, typeIn,
+                position, elevation, frequency, 0));
             break;
           case BaseMapElement::Glidersite:
             in >> name;
             in >> idString;
-            in >> icao;
+            in >> icaoName;
+            in >> gpsName;
             in >> lat_temp;
             in >> lon_temp;
             in >> elevation;
-            in >> isWinsh;
+            in >> isWinch;
 
             READ_CONTACT_DATA
 
             READ_RUNWAY_DATA
+
+            position = _globalMapMatrix.wgsToMap(lat_temp, lon_temp);
+
+            gliderList.append(new GliderSite(name, icaoName, gpsName,
+                position, elevation, frequency, isWinch));
+
+            break;
+        }
+    }
+
+  return true;
+}
+
+bool MapContents::__readAirspaceFile(const char* pathName)
+{
+  extern const MapMatrix _globalMapMatrix;
+
+  if(pathName == 0)
+      // Datei existiert nicht ...
+      return false;
+
+  Q_UINT8 typeIn;
+  Q_INT8 loadTypeID;
+  Q_UINT16 formatID;
+  Q_UINT32 magic;
+  QDateTime createDateTime;
+
+  Q_INT32 lat_temp, lon_temp;
+
+  QString name,idString, icaoName;
+  Q_INT16 uLimit, lLimit;
+  Q_INT8 uLimitType, lLimitType;
+
+  QString contactFrequency;
+  Q_INT8 contactType;
+  QString contactCallSign;
+  Q_UINT8 contactCount;
+
+  Q_INT8 exception = 0;
+  QString exceptionText;
+
+//  QList<radioContact> contactList;
+
+  Q_UINT32 locLength;
+
+  QFile eingabe(pathName);
+  if(!eingabe.open(IO_ReadOnly))
+    {
+      // Datei existiert, kann aber nicht gelesen werden:
+      // Infofenster wäre nötig ...
+      warning("KFLog: Can not open mapfile %s", (const char*)pathName);
+      return false;
+    }
+
+  QDataStream in(&eingabe);
+  in.setVersion(2);
+
+  in >> magic;
+  if(magic != KFLOG_FILE_MAGIC)  return false;
+
+  in >> loadTypeID;
+  if(loadTypeID != FILE_TYPE_AERO)  return false;
+
+  in >> formatID;
+  if(formatID < FILE_FORMAT_ID)
+    {
+      // zu alt ...
+    }
+  else if(formatID > FILE_FORMAT_ID)
+    {
+      // zu neu ...
+    }
+
+  in >> createDateTime;
+
+  int count = 0;
+
+  unsigned int type;
+
+  while(!in.eof())
+    {
+      in >> typeIn;
+
+      locLength = 0;
+
+      QPointArray tA;
+
+      count++;
+
+      //
+      //  Die Werte müssen wieder zurückgesetzt werden!
+      //
+
+      switch (typeIn)
+        {
+          case BaseMapElement::AirC:
+          case BaseMapElement::AirD:
+          case BaseMapElement::AirElow:
+          case BaseMapElement::AirEhigh:
+          case BaseMapElement::AirF:
+          case BaseMapElement::ControlC:
+          case BaseMapElement::ControlD:
+          case BaseMapElement::Danger:
+          case BaseMapElement::LowFlight:
+          case BaseMapElement::Restricted:
+          case BaseMapElement::TMZ:
+            in >> name;
+            in >> idString;
+            in >> icaoName;
+            in >> lLimitType;
+            in >> lLimit;
+            in >> uLimitType;
+            in >> uLimit;
+            in >> exception;
+
+            if(exception != 0)  in >> exceptionText;
+
+            in >> contactCount;
+            for(unsigned int loop = 0; loop < contactCount; loop++)
+              {
+                in >> contactFrequency;
+                in >> contactType;
+                in >> contactCallSign;
+              }
+
+            READ_POINT_LIST
+
+            type = (unsigned int)typeIn;
+            airspaceList.append(new Airspace(name, type, tA,
+                uLimit, uLimitType, lLimit, lLimitType));
 
             break;
         }
@@ -919,15 +1101,15 @@ bool MapContents::loadFlight(QFile igcFile)
   struct wayPoint* newWP;
   struct wayPoint* preWP;
   bool isValid;
-  /*
-   * This regexp is used to check the syntax of the position-lines in
-   * the igc-file.
-   *
-   *                       quality
-   *    time   lat      lon   |   h   GPS   ???
-   *   |----||------||-------|||---||----||----?
-   * ^B0944584832663N00856771EA0037700400100004
-   */
+  //
+  // This regexp is used to check the syntax of the position-lines in
+  // the igc-file.
+  //
+  //                       quality
+  //    time   lat      lon   |   h   GPS   ???
+  //   |----||------||-------|||---||----||----?
+  // ^B0944584832663N00856771EA0037700400100004
+  //
   QRegExp positionLine("^B[0-2][0-9][0-6][0-9][0-6][0-9][0-9][0-9][0-6][0-9][0-9][0-9][0-9][NS][0-1][0-9][0-9][0-6][0-9][0-9][0-9][0-9][EW][AV][0-9,-][0-9][0-9][0-9][0-9][0-9,-][0-9][0-9][0-9][0-9]");
 
   extern const MapMatrix _globalMapMatrix;
@@ -961,10 +1143,10 @@ bool MapContents::loadFlight(QFile igcFile)
         }
       else if(s.mid(0,1) == "B")
         {
-          /*
-           * We have a point.
-           * But we must proofe the linesyntax first.
-           */
+          //
+          // We have a point.
+          // But we must proofe the linesyntax first.
+          //
           if(positionLine.match(s) == -1)
             {
               // IO-Error !!!
@@ -1017,13 +1199,14 @@ bool MapContents::loadFlight(QFile igcFile)
               continue;
             }
 
-          /* dtime may change, even if the intervall, in wich the
-           * logger gets the position, is allways the same. If the
-           * intervall is f.e. 10 sec, dtime may change to 11 or 9 sec.
-           *
-           * In some files curTime and preTime are the same. In this case
-           * we set dT = 1 to avoid a floating-point-exeption ...
-           */
+          //
+          // dtime may change, even if the intervall, in wich the
+          // logger gets the position, is allways the same. If the
+          // intervall is f.e. 10 sec, dtime may change to 11 or 9 sec.
+          //
+          // In some files curTime and preTime are the same. In this case
+          // we set dT = 1 to avoid a floating-point-exeption ...
+          //
           dT = MAX( (curTime - preTime), 1);
           newPoint.dT = dT;
           newPoint.dH = newPoint.height - prePoint.height;
@@ -1051,9 +1234,9 @@ bool MapContents::loadFlight(QFile igcFile)
           speed = 3600 * newPoint.dS / dT;  // [km/h]
           v = newPoint.dH / dT * 1.0;       // [m/s]
 
-          /*
-           * landing-detection only for valid points
-           */
+          //
+          // landing-detection only for valid points
+          //
           if(launched)
             {
               flightRoute.last()->bearing = prePoint.bearing;
@@ -1063,27 +1246,27 @@ bool MapContents::loadFlight(QFile igcFile)
               if(!isValid)  continue;
               if(!append)
                 {
-                  /*
-                   * if ( speed > 10 AND |vario| < 0.5 )
-                   */
+                  //
+                  // if ( speed > 10 AND |vario| < 0.5 )
+                  //
                   if( ( speed > 10 ) && ( ( v > 0.5 ) || ( v < -0.5 ) ) )
                       append = true;
                   else
-                      /* We are realy back on the ground, again.
-                       * Now we can stop reading the file!           */
+                      // We are realy back on the ground, again.
+                      // Now we can stop reading the file!
                       break;
                 }
-              /*
-               * Die Landebedingungen sind, besonders bei einem großen
-               * Zeitabstand der Messungen noch nicht korrekt!
-               *
-               * Bedingung sollte über mehrere Punkte gehen. Ausserdem
-               * eventuell anhand dS und dH erfolgen.
-               *
-               */
+              //
+              // Die Landebedingungen sind, besonders bei einem großen
+              // Zeitabstand der Messungen noch nicht korrekt!
+              //
+              // Bedingung sollte über mehrere Punkte gehen. Ausserdem
+              // eventuell anhand dS und dH erfolgen.
+              //
+              //
               if( ( speed < 10 ) && ( ( v < 0.5 ) && ( v > -0.5 ) ) )
-                  /* We might be back on the ground, again. But
-                   * we wait for the next point.                     */
+                  // We might be back on the ground, again. But
+                  // we wait for the next point.
                   append = false;
             }
           else
@@ -1098,9 +1281,9 @@ bool MapContents::loadFlight(QFile igcFile)
                   *(flightRoute.last()) = newPoint;
                 }
             }
-          /*
-           * We only want to compare with valid points ...
-           */
+          //
+          // We only want to compare with valid points ...
+          //
           if(isValid)
             {
               prePoint = newPoint;
@@ -1112,7 +1295,6 @@ bool MapContents::loadFlight(QFile igcFile)
           if( ( ( ( s.mid( 8,1) == "N" ) || ( s.mid( 8,1) == "S" ) ) ||
                 ( ( s.mid(17,1) == "W" ) || ( s.mid(17,1) == "E" ) ) ))
             {
-
               // We have a waypoint
               sscanf(s.mid(1,17), "%2d%5d%1c%3d%5d%1c",
                   &lat, &latmin, &latChar, &lon, &lonmin, &lonChar);
@@ -1213,28 +1395,30 @@ void MapContents::proofeSection(bool isPrint)
       QString pathName;
       pathName = globalDirs->findResource("appdata", "mapdata/");
 
+      emit loadingMessage(i18n("Loading airfielddata ..."));
+
       QStringList airfields;
-      airfields = globalDirs->findAllResources("appdata", "mapdata/airfields/*.out");
-      for ( QStringList::Iterator it = airfields.begin(); it != airfields.end(); ++it )
-        {
-//          __readAirfieldFile((*it).latin1());
-          __readAsciiFile((*it).latin1());
-//          warning( "%s", (*it).latin1() );
-        }
+      airfields = globalDirs->findAllResources("appdata", "mapdata/airfields/*.kfl");
+      for(QStringList::Iterator it = airfields.begin(); it != airfields.end(); it++)
+          __readAirfieldFile((*it).latin1());
+
+      emit loadingMessage(i18n("Loading airspacedata ..."));
 
       QStringList airspace;
-      airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.out");
-      for ( QStringList::Iterator it = airspace.begin(); it != airspace.end(); ++it )
-        {
-          __readAsciiFile((*it).latin1());
+      airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.kfl");
+      for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
+          __readAirspaceFile((*it).latin1());
+
+//        {
+//          __readAsciiFile((*it).latin1());
 //          warning( "%s", (*it).latin1() );
-        }
+//        }
 
-
-//      __readAsciiFile(pathName + "airfields/deutschland.out");
-//      __readAsciiFile("/home/heiner/Lufträume.out");
       isFirst = false;
     }
+
+
+  emit loadingMessage(i18n("Loading mapdata ..."));
 
   for(int row = northCorner; row <= southCorner; row++)
     {
@@ -1245,7 +1429,7 @@ void MapContents::proofeSection(bool isPrint)
               // Kachel fehlt!
               int secID = row + ( col + ( row * 179 ) );
 
-              /* Nun müssen die korrekten Dateien geladen werden ... */
+              // Nun müssen die korrekten Dateien geladen werden ...
               __readTerrainFile(secID, FILE_TYPE_GROUND);
               __readTerrainFile(secID, FILE_TYPE_TERRAIN);
               __readBinaryFile(secID, FILE_TYPE_MAP);
@@ -1254,6 +1438,8 @@ void MapContents::proofeSection(bool isPrint)
             }
         }
     }
+
+//  emit loadingMessage("");
 }
 
 unsigned int MapContents::getListLength(int listIndex) const
@@ -1382,7 +1568,6 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
 void MapContents::printContents(QPainter* targetPainter)
 {
   proofeSection(true);
-
 
   for(unsigned int loop = 0; loop < topoList.count(); loop++)
       topoList.at(loop)->printMapElement(targetPainter);

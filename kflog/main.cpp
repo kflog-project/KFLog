@@ -80,14 +80,13 @@ int main(int argc, char *argv[])
   else 
     {
       KFLogApp *kflog = new KFLogApp();
-      kflog->show();
 
       KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 		
 		  if (args->count())
           kflog->slotFileOpenRecent((QString)args->arg(0));
 		  else
-          QTimer::singleShot(300, kflog, SLOT(slotStartComplete()));
+          QTimer::singleShot(700, kflog, SLOT(slotStartComplete()));
 
   		args->clear();
     }

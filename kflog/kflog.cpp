@@ -63,19 +63,19 @@
 KFLogApp::KFLogApp()
   : KDockMainWindow(0, "KFLogMainWindow"), showStartLogo(false)
 {
+  extern MapConfig _globalMapConfig;
+  extern MapMatrix _globalMapMatrix;
+
   config = kapp->config();
 
   config->setGroup("General Options");
 
-  if (config->readBoolEntry("Logo",false) && (!kapp->isRestored() ) )
+  if (config->readBoolEntry("Logo", true) && (!kapp->isRestored() ) )
     {
       showStartLogo = true;
       startLogo = new KFLogStartLogo();
       startLogo->show();
     }
-
-  extern MapConfig _globalMapConfig;
-  extern MapMatrix _globalMapMatrix;
 
   connect(&_globalMapMatrix, SIGNAL(displayMatrixValues(int, bool)),
       &_globalMapConfig, SLOT(slotSetMatrixValues(int, bool)));

@@ -17,18 +17,10 @@
 
 #include "radiopoint.h"
 
-#include <mapcalc.h>
-
-#include <kapp.h>
-#include <kiconloader.h>
-#include <qdatastream.h>
-#include <qfile.h>
-#include <qtextstream.h>
-
-RadioPoint::RadioPoint(QString n, QString abbr, unsigned int t, QPoint pos,
-    const char* f, const char* a, bool wP)
-  : SinglePoint(n, abbr, t, pos, wP),
-    frequency(f), alias(a)
+RadioPoint::RadioPoint(QString n, QString i, QString g, unsigned int t,
+    QPoint pos, const char* f)
+  : SinglePoint(n, g, t, pos),
+    frequency(f), icao(i)
 {
 
 }

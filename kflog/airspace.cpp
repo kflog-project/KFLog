@@ -19,10 +19,10 @@
 
 #include <klocale.h>
 
-Airspace::Airspace(QString n, unsigned int t, QPointArray pA, unsigned int upper,
-      unsigned int upperType, unsigned int lower, unsigned int lowerType)
+Airspace::Airspace(QString n, unsigned int t, QPointArray pA, unsigned int u,
+      unsigned int uType, unsigned int l, unsigned int lType)
   : LineElement(n, t, pA),
-    lLimit(lower), lLimitType(lowerType), uLimit(upper), uLimitType(upperType)
+    lLimit(l), lLimitType(lType), uLimit(u), uLimitType(uType)
 {
   // All Airspaces are closed regions ...
   closed = true;

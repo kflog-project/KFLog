@@ -1,6 +1,13 @@
 $Id$
 
 
+2002-01-05 Heiner <heiner@kflog.org>
+
+  * Added function for reading binary airport- and airfield-files.
+
+  * Reactivated splash-screen and added transparency.
+
+
 2002-01-04 Harry <harry@kflog.org>
 
   * Added first version of waypoint-dialog and -handling.

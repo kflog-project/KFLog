@@ -21,6 +21,7 @@
 #include <qbitarray.h>
 #include <qfile.h>
 #include <qlist.h>
+#include <qobject.h>
 #include <qstrlist.h>
 
 #include <basemapelement.h>
@@ -43,8 +44,10 @@ class SinglePoint;
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
-class MapContents
+class MapContents : public QObject
 {
+  Q_OBJECT
+
   public:
     /**
      * Creates a new MapContents-object.
@@ -166,13 +169,20 @@ class MapContents
      */
     static int degreeToNum(QString degree);
     /**
-     * The listid.
+     * The index of Mapelement-Lists.
      */
-    enum listID {NotSet = 0, AirportList, GliderList,
+    enum MapContentsListID {NotSet = 0, AirportList, GliderList,
         AddSitesList, OutList, NavList, AirspaceList, ObstacleList, ReportList,
         CityList, VillageList, LandmarkList, HighwayList, HighwayEntryList,
         RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
         WaypointList, DigitList, FlightList};
+
+  signals:
+    /**
+     * emitted during maploading to display a message f.e. in the
+     * splash-screen of the mainwindow.
+     */
+    void loadingMessage(QString message);
 
   private:
     /**
@@ -180,7 +190,13 @@ class MapContents
      *
      * @param  fileName  The path and name of the airfield-file.
      */
-    bool __readAirfieldFile(const char* fileName);
+    bool __readAirfieldFile(const char* pathName);
+    /**
+     * Reads a binary map file containing airspaces.
+     *
+     * @param  fileName  The path and name of the airspace-file.
+     */
+    bool __readAirspaceFile(const char* pathName);
     /**
      * Reads a new binary map file.
      *
@@ -205,6 +221,9 @@ class MapContents
     bool __readTerrainFile(const int fileSecID, const int fileTypeID);
     /**
      * Reads a new ascii map file.
+     *
+     * NOTE: This function is obsolete and will be removed in further
+     * releases!!!
      *
      * @param  fileName  The name of the mapfile
      *

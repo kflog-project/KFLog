@@ -19,10 +19,10 @@
 
 #include <kstddirs.h>
 
-SinglePoint::SinglePoint(QString n, QString abbr, unsigned int t,
-      QPoint pos, bool wP)
+SinglePoint::SinglePoint(QString n, QString gps, unsigned int t,
+      QPoint pos)
   : BaseMapElement(n, t),
-    position(pos), isWaypoint(wP), abbrev(abbr), curPos(pos)
+    position(pos), gpsName(gps), curPos(pos)
 {
 
 }
@@ -73,7 +73,7 @@ void SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
     }
 
   targetP->setPen(QPen(QColor(0,0,0), 2));
-  int iconSize = 16;
+  int iconSize = 8;
 
   if(typeID == BaseMapElement::Village)
     {
@@ -85,18 +85,13 @@ void SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
   curPos = glMapMatrix->map(position);
 
   if(glMapMatrix->isSwitchScale())
-      targetP->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
-          glConfig->getPixmap(typeID));
-  else
-      targetP->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
-          glConfig->getPixmap(typeID));
+      iconSize = 16;
+
+  targetP->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
+      glConfig->getPixmap(typeID));
 }
 
-void SinglePoint::setWaypoint(bool isW)  {  isWaypoint = isW;  }
-
-bool SinglePoint::isWayPoint() const { return isWaypoint; }
-
-QString SinglePoint::getWPName() const { return abbrev; }
+QString SinglePoint::getWPName() const { return gpsName; }
 
 QPoint SinglePoint::getPosition() const { return position; }
 

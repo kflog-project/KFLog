@@ -21,6 +21,21 @@
 #include <singlepoint.h>
 
 /**
+ * This struct contains the data of one frequency;
+ */
+struct radioContact
+{
+  /** */
+  QString frequency;
+  /** */
+  QString callSign;
+  /**
+   * @see KFLog#ContactType
+   */
+  unsigned int type;
+};
+
+/**
  * This class provides a mapelement for radio-navigation-facilities. It is
  * derived from SinglePoint. This class is used for: VOR, VORDME, VORTAC,
  * NDB and CompPoint.
@@ -37,15 +52,14 @@ class RadioPoint : public SinglePoint
      * Creates a new radio-point.
      *
      * @param  name  The name
-     * @param  abbr  The abbreviation, used for the gps-logger
+     * @param  icao  The icao-name
+     * @param  gps  The abbreviation, used for the gps-logger
      * @param  typeID  The typeid
      * @param  pos  The position
      * @param  frequency  The frequency
-     * @param  alias  The alias
-     * @param  wP  "true", if the element is a waypoint
      */
-    RadioPoint(QString name, QString abbr, unsigned int typeID, QPoint pos,
-        const char* frequency, const char* alias, bool wP=false);
+    RadioPoint(QString name, QString icao, QString gps, unsigned int typeID,
+        QPoint pos, const char* frequency);
     /**
      * Destructor
      */
@@ -63,9 +77,9 @@ class RadioPoint : public SinglePoint
      */
     QString frequency;
     /**
-     * The alias
+     * The icao-name
      */
-    QString alias;
+    QString icao;
 };
 
 #endif

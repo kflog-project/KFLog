@@ -25,31 +25,12 @@
 #include <qfile.h>
 #include <qtextstream.h>
 
-ElevPoint::ElevPoint(QString n, QString abbr, unsigned int t, QPoint pos,
-        unsigned int e, bool wP)
-: SinglePoint(n, abbr, t, pos, wP),
+ElevPoint::ElevPoint(QString n, QString g, unsigned int t, QPoint pos,
+        unsigned int e)
+: SinglePoint(n, g, t, pos),
   elevation(e)
 {
-/*
-  switch(typeID)
-    {
-      case Outlanding:
-        iconName = "outlanding.xpm";
-        break;
-      case Obstacle:
-        iconName = "obstacle.xpm";
-        break;
-      case LightObstacle:
-        iconName = "obst_light.xpm";
-        break;
-      case ObstacleGroup:
-        iconName = "obst_group.xpm";
-        break;
-      case LightObstacleGroup:
-        iconName = "obst_group_light.xpm";
-        break;
-    }
-*/
+
 }
 
 ElevPoint::~ElevPoint()

@@ -36,13 +36,12 @@ class ElevPoint : public SinglePoint
     /**
      * Creates a new elevpoint.
      * @param  name  The name
-     * @param  abbr  The abbreviation, used for the gps-logger
+     * @param  gps  The abbreviation, used for the gps-logger
      * @param  pos  The position
      * @param  elevation The elevation
-     * @param  wP  "true", if the element is a waypoint
      */
-    ElevPoint(QString name, QString abbr, unsigned int typdID, QPoint pos,
-        unsigned int elevation, bool wP = false);
+    ElevPoint(QString name, QString gps, unsigned int typdID, QPoint pos,
+        unsigned int elevation);
     /**
      * Destructor
      */

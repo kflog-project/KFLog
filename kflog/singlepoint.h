@@ -41,13 +41,11 @@ class SinglePoint : public BaseMapElement
 	   * Creates a new "SinglePoint".
 	   *
 	   * @param  name  The name
-	   * @param  alias  An alias-name, used for the gps-logger
+	   * @param  gps  An alias-name, used for the gps-logger
 	   * @param  typeID  The typeid
 	   * @param  pos  The position
-	   * @param  wP  "true", if the element is a waypoint
      */
-    SinglePoint(QString name, QString alias, unsigned int typeID, QPoint pos,
-        bool wP = false);
+    SinglePoint(QString name, QString gps, unsigned int typeID, QPoint pos);
     /**
 	   * Destructor
 	   */
@@ -70,15 +68,6 @@ class SinglePoint : public BaseMapElement
      * @return the position of the element.
      */
     virtual QPoint getPosition() const;
-    /**
-     * Sets <TT>isWaypoint</TT> to <TT>isW</TT>.
-     */
-    virtual void setWaypoint(bool isW);
-    /**
-     * @return <TT>true</TT>, if the element is a waypoint, otherwise
-     * <TT>false</TT>.
-     */
-    virtual bool isWayPoint() const;
     /**
      * @return the gps-name of the element.
      */
@@ -104,12 +93,10 @@ class SinglePoint : public BaseMapElement
      * The lat/lon-position of the element
      */
     QPoint position;
-    /** <TT>true</TT>, if the element is used as a waypoint. */
-    bool isWaypoint;
     /**
      * The abbreviation used for the GPS-logger.
      */
-    QString abbrev;
+    QString gpsName;
     /**
      * The current draw-position of the element.
      */

@@ -16,33 +16,32 @@
 ***********************************************************************/
 
 #include "kflogstartlogo.h"
+
 #include <kapp.h>
 #include <kstddirs.h>
+
+#include <qbitmap.h>
 #include <qpixmap.h>
 
 KFLogStartLogo::KFLogStartLogo()
-    : QWidget(0, 0,WStyle_NoBorder | WStyle_Customize | WStyle_StaysOnTop)
+    : QWidget( 0, "KFlogStartWindow",  WStyle_Customize | WStyle_StaysOnTop |
+             WStyle_NoBorder )
 {
-//  setBackgroundMode(NoBackground);
-  QString icon = KGlobal::dirs()->findResource("appdata", "pics/splash.png");
-  QPixmap pm;
-  pm.load(icon);
-  setBackgroundPixmap(pm);
+//  QPixmap pm(locate("appdata", "pics/entwurf_splash.png"));
+  QPixmap pm(locate("appdata", "pics/splash.png"));
 
-  setGeometry( ( ( QApplication::desktop()->width() - pm.width() ) / 2 ),
-               ( ( QApplication::desktop()->height() - pm.height() ) / 2 ),
-               pm.width(), pm.height() );
+  setBackgroundPixmap(pm);
+  setMask(QBitmap(locate("appdata", "pics/splash_mask.png")));
+
+  QWidget *desktop = KApplication::desktop();
+  QRect rect = desktop->geometry();
+  move(rect.x() + (rect.width() - pm.width())/2,
+       rect.y() + (rect.height() - pm.height())/2);
+
+  setFixedSize(pm.size());
 }
 
 KFLogStartLogo::~KFLogStartLogo()
 {
 
-}
-
-void KFLogStartLogo::mousePressEvent(QMouseEvent*)  {  close();  }
-
-bool KFLogStartLogo::event(QEvent* ev)
-{
-//  raise();
-  return QWidget::event(ev);
 }

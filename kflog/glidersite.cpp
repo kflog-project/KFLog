@@ -20,9 +20,9 @@
 #include <kiconloader.h>
 #include <kstddirs.h>
 
-GliderSite::GliderSite(QString n, QString abbr, QPoint pos, unsigned int elev,
-        const char* f, bool w, bool wP)
-: RadioPoint(n, abbr, BaseMapElement::Glidersite, pos, f, 0, wP),
+GliderSite::GliderSite(QString n, QString icao, QString gps, QPoint pos,
+        unsigned int elev, const char* f, bool w)
+: RadioPoint(n, icao, gps, BaseMapElement::Glidersite, pos, f),
   elevation(elev), winch(w)
 {
 
@@ -51,7 +51,7 @@ QString GliderSite::getInfoString() const
   text.sprintf("%d", elevation);
   text = "<TABLE BORDER=0><TR><TD>"
       "<IMG SRC=" + path + glConfig->getPixmapName(typeID) + ">" +
-      "</TD><TD>" + name + " (" + alias + ")</TD></TR>" +
+      "</TD><TD>" + name + " (" + icao + ")</TD></TR>" +
       "<TR><TD></TD><TD><FONT SIZE=-1>" + text + "m" +
       "<BR>" + frequency + "</FONT></TD></TR></TABLE>";
 
