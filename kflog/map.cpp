@@ -453,6 +453,45 @@ void Map::mouseMoveEvent(QMouseEvent* event)
     
 }
 
+/**
+  * just a helper function
+  * to keep the Waypoint class lightweight
+  */
+QString getInfoString (Waypoint* wp)
+{
+  extern MapConfig _globalMapConfig;
+
+  QString path = KGlobal::dirs()->findResource("appdata", "mapicons/");
+
+  QString text = "<TABLE BORDER=0><TR>";
+
+  // we don't have a pixmap for landmarks ?!
+  if (wp->type != BaseMapElement::Landmark)
+    text += QString ("<TD><IMG SRC= %1%2></TD>").arg(path).arg(_globalMapConfig.getPixmapName(wp->type));
+  else
+    text += "<TD></TD>";
+
+  qDebug (text);  
+
+  text += QString ("<TD>%1").arg(wp->name);
+  if (!wp->icao.isEmpty())
+    text += QString (" (%1)").arg(wp->icao);
+  text += "</TD></TR>";
+  
+  text += QString ("<TR><TD></TD><TD><FONT SIZE=-1> %1 m").arg(wp->elevation);
+  
+  if (wp->frequency > 0.0)
+  {
+    text += QString ("<BR>%1").arg (wp->frequency, 3);
+  }
+  text += "<BR>" + printPos(wp->origP.lat());
+  text += "<BR>" + printPos(wp->origP.lon(), false);
+
+  text += "</FONT></TD></TR></TABLE>";
+
+  return text;
+}
+
 void Map::__displayMapInfo(const QPoint& current, bool automatic)
 {
   /*
@@ -524,32 +563,6 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
         isAirport = true;
       }
     }
-
-  // let's show waypoints
-  for (QPtrListIterator<Waypoint> it (*(_globalMapContents.getWaypointList())); it.current(); ++it)
-  {
-    Waypoint* wp = it.current();
-    QPoint sitePos (_globalMapMatrix.map(_globalMapMatrix.wgsToMap(wp->origP)));
-    double dX = abs(sitePos.x() - current.x());
-    double dY = abs(sitePos.y() - current.y());
-
-    // Abstand entspricht der Icon-Größe.
-    if ( (dX < delta) && (dY < delta) )
-    {
-      QString wpText = "<B>"+i18n("Waypoint:")+"</B><UL>";
-      wpText += "<B>" + wp->name +
-                  "</B><BR>" +
-                  printPos(wp->origP.lat()) + "<BR>" +
-                  printPos(wp->origP.lon(), false);
-      wpText += "</UL>";
-      text += wpText;
-      // Text anzeigen
-      WhatsThat * box=new WhatsThat(this, wpText, this, "", timeout, &current);
-      box->show();
-
-      isAirport = true;
-    }
-  }
 
   if(baseFlight && baseFlight->getTypeID() == BaseMapElement::Flight)
     {
@@ -629,7 +642,26 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
         }
     }
 
-  if(isAirport)  return;
+  if (isAirport)  return;
+
+  // let's show waypoints
+  for (QPtrListIterator<Waypoint> it (*(_globalMapContents.getWaypointList())); it.current(); ++it)
+  {
+    Waypoint* wp = it.current();
+    QPoint sitePos (_globalMapMatrix.map(_globalMapMatrix.wgsToMap(wp->origP)));
+    double dX = abs(sitePos.x() - current.x());
+    double dY = abs(sitePos.y() - current.y());
+
+    // Abstand entspricht der Icon-Größe.
+    if ( (dX < delta) && (dY < delta) )
+    {
+      // Text anzeigen
+      WhatsThat * box=new WhatsThat(this, getInfoString(wp), this, "", timeout, &current);
+      box->show();
+
+      return;
+    }
+  }
 
   text += "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
 
