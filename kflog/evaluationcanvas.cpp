@@ -93,7 +93,7 @@ void EvaluationCanvas::paintEvent(QPaintEvent*)
 
 
 
-void EvaluationCanvas::mousePressEvent(QMouseEvent* event)
+void EvaluationCanvas::mousePressEvent(QMouseEvent* /*event*/)
 {
   //
   //  int x1 = ( cursor1 - startTime ) / secWidth
@@ -120,7 +120,7 @@ void EvaluationCanvas::mousePressEvent(QMouseEvent* event)
   //    }
 }
 
-void EvaluationCanvas::mouseReleaseEvent(QMouseEvent* event)
+void EvaluationCanvas::mouseReleaseEvent(QMouseEvent* /*event*/)
 {
   //
   //  time_t time_alt;
@@ -184,7 +184,7 @@ void EvaluationCanvas::mouseReleaseEvent(QMouseEvent* event)
   //  }
 }
 
-void EvaluationCanvas::mouseMoveEvent(QMouseEvent* event)
+void EvaluationCanvas::mouseMoveEvent(QMouseEvent* /*event*/)
 {
   //
   //  int x1 = (( cursor1 - startTime ) / secWidth)
@@ -299,7 +299,7 @@ QPoint EvaluationCanvas::__varioPoint(float durch[], int gn, int i)
   //  return QPoint(x, y);
 }
 
-void EvaluationCanvas::__drawCsystem(QPainter* painter)
+void EvaluationCanvas::__drawCsystem(QPainter* /*painter*/)
 {
   /*
    * Die Schleife unten kann nicht terminieren, wenn scale_h negativ ist!
@@ -854,7 +854,7 @@ void EvaluationCanvas::__paintCursor(int xpos, int calt, int move, int cursor)
   //    }
 }
 
-void EvaluationCanvas::resizeEvent(QResizeEvent* event)
+void EvaluationCanvas::resizeEvent(QResizeEvent* /*event*/)
 {
   //  lastPointerPosition=QPoint(-100,-100); //don't bitBlt the old buffer back, as the screen has been redrawn and the old coordinates are likely not valid anymore
   //  QWidget::resizeEvent(event);
