@@ -4,6 +4,8 @@ $Id$
 
   * Added import of FlightGear files.
 
+  * Added import of Gardown files.
+
   * Fixed bug with QLists in ~MapContents().
 
 
