@@ -23,6 +23,7 @@
 
 #include <flight.h>
 #include <mapcalc.h>
+#include <flighttask.h>
 #include <mapcontents.h>
 
 #include <kmessagebox.h>
@@ -90,6 +91,35 @@ void DataView::slotShowTaskText( FlightTask* task, QPoint current)
 
   tmp.sprintf("<hline><br><br><b>Entfernung: %.2f km<b>",distance);
   htmlText += tmp;
+
+  htmlText += "<hline><br><br><b>Entfernung Wertung: " + task->getTaskDistanceString();
+
+  htmlText += "<br><br>Aufgabenart: ";
+  switch(task->getTaskType())
+    {
+      case FlightTask::ZielS:
+        htmlText += i18n("Zielstrecke");
+        break;
+      case FlightTask::ZielR:
+        htmlText += i18n("ZielRückkehrstrecke");
+        break;
+      case FlightTask::FAI:
+        htmlText += i18n("FAI Dreieck");
+        break;
+      case FlightTask::Dreieck:
+        htmlText += i18n("Dreieck");
+        break;
+      case FlightTask::FAI_S:
+        htmlText += i18n("FAI Dreieck Start auf Schenkel");
+        break;
+      case FlightTask::Dreieck_S:
+        htmlText += i18n("Dreieck Start auf Schenkel");
+        break;
+      default:
+        htmlText += i18n("Unbekannt");
+    }
+  htmlText += "<br>";
+
 
   htmlText += "<br><hline><br><b>pos:<b>" + printPos(current.y()) + " / "
                                           + printPos(current.x(),true);
