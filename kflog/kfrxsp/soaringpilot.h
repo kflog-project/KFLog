@@ -20,9 +20,9 @@
 
 #include <qstring.h>
 
-#include <../frstructs.h>
-#include <../flighttask.h>
-#include <../flightrecorderpluginbase.h>
+#include "../frstructs.h"
+#include "../flighttask.h"
+#include "../flightrecorderpluginbase.h"
 
 /**Implementation for SoaringPilot.
 

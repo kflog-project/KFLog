@@ -18,7 +18,7 @@
 #ifndef IGC3DVIEWSTATE_H
 #define IGC3DVIEWSTATE_H
 
-#include <igc3dviewstate.h>
+#include "igc3dviewstate.h"
 
 /**
   * @author Thomas Nielsen

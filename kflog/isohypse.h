@@ -18,7 +18,7 @@
 #ifndef ISOHYPSE_H
 #define ISOHYPSE_H
 
-#include <lineelement.h>
+#include "lineelement.h"
 #include <qregion.h>
 
 /**

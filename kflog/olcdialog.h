@@ -27,7 +27,7 @@
 #include <qdialog.h>
 #include <qlabel.h>
 
-#include <flight.h>
+#include "flight.h"
 
 /**
  * This class provides a dialog for the OLC-declaration.

@@ -30,8 +30,8 @@
 #include <qtextview.h>
 
 // Appplication specific headers
-#include <flight.h>
-#include <igc3dview.h>
+#include "flight.h"
+#include "igc3dview.h"
 
 class Flight;
 class Igc3DView;

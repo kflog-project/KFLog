@@ -20,7 +20,7 @@
 
 #include <qpainter.h>
 
-#include <flight.h>
+#include "flight.h"
 
 /**
  * @author Heiner Lamprecht

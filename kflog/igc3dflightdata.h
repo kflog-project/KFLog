@@ -24,8 +24,8 @@
 #include <qpainter.h>
 #include <qlist.h>
 
-#include <igc3dviewstate.h>
-#include <flight.h>
+#include "igc3dviewstate.h"
+#include "flight.h"
 
 class Flight;
 class Igc3DViewState;

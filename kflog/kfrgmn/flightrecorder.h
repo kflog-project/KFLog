@@ -30,7 +30,7 @@
 #include <qstring.h>
 
 //#include <vlapi2.h>
-#include <garmin.h>
+#include "garmin.h"
 
 /**
  * @author Heiner Lamprecht

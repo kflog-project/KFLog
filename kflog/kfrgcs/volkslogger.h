@@ -18,9 +18,9 @@
 #ifndef VOLKSLOGGER_H
 #define VOLKSLOGGER_H
 
-#include <../frstructs.h>
-#include <../flighttask.h>
-#include <../flightrecorderpluginbase.h>
+#include "../frstructs.h"
+#include "../flighttask.h"
+#include "../flightrecorderpluginbase.h"
 
 /**
   *@author Harald Maier

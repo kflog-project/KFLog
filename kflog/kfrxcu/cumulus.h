@@ -28,7 +28,7 @@
  */
 
 #include <qstring.h>
-#include <../flightrecorderpluginbase.h>
+#include "../flightrecorderpluginbase.h"
 
 class Cumulus:public FlightRecorderPluginBase
 {

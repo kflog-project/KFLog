@@ -18,9 +18,9 @@
 #ifndef IGC3DPOLYHEDRON_H
 #define IGC3DPOLYHEDRON_H
 
-#include <igc3dview.h>
-#include <igc3dviewstate.h>
-#include <flight.h>
+#include "igc3dview.h"
+#include "igc3dviewstate.h"
+#include "flight.h"
 
 class Flight;
 class Igc3DView;

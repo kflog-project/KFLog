@@ -25,10 +25,10 @@
 #include <qframe.h>
 
 // Application headers
-#include <igc3dviewstate.h>
-#include <igc3dpolyhedron.h>
-#include <igc3ddialog.h>
-#include <igc3dflightdata.h>
+#include "igc3dviewstate.h"
+#include "igc3dpolyhedron.h"
+#include "igc3ddialog.h"
+#include "igc3dflightdata.h"
 
 class Flight;
 class Igc3DDialog;

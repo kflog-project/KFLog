@@ -18,8 +18,8 @@
 #ifndef GLIDERSITE_H
 #define GLIDERSITE_H
 
-#include <radiopoint.h>
-#include <runway.h>
+#include "radiopoint.h"
+#include "runway.h"
 
 /**
  * This class provides handling the glider-sites.

@@ -20,9 +20,9 @@
 
 #include <qptrlist.h>
 
-#include <../frstructs.h>
-#include <../flighttask.h>
-#include <../flightrecorderpluginbase.h>
+#include "../frstructs.h"
+#include "../flighttask.h"
+#include "../flightrecorderpluginbase.h"
 
 /**
   *@author Christian Fughe, Harald Maier
