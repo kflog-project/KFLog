@@ -32,6 +32,7 @@
 
 #include <../frstructs.h>
 #include <../flighttask.h>
+#include <../airport.h>
 
 #include <termios.h>
 
@@ -73,17 +74,17 @@ extern "C"
   int closeRecorder();
   /** write flight declaration to recorder */
   int writeDeclaration(FRTaskDeclaration *taskDecl, 
-                       QList<FRTaskPoint> *taskPoints);
+                       QList<Waypoint> *taskPoints);
   /** read waypoint and flight declaration form from recorder into mem */
   int readDatabase();
   /** read tasks from recorder */
-  int readTasks(QList<FRTask> *tasks);
+  int readTasks(QList<FlightTask> *tasks);
   /** write tasks to recorder */
-  int writeTasks(QList<FRTask> *tasks);
+  int writeTasks(QList<FlightTask> *tasks);
   /** read waypoints from recorder */
-  int readWaypoints(QList<FRWaypoint> *waypoints);
+  int readWaypoints(QList<Waypoint> *waypoints);
   /** write waypoints to recorder */
-  int writeWaypoints(QList<FRWaypoint> *waypoints);
+  int writeWaypoints(QList<Waypoint> *waypoints);
 }
 
 /*************************************************************************
@@ -223,13 +224,10 @@ int closeRecorder()
   return 1;
 }
 
-int writeDeclaration(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> *taskPoints)
+int writeDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint> *taskPoints)
 {
-//  vl.read_db_and_declaration();
-//
+  Waypoint *tp;
   unsigned int loop;
-  FRTaskPoint *tp;
-
   // Filling the strings with whitespaces
   QString pilotA(taskDecl->pilotA.leftJustify(32, ' ', true));
   QString pilotB(taskDecl->pilotB.leftJustify(32, ' ', true));
@@ -248,20 +246,20 @@ int writeDeclaration(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> *taskPoints
   // TakeOff (same ans landing ...)
   tp = taskPoints->at(0);
   strcpy(vl.declaration.flightinfo.homepoint.name, tp->name.left(6));
-  vl.declaration.flightinfo.homepoint.lon = tp->lonPos / 600000.0;
-  vl.declaration.flightinfo.homepoint.lat = tp->latPos / 600000.0;
+  vl.declaration.flightinfo.homepoint.lon = tp->origP.lon() / 600000.0;
+  vl.declaration.flightinfo.homepoint.lat = tp->origP.lat() / 600000.0;
 
   // Begin of Task
   tp = taskPoints->at(1);
   strcpy(vl.declaration.task.startpoint.name, tp->name.left(6));
-  vl.declaration.task.startpoint.lat = tp->latPos / 600000.0;
-  vl.declaration.task.startpoint.lon = tp->lonPos / 600000.0;
+  vl.declaration.task.startpoint.lat = tp->origP.lat() / 600000.0;
+  vl.declaration.task.startpoint.lon = tp->origP.lon() / 600000.0;
 
   for(loop = 2; loop < MIN(taskPoints->count() - 2, 12); loop++) {
     tp = taskPoints->at(loop);
     strcpy(vl.declaration.task.turnpoints[loop - 2].name, tp->name.left(6));
-    vl.declaration.task.turnpoints[loop - 2].lat = tp->latPos / 600000.0;
-    vl.declaration.task.turnpoints[loop - 2].lon = tp->lonPos / 600000.0;
+    vl.declaration.task.turnpoints[loop - 2].lat = tp->origP.lat() / 600000.0;
+    vl.declaration.task.turnpoints[loop - 2].lon = tp->origP.lon() / 600000.0;
   }
 
   vl.declaration.task.nturnpoints = MAX(MIN((int)taskPoints->count() - 4, 12), 0);
@@ -269,8 +267,8 @@ int writeDeclaration(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> *taskPoints
   // End of Task
   tp = taskPoints->at(taskPoints->count() - 2);
   strcpy(vl.declaration.task.finishpoint.name, tp->name.left(6));
-  vl.declaration.task.finishpoint.lat = tp->latPos / 600000.0;
-  vl.declaration.task.finishpoint.lon = tp->lonPos / 600000.0;
+  vl.declaration.task.finishpoint.lat = tp->origP.lat() / 600000.0;
+  vl.declaration.task.finishpoint.lon = tp->origP.lon() / 600000.0;
 
   return vl.write_db_and_declaration() == VLA_ERR_NOERR;
 }
@@ -280,10 +278,10 @@ int readDatabase()
   return vl.read_db_and_declaration() == VLA_ERR_NOERR;
 }
 
-int readTasks(QList<FRTask> *tasks)
+int readTasks(QList<FlightTask> *tasks)
 {
-  FRTask *task;
-  FRTaskPoint *tp;
+  QList<Waypoint> taskPoints;
+  Waypoint *tp;
   VLAPI_DATA::ROUTE *r;
   VLAPI_DATA::WPT *wp;
   int taskCnt;
@@ -291,47 +289,44 @@ int readTasks(QList<FRTask> *tasks)
 
   for (taskCnt = 0; taskCnt < vl.database.nroutes; taskCnt++) {
     r = &(vl.database.routes[taskCnt]);
-    task = new FRTask;
-    task->name = r->name;
+    taskPoints.clear();
     for (wpCnt = 0; wpCnt < maxNrWaypointsPerTask; wpCnt++) {
       wp = &(r->wpt[wpCnt]);
       if (isalnum(wp->name[0])) {
-        tp = new FRTaskPoint;
+        tp = new Waypoint;
         tp->name = wp->name;
-        tp->latPos = (int)(wp->lat * 600000.0);
-        tp->lonPos = (int)(wp->lon * 600000.0);
+        tp->origP.setPos((int)(wp->lat * 600000.0), (int)(wp->lon * 600000.0));
         tp->type = FlightTask::RouteP;
-	tp->elevation = 0;
+        tp->elevation = 0;
 
-        if (task->wayPoints.count() == 0) {
+        if (taskPoints.count() == 0) {
           // append take off
           tp->type = FlightTask::TakeOff;
-          task->wayPoints.append(tp);
+          taskPoints.append(tp);
           // make copy for begin
-          tp = new FRTaskPoint;
-          *tp = *(task->wayPoints.first());
+          tp = new Waypoint(taskPoints.first());
           tp->type = FlightTask::Begin;
         }
-        task->wayPoints.append(tp);
+        taskPoints.append(tp);
       }
     }
     // modify last for end of task
-    task->wayPoints.last()->type = FlightTask::End;
+    taskPoints.last()->type = FlightTask::End;
     // make copy for landing
-    tp = new FRTaskPoint;
-    *tp = *(task->wayPoints.last());
+    tp = new Waypoint(taskPoints.last());
     tp->type = FlightTask::Landing;
-    task->wayPoints.append(tp);
+    taskPoints.append(tp);
 
-    tasks->append(task);
+    tasks->append(new FlightTask(taskPoints, true, r->name));
   }
   return 1;
 }
 
-int writeTasks(QList<FRTask> *tasks)
+int writeTasks(QList<FlightTask> *tasks)
 {
-  FRTask *task;
-  FRTaskPoint *tp;
+  FlightTask *task;
+  QList<Waypoint> taskPoints;
+  Waypoint *tp;
   VLAPI_DATA::ROUTE *r;
   VLAPI_DATA::WPT *wp;
   unsigned int taskCnt;
@@ -354,9 +349,10 @@ int writeTasks(QList<FRTask> *tasks)
     }
 
     r = vl.database.routes + taskCnt++;
-    strcpy(r->name, task->name.leftJustify(14, ' ', true));
+    strcpy(r->name, task->getFileName().leftJustify(14, ' ', true));
     wpCnt = 0;
-    for (tp = task->wayPoints.first(); tp != 0; tp = task->wayPoints.next()) {
+    taskPoints = task->getWPList();
+    for (tp = taskPoints.first(); tp != 0; tp = taskPoints.next()) {
       // should never happen
       if (wpCnt >= maxNrWaypointsPerTask) {
         break;
@@ -367,8 +363,8 @@ int writeTasks(QList<FRTask> *tasks)
       }
       wp = r->wpt + wpCnt++;
       strcpy(wp->name, tp->name.leftJustify(6, ' ', true));
-      wp->lat = tp->latPos / 600000.0;
-      wp->lon = tp->lonPos / 600000.0;
+      wp->lat = tp->origP.lat() / 600000.0;
+      wp->lon = tp->origP.lon() / 600000.0;
       wp->typ = 0;
     }
 
@@ -381,37 +377,36 @@ int writeTasks(QList<FRTask> *tasks)
   return vl.write_db_and_declaration() == VLA_ERR_NOERR;
 }
 
-int readWaypoints(QList<FRWaypoint> *waypoints)
+int readWaypoints(QList<Waypoint> *waypoints)
 {
   int n;
-  FRWaypoint *frWp;
-  FRTaskPoint *tp;
+  Waypoint *frWp;
   VLAPI_DATA::WPT *wp;
 
   for (n = 0; n < vl.database.nwpts; n++) {
     wp = &(vl.database.wpts[n]);
-    frWp = new FRWaypoint;
-    tp = &frWp->point;
+    frWp = new Waypoint;
+    frWp->name = wp->name;
+    frWp->name = frWp->name.stripWhiteSpace();
 
-    tp->name = wp->name;
-    tp->name = tp->name.stripWhiteSpace();
-
-    tp->latPos = (int)(wp->lat * 600000.0);
-    tp->lonPos = (int)(wp->lon * 600000.0);
+    frWp->origP.setPos((int)(wp->lat * 600000.0), (int)(wp->lon * 600000.0));
     frWp->isLandable = (wp->typ & VLAPI_DATA::WPT::WPTTYP_L) > 0;
-    frWp->isHardSurface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0;
-    frWp->isAirport = (wp->typ & VLAPI_DATA::WPT::WPTTYP_A) > 0;
-    frWp->isCheckpoint = (wp->typ & VLAPI_DATA::WPT::WPTTYP_C) > 0;
+    if (frWp->isLandable) {
+      frWp->surface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0 ? Airport::Asphalt : Airport::Grass;
+    }
+    else {
+      frWp->surface = -1;
+    }
+    frWp->type = (wp->typ & VLAPI_DATA::WPT::WPTTYP_A) > 0 ? BaseMapElement::Airfield : -1;
 
     waypoints->append(frWp);
   }
   return 1;
 }
 
-int writeWaypoints(QList<FRWaypoint> *waypoints)
+int writeWaypoints(QList<Waypoint> *waypoints)
 {
-  FRWaypoint *frWp;
-  FRTaskPoint *tp;
+  Waypoint *frWp;
   VLAPI_DATA::WPT *wp;
   unsigned int wpCnt;
 
@@ -431,15 +426,15 @@ int writeWaypoints(QList<FRWaypoint> *waypoints)
       break;
     }
     wp = &(vl.database.wpts[wpCnt++]);
-    tp = &frWp->point;
-    strcpy(wp->name, tp->name.leftJustify(6, ' ', true));
-    wp->lat = tp->latPos / 600000.0;
-    wp->lon = tp->lonPos / 600000.0;
+    strcpy(wp->name, frWp->name.leftJustify(6, ' ', true));
+    wp->lat = frWp->origP.lat() / 600000.0;
+    wp->lon = frWp->origP.lon() / 600000.0;
     wp->typ = 
       (frWp->isLandable ? VLAPI_DATA::WPT::WPTTYP_L : 0) | 
-      (frWp->isHardSurface ? VLAPI_DATA::WPT::WPTTYP_H : 0) | 
-      (frWp->isAirport ? VLAPI_DATA::WPT::WPTTYP_A : 0) |
-      (frWp->isCheckpoint ? VLAPI_DATA::WPT::WPTTYP_C : 0);
+      (frWp->surface == Airport::Asphalt || frWp->surface == Airport::Concrete ? VLAPI_DATA::WPT::WPTTYP_H : 0) | 
+      (frWp->type == BaseMapElement::Airfield || frWp->type == BaseMapElement::Glidersite ||
+       frWp->type == BaseMapElement::Airport || frWp->type == BaseMapElement::IntAirport ||
+       frWp->type == BaseMapElement::MilAirport || frWp->type == BaseMapElement::CivMilAirport ? VLAPI_DATA::WPT::WPTTYP_A : 0);
   }
 
   return vl.write_db_and_declaration() == VLA_ERR_NOERR;

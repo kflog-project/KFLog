@@ -25,10 +25,11 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <time.h>
-
 #include <signal.h>
 
 #include <qstringlist.h>
+
+#include <../airport.h>
 
 extern int breakTransfer;
 
@@ -221,15 +222,14 @@ int SoaringPilot::readFile(QStringList &file)
 }
 
 /** No descriptions */
-int SoaringPilot::downloadWaypoints(QList<FRWaypoint> *waypoints)
+int SoaringPilot::downloadWaypoints(QList<Waypoint> *waypoints)
 {
   QStringList file;
   QStringList::iterator line;
   QStringList tokens;
   QString tmp;
   int ret;
-  FRWaypoint *frWp;
-  FRTaskPoint *tp;
+  Waypoint *frWp;
 
   //** -------------------------------------------------------------
   //**      SOARINGPILOT Version 1.8.8 Waypoints
@@ -241,21 +241,20 @@ int SoaringPilot::downloadWaypoints(QList<FRWaypoint> *waypoints)
     for (line = file.begin(); line != file.end(); ++line) {
       tokens = QStringList::split(",", *line, true);
       if (tokens.size() >= 6) {
-        frWp = new FRWaypoint;
-        tp = &frWp->point;
-
-        tp->name = tokens[5];
-        tp->name = tp->name.stripWhiteSpace();
-
-        tp->latPos = coordToDegree(tokens[1]);
-        tp->lonPos = coordToDegree(tokens[2]);
-        tp->elevation = feetToMeter(tokens[3]);
+        frWp = new Waypoint(tokens[5].stripWhiteSpace());
+        frWp->origP.setPos(coordToDegree(tokens[1]), coordToDegree(tokens[2]));
+        frWp->elevation = feetToMeter(tokens[3]);
 
         tmp = tokens[4];
         frWp->isLandable = (tmp.contains('A') > 0) || (tmp.contains('L') > 0);
-        frWp->isHardSurface = (tmp.contains('A') > 0);
-        frWp->isAirport = (tmp.contains('A') > 0);
-        frWp->isCheckpoint = 0;
+        if (frWp->isLandable) {
+          frWp->surface = tmp.contains('A') > 0 ? Airport::Asphalt : Airport::Grass;
+          frWp->type = tmp.contains('A') > 0 ? BaseMapElement::Airfield : BaseMapElement::Glidersite;
+        }
+        else {
+          frWp->surface = -1;
+          frWp->type = -1;
+        }
 
         frWp->comment = tokens[6];
 
@@ -267,12 +266,11 @@ int SoaringPilot::downloadWaypoints(QList<FRWaypoint> *waypoints)
 }
 
 /** No descriptions */
-int SoaringPilot::uploadWaypoints(QList<FRWaypoint> *waypoints)
+int SoaringPilot::uploadWaypoints(QList<Waypoint> *waypoints)
 {
   QStringList file;
   QString tmp, typ;
-  FRWaypoint *frWp;
-  FRTaskPoint *tp;
+  Waypoint *frWp;
   int line = 1;
   //** -------------------------------------------------------------
   //**      SOARINGPILOT Version 1.8.8 Waypoints
@@ -280,38 +278,44 @@ int SoaringPilot::uploadWaypoints(QList<FRWaypoint> *waypoints)
   //** -------------------------------------------------------------
   //1,48:00.000N,009:00.000E,590F,ATLSFMH,KFLOG,Remark,000000000000000000
   for (frWp = waypoints->first(); frWp != 0; frWp = waypoints->next()) {
-    tp = &frWp->point;
     typ = "";
     if (frWp->isLandable) {
-      if (frWp->isHardSurface) {
-        typ += "AL";
-      }
-      else {
-        typ += "L";
+      switch(frWp->type) {
+        case BaseMapElement::Airfield:
+        case BaseMapElement::Airport:
+        case BaseMapElement::IntAirport:
+        case BaseMapElement::MilAirport:
+        case BaseMapElement::CivMilAirport:
+          typ += "AL";
+          break;
+        case BaseMapElement::Glidersite:
+          typ += "L";
+          break;
       }
     }
     tmp.sprintf("%d,%s,%s,%s,%s,%s,%s\r\n", 
                 line++, 
-                degreeToDegMin(tp->latPos, true).latin1(),
-                degreeToDegMin(tp->lonPos, false).latin1(),
-                meterToFeet(tp->elevation).latin1(),
+                degreeToDegMin(frWp->origP.lat(), true).latin1(),
+                degreeToDegMin(frWp->origP.lon(), false).latin1(),
+                meterToFeet(frWp->elevation).latin1(),
                 typ.latin1(),
-                tp->name.latin1(),
+                frWp->name.latin1(),
                 frWp->comment.latin1());
     file.append(tmp);
   }
   return writeFile(file);
 }
 
-int SoaringPilot::downloadTasks(QList<FRTask> *tasks)
+int SoaringPilot::downloadTasks(QList<FlightTask> *tasks)
 {
   QStringList file;
   QStringList::iterator line;
   QStringList tokens;
   QString tmp;
+  QString nam;
   int ret;
-  FRTask *task;
-  FRTaskPoint *tp;
+  Waypoint *wp;
+  QList <Waypoint> wpList;
   unsigned int nrPoints;
   bool takeoff, landing;
   
@@ -334,8 +338,8 @@ int SoaringPilot::downloadTasks(QList<FRTask> *tasks)
       warning(*line);
 
       if (tokens.size() >= 3 && tokens[0] == "TS") {
-        task = new FRTask;
-        task->name = tokens[1];
+        wpList.clear();
+        nam = tokens[1];
         nrPoints = tokens[2].toInt();
         // check for takeoff and landing
         takeoff = (tokens.size() >= 4 && tokens[3].contains("T"));
@@ -345,17 +349,16 @@ int SoaringPilot::downloadTasks(QList<FRTask> *tasks)
           warning(*line);
           tokens = QStringList::split(",", *line, true);
           if (tokens.size() >= 5 && tokens[0] == "TW") {
-            tp = new FRTaskPoint;
-            tp->name = tokens[4];
-            tp->latPos = coordToDegree(tokens[1]);
-            tp->lonPos = coordToDegree(tokens[2]);
-            tp->elevation = feetToMeter(tokens[3]);
-            tp->type = FlightTask::RouteP;
-            task->wayPoints.append(tp);
+            wp = new Waypoint;
+            wp->name = tokens[4];
+            wp->origP.setPos(coordToDegree(tokens[1]), coordToDegree(tokens[2]));
+            wp->elevation = feetToMeter(tokens[3]);
+            wp->type = FlightTask::RouteP;
+            wpList.append(wp);
           }
           else if (tokens.size() >= 1 && tokens[0] == "TE") {
             // check with declaration
-            if (nrPoints != task->wayPoints.count()) {
+            if (nrPoints != wpList.count()) {
               return 0;
             }
             break;
@@ -363,37 +366,34 @@ int SoaringPilot::downloadTasks(QList<FRTask> *tasks)
         }
 
         if (!takeoff) {// append takeoff, copy of first point
-          tp = new FRTaskPoint;
-          *tp = *(task->wayPoints.first());
-          task->wayPoints.prepend(tp);
+          wpList.prepend(new Waypoint(wpList.first()));
         }
         if (!landing) {// append landing, copy of last point
-          tp = new FRTaskPoint;
-          *tp = *(task->wayPoints.last());
-          task->wayPoints.append(tp);
+          wpList.append(new Waypoint(wpList.last()));
         }
 
-        nrPoints = task->wayPoints.count();
+        nrPoints = wpList.count();
         if (nrPoints >= 2) {
-          task->wayPoints.at(nrPoints - 1)->type = FlightTask::End;
-          task->wayPoints.at(nrPoints - 2)->type = FlightTask::Landing;
-          task->wayPoints.at(1)->type = FlightTask::Begin;
-          task->wayPoints.at(0)->type = FlightTask::TakeOff;
+          wpList.at(nrPoints - 1)->type = FlightTask::End;
+          wpList.at(nrPoints - 2)->type = FlightTask::Landing;
+          wpList.at(1)->type = FlightTask::Begin;
+          wpList.at(0)->type = FlightTask::TakeOff;
         }
 
-        tasks->append(task);
+        tasks->append(new FlightTask(wpList, true, nam));
       }
     }
   }
   return ret;
 }
 
-int SoaringPilot::uploadTasks(QList<FRTask> *tasks)
+int SoaringPilot::uploadTasks(QList<FlightTask> *tasks)
 {
   QStringList file;
   QString tmp, typ;
-  FRTask *task;
-  FRTaskPoint *tp;
+  FlightTask *task;
+  Waypoint *wp;
+  QList <Waypoint> wpList;
   int nrPoints;
   // ** -------------------------------------------------------------
   // **      SOARINGPILOT Version 1.8.8 Tasks
@@ -409,7 +409,8 @@ int SoaringPilot::uploadTasks(QList<FRTask> *tasks)
   // TE
 
   for (task = tasks->first(); task != 0; task = tasks->next()) {
-    nrPoints = task->wayPoints.count();
+    wpList = task->getWPList();
+    nrPoints = wpList.count();
     if (nrPoints >= 4) {
       // complete task with takeoff and landing
       typ = "TL";
@@ -417,14 +418,14 @@ int SoaringPilot::uploadTasks(QList<FRTask> *tasks)
     else {
       typ = "";
     }
-    tmp.sprintf("TS,%s,%d,%s\r\n", task->name.latin1(), nrPoints, typ.latin1());
+    tmp.sprintf("TS,%s,%d,%s\r\n", task->getFileName().latin1(), nrPoints, typ.latin1());
     file.append(tmp);
-    for (tp = task->wayPoints.first(); tp != 0; tp = task->wayPoints.next()) {
+    for (wp = wpList.first(); wp != 0; wp = wpList.next()) {
       tmp.sprintf("TW,%s,%s,%s,%s\r\n", 
-                  degreeToDegMinSec(tp->latPos, true).latin1(),
-                  degreeToDegMinSec(tp->lonPos, false).latin1(),
-                  meterToFeet(tp->elevation).latin1(),
-                  tp->name.latin1());
+                  degreeToDegMinSec(wp->origP.lat(), true).latin1(),
+                  degreeToDegMinSec(wp->origP.lon(), false).latin1(),
+                  meterToFeet(wp->elevation).latin1(),
+                  wp->name.latin1());
       file.append(tmp);
     }
     file.append("TE\r\n");

@@ -58,7 +58,7 @@ class FlightTask : public BaseFlightElement
    * @param  isOrig  true, if the task is the original task
    *                 of a flight.
    */
-  FlightTask(QList<wayPoint> wpList, bool isOrig, QString fName);
+  FlightTask(QList<Waypoint> wpList, bool isOrig, QString fName);
   /**
    */
   ~FlightTask();
@@ -80,7 +80,7 @@ class FlightTask : public BaseFlightElement
   /**
    * Returns the waypointlist.
    */
-  QList<wayPoint> getWPList() { return wpList; };
+  QList<Waypoint> getWPList() { return wpList; };
   /**
    * Returns the type of the task.
    * @see #TaskType
@@ -120,7 +120,7 @@ class FlightTask : public BaseFlightElement
   /** */
   struct faiRange getFAIDistance(double leg);
   void setOptimizedTask(double points, double distance);
-  void setWaypointList(QList<wayPoint> wpL);
+  void setWaypointList(QList<Waypoint> wpL);
   /** No descriptions */
   void setPlanningType(int type);
   int getPlanningType() { return __planningType; };
@@ -182,7 +182,7 @@ class FlightTask : public BaseFlightElement
    */
   bool isOrig;
   /** */
-  QList<wayPoint> wpList;
+  QList<Waypoint> wpList;
   /** */
   unsigned int task_end;
   /** */

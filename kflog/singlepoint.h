@@ -18,7 +18,7 @@
 #ifndef SINGLEPOINT_H
 #define SINGLEPOINT_H
 
-#include <basemapelement.h>
+#include "basemapelement.h"
 
 /**
  * Mapelement used for small objects. The object can be one of:

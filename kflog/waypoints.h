@@ -22,7 +22,7 @@
 #include "waypointdialog.h"
 #include "waypointcatalog.h"
 #include "guicontrols/kfloglistview.h"
-#include "wp.h"
+#include "waypoint.h"
 
 #include <qframe.h>
 #include <qsplitter.h>
@@ -116,7 +116,7 @@ class Waypoints : public QFrame  {
   /** filter waypoints to display */
   void slotFilterWaypoints();
   /** add a new waypoint from outside */
-  void slotAddWaypoint(wayPoint *w);
+  void slotAddWaypoint(Waypoint *w);
   /** add a new waypoint from outside */
   void slotAddCatalog(WaypointCatalog *w);
   /** No descriptions */
@@ -125,7 +125,7 @@ class Waypoints : public QFrame  {
   void slotSetWaypointCatalogName(QString catalog);
  signals: // Signals
   /** No descriptions */
-  void copyWaypoint2Task(wayPoint *);
+  void copyWaypoint2Task(Waypoint *);
   /** signal to emit when current waypointcatalog has changed. */
   void waypointCatalogChanged(WaypointCatalog *);
   void centerMap(int, int);

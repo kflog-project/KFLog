@@ -1,12 +1,12 @@
 /***********************************************************************
 **
-**   wp.h
+**   waypoint.h
 **
 **   This file is part of KFLog2.
 **
 ************************************************************************
 **
-**   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
+**   Copyright (c):  2003 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -15,46 +15,25 @@
 **
 ***********************************************************************/
 
-#ifndef WP_STRUCT
-#define WP_STRUCT
+#ifndef WAYPOINT_H
+#define WAYPOINT_H
 
-#include <qpoint.h>
+#include "wgspoint.h"
 #include <qstring.h>
-#include <qptrcollection.h>
-#include "mapmatrix.h"
 
 /**
- * This struct contains one flightpoint.
- */
-struct flightPoint
-{
-  /** The original position of the point. Given in the internal format. */
-  WGSPoint origP;
-  /** The projected position of the point. */
-  QPoint projP;
-  /** The barometrical height, registered by the logger. */
-  int height;
-  /** The gps-height, registered by the logger. */
-  int gpsHeight;
-  /** The time, the point was registered by the logger. */
-  unsigned int time;
-  /** The elevation difference to the previous Point*/
-  int dH;
-  /** The time difference to the previous Point*/
-  int dT;
-  /** The distance between the Points*/
-  int dS;
-  /** The Bearing to the previous Point */
-  float bearing;
-  /** Kreisflug 0 oder Streckenflug 1*/
-  unsigned int f_state;
-};
+  *@author Heiner Lamprecht
+  */
 
-/**
- * This struct contains the data of one waypoint given from the logger.
- */
-struct wayPoint_
-{
+class Waypoint {
+public: 
+  Waypoint(QString nam = QString::null, WGSPoint oP = WGSPoint(), int typ = -1, QString _icao = QString::null,
+    QString _comment = QString::null, int surf = -1, int runw = -1, int leng = -1, int elev = -1,
+    double freq = 0.0, bool isLand = false, QPoint pP = QPoint(), unsigned int s1 = 0, unsigned int s2 = 0,
+    unsigned int sFAI = 0, double ang = 0.0, double dist = 0.0, QString desc = QString::null, unsigned int import = 2);
+  Waypoint(Waypoint *p);
+  Waypoint(Waypoint &p);
+  ~Waypoint();
   /** The name of the waypoint. */
   QString name;
   /** The original lat/lon-position of the waypoint. */

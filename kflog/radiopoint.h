@@ -18,7 +18,7 @@
 #ifndef RADIOPOINT_H
 #define RADIOPOINT_H
 
-#include <singlepoint.h>
+#include "singlepoint.h"
 
 /**
  * This struct contains the data of one frequency;

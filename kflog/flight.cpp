@@ -50,7 +50,7 @@
 #define SCALE 10.0
 
 #define APPEND_WAYPOINT(a, b, c) \
-      wpL.append(new wayPoint); \
+      wpL.append(new Waypoint); \
       wpL.current()->origP = route.at( a )->origP; \
       wpL.current()->projP = route.at( a )->projP; \
       wpL.current()->distance = ( b ); \
@@ -61,7 +61,7 @@
       wpL.current()->angle = -100;
 
 Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName,
-    QString gType, QString gID, int cClass, QList<wayPoint> wpL, QDate d)
+    QString gType, QString gID, int cClass, QList<Waypoint> wpL, QDate d)
   : BaseFlightElement("flight", BaseMapElement::Flight, fName),
     recorderID(recID),
     pilotName(pName),
@@ -729,7 +729,7 @@ void Flight::__checkMaxMin()
     }
 }
 
-QList<wayPoint> Flight::getWPList()
+QList<Waypoint> Flight::getWPList()
 {
   if(!optimized)
     return origTask.getWPList();
@@ -737,7 +737,7 @@ QList<wayPoint> Flight::getWPList()
     return optimizedTask.getWPList();
 }
 
-QList<wayPoint> Flight::getOriginalWPList()  {  return origTask.getWPList();  }
+QList<Waypoint> Flight::getOriginalWPList()  {  return origTask.getWPList();  }
 
 bool Flight::optimizeTaskOLC()
 {
@@ -789,7 +789,7 @@ bool Flight::optimizeTaskOLC()
   if(KMessageBox::questionYesNo(0, text, i18n("Optimizing")) ==
         KMessageBox::Yes)
     {
-      QList<wayPoint> wpL;
+      QList<Waypoint> wpL;
 
       APPEND_WAYPOINT(0, 0, i18n("Take-Off"))
       APPEND_WAYPOINT(idList[0], dist(route.at(idList[0]), route.at(0)),
@@ -965,7 +965,7 @@ bool Flight::optimizeTask()
   if(KMessageBox::questionYesNo(0, text, i18n("Optimizing")) ==
         KMessageBox::Yes)
     {
-      QList<wayPoint> wpL;
+      QList<Waypoint> wpL;
 
       APPEND_WAYPOINT(0, 0, i18n("Take-Off"))
       APPEND_WAYPOINT(0, 0, i18n("Begin of Task"))

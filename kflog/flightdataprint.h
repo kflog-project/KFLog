@@ -20,7 +20,7 @@
 
 #include <qpainter.h>
 
-class Flight;
+#include <flight.h>
 
 /**
  * @author Heiner Lamprecht
@@ -40,7 +40,7 @@ class FlightDataPrint
           int yPos, const char* text, bool printVario = false,
           bool printSpeed = false);
   /** */
-  void __printPositionData(QPainter* painter, struct wayPoint* cPoint,
+  void __printPositionData(QPainter* painter, Waypoint* cPoint,
           int yPos);
 };
 

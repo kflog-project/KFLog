@@ -18,7 +18,6 @@
 #include "flightdataprint.h"
 
 #include <config.h>
-#include <flight.h>
 #include <mapcalc.h>
 
 #include <klocale.h>
@@ -221,7 +220,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
             (const char*)currentFlight->getPoints(true));
   painter.drawText(125, 355, temp);
 
-  QList<wayPoint> wpList = currentFlight->getOriginalWPList(); // use original task
+  QList<Waypoint> wpList = currentFlight->getOriginalWPList(); // use original task
   int yPos = 375;
   for(unsigned int loop = 0; loop < wpList.count(); loop++)
     {
@@ -295,7 +294,7 @@ void FlightDataPrint::__printPositionData(QPainter* painter,
 }
 
 void FlightDataPrint::__printPositionData(QPainter* painter,
-        wayPoint* cPoint, int yPos)
+        Waypoint* cPoint, int yPos)
 {
   /*
    * Wenn Punkt nicht erreicht wurde, sollte alles in italic sein.

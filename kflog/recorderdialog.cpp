@@ -68,8 +68,8 @@ RecorderDialog::RecorderDialog(QWidget *parent, KConfig* cnf, const char *name)
 {
   extern MapContents _globalMapContents;
   BaseFlightElement *e;
-  struct wayPoint *wp;
-  QList<wayPoint> *tmp;
+  Waypoint *wp;
+  QList<Waypoint> *tmp;
   tmp = _globalMapContents.getWaypointList();
   waypoints = new WaypointList;
   for (wp = tmp->first(); wp != 0; wp = tmp->next()) {
@@ -93,9 +93,9 @@ RecorderDialog::RecorderDialog(QWidget *parent, KConfig* cnf, const char *name)
   __addWaypointPage();
   __addPilotPage();
   __addConfigPage();
-  
+
   slotEnablePages();
-  
+
   setMinimumWidth(500);
   setMinimumHeight(350);
 
@@ -136,7 +136,7 @@ void RecorderDialog::__addSettingsPage()
   selectType = new KComboBox(settingsPage, "type-selection");
   connect(selectType, SIGNAL(activated(const QString &)), this,
     SLOT(slotRecorderTypeChanged(const QString &)));
-    
+
   selectPort = new KComboBox(settingsPage, "port-selection");
   selectBaud = new KComboBox(settingsPage, "baud-selection");
 
@@ -175,7 +175,7 @@ void RecorderDialog::__addSettingsPage()
   sLayout->addWidget(connectB, 5, 6, AlignRight);
 
   sLayout->addMultiCellWidget(infoGroup, 8, 14, 0, 7);
-  sLayout->addWidget(new QLabel(i18n("API-Version"), settingsPage), 9, 1, 
+  sLayout->addWidget(new QLabel(i18n("API-Version"), settingsPage), 9, 1,
                      AlignRight);
   sLayout->addMultiCellWidget(apiID, 9, 9, 2, 3);
   sLayout->addWidget(new QLabel(i18n("Serial-Nr."), settingsPage), 11, 1);
@@ -248,7 +248,7 @@ void RecorderDialog::__addFlightPage()
 
   QGridLayout* fLayout = new QGridLayout(flightPage, 13, 5, 10, 1);
 
-  flightList = new KFLogListView("recorderFlightList", flightPage, 
+  flightList = new KFLogListView("recorderFlightList", flightPage,
                                  "flightList");
   flightList->setShowSortIndicator(true);
   flightList->setAllColumnsShowFocus(true);
@@ -297,14 +297,14 @@ void RecorderDialog::__addDeclarationPage()
   FlightTask *e;
 
   declarationPage = addPage(i18n("Declaration"), i18n("Flight Declaration"),
-                            KGlobal::instance()->iconLoader()->loadIcon("declaration", 
-                                                                        KIcon::NoGroup, 
+                            KGlobal::instance()->iconLoader()->loadIcon("declaration",
+                                                                        KIcon::NoGroup,
                                                                         KIcon::SizeLarge));
   QVBoxLayout *top = new QVBoxLayout(declarationPage, 5);
   QGridLayout* tLayout = new QGridLayout(13, 5, 1);
 
   taskSelection = new KComboBox(false, declarationPage, "taskSelection");
-  declarationList = new KFLogListView("recorderDeclarationList", 
+  declarationList = new KFLogListView("recorderDeclarationList",
                                       declarationPage, "declarationList");
 
   declarationColID = declarationList->addColumn(i18n("Nr"), 50);
@@ -334,7 +334,7 @@ void RecorderDialog::__addDeclarationPage()
   writeDeclaration->setMaximumWidth(writeDeclaration->sizeHint().width() + 15);
 
   tLayout->addMultiCellWidget(declarationList, 0, 0, 0, 6);
-  tLayout->addWidget(new QLabel(i18n("Pilot") + "1:", declarationPage), 2, 0, 
+  tLayout->addWidget(new QLabel(i18n("Pilot") + "1:", declarationPage), 2, 0,
                      AlignRight);
   tLayout->addWidget(pilotName, 2, 2);
   tLayout->addWidget(new QLabel(i18n("Pilot") + "2:", declarationPage), 2, 4,
@@ -383,7 +383,7 @@ void RecorderDialog::__addDeclarationPage()
     warning("Keine Aufgaben geplant ...");
     writeDeclaration->setEnabled(false);
   }
- 
+
   connect(taskSelection, SIGNAL(activated(int)), SLOT(slotSwitchTask(int)));
   connect(writeDeclaration, SIGNAL(clicked()), SLOT(slotWriteDeclaration()));
 }
@@ -391,7 +391,7 @@ void RecorderDialog::__addDeclarationPage()
 void RecorderDialog::__addTaskPage()
 {
   taskPage = addPage(i18n("Tasks"), i18n("Tasks"),
-                     KGlobal::instance()->iconLoader()->loadIcon("task", 
+                     KGlobal::instance()->iconLoader()->loadIcon("task",
                                                                  KIcon::NoGroup,
                                                                  KIcon::SizeLarge));
 
@@ -451,20 +451,20 @@ void RecorderDialog::fillTaskList()
 
 void RecorderDialog::__addWaypointPage()
 {
-  struct wayPoint *wp;
+  Waypoint *wp;
   int loop = 1;
   QString idS;
   QListViewItem *item;
 
   waypointPage = addPage(i18n("Waypoints"), i18n("Waypoints"),
-                         KGlobal::instance()->iconLoader()->loadIcon("waypoint", 
+                         KGlobal::instance()->iconLoader()->loadIcon("waypoint",
                                                                  KIcon::NoGroup,
                                                                  KIcon::SizeLarge));
   QVBoxLayout *top = new QVBoxLayout(waypointPage, 5);
   QHBoxLayout *buttons = new QHBoxLayout(10);
   QPushButton *b;
 
-  waypointList = new KFLogListView("recorderWaypointList", waypointPage, 
+  waypointList = new KFLogListView("recorderWaypointList", waypointPage,
                                    "waypointList");
 
   waypointColID = waypointList->addColumn(i18n("Nr"), 50);
@@ -525,7 +525,7 @@ void RecorderDialog::slotConnectRecorder()
   }
 
   setCursor(WaitCursor);
- 
+
   funcH = dlsym(libHandle, "openRecorder");
   CHECK_ERROR_EXIT
 
@@ -640,9 +640,6 @@ void RecorderDialog::slotWriteDeclaration()
   void* funcH;
   int ret;
   FRTaskDeclaration taskDecl;
-  FRTaskPoint *tp;
-  FlightTask *task;
-  struct wayPoint *wp;
   taskDecl.pilotA = pilotName->text();
   taskDecl.pilotB = copilotName->text();
   taskDecl.gliderID = gliderID->currentText();
@@ -650,20 +647,8 @@ void RecorderDialog::slotWriteDeclaration()
   taskDecl.compID = compID->text();
   taskDecl.compClass = compClass->text();
 
-  QList<FRTaskPoint> taskPointList;
-  taskPointList.setAutoDelete(true);
-
   if (taskSelection->currentItem() >= 0) {
-    task = tasks->at(taskSelection->currentItem());
-    QList<wayPoint> wpList = task->getWPList();
-    for(wp = wpList.first(); wp != 0; wp = wpList.next()) {
-      tp = new FRTaskPoint;
-      tp->name = wp->name;
-      tp->latPos = wp->origP.lat();
-      tp->lonPos = wp->origP.lon();
-      tp->type = wp->type;
-      taskPointList.append(tp);
-    }
+    QList<Waypoint> wpList = tasks->at(taskSelection->currentItem())->getWPList();
 
     funcH = dlsym(libHandle, "writeDeclaration");
     if (funcH == 0) {
@@ -674,8 +659,7 @@ void RecorderDialog::slotWriteDeclaration()
     else {
       warning("Schreibe Aufgabe auf Logger ...");
 
-      ret = ((int (*)(FRTaskDeclaration*, QList<FRTaskPoint>*))funcH)(&taskDecl,
-                                                                      &taskPointList);
+      ret = ((int (*)(FRTaskDeclaration*, QList<Waypoint>*))funcH)(&taskDecl, &wpList);
 
       warning("   ... fertig (%d)", ret);
     }
@@ -726,11 +710,11 @@ void RecorderDialog::slotSwitchTask(int idx)
   FlightTask *task = tasks->at(idx);
   QListViewItem* item;
   QString idS;
-  struct wayPoint *wp;
+  Waypoint *wp;
 
   declarationList->clear();
   if(task) {
-    QList<wayPoint> wpList = ((FlightTask*)task)->getWPList();
+    QList<Waypoint> wpList = ((FlightTask*)task)->getWPList();
     int loop = 1;
     for(wp = wpList.first(); wp != 0; wp = wpList.next()) {
       item = new QListViewItem(declarationList);
@@ -748,13 +732,8 @@ void RecorderDialog::slotReadTasks()
   char* error;
   void* funcH;
   FlightTask *task;
-  struct wayPoint *wp;
-  FRTaskPoint *frTp;
-  QList<FRTask> frTasks;
-  FRTask *t;
-  QList<wayPoint> *wpList;
-  frTasks.setAutoDelete(true);
-  extern MapContents _globalMapContents;
+  Waypoint *wp;
+  QList<Waypoint> wpList;
   extern MapMatrix _globalMapMatrix;
   int ret;
 
@@ -767,36 +746,19 @@ void RecorderDialog::slotReadTasks()
                        i18n("Library Error"));
   }
   else {
-    ret = ((int(*)(QList<FRTask> *))funcH)(&frTasks);
+    ret = ((int(*)(QList<FlightTask> *))funcH)(tasks);
     if (!ret) {
       KMessageBox::error(this,
                          i18n("Cannot read tasks from recorder"),
                          i18n("Library Error"));
     }
     else {
-      for (t = frTasks.first(); t != 0; t = frTasks.next()) {
-        task = new FlightTask(t->name == "" ? _globalMapContents.genTaskName() : t->name);
-        wpList = new QList<wayPoint>;
-        for (frTp = t->wayPoints.first(); frTp != 0; frTp = t->wayPoints.next()) {
-          wp = new wayPoint;
-          wp->name = frTp->name;
-          wp->origP = WGSPoint(frTp->latPos, frTp->lonPos);
+      for (task = tasks->first(); task != 0; task = tasks->next()) {
+        wpList = task->getWPList();
+        for (wp = wpList.first(); wp != 0; wp = wpList.next()) {
           wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
-          wp->type = frTp->type;
-          wp->sector1 = 0;
-          wp->sector2 = 0;
-          wp->sectorFAI = 0;
-          wp->elevation = frTp->elevation;
-          wp->frequency = 0;
-          wp->isLandable = true;
-          wp->runway = -1;
-          wp->length = -1;
-          wp->surface = -1;
-          wp->comment = "";
-          wpList->append(wp);
         }
-        task->setWaypointList(*wpList);
-        tasks->append(task);
+        task->setWaypointList(wpList);
         emit addTask(task);
       }
       // fill task list with new tasks
@@ -813,11 +775,10 @@ void RecorderDialog::slotWriteTasks()
   void* funcH;
   QString e;
   FlightTask *task;
-  struct wayPoint *wp;
-  FRTaskPoint *frTp;
-  QList<FRTask> frTasks;
-  FRTask *t;
-  QList<wayPoint> wpList;
+  Waypoint *wp;
+  QList<FlightTask> frTasks;
+  QList<Waypoint> wpListOrig;
+  QList<Waypoint> wpListCopy;
   frTasks.setAutoDelete(true);
 
   funcH = dlsym(libHandle, "writeTasks");
@@ -832,21 +793,20 @@ void RecorderDialog::slotWriteTasks()
   if (funcH == 0) {
     KMessageBox::error(this,
                        i18n("Function not implemented"),
-                       i18n("Library Error"));    
+                       i18n("Library Error"));
   }
   else if (maxNrTasks == 0) {
     KMessageBox::error(this,
                        i18n("Cannot obtain max number of tasks!"),
-                       i18n("Library Error"));    
+                       i18n("Library Error"));
   }
   else if (maxNrTasks == 0) {
     KMessageBox::error(this,
                        i18n("Cannot obtain max number of waypoints per task!"),
-                       i18n("Library Error"));    
+                       i18n("Library Error"));
   }
   else {
     for (task = tasks->first(); task != 0; task = tasks->next()) {
-      wpList = task->getWPList();
       if (frTasks.count() > *maxNrTasks) {
         e.sprintf(i18n("Maximum number of %d tasks reached!\n"
                        "Further tasks will be ignored."), *maxNrTasks);
@@ -858,15 +818,14 @@ void RecorderDialog::slotWriteTasks()
           break;
         }
       }
-      
-      t = new FRTask;
-      t->name = task->getFileName();
-      frTasks.append(t);
-      for (wp = wpList.first(); wp != 0; wp = wpList.next()){
-        if (t->wayPoints.count() > *maxNrWayPointsPerTask) {
+
+      wpListOrig = task->getWPList();
+      wpListCopy.clear();
+      for (wp = wpListOrig.first(); wp != 0; wp = wpListOrig.next()){
+        if (wpListCopy.count() > *maxNrWayPointsPerTask) {
           e.sprintf(i18n("Maximum number of turnpoints/task %d in %s reached!\n"
-                         "Further turnpoints will be ignored."), 
-                    *maxNrWayPointsPerTask, (const char *)t->name);
+                         "Further turnpoints will be ignored."),
+                    *maxNrWayPointsPerTask, task->getFileName().latin1());
           if (KMessageBox::warningContinueCancel(this, e, i18n("Recorder Warning"))
               == KMessageBox::Cancel) {
             return;
@@ -876,18 +835,12 @@ void RecorderDialog::slotWriteTasks()
           }
         }
 
-        frTp = new FRTaskPoint;
-        frTp->name = wp->name;
-        frTp->latPos = wp->origP.lat();
-        frTp->lonPos = wp->origP.lon();
-        frTp->type = wp->type;
-        frTp->elevation = wp->elevation;
-
-        t->wayPoints.append(frTp);
+        wpListCopy.append(wp);
       }
+      frTasks.append(new FlightTask(wpListCopy, true, task->getFileName()));
     }
-    
-    if (!((int (*)(QList<FRTask>*))funcH)(&frTasks)) {
+
+    if (!((int (*)(QList<FlightTask>*))funcH)(&frTasks)) {
       KMessageBox::error(this,
                          i18n("Cannot write tasks to recorder"),
                          i18n("Library Error"));
@@ -901,10 +854,8 @@ void RecorderDialog::slotReadWaypoints()
   void* funcH;
   int ret;
   QString e;
-  struct wayPoint *wp;
-  FRWaypoint *frWp;
-  QList<FRWaypoint> frWaypoints;
-  frWaypoints.setAutoDelete(true);
+  QList<Waypoint> frWaypoints;
+  Waypoint *wp;
 
   funcH = dlsym(libHandle, "readWaypoints");
   CHECK_ERROR
@@ -915,7 +866,7 @@ void RecorderDialog::slotReadWaypoints()
                        i18n("Library Error"));
   }
   else {
-    ret = ((int(*)(QList<FRWaypoint> *))funcH)(&frWaypoints);
+    ret = ((int(*)(QList<Waypoint> *))funcH)(&frWaypoints);
     if (!ret) {
       KMessageBox::error(this,
                          i18n("Cannot read waypoints from recorder"),
@@ -924,25 +875,7 @@ void RecorderDialog::slotReadWaypoints()
     else {
       WaypointCatalog *w = new WaypointCatalog(selectType->currentText() + "_" + serID->text());
       w->modified = true;
-      for (frWp = frWaypoints.first(); frWp != 0; frWp = frWaypoints.next()) {
-        wp = new wayPoint;
-        wp->name = frWp->point.name;
-        wp->origP = WGSPoint(frWp->point.latPos, frWp->point.lonPos);
-        wp->isLandable = frWp->isLandable;
-        if (frWp->isLandable) {
-          wp->surface = frWp->isHardSurface ? Airport::Asphalt : Airport::Grass;
-        }
-        else {
-          wp->surface = -1;
-        }
-        wp->type = frWp->isAirport ? BaseMapElement::Airfield : -1;
-
-        wp->elevation = frWp->point.elevation;
-        wp->frequency = 0;
-        wp->runway = -1;
-        wp->length = -1;
-	wp->comment = frWp->comment;
-
+      for (wp = frWaypoints.first(); wp != 0; wp = frWaypoints.next()) {
         w->wpList.insertItem(wp);
       }
 
@@ -957,10 +890,8 @@ void RecorderDialog::slotWriteWaypoints()
   char* error;
   void* funcH;
   QString e;
-  struct wayPoint *wp;
-  FRWaypoint *frWp;
-  QList<FRWaypoint> frWaypoints;
-  frWaypoints.setAutoDelete(true);
+  Waypoint *wp;
+  QList<Waypoint> frWaypoints;
 
   funcH = dlsym(libHandle, "writeWaypoints");
   CHECK_ERROR
@@ -971,12 +902,12 @@ void RecorderDialog::slotWriteWaypoints()
   if (funcH == 0) {
     KMessageBox::error(this,
                        i18n("Function not implemented"),
-                       i18n("Library Error"));    
+                       i18n("Library Error"));
   }
   else if (maxNrWaypoints == 0) {
     KMessageBox::error(this,
                        i18n("Cannot obtain max number of waypoints from lib"),
-                       i18n("Library Error"));    
+                       i18n("Library Error"));
   }
   else {
     for (wp = waypoints->first(); wp != 0; wp = waypoints->next()){
@@ -992,29 +923,10 @@ void RecorderDialog::slotWriteWaypoints()
         }
       }
 
-      frWp = new FRWaypoint;
-      frWp->point.name = wp->name;
-      frWp->point.latPos = wp->origP.lat();
-      frWp->point.lonPos = wp->origP.lon();
-      frWp->point.elevation = wp->elevation;
-      frWp->comment = wp->comment;
-      frWp->isLandable = wp->isLandable;
-      frWp->isHardSurface = 
-        wp->surface == Airport::Asphalt | 
-        wp->surface == Airport::Concrete;
-      frWp->isAirport = 
-        wp->type == BaseMapElement::Airfield ||
-        wp->type == BaseMapElement::Glidersite ||
-        wp->type == BaseMapElement::Airport ||
-        wp->type == BaseMapElement::IntAirport ||
-        wp->type == BaseMapElement::MilAirport ||
-        wp->type == BaseMapElement::CivMilAirport;
-      frWp->isCheckpoint = 0;
-
-      frWaypoints.append(frWp);
+      frWaypoints.append(wp);
     }
-    
-    if (!((int (*)(QList<FRWaypoint>*))funcH)(&frWaypoints)) {
+
+    if (!((int (*)(QList<Waypoint>*))funcH)(&frWaypoints)) {
       KMessageBox::error(this,
                          i18n("Cannot write waypoints to recorder"),
                          i18n("Library Error"));

@@ -180,8 +180,8 @@ void TaskDialog::polish()
 
   // load current waypoint list from mapcontents
   extern MapContents _globalMapContents;
-  QList<wayPoint>* wpList = _globalMapContents.getWaypointList();
-  wayPoint *wp;
+  QList<Waypoint>* wpList = _globalMapContents.getWaypointList();
+  Waypoint *wp;
   waypoints->clear();
   QString t;
   for (wp = wpList->first(); wp; wp = wpList->next()) {
@@ -249,7 +249,7 @@ void TaskDialog::slotSetPlanningDirection(int)
 
 void TaskDialog::fillWaypoints()
 {
-  wayPoint *wp, *wpPrev;
+  Waypoint *wp, *wpPrev;
   QListViewItem *item, *lastItem = 0;
   QString txt;
 
@@ -297,7 +297,7 @@ void TaskDialog::fillWaypoints()
 void TaskDialog::slotMoveUp()
 {
   int curPos = route->itemIndex(route->currentItem());
-  wayPoint *wp;
+  Waypoint *wp;
 
   if (curPos) {
     wp = wpList.take(curPos);
@@ -311,7 +311,7 @@ void TaskDialog::slotMoveUp()
 void TaskDialog::slotMoveDown()
 {
   unsigned int curPos = route->itemIndex(route->currentItem());
-  wayPoint *wp;
+  Waypoint *wp;
 
   if (curPos < wpList.count() - 1) {
     wp = wpList.take(curPos);
@@ -330,7 +330,7 @@ void TaskDialog::slotReplaceWaypoint()
 
   if (!selText.isEmpty()) {
     wpList.remove(curPos);
-    struct wayPoint *wp = new wayPoint;
+    Waypoint *wp = new Waypoint;
     *wp = *waypointDict[selText];
      wp->sector1 = 0;
      wp->sector2 = 0;
@@ -349,7 +349,7 @@ void TaskDialog::slotAddWaypoint()
   QString selText = waypoints->currentText();
 
   if (!selText.isEmpty()) {
-    struct wayPoint *wp = new wayPoint;
+    Waypoint *wp = new Waypoint;
     *wp = *waypointDict[selText];
      wp->sector1 = 0;
      wp->sector2 = 0;
@@ -391,10 +391,10 @@ void TaskDialog::setTask(FlightTask *orig)
 
   // make a work copy of the task with at least 4 points
   wpList = orig->getWPList();
-  wayPoint *wp;
+  Waypoint *wp;
   if (wpList.count() < 4) {
     for (unsigned int i = wpList.count(); i < 4; i++) {
-      wp = new wayPoint;
+      wp = new Waypoint;
       wp->origP.setLat(config->readNumEntry("Homesite Latitude"));
       wp->origP.setLon(config->readNumEntry("Homesite Longitude"));
       wp->projP = _globalMapMatrix.wgsToMap(wp->origP);

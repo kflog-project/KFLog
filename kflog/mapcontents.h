@@ -149,7 +149,7 @@ class MapContents : public QObject
     /**
      * @returns the wpList
      */
-	QList<wayPoint>* getWaypointList();
+	QList<Waypoint>* getWaypointList();
     /**
      * Searches the first point of the current flight, which distance to the
      * mousecursor is less than 30 pixel. If no point is found, -1 is
@@ -371,7 +371,7 @@ switch to first task in file */
     /*
 	 * This list is reset every time the current WaypointCatalog is changed.
 	 */
-    QList<wayPoint> wpList;
+    QList<Waypoint> wpList;
     /**
      * List of all map-section. Contains a "1" for all loaded section-files,
      * otherwise "0".

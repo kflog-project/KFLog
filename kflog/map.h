@@ -26,13 +26,8 @@
 
 #include <qpointarray.h>
 
-#include <wp.h>
-#include <flighttask.h>
+#include <flight.h>
 #include <waypointcatalog.h>
-
-// class SinglePoint;
-class Flight;
-class WaypointCatalog;
 
 /**
  * This class provides basic functions for displaying the map.
@@ -102,7 +97,7 @@ class Map : public QWidget
     /** No descriptions */
     void slotShowCurrentFlight();
     /** append a waypoint to the current task */
-    void slotAppendWaypoint2Task(wayPoint *p);
+    void slotAppendWaypoint2Task(Waypoint *p);
     /** Slot signalled when user selects another waypointcatalog.  */
     void slotWaypointCatalogChanged(WaypointCatalog* c);
 
@@ -122,7 +117,7 @@ class Map : public QWidget
     /** */
     void pointClicked(QPoint);
     /** is emited when shift + left button click on the map */
-    void waypointSelected(wayPoint *);
+    void waypointSelected(Waypoint *);
 
   protected:
     /**
@@ -201,7 +196,7 @@ class Map : public QWidget
      *   First look in task itself
      *   Second look in map contents
      */
-    bool __getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint> &taskPointList);
+    bool __getTaskWaypoint(QPoint current, Waypoint *wp, QList<Waypoint> &taskPointList);
     /**
      * This pixmap is used to store the currently displayed map.
      * This painter is about the same size as the map-widget, but is only

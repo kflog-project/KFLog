@@ -73,8 +73,7 @@ struct FRTaskDeclaration
   QString compID;
   QString compClass;
 };
-
-/** */
+/*
 struct FRTaskPoint
 {
   QString name;
@@ -84,7 +83,6 @@ struct FRTaskPoint
   int elevation; // in m
 };
 
-/** */
 struct FRWaypoint
 {
   struct FRTaskPoint point;
@@ -95,9 +93,9 @@ struct FRWaypoint
   QString comment;
 };
 
-/** */
 struct FRTask
 {
   QString name;
   QList <FRTaskPoint> wayPoints;
 };
+*/

@@ -24,7 +24,6 @@
 #include <qtextstream.h>
 
 #include <mapcalc.h>
-#include <wp.h>
 
 IGCPreview::IGCPreview(QWidget* parent)
   : KPreviewWidgetBase(parent, "IGC-PreviewWidget")

@@ -1,5 +1,10 @@
 $Id$
 
+2003-02-28 Harry <harry@kflog.org>
+
+  * Replaced wayPoint struct with Waypoint class
+
+
 2003-02-24 Heiner <heiner@kflog.org>
 
   * The evaluation-dialog saves the window-size in the config-files and

@@ -37,10 +37,10 @@ public:
   int closeLogger();
   /** No descriptions */
   int openLogger(char *port, int baud);
-  int downloadWaypoints(QList<FRWaypoint> *waypoints);
-  int uploadWaypoints(QList<FRWaypoint> *waypoints);
-  int downloadTasks(QList<FRTask> *tasks);
-  int uploadTasks(QList<FRTask> *tasks);
+  int downloadWaypoints(QList<Waypoint> *waypoints);
+  int uploadWaypoints(QList<Waypoint> *waypoints);
+  int downloadTasks(QList<FlightTask> *tasks);
+  int uploadTasks(QList<FlightTask> *tasks);
 private: // Private methods
   /** write a file like structure to the device */
   int writeFile(QStringList &file);

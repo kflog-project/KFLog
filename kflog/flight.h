@@ -48,7 +48,7 @@ class Flight : public BaseFlightElement
 	   */
     Flight(QString fileName, QString recID,
   	    QList<flightPoint> route, QString pName, QString gType,
-        QString gID, int cClass, QList<wayPoint> wpL, QDate date);
+        QString gID, int cClass, QList<Waypoint> wpL, QDate date);
 	  /**
 	   * Destroys the flight-object.
 	   */
@@ -159,11 +159,11 @@ class Flight : public BaseFlightElement
     /**
 	   * @return the list of optimized waypoints if task is optimized else then orig waypoints
      */
-    virtual QList<wayPoint> getWPList();
+    virtual QList<Waypoint> getWPList();
     /**
 	   * @return the original list of waypoints
      */
-    QList<wayPoint> getOriginalWPList();
+    QList<Waypoint> getOriginalWPList();
     /**
      * @return the type of the task
      */

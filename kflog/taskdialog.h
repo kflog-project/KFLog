@@ -31,7 +31,7 @@
 
 #include "guicontrols/kfloglistview.h"
 #include "flighttask.h"
-#include "wp.h"
+#include "waypoint.h"
 
 /**
   *@author Harald Maier
@@ -65,8 +65,8 @@ private slots: // Private slots
 private: // Private attributes
   /**  */
   KListBox *waypoints;
-  QDict<wayPoint> waypointDict;
-  QList<wayPoint> wpList;
+  QDict<Waypoint> waypointDict;
+  QList<Waypoint> wpList;
   FlightTask *pTask;
   /**  */
   QLineEdit *name;

@@ -55,14 +55,14 @@ QString DataView::__writeTaskInfo(FlightTask* task)
   QString htmlText;
   QString txt, tmp,speed;
   QString idString, timeString;
-  struct wayPoint *wp1, *wp2;
+  Waypoint *wp1, *wp2;
   int t1, t2;
   
   htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
       <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
       i18n("Task") + ":</B></TD></TR>";
 
-  QList<wayPoint> wpList = task->getWPList();
+  QList<Waypoint> wpList = task->getWPList();
 
   for(unsigned int loop = 0; loop < wpList.count(); loop++) {
     wp1 = wpList.at(loop);
@@ -171,7 +171,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
   
 void DataView::slotShowTaskText(FlightTask* task)
 {
-  QList<wayPoint> taskPointList = task->getWPList();
+  QList<Waypoint> taskPointList = task->getWPList();
   QString htmlText = "";
   QString tmp;
 

@@ -40,7 +40,6 @@
 #include <mapmatrix.h>
 #include <singlepoint.h>
 #include <radiopoint.h>
-#include "wp.h"
 #include "waypointdialog.h"
 
 #include <iostream>
@@ -172,7 +171,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
   extern MapContents _globalMapContents;
   extern const MapMatrix _globalMapMatrix;
   const QPoint current = event->pos();
-  struct wayPoint *w;
+  Waypoint *w;
 
   if(planning == 1 || planning == 3)
     {
@@ -189,9 +188,9 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
       if(!f)  return;
 
-      QList<wayPoint> taskPointList = f->getWPList();
-      QList<wayPoint> tempTaskPointList = f->getWPList();
-      QList<wayPoint> *wpList = _globalMapContents.getWaypointList();
+      QList<Waypoint> taskPointList = f->getWPList();
+      QList<Waypoint> tempTaskPointList = f->getWPList();
+      QList<Waypoint> *wpList = _globalMapContents.getWaypointList();
 
       // 3: Task beendet verschieben eines Punktes
 
@@ -235,7 +234,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
           if(!isSnapping)
             {
-              struct wayPoint wp;
+              Waypoint wp;
               bool found = __getTaskWaypoint(current, &wp, taskPointList);
 			  if (!found) // check wp catalog
 				found = __getTaskWaypoint(current, &wp, *wpList);
@@ -261,13 +260,13 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                   if(planning == 3)
                     {
                       //verschieben
-                      tempTaskPointList.insert(moveWPindex,new wayPoint);
+                      tempTaskPointList.insert(moveWPindex,new Waypoint);
                       w = tempTaskPointList.at(moveWPindex);
                     }
                   else
                     {
                       //anhängen
-                      tempTaskPointList.append(new wayPoint);
+                      tempTaskPointList.append(new Waypoint);
                       w = tempTaskPointList.last();
                     }
 
@@ -326,7 +325,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                       if(planning == 3)
                         {
                           //verschieben
-                          tempTaskPointList.insert(moveWPindex,new wayPoint);
+                          tempTaskPointList.insert(moveWPindex,new Waypoint);
                           tempTaskPointList.at(moveWPindex)->name = "";
                           QPoint tmp(_globalMapMatrix.mapToWgs(event->pos()));
 //                          tempTaskPointList.at(moveWPindex)->origP = _globalMapMatrix.mapToWgs(event->pos());
@@ -341,7 +340,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                       else
                         {
                           //anhängen
-                          tempTaskPointList.append(new wayPoint);
+                          tempTaskPointList.append(new Waypoint);
                           tempTaskPointList.last()->name = "test";
                           QPoint tmp(_globalMapMatrix.mapToWgs(event->pos()));
                           tempTaskPointList.last()->origP = WGSPoint(tmp.y(), tmp.x());
@@ -482,7 +481,7 @@ void Map::__displayMapInfo(QPoint current)
 
   if(baseFlight && baseFlight->getTypeID() == BaseMapElement::Flight)
     {
-      QList<wayPoint> wpList = baseFlight->getWPList();
+      QList<Waypoint> wpList = baseFlight->getWPList();
 
       delta = 25;
       bool isWP = false;
@@ -591,10 +590,10 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
   BaseFlightElement *baseFlight = _globalMapContents.getFlight();
   if(baseFlight == NULL)  return;
 
-  QList<wayPoint> taskPointList = baseFlight->getWPList();
-  QList<wayPoint> tempTaskPointList = baseFlight->getWPList();
-  QList<wayPoint> * wpList = _globalMapContents.getWaypointList();
-  struct wayPoint wp, *w;
+  QList<Waypoint> taskPointList = baseFlight->getWPList();
+  QList<Waypoint> tempTaskPointList = baseFlight->getWPList();
+  QList<Waypoint> * wpList = _globalMapContents.getWaypointList();
+  Waypoint wp, *w;
   QString text;
   bool found;
 
@@ -637,7 +636,7 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
               // neuen Punkt an Task Liste anhängen
 //              warning("hänge Punkt an");
 
-              taskPointList.append(new wayPoint);
+              taskPointList.append(new Waypoint);
               w = taskPointList.last();
 
               w->name = wp.name;
@@ -681,7 +680,7 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
             {
               planning = 2;
 //              warning("insert - verschiebe Punkt?");
-              taskPointList.insert(moveWPindex,new wayPoint);
+              taskPointList.insert(moveWPindex,new Waypoint);
               w = taskPointList.at(moveWPindex);
 
               w->name = wp.name;
@@ -854,7 +853,7 @@ warning("Map::mousePressEvent: planning=%d", planning);
   	              // Abstand entspricht der Icon-Größe.
         	        if (dX < delta && dY < delta)
         	          {
-          	          wayPoint *w = new wayPoint;
+          	          Waypoint *w = new Waypoint;
   	                  w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
                       w->description = hitElement->getName();
           	          w->type = hitElement->getTypeID();
@@ -894,7 +893,7 @@ warning("Map::mousePressEvent: planning=%d", planning);
               if (waypointDlg->exec() == QDialog::Accepted)
                 {
                   // add an 'free' waypoint
-                  wayPoint *w = new wayPoint;
+                  Waypoint *w = new Waypoint;
                   // leave name empty, this will generate an syntetic name
 
                   if(!waypointDlg->name->text().isEmpty())
@@ -1209,7 +1208,7 @@ void Map::__drawPlannedTask(bool solid)
 
   if(task && task->getTypeID() == BaseMapElement::Task)
     {
-      QList<wayPoint> WPList = task->getWPList();
+      QList<Waypoint> WPList = task->getWPList();
 
       // Strecke zeichnen
       if(solid)
@@ -2034,7 +2033,7 @@ void Map::slotShowCurrentFlight()
     }
 }
 /** append a waypoint to the current task */
-void Map::slotAppendWaypoint2Task(wayPoint *p)
+void Map::slotAppendWaypoint2Task(Waypoint *p)
 {
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
@@ -2042,7 +2041,7 @@ void Map::slotAppendWaypoint2Task(wayPoint *p)
   FlightTask *f = (FlightTask *)_globalMapContents.getFlight();
   if(f && f->getTypeID() == BaseMapElement::Task && planning)
     {
-      QList<wayPoint> taskPointList = f->getWPList();
+      QList<Waypoint> taskPointList = f->getWPList();
       p->projP = _globalMapMatrix.wgsToMap(p->origP);
       taskPointList.append(p);
       f->setWaypointList(taskPointList);
@@ -2054,10 +2053,10 @@ void Map::slotAppendWaypoint2Task(wayPoint *p)
 /** search for a waypoint
 First look in task itself
 Second look in map contents */
-bool Map::__getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint> &taskPointList)
+bool Map::__getTaskWaypoint(QPoint current, Waypoint *wp, QList<Waypoint> &taskPointList)
 {
   unsigned int i;
-  struct wayPoint *tmpPoint;
+  Waypoint *tmpPoint;
   QPoint sitePos;
   double dX, dY;
   // Radius for Mouse Snapping
@@ -2131,8 +2130,8 @@ void Map::__drawWaypoints(){
   int i, n;
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
-  QList<wayPoint> * wpList;
-  wayPoint * wp;
+  QList<Waypoint> * wpList;
+  Waypoint * wp;
   QPoint p;
 
   wpList = _globalMapContents.getWaypointList();
@@ -2146,7 +2145,7 @@ void Map::__drawWaypoints(){
   // now do complete list
   n =  wpList->count();
   for (i=0; i < n; i++){
-     wp = (wayPoint*)wpList->at(i);
+     wp = wpList->at(i);
      // make sure projection is ok, and map to screen
     wp->projP = _globalMapMatrix.wgsToMap(wp->origP.lat(), wp->origP.lon());
 	 p = _globalMapMatrix.map(wp->projP);
@@ -2166,11 +2165,11 @@ void Map::__drawWaypoints(){
 /** Slot signalled when user selects another waypointcatalog.  */
 void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
   extern MapContents _globalMapContents;
-  wayPoint *w;
-  wayPoint *newWP;
-  QDictIterator<wayPoint> it(c->wpList);
+  Waypoint *w;
+  Waypoint *newWP;
+  QDictIterator<Waypoint> it(c->wpList);
   bool filterRadius, filterArea;
-  QList<wayPoint> * wpList;
+  QList<Waypoint> * wpList;
 
   wpList = _globalMapContents.getWaypointList();
   wpList->clear();
@@ -2218,7 +2217,7 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
        }
      }
    // add the waypoint to the list
-   newWP = new wayPoint;
+   newWP = new Waypoint;
    newWP = w;
    wpList->append(newWP);
   }

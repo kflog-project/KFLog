@@ -37,13 +37,13 @@ double dist(double lat1, double lon1, double lat2, double lon2)
   return dist / 1000.0;
 }
 
-double dist(wayPoint* wp1, wayPoint* wp2)
+double dist(Waypoint* wp1, Waypoint* wp2)
 {
   return ( dist( wp1->origP.lat(), wp1->origP.lon(),
                  wp2->origP.lat(), wp2->origP.lon() ) );
 }
 
-double dist(wayPoint* wp, flightPoint* fp)
+double dist(Waypoint* wp, flightPoint* fp)
 {
   return ( dist( wp->origP.lat(), wp->origP.lon(),
                  fp->origP.lat(), fp->origP.lon() ) );

@@ -18,7 +18,7 @@
 #ifndef TASKDATAPRINT_H
 #define TASKDATAPRINT_H
 
-class FlightTask;
+#include <flighttask.h>
 
 /**
  * @author Heiner Lamprecht

@@ -52,13 +52,13 @@ extern "C"
   /*  not available for SP */
   /* int readDatabase(); */
   /** read tasks from recorder */
-  int readTasks(QList<FRTask> *tasks);
+  int readTasks(QList<FlightTask> *tasks);
   /** write tasks to recorder */
-  int writeTasks(QList<FRTask> *tasks);
+  int writeTasks(QList<FlightTask> *tasks);
   /** read waypoints from recorder */
-  int readWaypoints(QList<FRWaypoint> *waypoints);
+  int readWaypoints(QList<Waypoint> *waypoints);
   /** write waypoints to recorder */
-  int writeWaypoints(QList<FRWaypoint> *waypoints);
+  int writeWaypoints(QList<Waypoint> *waypoints);
 }
 
 
@@ -191,22 +191,22 @@ int closeRecorder()
 //  return 1;
 //}
 
-int readTasks(QList<FRTask> *tasks)
+int readTasks(QList<FlightTask> *tasks)
 {
   return sp.downloadTasks(tasks);
 }
 
-int writeTasks(QList<FRTask> *tasks)
+int writeTasks(QList<FlightTask> *tasks)
 {
   return sp.uploadTasks(tasks);
 }
 
-int readWaypoints(QList<FRWaypoint> *waypoints)
+int readWaypoints(QList<Waypoint> *waypoints)
 {
   return sp.downloadWaypoints(waypoints);
 }
 
-int writeWaypoints(QList<FRWaypoint> *waypoints)
+int writeWaypoints(QList<Waypoint> *waypoints)
 {
   return sp.uploadWaypoints(waypoints);
 }

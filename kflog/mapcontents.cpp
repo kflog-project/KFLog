@@ -1147,7 +1147,7 @@ BaseFlightElement* MapContents::getFlight()
 
 QList<BaseFlightElement>* MapContents::getFlightList()  {  return &flightList;  }
 
-QList<wayPoint>* MapContents::getWaypointList()  {  return &wpList;  }
+QList<Waypoint>* MapContents::getWaypointList()  {  return &wpList;  }
 
 bool MapContents::loadFlight(QFile& igcFile)
 {
@@ -1214,9 +1214,9 @@ bool MapContents::loadFlight(QFile& igcFile)
   flightPoint newPoint;
   flightPoint prePoint;
   QList<flightPoint> flightRoute;
-  QList<wayPoint> wpList;
-  wayPoint* newWP;
-  wayPoint* preWP;
+  QList<Waypoint> wpList;
+  Waypoint* newWP;
+  Waypoint* preWP;
   bool isValid = true;
 
   newPoint.dS = 0;
@@ -1541,7 +1541,7 @@ bool MapContents::loadFlight(QFile& igcFile)
                   if(latChar == 'S') latTemp = -latTemp;
                   if(lonChar == 'W') lonTemp = -lonTemp;
 
-                  newWP = new wayPoint;
+                  newWP = new Waypoint;
                   newWP->name = s.mid(18,20);
                   newWP->origP = WGSPoint(latTemp, lonTemp);
                   newWP->projP = _globalMapMatrix.wgsToMap(newWP->origP);
@@ -1565,7 +1565,7 @@ bool MapContents::loadFlight(QFile& igcFile)
                   // WendePunkte es gibt. <- Ist IGC Datei immer korrekt??
                   if(wp_count != 0 && last0 != (int)(wp_count - 1))
                     {
-                      newWP = new wayPoint;
+                      newWP = new Waypoint;
                       newWP->name =  preWP->name;
                       newWP->origP = preWP->origP;
                       newWP->projP = preWP->projP;
@@ -2288,9 +2288,9 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
   flightPoint newPoint;
   flightPoint prePoint;
   QList<flightPoint> flightRoute;
-  QList<wayPoint> wpList;
-  wayPoint* newWP;
-  wayPoint* preWP;
+  QList<Waypoint> wpList;
+  Waypoint* newWP;
+  Waypoint* preWP;
   bool isValid = true;
 
   //
@@ -2611,9 +2611,9 @@ bool MapContents::importGardownFile(QFile& gardownFile){
   flightPoint newPoint;
   flightPoint prePoint;
   QList<flightPoint> flightRoute;
-  QList<wayPoint> wpList;
-  wayPoint* newWP;
-  wayPoint* preWP;
+  QList<Waypoint> wpList;
+  Waypoint* newWP;
+  Waypoint* preWP;
   bool isValid = true;
 
   //
@@ -2844,7 +2844,7 @@ bool MapContents::loadTask(QFile& path)
   }
 
   QDomDocument doc;
-  QList<wayPoint> wpList;
+  QList<Waypoint> wpList;
   FlightTask *f, *firstTask = 0;
 
   doc.setContent(&path);
@@ -2860,7 +2860,7 @@ bool MapContents::loadTask(QFile& path)
       for (uint childIdx = 0; childIdx < childNodes.count(); childIdx++) {
         QDomNamedNodeMap nm =  childNodes.item(childIdx).attributes();
 
-        wayPoint *w = new wayPoint;
+        Waypoint *w = new Waypoint;
 
         w->name = nm.namedItem("Name").toAttr().value().left(6).upper();
         w->description = nm.namedItem("Description").toAttr().value();

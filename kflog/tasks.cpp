@@ -139,11 +139,11 @@ void Tasks::slotSaveTask()
   QDomElement root = doc.createElement("KFLogTask");
   QDomElement t, child;
   FlightTask *ft;
-  wayPoint *w;
+  Waypoint *w;
   QFile f;
   QString fName;
   QListViewItem *item = tasks->currentItem();
-  QList <wayPoint> wpList;
+  QList <Waypoint> wpList;
   wpList.setAutoDelete(false);
   uint i;
 
@@ -208,12 +208,12 @@ void Tasks::slotSaveAllTask()
   QDomDocument doc("KFLogTask");
   QDomElement root = doc.createElement("KFLogTask");
   QDomElement t, child;
-  wayPoint *w;
+  Waypoint *w;
   FlightTask *ft;
   QFile f;
   QString fName;
   QListViewItem *item;
-  QList <wayPoint> wpList;
+  QList <Waypoint> wpList;
   wpList.setAutoDelete(false);
   uint i;
 

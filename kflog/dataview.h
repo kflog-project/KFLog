@@ -21,8 +21,6 @@
 #include <ktextbrowser.h>
 #include <qframe.h>
 
-
-#include <wp.h>
 #include <flighttask.h>
 class Flight;
 

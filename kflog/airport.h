@@ -18,8 +18,8 @@
 #ifndef AIRPORT_H
 #define AIRPORT_H
 
-#include <radiopoint.h>
-#include <runway.h>
+#include "radiopoint.h"
+#include "runway.h"
 
 /**
   * This class is used for handling airports. The object can be one of

@@ -58,17 +58,17 @@ extern "C"
   int closeRecorder();
   /** write flight declaration to recorder */
   int writeDeclaration(FRTaskDeclaration *taskDecl, 
-                       QList<FRTaskPoint> *taskPoints);
+                       QList<Waypoint> *taskPoints);
   /** read waypoint and flight declaration form from recorder into mem */
   int readDatabase();
   /** read tasks from recorder */
-  int readTasks(QList<FRTask> *tasks);
+  int readTasks(QList<FlightTask> *tasks);
   /** write tasks to recorder */
-  int writeTasks(QList<FRTask> *tasks);
+  int writeTasks(QList<FlightTask> *tasks);
   /** read waypoints from recorder */
-  int readWaypoints(QList<FRWaypoint> *waypoints);
+  int readWaypoints(QList<Waypoint> *waypoints);
   /** write waypoints to recorder */
-  int writeWaypoints(QList<FRWaypoint> *waypoints);
+  int writeWaypoints(QList<Waypoint> *waypoints);
 }
 
 /*************************************************************************
@@ -181,7 +181,7 @@ int closeRecorder()
   return 1;
 }
 
-int writeDeclaration(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> *taskPoints)
+int writeDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint> *taskPoints)
 {
 //  unsigned int loop;
 //  FRTaskPoint *tp;
@@ -238,7 +238,7 @@ int readDatabase()
   return 1;
 }
 
-int readTasks(QList<FRTask> *tasks)
+int readTasks(QList<FlightTask> *tasks)
 {
 //  FRTask *task;
 //  FRTaskPoint *tp;
@@ -285,7 +285,7 @@ int readTasks(QList<FRTask> *tasks)
   return 1;
 }
 
-int writeTasks(QList<FRTask> *tasks)
+int writeTasks(QList<FlightTask> *tasks)
 {
 //  FRTask *task;
 //  FRTaskPoint *tp;
@@ -339,7 +339,7 @@ int writeTasks(QList<FRTask> *tasks)
   return 1;
 }
 
-int readWaypoints(QList<FRWaypoint> *waypoints)
+int readWaypoints(QList<Waypoint> *waypoints)
 {
 //  int n;
 //  FRWaypoint *frWp;
@@ -366,7 +366,7 @@ int readWaypoints(QList<FRWaypoint> *waypoints)
   return 1;
 }
 
-int writeWaypoints(QList<FRWaypoint> *waypoints)
+int writeWaypoints(QList<Waypoint> *waypoints)
 {
 //  FRWaypoint *frWp;
 //  FRTaskPoint *tp;

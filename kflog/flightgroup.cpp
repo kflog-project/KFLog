@@ -35,9 +35,9 @@ FlightGroup::~FlightGroup()
 {
 }
 
-QList<wayPoint> FlightGroup::getWPList()
+QList<Waypoint> FlightGroup::getWPList()
 {
-  QList<wayPoint> tmp;
+  QList<Waypoint> tmp;
   return tmp;
 }
 

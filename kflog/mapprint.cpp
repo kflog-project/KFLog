@@ -788,8 +788,8 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
 void MapPrint::__drawWaypoints(const double selectedScale, QPainter* wpP, const QSize pS, const QRect mapBorder, const int mapCenterLon,     const double dX, const double dY, const double gridLeft,     const double gridRight, const double gridTop, const double gridBot){
   extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
-  QList<wayPoint> *wpList;
-  wayPoint *wp;
+  QList<Waypoint> *wpList;
+  Waypoint *wp;
   int i,n;
   QPoint p;
 
@@ -800,7 +800,7 @@ void MapPrint::__drawWaypoints(const double selectedScale, QPainter* wpP, const 
 
   n = wpList->count();
   for (i=0; i < n; i++){
-     wp = (wayPoint*)wpList->at(i);
+     wp = wpList->at(i);
      p = _globalMapMatrix.print(wp->origP.lat(), wp->origP.lon(), dX, dY);
 	 // draw marker and name
      wpP->drawRect(p.x() - 4,p.y() - 4, 8, 8);

@@ -16,7 +16,6 @@
  ***************************************************************************/
 
 #include "waypoints.h"
-#include "wp.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "airport.h"
@@ -255,7 +254,7 @@ void Waypoints::slotAddWaypoint()
   
   if (!waypointDlg->name->text().isEmpty()) {
     // insert a new waypoint to current catalog
-    wayPoint *w = new wayPoint;
+    Waypoint *w = new Waypoint;
     w->name = waypointDlg->name->text().upper();
     w->description = waypointDlg->description->text();
     w->type = waypointDlg->getWaypointType();
@@ -299,7 +298,7 @@ void Waypoints::slotEditWaypoint()
   if (item != 0) {
     WaypointDict *wl = &waypointCatalogs.current()->wpList;
     oldName = item->text(colName);
-    wayPoint *w = wl->find(oldName);
+    Waypoint *w = wl->find(oldName);
 
     // initialize dialg
     waypointDlg->name->setText(w->name);
@@ -390,10 +389,10 @@ void Waypoints::slotDeleteWaypoint()
 void Waypoints::fillWaypoints()
 {
   QString tmp;
-  wayPoint *w;
+  Waypoint *w;
   WaypointCatalog *c = waypointCatalogs.current();
   QListViewItem *item;
-  QDictIterator<wayPoint> it(c->wpList);
+  QDictIterator<Waypoint> it(c->wpList);
   bool filterRadius, filterArea;
   extern TranslationList surfaces;
   extern TranslationList waypointTypes;
@@ -556,7 +555,7 @@ void Waypoints::slotCloseWaypointCatalog()
 void Waypoints::slotImportWaypointFromMap()
 {
   SinglePoint *s;
-  wayPoint *w;
+  Waypoint *w;
   WaypointCatalog *c = waypointCatalogs.current();
   WaypointDict *wl = &(c->wpList);
   unsigned int i;
@@ -617,7 +616,7 @@ void Waypoints::slotImportWaypointFromMap()
           }
         }
 
-        w = new wayPoint;
+        w = new Waypoint;
 
         w->name = s->getName().replace(blank, QString::null).left(6).upper();
         loop = 0;
@@ -677,7 +676,7 @@ void Waypoints::slotFilterWaypoints()
   }
 }
 /** add a new waypoint from outside */
-void Waypoints::slotAddWaypoint(wayPoint *w)
+void Waypoints::slotAddWaypoint(Waypoint *w)
 {
   WaypointDict *wl = &waypointCatalogs.current()->wpList;
   int loop = 1;
@@ -700,7 +699,7 @@ void Waypoints::slotCopyWaypoint2Task()
 
   if (item != 0) {
     WaypointDict *wl = &waypointCatalogs.current()->wpList;
-    wayPoint *w = wl->find(item->text(colName));
+    Waypoint *w = wl->find(item->text(colName));
 
     emit copyWaypoint2Task(w);
   }
@@ -713,7 +712,7 @@ void Waypoints::slotCenterMap()
   if (item != 0)
     {
       WaypointDict *wl = &waypointCatalogs.current()->wpList;
-      wayPoint *w = wl->find(item->text(colName));
+      Waypoint *w = wl->find(item->text(colName));
 
       emit centerMap(w->origP.lat(), w->origP.lon());
     }

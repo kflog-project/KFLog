@@ -19,6 +19,7 @@
 #define MAPCALC_H
 
 #include <wp.h>
+#include <waypoint.h>
 
 #define PI 3.141592654
 
@@ -36,12 +37,12 @@ double dist(double lat1, double lon1, double lat2, double lon2);
 /**
  * Calculates the distance between two given points (in km).
  */
-double dist(wayPoint* wp1, wayPoint* wp2);
+double dist(Waypoint* wp1, Waypoint* wp2);
 
 /**
  * Calculates the distance between two given points (in km).
  */
-double dist(wayPoint* wp, flightPoint* fp);
+double dist(Waypoint* wp, flightPoint* fp);
 
 /**
  * Calculates the distance between two given points (in km).

@@ -29,9 +29,9 @@ WaypointDict::~WaypointDict()
 }
 
 /** insert a new item into the list and check if waypoint already exist */
-bool WaypointDict::insertItem(wayPoint *e)
+bool WaypointDict::insertItem(Waypoint *e)
 {
-  wayPoint *tmp;
+  Waypoint *tmp;
   bool ins = true;
 
   if ((tmp = find(e->name)) != 0) {

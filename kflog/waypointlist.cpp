@@ -28,5 +28,5 @@ WaypointList::~WaypointList()
 
 int WaypointList::compareItems(QPtrCollection::Item item1, QPtrCollection::Item item2)
 {
-  return (((struct wayPoint *)item1)->name.compare(((struct wayPoint *)item2)->name));
+  return (((Waypoint *)item1)->name.compare(((Waypoint *)item2)->name));
 }

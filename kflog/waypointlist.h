@@ -18,7 +18,7 @@
 #ifndef WAYPOINTLIST_H
 #define WAYPOINTLIST_H
 
-#include "wp.h"
+#include "waypoint.h"
 
 #include <qptrlist.h>
 
@@ -26,7 +26,7 @@
   *@author Harald Maier
   */
 
-typedef QPtrList<wayPoint> WaypointListBase;
+typedef QPtrList<Waypoint> WaypointListBase;
 
 class WaypointList :public WaypointListBase {
 public:

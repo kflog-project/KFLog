@@ -17,8 +17,6 @@
 
 #include "taskdataprint.h"
 
-#include <flighttask.h>
-
 #include <config.h>
 #include <mapcalc.h>
 
@@ -166,7 +164,7 @@ TaskDataPrint::TaskDataPrint(FlightTask* task)
   printer.setFullPage(true);
 
   QString temp;
-  wayPoint* cPoint;
+  Waypoint *cPoint;
 
   QPainter painter(&printer);
 

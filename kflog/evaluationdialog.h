@@ -28,8 +28,6 @@
 #include <qslider.h>
 #include <qtextview.h>
 
-#include "wp.h"
-
 class Flight;
 
 /**

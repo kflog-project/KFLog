@@ -474,8 +474,8 @@ void KFLogApp::initView()
 
   connect(map, SIGNAL(changed(QSize)), mapControl,
       SLOT(slotShowMapData(QSize)));
-  connect(map, SIGNAL(waypointSelected(wayPoint *)), waypoints,
-    SLOT(slotAddWaypoint(wayPoint *)));
+  connect(map, SIGNAL(waypointSelected(Waypoint *)), waypoints,
+    SLOT(slotAddWaypoint(Waypoint *)));
   connect(map, SIGNAL(taskPlanningEnd()), tasks,
     SLOT(slotUpdateTask()));
 
@@ -499,8 +499,8 @@ void KFLogApp::initView()
   connect(&_globalMapContents, SIGNAL(currentFlightChanged()), tasks,
       SLOT(setCurrentTask()));
 
-  connect(waypoints, SIGNAL(copyWaypoint2Task(wayPoint *)), map,
-      SLOT(slotAppendWaypoint2Task(wayPoint *)));
+  connect(waypoints, SIGNAL(copyWaypoint2Task(Waypoint *)), map,
+      SLOT(slotAppendWaypoint2Task(Waypoint *)));
 
   connect(waypoints, SIGNAL(waypointCatalogChanged( WaypointCatalog * )), map,
       SLOT(slotWaypointCatalogChanged( WaypointCatalog * )));

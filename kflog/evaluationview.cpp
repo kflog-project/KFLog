@@ -644,7 +644,7 @@ void EvaluationView::__draw()
   int xpos = 0;
 
   // Wendepunkte
-  QList<wayPoint> wP;
+  QList<Waypoint> wP;
   QString timeText = 0;
 
   wP = flight->getWPList();

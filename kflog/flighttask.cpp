@@ -56,32 +56,34 @@ FlightTask::FlightTask(QString fName)
 }
 
 
-FlightTask::FlightTask(QList<wayPoint> wpL, bool isO, QString fName)
+FlightTask::FlightTask(QList<Waypoint> wpL, bool isO, QString fName)
   : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(isO),
-    wpList(wpL),
+//    wpList(wpL),
     __planningType(Route),
     __planningDirection(leftOfRoute)
 {
   warning("FlightTask(QList<wayPoint> wpL, bool isO, QString fName)");
+  warning(fName);
   //only do this if wpList is not empty!
-  if (wpList.count()  != 0)
-    {
-      for(unsigned int loop = 0; loop < wpList.count(); loop++)
-        {
-          wpList.at(loop)->type = FlightTask::FreeP;
-          wpList.at(loop)->sector1 = 0;
-          wpList.at(loop)->sector2 = 0;
-          wpList.at(loop)->sectorFAI = 0;
-        }
-
-      __setWaypointType();
-
-      __checkType();
-
-      for(unsigned int loop = 0; loop < wpList.count(); loop++)
-        __sectorangle(loop, false);
-    }
+  setWaypointList(wpL);
+//  if (wpList.count()  != 0)
+//    {
+//      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+//        {
+//          wpList.at(loop)->type = FlightTask::FreeP;
+//          wpList.at(loop)->sector1 = 0;
+//          wpList.at(loop)->sector2 = 0;
+//          wpList.at(loop)->sectorFAI = 0;
+//        }
+//
+//      __setWaypointType();
+//
+//      __checkType();
+//
+//      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+//        __sectorangle(loop, false);
+//    }
 
   FAISectList.setAutoDelete(true); 
 }
@@ -1156,7 +1158,7 @@ QString FlightTask::getPointsString()
 
 QRect FlightTask::getRect() const  {  return bBoxTask;  }
 
-void FlightTask::setWaypointList(QList<wayPoint> wpL)
+void FlightTask::setWaypointList(QList<Waypoint> wpL)
 {
   warning("setWaypointList(QList<wayPoint> wpL)");
   wpList = wpL;
@@ -1449,8 +1451,8 @@ struct faiRange FlightTask::getFAIDistance(double leg)
 
 void FlightTask::calcFAIArea()
 {
-  struct wayPoint *wp1;
-  struct wayPoint *wp2;
+  Waypoint *wp1;
+  Waypoint *wp2;
   double minDist;
   double trueCourse;
   double tmpDist;

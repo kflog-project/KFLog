@@ -18,7 +18,6 @@
 #include "olcdialog.h"
 
 #include <config.h>
-#include <flight.h>
 #include <mapcalc.h>
 
 #include <kconfig.h>
@@ -236,7 +235,7 @@ void OLCDialog::__fillDataFields()
   routePoints->setText(currentFlight->getPoints());
   routeLength->setText(currentFlight->getTaskDistance());
 
-  QList<wayPoint> wpList = currentFlight->getWPList();
+  QList<Waypoint> wpList = currentFlight->getWPList();
 
   startPoint->setText(wpList.at(0)->name);
   startPos->setText(printPos(wpList.at(0)->origP.lat(), true) + " / " +

@@ -33,7 +33,7 @@ class FlightGroup : public BaseFlightElement
   FlightGroup(QString fName);
   FlightGroup(QList <Flight::Flight> fList, QString fName);
   ~FlightGroup();
-  QList<wayPoint> getWPList();
+  QList<Waypoint> getWPList();
   /**
    * Draws the flight an the task for each fligth into the given painter. Reimplemented
    * from BaseMapElement.

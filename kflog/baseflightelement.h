@@ -21,7 +21,7 @@
 #include <qwidget.h>
 
 #include "basemapelement.h"
-#include "wp.h"
+#include "waypoint.h"
 
 /**
  * @author Harald Maier
@@ -34,7 +34,7 @@ public:
   BaseFlightElement(QString name, unsigned int typeID, QString fName);
   /** */
   ~BaseFlightElement();
-  virtual QList<wayPoint> getWPList() = 0;
+  virtual QList<Waypoint> getWPList() = 0;
   QString getFileName() { return sourceFileName; }
   /**
    * Searches the first point of the flight, which distance to the

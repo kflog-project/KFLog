@@ -90,7 +90,7 @@ bool WaypointCatalog::read(QString &catalog)
 
         for (uint i = 0; i < nl.count(); i++) {
           QDomNamedNodeMap nm =  nl.item(i).attributes();
-          wayPoint *w = new wayPoint;
+          Waypoint *w = new Waypoint;
 
           w->name = nm.namedItem("Name").toAttr().value().left(6).upper();
           w->description = nm.namedItem("Description").toAttr().value();
@@ -154,10 +154,10 @@ bool WaypointCatalog::write()
   QDomDocument doc("KFLogWaypoint");
   QDomElement root = doc.createElement("KFLogWaypoint");
   QDomElement child;
-  wayPoint *w;
+  Waypoint *w;
   QFile f;
   QString fName = path;
-  QDictIterator<wayPoint> it(wpList);
+  QDictIterator<Waypoint> it(wpList);
 /*
   if (!onDisc) {
     fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)", 0, i18n("Save waypoint catalog"));
@@ -232,10 +232,10 @@ bool WaypointCatalog::writeBinairy()
   QString wpComment="";
   Q_UINT8 wpImportance;
 
-  wayPoint *w;
+  Waypoint *w;
   QFile f;
   QString fName = path;
-  QDictIterator<wayPoint> it(wpList);
+  QDictIterator<Waypoint> it(wpList);
 
   f.setName(fName);
   if (f.open(IO_WriteOnly)) {
@@ -356,7 +356,7 @@ bool WaypointCatalog::importVolkslogger(QString & filename){
       s = QStringList::split (",", line, true);
       filePos += line.length();
       importProgress.setProgress(( filePos * 200 ) / fileLength);
-      wayPoint *w = new wayPoint;
+      Waypoint *w = new Waypoint;
 
 	  //
 	  // File is a collection of WPs.
@@ -550,7 +550,7 @@ bool WaypointCatalog::readBinairy(QString &catalog)
           };
 
        //create new waypoint object and set the correct properties
-          wayPoint *w = new wayPoint;
+          Waypoint *w = new Waypoint;
 
           w->name = wpName;
           w->description = wpDescription;
