@@ -32,9 +32,12 @@
 GLView::GLView( QWidget* parent, const char* name )
     : QGLWidget( parent, name )
 {
+    // These values should be stored KConfig
     xRot = yRot = zRot = -45.0;		// default object rotation
     scale = 1.25;			// default object scale
     heightExaggerate=2.0;   //  exaggerates the heights
+
+    // Initializations
     deltaX = 0.0;
     deltaY = 0.0;
     deltaZ = 0.0;
