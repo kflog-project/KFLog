@@ -1249,7 +1249,7 @@ bool MapContents::loadFlight(QFile& igcFile)
 
   QProgressDialog importProgress(0,0,true);
 
-  importProgress.setCaption(i18n("Import mapfile ..."));
+  importProgress.setCaption(i18n("Loading flight..."));
   importProgress.setLabelText(
       "<qt>" + i18n("Please wait while loading file<BR><B>%1</B>").arg(igcFile.name()) + "</qt>");
   importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
