@@ -1151,7 +1151,7 @@ install_location=
 type=SOURCE
 
 [kflog/map-icons/Makefile.am]
-files=kflog/map-icons/airfield_c.xpm,kflog/map-icons/airfield_g.xpm,kflog/map-icons/airport.xpm,kflog/map-icons/airspace.xpm,kflog/map-icons/ambheliport.xpm,kflog/map-icons/civheliport.xpm,kflog/map-icons/civmilair.xpm,kflog/map-icons/closed.xpm,kflog/map-icons/glider.xpm,kflog/map-icons/glider2.xpm,kflog/map-icons/jump.xpm,kflog/map-icons/milairport.xpm,kflog/map-icons/milheliport.xpm,kflog/map-icons/obst_group.xpm,kflog/map-icons/obst_group_light.xpm,kflog/map-icons/obst_light.xpm,kflog/map-icons/obstacle.xpm,kflog/map-icons/outlanding.xpm,kflog/map-icons/paraglider.xpm,kflog/map-icons/routepoint.xpm,kflog/map-icons/ul.xpm,kflog/map-icons/vortac.xpm,kflog/map-icons/waypoint.xpm
+files=kflog/map-icons/airfield_c.xpm,kflog/map-icons/airfield_g.xpm,kflog/map-icons/airport.xpm,kflog/map-icons/airspace.xpm,kflog/map-icons/ambheliport.xpm,kflog/map-icons/civheliport.xpm,kflog/map-icons/civmilair.xpm,kflog/map-icons/closed.xpm,kflog/map-icons/glider.xpm,kflog/map-icons/glider2.xpm,kflog/map-icons/jump.xpm,kflog/map-icons/milairport.xpm,kflog/map-icons/milheliport.xpm,kflog/map-icons/obst_group.xpm,kflog/map-icons/obst_group_light.xpm,kflog/map-icons/obst_light.xpm,kflog/map-icons/obstacle.xpm,kflog/map-icons/outlanding.xpm,kflog/map-icons/paraglider.xpm,kflog/map-icons/routepoint.xpm,kflog/map-icons/ul.xpm,kflog/map-icons/vortac.xpm,kflog/map-icons/waypoint.xpm,kflog/map-icons/balloon.xpm
 sub_dirs=small
 type=normal
 
@@ -1183,6 +1183,12 @@ type=DATA
 dist=true
 install=true
 install_location=$$(kde_datadir)/kflog/mapicons/ambheliport.xpm
+type=DATA
+
+[kflog/map-icons/balloon.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/balloon.xpm
 type=DATA
 
 [kflog/map-icons/civheliport.xpm]
@@ -1276,7 +1282,7 @@ install_location=$$(kde_datadir)/kflog/mapicons/routepoint.xpm
 type=DATA
 
 [kflog/map-icons/small/Makefile.am]
-files=kflog/map-icons/small/airfield_c.xpm,kflog/map-icons/small/airport.xpm,kflog/map-icons/small/ambheliport.xpm,kflog/map-icons/small/civheliport.xpm,kflog/map-icons/small/civmilair.xpm,kflog/map-icons/small/closed.xpm,kflog/map-icons/small/glider.xpm,kflog/map-icons/small/glider2.xpm,kflog/map-icons/small/jump.xpm,kflog/map-icons/small/milairport.xpm,kflog/map-icons/small/milheliport.xpm,kflog/map-icons/small/obst_group.xpm,kflog/map-icons/small/obstacle.xpm,kflog/map-icons/small/outlanding.xpm,kflog/map-icons/small/paraglider.xpm,kflog/map-icons/small/routepoint.xpm,kflog/map-icons/small/ulf.xpm,kflog/map-icons/small/vortac.xpm,kflog/map-icons/small/waypoint.xpm
+files=kflog/map-icons/small/airfield_c.xpm,kflog/map-icons/small/airport.xpm,kflog/map-icons/small/ambheliport.xpm,kflog/map-icons/small/civheliport.xpm,kflog/map-icons/small/civmilair.xpm,kflog/map-icons/small/closed.xpm,kflog/map-icons/small/glider.xpm,kflog/map-icons/small/glider2.xpm,kflog/map-icons/small/jump.xpm,kflog/map-icons/small/milairport.xpm,kflog/map-icons/small/milheliport.xpm,kflog/map-icons/small/obst_group.xpm,kflog/map-icons/small/obstacle.xpm,kflog/map-icons/small/outlanding.xpm,kflog/map-icons/small/paraglider.xpm,kflog/map-icons/small/routepoint.xpm,kflog/map-icons/small/ulf.xpm,kflog/map-icons/small/vortac.xpm,kflog/map-icons/small/waypoint.xpm,kflog/map-icons/small/balloon.xpm
 sub_dirs=
 type=normal
 
@@ -1296,6 +1302,12 @@ type=DATA
 dist=true
 install=true
 install_location=$$(kde_datadir)/kflog/mapicons/small/ambheliport.xpm
+type=DATA
+
+[kflog/map-icons/small/balloon.xpm]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapicons/small/balloon.xpm
 type=DATA
 
 [kflog/map-icons/small/civheliport.xpm]
