@@ -63,11 +63,11 @@ class DataView : public QFrame
      */
     void slotWPSelected(const QString &url);
     /**
-    	* Setzt die Infos zur gerade aktuellen Aufgabe (Planung)
+      * Sets the contents to the currently active task
     	*/
     void slotShowTaskText(FlightTask* task);
     /**
-      * Löscht den Inhalt von Dataview
+      * Clears the contents of the dataview
       */
     void slotClearView();
 

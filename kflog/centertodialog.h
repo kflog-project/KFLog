@@ -22,7 +22,14 @@
 
 #include <guicontrols/coordedit.h>
 /**
- * @author Andree Somers
+ * @short Dialog to enter the coordinates to center the map to
+ *
+ * This dialog is shown if the user wants to center the map on a specific
+ * coordinate. The user can enter a latitude and a longitude, and after
+ * pressing OK the map is asked to center on that coordinate.
+ *
+ * @author André Somers
+ * @version $Id$
  */
 class CenterToDialog : public KDialogBase
 {
@@ -30,9 +37,11 @@ class CenterToDialog : public KDialogBase
 
   public:
     /**
+     * Constructor
      */
     CenterToDialog(QWidget* parent, const char* name);
     /**
+     * Destructor
      */
     ~CenterToDialog();
 
@@ -43,13 +52,19 @@ class CenterToDialog : public KDialogBase
     void centerTo(int lattitude, int longitude);
 
   private:
-    /** */
+    /**
+     * Entrybox for the latitude
+     */
     LatEdit* latE;
-    /** */
+    /**
+     * Entrybox for the longitude
+     */
     LongEdit* longE;
 
   private slots:
-    /** */
+    /**
+     * Received if the OK button is clicked
+     */
     void slotOk();
 };
 
