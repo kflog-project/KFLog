@@ -27,12 +27,16 @@
 #include <time.h>
 #include <signal.h>
 
+#include <qfile.h>
 #include <qstringlist.h>
 #include <klocale.h>
+#include <kconfig.h>
+#include <kglobal.h>
 
 #include <../airport.h>
 
 extern int breakTransfer;
+char c36[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 int portID = -1;
 /**
@@ -252,10 +256,32 @@ FlightRecorderPluginBase::TransferMode SoaringPilot::getTransferMode()
 /**
  * Returns a list of recorded flights in this device.
  */
-int SoaringPilot::getFlightDir(QList<FRDirEntry>*)
+
+int SoaringPilot::getFlightDir(QList<FRDirEntry> *dirList)
 {
-  return FR_OK;
   /* André: I don't quite get this one. Shouldn't this return some FRDirEntries? */
+  // SearingPilot is something "special". It doesn't provide a flight directory
+  // You have to select the flight in SP, can be one or all !!!3
+  time_t startTime_t;
+  struct tm startTime;
+
+  dirList->clear();
+  FRDirEntry* entry = new FRDirEntry;
+
+  startTime_t = 0;
+  startTime = *gmtime(&startTime_t);
+
+  entry->pilotName = i18n("Please select flight from SoaringPilot and start transfer");
+  entry->gliderID = "";
+  entry->firstTime = startTime;
+  entry->lastTime = startTime;
+  entry->duration = 0;
+  entry->shortFileName = "short.igc";
+  entry->longFileName = "long.igc";
+
+  dirList->append(entry);
+
+  return FR_OK;
 }
 
 /**
@@ -263,7 +289,76 @@ int SoaringPilot::getFlightDir(QList<FRDirEntry>*)
  */
 int SoaringPilot::downloadFlight(int flightID, int secMode, QString fileName)
 {
-  return FR_OK;
+  QStringList file;
+  QStringList::iterator line;
+  QString A;
+  QString tmp;
+  QString dir;
+  int ret;
+  QFile f;
+  int day, month, year;
+
+  KConfig* config = KGlobal::config();
+  config->setGroup("Path");
+  dir = config->readEntry("DefaultFlightDirectory") + "/";
+  config->setGroup(0);
+
+  bool shortName = (fileName.upper().find("SHORT.IGC") == -1);
+
+  // IGC File structure
+  ret = readFile(file);
+  if (ret == FR_OK) {
+    for (line = file.begin(); line != file.end(); ++line) {
+      tmp = *line;
+      if (tmp.left(1) == "A") {
+        // new flight
+        if (f.isOpen()) {
+          f.close();
+        }
+
+        A = *line;
+        ++line;
+        tmp = *line;
+        warning(tmp);
+        if (tmp.left(5) == "HFDTE") {
+          if (tmp.length() >= 11) {
+            day = tmp.mid(5, 2).toInt();
+            month = tmp.mid(7, 2).toInt();
+            year = tmp.mid(9, 2).toInt();
+          }
+          else {
+            day = month = year = 0;
+          }
+
+          if (shortName) {
+            fileName.sprintf("%d%c%cx%s1.igc", year, c36[month], c36[day],
+                             (const char *)getRecorderSerialNo());
+          }
+          else {
+            fileName.sprintf("20%.2d-%.2d-%.2d-xsp-%s-%.2d.igc",
+                             year, month, day, 
+                             (const char *)getRecorderSerialNo(), 1);
+          }
+        }
+        else {
+          _errorinfo = i18n("invalid file structure\n\nHFTDE record expexted");
+          ret = FR_ERROR;
+          break;
+        }
+
+        f.setName(dir + fileName);
+        if (!f.open(IO_WriteOnly)) {
+          _errorinfo = i18n("IO error while saving file ") + fileName;
+          ret = FR_ERROR;
+          break;
+        }
+        f.writeBlock(A + "\n", A.length() + 1);
+      }
+      // write data to file
+      f.writeBlock(tmp + "\n", tmp.length() + 1);
+    }
+  }
+  return ret;
 }
 
 /**

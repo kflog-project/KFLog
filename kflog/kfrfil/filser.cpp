@@ -200,12 +200,6 @@ int Filser::getFlightDir(QList<FRDirEntry>* dirList)
       memcpy(ft->record, buf, bufP - buf);
       flightIndex.append(ft);
 
-      printf("Flug: %d\n", dirList->count() + 1);
-      
-      for (int i = 0; i < FLIGHT_INDEX_WIDTH; i++) {
-        printf("[%d] %c, %d\n", i, buf[i], buf[i]);
-      }
-
       // remove \0 between date and time
       ft->record[17] = ' ';
       startTime_t = stopTime_t = 0;
@@ -446,7 +440,6 @@ int Filser::getMemSection(char *memSection, int size)
   wb(L);
   for(i = 0; i < (size + 1); i++) {
     memSection[i] = rb();
-    printf("%d\n", memSection[i]);
   }
 
   if(calcCrcBuf(memSection, size) != memSection[size]) {
@@ -484,14 +477,13 @@ int Filser::getLoggerData(char *memSection, int sectionSize, char **memContents,
   *memContents = new char [(*contentSize) + 1]; // for CRC
   bufP = bufP2 = *memContents;
 
-  printf("contents size %d\n", *contentSize);
   // read each memory section
   for(i = 0; i < (sectionSize / 2); i++) {
     if(!(memSection[2 * i] | memSection[(2 * i) + 1])) {
       break;
     }
     count = (memSection[2 * i] << 8) + memSection[(2 * i) + 1];
-    printf("count %d\n", count);
+
     tcflush(portID, TCIOFLUSH);
     wb(STX);
     wb(f + i);
@@ -508,7 +500,7 @@ int Filser::getLoggerData(char *memSection, int sectionSize, char **memContents,
     bufP2 += count;
     bufP = bufP2;
   }
-  printf("huhu\n");
+
   return 1;  
 }
 
