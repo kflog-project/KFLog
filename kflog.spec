@@ -3,15 +3,15 @@
 # the error to ian geiser <geiseri@msoe.edu>
 Summary:   Soaring-pilot-software for KDE
 Name:      kflog
-Version:   2.0.1
-Release:   3
+Version:   2.0.2
+Release:   1
 Copyright: GPL
 Vendor:    Heiner Lamprecht <heiner@kflog.org>
 Url:       http://www.kflog.org/
 
 Packager:  Heiner Lamprecht <heiner@kflog.org>
 Group:     X11/KDE/Applications
-Source:    kflog-2.0.1.tar.gz
+Source:    kflog-2.0.2.tar.gz
 BuildRoot: /tmp/test/
 
 %description
