@@ -763,11 +763,11 @@ void KFLogConfig::__addIDTab()
 //  idLayout->addRowSpacing(15, 10);
   idLayout->addRowSpacing(16, 20);
   idLayout->addRowSpacing(17, 20);
-  idLayout->addRowSpacing(18, 20);
-  idLayout->addRowSpacing(19, 20);
-  idLayout->addRowSpacing(20, 20);
+  idLayout->addRowSpacing(18, 5);
+  idLayout->addRowSpacing(19, 5);
+  idLayout->addRowSpacing(20, 5);
 
-  idLayout->setRowStretch(17, 1);
+//  idLayout->setRowStretch(17, 1);
 
   config->setGroup("Map Data");
 
