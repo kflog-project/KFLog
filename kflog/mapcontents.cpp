@@ -1369,7 +1369,7 @@ bool MapContents::loadFlight(QFile& igcFile)
 
           sscanf(s.mid(25,10),"%5d%5d", &baroAltTemp, &gpsAltTemp);
 
-          if( latTemp == 0 && lonTemp == 0 && baroAltTemp == 0 && gpsAltTemp == 0)
+          if( latTemp == 0 && lonTemp == 0 )
             {
               // Ignoring a wrong point ...
               continue;
