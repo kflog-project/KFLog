@@ -1,0 +1,671 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2001
+# Thomas Nielsen <thomanie@stud.ntnu.no>, 2001.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2001-11-09 22:33+0100\n"
+"PO-Revision-Date: 2001-11-17 22:18GMT\n"
+"Last-Translator: Thomas Nielsen <thomanie@stud.ntnu.no>\n"
+"Language-Team:  <no@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 0.9.5\n"
+
+#: airspace.cpp:197
+msgid "unknown"
+msgstr "ukjent"
+
+#: dataview.cpp:36
+#, fuzzy
+msgid "Flight"
+msgstr "Flytur"
+
+#: dataview.cpp:60
+msgid "Date"
+msgstr "Dato"
+
+#: dataview.cpp:61
+#, fuzzy
+msgid "Pilot"
+msgstr "Pilot"
+
+#: dataview.cpp:62
+msgid "Glider"
+msgstr "Fly"
+
+#: dataview.cpp:70
+msgid "Task"
+msgstr "Oppgave"
+
+#: dataview.cpp:93
+#, fuzzy
+msgid "total Distance"
+msgstr "Total Distanse"
+
+#: dataview.cpp:99
+msgid "Flight contains no waypoints"
+msgstr "Flyturen inneholder ingen vendepunkter"
+
+#: evaluationdialog.cpp:41 evaluationdialog.cpp:283
+#, fuzzy
+msgid "Flightevaluation:"
+msgstr "Evaluering av flytur:"
+
+#: evaluationdialog.cpp:63
+#, fuzzy
+msgid "Flight:"
+msgstr "Flytur:"
+
+#: evaluationdialog.cpp:87
+msgid "Close"
+msgstr "Lukk"
+
+#: evaluationdialog.cpp:219
+#, fuzzy
+msgid "Circling"
+msgstr "Sirkling"
+
+#: evaluationdialog.cpp:220 evaluationdialog.cpp:231
+#, fuzzy
+msgid "Time"
+msgstr "Tid"
+
+#: evaluationdialog.cpp:221
+#, fuzzy
+msgid "Vario"
+msgstr "Vario"
+
+#: evaluationdialog.cpp:222 evaluationdialog.cpp:233
+msgid "Alt. Gain"
+msgstr "Høydegevinst"
+
+#: evaluationdialog.cpp:223 evaluationdialog.cpp:234
+msgid "Alt. Loss"
+msgstr "Høydetap"
+
+#: evaluationdialog.cpp:230
+msgid "Straight"
+msgstr "Rett legg"
+
+#: evaluationdialog.cpp:232
+msgid "tot. Distance"
+msgstr "Total distanse"
+
+#: evaluationdialog.cpp:235
+msgid "Speed"
+msgstr "Hastighet"
+
+#: evaluationdialog.cpp:236
+#, fuzzy
+msgid "L/D ratio"
+msgstr "Glidetall (L/D)"
+
+#: evaluationdialog.cpp:245
+#, fuzzy
+msgid "Total:"
+msgstr "Totalt:"
+
+#: flight.cpp:1188
+#, fuzzy
+msgid "The task is not valid.<BR>All waypoints are the same point."
+msgstr "Oppgaven er ikke gyldig.<BR>Alle venderpunkter har samme posisjon."
+
+#: flight.cpp:1568 flight.cpp:1591
+msgid "You have not reached the first waypoint of your task."
+msgstr "Du har ikke nådd første vendepunkt på�oppgaven."
+
+#: flight.cpp:1608
+msgid "You have not reached the last point of your task."
+msgstr "Du har ikke nådd siste vendepunkt på�oppgaven."
+
+#: flight.cpp:1700
+msgid ""
+"The time intervall between two points<BR>of the flight is more than 70 sec.!"
+"<BR>Due to Code Sportif 3, Nr. 1.9.2.1,<BR>the flight can not be valued!"
+msgstr ""
+"Tiden mellom to loggepunkter p�flyturen<BR>er strre enn 70 sekunder!."
+"<BR>I flge Code Sportif 3, Nr. 1.9.2.1,<BR>kann ikke oppgaven godkjennes!"
+
+#: flight.cpp:1819
+#, fuzzy
+msgid ""
+"The task has been optimized. The best task found is:\n"
+"\n"
+msgstr "Oppgaven er optimalisert. Den beste oppgaven er:\n\n"
+
+#: flight.cpp:1827
+#, fuzzy
+msgid "Distance:"
+msgstr "Distanse:"
+
+#: flight.cpp:1827
+#, fuzzy
+msgid "Points:"
+msgstr "Poeng:"
+
+#: flight.cpp:1828
+#, fuzzy
+msgid "Do You want to use this task and replace the old?"
+msgstr "Vil du erstatte den gamle oppgaven med denne?"
+
+#: kflog.cpp:104
+#, fuzzy
+msgid "&Open Flight"
+msgstr "&�ne Flytur"
+
+#: kflog.cpp:109
+#, fuzzy
+msgid "Close Flight"
+msgstr "Lukk Flytur"
+
+#: kflog.cpp:123
+#, fuzzy
+msgid "Center to &Task"
+msgstr "Sentrer om &Oppgaven"
+
+#: kflog.cpp:126
+#, fuzzy
+msgid "Center to &Flight"
+msgstr "Sentrer om &Flyturen"
+
+#: kflog.cpp:130
+#, fuzzy
+msgid "Center to &Homesite"
+msgstr "Senter om &Hjemmeflyplass"
+
+#: kflog.cpp:142
+#, fuzzy
+msgid "Show Flightdata"
+msgstr "Vis data om Flytur"
+
+#: kflog.cpp:144
+#, fuzzy
+msgid "Show Mapcontrol"
+msgstr "Vis Kartkontoll"
+
+#: kflog.cpp:159
+#, fuzzy
+msgid "Evaluation"
+msgstr "Evaluering"
+
+#: kflog.cpp:166
+#, fuzzy
+msgid "Open flight"
+msgstr "�ne Flytur"
+
+#: kflog.cpp:209
+#, fuzzy
+msgid "Map"
+msgstr "Kart"
+
+#: kflog.cpp:210
+#, fuzzy
+msgid "Flight-Data"
+msgstr "Flytur-Data"
+
+#: kflog.cpp:211
+#, fuzzy
+msgid "Map-Control"
+msgstr "Kart-Kontroll"
+
+#: kflog.cpp:351 kflog.cpp:390
+#, fuzzy
+msgid "Opening file..."
+msgstr "�ner fil..."
+
+#: kflog.cpp:362
+#, c-format, ycp-format
+#, fuzzy
+msgid "Can not download file %1"
+msgstr "Kan ikke laste ned filen %1"
+
+#: kflog.cpp:385 kflog.cpp:406 kflog.cpp:418 kflog.cpp:438 kflog.cpp:450
+#, fuzzy
+msgid "Ready."
+msgstr "Ferdig."
+
+#: kflog.cpp:412 printdialog.cpp:799 printdialog.cpp:1096 printdialog.cpp:1121
+#, fuzzy
+msgid "Printing..."
+msgstr "Skriver ut..."
+
+#: kflog.cpp:423
+#, fuzzy
+msgid "Exiting..."
+msgstr "Programmet avsluttes..."
+
+#: kflog.cpp:431
+#, fuzzy
+msgid "Toggling toolbar..."
+msgstr "Aktiverer/deaktiverer verktylinja..."
+
+#: kflog.cpp:443
+#, fuzzy
+msgid "Toggle the statusbar..."
+msgstr "Aktiverer/deaktiverer statuslinja..."
+
+#: kflogconfig.cpp:103
+#, fuzzy
+msgid "KFlog Setup"
+msgstr "KFlog Innstillinger"
+
+#: kflogconfig.cpp:181
+#, fuzzy
+msgid "Select Default-Directory for the IGC-Files"
+msgstr "Velg standard-mappe for IGC filer"
+
+#: kflogconfig.cpp:189
+#, fuzzy
+msgid "Select Directory for the Map-Files"
+msgstr "Velg standard-mappe for kart-filer"
+
+#: kflogconfig.cpp:197
+#, fuzzy
+msgid "Select Default-Directory for the Task-Files"
+msgstr "Velg standard-mappe for oppgave-filer"
+
+#: kflogconfig.cpp:507
+#, fuzzy
+msgid "Map-Elements"
+msgstr "Kartelementer"
+
+#: kflogconfig.cpp:507
+#, fuzzy
+msgid "Map Configuration"
+msgstr "Kartoppsett"
+
+#: kflogconfig.cpp:512
+#, fuzzy
+msgid "visible Map-Elements"
+msgstr "Synlige Kartelement"
+
+#: kflogconfig.cpp:517
+#, fuzzy
+msgid "Road"
+msgstr "Vei"
+
+#: kflogconfig.cpp:518
+#, fuzzy
+msgid "Highway"
+msgstr "Motorvei"
+
+#: kflogconfig.cpp:519
+#, fuzzy
+msgid "Railway"
+msgstr "Jernbane"
+
+#: kflogconfig.cpp:520
+#, fuzzy
+msgid "River / Lake"
+msgstr "Elv / Innsj"
+
+#: kflogconfig.cpp:521
+#, fuzzy
+msgid "City"
+msgstr "By"
+
+#: kflogconfig.cpp:523
+#, fuzzy
+msgid "draw up to border #1"
+msgstr "tegn inntil grense #1"
+
+#: kflogconfig.cpp:524
+#, fuzzy
+msgid "draw up to border #2"
+msgstr "tegn inntil grense #2"
+
+#: kflogconfig.cpp:525
+#, fuzzy
+msgid "draw up to border #3"
+msgstr "tegn inntil grense #3"
+
+#: kflogconfig.cpp:526
+#, fuzzy
+msgid "draw up to scale-limit"
+msgstr "tegn inntil m�estokk-grense"
+
+#: kflogconfig.cpp:527
+#, fuzzy
+msgid "draw outline"
+msgstr "tegn omriss"
+
+#: kflogconfig.cpp:554 kflogconfig.cpp:681 kflogconfig.cpp:819
+#, fuzzy
+msgid "Default"
+msgstr "Standard"
+
+#: kflogconfig.cpp:620
+#, fuzzy
+msgid "Map-Scales"
+msgstr "Kart m�estokk"
+
+#: kflogconfig.cpp:620
+#, fuzzy
+msgid "Map-Scale Configuration"
+msgstr "Oppsett av kart-m�estokk"
+
+#: kflogconfig.cpp:625
+#, fuzzy
+msgid "Scale-Range:"
+msgstr "M�estokk-intervall:"
+
+#: kflogconfig.cpp:627
+#, fuzzy
+msgid "lower limit"
+msgstr "nedre grense"
+
+#: kflogconfig.cpp:637
+#, fuzzy
+msgid "upper limit"
+msgstr "vre grense"
+
+#: kflogconfig.cpp:648
+#, fuzzy
+msgid "use small icons"
+msgstr "bruk sm�ikoner"
+
+#: kflogconfig.cpp:657
+#, fuzzy
+msgid "border #1"
+msgstr "grense #1"
+
+#: kflogconfig.cpp:665
+#, fuzzy
+msgid "border #2"
+msgstr "grense #2"
+
+#: kflogconfig.cpp:673
+#, fuzzy
+msgid "border #3"
+msgstr "grense #3"
+
+#: kflogconfig.cpp:745
+#, fuzzy
+msgid "Path"
+msgstr "Sti"
+
+#: kflogconfig.cpp:745
+#, fuzzy
+msgid "Path Configuration"
+msgstr "Sti-oppsett"
+
+#: kflogconfig.cpp:752
+#, fuzzy
+msgid "Flight-directory:"
+msgstr "Mappe for Flyturer:"
+
+#: kflogconfig.cpp:778
+#, fuzzy
+msgid "Task-directory:"
+msgstr "Mappe for Oppgaver:"
+
+#: kflogconfig.cpp:800
+#, fuzzy
+msgid "Map-directory:"
+msgstr "Mappe for Kart:"
+
+#: kflogconfig.cpp:837
+#, fuzzy
+msgid "Print"
+msgstr "Skriv ut"
+
+#: kflogconfig.cpp:837
+#, fuzzy
+msgid "Printer Configuration"
+msgstr "Skriverinnstillinger"
+
+#: kflogconfig.cpp:848
+#, fuzzy
+msgid "Identity"
+msgstr "Identitet"
+
+#: kflogconfig.cpp:848
+#, fuzzy
+msgid "Personal Information"
+msgstr "Personlige data"
+
+#: kflogconfig.cpp:855
+#, fuzzy
+msgid "Homesite:"
+msgstr "Hjemmeflyplass:"
+
+#: kflogconfig.cpp:865
+#, fuzzy
+msgid "Latitude"
+msgstr "Breddegrad"
+
+#: kflogconfig.cpp:867
+#, fuzzy
+msgid "Longitude"
+msgstr "Lengdegrad"
+
+#: map.cpp:146
+msgid ""
+"<B>The map</B><P>To move or scale the map, please use the buttons in the "
+"<B>Map-control</B>-area. Or center the map to the current cursor-positon by "
+"using the right mouse-button.</P><P>To zoom in or out, use the slider or the "
+"two buttons on the toolbar. You can also zoom with \"&lt;Ctrl&gt;&lt;+&gt;"
+"\" (zoom in) and \"&lt;Ctrl&gt;&lt;-&gt;\" (zoom out).</P><P>With the menu-"
+"item \"Options\" -> \"Configure KFLog\" you can configure, which map "
+"elements should be displayed at which scale.</P>"
+msgstr ""
+"<B>Kartet</B><P> For �flytte eller skalere kartet, bruk knappene under"
+"<B>Kart-Innstilling</B> Med hyre musknapp kan kartet sentreres"
+"p�muspekerens posisjon. </P> "
+"<P>For �forstrre eller forminske det synlige omr�et kan skyvekontrollen eller"
+" de to knappene p�verktylinjen benyttes. I tillegg kan du forstrre og forminske med"
+"\"&lt;Ctrl&gt;&lt;+&gt;\" (forsrre) und \"&lt;Ctrl&gt;&lt;-&gt;\" (forminsk)."
+"</P><P>Under \"Innstillinger\" -> \"KFLog innstillinger\" p�menyen kan "
+"du velge hvilke kartelementer som skal v�e synlige, og"
+"i hvilken m�estokk de skal vises. </P>"
+
+#: map.cpp:234
+#, fuzzy
+msgid "City:"
+msgstr "By:"
+
+#: map.cpp:351
+#, fuzzy
+msgid "Airspace-Structure"
+msgstr "Luftromsinndeling"
+
+#: mapcontents.cpp:446 mapcontents.cpp:1000
+#, fuzzy
+msgid "Import mapfile ..."
+msgstr "Importer kartfil ..."
+
+#: mapcontents.cpp:448 mapcontents.cpp:1002
+#, ycp-format
+#, fuzzy
+msgid "Please wait while loading file<BR><B>%1</B>"
+msgstr "Vennligst vent mens filen lastes:<BR><B>%1</B>"
+
+#: mapcontents.cpp:970
+#, ycp-format
+#, fuzzy
+msgid "The selected file<BR><B>%1</B><BR>does not exist!"
+msgstr "Den valgte filen <BR><B>%1</B><BR>eksisterer ikke!"
+
+#: mapcontents.cpp:976
+#, ycp-format
+#, fuzzy
+msgid "The selected file<BR><B>%1</B><BR>is empty!"
+msgstr "Den valgte filen<BR><B>%1</B><BR>er tom!"
+
+#: mapcontents.cpp:986
+#, ycp-format
+msgid "The selected file<BR><B>%1</B><BR>is not an igc-file!"
+msgstr "Den valgte filen<BR><B>%1</B><BR>er ikke en IGC-fil!"
+
+#: mapcontents.cpp:993
+#, ycp-format
+#, fuzzy
+msgid "You don't have permission to access file<BR><B>%1</B>"
+msgstr "Du har ikke rettigheter til �aksessere filen<BR><B>%1</B>"
+
+#: mapcontents.cpp:994
+#, fuzzy
+msgid "No permission"
+msgstr "Ingen rettigheter"
+
+#: mapcontents.cpp:1081
+#, ycp-format
+#, fuzzy
+msgid "Syntax-error while loading igc-file<BR><B>%1</B><BR>Aborting!"
+msgstr "Syntaks-feil i filen<BR><B>%1</B><BR>Avbryter!"
+
+#: mapcontents.cpp:1083
+#, fuzzy
+msgid "Error in IGC-file"
+msgstr "Feil i IGC-filen"
+
+#: mapcontrolview.cpp:35
+#, fuzzy
+msgid "Map-control:"
+msgstr "Kart-kontroll:"
+
+#: mapcontrolview.cpp:96
+#, fuzzy
+msgid "Height / Width [km]:"
+msgstr "Hyde / Bredde [km]:"
+
+#: mapcontrolview.cpp:104
+#, fuzzy
+msgid "Scale:"
+msgstr "M�estokk:"
+
+#: mapcontrolview.cpp:109
+#, fuzzy
+msgid "Set scale:"
+msgstr "Sett m�estokk:"
+
+#: printdialog.cpp:713
+#, fuzzy
+msgid "file"
+msgstr "fil"
+
+#: printdialog.cpp:805
+#, fuzzy
+msgid "Printer Output"
+msgstr "Skriver"
+
+#: printdialog.cpp:806
+#, fuzzy
+msgid "Paper Format"
+msgstr "Papirformat"
+
+#: printdialog.cpp:810
+#, fuzzy
+msgid "Map scale"
+msgstr "Kart m�estokk"
+
+#: printdialog.cpp:820
+#, fuzzy
+msgid "Print to Printer:"
+msgstr "Skriv ut til:"
+
+#: printdialog.cpp:821
+#, fuzzy
+msgid "Command:"
+msgstr "Kommando:"
+
+#: printdialog.cpp:826
+#, fuzzy
+msgid "Printer:"
+msgstr "Skriver:"
+
+#: printdialog.cpp:833
+#, fuzzy
+msgid "Print to File:"
+msgstr "Skriv til fil:"
+
+#: printdialog.cpp:846
+#, fuzzy
+msgid "Portrait"
+msgstr "Portrett"
+
+#: printdialog.cpp:847
+#, fuzzy
+msgid "Landscape"
+msgstr "Landskap"
+
+#: printdialog.cpp:868
+#, fuzzy
+msgid "Grey"
+msgstr "Gr�one"
+
+#: printdialog.cpp:869
+#, fuzzy
+msgid "Color"
+msgstr "Farve"
+
+#: printdialog.cpp:959
+#, fuzzy
+msgid "&Print"
+msgstr "&Skriv ut"
+
+#: printdialog.cpp:962
+#, fuzzy
+msgid "Pre&view"
+msgstr "Forh�d&svisning"
+
+#: printdialog.cpp:964
+#, fuzzy
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: printdialog.cpp:1098
+#, fuzzy
+msgid "Printing Map"
+msgstr "Skriver kart"
+
+#: printdialog.cpp:1123
+#, fuzzy
+msgid "Printing Flight-data"
+msgstr "Skriver Flytur-data"
+
+#: printdialog.cpp:1212
+#, fuzzy
+msgid ""
+"\n"
+"The file has been created!\n"
+msgstr ""
+"\n"
+"Filen er opprettet!\n"
+
+#: printdialog.cpp:1213
+#, fuzzy
+msgid "File created!"
+msgstr "Fil opprettet!"
+
+#: printdialog.cpp:1230
+#, fuzzy
+msgid ""
+"Could not send the map to the printer!\n"
+"The spooler send the following message:"
+msgstr ""
+"Kan ikke sende kartet til skriveren!\n"
+"Skriver-spooleren har returnert flgende melding: "
+
+#: printdialog.cpp:1232
+#, fuzzy
+msgid "Error occurred!"
+msgstr "Det har oppst�t en feil!"
+
+#: printdialog.cpp:1242
+#, fuzzy
+msgid ""
+"\n"
+"The file was sent to the printer!\n"
+msgstr ""
+"\n"
+"Filen er sent til skriveren!\n"
+
+#: printdialog.cpp:1242
+#, fuzzy
+msgid "File spooled!"
+msgstr "Filen er skrevet ut"
+

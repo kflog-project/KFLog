@@ -1,0 +1,680 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2001
+# Florian Ehinger <florian@kflog.de>, 2001.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2001-11-09 22:33+0100\n"
+"PO-Revision-Date: 2001-11-09 22:54GMT\n"
+"Last-Translator: Florian Ehinger <florian@kflog.de>\n"
+"Language-Team:  <de@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 0.9.5\n"
+
+#: airspace.cpp:197
+msgid "unknown"
+msgstr "unbekannt"
+
+#: dataview.cpp:36
+#, fuzzy
+msgid "Flight"
+msgstr "Flug"
+
+#: dataview.cpp:60
+#, fuzzy
+msgid "Date"
+msgstr "Datum"
+
+#: dataview.cpp:61
+#, fuzzy
+msgid "Pilot"
+msgstr "Pilot"
+
+#: dataview.cpp:62
+msgid "Glider"
+msgstr "Flugzeug"
+
+#: dataview.cpp:70
+#, fuzzy
+msgid "Task"
+msgstr "Aufgabe"
+
+#: dataview.cpp:93
+#, fuzzy
+msgid "total Distance"
+msgstr "Gesamtdistanz"
+
+#: dataview.cpp:99
+#, fuzzy
+msgid "Flight contains no waypoints"
+msgstr "Flug enthält keine Wendepunkte"
+
+#: evaluationdialog.cpp:41 evaluationdialog.cpp:283
+#, fuzzy
+msgid "Flightevaluation:"
+msgstr "Flugauswertung:"
+
+#: evaluationdialog.cpp:63
+#, fuzzy
+msgid "Flight:"
+msgstr "Flug:"
+
+#: evaluationdialog.cpp:87
+#, fuzzy
+msgid "Close"
+msgstr "Schließen"
+
+#: evaluationdialog.cpp:219
+#, fuzzy
+msgid "Circling"
+msgstr "Kreisflug"
+
+#: evaluationdialog.cpp:220 evaluationdialog.cpp:231
+#, fuzzy
+msgid "Time"
+msgstr "Zeit"
+
+#: evaluationdialog.cpp:221
+#, fuzzy
+msgid "Vario"
+msgstr "Vario"
+
+#: evaluationdialog.cpp:222 evaluationdialog.cpp:233
+#, fuzzy
+msgid "Alt. Gain"
+msgstr "Höhengewinn"
+
+#: evaluationdialog.cpp:223 evaluationdialog.cpp:234
+#, fuzzy
+msgid "Alt. Loss"
+msgstr "Höhenverlust"
+
+#: evaluationdialog.cpp:230
+#, fuzzy
+msgid "Straight"
+msgstr "Geradeausflug"
+
+#: evaluationdialog.cpp:232
+#, fuzzy
+msgid "tot. Distance"
+msgstr "Gesamtdistanz"
+
+#: evaluationdialog.cpp:235
+#, fuzzy
+msgid "Speed"
+msgstr "Geschwindigkeit"
+
+#: evaluationdialog.cpp:236
+#, fuzzy
+msgid "L/D ratio"
+msgstr "Gleitzahl"
+
+#: evaluationdialog.cpp:245
+#, fuzzy
+msgid "Total:"
+msgstr "Gesamt:"
+
+#: flight.cpp:1188
+#, fuzzy
+msgid "The task is not valid.<BR>All waypoints are the same point."
+msgstr "Die Aufgabe ist nicht gültig.<BR>Alle Wendepunkte haben die selbe Position."
+
+#: flight.cpp:1568 flight.cpp:1591
+msgid "You have not reached the first waypoint of your task."
+msgstr "Sie haben den ersten Wendepunkt ihrer Aufgabe nicht erreicht."
+
+#: flight.cpp:1608
+msgid "You have not reached the last point of your task."
+msgstr "Sie haben den letzten Wendepunkt ihrer Aufgabe nicht erreicht."
+
+#: flight.cpp:1700
+msgid ""
+"The time intervall between two points<BR>of the flight is more than 70 sec.!"
+"<BR>Due to Code Sportif 3, Nr. 1.9.2.1,<BR>the flight can not be valued!"
+msgstr ""
+"Das Zeitintervall zwischen zwei Punkten<BR>des Fluges ist größer als 70 sec! "
+"<BR>Laut Code Sportif 3, Nr. 1.9.2.1,<BR>kann der Flug nicht gewertet werden!"
+
+#: flight.cpp:1819
+#, fuzzy
+msgid ""
+"The task has been optimized. The best task found is:\n"
+"\n"
+msgstr "Die Aufgabe wurde optimiert. Die beste gefundene Aufgabe ist:\n\n"
+
+#: flight.cpp:1827
+#, fuzzy
+msgid "Distance:"
+msgstr "Distanz:"
+
+#: flight.cpp:1827
+#, fuzzy
+msgid "Points:"
+msgstr "Punkte:"
+
+#: flight.cpp:1828
+#, fuzzy
+msgid "Do You want to use this task and replace the old?"
+msgstr "Wollen Sie diese Aufgabe verwenden und die alte ersetzen?"
+
+#: kflog.cpp:104
+#, fuzzy
+msgid "&Open Flight"
+msgstr "&Flug öffnen"
+
+#: kflog.cpp:109
+#, fuzzy
+msgid "Close Flight"
+msgstr "Flug schließen"
+
+#: kflog.cpp:123
+#, fuzzy
+msgid "Center to &Task"
+msgstr "auf &Aufgabe zentrieren"
+
+#: kflog.cpp:126
+#, fuzzy
+msgid "Center to &Flight"
+msgstr "auf &Flug zentrieren"
+
+#: kflog.cpp:130
+#, fuzzy
+msgid "Center to &Homesite"
+msgstr "auf &Heimatflugplatz zentrieren"
+
+#: kflog.cpp:142
+#, fuzzy
+msgid "Show Flightdata"
+msgstr "Flugdaten zeigen"
+
+#: kflog.cpp:144
+#, fuzzy
+msgid "Show Mapcontrol"
+msgstr "Kartenkontrolle zeigen"
+
+#: kflog.cpp:159
+#, fuzzy
+msgid "Evaluation"
+msgstr "Auswertung"
+
+#: kflog.cpp:166
+#, fuzzy
+msgid "Open flight"
+msgstr "Flug öffnen"
+
+#: kflog.cpp:209
+#, fuzzy
+msgid "Map"
+msgstr "Karte"
+
+#: kflog.cpp:210
+#, fuzzy
+msgid "Flight-Data"
+msgstr "Flug-Daten"
+
+#: kflog.cpp:211
+#, fuzzy
+msgid "Map-Control"
+msgstr "Karten-Kontrolle"
+
+#: kflog.cpp:351 kflog.cpp:390
+#, fuzzy
+msgid "Opening file..."
+msgstr "öffne Datei..."
+
+#: kflog.cpp:362
+#, c-format, ycp-format
+#, fuzzy
+msgid "Can not download file %1"
+msgstr "Kann Datei %1 nicht herunterladen"
+
+#: kflog.cpp:385 kflog.cpp:406 kflog.cpp:418 kflog.cpp:438 kflog.cpp:450
+#, fuzzy
+msgid "Ready."
+msgstr "Fertig."
+
+#: kflog.cpp:412 printdialog.cpp:799 printdialog.cpp:1096 printdialog.cpp:1121
+#, fuzzy
+msgid "Printing..."
+msgstr "Drucke..."
+
+#: kflog.cpp:423
+#, fuzzy
+msgid "Exiting..."
+msgstr "Programm wird beendet..."
+
+#: kflog.cpp:431
+#, fuzzy
+msgid "Toggling toolbar..."
+msgstr "Werkzeugleiste (de)aktivieren..."
+
+#: kflog.cpp:443
+#, fuzzy
+msgid "Toggle the statusbar..."
+msgstr "Statusleiste (de)aktivieren..."
+
+#: kflogconfig.cpp:103
+#, fuzzy
+msgid "KFlog Setup"
+msgstr "KFlog Einstellungen"
+
+#: kflogconfig.cpp:181
+#, fuzzy
+msgid "Select Default-Directory for the IGC-Files"
+msgstr "Wählen Sie das Standard Verzeichnis für die IGC Dateien"
+
+#: kflogconfig.cpp:189
+#, fuzzy
+msgid "Select Directory for the Map-Files"
+msgstr "Wählen Sie das Verzeichnis für die Karten Dateien"
+
+#: kflogconfig.cpp:197
+#, fuzzy
+msgid "Select Default-Directory for the Task-Files"
+msgstr "Wählen Sie das Standard Verzeichnis für die Aufgaben Dateien"
+
+#: kflogconfig.cpp:507
+#, fuzzy
+msgid "Map-Elements"
+msgstr "Karten Elemente"
+
+#: kflogconfig.cpp:507
+#, fuzzy
+msgid "Map Configuration"
+msgstr "Karten Konfiguration"
+
+#: kflogconfig.cpp:512
+#, fuzzy
+msgid "visible Map-Elements"
+msgstr "sichtbare Karten Elemente "
+
+#: kflogconfig.cpp:517
+#, fuzzy
+msgid "Road"
+msgstr "Straße"
+
+#: kflogconfig.cpp:518
+#, fuzzy
+msgid "Highway"
+msgstr "Autobahn"
+
+#: kflogconfig.cpp:519
+#, fuzzy
+msgid "Railway"
+msgstr "Eisenbahn"
+
+#: kflogconfig.cpp:520
+#, fuzzy
+msgid "River / Lake"
+msgstr "Fluss / See"
+
+#: kflogconfig.cpp:521
+#, fuzzy
+msgid "City"
+msgstr "Stadt"
+
+#: kflogconfig.cpp:523
+#, fuzzy
+msgid "draw up to border #1"
+msgstr "zeichne bis Grenze #1"
+
+#: kflogconfig.cpp:524
+#, fuzzy
+msgid "draw up to border #2"
+msgstr "zeichne bis Grenze #2"
+
+#: kflogconfig.cpp:525
+#, fuzzy
+msgid "draw up to border #3"
+msgstr "zeichne bis Grenze #3"
+
+#: kflogconfig.cpp:526
+#, fuzzy
+msgid "draw up to scale-limit"
+msgstr "zeichne bis Maßstabsgrenze"
+
+#: kflogconfig.cpp:527
+#, fuzzy
+msgid "draw outline"
+msgstr "zeichne Umrandung"
+
+#: kflogconfig.cpp:554 kflogconfig.cpp:681 kflogconfig.cpp:819
+#, fuzzy
+msgid "Default"
+msgstr "Standard"
+
+#: kflogconfig.cpp:620
+#, fuzzy
+msgid "Map-Scales"
+msgstr "Karten Maßstäbe"
+
+#: kflogconfig.cpp:620
+#, fuzzy
+msgid "Map-Scale Configuration"
+msgstr "Konfiguration der Karten Maßstäbe"
+
+#: kflogconfig.cpp:625
+#, fuzzy
+msgid "Scale-Range:"
+msgstr "Maßstabs-Bereich:"
+
+#: kflogconfig.cpp:627
+#, fuzzy
+msgid "lower limit"
+msgstr "untere Grenze"
+
+#: kflogconfig.cpp:637
+#, fuzzy
+msgid "upper limit"
+msgstr "obere Grenze"
+
+#: kflogconfig.cpp:648
+#, fuzzy
+msgid "use small icons"
+msgstr "kleine Icons verwenden"
+
+#: kflogconfig.cpp:657
+#, fuzzy
+msgid "border #1"
+msgstr "Grenze #1"
+
+#: kflogconfig.cpp:665
+#, fuzzy
+msgid "border #2"
+msgstr "Grenze #2"
+
+#: kflogconfig.cpp:673
+#, fuzzy
+msgid "border #3"
+msgstr "Grenze #3"
+
+#: kflogconfig.cpp:745
+#, fuzzy
+msgid "Path"
+msgstr "Pfad"
+
+#: kflogconfig.cpp:745
+#, fuzzy
+msgid "Path Configuration"
+msgstr "Pfade einrichten"
+
+#: kflogconfig.cpp:752
+#, fuzzy
+msgid "Flight-directory:"
+msgstr "Verzeichnis der Flüge:"
+
+#: kflogconfig.cpp:778
+#, fuzzy
+msgid "Task-directory:"
+msgstr "Verzeichnis der Aufgaben:"
+
+#: kflogconfig.cpp:800
+#, fuzzy
+msgid "Map-directory:"
+msgstr "Verzeichnis der Karten:"
+
+#: kflogconfig.cpp:837
+#, fuzzy
+msgid "Print"
+msgstr "Druck"
+
+#: kflogconfig.cpp:837
+#, fuzzy
+msgid "Printer Configuration"
+msgstr "Druckereinrichtung"
+
+#: kflogconfig.cpp:848
+#, fuzzy
+msgid "Identity"
+msgstr "Identität"
+
+#: kflogconfig.cpp:848
+#, fuzzy
+msgid "Personal Information"
+msgstr "Persönliche Angaben"
+
+#: kflogconfig.cpp:855
+#, fuzzy
+msgid "Homesite:"
+msgstr "Heimatflugplatz:"
+
+#: kflogconfig.cpp:865
+#, fuzzy
+msgid "Latitude"
+msgstr "Breitengrad"
+
+#: kflogconfig.cpp:867
+#, fuzzy
+msgid "Longitude"
+msgstr "Längengrad"
+
+#: map.cpp:146
+msgid ""
+"<B>The map</B><P>To move or scale the map, please use the buttons in the "
+"<B>Map-control</B>-area. Or center the map to the current cursor-positon by "
+"using the right mouse-button.</P><P>To zoom in or out, use the slider or the "
+"two buttons on the toolbar. You can also zoom with \"&lt;Ctrl&gt;&lt;+&gt;"
+"\" (zoom in) and \"&lt;Ctrl&gt;&lt;-&gt;\" (zoom out).</P><P>With the menu-"
+"item \"Options\" -> \"Configure KFLog\" you can configure, which map "
+"elements should be displayed at which scale.</P>"
+msgstr ""
+"<B>Die Karte</B><P> Die Karte kann mit den Knöpfen der "
+"<B>Karten-Kontrolle</B> verschoben und gezoomt werden. Mit der rechten "
+"Maustaste kann die Karten auf einen bestimmten Punkt zentriert werden.</P> "
+"<P>Zum Zoomen der Karte dient der Schiebebalken bzw. die beiden Knöpfe "
+"in der Werkzeugleiste. Zusätzlich kann die Karte mit den Tasten "
+"\"&lt;Strg&gt;&lt;+&gt;\" (Vergößern) und \"&lt;Strg&gt;&lt;-&gt;\" (Verkleinern) "
+"gezoomt werden.</P><P>Mit dem Menüpunkt \"Einstellungen\" -> "
+"\"KFLog einrichten\" kann ausserdem gesteuert werden, welche Kartenelemente "
+"bei welchem Maßstab angezeigt werden sollen.</P>"
+
+#: map.cpp:234
+#, fuzzy
+msgid "City:"
+msgstr "Stadt:"
+
+#: map.cpp:351
+#, fuzzy
+msgid "Airspace-Structure"
+msgstr "Luftraumstruktur"
+
+#: mapcontents.cpp:446 mapcontents.cpp:1000
+#, fuzzy
+msgid "Import mapfile ..."
+msgstr "importiere Kartendatei ..."
+
+#: mapcontents.cpp:448 mapcontents.cpp:1002
+#, ycp-format
+#, fuzzy
+msgid "Please wait while loading file<BR><B>%1</B>"
+msgstr "Bitte warten. Lade Datei<BR><B>%1</B>"
+
+#: mapcontents.cpp:970
+#, ycp-format
+#, fuzzy
+msgid "The selected file<BR><B>%1</B><BR>does not exist!"
+msgstr "Die gewählte Datei<BR><B>%1</B><BR>existiert nicht!"
+
+#: mapcontents.cpp:976
+#, ycp-format
+#, fuzzy
+msgid "The selected file<BR><B>%1</B><BR>is empty!"
+msgstr "Die gewählte Datei<BR><B>%1</B><BR>ist leer!"
+
+#: mapcontents.cpp:986
+#, ycp-format
+msgid "The selected file<BR><B>%1</B><BR>is not an igc-file!"
+msgstr "Die gewählte Datei<BR><B>%1</B><BR>ist keine IGC-Datei!"
+
+#: mapcontents.cpp:993
+#, ycp-format
+#, fuzzy
+msgid "You don't have permission to access file<BR><B>%1</B>"
+msgstr "Sie haben keine Zugriffsrechte auf Datei<BR><B>%1</B>"
+
+#: mapcontents.cpp:994
+#, fuzzy
+msgid "No permission"
+msgstr "Keine Zugriffsrechte"
+
+#: mapcontents.cpp:1081
+#, ycp-format
+#, fuzzy
+msgid "Syntax-error while loading igc-file<BR><B>%1</B><BR>Aborting!"
+msgstr "Syntax-Fehler in Datei<BR><B>%1</B><BR>Abbruch!"
+
+#: mapcontents.cpp:1083
+#, fuzzy
+msgid "Error in IGC-file"
+msgstr "Fehler in IGC Datei"
+
+#: mapcontrolview.cpp:35
+#, fuzzy
+msgid "Map-control:"
+msgstr "Karten-Kontrolle:"
+
+#: mapcontrolview.cpp:96
+#, fuzzy
+msgid "Height / Width [km]:"
+msgstr "Höhe / Breite [km]:"
+
+#: mapcontrolview.cpp:104
+#, fuzzy
+msgid "Scale:"
+msgstr "Maßstab:"
+
+#: mapcontrolview.cpp:109
+#, fuzzy
+msgid "Set scale:"
+msgstr "Maßstab setzen:"
+
+#: printdialog.cpp:713
+#, fuzzy
+msgid "file"
+msgstr "Datei"
+
+#: printdialog.cpp:805
+#, fuzzy
+msgid "Printer Output"
+msgstr "Druckerausgabe"
+
+#: printdialog.cpp:806
+#, fuzzy
+msgid "Paper Format"
+msgstr "Papier Format"
+
+#: printdialog.cpp:810
+#, fuzzy
+msgid "Map scale"
+msgstr "Karten Maßstab"
+
+#: printdialog.cpp:820
+#, fuzzy
+msgid "Print to Printer:"
+msgstr "Auf Drucker ausgeben:"
+
+#: printdialog.cpp:821
+#, fuzzy
+msgid "Command:"
+msgstr "Befehl:"
+
+#: printdialog.cpp:826
+#, fuzzy
+msgid "Printer:"
+msgstr "Drucker:"
+
+#: printdialog.cpp:833
+#, fuzzy
+msgid "Print to File:"
+msgstr "Drucken in Datei:"
+
+#: printdialog.cpp:846
+#, fuzzy
+msgid "Portrait"
+msgstr "Hochformat"
+
+#: printdialog.cpp:847
+#, fuzzy
+msgid "Landscape"
+msgstr "Querformat"
+
+#: printdialog.cpp:868
+#, fuzzy
+msgid "Grey"
+msgstr "Grau"
+
+#: printdialog.cpp:869
+#, fuzzy
+msgid "Color"
+msgstr "Farbe"
+
+#: printdialog.cpp:959
+#, fuzzy
+msgid "&Print"
+msgstr "&Drucken"
+
+#: printdialog.cpp:962
+#, fuzzy
+msgid "Pre&view"
+msgstr "Vor&schau"
+
+#: printdialog.cpp:964
+#, fuzzy
+msgid "Cancel"
+msgstr "Abbruch"
+
+#: printdialog.cpp:1098
+#, fuzzy
+msgid "Printing Map"
+msgstr "Karte Drucken"
+
+#: printdialog.cpp:1123
+#, fuzzy
+msgid "Printing Flight-data"
+msgstr "Flug-Daten drucken"
+
+#: printdialog.cpp:1212
+#, fuzzy
+msgid ""
+"\n"
+"The file has been created!\n"
+msgstr ""
+"\n"
+"Die Datei wurde erstellt!\n"
+
+#: printdialog.cpp:1213
+#, fuzzy
+msgid "File created!"
+msgstr "Datei erstellt!"
+
+#: printdialog.cpp:1230
+#, fuzzy
+msgid ""
+"Could not send the map to the printer!\n"
+"The spooler send the following message:"
+msgstr ""
+"Kann die Karte nicht zum Drucker senden!\n"
+"Der Drucker-Spooler hat die folgende Meldung zurückgegeben:"
+
+#: printdialog.cpp:1232
+#, fuzzy
+msgid "Error occurred!"
+msgstr "Fehler aufgetreten!"
+
+#: printdialog.cpp:1242
+#, fuzzy
+msgid ""
+"\n"
+"The file was sent to the printer!\n"
+msgstr ""
+"\n"
+"Die Datei wurde an den Drucker gesendet!\n"
+
+#: printdialog.cpp:1242
+#, fuzzy
+msgid "File spooled!"
+msgstr "Datei gedruckt"
+
