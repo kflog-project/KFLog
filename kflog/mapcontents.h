@@ -23,6 +23,7 @@
 #include <qlist.h>
 #include <qobject.h>
 #include <qstrlist.h>
+#include <kio/jobclasses.h>
 
 #include <flighttask.h>
 
@@ -402,7 +403,12 @@ switch to first task in file */
     /**
      * List of all drawn isohypses.
      */
-    QList<isoListEntry> regIsoLines; 
+    QList<isoListEntry> regIsoLines;
+
+    /**
+     * downloads File from www.kflog.org, optionally waits until finished
+     */
+    void __downloadFile(QString fileName, QString destString, bool wait=false);
 };
 
 #endif

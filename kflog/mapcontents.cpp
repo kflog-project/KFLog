@@ -40,6 +40,9 @@
 #include <qstring.h>
 #include <qtextstream.h>
 #include <qdom.h>
+#include <kio/netaccess.h>
+#include <kio/scheduler.h>
+#include <kconfig.h>
 
 #include <mapmatrix.h>
 
@@ -536,6 +539,27 @@ bool MapContents::__readAsciiFile(const char* fileName)
   return true;
 }
 
+void MapContents::__downloadFile(QString fileName, QString destString, bool wait){
+  KConfig* config = KGlobal::config();
+  config->setGroup("General Options");
+  if (config->readBoolEntry("No Automatic Map Download",false))
+    return false;
+
+  config->setGroup("Path");
+  KURL src = KURL("http://maproom.kflog.org/data/");
+  KURL dest = KURL(destString);
+  src.addPath(fileName);
+  dest.addPath(fileName);
+
+  if (wait)
+    KIO::NetAccess::copy(src, dest); // waits until file is transmitted
+  else{
+    KIO::CopyJob *job = KIO::copy(src, dest);
+    connect( job, SIGNAL(result(KIO::Job*)),
+         this, SLOT(slotReloadMapData()) );
+  }
+}
+
 bool MapContents::__readTerrainFile(const int fileSecID,
     const int fileTypeID)
 {
@@ -555,6 +579,13 @@ bool MapContents::__readTerrainFile(const int fileSecID,
       // Data exists, but can't be read:
       // We need a messagebox
       warning("KFLog: Can not open mapfile %s", (const char*)pathName);
+
+      QString fileName;
+      fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
+      KConfig* config = KGlobal::config();
+      QString dest = config->readPathEntry("DefaultMapDirectory");
+      __downloadFile(fileName,dest);
+
       return false;
     }
 
@@ -670,7 +701,13 @@ bool MapContents::__readAirfieldFile(const char* pathName)
     {
       // Data exists, but can't be read:
       // We need a messagebox
-     warning("KFLog: Can not open mapfile %s", (const char*)pathName);
+     warning("KFLog: Can not open airfields file %s", (const char*)pathName);
+
+//      QString fileName;
+//      fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
+//      dest = config->readPathEntry("DefaultMapDirectory");
+//      __downloadFile(fileName,dest);
+
       return false;
     }
 
@@ -867,7 +904,13 @@ bool MapContents::__readAirspaceFile(const char* pathName)
     {
       // Data exists, but can't be read:
       // We need a messagebox
-      warning("KFLog: Can not open mapfile %s", (const char*)pathName);
+      warning("KFLog: Can not open airspace file %s", (const char*)pathName);
+
+//      QString fileName;
+//      fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
+//      dest = config->readPathEntry("DefaultMapDirectory");
+//      __downloadFile(fileName,dest);
+
       return false;
     }
 
@@ -987,6 +1030,13 @@ bool MapContents::__readBinaryFile(const int fileSecID,
       // Data exists, but can't be read:
       // We need a messagebox
       warning("KFLog: Can not open mapfile %s", (const char*)pathName);
+
+      QString fileName;
+      fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
+      KConfig* config = KGlobal::config();
+      QString dest = config->readPathEntry("DefaultMapDirectory");
+      __downloadFile(fileName,dest);
+
       return false;
     }
 
@@ -1738,10 +1788,35 @@ void MapContents::proofeSection(bool isPrint)
     {
       // No mapfiles installed!
       emit errorOnMapLoading();
-      KMessageBox::information(0,
-        i18n("The directory for the map-files is empty.\n"
-             "To download the files, please visit our homepage:\n") +
-             "http://maproom.kflog.org/", i18n("directory empty"), "NoMapFiles");
+      int ret = KMessageBox::questionYesNoCancel(0,i18n("There are no map-files in the directory\n")
+          + mapDir + i18n("\nyet. Do you want to download the data automatically?\n"
+          "(You need to have write permissions. If you want to change the directory,"
+          "press \"Cancel\" and change it in the Settings menu"));
+      KConfig* config = KGlobal::config();
+      config->setGroup("General Options");
+      switch (ret){
+        case KMessageBox::Yes:
+          __downloadFile("G_03699.kfl",mapDir,true);
+          if(QFile(mapDir+"/G_03699.kfl").exists()){
+            config->writeEntry("No Automatic Map Download",false);
+            KMessageBox::information(0,
+              i18n("The automatic data download feature is available when "
+              "a flight is loaded."));
+            break;
+          }
+          else{
+            KMessageBox::information(0,
+              i18n("The directory ") + mapDir
+              +i18n(" is not writeable! Please specify correct path in the Settings dialog!"));
+          }
+        case KMessageBox::No:
+          config->writeEntry("No Automatic Map Download",false);
+          break;
+      }
+//      KMessageBox::information(0,
+//        i18n("The directory for the map-files is empty.\n"
+//             "To download the files, please visit our homepage:\n") +
+//             "http://maproom.kflog.org/", i18n("directory empty"), "NoMapFiles");
     }
   else
     {
