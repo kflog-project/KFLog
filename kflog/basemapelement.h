@@ -56,7 +56,7 @@ class BaseMapElement
      * @param  targetP  The painter to draw the element into.
      * @param  maskP  The maskpainter for targetP
      */
-    virtual void drawMapElement(QPainter* targetP, QPainter* maskP);
+    virtual void drawMapElement(QPainter* targetP, QPainter* maskP) = 0;
     /**
      * Virtual function for printing the element.
      *
@@ -66,7 +66,7 @@ class BaseMapElement
      * @param  isText  Shows, if the text of some mapelements should
      *                 be printed.
      */
-    virtual void printMapElement(QPainter* printP, bool isText);
+    virtual void printMapElement(QPainter* printP, bool isText) = 0;
     /**
      * @return the name of the element.
      */
