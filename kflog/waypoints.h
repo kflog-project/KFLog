@@ -4,7 +4,7 @@
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier
     email                : harry@kflog.org
- ***************************************************************************/
+***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
@@ -32,19 +32,19 @@
 #include <kpopupmenu.h>
 
 /**
-  *@author Harald Maier
-  */
+ *@author Harald Maier
+ */
 
 class Waypoints : public QFrame  {
   Q_OBJECT
-public:
+    public:
   Waypoints(QWidget *parent = 0, const char *name = 0, QString *catalog = 0);
   ~Waypoints();
   /* save changes in catalogs, return success */
   bool saveChanges();
   /** return the current waypoint catalog */
   WaypointCatalog *getCurrentCatalog();
-private: // Private methods
+ private: // Private methods
   /** No descriptions */
   void addWaypointWindow(QWidget *parent);
   /** No descriptions */
@@ -54,7 +54,7 @@ private: // Private methods
   /** read filter and store in catalog */
   void getFilterData();
   void openCatalog(QString &catalog);
-private: // Private attributes
+ private: // Private attributes
   /** popup menu for waypoint's */
   KPopupMenu *wayPointPopup;
   /**  */
@@ -93,9 +93,8 @@ private: // Private attributes
   int colSurface;
   int colComment;
 
-private slots: // Private slots
-  void slotNotHandledItem();
-  void slotDeleteWaypoint();
+  private slots: // Private slots
+    void slotDeleteWaypoint();
   void slotEditWaypoint();
   /** insert waypoint from waypoint dialog */
   void slotAddWaypoint();
@@ -112,8 +111,8 @@ private slots: // Private slots
   void slotImportWaypointFromMap();
   void slotCopyWaypoint2Task();
   void slotCenterMap();
-public slots: // Public slots
-  void slotNewWaypoint();
+  public slots: // Public slots
+    void slotNewWaypoint();
   /** filter waypoints to display */
   void slotFilterWaypoints();
   /** add a new waypoint from outside */
@@ -124,7 +123,7 @@ public slots: // Public slots
   void slotImportWaypointFromFile();
   /* No descriptions */
   void slotSetWaypointCatalogName(QString catalog);
-signals: // Signals
+ signals: // Signals
   /** No descriptions */
   void copyWaypoint2Task(wayPoint *);
   /** signal to emit when current waypointcatalog has changed. */

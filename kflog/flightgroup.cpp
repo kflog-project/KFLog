@@ -1,19 +1,19 @@
 /***********************************************************************
-**
-**   flightgroup.cpp
-**
-**   This file is part of KFLog2.
-**
-************************************************************************
-**
-**   Copyright (c):  2002 by Harald Maier
-**
-**   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
-**
-**   $Id$
-**
-***********************************************************************/
+ **
+ **   flightgroup.cpp
+ **
+ **   This file is part of KFLog2.
+ **
+ ************************************************************************
+ **
+ **   Copyright (c):  2002 by Harald Maier
+ **
+ **   This file is distributed under the terms of the General Public
+ **   Licence. See the file COPYING for more information.
+ **
+ **   $Id$
+ **
+ ***********************************************************************/
 
 #include "flightgroup.h"
 #include "mapcalc.h"
@@ -27,49 +27,13 @@ FlightGroup::FlightGroup(QString fName)
 
 FlightGroup::FlightGroup(QList <Flight::Flight> fList, QString fName)
   : BaseFlightElement("flight group", BaseMapElement::FlightGroup, fName),
-  flightList(fList)
+    flightList(fList)
 {
 }
 
 FlightGroup::~FlightGroup()
 {
 }
-
-//QString FlightGroup::getFlightInfoString()
-//{
-//  QString htmlText;
-//  QString idString;
-//  unsigned int loop;
-//  Flight::Flight *flight;
-//
-//  htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-//      <TR><TD>" + i18n("Flight group") + ":</TD><TD><A HREF=EDITGROUP>" +
-//      getFileName() +  + "</A></TD></TR>\
-//      </TABLE><HR NOSHADE>";
-//
-//  if(flightList.count()) {
-//    htmlText += "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-//      <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
-//       i18n("Flights") + ":</B></TD></TR>";
-//
-//    for (loop = 0; loop < flightList.count(); loop++) {
-//      flight = flightList.at(loop);
-//      // store pointer of flight instead of index
-//      // flight list of mapcontents will change
-//      idString.sprintf("%d", flight);
-//
-//      htmlText += "<TR><TD><A HREF=" + idString + ">" +
-//        flight->getFileName() + "</A></TD><TD ALIGN=right>" + flight->getDate().toString() + "</TD></TR>\
-//        <TR><TD>" + flight->getDistance() + "</TD><TD ALIGN=right>" +
-//        printTime(flight->getLandTime() - flight->getStartTime()) + "</TD></TR>";
-//    }
-//  }
-//  else {
-//    htmlText += i18n("Click on the group name to start editing");
-//  }
-//
-//  return htmlText;
-//}
 
 QList<wayPoint> FlightGroup::getWPList()
 {

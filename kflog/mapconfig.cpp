@@ -108,6 +108,9 @@ MapConfig::MapConfig()
   forestBorder = new bool[6];
   glacierBorder = new bool[6];
   packiceBorder = new bool[6];
+
+  faiAreaLow500Border = new bool[6];
+  faiAreaHigh500Border = new bool[6];
 }
 
 MapConfig::~MapConfig()
@@ -167,6 +170,10 @@ void MapConfig::slotReadConfig()
   while(glacierBrushList.remove());
   while(packicePenList.remove());
   while(packiceBrushList.remove());
+  while(faiAreaLow500PenList.remove());
+  while(faiAreaLow500BrushList.remove());
+  while(faiAreaHigh500PenList.remove());
+  while(faiAreaHigh500BrushList.remove());
 
   config->setGroup("Topography");
   READ_TOPO("SubTerrain", LEVEL_SUB)
@@ -563,6 +570,34 @@ void MapConfig::slotReadConfig()
         TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4,
         PRINT_TMZ_BRUSH_STYLE_1, PRINT_TMZ_BRUSH_STYLE_2)
 
+    READ_PEN_BRUSH("FAIAreaLow500", faiAreaLow500PenList, faiAreaLow500Border, faiAreaLow500BrushList,
+        FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
+        PRINT_FAI_LOW_500_COLOR_1, PRINT_FAI_LOW_500_COLOR_2,
+        FAI_LOW_500_PEN_1, FAI_LOW_500_PEN_2, FAI_LOW_500_PEN_3, FAI_LOW_500_PEN_4,
+        PRINT_FAI_LOW_500_PEN_1, PRINT_FAI_LOW_500_PEN_2,
+        FAI_LOW_500_PEN_STYLE_1, FAI_LOW_500_PEN_STYLE_2, FAI_LOW_500_PEN_STYLE_3, FAI_LOW_500_PEN_STYLE_4,
+        PRINT_FAI_LOW_500_PEN_STYLE_1, PRINT_FAI_LOW_500_PEN_STYLE_2,
+        FAI_LOW_500_BRUSH_COLOR_1, FAI_LOW_500_BRUSH_COLOR_2,
+        FAI_LOW_500_BRUSH_COLOR_3, FAI_LOW_500_BRUSH_COLOR_4,
+        PRINT_FAI_LOW_500_BRUSH_COLOR_1, PRINT_FAI_LOW_500_BRUSH_COLOR_2,
+        FAI_LOW_500_BRUSH_STYLE_1, FAI_LOW_500_BRUSH_STYLE_2,
+        FAI_LOW_500_BRUSH_STYLE_3, FAI_LOW_500_BRUSH_STYLE_4,
+        PRINT_FAI_LOW_500_BRUSH_STYLE_1, PRINT_FAI_LOW_500_BRUSH_STYLE_2)
+
+    READ_PEN_BRUSH("FAIAreaHigh500", faiAreaHigh500PenList, faiAreaHigh500Border, faiAreaHigh500BrushList,
+        FAI_HIGH_500_COLOR_1, FAI_HIGH_500_COLOR_2, FAI_HIGH_500_COLOR_3, FAI_HIGH_500_COLOR_4,
+        PRINT_FAI_HIGH_500_COLOR_1, PRINT_FAI_HIGH_500_COLOR_2,
+        FAI_HIGH_500_PEN_1, FAI_HIGH_500_PEN_2, FAI_HIGH_500_PEN_3, FAI_HIGH_500_PEN_4,
+        PRINT_FAI_HIGH_500_PEN_1, PRINT_FAI_HIGH_500_PEN_2,
+        FAI_HIGH_500_PEN_STYLE_1, FAI_HIGH_500_PEN_STYLE_2, FAI_HIGH_500_PEN_STYLE_3, FAI_HIGH_500_PEN_STYLE_4,
+        PRINT_FAI_HIGH_500_PEN_STYLE_1, PRINT_FAI_HIGH_500_PEN_STYLE_2,
+        FAI_HIGH_500_BRUSH_COLOR_1, FAI_HIGH_500_BRUSH_COLOR_2,
+        FAI_HIGH_500_BRUSH_COLOR_3, FAI_HIGH_500_BRUSH_COLOR_4,
+        PRINT_FAI_HIGH_500_BRUSH_COLOR_1, PRINT_FAI_HIGH_500_BRUSH_COLOR_2,
+        FAI_HIGH_500_BRUSH_STYLE_1, FAI_HIGH_500_BRUSH_STYLE_2,
+        FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4,
+        PRINT_FAI_HIGH_500_BRUSH_STYLE_1, PRINT_FAI_HIGH_500_BRUSH_STYLE_2)
+
   config->setGroup("Flight");
   drawFType = config->readNumEntry("Draw Type", MapConfig::Speed);
 
@@ -740,6 +775,10 @@ QPen MapConfig::__getPen(unsigned int typeID, int sIndex)
           return *glacierPenList.at(sIndex);
       case BaseMapElement::PackIce:
           return *packicePenList.at(sIndex);
+      case BaseMapElement::FAIAreaLow500:
+          return *faiAreaLow500PenList.at(sIndex);
+      case BaseMapElement::FAIAreaHigh500:
+          return *faiAreaHigh500PenList.at(sIndex);
       default:
           return *roadPenList.at(sIndex);
     }
@@ -805,7 +844,10 @@ bool MapConfig::isBorder(unsigned int typeID)
           return glacierBorder[scaleIndex];
       case BaseMapElement::PackIce:
           return packiceBorder[scaleIndex];
-
+      case BaseMapElement::FAIAreaLow500:
+          return faiAreaLow500Border[scaleIndex];
+      case BaseMapElement::FAIAreaHigh500:
+          return faiAreaHigh500Border[scaleIndex];
     }
 
   /* Should never happen ... */
@@ -847,6 +889,10 @@ bool MapConfig::isPrintBorder(unsigned int typeID)
           return glacierBorder[printScaleIndex];
       case BaseMapElement::PackIce:
           return packiceBorder[printScaleIndex];
+      case BaseMapElement::FAIAreaLow500:
+          return faiAreaLow500Border[printScaleIndex];
+      case BaseMapElement::FAIAreaHigh500:
+          return faiAreaHigh500Border[printScaleIndex];
 
     }
   /* Should never happen ... */
@@ -910,6 +956,10 @@ QBrush MapConfig::__getBrush(unsigned int typeID, int sIndex)
           return *glacierBrushList.at(sIndex);
       case BaseMapElement::PackIce:
           return *packiceBrushList.at(sIndex);
+      case BaseMapElement::FAIAreaLow500:
+          return *faiAreaLow500BrushList.at(sIndex);
+      case BaseMapElement::FAIAreaHigh500:
+          return *faiAreaHigh500BrushList.at(sIndex);
 
     }
   return QBrush();

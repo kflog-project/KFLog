@@ -73,8 +73,8 @@
   a->setAlignment( c | AlignVCenter );
 
 TranslationList surfaces;
-
 TranslationList waypointTypes;
+TranslationList taskTypes;
 
 KFLogApp::KFLogApp()
   : KDockMainWindow(0, "KFLogMainWindow"), showStartLogo(false)
@@ -1183,6 +1183,18 @@ void KFLogApp::slotTaskOpen()
 }
 
 /* Slot to set filename for WaypointCatalog */
-void KFLogApp::slotSetWaypointCatalog(QString catalog){
+void KFLogApp::slotSetWaypointCatalog(QString catalog)
+{
   waypoints->slotSetWaypointCatalogName( catalog );
+}
+
+/** No descriptions */
+void KFLogApp::initTaskTypes()
+{
+  taskTypes.setAutoDelete(true);
+
+  taskTypes.append(new TranslationElement(FlightTask::Route, i18n("Normal Route")));
+  taskTypes.append(new TranslationElement(FlightTask::FAIArea, i18n("FAI Area")));
+
+  taskTypes.sort();
 }

@@ -216,8 +216,6 @@ class Flight : public BaseFlightElement
     QStrList getHeader();
     /** @return the competition-class */
     int getCompetitionClass() const;
-    /** No descriptions */
-//    virtual QString getFlightInfoString();
     /**
 		 * Increments the nAnimationIndex member
      */

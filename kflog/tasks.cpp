@@ -91,17 +91,6 @@ void Tasks::addPopupMenu()
     SLOT(slotSaveTask()));
   idTaskSaveAll = taskPopup->insertItem(SmallIcon("save_all"), i18n("Save &all task's"), this,
     SLOT(slotSaveAllTask()));
-//  taskPopup->insertSeparator();
-//  taskPopup->insertItem(i18n("Down&load from logger"), this,
-//    SLOT(slotNotHandledItem()));
-//  taskPopup->insertItem(i18n("&Upload to logger"), this,
-//    SLOT(slotNotHandledItem()));
-
-}
-
-void Tasks::slotNotHandledItem()
-{
-  KMessageBox::sorry(this, "This function is not yet available!", "ooops");
 }
 
 void Tasks::slotNewTask()

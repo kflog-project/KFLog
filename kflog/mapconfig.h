@@ -238,6 +238,10 @@ class MapConfig : public QObject
     QList<QBrush> forestBrushList;
     QList<QBrush> glacierBrushList;
     QList<QBrush> packiceBrushList;
+    QList<QPen> faiAreaLow500PenList;
+    QList<QBrush> faiAreaLow500BrushList;
+    QList<QPen> faiAreaHigh500PenList;
+    QList<QBrush> faiAreaHigh500BrushList;
     /**
      */
     bool* airABorder;
@@ -268,6 +272,8 @@ class MapConfig : public QObject
     bool* forestBorder;
     bool* glacierBorder;
     bool* packiceBorder;
+    bool* faiAreaLow500Border;
+    bool* faiAreaHigh500Border;
     /**
      * The current scaleindex for displaying the map. The index is set
      * from the mapmatrix-object each time, the map is zoomed.

@@ -30,11 +30,11 @@ CenterToDialog::CenterToDialog(QWidget *parent, const char *name )
 
   QGrid* page = this->makeGridMainWidget(2, QGrid::Horizontal);
 
-  QLabel* labelLat = new QLabel( i18n("Latitude"), page, "captionLat");
+  new QLabel( i18n("Latitude"), page, "captionLat");
   latE = new LatEdit(page, "latitude");
   latE->setMinimumWidth(150);
 
-  QLabel* labelLong = new QLabel( i18n("Longitude"), page, "captionLong");
+  new QLabel( i18n("Longitude"), page, "captionLong");
   longE = new LongEdit(page, "longitude");
   longE->setMinimumWidth(150);
 

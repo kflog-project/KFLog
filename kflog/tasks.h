@@ -62,7 +62,6 @@ private: // Private methods
   void addPopupMenu();
 private slots: // Private slots
   /** No descriptions */
-  void slotNotHandledItem();
   void slotOpenTask();
   void slotEditTask();
   void slotDeleteTask();
