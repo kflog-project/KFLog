@@ -140,6 +140,10 @@ void Waypoints::addWaypointWindow(QWidget *parent)
 void Waypoints::addPopupMenu()
 {
   wayPointPopup = new KPopupMenu(waypoints);
+  catalogCopySubPopup = new KPopupMenu(waypoints);
+  catalogMoveSubPopup = new KPopupMenu(waypoints);
+  
+  
   wayPointPopup->insertTitle(SmallIcon("waypoint"), "Waypoint's", 0);
   wayPointPopup->insertItem(SmallIcon("waypoint"), i18n("&New catalog"), this,
                             SLOT(slotNewWaypointCatalog()));
@@ -164,6 +168,9 @@ void Waypoints::addPopupMenu()
                                              SLOT(slotEditWaypoint()));
   idWaypointDelete = wayPointPopup->insertItem(SmallIcon("editdelete"), i18n("&Delete waypoint"), this,
                                                SLOT(slotDeleteWaypoint()));
+  idWaypointCopy2Catalog = wayPointPopup->insertItem(SmallIcon("editcopy"), i18n("Copy to &catalog"), catalogCopySubPopup);
+  idWaypointMove2Catalog = wayPointPopup->insertItem(SmallIcon("editmove"), i18n("Move to &catalog"), catalogMoveSubPopup);
+  
   wayPointPopup->insertSeparator();
   idWaypointCopy2Task = wayPointPopup->insertItem(SmallIcon("editcopy"), i18n("Copy to &task"), this,
                                                   SLOT(slotCopyWaypoint2Task()));
@@ -171,6 +178,43 @@ void Waypoints::addPopupMenu()
                                                   SLOT(slotCenterMap()));
   idWaypointSetHome = wayPointPopup->insertItem(SmallIcon("gohome"), i18n("Set Homesite"), this,
                                                 SLOT(slotSetHome()));
+
+  connect(catalogCopySubPopup, SIGNAL(activated(int)), this, SLOT(slotCopy2Catalog(int)));
+  connect(catalogMoveSubPopup, SIGNAL(activated(int)), this, SLOT(slotMove2Catalog(int)));
+}
+
+/**
+ * Copies the current waypoint to the selected catalog
+ */
+void Waypoints::slotCopy2Catalog(int id){
+  QListViewItem *item = waypoints->currentItem();
+  Waypoint * wpt;
+
+  if (item != 0) {
+    QString tmp = item->text(colName);
+    wpt=waypointCatalogs.current()->wpList.find(tmp);
+    waypointCatalogs.at(id)->wpList.insertItem(new Waypoint(wpt));
+    waypointCatalogs.at(id)->modified=true;
+  }
+  
+}
+
+/**
+ * Moves the current waypoint to the selected catalog
+ */
+void Waypoints::slotMove2Catalog(int id){
+  QListViewItem *item = waypoints->currentItem();
+  Waypoint * wpt;
+  
+  if (item != 0) {
+    QString tmp = item->text(colName);
+    wpt=waypointCatalogs.current()->wpList.take(tmp);
+    waypointCatalogs.current()->modified = true;
+    waypointCatalogs.at(id)->wpList.insertItem(wpt);
+    waypointCatalogs.at(id)->modified=true;
+    delete item;
+  }
+
 }
 
 /** open a catalog and set it active */
@@ -188,6 +232,7 @@ void Waypoints::slotOpenWaypointCatalog()
 
 void Waypoints::showWaypointPopup(QListViewItem *it, const QPoint &, int)
 {
+  //enable and disable the correct menuitems
   wayPointPopup->setItemEnabled(idWaypointCatalogSave, waypointCatalogs.count() && waypointCatalogs.current()->modified);
   wayPointPopup->setItemEnabled(idWaypointCatalogSaveAs, waypointCatalogs.count() > 0);
   wayPointPopup->setItemEnabled(idWaypointCatalogClose, waypointCatalogs.count() > 1);
@@ -201,6 +246,22 @@ void Waypoints::showWaypointPopup(QListViewItem *it, const QPoint &, int)
   wayPointPopup->setItemEnabled(idWaypointCenterMap, it != 0);
   wayPointPopup->setItemEnabled(idWaypointSetHome, it != 0);
 
+  wayPointPopup->setItemEnabled(idWaypointCopy2Catalog, waypointCatalogs.count() > 1 && it != 0);
+  wayPointPopup->setItemEnabled(idWaypointMove2Catalog, waypointCatalogs.count() > 1 && it != 0);
+
+  //fill the submenus for the move & copy to catalog
+  catalogCopySubPopup->clear();
+  catalogMoveSubPopup->clear();
+  //store current catalog index
+  int curCat=waypointCatalogs.at();
+  for (int i=0;i<waypointCatalogs.count();i++) {
+    if (curCat!=i) { //only insert if this catalog is NOT the current catalog...
+      catalogCopySubPopup->insertItem(waypointCatalogs.at(i)->path,i);
+      catalogMoveSubPopup->insertItem(waypointCatalogs.at(i)->path,i);
+    }
+  }
+  //make sure we go back to the original catalog...
+  waypointCatalogs.at(curCat);
   wayPointPopup->exec(QCursor::pos());
 }
 

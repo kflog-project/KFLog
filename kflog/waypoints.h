@@ -68,6 +68,9 @@ class Waypoints : public QFrame  {
  private: // Private attributes
   /** popup menu for waypoint's */
   KPopupMenu *wayPointPopup;
+  KPopupMenu *catalogCopySubPopup;
+  KPopupMenu *catalogMoveSubPopup;
+  
   /**  */
   QComboBox *catalogName;
   KFLogListView *waypoints;
@@ -84,6 +87,9 @@ class Waypoints : public QFrame  {
   int idWaypointCopy2Task;
   int idWaypointCenterMap;
   int idWaypointSetHome;
+  int idWaypointCopy2Catalog;
+  int idWaypointMove2Catalog;
+
   /** all loaded catalogs */
   QList<WaypointCatalog> waypointCatalogs;
   /**  */
@@ -124,6 +130,14 @@ class Waypoints : public QFrame  {
   void slotCopyWaypoint2Task();
   void slotCenterMap();
   void slotSetHome();
+ /**
+  * Moves the current waypoint to the selected catalog
+  */
+  void slotMove2Catalog(int);
+ /**
+  * Copies the current waypoint to the selected catalog
+  */
+  void slotCopy2Catalog(int);
 
   public slots: // Public slots
   /**
