@@ -21,7 +21,7 @@
 #include <unistd.h>
 
 #include <klocale.h>
-#include <qarray.h>
+#include <qmemarray.h>
 #include <qfile.h>
 #include <qptrlist.h>
 #include <qstring.h>
