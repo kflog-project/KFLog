@@ -241,9 +241,9 @@ void Map::mouseMoveEvent(QMouseEvent* event)
              (current.y() > 0 && current.y() < this->height()))
             {
               // Linien zeichnen
-    cout << "Punkt: " <<
-          printPos(preSitePos.y()) << " / " <<
-          printPos(preSitePos.x()) << endl;
+//    cout << "Punkt: " <<
+//          printPos(preSitePos.y()) << " / " <<
+//          printPos(preSitePos.x()) << endl;
               if(!(planning == 3 && moveWPindex == 0))
                 {
                   planP.drawLine(preSitePos.x(),preSitePos.y(),
@@ -266,7 +266,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
             }
           planP.end();            
         }
-//      emit showTaskText(taskPoints,_globalMapMatrix.mapToWgs(point));
+      emit showTaskText(taskPoints,_globalMapMatrix.mapToWgs(point));
     }
 
   if (!timerAnimate->isActive())
@@ -431,6 +431,9 @@ void Map::mousePressEvent(QMouseEvent* event)
                           cout << "Punkt: " << tempWP->name << " - " <<
                                   printPos(taskPoints.getLast()->projP.y()) << " / " <<
                                    printPos(taskPoints.getLast()->projP.x()) << "\n\n" << endl;
+                         cout << "       " << tempWP->name << " - " <<
+                                  printPos(taskPoints.getLast()->origP.y()) << " / " <<
+                                   printPos(taskPoints.getLast()->origP.x()) << "\n\n" << endl;
                         }
                     
                       // Aufgabe zeichnen
@@ -919,12 +922,15 @@ void Map::__drawPlannedTask()
 
   QPointArray points(taskPoints.count());
   QPoint temp;
+
+//  points = _globalMapMatrix.map(taskPoints);
   for(unsigned int n = 0; n < taskPoints.count(); n++)
     {
       temp = _globalMapMatrix.map(taskPoints.at(n)->projP);
 
       points.setPoint(n,temp.x(),temp.y());
     }
+
   planP.drawPolyline(points);
   planP.end();
 }

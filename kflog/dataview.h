@@ -21,7 +21,8 @@
 #include <ktextbrowser.h>
 #include <qframe.h>
 
-#include <singlepoint.h>
+
+#include <wp.h>
 class Flight;
 
 /**
@@ -61,7 +62,7 @@ class DataView : public QFrame
     /**
     	* Setzt die Infos zur gerade aktuellen Aufgabe (Planung)
     	*/
-    void slotShowTaskText(QArray<SinglePoint*> taskPoints, QPoint current);
+    void slotShowTaskText(QList<wayPoint> taskPoints, QPoint current);
 
   private:
     /**

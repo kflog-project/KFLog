@@ -68,11 +68,11 @@ class SinglePoint : public BaseMapElement
      */
     virtual void printMapElement(QPainter* printP, bool isText) const;
     /**
-     * @return the position of the element.
+     * @return the projected position of the element.
      */
     virtual QPoint getPosition() const;
     /**
-     * @return the WGSposition of the element.
+     * @return the WGSposition of the element. (normales Lat/Lon System)
      */
     virtual QPoint getWGSPosition() const;
     /**
@@ -101,7 +101,7 @@ class SinglePoint : public BaseMapElement
      */
     virtual bool __isVisible() const;
     /**
-     * The lat/lon-position of the element
+     * The projected lat/lon-position of the element
      */
     QPoint position;
     /**
