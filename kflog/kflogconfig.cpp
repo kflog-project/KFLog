@@ -87,6 +87,7 @@ void KFLogConfig::slotOk()
   config->writeEntry("Lower Limit", lLimitN->value());
   config->writeEntry("Upper Limit", uLimitN->value());
   config->writeEntry("Switch Scale", switchScaleN->value());
+  config->writeEntry("Waypoint Label", wpLabelN->value());
   config->writeEntry("Border 1", reduce1N->value());
   config->writeEntry("Border 2", reduce2N->value());
   config->writeEntry("Border 3", reduce3N->value());
@@ -204,6 +205,11 @@ void KFLogConfig::slotShowSwitchScale(int value)
   switchScaleN->display(__setScaleValue(value));
 }
 
+void KFLogConfig::slotShowWpLabel(int value)
+{
+  wpLabelN->display(__setScaleValue(value));
+}
+
 void KFLogConfig::slotShowReduceScaleA(int value)
 {
   reduce1N->display(__setScaleValue(value));
@@ -241,6 +247,8 @@ void KFLogConfig::slotDefaultScale()
   uLimitN->display(U_LIMIT);
   switchScale->setValue(__getScaleValue(SWITCH_S));
   switchScaleN->display(SWITCH_S);
+  wpLabel->setValue(__getScaleValue(WPLABEL));
+  wpLabelN->display(WPLABEL);
   reduce1->setValue(__getScaleValue(BORDER_1));
   reduce1N->display(BORDER_1);
   reduce2->setValue(__getScaleValue(BORDER_2));
@@ -428,6 +436,7 @@ void KFLogConfig::__addScaleTab()
   int ll = config->readNumEntry("Lower Limit", L_LIMIT);
   int ul = config->readNumEntry("Upper Limit", U_LIMIT);
   int sw = config->readNumEntry("Switch Scale", SWITCH_S);
+  int wl = config->readNumEntry("Waypoint Label", WPLABEL);
   int b1 = config->readNumEntry("Border 1", BORDER_1);
   int b2 = config->readNumEntry("Border 2", BORDER_2);
   int b3 = config->readNumEntry("Border 3", BORDER_3);
@@ -461,13 +470,20 @@ void KFLogConfig::__addScaleTab()
   borderBox->setTitle("Scale-Thresholds:");
 
   QLabel* switchText = new QLabel(i18n("use small icons"), scalePage);
-
   switchScale = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
   switchScale->setMinimumHeight(switchScale->sizeHint().height() + 5);
   switchScale->setMaximumHeight(switchScale->sizeHint().height() + 20);
   switchScaleN = new QLCDNumber(5, scalePage);
   switchScale->setValue(__getScaleValue(sw));
   switchScaleN->display(sw);
+
+  QLabel* wpLabelText = new QLabel(i18n("draw waypoint labels"), scalePage);
+  wpLabel = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
+  wpLabel->setMinimumHeight(switchScale->sizeHint().height() + 5);
+  wpLabel->setMaximumHeight(switchScale->sizeHint().height() + 20);
+  wpLabelN = new QLCDNumber(5, scalePage);
+  wpLabel->setValue(__getScaleValue(wl));
+  wpLabelN->display(wl);
 
   QLabel* reduce1Text = new QLabel(i18n("threshold #1"), scalePage);
   reduce1 = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
@@ -498,7 +514,7 @@ void KFLogConfig::__addScaleTab()
   defaultScale->setMaximumWidth(defaultScale->sizeHint().width() + 10);
   defaultScale->setMinimumHeight(defaultScale->sizeHint().height() + 2);
 
-  QGridLayout* scaleLayout = new QGridLayout(scalePage, 17, 7, 8, 1);
+  QGridLayout* scaleLayout = new QGridLayout(scalePage, 19, 7, 8, 1);
   scaleLayout->addMultiCellWidget(scaleLimits, 0, 4, 0, 6);
   scaleLayout->addWidget(lLimitText, 1, 1);
   scaleLayout->addWidget(lLimit, 1, 3);
@@ -507,21 +523,24 @@ void KFLogConfig::__addScaleTab()
   scaleLayout->addWidget(uLimit, 3, 3);
   scaleLayout->addWidget(uLimitN, 3, 5);
 
-  scaleLayout->addMultiCellWidget(borderBox, 6, 14, 0, 6);
+  scaleLayout->addMultiCellWidget(borderBox, 6, 16, 0, 6);
   scaleLayout->addWidget(switchText, 7, 1);
   scaleLayout->addWidget(switchScale, 7, 3);
   scaleLayout->addWidget(switchScaleN, 7, 5);
-  scaleLayout->addWidget(reduce1Text, 9, 1);
-  scaleLayout->addWidget(reduce1, 9, 3);
-  scaleLayout->addWidget(reduce1N, 9, 5);
-  scaleLayout->addWidget(reduce2Text, 11, 1);
-  scaleLayout->addWidget(reduce2, 11, 3);
-  scaleLayout->addWidget(reduce2N, 11, 5);
-  scaleLayout->addWidget(reduce3Text, 13, 1);
-  scaleLayout->addWidget(reduce3, 13, 3);
-  scaleLayout->addWidget(reduce3N, 13, 5);
+  scaleLayout->addWidget(wpLabelText, 9, 1);
+  scaleLayout->addWidget(wpLabel, 9, 3);
+  scaleLayout->addWidget(wpLabelN, 9, 5);
+  scaleLayout->addWidget(reduce1Text, 11, 1);
+  scaleLayout->addWidget(reduce1, 11, 3);
+  scaleLayout->addWidget(reduce1N, 11, 5);
+  scaleLayout->addWidget(reduce2Text, 13, 1);
+  scaleLayout->addWidget(reduce2, 13, 3);
+  scaleLayout->addWidget(reduce2N, 13, 5);
+  scaleLayout->addWidget(reduce3Text, 15, 1);
+  scaleLayout->addWidget(reduce3, 15, 3);
+  scaleLayout->addWidget(reduce3N, 15, 5);
 
-  scaleLayout->addMultiCellWidget(defaultScale, 16, 16, 0, 1, AlignLeft);
+  scaleLayout->addMultiCellWidget(defaultScale, 18, 18, 0, 1, AlignLeft);
 
   scaleLayout->addColSpacing(0, 10);
   scaleLayout->addColSpacing(2, 5);
@@ -534,14 +553,14 @@ void KFLogConfig::__addScaleTab()
   scaleLayout->addRowSpacing(4, 5);
   scaleLayout->addRowSpacing(5, 10);
   scaleLayout->addRowSpacing(6, 25);
-  scaleLayout->addRowSpacing(14, 5);
-  scaleLayout->addRowSpacing(15, 10);
+  scaleLayout->addRowSpacing(16, 5);
+  scaleLayout->addRowSpacing(17, 10);
 
   connect(defaultScale, SIGNAL(clicked()), SLOT(slotDefaultScale()));
   connect(lLimit, SIGNAL(valueChanged(int)), SLOT(slotShowLowerLimit(int)));
   connect(uLimit, SIGNAL(valueChanged(int)), SLOT(slotShowUpperLimit(int)));
-  connect(switchScale, SIGNAL(valueChanged(int)),
-      SLOT(slotShowSwitchScale(int)));
+  connect(switchScale, SIGNAL(valueChanged(int)), SLOT(slotShowSwitchScale(int)));
+  connect(wpLabel, SIGNAL(valueChanged(int)), SLOT(slotShowWpLabel(int)));
   connect(reduce1, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleA(int)));
   connect(reduce2, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleB(int)));
   connect(reduce3, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleC(int)));
@@ -561,7 +580,7 @@ void KFLogConfig::__addPathTab()
   QString mapDir = config->readEntry("DefaultMapDirectory",
       KGlobal::dirs()->findResource("appdata", "mapdata/"));
 
-  pathPage = addPage(i18n("Path"),i18n("Path Configuration"),
+  pathPage = addPage(i18n("Paths"),i18n("Path Configuration"),
       KGlobal::instance()->iconLoader()->loadIcon("fileopen", KIcon::NoGroup,
           KIcon::SizeLarge));
 
@@ -812,7 +831,7 @@ void KFLogConfig::__addWaypointTab()
   int catalogType = config->readNumEntry("DefaultWaypointCatalog", LastUsed);
   QString catalogName = config->readEntry("DefaultCatalogName", "");
 
-  waypointPage = addPage(i18n("Waypoint"), i18n("Catalog Configuration"),
+  waypointPage = addPage(i18n("Waypoints"), i18n("Catalog Configuration"),
       KGlobal::instance()->iconLoader()->loadIcon("waypoint", KIcon::NoGroup,
           KIcon::SizeLarge));
 

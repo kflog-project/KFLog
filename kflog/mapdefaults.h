@@ -23,6 +23,7 @@
 #define L_LIMIT 10
 #define U_LIMIT 1500
 #define SWITCH_S 290
+#define WPLABEL 400
 #define BORDER_1 100
 #define BORDER_2 500
 #define BORDER_3 1000

@@ -601,6 +601,9 @@ void MapConfig::slotReadConfig()
   config->setGroup("Flight");
   drawFType = config->readNumEntry("Draw Type", MapConfig::Speed);
 
+  config->setGroup("Scale");
+  _drawWpLabelScale = config->readNumEntry("Waypoint Label", WPLABEL);
+  
   config->setGroup(0);
 
   emit configChanged();
@@ -1062,4 +1065,15 @@ QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
     }
 
   return iconName;
+}
+
+/** Returns true if small icons are used, else returns false. */
+bool MapConfig::useSmallIcons(){
+  return !isSwitch;
+}
+
+/** Returns true if small icons are used, else returns false. */
+bool MapConfig::drawWpLabels(){
+  extern MapMatrix _globalMapMatrix;
+  return (_globalMapMatrix.getScale(MapMatrix::CurrentScale)<=_drawWpLabelScale);
 }

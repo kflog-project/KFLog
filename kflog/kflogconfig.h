@@ -92,6 +92,8 @@ class KFLogConfig : public KDialogBase
     /** */
     void slotShowSwitchScale(int value);
     /** */
+    void slotShowWpLabel(int value);
+    /** */
     void slotShowReduceScaleA(int value);
     /** */
     void slotShowReduceScaleB(int value);
@@ -155,12 +157,14 @@ Setting will be overwritten by commandline switch */
     QSlider* lLimit;
     QSlider* uLimit;
     QSlider* switchScale;
+    QSlider* wpLabel;
     QSlider* reduce1;
     QSlider* reduce2;
     QSlider* reduce3;
     QLCDNumber* lLimitN;
     QLCDNumber* uLimitN;
     QLCDNumber* switchScaleN;
+    QLCDNumber* wpLabelN;
     QLCDNumber* reduce1N;
     QLCDNumber* reduce2N;
     QLCDNumber* reduce3N;

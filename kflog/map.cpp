@@ -2132,6 +2132,8 @@ void Map::__drawWaypoints(){
   int i, n;
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
+  extern MapConfig _globalMapConfig;
+  
   QList<Waypoint> * wpList;
   Waypoint * wp;
   QPoint p;
@@ -2147,16 +2149,47 @@ void Map::__drawWaypoints(){
   // now do complete list
   n =  wpList->count();
   for (i=0; i < n; i++){
-     wp = wpList->at(i);
-     // make sure projection is ok, and map to screen
+    wp = wpList->at(i);
+    // make sure projection is ok, and map to screen
     wp->projP = _globalMapMatrix.wgsToMap(wp->origP.lat(), wp->origP.lon());
-	 p = _globalMapMatrix.map(wp->projP);
-	 // draw marker
-     wpPainter.drawRect(p.x() - 4,p.y() - 4, 8, 8);
-     wpMaskPainter.drawRect(p.x() - 4,p.y() - 4, 8, 8);
+    p = _globalMapMatrix.map(wp->projP);
+
+    // draw marker
+    wpPainter.setBrush(NoBrush);
+    wpPainter.setPen(QPen(QColor(0,0,0), 2, SolidLine));
+    wpPainter.drawRect(p.x() - 4,p.y() - 4, 8, 8);
+    wpMaskPainter.drawRect(p.x() - 4,p.y() - 4, 8, 8);
+
      // draw name of wp
-     wpPainter.drawText(p.x()+6, p.y(), wp->name, -1);
-     wpMaskPainter.drawText(p.x()+6, p.y(), wp->name, -1);
+     if(_globalMapConfig.drawWpLabels()) {
+        int xOffset;
+        int yOffset;
+        QRect textbox;
+        textbox=wpPainter.fontMetrics().boundingRect(wp->name);
+        if (wp->origP.lon()<_globalMapMatrix.getMapCenter(false).y()) {
+          //the wp is on the left side of the map, so draw the textlabel on the right side
+          xOffset=14;
+          yOffset=-2;
+          if (_globalMapConfig.useSmallIcons()){
+            xOffset=6;
+            yOffset=0;
+          }
+        } else {
+          //the wp is on the right side of the map, so draw the textlabel on the left side
+          xOffset=-textbox.width()-14;
+          yOffset=-2;
+          if (_globalMapConfig.useSmallIcons()){
+            xOffset=-textbox.width()-6;
+            yOffset=0;
+          }
+         }
+
+        wpPainter.setPen(QPen(Qt::black, 3, SolidLine));
+        wpPainter.fillRect(p.x()+xOffset-1,p.y()+yOffset,textbox.width()+2,-textbox.height()-2,Qt::white);
+        wpPainter.drawText(p.x()+xOffset, p.y()+yOffset, wp->name, -1);
+        wpMaskPainter.drawText(p.x()+xOffset, p.y()+yOffset, wp->name, -1);
+        wpMaskPainter.fillRect(p.x()+xOffset-1,p.y()+yOffset,textbox.width()+2,-textbox.height()-2,wpMaskPainter.pen().color());
+     }
    }
 
   // clean up

@@ -159,7 +159,9 @@ class MapConfig : public QObject
      * Sets the printScaleIndex.
      */
     void slotSetPrintMatrixValues(int index);
-
+    bool useSmallIcons();
+    bool drawWpLabels();
+    
   signals:
     /**
      * Emitted each time, the config has changed.
@@ -301,6 +303,7 @@ class MapConfig : public QObject
      * @see #slotSetFlightDataType
      */
     int drawFType;
+    int _drawWpLabelScale;
 };
 
 #endif
