@@ -26,7 +26,6 @@
 #include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
-#include <klocale.h>
 
 #include "../airport.h"
 #include "filser.h"
@@ -68,6 +67,7 @@
 #define MED_SECURITY        0x0e
 #define HIGH_SECURITY       0x0f
 
+
 /**
  * The device-name of the port.
  */
@@ -104,7 +104,7 @@ unsigned char STX = 0x02, /* Command prefix like AT for modems      */
 
 #define BUFSIZE 1024          /* General buffer size             */
 
-void debugHex (const char* buf, unsigned int size)
+void debugHex (const unsigned char* buf, unsigned int size)
 {
   for (unsigned int ix1=0; ix1 < size; ix1+=0x10)
   {
@@ -180,11 +180,12 @@ FlightRecorderPluginBase::TransferMode Filser::getTransferMode() const
 
 int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
 {
+  qDebug ("Filser::getFlightDir");
   int flightCount = 0;
-  int indexByte = 1;
+  unsigned char indexByte = 1;
   int rc;
-  char *bufP;
-  char buf[BUFSIZE + 1];
+  unsigned char *bufP;
+  unsigned char buf[BUFSIZE + 1];
 
   dirList->clear();
 
@@ -314,8 +315,8 @@ int Filser::getBasicData(FR_BasicData& data)
   }
 
   int rc = FR_OK;
-  char *bufP;
-  char buf[BUFSIZE + 1];
+  unsigned char *bufP;
+  unsigned char buf[BUFSIZE + 1];
 
   if (!check4Device()) {
     return FR_ERROR;
@@ -338,9 +339,9 @@ int Filser::getBasicData(FR_BasicData& data)
   while ((buffersize + buf - bufP) > 0) {
     bufP = readData(bufP, (buffersize + buf - bufP));
   }
- 
+
   // uncomment this if you want to analyze the buffer
-  debugHex (buf, buffersize);
+  // debugHex (buf, buffersize);
 
   if ((bufP - buf) != buffersize) {
     _errorinfo = i18n("get_logger_data(): Wrong amount of bytes from LX-device");
@@ -356,15 +357,15 @@ int Filser::getBasicData(FR_BasicData& data)
   */
   else
   {
-    QStringList list = QStringList::split (QRegExp("[\n\r]"), buf);
-    for (int i = 0; i < list.size(); i++)
+    QStringList list = QStringList::split (QRegExp("[\n\r]"), (char*)buf);
+    for (QStringList::Iterator it = list.begin(); it != list.end(); ++it)
     {
       // Example: Version LX20 V5.11
-      if (list [i].left(7).upper() == "VERSION")
-        _basicData.recorderType = list[i].mid(8);
+      if ((*it).left(7).upper() == "VERSION")
+        _basicData.recorderType = (*it).mid(8);
       // Example: SN12969,HW3.0
-      else if (list[i].left(2) == "SN")
-        _basicData.serialNumber = list[i].mid(2);
+      else if ((*it).left(2) == "SN")
+        _basicData.serialNumber = (*it).mid(2);
     }
   }
 
@@ -387,7 +388,7 @@ int Filser::getBasicData(FR_BasicData& data)
     bufP = readData(bufP, (0x40 + buf - bufP));
   }
   // uncomment this if you want to analyze the buffer
-  debugHex (buf, 0x40);
+  // debugHex (buf, 0x40);
 
   if ((bufP - buf) != 0x40) {
     _errorinfo = i18n("get_logger_data(): Wrong amount of bytes from LX-device");
@@ -409,10 +410,10 @@ int Filser::getBasicData(FR_BasicData& data)
   else
   {
     // hopefully, Filser will not change size or position of data fields ...
-    _basicData.pilotName = &buf[3];
-    _basicData.gliderType = &buf[0x16];
-    _basicData.gliderID = &buf[0x22];
-    _basicData.competitionID = &buf[0x2a];
+    _basicData.pilotName = (char*)&buf[3];
+    _basicData.gliderType = (char*)&buf[0x16];
+    _basicData.gliderID = (char*)&buf[0x22];
+    _basicData.competitionID = (char*)&buf[0x2a];
     data = _basicData;
   }
   return rc;
@@ -421,32 +422,32 @@ int Filser::getBasicData(FR_BasicData& data)
 int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileName)
 {
   int rc;
-  char memSection[0x20];  /* Information received from the   */
+  unsigned char memSection[0x20];  /* Information received from the   */
                           /* logger about the memory         */
                           /* blocks of a specific flight     */
                           /* for download. The table is      */
                           /* 0x20 bytes long. Two bytes for  */
                           /* a block.                        */
-  char *memContents = 0; /* buffer to hold igc contents */
+  unsigned char *memContents = 0; /* buffer to hold igc contents */
   int contentSize; /* length of igc file buffer */
   FILE *f;
 
   _errorinfo = "";
-  
+
   struct flightTable *ft = flightIndex.at(flightID);
-  if (!check4Device() || !defMem(ft) || 
+  if (!check4Device() || !defMem(ft) ||
       !getMemSection(memSection, sizeof(memSection)) ||
       !getLoggerData(memSection, sizeof(memSection), &memContents, &contentSize)) {
     rc = FR_ERROR;
   }
   else {
     if ((f = fopen(fileName, "w")) != NULL) {
-      if (convFil2Igc(f, (unsigned char *)memContents, (unsigned char *)memContents + contentSize)) {
+      if (convFil2Igc(f, memContents, memContents + contentSize)) {
         rc = FR_OK;
       }
       else {
         _errorinfo += i18n("\ncheck igc file for further info");
-        rc = FR_ERROR;        
+        rc = FR_ERROR;
       }
       fclose(f);
     }
@@ -568,7 +569,7 @@ bool Filser::defMem(struct flightTable *ft)
 
   memcpy(address_buf, &flight_start_adr, 3);
   memcpy(address_buf + 3, &flight_end_adr, 3);
-  address_buf[6] = (unsigned char)calcCrcBuf((char *)address_buf, 6);
+  address_buf[6] = calcCrcBuf(address_buf, 6);
 
   tcflush(portID, TCIOFLUSH);
 
@@ -584,7 +585,7 @@ bool Filser::defMem(struct flightTable *ft)
   return true;
 }
 
-bool Filser::getMemSection(char *memSection, int size)
+bool Filser::getMemSection(unsigned char *memSection, int size)
 {
   int i;
 
@@ -603,30 +604,30 @@ bool Filser::getMemSection(char *memSection, int size)
   return true;
 }
 
-bool Filser::getLoggerData(char *memSection, int sectionSize, char **memContents, int *contentSize)
+bool Filser::getLoggerData(unsigned char *memSection, int sectionSize, unsigned char **memContents, int *contentSize)
 {
-  char *bufP, *bufP2;
+  unsigned char *bufP, *bufP2;
   /*
    * Calculate the size the of the memory buffer
    */
-  *contentSize = 0; 
+  *contentSize = 0;
   for(int i = 0; i < (sectionSize / 2); i++) {
     if(!(memSection[2 * i] | memSection[(2 * i) + 1])) {
       break;
     }
-    *contentSize += ((unsigned char)memSection[2 * i] << 8) + (unsigned char)memSection[(2 * i) + 1];
+    *contentSize += (memSection[2 * i] << 8) + memSection[(2 * i) + 1];
   }
   /*
    * plus 0x100 bytes for the extra data of get_extra_data()
    * we ignore this, required only for .fil files
    */
-  //fil_file_length+=0x100; 
+  //fil_file_length+=0x100;
   /*
    * Allocate fil_file_length bytes
    * plus one byte for the CRC byte.
    */
 
-  *memContents = new char [(*contentSize) + 1]; // for CRC
+  *memContents = new unsigned char [(*contentSize) + 1]; // for CRC
   bufP = bufP2 = *memContents;
 
   // read each memory section
@@ -653,7 +654,7 @@ bool Filser::getLoggerData(char *memSection, int sectionSize, char **memContents
     bufP = bufP2;
   }
 
-  return true;  
+  return true;
 }
 
 /*
@@ -669,7 +670,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
   int i, j, l, ftab[16], etab[16], time, time_orig, fix_lat, fix_lat_orig, fix_lon, fix_lon_orig, tp;
   unsigned char flight_no, *fil_p_ev;
 
-  unsigned int ext_dat;                    
+  unsigned int ext_dat;
   char HFDTE[256], fix_ext_num = 0, ext_num = 0, ev = 0, fix_stat;
   unsigned int flt_id;
   char *flt_pilot, *flt_glider, *flt_reg, *flt_comp, *flt_observer, *flt_gps;
@@ -841,7 +842,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       fprintf(figc, "LFILEMPTY%d\r\n", i);
     }
     else if((fil_p[0] <= MAX_LSTRING) && (fil_p[0] > 0)) {
-      fprintf(figc, "%.*s\r\n", fil_p[0], fil_p + 1);         
+      fprintf(figc, "%.*s\r\n", fil_p[0], fil_p + 1);
       fil_p += fil_p[0] + 1;
     }
     /*
@@ -849,16 +850,16 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
      * to the .igc-file format.
      */
     else switch (fil_p[0]) {
-    case START: 
+    case START:
       /* 80h                         */
       /* 8   byte: "STReRAZ\0"       */
       /* 1   byte: flight of the day */
       fil_p++;
-      flight_no = fil_p[8];  
+      flight_no = fil_p[8];
       fil_p += 9;
       break;
-  
-    case DATUM: 
+
+    case DATUM:
       /* fbh                         */
       /* 1   byte: day               */
       /* 1   byte: month             */
@@ -867,18 +868,18 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       sprintf(HFDTE, "%02d%02d%02d", fil_p[0], fil_p[1], (fil_p[2] << 8) + fil_p[3]);
       fil_p += 4;
       break;
-  
+
     case SER_NR:
       /* f6h                         */
       /* 8   byte, "FIL_S/N\0"       */
       /* 1   byte, flight of the day */
       fil_p++;
-      fprintf(figc, "A%s", fil_p);         
+      fprintf(figc, "A%s", fil_p);
       fil_p += 9;
-      fprintf(figc, "FLIGHT:%d\r\n", flight_no);         
-      fprintf(figc, "HFDTE%s\r\n", HFDTE);         
+      fprintf(figc, "FLIGHT:%d\r\n", flight_no);
+      fprintf(figc, "HFDTE%s\r\n", HFDTE);
       break;
-  
+
     case FLIGHT_INFO:
       /* fch                         */
       /* 2   byte, id                */
@@ -920,7 +921,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       fprintf(figc, "HFGTYGLIDERTYPE:%s\r\n", flt_glider);
       fprintf(figc, "HFGIDGLIDERID:%s\r\n", flt_reg);
       if(flt_gps_datum != 255) {
-        fprintf(figc, "HFDTM%03dGPSDATUM:%s\r\n", flt_gps_datum, 
+        fprintf(figc, "HFDTM%03dGPSDATUM:%s\r\n", flt_gps_datum,
                 gps_datum_tab[flt_gps_datum]);
       }
       else {
@@ -930,7 +931,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       fprintf(figc, "HFCCLCOMPETITIONCLASS:%s\r\n", competition_class[flt_class_id]);
       fprintf(figc, "HFGPSGPS:%s\r\n", flt_gps);
       break;
-  
+
     case COMPETITION_CLASS:
       /* f1h                         */
       /* 9   byte, class id          */
@@ -953,17 +954,17 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       fil_p += 9;
       fprintf(figc, "HFGPSGPS:%s\r\n", flt_gps);
       break;
-  
+
     case SHVERSION:
       /* 7fh                         */
       /* 1   byte, hardware          */
       /* 1   byte, software          */
       fil_p++;
-      fprintf(figc, "HFRFWFIRMWAREVERSION:%3.1f\r\n", fil_p[1]/10.);         
-      fprintf(figc, "HFRHWHARDWAREVERSION:%3.1f\r\n", fil_p[0]/10.);         
+      fprintf(figc, "HFRFWFIRMWAREVERSION:%3.1f\r\n", fil_p[1]/10.);
+      fprintf(figc, "HFRHWHARDWAREVERSION:%3.1f\r\n", fil_p[0]/10.);
       fil_p += 2;
       break;
-  
+
     case FIXEXT_INFO:
       /* feh                         */
       /* 2   byte, time              */
@@ -997,7 +998,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       }
       fprintf(figc, "\r\n");
       break;
-  
+
     case EXTEND_INFO:
       /* fdh                         */
       /* 2   byte, time              */
@@ -1031,17 +1032,17 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       }
       fprintf(figc, "\r\n");
       break;
-  
+
     case FIXEXT:
       /* f9h                         */
       fil_p++;
       for(i = 0;i < fix_ext_num; i++) {
         fprintf(figc, "%0*u", ftab[i], (fil_p[0] << 8) + fil_p[1]);
         fil_p += 2;
-      }  
+      }
       fprintf(figc, "\r\n");
       break;
-  
+
     case EXTEND:
       /* fah                         */
       fil_p++;
@@ -1051,10 +1052,10 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       for(i = 0; i < ext_num; i++) {
         fprintf(figc, "%0*u", etab[i], (fil_p[0] << 8) + fil_p[1]);
         fil_p += 2;
-      }  
+      }
       fprintf(figc, "\r\n");
       break;
-  
+
     case TASK:
       /* f7h                         */
       /* 4   byte, time              */
@@ -1087,12 +1088,12 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       }
       // get lon
       for(tp = 0; tp < 12; tp++) {
-        TP[tp].lon = ((char) fil_p[0] << 24) + (fil_p[1] << 16) + (fil_p[2] << 8) + fil_p[3];
+        TP[tp].lon = ((signed char) fil_p[0] << 24) + (fil_p[1] << 16) + (fil_p[2] << 8) + fil_p[3];
         fil_p += 4;
       }
       // get lat
       for(tp = 0; tp < 12; tp++) {
-        TP[tp].lat = ((char) fil_p[0] << 24) + (fil_p[1] << 16) + (fil_p[2] << 8) + fil_p[3];
+        TP[tp].lat = ((signed char) fil_p[0] << 24) + (fil_p[1] << 16) + (fil_p[2] << 8) + fil_p[3];
         fil_p += 4;
       }
       // get name
@@ -1112,14 +1113,14 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
         }
       }
       break;
-  
+
     case EVENT:
       fil_p++;
       fil_p_ev = fil_p;
       fil_p += 9;
       ev = 1;
       break;
-  
+
     case POSITION_OK:
     case POSITION_BAD:
       /* bfh                         */
@@ -1130,22 +1131,23 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       /* 2   byte, galt              */
       fix_stat = fil_p[0] == POSITION_OK ? 'A' : 'V';
       fil_p++;
-      time = time_orig + ((char) fil_p[0] << 8) + fil_p[1];
+      // on the arm architecture, char is unsigned ! Force it signed to make it run correctly on the Zaurus
+      time = time_orig + ((signed char) fil_p[0] << 8) + fil_p[1];
       fil_p += 2;
-      fix_lat = fix_lat_orig + ((char) fil_p[0] << 8) + fil_p[1];
+      fix_lat = fix_lat_orig + ((signed char) fil_p[0] << 8) + fil_p[1];
       fil_p += 2;
-      fix_lon = fix_lon_orig + ((char) fil_p[0] << 8) + fil_p[1];
+      fix_lon = fix_lon_orig + ((signed char) fil_p[0] << 8) + fil_p[1];
       fil_p += 2;
-  
+
       if(ev) {
         fprintf(figc,"E%02d%02d%02d%s\r\n", time / 3600, time % 3600 / 60, time % 60, fil_p_ev);
         ev = 0;
       }
-  
+
       if (time < 0) {
         ev=0;
       }
-      fprintf(figc, "B%02d%02d%02d", time / 3600, time % 3600 / 60, time % 60);         
+      fprintf(figc, "B%02d%02d%02d", time / 3600, time % 3600 / 60, time % 60);
       fprintf(figc, "%02d%05d%c", abs( fix_lat / 60000), abs(fix_lat % 60000), fix_lat >= 0 ? 'N' : 'S');
       fprintf(figc, "%03d%05d%c", abs(fix_lon / 60000), abs(fix_lon % 60000), fix_lon >= 0 ? 'E' : 'W'); fprintf(figc, "%c", fix_stat);
       fprintf(figc, "%05d", (fil_p[0] << 8) + fil_p[1]);
@@ -1155,8 +1157,8 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       if (!fix_ext_num) {
         fprintf(figc,"\r\n");
       }
-      break;                
-  
+      break;
+
     case ORIGIN:
       /* a0h                         */
       /* 4   byte, time              */
@@ -1165,7 +1167,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       fil_p++;
       time = (fil_p[0] << 24) + (fil_p[1] << 16) + (fil_p[2] << 8) + fil_p[3];
       fil_p += 4;
-      fprintf(figc, "LFILORIGIN%02d%02d%02d", time / 3600, time % 3600 / 60, time % 60 );         
+      fprintf(figc, "LFILORIGIN%02d%02d%02d", time / 3600, time % 3600 / 60, time % 60 );
 
       fix_lat= ((char) fil_p[0] << 24) + (fil_p[1] << 16) + (fil_p[2] <<8 ) + fil_p[3];
       fil_p += 4;
@@ -1178,49 +1180,49 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       fix_lat_orig = fix_lat;
       fix_lon_orig = fix_lon;
       break;
-  
+
     case END:
       /* 40h                         */
       fil_p = fil_p_last;   /* end of while loop */
       break;
-  
+
     case SECURITY_OLD:
       /* f5h                         */
       fil_p++;
-      fprintf(figc, "G%22.22s\r\n", fil_p);          
+      fprintf(figc, "G%22.22s\r\n", fil_p);
       fil_p += 22;
-      break;                
+      break;
     case SECURITY:
       /* f0h                         */
       /* 1   byte, len               */
       /* 1   byte, type              */
       /* 64  byte, char              */
       fil_p++;
-  
+
       switch(fil_p[1]) {
-      case HIGH_SECURITY: 
-        fprintf(figc, "G2"); 
+      case HIGH_SECURITY:
+        fprintf(figc, "G2");
         break;
-      case MED_SECURITY:  
-        fprintf(figc, "G1"); 
+      case MED_SECURITY:
+        fprintf(figc, "G1");
         break;
-      case LOW_SECURITY:  
-        fprintf(figc, "G0"); 
+      case LOW_SECURITY:
+        fprintf(figc, "G0");
         break;
       }
-  
+
       for(i = 0; i < fil_p[0]; i++) {
-        fprintf(figc, "%02X", fil_p[i + 2]);         
+        fprintf(figc, "%02X", fil_p[i + 2]);
       }
-      fprintf(figc, "\r\n");         
+      fprintf(figc, "\r\n");
       fil_p += 66;
-      break;                
+      break;
     default:        /* ???? */
-      fprintf(figc, "LFILUNKNOWN%#x\r\n", fil_p[0]);         
+      fprintf(figc, "LFILUNKNOWN%#x\r\n", fil_p[0]);
       fil_p++;
       _errorinfo = i18n("unexpected record id in '.fil'-file");
       return false;
-      break;                
+      break;
     }
   }
 
@@ -1230,14 +1232,16 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
 /**
  * Calculate the check sum
  */
-char Filser::calcCrc(char d, char crc)
+// use unsigned char instead of char ! On arm architecture, char is unsigned, on desktop it is signed !!!
+unsigned char Filser::calcCrc(unsigned char d, unsigned char crc)
 {
-  char tmp, crcpoly = 0x69; /* Static value for the calculation of the checksum. */
+  unsigned char tmp;
+  const unsigned char crcpoly = 0x69; /* Static value for the calculation of the checksum. */
 
   for(int count = 8; --count >= 0; d <<= 1) {
     tmp = crc ^ d;
     crc <<= 1;
-    if(tmp < 0) {
+    if(tmp & 0x80) {
       crc ^= crcpoly;
     }
   }
@@ -1247,10 +1251,10 @@ char Filser::calcCrc(char d, char crc)
 /**
  * Calculate the check sum on a buffer of bytes
  */
-char Filser::calcCrcBuf(const char *buf, unsigned int count)
+unsigned char Filser::calcCrcBuf(const unsigned char *buf, unsigned int count)
 {
   unsigned int i;
-  char crc = (char)0xff;
+  unsigned char crc = 0xff;
   for(i = 0; i < count; i++) {
     crc = calcCrc(buf[i], crc);
   }
@@ -1264,7 +1268,7 @@ char Filser::calcCrcBuf(const char *buf, unsigned int count)
  * In the future this function might be necessary to disconnect from lx
  * devices with more memory. The CRC check will tell.
  */
-char *Filser::readData(char *bufP, int count)
+unsigned char *Filser::readData(unsigned char *bufP, int count)
 {
   int rc;
   switch (rc = read(portID, bufP, count)) {
@@ -1276,13 +1280,13 @@ char *Filser::readData(char *bufP, int count)
     bufP += rc;
     break;
   }
-  return bufP;  
+  return bufP;
 }
 
 bool Filser::readMemSetting()
 {
-  char *bufP;
-  char buf[BUFSIZE + 1];
+  unsigned char *bufP;
+  unsigned char buf[BUFSIZE + 1];
 
   memset(buf, '\0', sizeof(buf));
 
@@ -1299,12 +1303,14 @@ bool Filser::readMemSetting()
   while ((LX_MEM_RET + buf - bufP) > 0) {
     bufP = readData(bufP, LX_MEM_RET + buf - bufP);
   }
+  // uncomment the next statement to analyze the buffer
+  // debugHex (buf, LX_MEM_RET);
 
   if(calcCrcBuf(buf, LX_MEM_RET-1) != buf[LX_MEM_RET-1])
   {
-    warning("read_mem_setting(): Bad CRC");
+    qDebug("read_mem_setting(): Bad CRC");
     return false;
-  }  
+  }
 
   /*
    * Byte description and the values from my logger
@@ -1341,7 +1347,6 @@ bool Filser::check4Device()
     wb(SYN);
     int ret = rb();
     if (ret == ACK) {
-      warning("connected");
       rc = true;
       break;
     }
@@ -1373,12 +1378,13 @@ int Filser::wb(unsigned char c)
 /*
  * read byte
  */
-char Filser::rb()
+// use unsigned char instead of char ! On the arm architecture, char is unsigned ! On desktop, it is signed !!!
+unsigned char Filser::rb()
 {
   unsigned char buf;
 
   if (read(portID, &buf, 1) != 1) {
-    return -1;
+    return 0xff;
   }
   return buf;
 }   
@@ -1415,7 +1421,8 @@ int Filser::closeRecorder()
 /** NOT IMLEMENTED
     ============================================*/
 
-int Filser::writeDeclaration(FRTaskDeclaration* /*taskDecl*/, QPtrList<Waypoint> * /*taskPoints*/ )
+
+int Filser::writeDeclaration(FRTaskDeclaration* , QPtrList<Waypoint>* )
 {
   return FR_NOTSUPPORTED;
 }
@@ -1435,12 +1442,12 @@ int Filser::writeTasks(QPtrList<FlightTask> * /*tasks*/)
   return FR_NOTSUPPORTED;
 }
 
-int Filser::readWaypoints(QPtrList<Waypoint> * /*waypoints*/)
+int Filser::readWaypoints(QPtrList<Waypoint>* )
 {
   return FR_NOTSUPPORTED;
 }
 
-int Filser::writeWaypoints(QPtrList<Waypoint> * /*waypoints*/)
+int Filser::writeWaypoints(QPtrList<Waypoint>* )
 {
   return FR_NOTSUPPORTED;
 }

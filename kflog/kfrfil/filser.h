@@ -18,15 +18,41 @@
 #ifndef FILSER_H
 #define FILSER_H
 
-#include <qptrlist.h>
+#include <stdio.h>
 
+#include <qglobal.h>
+#if QT_VERSION < 0x030000
+
+#include <qlist.h>
+#include "waypoint.h"
+#include "frstructs.h"
+#include "flighttask.h"
+#include "flightrecorderpluginbase.h"
+
+#else
+
+#include <qptrlist.h>
+#include "../waypoint.h"
 #include "../frstructs.h"
 #include "../flighttask.h"
 #include "../flightrecorderpluginbase.h"
 
+#endif
+
 /**
   *@author Christian Fughe, Harald Maier
   */
+
+/**
+  * This plugin should work under QtEmbedded (Version 2.3.3) and Qt (Version 3.x)
+  * we take care of this by some defines
+  */
+#if QT_VERSION < 0x030000
+#define i18n tr
+#define QPtrList QList
+#else
+#include <klocale.h>
+#endif
 
 #define FLIGHT_INDEX_WIDTH 0x60 /* Bytes per record of the flight  */
                                 /* index. (96)                          */
@@ -99,7 +125,7 @@ public:
    */
   virtual int writeWaypoints(QPtrList<Waypoint> *waypoints);
 
-  static char calcCrcBuf(const char *buf, unsigned int count);
+  static unsigned char calcCrcBuf(const unsigned char *buf, unsigned int count);
 
 private:
   /**
@@ -113,20 +139,20 @@ private:
   /**
    * read byte
    */
-  char rb();
+  unsigned char rb();
   /**
    * Calculate the check sum
    */
-  static char calcCrc(char d, char crc);
+  static unsigned char calcCrc(unsigned char d, unsigned char crc);
   /**
    * Calculate the check sum on a buffer of bytes
    */
   bool readMemSetting();
   bool defMem(struct flightTable *ft);
-  bool getMemSection(char *memSection, int size);
-  bool getLoggerData(char *memSection, int sectionSize, char **memContents, int *contentSize);
+  bool getMemSection(unsigned char *memSection, int size);
+  bool getLoggerData(unsigned char *memSection, int sectionSize, unsigned char **memContents, int *contentSize);
   bool convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last);
-  char *readData(char *buf_p, int count);
+  unsigned char *readData(unsigned char *buf_p, int count);
   QPtrList <flightTable> flightIndex;
   char *wordtoserno(unsigned int Binaer);
 };
