@@ -129,6 +129,8 @@ void RecorderDialog::__addSettingsPage()
   selectPort->insertItem("ttyS1");
   selectPort->insertItem("ttyS2");
   selectPort->insertItem("ttyS3");
+  selectPort->insertItem("ttyUSB0");
+  selectPort->insertItem("ttyUSB1");
 
   cmdConnect = new QPushButton(i18n("Connect recorder"), settingsPage);
   cmdConnect->setMaximumWidth(cmdConnect->sizeHint().width() + 5);
