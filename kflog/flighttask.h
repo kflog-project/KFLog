@@ -108,6 +108,8 @@ class FlightTask : public BaseFlightElement
   /** */
   QString getTotalDistanceString() ;
   /** */
+  double getAverageSpeed();
+    /** */
   QString getTaskDistanceString() ;
   /** calc min and max distance for FAI triangles*/
   QString getFAIDistanceString() ;

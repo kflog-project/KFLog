@@ -1127,6 +1127,15 @@ QString FlightTask::getTaskDistanceString()
   return distString;
 }
 
+double FlightTask::getAverageSpeed()
+{
+  long timeDiff;
+  QString averageString;
+  if (wpList.count()<2) return 0.0;
+  timeDiff = wpList.at(wpList.count()-2)->sectorFAI-wpList.at(1)->sectorFAI;
+  return distance_wert/timeDiff*3600.0;
+}
+
 QString FlightTask::getPointsString()
 {
   if(flightType == FlightTask::NotSet)  return "--";

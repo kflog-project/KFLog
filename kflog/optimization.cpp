@@ -11,6 +11,11 @@
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
 **
+**   The optimization procedure is developped by
+**   Oswin Aichholzer (oaich@igi.tu-graz.ac.at) and implemented by
+**   Ch. Bodner (christof.bodner@gmx.net)
+**   It is based upon the principle of dynamic programming.
+**
 **   $Id$
 **
 ***********************************************************************/
@@ -19,51 +24,124 @@
 #include <klocale.h>
 #include <qmessagebox.h>
 #include <qprogressdialog.h>
+#include <stdlib.h>
 
-Optimization::Optimization(QList<flightPoint> ptr_route){
+#define PROGESSDLG
+
+// different weight for last two legs
+double Optimization::weight(unsigned int k){
+  switch (k){
+    case LEGS:
+      return 0.6;
+    case LEGS-1:
+      return 0.8;
+    default:
+      return 1.0;
+  }
+}
+
+Optimization::Optimization(unsigned int firstPoint, unsigned int lastPoint, QList<flightPoint> ptr_route){
   route = ptr_route;
+  start = firstPoint;
+  stop  = lastPoint;
+  optimized=false;
 }
 
 Optimization::~Optimization(){
 }
 
-double Optimization::optimizationResult(unsigned int retList[7], double *retPoints){
-  for (int i=0;i<6;i++)
-    retList[i]=idList[i];
+double Optimization::optimizationResult(unsigned int retList[LEGS+1], double *retPoints){
+  if (!optimized)
+    return -1.0;
+  for (int i=0;i<=LEGS;i++)
+    retList[i]=pointList[i];
   *retPoints=points;
   return distance;
 }
 
 void Optimization::run(){
 
-  unsigned int start=0;
-  unsigned int stop=route.count();
+  double *L;                        // length values
+  int *w;                           // waypoints
+  int v[LEGS+1];                    // solution points
+  double length;                    // solution length
 
-  unsigned int delta = (unsigned int)(stop/8);
-  for (int i=0;i<7;i++)
-    idList[i]=(i+1)*delta;
+  unsigned int i,j,k;               // loop variables
+  unsigned int n;                   // number of points
+  double c;                         // temp variable
+
+  n=(stop-start)+1;
+
+#ifdef PROGESSDLG
+  QProgressDialog importProgress(0,0,true);
+
+  importProgress.setCaption(i18n("Optimizing flight ..."));
+  importProgress.setLabelText(
+      i18n("Please wait while optimizing flight for OLC"));
+  importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
+  importProgress.setTotalSteps(7*n);
+  importProgress.setMinimumDuration(0);
+  importProgress.setProgress(0);
+  importProgress.show();
+  if (importProgress.wasCancelled()) return 0;
+#endif
   
-  points=__CalculateOLCPoints(start,stop,idList);
+  // allocate memory
+  L=(double *) malloc((n+1)*(LEGS+1)*sizeof(double));
+  w=(unsigned int *) malloc((n+1)*(LEGS+1)*sizeof(unsigned int));
+  
+  for (i=0;i<n-1;i++){
+    L[i+0*n]=0;
+  }
+  for (k=1;k<=LEGS;k++){
+    for (i=0;i<n-1;i++){
+#ifdef PROGESSDLG
+      if (importProgress.wasCancelled()) return;
+      importProgress.setProgress(i+k*n);
+#endif
+      L[i+k*n]=0;
+      c=0;
+      for (j=0;j<i;j++){
+        c=L[j+(k-1)*n]+weight(k)*dist(route.at(j+start),route.at(i+start));
+        if (c>L[i+k*n]){
+          L[i+k*n]=c;
+          w[i+k*n]=j;
+        }
+      }
+    }
+  }
+#ifdef PROGESSDLG
+  importProgress.close();
+#endif
 
-  distance=dist(route.at(idList[0]),route.at(idList[1]))+
-    dist(route.at(idList[1]),route.at(idList[2]))+
-    dist(route.at(idList[2]),route.at(idList[3]))+
-    dist(route.at(idList[3]),route.at(idList[4]))+
-    dist(route.at(idList[4]),route.at(idList[5]))+
-    dist(route.at(idList[5]),route.at(idList[6]));
+  // find maximal length
+  points=0;
+  for (i=0;i<n-1;i++){
+    if(L[i+LEGS*n]>points){
+      points=L[i+LEGS*n];
+      pointList[LEGS]=i;
+    }
+  }
 
-}
+  // find waypoints
+  for (long k=LEGS-1;k>=0;k--){
+      pointList[k]=w[pointList[k+1]+k*n];
+  }
+  // correct waypoints
+  for (long k=LEGS-1;k>=0;k--){
+      pointList[k]+=start;
+  }
 
-double Optimization::__CalculateOLCPoints(unsigned int start,unsigned int stop,unsigned int idList[7]){
-  if (idList[0]<start || idList[1]<start || idList[2]<start || idList[3]<start || idList[4]<start || idList[5]<start || idList[6]<start ||
-      idList[0]<start || idList[1]>=stop || idList[2]>=stop || idList[3]>=stop || idList[4]>=stop || idList[5]>=stop || idList[6]>=stop ||
-      idList[1]<idList[0] || idList[2]<idList[1] ||idList[3]<idList[2] || idList[4]<idList[3] || idList[5]<idList[4] || idList[6]<idList[5] )
-    return 0.0;
+  distance=dist(route.at(pointList[0]),route.at(pointList[1]))+
+    dist(route.at(pointList[1]),route.at(pointList[2]))+
+    dist(route.at(pointList[2]),route.at(pointList[3]))+
+    dist(route.at(pointList[3]),route.at(pointList[4]))+
+    dist(route.at(pointList[4]),route.at(pointList[5]))+
+    dist(route.at(pointList[5]),route.at(pointList[6]));
 
-  return dist(route.at(idList[0]),route.at(idList[1]))+
-   dist(route.at(idList[1]),route.at(idList[2]))+
-   dist(route.at(idList[2]),route.at(idList[3]))+
-   dist(route.at(idList[3]),route.at(idList[4]))+
-   dist(route.at(idList[4]),route.at(idList[5]))*0.8+
-   dist(route.at(idList[5]),route.at(idList[6]))*0.6;
+    // free memory
+    free(L);
+    free(w);
+
+    optimized=true;
 }

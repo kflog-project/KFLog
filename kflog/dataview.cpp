@@ -53,7 +53,7 @@ DataView::~DataView()
 QString DataView::__writeTaskInfo(FlightTask* task)
 {
   QString htmlText;
-  QString txt, tmp;
+  QString txt, tmp,speed;
   QString idString, timeString;
   struct wayPoint *wp;
 
@@ -68,7 +68,10 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       wp = wpList.at(loop);
       if(loop > 0)
         {
-          tmp.sprintf("%.2f km / %03.0f°", wp->distance, getTrueCourse(wp->origP, wpList.at(loop - 1)->origP));
+          tmp.sprintf("%.2f km / %03.0f° / %.1f km/h",
+            wp->distance,
+            getTrueCourse(wp->origP, wpList.at(loop - 1)->origP),
+            wp->distance/(wp->sectorFAI-wpList.at(loop-1)->sectorFAI)*3600.0);
           htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
               tmp + "</TD></TR>";
         }
@@ -92,18 +95,23 @@ QString DataView::__writeTaskInfo(FlightTask* task)
           <TD ALIGN=right>" + printPos(wp->origP.lon(), false) +
           "</TD></TR>";
     }
-
+  
   if (task->getTaskType()==FlightTask::OLC){
     txt.sprintf("%.2f", task->getOlcPoints());
-    htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
+    speed.sprintf("%.2f",task->getAverageSpeed());
+    htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Total Distance") +
       ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
       task->getTotalDistanceString() + "</TD></TR>\
       <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Task Distance") +
       ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
       task->getTaskDistanceString() + "</TD></TR>\
-      <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Points") +
+      <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Average Speed") +
       ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-      txt + "</TD></TR></TABLE>";
+      speed + "</TD>" +
+      "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Points") +
+      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+      txt + "</TD>" +
+      "</TR></TABLE>";
   }
   else
   {
