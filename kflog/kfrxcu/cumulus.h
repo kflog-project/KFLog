@@ -52,7 +52,7 @@ public:
   /**
    * Downloads the indicated flight from the recorder.
    */
-  virtual int downloadFlight(int flightID, int secMode, QString fileName);
+  virtual int downloadFlight(int flightID, int secMode, const QString& fileName);
   /**
    * get recorder info serial id
    */
@@ -60,11 +60,11 @@ public:
   /**
    * Opens the recorder for serial communication. (Not implemented.)
    */
-  virtual int openRecorder(const QString portName, int baud);
+  virtual int openRecorder(const QString& portName, int baud);
   /**
    * Opens the recorder for other communication.
    */
-  virtual int openRecorder(QString URL);
+  virtual int openRecorder(const QString& URL);
   /**
    * Closes the connection with the flightrecorder.
    */

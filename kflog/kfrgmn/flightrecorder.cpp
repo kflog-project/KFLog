@@ -35,7 +35,7 @@ extern "C"
 **
 *************************************************************************/
 FlightRecorderPluginBase * getRecorder() {
-  return new GarminFR;
+  return new GarminFR();
 }
 
 

@@ -40,7 +40,7 @@ extern "C"
 **
 *************************************************************************/
 FlightRecorderPluginBase * getRecorder() {
-  return new SoaringPilot;
+  return new SoaringPilot ();
 }
 
 

@@ -54,7 +54,7 @@ struct termios newTermEnv;
  * Needed to reset the serial port in any case of unexpected exiting
  * of the programm. Called via signal-handler of the runtime-environment.
  */
-void releaseTTY(int signal)
+void releaseTTY(int /*signal*/)
 {
   tcsetattr(portID, TCSANOW, &oldTermEnv);
   exit(-1);
@@ -289,7 +289,7 @@ int SoaringPilot::getFlightDir(QList<FRDirEntry> *dirList)
 /**
  *
  */
-int SoaringPilot::downloadFlight(int flightID, int secMode, QString fileName)
+int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QString& fileName)
 {
   QStringList file;
   QStringList::iterator line;
@@ -302,6 +302,7 @@ int SoaringPilot::downloadFlight(int flightID, int secMode, QString fileName)
   int ret;
   QFile f;
   int day, month, year;
+  QString _fileName = fileName;
 
   flightCount.setAutoDelete(true);
 
@@ -310,7 +311,7 @@ int SoaringPilot::downloadFlight(int flightID, int secMode, QString fileName)
   dir = config->readEntry("DefaultFlightDirectory") + "/";
   config->setGroup(0);
 
-  bool shortName = (fileName.upper().find("SHORT.IGC") != -1);
+  bool shortName = (_fileName.upper().find("SHORT.IGC") != -1);
 
   // IGC File structure
   ret = readFile(file);
@@ -347,11 +348,11 @@ int SoaringPilot::downloadFlight(int flightID, int secMode, QString fileName)
           }
 
           if (shortName) {
-            fileName.sprintf("%d%c%cX%s%c.IGC", year, c36[month], c36[day],
+            _fileName.sprintf("%d%c%cX%s%c.IGC", year, c36[month], c36[day],
                              (const char *)getRecorderSerialNo(), c36[*fc]);
           }
           else {
-            fileName.sprintf("20%.2d-%.2d-%.2d-XSP-%s-%.2d.IGC",
+            _fileName.sprintf("20%.2d-%.2d-%.2d-XSP-%s-%.2d.IGC",
                              year, month, day, 
                              (const char *)getRecorderSerialNo(), *fc);
           }
@@ -362,9 +363,9 @@ int SoaringPilot::downloadFlight(int flightID, int secMode, QString fileName)
           break;
         }
 
-        f.setName(dir + fileName);
+        f.setName(dir + _fileName);
         if (!f.open(IO_WriteOnly)) {
-          _errorinfo = i18n("IO error while saving file ") + fileName;
+          _errorinfo = i18n("IO error while saving file ") + _fileName;
           ret = FR_ERROR;
           break;
         }
@@ -388,7 +389,7 @@ QString SoaringPilot::getRecorderSerialNo()
 /**
  * Opens the recorder for serial communication.
  */
-int SoaringPilot::openRecorder(const QString portName, int baud)
+int SoaringPilot::openRecorder(const QString& portName, int baud)
 {
   speed_t speed;
 
@@ -727,7 +728,7 @@ int SoaringPilot::writeWaypoints(QList<Waypoint> *waypoints)
 /**
  * Opens the recorder for other communication.
  */
-int SoaringPilot::openRecorder(QString URL)
+int SoaringPilot::openRecorder(const QString& /*URL*/)
 {
   return FR_NOTSUPPORTED;
 }
@@ -735,7 +736,7 @@ int SoaringPilot::openRecorder(QString URL)
  /**
  * Write flight declaration to recorder
  */
-int SoaringPilot::writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint> *taskPoints)
+int SoaringPilot::writeDeclaration(FRTaskDeclaration * /*taskDecl*/, QList<Waypoint> * /*taskPoints*/)
 {
   return FR_NOTSUPPORTED;
 }

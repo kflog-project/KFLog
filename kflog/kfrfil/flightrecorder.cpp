@@ -31,5 +31,5 @@ extern "C"
 **
 *************************************************************************/
 FlightRecorderPluginBase * getRecorder() {
-  return new Filser;
+  return new Filser ();
 }

@@ -34,6 +34,6 @@ extern "C"
 **
 *************************************************************************/
 FlightRecorderPluginBase * getRecorder() {
-  return new Cumulus;
+  return new Cumulus ();
 }
 

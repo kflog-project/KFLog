@@ -155,7 +155,7 @@ int Volkslogger::getFlightDir(QList<FRDirEntry>* dirList)
   return bArray;
 }
 */
-int Volkslogger::downloadFlight(int flightID, int secMode, QString fileName)
+int Volkslogger::downloadFlight(int flightID, int secMode, const QString& fileName)
 {
   return (vl.read_igcfile((char *)fileName.latin1(), flightID, secMode) == VLA_ERR_NOERR ? FR_OK : FR_ERROR);
 }
@@ -167,7 +167,7 @@ QString Volkslogger::getRecorderSerialNo()
   return wordtoserno(vl.vlinfo.vlserno);
 }
 
-int Volkslogger::openRecorder(const QString pName, int baud)
+int Volkslogger::openRecorder(const QString& pName, int baud)
 {
   int err;
   portName = (char *)pName.latin1();
@@ -445,7 +445,7 @@ int Volkslogger::writeWaypoints(QList<Waypoint> *waypoints)
 /**
  * Opens the recorder for other communication.
  */
-int Volkslogger::openRecorder(QString URL)
+int Volkslogger::openRecorder(const QString& /*URL*/)
 {
   return FR_NOTSUPPORTED;
 }

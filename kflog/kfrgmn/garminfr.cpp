@@ -98,7 +98,7 @@ int GarminFR::getFlightDir(QList<FRDirEntry>* dirList){
 /**
  *
  */
-int GarminFR::downloadFlight(int flightID, int secMode, QString fileName){
+int GarminFR::downloadFlight(int /*flightID*/, int /*secMode*/, const QString& /*fileName*/){
   return FR_NOTSUPPORTED;
 }
 
@@ -114,7 +114,7 @@ QString GarminFR::getRecorderSerialNo(){
 /**
  * Opens the recorder for serial communication.
  */
-int GarminFR::openRecorder(const QString portName, int baud) {
+int GarminFR::openRecorder(const QString& portName, int baud) {
 
   this->portName = (char*)portName.latin1();
 
@@ -143,7 +143,7 @@ int GarminFR::closeRecorder(){
 /**
  * Read tasks from recorder
  */
-int GarminFR::readTasks(QList<FlightTask> *tasks){
+int GarminFR::readTasks(QList<FlightTask> * /*tasks*/){
   return FR_NOTSUPPORTED;
 }
 
@@ -151,7 +151,7 @@ int GarminFR::readTasks(QList<FlightTask> *tasks){
 /**
  * Write tasks to recorder
  */
-int GarminFR::writeTasks(QList<FlightTask> *tasks){
+int GarminFR::writeTasks(QList<FlightTask> * /*tasks*/){
   return FR_NOTSUPPORTED;
 }
 
@@ -159,7 +159,7 @@ int GarminFR::writeTasks(QList<FlightTask> *tasks){
 /**
  * Read waypoints from recorder
  */
-int GarminFR::readWaypoints(QList<Waypoint> *waypoints){
+int GarminFR::readWaypoints(QList<Waypoint> * /*waypoints*/){
   return FR_NOTSUPPORTED;
 }
 
@@ -167,7 +167,7 @@ int GarminFR::readWaypoints(QList<Waypoint> *waypoints){
 /**
  * Write waypoints to recorder
  */
-int GarminFR::writeWaypoints(QList<Waypoint> *waypoints){
+int GarminFR::writeWaypoints(QList<Waypoint> * /*waypoints*/){
   return FR_NOTSUPPORTED;
 }
 
@@ -178,14 +178,14 @@ int GarminFR::writeWaypoints(QList<Waypoint> *waypoints){
 /**
  * Opens the recorder for other communication.
  */
-int GarminFR::openRecorder(QString URL){
+int GarminFR::openRecorder(const QString& /*URL*/){
   return FR_NOTSUPPORTED;
 }
 
  /**
  * Write flight declaration to recorder
  */
-int GarminFR::writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint> *taskPoints) {
+int GarminFR::writeDeclaration(FRTaskDeclaration * /*taskDecl*/, QList<Waypoint> * /*taskPoints*/) {
   return FR_NOTSUPPORTED;
 }
 

@@ -85,7 +85,7 @@ int Cumulus::getFlightDir(QList<FRDirEntry>*){
 /**
  *
  */
-int Cumulus::downloadFlight(int flightID, int secMode, QString fileName){
+int Cumulus::downloadFlight(int /*flightID*/, int /*secMode*/, const QString& /*fileName*/){
   return FR_NOTSUPPORTED;  
 }
 
@@ -101,7 +101,7 @@ QString Cumulus::getRecorderSerialNo(){
 /**
  * Opens the recorder for other communication.
  */
-int Cumulus::openRecorder(QString URL){
+int Cumulus::openRecorder(const QString& URL){
   //Don't forget to set _isConnected to true if succeeded.
 
   //basicly, we check if cumulus is installed.
@@ -222,7 +222,7 @@ int Cumulus::writeWaypoints(QList<Waypoint> *waypoints){
 /**
  * Opens the recorder for serial communication.
  */
-int Cumulus::openRecorder(const QString portName, int baud) {
+int Cumulus::openRecorder(const QString& portName, int baud) {
   return FR_NOTSUPPORTED;
 }
 
