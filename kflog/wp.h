@@ -71,6 +71,26 @@ struct wayPoint
   int type;
   /** The distance to the previous waypoint */
   double distance;
+
+  /** Improvements for planning */
+  /** long name or description (internal only) */
+  QString description;
+  /** ICAO name */
+  QString icao;
+  /** */
+  QString comment;
+  /** internal surface id */
+  int surface;
+  /** */
+  int runway;
+  /** */
+  int length;
+  /** */
+  int elevation;
+  /** */
+  double frequency;
+  /** flag for landable*/
+  bool isLandable;
 };
 
 #endif
