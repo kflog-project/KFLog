@@ -4,6 +4,8 @@
 **
 **   This file is part of KFLog2.
 **
+**   $Id$
+**
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
@@ -802,6 +804,7 @@ bool MapContents::__readAirfieldFile(const char* pathName)
           case BaseMapElement::MilAirport:
           case BaseMapElement::CivMilAirport:
           case BaseMapElement::Airfield:
+          case BaseMapElement::UltraLight:
             in >> name;
             in >> idString;
             in >> icaoName;
