@@ -551,10 +551,14 @@ void KFLogApp::saveOptions()
   config->writeEntry("ToolBarPos", (int) toolBar("mainToolBar")->barPos());
 
   config->setGroup("Waypoints");
+
   if (config->readNumEntry("DefaultWaypointCatalog", KFLogConfig::LastUsed) ==
-      KFLogConfig::LastUsed) {
-    config->writeEntry("DefaultCatalogName", waypoints->getCurrentCatalog()->path);
-  }
+      KFLogConfig::LastUsed && waypoints->getCurrentCatalog() != NULL)
+    {
+      // Only write the path, if a waypoint-catalog is opened.
+      // Otherwise KFLog crashes on a clean installation.
+      config->writeEntry("DefaultCatalogName", waypoints->getCurrentCatalog()->path);
+    }
 
   config->setGroup(0);
 
