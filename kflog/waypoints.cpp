@@ -141,6 +141,8 @@ void Waypoints::addPopupMenu()
     SLOT(slotImportWaypointCatalog()));
   idWaypointImportFromMap = wayPointPopup->insertItem(i18n("Import from &map"), this,
     SLOT(slotImportWaypointFromMap()));
+  idWaypointImportFromFile = wayPointPopup->insertItem(i18n("Import from &file"), this,
+    SLOT(slotImportWaypointFromFile()));
   idWaypointCatalogSave = wayPointPopup->insertItem(SmallIcon("filesave"), i18n("&Save catalog"), this,
     SLOT(slotSaveWaypointCatalog()));
   idWaypointCatalogClose = wayPointPopup->insertItem(SmallIcon("fileclose"), i18n("&Close catalog"), this,
@@ -709,5 +711,25 @@ void Waypoints::getFilterData()
     int tmp = c->areaLong1;
     c->areaLong1 = c->areaLong2;
     c->areaLong2 = tmp;
+  }
+}
+/** No descriptions */
+void Waypoints::slotImportWaypointFromFile(){
+  KConfig* config = KGlobal::config();
+  config->setGroup("Path");
+  QString wayPointDir = config->readEntry("DefaultWaypointDirectory",
+      getpwuid(getuid())->pw_dir);
+
+  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt) \n *.gdn *.GDN|Waypoint file (Garmin format, *.gdn) \n *|All files", this, i18n("Import waypoints from file"));
+
+  if(!fName.isEmpty()) {
+    WaypointCatalog *w = waypointCatalogs.current();
+
+    // read from disk
+
+//    w->importGarmin(fName);
+	w->importVolkslogger(fName);
+    w->modified = true;
+    fillWaypoints();
   }
 }

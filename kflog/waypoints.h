@@ -62,6 +62,7 @@ private: // Private attributes
   int idWaypointCatalogImport;
   int idWaypointCatalogClose;
   int idWaypointImportFromMap;
+  int idWaypointImportFromFile;
   int idWaypointNew;
   int idWaypointEdit;
   int idWaypointDelete;
@@ -110,6 +111,8 @@ public slots: // Public slots
   void slotFilterWaypoints();
   /** add a new waypoint from outside */
   void slotAddWaypoint(wayPoint *w);
+  /** No descriptions */
+  void slotImportWaypointFromFile();
 signals: // Signals
   /** No descriptions */
   void copyWaypoint2Task(wayPoint *);
