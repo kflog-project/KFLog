@@ -539,6 +539,25 @@ bool MapContents::__readAsciiFile(const char* fileName)
   return true;
 }
 
+<<<<<<< mapcontents.cpp
+void MapContents::__downloadFile(QString fileName, QString destString){
+  KConfig* config = KGlobal::config();
+  config->setGroup("General Options");
+  if (config->readBoolEntry("No Automatic Map Download",false))
+    return false;
+
+  config->setGroup("Path");
+  KURL src = KURL("http://maproom.kflog.org/data/");
+  KURL dest = KURL(destString);
+  src.addPath(fileName);
+  dest.addPath(fileName);
+
+  KIO::CopyJob *job = KIO::copy(src, dest, true);
+  connect( job, SIGNAL(result(KIO::Job*)),
+         this, SLOT(__jobResult(KIO::Job*)) );
+}
+
+=======
 void MapContents::__downloadFile(QString fileName, QString destString, bool wait){
   KConfig* config = KGlobal::config();
   config->setGroup("General Options");
@@ -560,6 +579,7 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
   }
 }
 
+>>>>>>> 1.74
 bool MapContents::__readTerrainFile(const int fileSecID,
     const int fileTypeID)
 {
