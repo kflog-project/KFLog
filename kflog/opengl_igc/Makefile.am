@@ -2,10 +2,10 @@
 lib_LTLIBRARIES = libopengl_igc.la
 
 
-INCLUDES = -I.. $(all_includes)
+INCLUDES = $(all_includes)
 
 
-LDFLAGS =              
+LDFLAGS =                
 
 
 libopengl_igc_la_LDFLAGS = -version-info 1:0:0

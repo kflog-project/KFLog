@@ -20,14 +20,9 @@
 
 #include "mapmatrix.h"
 
-static const char *timeFormat[4] = {
-  {"%2d:%2d"},
-  {"%2d:%2d:%2d"},
-  {"%02d:%02d"},
-  {"%02d:%02d:%02d"}
-  };
+static const char *timeFormat[4] = {"%2d:%2d", "%2d:%2d:%2d", "%02d:%02d", "%02d:%02d:%02d"};
 
-static const char *monthAbb[12] = {"Jan", "`Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+static const char *monthAbb[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 double dist(double lat1, double lon1, double lat2, double lon2)
 {

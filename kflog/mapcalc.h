@@ -18,8 +18,8 @@
 #ifndef MAPCALC_H
 #define MAPCALC_H
 
-#include <wp.h>
-#include <waypoint.h>
+#include "wp.h"
+#include "waypoint.h"
 #include <time.h>
 
 #define PI 3.141592654

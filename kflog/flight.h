@@ -19,10 +19,10 @@
 #define FLIGHT_H
 
 #include <time.h>
-#include <baseflightelement.h>
-#include <flighttask.h>
-#include <optimization.h>
-#include <map.h>
+#include "baseflightelement.h"
+#include "flighttask.h"
+#include "optimization.h"
+#include "map.h"
 
 #include <qdatetime.h>
 #include <qlist.h>

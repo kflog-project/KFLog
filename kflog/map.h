@@ -18,7 +18,7 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include <kflog.h>
+#include "kflog.h"
 
 #include <qregion.h>
 #include <qwidget.h>
@@ -27,8 +27,8 @@
 #include <qpointarray.h>
 #include <qtimer.h>
 
-#include <flight.h>
-#include <waypointcatalog.h>
+#include "flight.h"
+#include "waypointcatalog.h"
 
 /**
  * This class provides basic functions for displaying the map.
