@@ -1672,6 +1672,7 @@ void FlightTask::setTaskName(const QString& fName)
 {
   sourceFileName = fName;
 }
+
 /** No descriptions */
 QString FlightTask::getPlanningTypeString()
 {
