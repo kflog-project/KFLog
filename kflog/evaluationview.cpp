@@ -497,7 +497,6 @@ void EvaluationView::drawCurve(bool arg_vario, bool arg_speed,
             bool arg_baro, unsigned int arg_glatt_va, unsigned int arg_glatt_v,
             unsigned int arg_glatt_h, unsigned int secW)
 {
-//  warning("drawCurve");
   Flight* flight = evalDialog->getFlight();
   if (flight) {
     isFlight = true;
@@ -522,7 +521,6 @@ void EvaluationView::drawCurve(bool arg_vario, bool arg_speed,
     secWidth = secW;
 
     int width = (landTime - startTime) / secWidth + (KOORD_DISTANCE * 2) + 20;
-
 
     this->resize(MAX(width, scrollFrame->visibleWidth()),
                  scrollFrame->viewport()->height());
@@ -764,6 +762,5 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
 
 void EvaluationView::resizeEvent(QResizeEvent* event)
 {
-  warning("EvaluationView::Resize Event");
   QWidget::resizeEvent(event);
 }

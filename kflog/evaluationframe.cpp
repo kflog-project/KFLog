@@ -192,16 +192,7 @@ void EvaluationFrame::slotShowFlight()
 
 void EvaluationFrame::slotShowGraph()
 {
-/*  this->setCaption(i18n("Flightevaluation:") + flightList->at(n)->getPilot()
-                    + "  " + flightList->at(n)->getDate().toString());
-  // GRUNDWERTE setzen
-  updateText(0,flightList->at(n)->getRouteLength() - 1, true);
-*/
-
-
-//  warning("EvaluationFrame::slotShowGraph");
-
-  // Kurve malen
+  // draw the curve
   evalView->drawCurve(check_vario->isChecked(), check_speed->isChecked(),
     check_baro->isChecked(), glatt_va, glatt_v, glatt_h, secWidth);
 
@@ -210,7 +201,6 @@ void EvaluationFrame::slotShowGraph()
                + X_ABSTAND ;
     graphFrame->center(contentsX,0);
   }
-//warning("Setze auf X: %d",centerTime);
 }
 
 
