@@ -800,9 +800,11 @@ void Map::mousePressEvent(QMouseEvent* event)
 
   if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
 
-  BaseFlightElement *f = _globalMapContents.getFlight();
+  BaseFlightElement *f = NULL;
+  f = _globalMapContents.getFlight();
 
-  QList<wayPoint> taskPointList = f->getWPList();
+  if (f != NULL)
+    QList<wayPoint> taskPointList = f->getWPList();
 
   if(event->button() == MidButton)
     {
