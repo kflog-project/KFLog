@@ -139,9 +139,9 @@ void OptimizationWizard::slotStartOptimization()
 
   int heightDiff = route.at(idList[8])->height - route.at(idList[0])->height;
   if (heightDiff<-1000)
-    text += "<div align=\"center\"><b>WARNING! THE HEIGHT DIFFERENCE IS TOO LARGE!<br>This is not a valid OLC task. Go back and correct the start and/or end times.</b></div>";
+    text += "<div align=\"center\"><b>" + i18n("WARNING! THE HEIGHT DIFFERENCE IS TOO LARGE!<br>This is not a valid OLC task. Go back and correct the start and/or end times.")+"</b></div>";
   
-  text += "<div align=\"center\">If you want to use this task and replace the old, press \"Finish\", else press \"Cancel\"</div>";
+  text += "<div align=\"center\">"+i18n("If you want to use this task and replace the old, press \"Finish\", else press \"Cancel\"")+"</div>";
 
   kTextBrowser1->setText(text);
 //  next();
@@ -184,7 +184,7 @@ void OptimizationWizard::setMapContents( Map* _map )
         SLOT(slotDrawCursor(QPoint, QPoint)));
 }
 
-double OptimizationWizard::optimizationResult( unsigned int pointList[LEGS+3], double * points )
+double OptimizationWizard::optimizationResult( unsigned int* pointList, double * points )
 {
     return optimization->optimizationResult( pointList,points );
 }
