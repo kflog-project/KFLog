@@ -114,7 +114,6 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   setAcceptDrops(true);
 
 	setFocusPolicy( QWidget::StrongFocus );
-	grabKeyboard();
 
   QWhatsThis::add(this, i18n("<B>The map</B>"
          "<P>To move or scale the map, please use the buttons in the "
