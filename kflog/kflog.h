@@ -216,6 +216,9 @@ class KFLogApp : public KDockMainWindow
     /** */
     void slotTaskAndWaypoint();
 
+    /** */
+    void slotFlightViewIgc3D();
+
   private:
     /**
      * The configuration object of the application
@@ -365,6 +368,10 @@ class KFLogApp : public KDockMainWindow
 		KAction* stepFlightEnd;
  		KAction* stepFlightStepNext;
  		KAction* stepFlightStepPrev;
+		/**
+     * The igc3d dialog
+     */
+ 		KAction* viewIgc3D;
 		/**
      * The map-widget.
      */

@@ -52,6 +52,7 @@
 #include <mapcontrolview.h>
 #include <mapprint.h>
 #include <taskandwaypoint.h>
+#include <igc3ddialog.h>
 
 #define STATUS_LABEL(a,b,c) \
   a = new KStatusBarLabel( "", 0, statusBar() ); \
@@ -112,6 +113,8 @@ KFLogApp::KFLogApp()
   stepFlightStepPrev->setEnabled(false);
   stepFlightHome->setEnabled(false);
   stepFlightEnd->setEnabled(false);
+  viewIgc3D->setEnabled(false);
+
 
   activateDock();
 
@@ -245,6 +248,13 @@ void KFLogApp::initActions()
 			Key_PageDown, map, SLOT(slotFlightStepPrev()), actionCollection(),
 			"prev_step_flight_point");
 
+	/**
+	 * Igc3d action
+	 */            	
+	viewIgc3D = new KAction(i18n("View flight in 3D"), "vectorgfx",
+			CTRL+Key_R, this, SLOT(slotFlightViewIgc3D()), actionCollection(),
+			"view_flight_3D");
+
   KSelectAction* viewFlightDataType = new KSelectAction(
       i18n("Show Flightdata"), "idea", 0,
       actionCollection(), "view_flight_data");
@@ -278,6 +288,7 @@ void KFLogApp::initActions()
   flightMenu->insert(stepFlightStepPrev);
   flightMenu->insert(stepFlightHome);
   flightMenu->insert(stepFlightEnd);
+  flightMenu->insert(viewIgc3D);
 
   KStdAction::configureToolbars(this,
       SLOT(slotConfigureToolbars()), actionCollection());
@@ -483,6 +494,7 @@ void KFLogApp::slotFileClose()
 		  stepFlightStepPrev->setEnabled(false);
 		  stepFlightHome->setEnabled(false);
 		  stepFlightEnd->setEnabled(false);
+		  viewIgc3D->setEnabled(false);
     }
 }
 
@@ -530,6 +542,7 @@ void KFLogApp::slotFileOpen()
 		  stepFlightStepPrev->setEnabled(true);
 		  stepFlightHome->setEnabled(true);
 		  stepFlightEnd->setEnabled(true);
+		  viewIgc3D->setEnabled(true);
 
       fileOpenRecent->addURL(fUrl);
 
@@ -565,6 +578,7 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
 				  stepFlightStepPrev->setEnabled(true);
 				  stepFlightHome->setEnabled(true);
 				  stepFlightEnd->setEnabled(true);
+				  viewIgc3D->setEnabled(true);
 
           map->slotRedrawFlight();
           map->slotCenterToFlight();
@@ -747,4 +761,15 @@ void KFLogApp::slotTaskAndWaypoint()
 {
   TaskAndWaypoint d(this);
   d.exec();
+}
+
+
+void KFLogApp::slotFlightViewIgc3D()
+{
+  extern MapContents _globalMapContents;
+
+  if(_globalMapContents.getFlightList()->count()){
+	  Igc3DDialog * igc3d = new Igc3DDialog(_globalMapContents.getFlightList());
+    igc3d->show();
+  }
 }
