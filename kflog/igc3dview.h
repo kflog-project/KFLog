@@ -82,6 +82,13 @@ class Igc3DView : public QWidget
    * Redefinition of the paintEvent.
    */
   virtual void paintEvent(QPaintEvent* event);
+
+	/**
+	 * Redefinition of the resize event
+	 */
+	virtual void resizeEvent(QResizeEvent * event );
+
+
   /**
 	 * No descriptions
 	 */

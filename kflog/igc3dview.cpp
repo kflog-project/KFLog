@@ -49,6 +49,9 @@ Igc3DView::Igc3DView(Igc3DDialog* dialog, QList<Flight>* fList)
   isFlight = false;
   setBackgroundColor(QColor(white));
 
+	//
+	setFocusPolicy(QWidget::StrongFocus);
+
   // create members
 	this->state = new Igc3DViewState();
 	this->flightbox = new Igc3DPolyhedron(state);
@@ -75,20 +78,36 @@ Igc3DView::Igc3DView(Igc3DDialog* dialog, QList<Flight>* fList)
 	state->deltay = state->deltay + state->deltayoffset;
 	state->flight_trace = 1;
 	state->flight_shadow = 1;
-	
+	this->reset();
+
 }
 
 Igc3DView::~Igc3DView()
 {
-//  delete pixBuffer;
   delete state;
   delete flightbox;
   delete flight;
 }
 
+void Igc3DView::resizeEvent( QResizeEvent * event )
+{
+	QSize qs;
+
+	qs = event->size();
+	state->height = qs.height();
+	state->width = qs.width();
+}
+
+
 QSize Igc3DView::sizeHint()
 {
-  return QWidget::sizeHint();
+	QSize qs;
+	qs = QWidget::sizeHint();
+
+	state->height = qs.height();
+	state->width = qs.width();
+
+  return qs;
 }
 
 void Igc3DView::paintEvent(QPaintEvent* event = 0)
@@ -97,8 +116,6 @@ void Igc3DView::paintEvent(QPaintEvent* event = 0)
    * call the drawing function for the view
    */	
 	__draw();
-
-//  warning("paintEvent");
 }
 
 /** No descriptions */
@@ -155,14 +172,8 @@ void Igc3DView::__draw(void)
 	
 	p->end();
 	bitBlt(this, 0, 0, &pm);
-
-/*
-	if(flight->flight_opened_flag){
-		dataline = getflightpointdata();
-		LineEdit1->setText(dataline);
-	}
-*/
 }
+
 /** No descriptions */
 void Igc3DView::slotRedraw(){
 	this->__draw();
@@ -170,13 +181,15 @@ void Igc3DView::slotRedraw(){
 
 void Igc3DView::keyPressEvent ( QKeyEvent * k )
 {
+	int n;
+
 	switch ( k->key() ) {
 		case Key_R:
 			reset();
 			break;
-		case Key_T:
-			state->flight_trace = (state->flight_trace + 1)%2;
-			break;
+//		case Key_T:
+//			state->flight_trace = (state->flight_trace + 1)%2;
+//			break;
 		case Key_S:
 			state->flight_shadow = (state->flight_shadow + 1)%2;
 			break;
@@ -185,6 +198,30 @@ void Igc3DView::keyPressEvent ( QKeyEvent * k )
 			break;
 		case Key_F:
 			state->polyhedron_front = (state->polyhedron_front + 1)%2;
+			break;
+		case Key_Down:
+			n = state->alpha-5;
+			change_alpha(n);
+			break;
+		case Key_Up:
+			n = state->alpha+5;
+			change_alpha(n);
+			break;
+		case Key_Left:
+			n = state->gamma+5;
+			change_gamma(n);
+			break;
+		case Key_Right:
+			n = state->gamma-5;
+			change_gamma(n);
+			break;
+		case Key_Plus:
+			n = state->mag+2;
+			change_mag(n);
+			break;
+		case Key_Minus:
+			n = state->mag-2;
+			change_mag(n);
 			break;
 	}
 	__draw();
@@ -216,32 +253,27 @@ Igc3DViewState* Igc3DView::setState(Igc3DViewState* vs)
 void Igc3DView::change_mag(int i)
 {
 	state->mag = i;
-	__draw();
 }
 
 void Igc3DView::change_dist(int i)
 {
 	// Make sure deltay will never be less than offset (-> display would look funny)
 	state->deltay = state->deltayoffset - i;
-	__draw();
 }
 
 void Igc3DView::change_alpha(int i)
 {
 	state->alpha = i;
-	__draw();
 }
 
 void Igc3DView::change_beta(int i)
 {
 	state->beta = i;
-	__draw();
 }
 
 void Igc3DView::change_gamma(int i)
 {
 	state->gamma = i;
-	__draw();
 }
 
 void Igc3DView::change_zfactor(int i)
