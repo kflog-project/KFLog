@@ -45,7 +45,7 @@ MapMatrix _globalMapMatrix;
  */
 static KCmdLineOptions options[] =
 {
-  { "+[File]", I18N_NOOP("file to open"), 0 },
+  { "+[File]", I18N_NOOP("igc-file to open"), 0 },
   { 0, 0, 0 }
 };
 
@@ -58,9 +58,9 @@ int main(int argc, char *argv[])
 {
 	KAboutData aboutData( "kflog", I18N_NOOP("KFLog"),
 		VERSION, description, KAboutData::License_GPL,
-		"(c) 2001, The KFLog-Team", 0, 0, "heiner@kflog.de");
-	aboutData.addAuthor("Heiner Lamprecht",0, "heiner@kflog.de");
-	aboutData.addAuthor("Florian Ehinger",0, "florian@kflog.de");
+		"(c) 2001, The KFLog-Team", 0, 0, "bugs@kflog.org");
+	aboutData.addAuthor("Heiner Lamprecht",0, "heiner@kflog.org");
+	aboutData.addAuthor("Florian Ehinger",0, "florian@kflog.org");
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 

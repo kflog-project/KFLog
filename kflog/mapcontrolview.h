@@ -63,6 +63,8 @@ class MapControlView : public QWidget
      * Shows the scale in the lcd-label and sets the slider.
      */
     void slotShowScaleChange(int value);
+    /** */
+    void slotSetMaxValue(double scale);
 
   signals:
     /** */

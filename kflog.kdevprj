@@ -81,7 +81,7 @@ type=DATA
 [README-MAP]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapdata/README
+install_location=$(kde_datadir)/kflog/mapdata/README
 type=DATA
 
 [TODO]
@@ -124,7 +124,7 @@ install_location=
 type=DATA
 
 [kflog/Makefile.am]
-files=kflog/main.cpp,kflog/kflog.cpp,kflog/kflog.h,kflog/kflogui.rc,kflog/kflog.desktop,kflog/mapcontrolview.h,kflog/mapcontrolview.cpp,kflog/mapcalc.cpp,kflog/mapcalc.h,kflog/wp.h,kflog/dataview.cpp,kflog/dataview.h,kflog/map.cpp,kflog/map.h,kflog/basemapelement.cpp,kflog/basemapelement.h,kflog/mapcontents.cpp,kflog/mapcontents.h,kflog/resource.h,kflog/airport.cpp,kflog/airport.h,kflog/airspace.cpp,kflog/airspace.h,kflog/elevpoint.cpp,kflog/elevpoint.h,kflog/glidersite.cpp,kflog/glidersite.h,kflog/isohypse.cpp,kflog/isohypse.h,kflog/lineelement.cpp,kflog/lineelement.h,kflog/radiopoint.cpp,kflog/radiopoint.h,kflog/singlepoint.cpp,kflog/singlepoint.h,kflog/mapmatrix.cpp,kflog/mapmatrix.h,kflog/flight.cpp,kflog/flight.h,kflog/flighttask.cpp,kflog/flighttask.h,kflog/kflogstartlogo.cpp,kflog/kflogstartlogo.h,kflog/printdialog.h,kflog/printdialog.cpp,kflog/kflogconfig.cpp,kflog/kflogconfig.h,kflog/mapdefaults.h,kflog/evaluationdialog.cpp,kflog/evaluationdialog.h,kflog/evaluationview.cpp,kflog/evaluationview.h,kflog/hi16-app-kflog.png,kflog/hi32-app-kflog.png,kflog/hi48-app-kflog.png,kflog/hi16-mimetype-x-igc.png,kflog/hi32-mimetype-x-igc.png,kflog/hi48-mimetype-x-igc.png,kflog/x-igc.desktop,kflog/hi22-action-movemap_e.png,kflog/hi22-action-movemap_n.png,kflog/hi22-action-movemap_ne.png,kflog/hi22-action-movemap_nw.png,kflog/hi22-action-movemap_s.png,kflog/hi22-action-movemap_se.png,kflog/hi22-action-movemap_sw.png,kflog/hi22-action-movemap_w.png,kflog/hi16-action-flightevaluation.png,kflog/hi22-action-flightevaluation.png,kflog/hi32-action-flightevaluation.png,kflog/hi16-action-centerflight.png,kflog/hi16-action-centertask.png,kflog/hi22-action-centerflight.png,kflog/hi22-action-centertask.png
+files=kflog/main.cpp,kflog/kflog.cpp,kflog/kflog.h,kflog/kflogui.rc,kflog/kflog.desktop,kflog/mapcontrolview.h,kflog/mapcontrolview.cpp,kflog/mapcalc.cpp,kflog/mapcalc.h,kflog/wp.h,kflog/dataview.cpp,kflog/dataview.h,kflog/map.cpp,kflog/map.h,kflog/basemapelement.cpp,kflog/basemapelement.h,kflog/mapcontents.cpp,kflog/mapcontents.h,kflog/resource.h,kflog/airport.cpp,kflog/airport.h,kflog/airspace.cpp,kflog/airspace.h,kflog/elevpoint.cpp,kflog/elevpoint.h,kflog/glidersite.cpp,kflog/glidersite.h,kflog/isohypse.cpp,kflog/isohypse.h,kflog/lineelement.cpp,kflog/lineelement.h,kflog/radiopoint.cpp,kflog/radiopoint.h,kflog/singlepoint.cpp,kflog/singlepoint.h,kflog/mapmatrix.cpp,kflog/mapmatrix.h,kflog/flight.cpp,kflog/flight.h,kflog/flighttask.cpp,kflog/flighttask.h,kflog/kflogstartlogo.cpp,kflog/kflogstartlogo.h,kflog/printdialog.h,kflog/printdialog.cpp,kflog/kflogconfig.cpp,kflog/kflogconfig.h,kflog/mapdefaults.h,kflog/evaluationdialog.cpp,kflog/evaluationdialog.h,kflog/evaluationview.cpp,kflog/evaluationview.h,kflog/hi16-app-kflog.png,kflog/hi32-app-kflog.png,kflog/hi48-app-kflog.png,kflog/hi16-mimetype-igc.png,kflog/hi32-mimetype-igc.png,kflog/hi48-mimetype-igc.png,kflog/igc.desktop,kflog/hi22-action-movemap_e.png,kflog/hi22-action-movemap_n.png,kflog/hi22-action-movemap_ne.png,kflog/hi22-action-movemap_nw.png,kflog/hi22-action-movemap_s.png,kflog/hi22-action-movemap_se.png,kflog/hi22-action-movemap_sw.png,kflog/hi22-action-movemap_w.png,kflog/hi16-action-flightevaluation.png,kflog/hi22-action-flightevaluation.png,kflog/hi32-action-flightevaluation.png,kflog/hi16-action-centerflight.png,kflog/hi16-action-centertask.png,kflog/hi22-action-centerflight.png,kflog/hi22-action-centertask.png
 sub_dirs=map-icons
 type=prog_main
 
@@ -251,127 +251,133 @@ type=HEADER
 [kflog/hi16-action-centerflight.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/16x16/action/centerflight.png
+install_location=$(kde_icondir)/hicolor/16x16/actions/centerflight.png
 type=DATA
 
 [kflog/hi16-action-centertask.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/16x16/action/centertask.png
+install_location=$(kde_icondir)/hicolor/16x16/actions/centertask.png
 type=DATA
 
 [kflog/hi16-action-flightevaluation.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/16x16/action/flightevaluation.png
+install_location=$(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
 type=DATA
 
 [kflog/hi16-app-kflog.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/16x16/apps/kflog.png
+install_location=$(kde_icondir)/hicolor/16x16/apps/kflog.png
 type=DATA
 
-[kflog/hi16-mimetype-x-igc.png]
+[kflog/hi16-mimetype-igc.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/16x16/mimetypes/x-igc.png
+install_location=$(kde_icondir)/hicolor/16x16/mimetypes/igc.png
 type=DATA
 
 [kflog/hi22-action-centerflight.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/22x22/action/centerflight.png
+install_location=$(kde_icondir)/hicolor/22x22/actions/centerflight.png
 type=DATA
 
 [kflog/hi22-action-centertask.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/22x22/action/centertask.png
+install_location=$(kde_icondir)/hicolor/22x22/actions/centertask.png
 type=DATA
 
 [kflog/hi22-action-flightevaluation.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/22x22/action/flightevaluation.png
+install_location=$(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
 type=DATA
 
 [kflog/hi22-action-movemap_e.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/22x22/action/movemap_e.png
+install_location=$(kde_icondir)/hicolor/22x22/actions/movemap_e.png
 type=DATA
 
 [kflog/hi22-action-movemap_n.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/22x22/action/movemap_n.png
+install_location=$(kde_icondir)/hicolor/22x22/actions/movemap_n.png
 type=DATA
 
 [kflog/hi22-action-movemap_ne.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/22x22/action/movemap_ne.png
+install_location=$(kde_icondir)/hicolor/22x22/actions/movemap_ne.png
 type=DATA
 
 [kflog/hi22-action-movemap_nw.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/22x22/action/movemap_nw.png
+install_location=$(kde_icondir)/hicolor/22x22/actions/movemap_nw.png
 type=DATA
 
 [kflog/hi22-action-movemap_s.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/22x22/action/movemap_s.png
+install_location=$(kde_icondir)/hicolor/22x22/actions/movemap_s.png
 type=DATA
 
 [kflog/hi22-action-movemap_se.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/22x22/action/movemap_se.png
+install_location=$(kde_icondir)/hicolor/22x22/actions/movemap_se.png
 type=DATA
 
 [kflog/hi22-action-movemap_sw.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/22x22/action/movemap_sw.png
+install_location=$(kde_icondir)/hicolor/22x22/actions/movemap_sw.png
 type=DATA
 
 [kflog/hi22-action-movemap_w.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/22x22/action/movemap_w.png
+install_location=$(kde_icondir)/hicolor/22x22/actions/movemap_w.png
 type=DATA
 
 [kflog/hi32-action-flightevaluation.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/32x32/action/flightevaluation.png
+install_location=$(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
 type=DATA
 
 [kflog/hi32-app-kflog.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/32x32/apps/kflog.png
+install_location=$(kde_icondir)/hicolor/32x32/apps/kflog.png
 type=DATA
 
-[kflog/hi32-mimetype-x-igc.png]
+[kflog/hi32-mimetype-igc.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/32x32/mimetypes/x-igc.png
+install_location=$(kde_icondir)/hicolor/32x32/mimetypes/igc.png
 type=DATA
 
 [kflog/hi48-app-kflog.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/48x48/apps/kflog.png
+install_location=$(kde_icondir)/hicolor/48x48/apps/kflog.png
 type=DATA
 
-[kflog/hi48-mimetype-x-igc.png]
+[kflog/hi48-mimetype-igc.png]
 dist=true
 install=true
-install_location=$$(kde_icondir)/hicolor/48x48/mimetypes/x-igc.png
+install_location=$(kde_icondir)/hicolor/48x48/mimetypes/igc.png
+type=DATA
+
+[kflog/igc.desktop]
+dist=true
+install=true
+install_location=$(kde_mimedir)/application/igc.desktop
 type=DATA
 
 [kflog/isohypse.cpp]
@@ -395,7 +401,7 @@ type=SOURCE
 [kflog/kflog.desktop]
 dist=true
 install=true
-install_location=$$(kde_appsdir)/Applications/kflog.desktop
+install_location=$(kde_appsdir)/Applications/kflog.desktop
 type=DATA
 
 [kflog/kflog.h]
@@ -431,7 +437,7 @@ type=HEADER
 [kflog/kflogui.rc]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/kflogui.rc
+install_location=$(kde_datadir)/kflog/kflogui.rc
 type=DATA
 
 [kflog/lineelement.cpp]
@@ -463,121 +469,121 @@ type=DATA
 [kflog/map-icons/airfield_c.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/airfield_c.xpm
+install_location=$(kde_datadir)/kflog/mapicons/airfield_c.xpm
 type=DATA
 
 [kflog/map-icons/airfield_g.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/airfield_g.xpm
+install_location=$(kde_datadir)/kflog/mapicons/airfield_g.xpm
 type=DATA
 
 [kflog/map-icons/airport.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/airport.xpm
+install_location=$(kde_datadir)/kflog/mapicons/airport.xpm
 type=DATA
 
 [kflog/map-icons/airspace.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/airspace.xpm
+install_location=$(kde_datadir)/kflog/mapicons/airspace.xpm
 type=DATA
 
 [kflog/map-icons/ambheliport.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/ambheliport.xpm
+install_location=$(kde_datadir)/kflog/mapicons/ambheliport.xpm
 type=DATA
 
 [kflog/map-icons/civheliport.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/civheliport.xpm
+install_location=$(kde_datadir)/kflog/mapicons/civheliport.xpm
 type=DATA
 
 [kflog/map-icons/civmilair.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/civmilair.xpm
+install_location=$(kde_datadir)/kflog/mapicons/civmilair.xpm
 type=DATA
 
 [kflog/map-icons/closed.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/closed.xpm
+install_location=$(kde_datadir)/kflog/mapicons/closed.xpm
 type=DATA
 
 [kflog/map-icons/glider.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/glider.xpm
+install_location=$(kde_datadir)/kflog/mapicons/glider.xpm
 type=DATA
 
 [kflog/map-icons/glider2.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/glider2.xpm
+install_location=$(kde_datadir)/kflog/mapicons/glider2.xpm
 type=DATA
 
 [kflog/map-icons/jump.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/jump.xpm
+install_location=$(kde_datadir)/kflog/mapicons/jump.xpm
 type=DATA
 
 [kflog/map-icons/milairport.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/milairport.xpm
+install_location=$(kde_datadir)/kflog/mapicons/milairport.xpm
 type=DATA
 
 [kflog/map-icons/milheliport.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/milheliport.xpm
+install_location=$(kde_datadir)/kflog/mapicons/milheliport.xpm
 type=DATA
 
 [kflog/map-icons/obst_group.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/obst_group.xpm
+install_location=$(kde_datadir)/kflog/mapicons/obst_group.xpm
 type=DATA
 
 [kflog/map-icons/obst_group_light.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/obst_group_light.xpm
+install_location=$(kde_datadir)/kflog/mapicons/obst_group_light.xpm
 type=DATA
 
 [kflog/map-icons/obst_light.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/obst_light.xpm
+install_location=$(kde_datadir)/kflog/mapicons/obst_light.xpm
 type=DATA
 
 [kflog/map-icons/obstacle.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/obstacle.xpm
+install_location=$(kde_datadir)/kflog/mapicons/obstacle.xpm
 type=DATA
 
 [kflog/map-icons/outlanding.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/outlanding.xpm
+install_location=$(kde_datadir)/kflog/mapicons/outlanding.xpm
 type=DATA
 
 [kflog/map-icons/paraglider.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/paraglider.xpm
+install_location=$(kde_datadir)/kflog/mapicons/paraglider.xpm
 type=DATA
 
 [kflog/map-icons/routepoint.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/routepoint.xpm
+install_location=$(kde_datadir)/kflog/mapicons/routepoint.xpm
 type=DATA
 
 [kflog/map-icons/small/Makefile.am]
@@ -591,133 +597,133 @@ type=DATA
 [kflog/map-icons/small/airfield_c.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/airfield_c.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/airfield_c.xpm
 type=DATA
 
 [kflog/map-icons/small/airport.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/airport.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/airport.xpm
 type=DATA
 
 [kflog/map-icons/small/ambheliport.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/ambheliport.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/ambheliport.xpm
 type=DATA
 
 [kflog/map-icons/small/civheliport.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/civheliport.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/civheliport.xpm
 type=DATA
 
 [kflog/map-icons/small/civmilair.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/civmilair.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/civmilair.xpm
 type=DATA
 
 [kflog/map-icons/small/closed.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/closed.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/closed.xpm
 type=DATA
 
 [kflog/map-icons/small/glider.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/glider.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/glider.xpm
 type=DATA
 
 [kflog/map-icons/small/glider2.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/glider2.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/glider2.xpm
 type=DATA
 
 [kflog/map-icons/small/jump.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/jump.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/jump.xpm
 type=DATA
 
 [kflog/map-icons/small/milairport.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/milairport.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/milairport.xpm
 type=DATA
 
 [kflog/map-icons/small/milheliport.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/milheliport.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/milheliport.xpm
 type=DATA
 
 [kflog/map-icons/small/obst_group.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/obst_group.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/obst_group.xpm
 type=DATA
 
 [kflog/map-icons/small/obstacle.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/obstacle.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/obstacle.xpm
 type=DATA
 
 [kflog/map-icons/small/outlanding.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/outlanding.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/outlanding.xpm
 type=DATA
 
 [kflog/map-icons/small/paraglider.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/paraglider.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/paraglider.xpm
 type=DATA
 
 [kflog/map-icons/small/routepoint.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/routepoint.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/routepoint.xpm
 type=DATA
 
 [kflog/map-icons/small/ulf.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/ul.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/ul.xpm
 type=DATA
 
 [kflog/map-icons/small/vortac.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/vortac.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/vortac.xpm
 type=DATA
 
 [kflog/map-icons/small/waypoint.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/small/waypoint.xpm
+install_location=$(kde_datadir)/kflog/mapicons/small/waypoint.xpm
 type=DATA
 
 [kflog/map-icons/ul.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/ul.xpm
+install_location=$(kde_datadir)/kflog/mapicons/ul.xpm
 type=DATA
 
 [kflog/map-icons/vortac.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/vortac.xpm
+install_location=$(kde_datadir)/kflog/mapicons/vortac.xpm
 type=DATA
 
 [kflog/map-icons/waypoint.xpm]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/mapicons/waypoint.xpm
+install_location=$(kde_datadir)/kflog/mapicons/waypoint.xpm
 type=DATA
 
 [kflog/map.cpp]
@@ -834,21 +840,15 @@ install=false
 install_location=
 type=HEADER
 
-[kflog/x-igc.desktop]
-dist=true
-install=true
-install_location=$$(kde_mimedir)/application/x-igc.desktop
-type=DATA
-
 [po/Makefile.am]
-files=po/de.po,po/de.gmo,po/kflog.pot
+files=po/de.po,po/de.gmo,po/kflog.pot,po/no.gmo,po/no.po
 sub_dirs=
 type=po
 
 [po/de.gmo]
-dist=true
-install=true
-install_location=$$(kde_locale)/de/kflog.mo
+dist=false
+install=false
+install_location=$(kde_locale)/de/kflog.mo
 type=DATA
 
 [po/de.po]
@@ -862,3 +862,15 @@ dist=true
 install=false
 install_location=
 type=DATA
+
+[po/no.gmo]
+dist=false
+install=false
+install_location=
+type=DATA
+
+[po/no.po]
+dist=false
+install=false
+install_location=
+type=PO

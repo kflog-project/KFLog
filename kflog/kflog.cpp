@@ -166,7 +166,7 @@ void KFLogApp::initActions()
   fileOpen->setStatusText(i18n("Open flight"));
 //  filePrint ->setStatusText(i18n("Print map"));
 
-  createGUI("/home/heiner/Entwicklung/kflog2/kflog/kflogui.rc");
+  createGUI();
 }
 
 void KFLogApp::initStatusBar()

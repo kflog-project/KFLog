@@ -285,7 +285,7 @@ void Flight::__flightState()
         }
       else
         {
-          if(route.at(n)->time - route.at(n - weiter)->time  >= 20)
+          if( (route.at(n)->time - route.at(n - weiter)->time)  >= 20)
             {
               // Kreisflug war unter 20s und wird daher nicht gewertet
               s_point = - 1;
@@ -634,7 +634,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 // Flugweg
 
   unsigned int delta = 1;
-  if(glMapMatrix->isSwitchScale())  delta = 8;
+  if(!glMapMatrix->isSwitchScale())  delta = 8;
 
   curPointA = glMapMatrix->map(route.at(0)->projP);
   bBoxFlight.setLeft(curPointA.x());
@@ -1075,8 +1075,7 @@ int Flight::searchPoint(QPoint cPoint, struct flightPoint* searchPoint)
 
   double minDist = 1000.0, distance = 0.0;
 
-  if(glMapMatrix->isSwitchScale())
-      delta = 8;
+  if(!glMapMatrix->isSwitchScale())  delta = 8;
 
   QPoint fPoint;
 
@@ -1450,7 +1449,6 @@ void Flight::__checkWaypoints()
            */
           time_error = true;
         }
-
       preTime = route.at(loop)->time;
     }
 

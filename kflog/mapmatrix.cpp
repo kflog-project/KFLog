@@ -46,6 +46,7 @@
 #define VAL_BORDER_1                     100
 #define VAL_BORDER_2                     500
 #define VAL_BORDER_3                    1000
+#define VAL_BORDER_S                     250
 
 // Anfangs-Position (Poltringen)
 #define HOME_DEFAULT_LAT 29125200
@@ -418,8 +419,8 @@ void MapMatrix::initMatrix()
   scaleBorders[Border1] = config->readNumEntry("Border 1", VAL_BORDER_1);
   scaleBorders[Border2] = config->readNumEntry("Border 2", VAL_BORDER_2);
   scaleBorders[Border3] = config->readNumEntry("Border 3", VAL_BORDER_3);
-  scaleBorders[SwitchScale] = config->readNumEntry("Switch Scale", VAL_BORDER_2);
-  scaleBorders[UpperLimit] = config->readNumEntry("Upper Limit", VAL_BORDER_2);
+  scaleBorders[SwitchScale] = config->readNumEntry("Switch Scale", VAL_BORDER_S);
+  scaleBorders[UpperLimit] = config->readNumEntry("Upper Limit", VAL_BORDER_U);
 
   var1 = cos(v1)*cos(v1);
   var2 = sin(v1)+sin(v2);

@@ -5,7 +5,7 @@ kflog_LDADD   =  -lm $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOC
 
 SUBDIRS = map-icons 
 
-EXTRA_DIST = main.cpp kflog.cpp kflog.h kflogui.rc kflog.desktop mapcontrolview.h mapcontrolview.cpp mapcalc.cpp mapcalc.h wp.h dataview.cpp dataview.h map.cpp map.h basemapelement.cpp basemapelement.h mapcontents.cpp mapcontents.h resource.h airport.cpp airport.h airspace.cpp airspace.h elevpoint.cpp elevpoint.h glidersite.cpp glidersite.h isohypse.cpp isohypse.h lineelement.cpp lineelement.h radiopoint.cpp radiopoint.h singlepoint.cpp singlepoint.h mapmatrix.cpp mapmatrix.h flight.cpp flight.h flighttask.cpp flighttask.h kflogstartlogo.cpp kflogstartlogo.h printdialog.h printdialog.cpp kflogconfig.cpp kflogconfig.h mapdefaults.h evaluationdialog.cpp evaluationdialog.h evaluationview.cpp evaluationview.h hi16-app-kflog.png hi32-app-kflog.png hi48-app-kflog.png hi16-mimetype-x-igc.png hi32-mimetype-x-igc.png hi48-mimetype-x-igc.png x-igc.desktop hi22-action-movemap_e.png hi22-action-movemap_n.png hi22-action-movemap_ne.png hi22-action-movemap_nw.png hi22-action-movemap_s.png hi22-action-movemap_se.png hi22-action-movemap_sw.png hi22-action-movemap_w.png hi16-action-flightevaluation.png hi22-action-flightevaluation.png hi32-action-flightevaluation.png hi16-action-centerflight.png hi16-action-centertask.png hi22-action-centerflight.png hi22-action-centertask.png 
+EXTRA_DIST = main.cpp kflog.cpp kflog.h kflogui.rc kflog.desktop mapcontrolview.h mapcontrolview.cpp mapcalc.cpp mapcalc.h wp.h dataview.cpp dataview.h map.cpp map.h basemapelement.cpp basemapelement.h mapcontents.cpp mapcontents.h resource.h airport.cpp airport.h airspace.cpp airspace.h elevpoint.cpp elevpoint.h glidersite.cpp glidersite.h isohypse.cpp isohypse.h lineelement.cpp lineelement.h radiopoint.cpp radiopoint.h singlepoint.cpp singlepoint.h mapmatrix.cpp mapmatrix.h flight.cpp flight.h flighttask.cpp flighttask.h kflogstartlogo.cpp kflogstartlogo.h printdialog.h printdialog.cpp kflogconfig.cpp kflogconfig.h mapdefaults.h evaluationdialog.cpp evaluationdialog.h evaluationview.cpp evaluationview.h hi16-app-kflog.png hi32-app-kflog.png hi48-app-kflog.png hi16-mimetype-igc.png hi32-mimetype-igc.png hi48-mimetype-igc.png igc.desktop hi22-action-movemap_e.png hi22-action-movemap_n.png hi22-action-movemap_ne.png hi22-action-movemap_nw.png hi22-action-movemap_s.png hi22-action-movemap_se.png hi22-action-movemap_sw.png hi22-action-movemap_w.png hi16-action-flightevaluation.png hi22-action-flightevaluation.png hi32-action-flightevaluation.png hi16-action-centerflight.png hi16-action-centertask.png hi22-action-centerflight.png hi22-action-centertask.png 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_datadir)/kflog/
@@ -19,13 +19,13 @@ install-data-local:
 	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/apps/
 	$(INSTALL_DATA) $(srcdir)/hi48-app-kflog.png $(kde_icondir)/hicolor/48x48/apps/kflog.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/mimetypes/
-	$(INSTALL_DATA) $(srcdir)/hi16-mimetype-x-igc.png $(kde_icondir)/hicolor/16x16/mimetypes/x-igc.png
+	$(INSTALL_DATA) $(srcdir)/hi16-mimetype-igc.png $(kde_icondir)/hicolor/16x16/mimetypes/igc.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/32x32/mimetypes/
-	$(INSTALL_DATA) $(srcdir)/hi32-mimetype-x-igc.png $(kde_icondir)/hicolor/32x32/mimetypes/x-igc.png
+	$(INSTALL_DATA) $(srcdir)/hi32-mimetype-igc.png $(kde_icondir)/hicolor/32x32/mimetypes/igc.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/mimetypes/
-	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-x-igc.png $(kde_icondir)/hicolor/48x48/mimetypes/x-igc.png
+	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-igc.png $(kde_icondir)/hicolor/48x48/mimetypes/igc.png
 	$(mkinstalldirs) $(kde_mimedir)/application/
-	$(INSTALL_DATA) $(srcdir)/x-igc.desktop $(kde_mimedir)/application/x-igc.desktop
+	$(INSTALL_DATA) $(srcdir)/igc.desktop $(kde_mimedir)/application/igc.desktop
 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_e.png $(kde_icondir)/hicolor/22x22/actions/movemap_e.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
@@ -63,10 +63,10 @@ uninstall-local:
 	-rm -f $(kde_icondir)/hicolor/16x16/apps/kflog.png
 	-rm -f $(kde_icondir)/hicolor/32x32/apps/kflog.png
 	-rm -f $(kde_icondir)/hicolor/48x48/apps/kflog.png
-	-rm -f $(kde_icondir)/hicolor/16x16/mimetypes/x-igc.png
-	-rm -f $(kde_icondir)/hicolor/32x32/mimetypes/x-igc.png
-	-rm -f $(kde_icondir)/hicolor/48x48/mimetypes/x-igc.png
-	-rm -f $(kde_mimedir)/application/x-igc.desktop
+	-rm -f $(kde_icondir)/hicolor/16x16/mimetypes/igc.png
+	-rm -f $(kde_icondir)/hicolor/32x32/mimetypes/igc.png
+	-rm -f $(kde_icondir)/hicolor/48x48/mimetypes/igc.png
+	-rm -f $(kde_mimedir)/application/igc.desktop
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_e.png
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_n.png
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_ne.png

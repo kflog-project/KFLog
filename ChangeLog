@@ -1,2 +1,30 @@
-This is the first release of the KDE2-Version of KFLog. Therefore, no
-ChangeLog exists yet.
+$Id$
+
+
+2001-11-25 Heiner <heiner@kflog.org>
+
+  * Added recognizing the point-validation. Now the validation-flag of the
+    logger will be read. Non-valid points will be ignored in calculation
+    distance and speed.
+
+  * Fixed some bugs in parsing an igc-file. Now a negative height will be
+    read without giving an error-message.
+
+
+2001-11-18 Heiner <heiner@kflog.org>
+
+  * Added swedish translation
+    (provided by Göran Källqvist <kjellqvist@nordkalak.se>)
+
+
+2001-11-17 Heiner <heiner@kflog.org>
+
+  * Fixed some minor bugs.
+
+  * Added norwegian translation
+    (provided by Thomas Nielsen <thomanie@stud.ntnu.no>)
+
+
+2001-11-14 Heiner <heiner@kflog.org>
+
+  * Released KFLog 2.0.1

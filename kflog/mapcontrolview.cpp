@@ -29,6 +29,8 @@
 #include <qlabel.h>
 #include <qlayout.h>
 
+#define DELTA 4
+
 MapControlView::MapControlView(QWidget* parent, Map* map)
 : QWidget(parent)
 {
@@ -39,58 +41,71 @@ MapControlView::MapControlView(QWidget* parent, Map* map)
   QFrame* navFrame = new QFrame(parent);
   QPushButton* nwB = new QPushButton(navFrame);
   nwB->setPixmap(BarIcon("movemap_nw"));
-  nwB->setFixedHeight(35);
-  nwB->setFixedWidth(35);
+  nwB->setFixedHeight(nwB->sizeHint().height() + DELTA);
+  nwB->setFixedWidth(nwB->sizeHint().width() + DELTA);
+
   QPushButton* nB = new QPushButton(navFrame);
   nB->setPixmap(BarIcon("movemap_n"));
-  nB->setFixedHeight(35);
-  nB->setFixedWidth(35);
+  nB->setFixedHeight(nB->sizeHint().height() + DELTA);
+  nB->setFixedWidth(nB->sizeHint().width() + DELTA);
+
   QPushButton* neB = new QPushButton(navFrame);
   neB->setPixmap(BarIcon("movemap_ne"));
-  neB->setFixedHeight(35);
-  neB->setFixedWidth(35);
+  neB->setFixedHeight(neB->sizeHint().height() + DELTA);
+  neB->setFixedWidth(neB->sizeHint().width() + DELTA);
+
   QPushButton* wB = new QPushButton(navFrame);
   wB->setPixmap(BarIcon("movemap_e"));
-  wB->setFixedHeight(35);
-  wB->setFixedWidth(35);
+  wB->setFixedHeight(wB->sizeHint().height() + DELTA);
+  wB->setFixedWidth(wB->sizeHint().width() + DELTA);
+
   QPushButton* cenB = new QPushButton(navFrame);
   cenB->setPixmap(BarIcon("gohome"));
-  cenB->setFixedHeight(35);
-  cenB->setFixedWidth(35);
+  cenB->setFixedHeight(cenB->sizeHint().height() + DELTA);
+  cenB->setFixedWidth(cenB->sizeHint().width() + DELTA);
+
   QPushButton* eB = new QPushButton(navFrame);
   eB->setPixmap(BarIcon("movemap_w"));
-  eB->setFixedHeight(35);
-  eB->setFixedWidth(35);
+  eB->setFixedHeight(eB->sizeHint().height() + DELTA);
+  eB->setFixedWidth(eB->sizeHint().width() + DELTA);
+
   QPushButton* swB = new QPushButton(navFrame);
   swB->setPixmap(BarIcon("movemap_sw"));
-  swB->setFixedHeight(35);
-  swB->setFixedWidth(35);
+  swB->setFixedHeight(swB->sizeHint().height() + DELTA);
+  swB->setFixedWidth(swB->sizeHint().width() + DELTA);
+
   QPushButton* sB = new QPushButton(navFrame);
   sB->setPixmap(BarIcon("movemap_s"));
-  sB->setFixedHeight(35);
-  sB->setFixedWidth(35);
+  sB->setFixedHeight(sB->sizeHint().height() + DELTA);
+  sB->setFixedWidth(sB->sizeHint().width() + DELTA);
+
   QPushButton* seB = new QPushButton(navFrame);
   seB->setPixmap(BarIcon("movemap_se"));
-  seB->setFixedHeight(35);
-  seB->setFixedWidth(35);
+  seB->setFixedHeight(seB->sizeHint().height() + DELTA);
+  seB->setFixedWidth(seB->sizeHint().width() + DELTA);
 
-  QGridLayout* navLayout = new QGridLayout(navFrame, 3, 3, 0, 2, "navLayout");
-  navLayout->addWidget(nwB,0,0);
-  navLayout->addWidget(nB,0,1);
-  navLayout->addWidget(neB,0,2);
-  navLayout->addWidget(wB,1,0);
-  navLayout->addWidget(cenB,1,1);
-  navLayout->addWidget(eB,1,2);
-  navLayout->addWidget(swB,2,0);
-  navLayout->addWidget(sB,2,1);
-  navLayout->addWidget(seB,2,2);
+  QGridLayout* navLayout = new QGridLayout(navFrame, 5, 5, 0, 2, "navLayout");
+  navLayout->addWidget(nwB,1,1);
+  navLayout->addWidget(nB,1,2);
+  navLayout->addWidget(neB,1,3);
+  navLayout->addWidget(wB,2,1);
+  navLayout->addWidget(cenB,2,2);
+  navLayout->addWidget(eB,2,3);
+  navLayout->addWidget(swB,3,1);
+  navLayout->addWidget(sB,3,2);
+  navLayout->addWidget(seB,3,3);
 
-  navLayout->setColStretch(0,0);
+  navLayout->setColStretch(0,1);
   navLayout->setColStretch(1,0);
   navLayout->setColStretch(2,0);
-  navLayout->setRowStretch(0,0);
+  navLayout->setColStretch(3,0);
+  navLayout->setColStretch(4,1);
+
+  navLayout->setRowStretch(0,1);
   navLayout->setRowStretch(1,0);
   navLayout->setRowStretch(2,0);
+  navLayout->setRowStretch(3,0);
+  navLayout->setRowStretch(4,1);
   navLayout->activate();
 
   QLabel* dimLabel = new QLabel(i18n("Height / Width [km]:"), parent);
@@ -166,6 +181,11 @@ void MapControlView::slotShowMapData(QSize mapSize)
 
   currentScaleValue->display(cScale);
   currentScaleSlider->setValue(__getScaleValue(cScale));
+}
+
+void MapControlView::slotSetMaxValue(double scale)
+{
+  currentScaleSlider->setMaxValue(__getScaleValue(scale));
 }
 
 void MapControlView::slotSetScale()

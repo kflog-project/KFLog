@@ -1035,7 +1035,7 @@ bool MapContents::loadFlight(QFile igcFile)
    *   |----||------||-------|||---||----||----?
    * ^B0944584832663N00856771EA0037700400100004
    */
-  QRegExp positionLine("^B[0-2][0-9][0-6][0-9][0-6][0-9][0-9][0-9][0-6][0-9][0-9][0-9][0-9][NS][0-1][0-9][0-9][0-6][0-9][0-9][0-9][0-9][EW][AV][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]");
+  QRegExp positionLine("^B[0-2][0-9][0-6][0-9][0-6][0-9][0-9][0-9][0-6][0-9][0-9][0-9][0-9][NS][0-1][0-9][0-9][0-6][0-9][0-9][0-9][0-9][EW][AV][0-9,-][0-9][0-9][0-9][0-9][0-9,-][0-9][0-9][0-9][0-9]");
 
   extern const MapMatrix _globalMapMatrix;
 
@@ -1099,6 +1099,13 @@ bool MapContents::loadFlight(QFile igcFile)
           newPoint.origP = QPoint(latTemp, lonTemp);
           newPoint.projP = _globalMapMatrix.wgsToMap(newPoint.origP);
 
+          if(s.mid(24,1) == "A")
+              newPoint.isValid = true;
+          else if(s.mid(24,1) == "V")
+              newPoint.isValid = false;
+          else
+              fatal("FEHLER!");
+
           sscanf(s.mid(25,10),"%5d%5d", &newPoint.height, &newPoint.gpsHeight);
 
           if(isFirst)
@@ -1147,22 +1154,24 @@ bool MapContents::loadFlight(QFile igcFile)
 
           temp_bearing = getBearing(prePoint,newPoint);
 
-//          cout << printTime(prePoint.time,1);
-//          cout << "   Diff: " << prePoint.bearing * 180.0 / PI << endl;
-
-//               << "  Diff: " << (newPoint.bearing - prePoint.bearing) * 180.0 / PI << endl;
-
           speed = 3600 * newPoint.dS / dT;  // [km/h]
           v = newPoint.dH / dT * 1.0;       // [m/s]
 
+          /*
+           * landing-detection only for valid points
+           */
           if(launched)
             {
               flightRoute.last()->bearing = prePoint.bearing;
               flightRoute.append(new flightPoint);
               *(flightRoute.last()) = newPoint;
 
+              if(!newPoint.isValid)  continue;
               if(!append)
                 {
+                  /*
+                   * if ( speed > 10 AND |vario| < 0.5 )
+                   */
                   if( ( speed > 10 ) && ( ( v > 0.5 ) || ( v < -0.5 ) ) )
                       append = true;
                   else
@@ -1195,8 +1204,14 @@ bool MapContents::loadFlight(QFile igcFile)
                   *(flightRoute.last()) = newPoint;
                 }
             }
-          prePoint = newPoint;
-          preTime = curTime;
+          /*
+           * We only want to compare with valid points ...
+           */
+          if(newPoint.isValid)
+            {
+              prePoint = newPoint;
+              preTime = curTime;
+            }
         }
       else if(s.mid(0,1) == "C")
         {

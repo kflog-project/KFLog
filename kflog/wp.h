@@ -104,6 +104,10 @@ struct flightPoint
   float bearing;
   /** Kreisflug 0 oder Streckenflug 1*/
   unsigned int f_state;
+  /**
+   * true, if logger says, point is valid.
+   */
+  bool isValid;
 };
 
 /**
