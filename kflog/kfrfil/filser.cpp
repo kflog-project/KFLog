@@ -462,7 +462,7 @@ int Filser::getLoggerData(char *memSection, int sectionSize, char **memContents,
     if(!(memSection[2 * i] | memSection[(2 * i) + 1])) {
       break;
     }
-    *contentSize += (memSection[2 * i] << 8) + memSection[(2 * i) + 1];
+    *contentSize += ((unsigned char)memSection[2 * i] << 8) + (unsigned char)memSection[(2 * i) + 1];
   }
   /*
    * plus 0x100 bytes for the extra data of get_extra_data()
@@ -482,7 +482,7 @@ int Filser::getLoggerData(char *memSection, int sectionSize, char **memContents,
     if(!(memSection[2 * i] | memSection[(2 * i) + 1])) {
       break;
     }
-    count = (memSection[2 * i] << 8) + memSection[(2 * i) + 1];
+    count = ((unsigned char)memSection[2 * i] << 8) + (unsigned char)memSection[(2 * i) + 1];
 
     tcflush(portID, TCIOFLUSH);
     wb(STX);
