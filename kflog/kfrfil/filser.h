@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by Christian Fughe, Harald Maier
+**   Copyright (c):  2003 by Christian Fughe, Harald Maier, Eggert Ehmke
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -28,6 +28,7 @@
 #include "frstructs.h"
 #include "flighttask.h"
 #include "flightrecorderpluginbase.h"
+#include "da4record.h"
 
 #else
 
@@ -36,6 +37,7 @@
 #include "../frstructs.h"
 #include "../flighttask.h"
 #include "../flightrecorderpluginbase.h"
+#include "../da4record.h"
 
 #endif
 
@@ -125,7 +127,7 @@ public:
    */
   virtual int writeWaypoints(QPtrList<Waypoint> *waypoints);
 
-  static unsigned char calcCrcBuf(const unsigned char *buf, unsigned int count);
+  static unsigned char calcCrcBuf(const void* buf, unsigned int count);
 
 private:
   /**
@@ -156,6 +158,12 @@ private:
   unsigned char *writeData(unsigned char *buf_p, int count);
   QPtrList <flightTable> flightIndex;
   char *wordtoserno(unsigned int Binaer);
+  // true if the da4buffer is identical to the logger content
+  bool _da4BufferValid;
+  DA4Buffer _da4Buffer;
+  int readDA4Buffer();
+  int writeDA4Buffer();
+  int findWaypoint (Waypoint* wp);
 };
 
 #endif

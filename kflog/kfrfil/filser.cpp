@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by Christian Fughe, Harald Maier
+**   Copyright (c):  2003 by Christian Fughe, Harald Maier, Eggert Ehmke
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -29,7 +29,6 @@
 #include <qstringlist.h>
 
 #include "../airport.h"
-#include "../da4record.h"
 #include "filser.h"
 
 #define MAX_LSTRING    63
@@ -108,7 +107,7 @@ unsigned char STX = 0x02, /* Command prefix like AT for modems        */
 
 #define BUFSIZE 1024          /* General buffer size                  */
 
-void debugHex (const unsigned char* buf, unsigned int size)
+void debugHex (const void* buf, unsigned int size)
 {
   for (unsigned int ix1=0; ix1 < size; ix1+=0x10)
   {
@@ -117,14 +116,14 @@ void debugHex (const unsigned char* buf, unsigned int size)
     for (int ix2=0; ix2<0x10; ix2++)
     {
       QString byte;
-      byte.sprintf("%02X ", buf[ix1+ix2]);
+      byte.sprintf("%02X ", ((unsigned char*)buf)[ix1+ix2]);
       line += byte;
     }
     line += "    ";
     for (int ix2=0; ix2<0x10; ix2++)
     {
-      if (isprint (buf [ix1+ix2]))
-        line += buf [ix1+ix2];
+      if (isprint (((unsigned char*)buf)[ix1+ix2]))
+        line += ((unsigned char*)buf)[ix1+ix2];
       else
         line += ' ';
     }
@@ -146,18 +145,18 @@ void releaseTTY(int /* signal*/)
 Filser::Filser()
 {
   //Set Flightrecorders capabilities. Defaults are 0 and false.
-  _capabilities.maxNrTasks = 100;             //maximum number of tasks
-  _capabilities.maxNrWaypoints = 600;         //maximum number of waypoints
-  _capabilities.maxNrWaypointsPerTask = 10; //maximum number of waypoints per task
-  _capabilities.maxNrPilots = 1;            //maximum number of pilots
+  _capabilities.maxNrTasks = TASK_MAX;             //maximum number of tasks
+  _capabilities.maxNrWaypoints = WAYPOINT_MAX;     //maximum number of waypoints
+  _capabilities.maxNrWaypointsPerTask = MAXTSKPNT; //maximum number of waypoints per task
+  _capabilities.maxNrPilots = 1;             //maximum number of pilots
 
-  _capabilities.supDlWaypoint = true;      //supports downloading of waypoints?
-  _capabilities.supUlWaypoint = true;      //supports uploading of waypoints?
-  _capabilities.supDlFlight = true;        //supports downloading of flights?
+  _capabilities.supDlWaypoint = true;        //supports downloading of waypoints?
+  _capabilities.supUlWaypoint = true;        //supports uploading of waypoints?
+  _capabilities.supDlFlight = true;          //supports downloading of flights?
   //_capabilities.supUlFlight = true;        //supports uploading of flights?
-  _capabilities.supSignedFlight = true;    //supports downloading in of signed flights?
-  //_capabilities.supDlTask = true;          //supports downloading of tasks?
-  //_capabilities.supUlTask = true;          //supports uploading of tasks?
+  _capabilities.supSignedFlight = true;      //supports downloading in of signed flights?
+  _capabilities.supDlTask = true;            //supports downloading of tasks?
+  _capabilities.supUlTask = true;            //supports uploading of tasks?
   //_capabilities.supUlDeclaration = true;   //supports uploading of declarations?
   _capabilities.supDspSerialNumber = true;
   _capabilities.supDspRecorderType = true;
@@ -169,6 +168,7 @@ Filser::Filser()
 
   portID = -1;
   flightIndex.setAutoDelete(true);
+  _da4BufferValid = false;
 }
 
 Filser::~Filser()
@@ -538,6 +538,7 @@ int Filser::openRecorder(const QString& pName, int baud)
     tcsetattr(portID, TCSANOW, &newTermEnv);
 
     _isConnected = true;
+    _da4BufferValid = false;
     return FR_OK;
     }
   else {
@@ -583,6 +584,7 @@ bool Filser::defMem(struct flightTable *ft)
   for(unsigned int i = 0; i < sizeof(address_buf); i++) {
     wb(address_buf[i]);
   }
+  tcdrain (portID);
   if (rb() != ACK) {
     _errorinfo = i18n("Invalid response from LX-device.");
     return false;
@@ -598,6 +600,7 @@ bool Filser::getMemSection(unsigned char *memSection, int size)
 
   wb(STX);
   wb(L);
+  tcdrain (portID);
   for(i = 0; i < (size + 1); i++) {
     memSection[i] = rb();
   }
@@ -1241,7 +1244,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
 unsigned char Filser::calcCrc(unsigned char d, unsigned char crc)
 {
   unsigned char tmp;
-  const unsigned char crcpoly = 0x69; /* Static value for the calculation of the checksum. */
+  static const unsigned char crcpoly = 0x69; /* Static value for the calculation of the checksum. */
 
   for(int count = 8; --count >= 0; d <<= 1) {
     tmp = crc ^ d;
@@ -1256,12 +1259,12 @@ unsigned char Filser::calcCrc(unsigned char d, unsigned char crc)
 /**
  * Calculate the check sum on a buffer of bytes
  */
-unsigned char Filser::calcCrcBuf(const unsigned char *buf, unsigned int count)
+unsigned char Filser::calcCrcBuf(const void *buf, unsigned int count)
 {
   unsigned int i;
   unsigned char crc = 0xff;
   for(i = 0; i < count; i++) {
-    crc = calcCrc(buf[i], crc);
+    crc = calcCrc(((unsigned char*)buf)[i], crc);
   }
   return crc;
 }
@@ -1366,6 +1369,7 @@ bool Filser::check4Device()
   tcflush(portID, TCIOFLUSH);
   while (!breakTransfer) {
     wb(SYN);
+    tcdrain (portID);
     int ret = rb();
     if (ret == ACK) {
       rc = true;
@@ -1433,6 +1437,7 @@ int Filser::closeRecorder()
     tcsetattr(portID, TCSANOW, &oldTermEnv);
     close(portID);
     _isConnected = false;
+    _da4BufferValid = false;
     return FR_OK;
   }
   else {
@@ -1454,22 +1459,154 @@ int Filser::readDatabase()
   return FR_NOTSUPPORTED;
 }
 
-int Filser::readTasks(QPtrList<FlightTask> * /*tasks*/)
+/**
+  * read the tasks from the lx recorder
+  * read the da4 buffer and select tasks
+  * tasks are contructed from waypoints in the same buffer !
+  */
+int Filser::readTasks(QPtrList<FlightTask> * tasks)
 {
-  return FR_NOTSUPPORTED;
+  qDebug ("Filser::readTasks");
+
+  int result = readDA4Buffer();
+  if (result != FR_OK)
+    return result;
+
+  for (int RecordNumber = 0; RecordNumber < _capabilities.maxNrTasks; RecordNumber++)
+  {
+    if (_da4Buffer.tasks[RecordNumber].prg)
+    {
+      DA4TaskRecord record (&_da4Buffer.tasks[RecordNumber]);
+      QPtrList<Waypoint> wplist;
+      Waypoint* wp;
+      for (int i = 0; i < _capabilities.maxNrWaypointsPerTask; i++)
+      {
+        if (record.pnttype(i) != 0)
+        {
+          DA4WPRecord wprecord (&_da4Buffer.waypoints[record.pntind(i)]);
+          wp = wprecord.newWaypoint();
+          wp->type = FlightTask::RouteP;
+          if (wplist.count() == 0)
+          {
+            // append take off
+            wp->type = FlightTask::TakeOff;
+            wplist.append(wp);
+            // make copy for begin
+            wp = new Waypoint(wplist.first());
+            wp->type = FlightTask::Begin;
+          }
+          wplist.append (wp);
+        }
+      }
+      // modify last for end of task
+      wplist.last()->type = FlightTask::End;
+      // make copy for landing
+      wp = new Waypoint(wplist.last());
+      wp->type = FlightTask::Landing;
+      wplist.append (wp);
+      
+      tasks->append (new FlightTask (wplist, true, QString("TSK%1").arg(RecordNumber)));
+    }
+  }
+    
+  return FR_OK;
 }
 
-int Filser::writeTasks(QPtrList<FlightTask> * /*tasks*/)
+/**
+  * find a waypoint in the recorder database.
+  * if not found, create a new one
+  */
+int Filser::findWaypoint (Waypoint* wp)
 {
-  return FR_NOTSUPPORTED;
+  qDebug ("Filser::findWaypoint");
+  int freeRecord = -1;
+  for (int RecordNumber = 0; RecordNumber < _capabilities.maxNrWaypoints; RecordNumber++)
+  {
+    DA4WPRecord wprecord (&_da4Buffer.waypoints[RecordNumber]);
+    QString str1 = wprecord.name();
+    QString str2 = wp->name;
+    if (str1.stripWhiteSpace().upper() == str2.stripWhiteSpace().upper())
+    {
+      // make sure the waypoint contains the data we want
+      wprecord.setWaypoint(wp);
+      qDebug ("waypoint %s found at %d", wp->name.latin1(), RecordNumber);
+      return RecordNumber;
+    }
+    else if ((wprecord.type() == BaseMapElement::NotSelected) && (freeRecord == -1))
+      freeRecord = RecordNumber;
+  }
+  // if none was found, use a free entry
+  if (freeRecord >= 0)
+  {
+    DA4WPRecord wprecord (&_da4Buffer.waypoints[freeRecord]);
+    wprecord.setWaypoint(wp);
+    qDebug ("waypoint %s not found. created at %d", wp->name.latin1(), freeRecord);
+    return freeRecord;
+  }
+  qDebug ("waypoint not found");
+  return -1;
 }
 
-int Filser::readWaypoints(QPtrList<Waypoint>* wpList)
+/**
+  * write the tasks to the lx recorder
+  * read the da4 buffer
+  * write tasks; if the proper waypoints are not in the buffer,
+  * they are constructed on the fly
+  * write the buffer back to recorder
+  */
+int Filser::writeTasks(QPtrList<FlightTask>* tasks)
 {
-  qDebug ("Filser::readWaypoints");
+  qDebug ("Filser::writeTasks");
+
+  int result = readDA4Buffer ();
+  if (result != FR_OK)
+    return result;
+
+  int RecordNumber = 0;
+  for (FlightTask* task = tasks->first(); task; task = tasks->next())
+  {
+    DA4TaskRecord taskrecord (&_da4Buffer.tasks[RecordNumber++]);
+    taskrecord.clear();
+    // should never happen
+    if (RecordNumber >= _capabilities.maxNrTasks)
+      break;
+    taskrecord.setPrg (1);
+    QPtrList<Waypoint> wplist = task->getWPList();
+    int wpCnt = 0;
+    for (Waypoint* wp = wplist.first(); wp; wp = wplist.next())
+    {
+      // should never happen
+      if (wpCnt >= _capabilities.maxNrWaypointsPerTask)
+        break;
+      // ignore take off and landing
+      if (wp->type == FlightTask::TakeOff || wp->type == FlightTask::Landing)
+        continue;
+      int index = findWaypoint (wp);
+      if (index >= 0)
+        taskrecord.setInd (wpCnt, index);
+      wpCnt++;
+    }
+  }
+  while (RecordNumber < _capabilities.maxNrTasks)
+  {
+    DA4TaskRecord taskrecord (&_da4Buffer.tasks[RecordNumber++]);
+    taskrecord.clear();
+  }
   
-  int rc = FR_OK;
+  _da4BufferValid = false;
 
+  return writeDA4Buffer();
+}
+
+/**
+  * read the da4 buffer from the lx recorder
+  * it contains both waypoints and tasks
+  */
+int Filser::readDA4Buffer()
+{
+  if (_da4BufferValid)
+    return FR_OK;
+    
   if (!readMemSetting()) {
     return FR_ERROR;
   }
@@ -1481,50 +1618,64 @@ int Filser::readWaypoints(QPtrList<Waypoint>* wpList)
   wb(STX);
   wb(R);
 
-  while (true)
+  unsigned char* bufP = (unsigned char*)&_da4Buffer;
+
+  while ((bufP - (unsigned char*)&_da4Buffer) < sizeof (DA4Buffer))
   {
-    DA4Record buffer;
-    unsigned char *bufP = buffer.buffer();
+    bufP = readData(bufP, (sizeof (DA4Buffer) + (unsigned char*)&_da4Buffer - bufP));
+  }
+  if (rb () != calcCrcBuf (&_da4Buffer, sizeof (DA4Buffer)))
+  {
+    _errorinfo = i18n("Filser::readWaypoints(): Bad CRC");
+    qDebug (_errorinfo);
+    return FR_ERROR;
+  }
+  _da4BufferValid = true;
+  return FR_OK;  
+}
 
-    while ((bufP - buffer.buffer()) < buffer.size())
+/**
+  * read the waypoints from the lx recorder
+  * read the da4 buffer and select waypoints
+  */
+int Filser::readWaypoints(QPtrList<Waypoint>* wpList)
+{
+  qDebug ("Filser::readWaypoints");
+  
+  int result = readDA4Buffer();
+  if (result != FR_OK)
+    return result;
+
+  for (int RecordNumber = 0; RecordNumber < _capabilities.maxNrWaypoints; RecordNumber++)
+  {
+    DA4WPRecord record (&_da4Buffer.waypoints[RecordNumber]);
+    // debugHex (buffer.waypoints[RecordNumber], WAYPOINT_WIDTH);
+    if (record.type() == 0 && record.name().isEmpty())
     {
-      bufP = readData(bufP, (buffer.size() + buffer.buffer() - bufP));
-    }
-    // debugHex (buffer.buffer(), buffer.size());
-    if (buffer.type() == 0 && buffer.name().isEmpty())
+      qDebug ("this should never happen !!?");
       break;
+    }
 
-    if (buffer.type() != BaseMapElement::NotSelected)
+    if (record.type() != BaseMapElement::NotSelected)
     {
-      if (buffer.name().stripWhiteSpace().isEmpty())
+      if (record.name().stripWhiteSpace().isEmpty())
         continue;
-      Waypoint *w = new Waypoint;
-      w->type = buffer.type();
-      w->name = buffer.name();
-      w->description = "";
-      w->icao = "";
-      w->origP.setLat((int)(buffer.lat() * 600000.0));
-      w->origP.setLon((int)(buffer.lon() * 600000.0));
-      w->elevation = (int)(buffer.elev() * 0.3048); // don't we have conversion constants ?
-      w->frequency = buffer.freq();
-      w->isLandable = false;
-      w->length = buffer.len(); // length ?!
-      w->runway = buffer.dir(); // direction ?!
-      w->surface = buffer.surface();
-      w->comment = i18n("Imported from Filser");
-      w->importance = 3;
+      Waypoint *w = record.newWaypoint();
       wpList->append(w);
     }
   }
-    
-  return rc;
+  return FR_OK;
 }
 
-int Filser::writeWaypoints(QPtrList<Waypoint>* wpList)
+/**
+  * write the da4 buffer to the lx recorder
+  * it contains both waypoints and tasks
+  */
+int Filser::writeDA4Buffer()
 {
-  qDebug ("Filser::writeWaypoints");
-  int rc = FR_OK;
-
+  if (_da4BufferValid)
+    return FR_OK;
+    
   if (!readMemSetting()) {
     return FR_ERROR;
   }
@@ -1535,29 +1686,61 @@ int Filser::writeWaypoints(QPtrList<Waypoint>* wpList)
 
   wb(STX);
   wb(W);
-
-  for (Waypoint* wp = wpList->first(); wp; wp = wpList->next())
+  
+  // transfer data to logger
+  unsigned char *bufP = (unsigned char*)&_da4Buffer;
+  while ((bufP - (unsigned char*)&_da4Buffer) < sizeof (DA4Buffer))
   {
-    DA4Record buffer;
-    buffer.setType ((BaseMapElement::objectType)wp->type);
-    buffer.setName (wp->name);
-    buffer.setLat (wp->origP.lat()/600000.0);
-    buffer.setLon (wp->origP.lon()/600000.0);
-    buffer.setElev ((short int)round(wp->elevation/0.3048));
-    buffer.setFreq(wp->frequency);
-    buffer.setLen(wp->length);
-    buffer.setDir(wp->runway);
-    buffer.setSurface((Airport::SurfaceType)wp->surface);
-    buffer.setFiller();
-
-    unsigned char *bufP = buffer.buffer();
-    while ((bufP - buffer.buffer()) < buffer.size())
-    {
-      bufP = writeData(bufP, (buffer.size() + buffer.buffer() - bufP));
-    }
+    bufP = writeData(bufP, (sizeof (DA4Buffer) + (unsigned char*)&_da4Buffer - bufP));
   }
 
+  unsigned char crc = calcCrcBuf (&_da4Buffer, sizeof (DA4Buffer));
+  wb (crc);
+
+  // wait until all output has been written
+  tcdrain(portID);
+  if (ACK != rb())
+  {
+    _errorinfo = i18n ("Filser::writeWaypoints: transfer failed");
+    qDebug (_errorinfo);
+    return FR_ERROR;
+  }
+
+  _da4BufferValid = true;
   return FR_OK;
+}
+
+/**
+  * write the waypoints to the lx recorder
+  * read the da4 buffer
+  * write waypoints
+  * write the buffer back to recorder
+  */
+int Filser::writeWaypoints(QPtrList<Waypoint>* wpList)
+{
+  qDebug ("Filser::writeWaypoints");
+
+  int result = readDA4Buffer ();
+  if (result != FR_OK)
+    return result;
+
+  int RecordNumber = 0;
+  for (Waypoint* wp = wpList->first(); wp; wp = wpList->next())
+  {
+    DA4WPRecord record (&_da4Buffer.waypoints[RecordNumber++]);
+
+    record.setWaypoint (wp);
+  }
+
+  // fill rest of waypoints
+  while (RecordNumber < _capabilities.maxNrWaypoints)
+  {
+    DA4WPRecord record (&_da4Buffer.waypoints[RecordNumber++]);
+    record.clear();
+  }
+  _da4BufferValid = false;
+
+  return writeDA4Buffer();
 }
 
 /**

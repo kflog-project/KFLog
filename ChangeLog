@@ -4,6 +4,8 @@ $Id$
 
   * bugfix in dataview.cpp: prevent crash when MapContents::getFlight() returns NULL.
   
+  * enabled up/download of task buffers to/from lx devices
+  
 
 2003-08-01 Eggert Ehmke <eggert@kflog.org>
 

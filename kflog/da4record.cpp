@@ -8,6 +8,9 @@
 **
 **   Copyright (c):  2003 by Eggert Ehmke
 **
+**   Parts are derived from LoggerFil
+**   Copyright (C) 2003 Christian Fughe
+**
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
 **
@@ -15,39 +18,10 @@
 **
 ***********************************************************************/
 
+#define _GNU_SOURCE
+#include <cmath>
+#include <klocale.h>
 #include "da4record.h"
-
-/**
-  * This helper function converts floating point numbers that are stored in filser binary files
-  * into normal float numbers.
-  */
-float FloatFromU32(Q_UINT32 u32)
-{
-  union
-  {
-    float    f32;
-    Q_UINT32 u32;
-  } u;
-
-  u.u32 = u32;
-  // read out the float value
-  return u.f32;
-}
-
-/**
-  * This helper function converts floating point numbers
-  * into float numbers to be stored in filser binary files.
-  */
-Q_UINT32 U32fromFloat (float f32)
-{
-  union
-  {
-    float    f32;
-    Q_UINT32 u32;
-  } u;
-  u.f32 = f32;
-  return u.u32;
-}
 
 Q_UINT16 U16Swap (Q_UINT16 u16)
 {
@@ -63,35 +37,55 @@ Q_UINT16 U16Swap (Q_UINT16 u16)
   return u.u16;
 }
 
-DA4Record::DA4Record()
+DA4WPRecord::DA4WPRecord(DA4WPStruct* buffer)
+{
+  _buffer = buffer;
+}
+
+DA4WPRecord::~DA4WPRecord()
 {
 }
 
-DA4Record::~DA4Record()
+DA4TaskRecord::DA4TaskRecord(DA4TaskStruct* buffer)
+{
+  _buffer = buffer;
+}
+
+DA4TaskRecord::~DA4TaskRecord()
 {
 }
 
-void DA4Record::setType (BaseMapElement::objectType type)
+void DA4TaskRecord::clear()
+{
+  memset (_buffer, 0, sizeof (DA4TaskStruct));
+}
+
+void DA4WPRecord::clear()
+{
+  memset (_buffer, 0, sizeof (DA4WPStruct));
+}
+
+void DA4WPRecord::setType (BaseMapElement::objectType type)
 {
   switch (type)
   {
     case BaseMapElement::Landmark:
-      _buffer[0] = 1;
+      _buffer->prg = 1;
       break;
     case BaseMapElement::Airfield:
-      _buffer[0] = 2;
+      _buffer->prg = 2;
       break;
     case BaseMapElement::Outlanding:
-      _buffer[0] = 3;
+      _buffer->prg = 3;
       break;
     default:
-      _buffer[0] = 4;
+      _buffer->prg = 4;
   }
 }
 
-BaseMapElement::objectType DA4Record::type ()
+BaseMapElement::objectType DA4WPRecord::type () const
 {
-  switch (_buffer[0])
+  switch (_buffer->prg)
   {
     case 1:  return BaseMapElement::Landmark; // should be turnpoint
              break;
@@ -105,119 +99,103 @@ BaseMapElement::objectType DA4Record::type ()
   }
 }
 
-void DA4Record::setName (const QString& name)
+void DA4WPRecord::setName (const QString& name)
 {
-  QCString sName (name);
-  qstrncpy (&_buffer[1], sName.leftJustify (8, ' ', true), 9);
+  QCString sName (name.upper());
+  qstrncpy (_buffer->name, sName.leftJustify (8, ' ', true), 9);
 }
 
-QString DA4Record::name () const
+QString DA4WPRecord::name () const
 {
-  char pName [9];
-  memcpy (pName, &_buffer[1], 9);
-  return pName;
+  return _buffer->name;
 }
 
-void DA4Record::setLat (float lat)
+void DA4WPRecord::setLat (float lat)
 {
-  Q_UINT32 ulat = U32fromFloat (lat);  
-  memcpy (&_buffer[10], &ulat, 4);
+  _buffer->latitude = lat;
 }
 
-void DA4Record::setLon (float lon)
+void DA4WPRecord::setLon (float lon)
 {
-  Q_UINT32 ulon = U32fromFloat (lon);
-  memcpy (&_buffer[14], &ulon, 4);
+  _buffer->longitude = lon;
 }
 
-float DA4Record::lat () const
+float DA4WPRecord::lat () const
 {
-  Q_UINT32 ulat;
-  memcpy (&ulat, &_buffer[10], 4);
-  return FloatFromU32(ulat);
+  return _buffer->latitude;
 }
 
-float DA4Record::lon () const
+float DA4WPRecord::lon () const
 {
-  Q_UINT32 ulon;
-  memcpy (&ulon, &_buffer[14], 4);
-  return FloatFromU32(ulon);
+  return _buffer->longitude;
 }
 
-void DA4Record::setElev (short int elev)
+void DA4WPRecord::setElev (short int elev)
 {
-  Q_UINT16 uelev = U16Swap (elev);
-  memcpy (&_buffer[18], &uelev, 2);
+  _buffer->altitude = U16Swap (elev);
 }
 
-short int DA4Record::elev () const
+short int DA4WPRecord::elev () const
 {
-  Q_UINT16 uelev;
-  memcpy (&uelev, &_buffer[18], 2);
-  return U16Swap (uelev);  
+  return U16Swap (_buffer->altitude);
 }
 
-void DA4Record::setFreq (float freq)
+void DA4WPRecord::setFreq (float freq)
 {
-  Q_UINT32 ufreq = U32fromFloat (freq);
-  memcpy (&_buffer[20], &ufreq, 4);
+  _buffer->f = freq;
 }
 
-float DA4Record::freq () const
+float DA4WPRecord::freq () const
 {
-  Q_UINT32 ufreq;
-  memcpy (&ufreq, &_buffer[20], 4);
-  return FloatFromU32(ufreq);
+  return _buffer->f;
 }
 
-void DA4Record::setLen (short int len)
+void DA4WPRecord::setLen (short int len)
 {
   Q_UINT16 ulen;
   if (len == -1)
     ulen = 0;
   else
     ulen = U16Swap (len);
-  memcpy (&_buffer[24], &ulen, 2);
+  _buffer->rw = ulen;
 }
 
-short int DA4Record::len () const
+short int DA4WPRecord::len () const
 {
-  Q_UINT16 ulen;
-  memcpy (&ulen, &_buffer[24], 2);
-  return U16Swap (ulen);
+  return U16Swap (_buffer->rw);
 }
 
-void DA4Record::setDir (short int dir)
+void DA4WPRecord::setDir (short int dir)
 {
   if (dir == -1)
-    _buffer [26] = 0;
+    _buffer->rwdir = 0;
   else
-    _buffer [26] = dir;
+    _buffer->rwdir = dir;
 }
 
-short int DA4Record::dir () const
+short int DA4WPRecord::dir () const
 {
-  return _buffer[26];
+  return _buffer->rwdir;
 }
 
-void DA4Record::setSurface (Airport::SurfaceType surface)
+void DA4WPRecord::setSurface (Airport::SurfaceType surface)
 {
   switch (surface)
   {
     case Airport::Grass:
-      _buffer[27] = 'G';
+      _buffer->rwtype = 'G';
       break;
     case Airport::Concrete:
-      _buffer[27] = 'C';
+      _buffer->rwtype = 'C';
       break;
     default:
-      _buffer[27] = 'U';
+      _buffer->rwtype = 'U';
   }
 }
 
-Airport::SurfaceType DA4Record::surface () const
+Airport::SurfaceType DA4WPRecord::surface () const
 {
-  switch (_buffer [27])
+  switch (_buffer->rwtype)
   {
     case 'G': return Airport::Grass;
           break;
@@ -227,9 +205,55 @@ Airport::SurfaceType DA4Record::surface () const
   }
 }
 
-void DA4Record::setFiller ()
+void DA4WPRecord::setTC ()
 {
-  _buffer[28] = 'I';
-  _buffer[29] = 0;
-  _buffer[30] = 0;
+  _buffer->tcdir = 'I';
+  _buffer->tc = 0;
+}
+
+Waypoint* DA4WPRecord::newWaypoint () const
+{
+  Waypoint* wp = new Waypoint;
+
+  wp->type = type();
+  wp->name = name();
+  wp->description = "";
+  wp->icao = "";
+  wp->origP.setLat((int)(lat() * 600000.0));
+  wp->origP.setLon((int)(lon() * 600000.0));
+  wp->elevation = (int)(elev() * 0.3048); // don't we have conversion constants ?
+  wp->frequency = freq();
+  wp->isLandable = false;
+  wp->length = len(); // length ?!
+  wp->runway = dir(); // direction ?!
+  wp->surface = surface();
+  wp->comment = i18n("Imported from Filser");
+  wp->importance = 3;
+
+  return wp;
+}
+
+void DA4WPRecord::setWaypoint (Waypoint* wp)
+{
+  setType ((BaseMapElement::objectType)wp->type);
+  setName (wp->name);
+  setLat (wp->origP.lat()/600000.0);
+  setLon (wp->origP.lon()/600000.0);
+  setElev ((short int)round(wp->elevation/0.3048));
+  setFreq(wp->frequency);
+  setLen(wp->length);
+  setDir(wp->runway);
+  setSurface((Airport::SurfaceType)wp->surface);
+  setTC();
+}
+
+short DA4TaskRecord::pntind (char inx)
+{
+  return U16Swap (_buffer->pntind [inx]);
+}
+
+void DA4TaskRecord::setInd (char wp, short inx)
+{
+  _buffer->pnttype [wp] = 1;
+  _buffer->pntind [wp] = U16Swap (inx);
 }
