@@ -5,3 +5,8 @@ Makefile.in
 *_meta_unload.cpp
 .libs
 .deps
+config.cache
+config.status
+config.log
+configure
+*.gmo
