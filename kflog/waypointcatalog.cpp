@@ -21,6 +21,7 @@
 #include "waypointcatalog.h"
 #include "airport.h"
 #include "kfrgcs/vlapi2.h"
+#include "da4record.h"
 
 #include <qdom.h>
 #include <qapplication.h>
@@ -615,58 +616,6 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
   return false;
 }
 
-/**
-  * This helper function converts floating point numbers that are stored in filser binary files
-  * into normal float numbers.
-  */
-float FloatFromSwappedU32(Q_UINT32 u32)
-{
-  // the numbers are 32 bit float values with reversed byte order
-  union
-  {
-    float    f32;
-    Q_UINT32 u32;
-    Q_UINT8  bytes[4];
-  } u;
-
-  // put in the reversed bytes
-  u.u32 = u32;
-  // swap them into normal order
-  Q_UINT8 tmp = u.bytes[0]; u.bytes[0] = u.bytes[3]; u.bytes[3] = tmp;
-  tmp = u.bytes[1]; u.bytes[1] = u.bytes[2]; u.bytes[2] = tmp;
-  // read out the float value
-  return u.f32;
-}
-
-/**
-  * This helper function converts floating point numbers
-  * into float numbers to be stored in filser binary files.
-  */
-Q_UINT32 U32fromFloat (float f32)
-{
-  union
-  {
-    float    f32;
-    Q_UINT32 u32;
-  } u;
-  u.f32 = f32;  
-  return u.u32;
-}
-
-Q_UINT16 U16Swap (Q_UINT16 u16)
-{
-  union
-  {
-    Q_UINT16 u16;
-    Q_UINT8 bytes [2];
-  } u;
-  u.u16 = u16;
-  Q_UINT8 tmp = u.bytes[0];
-  u.bytes[0] = u.bytes[1];
-  u.bytes[1] = tmp;
-  return u.u16;
-}
-
 /** read a waypoint catalog from a filser binary file */
 bool WaypointCatalog::readFilserDA4 (const QString& catalog)
 {
@@ -680,64 +629,26 @@ bool WaypointCatalog::readFilserDA4 (const QString& catalog)
       QDataStream in(&f);
       while (!in.eof())
       {
-        Q_INT8 type;
-        in >> type;
-        char pName [9];
-        in.readRawBytes (pName, 9);
-        Q_UINT32 ulat;
-        in >> ulat;
-        Q_UINT32 ulon;
-        in >> ulon;
-        Q_INT16 elev;
-        in >> elev;
-        Q_INT32 freq;
-        in >> freq;
-        Q_UINT16 len;
-        in >> len;
-        Q_UINT8 dir;
-        in >> dir;
-        Q_UINT8 surface;
-        in >> surface;
-        Q_UINT8 tca;
-        in >> tca;
-        Q_UINT16 tc;
-        in >> tc;
+        DA4Record buffer;
+        in.readRawBytes ((char*)buffer.buffer(), buffer.size());
 
-        if (type >= 1 && type <= 4)
+        if (buffer.type() != BaseMapElement::NotSelected)
         {
-          if (QString (pName).stripWhiteSpace().isEmpty())
+          if (buffer.name().stripWhiteSpace().isEmpty())
             continue;
           Waypoint *w = new Waypoint;
-          w->name = pName;
+          w->type = buffer.type();
+          w->name = buffer.name();
           w->description = "";
           w->icao = "";
-          switch (type)
-          {
-            case 1:  w->type = BaseMapElement::Landmark; // should be turnpoint
-                     break;
-            case 2:  w->type = BaseMapElement::Airfield;
-                     break;
-            case 3:  w->type = BaseMapElement::Outlanding;
-                     break;
-            case 4:  w->type = BaseMapElement::Landmark;
-                     break;
-            default: w->type = BaseMapElement::Landmark;
-          }
-          w->origP.setLat((int)(FloatFromSwappedU32(ulat)*600000.0));
-          w->origP.setLon((int)(FloatFromSwappedU32(ulon)*600000.0));
-          w->elevation = (int)(elev * 0.3048); // don't we have conversion constants ?
-          w->frequency = FloatFromSwappedU32 (freq);
+          w->origP.setLat((int)(buffer.lat()*600000.0));
+          w->origP.setLon((int)(buffer.lon()*600000.0));
+          w->elevation = (int)(buffer.elev() * 0.3048); // don't we have conversion constants ?
+          w->frequency = buffer.freq();
           w->isLandable = false;
-          w->length = len; // length ?!
-          w->runway = dir; // direction ?!
-          switch (surface)
-          {
-            case 'G': w->surface = Airport::Grass;
-                  break;
-            case 'C': w->surface = Airport::Concrete;
-                  break;
-            default:  w->surface = Airport::Unknown;
-          }
+          w->length = buffer.len(); // length ?!
+          w->runway = buffer.dir(); // direction ?!
+          w->surface = buffer.surface();
           w->comment = i18n("Imported from %1").arg(catalog);
           w->importance = 3;
 
@@ -768,58 +679,18 @@ bool WaypointCatalog::writeFilserDA4 (const QString& catalog)
     QDictIterator<Waypoint> it(wpList);
     for (Waypoint* w = it.current(); w != 0; w = ++it)
     {
-      char buffer [31];
-      Q_UINT8 type;
-      switch (w->type)
-      {
-        case BaseMapElement::Landmark:
-          type = 1;
-          break;
-        case BaseMapElement::Airfield:
-          type = 2;
-          break;
-        case BaseMapElement::Outlanding:
-          type = 3;
-          break;
-        default:
-          type = 4;
-      }
-      buffer [0] = type;
-      QCString sName (w->name);
-      qstrncpy (&buffer[1], sName.leftJustify (8, ' ', true), 9);
-      Q_UINT32 lat = U32fromFloat (w->origP.lat()/600000.0);
-      Q_UINT32 lon = U32fromFloat (w->origP.lon()/600000.0);
-      memcpy (&buffer[10], &lat, 4);
-      memcpy (&buffer[14], &lon, 4);
-      Q_INT16 elev = U16Swap ((short int)round(w->elevation/0.3048));
-      memcpy (&buffer[18], &elev, 2);
-      Q_UINT32 freq = U32fromFloat(w->frequency);
-      memcpy (&buffer[20], &freq, 4);
-      Q_UINT16 len;
-      if (w->length == -1)
-        len = 0;
-      else
-        len = U16Swap (w->length);
-      memcpy (&buffer[24], &len, 2);
-      if (w->runway == -1)
-        buffer[26] = 0;
-      else
-        buffer[26] = w->runway;
-      switch (w->surface)
-      {
-        case Airport::Grass:
-          buffer[27] = 'G';
-          break;
-        case Airport::Concrete:
-          buffer[27] = 'C';
-          break;
-        default:
-          buffer[27] = 'U';
-      }
-      buffer[28] = 'I';
-      buffer[29] = 0;
-      buffer[30] = 0;
-      out.writeRawBytes (buffer, 31);
+      DA4Record buffer;
+      buffer.setType((BaseMapElement::objectType)w->type);
+      buffer.setName(w->name);
+      buffer.setLat(w->origP.lat()/600000.0);
+      buffer.setLon(w->origP.lon()/600000.0);
+      buffer.setElev((short int)round(w->elevation/0.3048));
+      buffer.setFreq(w->frequency);
+      buffer.setLen(w->length);
+      buffer.setDir(w->runway);
+      buffer.setSurface((Airport::SurfaceType)w->surface);
+      buffer.setFiller();
+      out.writeRawBytes ((char*)buffer.buffer(), buffer.size());
     }
     return true;
   }
