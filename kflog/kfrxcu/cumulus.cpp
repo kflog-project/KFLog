@@ -165,15 +165,22 @@ int Cumulus::getBasicData(FR_BasicData& data)
  */
 int Cumulus::openRecorder(const QString& URL){
   //Don't forget to set _isConnected to true if succeeded.
-
+  KURL kurl(URL);
+  QString path;
+  if (kurl.hasPath()) {
+    path=kurl.path(1);
+  }
   //basicly, we check if cumulus is installed.
-  if (KIO::NetAccess::exists(KURL(URL + "/opt/QtPalmtop/bin/cumulus"), true, _parent)) {
-    _URL=URL;
+  kurl.setPath("/opt/QtPalmtop/bin/cumulus");
+  if (KIO::NetAccess::exists(kurl, true, _parent)) {
+    kurl.setPath(""); //clear path from URL
+    _URL=kurl.url();
     _isConnected=true;
+    _home = path;
     return FR_OK;
   } else {
     _isConnected=false;
-    _errorinfo=i18n("<qt>Could not connect to PDA, or the following file did not exist:<br><br>%1</qt>").arg(URL + "/opt/QtPalmtop/bin/cumulus");
+    _errorinfo=i18n("<qt>Could not connect to PDA, or the following file did not exist:<br><br>%1</qt>").arg(kurl.prettyURL());
     return FR_ERROR;
   }
 }
@@ -435,6 +442,10 @@ FRDirEntry* Cumulus::getFlightInfo(QString filename) {
               date.tm_mday = s.mid(5,2).toInt();
               date.tm_mon = s.mid(7,2).toInt() -1;
               date.tm_year = s.mid(9,2).toInt() + 100; //only works for flights recorded after the year 2000, which is reasonable given the age of Cumulus :-)
+              firstfix=date;
+              lastfix=date;
+              firstfix.tm_hour=0; firstfix.tm_min=0; firstfix.tm_sec=0;
+              lastfix.tm_hour=0; lastfix.tm_min=0; lastfix.tm_sec=0;
             }
               
         }
