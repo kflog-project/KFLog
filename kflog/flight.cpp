@@ -340,64 +340,38 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   bBoxFlight.setRight(curPointA.x());
   bBoxFlight.setBottom(curPointA.y());
 
-  if (!bAnimationActive){
-    for(unsigned int n = delta; n < route.count(); n = n + delta)
-      {
-        pointA = route.at(n - delta);
-        pointB = route.at(n);
-        if(n + delta < route.count())
-            pointC = route.at(n + delta);
-        else
-            pointC = route.last();
+  if (!bAnimationActive)
+    nStop = route.count();
+  else
+	  nStop = nAnimationIndex;
 
-        curPointB = glMapMatrix->map(pointB->projP);
+  for(unsigned int n = delta; n < nStop; n = n + delta)
+    {
+      pointA = route.at(n - delta);
+      pointB = route.at(n);
+      if(n + delta < nStop)
+          pointC = route.at(n + delta);
+      else
+          pointC = route.at(nStop);
 
-        bBoxFlight.setLeft(MIN(curPointB.x(), bBoxFlight.left()));
-        bBoxFlight.setTop(MAX(curPointB.y(), bBoxFlight.top()));
-        bBoxFlight.setRight(MAX(curPointB.x(), bBoxFlight.right()));
-        bBoxFlight.setBottom(MIN(curPointB.y(), bBoxFlight.bottom()));
+      curPointB = glMapMatrix->map(pointB->projP);
 
-        QPen drawP = glConfig->getDrawPen(pointB);
-        drawP.setCapStyle(Qt::SquareCap);
-        targetPainter->setPen(drawP);
-        maskPainter->setPen(QPen(Qt::color1, drawP.width(),
-            Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
+      bBoxFlight.setLeft(MIN(curPointB.x(), bBoxFlight.left()));
+      bBoxFlight.setTop(MAX(curPointB.y(), bBoxFlight.top()));
+      bBoxFlight.setRight(MAX(curPointB.x(), bBoxFlight.right()));
+      bBoxFlight.setBottom(MIN(curPointB.y(), bBoxFlight.bottom()));
 
-        targetPainter->drawLine(curPointA, curPointB);
-        maskPainter->drawLine(curPointA, curPointB);
+      QPen drawP = glConfig->getDrawPen(pointB);
+      drawP.setCapStyle(Qt::SquareCap);
+      targetPainter->setPen(drawP);
+      maskPainter->setPen(QPen(Qt::color1, drawP.width(),
+          Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
 
-        curPointA = curPointB;
-      }
-  } else {
-    nStop = (unsigned int)nAnimationIndex;
-    for(unsigned int n = delta; n < nStop; n = n + delta)
-      {
-        pointA = route.at(n - delta);
-        pointB = route.at(n);
-        if(n + delta < nStop)
-            pointC = route.at(n + delta);
-        else
-            pointC = route.at(nStop);
+      targetPainter->drawLine(curPointA, curPointB);
+      maskPainter->drawLine(curPointA, curPointB);
 
-        curPointB = glMapMatrix->map(pointB->projP);
-
-        bBoxFlight.setLeft(MIN(curPointB.x(), bBoxFlight.left()));
-        bBoxFlight.setTop(MAX(curPointB.y(), bBoxFlight.top()));
-        bBoxFlight.setRight(MAX(curPointB.x(), bBoxFlight.right()));
-        bBoxFlight.setBottom(MIN(curPointB.y(), bBoxFlight.bottom()));
-
-        QPen drawP = glConfig->getDrawPen(pointB);
-        drawP.setCapStyle(Qt::SquareCap);
-        targetPainter->setPen(drawP);
-        maskPainter->setPen(QPen(Qt::color1, drawP.width(),
-            Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
-
-        targetPainter->drawLine(curPointA, curPointB);
-        maskPainter->drawLine(curPointA, curPointB);
-
-        curPointA = curPointB;
-      }
-  }
+      curPointA = curPointB;
+    }
 }
 
 
