@@ -33,7 +33,7 @@
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
-class BaseMapElement
+    class BaseMapElement
 {
   public:
     /**

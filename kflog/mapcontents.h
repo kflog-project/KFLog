@@ -129,7 +129,7 @@ class MapContents
     /** reads a new binary-map-file */
     bool __readBinaryFile(const int fileSecID, const char fileTypeID);
     /** */
-    bool __readTerrainFile(const int fileSecID, const char fileTypeID);
+    bool __readTerrainFile(const int fileSecID, const int fileTypeID);
     /** */
     bool __readAsciiFile(const char* fileName);
     /** */

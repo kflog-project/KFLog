@@ -56,6 +56,8 @@
 #define KFLOG_FILE_MAGIC  0x404b464c
 #define FILE_TYPE_GROUND  0x47
 #define FILE_TYPE_TERRAIN 0x54
+#define FILE_TYPE_MAP     0x4d
+#define FILE_TYPE_AERO    0x41
 #define FILE_FORMAT_ID    100
 
 #define CHECK_BORDER if(i == 0) { \
@@ -68,8 +70,8 @@
     border.west = MIN(border.west, lon_temp); \
   }
 
-#define READ_POINT_LIST tA.resize(length); \
-  for(unsigned int i = 0; i < length; i++) { \
+#define READ_POINT_LIST tA.resize(locLength); \
+  for(unsigned int i = 0; i < locLength; i++) { \
     in >> lat_temp;          in >> lon_temp; \
     tA.setPoint(i, _globalMapMatrix.wgsToMap(lat_temp, lon_temp)); \
   }
@@ -734,7 +736,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
 }
 
 bool MapContents::__readTerrainFile(const int fileSecID,
-    const char fileTypeID)
+    const int fileTypeID)
 {
   extern const MapMatrix _globalMapMatrix;
 
@@ -760,7 +762,7 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 
   in.setVersion(2);
 
-  char loadTypeID;
+  Q_INT8 loadTypeID;
   Q_UINT16 loadSecID, formatID;
   Q_UINT32 magic;
   QDateTime createDateTime;
@@ -774,7 +776,7 @@ bool MapContents::__readTerrainFile(const int fileSecID,
       return false;
     }
 
-  in.readRawBytes(&loadTypeID, 1);
+  in >> loadTypeID;
   if(loadTypeID != fileTypeID)
     {
       // falschen Datentyp geladen ...
@@ -841,6 +843,104 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 bool MapContents::__readBinaryFile(const int fileSecID,
     const char fileTypeID)
 {
+  extern const MapMatrix _globalMapMatrix;
+
+  KStandardDirs* globalDirs = KGlobal::dirs();
+  QString pathName;
+  pathName.sprintf("kflog/mapdata/%c_%.4d.kfl", fileTypeID, fileSecID);
+  pathName = globalDirs->findResource("data", pathName);
+
+  if(pathName == 0)
+      // Datei existiert nicht ...
+      return false;
+
+  QFile eingabe(pathName);
+  if(!eingabe.open(IO_ReadOnly))
+    {
+      // Datei existiert, kann aber nicht gelesen werden:
+      // Infofenster wäre nötig ...
+      warning("KFLog: Can not open mapfile %s", (const char*)pathName);
+      return false;
+    }
+
+  QDataStream in(&eingabe);
+  in.setVersion(2);
+
+  Q_UINT8 typeIn;
+  Q_INT8 loadTypeID;
+  Q_UINT16 loadSecID, formatID;
+  Q_INT32 lat_temp, lon_temp;
+  Q_UINT32 magic, locLength;
+  QDateTime createDateTime;
+
+  in >> magic;
+  if(magic != KFLOG_FILE_MAGIC)
+    {
+      // falsches Dateiformat !!!
+      warning("KFLog: Trying to open old map-file; aborting!");
+      warning(pathName);
+      return false;
+    }
+
+  in >> loadTypeID;
+  if(loadTypeID != fileTypeID)
+    {
+      // falschen Datentyp geladen ...
+      warning("<------------------ Falsche Typ-ID");
+      return false;
+    }
+
+  in >> formatID;
+  if(formatID < FILE_FORMAT_ID)
+    {
+      // zu alt ...
+    }
+  else if(formatID > FILE_FORMAT_ID)
+    {
+      // zu neu ...
+    }
+  in >> loadSecID;
+  if(loadSecID != fileSecID)
+    {
+      // Problem!!!
+      warning("<------------------- Falsche Kachel-ID");
+      return false;
+    }
+  in >> createDateTime;
+
+  while(!in.eof())
+    {
+      in >> typeIn;
+      locLength = 0;
+
+      QPointArray tA;
+
+      switch (typeIn)
+        {
+          case BaseMapElement::Highway:
+            in >> locLength;
+
+            READ_POINT_LIST
+
+            highwayList.append(new LineElement("Road", typeIn, tA));
+            break;
+          case BaseMapElement::MidRoad:
+            in >> locLength;
+
+            READ_POINT_LIST
+
+            roadList.append(new LineElement("Road", typeIn, tA));
+            break;
+          case BaseMapElement::Railway:
+            in >> locLength;
+
+            READ_POINT_LIST
+
+            roadList.append(new LineElement("Railway", typeIn, tA));
+            break;
+        }
+    }
+
 return true;
 
 //  Airspace* newAir;
@@ -1352,9 +1452,8 @@ bool MapContents::loadFlight(QFile igcFile)
         }
       else if(s.mid(0,1) == "B")
         {
-	  /*
-           * We have a point
-           *
+          /*
+           * We have a point.
            * But we must proofe the linesyntax first.
            */
           if(positionLine.match(s) == -1)
@@ -1535,9 +1634,8 @@ bool MapContents::loadFlight(QFile igcFile)
 
   importProgress.close();
 
-  flightList.append(new Flight(QFileInfo(igcFile).fileName(),
-      flightRoute, pilotName, gliderType,
-      gliderID, wpList, date));
+  flightList.append(new Flight(QFileInfo(igcFile).fileName(), flightRoute,
+      pilotName, gliderType, gliderID, wpList, date));
   warning("Erstelle FlightList");
 
   return true;
@@ -1565,74 +1663,24 @@ void MapContents::proofeSection()
       isFirst = false;
     }
 
-  for(int row = northCorner; row <= southCorner; row++) {
-    for(int col = westCorner; col <= eastCorner; col++) {
-      if( sectionArray.testBit( row + ( col + ( row * 89 ) ) ) ) {
-        // Kachel ist geladen!
-      } else {
-        // Kachel fehlt!
-        int secID = row + ( col + ( row * 89 ) );
+  for(int row = northCorner; row <= southCorner; row++)
+    {
+      for(int col = westCorner; col <= eastCorner; col++)
+        {
+          if( !sectionArray.testBit( row + ( col + ( row * 89 ) ) ) )
+            {
+              // Kachel fehlt!
+              int secID = row + ( col + ( row * 89 ) );
 
-//        int latID = (int)row * -2 + 88;
-//        int lonID = (int)col * 2 - 180;
-//        QString latID_S, lonID_S;
-//        if(latID < 0) {
-//          latID_S.sprintf("%dS", -latID);
-//        } else {
-//          latID_S.sprintf("%dN", latID);
-//        }
-//        if(lonID < 0) {
-//          lonID_S.sprintf("%dW", -lonID);
-//        } else {
-//          lonID_S.sprintf("%dE", lonID);
-//        }
-//        /* Höhendaten (Digital Elevation Model): */
-//        QString demSecName = latID_S + "_" + lonID_S + "_dem.wld";
-//        /* Nullmeterlinie */
-//        QString dem0SecName = latID_S + "_" + lonID_S + "_0_dem.wld";
-//         /* übrige Kartendaten: */
-////        QString mapSecName = latID_S + "_" + lonID_S + "_map.wld";
-////        QString asciiName =
-////            "/data/KartenDaten/KFLog-Karten/Staaten_Kachel/" + latID_S
-////            + "_" + lonID_S + ".out";
-////        QString cityName =
-////            "/data/KartenDaten/KFLog-Karten/städte_gekachelt/" + latID_S
-////            + "_" + lonID_S + ".out";
-////        __readAsciiFile(cityName);
+              /* Nun müssen die korrekten Dateien geladen werden ... */
+              __readTerrainFile(secID, FILE_TYPE_GROUND);
+              __readTerrainFile(secID, FILE_TYPE_TERRAIN);
+              __readBinaryFile(secID, FILE_TYPE_MAP);
 
-           /* Nun müssen die korrekten Dateien geladen werden ... */
-        __readTerrainFile(secID, FILE_TYPE_GROUND);
-        __readTerrainFile(secID, FILE_TYPE_TERRAIN);
-
-//        if(__readAsciiIsoFile(asciiName))
-//            __readAsciiIsoFile(asciiName);
-          {
-
-//            asciiName = "/data/KartenDaten/KFLog-Karten/LinienKacheln/" +
-//            latID_S + "_" + lonID_S + ".roads.out";
-//            __readAsciiFile(asciiName);
-//
-//            asciiName = "/data/KartenDaten/KFLog-Karten/LinienKacheln/" +
-//              latID_S + "_" + lonID_S + ".railway.out";
-//            __readAsciiFile(asciiName);
-//
-//           asciiName = "/data/KartenDaten/KFLog-Karten/LinienKacheln/" +
-//              latID_S  + "_" + lonID_S + ".river.out";
-//           __readAsciiFile(asciiName);
-//
-//           asciiName = "/data/KartenDaten/KFLog-Karten/seen_gekachelt/europa_seen." +
-//              latID_S  + "_" + lonID_S + ".dnnet.out";
-//           __readAsciiFile(asciiName);
-
-//            warning("    Kachel geladen: %s", (const char*)demSecName);
-            sectionArray.setBit( row + ( col + ( row * 89 ) ), true );
-          }
-//        else
-//          warning("KACHEL FEHLT: %s", (const char*)demSecName);
-      }
+              sectionArray.setBit( secID, true );
+            }
+        }
     }
-  }
-
 }
 
 unsigned int MapContents::getListLength(int listIndex) const
