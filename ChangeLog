@@ -1,6 +1,13 @@
 $Id$
 
 
+2002-03-04 Harry <harry@kflog.org>
+
+  * Some improvements in waypoint handling/filtering
+
+  * First version of task dialog
+
+
 2002-02-22 Heiner <heiner@kflog.org>
 
   * Fixed a bug in Map::mousePressEvent()
