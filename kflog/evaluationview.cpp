@@ -75,7 +75,7 @@ QSize EvaluationView::sizeHint()
   return QWidget::sizeHint();
 }
 
-void EvaluationView::paintEvent(QPaintEvent* event = 0)
+void EvaluationView::paintEvent(QPaintEvent*)
 {
   bitBlt(pixBuffer, 0, 0, pixBufferKurve);
 
