@@ -534,7 +534,8 @@ void KFLogApp::initView()
   connect(map, SIGNAL(taskPlanningEnd()), tasks,
     SLOT(slotUpdateTask()));
   connect(map, SIGNAL(elevation(int)), legend, SLOT(highlightLevel(int)));
-
+  connect(map, SIGNAL(regWaypointDialog(QWidget *)), this, SLOT(slotRegisterWaypointDialog(QWidget *)));
+  
   extern MapMatrix _globalMapMatrix;
   connect(mapControl, SIGNAL(scaleChanged(double)), &_globalMapMatrix,
       SLOT(slotSetScale(double)));
@@ -1314,3 +1315,7 @@ void KFLogApp::slotEnableMessages(){
   KMessageBox::enableAllMessages();
 }
 
+/** Connects the dialogs addWaypoint signal to the waypoint object. */
+void KFLogApp::slotRegisterWaypointDialog(QWidget * dialog){
+  connect(dialog, SIGNAL(addWaypoint(Waypoint *)), waypoints, SLOT(slotAddWaypoint(Waypoint *)));  
+}

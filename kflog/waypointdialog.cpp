@@ -71,6 +71,7 @@ void WaypointDialog::__initDialog()
   buttons->addWidget(applyButton);
   b = new QPushButton(i18n("&Ok"), this);
   b->setDefault(true);
+  connect(b, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
   connect(b, SIGNAL(clicked()), SLOT(accept()));
   buttons->addWidget(b);
   b = new QPushButton(i18n("&Cancel"), this);
@@ -170,7 +171,7 @@ void WaypointDialog::slotAddWaypoint()
   QString text;
   extern MapContents _globalMapContents;
 
-  if (!name->text().isEmpty()) {
+  //if (!name->text().isEmpty()) { we accept an empty name. A syntetic one will be created.
     // insert a new waypoint to current catalog
     Waypoint *w = new Waypoint;
     w->name = name->text().upper();
@@ -196,7 +197,7 @@ void WaypointDialog::slotAddWaypoint()
 
     emit addWaypoint(w);
     clear();
-  }
+  //}
 }
 
 /** return internal type of waypoint */

@@ -270,10 +270,7 @@ void Waypoints::showWaypointPopup(QListViewItem *it, const QPoint &, int)
 void Waypoints::slotNewWaypoint()
 {
   waypointDlg->clear();
-
-  if (waypointDlg->exec() == QDialog::Accepted) {
-    slotAddWaypoint();
-  }
+  waypointDlg->exec();
 }
 
 /** create a new catalog */
@@ -316,42 +313,6 @@ bool Waypoints::saveChanges()
     }
 
   return true;
-}
-
-/** insert waypoint from waypoint dialog */
-void Waypoints::slotAddWaypoint()
-{
-//  QString text;
-//
-//  if (!waypointDlg->name->text().isEmpty()) {
-//    // insert a new waypoint to current catalog
-//    Waypoint *w = new Waypoint;
-//    w->name = waypointDlg->name->text().upper();
-//    w->description = waypointDlg->description->text();
-//    w->type = waypointDlg->getWaypointType();
-//    w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
-//    w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
-//    w->elevation = waypointDlg->elevation->text().toInt();
-//    w->icao = waypointDlg->icao->text().upper();
-//    w->frequency = waypointDlg->frequency->text().toDouble();
-//    text = waypointDlg->runway->text();
-//    if (!text.isEmpty()) {
-//      w->runway = text.toInt();
-//    }
-//
-//    text = waypointDlg->length->text();
-//    if (!text.isEmpty()) {
-//      w->length = text.toInt();
-//    }
-//    w->surface = waypointDlg->getSurface();
-//    w->isLandable = waypointDlg->isLandable->isChecked();
-//    w->comment = waypointDlg->comment->text();
-//
-//    if (waypointCatalogs.current()->wpList.insertItem(w)) {
-//      waypointCatalogs.current()->modified = true;
-//      fillWaypoints();
-//    }
-//  }
 }
 
 /** No descriptions */
@@ -728,6 +689,7 @@ void Waypoints::slotImportWaypointFromMap()
     fillWaypoints();
   }
 }
+
 /** filter waypoints to display */
 void Waypoints::slotFilterWaypoints()
 {
@@ -736,6 +698,7 @@ void Waypoints::slotFilterWaypoints()
     fillWaypoints();
   }
 }
+
 /** add a new waypoint from outside */
 void Waypoints::slotAddWaypoint(Waypoint *w)
 {

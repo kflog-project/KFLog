@@ -114,8 +114,6 @@ class Waypoints : public QFrame  {
   private slots: // Private slots
     void slotDeleteWaypoint();
   void slotEditWaypoint();
-  /** insert waypoint from waypoint dialog */
-  void slotAddWaypoint();
   /** create a new catalog */
   void slotNewWaypointCatalog();
   /** open a catalog and set it active */
@@ -149,7 +147,7 @@ class Waypoints : public QFrame  {
    */
   void slotFilterWaypoints();
   /**
-   * add a new waypoint from outside
+   * add a new waypoint
    */
   void slotAddWaypoint(Waypoint *w);
   /**

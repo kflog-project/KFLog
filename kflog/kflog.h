@@ -65,7 +65,7 @@ class KFLogApp : public KDockMainWindow
    * Destructor.
    */
   ~KFLogApp();
-
+  
  signals:
   /**
    * Emitted, when the user selects a new flightdatatype.
@@ -293,6 +293,8 @@ class KFLogApp : public KDockMainWindow
   void slotCenterTo();
   /** Re-enables all messages turned off using "Don't show this dialog again" checkboxes. */
   void slotEnableMessages();
+  /** Connects the dialogs addWaypoint signal to the waypoint object. */
+  void slotRegisterWaypointDialog(QWidget * dialog);
  private:
   /**
    * The startup-window.

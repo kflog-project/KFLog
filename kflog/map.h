@@ -127,6 +127,8 @@ class Map : public QWidget
     void waypointSelected(Waypoint *);
     /** Emitted when the mouse hits a new elevation. The argument is the level. */
     void elevation(int);
+    /** Send to kflogApp to make KFLogApp connect the dialogs signals to the waypoint object. */
+    void regWaypointDialog(QWidget *);
 
   protected:
     /**

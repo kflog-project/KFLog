@@ -885,6 +885,8 @@ warning("Map::mousePressEvent: planning=%d", planning);
                 warning("new waypoint");
 
                 WaypointDialog *waypointDlg = new WaypointDialog(this);
+                emit regWaypointDialog(waypointDlg); //register the dialog and connect it's signals.
+                
                 waypointDlg->enableApplyButton(false);
 
                 QPoint p = _globalMapMatrix.mapToWgs(current);
@@ -895,39 +897,8 @@ warning("Map::mousePressEvent: planning=%d", planning);
                 waypointDlg->latitude->setText(printPos(p.y(), true));
                 waypointDlg->setSurface(-1);
 
-                if (waypointDlg->exec() == QDialog::Accepted)
-                  {
-                    // add an 'free' waypoint
-                    Waypoint *w = new Waypoint;
-                    // leave name empty, this will generate an syntetic name
+                waypointDlg->exec(); //we only need to exec the dialog. The dialog can take care of itself now :-)
 
-                    if(!waypointDlg->name->text().isEmpty())
-                      w->name = waypointDlg->name->text().left(6).upper();
-
-                    w->description = waypointDlg->description->text();
-                    w->type = waypointDlg->getWaypointType();
-                    w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
-                    w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
-                    w->projP = _globalMapMatrix.wgsToMap(w->origP.lat(), w->origP.lon());
-                    w->elevation = waypointDlg->elevation->text().toInt();
-                    w->icao = waypointDlg->icao->text().upper();
-                    w->frequency = waypointDlg->frequency->text().toDouble();
-                    text = waypointDlg->runway->text();
-                    if (!text.isEmpty()) {
-                      w->runway = text.toInt();
-                    }
-
-                    text = waypointDlg->length->text();
-                    if (!text.isEmpty()) {
-                      w->length = text.toInt();
-                    }
-
-                    w->surface = waypointDlg->getSurface();
-                    w->comment = waypointDlg->comment->text();
-                    w->isLandable = waypointDlg->isLandable->isChecked();
-
-                    emit waypointSelected(w);
-                  }
                 delete waypointDlg;
 
     	        }
