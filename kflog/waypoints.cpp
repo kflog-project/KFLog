@@ -443,6 +443,7 @@ void Waypoints::slotSwitchWaypointCatalog(int idx)
 {
   waypointCatalogs.at(idx);
   fillWaypoints();
+  emit waypointCatalogChanged( waypointCatalogs.current() );
 }
 
 void Waypoints::slotSaveWaypointCatalog()

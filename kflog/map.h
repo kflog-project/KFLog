@@ -31,6 +31,7 @@
 
 // class SinglePoint;
 class Flight;
+class WaypointCatalog;
 
 /**
  * This class provides basic functions for displaying the map.
@@ -98,6 +99,8 @@ class Map : public QWidget
     void slotShowCurrentFlight();
     /** append a waypoint to the current task */
     void slotAppendWaypoint2Task(wayPoint *p);
+  /** Slot signalled when user selects another waypointcatalog.  */
+  void slotWaypointCatalogChanged(WaypointCatalog* c);
 
   signals:
     /** */

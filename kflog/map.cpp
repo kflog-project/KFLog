@@ -1950,3 +1950,9 @@ void Map::__drawWaypoints(){
   wpMaskPainter.end();
 }
 
+/** Slot signalled when user selects another waypointcatalog.  */
+void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
+	// TODO :
+   // The user has now selected the catalog c, reprocess as necessary
+
+}

@@ -486,6 +486,10 @@ void KFLogApp::initView()
 
   connect(waypoints, SIGNAL(copyWaypoint2Task(wayPoint *)), map,
       SLOT(slotAppendWaypoint2Task(wayPoint *)));
+
+  connect(waypoints, SIGNAL(waypointCatalogChanged( WaypointCatalog * )), map,
+      SLOT(slotWaypointCatalogChanged( WaypointCatalog * )));
+
 }
 
 void KFLogApp::slotShowPointInfo(const QPoint pos,

@@ -116,6 +116,8 @@ public slots: // Public slots
 signals: // Signals
   /** No descriptions */
   void copyWaypoint2Task(wayPoint *);
+  /** signal to emit when current waypointcatalog has changed. */
+  void waypointCatalogChanged(WaypointCatalog *);
 };
 
 #endif
