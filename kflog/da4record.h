@@ -104,7 +104,7 @@ public:
 	DA4TaskRecord(DA4TaskStruct* buffer);
 	~DA4TaskRecord();
   void clear();
-  char pnttype (char inx) { return _buffer->pnttype[inx]; };
+  char pnttype (char inx) { return _buffer->pnttype[(int)inx]; };
   short int pntind (char inx);
   void setPrg (char prg) { _buffer->prg = prg; };
   void setInd (char wp, short inx);
