@@ -1,5 +1,11 @@
 $Id$
 
+2002-02-14 Florian <florian@kflog.org>
+
+  * Added basically functions for graphical Task Planning
+
+  * Fixed crash of EvaluationDialog when loading a flight without a task.
+
 2002-02-13 Harry <harry@kflog.org>
 
   * Added waypoints as dockable widget
