@@ -16,7 +16,6 @@
  ***************************************************************************/
 
 #include <stdlib.h>
-
 // include files for QT
 
 // include files for KDE
@@ -61,19 +60,20 @@ void CoordEdit::keyPressEvent (QKeyEvent *e)
       setCursorPosition(col);
       break;
     default:
-      if (col == 0) {
+      if (col == text().length() - 1) {
         if (validDirection.contains(s)) {
-          setText(text().replace(0, 1, s));
-          setCursorPosition(1);
+          setText(text().replace(text().length() - 1, 1, s));
+          setCursorPosition(text().length());
         }
       }
       else {
         s.toInt(&isNumber);
         if (isNumber && mask[col] == '0') {
           setText(text().replace(col, 1, s));
-          setCursorPosition(col + 1);
+          setCursorPosition(++col);
           // jump to next number field
-          if (mask[col + 1] != '0') {
+          //col++;
+          if (col < text().length() && mask[col] != '0') {
             setCursorPosition(col + 2);
           }
         }
@@ -94,84 +94,14 @@ void CoordEdit::showEvent(QShowEvent *)
   }
 }
 
-void CoordEdit::setSeconds(int s)
-{
-  int degree, min, sec;
-  div_t divRes;
-  QString tmp;
-
-  divRes = div(s, 3600);
-  degree = divRes.quot;
-  divRes = div(divRes.rem, 60);
-  min = divRes.quot;
-  sec = divRes.rem;
-  __formatCoord(degree, min, sec, s >= 0 ? 1 : -1);
-}
-
 LatEdit::LatEdit(QWidget *parent, const char *name ) : CoordEdit(parent, name)
 {
-  mask = "N00°00'00\"";
+  mask = "00° 00' 00\" N";
   validDirection = "NS";
 }
 
 LongEdit::LongEdit(QWidget *parent, const char *name ) : CoordEdit(parent, name)
 {
-  mask = "E000°00'00\"";
+  mask = "000° 00' 00\" E";
   validDirection = "WE";
-}
-
-/** No descriptions */
-int LatEdit::seconds()
-{
-  int degree, min, sec, result;
-  QString t = text();
-
-  degree = t.mid(1, 2).toInt();
-  min = t.mid(4, 2).toInt();
-  sec = t.mid(7, 2).toInt();
-
-  result = (degree * 3600) + (min * 60) + sec;
-  if (result > 324000) { // 90° * 3600 sec
-    result = 648000 - result;
-  }
-
-  if (t.left(1) == "S") {
-    result = -result;
-  }
-  return result;
-}
-
-/** No descriptions */
-int LongEdit::seconds()
-{
-  int degree, min, sec, result;
-  QString t = text();
-
-  degree = t.mid(1, 3).toInt();
-  min = t.mid(5, 2).toInt();
-  sec = t.mid(8, 2).toInt();
-
-  result = (degree * 3600) + (min * 60) + sec;
-  if (result > 648000) { // 180° * 3600 sec
-    result = 1296000 - result;
-  }
-
-  if (t.left(1) == "W") {
-    result = -result;
-  }
-  return result;
-}
-
-void LatEdit::__formatCoord(int degree, int min, int sec, int sign)
-{
-  QString tmp;
-  tmp.sprintf("%c%02d°%02d'%02d\"", sign >= 0 ? 'N' : 'S', degree, min, sec);
-  setText(tmp);
-}
-
-void LongEdit::__formatCoord(int degree, int min, int sec, int sign)
-{
-  QString tmp;
-  tmp.sprintf("%c%03d°%02d'%02d\"", sign >= 0 ? 'E' : 'W', degree, min, sec);
-  setText(tmp);
 }

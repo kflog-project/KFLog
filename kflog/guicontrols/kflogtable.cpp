@@ -18,7 +18,7 @@
 #include "kflogtable.h"
 
 KFLogTable::KFLogTable(QWidget *parent, const char *name)
-  : QTable(parent, name)
+  : QTable(parent, name), oldCol(-1)
 {
 }
 
@@ -57,5 +57,26 @@ void KFLogTable::deleteRow(int row)
     if (numRows() > 0) {
       setCurrentCell(row < numRows() ? row : row - 1, currentColumn());
     }
+  }
+}
+/** No descriptions */
+void KFLogTable::columnClicked(int col)
+{
+  if (col != oldCol) {
+    oldCol = col;
+    ascending = true;
+  }
+  else {
+    ascending = !ascending;
+  }
+
+  sort();
+}
+
+void KFLogTable::sort()
+{
+  if (oldCol != -1) {
+    sortColumn(oldCol, ascending, true);
+    horizontalHeader()->setSortIndicator(oldCol, ascending);
   }
 }

@@ -34,11 +34,8 @@ public:
 	void focusInEvent (QFocusEvent *e);
   /** No descriptions */
   void showEvent(QShowEvent *);
-  void setSeconds(int s);
 protected:
   /** No descriptions */
-  virtual int seconds() = 0;
-  virtual void __formatCoord(int degree, int min, int sec, int sign) = 0;
 	QString mask;
 	QString validDirection;
 };

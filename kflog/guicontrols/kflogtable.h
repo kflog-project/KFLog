@@ -33,6 +33,13 @@ public:
 	~KFLogTable();
   void deleteRow(int row);
   void insertRow(int row);
+  void sort();
+protected slots: // Protected slots
+  /** No descriptions */
+  void columnClicked(int col);
+private:
+  int oldCol;
+  bool ascending;
 };
 
 #endif
