@@ -30,6 +30,7 @@
 #include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
+#include <ktempfile.h>
 
 #include "../airport.h"
 #include "filser.h"
@@ -344,9 +345,15 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
   //                   purpose, the time consuming retrieval can be
   //                   removed.
   else {
-    downloadFlight(0,0,"/tmp/tmp.igc");
-    unlink("/tmp/tmp.igc");
-  
+    KTempFile tmpigc;                          //create a temporary file,
+    tmpigc.setAutoDelete(true);                //  and set autodelete to true.
+    if (tmpigc.status()!=0) {                  //check to see if a temporary file could be created.
+      _errorinfo=i18n("Could not create temporary file. Please check your writepermissions.");
+      return FR_ERROR;
+    }
+
+    downloadFlight(0,0,tmpigc.name());
+
     for (i=0; i<flightCount; i++) {
       dirList->at(i)->shortFileName.sprintf("%c%c%c%c%s%c.igc",
                                    c36[dirList->at(i)->firstTime.tm_year % 10],
