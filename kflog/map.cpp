@@ -47,6 +47,7 @@
 #include "waypoints.h"
 #include "waypointdialog.h"
 #include "resource.h"
+#include "whatsthat.h"
 
 
 // Festlegen der Größe der Pixmaps auf Desktop-Grösse
@@ -59,6 +60,7 @@
 #define MAX_X_TO_PAN QApplication::desktop()->width()-30
 #define MIN_Y_TO_PAN 30
 #define MAX_Y_TO_PAN QApplication::desktop()->height()-30
+#define MAP_INFO_DELAY 1000
 
 
 Map::Map(KFLogApp *m, QFrame* parent, const char* name)
@@ -151,6 +153,10 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   timerAnimate = new QTimer( this );
   connect( timerAnimate, SIGNAL(timeout()), this,
 	   SLOT(slotAnimateFlightTimeout()) );
+
+  mapInfoTimer = new QTimer(this);
+  connect (mapInfoTimer, SIGNAL(timeout()), this, SLOT(slotMapInfoTimeout()));
+  
   isZoomRect=false;
 }
 
@@ -165,6 +171,13 @@ void Map::mouseMoveEvent(QMouseEvent* event)
   const QPoint current = event->pos();
   Waypoint *w;
 
+  QPoint vector = event->pos()-mapInfoTimerStartpoint;
+  if(vector.manhattanLength()>4) {
+    mapInfoTimer->stop();
+    mapInfoTimer->start(MAP_INFO_DELAY, true);
+    mapInfoTimerStartpoint=event->pos();
+  }
+  
   if(planning == 1 || planning == 3)
     {
       double delta(8.0);
@@ -440,7 +453,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
     
 }
 
-void Map::__displayMapInfo(const QPoint& current)
+void Map::__displayMapInfo(const QPoint& current, bool automatic)
 {
   /*
    * Glider airfields first, if there exist any
@@ -458,7 +471,9 @@ void Map::__displayMapInfo(const QPoint& current)
   double delta(16.0);
 
   QString text;
-
+  int timeout=60000;
+  if (automatic) timeout=3500;
+  
   bool show = false, isAirport = false;
 
   for(unsigned int loop = 0;
@@ -478,8 +493,10 @@ void Map::__displayMapInfo(const QPoint& current)
         {
           text = text + ((SinglePoint*)hitElement)->getInfoString();
           // Text anzeigen
-          QWhatsThis::enterWhatsThisMode();
-          QWhatsThis::leaveWhatsThisMode(text);
+         // QWhatsThis::enterWhatsThisMode();
+         // QWhatsThis::leaveWhatsThisMode(text);
+          WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &current);
+          box->show();
           isAirport = true;
         }
     }
@@ -505,8 +522,11 @@ void Map::__displayMapInfo(const QPoint& current)
         {
           text = text + hitElement->getInfoString();
           // Text anzeigen
-          QWhatsThis::enterWhatsThisMode();
-          QWhatsThis::leaveWhatsThisMode(text);
+          //QWhatsThis::enterWhatsThisMode();
+          //QWhatsThis::leaveWhatsThisMode(text);
+         WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &current);
+         box->show();
+
           isAirport = true;
         }
     }
@@ -585,8 +605,10 @@ void Map::__displayMapInfo(const QPoint& current)
           wpText = wpText + "</UL>";
           text = text + wpText;
           // Show text
-          QWhatsThis::enterWhatsThisMode();
-          QWhatsThis::leaveWhatsThisMode(text);
+          //QWhatsThis::enterWhatsThisMode();
+          //QWhatsThis::leaveWhatsThisMode(text);
+          WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &current);
+          box->show();
           isAirport = true;
         }
     }
@@ -609,8 +631,10 @@ void Map::__displayMapInfo(const QPoint& current)
   if(show)
     {
       //  Show text
-      QWhatsThis::enterWhatsThisMode();
-      QWhatsThis::leaveWhatsThisMode(text);
+      // QWhatsThis::enterWhatsThisMode();
+      // QWhatsThis::leaveWhatsThisMode(text);
+      WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &current);
+      box->show();
     }
 }
 
@@ -974,7 +998,7 @@ void Map::mousePressEvent(QMouseEvent* event)
 
     	        }
           }  else {
-            __displayMapInfo(current);
+           // __displayMapInfo(current);
           }
 
         if(planning)  {
@@ -2371,7 +2395,8 @@ void Map::__createPopupMenu(){
   mapPopup->insertTitle(/*SmallIcon("task")*/ 0, i18n("Map"), 0);
   idMpAddWaypoint  = mapPopup->insertItem(SmallIcon("waypoint"), i18n("&New waypoint"), this, SLOT(slotMpNewWaypoint()));
   idMpEndPlanning = mapPopup->insertItem(i18n("&End taskplanning"), this, SLOT(slotMpEndPlanning()));
-
+  mapPopup->insertItem(SmallIcon("info"), i18n("&Show map info..."), this, SLOT(slotMpShowMapInfo()));
+  
   mapPopup->insertSeparator();
   idMpCenterMap  = mapPopup->insertItem(SmallIcon("centerto"), i18n("&Center map"), this, SLOT(slotMpCenterMap()));
 
@@ -2476,4 +2501,19 @@ void Map::slotMpEndPlanning(){
   planning = 2;
 
   emit taskPlanningEnd();
+}
+
+void Map::slotMpShowMapInfo(){
+  leaveEvent(0);
+  __displayMapInfo(popupPos, false);
+}
+
+void Map::leaveEvent ( QEvent * ){
+  mapInfoTimer->stop();
+  mapInfoTimerStartpoint=QPoint(-999,-999);
+}
+
+void Map::slotMapInfoTimeout() {
+  __displayMapInfo(mapInfoTimerStartpoint, true);
+
 }

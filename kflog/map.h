@@ -211,7 +211,7 @@ class Map : public QWidget
     /**
       * Display Infos about MapItems
       */
-    void __displayMapInfo(const QPoint& current);
+    void __displayMapInfo(const QPoint& current, bool automatic=true);
     /**
       * graphical planning
       */
@@ -367,12 +367,28 @@ protected slots: // Protected slots
      * called from the MapPopupmenu to end the planning.
      */
     void slotMpEndPlanning();
-    //
-    QPoint preSnapPoint;
+    /**
+     * called from the MapPopupmenu to show info on the current location.
+     */
+    void slotMpShowMapInfo();
+    /**
+     * Called if the mouse leaves the map.
+     */
+    virtual void leaveEvent ( QEvent * );
+    /**
+     * Called on timeout of the MapInfoTimer. Triggers display of the mapinfo box.
+     */
+    void slotMapInfoTimeout();
 
 protected: // Protected attributes
-  /** Contains the position where the mouse was clicked to show the popupmenu */
-  QPoint popupPos;
+    /** Contains the position where the mouse was clicked to show the popupmenu */
+    QPoint popupPos;
+    //
+    QPoint preSnapPoint;
+    //
+    QTimer * mapInfoTimer;
+    QPoint mapInfoTimerStartpoint;
+    
 };
 
 #endif
