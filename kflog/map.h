@@ -126,6 +126,10 @@ class Map : public QWidget
     void pointClicked(const QPoint&);
     /** is emited when shift + left button click on the map */
     void waypointSelected(Waypoint *);
+    /** is emited when a waypoint should be deleted */
+    void waypointDeleted(Waypoint *);
+    /** is emited when a waypoint should be edited */
+    void waypointEdited(Waypoint *);
     /** Emitted when the mouse hits a new elevation. The argument is the level. */
     void elevation(int);
     /** Send to kflogApp to make KFLogApp connect the dialogs signals to the waypoint object. */
@@ -172,6 +176,12 @@ class Map : public QWidget
 
   private:
   // defining the cursor for the map:
+
+    /**
+     * tries to find a waypoint at current position
+     */
+    Waypoint* findWaypoint (const QPoint& current);
+
     /**
      * Redraws the map.
      */
@@ -347,6 +357,8 @@ class Map : public QWidget
     int idMpEndPlanning;
     int idMpCenterMap;
     int idMpAddWaypoint;
+    int idMpEditWaypoint;
+    int idMpDeleteWaypoint;
     int idMpAddTaskPoint;
     int idMpZoomIn;
     int idMpZoomOut;
@@ -363,6 +375,14 @@ protected slots: // Protected slots
      * called from the MapPopupmenu to add a new waypoint.
      */
     void slotMpNewWaypoint();
+    /**
+     * called from the MapPopupmenu to edit waypoint.
+     */
+    void slotMpEditWaypoint();
+    /**
+     * called from the MapPopupmenu to delete a waypoint.
+     */
+    void slotMpDeleteWaypoint();
     /**
      * called from the MapPopupmenu to end the planning.
      */

@@ -494,6 +494,26 @@ QString getInfoString (Waypoint* wp)
   return text;
 }
 
+Waypoint* Map::findWaypoint (const QPoint& current)
+{
+  extern MapContents _globalMapContents;
+  extern MapMatrix _globalMapMatrix;
+  for (QPtrListIterator<Waypoint> it (*(_globalMapContents.getWaypointList())); it.current(); ++it)
+  {
+    Waypoint* wp = it.current();
+    QPoint sitePos (_globalMapMatrix.map(_globalMapMatrix.wgsToMap(wp->origP)));
+    double dX = abs(sitePos.x() - current.x());
+    double dY = abs(sitePos.y() - current.y());
+
+    // Abstand entspricht der Icon-Größe.
+    if ( (dX < 8.0) && (dY < 8.0) )
+    {
+      return wp;
+    }
+  }
+  return NULL;
+}
+
 void Map::__displayMapInfo(const QPoint& current, bool automatic)
 {
   /*
@@ -647,24 +667,14 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
   if (isAirport)  return;
 
   // let's show waypoints
-  for (QPtrListIterator<Waypoint> it (*(_globalMapContents.getWaypointList())); it.current(); ++it)
+  Waypoint* wp = findWaypoint (current);
+  if (wp)
   {
-    Waypoint* wp = it.current();
-    QPoint sitePos (_globalMapMatrix.map(_globalMapMatrix.wgsToMap(wp->origP)));
-    double dX = abs(sitePos.x() - current.x());
-    double dY = abs(sitePos.y() - current.y());
-
-    // Abstand entspricht der Icon-Größe.
-    if ( (dX < delta) && (dY < delta) )
-    {
-      // Text anzeigen
-      WhatsThat * box=new WhatsThat(this, getInfoString(wp), this, "", timeout, &current);
-      box->show();
-
-      return;
-    }
+    WhatsThat * box=new WhatsThat(this, getInfoString(wp), this, "", timeout, &current);
+    box->show();
+    return;
   }
-
+  
   text += "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
 
   for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
@@ -2440,11 +2450,17 @@ void Map::__createPopupMenu(){
   mapPopup=new KPopupMenu(this);
   
   mapPopup->insertTitle(/*SmallIcon("task")*/ 0, i18n("Map"), 0);
-  idMpAddWaypoint  = mapPopup->insertItem(SmallIcon("waypoint"), i18n("&New waypoint"), this, SLOT(slotMpNewWaypoint()));
-  idMpEndPlanning = mapPopup->insertItem(i18n("&End taskplanning"), this, SLOT(slotMpEndPlanning()));
+  idMpAddWaypoint  = mapPopup->insertItem(SmallIcon("filenew"), i18n("&New waypoint"), this, SLOT(slotMpNewWaypoint()));
+  idMpEditWaypoint = mapPopup->insertItem(SmallIcon("wizard"), i18n("&Edit waypoint"), this, SLOT(slotMpEditWaypoint()));
+  idMpDeleteWaypoint = mapPopup->insertItem(SmallIcon("editdelete"), i18n("&Delete waypoint"), this, SLOT(slotMpDeleteWaypoint()));
+
+  mapPopup->insertSeparator();
+
+  idMpEndPlanning  = mapPopup->insertItem(i18n("&End taskplanning"), this, SLOT(slotMpEndPlanning()));
   mapPopup->insertItem(SmallIcon("info"), i18n("&Show map info..."), this, SLOT(slotMpShowMapInfo()));
   
   mapPopup->insertSeparator();
+
   idMpCenterMap  = mapPopup->insertItem(SmallIcon("centerto"), i18n("&Center map"), this, SLOT(slotMpCenterMap()));
 
   idMpZoomIn = mapPopup->insertItem(SmallIcon("viewmag+"), i18n("Zoom &In"), &_globalMapMatrix, SLOT(slotZoomIn()));
@@ -2456,6 +2472,19 @@ void Map::__createPopupMenu(){
 
 /** Selects the correct items to show from the menu and then shows it. */
 void Map::__showPopupMenu(QMouseEvent * Event){
+  if (findWaypoint (Event->pos()))
+  {
+    mapPopup->setItemEnabled(idMpAddWaypoint, false);
+    mapPopup->setItemEnabled(idMpEditWaypoint, true);
+    mapPopup->setItemEnabled(idMpDeleteWaypoint, true);
+  }
+  else
+  {
+    mapPopup->setItemEnabled(idMpAddWaypoint, true);
+    mapPopup->setItemEnabled(idMpEditWaypoint, false);
+    mapPopup->setItemEnabled(idMpDeleteWaypoint, false);
+  }
+              
   mapPopup->setItemEnabled(idMpEndPlanning, (planning == 1 || planning == 3));
   
   mapPopup->exec(mapToGlobal(Event->pos()));
@@ -2527,6 +2556,25 @@ void Map::slotMpNewWaypoint(){
       waypointDlg->exec(); //we only need to exec the dialog. The dialog can take care of itself now :-)
 
       delete waypointDlg;
+   }
+}
+
+/** called from the MapPopupmenu to edit waypoint. */
+void Map::slotMpEditWaypoint(){
+
+   Waypoint* wp = findWaypoint (popupPos);
+   if (wp)
+   {
+      emit waypointEdited (wp);
+   }
+}
+
+/** called from the MapPopupmenu to edit waypoint. */
+void Map::slotMpDeleteWaypoint(){
+   Waypoint* wp = findWaypoint (popupPos);
+   if (wp)
+   {
+      emit waypointDeleted (wp);
    }
 }
 
