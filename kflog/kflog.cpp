@@ -233,7 +233,7 @@ void KFLogApp::initActions()
       CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
       "evaluate_flight");
 
-  viewWaypoints = new KToggleAction(i18n("Task && Waypoints"), "waypoint",
+  viewWaypoints = new KToggleAction(i18n("Waypoints"), "waypoint",
       CTRL+Key_T, this, SLOT(slotToggleWaypointsDock()), actionCollection(),
       "waypoints");
 

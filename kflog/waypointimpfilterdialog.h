@@ -44,7 +44,7 @@ public:
 	~WaypointImpFilterDialog();
   /** No descriptions */
   int getCenterRef();
-  QPoint getAirportRef();
+  WGSPoint getAirportRef();
 
   QCheckBox *useAll;
   QCheckBox *airports;

@@ -237,10 +237,10 @@ void WaypointImpFilterDialog::polish()
   refAirport->listBox()->sort();
 }
 
-QPoint WaypointImpFilterDialog::getAirportRef()
+WGSPoint WaypointImpFilterDialog::getAirportRef()
 {
   QString s = refAirport->currentText();
   SinglePoint *sp = airportDict.find(s);
-  QPoint p = _globalMapMatrix.mapToWgs(_globalMapMatrix.map(sp->getPosition()));
+  WGSPoint p = sp->getWGSPosition();
   return p;
 }

@@ -819,7 +819,8 @@ warning("Map::mousePressEvent: planning=%d", planning);
               wayPoint *w = new wayPoint;
               // leave name empty, this will generate an syntetic name
               w->type = BaseMapElement::Landmark;
-              w->origP = _globalMapMatrix.mapToWgs(current);
+              QPoint tmp(_globalMapMatrix.mapToWgs(current));
+              w->origP = WGSPoint(tmp.y(), tmp.x());
               w->isLandable = false;
               w->elevation = 0;
               w->frequency = 0.0;

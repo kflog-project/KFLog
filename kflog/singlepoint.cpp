@@ -95,7 +95,7 @@ QString SinglePoint::getWPName() const { return gpsName; }
 
 QPoint SinglePoint::getPosition() const { return position; }
 
-QPoint SinglePoint::getWGSPosition() const { return wgsPosition; }
+WGSPoint SinglePoint::getWGSPosition() const { return wgsPosition; }
 
 QPoint SinglePoint::getMapPosition() const  { return curPos;  }
 

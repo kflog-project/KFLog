@@ -75,7 +75,7 @@ class SinglePoint : public BaseMapElement
     /**
      * @return the WGSposition of the element. (normales Lat/Lon System)
      */
-    virtual QPoint getWGSPosition() const;
+    virtual WGSPoint getWGSPosition() const;
     /**
      * @return the gps-name of the element.
      */

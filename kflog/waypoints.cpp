@@ -321,8 +321,8 @@ void Waypoints::slotEditWaypoint()
         w->name = waypointDlg->name->text().left(6).upper();
         w->description = waypointDlg->description->text();
         w->type = waypointDlg->getWaypointType();
-        w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
-        w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+        w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+        w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
         w->elevation = waypointDlg->elevation->text().toInt();
         w->icao = waypointDlg->icao->text().upper();
         w->frequency = waypointDlg->frequency->text().toDouble();
@@ -509,7 +509,7 @@ void Waypoints::slotImportWaypointFromMap()
   WaypointList *wl = &(c->wpList);
   unsigned int i;
   int type, loop;
-  QPoint p;
+  WGSPoint p;
   QString tmp;
   QRegExp blank("[ ]");
   QValueList<int> searchLists;
@@ -550,17 +550,17 @@ void Waypoints::slotImportWaypointFromMap()
       for (i = 0; i < _globalMapContents.getListLength(*searchListsIt); i++) {
 
         s = (SinglePoint *)_globalMapContents.getElement(*searchListsIt, i);
-        p = _globalMapMatrix.mapToWgs(_globalMapMatrix.map(s->getPosition()));
+        p = s->getWGSPosition();
 
         // check area
         if (filterArea) {
-          if (p.x() < c->areaLong1 || p.x() > c->areaLong2 ||
-              p.y() < c->areaLat1 || p.y() > c->areaLat2) {
+          if (p.lon() < c->areaLong1 || p.lon() > c->areaLong2 ||
+              p.lat() < c->areaLat1 || p.lat() > c->areaLat2) {
               continue;
           }
         }
         else if (filterRadius) {
-          if (dist(c->radiusLat, c->radiusLong, p.y(), p.x()) > c->radiusSize) {
+          if (dist(c->radiusLat, c->radiusLong, p.lat(), p.lon()) > c->radiusSize) {
             continue;
           }
         }
@@ -656,7 +656,7 @@ void Waypoints::slotCopyWaypoint2Task()
 
 void Waypoints::getFilterData()
 {
-  QPoint p;
+  WGSPoint p;
   KConfig* config = KGlobal::config();
   config->setGroup("Map Data");
   WaypointCatalog *c = waypointCatalogs.current();
@@ -686,13 +686,13 @@ void Waypoints::getFilterData()
     break;
   case CENTER_MAP:
     p = _globalMapMatrix.getMapCenter(false);
-    c->radiusLat = p.x();
-    c->radiusLong = p.y();
+    c->radiusLat = p.lat();
+    c->radiusLong = p.lon();
     break;
   case CENTER_AIRPORT:
     p = importFilterDlg->getAirportRef();
-    c->radiusLat = p.y();
-    c->radiusLong = p.x();
+    c->radiusLat = p.lat();
+    c->radiusLong = p.lon();
     break;
   }
 
