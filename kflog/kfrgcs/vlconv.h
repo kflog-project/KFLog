@@ -1,12 +1,27 @@
+/***********************************************************************
+**
+**   vlconv.h
+**
+**   This file is part of libkfrgcs.
+**
+************************************************************************
+**
+**   Copyright (c):  2002 by Garrecht Ingenieurgesellschaft
+**
+**   This file is distributed under the terms of the General Public
+**   Licence. See the file COPYING for more information.
+**
+**   $Id$
+**
+***********************************************************************/
+
 #ifndef VLCONV_H
 #define VLCONV_H
-
 
 #include <stdio.h>
 #include <time.h>
 #include <memory.h>
 #include "vlapityp.h"
-
 
 /* Untertypen des Haupttyps Variabel */
 #define FLDPLT	     0x01

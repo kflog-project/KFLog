@@ -2,7 +2,7 @@
 **
 **   vlapisys_linux.cpp
 **
-**   This file is part of KFLog.
+**   This file is part of libkfrgcs.
 **
 ************************************************************************
 **

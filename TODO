@@ -20,31 +20,31 @@ Flightrecorder
 Planning
 ========
 
-* graphical planning                                     Flo                    [1]
+* graphical planning
 
-  -> printing of planned task (track, not info)          Flo
+  -> printing of planned task (track, not info)
 
   -> area computation for FAI triangles
 
-* Rules (sectors, radius, possible tasks)                Flo/Harald             ?
+* Rules (sectors, radius, possible tasks)
   must be solved in a unspecified way
   necessary for dialoge planning ?
 
-* XML format definition for WayPoint and                 Harald                 [1]
+* XML format definition for WayPoint and
   task files used by KFLog
 
 * Import and Export of WayPoints and Tasks
 
-  -> WGS-Import                                          Christof
+  -> WGS-Import
 
-  -> Others                                              Harald                 [5]
+  -> Others
 
-* Elevation Profile                                                             [10]
+* Elevation Profile
 
-* List of Sites (Frequencies) and                                               [10]
+* List of Sites (Frequencies) and
   obstacles along the task
 
-* Time Planing (with given average vario and                                    [10]
+* Time Planing (with given average vario and
   polare of the glider)
 
   -> Import of PC_MET Database
@@ -55,13 +55,13 @@ Evaluation
 
 * Display Airspace violations
 
-* online declaration for OLC and DMST-Online             Flo
+* online declaration for OLC and DMST-Online
 
 * Thermical Information (list of all upwinds)
 
 * display & print more statistics
 
-* elevation profile (under the Barogram)                                        [10]
+* elevation profile (under the Barogram)
 
 * Different colours for flights
 
@@ -76,23 +76,23 @@ Evaluation
 Map
 ===
 
-* use of vmap1 (improved dcw Data)                       Flo
+* use of vmap1 (improved dcw Data)
 
-* other projections (mercator)                           Heiner
+* other projections (mercator)
 
-* rasterimage support (scanned maps ...)                 Heiner / Flo
+* rasterimage support (scanned maps ...)
 
-* Customise colours for elevation data                   Heiner
+* Customise colours for elevation data
 
 * integration of Aeroplanner.com data
 
-* Shading of elevation data                              Heiner
+* Shading of elevation data
 
 
 3D View
 =======
 
-* 3digc                                                  Thomas
+* 3digc
 
   -> same colours for the flight as in 2d map
 
@@ -100,12 +100,12 @@ Map
 
   -> animation?
 
-* OpenGl_igc                                             Christof
+* OpenGl_igc
 
   -> integration into KFlog
 
 
-Animation                                                Thomas
+Animation
 =========
 
 * several flights at the same time
@@ -129,13 +129,13 @@ Documentation
 
 * Handbook as PDF or ghostscript for Printing
 
-* System doc                                             All ??
+* System doc
 
 
 Other
 =====
 
-* Flightgear                                             Christof
+* Flightgear
 
   -> animate flights in FlightGear
 
@@ -149,17 +149,17 @@ Other
 
 * Preview
 
-  -> add the duration                                    Heiner
+  -> add the duration
 
-  -> display as standard in the flight open dialog       Heiner
+  -> display as standard in the flight open dialog
 
-* Link IGC-Files to KFLog (KDE)                          Heiner / Flo
+* Link IGC-Files to KFLog (KDE)
 
 * Import IGC-Files
 
-  -> due to the FAI Definition                           Heiner
+  -> due to the FAI Definition
 
-  -> other Data (eg. ENL)                                Heiner / Flo
+  -> other Data (eg. ENL)
 
 * Select active Flight
 

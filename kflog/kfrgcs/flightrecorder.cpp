@@ -2,7 +2,7 @@
 **
 **   flightrecorder.cpp
 **
-**   This file is part of kio-logger.
+**   This file is part of libkfrgcs.
 **
 ************************************************************************
 **

@@ -1,0 +1,20 @@
+$Id$
+
+libkfrgcs:
+
+The files in this directory are used for the recorder-backend for
+Volkslogger recorders. The lib is called "libkfrgcs" ("kfr" indicates,
+that it is a kde-lib for accessing flight-recorders and "gcs" is the
+appreviation of Garrecht Ingenieurgesellschaft as it is used in the
+igc-files).
+
+The lib will be installed in $KDE_LIB. The file "gcs.desktop" will
+be installed in $KDE_DATA/kflog/logger/ and is used to indicate, that
+the lib is installed. It will be searched by KFLog each time the
+recorder-dialog is opened.
+
+The files in this directory are based on the work of Garrecht
+Ingenieurgesellschaft (http://www.volkslogger.de/).
+
+We want to thank Garrecht for supporting us in implementing the
+backend!
