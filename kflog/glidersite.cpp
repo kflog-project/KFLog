@@ -48,7 +48,7 @@ QString GliderSite::getInfoString() const
 
   text.sprintf("%d", elevation);
   text = "<TABLE BORDER=0><TR><TD>"
-      "<IMG SRC=" + path + glConfig->getPixmapName(typeID) + ">" +
+      "<IMG SRC=" + path + glConfig->getPixmapName(typeID, winch) + ">" +
       "</TD><TD>" + name + " (" + icao + ")</TD></TR>" +
       "<TR><TD></TD><TD><FONT SIZE=-1>" + text + "m" +
       "<BR>" + frequency + "</FONT></TD></TR></TABLE>";

@@ -1019,7 +1019,10 @@ QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
         iconName = "civmilair.xpm";
         break;
       case BaseMapElement::Airfield:
-        iconName = "airfield_c.xpm";
+/*        if(isWinch)                        // isWinch is here mis-used to provide a grass-runway icon
+            iconName = "aifield_g.xpm";
+        else           */
+            iconName = "airfield_c.xpm";
         break;
       case BaseMapElement::ClosedAirfield:
         iconName = "closed.xpm";
@@ -1035,9 +1038,9 @@ QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
         break;
       case BaseMapElement::Glidersite:
         if(isWinch)
-            iconName = "glider.xpm";
+            iconName = "glider.xpm";     // winch, red icon
         else
-            iconName = "glider2.xpm";
+            iconName = "glider2.xpm";   // aerotow, black icon
         break;
       case BaseMapElement::UltraLight:
         iconName = "ul.xpm";
@@ -1068,6 +1071,21 @@ QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
         break;
       case BaseMapElement::Ndb:
         iconName = "ndb.xpm";
+        break;
+      case BaseMapElement::Outlanding:
+        iconName = "outlanding.xpm";
+        break;
+      case BaseMapElement::Obstacle:
+        iconName = "obstacle.xpm";
+        break;
+      case BaseMapElement::LightObstacle:
+        iconName = "obst_light.xpm";
+        break;
+      case BaseMapElement::ObstacleGroup:
+        iconName = "obst_group.xpm";
+        break;
+      case BaseMapElement::LightObstacleGroup:
+        iconName = "obst_group_light.xpm";
         break;
       default:
         iconName = "";
