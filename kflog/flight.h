@@ -181,6 +181,14 @@ class Flight : public BaseMapElement
      */
     int searchPoint(QPoint cPoint, struct flightPoint& searchPoint);
     /**
+		 * Get the previous FlightPoint before number 'index'
+		 */
+    int searchGetPrevPoint(int index, struct flightPoint& searchPoint);
+    /**
+		 * Get the next FlightPoint after number 'index'
+		 */
+    int searchGetNextPoint(int index, struct flightPoint& searchPoint);
+    /**
      * @return "true" if the flight has been optimized.
      */
     bool isOptimized() const;

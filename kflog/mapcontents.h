@@ -169,6 +169,14 @@ class MapContents : public QObject
      */
     static int degreeToNum(QString degree);
     /**
+		 * Get the contents of the next FlightPoint after number 'index'
+	   */
+    int searchGetNextFlightPoint(int index, struct flightPoint & fP);
+    /**
+		 * Get the contents of the previous FlightPoint before number 'index'
+	   */
+    int searchGetPrevFlightPoint(int index, struct flightPoint & fP);
+    /**
      * The index of Mapelement-Lists.
      */
     enum MapContentsListID {NotSet = 0, AirportList, GliderList,

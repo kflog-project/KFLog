@@ -84,6 +84,10 @@ class Map : public QWidget
      */
     virtual void mouseMoveEvent(QMouseEvent* event);
     /**
+     * Processes the keyboard input to the Map class
+     */
+    virtual void keyPressEvent( QKeyEvent * event);
+    /**
      * Redefinition of the paintEvent.
      */
     virtual void paintEvent(QPaintEvent* event);
@@ -181,6 +185,7 @@ class Map : public QWidget
     QPoint prePos;
     QPoint preCur1;
     QPoint preCur2;
+    int preIndex;
     /**
      * Contains the regions of all visible airspaces. The list is needed to
      * find the airspace-data when the users selects a airspace in the map.

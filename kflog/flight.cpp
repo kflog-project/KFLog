@@ -1671,3 +1671,25 @@ bool Flight::optimizeTask()
   return false;
 }
 
+/** Get the next FlightPoint after number 'index' */
+int Flight::searchGetNextPoint(int index, struct flightPoint& searchPoint)
+{
+  // only move to next if not at last point
+  if ((index < route.count()-1) && (index > 0))
+		index += 1;
+
+	// now update searchPoint struct
+  searchPoint = *route.at(index);
+  return index;
+}
+
+/** Get the previous FlightPoint before number 'index' */
+int Flight::searchGetPrevPoint(int index, struct flightPoint& searchPoint)
+{
+	// only move to next is not first point
+  if ((index > 1) && (index <= route.count()-1))
+		index -= 1;
+ 	// now update searchPoint struct
+  searchPoint = *route.at(index);
+  return index;
+}

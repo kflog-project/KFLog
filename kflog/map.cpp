@@ -23,6 +23,7 @@
 #include <qdragobject.h>
 #include <qpainter.h>
 #include <qwhatsthis.h>
+#include <ctype.h>
 
 #include <airspace.h>
 #include <flight.h>
@@ -112,6 +113,9 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   setCursor(crossCursor);
   setAcceptDrops(true);
 
+	setFocusPolicy( QWidget::StrongFocus );
+	grabKeyboard();
+
   QWhatsThis::add(this, i18n("<B>The map</B>"
          "<P>To move or scale the map, please use the buttons in the "
          "<B>Map-control</B>-area. Or center the map to the current "
@@ -133,6 +137,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 {
   extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
+  int index;
 
   if(prePos.x() >= 0)
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
@@ -140,10 +145,11 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
   struct flightPoint cP;
 
-  if(_globalMapContents.searchFlightPoint(event->pos(), cP) != -1)
+  if((index = _globalMapContents.searchFlightPoint(event->pos(), cP)) != -1)
     {
       emit showFlightPoint(_globalMapMatrix.mapToWgs(event->pos()), cP);
       prePos = _globalMapMatrix.map(cP.projP);
+      preIndex = index;
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
     }
   else
@@ -810,4 +816,77 @@ void Map::slotOptimzeFlight()
 //    showFlightData(flightList.current());
   //  mainApp->getMap()->showFlightLayer(true);
 //  }
+}
+
+/** Processes the keyboard input to the Map class */
+void Map::keyPressEvent( QKeyEvent* event)
+{
+  extern const MapMatrix _globalMapMatrix;
+  extern MapContents _globalMapContents;
+  struct flightPoint cP;
+  int index;
+
+  // is log loaded and point selected with mouse?
+  if (prePos.x() >= 0){
+  	switch ( event->key() ){
+			/**
+			 * Single-step
+			 */
+   		case Key_Up:
+  	   	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+    								 prePos.x() - 20, prePos.y() - 20, 40, 40);
+		    // get the next point, preIndex now holds last index
+				if ((index = _globalMapContents.searchGetNextFlightPoint(preIndex, cP)) != -1){
+          emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
+          prePos = _globalMapMatrix.map(cP.projP);
+					preIndex = index;
+          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+				}
+				event->accept();	// set by default really
+      	break;
+   		case Key_Down:
+  	   	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+    								 prePos.x() - 20, prePos.y() - 20, 40, 40);
+		    // get the next point, preIndex now holds last index
+				if ((index = _globalMapContents.searchGetPrevFlightPoint(preIndex, cP)) != -1){
+          emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
+          prePos = _globalMapMatrix.map(cP.projP);
+					preIndex = index;
+          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+				}
+				event->accept();	// set by default really
+      	break;
+			/**
+			 * Multi-step
+			 */
+/*   		case Key_PageUp:
+  	   	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+    								 prePos.x() - 20, prePos.y() - 20, 40, 40);
+		    // get the next point, preIndex now holds last index
+				if ((index = _globalMapContents.searchGetNextFlightPoint(preIndex, cP)) != -1){
+          emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
+          prePos = _globalMapMatrix.map(cP.projP);
+					preIndex = index;
+          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+				}
+				event->accept();	// set by default really
+      	break;
+   		case Key_PageDown:
+  	   	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+    								 prePos.x() - 20, prePos.y() - 20, 40, 40);
+		    // get the next point, preIndex now holds last index
+				if ((index = _globalMapContents.searchGetPrevFlightPoint(preIndex, cP)) != -1){
+          emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
+          prePos = _globalMapMatrix.map(cP.projP);
+					preIndex = index;
+          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+				}
+				event->accept();	// set by default really
+      	break;
+ */
+			default:
+	 	  	event->ignore();
+      	break;
+   	}
+	}
 }

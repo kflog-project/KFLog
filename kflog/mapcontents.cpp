@@ -1714,3 +1714,21 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
           isoList.at(loop)->at(loop2)->drawMapElement(targetP, maskP);
     }
 }
+
+/** Get the contents of the previous FlightPoint before number 'index' */
+int MapContents::searchGetPrevFlightPoint(int index, struct flightPoint & fP)
+{
+	if(flightList.count()){
+		return (flightList.current()->searchGetPrevPoint(index, fP));
+	}
+	return -1;
+}
+
+/** Get the contents of the next FlightPoint after number 'index' */
+int MapContents::searchGetNextFlightPoint(int index, struct flightPoint & fP)
+{
+	if(flightList.count()){
+		return (flightList.current()->searchGetNextPoint(index, fP));
+	}
+	return -1;
+}
