@@ -242,7 +242,7 @@ QString SoaringPilot::meterToFeet(int m)
 /**
  * Returns the name of the lib.
  */
-QString SoaringPilot::getLibName()
+QString SoaringPilot::getLibName() const
 {
   return "libkfrxsp"; 
 }
@@ -250,7 +250,7 @@ QString SoaringPilot::getLibName()
 /**
  * Returns the transfermode this plugin supports.
  */
-FlightRecorderPluginBase::TransferMode SoaringPilot::getTransferMode()
+FlightRecorderPluginBase::TransferMode SoaringPilot::getTransferMode() const
 {
   return FlightRecorderPluginBase::serial;
 }

@@ -61,7 +61,8 @@ Cumulus::~Cumulus(){
 /**
  * Returns the name of the lib.
  */
-QString Cumulus::getLibName(){
+QString Cumulus::getLibName() const
+{
   return i18n("Cumulus/KFLog-e plugin, version %1").arg("0.1");  
 }
 
@@ -69,7 +70,8 @@ QString Cumulus::getLibName(){
 /**
  * Returns the transfermode this plugin supports.
  */
-FlightRecorderPluginBase::TransferMode Cumulus::getTransferMode(){
+FlightRecorderPluginBase::TransferMode Cumulus::getTransferMode() const
+{
   return FlightRecorderPluginBase::URL;  
 }
 
