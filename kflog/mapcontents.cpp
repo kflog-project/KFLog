@@ -1143,14 +1143,13 @@ bool MapContents::loadFlight(QFile igcFile)
       if(s.mid(0,1) == "H")
         {
           // We have a headerline
-          if(s.mid(5,5) == "PILOT")
-              pilotName = s.mid(11,100);
-          else if(s.mid(5,10) == "GLIDERTYPE")
-              gliderType = s.mid(16,100);
-          else if(s.mid(5,8) == "GLIDERID")
-              gliderID = s.mid(14,100);
-          else if(s.mid(1,4) == "FDTE")
-              // Hier bislang nur "deutsches" Format.
+          if(s.mid(1,4).upper() == "FPLT")
+              pilotName = s.mid(s.find(':')+1,100);
+          else if(s.mid(1,4).upper() == "FGTY")
+              gliderType = s.mid(s.find(':')+1,100);
+          else if(s.mid(1,4).upper() == "FGID")
+              gliderID = s.mid(s.find(':')+1,100);
+          else if(s.mid(1,4).upper() == "FDTE")
               date = s.mid(5,2) + "." + s.mid(7,2) + "." + s.mid(9,2);
         }
       else if(s.mid(0,1) == "B")

@@ -1,5 +1,12 @@
 $Id$
 
+
+2002-02-09 Heiner <heiner@kflog.org>
+
+  * Fixed MapContents and IDCPreview to support logger, that produce
+    some strange igc-header.
+
+
 2002-02-04 Thomas <thomas@kflog.org>
 
   * Integrated 3DIgc by Jan Max Krueger into KFlog.
