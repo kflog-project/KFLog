@@ -906,8 +906,14 @@ void Waypoints::openCatalog(QString &catalog)
 }
 
 /* slot to set name of catalog and open it without a file selection dialog */
-void Waypoints::slotSetWaypointCatalogName(QString catalog){
-  this->openCatalog(catalog);
+void Waypoints::slotSetWaypointCatalogName(QString catalog)
+{
+  if (!catalog.isEmpty()) {  
+    openCatalog(catalog);
+  }
+  else {
+    slotNewWaypointCatalog();
+  }  
 }
 
 /** return the current waypoint catalog */

@@ -132,10 +132,8 @@ int main(int argc, char *argv[])
         case KFLogConfig::LastUsed:
           // no break;
         case KFLogConfig::Specific:
-          waypointsOptionArg = config->readEntry("DefaultCatalogName", QString::null);
-          if (!waypointsOptionArg.isEmpty()) {
-            kflog->slotSetWaypointCatalog(waypointsOptionArg);
-          } 
+          waypointsOptionArg = config->readEntry("DefaultCatalogName", "");
+          kflog->slotSetWaypointCatalog(waypointsOptionArg);
         }
       }
 

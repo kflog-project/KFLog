@@ -206,6 +206,15 @@ void TaskDialog::slotSetPlanningType(int idx)
   id = taskTypes.at(idx)->id;
   switch (id) {
   case FlightTask::FAIArea:
+    KMessageBox::information (this, i18n("Task Type FAI Area:\n"
+      "You can define a task with either takeoff, start, end and landing or "
+      "takeoff, start, end, landing and one additional route point.\n"
+      "The FAI area calculation will be made with start and end point or start and route point, "
+      "depending wether the route point is defined or not\n"
+      "Deleting takeoff start, end and landing points is not possible, "
+      "but you can replace them with other waypoints.\n"
+      "New waypoints will be added after the selected one."), i18n("Task selection"),
+      i18n("Do not show this message again."));
     cnt = wpList.count();    
     left->setEnabled(true);
     right->setEnabled(true);
@@ -213,13 +222,19 @@ void TaskDialog::slotSetPlanningType(int idx)
     right->setChecked(pTask->getPlanningDirection() & FlightTask::rightOfRoute);
     if (cnt > 5) {
       // remove route points
-      for(n = cnt - 3; n >= 2; n--) {
+      for(n = cnt - 3; n > 2; n--) {
         wpList.take(n);
       }
       pTask->setWaypointList(wpList);
     }        
     break;
   case FlightTask::Route:
+    KMessageBox::information (this, i18n("Task Type Traditional Route:\n"
+      "You can define a task with takeoff, start, end, landing and route points. "
+      "Deleting takeoff start, end and landing is not possible, "
+      "but you can replace them with other waypoints.\n"
+      "New waypoints will be added after the selected one."), i18n("Task selection"),
+      i18n("Do not show this message again."));
     left->setEnabled(false);
     right->setEnabled(false);
     left->setChecked(false);

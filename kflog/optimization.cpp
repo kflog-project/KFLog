@@ -100,11 +100,13 @@ void Optimization::run(){
   unsigned int *w;                  // waypoints
   double length;                    // solution length
 
-  unsigned int i,j,k;               // loop variables
+  unsigned int i,j,k, ii;               // loop variables
   unsigned int n;                   // number of points
   double c;                         // temp variables
   unsigned int index;
-
+  double wLeg;
+  flightPoint **rp;
+  
   n=route.count()+1;
   qWarning(QString("Number of points to optimize: %1").arg(n));
   if(progress){
@@ -116,29 +118,44 @@ void Optimization::run(){
   // allocate memory
   L=(double *) malloc((n+1)*(LEGS+1)*sizeof(double));
   w=(unsigned int *) malloc((n+1)*(LEGS+1)*sizeof(unsigned int));
+  rp = (flightPoint **) malloc(route.count() * sizeof(flightPoint *));
+  
   Q_CHECK_PTR(L);
   Q_CHECK_PTR(w);
-  
+  Q_CHECK_PTR(rp);
+
   for (i=0;i<=n-1;i++){
     L[i+0*n]=0;
   }
+  
+   for (i = 0; i < route.count(); i++){
+     rp[i] = route.at(i);
+   }
+  
   for (k=1;k<=LEGS;k++){
+    ii = (k-1)*n;
+    wLeg = weight(k);
+    
     for (i=0;i<n-1;i++){
       kapp->processEvents();
       if (stopit){
           free(L);
           free(w);
+          free(rp);
           progress->setProgress(0);
           optimized=false;
           return;
       }
-      if(progress)
-        progress->setProgress(i+k*n);
       index=i+k*n;
+
+      if(progress) {
+        progress->setProgress(index);
+      }
+      
       L[index]=0;
       c=0;
       for (j=0;j<i;j++){
-        c=L[j+(k-1)*n]+weight(k)*dist(route.at(j),route.at(i));
+        c=L[j+ii]+wLeg*dist(rp[j], rp[i]);
         if (c>L[index]){
           L[index]=c;
           w[index]=j;
@@ -174,6 +191,7 @@ void Optimization::run(){
     // free memory
     free(L);
     free(w);
+    free(rp);
 
     if(progress)
       progress->setProgress(0);
