@@ -19,6 +19,7 @@
 #include "basemapelement.h"
 #include "airport.h"
 #include "waypointelement.h"
+#include "mapcalc.h"
 
 #include <pwd.h>
 #include <stdlib.h>
@@ -40,12 +41,13 @@
 #define COL_WAYPOINT_TYPE 3
 #define COL_WAYPOINT_LAT 4
 #define COL_WAYPOINT_LONG 5
-#define COL_WAYPOINT_FREQ 6
-#define COL_WAYPOINT_ELEV 7
-#define COL_WAYPOINT_RUNWAY 8
-#define COL_WAYPOINT_LENGTH 9
-#define COL_WAYPOINT_SURFACE 10
-#define COL_WAYPOINT_COMMENT 11
+#define COL_WAYPOINT_ELEV 6
+#define COL_WAYPOINT_FREQ 7
+#define COL_WAYPOINT_IS_LANDABLE 8
+#define COL_WAYPOINT_RUNWAY 9
+#define COL_WAYPOINT_LENGTH 10
+#define COL_WAYPOINT_SURFACE 11
+#define COL_WAYPOINT_COMMENT 12
 
 TaskAndWaypoint::TaskAndWaypoint(QWidget *parent, const char *name )
   : KDialog(parent, name, true)
@@ -100,7 +102,6 @@ TaskAndWaypoint::~TaskAndWaypoint()
 
 void TaskAndWaypoint::initSurfaces()
 {
-  TranslationElement *te;
   surfaces.setAutoDelete(true);
 
   surfaces.append(new TranslationElement(Airport::NotSet, i18n("Unknown")));
@@ -109,15 +110,10 @@ void TaskAndWaypoint::initSurfaces()
   surfaces.append(new TranslationElement(Airport::Concrete, i18n("Concrete")));
 
   surfaces.sort();
-  // index by id
-  for (te = surfaces.first(); te != 0; te = surfaces.next()) {
-    surfacesById.insert(te->id, te);
-  }
 }
 
 void TaskAndWaypoint::initTypes()
 {
-  TranslationElement *te;
   waypointTypes.setAutoDelete(true);
 
   // don't know if we really need all of them
@@ -149,10 +145,6 @@ void TaskAndWaypoint::initTypes()
   waypointTypes.append(new TranslationElement(BaseMapElement::Village, i18n("Village")));
 
   waypointTypes.sort();
-  // index by id
-  for (te = waypointTypes.first(); te != 0; te = waypointTypes.next()) {
-    waypointTypesById.insert(te->id, te);
-  }
 }
 
 /** No descriptions */
@@ -175,21 +167,22 @@ void TaskAndWaypoint::addTaskWindow(QSplitter *s)
 void TaskAndWaypoint::addWaypointWindow(QSplitter *s)
 {
   QWidget *w = new QWidget(s);
-  waypoints =  new KFLogTable(0, 12, w, "waypoints");
+  waypoints =  new KFLogTable(0, 13, w, "waypoints");
 
   QHeader *h = waypoints->horizontalHeader();
-  h->setLabel(0, i18n("Name"));
-  h->setLabel(1, i18n("Description"));
-  h->setLabel(2, i18n("ICAO"));
-  h->setLabel(3, i18n("Type"));
-  h->setLabel(4, i18n("Latitude"));
-  h->setLabel(5, i18n("Longitude"));
-  h->setLabel(6, i18n("Frequency"));
-  h->setLabel(7, i18n("Elevation (m)"));
-  h->setLabel(8, i18n("Runway"));
-  h->setLabel(9, i18n("Length (m)"));
-  h->setLabel(10, i18n("Surface"));
-  h->setLabel(11, i18n("Comment"));
+  h->setLabel(COL_WAYPOINT_NAME, i18n("Name"));
+  h->setLabel(COL_WAYPOINT_DESCRIPTION, i18n("Description"));
+  h->setLabel(COL_WAYPOINT_ICAO, i18n("ICAO"));
+  h->setLabel(COL_WAYPOINT_TYPE, i18n("Type"));
+  h->setLabel(COL_WAYPOINT_LAT, i18n("Latitude"));
+  h->setLabel(COL_WAYPOINT_LONG, i18n("Longitude"));
+  h->setLabel(COL_WAYPOINT_ELEV, i18n("Elevation (m)"));
+  h->setLabel(COL_WAYPOINT_FREQ, i18n("Frequency"));
+  h->setLabel(COL_WAYPOINT_IS_LANDABLE, i18n("Landable"));
+  h->setLabel(COL_WAYPOINT_RUNWAY, i18n("Runway"));
+  h->setLabel(COL_WAYPOINT_LENGTH, i18n("Length (m)"));
+  h->setLabel(COL_WAYPOINT_SURFACE, i18n("Surface"));
+  h->setLabel(COL_WAYPOINT_COMMENT, i18n("Comment"));
 
   connect(waypoints, SIGNAL(pressed(int, int, int, const QPoint &)),
     SLOT(showWaypointPopup(int, int, int, const QPoint &)));
@@ -358,8 +351,7 @@ void TaskAndWaypoint::reject()
 /** insert waypoint from waypoint dialog */
 void TaskAndWaypoint::slotAddWaypoint()
 {
-  int idx, comboIdx;
-  WaypointList *wl = waypointCatalogs.current()->wpList;
+  int comboIdx;
 
   if (!waypointDlg->name->text().isEmpty()) {
     // insert a new waypoint to current catalog
@@ -369,8 +361,8 @@ void TaskAndWaypoint::slotAddWaypoint()
     comboIdx = waypointDlg->waypointType->currentItem();
     // translate to id
     w->type = comboIdx != -1 ? waypointTypes.at(comboIdx)->id : -1;
-    w->pos.setX(waypointDlg->longitude->seconds());
-    w->pos.setY(waypointDlg->latitude->seconds());
+    w->pos.setX(pos2Units(waypointDlg->longitude->text(), false));
+    w->pos.setY(pos2Units(waypointDlg->latitude->text(), true));
     w->elevation = waypointDlg->elevation->text().toInt();
     w->icao = waypointDlg->icao->text().upper();
     w->frequency = waypointDlg->frequency->text().toDouble();
@@ -381,15 +373,9 @@ void TaskAndWaypoint::slotAddWaypoint()
     w->surface = comboIdx != -1 ? surfaces.at(comboIdx)->id : -1;
     w->comment = waypointDlg->comment->text();
 
-    idx = wl->insertItem(w);
-    if (idx != -1) {
+    if (waypointCatalogs.current()->wpList.insertItem(w)) {
       waypointCatalogs.current()->modified = true;
-      // check if we have a new item
-      if ((int)wl->count() > waypoints->numRows()) {
-        waypoints->insertRow(idx);
-      }
-
-      fillWaypoints(idx, idx);
+      fillWaypoints();
     }
   }
 }
@@ -397,21 +383,22 @@ void TaskAndWaypoint::slotAddWaypoint()
 /** No descriptions */
 void TaskAndWaypoint::slotEditWaypoint()
 {
-  int idx = waypoints->currentRow();
+  int row = waypoints->currentRow();
   int comboIdx;
-  QString tmp;
+  QString tmp, oldName;
 
-  if (idx >= 0) {
-    WaypointList *wl = waypointCatalogs.current()->wpList;
-    WaypointElement *w = wl->at(idx);
+  if (row >= 0) {
+    WaypointList *wl = &waypointCatalogs.current()->wpList;
+    oldName = waypoints->text(row, COL_WAYPOINT_NAME);
+    WaypointElement *w = wl->find(oldName);
 
     // initialize dialg
     waypointDlg->name->setText(w->name);
     waypointDlg->description->setText(w->description);
     // translate id to index
-    waypointDlg->waypointType->setCurrentItem(waypointTypes.findRef(waypointTypesById[w->type]));
-    waypointDlg->longitude->setSeconds(w->pos.x());
-    waypointDlg->latitude->setSeconds(w->pos.y());
+    waypointDlg->waypointType->setCurrentItem(waypointTypes.idxById(w->type));
+    waypointDlg->longitude->setText(printPos(w->pos.x(), false));
+    waypointDlg->latitude->setText(printPos(w->pos.y(), true));
     tmp.sprintf("%d", w->elevation);
     waypointDlg->elevation->setText(tmp);
     waypointDlg->icao->setText(w->icao);
@@ -422,8 +409,9 @@ void TaskAndWaypoint::slotEditWaypoint()
     tmp.sprintf("%d", w->length);
     waypointDlg->length->setText(tmp);
     // translate to id
-    waypointDlg->surface->setCurrentItem(surfaces.findRef(surfacesById[w->surface]));
+    waypointDlg->surface->setCurrentItem(surfaces.idxById(w->surface));
     waypointDlg->comment->setText(w->comment);
+    waypointDlg->isLandable->setChecked(w->isLandable);
 
     if (waypointDlg->exec() == Accepted) {
       if (!waypointDlg->name->text().isEmpty()) {
@@ -432,8 +420,8 @@ void TaskAndWaypoint::slotEditWaypoint()
         comboIdx = waypointDlg->waypointType->currentItem();
         // translate to id
         w->type = comboIdx != -1 ? waypointTypes.at(comboIdx)->id : -1;
-        w->pos.setX(waypointDlg->longitude->seconds());
-        w->pos.setY(waypointDlg->latitude->seconds());
+        w->pos.setX(pos2Units(waypointDlg->longitude->text(), false));
+        w->pos.setY(pos2Units(waypointDlg->latitude->text(), true));
         w->elevation = waypointDlg->elevation->text().toInt();
         w->icao = waypointDlg->icao->text().upper();
         w->frequency = waypointDlg->frequency->text().toDouble();
@@ -443,9 +431,16 @@ void TaskAndWaypoint::slotEditWaypoint()
         // translate to id
         w->surface = comboIdx != -1 ? surfaces.at(comboIdx)->id : -1;
         w->comment = waypointDlg->comment->text();
+        w->isLandable = waypointDlg->isLandable->isChecked();
+
+        /* name has changed, remove old key and insert a new key */
+        if (oldName != w->name) {
+          wl->take(oldName);
+          wl->insertItem(w);
+        }
 
         waypointCatalogs.current()->modified = true;
-        fillWaypoints(idx, idx);
+        fillWaypoints();
       }
     }
   }
@@ -454,75 +449,55 @@ void TaskAndWaypoint::slotEditWaypoint()
 /** No descriptions */
 void TaskAndWaypoint::slotDeleteWaypoint()
 {
-  int idx = waypoints->currentRow();
-  WaypointList *wl = waypointCatalogs.current()->wpList;
-  waypoints->deleteRow(idx);
-  wl->remove(idx);
+  QString tmp = waypoints->text(waypoints->currentRow(), COL_WAYPOINT_NAME);
+  waypointCatalogs.current()->wpList.remove(tmp);
+  waypointCatalogs.current()->modified = true;
+  fillWaypoints();
 }
 
 /** No descriptions */
-void TaskAndWaypoint::fillWaypoints(int start, int end)
+void TaskAndWaypoint::fillWaypoints()
 {
-  int degree, min, sec;
-  div_t divRes;
   QString tmp;
-  WaypointList *wl = waypointCatalogs.current()->wpList;
   WaypointElement *w;
+  QDictIterator<WaypointElement> it(waypointCatalogs.current()->wpList);
+  int row = 0;
 
-  if (end == -1) {
-    end = wl->count() - 1;
-  }
+  waypoints->setNumRows(it.count());
 
-  while (start <= end) {
-    w = wl->at(start);
-
-    waypoints->setItem(start, COL_WAYPOINT_NAME, new QTableItem(waypoints, QTableItem::Never, w->name));
-    waypoints->setItem(start, COL_WAYPOINT_DESCRIPTION, new QTableItem(waypoints, QTableItem::Never, w->description));
-    waypoints->setItem(start, COL_WAYPOINT_ICAO, new QTableItem(waypoints, QTableItem::Never, w->icao));
-
-    waypoints->setItem(start, COL_WAYPOINT_TYPE, new QTableItem(waypoints, QTableItem::Never,
-      w->type == -1 ? QString::null : waypointTypesById[w->type]->text));
-
-    divRes = div(w->pos.y(), 3600);
-    degree = divRes.quot;
-    divRes = div(divRes.rem, 60);
-    min = divRes.quot;
-    sec = divRes.rem;
-    tmp.sprintf("%c%02d°%02d'%02d\"", w->pos.y() >= 0 ? 'N' : 'S', degree, min, sec);
-    waypoints->setItem(start, COL_WAYPOINT_LAT, new QTableItem(waypoints, QTableItem::Never, tmp));
-
-    divRes = div(w->pos.x(), 3600);
-    degree = divRes.quot;
-    divRes = div(divRes.rem, 60);
-    min = divRes.quot;
-    sec = divRes.rem;
-    tmp.sprintf("%c%03d°%02d'%02d\"", w->pos.x() >= 0 ? 'E' : 'W', degree, min, sec);
-    waypoints->setItem(start, COL_WAYPOINT_LONG, new QTableItem(waypoints, QTableItem::Never, tmp));
-
-    tmp.sprintf("%.3f", w->frequency);
-    waypoints->setItem(start, COL_WAYPOINT_FREQ, new QTableItem(waypoints, QTableItem::Never, tmp));
+  for (w = it.current(); w != 0; w = ++it) {
+    waypoints->setItem(row, COL_WAYPOINT_NAME, new QTableItem(waypoints, QTableItem::Never, w->name));
+    waypoints->setItem(row, COL_WAYPOINT_DESCRIPTION, new QTableItem(waypoints, QTableItem::Never, w->description));
+    waypoints->setItem(row, COL_WAYPOINT_ICAO, new QTableItem(waypoints, QTableItem::Never, w->icao));
+    waypoints->setItem(row, COL_WAYPOINT_TYPE, new QTableItem(waypoints, QTableItem::Never,
+      w->type == -1 ? QString::null : waypointTypes.itemById(w->type)->text));
+    waypoints->setItem(row, COL_WAYPOINT_LAT, new QTableItem(waypoints, QTableItem::Never,
+      printPos(w->pos.y(), true)));
+    waypoints->setItem(row, COL_WAYPOINT_LONG, new QTableItem(waypoints, QTableItem::Never,
+      printPos(w->pos.x(), false)));
     tmp.sprintf("%d", w->elevation);
-    waypoints->setItem(start, COL_WAYPOINT_ELEV, new QTableItem(waypoints, QTableItem::Never, tmp));
+    waypoints->setItem(row, COL_WAYPOINT_ELEV, new QTableItem(waypoints, QTableItem::Never, tmp));
+    tmp.sprintf("%.3f", w->frequency);
+    waypoints->setItem(row, COL_WAYPOINT_FREQ, new QTableItem(waypoints, QTableItem::Never, tmp));
+    waypoints->setItem(row, COL_WAYPOINT_IS_LANDABLE, new QTableItem(waypoints, QTableItem::Never,
+      w->isLandable == true ? i18n("Yes") : QString::null));
     tmp.sprintf("%02d", w->runway);
-    waypoints->setItem(start, COL_WAYPOINT_RUNWAY, new QTableItem(waypoints, QTableItem::Never, tmp));
+    waypoints->setItem(row, COL_WAYPOINT_RUNWAY, new QTableItem(waypoints, QTableItem::Never, tmp));
     tmp.sprintf("%d", w->length);
-    waypoints->setItem(start, COL_WAYPOINT_LENGTH, new QTableItem(waypoints, QTableItem::Never, tmp));
+    waypoints->setItem(row, COL_WAYPOINT_LENGTH, new QTableItem(waypoints, QTableItem::Never, tmp));
+    waypoints->setItem(row, COL_WAYPOINT_SURFACE, new QTableItem(waypoints, QTableItem::Never,
+      w->surface == -1 ? QString::null : surfaces.itemById(w->surface)->text));
+    waypoints->setItem(row, COL_WAYPOINT_COMMENT, new QTableItem(waypoints, QTableItem::Never, w->comment));
 
-    waypoints->setItem(start, COL_WAYPOINT_SURFACE, new QTableItem(waypoints, QTableItem::Never,
-      w->surface == -1 ? QString::null : surfacesById[w->surface]->text));
-
-    waypoints->setItem(start, COL_WAYPOINT_COMMENT, new QTableItem(waypoints, QTableItem::Never, w->comment));
-
-    start++;
+    row++;
   }
+  waypoints->sort();
 }
 
 /** No descriptions */
 void TaskAndWaypoint::slotSwitchWaypointCatalog(int idx)
 {
-  WaypointList *wl = waypointCatalogs.at(idx)->wpList;
-
-  waypoints->setNumRows(wl->count());
+  waypointCatalogs.at(idx);
   fillWaypoints();
 }
 
@@ -549,7 +524,6 @@ void TaskAndWaypoint::slotImportWaypointCatalog()
     // read from disk
     w->read(fName);
     w->modified = true;
-    waypoints->setNumRows(w->wpList-> count());
     fillWaypoints();
   }
 }

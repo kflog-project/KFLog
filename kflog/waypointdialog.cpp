@@ -100,6 +100,9 @@ void WaypointDialog::__initDialog()
   l = new QLabel(frequency, i18n("%1:").arg("&Frequency"), this);
   layout->addWidget(l, 4, 1);
 
+  isLandable = new QCheckBox(i18n("L&andable"), this);
+  layout->addWidget(isLandable, 5, 2);
+
   runway = new QLineEdit(this);
   layout->addWidget(runway, 7, 0);
   l = new QLabel(runway, i18n("%1:").arg("&Runnway"), this);
@@ -140,6 +143,7 @@ void WaypointDialog::clear()
   comment->clear();
   latitude->clear();
   longitude->clear();
+  isLandable->setChecked(false);
 }
 /** No descriptions */
 void WaypointDialog::slotAddWaypoint()

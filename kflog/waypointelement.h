@@ -52,6 +52,8 @@ public: // Public attributes
   double frequency;
   /** LAT/LONG */
   QPoint pos;
+  /** flag for landable*/
+  bool isLandable;
 };
 
 #endif

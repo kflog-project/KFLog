@@ -29,24 +29,15 @@ WaypointList::~WaypointList()
 {
 }
 
-/** No descriptions */
-int WaypointList::compareItems(QCollection::Item e1, QCollection::Item e2)
+/** insert a new item into the list and check if waypoint already exist */
+bool WaypointList::insertItem(WaypointElement *e)
 {
-  return (((WaypointElement *)e1)->name.compare(((WaypointElement *)e2)->name));
-}
-
-/** insert a new item into the list, sort inplace and return index of new item
-    check if waypoint already exist */
-int WaypointList::insertItem(WaypointElement *e)
-{
-  int idx;
   WaypointElement *tmp;
+  bool ins = true;
 
-  if ((idx = find(e)) != -1) {
+  if ((tmp = find(e->name)) != 0) {
     switch (KMessageBox::warningYesNoCancel(0, i18n("Waypoint<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Overwrite it?").arg(e->name))) {
     case KMessageBox::Yes:
-      tmp = current();
-      tmp->name = e->name;
       tmp->description = e->description;
       tmp->type = e->type;
       tmp->pos = e->pos;
@@ -57,16 +48,16 @@ int WaypointList::insertItem(WaypointElement *e)
       tmp->length = e->length;
       tmp->surface = e->surface;
       tmp->comment = e->comment;
+      tmp->isLandable = e->isLandable;
       break;
     case KMessageBox::Cancel:
-      idx = -1;
+      ins = false;
       break;
     }
   }
   else {
-    inSort(e);
-    idx = findRef(e);
+    insert(e->name, e);
   }
 
-  return idx;
+  return ins;
 }

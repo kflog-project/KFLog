@@ -20,22 +20,19 @@
 
 #include "waypointelement.h"
 
-#include <qlist.h>
+#include <qdict.h>
 
 /**
   *@author Harald Maier
   */
+typedef QDict<WaypointElement> WaypointListBase;
 
-typedef QList<WaypointElement> WaypointListBase;
-
-class WaypointList : public WaypointListBase {
+class WaypointList :public WaypointListBase {
 public: 
 	WaypointList();
 	~WaypointList();
   /** No descriptions */
-  virtual int compareItems(QCollection::Item e1, QCollection::Item e2);
-  /** No descriptions */
-  int insertItem(WaypointElement *e);
+  bool insertItem(WaypointElement *e);
 };
 
 #endif

@@ -27,7 +27,6 @@
 #include <qsplitter.h>
 #include <qcombobox.h>
 #include <qlist.h>
-#include <qintdict.h>
 
 #include <kconfig.h>
 #include <kdialog.h>
@@ -54,12 +53,10 @@ private: // Private methods
   /** No descriptions */
   void addPopupMenu();
   /** No descriptions */
-  void fillWaypoints(int start = 0, int end = -1);
+  void fillWaypoints();
 private: // Private attributes
   TranslationList surfaces;
-  QIntDict<TranslationElement> surfacesById;
   TranslationList waypointTypes;
-  QIntDict<TranslationElement> waypointTypesById;
   /** popup menu for tasks's */
   KPopupMenu *taskPointPopup;
   /** popup menu for waypoint's */

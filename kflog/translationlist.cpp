@@ -29,3 +29,22 @@ int TranslationList::compareItems(QCollection::Item e1, QCollection::Item e2)
 {
   return (((TranslationElement *)e1)->text.compare(((TranslationElement *)e2)->text));
 }
+
+/** append new element and idex by id */
+void TranslationList::append(const TranslationElement *item)
+{
+  QGList::append((void *)item);
+  // index by id
+  idIndex.insert(item->id, item);
+}
+/** return index by ID */
+int TranslationList::idxById(int id)
+{
+  // find item and return index
+  return findRef(idIndex[id]);
+}
+/** return a transaltion element item by given id */
+TranslationElement *TranslationList::itemById(int id)
+{
+  return idIndex[id];
+}

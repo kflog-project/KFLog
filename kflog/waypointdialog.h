@@ -22,6 +22,7 @@
 
 #include <qwidget.h>
 #include <qlineedit.h>
+#include <qcheckbox.h>
 
 #include <kcombobox.h>
 #include <kdialog.h>
@@ -63,6 +64,8 @@ public: // Public attributes
   LatEdit *latitude;
   /**  */
   LongEdit *longitude;
+  /** */
+  QCheckBox *isLandable;
 public slots: // Public slots
   /** clear all entries */
   void clear();

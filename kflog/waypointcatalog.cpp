@@ -33,14 +33,10 @@ WaypointCatalog::WaypointCatalog()
   config->setGroup("Path");
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory", getpwuid(getuid())->pw_dir);
   path = wayPointDir + "/" + i18n("unnamed.kflogwp");
-
-  wpList = new WaypointList;
-  wpList->setAutoDelete(true);
 }
 
 WaypointCatalog::~WaypointCatalog()
 {
-  delete wpList;
 }
 
 /** read a catalog from file */
@@ -69,20 +65,19 @@ bool WaypointCatalog::read(QString &catalog)
           w->type = nm.namedItem("Type").toAttr().value().toInt();
           w->pos.setY(nm.namedItem("Latitude").toAttr().value().toInt());
           w->pos.setX(nm.namedItem("Longitude").toAttr().value().toInt());
-          w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
           w->elevation = nm.namedItem("Elevation").toAttr().value().toInt();
+          w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
+          w->isLandable = nm.namedItem("Landable").toAttr().value().toInt();
           w->runway = nm.namedItem("Runway").toAttr().value().toInt();
           w->length = nm.namedItem("Length").toAttr().value().toInt();
           w->surface = nm.namedItem("Surface").toAttr().value().toInt();
           w->comment = nm.namedItem("Comment").toAttr().value();
 
-          if (wpList->insertItem(w) == -1) {
+          if (!wpList.insertItem(w)) {
             break;
           }
         }
 
-        // everything's fine now
-        wpList->sort();
         ok = true;
       }
       else {
@@ -113,6 +108,7 @@ bool WaypointCatalog::write()
   WaypointElement *w;
   QFile f;
   QString fName = path;
+  QDictIterator<WaypointElement> it(wpList);
 
   if (!onDisc) {
     fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)", 0, i18n("Save waypoint catalog"));
@@ -130,7 +126,7 @@ bool WaypointCatalog::write()
 
   doc.appendChild(root);
 
-  for (w = wpList->first(); w != 0; w = wpList->next()) {
+  for (w = it.current(); w != 0; w = ++it) {
     child = doc.createElement("Waypoint");
 
     child.setAttribute("Name", w->name);
@@ -139,8 +135,9 @@ bool WaypointCatalog::write()
     child.setAttribute("Type", w->type);
     child.setAttribute("Latitude", w->pos.y());
     child.setAttribute("Longitude", w->pos.x());
-    child.setAttribute("Frequency", w->frequency);
     child.setAttribute("Elevation", w->elevation);
+    child.setAttribute("Frequency", w->frequency);
+    child.setAttribute("Landable", w->isLandable);
     child.setAttribute("Runway", w->runway);
     child.setAttribute("Length", w->length);
     child.setAttribute("Surface", w->surface);

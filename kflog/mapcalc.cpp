@@ -67,23 +67,25 @@ QString printPos(int coord, bool isLat)
   sec = (sec * 60) / 10000;
 
   min = (int)sqrt(min * min);
-  if(min < 10)  posMin.sprintf(" 0%d'", min);
-  else  posMin.sprintf(" %d'", min);
+  //if(min < 10)  posMin.sprintf(" 0%d'", min);
+  //else
+  posMin.sprintf(" %02d'", min);
 
   sec = (int)sqrt(sec * sec);
-  if(sec < 10)  posSec.sprintf(" 0%d\"", sec);
-  else  posSec.sprintf(" %d\"", sec);
+  //if(sec < 10)  posSec.sprintf(" 0%d\"", sec);
+  //else
+  posSec.sprintf(" %02d\"", sec);
 
   if(isLat)
     {
       if(coord < 0)
         {
-          posDeg.sprintf("%d°", -degree);
+          posDeg.sprintf("%02d°", -degree);
           pos = posDeg + posMin + posSec + " S";
         }
       else
         {
-          posDeg.sprintf("%d°", degree);
+          posDeg.sprintf("%02d°", degree);
           pos = posDeg + posMin + posSec + " N";
         }
     }
@@ -91,12 +93,12 @@ QString printPos(int coord, bool isLat)
     {
       if(coord < 0)
         {
-          posDeg.sprintf("%d°", -degree);
+          posDeg.sprintf("%03d°", -degree);
           pos = posDeg + posMin + posSec + " W";
         }
       else
         {
-          posDeg.sprintf("%d°", degree);
+          posDeg.sprintf("%03d°", degree);
           pos = posDeg + posMin + posSec + " E";
         }
     }
@@ -159,4 +161,33 @@ double polar(double x, double y)
   if(angle > (2 * PI))  angle = angle - (2 * PI);
 
   return angle;
+}
+
+/* convert position to internal units of 1/10000 min. */
+int pos2Units(const QString &pos, bool isLat)
+{
+  int degree, min, sec, result = 0;
+
+  if (isLat) {
+    degree = pos.left(2).toInt();
+    min = pos.mid(4, 2).toInt();
+    sec = pos.mid(8, 2).toInt();
+  }
+  else {
+    degree = pos.left(3).toInt();
+    min = pos.mid(5, 2).toInt();
+    sec = pos.mid(9, 2).toInt();
+  }
+
+  result = (degree * 600000) + (min * 10000) + (sec * 10000 / 60);
+  result++;
+
+  if (isLat && pos.right(1) == "S") {
+    result = -result;
+  }
+  else if (pos.right(1) == "W") {
+    result = -result;
+  }
+
+  return result;
 }

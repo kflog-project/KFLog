@@ -34,7 +34,7 @@ public:
   bool write();
 public: // Public attributes
   /**  */
-  WaypointList *wpList;
+  WaypointList wpList;
   QString path;
   bool modified;
   /**  */
