@@ -684,7 +684,7 @@ bool WaypointCatalog::writeFilserDA4 (const QString& catalog)
       buffer.setName(w->name);
       buffer.setLat(w->origP.lat()/600000.0);
       buffer.setLon(w->origP.lon()/600000.0);
-      buffer.setElev((short int)round(w->elevation/0.3048));
+//      buffer.setElev((short int)round(w->elevation/0.3048));
       buffer.setFreq(w->frequency);
       buffer.setLen(w->length);
       buffer.setDir(w->runway);

@@ -299,7 +299,7 @@ QPoint EvaluationCanvas::__varioPoint(float durch[], int gn, int i)
   //  return QPoint(x, y);
 }
 
-void EvaluationCanvas::__drawCsystem(QPainter painter)
+void EvaluationCanvas::__drawCsystem(QPainter * painter)
 {
   /*
    * Die Schleife unten kann nicht terminieren, wenn scale_h negativ ist!
@@ -326,8 +326,8 @@ void EvaluationCanvas::__drawCsystem(QPainter painter)
   QCanvasLine yAxisLine = QCanvasLine(canvas);
   yAxisLine.setPoints(KOORD_DISTANCE,hoehe - Y_ABSTAND, KOORD_DISTANCE, Y_ABSTAND);
 
-  yAxisLine.draw(painter);
-  xAxisLine.draw(painter);
+  //yAxisLine.draw(*painter);
+  //xAxisLine.draw(*painter);
 
 
   // Vario Null Linie
