@@ -1,5 +1,9 @@
 $Id$
 
+2002-06-13 Thomas <thomas@kflog.org>
+
+  * Click on waypoint from WaypointCatalog in map to add to task.
+
 
 2002-06-12 Thomas <thomas@kflog.org>
 
