@@ -153,7 +153,6 @@ void WaypointDialog::clear()
 {
   name->clear();
   description->clear();
-  waypointType->setCurrentItem(-1);
   elevation->clear();
   icao->clear();
   frequency->clear();
@@ -164,6 +163,7 @@ void WaypointDialog::clear()
   latitude->clear();
   longitude->clear();
   isLandable->setChecked(false);
+  setWaypointType(BaseMapElement::Landmark);
 }
 /** No descriptions */
 void WaypointDialog::slotAddWaypoint()

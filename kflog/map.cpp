@@ -892,7 +892,7 @@ warning("Map::mousePressEvent: planning=%d", planning);
                 QPoint p = _globalMapMatrix.mapToWgs(current);
 
                 // initialize dialog
-                waypointDlg->setWaypointType(BaseMapElement::Landmark);
+                //waypointDlg->setWaypointType(BaseMapElement::Landmark); now set by default.
                 waypointDlg->longitude->setText(printPos(p.x(), false));
                 waypointDlg->latitude->setText(printPos(p.y(), true));
                 waypointDlg->setSurface(-1);
