@@ -8,12 +8,13 @@ Um die Daten aus einem Logger zu lesen, wird der Logger in der Regel durch ein D
 Hier kann nun der Logger und die Schnittstelle, über die der Logger mit dem Computer verbunden ist, eingestellt werden.
 \begin{figure}[htpb]
 \begin{center}
-\includegraphics[scale=1]{Bilder/fertig/Loggerdialog.ps} 
+\includegraphics[scale=.34]{Bilder/fertig/Loggerdialog-Logger.png} 
 \\
 \caption{Verbindung mit einem Logger}
 \end{center}
 \end{figure}
-Z.Z. werden die Logger vom Typ Volkslogger,Filser und Garmin unterstützt.
+Z.Z. werden die Logger vom Typ Volkslogger,Filser und Garmin unterstützt. Eine Unterstützung anderer Geräte ist davon abhängig, wie der Hersteller die Dokumentationen für die entsprechenden Schnittstellen zur Verfügung stellt.\\
+
 Weiterhin ist es möglich Flüge, die mit dem Cumulus-System (http://cumulus.kflog.org/) aufgezeichnet worden sind, einzulesen.
 \\Der Verbindungsaufbau erfolgt im wesentlichen in 3 Schritten:
 \begin{enumerate}
@@ -27,7 +28,7 @@ Durch Klick auf das Symbol mit der Bezeichnung ''Flüge'' wird der Einlesedialog 
 Hier kann man zunächst eine Liste mit allen auf dem Logger aufgezeichneten Flügen laden, indem man den Knopf ''Liste Laden'' betätigt.
 \begin{figure}[htpb]
 \begin{center}
-\includegraphics[scale=1]{Bilder/fertig/Loggerdialog-Flüge.ps} 
+\includegraphics[scale=.34]{Bilder/fertig/Loggerdialog-Flüge.png} 
 \\
 \caption{Loggerdialog-Flüge}
 \end{center}
@@ -35,16 +36,23 @@ Hier kann man zunächst eine Liste mit allen auf dem Logger aufgezeichneten Flüge
 \\Diese Liste wird dann in einer Übersicht, chronologisch geordnet, angezeigt (s. Abb. 29). 
 Nun kann der gewünschte Flug mit der Maus markiert und vom Logger gelesen werden (Klick auf ''Flug sichern''), wobei eine IGC-Datei erzeugt wird.
 Diese Datei wird im Verzeichnis für die Flüge abgelegt.
-\subsubsection{Aufgaben in den Logger laden}
+\subsubsection{Aufgaben Anmelden}
 Um für eine Aufgabe die maximal mögliche Punktzahl zu erhalten, ist es notwendig, den Flug vor Beginn zu deklarieren, d.h. die Anmeldung und die Aufgabe müssen vor dem Start an den Logger übermittelt werden.
 \\Die Anmeldung erfolgt im Loggerdialog indem man auf das Symbol Anmeldung klickt.
-In diesem Dialog kann man die Aufgabe auswählen (diese Aufgabe muss vorher erstellt bzw. in KFlog eingeladen worden sein). Die Ausgewählte Aufgabe wird als Übersicht mit den Wendepunkten und der Entfernung angezeigt. Vor dem Übertragen sind im untereren Bereich noch die Namen der Piloten sowie die Wettbewerbsklasse in die freien Felder einzutragen und der Flugzeugtyp ist einzustellen.
+In diesem Dialog kann die Aufgabe ausgewählt werden (diese Aufgabe muss vorher erstellt bzw. in KFlog eingeladen worden sein). Die ausgewählte Aufgabe wird als Übersicht mit den Wendepunkten und der Entfernung dargestellt.
+\\ Vor dem Übertragen sind im untereren Bereich noch die Namen der Piloten sowie die Wettbewerbsklasse in die freien Felder einzutragen und der Flugzeugtyp ist einzustellen (s.Abb. 30).
 \\Anschließend kann der Knopf ''Anmeldung an Logger übertragen'' geklickt werden und die Daten werden in den Logger transferiert. Anschließend kann am Logger überprüft werden, ob die Daten ordnungsgemäß im Logger ''angekommen'' sind.
 \begin{figure}[htpb]
 \begin{center}
-\includegraphics[scale=1]{Bilder/fertig/Loggerdialog-Anmeldung.ps} 
+\includegraphics[scale=1]{Bilder/fertig/Loggerdialog-Anmeldung.png} 
 \\
 \caption{Anmeldung einer Aufgabe in den Logger}
 \end{center}
 \end{figure}  
-
+\newpage
+\subsubsection{Aufgaben vom bzw. zum Logger übertragen}
+Bei einigen Loggern ist es möglich, eine Aufgabenliste im Logger abzulegen. Auf dieser Liste kann dann z.B. bei der Fluganmeldung zurückgegriffen werden.\\
+Um Aufgaben, die mit KFlog erstellt worden sind, an den Logger zu übertragen, muss im Loggerdialog der Punkt ''Aufgaben'' gewählt werden. Im Fenster erscheint eine Liste
+\subsubsection{Wendepunkte vom bzw. zum Logger übertragen}
+Bei verschiedenen Loggern ist es möglich eine Wendepunktliste zu führen. Wenn der Logger und KFlog einen unterschiedlichen Datenstand besitzen, können im Loggerdialog mit Klick auf das Icon ''Wegpunkte'' einzelne Wegpunkte ausgewählt und an den Logger übertragen werden. \\
+Es ist ebenso möglich die Wegpunkte, die im Loger gespeichert sind in den vorhandenen Wegpunktkatalog einzulesen.
