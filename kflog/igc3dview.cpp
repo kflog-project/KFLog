@@ -44,6 +44,18 @@
 #define X_ABSTAND 100
 #define Y_ABSTAND 30
 
+#define DISPLAY_HELP_MESSAGE QMessageBox::information( this, i18n("Help for 3D view"), \
+                                      i18n("Basic key functions:\n\n" \
+												"Left/Right :\t rotate \n"  \
+												"Up/Down : \t tilt \n"        \
+												"+/- : \t zoom \n"               \
+												"S : \t \t toggle shadow \n" \
+												"B : \t \t toggle back \n"       \
+												"F : \t \t toggle front \n"),     \
+                                      i18n("&Ok"), 0,  0 );
+
+
+
 class Igc3DViewState;
 class Igc3DPolyhedron;
 
@@ -211,17 +223,7 @@ void Igc3DView::keyPressEvent ( QKeyEvent * k )
 			change_mag(n);
 			break;
 		case Key_F1:
-			QMessageBox::information( this, i18n("Help for 3D view"),
-                                      i18n("Basic key functions:\n\n"
-												"Left/Right :\t rotate \n"
-												"Up/Down : \t tilt \n"
-												"+/- : \t zoom \n"
-												"S : \t \t toggle shadow \n"
-												"B : \t \t toggle back \n"
-												"F : \t \t toggle front \n"),
-                                      i18n("&Ok"),
-                                      0,      // Enter == button 0
-                                      0 ); // Escape == button 2
+			DISPLAY_HELP_MESSAGE
 			break;
 	}
 	__draw();
@@ -361,4 +363,8 @@ void Igc3DView::slotShowFlight()
   state->flight_trace = 1;
   state->flight_shadow = 1;
   this->reset();
+}
+/** No descriptions */
+void Igc3DView::mousePressEvent(QMouseEvent* event){
+	DISPLAY_HELP_MESSAGE
 }
