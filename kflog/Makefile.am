@@ -26,36 +26,36 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-x-igc.png $(kde_icondir)/hicolor/48x48/mimetypes/x-igc.png
 	$(mkinstalldirs) $(kde_mimedir)/application/
 	$(INSTALL_DATA) $(srcdir)/x-igc.desktop $(kde_mimedir)/application/x-igc.desktop
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/action/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_e.png $(kde_icondir)/hicolor/22x22/action/movemap_e.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/action/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_n.png $(kde_icondir)/hicolor/22x22/action/movemap_n.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/action/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_ne.png $(kde_icondir)/hicolor/22x22/action/movemap_ne.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/action/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_nw.png $(kde_icondir)/hicolor/22x22/action/movemap_nw.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/action/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_s.png $(kde_icondir)/hicolor/22x22/action/movemap_s.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/action/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_se.png $(kde_icondir)/hicolor/22x22/action/movemap_se.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/action/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_sw.png $(kde_icondir)/hicolor/22x22/action/movemap_sw.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/action/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_w.png $(kde_icondir)/hicolor/22x22/action/movemap_w.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/action/
-	$(INSTALL_DATA) $(srcdir)/hi16-action-flightevaluation.png $(kde_icondir)/hicolor/16x16/action/flightevaluation.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/action/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-flightevaluation.png $(kde_icondir)/hicolor/22x22/action/flightevaluation.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/32x32/action/
-	$(INSTALL_DATA) $(srcdir)/hi32-action-flightevaluation.png $(kde_icondir)/hicolor/32x32/action/flightevaluation.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/action/
-	$(INSTALL_DATA) $(srcdir)/hi16-action-centerflight.png $(kde_icondir)/hicolor/16x16/action/centerflight.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/action/
-	$(INSTALL_DATA) $(srcdir)/hi16-action-centertask.png $(kde_icondir)/hicolor/16x16/action/centertask.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/action/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-centerflight.png $(kde_icondir)/hicolor/22x22/action/centerflight.png
-	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/action/
-	$(INSTALL_DATA) $(srcdir)/hi22-action-centertask.png $(kde_icondir)/hicolor/22x22/action/centertask.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_e.png $(kde_icondir)/hicolor/22x22/actions/movemap_e.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_n.png $(kde_icondir)/hicolor/22x22/actions/movemap_n.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_ne.png $(kde_icondir)/hicolor/22x22/actions/movemap_ne.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_nw.png $(kde_icondir)/hicolor/22x22/actions/movemap_nw.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_s.png $(kde_icondir)/hicolor/22x22/actions/movemap_s.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_se.png $(kde_icondir)/hicolor/22x22/actions/movemap_se.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_sw.png $(kde_icondir)/hicolor/22x22/actions/movemap_sw.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_w.png $(kde_icondir)/hicolor/22x22/actions/movemap_w.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
+	$(INSTALL_DATA) $(srcdir)/hi16-action-flightevaluation.png $(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-flightevaluation.png $(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/32x32/actions/
+	$(INSTALL_DATA) $(srcdir)/hi32-action-flightevaluation.png $(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
+	$(INSTALL_DATA) $(srcdir)/hi16-action-centerflight.png $(kde_icondir)/hicolor/16x16/actions/centerflight.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
+	$(INSTALL_DATA) $(srcdir)/hi16-action-centertask.png $(kde_icondir)/hicolor/16x16/actions/centertask.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-centerflight.png $(kde_icondir)/hicolor/22x22/actions/centerflight.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-centertask.png $(kde_icondir)/hicolor/22x22/actions/centertask.png
 
 uninstall-local:
 	-rm -f $(kde_datadir)/kflog/kflogui.rc
@@ -67,21 +67,21 @@ uninstall-local:
 	-rm -f $(kde_icondir)/hicolor/32x32/mimetypes/x-igc.png
 	-rm -f $(kde_icondir)/hicolor/48x48/mimetypes/x-igc.png
 	-rm -f $(kde_mimedir)/application/x-igc.desktop
-	-rm -f $(kde_icondir)/hicolor/22x22/action/movemap_e.png
-	-rm -f $(kde_icondir)/hicolor/22x22/action/movemap_n.png
-	-rm -f $(kde_icondir)/hicolor/22x22/action/movemap_ne.png
-	-rm -f $(kde_icondir)/hicolor/22x22/action/movemap_nw.png
-	-rm -f $(kde_icondir)/hicolor/22x22/action/movemap_s.png
-	-rm -f $(kde_icondir)/hicolor/22x22/action/movemap_se.png
-	-rm -f $(kde_icondir)/hicolor/22x22/action/movemap_sw.png
-	-rm -f $(kde_icondir)/hicolor/22x22/action/movemap_w.png
-	-rm -f $(kde_icondir)/hicolor/16x16/action/flightevaluation.png
-	-rm -f $(kde_icondir)/hicolor/22x22/action/flightevaluation.png
-	-rm -f $(kde_icondir)/hicolor/32x32/action/flightevaluation.png
-	-rm -f $(kde_icondir)/hicolor/16x16/action/centerflight.png
-	-rm -f $(kde_icondir)/hicolor/16x16/action/centertask.png
-	-rm -f $(kde_icondir)/hicolor/22x22/action/centerflight.png
-	-rm -f $(kde_icondir)/hicolor/22x22/action/centertask.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_e.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_n.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_ne.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_nw.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_s.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_se.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_sw.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_w.png
+	-rm -f $(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
+	-rm -f $(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
+	-rm -f $(kde_icondir)/hicolor/16x16/actions/centerflight.png
+	-rm -f $(kde_icondir)/hicolor/16x16/actions/centertask.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/centerflight.png
+	-rm -f $(kde_icondir)/hicolor/22x22/actions/centertask.png
 
 ####### kdevelop will overwrite this part!!! (end)############
 # this 10 paths are KDE specific. Use them:
