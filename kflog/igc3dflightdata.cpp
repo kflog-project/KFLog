@@ -19,11 +19,15 @@
 #include <ctype.h>
 #include <stdio.h>
 
+//#include <iostream>
+
 #include <qstring.h>
 
 #include <igc3dflightdata.h>
 #include <igc3dviewstate.h>
 #include <mapcalc.h>
+
+//using namespace std;
 
 class Igc3DViewState;
 
@@ -442,8 +446,10 @@ void Igc3DFlightData::load(Flight* flight)
        sscanf ((const char *) t, "%02f:%02f:%02f", &hh, &mm, &ss);
 
        r = printPos(cP.origP.lat(),true);
+//	std::cout << r << endl;
        sscanf ((const char *) r, "%2f%c %2f%c %2f%c %c", &lat, &AV, &latmin, &AV, &latmindez, &AV, &NS);
        s = printPos(cP.origP.lon(),false);
+//	std::cout << s << endl;
        sscanf ((const char *) s, "%3f%c %2f%c %2f%c %c",&lon, &AV, &lonmin, &AV, &lonmindez, &AV, &EW);
 
        if(firstDataPoint == NULL){
@@ -464,20 +470,22 @@ void Igc3DFlightData::load(Flight* flight)
        				
        tmpDataPoint->timesec = hh * 3600 + mm * 60 + ss;
        				
-       tmpDataPoint->y = lat + (latmin / 60.0) + (latmindez / 60000.0);
+       tmpDataPoint->y = lat + (latmin / 60.0) + (latmindez / 3600.0);
        if (NS == 'S'){
          tmpDataPoint->y =  tmpDataPoint->y * (-1.0);
        }
        tmpDataPoint->latdeg = tmpDataPoint->y;
 
-       tmpDataPoint->x = lon + (lonmin / 60.0) + (lonmindez / 60000.0);
+       tmpDataPoint->x = lon + (lonmin / 60.0) + (lonmindez / 3600.0);
        if (EW == 'W'){
          tmpDataPoint->x = tmpDataPoint->x * (-1.0);
        }
        tmpDataPoint->londeg = tmpDataPoint->x;
-       				
-       fixlines++;
-	 }
+
+//	std::cout << "lat = " << tmpDataPoint->latdeg << ", lon = " <<
+//		tmpDataPoint->londeg << endl;
+	fixlines++;
+	}
   tmpDataPoint->next = firstDataPoint;
   firstDataPoint->previous = tmpDataPoint; // Closing the loop.
 
