@@ -57,13 +57,16 @@ double dist( flightPoint* fp1, flightPoint* fp2);
 QString printPos(int coord, bool isLat = true);
 
 /**
- * Converts the given time (in sec.) into a readable string.
+ * Converts the given time (in sec. from 1.1.1970 00:00:00) into a readable string.
  * ( hh:mm:ss )
  */
 QString printTime(time_t time, bool isZero = false, bool isSecond = true);
 
-// Same convesion for time delays
+// Convesion for time delays
 QString printTime(int time, bool isZero = false, bool isSecond = true);
+
+// Compute the time_t equivalent from  year [1970 - ...], month  [ 1-12], day [1-31]
+time_t timeToDay(const int year, const int month, const int day, const char *monabb = NULL);
 
 /**
  * Calculates the vario of a given point

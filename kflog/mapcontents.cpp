@@ -1309,7 +1309,7 @@ bool MapContents::loadFlight(QFile& igcFile)
   int last0 = -1;
   bool isHeader = true;
   bool isAus = false;
-  time_t timeToDay = 0;
+  time_t timeOfFlightDay = 0;
 
   //
   // Sequence of records in the igc-file:
@@ -1388,20 +1388,7 @@ bool MapContents::loadFlight(QFile& igcFile)
                   date.setYMD(s.mid(9, 2).toInt(),
                       s.mid(7, 2).toInt(), s.mid(5, 2).toInt());
 
-              struct tm bt;
-              bt.tm_sec = 0;
-              bt.tm_min = 0;
-              bt.tm_hour = 0;
-              bt.tm_mday = date.day();
-              bt.tm_mon = date.month() - 1;
-              bt.tm_year = date.year() - 1900;
-              bt.tm_wday = date.dayOfWeek() - 1;
-              bt.tm_yday = date.dayOfYear() - 1;
-              bt.tm_isdst = 0;
-              bt.tm_gmtoff = 0;
-              bt.tm_zone = NULL;//"GMT";
-
-              timeToDay = mktime (&bt) ;
+              timeOfFlightDay = timeToDay(date.year(), date.month(), date.day());
 
             }
           else if(s.mid(1, 4).upper() == "FCCL")
@@ -1450,7 +1437,7 @@ bool MapContents::loadFlight(QFile& igcFile)
               continue;
             }
 
-          curTime = timeToDay + 3600 * hh + 60 * mm + ss;
+          curTime = timeOfFlightDay + 3600 * hh + 60 * mm + ss;
 
           newPoint.time = curTime;
           newPoint.origP = WGSPoint(latTemp, lonTemp);
@@ -1486,19 +1473,19 @@ bool MapContents::loadFlight(QFile& igcFile)
           // logger gets the position, is allways the same. If the
           // intervall is f.e. 10 sec, dtime may change to 11 or 9 sec.
           //
-          // In some files curTime and preTime are the same. In this case
-          // we set dT = 1 to avoid a floating-point-exeption ...
-          //
           if(curTime < preTime)
             {
               // The new fix as a smaller timestamp. Therefore we assume, that
               // we have an overnight-flight. So we must add one day (e.g. 86400 sec.)
-              timeToDay += 86400;
+              timeOfFlightDay += 86400;
               curTime += 86400;
               newPoint.time = curTime;
             }
-          dT = MAX( (curTime - preTime), 1);
 
+          //
+          // In some files curTime and preTime are the same. In this case
+          // we set dT = 1 to avoid a floating-point-exeption ...
+          dT = MAX( (curTime - preTime), 1);
           newPoint.dT = dT;
           newPoint.dH = newPoint.height - prePoint.height;
           newPoint.dS = (int)(dist(latTemp, lonTemp,
@@ -1524,7 +1511,7 @@ bool MapContents::loadFlight(QFile& igcFile)
 
           // Versuch der Ausklink-Erkennung ...
           if(launched && ((isAus != true) &&
-              (abs(prePoint.bearing) > (prePoint.dT * PI / 30.0))))
+              (fabs(prePoint.bearing) > (prePoint.dT * PI / 30.0))))
             {
               warning("Ausklinken erkannt nach %s",
                 (const char*)printTime(preTime));
@@ -2443,7 +2430,8 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
   char latChar, lonChar, validChar;
   bool launched = false, append = true, isFirst = true;//unused , isFirstWP = true;
   int dT, lat, latmin, latTemp, lon, lonmin, lonTemp;
-  int hh = 0, mm = 0, ss = 0, curTime = 0, preTime = 0;
+  int hh = 0, mm = 0, ss = 0;
+  time_t curTime = 0, preTime = 0;
   int cClass = Flight::NotSet;
 
   float v, speed;
@@ -2511,7 +2499,7 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
       filePos += s.length();
       importProgress.setProgress(( filePos * 200 ) / fileLength);
 
-		if(s.mid(0,6) == "$GPRMC")
+      if(s.mid(0,6) == "$GPRMC")
         {
           //
           // We have a point.
@@ -2536,13 +2524,13 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
               return false;
             }
 */
-		spd = 0;
-   		brng = 0;
-   		magdev = 0;
-   		fLat = 0;
-   		fLon = 0;
+          spd = 0;
+          brng = 0;
+          magdev = 0;
+          fLat = 0;
+          fLon = 0;
 
-		  // file is ok, now read data from line
+          // file is ok, now read data from line
           sscanf(s.mid(7,8), "%2d%2d%2d,%1c", &hh, &mm, &ss, &validChar);
           sscanf(s.mid(16,10), "%2d%f,1%c", &lat, &fLat, &latChar);
           sscanf(s.mid(27,11), "%3d%f,%1c", &lon, &fLon, &lonChar);
@@ -2550,24 +2538,28 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
           sscanf(s.mid(51,7), "%2d%2d%3d", &day, &month, &year);
           sscanf(s.mid(59,10), "%f,%1c*%2c", &magdev,&magdevChar,&checksum);
 
-		  // NMEA year is number of years after 1900
+          // NMEA year is number of years after 1900
           year +=1900;
 
-		  // skip if lat & lon = 000.0N
-		  if ((lat == 0.0) && (lon == 0.0))
-			continue;
+          // Convert date into time_t
+          time_t timeOfFlightDay = timeToDay(year, month, day);
 
-		  latmin = fLat * 1000;
-          lonmin = fLon * 1000;
-  		
-		  // convert to internal KFLog format
-	      latTemp = lat * 600000 + latmin * 10;
+
+          // skip if lat & lon = 000.0N
+          if ((lat == 0.0) && (lon == 0.0))
+              continue;
+
+          latmin = (int) fLat * 1000;
+          lonmin = (int) fLon * 1000;
+
+          // convert to internal KFLog format
+          latTemp = lat * 600000 + latmin * 10;
           lonTemp = lon * 600000 + lonmin * 10;
 
           if(latChar == 'S') latTemp = -latTemp;
           if(lonChar == 'W') lonTemp = -lonTemp;
-		 	
-          curTime = 3600 * hh + 60 * mm + ss;
+
+          curTime = timeOfFlightDay +  3600 * hh + 60 * mm + ss;
 
           newPoint.time = curTime;
           newPoint.origP = WGSPoint(latTemp, lonTemp);
@@ -2599,12 +2591,21 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
           // logger gets the position, is allways the same. If the
           // intervall is f.e. 10 sec, dtime may change to 11 or 9 sec.
           //
+          if(curTime < preTime)
+            {
+              // The new fix as a smaller timestamp. Therefore we assume, that
+              // we have an overnight-flight. So we must add one day (e.g. 86400 sec.)
+              timeOfFlightDay += 86400;
+              curTime += 86400;
+              newPoint.time = curTime;
+            }
+
+          //
           // In some files curTime and preTime are the same. In this case
           // we set dT = 1 to avoid a floating-point-exeption ...
-          //
           dT = MAX( (curTime - preTime), 1);
- 		  newPoint.height = 0;
- 		  newPoint.gpsHeight = 0;
+          newPoint.height = 0;
+          newPoint.gpsHeight = 0;
           newPoint.dT = dT;
           newPoint.dH = newPoint.height - prePoint.height;
           newPoint.dS = (int)(dist(latTemp, lonTemp,
@@ -2632,7 +2633,7 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
           v = newPoint.dH / dT * 1.0;       // [m/s]
 
           //
-		  // Landing detection is not valid for FlightGear files, hence only accept launced at first fix
+          // Landing detection is not valid for FlightGear files, hence only accept launced at first fix
           //
           if(launched)
             {
@@ -2681,8 +2682,8 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
         }
       else if(s.mid(0,6) == "$PGRMZ")
       {
-       	// ignore private data for now...
- 		continue;
+          // ignore private data for now...
+          continue;
       }
     }
 
@@ -2763,10 +2764,11 @@ bool MapContents::importGardownFile(QFile& gardownFile){
 
   QString pilotName, gliderType, gliderID, recorderID;
   QDate date;
-  char latChar, lonChar, validChar;
-  bool launched = false, append = true, isFirst = true, isFirstWP = true;
+  char latChar, lonChar; //unused , validChar;
+  bool launched = false, /*unused append = true,*/ isFirst = true; // unused , isFirstWP = true;
   int dT, lat, latmin, latTemp, lon, lonmin, lonTemp;
-  int hh = 0, mm = 0, ss = 0, curTime = 0, preTime = 0;
+  int hh = 0, mm = 0, ss = 0, height;
+  time_t curTime = 0, preTime = 0;
   int cClass = Flight::NotSet;
 
   float v, speed;
@@ -2775,8 +2777,8 @@ bool MapContents::importGardownFile(QFile& gardownFile){
   flightPoint prePoint;
   QList<flightPoint> flightRoute;
   QList<Waypoint> wpList;
-  Waypoint* newWP;
-  Waypoint* preWP;
+//unused  Waypoint* newWP;
+//unused  Waypoint* preWP;
   bool isValid = true;
 
   //
@@ -2793,13 +2795,14 @@ bool MapContents::importGardownFile(QFile& gardownFile){
 
   int lineCount = 0;
   unsigned int wp_count = 0;
-//  int last0 = -1;
-//  bool isHeader = true;
-//  bool isAus = false;
+//unused  int last0 = -1;
+//unused  bool isHeader = true;
+//unused  bool isAus = false;
 
   float spd, brng, magdev,fLat, fLon;
-//  int day, month, year;
-//  char magdevChar, checksum[2];
+  int day, month, year;
+//unused  char magdevChar, checksum[2];
+  time_t timeOfFlightDay;
 
 
   while (!stream.eof())
@@ -2812,7 +2815,7 @@ bool MapContents::importGardownFile(QFile& gardownFile){
       filePos += s.length();
       importProgress.setProgress(( filePos * 200 ) / fileLength);
 
-		if(s.mid(0,2) == "T ")
+      if(s.mid(0,2) == "T ")
         {
           //
           // We have a point.
@@ -2837,38 +2840,52 @@ bool MapContents::importGardownFile(QFile& gardownFile){
               return false;
             }
 */
-		spd = 0;
-   		brng = 0;
-   		magdev = 0;
-   		fLat = 0;
-   		fLon = 0;
+          // Example of my garmin 90:
+          //H  LATITUDE    LONGITUDE    DATE      TIME     ALT    ;track
+          //T  N4815.60836 E01229.15449 30-JUL-96 12:59:01 -9999
 
-		  // file is ok, now read data from line
-  QString t = s.mid(3,11);
-          sscanf(t,  "%1c%2d %f", &latChar, &lat, &fLat);
-		t = s.mid(15,12);
-          sscanf(t,  "%1c%3d %f", &lonChar, &lon, &fLon);
+          spd = 0;
+          brng = 0;
+          magdev = 0;
+          fLat = 0;
+          fLon = 0;
 
-		  // skip if lat & lon = 000.0N
-		  if ((lat == 0.0) && (lon == 0.0))
-			continue;
+          // file is ok, now read data from line
+          sscanf(s.mid(3,11),  "%1c%2d %f", &latChar, &lat, &fLat);
+          sscanf(s.mid(15,12),  "%1c%3d %f", &lonChar, &lon, &fLon);
+          sscanf(s.mid(28,9), "%2d-%*3s-%2d", &day, &year);
+          if ( year > 70 )
+            year += 1900;
+          else
+            year += 2000;
+          timeOfFlightDay = timeToDay(year, month, day, s.mid(31, 3).latin1());
+          sscanf(s.mid(38, 8), "%2d:%2d:%2d", &hh, &mm, &ss);
+          curTime = timeOfFlightDay + 3600 * hh + 60 * mm + ss;
+          sscanf(s.mid(47, 5), "%d", &height);
+          if ( height < 0 )
+            height = 0;
 
-		  latmin = fLat * 1000;
-          lonmin = fLon * 1000;
-  		
-		  // convert to internal KFLog format
-	      latTemp = lat * 600000 + latmin * 10;
+
+          // skip if lat & lon = 000.0N
+          if ((lat == 0.0) && (lon == 0.0))
+              continue;
+
+          latmin = (int) fLat * 1000;
+          lonmin = (int) fLon * 1000;
+
+          // convert to internal KFLog format
+          latTemp = lat * 600000 + latmin * 10;
           lonTemp = lon * 600000 + lonmin * 10;
 
           if(latChar == 'S') latTemp = -latTemp;
           if(lonChar == 'W') lonTemp = -lonTemp;
-		 	
-          curTime = 3600 * hh + 60 * mm + ss;
 
           newPoint.time = curTime;
           newPoint.origP = WGSPoint(latTemp, lonTemp);
           newPoint.projP = _globalMapMatrix.wgsToMap(newPoint.origP);
           newPoint.f_state = Flight::Straight;
+          newPoint.height = height;
+          newPoint.gpsHeight = height;
 
 //          if(s.mid(14,1) == "A")
               isValid = true;
@@ -2897,10 +2914,7 @@ bool MapContents::importGardownFile(QFile& gardownFile){
           //
           // In some files curTime and preTime are the same. In this case
           // we set dT = 1 to avoid a floating-point-exeption ...
-          //
           dT = MAX( (curTime - preTime), 1);
- 		  newPoint.height = 0;
- 		  newPoint.gpsHeight = 0;
           newPoint.dT = dT;
           newPoint.dH = newPoint.height - prePoint.height;
           newPoint.dS = (int)(dist(latTemp, lonTemp,
@@ -2925,11 +2939,11 @@ bool MapContents::importGardownFile(QFile& gardownFile){
           temp_bearing = getBearing(prePoint,newPoint);
 
 //          speed = 3600 * spd ;  // [km/h]
-		  speed = 3600 * spd ;  // [km/h]
+          speed = 3600 * spd ;  // [km/h]
           v = newPoint.dH / dT * 1.0;       // [m/s]
 
           //
-		  // Landing detection is not valid for FlightGear files, hence only accept launced at first fix
+          // Landing detection is not valid for FlightGear files, hence only accept launced at first fix
           //
           if(launched)
             {
@@ -2955,8 +2969,8 @@ bool MapContents::importGardownFile(QFile& gardownFile){
             }
         }
       else {
-       	// ignore other lines in file for now...
- 		continue;
+        // ignore other lines in file for now...
+        continue;
       }
     }
 

@@ -27,6 +27,7 @@ static const char *timeFormat[4] = {
   {"%02d:%02d:%02d"}
   };
 
+static const char *monthAbb[12] = {"Jan", "`Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 double dist(double lat1, double lon1, double lat2, double lon2)
 {
@@ -137,6 +138,35 @@ QString printTime(int time, bool isZero, bool isSecond)
   int ss = time - (hh * 3600) - mm * 60;
 
   return tmpbuf.sprintf(timeFormat[isSecond + 2*isZero], hh, mm, ss);
+}
+
+time_t timeToDay(const int year, const int month, const int day, const char *monabb)
+{
+  struct tm bt;
+  int mymonth = month;
+
+  bt.tm_sec = 0; /* Seconds.	[0-60] (1 leap second) */
+  bt.tm_min = 0; /* Minutes.	[0-59] */
+  bt.tm_hour = 0; /* Hours.	[0-23] */
+  bt.tm_mday = day; /* Day.		[1-31] */
+  if ( monabb )
+  {
+    mymonth = 1; // default to Jan
+    for ( int i = 0; i < 12; i++ )
+      if ( strcasecmp(monthAbb[i], monabb) == 0 ) {
+        mymonth = i + 1;
+        break;
+      }
+  }
+  bt.tm_mon = mymonth - 1; /* Month.	[0-11] */
+  bt.tm_year = year - 1900; /* Year	- 1900.  */
+  bt.tm_wday = 0; /* Day of week.	[0-6] */
+  bt.tm_yday = 0; /* Day of year.[0-365]	*/
+  bt.tm_isdst = 0; /* DST.		[-1/0/1]*/
+  bt.tm_gmtoff = 0; /* Seconds east of UTC.  */
+  bt.tm_zone = NULL; /* "GMT" Timezone abbreviation.  */
+
+  return mktime(&bt);
 }
 
 float getSpeed(flightPoint p) { return (float)p.dS / (float)p.dT * 3.6; }
