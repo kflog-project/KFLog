@@ -226,14 +226,17 @@ void Waypoints::slotNewWaypointCatalog()
 /* save changes in catalogs, return success */
 bool Waypoints::saveChanges()
 {
-  qDebug("saving changes to waypoints");
   WaypointCatalog *w;
   for (w = waypointCatalogs.first(); w != 0; w = waypointCatalogs.next())
     {
-      qDebug("checking to see if catalog is modified...");
       if (w->modified)
         {
-          switch(KMessageBox::warningYesNoCancel(this, "<qt>"+ i18n("Save changes to<BR><B>%1</B>").arg(w->path) + "</qt>")) //added <qt> tags outside of string so we won't have to re-translate.
+          switch(KMessageBox::warningYesNoCancel(
+                this,
+                i18n("<qt>The waypoint file has been modified.<br>Save changes to<BR><B>%1</B></qt>").arg(w->path),
+                i18n("Save changes?"),
+                i18n("Save"),
+                i18n("Discard")))
             {
             case KMessageBox::Yes:
               // Hier zwischenzeitlich auf binärformat umgestellt ...
