@@ -18,6 +18,7 @@
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <klocale.h>
+#include <kconfig.h>
 
 #include "kflog.h"
 #include <kflogstartlogo.h>
@@ -44,8 +45,17 @@ MapConfig _globalMapConfig;
 /**
  * List of commandline-options
  */
+
 static KCmdLineOptions options[] =
 {
+  { "e", 0, 0 },
+  { "export-png ", I18N_NOOP("export to png graphics file"), "file:out.png" },
+  { "w", 0, 0 },
+  { "width ", I18N_NOOP("width of pixmap"), "640" },
+  { "h", 0, 0 },
+  { "height ", I18N_NOOP("height of pixmap"), "480" },
+  { "b", 0, 0 },
+  { "batch", I18N_NOOP("quit after export (batch mode)"), 0 },
   { "+[File]", I18N_NOOP("igc-file to open"), 0 },
   { 0, 0, 0 }
 };
@@ -99,9 +109,27 @@ int main(int argc, char *argv[])
       KFLogApp *kflog = new KFLogApp();
       KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-      if (args->count())
+      if (args->count()){
+          if (args->isSet("export-png")){
+            KConfig* config = KGlobal::config();
+            config->setGroup("General Options");
+            config->writeEntry("ShowWaypointWarnings",false,false);
+          }
+
           kflog->slotFileOpenRecent((QString)args->arg(0));
 
+          if (args->isSet("export-png")){
+            warning("Writing PNG...");
+            KURL url((QString)args->getOption("export-png"));
+            kflog->slotSavePixmap(url,args->getOption("width").toInt(),args->getOption("height").toInt());
+          }
+
+          if (args->isSet("batch")){
+            args->clear();
+            warning("Exiting.");
+            return 0;
+          }
+      }
       QTimer::singleShot(700, kflog, SLOT(slotStartComplete()));
 
   		args->clear();

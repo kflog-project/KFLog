@@ -227,6 +227,8 @@ class KFLogApp : public KDockMainWindow
     /** */
     void slotOptimizeFlight();
     /** */
+    void slotSavePixmap(KURL url, int width, int height);
+    /** */
     void slotFlightViewIgc3D();
     /**
      * Hides the Waypoints-widget. Called, when the user has closed or

@@ -1226,13 +1226,11 @@ void Map::__redrawMap()
   slotDrawCursor(temp1,temp2);
 }
 
-void Map::slotSavePixmap()
-{
-  KFileDialog* dlg = new KFileDialog(0, "*.png *.PNG", this,
-      i18n("Select PNG-File"), true);
-  dlg->exec();
+/** Save Map to PNG-file with width,heigt. Use actual size if width=0 & height=0 */
+void Map::slotSavePixmap(KURL fUrl, int width, int height){
 
-  KURL fUrl = dlg->selectedURL();
+  int w_orig,h_orig;
+
   if(fUrl.isEmpty())  return;
 
   QString fName;
@@ -1243,9 +1241,26 @@ void Map::slotSavePixmap()
       KNotifyClient::event(i18n("Can not save to file %1").arg(fUrl.url()));
       return;
     }
-
+	if (width && height){
+	  w_orig=pixBuffer.width();
+	  h_orig=pixBuffer.height();
+  	pixBuffer.resize(width,height);
+  	slotCenterToFlight();
+  }
 	QImage image = QImage(pixBuffer.convertToImage());
 	image.save(fName,"PNG");
+	if (width && height){
+  	pixBuffer.resize(w_orig,h_orig);
+  	__redrawMap();
+  }
+}
+
+void Map::slotSavePixmap()
+{
+  KFileDialog* dlg = new KFileDialog(0, "*.png *.PNG", this,
+      i18n("Select PNG-File"), true);
+  dlg->exec();
+  slotSavePixmap(dlg->selectedURL(),0,0);
 }
 
 void Map::slotRedrawFlight()

@@ -1238,3 +1238,7 @@ void KFLogApp::slotImportGardownFile(){
 
   slotStatusMsg(i18n("Ready."));
 }
+/** No descriptions */
+void KFLogApp::slotSavePixmap( KURL url, int width, int height ){
+  map->slotSavePixmap(url,width,height);
+}

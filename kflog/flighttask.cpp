@@ -729,6 +729,8 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
 
   int gliderIndex = 100, preTime = 0;
   KConfig* config = KGlobal::config();
+  config->setGroup("General Options");
+  bool showWarnings = config->readBoolEntry("ShowWaypointWarnings",true);
   config->setGroup("FlightPoints");
 
   double pointFAI = config->readDoubleNumEntry("FAIPoint", 2.0);
@@ -859,7 +861,7 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
   double dmstMalus = 1.0, aussenlande = 0.0;
   bool home, stop = false;
 
-  if(wpList.at(1)->sector1 == 0)
+  if ((wpList.at(1)->sector1 == 0) && showWarnings)
     {
       KMessageBox::information(0,
           i18n("You have not reached the first waypoint of your task."));
@@ -881,7 +883,7 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
           else
             {
               // Wendepunkt nicht erreicht!!
-              if(loop == 2)
+              if ((loop == 2) && showWarnings)
                 {
                   KMessageBox::information(0,
                       i18n("You have not reached the first waypoint of your task."));
@@ -901,8 +903,9 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
   if(wpList.at(wpList.count() - 2)->sector1 == 0)
     {
       home = false;
-      KMessageBox::error(0,
-          i18n("You have not reached the last point of your task."));
+      if(showWarnings)
+        KMessageBox::error(0,
+            i18n("You have not reached the last point of your task."));
 
       if(dist(wpList.at(1 + dmstCount), route.last()) < 1.0)
         {
@@ -979,7 +982,7 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
       taskPoints -= ( taskPoints * (malusValue / 100.0) );
     }
 
-  if (time_error)
+  if (time_error && showWarnings)
    {
      KMessageBox::error(0,
         i18n("The time intervall between two points<BR>"

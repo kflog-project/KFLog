@@ -26,10 +26,12 @@ ldadd=-lkdeprint -lm $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
 ldflags=\s\s
 
 [General]
-AMChanged=false
+AMChanged=true
 author=Heiner Lamprecht
 configure_args=--prefix=/opt/kde2 --enable-debug\s
+debug_args=--export-png file:123.png "file://home/bodner/Fliegerei/Saison 2002/26ea0gp1.igc"
 email=heiner@kflog.org
+execute_args=--export-png 123.png "/home/bodner/Fliegerei/Saison 2002/26ea0gp1.igc"
 kdevprj_version=1.3
 lfv_open_groups=User Interface
 make_options=\s-j1
