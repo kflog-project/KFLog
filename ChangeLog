@@ -1,10 +1,8 @@
 $Id$
 
-2003-07-24 Eggert Ehmke <eggert@kflog.org>
+2003-07-26 Eggert Ehmke <eggert@kflog.org>
 
-  * added import for filser txt and da4 waypoint files
-
-  * added export for filser txt waypoint files
+  * added import/export for filser txt and da4 waypoint files
 
 
 2003-07-12 Florian Ehinger <florian@kflog.org>
