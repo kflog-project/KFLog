@@ -44,6 +44,7 @@
 #include <radiopoint.h>
 #include "waypoints.h"
 #include "waypointdialog.h"
+#include "resource.h"
 
 
 // Festlegen der Größe der Pixmaps auf Desktop-Grösse
@@ -380,8 +381,10 @@ void Map::mouseMoveEvent(QMouseEvent* event)
           prePos.setY(-50);
         }
 
-      __findElevation(current);
     }
+
+    __findElevation(current);
+
     if (dragZoomRect){
         QPainter zoomPainter;
         zoomPainter.begin(this);
@@ -389,21 +392,21 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
         double width = event->pos().x() - beginDrag.x();
         double height = event->pos().y() - beginDrag.y();
-        const double widthRatio = width / this->width();
-        const double heightRatio = height / this->height();
+        const double widthRatio = ABS(width / this->width());
+        const double heightRatio = ABS(height / this->height());
 
         if(widthRatio > heightRatio)
           {
             height = this->height() * widthRatio;
+            if(event->pos().y() < beginDrag.y()) {  height *= -1;  }  //make sure we keep the right sign
           }
         else
           {
             width = this->width() * heightRatio;
+            if(event->pos().x() < beginDrag.x()) {  width *= -1;  }   //make sure we keep the right sign
           }
-
-        if(event->pos().x() < beginDrag.x()) {  width *= -1;  }
-        if(event->pos().y() < beginDrag.y()) {  height *= -1;  }
-
+          
+       
         zoomPainter.setPen(QPen(QColor(255, 255, 255), 1, DashLine));
         // Delete the old rectangle:
         zoomPainter.drawRect( beginDrag.x(), beginDrag.y(), sizeDrag.x(), sizeDrag.y());
@@ -411,9 +414,21 @@ void Map::mouseMoveEvent(QMouseEvent* event)
         zoomPainter.drawRect( beginDrag.x(), beginDrag.y(), (int)width, (int)height);
         zoomPainter.end();
 
+        //This is odd. Why use a QPoint when a QSize would be more appropriate?
         sizeDrag.setX((int)width);
         sizeDrag.setY((int)height);
     }
+
+    //warning("dragzoomrect: %d, event->state: %d (leftbutton=%d)", dragZoomRect, event->state(), LeftButton);
+    if ((!dragZoomRect) && (event->state() && LeftButton)){
+      //start dragZoom
+      setCursor(CrossCursor);
+      isZoomRect = true;
+      beginDrag = event->pos();
+      sizeDrag = QPoint(0,0);
+      dragZoomRect=true;
+    }
+    
 }
 
 void Map::__displayMapInfo(QPoint current)
@@ -814,33 +829,43 @@ void Map::mouseReleaseEvent(QMouseEvent* event)
         {
           double width = event->pos().x() - beginDrag.x();
           double height = event->pos().y() - beginDrag.y();
-          const double widthRatio = width / this->width();
-          const double heightRatio = height / this->height();
+          const double widthRatio = ABS(width / this->width());
+          const double heightRatio = ABS(height / this->height());
 
           if(widthRatio > heightRatio)
             {
               height = this->height() * widthRatio;
+              if(event->pos().y() < beginDrag.y()) {  height *= -1;  }
             }
           else
             {
               width = this->width() * heightRatio;
+              if(event->pos().x() < beginDrag.x()) {  width *= -1;  }
             }
 
-          if(event->pos().x() < beginDrag.x()) {  width *= -1;  }
-          if(event->pos().y() < beginDrag.y()) {  height *= -1;  }
-
-          _globalMapMatrix.centerToRect(QRect(beginDrag,
-              QPoint(beginDrag.x() + (int)width, beginDrag.y() + (int)height)), QSize(0,0), false);
+          
+          if (width<0 && height<0) {  //work around for problem where mapmatrix calculates the wrong scale if both width and height are < 0
+            _globalMapMatrix.centerToRect(QRect(QPoint(beginDrag.x() + (int)width, beginDrag.y() + (int)height), beginDrag), QSize(0,0), false);
+          } else {
+            _globalMapMatrix.centerToRect(QRect(beginDrag, QPoint(beginDrag.x() + (int)width, beginDrag.y() + (int)height)), QSize(0,0), false);
+          }
           _globalMapMatrix.createMatrix(this->size());
           __redrawMap();
           emit changed(this->size());
-        }
+        } else {
+          //we are not going to zoom, but we still need to clean up our mess!
+          QPainter zoomPainter;
+          zoomPainter.begin(this);
+          zoomPainter.setRasterOp( Qt::XorROP );
+          zoomPainter.setPen(QPen(QColor(255, 255, 255), 1, DashLine));
+          // Delete the old rectangle:
+          zoomPainter.drawRect( beginDrag.x(), beginDrag.y(), sizeDrag.x(), sizeDrag.y());
+        }   
     }
 }
 
 void Map::mousePressEvent(QMouseEvent* event)
 {
-warning("Map::mousePressEvent: planning=%d", planning);
   // First: delete the cursor, if visible:
   if(prePos.x() >= 0)
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
