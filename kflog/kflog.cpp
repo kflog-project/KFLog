@@ -37,6 +37,7 @@
 #include <kmessagebox.h>
 #include <knotifyclient.h>
 #include <kstdaction.h>
+#include <ktip.h>
 
 // application specific includes
 #include "kflog.h"
@@ -64,6 +65,7 @@
 #include "basemapelement.h"
 #include "airport.h"
 #include "topolegend.h"
+#include "objecttree.h"
 
 #define STATUS_LABEL(a,b,c) \
   a = new KStatusBarLabel( "", 0, statusBar() ); \
@@ -156,6 +158,8 @@ KFLogApp::KFLogApp()
       this, SLOT(slotShowPointInfo(const QPoint)));
   connect(&_globalMapContents, SIGNAL(contentsChanged()),map, SLOT(slotRedrawMap()));
   slotModifyMenu();
+
+  KTipDialog::showTip(this, "kflog/tips");
 }
 
 KFLogApp::~KFLogApp()
@@ -298,6 +302,10 @@ void KFLogApp::initActions()
       CTRL+Key_L, this, SLOT(slotToggleLegendDock()), actionCollection(),
       "toggle_legend");
 
+  viewObjectTree = new KToggleAction(i18n("Show object tree"), 0,
+      CTRL+Key_O, this, SLOT(slotToggleObjectTreeDock()), actionCollection(),
+      "toggle_objectTree");
+
   flightOptimization = new KAction(i18n("Optimize"), "wizard", 0,
       this, SLOT(slotOptimizeFlight()), actionCollection(), "optimize_flight");
 
@@ -391,7 +399,9 @@ void KFLogApp::initActions()
       SLOT(slotConfigureToolbars()), actionCollection());
   KStdAction::keyBindings(this,
       SLOT(slotConfigureKeyBindings()), actionCollection());
-
+  KStdAction::tipOfDay(this,
+      SLOT(slotTipOfDay()), actionCollection());
+      
   KStdAction::preferences(this, SLOT(slotConfigureKFLog()), actionCollection());
 
   KActionMenu *w = new KActionMenu(i18n("&Window"), "igc",
@@ -452,7 +462,7 @@ void KFLogApp::initView()
   waypointsDock = createDockWidget("Waypoints", 0, 0, i18n("Waypoints"));
   tasksDock = createDockWidget("Tasks", 0, 0, i18n("Tasks"));
   legendDock = createDockWidget("Legend", 0, 0, i18n("Legend"));
-  
+  objectTreeDock = createDockWidget("LoadedObjects", 0, 0, i18n("KFLog Browser"));
   extern MapContents _globalMapContents;
 
 
@@ -484,6 +494,10 @@ void KFLogApp::initView()
       SLOT(slotHideLegendDock()));
   connect(legendDock, SIGNAL(hasUndocked()),
       SLOT(slotHideLegendDock()));
+  connect(objectTreeDock, SIGNAL(iMBeingClosed()),
+      SLOT(slotHideObjectTreeDock()));
+  connect(objectTreeDock, SIGNAL(hasUndocked()),
+      SLOT(slotHideObjectTreeDock()));
 
   setView(mapViewDock);
   setMainDockWidget(mapViewDock);
@@ -516,12 +530,16 @@ void KFLogApp::initView()
   legend = new TopoLegend(legendDock);
   legendDock->setWidget(legend);
 
+  objectTree = new ObjectTree(objectTreeDock);
+  objectTreeDock->setWidget(objectTree);
+
 
   /* Standard positions for the docking windows
    * Arguments for manualDock():
    * dock target, dock side, remaining space in target (in percent)
    */
-  dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 67 );
+  objectTreeDock->manualDock( mapViewDock, KDockWidget::DockRight, 67 );
+  dataViewDock->manualDock( objectTreeDock, KDockWidget::DockBottom, 67 );
   mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 62 );
   helpWindowDock->manualDock( mapControlDock, KDockWidget::DockCenter);    
   waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 70);
@@ -556,6 +574,12 @@ void KFLogApp::initView()
       SLOT(setFlightData()));
   connect(&_globalMapContents, SIGNAL(currentFlightChanged()), tasks,
       SLOT(setCurrentTask()));
+  connect(&_globalMapContents, SIGNAL(newFlightAdded(Flight*)), objectTree,
+      SLOT(slotNewFlightAdded(Flight*)));
+  connect(&_globalMapContents, SIGNAL(newTaskAdded(FlightTask*)), objectTree,
+      SLOT(slotNewTaskAdded(FlightTask*)));
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged(BaseFlightElement*)), objectTree,
+      SLOT(slotSelectedFlightChanged(BaseFlightElement*)));
 
   connect(waypoints, SIGNAL(copyWaypoint2Task(Waypoint *)), map,
       SLOT(slotAppendWaypoint2Task(Waypoint *)));
@@ -574,6 +598,9 @@ void KFLogApp::initView()
 
   connect(waypoints, SIGNAL(centerMap(int, int)), &_globalMapMatrix,
       SLOT(slotCenterTo(int, int)));
+
+  connect(objectTree, SIGNAL(selectedFlight(BaseFlightElement *)), &_globalMapContents,
+      SLOT(slotSetFlight(BaseFlightElement *)));
 }
 
 void KFLogApp::slotShowPointInfo(const QPoint pos,
@@ -838,6 +865,8 @@ void KFLogApp::slotHideTasksDock() { viewTasks->setChecked(false); }
 
 void KFLogApp::slotHideLegendDock() { viewLegend->setChecked(false); }
 
+void KFLogApp::slotHideObjectTreeDock() { viewObjectTree->setChecked(false); }
+
 void KFLogApp::slotCheckDockWidgetStatus()
 {
   viewMapControl->setChecked(mapControlDock->isVisible());
@@ -862,6 +891,8 @@ void KFLogApp::slotToggleWaypointsDock() { waypointsDock->changeHideShowState();
 void KFLogApp::slotToggleTasksDock() { tasksDock->changeHideShowState(); }
 
 void KFLogApp::slotToggleLegendDock() { legendDock->changeHideShowState(); }
+
+void KFLogApp::slotToggleObjectTreeDock() { objectTreeDock->changeHideShowState(); }
 
 void KFLogApp::slotSelectFlightData(int id)
 {
@@ -1319,4 +1350,9 @@ void KFLogApp::slotEnableMessages(){
 /** Connects the dialogs addWaypoint signal to the waypoint object. */
 void KFLogApp::slotRegisterWaypointDialog(QWidget * dialog){
   connect(dialog, SIGNAL(addWaypoint(Waypoint *)), waypoints, SLOT(slotAddWaypoint(Waypoint *)));  
+}
+
+/** Called to force display of the "Tip of the Day" dialog. */
+void KFLogApp::slotTipOfDay(){
+  KTipDialog::showTip(this,"kflog/tips",true);
 }

@@ -145,7 +145,9 @@ MapContents::MapContents()
   wpList.setAutoDelete(false);
   regIsoLines.setAutoDelete(true);
   downloadList = new DownloadList();
+
   connect(downloadList,SIGNAL(allDownloadsFinished()),this,SLOT(slotDownloadFinished()));
+  connect(this,SIGNAL(currentFlightChanged()),SLOT(slotReSendFlightChanged()));
 }
 
 MapContents::~MapContents()
@@ -1470,7 +1472,14 @@ bool MapContents::loadFlight(QFile& igcFile)
           // In some files curTime and preTime are the same. In this case
           // we set dT = 1 to avoid a floating-point-exeption ...
           //
+          if(curTime < preTime)
+            {
+              // The new fix as a smaller timestamp. Therefore we assume, that
+              // we have an overnight-flight. So we must add one day (e.g. 86400 sec.)
+              curTime += 86400;
+            }
           dT = MAX( (curTime - preTime), 1);
+
           newPoint.dT = dT;
           newPoint.dH = newPoint.height - prePoint.height;
           newPoint.dS = (int)(dist(latTemp, lonTemp,
@@ -1654,6 +1663,8 @@ bool MapContents::loadFlight(QFile& igcFile)
   flightList.append(new Flight(igcFile.name(), recorderID,
       flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
 
+  emit newFlightAdded((Flight*)flightList.last());
+  
   emit currentFlightChanged();
   return true;
 }
@@ -3063,10 +3074,14 @@ isoListEntry::~isoListEntry() {
 /** Re-projects any flights and tasks that may be loaded. */
 void MapContents::reProject(){
   QListIterator<BaseFlightElement> it(flightList); // iterator for flightlist
-  extern MapMatrix _globalMapMatrix;
   
   for ( ; it.current(); ++it ) {
       BaseFlightElement *fe = it.current();
       fe->reProject();
   }
+}
+
+/** Connected to the signal currentFlightChanged, and used to resend the signal with the current flight as an argument. */
+void MapContents::slotReSendFlightChanged(){
+    emit currentFlightChanged(getFlight());
 }

@@ -179,6 +179,9 @@ class MapMatrix : public QObject
     /**
      * Centers the map to the given rectangle and scales the map, so that
      * the rectangle will be seen completly.
+     * @param QRect Rectangle to zoom to
+     * @param QSize
+     * @param addBorder Adds a border of 6.5 km if true.
      */
     double centerToRect(QRect, QSize = QSize(0,0), bool addBorder = true);
     /** */

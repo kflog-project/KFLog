@@ -354,16 +354,13 @@ void EvaluationView::__drawCsystem(QPainter* painter)
   while(time / (int)secWidth < breite - 2*KOORD_DISTANCE)
     {
       painter->setPen(QPen(QColor(0,0,0), 2));
-      painter->drawLine(X_ABSTAND + (time / secWidth) ,
-                  hoehe - Y_ABSTAND,
-                  X_ABSTAND + (time / secWidth) ,
-                  hoehe - Y_ABSTAND + 10);
+      painter->drawLine(X_ABSTAND + (time / secWidth), hoehe - Y_ABSTAND,
+                  X_ABSTAND + (time / secWidth), hoehe - Y_ABSTAND + 10);
 
       painter->setPen(QPen(QColor(0,0,0), 1));
       text = printTime(startTime + time,false,false);
-      painter->drawText(X_ABSTAND + (time / secWidth) - 40
-                          ,
-                         hoehe - 21,80,20, AlignCenter,text);
+      painter->drawText(X_ABSTAND + (time / secWidth) - 40,
+                         hoehe - 21, 80, 20, AlignCenter, text);
 
       time += time_plus;
     }
@@ -372,11 +369,8 @@ void EvaluationView::__drawCsystem(QPainter* painter)
     {
       // "kleine" Striche (min)
       painter->setPen(QPen(QColor(0,0,0), 1));
-      painter->drawLine(X_ABSTAND + (time_small / secWidth)
-                ,
-             hoehe - Y_ABSTAND,
-             X_ABSTAND + (time_small / secWidth) ,
-             hoehe - Y_ABSTAND + 5);
+      painter->drawLine(X_ABSTAND + (time_small / secWidth), hoehe - Y_ABSTAND,
+             X_ABSTAND + (time_small / secWidth), hoehe - Y_ABSTAND + 5);
 
       time_small += time_small_plus;
     }
@@ -388,7 +382,7 @@ void EvaluationView::__drawCsystem(QPainter* painter)
   painterText.drawLine(KOORD_DISTANCE,hoehe - Y_ABSTAND,
                        KOORD_DISTANCE, Y_ABSTAND);
 
-
+                       
   if(!vario && !speed && baro)
     {
       // Barogramm
@@ -408,7 +402,8 @@ void EvaluationView::__drawCsystem(QPainter* painter)
                            KOORD_DISTANCE - 3,20,Qt::AlignRight | Qt::AlignVCenter,text);
 
 
-          if(h == 1000 || h == 2000 || h == 3000)
+          if(h == 1000 || h == 2000 || h == 3000 || h == 4000 ||
+                h == 5000 || h == 6000 || h == 7000 || h == 8000 || h == 9000)
               painter->setPen(QPen(QColor(200,200,255), 2));
           else
               painter->setPen(QPen(QColor(200,200,255), 1));
@@ -512,6 +507,9 @@ void EvaluationView::drawCurve(bool arg_vario, bool arg_speed,
 
     startTime = flight->getStartTime();
     landTime = flight->getLandTime();
+    
+    // Correct the landtime for overnight-flights by adding one day (e.g. 86400 sec.):
+    if(startTime > landTime)  {  landTime += 86400;  }
 
     cursor1 = MAX(startTime,cursor1);
     cursor2 = MAX(startTime,cursor2);
@@ -594,6 +592,9 @@ void EvaluationView::__draw()
   for(unsigned int loop = 0; loop < flight->getRouteLength(); loop++)
     {
       curTime = flight->getPoint(loop).time;
+
+      // Correct time for overnight-flights:
+      if(curTime < startTime)  {  curTime += 86400;  }
 
       /* Der Array wird hier noch falsch gefüllt. Wenn über 3 Punkte geglättet wird, stimmt
        * alles. Wenn jedoch z.B. über 5 Punkte geglättet wird, werden die Punkte
@@ -738,14 +739,10 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
           paint.setBrush(QBrush(QColor(200,0,0), SolidPattern));
         }
 
-    QPixmap pixCursor1 = QPixmap(KGlobal::dirs()->findResource("appdata",
-      "pics/flag_green.png"));
-    QPixmap pixCursor2 = QPixmap(KGlobal::dirs()->findResource("appdata",
-      "pics/flag_red.png"));
-
-
-      // alte Linie übermalen
-//      paint.drawLine(calt, this->height() - Y_ABSTAND, calt, Y_ABSTAND);
+      QPixmap pixCursor1 = QPixmap(KGlobal::dirs()->findResource("appdata",
+          "pics/flag_green.png"));
+      QPixmap pixCursor2 = QPixmap(KGlobal::dirs()->findResource("appdata",
+          "pics/flag_red.png"));
 
       // neue Linie malen
       paint.drawLine(xpos, this->height() - Y_ABSTAND, xpos, Y_ABSTAND);

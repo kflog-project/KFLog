@@ -19,10 +19,14 @@
    <Action name="toggle_help_window" />    
    <Action name="waypoints" />  
    <Action name="tasks" />
+   <Action name="toggle_objectTree" />
    <Separator weakSeparator="1" name="separator_3" />
    <Action name="reset_confirmations" />
   </Menu>
   <Action name="window" />
+  <Menu name="help">
+    <Action name="help_show_tip" />
+  </Menu>
  </MenuBar>
  <ToolBar noMerge="1" name="mainToolBar" >
   <text>Main Toolbar</text>

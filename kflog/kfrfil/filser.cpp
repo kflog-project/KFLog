@@ -109,7 +109,7 @@ unsigned char STX = 0x02, /* Command prefix like AT for modems      */
 void releaseTTY(int signal)
 {
   tcsetattr(portID, TCSANOW, &oldTermEnv);
-  exit(-1);
+  //exit(-1);
 }
 
 Filser::Filser()

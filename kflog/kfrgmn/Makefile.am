@@ -5,7 +5,7 @@ lib_LTLIBRARIES = libkfrgmn.la
 INCLUDES = $(all_includes)
 
 
-LDFLAGS =               
+LDFLAGS =              
 
 
 libkfrgmn_la_LDFLAGS = -version-info 0:0:0

@@ -44,6 +44,7 @@ class Waypoints;
 class Tasks;
 class EvaluationDialog;
 class TopoLegend;
+class ObjectTree;
 
 /**
  * Mainwindow for KFLog.
@@ -183,6 +184,10 @@ class KFLogApp : public KDockMainWindow
   /**
    * Shows or hides the legend-widget.
    */
+  void slotToggleObjectTreeDock();
+  /**
+   * Shows or hides the object-widget.
+   */
   void slotToggleLegendDock();
   /**
    * Opens a dialog for configuration of the toolbar.
@@ -267,6 +272,11 @@ class KFLogApp : public KDockMainWindow
    */
   void slotHideLegendDock();
   /**
+   * Hides the Objects-widget. Called, when the user has closed or
+   * undocked the widget.
+   */
+  void slotHideObjectTreeDock();
+  /**
    * Hides the Tasks-widget. Called, when the user has closed or
    * undocked the widget.
    */
@@ -344,15 +354,22 @@ class KFLogApp : public KDockMainWindow
   /**
    * Dockwidget to handle the legend-widget.
    *
-   * @see tasks
+   * @see TopoLegend
    */
   KDockWidget* legendDock;
+  TopoLegend* legend;
+  /**
+   * Dockwidget to handle the object view
+   *
+   * @see ObjectView
+   */
+  KDockWidget* objectTreeDock;
+  ObjectTree* objectTree;
   /**
    * The mapcontrol-widget. Embedded in mapControlDock
    *
    * @see mapControlDock
    */
-  TopoLegend* legend;
   
   MapControlView* mapControl;
   /**
@@ -466,6 +483,10 @@ class KFLogApp : public KDockMainWindow
   /**
    * Action to handle the legend.
    */
+  KToggleAction* viewObjectTree;
+  /**
+   * Action to handle the objectView.
+   */
   KToggleAction* viewLegend;
   /**
    * Action to show the evaluationdialog.
@@ -534,7 +555,7 @@ class KFLogApp : public KDockMainWindow
    */
   Waypoints *waypoints;
   /**
-   * The taskt-widget.
+   * The task-widget.
    */
   Tasks *tasks;
   /**
@@ -544,8 +565,14 @@ class KFLogApp : public KDockMainWindow
   KPopupMenu* windowMenu;
 
   private slots: // Private slots
-    /** insert available flights into menu */
-    void slotWindowsMenuAboutToShow();
+  /**
+   * insert available flights into menu
+   */
+  void slotWindowsMenuAboutToShow();
+  /**
+   * Called to force display of the "Tip of the Day" dialog.
+   */
+  void slotTipOfDay();
 
 };
  

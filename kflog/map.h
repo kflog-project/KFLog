@@ -316,10 +316,13 @@ class Map : public QWidget
     bool isSnapping;
     // temp task (snapping)
     FlightTask tempTask;
-    // for the rectangular zoom
+    // for the rectangular zoom: indicates that dragZoom mode is initiated, but the drag itself has not nessecairaly started
     bool isZoomRect;
+    // indicates that the drag for the dragZoom has started
     bool dragZoomRect;
+    // contains the point where the dragZoom was started
     QPoint beginDrag;
+    // contains the size of the drag. Don't know why it's not a QSize object...
     QPoint sizeDrag;
 
     /**

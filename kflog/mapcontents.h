@@ -271,11 +271,17 @@ switch to first task in file */
      * splash-screen of the mainwindow.
      */
     void loadingMessage(QString message);
-    /** signal that a new flight/task/flight group become active */
+    /**
+     * signal that a new flight/task/flight group become active
+     */
     void currentFlightChanged();
-    /** signal that a new task has been created */
+    /**
+     * signal that a new task has been created
+     */
     void newTaskAdded(FlightTask *);
-    /** signal emitted when new task has been created */
+    /**
+     * signal emitted when new task has been created
+     */
     void taskHelp(QString);
     /**
      * Emitted, when no mapfiles are found, or the when the map-directories
@@ -289,10 +295,18 @@ switch to first task in file */
       */
     void activatePlanning();
 
-    /*
-    *  Map contents have changed
-    */
+    /**
+     *  Map contents have changed
+     */
     void contentsChanged();
+    /**
+     * Emitted if a new flight was added to the flightlist.
+     */
+    void newFlightAdded(Flight *);;
+    /**
+     * Emitted if the current flight has changed.
+     */
+    void currentFlightChanged(BaseFlightElement*);
 
   private:
     /**
@@ -448,6 +462,12 @@ switch to first task in file */
      */
     void __downloadFile(QString fileName, QString destString, bool wait=false);
     DownloadList* downloadList;
+private slots: // Private slots
+  /**
+   * Connected to the signal currentFlightChanged, and used to resend
+   * the signal with the current flight as an argument.
+   */
+  void slotReSendFlightChanged();
 };
 
 enum AutoDownloadType {ADT_NotSet = 0, Automatic, Inhibited};

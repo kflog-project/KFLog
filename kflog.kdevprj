@@ -21,9 +21,9 @@ addcxxflags=
 bin_program=kflog
 cflags=
 cppflags=
-cxxflags=\s-O3 -Wall
+cxxflags=\s-O0 -Wall
 ldadd=-lkdeprint -lm $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
-ldflags=\s             \s
+ldflags=\s           \s
 
 [General]
 AMChanged=true
@@ -31,7 +31,7 @@ author=Heiner Lamprecht
 configure_args=\s--build=i386-linux --host=i386-linux --target=i386-linux --prefix=/opt/kde3 --enable-debug\s
 email=heiner@kflog.org
 kdevprj_version=1.3
-lfv_open_groups=GNU,Übersetzungen
+lfv_open_groups=Quellen,Übersetzungen
 make_options=\s-j1
 makefiles=Makefile.am,kflog/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,po/Makefile.am,kflog/guicontrols/Makefile.am,kflog/kfrgcs/Makefile.am,kflog/kfrgmn/Makefile.am,kflog/map-icons/Makefile.am,kflog/map-icons/small/Makefile.am,kflog/pics/Makefile.am,kflog/kfrfil/Makefile.am,kflog/kfrxsp/Makefile.am,kflog/kfrxcu/Makefile.am
 modifyMakefiles=true
@@ -144,7 +144,7 @@ install_location=
 type=DATA
 
 [kflog/Makefile.am]
-files=kflog/main.cpp,kflog/kflog.cpp,kflog/kflog.h,kflog/kflog.desktop,kflog/airport.cpp,kflog/airport.h,kflog/airspace.cpp,kflog/airspace.h,kflog/baseflightelement.cpp,kflog/baseflightelement.h,kflog/basemapelement.cpp,kflog/basemapelement.h,kflog/configdrawelement.cpp,kflog/configdrawelement.h,kflog/configprintelement.cpp,kflog/configprintelement.h,kflog/dataview.cpp,kflog/dataview.h,kflog/evaluationdialog.cpp,kflog/evaluationdialog.h,kflog/evaluationframe.cpp,kflog/evaluationframe.h,kflog/evaluationview.cpp,kflog/evaluationview.h,kflog/flight.cpp,kflog/flight.h,kflog/flightdataprint.cpp,kflog/flightdataprint.h,kflog/flightgroup.cpp,kflog/flightgroup.h,kflog/flightselectiondialog.cpp,kflog/flightselectiondialog.h,kflog/flighttask.cpp,kflog/flighttask.h,kflog/glidersite.cpp,kflog/glidersite.h,kflog/frstructs.h,kflog/hi16-action-centerflight.png,kflog/hi16-action-centertask.png,kflog/hi16-action-flightevaluation.png,kflog/hi16-action-stepback.png,kflog/hi16-action-stepforward.png,kflog/hi16-action-waypoint.png,kflog/hi16-app-kflog.png,kflog/hi16-mimetype-igc.png,kflog/hi22-action-centerflight.png,kflog/hi22-action-centertask.png,kflog/hi22-action-flightevaluation.png,kflog/hi22-action-movemap_e.png,kflog/hi22-action-movemap_n.png,kflog/hi22-action-movemap_ne.png,kflog/hi22-action-movemap_nw.png,kflog/hi22-action-movemap_s.png,kflog/hi22-action-movemap_se.png,kflog/hi22-action-movemap_sw.png,kflog/hi22-action-movemap_w.png,kflog/hi22-action-stepback.png,kflog/hi22-action-waypoint.png,kflog/hi22-action-stepforward.png,kflog/hi32-action-flightevaluation.png,kflog/hi32-action-projection.png,kflog/hi32-app-kflog.png,kflog/hi32-mimetype-igc.png,kflog/hi48-app-kflog.png,kflog/hi48-mimetype-igc.png,kflog/igc3ddialog.cpp,kflog/igc3ddialog.h,kflog/igc3dflightdata.cpp,kflog/igc3dflightdata.h,kflog/igc3dpolyhedron.cpp,kflog/igc3dpolyhedron.h,kflog/igc3dview.cpp,kflog/igc3dview.h,kflog/igc3dviewstate.cpp,kflog/igc3dviewstate.h,kflog/igcpreview.h,kflog/igcpreview.cpp,kflog/isohypse.cpp,kflog/isohypse.h,kflog/kflogconfig.cpp,kflog/kflogconfig.h,kflog/kflogrc,kflog/kflogstartlogo.cpp,kflog/kflogstartlogo.h,kflog/kflogui.rc,kflog/lineelement.cpp,kflog/lineelement.h,kflog/map.cpp,kflog/map.h,kflog/mapcalc.cpp,kflog/mapcalc.h,kflog/mapconfig.cpp,kflog/mapconfig.h,kflog/mapcontents.cpp,kflog/mapcontents.h,kflog/mapcontrolview.cpp,kflog/mapcontrolview.h,kflog/mapdefaults.h,kflog/mapmatrix.h,kflog/mapmatrix.cpp,kflog/mapprint.cpp,kflog/mapprint.h,kflog/olcdialog.cpp,kflog/olcdialog.h,kflog/projectionbase.cpp,kflog/projectioncylindric.cpp,kflog/projectionbase.h,kflog/projectioncylindric.h,kflog/projectionlambert.cpp,kflog/projectionlambert.h,kflog/radiopoint.cpp,kflog/radiopoint.h,kflog/recorderdialog.cpp,kflog/recorderdialog.h,kflog/resource.h,kflog/runway.h,kflog/singlepoint.cpp,kflog/singlepoint.h,kflog/taskdataprint.cpp,kflog/taskdataprint.h,kflog/translationelement.cpp,kflog/translationelement.h,kflog/translationlist.cpp,kflog/translationlist.h,kflog/waypointcatalog.cpp,kflog/waypointcatalog.h,kflog/waypointdialog.cpp,kflog/waypointdialog.h,kflog/waypointimpfilterdialog.cpp,kflog/waypointimpfilterdialog.h,kflog/waypointlist.cpp,kflog/waypointlist.h,kflog/waypoints.cpp,kflog/waypoints.h,kflog/wp.h,kflog/tasks.cpp,kflog/tasks.h,kflog/hi16-action-save_all.png,kflog/hi22-action-save_all.png,kflog/centertodialog.cpp,kflog/centertodialog.h,kflog/hi22-action-centerwaypoint.png,kflog/hi16-action-centerwaypoint.png,kflog/hi22-action-centerto.png,kflog/taskdialog.cpp,kflog/taskdialog.h,kflog/hi22-action-task.png,kflog/hi16-action-task.png,kflog/waypointdict.cpp,kflog/waypointdict.h,kflog/hi48-mimetype-declaration.png,kflog/hi48-mimetype-task.png,kflog/hi48-mimetype-waypoint.png,kflog/hi48-mimetype-pilot.png,kflog/optimization.cpp,kflog/optimization.h,kflog/flightrecorderpluginbase.cpp,kflog/flightrecorderpluginbase.h,kflog/waypoint.cpp,kflog/waypoint.h,kflog/optimizationwizard.cpp,kflog/optimizationwizard.h,kflog/topolegend.cpp,kflog/topolegend.h,kflog/wgspoint.h,kflog/gliders.h,kflog/downloadlist.cpp,kflog/downloadlist.h,kflog/contestlist.h,kflog/contests.h,kflog/helpwindow.cpp,kflog/helpwindow.h
+files=kflog/main.cpp,kflog/kflog.cpp,kflog/kflog.h,kflog/kflog.desktop,kflog/airport.cpp,kflog/airport.h,kflog/airspace.cpp,kflog/airspace.h,kflog/baseflightelement.cpp,kflog/baseflightelement.h,kflog/basemapelement.cpp,kflog/basemapelement.h,kflog/configdrawelement.cpp,kflog/configdrawelement.h,kflog/configprintelement.cpp,kflog/configprintelement.h,kflog/dataview.cpp,kflog/dataview.h,kflog/evaluationdialog.cpp,kflog/evaluationdialog.h,kflog/evaluationframe.cpp,kflog/evaluationframe.h,kflog/evaluationview.cpp,kflog/evaluationview.h,kflog/flight.cpp,kflog/flight.h,kflog/flightdataprint.cpp,kflog/flightdataprint.h,kflog/flightgroup.cpp,kflog/flightgroup.h,kflog/flightselectiondialog.cpp,kflog/flightselectiondialog.h,kflog/flighttask.cpp,kflog/flighttask.h,kflog/glidersite.cpp,kflog/glidersite.h,kflog/frstructs.h,kflog/hi16-action-centerflight.png,kflog/hi16-action-centertask.png,kflog/hi16-action-flightevaluation.png,kflog/hi16-action-stepback.png,kflog/hi16-action-stepforward.png,kflog/hi16-action-waypoint.png,kflog/hi16-app-kflog.png,kflog/hi16-mimetype-igc.png,kflog/hi22-action-centerflight.png,kflog/hi22-action-centertask.png,kflog/hi22-action-flightevaluation.png,kflog/hi22-action-movemap_e.png,kflog/hi22-action-movemap_n.png,kflog/hi22-action-movemap_ne.png,kflog/hi22-action-movemap_nw.png,kflog/hi22-action-movemap_s.png,kflog/hi22-action-movemap_se.png,kflog/hi22-action-movemap_sw.png,kflog/hi22-action-movemap_w.png,kflog/hi22-action-stepback.png,kflog/hi22-action-waypoint.png,kflog/hi22-action-stepforward.png,kflog/hi32-action-flightevaluation.png,kflog/hi32-action-projection.png,kflog/hi32-app-kflog.png,kflog/hi32-mimetype-igc.png,kflog/hi48-app-kflog.png,kflog/hi48-mimetype-igc.png,kflog/igc3ddialog.cpp,kflog/igc3ddialog.h,kflog/igc3dflightdata.cpp,kflog/igc3dflightdata.h,kflog/igc3dpolyhedron.cpp,kflog/igc3dpolyhedron.h,kflog/igc3dview.cpp,kflog/igc3dview.h,kflog/igc3dviewstate.cpp,kflog/igc3dviewstate.h,kflog/igcpreview.h,kflog/igcpreview.cpp,kflog/isohypse.cpp,kflog/isohypse.h,kflog/kflogconfig.cpp,kflog/kflogconfig.h,kflog/kflogrc,kflog/kflogstartlogo.cpp,kflog/kflogstartlogo.h,kflog/kflogui.rc,kflog/lineelement.cpp,kflog/lineelement.h,kflog/map.cpp,kflog/map.h,kflog/mapcalc.cpp,kflog/mapcalc.h,kflog/mapconfig.cpp,kflog/mapconfig.h,kflog/mapcontents.cpp,kflog/mapcontents.h,kflog/mapcontrolview.cpp,kflog/mapcontrolview.h,kflog/mapdefaults.h,kflog/mapmatrix.h,kflog/mapmatrix.cpp,kflog/mapprint.cpp,kflog/mapprint.h,kflog/olcdialog.cpp,kflog/olcdialog.h,kflog/projectionbase.cpp,kflog/projectioncylindric.cpp,kflog/projectionbase.h,kflog/projectioncylindric.h,kflog/projectionlambert.cpp,kflog/projectionlambert.h,kflog/radiopoint.cpp,kflog/radiopoint.h,kflog/recorderdialog.cpp,kflog/recorderdialog.h,kflog/resource.h,kflog/runway.h,kflog/singlepoint.cpp,kflog/singlepoint.h,kflog/taskdataprint.cpp,kflog/taskdataprint.h,kflog/translationelement.cpp,kflog/translationelement.h,kflog/translationlist.cpp,kflog/translationlist.h,kflog/waypointcatalog.cpp,kflog/waypointcatalog.h,kflog/waypointdialog.cpp,kflog/waypointdialog.h,kflog/waypointimpfilterdialog.cpp,kflog/waypointimpfilterdialog.h,kflog/waypointlist.cpp,kflog/waypointlist.h,kflog/waypoints.cpp,kflog/waypoints.h,kflog/wp.h,kflog/tasks.cpp,kflog/tasks.h,kflog/hi16-action-save_all.png,kflog/hi22-action-save_all.png,kflog/centertodialog.cpp,kflog/centertodialog.h,kflog/hi22-action-centerwaypoint.png,kflog/hi16-action-centerwaypoint.png,kflog/hi22-action-centerto.png,kflog/taskdialog.cpp,kflog/taskdialog.h,kflog/hi22-action-task.png,kflog/hi16-action-task.png,kflog/waypointdict.cpp,kflog/waypointdict.h,kflog/hi48-mimetype-declaration.png,kflog/hi48-mimetype-task.png,kflog/hi48-mimetype-waypoint.png,kflog/hi48-mimetype-pilot.png,kflog/optimization.cpp,kflog/optimization.h,kflog/flightrecorderpluginbase.cpp,kflog/flightrecorderpluginbase.h,kflog/waypoint.cpp,kflog/waypoint.h,kflog/optimizationwizard.cpp,kflog/optimizationwizard.h,kflog/topolegend.cpp,kflog/topolegend.h,kflog/wgspoint.h,kflog/gliders.h,kflog/downloadlist.cpp,kflog/downloadlist.h,kflog/contestlist.h,kflog/contests.h,kflog/helpwindow.cpp,kflog/helpwindow.h,kflog/objecttree.cpp,kflog/objecttree.h,kflog/flightlistviewitem.cpp,kflog/flightlistviewitem.h,kflog/tasklistviewitem.cpp,kflog/tasklistviewitem.h
 sub_dirs=guicontrols,kfrgcs,kfrgmn,map-icons,pics,kfrfil,kfrxsp,kfrxcu
 type=prog_main
 
@@ -335,6 +335,18 @@ install_location=
 type=SOURCE
 
 [kflog/flightgroup.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/flightlistviewitem.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/flightlistviewitem.h]
 dist=true
 install=false
 install_location=
@@ -816,17 +828,11 @@ install_location=$$(kde_datadir)/kflog/kflogui.rc
 type=DATA
 
 [kflog/kfrfil/Makefile.am]
-files=kflog/kfrfil/fil.desktop,kflog/kfrfil/flightrecorder.cpp,kflog/kfrfil/filser.cpp,kflog/kfrfil/filser.h,kflog/kfrfil/README
+files=kflog/kfrfil/fil.desktop,kflog/kfrfil/flightrecorder.cpp,kflog/kfrfil/filser.cpp,kflog/kfrfil/filser.h
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=kfrfil
 sub_dirs=
 type=shared_library
-
-[kflog/kfrfil/README]
-dist=true
-install=false
-install_location=
-type=DATA
 
 [kflog/kfrfil/fil.desktop]
 dist=true
@@ -1490,6 +1496,18 @@ install=false
 install_location=
 type=HEADER
 
+[kflog/objecttree.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/objecttree.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
 [kflog/olcdialog.cpp]
 dist=true
 install=false
@@ -1772,6 +1790,18 @@ install_location=
 type=SOURCE
 
 [kflog/taskdialog.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
+[kflog/tasklistviewitem.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/tasklistviewitem.h]
 dist=true
 install=false
 install_location=
