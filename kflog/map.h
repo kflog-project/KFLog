@@ -173,6 +173,15 @@ class Map : public QWidget
      */
     KFLogApp* mainApp;
     /**
+      * Display Infos about MapItems
+      */
+    void __displayMapInfo(QPoint current);
+    /**
+      * graphical planning
+      */
+    void __graphicalPlanning(QPoint current);
+
+    /**
      * This pixmap is used to store the currently displayed map.
      * This painter is about the same size as the map-widget, but is only
      * used for internal buffering the map. Whenever the widget is about

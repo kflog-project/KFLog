@@ -324,6 +324,179 @@ void Map::mouseMoveEvent(QMouseEvent* event)
     }
 }
 
+void Map::__displayMapInfo(QPoint current)
+{
+  /*
+   * Segelflugplätze, soweit vorhanden, kommen als erster Eintrag
+   */
+  extern MapContents _globalMapContents;
+  extern MapMatrix _globalMapMatrix;
+
+  BaseFlightElement *baseFlight = _globalMapContents.getFlight();
+
+  SinglePoint *hitElement;
+
+  QPoint sitePos;
+  double dX, dY;
+  // Radius for Mouse Snapping
+  double delta(16.0);
+
+  QString text;
+
+  bool show = false, isAirport = false;
+
+  for(unsigned int loop = 0;
+      loop < _globalMapContents.getListLength(
+		      MapContents::GliderList); loop++)
+    {
+      hitElement = (SinglePoint*)_globalMapContents.getElement(
+          MapContents::GliderList, loop);
+      sitePos = hitElement->getMapPosition();
+
+      dX = sitePos.x() - current.x();
+      dY = sitePos.y() - current.y();
+
+      // Abstand entspricht der Icon-Größe.
+      if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+          ( ( dY < delta ) && ( dY > -delta ) ) )
+        {
+          text = text + ((SinglePoint*)hitElement)->getInfoString();
+          // Text anzeigen
+          QWhatsThis::enterWhatsThisMode();
+          QWhatsThis::leaveWhatsThisMode(text);
+          isAirport = true;
+        }
+    }
+
+//          text = "";    // Wir wollen _nur_ Flugplätze anzeigen!
+
+  if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
+
+  for(unsigned int loop = 0;
+      loop < _globalMapContents.getListLength(
+		          MapContents::AirportList); loop++)
+    {
+      hitElement = (SinglePoint*)_globalMapContents.getElement(
+          MapContents::AirportList, loop);
+      sitePos = hitElement->getMapPosition();
+
+      dX = sitePos.x() - current.x();
+      dY = sitePos.y() - current.y();
+
+      // Abstand entspricht der Icon-Größe.
+      if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+          ( ( dY < delta ) && ( dY > -delta ) ) )
+        {
+          text = text + hitElement->getInfoString();
+          // Text anzeigen
+          QWhatsThis::enterWhatsThisMode();
+          QWhatsThis::leaveWhatsThisMode(text);
+          isAirport = true;
+        }
+    }
+
+  if(baseFlight && baseFlight->getTypeID() == BaseMapElement::Flight)
+    {
+      QList<wayPoint> wpList = baseFlight->getWPList();
+
+      delta = 25;
+      bool isWP = false;
+      QString wpText;
+      wpText = "<B>Waypoint:</B><UL>";
+
+      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+        {
+          sitePos = _globalMapMatrix.map(wpList.at(loop)->projP);
+
+          dX = sitePos.x() - current.x();
+          dY = sitePos.y() - current.y();
+
+          // We do not search for the sector ...
+          if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+              ( ( dY < delta ) && ( dY > -delta ) ) )
+            {
+              isWP = true;
+
+              QString tmpText, timeText;
+
+              if(wpList.at(loop)->sector1 != 0)
+                {
+                  timeText = printTime(wpList.at(loop)->sector1);
+                  tmpText = i18n("Sector 1");
+                }
+              else if(wpList.at(loop)->sector2 != 0)
+                {
+                  timeText = printTime(wpList.at(loop)->sector2);
+                  tmpText = i18n("Sector 2");
+                }
+              else if(wpList.at(loop)->sectorFAI != 0)
+                {
+                  timeText = printTime(wpList.at(loop)->sectorFAI);
+                  tmpText = i18n("FAI-Sector");
+                }
+              else
+                {
+                  timeText = "&nbsp;" + i18n("not reached");
+                }
+
+              switch(wpList.at(loop)->type)
+                {
+                  case FlightTask::TakeOff:
+                    tmpText = i18n("Take Off");
+                    break;
+                  case FlightTask::Begin:
+                    tmpText = i18n("Begin of task");
+                    break;
+                  case FlightTask::End:
+                    tmpText = i18n("End of task");
+                    break;
+                  case FlightTask::Landing:
+                    tmpText = i18n("Landing");
+                    break;
+                }
+
+              wpText = wpText + "<LI><B>" + wpList.at(loop)->name +
+                  "</B>  " +
+                  "&nbsp;" + timeText + " / " + tmpText + "<BR>" +
+                  printPos(wpList.at(loop)->origP.x()) + " / " +
+                  printPos(wpList.at(loop)->origP.y(), false) + "</LI>";
+            }
+        }
+
+      if(isWP)
+        {
+          wpText = wpText + "</UL>";
+          text = text + wpText;
+          // Text anzeigen
+          QWhatsThis::enterWhatsThisMode();
+          QWhatsThis::leaveWhatsThisMode(text);
+          isAirport = true;
+        }
+    }
+
+  if(isAirport)  return;
+
+  text = text + "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
+
+  for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
+    {
+      if(airspaceRegList->at(loop)->contains(current))
+        {
+          text = text + "<LI>" + ((Airspace*)_globalMapContents.getElement(
+              MapContents::AirspaceList, loop))->getInfoString() + "</LI>";
+          show = true;
+        }
+    }
+  text = text + "</UL>";
+
+  if(show)
+    {
+      //  Text anzeigen
+      QWhatsThis::enterWhatsThisMode();
+      QWhatsThis::leaveWhatsThisMode(text);
+    }
+}
+
 void Map::mousePressEvent(QMouseEvent* event)
 {
   // First: delete the cursor, if visible:
@@ -338,7 +511,6 @@ void Map::mousePressEvent(QMouseEvent* event)
 
   bool shiftButton = event->state() & ShiftButton;
 
-  bool show = false, isAirport = false;
 
   SinglePoint *hitElement;
   QString text;
@@ -575,159 +747,8 @@ void Map::mousePressEvent(QMouseEvent* event)
         }
       else
         {
-          /*
-           * Segelflugplätze, soweit vorhanden, kommen als erster Eintrag
-           */
-          for(unsigned int loop = 0;
-              loop < _globalMapContents.getListLength(
-						      MapContents::GliderList); loop++)
-            {
-              hitElement = (SinglePoint*)_globalMapContents.getElement(
-                  MapContents::GliderList, loop);
-              sitePos = hitElement->getMapPosition();
-
-              dX = sitePos.x() - current.x();
-              dY = sitePos.y() - current.y();
-	      
-              // Abstand entspricht der Icon-Größe.
-              if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-                  ( ( dY < delta ) && ( dY > -delta ) ) )
-                {
-                  text = text + ((SinglePoint*)hitElement)->getInfoString();
-                  // Text anzeigen
-                  QWhatsThis::enterWhatsThisMode();
-                  QWhatsThis::leaveWhatsThisMode(text);
-                  isAirport = true;
-                }
-            }
-
-//          text = "";    // Wir wollen _nur_ Flugplätze anzeigen!
-
-	        if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
-
-  	      for(unsigned int loop = 0;
-	            loop < _globalMapContents.getListLength(
-						          MapContents::AirportList); loop++)
-    	      {
-  	          hitElement = (SinglePoint*)_globalMapContents.getElement(
-                  MapContents::AirportList, loop);
-              sitePos = hitElement->getMapPosition();
-
-              dX = sitePos.x() - current.x();
-              dY = sitePos.y() - current.y();
-
-              // Abstand entspricht der Icon-Größe.
-              if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-                  ( ( dY < delta ) && ( dY > -delta ) ) )
-                {
-                  text = text + hitElement->getInfoString();
-                  // Text anzeigen
-                  QWhatsThis::enterWhatsThisMode();
-                  QWhatsThis::leaveWhatsThisMode(text);
-                  isAirport = true;
-                }
-            }
-
-          if(f && f->getTypeID() == BaseMapElement::Flight)
-	          {
-              QList<wayPoint> wpList = f->getWPList();
-
-              delta = 25;
-              bool isWP = false;
-              QString wpText;
-              wpText = "<B>Waypoint:</B><UL>";
-
-              for(unsigned int loop = 0; loop < wpList.count(); loop++)
-                {
-                  sitePos = _globalMapMatrix.map(wpList.at(loop)->projP);
-
-                  dX = sitePos.x() - current.x();
-                  dY = sitePos.y() - current.y();
-
-                  // We do not search for the sector ...
-                  if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-                      ( ( dY < delta ) && ( dY > -delta ) ) )
-                    {
-                      isWP = true;
-
-                      QString tmpText, timeText;
-
-                      if(wpList.at(loop)->sector1 != 0)
-                        {
-                          timeText = printTime(wpList.at(loop)->sector1);
-                          tmpText = i18n("Sector 1");
-                        }
-                      else if(wpList.at(loop)->sector2 != 0)
-                        {
-                          timeText = printTime(wpList.at(loop)->sector2);
-                          tmpText = i18n("Sector 2");
-                        }
-                      else if(wpList.at(loop)->sectorFAI != 0)
-                        {
-                          timeText = printTime(wpList.at(loop)->sectorFAI);
-                          tmpText = i18n("FAI-Sector");
-                        }
-                      else
-                        {
-                          timeText = "&nbsp;" + i18n("not reached");
-                        }
-
-                      switch(wpList.at(loop)->type)
-                        {
-                          case FlightTask::TakeOff:
-                            tmpText = i18n("Take Off");
-                            break;
-                          case FlightTask::Begin:
-                            tmpText = i18n("Begin of task");
-                            break;
-                          case FlightTask::End:
-                            tmpText = i18n("End of task");
-                            break;
-                          case FlightTask::Landing:
-                            tmpText = i18n("Landing");
-                            break;
-                        }
-
-                      wpText = wpText + "<LI><B>" + wpList.at(loop)->name +
-                          "</B>  " +
-                          "&nbsp;" + timeText + " / " + tmpText + "<BR>" +
-                          printPos(wpList.at(loop)->origP.x()) + " / " +
-                          printPos(wpList.at(loop)->origP.y(), false) + "</LI>";
-    		            }
-                }
-
-              if(isWP)
-                {
-                  wpText = wpText + "</UL>";
-                  text = text + wpText;
-                  // Text anzeigen
-                  QWhatsThis::enterWhatsThisMode();
-                  QWhatsThis::leaveWhatsThisMode(text);
-                  isAirport = true;
-                }
-            }
-
-          if(isAirport)  return;
-
-          text = text + "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
-
-          for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
-            {
-              if(airspaceRegList->at(loop)->contains(current))
-                {
-                  text = text + "<LI>" + ((Airspace*)_globalMapContents.getElement(
-                      MapContents::AirspaceList, loop))->getInfoString() + "</LI>";
-                  show = true;
-                }
-            }
-          text = text + "</UL>";
-
-          if(show)
-            {
-              //  Text anzeigen
-              QWhatsThis::enterWhatsThisMode();
-              QWhatsThis::leaveWhatsThisMode(text);
-            }
+            // Display Information about Map Items
+            __displayMapInfo(current);
         }
     }
 }
