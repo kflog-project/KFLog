@@ -35,5 +35,5 @@ extern "C"
 **
 *************************************************************************/
 FlightRecorderPluginBase * getRecorder() {
-  return new Volkslogger;
+  return new Volkslogger ();
 }
