@@ -341,7 +341,25 @@ class KFLogApp : public KDockMainWindow
     KAction* flightEvaluation;
     KAction* taskAndWaypoint;
 //    KAction* flightOptimization;
-    /**
+		/**
+		 * Action to start the animation
+		 */		
+		KAction* animateFlightStart;
+		/**
+		 * Action to stop the animation
+		 */		
+		KAction* animateFlightStop;
+		/**
+		 * Steppings actions.
+		 */
+		KAction* stepFlightNext;
+ 		KAction* stepFlightPrev;
+		KAction* stepFlightHome;
+		KAction* stepFlightEnd;
+ 		KAction* stepFlightStepNext;
+ 		KAction* stepFlightStepPrev;
+
+		/**
      * The map-widget.
      */
     Map* map;

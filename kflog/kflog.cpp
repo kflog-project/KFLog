@@ -101,6 +101,14 @@ KFLogApp::KFLogApp()
   viewCenterTask->setEnabled(false);
   viewCenterFlight->setEnabled(false);
   flightEvaluation->setEnabled(false);
+  animateFlightStart->setEnabled(false);
+  animateFlightStop->setEnabled(false);
+  stepFlightNext->setEnabled(false);
+  stepFlightPrev->setEnabled(false);
+  stepFlightStepNext->setEnabled(false);
+  stepFlightStepPrev->setEnabled(false);
+  stepFlightHome->setEnabled(false);
+  stepFlightEnd->setEnabled(false);
 
   activateDock();
 
@@ -203,6 +211,35 @@ void KFLogApp::initActions()
 //  new KAction(i18n("Optimize"), "flight_optimize", 0, map,
 //      SLOT(slotOptimzeFlight()), actionCollection(), "optimize_flight");
 
+  //Animation actions
+  animateFlightStart = new KAction(i18n("&Start Flight Animation"), "Start Animation",
+			Key_F12, map, SLOT(slotAnimateFlightStart()), actionCollection(),
+			"start_animate");
+  animateFlightStop = new KAction(i18n("Stop Flight &Animation"), "Stop Animation",
+			Key_F11, map, SLOT(slotAnimateFlightStop()), actionCollection(),
+			"stop_animate");
+	//Stepping actions
+	stepFlightNext = new KAction(i18n("Next Flight Point"), "Next Flight Point",
+			Key_Up, map, SLOT(slotFlightNext()), actionCollection(),
+		  "next_flight_point");
+	stepFlightPrev = new KAction(i18n("Prev Flight Point"), "Previous Flight Point",
+			Key_Down, map, SLOT(slotFlightPrev()), actionCollection(),
+			"prev_flight_point");
+	stepFlightHome = new KAction(i18n("First Flight Point"), "Jump to First Flight Point",
+			Key_Home, map, SLOT(slotFlightHome()), actionCollection(),
+			"first_flight_point");
+	stepFlightEnd = new KAction(i18n("Last Flight Point"), "Jump to Last Flight Point",
+			Key_End, map, SLOT(slotFlightEnd()), actionCollection(),
+			"last_flight_point");
+	stepFlightStepNext = new KAction(i18n("Step +10 Flight Points"), "Step forward 10 Flight Points",
+			Key_PageUp, map, SLOT(slotFlightStepNext()), actionCollection(),
+			"next_step_flight_point");
+	stepFlightStepPrev = new KAction(i18n("Step -10 Flight Points"), "Step back 10 Flight Points",
+			Key_PageDown, map, SLOT(slotFlightStepPrev()), actionCollection(),
+			"prev_step_flight_point");
+
+
+
   KSelectAction* viewFlightDataType = new KSelectAction(
       i18n("Show Flightdata"), "idea", 0,
       actionCollection(), "view_flight_data");
@@ -224,7 +261,15 @@ void KFLogApp::initActions()
       actionCollection(), "flight");
   flightMenu->insert(flightEvaluation);
   flightMenu->insert(taskAndWaypoint);
-  flightMenu->insert(viewFlightDataType);
+  flightMenu->insert(animateFlightStart);
+  flightMenu->insert(animateFlightStop);
+
+  flightMenu->insert(stepFlightNext);
+  flightMenu->insert(stepFlightPrev);
+  flightMenu->insert(stepFlightStepNext);
+  flightMenu->insert(stepFlightStepPrev);
+  flightMenu->insert(stepFlightHome);
+  flightMenu->insert(stepFlightEnd);
 
   KStdAction::configureToolbars(this,
       SLOT(slotConfigureToolbars()), actionCollection());
@@ -421,6 +466,14 @@ void KFLogApp::slotFileClose()
       viewCenterTask->setEnabled(false);
       viewCenterFlight->setEnabled(false);
       flightEvaluation->setEnabled(false);
+      animateFlightStart->setEnabled(false);
+      animateFlightStop->setEnabled(false);
+			stepFlightNext->setEnabled(false);
+		  stepFlightPrev->setEnabled(false);
+		  stepFlightStepNext->setEnabled(false);
+		  stepFlightStepPrev->setEnabled(false);
+		  stepFlightHome->setEnabled(false);
+		  stepFlightEnd->setEnabled(false);
     }
 }
 
@@ -459,6 +512,14 @@ void KFLogApp::slotFileOpen()
       viewCenterTask->setEnabled(true);
       viewCenterFlight->setEnabled(true);
       flightEvaluation->setEnabled(true);
+      animateFlightStart->setEnabled(true);
+      animateFlightStop->setEnabled(true);
+		  stepFlightNext->setEnabled(true);
+		  stepFlightPrev->setEnabled(true);
+		  stepFlightStepNext->setEnabled(true);
+		  stepFlightStepPrev->setEnabled(true);
+		  stepFlightHome->setEnabled(true);
+		  stepFlightEnd->setEnabled(true);
 
       fileOpenRecent->addURL(fUrl);
 
@@ -486,6 +547,16 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
           viewCenterTask->setEnabled(true);
           viewCenterFlight->setEnabled(true);
           flightEvaluation->setEnabled(true);
+          animateFlightStart->setEnabled(true);
+          animateFlightStop->setEnabled(true);
+				  stepFlightNext->setEnabled(true);
+				  stepFlightPrev->setEnabled(true);
+				  stepFlightStepNext->setEnabled(true);
+				  stepFlightStepPrev->setEnabled(true);
+				  stepFlightHome->setEnabled(true);
+				  stepFlightEnd->setEnabled(true);
+
+
           map->slotRedrawFlight();
           map->slotCenterToFlight();
 

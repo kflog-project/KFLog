@@ -66,7 +66,26 @@ class Map : public QWidget
 		 * Animation slot.
 		 * Called for every timeout of the animation timer. Advances the crosshair one single step.
 		 */
-    void slotAnimateFlight();
+    void slotAnimateFlightTimeout();
+    /**
+		 * Animation slot.
+		 * Called to start the animation timer
+		 */
+    void slotAnimateFlightStart();
+	  /**
+		 * Animation slot.
+		 * Called to stop the animation timer
+		 */
+    void slotAnimateFlightStop();
+		/**
+		 * Stepping slots.
+		 */
+    void slotFlightNext();
+    void slotFlightPrev();
+    void slotFlightStepNext();
+    void slotFlightStepPrev();
+    void slotFlightHome();
+    void slotFlightEnd();
 
   signals:
     /** */
@@ -88,10 +107,6 @@ class Map : public QWidget
      * Displays the coordinates of the mousepointer in the status-bar.
      */
     virtual void mouseMoveEvent(QMouseEvent* event);
-    /**
-     * Processes the keyboard input to the Map class
-     */
-    virtual void keyPressEvent( QKeyEvent * event);
     /**
      * Redefinition of the paintEvent.
      */
