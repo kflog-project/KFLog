@@ -841,11 +841,12 @@ void EvaluationView::removePointer(bool forceRedraw) {
 
 /** Prepares the needed buffers for the pointer */
 void EvaluationView::preparePointer() {
+  /* Removed because it caused trouble when a second instance was created
   //delete pixmaps if they allready exist (maybe we needed to re-initialize?)
   if (pixPointer) delete pixPointer;
   if (pixPointerBuffer) delete pixPointerBuffer;
   if (bitPointerMask) delete bitPointerMask;
-  
+  */
   //create pixmaps
   pixPointer=new QPixmap(12,9);
   pixPointerBuffer=new QPixmap(12,9);
