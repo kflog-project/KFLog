@@ -33,61 +33,68 @@ Airspace::Airspace(QString n, unsigned int t, QPointArray pA)
       case AirC:
         PEN_THICKNESS(3,3,3,3,3,3,3,3,3)
         drawColor = QColor(0,120,0);
-        fillBrush = QBrush(QBrush::NoBrush);
+        fillBrushStyle = QBrush::NoBrush;
         break;
       case AirCtemp:
         PEN_THICKNESS(3,3,3,3,3,3,3,3,3)
         drawColor = QColor(0,120,0);
-        fillBrush = QBrush(QColor(0,200,0), QBrush::Dense6Pattern);
+        fillColor = QColor(0,200,0);
+        fillBrushStyle = QBrush::Dense6Pattern;
         break;
       case AirD:
         PEN_THICKNESS(3,3,3,3,3,3,3,3,3)
         drawPenStyle = QPen::DashLine;
         drawColor = QColor(0,180,0);
-        fillBrush = QBrush(QBrush::NoBrush);
+        fillBrushStyle = QBrush::NoBrush;
         break;
       case AirDtemp:
         PEN_THICKNESS(3,3,3,3,3,3,3,3,3)
         drawPenStyle = QPen::DashLine;
         drawColor = QColor(0,180,0);
-        fillBrush = QBrush(QColor(120,255,120), QBrush::FDiagPattern);
+        fillColor = QColor(120,255,120);
+        fillBrushStyle = QBrush::FDiagPattern;
         break;
       case AirElow:
         PEN_THICKNESS(3,3,3,3,2,2,2,2,2)
         drawColor = QColor(200,100,100);
-        fillBrush = QBrush(QBrush::NoBrush);
+        fillBrushStyle = QBrush::NoBrush;
         break;
       case AirEhigh:
         PEN_THICKNESS(3,3,3,3,2,2,2,2,2)
         drawColor = QColor(100,100,175);
-        fillBrush = QBrush(QBrush::NoBrush);
+        fillBrushStyle = QBrush::NoBrush;
         break;
       case AirF:
         PEN_THICKNESS(2,2,2,2,2,2,2,2,2)
         drawColor = QColor(50,50,125);
-        fillBrush = QBrush(QColor(100,100,175), QBrush::Dense5Pattern);
+        fillColor = QColor(100,100,175);
+        fillBrushStyle = QBrush::Dense5Pattern;
         break;
       case ControlD:
         PEN_THICKNESS(2,2,2,2,2,2,2,2,2)
         drawPenStyle = QPen::DashLine;
         drawColor = QColor(0,0,150);
-        fillBrush = QBrush(QColor(200,50,50), QBrush::Dense5Pattern);
+        fillColor = QColor(200,50,50);
+        fillBrushStyle = QBrush::Dense5Pattern;
         break;
       case Restricted:
         PEN_THICKNESS(2,2,2,2,2,2,2,2,2)
         drawColor = QColor(50,50,125);
-        fillBrush = QBrush(QColor(100,100,175), QBrush::BDiagPattern);
+        fillColor = QColor(100,100,175);
+        fillBrushStyle = QBrush::BDiagPattern;
         break;
       case Danger:
         PEN_THICKNESS(2,2,2,2,2,2,2,2,2)
         drawColor = QColor(50,50,125);
-        fillBrush = QBrush(QColor(100,100,175), QBrush::BDiagPattern);
+        fillColor = QColor(100,100,175);
+        fillBrushStyle = QBrush::BDiagPattern;
         break;
       case LowFlight:
         PEN_THICKNESS(3,3,3,3,3,3,3,3,3)
         drawPenStyle = QPen::DashLine;
         drawColor = QColor(150,0,0);
-        fillBrush = QBrush(QColor(255,150,150), QBrush::FDiagPattern);
+        fillColor = QColor(255,150,150);
+        fillBrushStyle = QBrush::FDiagPattern;
         break;
     }
 }

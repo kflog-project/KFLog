@@ -341,16 +341,31 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
             {
               case Flight::RouteP:
                 targetPainter->setPen(QPen(QColor(50, 50, 50), 2));
-                targetPainter->setBrush(QColor(255, 100, 100));
+                targetPainter->setBrush(QColor(255, 110, 110));
                 targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 1440, 2880);
-                targetPainter->setBrush(QColor(100, 255, 100));
+                targetPainter->setBrush(QColor(110, 255, 110));
                 targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
                 targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
 
+                // Inneren Sektor erneut zeichnen, damit Trennlinien
+                // zwischen Sekt. 1 und Zylinder verschwinden
+//                targetPainter->setPen(QPen::NoPen);
+//                targetPainter->drawEllipse(gx + 2, gy + 2,
+//                    (2 * R2) - 5, (2 * R2) - 5);
+
+                maskPainter->setPen(QPen(Qt::color1, 2));
+                maskPainter->setBrush(QBrush(Qt::color1));
+                maskPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 1440, 2880);
+                maskPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
+                maskPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
                 if(loop)
                   {
                     targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
+                    maskPainter->setPen(QPen(Qt::color1, 3));
                     targetPainter->drawLine(
+                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
+                        _globalMapMatrix.map(wpList.at(loop)->projP));
+                    maskPainter->drawLine(
                         _globalMapMatrix.map(wpList.at(loop - 1)->projP),
                         _globalMapMatrix.map(wpList.at(loop)->projP));
                   }
@@ -362,11 +377,21 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                 targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
                 targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
 
+                maskPainter->setPen(QPen(Qt::color1, 2));
+                maskPainter->setBrush(QBrush(Qt::color1, QBrush::BDiagPattern));
+                maskPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
+                maskPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+
                 if(loop)
                   {
                     targetPainter->setPen(QPen(QColor(50, 50, 50), 3,
                         QPen::DashLine));
+                    maskPainter->setPen(QPen(Qt::color1, 3,
+                        QPen::DashLine));
                     targetPainter->drawLine(
+                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
+                        _globalMapMatrix.map(wpList.at(loop)->projP));
+                    maskPainter->drawLine(
                         _globalMapMatrix.map(wpList.at(loop - 1)->projP),
                         _globalMapMatrix.map(wpList.at(loop)->projP));
                   }
@@ -375,10 +400,21 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                 targetPainter->setPen(QPen(QColor(50, 50, 50), 2));
                 targetPainter->setBrush(QBrush(QColor(0, 0, 255),
                     QBrush::FDiagPattern));
+                maskPainter->setPen(QPen(Qt::color1, 2));
+                maskPainter->setBrush(QBrush(Qt::color1,
+                    QBrush::FDiagPattern));
+
                 targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
                 targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
                 targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
                 targetPainter->drawLine(
+                    _globalMapMatrix.map(wpList.at(loop-1)->projP),
+                    _globalMapMatrix.map(wpList.at(loop)->projP));
+
+                maskPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
+                maskPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+                maskPainter->setPen(QPen(QColor(50, 50, 50), 3));
+                maskPainter->drawLine(
                     _globalMapMatrix.map(wpList.at(loop-1)->projP),
                     _globalMapMatrix.map(wpList.at(loop)->projP));
                 break;
@@ -386,7 +422,12 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                 if(loop)
                   {
                     targetPainter->setPen(QPen(QColor(50,50,50), 3));
+                    maskPainter->setPen(QPen(Qt::color1, 3));
+
                     targetPainter->drawLine(
+                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
+                        _globalMapMatrix.map(wpList.at(loop)->projP));
+                    maskPainter->drawLine(
                         _globalMapMatrix.map(wpList.at(loop - 1)->projP),
                         _globalMapMatrix.map(wpList.at(loop)->projP));
                   }
@@ -396,12 +437,27 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                   {
                     targetPainter->setPen(QPen(QColor(50, 50, 50), 3,
                         QPen::DashLine));
+                    maskPainter->setPen(QPen(Qt::color1, 3,
+                        QPen::DashLine));
+
                     targetPainter->drawLine(
                         _globalMapMatrix.map(wpList.at(loop - 1)->projP),
                         _globalMapMatrix.map(wpList.at(loop)->projP));
+
+                    maskPainter->drawLine(
+                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
+                        _globalMapMatrix.map(wpList.at(loop)->projP));
+
                     targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
                     targetPainter->setBrush(QBrush::NoBrush);
+                    maskPainter->setPen(QPen(Qt::color1, 2));
+                    maskPainter->setBrush(QBrush::NoBrush);
+
                     targetPainter->drawEllipse(
+                        _globalMapMatrix.map(wpList.at(loop)->projP).x() - 8,
+                        _globalMapMatrix.map(wpList.at(loop)->projP).y() - 8,
+                        16, 16);
+                    maskPainter->drawEllipse(
                         _globalMapMatrix.map(wpList.at(loop)->projP).x() - 8,
                         _globalMapMatrix.map(wpList.at(loop)->projP).y() - 8,
                         16, 16);
@@ -434,6 +490,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       bBoxFlight.setBottom(MIN(curPointB.y(), bBoxFlight.bottom()));
 
       // Strecke einzeichnen
+      maskPainter->setPen(QPen(Qt::color1, 4));
       if(_currentScale < _scale[ID_BORDER_SMALL - 1])
         {
           if(pointA->dH < 0)
@@ -444,7 +501,10 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       else if(_currentScale < _scale[5])
           targetPainter->setPen(QPen(QColor(0,0,200), 4));
       else
+        {
+          maskPainter->setPen(QPen(Qt::color1, 3));
           targetPainter->setPen(QPen(QColor(0,0,200), 3));
+        }
 
       /*******************************************************************
        **
@@ -470,6 +530,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       */
 
       targetPainter->drawLine(curPointA, curPointB);
+      maskPainter->drawLine(curPointA, curPointB);
 
       // Wenn die Kringel beibehalten werden, müsste eine weitere
       // Grenze eingeführt werden ...

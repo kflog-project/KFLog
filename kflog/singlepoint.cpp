@@ -142,7 +142,11 @@ bool SinglePoint::__isVisible() const
 
 void SinglePoint::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
-  if(!__isVisible())  return;
+  if(!__isVisible())
+    {
+      curPos = QPoint(-50, -50);
+      return;
+    }
 
   extern const double _currentScale, _scale[];
   extern const bool _showElements[];

@@ -71,9 +71,11 @@ class LineElement : public BaseMapElement
     /** */
     Qt::PenStyle drawPenStyle;
     /** */
+    Qt::BrushStyle fillBrushStyle;
+    /** */
     QColor fillColor;
     /** */
-    QBrush fillBrush;
+//    QBrush fillBrush;
     /** */
     int* drawThickness;
     /**

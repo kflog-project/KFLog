@@ -1354,8 +1354,8 @@ void MapContents::proofeSection()
 
   if(isFirst)
     {
-//      __readAsciiFile("/home/heiner/Entwicklung/import/luftraume.out");
-//      __readAsciiFile("/home/heiner/Entwicklung/KFLog_Daten/karte/kflog_sites.out");
+      __readAsciiFile("/home/heiner/Entwicklung/import/luftraume.out");
+      __readAsciiFile("/home/heiner/Entwicklung/KFLog_Daten/karte/kflog_sites.out");
       isFirst = false;
     }
 

@@ -123,7 +123,9 @@ Map::Map(KFLogApp *m, QFrame* parent)
   pixWaypoints.resize( PIX_WIDTH, PIX_HEIGHT );
   pixUnderMap.resize( PIX_WIDTH, PIX_HEIGHT );
   pixIsoMap.resize( PIX_WIDTH, PIX_HEIGHT );
-  bitMask.resize( PIX_WIDTH, PIX_HEIGHT );
+  bitMapMask.resize( PIX_WIDTH, PIX_HEIGHT );
+  bitAirspaceMask.resize( PIX_WIDTH, PIX_HEIGHT );
+  bitFlightMask.resize( PIX_WIDTH, PIX_HEIGHT );
 
   indexList = new unsigned int[1];
   xPos = new int[1];
@@ -500,8 +502,8 @@ void Map::mousePressEvent(QMouseEvent* event)
           QPoint sitePos;
           double dX, dY, delta;
 
-          delta = 16.0;
-            // Ist die Grenze noch aktuell ???
+          delta = 16.0; // Ist die Grenze noch aktuell ???
+          text = "";    // Wir wollen _nur_ Flugplätze anzeigen!
           if(_currentScale > _scale[3]) delta = 8.0;
 
           for(unsigned int loop = 0;
@@ -519,7 +521,7 @@ void Map::mousePressEvent(QMouseEvent* event)
               if( ( ( dX < delta ) && ( dX > -delta ) ) &&
                   ( ( dY < delta ) && ( dY > -delta ) ) )
                 {
-                  text = ((SinglePoint*)hitElement)->getInfoString();
+                  text = text + ((SinglePoint*)hitElement)->getInfoString();
                   /*
                    * Text anzeigen
                    */
@@ -683,7 +685,9 @@ void Map::__drawMap()
   QPainter waypointP(&pixWaypoints);
   QPainter uMapP(&pixUnderMap);
   QPainter isoMapP(&pixIsoMap);
-  QPainter bitMaskP(&bitMask);
+  QPainter mapMaskP(&bitMapMask);
+  QPainter flightMaskP(&bitFlightMask);
+  QPainter airspaceMaskP(&bitAirspaceMask);
 
   airspaceRegList->clear();
   cityRegList->clear();
@@ -707,40 +711,42 @@ void Map::__drawMap()
 
   pixIsoMap.fill(QColor(96,128,248));
 
-  _globalMapContents.drawIsoList(&isoMapP, &bitMaskP);
+  _globalMapContents.drawIsoList(&isoMapP, &mapMaskP);
 
   if(_currentScale <= _scale[_scaleBorder[ID_GLACIER]])
-      _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::TopoList);
+      _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::TopoList);
 
   mainApp->slotSetProgress(5);
 
-  _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::HydroList);
+  _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::CityList);
+
+  _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::HydroList);
 
   mainApp->slotSetProgress(10);
 
-  _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::RoadList);
+  _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::RoadList);
 
   mainApp->slotSetProgress(15);
 
   if(_currentScale <= _scale[_scaleBorder[ID_HIGHWAY]])
-      _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::HighwayList);
+      _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::HighwayList);
 
   mainApp->slotSetProgress(20);
 
   mainApp->slotSetProgress(25);
 
-  _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::RailList);
+  _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::RailList);
 
   mainApp->slotSetProgress(30);
 
   mainApp->slotSetProgress(35);
 
-  _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::CityList);
+//  _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::CityList);
 //  for(unsigned int loop = 0; loop < _globalMapContents.getListLength(
 //          MapContents::CityList); loop++)
 //    {
 //      _current = _globalMapContents.getElement(MapContents::CityList, loop);
-//      cityRegList->append(_current->drawRegion(&uMapP, &bitMaskP));
+//      cityRegList->append(_current->drawRegion(&uMapP, &mapMaskP));
 //    }
 
   mainApp->slotSetProgress(40);
@@ -751,22 +757,22 @@ void Map::__drawMap()
   mainApp->slotSetProgress(45);
 
   if(_currentScale <= _scale[_scaleBorder[ID_LANDMARK]])
-      _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::LandmarkList);
+      _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::LandmarkList);
 
   mainApp->slotSetProgress(50);
 
   if(_currentScale <= _scale[_scaleBorder[ID_OBSTACLE]])
-      _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::ObstacleList);
+      _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::ObstacleList);
 
   mainApp->slotSetProgress(55);
 
   if(_currentScale <= _scale[_scaleBorder[ID_RADIO]])
-      _globalMapContents.drawList(&aSitesP, &bitMaskP, MapContents::ReportList);
+      _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::ReportList);
 
   mainApp->slotSetProgress(60);
 
   if(_currentScale <= _scale[_scaleBorder[ID_RADIO]])
-      _globalMapContents.drawList(&aSitesP, &bitMaskP, MapContents::NavList);
+      _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::NavList);
 
   mainApp->slotSetProgress(65);
 
@@ -778,7 +784,9 @@ void Map::__drawMap()
             MapContents::AirspaceList, loop);
         // wir sollten nur die Lufträume in der Liste speichern, die
         // tatsächlich gezeichnet werden. Dann geht die Suche schneller.
-        airspaceRegList->append(_current->drawRegion(&airSpaceP, &bitMaskP));
+//        airspaceRegList->append(_current->drawRegion(&airSpaceP, &mapMaskP));
+        airspaceRegList->append(_current->drawRegion(&airSpaceP,
+            &airspaceMaskP));
       }
 
   mainApp->slotSetProgress(70);
@@ -789,32 +797,32 @@ void Map::__drawMap()
       {
         _current = _globalMapContents.getElement(
               MapContents::IntAirportList, loop);
-        _current->drawRegion(&aSitesP, &bitMaskP);
+        _current->drawRegion(&aSitesP, &mapMaskP);
       }
 
   mainApp->slotSetProgress(75);
 
   if(_currentScale <= _scale[_scaleBorder[ID_AIRPORT]])
-      _globalMapContents.drawList(&aSitesP, &bitMaskP, MapContents::AirportList);
+      _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::AirportList);
 
   mainApp->slotSetProgress(80);
 
   if(_currentScale <= _scale[_scaleBorder[ID_ADDSITES]])
-      _globalMapContents.drawList(&aSitesP, &bitMaskP, MapContents::AddSitesList);
+      _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::AddSitesList);
 
   mainApp->slotSetProgress(85);
 
   if(_currentScale <= _scale[_scaleBorder[ID_OUTLANDING]])
-      _globalMapContents.drawList(&aSitesP, &bitMaskP, MapContents::OutList);
+      _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::OutList);
 
   mainApp->slotSetProgress(90);
 
   if(_currentScale <= _scale[_scaleBorder[ID_GLIDERSITE]])
-      _globalMapContents.drawList(&gliderP, &bitMaskP, MapContents::GliderList);
+      _globalMapContents.drawList(&gliderP, &mapMaskP, MapContents::GliderList);
 
   mainApp->slotSetProgress(95);
 
-  _globalMapContents.drawList(&uMapP, &bitMaskP, MapContents::FlightList);
+  _globalMapContents.drawList(&flightP, &flightMaskP, MapContents::FlightList);
 
   mainApp->slotSetProgress(100);
 
@@ -825,6 +833,8 @@ void Map::__drawMap()
   gliderP.end();
   waypointP.end();
   uMapP.end();
+  airspaceMaskP.end();
+  flightMaskP.end();
 }
 
 void Map::resizeEvent(QResizeEvent* event)
@@ -849,8 +859,12 @@ void Map::__redrawMap()
   pixUnderMap.fill(black);
   pixIsoMap.fill(white);
   pixWaypoints.fill(white);
-  bitMask.fill(black);
 //  pixBuffer.fill(white);
+  pixFlight.fill(white);
+
+  bitMapMask.fill(Qt::color0);
+  bitFlightMask.fill(Qt::color0);
+  bitAirspaceMask.fill(Qt::color0);
 
   extern MapContents _globalMapContents;
   _globalMapContents.proofeSection();
@@ -892,16 +906,17 @@ void Map::slotShowLayer()
   /* Wg. der Höhenlinien mal geändert ... */
 //  pixBuffer.fill(white);
 
-//  bitBlt(&pixBuffer, 0, 0, &bitMask);
-
-  pixUnderMap.setMask(bitMask);
+  pixUnderMap.setMask(bitMapMask);
+  pixFlight.setMask(bitFlightMask);
   bitBlt(&pixBuffer, 0, 0, &pixIsoMap);
-//  bitBlt(&pixBuffer, 0, 0, &bitMask, 0, 0, -1, -1, NotEraseROP);
+//  bitBlt(&pixBuffer, 0, 0, &bitMapMask, 0, 0, -1, -1, NotEraseROP);
 //  bitBlt(&pixBuffer, 0, 0, &pixUnderMap, 0, 0, -1, -1, NotEraseROP);
   bitBlt(&pixBuffer, 0, 0, &pixUnderMap);
-//  bitBlt(&pixBuffer, 0, 0, &pixAllSites, 0, 0, -1, -1, NotEraseROP);
-//  bitBlt(&pixBuffer, 0, 0, &pixAirspace, 0, 0, -1, -1, NotEraseROP);
-//  bitBlt(&pixBuffer, 0, 0, &pixGrid, 0, 0, -1, -1, NotEraseROP);
+  bitBlt(&pixBuffer, 0, 0, &pixAllSites, 0, 0, -1, -1, NotEraseROP);
+  bitBlt(&pixBuffer, 0, 0, &pixAirspace, 0, 0, -1, -1, NotEraseROP);
+//  bitBlt(&pixBuffer, 0, 0, &pixFlight, 0, 0, -1, -1, NotEraseROP);
+  bitBlt(&pixBuffer, 0, 0, &pixFlight);
+  bitBlt(&pixBuffer, 0, 0, &pixGrid, 0, 0, -1, -1, NotEraseROP);
 
   paintEvent();
 }

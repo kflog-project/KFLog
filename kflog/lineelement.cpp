@@ -26,9 +26,9 @@
 #include <qfile.h>
 #include <qtextstream.h>
 
-LineElement::LineElement(QString n, unsigned int t, QPointArray pA,
-    bool isV = false)
+LineElement::LineElement(QString n, unsigned int t, QPointArray pA, bool isV)
 : BaseMapElement(n, t), drawPenStyle(QPen::SolidLine),
+  fillBrushStyle(QBrush::SolidPattern),
   projPointArray(pA), bBox(pA.boundingRect()), valley(isV), closed(false)
 {
   fillColor.setRgb(0, 0, 0);
@@ -43,15 +43,15 @@ LineElement::LineElement(QString n, unsigned int t, QPointArray pA,
         break;
       case MidRoad:
         PEN_THICKNESS(2, 2, 2, 2, 2, 1, 1, 1, 1)
-        drawColor.setRgb(200, 100, 100);
+        drawColor.setRgb(255, 100, 100);
         break;
       case SmallRoad:
         PEN_THICKNESS(1, 1, 1, 1, 1, 1, 1, 1, 1)
-        drawColor.setRgb(200, 50, 50);
+        drawColor.setRgb(255, 50, 50);
         break;
       case Railway:
         PEN_THICKNESS(2, 2, 2, 2, 2, 1, 1, 1, 1)
-        drawColor.setRgb(105, 105, 105);
+        drawColor.setRgb(80, 80, 80);
         break;
       case AerialRailway:
         PEN_THICKNESS(2, 2, 2, 2, 2, 2, 2, 1, 1)
@@ -85,28 +85,28 @@ LineElement::LineElement(QString n, unsigned int t, QPointArray pA,
       case HugeCity:
         PEN_THICKNESS(1, 1, 1, 1, 1, 1, 1, 1, 1)
         drawColor.setRgb(0, 0, 0);
-        fillColor.setRgb(245,240,0);
+        fillColor.setRgb(255,250,1000);
 //        fillBrush = QBrush(QColor(245,220,0),QBrush::Dense3Pattern);
 //        fillBrush = QBrush(QColor(255,255,0), QBrush::SolidPattern);
-        fillBrush = QBrush(QColor(245,240,0), QBrush::SolidPattern);
+//        fillBrush = QBrush(QColor(245,240,0), QBrush::SolidPattern);
         closed = true;
         break;
       case BigCity:
         PEN_THICKNESS(1, 1, 1, 1, 1, 1, 1, 1, 1)
         drawColor.setRgb(0, 0, 0);
-        fillColor.setRgb(245,240,0);
+        fillColor.setRgb(255,250,100);
 //        fillBrush = QBrush(QColor(245,220,0),QBrush::Dense3Pattern);
 //        fillBrush = QBrush(QColor(255,255,0), QBrush::SolidPattern);
-        fillBrush = QBrush(QColor(245,240,0), QBrush::SolidPattern);
+//        fillBrush = QBrush(QColor(245,240,0), QBrush::SolidPattern);
         closed = true;
         break;
       case MidCity:
         PEN_THICKNESS(1, 1, 1, 1, 1, 1, 1, 1, 1)
         drawColor.setRgb(0, 0, 0);
-        fillColor.setRgb(245,240,0);
+        fillColor.setRgb(255,250,100);
 //        fillBrush = QBrush(QColor(245,220,0),QBrush::Dense3Pattern);
 //        fillBrush = QBrush(QColor(255,255,0), QBrush::SolidPattern);
-        fillBrush = QBrush(QColor(245,240,0), QBrush::SolidPattern);
+//        fillBrush = QBrush(QColor(245,240,0), QBrush::SolidPattern);
         closed = true;
         break;
       case SmallCity:
@@ -115,7 +115,7 @@ LineElement::LineElement(QString n, unsigned int t, QPointArray pA,
         fillColor.setRgb(245,240,0);
 //        fillBrush = QBrush(QColor(245,220,0),QBrush::Dense3Pattern);
 //        fillBrush = QBrush(QColor(255,255,0), QBrush::SolidPattern);
-        fillBrush = QBrush(QColor(245,240,0), QBrush::SolidPattern);
+//        fillBrush = QBrush(QColor(245,240,0), QBrush::SolidPattern);
         closed = true;
         break;
     }
@@ -282,23 +282,18 @@ QRegion* LineElement::drawRegion(QPainter* targetPainter, QPainter* maskPainter)
 
   if(valley)
     {
-      maskPainter->setBrush(QBrush(Qt::color0, QBrush::SolidPattern));
+      maskPainter->setBrush(QBrush(Qt::color0, fillBrushStyle));
     }
   else
     {
-      maskPainter->setBrush(QBrush(Qt::color1, QBrush::SolidPattern));
+      maskPainter->setBrush(QBrush(Qt::color1, fillBrushStyle));
     }
-//  maskPainter->setPen(QPen(Qt::color1, drawThickness[index], drawPenStyle));
-  maskPainter->setPen(QPen(Qt::color1, 2, drawPenStyle));
+  maskPainter->setPen(QPen(Qt::color1, drawThickness[index], drawPenStyle));
   maskPainter->drawPolygon(tA);
 
-  targetPainter->setBrush(fillBrush);
-  targetPainter->setPen(QPen(QColor(245,240,0), 0, drawPenStyle));
+  targetPainter->setBrush(QBrush(fillColor, fillBrushStyle));
+  targetPainter->setPen(QPen(drawColor, drawThickness[index], drawPenStyle));
   targetPainter->drawPolygon(tA);
-
-//  targetPainter->setBrush(QBrush::NoBrush);
-//  targetPainter->setPen(QPen(drawColor, drawThickness[index], drawPenStyle));
-//  targetPainter->drawPolyline(tA);
 
   return (new QRegion(tA));
 }
@@ -341,8 +336,8 @@ void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
   if(typeID == 37 && isFirst)
     {
 //      targetPainter->setPen(QPen(drawColor, drawThickness[index]));
-      targetPainter->setPen(QPen(drawColor, 3));
-      maskPainter->setPen(QPen(Qt::color1, 3));
+      targetPainter->setPen(QPen(drawColor, drawThickness[index] * 3));
+      maskPainter->setPen(QPen(Qt::color1, drawThickness[index] * 3));
       maskPainter->drawPolygon(pArray);
       targetPainter->drawPolyline(pArray);
 

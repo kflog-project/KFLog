@@ -201,7 +201,11 @@ class Map : public QWidget
      */
     QPixmap pixCursor;
     /** */
-    QBitmap bitMask;
+    QBitmap bitMapMask;
+    /** */
+    QBitmap bitAirspaceMask;
+    /** */
+    QBitmap bitFlightMask;
     /**
       * The minimum scale. Here the height of 1 point is about 6360.0m.
       */
