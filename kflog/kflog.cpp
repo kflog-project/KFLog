@@ -78,6 +78,7 @@ TranslationList surfaces;
 TranslationList waypointTypes;
 TranslationList taskTypes;
 
+
 KFLogApp::KFLogApp()
   : KDockMainWindow(0, "KFLogMainWindow"), showStartLogo(false)
 {

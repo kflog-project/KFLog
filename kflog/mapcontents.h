@@ -435,12 +435,6 @@ switch to first task in file */
 
 
     /**
-     * Suppress that the Error Dialogs will appear two times during the start
-     */
-    bool stop;
-
-
-    /**
      * List of all drawn isohypses.
      */
     QList<isoListEntry> regIsoLines;

@@ -111,6 +111,9 @@
       in >> rwOpen; \
     }
 
+
+
+    
 // Liste der Höhenstufen (insg. 50 Stufen):
 const int MapContents::isoLines[] = { 0, 10, 25, 50, 75, 100, 150, 200, 250,
           300, 350, 400, 450, 500, 600, 700, 800, 900, 1000, 1250, 1500, 1750,
@@ -119,7 +122,7 @@ const int MapContents::isoLines[] = { 0, 10, 25, 50, 75, 100, 150, 200, 250,
           7500, 7750, 8000, 8250, 8500, 8750};
 
 MapContents::MapContents()
-  : isFirst(true),stop(false)
+  : isFirst(true)
 {
   sectionArray.resize(MAX_FILE_COUNT);
   sectionArray.fill(false);
@@ -1689,22 +1692,11 @@ void MapContents::proofeSection(bool isPrint)
       globalDirs->findResource("data", "kflog/mapdata/"));
 
 
-      warning("stop %d", stop);
-
- // supress that the dialog will appear two times
- if(stop)
-   {
-     stop = false;
-     warning("Supress that the Dialogs appears a second time");
-//     return;
-   }
-
       
 
 // Checking for the MapFiles    
   if(mapDir.isNull())
     {
-      stop = true;
     
       usleep(10 * 1000);
             
@@ -1801,11 +1793,11 @@ void MapContents::proofeSection(bool isPrint)
 
 
 // Checking for Airspaces
-    if (airspaceList.isEmpty()) {  //we only need to load the airspaces if the list is still empty.
+    if (airspaceList.isEmpty()) {
+      //we only need to load the airspaces if the list is still empty.
       QDir airspaceDir(mapDir + "/airspace/");
       if(!airspaceDir.exists())
         {
-          stop = true;
         usleep(10 * 1000);
           emit errorOnMapLoading();
           KMessageBox::error(0,
@@ -1842,7 +1834,6 @@ void MapContents::proofeSection(bool isPrint)
       QDir airfieldDir(mapDir + "/airfields/");
       if(!airfieldDir.exists())
         {
-          stop = true;
         usleep(10 * 1000);
           emit errorOnMapLoading();
           KMessageBox::error(0,
@@ -1879,6 +1870,7 @@ void MapContents::proofeSection(bool isPrint)
 //          warning( "%s", (*it).latin1() );
 //        }
       }
+
    
 }
 
