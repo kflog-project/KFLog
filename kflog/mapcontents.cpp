@@ -547,7 +547,6 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
   if (config->readNumEntry("Automatic Map Download")==Inhibited)
     return;
 
-//  config->setGroup("Path");
   KURL src = KURL(config->readPathEntry("Mapserver","http://maproom.kflog.org/data/"));
   KURL dest = KURL(destString);
   src.addPath(fileName);
@@ -558,7 +557,6 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
     QString errorString = KIO::NetAccess::lastErrorString();
     if (errorString!="")
       KMessageBox::error(0,errorString);
-    slotReloadMapData();
   }
   else{
     downloadList->copyKURL(&src,&dest);
@@ -584,11 +582,12 @@ bool MapContents::__readTerrainFile(const int fileSecID,
     {
       // Data exists, but can't be read:
       // We need a messagebox
-      warning("KFLog: Can not open mapfile %s", (const char*)pathName);
+      warning("KFLog: Can not open terrainfile %s", (const char*)pathName);
 
       QString fileName;
       fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
       KConfig* config = KGlobal::config();
+      config->setGroup("Path");
       QString dest = config->readPathEntry("DefaultMapDirectory");
       __downloadFile(fileName,dest);
 
@@ -1040,6 +1039,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
       QString fileName;
       fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
       KConfig* config = KGlobal::config();
+      config->setGroup("Path");
       QString dest = config->readPathEntry("DefaultMapDirectory");
       __downloadFile(fileName,dest);
 
@@ -1803,9 +1803,9 @@ void MapContents::proofeSection(bool isPrint)
               __downloadFile("G_03699.kfl",mapDir,true);
               if(QFile(mapDir+"/G_03699.kfl").exists()){
                 config->writeEntry("Automatic Map Download",Automatic);
-                KMessageBox::information(0,
-                  i18n("The automatic data download feature is available when "
-                  "a flight is loaded. Please open a flight."));
+//                KMessageBox::information(0,
+//                  i18n("The automatic data download feature is available when "
+//                  "a flight is loaded. Please open a flight."));
               }
               else{
                 KMessageBox::information(0,

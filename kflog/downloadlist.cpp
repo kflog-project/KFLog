@@ -18,8 +18,11 @@
 #include "downloadlist.h"
 #include <kio/netaccess.h>
 #include <kio/scheduler.h>
-#include <kmessagebox.h>
+#include <qmessagebox.h>
+#include <klocale.h>
+#include <kconfig.h>
 #include "map.h"
+#include "mapcontents.h"
 
 DownloadList::DownloadList(){
   srcList.setAutoDelete(true);
@@ -43,8 +46,19 @@ void DownloadList::slotDownloadFinished(KIO::Job* job){
   error=job->error();
   if (error){
 //    job->showErrorDialog(0);
-    errorStrings=job->detailedErrorStrings();
-    KMessageBox::questionYesNo(0,errorStrings.first(),errorStrings.first());
+    int ret=QMessageBox::warning(0,i18n("Error downloading files"),job->errorString()+"\n"+
+      i18n("Do you want to continue to download the map files?\n")+
+      i18n("Warning: If you press \"Continue\" you may end in an endless loop"),
+      "&Continue", "&Stop",
+        0,      // Enter == button 0
+        1 );    // Escape == button 1
+    if (ret==1){
+      KConfig* config = KGlobal::config();
+      config->setGroup("General Options");
+      config->writeEntry("Automatic Map Download",Inhibited,false);
+      srcList.clear();
+      destList.clear();
+    }
   }
   emit downloadFinished();
   __schedule();
@@ -57,14 +71,13 @@ void DownloadList::__schedule(){
     downloadRunning=true;
     KURL* src = srcList.take(0);
     KURL* dest = destList.take(0);
-    KIO::CopyJob *job = KIO::copy(*src,*dest);
-    delete src;
-    delete dest;
+    KIO::Job* job = new KIO::FileCopyJob(*src, *dest, 0644, false, false, false, true);
+//    delete src;
+//    delete dest;
     connect( job, SIGNAL(result(KIO::Job*)),
              this, SLOT(slotDownloadFinished(KIO::Job*)) );
   }
   else {
-//    qWarning("allDownloadsFinished() emitted");
     emit allDownloadsFinished();
   }
 }
