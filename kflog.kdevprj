@@ -70,7 +70,7 @@ groups=Icons,Header,Quellen,Benutzerschnittstelle,Übersetzungen,GNU,Andere
 Übersetzungen=*.po
 
 [Makefile.am]
-files=kflog.kdevprj,admin,AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,kflog.lsm,README-MAP,kflog.spec,README-AIRFIELDS,README-AIRSPACE
+files=kflog.kdevprj,admin,AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,kflog.lsm,README-MAP,kflog.spec,README-AIRFIELDS,README-AIRSPACE,tips
 sub_dirs=kflog,po,doc
 type=normal
 
@@ -2010,4 +2010,10 @@ type=DATA
 dist=false
 install=false
 install_location=
+type=PO
+
+[tips]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/tips
 type=DATA
