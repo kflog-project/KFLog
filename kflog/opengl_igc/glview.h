@@ -39,6 +39,7 @@ public slots:
     void		setXRotation( int degrees );
     void		setYRotation( int degrees );
     void		setZRotation( int degrees );
+    void    zoom( float scalefactor );
 
 protected:
 

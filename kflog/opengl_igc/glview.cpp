@@ -35,7 +35,8 @@
 
 
 /*!
-  Create an OpenGL widget
+  This is the main class for the OpenGL implementation. The constructor
+  initializes some variables.
 */
 
 GLView::GLView( QWidget* parent, const char* name )
@@ -44,16 +45,16 @@ GLView::GLView( QWidget* parent, const char* name )
     // These values should be stored KConfig
     xRot = -45.0;
     yRot = 0.0;
-    zRot = -30.0;		// default object rotation
-    scale = 1.25;			// default object scale
+    zRot = -30.0;		        // default object rotation
+    scale = 1.25;			      // default object scale
     heightExaggerate=2.0;   //  exaggerates the heights
 
     // Initializations
-    deltaX = 0.0;
+    deltaX = 0.0;           // initial position of objects
     deltaY = 0.0;
     deltaZ = 0.0;
-    boxObject = 0;
-    flightList.clear();
+    boxObject = 0;          // bounding box object (0 means none)
+    flightList.clear();     // no flights in list
 }
 
 
@@ -184,24 +185,38 @@ void GLView::addFlight(Flight* flight)
 
 /*!
   The actual openGL commands for drawing are performed here.
+  This function is called on every paint event.
 */
 
 void GLView::paintGL()
 {
 //    qWarning("GLBox::paintGL()");
+    // initialise the state machine (here will be more e.g. the lighting)
     glClear( GL_COLOR_BUFFER_BIT );
+    glLoadIdentity();  // unity matrix
 
-    glLoadIdentity();
+    // the following lines are for the transformations
+    // You have to read them "bottom up". E.g. the last translation
+    // is actually the first that is performed (This is due to the
+    // matrix operation)
+
+    // move a little bit away from camera
     glTranslatef( 0.0, 0.0, -10.0 );
 
+    // rotate around x-, y- and z-axis
     glRotatef( xRot, 1.0, 0.0, 0.0 ); 
     glRotatef( yRot, 0.0, 1.0, 0.0 ); 
     glRotatef( zRot, 0.0, 0.0, 1.0 );
 
+    // scale objects
     glScalef( scale, scale, scale*heightExaggerate );
+    // move the center of the object to 0,0,0
     glTranslatef( deltaX, deltaY, deltaZ );
 
+    // now all objects that should be displayed
+    // bounding box
     glCallList( boxObject );
+    // flight list (including the shadows of the flights)
     QValueList<GLuint>::iterator it;
     for ( it = flightList.begin(); it != flightList.end(); ++it )
       glCallList((*it));
@@ -209,20 +224,21 @@ void GLView::paintGL()
 
 
 /*!
-  Set up the OpenGL rendering state, and define display list
+  Set up the OpenGL rendering state, and define display list. Called once on the
+  initialization of the widget
 */
 
 void GLView::initializeGL()
 {
     qWarning("GLBox::initializeGL()");
     qglClearColor( black ); 		// Let OpenGL clear to black
-    glShadeModel( GL_FLAT );
+    glShadeModel( GL_FLAT );    // shading model
 }
 
 
 
 /*!
-  Set up the OpenGL view port, matrix mode, etc.
+  Set up the OpenGL view port, matrix mode, etc. Here is the projection mode
 */
 
 void GLView::resizeGL( int w, int h )
@@ -237,45 +253,46 @@ void GLView::resizeGL( int w, int h )
 
 
 /*!
-  Generate an OpenGL display list for the object to be shown, i.e. the box
+  Generate an OpenGL display list for the object to be shown, i.e. the bounding box
 */
 
 GLuint GLView::makeBoxObject()
 {	
-    GLuint list;
+    GLuint list;                // OpenGL objects are referred to as unsigned integers
 
-    list = glGenLists( 1 );
+    list = glGenLists( 1 );     // generate new list (empty)
 
-    glNewList( list, GL_COMPILE );
+    glNewList( list, GL_COMPILE );  // set mode = compile (=faster in rendering, but
+                                    // no changes allowed
 
     qglColor( white );		      // Shorthand for glColor3f or glIndex
 
     glLineWidth( 2.0 );
 
-    glBegin( GL_LINE_LOOP );
-    glVertex3f(  maxx,  maxy,  minz );
+    glBegin( GL_LINE_LOOP );    //  Begin new line segment (closed)
+    glVertex3f(  maxx,  maxy,  minz );   // define verteces as floating öoint values)
     glVertex3f(  maxx,  miny,  minz );
     glVertex3f(  minx,  miny,  minz );
     glVertex3f(  minx,  maxy,  minz );
-    glEnd();
+    glEnd();                    //  End of segment
 
-    glBegin( GL_LINE_LOOP );
+    glBegin( GL_LINE_LOOP );    // same as above
     glVertex3f(  maxx,  maxy, maxz );
     glVertex3f(  maxx,  miny, maxz );
     glVertex3f(  minx,  miny, maxz );
     glVertex3f(  minx,  maxy, maxz );
     glEnd();
 
-    glBegin( GL_LINES );
+    glBegin( GL_LINES );         // these are 4 lines (not closed, so 8 points)
     glVertex3f(  maxx,  maxy,  minz );   glVertex3f(  maxx,  maxy, maxz );
     glVertex3f(  maxx,  miny,  minz );   glVertex3f(  maxx,  miny, maxz );
     glVertex3f(  minx,  miny,  minz );   glVertex3f(  minx,  miny, maxz );
     glVertex3f(  minx,  maxy,  minz );   glVertex3f(  minx,  maxy, maxz );
     glEnd();
 
-    glEndList();
+    glEndList();                 // end of object
 
-    return list;
+    return list;                  // return object identifier
 }
 
 /*!
@@ -299,7 +316,6 @@ void GLView::setYRotation( int degrees )
     updateGL();
 }
 
-
 /*!
   Set the rotation angle of the object to \e degrees around the Z axis.
 */
@@ -310,17 +326,27 @@ void GLView::setZRotation( int degrees )
     updateGL();
 }
 
+/*!
+  Zooms scene
+*/
+
+void GLView::zoom( float scalefactor )
+{
+    scale*=scalefactor;
+    updateGL();
+}
+
 /*
   Slots
 */
 void GLView::mousePressEvent ( QMouseEvent * e )
 {
-  mouse_last=e->pos();
+  mouse_last=e->pos();  // store mouse position
 }
 
 void GLView::mouseMoveEvent ( QMouseEvent * e )
 {
-  if (e->state() & LeftButton){
+  if (e->state() & LeftButton){  // left button means translation
     float phi=zRot/180.0*M_PI;
     float dx=(mouse_last.x()-e->x())/100.0/scale;
     float dy=(mouse_last.y()-e->y())/100.0/scale;
@@ -329,7 +355,7 @@ void GLView::mouseMoveEvent ( QMouseEvent * e )
     mouse_last=e->pos();
     updateGL();
   }
-  else if(e->state() & RightButton){
+  else if(e->state() & RightButton){  // right button is rotation
     zRot-=mouse_last.x()-e->x();
     xRot-=mouse_last.y()-e->y();
     mouse_last=e->pos();
@@ -338,11 +364,14 @@ void GLView::mouseMoveEvent ( QMouseEvent * e )
   }
 }
 
+/*!
+  Zoom objects with mouse wheel
+*/
+
 void GLView::wheelEvent ( QWheelEvent * e )
 {
-  if (e->delta()>0)
-    scale*=(e->delta()/100.0);
-  else if (e->delta()<0)
-    scale/=(-e->delta()/100.0);
-  updateGL();
+  float factor=e->delta()/100.0;
+  if (factor<0)
+    factor=-1/factor;
+  zoom(factor);
 }
