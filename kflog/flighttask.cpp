@@ -81,10 +81,10 @@ void FlightTask::__checkType()
 
   for(unsigned int loop = 1; loop <= wpList.count() - 1; loop++)
   {
-warning("distance: %f",wpList.at(loop)->distance);
+//warning("distance: %f",wpList.at(loop)->distance);
       distance_total += wpList.at(loop)->distance;
   }
-warning("Total Distance: %f",distance_total);
+//warning("Total Distance: %f",distance_total);
 
   if(wpList.count() < 4)
     {

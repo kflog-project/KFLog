@@ -63,7 +63,6 @@ void DataView::slotShowTaskText( FlightTask* task, QPoint current)
     for(unsigned int n = 0; n < taskPointList.count(); n++)
     	{
   	  	position = taskPointList.at(n)->origP;
-		 	  distance += dist(pre_position.y(),pre_position.x(),position.y(),position.x());			
 			
   		 	name = taskPointList.at(n)->name;
 	  		htmlText += (QString)"<b>" + name + "</b>" + "<br>" +
@@ -71,8 +70,6 @@ void DataView::slotShowTaskText( FlightTask* task, QPoint current)
 			  pre_position = position;
 			
     	}
-
-   	distance += dist(pre_position.y(),pre_position.x(),current.y(),current.x());
   }
 
   // Frage
@@ -88,9 +85,6 @@ void DataView::slotShowTaskText( FlightTask* task, QPoint current)
     {
       htmlText += "<br><b>Nächster WendePunkt (End-/LandePunkt)?</b><br>";
     }
-
-  tmp.sprintf("<hline><br><br><b>Entfernung: %.2f km<b>",distance);
-  htmlText += tmp;
 
   htmlText += "<hline><br><br><b>Entfernung: " + task->getTotalDistanceString();
   htmlText += "<hline><br><br><b>Entfernung Wertung: " + task->getTaskDistanceString();

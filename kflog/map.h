@@ -141,10 +141,6 @@ class Map : public QWidget
 
   private:
     /**
-     * functionality for the graphical Planning
-     */
-    void __graphicalPlanning();
-    /**
      * Redraws the map.
      */
     void __redrawMap();
@@ -165,7 +161,7 @@ class Map : public QWidget
      * Draws the Task which is currently planned
      *
      */
-    void __drawPlannedTask();
+    void __drawPlannedTask(bool solid = true);
     /**
      * Draws the grid tino the map.
      */
@@ -264,7 +260,7 @@ class Map : public QWidget
 			* contains planning task points
 			* enthält die Punkte!!!
 			*/
-    QList<wayPoint> taskPointList;
+ //   QList<wayPoint> taskPointList;
 		// 0 keine Planung 1 Planung 2 Planung Aufgabe Abgeschlossen
 //		enum planning {NoPlanning = 0, Planning = 1, TaskFinished = 2};
 		int planning;
@@ -275,6 +271,8 @@ class Map : public QWidget
 		bool lastAdd;
     // indicates if the mouse is in a snapping area
     bool isSnapping;
+    // temp task (snapping)
+    FlightTask tempTask;
 };
 
 #endif
