@@ -50,6 +50,7 @@
 #define REQ_FLIGHT_DATA    0xc9
 
 
+#define SECURITY_NEW       239        /* ef */ /* 28.5.2004 Fughe: Upgrading to G3 security records */
 #define SECURITY           240        /* f0 */
 #define COMPETITION_CLASS  241        /* f1 */
 #define SAT_CON            242        /* f2 */
@@ -1288,6 +1289,25 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       }
       fprintf(figc, "\r\n");
       fil_p += 66;
+      break;
+    case SECURITY_NEW:
+                /* efh                         */
+                /* 1   byte, len or type       */
+                /* 64  byte, char              */
+      fil_p++;
+
+      fprintf(figc, "G3");
+
+      for(i=0;i<(2+fil_p[0]);i++)
+      {
+        if(!((i-31)%32))
+        {
+          fprintf(figc, "\r\nG");
+        }
+        fprintf(figc, "%02X", fil_p[i+1]);
+      }
+      fprintf(figc, "\r\n");
+      fil_p+=0x83;
       break;
     default:        /* ???? */
       fprintf(figc, "LFILUNKNOWN%#x\r\n", fil_p[0]);
