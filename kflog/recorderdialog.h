@@ -111,7 +111,7 @@ class RecorderDialog : public KDialogBase
     /**
      * Opens the library with the indicated name
      */
-    int __openLib(const QString& libN);
+    bool __openLib(const QString& libN);
     /**
      * Creates and add the Settings page (the first page) to the dialog
      */
