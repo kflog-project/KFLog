@@ -24,7 +24,7 @@ ldadd=\s-lm $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
 ldflags=
 
 [General]
-AMChanged=false
+AMChanged=true
 author=Heiner Lamprecht
 configure_args=--prefix=/opt/kde2/
 email=heiner@kflog.org
@@ -38,7 +38,7 @@ project_type=normal_kde2
 sgml_file=/home/heiner/Entwicklung/kflog2/doc/en/index.docbook
 short_info=
 sub_dir=kflog/
-version=2.0.2
+version=2.0.3
 version_control=CVS
 workspace=1
 
@@ -1174,7 +1174,7 @@ install_location=
 type=HEADER
 
 [po/Makefile.am]
-files=po/de.po,po/de.gmo,po/kflog.pot,po/no.gmo,po/no.po,po/sv.gmo,po/sv.po
+files=po/de.po,po/de.gmo,po/kflog.pot,po/no.gmo,po/no.po,po/sv.gmo,po/sv.po,po/fr.po,po/fr.gmo
 sub_dirs=
 type=po
 
@@ -1185,6 +1185,18 @@ install_location=$$(kde_locale)/de/kflog.mo
 type=DATA
 
 [po/de.po]
+dist=false
+install=false
+install_location=
+type=PO
+
+[po/fr.gmo]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[po/fr.po]
 dist=false
 install=false
 install_location=
