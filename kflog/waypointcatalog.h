@@ -30,11 +30,19 @@ public:
 	~WaypointCatalog();
   /** No descriptions */
   bool read(QString &catalog);
+  bool readBinairy(QString &catalog);
   /** No descriptions */
   bool write();
-  bool writeBinary();
+  bool writeBinairy();
   /** No descriptions */
   bool importVolkslogger(QString & filename);
+  /** Checks if the file exists on disk, and if not asks the user for it.
+    * It then calls either write() or writeBinary(),
+    * depending on the selected format.
+    */
+  bool save(bool alwaysAskName=false);
+  /** This function calls either read or readBinairy depending on the filename of the catalog. */
+  bool load(QString & catalog);
 
   /** filter for display/import */
   bool showAll;

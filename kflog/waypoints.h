@@ -62,6 +62,7 @@ private: // Private attributes
   KFLogListView *waypoints;
   /** some menu items */
   int idWaypointCatalogSave;
+  int idWaypointCatalogSaveAs;
   int idWaypointCatalogImport;
   int idWaypointCatalogClose;
   int idWaypointImportFromMap;
@@ -103,6 +104,7 @@ private slots: // Private slots
   /** open a catalog and set it active */
   void slotOpenWaypointCatalog();
   void slotSaveWaypointCatalog();
+  void slotSaveWaypointCatalogAs();
   void slotCloseWaypointCatalog();
   void slotImportWaypointCatalog();
   void slotSwitchWaypointCatalog(int idx);

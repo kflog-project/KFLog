@@ -93,6 +93,11 @@ struct wayPoint
   double frequency;
   /** flag for landable*/
   bool isLandable;
+  /** contains an importance indidation for the waypoint
+    * 0=low
+    * 1=normal
+    * 2=high  */
+  unsigned int importance;
 };
 
 #endif

@@ -154,6 +154,8 @@ void Waypoints::addPopupMenu()
     SLOT(slotImportWaypointFromFile()));
   idWaypointCatalogSave = wayPointPopup->insertItem(SmallIcon("filesave"), i18n("&Save catalog"), this,
     SLOT(slotSaveWaypointCatalog()));
+  idWaypointCatalogSaveAs = wayPointPopup->insertItem(SmallIcon("filesave"), i18n("&Save catalog as..."), this,
+    SLOT(slotSaveWaypointCatalogAs()));
   idWaypointCatalogClose = wayPointPopup->insertItem(SmallIcon("fileclose"), i18n("&Close catalog"), this,
     SLOT(slotCloseWaypointCatalog()));
 //  wayPointPopup->insertSeparator();
@@ -183,7 +185,7 @@ void Waypoints::slotOpenWaypointCatalog()
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory",
       getpwuid(getuid())->pw_dir);
 
-  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)", this, i18n("Open waypoint catalog"));
+  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n*.kwp *.KWP|Cumulus and KFLogEmbedded waypoints (*.kwp)\n*.kflogwp *.KFLOGWP *.kwp *.KWP|All supported waypoint formats", this, i18n("Open waypoint catalog"));
 
   openCatalog(fName);
 }
@@ -197,6 +199,7 @@ void Waypoints::slotNotHandledItem()
 void Waypoints::showWaypointPopup(QListViewItem *it, const QPoint &, int)
 {
   wayPointPopup->setItemEnabled(idWaypointCatalogSave, waypointCatalogs.count() && waypointCatalogs.current()->modified);
+  wayPointPopup->setItemEnabled(idWaypointCatalogSaveAs, waypointCatalogs.count() > 0);
   wayPointPopup->setItemEnabled(idWaypointCatalogClose, waypointCatalogs.count() > 1);
   wayPointPopup->setItemEnabled(idWaypointCatalogImport, waypointCatalogs.count());
   wayPointPopup->setItemEnabled(idWaypointImportFromMap,waypointCatalogs.count());
@@ -205,6 +208,7 @@ void Waypoints::showWaypointPopup(QListViewItem *it, const QPoint &, int)
   wayPointPopup->setItemEnabled(idWaypointEdit, it != 0);
   wayPointPopup->setItemEnabled(idWaypointDelete, it != 0);
   wayPointPopup->setItemEnabled(idWaypointCopy2Task, it != 0);
+  wayPointPopup->setItemEnabled(idWaypointCenterMap, it != 0);
 
   wayPointPopup->exec(QCursor::pos());
 }
@@ -243,7 +247,7 @@ bool Waypoints::saveChanges()
             {
               case KMessageBox::Yes:
                 // Hier zwischenzeitlich auf binärformat umgestellt ...
-                if (!w->write()) //Binary())
+                if (!w->save()) //Binary())
                     return false;
                 break;
               case KMessageBox::Cancel:
@@ -497,7 +501,15 @@ void Waypoints::slotSwitchWaypointCatalog(int idx)
 void Waypoints::slotSaveWaypointCatalog()
 {
   WaypointCatalog *w = waypointCatalogs.current();
-  if (w->write()) {
+  if (w->save()) {
+    catalogName->changeItem(w->path, catalogName->currentItem());
+  }
+}
+
+void Waypoints::slotSaveWaypointCatalogAs()
+{
+  WaypointCatalog *w = waypointCatalogs.current();
+  if (w->save(true)) {
     catalogName->changeItem(w->path, catalogName->currentItem());
   }
 }
@@ -530,7 +542,7 @@ void Waypoints::slotCloseWaypointCatalog()
   if (w->modified) {
     switch(KMessageBox::warningYesNoCancel(this, i18n("Save changes to<BR><B>%1</B>").arg(w->path))) {
     case KMessageBox::Yes:
-      if (!w->write()) {
+      if (!w->save()) {
         return;
       }
       break;
@@ -809,7 +821,7 @@ void Waypoints::openCatalog(QString &catalog)
 
     if (f.exists()) {
       // read from disk
-      if (!w->read(catalog)) {
+      if (!w->load(catalog)) {
         delete w;
       }
       else {
