@@ -1,11 +1,36 @@
 $Id$
 
-Das Projekt wurde 1998 von einem Geographie Studenten und
-einem Segelflieger ins Leben gerufen. Urspruenglich war
-das Projekt nur dafuer gedacht ein bisschen programmieren
-zu lernen ... bla bla bla
+(1)
+
+KFLOG ein (nicht ganz neues), jedoch noch recht unbekanntes Programm im
+Bereich der Planungs und AuswerteSoftware für Segelflieger soll hiemit kurz
+vorgestellt werden.
+
+KFLog (sprich: Kaa Äf Log :-) steht für KDE Flight LOGger. KDE ist die
+Benutzeroberfläche unter Linux, für welche KFLog programiert ist.
+
+Dies ist auch gleich einer der Hauptunterschiede zu den bekannten
+Programmen StrePla, SeeYou ..., welche für Microsoft Windows programiert
+sind. Ein weiterer Unterschied (und großer Vorteil) ist, dass KFLog als
+Opensource entwickelt wird. Dies bedeutet unter anderem, dass das Programm
+kostenlos erhältlich ist und es für neue Mistreiter sehr einfach ist in das
+Projekt einzusteigen.
+
+Linux hat zwar leider immer noch den Ruf, ein Betriebsystem für Freaks zu
+sein. Durch die Modernen Oberflächen wie KDE und der einfachen
+Instatllation aktueller Distributionen braucht Linux sich im Vergleich zu
+Windows aber keines falls mehr zu verstecken.
 
 
+(2)
+[
+	Das Projekt wurde 1998 von einem Geographie Studenten und
+	einem Segelflieger ins Leben gerufen. Urspruenglich war
+	das Projekt nur dafuer gedacht ein bisschen programmieren
+	zu lernen ... bla bla bla
+]
+
+[
 
 _Open Source Linux_
 Entwickelt wird KFLOG unter Linux. Als programmiersprache
@@ -19,15 +44,29 @@ als Opensource verfuegbar.
 [comment André: I think this is not relevant, nor interesting
 for the target-audience. Who cares we are using C++? Especially
 in the beginning of the article, we should not get too technical.]
+]
 
+[
+(3)
 Aufschwung hat das Projekt Ende 2000 mit der Entscheidung
 eine eigene Webdomain fuer KFLOG einzurichten erhalten.
 Hierdurch wurde neben der Darstellung des Programms auch
 neue Mitglieder fuer das Team gewonnen. In der
 Zwischenzeit arbeiten ca. 15 Personen aus ganz Europa an
 dem Projekt. (Programmieren, Uebersetzten....)
+In der Zwischenzeit hat KFLog einen Stand erreicht, bei dem wir der Meinung
+sind es der breiten Öffentlichkeit vorstellen zu können.
+]
+
+(4)
+Wenn man KFLog startet sieht man sofort die große Kartenanzeige. In dieser
+wird die Topographie, Lufträume, und ggf. Flüge und Aufgaben angezeigt.
+
+
+(5)
 
 _Karten_
+[
 Die ersten Karten fuer KFLOG wurden noch van Hand mittels
 eines Digitalisiertablettes eingelesen. Es wurde jedoch
 relativ schnell klar, dass dies fuer ein groesseres Gebiet
@@ -35,42 +74,111 @@ eine unvorstellbar grosse Arbeit ist. Durch langes
 recherchieren im Internet sind wir auf verschiedene freie
 Datensaetze gestossen, die nun als Grundlage fuer die
 angezeigten Karten dienen.
+]
+
+Es sind Kartendaten fuer die gesamte Welt verfuegbar. Die Luftraumdaten
+werden darueberhinaus monatlich aktualisiert und koennen wie die restlichen
+Karten und das Programm kostenlos ueber die Internetseite
+heruntergeladen werden.
+
 Die Hoeheninformationen stammen aus dem GLOBE und ...
-Projekt. Die Topographie hat als Grundlage die VPF
-Datensaetzte des amerikanischen Militaers. Die
-Luftraumdaten stammen ebenfalls aus Quellen des
-amerikanischen Militaers. (DAFiF)
+Projekt. Die Topographie und die Luftraumdaten stammen aus Quellen
+des amerikanischen Militaers.
+
 [Addition by André]
-These are incidently the same sources other popular 
+These are incidently the same sources other popular
 programs such as WinPilot and SeeYou use.
 [/Addition]
 
-Es sind Kartendaten fuer die gesamte Welt fuer KFLOG
-verfuegbar. Die Luftraumdaten werden darueberhinaus
-monatlich aktualisiert und koennen wie die restlichen
-Karten und das Programm kostenlos ueber die Internetseite
-Downgeloadet werden.
+Eine besonders nette Funktion ist der automatische Kartendownload. Bei
+einer aktiven Internetverbindung können hiermit direkt aus KFLog heraus
+fehlende Karten Kacheln oder Updates vom KFLog Server heruntergeladen
+werden.
+
+[
 Es ist ausserdem ein Karteneditor fuer den Endbenutzer in
 Planung, so dass die Daten laufend verbessert und aktuell
 gehalten werden koennen. [comment: is there really ? ;-)]
-
+]
 
 _Funktionen_
 KFLOG ist dazu gedacht, Streckenfluege mit Segelflugzeugen
-zu planen und anschliessend zu visualisieren und
-auszuwerten. Durch die Unterprojekte Cumulus, KFLOG
+zu planen und anschließend zu visualisieren und
+auszuwerten.
+
+[
+Durch die Unterprojekte Cumulus, KFLOG
 Embedded und Startkladde wird zusaetzlich noch die
 Durchfuehrung und Verwaltung von Fluegen unterstuetzt.
 Auch wenn KFLOG im Moment noch nicht direkt andere
 Luftsportarten wie Drachenflug, Paragliding, usw.
 unterstuezt ist es sicher auch fuer diese Sportarten
 interessant.
+]
 [Comment André: you should talk about the functions of KFLog here,
 not the spinoffs I think. See section below.]
 
+_Loggerschnittstelle_
+Es können vorhandene IGC Dateien geöffnet werden, oder aber man benutzt die
+Loggerschnittstelle, um Flüge direkt von einem Gerät zu laden.
+
+Da von den Loggerherstellern im Normalfall jedoch keine Treiber für LINUX
+mitgeliefert werden stellt das KFLOG Team für verschiedene Typen Treiber
+bereit.
+Diese können einerseits direkt aus KFLOG heraus aufgerufen werden,
+es ist aber auch möglich sie als seperates Programm zu verwenden. Durch
+die gute Zusammenarbeit mit der Fa Garrecht haben wir einen Treiber für
+den Volkslogger enntwickelt. Außerdem existiert ein Treiber für Filser
+Geräte sowie für die PDA Software Cumulus und Soaringpilot.
+
+Wir hoffen bald Treiber für weitere Logger zur Verfügung stellen
+zu können. Hierbei sind wir jedoch auf die Mithilfe der Hersteller
+angewiesen.
+
+
+
+(6)
+
+Neben der reinen Anzeige ist das Auswerten und Planen ein weiterer
+Programmschwerpunkt.
+
+(7)
+
+
+_Auswertung_
+
+Mittels KFLOG ist eine detailierte Auswertung von Fluegen
+moeglich. Die Flugwegdarstellung in der Karte kann nach
+verschiedenen Parametern eingefaerbt werden (Hoehe, Vario,
+Geschwindigkeit, Kreisflug ...) Außerdem ist es möglich sich den
+Flugweg in einer 3D Ansicht anzeigen zu lassen.
+
+Im Auswertungsdialoges ist eine skalierbare Darstellung von Baraogramm,
+Variogramm, Speedogramm moeglich.
+
+[  Zudem kann die Glaette jeder Kurve beliebig veraendert werden. ]
+
+Es ist moeglich einezelen Teilabschnitte des Fluges auszuwaehlen, und sich
+hierfuer detailierte Informationen, wie Hoehengewinn,
+Strecke, Durchschnittsgeschwindigkeit ..., anzeigen zu lassen.
+
+Geflogene Strecken können enfach für OLC, DMST usw. optimiert werden.
+
+
+[ Dank eines genauen Algorithmus wird die größte Strecke genau berechnet. ]
+
+Eine Flugaufgabe kann dann direkt aus KFLog heraus über das Internet
+beim OLC Server online gemeldet werden. Die Meldung für die DMST-Online
+kann ebenfalls direkt erfolgen.
+
+
+(8)
 _Planen_
-Es ist eine graphische sowie Dialogbasierte Planung von
-beliebigen Strecken moeglich. 
+Die Planung von beliebigen Strecken ist graphisch direkt in der Karte
+als auch über einen Dialog möglich.
+Zusätzlich zu "konventionellen" Strecken ist es möglich auch
+aufwendigere Arten wie FAI Flächen für Dreiecke zu erzeugen.
+
 [Addition by André] Currently, not only old-fashioned tasks are
 possible, but also more advanced types like FAI-area's
 can be defined.[/Addition]
@@ -78,22 +186,55 @@ can be defined.[/Addition]
 Screenshots Beispiele ...
 
 
-_Auswertung_
+DRUCKEN
+Es ist möglich jeden beliebigen Ausschnitt der Karte, ob mit oder
+ohne Flugweg, Aufgabe zu drucken. Wie auch bei der Anzeige der Karte kann
+hier beliebig konfiguriert werden, was bzw. wie die Elemente angezeigt
+werden.
 
-Mittels KFLOG ist eine detailierte Auswertung von Fluegen
-moeglich. Die Flugwegdarstellung in der Karte kann nach
-verschiedenen PArametern eingefaerbt werden (Hoehe, Vario,
-Geschwindigkeit, Kreisflug ...) Weitere
-darstellungsmoeglichkeiten sind eine einfache sowie
-aufwendigere 3D Ansicht (Planung bla bla)
+Des weiteren ist es möglich Statistiken zu Flug und Aufgabe zu drucken.
 
-Mittels des Auswertungsdialoges ist eine skalierbare
-Darstellung von Baraogramm, Variogramm, Speedogramm
-moeglich. Zudem kann die Glaette jeder Kurve beliebig
-veraendert werden. Es ist moeglich einezelen
-Teilabschnitte des Fluges auszuwaehlen, und sich hierfuer
-detailierte Informationen anzeigen zu lassen.
-Hoehengewinn, Strecke, Durchschnittsgeschwindigkeit ...
+Bezogen werden kann KFLog einfach über Internet http://www.kflog.org oder
+aber CD.
+
+Besonders interessant für Windows Nutzer ist unsere Demo CD, welche auf
+Knoppix basiert, mit der es möglich ist Linux, direkt von CD zu booten,
+wodurch KFLog auf nahezu jedem Computer ohne jeglich Installation startbar
+ist.
+
+Diese ist wie auch die reine Programm Cd für einen kleinen Unkostenbeitrag
+erhältlich.
+
+
+(9)
+Zwei Abkömmlinge von KFLog haben schon das Tageslicht erblickt. Beide für
+den Einsatz auf PDAs ausgerichtet:
+KFlogEmbedded eine MiniVersion von KFLog zum Anzeigen, Planen und Auswerten
+von Flügen auf dem Platz. Es ist also sogar kein Laptop mehr nötig um seine
+Aufgaben auf den Logger zu übertragen.
+Cumulus auf der anderen Seite stellt einen Flugcomputer berei, der auf
+KFLog beruht.
+Alle Funktionen die man erwartet: moving map, Wegpunkte, Endanflugrechner
+und vieles mehr sind bereits implementiert.
+
+Und wie KFlog selbst: Völlig frei zum benützen und auf seine Bedürfnisse
+anzupasssen
+
+Des weiteren ist ein Programm zum Verwalten von Flügen (Desktop, PDA) Eine
+Schnittstelle zum Flugsimulator FlightGear (Animation von Flügen) und
+vieles mehr geplant.
+
+Unser Team ist über neue Mitstreiter immer froh, wer also Lust hat etwas zu
+programmieren, Übersetzen, Dokumentation zu schreiben oder Sonstiges ist
+herzlich willkommen.
+
+Die Zukunft von OpenSource Software für die Segelfluggemeinde sieht rosig
+aus. Die Entwicklung geht schnell voran, mehr und mehr Funktionen und
+Optimierungen werden jeden Monat hinzugefügt.
+
+Segelflugpiloten mögen ihre Freiheit und endlich ist nun auch ihre Software
+frei!
+
 
 [addition André]
 _Spinoffs_
@@ -102,7 +243,7 @@ Allready, two spinoffs of KFLog have seen the light of day.
 Both focussed on the handheld, KFLogEmbedded makes a mini-
 version of KFLog available for reviewing and flights on the
 field, without the need for even a laptop. Cumulus on the
-other hand is providing a flightcomputer based on KFLog 
+other hand is providing a flightcomputer based on KFLog
 with all the functions you'd expect: moving map, waypoints,
 final glide and much more. And, just like KFLog itself:
 completely free to use or modify to fit your needs!
