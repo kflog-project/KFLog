@@ -18,7 +18,6 @@
 #include "dataview.h"
 
 #include <klocale.h>
-#include <qframe.h>
 #include <qlayout.h>
 #include <qstrlist.h>
 
@@ -26,21 +25,11 @@
 #include <mapcalc.h>
 
 DataView::DataView(QWidget* parent)
-: QTabWidget(parent)
+: QFrame(parent, "FlightData")
 {
-  QFrame* flightDataFrame = new QFrame(this);
-//  QFrame* taskDataFrame = new QFrame(this);
-//  QFrame* mapElementFrame = new QFrame(this);
-//  QFrame* searchDataFrame = new QFrame(this);
+  flightDataText = new QTextView(this, "flightData");
 
-  addTab(flightDataFrame, i18n("Flight"));
-//  addTab(taskDataFrame, i18n("&Task"));
-//  addTab(mapElementFrame, i18n("&Map"));
-//  addTab(searchDataFrame, i18n("&Search"));
-
-  flightDataText = new QTextView(flightDataFrame, "flightData");
-
-  QHBoxLayout* flightLayout = new QHBoxLayout(flightDataFrame, 5);
+  QHBoxLayout* flightLayout = new QHBoxLayout(this, 5);
   flightLayout->addWidget(flightDataText);
 }
 

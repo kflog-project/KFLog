@@ -19,15 +19,17 @@
 #define DATAVIEW_H
 
 #include <qtextview.h>
-#include <qtabwidget.h>
+#include <qframe.h>
 
 class Flight;
 
 /**
+ * Provides widgets for displaying the flight-data.
+ *
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
-class DataView : public QTabWidget
+class DataView : public QFrame
 {
   public:
     /**
