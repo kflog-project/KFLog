@@ -82,7 +82,7 @@ void Igc3DDialog::slotShowFlightData()
 {
 //  warning("Igc3DDialog::slotShowFlightData");
 //  this->setCaption(i18n("FlightIgc3D:") + flightList->at(n)->getPilot()
-//                    + "  " + flightList->at(n)->getDate());
+//                    + "  " + flightList->at(n)->getDate().toString());
 
   emit flightChanged();
 }

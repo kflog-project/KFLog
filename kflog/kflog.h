@@ -29,6 +29,7 @@
 #include <kmainwindow.h>
 #include <kaccel.h>
 #include <kaction.h>
+#include <kprocess.h>
 #include <kprogress.h>
 #include <kpopupmenu.h>
 
@@ -236,6 +237,10 @@ class KFLogApp : public KDockMainWindow
     void slotModifyMenu();
     /** */
     void slotOpenRecorderDialog();
+    /**
+      *  olc Declaration
+      **/
+    void slotOlcDeclaration();
 
   private:
     /**
@@ -403,7 +408,9 @@ class KFLogApp : public KDockMainWindow
 		/**
      * The igc3d dialog
      */
- 		KAction* viewIgc3D;
+ 	  KAction* viewIgc3D;
+    /** */
+    KAction* olcDeclaration;
  		/**
  		  * The Task Planning
  		  */
@@ -433,9 +440,12 @@ class KFLogApp : public KDockMainWindow
      */
     bool showStartLogo;
     KPopupMenu* windowMenu;
-private slots: // Private slots
-  /** insert available flights into menu */
-  void slotWindowsMenuAboutToShow();
+
+    KProcess browser;
+
+  private slots: // Private slots
+    /** insert available flights into menu */
+    void slotWindowsMenuAboutToShow();
 };
  
 #endif // KFLOG_H

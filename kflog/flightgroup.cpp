@@ -59,7 +59,7 @@ FlightGroup::~FlightGroup()
 //      idString.sprintf("%d", flight);
 //
 //      htmlText += "<TR><TD><A HREF=" + idString + ">" +
-//        flight->getFileName() + "</A></TD><TD ALIGN=right>" + flight->getDate() + "</TD></TR>\
+//        flight->getFileName() + "</A></TD><TD ALIGN=right>" + flight->getDate().toString() + "</TD></TR>\
 //        <TR><TD>" + flight->getDistance() + "</TD><TD ALIGN=right>" +
 //        printTime(flight->getLandTime() - flight->getStartTime()) + "</TD></TR>";
 //    }

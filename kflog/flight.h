@@ -21,6 +21,7 @@
 #include <baseflightelement.h>
 #include <flighttask.h>
 
+#include <qdatetime.h>
 #include <qlist.h>
 #include <qstring.h>
 #include <qstrlist.h>
@@ -46,7 +47,7 @@ class Flight : public BaseFlightElement
 	   */
     Flight(QString fileName, QString recID,
   	    QList<flightPoint> route, QString pName, QString gType,
-        QString gID, QList<wayPoint> wpL, QString date);
+        QString gID, int cClass, QList<wayPoint> wpL, QDate date);
 	  /**
 	   * Destroys the flight-object.
 	   */
@@ -128,7 +129,7 @@ class Flight : public BaseFlightElement
     /**
      * @return the date of the flight.
      */
-    QString getDate() const;
+    QDate getDate() const;
     /**
      * Searches the point of the flight, which time is the nearest
      * to the given time.
@@ -213,6 +214,8 @@ class Flight : public BaseFlightElement
      * @return the header-info of the igc-file (date, pilot-name, ...)
      */
     QStrList getHeader();
+    /** @return the competition-class */
+    int getCompetitionClass() const;
     /** No descriptions */
 //    virtual QString getFlightInfoString();
     /**
@@ -251,6 +254,14 @@ class Flight : public BaseFlightElement
      *  Flight State
      */
     enum FlightState {Straight = 0, LeftTurn = 1, RightTurn = 2, MixedTurn = 3};
+    /**
+     * "Unknown" is used, when there is an unrecognized competitionclass in
+     * the igc-file. If there is no class given, "NotSet" is used.
+     */
+    enum CompetitionClass {Unknown = -1, NotSet = 0,  PW5 = 1, Club = 2,
+        Standard = 3, FifteenMeter = 4, EightteenMeter = 5, DoubleSitter = 6,
+        OpenClass = 7, HGFlexWing = 8, HGRigidWing = 9, ParaGlider = 10,
+        ParaOpen = 11, ParaSport = 12, ParaTandem = 13};
 
   private:
     /** */
@@ -277,7 +288,9 @@ class Flight : public BaseFlightElement
 	  QString pilotName;
     QString gliderType;
     QString gliderID;
-    QString date;
+    QDate date;
+    int competitionClass;
+
     flightPoint* drawRoute;
     unsigned int drawLength;
     unsigned int v_max;

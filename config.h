@@ -14,7 +14,7 @@
 #define PACKAGE "kflog"
 
 /* Version number of package */
-#define VERSION "2.0.5"
+#define VERSION "2.0.6"
 
 /* C++ compiler supports template repository */
 #define HAVE_TEMPLATE_REPOSITORY 1

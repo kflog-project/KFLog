@@ -125,7 +125,9 @@ class KFLogConfig : public KDialogBase
     LatEdit* homeLatE;
     LongEdit* homeLonE;
     QLineEdit* homeNameE;
-    QLineEdit* pilotNameE;
+    QLineEdit* preNameE;
+    QLineEdit* surNameE;
+    QLineEdit* dateOfBirthE;
 
     QSlider* lLimit;
     QSlider* uLimit;

@@ -225,7 +225,7 @@ void EvaluationDialog::slotShowFlightData()
   if (flight) {
     if (flight->getTypeID() == BaseMapElement::Flight) {
       setCaption(i18n("Flightevaluation:") + flight->getPilot() + "  "
-        + flight->getDate());
+        + flight->getDate().toString());
     }
     else {
       setCaption(i18n("Flightevaluation:"));

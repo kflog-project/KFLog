@@ -27,6 +27,7 @@
 
 //#include <kapp.h>
 //#include <kconfig.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <qpixmap.h>
@@ -58,13 +59,14 @@
       wpL.current()->angle = -100;
 
 Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName,
-    QString gType, QString gID, QList<wayPoint> wpL, QString d)
+    QString gType, QString gID, int cClass, QList<wayPoint> wpL, QDate d)
   : BaseFlightElement("flight", BaseMapElement::Flight, fName),
     recorderID(recID),
     pilotName(pName),
     gliderType(gType),
     gliderID(gID),
     date(d),
+    competitionClass(cClass),
     v_max(0),
     h_max(0),
     va_min(0),
@@ -91,7 +93,7 @@ Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName
   header.append(pilotName);
   header.append(gliderID);
   header.append(gliderType);
-  header.append(date);
+  header.append(KGlobal::locale()->formatDate(date, true));
   header.append(printTime(route.last()->time - route.at(0)->time));
   header.append(getTaskTypeString());
   header.append(getDistance());
@@ -634,6 +636,8 @@ QString Flight::getPoints(bool isOrig) const
       return optimizedTask.getPointsString();
 }
 
+int Flight::getCompetitionClass() const  { return competitionClass; }
+
 int Flight::getLandTime() const { return landTime; }
 
 QString Flight::getPilot() const { return pilotName; }
@@ -642,7 +646,7 @@ int Flight::getStartTime() const { return startTime; }
 
 QString Flight::getType() const { return gliderType; }
 
-QString Flight::getDate() const { return date; }
+QDate Flight::getDate() const { return date; }
 
 unsigned int Flight::getRouteLength() const { return route.count(); }
 

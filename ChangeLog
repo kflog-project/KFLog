@@ -1,6 +1,16 @@
 $Id$
 
 
+2002-05-01 Heiner <heiner@kflog.org>
+
+  * Prepared and release bugfix-release
+
+
+2002-04-30 Harry <harry@kflog.org>
+
+  * Fix switched lat/long in waypoint handling
+
+
 2002-04-27 Heiner <heiner@kflog.org>
 
   * Prepared the next release and tagged it.

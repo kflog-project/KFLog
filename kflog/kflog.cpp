@@ -22,6 +22,7 @@
 #include <qdir.h>
 #include <qlayout.h>
 #include <qprinter.h>
+#include <qtextstream.h>
 
 // include files for KDE
 #include <kconfig.h>
@@ -67,7 +68,28 @@
   a->setLineWidth(0); \
   a->setAlignment( c | AlignVCenter );
 
+#define POS_STRINGS(point) \
+  latitude = point.lat(); \
+  longitude = point.lon(); \
+  if(latitude < 0) latH = "S"; \
+  if(longitude < 0) lonH = "W"; \
+  degree = latitude / 600000; \
+  min = (latitude - (degree * 600000)) / 10000; \
+  min_deg = (latitude - (degree * 600000) - (min * 10000)); \
+  min_deg = min_deg / 1000; \
+  latG.sprintf("%d", degree); \
+  latM.sprintf("%d", min); \
+  latMD.sprintf("%d", min_deg); \
+  degree = longitude / 600000; \
+  min = (longitude - (degree * 600000)) / 10000; \
+  min_deg = (longitude - (degree * 600000) - (min * 10000)); \
+  min_deg = min_deg / 1000; \
+  lonG.sprintf("%d", degree); \
+  lonM.sprintf("%d", min); \
+  lonMD.sprintf("%d", min_deg);
+
 TranslationList surfaces;
+
 TranslationList waypointTypes;
 
 KFLogApp::KFLogApp()
@@ -240,6 +262,9 @@ void KFLogApp::initActions()
   flightOptimization = new KAction(i18n("Optimize"), "wizard", 0,
       this, SLOT(slotOptimizeFlight()), actionCollection(), "optimize_flight");
 
+//  olcDeclaration = new KAction(i18n("send OLC-Declaration"), 0,
+//      this, SLOT(slotOlcDeclaration()), actionCollection(), "olc_declaration");
+
   //Animation actions
   animateFlightStart = new KAction(i18n("&Start Flight Animation"), "1rightarrow",
 			Key_F12, map, SLOT(slotAnimateFlightStart()), actionCollection(),
@@ -299,6 +324,7 @@ void KFLogApp::initActions()
   flightMenu->insert(viewWaypoints);
   flightMenu->insert(viewFlightDataType);
   flightMenu->insert(viewIgc3D);
+//  flightMenu->insert(olcDeclaration);
 //  flightMenu->insert(mapPlanning);
   flightMenu->popupMenu()->insertSeparator();
   flightMenu->insert(animateFlightStart);
@@ -592,6 +618,173 @@ void KFLogApp::slotFilePrint()
   MapPrint::MapPrint(viewCenterFlight->isEnabled());
 
   slotStatusMsg(i18n("Ready."));
+}
+
+void KFLogApp::slotOlcDeclaration()
+{
+  // currently not available ...
+  return;
+
+  extern MapContents _globalMapContents;
+  Flight* f = (Flight*)_globalMapContents.getFlight();
+
+  if(f == NULL)  return;
+
+  if(f->getTypeID() != BaseMapElement::Flight)
+    {
+      KMessageBox::sorry(this, i18n("You can only send flights to the OLC!"),
+          i18n("No flight found"));
+      return;
+    }
+
+  FlightTask t = f->getTask();
+
+  config->setGroup("Personal Data");
+
+  QString link;
+
+  // ungeklärte Felder:
+  QString index("100");     // Sollte sowieso mal in eine Config-Datei ...
+  QString glider("1");      // "1" für reine Segelflugzeuge
+
+  QString dateString;
+  dateString.sprintf("%d", f->getDate().year() + f->getDate().dayOfYear());
+
+  QString compClass("0");
+  switch(f->getCompetitionClass())
+    {
+      case Flight::PW5:
+        compClass = "1";
+        break;
+      case Flight::Club:
+        compClass = "2";
+        break;
+      case Flight::Standard:
+        compClass = "3";
+        break;
+      case Flight::FifteenMeter:
+        compClass = "4";
+        break;
+      case Flight::EightteenMeter:
+        compClass = "5";
+        break;
+      case Flight::DoubleSitter:
+        compClass = "6";
+        break;
+      case Flight::OpenClass:
+        compClass = "7";
+        break;
+      case Flight::HGFlexWing:
+        compClass = "1";
+        break;
+      case Flight::HGRigidWing:
+        compClass = "2";
+        break;
+      case Flight::ParaGlider:
+        compClass = "10";
+        break;
+      case Flight::ParaOpen:
+        compClass = "3";
+        break;
+      case Flight::ParaSport:
+        compClass = "4";
+        break;
+      case Flight::ParaTandem:
+        compClass = "5";
+        break;
+    }
+
+  // personal info
+  link = "OLCvnolc=" + config->readEntry("PreName", "")
+      + "&na=" + config->readEntry("SurName", "")
+      + "&geb=" + config->readEntry("Birthday", "");
+
+  // glider info
+  link = link + "&gty=" + f->getHeader().at(2)
+      + "&gid=" + f->getHeader().at(1)
+      + "&ind=" + index
+      + "&klasse=" + compClass + "&flugzeug=" + glider;
+
+  // The olc need an "offical" filename. So we have to create it here ...
+  link += "&igcfn=" + f->getFileName() + "&sta=" + t.getWPList().first()->name +
+          "&ft=" + dateString +  "&s0=" + printTime(f->getStartTime(), true);
+
+  QString latH("N"), latG, latM, latMD;
+  QString lonH("E"), lonG, lonM, lonMD;
+
+  int latitude, longitude;
+  int degree, min, min_deg;
+
+  // the beginning of the task should allways be the second point ...
+  POS_STRINGS(t.getWPList().at(1)->origP)
+
+  // Abflugpunkt
+  link += "&w0bh=" + latH + "&w0bg=" + latG + "&w0bm=" + latM + "&w0bmd=" + latMD
+      + "&w0lh=" + lonH + "&w0lg=" + lonG + "&w0lm=" + lonM + "&w0lmd=" + lonMD;
+
+  if(t.getTaskType() == FlightTask::FAI || t.getTaskType() == FlightTask::Dreieck ||
+      t.getTaskType() == FlightTask::FAI_S || t.getTaskType() == FlightTask::Dreieck_S)
+    {
+      // we have a triangle ...
+      POS_STRINGS(t.getWPList().at(2)->origP)
+
+      link += "&w1bh=" + latH + "&w1bg=" + latG + "&w1bm=" + latM + "&w1bmd=" + latMD
+          + "&w1lh=" + lonH + "&w1lg=" + lonG + "&w1lm=" + lonM + "&w1lmd=" + lonMD;
+
+      POS_STRINGS(t.getWPList().at(3)->origP)
+      link += "&w2bh=" + latH + "&w2bg=" + latG + "&w2bm=" + latM + "&w2bmd=" + latMD
+          + "&w2lh=" + lonH + "&w2lg=" + lonG + "&w2lm=" + lonM + "&w2lmd=" + lonMD;
+
+      POS_STRINGS(t.getWPList().at(4)->origP)
+      link += "&w3bh=" + latH + "&w3bg=" + latG + "&w3bm=" + latM + "&w3bmd=" + latMD
+          + "&w3lh=" + lonH + "&w3lg=" + lonG + "&w3lm=" + lonM + "&w3lmd=" + lonMD;
+    }
+
+  // Endpunkt
+  POS_STRINGS(t.getWPList().at(t.getWPList().count() - 2)->origP)
+  link += "&w4bh=" + latH + "&w4bg=" + latG + "&w4bm=" + latM + "&w4bmd=" + latMD
+      + "&w4lh=" + lonH + "&w4lg=" + lonG + "&w4lm=" + lonM + "&w4lmd=" + lonMD;
+
+  link += "&s4=" + printTime(f->getLandTime(), true);
+
+  QFile igcFile(f->getFileName());
+
+//  if(!igcFile.open(IO_ReadOnly))
+//    {
+//      KMessageBox::error(0,
+//          i18n("You don't have permission to access file<BR><B>%1</B>").arg(igcFile.name()),
+//          i18n("No permission"));
+//      return;
+//    }
+
+//  QTextStream igcStream(&igcFile);
+  QString igcString;
+
+//  while(!igcStream.eof())
+//    {
+//      igcString += igcStream.readLine();
+//    }
+
+  // IGC File
+  link = link + "&software=" + "kflog-" + VERSION + "&IGCigcIGC=" + igcString;
+
+  // Link für Hängegleiter:
+  //   http://www.segelflugszene.de/olc-cgi/holc-d/olc
+  // Link für Segelflüge:
+  //   http://www.segelflugszene.de/olc-cgi/olc-d/olc
+  // Ausserdem muss das Land noch konfigurierbar sein.
+  link = "http://www.segelflugszene.de/olc-cgi/olc-d/olc?" + link;
+
+//  warning(link);
+
+  // Because "%" is used in placeholder in a string, we have to add it this way ...
+  char prozent = 0x25;
+  QString spaceString = QString(QChar(prozent)) + "20";
+  link.replace(QRegExp("[ ]"), spaceString);
+
+  browser.clearArguments();
+  browser << "konqueror" << link;
+  browser.start();
 }
 
 void KFLogApp::slotFlightPrint()

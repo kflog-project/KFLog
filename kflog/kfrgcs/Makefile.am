@@ -5,10 +5,10 @@ lib_LTLIBRARIES = libkfrgcs.la
 INCLUDES = $(all_includes)
 
 
-LDFLAGS =  
+LDFLAGS =   
 
 
-libkfrgcs_la_LDFLAGS = -version-info 0:0:0
+libkfrgcs_la_LDFLAGS = -version-info 0:0:1
 
 libkfrgcs_la_METASOURCES = AUTO
 

@@ -191,7 +191,7 @@ void EvaluationFrame::slotShowFlight()
 void EvaluationFrame::slotShowGraph()
 {
 /*  this->setCaption(i18n("Flightevaluation:") + flightList->at(n)->getPilot()
-                    + "  " + flightList->at(n)->getDate());
+                    + "  " + flightList->at(n)->getDate().toString());
   // GRUNDWERTE setzen
   updateText(0,flightList->at(n)->getRouteLength() - 1, true);
 */

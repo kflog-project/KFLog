@@ -167,7 +167,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
 
   painter.setFont(QFont("helvetica", 10));
   painter.drawText(50, 100, i18n("Date") + ":");
-  painter.drawText(125, 100, currentFlight->getDate());
+  painter.drawText(125, 100, currentFlight->getDate().toString());
   painter.drawText(50, 115, i18n("Pilot") + ":");
   painter.drawText(125, 115, currentFlight->getPilot());
   painter.drawText(50, 130, i18n("Glider") + ":");

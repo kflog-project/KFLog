@@ -1113,11 +1113,13 @@ bool MapContents::loadFlight(QFile igcFile)
   QString s;
   QTextStream stream(&igcFile);
 
-  QString pilotName, gliderType, gliderID, date, recorderID;
+  QString pilotName, gliderType, gliderID, recorderID;
+  QDate date;
   char latChar, lonChar;
   bool launched = false, append = true, isFirst = true, isFirstWP = true;
   int dT, lat, latmin, latTemp, lon, lonmin, lonTemp;
   int hh = 0, mm = 0, ss = 0, curTime = 0, preTime = 0;
+  int cClass = Flight::NotSet;
 
   float v, speed;
 
@@ -1153,6 +1155,8 @@ bool MapContents::loadFlight(QFile igcFile)
   unsigned int wp_count = 0;
   int last0 = -1;
   bool isHeader = true;
+
+  bool isAus = false;
 
   //
   // Sequence of records in the igc-file:
@@ -1206,53 +1210,73 @@ bool MapContents::loadFlight(QFile igcFile)
       importProgress.setProgress(( filePos * 200 ) / fileLength);
       if(s.mid(0,1) == "A" && isHeader)
         {
-          // We have an menufactorer-id
-          if(s.mid(1,3).upper() == "GCS")
-              recorderID = "Volkslogger (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "BOR")
-              recorderID = "Borgelt (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "CAM")
-              recorderID = "Cambridge (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "DEL")
-              recorderID = "Delver (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "EWA")
-              recorderID = "EW (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "FIL")
-              recorderID = "Filser (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "GRI")
-              recorderID = "Griffin (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "SCH")
-              recorderID = "Scheffel (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "IEC")
-              recorderID = "Ilec (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "LXN")
-              recorderID = "LX Navigation (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "PES")
-              recorderID = "Peschges (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "PRT")
-              recorderID = "Print Technik (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "SDI")
-              recorderID = "Streamline Digital Instruments (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "BVI")
-              recorderID = "Ball Variometer Inc (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "WES")
-              recorderID = "Westerboer (" + s.mid(4,3) + ")";
-          else if(s.mid(1,3).upper() == "ZAN")
-              recorderID = "Zander (" + s.mid(4,3) + ")";
-          else
-              recorderID = "unknown (" + s.mid(4,3) + ")";
+          // We have an manufactorer-id
+          KGlobal::config()->setGroup("Manufactorer ID");
+          recorderID = KGlobal::config()->readEntry(s.mid(1,3).upper(),
+            i18n("unknown manufactorer"));
+          recorderID = recorderID + " (" + s.mid(4,3) + ")";
+          KGlobal::config()->setGroup(0);
+//          if(s.mid(1,3).upper() == "GCS")
+//              recorderID = "Volkslogger (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "BOR")
+//              recorderID = "Borgelt (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "CAM")
+//              recorderID = "Cambridge (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "DEL")
+//              recorderID = "Delver (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "EWA")
+//              recorderID = "EW (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "FIL")
+//              recorderID = "Filser (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "GRI")
+//              recorderID = "Griffin (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "SCH")
+//              recorderID = "Scheffel (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "IEC")
+//              recorderID = "Ilec (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "LXN")
+//              recorderID = "LX Navigation (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "PES")
+//              recorderID = "Peschges (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "PRT")
+//              recorderID = "Print Technik (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "SDI")
+//              recorderID = "Streamline Digital Instruments (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "BVI")
+//              recorderID = "Ball Variometer Inc (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "WES")
+//              recorderID = "Westerboer (" + s.mid(4,3) + ")";
+//          else if(s.mid(1,3).upper() == "ZAN")
+//              recorderID = "Zander (" + s.mid(4,3) + ")";
+//          else
+//              recorderID = "unknown (" + s.mid(4,3) + ")";
         }
       else if(s.mid(0,1) == "H" && isHeader)
         {
           // We have a headerline
-          if(s.mid(1,4).upper() == "FPLT")
+          if(s.mid(1, 4).upper() == "FPLT")
               pilotName = s.mid(s.find(':')+1,100);
-          else if(s.mid(1,4).upper() == "FGTY")
+          else if(s.mid(1, 4).upper() == "FGTY")
               gliderType = s.mid(s.find(':')+1,100);
-          else if(s.mid(1,4).upper() == "FGID")
+          else if(s.mid(1, 4).upper() == "FGID")
               gliderID = s.mid(s.find(':')+1,100);
-          else if(s.mid(1,4).upper() == "FDTE")
-              date = s.mid(5,2) + "." + s.mid(7,2) + "." + s.mid(9,2);
+          else if(s.mid(1, 4).upper() == "FDTE")
+            {
+              if(s.mid(9, 2).toInt() < 50)
+                  date.setYMD(2000 + s.mid(9, 2).toInt(),
+                      s.mid(7, 2).toInt(), s.mid(5, 2).toInt());
+              else
+                  date.setYMD(s.mid(9, 2).toInt(),
+                      s.mid(7, 2).toInt(), s.mid(5, 2).toInt());
+            }
+          else if(s.mid(1, 4).upper() == "FCCL")
+            {
+              // Searching the config-file for the Competition-Class
+              KGlobal::config()->setGroup("CompetitionClasses");
+              cClass = KGlobal::config()->readNumEntry(
+                  s.mid(s.find(':')+1,100).upper(), Flight::Unknown);
+              KGlobal::config()->setGroup(0);
+            }
         }
       else if(s.mid(0,1) == "B")
         {
@@ -1345,6 +1369,16 @@ bool MapContents::loadFlight(QFile igcFile)
             }
 
           temp_bearing = getBearing(prePoint,newPoint);
+
+          // Versuch der Ausklink-Erkennung ...
+          if(launched && ((isAus != true) &&
+              (abs(prePoint.bearing) > (prePoint.dT * PI / 30.0))))
+            {
+              warning("Ausklinken erkannt nach %s",
+                (const char*)printTime(preTime));
+              warning("%.5f", prePoint.bearing);
+              isAus = true;
+            }
 
           speed = 3600 * newPoint.dS / dT;  // [km/h]
           v = newPoint.dH / dT * 1.0;       // [m/s]
@@ -1485,8 +1519,8 @@ bool MapContents::loadFlight(QFile igcFile)
       return false;
     }
 
-  flightList.append(new Flight(QFileInfo(igcFile).fileName(), recorderID,
-      flightRoute, pilotName, gliderType, gliderID, wpList, date));
+  flightList.append(new Flight(igcFile.name(), recorderID,
+      flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
 
   emit currentFlightChanged();
   return true;

@@ -1,0 +1,27 @@
+[CompetitionClasses]
+CLUB=2
+CLUBCLASSE=2
+CLUBKLASSE=2
+STD=3
+STANDARD=3
+STANDARDT=3
+15M=4
+18M=5
+DOPPEL=6
+[Manufactorer ID]
+GCS=Volkslogger
+BOR=Borgelt
+CAM=Cambridge
+DEL=Delver
+EWA=EW
+FIL=Filser
+GRI=Griffin
+SCH=Scheffel
+IEC=Ilec
+LXN=LX Navigation
+PES=Peschges
+PRT=Print Technik
+SDI=Streamline Digital Instruments
+BVI=Ball Variometer Inc
+WES=Westerboer
+ZAN=Zander
