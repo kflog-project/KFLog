@@ -45,7 +45,7 @@
 extern MapContents _globalMapContents;
 extern MapMatrix _globalMapMatrix;
 
-Waypoints::Waypoints(QWidget *parent, const char *name, QString *catalog)
+Waypoints::Waypoints(QWidget *parent, const char *name, const QString& /*catalog*/)
   : QFrame(parent, name)
 {
   addWaypointWindow(this);
@@ -53,7 +53,7 @@ Waypoints::Waypoints(QWidget *parent, const char *name, QString *catalog)
 
   waypointCatalogs.setAutoDelete(true);
   /*
-    if (catalog == 0) {
+    if (catalog.isEmpty() == 0) {
     slotNewWaypointCatalog();
     }
     else {

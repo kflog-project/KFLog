@@ -41,7 +41,7 @@
 class Waypoints : public QFrame  {
   Q_OBJECT
     public:
-  Waypoints(QWidget *parent = 0, const char *name = 0, QString *catalog = 0);
+  Waypoints(QWidget *parent = 0, const char *name = 0, const QString& catalog = QString::null);
   ~Waypoints();
   /**
    * save changes in catalogs, return success
