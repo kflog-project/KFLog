@@ -42,6 +42,13 @@ The simplest way to compile this package is:
   4. You can remove the program binaries and object files from the
      source code directory by typing `make clean'.  
 
+Compiling from CVS
+==================
+
+   If you are using a CVS checkout, you need to run 
+'make -f Makefile.dist' before you run './configure' as described
+above.
+   
 Compilers and Options
 =====================
 
