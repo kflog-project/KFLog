@@ -18,7 +18,7 @@
 #include "projectionbase.h"
 
 ProjectionBase::ProjectionBase(int projectionType)
-  : projType(projectionType)
+  : projType((ProjectionType)projectionType)
 {
 
 }
