@@ -5,371 +5,471 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-11-09 22:33+0100\n"
-"PO-Revision-Date: 2001-11-18 13:33+GMT\n"
-"Last-Translator: Gˆran K‰llqvist <kjellqvist@nordkalak.se>\n"
+"POT-Creation-Date: 2001-12-17 22:49+0100\n"
+"PO-Revision-Date: 2002-01-12 21:50GMT\n"
+"Last-Translator: G√∂ran K√§llqvist <kjellqvist@nordkalak.se>\n"
 "Language-Team: svenska <de@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 0.7\n"
+"X-Generator: KBabel 0.9.5\n"
 
-#: airspace.cpp:197
+#: airspace.cpp:137
 msgid "unknown"
-msgstr "ok‰nd"
+msgstr "ok√§nd"
 
-#: dataview.cpp:36
-msgid "Flight"
-msgstr "Flygning"
-
-#: dataview.cpp:60
+#: dataview.cpp:52
 msgid "Date"
 msgstr "Datum"
 
-#: dataview.cpp:61
+#: dataview.cpp:53
 msgid "Pilot"
 msgstr "Pilot"
 
-#: dataview.cpp:62
+#: dataview.cpp:54
 msgid "Glider"
 msgstr "Glidflygplan"
 
-#: dataview.cpp:70
+#: dataview.cpp:66
 msgid "Task"
 msgstr "Uppgift"
 
-#: dataview.cpp:93
-msgid "total Distance"
-msgstr "total distans"
-
 #: dataview.cpp:99
+msgid "total Distance"
+msgstr "sammanlagd distans"
+
+#: dataview.cpp:101
+msgid "Points"
+msgstr "Punkter"
+
+#: dataview.cpp:107
 msgid "Flight contains no waypoints"
-msgstr "Flygningen innehÂller inga brytpunkter"
+msgstr "Flygningen inneh√•ller inga brytpunkter"
 
-#: evaluationdialog.cpp:41 evaluationdialog.cpp:283
+#: evaluationdialog.cpp:38 evaluationdialog.cpp:204
 msgid "Flightevaluation:"
-msgstr "Utv‰rdering av flygning:"
+msgstr "Utv√§rdering av flygning:"
 
-#: evaluationdialog.cpp:63
+#: evaluationdialog.cpp:44
 msgid "Flight:"
 msgstr "Flygning:"
 
-#: evaluationdialog.cpp:87
-msgid "Close"
-msgstr "St‰ng"
-
-#: evaluationdialog.cpp:219
+#: evaluationdialog.cpp:135
 msgid "Circling"
 msgstr "Cirklar runt"
 
-#: evaluationdialog.cpp:220 evaluationdialog.cpp:231
+#: evaluationdialog.cpp:136 evaluationdialog.cpp:147
 msgid "Time"
 msgstr "Tid"
 
-#: evaluationdialog.cpp:221
+#: evaluationdialog.cpp:137
 msgid "Vario"
-msgstr "Vario"
+msgstr "Varia"
 
-#: evaluationdialog.cpp:222 evaluationdialog.cpp:233
+#: evaluationdialog.cpp:138 evaluationdialog.cpp:149
 msgid "Alt. Gain"
-msgstr "Hˆjd, ˆkning"
+msgstr "H√∂jd, √∂kning"
 
-#: evaluationdialog.cpp:223 evaluationdialog.cpp:234
+#: evaluationdialog.cpp:139 evaluationdialog.cpp:150
 msgid "Alt. Loss"
-msgstr "Hˆjd, minskning"
+msgstr "H√∂jd, minskning"
 
-#: evaluationdialog.cpp:230
+#: evaluationdialog.cpp:146
 msgid "Straight"
 msgstr "Rakt fram"
 
-#: evaluationdialog.cpp:232
+#: evaluationdialog.cpp:148
 msgid "tot. Distance"
-msgstr "total distans"
+msgstr "sammanlagd distans"
 
-#: evaluationdialog.cpp:235
+#: evaluationdialog.cpp:151
 msgid "Speed"
 msgstr "Hastighet"
 
-#: evaluationdialog.cpp:236
+#: evaluationdialog.cpp:152
 msgid "L/D ratio"
 msgstr "Glidtal"
 
-#: evaluationdialog.cpp:245
+#: evaluationdialog.cpp:161
 msgid "Total:"
-msgstr "Sammanlagt:"
+msgstr "Sammanlagd:"
 
-#: flight.cpp:1188
-msgid "The task is not valid.<BR>All waypoints are the same point."
-msgstr "Ogiltig uppgift.<BR>Alla brytpunkter har samma position."
+#: evaluationframe.cpp:58
+msgid "Zeitskalierung:"
+msgstr "Tidsskala:"
 
-#: flight.cpp:1568 flight.cpp:1591
+#: evaluationframe.cpp:65
+msgid "GlÔøΩtung:"
+msgstr "Glidning:"
+
+#: evaluationframe.cpp:82
+msgid "V"
+msgstr "V"
+
+#: evaluationframe.cpp:83
+msgid "H"
+msgstr "H"
+
+#: evaluationframe.cpp:84
+msgid "S"
+msgstr "S"
+
+#: flight.cpp:1516 flight.cpp:1538
 msgid "You have not reached the first waypoint of your task."
-msgstr "Du har inte nÂtt fˆrsta brytpunkten i din uppgift."
+msgstr "Du har inte n√•tt f√∂rsta brytpunkten i din uppgift."
 
-#: flight.cpp:1608
+#: flight.cpp:1556
 msgid "You have not reached the last point of your task."
-msgstr "Du har inte nÂtt sista brytpunkten i din uppgift."
+msgstr "Du har inte n√•tt sista brytpunkten i din uppgift."
 
-#: flight.cpp:1700
+#: flight.cpp:1639
 msgid ""
 "The time intervall between two points<BR>of the flight is more than 70 sec.!"
 "<BR>Due to Code Sportif 3, Nr. 1.9.2.1,<BR>the flight can not be valued!"
 msgstr ""
-"Tidsintervallet mellan tvÂ punkter<BR>i flygningen ‰r mer ‰n 70 sekunder!"
-"<BR>Enligt Code Sportif 3, Nr 1.9.2.1,<BR>kan inte flygningen bedˆmas!"
+"Tidsintervallet mellan tv√• punkter <BR> i flygningen √§r mer √§n 70 sekunder! "
+"<BR>Enligt Code Sportif 3, Nr 1.9.2.1,<BR>kan inte flygningen bed√∂mas!"
 
-#: flight.cpp:1819
+#: flight.cpp:1758
 msgid ""
 "The task has been optimized. The best task found is:\n"
 "\n"
-msgstr "Uppgiften har optimerats. Den b‰sta uppgift som hittats ‰r:\n\n"
+msgstr "Uppgiften har optimerats. B√§sta funna uppgift √§r:\n\n"
 
-#: flight.cpp:1827
+#: flight.cpp:1766
 msgid "Distance:"
 msgstr "Distans:"
 
-#: flight.cpp:1827
+#: flight.cpp:1766
 msgid "Points:"
-msgstr "Positioner:"
+msgstr "Punkter:"
 
-#: flight.cpp:1828
+#: flight.cpp:1767
 msgid "Do You want to use this task and replace the old?"
-msgstr "Vill du anv‰nda denna uppgift och ers‰tta den gamla?"
+msgstr "Vill du anv√§nda denna uppgift och ers√§tta den tidigare?"
 
-#: kflog.cpp:104
+#: kflog.cpp:103
 msgid "&Open Flight"
-msgstr "&÷ppna flygning"
+msgstr "&√ñppna flygning"
 
 #: kflog.cpp:109
 msgid "Close Flight"
-msgstr "St‰nga flygning"
+msgstr "St√§ng flygning"
 
-#: kflog.cpp:123
+#: kflog.cpp:116
+msgid "Move map"
+msgstr "Flytta karta"
+
+#: kflog.cpp:124
 msgid "Center to &Task"
-msgstr "Centrera pÂ &uppgift"
+msgstr "Centrera p√• &uppgift"
 
-#: kflog.cpp:126
+#: kflog.cpp:127
 msgid "Center to &Flight"
-msgstr "Centrera pÂ &flygning"
+msgstr "Centrera p√• &flygning"
 
-#: kflog.cpp:130
+#: kflog.cpp:131
 msgid "Center to &Homesite"
-msgstr "Centrera pÂ &hemflygplats"
+msgstr "Centrera p√• &hemflygplats"
 
-#: kflog.cpp:142
+#: kflog.cpp:135
+msgid "move map north-west"
+msgstr "flytta kartan √•t nordv√§st"
+
+#: kflog.cpp:137
+msgid "move map north"
+msgstr "flytta kartan norrut"
+
+#: kflog.cpp:139
+msgid "move map northeast"
+msgstr "flytta kartan √•t nord√∂st"
+
+#: kflog.cpp:141
+msgid "move map west"
+msgstr "flytta kartan v√§sterut"
+
+#: kflog.cpp:143
+msgid "move map east"
+msgstr "flytta kartan √∂sterut"
+
+#: kflog.cpp:145
+msgid "move map south-west"
+msgstr "flytta kartan √•t sydv√§st"
+
+#: kflog.cpp:147
+msgid "move map south"
+msgstr "flytta kartan s√∂derut"
+
+#: kflog.cpp:149
+msgid "move map south-east"
+msgstr "flytta kartan √•t sydost"
+
+#: kflog.cpp:158
 msgid "Show Flightdata"
 msgstr "Visa flygdata"
 
-#: kflog.cpp:144
+#: kflog.cpp:160
 msgid "Show Mapcontrol"
 msgstr "Visa kartkontroll"
 
-#: kflog.cpp:159
+#: kflog.cpp:162
+msgid "Show Map"
+msgstr "Visa karta"
+
+#: kflog.cpp:170
 msgid "Evaluation"
-msgstr "Utv‰rdering"
+msgstr "Utv√§rdering"
 
-#: kflog.cpp:166
-msgid "Open flight"
-msgstr "÷ppna flygning"
+#: kflog.cpp:177
+msgid "F&light"
+msgstr "F&lygning"
 
-#: kflog.cpp:209
+#: kflog.cpp:228
 msgid "Map"
 msgstr "Karta"
 
-#: kflog.cpp:210
+#: kflog.cpp:229
 msgid "Flight-Data"
 msgstr "Flygdata"
 
-#: kflog.cpp:211
+#: kflog.cpp:230
 msgid "Map-Control"
 msgstr "Kartkontroll"
 
-#: kflog.cpp:351 kflog.cpp:390
+#: kflog.cpp:385 kflog.cpp:425
 msgid "Opening file..."
-msgstr "÷ppnar fil..."
+msgstr "√ñppnar fil..."
 
-#: kflog.cpp:362
+#: kflog.cpp:396
 #, c-format, ycp-format
 msgid "Can not download file %1"
-msgstr "Kan inte h‰mta fil %1"
+msgstr "Kan inte h√§mta fil %1"
 
-#: kflog.cpp:385 kflog.cpp:406 kflog.cpp:418 kflog.cpp:438 kflog.cpp:450
+#: kflog.cpp:420 kflog.cpp:447 kflog.cpp:459 kflog.cpp:479 kflog.cpp:491
 msgid "Ready."
 msgstr "Klar."
 
-#: kflog.cpp:412 printdialog.cpp:799 printdialog.cpp:1096 printdialog.cpp:1121
+#: kflog.cpp:453 printdialog.cpp:762 printdialog.cpp:1059 printdialog.cpp:1084
 msgid "Printing..."
 msgstr "Skriver..."
 
-#: kflog.cpp:423
+#: kflog.cpp:464
 msgid "Exiting..."
 msgstr "Avslutar programmet..."
 
-#: kflog.cpp:431
+#: kflog.cpp:472
 msgid "Toggling toolbar..."
-msgstr "(Av)aktiverar verktygsrad..."
+msgstr "(Av)aktiverar verktygslist..."
 
-#: kflog.cpp:443
+#: kflog.cpp:484
 msgid "Toggle the statusbar..."
 msgstr "(Av)aktiverar statusrad..."
 
-#: kflogconfig.cpp:103
+#: kflogconfig.cpp:223
 msgid "KFlog Setup"
-msgstr "Inst‰llning av KFLog"
+msgstr "Anpassning av KFlog"
 
-#: kflogconfig.cpp:181
+#: kflogconfig.cpp:380
 msgid "Select Default-Directory for the IGC-Files"
-msgstr "V‰lj standardbibliotek fˆr IGC-filer"
+msgstr "V√§lj standardbibliotek f√∂r IGC-filer"
 
-#: kflogconfig.cpp:189
+#: kflogconfig.cpp:388
 msgid "Select Directory for the Map-Files"
-msgstr "V‰lj bibliotek fˆr kartfiler"
+msgstr "V√§lj bibliotek f√∂r kartfiler"
 
-#: kflogconfig.cpp:197
+#: kflogconfig.cpp:396
 msgid "Select Default-Directory for the Task-Files"
-msgstr "V‰lj standardbibliotek fˆr filer med uppgifter"
+msgstr "V√§lj standardbibliotek f√∂r uppgiftsfiler"
 
-#: kflogconfig.cpp:507
+#: kflogconfig.cpp:991
 msgid "Map-Elements"
 msgstr "Kartelement"
 
-#: kflogconfig.cpp:507
+#: kflogconfig.cpp:991
 msgid "Map Configuration"
 msgstr "Konfigurering av karta"
 
-#: kflogconfig.cpp:512
+#: kflogconfig.cpp:996
 msgid "visible Map-Elements"
 msgstr "synliga kartelement"
 
-#: kflogconfig.cpp:517
+#: kflogconfig.cpp:1000
 msgid "Road"
-msgstr "V‰g"
+msgstr "V√§g"
 
-#: kflogconfig.cpp:518
+#: kflogconfig.cpp:1001
 msgid "Highway"
-msgstr "Motorv‰g"
+msgstr "Motorv√§g"
 
-#: kflogconfig.cpp:519
+#: kflogconfig.cpp:1002
 msgid "Railway"
-msgstr "J‰rnv‰g"
+msgstr "J√§rnv√§g"
 
-#: kflogconfig.cpp:520
+#: kflogconfig.cpp:1003
 msgid "River / Lake"
-msgstr "Sjˆ / Flod"
+msgstr "Flod / Sj√∂"
 
-#: kflogconfig.cpp:521
+#: kflogconfig.cpp:1004
+msgid "Canal"
+msgstr "Kanal"
+
+#: kflogconfig.cpp:1005
 msgid "City"
 msgstr "Stad"
 
-#: kflogconfig.cpp:523
-msgid "draw up to border #1"
-msgstr "rita till gr‰ns #1"
+#: kflogconfig.cpp:1006
+msgid "Airspace C"
+msgstr "Luftrum C"
 
-#: kflogconfig.cpp:524
-msgid "draw up to border #2"
-msgstr "rita till gr‰ns #2"
+#: kflogconfig.cpp:1007
+msgid "Airspace D"
+msgstr "Luftrum D"
 
-#: kflogconfig.cpp:525
-msgid "draw up to border #3"
-msgstr "rita till gr‰ns #3"
+#: kflogconfig.cpp:1008
+msgid "Airspace E (low)"
+msgstr "Luftrum E (l√•gt)"
 
-#: kflogconfig.cpp:526
-msgid "draw up to scale-limit"
-msgstr "rita i maximal skala"
+#: kflogconfig.cpp:1009
+msgid "Airspace E (high)"
+msgstr "Luftrum E (h√∂gt)"
 
-#: kflogconfig.cpp:527
-msgid "draw outline"
-msgstr "rita konturer"
+#: kflogconfig.cpp:1010
+msgid "Airspace F"
+msgstr "Luftrum F"
 
-#: kflogconfig.cpp:554 kflogconfig.cpp:681 kflogconfig.cpp:819
+#: kflogconfig.cpp:1011
+msgid "Control C"
+msgstr "Kontroll C"
+
+#: kflogconfig.cpp:1012
+msgid "Control D"
+msgstr "Kontroll D"
+
+#: kflogconfig.cpp:1013
+msgid "Danger"
+msgstr "Fara"
+
+#: kflogconfig.cpp:1014
+msgid "Low flight area"
+msgstr "L√•gflygningsomr√•de"
+
+#: kflogconfig.cpp:1015
+msgid "Restricted"
+msgstr "Skyddsomr√•de"
+
+#: kflogconfig.cpp:1016
+msgid "TMZ"
+msgstr "TMZ"
+
+#: kflogconfig.cpp:1018 kflogconfig.cpp:1158
+msgid "border #1"
+msgstr "gr√§ns #1"
+
+#: kflogconfig.cpp:1019 kflogconfig.cpp:1166
+msgid "border #2"
+msgstr "gr√§ns #2"
+
+#: kflogconfig.cpp:1020 kflogconfig.cpp:1174
+msgid "border #3"
+msgstr "gr√§ns #3"
+
+#: kflogconfig.cpp:1021
+msgid "scale-limit"
+msgstr "maximal skala"
+
+#: kflogconfig.cpp:1038 kflogconfig.cpp:1182 kflogconfig.cpp:1322
 msgid "Default"
 msgstr "Standard"
 
-#: kflogconfig.cpp:620
+#: kflogconfig.cpp:1046
+msgid "draw up to"
+msgstr "rita till"
+
+#: kflogconfig.cpp:1047
+msgid "Pen"
+msgstr "Penna"
+
+#: kflogconfig.cpp:1048
+msgid "Brush"
+msgstr "Pensel"
+
+#: kflogconfig.cpp:1121
 msgid "Map-Scales"
 msgstr "Kartskala"
 
-#: kflogconfig.cpp:620
+#: kflogconfig.cpp:1121
 msgid "Map-Scale Configuration"
-msgstr "Konfigurera kartskala"
+msgstr "Konfigurering av kartskala"
 
-#: kflogconfig.cpp:625
+#: kflogconfig.cpp:1126
 msgid "Scale-Range:"
-msgstr "Skala, gr‰nser:"
+msgstr "Skala, gr√§nser"
 
-#: kflogconfig.cpp:627
+#: kflogconfig.cpp:1128
 msgid "lower limit"
-msgstr "nedre gr‰ns"
+msgstr "nedre gr√§ns"
 
-#: kflogconfig.cpp:637
+#: kflogconfig.cpp:1138
 msgid "upper limit"
-msgstr "ˆvre gr‰ns"
+msgstr "√∂vre gr√§ns"
 
-#: kflogconfig.cpp:648
+#: kflogconfig.cpp:1149
 msgid "use small icons"
-msgstr "anv‰nd smÂ ikoner"
+msgstr "anv√§nd sm√• ikoner"
 
-#: kflogconfig.cpp:657
-msgid "border #1"
-msgstr "gr‰ns #1"
-
-#: kflogconfig.cpp:665
-msgid "border #2"
-msgstr "gr‰ns #2"
-
-#: kflogconfig.cpp:673
-msgid "border #3"
-msgstr "gr‰ns #3"
-
-#: kflogconfig.cpp:745
+#: kflogconfig.cpp:1246
 msgid "Path"
-msgstr "V‰g"
+msgstr "S√∂kv√§g"
 
-#: kflogconfig.cpp:745
+#: kflogconfig.cpp:1246
 msgid "Path Configuration"
-msgstr "Konfigurera v‰g"
+msgstr "Konfigurering av s√∂kv√§g"
 
-#: kflogconfig.cpp:752
+#: kflogconfig.cpp:1253
 msgid "Flight-directory:"
-msgstr "Flygbibliotek:"
+msgstr "Bibliotek f√∂r flygningar:"
 
-#: kflogconfig.cpp:778
+#: kflogconfig.cpp:1280
 msgid "Task-directory:"
-msgstr "Bibliotek fˆr uppgifter:"
+msgstr "Bibliotek f√∂r uppgifter:"
 
-#: kflogconfig.cpp:800
+#: kflogconfig.cpp:1303
 msgid "Map-directory:"
-msgstr "Kartbibliotek:"
+msgstr "Bibliotek f√∂r kartor:"
 
-#: kflogconfig.cpp:837
+#: kflogconfig.cpp:1340
 msgid "Print"
-msgstr "Skriv"
+msgstr "Skriv ut"
 
-#: kflogconfig.cpp:837
+#: kflogconfig.cpp:1340
 msgid "Printer Configuration"
 msgstr "Konfigurering av skrivare"
 
-#: kflogconfig.cpp:848
+#: kflogconfig.cpp:1352
 msgid "Identity"
 msgstr "Identitet"
 
-#: kflogconfig.cpp:848
+#: kflogconfig.cpp:1352
 msgid "Personal Information"
-msgstr "Personlig information"
+msgstr "Personliga uppgifter"
 
-#: kflogconfig.cpp:855
+#: kflogconfig.cpp:1359
 msgid "Homesite:"
 msgstr "Hemflygplats:"
 
-#: kflogconfig.cpp:865
+#: kflogconfig.cpp:1371
+msgid "Homesite"
+msgstr "Hemflygplats"
+
+#: kflogconfig.cpp:1373
 msgid "Latitude"
 msgstr "Breddgrad"
 
-#: kflogconfig.cpp:867
+#: kflogconfig.cpp:1375
 msgid "Longitude"
-msgstr "L‰ngdgrad"
+msgstr "L√§ngdgrad"
 
-#: map.cpp:146
+#: map.cpp:136
 msgid ""
 "<B>The map</B><P>To move or scale the map, please use the buttons in the "
 "<B>Map-control</B>-area. Or center the map to the current cursor-positon by "
@@ -379,177 +479,209 @@ msgid ""
 "item \"Options\" -> \"Configure KFLog\" you can configure, which map "
 "elements should be displayed at which scale.</P>"
 msgstr ""
-"<B>Kartan</B><P>Anv‰nd knappar i <B>Kartkontrollen</B> fˆr att "
-"flytta kartan eller ‰ndra skalan. Eller centrera kartan till markˆrens "
-"nuvarande position genom att klicka hˆger musknapp.</P><P>Zooma in "
-"eller ut med dragknappen eller verktygsradens tvÂ knappar. Man kan "
-"ocksÂ zooma med \"&lt;Ctrl&gt;&lt;+&gt;\" (zooma in) och \"&lt;Ctrl&gt;&lt;-&gt;\" "
-"(zooma ut).</P><P>Med menyalternativet \"Alternativ\"-> \"Konfigurera KFLog\" "
-"kan man ‰ndra vilka kartelement som ska visas och i vilken skala.</P>"
+"<B>Kartan</B><P>Var v√§nlig och anv√§nd knapparna i <B>Kartkontrollen</B> f√∂r att "
+"flytta eller √§ndra skalan p√• kartan. Eller centrera kartan p√• aktuell mark√∂rposition med "
+"h√∂ger musknapp.</P><P>Zooma in och ut med dragknappen eller de tv√• knapparna "
+"p√• verktygsraden. Man kan ocks√• zooma med \"&lt;Ctrl&gt;&lt;+&gt;\" (zooma in) och "
+"\"&lt;Ctrl&gt;&lt;-&gt;\" (zooma ut).</P><P>I menyalternativet \"Alternativ\"-> "
+"\"Konfigurera KFlog\" kan man best√§mma vilka kartelement som ska visas och i "
+"viken skala.</P>"
 
-#: map.cpp:234
-msgid "City:"
-msgstr "Stad:"
+#: map.cpp:295
+msgid "Sector 1"
+msgstr "Sektor 1"
 
-#: map.cpp:351
+#: map.cpp:300
+msgid "Sector 2"
+msgstr "Sektor 2"
+
+#: map.cpp:305
+msgid "FAI-Sector"
+msgstr "FAI-sektor"
+
+#: map.cpp:309
+msgid "not reached"
+msgstr "inte uppn√•dd"
+
+#: map.cpp:315
+msgid "Take Off"
+msgstr "Start"
+
+#: map.cpp:318
+msgid "Begin of task"
+msgstr "B√∂rjan av uppgift"
+
+#: map.cpp:321
+msgid "End of task"
+msgstr "Slut p√• uppgift"
+
+#: map.cpp:324
+msgid "Landing"
+msgstr "Landning"
+
+#: map.cpp:349
 msgid "Airspace-Structure"
-msgstr "Struktur hos luftrummet"
+msgstr "Luftrummets struktur"
 
-#: mapcontents.cpp:446 mapcontents.cpp:1000
+#: mapcontents.cpp:308 mapcontents.cpp:857
 msgid "Import mapfile ..."
 msgstr "Importera kartfil..."
 
-#: mapcontents.cpp:448 mapcontents.cpp:1002
+#: mapcontents.cpp:310 mapcontents.cpp:859
 #, ycp-format
 msgid "Please wait while loading file<BR><B>%1</B>"
-msgstr "Var god v‰nta medan jag laddar filen <BR><B>%1</B>"
+msgstr "Var god v√§nta medan filen<BR><B>%1</B><BR>laddas."
 
-#: mapcontents.cpp:970
+#: mapcontents.cpp:827
 #, ycp-format
 msgid "The selected file<BR><B>%1</B><BR>does not exist!"
 msgstr "Den angivna filen<BR><B>%1</B><BR>finns inte!"
 
-#: mapcontents.cpp:976
+#: mapcontents.cpp:833
 #, ycp-format
 msgid "The selected file<BR><B>%1</B><BR>is empty!"
-msgstr "Den angivna filen<BR><B>%1</B><BR>‰r tom!"
+msgstr "Den angivna filen<BR><B>%1</B><BR>√§r tom!"
 
-#: mapcontents.cpp:986
+#: mapcontents.cpp:843
 #, ycp-format
 msgid "The selected file<BR><B>%1</B><BR>is not an igc-file!"
-msgstr "Den angivna filen<BR><B>%1</B><BR>‰r ingen igc-fil!"
+msgstr "Den angivna filen<BR><B>%1</B><BR>√§r ingen igc-fil!"
 
-#: mapcontents.cpp:993
+#: mapcontents.cpp:850
 #, ycp-format
 msgid "You don't have permission to access file<BR><B>%1</B>"
-msgstr "Du har inte tillÂtelse att anv‰nda filen<BR><B>%1</B>"
+msgstr "Du har inte r√§ttigheter att anv√§nda filen<BR><B>%1</B>"
 
-#: mapcontents.cpp:994
+#: mapcontents.cpp:851
 msgid "No permission"
-msgstr "Inte tillstÂnd att anv‰nda"
+msgstr "Inte till√•telse att anv√§nda"
 
-#: mapcontents.cpp:1081
+#: mapcontents.cpp:938
 #, ycp-format
 msgid "Syntax-error while loading igc-file<BR><B>%1</B><BR>Aborting!"
 msgstr "Syntaxfel vid laddning av igc-filen<BR><B>%1</B><BR>Avbryter!"
 
-#: mapcontents.cpp:1083
+#: mapcontents.cpp:940
 msgid "Error in IGC-file"
-msgstr "Fel i IGC-fil"
+msgstr "Fel i IGC-filen"
 
-#: mapcontrolview.cpp:35
+#: mapcontrolview.cpp:37
 msgid "Map-control:"
 msgstr "Kartkontroll:"
 
-#: mapcontrolview.cpp:96
+#: mapcontrolview.cpp:111
 msgid "Height / Width [km]:"
-msgstr "Hˆjd / Bredd [km]:"
+msgstr "H√∂jd / Bredd [km]:"
 
-#: mapcontrolview.cpp:104
+#: mapcontrolview.cpp:119
 msgid "Scale:"
 msgstr "Skala:"
 
-#: mapcontrolview.cpp:109
+#: mapcontrolview.cpp:124
 msgid "Set scale:"
-msgstr "S‰tt skala:"
+msgstr "√Ñndra skala:"
 
-#: printdialog.cpp:713
+#: printdialog.cpp:676
 msgid "file"
 msgstr "fil"
 
-#: printdialog.cpp:805
+#: printdialog.cpp:768
 msgid "Printer Output"
-msgstr "Utskrift frÂn skrivare"
+msgstr "Utskrift fr√•n skrivare"
 
-#: printdialog.cpp:806
+#: printdialog.cpp:769
 msgid "Paper Format"
 msgstr "Pappersformat"
 
-#: printdialog.cpp:810
+#: printdialog.cpp:773
 msgid "Map scale"
-msgstr "Kartans skala"
+msgstr "Kartskala"
 
-#: printdialog.cpp:820
+#: printdialog.cpp:783
 msgid "Print to Printer:"
 msgstr "Skriv till skrivare:"
 
-#: printdialog.cpp:821
+#: printdialog.cpp:784
 msgid "Command:"
 msgstr "Kommando:"
 
-#: printdialog.cpp:826
+#: printdialog.cpp:789
 msgid "Printer:"
 msgstr "Skrivare:"
 
-#: printdialog.cpp:833
+#: printdialog.cpp:796
 msgid "Print to File:"
 msgstr "Skriv till fil:"
 
-#: printdialog.cpp:846
+#: printdialog.cpp:809
 msgid "Portrait"
-msgstr "StÂende"
+msgstr "St√•ende"
 
-#: printdialog.cpp:847
+#: printdialog.cpp:810
 msgid "Landscape"
 msgstr "Liggande"
 
-#: printdialog.cpp:868
+#: printdialog.cpp:831
 msgid "Grey"
-msgstr "GrÂ"
+msgstr "Gr√•"
 
-#: printdialog.cpp:869
+#: printdialog.cpp:832
 msgid "Color"
-msgstr "F‰rg"
+msgstr "F√§rg"
 
-#: printdialog.cpp:959
+#: printdialog.cpp:922
 msgid "&Print"
 msgstr "&Skriv"
 
-#: printdialog.cpp:962
+#: printdialog.cpp:925
 msgid "Pre&view"
-msgstr "Fˆrhands&visa"
+msgstr "F√∂rhands&visa"
 
-#: printdialog.cpp:964
+#: printdialog.cpp:927
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: printdialog.cpp:1098
+#: printdialog.cpp:1061
 msgid "Printing Map"
 msgstr "Skriver ut karta"
 
-#: printdialog.cpp:1123
+#: printdialog.cpp:1086
 msgid "Printing Flight-data"
 msgstr "Skriver ut flygdata"
 
-#: printdialog.cpp:1212
+#: printdialog.cpp:1175
 msgid ""
 "\n"
 "The file has been created!\n"
-msgstr "\n Filen har skapats!\n"
+msgstr ""
+"\n"
+"Filen har skapats!\n"
 
-#: printdialog.cpp:1213
+#: printdialog.cpp:1176
 msgid "File created!"
 msgstr "Filen skapad!"
 
-#: printdialog.cpp:1230
+#: printdialog.cpp:1193
 msgid ""
 "Could not send the map to the printer!\n"
 "The spooler send the following message:"
 msgstr ""
-"Kunde inte skicka filen till skrivaren!\n"
-"Skrivarkˆn skickade fˆljande meddelande:"
+"Kunde inte skicka kartan till skrivaren!\n"
+"Utskriftsk√∂n skickade f√∂ljande meddelande:"
 
-#: printdialog.cpp:1232
+#: printdialog.cpp:1195
 msgid "Error occurred!"
 msgstr "Ett fel uppstod!"
 
-#: printdialog.cpp:1242
+#: printdialog.cpp:1205
 msgid ""
 "\n"
 "The file was sent to the printer!\n"
-msgstr "\n Filen skickades till skrivaren!\n"
+msgstr ""
+"\n"
+"Filen skickades till skrivaren!\n"
 
-#: printdialog.cpp:1242
+#: printdialog.cpp:1205
 msgid "File spooled!"
-msgstr "Filen kˆad till skrivare!"
+msgstr "Filen k√∂ad till skrivare!"
 
