@@ -126,6 +126,8 @@ class FlightTask : public BaseFlightElement
   int getPlanningType() { return __planningType; };
   void setPlanningDirection(int dir);
   int getPlanningDirection() { return __planningDirection; };
+  /** set new task name */
+  void setTaskName(QString fName);
   /**
    * The waypoint-types.
    */

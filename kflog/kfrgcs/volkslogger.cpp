@@ -282,7 +282,6 @@ int Volkslogger::readTasks(QList<FlightTask> *tasks)
         tp->name = wp->name;
         tp->origP.setPos((int)(wp->lat * 600000.0), (int)(wp->lon * 600000.0));
         tp->type = FlightTask::RouteP;
-        tp->elevation = 0;
 
         if (taskPoints.count() == 0) {
           // append take off
@@ -390,9 +389,6 @@ int Volkslogger::readWaypoints(QList<Waypoint> *waypoints)
     frWp->isLandable = (wp->typ & VLAPI_DATA::WPT::WPTTYP_L) > 0;
     if (frWp->isLandable) {
       frWp->surface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0 ? Airport::Asphalt : Airport::Grass;
-    }
-    else {
-      frWp->surface = -1;
     }
     frWp->type = (wp->typ & VLAPI_DATA::WPT::WPTTYP_A) > 0 ? BaseMapElement::Airfield : -1;
 

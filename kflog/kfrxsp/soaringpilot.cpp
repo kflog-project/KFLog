@@ -546,10 +546,6 @@ int SoaringPilot::readWaypoints(QList<Waypoint> *waypoints)
           frWp->surface = tmp.contains('A') > 0 ? Airport::Asphalt : Airport::Grass;
           frWp->type = tmp.contains('A') > 0 ? BaseMapElement::Airfield : BaseMapElement::Glidersite;
         }
-        else {
-          frWp->surface = -1;
-          frWp->type = -1;
-        }
 
         frWp->comment = tokens[6];
 

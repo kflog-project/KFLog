@@ -284,9 +284,6 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                    w->surface = wp.surface;
                    w->comment = wp.comment;
                    w->isLandable = wp.isLandable;
-                   w->sectorFAI = 0;
-                   w->sector1 = 0;
-                   w->sector2 = 0;
 
                   tempTask.setWaypointList(tempTaskPointList);
                   __drawPlannedTask(false);
@@ -328,14 +325,9 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                           tempTaskPointList.insert(moveWPindex,new Waypoint);
                           tempTaskPointList.at(moveWPindex)->name = "";
                           QPoint tmp(_globalMapMatrix.mapToWgs(event->pos()));
-//                          tempTaskPointList.at(moveWPindex)->origP = _globalMapMatrix.mapToWgs(event->pos());
                           tempTaskPointList.at(moveWPindex)->origP = WGSPoint(tmp.y(), tmp.x());
                           tempTaskPointList.at(moveWPindex)->projP =
                                 _globalMapMatrix.wgsToMap(tempTaskPointList.at(moveWPindex)->origP);
-                          tempTaskPointList.at(moveWPindex)->sectorFAI = 0;
-                          tempTaskPointList.at(moveWPindex)->sector1 = 0;
-                          tempTaskPointList.at(moveWPindex)->sector2 = 0;
-                          // hier müssen noch mehr Sachen übergeben werden
                         }
                       else
                         {
@@ -346,10 +338,6 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                           tempTaskPointList.last()->origP = WGSPoint(tmp.y(), tmp.x());
                           tempTaskPointList.last()->projP =
                                 _globalMapMatrix.wgsToMap(tempTaskPointList.last()->origP);
-                          tempTaskPointList.last()->sectorFAI = 0;
-                          tempTaskPointList.last()->sector1 = 0;
-                          tempTaskPointList.last()->sector2 = 0;
-                          // hier müssen noch mehr Sachen übergeben werden
                         }
 
 
@@ -655,10 +643,6 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
               w->surface = wp.surface;
               w->comment = wp.comment;
               w->isLandable = wp.isLandable;
-              w->sector1 = 0;
-              w->sector2 = 0;
-              w->sectorFAI = 0;
-              // hier müssen noch mehr Sachen übergeben werden
             }
           else if(planning == 2)
             {
@@ -699,10 +683,6 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
               w->surface = wp.surface;
               w->comment = wp.comment;
               w->isLandable = wp.isLandable;
-              w->sector1 = 0;
-              w->sector2 = 0;
-              w->sectorFAI = 0;
-              // hier müssen noch mehr Sachen übergeben werden
             } //planning == 3
         } // found
 
@@ -864,12 +844,6 @@ warning("Map::mousePressEvent: planning=%d", planning);
                       w->icao = hitElement->getICAO();
                       w->frequency = hitElement->getFrequency().toDouble();
                       w->isLandable = true;
-                      w->surface = -1;
-                      w->runway = -1;
-                      w->length = -1;
-                      w->sectorFAI = 0;
-                      w->sector1 = 0;
-                      w->sector2 = 0;
 
                       emit waypointSelected(w);
                       found = true;
@@ -913,22 +887,15 @@ warning("Map::mousePressEvent: planning=%d", planning);
                   if (!text.isEmpty()) {
                     w->runway = text.toInt();
                   }
-                  else {
-                    w->runway = -1;
-                  }
+
                   text = waypointDlg->length->text();
                   if (!text.isEmpty()) {
                     w->length = text.toInt();
                   }
-                  else {
-                    w->length = 1;
-                  }
+                  
                   w->surface = waypointDlg->getSurface();
                   w->comment = waypointDlg->comment->text();
                   w->isLandable = waypointDlg->isLandable->isChecked();
-                  w->sector1 = 0;
-                  w->sector2 = 0;
-                  w->sectorFAI = 0;
 
                   emit waypointSelected(w);
                 }
@@ -2252,9 +2219,7 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
        }
      }
    // add the waypoint to the list
-   newWP = new Waypoint;
-   newWP = w;
-   wpList->append(newWP);
+   wpList->append(new Waypoint(w));
   }
   // force a update
   emit changed(this->size());

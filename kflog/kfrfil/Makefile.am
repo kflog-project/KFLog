@@ -12,10 +12,10 @@ libkfrfil_la_LDFLAGS = -version-info 0:0:0
 
 libkfrfil_la_METASOURCES = AUTO
 
-libkfrfil_la_SOURCES = flightrecorder.cpp 
+libkfrfil_la_SOURCES = filser.cpp flightrecorder.cpp 
 
 
-EXTRA_DIST = fil.desktop flightrecorder.cpp 
+EXTRA_DIST = fil.desktop flightrecorder.cpp filser.cpp filser.h 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_datadir)/kflog/logger/

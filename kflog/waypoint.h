@@ -28,7 +28,7 @@
 class Waypoint {
 public: 
   Waypoint(QString nam = QString::null, WGSPoint oP = WGSPoint(), int typ = -1, QString _icao = QString::null,
-    QString _comment = QString::null, int surf = -1, int runw = -1, int leng = -1, int elev = -1,
+    QString _comment = QString::null, int surf = -1, int runw = -1, int leng = -1, int elev = 0,
     double freq = 0.0, bool isLand = false, QPoint pP = QPoint(), unsigned int s1 = 0, unsigned int s2 = 0,
     unsigned int sFAI = 0, double ang = 0.0, double dist = 0.0, QString desc = QString::null, unsigned int import = 2);
   Waypoint(Waypoint *p);

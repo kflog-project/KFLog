@@ -177,8 +177,8 @@ class RecorderDialog : public KDialogBase
 
     KLineEdit* pilotName;
     KLineEdit* copilotName;
-    KComboBox* gliderID;
-    KLineEdit* gliderType;
+    KLineEdit* gliderID;
+    KComboBox* gliderType;
     KLineEdit* compClass;
     KLineEdit* compID;
     KComboBox* taskSelection;

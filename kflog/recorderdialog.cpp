@@ -363,9 +363,9 @@ void RecorderDialog::__addDeclarationPage()
 
   pilotName = new KLineEdit(declarationPage, "pilotName");
   copilotName = new KLineEdit(declarationPage, "copilotName");
-  gliderID = new KComboBox(declarationPage, "gliderID");
-  gliderID->setEditable(true);
-  gliderType = new KLineEdit(declarationPage, "gliderType");
+  gliderID = new KLineEdit(declarationPage, "gliderID");
+  gliderType = new KComboBox(declarationPage, "gliderType");
+  gliderType->setEditable(true);
   compID = new KLineEdit(declarationPage, "compID");
   compClass = new KLineEdit(declarationPage, "compClass");
 
@@ -421,6 +421,12 @@ void RecorderDialog::__addDeclarationPage()
   else {
     warning("No tasks planned ...");
     writeDeclaration->setEnabled(false);
+  }
+
+  int idx = 0;
+#include <gliders.h>
+  while(gliderList[idx].index != -1) {
+    gliderType->insertItem(QString(gliderList[idx++].name));
   }
 
   connect(taskSelection, SIGNAL(activated(int)), SLOT(slotSwitchTask(int)));
@@ -710,8 +716,8 @@ void RecorderDialog::slotWriteDeclaration()
   FRTaskDeclaration taskDecl;
   taskDecl.pilotA = pilotName->text();
   taskDecl.pilotB = copilotName->text();
-  taskDecl.gliderID = gliderID->currentText();
-  taskDecl.gliderType = gliderType->text();
+  taskDecl.gliderID = gliderID->text();
+  taskDecl.gliderType = gliderType->currentText();
   taskDecl.compID = compID->text();
   taskDecl.compClass = compClass->text();
   QString errorDetails;
@@ -841,6 +847,7 @@ void RecorderDialog::slotReadTasks()
   FlightTask *task;
   Waypoint *wp;
   QList<Waypoint> wpList;
+  extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
   int ret;
   int cnt=0;
@@ -870,6 +877,8 @@ void RecorderDialog::slotReadTasks()
   else {
     for (task = tasks->first(); task != 0; task = tasks->next()) {
       wpList = task->getWPList();
+      // here we overwrite the original task name to get a unique internal name
+      task->setTaskName(_globalMapContents.genTaskName());
       for (wp = wpList.first(); wp != 0; wp = wpList.next()) {
         wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
       }

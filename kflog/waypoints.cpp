@@ -269,17 +269,11 @@ void Waypoints::slotAddWaypoint()
     if (!text.isEmpty()) {
       w->runway = text.toInt();
     }
-    else {
-      w->runway = -1;
-    }
 
     text = waypointDlg->length->text();
     if (!text.isEmpty()) {
       w->length = text.toInt();
     }    
-    else {
-      w->length = -1;
-    }
     w->surface = waypointDlg->getSurface();
     w->isLandable = waypointDlg->isLandable->isChecked();
     w->comment = waypointDlg->comment->text();
@@ -629,10 +623,6 @@ void Waypoints::slotImportWaypointFromMap()
         w->description = s->getName();
         type = s->getTypeID();
         w->type = type;
-        w->runway = -1;
-        w->length = -1;
-        w->surface = -1;
-        w->frequency = 0.0;
 
         w->origP = p;
 

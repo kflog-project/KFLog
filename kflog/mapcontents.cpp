@@ -1598,10 +1598,6 @@ bool MapContents::loadFlight(QFile& igcFile)
                   newWP->name = s.mid(18,20);
                   newWP->origP = WGSPoint(latTemp, lonTemp);
                   newWP->projP = _globalMapMatrix.wgsToMap(newWP->origP);
-                  newWP->sector1 = 0;
-                  newWP->sector2 = 0;
-                  newWP->sectorFAI = 0;
-                  newWP->angle = -100;
                   newWP->type = Flight::NotSet;
                   if(isFirstWP)
                       newWP->distance = 0;
@@ -1622,11 +1618,6 @@ bool MapContents::loadFlight(QFile& igcFile)
                       newWP->name =  preWP->name;
                       newWP->origP = preWP->origP;
                       newWP->projP = preWP->projP;
-                      newWP->sector1 = 0;
-                      newWP->sector2 = 0;
-                      newWP->sectorFAI = 0;
-                      newWP->angle = -100;
-                      newWP->type = Flight::NotSet;
 
                       wpList.append(newWP);
                     }

@@ -64,27 +64,7 @@ FlightTask::FlightTask(QList<Waypoint> wpL, bool isO, QString fName)
     __planningDirection(leftOfRoute)
 {
   warning("FlightTask(QList<wayPoint> wpL, bool isO, QString fName)");
-  warning(fName);
-  //only do this if wpList is not empty!
   setWaypointList(wpL);
-//  if (wpList.count()  != 0)
-//    {
-//      for(unsigned int loop = 0; loop < wpList.count(); loop++)
-//        {
-//          wpList.at(loop)->type = FlightTask::FreeP;
-//          wpList.at(loop)->sector1 = 0;
-//          wpList.at(loop)->sector2 = 0;
-//          wpList.at(loop)->sectorFAI = 0;
-//        }
-//
-//      __setWaypointType();
-//
-//      __checkType();
-//
-//      for(unsigned int loop = 0; loop < wpList.count(); loop++)
-//        __sectorangle(loop, false);
-//    }
-
   FAISectList.setAutoDelete(true); 
 }
 
@@ -1680,3 +1660,8 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
     }
   }
 }  
+/** set new task name */
+void FlightTask::setTaskName(QString fName)
+{
+  sourceFileName = fName;
+}

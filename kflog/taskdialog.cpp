@@ -332,9 +332,6 @@ void TaskDialog::slotReplaceWaypoint()
     wpList.remove(curPos);
     Waypoint *wp = new Waypoint;
     *wp = *waypointDict[selText];
-     wp->sector1 = 0;
-     wp->sector2 = 0;
-     wp->sectorFAI = 0;
 
     wpList.insert(curPos, wp);
     pTask->setWaypointList(wpList);
@@ -351,9 +348,6 @@ void TaskDialog::slotAddWaypoint()
   if (!selText.isEmpty()) {
     Waypoint *wp = new Waypoint;
     *wp = *waypointDict[selText];
-     wp->sector1 = 0;
-     wp->sector2 = 0;
-     wp->sectorFAI = 0;
 
     wpList.insert(cnt - 2, wp);
     pTask->setWaypointList(wpList);
@@ -399,9 +393,6 @@ void TaskDialog::setTask(FlightTask *orig)
       wp->origP.setLon(config->readNumEntry("Homesite Longitude"));
       wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
       wp->name = config->readEntry("Homesite").left(6).upper();
-      wp->sector1 = 0;
-      wp->sector2 = 0;
-      wp->sectorFAI = 0;
 
       wpList.append(wp);
     }
