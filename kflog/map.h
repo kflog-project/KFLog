@@ -28,6 +28,7 @@
 
 #include <wp.h>
 #include <flighttask.h>
+#include <waypointcatalog.h>
 
 // class SinglePoint;
 class Flight;

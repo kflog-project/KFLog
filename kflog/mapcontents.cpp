@@ -135,6 +135,7 @@ MapContents::MapContents()
   roadList.setAutoDelete(true);
   stationList.setAutoDelete(true);
   topoList.setAutoDelete(true);
+  wpList.setAutoDelete(true);
 }
 
 MapContents::~MapContents()
@@ -1072,6 +1073,8 @@ BaseFlightElement* MapContents::getFlight()
 }
 
 QList<BaseFlightElement>* MapContents::getFlightList()  {  return &flightList;  }
+
+QList<wayPoint>* MapContents::getWaypointList()  {  return &wpList;  }
 
 bool MapContents::loadFlight(QFile igcFile)
 {

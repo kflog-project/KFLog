@@ -1915,36 +1915,31 @@ bool Map::__getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint>
 void Map::__drawWaypoints(){
  int i, n, x, y;
   extern MapContents _globalMapContents;
+  extern MapMatrix _globalMapMatrix;
+  QList<wayPoint> * wpList;
   wayPoint * wp;
+  QPoint p;
+
+  wpList = _globalMapContents.getWaypointList();
 
   QPainter wpPainter(&pixWaypoints);
   QPainter wpMaskPainter(&bitWaypointsMask);
 
-/*
-  // just a test
   wpPainter.setBrush(NoBrush);
-  wpPainter.setPen(QPen(QColor(0,0,0), 10, SolidLine));
-  wpPainter.drawLine(10,10,1000,1000);
-  wpMaskPainter.drawLine(10,10,1000,1000);
-*/
-/*
-  // test draw a marker
-  wpPainter.drawRect(50,50, 8, 8);
-  wpMaskPainter.drawRect(50, 50, 8, 8);
-*/
+  wpPainter.setPen(QPen(QColor(0,0,0), 2, SolidLine));
 
-/*
-  // now for real
-  n =  _globalMapContents.wpList.count();
- for (i=0; i < n; i++){
-    wp = (wayPoint*)_globalMapContents.wpList.at(i);
-    // draw marker
-    x =wp->projP.x();
-    y =wp->projP.y();
-   wpPainter.drawRect(x-4,y-4, 8, 8);
-    wpMaskPainter.drawRect(x-4,y-4, 8, 8);
-  }
-*/
+  // now do complete list
+  n =  wpList->count();
+  for (i=0; i < n; i++){
+     wp = (wayPoint*)wpList->at(i);
+     // make sure projection is ok, and map to screen
+    wp->projP = _globalMapMatrix.wgsToMap(wp->origP.lat(), wp->origP.lon());
+	 p = _globalMapMatrix.map(wp->projP);
+	 // draw marker
+     wpPainter.drawRect(p.x() - 4,p.y() - 4, 8, 8);
+     wpMaskPainter.drawRect(p.x() - 4,p.y() - 4, 8, 8);
+   }
+
   // clean up
   wpPainter.end();
   wpMaskPainter.end();
@@ -1952,7 +1947,64 @@ void Map::__drawWaypoints(){
 
 /** Slot signalled when user selects another waypointcatalog.  */
 void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
-	// TODO :
-   // The user has now selected the catalog c, reprocess as necessary
+  extern MapContents _globalMapContents;
+  wayPoint *w;
+  wayPoint *newWP;
+  QDictIterator<wayPoint> it(c->wpList);
+  bool filterRadius, filterArea;
+  QList<wayPoint> * wpList;
 
+  wpList = _globalMapContents.getWaypointList();
+  wpList->clear();
+
+  filterRadius = (c->radiusLat != 1  || c->radiusLong != 1);
+  filterArea = (c->areaLat2 != 1 && c->areaLong2 != 1 && !filterRadius);
+
+  for (w = it.toFirst(); w != 0; w = ++it) {
+    if (!c->showAll) {
+      switch(w->type) {
+      case BaseMapElement::IntAirport:
+      case BaseMapElement::Airport:
+      case BaseMapElement::MilAirport:
+      case BaseMapElement::CivMilAirport:
+      case BaseMapElement::Airfield:
+        if (!c->showAirports) {
+          continue;
+        }
+        break;
+      case BaseMapElement::Glidersite:
+        if (!c->showGliderSites) {
+          continue;
+        }
+        break;
+      case BaseMapElement::UltraLight:
+      case BaseMapElement::HangGlider:
+      case BaseMapElement::Parachute:
+      case BaseMapElement::Ballon:
+        if (!c->showOtherSites) {
+          continue;
+        }
+        break;
+      }
+    }
+
+     if (filterArea) {
+       if (w->origP.lat() < c->areaLat1 || w->origP.lat() > c->areaLat2 ||
+           w->origP.lon() < c->areaLong1 || w->origP.lon() > c->areaLong2) {
+           continue;
+       }
+     }
+     else if (filterRadius) {
+       if (dist(c->radiusLat, c->radiusLong, w->origP.lat(), w->origP.lon()) > c->radiusSize) {
+         continue;
+       }
+     }
+   // add the waypoint to the list
+   newWP = new wayPoint;
+   newWP = w;
+   wpList->append(newWP);
+  }
+  // force a update
+  emit changed(this->size());
+  __redrawMap();
 }
