@@ -22,7 +22,8 @@
 #include "waypoint.h"
 #include <time.h>
 
-#define PI 3.141592654
+#define PI  3.141592654
+#define PI2 6.28318530718
 
 /**
  * The earth's radius used for calculation, given in Meter.
@@ -105,5 +106,30 @@ WGSPoint posOfDistAndBearing(double lat1, double lon1, double bearing, double di
 
 /* calculate true course from prev point (p2) */
 double getTrueCourse(WGSPoint p1, WGSPoint p2);
+
+/**
+ * Calculates the direction of the vector pointing to the outside
+ * of the area spanned by the two vectors.
+ */
+double outsideVector(QPoint center, QPoint p1, QPoint p2);
+double outsideVector(double angle1, double angle2);
+
+double normalize(double angle);
+
+int normalize(int angle);
+
+
+/**
+  * Calculates the difference between two angles, returning the smallest
+  * angle. It returns an angle between -180 and 180 in degrees. Positive
+  * in clockwise direction.
+  */
+int angleDiff(int ang1, int ang2);
+
+/**
+  * Calculates the difference between two angles, returning the smallest
+  * angle. It returns an angle between -Pi and Pi in rad.
+  */
+double angleDiff(double ang1, double ang2);
 
 #endif

@@ -256,10 +256,8 @@ double FlightTask::__sectorangle(unsigned int loop, bool isDraw)
                             ( wpList.at(CUR_ID)->projP.x() - wpList.at(NEXT_ID)->projP.x() ),
                             ( wpList.at(CUR_ID)->projP.y() - wpList.at(NEXT_ID)->projP.y() ) );
 
-          sectorAngle = (preAngle + nextAngle) / 2.0;
-          if( ( preAngle < PI / 2.0 && nextAngle > 1.5 * PI ) ||
-              ( nextAngle < PI / 2.0 && preAngle > 1.5 * PI ) )
-            sectorAngle = sectorAngle - PI;
+          // vector pointing to the outside of the two points
+          sectorAngle = outsideVector(preAngle, nextAngle);
         }
       else
         sectorAngle = 0;

@@ -19,6 +19,8 @@
 #include "mapcalc.h"
 
 #include "mapmatrix.h"
+#include "resource.h"
+
 
 static const char *timeFormat[4] = {"%2d:%2d", "%2d:%2d:%2d", "%02d:%02d", "%02d:%02d:%02d"};
 
@@ -262,5 +264,104 @@ WGSPoint posOfDistAndBearing(double lat1, double lon1, double bearing, double di
   tLon = -fmod(lon1 - lon + PI, 2.0 * PI) + PI;
 
   return WGSPoint(rad2int(tLat), rad2int(tLon));
+}
+
+float getBearing(QPoint p1, QPoint p2)
+{
+  extern MapMatrix * _globalMapMatrix;
+    QPoint pp1, pp2;
+    double angle=0.0;
+    double dx=0.0;
+    double dy=0.0;
+
+    pp1 = _globalMapMatrix->map(_globalMapMatrix->wgsToMap(p1.x(), p1.y()));
+    pp2 = _globalMapMatrix->map(_globalMapMatrix->wgsToMap(p2.x(), p2.y()));
+
+    dx=pp2.x()-pp1.x();
+    dy=pp2.y()-pp1.y();
+
+    if (dy>=-0.001 && dy<=0.001)
+      {
+        if (dx < 0.0) return (1.5 * PI);
+        else return (0.5 * PI);
+      }
+
+      angle=atan(dx/-dy);
+      if (dy>0.0) angle+= PI;
+      if (angle<0) angle+=(2 * PI);
+      if (angle>(2* PI )) angle-=(2* PI);
+
+      return angle;
+
+}
+
+
+
+/**
+ * Calculates the direction of the vector pointing to the outside
+ * of the area spanned by the two vectors.
+ */
+double outsideVector(QPoint center, QPoint p1, QPoint p2){
+  double v1=getBearing(center, p1);
+  double v2=getBearing(center, p2);
+
+  double res1=(v1+v2)/2;
+  double res2=res1+PI;
+
+  res1=normalize(res1);
+  res2=normalize(res2);
+
+
+  if(res1-MIN(v1,v2)<0.5 * PI) {
+    return res1;
+  } else {
+    return res2;
+  }
+
+}
+
+double outsideVector(double angle1, double angle2) {
+  double res1=(angle1+angle2)/2;
+  double res2=res1+PI;
+
+  res1=normalize(res1);
+  res2=normalize(res2);
+
+
+  if(res1-MIN(angle1,angle2)<0.5 * PI) {
+    return res1;
+  } else {
+    return res2;
+  }
+}
+
+double normalize(double angle) {
+  if (angle<0) return normalize(angle+PI2);
+  if (angle>=PI2) return normalize(angle-PI2);
+  return angle;
+}
+
+int normalize(int angle) {
+  if (angle<0) return normalize(angle+360);
+  if (angle>=360) return normalize(angle-360);
+  return angle;
+}
+
+int angleDiff(int ang1, int ang2) {
+  int a1=normalize(ang1);
+  int a2=normalize(ang2);
+  int a=a2-a1;
+  if (a>180) return(a-360);
+  if (a<-180) return(a+360);
+  return a;
+}
+
+double angleDiff(double ang1, double ang2) {
+  double a1=normalize(ang1);
+  double a2=normalize(ang2);
+  double a=a2-a1;
+  if (a>PI) return(a-PI2);
+  if (a<-PI) return(a+PI2);
+  return a;
 }
 
