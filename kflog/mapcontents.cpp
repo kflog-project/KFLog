@@ -1788,10 +1788,10 @@ void MapContents::proofeSection(bool isPrint)
     {
       // No mapfiles installed!
       emit errorOnMapLoading();
-      int ret = KMessageBox::questionYesNoCancel(0,i18n("There are no map-files in the directory\n")
-          + mapDir + i18n("\nyet. Do you want to download the data automatically?\n"
+      int ret = KMessageBox::questionYesNoCancel(0,i18n("<qt>There are no map-files in the directory<br><b>%1"
+          "</b></br>yet. Do you want to download the data automatically?<br>"
           "(You need to have write permissions. If you want to change the directory,"
-          "press \"Cancel\" and change it in the Settings menu"));
+          "press \"Cancel\" and change it in the Settings menu.)</qt>").arg(mapDir));
       KConfig* config = KGlobal::config();
       config->setGroup("General Options");
       switch (ret){
