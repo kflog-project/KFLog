@@ -93,6 +93,7 @@ struct termios newTermEnv;
  */
 unsigned char STX = 0x02, /* Command prefix like AT for modems        */
   ACK = 0x06,      /* Response OK, if the crc check is ok             */
+  NAK = 0x15,      /* Response not OK, if the crc check is not ok     */
   SYN = 0x16,      /* Request for CONNECT                             */
   K = 'K' | 0x80,  /* get_extra_data()   - trailing fix sized block   */
   L = 'L' | 0x80,  /* get_mem_sections() - the flight data is         */
@@ -1699,15 +1700,24 @@ int Filser::writeDA4Buffer()
 
   // wait until all output has been written
   tcdrain(portID);
-  if (ACK != rb())
+  int result = rb();
+  if (result == ACK)
   {
-    _errorinfo = i18n ("Filser::writeWaypoints: transfer failed");
+    _da4BufferValid = true;
+    return FR_OK;
+  }
+  else if (result == NAK)
+  {
+    _errorinfo = i18n("Filser::writeDA4Buffer: Bad CRC");
     qDebug (_errorinfo);
     return FR_ERROR;
   }
-
-  _da4BufferValid = true;
-  return FR_OK;
+  else
+  {
+    _errorinfo = i18n ("Filser::writeDA4Buffer: transfer failed");
+    qDebug (_errorinfo);
+    return FR_ERROR;
+  }
 }
 
 /**
