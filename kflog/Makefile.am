@@ -66,6 +66,10 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/hi48-app-kflog.png $(kde_icondir)/hicolor/48x48/apps/kflog.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/mimetypes/
 	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-igc.png $(kde_icondir)/hicolor/48x48/mimetypes/igc.png
+	$(mkinstalldirs) $(kde_datadir)/kflog/
+	$(INSTALL_DATA) $(srcdir)/kflogrc $(kde_datadir)/kflog/kflogrc
+	$(mkinstalldirs) $(kde_datadir)/kflog/
+	$(INSTALL_DATA) $(srcdir)/kflogui.rc $(kde_datadir)/kflog/kflogui.rc
 	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
 	$(INSTALL_DATA) $(srcdir)/hi16-action-save_all.png $(kde_icondir)/hicolor/16x16/actions/save_all.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
@@ -107,6 +111,8 @@ uninstall-local:
 	-rm -f $(kde_icondir)/hicolor/32x32/mimetypes/igc.png
 	-rm -f $(kde_icondir)/hicolor/48x48/apps/kflog.png
 	-rm -f $(kde_icondir)/hicolor/48x48/mimetypes/igc.png
+	-rm -f $(kde_datadir)/kflog/kflogrc
+	-rm -f $(kde_datadir)/kflog/kflogui.rc
 	-rm -f $(kde_icondir)/hicolor/16x16/actions/save_all.png
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/save_all.png
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/centerwaypoint.png

@@ -31,7 +31,7 @@ author=Heiner Lamprecht
 configure_args=--prefix=/opt/kde2 --enable-debug
 email=heiner@kflog.org
 kdevprj_version=1.3
-lfv_open_groups=
+lfv_open_groups=Andere
 make_options=\s-j1
 makefiles=Makefile.am,kflog/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,po/Makefile.am,kflog/guicontrols/Makefile.am,kflog/kfrgcs/Makefile.am,kflog/map-icons/Makefile.am,kflog/map-icons/small/Makefile.am,kflog/pics/Makefile.am
 modifyMakefiles=true
@@ -50,6 +50,15 @@ install=false
 install_location=
 type=DATA
 
+[KPP]
+kpp_appgrp=
+kpp_bldroot=/tmp/build/
+kpp_icon=0
+kpp_license=5
+kpp_summary=Soaring-pilot-software for KDE
+kpp_url=http://www.kflog.org/
+kpp_version=2.0.7
+
 [LFV Groups]
 Andere=*
 Benutzerschnittstelle=*.kdevdlg,*.ui,*.rc
@@ -61,7 +70,7 @@ groups=Icons,Header,Quellen,Benutzerschnittstelle,Übersetzungen,GNU,Andere
 Übersetzungen=*.po
 
 [Makefile.am]
-files=kflog.kdevprj,admin,AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,kflog.lsm,README-MAP
+files=kflog.kdevprj,admin,AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,kflog.lsm,README-MAP,kflog.spec
 sub_dirs=kflog,po,doc
 type=normal
 
@@ -73,8 +82,8 @@ type=DATA
 
 [README-MAP]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$(kde_datadir)/kflog/mapdata/README-MAP
 type=DATA
 
 [TODO]
@@ -111,6 +120,12 @@ install_location=
 type=DATA
 
 [kflog.lsm]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog.spec]
 dist=true
 install=false
 install_location=
@@ -676,8 +691,8 @@ type=HEADER
 
 [kflog/kflogrc]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$(kde_datadir)/kflog/kflogrc
 type=DATA
 
 [kflog/kflogstartlogo.cpp]
@@ -694,8 +709,8 @@ type=HEADER
 
 [kflog/kflogui.rc]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$(kde_datadir)/kflog/kflogui.rc
 type=DATA
 
 [kflog/kfrgcs/Makefile.am]
@@ -731,8 +746,8 @@ type=SOURCE
 
 [kflog/kfrgcs/gcs.desktop]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$(kde_datadir)/kflog/logger/gcs.desktop
 type=DATA
 
 [kflog/kfrgcs/grecord.cpp]

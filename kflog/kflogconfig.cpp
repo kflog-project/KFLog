@@ -281,11 +281,11 @@ void KFLogConfig::__addMapTab()
   elementSelect->insertItem(i18n("Restricted"), KFLogConfig::Restricted);
   elementSelect->insertItem(i18n("TMZ"), KFLogConfig::Tmz);
   // Reihenfolge ???
-  elementSelect->insertItem(i18n("Forest"), KFLogConfig::Forest);
-  elementSelect->insertItem(i18n("Trail"), KFLogConfig::Trail);
-  elementSelect->insertItem(i18n("double Railway"), KFLogConfig::Railway_D);
-  elementSelect->insertItem(i18n("Aerial Cable"), KFLogConfig::Aerial_Cable);
-  elementSelect->insertItem(i18n("temporarily River / Lake"), KFLogConfig::River_T);
+//  elementSelect->insertItem(i18n("Forest"), KFLogConfig::Forest);
+//  elementSelect->insertItem(i18n("Trail"), KFLogConfig::Trail);
+//  elementSelect->insertItem(i18n("double Railway"), KFLogConfig::Railway_D);
+//  elementSelect->insertItem(i18n("Aerial Cable"), KFLogConfig::Aerial_Cable);
+//  elementSelect->insertItem(i18n("temporarily River / Lake"), KFLogConfig::River_T);
 
   QPushButton* defaultElements = new QPushButton(i18n("Default"), mapPage,
       "defaultElements");
