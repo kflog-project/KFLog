@@ -105,7 +105,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       tmp.sprintf("%.2f km / %03.0f° / %.1f km/h",
                   wp1->distance,
                   getTrueCourse(wp1->origP, wp2->origP),
-                  (t1 - t2 != 0) ? wp1->distance / (t1 - t2) * 3600.0 : 0.0);
+                  (t1 != 0 && t2 != 0) ? wp1->distance / (t1 - t2) * 3600.0 : 0.0);
       htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
         tmp + "</TD></TR>";
     }
