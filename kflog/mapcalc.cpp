@@ -155,15 +155,23 @@ time_t timeToDay(const int year, const int month, const int day, const char *mon
         break;
       }
   }
-  bt.tm_mon = mymonth - 1; /* Month.	[0-11] */
-  bt.tm_year = year - 1900; /* Year	- 1900.  */
-  bt.tm_wday = 0; /* Day of week.	[0-6] */
-  bt.tm_yday = 0; /* Day of year.[0-365]	*/
-  bt.tm_isdst = 0; /* DST.		[-1/0/1]*/
-  bt.tm_gmtoff = 0; /* Seconds east of UTC.  */
-  bt.tm_zone = NULL; /* "GMT" Timezone abbreviation.  */
+  bt.tm_mon = mymonth - 1; // Month.	[0-11]
+  bt.tm_year = year - 1900;   // Year	- 1900.
 
-  return mktime(&bt);
+  // The next two members of the struct are set by the mktime routine
+  bt.tm_wday = 0;   // Day of week [0-6]  I am in doubt, seems to be 1-7
+  bt.tm_yday = 0;    // Day of year [0-365]
+  // The following members of the struct seems to be also set by the mktime routine
+  bt.tm_isdst = 0;  // DST [-1/0/1] -1: no info, 0 : no daylight save time, 1 daylight save time
+  bt.tm_gmtoff = 0; // Seconds east of UTC
+  bt.tm_zone = NULL; // Timezone abbreviation.
+
+  // mktime tries to return a local time with respect to daylight save time
+  time_t ret = mktime(&bt);
+  // Fiddle out the dst and gmtoff because we want a UTC based time
+  ret += (bt.tm_gmtoff - (bt.tm_isdst == 1) ? 3600 : 0);
+
+  return ret;
 }
 
 float getSpeed(flightPoint p) { return (float)p.dS / (float)p.dT * 3.6; }
