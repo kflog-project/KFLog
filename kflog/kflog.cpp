@@ -1015,7 +1015,13 @@ void KFLogApp::slotModifyMenu()
 
 void KFLogApp::slotOpenRecorderDialog()
 {
+  extern MapContents _globalMapContents;
+
   RecorderDialog* dlg = new RecorderDialog(this, config, "recorderDialog");
+  connect(dlg, SIGNAL(addCatalog(WaypointCatalog *)), waypoints,
+    SLOT(slotAddCatalog(WaypointCatalog *)));
+  connect(dlg, SIGNAL(addTask(FlightTask *)), &_globalMapContents,
+    SLOT(slotAppendTask(FlightTask *)));
   dlg->exec();
   delete dlg;
 }

@@ -53,14 +53,14 @@ Waypoints::Waypoints(QWidget *parent, const char *name, QString *catalog)
   addPopupMenu();
 
   waypointCatalogs.setAutoDelete(true);
-
+/*
   if (catalog == 0) {
     slotNewWaypointCatalog();
   }
   else {
     openCatalog(*catalog);
   }
-
+*/
   waypointDlg = new WaypointDialog(this);
   connect(waypointDlg, SIGNAL(addWaypoint()), SLOT(slotAddWaypoint()));
 

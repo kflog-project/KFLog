@@ -38,6 +38,7 @@
 #define MAX(a,b)   ( ( a > b ) ? a : b )
 #define MIN(a,b)   ( ( a < b ) ? a : b )
 
+int breakTransfer = 0;
 unsigned int maxNrTasks = 25;
 unsigned int maxNrWaypoints = 500;
 unsigned int maxNrWaypointsPerTask = 10;
@@ -302,9 +303,26 @@ QList<FRTask> readTasks(int *ret)
         tp->lonPos = (int)(wp->lon * 600000.0);
         tp->type = FlightTask::RouteP;
 
+        if (task->wayPoints.count() == 0) {
+          // append take off
+          tp->type = FlightTask::TakeOff;
+          task->wayPoints.append(tp);
+          // make copy for begin
+          tp = new FRTaskPoint;
+          *tp = *(task->wayPoints.first());
+          tp->type = FlightTask::Begin;
+        }
         task->wayPoints.append(tp);
       }
     }
+    // modify last for end of task
+    task->wayPoints.last()->type = FlightTask::End;
+    // make copy for landing
+    tp = new FRTaskPoint;
+    *tp = *(task->wayPoints.last());
+    tp->type = FlightTask::Landing;
+    task->wayPoints.append(tp);
+
     tasks.append(task);
   }
   *ret = 1;
@@ -352,6 +370,7 @@ int writeTasks(QList<FRTask> *tasks)
       strcpy(wp->name, tp->name.leftJustify(6, ' ', true));
       wp->lat = tp->latPos / 600000.0;
       wp->lon = tp->lonPos / 600000.0;
+      wp->typ = 0;
     }
 
     // fill remaining turnpoints with '0xff'
@@ -381,10 +400,10 @@ QList<FRWaypoint> readWaypoints(int *ret)
 
     tp->latPos = (int)(wp->lat * 600000.0);
     tp->lonPos = (int)(wp->lon * 600000.0);
-    frWp->isLandable = wp->typ & VLAPI_DATA::WPT::WPTTYP_L;
-    frWp->isHardSurface = wp->typ & VLAPI_DATA::WPT::WPTTYP_H;
-    frWp->isAirport = wp->typ & VLAPI_DATA::WPT::WPTTYP_A;
-    frWp->isCheckpoint = wp->typ & VLAPI_DATA::WPT::WPTTYP_C;
+    frWp->isLandable = (wp->typ & VLAPI_DATA::WPT::WPTTYP_L) > 0;
+    frWp->isHardSurface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0;
+    frWp->isAirport = (wp->typ & VLAPI_DATA::WPT::WPTTYP_A) > 0;
+    frWp->isCheckpoint = (wp->typ & VLAPI_DATA::WPT::WPTTYP_C) > 0;
 
     waypoints.append(frWp);
   }

@@ -2119,6 +2119,12 @@ void MapContents::slotNewTask()
 //  emit activatePlanning();
 }
 
+void MapContents::slotAppendTask(FlightTask *f)
+{
+  flightList.append(f);
+  emit newTaskAdded(f);
+}
+
 /** create a new, empty flight group */
 void MapContents::slotNewFlightGroup()
 {

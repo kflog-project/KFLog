@@ -398,10 +398,10 @@ VLA_ERROR VLA_XFR::readdir(lpb buffer, int32 size) {
   int r;
   if(buffer==0)
     return VLA_ERR_MISC;
-  if(sendcommand(cmd_DIR,0,0) != 0) 
+  if(sendcommand(cmd_DIR,0,0) != 0)
     return VLA_ERR_NOANSWER;
   r = readlog(buffer,size);
-  if (r <= 0) 
+  if (r <= 0)
     return VLA_ERR_NOFLIGHTS;
   else
     return VLA_ERR_NOERR;

@@ -181,6 +181,8 @@ class MapContents : public QObject
   /** read a task file and append all tasks to flight list
 switch to first task in file */
   bool loadTask(QFile path);
+  /** generate new task name */
+  QString genTaskName();
     /**
 		 * Get the contents of the next FlightPoint after number 'index'
 	   */
@@ -219,6 +221,8 @@ switch to first task in file */
     void slotNewFlightGroup();
     /** create a new, empty task */
     void slotNewTask();
+    /** append task to flight list */
+    void slotAppendTask(FlightTask *f);
     /** No descriptions */
     void slotEditFlightGroup();
     /** */
@@ -382,8 +386,6 @@ switch to first task in file */
 
     /** Should be deleted somtime ... */
     bool isFirst;
-    /** generate new task name */
-    QString genTaskName();
 };
 
 #endif

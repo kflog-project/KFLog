@@ -176,9 +176,16 @@ void TaskDialog::polish()
   QList<wayPoint>* wpList = _globalMapContents.getWaypointList();
   wayPoint *wp;
   waypoints->clear();
+  QString t;
   for (wp = wpList->first(); wp; wp = wpList->next()) {
-     waypoints->insertItem(wp->description);
-     waypointDict.insert(wp->description, wp);
+    if (!wp->description.isEmpty()) {
+      t = wp->description;
+    }
+    else {
+      t = wp->name;
+    }
+    waypoints->insertItem(t);
+    waypointDict.insert(t, wp);
   }
   waypoints->sort();
 }
@@ -189,7 +196,7 @@ void TaskDialog::slotSetPlanningType(int)
 
   if (areaBased->isChecked()) {
     cnt = wpList.count();
-
+    
     left->setEnabled(true);
     right->setEnabled(true);
     left->setChecked(pTask->getPlanningDirection() & FlightTask::leftOfRoute);

@@ -18,8 +18,6 @@
 #ifndef RECORDERDIALOG_H
 #define RECORDERDIALOG_H
 
-#include <frstructs.h>
-
 #include <kcombobox.h>
 #include <kconfig.h>
 #include <kdialogbase.h>
@@ -29,6 +27,8 @@
 #include <qstringlist.h>
 #include <qwidget.h>
 
+#include "frstructs.h"
+#include "waypointcatalog.h"
 #include "flighttask.h"
 #include "waypointlist.h"
 #include "guicontrols/kfloglistview.h"
@@ -85,6 +85,8 @@ class RecorderDialog : public KDialogBase
     void __addTaskPage();
     /** */
     void __addWaypointPage();
+    /** */
+    void fillTaskList();
     /** */
     QFrame* flightPage;
     /** */
@@ -165,6 +167,10 @@ class RecorderDialog : public KDialogBase
     KComboBox* taskSelection;
   private slots:
     void slotSwitchTask(int idx);
+signals: // Signals
+  /** No descriptions */
+  void addCatalog(WaypointCatalog *w);
+  void addTask(FlightTask *t);
 };
 
 #endif

@@ -2005,7 +2005,7 @@ void Map::slotShowCurrentFlight()
 
   planning = 0;
 
-  if (f->getTypeID() == BaseMapElement::Task) {
+  if (f && f->getTypeID() == BaseMapElement::Task) {
     if (((FlightTask *)f)->getWPList().count() < 1) {
       slotActivatePlanning();
     }

@@ -26,8 +26,8 @@
 
 class WaypointCatalog {
 public: 
-	WaypointCatalog();
-	~WaypointCatalog();
+  WaypointCatalog(QString name = QString::null);
+  ~WaypointCatalog();
   /** No descriptions */
   bool read(QString &catalog);
   bool readBinairy(QString &catalog);

@@ -49,13 +49,16 @@
 #define FILE_FORMAT_ID_2    101
 
 
-WaypointCatalog::WaypointCatalog()
+WaypointCatalog::WaypointCatalog(QString name)
   : modified(false), onDisc(false)
 {
   KConfig* config = KGlobal::config();
   config->setGroup("Path");
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory", getpwuid(getuid())->pw_dir);
-  path = wayPointDir + "/" + i18n("unnamed.kflogwp");
+  if (name == QString::null) {
+    name = i18n("unnamed");
+  }
+  path = wayPointDir + "/" + name + ".kflogwp";
 
   showAll = true;
   showAirports = showGliderSites = showOtherSites = showObstacle = showLandmark = showOutlanding =
@@ -155,7 +158,7 @@ bool WaypointCatalog::write()
   QFile f;
   QString fName = path;
   QDictIterator<wayPoint> it(wpList);
-
+/*
   if (!onDisc) {
     fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)", 0, i18n("Save waypoint catalog"));
     if(!fName.isEmpty()) {
@@ -167,7 +170,7 @@ bool WaypointCatalog::write()
       return false;
     }
   }
-
+*/
   QApplication::setOverrideCursor( Qt::waitCursor );
 
   doc.appendChild(root);
