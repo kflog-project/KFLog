@@ -1,3 +1,8 @@
+# translation of de.po to 
+# translation of de.po to
+# translation of de.po to
+# translation of de.po to
+# translation of de.po to
 # translation of de.po to deutsch
 # translation of de.po to
 # This file is distributed under the same license as the PACKAGE package.
@@ -8,10 +13,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
-"POT-Creation-Date: 2003-07-15 12:43+0200\n"
-"PO-Revision-Date: 2003-07-15 12:54+0200\n"
-"Last-Translator: Eggert Ehmke <eggert.ehmke@berlin.de>\n"
-"Language-Team: deutsch <de@li.org>\n"
+"POT-Creation-Date: 2003-07-16 18:36+0200\n"
+"PO-Revision-Date: 2003-07-16 18:42+0200\n"
+"Last-Translator: \n"
+"Language-Team:  <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -706,7 +711,8 @@ msgid "Map-Control"
 msgstr "Karten-Kontrolle"
 
 #: kflog.cpp:486 kflogconfig.cpp:834 recorderdialog.cpp:587
-#: tasklistviewitem.cpp:77 waypoints.moc.cpp:34 waypoints.moc.cpp:42
+#: tasklistviewitem.cpp:77 waypoints.cpp:109 waypoints.moc.cpp:34
+#: waypoints.moc.cpp:42
 msgid "Waypoints"
 msgstr "Wegpunkte"
 
@@ -1270,13 +1276,13 @@ msgstr "Entwickler (3D-Dialog)"
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
-msgstr "Heiner Lamprecht"
+msgstr "Heiner Lamprecht,Eggert Ehmke"
 
 #: main.cpp:108 _translatorinfo.cpp:3
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
-msgstr "heiner@kflog.org"
+msgstr "heiner@kflog.org,eggert@kflog.org"
 
 #: map.cpp:136
 msgid ""
@@ -1676,6 +1682,56 @@ msgstr "Aufgabe speichern"
 #: waypointcatalog.cpp:214 waypointcatalog.cpp:291 waypointcatalog.cpp:572
 msgid "<B>%1</B><BR>permission denied!"
 msgstr "Zugriff verweigert!<BR><B>%1</B>"
+
+#: optimizationwizard.cpp:320
+msgid "OLC Optimization"
+msgstr "OLC Optimierung"
+
+#: optimizationwizard.cpp:321
+msgid "Task Start/End Point"
+msgstr "Aufgabe Start/Endpunkt"
+
+#: optimizationwizard.cpp:322 optimizationwizard.cpp:324
+#: optimizationwizard.cpp:329
+msgid "1999m"
+msgstr ""
+
+#: optimizationwizard.cpp:323 optimizationwizard.cpp:326
+#: optimizationwizard.cpp:330
+msgid "11:11:11"
+msgstr ""
+
+#: optimizationwizard.cpp:325
+msgid "<p align=\"right\">Difference:</p>"
+msgstr "<p align=\"right\">Differenz:</p>"
+
+#: optimizationwizard.cpp:327
+msgid "<p align=\"right\">Start of Task:</p>"
+msgstr "<p align=\"right\">Beginn der Aufgabe:</p>"
+
+#: optimizationwizard.cpp:328
+msgid "<p align=\"right\">End of Task:</p>"
+msgstr "<p align=\"right\">Ende der Aufgabe:</p>"
+
+#: optimizationwizard.cpp:331
+msgid "Set Times"
+msgstr "Zeiten setzen"
+
+#: optimizationwizard.cpp:332
+msgid "Task start and end times"
+msgstr "Start- und Endzeit der Aufgabe"
+
+#: optimizationwizard.cpp:333
+msgid "Start Optimization"
+msgstr "Optimierung starten"
+
+#: optimizationwizard.cpp:334
+msgid "Stop Optimization"
+msgstr "Optimierung beenden"
+
+#: optimizationwizard.cpp:335 optimization.moc.cpp:34 optimization.moc.cpp:42
+msgid "Optimization"
+msgstr "Optimieren"
 
 #: optimizationwizard.ui.h:25
 msgid "The task has not been optimized for the OLC, yet"
@@ -2127,7 +2183,7 @@ msgstr ""
 
 #: recorderdialog.cpp:1301 recorderdialog.cpp:1306
 msgid "Cannot write waypoints to recorder."
-msgstr "Kann Wendepunkte nich auf den Logger laden."
+msgstr "Kann Wendepunkte nicht auf den Logger laden."
 
 #: recorderdialog.cpp:1313
 msgid "%1 waypoints have been uploaded to the recorder."
@@ -2487,10 +2543,6 @@ msgstr "Oberfläche"
 msgid "Comment"
 msgstr "Kommentar"
 
-#: waypoints.cpp:109
-msgid "%1:"
-msgstr "%1:"
-
 #: waypoints.cpp:122
 msgid "Filter"
 msgstr "Filter"
@@ -2722,6 +2774,122 @@ msgstr ""
 msgid "Nr of waypoints differ from task header"
 msgstr "Die Anzahl der Wegpunkte stimmt nicht mit der Aufgabe überein"
 
+#: flightselectiondialog.moc.cpp:34 flightselectiondialog.moc.cpp:42
+msgid "FlightSelectionDialog"
+msgstr ""
+
+#: configprintelement.moc.cpp:34 configprintelement.moc.cpp:42
+msgid "ConfigPrintElement"
+msgstr ""
+
+#: configdrawelement.moc.cpp:34 configdrawelement.moc.cpp:42
+msgid "ConfigDrawElement"
+msgstr ""
+
+#: downloadlist.moc.cpp:34 downloadlist.moc.cpp:42
+msgid "DownloadList"
+msgstr ""
+
+#: recorderdialog.moc.cpp:34 recorderdialog.moc.cpp:42
+msgid "RecorderDialog"
+msgstr ""
+
+#: olcdialog.moc.cpp:34 olcdialog.moc.cpp:42
+msgid "OLCDialog"
+msgstr ""
+
+#: mapcontents.moc.cpp:34 mapcontents.moc.cpp:42
+msgid "MapContents"
+msgstr ""
+
+#: whatsthat.moc.cpp:34 whatsthat.moc.cpp:42
+msgid "WhatsThat"
+msgstr ""
+
+#: dataview.moc.cpp:34 dataview.moc.cpp:42
+msgid "DataView"
+msgstr ""
+
+#: evaluationframe.moc.cpp:34 evaluationframe.moc.cpp:42
+msgid "EvaluationFrame"
+msgstr ""
+
+#: helpwindow.moc.cpp:34 helpwindow.moc.cpp:42
+msgid "HelpWindow"
+msgstr ""
+
+#: mapmatrix.moc.cpp:34 mapmatrix.moc.cpp:42
+msgid "MapMatrix"
+msgstr ""
+
+#: igc3dview.moc.cpp:34 igc3dview.moc.cpp:42
+msgid "Igc3DView"
+msgstr ""
+
+#: topolegend.moc.cpp:34 topolegend.moc.cpp:42
+msgid "TopoLegend"
+msgstr ""
+
+#: centertodialog.moc.cpp:34 centertodialog.moc.cpp:42
+msgid "CenterToDialog"
+msgstr ""
+
+#: mapconfig.moc.cpp:34 mapconfig.moc.cpp:42
+msgid "MapConfig"
+msgstr ""
+
+#: waypointimpfilterdialog.moc.cpp:34 waypointimpfilterdialog.moc.cpp:42
+msgid "WaypointImpFilterDialog"
+msgstr ""
+
+#: kflog.moc.cpp:34 kflog.moc.cpp:42
+msgid "KFLogApp"
+msgstr ""
+
+#: kflogconfig.moc.cpp:34 kflogconfig.moc.cpp:42
+msgid "KFLogConfig"
+msgstr ""
+
+#: flightrecorderpluginbase.moc.cpp:34 flightrecorderpluginbase.moc.cpp:42
+msgid "FlightRecorderPluginBase"
+msgstr ""
+
+#: objecttree.moc.cpp:34 objecttree.moc.cpp:42
+msgid "ObjectTree"
+msgstr ""
+
+#: evaluationdialog.moc.cpp:34 evaluationdialog.moc.cpp:42
+msgid "EvaluationDialog"
+msgstr ""
+
+#: igcpreview.moc.cpp:34 igcpreview.moc.cpp:42
+msgid "IGCPreview"
+msgstr ""
+
+#: taskdialog.moc.cpp:34 taskdialog.moc.cpp:42
+msgid "TaskDialog"
+msgstr ""
+
+#: evaluationview.moc.cpp:34 evaluationview.moc.cpp:42
+msgid "EvaluationView"
+msgstr ""
+
+#: optimizationwizard.moc.cpp:34 optimizationwizard.moc.cpp:42
+msgid "OptimizationWizard"
+msgstr ""
+
+#: igc3ddialog.moc.cpp:34 igc3ddialog.moc.cpp:42
+msgid "Igc3DDialog"
+msgstr ""
+
+#: waypointdialog.moc.cpp:34 waypointdialog.moc.cpp:42
+msgid "WaypointDialog"
+msgstr ""
+
+#: mapcontrolview.moc.cpp:34 mapcontrolview.moc.cpp:42
+msgid "MapControlView"
+msgstr ""
+
 #: olcdialog.cpp:66 olcdialog.cpp:69
 msgid "OLC-Declaration"
 msgstr "OLC-Anmeldung"
@@ -2790,125 +2958,8 @@ msgstr "Der Flug wurde nicht für OLC optimiert !"
 msgid "Not optimized for OLC"
 msgstr "Nicht optimiert für OLC"
 
-#: flightselectiondialog.moc.cpp:34 flightselectiondialog.moc.cpp:42
-msgid "FlightSelectionDialog"
-msgstr ""
-
-#: configprintelement.moc.cpp:34 configprintelement.moc.cpp:42
-msgid "ConfigPrintElement"
-msgstr ""
-
-#: configdrawelement.moc.cpp:34 configdrawelement.moc.cpp:42
-msgid "ConfigDrawElement"
-msgstr ""
-
-#: downloadlist.moc.cpp:34 downloadlist.moc.cpp:42
-msgid "DownloadList"
-msgstr ""
-
-#: recorderdialog.moc.cpp:34 recorderdialog.moc.cpp:42
-msgid "RecorderDialog"
-msgstr ""
-
-#: olcdialog.moc.cpp:34 olcdialog.moc.cpp:42
-msgid "OLCDialog"
-msgstr ""
-
-#: mapcontents.moc.cpp:34 mapcontents.moc.cpp:42
-msgid "MapContents"
-msgstr ""
-
-#: whatsthat.moc.cpp:34 whatsthat.moc.cpp:42
-msgid "WhatsThat"
-msgstr ""
-
-#: dataview.moc.cpp:34 dataview.moc.cpp:42
-msgid "DataView"
-msgstr ""
-
-#: evaluationframe.moc.cpp:34 evaluationframe.moc.cpp:42
-msgid "EvaluationFrame"
-msgstr ""
-
-#: helpwindow.moc.cpp:34 helpwindow.moc.cpp:42
-msgid "HelpWindow"
-msgstr ""
-
-#: mapmatrix.moc.cpp:34 mapmatrix.moc.cpp:42
-msgid "MapMatrix"
-msgstr ""
-
-#: igc3dview.moc.cpp:34 igc3dview.moc.cpp:42
-msgid "Igc3DView"
-msgstr ""
-
-#: topolegend.moc.cpp:34 topolegend.moc.cpp:42
-msgid "TopoLegend"
-msgstr ""
-
-#: centertodialog.moc.cpp:34 centertodialog.moc.cpp:42
-msgid "CenterToDialog"
-msgstr ""
-
-#: mapconfig.moc.cpp:34 mapconfig.moc.cpp:42
-msgid "MapConfig"
-msgstr ""
-
-#: optimization.moc.cpp:34 optimization.moc.cpp:42
-msgid "Optimization"
-msgstr "Optimieren"
-
-#: waypointimpfilterdialog.moc.cpp:34 waypointimpfilterdialog.moc.cpp:42
-msgid "WaypointImpFilterDialog"
-msgstr ""
-
-#: kflog.moc.cpp:34 kflog.moc.cpp:42
-msgid "KFLogApp"
-msgstr ""
-
-#: kflogconfig.moc.cpp:34 kflogconfig.moc.cpp:42
-msgid "KFLogConfig"
-msgstr ""
-
-#: flightrecorderpluginbase.moc.cpp:34 flightrecorderpluginbase.moc.cpp:42
-msgid "FlightRecorderPluginBase"
-msgstr ""
-
-#: objecttree.moc.cpp:34 objecttree.moc.cpp:42
-msgid "ObjectTree"
-msgstr ""
-
-#: evaluationdialog.moc.cpp:34 evaluationdialog.moc.cpp:42
-msgid "EvaluationDialog"
-msgstr ""
-
-#: igcpreview.moc.cpp:34 igcpreview.moc.cpp:42
-msgid "IGCPreview"
-msgstr ""
-
-#: taskdialog.moc.cpp:34 taskdialog.moc.cpp:42
-msgid "TaskDialog"
-msgstr ""
-
-#: evaluationview.moc.cpp:34 evaluationview.moc.cpp:42
-msgid "EvaluationView"
-msgstr ""
-
-#: optimizationwizard.moc.cpp:34 optimizationwizard.moc.cpp:42
-msgid "OptimizationWizard"
-msgstr ""
-
-#: igc3ddialog.moc.cpp:34 igc3ddialog.moc.cpp:42
-msgid "Igc3DDialog"
-msgstr ""
-
-#: waypointdialog.moc.cpp:34 waypointdialog.moc.cpp:42
-msgid "WaypointDialog"
-msgstr ""
-
-#: mapcontrolview.moc.cpp:34 mapcontrolview.moc.cpp:42
-msgid "MapControlView"
-msgstr ""
+#~ msgid "%1:"
+#~ msgstr "%1:"
 
 #~ msgid ""
 #~ "Waypoint %1 will be deleted.\n"
