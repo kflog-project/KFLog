@@ -31,6 +31,7 @@
 
 // class SinglePoint;
 class WaypointElement;
+class Flight;
 
 /**
  * This class provides basic functions for displaying the map.
@@ -242,10 +243,14 @@ class Map : public QWidget
 		 */
 		QTimer* timerAnimate;
 		/**
+		 * FlightList to animate
+		 */
+  	Flight* flightToAnimate;
+		/**
 			* contains planning task points
 			* enthält die Punkte!!!
 			*/
-//		QList<wayPoint> taskPointList;
+    QList<wayPoint> taskPointList;
 		// 0 keine Planung 1 Planung 2 Planung Aufgabe Abgeschlossen
 //		enum planning {NoPlanning = 0, Planning = 1, TaskFinished = 2};
 		int planning;
