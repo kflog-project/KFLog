@@ -1,5 +1,10 @@
 $Id$
 
+2002-03-26 Thomas <thomas@kflog.org>
+
+  * Rewrite and optimize animation code with new class-structure.
+
+
 2002-03-26 Harry <harry@kflog.org>
 
   * Introduction of BaseFlightElement for all flight types
