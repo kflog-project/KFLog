@@ -20,6 +20,8 @@
 
 
 /**
+ * @short Flightrecorder plugin for Cumulus
+ *
  * This class presents a plugin to interface with the Zaurus as if it
  * were a flightrecorder.
  * @author André Somers
@@ -40,14 +42,15 @@ public:
   virtual QString getLibName();
   /**
    * Returns the transfermode this plugin supports.
+   * @returns FlightRecorderPluginBase::URL
    */
   virtual TransferMode getTransferMode();
   /**
-   * Returns a list of recorded flights in this device.
+   * Returns a list of recorded flights in this device. (Not implemented.)
    */
   virtual int getFlightDir(QList<FRDirEntry>*);
   /**
-   *
+   * Downloads the indicated flight from the recorder.
    */
   virtual int downloadFlight(int flightID, int secMode, QString fileName);
   /**
@@ -55,7 +58,7 @@ public:
    */
   virtual QString getRecorderSerialNo();
   /**
-   * Opens the recorder for serial communication.
+   * Opens the recorder for serial communication. (Not implemented.)
    */
   virtual int openRecorder(const QString portName, int baud);
   /**
@@ -67,28 +70,34 @@ public:
    */
   virtual int closeRecorder();
   /**
-   * Write flight declaration to recorder
+   * Write flight declaration to recorder. (Not implemented.)
    */
   virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint> *taskPoints); 
   /**
-   * Read tasks from recorder
+   * Read tasks from recorder. (Not implemented.)
    */
   virtual int readTasks(QList<FlightTask> *tasks);
   /**
-   * Write tasks to recorder
+   * Write tasks to recorder. (Not implemented.)
    */
   virtual int writeTasks(QList<FlightTask> *tasks);
   /**
-   * Read waypoints from recorder
+   * Read waypoints from recorder.
    */
   virtual int readWaypoints(QList<Waypoint> *waypoints);
   /**
-   * Write waypoints to recorder
+   * Write waypoints to recorder.
    */
   virtual int writeWaypoints(QList<Waypoint> *waypoints);
 
 protected:
+  /**
+   * Contains the path of the temporary local copy of the waypoint file from/for Cumulus
+   */
   QString _tmpWaypointFile;
+  /**
+   * Contains the base URL for the communication with Cumulus
+   */
   QString _URL;  
 };
 

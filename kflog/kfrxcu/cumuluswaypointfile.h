@@ -27,17 +27,26 @@
 #include <qlist.h>
 #include <qstring.h>
 
-/**This class contains all there is to know about loading and saving waypoint files in Cumulus format.
-  *@author André Somers
-  */
+/**
+ * @short Interface to read and write waypoints in Cumulus format.
+ *
+ * This class contains all there is to know about loading and saving waypoint files in Cumulus format.
+ * @author André Somers
+ */
 
 class CumulusWaypointFile : public QObject  {
 public: 
 	CumulusWaypointFile();
 	~CumulusWaypointFile();
-  /** Tries to save the waypoints in the list, and returns NOTIMPLEMENTED (-2), ERROR (-1) or OK (1). */
+  /**
+   * Tries to save the waypoints in the list, and returns NOTIMPLEMENTED (-2), ERROR (-1) or OK (1).
+   * @returns NOTIMPLEMENTED (-2), ERROR (-1) or OK (1).
+   */
   int save(QString file, QList<Waypoint> *waypoints);
-  /** loads the waypoints into the QList, and returns the number of loaded waypoints. */
+  /**
+   * Loads the waypoints into the QList, and returns the number of loaded waypoints.
+   * @returns Number of waypoints loaded.
+   */
   int load(QString file, QList<Waypoint> *waypoints);
 };
 

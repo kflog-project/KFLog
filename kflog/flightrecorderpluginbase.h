@@ -57,6 +57,19 @@ struct FR_Capabilities {
   bool supUlDeclaration;   //supports uploading of declarations?
 };
 
+/**
+ * @short Baseclass for all flightrecorder plugins
+ *
+ * This class funtions as a baseclass for all flightrecorderplugins. The
+ * decending classes must re-implement all memberfuntions. Because
+ * different flightrecorders have different capabilities, the capabilities
+ * of a decendant class must be set in the constructor using a
+ * @ref FR_Capabilities struct. Also, you need use
+ * <pre>
+ *    return FR_NOTSUPPORTED;
+ * </pre>
+ * as implementation of the not supported memberfunctions.
+ */
     
 class FlightRecorderPluginBase:public QObject {
 Q_OBJECT

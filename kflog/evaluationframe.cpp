@@ -121,7 +121,7 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   kontrolllayout->addRowSpacing(8,5);
   kontrolllayout->addRowSpacing(10,5);
   kontrolllayout->setRowStretch(12,3);
-
+  
 // Setzt die Anfangsgrößen des Splitters
   typedef QValueList<int> testList;
   testList kontList;
