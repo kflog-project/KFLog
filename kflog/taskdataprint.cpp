@@ -177,7 +177,7 @@ TaskDataPrint::TaskDataPrint(FlightTask* task)
 
   painter.setFont(QFont("helvetica", 10));
   painter.drawText(50, 100, i18n("Task-Type") + ":");
-  painter.drawText(125, 100, task->getTastTypeString());
+  painter.drawText(125, 100, task->getTaskTypeString());
   painter.drawText(50, 115, i18n("total Distance") + ":");
   painter.drawText(125, 115, task->getTotalDistanceString());
   painter.drawText(50, 130, i18n("Task-Distance") + ":");

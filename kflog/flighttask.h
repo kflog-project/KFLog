@@ -72,7 +72,7 @@ class FlightTask : public BaseFlightElement
      */
     int getTaskType() const;
     /** */
-    QString getTastTypeString() const;
+    QString getTaskTypeString() const;
     /**
      * Draws the flight an the task into the given painter. Reimplemented
      * from BaseMapElement.
@@ -88,8 +88,6 @@ class FlightTask : public BaseFlightElement
     /** */
     int getPlannedPoints() const;
     /** */
-    QString getRouteType() const;
-    /** */
     QString getTotalDistanceString() const;
     /** */
     QString getTaskDistanceString() const;
@@ -100,7 +98,7 @@ class FlightTask : public BaseFlightElement
     /** */
     void setWaypointList(QList<wayPoint> wpL);
     /** No descriptions */
-    virtual QString getFlightInfoString();
+//    virtual QString getFlightInfoString();
     /**
      * The waypoint-types.
      */
@@ -120,7 +118,7 @@ class FlightTask : public BaseFlightElement
     /**
      * Calculates the sector.
      */
-    double __sectorangle(int loop, bool isDraw);
+    double __sectorangle(unsigned int loop, bool isDraw);
     /**
      * Proofes the type of the task and sets the status of the waypoints.
      */

@@ -92,10 +92,11 @@ class Map : public QWidget
     void slotFlightEnd();
 
     void slotActivatePlanning();
-  /** No descriptions */
-  void slotShowCurrentFlight();
-  /** append a waypoint to the current task */
-  void slotAppendWaypoint2Task(wayPoint *p);
+    /** No descriptions */
+    void slotShowCurrentFlight();
+    /** append a waypoint to the current task */
+    void slotAppendWaypoint2Task(wayPoint *p);
+
   signals:
     /** */
     void changed(QSize);
@@ -111,8 +112,8 @@ class Map : public QWidget
     void showPoint(const QPoint pos);
     /** */
     void pointClicked(QPoint);
-  /** is emited when shift + left button click on the map */
-  void waypointSelected(wayPoint *);
+    /** is emited when shift + left button click on the map */
+    void waypointSelected(wayPoint *);
 
   protected:
     /**
@@ -169,7 +170,7 @@ class Map : public QWidget
      */
     void __drawGrid();
     /** */
-    void __setMapBorder();
+//    void __setMapBorder();
     /**
      * Pointer to the current KFLog-instance.
      */
@@ -182,11 +183,12 @@ class Map : public QWidget
       * graphical planning
       */
     void __graphicalPlanning(QPoint current, QMouseEvent* event);
-    /** search for a waypoint
-        First look in task itself
-        Second look in map contents */
+    /**
+     *   search for a waypoint
+     *   First look in task itself
+     *   Second look in map contents
+     */
     bool __getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint> &taskPointList);
-
     /**
      * This pixmap is used to store the currently displayed map.
      * This painter is about the same size as the map-widget, but is only
@@ -195,9 +197,9 @@ class Map : public QWidget
      */
     QPixmap pixBuffer;
     /**
-      * Contains the Map under the CursorA to erase the cursor later
-      *
-      */
+     * Contains the Map under the CursorA to erase the cursor later
+     *
+     */
     QPixmap pixCursorBuffer1;
     QPixmap pixCursorBuffer2;
     QPixmap pixCursor1;
@@ -272,13 +274,15 @@ class Map : public QWidget
 		int planning;
 		// Index des WP welcher verschoben wird bei planning == 3
 		int moveWPindex;
-
     // indicates if a WP was Added in Snapping Mode (Planning)
 		bool lastAdd;
     // indicates if the mouse is in a snapping area
     bool isSnapping;
     // temp task (snapping)
     FlightTask tempTask;
+
+    //
+    QPoint preSnapPoint;
 };
 
 #endif

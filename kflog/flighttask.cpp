@@ -228,41 +228,54 @@ void FlightTask::__checkType()
     }
 }
 
-double FlightTask::__sectorangle(int loop, bool isDraw)
+double FlightTask::__sectorangle(unsigned int loop, bool isDraw)
 {
-  /*
-   * Berechnet die Winkelhalbierende des Sektors
-   */
   double nextAngle = 0.0, preAngle = 0.0, sectorAngle = 0.0;
-  // Art des Wendepunktes
+
+  // In some cases during planning, this method is called with wrong
+  // loop-values. Therefore we must check the id before calculating
+  // the direction
   switch(wpList.at(loop)->type)
     {
       case Begin:
         // directions to the next point
-        sectorAngle = polar(
-            ( wpList.at(CUR_ID)->projP.x() - wpList.at(NEXT_ID)->projP.x() ),
-            ( wpList.at(CUR_ID)->projP.y() - wpList.at(NEXT_ID)->projP.y() ) );
+        if(wpList.count() >= loop + 1)
+            sectorAngle = polar(
+                ( wpList.at(CUR_ID)->projP.x() - wpList.at(NEXT_ID)->projP.x() ),
+                ( wpList.at(CUR_ID)->projP.y() - wpList.at(NEXT_ID)->projP.y() ) );
+        else
+            sectorAngle = 0;
         break;
       case RouteP:
-        // directions to the previous point
-        preAngle = polar(
-            ( wpList.at(CUR_ID)->projP.x() - wpList.at(PRE_ID)->projP.x() ),
-            ( wpList.at(CUR_ID)->projP.y() - wpList.at(PRE_ID)->projP.y() ) );
-        // direction to the following point:
-        nextAngle = polar(
-            ( wpList.at(CUR_ID)->projP.x() - wpList.at(NEXT_ID)->projP.x() ),
-            ( wpList.at(CUR_ID)->projP.y() - wpList.at(NEXT_ID)->projP.y() ) );
+        if(loop >= 1 && wpList.count() >= loop + 1)
+          {
+            // directions to the previous point
+            preAngle = polar(
+                ( wpList.at(CUR_ID)->projP.x() - wpList.at(PRE_ID)->projP.x() ),
+                ( wpList.at(CUR_ID)->projP.y() - wpList.at(PRE_ID)->projP.y() ) );
+            // direction to the following point:
+            nextAngle = polar(
+                ( wpList.at(CUR_ID)->projP.x() - wpList.at(NEXT_ID)->projP.x() ),
+                ( wpList.at(CUR_ID)->projP.y() - wpList.at(NEXT_ID)->projP.y() ) );
 
-        sectorAngle = (preAngle + nextAngle) / 2.0;
-        if( ( preAngle < PI / 2.0 && nextAngle > 1.5 * PI ) ||
-            ( nextAngle < PI / 2.0 && preAngle > 1.5 * PI ) )
-            sectorAngle = sectorAngle - PI;
+            sectorAngle = (preAngle + nextAngle) / 2.0;
+            if( ( preAngle < PI / 2.0 && nextAngle > 1.5 * PI ) ||
+                ( nextAngle < PI / 2.0 && preAngle > 1.5 * PI ) )
+                sectorAngle = sectorAngle - PI;
+          }
+        else
+            sectorAngle = 0;
         break;
       case End:
-        // direction to the previous point:
-        sectorAngle = polar(
-            ( wpList.at(CUR_ID)->projP.x() - wpList.at(PRE_ID)->projP.x() ),
-            ( wpList.at(CUR_ID)->projP.y() - wpList.at(PRE_ID)->projP.y() ) );
+        if(loop >= 1 && loop < wpList.count())
+          {
+            // direction to the previous point:
+            sectorAngle = polar(
+                ( wpList.at(CUR_ID)->projP.x() - wpList.at(PRE_ID)->projP.x() ),
+                ( wpList.at(CUR_ID)->projP.y() - wpList.at(PRE_ID)->projP.y() ) );
+          }
+        else
+            sectorAngle = 0;
         break;
     }
 
@@ -288,19 +301,16 @@ void FlightTask::__setWaypointType()
     {
       wpList.at(n)->distance = dist(wpList.at(n-1),wpList.at(n));
       wpList.at(n)->type = FlightTask::FreeP;
-      warning("n: %f",wpList.at(n)->distance);
     }
 
   // Kein Wendepunkt definiert
   if (wpList.count() < 4)  return;
 
-  // warning("WendePunkte: %d",wpList.count());
   wpList.at(0)->type = FlightTask::TakeOff;
   wpList.at(1)->type = FlightTask::Begin;
 
-
   for(unsigned int n = 2; n + 2 < wpList.count(); n++)
-    wpList.at(n)->type = FlightTask::RouteP;
+      wpList.at(n)->type = FlightTask::RouteP;
 
   wpList.at(wpList.count() - 2)->type = FlightTask::End;
   wpList.at(wpList.count() - 1)->type = FlightTask::Landing;
@@ -308,9 +318,21 @@ void FlightTask::__setWaypointType()
 
 int FlightTask::getTaskType() const  {  return flightType;  }
 
-QString FlightTask::getTastTypeString() const
+QString FlightTask::getTaskTypeString() const
 {
-  return "hallo";
+  switch(flightType)
+    {
+      case FlightTask::NotSet:       return i18n("not set");
+      case FlightTask::ZielS:        return i18n("Free Distance");
+      case FlightTask::ZielR:        return i18n("Free Out and Return Distance");
+      case FlightTask::FAI:          return i18n("FAI Triangle");
+      case FlightTask::Dreieck:      return i18n("Triangle");
+      case FlightTask::FAI_S:        return i18n("FAI Triangle Start on leg");
+      case FlightTask::Dreieck_S:    return i18n("Triangle Start on leg");
+      case FlightTask::Abgebrochen:  return i18n("???");
+    }
+
+  return i18n("Unknown");
 }
 
 bool FlightTask::isFAI(double d_wp, double d1, double d2, double d3)
@@ -954,9 +976,6 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
        */
       taskPoints -= ( taskPoints * (malusValue / 100.0) );
     }
-///
-
-
 
   if (time_error)
    {
@@ -967,25 +986,6 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
              "the flight can not be valued!"));
    }
 
-}
-
-QString FlightTask::getRouteType() const
-{
-  /*
-   * Die Ausgabetexte müssen noch ins Englische übersetzt werden ...
-   */
-  switch(flightType)
-    {
-      case NotSet:      return "nicht gesetzt";
-      case ZielS:       return "Zielstrecke";
-      case ZielR:       return "Zielrückkehr";
-      case FAI:         return "FAI-Dreieck";
-      case Dreieck:     return "allg. Dreieck";
-      case FAI_S:       return "FAI-Dreieck (S)";
-      case Dreieck_S:   return "allg. Dreieck (S)";
-      case Abgebrochen: return "abgebrochen";
-      default:          return "unbekannt";
-    }
 }
 
 QString FlightTask::getTotalDistanceString() const
@@ -1038,63 +1038,63 @@ void FlightTask::setWaypointList(QList<wayPoint> wpL)
       __sectorangle(loop, false);
 }
 /** No descriptions */
-QString FlightTask::getFlightInfoString()
-{
-  QString htmlText;
-
-  htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-      <TR><TD>" + i18n("Task") + ":</TD><TD><A HREF=EDITTASK>" +
-      getFileName() +  + "</A></TD></TR>\
-      </TABLE><HR NOSHADE>";
-
-  QList<wayPoint> wpList = getWPList();
-
-  if(wpList.count()) {
-    htmlText += "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-      <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
-       i18n("Waypoints") + ":</B></TD></TR>";
-
-    for(unsigned int loop = 0; loop < wpList.count(); loop++) {
-      if(loop > 0) {
-        QString tmp;
-        tmp.sprintf("%.2f km",wpList.at(loop)->distance);
-
-        htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
-          tmp + "</TD></TR>";
-      }
-
-      QString idString;
-      idString.sprintf("%d", loop);
-
-      htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
-        wpList.at(loop)->name + "</A></TD>\
-        <TR><TD WIDTH=15></TD>\
-        <TD>" + printPos(wpList.at(loop)->origP.lat()) + "</TD>\
-        <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.lon(), false) +
-        "</TD></TR>";
-    }
-
-    htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
-      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + getTotalDistanceString() + "</TD></TR>\
-      </TABLE>";
-  }
-  else {
-    htmlText += i18n(
-      "You can select waypoints with the left mouse button."
-      "You can also select free waypoints by clicking anywhere in the map."
-      "<br><br>"
-      "When you press &lt;STRG&gt; and click with the left mouse button on a taskpoint,"
-      "it will be deleted.<br>"
-      "You can compute the task up to your current mouse position by pressing &lt;SHIFT&gt;."
-      "<br>"
-      "Finish the task with the rigth mouse button.<br>"
-      "It's possible to move and delete taskpoints from the finished task."
-      );
-
-  }
-
-  return htmlText;
-}
+//QString FlightTask::getFlightInfoString()
+//{
+//  QString htmlText;
+//
+//  htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+//      <TR><TD>" + i18n("Task") + ":</TD><TD><A HREF=EDITTASK>" +
+//      getFileName() +  + "</A></TD></TR>\
+//      </TABLE><HR NOSHADE>";
+//
+//  QList<wayPoint> wpList = getWPList();
+//
+//  if(wpList.count()) {
+//    htmlText += "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+//      <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
+//       i18n("Waypoints") + ":</B></TD></TR>";
+//
+//    for(unsigned int loop = 0; loop < wpList.count(); loop++) {
+//      if(loop > 0) {
+//        QString tmp;
+//        tmp.sprintf("%.2f km",wpList.at(loop)->distance);
+//
+//        htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
+//          tmp + "</TD></TR>";
+//      }
+//
+//      QString idString;
+//      idString.sprintf("%d", loop);
+//
+//      htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
+//        wpList.at(loop)->name + "</A></TD>\
+//        <TR><TD WIDTH=15></TD>\
+//        <TD>" + printPos(wpList.at(loop)->origP.lat()) + "</TD>\
+//        <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.lon(), false) +
+//        "</TD></TR>";
+//    }
+//
+//    htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
+//      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" + getTotalDistanceString() + "</TD></TR>\
+//      </TABLE>";
+//  }
+//  else {
+//    htmlText += i18n(
+//      "You can select waypoints with the left mouse button."
+//      "You can also select free waypoints by clicking anywhere in the map."
+//      "<br><br>"
+//      "When you press &lt;STRG&gt; and click with the left mouse button on a taskpoint,"
+//      "it will be deleted.<br>"
+//      "You can compute the task up to your current mouse position by pressing &lt;SHIFT&gt;."
+//      "<br>"
+//      "Finish the task with the rigth mouse button.<br>"
+//      "It's possible to move and delete taskpoints from the finished task."
+//      );
+//
+//  }
+//
+//  return htmlText;
+//}
 
 
 

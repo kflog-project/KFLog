@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-04-22 22:59+0200\n"
+"POT-Creation-Date: 2002-04-27 14:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,90 +54,61 @@ msgstr ""
 msgid "1:500.000"
 msgstr ""
 
-#: dataview.cpp:55 flight.cpp:969 flightdataprint.cpp:214 flighttask.cpp:1046
-#: recorderdialog.cpp:241 taskdataprint.cpp:190
+#: dataview.cpp:55 flightdataprint.cpp:214 recorderdialog.cpp:241
+#: taskdataprint.cpp:190
 msgid "Task"
 msgstr ""
 
-#: dataview.cpp:84 flight.cpp:1002 flighttask.cpp:1077 taskdataprint.cpp:181
+#: dataview.cpp:93 taskdataprint.cpp:181
 msgid "total Distance"
 msgstr ""
 
-#: dataview.cpp:87
+#: dataview.cpp:96
 msgid "Task Distance"
 msgstr ""
 
-#: dataview.cpp:90 flight.cpp:1004
+#: dataview.cpp:99
 msgid "Points"
 msgstr ""
 
-#: dataview.cpp:103
+#: dataview.cpp:112
 msgid "Task-Type: "
 msgstr ""
 
-#: dataview.cpp:108
-msgid "Zielstrecke"
-msgstr ""
-
-#: dataview.cpp:111
-msgid "Zielrückkehrstrecke"
-msgstr ""
-
-#: dataview.cpp:114
-msgid "FAI Triangle"
-msgstr ""
-
-#: dataview.cpp:117
-msgid "Triangle"
-msgstr ""
-
-#: dataview.cpp:120
-msgid "FAI Triangle Start on leg"
-msgstr ""
-
-#: dataview.cpp:123
-msgid "Triangle Start on leg"
-msgstr ""
-
-#: dataview.cpp:126 kflog.cpp:912
-msgid "Unknown"
-msgstr ""
-
-#: dataview.cpp:140 map.cpp:485
+#: dataview.cpp:124 map.cpp:503
 msgid "Begin of task"
 msgstr ""
 
-#: dataview.cpp:144
+#: dataview.cpp:128
 msgid "Next waypoint"
 msgstr ""
 
-#: dataview.cpp:165 flight.cpp:957 flightdataprint.cpp:169
-#: recorderdialog.cpp:205
+#: dataview.cpp:149 flightdataprint.cpp:169 recorderdialog.cpp:205
 msgid "Date"
 msgstr ""
 
-#: dataview.cpp:166 flight.cpp:958 flightdataprint.cpp:171 kflogconfig.cpp:544
+#: dataview.cpp:150 flightdataprint.cpp:171 kflogconfig.cpp:544
 #: recorderdialog.cpp:206 recorderdialog.cpp:272 recorderdialog.cpp:274
 msgid "Pilot"
 msgstr ""
 
-#: dataview.cpp:167 flight.cpp:959 flightdataprint.cpp:173
-#: recorderdialog.cpp:207
+#: dataview.cpp:151 flightdataprint.cpp:173 recorderdialog.cpp:207
 msgid "Glider"
 msgstr ""
 
-#: dataview.cpp:174 flight.cpp:1010
+#: dataview.cpp:158
 msgid "Flight contains no waypoints"
 msgstr ""
 
-#: dataview.cpp:188
+#: dataview.cpp:169
 msgid ""
 "You can select waypoints with the left mouse button.You can also select free "
 "waypoints by clicking anywhere in the map.<br><br>When you press &lt;"
 "STRG&gt; and click with the left mouse button on a taskpoint, it will be "
 "deleted.<br>You can compute the task up to your current mouse position by "
-"pressing &lt;SHIFT&gt;.<br>Finish the task with the rigth mouse button."
-"<br>It's possible to move and delete taskpoints from the finished task."
+"pressing &lt;SHIFT&gt;.<br>To finish the task, press &lt;STRG&gt; and click "
+"the right mouse button.<br>It's possible to move and delete taskpoints from "
+"the finished task."
 msgstr ""
 
 #: evaluationdialog.cpp:38 evaluationdialog.cpp:227 evaluationdialog.cpp:231
@@ -258,7 +229,7 @@ msgstr ""
 msgid "End of Task"
 msgstr ""
 
-#: flight.cpp:887 flightdataprint.cpp:192 map.cpp:491
+#: flight.cpp:887 flightdataprint.cpp:192 map.cpp:509
 msgid "Landing"
 msgstr ""
 
@@ -311,44 +282,54 @@ msgstr ""
 msgid "optimized Task"
 msgstr ""
 
-#: flightgroup.cpp:46
-msgid "Flight group"
+#: flighttask.cpp:325
+msgid "not set"
 msgstr ""
 
-#: flightgroup.cpp:53 recorderdialog.cpp:195
-msgid "Flights"
+#: flighttask.cpp:326
+msgid "Free Distance"
 msgstr ""
 
-#: flightgroup.cpp:68
-msgid "Click on the group name to start editing"
+#: flighttask.cpp:327
+msgid "Free Out and Return Distance"
 msgstr ""
 
-#: flighttask.cpp:841 flighttask.cpp:863
+#: flighttask.cpp:328
+msgid "FAI Triangle"
+msgstr ""
+
+#: flighttask.cpp:329
+msgid "Triangle"
+msgstr ""
+
+#: flighttask.cpp:330
+msgid "FAI Triangle Start on leg"
+msgstr ""
+
+#: flighttask.cpp:331
+msgid "Triangle Start on leg"
+msgstr ""
+
+#: flighttask.cpp:332
+msgid "???"
+msgstr ""
+
+#: flighttask.cpp:335 kflog.cpp:912
+msgid "Unknown"
+msgstr ""
+
+#: flighttask.cpp:863 flighttask.cpp:885
 msgid "You have not reached the first waypoint of your task."
 msgstr ""
 
-#: flighttask.cpp:881
+#: flighttask.cpp:903
 msgid "You have not reached the last point of your task."
 msgstr ""
 
-#: flighttask.cpp:964
+#: flighttask.cpp:983
 msgid ""
 "The time intervall between two points<BR>of the flight is more than 70 sec.!"
 "<BR>Due to Code Sportif 3, Nr. 1.9.2.1,<BR>the flight can not be valued!"
-msgstr ""
-
-#: flighttask.cpp:1055 kflog.cpp:373
-msgid "Waypoints"
-msgstr ""
-
-#: flighttask.cpp:1083
-msgid ""
-"You can select waypoints with the left mouse button.You can also select free "
-"waypoints by clicking anywhere in the map.<br><br>When you press &lt;"
-"STRG&gt; and click with the left mouse button on a taskpoint,it will be "
-"deleted.<br>You can compute the task up to your current mouse position by "
-"pressing &lt;SHIFT&gt;.<br>Finish the task with the rigth mouse button."
-"<br>It's possible to move and delete taskpoints from the finished task."
 msgstr ""
 
 #: igc3ddialog.cpp:36
@@ -525,6 +506,10 @@ msgstr ""
 
 #: kflog.cpp:372
 msgid "Map-Control"
+msgstr ""
+
+#: kflog.cpp:373
+msgid "Waypoints"
 msgstr ""
 
 #: kflog.cpp:536 kflog.cpp:570
@@ -913,137 +898,137 @@ msgid ""
 "elements should be displayed at which scale.</P>"
 msgstr ""
 
-#: map.cpp:461
+#: map.cpp:479
 msgid "Sector 1"
 msgstr ""
 
-#: map.cpp:466
+#: map.cpp:484
 msgid "Sector 2"
 msgstr ""
 
-#: map.cpp:472
+#: map.cpp:490
 msgid "FAI-Sector"
 msgstr ""
 
-#: map.cpp:476
+#: map.cpp:494
 msgid "not reached"
 msgstr ""
 
-#: map.cpp:482
+#: map.cpp:500
 msgid "Take Off"
 msgstr ""
 
-#: map.cpp:488
+#: map.cpp:506
 msgid "End of task"
 msgstr ""
 
-#: map.cpp:516
+#: map.cpp:534
 msgid "Airspace-Structure"
 msgstr ""
 
-#: mapcontents.cpp:262 mapcontents.cpp:1108
+#: mapcontents.cpp:245 mapcontents.cpp:1099
 msgid "Import mapfile ..."
 msgstr ""
 
-#: mapcontents.cpp:264 mapcontents.cpp:1110
+#: mapcontents.cpp:247 mapcontents.cpp:1101
 #, ycp-format
 msgid "Please wait while loading file<BR><B>%1</B>"
 msgstr ""
 
-#: mapcontents.cpp:1079
+#: mapcontents.cpp:1070
 #, ycp-format
 msgid "The selected file<BR><B>%1</B><BR>does not exist!"
 msgstr ""
 
-#: mapcontents.cpp:1085
+#: mapcontents.cpp:1076
 #, ycp-format
 msgid "The selected file<BR><B>%1</B><BR>is empty!"
 msgstr ""
 
-#: mapcontents.cpp:1094
+#: mapcontents.cpp:1085
 #, ycp-format
 msgid "The selected file<BR><B>%1</B><BR>is not an igc-file!"
 msgstr ""
 
-#: mapcontents.cpp:1101
+#: mapcontents.cpp:1092
 #, ycp-format
 msgid "You don't have permission to access file<BR><B>%1</B>"
 msgstr ""
 
-#: mapcontents.cpp:1102
+#: mapcontents.cpp:1093
 msgid "No permission"
 msgstr ""
 
-#: mapcontents.cpp:1278
+#: mapcontents.cpp:1269
 #, ycp-format
 msgid "Syntax-error while loading igc-file<BR><B>%1</B><BR>Aborting!"
 msgstr ""
 
-#: mapcontents.cpp:1280
+#: mapcontents.cpp:1271
 msgid "Error in IGC-file"
 msgstr ""
 
-#: mapcontents.cpp:1491
+#: mapcontents.cpp:1482
 #, ycp-format
 msgid "The selected file<BR><B>%1</B><BR>contains no flight!"
 msgstr ""
 
-#: mapcontents.cpp:1537
+#: mapcontents.cpp:1528
 #, c-format, ycp-format
 msgid ""
 "The directory for the airspace-files does not exist:\n"
 "%1"
 msgstr ""
 
-#: mapcontents.cpp:1538 mapcontents.cpp:1567 mapcontents.cpp:1606
+#: mapcontents.cpp:1529 mapcontents.cpp:1558 mapcontents.cpp:1597
 msgid "Directory not found"
 msgstr ""
 
-#: mapcontents.cpp:1542
+#: mapcontents.cpp:1533
 msgid "Loading airspacedata ..."
 msgstr ""
 
-#: mapcontents.cpp:1551
+#: mapcontents.cpp:1542
 msgid ""
 "The directory for the airspace-files is empty.\n"
 "To download the files, please visit our homepage:\n"
 msgstr ""
 
-#: mapcontents.cpp:1553 mapcontents.cpp:1582 mapcontents.cpp:1615
+#: mapcontents.cpp:1544 mapcontents.cpp:1573 mapcontents.cpp:1606
 msgid "directory empty"
 msgstr ""
 
-#: mapcontents.cpp:1566
+#: mapcontents.cpp:1557
 #, c-format, ycp-format
 msgid ""
 "The directory for the airfield-files does not exist:\n"
 "%1"
 msgstr ""
 
-#: mapcontents.cpp:1571
+#: mapcontents.cpp:1562
 msgid "Loading airfielddata ..."
 msgstr ""
 
-#: mapcontents.cpp:1580
+#: mapcontents.cpp:1571
 msgid ""
 "The directory for the airfield-files is empty.\n"
 "To download the files, please visit our homepage:\n"
 msgstr ""
 
-#: mapcontents.cpp:1605
+#: mapcontents.cpp:1596
 #, c-format, ycp-format
 msgid ""
 "The directory for the map-files does not exist:\n"
 "%1"
 msgstr ""
 
-#: mapcontents.cpp:1613
+#: mapcontents.cpp:1604
 msgid ""
 "The directory for the map-files is empty.\n"
 "To download the files, please visit our homepage:\n"
 msgstr ""
 
-#: mapcontents.cpp:1619
+#: mapcontents.cpp:1610
 msgid "Loading mapdata ..."
 msgstr ""
 
@@ -1148,6 +1133,10 @@ msgstr ""
 msgid "Configfile %1 is corrupt!"
 msgstr ""
 
+#: recorderdialog.cpp:195
+msgid "Flights"
+msgstr ""
+
 #: recorderdialog.cpp:204 recorderdialog.cpp:252
 msgid "Nr"
 msgstr ""
@@ -1214,7 +1203,7 @@ msgstr ""
 msgid "No port given!"
 msgstr ""
 
-#: recorderdialog.cpp:351 recorderdialog.cpp:390 recorderdialog.cpp:518
+#: recorderdialog.cpp:351 recorderdialog.cpp:390 recorderdialog.cpp:507
 msgid "Could not open lib!"
 msgstr ""
 
@@ -1222,15 +1211,15 @@ msgstr ""
 msgid "No port specified!"
 msgstr ""
 
-#: recorderdialog.cpp:554
+#: recorderdialog.cpp:543
 msgid "Method not implemented!"
 msgstr ""
 
-#: recorderdialog.cpp:557
+#: recorderdialog.cpp:546
 msgid "An error occured while reading the flight-directory!"
 msgstr ""
 
-#: recorderdialog.cpp:565
+#: recorderdialog.cpp:554
 msgid "Unknown return-code recieved!"
 msgstr ""
 

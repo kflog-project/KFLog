@@ -1,53 +1,176 @@
 $Id$
 
-* Wendepunkte origP hat andere x/y Reihenfolge als projP Korrigieren!!
+####################################################################################
+
+                     ########    ####     #####      ####
+                        ##      ##  ##    ##  ##    ##  ##
+                        ##      ##  ##    ##  ##    ##  ##
+                        ##      ##  ##    ##  ##    ##  ##
+                        ##       ####     #####      ####
+
+####################################################################################
 
 
-* Flugweg und Aufgabe drucken/zeichnen ...
+Flightrecorder
+==============
 
-  -> Die Linie vom letzten Wegpunkt zum Endpunkt (Start auf
-     Schenkel), wird zweimal gezeichnet. Wieso ???
-
-  -> Nach dem Drucken wird die Karte erneut gezeichnet, um die alten
-     Werte komplett wieer herzustellen. Das ist nicht nötig, solange
-     nur der Flug neugezeichnet wird ...
+* integrating other flightrecorders
 
 
-* Fluginformationen drucken
+Planning
+========
 
-  -> Wie können wir garantieren, dass die neue KAction "flightPrint" auf
-     jeden Fall sichtbar wird? Am besten ohne Linie zum
+* graphical planning                                     Flo                    [1]
 
-  -> später: auf Wunsch auch alle Wendepunkte, je in eigenen Ausschnitt gezoomt)
+  -> printing of planned task (track, not info)          Flo
 
+  -> area computation for FAI triangles
 
-* Punkte beim Optimieren noch nach aussen verschieben.
+* Rules (sectors, radius, possible tasks)                Flo/Harald             ?
+  must be solved in a unspecified way
+  necessary for dialoge planning ?
 
+* XML format definition for WayPoint and                 Harald                 [1]
+  task files used by KFLog
 
-/*************************************************************************
- *
- *
- *
- */
+* Import and Export of WayPoints and Tasks
 
-* Konfiguration der Druckeinstellungen.
+  -> WGS-Import                                          Christof
 
+  -> Others                                              Harald                 [5]
 
-* Konfiguration der Farben der Höhenlinien.
+* Elevation Profile                                                             [10]
 
+* List of Sites (Frequencies) and                                               [10]
+  obstacles along the task
 
-* Einstellen, welche Höhen gezeichnet werden sollen ???
+* Time Planing (with given average vario and                                    [10]
+  polare of the glider)
 
-
-/*************************************************************************
- *
- * Wer?? Wann??
- *
- */
-
-* Die Karte muss bei einem resizeEvent() eigentlich nicht neu gezeichnet
-  werden. pixBuffer muss nur gross genug sein ...
+  -> Import of PC_MET Database
 
 
-* Maßstabs-Angabe nach Zentrieren auf Flug/Aufgabe zunächst nicht richtig.
-  Maßstab müsste zunächst "geprüft" werden ...
+Evaluation
+==========
+
+* Display Airspace violations
+
+* online declaration for OLC and DMST-Online             Flo
+
+* Thermical Information (list of all upwinds)
+
+* display & print more statistics
+
+* elevation profile (under the Barogram)                                        [10]
+
+* Different colours for flights
+
+* Instrument images for the current flight values
+  (Speed, elevation, vario)
+
+* computation of the wind
+
+* Display ENL (engine noise level)
+
+
+Map
+===
+
+* use of vmap1 (improved dcw Data)                       Flo
+
+* other projections (mercator)                           Heiner
+
+* rasterimage support (scanned maps ...)                 Heiner / Flo
+
+* Customise colours for elevation data                   Heiner
+
+* integration of Aeroplanner.com data
+
+* Shading of elevation data                              Heiner
+
+
+3D View
+=======
+
+* 3digc                                                  Thomas
+
+  -> same colours for the flight as in 2d map
+
+  -> use mouse for rotate and zoom
+
+  -> animation?
+
+* OpenGl_igc                                             Christof
+
+  -> integration into KFlog
+
+
+Animation                                                Thomas
+=========
+
+* several flights at the same time
+
+* option for synchronise the starttime
+  for several flights
+
+* animate not only the cursor
+
+  -> additional possibility to draw the flight
+     step by step
+
+* center the actual point when it runs out of
+  the view
+
+
+Documentation
+=============
+
+* Online Documentation for KDE
+
+* Handbook as PDF or ghostscript for Printing
+
+* System doc                                             All ??
+
+
+Other
+=====
+
+* Flightgear                                             Christof
+
+  -> animate flights in FlightGear
+
+  -> display Airspace in Flightgear
+
+* Remote/command-line drawing of map
+  (draw a given flight with the underlying map
+  into an image file without open a GUI)
+
+* Chooseable units for KFLog
+
+* Preview
+
+  -> add the duration                                    Heiner
+
+  -> display as standard in the flight open dialog       Heiner
+
+* Link IGC-Files to KFLog (KDE)                          Heiner / Flo
+
+* Import IGC-Files
+
+  -> due to the FAI Definition                           Heiner
+
+  -> other Data (eg. ENL)                                Heiner / Flo
+
+* Select active Flight
+
+
+Translation
+===========
+
+Lang          WebSite           KFLog
+-------------------------------------
+German        Heiner/Flo        Flo
+Italian       Andrea            Andrea
+Norwegian     Thomas            Thomas
+Swedish                         Göran
+French                          Helmut

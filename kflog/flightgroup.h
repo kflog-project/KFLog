@@ -33,7 +33,7 @@ public:
 	FlightGroup(QString fName);
 	FlightGroup(QList <Flight::Flight> fList, QString fName);
 	~FlightGroup();
-  QString getFlightInfoString();
+//  QString getFlightInfoString();
   QList<wayPoint> getWPList();
   /**
   * Draws the flight an the task for each fligth into the given painter. Reimplemented

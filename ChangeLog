@@ -1,7 +1,14 @@
 $Id$
 
 
-2002-05-25 Heiner <heiner@kflog.org>
+2002-04-27 Heiner <heiner@kflog.org>
+
+  * Fixed some minor bugs in planning
+
+  * Completed german translation.
+
+
+2002-04-25 Heiner <heiner@kflog.org>
 
   * Created the class WGSPoint, which is derived from QPoint and
     provides easy-to-understand position-access.

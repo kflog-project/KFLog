@@ -70,7 +70,7 @@ class Flight : public BaseFlightElement
 	   *                 case.
 	   * @return the route-type of the flight
 	   */
-  	QString getRouteType(bool isOrig = false) const;
+  	QString getTaskTypeString(bool isOrig = false) const;
 	  /**
 	   * @param  isOrig  "true", if the original-task should be used.
 	   *                 The default is "false". If the flight has not been
@@ -214,7 +214,7 @@ class Flight : public BaseFlightElement
      */
     QStrList getHeader();
     /** No descriptions */
-    virtual QString getFlightInfoString();
+//    virtual QString getFlightInfoString();
     /**
 		 * Increments the nAnimationIndex member
      */

@@ -216,7 +216,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
 
   painter.drawText(50, 355, i18n("Typ") + ":");
   temp = i18n("%1  Track: %2  Points: %3").arg(
-            (const char*)currentFlight->getRouteType(true)).arg(
+            (const char*)currentFlight->getTaskTypeString(true)).arg(
             (const char*)currentFlight->getDistance(true)).arg(
             (const char*)currentFlight->getPoints(true));
   painter.drawText(125, 355, temp);
@@ -245,7 +245,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
 
       painter.drawText(50, yPos, i18n("Typ") + ":");
       temp = i18n("%1  Track: %2  Points: %3").arg(
-            (const char*)currentFlight->getRouteType()).arg(
+            (const char*)currentFlight->getTaskTypeString()).arg(
             (const char*)currentFlight->getDistance()).arg(
             (const char*)currentFlight->getPoints());
       painter.drawText(125, yPos, temp);

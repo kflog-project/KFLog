@@ -35,7 +35,7 @@ class BaseFlightElement : public BaseMapElement
     /** */
     ~BaseFlightElement();
     /** No descriptions */
-    virtual QString getFlightInfoString() = 0;
+//    virtual QString getFlightInfoString() = 0;
     virtual QList<wayPoint> getWPList() = 0;
     QString getFileName() { return sourceFileName; }
     /**
