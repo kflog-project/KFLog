@@ -347,7 +347,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   bBoxFlight.setBottom(curPointA.y());
 
   if (!bAnimationActive)
-    nStop = route.count();
+    nStop = route.count()-1;
   else
 	  nStop = nAnimationIndex;
 
