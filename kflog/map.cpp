@@ -221,8 +221,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
             {
               Waypoint wp;
               bool found = __getTaskWaypoint(current, &wp, taskPointList);
-			  if (!found) // check wp catalog
-				found = __getTaskWaypoint(current, &wp, *wpList);
+              if (!found) // check wp catalog
+              found = __getTaskWaypoint(current, &wp, *wpList);
               if(found)
 //              if(__getTaskWaypoint(current, &wp, taskPointList))
                 {
@@ -382,7 +382,20 @@ void Map::mouseMoveEvent(QMouseEvent* event)
       __findElevation(current);
     }
     if (dragZoomRect){
-//      qWarning("dragZoomRect");
+        QPainter zoomPainter;
+        zoomPainter.begin(this);
+        zoomPainter.setRasterOp( Qt::XorROP );
+
+        zoomPainter.setPen(QPen(QColor(255, 255, 255), 1, DashLine));
+        // Delete the old rectangle:
+        zoomPainter.drawRect( beginDrag.x(), beginDrag.y(),
+            tmpDrag.x() - beginDrag.x(), tmpDrag.y() - beginDrag.y());
+        // Draw the new one:
+        zoomPainter.drawRect( beginDrag.x(), beginDrag.y(),
+            event->pos().x() - beginDrag.x(), event->pos().y() - beginDrag.y());
+        zoomPainter.end();
+
+        tmpDrag = event->pos();
     }
 }
 
@@ -796,7 +809,8 @@ warning("Map::mousePressEvent: planning=%d", planning);
           prePos.x() - 20, prePos.y() - 20, 40, 40);
 
   if (isZoomRect){ // Zooming
-    beginDrag=event->pos();
+    beginDrag = event->pos();
+    tmpDrag = event->pos();
     dragZoomRect=true;
   }
   else
@@ -938,6 +952,7 @@ warning("Map::mousePressEvent: planning=%d", planning);
 
 void Map::paintEvent(QPaintEvent* event = 0)
 {
+  warning("Map::paintEvent()");
   if(event == 0)
       bitBlt(this, 0, 0, &pixBuffer);
   else
@@ -993,7 +1008,7 @@ void Map::__drawGrid()
 	    for(int lonloop = 0; lonloop < size; lonloop++)
 	      {
 	        cP = _globalMapMatrix.wgsToMap( ( lat2 + loop ) * 600000,
-					      ( lon1 + ( lonloop * 0.1 ) ) * 600000);
+              (int)( lon1 + ( lonloop * 0.1 ) ) * 600000);
 	        pointArray.setPoint(lonloop, cP);
   	    }
 
@@ -1004,12 +1019,12 @@ void Map::__drawGrid()
 	        QPointArray pointArraySmall(size);
 
   	      for(int lonloop = 0; lonloop < size; lonloop++)
-	        	{
-        		  cP = _globalMapMatrix.wgsToMap(
-				    		 ( lat2 + loop + ( loop2 * ( step / 60.0 ) ) ) * 600000,
-						     (lon1 + (lonloop * 0.1)) * 600000);
-        		  pointArraySmall.setPoint(lonloop, cP);
-        		}
+            {
+              cP = _globalMapMatrix.wgsToMap(
+                  (int)( lat2 + loop + ( loop2 * ( step / 60.0 ) ) ) * 600000,
+                  (int)(lon1 + (lonloop * 0.1)) * 600000);
+              pointArraySmall.setPoint(lonloop, cP);
+            }
   	
           if(loop2 == (number / 2.0))
     		    {
@@ -1043,10 +1058,10 @@ void Map::__drawGrid()
   	  for(int loop2 = 1; loop2 < number; loop2++)
 	      {
 	        cP = _globalMapMatrix.wgsToMap((lat1 * 600000),
-			  	    ((loop + (loop2 * step / 60.0)) * 600000));
+			  	    (int)((loop + (loop2 * step / 60.0)) * 600000));
 
   	      cP2 = _globalMapMatrix.wgsToMap((lat2 * 600000),
-					      ((loop + (loop2 * step / 60.0)) * 600000));
+					      (int)((loop + (loop2 * step / 60.0)) * 600000));
 
   	      if(loop2 == (number / 2.0))
               gridP.setPen(QPen(QColor(0,0,0), 1, DashLine));
@@ -2292,4 +2307,4 @@ void Map::__setCursor()
   const QBitmap cross(32, 32, cross_bits, true);
   const QCursor crossCursor(cross, cross);
   setCursor(crossCursor);
-}  
+}

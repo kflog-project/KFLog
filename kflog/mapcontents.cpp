@@ -587,10 +587,7 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 
       QString fileName;
       fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
-      KConfig* config = KGlobal::config();
-      config->setGroup("Path");
-      QString dest = config->readPathEntry("DefaultMapDirectory");
-      __downloadFile(fileName,dest);
+      __downloadFile(fileName,mapDir);
 
       return false;
     }
@@ -1039,10 +1036,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
 
       QString fileName;
       fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
-      KConfig* config = KGlobal::config();
-      config->setGroup("Path");
-      QString dest = config->readPathEntry("DefaultMapDirectory");
-      __downloadFile(fileName,dest);
+      __downloadFile(fileName,mapDir);
 
       return false;
     }

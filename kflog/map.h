@@ -166,6 +166,7 @@ class Map : public QWidget
     bool isZoomRect;
     bool dragZoomRect;
     QPoint beginDrag;
+    QPoint tmpDrag;
 
   private:
   // defining the cursor for the map:
