@@ -42,8 +42,7 @@ bool WaypointList::insertItem(WaypointElement *e)
       insert(e->name, e);
       break;
     case KMessageBox::No:
-      delete e;
-      break;
+      // no break !!
     case KMessageBox::Cancel:
       delete e;
       ins = false;

@@ -398,10 +398,13 @@ void KFLogApp::initView()
    */
   dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );
   mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 75 );
-  taskAndWaypointDock->manualDock(mapViewDock, KDockWidget::DockBottom, 70);
+  taskAndWaypointDock->manualDock(mapViewDock, KDockWidget::DockBottom, 71);
 
   connect(map, SIGNAL(changed(QSize)), mapControl,
       SLOT(slotShowMapData(QSize)));
+
+  connect(map, SIGNAL(waypointSelected(WaypointElement *)), taskAndWaypoint,
+    SLOT(slotAddWaypoint(WaypointElement *)));
 
   extern MapMatrix _globalMapMatrix;
   connect(mapControl, SIGNAL(scaleChanged(double)), &_globalMapMatrix,
@@ -796,5 +799,5 @@ void KFLogApp::slotFlightViewIgc3D()
 
 bool KFLogApp::queryClose()
 {
-//  return taskAndWaypoint->saveChanges();
+  return taskAndWaypoint->saveChanges();
 }

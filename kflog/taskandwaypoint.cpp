@@ -821,3 +821,20 @@ void TaskAndWaypoint::slotFilterWaypoints()
     fillWaypoints();
   }
 }
+/** add a new waypoint from outside */
+void TaskAndWaypoint::slotAddWaypoint(WaypointElement *w)
+{
+  WaypointList *wl = &waypointCatalogs.current()->wpList;
+  int loop = 1;
+  if (w->name.isEmpty()) {
+    w->name.sprintf("WPT%03d", loop);
+    while (wl->find(w->name) && loop < 1000) {
+      w->name.sprintf("WPT%03d", ++loop);
+    }
+  }
+
+  if (wl->insertItem(w)) {
+    waypointCatalogs.current()->modified = true;
+    fillWaypoints();
+  }
+}

@@ -123,6 +123,8 @@ private slots: // Private slots
 public slots: // Public slots
   /** filter waypoints to display */
   void slotFilterWaypoints();
+  /** add a new waypoint from outside */
+  void slotAddWaypoint(WaypointElement *w);
 };
 
 #endif

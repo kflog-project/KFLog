@@ -34,6 +34,8 @@
 #include <mapcontents.h>
 #include <mapmatrix.h>
 #include <singlepoint.h>
+#include <radiopoint.h>
+#include "waypointelement.h"
 
 // Festlegen der Größe der Pixmaps auf Desktop-Grösse
 #define PIX_WIDTH  QApplication::desktop()->width()
@@ -294,6 +296,7 @@ void Map::mousePressEvent(QMouseEvent* event)
 
   const QPoint current = event->pos();
 
+  bool shiftButton = event->state() & ShiftButton;
 
   bool show = false, isAirport = false;
 
@@ -314,9 +317,52 @@ void Map::mousePressEvent(QMouseEvent* event)
     }
   else if(event->button() == LeftButton)
     {
-      //    _start = event->pos();
 
-      if(planning == 1 || planning == 2 || planning == 3)
+      //    _start = event->pos();
+      if (shiftButton) {
+        QRegExp blank("[ ]");
+        bool found = false;
+        int searchList[] = {MapContents::GliderList, MapContents::AirportList};
+        for (int l = 0; l < 2; l++) {
+       	  for(unsigned int loop = 0;
+       	      loop < _globalMapContents.getListLength(searchList[l]); loop++) {
+    	      hitElement = (SinglePoint*)_globalMapContents.getElement(searchList[l], loop);
+    	      sitePos = hitElement->getMapPosition();
+  	
+  	        dX = sitePos.x() - current.x();
+  	        dY = sitePos.y() - current.y();
+  	
+  	        // Abstand entspricht der Icon-Größe.
+  	        if( ( ( dX < delta ) && ( dX > -delta ) ) && ( ( dY < delta ) && ( dY > -delta ) ) ) {
+  	          WaypointElement *w = new WaypointElement;
+  	          w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
+              w->description = hitElement->getName();
+  	          w->type = hitElement->getTypeID();
+  	          w->pos = _globalMapMatrix.mapToWgs(_globalMapMatrix.map(hitElement->getPosition()));
+              w->elevation = hitElement->getElevation();
+              w->icao = ((RadioPoint *)hitElement)->getICAO();
+              w->frequency = ((RadioPoint *)hitElement)->getFrequency().toDouble();
+              w->isLandable = true;
+              emit waypointSelected(w);
+              found = true;
+              break;
+  	        }
+  	      }
+  	      if (found) {
+  	        break;
+  	      }
+  	    }
+  	    if (!found) {
+  	      // add an 'free' waypoint
+          WaypointElement *w = new WaypointElement;
+          // leave name empty, this will generate an syntetic name
+          w->type = BaseMapElement::Landmark;
+          w->pos = _globalMapMatrix.mapToWgs(current);
+          w->isLandable = false;
+          emit waypointSelected(w);
+  	    }
+      }
+      else if(planning == 1 || planning == 2 || planning == 3)
         {
           ////////// Planen
           int dX_old = delta + 10;

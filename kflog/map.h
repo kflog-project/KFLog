@@ -27,7 +27,9 @@
 
 #include <qpointarray.h>
 
+
 class SinglePoint;
+class WaypointElement;
 
 /**
  * This class provides basic functions for displaying the map.
@@ -104,6 +106,8 @@ class Map : public QWidget
     void showPoint(const QPoint pos);
     /** */
     void pointClicked(QPoint);
+  /** is emited when shift + left button click on the map */
+  void waypointSelected(WaypointElement *);
 
   protected:
     /**
