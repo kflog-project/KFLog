@@ -1,0 +1,12 @@
+# KDE Config File  
+[Desktop Entry]
+Type=Application
+Exec=kflog -caption "%c" %i %m  
+Icon=kflog.png
+MiniIcon=kflog.png
+DocPath=kflog/index.html
+Comment=
+Comment[de]=
+Terminal=0
+Name=KFLog
+Name[de]=KFLog
