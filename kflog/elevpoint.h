@@ -47,10 +47,6 @@ class ElevPoint : public SinglePoint
      */
     virtual void drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
     /** */
-    virtual void printMapElement(QPainter* printPainter, const double dX,
-        const double dY, const int mapCenterLon, const double scale,
-        const struct elementBorder mapBorder);
-    /** */
     virtual void printMapElement(QPainter* printPainter);
     /**
      * Returns the elevation of the element.
@@ -66,14 +62,5 @@ class ElevPoint : public SinglePoint
      */
     unsigned int elevation;
 };
-
-/*************************************************************************
- *
- * Die Ein- und Ausgabeoperatoren
- *
- *************************************************************************/
-//QDataStream& operator<<(QDataStream& outStream, const ElevPoint& ePoint);
-//QTextStream& operator<<(QTextStream& outStream, const ElevPoint& ePoint);
-//QDataStream& operator>>(QDataStream& outStream, ElevPoint& ePoint);
 
 #endif

@@ -25,9 +25,12 @@ double dist(double lat1, double lon1, double lat2, double lon2)
   double dlat = lat1 - lat2;
   double dlon = lon1 - lon2;
 
+  // lat is used to calculate the earth-radius. We use the average here.
+  double lat = ( lat1 + lat2 ) / 2.0;
+
   double dist = RADIUS * sqrt( ( pi_180 * dlat * pi_180 * dlat )
-    + ( pi_180 * cos( pi_180 * lat1 ) * dlon *
-        pi_180 * cos( pi_180 * lat1 ) * dlon ) );
+    + ( pi_180 * cos( pi_180 * lat ) * dlon *
+        pi_180 * cos( pi_180 * lat ) * dlon ) );
 
   return dist / 1000.0;
 }

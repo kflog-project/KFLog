@@ -58,11 +58,7 @@ class Airport : public RadioPoint
      */
     unsigned int getRunwayNumber() const;
     /** */
-    virtual void printMapElement(QPainter* printPainter, const double dX,
-        const double dY, const int mapCenterLon, const double scale,
-        const struct elementBorder mapBorder);
-    /** */
-    virtual void printMapElement(QPainter* printPainter);
+    virtual void printMapElement(QPainter* printPainter) const;
     /** */
     unsigned int getElevation() const;
     /** */
@@ -88,14 +84,5 @@ class Airport : public RadioPoint
      */
     unsigned int rwNum;
 };
-
-/*************************************************************************
- *
- * Die Ein- und Ausgabeoperatoren
- *
- *************************************************************************/
-//QDataStream& operator<<(QDataStream& outStream, const Airport& airport);
-//QTextStream& operator<<(QTextStream& outStream, const Airport& airport);
-//QDataStream& operator>>(QDataStream& outStream, Airport& airport);
 
 #endif

@@ -67,6 +67,8 @@ class MapMatrix
      */
     QPoint print(int latitude, int longitude, double dX, double dY) const;
     /** */
+    QPoint print(QPoint p) const;
+    /** */
     QPointArray print(QPointArray pArray) const;
     /**
      *
@@ -105,7 +107,7 @@ class MapMatrix
     /** */
     void moveMap(int dir);
     /** */
-    void centerToMouse(QPoint);
+    void centerToPoint(QPoint);
     /** */
     void centerToRect(QRect);
     /** */

@@ -46,7 +46,7 @@ class KFLogApp : public KDockMainWindow
 {
   Q_OBJECT
 
-//  friend class KFLogView;
+  friend class KFLogView;
 
   public:
     /** */
@@ -55,8 +55,6 @@ class KFLogApp : public KDockMainWindow
     ~KFLogApp();
     /** */
     void showPointInfo(QPoint, struct flightPoint* point);
-    /** display the coordinates in the statusbar*/
-//    void showCoords(QPoint);
     /** */
     void clearPointInfo(QPoint);
 
@@ -96,6 +94,8 @@ class KFLogApp : public KDockMainWindow
     /** */
     void slotToggleMapControl();
     /** */
+    void slotToggleMap();
+    /** */
     void slotConfigureToolbars();
     /** */
     void slotConfigureKeyBindings();
@@ -109,22 +109,18 @@ class KFLogApp : public KDockMainWindow
     void slotStartComplete();
     /** */
     void slotEvaluateFlight();
+    /** */
+    void slotHideMapControlDock();
+    /** */
+    void slotHideMapViewDock();
+    /** */
+    void slotHideDataViewDock();
+    /** */
+    void slotCheckDockWidgetStatus();
 
   private:
     /** the configuration object of the application */
     KConfig *config;
-    /** fileMenu contains all items of the menubar entry "File" */
-    QPopupMenu* file_menu;
-    /** viewMenu contains all items of the menubar entry "View" */
-    QPopupMenu* viewMenu;
-    /** mapMenu contains the items of the submenu "Layer" */
-    QPopupMenu* mapMenu;
-    /** confMenu contains all item of the menubar entry "Options" */
-    QPopupMenu* confMenu;
-    /** flightMenu contains all item of the menubar entry "Flight" */
-    QPopupMenu* flightMenu;
-    /** helpMenu contains all items of the menubar entry "Help" */
-    QPopupMenu* helpMenu;
     /** */
     KDockWidget* mapControlDock;
     KDockWidget* mapViewDock;
@@ -142,25 +138,18 @@ class KFLogApp : public KDockMainWindow
     KStatusBarLabel* statusSpeedL;
     KStatusBarLabel* statusLatL;
     KStatusBarLabel* statusLonL;
-    // KAction pointers to enable/disable actions
-    KAction* fileOpen;
     KAction* fileClose;
     KRecentFilesAction* fileOpenRecent;
 //    KAction* filePrint;
-    KAction* fileQuit;
     KToggleAction* viewToolBar;
     KToggleAction* viewStatusBar;
-    KAction* configToolBar;
-    KAction* configKeyBindings;
     KAction* viewRedraw;
     KAction* viewCenterTask;
     KAction* viewCenterFlight;
-    KAction* viewCenterHome;
-//    KAction* viewZoomIn;
-//    KAction* viewZoomOut;
+//    KAction* viewCenterHome;
     KToggleAction* viewData;
     KToggleAction* viewMapControl;
-//    KAction* configKFLog;
+    KToggleAction* viewMap;
     KAction* flightEvaluation;
 //    KAction* flightOptimization;
     /** */

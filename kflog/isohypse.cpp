@@ -19,19 +19,11 @@
 
 #include <mapmatrix.h>
 
-Isohypse::Isohypse()
-: LineElement(0, BaseMapElement::Isohypse, 0)
-{
-
-}
-
 Isohypse::Isohypse(QPointArray pA, unsigned int elev, bool isV, int s_ID)
 : LineElement(0, BaseMapElement::Isohypse, pA, isV),
   elevation(elev), sort_ID(s_ID)
 {
-  /* Farbgebung erfolgt in
-   *   MapContents::drawIsoList()
-   */
+
 }
 
 Isohypse::~Isohypse()
@@ -39,10 +31,10 @@ Isohypse::~Isohypse()
 
 }
 
-void Isohypse::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
+void Isohypse::drawMapElement(QPainter* targetP, QPainter* maskP)
 {
   if(glMapMatrix->isVisible(bBox))
-      targetPainter->drawPolygon(glMapMatrix->map(projPointArray));
+      targetP->drawPolygon(glMapMatrix->map(projPointArray));
 }
 
 int Isohypse::getElevation() const { return elevation; }

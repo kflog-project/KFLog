@@ -142,7 +142,7 @@ MapContents::~MapContents()
   topoList.~QList();
 }
 
-int MapContents::degreeToNum(const char* inDegree)
+int MapContents::degreeToNum(QString inDegree)
 {
   /*
    * Das Parsen insgesamt sollte nochmal überarbeitet werden!
@@ -151,40 +151,29 @@ int MapContents::degreeToNum(const char* inDegree)
   int result = 0;
   int count = 0;
 
-  char* degree;
-  degree = new char[strlen(inDegree)];
-  int n = 0;
+//  char* degree;
+//  degree = new char[strlen(inDegree)];
+  const char* degree = (const char*) inDegree;
+//  int n = 0;
 
   // Löschen aller Leerzeichen, damit das Parsen unten klappt.
-  for(unsigned int loop = 0; loop < strlen(inDegree); loop++)
-    {
-      if(inDegree[loop] == ' ') continue;
-
-      degree[n] = inDegree[loop];
-      n++;
-    }
+//  for(unsigned int loop = 0; loop < strlen(inDegree); loop++)
+//    {
+//      if(inDegree[loop] == ' ') continue;
+//
+//      degree[n] = inDegree[loop];
+//      n++;
+//    }
 
   QRegExp number("^-?[0-9]+$");
   QRegExp deg1("[°.]");
   QRegExp deg2(",");
   QRegExp deg3("'");
   QRegExp dir("[swSW]$");
+
   if(number.match(degree) != -1)
     {
-      unsigned int id = 1;
-      if(degree[0] == '-')
-        {
-          result = degree[1] - '0';
-          id++;
-        }
-      else
-        result = degree[0] - '0';
-
-      for(unsigned int loop = id ; loop < strlen(degree); loop++)
-        result = 10 * result + (degree[loop] - '0');
-
-      if(id == 2) return -result;
-
+      sscanf(degree, "%d", &result);
       return result;
     }
 
@@ -295,133 +284,6 @@ void MapContents::closeFlight()
   flightList.clear();
 }
 
-int MapContents::__degreeToNum(const char* degree)
-{
-  int deg = 0, min = 0, sec = 0;
-  int result;
-  int count = 0;
-
-  QRegExp number("^-?[0-9]+$");
-  QRegExp deg1("[°.]");
-  QRegExp deg2(",");
-  QRegExp deg3("'");
-  QRegExp dir("[swSW]$");
-  if(number.match(degree) != -1)
-    {
-      unsigned int id = 1;
-      if(degree[0] == '-')
-        {
-          result = degree[1] - '0';
-          id++;
-        }
-      else
-        result = degree[0] - '0';
-
-      for(unsigned int loop = id ; loop < strlen(degree); loop++)
-        result = 10 * result + (degree[loop] - '0');
-
-      if(id == 2) return -result;
-
-      return result;
-    }
-
-  switch(deg1.match(degree))
-    {
-      case 1:
-        deg = degree[0] - '0';
-        degree += 2;
-        break;
-      case 2:
-        deg = 10 * (degree[0] - '0') + (degree[1] - '0');
-        degree += 3;
-        break;
-      case 3:
-        deg = 100 * (degree[0] - '0') + 10 * (degree[1] - '0')
-            + (degree[2] - '0');
-        degree += 4;
-        break;
-      default:
-        if(deg1.match(degree) > 3)  return 0;    // << degree is not correct!
-        switch(strlen(degree))
-          {
-            case 1:
-              deg = degree[0] - '0';
-              break;
-            case 2:
-              deg = 10 * (degree[0] - '0') + (degree[1] -'0');
-              break;
-            case 3:
-              deg = 100 * (degree[0] - '0') + 10 * (degree[1] - '0')
-                    + (degree[2] - '0');
-              break;
-            default:
-              return 0;                           // << degree is not correct!
-          }
-    }
-
-  if( deg2.match(degree) != -1 )
-    {
-      // Minuten mit Nachkommastellen!
-      switch(deg2.match(degree))
-        {
-          case 1:
-            min = degree[0] - '0';
-            for(unsigned int loop = 2; loop < strlen(degree); loop++)
-              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
-                {
-                  sec = 10 * sec + (degree[loop] - '0');
-                  count++;
-                }
-            break;
-          case 2:
-            min = 10 * (degree[0] - '0') + (degree[1] -'0');
-            for(unsigned int loop = 3; loop < strlen(degree); loop++)
-              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
-                {
-                  sec = (degree[loop] - '0') + (sec / 10);
-                  count++;
-                }
-            break;
-          default:
-            if( ( deg2.match(degree) > 2 ) || ( deg2.match(degree) == 0 ) )
-                return 0;    // << degree is not correct!
-        }
-    }
-  else if( deg3.match(degree) != -1 )
-    {
-      // es folgen "echte" Sekunden
-      switch( deg3.match(degree) )
-        {
-          case 1:
-            min = degree[0] - '0';
-            for(unsigned int loop = 2; loop < strlen(degree); loop++)
-              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
-                {
-                  sec = sec * 10 + (degree[loop] - '0');
-                  count++;
-                }
-            break;
-          case 2:
-            min = 10 * (degree[0] - '0') + (degree[1] -'0');
-            for(unsigned int loop = 3; loop < strlen(degree); loop++)
-              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
-                {
-                  sec = sec * 10 + (degree[loop] - '0');
-                  count++;
-                }
-            break;
-          default:
-            if( ( deg2.match(degree) > 2 ) || ( deg2.match(degree) == 0 ) )
-                return 0;    // << degree is not correct!
-        }
-    }
-  result = (int) ((600000 * deg) + (10000 * (min + (sec * pow(10,-count)))));
-
-  if(dir.match(degree) >= 0) return -result;
-
-  return result;
-}
-
 bool MapContents::__readAsciiFile(const char* fileName)
 {
   extern const MapMatrix _globalMapMatrix;
@@ -481,9 +343,6 @@ bool MapContents::__readAsciiFile(const char* fileName)
   QPointArray tA;
   QPoint position;
 
-  Airspace* newAir;
-  LineElement* newLine;
-
   while (!stream.eof())
     {
       if(importProgress.wasCancelled()) break;
@@ -539,8 +398,8 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   if(line.mid(loop, 1) == " ") break;
 
               position = _globalMapMatrix.wgsToMap(
-                  __degreeToNum( line.mid( 3, ( loop - 3 ) ) ),
-                  __degreeToNum( line.mid( ( loop + 1 ), 100 ) ) );
+                  degreeToNum( line.mid( 3, ( loop - 3 ) ) ),
+                  degreeToNum( line.mid( ( loop + 1 ), 100 ) ) );
             }
           else if(line.mid(0,5) == "LTYPE")
               llimitType = line.mid(6,1).toUInt();
@@ -598,8 +457,8 @@ bool MapContents::__readAsciiFile(const char* fileName)
               for(loop = 0; loop < strlen(line); loop++)
                   if(line.mid(loop, 1) == " ") break;
 
-              lat_temp = __degreeToNum(line.left(loop));
-              lon_temp = __degreeToNum(line.mid((loop + 1),100));
+              lat_temp = degreeToNum(line.left(loop));
+              lon_temp = degreeToNum(line.mid((loop + 1), line.length() - loop));
               tA.setPoint(posLength - 1,
                   _globalMapMatrix.wgsToMap(lat_temp, lon_temp));
             }
@@ -659,9 +518,8 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   case BaseMapElement::Restricted:
                   case BaseMapElement::Danger:
                   case BaseMapElement::LowFlight:
-                    newAir = new Airspace(name, type, tA);
-                    newAir->setValues(ulimit, ulimitType, llimit, llimitType);
-                    airspaceList.append(newAir);
+                    airspaceList.append(new Airspace(name, type, tA,
+                        ulimit, ulimitType, llimit, llimitType));
                     break;
                   case BaseMapElement::Obstacle:
                   case BaseMapElement::LightObstacle:
@@ -687,7 +545,6 @@ bool MapContents::__readAsciiFile(const char* fileName)
                     railList.append(new LineElement(name, type, tA));
                     break;
                   case BaseMapElement::AerialRailway:
-                    newLine = new LineElement(name, type, tA);
                     railList.append(new LineElement(name, type, tA));
                     break;
                   case BaseMapElement::Lake:
@@ -1244,9 +1101,8 @@ bool MapContents::loadFlight(QFile igcFile)
                   if(isFirstWP)
                       newWP->distance = 0;
                   else
-                      newWP->distance = dist(latTemp, lonTemp,
-                  preWP->origP.y(), preWP->origP.x());
-                  if(!isFirstWP && newWP->distance <= 0.1)  continue;
+                      newWP->distance = dist(newWP, preWP);
+
                   wpList.append(newWP);
                   isFirstWP = false;
                   preWP = newWP;
@@ -1318,17 +1174,19 @@ void MapContents::proofeSection()
 
       QStringList airfields;
       airfields = globalDirs->findAllResources("appdata", "mapdata/airfields/*.out");
-      for ( QStringList::Iterator it = airfields.begin(); it != airfields.end(); ++it ) {
-        __readAsciiFile((*it).latin1());
-//        warning( "%s", (*it).latin1() );
-      }
+      for ( QStringList::Iterator it = airfields.begin(); it != airfields.end(); ++it )
+        {
+          __readAsciiFile((*it).latin1());
+//          warning( "%s", (*it).latin1() );
+        }
 
       QStringList airspace;
       airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.out");
-      for ( QStringList::Iterator it = airspace.begin(); it != airspace.end(); ++it ) {
-        __readAsciiFile((*it).latin1());
-//        warning( "%s", (*it).latin1() );
-      }
+      for ( QStringList::Iterator it = airspace.begin(); it != airspace.end(); ++it )
+        {
+          __readAsciiFile((*it).latin1());
+//          warning( "%s", (*it).latin1() );
+        }
 
 
 //      __readAsciiFile(pathName + "airfields/deutschland.out");
@@ -1478,73 +1336,52 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
   }
 }
 
-void MapContents::printList(QPainter* targetPainter, unsigned int listID)
+void MapContents::printContents(QPainter* targetPainter)
 {
-  switch(listID)
-    {
-      case AirportList:
-        for(unsigned int loop = 0; loop < airportList.count(); loop++)
-            airportList.at(loop)->printMapElement(targetPainter);
-        break;
-      case GliderList:
-        for(unsigned int loop = 0; loop < gliderList.count(); loop++)
-            gliderList.at(loop)->printMapElement(targetPainter);
-        break;
-      case OutList:
-        for(unsigned int loop = 0; loop < outList.count(); loop++)
-            outList.at(loop)->printMapElement(targetPainter);
-        break;
-      case NavList:
-        for(unsigned int loop = 0; loop < navList.count(); loop++)
-            navList.at(loop)->printMapElement(targetPainter);
-        break;
-      case AirspaceList:
-        for(unsigned int loop = 0; loop < airspaceList.count(); loop++)
-            airspaceList.at(loop)->printMapElement(targetPainter);
-        break;
-      case ObstacleList:
-        for(unsigned int loop = 0; loop < obstacleList.count(); loop++)
-            obstacleList.at(loop)->printMapElement(targetPainter);
-        break;
-      case ReportList:
-        for(unsigned int loop = 0; loop < reportList.count(); loop++)
-            reportList.at(loop)->printMapElement(targetPainter);
-        break;
-      case CityList:
-        for(unsigned int loop = 0; loop < cityList.count(); loop++)
-            cityList.at(loop)->printMapElement(targetPainter);
-        break;
-//      case VillageList:
-//        for(unsigned int loop = 0; loop < villageList.count(); loop++)
-//            villageList.at(loop)->drawMapElement(targetPainter);
-//        break;
-      case LandmarkList:
-        for(unsigned int loop = 0; loop < landmarkList.count(); loop++)
-            landmarkList.at(loop)->printMapElement(targetPainter);
-        break;
-      case RoadList:
-        for(unsigned int loop = 0; loop < roadList.count(); loop++)
-            roadList.at(loop)->printMapElement(targetPainter);
-        break;
-      case RailList:
-        for(unsigned int loop = 0; loop < railList.count(); loop++)
-            railList.at(loop)->printMapElement(targetPainter);
-        break;
-      case HydroList:
-        for(unsigned int loop = 0; loop < hydroList.count(); loop++)
-            hydroList.at(loop)->printMapElement(targetPainter);
-        break;
-      case TopoList:
-        for(unsigned int loop = 0; loop < topoList.count(); loop++)
-            topoList.at(loop)->printMapElement(targetPainter);
-        break;
-      case FlightList:
-        for(unsigned int loop = 0; loop < flightList.count(); loop++)
-            flightList.at(loop)->printMapElement(targetPainter);
-        break;
-      default:
-        return;
-    }
+  for(unsigned int loop = 0; loop < airportList.count(); loop++)
+      airportList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < gliderList.count(); loop++)
+      gliderList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < outList.count(); loop++)
+      outList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < navList.count(); loop++)
+      navList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < airspaceList.count(); loop++)
+      airspaceList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < obstacleList.count(); loop++)
+      obstacleList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < reportList.count(); loop++)
+      reportList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < cityList.count(); loop++)
+      cityList.at(loop)->printMapElement(targetPainter);
+
+//  for(unsigned int loop = 0; loop < villageList.count(); loop++)
+//      villageList.at(loop)->drawMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < landmarkList.count(); loop++)
+      landmarkList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < roadList.count(); loop++)
+      roadList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < railList.count(); loop++)
+      railList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < hydroList.count(); loop++)
+      hydroList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < topoList.count(); loop++)
+      topoList.at(loop)->printMapElement(targetPainter);
+
+  for(unsigned int loop = 0; loop < flightList.count(); loop++)
+      flightList.at(loop)->printMapElement(targetPainter);
 }
 
 void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,

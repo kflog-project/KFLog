@@ -33,20 +33,6 @@
 #include <qgroupbox.h>
 #include <qprinter.h>
 
-#define PRINT_LOOP(a) for(unsigned int loop = 0; loop < \
-    _globalMapContents->getListLength(a); loop++) { \
-    _current = _globalMapContents->getElement(a, loop); \
-    _current->printMapElement(&printPainter, dX, dY, mapCenterLon, \
-        selectedScale, mapBorder); \
-  }
-
-/*
-#define SHOW_LAYER(a,b) bool a = mainApp->toolBar()->isButtonOn(b); \
-      mainApp->menuBar()->setItemChecked(b, a);
-*/
-
-#define SHOW_LAYER(a,b) bool a = true;
-
 #define TOP_LEFT_X   ( ( 0 + leftMargin ) * 2 )
 #define TOP_LEFT_Y   ( ( 0 + topMargin ) * 2 )
 #define TOP_RIGHT_X  ( ( pS.width() - rightMargin ) * 2 )
@@ -281,32 +267,20 @@ QString PrintDialog::__createMapPrint()
 {
   extern MapMatrix _globalMapMatrix;
 
-  SHOW_LAYER(showAddSites, ID_LAYER_ADDSITES)
-  SHOW_LAYER(showAirport,  ID_LAYER_AIRPORT)
-  SHOW_LAYER(showAirspace, ID_LAYER_AIRSPACE)
-  SHOW_LAYER(showCity,     ID_LAYER_CITY)
-  SHOW_LAYER(showFlight,   ID_LAYER_FLIGHT)
-  SHOW_LAYER(showGlider,   ID_LAYER_GLIDER)
-  SHOW_LAYER(showHydro,    ID_LAYER_HYDRO)
-  SHOW_LAYER(showLand,     ID_LAYER_LAND)
-  SHOW_LAYER(showNav,      ID_LAYER_NAV)
-  SHOW_LAYER(showOut,      ID_LAYER_OUT)
-  SHOW_LAYER(showRail,     ID_LAYER_RAIL)
-  SHOW_LAYER(showRoad,     ID_LAYER_ROAD)
-  SHOW_LAYER(showTopo,     ID_LAYER_TOPO)
-  SHOW_LAYER(showWaypoint, ID_LAYER_WAYPOINT)
-
   QPrinter printer;
   QString fileName;
   /* Es wird immer in eine Datei gedruckt ... */
   printer.setOutputToFile(true);
   printer.setDocName("kflog-map.ps");
-
+  printer.setCreator((QString)"KFLog " + VERSION);
+  printer.setFullPage(true);
   printer.setPageSize( QPrinter::A4 );
 
   /* Besser: Ins KDE-Tempdir schreiben !!! */
-  if(printerB->isChecked()) fileName = "/tmp/kflog-map.ps";
-  else fileName = fileE->text();
+  if(printerB->isChecked())
+      fileName = "/tmp/kflog-map.ps";
+  else
+      fileName = fileE->text();
 
   /* Hier wird bislang nicht geprüft, ob die Datei existiert bzw. erzeugt
    * werden darf ...
@@ -321,10 +295,6 @@ QString PrintDialog::__createMapPrint()
   QPainter printPainter(&printer);
   const QWMatrix oldMatrix = printPainter.worldMatrix();
   QWMatrix newMatrix = printPainter.worldMatrix();
-
-  printPainter.drawLine(0, 0, 400, 400);
-  printPainter.drawLine(0, 0, 100, 400);
-  printPainter.drawLine(0, 0, 400, 100);
 
   const QSize pS = __getPaperSize(&printer);
 
@@ -412,15 +382,8 @@ QString PrintDialog::__createMapPrint()
     }
 
   extern MapContents _globalMapContents;
-  BaseMapElement* _current;
 
-//    if(displayFlights) __drawFlight();
-
-//  _globalMapMatrix.createPrintMatrix(scaleRange[scaleSelect->currentItem()] / 2,
-//          pS, TOP_LEFT_X * 2, TOP_LEFT_Y * 2);
-
-  printPainter.setBrush(QPainter::NoBrush);
-  _globalMapContents.printList(&printPainter, MapContents::AirspaceList);
+  _globalMapContents.printContents(&printPainter);
 
   printPainter.setClipRect(0, 0, pS.width(), pS.height());
 

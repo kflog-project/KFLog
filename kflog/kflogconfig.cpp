@@ -96,8 +96,7 @@
     a[0] = config->readBoolEntry("Border 1", true); \
     a[1] = config->readBoolEntry("Border 2", true); \
     a[2] = config->readBoolEntry("Border 3", true); \
-    a[3] = config->readBoolEntry("Border 4", true); \
-    a[4] = config->readBoolEntry("Border 5", true);
+    a[3] = config->readBoolEntry("Border 4", true);
 
 #define READ_PEN(A, C1, C2, C3, C4, P1, P2, P3, P4, S1, S2, S3, S4) \
   A.append(new QPen(config->readColorEntry("Color 1", new C1), \
@@ -132,6 +131,10 @@
     config->writeEntry("Pen Size 2", a.at(1)->width()); \
     config->writeEntry("Pen Size 3", a.at(2)->width()); \
     config->writeEntry("Pen Size 4", a.at(3)->width()); \
+    config->writeEntry("Pen Style 1", a.at(0)->style()); \
+    config->writeEntry("Pen Style 2", a.at(1)->style()); \
+    config->writeEntry("Pen Style 3", a.at(2)->style()); \
+    config->writeEntry("Pen Style 4", a.at(3)->style()); \
     config->writeEntry("Border 1", b[0]); \
     config->writeEntry("Border 2", b[1]); \
     config->writeEntry("Border 3", b[2]); \
@@ -221,21 +224,23 @@ KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
       parent, name, true, true),
     config(cnf), oldElement(-1)
 {
-  airCBorder = new bool[5];
-  airDBorder = new bool[5];
-  airElBorder = new bool[5];
-  airEhBorder = new bool[5];
-  ctrCBorder = new bool[5];
-  ctrDBorder = new bool[5];
-  dangerBorder = new bool[5];
-  restrBorder = new bool[5];
-  tmzBorder = new bool[5];
+  airCBorder = new bool[4];
+  airDBorder = new bool[4];
+  airElBorder = new bool[4];
+  airEhBorder = new bool[4];
+  airFBorder = new bool[4];
+  ctrCBorder = new bool[4];
+  ctrDBorder = new bool[4];
+  lowFBorder = new bool[4];
+  dangerBorder = new bool[4];
+  restrBorder = new bool[4];
+  tmzBorder = new bool[4];
 
-  roadBorder = new bool[5];
-  highwayBorder = new bool[5];
-  railBorder = new bool[5];
-  riverBorder = new bool[5];
-  cityBorder = new bool[5];
+  roadBorder = new bool[4];
+  highwayBorder = new bool[4];
+  railBorder = new bool[4];
+  riverBorder = new bool[4];
+  cityBorder = new bool[4];
 
   airCPenList.setAutoDelete(true);
   airCBrushList.setAutoDelete(true);
@@ -249,6 +254,8 @@ KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
   ctrCBrushList.setAutoDelete(true);
   ctrDPenList.setAutoDelete(true);
   ctrDBrushList.setAutoDelete(true);
+  lowFPenList.setAutoDelete(true);
+  lowFBrushList.setAutoDelete(true);
   dangerPenList.setAutoDelete(true);
   dangerBrushList.setAutoDelete(true);
   restrPenList.setAutoDelete(true);
@@ -316,6 +323,46 @@ void KFLogConfig::slotOk()
   WRITE_DRAW_VALUES(airCPenList, airCBorder);
   WRITE_BRUSH_VALUES(airCBrushList);
 
+  config->setGroup("Airspace D");
+  WRITE_DRAW_VALUES(airDPenList, airDBorder);
+  WRITE_BRUSH_VALUES(airDBrushList);
+
+  config->setGroup("Airspace E low");
+  WRITE_DRAW_VALUES(airElPenList, airElBorder);
+  WRITE_BRUSH_VALUES(airElBrushList);
+
+  config->setGroup("Airspace E high");
+  WRITE_DRAW_VALUES(airEhPenList, airEhBorder);
+  WRITE_BRUSH_VALUES(airEhBrushList);
+
+  config->setGroup("Airspace F");
+  WRITE_DRAW_VALUES(airFPenList, airFBorder);
+  WRITE_BRUSH_VALUES(airFBrushList);
+
+  config->setGroup("Control C");
+  WRITE_DRAW_VALUES(ctrCPenList, ctrCBorder);
+  WRITE_BRUSH_VALUES(ctrCBrushList);
+
+  config->setGroup("Control D");
+  WRITE_DRAW_VALUES(ctrDPenList, ctrDBorder);
+  WRITE_BRUSH_VALUES(ctrDBrushList);
+
+  config->setGroup("Danger");
+  WRITE_DRAW_VALUES(dangerPenList, dangerBorder);
+  WRITE_BRUSH_VALUES(dangerBrushList);
+
+  config->setGroup("Low Flight");
+  WRITE_DRAW_VALUES(lowFPenList, lowFBorder);
+  WRITE_BRUSH_VALUES(lowFBrushList);
+
+  config->setGroup("Restricted Area");
+  WRITE_DRAW_VALUES(restrPenList, restrBorder);
+  WRITE_BRUSH_VALUES(restrBrushList);
+
+  config->setGroup("TMZ");
+  WRITE_DRAW_VALUES(tmzPenList, tmzBorder);
+  WRITE_BRUSH_VALUES(tmzBrushList);
+
   config->setGroup("Map Data");
   config->writeEntry("Homesite Latitude",
       MapContents::degreeToNum(homeLatE->text()));
@@ -323,6 +370,7 @@ void KFLogConfig::slotOk()
       MapContents::degreeToNum(homeLonE->text()));
   config->sync();
 
+  emit scaleChanged(lLimitN->value(), uLimitN->value());
   accept();
 }
 
@@ -386,6 +434,10 @@ void KFLogConfig::slotSelectElement(int elementID)
         SAVE_PEN(airEhPenList, airEhBorder)
         SAVE_BRUSH(airEhBrushList)
         break;
+      case AirF:
+        SAVE_PEN(airFPenList, airFBorder)
+        SAVE_BRUSH(airFBrushList)
+        break;
       case ControlC:
         SAVE_PEN(ctrCPenList, ctrCBorder)
         SAVE_BRUSH(ctrCBrushList)
@@ -393,6 +445,22 @@ void KFLogConfig::slotSelectElement(int elementID)
       case ControlD:
         SAVE_PEN(ctrDPenList, ctrDBorder)
         SAVE_BRUSH(ctrDBrushList)
+        break;
+      case Danger:
+        SAVE_PEN(dangerPenList, dangerBorder)
+        SAVE_BRUSH(dangerBrushList)
+        break;
+      case LowFlight:
+        SAVE_PEN(lowFPenList, lowFBorder)
+        SAVE_BRUSH(lowFBrushList)
+        break;
+      case Restricted:
+        SAVE_PEN(restrPenList, restrBorder)
+        SAVE_BRUSH(restrBrushList)
+        break;
+      case TMZ:
+        SAVE_PEN(tmzPenList, tmzBorder)
+        SAVE_BRUSH(tmzBrushList)
         break;
       default:
         break;
@@ -432,6 +500,10 @@ void KFLogConfig::slotSelectElement(int elementID)
         SHOW_PEN(airEhPenList, airEhBorder)
         SHOW_BRUSH(airEhBrushList)
         break;
+      case AirF:
+        SHOW_PEN(airFPenList, airFBorder)
+        SHOW_BRUSH(airFBrushList)
+        break;
       case ControlC:
         SHOW_PEN(ctrCPenList, ctrCBorder)
         SHOW_BRUSH(ctrCBrushList)
@@ -439,6 +511,22 @@ void KFLogConfig::slotSelectElement(int elementID)
       case ControlD:
         SHOW_PEN(ctrDPenList, ctrDBorder)
         SHOW_BRUSH(ctrDBrushList)
+        break;
+      case Danger:
+        SHOW_PEN(dangerPenList, dangerBorder)
+        SHOW_BRUSH(dangerBrushList)
+        break;
+      case LowFlight:
+        SHOW_PEN(lowFPenList, lowFBorder)
+        SHOW_BRUSH(lowFBrushList)
+        break;
+      case Restricted:
+        SHOW_PEN(restrPenList, restrBorder)
+        SHOW_BRUSH(restrBrushList)
+        break;
+      case TMZ:
+        SHOW_PEN(tmzPenList, tmzBorder)
+        SHOW_BRUSH(tmzBrushList)
         break;
     }
 
@@ -461,6 +549,16 @@ void KFLogConfig::slotToggleFirst(bool toggle)
         border1BrushStyle->setEnabled(false);
         break;
       case AirC:
+      case AirD:
+      case AirElow:
+      case AirEhigh:
+      case AirF:
+      case ControlC:
+      case ControlD:
+      case LowFlight:
+      case Danger:
+      case Restricted:
+      case TMZ:
         border1PenStyle->setEnabled(toggle);
         border1BrushColor->setEnabled(toggle);
         border1BrushStyle->setEnabled(toggle);
@@ -492,6 +590,16 @@ void KFLogConfig::slotToggleSecond(bool toggle)
         border2BrushStyle->setEnabled(false);
         break;
       case AirC:
+      case AirD:
+      case AirElow:
+      case AirEhigh:
+      case AirF:
+      case ControlC:
+      case ControlD:
+      case LowFlight:
+      case Danger:
+      case Restricted:
+      case TMZ:
         border2PenStyle->setEnabled(toggle);
         border2BrushColor->setEnabled(toggle);
         border2BrushStyle->setEnabled(toggle);
@@ -523,6 +631,16 @@ void KFLogConfig::slotToggleThird(bool toggle)
         border3BrushStyle->setEnabled(false);
         break;
       case AirC:
+      case AirD:
+      case AirElow:
+      case AirEhigh:
+      case AirF:
+      case ControlC:
+      case ControlD:
+      case LowFlight:
+      case Danger:
+      case Restricted:
+      case TMZ:
         border3PenStyle->setEnabled(toggle);
         border3BrushColor->setEnabled(toggle);
         border3BrushStyle->setEnabled(toggle);
@@ -552,6 +670,16 @@ void KFLogConfig::slotToggleForth(bool toggle)
         border4BrushStyle->setEnabled(false);
         break;
       case AirC:
+      case AirD:
+      case AirElow:
+      case AirEhigh:
+      case AirF:
+      case ControlC:
+      case ControlD:
+      case LowFlight:
+      case Danger:
+      case Restricted:
+      case TMZ:
         border4PenStyle->setEnabled(toggle);
         border4BrushColor->setEnabled(toggle);
         border4BrushStyle->setEnabled(toggle);
@@ -567,18 +695,27 @@ void KFLogConfig::slotSetSecond()
 {
   border2Color->setColor(border1Color->color());
   border2Pen->setValue(border1Pen->value());
+  border2PenStyle->setCurrentItem(border1PenStyle->currentItem());
+  border2BrushColor->setColor(border1BrushColor->color());
+  border2BrushStyle->setCurrentItem(border1BrushStyle->currentItem());
 }
 
 void KFLogConfig::slotSetThird()
 {
   border3Color->setColor(border2Color->color());
   border3Pen->setValue(border2Pen->value());
+  border3PenStyle->setCurrentItem(border2PenStyle->currentItem());
+  border3BrushColor->setColor(border2BrushColor->color());
+  border3BrushStyle->setCurrentItem(border2BrushStyle->currentItem());
 }
 
 void KFLogConfig::slotSetForth()
 {
   border4Color->setColor(border3Color->color());
   border4Pen->setValue(border3Pen->value());
+  border4PenStyle->setCurrentItem(border3PenStyle->currentItem());
+  border4BrushColor->setColor(border3BrushColor->color());
+  border4BrushStyle->setCurrentItem(border3BrushStyle->currentItem());
 }
 
 void KFLogConfig::slotShowLowerLimit(int value)
@@ -788,6 +925,15 @@ void KFLogConfig::__addMapTab()
         AIREH_BRUSH_STYLE_2, AIREH_BRUSH_STYLE_3, AIREH_BRUSH_STYLE_4)
   READ_BORDER(airEhBorder);
 
+  config->setGroup("Airspace F");
+  READ_PEN(airFPenList, AIRF_COLOR_1, AIRF_COLOR_2, AIRF_COLOR_3,
+        AIRF_COLOR_4, AIRF_PEN_1, AIRF_PEN_2, AIRF_PEN_3, AIRF_PEN_4,
+        AIRF_PEN_STYLE_1, AIRF_PEN_STYLE_2, AIRF_PEN_STYLE_3, AIRF_PEN_STYLE_4)
+  READ_BRUSH(airFBrushList, AIRF_BRUSH_COLOR_1, AIRF_BRUSH_COLOR_2,
+        AIRF_BRUSH_COLOR_3, AIRF_BRUSH_COLOR_4, AIRF_BRUSH_STYLE_1,
+        AIRF_BRUSH_STYLE_2, AIRF_BRUSH_STYLE_3, AIRF_BRUSH_STYLE_4)
+  READ_BORDER(airFBorder);
+
   config->setGroup("Control C");
   READ_PEN(ctrCPenList, CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
         CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
@@ -806,6 +952,42 @@ void KFLogConfig::__addMapTab()
         CTRD_BRUSH_STYLE_2, CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4)
   READ_BORDER(ctrDBorder);
 
+  config->setGroup("Danger");
+  READ_PEN(dangerPenList, DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
+        DNG_PEN_1, DNG_PEN_2, DNG_PEN_3, DNG_PEN_4,
+        DNG_PEN_STYLE_1, DNG_PEN_STYLE_2, DNG_PEN_STYLE_3, DNG_PEN_STYLE_4)
+  READ_BRUSH(dangerBrushList, DNG_BRUSH_COLOR_1, DNG_BRUSH_COLOR_2,
+        DNG_BRUSH_COLOR_3, DNG_BRUSH_COLOR_4, DNG_BRUSH_STYLE_1,
+        DNG_BRUSH_STYLE_2, DNG_BRUSH_STYLE_3, DNG_BRUSH_STYLE_4)
+  READ_BORDER(dangerBorder);
+
+  config->setGroup("Low Flight");
+  READ_PEN(lowFPenList, LOWF_COLOR_1, LOWF_COLOR_2, LOWF_COLOR_3, LOWF_COLOR_4,
+        LOWF_PEN_1, LOWF_PEN_2, LOWF_PEN_3, LOWF_PEN_4,
+        LOWF_PEN_STYLE_1, LOWF_PEN_STYLE_2, LOWF_PEN_STYLE_3, LOWF_PEN_STYLE_4)
+  READ_BRUSH(lowFBrushList, LOWF_BRUSH_COLOR_1, LOWF_BRUSH_COLOR_2,
+        LOWF_BRUSH_COLOR_3, LOWF_BRUSH_COLOR_4, LOWF_BRUSH_STYLE_1,
+        LOWF_BRUSH_STYLE_2, LOWF_BRUSH_STYLE_3, LOWF_BRUSH_STYLE_4)
+  READ_BORDER(lowFBorder);
+
+  config->setGroup("Restricted Area");
+  READ_PEN(restrPenList, RES_COLOR_1, RES_COLOR_2, RES_COLOR_3, RES_COLOR_4,
+        RES_PEN_1, RES_PEN_2, RES_PEN_3, RES_PEN_4,
+        RES_PEN_STYLE_1, RES_PEN_STYLE_2, RES_PEN_STYLE_3, RES_PEN_STYLE_4)
+  READ_BRUSH(restrBrushList, RES_BRUSH_COLOR_1, RES_BRUSH_COLOR_2,
+        RES_BRUSH_COLOR_3, RES_BRUSH_COLOR_4, RES_BRUSH_STYLE_1,
+        RES_BRUSH_STYLE_2, RES_BRUSH_STYLE_3, RES_BRUSH_STYLE_4)
+  READ_BORDER(restrBorder);
+
+  config->setGroup("TMZ");
+  READ_PEN(tmzPenList, TMZ_COLOR_1, TMZ_COLOR_2, TMZ_COLOR_3, TMZ_COLOR_4,
+        TMZ_PEN_1, TMZ_PEN_2, TMZ_PEN_3, TMZ_PEN_4,
+        TMZ_PEN_STYLE_1, TMZ_PEN_STYLE_2, TMZ_PEN_STYLE_3, TMZ_PEN_STYLE_4)
+  READ_BRUSH(tmzBrushList, TMZ_BRUSH_COLOR_1, TMZ_BRUSH_COLOR_2,
+        TMZ_BRUSH_COLOR_3, TMZ_BRUSH_COLOR_4, TMZ_BRUSH_STYLE_1,
+        TMZ_BRUSH_STYLE_2, TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4)
+  READ_BORDER(tmzBorder);
+
   mapPage = addPage(i18n("Map-Elements"),i18n("Map Configuration"),
       KGlobal::instance()->iconLoader()->loadIcon("kflog", KIcon::NoGroup,
           KIcon::SizeLarge));
@@ -814,6 +996,7 @@ void KFLogConfig::__addMapTab()
   elementBox->setTitle(i18n("visible Map-Elements"));
 
   elementSelect = new KComboBox(mapPage, "elementBox");
+  elementSelect->setMaximumWidth(300);
   elementSelect->insertItem(i18n("Road"), Road);
   elementSelect->insertItem(i18n("Highway"), Highway);
   elementSelect->insertItem(i18n("Railway"), Railway);
@@ -859,7 +1042,7 @@ void KFLogConfig::__addMapTab()
 
   QGridLayout* elLayout = new QGridLayout(mapPage, 15, 15, 12, 1);
   elLayout->addMultiCellWidget(elementBox, 0, 12, 0, 14);
-  elLayout->addWidget(elementSelect, 1, 1);
+  elLayout->addMultiCellWidget(elementSelect, 1, 1, 1, 5, AlignLeft);
   elLayout->addWidget(new QLabel(i18n("draw up to"), mapPage), 3, 1);
   elLayout->addMultiCellWidget(new QLabel(i18n("Pen"), mapPage), 3, 3, 3, 7);
   elLayout->addMultiCellWidget(new QLabel(i18n("Brush"), mapPage), 3, 3, 9, 11);

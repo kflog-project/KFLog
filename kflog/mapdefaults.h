@@ -6,6 +6,12 @@
 **
 ************************************************************************
 **
+**   mapdefaults.h
+**
+**   This file is part of KFLog2.
+**
+************************************************************************
+**
 **   Copyright (c):  2001 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
@@ -19,6 +25,15 @@
 #define HOME_DEFAULT_LAT 29125200
 #define HOME_DEFAULT_LON 5364500
 
+// Maßstäbe
+#define L_LIMIT 10
+#define U_LIMIT 1500
+#define SWITCH_S 290
+#define BORDER_1 100
+#define BORDER_2 500
+#define BORDER_3 1000
+
+// Darstellung Kartenelemente
 #define ROAD_COLOR_1  QColor(255,100,100)
 #define ROAD_COLOR_2  QColor(255,100,100)
 #define ROAD_COLOR_3  QColor(255,100,100)
@@ -39,7 +54,6 @@
 #define RIVER_COLOR_3 QColor(70,70,195)
 #define RIVER_COLOR_4 QColor(70,70,195)
 
-// Farbe nicht endgültig ;-)
 #define CANAL_COLOR_1 QColor(70,195,70)
 #define CANAL_COLOR_2 QColor(70,195,70)
 #define CANAL_COLOR_3 QColor(70,195,70)
@@ -210,6 +224,31 @@
 #define AIREH_BRUSH_STYLE_3 Qt::NoBrush
 #define AIREH_BRUSH_STYLE_4 Qt::NoBrush
 
+#define AIRF_PEN_1 4
+#define AIRF_PEN_2 3
+#define AIRF_PEN_3 3
+#define AIRF_PEN_4 2
+
+#define AIRF_PEN_STYLE_1 Qt::SolidLine
+#define AIRF_PEN_STYLE_2 Qt::SolidLine
+#define AIRF_PEN_STYLE_3 Qt::SolidLine
+#define AIRF_PEN_STYLE_4 Qt::SolidLine
+
+#define AIRF_COLOR_1 QColor(0,120,0)
+#define AIRF_COLOR_2 QColor(0,120,0)
+#define AIRF_COLOR_3 QColor(0,120,0)
+#define AIRF_COLOR_4 QColor(0,120,0)
+
+#define AIRF_BRUSH_COLOR_1 QColor(0,120,0)
+#define AIRF_BRUSH_COLOR_2 QColor(0,120,0)
+#define AIRF_BRUSH_COLOR_3 QColor(0,120,0)
+#define AIRF_BRUSH_COLOR_4 QColor(0,120,0)
+
+#define AIRF_BRUSH_STYLE_1 Qt::NoBrush
+#define AIRF_BRUSH_STYLE_2 Qt::NoBrush
+#define AIRF_BRUSH_STYLE_3 Qt::NoBrush
+#define AIRF_BRUSH_STYLE_4 Qt::NoBrush
+
 #define CTRC_PEN_1 4
 #define CTRC_PEN_2 3
 #define CTRC_PEN_3 3
@@ -260,9 +299,102 @@
 #define CTRD_BRUSH_STYLE_3 Qt::NoBrush
 #define CTRD_BRUSH_STYLE_4 Qt::NoBrush
 
-#define L_LIMIT 10
-#define U_LIMIT 1500
-#define SWITCH_S 290
-#define BORDER_1 100
-#define BORDER_2 500
-#define BORDER_3 1000
+#define LOWF_PEN_1 4
+#define LOWF_PEN_2 3
+#define LOWF_PEN_3 3
+#define LOWF_PEN_4 2
+
+#define LOWF_PEN_STYLE_1 Qt::SolidLine
+#define LOWF_PEN_STYLE_2 Qt::SolidLine
+#define LOWF_PEN_STYLE_3 Qt::SolidLine
+#define LOWF_PEN_STYLE_4 Qt::SolidLine
+
+#define LOWF_COLOR_1 QColor(0,120,0)
+#define LOWF_COLOR_2 QColor(0,120,0)
+#define LOWF_COLOR_3 QColor(0,120,0)
+#define LOWF_COLOR_4 QColor(0,120,0)
+
+#define LOWF_BRUSH_COLOR_1 QColor(0,120,0)
+#define LOWF_BRUSH_COLOR_2 QColor(0,120,0)
+#define LOWF_BRUSH_COLOR_3 QColor(0,120,0)
+#define LOWF_BRUSH_COLOR_4 QColor(0,120,0)
+
+#define LOWF_BRUSH_STYLE_1 Qt::NoBrush
+#define LOWF_BRUSH_STYLE_2 Qt::NoBrush
+#define LOWF_BRUSH_STYLE_3 Qt::NoBrush
+#define LOWF_BRUSH_STYLE_4 Qt::NoBrush
+
+#define DNG_PEN_1 4
+#define DNG_PEN_2 3
+#define DNG_PEN_3 3
+#define DNG_PEN_4 2
+
+#define DNG_PEN_STYLE_1 Qt::SolidLine
+#define DNG_PEN_STYLE_2 Qt::SolidLine
+#define DNG_PEN_STYLE_3 Qt::SolidLine
+#define DNG_PEN_STYLE_4 Qt::SolidLine
+
+#define DNG_COLOR_1 QColor(0,120,0)
+#define DNG_COLOR_2 QColor(0,120,0)
+#define DNG_COLOR_3 QColor(0,120,0)
+#define DNG_COLOR_4 QColor(0,120,0)
+
+#define DNG_BRUSH_COLOR_1 QColor(0,120,0)
+#define DNG_BRUSH_COLOR_2 QColor(0,120,0)
+#define DNG_BRUSH_COLOR_3 QColor(0,120,0)
+#define DNG_BRUSH_COLOR_4 QColor(0,120,0)
+
+#define DNG_BRUSH_STYLE_1 Qt::NoBrush
+#define DNG_BRUSH_STYLE_2 Qt::NoBrush
+#define DNG_BRUSH_STYLE_3 Qt::NoBrush
+#define DNG_BRUSH_STYLE_4 Qt::NoBrush
+
+#define RES_PEN_1 4
+#define RES_PEN_2 3
+#define RES_PEN_3 3
+#define RES_PEN_4 2
+
+#define RES_PEN_STYLE_1 Qt::SolidLine
+#define RES_PEN_STYLE_2 Qt::SolidLine
+#define RES_PEN_STYLE_3 Qt::SolidLine
+#define RES_PEN_STYLE_4 Qt::SolidLine
+
+#define RES_COLOR_1 QColor(0,120,0)
+#define RES_COLOR_2 QColor(0,120,0)
+#define RES_COLOR_3 QColor(0,120,0)
+#define RES_COLOR_4 QColor(0,120,0)
+
+#define RES_BRUSH_COLOR_1 QColor(0,120,0)
+#define RES_BRUSH_COLOR_2 QColor(0,120,0)
+#define RES_BRUSH_COLOR_3 QColor(0,120,0)
+#define RES_BRUSH_COLOR_4 QColor(0,120,0)
+
+#define RES_BRUSH_STYLE_1 Qt::NoBrush
+#define RES_BRUSH_STYLE_2 Qt::NoBrush
+#define RES_BRUSH_STYLE_3 Qt::NoBrush
+#define RES_BRUSH_STYLE_4 Qt::NoBrush
+
+#define TMZ_PEN_1 4
+#define TMZ_PEN_2 3
+#define TMZ_PEN_3 3
+#define TMZ_PEN_4 2
+
+#define TMZ_PEN_STYLE_1 Qt::SolidLine
+#define TMZ_PEN_STYLE_2 Qt::SolidLine
+#define TMZ_PEN_STYLE_3 Qt::SolidLine
+#define TMZ_PEN_STYLE_4 Qt::SolidLine
+
+#define TMZ_COLOR_1 QColor(0,120,0)
+#define TMZ_COLOR_2 QColor(0,120,0)
+#define TMZ_COLOR_3 QColor(0,120,0)
+#define TMZ_COLOR_4 QColor(0,120,0)
+
+#define TMZ_BRUSH_COLOR_1 QColor(0,120,0)
+#define TMZ_BRUSH_COLOR_2 QColor(0,120,0)
+#define TMZ_BRUSH_COLOR_3 QColor(0,120,0)
+#define TMZ_BRUSH_COLOR_4 QColor(0,120,0)
+
+#define TMZ_BRUSH_STYLE_1 Qt::NoBrush
+#define TMZ_BRUSH_STYLE_2 Qt::NoBrush
+#define TMZ_BRUSH_STYLE_3 Qt::NoBrush
+#define TMZ_BRUSH_STYLE_4 Qt::NoBrush

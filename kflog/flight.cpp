@@ -18,7 +18,6 @@
 **
 ***********************************************************************/
 
-#include <iostream>
 #include <cmath>
 #include <stdlib.h>
 #include <unistd.h>
@@ -71,8 +70,6 @@ Flight::Flight(QString fName, QList<flightPoint> r, QString pName,
     gliderType(gType),
     gliderID(gID),
     date(d),
-    tBegin(0),
-    tEnd(0),
     distance_tot(0),
     distance_wp(0),
     flightType(0),
@@ -102,21 +99,6 @@ Flight::Flight(QString fName, QList<flightPoint> r, QString pName,
   __checkWaypoints();
   __checkMaxMin();
   __flightState();
-
-//int links = 0;
-//int rechts = 0;
-//int vermischt = 0;
-
-//  for(unsigned int n = 0; n < route.count(); n++)
-//    {
-//      if(route.at(n)->f_state == Links) links++;
-//      else if(route.at(n)->f_state == Rechts) rechts++;
-//      else if(route.at(n)->f_state == Vermischt) vermischt++;
-//    }
-
-//  warning("Rechts:    %d \nLinks:     %d \nVermischt: %d", rechts, links,vermischt);
-//  warning("Gesamtanzahl: %d", route.count());
-
 }
 
 Flight::~Flight()
@@ -429,16 +411,11 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
     {
       QPoint tempP;
 
-//      warning("StreckenType: %d", flightType);
-
       for(unsigned int loop = 0; loop < wpList.count(); loop++)
         {
           /*
            * w1 ist die Winkelhalbierende des Sektors!!!
            *      (Angaben in 1/16 Grad)
-           *
-           *
-           *    schein noch nicht immer zu stimmen!!!
            */
           w1 = ( ( glMapMatrix->map(wpList.at(loop)->angle) + PI ) / PI )
                   * 180.0 * 16.0 * -1.0;
@@ -476,9 +453,9 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
                 // Inneren Sektor erneut zeichnen, damit Trennlinien
                 // zwischen Sekt. 1 und Zylinder verschwinden
-//                targetPainter->setPen(QPen::NoPen);
-//                targetPainter->drawEllipse(gx + 2, gy + 2,
-//                    (2 * R2) - 5, (2 * R2) - 5);
+                targetPainter->setPen(QPen::NoPen);
+                targetPainter->drawEllipse(gx + 2, gy + 2,
+                    (2 * R2) - 4, (2 * R2) - 4);
 
                 maskPainter->setPen(QPen(Qt::color1, 2));
                 maskPainter->setBrush(QBrush(Qt::color1));
@@ -488,14 +465,10 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                 if(loop)
                   {
                     if((flightType == FAI_S || flightType == Dreieck_S) &&
-                        loop == 2)
-                      {
+                            loop == 2)
                         targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
-                      }
                     else
-                      {
                         targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
-                      }
 
                     maskPainter->setPen(QPen(Qt::color1, 3));
                     targetPainter->drawLine(
@@ -555,13 +528,9 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
                 // Strecke
                 if(flightType == FAI_S || flightType == Dreieck_S)
-                  {
                     targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
-                  }
                 else
-                  {
                     targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
-                  }
 
                 maskPainter->setPen(QPen(Qt::color1, 3));
                 targetPainter->drawLine(
@@ -601,34 +570,22 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                 targetPainter->setBrush(QBrush::NoBrush);
                 maskPainter->setPen(QPen(Qt::color1, 2));
                 maskPainter->setBrush(QBrush::NoBrush);
-
-                targetPainter->drawEllipse(
-                  glMapMatrix->map(wpList.at(loop)->projP).x() - 8,
-                  glMapMatrix->map(wpList.at(loop)->projP).y() - 8,
-                      16, 16);
-                maskPainter->drawEllipse(
-                  glMapMatrix->map(wpList.at(loop)->projP).x() - 8,
-                  glMapMatrix->map(wpList.at(loop)->projP).y() - 8,
-                      16, 16);
                 break;
             }
 
-            }
         }
+    }
 
         // Strecke bei Start auf Schenkel
-        if(flightType == FAI_S || flightType == Dreieck_S)
-            {
-//              warning("Strecke: %d - %d",tBegin,tEnd);
-              targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
-              maskPainter->setPen(QPen(Qt::color1, 3));
-              targetPainter->drawLine(
-                  glMapMatrix->map(wpList.at(2)->projP),
-                  glMapMatrix->map(wpList.at(wpList.count() - 3)->projP));
-              maskPainter->drawLine(
-                  glMapMatrix->map(wpList.at(2)->projP),
-                  glMapMatrix->map(wpList.at(wpList.count() - 3)->projP));
-    }
+    if(flightType == FAI_S || flightType == Dreieck_S)
+      {
+        targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
+        maskPainter->setPen(QPen(Qt::color1, 3));
+        targetPainter->drawLine(glMapMatrix->map(wpList.at(2)->projP),
+            glMapMatrix->map(wpList.at(wpList.count() - 3)->projP));
+        maskPainter->drawLine(glMapMatrix->map(wpList.at(2)->projP),
+            glMapMatrix->map(wpList.at(wpList.count() - 3)->projP));
+      }
 
 
 // Flugweg
@@ -1001,7 +958,7 @@ QString Flight::getDistance(bool isOrig) const
   if(type == NotSet)  return "--";
 
   QString distString;
-  distString.sprintf("%.2f km ", dist);
+  distString.sprintf("%.2f km", dist);
 
   return distString;
 }
@@ -1147,65 +1104,64 @@ void Flight::__setWaypointType()
 
 void Flight::__appendWaypoint(struct wayPoint* newPoint)
 {
-  if(wpList.count() && dist(wpList.last(), newPoint) <= 0.1) return;
-  wpList.append(newPoint);
-
-  if(tEnd == 0 && wpList.count() > 2)
-    {
-      int loop = 0;
-
-      for(int n = wpList.count() - 3; n >= 0; n--)
-        {
-          loop++;
-          if(newPoint->origP == wpList.at(n)->origP)
-            {
-              bool noTask = false;
-
-              tEnd = wpList.count() - 1;
-              tBegin = n;
-              wpList.at(tEnd)->type = Flight::End;
-              wpList.at(tBegin)->type = Flight::Begin;
-
-
-              // Wenn wpList.count() < 4 -> keine Aufgabe deklariert
-              ///// Müll rausfiltern
-              if(tEnd - tBegin == 2)
-                {
-                  if(wpList.at(tBegin)->origP == wpList.at(tBegin + 1)->origP)
-                      noTask = true;
-                }
-              else
-                {
-                  for(int loop = tBegin + 2; loop < tEnd; loop++)
-                    {
-                      if(wpList.at(loop - 1)->origP == wpList.at(loop)->origP)
-                          noTask = true;
-                    }
-                }
-
-              if(noTask)
-                {
-                  for(int m = 0; m < tEnd; m++)
-                      wpList.at(m)->type = Flight::FreeP;
-
-                  flightType = Flight::Abgebrochen;
-                  KMessageBox::error(0, i18n("The task is not valid.<BR>"
-                           "All waypoints are the same point."));
-                }
-              else
-                {
-                  for(int m = 0; m < tBegin; m++)
-                      wpList.at(m)->type = Flight::FreeP;
-
-                  for(int m = tBegin + 1; m < tEnd; m++)
-                      wpList.at(m)->type = Flight::RouteP;
-                }
-              break;
-            }
-        }
-    }
-  else
-      newPoint->type = Flight::FreeP;
+//  wpList.append(newPoint);
+//
+//  if(tEnd == 0 && wpList.count() > 2)
+//    {
+//      int loop = 0;
+//
+//      for(int n = wpList.count() - 3; n >= 0; n--)
+//        {
+//          loop++;
+//          if(newPoint->origP == wpList.at(n)->origP)
+//            {
+//              bool noTask = false;
+//
+//              tEnd = wpList.count() - 1;
+//              tBegin = n;
+//              wpList.at(tEnd)->type = Flight::End;
+//              wpList.at(tBegin)->type = Flight::Begin;
+//
+//
+//              // Wenn wpList.count() < 4 -> keine Aufgabe deklariert
+//              ///// Müll rausfiltern
+//              if(tEnd - tBegin == 2)
+//                {
+//                  if(wpList.at(tBegin)->origP == wpList.at(tBegin + 1)->origP)
+//                      noTask = true;
+//                }
+//              else
+//                {
+//                  for(int loop = tBegin + 2; loop < tEnd; loop++)
+//                    {
+//                      if(wpList.at(loop - 1)->origP == wpList.at(loop)->origP)
+//                          noTask = true;
+//                    }
+//                }
+//
+//              if(noTask)
+//                {
+//                  for(int m = 0; m < tEnd; m++)
+//                      wpList.at(m)->type = Flight::FreeP;
+//
+//                  flightType = Flight::Abgebrochen;
+//                  KMessageBox::error(0, i18n("The task is not valid.<BR>"
+//                           "All waypoints are the same point."));
+//                }
+//              else
+//                {
+//                  for(int m = 0; m < tBegin; m++)
+//                      wpList.at(m)->type = Flight::FreeP;
+//
+//                  for(int m = tBegin + 1; m < tEnd; m++)
+//                      wpList.at(m)->type = Flight::RouteP;
+//                }
+//              break;
+//            }
+//        }
+//    }
+//  else
+//      newPoint->type = Flight::FreeP;
 }
 
 void Flight::__checkType()
@@ -1217,8 +1173,6 @@ void Flight::__checkType()
    **/
   distance_tot = 0;
   double distance_tot_d = 0;
-/// Nicht gesetzt wird vermutlich auch nicht mehr gebraucht!!
-//warning("tBegin: %d / tEnd: %d", tBegin, tEnd);
 
   if(wpList.count() < 4)
     {
@@ -1228,10 +1182,7 @@ void Flight::__checkType()
     }
 
   for(unsigned int loop = 2; loop <= wpList.count() - 2; loop++)
-    {
-      wpList.at(loop)->distance = dist(wpList.at(loop - 1), wpList.at(loop));
       distance_tot = distance_tot + wpList.at(loop)->distance;
-    }
 
   if(dist(wpList.at(1),wpList.at(wpList.count() - 2)) < 1.0)
     {
@@ -1248,8 +1199,7 @@ void Flight::__checkType()
           case 2:
             // FAI Dreieck
             if(__isFAI(distance_tot,wpList.at(2)->distance,
-                wpList.at(3)->distance,
-                wpList.at(4)->distance))
+                wpList.at(3)->distance, wpList.at(4)->distance))
                flightType = FAI;
             else
               // Dreieck
@@ -1263,14 +1213,12 @@ void Flight::__checkType()
             // Erste Abfrage je nachdem ob Vieleck oder Dreieck mehr Punkte geben
             // würde
             distance_tot_d = distance_tot - wpList.at(2)->distance
-                 - wpList.at(5)->distance
-                 + dist(wpList.at(2), wpList.at(4));
+                 - wpList.at(5)->distance + dist(wpList.at(2), wpList.at(4));
 
 
             //warning("dist: %.2f  dist_d: %.2f",distance_tot,distance_tot_d);
-            if(__isFAI(distance_tot_d, dist(wpList.at(2),
-                  wpList.at(4)), wpList.at(3)->distance,
-                  wpList.at(4)->distance))
+            if(__isFAI(distance_tot_d, dist(wpList.at(2), wpList.at(4)),
+                  wpList.at(3)->distance, wpList.at(4)->distance))
               {
                 if(distance_tot > distance_tot_d * (1.0 + 1.0/3.0))
                   {
@@ -1299,14 +1247,11 @@ void Flight::__checkType()
           case 5:
             // 2x Dreieck nur als FAI gültig
             flightType = Unknown;
-            if( (distance_tot / 2 <= 100) &&
-                (wpList.at(1) == wpList.at(4)) &&
+            if( (distance_tot / 2 <= 100) && (wpList.at(1) == wpList.at(4)) &&
                 (wpList.at(2) == wpList.at(5)) &&
                 (wpList.at(3) == wpList.at(6)) &&
-                __isFAI(distance_tot / 2,
-                        wpList.at(2)->distance,
-                        wpList.at(3)->distance,
-                        wpList.at(4)->distance))
+                __isFAI(distance_tot / 2, wpList.at(2)->distance,
+                        wpList.at(3)->distance, wpList.at(4)->distance))
               {
                 flightType = FAI_2;
               }
@@ -1453,16 +1398,16 @@ void Flight::__checkWaypoints()
     }
 
 
-// Noch nötig ???
-  if(dist(wpList.at(0), route.at(1)) < 1.0)
-    {
-      wpList.at(0)->sector1 = route.at(0)->time;
-    }
-
-  if(dist(wpList.last(), route.last()) < 1.0)
-    {
-      wpList.last()->sector1 = route.last()->time;
-    }
+//// Noch nötig ???
+//  if(dist(wpList.at(0), route.at(1)) < 1.0)
+//    {
+//      wpList.at(0)->sector1 = route.at(0)->time;
+//    }
+//
+//  if(dist(wpList.last(), route.last()) < 1.0)
+//    {
+//      wpList.last()->sector1 = route.last()->time;
+//    }
 
   unsigned int startIndex = 0, dummy = 0;
 
@@ -1565,21 +1510,20 @@ void Flight::__checkWaypoints()
   double dmstMalus = 1.0, aussenlande = 0.0;
   bool home, stop = false;
 
-  if(wpList.at(tBegin)->sector1 == 0)
+  if(wpList.at(1)->sector1 == 0)
     {
       KMessageBox::information(0,
           i18n("You have not reached the first waypoint of your task."));
       return;
     }
 
-  for(int loop = tBegin + 1; loop < tEnd; loop++)
+  // Durchgehen der Wendepunkte
+  for(int loop = 1; loop < wpList.count() - 2; loop++)
     {
       if(!stop)
         {
           if(wpList.at(loop)->sector1 != 0)
-            {
               dmstCount++;
-            }
           else if(wpList.at(loop)->sector2 != 0)
             {
               dmstMalus += sectorMalus;
@@ -1588,7 +1532,7 @@ void Flight::__checkWaypoints()
           else
             {
               // Wendepunkt nicht erreicht!!
-              if(loop == tBegin + 1)
+              if(loop == 2)
                 {
                   KMessageBox::information(0,
                       i18n("You have not reached the first waypoint of your task."));
@@ -1601,53 +1545,53 @@ void Flight::__checkWaypoints()
             }
         }
 
-      if(wpList.at(loop)->sectorFAI != 0) faiCount++;
+      if(wpList.at(loop)->sectorFAI != 0)
+          faiCount++;
     }
 
-  if(wpList.at(tEnd)->sector1 == 0)
+  if(wpList.at(wpList.count() - 2)->sector1 == 0)
     {
       home = false;
       KMessageBox::error(0,
           i18n("You have not reached the last point of your task."));
 
-      if(dist(wpList.at(tBegin + dmstCount), route.last()) < 1.0)
+      if(dist(wpList.at(1 + dmstCount), route.last()) < 1.0)
         {
           // Landung auf letztem Wegpunkt
         }
       else
           // Außenlandung -- Wertung: + 1Punkt bis zur Außenlandung
-          aussenlande = dist(wpList.at(tBegin + dmstCount), route.last());
+          aussenlande = dist(wpList.at(1 + dmstCount), route.last());
     }
   else
     {
+      // Zu Hause gelandet
       dmstCount++;
       faiCount++;
       home = true;
     }
 
   // FAI erreicht?
-//  if(faiCount == tEnd - tBegin)
+//  if(faiCount == wpList.count() - 2)
 //    {
-//      cerr << "Nach FAI Regeln erfüllt!\n";
+//      warning("Nach FAI Regeln erfüllt!");
 //    }
 
   double wertDist = 0, F = 1;
 
-  if(dmstCount != tEnd - tBegin)
+  if(dmstCount != wpList.count() - 2)
     {
       if(home)
         {
-          wertDist = dist(wpList.at(tEnd),
-              wpList.at(tBegin + dmstCount - 1));
-          for(int loop = tBegin; loop < tBegin + dmstCount; loop++)
+          wertDist = dist(wpList.at(wpList.count() - 1),
+              wpList.at(dmstCount));
+          for(int loop = 1; loop < 1 + dmstCount; loop++)
               wertDist = wertDist + wpList.at(loop)->distance;
-
         }
       else
         {
-          for(int loop = tBegin; loop <= tBegin + dmstCount; loop++)
+          for(int loop = 1; loop <= 1 + dmstCount; loop++)
               wertDist = wertDist + wpList.at(loop)->distance;
-
         }
     }
   else
@@ -1680,22 +1624,14 @@ void Flight::__checkWaypoints()
 
   taskPoints = (wertDist * F * 100) / gliderIndex * dmstMalus +
                       (aussenlande * pointCancel * 100) / gliderIndex;
+
   if(origList.count())
     {
       /*
        * Optimierter Flug: 10% abziehen
        */
       taskPoints -= ( taskPoints * (malusValue / 100.0) );
-//      cerr << "reduziere Punkte um 10%\n";
     }
-
-//  cerr << "dmstCount " << dmstCount << endl;
-//  cerr << "Punkte/km " << F << endl;
-//  cerr << "malus: " << dmstMalus << endl;
-//  cerr << "Index: " << gliderIndex << endl;
-//  cerr << "Entfernung: " << wertDist << endl;
-//  cerr << "Punkte: " << taskPoints << endl;
-
 
   if (time_error)
    {

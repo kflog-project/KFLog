@@ -88,7 +88,7 @@ class MapContents
     /** Zeichnet die Höhenlinien */
     void drawIsoList(QPainter* targetPainter, QPainter* maskPainter);
     /** */
-    void printList(QPainter*, unsigned int listID);
+    void printContents(QPainter*);
     /**
      * Loads a new flight-file.
      */
@@ -108,25 +108,22 @@ class MapContents
     /** Close a flight */
     void closeFlight();
     /**
-     * The listid.
-     */
-
-    enum listID {NotSet = 0, IntAirportList, AirportList, GliderList,
-        AddSitesList, OutList, NavList, AirspaceList, ObstacleList, ReportList,
-        CityList, VillageList, LandmarkList, HighwayList, HighwayEntryList,
-        RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
-        WaypointList, DigitList, FlightList};
-
-    static int degreeToNum(const char* degree);
-
-  private:
-    /**
      * Converts the longitute or latitute into the internal format
      * suitable for the Location-class. "degree" is a string in the
      * format: [g]gg.mm'ss"X where g,m,s are any digits from 0 to 9
      * and X is one of N, S, E, W.
      */
-    int __degreeToNum(const char* degree);
+    static int degreeToNum(QString degree);
+    /**
+     * The listid.
+     */
+    enum listID {NotSet = 0, AirportList, GliderList,
+        AddSitesList, OutList, NavList, AirspaceList, ObstacleList, ReportList,
+        CityList, VillageList, LandmarkList, HighwayList, HighwayEntryList,
+        RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
+        WaypointList, DigitList, FlightList};
+
+  private:
     /** reads a new binary-map-file */
     bool __readBinaryFile(const int fileSecID, const char fileTypeID);
     /** */
@@ -212,7 +209,7 @@ class MapContents
      */
     unsigned int* waypointList;
     /**
-     * waypointIndex contains the index of the waypoin.
+     * waypointIndex contains the index of the waypoint.
      */
     unsigned int* waypointIndex;
     /**

@@ -57,13 +57,6 @@ ElevPoint::~ElevPoint()
 
 void ElevPoint::printMapElement(QPainter* printPainter)
 {
-
-}
-
-void ElevPoint::printMapElement(QPainter* printPainter, const double dX,
-    const double dY, const int mapCenterLon, const double scale,
-    const struct elementBorder mapBorder)
-{
   if(!__isVisible()) return;
 }
 

@@ -24,6 +24,7 @@
 #include <klocale.h>
 #include <kmenubar.h>
 #include <kmessagebox.h>
+#include <kstddirs.h>
 #include <ktoolbarbutton.h>
 
 #include <qbitmap.h>
@@ -58,9 +59,8 @@
 #define PIX_HEIGHT QApplication::desktop()->height()
 
 Map::Map(KFLogApp *m, QFrame* parent, const char* name)
-: QWidget(parent, name),
-  mainApp(m), prePos(-50, -50), preCur1(-50, -50), preCur2(-50, -50), posNum(1),
-    indexLength(0)
+  : QWidget(parent, name),
+    mainApp(m), prePos(-50, -50), preCur1(-50, -50), preCur2(-50, -50)
 {
   // defining the cursor for the map:
   static const unsigned char cross_bits[] = {
@@ -77,63 +77,53 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
   };
 
+  QBitmap bitCursorMask;
+  bitCursorMask.resize(40,40);
+  bitCursorMask.fill(Qt::color0);
   pixCursor.resize(40,40);
   pixCursor.fill(white);
 
   QPainter cursor(&pixCursor);
-  cursor.setPen(QPen(QColor(255,100,255), 2));
+  cursor.setPen(QPen(QColor(255,0,255), 2));
   cursor.drawLine(0,0,40,40);
   cursor.drawLine(0,40,40,0);
   cursor.setPen(QPen(QColor(255,0,255), 3));
   cursor.drawEllipse(10, 10, 20, 20);
   cursor.end();
 
-  pixCursor1.resize(40,40);
-  pixCursor1.fill(white);
-  QPainter cursor1(&pixCursor1);
-  cursor1.setPen(QPen(QColor(0,255,0), 3));
-  cursor1.drawLine(0,0,40,40);
-  cursor1.drawLine(0,40,40,0);
-//  cursor1.setPen(QPen(QColor(255,0,255), 3));
-//  cursor.drawEllipse(10, 10, 20, 20);
-  cursor1.end();
+  cursor.begin(&bitCursorMask);
+  cursor.setPen(QPen(Qt::color1, 2));
+  cursor.drawLine(0,0,40,40);
+  cursor.drawLine(0,40,40,0);
+  cursor.setPen(QPen(Qt::color1, 3));
+  cursor.drawEllipse(10, 10, 20, 20);
+  cursor.end();
 
-  pixCursor2.resize(40,40);
-  pixCursor2.fill(white);
-  QPainter cursor2(&pixCursor2);
-  cursor2.setPen(QPen(QColor(255,0,0), 3));
-  cursor2.drawLine(0,0,40,40);
-  cursor2.drawLine(0,40,40,0);
-//  cursor2.setPen(QPen(QColor(255,0,255), 3));
-//  cursor.drawEllipse(10, 10, 20, 20);
-  cursor2.end();
+  pixCursor.setMask(bitCursorMask);
 
-  pixCursorBuffer1.resize(40,40);
+  pixCursor1 = QPixmap(KGlobal::dirs()->findResource("appdata",
+      "pics/flag_green.png"));
+  pixCursor2 = QPixmap(KGlobal::dirs()->findResource("appdata",
+      "pics/flag_red.png"));
+
+  pixCursorBuffer1.resize(32,32);
   pixCursorBuffer1.fill(white);
-  pixCursorBuffer2.resize(40,40);
+
+  pixCursorBuffer2.resize(32,32);
   pixCursorBuffer2.fill(white);
 
-  pixAllSites.resize( PIX_WIDTH, PIX_HEIGHT );
+  pixAero.resize( PIX_WIDTH, PIX_HEIGHT );
   pixAirspace.resize( PIX_WIDTH, PIX_HEIGHT );
   pixFlight.resize( PIX_WIDTH, PIX_HEIGHT );
-  pixGlider.resize( PIX_WIDTH, PIX_HEIGHT );
   pixGrid.resize( PIX_WIDTH, PIX_HEIGHT );
-  pixWaypoints.resize( PIX_WIDTH, PIX_HEIGHT );
   pixUnderMap.resize( PIX_WIDTH, PIX_HEIGHT );
   pixIsoMap.resize( PIX_WIDTH, PIX_HEIGHT );
   bitMapMask.resize( PIX_WIDTH, PIX_HEIGHT );
   bitAirspaceMask.resize( PIX_WIDTH, PIX_HEIGHT );
   bitFlightMask.resize( PIX_WIDTH, PIX_HEIGHT );
 
-  indexList = new unsigned int[1];
-  xPos = new int[1];
-  yPos = new int[1];
-
   airspaceRegList = new QList<QRegion>;
-  cityRegList = new QList<QRegion>;
   airspaceRegList->setAutoDelete(true);
-  cityRegList->setAutoDelete(true);
-  displayFlights = false;
 
   const QBitmap cross(32, 32, cross_bits, true);
   const QCursor crossCursor(cross, cross);
@@ -155,13 +145,13 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
          "scale.</P>"));
 }
 
-Map::~Map()  {  delete[] indexList;  }
+Map::~Map()
+{
+
+}
 
 void Map::mouseMoveEvent(QMouseEvent* event)
 {
-  // keep the current mouse position
-  _currentPos = event->pos();
-
   extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
 
@@ -171,12 +161,11 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
   struct flightPoint* cP = new struct flightPoint[1];
 
-  if(_globalMapContents.searchFlightPoint(_currentPos, cP) != -1)
+  if(_globalMapContents.searchFlightPoint(event->pos(), cP) != -1)
     {
       mainApp->showPointInfo(_globalMapMatrix.mapToWgs(event->pos()), &cP[0]);
       prePos = _globalMapMatrix.map(cP[0].projP);
-      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor,
-          0, 0, -1, -1, NotEraseROP);
+      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
     }
   else
     {
@@ -189,6 +178,11 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
 void Map::mousePressEvent(QMouseEvent* event)
 {
+  // First: delete the cursor, if visible:
+  if(prePos.x() >= 0)
+      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+          prePos.x() - 20, prePos.y() - 20, 40, 40);
+
   extern MapContents _globalMapContents;
   extern const MapMatrix _globalMapMatrix;
 
@@ -197,7 +191,7 @@ void Map::mousePressEvent(QMouseEvent* event)
   if(event->button() == MidButton)
     {
       extern MapMatrix _globalMapMatrix;
-      _globalMapMatrix.centerToMouse(event->pos());
+      _globalMapMatrix.centerToPoint(event->pos());
       _globalMapMatrix.createMatrix(this->size());
       __redrawMap();
     }
@@ -207,168 +201,166 @@ void Map::mousePressEvent(QMouseEvent* event)
     }
   else if(event->button() == RightButton)
     {
-      delete[] indexList;
-      indexList = new unsigned int[1];
+      bool show = false, isAirport = false;
 
-  	  KPopupMenu* helpMenu = new KPopupMenu("Info");
-	    bool show = false;
-	    bool isAirport = false;
-
-      QRegion* testReg;
       BaseMapElement* hitElement;
       QString text;
 
-      if(showCity)
+      QPoint sitePos;
+      double dX, dY, delta(16.0);
+
+      if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
+
+      /*
+       * Segelflugplätze, soweit vorhanden, kommen als erster Eintrag
+       */
+      for(unsigned int loop = 0;
+            loop < _globalMapContents.getListLength(
+                    MapContents::GliderList); loop++)
         {
-          /*
-           * zunächst nach Städten suchen
-           */
-          for(unsigned int loop = 0; loop < cityRegList->count(); loop++)
+          hitElement = _globalMapContents.getElement(
+                  MapContents::GliderList, loop);
+          sitePos = ((SinglePoint*)hitElement)->getMapPosition();
+
+          dX = sitePos.x() - current.x();
+          dY = sitePos.y() - current.y();
+
+          // Abstand entspricht der Icon-Größe.
+          if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+              ( ( dY < delta ) && ( dY > -delta ) ) )
             {
-              testReg = cityRegList->at(loop);
-              if(testReg->contains(current))
-                {
-                  hitElement = _globalMapContents.getElement(
-                          MapContents::CityList, loop);
-//          text.sprintf("%s %d", i18n("City:"), loop);
-                  text = i18n("City:");
-                  text = text + ' ' + hitElement->getName();
-                  helpMenu->setTitle(text);
-                  show = true;
-                }
+              text = text + ((SinglePoint*)hitElement)->getInfoString();
+              // Text anzeigen
+              QWhatsThis::enterWhatsThisMode();
+              QWhatsThis::leaveWhatsThisMode(text);
+              isAirport = true;
             }
         }
 
-//      if(showGlider)
+//      text = "";    // Wir wollen _nur_ Flugplätze anzeigen!
+
+      if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
+
+      for(unsigned int loop = 0;
+            loop < _globalMapContents.getListLength(
+                  MapContents::AirportList); loop++)
         {
-          /*
-           * Segelflugplätze, soweit vorhanden, kommen als erster Eintrag
-           */
-          QPoint sitePos;
-          double dX, dY, delta;
+          hitElement = _globalMapContents.getElement(
+                  MapContents::AirportList, loop);
+          sitePos = ((SinglePoint*)hitElement)->getMapPosition();
 
-          delta = 16.0;
-          // Ist die Grenze noch aktuell ???
-          if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
+          dX = sitePos.x() - current.x();
+          dY = sitePos.y() - current.y();
 
-          for(unsigned int loop = 0;
-                loop < _globalMapContents.getListLength(
-                        MapContents::GliderList); loop++)
+          // Abstand entspricht der Icon-Größe.
+          if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+              ( ( dY < delta ) && ( dY > -delta ) ) )
+            {
+              text = text + ((SinglePoint*)hitElement)->getInfoString();
+              // Text anzeigen
+              QWhatsThis::enterWhatsThisMode();
+              QWhatsThis::leaveWhatsThisMode(text);
+              isAirport = true;
+            }
+        }
+
+      QList<struct wayPoint>* wpList =
+          _globalMapContents.getFlight()->getWPList();
+
+      delta = 25;
+      bool isWP = false;
+      QString wpText;
+      wpText = "<B>Waypoint:</B><UL>";
+
+      for(unsigned int loop = 0; loop < wpList->count(); loop++)
+        {
+          sitePos = _globalMapMatrix.map(wpList->at(loop)->projP);
+
+          dX = sitePos.x() - current.x();
+          dY = sitePos.y() - current.y();
+
+          // We do not search for the sector ...
+          if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+              ( ( dY < delta ) && ( dY > -delta ) ) )
+            {
+              isWP = true;
+
+              QString tmpText, timeText;
+
+              if(wpList->at(loop)->sector1 != 0)
+                {
+                  timeText = printTime(wpList->at(loop)->sector1);
+                  tmpText = i18n("Sector 1");
+                }
+              else if(wpList->at(loop)->sector2 != 0)
+                {
+                  timeText = printTime(wpList->at(loop)->sector2);
+                  tmpText = i18n("Sector 2");
+                }
+              else if(wpList->at(loop)->sectorFAI != 0)
+                {
+                  timeText = printTime(wpList->at(loop)->sectorFAI);
+                  tmpText = i18n("FAI-Sector");
+                }
+              else
+                {
+                  timeText = "&nbsp;" + i18n("not reached");
+                }
+
+              switch(wpList->at(loop)->type)
+                {
+                  case Flight::TakeOff:
+                    tmpText = i18n("Take Off");
+                    break;
+                  case Flight::Begin:
+                    tmpText = i18n("Begin of task");
+                    break;
+                  case Flight::End:
+                    tmpText = i18n("End of task");
+                    break;
+                  case Flight::Landing:
+                    tmpText = i18n("Landing");
+                    break;
+                }
+
+              wpText = wpText + "<LI><B>" + wpList->at(loop)->name + "</B>  " +
+                  "&nbsp;" + timeText + " / " + tmpText + "<BR>" +
+                  printPos(wpList->at(loop)->origP.x()) + " / " +
+                  printPos(wpList->at(loop)->origP.y(), false) + "</LI>";
+            }
+        }
+
+      if(isWP)
+        {
+          wpText = wpText + "</UL>";
+          text = text + wpText;
+          // Text anzeigen
+          QWhatsThis::enterWhatsThisMode();
+          QWhatsThis::leaveWhatsThisMode(text);
+          isAirport = true;
+        }
+
+      if(isAirport)  return;
+
+      text = text + "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
+
+      for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
+        {
+          if(airspaceRegList->at(loop)->contains(current))
             {
               hitElement = _globalMapContents.getElement(
-                      MapContents::GliderList, loop);
-              sitePos = ((SinglePoint*)hitElement)->getMapPosition();
+                    MapContents::AirspaceList, loop);
 
-              dX = sitePos.x() - current.x();
-              dY = sitePos.y() - current.y();
-
-              // Abstand entspricht der Icon-Größe.
-              if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-                  ( ( dY < delta ) && ( dY > -delta ) ) )
-                {
-//                  warning("Zeige Infos an ...");
-                  text = text + ((SinglePoint*)hitElement)->getInfoString();
-                  /*
-                   * Text anzeigen
-                   */
-                  QWhatsThis::enterWhatsThisMode();
-                  QWhatsThis::leaveWhatsThisMode(text);
-                  isAirport = true;
-                }
-            }
-            /*
-              hitElement = _globalMapContents.getElement(
-                        MapContents::GliderList, loop);
-              gliderPos = ((SinglePoint*)hitElement)->getMapPosition();
-
-              dX = gliderPos.x() - current.x();
-              dY = gliderPos.y() - current.y();
-
-              // Abstand entspricht der Icon-Größe.
-              if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-                  ( ( dY < delta ) && ( dY > -delta ) ) )
-                {
-                  text = i18n("Glidersite:");
-                  text = text + ' ' + hitElement->getName();
-//                  helpMenu->insertItem(Icon(KApplication::kde_datadir() +
-//                      "/kflog/map/small/glider.xpm"), text);
-                  helpMenu->connectItem(helpMenu->count() - 1, this,
-                      SLOT(slotShowMapElement()));
-                  // helpMenu enthält auf jeden Fall den Titel und
-                  // zwei Linien, also 3 Einträge !!!
-                  indexLength = helpMenu->count() - 3;
-                  indexList = (unsigned int*) realloc(indexList,
-                            (2 * indexLength * sizeof(int)));
-                  indexList[2 * indexLength - 2] =
-                          (unsigned int)BaseMapElement::Glidersite;
-                  indexList[2 * indexLength - 1] = loop;
-                  show = true;
-                }
-            }
-            */
-        }
-
-//      if(showAirport)
-        {
-          QPoint sitePos;
-          double dX, dY, delta;
-
-          delta = 16.0; // Ist die Grenze noch aktuell ???
-          text = "";    // Wir wollen _nur_ Flugplätze anzeigen!
-          if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
-
-          for(unsigned int loop = 0;
-                loop < _globalMapContents.getListLength(
-                      MapContents::AirportList); loop++)
-            {
-              hitElement = _globalMapContents.getElement(
-                      MapContents::AirportList, loop);
-              sitePos = ((SinglePoint*)hitElement)->getMapPosition();
-
-              dX = sitePos.x() - current.x();
-              dY = sitePos.y() - current.y();
-
-              // Abstand entspricht der Icon-Größe.
-              if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-                  ( ( dY < delta ) && ( dY > -delta ) ) )
-                {
-                  text = text + ((SinglePoint*)hitElement)->getInfoString();
-                  /*
-                   * Text anzeigen
-                   */
-                  QWhatsThis::enterWhatsThisMode();
-                  QWhatsThis::leaveWhatsThisMode(text);
-                  isAirport = true;
-                }
+              text = text + "<LI>" + ((Airspace*)hitElement)->getInfoString()
+                  + "</LI>";
+              show = true;
             }
         }
-
-        if(isAirport)  return;
-//      if(showAirspace)
-        {
-          Airspace* tempAir;
-
-          text = text + "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
-          for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
-            {
-              testReg = airspaceRegList->at(loop);
-              if(testReg->contains(current))
-                {
-                  hitElement = _globalMapContents.getElement(
-                        MapContents::AirspaceList, loop);
-                  tempAir = (Airspace*)hitElement;
-                  text = text + "<LI>" + tempAir->getInfoString() + "</LI>";
-                  show = true;
-                }
-            }
-          text = text + "</UL>";
-        }
+      text = text + "</UL>";
 
       if(show)
         {
-          /*
-           * Text anzeigen
-           */
+          //  Text anzeigen
           QWhatsThis::enterWhatsThisMode();
           QWhatsThis::leaveWhatsThisMode(text);
         }
@@ -498,11 +490,9 @@ void Map::__drawGrid()
 
 void Map::__drawMap()
 {
-  QPainter aSitesP(&pixAllSites);
+  QPainter aeroP(&pixAero);
   QPainter airSpaceP(&pixAirspace);
   QPainter flightP(&pixFlight);
-  QPainter gliderP(&pixGlider);
-  QPainter waypointP(&pixWaypoints);
   QPainter uMapP(&pixUnderMap);
   QPainter isoMapP(&pixIsoMap);
   QPainter mapMaskP(&bitMapMask);
@@ -510,18 +500,10 @@ void Map::__drawMap()
   QPainter airspaceMaskP(&bitAirspaceMask);
 
   airspaceRegList->clear();
-  cityRegList->clear();
 
   extern MapContents _globalMapContents;
 
   BaseMapElement* _current;
-
-  delete[] xPos;
-  delete[] yPos;
-
-  posNum = _globalMapContents.getListLength(MapContents::GliderList);
-  xPos = new int[posNum];
-  yPos = new int[posNum];
 
   pixIsoMap.fill(QColor(96,128,248));
 
@@ -553,14 +535,6 @@ void Map::__drawMap()
 
   mainApp->slotSetProgress(35);
 
-//  _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::CityList);
-//  for(unsigned int loop = 0; loop < _globalMapContents.getListLength(
-//          MapContents::CityList); loop++)
-//    {
-//      _current = _globalMapContents.getElement(MapContents::CityList, loop);
-//      cityRegList->append(_current->drawRegion(&uMapP, &mapMaskP));
-//    }
-
   mainApp->slotSetProgress(40);
 
 //  _globalMapContents.drawList(&uMapP, MapContents::VillageList);
@@ -575,11 +549,11 @@ void Map::__drawMap()
 
   mainApp->slotSetProgress(55);
 
-  _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::ReportList);
+  _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::ReportList);
 
   mainApp->slotSetProgress(60);
 
-  _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::NavList);
+  _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::NavList);
 
   mainApp->slotSetProgress(65);
 
@@ -596,40 +570,30 @@ void Map::__drawMap()
 
   mainApp->slotSetProgress(70);
 
-  for(unsigned int loop = 0; loop < _globalMapContents.getListLength(
-        MapContents::IntAirportList); loop++)
-    {
-      _current = _globalMapContents.getElement(
-            MapContents::IntAirportList, loop);
-      _current->drawMapElement(&aSitesP, &mapMaskP);
-    }
-
   mainApp->slotSetProgress(75);
 
-  _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::AirportList);
+  _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::AirportList);
 
   mainApp->slotSetProgress(80);
 
-  _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::AddSitesList);
+  _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::AddSitesList);
 
   mainApp->slotSetProgress(85);
 
-  _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::OutList);
+  _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::OutList);
 
   mainApp->slotSetProgress(90);
 
-  _globalMapContents.drawList(&gliderP, &mapMaskP, MapContents::GliderList);
+  _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::GliderList);
 
   mainApp->slotSetProgress(95);
 
   _globalMapContents.drawList(&flightP, &flightMaskP, MapContents::FlightList);
 
   // Closing the painter ...
-  aSitesP.end();
+  aeroP.end();
   airSpaceP.end();
   flightP.end();
-  gliderP.end();
-  waypointP.end();
   uMapP.end();
   airspaceMaskP.end();
   flightMaskP.end();
@@ -637,13 +601,15 @@ void Map::__drawMap()
 
 void Map::resizeEvent(QResizeEvent* event)
 {
-  extern MapMatrix _globalMapMatrix;
-  _globalMapMatrix.createMatrix(event->size());
+  if(!event->size().isEmpty())
+    {
+      extern MapMatrix _globalMapMatrix;
+      _globalMapMatrix.createMatrix(event->size());
+      pixBuffer.resize(event->size());
+      pixBuffer.fill(white);
 
-  pixBuffer.resize(event->size());
-  pixBuffer.fill(white);
-
-  if(!event->size().isEmpty()) __redrawMap();
+      __redrawMap();
+    }
 
   emit changed(event->size());
 }
@@ -673,21 +639,17 @@ void Map::__redrawMap()
   // Statusbar noch nicht "genial" eingestellt ...
   mainApp->slotSetProgress(0);
 
-  pixAllSites.fill(white);
+  pixAero.fill(white);
   pixAirspace.fill(white);
-  pixGlider.fill(white);
   pixGrid.fill(white);
   pixUnderMap.fill(black);
   pixIsoMap.fill(white);
-  pixWaypoints.fill(white);
-//  pixBuffer.fill(white);
   pixFlight.fill(white);
 
   bitMapMask.fill(Qt::color0);
   bitFlightMask.fill(Qt::color0);
   bitAirspaceMask.fill(Qt::color0);
 
-  //
   QPoint temp1(preCur1);
   QPoint temp2(preCur2);
 
@@ -700,7 +662,7 @@ void Map::__redrawMap()
   __drawGrid();
   __drawMap();
 
-  slotShowLayer();
+  __showLayer();
 
   mainApp->slotSetProgress(100);
 
@@ -717,22 +679,19 @@ void Map::slotRedrawMap()
   __redrawMap();
 }
 
-void Map::slotShowLayer()
+void Map::__showLayer()
 {
-//  pixBuffer.fill(QColor(239,238,236));
-  /* Wg. der Höhenlinien mal geändert ... */
-//  pixBuffer.fill(white);
-
   pixUnderMap.setMask(bitMapMask);
   pixFlight.setMask(bitFlightMask);
+
   bitBlt(&pixBuffer, 0, 0, &pixIsoMap);
-//  bitBlt(&pixBuffer, 0, 0, &bitMapMask, 0, 0, -1, -1, NotEraseROP);
-//  bitBlt(&pixBuffer, 0, 0, &pixUnderMap, 0, 0, -1, -1, NotEraseROP);
   bitBlt(&pixBuffer, 0, 0, &pixUnderMap);
-  bitBlt(&pixBuffer, 0, 0, &pixAllSites, 0, 0, -1, -1, NotEraseROP);
-  bitBlt(&pixBuffer, 0, 0, &pixAirspace, 0, 0, -1, -1, NotEraseROP);
-  bitBlt(&pixBuffer, 0, 0, &pixGlider, 0, 0, -1, -1, NotEraseROP);
-//  bitBlt(&pixBuffer, 0, 0, &pixFlight, 0, 0, -1, -1, NotEraseROP);
+  bitBlt(&pixBuffer, 0, 0, &pixAero, 0, 0, -1, -1, NotEraseROP);
+//  bitBlt(&pixBuffer, 0, 0, &pixAirspace, 0, 0, -1, -1, NotEraseROP);
+
+  pixAirspace.setMask(bitAirspaceMask);
+  bitBlt(&pixBuffer, 0, 0, &pixAirspace);
+
   bitBlt(&pixBuffer, 0, 0, &pixFlight);
   bitBlt(&pixBuffer, 0, 0, &pixGrid, 0, 0, -1, -1, NotEraseROP);
 
@@ -757,16 +716,6 @@ void Map::slotZoomOut()
   emit changed(this->size());
 }
 
-void Map::slotDrawFlight()
-{
-//  if(view->getFlightDataView()->getFlightList()->count() == 0) return;
-
-//  displayFlights = true;
-
-//  __drawFlight();
-//  slotShowLayer();
-}
-
 void Map::slotDrawCursor(QPoint p1, QPoint p2)
 {
   extern const MapMatrix _globalMapMatrix;
@@ -776,89 +725,48 @@ void Map::slotDrawCursor(QPoint p1, QPoint p2)
   QPoint prePos1(_globalMapMatrix.map(preCur1)),
          prePos2(_globalMapMatrix.map(preCur2));
 
-  if(preCur1.x() >= 0)
+  if(preCur1.x() > -50)
     {
-      bitBlt(&pixBuffer, prePos1.x() - 20, prePos1.y() - 20, &pixCursorBuffer1);
-      bitBlt(this, prePos1.x() - 20, prePos1.y() - 20, &pixCursorBuffer1);
+      bitBlt(&pixBuffer, prePos1.x() - 32, prePos1.y() - 32, &pixCursorBuffer1);
+      bitBlt(this, prePos1.x() - 32, prePos1.y() - 32, &pixCursorBuffer1);
     }
-  if(preCur2.x() >= 0)
+  if(preCur2.x() > -50)
     {
-      bitBlt(&pixBuffer, prePos2.x() - 20, prePos2.y() - 20, &pixCursorBuffer2);
-      bitBlt(this, prePos2.x() - 20, prePos2.y() - 20, &pixCursorBuffer2);
+      bitBlt(&pixBuffer, prePos2.x() - 0, prePos2.y() - 32, &pixCursorBuffer2);
+      bitBlt(this, prePos2.x() - 0, prePos2.y() - 32, &pixCursorBuffer2);
     }
-
   //
   // copying the pixmaps can crash the x-server, if the coordinates
   // are out of range.
   //
   //                                                Fixed 2001-12-01
   //
-  if(preCur1.x() > -50 && preCur1.x() < width() + 50 &&
-          preCur1.y() > -50 && preCur1.y() < height() + 50)
+  if(pos1.x() > -50 && pos1.x() < width() + 50 &&
+          pos1.y() > -50 && pos1.y() < height() + 50)
       bitBlt(&pixCursorBuffer1, 0, 0, &pixBuffer,
-          pos1.x() - 20, pos1.y() - 20, 40, 40);
-  if(preCur2.x() > -50 && preCur2.x() < width() + 50 &&
-          preCur2.y() > -50 && preCur2.y() < height() + 50)
+          pos1.x() - 32, pos1.y() - 32, 32, 32);
+
+  if(pos2.x() > -50 && pos2.x() < width() + 50 &&
+          pos2.y() > -50 && pos2.y() < height() + 50)
       bitBlt(&pixCursorBuffer2, 0, 0, &pixBuffer,
-          pos2.x() - 20, pos2.y() - 20, 40, 40);
+          pos2.x() - 0, pos2.y() - 32, 32, 32);
 
   if(pos1.x() > -50 && pos1.x() < width() + 50 &&
           pos1.y() > -50 && pos1.y() < height() + 50)
     {
-      bitBlt(this, pos1.x() - 20, pos1.y() - 20, &pixCursor1,
-          0, 0, -1, -1, NotEraseROP);
-      bitBlt(&pixBuffer, pos1.x() - 20, pos1.y() - 20, &pixCursor1,
-          0, 0, -1, -1, NotEraseROP);
+      bitBlt(this, pos1.x() - 32, pos1.y() - 32, &pixCursor1);
+      bitBlt(&pixBuffer, pos1.x() - 32, pos1.y() - 32, &pixCursor1);
     }
 
   if(pos2.x() > -50 && pos2.x() < width() + 50 &&
           pos2.y() > -50 && pos2.y() < height() + 50)
     {
-      bitBlt(this, pos2.x() - 20, pos2.y() - 20, &pixCursor2,
-          0, 0, -1, -1, NotEraseROP);
-      bitBlt(&pixBuffer, pos2.x() - 20, pos2.y() - 20, &pixCursor2,
-          0, 0, -1, -1, NotEraseROP);
+      bitBlt(this, pos2.x() - 0, pos2.y() - 32, &pixCursor2);
+      bitBlt(&pixBuffer, pos2.x() - 0, pos2.y() - 32, &pixCursor2);
     }
 
   preCur1 = p1;
   preCur2 = p2;
-}
-
-void Map::slotShowMapElement()
-{
-/*
-  if(!indexLength) return;
-
-  MapElementView* elementView = view->getMapElementView();
-
-  elementView->beginHTML();
-
-  for(unsigned int loop = 1; loop <= indexLength; loop++)
-    {
-      switch (indexList[loop * 2 - 2])
-        {
-          case BaseMapElement::Glidersite:
-            elementView->addGlidersite(indexList[loop * 2 - 1]);
-            break;
-          case BaseMapElement::Airport:
-          case BaseMapElement::MilAirport:
-          case BaseMapElement::CivMilAirport:
-          case BaseMapElement::Airfield:
-          case BaseMapElement::ClosedAirfield:
-          case BaseMapElement::CivHeliport:
-          case BaseMapElement::MilHeliport:
-          case BaseMapElement::AmbHeliport:
-            elementView->addAirport(indexList[loop * 2 - 1]);
-            break;
-          default:
-            elementView->addAirspace(indexList[loop * 2 - 1],
-                  indexList[loop * 2 - 2]);
-            break;
-        }
-    }
-
-  elementView->showHTML(true);
-*/
 }
 
 void Map::slotPrintMap()
@@ -867,16 +775,25 @@ void Map::slotPrintMap()
   pD.openMapPrintDialog();
 }
 
-void Map::slotCenterToItem(int listIndex, int elementIndex)
+void Map::slotCenterToWaypoint(const int id)
 {
   extern MapContents _globalMapContents;
-  SinglePoint* hitEl = _globalMapContents.getSinglePoint(listIndex,
-            elementIndex);
+  extern MapMatrix _globalMapMatrix;
 
-  mapCenterLat = hitEl->getPosition().x();
-  mapCenterLon = hitEl->getPosition().y();
+  if(id >= _globalMapContents.getFlight()->getWPList()->count())
+    {
+      warning("KFLog: Map::slotCenterToWaypoint: wrong Waypoint-ID");
+      return;
+    }
 
-  slotRedrawMap();
+  _globalMapMatrix.centerToPoint(_globalMapMatrix.map(
+      _globalMapContents.getFlight()->getWPList()->at(id)->projP));
+  _globalMapMatrix.setScale(_globalMapMatrix.getScale(MapMatrix::LowerLimit));
+  _globalMapMatrix.createMatrix(this->size());
+
+  __redrawMap();
+
+  emit changed(this->size());
 }
 
 void Map::slotCenterToFlight()
@@ -905,13 +822,6 @@ void Map::slotCenterToTask()
   emit changed(this->size());
 }
 
-void Map::slotCenterToWaypoint(struct wayPoint* centerP)
-{
-  mapCenterLat = centerP->latitude;
-  mapCenterLon = centerP->longitude;
-  __redrawMap();
-}
-
 void Map::slotCenterToHome()  { MATRIX_MOVE( MapMatrix::Home ) }
 
 void Map::slotMoveMapNW() { MATRIX_MOVE( MapMatrix::North | MapMatrix::West ) }
@@ -938,10 +848,7 @@ void Map::showFlightLayer(bool redrawFlight)
 //      __drawFlight();
     }
 
-  if(!showFlight)
-    mainApp->toolBar()->getButton(ID_LAYER_FLIGHT)->toggle();
-
-  slotShowLayer();
+  __showLayer();
 }
 
 /** Löscht den Fluglayer */
@@ -951,7 +858,7 @@ void Map::slotDeleteFlightLayer()
   _globalMapContents.closeFlight();
   pixFlight.fill(white);
   bitFlightMask.fill(black);
-  slotShowLayer();
+  __showLayer();
 }
 
 void Map::slotOptimzeFlight()

@@ -18,7 +18,7 @@
 #ifndef DATAVIEW_H
 #define DATAVIEW_H
 
-#include <qtextview.h>
+#include <ktextbrowser.h>
 #include <qframe.h>
 
 class Flight;
@@ -31,6 +31,8 @@ class Flight;
  */
 class DataView : public QFrame
 {
+  Q_OBJECT
+
   public:
     /**
      * Creates a new DataView object
@@ -41,9 +43,17 @@ class DataView : public QFrame
     /** */
     void setFlightData(Flight*);
 
+  signals:
+    /** Emitted whe the user selects one waypoint in the list. */
+    void wpSelected(const int id);
+
+  public slots:
+    /** */
+    void slotWPSelected(const QString &url);
+
   private:
     /** */
-    QTextView* flightDataText;
+    KTextBrowser* flightDataText;
 };
 
 #endif

@@ -17,22 +17,15 @@
 
 #include "glidersite.h"
 
-#include <mapcalc.h>
-
-#include <kapp.h>
 #include <kiconloader.h>
 #include <kstddirs.h>
-#include <qdatastream.h>
-#include <qfile.h>
-#include <qtextstream.h>
 
 GliderSite::GliderSite(QString n, QString abbr, QPoint pos, unsigned int elev,
         const char* f, bool w, bool wP)
 : RadioPoint(n, abbr, BaseMapElement::Glidersite, pos, f, 0, wP),
   elevation(elev), winch(w)
 {
-  if(winch) iconName = "glider.xpm";
-  else iconName = "glider2.xpm";
+
 }
 
 GliderSite::~GliderSite()
@@ -50,11 +43,6 @@ unsigned int GliderSite::getRunwayNumber() const { return rwNum; }
 
 bool GliderSite::isWinch() const { return winch; }
 
-void GliderSite::printMapElement(QPainter* printPainter)
-{
-
-}
-
 QString GliderSite::getInfoString() const
 {
   QString text;
@@ -70,13 +58,11 @@ QString GliderSite::getInfoString() const
   return text;
 }
 
-void GliderSite::printMapElement(QPainter* printPainter, const double dX,
-    const double dY, const int mapCenterLon, const double scale,
-    const struct elementBorder mapBorder)
+void GliderSite::printMapElement(QPainter* printPainter) const
 {
   if(!__isVisible()) return;
 
-  struct drawPoint printPos;// = __projectElement(dX, dY, mapCenterLon, scale);
+  struct drawPoint printPos;
 
   int iconSize = 20;
 

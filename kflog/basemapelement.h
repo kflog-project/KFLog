@@ -53,15 +53,12 @@ class BaseMapElement
      * QRegion when drawn (e.g. AreaElement).
      * The function must be implemented in the child-classes.
      */
-    virtual void drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
+    virtual void drawMapElement(QPainter* targetP, QPainter* maskP);
     /** */
-    virtual QRegion* drawRegion(QPainter* targetPainter, QPainter* maskPainter);
+    virtual QRegion* drawRegion(QPainter* targetP, QPainter* maskP);
     /** */
-    virtual void printMapElement(QPainter* printPainter, const double dX,
-          const double dY, const int mapCenterLon, const double scale,
-          const struct elementBorder mapBorder);
     /** */
-    virtual void printMapElement(QPainter* printPainter);
+    virtual void printMapElement(QPainter* printP) const;
     /**
      * Virtual function which returns the name of the object.
      * The name is no member of BaseMapElement, but is needed in several

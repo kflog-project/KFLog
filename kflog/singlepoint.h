@@ -53,13 +53,9 @@ class SinglePoint : public BaseMapElement
     /**
      * Draws the element into the given painter.
      */
-    virtual void drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
+    virtual void drawMapElement(QPainter* targetP, QPainter* maskP);
     /** */
-    virtual void printMapElement(QPainter* printPainter, const double dX,
-        const double dY, const int mapCenterLon, const double scale,
-        const struct elementBorder mapBorder);
-    /** */
-    virtual void printMapElement(QPainter* printPainter);
+    virtual void printMapElement(QPainter* printP) const;
     /**
      * Returns the position of the element.
      */
@@ -95,14 +91,5 @@ class SinglePoint : public BaseMapElement
     /** */
     QPoint curPos;
 };
-
-/*************************************************************************
- *
- * Die Ein- und Ausgabeoperatoren
- *
- *************************************************************************/
-//QDataStream& operator<<(QDataStream& outStream, const SinglePoint& sPoint);
-//QTextStream& operator<<(QTextStream& outStream, const SinglePoint& sPoint);
-//QDataStream& operator>>(QDataStream& outStream, SinglePoint& sPoint);
 
 #endif

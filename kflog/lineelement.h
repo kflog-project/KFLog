@@ -20,16 +20,6 @@
 
 #include <basemapelement.h>
 
-/*
- * PEN_THICKNESS füllt den Array mit den Strichstärken ...
- */
-#define PEN_THICKNESS(a, b, c, d, e, f, g, h, i) \
-    drawPenSize[0] = a; drawPenSize[1] = b; drawPenSize[2] = c; \
-    drawPenSize[3] = d; drawPenSize[4] = e;
-
-#include <qlist.h>
-#include <qpen.h>
-
 /**
  * Class used for all elements, which consist of a pointarray.
  *
@@ -52,27 +42,15 @@ class LineElement : public BaseMapElement
     /**
      * Draws the element into the given painter.
      */
-    virtual void drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
+    virtual void drawMapElement(QPainter* targetP, QPainter* maskP);
     /** */
-    virtual void printMapElement(QPainter* printPainter, const double dX,
-        const double dY, const int mapCenterLon, const double scale,
-        const struct elementBorder mapBorder);
-    /** */
-    virtual void printMapElement(QPainter* printPainter);
+    virtual void printMapElement(QPainter* printPainter) const;
     /** */
     virtual bool isValley() const;
 
   protected:
     /** */
     virtual bool __isVisible() const;
-    /** */
-    Qt::PenStyle drawPenStyle;
-    /** */
-    Qt::BrushStyle fillBrushStyle;
-    /** */
-    QColor fillColor;
-    /** */
-//    QBrush fillBrush;
     /**
      * Contains the projected positions of the item.
      */
@@ -83,23 +61,6 @@ class LineElement : public BaseMapElement
     bool valley;
     /** */
     bool closed;
-    /** */
-    bool* border;
-    /**
-     * This array (size: 5) contains the linewidth used for drawing the
-     * element.
-     */
-    int* drawPenSize;
-    QColor* drawColor;
 };
-
-/*************************************************************************
- *
- * Die Ein- und Ausgabeoperatoren
- *
- *************************************************************************/
-//QDataStream& operator<<(QDataStream& outStream, const LineElement& element);
-//QTextStream& operator<<(QTextStream& outStream, const LineElement& element);
-//QDataStream& operator>>(QDataStream& outStream, LineElement& element);
 
 #endif

@@ -40,24 +40,11 @@ void BaseMapElement::initMapElement(MapMatrix* matrix, MapConfig* config)
   glConfig = config;
 }
 
-void BaseMapElement::printMapElement(QPainter* printP, const double dX,
-      const double dY, const int mapCenterLon, const double scale,
-      const struct elementBorder mapBorder)
-{
+void BaseMapElement::printMapElement(QPainter* printP) const {  }
 
-}
+void BaseMapElement::drawMapElement(QPainter* pP, QPainter* mP) {  }
 
-void BaseMapElement::printMapElement(QPainter* printP)
-{
-
-}
-
-void BaseMapElement::drawMapElement(QPainter* printP, QPainter* maskP)
-{
-
-}
-
-QRegion* BaseMapElement::drawRegion(QPainter* targetP, QPainter* maskPainter)
+QRegion* BaseMapElement::drawRegion(QPainter* targetP, QPainter* maskP)
 {
   return (new QRegion(0,0,1,1));
 }

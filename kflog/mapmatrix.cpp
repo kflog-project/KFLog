@@ -55,7 +55,7 @@
 #define HOME_DEFAULT_LON 5364500
 
 MapMatrix::MapMatrix()
-  : cScale(0), rotationArc(0)
+  : mapCenterLat(0), mapCenterLon(0), cScale(0), rotationArc(0)
 {
   viewBorder.setTop(32000000);
   viewBorder.setBottom(25000000);
@@ -164,6 +164,11 @@ QPointArray MapMatrix::print(QPointArray pArray) const
   return printMatrix.map(pArray);
 }
 
+QPoint MapMatrix::print(QPoint p) const
+{
+  return printMatrix.map(p);
+}
+
 QPoint MapMatrix::print(int lat, int lon, double dX, double dY) const
 {
   QPoint temp;
@@ -223,7 +228,7 @@ double MapMatrix::getScale(unsigned int type)
   return 0.0;
 }
 
-void MapMatrix::centerToMouse(QPoint center)
+void MapMatrix::centerToPoint(QPoint center)
 {
   bool result = true;
   QWMatrix invertMatrix = worldMatrix.invert(&result);
@@ -256,7 +261,7 @@ void MapMatrix::centerToRect(QRect center)
   if((tempScale / cScale) > 1.1 || (tempScale / cScale) < 0.8)
       cScale = tempScale;
 
-  centerToMouse(QPoint(centerX, centerY));
+  centerToPoint(QPoint(centerX, centerY));
 }
 
 QPoint MapMatrix::mapToWgs(QPoint pos) const
@@ -413,9 +418,19 @@ void MapMatrix::initMatrix(MapConfig* mConf)
   KConfig *config = kapp->config();
 
   config->setGroup("Map Data");
-  mapCenterLat = config->readNumEntry("Center Latitude", 29100000);
-  mapCenterLon = config->readNumEntry("Center Longitude", 5400000);
-  cScale = config->readDoubleNumEntry("Map Scale", 200);
+  //
+  // The scale is set to 0 in the constructor. Here we read the scale and
+  // the mapcenter only the first time. Otherwise the values would change
+  // after configuring KFLog.
+  //
+  //                                                Fixed 2001-12-14
+  if(cScale <= 0)
+    {
+      mapCenterLat = config->readNumEntry("Center Latitude", HOME_DEFAULT_LAT);
+      mapCenterLon = config->readNumEntry("Center Longitude", HOME_DEFAULT_LON);
+      cScale = config->readDoubleNumEntry("Map Scale", 200);
+    }
+
   v1 = config->readDoubleNumEntry("Parallel1", 32400000);
   v2 = config->readDoubleNumEntry("Parallel2", 30000000);
   homeLat = config->readNumEntry("Homesite Latitude", HOME_DEFAULT_LAT);
@@ -428,6 +443,9 @@ void MapMatrix::initMatrix(MapConfig* mConf)
   scaleBorders[Border3] = config->readNumEntry("Border 3", VAL_BORDER_3);
   scaleBorders[SwitchScale] = config->readNumEntry("Switch Scale", VAL_BORDER_S);
   scaleBorders[UpperLimit] = config->readNumEntry("Upper Limit", VAL_BORDER_U);
+
+  cScale = MIN(cScale, scaleBorders[UpperLimit]);
+  cScale = MAX(cScale, scaleBorders[LowerLimit]);
 
   var1 = cos(v1)*cos(v1);
   var2 = sin(v1)+sin(v2);

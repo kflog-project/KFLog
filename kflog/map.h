@@ -40,23 +40,20 @@ class Map : public QWidget
 
   public:
     /**
-     * The constructor creates a new Map-object, read the configdata for the
-     * standard parallels, the center of the map, the scale used the last
-     * time. It also creates the icon used as a cursor in the map, and
-     * connects some tool-bar-button for controling the map.
+     * The constructor creates a new Map-object and
+     * creates the icon used as a cursor in the map.
      */
     Map(KFLogApp* main, QFrame* parent, const char* name);
     /**
-     * Destroys the Map-object and saves the current scale and center of the
-     * map, so the map will appear the same, when KFLog is started next.
+     * Destroys the Map-object.
      */
     ~Map();
-    /**  */
+    /**
+     * Draws only the flights after optimizing the task.
+     */
     void showFlightLayer(bool redrawFlight = false);
 
   public slots:
-    /** */
-    void slotShowMapElement();
     /**
      * Forces increasing the scale.
      * @see #scaleAdd
@@ -69,16 +66,8 @@ class Map : public QWidget
      * @see #scale
      */
     void slotZoomOut();
-    /**
-     * Displays the flight in the map.
-     */
-    void slotDrawFlight();
     /** */
     void slotRedrawMap();
-    /** */
-    void slotShowLayer();
-    /** */
-    void slotCenterToItem(int listIndex, int elementIndex);
     /** */
     void slotCenterToFlight();
     /** */
@@ -86,7 +75,7 @@ class Map : public QWidget
     /** */
     void slotCenterToHome();
     /** */
-    void slotCenterToWaypoint(struct wayPoint* centerPoint);
+    void slotCenterToWaypoint(const int id);
     /** */
     void slotMoveMapNW();
     /** */
@@ -149,6 +138,10 @@ class Map : public QWidget
      */
     void __redrawMap();
     /**
+     * Copies the pixmaps into pixBuffer and calls a paintEvent().
+     */
+    void __showLayer();
+    /**
      * Draws the map. The type of mapobjects to be drawn is controlled
      * via slotConfigureMap.
      * @see #slotConfigureMap
@@ -165,11 +158,6 @@ class Map : public QWidget
      */
     KFLogApp* mainApp;
     /**
-     * Coordinates of the current mouse-position, needed
-     * to show in the status bar.
-     */
-    QPoint _currentPos;
-    /**
      * This pixmap is used to store the currently displayed map.
      * This painter is about the same size as the map-widget, but is only
      * used for internal buffering the map. Whenever the widget is about
@@ -177,7 +165,7 @@ class Map : public QWidget
      */
     QPixmap pixBuffer;
     /**
-      * Contains the Map under the CursorA to erase them later
+      * Contains the Map under the CursorA to erase the cursor later
       *
       */
     QPixmap pixCursorBuffer1;
@@ -193,17 +181,9 @@ class Map : public QWidget
      */
     QPixmap pixUnderMap;
     /**
-     * The layer containing the waypoints.
+     * The layer containing all aeronautical elements.
      */
-    QPixmap pixWaypoints;
-    /**
-     * The layer containing the glider-sites.
-     */
-    QPixmap pixGlider;
-    /**
-     * Contains all airports, airfields, additional sites, ...
-     */
-    QPixmap pixAllSites;
+    QPixmap pixAero;
     /**
      * Contains the flights.
      */
@@ -213,7 +193,7 @@ class Map : public QWidget
      */
     QPixmap pixAirspace;
     /**
-     *
+     * Contains the topography
      */
     QPixmap pixIsoMap;
     /**
@@ -226,68 +206,15 @@ class Map : public QWidget
     QBitmap bitAirspaceMask;
     /** */
     QBitmap bitFlightMask;
-    /**
-      * The minimum scale. Here the height of 1 point is about 6360.0m.
-      */
-    static const int minScale = 1000;
-    /**
-      * The maximum scale. Here the height of 1 point is about 12.72m.
-      */
-    static const int maxScale = 750000;
-    /**
-     * The mapCenter is the position displayed in the center of the map.
-     * It is used in two different ways:
-     * 1.: Determine the area shown in the map-widget
-     * 2.: Calculating the difference in latitude between a point in the
-     * map and the center.
-     *
-     * The latitude of the center of the map.
-     */
-    int mapCenterLat;
-    /**
-     * The longitude of the center of the map.
-     */
-    int mapCenterLon;
-    bool displayFlights;
-    bool showAddSites;
-    bool showAirport;
-    bool showAirspace;
-    bool showCity;
-    bool showFlight;
-    bool showGlider;
-    bool showHydro;
-    bool showLand;
-    bool showNav;
-    bool showOut;
-    bool showRail;
-    bool showRoad;
-    bool showTopo;
-    bool showWaypoint;
-
-    /**  */
-    int* xPos;
-    int* yPos;
-
     /** */
     QPoint prePos;
     QPoint preCur1;
     QPoint preCur2;
-
-    /** */
-    unsigned int posNum;
+    /**
+     * Contains the regions of all visible airspaces. The list is needed to
+     * find the airspace-data when the users selects a airspace in the map.
+     */
     QList<QRegion>* airspaceRegList;
-    QList<QRegion>* cityRegList;
-
-    /**
-     * Contains two values for each entry in the popupmenu of the map.
-     * The first value contains the typeID of the airspace or glidersite,
-     * the second value contains the itemID in the mapcontentslist.
-     */
-    unsigned int* indexList;
-    /**
-     * Contains the number of entries in the popupmenu of the map.
-     */
-    unsigned int indexLength;
 };
 
 #endif

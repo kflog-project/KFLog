@@ -35,7 +35,10 @@
 class KFLogApp;
 
 /**
+ * This class provides the config-dialog for KFLog.
+ *
  * @author Heiner Lamprecht
+ * @version $Id$
  */
 class KFLogConfig : public KDialogBase
 {
@@ -50,6 +53,10 @@ class KFLogConfig : public KDialogBase
     enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
         AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
         LowFlight, Restricted, TMZ};
+
+  signals:
+    /** */
+    void scaleChanged(int min, int max);
 
   public slots:
     /** */
@@ -110,7 +117,6 @@ class KFLogConfig : public KDialogBase
     int __setScaleValue(int value);
     /** */
     int __getScaleValue(double value);
-
     /** */
     QFrame* idPage;
     /** */
@@ -148,19 +154,16 @@ class KFLogConfig : public KDialogBase
     QCheckBox* border2;
     QCheckBox* border3;
     QCheckBox* border4;
-    QCheckBox* outLine;
 
     KColorButton* border1Color;
     KColorButton* border2Color;
     KColorButton* border3Color;
     KColorButton* border4Color;
-    KColorButton* outLineColor;
 
     QSpinBox* border1Pen;
     QSpinBox* border2Pen;
     QSpinBox* border3Pen;
     QSpinBox* border4Pen;
-    QSpinBox* outLinePen;
 
     QPushButton* border1Button;
     QPushButton* border2Button;
@@ -191,10 +194,14 @@ class KFLogConfig : public KDialogBase
     QList<QBrush> airElBrushList;
     QList<QPen> airEhPenList;
     QList<QBrush> airEhBrushList;
+    QList<QPen> airFPenList;
+    QList<QBrush> airFBrushList;
     QList<QPen> ctrCPenList;
     QList<QBrush> ctrCBrushList;
     QList<QPen> ctrDPenList;
     QList<QBrush> ctrDBrushList;
+    QList<QPen> lowFPenList;
+    QList<QBrush> lowFBrushList;
     QList<QPen> dangerPenList;
     QList<QBrush> dangerBrushList;
     QList<QPen> restrPenList;
@@ -213,9 +220,11 @@ class KFLogConfig : public KDialogBase
     bool* airDBorder;
     bool* airElBorder;
     bool* airEhBorder;
+    bool* airFBorder;
     bool* ctrCBorder;
     bool* ctrDBorder;
     bool* dangerBorder;
+    bool* lowFBorder;
     bool* restrBorder;
     bool* tmzBorder;
 

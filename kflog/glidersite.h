@@ -61,11 +61,7 @@ class GliderSite : public RadioPoint
     /** */
     virtual QString getInfoString() const;
     /** */
-    virtual void printMapElement(QPainter* printPainter, const double dX,
-        const double dY, const int mapCenterLon, const double scale,
-        const struct elementBorder mapBorder);
-    /** */
-    virtual void printMapElement(QPainter* printPainter);
+    virtual void printMapElement(QPainter* printPainter) const;
     /**
      * Returns the elevation of the element.
      */
@@ -86,14 +82,5 @@ class GliderSite : public RadioPoint
     /** Contains the number of runways. */
     unsigned int rwNum;
 };
-
-/*************************************************************************
- *
- * Die Ein- und Ausgabeoperatoren
- *
- *************************************************************************/
-//QDataStream& operator<<(QDataStream& outStream, const GliderSite& site);
-//QTextStream& operator<<(QTextStream& outStream, const GliderSite& site);
-//QDataStream& operator>>(QDataStream& outStream, GliderSite& site);
 
 #endif

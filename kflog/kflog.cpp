@@ -17,15 +17,10 @@
 
 #include <unistd.h>
 #include <pwd.h>
-//#include <sys/types.h>
-#include <stdlib.h>
 
 // include files for QT
 #include <qdir.h>
-#include <qkeycode.h>
-#include <qlabel.h>
 #include <qlayout.h>
-#include <qpainter.h>
 #include <qprinter.h>
 
 // include files for KDE
@@ -62,7 +57,6 @@
   a->setMargin(0); \
   a->setLineWidth(0); \
   a->setAlignment( c | AlignVCenter );
-//  a->setIndent(10);
 
 KFLogApp::KFLogApp(QWidget* , const char* name)
   : KDockMainWindow(0, name), showStartLogo(false)
@@ -88,34 +82,40 @@ KFLogApp::KFLogApp(QWidget* , const char* name)
   readOptions();
 
 //  filePrint->setEnabled(true);
-  viewData->setChecked(true);
-  viewMapControl->setChecked(true);
+  fileClose->setEnabled(false);
   viewCenterTask->setEnabled(false);
   viewCenterFlight->setEnabled(false);
   flightEvaluation->setEnabled(false);
+
+  readDockConfig(config, "Window Layout");
+  activateDock();
+
+  slotCheckDockWidgetStatus();
 }
 
 KFLogApp::~KFLogApp()
 {
-
+  writeDockConfig(config, "Window Layout");
 }
 
 void KFLogApp::initActions()
 {
-  fileOpen = new KAction(i18n("&Open Flight"), "fileopen",
+  new KAction(i18n("&Open Flight"), "fileopen",
       KStdAccel::key(KStdAccel::Open), this, SLOT(slotFileOpen()),
       actionCollection(), "file_open");
+
   fileOpenRecent = KStdAction::openRecent(this,
       SLOT(slotFileOpenRecent(const KURL&)), actionCollection());
   fileClose = new KAction(i18n("Close Flight"), "fileclose",
       KStdAccel::key(KStdAccel::Close), this, SLOT(slotFileClose()),
       actionCollection(), "file_close");
-/*
- * Printing not available yet ...
- *  filePrint = KStdAction::print(this, SLOT(slotFilePrint()),
- *      actionCollection());
- */
+
+  KStdAction::print(this, SLOT(slotFilePrint()), actionCollection());
   KStdAction::quit(this, SLOT(slotFileQuit()), actionCollection());
+
+  KActionMenu* mapMoveMenu = new KActionMenu(i18n("Move map"), "move",
+      actionCollection(), "move_map");
+  mapMoveMenu->setDelayed(false);
 
   viewRedraw = KStdAction::redisplay(map, SLOT(slotRedrawMap()),
       actionCollection());
@@ -132,10 +132,25 @@ void KFLogApp::initActions()
       KStdAccel::key(KStdAccel::Home), map,
       SLOT(slotCenterToHome()), actionCollection(), "view_center_home");
 
-  KStdAction::zoomIn(map, SLOT(slotZoomIn()),
-      actionCollection());
-  KStdAction::zoomOut(map, SLOT(slotZoomOut()),
-      actionCollection());
+  mapMoveMenu->insert(new KAction(i18n("move map north-west"), "movemap_nw", 0,
+      map, SLOT(slotMoveMapNW()), actionCollection(), "move_map_nw"));
+  mapMoveMenu->insert(new KAction(i18n("move map north"), "movemap_n", 0,
+      map, SLOT(slotMoveMapN()), actionCollection(), "move_map_n"));
+  mapMoveMenu->insert(new KAction(i18n("move map northeast"), "movemap_ne", 0,
+      map, SLOT(slotMoveMapNE()), actionCollection(), "move_map_ne"));
+  mapMoveMenu->insert(new KAction(i18n("move map west"), "movemap_w", 0,
+      map, SLOT(slotMoveMapW()), actionCollection(), "move_map_w"));
+  mapMoveMenu->insert(new KAction(i18n("move map east"), "movemap_e", 0,
+      map, SLOT(slotMoveMapE()), actionCollection(), "move_map_e"));
+  mapMoveMenu->insert(new KAction(i18n("move map south-west"), "movemap_sw", 0,
+      map, SLOT(slotMoveMapSW()), actionCollection(), "move_map_sw"));
+  mapMoveMenu->insert(new KAction(i18n("move map south"), "movemap_s", 0,
+      map, SLOT(slotMoveMapS()), actionCollection(), "move_map_s"));
+  mapMoveMenu->insert(new KAction(i18n("move map south-east"), "movemap_se", 0,
+      map, SLOT(slotMoveMapSE()), actionCollection(), "move_map_se"));
+
+  KStdAction::zoomIn(map, SLOT(slotZoomIn()), actionCollection());
+  KStdAction::zoomOut(map, SLOT(slotZoomOut()), actionCollection());
   /*
    * Wir brauchen dringend Icons für diese beiden Aktionen, damit man
    * es auch in die Werkzeugleisten packen kann!
@@ -144,11 +159,24 @@ void KFLogApp::initActions()
       SLOT(slotToggleDataView()), actionCollection(), "toggle_data_view");
   viewMapControl = new KToggleAction(i18n("Show Mapcontrol"), 0, this,
       SLOT(slotToggleMapControl()), actionCollection(), "toggle_map_control");
+  viewMap = new KToggleAction(i18n("Show Map"), 0, this,
+      SLOT(slotToggleMap()), actionCollection(), "toggle_map");
 
   viewToolBar = KStdAction::showToolbar(this, SLOT(slotViewToolBar()),
       actionCollection());
   viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()),
       actionCollection());
+
+  flightEvaluation = new KAction(i18n("Evaluation"), "flightevaluation",
+      CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
+      "evaluate_flight");
+
+//  new KAction(i18n("Optimize"), "flight_optimize", 0, map,
+//      SLOT(slotOptimzeFlight()), actionCollection(), "optimize_flight");
+
+  KActionMenu* flightMenu = new KActionMenu(i18n("F&light"),
+      actionCollection(), "flight");
+  flightMenu->insert(flightEvaluation);
 
   KStdAction::configureToolbars(this,
       SLOT(slotConfigureToolbars()), actionCollection());
@@ -156,16 +184,6 @@ void KFLogApp::initActions()
       SLOT(slotConfigureKeyBindings()), actionCollection());
 
   KStdAction::preferences(this, SLOT(slotConfigureKFLog()), actionCollection());
-
-  flightEvaluation = new KAction(i18n("Evaluation"), "flightevaluation",
-      CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
-      "evaluate_flight");
-
-//  new KAction(i18n("Optimize"), 0, 0, map,
-//      SLOT(slotOptimzeFlight()), actionCollection(), "optimize_flight");
-
-  fileOpen->setStatusText(i18n("Open flight"));
-//  filePrint ->setStatusText(i18n("Print map"));
 
   createGUI();
 }
@@ -211,6 +229,19 @@ void KFLogApp::initView()
   dataViewDock = createDockWidget("Flight-Data", 0, 0, i18n("Flight-Data"));
   mapControlDock = createDockWidget("Map-Control", 0, 0, i18n("Map-Control"));
 
+  connect(mapControlDock, SIGNAL(iMBeingClosed()),
+      SLOT(slotHideMapControlDock()));
+  connect(mapControlDock, SIGNAL(hasUndocked()),
+      SLOT(slotHideMapControlDock()));
+  connect(mapViewDock, SIGNAL(iMBeingClosed()),
+      SLOT(slotHideMapViewDock()));
+  connect(mapViewDock, SIGNAL(hasUndocked()),
+      SLOT(slotHideMapViewDock()));
+  connect(dataViewDock, SIGNAL(iMBeingClosed()),
+      SLOT(slotHideDataViewDock()));
+  connect(dataViewDock, SIGNAL(hasUndocked()),
+      SLOT(slotHideDataViewDock()));
+
   setView(mapViewDock);
   setMainDockWidget(mapViewDock);
 
@@ -236,18 +267,13 @@ void KFLogApp::initView()
   dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );
   mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 75 );
 
-  connect(map, SIGNAL(changed(QSize)), mapControl,
-      SLOT(slotShowMapData(QSize)));
-  connect(mapControl, SIGNAL(scaleChanged()), map,
-      SLOT(slotRedrawMap()));
-}
+  connect(map, SIGNAL(changed(QSize)), mapControl, SLOT(slotShowMapData(QSize)));
+  connect(mapControl, SIGNAL(scaleChanged()), map, SLOT(slotRedrawMap()));
 
-//void KFLogApp::showCoords(QPoint pos)
-//{
-//  statusBar()->clear();
-//  statusLatL->setText(printPos(pos.y()));
-//  statusLonL->setText(printPos(pos.x(), false));
-//}
+  connect(dataView, SIGNAL(wpSelected(const int)), map,
+      SLOT(slotCenterToWaypoint(const int)));
+
+}
 
 void KFLogApp::showPointInfo(QPoint pos, struct flightPoint* point)
 {
@@ -315,6 +341,10 @@ void KFLogApp::readOptions()
   flightDir = config->readEntry("DefaultFlightDirectory",
       getpwuid(getuid())->pw_dir);
 
+  config->setGroup("Scale");
+  mapControl->slotSetMinMaxValue(config->readNumEntry("Lower Limit", 10),
+      config->readNumEntry("Upper Limit", 1500));
+
   if(!size.isEmpty())  resize(size);
 
   mapConfig = new MapConfig(config);
@@ -343,6 +373,7 @@ void KFLogApp::slotFileClose()
   extern MapContents _globalMapContents;
   if(_globalMapContents.getFlightList()->count() == 0)
     {
+      fileClose->setEnabled(false);
       viewCenterTask->setEnabled(false);
       viewCenterFlight->setEnabled(false);
       flightEvaluation->setEnabled(false);
@@ -372,6 +403,7 @@ void KFLogApp::slotFileOpen()
   if(_globalMapContents.loadFlight(fName))
     {
       dataView->setFlightData(_globalMapContents.getFlight());
+      fileClose->setEnabled(true);
       viewCenterTask->setEnabled(true);
       viewCenterFlight->setEnabled(true);
       flightEvaluation->setEnabled(true);
@@ -398,11 +430,17 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
       if(_globalMapContents.loadFlight(url.path()))
         {
           dataView->setFlightData(_globalMapContents.getFlight());
+          fileClose->setEnabled(true);
           viewCenterTask->setEnabled(true);
           viewCenterFlight->setEnabled(true);
           flightEvaluation->setEnabled(true);
           map->slotRedrawMap();
           map->slotCenterToFlight();
+
+          // Just a workaround. It's the only way to not have the item
+          // checked after loading the flight. Otherwise we had to take
+          // care that the item is unchecked, when the flight is closed ...
+          fileOpenRecent->setCurrentItem(-1);
         }
     }
 
@@ -459,40 +497,34 @@ void KFLogApp::slotStatusMsg(const QString &text)
   statusBar()->changeItem(text, ID_STATUS_MSG);
 }
 
-void KFLogApp::slotToggleDataView()
+void KFLogApp::slotHideMapControlDock()  { viewMapControl->setChecked(false); }
+
+void KFLogApp::slotHideMapViewDock()  { viewMap->setChecked(false); }
+
+void KFLogApp::slotHideDataViewDock()  { viewData->setChecked(false); }
+
+void KFLogApp::slotCheckDockWidgetStatus()
 {
-  if(dataViewDock->isVisible()){
-//    view_menu->setItemChecked(ID_VIEW_TREEVIEW,false);
-//    toolBar()->setButton(ID_VIEW_TREEVIEW,false);
-  }
-  else{
-//    view_menu->setItemChecked(ID_VIEW_TREEVIEW,true);
-//    toolBar()->setButton(ID_VIEW_TREEVIEW,true);
-  }
-  dataViewDock->changeHideShowState();
+  viewMapControl->setChecked(mapControlDock->isVisible());
+  viewMap->setChecked(mapViewDock->isVisible());
+  viewData->setChecked(dataViewDock->isVisible());
 }
 
-void KFLogApp::slotToggleMapControl()
-{
-  if(mapControlDock->isVisible()){
-//    view_menu->setItemChecked(ID_VIEW_TREEVIEW,false);
-//    toolBar()->setButton(ID_VIEW_TREEVIEW,false);
-  }
-  else{
-//    view_menu->setItemChecked(ID_VIEW_TREEVIEW,true);
-//    toolBar()->setButton(ID_VIEW_TREEVIEW,true);
-  }
-  mapControlDock->changeHideShowState();
-}
+void KFLogApp::slotToggleDataView()  { dataViewDock->changeHideShowState(); }
+
+void KFLogApp::slotToggleMapControl() { mapControlDock->changeHideShowState(); }
+
+void KFLogApp::slotToggleMap() { mapViewDock->changeHideShowState(); }
 
 void KFLogApp::slotEvaluateFlight()
 {
   extern MapContents _globalMapContents;
   EvaluationDialog* eval =
-    new EvaluationDialog(_globalMapContents.getFlightList());
+      new EvaluationDialog(_globalMapContents.getFlightList());
 
-  map->connect(eval, SIGNAL(showCursor(QPoint, QPoint)),
-  SLOT(slotDrawCursor(QPoint, QPoint)));
+  connect(eval, SIGNAL(showCursor(QPoint, QPoint)), map,
+      SLOT(slotDrawCursor(QPoint, QPoint)));
+
   eval->slotShowFlightData(0);  // <- hier wird angenommen, dass mindestens
                                 // ein Element vorhanden ist ...
 }
@@ -513,20 +545,25 @@ void KFLogApp::slotConfigureKeyBindings()
 
 void KFLogApp::slotConfigureKFLog()
 {
-  if(KFLogConfig(this, config, "kflogconfig").exec())
+  KFLogConfig* confDlg = new KFLogConfig(this, config, "kflogconfig");
+
+  connect(confDlg, SIGNAL(scaleChanged(int, int)), mapControl,
+      SLOT(slotSetMinMaxValue(int, int)));
+
+  if(confDlg->exec())
     {
+      extern MapMatrix _globalMapMatrix;
       mapConfig->readConfig();
+      _globalMapMatrix.initMatrix(mapConfig);
       map->slotRedrawMap();
     }
+
+  delete confDlg;
 }
 
 void KFLogApp::slotNewToolbarConfig()
 {
-//   ...if you use any action list, use plugActionList on each here...
    applyMainWindowSettings( KGlobal::config(), "MainWindow" );
 }
 
-void KFLogApp::slotStartComplete()
-{
-  if(showStartLogo)  delete startLogo;
-}
+void KFLogApp::slotStartComplete()  { if(showStartLogo)  delete startLogo; }

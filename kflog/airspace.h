@@ -39,7 +39,9 @@ class Airspace : public LineElement
      * of the airspace and the type of value (MSL, GND, FL); lower and
      * lowerType give the value for the lower limit.
      */
-    Airspace(QString n, unsigned int t, QPointArray pA);
+    Airspace(QString n, unsigned int t, QPointArray pA,
+            unsigned int upper, unsigned int upperType,
+            unsigned int lower, unsigned int lowerType);
     /**
      * Destructor, does nothing special.
      */
@@ -47,13 +49,7 @@ class Airspace : public LineElement
     /**
      * Draws the element into the given painter.
      */
-    virtual QRegion* drawRegion(QPainter* targetPainter, QPainter* maskPainter);
-    /** */
-    virtual void printMapElement(QPainter* printPainter, const double dX,
-        const double dY, const int mapCenterLon, const double scale,
-        const struct elementBorder mapBorder);
-    /** */
-    virtual void printMapElement(QPainter* printPainter);
+    virtual QRegion* drawRegion(QPainter* targetP, QPainter* maskP);
     /**
      * Returns the upper limit of the airspace.
      */
@@ -79,10 +75,7 @@ class Airspace : public LineElement
      */
     enum LimitType {NotSet, MSL, GND, FL};
     /** */
-    void setValues(unsigned int upper = 0, unsigned int upperType = 0,
-            unsigned int lower = 0, unsigned int lowerType = 0);
-    /** */
-    QString getInfoString();
+    QString getInfoString() const;
 
   private:
     /**
@@ -108,14 +101,5 @@ class Airspace : public LineElement
      */
     unsigned int uLimitType;
 };
-
-/*************************************************************************
- *
- * Die Ein- und Ausgabeoperatoren
- *
- *************************************************************************/
-//QDataStream& operator<<(QDataStream& outStream, const Airspace& airspace);
-//QTextStream& operator<<(QTextStream& outStream, const Airspace& airspace);
-//QDataStream& operator>>(QDataStream& outStream, Airspace& airspace);
 
 #endif

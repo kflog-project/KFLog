@@ -209,14 +209,10 @@ class Flight : public BaseMapElement
     QString startSite;
     QString landSite;
 
-//    int dtime;
     QString date;
 
-//    MapContents* mapContents;
     QList<struct wayPoint> wpList;
     QList<struct wayPoint> origList;
-    int tBegin;
-    int tEnd;
 
     double distance_tot;
     double distance_wp;
@@ -244,14 +240,5 @@ class Flight : public BaseMapElement
     int landTime;
     int startTime;
 };
-
-/*************************************************************************
- *
- * Die Ein- und Ausgabeoperatoren
- *
- *************************************************************************/
-//QDataStream& operator<<(QDataStream& outStream, const Flight& flight);
-//QTextStream& operator<<(QTextStream& outStream, const Flight& flight);
-//QDataStream& operator>>(QDataStream& outStream, Flight& flight);
 
 #endif

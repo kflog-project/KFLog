@@ -53,16 +53,17 @@ int main(int argc, char *argv[])
   /**
    * Short description of what KFLog is.
    */
-  const char *description =
-    I18N_NOOP("KFLog - The K-Flight-Logger");
+  const char* description =
+      I18N_NOOP("KFLog - The K-Flight-Logger");
 
 	KAboutData aboutData( "kflog", I18N_NOOP("KFLog"),
 		VERSION, description, KAboutData::License_GPL,
-		"(c) 2001, The KFLog-Team", 0, "http://www.kflog.org", "bugs@kflog.org");
+		"(c) 2001, The KFLog-Team", 0, "http://www.kflog.org",
+		"bugs@kflog.org");
 	aboutData.addAuthor("Heiner Lamprecht", 0, "heiner@kflog.org");
 	aboutData.addAuthor("Florian Ehinger", 0, "florian@kflog.org");
 	KCmdLineArgs::init( argc, argv, &aboutData );
-	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
+	KCmdLineArgs::addCmdLineOptions( options );
 
   KApplication app;
 
@@ -78,14 +79,10 @@ int main(int argc, char *argv[])
       KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 		
 		  if (args->count())
-    		{
-    		  _globalMapContents.loadFlight((QString)args->arg(0));
-          kflog->slotStartComplete();
-    		}
+          kflog->slotFileOpenRecent((QString)args->arg(0));
 		  else
-    		{
           QTimer::singleShot(300, kflog, SLOT(slotStartComplete()));
-    		}
+
   		args->clear();
     }
 

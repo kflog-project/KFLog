@@ -32,7 +32,7 @@
 #define DELTA 4
 
 MapControlView::MapControlView(QWidget* parent, Map* map)
-: QWidget(parent)
+  : QWidget(parent, "mapcontrolview")
 {
   QLabel* mapControl = new QLabel("<B>" + i18n("Map-control:") + "</B>",
       parent);
@@ -189,16 +189,17 @@ void MapControlView::slotShowMapData(QSize mapSize)
   currentScaleSlider->setValue(__getScaleValue(cScale));
 }
 
-void MapControlView::slotSetMaxValue(double scale)
+void MapControlView::slotSetMinMaxValue(int min, int max)
 {
-  currentScaleSlider->setMaxValue(__getScaleValue(scale));
+  currentScaleSlider->setMinValue(__getScaleValue(min));
+  currentScaleSlider->setMaxValue(__getScaleValue(max));
 }
 
 void MapControlView::slotSetScale()
 {
   extern MapMatrix _globalMapMatrix;
 
-  if( _globalMapMatrix.getScale() != __getScaleValue( currentScaleValue->value() ) )
+  if( _globalMapMatrix.getScale() != __getScaleValue(currentScaleValue->value()) )
     {
       _globalMapMatrix.setScale(currentScaleValue->value());
       emit(scaleChanged());

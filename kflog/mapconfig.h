@@ -47,25 +47,19 @@ class MapConfig
     /**
      * Returns the pen for drawing a mapelement.
      */
-    QPen getPen(unsigned int typeID);
+    QPen getDrawPen(unsigned int typeID);
     /**
-     * Returns the pen for drawing the outline of a mapelement. Used
-     * f.e. for cities.
+     * Returns the pen for printing a mapelement.
      */
-    QPen getOutlinePen(unsigned int typeID);
+    QPen getPrintPen(unsigned int typeID);
     /**
-     * Returns the brush for drawing an areaelement like airspaces.
+     * Returns the brush for drawing an areaelement.
      */
-    QBrush getBrush(unsigned int typeID);
-/**********************************************************************
- *
- * Wieso brauchen wir getDrawColor() und getFillColos()?
- *
- *********************************************************************/
-    /** */
-    QColor getDrawColor(unsigned int typeID);
-    /** */
-    QColor getFillColor(unsigned int typeID);
+    QBrush getDrawBrush(unsigned int typeID);
+    /**
+     * Returns the brush for printing an areaelement.
+     */
+    QBrush getPrintBrush(unsigned int typeID);
     /**
      * Returns the icon-pixmap of the element.
      */
@@ -77,11 +71,6 @@ class MapConfig
      * @see MapMatrix#scaleAdd
      */
     void setMatrixValues(int index, bool isSwitch);
-    /**
-     */
-    QList<QPen> getPenList(unsigned int listID);
-    /** */
-    bool* getPenList(QList<QPen>* list, unsigned int listID);
     /** */
     enum ListType {RoadList = 0, HighwayList, RailwayList, RiverList,
         CityList};
@@ -89,19 +78,50 @@ class MapConfig
   private:
     KConfig* config;
     /**
-     * Contains the pen-data for the roads.
      */
+    QList<QPen> airCPenList;
+    QList<QBrush> airCBrushList;
+    QList<QPen> airDPenList;
+    QList<QBrush> airDBrushList;
+    QList<QPen> airElPenList;
+    QList<QBrush> airElBrushList;
+    QList<QPen> airEhPenList;
+    QList<QBrush> airEhBrushList;
+    QList<QPen> airFPenList;
+    QList<QBrush> airFBrushList;
+    QList<QPen> ctrCPenList;
+    QList<QBrush> ctrCBrushList;
+    QList<QPen> ctrDPenList;
+    QList<QBrush> ctrDBrushList;
+    QList<QPen> lowFPenList;
+    QList<QBrush> lowFBrushList;
+    QList<QPen> dangerPenList;
+    QList<QBrush> dangerBrushList;
+    QList<QPen> restrPenList;
+    QList<QBrush> restrBrushList;
+    QList<QPen> tmzPenList;
+    QList<QBrush> tmzBrushList;
+
     QList<QPen> roadPenList;
     QList<QPen> railPenList;
     QList<QPen> riverPenList;
     QList<QPen> highwayPenList;
     QList<QPen> cityPenList;
     QList<QBrush> cityBrushList;
-    QList<QPen> airCPenList;
-    QList<QBrush> airCBrushList;
     /**
      */
     bool* airCBorder;
+    bool* airDBorder;
+    bool* airElBorder;
+    bool* airEhBorder;
+    bool* airFBorder;
+    bool* ctrCBorder;
+    bool* ctrDBorder;
+    bool* dangerBorder;
+    bool* lowFBorder;
+    bool* restrBorder;
+    bool* tmzBorder;
+
     bool* roadBorder;
     bool* highwayBorder;
     bool* railBorder;

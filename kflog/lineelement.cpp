@@ -16,46 +16,11 @@
 ***********************************************************************/
 
 #include "lineelement.h"
-#include <mapdefaults.h>
-#include <kflogconfig.h>
-#include <mapcalc.h>
-#include <mapmatrix.h>
-
-#include <kapp.h>
-#include <kconfig.h>
-#include <kiconloader.h>
-#include <qdatastream.h>
-#include <qfile.h>
-#include <qtextstream.h>
-
-#define READ_BORDER \
-    border[0] = config->readBoolEntry("Border 1", true); \
-    border[1] = config->readBoolEntry("Border 2", true); \
-    border[2] = config->readBoolEntry("Border 3", true); \
-    border[3] = config->readBoolEntry("Border 4", true); \
-    border[4] = config->readBoolEntry("Border 5", true);
-
-#define READ_PEN(c1,c2,c3,c4,p1,p2,p3,p4) \
-    drawPenSize[0] = config->readNumEntry("Pen Size 1", p1); \
-    drawColor[0] = config->readColorEntry("Color 1", new c1); \
-    drawPenSize[1] = config->readNumEntry("Pen Size 2", p1); \
-    drawColor[1] = config->readColorEntry("Color 2", new c1); \
-    drawPenSize[2] = config->readNumEntry("Pen Size 3", p1); \
-    drawColor[2] = config->readColorEntry("Color 3", new c1); \
-    drawPenSize[3] = config->readNumEntry("Pen Size 4", p1); \
-    drawColor[3] = config->readColorEntry("Color 4", new c1);
 
 LineElement::LineElement(QString n, unsigned int t, QPointArray pA, bool isV)
-: BaseMapElement(n, t), drawPenStyle(QPen::SolidLine),
-  fillBrushStyle(QBrush::SolidPattern),
+: BaseMapElement(n, t),
   projPointArray(pA), bBox(pA.boundingRect()), valley(isV), closed(false)
 {
-  fillColor.setRgb(100, 255, 100);
-
-  border = new bool[5];
-  drawPenSize = new int[5];
-  drawColor = new QColor[5];
-
   if(typeID == BaseMapElement::Lake || typeID == BaseMapElement::City)
       closed = true;
 }
@@ -65,81 +30,84 @@ LineElement::~LineElement()
 
 }
 
-void LineElement::printMapElement(QPainter* printPainter)
+void LineElement::printMapElement(QPainter* printPainter) const
 {
+  printPainter->setPen(glConfig->getPrintPen(typeID));
 
+  if(closed)
+    {
+      printPainter->setBrush(glConfig->getPrintBrush(typeID));
+      printPainter->drawPolygon(glMapMatrix->print(projPointArray));
+    }
+  else
+    {
+      printPainter->drawPolyline(glMapMatrix->print(projPointArray));
+    }
 }
 
-void LineElement::printMapElement(QPainter* printPainter, const double dX,
-      const double dY, const int mapCenterLon, const double scale,
-      const struct elementBorder mapBorder)
-{
-
-}
-
-void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
+void LineElement::drawMapElement(QPainter* targetP, QPainter* maskP)
 {
   /* If the element-type should not be drawn in the actual scale, or if the
    * element is not visible, return.
    */
   if(!glConfig->isBorder(typeID) || !__isVisible()) return;
 
-  QPen drawP(glConfig->getPen(typeID));
+  QPen drawP(glConfig->getDrawPen(typeID));
 
   QPointArray pA = glMapMatrix->map(projPointArray);
 
   if(valley)
     {
-      maskPainter->setPen(QPen(Qt::color0, drawP.width(), drawP.style()));
-      maskPainter->setBrush(QBrush(Qt::color0, QBrush::SolidPattern));
+      maskP->setPen(QPen(Qt::color0, drawP.width(), drawP.style()));
+      maskP->setBrush(QBrush(Qt::color0, QBrush::SolidPattern));
     }
   else
     {
-      maskPainter->setPen(QPen(Qt::color1, drawP.width(), drawP.style()));
-      maskPainter->setBrush(QBrush(Qt::color1, Qt::SolidPattern));
+      maskP->setPen(QPen(Qt::color1, drawP.width(), drawP.style()));
+      maskP->setBrush(QBrush(Qt::color1, Qt::SolidPattern));
     }
 
   if(typeID == BaseMapElement::City)
     {
       /*
-       * We do not draw an outline of the city directly, because otherwise
-       * we will get trouble with cities lying at the edge of a map-section.
-       * So we thicker draw a line into the mask-painter.
+       * We do not draw the outline of the city directly, because otherwise
+       * we will get into trouble with cities lying at the edge of a
+       * map-section. So we use a thicker draw a line into the mask-painter.
        */
-      maskPainter->setPen(QPen(Qt::color1, drawP.width() * 2));
-      maskPainter->drawPolygon(pA);
+      maskP->setPen(QPen(Qt::color1, drawP.width() * 2));
+      maskP->drawPolygon(pA);
 
-      QBrush drawB = glConfig->getBrush(typeID);
-      targetPainter->setPen(QPen(drawB.color(), 0, Qt::NoPen));
-      targetPainter->setBrush(drawB);
-      targetPainter->drawPolygon(pA);
+      QBrush drawB = glConfig->getDrawBrush(typeID);
+      targetP->setPen(QPen(drawB.color(), 0, Qt::NoPen));
+      targetP->setBrush(drawB);
+      targetP->drawPolygon(pA);
 
       return;
     }
 
-  targetPainter->setPen(drawP);
+  targetP->setPen(drawP);
 
   if(closed)
     {
       // Lakes do not have a brush, because they are devided into normal
       // sections and we do not want to see section-borders in a lake ...
       if(typeID == BaseMapElement::Lake)
-          targetPainter->setBrush(QBrush(drawP.color(), QBrush::SolidPattern));
+          targetP->setBrush(QBrush(drawP.color(), QBrush::SolidPattern));
       else
-          targetPainter->setBrush(glConfig->getBrush(typeID));
+          targetP->setBrush(glConfig->getDrawBrush(typeID));
 
-      maskPainter->drawPolygon(pA);
-      targetPainter->drawPolygon(pA);
+      maskP->drawPolygon(pA);
+      targetP->drawPolygon(pA);
     }
   else
     {
-      maskPainter->drawPolyline(pA);
-      targetPainter->drawPolyline(pA);
+      maskP->drawPolyline(pA);
+      targetP->drawPolyline(pA);
       if(typeID == Highway && drawP.width() > 4)
         {
           // Mittellinie zeichnen
-          targetPainter->setPen(QPen(QColor(255,255,255), 1));
-          targetPainter->drawPolyline(pA);
+          targetP->setPen(QPen(QColor(255,255,255), 1));
+          targetP->drawPolyline(pA);
         }
     }
 }

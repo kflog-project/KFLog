@@ -64,7 +64,7 @@ class MapControlView : public QWidget
      */
     void slotShowScaleChange(int value);
     /** */
-    void slotSetMaxValue(double scale);
+    void slotSetMinMaxValue(int min, int max);
 
   signals:
     /** */
