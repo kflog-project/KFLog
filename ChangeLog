@@ -1,6 +1,12 @@
 $Id$
 
 
+2003-07-10 Eggert Ehmke <eggert@kflog.org>
+
+  * added the waypoint list to the mapinfo that is displayed when activated
+    by context menu or by tooltip popup
+
+
 2003-07-09 Heiner Lamprecht <heiner@kflog.org>
 
   * Fixed a bug in EvaluationFrame::slotScale(), which could crash KFLog,
