@@ -11,10 +11,72 @@ $Id$
 ####################################################################################
 
 
-Flightrecorder
-==============
+Next Steps
+==========
 
-* integrating other flightrecorders
+* Planning:
+
+  The handling doesn't seem to be intuitive. The task-definition-dialog should
+  appear in the dataview as soon as planning begins. That would be the easiest
+  way to combine both visual planning and waypoint-selecting.
+
+  We should printout a list of all waypoints and airfields along a planned task.
+  When printing a task-map, the borders for the area-based-task is hardly visible
+  and not yet configurable. We do not have a task-type "area-based" yet, so the
+  text is always wrong.
+
+
+* Documentation:
+
+  We often talked about this topic, but we don't have a usable documentation yet.
+
+
+* Mapdisplay:
+
+  When displaying several flights at the same time, we should use different
+  colours for the tracks. When the user loads the second flight, a dialog could
+  appear, asking if he wants to create a new flight-group.
+
+  Right now, only one flight or flight-group can be displayed at the same time.
+  It's a bit difficult to switch on or off a flight, because, the map will allways
+  be redrawn after that. There should be an easier handling for that.
+
+  We cannot configure the colour of the elevation-lines or configure, which
+  lines should be drawn. We too need a sort of map-legend.
+
+
+* Evaluation:
+
+  We already can display the upwinds in the the map. It would be nice to have these
+  things in the evaluation-dialog, too. And a list of each upwind, with some
+  statistical data, would also be nice (including the possibility to center and zoom
+  the map to each upwind by selecting it).
+
+  The printout of the flight-data is a bit short, perhaps we can add some more
+  things here. We should also printout the data for a flight group.
+
+
+* OLC-declaration:
+
+  Finishing the online-declaration for the OLC.
+
+
+* 3D-View:
+
+  The dialog should use the same colour for the track as the 2D-view. It would be
+  nice to have some buttons in the dialog for rotating and zooming. Is it possible
+  to animate the track in the 3D-view?
+
+
+Allways a Topic
+===============
+
+* integrating of other flightrecorders
+
+
+Nice To Have
+============
+
 
 
 Planning
@@ -73,16 +135,11 @@ Evaluation
 
 * Online-declaration to OLC
 
+
 Map
 ===
 
-* use of vmap1 (improved dcw Data)
-
-* rasterimage support (scanned maps ...)
-
 * Customise colours for elevation data
-
-* integration of Aeroplanner.com data
 
 * Shading of elevation data
 
@@ -165,13 +222,6 @@ Other
 * Select active Flight
 
 
-QT/e version
-============
-
-* All... So start with: making a list of the things this version
-  should and should not do.
-
-
 
 Translation
 ===========
@@ -183,4 +233,4 @@ Italian       Andrea            Andrea
 Norwegian     Thomas            Thomas
 Swedish                         Göran
 French                          Helmut
-Dutch         André		André
+Dutch         André             André

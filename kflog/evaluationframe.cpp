@@ -74,7 +74,7 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   check_baro = new QCheckBox(kontrolle);
   check_speed = new QCheckBox(kontrolle);
 
-  kontrolle->setMaximumWidth(check_speed->sizeHint().width() * 7 + 5);
+  kontrolle->setMaximumWidth(scale_label->sizeHint().width() + 10);
 
   QLabel* label_vario = new QLabel(i18n("V"),kontrolle);
   QLabel* label_baro  = new QLabel(i18n("H"),kontrolle);
@@ -125,8 +125,8 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
 // Setzt die Anfangsgrößen des Splitters
   typedef QValueList<int> testList;
   testList kontList;
-  kontList.append(300);
-  kontList.append(check_speed->sizeHint().width() * 6 + 5);
+  kontList.append(400);
+  kontList.append(scale_label->sizeHint().width() + 10);
   kontSplitter->setSizes(kontList);
 
 //  kontSplitter->setResizeMode(graphFrame,QSplitter::FollowSizeHint);
@@ -170,7 +170,7 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
 
 EvaluationFrame::~EvaluationFrame()
 {
-  // Einstellungen Speichern
+  // Save settings
   KConfig* config = KGlobal::config();
 
   config->setGroup("Evaluation");
@@ -181,7 +181,6 @@ EvaluationFrame::~EvaluationFrame()
   config->writeEntry("Vario",check_vario->isChecked());
   config->writeEntry("Elevation",check_baro->isChecked());
   config->writeEntry("Speed",check_speed->isChecked());
-
 }
 
 void EvaluationFrame::slotShowFlight()

@@ -98,6 +98,14 @@ RecorderDialog::RecorderDialog(QWidget *parent, KConfig* cnf, const char *name)
   
   setMinimumWidth(500);
   setMinimumHeight(350);
+
+  // First: disable all pages but the first, for we must connect
+  // to the recorder prior any other action
+
+  flightPage->setEnabled( false );
+  waypointPage->setEnabled( false );
+  taskPage->setEnabled( false );
+  declarationPage->setEnabled( false );
 }
 
 RecorderDialog::~RecorderDialog()

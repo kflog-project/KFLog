@@ -21,6 +21,8 @@
 #include <mapcontents.h>
 
 #include <kapp.h>
+#include <kconfig.h>
+#include <kglobal.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
 #include <qlayout.h>
@@ -36,8 +38,6 @@ EvaluationDialog::EvaluationDialog(QWidget *parent)
 : QDialog(parent, "EvaluationsDialog", false)
 {
   setCaption(i18n("Flightevaluation:"));
-  setMinimumWidth(800);
-  setMinimumHeight(500);
 
   setWFlags(getWFlags() | WStyle_StaysOnTop);
 
@@ -75,7 +75,8 @@ EvaluationDialog::EvaluationDialog(QWidget *parent)
   obenlayout->addWidget(combo_flight);
 
   gesamtlayout->addWidget(oben);
-*/  gesamtlayout->addWidget(textSplitter);
+*/
+  gesamtlayout->addWidget(textSplitter);
 
 //  updateListBox();
 
@@ -86,18 +87,33 @@ EvaluationDialog::EvaluationDialog(QWidget *parent)
   list.append(60);
   textSplitter->setSizes(list);
 
+  KConfig* config = KGlobal::config();
+
+  config->setGroup("Evaluation");
+  int dlgWidth, dlgHeight;
+  dlgWidth = config->readNumEntry("Dialog Width", 500);
+  dlgHeight = config->readNumEntry("Dialog Height", 300);
+
+  resize(dlgWidth, dlgHeight);
+  
 //  connect(combo_flight, SIGNAL(activated(int)),
 //        SLOT(slotShowFlightData()));
 //  connect(close, SIGNAL(clicked()), SLOT(reject()));
   show();
-  resizeEvent(0);
+  slotShowFlightData();
 }
 
 EvaluationDialog::~EvaluationDialog()
 {
-
-  // Cursor löschen
+  // delete Cursor
   emit(showCursor(QPoint(-100,-100), QPoint(-100,-100)));
+
+  // Save settings
+  KConfig* config = KGlobal::config();
+
+  config->setGroup("Evaluation");
+  config->writeEntry("Dialog Width", width());
+  config->writeEntry("Dialog Height", height());
 }
 
 void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
