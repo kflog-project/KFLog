@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-01-13 13:30+0100\n"
-"PO-Revision-Date: 2002-01-13 13:55MEZ\n"
+"POT-Creation-Date: 2002-01-18 23:02+0100\n"
+"PO-Revision-Date: 2002-01-18 23:03MEZ\n"
 "Last-Translator: Florian Ehinger <florian@kflog.org>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -508,6 +508,22 @@ msgstr "Breitengrad"
 #: kflogconfig.cpp:558 taskandwaypoint.cpp:186
 msgid "Longitude"
 msgstr "Längengrad"
+
+#: main.cpp:61
+msgid "KFLog - The K-Flight-Logger"
+msgstr "KFLog - Der K-Flug-Logger"
+
+#: main.cpp:67
+msgid ""
+"_: NAME OF TRANSLATORS\n"
+"Your names"
+msgstr "Florian Ehinger"
+
+#: main.cpp:68
+msgid ""
+"_: EMAIL OF TRANSLATORS\n"
+"Your emails"
+msgstr "florian@kflog.org"
 
 #: map.cpp:115
 msgid ""

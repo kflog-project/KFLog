@@ -41,7 +41,7 @@ s%@CPPFLAGS@%%g
 s%@CXXFLAGS@%-O2 -fno-exceptions -fno-check-new -Wall -pedantic -W -Wpointer-arith -Wmissing-prototypes -Wwrite-strings -Wno-long-long -Wnon-virtual-dtor -fno-builtin -O0 -g3 -Wall%g
 s%@FFLAGS@%%g
 s%@DEFS@%-DHAVE_CONFIG_H%g
-s%@LDFLAGS@%  %g
+s%@LDFLAGS@%%g
 s%@LIBS@%%g
 s%@exec_prefix@%${prefix}%g
 s%@prefix@%/opt/kde2/%g

@@ -24,7 +24,7 @@ ldadd=\s-lm $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
 ldflags=
 
 [General]
-AMChanged=true
+AMChanged=false
 author=Heiner Lamprecht
 configure_args=--prefix=/opt/kde2/
 email=heiner@kflog.org
@@ -1179,8 +1179,8 @@ sub_dirs=
 type=po
 
 [po/de.gmo]
-dist=false
-install=false
+dist=true
+install=true
 install_location=$$(kde_locale)/de/kflog.mo
 type=DATA
 
@@ -1192,8 +1192,8 @@ type=PO
 
 [po/fr.gmo]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$(kde_locale)/fr/kflog.mo
 type=DATA
 
 [po/fr.po]
@@ -1209,9 +1209,9 @@ install_location=
 type=DATA
 
 [po/no.gmo]
-dist=false
-install=false
-install_location=
+dist=true
+install=true
+install_location=$$(kde_locale)/no/kflog.mo
 type=DATA
 
 [po/no.po]
@@ -1222,8 +1222,8 @@ type=PO
 
 [po/sv.gmo]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$(kde_locale)/sv/kflog.mo
 type=DATA
 
 [po/sv.po]

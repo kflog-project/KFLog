@@ -57,15 +57,15 @@ static KCmdLineOptions options[] =
  */
 int main(int argc, char *argv[])
 {
-	KAboutData aboutData( "kflog", I18N_NOOP("KFLog"),
-		VERSION, I18N_NOOP("KFLog - The K-Flight-Logger"), KAboutData::License_GPL,
+	KAboutData aboutData( "kflog", "KFLog",
+		VERSION, i18n("KFLog - The K-Flight-Logger"), KAboutData::License_GPL,
 		"(c) 2001, The KFLog-Team", 0, "http://www.kflog.org",
 		"bugs@kflog.org");
 	aboutData.addAuthor("Heiner Lamprecht", 0, "heiner@kflog.org");
 	aboutData.addAuthor("Florian Ehinger", 0, "florian@kflog.org");
 	aboutData.addAuthor("Harald Maier", 0, "harry@kflog.org");
-	aboutData.setTranslator(I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"),
-	  I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails"));
+	aboutData.setTranslator(i18n("_: NAME OF TRANSLATORS\nYour names"),
+	  i18n("_: EMAIL OF TRANSLATORS\nYour emails"));
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options );
 
