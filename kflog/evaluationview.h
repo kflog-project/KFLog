@@ -49,6 +49,10 @@ class EvaluationView : public QWidget
 
   virtual QSize sizeHint();
 
+  // Cursor Positionen
+  unsigned int cursor1;
+  unsigned int cursor2;
+
  protected:
   /**
     * Redefinition of the paintEvent.
@@ -116,8 +120,6 @@ class EvaluationView : public QWidget
   int mouseB;
   int leftB;
   // Cursor Positionen
-  unsigned int cursor1;
-  unsigned int cursor2;
   unsigned int cursor_alt;
 
   Flight* flight;

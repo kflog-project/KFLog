@@ -42,6 +42,10 @@ class EvaluationFrame : public QFrame
     /** */
     ~EvaluationFrame();
     /** */
+    /** */
+    unsigned int getTaskStart();
+    /** */
+    unsigned int getTaskEnd();
 //    void updateCursorText(QString text);
 
   public slots:

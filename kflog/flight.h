@@ -21,11 +21,13 @@
 #include <baseflightelement.h>
 #include <flighttask.h>
 #include <optimization.h>
+#include <map.h>
 
 #include <qdatetime.h>
 #include <qlist.h>
 #include <qstring.h>
 #include <qstrlist.h>
+#include <qptrlist.h>
 
 /**
  * Contains the logged flight-data.
@@ -108,6 +110,10 @@ class Flight : public BaseFlightElement
      * @return the landing time.
      */
     int getLandTime() const;
+   /**
+    * @return the route
+    */
+    QList<flightPoint> getRoute() const;
     /**
      * @return the number of logged points.
      */
@@ -177,7 +183,7 @@ class Flight : public BaseFlightElement
      * Optimizes the task for OLC.
      * @return  "true", if the user wants to use the optimized task.
      */
-    bool optimizeTaskOLC();
+    bool optimizeTaskOLC(Map* map);
     /**
      * Searches the first point of the flight, which distance to the
      * mousecursor is less than 30 pixel. If no point is found, -1 is
@@ -314,7 +320,7 @@ class Flight : public BaseFlightElement
 
     FlightTask origTask;
     FlightTask optimizedTask;
-    Optimization *optim;
+//    Optimization *optim;
     bool optimized;
 
     /**

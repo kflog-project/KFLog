@@ -27,6 +27,8 @@
 #include <qspinbox.h>
 #include <qslider.h>
 #include <qtextview.h>
+#include "wp.h"
+#include "evaluationframe.h"
 
 class Flight;
 
@@ -56,6 +58,9 @@ class EvaluationDialog : public QDialog
   /** No descriptions */
   Flight* getFlight();
 
+  unsigned int getTaskStart(){return evalFrame->getTaskStart();}
+  unsigned int getTaskEnd(){return evalFrame->getTaskEnd();}
+
  signals:
   /** */
   void showCursor(QPoint p1, QPoint p2);
@@ -83,6 +88,7 @@ class EvaluationDialog : public QDialog
   QTextView* textLabel;
   QComboBox* combo_flight;
   Flight* flight;
+  EvaluationFrame* evalFrame;
 };
 
 #endif

@@ -53,7 +53,7 @@ EvaluationDialog::EvaluationDialog(QWidget *parent)
   QSplitter* textSplitter = new QSplitter(QSplitter::Vertical, this, "splitter");
 
   // Diagrammfenster - Mitte
-  EvaluationFrame* evalFrame = new EvaluationFrame(textSplitter, this);
+  evalFrame = new EvaluationFrame(textSplitter, this);
 
   connect(this, SIGNAL(flightChanged()), evalFrame,
       SLOT(slotShowFlight()));

@@ -25,6 +25,7 @@
 
 #include <mapcalc.h>
 #include <mapmatrix.h>
+#include <optimizationwizard.h>
 
 //#include <kapp.h>
 //#include <kconfig.h>
@@ -33,6 +34,7 @@
 #include <kmessagebox.h>
 #include <ktextbrowser.h>
 #include <qpixmap.h>
+#include <qptrlist.h>
 
 /* Anzahl der zu merkenden besten Flüge */
 #define NUM_TASKS 3
@@ -449,6 +451,10 @@ int Flight::getPointIndexByTime(int time)
   return ep;
 }
 
+QList<flightPoint> Flight::getRoute() const{
+  return route;
+}
+
 flightPoint Flight::getPoint(int n)
 {
   if(n >= 0 && n < (int)route.count())  return *route.at(n);
@@ -739,56 +745,55 @@ QList<Waypoint> Flight::getWPList()
 
 QList<Waypoint> Flight::getOriginalWPList()  {  return origTask.getWPList();  }
 
-bool Flight::optimizeTaskOLC()
+bool Flight::optimizeTaskOLC(Map* map)
 {
-  if( route.count() < 10)  return false;
-
-  if (!taskTimesSet){
-    KMessageBox::information(0,"You have to set the begin and end times\nin the evaluation dialog first");
+  OptimizationWizard* wizard = new OptimizationWizard(0,i18n("Optimization for OLC"));
+  wizard->setMapContents(map);
+  int wizard_ret = wizard->exec();
+  if (wizard_ret==QDialog::Rejected) {
+    delete wizard;
     return false;
   }
-  optim = new Optimization(taskBegin,taskEnd,route);
-  optim->run();
 
   unsigned int idList[7];
   double points;
-  double distance = optim->optimizationResult(idList,&points);
+  double distance = wizard->optimizationResult(idList,&points);
 
   if (distance<0.0) // optimization was canceled
     return false;
 
-  QString text, distText, rawPointText;
-  rawPointText.sprintf(" %.2f", points);
-  distText.sprintf(" %.2f km  ", distance);
-  text = i18n("The task has been optimized for the OLC.\nThe best task found is:\n\n");
-  text = text + "\t1:  "
-      + printPos(route.at(idList[0])->origP.lat()) + " / "
-      + printPos(route.at(idList[0])->origP.lon(), false)
-      + QString("\n\t2:  ")
-      + printPos(route.at(idList[1])->origP.lat()) + " / "
-      + printPos(route.at(idList[1])->origP.lon(), false)
-      + QString(" (%1km)\n\t3:  ").arg(dist(route.at(idList[0]),route.at(idList[1])),0,'f',2)
-      + printPos(route.at(idList[2])->origP.lat()) + " / "
-      + printPos(route.at(idList[2])->origP.lon(), false)
-      + QString(" (%1km)\n\t4:  ").arg(dist(route.at(idList[1]),route.at(idList[2])),0,'f',2)
-      + printPos(route.at(idList[3])->origP.lat()) + " / "
-      + printPos(route.at(idList[3])->origP.lon(), false)
-      + QString(" (%1km)\n\t5:  ").arg(dist(route.at(idList[2]),route.at(idList[3])),0,'f',2)
-      + printPos(route.at(idList[4])->origP.lat()) + " / "
-      + printPos(route.at(idList[4])->origP.lon(), false)
-      + QString(" (%1km)\n\t6:  ").arg(dist(route.at(idList[3]),route.at(idList[4])),0,'f',2)
-      + printPos(route.at(idList[5])->origP.lat()) + " / "
-      + printPos(route.at(idList[5])->origP.lon(), false)
-      + QString(" (%1km)\n\t7:  ").arg(dist(route.at(idList[4]),route.at(idList[5])),0,'f',2)
-      + printPos(route.at(idList[6])->origP.lat()) + " / "
-      + printPos(route.at(idList[6])->origP.lon(), false)
-      + QString(" (%1km):  ").arg(dist(route.at(idList[5]),route.at(idList[6])),0,'f',2)
-      + i18n("\n\nDistance:\t") + distText + "\n" + i18n("Points(raw):\t") + rawPointText + "\n\n"
-      + i18n("Do You want to use this task and replace the old?");
-
-  if(KMessageBox::questionYesNo(0, text, i18n("Optimizing")) ==
-        KMessageBox::Yes)
-    {
+//  QString text, distText, rawPointText;
+//  rawPointText.sprintf(" %.2f", points);
+//  distText.sprintf(" %.2f km  ", distance);
+//  text = i18n("The task has been optimized for the OLC.\nThe best task found is:\n\n");
+//  text = text + "\t1:  "
+//      + printPos(route.at(idList[0])->origP.lat()) + " / "
+//      + printPos(route.at(idList[0])->origP.lon(), false)
+//      + QString("\n\t2:  ")
+//      + printPos(route.at(idList[1])->origP.lat()) + " / "
+//      + printPos(route.at(idList[1])->origP.lon(), false)
+//      + QString(" (%1km)\n\t3:  ").arg(dist(route.at(idList[0]),route.at(idList[1])),0,'f',2)
+//      + printPos(route.at(idList[2])->origP.lat()) + " / "
+//      + printPos(route.at(idList[2])->origP.lon(), false)
+//      + QString(" (%1km)\n\t4:  ").arg(dist(route.at(idList[1]),route.at(idList[2])),0,'f',2)
+//      + printPos(route.at(idList[3])->origP.lat()) + " / "
+//      + printPos(route.at(idList[3])->origP.lon(), false)
+//      + QString(" (%1km)\n\t5:  ").arg(dist(route.at(idList[2]),route.at(idList[3])),0,'f',2)
+//      + printPos(route.at(idList[4])->origP.lat()) + " / "
+//      + printPos(route.at(idList[4])->origP.lon(), false)
+//      + QString(" (%1km)\n\t6:  ").arg(dist(route.at(idList[3]),route.at(idList[4])),0,'f',2)
+//      + printPos(route.at(idList[5])->origP.lat()) + " / "
+//      + printPos(route.at(idList[5])->origP.lon(), false)
+//      + QString(" (%1km)\n\t7:  ").arg(dist(route.at(idList[4]),route.at(idList[5])),0,'f',2)
+//      + printPos(route.at(idList[6])->origP.lat()) + " / "
+//      + printPos(route.at(idList[6])->origP.lon(), false)
+//      + QString(" (%1km):  ").arg(dist(route.at(idList[5]),route.at(idList[6])),0,'f',2)
+//      + i18n("\n\nDistance:\t") + distText + "\n" + i18n("Points(raw):\t") + rawPointText + "\n\n"
+//      + i18n("Do You want to use this task and replace the old?");
+//
+//  if(KMessageBox::questionYesNo(0, text, i18n("Optimizing")) ==
+//        KMessageBox::Yes)
+//    {
       QList<Waypoint> wpL;
 
       APPEND_WAYPOINT(0, 0, i18n("Take-Off"))
@@ -813,10 +818,12 @@ bool Flight::optimizeTaskOLC()
       optimizedTask.setOptimizedTask(points,distance);
       optimized = true;
 
+      delete wizard;
       return true;
-    }
-
-  return false;
+//    }
+//
+//  delete wizard;
+//  return false;
 }
 
 

@@ -272,7 +272,7 @@ void KFLogApp::initActions()
       this, SLOT(slotOptimizeFlight()), actionCollection(), "optimize_flight");
 
       
-  flightOptimizationOLC = new KAction(i18n("Optimize(OLC)"), "wizard_olc", 0,
+  flightOptimizationOLC = new KAction(i18n("Optimize(OLC)"), "wizard", 0,
       this, SLOT(slotOptimizeFlightOLC()), actionCollection(), "optimize_flight_olc");
 
 
@@ -860,15 +860,14 @@ void KFLogApp::slotOptimizeFlightOLC()
 {
   extern MapContents _globalMapContents;
   Flight *f = (Flight *)_globalMapContents.getFlight();
-  if(f && f->getTypeID() == BaseMapElement::Flight)
-    {
-      if(f->optimizeTaskOLC())
+  if(f && f->getTypeID() == BaseMapElement::Flight){
+      if(f->optimizeTaskOLC(map))
         {
           // Okay, update flightdata and redraw map
           dataView->setFlightData();
           map->slotRedrawFlight();
         }
-    }
+  }
 }
 
 void KFLogApp::slotConfigureToolbars()

@@ -25,6 +25,7 @@
 #include <qbitmap.h>
 
 #include <qpointarray.h>
+#include <qtimer.h>
 
 #include <flight.h>
 #include <waypointcatalog.h>
@@ -35,6 +36,8 @@
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
+class Flight;
+ 
 class Map : public QWidget
 {
   Q_OBJECT

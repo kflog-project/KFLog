@@ -264,3 +264,11 @@ void EvaluationFrame::resizeEvent(QResizeEvent* event)
   QFrame::resizeEvent(event);
   slotShowGraph();
 }
+
+unsigned int EvaluationFrame::getTaskStart(){
+  return flight->getPointIndexByTime(evalView->cursor1);
+}
+
+unsigned int EvaluationFrame::getTaskEnd(){
+  return flight->getPointIndexByTime(evalView->cursor2);
+}
