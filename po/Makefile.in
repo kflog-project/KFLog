@@ -206,8 +206,8 @@ EXTRA_DIST = kflog.pot sv.gmo
 ####### kdevelop will overwrite this part!!! (end)############
 #>- POFILES = AUTO
 #>+ 2
-POFILES = de.po no.po sv.po
-GMOFILES = de.gmo no.gmo sv.gmo
+POFILES = de.po fr.po no.po sv.po
+GMOFILES = de.gmo fr.gmo no.gmo sv.gmo
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -216,7 +216,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 #>- DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 #>+ 4
-KDE_DIST=de.gmo no.gmo no.po de.po sv.po 
+KDE_DIST=de.gmo no.gmo no.po fr.po de.po sv.po 
 
 #>- DISTFILES= $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST) $(KDE_DIST)
 #>+ 1
@@ -352,10 +352,13 @@ merge:
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
 
-#>+ 10
+#>+ 13
 de.gmo: de.po
 	rm -f de.gmo; $(GMSGFMT) -o de.gmo $(srcdir)/de.po
 	test ! -f de.gmo || touch de.gmo
+fr.gmo: fr.po
+	rm -f fr.gmo; $(GMSGFMT) -o fr.gmo $(srcdir)/fr.po
+	test ! -f fr.gmo || touch fr.gmo
 no.gmo: no.po
 	rm -f no.gmo; $(GMSGFMT) -o no.gmo $(srcdir)/no.po
 	test ! -f no.gmo || touch no.gmo
@@ -365,21 +368,22 @@ sv.gmo: sv.po
 
 #>+ 3
 clean-nls:
-	-rm -f  de.gmo no.gmo sv.gmo
+	-rm -f  de.gmo fr.gmo no.gmo sv.gmo
 
 #>+ 9
 install-nls:
 install-nls:
-	@for base in de no sv ; do \
+	@for base in de fr no sv ; do \
 	  echo $(INSTALL_DATA) $$base.gmo $(DESTDIR)$(kde_locale)/$$base/LC_MESSAGES/$(PACKAGE).mo ;\
 	  $(mkinstalldirs) $(DESTDIR)$(kde_locale)/$$base/LC_MESSAGES ; \
 	  test ! -f $$base.gmo || $(INSTALL_DATA) $$base.gmo $(DESTDIR)$(kde_locale)/$$base/LC_MESSAGES/$(PACKAGE).mo ;\
 	done
 
 
-#>+ 5
+#>+ 6
 uninstall-nls:
 	rm -f $(DESTDIR)$(kde_locale)/de/LC_MESSAGES/$(PACKAGE).mo
+	rm -f $(DESTDIR)$(kde_locale)/fr/LC_MESSAGES/$(PACKAGE).mo
 	rm -f $(DESTDIR)$(kde_locale)/no/LC_MESSAGES/$(PACKAGE).mo
 	rm -f $(DESTDIR)$(kde_locale)/sv/LC_MESSAGES/$(PACKAGE).mo
 
