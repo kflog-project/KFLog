@@ -49,6 +49,10 @@ $Id$
 
   * Fixed a small bug in the Evaluation dialog
 
+  * Tasks are treated as normal documents now too, so they show up in the Recent Documents
+    list and can be dragged & dropped into the map or the KFLogBrowser, just like you can
+    with flights.
+
   
 2003-06-12 Eggert Ehmke <eggert@kflog.org>
 
