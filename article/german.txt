@@ -40,6 +40,10 @@ Projekt. Die Topographie hat als Grundlage die VPF
 Datensaetzte des amerikanischen Militaers. Die
 Luftraumdaten stammen ebenfalls aus Quellen des
 amerikanischen Militaers. (DAFiF)
+[Addition by André]
+These are incidently the same sources other popular 
+programs such as WinPilot and SeeYou use.
+[/Addition]
 
 Es sind Kartendaten fuer die gesamte Welt fuer KFLOG
 verfuegbar. Die Luftraumdaten werden darueberhinaus
@@ -48,7 +52,7 @@ Karten und das Programm kostenlos ueber die Internetseite
 Downgeloadet werden.
 Es ist ausserdem ein Karteneditor fuer den Endbenutzer in
 Planung, so dass die Daten laufend verbessert und aktuell
-gehalten werden koennen.
+gehalten werden koennen. [comment: is there really ? ;-)]
 
 
 _Funktionen_
@@ -61,10 +65,15 @@ Auch wenn KFLOG im Moment noch nicht direkt andere
 Luftsportarten wie Drachenflug, Paragliding, usw.
 unterstuezt ist es sicher auch fuer diese Sportarten
 interessant.
+[Comment André: you should talk about the functions of KFLog here,
+not the spinoffs I think. See section below.]
 
 _Planen_
 Es ist eine graphische sowie Dialogbasierte Planung von
-beliebigen Strecken moeglich.
+beliebigen Strecken moeglich. 
+[Addition by André] Currently, not only old-fashioned tasks are
+possible, but also more advanced types like FAI-area's
+can be defined.[/Addition]
 
 Screenshots Beispiele ...
 
