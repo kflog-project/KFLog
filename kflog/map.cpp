@@ -809,6 +809,7 @@ warning("Map::mousePressEvent: planning=%d", planning);
       // Move Map
       _globalMapMatrix.centerToPoint(event->pos());
       _globalMapMatrix.createMatrix(this->size());
+  
       __redrawMap();
     }
   else if(event->button() == LeftButton)
@@ -1519,6 +1520,7 @@ void Map::slotCenterToFlight()
     if (!r.isNull()) {
       _globalMapMatrix.centerToRect(r);
       _globalMapMatrix.createMatrix(this->size());
+
       __redrawMap();
     }
 
@@ -1567,6 +1569,7 @@ void Map::slotCenterToTask()
         {
           _globalMapMatrix.centerToRect(r);
           _globalMapMatrix.createMatrix(this->size());
+
           __redrawMap();
 
           emit changed(this->size());
@@ -1797,6 +1800,7 @@ void Map::slotFlightNext()
 				  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
      				_globalMapMatrix.centerToPoint(prePos);
      	            _globalMapMatrix.createMatrix(this->size());
+
      			    __redrawMap();
               }			 		
               emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
@@ -1832,6 +1836,7 @@ void Map::slotFlightPrev()
 				  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
      				_globalMapMatrix.centerToPoint(prePos);
      	            _globalMapMatrix.createMatrix(this->size());
+
      			    __redrawMap();
               }		
               emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
@@ -1866,6 +1871,7 @@ void Map::slotFlightStepNext()
 				  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
      				_globalMapMatrix.centerToPoint(prePos);
      	            _globalMapMatrix.createMatrix(this->size());
+
      			    __redrawMap();
               }			 		
               emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
@@ -1901,6 +1907,7 @@ void Map::slotFlightStepPrev()
 				  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
      				_globalMapMatrix.centerToPoint(prePos);
      	            _globalMapMatrix.createMatrix(this->size());
+
      			    __redrawMap();
               }			 		
               emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
@@ -2228,6 +2235,7 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
   }
   // force a update
   emit changed(this->size());
+
   __redrawMap();
 }
 

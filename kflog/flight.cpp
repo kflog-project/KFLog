@@ -987,6 +987,7 @@ bool Flight::optimizeTask()
   return false;
 }
 
+
 /** Get the next FlightPoint after number 'index' */
 int Flight::searchGetNextPoint(int index, flightPoint& searchPoint)
 {

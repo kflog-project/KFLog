@@ -29,7 +29,8 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstddirs.h>
-#include <kdirselectdialog.h>
+#include <kstandarddirs.h>
+#include <kfiledialog.h>
 #include <qdatastream.h>
 #include <qdatetime.h>
 #include <qdir.h>
@@ -118,7 +119,7 @@ const int MapContents::isoLines[] = { 0, 10, 25, 50, 75, 100, 150, 200, 250,
           7500, 7750, 8000, 8250, 8500, 8750};
 
 MapContents::MapContents()
-  : isFirst(true)
+  : isFirst(true),firstStart(true)
 {
   sectionArray.resize(MAX_FILE_COUNT);
   sectionArray.fill(false);
@@ -1675,7 +1676,21 @@ void MapContents::proofeSection(bool isPrint)
   mapDir = config->readEntry("DefaultMapDirectory",
       globalDirs->findResource("appdata", "mapdata"));
 
+
+  /*
+   * Currently there is commited a QResizeEvent 2times during the start
+   * which will lead to display to Informaion Dialogs during the first start.
+   *
+   * Workaround with a global variable: firstStart
+   */
+      
   if(mapDir.isEmpty()) {
+    if (firstStart)
+      {
+        firstStart = false;  
+        return;
+      }
+
     /* We don't have a mapdir configured. This is a problem, as the user will be
        flooded with errordialogs and no maps will be loaded. Therefore, it is a
        better strategy to just ask the user. */
@@ -1685,10 +1700,10 @@ void MapContents::proofeSection(bool isPrint)
     
     KMessageBox::sorry(0, i18n("<qt>The directory for maps has not been set.<br>Please select the directory where you have installed your maps.</qt>"),
                           i18n("Mapdirectory not set."));
-    // set a defaultdirectory                          
-    mapDir = KDirSelectDialog::selectDirectory(
-        "/opt/kde3/share/apps/kflog/mapdata/",
-        true,0,i18n("Select map directory...")).path();
+    // set a defaultdirectory
+    mapDir = KFileDialog::getExistingDirectory(
+      "/opt/kde3/share/apps/kflog/mapdata/",
+      0,i18n("Select map directory...") );
 
     config->writeEntry("DefaultMapDirectory", mapDir);
   }

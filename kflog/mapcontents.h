@@ -434,6 +434,13 @@ switch to first task in file */
     bool isFirst;
 
     /**
+     * Added for a Workaround: There are not two messages
+     * boxes during the first start anymore
+     */
+    bool firstStart;
+
+     
+    /**
      * List of all drawn isohypses.
      */
     QList<isoListEntry> regIsoLines;

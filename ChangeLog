@@ -1,5 +1,10 @@
 $Id$
 
+2003-04-25 Florian <florian@kflog.org>
+  * Changed the MapdirectorySelect Dialog to a KFileDialog
+    looks nicer ;-)
+    The Dialog will no longer appears two times
+
 2003-04-24 Florian <florian@kflog.org>
   * some adjustments for the default layout
   
