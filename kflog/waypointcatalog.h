@@ -40,6 +40,8 @@ public:
   bool readFilserDA4 (const QString& catalog);
   /** No descriptions */
   bool writeFilserDA4 (const QString& catalog);
+  /** read SeeYou cup file, only waypoint part */
+  bool readCup (const QString& catalog);
   /** No descriptions */
   bool write();
   /** No descriptions */

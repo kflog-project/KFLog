@@ -231,7 +231,8 @@ void Waypoints::slotOpenWaypointCatalog()
                                                             "*.kwp *.KWP|" + i18n ("Cumulus and KFLogEmbedded waypoints") + " (*.kwp)\n"
                                                             "*.txt *.TXT|" + i18n ("Filser txt waypoints") + " (*.txt)\n"
                                                             "*.da4 *.DA4|" + i18n ("Filser da4 waypoints") + " (*.da4)\n"
-                                                            "*.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT|" + i18n ("All supported waypoint formats"), this, i18n("Open waypoint catalog"));
+                                                            "*.cup *.CUP|" + i18n ("SeeYou cup waypoints") + " (*.cup)\n"
+                                                            "*.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT|" + i18n ("All supported waypoint formats"), this, i18n("Open waypoint catalog"));
 
   openCatalog(fName);
 }

@@ -497,6 +497,8 @@ bool WaypointCatalog::load(const QString& catalog){
     return readFilserTXT (catalog);
   else if (catalog.right(4).lower() == ".da4")
     return readFilserDA4 (catalog);
+  else if (catalog.right(4).lower() == ".cup")
+    return readCup (catalog);
   else
     return readBinary(catalog);
 }
@@ -820,4 +822,244 @@ bool WaypointCatalog::readBinary(const QString &catalog)
   }
 
   return true;
+}
+
+/** read a waypoint catalog from a SeeYou cup file, only waypoint part */
+bool WaypointCatalog::readCup (const QString& catalog)
+{
+  qDebug ("WaypointCatalog::readCup (%s)", catalog.latin1());
+
+  QFile f(catalog);
+
+  if (f.exists())
+  {
+    if (f.open(IO_ReadOnly))
+    {
+      while (!f.atEnd())
+      {
+	bool ok;
+        QString line;
+        Q_LONG result = f.readLine (line, 256);
+
+        if (result > 0)
+        {
+	  line.replace( QRegExp("[\r\n]"), "" );
+          QStringList list = QStringList::split (",", line, true);
+
+          if( list[0] == "-----Related Tasks-----" )
+	    {
+	       // Task part starts, we will ignore it and break up reading
+	      break;
+	    }
+
+	  // 10 elements are mandatory, element 11 description is optional
+	  if( list.count() < 10 ||
+	      list[0] == "Title" || list[1] == "Code" || list[2] == "Country" )
+	    {
+	      // too less elements or a description line, ignore this
+	      continue;
+	    }
+
+	  // A cup line consists of the following elements:
+	  //
+	  // Title,Code,Country,Latitude,Longitude,Elevation,Style,Direction,Length,Frequency,Description
+	  //
+	  // See here for more info: http://www.seeyou.ws/thankyou.php?fname=cup_format.pdf
+
+          Waypoint *w = new Waypoint;
+
+          w->isLandable = false;
+
+	  if( list[0].length() ) // long name of waypoint
+	    {
+	      w->description = list[0].replace( QRegExp("\""), "" );
+	    }
+	  else
+	    {
+	      w->description = ""; 
+	    }
+
+          w->name = list[1].replace( QRegExp("\""), "" ); // short name of waypoint
+	  w->comment = list[2] + ": ";
+          w->icao = "";
+	  w->surface = Airport::Unknown;
+
+	  // waypoint type
+	  uint wpType = list[6].toUInt(&ok);
+
+	  if( ! ok )
+	    {
+	      delete w; continue;
+	    }
+
+	  switch( wpType )
+	    {
+	    case 0:
+	      w->type = BaseMapElement::NotSelected;
+	      break;
+	    case 1:
+	      w->type = BaseMapElement::Landmark;
+	      break;
+	    case 2:
+	      w->type = BaseMapElement::Airfield;
+	      w->surface = Airport::Grass;
+	      w->isLandable = true;
+	      break;
+	    case 3:
+	      w->type = BaseMapElement::Outlanding;
+	      break;
+	    case 4:
+	      w->type = BaseMapElement::Glidersite;
+	      w->isLandable = true;
+	      break;
+	    case 5:
+	      w->type = BaseMapElement::Airfield;
+	      w->surface = Airport::Concrete;
+	      w->isLandable = true;
+	      break;
+	    case 6:
+	      w->type = BaseMapElement::Landmark;
+	      break;
+	    case 7:
+	      w->type = BaseMapElement::Landmark;
+	      break;
+	    default:
+	      w->type = BaseMapElement::NotSelected;
+	      break;
+	    }
+
+	  // latitude as ddmm.mmm(N|S)
+	  double degree = list[3].left(2).toDouble(&ok);
+
+	  if( ! ok )
+	    {
+	      delete w; continue;
+	    }
+
+	  double minutes = list[3].mid(2,6).toDouble(&ok);
+
+	  if( ! ok )
+	    {
+	      delete w; continue;
+	    }
+
+	  double latTmp = (degree * 600000.) + (minutes * 10000.0);
+
+	  if( list[3].right(1).upper() == "S" )
+	    {
+	      latTmp = -latTmp;
+	    }
+
+	  // longitude dddmm.mmm(E|W)
+	  degree = list[4].left(3).toDouble(&ok);
+
+	  if( ! ok )
+	    {
+	      delete w; continue;
+	    }
+
+	  minutes = list[4].mid(3,6).toDouble(&ok);
+
+	  if( ! ok )
+	    {
+	      delete w; continue;
+	    }
+
+	  double lonTmp = (degree * 600000.) + (minutes * 10000.0);
+
+
+	  if( list[4].right(1).upper() == "W" )
+	    {
+	      lonTmp = -lonTmp;
+	    }
+
+          w->origP.setLat((int) rint(latTmp));
+          w->origP.setLon((int) rint(lonTmp));
+
+	  if( list[5].length() ) // elevation in meter or feet
+	    {
+	      w->elevation = (list[5].left(list[5].length()-1)).toInt(&ok);
+
+	      if( ! ok )
+		{
+		  delete w; continue;
+		}
+
+	      if( list[5].right(1).lower() == "f" )
+		{
+		  w->elevation = (int) rint(w->elevation * 0.3048);
+		}
+	    }
+
+	  if( list[9].stripWhiteSpace().length() ) // airport frequency
+	    {
+	      double frequency = list[9].replace( QRegExp("\""), "" ).toDouble(&ok);
+
+	      if( ok )
+		{
+		  w->frequency = frequency;
+		}
+	    }
+
+	  if( list[7].stripWhiteSpace().length() ) // runway direction
+	    {
+	      uint rdir = list[7].toInt(&ok);
+
+	      if( ok )
+		{
+		  w->runway = rdir;
+		}
+	    }
+
+	  if( list[8].stripWhiteSpace().length() ) // runway length in meters
+	    {
+	      // three units are possible:
+	      // o meter: m
+	      // o nautical mile: nm
+	      // o statute mile: ml
+	      QString unit;
+	      int uStart = list[8].find( QRegExp("[lmn]") );
+
+	      if( uStart != -1 )
+		{
+		  unit = list[8].mid( uStart ).lower();
+		  double length = list[8].left( list[8].length()-unit.length() ).toDouble(&ok);
+
+		  if( ok )
+		    {
+		      if( unit == "nm" ) // nautical miles
+			{
+			  length *= 1852;
+			}
+		      else if( unit == "ml" ) // statute miles
+			{
+			  length *= 1609.34;
+			}
+
+		      w->length = (int) rint( length );
+		    }
+		}
+	    }
+
+	  if( list.count() == 11 &&
+	      list[10].stripWhiteSpace().length() ) // description, optional
+	    {
+	      w->comment += list[10].replace( QRegExp("\""), "" );
+	    }
+
+          w->importance = 3;
+
+          if (!wpList.insertItem(w))
+          {
+            delete w;
+            break;
+          }
+        }
+      }
+      onDisc = true;
+      path = catalog;
+      return true;
+    }
+  }
+  return false;
 }
