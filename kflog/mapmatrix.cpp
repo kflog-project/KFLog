@@ -26,7 +26,7 @@
 // 10 Meter Höhe pro Pixel ist die stärkste Vergrößerung.
 // Bei dieser Vergrößerung erfolgt die eigentliche Projektion
 #define MAX_SCALE 10.0
-#define MIN_SCALE 5000.0
+#define MIN_SCALE 500000.0
 
 #define MAX(a,b)   ( ( a > b ) ? a : b )
 #define MIN(a,b)   ( ( a < b ) ? a : b )

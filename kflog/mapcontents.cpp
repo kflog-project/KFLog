@@ -81,6 +81,7 @@
   }
 
 #define READ_POINT_LIST  in >> locLength; \
+  warning("locLenght %d",locLength); \
   tA.resize(locLength); \
   for(unsigned int i = 0; i < locLength; i++) { \
     in >> lat_temp;          in >> lon_temp; \
@@ -987,6 +988,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
       return false;
     }
 
+
   QDataStream in(&eingabe);
   in.setVersion(2);
 
@@ -1029,7 +1031,6 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   unsigned int gesamt_elemente = 0;
   unsigned int river = 0;
   unsigned int rivert = 0;
-
   while(!in.eof())
     {
       in >> typeIn;
@@ -1039,6 +1040,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
       QPointArray tA;
 
       gesamt_elemente++;
+
 
       switch (typeIn)
         {
@@ -1071,9 +1073,13 @@ bool MapContents::__readBinaryFile(const int fileSecID,
             READ_POINT_LIST
             hydroList.append(new LineElement(name, typeIn, tA, sort));
             break;
+          case BaseMapElement::PackIce:
+            // wird im Moment nicht verwendet
+            // steht jedoch durch Fehler in MapBin in Dateien
+            READ_POINT_LIST
+            break;
           case BaseMapElement::Forest:
           case BaseMapElement::Glacier:
-          case BaseMapElement::PackIce:
             in >> sort;
             if(formatID >= FILE_FORMAT_ID) in >> name;
             READ_POINT_LIST
@@ -1109,9 +1115,10 @@ bool MapContents::__readBinaryFile(const int fileSecID,
             break;
         }
     }
-
   return true;
 }
+
+
 /*
 int MapContents::searchFlightPoint(QPoint cPos, flightPoint& fP)
 {
@@ -1614,8 +1621,8 @@ void MapContents::proofeSection(bool isPrint)
 
   if(mapBorder.left() < 0)  westCorner -= 1;
   if(mapBorder.right() < 0)  eastCorner -= 1;
-  if(mapBorder.top() < 0) northCorner -= 1;
-  if(mapBorder.bottom() < 0) southCorner -= 1;
+  if(mapBorder.top() < 0) northCorner += 1;
+  if(mapBorder.bottom() < 0) southCorner += 1;
 
   if(isFirst)
     {
@@ -1735,6 +1742,7 @@ void MapContents::proofeSection(bool isPrint)
     }
 
 //  emit loadingMessage("");
+
 }
 
 unsigned int MapContents::getListLength(int listIndex) const
