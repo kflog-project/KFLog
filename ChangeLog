@@ -1,5 +1,10 @@
 $Id$
 
+2002-07-11 Thomas <thomas@kflog.org>
+
+  * Added automagical panning of map when stepping through flight.
+  * Added help-dialog to 3D view.
+
 
 2002-07-11 Heiner <heiner@kflog.org>
 
