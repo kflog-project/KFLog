@@ -232,6 +232,8 @@ void EvaluationFrame::slotSpeedGlatt(int g)
 
 void EvaluationFrame::slotScale(int g)
 {
+  if(flight == NULL)  return;
+  
   // gibt den Scalierungsfaktor zurück
   secWidth = g;
 

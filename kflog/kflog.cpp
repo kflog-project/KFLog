@@ -136,7 +136,6 @@ KFLogApp::KFLogApp()
 
   activateDock();
 
-  slotCheckDockWidgetStatus();
   // Heavy workaround! MapConfig should tell KFLogApp, which type is selected!
   slotSelectFlightData(0);
 
@@ -163,6 +162,9 @@ KFLogApp::KFLogApp()
   connect(map, SIGNAL(showPoint(const QPoint&)), evaluationWindow, SLOT(slotRemoveFlightPoint()));
   connect(map, SIGNAL(showFlightPoint(const QPoint&, const flightPoint&)),
       evaluationWindow, SLOT(slotShowFlightPoint(const QPoint&, const flightPoint&)));
+
+
+  slotCheckDockWidgetStatus();      
   KTipDialog::showTip(this, "kflog/tips");
 }
 
@@ -897,14 +899,17 @@ void KFLogApp::slotHideObjectTreeDock() { viewObjectTree->setChecked(false); }
 
 void KFLogApp::slotCheckDockWidgetStatus()
 {
-  viewMapControl->setChecked(mapControlDock->isVisible());
-  viewMap->setChecked(mapViewDock->isVisible());
-  viewData->setChecked(dataViewDock->isVisible());
-  viewHelpWindow->setChecked(helpWindowDock->isVisible());
-  viewEvaluationWindow->setChecked(evaluationWindowDock->isVisible());    
-  viewWaypoints->setChecked(waypointsDock->isVisible());
-  viewLegend->setChecked(legendDock->isVisible());
-  viewObjectTree->setChecked(objectTreeDock->isVisible());
+  // Here is still a bug. The toggle status is invalid, when the widget is a non active
+  // TabWidget.
+  //          Florian
+  viewMapControl->setChecked(mapControlDock->isShown());
+  viewMap->setChecked(mapViewDock->isShown());
+  viewData->setChecked(dataViewDock->isShown());
+  viewHelpWindow->setChecked(helpWindowDock->isShown());
+  viewEvaluationWindow->setChecked(evaluationWindowDock->isShown());    
+  viewWaypoints->setChecked(waypointsDock->isShown());
+  viewLegend->setChecked(legendDock->isShown());
+  viewObjectTree->setChecked(objectTreeDock->isShown());
 }
 
 void KFLogApp::slotToggleDataView()  { dataViewDock->changeHideShowState(); }

@@ -1,12 +1,21 @@
 $Id$
 
+
+2003-07-09 Heiner Lamprecht <heiner@kflog.org>
+
+  * Fixed a bug in EvaluationFrame::slotScale(), which could crash KFLog,
+    if no flight was loaded.
+
+
 2003-07-09 Eggert Ehmke <eggert@kflog.org>
 
   * Updated german translation
 
+
 2003-06-24 Eggert Ehmke <eggert@kflog.org>
 
   * backported architecture independant code for Filser plugin from kflogembedded
+
 
 2003-07-07 André Somers <andre@kflog.org>
 
@@ -36,7 +45,9 @@ $Id$
 
   
 2003-06-12 Eggert Ehmke <eggert@kflog.org>
+
   * Bugfix: coordinates during flight animation are shown correctly now in status bar
+
 
 2003-06-04 Heiner Lamprecht <heiner@kflog.org>
 
