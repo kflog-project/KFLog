@@ -320,6 +320,14 @@ class Map : public QWidget
     // temp task (snapping)
     FlightTask tempTask;
 
+    /**
+     * Added for a Workaround: There are not two messages
+     * boxes during the first start anymore
+     */
+    bool firstStart;
+
+     
+    
   public: // Public attributes
     //
     QPoint preSnapPoint;

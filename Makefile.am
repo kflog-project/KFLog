@@ -2,14 +2,20 @@
 
 SUBDIRS = kflog po doc 
 
-EXTRA_DIST = kflog.kdevprj admin AUTHORS COPYING ChangeLog INSTALL README TODO kflog.lsm README-MAP kflog.spec 
+EXTRA_DIST = kflog.kdevprj admin AUTHORS COPYING ChangeLog INSTALL README TODO kflog.lsm README-MAP kflog.spec README-AIRFIELDS README-AIRSPACE 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_datadir)/kflog/mapdata/
 	$(INSTALL_DATA) $(srcdir)/README-MAP $(kde_datadir)/kflog/mapdata/README-MAP
+	$(mkinstalldirs) $(kde_datadir)/kflog/mapdata/airfields/
+	$(INSTALL_DATA) $(srcdir)/README-AIRFIELDS $(kde_datadir)/kflog/mapdata/airfields/README-AIRFIELDS
+	$(mkinstalldirs) $(kde_datadir)/kflog/mapdata/airspace/
+	$(INSTALL_DATA) $(srcdir)/README-AIRSPACE $(kde_datadir)/kflog/mapdata/airspace/README-AIRSPACE
 
 uninstall-local:
 	-rm -f $(kde_datadir)/kflog/mapdata/README-MAP
+	-rm -f $(kde_datadir)/kflog/mapdata/airfields/README-AIRFIELDS
+	-rm -f $(kde_datadir)/kflog/mapdata/airspace/README-AIRSPACE
 
 ####### kdevelop will overwrite this part!!! (end)############
 # not a GNU package. You can remove this line, if 

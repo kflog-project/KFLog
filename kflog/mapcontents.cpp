@@ -16,48 +16,63 @@
 ***********************************************************************/
 
 #include <cmath>
-#include <stdlib.h>
 #include <iostream>
+#include <stdlib.h>
 
-#include "mapcontents.h"
-#include <mapcalc.h>
-#include "flightselectiondialog.h"
-#include "kflog.h"
+
+#include <stdio.h>
+#include <cstdlib>
+
+// Datei-handling:
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+#include <signal.h>
+#include <termios.h>
+#include <time.h>
+#include <unistd.h>
+
+
 
 #include <kconfig.h>
+#include <kfiledialog.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstddirs.h>
 #include <kstandarddirs.h>
-#include <kfiledialog.h>
+#include <kio/netaccess.h>
+#include <kio/scheduler.h>
+
 #include <qdatastream.h>
 #include <qdatetime.h>
 #include <qdir.h>
+#include <qdom.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qprogressdialog.h>
 #include <qregexp.h>
 #include <qstring.h>
 #include <qtextstream.h>
-#include <qdom.h>
-#include <kio/netaccess.h>
-#include <kio/scheduler.h>
-#include <kconfig.h>
-
-#include <mapmatrix.h>
 
 #include <airport.h>
 #include <airspace.h>
 #include <basemapelement.h>
+#include <downloadlist.h>
 #include <flight.h>
 #include <flightgroup.h>
+#include <flightselectiondialog.h>
 #include <glidersite.h>
 #include <isohypse.h>
+#include <kflog.h>
 #include <lineelement.h>
+#include <mapcalc.h>
+#include <mapcontents.h>
+#include <mapmatrix.h>
 #include <radiopoint.h>
 #include <singlepoint.h>
-#include <downloadlist.h>
+
 
 #define MAX_FILE_COUNT 16200
 #define ISO_LINE_NUM 50
@@ -119,7 +134,7 @@ const int MapContents::isoLines[] = { 0, 10, 25, 50, 75, 100, 150, 200, 250,
           7500, 7750, 8000, 8250, 8500, 8750};
 
 MapContents::MapContents()
-  : isFirst(true),firstStart(true)
+  : isFirst(true),stop(false)
 {
   sectionArray.resize(MAX_FILE_COUNT);
   sectionArray.fill(false);
@@ -1664,29 +1679,6 @@ void MapContents::proofeSection(bool isPrint)
   extern MapMatrix _globalMapMatrix;
   QRect mapBorder;
 
-  KStandardDirs* globalDirs = KGlobal::dirs();
-  KConfig* config = KGlobal::config();
-  config->setGroup("Path");
-  mapDir = config->readEntry("DefaultMapDirectory",
-      globalDirs->findResource("data", "kflog/mapdata/"));
-
-
-  /*
-   * Currently a QResizeEvent is commited 2times during the start
-   * which will lead to display to Informaion Dialogs during the first start.
-   *
-   * Workaround with a global variable: firstStart
-   */
-      
-  if(mapDir.isEmpty()) {
-
-    /* The mapdirectory does not exist. Ask the user */
-    KMessageBox::sorry(0, i18n("<qt>The mapdirectory does not exist.<br>Please select the directory where you have installed your maps.</qt>"),
-                          i18n("Mapdirectory does not exist."));
-    mapDir = KFileDialog::getExistingDirectory(0,0,i18n("Select map directory...") );
-
-    config->writeEntry("DefaultMapDirectory", mapDir);
-  }
       
   if(isPrint)
       mapBorder = _globalMapMatrix.getPrintBorder();
@@ -1703,85 +1695,46 @@ void MapContents::proofeSection(bool isPrint)
   if(mapBorder.top() < 0) northCorner += 1;
   if(mapBorder.bottom() < 0) southCorner += 1;
 
-  if(isFirst)
+
+  KStandardDirs* globalDirs = KGlobal::dirs();
+  KConfig* config = KGlobal::config();
+  config->setGroup("Path");
+  mapDir = config->readEntry("DefaultMapDirectory",
+      globalDirs->findResource("data", "kflog/mapdata/"));
+
+
+      warning("stop %d", stop);
+
+ // supress that the dialog will appear two times
+ if(stop)
+   {
+     stop = false;
+     warning("Supress that the Dialogs appears a second time");
+     return;
+   }
+
+      
+
+// Checking for the MapFiles    
+  if(mapDir.isNull())
     {
-      QDir airspaceDir(mapDir + "/airspace/");
-      QDir airfieldDir(mapDir + "/airfields/");
-
-      if(!airspaceDir.exists())
-        {
-          emit errorOnMapLoading();
-          KMessageBox::error(0,
-            "<qt>" + i18n("The directory for the airspace-files does not exist:<br><b>%1</b></qt>").arg(airspaceDir.path() + "</qt>"),
-            i18n("Directory not found"));
-        }
-      else
-        {
-          emit loadingMessage(i18n("Loading airspacedata ..."));
-
-          QStringList airspace;
-          airspace = airspaceDir.entryList("*.kfl");
-          if(airspace.count() == 0)
-            {
-              // No mapfiles found
-              emit errorOnMapLoading();
-              KMessageBox::information(0,
-                i18n("The directory for the airspace-files is empty.\n"
-                     "To download the files, please visit our homepage:\n") +
-                     "http://maproom.kflog.org/", i18n("directory empty"), "NoAirspaceFiles");
-            }
-          else
-            {
-              for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
-                  __readAirspaceFile(airspaceDir.path() + "/" + (*it).latin1());
-            }
-        }
-
-      if(!airfieldDir.exists())
-        {
-          emit errorOnMapLoading();
-          KMessageBox::error(0,
-            i18n("<qt>The directory for the airfield-files does not exist:<br><b>%1</b></qt>").arg(airfieldDir.path()),
-            i18n("Directory not found"));
-        }
-      else
-        {
-          emit loadingMessage(i18n("Loading airfielddata ..."));
-
-          QStringList airfields;
-          airfields = airfieldDir.entryList("*.kfl");
-          if(airfields.count() == 0)
-            {
-              // No mapfiles found
-              emit errorOnMapLoading();
-              KMessageBox::information(0,
-                i18n("The directory for the airfield-files is empty.\n"
-                     "To download the files, please visit our homepage:\n") +
-                     "http://maproom.kflog.org/", i18n("directory empty"), "NoAirfieldFiles");
-            }
-          else
-            {
-              for(QStringList::Iterator it = airfields.begin(); it != airfields.end(); it++)
-                  __readAirfieldFile(airfieldDir.path() + "/" + (*it).latin1());
-            }
-        }
-//      airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.out");
-//      for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
-//        {
-//          __readAsciiFile((*it).latin1());
-//          warning( "%s", (*it).latin1() );
-//        }
-
-      isFirst = false;
-    }
-
-  if(!QDir(mapDir).exists())
-    {
-      // Directory does not exist!
-      emit errorOnMapLoading();
+      stop = true;
+    
+      usleep(10 * 1000);
+            
+      /* The mapdirectory does not exist. Ask the user */
       KMessageBox::error(0,
-        i18n("<qt>The directory for the map-files does not exist:<br><b>%1</b></qt>").arg(QDir(mapDir).path()),
+        "<qt>" +
+        i18n("The directory for the map-files does not exist.") + "<br>" +
+        i18n("Please select the directory where the files are located.") +
+        "</qt>",
         i18n("Directory not found"));
+
+      mapDir = KFileDialog::getExistingDirectory(0,0,i18n("Select map directory...") );
+
+      config->writeEntry("DefaultMapDirectory", mapDir);
+
+      emit errorOnMapLoading();
     }
   else if(QDir(mapDir).entryList("*.kfl").isEmpty())
     {
@@ -1859,8 +1812,84 @@ void MapContents::proofeSection(bool isPrint)
         }
     }
 
-//  emit loadingMessage("");
 
+
+// Checking for Airspaces
+    QDir airspaceDir(mapDir + "/airspace/");
+    if(!airspaceDir.exists())
+      {
+        stop = true;
+      usleep(10 * 1000);        
+        emit errorOnMapLoading();
+        KMessageBox::error(0,
+          "<qt>" +
+          i18n("The directory for the airspace-files does not exist:") +
+          "<br><b>" + airspaceDir.path() + "</b>"  +
+          "</qt>",
+          i18n("Directory not found"));
+      }
+    else
+      {
+        emit loadingMessage(i18n("Loading airspacedata ..."));
+        QStringList airspace;
+        airspace = airspaceDir.entryList("*.kfl");
+        if(airspace.count() == 0)
+          {
+            // No mapfiles found
+            emit errorOnMapLoading();
+            KMessageBox::information(0,
+              i18n("The directory for the airspace-files is empty.\n"
+                   "To download the files, please visit our homepage:\n") +
+                   "http://maproom.kflog.org/", i18n("directory empty"), "NoAirspaceFiles");
+          }
+        else
+          {
+            for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
+                __readAirspaceFile(airspaceDir.path() + "/" + (*it).latin1());
+          }
+      }
+// Checking for Airfields
+    QDir airfieldDir(mapDir + "/airfields/");
+    if(!airfieldDir.exists())
+      {
+        stop = true;
+      usleep(10 * 1000);          
+        emit errorOnMapLoading();
+        KMessageBox::error(0,
+          "<qt>" +
+          i18n("The directory for the airfield-files does not exist:") +
+          "<br><b>" + airfieldDir.path() + "</b>"  +
+          "</qt>",
+          i18n("Directory not found"));
+      }
+    else
+      {
+        emit loadingMessage(i18n("Loading airfielddata ..."));
+        QStringList airfields;
+        airfields = airfieldDir.entryList("*.kfl");
+        if(airfields.count() == 0)
+          {
+            // No mapfiles found
+            emit errorOnMapLoading();
+            KMessageBox::information(0,
+              i18n("The directory for the airfield-files is empty.\n"
+                   "To download the files, please visit our homepage:\n") +
+                   "http://maproom.kflog.org/", i18n("directory empty"), "NoAirfieldFiles");
+          }
+        else
+          {
+            for(QStringList::Iterator it = airfields.begin(); it != airfields.end(); it++)
+                __readAirfieldFile(airfieldDir.path() + "/" + (*it).latin1());
+          }
+      }
+//     airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.out");
+//      for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
+//        {
+//          __readAsciiFile((*it).latin1());
+//          warning( "%s", (*it).latin1() );
+//        }
+
+   
 }
 
 unsigned int MapContents::getListLength(int listIndex) const

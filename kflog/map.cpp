@@ -15,20 +15,22 @@
 **
 ***********************************************************************/
 
+#include <ctype.h>
+#include <iostream>
+#include <stdlib.h>
+
 #include <kapp.h>
 #include <kconfig.h>
-#include <klocale.h>
-#include <kstddirs.h>
 #include <kfiledialog.h>
+#include <klocale.h>
 #include <knotifyclient.h>
+#include <kstddirs.h>
 
 #include <qdragobject.h>
 #include <qpainter.h>
 #include <qregexp.h>
 #include <qtimer.h>
 #include <qwhatsthis.h>
-#include <ctype.h>
-#include <stdlib.h>
 
 #include <airspace.h>
 #include <flight.h>
@@ -43,7 +45,6 @@
 #include "waypoints.h"
 #include "waypointdialog.h"
 
-#include <iostream>
 
 // Festlegen der Größe der Pixmaps auf Desktop-Grösse
 #define PIX_WIDTH  QApplication::desktop()->width()
@@ -1238,6 +1239,7 @@ void Map::resizeEvent(QResizeEvent* event)
 {
   if(!event->size().isEmpty())
     {
+    
       extern MapMatrix _globalMapMatrix;
       _globalMapMatrix.createMatrix(event->size());
       pixBuffer.resize(event->size());

@@ -70,7 +70,7 @@ groups=Icons,Header,Quellen,Benutzerschnittstelle,Übersetzungen,GNU,Andere
 Übersetzungen=*.po
 
 [Makefile.am]
-files=kflog.kdevprj,admin,AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,kflog.lsm,README-MAP,kflog.spec
+files=kflog.kdevprj,admin,AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,kflog.lsm,README-MAP,kflog.spec,README-AIRFIELDS,README-AIRSPACE
 sub_dirs=kflog,po,doc
 type=normal
 
@@ -78,6 +78,18 @@ type=normal
 dist=true
 install=false
 install_location=
+type=DATA
+
+[README-AIRFIELDS]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapdata/airfields/README-AIRFIELDS
+type=DATA
+
+[README-AIRSPACE]
+dist=true
+install=true
+install_location=$$(kde_datadir)/kflog/mapdata/airspace/README-AIRSPACE
 type=DATA
 
 [README-MAP]
