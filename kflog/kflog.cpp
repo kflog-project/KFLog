@@ -52,6 +52,7 @@
 #include <mapcontents.h>
 #include <mapcontrolview.h>
 #include <mapprint.h>
+#include <olcdialog.h>
 #include <recorderdialog.h>
 #include <taskdataprint.h>
 #include <waypoints.h>
@@ -271,8 +272,8 @@ void KFLogApp::initActions()
   flightOptimization = new KAction(i18n("Optimize"), "wizard", 0,
       this, SLOT(slotOptimizeFlight()), actionCollection(), "optimize_flight");
 
-//  olcDeclaration = new KAction(i18n("send OLC-Declaration"), 0,
-//      this, SLOT(slotOlcDeclaration()), actionCollection(), "olc_declaration");
+  olcDeclaration = new KAction(i18n("send OLC-Declaration"), 0,
+      this, SLOT(slotOlcDeclaration()), actionCollection(), "olc_declaration");
 
   //Animation actions
   animateFlightStart = new KAction(i18n("&Start Flight Animation"), "1rightarrow",
@@ -333,7 +334,7 @@ void KFLogApp::initActions()
   flightMenu->insert(viewWaypoints);
   flightMenu->insert(viewFlightDataType);
   flightMenu->insert(viewIgc3D);
-//  flightMenu->insert(olcDeclaration);
+  flightMenu->insert(olcDeclaration);
 //  flightMenu->insert(mapPlanning);
   flightMenu->popupMenu()->insertSeparator();
   flightMenu->insert(animateFlightStart);
@@ -632,6 +633,11 @@ void KFLogApp::slotFilePrint()
 void KFLogApp::slotOlcDeclaration()
 {
   // currently not available ...
+
+  OLCDialog* dlg = new OLCDialog(this, "olc-dialog");
+
+  dlg->show();
+
   return;
 
   extern MapContents _globalMapContents;

@@ -101,12 +101,13 @@
       in >> rwOpen; \
     }
 
-// Liste der Höhenstufen (insg. 46 Stufen):
+// Liste der Höhenstufen (insg. 47 Stufen):
+// Last value only for a correct ending ...
 const int MapContents::isoLines[] = { 0, 10, 25, 50, 75, 100, 200, 300, 400,
           500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500,
           2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250,
           5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750,
-          8000, 8250, 8500, 8750};
+          8000, 8250, 8500, 8750, 9000};
 
 
 MapContents::MapContents()
@@ -617,9 +618,11 @@ bool MapContents::__readTerrainFile(const int fileSecID,
         }
       sort_temp = (int)sort;
 
+      // Adding "1" to sort_temp, because, otherwise the 10m-line
+      // will not be displayed correctly
       for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
           if(isoLines[pos] == elevation)
-              sort_temp = ISO_LINE_NUM * sort_temp + pos;
+              sort_temp = ISO_LINE_NUM * sort_temp + pos + 1;
 
       Isohypse* newItem = new Isohypse(tA, elevation, valley);
       isoList.at(sort_temp)->append(newItem);
@@ -1934,7 +1937,8 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
                   height = pos + 2;
             }
         }
-      targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 0));
+
+      targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1));
       targetP->setBrush(QBrush(_globalMapConfig.getIsoColor(height),
           QBrush::SolidPattern));
       for(unsigned int loop2 = 0; loop2 < isoList.at(loop)->count(); loop2++)

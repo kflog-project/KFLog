@@ -1,5 +1,11 @@
 $Id$
 
+
+2002-05-18 Heiner <heiner@kflog.org>
+
+  * Added dutch translation. Thanks to André Somers
+
+
 2002-05-15 Thomas <thomas@kflog.org>
 
   * Added import of FlightGear files.
