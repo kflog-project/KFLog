@@ -1,6 +1,11 @@
 $Id$
 
 
+2003-05-01 Heiner <heiner@kflog.org>
+
+  * Tagged and prepared Release 2.1.0
+
+
 2003-04-29 André <andre@kflog.org>
   
   * Addition: implict start of dragZoom. Just start dragging anywhere on the map and it will automaticly start
