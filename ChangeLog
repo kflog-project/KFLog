@@ -1,6 +1,11 @@
 $Id$
 
 
+2001-12-18 Heiner <heiner@kflog.org>
+
+  * Tagged 2.0.2
+
+
 2001-12-16 Heiner <heiner@kflog.org>
 
   * Added Map::slotCenterToWaypoint(). When the user selects a waypoint
