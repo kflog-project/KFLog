@@ -22,6 +22,7 @@
 
 #include <qgrid.h>
 #include <qlabel.h>
+#include <qapplication.h>
 
 CenterToDialog::CenterToDialog(QWidget *parent, const char *name )
   : KDialogBase(parent, name)
@@ -39,9 +40,12 @@ CenterToDialog::CenterToDialog(QWidget *parent, const char *name )
   longE->setMinimumWidth(150);
 
   connect(this, SIGNAL(okClicked()), this, SLOT(slotOk()));
-
+  connect(latE, SIGNAL(returnPressed()), this, SLOT(slotOk()));
+  connect(longE, SIGNAL(returnPressed()), this, SLOT(slotOk()));
+  
   showButtonApply(false);
-
+  latE->setFocus();
+  
   disableResize();
 }
 
@@ -52,6 +56,8 @@ CenterToDialog::~CenterToDialog()
 
 void CenterToDialog::slotOk()
 {
+  hide();
+  qApp->processEvents();
   emit centerTo(MapContents::degreeToNum(latE->text()),
     MapContents::degreeToNum(longE->text()));
   close();
