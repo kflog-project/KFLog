@@ -1,6 +1,14 @@
 $Id$
 
 
+2003-07-11 Eggert Ehmke <eggert@kflog.org>
+
+  * added edit/delete waypoints to the map context menu
+
+  * suppressed the rename/overwrite warning if nothing has changed
+
+  * don't start the context menu timer when in planning mode
+  
 2003-07-10 Eggert Ehmke <eggert@kflog.org>
 
   * added the waypoint list to the mapinfo that is displayed when activated
