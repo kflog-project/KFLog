@@ -36,7 +36,7 @@ OpenGLWidget* openGLWidget;
 extern "C"
 {
   /** returns a reference to the caption string */
-  char* getCaption();
+  const char* getCaption();
 }
 extern "C"
 {
@@ -49,7 +49,7 @@ extern "C"
   void addFlight(Flight*);
 }
 
-char* getCaption()
+const char* getCaption()
 {
   return caption;
 }

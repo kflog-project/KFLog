@@ -20,7 +20,7 @@
 #include <math.h>
 #include "kaction.h"
 #include "klocale.h"
-#include <flight.h>
+#include "flight.h"
 
 /*!
   Create an OpenGL widget
