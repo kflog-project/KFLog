@@ -49,6 +49,14 @@
 #define PIX_WIDTH  QApplication::desktop()->width()
 #define PIX_HEIGHT QApplication::desktop()->height()
 
+// These values control the borders at which to pan the map
+// NOTE: These values are only for testing, and need revision.
+#define MIN_X_TO_PAN 30
+#define MAX_X_TO_PAN QApplication::desktop()->width()-30
+#define MIN_Y_TO_PAN 30
+#define MAX_Y_TO_PAN QApplication::desktop()->height()-30
+
+
 Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   : QWidget(parent, name),
     mainApp(m), prePos(-50, -50), preCur1(-50, -50), preCur2(-50, -50),
@@ -1799,6 +1807,14 @@ void Map::slotFlightNext()
           // get the next point, preIndex now holds last point
           if ((index = f->searchGetNextPoint(preIndex, cP)) != -1)
             {
+			  // if close to edge, recenter map to next point
+			  prePos = _globalMapMatrix.map(cP.projP);
+			  if ((prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
+				  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
+     				_globalMapMatrix.centerToPoint(prePos);
+     	            _globalMapMatrix.createMatrix(this->size());
+     			    __redrawMap();
+              }			 		
               emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
               prePos = _globalMapMatrix.map(cP.projP);
               preIndex = index;
@@ -1826,6 +1842,14 @@ void Map::slotFlightPrev()
           // get the next point, preIndex now holds last point
           if ((index = f->searchGetPrevPoint(preIndex, cP)) != -1)
             {
+				// if close to edge, recenter map to next point
+			  prePos = _globalMapMatrix.map(cP.projP);
+			  if ((prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
+				  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
+     				_globalMapMatrix.centerToPoint(prePos);
+     	            _globalMapMatrix.createMatrix(this->size());
+     			    __redrawMap();
+              }		
               emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
               prePos = _globalMapMatrix.map(cP.projP);
               preIndex = index;
