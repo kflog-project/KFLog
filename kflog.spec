@@ -15,7 +15,11 @@ Source:    kflog-2.0.7.tar.gz
 BuildRoot: /tmp/build/
 
 %description
-
+KFLog is used to display, analyze and evaluate flights logged with a
+gps-logger. It displays the flight in a map. KFLog now supports a large
+free vector-map, completly covering europe and including terrain-data.
+The map is not part of this package. You can download the map from
+the KFLog-website at http://maproom.kflog.org/
 
 %prep
 %setup

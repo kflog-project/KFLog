@@ -20,6 +20,7 @@
 
 #include <klocale.h>
 
+#include <qgrid.h>
 #include <qlabel.h>
 
 CenterToDialog::CenterToDialog(QWidget *parent, const char *name )

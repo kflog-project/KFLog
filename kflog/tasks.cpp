@@ -17,6 +17,7 @@
 #include <pwd.h>
 #include <unistd.h>
 
+#include <qcursor.h>
 #include <qlayout.h>
 #include <qdom.h>
 #include <qapplication.h>

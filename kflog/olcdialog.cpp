@@ -30,6 +30,7 @@
 #include <qgroupbox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+#include <qregexp.h>
 
 #define POS_STRINGS(point) \
   latitude = point.lat(); \
