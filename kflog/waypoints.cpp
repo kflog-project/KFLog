@@ -341,6 +341,7 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
   {
     QString tmp, oldName;
 
+    oldName = w->name;
     // initialize dialg
     waypointDlg->name->setText(w->name);
     waypointDlg->description->setText(w->description);
