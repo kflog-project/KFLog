@@ -2,7 +2,9 @@ $Id$
 
 2002-05-15 Thomas <thomas@kflog.org>
 
-  * Added import of FlightGear files
+  * Added import of FlightGear files.
+
+  * Fixed bug with QLists in ~MapContents().
 
 
 2002-05-01 Heiner <heiner@kflog.org>
