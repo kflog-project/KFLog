@@ -256,9 +256,32 @@ void KFLogApp::initActions()
 
   KStdAction::zoomIn(&_globalMapMatrix, SLOT(slotZoomIn()), actionCollection());
   KStdAction::zoomOut(&_globalMapMatrix, SLOT(slotZoomOut()), actionCollection());
+
+  // zoom & pan with Numpad keys (in the case of NumLock on)
+  mapMoveMenu->insert(new KAction(0, "zoom_in_key",Key_Plus, &_globalMapMatrix,
+    SLOT(slotZoomIn()),actionCollection()));
+  mapMoveMenu->insert(new KAction(0, "zoom_out_key",Key_Minus, &_globalMapMatrix,
+    SLOT(slotZoomOut()),actionCollection()));
+  mapMoveMenu->insert(new KAction(0, "movemap_s_key",Key_2, &_globalMapMatrix,
+    SLOT(slotMoveMapS()),actionCollection()));
+  mapMoveMenu->insert(new KAction(0, "movemap_se_key",Key_3, &_globalMapMatrix,
+    SLOT(slotMoveMapSE()),actionCollection()));
+  mapMoveMenu->insert(new KAction(0, "movemap_sw_key",Key_1, &_globalMapMatrix,
+    SLOT(slotMoveMapSW()),actionCollection()));
+  mapMoveMenu->insert(new KAction(0, "movemap_n_key",Key_8, &_globalMapMatrix,
+    SLOT(slotMoveMapN()),actionCollection()));
+  mapMoveMenu->insert(new KAction(0, "movemap_ne_key",Key_9, &_globalMapMatrix,
+    SLOT(slotMoveMapNE()),actionCollection()));
+  mapMoveMenu->insert(new KAction(0, "movemap_nw_key",Key_7, &_globalMapMatrix,
+    SLOT(slotMoveMapNW()),actionCollection()));
+  mapMoveMenu->insert(new KAction(0, "movemap_w_key",Key_4, &_globalMapMatrix,
+    SLOT(slotMoveMapW()),actionCollection()));
+  mapMoveMenu->insert(new KAction(0, "movemap_e_key",Key_6, &_globalMapMatrix,
+    SLOT(slotMoveMapE()),actionCollection()));
+
   /*
-   * Wir brauchen dringend Icons für diese beiden Aktionen, damit man
-   * es auch in die Werkzeugleisten packen kann!
+   * we urgently need icons for this actions in order to
+   * place them in the toolbar!!!
    */
   viewData = new KToggleAction(i18n("Show Flightdata"), 0, this,
       SLOT(slotToggleDataView()), actionCollection(), "toggle_data_view");
