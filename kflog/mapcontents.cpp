@@ -3181,6 +3181,22 @@ QString MapContents::genTaskName()
   return tmp;
 }
 
+QString MapContents::genTaskName(QString suggestion)
+{
+  BaseFlightElement* bfe;
+  FlightTask* ft=0;
+  for (bfe = flightList.first(); bfe; bfe = flightList.next()) {
+    ft=dynamic_cast<FlightTask*>(bfe);
+    if (ft) {
+      if (ft->getName() == suggestion) {
+        //name is allready in use
+        return QString("%1 (%2)").arg(suggestion).arg(genTaskName());
+      }
+    }
+  }
+  return suggestion;     
+}
+
 
 /***********************************************
  * isoListEntry

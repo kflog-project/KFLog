@@ -212,6 +212,8 @@ class MapContents : public QObject
     bool loadTask(QFile& path);
     /** generate new task name */
     QString genTaskName();
+    /** generate a task name, using the suggestion given. Prevents double task names */
+    QString genTaskName(QString suggestion);
     /**
      * The index of Mapelement-Lists.
      */
