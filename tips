@@ -114,3 +114,33 @@ a flight or a task?</p>
 <p>...that the scale indicator is in meters per pixel?</p>
 </html>
 </tip>
+
+<tip category="KFLog|General">
+<html>
+<p>...that the KFLog project started out as an exercise from a geography student
+and a gliderpilot to get some programming experience back in 1998?</p>
+</html>
+</tip>
+
+<tip category="KFLog|Map">
+<html>
+<p>...that you can choose how color is used to display a flight? It can represent:
+<ul>
+  <li>altitude,</li>
+  <li>speed,</li>
+  <li>vario, or</li>
+  <li>cycling.</li>
+</ul>
+You can also use a plain solid line of course.<br>
+Choose Show Flightdata from the Flight menu to select one of these options.</p>
+</html>
+
+</tip>
+<tip category="KFLog|Waypoints">
+<html>
+<p>...that you can filter the waypoints in your catalog to only display the
+ones you need?<br>
+Use the Filter button next to the catalog name dropdown in the Waypoint screen.</p>
+</html>
+</tip>
+
