@@ -500,6 +500,7 @@ bool WaypointCatalog::readBinairy(QString &catalog)
   Q_INT8 fileType;
   Q_UINT16 fileFormat;
 
+  
   QFile f(catalog);
   if (f.exists()) {
     if (f.open(IO_ReadOnly)) {
@@ -568,7 +569,7 @@ bool WaypointCatalog::readBinairy(QString &catalog)
           //qDebug("Waypoint read: %s (%s - %s)",w->name.latin1(),w->description.latin1(),w->icao.latin1());
 
           if (!wpList.insertItem(w)) {
-            qDebug("wazig... fout bij inlezen waypoints");
+            qDebug("odd... error reading waypoints");
             break;
           }
         }
@@ -589,5 +590,5 @@ bool WaypointCatalog::readBinairy(QString &catalog)
     qDebug("Waypoint catalog not found.");
   }
 
-  return ok;
+  return true;
 }
