@@ -53,12 +53,16 @@ FlightTask::FlightTask(QList<wayPoint> wpL, bool isO, QString fName)
     wpList(wpL)
 {
 warning("FlightTask(QList<wayPoint> wpL, bool isO, QString fName)");
-  __setWaypointType();
+  //only do this if wpList is not empty!
+  if (wpList.count()  != 0){
+     __setWaypointType();
 
-  __checkType();
+    __checkType();
 
-  for(unsigned int loop = 0; loop < wpList.count(); loop++)
-      __sectorangle(loop, false);
+    for(unsigned int loop = 0; loop < wpList.count(); loop++)
+       __sectorangle(loop, false);
+
+   }
 }
 
 FlightTask::~FlightTask()
