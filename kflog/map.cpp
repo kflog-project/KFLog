@@ -33,7 +33,7 @@
 #include <mapcalc.h>
 #include <mapcontents.h>
 #include <mapmatrix.h>
-
+#include <singlepoint.h>
 
 // Festlegen der Größe der Pixmaps auf Desktop-Grösse
 #define PIX_WIDTH  QApplication::desktop()->width()

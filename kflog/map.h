@@ -20,9 +20,14 @@
 
 #include <kflog.h>
 
+#include <qarray.h>
 #include <qregion.h>
 #include <qwidget.h>
 #include <qbitmap.h>
+
+#include <qpointarray.h>
+
+Class SinglePoint;
 
 /**
  * This class provides basic functions for displaying the map.
@@ -90,6 +95,10 @@ class Map : public QWidget
     void changed(QSize);
     /** */
     void showFlightPoint(const QPoint pos, const struct flightPoint& point);
+    /**
+    	*
+    	*/
+    void showTaskText(QArray<SinglePoint*> taskPoints, QPoint current);
     /** */
     void showPoint(const QPoint pos);
     /** */
@@ -141,6 +150,11 @@ class Map : public QWidget
      */
     void __drawFlight();
     /**
+     * Draws the Task which is currently planned
+     *
+     */
+    void __drawPlannedTask();
+    /**
      * Draws the grid tino the map.
      */
     void __drawGrid();
@@ -182,6 +196,10 @@ class Map : public QWidget
      */
     QPixmap pixFlight;
     /**
+     * Planning Task.
+     */
+    QPixmap pixPlan;
+    /**
      * Contains the airspace-structure.
      */
     QPixmap pixAirspace;
@@ -199,8 +217,10 @@ class Map : public QWidget
     QBitmap bitAirspaceMask;
     /** */
     QBitmap bitFlightMask;
+    QBitmap bitPlanMask;
     /** */
     QPoint prePos;
+    QPoint prePlanPos;
     QPoint preCur1;
     QPoint preCur2;
     int preIndex;
@@ -217,6 +237,17 @@ class Map : public QWidget
      * Animation index
 		 */
 		int nAnimateIndex;
+		/**
+			* contains planning task points
+			* enthält die Punkte!!!
+			*/
+		QArray<SinglePoint*> taskPoints;
+		// 0 keine Planung 1 Planung 2 Planung Aufgabe Abgeschlossen
+//		enum planning {NoPlanning = 0, Planning = 1, TaskFinished = 2};
+		int planning;
+		// Index des WP welcher verschoben wird bei planning == 3
+		int moveWPindex;
+			
 };
 
 #endif
