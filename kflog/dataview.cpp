@@ -111,16 +111,16 @@ void DataView::slotShowTaskText(FlightTask* task)
         htmlText += i18n("Zielrückkehrstrecke");
         break;
       case FlightTask::FAI:
-        htmlText += i18n("FAI Dreieck");
+        htmlText += i18n("FAI Triangle");
         break;
       case FlightTask::Dreieck:
-        htmlText += i18n("Dreieck");
+        htmlText += i18n("Triangle");
         break;
       case FlightTask::FAI_S:
-        htmlText += i18n("FAI Dreieck Start auf Schenkel");
+        htmlText += i18n("FAI Triangle Start on leg");
         break;
       case FlightTask::Dreieck_S:
-        htmlText += i18n("Dreieck Start auf Schenkel");
+        htmlText += i18n("Triangle Start on leg");
         break;
       default:
         htmlText += i18n("Unknown");
