@@ -237,7 +237,7 @@ switch to first task in file */
         CityList, PopulationList, LandmarkList, HighwayList, HighwayEntryList,
         RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
         WaypointList, DigitList, FlightList};
-
+    enum AutoDownloadType {ADT_NotSet = 0, Automatic, Inhibited};
     inline QList<isoListEntry>* getIsohypseRegions(){return &regIsoLines;};
 
   public slots:

@@ -544,10 +544,10 @@ bool MapContents::__readAsciiFile(const char* fileName)
 void MapContents::__downloadFile(QString fileName, QString destString, bool wait){
   KConfig* config = KGlobal::config();
   config->setGroup("General Options");
-  if (config->readBoolEntry("No Automatic Map Download",false))
+  if (config->readNumEntry("Automatic Map Download")==Inhibited)
     return;
 
-  config->setGroup("Path");
+//  config->setGroup("Path");
   KURL src = KURL(config->readPathEntry("Mapserver","http://maproom.kflog.org/data/"));
   KURL dest = KURL(destString);
   src.addPath(fileName);
@@ -1786,37 +1786,51 @@ void MapContents::proofeSection(bool isPrint)
     }
   else if(QDir(mapDir).entryList("*.kfl").isEmpty())
     {
-      // No mapfiles installed!
       emit errorOnMapLoading();
-      int ret = KMessageBox::questionYesNoCancel(0,i18n("<qt>There are no map-files in the directory<br><b>%1"
-          "</b></br>yet. Do you want to download the data automatically?<br>"
-          "(You need to have write permissions. If you want to change the directory,"
-          "press \"Cancel\" and change it in the Settings menu.)</qt>").arg(mapDir));
       KConfig* config = KGlobal::config();
       config->setGroup("General Options");
-      switch (ret){
-        case KMessageBox::Yes:
-          __downloadFile("G_03699.kfl",mapDir,true);
-          if(QFile(mapDir+"/G_03699.kfl").exists()){
-            config->writeEntry("No Automatic Map Download",false);
-            KMessageBox::information(0,
-              i18n("The automatic data download feature is available when "
-              "a flight is loaded. Please open a flight."));
-            break;
-          }
-//          else{
-//            KMessageBox::information(0,
-//              i18n("The directory ") + mapDir
-//              +i18n(" is not writeable! Please specify correct path in the Settings dialog!"));
-//          }
-        case KMessageBox::No:
-          config->writeEntry("No Automatic Map Download",false);
+      int ret=0;
+      switch (config->readNumEntry("Automatic Map Download",ADT_NotSet)){
+        case (ADT_NotSet):
+          config->writeEntry("Automatic Map Download",Inhibited,false); //this is temporary, will be overwritten later
+          ret = KMessageBox::questionYesNoCancel(0,i18n("<qt>There are no map-files in the directory<br><b>%1"
+              "</b></br>yet. Do you want to download the data automatically?<br>"
+              "(You need to have write permissions. If you want to change the directory,"
+              "press \"Cancel\" and change it in the Settings menu.)</qt>").arg(mapDir));
+          switch (ret){
+            case KMessageBox::Yes:
+              config->writeEntry("Automatic Map Download",Automatic,false); //this is temporary, will be overwritten later
+              __downloadFile("G_03699.kfl",mapDir,true);
+              if(QFile(mapDir+"/G_03699.kfl").exists()){
+                config->writeEntry("Automatic Map Download",Automatic);
+                KMessageBox::information(0,
+                  i18n("The automatic data download feature is available when "
+                  "a flight is loaded. Please open a flight."));
+              }
+              else{
+                KMessageBox::information(0,
+                  i18n("The directory ") + mapDir
+                  +i18n(" is either not writeable or the server ") +
+                  config->readPathEntry("Mapserver","http://maproom.kflog.org/data/") +
+                  i18n(" is not reachable.") +
+                  i18n(" Please specify the correct path in the Settings dialog and check the Internet connection!") +
+                  i18n(" Restart KFLog afterwards."));
+              }
+              break;
+            case KMessageBox::No:
+              config->writeEntry("Automatic Map Download",Inhibited);
+              break;
+            }
+          break;
+        case (Inhibited):
+          KMessageBox::information(0,
+            i18n("The directory for the map-files is empty.\n"
+                 "To download the files, please visit our homepage:\n") +
+                 "http://maproom.kflog.org/", i18n("directory empty"), "NoMapFiles");
+          break;
+        case (Automatic):
           break;
       }
-//      KMessageBox::information(0,
-//        i18n("The directory for the map-files is empty.\n"
-//             "To download the files, please visit our homepage:\n") +
-//             "http://maproom.kflog.org/", i18n("directory empty"), "NoMapFiles");
     }
   else
     {
@@ -1975,6 +1989,7 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
 
 void MapContents::slotDownloadFinished()
 {
+//  qWarning("slotDownloadFinished()");
   slotReloadMapData();
   emit contentsChanged();
 }
@@ -1999,7 +2014,7 @@ void MapContents::slotReloadMapData()
   topoList.clear();
   isoList.clear();
 
-  // Wir nehmen zunächst 4 Schachtelungstiefen an ...
+  // We assume a depth of 4 so far
   for(unsigned int loop = 0; loop < ( ISO_LINE_NUM * 4 ); loop++)
       isoList.append(new QList<Isohypse>);
 

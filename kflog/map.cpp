@@ -1240,7 +1240,8 @@ void Map::dropEvent(QDropEvent* event)
 
 void Map::__redrawMap()
 {
-  // Statusbar noch nicht "genial" eingestellt ...
+//  qWarning("__redrawMap()");
+  // Statusbar not set "geniously" so far...
   mainApp->slotSetProgress(0);
 
   pixPlan.fill(white);
@@ -1352,6 +1353,7 @@ void Map::slotRedrawFlight()
 
 void Map::slotRedrawMap()
 {
+  qWarning("slotRedrawMap()");
   extern MapMatrix _globalMapMatrix;
   _globalMapMatrix.createMatrix(this->size());
 

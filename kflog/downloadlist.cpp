@@ -18,6 +18,7 @@
 #include "downloadlist.h"
 #include <kio/netaccess.h>
 #include <kio/scheduler.h>
+#include <kmessagebox.h>
 #include "map.h"
 
 DownloadList::DownloadList(){
@@ -36,9 +37,15 @@ void DownloadList::copyKURL(KURL* src, KURL* dest){
 }
 
 void DownloadList::slotDownloadFinished(KIO::Job* job){
+  QStringList errorStrings;
   downloadRunning=false;
-  if (job->error())
-    job->showErrorDialog(0);
+  int error;
+  error=job->error();
+  if (error){
+//    job->showErrorDialog(0);
+    errorStrings=job->detailedErrorStrings();
+    KMessageBox::questionYesNo(0,errorStrings.first(),errorStrings.first());
+  }
   emit downloadFinished();
   __schedule();
 }
@@ -56,6 +63,8 @@ void DownloadList::__schedule(){
     connect( job, SIGNAL(result(KIO::Job*)),
              this, SLOT(slotDownloadFinished(KIO::Job*)) );
   }
-  else
+  else {
+//    qWarning("allDownloadsFinished() emitted");
     emit allDownloadsFinished();
+  }
 }
