@@ -75,7 +75,7 @@ warning("EvaluationFrame::EvaluationFrame");
   check_baro = new QCheckBox(kontrolle);
   check_speed = new QCheckBox(kontrolle);
 
-  kontrolle->setMaximumWidth(scale_label->sizeHint().width() + 10);
+  //kontrolle->setMaximumWidth(scale_label->sizeHint().width() + 10);
 
   QLabel* label_vario = new QLabel(i18n("V"),kontrolle);
   QLabel* label_baro  = new QLabel(i18n("H"),kontrolle);
