@@ -202,12 +202,12 @@ x_includes = @x_includes@
 x_libraries = @x_libraries@
 
 bin_PROGRAMS = kflog
-kflog_SOURCES = evaluationframe.cpp mapconfig.cpp evaluationview.cpp evaluationdialog.cpp kflogconfig.cpp printdialog.cpp kflogstartlogo.cpp flighttask.cpp flight.cpp mapmatrix.cpp singlepoint.cpp radiopoint.cpp lineelement.cpp isohypse.cpp glidersite.cpp elevpoint.cpp airspace.cpp airport.cpp mapcontents.cpp basemapelement.cpp map.cpp dataview.cpp mapcalc.cpp mapcontrolview.cpp kflog.cpp main.cpp 
+kflog_SOURCES = igcpreview.cpp evaluationframe.cpp mapconfig.cpp evaluationview.cpp evaluationdialog.cpp kflogconfig.cpp printdialog.cpp kflogstartlogo.cpp flighttask.cpp flight.cpp mapmatrix.cpp singlepoint.cpp radiopoint.cpp lineelement.cpp isohypse.cpp glidersite.cpp elevpoint.cpp airspace.cpp airport.cpp mapcontents.cpp basemapelement.cpp map.cpp dataview.cpp mapcalc.cpp mapcontrolview.cpp kflog.cpp main.cpp 
 kflog_LDADD = -lm $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
 
 SUBDIRS = map-icons pics 
 
-EXTRA_DIST = main.cpp kflog.cpp kflog.h kflogui.rc kflog.desktop mapcontrolview.h mapcontrolview.cpp mapcalc.cpp mapcalc.h wp.h dataview.cpp dataview.h map.cpp map.h basemapelement.cpp basemapelement.h mapcontents.cpp mapcontents.h resource.h airport.cpp airport.h airspace.cpp airspace.h elevpoint.cpp elevpoint.h glidersite.cpp glidersite.h isohypse.cpp isohypse.h lineelement.cpp lineelement.h radiopoint.cpp radiopoint.h singlepoint.cpp singlepoint.h mapmatrix.cpp mapmatrix.h flight.cpp flight.h flighttask.cpp flighttask.h kflogstartlogo.cpp kflogstartlogo.h printdialog.h printdialog.cpp kflogconfig.cpp kflogconfig.h mapdefaults.h evaluationdialog.cpp evaluationdialog.h evaluationview.cpp evaluationview.h hi16-app-kflog.png hi32-app-kflog.png hi48-app-kflog.png hi16-mimetype-igc.png hi32-mimetype-igc.png hi48-mimetype-igc.png igc.desktop hi22-action-movemap_e.png hi22-action-movemap_n.png hi22-action-movemap_ne.png hi22-action-movemap_nw.png hi22-action-movemap_s.png hi22-action-movemap_se.png hi22-action-movemap_sw.png hi22-action-movemap_w.png hi16-action-flightevaluation.png hi22-action-flightevaluation.png hi32-action-flightevaluation.png hi16-action-centerflight.png hi16-action-centertask.png hi22-action-centerflight.png hi22-action-centertask.png mapconfig.cpp mapconfig.h evaluationframe.cpp evaluationframe.h 
+EXTRA_DIST = main.cpp kflog.cpp kflog.h kflogui.rc kflog.desktop mapcontrolview.h mapcontrolview.cpp mapcalc.cpp mapcalc.h wp.h dataview.cpp dataview.h map.cpp map.h basemapelement.cpp basemapelement.h mapcontents.cpp mapcontents.h resource.h airport.cpp airport.h airspace.cpp airspace.h elevpoint.cpp elevpoint.h glidersite.cpp glidersite.h isohypse.cpp isohypse.h lineelement.cpp lineelement.h radiopoint.cpp radiopoint.h singlepoint.cpp singlepoint.h mapmatrix.cpp mapmatrix.h flight.cpp flight.h flighttask.cpp flighttask.h kflogstartlogo.cpp kflogstartlogo.h printdialog.h printdialog.cpp kflogconfig.cpp kflogconfig.h mapdefaults.h evaluationdialog.cpp evaluationdialog.h evaluationview.cpp evaluationview.h hi16-app-kflog.png hi32-app-kflog.png hi48-app-kflog.png hi16-mimetype-igc.png hi32-mimetype-igc.png hi48-mimetype-igc.png igc.desktop hi22-action-movemap_e.png hi22-action-movemap_n.png hi22-action-movemap_ne.png hi22-action-movemap_nw.png hi22-action-movemap_s.png hi22-action-movemap_se.png hi22-action-movemap_sw.png hi22-action-movemap_w.png hi16-action-flightevaluation.png hi22-action-flightevaluation.png hi32-action-flightevaluation.png hi16-action-centerflight.png hi16-action-centertask.png hi22-action-centerflight.png hi22-action-centertask.png mapconfig.cpp mapconfig.h evaluationframe.cpp evaluationframe.h igcpreview.cpp igcpreview.h 
 
 ####### kdevelop will overwrite this part!!! (end)############
 # this 10 paths are KDE specific. Use them:
@@ -244,8 +244,8 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-#>- kflog_OBJECTS =  evaluationframe.$(OBJEXT) mapconfig.$(OBJEXT) \
-#>- evaluationview.$(OBJEXT) evaluationdialog.$(OBJEXT) \
+#>- kflog_OBJECTS =  igcpreview.$(OBJEXT) evaluationframe.$(OBJEXT) \
+#>- mapconfig.$(OBJEXT) evaluationview.$(OBJEXT) evaluationdialog.$(OBJEXT) \
 #>- kflogconfig.$(OBJEXT) printdialog.$(OBJEXT) kflogstartlogo.$(OBJEXT) \
 #>- flighttask.$(OBJEXT) flight.$(OBJEXT) mapmatrix.$(OBJEXT) \
 #>- singlepoint.$(OBJEXT) radiopoint.$(OBJEXT) lineelement.$(OBJEXT) \
@@ -256,8 +256,8 @@ LIBS = @LIBS@
 #>- main.$(OBJEXT)
 #>+ 15
 kflog_final_OBJECTS = kflog.all_cpp.o 
-kflog_nofinal_OBJECTS = evaluationframe.$(OBJEXT) mapconfig.$(OBJEXT) \
-evaluationview.$(OBJEXT) evaluationdialog.$(OBJEXT) \
+kflog_nofinal_OBJECTS = igcpreview.$(OBJEXT) evaluationframe.$(OBJEXT) \
+mapconfig.$(OBJEXT) evaluationview.$(OBJEXT) evaluationdialog.$(OBJEXT) \
 kflogconfig.$(OBJEXT) printdialog.$(OBJEXT) kflogstartlogo.$(OBJEXT) \
 flighttask.$(OBJEXT) flight.$(OBJEXT) mapmatrix.$(OBJEXT) \
 singlepoint.$(OBJEXT) radiopoint.$(OBJEXT) lineelement.$(OBJEXT) \
@@ -266,7 +266,7 @@ airspace.$(OBJEXT) airport.$(OBJEXT) mapcontents.$(OBJEXT) \
 basemapelement.$(OBJEXT) map.$(OBJEXT) dataview.$(OBJEXT) \
 mapcalc.$(OBJEXT) mapcontrolview.$(OBJEXT) kflog.$(OBJEXT) \
 main.$(OBJEXT)\
-evaluationframe.moc.o evaluationview.moc.o map.moc.o dataview.moc.o evaluationdialog.moc.o printdialog.moc.o kflog.moc.o kflogconfig.moc.o kflogstartlogo.moc.o mapcontrolview.moc.o  \
+evaluationframe.moc.o evaluationview.moc.o map.moc.o dataview.moc.o evaluationdialog.moc.o printdialog.moc.o kflog.moc.o igcpreview.moc.o kflogconfig.moc.o kflogstartlogo.moc.o mapcontrolview.moc.o  \
 kflog_meta_unload.o 
 @KDE_USE_FINAL_FALSE@kflog_OBJECTS = $(kflog_nofinal_OBJECTS)
 @KDE_USE_FINAL_TRUE@kflog_OBJECTS = $(kflog_final_OBJECTS)
@@ -289,7 +289,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 #>- DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 #>+ 4
-KDE_DIST=runway.h 
+KDE_DIST=kflog_meta_unload.cpp kflog runway.h 
 
 DISTFILES= $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST) $(KDE_DIST)
 
@@ -299,29 +299,32 @@ GZIP_ENV = --best
 #>- DEP_FILES =  .deps/airport.P .deps/airspace.P .deps/basemapelement.P \
 #>- .deps/dataview.P .deps/elevpoint.P .deps/evaluationdialog.P \
 #>- .deps/evaluationframe.P .deps/evaluationview.P .deps/flight.P \
-#>- .deps/flighttask.P .deps/glidersite.P .deps/isohypse.P .deps/kflog.P \
-#>- .deps/kflogconfig.P .deps/kflogstartlogo.P .deps/lineelement.P \
-#>- .deps/main.P .deps/map.P .deps/mapcalc.P .deps/mapconfig.P \
-#>- .deps/mapcontents.P .deps/mapcontrolview.P .deps/mapmatrix.P \
-#>- .deps/printdialog.P .deps/radiopoint.P .deps/singlepoint.P
-#>+ 18
-@KDE_USE_FINAL_TRUE@DEP_FILES =  $(DEPDIR)/evaluationframe.moc.P $(DEPDIR)/evaluationview.moc.P $(DEPDIR)/map.moc.P $(DEPDIR)/dataview.moc.P $(DEPDIR)/evaluationdialog.moc.P $(DEPDIR)/printdialog.moc.P $(DEPDIR)/kflog.moc.P $(DEPDIR)/kflogconfig.moc.P $(DEPDIR)/kflogstartlogo.moc.P $(DEPDIR)/mapcontrolview.moc.P $(DEPDIR)/kflog_meta_unload.P  $(DEPDIR)/kflog.all_cpp.P \
+#>- .deps/flighttask.P .deps/glidersite.P .deps/igcpreview.P \
+#>- .deps/isohypse.P .deps/kflog.P .deps/kflogconfig.P \
+#>- .deps/kflogstartlogo.P .deps/lineelement.P .deps/main.P .deps/map.P \
+#>- .deps/mapcalc.P .deps/mapconfig.P .deps/mapcontents.P \
+#>- .deps/mapcontrolview.P .deps/mapmatrix.P .deps/printdialog.P \
+#>- .deps/radiopoint.P .deps/singlepoint.P
+#>+ 20
+@KDE_USE_FINAL_TRUE@DEP_FILES =  $(DEPDIR)/evaluationframe.moc.P $(DEPDIR)/evaluationview.moc.P $(DEPDIR)/map.moc.P $(DEPDIR)/dataview.moc.P $(DEPDIR)/evaluationdialog.moc.P $(DEPDIR)/printdialog.moc.P $(DEPDIR)/kflog.moc.P $(DEPDIR)/igcpreview.moc.P $(DEPDIR)/kflogconfig.moc.P $(DEPDIR)/kflogstartlogo.moc.P $(DEPDIR)/mapcontrolview.moc.P $(DEPDIR)/kflog_meta_unload.P  $(DEPDIR)/kflog.all_cpp.P \
 	  .deps/airport.P .deps/airspace.P .deps/basemapelement.P \
 .deps/dataview.P .deps/elevpoint.P .deps/evaluationdialog.P \
 .deps/evaluationframe.P .deps/evaluationview.P .deps/flight.P \
-.deps/flighttask.P .deps/glidersite.P .deps/isohypse.P .deps/kflog.P \
-.deps/kflogconfig.P .deps/kflogstartlogo.P .deps/lineelement.P \
-.deps/main.P .deps/map.P .deps/mapcalc.P .deps/mapconfig.P \
-.deps/mapcontents.P .deps/mapcontrolview.P .deps/mapmatrix.P \
-.deps/printdialog.P .deps/radiopoint.P .deps/singlepoint.P
-@KDE_USE_FINAL_FALSE@DEP_FILES =  $(DEPDIR)/evaluationframe.moc.P $(DEPDIR)/evaluationview.moc.P $(DEPDIR)/map.moc.P $(DEPDIR)/dataview.moc.P $(DEPDIR)/evaluationdialog.moc.P $(DEPDIR)/printdialog.moc.P $(DEPDIR)/kflog.moc.P $(DEPDIR)/kflogconfig.moc.P $(DEPDIR)/kflogstartlogo.moc.P $(DEPDIR)/mapcontrolview.moc.P $(DEPDIR)/kflog_meta_unload.P   .deps/airport.P .deps/airspace.P .deps/basemapelement.P \
+.deps/flighttask.P .deps/glidersite.P .deps/igcpreview.P \
+.deps/isohypse.P .deps/kflog.P .deps/kflogconfig.P \
+.deps/kflogstartlogo.P .deps/lineelement.P .deps/main.P .deps/map.P \
+.deps/mapcalc.P .deps/mapconfig.P .deps/mapcontents.P \
+.deps/mapcontrolview.P .deps/mapmatrix.P .deps/printdialog.P \
+.deps/radiopoint.P .deps/singlepoint.P
+@KDE_USE_FINAL_FALSE@DEP_FILES =  $(DEPDIR)/evaluationframe.moc.P $(DEPDIR)/evaluationview.moc.P $(DEPDIR)/map.moc.P $(DEPDIR)/dataview.moc.P $(DEPDIR)/evaluationdialog.moc.P $(DEPDIR)/printdialog.moc.P $(DEPDIR)/kflog.moc.P $(DEPDIR)/igcpreview.moc.P $(DEPDIR)/kflogconfig.moc.P $(DEPDIR)/kflogstartlogo.moc.P $(DEPDIR)/mapcontrolview.moc.P $(DEPDIR)/kflog_meta_unload.P   .deps/airport.P .deps/airspace.P .deps/basemapelement.P \
 .deps/dataview.P .deps/elevpoint.P .deps/evaluationdialog.P \
 .deps/evaluationframe.P .deps/evaluationview.P .deps/flight.P \
-.deps/flighttask.P .deps/glidersite.P .deps/isohypse.P .deps/kflog.P \
-.deps/kflogconfig.P .deps/kflogstartlogo.P .deps/lineelement.P \
-.deps/main.P .deps/map.P .deps/mapcalc.P .deps/mapconfig.P \
-.deps/mapcontents.P .deps/mapcontrolview.P .deps/mapmatrix.P \
-.deps/printdialog.P .deps/radiopoint.P .deps/singlepoint.P
+.deps/flighttask.P .deps/glidersite.P .deps/igcpreview.P \
+.deps/isohypse.P .deps/kflog.P .deps/kflogconfig.P \
+.deps/kflogstartlogo.P .deps/lineelement.P .deps/main.P .deps/map.P \
+.deps/mapcalc.P .deps/mapconfig.P .deps/mapcontents.P \
+.deps/mapcontrolview.P .deps/mapmatrix.P .deps/printdialog.P \
+.deps/radiopoint.P .deps/singlepoint.P
 
 SOURCES = $(kflog_SOURCES)
 OBJECTS = $(kflog_OBJECTS)
@@ -695,224 +698,224 @@ maintainer-clean
 
 
 install-data-local:
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/
-#>- 	$(INSTALL_DATA) $(srcdir)/kflogui.rc (kde_datadir)/kflog/kflogui.rc
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/
+#>- 	$(INSTALL_DATA) $(srcdir)/kflogui.rc $(kde_datadir)/kflog/kflogui.rc
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/kflogui.rc $(DESTDIR)(kde_datadir)/kflog/kflogui.rc
-#>- 	$(mkinstalldirs) (kde_appsdir)/Applications/
+	$(INSTALL_DATA) $(srcdir)/kflogui.rc $(DESTDIR)$(kde_datadir)/kflog/kflogui.rc
+#>- 	$(mkinstalldirs) $(kde_appsdir)/Applications/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_appsdir)/Applications/
-#>- 	$(INSTALL_DATA) $(srcdir)/kflog.desktop (kde_appsdir)/Applications/kflog.desktop
+	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Applications/
+#>- 	$(INSTALL_DATA) $(srcdir)/kflog.desktop $(kde_appsdir)/Applications/kflog.desktop
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/kflog.desktop $(DESTDIR)(kde_appsdir)/Applications/kflog.desktop
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/16x16/apps/
+	$(INSTALL_DATA) $(srcdir)/kflog.desktop $(DESTDIR)$(kde_appsdir)/Applications/kflog.desktop
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/apps/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/16x16/apps/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi16-app-kflog.png (kde_icondir)/hicolor/16x16/apps/kflog.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/16x16/apps/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi16-app-kflog.png $(kde_icondir)/hicolor/16x16/apps/kflog.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi16-app-kflog.png $(DESTDIR)(kde_icondir)/hicolor/16x16/apps/kflog.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/32x32/apps/
+	$(INSTALL_DATA) $(srcdir)/hi16-app-kflog.png $(DESTDIR)$(kde_icondir)/hicolor/16x16/apps/kflog.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/32x32/apps/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/32x32/apps/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi32-app-kflog.png (kde_icondir)/hicolor/32x32/apps/kflog.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/32x32/apps/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi32-app-kflog.png $(kde_icondir)/hicolor/32x32/apps/kflog.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi32-app-kflog.png $(DESTDIR)(kde_icondir)/hicolor/32x32/apps/kflog.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/48x48/apps/
+	$(INSTALL_DATA) $(srcdir)/hi32-app-kflog.png $(DESTDIR)$(kde_icondir)/hicolor/32x32/apps/kflog.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/apps/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/48x48/apps/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi48-app-kflog.png (kde_icondir)/hicolor/48x48/apps/kflog.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/48x48/apps/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi48-app-kflog.png $(kde_icondir)/hicolor/48x48/apps/kflog.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi48-app-kflog.png $(DESTDIR)(kde_icondir)/hicolor/48x48/apps/kflog.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/16x16/mimetypes/
+	$(INSTALL_DATA) $(srcdir)/hi48-app-kflog.png $(DESTDIR)$(kde_icondir)/hicolor/48x48/apps/kflog.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/mimetypes/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/16x16/mimetypes/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi16-mimetype-igc.png (kde_icondir)/hicolor/16x16/mimetypes/igc.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/16x16/mimetypes/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi16-mimetype-igc.png $(kde_icondir)/hicolor/16x16/mimetypes/igc.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi16-mimetype-igc.png $(DESTDIR)(kde_icondir)/hicolor/16x16/mimetypes/igc.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/32x32/mimetypes/
+	$(INSTALL_DATA) $(srcdir)/hi16-mimetype-igc.png $(DESTDIR)$(kde_icondir)/hicolor/16x16/mimetypes/igc.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/32x32/mimetypes/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/32x32/mimetypes/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi32-mimetype-igc.png (kde_icondir)/hicolor/32x32/mimetypes/igc.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/32x32/mimetypes/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi32-mimetype-igc.png $(kde_icondir)/hicolor/32x32/mimetypes/igc.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi32-mimetype-igc.png $(DESTDIR)(kde_icondir)/hicolor/32x32/mimetypes/igc.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/48x48/mimetypes/
+	$(INSTALL_DATA) $(srcdir)/hi32-mimetype-igc.png $(DESTDIR)$(kde_icondir)/hicolor/32x32/mimetypes/igc.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/mimetypes/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/48x48/mimetypes/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-igc.png (kde_icondir)/hicolor/48x48/mimetypes/igc.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/48x48/mimetypes/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-igc.png $(kde_icondir)/hicolor/48x48/mimetypes/igc.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-igc.png $(DESTDIR)(kde_icondir)/hicolor/48x48/mimetypes/igc.png
-#>- 	$(mkinstalldirs) (kde_mimedir)/application/
+	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-igc.png $(DESTDIR)$(kde_icondir)/hicolor/48x48/mimetypes/igc.png
+#>- 	$(mkinstalldirs) $(kde_mimedir)/application/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_mimedir)/application/
-#>- 	$(INSTALL_DATA) $(srcdir)/igc.desktop (kde_mimedir)/application/igc.desktop
+	$(mkinstalldirs) $(DESTDIR)$(kde_mimedir)/application/
+#>- 	$(INSTALL_DATA) $(srcdir)/igc.desktop $(kde_mimedir)/application/igc.desktop
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/igc.desktop $(DESTDIR)(kde_mimedir)/application/igc.desktop
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/igc.desktop $(DESTDIR)$(kde_mimedir)/application/igc.desktop
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_e.png (kde_icondir)/hicolor/22x22/actions/movemap_e.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_e.png $(kde_icondir)/hicolor/22x22/actions/movemap_e.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_e.png $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_e.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_e.png $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_e.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_n.png (kde_icondir)/hicolor/22x22/actions/movemap_n.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_n.png $(kde_icondir)/hicolor/22x22/actions/movemap_n.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_n.png $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_n.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_n.png $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_n.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_ne.png (kde_icondir)/hicolor/22x22/actions/movemap_ne.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_ne.png $(kde_icondir)/hicolor/22x22/actions/movemap_ne.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_ne.png $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_ne.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_ne.png $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_ne.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_nw.png (kde_icondir)/hicolor/22x22/actions/movemap_nw.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_nw.png $(kde_icondir)/hicolor/22x22/actions/movemap_nw.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_nw.png $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_nw.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_nw.png $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_nw.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_s.png (kde_icondir)/hicolor/22x22/actions/movemap_s.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_s.png $(kde_icondir)/hicolor/22x22/actions/movemap_s.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_s.png $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_s.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_s.png $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_s.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_se.png (kde_icondir)/hicolor/22x22/actions/movemap_se.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_se.png $(kde_icondir)/hicolor/22x22/actions/movemap_se.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_se.png $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_se.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_se.png $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_se.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_sw.png (kde_icondir)/hicolor/22x22/actions/movemap_sw.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_sw.png $(kde_icondir)/hicolor/22x22/actions/movemap_sw.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_sw.png $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_sw.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_sw.png $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_sw.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_w.png (kde_icondir)/hicolor/22x22/actions/movemap_w.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_w.png $(kde_icondir)/hicolor/22x22/actions/movemap_w.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_w.png $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_w.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/16x16/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-movemap_w.png $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_w.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/16x16/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi16-action-flightevaluation.png (kde_icondir)/hicolor/16x16/actions/flightevaluation.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/16x16/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi16-action-flightevaluation.png $(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi16-action-flightevaluation.png $(DESTDIR)(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi16-action-flightevaluation.png $(DESTDIR)$(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-flightevaluation.png (kde_icondir)/hicolor/22x22/actions/flightevaluation.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-flightevaluation.png $(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi22-action-flightevaluation.png $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/32x32/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-flightevaluation.png $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/32x32/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/32x32/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi32-action-flightevaluation.png (kde_icondir)/hicolor/32x32/actions/flightevaluation.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/32x32/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi32-action-flightevaluation.png $(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi32-action-flightevaluation.png $(DESTDIR)(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/16x16/actions/
+	$(INSTALL_DATA) $(srcdir)/hi32-action-flightevaluation.png $(DESTDIR)$(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/16x16/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi16-action-centerflight.png (kde_icondir)/hicolor/16x16/actions/centerflight.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/16x16/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi16-action-centerflight.png $(kde_icondir)/hicolor/16x16/actions/centerflight.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi16-action-centerflight.png $(DESTDIR)(kde_icondir)/hicolor/16x16/actions/centerflight.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/16x16/actions/
+	$(INSTALL_DATA) $(srcdir)/hi16-action-centerflight.png $(DESTDIR)$(kde_icondir)/hicolor/16x16/actions/centerflight.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/16x16/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi16-action-centertask.png (kde_icondir)/hicolor/16x16/actions/centertask.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/16x16/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi16-action-centertask.png $(kde_icondir)/hicolor/16x16/actions/centertask.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi16-action-centertask.png $(DESTDIR)(kde_icondir)/hicolor/16x16/actions/centertask.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi16-action-centertask.png $(DESTDIR)$(kde_icondir)/hicolor/16x16/actions/centertask.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-centerflight.png (kde_icondir)/hicolor/22x22/actions/centerflight.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-centerflight.png $(kde_icondir)/hicolor/22x22/actions/centerflight.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi22-action-centerflight.png $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/centerflight.png
-#>- 	$(mkinstalldirs) (kde_icondir)/hicolor/22x22/actions/
+	$(INSTALL_DATA) $(srcdir)/hi22-action-centerflight.png $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/centerflight.png
+#>- 	$(mkinstalldirs) $(kde_icondir)/hicolor/22x22/actions/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/
-#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-centertask.png (kde_icondir)/hicolor/22x22/actions/centertask.png
+	$(mkinstalldirs) $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/
+#>- 	$(INSTALL_DATA) $(srcdir)/hi22-action-centertask.png $(kde_icondir)/hicolor/22x22/actions/centertask.png
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/hi22-action-centertask.png $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/centertask.png
+	$(INSTALL_DATA) $(srcdir)/hi22-action-centertask.png $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/centertask.png
 
 uninstall-local:
-#>- 	-rm -f (kde_datadir)/kflog/kflogui.rc
+#>- 	-rm -f $(kde_datadir)/kflog/kflogui.rc
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/kflogui.rc
-#>- 	-rm -f (kde_appsdir)/Applications/kflog.desktop
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/kflogui.rc
+#>- 	-rm -f $(kde_appsdir)/Applications/kflog.desktop
 #>+ 1
-	-rm -f $(DESTDIR)(kde_appsdir)/Applications/kflog.desktop
-#>- 	-rm -f (kde_icondir)/hicolor/16x16/apps/kflog.png
+	-rm -f $(DESTDIR)$(kde_appsdir)/Applications/kflog.desktop
+#>- 	-rm -f $(kde_icondir)/hicolor/16x16/apps/kflog.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/16x16/apps/kflog.png
-#>- 	-rm -f (kde_icondir)/hicolor/32x32/apps/kflog.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/16x16/apps/kflog.png
+#>- 	-rm -f $(kde_icondir)/hicolor/32x32/apps/kflog.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/32x32/apps/kflog.png
-#>- 	-rm -f (kde_icondir)/hicolor/48x48/apps/kflog.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/32x32/apps/kflog.png
+#>- 	-rm -f $(kde_icondir)/hicolor/48x48/apps/kflog.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/48x48/apps/kflog.png
-#>- 	-rm -f (kde_icondir)/hicolor/16x16/mimetypes/igc.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/48x48/apps/kflog.png
+#>- 	-rm -f $(kde_icondir)/hicolor/16x16/mimetypes/igc.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/16x16/mimetypes/igc.png
-#>- 	-rm -f (kde_icondir)/hicolor/32x32/mimetypes/igc.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/16x16/mimetypes/igc.png
+#>- 	-rm -f $(kde_icondir)/hicolor/32x32/mimetypes/igc.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/32x32/mimetypes/igc.png
-#>- 	-rm -f (kde_icondir)/hicolor/48x48/mimetypes/igc.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/32x32/mimetypes/igc.png
+#>- 	-rm -f $(kde_icondir)/hicolor/48x48/mimetypes/igc.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/48x48/mimetypes/igc.png
-#>- 	-rm -f (kde_mimedir)/application/igc.desktop
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/48x48/mimetypes/igc.png
+#>- 	-rm -f $(kde_mimedir)/application/igc.desktop
 #>+ 1
-	-rm -f $(DESTDIR)(kde_mimedir)/application/igc.desktop
-#>- 	-rm -f (kde_icondir)/hicolor/22x22/actions/movemap_e.png
+	-rm -f $(DESTDIR)$(kde_mimedir)/application/igc.desktop
+#>- 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_e.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_e.png
-#>- 	-rm -f (kde_icondir)/hicolor/22x22/actions/movemap_n.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_e.png
+#>- 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_n.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_n.png
-#>- 	-rm -f (kde_icondir)/hicolor/22x22/actions/movemap_ne.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_n.png
+#>- 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_ne.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_ne.png
-#>- 	-rm -f (kde_icondir)/hicolor/22x22/actions/movemap_nw.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_ne.png
+#>- 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_nw.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_nw.png
-#>- 	-rm -f (kde_icondir)/hicolor/22x22/actions/movemap_s.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_nw.png
+#>- 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_s.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_s.png
-#>- 	-rm -f (kde_icondir)/hicolor/22x22/actions/movemap_se.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_s.png
+#>- 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_se.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_se.png
-#>- 	-rm -f (kde_icondir)/hicolor/22x22/actions/movemap_sw.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_se.png
+#>- 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_sw.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_sw.png
-#>- 	-rm -f (kde_icondir)/hicolor/22x22/actions/movemap_w.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_sw.png
+#>- 	-rm -f $(kde_icondir)/hicolor/22x22/actions/movemap_w.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/movemap_w.png
-#>- 	-rm -f (kde_icondir)/hicolor/16x16/actions/flightevaluation.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/movemap_w.png
+#>- 	-rm -f $(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
-#>- 	-rm -f (kde_icondir)/hicolor/22x22/actions/flightevaluation.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/16x16/actions/flightevaluation.png
+#>- 	-rm -f $(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
-#>- 	-rm -f (kde_icondir)/hicolor/32x32/actions/flightevaluation.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/flightevaluation.png
+#>- 	-rm -f $(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
-#>- 	-rm -f (kde_icondir)/hicolor/16x16/actions/centerflight.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/32x32/actions/flightevaluation.png
+#>- 	-rm -f $(kde_icondir)/hicolor/16x16/actions/centerflight.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/16x16/actions/centerflight.png
-#>- 	-rm -f (kde_icondir)/hicolor/16x16/actions/centertask.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/16x16/actions/centerflight.png
+#>- 	-rm -f $(kde_icondir)/hicolor/16x16/actions/centertask.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/16x16/actions/centertask.png
-#>- 	-rm -f (kde_icondir)/hicolor/22x22/actions/centerflight.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/16x16/actions/centertask.png
+#>- 	-rm -f $(kde_icondir)/hicolor/22x22/actions/centerflight.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/centerflight.png
-#>- 	-rm -f (kde_icondir)/hicolor/22x22/actions/centertask.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/centerflight.png
+#>- 	-rm -f $(kde_icondir)/hicolor/22x22/actions/centertask.png
 #>+ 1
-	-rm -f $(DESTDIR)(kde_icondir)/hicolor/22x22/actions/centertask.png
+	-rm -f $(DESTDIR)$(kde_icondir)/hicolor/22x22/actions/centertask.png
 
 messages: rc.cpp
 	LIST=`find . -name \*.h -o -name \*.hh -o -name \*.H -o -name \*.hxx -o -name \*.hpp -o -name \*.cpp -o -name \*.cc -o -name \*.cxx -o -name \*.ecpp -o -name \*.C`; \
@@ -953,6 +956,10 @@ kflog.moc.cpp: $(srcdir)/kflog.h
 	$(MOC) $(srcdir)/kflog.h -o kflog.moc.cpp
 
 #>+ 3
+igcpreview.moc.cpp: $(srcdir)/igcpreview.h
+	$(MOC) $(srcdir)/igcpreview.h -o igcpreview.moc.cpp
+
+#>+ 3
 kflogconfig.moc.cpp: $(srcdir)/kflogconfig.h
 	$(MOC) $(srcdir)/kflogconfig.h -o kflogconfig.moc.cpp
 
@@ -966,7 +973,7 @@ mapcontrolview.moc.cpp: $(srcdir)/mapcontrolview.h
 
 #>+ 3
 clean-metasources:
-	-rm -f  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp dataview.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp
+	-rm -f  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp dataview.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp igcpreview.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp
 
 #>+ 2
 docs-am:
@@ -978,11 +985,11 @@ force-reedit:
 
 
 #>+ 10
-kflog_meta_unload.cpp:  evaluationframe.moc.cpp evaluationview.moc.cpp dataview.moc.cpp map.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogstartlogo.moc.cpp kflogconfig.moc.cpp mapcontrolview.moc.cpp
+kflog_meta_unload.cpp:  evaluationframe.moc.cpp evaluationview.moc.cpp dataview.moc.cpp map.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp igcpreview.moc.cpp kflogstartlogo.moc.cpp kflogconfig.moc.cpp mapcontrolview.moc.cpp
 	@echo 'creating kflog_meta_unload.cpp'
 	-rm -f kflog_meta_unload.cpp
 	@echo 'static const char * _metalist_kflog[] = {' > kflog_meta_unload.cpp
-	cat  evaluationframe.moc.cpp evaluationview.moc.cpp dataview.moc.cpp map.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogstartlogo.moc.cpp kflogconfig.moc.cpp mapcontrolview.moc.cpp | grep 'char.*className' | sed -e 's/.*[^A-Za-z0-9_:]\([A-Za-z0-9_:]*\)::className.*$$/\"\1\",/' | sort | uniq >> kflog_meta_unload.cpp
+	cat  evaluationframe.moc.cpp evaluationview.moc.cpp dataview.moc.cpp map.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp igcpreview.moc.cpp kflogstartlogo.moc.cpp kflogconfig.moc.cpp mapcontrolview.moc.cpp | grep 'char.*className' | sed -e 's/.*[^A-Za-z0-9_:]\([A-Za-z0-9_:]*\)::className.*$$/\"\1\",/' | sort | uniq >> kflog_meta_unload.cpp
 	@echo '0};' >> kflog_meta_unload.cpp
 	@echo '#include <kunload.h>' >> kflog_meta_unload.cpp
 	@echo '_UNLOAD(kflog)' >> kflog_meta_unload.cpp
@@ -993,11 +1000,11 @@ clean-moc-classes:
 	-rm -f  kflog_meta_unload.cpp
 
 #>+ 11
-kflog.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/evaluationframe.cpp $(srcdir)/mapconfig.cpp $(srcdir)/evaluationview.cpp $(srcdir)/evaluationdialog.cpp $(srcdir)/kflogconfig.cpp $(srcdir)/printdialog.cpp $(srcdir)/kflogstartlogo.cpp $(srcdir)/flighttask.cpp $(srcdir)/flight.cpp $(srcdir)/mapmatrix.cpp $(srcdir)/singlepoint.cpp $(srcdir)/radiopoint.cpp $(srcdir)/lineelement.cpp $(srcdir)/isohypse.cpp $(srcdir)/glidersite.cpp $(srcdir)/elevpoint.cpp $(srcdir)/airspace.cpp $(srcdir)/airport.cpp $(srcdir)/mapcontents.cpp $(srcdir)/basemapelement.cpp $(srcdir)/map.cpp $(srcdir)/dataview.cpp $(srcdir)/mapcalc.cpp $(srcdir)/mapcontrolview.cpp $(srcdir)/kflog.cpp $(srcdir)/main.cpp kflog_meta_unload.cpp  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp dataview.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp
+kflog.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/igcpreview.cpp $(srcdir)/evaluationframe.cpp $(srcdir)/mapconfig.cpp $(srcdir)/evaluationview.cpp $(srcdir)/evaluationdialog.cpp $(srcdir)/kflogconfig.cpp $(srcdir)/printdialog.cpp $(srcdir)/kflogstartlogo.cpp $(srcdir)/flighttask.cpp $(srcdir)/flight.cpp $(srcdir)/mapmatrix.cpp $(srcdir)/singlepoint.cpp $(srcdir)/radiopoint.cpp $(srcdir)/lineelement.cpp $(srcdir)/isohypse.cpp $(srcdir)/glidersite.cpp $(srcdir)/elevpoint.cpp $(srcdir)/airspace.cpp $(srcdir)/airport.cpp $(srcdir)/mapcontents.cpp $(srcdir)/basemapelement.cpp $(srcdir)/map.cpp $(srcdir)/dataview.cpp $(srcdir)/mapcalc.cpp $(srcdir)/mapcontrolview.cpp $(srcdir)/kflog.cpp $(srcdir)/main.cpp $(srcdir)/kflog_meta_unload.cpp  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp dataview.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp igcpreview.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp
 	@echo 'creating kflog.all_cpp.cpp ...'; \
 	rm -f kflog.all_cpp.files kflog.all_cpp.final; \
 	echo "#define KDE_USE_FINAL 1" >> kflog.all_cpp.final; \
-	for file in evaluationframe.cpp mapconfig.cpp evaluationview.cpp evaluationdialog.cpp kflogconfig.cpp printdialog.cpp kflogstartlogo.cpp flighttask.cpp flight.cpp mapmatrix.cpp singlepoint.cpp radiopoint.cpp lineelement.cpp isohypse.cpp glidersite.cpp elevpoint.cpp airspace.cpp airport.cpp mapcontents.cpp basemapelement.cpp map.cpp dataview.cpp mapcalc.cpp mapcontrolview.cpp kflog.cpp main.cpp kflog_meta_unload.cpp  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp dataview.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp; do \
+	for file in igcpreview.cpp evaluationframe.cpp mapconfig.cpp evaluationview.cpp evaluationdialog.cpp kflogconfig.cpp printdialog.cpp kflogstartlogo.cpp flighttask.cpp flight.cpp mapmatrix.cpp singlepoint.cpp radiopoint.cpp lineelement.cpp isohypse.cpp glidersite.cpp elevpoint.cpp airspace.cpp airport.cpp mapcontents.cpp basemapelement.cpp map.cpp dataview.cpp mapcalc.cpp mapcontrolview.cpp kflog.cpp main.cpp kflog_meta_unload.cpp  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp dataview.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp igcpreview.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp; do \
 	  echo "#include \"$$file\"" >> kflog.all_cpp.files; \
 	  test ! -f $(srcdir)/$$file || egrep '^#pragma +implementation' $(srcdir)/$$file >> kflog.all_cpp.final; \
 	done; \

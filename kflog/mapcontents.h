@@ -104,7 +104,7 @@ class MapContents
     /**
      *
      */
-    int searchFlightPoint(QPoint cPos, struct flightPoint* fP);
+    int searchFlightPoint(QPoint cPos, struct flightPoint& fP);
     /** Close a flight */
     void closeFlight();
     /**

@@ -54,6 +54,7 @@ EvaluationView::EvaluationView(QScrollView* parent, EvaluationDialog* dialog)
 
 EvaluationView::~EvaluationView()
 {
+
   delete pixBuffer;
 }
 
@@ -77,14 +78,11 @@ EvaluationView::~EvaluationView()
 
 QSize EvaluationView::sizeHint()
 {
-  warning("EvaluationView::sizeHint(%d / %d)",
-      QWidget::sizeHint().width(), QWidget::sizeHint().height());
   return QWidget::sizeHint();
 }
 
 void EvaluationView::paintEvent(QPaintEvent* event = 0)
 {
-  warning("breite Pixbuffer ende: %d", pixBuffer->width());
   bitBlt(this, 0, 0, pixBuffer);
 }
 
@@ -556,7 +554,6 @@ void EvaluationView::__draw()
     }
 
 
-  warning("breite PixBuffer: %d", pixBuffer->width());
 
   pixBuffer->fill(white);
   QPainter paint(pixBuffer);

@@ -18,6 +18,8 @@
 #include "evaluationframe.h"
 #include <evaluationdialog.h>
 
+#include <kconfig.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <qlayout.h>
 #include <qsplitter.h>
@@ -25,13 +27,6 @@
 EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   : QFrame(parent)
 {
-
-  // müssen noch gespeichert werden
-  glatt_va = 0;
-  glatt_v = 0;
-  glatt_h = 0;
-  secWidth = 10;
-
 
   // variable Kontrolle
   QSplitter* kontSplitter = new QSplitter(QSplitter::Horizontal, this);
@@ -55,14 +50,12 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   QFrame* kontrolle = new QFrame(kontSplitter);
   kontrolle->setMinimumWidth(1);
 
-  QLabel* scale_label = new QLabel(i18n("Zeitskalierung:"),kontrolle);
+  QLabel* scale_label = new QLabel(i18n("Time scale:"),kontrolle);
   scale_label->setAlignment(AlignHCenter);
   spinScale = new QSpinBox(1,60,1,kontrolle);
-//  spinScale->setValue(secWidth);
 
-  kontrolle->setMaximumWidth(scale_label->sizeHint().width() + 5);
 
-  QLabel* label_glaettung = new QLabel(i18n("Glättung:"),kontrolle);
+  QLabel* label_glaettung = new QLabel(i18n("Smoothness:"),kontrolle);
   label_glaettung->setAlignment(AlignHCenter);
 
   sliderVario = new QSlider(0,10,1,0,QSlider::Vertical,kontrolle);
@@ -73,11 +66,11 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   sliderSpeed->sizeHint().setHeight(20);
 
   check_vario = new QCheckBox(kontrolle);
-  check_vario->setChecked(true);
   check_baro = new QCheckBox(kontrolle);
-  check_baro->setChecked(true);
   check_speed = new QCheckBox(kontrolle);
-  check_speed->setChecked(true);
+
+
+  kontrolle->setMaximumWidth(check_speed->sizeHint().width() * 7 + 5);
 
   QLabel* label_vario = new QLabel(i18n("V"),kontrolle);
   QLabel* label_baro  = new QLabel(i18n("H"),kontrolle);
@@ -124,9 +117,27 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   typedef QValueList<int> testList;
   testList kontList;
   kontList.append(300);
-  kontList.append(scale_label->sizeHint().width() + 5);
+  kontList.append(check_speed->sizeHint().width() * 6 + 5);
   kontSplitter->setSizes(kontList);
-  kontSplitter->setSizes(kontList);
+
+
+  // gespeicherte Daten
+  KConfig* config = KGlobal::config();
+
+  config->setGroup("Evaluation");
+  secWidth = config->readNumEntry("Scale Time",10);
+  spinScale->setValue(secWidth);
+  glatt_va = config->readNumEntry("Vario Smoothness",0);
+  sliderVario->setValue(glatt_va);
+  glatt_v = config->readNumEntry("Speed Smoothness",0);
+  sliderSpeed->setValue(glatt_v);
+  glatt_h = config->readNumEntry("Elevation Smoothness",0);
+  sliderBaro->setValue(glatt_h);
+  check_vario->setChecked(config->readBoolEntry("Vario",true));
+  check_speed->setChecked(config->readBoolEntry("Speed",true));
+  check_baro->setChecked(config->readBoolEntry("Elevation",true));
+
+  config->setGroup(0);
 
 
 
@@ -151,6 +162,17 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
 
 EvaluationFrame::~EvaluationFrame()
 {
+  // Einstellungen Speichern
+  KConfig* config = KGlobal::config();
+
+  config->setGroup("Evaluation");
+  config->writeEntry("Scale Time",secWidth);
+  config->writeEntry("Vario Smoothness",glatt_va);
+  config->writeEntry("Elevation Smoothness",glatt_h);
+  config->writeEntry("Speed Smoothness",glatt_v);
+  config->writeEntry("Vario",check_vario->isChecked());
+  config->writeEntry("Elevation",check_baro->isChecked());
+  config->writeEntry("Speed",check_speed->isChecked());
 
 }
 
@@ -170,7 +192,7 @@ void EvaluationFrame::slotShowGraph()
 */
 
 
-  warning("EvaluationFrame::slotShowGraph");
+//  warning("EvaluationFrame::slotShowGraph");
 
   // Kurve malen
   evalView->drawCurve(flight, check_vario->isChecked(),

@@ -1025,7 +1025,7 @@ const char* Flight::getFileName() const { return sourceFileName; }
 
 bool Flight::isOptimized() const { return (origList.count() != 0); }
 
-int Flight::searchPoint(QPoint cPoint, struct flightPoint* searchPoint)
+int Flight::searchPoint(QPoint cPoint, struct flightPoint& searchPoint)
 {
   unsigned int delta = 1;
   int index = -1;
@@ -1050,7 +1050,7 @@ int Flight::searchPoint(QPoint cPoint, struct flightPoint* searchPoint)
             {
               minDist = distance;
               index = loop;
-              searchPoint[0] = *route.at(index);
+              searchPoint = *route.at(index);
             }
         }
     }
@@ -1319,8 +1319,9 @@ void Flight::__checkWaypoints()
     {
       config->setGroup("GliderTypes");
       gliderIndex = config->readNumEntry(gliderType, 100);
-      config->setGroup(0);
     }
+
+  config->setGroup(0);
 
   for(unsigned int loop = 0; loop < route.count(); loop++)
     {
@@ -1334,18 +1335,6 @@ void Flight::__checkWaypoints()
         }
       preTime = route.at(loop)->time;
     }
-
-
-//// Noch nötig ???
-//  if(dist(wpList.at(0), route.at(1)) < 1.0)
-//    {
-//      wpList.at(0)->sector1 = route.at(0)->time;
-//    }
-//
-//  if(dist(wpList.last(), route.last()) < 1.0)
-//    {
-//      wpList.last()->sector1 = route.last()->time;
-//    }
 
   unsigned int startIndex = 0, dummy = 0;
 

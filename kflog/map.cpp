@@ -159,12 +159,12 @@ void Map::mouseMoveEvent(QMouseEvent* event)
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
           prePos.x() - 20, prePos.y() - 20, 40, 40);
 
-  struct flightPoint* cP = new struct flightPoint[1];
+  struct flightPoint cP;
 
   if(_globalMapContents.searchFlightPoint(event->pos(), cP) != -1)
     {
-      mainApp->showPointInfo(_globalMapMatrix.mapToWgs(event->pos()), &cP[0]);
-      prePos = _globalMapMatrix.map(cP[0].projP);
+      mainApp->showPointInfo(_globalMapMatrix.mapToWgs(event->pos()), cP);
+      prePos = _globalMapMatrix.map(cP.projP);
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
     }
   else

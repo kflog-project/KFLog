@@ -3,32 +3,52 @@ $Id$
 
 /*************************************************************************
  *
- * Nach PreRelease
+ * Florian
  *
  */
 
-
-* Kartenbewegungen als KAction (inkl. Tastaturbefehl)
-
-
-* LineElement::readConfig() sollte nur einmal ausgeführt werden (ausserhalb
-  von LineElement). Die entsprechenden Daten können dann abgerufen werden ...
-
-  -> zentrales KFLogConfigData-Objekt hält alle Zeicheneinstellungen
-     (könnte auch Bestandteil von MapContents werden?!?)
-
-  -> Alle Kartenobjekte haben einen Pointer auf dieses Objekt
-
-  -> beim Zeichnen werden die entsprechenden Angaben jedesmal von dort
-     genommen.
-
-  -> Das gilt auch für die Icons bei SinglePoint.
-
-  -> Der Konfigurations-Dialog liest die Daten ebenfalls von diesem Objekt
-     und sorgt dafür, dass dieses Objekt die geänderten Daten aufnimmt.
+* Beim Zoomen in Evaluations-Dialog: Verschieben der Darstellung, so dass
+  aktueller Bereich der gleiche bleibt.
 
 
-* Was passiert, wenn Maßstab negativ wird ???
+* Höhe des Cursor-Textes im Eval-Dialog ist fest und nicht von der
+  Schrift abhängig! Das sollte noch geändert werden!
+
+
+* Defaultwerte für Lufträume
+
+
+* Lufträume zum Teil falsch oder doppelt
+
+
+/*************************************************************************
+ *
+ * Heiner
+ *
+ */
+
+* Konfiguration der Druckeinstellungen.
+
+
+* Konfiguration der Farben der Höhenlinien.
+
+
+* Einstellen, welche Höhen gezeichnet werden sollen ???
+
+
+* Flug Darstellung:
+
+  -> Farbe des Fluges nach Steigrate, Höhe, ... dynamisch einfärben
+
+
+/*************************************************************************
+ *
+ * Wer?? Wann??
+ *
+ */
+
+* Die Karte muss bei einem resizeEvent() eigentlich nicht neu gezeichnet
+  werden. pixBuffer muss nur gross genug sein ...
 
 
 * Welche Variablen und Funktionen werden tatsächlich benutzt ???
@@ -38,64 +58,28 @@ $Id$
   Maßstab müsste zunächst "geprüft" werden ...
 
 
-* Luftraum-Nummern korrigieren
+/*************************************************************************
+ *
+ * Kartenfehler
+ *
+ */
 
+-> Die Höhenlinien in England scheinen in die falschen Dateien gerückt
+   zu sein. Zumindest der Bereich zwischen 2°W und 0°W ( >52° Nord ) der
+   Höhen über 0M ist in den 0°E Dateien ...
 
-* Drucken:
+-> Die 0-Meter-Linie ist in vielen Fällen noch falsch.
 
-  -> Die einzelnen Kartenobjekte müssen noch gedruckt werden.
-     Das sollte auch direkt über MapContents laufen ...
+-> "Kaputte Länder":
+   -> Spanien (Flüsse)
+   -> Russland (komplett, leider auch Küste ...)
 
-  -> Das Bild ist auf dem Papier noch verschoben.
+-> Flusskacheln prüfen
 
+-> Türkei: Städte
 
-* Zusätzliche Lufträume im Programm noch nicht bekannt.
+-> GB, Irland, Niederlande: Seen
 
+-> Niederlande: Flüsse
 
-* Kartenfehler:
-
-  -> Die Höhenlinien in England scheinen in die falschen Dateien gerückt
-     zu sein. Zumindest der Bereich zwischen 2°W und 0°W ( >52° Nord ) der
-     Höhen über 0M ist in den 0°E Dateien ...
-
-  -> Die 0-Meter-Linie ist in vielen Fällen noch falsch.
-
-  -> Grundlinien im Binnenland können zu Rechtecken zusammengefasst werden
-     (Grenzen löschen ...)
-
-  -> Die Grundhöhe einzelner Kacheln ist zu niedrig.
-
-  -> "Kaputte Länder":
-     -> Spanien (Flüsse)
-     -> Russland (komplett, leider auch Küste ...)
-
-  -> Lufträume zum Teil falsch oder doppelt
-
-  -> weitere Luftraumtypen einführen. Darstellung ändern.
-
-  -> Flusskacheln prüfen
-
-  -> Türkei: Städte
-
-  -> GB, Irland, Niederlande: Seen
-
-  -> Niederlande: Flüsse
-
-  -> Donau und Rhein lückenhaft
-
-
-* Flug Darstellung:
-
-  -> Auf einzelne Wendepunkte zoomen
-
-  -> Farbe des Fluges nach Steigrate, Höhe, ... dynamisch einfärben
-
-  -> Textdarstellung überarbeiten
-
-
-* Beim Suchen nach Flugplätzen, ... tauchen "weit weg gezeichnete" Punkte
-  plötzlich wieder auf ...
-
-
-* Die Kartenelemente werden in der Regel zweimal gezeichnet: in den Layer
-  und in die Maske. Das sollte vereinfacht werden !!!
+-> Donau und Rhein lückenhaft

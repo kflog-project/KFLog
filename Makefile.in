@@ -224,7 +224,7 @@ configure configure.in
 
 #>- DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 #>+ 4
-KDE_DIST=Makefile.dist kflog.spec configure.in.in README-MAP kflog.lsm kflog.kdevprj 
+KDE_DIST=Makefile.dist kflog.spec configure.in.in README-MAP kflog.lsm kflog.kdevses kflog.kdevprj 
 
 DISTFILES= $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST) $(KDE_DIST)
 
@@ -514,17 +514,17 @@ mostlyclean distclean maintainer-clean
 
 
 install-data-local:
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapdata/
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapdata/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapdata/
-#>- 	$(INSTALL_DATA) $(srcdir)/README-MAP (kde_datadir)/kflog/mapdata/README
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapdata/
+#>- 	$(INSTALL_DATA) $(srcdir)/README-MAP $(kde_datadir)/kflog/mapdata/README
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/README-MAP $(DESTDIR)(kde_datadir)/kflog/mapdata/README
+	$(INSTALL_DATA) $(srcdir)/README-MAP $(DESTDIR)$(kde_datadir)/kflog/mapdata/README
 
 uninstall-local:
-#>- 	-rm -f (kde_datadir)/kflog/mapdata/README
+#>- 	-rm -f $(kde_datadir)/kflog/mapdata/README
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapdata/README
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapdata/README
 
 $(top_srcdir)/configure.in: configure.in.in $(top_srcdir)/subdirs
 	cd $(top_srcdir) && $(MAKE) -f admin/Makefile.common configure.in ;

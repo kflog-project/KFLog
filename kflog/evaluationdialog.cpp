@@ -92,6 +92,7 @@ EvaluationDialog::EvaluationDialog(QList<Flight>* fList)
 
 EvaluationDialog::~EvaluationDialog()
 {
+
   // Cursor löschen
   emit(showCursor(QPoint(-100,-100), QPoint(-100,-100)));
 }
@@ -177,7 +178,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
 
 void EvaluationDialog::resizeEvent(QResizeEvent* event)
 {
-  warning("EvaluationDialog::resizeEvent");
+//  warning("EvaluationDialog::resizeEvent");
 
   QDialog::resizeEvent(event);
 
@@ -200,7 +201,7 @@ void EvaluationDialog::updateListBox()
 
 void EvaluationDialog::slotShowFlightData(int n)
 {
-  warning("EvaluationDialog::slotShowFlightData");
+//  warning("EvaluationDialog::slotShowFlightData");
   this->setCaption(i18n("Flightevaluation:") + flightList->at(n)->getPilot()
                     + "  " + flightList->at(n)->getDate());
   // GRUNDWERTE setzen
@@ -214,6 +215,6 @@ void EvaluationDialog::slotShowFlightData(int n)
 
 void EvaluationDialog::hide()
 {
-warning("EvaluationDialog::hide()");
+//warning("EvaluationDialog::hide()");
   this->EvaluationDialog::~EvaluationDialog();
 }

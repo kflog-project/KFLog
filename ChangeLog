@@ -1,6 +1,20 @@
 $Id$
 
 
+2001-12-20 Florian <florian@kflog.org>
+
+  * Added saving of window- and drawing-settings of the evaluation-dialog.
+
+
+2001-12-20 Heiner <heiner@kflog.org>
+
+  * Added preview of the igc-file in the open-file-dialog. Only the
+    file-header (date, pilot, glider, task) is displayed. The preview
+    only appears on local files.
+
+  * Fixed a bug in MapContents::degreeToNum()
+
+
 2001-12-18 Heiner <heiner@kflog.org>
 
   * Tagged 2.0.2

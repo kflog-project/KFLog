@@ -65,15 +65,7 @@ MapMatrix::MapMatrix()
 
 MapMatrix::~MapMatrix()
 {
-//  KConfig *config = kapp->config();
-//
-//  config->setGroup("Scale");
-//  config->writeEntry("Lower Limit", scaleBorders[LowerLimit]);
-//  config->writeEntry("Border 1", scaleBorders[Border1]);
-//  config->writeEntry("Border 2", scaleBorders[Border2]);
-//  config->writeEntry("Border 3", scaleBorders[Border3]);
-//  config->writeEntry("Switch Scale", scaleBorders[SwitchScale]);
-//  config->writeEntry("Upper Limit", scaleBorders[UpperLimit]);
+
 }
 
 QPoint MapMatrix::wgsToMap(QPoint origPoint) const
@@ -409,7 +401,7 @@ void MapMatrix::scaleSub(QSize mapSize)
   createMatrix(mapSize);
 }
 
-void MapMatrix::setScale(double nScale)  {  cScale = nScale;  }
+void MapMatrix::setScale(double nScale)  {  if (nScale > 0)  cScale = nScale;  }
 
 void MapMatrix::initMatrix(MapConfig* mConf)
 {
@@ -449,6 +441,8 @@ void MapMatrix::initMatrix(MapConfig* mConf)
 
   var1 = cos(v1)*cos(v1);
   var2 = sin(v1)+sin(v2);
+
+  config->setGroup(0);
 }
 
 void MapMatrix::saveMatrix()
@@ -471,6 +465,8 @@ void MapMatrix::saveMatrix()
   config->writeEntry("Border 3", scaleBorders[Border3]);
   config->writeEntry("Switch Scale", scaleBorders[SwitchScale]);
   config->writeEntry("Upper Limit", scaleBorders[UpperLimit]);
+
+  config->setGroup(0);
 }
 
 double MapMatrix::__calc_Y_Lambert(double latitude, double longitude) const

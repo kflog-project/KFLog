@@ -145,133 +145,44 @@ MapContents::~MapContents()
 int MapContents::degreeToNum(QString inDegree)
 {
   /*
-   * Das Parsen insgesamt sollte nochmal überarbeitet werden!
+   * needed formats:
+   *
+   *  [g]gg° mm' ss"
+   *  dddddddddd
    */
-  int deg = 0, min = 0, sec = 0;
-  int result = 0;
-  int count = 0;
-
-//  char* degree;
-//  degree = new char[strlen(inDegree)];
-  const char* degree = (const char*) inDegree;
-//  int n = 0;
-
-  // Löschen aller Leerzeichen, damit das Parsen unten klappt.
-//  for(unsigned int loop = 0; loop < strlen(inDegree); loop++)
-//    {
-//      if(inDegree[loop] == ' ') continue;
-//
-//      degree[n] = inDegree[loop];
-//      n++;
-//    }
-
+  QRegExp degree("^[0-9]?[0-9]°[ ]*[0-9][0-9]'[ ]*[0-9][0-9]\"");
   QRegExp number("^-?[0-9]+$");
-  QRegExp deg1("[°.]");
-  QRegExp deg2(",");
-  QRegExp deg3("'");
-  QRegExp dir("[swSW]$");
 
-  if(number.match(degree) != -1)
+  if(number.match(inDegree) != -1)
+      return inDegree.toInt();
+  else if(degree.match(inDegree) != -1)
     {
-      sscanf(degree, "%d", &result);
+      int deg = 0, min = 0, sec = 0, result = 0;
+
+      QRegExp deg1("°");
+      deg = inDegree.mid(0, deg1.match(inDegree)).toInt();
+      inDegree = inDegree.mid(deg1.match(inDegree) + 1, inDegree.length());
+
+      QRegExp deg2("'");
+      min = inDegree.mid(0, deg2.match(inDegree)).toInt();
+      inDegree = inDegree.mid(deg2.match(inDegree) + 1, inDegree.length());
+
+      QRegExp deg3("\"");
+      sec = inDegree.mid(0, deg3.match(inDegree)).toInt();
+
+      result = (int)((600000.0 * deg) + (10000.0 * (min + (sec / 60.0))));
+
+      // We add 1 to avoid rounding-errors ...
+      result += 1;
+
+      QRegExp dir("[swSW]$");
+      if(dir.match(inDegree) >= 0) return -result;
+
       return result;
     }
 
-  switch(deg1.match(degree))
-    {
-      case 1:
-        deg = degree[0] - '0';
-        degree += 2;
-        break;
-      case 2:
-        deg = 10 * (degree[0] - '0') + (degree[1] - '0');
-        degree += 3;
-        break;
-      case 3:
-        deg = 100 * (degree[0] - '0') + 10 * (degree[1] - '0')
-            + (degree[2] - '0');
-        degree += 4;
-        break;
-      default:
-        if(deg1.match(degree) > 3)  return 0;    // << degree is not correct!
-        switch(strlen(degree))
-          {
-            case 1:
-              deg = degree[0] - '0';
-              break;
-            case 2:
-              deg = 10 * (degree[0] - '0') + (degree[1] -'0');
-              break;
-            case 3:
-              deg = 100 * (degree[0] - '0') + 10 * (degree[1] - '0')
-                    + (degree[2] - '0');
-              break;
-            default:
-              return 0;                           // << degree is not correct!
-          }
-    }
-
-  if( deg2.match(degree) != -1 )
-    {
-      // Minuten mit Nachkommastellen!
-      switch(deg2.match(degree))
-        {
-          case 1:
-            min = degree[0] - '0';
-            for(unsigned int loop = 2; loop < strlen(degree); loop++)
-              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
-                {
-                  sec = 10 * sec + (degree[loop] - '0');
-                  count++;
-                }
-            break;
-          case 2:
-            min = 10 * (degree[0] - '0') + (degree[1] -'0');
-            for(unsigned int loop = 3; loop < strlen(degree); loop++)
-              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
-                {
-                  sec = (degree[loop] - '0') + (sec / 10);
-                  count++;
-                }
-            break;
-          default:
-            if( ( deg2.match(degree) > 2 ) || ( deg2.match(degree) == 0 ) )
-                return 0;    // << degree is not correct!
-        }
-    }
-  else if( deg3.match(degree) != -1 )
-    {
-      // es folgen "echte" Sekunden
-      switch( deg3.match(degree) )
-        {
-          case 1:
-            min = degree[0] - '0';
-            for(unsigned int loop = 2; loop < strlen(degree); loop++)
-              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
-                {
-                  sec = sec * 10 + (degree[loop] - '0');
-                  count++;
-                }
-            break;
-          case 2:
-            min = 10 * (degree[0] - '0') + (degree[1] -'0');
-            for(unsigned int loop = 3; loop < strlen(degree); loop++)
-              if( ( degree[loop] >= '0' ) && ( degree[loop] <= '9' ) )
-                {
-                  sec = sec * 10 + (degree[loop] - '0');
-                  count++;
-                }
-            break;
-          default:
-            if( ( deg2.match(degree) > 2 ) || ( deg2.match(degree) == 0 ) )
-                return 0;    // << degree is not correct!
-        }
-    }
-  result = (int) ((600000 * deg) + (10000 * (min + (sec * pow(10,-count)))));
-
-  if(dir.match(degree) >= 0) return -result;
-
-  return result;
+  // Wrong format!!!
+  return 0;
 }
 
 void MapContents::closeFlight()
@@ -798,7 +709,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   return true;
 }
 
-int MapContents::searchFlightPoint(QPoint cPos, struct flightPoint* fP)
+int MapContents::searchFlightPoint(QPoint cPos, struct flightPoint& fP)
 {
   if(flightList.count())
       return (flightList.current()->searchPoint(cPos, fP));
@@ -808,8 +719,7 @@ int MapContents::searchFlightPoint(QPoint cPos, struct flightPoint* fP)
 
 Flight* MapContents::getFlight()
 {
-  if(flightList.count())
-      return flightList.current();
+  if(flightList.count())  return flightList.current();
 
   return 0;
 }
@@ -837,7 +747,7 @@ bool MapContents::loadFlight(QFile igcFile)
    * Wir brauchen eine bessere Formatprüfung als nur die
    * Überprüfung der Endung und der Größe ...
    */
-  if((fInfo.extension() != "igc") && (fInfo.extension() != "IGC"))
+  if(((QString)fInfo.extension()).lower() != "igc")
     {
       KMessageBox::error(0,
           i18n("The selected file<BR><B>%1</B><BR>is not an igc-file!").arg(igcFile.name()));
@@ -1079,7 +989,6 @@ bool MapContents::loadFlight(QFile igcFile)
               // We have a waypoint
               sscanf(s.mid(1,17), "%2d%5d%1c%3d%5d%1c",
                   &lat, &latmin, &latChar, &lon, &lonmin, &lonChar);
-
 
               latTemp = lat * 600000 + latmin * 10;
               lonTemp = lon * 600000 + lonmin * 10;

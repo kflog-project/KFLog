@@ -368,7 +368,9 @@ void KFLogConfig::slotOk()
       MapContents::degreeToNum(homeLatE->text()));
   config->writeEntry("Homesite Longitude",
       MapContents::degreeToNum(homeLonE->text()));
+
   config->sync();
+  config->setGroup(0);
 
   emit scaleChanged(lLimitN->value(), uLimitN->value());
   accept();
@@ -988,6 +990,8 @@ void KFLogConfig::__addMapTab()
         TMZ_BRUSH_STYLE_2, TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4)
   READ_BORDER(tmzBorder);
 
+  config->setGroup(0);
+
   mapPage = addPage(i18n("Map-Elements"),i18n("Map Configuration"),
       KGlobal::instance()->iconLoader()->loadIcon("kflog", KIcon::NoGroup,
           KIcon::SizeLarge));
@@ -1231,6 +1235,8 @@ void KFLogConfig::__addScaleTab()
   connect(reduce1, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleA(int)));
   connect(reduce2, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleB(int)));
   connect(reduce3, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleC(int)));
+
+  config->setGroup(0);
 }
 
 void KFLogConfig::__addPathTab()
@@ -1333,6 +1339,8 @@ void KFLogConfig::__addPathTab()
   connect(mapPathSearch, SIGNAL(clicked()), SLOT(slotSearchMapPath()));
   connect(taskPathSearch, SIGNAL(clicked()), SLOT(slotSearchTaskPath()));
   connect(defaultPath, SIGNAL(clicked()), SLOT(slotDefaultPath()));
+
+  config->setGroup(0);
 }
 
 void KFLogConfig::__addPrintTab()
@@ -1384,6 +1392,8 @@ void KFLogConfig::__addIDTab()
   idLayout->addRowSpacing(2, 10);
 
   idLayout->addRowSpacing(3, 20);
+
+  config->setGroup(0);
 }
 
 int KFLogConfig::__setScaleValue(int value)

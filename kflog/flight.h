@@ -123,7 +123,7 @@ class Flight : public BaseMapElement
     /** */
     bool optimizeTask();
     /** */
-    int searchPoint(QPoint cPoint, struct flightPoint* searchPoint);
+    int searchPoint(QPoint cPoint, struct flightPoint& searchPoint);
     /** */
     bool isOptimized() const;
     /** */

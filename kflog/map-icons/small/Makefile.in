@@ -315,179 +315,179 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 
 install-data-local:
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/airfield_c.xpm (kde_datadir)/kflog/mapicons/small/airfield_c.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/airfield_c.xpm $(kde_datadir)/kflog/mapicons/small/airfield_c.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/airfield_c.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/airfield_c.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/airfield_c.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/airfield_c.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/airport.xpm (kde_datadir)/kflog/mapicons/small/airport.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/airport.xpm $(kde_datadir)/kflog/mapicons/small/airport.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/airport.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/airport.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/airport.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/airport.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/ambheliport.xpm (kde_datadir)/kflog/mapicons/small/ambheliport.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/ambheliport.xpm $(kde_datadir)/kflog/mapicons/small/ambheliport.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/ambheliport.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/ambheliport.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/ambheliport.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/ambheliport.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/civheliport.xpm (kde_datadir)/kflog/mapicons/small/civheliport.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/civheliport.xpm $(kde_datadir)/kflog/mapicons/small/civheliport.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/civheliport.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/civheliport.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/civheliport.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/civheliport.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/civmilair.xpm (kde_datadir)/kflog/mapicons/small/civmilair.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/civmilair.xpm $(kde_datadir)/kflog/mapicons/small/civmilair.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/civmilair.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/civmilair.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/civmilair.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/civmilair.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/closed.xpm (kde_datadir)/kflog/mapicons/small/closed.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/closed.xpm $(kde_datadir)/kflog/mapicons/small/closed.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/closed.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/closed.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/closed.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/closed.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/glider.xpm (kde_datadir)/kflog/mapicons/small/glider.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/glider.xpm $(kde_datadir)/kflog/mapicons/small/glider.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/glider.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/glider.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/glider.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/glider.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/glider2.xpm (kde_datadir)/kflog/mapicons/small/glider2.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/glider2.xpm $(kde_datadir)/kflog/mapicons/small/glider2.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/glider2.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/glider2.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/glider2.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/glider2.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/jump.xpm (kde_datadir)/kflog/mapicons/small/jump.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/jump.xpm $(kde_datadir)/kflog/mapicons/small/jump.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/jump.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/jump.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/jump.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/jump.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/milairport.xpm (kde_datadir)/kflog/mapicons/small/milairport.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/milairport.xpm $(kde_datadir)/kflog/mapicons/small/milairport.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/milairport.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/milairport.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/milairport.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/milairport.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/milheliport.xpm (kde_datadir)/kflog/mapicons/small/milheliport.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/milheliport.xpm $(kde_datadir)/kflog/mapicons/small/milheliport.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/milheliport.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/milheliport.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/milheliport.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/milheliport.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/obst_group.xpm (kde_datadir)/kflog/mapicons/small/obst_group.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/obst_group.xpm $(kde_datadir)/kflog/mapicons/small/obst_group.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/obst_group.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/obst_group.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/obst_group.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/obst_group.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/obstacle.xpm (kde_datadir)/kflog/mapicons/small/obstacle.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/obstacle.xpm $(kde_datadir)/kflog/mapicons/small/obstacle.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/obstacle.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/obstacle.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/obstacle.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/obstacle.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/outlanding.xpm (kde_datadir)/kflog/mapicons/small/outlanding.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/outlanding.xpm $(kde_datadir)/kflog/mapicons/small/outlanding.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/outlanding.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/outlanding.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/outlanding.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/outlanding.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/paraglider.xpm (kde_datadir)/kflog/mapicons/small/paraglider.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/paraglider.xpm $(kde_datadir)/kflog/mapicons/small/paraglider.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/paraglider.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/paraglider.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/paraglider.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/paraglider.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/routepoint.xpm (kde_datadir)/kflog/mapicons/small/routepoint.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/routepoint.xpm $(kde_datadir)/kflog/mapicons/small/routepoint.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/routepoint.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/routepoint.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/routepoint.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/routepoint.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/ulf.xpm (kde_datadir)/kflog/mapicons/small/ul.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/ulf.xpm $(kde_datadir)/kflog/mapicons/small/ul.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/ulf.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/ul.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/ulf.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/ul.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/vortac.xpm (kde_datadir)/kflog/mapicons/small/vortac.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/vortac.xpm $(kde_datadir)/kflog/mapicons/small/vortac.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/vortac.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/vortac.xpm
-#>- 	$(mkinstalldirs) (kde_datadir)/kflog/mapicons/small/
+	$(INSTALL_DATA) $(srcdir)/vortac.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/vortac.xpm
+#>- 	$(mkinstalldirs) $(kde_datadir)/kflog/mapicons/small/
 #>+ 1
-	$(mkinstalldirs) $(DESTDIR)(kde_datadir)/kflog/mapicons/small/
-#>- 	$(INSTALL_DATA) $(srcdir)/waypoint.xpm (kde_datadir)/kflog/mapicons/small/waypoint.xpm
+	$(mkinstalldirs) $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/
+#>- 	$(INSTALL_DATA) $(srcdir)/waypoint.xpm $(kde_datadir)/kflog/mapicons/small/waypoint.xpm
 #>+ 1
-	$(INSTALL_DATA) $(srcdir)/waypoint.xpm $(DESTDIR)(kde_datadir)/kflog/mapicons/small/waypoint.xpm
+	$(INSTALL_DATA) $(srcdir)/waypoint.xpm $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/waypoint.xpm
 
 uninstall-local:
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/airfield_c.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/airfield_c.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/airfield_c.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/airport.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/airfield_c.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/airport.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/airport.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/ambheliport.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/airport.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/ambheliport.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/ambheliport.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/civheliport.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/ambheliport.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/civheliport.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/civheliport.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/civmilair.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/civheliport.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/civmilair.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/civmilair.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/closed.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/civmilair.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/closed.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/closed.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/glider.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/closed.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/glider.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/glider.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/glider2.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/glider.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/glider2.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/glider2.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/jump.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/glider2.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/jump.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/jump.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/milairport.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/jump.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/milairport.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/milairport.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/milheliport.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/milairport.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/milheliport.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/milheliport.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/obst_group.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/milheliport.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/obst_group.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/obst_group.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/obstacle.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/obst_group.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/obstacle.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/obstacle.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/outlanding.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/obstacle.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/outlanding.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/outlanding.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/paraglider.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/outlanding.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/paraglider.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/paraglider.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/routepoint.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/paraglider.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/routepoint.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/routepoint.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/ul.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/routepoint.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/ul.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/ul.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/vortac.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/ul.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/vortac.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/vortac.xpm
-#>- 	-rm -f (kde_datadir)/kflog/mapicons/small/waypoint.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/vortac.xpm
+#>- 	-rm -f $(kde_datadir)/kflog/mapicons/small/waypoint.xpm
 #>+ 1
-	-rm -f $(DESTDIR)(kde_datadir)/kflog/mapicons/small/waypoint.xpm
+	-rm -f $(DESTDIR)$(kde_datadir)/kflog/mapicons/small/waypoint.xpm
 
 ####### kdevelop will overwrite this part!!! (end)############
 

@@ -46,15 +46,13 @@ class KFLogApp : public KDockMainWindow
 {
   Q_OBJECT
 
-  friend class KFLogView;
-
   public:
     /** */
     KFLogApp(QWidget* parent=0, const char* name=0);
     /** */
     ~KFLogApp();
     /** */
-    void showPointInfo(QPoint, struct flightPoint* point);
+    void showPointInfo(const QPoint, const struct flightPoint& point);
     /** */
     void clearPointInfo(QPoint);
 
@@ -88,7 +86,7 @@ class KFLogApp : public KDockMainWindow
     /** */
     void slotViewStatusBar();
     /** */
-    void slotStatusMsg(const QString &text);
+    void slotStatusMsg(const QString& text);
     /** */
     void slotToggleDataView();
     /** */
@@ -140,13 +138,11 @@ class KFLogApp : public KDockMainWindow
     KStatusBarLabel* statusLonL;
     KAction* fileClose;
     KRecentFilesAction* fileOpenRecent;
-//    KAction* filePrint;
     KToggleAction* viewToolBar;
     KToggleAction* viewStatusBar;
     KAction* viewRedraw;
     KAction* viewCenterTask;
     KAction* viewCenterFlight;
-//    KAction* viewCenterHome;
     KToggleAction* viewData;
     KToggleAction* viewMapControl;
     KToggleAction* viewMap;

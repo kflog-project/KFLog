@@ -40,6 +40,7 @@
 #include "kflog.h"
 #include <dataview.h>
 #include <evaluationdialog.h>
+#include <igcpreview.h>
 #include <kflogconfig.h>
 #include <kflogstartlogo.h>
 #include <map.h>
@@ -81,7 +82,6 @@ KFLogApp::KFLogApp(QWidget* , const char* name)
 
   readOptions();
 
-//  filePrint->setEnabled(true);
   fileClose->setEnabled(false);
   viewCenterTask->setEnabled(false);
   viewCenterFlight->setEnabled(false);
@@ -91,6 +91,8 @@ KFLogApp::KFLogApp(QWidget* , const char* name)
   activateDock();
 
   slotCheckDockWidgetStatus();
+
+  config->setGroup(0);
 }
 
 KFLogApp::~KFLogApp()
@@ -275,17 +277,17 @@ void KFLogApp::initView()
 
 }
 
-void KFLogApp::showPointInfo(QPoint pos, struct flightPoint* point)
+void KFLogApp::showPointInfo(const QPoint pos, const struct flightPoint& point)
 {
   statusBar()->clear();
   QString text;
-  text.sprintf("%s", (const char*)printTime(point->time, true));
+  text.sprintf("%s", (const char*)printTime(point.time, true));
   statusTimeL->setText(text);
-  text.sprintf("%4d m  ", point->height);
+  text.sprintf("%4d m  ", point.height);
   statusHeightL->setText(text);
-  text.sprintf("%3.1f km/h  ", (float)point->dS / (float)point->dT);
+  text.sprintf("%3.1f km/h  ", (float)point.dS / (float)point.dT);
   statusSpeedL->setText(text);
-  text.sprintf("%2.1f m/s  ", (float)point->dH / (float)point->dT);
+  text.sprintf("%2.1f m/s  ", (float)point.dH / (float)point.dT);
   statusVarioL->setText(text);
 
   statusLatL->setText(printPos(pos.y()));
@@ -311,9 +313,10 @@ void KFLogApp::saveOptions()
   config->writeEntry("Show Toolbar", viewToolBar->isChecked());
   config->writeEntry("Show Statusbar",viewStatusBar->isChecked());
   config->writeEntry("ToolBarPos", (int) toolBar("mainToolBar")->barPos());
+  config->setGroup(0);
+
   fileOpenRecent->saveEntries(config,"Recent Files");
 }
-
 
 void KFLogApp::readOptions()
 {
@@ -384,7 +387,15 @@ void KFLogApp::slotFileOpen()
 {
   slotStatusMsg(i18n("Opening file..."));
 
-  KURL fUrl = KFileDialog::getOpenURL(flightDir, "*.igc *.IGC", this);
+  KFileDialog* dlg = new KFileDialog(flightDir, "*.igc *.IGC", this,
+      i18n("Select IGC-File"), true);
+  IGCPreview* preview = new IGCPreview(dlg, "OpenIGC");
+  dlg->setPreviewWidget(preview);
+  dlg->exec();
+
+  KURL fUrl = dlg->selectedURL();
+
+//  KURL fUrl = KFileDialog::getOpenURL(flightDir, "*.igc *.IGC", this);
 
   if(fUrl.isEmpty())  return;
 

@@ -270,6 +270,8 @@ void MapConfig::readConfig()
         TMZ_BRUSH_COLOR_3, TMZ_BRUSH_COLOR_4, TMZ_BRUSH_STYLE_1,
         TMZ_BRUSH_STYLE_2, TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4)
   READ_BORDER(tmzBorder);
+
+  config->setGroup(0);
 }
 
 void MapConfig::setMatrixValues(int index, bool sw)
