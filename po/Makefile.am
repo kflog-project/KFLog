@@ -1,7 +1,7 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 
 
-EXTRA_DIST = kflog.pot 
+EXTRA_DIST = kflog.pot sv.gmo 
 
 ####### kdevelop will overwrite this part!!! (end)############
 POFILES = AUTO

@@ -1,9 +1,16 @@
 $Id$
 
+2001-12-02 Florian <florian@kflog.org>
+
+  * Extended the evaluation-dialog. Adden two splitters to allow the
+    user to change the size of the text below the graph.
+
+  * Added the waypoints to the evaluation-graph.
+
 
 2001-11-25 Heiner <heiner@kflog.org>
 
-  * Added recognizing the point-validation. Now the validation-flag of the
+  * Added recognition of point-validation. Now the validation-flag of the
     logger will be read. Non-valid points will be ignored in calculation
     distance and speed.
 

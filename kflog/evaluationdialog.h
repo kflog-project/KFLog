@@ -19,17 +19,17 @@
 #define EVALUATIONDIALOG_H
 
 #include <qdialog.h>
-#include <qlist.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
-#include <qspinbox.h>
-#include <qscrollview.h>
 #include <qlabel.h>
+#include <qlist.h>
+#include <qscrollview.h>
+#include <qspinbox.h>
+#include <qslider.h>
 #include <qtextview.h>
 
 #include "wp.h"
 
-class EvaluationView;
 class Flight;
 
 /**
@@ -57,19 +57,16 @@ class EvaluationDialog : public QDialog
   void updateText(int index1, int index2, bool updateAll = false);
 
  signals:
+  /** */
   void showCursor(QPoint p1, QPoint p2);
+  /** */
+  void flightChanged(Flight* flight);
+  /** */
+  void textChanged(QString);
 
  public slots:
   /** */
   void slotShowFlightData(int n);
-  /** */
-  void slotToggleView();
-  /** */
-  void slotVarioGlatt(int glatt);
-  void slotBaroGlatt(int glatt);
-  void slotSpeedGlatt(int glatt);
-
-  void slotScale(int secWidth);
 
   void hide();
 
@@ -84,28 +81,9 @@ class EvaluationDialog : public QDialog
    * Was ist mit diesen labels ???
    */
   QScrollView* graphFrame;
-  EvaluationView* evalView;
   QTextView* textLabel;
-  QTextView* cursorLabel;
-
-  QCheckBox* check_vario;
-  QCheckBox* check_baro;
-  QCheckBox* check_speed;
   QComboBox* combo_flight;
-
-  QSpinBox* spinVario;
-  QSpinBox* spinBaro;
-  QSpinBox* spinSpeed;
-  QSpinBox* spinScale;
-
   QList<Flight>* flightList;
-
-  int glatt_va;
-  int glatt_v;
-  int glatt_h;
-
-  int secWidth;
-
 };
 
 #endif

@@ -16,13 +16,16 @@
 ***********************************************************************/
 
 #include "evaluationdialog.h"
-#include "evaluationview.h"
+#include <evaluationframe.h>
+#include <evaluationview.h>
 
 #include <kapp.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+#include <qsplitter.h>
+#include <qvaluelist.h>
 
 #include <flight.h>
 #include <mapcalc.h>
@@ -32,146 +35,59 @@ EvaluationDialog::EvaluationDialog(QList<Flight>* fList)
 : QDialog(0, "EvaluationsDialog", false),
   flightList(fList)
 {
-  glatt_va = 0;
-  glatt_v = 0;
-  glatt_h = 0;
-
-  secWidth = 10;
-
   setCaption(i18n("Flightevaluation:"));
   setMinimumWidth(500);
   setMinimumHeight(500);
 
-  // Diagrammfenster
-  graphFrame = new QScrollView(this);
-  graphFrame->setResizePolicy(QScrollView::AutoOne);
-  graphFrame->setHScrollBarMode(QScrollView::AlwaysOn);
-  graphFrame->setVScrollBarMode(QScrollView::AlwaysOff);
-  graphFrame->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  graphFrame->setBackgroundMode(PaletteLight);
-
-  evalView = new EvaluationView(graphFrame,this);
-  graphFrame->addChild(evalView);
-
-  cursorLabel = new QTextView(this);
-  textLabel = new QTextView(this);
-  textLabel->sizeHint().setHeight(60);
-  textLabel->setVScrollBarMode(QScrollView::AlwaysOff);
-
-  // Auswahl
-  QFrame* oben = new QFrame(this);
+  // Auswahl - Kopfzeile
+  QFrame* oben = new QFrame(this, "frame_oben");
   QLabel* o1 = new QLabel(i18n("Flight:"), oben);
   o1->setAlignment(AlignRight);
-  combo_flight = new QComboBox(oben);
+  combo_flight = new QComboBox(oben, "combo_oben");
   o1->setMinimumHeight(o1->sizeHint().height() + 10);
   combo_flight->setMinimumWidth(120);
 
-  check_vario = new QCheckBox("Variogramm",this);
-//  check_vario->setMinimumWidth(check_vario->sizeHint().width());
-  check_vario->setChecked(true);
-  check_baro = new QCheckBox("Barogramm",this);
-  check_baro->setChecked(true);
-  check_speed = new QCheckBox("Geschw.",this);
-  check_speed->setChecked(true);
+  // variable Textanzeige
+  QSplitter* textSplitter = new QSplitter(QSplitter::Vertical, this, "splitter");
 
-  spinVario = new QSpinBox(0,999,1,this);
-  spinBaro = new QSpinBox(0,999,1,this);
-  spinSpeed = new QSpinBox(0,999,1,this);
+  // Diagrammfenster - Mitte
+  EvaluationFrame* evalFrame = new EvaluationFrame(textSplitter, this);
 
-  QLabel* scale_label = new QLabel("Zeitskalierung:", oben);
-  scale_label->setAlignment(AlignRight);
-  spinScale = new QSpinBox(1,60,1,oben);
-  spinScale->setMaximumWidth(60);
-  spinScale->setValue(secWidth);
+  connect(this, SIGNAL(flightChanged(Flight*)), evalFrame,
+      SLOT(slotShowFlight(Flight*)));
+  connect(this, SIGNAL(textChanged(QString)), evalFrame,
+      SLOT(slotUpdateCursorText(QString)));
 
-  QPushButton* close = new QPushButton(i18n("Close"),this);
-  close->setMinimumHeight(close->sizeHint().height() + 5);
-  close->setMaximumWidth(close->sizeHint().width() + 5);
+  // Textanzeige
+  textLabel = new QTextView(textSplitter);
+  textLabel->setMinimumHeight(1);
 
+//  QPushButton* close = new QPushButton(i18n("Close"),this);
+//  close->setMinimumHeight(close->sizeHint().height() + 5);
+//  close->setMaximumWidth(close->sizeHint().width() + 5);
+
+  QVBoxLayout* gesamtlayout = new QVBoxLayout(this,5,1);
   QHBoxLayout* obenlayout = new QHBoxLayout(oben);
-  QGridLayout* tabLayout = new QGridLayout(this,18,13,5,1);
 
   obenlayout->addWidget(o1);
   obenlayout->addWidget(combo_flight);
-  obenlayout->addWidget(scale_label);
-  obenlayout->addWidget(spinScale);
 
-  tabLayout->addMultiCellWidget(oben,0,0,0,3);
-  tabLayout->addMultiCellWidget(graphFrame,2,2,0,3);
-
-  tabLayout->addMultiCellWidget(cursorLabel,4,4,0,3);
-  tabLayout->addMultiCellWidget(textLabel,6,13,0,0);
-
-  tabLayout->addMultiCellWidget(check_vario,6,6,2,3);
-  tabLayout->addWidget(spinVario,7,3);
-  tabLayout->addMultiCellWidget(check_baro,9,9,2,3);
-  tabLayout->addWidget(spinBaro,10,3);
-  tabLayout->addMultiCellWidget(check_speed,12,12,2,3);
-  tabLayout->addWidget(spinSpeed,13,3);
-
-  tabLayout->addMultiCellWidget(close,15,15,2,3);
-
-  tabLayout->setColStretch(0,6);
-  tabLayout->addColSpacing(0,620);
-  tabLayout->setColStretch(1,0);
-  tabLayout->addColSpacing(1,5);
-  tabLayout->addColSpacing(2,30);
-  tabLayout->setColStretch(2,0);
-  tabLayout->setColStretch(3,1);
-
-  tabLayout->addRowSpacing(0,o1->sizeHint().height() + 10);
-  tabLayout->addRowSpacing(1,5);
-  tabLayout->setRowStretch(2,4);
-  tabLayout->addRowSpacing(2,graphFrame->sizeHint().height() + 5);
-  tabLayout->addRowSpacing(3,5);
-  tabLayout->addRowSpacing(4,cursorLabel->sizeHint().height() + 5);
-  tabLayout->setRowStretch(4,0);
-  tabLayout->addRowSpacing(5,0);
-  tabLayout->setRowStretch(5,0);
-
-  tabLayout->setRowStretch(6,2);
-//  tabLayout->addRowSpacing(6,0);
-  tabLayout->setRowStretch(7,2);
-//  tabLayout->addRowSpacing(7,0);
-
-  tabLayout->addRowSpacing(8,5);
-  tabLayout->setRowStretch(9,2);
-//  tabLayout->addRowSpacing(9,0);
-  tabLayout->setRowStretch(10,2);
-//  tabLayout->addRowSpacing(10,0);
-
-  tabLayout->addRowSpacing(11,5);
-  tabLayout->setRowStretch(12,2);
-//  tabLayout->addRowSpacing(12,0);
-  tabLayout->setRowStretch(13,2);
-//  tabLayout->addRowSpacing(13,0);
-
-  tabLayout->addRowSpacing(14,10);
-  tabLayout->addRowSpacing(15,close->sizeHint().height() + 5);
+  gesamtlayout->addWidget(oben);
+  gesamtlayout->addWidget(textSplitter);
 
   updateListBox();
 
-  this->connect(combo_flight, SIGNAL(activated(int)),
+  // Setting default-values for the splitter
+  typedef QValueList<int> testList;
+  testList list;
+  list.append(100);
+  list.append(60);
+  textSplitter->setSizes(list);
+
+  connect(combo_flight, SIGNAL(activated(int)),
         SLOT(slotShowFlightData(int)));
-  this->connect(check_vario, SIGNAL(clicked()),
-        SLOT(slotToggleView()));
-  this->connect(check_baro, SIGNAL(clicked()),
-        SLOT(slotToggleView()));
-  this->connect(check_speed, SIGNAL(clicked()),
-        SLOT(slotToggleView()));
-
-  this->connect(spinVario, SIGNAL(valueChanged(int)),
-        SLOT(slotVarioGlatt(int)));
-  this->connect(spinSpeed, SIGNAL(valueChanged(int)),
-        SLOT(slotSpeedGlatt(int)));
-  this->connect(spinBaro, SIGNAL(valueChanged(int)),
-        SLOT(slotBaroGlatt(int)));
-  this->connect(close, SIGNAL(clicked()), SLOT(reject()));
-
-  this->connect(spinScale, SIGNAL(valueChanged(int)),
-        SLOT(slotScale(int)));
-
-  this->show();
+//  connect(close, SIGNAL(clicked()), SLOT(reject()));
+  show();
 }
 
 EvaluationDialog::~EvaluationDialog()
@@ -209,7 +125,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
   text.sprintf("%.1f km/h", getSpeed(&p2));
   htmlText += text + "</TD></TR>";
 
-  cursorLabel->setText(htmlText);
+  emit textChanged(htmlText);
 
   if(updateAll)
     {
@@ -257,8 +173,12 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
   emit(showCursor(p1.projP,p2.projP));
 }
 
+
+
 void EvaluationDialog::resizeEvent(QResizeEvent* event)
 {
+  warning("EvaluationDialog::resizeEvent");
+
   QDialog::resizeEvent(event);
 
   if(flightList->count())
@@ -280,59 +200,20 @@ void EvaluationDialog::updateListBox()
 
 void EvaluationDialog::slotShowFlightData(int n)
 {
+  warning("EvaluationDialog::slotShowFlightData");
   this->setCaption(i18n("Flightevaluation:") + flightList->at(n)->getPilot()
                     + "  " + flightList->at(n)->getDate());
   // GRUNDWERTE setzen
   updateText(0,flightList->at(n)->getRouteLength() - 1, true);
 
-  // Kurve malen
-  evalView->drawCurve(flightList->at(n), check_vario->isChecked(),
-                check_speed->isChecked(), check_baro->isChecked(),
-                glatt_va, glatt_v, glatt_h, secWidth);
+
+  emit flightChanged(flightList->at(n));
 }
 
-void EvaluationDialog::slotToggleView()
-{
-  slotShowFlightData(combo_flight->currentItem());
-}
 
-void EvaluationDialog::slotVarioGlatt(int g)
-{
-  // gibt den Glästtungsfaktor zurück
-  glatt_va = g;
-
-  if(flightList->count())
-      slotShowFlightData(combo_flight->currentItem());
-}
-
-void EvaluationDialog::slotBaroGlatt(int g)
-{
-  // gibt den Glättungsfaktor zurück
-  glatt_h = g;
-
-  if(flightList->count())
-      slotShowFlightData(combo_flight->currentItem());
-}
-
-void EvaluationDialog::slotSpeedGlatt(int g)
-{
-  // gibt den Glättungsfaktor zurück
-  glatt_v = g;
-
-  if(flightList->count())
-      slotShowFlightData(combo_flight->currentItem());
-}
-
-void EvaluationDialog::slotScale(int g)
-{
-  // gibt den Scalierungsfaktor zurück
-  secWidth = g;
-
-  if(flightList->count())
-      slotShowFlightData(combo_flight->currentItem());
-}
 
 void EvaluationDialog::hide()
 {
+warning("EvaluationDialog::hide()");
   this->EvaluationDialog::~EvaluationDialog();
 }

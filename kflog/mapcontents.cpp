@@ -1319,14 +1319,14 @@ void MapContents::proofeSection()
       QStringList airfields;
       airfields = globalDirs->findAllResources("appdata", "mapdata/airfields/*.out");
       for ( QStringList::Iterator it = airfields.begin(); it != airfields.end(); ++it ) {
-        __readAsciiFile((*it).latin1());
+//        __readAsciiFile((*it).latin1());
 //        warning( "%s", (*it).latin1() );
       }
 
       QStringList airspace;
       airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.out");
       for ( QStringList::Iterator it = airspace.begin(); it != airspace.end(); ++it ) {
-        __readAsciiFile((*it).latin1());
+//        __readAsciiFile((*it).latin1());
 //        warning( "%s", (*it).latin1() );
       }
 

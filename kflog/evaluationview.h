@@ -46,6 +46,8 @@ class EvaluationView : public QWidget
   /** */
   enum CursorStatus { Reached = 8, NotReached = 16};
 
+  virtual QSize sizeHint();
+
  protected:
   /**
     * Redefinition of the paintEvent.
@@ -54,7 +56,7 @@ class EvaluationView : public QWidget
   /**
     * Redefinition of the resizeEvent.
     */
-  virtual void resizeEvent(QResizeEvent* event);
+//  virtual void resizeEvent(QResizeEvent* event);
   /**
     */
   virtual void mousePressEvent(QMouseEvent* event);
@@ -73,6 +75,9 @@ class EvaluationView : public QWidget
   QPoint __speedPoint(float speed, float speed_d[], int gn, int i);
 
   void __paintCursor(int xpos, int calt, int move, int cursor);
+  /** Zeichnet die Kurven */
+  void __draw();
+
 
   /** Behält den Inhalt der Zeichnung. */
   QPixmap* pixBuffer;
@@ -92,9 +97,13 @@ class EvaluationView : public QWidget
   float scale_h;
   float scale_va;
 
-//  unsigned int glatt_va;
-//  unsigned int glatt_v;
-//  unsigned int glatt_h;
+  unsigned int glatt_va;
+  unsigned int glatt_v;
+  unsigned int glatt_h;
+
+  bool baro;
+  bool vario;
+  bool speed;
 
   QScrollView* scrollFrame;
 
@@ -108,6 +117,8 @@ class EvaluationView : public QWidget
   unsigned int cursor_alt;
 
   Flight* flight;
+
+  bool isFlight;
 };
 
 #endif

@@ -24,12 +24,6 @@
 #include <mapmatrix.h>
 
 /**
- * Short description of what KFLog is.
- */
-static const char *description =
-    I18N_NOOP("KFLog - The K-Flight-Logger");
-
-/**
  * Contains all mapelements and takes control over drawing or printing
  * the elements.
  */
@@ -56,11 +50,17 @@ static KCmdLineOptions options[] =
  */
 int main(int argc, char *argv[])
 {
+  /**
+   * Short description of what KFLog is.
+   */
+  const char *description =
+    I18N_NOOP("KFLog - The K-Flight-Logger");
+
 	KAboutData aboutData( "kflog", I18N_NOOP("KFLog"),
 		VERSION, description, KAboutData::License_GPL,
-		"(c) 2001, The KFLog-Team", 0, 0, "bugs@kflog.org");
-	aboutData.addAuthor("Heiner Lamprecht",0, "heiner@kflog.org");
-	aboutData.addAuthor("Florian Ehinger",0, "florian@kflog.org");
+		"(c) 2001, The KFLog-Team", 0, "http://www.kflog.org", "bugs@kflog.org");
+	aboutData.addAuthor("Heiner Lamprecht", 0, "heiner@kflog.org");
+	aboutData.addAuthor("Florian Ehinger", 0, "florian@kflog.org");
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
