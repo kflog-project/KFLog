@@ -1,5 +1,11 @@
 $Id$
 
+2002-04-09 Thomas <thomas@kflog.org>
+
+  * Corrected handling of igcfiles not containing waypoints
+
+  * Fixed bug in drawing of flight
+
 
 2002-04-09 Heiner <heiner@kflog.org>
 
