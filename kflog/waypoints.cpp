@@ -243,7 +243,7 @@ bool Waypoints::saveChanges()
             {
               case KMessageBox::Yes:
                 // Hier zwischenzeitlich auf binärformat umgestellt ...
-                if (!w->writeBinary())
+                if (!w->write()) //Binary())
                     return false;
                 break;
               case KMessageBox::Cancel:
