@@ -64,10 +64,11 @@
 /* Maximale Vergrößerung beim Prüfen! */
 #define SCALE 10.0
 
-Flight::Flight(QList<flightPoint> r, QString pName, QString gType,
-    QString gID, QList<struct wayPoint> wpL, QString d)
+Flight::Flight(QString fName, QList<flightPoint> r, QString pName,
+    QString gType, QString gID, QList<struct wayPoint> wpL, QString d)
   : BaseMapElement("flight", BaseMapElement::Flight),
-    pilotName(pName), gliderType(gType), gliderID(gID), date(d), route(r)
+    pilotName(pName), gliderType(gType), gliderID(gID), date(d),
+    tBegin(0), tEnd(0), sourceFileName(fName), route(r)
 {
   routeLength = 0;
 
@@ -774,7 +775,6 @@ void Flight::__appendWaypoint(struct wayPoint* newPoint)
 
               tEnd = wpList.count() - 1;
               tBegin = n;
-
               wpList.at(tEnd)->type = Flight::End;
               wpList.at(tBegin)->type = Flight::Begin;
 
@@ -786,7 +786,7 @@ void Flight::__appendWaypoint(struct wayPoint* newPoint)
                 }
               else
                 {
-                  for(unsigned int loop = tBegin + 2; loop < tEnd; loop++)
+                  for(int loop = tBegin + 2; loop < tEnd; loop++)
                     {
                       if(wpList.at(loop - 1)->origP == wpList.at(loop)->origP)
                           noTask = true;
@@ -795,7 +795,7 @@ void Flight::__appendWaypoint(struct wayPoint* newPoint)
 
               if(noTask)
                 {
-                  for(unsigned int m = 0; m < tEnd; m++)
+                  for(int m = 0; m < tEnd; m++)
                       wpList.at(m)->type = Flight::FreeP;
 
                   flightType = Flight::Abgebrochen;
@@ -804,10 +804,10 @@ void Flight::__appendWaypoint(struct wayPoint* newPoint)
                 }
               else
                 {
-                  for(unsigned int m = 0; m < tBegin; m++)
+                  for(int m = 0; m < tBegin; m++)
                       wpList.at(m)->type = Flight::FreeP;
 
-                  for(unsigned int m = tBegin + 1; m < tEnd; m++)
+                  for(int m = tBegin + 1; m < tEnd; m++)
                       wpList.at(m)->type = Flight::RouteP;
                 }
               break;
@@ -820,15 +820,12 @@ void Flight::__appendWaypoint(struct wayPoint* newPoint)
 
 void Flight::__checkType()
 {
-warning("Flight::__checkType()");
   distance_tot = 0;
-
-  for(unsigned int loop = tBegin + 1; loop <= tEnd; loop++)
+  for(int loop = tBegin + 1; loop <= tEnd; loop++)
     {
       wpList.at(loop)->distance = dist(wpList.at(loop - 1), wpList.at(loop));
       distance_tot = distance_tot + wpList.at(loop)->distance;
     }
-
   switch(tEnd - tBegin)
     {
       case 0:
@@ -894,7 +891,6 @@ void Flight::__checkMaxMin()
 void Flight::__checkWaypoints()
 {
   if(flightType == NotSet) return;
-warning("Flight::__checkWaypoints()");
 
   int gliderIndex = 100, preTime = 0;
   KConfig* config = kapp->config();
@@ -929,8 +925,6 @@ warning("Flight::__checkWaypoints()");
                        "of the flight is more than 70 sec.!<BR>"
                        "Due to Code Sportif 3, Nr. 1.9.2.1,<BR>"
                        "the flight can not be valued!"));
-
-              warning("   hier drinnen");
               return;
               ////////////////////////////////////////////////////////////////
               // sonstige Reaktion ????
@@ -1060,7 +1054,7 @@ warning("Flight::__checkWaypoints()");
   /*
    * Überprüfen der Aufgabe
    */
-  unsigned int faiCount = 0, dmstCount = 0;
+  int faiCount = 0, dmstCount = 0;
   double dmstMalus = 1.0, aussenlande = 0.0;
   bool home, stop = false;
 
@@ -1071,7 +1065,7 @@ warning("Flight::__checkWaypoints()");
       return;
     }
 
-  for(unsigned int loop = tBegin + 1; loop < tEnd; loop++)
+  for(int loop = tBegin + 1; loop < tEnd; loop++)
     {
       if(!stop)
         {
@@ -1138,13 +1132,13 @@ warning("Flight::__checkWaypoints()");
         {
           wertDist = dist(wpList.at(tEnd),
               wpList.at(tBegin + dmstCount - 1));
-          for(unsigned int loop = tBegin; loop < tBegin + dmstCount; loop++)
+          for(int loop = tBegin; loop < tBegin + dmstCount; loop++)
               wertDist = wertDist + wpList.at(loop)->distance;
 
         }
       else
         {
-          for(unsigned int loop = tBegin; loop <= tBegin + dmstCount; loop++)
+          for(int loop = tBegin; loop <= tBegin + dmstCount; loop++)
               wertDist = wertDist + wpList.at(loop)->distance;
 
         }

@@ -205,16 +205,10 @@ void Airspace::setValues(unsigned int upper, unsigned int upperType,
 void Airspace::printMapElement(QPainter* printPainter)
 {
 //  if(!__isPrintable()) return;
-warning("Drucke Luftraum ...");
 
   extern const MapMatrix _globalMapMatrix;
-  QPointArray temp = _globalMapMatrix.print(projPointArray);
   printPainter->setPen(QPen(QColor(255,0,0), 4));
-//  printPainter->drawPolygon(_globalMapMatrix.print(projPointArray));
-  printPainter->drawPolygon(temp);
-
-  warning("1. Position: ( %d / %d )",
-    temp.at(0).x(), temp.at(0).y());
+  printPainter->drawPolygon(_globalMapMatrix.print(projPointArray));
 }
 
 void Airspace::printMapElement(QPainter* printPainter, const double dX,

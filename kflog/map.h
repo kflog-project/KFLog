@@ -57,8 +57,6 @@ class Map : public QWidget
   public slots:
     /** */
     void slotShowMapElement();
-    /** */
-    void slotConfigureMap();
     /**
      * Forces increasing the scale.
      * @see #scaleAdd

@@ -42,7 +42,8 @@ class Flight : public BaseMapElement
 	  /**
 	   * Creates a new flight-object.
 	   */
-  	Flight(QList<flightPoint> route, QString pName, QString gType,
+  	Flight(QString fileName,
+  	    QList<flightPoint> route, QString pName, QString gType,
         QString gID, QList<struct wayPoint> wpL, QString d);
 	  /**
 	   * Destroys the flight-object.
@@ -195,8 +196,8 @@ class Flight : public BaseMapElement
     unsigned int routeLength;
     QList<struct wayPoint> wpList;
     QList<struct wayPoint> origList;
-    unsigned int tBegin;
-    unsigned int tEnd;
+    int tBegin;
+    int tEnd;
 
     double distance_tot;
     double distance_wp;

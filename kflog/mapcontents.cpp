@@ -82,7 +82,7 @@ MapContents::MapContents()
 {
   // Liste der Höhenstufen (insg. 46 Stufen):
   // Compiler gibt hier eine Warnung aus. Gibt es eine andere Möglichkeit?
-  isoLines = new int[ISO_LINE_NUM]  = { 0, 10, 25, 50, 75, 100, 200, 300, 400,
+  isoLines = new int[ISO_LINE_NUM] = { 0, 10, 25, 50, 75, 100, 200, 300, 400,
             500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500,
             2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250,
             5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750,
@@ -1106,6 +1106,14 @@ Flight* MapContents::getFlight()
   return 0;
 }
 
+QList<Flight>* MapContents::getFlightList()
+{
+    warning("%d",flightList.count());
+    warning("-->  %s",flightList.at(0)->getFileName());
+    warning("getFlightList\n");
+    return &flightList;
+}
+
 bool MapContents::loadFlight(QFile igcFile)
 {
   warning("MapContents::loadFlight(%s)", (const char*)igcFile.name());
@@ -1331,8 +1339,10 @@ bool MapContents::loadFlight(QFile igcFile)
         }
     }
 
-  flightList.append(new Flight(flightRoute, pilotName, gliderType,
+  flightList.append(new Flight(QFileInfo(igcFile).fileName(),
+      flightRoute, pilotName, gliderType,
       gliderID, wpList, date));
+  warning("Erstelle FlightList");
 
   return true;
 }
@@ -1388,16 +1398,18 @@ void MapContents::proofeSection()
             "/data/KartenDaten/KFLog-Karten/Staaten_Kachel/" + latID_S
             + "_" + lonID_S + ".out";
         QString cityName =
-            "/data/KartenDaten/KFLog-Karten/Städte/" + latID_S
+            "/data/KartenDaten/KFLog-Karten/städte_gekachelt/" + latID_S
             + "_" + lonID_S + ".out";
         __readAsciiFile(cityName);
 
            /* Nun müssen die korrekten Dateien geladen werden ... */
         __readBinaryFile(demSecName);
         __readBinaryFile(dem0SecName);
+
 //        if(__readAsciiIsoFile(asciiName))
 //            __readAsciiIsoFile(asciiName);
           {
+
             asciiName = "/data/KartenDaten/KFLog-Karten/LinienKacheln/" +
             latID_S + "_" + lonID_S + ".roads.out";
             __readAsciiFile(asciiName);
@@ -1410,8 +1422,8 @@ void MapContents::proofeSection()
               latID_S  + "_" + lonID_S + ".river.out";
            __readAsciiFile(asciiName);
 
-           asciiName = "/data/KartenDaten/KFLog-Karten/Seen_Kachel/europa_seen." +
-              latID_S  + "_" + lonID_S + "_kor.dnnet.out";
+           asciiName = "/data/KartenDaten/KFLog-Karten/seen_gekachelt/europa_seen." +
+              latID_S  + "_" + lonID_S + ".dnnet.out";
            __readAsciiFile(asciiName);
 
 //            warning("    Kachel geladen: %s", (const char*)demSecName);
@@ -1439,7 +1451,6 @@ unsigned int MapContents::getListLength(int listIndex) const
     case NavList:
       return navList.count();
     case AirspaceList:
-      warning("MapContents::getListLength(%d) -> AirspaceList", listIndex);
       return airspaceList.count();
     case ObstacleList:
       return obstacleList.count();
@@ -1638,46 +1649,37 @@ void MapContents::printList(QPainter* targetPainter, unsigned int listID)
 void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
     unsigned int listID)
 {
-warning("MapContents::drawList(%d)", listID);
   switch(listID)
     {
       case AirportList:
-        warning("AirportList");
         for(unsigned int loop = 0; loop < airportList.count(); loop++)
             airportList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case GliderList:
-        warning("GliderList");
         for(unsigned int loop = 0; loop < gliderList.count(); loop++)
             gliderList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case OutList:
-        warning("OutList");
         for(unsigned int loop = 0; loop < outList.count(); loop++)
             outList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case NavList:
-        warning("NavList");
         for(unsigned int loop = 0; loop < navList.count(); loop++)
             navList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case AirspaceList:
-        warning("AirspaceList");
         for(unsigned int loop = 0; loop < airspaceList.count(); loop++)
             airspaceList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case ObstacleList:
-        warning("ObstacleList");
         for(unsigned int loop = 0; loop < obstacleList.count(); loop++)
             obstacleList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case ReportList:
-        warning("ReportList");
         for(unsigned int loop = 0; loop < reportList.count(); loop++)
             reportList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case CityList:
-        warning("CityList");
         for(unsigned int loop = 0; loop < cityList.count(); loop++)
             cityList.at(loop)->drawMapElement(targetPainter, maskPainter);
         for(unsigned int loop = 0; loop < cityList.count(); loop++)
@@ -1688,37 +1690,30 @@ warning("MapContents::drawList(%d)", listID);
 //            villageList.at(loop)->drawMapElement(targetPainter, maskPainter);
 //        break;
       case LandmarkList:
-        warning("LandmarkList");
         for(unsigned int loop = 0; loop < landmarkList.count(); loop++)
             landmarkList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case HighwayList:
-        warning("HighwayList");
         for(unsigned int loop = 0; loop < highwayList.count(); loop++)
             highwayList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case RoadList:
-        warning("RoadList");
         for(unsigned int loop = 0; loop < roadList.count(); loop++)
             roadList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case RailList:
-        warning("RailList");
         for(unsigned int loop = 0; loop < railList.count(); loop++)
             railList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case HydroList:
-        warning("HydroList");
         for(unsigned int loop = 0; loop < hydroList.count(); loop++)
             hydroList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case TopoList:
-        warning("TopoList");
         for(unsigned int loop = 0; loop < topoList.count(); loop++)
             topoList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case FlightList:
-        warning("FlightList");
         for(unsigned int loop = 0; loop < flightList.count(); loop++)
             flightList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;

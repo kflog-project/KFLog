@@ -81,7 +81,8 @@ class MapMatrix
     void initMatrix(int centerLat, int centerLon, double scale,
         double v1, double v2, int hLat, int hLon);
     /** */
-    QWMatrix* initPrintMatrix(double scale);
+    QWMatrix* createPrintMatrix(double scale, QSize pS, int dX = 0, int dY = 0,
+        bool rotate = false);
     /** */
     void scaleAdd(QSize mapSize);
     /** */

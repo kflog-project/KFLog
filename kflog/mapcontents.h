@@ -98,6 +98,10 @@ class MapContents
     /** */
     Flight* getFlight();
     /**
+      * Returns the flightList
+      */
+    QList<Flight>* getFlightList();
+    /**
      *
      */
     int searchFlightPoint(QPoint cPos, struct flightPoint* fP);

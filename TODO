@@ -4,15 +4,7 @@
   -> Die einzelnen Kartenobjekte müssen noch gedruckt werden.
      Das sollte auch direkt über MapContents laufen ...
 
-  -> Darstellung muss komplett über MapMatrix laufen ...
-
-     * Die Matrix wird noch nicht korrekt erzeugt. Vermutlich
-       wird die Verschiebung nicht richtig durchgeführt ...
-
   -> Das Bild ist auf dem Papier noch verschoben.
-
-  -> Die Auswahl des Papierformates hat keinerlei Einfluss auf
-     das QPrinter-Objekt
 
 
 * Kartenfehler:
@@ -47,14 +39,19 @@
 
   -> Textdarstellung überarbeiten
 
+
 * Flug schliessen
 
+
 * Was passiert, wenn Maßstab negativ wird ???
+
 
 * Maßstabs-Angabe nach Zentrieren auf Flug/Aufgabe zunächst nicht richtig.
   Maßstab müsste zunächst "geprüft" werden ...
 
+
 * alle Icons erzeugen !!!
+
 
 * Beim Suchen nach Flugplätzen, ... tauchen "weit weg gezeichnete" Punkte
   plötzlich wieder auf ...

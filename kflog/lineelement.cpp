@@ -85,7 +85,7 @@ LineElement::LineElement(QString n, unsigned int t, QPointArray pA, bool isV)
       case HugeCity:
         PEN_THICKNESS(1, 1, 1, 1, 1, 1, 1, 1, 1)
         drawColor.setRgb(0, 0, 0);
-        fillColor.setRgb(255,250,1000);
+        fillColor.setRgb(255,250,100);
 //        fillBrush = QBrush(QColor(245,220,0),QBrush::Dense3Pattern);
 //        fillBrush = QBrush(QColor(255,255,0), QBrush::SolidPattern);
 //        fillBrush = QBrush(QColor(245,240,0), QBrush::SolidPattern);
@@ -251,15 +251,15 @@ void LineElement::printMapElement(QPainter* printPainter, const double dX,
   }
 
   if(show) {
-    QPointArray pArray;// = __projectElement(dX, dY, mapCenterLon, scale);
+    QPointArray pA;// = __projectElement(dX, dY, mapCenterLon, scale);
 
     if(isClosed) {
-      printPainter->drawPolygon(pArray);
+      printPainter->drawPolygon(pA);
     } else {
-      printPainter->drawPolyline(pArray);
+      printPainter->drawPolyline(pA);
       if(highwayShow) {
         printPainter->setPen(QPen(QColor(255,255,255), 1));
-        printPainter->drawPolyline(pArray);
+        printPainter->drawPolyline(pA);
       }
     }
   }
@@ -335,7 +335,7 @@ void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
   targetPainter->setPen(QPen(drawColor, drawThickness[index]));
   targetPainter->setBrush(QBrush(fillColor, QBrush::SolidPattern));
 
-  QPointArray pArray = _globalMapMatrix.map(projPointArray);
+  QPointArray pA = _globalMapMatrix.map(projPointArray);
 
   /********************************/
   if(typeID == 37 && isFirst)
@@ -343,15 +343,15 @@ void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
 //      targetPainter->setPen(QPen(drawColor, drawThickness[index]));
       targetPainter->setPen(QPen(drawColor, drawThickness[index] * 3));
       maskPainter->setPen(QPen(Qt::color1, drawThickness[index] * 3));
-      maskPainter->drawPolygon(pArray);
-      targetPainter->drawPolyline(pArray);
+      maskPainter->drawPolygon(pA);
+      targetPainter->drawPolyline(pA);
 
       return;
     }
   else if(typeID == 37 && !isFirst)
     {
       targetPainter->setPen(QPen(fillColor, 0));
-      targetPainter->drawPolygon(pArray);
+      targetPainter->drawPolygon(pA);
 
       return;
     }
@@ -359,18 +359,18 @@ void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
 
   if(closed)
     {
-      maskPainter->drawPolygon(pArray);
-      targetPainter->drawPolygon(pArray);
+      maskPainter->drawPolygon(pA);
+      targetPainter->drawPolygon(pA);
     }
   else
     {
-      maskPainter->drawPolyline(pArray);
-      targetPainter->drawPolyline(pArray);
+      maskPainter->drawPolyline(pA);
+      targetPainter->drawPolyline(pA);
       if(typeID == Highway && _currentScale < _scale[5])
         {
           // Mittellinie zeichnen
           targetPainter->setPen(QPen(QColor(255,255,255), 1));
-          targetPainter->drawPolyline(pArray);
+          targetPainter->drawPolyline(pA);
         }
     }
 }

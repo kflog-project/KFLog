@@ -952,13 +952,6 @@ void Map::slotDrawFlight()
 //  slotShowLayer();
 }
 
-void Map::slotConfigureMap()
-{
-//  MapConfig* confD = new MapConfig(mainApp);
-//  confD->exec();
-//  if(confD->result()) __redrawMap();
-}
-
 void Map::slotShowMapElement()
 {
 /*

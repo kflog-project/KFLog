@@ -18,6 +18,7 @@
 #ifndef WP_STRUCT
 #define WP_STRUCT
 
+#include <qpen.h>
 #include <qpoint.h>
 #include <qstring.h>
 

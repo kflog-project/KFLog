@@ -36,6 +36,7 @@
 class DataView;
 class Map;
 class MapControlView;
+class KFLogConfig;
 class KFLogStartLogo;
 
 /**
@@ -111,11 +112,15 @@ class KFLogApp : public KDockMainWindow
     /** */
     void slotConfigureToolbars();
     /** */
+    void slotConfigureKFLog();
+    /** */
     void slotNewToolbarConfig();
     /** */
     void slotSetProgress(int value);
     /** */
     void slotStartComplete();
+    /** */
+    void slotEvaluateFlight();
 
   private:
     /** the configuration object of the application */
@@ -166,7 +171,8 @@ class KFLogApp : public KDockMainWindow
     KAction* viewZoomOut;
     KToggleAction* viewData;
     KToggleAction* viewMapControl;
-    KAction* configMap;
+    KAction* configKFLog;
+    KAction* flightEvaluation;
     /** */
     Map* map;
     /** */

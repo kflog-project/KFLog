@@ -15,6 +15,9 @@
 **
 ***********************************************************************/
 
+#include <unistd.h>
+#include <pwd.h>
+//#include <sys/types.h>
 #include <stdlib.h>
 
 // include files for QT
@@ -38,6 +41,7 @@
 // application specific includes
 #include "kflog.h"
 #include <dataview.h>
+#include <kflogconfig.h>
 #include <kflogstartlogo.h>
 #include <map.h>
 #include <mapcalc.h>
@@ -56,7 +60,7 @@
 //  a->setIndent(10);
 
 KFLogApp::KFLogApp(QWidget* , const char* name)
-  : KDockMainWindow(0, name), showStartLogo(false)
+  : KDockMainWindow(0, "KFLog-MainWindow"), showStartLogo(false)
 {
   config = kapp->config();
 
@@ -92,12 +96,12 @@ KFLogApp::~KFLogApp()
 
 void KFLogApp::initActions()
 {
-  fileOpen = new KAction(i18n("&Open Flight"), SmallIcon("fileopen"),
+  fileOpen = new KAction(i18n("&Open Flight"), BarIcon("fileopen"),
       KStdAccel::key(KStdAccel::Open), this, SLOT(slotFileOpen()),
       actionCollection(), "file_open");
   fileOpenRecent = KStdAction::openRecent(this,
       SLOT(slotFileOpenRecent(const KURL&)), actionCollection());
-  fileClose = new KAction(i18n("Close Flight"), SmallIcon("fileclose"),
+  fileClose = new KAction(i18n("Close Flight"), BarIcon("fileclose"),
       KStdAccel::key(KStdAccel::Close), this, SLOT(slotFileClose()),
       actionCollection(), "file_close");
   filePrint = KStdAction::print(this, SLOT(slotFilePrint()),
@@ -132,8 +136,11 @@ void KFLogApp::initActions()
       actionCollection());
   configToolBar = KStdAction::configureToolbars(this,
       SLOT(slotConfigureToolbars()), actionCollection());
-  configMap = new KAction(i18n("Configure &Map"), SmallIcon("configure"), 0,
-      map, SLOT(slotConfigureMap()), actionCollection(), "configure_map");
+  configKFLog = new KAction(i18n("Configure &KFLog"), SmallIcon("configure"), 0,
+      this, SLOT(slotConfigureKFLog()), actionCollection(), "configure_kflog");
+
+  flightEvaluation = new KAction(i18n("Evaluation"), 0, 0, this,
+      SLOT(slotEvaluateFlight()), actionCollection(), "evaluate_flight");
 
   fileOpen->setStatusText(i18n("Opens an existing flight"));
   fileOpenRecent->setStatusText(i18n("Opens a recently used flight"));
@@ -250,7 +257,7 @@ void KFLogApp::initStatusBar()
   statusProgress = new KProgress(statusBar());
   statusProgress->setFixedWidth(120);
   statusProgress->setFixedHeight( statusProgress->sizeHint().height() - 4 );
-  statusProgress->setBarStyle( KProgress::Blocked );
+//  statusProgress->setBarStyle( KProgress::Blocked );
   statusProgress->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
   statusProgress->setMargin( 0 );
   statusProgress->setLineWidth(0);
@@ -382,12 +389,13 @@ void KFLogApp::readOptions()
   toolBarPos=(KToolBar::BarPosition) config->readNumEntry("ToolBarPos",
       KToolBar::Top);
   toolBar("mainToolBar")->setBarPos(toolBarPos);
+  QSize size=config->readSizeEntry("Geometry");
 
   // initialize the recent file list
   fileOpenRecent->loadEntries(config,"Recent Files");
-  flightDir = config->readEntry("FlightDir", getenv("HOME"));
-
-  QSize size=config->readSizeEntry("Geometry");
+  config->setGroup("Path");
+  flightDir = config->readEntry("DefaultFlightDirectory",
+      getpwuid(getuid())->pw_dir);
 
   if(!size.isEmpty())  resize(size);
 
@@ -463,7 +471,6 @@ void KFLogApp::slotFileClose()
 
 void KFLogApp::slotFilePrint()
 {
-warning("KFLogApp::slotFilePrint()");
   slotStatusMsg(i18n("Printing..."));
 
 //  QPrinter printer;
@@ -537,6 +544,11 @@ void KFLogApp::slotToggleMapControl()
   mapControlDock->changeHideShowState();
 }
 
+void KFLogApp::slotEvaluateFlight()
+{
+
+}
+
 void KFLogApp::slotConfigureToolbars()
 {
   saveMainWindowSettings( KGlobal::config(), "MainWindow" );
@@ -544,6 +556,13 @@ void KFLogApp::slotConfigureToolbars()
   connect(&dlg, SIGNAL(newToolbarConfig()), this, SLOT(slotNewToolbarConfig()));
 
   if (dlg.exec())  createGUI();
+}
+
+void KFLogApp::slotConfigureKFLog()
+{
+  KFLogConfig configDlg(this, "kflog_setup");
+
+  configDlg.exec();
 }
 
 void KFLogApp::slotNewToolbarConfig()

@@ -24,19 +24,6 @@
 #include <mapmatrix.h>
 
 /**
- * erste Parallele
- */
-//double _v1;
-
-/**
- * zweite Parallele
- */
-//double _v2;
-
-//double _var1;
-//double _var2;
-
-/**
  * Anzahl der Maﬂstabsbereiche
  */
 #define SCALE_NUM 10
