@@ -66,7 +66,7 @@ extern "C"
   /** */
   int downloadFlight(int flightID, int secMode, char* fileName);
   /** get recorder info serial id*/
-  QString getRecorderName();
+  QString getRecorderSerialNo();
   /** */
   int openRecorder(char* portName, int baud);
   /** */
@@ -77,11 +77,11 @@ extern "C"
   /** read waypoint and flight declaration form from recorder into mem */
   int readDatabase();
   /** read tasks from recorder */
-  QList<FRTask> readTasks(int *ret);
+  int readTasks(QList<FRTask> *tasks);
   /** write tasks to recorder */
   int writeTasks(QList<FRTask> *tasks);
   /** read waypoints from recorder */
-  QList<FRWaypoint> readWaypoints(int *ret);
+  int readWaypoints(QList<FRWaypoint> *waypoints);
   /** write waypoints to recorder */
   int writeWaypoints(QList<FRWaypoint> *waypoints);
 }
@@ -189,7 +189,7 @@ int downloadFlight(int flightID, int secMode, char* fileName)
   return vl.read_igcfile(fileName, flightID, secMode) == VLA_ERR_NOERR;
 }
 
-QString getRecorderName()
+QString getRecorderSerialNo()
 {
   vl.read_info();
 
@@ -280,9 +280,8 @@ int readDatabase()
   return vl.read_db_and_declaration() == VLA_ERR_NOERR;
 }
 
-QList<FRTask> readTasks(int *ret)
+int readTasks(QList<FRTask> *tasks)
 {
-  QList<FRTask> tasks;
   FRTask *task;
   FRTaskPoint *tp;
   VLAPI_DATA::ROUTE *r;
@@ -323,10 +322,9 @@ QList<FRTask> readTasks(int *ret)
     tp->type = FlightTask::Landing;
     task->wayPoints.append(tp);
 
-    tasks.append(task);
+    tasks->append(task);
   }
-  *ret = 1;
-  return tasks;
+  return 1;
 }
 
 int writeTasks(QList<FRTask> *tasks)
@@ -382,9 +380,8 @@ int writeTasks(QList<FRTask> *tasks)
   return vl.write_db_and_declaration() == VLA_ERR_NOERR;
 }
 
-QList<FRWaypoint> readWaypoints(int *ret)
+int readWaypoints(QList<FRWaypoint> *waypoints)
 {
-  QList<FRWaypoint> waypoints;
   int n;
   FRWaypoint *frWp;
   FRTaskPoint *tp;
@@ -405,10 +402,9 @@ QList<FRWaypoint> readWaypoints(int *ret)
     frWp->isAirport = (wp->typ & VLAPI_DATA::WPT::WPTTYP_A) > 0;
     frWp->isCheckpoint = (wp->typ & VLAPI_DATA::WPT::WPTTYP_C) > 0;
 
-    waypoints.append(frWp);
+    waypoints->append(frWp);
   }
-  *ret = 1;
-  return waypoints;
+  return 1;
 }
 
 int writeWaypoints(QList<FRWaypoint> *waypoints)

@@ -932,7 +932,7 @@ esac
 # Don't blindly perform a `cd "$ac_dir"/$ac_foo && pwd` since $ac_foo can be
 # absolute.
 ac_abs_builddir=`cd "$ac_dir" && cd $ac_builddir && pwd`
-ac_abs_top_builddir=`cd "$ac_dir" && cd ${ac_top_builddir}. && pwd`
+ac_abs_top_builddir=`cd "$ac_dir" && cd $ac_top_builddir && pwd`
 ac_abs_srcdir=`cd "$ac_dir" && cd $ac_srcdir && pwd`
 ac_abs_top_srcdir=`cd "$ac_dir" && cd $ac_top_srcdir && pwd`
 
@@ -1300,8 +1300,6 @@ build_cpu=`echo $ac_cv_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
 build_vendor=`echo $ac_cv_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
 build_os=`echo $ac_cv_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
-test -z "$build_alias" &&
-  build_alias=$ac_cv_build
 
 echo "$as_me:$LINENO: checking host system type" >&5
 echo $ECHO_N "checking host system type... $ECHO_C" >&6
@@ -1324,8 +1322,6 @@ host_cpu=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
 host_vendor=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
 host_os=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
-test -z "$host_alias" &&
-  host_alias=$ac_cv_host
 
 echo "$as_me:$LINENO: checking target system type" >&5
 echo $ECHO_N "checking target system type... $ECHO_C" >&6
@@ -1355,9 +1351,6 @@ test -n "$target_alias" &&
   test "$program_prefix$program_suffix$program_transform_name" = \
     NONENONEs,x,x, &&
   program_prefix=${target_alias}-
-test -z "$target_alias" &&
-  target_alias=$ac_cv_target
-
 test "$program_prefix" != NONE &&
   program_transform_name="s,^,$program_prefix,;$program_transform_name"
 # Use a double $ so make ignores it.
@@ -6025,7 +6018,7 @@ test x"$pic_mode" = xno && libtool_flags="$libtool_flags --prefer-non-pic"
 case $host in
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 6028 "configure"' > conftest.$ac_ext
+  echo '#line 6021 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -11013,7 +11006,7 @@ for i in $jpeg_incdirs;
 do
   for j in jpeglib.h;
   do
-    echo "configure: 11016: $i/$j" >&5
+    echo "configure: 11009: $i/$j" >&5
     if test -r "$i/$j"; then
       echo "taking that" >&5
       jpeg_incdir=$i
@@ -11248,7 +11241,7 @@ for i in $qt_incdirs;
 do
   for j in $kde_qt_header;
   do
-    echo "configure: 11251: $i/$j" >&5
+    echo "configure: 11244: $i/$j" >&5
     if test -r "$i/$j"; then
       echo "taking that" >&5
       qt_incdir=$i
@@ -11864,7 +11857,7 @@ for i in $kde_incdirs;
 do
   for j in $kde_check_header;
   do
-    echo "configure: 11867: $i/$j" >&5
+    echo "configure: 11860: $i/$j" >&5
     if test -r "$i/$j"; then
       echo "taking that" >&5
       kde_incdir=$i
@@ -11894,7 +11887,7 @@ for i in $kde_libdirs;
 do
   for j in $kde_check_lib;
   do
-    echo "configure: 11897: $i/$j" >&5
+    echo "configure: 11890: $i/$j" >&5
     if test -r "$i/$j"; then
       echo "taking that" >&5
       kde_libdir=$i
@@ -12977,7 +12970,7 @@ for i in $kde_sharedirs;
 do
   for j in apps/ksgmltools2/customization/kde-chunk.xsl;
   do
-    echo "configure: 12980: $i/$j" >&5
+    echo "configure: 12973: $i/$j" >&5
     if test -r "$i/$j"; then
       echo "taking that" >&5
       KDE_XSL_STYLESHEET=$i
@@ -14019,7 +14012,7 @@ esac
 # Don't blindly perform a `cd "$ac_dir"/$ac_foo && pwd` since $ac_foo can be
 # absolute.
 ac_abs_builddir=`cd "$ac_dir" && cd $ac_builddir && pwd`
-ac_abs_top_builddir=`cd "$ac_dir" && cd ${ac_top_builddir}. && pwd`
+ac_abs_top_builddir=`cd "$ac_dir" && cd $ac_top_builddir && pwd`
 ac_abs_srcdir=`cd "$ac_dir" && cd $ac_srcdir && pwd`
 ac_abs_top_srcdir=`cd "$ac_dir" && cd $ac_top_srcdir && pwd`
 
@@ -14372,7 +14365,7 @@ esac
 # Don't blindly perform a `cd "$ac_dir"/$ac_foo && pwd` since $ac_foo can be
 # absolute.
 ac_abs_builddir=`cd "$ac_dir" && cd $ac_builddir && pwd`
-ac_abs_top_builddir=`cd "$ac_dir" && cd ${ac_top_builddir}. && pwd`
+ac_abs_top_builddir=`cd "$ac_dir" && cd $ac_top_builddir && pwd`
 ac_abs_srcdir=`cd "$ac_dir" && cd $ac_srcdir && pwd`
 ac_abs_top_srcdir=`cd "$ac_dir" && cd $ac_top_srcdir && pwd`
 

@@ -49,7 +49,7 @@
   if(error != NULL) \
     { \
       warning(error); \
-      return -1; \
+      return 0; \
     }
 
 #define CHECK_ERROR  error = dlerror(); \
@@ -509,7 +509,7 @@ void RecorderDialog::slotConnectRecorder()
     return;
   }
 
-  if(__openLib(name) == -1) {
+  if(!__openLib(name)) {
     warning(i18n("Could not open lib!"));
     return;
   }
@@ -517,10 +517,10 @@ void RecorderDialog::slotConnectRecorder()
   apiID->setText(libName);
 
   funcH = dlsym(libHandle, "openRecorder");
-  if (((int (*)(char *, int))funcH)(qstrdup(portName), baud)) {
-    CHECK_ERROR_EXIT
+  CHECK_ERROR_EXIT
 
-    funcH = dlsym(libHandle, "getRecorderName");
+  if (((int (*)(char *, int))funcH)(qstrdup(portName), baud)) {
+    funcH = dlsym(libHandle, "getRecorderSerialNo");
     CHECK_ERROR_EXIT
 
     serID->setText(((QString (*)())funcH)());
@@ -650,15 +650,19 @@ void RecorderDialog::slotWriteDeclaration()
     }
 
     funcH = dlsym(libHandle, "writeDeclaration");
+    if (funcH == 0) {
+      KMessageBox::error(this,
+                         i18n("Function not implemented"),
+                         i18n("Library Error"));
+    }
+    else {
+      warning("Schreibe Aufgabe auf Logger ...");
 
-    CHECK_ERROR
+      ret = ((int (*)(FRTaskDeclaration*, QList<FRTaskPoint>*))funcH)(&taskDecl,
+                                                                      &taskPointList);
 
-    warning("Schreibe Aufgabe auf Logger ...");
-
-    ret = ((int (*)(FRTaskDeclaration*, QList<FRTaskPoint>*))funcH)(&taskDecl,
-                                                                    &taskPointList);
-
-    warning("   ... fertig (%d)", ret);
+      warning("   ... fertig (%d)", ret);
+    }
   }
 }
 
@@ -674,22 +678,6 @@ int RecorderDialog::__fillDirList()
 
   ret = ((int (*)(QList<FRDirEntry>*)) funcH)(&dirList);
 
-  switch(ret) {
-  case -2:
-    warning(i18n("Method not implemented!"));
-    break;
-  case -1:
-    warning(i18n("An error occured while reading the flight-directory!"));
-    break;
-  case 1:
-    // Wenn keine FlŽüge gelesen wurden, muss die Funktion einen
-    // entsprechenden Fehlercode liefern!
-    // Ok!
-    break;
-  default:
-    warning(i18n("Unknown return-code recieved!"));
-    break;
-  }
   return ret;
 }
 
@@ -710,7 +698,7 @@ int RecorderDialog::__openLib(QString libN)
 
   isOpen = true;
 
-  return 0;
+  return 1;
 }
 
 void RecorderDialog::slotSwitchTask(int idx)
@@ -759,8 +747,8 @@ void RecorderDialog::slotReadTasks()
                        i18n("Library Error"));
   }
   else {
-    frTasks = ((QList<FRTask>(*)(int *))funcH)(&ret);
-    if (! ret) {
+    ret = ((int(*)(QList<FRTask> *))funcH)(&frTasks);
+    if (!ret) {
       KMessageBox::error(this,
                          i18n("Cannot read tasks from recorder"),
                          i18n("Library Error"));
@@ -905,8 +893,8 @@ void RecorderDialog::slotReadWaypoints()
                        i18n("Library Error"));
   }
   else {
-    frWaypoints = ((QList<FRWaypoint>(*)(int *))funcH)(&ret);
-    if (! ret) {
+    ret = ((int(*)(QList<FRWaypoint> *))funcH)(&frWaypoints);
+    if (!ret) {
       KMessageBox::error(this,
                          i18n("Cannot read waypoints from recorder"),
                          i18n("Library Error"));
@@ -1012,9 +1000,12 @@ void RecorderDialog::slotWriteWaypoints()
 void RecorderDialog::slotReadDatabase()
 {
   void* funcH;
+  char* error;
   int ret;
 
   funcH = dlsym(libHandle, "readDatabase");
+  CHECK_ERROR
+
   if (funcH != 0) {
     warning("read database");
     ret = ((int (*)())funcH)();
