@@ -164,7 +164,7 @@ void Waypoints::addPopupMenu()
   wayPointPopup->insertSeparator();
   idWaypointNew = wayPointPopup->insertItem(SmallIcon("filenew"), i18n("New &waypoint"), this,
                                             SLOT(slotNewWaypoint()));
-  idWaypointEdit = wayPointPopup->insertItem(SmallIcon("wizard"), i18n("&Edit waypopint"), this,
+  idWaypointEdit = wayPointPopup->insertItem(SmallIcon("wizard"), i18n("&Edit waypoint"), this,
                                              SLOT(slotEditWaypoint()));
   idWaypointDelete = wayPointPopup->insertItem(SmallIcon("editdelete"), i18n("&Delete waypoint"), this,
                                                SLOT(slotDeleteWaypoint()));
@@ -325,6 +325,16 @@ void Waypoints::slotEditWaypoint()
     WaypointDict *wl = &waypointCatalogs.current()->wpList;
     oldName = item->text(colName);
     Waypoint *w = wl->find(oldName);
+    slotEditWaypoint (w);
+  }
+}
+
+/** No descriptions */
+void Waypoints::slotEditWaypoint(Waypoint* w)
+{
+  if (w)
+  {
+    QString tmp, oldName;
 
     // initialize dialg
     waypointDlg->name->setText(w->name);
@@ -387,6 +397,7 @@ void Waypoints::slotEditWaypoint()
 
         /* name has changed, remove old key and insert a new key */
         if (oldName != w->name) {
+          WaypointDict *wl = &waypointCatalogs.current()->wpList;
           wl->take(oldName);
           wl->insertItem(w);
         }
@@ -396,6 +407,14 @@ void Waypoints::slotEditWaypoint()
       }
     }
   }
+}
+
+/** No descriptions */
+void Waypoints::slotDeleteWaypoint(Waypoint* wp)
+{
+  waypointCatalogs.current()->wpList.remove(wp->name);
+  waypointCatalogs.current()->modified = true;
+  fillWaypoints();
 }
 
 /** No descriptions */
