@@ -31,7 +31,7 @@
 #include <mapcontents.h>
 
 #include <kmessagebox.h>
-#include "iostream.h"
+#include <iostream>
 
 DataView::DataView(QWidget* parent)
 : QFrame(parent, "FlightData")

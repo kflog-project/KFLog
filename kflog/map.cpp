@@ -43,7 +43,7 @@
 #include "wp.h"
 #include "waypointdialog.h"
 
-#include <iostream.h>
+#include <iostream>
 
 // Festlegen der Größe der Pixmaps auf Desktop-Grösse
 #define PIX_WIDTH  QApplication::desktop()->width()

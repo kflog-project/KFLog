@@ -17,7 +17,7 @@
 
 #include <cmath>
 
-#include <iostream.h>
+#include <iostream>
 
 #include "projectioncylindric.h"
 

@@ -17,7 +17,7 @@
 
 #include <cmath>
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 
 #include "mapcontents.h"
 #include <mapcalc.h>
@@ -1149,7 +1149,7 @@ QList<BaseFlightElement>* MapContents::getFlightList()  {  return &flightList;  
 
 QList<wayPoint>* MapContents::getWaypointList()  {  return &wpList;  }
 
-bool MapContents::loadFlight(QFile igcFile)
+bool MapContents::loadFlight(QFile& igcFile)
 {
   float temp_bearing = 0.0;
 
@@ -2215,7 +2215,7 @@ void MapContents::slotEditFlightGroup()
 }
 
 /** No descriptions */
-bool MapContents::importFlightGearFile(QFile flightgearFile){
+bool MapContents::importFlightGearFile(QFile& flightgearFile){
   float temp_bearing = 0.0;
 
   QFileInfo fInfo(flightgearFile);
@@ -2538,7 +2538,7 @@ bool MapContents::importFlightGearFile(QFile flightgearFile){
   return true;
 }
 /** Imports a file downloaded with Gardown in DOS  */
-bool MapContents::importGardownFile(QFile gardownFile){
+bool MapContents::importGardownFile(QFile& gardownFile){
   float temp_bearing = 0.0;
 
   QFileInfo fInfo(gardownFile);
@@ -2814,7 +2814,7 @@ bool MapContents::importGardownFile(QFile gardownFile){
 
 /** read a task file and append all tasks to flight list
 switch to first task in file */
-bool MapContents::loadTask(QFile path)
+bool MapContents::loadTask(QFile& path)
 {
   QFileInfo fInfo(path);
 

@@ -133,7 +133,7 @@ class MapContents : public QObject
      * @param  file  The path to the igc-file
      * @return "true", when the file has successfully been loaded
      */
-    bool loadFlight(QFile);
+    bool loadFlight(QFile&);
     /**
      * @return a pointer to the current flight
      */
@@ -175,12 +175,12 @@ class MapContents : public QObject
      */
     static int degreeToNum(QString degree);
   /** No descriptions */
-  bool importFlightGearFile(QFile flightgearFile);
+  bool importFlightGearFile(QFile& flightgearFile);
   /** Imports a file downloaded with Gardown in DOS  */
-  bool importGardownFile(QFile gardownFile);
+  bool importGardownFile(QFile& gardownFile);
   /** read a task file and append all tasks to flight list
 switch to first task in file */
-  bool loadTask(QFile path);
+  bool loadTask(QFile& path);
   /** generate new task name */
   QString genTaskName();
     /**

@@ -21,7 +21,7 @@
 
 #include <cmath>
 
-#include <iostream.h>
+#include <iostream>
 
 #include <kconfig.h>
 #include <kglobal.h>

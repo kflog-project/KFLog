@@ -634,7 +634,8 @@ void KFLogApp::slotFileOpen()
   QFileInfo fInfo(fName);
   flightDir = fInfo.dirPath();
   extern MapContents _globalMapContents;
-  if(_globalMapContents.loadFlight(fName))
+  QFile file (fName);
+  if(_globalMapContents.loadFlight(file))
       fileOpenRecent->addURL(fUrl);
 
   slotStatusMsg(i18n("Ready."));
@@ -647,7 +648,8 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
   extern MapContents _globalMapContents;
   if(url.isLocalFile())
     {
-      if(_globalMapContents.loadFlight(url.path()))
+      QFile file (url.path());
+      if(_globalMapContents.loadFlight(file))
         {
           // Just a workaround. It's the only way to not have the item
           // checked after loading the flight. Otherwise we had to take
@@ -1099,7 +1101,8 @@ void KFLogApp::slotImportFlightGearFile(){
   QFileInfo fInfo(fName);
   flightDir = fInfo.dirPath();
   extern MapContents _globalMapContents;
-  if(_globalMapContents.importFlightGearFile(fName))
+  QFile file (fName);
+  if(_globalMapContents.importFlightGearFile(file))
       fileOpenRecent->addURL(fUrl);
 
   slotStatusMsg(i18n("Ready."));
@@ -1131,7 +1134,8 @@ void KFLogApp::slotImportGardownFile(){
   QFileInfo fInfo(fName);
   flightDir = fInfo.dirPath();
   extern MapContents _globalMapContents;
-  if(_globalMapContents.importGardownFile(fName))
+  QFile file (fName);
+  if(_globalMapContents.importGardownFile(file))
       fileOpenRecent->addURL(fUrl);
 
   slotStatusMsg(i18n("Ready."));
@@ -1168,7 +1172,8 @@ void KFLogApp::slotTaskOpen()
   QFileInfo fInfo(fName);
   flightDir = fInfo.dirPath();
   extern MapContents _globalMapContents;
-  _globalMapContents.loadTask(fName);
+  QFile file(fName);
+  _globalMapContents.loadTask(file);
 
   slotStatusMsg(i18n("Ready."));
 }
