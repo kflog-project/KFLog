@@ -1,5 +1,12 @@
 $Id$
 
+2003-11-24 Eggert Ehmke <eggert@kflog.org>
+
+  *added automatic detection of transfer speed for filser devices.
+  
+  * added supported transfer speeds to capabilies for all recorders
+  
+
 2003-08-22 Eggert Ehmke <eggert@kflog.org>
 
   * bugfix in dataview.cpp: prevent crash when MapContents::getFlight() returns NULL.
