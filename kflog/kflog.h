@@ -232,6 +232,8 @@ class KFLogApp : public KDockMainWindow
    * @see #flightDataTypeChanged(int)
    */
   void slotSelectFlightData(int listItem);
+  /** optimize flight for OLC declaration*/
+  void slotOptimizeFlightOLC();
   /** */
   void slotOptimizeFlight();
   /** */
@@ -412,6 +414,10 @@ class KFLogApp : public KDockMainWindow
    * Action to show the evaluationdialog.
    */
   KAction* flightEvaluation;
+  /**
+   * Action to optimize flight for OLC declaration.
+   */
+  KAction* flightOptimizationOLC;
   KAction* flightOptimization;
   /** */
   KAction* flightPrint;

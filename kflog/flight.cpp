@@ -737,6 +737,77 @@ QList<wayPoint> Flight::getWPList()
 
 QList<wayPoint> Flight::getOriginalWPList()  {  return origTask.getWPList();  }
 
+bool Flight::optimizeTaskOLC()
+{
+  if( route.count() < 10)  return false;
+
+  optim = new Optimization(route);
+  optim->run();
+  optim->wait();
+//  return true;
+
+//  if (!optim->finished()) return false;
+
+  unsigned int idList[7];
+  double points;
+  double distance = optim->optimizationResult(idList,&points);
+
+  QString text, distText, pointText;
+  pointText.sprintf(" %.2f", points);
+  distText.sprintf(" %.2f km  ", distance);
+  text = i18n("The task has been optimized for the OLC. The best task found is:\n\n");
+  text = text + "\t1:  "
+      + printPos(route.at(idList[0])->origP.lat()) + " / "
+      + printPos(route.at(idList[0])->origP.lon(), false) + QString("(%1)").arg(idList[0]) + "\n\t2:  "
+      + printPos(route.at(idList[1])->origP.lat()) + " / "
+      + printPos(route.at(idList[1])->origP.lon(), false) + QString("(%1)").arg(idList[1]) +  "\n\t3:  "
+      + printPos(route.at(idList[2])->origP.lat()) + " / "
+      + printPos(route.at(idList[2])->origP.lon(), false) + QString("(%1)").arg(idList[2]) +  "\n\t4:  "
+      + printPos(route.at(idList[3])->origP.lat()) + " / "
+      + printPos(route.at(idList[3])->origP.lon(), false) + QString("(%1)").arg(idList[3]) +  "\n\t5:  "
+      + printPos(route.at(idList[4])->origP.lat()) + " / "
+      + printPos(route.at(idList[4])->origP.lon(), false) + QString("(%1)").arg(idList[4]) +  "\n\t6:  "
+      + printPos(route.at(idList[5])->origP.lat()) + " / "
+      + printPos(route.at(idList[5])->origP.lon(), false) + QString("(%1)").arg(idList[5]) +  "\n\n\t"
+      + printPos(route.at(idList[6])->origP.lat()) + " / "
+      + printPos(route.at(idList[6])->origP.lon(), false) + QString("(%1)").arg(idList[6]) +  "\n\n\t"
+      + i18n("Distance:") + distText + i18n("Points (raw, without glider index:") + pointText + "\n\n"
+      + i18n("Do You want to use this task and replace the old?");
+
+  if(KMessageBox::questionYesNo(0, text, i18n("Optimizing")) ==
+        KMessageBox::Yes)
+    {
+      QList<wayPoint> wpL;
+
+      APPEND_WAYPOINT(0, 0, i18n("Take-Off"))
+      APPEND_WAYPOINT(idList[0], dist(route.at(idList[0]), route.at(0)),
+          i18n("Begin of Task"))
+      APPEND_WAYPOINT(idList[1], dist(route.at(idList[1]),
+          route.at(idList[0])), i18n("Optimize 1"))
+      APPEND_WAYPOINT(idList[2], dist(route.at(idList[2]),
+          route.at(idList[1])), i18n("Optimize 2"))
+      APPEND_WAYPOINT(idList[3], dist(route.at(idList[3]),
+          route.at(idList[2])), i18n("Optimize 3"))
+      APPEND_WAYPOINT(idList[4], dist(route.at(idList[4]),
+          route.at(idList[3])), i18n("Optimize 4"))
+      APPEND_WAYPOINT(idList[5], dist(route.at(idList[5]),
+          route.at(idList[4])), i18n("Optimize 5"))
+      APPEND_WAYPOINT(idList[6], dist(route.at(idList[6]),
+          route.at(idList[5])), i18n("End of Task"))
+      APPEND_WAYPOINT(0, 0, i18n("Landing"))
+
+      optimizedTask.setWaypointList(wpL);
+      optimizedTask.checkWaypoints(route, gliderType);
+      optimizedTask.setOptimizedTask(points,distance);
+      optimized = true;
+
+      return true;
+    }
+
+  return false;
+}
+
+
 bool Flight::optimizeTask()
 {
   if( route.count() < 10)  return false;

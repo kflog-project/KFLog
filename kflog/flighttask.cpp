@@ -349,6 +349,7 @@ QString FlightTask::getTaskTypeString() const
     case FlightTask::Dreieck:      return i18n("Triangle");
     case FlightTask::FAI_S:        return i18n("FAI Triangle Start on leg");
     case FlightTask::Dreieck_S:    return i18n("Triangle Start on leg");
+    case FlightTask::OLC:          return i18n("OLC optimized");
     case FlightTask::Abgebrochen:  return i18n("???");
     }
 
@@ -811,6 +812,11 @@ int FlightTask::getPlannedPoints()
   //                      (aussenlande * pointCancel * 100) / gliderIndex;
 }
 
+double FlightTask::getOlcPoints()
+{
+  return  olcPoints;
+}
+
 void FlightTask::checkWaypoints(QList<flightPoint> route,
                                 QString gliderType)
 {
@@ -1108,12 +1114,16 @@ QString FlightTask::getTaskDistanceString()
   if(flightType == FlightTask::NotSet)  return "--";
 
   QString distString;
-  if (getPlanningType() == Route) {
-    distString.sprintf("%.2f km", distance_task);
-  }
-  else {
-    distString = getFAIDistanceString();
-  }
+
+  if (flightType=OLC)
+    distString.sprintf("%.2f km",distance_wert);
+  else
+    if (getPlanningType() == Route) {
+      distString.sprintf("%.2f km", distance_task);
+    }
+    else {
+      distString = getFAIDistanceString();
+    }
   return distString;
 }
 
@@ -1121,11 +1131,16 @@ QString FlightTask::getPointsString()
 {
   if(flightType == FlightTask::NotSet)  return "--";
 
-  int points1 = (int) taskPoints;
-  if((int) ( (taskPoints - points1) * 10 ) > 5) points1++;
-
   QString pointString;
-  pointString.sprintf("%d", points1);
+
+  if (flightType=OLC)
+    pointString.sprintf("%.2f", olcPoints);
+  else{    
+    int points1 = (int) taskPoints;
+    if((int) ( (taskPoints - points1) * 10 ) > 5) points1++;
+
+    pointString.sprintf("%d", points1);
+  }
 
   return pointString;
 }
@@ -1148,6 +1163,13 @@ void FlightTask::setWaypointList(QList<wayPoint> wpL)
   if (getPlanningType() == FAIArea) {
     calcFAIArea();
   }
+}
+
+void FlightTask::setOptimizedTask(double points, double distance)
+{
+  distance_wert=distance;
+  olcPoints=points;
+  flightType=OLC;
 }
 
 void FlightTask::__setDMSTPoints()

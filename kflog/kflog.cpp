@@ -271,6 +271,10 @@ void KFLogApp::initActions()
   flightOptimization = new KAction(i18n("Optimize"), "wizard", 0,
       this, SLOT(slotOptimizeFlight()), actionCollection(), "optimize_flight");
 
+      
+  flightOptimizationOLC = new KAction(i18n("Optimize(OLC)"), "wizard_olc", 0,
+      this, SLOT(slotOptimizeFlightOLC()), actionCollection(), "optimize_flight_olc");
+
 
   // Disabled for the next release, because we only have the window ...
 //  olcDeclaration = new KAction(i18n("send OLC-Declaration"), 0,
@@ -332,6 +336,7 @@ void KFLogApp::initActions()
       actionCollection(), "flight");
   flightMenu->insert(flightEvaluation);
   flightMenu->insert(flightOptimization);
+  flightMenu->insert(flightOptimizationOLC);
   //  flightMenu->insert(viewWaypoints);
   flightMenu->insert(viewFlightDataType);
   flightMenu->insert(viewIgc3D);
@@ -843,6 +848,21 @@ void KFLogApp::slotOptimizeFlight()
   if(f && f->getTypeID() == BaseMapElement::Flight)
     {
       if(f->optimizeTask())
+        {
+          // Okay, update flightdata and redraw map
+          dataView->setFlightData();
+          map->slotRedrawFlight();
+        }
+    }
+}
+
+void KFLogApp::slotOptimizeFlightOLC()
+{
+  extern MapContents _globalMapContents;
+  Flight *f = (Flight *)_globalMapContents.getFlight();
+  if(f && f->getTypeID() == BaseMapElement::Flight)
+    {
+      if(f->optimizeTaskOLC())
         {
           // Okay, update flightdata and redraw map
           dataView->setFlightData();

@@ -102,6 +102,8 @@ class FlightTask : public BaseFlightElement
   void checkWaypoints(QList<flightPoint> route,
                       QString gliderType);
   /** */
+  double getOlcPoints();
+  /** */
   int getPlannedPoints() ;
   /** */
   QString getTotalDistanceString() ;
@@ -115,6 +117,7 @@ class FlightTask : public BaseFlightElement
   QRect getRect() const;
   /** */
   struct faiRange getFAIDistance(double leg);
+  void setOptimizedTask(double points, double distance);
   void setWaypointList(QList<wayPoint> wpL);
   /** No descriptions */
   void setPlanningType(int type);
@@ -131,7 +134,7 @@ class FlightTask : public BaseFlightElement
    */
   enum FlightType {ZielS = 1, ZielR = 2, FAI = 3, Dreieck = 4, FAI_S = 5,
                    Dreieck_S = 6, Abgebrochen = 7, Unknown = 8, FAI_2 = 9,
-                   FAI_S2 = 10, FAI_3 = 11, FAI_S3 = 12, Vieleck = 13};
+                   FAI_S2 = 10, FAI_3 = 11, FAI_S3 = 12, Vieleck = 13, OLC = 14};
   /*
    * The task-types
    */
@@ -184,6 +187,8 @@ class FlightTask : public BaseFlightElement
   unsigned int task_begin;
   /** */
   QRect bBoxTask;
+  /** */
+  double olcPoints;
   /** */
   double taskPoints;
   /** */

@@ -20,6 +20,7 @@
 
 #include <baseflightelement.h>
 #include <flighttask.h>
+#include <optimization.h>
 
 #include <qdatetime.h>
 #include <qlist.h>
@@ -173,6 +174,11 @@ class Flight : public BaseFlightElement
      */
     bool optimizeTask();
     /**
+     * Optimizes the task for OLC.
+     * @return  "true", if the user wants to use the optimized task.
+     */
+    bool optimizeTaskOLC();
+    /**
      * Searches the first point of the flight, which distance to the
      * mousecursor is less than 30 pixel. If no point is found, -1 is
      * returned.
@@ -304,7 +310,7 @@ class Flight : public BaseFlightElement
 
     FlightTask origTask;
     FlightTask optimizedTask;
-
+    Optimization *optim;
     bool optimized;
 
     /**
