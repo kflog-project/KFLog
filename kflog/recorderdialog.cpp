@@ -40,6 +40,7 @@
 #include <qstringlist.h>
 #include <qtimer.h>
 #include <qwhatsthis.h>
+#include <qdir.h>
 
 #include "mapcalc.h"
 #include "mapcontents.h"
@@ -800,30 +801,33 @@ void RecorderDialog::slotDownloadFlight()
 
   config->setGroup("Path");
   // If no DefaultFlightDirectory is configured, we must use $HOME instead of the root-directory
-  QString flightDir = config->readEntry("DefaultFlightDirectory", getpwuid(getuid())->pw_dir) + "/";
+  QString flightDir = config->readEntry("DefaultFlightDirectory", QDir::homeDirPath());
 
-  QString fileName = flightDir;
+  QString fileName = flightDir + "/";
 
   int flightID(item->text(colID).toInt() - 1);
 
-  warning("Loading flight %d (%d)", flightID, flightList->itemPos(item));
+  //warning("Loading flight %d (%d)", flightID, flightList->itemPos(item));
   warning(dirList.at(flightID)->longFileName);
   warning(dirList.at(flightID)->shortFileName);
 
 //  QTimer::singleShot( 0, this, SLOT(slotDisablePages()) );
 
-
+  warning("fileName: %s", fileName.latin1());
   if(useLongNames->isChecked()) {
     fileName += dirList.at(flightID)->longFileName.upper();
   }
   else {
     fileName += dirList.at(flightID)->shortFileName.upper();
   }
-
-  KFileDialog* dlg = new KFileDialog(flightDir, "*.igc *.IGC ", this,
+  warning("flightdir: %s, filename: %s", flightDir.latin1(), fileName.latin1());
+//  KFileDialog* dlg = new KFileDialog(flightDir, "*.igc *.IGC ", this,
+//         i18n("Select IGC File"), true);
+  KFileDialog* dlg = new KFileDialog(flightDir, i18n("*.igc *.IGC|IGC files"), this,
          i18n("Select IGC File"), true);
   dlg->setSelection( fileName );
   dlg->setOperationMode( KFileDialog::Saving );
+  dlg->setCaption(i18n("Select IGC file to save to"));
   dlg->exec();
 
   KURL fUrl = dlg->selectedURL();
@@ -1112,6 +1116,7 @@ void RecorderDialog::slotWriteTasks()
     KMessageBox::sorry(this,
                        i18n("Function not implemented"),
                        i18n("Task upload"));
+    delete statusDlg;
     return;
   }
 
@@ -1136,6 +1141,7 @@ void RecorderDialog::slotWriteTasks()
                        "Further tasks will be ignored."), maxNrTasks);
         if (KMessageBox::warningContinueCancel(this, e, i18n("Recorder Warning"))
             == KMessageBox::Cancel) {
+          delete statusDlg;
           return;
         }
         else {
@@ -1152,6 +1158,7 @@ void RecorderDialog::slotWriteTasks()
                     maxNrWayPointsPerTask, task->getFileName().latin1());
           if (KMessageBox::warningContinueCancel(this, e, i18n("Recorder Warning"))
               == KMessageBox::Cancel) {
+            delete statusDlg;
             return;
           }
           else {

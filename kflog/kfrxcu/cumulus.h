@@ -108,7 +108,9 @@ protected:
   QString _home;
   
   /**
-   * Returns the home path on the PDA
+   * Returns the home path on the PDA. If it has not been set yet, for instance by
+   * passing it in the URL, the function will try some standard locations by 
+   * looking for the Cumulus.conf file on a couple of places. 
    */
   QString homePath(); 
   

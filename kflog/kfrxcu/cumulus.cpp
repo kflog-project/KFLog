@@ -23,6 +23,7 @@
 #include <kio/jobclasses.h>
 #include <klocale.h>
 #include <kio/netaccess.h>
+#include <kio/scheduler.h>
 #include <ktempfile.h>
 #include <ktempdir.h>
 #include "cumuluswaypointfile.h"
@@ -41,7 +42,7 @@ Cumulus::Cumulus(){
   //_capabilities.supUlFlight = true;        //supports uploading of flights?
   //_capabilities.supSignedFlight = true;    //supports downloading in of signed flights?
   _capabilities.supDlTask = true;          //supports downloading of tasks?
-  //_capabilities.supUlTask = true;          //supports uploading of tasks?
+  _capabilities.supUlTask = true;          //supports uploading of tasks?
   //_capabilities.supUlDeclaration = true;   //supports uploading of declarations?
   //_capabilities.supDspSerialNumber = true;
   _capabilities.supDspRecorderType = true;
@@ -137,7 +138,8 @@ int Cumulus::getFlightDir(QPtrList<FRDirEntry>* flist){
  */
 int Cumulus::downloadFlight(int flightID, int /*secMode*/, const QString& fileName){
   qDebug("copying flight %d (%s) to %s", flightID, flightList[flightID].latin1(), fileName.latin1());
-  if (KIO::NetAccess::copy(flightList[flightID], fileName, _parent))
+  if (KIO::NetAccess::file_copy(flightList[flightID], 
+        fileName, -1, true, false , _parent))
     return FR_OK;
   
   _errorinfo=i18n("There was a problem copying the flight from the temporary to the new location.");
@@ -214,7 +216,7 @@ int Cumulus::readTasks(QPtrList<FlightTask> *tasks){
       return FR_ERROR;
     }
       
-    tasks->clear();
+    //tasks->clear();
     QFile f( _tmpTasksFile );
   
     if( !f.open( IO_ReadOnly ) )
@@ -224,7 +226,7 @@ int Cumulus::readTasks(QPtrList<FlightTask> *tasks){
       return FR_ERROR;
     }
 
-   QTextStream stream( &f );
+    QTextStream stream( &f );
     QString line;
     bool isTask( false );
     QString numTask, taskName;
@@ -276,7 +278,7 @@ int Cumulus::readTasks(QPtrList<FlightTask> *tasks){
       }
   
     f.close();
- 
+    KIO::NetAccess::removeTempFile( _tmpTasksFile );
     if (tasks->count()==0)
       {
         _errorinfo=i18n("No tasks defined on PDA.");
@@ -300,7 +302,71 @@ int Cumulus::readTasks(QPtrList<FlightTask> *tasks){
  * Write tasks to recorder
  */
 int Cumulus::writeTasks(QPtrList<FlightTask> *tasks){
-  return FR_NOTSUPPORTED;
+  qDebug("CuFR line %d", __LINE__);
+  int res= FR_NOTSUPPORTED;
+  
+  if (tasks->count()==0) {
+    _errorinfo=i18n("There were no tasks to upload.");
+    return FR_ERROR;
+  }
+  
+  KTempFile tmpFile;
+  
+  QTextStream * stream;
+  stream = tmpFile.textStream();
+  if( !stream )
+  {
+    // could not open file ...
+    _errorinfo=i18n("Could not open temporary task file for writing.");
+    return FR_ERROR;
+  }
+  
+  FlightTask* task;
+  
+  *stream << "# KFLog-Task-File" << endl;
+  int cnt=0;
+  for( task=tasks->first(); task; task=tasks->next() )
+    {
+  qDebug("CuFR line %d", __LINE__);
+      QList<Waypoint> wpList = task->getWPList();
+      QFileInfo fInfo(task->getFileName());
+      
+      *stream << "TS," << fInfo.fileName() << "," 
+         << wpList.count() << endl;
+
+      for( uint j=0; j < wpList.count(); j++ )
+        {
+  qDebug("CuFR line %d", __LINE__);
+          // saving each waypoint ...
+          Waypoint* wp = wpList.at(j);
+          *stream << "TW," << wp->origP.x() << "," << wp->origP.y() << ","
+            << wp->elevation << "," << wp->name << "," << wp->icao << ","
+            << wp->description << "," << wp->frequency << ","
+            << wp->comment << "," << wp->isLandable << wp->runway << ","
+            << wp->length << "," << wp->surface
+            << endl;
+        }
+      *stream << "TE" << endl;
+      cnt++;
+    }
+  qDebug("CuFR line %d", __LINE__);
+    
+  if (!tmpFile.close())
+    {
+      _errorinfo=i18n("There was an error writing to the temporary task file.");
+      return FR_ERROR;
+    }
+  qDebug("CuFR line %d", __LINE__);
+  
+  if (!KIO::NetAccess::upload(tmpFile.name(), 
+         KURL(_URL + homePath() + QString("tasks.tsk")), _parent))
+    {
+      _errorinfo=i18n("There was an error uploading the task file to the PDA.");
+      return FR_ERROR;
+    }
+  qDebug("CuFR line %d", __LINE__);
+  
+  return cnt; //FR_OK;  
 }
 
 
@@ -356,8 +422,10 @@ int Cumulus::writeWaypoints(QPtrList<Waypoint> *waypoints){
   }
   CumulusWaypointFile* wpfile=new CumulusWaypointFile;  //create a new CumulusWaypointFile,
   ret=wpfile->save(f.name(), waypoints);                //   and use it to write our waypoints.
-  if (ret>0) {                                          //writing to tempfile wend well
-    if (KIO::NetAccess::upload(f.name(),KURL(_URL + homePath() + "Applications/cumulus/cumulus.kwp"), _parent)) { //try to upload the file
+  if (ret>0) {                                         //writing to tempfile wend well 
+    KURL wpurl(_URL + homePath() + "Applications/cumulus/cumulus.kwp");
+    if (KIO::NetAccess::upload(f.name(),wpurl, _parent)) { //try to upload the file
+      KIO::chmod(wpurl, 0666); //make file readable and writable for everybody
       ret=FR_OK;
     } else {
       _errorinfo=i18n("Upload of temporary file to PDA failed.");
@@ -473,8 +541,8 @@ FRDirEntry* Cumulus::getFlightInfo(QString filename) {
   result->gliderID = gliderID;
   result->firstTime = firstfix;
   result->lastTime = lastfix;
-  result->shortFileName = filename;
-  result->longFileName = filename;
+  result->shortFileName = fInfo.fileName();
+  result->longFileName = fInfo.fileName();
   result->duration = lastfix.tm_sec-firstfix.tm_sec + 
                     (lastfix.tm_min-firstfix.tm_min) * 60 +
                     (lastfix.tm_hour-firstfix.tm_hour) * 3600;
