@@ -375,6 +375,10 @@ QString Cumulus::homePath() {
     _home="/home/root/";
     return _home;
   }
+  if (KIO::NetAccess::exists(KURL(_URL + "/root/Settings/Cumulus.conf"), true, _parent)) {
+    _home="/root/";
+    return _home;
+  }
   qDebug("CuFR line %d", __LINE__);
 }
 
