@@ -104,6 +104,7 @@ void DataView::setFlightData(Flight* cF)
       "<TR><TD>" + i18n("Pilot") + ":</TD><TD> " + h.at(0) + "</TD></TR>" +
       "<TR><TD>" + i18n("Glider") + ":</TD><TD>" + h.at(2) +
           " / " + h.at(1) + "</TD></TR>" +
+      "<TR><TD>" + i18n("Recoder") + ":</TD><TD>" + h.at(8) + "</TD></TR>" +
       "</TABLE>" + "<HR NOSHADE>";
 
   QList<wayPoint> wpList = cF->getWPList();

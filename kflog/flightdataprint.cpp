@@ -21,6 +21,7 @@
 #include <flight.h>
 #include <mapcalc.h>
 
+#include <kiconloader.h>
 #include <klocale.h>
 #include <kprinter.h>
 
@@ -156,6 +157,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
   flightPoint cPoint;
 
   QPainter painter(&printer);
+
   painter.setFont(QFont("helvetica", 18, QFont::Bold));
   painter.drawText(50, 50, i18n("Flightanalysis") + ":");
   painter.setPen(QPen(QColor(0, 0, 0), 2));
@@ -163,6 +165,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
   painter.setFont(QFont("helvetica", 10, QFont::Normal, true));
   painter.drawText(50, 58, 495, 20, Qt::AlignTop | Qt::AlignRight,
       (QString)i18n("File") + ": " + currentFlight->getFileName());
+
   painter.setFont(QFont("helvetica", 10));
   painter.drawText(50, 100, i18n("Date") + ":");
   painter.drawText(125, 100, currentFlight->getDate());
@@ -233,8 +236,13 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
       yPos += 20;
       painter.setFont(QFont("helvetica", 12, QFont::Bold));
       painter.drawText(50, yPos, i18n("optimized Task") + ":");
+      yPos += 5;
+
+      painter.setPen(QPen(QColor(0,0,0), 1));
+      painter.drawLine(50, yPos, 545, yPos);
+
       painter.setFont(QFont("helvetica", 10));
-      yPos += 20;
+      yPos += 15;
 
       painter.drawText(50, yPos, i18n("Typ") + ":");
       temp = i18n("%1  Track: %2  Points: %3").arg(
@@ -267,8 +275,8 @@ void FlightDataPrint::__printPositionData(QPainter* painter,
   QString temp;
   painter->drawText(50, yPos, text);
   painter->drawText(125, yPos, printPos(cPoint->origP.x(), true));
-  painter->drawText(200, yPos, "/");
-  painter->drawText(210, yPos, printPos(cPoint->origP.y(), false));
+  painter->drawText(190, yPos, "/");
+  painter->drawText(200, yPos, printPos(cPoint->origP.y(), false));
 
   painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
             printTime(cPoint->time));
@@ -296,8 +304,8 @@ void FlightDataPrint::__printPositionData(QPainter* painter,
   QString temp;
   painter->drawText(50, yPos, cPoint->name);
   painter->drawText(125, yPos, printPos(cPoint->origP.x(), true));
-  painter->drawText(200, yPos, "/");
-  painter->drawText(210, yPos, printPos(cPoint->origP.y(), false));
+  painter->drawText(190, yPos, "/");
+  painter->drawText(200, yPos, printPos(cPoint->origP.y(), false));
 
   if(cPoint->sector1 != 0)
       painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,

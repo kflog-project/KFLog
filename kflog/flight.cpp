@@ -57,9 +57,10 @@
       wpL.current()->sectorFAI = 0; \
       wpL.current()->angle = -100;
 
-Flight::Flight(QString fName, QList<flightPoint> r, QString pName,
+Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName,
     QString gType, QString gID, QList<wayPoint> wpL, QString d)
   : BaseMapElement("flight", BaseMapElement::Flight),
+    recorderID(recID),
     pilotName(pName),
     gliderType(gType),
     gliderID(gID),
@@ -671,6 +672,7 @@ QStrList Flight::getHeader()
   header.append(getRouteType());
   header.append(getDistance());
   header.append(getPoints());
+  header.append(recorderID);
 
   return header;
 }

@@ -1072,10 +1072,9 @@ bool MapContents::loadFlight(QFile igcFile)
           i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(igcFile.name()));
       return false;
     }
-  /*
-   * Wir brauchen eine bessere Formatprüfung als nur die
-   * Überprüfung der Endung und der Größe ...
-   */
+  //
+  // We need a better format-identification then only the extension ...
+  //
   if(((QString)fInfo.extension()).lower() != "igc")
     {
       KMessageBox::error(0,
@@ -1108,7 +1107,7 @@ bool MapContents::loadFlight(QFile igcFile)
   QString s;
   QTextStream stream(&igcFile);
 
-  QString pilotName, gliderType, gliderID, date;
+  QString pilotName, gliderType, gliderID, date, recorderID;
   char latChar, lonChar;
   bool launched = false, append = true, isFirst = true, isFirstWP = true;
   int dT, lat, latmin, latTemp, lon, lonmin, lonTemp;
@@ -1150,7 +1149,45 @@ bool MapContents::loadFlight(QFile igcFile)
       filePos += s.length();
       importProgress.setProgress(( filePos * 200 ) / fileLength);
 
-      if(s.mid(0,1) == "H")
+      if(s.mid(0,1) == "A")
+        {
+          // We have an menufactorer-id
+          if(s.mid(1,3).upper() == "GCS")
+              recorderID = "Volkslogger (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "BOR")
+              recorderID = "Borgelt (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "CAM")
+              recorderID = "Cambridge (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "DEL")
+              recorderID = "Delver (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "EWA")
+              recorderID = "EW (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "FIL")
+              recorderID = "Filser (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "GRI")
+              recorderID = "Griffin (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "SCH")
+              recorderID = "Scheffel (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "IEC")
+              recorderID = "Ilec (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "LXN")
+              recorderID = "LX Navigation (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "PES")
+              recorderID = "Peschges (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "PRT")
+              recorderID = "Print Technik (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "SDI")
+              recorderID = "Streamline Digital Instruments (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "BVI")
+              recorderID = "Ball Variometer Inc (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "WES")
+              recorderID = "Westerboer (" + s.mid(4,3) + ")";
+          else if(s.mid(1,3).upper() == "ZAN")
+              recorderID = "Zander (" + s.mid(4,3) + ")";
+          else
+              recorderID = "unknown (" + s.mid(4,3) + ")";
+        }
+      else if(s.mid(0,1) == "H")
         {
           // We have a headerline
           if(s.mid(1,4).upper() == "FPLT")
@@ -1384,8 +1421,15 @@ bool MapContents::loadFlight(QFile igcFile)
 
   importProgress.close();
 
-  flightList.append(new Flight(QFileInfo(igcFile).fileName(), flightRoute,
-      pilotName, gliderType, gliderID, wpList, date));
+  if(!launched || !flightRoute.count())
+    {
+      KMessageBox::error(0,
+          i18n("The selected file<BR><B>%1</B><BR>contains no flight!").arg(igcFile.name()));
+      return false;
+    }
+
+  flightList.append(new Flight(QFileInfo(igcFile).fileName(), recorderID,
+      flightRoute, pilotName, gliderType, gliderID, wpList, date));
 
   return true;
 }

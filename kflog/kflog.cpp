@@ -600,6 +600,7 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
           viewCenterTask->setEnabled(true);
           viewCenterFlight->setEnabled(true);
           flightEvaluation->setEnabled(true);
+          flightPrint->setEnabled(true);
           animateFlightStart->setEnabled(true);
           animateFlightStop->setEnabled(true);
 				  stepFlightNext->setEnabled(true);

@@ -45,7 +45,7 @@ class Flight : public BaseMapElement
 	   * @param  wpL  The list of waypoints of the task
 	   * @param  date  The date of the flight
 	   */
-    Flight(QString fileName,
+    Flight(QString fileName, QString recID,
   	    QList<flightPoint> route, QString pName, QString gType,
         QString gID, QList<wayPoint> wpL, QString date);
 	  /**
@@ -248,6 +248,7 @@ class Flight : public BaseMapElement
   	/** Kreisflug?? */
   	void __flightState();
 
+    QString recorderID;
 	  QString pilotName;
     QString gliderType;
     QString gliderID;
