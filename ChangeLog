@@ -15,14 +15,14 @@ $Id$
 2002-04-19 Harry <harry@kflog.org>
 
   * Adding free waypoint to graphical planning
-	
+
   * format display of task in dataview
 
 
 2002-04-16 Harry <harry@kflog.org>
 
   * Show current flight in 3D
-	
+
   * Size Evaluation Dialog
 
 
@@ -34,10 +34,10 @@ $Id$
 2002-04-10 Harry <harry@kflog.org>
 
   * Cleanup of old classes
-	
+
   * Rename TaskAndWaypoint to Waypoints
 
-	
+
 2002-04-09 Thomas <thomas@kflog.org>
 
   * Corrected handling of igcfiles not containing waypoints
@@ -58,7 +58,7 @@ $Id$
 2002-04-08 Harry <harry@kflog.org>
 
   * Fixed bug in setting animation index
-	
+
 
 2002-04-05 Thomas <thomas@kflog.org>
 
@@ -77,8 +77,9 @@ $Id$
   * Introduction of BaseFlightElement for all flight types
 
   * Switch active flight
-	
-2002-03-16 Heienr <heiner@kflog.org>
+
+
+2002-03-16 Heiner <heiner@kflog.org>
 
   * Fixed a bug in main(). Now the splash-screen disappears after all
     flight are loaded, when the user calls KFLog with igc-files as
