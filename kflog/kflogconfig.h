@@ -68,6 +68,8 @@ class KFLogConfig : public KDialogBase
     /** */
     void slotDefaultPath();
     /** */
+    void slotDefaultProjection();
+    /** */
     void slotDefaultScale();
     /** */
     void slotSearchFlightPath();
@@ -77,6 +79,8 @@ class KFLogConfig : public KDialogBase
     void slotSearchTaskPath();
     /** */
     void slotSearchWaypointPath();
+    /** */
+    void slotSelectProjection(int);
     /** */
     void slotShowLowerLimit(int value);
     /** */
@@ -100,6 +104,8 @@ class KFLogConfig : public KDialogBase
     /** */
     void __addTopographyTab();
     /** */
+    void __addProjectionTab();
+    /** */
     void __addScaleTab();
     /** */
     int __setScaleValue(int value);
@@ -113,6 +119,8 @@ class KFLogConfig : public KDialogBase
     QFrame* pathPage;
     /** */
     QFrame* topoPage;
+    /** */
+    QFrame* projPage;
     /** */
     QFrame* scalePage;
     /** */
@@ -141,8 +149,17 @@ class KFLogConfig : public KDialogBase
     QLCDNumber* reduce1N;
     QLCDNumber* reduce2N;
     QLCDNumber* reduce3N;
-
     KComboBox* elementSelect;
+    KComboBox* projectionSelect;
+    LatEdit* firstParallel;
+    LatEdit* secondParallel;
+    LongEdit* originLongitude;
+
+    int cylinPar;
+    int lambertV1;
+    int lambertV2;
+    int lambertOrigin;
+    int currentProjType;
 };
 
 #endif

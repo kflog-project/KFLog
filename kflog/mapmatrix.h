@@ -21,6 +21,9 @@
 #include <qobject.h>
 #include <qwmatrix.h>
 
+#include <projectionlambert.h>
+#include <projectioncylindric.h>
+
 /**
  * This class is used to handle WGS-coordinates. It inherits QPoint.
  * The only difference is, that the methods to access the coordinates
@@ -288,19 +291,19 @@ class MapMatrix : public QObject
     /**
      * Returns the x-coordinate for the Lambert-projection.
      */
-    double __calc_X_Lambert(double latitude, double longitude) const;
+//    double __calc_X_Lambert(double latitude, double longitude) const;
     /**
      * Returns the y-coordinate for the Lambert-projection.
      */
-    double __calc_Y_Lambert(double latitude, double longitude) const;
+//    double __calc_Y_Lambert(double latitude, double longitude) const;
     /**
      * Returns the latitude of the given map-point
      */
-    int __invert_Lambert_Lat(double x, double y) const;
+//    int __invert_Lambert_Lat(double x, double y) const;
     /**
      * Returns the longitude of the given map-point
      */
-    int __invert_Lambert_Lon(double x, double y) const;
+//    int __invert_Lambert_Lon(double x, double y) const;
     /**
      */
     QPoint __mapToWgs(QPoint) const;
@@ -316,13 +319,13 @@ class MapMatrix : public QObject
     /**
      *
      */
-    double v1;
+//    double v1;
     /**
      *
      */
-    double v2;
-    double var1;
-    double var2;
+//    double v2;
+//    double var1;
+//    double var2;
     /**
      * The mapCenter is the position displayed in the center of the map.
      * It is used in two different ways:
@@ -364,6 +367,13 @@ class MapMatrix : public QObject
     int scaleBorders[6];
     /** */
     QSize matrixSize;
+
+    /** */
+    ProjectionBase* currentProjection;
+    /** */
+    ProjectionLambert lambertProjection;
+    /** */
+    ProjectionCylindric cylindricalProjection;
 };
 
 #endif

@@ -22,9 +22,6 @@
 
 #include "mapmatrix.h"
 
-#define VAR1   ( cos(v1) * cos(v1) )
-#define VAR2   ( sin(v1) + sin(v2) )
-
 // Projektions-Maßstab
 // 10 Meter Höhe pro Pixel ist die stärkste Vergrößerung.
 // Bei dieser Vergrößerung erfolgt die eigentliche Projektion
@@ -51,7 +48,7 @@
 #define VAL_BORDER_3                    1000
 #define VAL_BORDER_S                     250
 
-// Anfangs-Position (Poltringen)
+// default Start-Position (Poltringen)
 #define HOME_DEFAULT_LAT 29125200
 #define HOME_DEFAULT_LON 5364500
 
@@ -100,6 +97,9 @@ MapMatrix::MapMatrix()
   printBorder.setBottom(25000000);
   printBorder.setLeft(2000000);
   printBorder.setRight(7000000);
+
+  currentProjection = &lambertProjection;
+//  currentProjection = &cylindricalProjection;
 }
 
 MapMatrix::~MapMatrix()
@@ -126,10 +126,15 @@ QPoint MapMatrix::wgsToMap(QPoint origPoint) const
 
 QPoint MapMatrix::wgsToMap(int lat, int lon) const
 {
-  return QPoint(__calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
+  return QPoint(currentProjection->projectX(NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
                     RADIUS / MAX_SCALE,
-                __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
+      currentProjection->projectY(NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
                     RADIUS / MAX_SCALE);
+
+//  return QPoint(__calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
+//                    RADIUS / MAX_SCALE,
+//                __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
+//                    RADIUS / MAX_SCALE);
 }
 
 QRect MapMatrix::wgsToMap(QRect rect) const
@@ -144,10 +149,15 @@ QPoint MapMatrix::__mapToWgs(QPoint origPoint) const
 
 QPoint MapMatrix::__mapToWgs(int x, int y) const
 {
-  double lat = __invert_Lambert_Lat(x * MAX_SCALE / RADIUS,
-                                    y * MAX_SCALE / RADIUS);
-  double lon = __invert_Lambert_Lon(x * MAX_SCALE / RADIUS,
-                                    y * MAX_SCALE / RADIUS);
+//  double lat = __invert_Lambert_Lat(x * MAX_SCALE / RADIUS,
+//                                    y * MAX_SCALE / RADIUS);
+//  double lon = __invert_Lambert_Lon(x * MAX_SCALE / RADIUS,
+//                                    y * MAX_SCALE / RADIUS);
+
+  double lat = RAD_TO_NUM(currentProjection->invertLat(x * MAX_SCALE / RADIUS,
+      y * MAX_SCALE / RADIUS));
+  double lon = RAD_TO_NUM(currentProjection->invertLon(x * MAX_SCALE / RADIUS,
+      y * MAX_SCALE / RADIUS));
 
   return QPoint((int)lon, (int)lat);
 }
@@ -216,21 +226,38 @@ QPoint MapMatrix::print(int lat, int lon, double dX, double dY) const
 {
   QPoint temp;
 
+//  if(dX == 0 &&  dY == 0)
+//    {
+//      temp = QPoint(
+//        ( __calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
+//            * RADIUS / pScale ) + dX,
+//        ( __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
+//             * RADIUS / pScale ) + dY );
+//    }
+//  else
+//    {
+//      temp = QPoint(
+//        ( __calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
+//            * RADIUS / ( pScale * 0.5 ) ) + dX,
+//        ( __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
+//             * RADIUS / ( pScale * 0.5 ) ) + dY );
+//    }
+
   if(dX == 0 &&  dY == 0)
     {
       temp = QPoint(
-        ( __calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
-            * RADIUS / pScale ) + dX,
-        ( __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
-             * RADIUS / pScale ) + dY );
+        ( currentProjection->projectX( NUM_TO_RAD(lat),
+            NUM_TO_RAD(lon - mapCenterLon) ) * RADIUS / pScale ) + dX,
+        ( currentProjection->projectY( NUM_TO_RAD(lat),
+            NUM_TO_RAD(lon - mapCenterLon) ) * RADIUS / pScale ) + dY );
     }
   else
     {
       temp = QPoint(
-        ( __calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
-            * RADIUS / ( pScale * 0.5 ) ) + dX,
-        ( __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
-             * RADIUS / ( pScale * 0.5 ) ) + dY );
+        ( currentProjection->projectX( NUM_TO_RAD(lat),
+            NUM_TO_RAD(lon - mapCenterLon) ) * RADIUS / ( pScale * 0.5 ) ) + dX,
+        ( currentProjection->projectY( NUM_TO_RAD(lat),
+            NUM_TO_RAD(lon - mapCenterLon) ) * RADIUS / ( pScale * 0.5 ) ) + dY );
     }
   return temp;
 }
@@ -249,14 +276,23 @@ QRect MapMatrix::getPrintBorder(double a1, double a2, double b1, double b2,
 {
   QRect temp;
 
-  temp.setTop( __invert_Lambert_Lat(a2 * pScale / RADIUS,
-      a1 * pScale / RADIUS) );
-  temp.setBottom( __invert_Lambert_Lat(b2 * pScale / RADIUS,
-      b1 * pScale / RADIUS) );
-  temp.setRight( __invert_Lambert_Lon(c2 * pScale / RADIUS,
-      c1 * pScale / RADIUS) + printCenterLon );
-  temp.setLeft( __invert_Lambert_Lon(d2 * pScale / RADIUS,
-      d1 * pScale / RADIUS) + printCenterLon );
+//  temp.setTop( __invert_Lambert_Lat(a2 * pScale / RADIUS,
+//      a1 * pScale / RADIUS) );
+//  temp.setBottom( __invert_Lambert_Lat(b2 * pScale / RADIUS,
+//      b1 * pScale / RADIUS) );
+//  temp.setRight( __invert_Lambert_Lon(c2 * pScale / RADIUS,
+//      c1 * pScale / RADIUS) + printCenterLon );
+//  temp.setLeft( __invert_Lambert_Lon(d2 * pScale / RADIUS,
+//      d1 * pScale / RADIUS) + printCenterLon );
+
+  temp.setTop(RAD_TO_NUM(currentProjection->invertLat(a2 * pScale / RADIUS,
+      a1 * pScale / RADIUS)));
+  temp.setBottom(RAD_TO_NUM(currentProjection->invertLat(b2 * pScale / RADIUS,
+      b1 * pScale / RADIUS)));
+  temp.setRight(RAD_TO_NUM(currentProjection->invertLon(c2 * pScale / RADIUS,
+      c1 * pScale / RADIUS)) + printCenterLon);
+  temp.setLeft(RAD_TO_NUM(currentProjection->invertLon(d2 * pScale / RADIUS,
+      d1 * pScale / RADIUS)) + printCenterLon);
 
   return temp;
 }
@@ -402,14 +438,17 @@ void MapMatrix::createMatrix(QSize newSize)
 
   /* Set rotating and scaling */
   double scale = MAX_SCALE / cScale;
-  rotationArc = atan(tempPoint.x() * 1.0 / tempPoint.y() * 1.0);
+  rotationArc = currentProjection->getRotationArc(tempPoint.x(), tempPoint.y());
 
   worldMatrix.setMatrix(cos(rotationArc) * scale, sin(rotationArc) * scale,
-      -sin(rotationArc) * scale, cos(rotationArc) * scale, 0,0);
+      -sin(rotationArc) * scale, cos(rotationArc) * scale, 0, 0);
 
   /* Set the tranlation */
-  QWMatrix translateMatrix(1, 0, 0, 1, newSize.width() / 2,
-    ( newSize.height() / 2 ) - worldMatrix.map(tempPoint).y() );
+  QWMatrix translateMatrix(1, 0, 0, 1,
+      currentProjection->getTranslationX(newSize.width(),
+          worldMatrix.map(tempPoint).x()),
+      currentProjection->getTranslationY(newSize.height(),
+          worldMatrix.map(tempPoint).y()));
 
   worldMatrix = worldMatrix * translateMatrix;
 
@@ -573,8 +612,6 @@ void MapMatrix::slotInitMatrix()
       cScale = config->readDoubleNumEntry("Map Scale", 200);
     }
 
-  v1 = config->readDoubleNumEntry("Parallel1", 32400000);
-  v2 = config->readDoubleNumEntry("Parallel2", 30000000);
   homeLat = config->readNumEntry("Homesite Latitude", HOME_DEFAULT_LAT);
   homeLon = config->readNumEntry("Homesite Longitude", HOME_DEFAULT_LON);
 
@@ -589,40 +626,46 @@ void MapMatrix::slotInitMatrix()
   cScale = MIN(cScale, scaleBorders[UpperLimit]);
   cScale = MAX(cScale, scaleBorders[LowerLimit]);
 
-  var1 = cos(v1)*cos(v1);
-  var2 = sin(v1)+sin(v2);
+  config->setGroup("Lambert Projection");
+  lambertProjection.initProjection(config->readNumEntry("Parallel1", 32400000),
+      config->readNumEntry("Parallel2", 30000000),
+      config->readNumEntry("Origin", 0));
+
+  config->setGroup("Cylindrical Projection");
+  cylindricalProjection.initProjection(config->readNumEntry("Parallel", 27000000));
 
   config->setGroup(0);
+
 }
 
-double MapMatrix::__calc_Y_Lambert(double latitude, double longitude) const
-{
-  return ( 2 * ( sqrt( var1 + ( sin(v1) - sin(latitude) ) * var2 ) / var2 )
-             * cos( var2 * longitude / 2 ) );
-}
+//double MapMatrix::__calc_Y_Lambert(double latitude, double longitude) const
+//{
+//  return ( 2 * ( sqrt( var1 + ( sin(v1) - sin(latitude) ) * var2 ) / var2 )
+//             * cos( var2 * longitude / 2 ) );
+//}
 
-double MapMatrix::__calc_X_Lambert(double latitude, double longitude) const
-{
-  return ( 2 * ( sqrt( var1 + ( sin(v1) - sin(latitude) ) * var2 ) / var2 )
-             * sin( var2 * longitude / 2 ) );
-}
+//double MapMatrix::__calc_X_Lambert(double latitude, double longitude) const
+//{
+//  return ( 2 * ( sqrt( var1 + ( sin(v1) - sin(latitude) ) * var2 ) / var2 )
+//             * sin( var2 * longitude / 2 ) );
+//}
 
-int MapMatrix::__invert_Lambert_Lat(double x, double y) const
-{
-  double lat = -asin(
-              ( -4.0 * pow(cos(v1), 2.0) - 4.0 * pow(sin(v1), 2.0)
-                -4.0 * sin(v1) * sin(v2)
-                + x * x * pow(sin(v1), 2.0) + pow(sin(v1), 2.0)* y * y
-                + 2.0 * x * x * sin(v1) * sin(v2) + 2.0 * sin(v1)
-                * sin(v2) * y * y + x * x * pow(sin(v2), 2.0)
-                + pow(sin(v2), 2.0) * y * y
-                ) /
-              ( sin(v1) + sin(v2) ) / 4 );
-  return RAD_TO_NUM(lat);
-}
+//int MapMatrix::__invert_Lambert_Lat(double x, double y) const
+//{
+//  double lat = -asin(
+//              ( -4.0 * pow(cos(v1), 2.0) - 4.0 * pow(sin(v1), 2.0)
+//                -4.0 * sin(v1) * sin(v2)
+//                + x * x * pow(sin(v1), 2.0) + pow(sin(v1), 2.0)* y * y
+//                + 2.0 * x * x * sin(v1) * sin(v2) + 2.0 * sin(v1)
+//                * sin(v2) * y * y + x * x * pow(sin(v2), 2.0)
+//                + pow(sin(v2), 2.0) * y * y
+//                ) /
+//              ( sin(v1) + sin(v2) ) / 4 );
+//  return RAD_TO_NUM(lat);
+//}
 
-int MapMatrix::__invert_Lambert_Lon(double x, double y) const
-{
-  double lon = 2.0 * atan( x / y ) / ( sin(v1) + sin(v2) );
-  return RAD_TO_NUM(lon);
-}
+//int MapMatrix::__invert_Lambert_Lon(double x, double y) const
+//{
+//  double lon = 2.0 * atan( x / y ) / ( sin(v1) + sin(v2) );
+//  return RAD_TO_NUM(lon);
+//}

@@ -27,7 +27,7 @@
 
 /**
  * This is the baseclass for all mapelements. The class will be inherited
- * by all classes implementing the map-elements. The clas provides several
+ * by all classes implementing the map-elements. The class provides several
  * virtual function for writing and drawing the elements. Additionaly,
  * the cass provides two enums for the element-type and the type of
  * elevation-values.

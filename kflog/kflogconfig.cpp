@@ -50,12 +50,14 @@
 KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
   : KDialogBase(IconList, i18n("KFlog Setup"), Ok|Cancel, Ok,
       parent, name, true, true),
-    config(cnf)
+    config(cnf),
+    currentProjType(-1)
 {
   __addIDTab();
   __addPathTab();
   __addScaleTab();
   __addMapTab();
+  __addProjectionTab();
 //  __addTopographyTab();
 
   connect( this, SIGNAL(okClicked()), SLOT(slotOk()) );
@@ -68,6 +70,8 @@ KFLogConfig::~KFLogConfig()
 
 void KFLogConfig::slotOk()
 {
+  slotSelectProjection(-1);
+
   config->setGroup("General Options");
   config->writeEntry("Version", "2.0.2");
 
@@ -91,6 +95,15 @@ void KFLogConfig::slotOk()
       MapContents::degreeToNum(homeLatE->text()));
   config->writeEntry("Homesite Longitude",
       MapContents::degreeToNum(homeLonE->text()));
+  config->writeEntry("Projection Type", projectionSelect->currentItem());
+
+  config->setGroup("Lambert Projection");
+  config->writeEntry("Parallel1", lambertV1);
+  config->writeEntry("Parallel2", lambertV2);
+  config->writeEntry("Origin", lambertOrigin);
+
+  config->setGroup("Cylindrical Projection");
+  config->writeEntry("Parallel", cylinPar);
 
   config->setGroup("Personal Data");
   config->writeEntry("PreName", preNameE->text());
@@ -137,6 +150,38 @@ void KFLogConfig::slotSearchWaypointPath()
   if(temp != 0)  waypointPathE->setText(temp);
 }
 
+void KFLogConfig::slotSelectProjection(int index)
+{
+  switch(currentProjType)
+    {
+      case 0:
+        lambertV1 = MapContents::degreeToNum(firstParallel->text());
+        lambertV2 = MapContents::degreeToNum(secondParallel->text());
+        lambertOrigin = MapContents::degreeToNum(originLongitude->text());
+        break;
+      case 1:
+        cylinPar = MapContents::degreeToNum(firstParallel->text());
+        break;
+    }
+
+  switch(index)
+    {
+      case 0:    // Lambert
+        secondParallel->setEnabled(true);
+        originLongitude->setEnabled(true);
+        firstParallel->setText(printPos(lambertV1, true));
+        secondParallel->setText(printPos(lambertV2, true));
+        originLongitude->setText(printPos(lambertOrigin, false));
+        break;
+      case 1:    // plate carre
+        secondParallel->setEnabled(false);
+        originLongitude->setEnabled(false);
+        firstParallel->setText(printPos(cylinPar, true));
+        break;
+    }
+  currentProjType = index;
+}
+
 void KFLogConfig::slotShowLowerLimit(int value)
 {
   lLimitN->display(__setScaleValue(value));
@@ -165,6 +210,18 @@ void KFLogConfig::slotShowReduceScaleB(int value)
 void KFLogConfig::slotShowReduceScaleC(int value)
 {
   reduce3N->display(__setScaleValue(value));
+}
+
+void KFLogConfig::slotDefaultProjection()
+{
+  lambertV1 = 32400000;
+  lambertV2 = 30000000;
+  lambertOrigin = 0;
+
+  cylinPar = 27000000;
+
+  projectionSelect->setCurrentItem(0);
+  slotSelectProjection(0);
 }
 
 void KFLogConfig::slotDefaultScale()
@@ -200,7 +257,7 @@ void KFLogConfig::__addMapTab()
   QGroupBox* elementBox = new QGroupBox(mapPage, "elementBox");
   elementBox->setTitle(i18n("visible Map-Elements"));
 
-  elementSelect = new KComboBox(mapPage, "elementBox");
+  elementSelect = new KComboBox(mapPage, "elementSelect");
 //  elementSelect->setMaximumWidth(300);
   elementSelect->insertItem(i18n("Road"), Road);
   elementSelect->insertItem(i18n("Highway"), Highway);
@@ -268,6 +325,82 @@ void KFLogConfig::__addMapTab()
 
   drawConfig->slotSelectElement(0);
   printConfig->slotSelectElement(0);
+}
+
+void KFLogConfig::__addProjectionTab()
+{
+  projPage = addPage(i18n("Map-Projection"),i18n("Configuration of Map-Projection"),
+      KGlobal::instance()->iconLoader()->loadIcon("projection", KIcon::NoGroup,
+          KIcon::SizeLarge));
+
+  QGroupBox* projType = new QGroupBox(projPage, "projectionSelectBox");
+  projType->setTitle(i18n("Type of Projection") + ":");
+
+  projectionSelect = new KComboBox(projPage, "projectionSelect");
+  projectionSelect->insertItem(i18n("Conical orthomorphic (Lambert)"));
+  projectionSelect->insertItem(i18n("Cylindrical Equidistant (Plate Carre)"));
+
+  QGroupBox* projConf = new QGroupBox(projPage, "projectionSelectBox");
+  projConf->setTitle(i18n("Setup Projection") + ":");
+
+  firstParallel = new LatEdit(projPage, "firstParallel");
+  secondParallel = new LatEdit(projPage, "secondParallel");
+  originLongitude = new LongEdit(projPage, "originLongitude");
+
+  QPushButton* defaultProj = new QPushButton(i18n("Default"), projPage,
+      "defaultScale");
+  defaultProj->setMaximumWidth(defaultProj->sizeHint().width() + 10);
+  defaultProj->setMinimumHeight(defaultProj->sizeHint().height() + 2);
+
+  QGridLayout* projLayout = new QGridLayout(projPage, 17, 7, 8, 1);
+  projLayout->addMultiCellWidget(projType, 0, 2, 0, 6);
+  projLayout->addMultiCellWidget(projectionSelect, 1, 1, 1, 5);
+  projLayout->addMultiCellWidget(projConf, 4, 10, 0, 6);
+  projLayout->addWidget(new QLabel(i18n("1. Standard Parallel") + ":", projPage),
+      5, 1);
+  projLayout->addWidget(firstParallel, 5, 3);
+  projLayout->addWidget(new QLabel(i18n("2. Standard Parallel") + ":", projPage),
+      7, 1);
+  projLayout->addWidget(secondParallel, 7, 3);
+  projLayout->addWidget(new QLabel(i18n("Origin Longitude") + ":", projPage),
+      9, 1);
+  projLayout->addWidget(originLongitude, 9, 3);
+
+  projLayout->addMultiCellWidget(defaultProj, 16, 16, 0, 1, AlignLeft);
+
+  projLayout->addColSpacing(0, 10);
+  projLayout->addColSpacing(2, 5);
+  projLayout->addColSpacing(4, 10);
+  projLayout->addColSpacing(6, 10);
+
+  projLayout->setColStretch(3, 1);
+
+  projLayout->addRowSpacing(0, 25);
+  projLayout->addRowSpacing(2, 5);
+  projLayout->addRowSpacing(4, 25);
+  projLayout->addRowSpacing(6, 5);
+  projLayout->addRowSpacing(8, 5);
+  projLayout->addRowSpacing(15, 10);
+
+  connect(defaultProj, SIGNAL(clicked()), SLOT(slotDefaultProjection()));
+  connect(projectionSelect, SIGNAL(activated(int)),
+      SLOT(slotSelectProjection(int)));
+
+  config->setGroup("Lambert Projection");
+  lambertV1 = config->readNumEntry("Parallel1", 32400000);
+  lambertV2 = config->readNumEntry("Parallel2", 30000000);
+  lambertOrigin = config->readNumEntry("Origin", 0);
+
+  config->setGroup("Cylindrical Projection");
+  cylinPar = config->readNumEntry("Parallel", 27000000);
+
+  config->setGroup("Map Data");
+  int projIndex = config->readNumEntry("Projection Type", 0);
+
+  projectionSelect->setCurrentItem(projIndex);
+  slotSelectProjection(projIndex);
+
+  config->setGroup(0);
 }
 
 void KFLogConfig::__addScaleTab()
@@ -378,11 +511,11 @@ void KFLogConfig::__addScaleTab()
 
   scaleLayout->setColStretch(3, 1);
 
-  scaleLayout->addRowSpacing(0, 20);
-  scaleLayout->addRowSpacing(4, 10);
+  scaleLayout->addRowSpacing(0, 25);
+  scaleLayout->addRowSpacing(4, 5);
   scaleLayout->addRowSpacing(5, 10);
-  scaleLayout->addRowSpacing(6, 20);
-  scaleLayout->addRowSpacing(14, 10);
+  scaleLayout->addRowSpacing(6, 25);
+  scaleLayout->addRowSpacing(14, 5);
   scaleLayout->addRowSpacing(15, 10);
 
   connect(defaultScale, SIGNAL(clicked()), SLOT(slotDefaultScale()));
@@ -435,11 +568,11 @@ void KFLogConfig::__addPathTab()
   pathLayout->addColSpacing(2, 10);
   pathLayout->addColSpacing(4, 10);
 
-  pathLayout->addRowSpacing(0, 20);
+  pathLayout->addRowSpacing(0, 25);
   pathLayout->addRowSpacing(1, 10);
   pathLayout->addRowSpacing(2, 10);
 
-  pathLayout->addRowSpacing(3, 20);
+  pathLayout->addRowSpacing(3, 25);
   pathLayout->setRowStretch(3, 1);
 
   QGroupBox* taskGroup = new QGroupBox(pathPage, "taskGroup");
@@ -458,11 +591,11 @@ void KFLogConfig::__addPathTab()
   pathLayout->addWidget(taskPathE, 5, 1);
   pathLayout->addWidget(taskPathSearch, 5, 3);
 
-  pathLayout->addRowSpacing(4, 20);
+  pathLayout->addRowSpacing(4, 25);
   pathLayout->addRowSpacing(5, 10);
   pathLayout->addRowSpacing(6, 10);
 
-  pathLayout->addRowSpacing(7, 20);
+  pathLayout->addRowSpacing(7, 25);
   pathLayout->setRowStretch(7, 1);
 
   QGroupBox* waypointGroup = new QGroupBox(pathPage, "waypointGroup");
@@ -579,7 +712,7 @@ void KFLogConfig::__addIDTab()
   idLayout->addColSpacing(2, 10);
   idLayout->addColSpacing(4, 10);
 
-  idLayout->addRowSpacing(0, 20);
+  idLayout->addRowSpacing(0, 25);
   idLayout->addRowSpacing(1, 5);
   idLayout->addRowSpacing(3, 5);
   idLayout->addRowSpacing(5, 5);
@@ -587,7 +720,7 @@ void KFLogConfig::__addIDTab()
 
   idLayout->addRowSpacing(8, 25);
 
-  idLayout->addRowSpacing(9, 20);
+  idLayout->addRowSpacing(9, 25);
   idLayout->addRowSpacing(10, 5);
   idLayout->addRowSpacing(11, 10);
   idLayout->addRowSpacing(12, 10);
