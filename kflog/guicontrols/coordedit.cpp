@@ -19,6 +19,9 @@
 // include files for QT
 
 // include files for KDE
+#include <kconfig.h>
+#include <kapp.h>
+
 
 // include files for project
 #include "coordedit.h"
@@ -43,8 +46,9 @@ void CoordEdit::keyPressEvent (QKeyEvent *e)
   QString s;
   int col;
   bool isNumber;
+  QString inputCols="0" + validDirection;
 
-  if (e->text() != 0) {
+  if (e->text().length()!=0 || e->key()==Key_Left || e->key()==Key_Right) {     //somehow, the original code let modifier keys through. This replacement does not.
     s = e->text().upper();
     col = cursorPosition();
     if (hasMarkedText()) {
@@ -52,14 +56,32 @@ void CoordEdit::keyPressEvent (QKeyEvent *e)
     }
 
     switch (e->key()) {
+    case Key_Return:
+    case Key_Escape:
+      QLineEdit::keyPressEvent(e);
+      break;
     case Key_Backspace:
+      while (!inputCols.contains(mask.mid(col-1,1))) setCursorPosition(--col); //move cursor to previous editable character
       col -= 1;
-      // fall through
+      setText(text().replace(col, 1, mask.mid(col, 1)));
+      setCursorPosition(col);
+      break;
     case Key_Delete:
       setText(text().replace(col, 1, mask.mid(col, 1)));
       setCursorPosition(col);
       break;
+    case Key_Left:
+      col--;
+      setCursorPosition(col);
+      while (!inputCols.contains(mask.mid(col,1))) setCursorPosition(--col); //move cursor in front of previous editable character
+      break;      
+    case Key_Right:
+      col++;
+      setCursorPosition(col);
+      while (!inputCols.contains(mask.mid(col,1))) setCursorPosition(++col); //move cursor in front of next editable character
+      break;
     default:
+      
       if (col == text().length() - 1) {
         if (validDirection.contains(s)) {
           setText(text().replace(text().length() - 1, 1, s));
@@ -94,15 +116,31 @@ void CoordEdit::showEvent(QShowEvent *)
   }
 }
 
-LatEdit::LatEdit(QWidget *parent, const char *name ) : CoordEdit(parent, name)
+LatEdit::LatEdit(QWidget *parent, const char *name, int base ) : CoordEdit(parent, name)
 {
-  mask = "00° 00' 00\" N";
+  if (base==0) {
+    KConfig *config = kapp->config();
+
+    config->setGroup("Map Data");
+    base = config->readNumEntry("Homesite Latitude", 1);
+    config->setGroup(0);
+  }
+  mask = "00° 00' 00\" S";
+  if (base>0) mask = "00° 00' 00\" N";
   validDirection = "NS";
 }
 
-LongEdit::LongEdit(QWidget *parent, const char *name ) : CoordEdit(parent, name)
-{
-  mask = "000° 00' 00\" E";
+LongEdit::LongEdit(QWidget *parent, const char *name, int base ) : CoordEdit(parent, name)
+{  
+  if (base==0) {
+    KConfig *config = kapp->config();
+
+    config->setGroup("Map Data");
+    base = config->readNumEntry("Homesite Longitude", 1);
+    config->setGroup(0);
+  }
+  mask = "000° 00' 00\" W";
+  if (base>0) mask = "000° 00' 00\" E";
   validDirection = "WE";
 }
 /** No descriptions */

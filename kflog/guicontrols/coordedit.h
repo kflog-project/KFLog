@@ -77,7 +77,7 @@ public:
  /**
   * Constructor. Takes the default @ref QWidget arguments
   */
-	LatEdit(QWidget *parent=0, const char *name=0);
+	LatEdit(QWidget *parent=0, const char *name=0, int base=0);
  /**
   * Destructor
   */
@@ -94,7 +94,7 @@ public:
  /**
   * Constructor. Takes the default @ref QWidget arguments
   */
-	LongEdit(QWidget *parent=0, const char *name=0);
+	LongEdit(QWidget *parent=0, const char *name=0, int base=0);
  /**
   * Destructor
   */
