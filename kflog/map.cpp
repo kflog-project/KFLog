@@ -1474,22 +1474,21 @@ void Map::slotSavePixmap(KURL fUrl, int width, int height){
   if(fUrl.isLocalFile())
       fName = fUrl.path();
   else
-    {
-      KNotifyClient::event(i18n("Can not save to file %1").arg(fUrl.url()));
       return;
-    }
-        if (width && height){
-          w_orig=pixBuffer.width();
-          h_orig=pixBuffer.height();
-          resize(width,height);
-          slotCenterToFlight();
+
+  if (width && height)
+  {
+    w_orig=pixBuffer.width();
+    h_orig=pixBuffer.height();
+    resize(width,height);
+    slotCenterToFlight();
   }
 
   KConfig* config = KGlobal::config();
   config->setGroup("CommentSettings");
   if (config->readBoolEntry("ShowComment"))
   {
-          Flight* flight = (Flight*)_globalMapContents.getFlight();
+    Flight* flight = (Flight*)_globalMapContents.getFlight();
     QPainter bufferP(&pixBuffer);
     bufferP.setPen( Qt::white );
     QFont font;
@@ -1530,7 +1529,6 @@ void Map::slotRedrawFlight()
 
 void Map::slotRedrawMap()
 {
-  qWarning("slotRedrawMap()");
   extern MapMatrix _globalMapMatrix;
   _globalMapMatrix.createMatrix(this->size());
 
@@ -2729,8 +2727,6 @@ void Map::__drawScale(){
   scalePMask.setPen(mPen);
   scalePMask.drawLine(leftXPos,this->height()-9,leftXPos,this->height()-1);              //left endbar
   scalePMask.drawLine(this->width()-5,this->height()-9,this->width()-5,this->height()-1);//right endbar
-
-  qDebug("Drawlength: %d",drawLength);
 
   //get the string to draw
   QString scaleText=i18n("%1 km").arg(len);
