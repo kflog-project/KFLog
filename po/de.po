@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
-"POT-Creation-Date: 2003-07-09 13:40+0200\n"
-"PO-Revision-Date: 2003-07-09 14:27+0200\n"
+"POT-Creation-Date: 2003-07-10 11:14+0200\n"
+"PO-Revision-Date: 2003-07-10 11:15+0200\n"
 "Last-Translator: Eggert Ehmke <eggert.ehmke@berlin.de>\n"
 "Language-Team: deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -106,7 +106,7 @@ msgstr "FAI Länge"
 msgid "Task-Type: "
 msgstr "Aufgaben Typ:"
 
-#: dataview.cpp:197 map.cpp:585
+#: dataview.cpp:197 map.cpp:604
 msgid "Begin of task"
 msgstr "Beginn der Aufgabe"
 
@@ -271,7 +271,7 @@ msgstr "Ende der Aufgabe"
 msgid "End of Soaring"
 msgstr "Segelflugende"
 
-#: flight.cpp:821 flight.cpp:992 flightdataprint.cpp:208 map.cpp:591
+#: flight.cpp:821 flight.cpp:992 flightdataprint.cpp:208 map.cpp:610
 #: taskdialog.cpp:292 tasklistviewitem.cpp:86
 msgid "Landing"
 msgstr "Landung"
@@ -670,7 +670,7 @@ msgstr "&Aufgabe"
 msgid "&Flight group"
 msgstr "Flug&gruppe"
 
-#: kflog.cpp:476 map.cpp:2395 mapprint.cpp:59 map.moc.cpp:34 map.moc.cpp:42
+#: kflog.cpp:476 map.cpp:2408 mapprint.cpp:59 map.moc.cpp:34 map.moc.cpp:42
 msgid "Map"
 msgstr "Karte"
 
@@ -1282,75 +1282,79 @@ msgstr ""
 "-> \"KFLog einrichten\" können Sie einrichten, welche Kartenelemente bei "
 "welchem Maßstab dargestellt werden sollen. </P>"
 
-#: map.cpp:561
+#: map.cpp:539
+msgid "Waypoint:"
+msgstr "Wegpunkt:"
+
+#: map.cpp:580
 msgid "Sector 1"
 msgstr "Sektor 1"
 
-#: map.cpp:566
+#: map.cpp:585
 msgid "Sector 2"
 msgstr "Sektor 2"
 
-#: map.cpp:572
+#: map.cpp:591
 msgid "FAI-Sector"
 msgstr "FAI-Sektor"
 
-#: map.cpp:576
+#: map.cpp:595
 msgid "not reached"
 msgstr "nicht erreicht"
 
-#: map.cpp:582 taskdialog.cpp:277
+#: map.cpp:601 taskdialog.cpp:277
 msgid "Take Off"
 msgstr "Start"
 
-#: map.cpp:588
+#: map.cpp:607
 msgid "End of task"
 msgstr "Ende der Aufgabe"
 
-#: map.cpp:618
+#: map.cpp:634
 msgid "Airspace-Structure"
 msgstr "Luftraumstruktur"
 
-#: map.cpp:1406
+#: map.cpp:1420
 msgid "Can not save to file %1"
 msgstr "Kann Datei %1 nicht speichern"
 
-#: map.cpp:1426
+#: map.cpp:1440
 msgid "%1 with %2 (%3) on %4"
 msgstr "%1 mit %2 (%3) am %4"
 
-#: map.cpp:1428
+#: map.cpp:1442
 msgid "created by KFLog (www.kflog.org)"
 msgstr "erzeugt von KFLog (www.kflog.org)"
 
-#: map.cpp:1446
+#: map.cpp:1460
 msgid "Select PNG-File"
 msgstr "Wähle PNG-Datei"
 
-#: map.cpp:1480
+#: map.cpp:1494
 msgid "To finish the planing, press <STRG> and the right mouse button!"
 msgstr "Um das Planen zu beenden, drücken Sie <STRG> und die rechte Maustaste!"
 
-#: map.cpp:2396
+#: map.cpp:2409
 msgid "&New waypoint"
 msgstr "Neuer &Wegpunkt"
 
-#: map.cpp:2397
+#: map.cpp:2410
 msgid "&End taskplanning"
 msgstr "&Ende der Flugplanung"
 
-#: map.cpp:2398
+#: map.cpp:2411
 msgid "&Show map info..."
 msgstr "&Karteninformation zeigen"
 
-#: map.cpp:2401
+#: map.cpp:2414
 msgid "&Center map"
 msgstr "Verschiebe &Mittelpunkt der Karte"
 
-#: map.cpp:2403
+#: map.cpp:2416
 msgid "Zoom &In"
 msgstr "Ver&größern"
 
-#: map.cpp:2404
+#: map.cpp:2417
 msgid "Zoom &Out"
 msgstr "Ver&kleinern"
 
