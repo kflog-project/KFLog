@@ -1,0 +1,12 @@
+Ich habe das Dokument auf pdflatex umgestellt, damit png-Grafiken eingebunden werden können.
+Das Erstellen der Dokumentation erfogt mit:
+
+pdflatex KFlog_Handbuch.tex
+
+Derzeit treten noch ein paar Fragen des Kompilers auf (weil noch einige Grafiken nicht das richtige Format besitzen), die aber mit Enter bestätigt werden können....
+
+HTML-Code wird dann mit
+
+latex2html KFlog_Handbuch.tex
+
+erstellt.
