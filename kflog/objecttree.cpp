@@ -183,7 +183,7 @@ int ObjectTree::currentFlightElementType() {
   if (!currentFlightElement) {
     return -1;
   } else {
-    return currentFlightElement->rtti();
+    return currentFlightElement->getTypeID();
   }
 }
 
@@ -207,15 +207,15 @@ void ObjectTree::showTaskPopup(QListViewItem *item, const QPoint &, int)
   }
 */
   //task items
-  taskPopup->setItemEnabled(idTaskEdit, TaskRoot->childCount() && currentFlightElementType()==feTask);
-  taskPopup->setItemEnabled(idTaskDelete, TaskRoot->childCount() && currentFlightElementType()==feTask);
-  taskPopup->setItemEnabled(idTaskSave, TaskRoot->childCount() && currentFlightElementType()==feTask);
-  taskPopup->setItemEnabled(idTaskSaveAll, TaskRoot->childCount() && currentFlightElementType()==feTask);
+  taskPopup->setItemEnabled(idTaskEdit, TaskRoot->childCount() && currentFlightElementType()==BaseMapElement::Task);
+  taskPopup->setItemEnabled(idTaskDelete, TaskRoot->childCount() && currentFlightElementType()==BaseMapElement::Task);
+  taskPopup->setItemEnabled(idTaskSave, TaskRoot->childCount() && currentFlightElementType()==BaseMapElement::Task);
+  taskPopup->setItemEnabled(idTaskSaveAll, TaskRoot->childCount() && currentFlightElementType()==BaseMapElement::Task);
 
   //flight items
-  taskPopup->setItemEnabled(idFlightClose, FlightRoot->childCount() && currentFlightElementType()==feFlight);
-  taskPopup->setItemEnabled(idFlightOptimize, FlightRoot->childCount() && currentFlightElementType()==feFlight);
-  taskPopup->setItemEnabled(idFlightOptimizeOLC, FlightRoot->childCount() && currentFlightElementType()==feFlight);
+  taskPopup->setItemEnabled(idFlightClose, FlightRoot->childCount() && currentFlightElementType()==BaseMapElement::Flight);
+  taskPopup->setItemEnabled(idFlightOptimize, FlightRoot->childCount() && currentFlightElementType()==BaseMapElement::Flight);
+  taskPopup->setItemEnabled(idFlightOptimizeOLC, FlightRoot->childCount() && currentFlightElementType()==BaseMapElement::Flight);
  
   taskPopup->exec(QCursor::pos());
 }
@@ -255,7 +255,7 @@ void ObjectTree::slotEditTask()
   FlightTask *ft;
 
   if (currentFlightElement != 0) {
-    if (currentFlightElement->rtti()==feTask) {
+    if (currentFlightElement->getTypeID()==BaseMapElement::Task) {
       ft = (FlightTask*) currentFlightElement;
       
       //td.name->setText(ft->getFileName());
@@ -279,7 +279,7 @@ void ObjectTree::slotEditTask()
 */
 void ObjectTree::slotDeleteTask()
 {
-  if (currentFlightElementType()==feTask || currentFlightElementType()==feFlight) {
+  if (currentFlightElementType()==BaseMapElement::Task || currentFlightElementType()==BaseMapElement::Flight) {
 //    currentFlightElement=0;
 //    delete currentItem();
     emit closeTask();
@@ -302,7 +302,7 @@ void ObjectTree::slotSaveTask()
   uint i;
 
   //check if we are dealing with a task, and if so, set ft to reference the flighttask, else exit.
-  if (currentFlightElementType()==feTask) {
+  if (currentFlightElementType()==BaseMapElement::Task) {
     ft=(FlightTask*)currentFlightElement;
   } else {
     return;
