@@ -54,7 +54,7 @@ void DataView::slotShowTaskText(QArray<SinglePoint*> taskPoints, QPoint current)
   for(unsigned int n = 0; n < taskPoints.size(); n++)
   	{
   		position = taskPoints.at(n)->getWGSPosition();
-		 	distance += dist(pre_position.y(),pre_position.x(),current.y(),current.x());			
+		 	distance += dist(pre_position.y(),pre_position.x(),position.y(),position.x());			
 			
 		 	name = taskPoints.at(n)->getWPName();
 			htmlText += (QString)"<b>" + name + "</b>" + "<br>" +
@@ -62,11 +62,13 @@ void DataView::slotShowTaskText(QArray<SinglePoint*> taskPoints, QPoint current)
 			pre_position = position;
 			
   	}
-  	distance += dist(pre_position.y(),pre_position.x(),current.y(),current.x());
+ 	distance += dist(pre_position.y(),pre_position.x(),current.y(),current.x());
   	
 
   tmp.sprintf("<hline><br><br><b>Entfernung: %.2f km<b>",distance);
   htmlText += tmp;
+  htmlText += "<br><hline><br><b>pos:<b>" + printPos(current.y()) + " / "
+                                          + printPos(current.x(),true);
   flightDataText->setText(htmlText);
 }
 
