@@ -22,7 +22,7 @@
 
 #include "optimization.h"
 #include <klocale.h>
-#include <qmessagebox.h>
+#include <kmessagebox.h>
 #include <qprogressdialog.h>
 #include <stdlib.h>
 
@@ -63,7 +63,6 @@ void Optimization::run(){
 
   double *L;                        // length values
   int *w;                           // waypoints
-  int v[LEGS+1];                    // solution points
   double length;                    // solution length
 
   unsigned int i,j,k;               // loop variables
@@ -90,7 +89,7 @@ void Optimization::run(){
   L=(double *) malloc((n+1)*(LEGS+1)*sizeof(double));
   w=(unsigned int *) malloc((n+1)*(LEGS+1)*sizeof(unsigned int));
   
-  for (i=0;i<n-1;i++){
+  for (i=0;i<=n-1;i++){
     L[i+0*n]=0;
   }
   for (k=1;k<=LEGS;k++){
@@ -125,11 +124,20 @@ void Optimization::run(){
 
   // find waypoints
   for (long k=LEGS-1;k>=0;k--){
-      pointList[k]=w[pointList[k+1]+k*n];
+      qWarning(QString("  k:%1\tstart:%2\t\tpointList[k+1]:%3").arg(k).arg(start).arg(pointList[k+1]));
+//      pointList[k]=w[pointList[k+1]+k*n];  // if this was the bug, we can delete this line
+      pointList[k]=w[pointList[k+1]+(k+1)*n];
+      qWarning(QString("->k:%1\tstart:%2\t\tpointList[k]:%3").arg(k).arg(start).arg(pointList[k]));
   }
   // correct waypoints
-  for (long k=LEGS-1;k>=0;k--){
+  for (long k=LEGS;k>=0;k--){
       pointList[k]+=start;
+      if (pointList[k]<start || pointList[k]>stop){
+        qWarning(QString("##k:%1\tstart:%2\t\tpointList[k]:%3").arg(k).arg(start).arg(pointList[k]));
+        KMessageBox::error(0,"Sorry optimization fault. Report error (including IGC-File) to <christof.bodner@gmx.net>");
+        return;
+      }
+        
   }
 
   distance=dist(route.at(pointList[0]),route.at(pointList[1]))+

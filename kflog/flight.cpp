@@ -101,6 +101,7 @@ Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName
   header.append(getDistance());
   header.append(getPoints());
   header.append(recorderID);
+  taskTimesSet=false;
 }
 
 Flight::~Flight()
@@ -742,7 +743,11 @@ bool Flight::optimizeTaskOLC()
 {
   if( route.count() < 10)  return false;
 
-  optim = new Optimization(0,route.count(),route);
+  if (!taskTimesSet){
+    KMessageBox::information(0,"You have to set the begin and end times\nin the evaluation dialog first");
+    return false;
+  }
+  optim = new Optimization(taskBegin,taskEnd,route);
   optim->run();
 
   unsigned int idList[7];
@@ -1040,6 +1045,14 @@ void Flight::setAnimationIndex(int n)
 {
   if ((n >= 0) && (getRouteLength() > (unsigned int)n))
             nAnimationIndex = n;
+}
+
+/** Sets task begin and end time */
+void Flight::setTaskByTimes(int timeBegin,int timeEnd)
+{
+  taskBegin = getPointIndexByTime(timeBegin);
+  taskEnd = getPointIndexByTime(timeEnd);
+  taskTimesSet=true;
 }
 
 /** Increments the nAnimationIndex member */

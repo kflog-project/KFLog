@@ -51,6 +51,9 @@ EvaluationView::EvaluationView(QScrollView* parent, EvaluationDialog* dialog)
 
 
   mouseB = NoButton | NotReached;
+//  cursor1 = flight->taskBegin;
+//  cursor2 = flight->TaskEnd;
+//  flight = evalDialog->getFlight();
   cursor1 = 0;
   cursor2 = 86400;
 
@@ -88,6 +91,8 @@ void EvaluationView::paintEvent(QPaintEvent* event = 0)
 
 void EvaluationView::mousePressEvent(QMouseEvent* event)
 {
+  flight = evalDialog->getFlight();
+
   int x1 = ( cursor1 - startTime ) / secWidth
              + X_ABSTAND ;
   int x2 = ( cursor2 - startTime ) / secWidth
@@ -114,9 +119,10 @@ void EvaluationView::mousePressEvent(QMouseEvent* event)
 
 void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
 {
+  flight = evalDialog->getFlight();
+
   int time_alt, x;
   int cursor = -1;
-  Flight *flight = evalDialog->getFlight();
 
   if (flight) {
     if(mouseB == (MidButton | Reached) ||
@@ -166,6 +172,7 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
       }
     else return;
 
+    flight->setTaskByTimes(cursor1,cursor2);
     evalDialog->updateText(flight->getPointIndexByTime(cursor1),
                            flight->getPointIndexByTime(cursor2), true);
 
@@ -177,12 +184,12 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
 
 void EvaluationView::mouseMoveEvent(QMouseEvent* event)
 {
+  flight = evalDialog->getFlight();
+
   int x1 = (( cursor1 - startTime ) / secWidth)
              + X_ABSTAND ;
   int x2 = (( cursor2 - startTime ) / secWidth)
              + X_ABSTAND ;
-
-  Flight *flight = evalDialog->getFlight();
 
   if (flight) {
     if(mouseB == (NoButton | NotReached))
@@ -230,7 +237,6 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
             else
                 cursor_2 = cursor;
           }
-
         evalDialog->updateText(flight->getPointIndexByTime(cursor_1),
                                flight->getPointIndexByTime(cursor_2));
       }

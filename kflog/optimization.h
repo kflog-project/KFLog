@@ -47,7 +47,7 @@ private:
   double weight(unsigned int k); // different weight for the legs
   QList<flightPoint> route;
   double distance,points;
-  unsigned int pointList[LEGS+1];
+  unsigned int pointList[LEGS+1];   // solution points
   unsigned int start;    // first
   unsigned int stop;     // last valid point
   bool  optimized;

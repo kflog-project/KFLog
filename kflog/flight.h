@@ -244,6 +244,8 @@ class Flight : public BaseFlightElement
     QPoint getLastAnimationPos(void);
     /** No descriptions */
     void setLastAnimationPos(QPoint pos);
+    /** Sets task begin and end time */
+    void setTaskByTimes(int timeBegin,int timeEnd);
     /**
      * The flight-types.
      */
@@ -307,6 +309,8 @@ class Flight : public BaseFlightElement
     QRect bBoxFlight;
     int landTime;
     int startTime;
+    int taskBegin; //index to begin of task
+    int taskEnd;   //index to end of task
 
     FlightTask origTask;
     FlightTask optimizedTask;
@@ -319,6 +323,7 @@ class Flight : public BaseFlightElement
     int nAnimationIndex;
     /**  */
     bool bAnimationActive;
+    bool taskTimesSet;
     QPoint preAnimationPos;
     QPixmap pixAnimate;
     /** */

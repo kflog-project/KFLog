@@ -120,7 +120,7 @@ class EvaluationView : public QWidget
   unsigned int cursor2;
   unsigned int cursor_alt;
 
-//  Flight* flight;
+  Flight* flight;
 
   bool isFlight;
 
