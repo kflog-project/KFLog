@@ -144,6 +144,7 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
   taskColLon = taskList->addColumn(i18n("Longitude"));
   taskColDist = taskList->addColumn(i18n("Distance"));
   taskColTime = taskList->addColumn(i18n("Time"));
+  taskList->setAllColumnsShowFocus (true);
 
   routeLength = new QLabel(midFrame);
   routeLength->setFrameStyle( QFrame::Panel | QFrame::Sunken );
@@ -268,35 +269,35 @@ void OLCDialog::__fillDataFields()
   }
 
   QString temp;
-  QListViewItem* item;
-  for(unsigned int loop = 1; loop < wpList.count(); loop++)
+  int loop = 0;
+  for(Waypoint* wp = wpList.first(); wp; wp = wpList.next())
     {
-      temp.sprintf("%d", loop);
+      temp.sprintf("%2d", loop++);
 
-      item = new QListViewItem(taskList);
+      QListViewItem* item = new QListViewItem(taskList);
       item->setText(taskColID, temp);
-      item->setText(taskColWP, wpList.at(loop)->name);
-      item->setText(taskColLat, printPos(wpList.at(loop)->origP.lat()));
-      item->setText(taskColLon, printPos(wpList.at(loop)->origP.lon(), false));
-      temp.sprintf("%.2f km", wpList.at(loop)->distance);
+      item->setText(taskColWP, wp->name);
+      item->setText(taskColLat, printPos(wp->origP.lat()));
+      item->setText(taskColLon, printPos(wp->origP.lon(), false));
+      temp.sprintf("%.2f km", wp->distance);
       item->setText(taskColDist, temp);
 
       time_t time;
-      if (wpList.at(loop)->fixTime != 0)
+      if (wp->fixTime != 0)
         {
-          time = wpList.at(loop)->fixTime;
+          time = wp->fixTime;
         }
-      else if(wpList.at(loop)->sectorFAI != 0)
+      else if(wp->sectorFAI != 0)
         {
-          time = wpList.at(loop)->sectorFAI;
+          time = wp->sectorFAI;
         }
-      else if(wpList.at(loop)->sector1 != 0)
+      else if(wp->sector1 != 0)
         {
-          time = wpList.at(loop)->sector1;
+          time = wp->sector1;
         }
-      else if(wpList.at(loop)->sector2 != 0)
+      else if(wp->sector2 != 0)
         {
-          time = wpList.at(loop)->sector2;
+          time = wp->sector2;
         }
       else
         {
