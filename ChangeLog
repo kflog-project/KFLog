@@ -1,5 +1,10 @@
 $Id$
 
+2003-08-22 Eggert Ehmke <eggert@kflog.org>
+
+  * bugfix in dataview.cpp: prevent crash when MapContents::getFlight() returns NULL.
+  
+
 2003-08-01 Eggert Ehmke <eggert@kflog.org>
 
   * added up/download for waypoint data to/from Filser recorder
