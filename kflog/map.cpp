@@ -159,6 +159,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
       const QPoint current = event->pos();
 
       BaseMapElement* hitElement;
+      FlightTask task;
 
 
       QPoint sitePos, preSitePos, nextSitePos;
@@ -204,8 +205,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                 loop < _globalMapContents.getListLength(
 						        MapContents::GliderList); loop++)
             {
-              hitElement = _globalMapContents.getElement(
-							 MapContents::GliderList, loop);
+              hitElement = _globalMapContents.getElement(MapContents::GliderList, loop);
+							
               sitePos = ((SinglePoint*)hitElement)->getMapPosition();
               
               dX = abs(sitePos.x() - current.x());
@@ -217,28 +218,32 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                   // im Snapping Bereich
                   dX_old = dX;
                   dY_old = dY;
-                    
+
                   point.setX(sitePos.x());
                   point.setY(sitePos.y());
                   // temporärer Weg
-                  QList<wayPoint> tempList;
+
+/*                  QList<wayPoint> tempList;
                   tempList = taskPointList;
                   wayPoint tempWP;
-                  tempWP.origP = _globalMapMatrix.mapToWgs(point);
-                  tempWP.projP = _globalMapMatrix.wgsToMap(tempWP.origP);
+                  tempWP.origP = ((SinglePoint*)hitElement)->getWGSPosition();
+                  tempWP.projP = ((SinglePoint*)hitElement)->getPosition();
                   tempList.append(&tempWP);
 
+
+                  pixFlight.fill(white);
+                  bitFlightMask.fill(black);
                   QPainter planP(&pixFlight);
                   QPainter planPMask(&bitFlightMask);
 
                   FlightTask task(tempList, true);
-                  task.drawMapElement(&planP,&planPMask);
-                  planP.end();
-                  planPMask.end();
+//                  task.drawMapElement(&planP,&planPMask);
+//                  planP.end();
+//                  planPMask.end();
+//                  __showLayer();
+*/
 
-                  bitBlt(this,0,0,&pixFlight,0,0,-1,-1,NotEraseROP);
-//                  pixFlight.fill(white);
-//                  bitFlightMask.fill(white);
+
                 }
             }
                 
@@ -287,7 +292,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
             }
           planP.end();            
         }
-      emit showTaskText(taskPointList,_globalMapMatrix.mapToWgs(point));
+//      emit showTaskText(task,_globalMapMatrix.mapToWgs(point));
     }
 
   if (!timerAnimate->isActive())
@@ -455,13 +460,20 @@ void Map::mousePressEvent(QMouseEvent* event)
 						            	// hier müssen noch mehr Sachen übergeben werden
 
 
+
                         }
                     
                       // Aufgabe zeichnen
                       if(taskPointList.count() > 0)
                         {
+                          warning("zeichne...");
                           __drawPlannedTask();
+
+
                           __showLayer();
+//                          pixFlight.fill(white);
+//                          bitFlightMask.fill(white);
+
                         }
                     }
                   else if(planning == 2)
@@ -947,7 +959,9 @@ warning("Map::__drawPlannedTask()");
   // Strecke zeichnen
   //  pixPlan.fill(white);  
   QPainter planP(&pixPlan);
-  QPen drawP(QColor(0,0,0), 5);
+  QPainter planPMask(&bitPlanMask);
+
+  QPen drawP(QColor(170,0,0), 5);
   drawP.setJoinStyle(Qt::MiterJoin);
   planP.setBrush(NoBrush);
   planP.setPen(drawP);
@@ -965,7 +979,13 @@ warning("Map::__drawPlannedTask()");
       points.setPoint(n,temp.x(),temp.y());
     }
 
-  planP.drawPolyline(points);
+//  planP.drawPolyline(points);
+
+  // Aufgabe mit Sektoren
+  FlightTask task(taskPointList, true);
+  task.drawMapElement(&planP,&planPMask);
+      emit showTaskText(&task,_globalMapMatrix.mapToWgs(QPoint(temp.x(),temp.y())));
+  planPMask.end();
   planP.end();
 }
 

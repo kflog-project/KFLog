@@ -43,8 +43,9 @@ DataView::~DataView()
 
 }
 
-void DataView::slotShowTaskText(QList<wayPoint> taskPointList, QPoint current)
+void DataView::slotShowTaskText( FlightTask* task, QPoint current)
 {
+  QList<wayPoint> taskPointList = task->getWPList();
   QString htmlText = "";
   QString tmp;
   double distance = 0;
@@ -88,6 +89,8 @@ void DataView::slotShowTaskText(QList<wayPoint> taskPointList, QPoint current)
   tmp.sprintf("<hline><br><br><b>Entfernung: %.2f km<b>",distance);
   htmlText += tmp;
 
+  tmp.sprintf("<br><br>Aufgabenart: %d",task->getTaskType());
+  htmlText += tmp;
 
   htmlText += "<br><hline><br><b>pos:<b>" + printPos(current.y()) + " / "
                                           + printPos(current.x(),true);

@@ -27,6 +27,7 @@
 #include <qpointarray.h>
 
 #include <wp.h>
+#include <flighttask.h>
 
 // class SinglePoint;
 class WaypointElement;
@@ -101,7 +102,7 @@ class Map : public QWidget
     /**
     	*
     	*/
-    void showTaskText(QList<wayPoint> taskPointList, QPoint current);
+    void showTaskText(FlightTask* task, QPoint current);
     /** */
     void taskPlanningEnd();
     /** */

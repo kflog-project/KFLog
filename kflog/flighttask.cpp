@@ -21,6 +21,8 @@
 
 #include <cmath>
 
+#include <iostream.h>
+
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -292,10 +294,10 @@ bool FlightTask::isFAI(double d_wp, double d1, double d2, double d3)
 void FlightTask::drawMapElement(QPainter* targetPainter,
     QPainter* maskPainter)
 {
-
   double w1;
   // Strecke und Sektoren zeichnen
-  if(flightType != NotSet)
+//  if(flightType != NotSet)
+  if(flightType != 99999)
     {
       QPoint tempP;
 
@@ -368,6 +370,7 @@ void FlightTask::drawMapElement(QPainter* targetPainter,
                         glMapMatrix->map(wpList.at(loop)->projP));
                   }
                 break;
+
               case FlightTask::Begin:
                 targetPainter->setPen(QPen(QColor(50, 50, 50), 2));
                 targetPainter->setBrush(QBrush(QColor(255, 0, 0),
@@ -384,7 +387,7 @@ void FlightTask::drawMapElement(QPainter* targetPainter,
                 //
                 if(loop)
                   {
-                    targetPainter->setPen(QPen(QColor(255, 0, 0), 2));
+                    targetPainter->setPen(QPen(QColor(255, 0, 0), 4));
                     maskPainter->setPen(QPen(Qt::color1, 2));
                     targetPainter->drawLine(
                         glMapMatrix->map(wpList.at(loop - 1)->projP),
@@ -392,6 +395,8 @@ void FlightTask::drawMapElement(QPainter* targetPainter,
                     maskPainter->drawLine(
                         glMapMatrix->map(wpList.at(loop - 1)->projP),
                         glMapMatrix->map(wpList.at(loop)->projP));
+                   warning("zeichne Linie zum Beginn loop: %d",loop);
+                   cout << "von " << wpList.at(loop - 1)->name << " nach: " << wpList.at(loop)->name << endl;
                   }
                 break;
 

@@ -128,8 +128,8 @@ KFLogApp::KFLogApp()
   connect(map, SIGNAL(showFlightPoint(const QPoint, const struct flightPoint&)),
       this, SLOT(slotShowPointInfo(const QPoint, const struct flightPoint&)));
   // Plannung
-  connect(map, SIGNAL(showTaskText(QList<wayPoint>, QPoint)),
-      dataView, SLOT(slotShowTaskText(QList<wayPoint>, QPoint)));
+  connect(map, SIGNAL(showTaskText(FlightTask* , QPoint)),
+      dataView, SLOT(slotShowTaskText(FlightTask*, QPoint)));
   connect(map, SIGNAL(taskPlanningEnd()), dataView, SLOT(slotClearView()));
   connect(map, SIGNAL(showPoint(const QPoint)),
       this, SLOT(slotShowPointInfo(const QPoint)));

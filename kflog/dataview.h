@@ -23,6 +23,7 @@
 
 
 #include <wp.h>
+#include <flighttask.h>
 class Flight;
 
 /**
@@ -62,7 +63,7 @@ class DataView : public QFrame
     /**
     	* Setzt die Infos zur gerade aktuellen Aufgabe (Planung)
     	*/
-    void slotShowTaskText(QList<wayPoint> taskPointList, QPoint current);
+    void slotShowTaskText(FlightTask* task, QPoint current);
     /**
       * Löscht den Inhalt von Dataview
       */
