@@ -18,6 +18,8 @@
 #include <unistd.h>
 
 #include "waypointcatalog.h"
+#include "airport.h"
+#include "kfrgcs/vlapi2.h"
 
 #include <qdom.h>
 #include <qapplication.h>
@@ -37,6 +39,7 @@
 #include <qprogressdialog.h>
 #include <qregexp.h>
 #include <qstring.h>
+#include <qstringlist.h>
 #include <qtextstream.h>
 
 
@@ -234,22 +237,23 @@ bool WaypointCatalog::importVolkslogger(QString & filename){
   unsigned int fileLength = fInfo.size();
   unsigned int filePos = 0;
 
-  QString s;
+  QStringList s;
+  QString line;
   QTextStream stream(&f);
 
-  QString wpname;
   int lat, lon, latTemp, lonTemp, latmin, lonmin;
   char latChar, lonChar;
   int lineCount;
+  QChar flag;
 
   while (!stream.eof())
     {
       if(importProgress.wasCancelled()) return false;
 
       lineCount++;
-
-      s = stream.readLine();
-      filePos += s.length();
+      line = stream.readLine();
+      s = QStringList::split (",", line, true);
+      filePos += line.length();
       importProgress.setProgress(( filePos * 200 ) / fileLength);
       wayPoint *w = new wayPoint;
 
@@ -259,33 +263,70 @@ bool WaypointCatalog::importVolkslogger(QString & filename){
       latChar = 'N';
       lonChar = 'E';
 
-	 wpname = s.mid(4,6);
+      // line format
+      // 001,name(max. 6 chars),lat,long,flags
+      // flags = XN
+      // N = OR'd digit of
+      // 1 = landable
+      // 2 = hard surface (we use asphalt) if set else gras
+      // 4 = airport if set else glider site
+      // 8 = checkpoint (ignored)
 
-      QString t = s.mid(11,16);
-      sscanf(t,  "%2d%5d,%3d%5d",  &lat, &latmin, &lon, &lonmin);
+      if (s.count() == 5) {
+        sscanf(s[2], "%2d%5d", &lat, &latmin);
+        sscanf(s[3], "%3d%5d", &lon, &lonmin);
 
-	  latTemp = lat * 600000 + latmin * 10;
-      lonTemp = lon * 600000 + lonmin * 10;
+        latTemp = lat * 600000 + latmin * 10;
+        lonTemp = lon * 600000 + lonmin * 10;
 
-      if(latChar == 'S') latTemp = -latTemp;
-      if(lonChar == 'W') lonTemp = -lonTemp;
+        if(latChar == 'S') latTemp = -latTemp;
+        if(lonChar == 'W') lonTemp = -lonTemp;
 
-      w->name = wpname;
-      w->description = "<unknown>";
-      w->icao = "<unknown>";
-      w->type = -1;
-      w->origP.setLat(latTemp);
-      w->origP.setLon(lonTemp);
-      w->elevation =0;
-      w->frequency = 0;
-      w->isLandable = 0;
-      w->runway = 0;
-      w->length = 0;
-      w->surface = 0;
-      w->comment = "<no comment>";
+        if (s[4].length() == 2) {
+          flag = s[4][1];
+        }
+        else {
+          flag = 0;
+        }
 
-      if (!wpList.insertItem(w)) {
-        break;
+        w->name = s[1].stripWhiteSpace();
+        //w->description = "<unknown>";
+        //w->icao = "<unknown>";
+
+        if (flag & VLAPI_DATA::WPT::WPTTYP_L) {
+          if (flag & VLAPI_DATA::WPT::WPTTYP_H) {
+            w->surface = Airport::Asphalt;
+          }
+          else {
+            w->surface = Airport::Grass;
+          }
+
+          if (flag & VLAPI_DATA::WPT::WPTTYP_A) {
+            w->type = BaseMapElement::Airfield;
+          }
+          else {
+            w->type = -1;
+          }
+
+          w->isLandable = true;
+        }
+        else {
+          w->type = -1;
+          w->isLandable = false;
+          w->surface = 0;
+        }
+        w->origP.setLat(latTemp);
+        w->origP.setLon(lonTemp);
+        w->elevation =0;
+        w->frequency = 0;
+        w->runway = 0;
+        w->length = 0;
+
+        //w->comment = "<no comment>";
+
+        if (!wpList.insertItem(w)) {
+          break;
+        }
       }
    }
 
