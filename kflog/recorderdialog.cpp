@@ -683,7 +683,7 @@ void RecorderDialog::slotConnectRecorder()
   else
   {
     QApplication::restoreOverrideCursor();
-    QString errorDetails = errorDetails=activeRecorder->lastError();
+    QString errorDetails=activeRecorder->lastError();
 
     if (!errorDetails.isEmpty()) {
       KMessageBox::detailedSorry(this,
