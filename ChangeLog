@@ -1,5 +1,12 @@
 $Id$
 
+2002-04-05 Thomas <thomas@kflog.org>
+
+  * Added indicator showing current point in flight animation.
+
+  * Flight information updated on statusbar while animating.
+
+
 2002-03-26 Thomas <thomas@kflog.org>
 
   * Rewrite and optimize animation code with new class-structure.
