@@ -1,6 +1,14 @@
 $Id$
 
 
+2002-02-03 Heiner <heiner@kflog.org>
+
+  * Integrated mapprinting into kde-printing-framework.
+
+  * Added printing of the flight and the task. The printout
+    can be centered to the flight or the task.
+
+
 2002-01-27 Heiner <heiner@kflog.org>
 
   * Changed drawing of airspaces slightly.

@@ -1,6 +1,33 @@
 $Id$
 
 
+* Flugweg und Aufgabe drucken/zeichnen ...
+
+  -> Die Linie vom letzten Wegpunkt zum Endpunkt (Start auf
+     Schenkel), wird zweimal gezeichnet. Wieso ???
+
+  -> Nach dem Drucken wird die Karte erneut gezeichnet, um die alten
+     Werte komplett wieer herzustellen. Das ist nicht nötig, solange
+     nur der Flug neugezeichnet wird ...
+
+
+* Fluginformationen drucken
+
+  -> Wie können wir garantieren, dass die neue KAction "flightPrint" auf
+     jeden Fall sichtbar wird? Am besten ohne Linie zum
+
+  -> später: auf Wunsch auch alle Wendepunkte, je in eigenen Ausschnitt gezoomt)
+
+
+* DropEvent in Map hier einbauen ...
+
+
+* PrintDialog entfernen
+
+
+* FlightTask einführen
+
+
 /*************************************************************************
  *
  *

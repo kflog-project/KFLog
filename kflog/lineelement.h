@@ -56,8 +56,11 @@ class LineElement : public BaseMapElement
      * Prints the element. Reimplemented from BaseMapElement.
      *
      * @param  printP  The painter to draw the element into.
+     *
+     * @param  isText  Shows, if the text of some mapelements should
+     *                 be printed.
      */
-    virtual void printMapElement(QPainter* printPainter) const;
+    virtual void printMapElement(QPainter* printPainter, bool isText) const;
     /**
      * @return "true", if the element is a valley.
      *

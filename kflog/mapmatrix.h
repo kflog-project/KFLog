@@ -106,6 +106,9 @@ class MapMatrix : public QObject
      */
     QPoint print(QPoint p) const;
     /**
+     */
+    double print(double bearing) const;
+    /**
      * Maps the given pointarray into the current print-matrix.
      *
      * @param  pArray  The pointarray to be mapped
@@ -135,7 +138,7 @@ class MapMatrix : public QObject
     /**
      * Initializes the matrix for printing the map.
      */
-    QWMatrix* createPrintMatrix(double scale, QSize pS, int dX = 0, int dY = 0,
+    void createPrintMatrix(double scale, QSize pS, int dX = 0, int dY = 0,
         bool rotate = false);
     /**
      * Initializes the matrix for displaying the map.
@@ -165,7 +168,7 @@ class MapMatrix : public QObject
      * Centers the map to the given rectangle and scales the map, so that
      * the rectangle will be seen completly.
      */
-    void centerToRect(QRect);
+    double centerToRect(QRect, QSize = QSize(0,0));
     /** */
     QPoint mapToWgs(QPoint pos) const;
     /**
@@ -179,7 +182,11 @@ class MapMatrix : public QObject
     /**
      * @return the lat/lon-position of the map-center.
      */
-    QPoint getMapCenter() const;
+    QPoint getMapCenter(bool isPrint = false) const;
+    /** */
+    void centerToLatLon(QPoint center);
+    /** */
+    void centerToLatLon(int latitude, int longitude);
 
   public slots:
     /** */
@@ -277,6 +284,9 @@ class MapMatrix : public QObject
      */
     int mapCenterLon;
     /** */
+    int printCenterLat;
+    int printCenterLon;
+    /** */
     int homeLat;
     /** */
     int homeLon;
@@ -294,6 +304,8 @@ class MapMatrix : public QObject
     double pScale;
     /** */
     double rotationArc;
+    /** */
+    double printArc;
     /** */
     int scaleBorders[6];
     /** */

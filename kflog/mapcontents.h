@@ -28,7 +28,6 @@
 
 class Airport;
 class Airspace;
-class ElevPoint;
 class Flight;
 class GliderSite;
 class Isohypse;
@@ -123,8 +122,11 @@ class MapContents : public QObject
      * Prints the whole content of the map into the given painter.
      *
      * @param  targetP  The painter to draw the elements into
+     *
+     * @param  isText  Shows, if the text of some mapelements should
+     *                 be printed.
      */
-    void printContents(QPainter* targetP);
+    void printContents(QPainter* targetP, bool isText);
     /**
      * Loads a new flight-file.
      *
@@ -262,7 +264,7 @@ class MapContents : public QObject
     /**
      * outList contains all outlanding-fields.
      */
-    QList<ElevPoint> outList;
+    QList<SinglePoint> outList;
     /**
      * navList contains all radio navigation facilities.
      */
@@ -275,7 +277,7 @@ class MapContents : public QObject
      * obstacleList contains all obstacles and -groups, as well
      * as the spots and passes.
      */
-    QList<ElevPoint> obstacleList;
+    QList<SinglePoint> obstacleList;
     /**
      * reportList contains all reporting points.
      */

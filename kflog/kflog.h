@@ -121,6 +121,8 @@ class KFLogApp : public KDockMainWindow
      * Opens the printing-dialog to print the map.
      */
     void slotFilePrint();
+    /** */
+    void slotFlightPrint();
     /**
      * Calls saveConfig() and closes the application.
      */
@@ -339,8 +341,11 @@ class KFLogApp : public KDockMainWindow
      * Action to show the evaluationdialog.
      */
     KAction* flightEvaluation;
-    KAction* taskAndWaypoint;
 //    KAction* flightOptimization;
+    /** */
+    KAction* flightPrint;
+    /** */
+    KAction* taskAndWaypoint;
 		/**
 		 * Action to start the animation
 		 */		
@@ -358,7 +363,6 @@ class KFLogApp : public KDockMainWindow
 		KAction* stepFlightEnd;
  		KAction* stepFlightStepNext;
  		KAction* stepFlightStepPrev;
-
 		/**
      * The map-widget.
      */

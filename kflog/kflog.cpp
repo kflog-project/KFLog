@@ -40,6 +40,7 @@
 #include "kflog.h"
 #include <dataview.h>
 #include <evaluationdialog.h>
+#include <flightdataprint.h>
 #include <igcpreview.h>
 #include <kflogconfig.h>
 #include <kflogstartlogo.h>
@@ -49,7 +50,6 @@
 #include <mapcontents.h>
 #include <mapcontrolview.h>
 #include <mapprint.h>
-#include <printdialog.h>
 #include <taskandwaypoint.h>
 
 #define STATUS_LABEL(a,b,c) \
@@ -145,6 +145,10 @@ void KFLogApp::initActions()
       actionCollection(), "file_close");
 
   KStdAction::print(this, SLOT(slotFilePrint()), actionCollection());
+
+  flightPrint = new KAction(i18n("Print Flightdata"), "fileprint",
+      0, this, SLOT(slotFlightPrint()), actionCollection(), "flight_print");
+
   KStdAction::quit(this, SLOT(slotFileQuit()), actionCollection());
 
   KActionMenu* mapMoveMenu = new KActionMenu(i18n("Move map"), "move",
@@ -557,7 +561,6 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
 				  stepFlightHome->setEnabled(true);
 				  stepFlightEnd->setEnabled(true);
 
-
           map->slotRedrawFlight();
           map->slotCenterToFlight();
 
@@ -571,17 +574,22 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
   slotStatusMsg(i18n("Ready."));
 }
 
-
 void KFLogApp::slotFilePrint()
 {
   slotStatusMsg(i18n("Printing..."));
 
-  MapPrint::MapPrint();
+  // viewCenterFlight is enabled, when a flight is loaded ...
+  MapPrint::MapPrint(viewCenterFlight->isEnabled());
 
-//  QPrinter printer;
-//  if (printer.setup(this))
-//  PrintDialog pD(this, true);
-//  pD.openMapPrintDialog();
+  slotStatusMsg(i18n("Ready."));
+}
+
+void KFLogApp::slotFlightPrint()
+{
+  slotStatusMsg(i18n("Printing..."));
+
+  extern MapContents _globalMapContents;
+  FlightDataPrint::FlightDataPrint(_globalMapContents.getFlight());
 
   slotStatusMsg(i18n("Ready."));
 }

@@ -39,7 +39,6 @@
 #include <airport.h>
 #include <airspace.h>
 #include <basemapelement.h>
-#include <elevpoint.h>
 #include <flight.h>
 #include <glidersite.h>
 #include <isohypse.h>
@@ -468,7 +467,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   case BaseMapElement::LightObstacle:
                   case BaseMapElement::ObstacleGroup:
                   case BaseMapElement::LightObstacleGroup:
-                    obstacleList.append(new ElevPoint(0, 0, type, position,
+                    obstacleList.append(new SinglePoint(0, 0, type, position,
                         elev));
                     break;
                   case BaseMapElement::CompPoint:
@@ -495,7 +494,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
                     hydroList.append(new LineElement(name, type, tA, sortID));
                     break;
                   case BaseMapElement::Spot:
-                    obstacleList.append(new ElevPoint(0, 0, type, position,
+                    obstacleList.append(new SinglePoint(0, 0, type, position,
                         elev));
                     break;
                   case BaseMapElement::Glacier:
@@ -1580,57 +1579,55 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
     }
 }
 
-void MapContents::printContents(QPainter* targetPainter)
+void MapContents::printContents(QPainter* targetPainter, bool isText)
 {
   proofeSection(true);
 
   for(unsigned int loop = 0; loop < topoList.count(); loop++)
-      topoList.at(loop)->printMapElement(targetPainter);
+      topoList.at(loop)->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < hydroList.count(); loop++)
-      hydroList.at(loop)->printMapElement(targetPainter);
+      hydroList.at(loop)->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < railList.count(); loop++)
-      railList.at(loop)->printMapElement(targetPainter);
+      railList.at(loop)->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < roadList.count(); loop++)
-      roadList.at(loop)->printMapElement(targetPainter);
+      roadList.at(loop)->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < cityList.count(); loop++)
-      cityList.at(loop)->printMapElement(targetPainter);
+      cityList.at(loop)->printMapElement(targetPainter, isText);
 
 //  for(unsigned int loop = 0; loop < villageList.count(); loop++)
-//      villageList.at(loop)->drawMapElement(targetPainter);
+//      villageList.at(loop)->drawMapElement(targetPainter, isText);
 
 
   for(unsigned int loop = 0; loop < navList.count(); loop++)
-      navList.at(loop)->printMapElement(targetPainter);
+      navList.at(loop)->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < airspaceList.count(); loop++)
-      airspaceList.at(loop)->printMapElement(targetPainter);
+      airspaceList.at(loop)->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < obstacleList.count(); loop++)
-      obstacleList.at(loop)->printMapElement(targetPainter);
+      obstacleList.at(loop)->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < reportList.count(); loop++)
-      reportList.at(loop)->printMapElement(targetPainter);
+      reportList.at(loop)->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < landmarkList.count(); loop++)
-      landmarkList.at(loop)->printMapElement(targetPainter);
-
+      landmarkList.at(loop)->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < airportList.count(); loop++)
-      airportList.at(loop)->printMapElement(targetPainter);
+      airportList.at(loop)->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < gliderList.count(); loop++)
-      gliderList.at(loop)->printMapElement(targetPainter);
+      gliderList.at(loop)->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < outList.count(); loop++)
-      outList.at(loop)->printMapElement(targetPainter);
-
+      outList.at(loop)->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < flightList.count(); loop++)
-      flightList.at(loop)->printMapElement(targetPainter);
+      flightList.at(loop)->printMapElement(targetPainter, isText);
 }
 
 void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
@@ -1742,9 +1739,9 @@ int MapContents::searchGetPrevFlightPoint(int index, flightPoint & fP)
 /** Get the contents of the next FlightPoint after number 'index' */
 int MapContents::searchGetNextFlightPoint(int index, flightPoint & fP)
 {
-	if(flightList.count()){
-		return (flightList.current()->searchGetNextPoint(index, fP));
-	}
+	if(flightList.count())
+      return (flightList.current()->searchGetNextPoint(index, fP));
+
 	return -1;
 }
 

@@ -146,6 +146,8 @@ class Flight : public BaseMapElement
      * @param  maskP  The maskpainter for targetP
      */
     virtual void drawMapElement(QPainter* targetP, QPainter* maskP);
+    /** */
+    virtual void printMapElement(QPainter* targetP, bool isText);
     /**
      * @return the point with the index "n"
      */
@@ -196,6 +198,8 @@ class Flight : public BaseMapElement
      * @return the bounding-box of the flight.
      */
     QRect getFlightRect() const;
+    /** */
+    QRect getWGSFlightRect() const;
     /**
      * @return the bounding-box of the task.
      */
@@ -296,6 +300,7 @@ class Flight : public BaseMapElement
 
     QRect bBoxFlight;
     QRect bBoxTask;
+    QRect wgsBoxFlight;
     int landTime;
     int startTime;
 };

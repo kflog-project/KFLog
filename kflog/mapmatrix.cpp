@@ -56,7 +56,8 @@
 #define HOME_DEFAULT_LON 5364500
 
 MapMatrix::MapMatrix()
-  : mapCenterLat(0), mapCenterLon(0), cScale(0), rotationArc(0)
+  : mapCenterLat(0), mapCenterLon(0), printCenterLat(0), printCenterLon(0),
+    cScale(0), rotationArc(0), printArc(0)
 {
   viewBorder.setTop(32000000);
   viewBorder.setBottom(25000000);
@@ -183,20 +184,25 @@ QPoint MapMatrix::print(int lat, int lon, double dX, double dY) const
   if(dX == 0 &&  dY == 0)
     {
       temp = QPoint(
-      ( __calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
-          * RADIUS / pScale ) + dX,
-      ( __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
-           * RADIUS / pScale ) + dY );
+        ( __calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
+            * RADIUS / pScale ) + dX,
+        ( __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
+             * RADIUS / pScale ) + dY );
     }
   else
     {
       temp = QPoint(
-      ( __calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
-          * RADIUS / ( pScale * 0.5 ) ) + dX,
-      ( __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
-           * RADIUS / ( pScale * 0.5 ) ) + dY );
+        ( __calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
+            * RADIUS / ( pScale * 0.5 ) ) + dX,
+        ( __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
+             * RADIUS / ( pScale * 0.5 ) ) + dY );
     }
   return temp;
+}
+
+double MapMatrix::print(double arc) const
+{
+  return (arc + printArc);
 }
 
 QRect MapMatrix::getViewBorder() const  { return viewBorder; }
@@ -213,16 +219,19 @@ QRect MapMatrix::getPrintBorder(double a1, double a2, double b1, double b2,
   temp.setBottom( __invert_Lambert_Lat(b2 * pScale / RADIUS,
       b1 * pScale / RADIUS) );
   temp.setRight( __invert_Lambert_Lon(c2 * pScale / RADIUS,
-      c1 * pScale / RADIUS) + mapCenterLon );
+      c1 * pScale / RADIUS) + printCenterLon );
   temp.setLeft( __invert_Lambert_Lon(d2 * pScale / RADIUS,
-      d1 * pScale / RADIUS) + mapCenterLon );
+      d1 * pScale / RADIUS) + printCenterLon );
 
   return temp;
 }
 
-QPoint MapMatrix::getMapCenter() const
+QPoint MapMatrix::getMapCenter(bool isPrint) const
 {
-  return QPoint(mapCenterLat, mapCenterLon);
+  if(isPrint)
+      return QPoint(printCenterLat, printCenterLon);
+  else
+      return QPoint(mapCenterLat, mapCenterLon);
 }
 
 double MapMatrix::getScale(unsigned int type)
@@ -250,26 +259,52 @@ void MapMatrix::centerToPoint(QPoint center)
   mapCenterLon = projCenter.x();
 }
 
-void MapMatrix::centerToRect(QRect center)
+void MapMatrix::centerToLatLon(QPoint center)
 {
-  int centerX = (center.left() + center.right()) / 2;
-  int centerY = (center.top() + center.bottom()) / 2;
+  centerToLatLon(center.x(), center.y());
+}
 
-  double xScaleDelta = (double)(sqrt(center.width() * center.width())) /
-      (double)mapViewSize.width();
-  double yScaleDelta = (double)(sqrt(center.height() * center.height())) /
-      (double)mapViewSize.height();
+void MapMatrix::centerToLatLon(int latitude, int longitude)
+{
+  mapCenterLat = latitude;
+  mapCenterLon = longitude;
+}
 
-  double tempScale = cScale * MAX(xScaleDelta, yScaleDelta) * 1.05;
-  // Maximale Vergrößerung
-  if(tempScale < MAX_SCALE)
-      tempScale = MAX_SCALE;
+double MapMatrix::centerToRect(QRect center, QSize pS)
+{
+  const int centerX = (center.left() + center.right()) / 2;
+  const int centerY = (center.top() + center.bottom()) / 2;
+
+  // We add 6.5 km to ensure, that the sectors will be visible,
+  // when the user centers to the task.
+  const double width = sqrt(center.width() * center.width()) +
+      (6.5 * 1000.0 / cScale);
+  const double height = sqrt(center.height() * center.height()) +
+      (6.5 * 1000.0 / cScale);
+
+  double xScaleDelta, yScaleDelta;
+
+  if(pS == QSize(0,0))
+    {
+      xScaleDelta = width / mapViewSize.width();
+      yScaleDelta = height / mapViewSize.height();
+    }
+  else
+    {
+      xScaleDelta = width / pS.width();
+      yScaleDelta = height / pS.height();
+    }
+
+  double tempScale = MAX(cScale * MAX(xScaleDelta, yScaleDelta),
+      MAX_SCALE);
 
   // Änderung nur, wenn Unterschied zu gross:
-  if((tempScale / cScale) > 1.1 || (tempScale / cScale) < 0.8)
+  if((tempScale / cScale) > 1.05 || (tempScale / cScale) < 0.95)
       cScale = tempScale;
 
   centerToPoint(QPoint(centerX, centerY));
+
+  return cScale;
 }
 
 QPoint MapMatrix::mapToWgs(QPoint pos) const
@@ -374,10 +409,13 @@ void MapMatrix::createMatrix(QSize newSize)
 //  emit matrixChanged();
 }
 
-QWMatrix* MapMatrix::createPrintMatrix(double printScale, QSize pSize, int dX,
+void MapMatrix::createPrintMatrix(double printScale, QSize pSize, int dX,
     int dY, bool rotate)
 {
   pScale = printScale;
+
+  printCenterLat = mapCenterLat;
+  printCenterLon = mapCenterLon;
 
   //
   // We must devide the scale by 2.0, because all printing is done
@@ -388,11 +426,11 @@ QWMatrix* MapMatrix::createPrintMatrix(double printScale, QSize pSize, int dX,
   else
       emit printMatrixValues(1);
 
-  const QPoint tempPoint(wgsToMap(mapCenterLat, mapCenterLon));
+  const QPoint tempPoint(wgsToMap(printCenterLat, printCenterLon));
   printMatrix.reset();
 
   double scale = MAX_SCALE / pScale;
-  double printArc = atan(tempPoint.x() * 1.0 / tempPoint.y() * 1.0);
+  printArc = atan(tempPoint.x() * 1.0 / tempPoint.y() * 1.0);
 
   printMatrix.setMatrix(cos(printArc) * scale, sin(printArc) * scale,
       -sin(printArc) * scale, cos(printArc) * scale, 0, 0);
@@ -403,15 +441,14 @@ QWMatrix* MapMatrix::createPrintMatrix(double printScale, QSize pSize, int dX,
   /* Set the translation */
   if(dX == 0 && dY == 0)
     {
-      QWMatrix translateMatrix(1, 0, 0, 1, pSize.width() / 2 + dX,
-        ( pSize.height() / 2 ) - printMatrix.map(tempPoint).y() + dY );
+      QWMatrix translateMatrix(1, 0, 0, 1, pSize.width() / 2,
+        ( pSize.height() / 2 ) - printMatrix.map(tempPoint).y() );
 
       printMatrix = printMatrix * translateMatrix;
     }
   else
     {
       QWMatrix translateMatrix(1, 0, 0, 1, dX, dY );
-
       printMatrix = printMatrix * translateMatrix;
     }
 
@@ -439,7 +476,7 @@ QWMatrix* MapMatrix::createPrintMatrix(double printScale, QSize pSize, int dX,
   printBorder.setRight(trCorner.x());
   printBorder.setBottom(MIN(blCorner.y(), brCorner.y()));
 
-  return &printMatrix;
+//  return &printMatrix;
 }
 
 void MapMatrix::slotCenterToHome()  { MATRIX_MOVE( MapMatrix::Home ) }
