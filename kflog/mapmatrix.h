@@ -306,10 +306,6 @@ class MapMatrix : public QObject
     /** */
     int printCenterLat;
     int printCenterLon;
-    /** */
-    int homeLat;
-    /** */
-    int homeLon;
     /**
      * Contains the geographical border of the map (lat/lon).
      */

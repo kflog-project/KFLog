@@ -83,6 +83,7 @@ class Waypoints : public QFrame  {
   int idWaypointDelete;
   int idWaypointCopy2Task;
   int idWaypointCenterMap;
+  int idWaypointSetHome;
   /** all loaded catalogs */
   QList<WaypointCatalog> waypointCatalogs;
   /**  */
@@ -122,6 +123,7 @@ class Waypoints : public QFrame  {
   void slotImportWaypointFromMap();
   void slotCopyWaypoint2Task();
   void slotCenterMap();
+  void slotSetHome();
 
   public slots: // Public slots
   /**

@@ -28,6 +28,7 @@
 #include <signal.h>
 
 #include <qstringlist.h>
+#include <klocale.h>
 
 #include <../airport.h>
 
@@ -103,6 +104,7 @@ int SoaringPilot::readFile(QStringList &file)
   QString s;
   time_t t1;
   int start = 0;
+  _errorinfo = "";
 
   t1 = time(NULL);
   while (!breakTransfer) {
@@ -124,6 +126,13 @@ int SoaringPilot::readFile(QStringList &file)
       if (time(NULL) - t1 > 2) {
         break;
       }
+    }
+    else {
+      // waiting 5 secs. for response
+      if (time(NULL) - t1 > 5) {
+        _errorinfo = i18n("No response from recorder within 5 seconds!");
+        return FR_ERROR;
+      }      
     }
   }
   return FR_OK;
@@ -371,6 +380,7 @@ int SoaringPilot::openRecorder(const QString portName, int baud)
 int SoaringPilot::closeRecorder() {
   if (portID != -1) {
     tcsetattr(portID, TCSANOW, &oldTermEnv);
+    close(portID);
     _isConnected=false;
     return FR_OK;
   }

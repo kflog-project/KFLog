@@ -169,6 +169,8 @@ void Waypoints::addPopupMenu()
                                                   SLOT(slotCopyWaypoint2Task()));
   idWaypointCenterMap = wayPointPopup->insertItem(SmallIcon("centerwaypoint"), i18n("Center map on waypoint"), this,
                                                   SLOT(slotCenterMap()));
+  idWaypointSetHome = wayPointPopup->insertItem(SmallIcon("gohome"), i18n("Set Homesite"), this,
+                                                SLOT(slotSetHome()));
 }
 
 /** open a catalog and set it active */
@@ -197,6 +199,7 @@ void Waypoints::showWaypointPopup(QListViewItem *it, const QPoint &, int)
   wayPointPopup->setItemEnabled(idWaypointDelete, it != 0);
   wayPointPopup->setItemEnabled(idWaypointCopy2Task, it != 0);
   wayPointPopup->setItemEnabled(idWaypointCenterMap, it != 0);
+  wayPointPopup->setItemEnabled(idWaypointSetHome, it != 0);
 
   wayPointPopup->exec(QCursor::pos());
 }
@@ -711,6 +714,24 @@ void Waypoints::slotCenterMap()
 
       emit centerMap(w->origP.lat(), w->origP.lon());
     }
+}
+
+void Waypoints::slotSetHome()
+{
+  KConfig* config = KGlobal::config();
+  config->setGroup("Map Data");
+  QListViewItem *item = waypoints->currentItem();
+
+  if (item != 0) {
+    WaypointDict *wl = &waypointCatalogs.current()->wpList;
+    Waypoint *w = wl->find(item->text(colName));
+    
+    config->writeEntry("Homesite", w->name);
+    config->writeEntry("Homesite Latitude", w->origP.lat());
+    config->writeEntry("Homesite Longitude", w->origP.lon());
+
+    config->setGroup(0);
+  }
 }
 
 void Waypoints::getFilterData()

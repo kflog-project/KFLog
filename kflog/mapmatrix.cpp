@@ -433,8 +433,12 @@ void MapMatrix::__moveMap(int dir)
         mapCenterLon = viewBorder.right();
         break;
       case Home:
-        mapCenterLat = homeLat;
-        mapCenterLon = homeLon;
+        KConfig *config = kapp->config();
+
+        config->setGroup("Map Data");
+        mapCenterLat = config->readNumEntry("Homesite Latitude", HOME_DEFAULT_LAT);
+        mapCenterLon = config->readNumEntry("Homesite Longitude", HOME_DEFAULT_LON);
+        config->setGroup(0);
     }
 
   createMatrix(matrixSize);
@@ -624,9 +628,6 @@ void MapMatrix::slotInitMatrix()
       mapCenterLon = config->readNumEntry("Center Longitude", HOME_DEFAULT_LON);
       cScale = config->readDoubleNumEntry("Map Scale", 200);
     }
-
-  homeLat = config->readNumEntry("Homesite Latitude", HOME_DEFAULT_LAT);
-  homeLon = config->readNumEntry("Homesite Longitude", HOME_DEFAULT_LON);
 
   newProjectionType = config->readNumEntry("Projection Type", 0);
 
