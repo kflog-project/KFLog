@@ -363,7 +363,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   if (!bAnimationActive)
     nStop = route.count()-1;
   else
-	  nStop = nAnimationIndex;
+    nStop = nAnimationIndex;
 
   for(unsigned int n = delta; n < nStop; n = n + delta)
     {
@@ -383,6 +383,8 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
       QPen drawP = glConfig->getDrawPen(pointB);
       drawP.setCapStyle(Qt::SquareCap);
+//      QColor HeightC(QColor("darkblue").light(100 + (int)(pointB->height/20)));
+//      drawP.setColor(HeightC);
       targetPainter->setPen(drawP);
 
       maskPainter->setPen(QPen(Qt::color1, drawP.width(),
@@ -908,9 +910,9 @@ int Flight::searchGetNextPoint(int index, flightPoint& searchPoint)
 {
   // only move to next if not at last point
   if ((index < (int)route.count() - 1) && (index >= 0))
-	  	index += 1;
+                  index += 1;
 
-	// now update searchPoint struct
+        // now update searchPoint struct
   searchPoint = *route.at(index);
   return index;
 }
@@ -918,10 +920,10 @@ int Flight::searchGetNextPoint(int index, flightPoint& searchPoint)
 /** Get the previous FlightPoint before number 'index' */
 int Flight::searchGetPrevPoint(int index, flightPoint& searchPoint)
 {
-	// only move to next is not first point
+        // only move to next is not first point
   if ((index > 1) && (index <= (int)route.count() - 1))
-  		index -= 1;
- 	// now update searchPoint struct
+                  index -= 1;
+         // now update searchPoint struct
   searchPoint = *route.at(index);
   return index;
 }
@@ -934,7 +936,7 @@ int Flight::searchStepNextPoint(int index, flightPoint & fP, int step)
   if (index + step < (int)getRouteLength() - 1)
       index += step;
   else
-  	  index = getRouteLength() - 1;
+            index = getRouteLength() - 1;
 
   return searchGetNextPoint(index, fP);
 }
@@ -947,7 +949,7 @@ int Flight::searchStepPrevPoint(int index,  flightPoint & fP, int step)
   if (index - step > 0)
       index -= step;
   else
-  	  index = 1;
+            index = 1;
 
   return searchGetPrevPoint(index, fP);
 }
@@ -1024,18 +1026,18 @@ QStrList Flight::getHeader()  {  return header;  }
 void Flight::setAnimationIndex(int n)
 {
   if ((n >= 0) && (getRouteLength() > (unsigned int)n))
-  	  nAnimationIndex = n;
+            nAnimationIndex = n;
 }
 
 /** Increments the nAnimationIndex member */
 void Flight::setAnimationNextIndex(void)
 {
-	if (getRouteLength() > (unsigned int)nAnimationIndex+1)
-  	  nAnimationIndex++;
+        if (getRouteLength() > (unsigned int)nAnimationIndex+1)
+            nAnimationIndex++;
   else
     {
-		  nAnimationIndex = (int)getRouteLength()-1;
-      bAnimationActive = false;	//stop the animation of this flight
+                  nAnimationIndex = (int)getRouteLength()-1;
+      bAnimationActive = false;        //stop the animation of this flight
     }
 }
 
@@ -1059,4 +1061,3 @@ QPixmap Flight::getLastAnimationPixmap(void)  {  return pixAnimate;  }
 
 /** No descriptions */
 void Flight::setLastAnimationPixmap(QPixmap pix)  {  pixAnimate = pix;  }
-
