@@ -49,6 +49,16 @@ public:
    * @returns an identifier with the value TASKLISTVIEWITEM_TYPEID for runtime typechecking
    */
   inline virtual int rtti() const{return TASKLISTVIEWITEM_TYPEID;};
+  /**
+   * Called to make the item update itself.
+   */
+  void update();
+
+protected: // Protected methods
+  /**
+   * Creates the childnodes for this flightnode.
+   */
+  void createChildren();
 };
 
 #endif

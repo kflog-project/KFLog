@@ -117,7 +117,7 @@ void ObjectTree::slotFlightChanged(){
         ((FlightListViewItem*)itm)->update();
         break;
       case TASKLISTVIEWITEM_TYPEID:
-        //(TaskListViewItem*)itm->update();
+        ((TaskListViewItem*)itm)->update();
         break;
       default:
         warning("Listviewitem of unknown type");

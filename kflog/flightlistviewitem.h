@@ -55,8 +55,11 @@ public:
    * @returns an identifier with the value FLIGHTLISTVIEWITEM_TYPEID for runtime typechecking
    */
   inline virtual int rtti() const{return FLIGHTLISTVIEWITEM_TYPEID;};
+
 protected: // Protected methods
-  /** Creates the childnodes for this flightnode. */
+  /**
+   * Creates the childnodes for this flightnode.
+   */
   void createChildren();
 };
 
