@@ -94,7 +94,7 @@
 #define ULTRALIGHT       11
 #define HANGGLIDER       12
 #define PARACHUTE        13
-#define BALLON           14
+#define BALLOON           14
 #define OUTLANDING       15
 
 #define VOR              16

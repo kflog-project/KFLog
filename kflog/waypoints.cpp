@@ -453,7 +453,7 @@ void Waypoints::fillWaypoints()
       case BaseMapElement::UltraLight:
       case BaseMapElement::HangGlider:
       case BaseMapElement::Parachute:
-      case BaseMapElement::Ballon:
+      case BaseMapElement::Balloon:
         if (!c->showOtherSites) {
           continue;
         }

@@ -454,7 +454,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   case BaseMapElement::UltraLight:
                   case BaseMapElement::HangGlider:
                   case BaseMapElement::Parachute:
-                  case BaseMapElement::Ballon:
+                  case BaseMapElement::Balloon:
                     break;
                   case BaseMapElement::Outlanding:
                     break;
