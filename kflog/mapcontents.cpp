@@ -618,7 +618,6 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 
 //      valley -= 1;
 //      valley *= -1;
-
       // We must ignore it, when sort is more than 3 or less than 0!
       if(sort >= 0 && sort <= 3)
         {
