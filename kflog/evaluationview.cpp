@@ -627,7 +627,8 @@ void EvaluationView::__draw()
   QString timeText = 0;
 
   wP = flight->getWPList();
-  for(unsigned int n = 1; n < wP.count() - 1; n++)
+
+  for(unsigned int n = 1; n + 1 < wP.count(); n++)
     {
       xpos = (wP.at(n)->sector1 - startTime ) / secWidth + X_ABSTAND;
 

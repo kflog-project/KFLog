@@ -796,5 +796,5 @@ void KFLogApp::slotFlightViewIgc3D()
 
 bool KFLogApp::queryClose()
 {
-  return taskAndWaypoint->saveChanges();
+//  return taskAndWaypoint->saveChanges();
 }
