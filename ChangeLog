@@ -6,6 +6,8 @@ $Id$
   * added the waypoint list to the mapinfo that is displayed when activated
     by context menu or by tooltip popup
 
+  * Bugfix: if waypoints are deleted, this has immediat effect on the map display now.
+
 
 2003-07-09 Heiner Lamprecht <heiner@kflog.org>
 
