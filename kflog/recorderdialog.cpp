@@ -503,9 +503,13 @@ void RecorderDialog::slotWriteTask()
 
   CHECK_ERROR
 
+  warning("Schreibe Aufgabe auf Logger ...");
+
   int ret;
   ret = ((int (*)(FRTaskDeclaration*, QList<FRTaskPoint>, char*)) funcH)(
       &taskDecl, taskPointList, qstrdup(portName));
+
+  warning("   ... fertig (%d)", ret);
 }
 
 int RecorderDialog::__fillDirList()
