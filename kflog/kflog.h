@@ -35,8 +35,6 @@
 
 class DataView;
 class Map;
-class MapCanvas;
-class MapCanvasView;
 class MapControlView;
 
 /**
@@ -50,7 +48,7 @@ class MapControlView;
  * @see KApplication
  * @see KConfig
  *
- * @author Heiner Lamprecht
+ * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
 class KFLogApp : public KDockMainWindow
@@ -65,89 +63,54 @@ class KFLogApp : public KDockMainWindow
     KFLogApp(QWidget* parent=0, const char* name=0);
     /** */
     ~KFLogApp();
-    /** */
-    Map* getMap();
 
   protected:
-    /** save general Options like all bar positions and status as well as the geometry and the recent file list to the configuration
-     * file
-     */ 	
+    /** */
     void saveOptions();
-    /** read general Options again and initialize all variables like the recent file list
-     */
+    /** */
     void readOptions();
-    /** initializes the KActions of the application */
+    /** */
     void initActions();
-    /** sets up the statusbar for the main window by initialzing a statuslabel.
-     */
+    /** */
     void initStatusBar();
-    /* */
+    /** */
     void initMenuBar();
-    /** creates the centerwidget of the KTMainWindow instance and sets it as the view
-     */
+    /** */
     void initView();
-    /** queryExit is called by KTMainWindow when the last window of the application is going to be closed during the closeEvent().
-     * Against the default implementation that just returns true, this calls saveOptions() to save the settings of the last window's	
-     * properties.
-     * @see KTMainWindow#queryExit
-     * @see KTMainWindow#closeEvent
-     */
+    /**  */
     virtual bool queryExit();
 
   public slots:
-    /** open a new application window by creating a new instance of KFLogApp */
-//    void slotFileNewWindow();
-    /** open a file and load it into the document*/
+    /** */
     void slotFileOpen();
     /** */
     void slotFileClose();
-    /** opens a file from the recent files menu */
+    /** */
     void slotFileOpenRecent(const KURL& url);
-    /** print the actual file */
+    /** */
     void slotFilePrint();
-    /** closes all open windows by calling close() on each memberList item until the list is empty, then quits the application.
-     * If queryClose() returns false because the user canceled the saveModified() dialog, the closing breaks.
-     */
+    /** */
     void slotFileQuit();
-    /** toggles the toolbar
-     */
+    /** */
     void slotViewToolBar();
-    /** toggles the statusbar
-     */
+    /** */
     void slotViewStatusBar();
-    /** changes the statusbar contents for the standard label permanently, used to indicate current actions.
-     * @param text the text that is displayed in the statusbar
-     */
+    /** */
     void slotStatusMsg(const QString &text);
     /** */
     void slotToggleDataView();
     /** */
     void slotToggleMapControl();
     /** */
-//    void slotCenterToHome();
-    /** */
-//    void slotCenterToFlight();
-    /** */
-//    void slotCenterToTask();
-    /** */
-//    void slotRedrawMap();
-    /** */
-//    void slotZoomIn();
-    /** */
-//    void slotZoomOut();
-    /** */
     void slotConfigureToolbars();
     /** */
     void slotNewToolbarConfig();
-    /** */
-    void slotConfigureMap();
     /** */
     void slotSetProgress(int value);
 
   private:
     /** the configuration object of the application */
     KConfig *config;
-
     /** fileMenu contains all items of the menubar entry "File" */
     QPopupMenu* file_menu;
     /** viewMenu contains all items of the menubar entry "View" */
@@ -160,23 +123,18 @@ class KFLogApp : public KDockMainWindow
     QPopupMenu* flightMenu;
     /** helpMenu contains all items of the menubar entry "Help" */
     QPopupMenu* helpMenu;
-
     /** */
     KDockWidget* mapControlDock;
     KDockWidget* mapViewDock;
     KDockWidget* dataViewDock;
-
     /** */
     MapControlView* mapControl;
     /** */
     DataView* dataView;
-
     /** */
     KProgress* statusProgress;
     KStatusBarLabel* statusLabel;
-
     // KAction pointers to enable/disable actions
-//    KAction* fileNewWindow;
     KAction* fileOpen;
     KAction* fileClose;
     KRecentFilesAction* fileOpenRecent;
@@ -194,9 +152,10 @@ class KFLogApp : public KDockMainWindow
     KToggleAction* viewData;
     KToggleAction* viewMapControl;
     KAction* configMap;
-
     /** */
     Map* map;
+    /** */
+    QString flightDir;
 };
  
 #endif // KFLOG_H

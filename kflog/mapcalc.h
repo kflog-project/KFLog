@@ -49,44 +49,44 @@ int radToNum(double radial);
 /**
   *
   */
-struct drawPoint calcLambert(struct point curPoint,
-        int mapCenterLon, double dX, double dY, double scale = 0);
+//struct drawPoint calcLambert(struct point curPoint,
+//        int mapCenterLon, double dX, double dY, double scale = 0);
 
 /**
   *
   */
-struct drawPoint calcLambert(struct flightPoint curPoint,
-        int mapCenterLon, double dX, double dY, double scale = 0);
+//struct drawPoint calcLambert(struct flightPoint curPoint,
+//        int mapCenterLon, double dX, double dY, double scale = 0);
 
 /**
   *
   */
-struct drawPoint calcLambert(int latitude, int longitude,
-        int mapCenterLon, double dX, double dY, double scale = 0);
+//struct drawPoint calcLambert(int latitude, int longitude,
+//        int mapCenterLon, double dX, double dY, double scale = 0);
 
 /**
   * Returns the x-coordinate for the Lambert-projection.
   */
-double calc_X_Lambert(double latitude, double longitude);
+//double calc_X_Lambert(double latitude, double longitude);
 
 /**
   * Returns the y-coordinate for the Lambert-projection.
   */
-double calc_Y_Lambert(double latitude, double longitude);
+//double calc_Y_Lambert(double latitude, double longitude);
 
 /**
   * Calculates the geographical position of a given point in the
   * map. The position is stored in "lat" and "lon" in the internal
   * format.
   */
-void map2Lambert(double x, double y, struct point* loc);
+//void map2Lambert(double x, double y, struct point* loc);
 
 /**
   * Calculates the geographical latitude of a given point in the
   * map. The position is stored in "lat" and "lon" in the internal
   * format.
   */
-int map2LambertLat(double x, double y);
+//int map2LambertLat(double x, double y);
 
 /**
   * Calculates the geographical longitude of a given point in the

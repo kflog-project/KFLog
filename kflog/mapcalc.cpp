@@ -158,119 +158,118 @@ int radToNum(double radial)
 {
   return (int) (radial * 108000000.0 / PI );
 }
+//
+//struct drawPoint calcLambert(struct point curPoint,
+//        int mapCenterLon, double dX, double dY, double scale)
+//{
+//  return ( calcLambert(curPoint.latitude, curPoint.longitude,
+//      mapCenterLon, dX, dY, scale) );
+//}
+//
+//struct drawPoint calcLambert(struct flightPoint curPoint,
+//        int mapCenterLon, double dX, double dY, double scale)
+//{
+//  return ( calcLambert(curPoint.latitude, curPoint.longitude,
+//      mapCenterLon, dX, dY, scale) );
+//}
+//
+//struct drawPoint calcLambert(int latitude, int longitude,
+//        int mapCenterLon, double dX, double dY, double scale)
+//{
+//  extern double _currentScale;
+//  struct drawPoint newPoint;
+//
+//  double projX, projY, projLat, projLon;
+//
+//  projLat = numToRad(latitude);
+//  projLon = numToRad(longitude - mapCenterLon);
+//
+//  projX = calc_X_Lambert(projLat, projLon);
+//  projY = calc_Y_Lambert(projLat, projLon);
+//
+//  if(scale == 0)
+//    {
+//      newPoint.x = projX * RADIUS / _currentScale + dX;
+//      newPoint.y = projY * RADIUS / _currentScale + dY;
+//    }
+//  else
+//    {
+//      newPoint.x = projX * RADIUS / scale + dX;
+//      newPoint.y = projY * RADIUS / scale + dY;
+//    }
+//
+//  return newPoint;
+//}
 
-struct drawPoint calcLambert(struct point curPoint,
-        int mapCenterLon, double dX, double dY, double scale)
-{
-  return ( calcLambert(curPoint.latitude, curPoint.longitude,
-      mapCenterLon, dX, dY, scale) );
-}
+//double calc_Y_Lambert(double latitude, double longitude)
+//{
+//  extern double _v1, _var1, _var2;
+//  double y1;
+//
+//  y1 = 2 * ( sqrt( _var1 + ( sin(_v1) - sin(latitude) ) *_var2 )
+//             / _var2 )
+//         * cos( _var2 * longitude / 2 );
+//
+//  return y1;
+//}
 
-struct drawPoint calcLambert(struct flightPoint curPoint,
-        int mapCenterLon, double dX, double dY, double scale)
-{
-  return ( calcLambert(curPoint.latitude, curPoint.longitude,
-      mapCenterLon, dX, dY, scale) );
-}
+//double calc_X_Lambert(double latitude, double longitude)
+//{
+//  extern double _v1, _var1, _var2;
+//  double x1;
+//
+//  x1 = 2 * ( sqrt( _var1 + ( sin(_v1) - sin(latitude) ) * _var2 )
+//            / _var2 )
+//         * sin( _var2 * longitude / 2 );
+//
+//  return x1;
+//}
 
-struct drawPoint calcLambert(int latitude, int longitude,
-        int mapCenterLon, double dX, double dY, double scale)
-{
-  extern double _currentScale;
-  struct drawPoint newPoint;
+//void map2Lambert(double x, double y, struct point* loc)
+//{
+//  extern double _v1, _v2;
+//  double lat, lon;
+//
+//  lat = -asin(
+//              ( -4.0 * pow(cos(_v1), 2.0) - 4.0 * pow(sin(_v1), 2.0)
+//                -4.0 * sin(_v1) * sin(_v2)
+//                + y * y * pow(sin(_v1), 2.0) + pow(sin(_v1), 2.0)* x * x
+//                + 2.0 * y * y * sin(_v1) * sin(_v2) + 2.0 * sin(_v1)
+//                * sin(_v2) * x * x + y * y * pow(sin(_v2), 2.0)
+//                + pow(sin(_v2), 2.0) * x * x
+//                ) /
+//              ( sin(_v1) + sin(_v2) ) / 4 );
+//
+//  lon = 2.0 * atan( y / x ) / ( sin(_v1) + sin(_v2) );
+//
+//  loc->latitude = radToNum(lat);
+//  loc->longitude = radToNum(lon);
+//}
 
-  double projX, projY, projLat, projLon;
+//int map2LambertLat(double x, double y)
+//{
+//  extern double _v1, _v2;
+//  double lat;
+//  lat = -asin(
+//              ( -4.0 * pow(cos(_v1), 2.0) - 4.0 * pow(sin(_v1), 2.0)
+//                -4.0 * sin(_v1) * sin(_v2)
+//                + y * y * pow(sin(_v1), 2.0) + pow(sin(_v1), 2.0)* x * x
+//                + 2.0 * y * y * sin(_v1) * sin(_v2) + 2.0 * sin(_v1)
+//                * sin(_v2) * x * x + y * y * pow(sin(_v2), 2.0)
+//                + pow(sin(_v2), 2.0) * x * x
+//                ) /
+//              ( sin(_v1) + sin(_v2) ) / 4 );
+//  return radToNum(lat);
+//}
 
-  projLat = numToRad(latitude);
-  projLon = numToRad(longitude - mapCenterLon);
+//int map2LambertLon(double x, double y)
+//{
+//  extern double _v1, _v2;
+//  double lon;
 
-  projX = calc_X_Lambert(projLat, projLon);
-  projY = calc_Y_Lambert(projLat, projLon);
-
-  if(scale == 0)
-    {
-      newPoint.x = projX * RADIUS / _currentScale + dX;
-      newPoint.y = projY * RADIUS / _currentScale + dY;
-    }
-  else
-    {
-      newPoint.x = projX * RADIUS / scale + dX;
-      newPoint.y = projY * RADIUS / scale + dY;
-    }
-
-  return newPoint;
-}
-
-double calc_Y_Lambert(double latitude, double longitude)
-{
-  extern double _v1, _var1, _var2;
-  double y1;
-
-  y1 = 2 * ( sqrt( _var1 + ( sin(_v1) - sin(latitude) ) *_var2 )
-             / _var2 )
-         * cos( _var2 * longitude / 2 );
-
-  return y1;
-}
-
-double calc_X_Lambert(double latitude, double longitude)
-{
-  extern double _v1, _var1, _var2;
-  double x1;
-
-  x1 = 2 * ( sqrt( _var1 + ( sin(_v1) - sin(latitude) ) * _var2 )
-            / _var2 )
-         * sin( _var2 * longitude / 2 );
-
-  return x1;
-}
-
-void map2Lambert(double x, double y, struct point* loc)
-{
-  extern double _v1, _v2;
-  double lat, lon;
-
-  lat = -asin(
-              ( -4.0 * pow(cos(_v1), 2.0) - 4.0 * pow(sin(_v1), 2.0)
-                -4.0 * sin(_v1) * sin(_v2)
-                + y * y * pow(sin(_v1), 2.0) + pow(sin(_v1), 2.0)* x * x
-                + 2.0 * y * y * sin(_v1) * sin(_v2) + 2.0 * sin(_v1)
-                * sin(_v2) * x * x + y * y * pow(sin(_v2), 2.0)
-                + pow(sin(_v2), 2.0) * x * x
-                ) /
-              ( sin(_v1) + sin(_v2) ) / 4 );
-
-  lon = 2.0 * atan( y / x ) / ( sin(_v1) + sin(_v2) );
-
-  loc->latitude = radToNum(lat);
-  loc->longitude = radToNum(lon);
-}
-
-int map2LambertLat(double x, double y)
-{
-  extern double _v1, _v2;
-  double lat;
-  lat = -asin(
-              ( -4.0 * pow(cos(_v1), 2.0) - 4.0 * pow(sin(_v1), 2.0)
-                -4.0 * sin(_v1) * sin(_v2)
-                + y * y * pow(sin(_v1), 2.0) + pow(sin(_v1), 2.0)* x * x
-                + 2.0 * y * y * sin(_v1) * sin(_v2) + 2.0 * sin(_v1)
-                * sin(_v2) * x * x + y * y * pow(sin(_v2), 2.0)
-                + pow(sin(_v2), 2.0) * x * x
-                ) /
-              ( sin(_v1) + sin(_v2) ) / 4 );
-  return radToNum(lat);
-}
-
-int map2LambertLon(double x, double y)
-{
-  extern double _v1, _v2;
-  double lon;
-
-  lon = 2.0 * atan( y / x ) / ( sin(_v1) + sin(_v2) );
-  return radToNum(lon);
-
-}
+//  lon = 2.0 * atan( y / x ) / ( sin(_v1) + sin(_v2) );
+//  return radToNum(lon);
+//}
 
 double dist(double lat1, double lon1, double lat2, double lon2)
 {

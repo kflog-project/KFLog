@@ -21,7 +21,7 @@
 #include <qtabwidget.h>
 
 /**
- * @author Heiner Lamprecht
+ * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
 class DataView : public QTabWidget

@@ -40,35 +40,38 @@ class MapControlView : public QWidget
 {
   Q_OBJECT
 
- public:
-  /**
-    * Creates all needed widgets.
-    */
-  MapControlView(KFLogApp* main, QWidget *parent, Map* map);
-  /**
-    * Destructor, does nothing special.
-    */
-  ~MapControlView();
+  public:
+    /**
+     * Creates all needed widgets.
+     */
+    MapControlView(QWidget *parent, Map* map);
+    /**
+     * Destructor, does nothing special.
+     */
+    ~MapControlView();
 
- public slots:
-  /**
-    * Displays the map-data (height and width of the map, scale).
-    */
-  void slotShowMapData(double w, double h);
-  /**
-    * Sets the scale, called when the slider is moved.
-    */
-  void slotSetScale();
-  /**
-    * Shows the scale in the lcd-label and sets the slider.
-    */
-  void slotShowScaleChange(int value);
+  public slots:
+    /**
+     * Displays the map-data (height and width of the map, scale).
+     */
+    void slotShowMapData(QSize);
+    /**
+     * Sets the scale, called when the slider is moved.
+     */
+    void slotSetScale();
+    /**
+     * Shows the scale in the lcd-label and sets the slider.
+     */
+//    void slotShowScaleChange(int value);
 
- private:
-  KFLogApp* mainApp;
-  QSlider* currentScaleSlider;
-  QLCDNumber* currentScaleValue;
-  QLabel* dimText;
+  signals:
+    /** */
+    void scaleChanged(int);
+
+  private:
+    QSlider* currentScaleSlider;
+    QLCDNumber* currentScaleValue;
+    QLabel* dimText;
 };
 
 #endif

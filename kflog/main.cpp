@@ -26,15 +26,15 @@
 /**
  * erste Parallele
  */
-double _v1;
+//double _v1;
 
 /**
  * zweite Parallele
  */
-double _v2;
+//double _v2;
 
-double _var1;
-double _var2;
+//double _var1;
+//double _var2;
 
 /**
  * Anzahl der Maﬂstabsbereiche

@@ -267,19 +267,21 @@ Map::Map(KFLogApp *m, QFrame* parent)
   this->setBackgroundColor(QColor(255,255,255));
   this->setCursor(crossCursor);
 
-  QWhatsThis::add(this, i18n("The map\n\n"
-         "To move or scale the map, please use the buttons on the right. "
-         "To zoom in or out, use the slider or the two buttons on the "
-         "toolbar. You can also zoom with the two keys \"+\" (zoom in) "
-         "and \"-\" (zoom out).\n\n"
-         "With the menu-item \"Options\" -> \"Configure map\" you can "
+  QWhatsThis::add(this, i18n("<B>The map</B>"
+         "<P>To move or scale the map, please use the buttons in the "
+         "<B>Map-control</B>-area. Or center the map to the current "
+         "cursor-positon by using the right mouse-button.</P>"
+         "<P>To zoom in or out, use the slider or the two buttons on the "
+         "toolbar. You can also zoom with \"&lt;Ctrl&gt;&lt;+&gt;\" (zoom in) "
+         "and \"&lt;Ctrl&gt;&lt;-&gt;\" (zoom out).</P>"
+         "<P>With the menu-item \"Options\" -> \"Configure map\" you can "
          "configure, which map elements should be displayed at which "
-         "scale."));
+         "scale.</P>"));
 }
 
 Map::~Map()
 {
-  extern const double _v1, _v2, _currentScale, _scale[];
+  extern const double _currentScale, _scale[];
   extern const int _scaleBorder[];
   extern const bool _showElements[];
 
@@ -289,8 +291,6 @@ Map::~Map()
   config->writeEntry("MapScale",   _currentScale);
   config->writeEntry("MapCenterX", mapCenterLon);
   config->writeEntry("MapCenterY", mapCenterLat);
-  config->writeEntry("Parallel1",  radToNum(_v1));
-  config->writeEntry("Parallel2",  radToNum(_v2));
 
   config->setGroup("MapLayer");
   config->writeEntry("AddSites", showAddSites);
@@ -395,8 +395,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
   _currentPos = event->pos();
 
   struct point loc;
-  map2Lambert((( event->pos().y() - DELTA_Y ) * _currentScale / RADIUS),
-      (( event->pos().x() - DELTA_X ) * _currentScale / RADIUS), &loc);
+//  map2Lambert((( event->pos().y() - DELTA_Y ) * _currentScale / RADIUS),
+//      (( event->pos().x() - DELTA_X ) * _currentScale / RADIUS), &loc);
 
 //  mainApp->showCoords(loc.latitude, (loc.longitude + mapCenterLon));
 
@@ -923,23 +923,16 @@ void Map::__drawMap()
 
 void Map::resizeEvent(QResizeEvent* event)
 {
-warning("Map::resizeEvent(%d / %d)",
-    event->size().width(), event->size().height());
-
   extern MapMatrix _globalMapMatrix;
   _globalMapMatrix.createMatrix(event->size());
 
   pixBuffer.resize(event->size());
   pixBuffer.fill(white);
 
-  if(event->size() == event->oldSize())
-    warning("    Größe unverändert!");
-  else
-    warning("    Größe hat sich verändert!");
-
   // Beim Programmstart wird dies einmal zuviel aufgerufen ...
-  if(!event->size().isEmpty())
-      __redrawMap();
+  if(!event->size().isEmpty()) __redrawMap();
+
+  emit changed(event->size());
 }
 
 void Map::__redrawMap()
@@ -1031,6 +1024,7 @@ void Map::slotZoomIn()
   _globalMapMatrix.scaleAdd(this->size());
 
   __redrawMap();
+  emit changed(this->size());
 }
 
 void Map::slotZoomOut()
@@ -1039,6 +1033,7 @@ void Map::slotZoomOut()
   _globalMapMatrix.scaleSub(this->size());
 
   __redrawMap();
+  emit changed(this->size());
 }
 
 void Map::slotDrawFlight()
@@ -1213,6 +1208,11 @@ void Map::slotMoveMapSW() { MATRIX_MOVE( MapMatrix::South | MapMatrix::West ) }
 void Map::slotMoveMapS()  { MATRIX_MOVE( MapMatrix::South ) }
 
 void Map::slotMoveMapSE() { MATRIX_MOVE( MapMatrix::South | MapMatrix::East ) }
+
+void Map::slotScaleChanged(int newScale)
+{
+//  warning("Map::slotScaleChanged(%d)", newScale);
+}
 
 void Map::showFlightLayer(bool redrawFlight)
 {

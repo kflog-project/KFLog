@@ -15,6 +15,8 @@
 **
 ***********************************************************************/
 
+#include <stdlib.h>
+
 // include files for QT
 #include <qdir.h>
 #include <qlabel.h>
@@ -25,6 +27,7 @@
 // include files for KDE
 #include <kedittoolbar.h>
 #include <kiconloader.h>
+#include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kmenubar.h>
@@ -53,17 +56,11 @@ KFLogApp::KFLogApp(QWidget* , const char* name)
   filePrint->setEnabled(false);
   viewData->setChecked(true);
   viewMapControl->setChecked(true);
-
 }
 
 KFLogApp::~KFLogApp()
 {
-//  this->close();
-}
 
-Map* KFLogApp::getMap()
-{
-  return map;
 }
 
 void KFLogApp::initActions()
@@ -109,7 +106,7 @@ void KFLogApp::initActions()
   configToolBar = KStdAction::configureToolbars(this,
       SLOT(slotConfigureToolbars()), actionCollection());
   configMap = new KAction(i18n("Configure &Map"), SmallIcon("configure"), 0,
-      this, SLOT(slotConfigureMap()), actionCollection(), "configure_map");
+      map, SLOT(slotConfigureMap()), actionCollection(), "configure_map");
 
   fileOpen->setStatusText(i18n("Opens an existing flight"));
   fileOpenRecent->setStatusText(i18n("Opens a recently used flight"));
@@ -266,7 +263,7 @@ void KFLogApp::initView()
   mapLayout->activate();
 
   QFrame* mapControlFrame = new QFrame(mapControlDock);
-  mapControl = new MapControlView(this, mapControlFrame, map);
+  mapControl = new MapControlView(mapControlFrame, map);
   mapControlDock->setWidget(mapControlFrame);
 
   mapViewDock->setWidget(mapViewFrame);
@@ -279,6 +276,11 @@ void KFLogApp::initView()
    */
   dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );
   mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 75 );
+
+  connect(map, SIGNAL(changed(QSize)), mapControl,
+      SLOT(slotShowMapData(QSize)));
+  connect(mapControl, SIGNAL(scaleChanged(int)), map,
+      SLOT(slotScaleChanged(int)));
 }
 
 void KFLogApp::saveOptions()
@@ -313,6 +315,7 @@ void KFLogApp::readOptions()
 
   // initialize the recent file list
   fileOpenRecent->loadEntries(config,"Recent Files");
+  flightDir = config->readEntry("FlightDir", getenv("HOME"));
 
   QSize size=config->readSizeEntry("Geometry");
 
@@ -343,50 +346,22 @@ bool KFLogApp::queryExit()
 // SLOT IMPLEMENTATION
 /////////////////////////////////////////////////////////////////////
 
-void KFLogApp::slotSetProgress(int value)
-{
-//  statusProgress->setProgress(value);
-  statusProgress->setValue(value);
-}
-//
-//void KFLogApp::slotCenterToHome()
-//{
-//
-//}
-//
-//void KFLogApp::slotCenterToFlight()
-//{
-//
-//}
-//
-//void KFLogApp::slotCenterToTask()
-//{
-//
-//}
-//
-//void KFLogApp::slotZoomIn()
-//{
-//
-//}
-//
-//void KFLogApp::slotZoomOut()
-//{
-//
-//}
-
-//void KFLogApp::slotFileNewWindow()
-//{
-//  slotStatusMsg(i18n("Opening a new application window..."));
-//	
-//  KFLogApp *new_window= new KFLogApp();
-//  new_window->show();
-//
-//  slotStatusMsg(i18n("Ready."));
-//}
+void KFLogApp::slotSetProgress(int value)  { statusProgress->setValue(value); }
 
 void KFLogApp::slotFileOpen()
 {
   slotStatusMsg(i18n("Opening file..."));
+
+  QString fileName = KFileDialog::getOpenFileName(flightDir,
+      "*.igc *.IGC", this);
+
+  if(fileName != NULL)
+    {
+      QFileInfo fInfo(fileName);
+      flightDir = fInfo.dirPath();
+      extern MapContents _globalMapContents;
+      _globalMapContents.loadFlight(fileName);
+    }
 
   slotStatusMsg(i18n("Ready."));
 }
@@ -408,59 +383,27 @@ void KFLogApp::slotFilePrint()
   slotStatusMsg(i18n("Printing..."));
 
   QPrinter printer;
-  if (printer.setup(this))
-  {
-
-  }
+  if (printer.setup(this)) {  }
 
   slotStatusMsg(i18n("Ready."));
 }
 
 void KFLogApp::slotFileQuit()
 {
-
   slotStatusMsg(i18n("Exiting..."));
   saveOptions();
 
   close();
-/*
-  // close the first window, the list makes the next one the first again.
-  // This ensures that queryClose() is called on each window to ask for closing
-  KMainWindow* w;
-  if(memberList)
-  {
-    for(w=memberList->first(); w!=0; w=memberList->first())
-    {
-      // only close the window if the closeEvent is accepted. If the user
-      // presses Cancel on the saveModified() dialog,
-      // the window and the application stay open.
-      if(!w->close())
-          break;
-    }
-  }
-  slotStatusMsg(i18n("Ready."));
-//  this->close();
-*/
 }
-
-//void KFLogApp::slotRedrawMap()
-//{
-//
-//}
 
 void KFLogApp::slotViewToolBar()
 {
   slotStatusMsg(i18n("Toggling toolbar..."));
-  ///////////////////////////////////////////////////////////////////
-  // turn Toolbar on or off
+
   if(!viewToolBar->isChecked())
-  {
-    toolBar("mainToolBar")->hide();
-  }
+      toolBar("mainToolBar")->hide();
   else
-  {
-    toolBar("mainToolBar")->show();
-  }		
+      toolBar("mainToolBar")->show();
 
   slotStatusMsg(i18n("Ready."));
 }
@@ -468,20 +411,14 @@ void KFLogApp::slotViewToolBar()
 void KFLogApp::slotViewStatusBar()
 {
   slotStatusMsg(i18n("Toggle the statusbar..."));
-  ///////////////////////////////////////////////////////////////////
-  //turn Statusbar on or off
+
   if(!viewStatusBar->isChecked())
-  {
-    statusBar()->hide();
-  }
+      statusBar()->hide();
   else
-  {
-    statusBar()->show();
-  }
+      statusBar()->show();
 
   slotStatusMsg(i18n("Ready."));
 }
-
 
 void KFLogApp::slotStatusMsg(const QString &text)
 {
@@ -515,20 +452,13 @@ void KFLogApp::slotToggleMapControl()
   mapControlDock->changeHideShowState();
 }
 
-void KFLogApp::slotConfigureMap()
-{
-
-}
-
 void KFLogApp::slotConfigureToolbars()
 {
   saveMainWindowSettings( KGlobal::config(), "MainWindow" );
   KEditToolbar dlg(actionCollection());
   connect(&dlg, SIGNAL(newToolbarConfig()), this, SLOT(slotNewToolbarConfig()));
-  if (dlg.exec())
-  {
-    createGUI();
-  }
+
+  if (dlg.exec())  createGUI();
 }
 
 void KFLogApp::slotNewToolbarConfig()
@@ -536,4 +466,3 @@ void KFLogApp::slotNewToolbarConfig()
 //   ...if you use any action list, use plugActionList on each here...
    applyMainWindowSettings( KGlobal::config(), "MainWindow" );
 }
-

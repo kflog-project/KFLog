@@ -23,6 +23,7 @@
 //#include <kapp.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kmessagebox.h>
 #include <kstddirs.h>
 #include <qdatastream.h>
 #include <qdatetime.h>
@@ -39,6 +40,7 @@
 #include <airspace.h>
 #include <basemapelement.h>
 #include <elevpoint.h>
+#include <flight.h>
 #include <glidersite.h>
 #include <isohypse.h>
 #include <lineelement.h>
@@ -96,6 +98,7 @@ MapContents::MapContents()
   airportList.setAutoDelete(true);
   airspaceList.setAutoDelete(true);
   gliderList.setAutoDelete(true);
+  flightList.setAutoDelete(true);
   highEntryList.setAutoDelete(true);
   highwayList.setAutoDelete(true);
   hydroList.setAutoDelete(true);
@@ -119,11 +122,11 @@ MapContents::~MapContents()
 {
   delete[] isoLines;
   // Hier müssen ALLE Listen gelöscht werden!!!
-//  intairportList.~QList();
   airportList.~QList();
   airspaceList.~QList();
   cityList.~QList();
   gliderList.~QList();
+  flightList.~QList();
   highEntryList.~QList();
   highwayList.~QList();
   hydroList.~QList();
@@ -157,17 +160,20 @@ bool MapContents::__readAsciiFile(const char* fileName)
 
   warning("KFLog: parsing mapfile %s", fileName);
 
+  QProgressDialog importProgress(0,0,true);
+
+  importProgress.setCaption(i18n("Import mapfile ..."));
+  importProgress.setLabelText((QString)i18n("Please wait while loading file")
+          + "<BR><B>" + fileName + "</B>");
+  importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
+  importProgress.show();
+  importProgress.setMinimumDuration(0);
+
+  importProgress.setProgress(0);
+
   QFileInfo fileInfo(fileName);
   unsigned int fileLength = fileInfo.size();
   unsigned int filePos = 0;
-
-  QProgressDialog* importProgress = new QProgressDialog(0,0,true);
-
-  importProgress->setCaption(i18n("Import mapfile ..."));
-  importProgress->setLabelText((QString)i18n("Please wait while loading file")
-          + "\n" + fileName);
-  importProgress->setMinimumWidth(importProgress->sizeHint().width() + 45);
-  importProgress->show();
 
   bool isObject = false;
   bool isValley = false;
@@ -197,14 +203,12 @@ bool MapContents::__readAsciiFile(const char* fileName)
   Airspace* newAir;
   LineElement* newLine;
 
-  importProgress->setProgress(0);
-
   while (!stream.eof()) {
-    if(importProgress->wasCancelled()) break;
+    if(importProgress.wasCancelled()) break;
 
     line = stream.readLine();
     filePos += line.length();
-    importProgress->setProgress(( filePos * 100 ) / fileLength);
+    importProgress.setProgress(( filePos * 100 ) / fileLength);
     line = line.simplifyWhiteSpace();
     // if it is a comment, ignore it!
     if(line.mid(0,1) == "#") continue;
@@ -470,7 +474,6 @@ bool MapContents::__readAsciiFile(const char* fileName)
   }
 
   file.close();
-  delete importProgress;
 
   debug("KFLog: %d mapobjects found", objectCount);
 
@@ -1021,6 +1024,203 @@ void MapContents::addElement(Airport* newElement)
 void MapContents::addElement(RadioPoint* newElement)
 {
   navList.append(newElement);
+}
+
+void MapContents::loadFlight(QFile igcFile)
+{
+  warning("MapContents::loadFlight(%s)", (const char*)igcFile.name());
+
+  QFileInfo fInfo(igcFile);
+  if(!fInfo.exists())
+    {
+      KMessageBox::error(0, i18n("The selected file") + "<BR><B>"
+          + igcFile.name() + "</B><BR>" + i18n("does not exist!"));
+      return;
+    }
+  if(!fInfo.size())
+    {
+      KMessageBox::sorry(0, i18n("The selected file") + "<BR><B>"
+          + igcFile.name() + "</B><BR>" + i18n("is empty!"));
+      return;
+    }
+  /*
+   * Wir brauchen eine bessere Formatprüfung als nur die
+   * Überprüfung der Endung und der Größe ...
+   */
+  if((fInfo.extension() != "igc") && (fInfo.extension() != "IGC"))
+    {
+      KMessageBox::error(0, i18n("The selected file") + "<BR><B>"
+          + igcFile.name() + "</B><BR>" + i18n("is not an igc-file!"));
+      return;
+    }
+
+  if(!igcFile.open(IO_ReadOnly))
+    {
+      KMessageBox::error(0, i18n("You don't have permission to access file")
+          + "<BR><B>" + igcFile.name() + "</B>", i18n("No permission"));
+      return;
+    }
+
+  QProgressDialog importProgress(0,0,true);
+
+  importProgress.setCaption(i18n("Import mapfile ..."));
+  importProgress.setLabelText((QString)i18n("Please wait while loading file")
+          + "<BR><B>" + igcFile.name() + "</B>");
+  importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
+  importProgress.setTotalSteps(200);
+  importProgress.show();
+  importProgress.setMinimumDuration(0);
+
+  importProgress.setProgress(0);
+
+  unsigned int fileLength = fInfo.size();
+  unsigned int filePos = 0;
+  QString s;
+  QTextStream stream(&igcFile);
+
+  QString pilotName, gliderType, gliderID, date;
+  char latChar, lonChar;
+  bool launched = false, append = true, isFirst = true;
+  int dt, lat, latmin, latTemp, lon, lonmin, lonTemp;
+  int hh = 0, mm = 0, ss = 0, curTime = 0, preTime = 0;
+
+  float vario, speed;
+
+  while (!stream.eof())
+    {
+      if(importProgress.wasCancelled()) return;
+
+      s = stream.readLine();
+      filePos += s.length();
+      importProgress.setProgress(( filePos * 200 ) / fileLength);
+
+      if(s.mid(0,1) == "H")
+        {
+          // We have a headerline
+          if(s.mid(5,5) == "PILOT")
+              pilotName = s.mid(11,100);
+          else if(s.mid(5,10) == "GLIDERTYPE")
+              gliderType = s.mid(16,100);
+          else if(s.mid(5,8) == "GLIDERID")
+              gliderID = s.mid(14,100);
+          else if(s.mid(1,4) == "FDTE")
+              // Hier bislang nur "deutsches" Format.
+              date = s.mid(5,2) + "." + s.mid(7,2) + "." + s.mid(9,2);
+        }
+      else if(s.mid(0,1) == "B")
+        {
+          // We have a point
+          sscanf(s.mid(1,23), "%2d%2d%2d%2d%5d%1c%3d%5d%1c",
+              &hh, &mm, &ss, &lat, &latmin, &latChar, &lon, &lonmin, &lonChar);
+          latTemp = lat * 600000 + latmin * 10;
+          lonTemp = lon * 600000 + lonmin * 10;
+
+          if(latChar == 'S') latTemp = -latTemp;
+
+          if(lonChar == 'W') lonTemp = -lonTemp;
+
+          curTime = 3600 * hh + 60 * mm + ss;
+//          current.time = curTime;
+//          current.latitude = latTemp;
+//          current.longitude = lonTemp;
+
+//          sscanf(s.mid(25,10), "%5d%5d", &current.height, &current.gpsHeight);
+
+          if(isFirst)
+            {
+//              oldPoint = current;
+              preTime = curTime;
+              isFirst = false;
+//              current.distance = 0;
+//              current.dh = 0;
+//              current.dt = 0;
+//              speed = 0;
+//              vario = 0;
+              continue;
+            }
+          //
+          // dtime may change, even if the intervall, in wich the
+          // logger gets the position, is allways the same. If the
+          // intervall is f.e. 10 sec, dtime may change to 11 or 9 sec.
+          //
+          dt = curTime - preTime;
+//          current.dt = dt;
+//          current.dh = current.height - oldPoint.height;
+
+//          current.distance = (int)(dist(current.latitude, current.longitude,
+//                oldPoint.latitude, oldPoint.longitude) * 1000.0);
+
+
+          // prüfen ob noch nötig!!!
+//          double ddist = dist(current.latitude, current.longitude,
+//                  oldPoint.latitude, oldPoint.longitude);
+//          float dheight = current.height - oldPoint.height;
+
+//          speed = 3600 * ddist / dt;  // [km/h]
+//          vario = dheight / dt * 1.0; // [m/s]
+
+          if(launched)
+            {
+//              routeLength++;
+//              flightRoute = (struct flightPoint*) realloc(flightRoute,
+//                                     routeLength * sizeof(flightPoint));
+//              flightRoute[routeLength - 1] = current;
+              if(!append)
+                {
+                  if( ( speed > 10 ) &&
+                      ( ( vario > 0.5 ) || ( vario < -0.5 ) ) )
+                    {
+                      append = true;
+                    }
+                  else
+                    {
+                      // We are realy back on the ground, again.
+                      // Now we can stop reading the file!
+                      break;
+                    }
+                }
+              /*
+               * Die Landebedingungen sind, besonders bei einem großen
+               * Zeitabstand der Messungen noch nicht korrekt !
+               *
+               * Bedingung sollte über mehrere Punkte gehen
+               *
+               */
+              if( ( speed < 10 ) &&
+                  ( ( vario < 0.5 ) && ( vario > -0.5 ) ) )
+                {
+                  // We might be back on the ground, again.
+                  append = false;
+                }
+            }
+          else
+            {
+              if((speed > 20) && (vario > 1.5))
+                {
+                  launched = true;
+//                  flightRoute = new flightPoint[2];
+//                  flightRoute[0] = oldPoint;
+//                  flightRoute[1] = current;
+//                  routeLength = 2;
+                }
+            }
+//          oldPoint = current;
+          preTime = curTime;
+        }
+      else if(s.mid(0,1) == "C")
+        {
+          if( ( ( ( s.mid( 8,1) == "N" ) || ( s.mid( 8,1) == "S" ) ) ||
+                ( ( s.mid(17,1) == "W" ) || ( s.mid(17,1) == "E" ) ) ) &&
+              ( s.mid(18,20 ) != 0 ) )
+            {
+              // We have a waypoint
+            }
+        }
+      else if(s.mid(0,1) == "L")
+        {
+          // We have a comment. Let's ignore it ...
+        }
+    }
 }
 
 void MapContents::proofeSection()

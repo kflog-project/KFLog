@@ -28,16 +28,15 @@
 #include <qlabel.h>
 #include <qlayout.h>
 
-MapControlView::MapControlView(KFLogApp* main, QWidget* parent, Map* map)
-: QWidget(parent),
-  mainApp(main)
+MapControlView::MapControlView(QWidget* parent, Map* map)
+: QWidget(parent)
 {
-  QFont bold;
-  bold.setBold(true);
+//  QFont bold;
+//  bold.setBold(true);
 
-  QLabel* mapControl = new QLabel(i18n("Map-control:"), parent);
+  QLabel* mapControl = new QLabel(i18n("<B>Map-control:</B>"), parent);
   mapControl->setMinimumHeight(mapControl->sizeHint().height() + 5);
-  mapControl->setFont(bold);
+//  mapControl->setFont(bold);
 
   QFrame* navFrame = new QFrame(parent);
   QPushButton* nwB = new QPushButton("NW", navFrame);
@@ -62,8 +61,7 @@ MapControlView::MapControlView(KFLogApp* main, QWidget* parent, Map* map)
   eB->setPixmap(BarIcon("1rightarrow"));
   eB->setFixedHeight(35);
   eB->setFixedWidth(35);
-  QPushButton* swB = new QPushButton(navFrame);
-  swB->setPixmap(BarIcon("1downleftarrow"));
+  QPushButton* swB = new QPushButton("SW", navFrame);
   swB->setFixedHeight(35);
   swB->setFixedWidth(35);
   QPushButton* sB = new QPushButton(navFrame);
@@ -98,7 +96,7 @@ MapControlView::MapControlView(KFLogApp* main, QWidget* parent, Map* map)
   dimText = new QLabel("125 / 130", parent);
   dimText->setAlignment( AlignCenter );
 
-  dimText->setFont( QFont( "Courier" ) );
+//  dimText->setFont( QFont( "Courier" ) );
   dimText->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   dimText->setBackgroundMode( PaletteLight );
 
@@ -133,7 +131,7 @@ MapControlView::MapControlView(KFLogApp* main, QWidget* parent, Map* map)
   controlLayout->activate();
 
   connect(currentScaleSlider, SIGNAL(valueChanged(int)),
-            SLOT(slotShowScaleChange(int)));
+            SIGNAL(scaleChanged(int)));
   connect(currentScaleSlider, SIGNAL(sliderReleased()),
             SLOT(slotSetScale()));
 
@@ -156,30 +154,15 @@ MapControlView::~MapControlView()
 //////////////////////////////////////////////////////////////////////////
 // Slots
 //////////////////////////////////////////////////////////////////////////
-void MapControlView::slotShowMapData(double width, double height)
+void MapControlView::slotShowMapData(QSize mapSize)
 {
-  extern double _currentScale;
+  extern const double _currentScale;
 
   QString temp;
-  int temp1, temp2;
 
-  temp1 = (int) ( height * _currentScale / 1000.0);
-  temp2 = (int) ( ( ( height * _currentScale / 1000.0 ) - temp1) * 100 );
-  if(temp2 < 10) {
-    temp.sprintf("%4d,0%1d", temp1, temp2);
-  } else {
-    temp.sprintf("%4d,%2d", temp1, temp2);
-  }
+  temp.sprintf("<TT>%.1f / %.1f</TT>", mapSize.height() * _currentScale / 1000.0,
+      mapSize.width() * _currentScale / 1000.0);
   dimText->setText(temp);
-
-  temp1 = (int) ( width * _currentScale / 1000.0);
-  temp2 = (int) ( ( ( width * _currentScale / 1000.0 ) - temp1) * 100 );
-  if(temp2 < 10) {
-    temp.sprintf("%4d,0%1d", temp1, temp2);
-  } else {
-    temp.sprintf("%4d,%2d", temp1, temp2);
-  }
-//  widthText->setText(temp);
 
   currentScaleValue->display(_currentScale);
   currentScaleSlider->setValue(getScaleValue(_currentScale));
@@ -189,26 +172,19 @@ void MapControlView::slotSetScale()
 {
   extern double _currentScale;
 
-  if(_currentScale != currentScaleValue->value()) {
-    _currentScale = currentScaleValue->value();
-//    mainApp->getMap()->slotRedrawMap();
-  }
+  if(_currentScale != currentScaleValue->value())
+      _currentScale = currentScaleValue->value();
 }
-
-void MapControlView::slotShowScaleChange(int value)
-{
-  extern double _scale[];
-
-  currentScaleValue->display(setScaleValue(value));
-
-  if(currentScaleValue->value() > _scale[9])
-    currentScaleSlider->setValue(getScaleValue(_scale[9]));
-
-  if(currentScaleValue->value() < _scale[0])
-    currentScaleSlider->setValue(getScaleValue(_scale[0]));
-}
-
-//void MapControlView::slotCenterMap()
+//
+//void MapControlView::slotShowScaleChange(int value)
 //{
-//  mainApp->getMap()->slotCenterMap();
+//  extern double _scale[];
+//
+//  currentScaleValue->display(setScaleValue(value));
+//
+//  if(currentScaleValue->value() > _scale[9])
+//      currentScaleSlider->setValue(getScaleValue(_scale[9]));
+//
+//  if(currentScaleValue->value() < _scale[0])
+//      currentScaleSlider->setValue(getScaleValue(_scale[0]));
 //}

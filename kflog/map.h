@@ -31,6 +31,7 @@ class MapView;
 
 /**
  * This class provides basic functions for displaying the map.
+ *
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
@@ -109,6 +110,12 @@ class Map : public QWidget
     void slotMoveMapSE();
     /** */
     void slotPrintMap();
+    /** */
+    void slotScaleChanged(int);
+
+  signals:
+    /** */
+    void changed(QSize);
 
   protected:
     /**
