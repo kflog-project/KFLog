@@ -289,7 +289,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 #>- DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 #>+ 4
-KDE_DIST=kflog_meta_unload.cpp runway.h 
+KDE_DIST=runway.h 
 
 DISTFILES= $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST) $(KDE_DIST)
 
@@ -993,7 +993,7 @@ clean-moc-classes:
 	-rm -f  kflog_meta_unload.cpp
 
 #>+ 11
-kflog.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/evaluationframe.cpp $(srcdir)/mapconfig.cpp $(srcdir)/evaluationview.cpp $(srcdir)/evaluationdialog.cpp $(srcdir)/kflogconfig.cpp $(srcdir)/printdialog.cpp $(srcdir)/kflogstartlogo.cpp $(srcdir)/flighttask.cpp $(srcdir)/flight.cpp $(srcdir)/mapmatrix.cpp $(srcdir)/singlepoint.cpp $(srcdir)/radiopoint.cpp $(srcdir)/lineelement.cpp $(srcdir)/isohypse.cpp $(srcdir)/glidersite.cpp $(srcdir)/elevpoint.cpp $(srcdir)/airspace.cpp $(srcdir)/airport.cpp $(srcdir)/mapcontents.cpp $(srcdir)/basemapelement.cpp $(srcdir)/map.cpp $(srcdir)/dataview.cpp $(srcdir)/mapcalc.cpp $(srcdir)/mapcontrolview.cpp $(srcdir)/kflog.cpp $(srcdir)/main.cpp $(srcdir)/kflog_meta_unload.cpp  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp dataview.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp
+kflog.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/evaluationframe.cpp $(srcdir)/mapconfig.cpp $(srcdir)/evaluationview.cpp $(srcdir)/evaluationdialog.cpp $(srcdir)/kflogconfig.cpp $(srcdir)/printdialog.cpp $(srcdir)/kflogstartlogo.cpp $(srcdir)/flighttask.cpp $(srcdir)/flight.cpp $(srcdir)/mapmatrix.cpp $(srcdir)/singlepoint.cpp $(srcdir)/radiopoint.cpp $(srcdir)/lineelement.cpp $(srcdir)/isohypse.cpp $(srcdir)/glidersite.cpp $(srcdir)/elevpoint.cpp $(srcdir)/airspace.cpp $(srcdir)/airport.cpp $(srcdir)/mapcontents.cpp $(srcdir)/basemapelement.cpp $(srcdir)/map.cpp $(srcdir)/dataview.cpp $(srcdir)/mapcalc.cpp $(srcdir)/mapcontrolview.cpp $(srcdir)/kflog.cpp $(srcdir)/main.cpp kflog_meta_unload.cpp  evaluationframe.moc.cpp evaluationview.moc.cpp map.moc.cpp dataview.moc.cpp evaluationdialog.moc.cpp printdialog.moc.cpp kflog.moc.cpp kflogconfig.moc.cpp kflogstartlogo.moc.cpp mapcontrolview.moc.cpp
 	@echo 'creating kflog.all_cpp.cpp ...'; \
 	rm -f kflog.all_cpp.files kflog.all_cpp.final; \
 	echo "#define KDE_USE_FINAL 1" >> kflog.all_cpp.final; \
