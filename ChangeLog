@@ -1,21 +1,36 @@
 $Id$
 
+2003-06-04 Heiner Lamprecht <heiner@kflog.org>
+
+  * Changed the fonts in the printout of the flightdata.
+
+  * Repaired the map-printing.
+
+
 2003-06-05 Eggert Ehmke <eggert@kflog.org>
+
   * improved Filser interface, tested with different versions of lx devices
+
   * fixed bug: last entry in flight list is not doubled anymore
+
   * added duration column in flight list
 
+  
 2003-05-29 Florian Ehinger <florian@kflog.org>
+
   * Fixed Bugs in EvaluationDialog
-     (Flags in the map are shown again, cursor text is shown again)
+    (Flags in the map are shown again, cursor text is shown again)
+
   * it's no longer possible to move cursor1 behind cursor2
+
   * Changed the evaluation Dialog to a KDockwiget
 
+  
 2003-05-27 Eggert Ehmke <eggert@kflog.org>
 
-    * Extended flight recorder capabilities for basic data
-      like serial number, pilot name, glider type, competition id and more.
-	  All these data can now be fetched by new function getBasicData.
+  * Extended flight recorder capabilities for basic data
+    like serial number, pilot name, glider type, competition id and more.
+    All these data can now be fetched by new function getBasicData.
 
 
 2003-05-23 André Somers <andre@kflog.org>
@@ -55,7 +70,8 @@ $Id$
 
 2003-04-29 André <andre@kflog.org>
   
-  * Addition: implict start of dragZoom. Just start dragging anywhere on the map and it will automaticly start
+  * Addition: implict start of dragZoom. Just start dragging anywhere on
+    the map and it will automaticly start
 
   * Fix: could not drag in north-west direction
 
@@ -63,6 +79,7 @@ $Id$
 
 
 2003-04-28 Heiner <heiner@kflog.org>
+
   * Fixed some problem in evaluating over-night-flights.
 
   

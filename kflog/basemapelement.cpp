@@ -42,8 +42,7 @@ void BaseMapElement::initMapElement(MapMatrix* matrix, MapConfig* config)
 
 void BaseMapElement::printMapElement(QPainter* printP, bool isT)
 {
-  warning("BaseMapElement::printMapElement");
-
+//  warning("BaseMapElement::printMapElement");
 }
 
 

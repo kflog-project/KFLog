@@ -308,7 +308,7 @@ void KFLogApp::initActions()
       CTRL+Key_L, this, SLOT(slotToggleLegendDock()), actionCollection(),
       "toggle_legend");
 
-  viewObjectTree = new KToggleAction(i18n("Show object tree"), 0,
+  viewObjectTree = new KToggleAction(i18n("Show object tree"), "view_tree",
       CTRL+Key_O, this, SLOT(slotToggleObjectTreeDock()), actionCollection(),
       "toggle_objectTree");
 
@@ -316,7 +316,7 @@ void KFLogApp::initActions()
       this, SLOT(slotOptimizeFlight()), actionCollection(), "optimize_flight");
 
       
-  flightOptimizationOLC = new KAction(i18n("Optimize(OLC)"), "wizard", 0,
+  flightOptimizationOLC = new KAction(i18n("Optimize (OLC)"), "wizard", 0,
       this, SLOT(slotOptimizeFlightOLC()), actionCollection(), "optimize_flight_olc");
 
 

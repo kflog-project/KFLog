@@ -30,7 +30,7 @@
 
 FlightDataPrint::FlightDataPrint(Flight* currentFlight)
 {
-  KPrinter printer;
+  KPrinter printer(true, QPrinter::PrinterResolution);
 
   if(!printer.setup())  return;
 
@@ -158,15 +158,26 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
 
   QPainter painter(&printer);
 
-  painter.setFont(QFont("helvetica", 18, QFont::Bold));
+  QFont font;
+  font.setPointSize(18);
+  font.setWeight(QFont::Bold);
+
+  painter.setFont( font );
   painter.drawText(50, 50, i18n("Flightanalysis") + ":");
   painter.setPen(QPen(QColor(0, 0, 0), 2));
   painter.drawLine(50, 56, 545, 56);
-  painter.setFont(QFont("helvetica", 10, QFont::Normal, true));
+//  painter.setFont(QFont("helvetica", 10, QFont::Normal, true));
+
+  font.setPointSize( 9 );
+  font.setWeight( QFont::Normal );
+  font.setItalic( true );
+  
+  painter.setFont( font );
   painter.drawText(50, 58, 495, 20, Qt::AlignTop | Qt::AlignRight,
       (QString)i18n("File") + ": " + currentFlight->getFileName());
 
-  painter.setFont(QFont("helvetica", 10));
+  font.setItalic( false );
+  painter.setFont( font );
   painter.drawText(50, 100, i18n("Date") + ":");
   painter.drawText(125, 100, currentFlight->getDate().toString());
   painter.drawText(50, 115, i18n("Pilot") + ":");
@@ -178,10 +189,14 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
   painter.setPen(QPen(QColor(0,0,0), 1));
   painter.drawLine(50, 175, 545, 175);
 
-  painter.setFont(QFont("helvetica", 12, QFont::Bold));
+  font.setPointSize( 12 );
+  font.setWeight( QFont::Bold );
+  painter.setFont( font );
   painter.drawText(50, 170, i18n("Flighttrack") + ":");
 
-  painter.setFont(QFont("helvetica", 10));
+  font.setWeight( QFont::Normal );
+  font.setPointSize( 9 );
+  painter.setFont( font );
   painter.drawText(50, 190, i18n("Duration") + ":");
   painter.drawText(125, 190,
       printTime(currentFlight->getLandTime() - currentFlight->getStartTime()));
@@ -211,9 +226,14 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
   painter.setPen(QPen(QColor(0,0,0), 1));
   painter.drawLine(50, 340, 545, 340);
 
-  painter.setFont(QFont("helvetica", 12, QFont::Bold));
+  font.setPointSize( 12 );
+  font.setWeight( QFont::Bold );
+  painter.setFont( font );
   painter.drawText(50, 335, i18n("Task") + ":");
-  painter.setFont(QFont("helvetica", 10));
+
+  font.setPointSize( 9 );
+  font.setWeight( QFont::Normal );
+  painter.setFont( font );
 
   painter.drawText(50, 355, i18n("Typ") + ":");
   temp = i18n("%1  Track: %2  Points: %3").arg(
@@ -234,14 +254,19 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
     {
       wpList = currentFlight->getWPList();
       yPos += 20;
-      painter.setFont(QFont("helvetica", 12, QFont::Bold));
+
+      font.setPointSize( 12 );
+      font.setWeight( QFont::Bold );
+      painter.setFont( font );
       painter.drawText(50, yPos, i18n("Optimized Task") + ":");
       yPos += 5;
 
       painter.setPen(QPen(QColor(0,0,0), 1));
       painter.drawLine(50, yPos, 545, yPos);
 
-      painter.setFont(QFont("helvetica", 10));
+      font.setPointSize( 9 );
+      font.setWeight( QFont::Normal );
+      painter.setFont( font );
       yPos += 15;
 
       painter.drawText(50, yPos, i18n("Typ") + ":");
@@ -274,24 +299,24 @@ void FlightDataPrint::__printPositionData(QPainter* painter,
 {
   QString temp;
   painter->drawText(50, yPos, text);
-  painter->drawText(135, yPos, printPos(cPoint->origP.lat(), true));
-  painter->drawText(200, yPos, "/");
-  painter->drawText(210, yPos, printPos(cPoint->origP.lon(), false));
+  painter->drawText(145, yPos, printPos(cPoint->origP.lat(), true));
+  painter->drawText(220, yPos, "/");
+  painter->drawText(230, yPos, printPos(cPoint->origP.lon(), false));
 
-  painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
+  painter->drawText(300, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
             printTime(cPoint->time));
   temp.sprintf("%d m", cPoint->height);
-  painter->drawText(335, yPos - 18, 45, 20, Qt::AlignBottom | Qt::AlignRight, temp);
+  painter->drawText(360, yPos - 18, 45, 20, Qt::AlignBottom | Qt::AlignRight, temp);
 
   if(printVario)
     {
       temp.sprintf("%.1f m/s", getVario(*cPoint));
-      painter->drawText(385, yPos - 18, 60, 20, Qt::AlignBottom | Qt::AlignRight, temp);
+      painter->drawText(405, yPos - 18, 60, 20, Qt::AlignBottom | Qt::AlignRight, temp);
     }
   if(printSpeed)
     {
       temp.sprintf("%.1f km/h", getSpeed(*cPoint));
-      painter->drawText(450, yPos - 18, 65, 20, Qt::AlignBottom | Qt::AlignRight, temp);
+      painter->drawText(470, yPos - 18, 65, 20, Qt::AlignBottom | Qt::AlignRight, temp);
     }
 }
 
@@ -304,55 +329,55 @@ void FlightDataPrint::__printPositionData(QPainter* painter,
   QString temp;
   bool nospeed;
   painter->drawText(50, yPos, cPoint->name);
-  painter->drawText(135, yPos, printPos(cPoint->origP.lat(), true));
-  painter->drawText(200, yPos, "/");
-  painter->drawText(210, yPos, printPos(cPoint->origP.lon(), false));
+  painter->drawText(145, yPos, printPos(cPoint->origP.lat(), true));
+  painter->drawText(220, yPos, "/");
+  painter->drawText(230, yPos, printPos(cPoint->origP.lon(), false));
 
   if(cPoint->fixTime != 0){
       time=cPoint->fixTime;
-      painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
+      painter->drawText(300, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
               printTime(cPoint->fixTime));
       nospeed=false;
   }
   else if(cPoint->sector1 != 0){
       time=cPoint->sector1;
-      painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
+      painter->drawText(290, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
               printTime(cPoint->sector1));
       nospeed=false;
   }
   else if(cPoint->sector2 != 0)
     {
       time=cPoint->sector2;
-      painter->setFont(QFont("helvetica", 11, QFont::Normal, true));
-      painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
+      painter->setFont(QFont("helvetica", 9, QFont::Normal, true));
+      painter->drawText(290, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
               printTime(cPoint->sector2));
-      painter->setFont(QFont("helvetica", 11));
+      painter->setFont(QFont("helvetica", 9));
       nospeed=false;
     }
   else
-      painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight, "-");
+      painter->drawText(290, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight, "-");
 
   if(cPoint->sectorFAI != 0){
-      painter->drawText(330, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
+      painter->drawText(360, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
               printTime(cPoint->sectorFAI));
       nospeed=false;
   }
   else{
-      painter->drawText(330, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight, "-");
+      painter->drawText(360, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight, "-");
       nospeed=true;
   }
 
   if(cPoint->distance != 0)
     {
       temp.sprintf("%.1f km", cPoint->distance);
-      painter->drawText(390, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
+      painter->drawText(410, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
             temp);
     if(time && lasttime && !nospeed)
       {
         float speed = cPoint->distance/(time-lasttime)*3600.0;
         if ( (speed>0.0) && (speed<500.0)){ // suppress nonsense values
           temp.sprintf("%.1f km/h", speed);
-          painter->drawText(450, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
+          painter->drawText(470, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
                 temp);
         }
       }

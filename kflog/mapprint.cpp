@@ -181,8 +181,8 @@ MapPrint::MapPrint(bool flightLoaded)
 
   dialogPage = new MapPrintDialogPage(scaleList, 0, "MapPrintDialogPage", false);
 
-  
-  KPrinter printer;
+  KPrinter printer(true, QPrinter::PrinterResolution);
+//  KPrinter printer;
   printer.addDialogPage(dialogPage);
 
   if(!printer.setup(0, i18n("Map print"), true))  return;
@@ -443,8 +443,8 @@ MapPrint::MapPrint(bool flightLoaded)
         show1 = true;
         break;
       default:
-        /* Hier muﬂ jetzt zun‰chst der verwendete Maﬂstab berechnet und dann
-         * entschieden werden, welche Art der Balken-Darstellung verwendet wird.
+        /*
+         * We must calculate the used scale and choose, which scale-rule will be used.
          */
         int tempScale = (int)(selectedScale / 25.4 * 72 * 2);
 
@@ -506,7 +506,7 @@ MapPrint::MapPrint(bool flightLoaded)
   int scale10Y = scaleY - 10;
 
   /*
-   * Rahmen der Karte und der Legende.
+   * Border of the map and the legend.
    */
   printPainter.setPen(QPen(QColor(0, 0, 0), 2));
   printPainter.setBrush(Qt::NoBrush);
@@ -519,8 +519,8 @@ MapPrint::MapPrint(bool flightLoaded)
       BOT_RIGHT_X - TOP_LEFT_X - 60, BOT_RIGHT_Y - TOP_LEFT_Y - 125);
 
   /*
-   * Wenn die Boxen hier zu klein sind, wird die gesamte Ausgabe zerstˆrt.
-   * Anscheinend ein Bug in QPainter :-(
+   * If the boxes are too small, the whole output will be destroyed.
+   * Seems to be a bug in QPainter :-(
    */
   printPainter.setFont(QFont("helvetica", 20, QFont::Bold));
   printPainter.drawText(BOT_RIGHT_X - 310, BOT_RIGHT_Y - 65, 300, 50,
@@ -531,8 +531,7 @@ MapPrint::MapPrint(bool flightLoaded)
           (QString)"printed by KFLog " + VERSION);
 
   /*
-   * Wenn die druckbare Fl‰che zu klein ist, wird der Maﬂstabsbalken nicht
-   * angepaﬂt. Der Balken ist bei den festen Maﬂst‰ben immer 8 bzw. 10cm breit!
+   * If the printable area is too small, the scale-rule will not fit.
    */
   printPainter.setPen(QPen(QColor(0, 0, 0), 2));
   printPainter.setFont(QFont("helvetica", 15));
@@ -549,7 +548,7 @@ MapPrint::MapPrint(bool flightLoaded)
   printPainter.drawText(scaleX - 4, scale10Y - 5, "0");
   printPainter.drawText(scaleX + 2, scaleY + 15, "[km]");
 
-  /* 5- und 10-km Striche zeichnen */
+  // 5- and 10-km lines
   for(unsigned int loop = 1; loop <= stop10; loop++)
     {
       printPainter.drawLine(scaleX + (10000 * loop / selectedScale), scaleY,
@@ -570,7 +569,7 @@ MapPrint::MapPrint(bool flightLoaded)
         }
     }
 
-  /* 1-km Striche zeichnen */
+  // 1-km lines
   for(unsigned int loop = 1; loop <= stop1; loop++)
     {
       printPainter.drawLine(scaleX + (1000 * loop / selectedScale), scaleY,
@@ -583,7 +582,7 @@ MapPrint::MapPrint(bool flightLoaded)
         }
     }
 
-  /* Zur¸cksetzen der Darstellung   */
+  // Restoring the display:
   printPainter.setWorldMatrix(oldMatrix);
   printPainter.end();
 
