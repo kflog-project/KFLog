@@ -4,6 +4,9 @@
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier
     email                : harry@kflog.org
+
+    $Id$
+
 ***************************************************************************/
 
 /***************************************************************************
@@ -260,7 +263,7 @@ void Waypoints::showWaypointPopup(QListViewItem *it, const QPoint &, int)
   catalogCopySubPopup->clear();
   catalogMoveSubPopup->clear();
   //store current catalog index
-  int curCat=waypointCatalogs.at();
+  uint curCat=waypointCatalogs.at();
   for (unsigned int i=0;i<waypointCatalogs.count();i++) {
     if (curCat!=i) { //only insert if this catalog is NOT the current catalog...
       catalogCopySubPopup->insertItem(waypointCatalogs.at(i)->path,i);
@@ -734,6 +737,13 @@ void Waypoints::slotImportWaypointFromMap()
 /** filter waypoints to display */
 void Waypoints::slotFilterWaypoints()
 {
+  // @AP: check, if a WaypointCatalog is available, otherwise a core
+  // dump will occure
+
+  if (!waypointCatalogs.current()) {
+    return; // no catalog loaded
+  }
+
   if (importFilterDlg->exec() == QDialog::Accepted) {
     getFilterData();
     fillWaypoints();
