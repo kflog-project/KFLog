@@ -1,5 +1,10 @@
 $Id$
 
+2002-11-30 Andre <andre@kflog.org>
+
+  * Add icons to the waypointlist
+  * Add reading and writing of waypoint in binairy format
+
 2002-08-06 Thomas <thomas@kflog.org>
 
   * Add commandline option to specify and load WaypointCatalog
