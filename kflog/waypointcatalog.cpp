@@ -727,6 +727,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
   Q_INT8 fileType;
   Q_UINT16 fileFormat;
 
+  //int startoffset;
 
   QFile f(catalog);
   if (f.exists()) {
@@ -757,6 +758,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
       if (fileFormat==FILE_FORMAT_ID_2)
       while(!in.eof()) {
         // read values from file
+          //startoffset=f.at();
           in >> wpName;
           in >> wpDescription;
           in >> wpICAO;
@@ -793,7 +795,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
           w->surface = wpSurface;
           w->comment = wpComment;
           w->importance = wpImportance;
-          qDebug("Waypoint read: %s (%s - %s)",w->name.latin1(),w->description.latin1(),w->icao.latin1());
+          //qDebug("Waypoint read: %s (%s - %s) offset %d-%d",w->name.latin1(),w->description.latin1(),w->icao.latin1(), startoffset, f.at());
           if (!wpList.insertItem(w))
           {
             qDebug("odd... error reading waypoints");

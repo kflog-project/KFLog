@@ -512,7 +512,6 @@ void Waypoints::fillWaypoints()
         continue;
       }
     }
-
     item = new QListViewItem(waypoints);
     item->setText(colName, w->name);
     item->setText(colDesc, w->description);
@@ -532,7 +531,6 @@ void Waypoints::fillWaypoints()
       tmp = QString::null;
     }
     item->setText(colRunway, tmp);
-
     if (w->length > -1) {
       tmp.sprintf("%02d", w->length);
     }
@@ -545,7 +543,6 @@ void Waypoints::fillWaypoints()
     item->setText(colComment, w->comment);
     item->setPixmap(colName, _globalMapConfig.getPixmap(w->type,false,true));
   }
-
   emit waypointCatalogChanged( waypointCatalogs.current() );
 }
 
@@ -911,6 +908,7 @@ void Waypoints::openCatalog(QString &catalog)
         catalogName->insertItem(w->path);
 
         catalogName->setCurrentItem(newItem);
+        qDebug(".....");
         slotSwitchWaypointCatalog(newItem);
       }
     }

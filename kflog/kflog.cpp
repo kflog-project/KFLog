@@ -1300,6 +1300,8 @@ void KFLogApp::initTypes()
   waypointTypes.append(new TranslationElement(BaseMapElement::Railway, i18n("Railway")));
   waypointTypes.append(new TranslationElement(BaseMapElement::Road, i18n("Road")));
   waypointTypes.append(new TranslationElement(BaseMapElement::PopulationPlace, i18n("Village,City")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Turnpoint, i18n("Turnpoint")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Thermal, i18n("Thermal")));
 
   waypointTypes.sort();
 }

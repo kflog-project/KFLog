@@ -161,7 +161,8 @@
 #define PACK_ICE         56
 #define TRAIL            58
 #define FOREST           60
-
+#define TURNPOINT        61
+#define THERMAL          62
 
 /*
  * In einigen ASCII-Dateien taucht der Typ 71 für Kanäle auf,
