@@ -142,11 +142,11 @@ bool WaypointCatalog::read(QString &catalog)
 
     }
     else {
-      KMessageBox::error(0, "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(catalog) + "</qt>", i18n("Error occurred!"));
+      KMessageBox::error(0, QString ("<qt><B>%1</B><BR>").arg(catalog) + i18n("permission denied!") + "</qt>", i18n("Error occurred!"));
     }
   }
   else {
-    KMessageBox::error(0, "<qt>" + i18n("<B>%1</B><BR>not found!").arg(catalog) + "</qt>", i18n("Error occurred!"));
+    KMessageBox::error(0, QString ("<qt><B>%1</B><BR>").arg(catalog) + i18n("not found!") + "</qt>", i18n("Error occurred!"));
   }
 
   return ok;
@@ -211,7 +211,7 @@ bool WaypointCatalog::write()
     onDisc = true;
   }
   else {
-    KMessageBox::error(0, "<qt>"+ i18n("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", i18n("Error occurred!"));
+    KMessageBox::error(0, QString ("<qt><B>%1</B><BR>").arg(fName) + i18n ("permission denied!")+ "</qt>", i18n("Error occurred!"));
   }
 
   QApplication::restoreOverrideCursor();
@@ -288,7 +288,7 @@ bool WaypointCatalog::writeBinairy()
     onDisc = true;
   }
   else {
-    KMessageBox::error(0, "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", i18n("Error occurred!"));
+    KMessageBox::error(0, QString ("<qt><B>%1</B><BR>").arg(fName) + i18n("permission denied!") + "</qt>", i18n("Error occurred!"));
   }
   return ok;
 }
@@ -569,7 +569,7 @@ bool WaypointCatalog::readBinairy(QString &catalog)
           writeBinairy();
     }
     else {
-      KMessageBox::error(0, "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(catalog) + "</qt>", i18n("Error occurred!"));
+      KMessageBox::error(0, QString ("<qt><B>%1</B><BR>").arg(catalog) + i18n("permission denied!") + "</qt>", i18n("Error occurred!"));
     }
   }
   else {
