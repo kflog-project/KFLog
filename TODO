@@ -20,6 +20,8 @@ Flightrecorder
 Planning
 ========
 
+* Area-based planning
+
 * graphical planning
 
   -> printing of planned task (track, not info)
@@ -68,10 +70,11 @@ Evaluation
 * Instrument images for the current flight values
   (Speed, elevation, vario)
 
-* computation of the wind
+* computation of the wind, and display in statistics
 
 * Display ENL (engine noise level)
 
+* Online-declaration to OLC
 
 Map
 ===
@@ -85,6 +88,9 @@ Map
 * integration of Aeroplanner.com data
 
 * Shading of elevation data
+
+* Use different colors for the flighttrack, if
+  displaying more than one flight.
 
 
 3D View
@@ -162,6 +168,14 @@ Other
 * Select active Flight
 
 
+QT/e version
+============
+
+* All... So start with: making a list of the things this version
+  should and should not do.
+
+
+
 Translation
 ===========
 
@@ -172,3 +186,4 @@ Italian       Andrea            Andrea
 Norwegian     Thomas            Thomas
 Swedish                         Göran
 French                          Helmut
+Dutch         André		André
