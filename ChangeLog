@@ -1,5 +1,14 @@
 $Id$
 
+2003-05-21 Eggert Ehmke <eggert@kflog.org>
+
+  * Bugfix: list of waypoints in OLCDialog was sorted wrong if more than 9 entries
+
+  * Optimization: several class parameters are now const class&
+
+  * more optimizations have been backported from Cumulus
+  
+
 2003-05-20 Eggert Ehmke <eggert@kflog.org>
 
   * Added a wait cursor for time consuming operations in RecorderDialog
