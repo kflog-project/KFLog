@@ -1,36 +1,19 @@
 # translation of de.po to 
-# translation of de.po to
-# translation of de.po to deutsch
-# Copyright (C) 2003 Free Software Foundation, Inc.
-# Eggert Ehmke <eggert.ehmke@berlin.de>, 2003
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Heiner Lamprecht <heiner@kflog.org>, 2003
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
-"POT-Creation-Date: 2003-07-12 00:25+0200\n"
-"PO-Revision-Date: 2003-07-12 00:26+0200\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2003-07-12 22:26+0200\n"
+"PO-Revision-Date: 2003-07-13 15:00+0200\n"
+"Last-Translator: Heiner Lamprecht <heiner@kflog.org>\n"
 "Language-Team:  <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.0.1\n"
-
-#: guicontrols/kfloglistview.moc.cpp:34 guicontrols/kfloglistview.moc.cpp:42
-msgid "KFLogListView"
-msgstr "KFLogListView"
-
-#: guicontrols/coordedit.moc.cpp:34 guicontrols/coordedit.moc.cpp:42
-msgid "CoordEdit"
-msgstr ""
-
-#: guicontrols/coordedit.moc.cpp:116 guicontrols/coordedit.moc.cpp:124
-msgid "LatEdit"
-msgstr ""
-
-#: guicontrols/coordedit.moc.cpp:189 guicontrols/coordedit.moc.cpp:197
-msgid "LongEdit"
-msgstr ""
 
 #: airspace.cpp:85 airspace.cpp:104
 msgid "Unlimited"
@@ -44,13 +27,13 @@ msgstr "unbekannt"
 msgid "Center to ..."
 msgstr "Zentrieren auf ..."
 
-#: centertodialog.cpp:34 kflogconfig.cpp:744 recorderdialog.cpp:431
-#: recorderdialog.cpp:594 waypoints.cpp:85 olcdialog.cpp:143
+#: centertodialog.cpp:34 kflogconfig.cpp:744 olcdialog.cpp:143
+#: recorderdialog.cpp:436 recorderdialog.cpp:600 waypoints.cpp:85
 msgid "Latitude"
 msgstr "Breitengrad"
 
-#: centertodialog.cpp:38 kflogconfig.cpp:746 recorderdialog.cpp:432
-#: recorderdialog.cpp:595 waypoints.cpp:86 olcdialog.cpp:144
+#: centertodialog.cpp:38 kflogconfig.cpp:746 olcdialog.cpp:144
+#: recorderdialog.cpp:437 recorderdialog.cpp:601 waypoints.cpp:86
 msgid "Longitude"
 msgstr "Längengrad"
 
@@ -86,8 +69,8 @@ msgstr "Füllung"
 msgid "1:500.000"
 msgstr "1:500.000"
 
-#: dataview.cpp:63 flightdataprint.cpp:232 taskdataprint.cpp:188
-#: olcdialog.cpp:103
+#: dataview.cpp:63 flightdataprint.cpp:232 olcdialog.cpp:103
+#: taskdataprint.cpp:188
 msgid "Task"
 msgstr "Aufgabe"
 
@@ -104,7 +87,7 @@ msgid "Average Speed"
 msgstr "Durchschnittsgeschwindigkeit"
 
 #: dataview.cpp:143 dataview.cpp:157 flightlistviewitem.cpp:73
-#: tasklistviewitem.cpp:72 olcdialog.cpp:184
+#: olcdialog.cpp:184 tasklistviewitem.cpp:72
 msgid "Points"
 msgstr "Punkte"
 
@@ -133,18 +116,18 @@ msgid "Next waypoint"
 msgstr "Nächster Wegpunkt"
 
 #: dataview.cpp:235 flightdataprint.cpp:181 flightlistviewitem.cpp:69
-#: recorderdialog.cpp:374
+#: recorderdialog.cpp:379
 msgid "Date"
 msgstr "Datum"
 
 #: dataview.cpp:236 flightdataprint.cpp:183 flightlistviewitem.cpp:67
-#: kflogconfig.cpp:717 recorderdialog.cpp:375 recorderdialog.cpp:456
-#: recorderdialog.cpp:459 olcdialog.cpp:99
+#: kflogconfig.cpp:717 olcdialog.cpp:99 recorderdialog.cpp:380
+#: recorderdialog.cpp:461 recorderdialog.cpp:464
 msgid "Pilot"
 msgstr "Pilot"
 
 #: dataview.cpp:237 flightdataprint.cpp:185 flightlistviewitem.cpp:71
-#: recorderdialog.cpp:376 olcdialog.cpp:101
+#: olcdialog.cpp:101 recorderdialog.cpp:381
 msgid "Glider"
 msgstr "Flugzeug"
 
@@ -157,7 +140,7 @@ msgid "Flight group"
 msgstr "Flug-Gruppe"
 
 #: dataview.cpp:258 objecttree.cpp:56 objecttree.cpp:241
-#: recorderdialog.cpp:362
+#: recorderdialog.cpp:367
 msgid "Flights"
 msgstr "Flüge"
 
@@ -177,7 +160,7 @@ msgstr "Kreisflug"
 msgid "Time"
 msgstr "Zeit"
 
-#: evaluationdialog.cpp:189 kflog.cpp:390
+#: evaluationdialog.cpp:189 kflog.cpp:393
 msgid "Vario"
 msgstr "Vario"
 
@@ -197,7 +180,7 @@ msgstr "Geradeausflug"
 msgid "tot. Distance"
 msgstr "Ges. Distanz"
 
-#: evaluationdialog.cpp:203 kflog.cpp:389
+#: evaluationdialog.cpp:203 kflog.cpp:392
 msgid "Speed"
 msgstr "Geschwindigkeit"
 
@@ -326,7 +309,7 @@ msgstr "Fluganalyse"
 msgid "Flighttrack"
 msgstr "Flugweg"
 
-#: flightdataprint.cpp:200 recorderdialog.cpp:379
+#: flightdataprint.cpp:200 recorderdialog.cpp:384
 msgid "Duration"
 msgstr "Dauer"
 
@@ -423,7 +406,7 @@ msgstr "OLC optimiert (Regeln 2003)"
 msgid "???"
 msgstr "???"
 
-#: flighttask.cpp:337 kflog.cpp:1259
+#: flighttask.cpp:337 kflog.cpp:1264
 msgid "Unknown"
 msgstr "Unbekannt"
 
@@ -440,7 +423,7 @@ msgid ""
 "The time intervall between two points<BR>of the flight is more than 70 sec.!"
 "<BR>Due to Code Sportif 3, Nr. 1.9.2.1,<BR>the flight can not be valued!"
 msgstr ""
-"Der zeitliche Abstand zwischen zwei Punkten<BR>des Fluges länger als 70s!"
+"Der zeitliche Abstand zwischen zwei Punkten<BR>des Fluges ist länger als 70s!"
 "<BR> Nach Code Sportif 3, Nr. 1.9.2.1,<BR>kann der Flug nicht gewertet "
 "werden!"
 
@@ -476,438 +459,439 @@ msgstr ""
 msgid "no task given"
 msgstr "Keine Aufgabe angegeben"
 
-#: kflog.cpp:183
+#: kflog.cpp:186
 msgid "&Open Flight"
 msgstr "&Flug öffnen"
 
-#: kflog.cpp:186
+#: kflog.cpp:189
 msgid "&Open Task"
 msgstr "Aufgabe &öffnen"
 
-#: kflog.cpp:191
+#: kflog.cpp:194
 msgid "Close Flight"
 msgstr "Flug schließen"
 
-#: kflog.cpp:195
+#: kflog.cpp:198
 msgid "Open Recorder"
 msgstr "Logger öffnen"
 
-#: kflog.cpp:199
+#: kflog.cpp:202
 msgid "Import FlightGear File"
 msgstr "FlightGear-Datei importieren"
 
-#: kflog.cpp:203
+#: kflog.cpp:206
 msgid "Import Gardown File"
 msgstr "Gardown-Datei importieren"
 
-#: kflog.cpp:209
+#: kflog.cpp:212
 msgid "Export to PNG..."
 msgstr "Export nach PNG ..."
 
-#: kflog.cpp:212
+#: kflog.cpp:215
 msgid "Print Flightdata"
 msgstr "Drucke Flugdaten"
 
-#: kflog.cpp:217
+#: kflog.cpp:220
 msgid "Move map"
 msgstr "Karte verschieben"
 
-#: kflog.cpp:225
+#: kflog.cpp:228
 msgid "Center to &Task"
 msgstr "auf &Aufgabe zentrieren"
 
-#: kflog.cpp:229
+#: kflog.cpp:232
 msgid "Center to &Flight"
 msgstr "auf &Flug zentrieren"
 
-#: kflog.cpp:233
+#: kflog.cpp:236
 msgid "Center to &Homesite"
 msgstr "auf &Heimatflugplatz zentrieren"
 
-#: kflog.cpp:237
+#: kflog.cpp:240
 msgid "Center to..."
 msgstr "Zentrieren auf ..."
 
-#: kflog.cpp:245
+#: kflog.cpp:248
 msgid "move map north-west"
 msgstr "Nord-West"
 
-#: kflog.cpp:249
+#: kflog.cpp:252
 msgid "move map north"
 msgstr "Nord"
 
-#: kflog.cpp:253
+#: kflog.cpp:256
 msgid "move map northeast"
 msgstr "Nord-Ost"
 
-#: kflog.cpp:257
+#: kflog.cpp:260
 msgid "move map west"
 msgstr "West"
 
-#: kflog.cpp:261
+#: kflog.cpp:264
 msgid "move map east"
 msgstr "Ost"
 
-#: kflog.cpp:265
+#: kflog.cpp:268
 msgid "move map south-west"
 msgstr "Süd-West"
 
-#: kflog.cpp:269
+#: kflog.cpp:272
 msgid "move map south"
 msgstr "Süd"
 
-#: kflog.cpp:273
+#: kflog.cpp:276
 msgid "move map south-east"
 msgstr "Süd-Ost"
 
-#: kflog.cpp:291
+#: kflog.cpp:294
 msgid "Show Flight&data"
 msgstr "&Flugdaten zeigen"
 
-#: kflog.cpp:294
+#: kflog.cpp:297
 msgid "Show &HelpWindow"
 msgstr "&Hilfefenster anzeigen"
 
-#: kflog.cpp:298
+#: kflog.cpp:301
 msgid "Show &EvaluationWindow"
 msgstr "&Auswertung zeigen"
 
-#: kflog.cpp:302
+#: kflog.cpp:305
 msgid "Show Map&control"
 msgstr "&Kartenkontrolle zeigen"
 
-#: kflog.cpp:305
+#: kflog.cpp:308
 msgid "Show &Map"
 msgstr "&Karte anzeigen"
 
-#: kflog.cpp:309
+#: kflog.cpp:312
 msgid "Show &Waypoints"
 msgstr "Zeige &Wegpunkte"
 
-#: kflog.cpp:313
+#: kflog.cpp:316
 msgid "Show &Legend"
 msgstr "Höhen&legende anzeigen"
 
-#: kflog.cpp:317
+#: kflog.cpp:320
 msgid "Show KFLog&Browser"
 msgstr "KFLog &Browser zeigen"
 
-#: kflog.cpp:321
+#: kflog.cpp:324
 msgid "Optimize"
 msgstr "Optimieren"
 
-#: kflog.cpp:325
+#: kflog.cpp:328
 msgid "Optimize (OLC)"
 msgstr "Optimieren (OLC)"
 
-#: kflog.cpp:330
+#: kflog.cpp:333
 msgid "send OLC-Declaration"
 msgstr "OLC Anmeldung senden"
 
-#: kflog.cpp:334
+#: kflog.cpp:337
 msgid "Reset confirmations"
 msgstr "Bestätigungen zurücksetzen"
 
-#: kflog.cpp:339
+#: kflog.cpp:342
 msgid "&Start Flight Animation"
 msgstr "&Starte Animation"
 
-#: kflog.cpp:342
+#: kflog.cpp:345
 msgid "Stop Flight &Animation"
 msgstr "&Beende Animation"
 
-#: kflog.cpp:346
+#: kflog.cpp:349
 msgid "Next Flight Point"
 msgstr "nächster Flugpunkt"
 
-#: kflog.cpp:349
+#: kflog.cpp:352
 msgid "Prev Flight Point"
 msgstr "vorheriger Flugpunkt"
 
-#: kflog.cpp:352
+#: kflog.cpp:355
 msgid "First Flight Point"
 msgstr "erster Flugpunkt"
 
-#: kflog.cpp:355
+#: kflog.cpp:358
 msgid "Last Flight Point"
 msgstr "letzter Flugpunkt"
 
-#: kflog.cpp:358
+#: kflog.cpp:361
 msgid "Step +10 Flight Points"
 msgstr "+10 Flugpunkte"
 
-#: kflog.cpp:361
+#: kflog.cpp:364
 msgid "Step -10 Flight Points"
 msgstr "-10 Flugpunkte"
 
-#: kflog.cpp:368
+#: kflog.cpp:371
 msgid "View flight in 3D"
 msgstr "Zeige Flug in 3D"
 
-#: kflog.cpp:375
+#: kflog.cpp:378
 msgid "View flight in 3D (OpenGL)"
 msgstr "Zeige Flug in 3D (OpenGL)"
 
-#: kflog.cpp:380
+#: kflog.cpp:383
 msgid "Show Flightdata"
 msgstr "Flugdaten zeigen"
 
-#: kflog.cpp:387
+#: kflog.cpp:390
 msgid "Altitude"
 msgstr "Höhe"
 
-#: kflog.cpp:388
+#: kflog.cpp:391
 msgid "Cycling"
 msgstr "Kreisflug"
 
-#: kflog.cpp:391
+#: kflog.cpp:394
 msgid "Solid"
 msgstr "einfarbig"
 
-#: kflog.cpp:397
+#: kflog.cpp:400
 msgid "F&light"
 msgstr "F&lug"
 
-#: kflog.cpp:427
+#: kflog.cpp:430
 msgid "&Window"
 msgstr "&Fenster"
 
-#: kflog.cpp:433
+#: kflog.cpp:436
 msgid "&New"
 msgstr "&Neu"
 
-#: kflog.cpp:434
+#: kflog.cpp:437
 msgid "&Waypoint"
 msgstr "&Wendepunkt"
 
-#: kflog.cpp:435 taskdialog.cpp:122
+#: kflog.cpp:438 taskdialog.cpp:122
 msgid "&Task"
 msgstr "&Aufgabe"
 
-#: kflog.cpp:436
+#: kflog.cpp:439
 msgid "&Flight group"
 msgstr "Flug&gruppe"
 
-#: kflog.cpp:478 map.cpp:2458 mapprint.cpp:59 map.moc.cpp:34 map.moc.cpp:42
+#: kflog.cpp:481 map.cpp:2458 mapprint.cpp:59
 msgid "Map"
 msgstr "Karte"
 
-#: kflog.cpp:479
+#: kflog.cpp:482
 msgid "Flight-Data"
 msgstr "Flug-Daten"
 
-#: kflog.cpp:481
+#: kflog.cpp:484
 msgid "Evaluation"
 msgstr "Auswertung"
 
-#: kflog.cpp:482
+#: kflog.cpp:485
 msgid "Map-Control"
 msgstr "Karten-Kontrolle"
 
-#: kflog.cpp:483 kflogconfig.cpp:834 recorderdialog.cpp:581
-#: tasklistviewitem.cpp:77 waypoints.moc.cpp:34 waypoints.moc.cpp:42
+#: kflog.cpp:486 kflogconfig.cpp:834 recorderdialog.cpp:587
+#: tasklistviewitem.cpp:77
 msgid "Waypoints"
 msgstr "Wegpunkte"
 
-#: kflog.cpp:484
+#: kflog.cpp:487
 msgid "Legend"
 msgstr "Legende"
 
-#: kflog.cpp:485
+#: kflog.cpp:488
 msgid "KFLog Browser"
 msgstr "KFLog Browser"
 
-#: kflog.cpp:728 kflog.cpp:764 kflog.cpp:1304 kflog.cpp:1337 kflog.cpp:1375
+#: kflog.cpp:731 kflog.cpp:767 kflog.cpp:1309 kflog.cpp:1342 kflog.cpp:1380
 msgid "Opening file..."
 msgstr "öffne Datei..."
 
-#: kflog.cpp:731
+#: kflog.cpp:734
 msgid "Select IGC-File"
 msgstr "IGC-Datei wählen"
 
-#: kflog.cpp:734
+#: kflog.cpp:737
 msgid "Open flight"
 msgstr "Flug öffnen"
 
-#: kflog.cpp:748 kflog.cpp:1321 kflog.cpp:1354 kflog.cpp:1393
+#: kflog.cpp:751 kflog.cpp:1326 kflog.cpp:1359 kflog.cpp:1398
+#: recorderdialog.cpp:831
 msgid "Can not download file %1"
 msgstr "Kann Datei %1 nicht herunterladen"
 
-#: kflog.cpp:759 kflog.cpp:787 kflog.cpp:797 kflog.cpp:843 kflog.cpp:863
-#: kflog.cpp:875 kflog.cpp:1332 kflog.cpp:1365 kflog.cpp:1404
+#: kflog.cpp:762 kflog.cpp:790 kflog.cpp:800 kflog.cpp:846 kflog.cpp:866
+#: kflog.cpp:878 kflog.cpp:1337 kflog.cpp:1370 kflog.cpp:1409
 msgid "Ready."
 msgstr "Fertig."
 
-#: kflog.cpp:792 kflog.cpp:823
+#: kflog.cpp:795 kflog.cpp:826
 msgid "Printing..."
 msgstr "Drucke..."
 
-#: kflog.cpp:811
+#: kflog.cpp:814
 msgid "You can only send flights to the OLC!"
 msgstr "Sie können nur Flüge an den OLC senden!"
 
-#: kflog.cpp:812
+#: kflog.cpp:815
 msgid "No flight found"
 msgstr "Keine Flüge gefunden"
 
-#: kflog.cpp:839
+#: kflog.cpp:842
 #, c-format
 msgid "Not yet available for type : %d"
 msgstr "Noch nicht möglich für Typ: %d"
 
-#: kflog.cpp:848
+#: kflog.cpp:851
 msgid "Exiting..."
 msgstr "Programm wird beendet..."
 
-#: kflog.cpp:856
+#: kflog.cpp:859
 msgid "Toggling toolbar..."
 msgstr "Werkzeugleiste (de)aktivieren..."
 
-#: kflog.cpp:868
+#: kflog.cpp:871
 msgid "Toggle the statusbar..."
 msgstr "Statusleiste (de)aktivieren..."
 
-#: kflog.cpp:979
+#: kflog.cpp:982
 msgid "center-to-dialog"
-msgstr "Zentrieren auf"
+msgstr "Zentrieren auf ..."
 
-#: kflog.cpp:1260
+#: kflog.cpp:1265
 msgid "Grass"
-msgstr "Graß"
+msgstr "Gras"
 
-#: kflog.cpp:1261
+#: kflog.cpp:1266
 msgid "Asphalt"
 msgstr "Asphalt"
 
-#: kflog.cpp:1262
+#: kflog.cpp:1267
 msgid "Concrete"
 msgstr "Beton"
 
-#: kflog.cpp:1272
+#: kflog.cpp:1277
 msgid "Aerial railway"
 msgstr "Seilbahn"
 
-#: kflog.cpp:1273 waypointimpfilterdialog.cpp:99
+#: kflog.cpp:1278 waypointimpfilterdialog.cpp:99
 msgid "Airfield"
 msgstr "Flugplatz"
 
-#: kflog.cpp:1274
+#: kflog.cpp:1279
 msgid "Airport"
 msgstr "Flughafen"
 
-#: kflog.cpp:1275
+#: kflog.cpp:1280
 msgid "Ambul. Airport"
 msgstr "Amb. Hubschrauberplatz"
 
-#: kflog.cpp:1276
+#: kflog.cpp:1281
 msgid "Balloon"
 msgstr "Ballonstartplatz"
 
-#: kflog.cpp:1277 kflogconfig.cpp:284
+#: kflog.cpp:1282 kflogconfig.cpp:284
 msgid "City"
 msgstr "Stadt"
 
-#: kflog.cpp:1278
+#: kflog.cpp:1283
 msgid "Civil Heliport"
 msgstr "Ziv. Hubschrauberplatz"
 
-#: kflog.cpp:1279
+#: kflog.cpp:1284
 msgid "Int. Airport"
 msgstr "Internat. Flughafen"
 
-#: kflog.cpp:1280
+#: kflog.cpp:1285
 msgid "Mil. Airport"
 msgstr "Mil. Flughafen"
 
-#: kflog.cpp:1281
+#: kflog.cpp:1286
 msgid "Civil/Mil. Airport"
 msgstr "Ziv./Mil. Flughafen"
 
-#: kflog.cpp:1282
+#: kflog.cpp:1287
 msgid "Closed Airfield"
 msgstr "geschlossener Flughafen"
 
-#: kflog.cpp:1283
+#: kflog.cpp:1288
 msgid "Glider site"
 msgstr "Segelflugplatz"
 
-#: kflog.cpp:1284
+#: kflog.cpp:1289
 msgid "Hang glider"
 msgstr "Hängegleitergelände"
 
-#: kflog.cpp:1285 kflogconfig.cpp:280
+#: kflog.cpp:1290 kflogconfig.cpp:280
 msgid "Highway"
 msgstr "Autobahn"
 
-#: kflog.cpp:1286
+#: kflog.cpp:1291
 msgid "Landmark"
 msgstr "Landschaftsmerkmal"
 
-#: kflog.cpp:1287
+#: kflog.cpp:1292
 msgid "Mil. Heliport"
 msgstr "Mil. Hubschrauberplatz"
 
-#: kflog.cpp:1288
+#: kflog.cpp:1293
 msgid "Ultralight"
 msgstr "Ultraleichtflugbetrieb"
 
-#: kflog.cpp:1289
+#: kflog.cpp:1294
 msgid "Parachute"
 msgstr "Fallschirmabsprunggelände"
 
-#: kflog.cpp:1290
+#: kflog.cpp:1295
 msgid "Outlanding"
 msgstr "Außenlandefeld"
 
-#: kflog.cpp:1291
+#: kflog.cpp:1296
 msgid "Obstacle"
 msgstr "Hindernis"
 
-#: kflog.cpp:1292
+#: kflog.cpp:1297
 msgid "Obstacle group"
 msgstr "Hindernisgruppe"
 
-#: kflog.cpp:1293
+#: kflog.cpp:1298
 msgid "Obstacle group (lighted)"
 msgstr "Hindernisgruppe (beleuchtet)"
 
-#: kflog.cpp:1294
+#: kflog.cpp:1299
 msgid "Obstacle (lighted)"
 msgstr "Hindernis (beleuchtet)"
 
-#: kflog.cpp:1295 kflogconfig.cpp:281
+#: kflog.cpp:1300 kflogconfig.cpp:281
 msgid "Railway"
 msgstr "Eisenbahn"
 
-#: kflog.cpp:1296 kflogconfig.cpp:279
+#: kflog.cpp:1301 kflogconfig.cpp:279
 msgid "Road"
 msgstr "Straße"
 
-#: kflog.cpp:1297
+#: kflog.cpp:1302
 msgid "Village,City"
 msgstr "Dorf, Stadt"
 
-#: kflog.cpp:1307
+#: kflog.cpp:1312
 msgid "Select FlightGear File"
 msgstr "Wähle FlightGear Datei"
 
-#: kflog.cpp:1340
+#: kflog.cpp:1345
 msgid "Select Gardown File"
 msgstr "Wähle Gardown Datei"
 
-#: kflog.cpp:1378
+#: kflog.cpp:1383
 msgid "Select Task-File"
 msgstr "Wähle Aufgabendatei"
 
-#: kflog.cpp:1379
+#: kflog.cpp:1384
 msgid "Open task"
 msgstr "Aufgabe öffnen"
 
-#: kflog.cpp:1418
+#: kflog.cpp:1423
 msgid "Traditional Route"
 msgstr "Traditionelle Aufgabe"
 
-#: kflog.cpp:1419
+#: kflog.cpp:1424
 msgid "FAI Area"
 msgstr "FAI Flächen"
 
@@ -1191,34 +1175,6 @@ msgstr "Auswählen"
 msgid "Select default waypoint catalog"
 msgstr "Standart Wendepunktkatalog wählen"
 
-#: main.cpp:55
-msgid "export to png graphics file"
-msgstr "exportiere nach PNG-Graphikdatei"
-
-#: main.cpp:57
-msgid "width of pixmap"
-msgstr "Breite der Pixmap"
-
-#: main.cpp:59
-msgid "height of pixmap"
-msgstr "Höhe der Pixmap"
-
-#: main.cpp:61
-msgid "suppress comment"
-msgstr "Kommentar unterdrücken"
-
-#: main.cpp:63
-msgid "quit after export (batch mode)"
-msgstr "Beenden nach Export (Stapelverarbeitung)"
-
-#: main.cpp:64
-msgid "waypoint-catalog to open"
-msgstr "Wegpunkt-Katalog öffnen"
-
-#: main.cpp:65
-msgid "igc-file to open"
-msgstr "IGC-Datei öffnen"
-
 #: main.cpp:82
 msgid "KFLog - The K-Flight-Logger"
 msgstr "KFLog - Der K-Flug-Logger"
@@ -1234,7 +1190,7 @@ msgstr ""
 "GTOPO30 Daten und der Digital Chart of the World.\n"
 "Sollten Sie noch keine Kartendateien installiert haben\n"
 "besuchen Sie bitte unsere Homepage und laden\n"
-"das Gebiet welches Sie benötigen herunter.."
+"das Gebiet, welches Sie benötigen, herunter."
 
 #: main.cpp:91
 msgid "Maintenance, Core-developer, Mapdata"
@@ -1264,17 +1220,17 @@ msgstr "Entwickler (Wegpunkt-Dialog, Aufgabenplanung)"
 msgid "Developer (3D-Dialog)"
 msgstr "Entwickler (3D-Dialog)"
 
-#: main.cpp:107 _translatorinfo.cpp:1
+#: main.cpp:107
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
-msgstr "Florian Ehinger"
+msgstr "Heiner Lamprecht"
 
-#: main.cpp:108 _translatorinfo.cpp:3
+#: main.cpp:108
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
-msgstr "florian@kflog.org"
+msgstr "heiner@kflog.org"
 
 #: map.cpp:136
 msgid ""
@@ -1408,13 +1364,13 @@ msgid "The selected file<BR><B>%1</B><BR>is not an igc-file!"
 msgstr "Die gewählte Datei<BR><B>%1</B><BR>ist keine IGC-Datei!"
 
 #: mapcontents.cpp:1243 mapcontents.cpp:2451 mapcontents.cpp:2788
-#: mapcontents.cpp:3065 waypointcatalog.cpp:326 olcdialog.cpp:372
-#: olcdialog.cpp:380
+#: mapcontents.cpp:3065 olcdialog.cpp:372 olcdialog.cpp:380
+#: waypointcatalog.cpp:326
 msgid "You don't have permission to access file<BR><B>%1</B>"
 msgstr "Sie haben keine Zugriffsrechte für Datei<BR><B>%1</B>"
 
 #: mapcontents.cpp:1244 mapcontents.cpp:2452 mapcontents.cpp:2789
-#: waypointcatalog.cpp:327 olcdialog.cpp:373 olcdialog.cpp:381
+#: olcdialog.cpp:373 olcdialog.cpp:381 waypointcatalog.cpp:327
 msgid "No permission"
 msgstr "Keine Zugriffsrechte"
 
@@ -1533,10 +1489,10 @@ msgid ""
 "the right mouse button.<br>It's possible to move and delete taskpoints from "
 "the finished task."
 msgstr ""
-"Sie können Wendepunkte mit der Linken Maustaste auswählen. Außerdem ist es "
+"Sie können Wendepunkte mit der linken Maustaste auswählen. Außerdem ist es "
 "möglich, durch klicken in die Karte und gleichzeitigem Drücken der Shift "
 "Taste , einen freien Wendepunkt auszuwählen<br><br> Eine Wendepunkt kann "
-"durch drücken von &lt;STRG&gt; und einem Klick auf den Wendepunkt gelöscht "
+"durch Drücken von &lt;STRG&gt; und einem Klick auf den Wendepunkt gelöscht "
 "werden. <br>Die Aufgabe kann bis zur aktuellen Mausposition berechnet "
 "werden, indem Sie &lt;SHIFT&gt; drücken.<br> Um die Aufgabe zu beenden bitte "
 "&lt;STRG&gt; und die rechte Maustaste drücken.<br> Es ist möglich "
@@ -1612,17 +1568,17 @@ msgstr "auf Flug zentrieren"
 msgid "Center to Task"
 msgstr "auf Aufgabe zentrieren"
 
-#: objecttree.cpp:53 recorderdialog.cpp:430 recorderdialog.cpp:529
-#: recorderdialog.cpp:593 waypoints.cpp:81
+#: objecttree.cpp:53 recorderdialog.cpp:435 recorderdialog.cpp:535
+#: recorderdialog.cpp:599 waypoints.cpp:81
 msgid "Name"
 msgstr "Name"
 
-#: objecttree.cpp:54 recorderdialog.cpp:530 waypoints.cpp:82
+#: objecttree.cpp:54 recorderdialog.cpp:536 waypoints.cpp:82
 msgid "Description"
 msgstr "Beschreibung"
 
-#: objecttree.cpp:65 objecttree.cpp:226 recorderdialog.cpp:485
-#: recorderdialog.cpp:518 tasks.moc.cpp:34 tasks.moc.cpp:42
+#: objecttree.cpp:65 objecttree.cpp:226 recorderdialog.cpp:490
+#: recorderdialog.cpp:524
 msgid "Tasks"
 msgstr "Aufgaben"
 
@@ -1660,7 +1616,7 @@ msgstr "Flug &optimieren"
 
 #: objecttree.cpp:245
 msgid "O&ptimize flight (OLC)"
-msgstr "Flug optimieren (OLC)"
+msgstr "Flug &optimieren (OLC)"
 
 #: objecttree.cpp:247
 msgid "&Close flight"
@@ -1675,205 +1631,205 @@ msgstr "Aufgabe speichern"
 msgid "<B>%1</B><BR>permission denied!"
 msgstr "Zugriff verweigert!<BR><B>%1</B>"
 
-#: optimizationwizard.ui.h:25
-msgid "The task has not been optimized for the OLC, yet"
-msgstr "Die Aufgabe wurde noch nicht für OLC optimiert."
+#: olcdialog.cpp:66 olcdialog.cpp:69
+msgid "OLC-Declaration"
+msgstr "OLC-Anmeldung"
 
-#: optimizationwizard.ui.h:26
-msgid "Press \"Start Optimization\" to begin"
-msgstr "Drücken Sie \"Optimierung beginnen\" um die Optimierung zu starten"
+#: olcdialog.cpp:77
+msgid "Send"
+msgstr "Sende"
 
-#: optimizationwizard.ui.h:86
-msgid "Optimization Result"
-msgstr "Ergebnis der Optimierung"
+#: olcdialog.cpp:78
+msgid "Save as"
+msgstr "Speichern unter"
 
-#: optimizationwizard.ui.h:87
-msgid ""
-"<th scope=col></th><th scope=col>Time</th><th scope=col>Latitude</th><th "
-"scope=col>Longitude</th><th ALIGN=right scope=col>Distance</th></tr>"
-msgstr ""
-"<th scope=col></th><th scope=col>Zeit</th><th scope=col>Breitengrad</th><th "
-"scope=col>Längengrad</th><th ALIGN=right scope=col>Distanz</th></tr>"
+#: olcdialog.cpp:123
+msgid "pure glider"
+msgstr "reines Segelflugzeug"
 
-#: optimizationwizard.ui.h:88
-msgid "</thead><tbody>"
-msgstr "</thead><tbody>"
+#: olcdialog.cpp:127
+msgid "Club"
+msgstr "Club"
 
-#: optimizationwizard.ui.h:90
-msgid "<tr><td>Begin of Soaring</td><td>"
-msgstr "<tr><td>Segelflugbeginn</td><td>"
+#: olcdialog.cpp:128
+msgid "Standard"
+msgstr "Standard"
 
-#: optimizationwizard.ui.h:94
-msgid "<tr><td>Begin of Task</td><td>"
-msgstr "<tr><td>Beginn der Aufgabe</td><td>"
+#: olcdialog.cpp:129
+msgid "15 Meter"
+msgstr "15 Meter"
 
-#: optimizationwizard.ui.h:98
-msgid "<tr><td>1.Turnpoint</td><td>"
-msgstr "<tr><td>1.Wendepunkt</td><td>"
+#: olcdialog.cpp:130
+msgid "18 Meter"
+msgstr "18 Meter"
 
-#: optimizationwizard.ui.h:103
-msgid "<tr><td>2.Turnpoint</td><td>"
-msgstr "<tr><td>2.Wendepunkt</td><td>"
+#: olcdialog.cpp:131
+msgid "double seater"
+msgstr "Doppelsitzer"
 
-#: optimizationwizard.ui.h:108
-msgid "<tr><td>3.Turnpoint</td><td>"
-msgstr "<tr><td>3.Wendepunkt</td><td>"
+#: olcdialog.cpp:132
+msgid "open"
+msgstr "offen"
 
-#: optimizationwizard.ui.h:113
-msgid "<tr><td>4.Turnpoint</td><td>"
-msgstr "<tr><td>4.Wendepunkt</td><td>"
+#: olcdialog.cpp:141
+msgid "ID"
+msgstr "Nummer"
 
-#: optimizationwizard.ui.h:118
-msgid "<tr><td>5.Turnpoint</td><td>"
-msgstr "<tr><td>5.Wendepunkt</td><td>"
+#: olcdialog.cpp:142 taskdialog.cpp:118
+msgid "Waypoint"
+msgstr "Wegpunkt"
 
-#: optimizationwizard.ui.h:123
-msgid "<tr><td>End of Task</td><td>"
-msgstr "<tr><td>Ende der Aufgabe</td><td>"
+#: olcdialog.cpp:145 taskdialog.cpp:119 tasklistviewitem.cpp:70
+msgid "Distance"
+msgstr "Distanz"
 
-#: optimizationwizard.ui.h:128
-msgid "<tr><td>End of Soaring</td><td>"
-msgstr "<tr><td>Segelflugende</td><td>"
+#: olcdialog.cpp:159
+msgid "Birthday (dd.mm.yyyy)"
+msgstr "Geburtstag (dd.mm.yyyy)"
 
-#: optimizationwizard.ui.h:135
-msgid "Summary: Distance:"
-msgstr "Zusammenfassung: Distanz:"
+#: olcdialog.cpp:165 recorderdialog.cpp:470
+msgid "Glidertype"
+msgstr "Typ"
 
-#: optimizationwizard.ui.h:136
-msgid " Points(raw):"
-msgstr "Punkte(geschätzt):"
+#: olcdialog.cpp:166 recorderdialog.cpp:467
+msgid "Glider-ID"
+msgstr "Kennung"
 
-#: optimizationwizard.ui.h:142
-msgid ""
-"WARNING! THE HEIGHT DIFFERENCE IS TOO LARGE!<br>This is not a valid OLC "
-"task. Go back and correct the start and/or end times."
-msgstr ""
-"WARNUNG! DIE HÖHENDIFFERENZ IST ZU GROSS!<br> Dies ist keine gültige OLC-"
-"Aufgabe.Gehen Sie zurück und ändern Sie die Beginn- oder Endzeit."
+#: olcdialog.cpp:172
+msgid "Class"
+msgstr "Klasse"
 
-#: optimizationwizard.ui.h:144
-msgid ""
-"If you want to use this task and replace the old, press \"Finish\", else "
-"press \"Cancel\""
-msgstr ""
-"Wenn Sie diese Aufgabe verwenden und die alte ersetzen wollen, drücken Sie "
-"\"Abschließen\", sonst drücken Sie \"Abbrechen\" "
+#: olcdialog.cpp:176
+msgid "Startpoint"
+msgstr "Startpunkt"
 
-#: recorderdialog.cpp:65
+#: olcdialog.cpp:181
+msgid "Task-Length"
+msgstr "Aufgabenlänge"
+
+#: olcdialog.cpp:359 olcdialog.cpp:398
+msgid "The flight has not been optimized for the OLC!"
+msgstr "Der Flug wurde nicht für OLC optimiert !"
+
+#: olcdialog.cpp:360 olcdialog.cpp:399
+msgid "Not optimized for OLC"
+msgstr "Nicht optimiert für OLC"
+
+#: recorderdialog.cpp:70
 msgid "Flightrecorder-Dialog"
 msgstr "Logger-Dialog"
 
-#: recorderdialog.cpp:124
+#: recorderdialog.cpp:129
 msgid "Recorder"
 msgstr "Logger"
 
-#: recorderdialog.cpp:124
+#: recorderdialog.cpp:129
 msgid "Recorder Settings"
 msgstr "Logger-Einstellungen"
 
-#: recorderdialog.cpp:131
+#: recorderdialog.cpp:136
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: recorderdialog.cpp:138
+#: recorderdialog.cpp:143
 msgid "Port"
 msgstr "Port"
 
-#: recorderdialog.cpp:140
+#: recorderdialog.cpp:145
 msgid "Baud"
 msgstr "Baudrate"
 
-#: recorderdialog.cpp:142
+#: recorderdialog.cpp:147
 msgid "URL"
 msgstr "URL"
 
-#: recorderdialog.cpp:156
+#: recorderdialog.cpp:161
 msgid "Connect recorder"
 msgstr "Logger anschließen"
 
-#: recorderdialog.cpp:160
+#: recorderdialog.cpp:165
 msgid "Info"
 msgstr "Informationen"
 
-#: recorderdialog.cpp:162
+#: recorderdialog.cpp:167
 msgid "API-Version"
 msgstr "API-Version"
 
-#: recorderdialog.cpp:167
+#: recorderdialog.cpp:172
 msgid "Serial-Nr."
 msgstr "Serien-Nr."
 
-#: recorderdialog.cpp:168
+#: recorderdialog.cpp:173
 msgid "no recorder connected"
 msgstr "kein Logger angeschlossen"
 
-#: recorderdialog.cpp:172
+#: recorderdialog.cpp:177
 msgid "Recorder Type"
 msgstr "Loggertyp"
 
-#: recorderdialog.cpp:177
+#: recorderdialog.cpp:182
 msgid "Pilot Name"
 msgstr "Pilot"
 
-#: recorderdialog.cpp:182
+#: recorderdialog.cpp:187
 msgid "Glider Type"
 msgstr "Flugzeugtyp"
 
-#: recorderdialog.cpp:187
+#: recorderdialog.cpp:192
 msgid "Glider ID"
 msgstr "Kennung"
 
-#: recorderdialog.cpp:197 taskdialog.cpp:117 tasklistviewitem.cpp:68
+#: recorderdialog.cpp:202 taskdialog.cpp:117 tasklistviewitem.cpp:68
 #: waypointimpfilterdialog.cpp:48 waypoints.cpp:84
 msgid "Type"
 msgstr "Typ"
 
-#: recorderdialog.cpp:249
+#: recorderdialog.cpp:254
 msgid "There are no recorder-libraries installed."
 msgstr "Es sind keine Logger-Bibliotheken installiert."
 
-#: recorderdialog.cpp:250
+#: recorderdialog.cpp:255
 msgid "No recorders installed."
 msgstr "Keine Logger installiert."
 
-#: recorderdialog.cpp:270
+#: recorderdialog.cpp:275
 msgid "Configfile %1 is corrupt!"
 msgstr "Konfigurationsdatei %1 ist fehlerhaft!"
 
-#: recorderdialog.cpp:373 recorderdialog.cpp:429 recorderdialog.cpp:528
-#: recorderdialog.cpp:592
+#: recorderdialog.cpp:378 recorderdialog.cpp:434 recorderdialog.cpp:534
+#: recorderdialog.cpp:598
 msgid "Nr"
 msgstr "Nr"
 
-#: recorderdialog.cpp:377
+#: recorderdialog.cpp:382
 msgid "first Point"
 msgstr "erster Punkt"
 
-#: recorderdialog.cpp:378
+#: recorderdialog.cpp:383
 msgid "last Point"
 msgstr "letzter Punkt"
 
-#: recorderdialog.cpp:385
+#: recorderdialog.cpp:390
 msgid "load list"
 msgstr "Liste laden"
 
-#: recorderdialog.cpp:386
+#: recorderdialog.cpp:391
 msgid "save flight"
 msgstr "Flug speichern"
 
-#: recorderdialog.cpp:387
+#: recorderdialog.cpp:392
 msgid "long filenames"
 msgstr "lange Dateinamen"
 
-#: recorderdialog.cpp:390
+#: recorderdialog.cpp:395
 msgid "fast download"
 msgstr "schnelles Speichern"
 
-#: recorderdialog.cpp:394
+#: recorderdialog.cpp:399
 msgid "If checked, the long filenames are used."
 msgstr "Wenn eingeschaltet, werden lange Dateinamen verwendet."
 
-#: recorderdialog.cpp:396
+#: recorderdialog.cpp:401
 msgid ""
 "If checked, the IGC-file will not be signed.<BR>Note: Do not use fast "
 "download when using the file for competitions."
@@ -1881,72 +1837,64 @@ msgstr ""
 "IGC Datei wird nicht signiert.<BR> Bemerkung: Den schnellen Download nicht "
 "verwenden, wenn die Datei für Wettbewerbe gedacht ist."
 
-#: recorderdialog.cpp:418
+#: recorderdialog.cpp:423
 msgid "Declaration"
 msgstr "Anmeldung"
 
-#: recorderdialog.cpp:418
+#: recorderdialog.cpp:423
 msgid "Flight Declaration"
 msgstr "Fluganmeldung"
 
-#: recorderdialog.cpp:452
+#: recorderdialog.cpp:457
 msgid "write declaration to recorder"
 msgstr "Anmeldung an Logger übertragen"
 
-#: recorderdialog.cpp:462 olcdialog.cpp:166
-msgid "Glider-ID"
-msgstr "Kennung"
-
-#: recorderdialog.cpp:465 olcdialog.cpp:165
-msgid "Glidertype"
-msgstr "Typ"
-
-#: recorderdialog.cpp:468
+#: recorderdialog.cpp:473
 msgid "Comp. ID"
 msgstr "Wettb.-Kennung"
 
-#: recorderdialog.cpp:471
+#: recorderdialog.cpp:476
 msgid "Comp. Class"
 msgstr "Wettb.-Klasse"
 
-#: recorderdialog.cpp:531
+#: recorderdialog.cpp:537
 msgid "Task dist."
 msgstr "Aufgaben Dist."
 
-#: recorderdialog.cpp:532
+#: recorderdialog.cpp:538
 msgid "Total dist."
 msgstr "Gesamtdist."
 
-#: recorderdialog.cpp:543
+#: recorderdialog.cpp:549
 msgid "write tasks to recorder"
 msgstr "übertrage Aufgaben auf Logger"
 
-#: recorderdialog.cpp:547
+#: recorderdialog.cpp:553
 msgid "read tasks from recorder"
 msgstr "lese Aufgaben vom Logger"
 
-#: recorderdialog.cpp:609
+#: recorderdialog.cpp:615
 msgid "write waypoints to recorder"
 msgstr "übertrage Wendepunkte auf den Logger"
 
-#: recorderdialog.cpp:613
+#: recorderdialog.cpp:619
 msgid "read waypoints from recorder"
 msgstr "lese Wendepunkte vom Logger"
 
-#: recorderdialog.cpp:641 recorderdialog.cpp:1327
+#: recorderdialog.cpp:647 recorderdialog.cpp:1432
 msgid "Could not open lib!"
 msgstr "Kann Bibliothek nicht öffnen!"
 
-#: recorderdialog.cpp:651
+#: recorderdialog.cpp:657
 msgid "No port given!"
 msgstr "Kein Port angegeben!"
 
-#: recorderdialog.cpp:662
+#: recorderdialog.cpp:668
 msgid "No URL entered!"
 msgstr "Keine URL eingegeben!"
 
-#: recorderdialog.cpp:686 recorderdialog.cpp:692 recorderdialog.cpp:1252
-#: recorderdialog.cpp:1258
+#: recorderdialog.cpp:693 recorderdialog.cpp:699 recorderdialog.cpp:1349
+#: recorderdialog.cpp:1355
 msgid ""
 "Sorry, could not connect to recorder.\n"
 "Please check connections and settings."
@@ -1954,72 +1902,96 @@ msgstr ""
 "Sorry, kann keine Verbindung zum Logger aufbauen.\n"
 "Bitte die Verbindungseinstellungen überprüfen."
 
-#: recorderdialog.cpp:689 recorderdialog.cpp:694 recorderdialog.cpp:1255
-#: recorderdialog.cpp:1260
+#: recorderdialog.cpp:696 recorderdialog.cpp:701 recorderdialog.cpp:1352
+#: recorderdialog.cpp:1357
 msgid "Recorder Connection"
 msgstr "Logger Verbindung"
 
-#: recorderdialog.cpp:733 recorderdialog.cpp:738
+#: recorderdialog.cpp:727
+msgid "downloading flightlist"
+msgstr "Lade Flugliste herunter"
+
+#: recorderdialog.cpp:751 recorderdialog.cpp:756
 msgid "There was an error reading the flight list!"
 msgstr "Ein Fehler ist beim Übertragen der Flugliste aufgetreten!"
 
-#: recorderdialog.cpp:735 recorderdialog.cpp:739 recorderdialog.cpp:808
-#: recorderdialog.cpp:812 recorderdialog.cpp:859 recorderdialog.cpp:863
-#: recorderdialog.cpp:977 recorderdialog.cpp:981 recorderdialog.cpp:1035
-#: recorderdialog.cpp:1040 recorderdialog.cpp:1084 recorderdialog.cpp:1088
-#: recorderdialog.cpp:1125 recorderdialog.cpp:1129 recorderdialog.cpp:1181
-#: recorderdialog.cpp:1208 recorderdialog.cpp:1212
+#: recorderdialog.cpp:753 recorderdialog.cpp:757 recorderdialog.cpp:862
+#: recorderdialog.cpp:866 recorderdialog.cpp:923 recorderdialog.cpp:927
+#: recorderdialog.cpp:1049 recorderdialog.cpp:1053 recorderdialog.cpp:1117
+#: recorderdialog.cpp:1122 recorderdialog.cpp:1166 recorderdialog.cpp:1170
+#: recorderdialog.cpp:1214 recorderdialog.cpp:1218 recorderdialog.cpp:1276
+#: recorderdialog.cpp:1303 recorderdialog.cpp:1307
 msgid "Library Error"
 msgstr "Fehler in der Bibliothek"
 
-#: recorderdialog.cpp:806 recorderdialog.cpp:811
+#: recorderdialog.cpp:820
+msgid "Select IGC File"
+msgstr "Wähle IGC-Datei"
+
+#: recorderdialog.cpp:836
+msgid "downloading flight"
+msgstr "Lade Flug herunter"
+
+#: recorderdialog.cpp:860 recorderdialog.cpp:865
 msgid "There was an error downloading the flight!"
 msgstr "Ein Fehler ist beim Übertragen des Fluges aufgetreten!"
 
-#: recorderdialog.cpp:833 recorderdialog.cpp:849 recorderdialog.cpp:966
-#: recorderdialog.cpp:1023 recorderdialog.cpp:1111 recorderdialog.cpp:1171
+#: recorderdialog.cpp:878
+msgid "send declaration"
+msgstr "Sende Anmeldung"
+
+#: recorderdialog.cpp:878
+msgid "send flightdeclaration to the recorder"
+msgstr "Sende Fluganmeldung an den Logger"
+
+#: recorderdialog.cpp:897 recorderdialog.cpp:913 recorderdialog.cpp:1037
+#: recorderdialog.cpp:1105 recorderdialog.cpp:1200 recorderdialog.cpp:1266
 msgid "Function not implemented"
 msgstr "Funktion nicht implementiert"
 
-#: recorderdialog.cpp:834 recorderdialog.cpp:850 recorderdialog.cpp:871
+#: recorderdialog.cpp:898 recorderdialog.cpp:914 recorderdialog.cpp:935
 msgid "Declaration upload"
 msgstr "Übertragung der Fluganmeldung"
 
-#: recorderdialog.cpp:857 recorderdialog.cpp:862
+#: recorderdialog.cpp:921 recorderdialog.cpp:926
 msgid "There was an error writing the declaration!"
 msgstr "Ein Fehler ist beim Übertragen der Fluganmeldung aufgetreten!"
 
-#: recorderdialog.cpp:870
+#: recorderdialog.cpp:934
 msgid "The declaration was uploaded to the recorder."
 msgstr "Die Fluganmeldung wurde auf den Logger übertragen."
 
-#: recorderdialog.cpp:967 recorderdialog.cpp:1000
+#: recorderdialog.cpp:1038 recorderdialog.cpp:1072
 msgid "Task download"
 msgstr "Aufgaben lesen"
 
-#: recorderdialog.cpp:975 recorderdialog.cpp:980
+#: recorderdialog.cpp:1047 recorderdialog.cpp:1052
 msgid "Cannot read tasks from recorder"
 msgstr "Kann keine Aufgaben vom Logger lesen"
 
-#: recorderdialog.cpp:999
+#: recorderdialog.cpp:1071
 msgid "%1 tasks were downloaded from the recorder."
 msgstr "%1 Aufgaben wurden vom Logger heruntergeladen."
 
-#: recorderdialog.cpp:1024 recorderdialog.cpp:1093
+#: recorderdialog.cpp:1084
+msgid "send tasks to recorder"
+msgstr "Sende Aufgaben an den Logger"
+
+#: recorderdialog.cpp:1106 recorderdialog.cpp:1175
 msgid "Task upload"
 msgstr "Übertragung der Aufgaben"
 
-#: recorderdialog.cpp:1034
+#: recorderdialog.cpp:1116
 msgid "Cannot obtain max number of tasks!"
 msgstr "Kann nicht die maximal erlaubte Anzahl von Aufgaben bestimmen!"
 
-#: recorderdialog.cpp:1039
+#: recorderdialog.cpp:1121
 msgid "Cannot obtain max number of waypoints per task!"
 msgstr ""
 "Kann nicht die maximal erlaubte Anzahl von Wendepunkten per Aufgabe "
 "bestimmen!"
 
-#: recorderdialog.cpp:1045
+#: recorderdialog.cpp:1127
 #, c-format
 msgid ""
 "Maximum number of %d tasks reached!\n"
@@ -2028,11 +2000,11 @@ msgstr ""
 "Maximale Anzahl von %d Aufgaben erreicht! \n"
 "Weitere Aufgaben werden ignoriert."
 
-#: recorderdialog.cpp:1047 recorderdialog.cpp:1063 recorderdialog.cpp:1188
+#: recorderdialog.cpp:1129 recorderdialog.cpp:1145 recorderdialog.cpp:1283
 msgid "Recorder Warning"
 msgstr "Logger Warnung"
 
-#: recorderdialog.cpp:1060
+#: recorderdialog.cpp:1142
 #, c-format
 msgid ""
 "Maximum number of turnpoints/task %d in %s reached!\n"
@@ -2041,27 +2013,31 @@ msgstr ""
 "Maximale Anzahl der Wendepunkte/Aufgabe %d in %s erreicht!\n"
 "Weitere Wendepunkte werden ignoriert."
 
-#: recorderdialog.cpp:1082 recorderdialog.cpp:1087
+#: recorderdialog.cpp:1164 recorderdialog.cpp:1169
 msgid "Cannot write tasks to recorder"
 msgstr "Kann Aufgabe nicht auf Logger übertragen"
 
-#: recorderdialog.cpp:1092
+#: recorderdialog.cpp:1174
 msgid "%1 tasks were uploaded to the recorder."
 msgstr "%1 Aufgaben wurden auf den Logger übertragen."
 
-#: recorderdialog.cpp:1112 recorderdialog.cpp:1144
+#: recorderdialog.cpp:1201 recorderdialog.cpp:1233
 msgid "Waypoint download"
 msgstr "Wegpunkt Download"
 
-#: recorderdialog.cpp:1123 recorderdialog.cpp:1128
+#: recorderdialog.cpp:1212 recorderdialog.cpp:1217
 msgid "Cannot read waypoints from recorder"
 msgstr "Kann keine Wendepunkte vom Logger lesen"
 
-#: recorderdialog.cpp:1143
+#: recorderdialog.cpp:1232
 msgid "%1 waypoints have been downloaded from the recorder."
 msgstr "%1 Wendepunkte wurden vom Logger heruntergeladen."
 
-#: recorderdialog.cpp:1161
+#: recorderdialog.cpp:1243
+msgid "send waypoints"
+msgstr "Sende Wegpunkte"
+
+#: recorderdialog.cpp:1256
 msgid ""
 "Uploading waypoints to the recorder will overwrite existing waypoints on the "
 "recorder. Do want to continue uploading?"
@@ -2070,23 +2046,23 @@ msgstr ""
 "Wendepunkte auf dem Logger überschreiben. Wollen Sie mit dem Übertragen "
 "fortfahren?"
 
-#: recorderdialog.cpp:1162
+#: recorderdialog.cpp:1257
 msgid "Waypoints upload"
 msgstr "Wegpunkte senden"
 
-#: recorderdialog.cpp:1163
+#: recorderdialog.cpp:1258
 msgid "Upload"
 msgstr "Übertragung"
 
-#: recorderdialog.cpp:1172 recorderdialog.cpp:1219
+#: recorderdialog.cpp:1267 recorderdialog.cpp:1314
 msgid "Waypoint upload"
 msgstr "Wendepunkte senden"
 
-#: recorderdialog.cpp:1180
+#: recorderdialog.cpp:1275
 msgid "Cannot obtain maximum number of waypoints from lib."
 msgstr "Kann nicht die maximal erlaubte Anzahl von Wendepunkten bestimmen."
 
-#: recorderdialog.cpp:1186
+#: recorderdialog.cpp:1281
 #, c-format
 msgid ""
 "Maximum number of %d waypoints reached!\n"
@@ -2095,23 +2071,23 @@ msgstr ""
 "Maximale Anzahl con %d Wendepunkten erreicht!\n"
 "Weitere Wendepunkte werden ignoriert."
 
-#: recorderdialog.cpp:1206 recorderdialog.cpp:1211
+#: recorderdialog.cpp:1301 recorderdialog.cpp:1306
 msgid "Cannot write waypoints to recorder."
 msgstr "Kann Wendepunkte nich auf den Logger laden."
 
-#: recorderdialog.cpp:1218
+#: recorderdialog.cpp:1313
 msgid "%1 waypoints have been uploaded to the recorder."
 msgstr "%1 Wendepunkte wurden auf den Logger geladen."
 
-#: recorderdialog.cpp:1345
+#: recorderdialog.cpp:1450
 msgid "Pilots"
 msgstr "Piloten"
 
-#: recorderdialog.cpp:1345
+#: recorderdialog.cpp:1450
 msgid "List of pilots"
 msgstr "Liste der Piloten "
 
-#: recorderdialog.cpp:1356
+#: recorderdialog.cpp:1461
 msgid "Recorder configuration"
 msgstr "Logger configuration"
 
@@ -2151,14 +2127,6 @@ msgstr "&links"
 msgid "ri&ght"
 msgstr "&rechts"
 
-#: taskdialog.cpp:118 olcdialog.cpp:142
-msgid "Waypoint"
-msgstr "Wegpunkt"
-
-#: taskdialog.cpp:119 tasklistviewitem.cpp:70 olcdialog.cpp:145
-msgid "Distance"
-msgstr "Distanz"
-
 #: taskdialog.cpp:120
 msgid "TC"
 msgstr "Kurs"
@@ -2178,14 +2146,14 @@ msgid ""
 "replace them with other waypoints.\n"
 "New waypoints will be added after the selected one."
 msgstr ""
-"Task Type FAI Area:\n"
-"You can define a task with either takeoff, start, end and landing or "
-"takeoff, start, end, landing and one additional route point.\n"
-"The FAI area calculation will be made with start and end point or start and "
-"route point, depending wether the route point is defined or not\n"
-"Deleting takeoff start, end and landing points is not possible, but you can "
-"replace them with other waypoints.\n"
-"New waypoints will be added after the selected one."
+"Aufgaben Typ FAI-Flächen\n"
+"Sie können eine Aufgabe mit entweder Start, Beginn, Ende und Landung oder "
+"Start, Beginn, Ende, Landung und einem weiteren Wegpunkt definieren. "
+"Zur Berechnung der FAI-Fläche werden Beginn und Ende und der eventuell "
+"definierte Wegpunkt verwendet.\n"
+"Das Löschen von Start, Beginn, Ende und Landung ist nicht möglich, aber "
+"Sie können Sie durch andere Wegpunkte ersetzen.\n"
+"Neue Wegpunkte werden nach dem selektierten eingefügt."
 
 #: taskdialog.cpp:216 taskdialog.cpp:236
 msgid "Task selection"
@@ -2203,11 +2171,11 @@ msgid ""
 "them with other waypoints.\n"
 "New waypoints will be added after the selected one."
 msgstr ""
-"Task Type Traditional Route:\n"
-"You can define a task with takeoff, start, end, landing and route points. "
-"Deleting takeoff start, end and landing is not possible, but you can replace "
-"them with other waypoints.\n"
-"New waypoints will be added after the selected one."
+"Ausgaben Typ Tradidionelle Route:\n"
+"Sie können eine Aufgabe definieren mit Start, Beginn, Ende, Landung und "
+"weiteren Wegpunkten. Das Löschen von Start, Beginn, Ende und Landung "
+"ist nicht möglich, aber Sie können die Punkte durch andere Wegpunkte ersetzen.\n"
+"Neue Wegpunkte werden nach dem selektierten eingefügt."
 
 #: taskdialog.cpp:283
 msgid "Route Point"
@@ -2235,17 +2203,17 @@ msgstr "Ziel"
 
 #: topolegend.cpp:56
 msgid "label used for top level in legend"
-msgstr ""
+msgstr "Label für die höchste Höhe in der Legende"
 
 #: topolegend.cpp:58
 msgid "label used for lowest level (blue level) in legend"
-msgstr ""
+msgstr "Label für die tiefste Höhe in der Legende"
 
 #: topolegend.cpp:60
 msgid "label used for normal level in legend"
-msgstr ""
+msgstr "Label für normale Höhen in der Legende"
 
-#: waypointcatalog.cpp:63 waypoints.cpp:733
+#: waypointcatalog.cpp:63 waypoints.cpp:739
 msgid "unnamed"
 msgstr "Unbenannt"
 
@@ -2336,7 +2304,7 @@ msgstr "andere &Plätze"
 
 #: waypointimpfilterdialog.cpp:59
 msgid "Ou&tlanding fields"
-msgstr "&Außenlandefeld"
+msgstr "&Außenlandefelder"
 
 #: waypointimpfilterdialog.cpp:60
 msgid "O&bstacles"
@@ -2499,6 +2467,14 @@ msgid "Save changes?"
 msgstr "Änderungen speichern?"
 
 #: waypoints.cpp:416
+msgid "<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>"
+msgstr "<qt> Wegpunkt<b>%1</b><br></qt>"
+
+#: waypoints.cpp:417
+msgid "Delete waypoint?"
+msgstr "Wegpunkt löschen?"
+
+#: waypoints.cpp:434
 msgid ""
 "Waypoint %1 will be deleted.\n"
 "Are you sure?"
@@ -2506,447 +2482,19 @@ msgstr ""
 "Wegpunkt %1 wird gelöscht.\n"
 "Sind Sie sicher?"
 
-#: waypoints.cpp:565
+#: waypoints.cpp:571
 msgid "Import waypoint catalog"
 msgstr "Wegpunkt-Katalog importieren"
 
-#: waypoints.cpp:584
+#: waypoints.cpp:590
 msgid "Save changes to<BR><B>%1</B>"
 msgstr "Änderungen speichern unter<BR><B>%1</B>"
 
-#: waypoints.cpp:862
+#: waypoints.cpp:868
 msgid "*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT)"
-msgstr ""
+msgstr "*dbt *.DBT|Wegpunktdatei (Volkslogger format, *.dbt *.DBT)"
 
-#: waypoints.cpp:862
+#: waypoints.cpp:868
 msgid "Import waypoints from file"
 msgstr "Importiere Wegpunkte aus Datei"
-
-#: kfrfil/filser.cpp:214
-msgid "read_flight_index(): Wrong amount of bytes from LX-device"
-msgstr "read_flight_index(): Falsche Anzahl von Bytes vom LX-Gerät"
-
-#: kfrfil/filser.cpp:219
-msgid "read_flight_index(): Bad CRC"
-msgstr "read_flight_index(): Falsche Checksumme"
-
-#: kfrfil/filser.cpp:286
-msgid "read_flight_index(): Wrong index byte"
-msgstr ""
-
-#: kfrfil/filser.cpp:294
-msgid "read_flight_index(): no flights available in LX-device"
-msgstr "read_flight_index(): keine Flüge verfügbar im LX-Gerät"
-
-#: kfrfil/filser.cpp:347 kfrfil/filser.cpp:394
-msgid "get_logger_data(): Wrong amount of bytes from LX-device"
-msgstr "get_logger_data(): Falsche Anzahl von Bytes vom LX-Gerät"
-
-#: kfrfil/filser.cpp:407
-msgid "get_logger_data(): wrong format"
-msgstr "get_logger_data(): Falsches Format"
-
-#: kfrfil/filser.cpp:449
-msgid ""
-"\n"
-"check igc file for further info"
-msgstr ""
-"\n"
-"Prüfen Sie die IGC-Datei für weitere Informationen"
-
-#: kfrfil/filser.cpp:455
-msgid "cannot open igc file "
-msgstr "Kann IGC-Datei nicht öffnen "
-
-#: kfrfil/filser.cpp:539 kfrgcs/volkslogger.cpp:192 kfrgmn/garminfr.cpp:138
-msgid "No logger found!"
-msgstr "Kein Logger gefunden!"
-
-#: kfrfil/filser.cpp:557 kfrfil/filser.cpp:566
-msgid "Invalid memory size in the flight table from the LX-device."
-msgstr "Falsche Speichergröße in der Flugtabelle im LX-Gerät"
-
-#: kfrfil/filser.cpp:582
-msgid "Invalid response from LX-device."
-msgstr "Ungültige Antwort vom LX-Gerät"
-
-#: kfrfil/filser.cpp:601
-msgid "get_mem_sections(): Bad CRC"
-msgstr "get_mem_sections(): Falsche Checksumme"
-
-#: kfrfil/filser.cpp:647
-msgid "get_logger_data(): Bad CRC"
-msgstr "get_logger_data(): Falsche Checksumme"
-
-#: kfrfil/filser.cpp:838
-msgid "unexpected end of '.fil'-file"
-msgstr "Unerwartetes Ende der .fil Datei"
-
-#: kfrfil/filser.cpp:1223
-msgid "unexpected record id in '.fil'-file"
-msgstr "Unerwarteter Datensatz in .fil Datei"
-
-#: kfrfil/filser.cpp:1357
-msgid ""
-"No response from recorder within 10 seconds!\n"
-"Did you press WRITE/RTE?"
-msgstr ""
-"Keine Antwort vom Logger nach 10 Sekunden!\n"
-"Haben Sie WRITE/RTE gedrückt?"
-
-#: kfrgmn/garminfr.cpp:93
-msgid "opening port"
-msgstr "Schnittstelle öffnen"
-
-#: kfrgmn/garminfr.cpp:96
-msgid "requesting tracklog"
-msgstr "Flugweg anfordern"
-
-#: kfrxcu/cumulus.cpp:72
-msgid "Cumulus/KFLog-e plugin, version %1"
-msgstr "Cumulus/KFLog-e Plugin, Version %1"
-
-#: kfrxcu/cumulus.cpp:129
-msgid ""
-"<qt>Could not connect to PDA, or the following file did not exist:<br><br>%"
-"1</qt>"
-msgstr ""
-"<qt>Kann keine Verbindung zum PDA herstellen, oder die folgende Datei "
-"existiert nicht:<br><br> %1</qt>"
-
-#: kfrxcu/cumulus.cpp:151 kfrxcu/cumulus.cpp:176 kfrxcu/cumulus.cpp:209
-msgid "Not connected to PDA!"
-msgstr "Nicht mit dem PDA verbunden!"
-
-#: kfrxcu/cumulus.cpp:185
-msgid "Could not download waypointfile from PDA."
-msgstr "Kann keine Wegpunktdatei vom PDA herunterladen."
-
-#: kfrxcu/cumulus.cpp:216
-msgid "Could not create temporary file. Please check your writepermissions."
-msgstr ""
-"Kann keine temporäre Datei erstellen. Bitte überprüfen Sie ihre "
-"Zugriffsrechte."
-
-#: kfrxcu/cumulus.cpp:225
-msgid "Upload of temporary file to PDA failed."
-msgstr "Übertragen der temporären Datei auf den PDA fehlgeschlagen."
-
-#: kfrxsp/soaringpilot.cpp:145
-msgid "No response from recorder within 5 seconds!"
-msgstr "Keine Antwort vom Logger in den letzten 5 Sekunden!"
-
-#: kfrxsp/soaringpilot.cpp:282
-msgid "Please select flight from SoaringPilot and start transfer"
-msgstr "Bitte wählen Sie den Flug vomSoaringPilot aus und starten Sie die Übertragung"
-
-#: kfrxsp/soaringpilot.cpp:367
-msgid ""
-"invalid file structure\n"
-"\n"
-"HFTDE record expexted"
-msgstr ""
-
-#: kfrxsp/soaringpilot.cpp:374
-msgid "IO error while saving file "
-msgstr "IO-Fehler beim Speichern der Datei "
-
-#: kfrxsp/soaringpilot.cpp:573
-msgid "invalid task definition in task "
-msgstr ""
-
-#: kfrxsp/soaringpilot.cpp:574
-msgid "Nr of waypoints differ from task header"
-msgstr ""
-
-#: opengl_igc/glview.moc.cpp:34 opengl_igc/glview.moc.cpp:42
-msgid "GLView"
-msgstr ""
-
-#: flightselectiondialog.moc.cpp:34 flightselectiondialog.moc.cpp:42
-msgid "FlightSelectionDialog"
-msgstr ""
-
-#: configprintelement.moc.cpp:34 configprintelement.moc.cpp:42
-msgid "ConfigPrintElement"
-msgstr ""
-
-#: configdrawelement.moc.cpp:34 configdrawelement.moc.cpp:42
-msgid "ConfigDrawElement"
-msgstr ""
-
-#: downloadlist.moc.cpp:34 downloadlist.moc.cpp:42
-msgid "DownloadList"
-msgstr ""
-
-#: recorderdialog.moc.cpp:34 recorderdialog.moc.cpp:42
-msgid "RecorderDialog"
-msgstr ""
-
-#: olcdialog.moc.cpp:34 olcdialog.moc.cpp:42
-msgid "OLCDialog"
-msgstr ""
-
-#: mapcontents.moc.cpp:34 mapcontents.moc.cpp:42
-msgid "MapContents"
-msgstr ""
-
-#: whatsthat.moc.cpp:34 whatsthat.moc.cpp:42
-msgid "WhatsThat"
-msgstr ""
-
-#: dataview.moc.cpp:34 dataview.moc.cpp:42
-msgid "DataView"
-msgstr ""
-
-#: evaluationframe.moc.cpp:34 evaluationframe.moc.cpp:42
-msgid "EvaluationFrame"
-msgstr ""
-
-#: helpwindow.moc.cpp:34 helpwindow.moc.cpp:42
-msgid "HelpWindow"
-msgstr "Hilfefenster"
-
-#: mapmatrix.moc.cpp:34 mapmatrix.moc.cpp:42
-msgid "MapMatrix"
-msgstr ""
-
-#: igc3dview.moc.cpp:34 igc3dview.moc.cpp:42
-msgid "Igc3DView"
-msgstr ""
-
-#: topolegend.moc.cpp:34 topolegend.moc.cpp:42
-msgid "TopoLegend"
-msgstr ""
-
-#: centertodialog.moc.cpp:34 centertodialog.moc.cpp:42
-msgid "CenterToDialog"
-msgstr ""
-
-#: mapconfig.moc.cpp:34 mapconfig.moc.cpp:42
-msgid "MapConfig"
-msgstr ""
-
-#: optimization.moc.cpp:34 optimization.moc.cpp:42
-msgid "Optimization"
-msgstr "Optimierung"
-
-#: waypointimpfilterdialog.moc.cpp:34 waypointimpfilterdialog.moc.cpp:42
-msgid "WaypointImpFilterDialog"
-msgstr ""
-
-#: kflog.moc.cpp:34 kflog.moc.cpp:42
-msgid "KFLogApp"
-msgstr ""
-
-#: kflogconfig.moc.cpp:34 kflogconfig.moc.cpp:42
-msgid "KFLogConfig"
-msgstr ""
-
-#: flightrecorderpluginbase.moc.cpp:34 flightrecorderpluginbase.moc.cpp:42
-msgid "FlightRecorderPluginBase"
-msgstr ""
-
-#: objecttree.moc.cpp:34 objecttree.moc.cpp:42
-msgid "ObjectTree"
-msgstr ""
-
-#: evaluationdialog.moc.cpp:34 evaluationdialog.moc.cpp:42
-msgid "EvaluationDialog"
-msgstr ""
-
-#: igcpreview.moc.cpp:34 igcpreview.moc.cpp:42
-msgid "IGCPreview"
-msgstr ""
-
-#: taskdialog.moc.cpp:34 taskdialog.moc.cpp:42
-msgid "TaskDialog"
-msgstr ""
-
-#: evaluationview.moc.cpp:34 evaluationview.moc.cpp:42
-msgid "EvaluationView"
-msgstr ""
-
-#: optimizationwizard.moc.cpp:34 optimizationwizard.moc.cpp:42
-msgid "OptimizationWizard"
-msgstr ""
-
-#: igc3ddialog.moc.cpp:34 igc3ddialog.moc.cpp:42
-msgid "Igc3DDialog"
-msgstr ""
-
-#: waypointdialog.moc.cpp:34 waypointdialog.moc.cpp:42
-msgid "WaypointDialog"
-msgstr ""
-
-#: mapcontrolview.moc.cpp:34 mapcontrolview.moc.cpp:42
-msgid "MapControlView"
-msgstr ""
-
-#: olcdialog.cpp:66 olcdialog.cpp:69
-msgid "OLC-Declaration"
-msgstr "OLC-Anmeldung"
-
-#: olcdialog.cpp:77
-msgid "Send"
-msgstr "Sende"
-
-#: olcdialog.cpp:78
-msgid "Save as"
-msgstr "Speichern unter"
-
-#: olcdialog.cpp:123
-msgid "pure glider"
-msgstr "reines Segelflugzeug"
-
-#: olcdialog.cpp:127
-msgid "Club"
-msgstr "Club"
-
-#: olcdialog.cpp:128
-msgid "Standard"
-msgstr "Standard"
-
-#: olcdialog.cpp:129
-msgid "15 Meter"
-msgstr "15 Meter"
-
-#: olcdialog.cpp:130
-msgid "18 Meter"
-msgstr "18 Meter"
-
-#: olcdialog.cpp:131
-msgid "double seater"
-msgstr "Doppelsitzer"
-
-#: olcdialog.cpp:132
-msgid "open"
-msgstr "offen"
-
-#: olcdialog.cpp:141
-msgid "ID"
-msgstr "Nummer"
-
-#: olcdialog.cpp:159
-msgid "Birthday (dd.mm.yyyy)"
-msgstr "Geburtstag (dd.mm.yyyy)"
-
-#: olcdialog.cpp:172
-msgid "Class"
-msgstr "Klasse"
-
-#: olcdialog.cpp:176
-msgid "Startpoint"
-msgstr "Startpunkt"
-
-#: olcdialog.cpp:181
-msgid "Task-Length"
-msgstr "Aufgabenlänge"
-
-#: olcdialog.cpp:359 olcdialog.cpp:398
-msgid "The flight has not been optimized for the OLC!"
-msgstr "Der Flug wurde nicht für OLC optimiert !"
-
-#: olcdialog.cpp:360 olcdialog.cpp:399
-msgid "Not optimized for OLC"
-msgstr "Nicht optimiert für OLC"
-
-#~ msgid "Show tasks"
-#~ msgstr "Zeige Aufgaben"
-
-#~ msgid "Show object tree"
-#~ msgstr "Zeige Objektbaum"
-
-#~ msgid "Task Type"
-#~ msgstr "Aufgaben Art"
-
-#~ msgid "Tasks's"
-#~ msgstr "Aufgaben"
-
-#~ msgid "&Delete task"
-#~ msgstr "Aufgabe &löschen"
-
-#~ msgid "OLC Optimization"
-#~ msgstr "OLC Optimierung"
-
-#~ msgid "Task Start/End Point"
-#~ msgstr "Aufgabenbeginn/letzter Punkt"
-
-#~ msgid "<p align=\"right\">Difference:</p>"
-#~ msgstr "<p align=\"right\">Differenz:</p>"
-
-#~ msgid "<p align=\"right\">Start of Task:</p>"
-#~ msgstr "<p align=\"right\">Beginn der Aufgabe:</p>"
-
-#~ msgid "<p align=\"right\">End of Task:</p>"
-#~ msgstr "<p align=\"right\">Ende der Aufgabe:</p>"
-
-#~ msgid "Set Times"
-#~ msgstr "Zeiten setzen"
-
-#~ msgid "Task start and end times"
-#~ msgstr "Aufgabe: Beginn- und Endzeiten"
-
-#~ msgid "Start Optimization"
-#~ msgstr "Optimierung beginnen"
-
-#~ msgid "Stop Optimization"
-#~ msgstr "Optimierung beenden"
-
-#~ msgid "The directory "
-#~ msgstr "Das Verzeichnis "
-
-#~ msgid " is either not writeable or the server "
-#~ msgstr "ist entweder schreibgeschützt oder der Server "
-
-#~ msgid " is not reachable."
-#~ msgstr "ist nicht erreichbar."
-
-#, fuzzy
-#~ msgid "FAI Area >P0 km"
-#~ msgstr "FAI Fläche >= 500 km"
-
-#~ msgid "File"
-#~ msgstr "Datei"
-
-#~ msgid "&Cancel"
-#~ msgstr "&Abbruch"
-
-#~ msgid "Area Assigned"
-#~ msgstr "Area Assigned Aufgabe"
-
-#~ msgid "Default"
-#~ msgstr "Standard"
-
-#~ msgid "Print"
-#~ msgstr "Druck"
-
-#~ msgid ""
-#~ "<qt>The directory for maps has not been set.<br>Please select the "
-#~ "directory where you have installed your maps.</qt>"
-#~ msgstr ""
-#~ "<qt>Das Verzeichnis für die Kartendaten wurde noch nicht gesetzt.<br> "
-#~ "Bitte wählen Sie das Verzeichnis, indem die Kartendaten installiert sind."
-#~ "</qt>"
-
-#~ msgid "Mapdirectory not set."
-#~ msgstr "Kartenverzeichnis nicht gesetzt"
-
-#~ msgid "There are no map-files in the directory\n"
-#~ msgstr "Es sind keine Kartendateien im Verzeichnis enthalten\n"
-
-#~ msgid "Cancel"
-#~ msgstr "Abbruch"
-
-#~ msgid "&Add"
-#~ msgstr "&Hinzufügen"
-
-#~ msgid "Save"
-#~ msgstr "Speichern"
-
-#~ msgid "Discard"
-#~ msgstr "Verwerfen"
-
-#~ msgid "Yes"
-#~ msgstr "Ja"
 
