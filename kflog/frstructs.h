@@ -55,7 +55,7 @@ struct FRDirEntry
    */
   tm firstTime;
   /**
-   * The time of the first fix (i.e. first B-record) of the flight.
+   * The time of the last fix (i.e. last B-record) of the flight.
    * According to the IGC-specification, the time is given in UTC.
    */
   tm lastTime;
