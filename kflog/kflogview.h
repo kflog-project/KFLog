@@ -25,8 +25,6 @@
 // include files for Qt
 #include <qwidget.h>
 
-class KFLogDoc;
-
 /** The KFLogView class provides the view widget for the KFLogApp instance.	
  * The View instance inherits QWidget as a base class and represents the view object of a KTMainWindow. As KFLogView is part of the
  * docuement-view model, it needs a reference to the document object connected with it by the KFLogApp class to manipulate and display
@@ -43,16 +41,6 @@ class KFLogView : public QWidget
     KFLogView(QWidget *parent = 0, const char *name=0);
     /** Destructor for the main view */
     ~KFLogView();
-
-    /** returns a pointer to the document connected to the view instance. Mind that this method requires a KFLogApp instance as a parent
-     * widget to get to the window document pointer by calling the KFLogApp::getDocument() method.
-     *
-     * @see KFLogApp#getDocument
-     */
-    KFLogDoc *getDocument() const;
-
-    /** contains the implementation for printing functionality */
-    void print(QPrinter *pPrinter);
 	
   private:
 	

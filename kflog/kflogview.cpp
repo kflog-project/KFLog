@@ -16,6 +16,8 @@
 ***********************************************************************/
 
 // include files for Qt
+#include <qlabel.h>
+#include <qlayout.h>
 #include <qprinter.h>
 #include <qpainter.h>
 
@@ -26,26 +28,12 @@
 
 KFLogView::KFLogView(QWidget *parent, const char *name) : QWidget(parent, name)
 {
-  setBackgroundMode(PaletteBase);
+  QLabel* helloLabel = new QLabel("hallo, ich bin ein label", this);
+
+  QBoxLayout* layout = new QBoxLayout(this, QBoxLayout::LeftToRight);
+  layout->addWidget(helloLabel);
 }
 
 KFLogView::~KFLogView()
 {
-}
-
-KFLogDoc *KFLogView::getDocument() const
-{
-  KFLogApp *theApp=(KFLogApp *) parentWidget();
-
-  return theApp->getDocument();
-}
-
-void KFLogView::print(QPrinter *pPrinter)
-{
-  QPainter printpainter;
-  printpainter.begin(pPrinter);
-	
-  // TODO: add your printing code here
-
-  printpainter.end();
 }

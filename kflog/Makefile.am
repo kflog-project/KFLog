@@ -1,10 +1,10 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 bin_PROGRAMS = kflog
-kflog_SOURCES = kflogview.cpp kflogdoc.cpp kflog.cpp main.cpp 
-kflog_LDADD   =  -lkfile -lkdeui -lkdecore $(LIB_QT) $(LIBSOCKET)
+kflog_SOURCES = kflogview.cpp kflog.cpp main.cpp 
+kflog_LDADD   = -lkfile -lkdeui -lkdecore $(LIB_QT) $(LIBSOCKET)
 
 
-EXTRA_DIST = main.cpp kflog.cpp kflog.h kflogdoc.cpp kflogdoc.h kflogview.cpp kflogview.h kflogui.rc kflog.desktop lo32-app-kflog.png lo16-app-kflog.png 
+EXTRA_DIST = main.cpp kflog.cpp kflog.h kflogview.cpp kflogview.h kflogui.rc kflog.desktop lo32-app-kflog.png lo16-app-kflog.png 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_appsdir)/Applications/

@@ -22,7 +22,7 @@
 #include "kflog.h"
 
 static const char *description =
-	I18N_NOOP("KFLog");
+	I18N_NOOP("KFLog - The K-Flight-Logger");
 // INSERT A DESCRIPTION FOR YOUR APPLICATION HERE
 	
 	
@@ -35,11 +35,11 @@ static KCmdLineOptions options[] =
 
 int main(int argc, char *argv[])
 {
-
 	KAboutData aboutData( "kflog", I18N_NOOP("KFLog"),
 		VERSION, description, KAboutData::License_GPL,
 		"(c) 2001, Heiner Lamprecht", 0, 0, "heiner@kflog.de");
 	aboutData.addAuthor("Heiner Lamprecht",0, "heiner@kflog.de");
+	aboutData.addAuthor("Florian Ehinger",0, "florian@kflog.de");
 	KCmdLineArgs::init( argc, argv, &aboutData );
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
@@ -58,11 +58,11 @@ int main(int argc, char *argv[])
 		
 		if (args->count())
 		{
-        kflog->openDocumentFile(args->arg(0));
+//        kflog->openDocumentFile(args->arg(0));
 		}
 		else
 		{
-		  kflog->openDocumentFile();
+//		  kflog->openDocumentFile();
 		}
 		args->clear();
   }

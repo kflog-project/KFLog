@@ -17,6 +17,7 @@
 
 // include files for QT
 #include <qdir.h>
+#include <qlabel.h>
 #include <qprinter.h>
 #include <qpainter.h>
 
@@ -32,11 +33,10 @@
 // application specific includes
 #include "kflog.h"
 #include "kflogview.h"
-#include "kflogdoc.h"
 
 #define ID_STATUS_MSG 1
 
-KFLogApp::KFLogApp(QWidget* , const char* name):KMainWindow(0, name)
+KFLogApp::KFLogApp(QWidget* , const char* name):KDockMainWindow(0, name)
 {
   config=kapp->config();
 
@@ -44,19 +44,13 @@ KFLogApp::KFLogApp(QWidget* , const char* name):KMainWindow(0, name)
   // call inits to invoke all other construction parts
   initStatusBar();
   initActions();
-  initDocument();
   initView();
 	
   readOptions();
 
   ///////////////////////////////////////////////////////////////////
   // disable actions at startup
-  fileSave->setEnabled(false);
-  fileSaveAs->setEnabled(false);
   filePrint->setEnabled(false);
-  editCut->setEnabled(false);
-  editCopy->setEnabled(false);
-  editPaste->setEnabled(false);
 }
 
 KFLogApp::~KFLogApp()
@@ -67,38 +61,23 @@ KFLogApp::~KFLogApp()
 void KFLogApp::initActions()
 {
   fileNewWindow = new KAction(i18n("New &Window"), 0, 0, this, SLOT(slotFileNewWindow()), actionCollection(),"file_new_window");
-  fileNew = KStdAction::openNew(this, SLOT(slotFileNew()), actionCollection());
   fileOpen = KStdAction::open(this, SLOT(slotFileOpen()), actionCollection());
   fileOpenRecent = KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)), actionCollection());
-  fileSave = KStdAction::save(this, SLOT(slotFileSave()), actionCollection());
-  fileSaveAs = KStdAction::saveAs(this, SLOT(slotFileSaveAs()), actionCollection());
-  fileClose = KStdAction::close(this, SLOT(slotFileClose()), actionCollection());
   filePrint = KStdAction::print(this, SLOT(slotFilePrint()), actionCollection());
   fileQuit = KStdAction::quit(this, SLOT(slotFileQuit()), actionCollection());
-  editCut = KStdAction::cut(this, SLOT(slotEditCut()), actionCollection());
-  editCopy = KStdAction::copy(this, SLOT(slotEditCopy()), actionCollection());
-  editPaste = KStdAction::paste(this, SLOT(slotEditPaste()), actionCollection());
   viewToolBar = KStdAction::showToolbar(this, SLOT(slotViewToolBar()), actionCollection());
   viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()), actionCollection());
 
   fileNewWindow->setStatusText(i18n("Opens a new application window"));
-  fileNew->setStatusText(i18n("Creates a new document"));
   fileOpen->setStatusText(i18n("Opens an existing document"));
   fileOpenRecent->setStatusText(i18n("Opens a recently used file"));
-  fileSave->setStatusText(i18n("Saves the actual document"));
-  fileSaveAs->setStatusText(i18n("Saves the actual document as..."));
-  fileClose->setStatusText(i18n("Closes the actual document"));
   filePrint ->setStatusText(i18n("Prints out the actual document"));
   fileQuit->setStatusText(i18n("Quits the application"));
-  editCut->setStatusText(i18n("Cuts the selected section and puts it to the clipboard"));
-  editCopy->setStatusText(i18n("Copies the selected section to the clipboard"));
-  editPaste->setStatusText(i18n("Pastes the clipboard contents to actual position"));
   viewToolBar->setStatusText(i18n("Enables/disables the toolbar"));
   viewStatusBar->setStatusText(i18n("Enables/disables the statusbar"));
 
   // use the absolute path to your kflogui.rc file for testing purpose in createGUI();
   createGUI();
-
 }
 
 
@@ -110,38 +89,23 @@ void KFLogApp::initStatusBar()
   statusBar()->insertItem(i18n("Ready."), ID_STATUS_MSG);
 }
 
-void KFLogApp::initDocument()
-{
-  doc = new KFLogDoc(this);
-  doc->newDocument();
-}
-
 void KFLogApp::initView()
-{ 
-  ////////////////////////////////////////////////////////////////////
-  // create the main widget here that is managed by KTMainWindow's view-region and
-  // connect the widget to your document to display document contents.
-
-  view = new KFLogView(this);
-  doc->addView(view);
-  setCentralWidget(view);	
-  setCaption(doc->URL().fileName(),false);
-
-}
-
-void KFLogApp::openDocumentFile(const KURL& url)
 {
-  slotStatusMsg(i18n("Opening file..."));
+  // wir könnten mal Icons für die einzelnen Bereiche gebrauchen ...
+  mapDock = createDockWidget( "Map", 0L, 0L, i18n("Map"));
+  flightDock = createDockWidget( "Flight-Data", 0L, 0L,
+          i18n("Flight-Data"));
 
-  doc->openDocument( url);
-  fileOpenRecent->addURL( url );
-  slotStatusMsg(i18n("Ready."));
-}
+  view = new KFLogView(mapDock);
+  mapDock->setWidget(view);
+  setView(mapDock);
+  setMainDockWidget(mapDock);
 
-
-KFLogDoc *KFLogApp::getDocument() const
-{
-  return doc;
+  QLabel* aw = new QLabel("2. Label", flightDock);
+  flightDock->setWidget( aw);
+  flightDock->manualDock( mapDock,              // dock target
+                         KDockWidget::DockRight, // dock site
+                         25 );                  // relation target/this (in percent)
 }
 
 void KFLogApp::saveOptions()
@@ -187,57 +151,14 @@ void KFLogApp::readOptions()
 
 void KFLogApp::saveProperties(KConfig *_cfg)
 {
-  if(doc->URL().fileName()!=i18n("Untitled") && !doc->isModified())
-  {
-    // saving to tempfile not necessary
 
-  }
-  else
-  {
-    KURL url=doc->URL();	
-    _cfg->writeEntry("filename", url.url());
-    _cfg->writeEntry("modified", doc->isModified());
-    QString tempname = kapp->tempSaveName(url.url());
-    QString tempurl= KURL::encode_string(tempname);
-    KURL _url(tempurl);
-    doc->saveDocument(_url);
-  }
 }
 
 
 void KFLogApp::readProperties(KConfig* _cfg)
 {
-  QString filename = _cfg->readEntry("filename", "");
-  KURL url(filename);
-  bool modified = _cfg->readBoolEntry("modified", false);
-  if(modified)
-  {
-    bool canRecover;
-    QString tempname = kapp->checkRecoverFile(filename, canRecover);
-    KURL _url(tempname);
-  	
-    if(canRecover)
-    {
-      doc->openDocument(_url);
-      doc->setModified();
-      setCaption(_url.fileName(),true);
-      QFile::remove(tempname);
-    }
-  }
-  else
-  {
-    if(!filename.isEmpty())
-    {
-      doc->openDocument(url);
-      setCaption(url.fileName(),false);
-    }
-  }
-}		
 
-bool KFLogApp::queryClose()
-{
-  return doc->saveModified();
-}
+}		
 
 bool KFLogApp::queryExit()
 {
@@ -259,94 +180,16 @@ void KFLogApp::slotFileNewWindow()
   slotStatusMsg(i18n("Ready."));
 }
 
-void KFLogApp::slotFileNew()
-{
-  slotStatusMsg(i18n("Creating new document..."));
-
-  if(!doc->saveModified())
-  {
-     // here saving wasn't successful
-
-  }
-  else
-  {	
-    doc->newDocument();		
-    setCaption(doc->URL().fileName(), false);
-  }
-
-  slotStatusMsg(i18n("Ready."));
-}
-
 void KFLogApp::slotFileOpen()
 {
   slotStatusMsg(i18n("Opening file..."));
-	
-  if(!doc->saveModified())
-  {
-     // here saving wasn't successful
 
-  }
-  else
-  {	
-    KURL url=KFileDialog::getOpenURL(QString::null,
-        i18n("*|All files"), this, i18n("Open File..."));
-    if(!url.isEmpty())
-    {
-      doc->openDocument(url);
-      setCaption(url.fileName(), false);
-      fileOpenRecent->addURL( url );
-    }
-  }
   slotStatusMsg(i18n("Ready."));
 }
 
 void KFLogApp::slotFileOpenRecent(const KURL& url)
 {
   slotStatusMsg(i18n("Opening file..."));
-	
-  if(!doc->saveModified())
-  {
-     // here saving wasn't successful
-  }
-  else
-  {
-    doc->openDocument(url);
-    setCaption(url.fileName(), false);
-  }
-
-  slotStatusMsg(i18n("Ready."));
-}
-
-void KFLogApp::slotFileSave()
-{
-  slotStatusMsg(i18n("Saving file..."));
-	
-  doc->saveDocument(doc->URL());
-
-  slotStatusMsg(i18n("Ready."));
-}
-
-void KFLogApp::slotFileSaveAs()
-{
-  slotStatusMsg(i18n("Saving file with a new filename..."));
-
-  KURL url=KFileDialog::getSaveURL(QDir::currentDirPath(),
-        i18n("*|All files"), this, i18n("Save as..."));
-  if(!url.isEmpty())
-  {
-    doc->saveDocument(url);
-    fileOpenRecent->addURL(url);
-    setCaption(url.fileName(),doc->isModified());
-  }
-
-  slotStatusMsg(i18n("Ready."));
-}
-
-void KFLogApp::slotFileClose()
-{
-  slotStatusMsg(i18n("Closing file..."));
-	
-  close();
 
   slotStatusMsg(i18n("Ready."));
 }
@@ -358,7 +201,7 @@ void KFLogApp::slotFilePrint()
   QPrinter printer;
   if (printer.setup(this))
   {
-    view->print(&printer);
+
   }
 
   slotStatusMsg(i18n("Ready."));
@@ -381,27 +224,6 @@ void KFLogApp::slotFileQuit()
 	break;
     }
   }	
-  slotStatusMsg(i18n("Ready."));
-}
-
-void KFLogApp::slotEditCut()
-{
-  slotStatusMsg(i18n("Cutting selection..."));
-
-  slotStatusMsg(i18n("Ready."));
-}
-
-void KFLogApp::slotEditCopy()
-{
-  slotStatusMsg(i18n("Copying selection to clipboard..."));
-
-  slotStatusMsg(i18n("Ready."));
-}
-
-void KFLogApp::slotEditPaste()
-{
-  slotStatusMsg(i18n("Inserting clipboard contents..."));
-
   slotStatusMsg(i18n("Ready."));
 }
 

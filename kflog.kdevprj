@@ -16,14 +16,15 @@ type=DATA
 [Config for BinMakefileAm]
 bin_program=kflog
 cxxflags=-O0 -g3 -Wall
-ldadd= -lkfile -lkdeui -lkdecore $(LIB_QT)
-ldflags= 
+ldadd=-lkfile -lkdeui -lkdecore $(LIB_QT)
+ldflags=
 [General]
 AMChanged=true
 author=Heiner Lamprecht
 configure_args=--with-qt-dir=/usr/lib/qt2 --prefix=/opt/kde2
 email=heiner@kflog.de
 kdevprj_version=1.3
+lfv_open_groups=Headers
 makefiles=Makefile.am,kflog/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,po/Makefile.am
 project_name=KFLog
 project_type=normal_kde2
@@ -81,7 +82,7 @@ install=false
 install_location=
 type=DATA
 [kflog/Makefile.am]
-files=kflog/main.cpp,kflog/kflog.cpp,kflog/kflog.h,kflog/kflogdoc.cpp,kflog/kflogdoc.h,kflog/kflogview.cpp,kflog/kflogview.h,kflog/kflogui.rc,kflog/kflog.desktop,kflog/lo32-app-kflog.png,kflog/lo16-app-kflog.png
+files=kflog/main.cpp,kflog/kflog.cpp,kflog/kflog.h,kflog/kflogview.cpp,kflog/kflogview.h,kflog/kflogui.rc,kflog/kflog.desktop,kflog/lo32-app-kflog.png,kflog/lo16-app-kflog.png
 sub_dirs=
 type=prog_main
 [kflog/kflog.cpp]
@@ -95,16 +96,6 @@ install=true
 install_location=$$(kde_appsdir)/Applications/kflog.desktop
 type=DATA
 [kflog/kflog.h]
-dist=true
-install=false
-install_location=
-type=HEADER
-[kflog/kflogdoc.cpp]
-dist=true
-install=false
-install_location=
-type=SOURCE
-[kflog/kflogdoc.h]
 dist=true
 install=false
 install_location=
