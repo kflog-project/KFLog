@@ -1,3 +1,4 @@
+# translation of nl.po to Dutch
 # translation of nl-new.po to Dutch
 # translation of nl-new.po to
 # translation of kflog.po to Dutch
@@ -7,9 +8,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: nl-new\n"
+"Project-Id-Version: nl\n"
 "POT-Creation-Date: 2003-04-01 11:25+0200\n"
-"PO-Revision-Date: 2003-04-12 21:28+0200\n"
+"PO-Revision-Date: 2003-04-27 20:02+0200\n"
 "Last-Translator: André Somers <andre@kflog.org>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -758,7 +759,7 @@ msgstr "Beton"
 
 #: kflog.cpp:1120
 msgid "Aerial railway"
-msgstr "Aerial railway"
+msgstr "Gondelbaan"
 
 #: kflog.cpp:1121 waypointimpfilterdialog.cpp:99
 msgid "Airfield"
