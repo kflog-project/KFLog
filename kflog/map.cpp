@@ -167,29 +167,33 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
       if(taskPoints.size() > 0)
         {
-          int dX_old = delta + 10;
-          int dY_old = delta + 10;
+          double dX_old = delta + 10.0;
+          double dY_old = delta + 10.0;
           /*
            *  Muss für alle Punktdaten durchgeführt werden
            */
           if(planning == 1)
             {
-	      preSitePos = _globalMapMatrix.map(taskPoints.at(taskPoints.size() - 1)->getPosition());
-	    }
+              preSitePos = _globalMapMatrix.map(
+                  taskPoints.at(taskPoints.size() - 1)->getPosition());
+            }
           else if(planning == 3)
             {
               if(moveWPindex > 0)
-		preSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex - 1)->getPosition());
-              if(moveWPindex < taskPoints.size() - 1)  
-		nextSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex + 1)->getPosition());              
+                  preSitePos = _globalMapMatrix.map(
+                      taskPoints.at(moveWPindex - 1)->getPosition());
+
+              if(moveWPindex + 1 < taskPoints.size())
+                  nextSitePos = _globalMapMatrix.map(
+                      taskPoints.at(moveWPindex + 1)->getPosition());
             }
                  
           point.setX(current.x());
           point.setY(current.y());
         
           for(unsigned int loop = 0;
-	      loop < _globalMapContents.getListLength(
-						      MapContents::GliderList); loop++)
+                loop < _globalMapContents.getListLength(
+						        MapContents::GliderList); loop++)
             {
               hitElement = _globalMapContents.getElement(
 							 MapContents::GliderList, loop);
@@ -208,27 +212,27 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                   point.setX(sitePos.x());
                   point.setY(sitePos.y());
                 }
-	    }
+            }
                 
           QPainter planP(this);
-	  planP.setRasterOp(XorROP);
+          planP.setRasterOp(XorROP);
           planP.setBrush(NoBrush);
           planP.setPen(QPen(QColor(255,0,0), 5));
 
-	  if(prePlanPos.x() >= 0)
-	    {
+          if(prePlanPos.x() >= 0)
+            {
               // alte Linien löschen
               if(!(planning == 3 && moveWPindex == 0))
                 {  
-		  planP.drawLine(preSitePos.x(),preSitePos.y(),
-                                 prePlanPos.x(),prePlanPos.y());
+                  planP.drawLine(preSitePos.x(),preSitePos.y(),
+                      prePlanPos.x(),prePlanPos.y());
                 }
-              if((planning == 3) && moveWPindex != taskPoints.size() - 1)
+              if((planning == 3) && moveWPindex + 1 != taskPoints.size())
                 {
-		  planP.drawLine(nextSitePos.x(),nextSitePos.y(),
-				 prePlanPos.x(),prePlanPos.y());
+                  planP.drawLine(nextSitePos.x(),nextSitePos.y(),
+                      prePlanPos.x(),prePlanPos.y());
                 }
-	    }
+            }
 
           if((current.x() > 0 && current.x() < this->width()) &&
              (current.y() > 0 && current.y() < this->height()))
@@ -237,12 +241,12 @@ void Map::mouseMoveEvent(QMouseEvent* event)
               if(!(planning == 3 && moveWPindex == 0))
                 {
                   planP.drawLine(preSitePos.x(),preSitePos.y(),
-				 point.x(),point.y());
+                      point.x(),point.y());
                 }
-              if((planning == 3) && moveWPindex != taskPoints.size() - 1)
+              if((planning == 3) && moveWPindex + 1 != taskPoints.size())
                 {                                 
                   planP.drawLine(nextSitePos.x(),nextSitePos.y(),
-                                 point.x(),point.y());
+                      point.x(),point.y());
                 }
                 
               prePlanPos = point;
@@ -259,37 +263,36 @@ void Map::mouseMoveEvent(QMouseEvent* event)
         }
     }
 
-    
-    
-  if (!timerAnimate->isActive()){
-    if(prePos.x() >= 0)
-      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-	     prePos.x() - 20, prePos.y() - 20, 40, 40);
+  if (!timerAnimate->isActive())
+    {
+      if(prePos.x() >= 0)
+          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+              prePos.x() - 20, prePos.y() - 20, 40, 40);
 
-    flightPoint cP;
+      flightPoint cP;
 
-    if((index = _globalMapContents.searchFlightPoint(event->pos(), cP)) != -1)
-      {
-        emit showFlightPoint(_globalMapMatrix.mapToWgs(event->pos()), cP);
-        prePos = _globalMapMatrix.map(cP.projP);
-        preIndex = index;
-        bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
-      }
-    else
-      {
-        emit showPoint(_globalMapMatrix.mapToWgs(event->pos()));
-        prePos.setX(-50);
-        prePos.setY(-50);
-      }
-  }
+      if((index = _globalMapContents.searchFlightPoint(event->pos(), cP)) != -1)
+        {
+          emit showFlightPoint(_globalMapMatrix.mapToWgs(event->pos()), cP);
+          prePos = _globalMapMatrix.map(cP.projP);
+          preIndex = index;
+          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+        }
+      else
+        {
+          emit showPoint(_globalMapMatrix.mapToWgs(event->pos()));
+          prePos.setX(-50);
+          prePos.setY(-50);
+        }
+    }
 }
 
 void Map::mousePressEvent(QMouseEvent* event)
 {
   // First: delete the cursor, if visible:
   if(prePos.x() >= 0)
-    bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-	   prePos.x() - 20, prePos.y() - 20, 40, 40);
+      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+          prePos.x() - 20, prePos.y() - 20, 40, 40);
 
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
@@ -319,59 +322,64 @@ void Map::mousePressEvent(QMouseEvent* event)
     {
 
       //    _start = event->pos();
-      if (shiftButton) {
-        QRegExp blank("[ ]");
-        bool found = false;
-        int searchList[] = {MapContents::GliderList, MapContents::AirportList};
-        for (int l = 0; l < 2; l++) {
-       	  for(unsigned int loop = 0;
-       	      loop < _globalMapContents.getListLength(searchList[l]); loop++) {
-    	      hitElement = (SinglePoint*)_globalMapContents.getElement(searchList[l], loop);
-    	      sitePos = hitElement->getMapPosition();
+      if (shiftButton)
+        {
+          QRegExp blank("[ ]");
+          bool found = false;
+          int searchList[] = {MapContents::GliderList, MapContents::AirportList};
+          for (int l = 0; l < 2; l++)
+            {
+           	  for(unsigned int loop = 0;
+           	      loop < _globalMapContents.getListLength(searchList[l]); loop++)
+           	    {
+        	        hitElement = (SinglePoint*)_globalMapContents.getElement(
+        	            searchList[l], loop);
+          	      sitePos = hitElement->getMapPosition();
+
+        	        dX = sitePos.x() - current.x();
+  	              dY = sitePos.y() - current.y();
   	
-  	        dX = sitePos.x() - current.x();
-  	        dY = sitePos.y() - current.y();
-  	
-  	        // Abstand entspricht der Icon-Größe.
-  	        if( ( ( dX < delta ) && ( dX > -delta ) ) && ( ( dY < delta ) && ( dY > -delta ) ) ) {
-  	          WaypointElement *w = new WaypointElement;
-  	          w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
-              w->description = hitElement->getName();
-  	          w->type = hitElement->getTypeID();
-  	          w->pos = _globalMapMatrix.mapToWgs(_globalMapMatrix.map(hitElement->getPosition()));
-              w->elevation = hitElement->getElevation();
-              w->icao = ((RadioPoint *)hitElement)->getICAO();
-              w->frequency = ((RadioPoint *)hitElement)->getFrequency().toDouble();
-              w->isLandable = true;
+  	              // Abstand entspricht der Icon-Größe.
+        	        if( ( ( dX < delta ) && ( dX > -delta ) ) && ( ( dY < delta ) && ( dY > -delta ) ) )
+        	          {
+          	          WaypointElement *w = new WaypointElement;
+  	                  w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
+                      w->description = hitElement->getName();
+          	          w->type = hitElement->getTypeID();
+          	          w->pos = _globalMapMatrix.mapToWgs(_globalMapMatrix.map(hitElement->getPosition()));
+                      w->elevation = hitElement->getElevation();
+                      w->icao = ((RadioPoint *)hitElement)->getICAO();
+                      w->frequency = ((RadioPoint *)hitElement)->getFrequency().toDouble();
+                      w->isLandable = true;
+                      emit waypointSelected(w);
+                      found = true;
+                      break;
+        	          }
+      	        }
+      	      if (found)  break;
+      	    }
+
+  	      if (!found)
+  	        {
+      	      // add an 'free' waypoint
+              WaypointElement *w = new WaypointElement;
+              // leave name empty, this will generate an syntetic name
+              w->type = BaseMapElement::Landmark;
+              w->pos = _globalMapMatrix.mapToWgs(current);
+              w->isLandable = false;
               emit waypointSelected(w);
-              found = true;
-              break;
   	        }
-  	      }
-  	      if (found) {
-  	        break;
-  	      }
-  	    }
-  	    if (!found) {
-  	      // add an 'free' waypoint
-          WaypointElement *w = new WaypointElement;
-          // leave name empty, this will generate an syntetic name
-          w->type = BaseMapElement::Landmark;
-          w->pos = _globalMapMatrix.mapToWgs(current);
-          w->isLandable = false;
-          emit waypointSelected(w);
-  	    }
-      }
+        }
       else if(planning == 1 || planning == 2 || planning == 3)
         {
           ////////// Planen
-          int dX_old = delta + 10;
-          int dY_old = delta + 10;  
+          double dX_old = delta + 10;
+          double dY_old = delta + 10;
           /*
            *  Muss für alle Punktdaten durchgeführt werden
            */
           for(unsigned int loop = 0;
-	      loop < _globalMapContents.getListLength(
+              loop < _globalMapContents.getListLength(
 						      MapContents::GliderList); loop++)
             {
               hitElement = (SinglePoint*)_globalMapContents.getElement(
@@ -383,7 +391,7 @@ void Map::mousePressEvent(QMouseEvent* event)
 
               // Abstand entspricht der Icon-Größe.
               if( (( dX < delta )  && ( dY < delta )) &&
-		  (( dX < dX_old ) && ( dY < dY_old )) )
+                  (( dX < dX_old ) && ( dY < dY_old )) )
                 {
                   // im Bereich eines WP
                   dX_old = dX;
@@ -396,10 +404,9 @@ void Map::mousePressEvent(QMouseEvent* event)
                          taskPoints.at(taskPoints.size() - 1)->getPosition().x())
                         {
                           // gleicher Punkt --> löschen
-			  //                          taskPoints.at(taskPoints.size()) == ;                    
+//                          taskPoints.at(taskPoints.size()) == ;
                           pixPlan.fill(white);
                           taskPoints.resize(taskPoints.size() - 1);
-			  // __redrawMap();
                         }
                       else
                         {
@@ -421,12 +428,12 @@ void Map::mousePressEvent(QMouseEvent* event)
                       for(unsigned int n = 0; n < taskPoints.size(); n++)
                         {
                           if(hitElement->getPosition().x() ==
-			     taskPoints.at(n)->getPosition().x())
+                                  taskPoints.at(n)->getPosition().x())
                             {
                               planning = 3;                            
                               moveWPindex = n;
                               prePlanPos.setX(-999);
-			      prePlanPos.setY(-999);                              
+                              prePlanPos.setY(-999);
                               break;
                             }
                         }
@@ -434,7 +441,7 @@ void Map::mousePressEvent(QMouseEvent* event)
                   else if(planning == 3)
                     {
                       planning = 2;
-		      taskPoints.at(moveWPindex) = hitElement;
+                      taskPoints.at(moveWPindex) = hitElement;
                 
                       // Aufgabe zeichnen
                       if(taskPoints.size() > 1)
@@ -452,17 +459,17 @@ void Map::mousePressEvent(QMouseEvent* event)
     {
       if(planning == 1 || planning == 3)
         {
-	  QPoint preSitePos, nextSitePos;
-	  // Strecke löschen
-	  moveWPindex = -999;
+          QPoint preSitePos, nextSitePos;
+          // Strecke löschen
+          moveWPindex = -999;
 
           QPainter planP(this);
-	  planP.setRasterOp(XorROP);
+          planP.setRasterOp(XorROP);
           planP.setBrush(NoBrush);
           planP.setPen(QPen(QColor(255,0,0), 5));
 	  
-	  if(prePlanPos.x() >= 0)
-	    {
+      	  if(prePlanPos.x() >= 0)
+	          {
               // alte Linien löschen
               preSitePos = _globalMapMatrix.map(taskPoints.at(taskPoints.size() - 1)->getPosition());
               if(planning == 3)
@@ -470,12 +477,12 @@ void Map::mousePressEvent(QMouseEvent* event)
                   preSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex - 1)->getPosition());
                   nextSitePos = _globalMapMatrix.map(taskPoints.at(moveWPindex + 1)->getPosition());
 
-		  planP.drawLine(nextSitePos.x(),nextSitePos.y(),
-				 prePlanPos.x(),prePlanPos.y());
-                }           
-	      planP.drawLine(preSitePos.x(),preSitePos.y(),
-                             prePlanPos.x(),prePlanPos.y());
-	    }
+                  planP.drawLine(nextSitePos.x(),nextSitePos.y(),
+                  prePlanPos.x(),prePlanPos.y());
+                }
+	            planP.drawLine(preSitePos.x(),preSitePos.y(),
+                  prePlanPos.x(),prePlanPos.y());
+      	    }
           planP.end();                      
           
           prePlanPos.setX(-999);
@@ -484,164 +491,163 @@ void Map::mousePressEvent(QMouseEvent* event)
         }
       else
         {
-	  /*
-	   * Segelflugplätze, soweit vorhanden, kommen als erster Eintrag
-	   */
-	  for(unsigned int loop = 0;
-	      loop < _globalMapContents.getListLength(
+          /*
+           * Segelflugplätze, soweit vorhanden, kommen als erster Eintrag
+           */
+          for(unsigned int loop = 0;
+              loop < _globalMapContents.getListLength(
 						      MapContents::GliderList); loop++)
-	    {
-	      hitElement = (SinglePoint*)_globalMapContents.getElement(
-								       MapContents::GliderList, loop);
-	      sitePos = hitElement->getMapPosition();
+            {
+              hitElement = (SinglePoint*)_globalMapContents.getElement(
+                  MapContents::GliderList, loop);
+              sitePos = hitElement->getMapPosition();
+
+              dX = sitePos.x() - current.x();
+              dY = sitePos.y() - current.y();
 	      
-	      dX = sitePos.x() - current.x();
-	      dY = sitePos.y() - current.y();
-	      
-	      // Abstand entspricht der Icon-Größe.
-	      if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-		  ( ( dY < delta ) && ( dY > -delta ) ) )
-		{
-		  text = text + ((SinglePoint*)hitElement)->getInfoString();
-		  // Text anzeigen
-		  QWhatsThis::enterWhatsThisMode();
-		  QWhatsThis::leaveWhatsThisMode(text);
-		  isAirport = true;
-		}
-	    }
+              // Abstand entspricht der Icon-Größe.
+              if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+                  ( ( dY < delta ) && ( dY > -delta ) ) )
+                {
+                  text = text + ((SinglePoint*)hitElement)->getInfoString();
+                  // Text anzeigen
+                  QWhatsThis::enterWhatsThisMode();
+                  QWhatsThis::leaveWhatsThisMode(text);
+                  isAirport = true;
+                }
+            }
 
-	  //      text = "";    // Wir wollen _nur_ Flugplätze anzeigen!
+//          text = "";    // Wir wollen _nur_ Flugplätze anzeigen!
 
-	  if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
+	        if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
 
-	  for(unsigned int loop = 0;
-	      loop < _globalMapContents.getListLength(
-						      MapContents::AirportList); loop++)
-	    {
-	      hitElement = (SinglePoint*)_globalMapContents.getElement(
-								       MapContents::AirportList, loop);
-	      sitePos = hitElement->getMapPosition();
+  	      for(unsigned int loop = 0;
+	            loop < _globalMapContents.getListLength(
+						          MapContents::AirportList); loop++)
+    	      {
+  	          hitElement = (SinglePoint*)_globalMapContents.getElement(
+                  MapContents::AirportList, loop);
+              sitePos = hitElement->getMapPosition();
 
-	      dX = sitePos.x() - current.x();
-	      dY = sitePos.y() - current.y();
+              dX = sitePos.x() - current.x();
+              dY = sitePos.y() - current.y();
 
-	      // Abstand entspricht der Icon-Größe.
-	      if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-		  ( ( dY < delta ) && ( dY > -delta ) ) )
-		{
-		  text = text + hitElement->getInfoString();
-		  // Text anzeigen
-		  QWhatsThis::enterWhatsThisMode();
-		  QWhatsThis::leaveWhatsThisMode(text);
-		  isAirport = true;
-		}
-	    }
+              // Abstand entspricht der Icon-Größe.
+              if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+                  ( ( dY < delta ) && ( dY > -delta ) ) )
+                {
+                  text = text + hitElement->getInfoString();
+                  // Text anzeigen
+                  QWhatsThis::enterWhatsThisMode();
+                  QWhatsThis::leaveWhatsThisMode(text);
+                  isAirport = true;
+                }
+            }
 
-	  if(_globalMapContents.getFlightList()->count() > 0)
-	    {
-	      QList<wayPoint> wpList =
-                _globalMapContents.getFlight()->getWPList();
+          if(_globalMapContents.getFlightList()->count() > 0)
+	          {
+              QList<wayPoint> wpList =
+                  _globalMapContents.getFlight()->getWPList();
 
-	      delta = 25;
-	      bool isWP = false;
-	      QString wpText;
-	      wpText = "<B>Waypoint:</B><UL>";
+              delta = 25;
+              bool isWP = false;
+              QString wpText;
+              wpText = "<B>Waypoint:</B><UL>";
 
-	      for(unsigned int loop = 0; loop < wpList.count(); loop++)
-		{
-		  sitePos = _globalMapMatrix.map(wpList.at(loop)->projP);
+              for(unsigned int loop = 0; loop < wpList.count(); loop++)
+                {
+                  sitePos = _globalMapMatrix.map(wpList.at(loop)->projP);
 
-		  dX = sitePos.x() - current.x();
-		  dY = sitePos.y() - current.y();
+                  dX = sitePos.x() - current.x();
+                  dY = sitePos.y() - current.y();
 
-		  // We do not search for the sector ...
-		  if( ( ( dX < delta ) && ( dX > -delta ) ) &&
-		      ( ( dY < delta ) && ( dY > -delta ) ) )
-		    {
-		      isWP = true;
+                  // We do not search for the sector ...
+                  if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+                      ( ( dY < delta ) && ( dY > -delta ) ) )
+                    {
+                      isWP = true;
 
-		      QString tmpText, timeText;
+                      QString tmpText, timeText;
 
-		      if(wpList.at(loop)->sector1 != 0)
-			{
-			  timeText = printTime(wpList.at(loop)->sector1);
-			  tmpText = i18n("Sector 1");
-			}
-		      else if(wpList.at(loop)->sector2 != 0)
-			{
-			  timeText = printTime(wpList.at(loop)->sector2);
-			  tmpText = i18n("Sector 2");
-			}
-		      else if(wpList.at(loop)->sectorFAI != 0)
-			{
-			  timeText = printTime(wpList.at(loop)->sectorFAI);
-			  tmpText = i18n("FAI-Sector");
-			}
-		      else
-			{
-			  timeText = "&nbsp;" + i18n("not reached");
-			}
+                      if(wpList.at(loop)->sector1 != 0)
+                        {
+                          timeText = printTime(wpList.at(loop)->sector1);
+                          tmpText = i18n("Sector 1");
+                        }
+                      else if(wpList.at(loop)->sector2 != 0)
+                        {
+                          timeText = printTime(wpList.at(loop)->sector2);
+                          tmpText = i18n("Sector 2");
+                        }
+                      else if(wpList.at(loop)->sectorFAI != 0)
+                        {
+                          timeText = printTime(wpList.at(loop)->sectorFAI);
+                          tmpText = i18n("FAI-Sector");
+                        }
+                      else
+                        {
+                          timeText = "&nbsp;" + i18n("not reached");
+                        }
 
-		      switch(wpList.at(loop)->type)
-			{
-			case FlightTask::TakeOff:
-			  tmpText = i18n("Take Off");
-			  break;
-			case FlightTask::Begin:
-			  tmpText = i18n("Begin of task");
-			  break;
-			case FlightTask::End:
-			  tmpText = i18n("End of task");
-			  break;
-			case FlightTask::Landing:
-			  tmpText = i18n("Landing");
-			  break;
-			}
+                      switch(wpList.at(loop)->type)
+                        {
+                          case FlightTask::TakeOff:
+                            tmpText = i18n("Take Off");
+                            break;
+                          case FlightTask::Begin:
+                            tmpText = i18n("Begin of task");
+                            break;
+                          case FlightTask::End:
+                            tmpText = i18n("End of task");
+                            break;
+                          case FlightTask::Landing:
+                            tmpText = i18n("Landing");
+                            break;
+                        }
 
-		      wpText = wpText + "<LI><B>" + wpList.at(loop)->name +
-			"</B>  " +
-			"&nbsp;" + timeText + " / " + tmpText + "<BR>" +
-			printPos(wpList.at(loop)->origP.x()) + " / " +
-			printPos(wpList.at(loop)->origP.y(), false) + "</LI>";
-		    }
-		}
+                      wpText = wpText + "<LI><B>" + wpList.at(loop)->name +
+                          "</B>  " +
+                          "&nbsp;" + timeText + " / " + tmpText + "<BR>" +
+                          printPos(wpList.at(loop)->origP.x()) + " / " +
+                          printPos(wpList.at(loop)->origP.y(), false) + "</LI>";
+    		            }
+                }
 
-	      if(isWP)
-		{
-		  wpText = wpText + "</UL>";
-		  text = text + wpText;
-		  // Text anzeigen
-		  QWhatsThis::enterWhatsThisMode();
-		  QWhatsThis::leaveWhatsThisMode(text);
-		  isAirport = true;
-		}
-	    }
+              if(isWP)
+                {
+                  wpText = wpText + "</UL>";
+                  text = text + wpText;
+                  // Text anzeigen
+                  QWhatsThis::enterWhatsThisMode();
+                  QWhatsThis::leaveWhatsThisMode(text);
+                  isAirport = true;
+                }
+            }
 
-	  if(isAirport)  return;
+          if(isAirport)  return;
 
-	  text = text + "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
+          text = text + "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
 
-	  for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
-	    {
-	      if(airspaceRegList->at(loop)->contains(current))
-		{
-		  hitElement = (SinglePoint*)_globalMapContents.getElement(
-									   MapContents::AirspaceList, loop);
+          for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
+            {
+              if(airspaceRegList->at(loop)->contains(current))
+                {
+                  hitElement = (SinglePoint*)_globalMapContents.getElement(
+                      MapContents::AirspaceList, loop);
 
-		  text = text + "<LI>" + hitElement->getInfoString()
-                    + "</LI>";
-		  show = true;
-		}
-	    }
-	  text = text + "</UL>";
+                  text = text + "<LI>" + hitElement->getInfoString() + "</LI>";
+                  show = true;
+                }
+            }
+          text = text + "</UL>";
 
-	  if(show)
-	    {
-	      //  Text anzeigen
-	      QWhatsThis::enterWhatsThisMode();
-	      QWhatsThis::leaveWhatsThisMode(text);
-	    }
-	}
+          if(show)
+            {
+              //  Text anzeigen
+              QWhatsThis::enterWhatsThisMode();
+              QWhatsThis::leaveWhatsThisMode(text);
+            }
+        }
     }
 }
 

@@ -643,7 +643,6 @@ void KFLogApp::slotFileQuit()
   saveOptions();
 
   close();
-  slotStatusMsg(i18n("Ready."));
 }
 
 void KFLogApp::slotViewToolBar()

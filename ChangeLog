@@ -1,17 +1,26 @@
 $Id$
 
+
+2002-02-17 Heiner <heiner@kflog.org>
+
+  * Fixed a bug in KFLogApp::slotFileQuit(), that caused KFLog to crash
+    on exiting.
+
+
 2002-02-14 Florian <florian@kflog.org>
 
   * Added basically functions for graphical Task Planning
 
   * Fixed crash of EvaluationDialog when loading a flight without a task.
 
+
 2002-02-13 Harry <harry@kflog.org>
 
   * Added waypoints as dockable widget
 
   * Added filter for import and display of waypoints
-	
+
+
 2002-02-12 Thomas <thomas@kflog.org>
 
   * Added zoom, tilt and rotate functionallity to 3DIgc dialog.
