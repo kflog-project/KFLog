@@ -481,10 +481,23 @@ void TaskAndWaypoint::fillWaypoints()
 
   for (w = it.current(); w != 0; w = ++it) {
     if (!showAll) {
-      if ((w->type == BaseMapElement::Airport && !showAirports) ||
-          (w->type == BaseMapElement::Glidersite && !showGliderSites)) {
-         maxRows--;
-         continue;
+      switch(w->type) {
+      case BaseMapElement::IntAirport:
+      case BaseMapElement::Airport:
+      case BaseMapElement::MilAirport:
+      case BaseMapElement::CivMilAirport:
+      case BaseMapElement::Airfield:
+        if (!showAirports) {
+          maxRows--;
+          continue;
+        }
+        break;
+      case BaseMapElement::Glidersite:
+        if (!showGliderSites) {
+          maxRows--;
+          continue;
+        }
+        break;
       }
     }
 
@@ -690,6 +703,7 @@ void TaskAndWaypoint::slotImportWaypointFromMap()
         w->frequency = a->getFrequency().toDouble();
 
         switch(type) {
+        case BaseMapElement::IntAirport:
         case BaseMapElement::Airport:
         case BaseMapElement::MilAirport:
         case BaseMapElement::CivMilAirport:

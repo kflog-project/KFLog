@@ -23,7 +23,7 @@ KFLogTable::KFLogTable(QWidget *parent, const char *name)
 }
 
 KFLogTable::KFLogTable(int numRows, int numCols, QWidget *parent, const char *name)
-  : QTable(numRows, numCols, parent, name)
+  : QTable(numRows, numCols, parent, name), oldCol(-1)
 {
 }
 
