@@ -362,12 +362,13 @@ void OLCDialog::slotSave()
 
   QString link = composeOLCString(false);
   QString olcFileName = KFileDialog::getSaveFileName();
+  if (olcFileName==QString::null) return;
   
   QFile igcFile(currentFlight->getFileName());
   if(!igcFile.open(IO_ReadOnly))
     {
       KMessageBox::error(0,
-          i18n("You don't have permission to access file<BR><B>%1</B>").arg(igcFile.name()),
+          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(igcFile.name())+ "</qt>",
           i18n("No permission"));
       return;
     }
@@ -375,7 +376,7 @@ void OLCDialog::slotSave()
   if (!olcFile.open( IO_WriteOnly ))
     {
       KMessageBox::error(0,
-          i18n("You don't have permission to access file<BR><B>%1</B>").arg(olcFile.name()),
+          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(olcFile.name()) + "</qt>",
           i18n("No permission"));
       return;
     }
