@@ -116,7 +116,7 @@ QString GarminFR::getRecorderSerialNo(){
  */
 int GarminFR::openRecorder(const QString portName, int baud) {
 
-  this->portName = portName.latin1();
+  this->portName = (char*)portName.latin1();
 
   if (!gmn.openComm(this->portName))
     {
