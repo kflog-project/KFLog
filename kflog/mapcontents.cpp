@@ -675,6 +675,13 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 
 //      valley = 0;
 
+      // the groundlines 0m do not need a sort id
+      if(elevation <= 0)
+        {
+	  sort = 0;
+	  valley = 0;
+        }
+	   
       if(sort >= 0 && sort <= 3)
         {
           for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
@@ -683,12 +690,14 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 
           // If sort_temp is -1 here, we have an unused elevation and
           // must ignore it!
+      
           if(sort_temp != -1)
             {
               Isohypse* newItem = new Isohypse(tA, elevation, valley);
               isoList.at(sort_temp)->append(newItem);
             }
         }
+      
     }
 
   return true;
@@ -2244,11 +2253,14 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
             }
         }
 
-      targetP->setPen(QPen(_globalMapConfig.getIsoPenColor(), 1,
-        _globalMapConfig.getIsoPenStyle(iso->getFirst()->getElevation())));  // make configurable
+//      targetP->setPen(QPen(_globalMapConfig.getIsoPenColor(), 1,
+//        _globalMapConfig.getIsoPenStyle(iso->getFirst()->getElevation())));  // make configurable
+
 //      targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1, Qt::NoPen));
+      targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1, Qt::SolidLine));
       targetP->setBrush(QBrush(_globalMapConfig.getIsoColor(height),
           QBrush::SolidPattern));
+      
       for(Isohypse* iso2 = iso->first(); iso2; iso2 = iso->next())
         {
           QRegion * reg = iso2->drawRegion(targetP, maskP);

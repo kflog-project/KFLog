@@ -30,7 +30,6 @@ ElevationFinder::ElevationFinder(QObject *parent, const char *name)
   
   demFile = 0;
   demStream = 0;
-  
 }
 
 

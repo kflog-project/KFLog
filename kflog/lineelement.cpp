@@ -120,6 +120,7 @@ void LineElement::drawMapElement(QPainter* targetP, QPainter* maskP)
     {
       maskP->drawPolyline(pA);
       targetP->drawPolyline(pA);
+      
       if(typeID == Highway && drawP.width() > 4)
         {
           // draw the white line in the middle

@@ -5,7 +5,7 @@ lib_LTLIBRARIES = libkfrxcu.la
 INCLUDES = $(all_includes)
 
 
-LDFLAGS =               
+LDFLAGS =                
 
 
 libkfrxcu_la_LDFLAGS = -version-info 0:0:0
