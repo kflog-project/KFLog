@@ -441,9 +441,9 @@ void Igc3DFlightData::load(Flight* flight)
        t = printTime(cP.time, false, true);
        sscanf ((const char *) t, "%02f:%02f:%02f", &hh, &mm, &ss);
 
-       r = printPos(cP.origP.x(),true);
+       r = printPos(cP.origP.lat(),true);
        sscanf ((const char *) r, "%2f%c %2f%c %2f%c %c", &lat, &AV, &latmin, &AV, &latmindez, &AV, &NS);
-       s = printPos(cP.origP.y(),false);
+       s = printPos(cP.origP.lon(),false);
        sscanf ((const char *) s, "%3f%c %2f%c %2f%c %c",&lon, &AV, &lonmin, &AV, &lonmindez, &AV, &EW);
 
        if(firstDataPoint == NULL){

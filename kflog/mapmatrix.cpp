@@ -55,6 +55,38 @@
 #define HOME_DEFAULT_LAT 29125200
 #define HOME_DEFAULT_LON 5364500
 
+
+/*************************************************************************
+**
+** WGSPoint
+**
+*************************************************************************/
+
+WGSPoint::WGSPoint()
+  : QPoint()
+{
+
+}
+
+WGSPoint::WGSPoint(int lat, int lon)
+  : QPoint(lat, lon)
+{
+
+}
+
+WGSPoint &WGSPoint::operator=( const QPoint &p )
+{
+  setPos(p.x(), p.y());
+  return *this;
+}
+
+
+/*************************************************************************
+**
+**  MapMatrix
+**
+*************************************************************************/
+
 MapMatrix::MapMatrix()
   : mapCenterLat(0), mapCenterLon(0), printCenterLat(0), printCenterLon(0),
     cScale(0), rotationArc(0), printArc(0)

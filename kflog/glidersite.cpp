@@ -20,9 +20,9 @@
 #include <kiconloader.h>
 #include <kstddirs.h>
 
-GliderSite::GliderSite(QString n, QString icao, QString gps, QPoint pos,
-        unsigned int elev, const char* f, bool w)
-: RadioPoint(n, icao, gps, BaseMapElement::Glidersite, pos, f, elev),
+GliderSite::GliderSite(QString n, QString icao, QString gps, WGSPoint wgsPos,
+        QPoint pos, unsigned int elev, const char* f, bool w)
+: RadioPoint(n, icao, gps, BaseMapElement::Glidersite, wgsPos, pos, f, elev),
   winch(w)
 {
 

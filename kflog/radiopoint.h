@@ -55,11 +55,12 @@ class RadioPoint : public SinglePoint
      * @param  icao  The icao-name
      * @param  gps  The abbreviation, used for the gps-logger
      * @param  typeID  The typeid
-     * @param  pos  The position
+     * @param  pos  The projected position
+     * @param  wgsPos  The original WGS-position
      * @param  frequency  The frequency
      */
     RadioPoint(QString name, QString icao, QString gps, unsigned int typeID,
-        QPoint pos, const char* frequency, int elevation = 0);
+        WGSPoint wgsP, QPoint pos, const char* frequency, int elevation = 0);
     /**
      * Destructor
      */

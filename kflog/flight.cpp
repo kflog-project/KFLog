@@ -860,12 +860,12 @@ bool Flight::optimizeTask()
   distText.sprintf(" %.2f km  ", totalDist);
   text = i18n("The task has been optimized. The best task found is:\n\n");
   text = text + "\t1:  "
-      + printPos(route.at(idList[0])->origP.x()) + " / "
-      + printPos(route.at(idList[0])->origP.y(), false) + "\n\t2:  "
-      + printPos(route.at(idList[1])->origP.x()) + " / "
-      + printPos(route.at(idList[1])->origP.y(), false) + "\n\t3:  "
-      + printPos(route.at(idList[2])->origP.x()) + " / "
-      + printPos(route.at(idList[2])->origP.y(), false) + "\n\n\t"
+      + printPos(route.at(idList[0])->origP.lat()) + " / "
+      + printPos(route.at(idList[0])->origP.lon(), false) + "\n\t2:  "
+      + printPos(route.at(idList[1])->origP.lat()) + " / "
+      + printPos(route.at(idList[1])->origP.lon(), false) + "\n\t3:  "
+      + printPos(route.at(idList[2])->origP.lat()) + " / "
+      + printPos(route.at(idList[2])->origP.lon(), false) + "\n\n\t"
       + i18n("Distance:") + distText + i18n("Points:") + pointText + "\n\n"
       + i18n("Do You want to use this task and replace the old?");
 
@@ -994,8 +994,8 @@ QString Flight::getFlightInfoString()
               wpList.at(loop)->name + "</A></TD>\
               <TD ALIGN=right>" + timeText + "</TD></TR>\
               <TR><TD WIDTH=15></TD>\
-              <TD>" + printPos(wpList.at(loop)->origP.x()) + "</TD>\
-              <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.y(), false) +
+              <TD>" + printPos(wpList.at(loop)->origP.lat()) + "</TD>\
+              <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.lon(), false) +
               "</TD></TR>";
         }
 

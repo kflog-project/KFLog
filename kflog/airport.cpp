@@ -21,8 +21,8 @@
 #include <kstddirs.h>
 
 Airport::Airport(QString n, QString i, QString abbr, unsigned int t,
-  QPoint pos, unsigned int e, const char* f, bool v)
-  : RadioPoint(n, i, abbr, t, pos, f, e),
+  WGSPoint wgsPos, QPoint pos, unsigned int e, const char* f, bool v)
+  : RadioPoint(n, i, abbr, t, wgsPos, pos, f, e),
     vdf(v)
 {
 

@@ -1,6 +1,12 @@
 $Id$
 
 
+2002-05-25 Heiner <heiner@kflog.org>
+
+  * Created the class WGSPoint, which is derived from QPoint and
+    provides easy-to-understand position-access.
+
+
 2002-04-23 Heiner <heiner@kflog.org>
 
   * Fixed some bugs in kfrgcs. Now the correct waypoint-position

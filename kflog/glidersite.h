@@ -36,13 +36,14 @@ class GliderSite : public RadioPoint
      * @param  name  The name
      * @param  icao  The icao-name
      * @param  abbr  The abbreviation, used for the gps-logger
-     * @param  pos  The position
+     * @param  pos  The projected position
+     * @param  wgsPos  The original WGS-position
      * @param  elevation  The elevation
      * @param  frequency  The frequency
      * @param  winsh  "true", if only winsh-launch is available
      */
-    GliderSite(QString name, QString icao, QString abbr, QPoint pos,
-        unsigned int elevation, const char* frequency, bool winch);
+    GliderSite(QString name, QString icao, QString abbr, WGSPoint wgsPos,
+        QPoint pos, unsigned int elevation, const char* frequency, bool winch);
     /**
      * Destructor.
      */

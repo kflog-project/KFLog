@@ -33,15 +33,15 @@
 
 #define PRINT_POSITION(yPos) \
   painter.drawText(50, yPos, cPoint->name); \
-  painter.drawText(125, yPos, printPos(cPoint->origP.x(), true)); \
+  painter.drawText(125, yPos, printPos(cPoint->origP.lat(), true)); \
   painter.drawText(190, yPos, "/"); \
-  painter.drawText(200, yPos, printPos(cPoint->origP.y(), false));
+  painter.drawText(200, yPos, printPos(cPoint->origP.lon(), false));
 
 #define PRINT_POSITION_TEXT(yPos, text) \
   painter.drawText(50, yPos, text); \
-  painter.drawText(125, yPos, printPos(cPoint->origP.x(), true)); \
+  painter.drawText(125, yPos, printPos(cPoint->origP.lat(), true)); \
   painter.drawText(190, yPos, "/"); \
-  painter.drawText(200, yPos, printPos(cPoint->origP.y(), false));
+  painter.drawText(200, yPos, printPos(cPoint->origP.lon(), false));
 
 TaskDataPrint::TaskDataPrint(FlightTask* task)
 {

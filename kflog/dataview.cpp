@@ -73,8 +73,8 @@ QString DataView::__writeTaskInfo(FlightTask* task)
           wpList.at(loop)->name + "</A></TD>\
           <TD ALIGN=right>--</TD></TR>\
           <TR><TD WIDTH=15></TD>\
-          <TD>" + printPos(wpList.at(loop)->origP.x()) + "</TD>\
-          <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.y(), false) +
+          <TD>" + printPos(wpList.at(loop)->origP.lat()) + "</TD>\
+          <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.lon(), false) +
           "</TD></TR>";
     }
 

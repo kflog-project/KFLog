@@ -44,8 +44,8 @@ class Airport : public RadioPoint
      * @param  vdf  "true",
      */
     Airport(QString name, QString icao, QString abbr, unsigned int typeID,
-        QPoint pos, unsigned int elevation, const char* frequency,
-        bool vdf);
+        WGSPoint wgsPos, QPoint pos, unsigned int elevation,
+        const char* frequency, bool vdf);
     /**
      * Destructor
      */

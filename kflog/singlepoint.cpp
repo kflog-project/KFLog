@@ -20,9 +20,9 @@
 #include <kstddirs.h>
 
 SinglePoint::SinglePoint(QString n, QString gps, unsigned int t,
-      QPoint pos, unsigned int elev)
+      WGSPoint wgsP, QPoint pos, unsigned int elev)
   : BaseMapElement(n, t),
-    position(pos), gpsName(gps), curPos(pos), elevation(elev)
+    wgsPosition(wgsP), position(pos), gpsName(gps), curPos(pos), elevation(elev)
 {
 
 }
@@ -95,7 +95,7 @@ QString SinglePoint::getWPName() const { return gpsName; }
 
 QPoint SinglePoint::getPosition() const { return position; }
 
-QPoint SinglePoint::getWGSPosition() const { return glMapMatrix->mapToWgs(curPos); }
+QPoint SinglePoint::getWGSPosition() const { return wgsPosition; }
 
 QPoint SinglePoint::getMapPosition() const  { return curPos;  }
 

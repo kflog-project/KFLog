@@ -273,9 +273,9 @@ void FlightDataPrint::__printPositionData(QPainter* painter,
 {
   QString temp;
   painter->drawText(50, yPos, text);
-  painter->drawText(125, yPos, printPos(cPoint->origP.x(), true));
+  painter->drawText(125, yPos, printPos(cPoint->origP.lat(), true));
   painter->drawText(190, yPos, "/");
-  painter->drawText(200, yPos, printPos(cPoint->origP.y(), false));
+  painter->drawText(200, yPos, printPos(cPoint->origP.lon(), false));
 
   painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
             printTime(cPoint->time));
@@ -302,9 +302,9 @@ void FlightDataPrint::__printPositionData(QPainter* painter,
    */
   QString temp;
   painter->drawText(50, yPos, cPoint->name);
-  painter->drawText(125, yPos, printPos(cPoint->origP.x(), true));
+  painter->drawText(125, yPos, printPos(cPoint->origP.lat(), true));
   painter->drawText(190, yPos, "/");
-  painter->drawText(200, yPos, printPos(cPoint->origP.y(), false));
+  painter->drawText(200, yPos, printPos(cPoint->origP.lon(), false));
 
   if(cPoint->sector1 != 0)
       painter->drawText(270, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,

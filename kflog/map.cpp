@@ -294,8 +294,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                           tempTaskPointList.at(moveWPindex)->name = "";
                           tempTaskPointList.at(moveWPindex)->origP = _globalMapMatrix.mapToWgs(event->pos());
                           tempTaskPointList.at(moveWPindex)->projP =
-                                _globalMapMatrix.wgsToMap(tempTaskPointList.at(moveWPindex)->origP.y(),
-                                                      tempTaskPointList.at(moveWPindex)->origP.x());
+                                _globalMapMatrix.wgsToMap(tempTaskPointList.at(moveWPindex)->origP);
                           // hier müssen noch mehr Sachen übergeben werden
                         }
                       else
@@ -305,8 +304,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                           tempTaskPointList.last()->name = "test";
                           tempTaskPointList.last()->origP = _globalMapMatrix.mapToWgs(event->pos());
                           tempTaskPointList.last()->projP =
-                                _globalMapMatrix.wgsToMap(tempTaskPointList.last()->origP.y(),
-                                                      tempTaskPointList.last()->origP.x());
+                                _globalMapMatrix.wgsToMap(tempTaskPointList.last()->origP);
                           // hier müssen noch mehr Sachen übergeben werden
                         }
                     tempTask.setWaypointList(tempTaskPointList);
@@ -495,8 +493,8 @@ void Map::__displayMapInfo(QPoint current)
               wpText = wpText + "<LI><B>" + wpList.at(loop)->name +
                   "</B>  " +
                   "&nbsp;" + timeText + " / " + tmpText + "<BR>" +
-                  printPos(wpList.at(loop)->origP.x()) + " / " +
-                  printPos(wpList.at(loop)->origP.y(), false) + "</LI>";
+                  printPos(wpList.at(loop)->origP.lat()) + " / " +
+                  printPos(wpList.at(loop)->origP.lon(), false) + "</LI>";
             }
         }
 
@@ -634,9 +632,9 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
                   w->name = waypointDlg->name->text().left(6).upper();
                   w->description = waypointDlg->description->text();
                   w->type = waypointDlg->getWaypointType();
-                  w->origP.setX(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
-                  w->origP.setY(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
-                  w->projP = _globalMapMatrix.wgsToMap(w->origP.y(), w->origP.x());
+                  w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
+                  w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+                  w->projP = _globalMapMatrix.wgsToMap(w->origP.lat(), w->origP.lon());
                   w->elevation = waypointDlg->elevation->text().toInt();
                   w->icao = waypointDlg->icao->text().upper();
                   w->frequency = waypointDlg->frequency->text().toDouble();
@@ -743,7 +741,7 @@ void Map::mousePressEvent(QMouseEvent* event)
                       w->description = hitElement->getName();
           	          w->type = hitElement->getTypeID();
 //          	          w->origP = _globalMapMatrix.mapToWgs(_globalMapMatrix.map(hitElement->getPosition()));
-          	          w->origP = hitElement->getWGSPosition();
+                      w->origP = hitElement->getWGSPosition();
                       w->elevation = hitElement->getElevation();
                       w->icao = ((RadioPoint *)hitElement)->getICAO();
                       w->frequency = ((RadioPoint *)hitElement)->getFrequency().toDouble();
@@ -1725,7 +1723,7 @@ void Map::slotAppendWaypoint2Task(wayPoint *p)
   if(f && f->getTypeID() == BaseMapElement::Task && planning)
     {
       QList<wayPoint> taskPointList = f->getWPList();
-      p->projP = _globalMapMatrix.wgsToMap(p->origP.y(), p->origP.x());
+      p->projP = _globalMapMatrix.wgsToMap(p->origP);
       taskPointList.append(p);
       f->setWaypointList(taskPointList);
       __drawPlannedTask(true);
@@ -1752,7 +1750,7 @@ bool Map::__getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint>
   for(i = 0; i < taskPointList.count(); i++)
     {
       tmpPoint = taskPointList.at(i);
-      sitePos = _globalMapMatrix.map(_globalMapMatrix.wgsToMap(tmpPoint->origP.y(), tmpPoint->origP.x()));
+      sitePos = _globalMapMatrix.map(_globalMapMatrix.wgsToMap(tmpPoint->origP));
       dX = abs(sitePos.x() - current.x());
       dY = abs(sitePos.y() - current.y());
 

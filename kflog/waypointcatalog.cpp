@@ -69,8 +69,8 @@ bool WaypointCatalog::read(QString &catalog)
           w->description = nm.namedItem("Description").toAttr().value();
           w->icao = nm.namedItem("ICAO").toAttr().value().upper();
           w->type = nm.namedItem("Type").toAttr().value().toInt();
-          w->origP.setY(nm.namedItem("Latitude").toAttr().value().toInt());
-          w->origP.setX(nm.namedItem("Longitude").toAttr().value().toInt());
+          w->origP.setLat(nm.namedItem("Latitude").toAttr().value().toInt());
+          w->origP.setLon(nm.namedItem("Longitude").toAttr().value().toInt());
           w->elevation = nm.namedItem("Elevation").toAttr().value().toInt();
           w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
           w->isLandable = nm.namedItem("Landable").toAttr().value().toInt();
@@ -139,8 +139,8 @@ bool WaypointCatalog::write()
     child.setAttribute("Description", w->description);
     child.setAttribute("ICAO", w->icao);
     child.setAttribute("Type", w->type);
-    child.setAttribute("Latitude", w->origP.y());
-    child.setAttribute("Longitude", w->origP.x());
+    child.setAttribute("Latitude", w->origP.lat());
+    child.setAttribute("Longitude", w->origP.lon());
     child.setAttribute("Elevation", w->elevation);
     child.setAttribute("Frequency", w->frequency);
     child.setAttribute("Landable", w->isLandable);

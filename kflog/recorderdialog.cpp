@@ -312,8 +312,8 @@ void RecorderDialog::__addTaskPage()
           idS.sprintf("%.2d", loop + 1);
           item->setText(taskColID, idS);
           item->setText(taskColName, wpList.at(loop)->name);
-          item->setText(taskColLat, printPos(wpList.at(loop)->origP.y()));
-          item->setText(taskColLon, printPos(wpList.at(loop)->origP.x(), false));
+          item->setText(taskColLat, printPos(wpList.at(loop)->origP.lat()));
+          item->setText(taskColLon, printPos(wpList.at(loop)->origP.lon(), false));
         }
     }
   else
@@ -493,8 +493,8 @@ void RecorderDialog::slotWriteTask()
         {
           taskPointList.append(new FRTaskPoint);
           taskPointList.last()->name = wpList.at(loop)->name;
-          taskPointList.last()->latPos = wpList.at(loop)->origP.y();
-          taskPointList.last()->lonPos = wpList.at(loop)->origP.x();
+          taskPointList.last()->latPos = wpList.at(loop)->origP.lat();
+          taskPointList.last()->lonPos = wpList.at(loop)->origP.lon();
         }
     }
 

@@ -84,23 +84,6 @@
     tA.setPoint(i, _globalMapMatrix.wgsToMap(lat_temp, lon_temp)); \
   }
 
-#define READ_POINT_LIST_AIR  in >> locLength; \
-  tA.resize(locLength); \
-  for(unsigned int i = 0; i < locLength; i++) { \
-    in >> lat_temp;          in >> lon_temp; \
-    warning("Punkt: %d / %d -> %s / %s", lat_temp, lon_temp, \
-        (const char*)printPos(lat_temp, true), (const char*)printPos(lon_temp, false)); \
-    tA.setPoint(i, _globalMapMatrix.wgsToMap(lat_temp, lon_temp)); \
-  }
-
-#define READ_POINT_LIST_ISO latList = new int[isoLength]; \
-  lonList = new int[isoLength]; \
-  for(unsigned int i = 0; i < isoLength; i++) { \
-    in >> lat_temp;          in >> lon_temp; \
-    latList[i] = lat_temp;   lonList[i] = lon_temp; \
-    CHECK_BORDER \
-  }
-
 #define READ_CONTACT_DATA in >> contactCount; \
   for(unsigned int loop = 0; loop < contactCount; loop++) \
     { \
@@ -296,6 +279,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
 
   QPointArray tA;
   QPoint position;
+  WGSPoint wgsPos;
 
   while (!stream.eof())
     {
@@ -351,9 +335,10 @@ bool MapContents::__readAsciiFile(const char* fileName)
               for(loop = 3; loop < strlen(line); loop++)
                   if(line.mid(loop, 1) == " ") break;
 
-              position = _globalMapMatrix.wgsToMap(
-                  degreeToNum( line.mid( 3, ( loop - 3 ) ) ),
+              wgsPos.setPos(degreeToNum( line.mid( 3, ( loop - 3 ) ) ),
                   degreeToNum( line.mid( ( loop + 1 ), 100 ) ) );
+
+              position = _globalMapMatrix.wgsToMap(wgsPos);
             }
           else if(line.mid(0,5) == "LTYPE")
               lLimitType = line.mid(6,1).toUInt();
@@ -432,22 +417,22 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   case BaseMapElement::CivMilAirport:
                   case BaseMapElement::Airfield:
                     airportList.append(new Airport(name, alias, abbr, type,
-                        position, elev, frequency, vdf));
+                        wgsPos, position, elev, frequency, vdf));
                     break;
                   case BaseMapElement::ClosedAirfield:
                     airportList.append(new Airport(name, 0, abbr, type,
-                        position, 0, 0, 0));
+                        wgsPos, position, 0, 0, 0));
                     break;
                   case BaseMapElement::CivHeliport:
                   case BaseMapElement::MilHeliport:
                   case BaseMapElement::AmbHeliport:
                     airportList.append(new Airport(name, alias, abbr, type,
-                        position, elev, frequency, 0));
+                        wgsPos, position, elev, frequency, 0));
                     break;
                   case BaseMapElement::Glidersite:
                     // Wieso können hier keine Startbahn-Daten angegeben werden?
                     gliderList.append(new GliderSite(name, alias, abbr,
-                        position, elev, frequency, winch));
+                        wgsPos, position, elev, frequency, winch));
                     break;
                   case BaseMapElement::UltraLight:
                   case BaseMapElement::HangGlider:
@@ -461,7 +446,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   case BaseMapElement::VORTAC:
                   case BaseMapElement::NDB:
                     navList.append(new RadioPoint(name, alias, abbr, type,
-                        position, frequency));
+                        wgsPos, position, frequency));
                     break;
                   case BaseMapElement::AirA:
                   case BaseMapElement::AirB:
@@ -481,8 +466,8 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   case BaseMapElement::LightObstacle:
                   case BaseMapElement::ObstacleGroup:
                   case BaseMapElement::LightObstacleGroup:
-                    obstacleList.append(new SinglePoint(0, 0, type, position,
-                        elev));
+                    obstacleList.append(new SinglePoint(0, 0, type, wgsPos,
+                        position, elev));
                     break;
                   case BaseMapElement::CompPoint:
 //                    reportList.append(
@@ -508,8 +493,8 @@ bool MapContents::__readAsciiFile(const char* fileName)
                     hydroList.append(new LineElement(name, type, tA, sortID));
                     break;
                   case BaseMapElement::Spot:
-                    obstacleList.append(new SinglePoint(0, 0, type, position,
-                        elev));
+                    obstacleList.append(new SinglePoint(0, 0, type, wgsPos,
+                        position, elev));
                     break;
                   case BaseMapElement::Glacier:
                     topoList.append(new LineElement(name, type, tA));
@@ -685,6 +670,7 @@ bool MapContents::__readAirfieldFile(const char* pathName)
   Q_UINT8 rwMaterial;
   Q_INT8 rwOpen;
   QPoint position;
+  WGSPoint wgsPos;
 
   in >> magic;
   if(magic != KFLOG_FILE_MAGIC)  return false;
@@ -742,10 +728,11 @@ bool MapContents::__readAirfieldFile(const char* pathName)
 
             READ_RUNWAY_DATA
 
-            position = _globalMapMatrix.wgsToMap(lat_temp, lon_temp);
+            wgsPos.setPos(lat_temp, lon_temp);
+            position = _globalMapMatrix.wgsToMap(wgsPos);
 
             airportList.append(new Airport(name, icaoName, gpsName, typeIn,
-                position, elevation, frequency, (bool)vdf));
+                wgsPos, position, elevation, frequency, (bool)vdf));
             break;
           case BaseMapElement::ClosedAirfield:
             in >> name;
@@ -756,10 +743,11 @@ bool MapContents::__readAirfieldFile(const char* pathName)
             in >> lon_temp;
             in >> elevation;
 
-            position = _globalMapMatrix.wgsToMap(lat_temp, lon_temp);
+            wgsPos.setPos(lat_temp, lon_temp);
+            position = _globalMapMatrix.wgsToMap(wgsPos);
 
             airportList.append(new Airport(name, icaoName, gpsName, typeIn,
-                position, 0, 0, 0));
+                wgsPos, position, 0, 0, 0));
 
             break;
           case BaseMapElement::CivHeliport:
@@ -775,10 +763,12 @@ bool MapContents::__readAirfieldFile(const char* pathName)
 
             READ_CONTACT_DATA
 
-            position = _globalMapMatrix.wgsToMap(lat_temp, lon_temp);
+            wgsPos.setPos(lat_temp, lon_temp);
+            position = _globalMapMatrix.wgsToMap(wgsPos);
 
             airportList.append(new Airport(name, icaoName, gpsName, typeIn,
-                position, elevation, frequency, 0));
+                wgsPos, position, elevation, frequency, 0));
+
             break;
           case BaseMapElement::Glidersite:
             in >> name;
@@ -794,10 +784,11 @@ bool MapContents::__readAirfieldFile(const char* pathName)
 
             READ_RUNWAY_DATA
 
-            position = _globalMapMatrix.wgsToMap(lat_temp, lon_temp);
+            wgsPos.setPos(lat_temp, lon_temp);
+            position = _globalMapMatrix.wgsToMap(wgsPos);
 
             gliderList.append(new GliderSite(name, icaoName, gpsName,
-                position, elevation, frequency, isWinch));
+                wgsPos, position, elevation, frequency, isWinch));
 
             break;
         }
@@ -983,11 +974,11 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   in >> formatID;
   if(formatID < FILE_FORMAT_ID)
     {
-      // zu alt ...
+      // to old ...
     }
   else if(formatID > FILE_FORMAT_ID)
     {
-      // zu neu ...
+      // to young ...
     }
 
   in >> loadSecID;
@@ -1293,7 +1284,7 @@ bool MapContents::loadFlight(QFile igcFile)
           curTime = 3600 * hh + 60 * mm + ss;
 
           newPoint.time = curTime;
-          newPoint.origP = QPoint(latTemp, lonTemp);
+          newPoint.origP = WGSPoint(latTemp, lonTemp);
           newPoint.projP = _globalMapMatrix.wgsToMap(newPoint.origP);
           newPoint.f_state = Flight::Straight;
 
@@ -1333,7 +1324,7 @@ bool MapContents::loadFlight(QFile igcFile)
           newPoint.dT = dT;
           newPoint.dH = newPoint.height - prePoint.height;
           newPoint.dS = (int)(dist(latTemp, lonTemp,
-              prePoint.origP.x(), prePoint.origP.y()) * 1000.0);
+              prePoint.origP.lat(), prePoint.origP.lon()) * 1000.0);
 
           prePoint.bearing = getBearing(prePoint,newPoint) - temp_bearing;
 
@@ -1431,7 +1422,7 @@ bool MapContents::loadFlight(QFile igcFile)
 
                   newWP = new wayPoint;
                   newWP->name = s.mid(18,20);
-                  newWP->origP = QPoint(latTemp, lonTemp);
+                  newWP->origP = WGSPoint(latTemp, lonTemp);
                   newWP->projP = _globalMapMatrix.wgsToMap(newWP->origP);
                   newWP->sector1 = 0;
                   newWP->sector2 = 0;

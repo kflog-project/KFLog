@@ -36,16 +36,17 @@
 class SinglePoint : public BaseMapElement
 {
   public:
-	  /**
-	   * Creates a new "SinglePoint".
-	   *
-	   * @param  name  The name
-	   * @param  gps  An alias-name, used for the gps-logger
-	   * @param  typeID  The typeid
-	   * @param  pos  The position
+    /**
+     * Creates a new "SinglePoint".
+     *
+     * @param  name  The name
+     * @param  gps  An alias-name, used for the gps-logger
+     * @param  typeID  The typeid
+     * @param  pos  The projected position
+     * @param  wgsPos  The original WGS-position
      */
-    SinglePoint(QString name, QString gps, unsigned int typeID, QPoint pos,
-        unsigned int elevation = 0);
+    SinglePoint(QString name, QString gps, unsigned int typeID,
+        WGSPoint wgsPos, QPoint pos, unsigned int elevation = 0);
     /**
 	   * Destructor
 	   */
@@ -100,6 +101,9 @@ class SinglePoint : public BaseMapElement
      * @return "true", if the element is in the drawing-area of the map.
      */
     virtual bool __isVisible() const;
+    /**
+     */
+    WGSPoint wgsPosition;
     /**
      * The projected lat/lon-position of the element
      */

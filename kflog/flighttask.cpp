@@ -1069,8 +1069,8 @@ QString FlightTask::getFlightInfoString()
       htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
         wpList.at(loop)->name + "</A></TD>\
         <TR><TD WIDTH=15></TD>\
-        <TD>" + printPos(wpList.at(loop)->origP.x()) + "</TD>\
-        <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.y(), false) +
+        <TD>" + printPos(wpList.at(loop)->origP.lat()) + "</TD>\
+        <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.lon(), false) +
         "</TD></TR>";
     }
 

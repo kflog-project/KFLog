@@ -21,13 +21,15 @@
 #include <qpoint.h>
 #include <qstring.h>
 
+#include <mapmatrix.h>
+
 /**
  * This struct contains one flightpoint.
  */
 struct flightPoint
 {
   /** The original position of the point. Given in the internal format. */
-  QPoint origP;
+  WGSPoint origP;
   /** The projected position of the point. */
   QPoint projP;
   /** The barometrical height, registered by the logger. */
@@ -56,7 +58,7 @@ struct wayPoint
   /** The name of the waypoint. */
   QString name;
   /** The original lat/lon-position of the waypoint. */
-  QPoint origP;
+  WGSPoint origP;
   /** The projected position of the waypoint. */
   QPoint projP;
   /** The time, sector 1 has been reached. */
