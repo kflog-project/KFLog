@@ -60,7 +60,6 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   scale_label->setAlignment(AlignHCenter);
   spinScale = new QSpinBox(1,60,1,kontrolle);
 
-
   QLabel* label_glaettung = new QLabel(i18n("Smoothness:"),kontrolle);
   label_glaettung->setAlignment(AlignHCenter);
 
@@ -75,7 +74,6 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   check_baro = new QCheckBox(kontrolle);
   check_speed = new QCheckBox(kontrolle);
 
-
   kontrolle->setMaximumWidth(check_speed->sizeHint().width() * 7 + 5);
 
   QLabel* label_vario = new QLabel(i18n("V"),kontrolle);
@@ -85,12 +83,17 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   label_baro->setAlignment(AlignHCenter);
   label_speed->setAlignment(AlignHCenter);
 
-  QVBoxLayout* mittelayout = new QVBoxLayout(this);
+  QGridLayout* mittelayout = new QGridLayout( this, 3, 1 );
 
-  QGridLayout* kontrolllayout = new QGridLayout(kontrolle,12,6,5,1);
+  QGridLayout* kontrolllayout = new QGridLayout( kontrolle, 12, 6, 5, 1 );
 
-  mittelayout->addWidget(kontSplitter);
-  mittelayout->addWidget(cursorLabel);
+  mittelayout->addWidget(kontSplitter, 0, 0);
+  mittelayout->addWidget(cursorLabel, 2, 0);
+
+  mittelayout->setRowStretch( 0, 1 );
+  mittelayout->setRowStretch( 1, 0 );
+  mittelayout->addRowSpacing( 1, 5 );
+  mittelayout->setRowStretch( 2, 0 );
 
   kontrolllayout->addMultiCellWidget(scale_label,1,1,0,6);
   kontrolllayout->addMultiCellWidget(spinScale,3,3,2,5);
@@ -146,8 +149,6 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   check_baro->setChecked(config->readBoolEntry("Elevation",true));
 
   config->setGroup(0);
-
-
 
   this->connect(check_vario, SIGNAL(clicked()),
         SLOT(slotShowGraph()));

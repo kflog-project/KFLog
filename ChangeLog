@@ -6,6 +6,8 @@ $Id$
   * Fixed a small bug in KFLogApp::saveOptions(), which could crash KFLog,
     if no waypoint-catalog has been opened.
 
+  * Ignoring zero-value-points in MapContents::loadFlight().
+
 
 2003-01-01 Eggert <eggert@kflog.org>
 

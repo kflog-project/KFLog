@@ -1205,7 +1205,7 @@ bool MapContents::loadFlight(QFile& igcFile)
   QDate date;
   char latChar, lonChar;
   bool launched = false, append = true, isFirst = true, isFirstWP = true;
-  int dT, lat, latmin, latTemp, lon, lonmin, lonTemp;
+  int dT, lat, latmin, latTemp, lon, lonmin, lonTemp, baroAltTemp, gpsAltTemp;
   int hh = 0, mm = 0, ss = 0, curTime = 0, preTime = 0;
   int cClass = Flight::NotSet;
 
@@ -1367,12 +1367,22 @@ bool MapContents::loadFlight(QFile& igcFile)
           if(latChar == 'S') latTemp = -latTemp;
           if(lonChar == 'W') lonTemp = -lonTemp;
 
+          sscanf(s.mid(25,10),"%5d%5d", &baroAltTemp, &gpsAltTemp);
+
+          if( latTemp == 0 && lonTemp == 0 && baroAltTemp == 0 && gpsAltTemp == 0)
+            {
+              // Ignoring a wrong point ...
+              continue;
+            }
+
           curTime = 3600 * hh + 60 * mm + ss;
 
           newPoint.time = curTime;
           newPoint.origP = WGSPoint(latTemp, lonTemp);
           newPoint.projP = _globalMapMatrix.wgsToMap(newPoint.origP);
           newPoint.f_state = Flight::Straight;
+          newPoint.height = baroAltTemp;
+          newPoint.gpsHeight = gpsAltTemp;
 
           if(s.mid(24,1) == "A")
               isValid = true;
@@ -1380,8 +1390,6 @@ bool MapContents::loadFlight(QFile& igcFile)
               isValid = false;
           else
               fatal("KFLog: Wrong value found in igc-line!");
-
-          sscanf(s.mid(25,10),"%5d%5d", &newPoint.height, &newPoint.gpsHeight);
 
           if(isFirst)
             {

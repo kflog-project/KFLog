@@ -172,12 +172,18 @@ void DataView::setFlightData()
             h = ((Flight*)e)->getHeader();
             fTask = ((Flight*)e)->getTask();
 
-            htmlText = (QString)"<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-                <TR><TD>" + i18n("Date") + ":</TD><TD>" + h.at(3) + "</TD></TR>\
-                <TR><TD>" + i18n("Pilot") + ":</TD><TD> " + h.at(0) + "</TD></TR>\
-                <TR><TD>" + i18n("Glider") + ":</TD><TD>" + h.at(2) +
+            //
+            // For some strange reason, the widget adds a large vertical space
+            // between the the first table and the following rule. Therfore I
+            // have removed the rule
+            //                                                     Heiner, 2003-01-02
+            //
+            htmlText = (QString)"<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>" +
+                "<TR><TD>" + i18n("Date") + ":</TD><TD>" + h.at(3) + "</TD></TR>" +
+                "<TR><TD>" + i18n("Pilot") + ":</TD><TD> " + h.at(0) + "</TD></TR>" +
+                "<TR><TD>" + i18n("Glider") + ":</TD><TD>" + h.at(2) +
                 " / " + h.at(1) + "</TD></TR>" +
-                "</TABLE><HR NOSHADE>";
+                "</TABLE><BR>";
 
             if(fTask.getWPList().count())
                 htmlText += __writeTaskInfo(&fTask);
