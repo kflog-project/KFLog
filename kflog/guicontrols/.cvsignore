@@ -3,3 +3,5 @@ Makefile.in
 *.moc.cpp
 *.moc
 *_meta_unload.cpp
+.libs
+.deps
