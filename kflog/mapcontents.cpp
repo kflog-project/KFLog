@@ -888,7 +888,8 @@ bool MapContents::__readAirfieldFile(const char* pathName)
 bool MapContents::__readAirspaceFile(const char* pathName)
 {
   extern const MapMatrix _globalMapMatrix;
-
+  //warning("loading airspace file: %s", (const char*)pathName);
+  
   if(pathName == 0)
       // Data does not exist...
       return false;
@@ -1815,80 +1816,84 @@ void MapContents::proofeSection(bool isPrint)
 
 
 // Checking for Airspaces
-    QDir airspaceDir(mapDir + "/airspace/");
-    if(!airspaceDir.exists())
-      {
-        stop = true;
-      usleep(10 * 1000);        
-        emit errorOnMapLoading();
-        KMessageBox::error(0,
-          "<qt>" +
-          i18n("The directory for the airspace-files does not exist:") +
-          "<br><b>" + airspaceDir.path() + "</b>"  +
-          "</qt>",
-          i18n("Directory not found"));
+    if (airspaceList.isEmpty()) {  //we only need to load the airspaces if the list is still empty.
+      QDir airspaceDir(mapDir + "/airspace/");
+      if(!airspaceDir.exists())
+        {
+          stop = true;
+        usleep(10 * 1000);
+          emit errorOnMapLoading();
+          KMessageBox::error(0,
+            "<qt>" +
+            i18n("The directory for the airspace-files does not exist:") +
+            "<br><b>" + airspaceDir.path() + "</b>"  +
+            "</qt>",
+            i18n("Directory not found"));
+        }
+      else
+        {
+          emit loadingMessage(i18n("Loading airspacedata ..."));
+          QStringList airspace;
+          airspace = airspaceDir.entryList("*.kfl");
+          if(airspace.count() == 0)
+            {
+              // No mapfiles found
+              emit errorOnMapLoading();
+              KMessageBox::information(0,
+                i18n("The directory for the airspace-files is empty.\n"
+                     "To download the files, please visit our homepage:\n") +
+                     "http://maproom.kflog.org/", i18n("directory empty"), "NoAirspaceFiles");
+            }
+          else
+            {
+              for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
+                  __readAirspaceFile(airspaceDir.path() + "/" + (*it).latin1());
+            }
+        }
       }
-    else
-      {
-        emit loadingMessage(i18n("Loading airspacedata ..."));
-        QStringList airspace;
-        airspace = airspaceDir.entryList("*.kfl");
-        if(airspace.count() == 0)
-          {
-            // No mapfiles found
-            emit errorOnMapLoading();
-            KMessageBox::information(0,
-              i18n("The directory for the airspace-files is empty.\n"
-                   "To download the files, please visit our homepage:\n") +
-                   "http://maproom.kflog.org/", i18n("directory empty"), "NoAirspaceFiles");
-          }
-        else
-          {
-            for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
-                __readAirspaceFile(airspaceDir.path() + "/" + (*it).latin1());
-          }
-      }
+      
 // Checking for Airfields
-    QDir airfieldDir(mapDir + "/airfields/");
-    if(!airfieldDir.exists())
-      {
-        stop = true;
-      usleep(10 * 1000);          
-        emit errorOnMapLoading();
-        KMessageBox::error(0,
-          "<qt>" +
-          i18n("The directory for the airfield-files does not exist:") +
-          "<br><b>" + airfieldDir.path() + "</b>"  +
-          "</qt>",
-          i18n("Directory not found"));
-      }
-    else
-      {
-        emit loadingMessage(i18n("Loading airfielddata ..."));
-        QStringList airfields;
-        airfields = airfieldDir.entryList("*.kfl");
-        if(airfields.count() == 0)
-          {
-            // No mapfiles found
-            emit errorOnMapLoading();
-            KMessageBox::information(0,
-              i18n("The directory for the airfield-files is empty.\n"
-                   "To download the files, please visit our homepage:\n") +
-                   "http://maproom.kflog.org/", i18n("directory empty"), "NoAirfieldFiles");
-          }
-        else
-          {
-            for(QStringList::Iterator it = airfields.begin(); it != airfields.end(); it++)
-                __readAirfieldFile(airfieldDir.path() + "/" + (*it).latin1());
-          }
-      }
+    if (airportList.isEmpty()) {  //we only need to load the airports if the list is still empty.
+      QDir airfieldDir(mapDir + "/airfields/");
+      if(!airfieldDir.exists())
+        {
+          stop = true;
+        usleep(10 * 1000);
+          emit errorOnMapLoading();
+          KMessageBox::error(0,
+            "<qt>" +
+            i18n("The directory for the airfield-files does not exist:") +
+            "<br><b>" + airfieldDir.path() + "</b>"  +
+            "</qt>",
+            i18n("Directory not found"));
+        }
+      else
+        {
+          emit loadingMessage(i18n("Loading airfielddata ..."));
+          QStringList airfields;
+          airfields = airfieldDir.entryList("*.kfl");
+          if(airfields.count() == 0)
+            {
+              // No mapfiles found
+              emit errorOnMapLoading();
+              KMessageBox::information(0,
+                i18n("The directory for the airfield-files is empty.\n"
+                     "To download the files, please visit our homepage:\n") +
+                     "http://maproom.kflog.org/", i18n("directory empty"), "NoAirfieldFiles");
+            }
+          else
+            {
+              for(QStringList::Iterator it = airfields.begin(); it != airfields.end(); it++)
+                  __readAirfieldFile(airfieldDir.path() + "/" + (*it).latin1());
+            }
+        }
 //     airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.out");
 //      for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
 //        {
 //          __readAsciiFile((*it).latin1());
 //          warning( "%s", (*it).latin1() );
 //        }
-
+      }
    
 }
 
