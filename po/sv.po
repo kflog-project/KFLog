@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2002-02-20 21:26+0100\n"
-"PO-Revision-Date: 2002-02-24 21:05GMT\n"
+"PO-Revision-Date: 2002-02-25 18:09GMT\n"
 "Last-Translator: Göran Källqvist <kjellqvist@nordkalak.se>\n"
 "Language-Team: svenska <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -100,7 +100,7 @@ msgstr "Tid"
 
 #: evaluationdialog.cpp:138 kflog.cpp:279
 msgid "Vario"
-msgstr "Varia"
+msgstr "Vario"
 
 #: evaluationdialog.cpp:139 evaluationdialog.cpp:150
 msgid "Alt. Gain"
@@ -917,7 +917,7 @@ msgstr "Fallskärm"
 
 #: taskandwaypoint.cpp:139
 msgid "Outlanding"
-msgstr "Landa ute"
+msgstr "Utelandning"
 
 #: taskandwaypoint.cpp:140
 msgid "Obstacle"
@@ -1138,7 +1138,7 @@ msgstr "Ö&vriga flygfält"
 
 #: waypointimpfilterdialog.cpp:52
 msgid "Ou&tlanding fields"
-msgstr "Fält för att landa &ute"
+msgstr "Fält för &utelandning"
 
 #: waypointimpfilterdialog.cpp:53
 msgid "O&bstacles"
