@@ -231,7 +231,7 @@ bool Waypoints::saveChanges()
     {
       if (w->modified)
         {
-          switch(KMessageBox::warningYesNoCancel(this, i18n("Save changes to<BR><B>%1</B>").arg(w->path)))
+          switch(KMessageBox::warningYesNoCancel(this, "<qt>"+ i18n("Save changes to<BR><B>%1</B>").arg(w->path) + "</qt>")) //added <qt> tags outside of string so we won't have to re-translate.
             {
             case KMessageBox::Yes:
               // Hier zwischenzeitlich auf binärformat umgestellt ...
@@ -528,7 +528,7 @@ void Waypoints::slotCloseWaypointCatalog()
   int cnt;
 
   if (w->modified) {
-    switch(KMessageBox::warningYesNoCancel(this, i18n("Save changes to<BR><B>%1</B>").arg(w->path))) {
+    switch(KMessageBox::warningYesNoCancel(this, "<qt>" + i18n("Save changes to<BR><B>%1</B>").arg(w->path) + "</qt>")) {
     case KMessageBox::Yes:
       if (!w->save()) {
         return;
