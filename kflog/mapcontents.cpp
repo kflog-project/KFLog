@@ -2086,46 +2086,46 @@ void MapContents::printContents(QPainter* targetPainter, bool isText)
 {
   proofeSection(true);
 
-  for(LineElement* topo = topoList.first(); topo; topo = topoList.next())
+  for(BaseMapElement* topo = topoList.first(); topo; topo = topoList.next())
       topo->printMapElement(targetPainter, isText);
 
-  for(LineElement* hydro = hydroList.first(); hydro; hydro = hydroList.next())
+  for(BaseMapElement* hydro = hydroList.first(); hydro; hydro = hydroList.next())
       hydro->printMapElement(targetPainter, isText);
 
-  for(LineElement* rail = railList.first(); rail; rail = railList.next())
+  for(BaseMapElement* rail = railList.first(); rail; rail = railList.next())
       rail->printMapElement(targetPainter, isText);
 
-  for(LineElement* road = roadList.first(); road; road = roadList.next())
+  for(BaseMapElement* road = roadList.first(); road; road = roadList.next())
       road->printMapElement(targetPainter, isText);
 
-  for(LineElement* city = cityList.first(); city; city = cityList.next())
+  for(BaseMapElement* city = cityList.first(); city; city = cityList.next())
       city->printMapElement(targetPainter, isText);
 
-  for(SinglePoint* population = populationList.first(); population; population = populationList.next())
+  for(BaseMapElement* population = populationList.first(); population; population = populationList.next())
       population->printMapElement(targetPainter, isText);
 
-  for(RadioPoint* nav = navList.first(); nav; nav = navList.next())
+  for(BaseMapElement* nav = navList.first(); nav; nav = navList.next())
       nav->printMapElement(targetPainter, isText);
 
-  for(Airspace* airspace = airspaceList.first(); airspace; airspace = airspaceList.next())
+  for(BaseMapElement* airspace = airspaceList.first(); airspace; airspace = airspaceList.next())
       airspace->printMapElement(targetPainter, isText);
 
-  for(SinglePoint* obstacle = obstacleList.first(); obstacle; obstacle = obstacleList.next())
+  for(BaseMapElement* obstacle = obstacleList.first(); obstacle; obstacle = obstacleList.next())
       obstacle->printMapElement(targetPainter, isText);
 
-  for(SinglePoint* report = reportList.first(); report; report = reportList.next())
+  for(BaseMapElement* report = reportList.first(); report; report = reportList.next())
       report->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* landmark = landmarkList.first(); landmark; landmark = landmarkList.next())
       landmark->printMapElement(targetPainter, isText);
 
-  for(Airport* airport = airportList.first(); airport; airport = airportList.next())
+  for(BaseMapElement* airport = airportList.first(); airport; airport = airportList.next())
       airport->printMapElement(targetPainter, isText);
 
-  for(GliderSite* glider = gliderList.first(); glider; glider = gliderList.next())
+  for(BaseMapElement* glider = gliderList.first(); glider; glider = gliderList.next())
       glider->printMapElement(targetPainter, isText);
 
-  for(SinglePoint* out = outList.first(); out; out = outList.next())
+  for(BaseMapElement* out = outList.first(); out; out = outList.next())
       out->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < flightList.count(); loop++)
