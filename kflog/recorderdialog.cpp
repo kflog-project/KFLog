@@ -493,25 +493,14 @@ void RecorderDialog::slotWriteTask()
         {
           taskPointList.append(new FRTaskPoint);
           taskPointList.last()->name = wpList.at(loop)->name;
-          taskPointList.last()->latPos = wpList.at(loop)->projP.x();
-          taskPointList.last()->lonPos = wpList.at(loop)->projP.y();
+          taskPointList.last()->latPos = wpList.at(loop)->origP.y();
+          taskPointList.last()->lonPos = wpList.at(loop)->origP.x();
         }
     }
 
   QStringList::Iterator it = libNameList.at(selectType->currentItem());
   libName = (*it).latin1();
   portName = "/dev/" + selectPort->currentText();
-
-  // Filling the strings with whitespaces
-//  QString pilotA((const char*)taskDecl.pilotA.left(32));
-//  QString pilotB((const char*)taskDecl.pilotB.left(32));
-//  pilotA += "                                 ";
-//  pilotB += "                                 ";
-
-//  warning("%s%s",
-//      (const char*)pilotA.left(32), (const char*)pilotB.left(32));
-
-//  return;
 
   if(__openLib(libName) == -1)
     {

@@ -1,5 +1,17 @@
 $Id$
 
+
+2002-04-23 Heiner <heiner@kflog.org>
+
+  * Fixed some bugs in kfrgcs. Now the correct waypoint-position
+    is written to the recorder.
+
+
+2002-04-22 Heiner <heiner@kflog.org>
+
+  * Added task-writing to the recorder-dialog and kfrgcs.
+
+
 2002-04-19 Harry <harry@kflog.org>
 
   * Adding free waypoint to graphical planning
@@ -13,7 +25,12 @@ $Id$
 	
   * Size Evaluation Dialog
 
-	
+
+2002-04-14 Florian <florian@kflog.org>
+
+  * Extended graphical planing.
+
+
 2002-04-10 Harry <harry@kflog.org>
 
   * Cleanup of old classes
