@@ -191,6 +191,7 @@ bool WaypointCatalog::write()
   doc.appendChild(root);
 
   for (w = it.current(); w != 0; w = ++it) {
+    qDebug("writing waypoint %s (%s - %s)",w->name.latin1(),w->description.latin1(),w->icao.latin1());
     child = doc.createElement("Waypoint");
 
     child.setAttribute("Name", w->name);
@@ -446,17 +447,17 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
 bool WaypointCatalog::save(bool alwaysAskName){
   QString fName = path;
 
-  // check for unsupported file types - currently none
-  /*
-  if (fName.right(4).lower() == ".da4")
+  // check for unsupported file types - currently cup
+
+  if (fName.right(4).lower() == ".cup")
     if (KMessageBox::warningYesNoCancel(
                 NULL,
-                i18n("<qt>This type is not supported.<br>Save in KFLog format ?<BR><B>%1</B></qt>").arg(fName),
+                i18n("<qt>Saving in the current file format is not supported.<br>Save in another format ?<BR><B>%1</B></qt>").arg(fName),
                 i18n("Save changes?"),
                 i18n("Save"),
                 i18n("Discard")) == KMessageBox::Yes)
               alwaysAskName = true;
-  */
+
 
   if (!onDisc || alwaysAskName) {
     fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n"
@@ -756,7 +757,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
         return false;
       }
     //from here on, we assume that the file has the correct format.
-
+      if (fileFormat==FILE_FORMAT_ID_2)
       while(!in.eof()) {
         // read values from file
           in >> wpName;
@@ -795,8 +796,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
           w->surface = wpSurface;
           w->comment = wpComment;
           w->importance = wpImportance;
-          //qDebug("Waypoint read: %s (%s - %s)",w->name.latin1(),w->description.latin1(),w->icao.latin1());
-
+          qDebug("Waypoint read: %s (%s - %s)",w->name.latin1(),w->description.latin1(),w->icao.latin1());
           if (!wpList.insertItem(w))
           {
             qDebug("odd... error reading waypoints");
@@ -837,13 +837,13 @@ bool WaypointCatalog::readCup (const QString& catalog)
     {
       while (!f.atEnd())
       {
-	bool ok;
+        bool ok;
         QString line;
         Q_LONG result = f.readLine (line, 256);
 
         if (result > 0)
         {
-	  line.replace( QRegExp("[\r\n]"), "" );
+          line.replace( QRegExp("[\r\n]"), "" );
           QStringList list = QStringList::split (",", line, true);
 
           if( list[0] == "-----Related Tasks-----" )
@@ -869,7 +869,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
           Waypoint *w = new Waypoint;
 
           w->isLandable = false;
-	  w->importance = 0;
+          w->importance = 0;
 
 	  if( list[0].length() ) // long name of waypoint
 	    {
@@ -890,6 +890,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
 	  if( ! ok )
 	    {
+        qDebug("Invalid waypoint type. Ignoring.");
 	      delete w; continue;
 	    }
 
@@ -938,6 +939,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
 	  if( ! ok )
 	    {
+        qDebug("Error reading coordinate (N/S) (1)");
 	      delete w; continue;
 	    }
 
@@ -945,6 +947,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
 	  if( ! ok )
 	    {
+        qDebug("Error reading coordinate (N/S) (2)");
 	      delete w; continue;
 	    }
 
@@ -960,6 +963,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
 	  if( ! ok )
 	    {
+        qDebug("Error reading coordinate (E/W) (1)");
 	      delete w; continue;
 	    }
 
@@ -967,6 +971,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
 	  if( ! ok )
 	    {
+        qDebug("Error reading coordinate (E/W) (2)");
 	      delete w; continue;
 	    }
 
@@ -983,17 +988,20 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
 	  if( list[5].length() ) // elevation in meter or feet
 	    {
-	      w->elevation = (list[5].left(list[5].length()-1)).toInt(&ok);
+	      double tmpElev = (int) rint((list[5].left(list[5].length()-1)).toDouble(&ok));
 
 	      if( ! ok )
 		{
+			qDebug("Error reading elevation.");
 		  delete w; continue;
 		}
 
 	      if( list[5].right(1).lower() == "f" )
 		{
-		  w->elevation = (int) rint(w->elevation * 0.3048);
-		}
+		  w->elevation = (int) rint(tmpElev * 0.3048);
+		} else {
+      w->elevation = (int) rint(tmpElev);
+    }
 	    }
 
 	  if( list[9].stripWhiteSpace().length() ) // airport frequency
@@ -1055,6 +1063,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
           if (!wpList.insertItem(w))
           {
             delete w;
+            qDebug("Error inserting waypoint in catalog");
             break;
           }
         }
