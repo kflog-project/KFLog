@@ -72,6 +72,10 @@ class SinglePoint : public BaseMapElement
      */
     virtual QPoint getPosition() const;
     /**
+     * @return the WGSposition of the element.
+     */
+    virtual QPoint getWGSPosition() const;
+    /**
      * @return the gps-name of the element.
      */
     virtual QString getWPName() const;

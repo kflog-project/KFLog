@@ -126,6 +126,9 @@ KFLogApp::KFLogApp()
       SLOT(slotRedrawMap()));
   connect(map, SIGNAL(showFlightPoint(const QPoint, const struct flightPoint&)),
       this, SLOT(slotShowPointInfo(const QPoint, const struct flightPoint&)));
+  // Plannung
+  connect(map, SIGNAL(showTaskText(QArray<SinglePoint*>, QPoint)),
+      dataView, SLOT(slotShowTaskText(QArray<SinglePoint*>, QPoint)));
   connect(map, SIGNAL(showPoint(const QPoint)),
       this, SLOT(slotShowPointInfo(const QPoint)));
 }

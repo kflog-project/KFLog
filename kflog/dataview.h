@@ -21,6 +21,7 @@
 #include <ktextbrowser.h>
 #include <qframe.h>
 
+#include <singlepoint.h>
 class Flight;
 
 /**
@@ -57,6 +58,10 @@ class DataView : public QFrame
      * Called when the user clickes on one of the waypoint-links.
      */
     void slotWPSelected(const QString &url);
+    /**
+    	* Setzt die Infos zur gerade aktuellen Aufgabe (Planung)
+    	*/
+    void slotShowTaskText(QArray<SinglePoint*> taskPoints, QPoint current);
 
   private:
     /**
