@@ -1,6 +1,15 @@
 $Id$
 
 
+2003-04-29 André <andre@kflog.org>
+  
+  * Addition: implict start of dragZoom. Just start dragging anywhere on the map and it will automaticly start
+
+  * Fix: could not drag in north-west direction
+
+  * Fix: rectangle too small to zoom to was not removed from map
+
+
 2003-04-27 Heiner <heiner@kflog.org>
 
   * Completed the mouse-zoomig. Now the side-ratio of the current map-window
