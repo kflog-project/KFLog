@@ -74,7 +74,7 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "2.0.7"
+#define VERSION "2.1.0"
 
 /* Compatibility define */
 #define ksize_t socklen_t

@@ -1,4 +1,4 @@
-<!DOCTYPE kpartgui ><kpartgui version="2.0.7" name="kflog" >
+<!DOCTYPE kpartgui ><kpartgui version="2.1.0" name="kflog" >
  <MenuBar>
   <Menu name="file" >
    <text>&amp;File</text>

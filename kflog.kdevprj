@@ -26,9 +26,9 @@ ldadd=-lkdeprint -lm $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
 ldflags=\s           \s
 
 [General]
-AMChanged=true
+AMChanged=false
 author=Heiner Lamprecht
-configure_args=\s--build=i386-linux --host=i386-linux --target=i386-linux --prefix=/opt/kde3 --enable-debug\s
+configure_args=--prefix=/opt/kde3\s
 email=heiner@kflog.org
 kdevprj_version=1.3
 lfv_open_groups=Quellen,Übersetzungen
@@ -51,7 +51,7 @@ install_location=
 type=DATA
 
 [KPP]
-kpp_appgrp=
+kpp_appgrp=Application
 kpp_bldroot=/tmp/build/
 kpp_icon=0
 kpp_license=5
