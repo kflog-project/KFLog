@@ -1,0 +1,154 @@
+<!DOCTYPE kdevelop>
+<kdevelop>
+  <general>
+    <author>Heiner Lamprecht</author>
+    <email>heiner@kflog.org</email>
+    <projectmanagement>KDevKDEAutoProject</projectmanagement>
+    <primarylanguage>C++</primarylanguage>
+    <keywords>
+      <keyword>KDE</keyword>
+      <keyword>Qt</keyword>
+    </keywords>
+    <version>2.0.8</version>
+    <description/>
+    <ignoreparts>
+      <part>KDevPerforce</part>
+    </ignoreparts>
+    <projectdirectory>.</projectdirectory>
+    <absoluteprojectpath>false</absoluteprojectpath>
+  </general>
+  <kdevautoproject>
+    <general>
+      <mainprogram>kflog</mainprogram>
+      <useconfiguration>default</useconfiguration>
+      <activetarget>kflog/kflog</activetarget>
+    </general>
+    <configure>
+      <configargs>\s--build=i386-linux --host=i386-linux --target=i386-linux --prefix=/opt/kde3 --enable-debug\s</configargs>
+    </configure>
+    <make>
+      <abortonerror>true</abortonerror>
+      <numberofjobs>1</numberofjobs>
+      <dontact>false</dontact>
+      <makebin>make</makebin>
+      <envvars>
+        <envvar value="1" name="WANT_AUTOCONF_2_5" />
+        <envvar value="1" name="WANT_AUTOMAKE_1_6" />
+      </envvars>
+    </make>
+    <compiler>
+      <cflags/>
+      <cxxflags>\s-O0 -Wall</cxxflags>
+    </compiler>
+    <makeenvvars>
+      <envvar value="/usr/lib/qt3" name="QTDIR" />
+      <envvar value="1" name="WANT_AUTOCONF_2_5" />
+      <envvar value="1" name="WANT_AUTOMAKE_1_6" />
+    </makeenvvars>
+    <run>
+      <mainprogram>./kflog/kflog</mainprogram>
+      <programargs/>
+      <terminal>false</terminal>
+      <envvars/>
+    </run>
+    <envvars/>
+    <configurations>
+      <default>
+        <configargs>--prefix=/opt/kde3 --enable-debug=yes</configargs>
+        <builddir/>
+        <ccompiler>GccOptions</ccompiler>
+        <cxxcompiler>GppOptions</cxxcompiler>
+        <f77compiler>G77Options</f77compiler>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
+        <cflags/>
+        <cxxflags/>
+        <f77flags/>
+        <topsourcedir/>
+        <cppflags/>
+        <ldflags/>
+      </default>
+    </configurations>
+  </kdevautoproject>
+  <kdevfileview>
+    <groups>
+      <group pattern="*.png,*.xpm" name="Icons" />
+      <group pattern="*.h,*.hh,*.hxx,*.hpp,*.H" name="Header" />
+      <group pattern="*.cpp,*.c,*.cc,*.C,*.cxx,*.ec,*.ecpp,*.lxx,*.l++,*.ll,*.l" name="Quellen" />
+      <group pattern="*.kdevdlg,*.ui,*.rc" name="Benutzerschnittstelle" />
+      <group pattern="*.po" name="Übersetzungen" />
+      <group pattern="AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,NEWS" name="GNU" />
+      <group pattern="*" name="Andere" />
+    </groups>
+    <tree>
+      <hidenonprojectfiles>false</hidenonprojectfiles>
+      <hidepatterns>*.o,*.lo,CVS</hidepatterns>
+    </tree>
+  </kdevfileview>
+  <kdevdoctreeview>
+    <ignoretocs>
+      <toc>gtk</toc>
+      <toc>gnustep</toc>
+      <toc>python</toc>
+      <toc>php</toc>
+      <toc>perl</toc>
+    </ignoretocs>
+    <projectdoc>
+      <userdocDir>/home/hjr/Projekte/kflog3/html/</userdocDir>
+      <apidocDir>/home/hjr/Projekte/kflog3/html/</apidocDir>
+    </projectdoc>
+  </kdevdoctreeview>
+  <kdevdebugger>
+    <general>
+      <dbgshell>libtool</dbgshell>
+      <programargs/>
+      <gdbpath/>
+      <breakonloadinglibs>true</breakonloadinglibs>
+      <separatetty>false</separatetty>
+      <floatingtoolbar>false</floatingtoolbar>
+    </general>
+    <display>
+      <staticmembers>true</staticmembers>
+      <demanglenames>true</demanglenames>
+    </display>
+  </kdevdebugger>
+  <cppsupportpart>
+    <codecompletion>
+      <codehinting outputview="1" enablech="1" selectview="0" />
+    </codecompletion>
+    <classstore>
+      <enablepcs>true</enablepcs>
+      <enablepp>true</enablepp>
+      <preparsing>
+        <directory dir="/home/hjr/Projekte/kflog3/kflog/" parsesubdir="Yes" />
+      </preparsing>
+    </classstore>
+    <filetemplates>
+      <choosefiles>false</choosefiles>
+      <interfaceURL/>
+      <implementationURL/>
+      <interfacesuffix>.h</interfacesuffix>
+      <implementationsuffix>.cpp</implementationsuffix>
+      <lowercasefilenames>true</lowercasefilenames>
+    </filetemplates>
+  </cppsupportpart>
+  <kdevclassview>
+    <folderhierarchy>true</folderhierarchy>
+    <depthoffolders>2</depthoffolders>
+  </kdevclassview>
+  <kdevcvs>
+    <cvsoptions>-f</cvsoptions>
+    <commitoptions/>
+    <updateoptions>-dP</updateoptions>
+    <addoptions/>
+    <removeoptions>-f</removeoptions>
+    <diffoptions>-u3 -p</diffoptions>
+    <logoptions/>
+    <rshoptions/>
+  </kdevcvs>
+  <kdevfilecreate>
+    <filetypes/>
+    <useglobaltypes/>
+  </kdevfilecreate>
+</kdevelop>
