@@ -638,9 +638,23 @@ void RecorderDialog::slotReadFlightList()
 {
   // Jetzt muss das Flugverzeichnis vom Logger gelesen werden!
   // Now we need to read the flightdeclaration from the logger!
-  __fillDirList();
+  QString errorDetails;
 
   flightList->clear();
+
+  if (__fillDirList() == FR_ERROR) {
+    if ((errorDetails = activeRecorder->lastError()) != "") {
+      KMessageBox::detailedError(this,
+                                 i18n("There was an error reading the flight list!"),
+                                 errorDetails,
+                                 i18n("Library Error"));
+    } else {
+      KMessageBox::error(this,
+                         i18n("There was an error reading the flight list!"),
+                         i18n("Library Error"));
+    }
+    return;
+  }
 
   QListViewItem* item;
   FRDirEntry* e;
@@ -674,6 +688,7 @@ void RecorderDialog::slotDownloadFlight()
   //void* funcH;
   int ret;
   QString fileName;
+  QString errorDetails;
 
   if(item == 0) {
     return;
@@ -689,10 +704,10 @@ void RecorderDialog::slotDownloadFlight()
   warning(dirList.at(flightID)->shortFileName);
 
   if(useLongNames->isChecked()) {
-    fileName += dirList.at(flightID)->longFileName;
+    fileName += dirList.at(flightID)->longFileName.upper();
   }
   else {
-    fileName += dirList.at(flightID)->shortFileName;
+    fileName += dirList.at(flightID)->shortFileName.upper();
   }
   warning(fileName);
 
@@ -705,7 +720,21 @@ void RecorderDialog::slotDownloadFlight()
   */
   if (!activeRecorder) return;
   ret = activeRecorder->downloadFlight(flightID,!useFastDownload->isChecked(),fileName);
-
+  
+  if (ret == FR_ERROR) {
+    warning("ERROR");
+    if ((errorDetails = activeRecorder->lastError()) != "") {
+      warning(errorDetails);
+      KMessageBox::detailedError(this,
+                                 i18n("There was an error downloading the flight!"),
+                                 errorDetails,
+                                 i18n("Library Error"));
+    } else {
+      KMessageBox::error(this,
+                         i18n("There was an error downloading the flight!"),
+                         i18n("Library Error"));
+    }
+  }
   //TODO: handle returnvalues!
 }
 

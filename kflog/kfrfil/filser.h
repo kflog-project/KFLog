@@ -18,6 +18,8 @@
 #ifndef FILSER_H
 #define FILSER_H
 
+#include <qptrlist.h>
+
 #include <../frstructs.h>
 #include <../flighttask.h>
 #include <../flightrecorderpluginbase.h>
@@ -25,6 +27,15 @@
 /**
   *@author Harald Maier
   */
+
+#define FLIGHT_INDEX_WIDTH 96 /* Bytes per record of the flight  */
+                              /* index.                          */
+#define LX_MEM_RET 7          /* Number of bytes returned by     */
+                              /* wb(STX), wb(Q).                 */
+
+struct flightTable {
+  unsigned char record[FLIGHT_INDEX_WIDTH];
+};
 
 class Filser : public FlightRecorderPluginBase
 {
@@ -96,7 +107,7 @@ private:
   /**
    * write byte
    */
-  int wb(char c);
+  int wb(unsigned char c);
   /**
    * read byte
    */
@@ -104,13 +115,19 @@ private:
   /**
    * Calculate the check sum
    */
-  char calc_crc(char d, char crc);
+  char calcCrc(char d, char crc);
   /**
    * Calculate the check sum on a buffer of bytes
    */
-  char calc_crc_buf(char *buf, unsigned int count);
-  int read_mem_setting();
-  char *read_data(char *buf_p, int count);
+  char calcCrcBuf(char *buf, unsigned int count);
+  int readMemSetting();
+  int defMem(struct flightTable *ft);
+  int getMemSection(char *memSection, int size);
+  int getLoggerData(char *memSection, int sectionSize, char **memContents, int *contentSize);
+  int convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last);
+  char *readData(char *buf_p, int count);
+  QPtrList <flightTable> flightIndex;
+  char *wordtoserno(unsigned int Binaer);
 };
 
 #endif
