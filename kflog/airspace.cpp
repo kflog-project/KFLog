@@ -39,6 +39,8 @@ QRegion* Airspace::drawRegion(QPainter* targetP, QPainter* maskP)
 
   QPointArray tA = glMapMatrix->map(projPointArray);
 
+  if(tA.count() <= 1) return (new QRegion());
+
   QBrush drawB = glConfig->getDrawBrush(typeID);
   QPen drawP = glConfig->getDrawPen(typeID);
   drawP.setJoinStyle(Qt::RoundJoin);
