@@ -26,23 +26,31 @@
 
 class WaypointCatalog {
 public: 
-  WaypointCatalog(QString name = QString::null);
+  WaypointCatalog(const QString& name = QString::null);
   ~WaypointCatalog();
   /** No descriptions */
-  bool read(QString &catalog);
-  bool readBinairy(QString &catalog);
+  bool read(const QString &catalog);
+  /** No descriptions */
+  bool readBinary(const QString &catalog);
+  /** No descriptions */
+  bool readFilserTXT (const QString& catalog);
+  /** No descriptions */
+  bool writeFilserTXT (const QString& catalog);
+  /** No descriptions */
+  bool readFilserDA4 (const QString& catalog);
   /** No descriptions */
   bool write();
-  bool writeBinairy();
   /** No descriptions */
-  bool importVolkslogger(QString & filename);
+  bool writeBinary();
+  /** No descriptions */
+  bool importVolkslogger(const QString & filename);
   /** Checks if the file exists on disk, and if not asks the user for it.
     * It then calls either write() or writeBinary(),
     * depending on the selected format.
     */
   bool save(bool alwaysAskName=false);
-  /** This function calls either read or readBinairy depending on the filename of the catalog. */
-  bool load(QString & catalog);
+  /** This function calls either read or readBinary depending on the filename of the catalog. */
+  bool load(const QString & catalog);
 
   /** filter for display/import */
   bool showAll;
