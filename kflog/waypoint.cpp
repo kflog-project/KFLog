@@ -16,10 +16,12 @@
 ***********************************************************************/
 
 #include "waypoint.h"
+#include "wp.h"
+#include "flight.h"
 
 Waypoint::Waypoint(QString nam, WGSPoint oP, int typ, QString _icao, QString _comment,
   int surf, int runw, int leng, int elev, double freq, bool isLand, QPoint pP,
-  unsigned int s1, unsigned int s2, unsigned int sFAI,
+  time_t s1, time_t s2, unsigned int sFAI,
   double ang, double dist, QString desc, unsigned int import, time_t GPSFixTime)
 {
   name = nam;
@@ -41,7 +43,7 @@ Waypoint::Waypoint(QString nam, WGSPoint oP, int typ, QString _icao, QString _co
   frequency = freq;
   isLandable = isLand;
   importance = import;
-  fixTime = GPSFixTime;  
+  fixTime = GPSFixTime;
 }
 
 Waypoint::~Waypoint()
@@ -56,4 +58,21 @@ Waypoint::Waypoint(Waypoint *p)
 Waypoint::Waypoint(Waypoint &p)
 {
   *this = p;
+}
+
+/////////////////////////////////////////////////////
+// Implementation of a Logger Fix
+flightPoint::flightPoint(void)
+{
+  //  QPoint projP; // ??
+  height = 0;
+  gpsHeight = 0;
+  engineNoise  = -1; // indicates not measured
+  surfaceHeight = 0;
+  time  = 0;
+  dH = 0;
+  dT = 0;
+  dS = 0;
+  bearing = .0;
+  f_state = Flight::Straight;
 }

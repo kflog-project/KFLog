@@ -19,6 +19,7 @@
 
 #include <stdio.h>
 #include <cstdlib>
+#include <iostream>
 
 // Datei-handling:
 #include <sys/types.h>
@@ -30,7 +31,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#include <iostream>
+using namespace std; 
 
 int noninteractive;
 

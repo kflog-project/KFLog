@@ -36,7 +36,7 @@ class FlightDataPrint
 
  private:
   /** */
-  void __printPositionData(QPainter* painter, struct flightPoint* cPoint,
+  void __printPositionData(QPainter* painter, flightPoint* cPoint,
           int yPos, const char* text, bool printVario = false,
           bool printSpeed = false);
   /** */

@@ -41,6 +41,7 @@ class MapControlView;
 class KFLogConfig;
 class KFLogStartLogo;
 class Waypoints;
+class flightPoint;
 class Tasks;
 class EvaluationDialog;
 class TopoLegend;
@@ -117,7 +118,7 @@ class KFLogApp : public KDockMainWindow
      * @param flightP  Pointer to the flightpoint.
      */
     void slotShowPointInfo(const QPoint mousePosition,
-                           const struct flightPoint& point);
+                           const flightPoint& point);
   /**
    * Displays the position of the mousecursor in the statusbar and
    * deletes the text of the other statusbar-fields.

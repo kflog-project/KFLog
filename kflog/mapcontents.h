@@ -309,6 +309,14 @@ switch to first task in file */
     void currentFlightChanged(BaseFlightElement*);
 
   private:
+
+    // Short structure to handle the optional entries in an igc file
+    class bOption {
+      public:
+        int begin, length;
+        char mnemonic[4];
+    };
+
     /**
      * Reads a binary map file containing airfields.
      *

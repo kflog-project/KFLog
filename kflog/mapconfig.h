@@ -24,6 +24,9 @@
 #include <qpen.h>
 #include <qpixmap.h>
 
+
+class flightPoint;
+
 /**
  * This class takes care of the configuration-data for displaying
  * and printing map-elements. To avoid problems, there should be only
@@ -71,7 +74,7 @@ class MapConfig : public QObject
      *
      * @return the pen for drawing a line between two flightpoints of a flight.
      */
-    QPen getDrawPen(struct flightPoint* fP);
+    QPen getDrawPen(flightPoint* fP);
     /**
      * @param  type  The typeID of the element.
      *

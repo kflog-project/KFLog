@@ -18,6 +18,7 @@
 #include <memory.h>
 #include <string.h>
 #include <stdlib.h>
+#include <iostream>
 
 
 #include "vlapi2.h"
@@ -28,7 +29,7 @@
 
 #include <utils.h>
 
-#include <iostream>
+using namespace std;
 
 extern int noninteractive;
 
@@ -182,7 +183,7 @@ int16 VLA_XFR::wait4ack() {
   // Anfangszeit merken
   t1 = get_timer_s();
   // Auf Beendigungscode vom Logger warten
-  while ( !test_user_break() && serial_in(&c) && get_timer_s()<t1+timeout ) 
+  while ( !test_user_break() && serial_in(&c) && get_timer_s()<t1+timeout )
     progress_set(VLS_TXT_WTCMD);
   if (test_user_break()) {
     if (clear_user_break() == 1)

@@ -1282,6 +1282,7 @@ bool MapContents::loadFlight(QFile& igcFile)
   newPoint.dH = 0;
   prePoint.dS = 0;
   prePoint.dH = 0;
+  QValueVector<bOption> options;
 
   //
   // This regexp is used to check the syntax of the position-lines in
@@ -1400,6 +1401,39 @@ bool MapContents::loadFlight(QFile& igcFile)
               KGlobal::config()->setGroup(0);
             }
         }
+      else if ( s.mid(0,1) == "I" )
+        {
+          // This record defines the extension of the mandatory fix B Record. Only one I record is allowed in each file.
+          // This record has to be located before the first B Record, immediately after the H record.
+          // Format of I Record:
+          //    I N N S S F F M M M S S F F M M M CR LF
+          // Description             Size          Element   Remarks
+          //   # of  extensions            2 bytes       NN        Valid characters 0-9
+          //   Start byte number        2 bytes       SS        Valid characters 0-9
+          //   Finish byte number      2 bytes       FF        Valid characters 0-9
+          //   Mnemonic                    3 bytes       MMM       Valid characters alphanumeric
+          // The byte count starts from the beginning of the B Record starting at 1.
+
+          int nrOfOpts = 0;
+          bOption opt;
+          sscanf( s.mid(1, 2), "%2d", &nrOfOpts);
+          if ( nrOfOpts < 1 || nrOfOpts > 10 )
+          {
+            // Must be wrong
+            warning("KFLog: Too much options in line %d of igc-file %s",
+                  lineCount, (const char*)igcFile.name());
+          }
+
+          // Select the options announced in this igc file
+          options.clear();
+          for (int i = 0; i < nrOfOpts; i++ )
+          {
+            sscanf(s.mid(3+i*7, 7), "%2d%2d%3s", &opt.begin, &opt.length, opt.mnemonic);
+            opt.begin -= 1; // B record starts with 1!
+            opt.length = opt.length - opt.begin;
+            options.append(opt);
+          }
+        }
       else if(s.mid(0,1) == "B")
         {
           isHeader = false;
@@ -1430,6 +1464,18 @@ bool MapContents::loadFlight(QFile& igcFile)
           if(lonChar == 'W') lonTemp = -lonTemp;
 
           sscanf(s.mid(25,10),"%5d%5d", &baroAltTemp, &gpsAltTemp);
+
+          // Scan the optional parts of the B record
+          newPoint.engineNoise = -1;
+          QValueVector<bOption>::iterator bOpt;
+          for ( bOpt = options.begin(); bOpt < options.end(); bOpt++ ) {
+            // Parse only known options
+            if ( strncasecmp((*bOpt).mnemonic, "ENL", 3) == 0 )
+            {
+              sscanf( s.mid((*bOpt).begin, (*bOpt).length), "%d", &newPoint.engineNoise );
+            }
+            // else if ...
+          }
 
           if( latTemp == 0 && lonTemp == 0 )
             {

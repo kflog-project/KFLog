@@ -450,7 +450,7 @@ void Igc3DFlightData::load(Flight* flight)
 	
 	linenum = 0;
 
-	struct flightPoint cP;
+	flightPoint cP;
 
 	reset();
 

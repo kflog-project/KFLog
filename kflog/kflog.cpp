@@ -142,8 +142,8 @@ KFLogApp::KFLogApp()
 
   connect(&_globalMapMatrix, SIGNAL(matrixChanged()), map,
       SLOT(slotRedrawMap()));
-  connect(map, SIGNAL(showFlightPoint(const QPoint, const struct flightPoint&)),
-      this, SLOT(slotShowPointInfo(const QPoint, const struct flightPoint&)));
+  connect(map, SIGNAL(showFlightPoint(const QPoint, const flightPoint&)),
+      this, SLOT(slotShowPointInfo(const QPoint, const flightPoint&)));
   // Plannung
   connect(&_globalMapContents, SIGNAL(activatePlanning()),
      map,SLOT(slotActivatePlanning()));
@@ -614,7 +614,7 @@ void KFLogApp::initView()
 }
 
 void KFLogApp::slotShowPointInfo(const QPoint pos,
-    const struct flightPoint& point)
+    const flightPoint& point)
 {
   statusBar()->clear();
   statusTimeL->setText(printTime(point.time, true));

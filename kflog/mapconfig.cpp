@@ -628,7 +628,7 @@ QPen MapConfig::getPrintPen(unsigned int typeID)
   return __getPen(typeID, printScaleIndex);
 }
 
-QPen MapConfig::getDrawPen(struct flightPoint* fP)
+QPen MapConfig::getDrawPen(flightPoint* fP)
 {
   //
   // Dynamische Farben im Flug:
@@ -636,6 +636,7 @@ QPen MapConfig::getDrawPen(struct flightPoint* fP)
   //   Farben als Legende ausgeben ???
   //
   //   Farbwerte müssen noch eingestellt werden. Konfigurierbar???
+  //   I would prefer colors adjusted for each flights histogram.
   //
 
   if(!isSwitch)  return QPen(QColor(0,100,200), 3);
@@ -711,6 +712,15 @@ QPen MapConfig::getDrawPen(struct flightPoint* fP)
         blue = 200;
         break;
     }
+
+  // Simple aproach to see "engine was running"
+  if ( fP->engineNoise > 350 ) {
+    //  Put a white strip there in every case
+    red = 255;
+    green = 255;
+    blue = 255;
+  }
+
 
   return QPen(QColor(red, green, blue), width);
 }
