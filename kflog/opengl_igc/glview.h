@@ -51,6 +51,8 @@ protected:
     
 private:
 
+    QColor getBackgroundColor();		//returns the background color 
+    						//should read from Settings dialog
     GLuint boxObject;
     QValueList<GLuint> flightList;
     GLfloat xRot, yRot, zRot, deltaX, deltaY, deltaZ, scale, heightExaggerate;

@@ -225,7 +225,8 @@ void GLView::paintGL()
 void GLView::initializeGL()
 {
     qWarning("GLBox::initializeGL()");
-    qglClearColor( black ); 		// Let OpenGL clear to black
+//    qglClearColor( black ); 		// Let OpenGL clear to black
+    qglClearColor(getBackgroundColor());
     glShadeModel( GL_FLAT );    // shading model
 }
 
@@ -342,7 +343,7 @@ void GLView::mouseMoveEvent ( QMouseEvent * e )
 {
   if (e->state() & LeftButton){  // left button means translation
     float phi=zRot/180.0*M_PI;
-    qWarning(QString("phi:%1").arg(phi));
+//    qWarning(QString("phi:%1").arg(phi));
     float dx=(mouse_last.x()-e->x())/100.0/scale;
     float dy=(mouse_last.y()-e->y())/100.0/scale;
     if (((int)xRot % 360)>-90)
@@ -371,4 +372,9 @@ void GLView::wheelEvent ( QWheelEvent * e )
   if (factor<0)
     factor=-1/factor;
   zoom(factor);
+}
+
+QColor GLView::getBackgroundColor()
+{
+    return QColor(64,102,128);
 }
