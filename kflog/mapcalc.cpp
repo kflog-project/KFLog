@@ -20,6 +20,14 @@
 
 #include "mapmatrix.h"
 
+static const char *timeFormat[4] = {
+  {"%2d:%2d"},
+  {"%2d:%2d:%2d"},
+  {"%02d:%02d"},
+  {"%02d:%02d:%02d"}
+  };
+
+
 double dist(double lat1, double lon1, double lat2, double lon2)
 {
   double pi_180 = PI / 108000000.0;
@@ -108,26 +116,27 @@ QString printPos(int coord, bool isLat)
   return pos;
 }
 
+QString printTime(time_t time, bool isZero, bool isSecond)
+{
+  QString tmpbuf;
+  struct tm lt;
+
+  gmtime_r (&time, &lt);
+
+  return tmpbuf.sprintf(timeFormat[isSecond + 2*isZero], lt.tm_hour, lt.tm_min, lt.tm_sec);
+
+}
+
+
 QString printTime(int time, bool isZero, bool isSecond)
 {
-  QString hour, min, sec;
+  QString tmpbuf;
 
   int hh = time / 3600;
   int mm = (time - (hh * 3600)) / 60;
   int ss = time - (hh * 3600) - mm * 60;
 
-  if(isZero && hh < 10)  hour.sprintf("0%d", hh);
-  else  hour.sprintf("%d", hh);
-
-  if(mm < 10)  min.sprintf("0%d", mm);
-  else  min.sprintf("%d", mm);
-
-  if(ss < 10)  sec.sprintf("0%d", ss);
-  else  sec.sprintf("%d", ss);
-
-  if(isSecond)  return (hour + ":" + min + ":" + sec);
-
-  return ( hour + ":" + min );
+  return tmpbuf.sprintf(timeFormat[isSecond + 2*isZero], hh, mm, ss);
 }
 
 float getSpeed(flightPoint p) { return (float)p.dS / (float)p.dT * 3.6; }

@@ -577,23 +577,23 @@ void MapMatrix::createPrintMatrix(double printScale, QSize pSize, int dX,
 //  return &printMatrix;
 }
 
-void MapMatrix::slotCenterToHome()  { MATRIX_MOVE( MapMatrix::Home ) }
+void MapMatrix::slotCenterToHome()  { MATRIX_MOVE( MapMatrix::Home ); }
 
-void MapMatrix::slotMoveMapNW() { MATRIX_MOVE( MapMatrix::North | MapMatrix::West ) }
+void MapMatrix::slotMoveMapNW() { MATRIX_MOVE( MapMatrix::North | MapMatrix::West ); }
 
-void MapMatrix::slotMoveMapN()  { MATRIX_MOVE( MapMatrix::North ) }
+void MapMatrix::slotMoveMapN()  { MATRIX_MOVE( MapMatrix::North ); }
 
-void MapMatrix::slotMoveMapNE() { MATRIX_MOVE( MapMatrix::North | MapMatrix::East ) }
+void MapMatrix::slotMoveMapNE() { MATRIX_MOVE( MapMatrix::North | MapMatrix::East ); }
 
-void MapMatrix::slotMoveMapW()  { MATRIX_MOVE( MapMatrix::West ) }
+void MapMatrix::slotMoveMapW()  { MATRIX_MOVE( MapMatrix::West ); }
 
-void MapMatrix::slotMoveMapE()  { MATRIX_MOVE( MapMatrix::East ) }
+void MapMatrix::slotMoveMapE()  { MATRIX_MOVE( MapMatrix::East ); }
 
-void MapMatrix::slotMoveMapSW() { MATRIX_MOVE( MapMatrix::South | MapMatrix::West ) }
+void MapMatrix::slotMoveMapSW() { MATRIX_MOVE( MapMatrix::South | MapMatrix::West ); }
 
-void MapMatrix::slotMoveMapS()  { MATRIX_MOVE( MapMatrix::South ) }
+void MapMatrix::slotMoveMapS()  { MATRIX_MOVE( MapMatrix::South ); }
 
-void MapMatrix::slotMoveMapSE() { MATRIX_MOVE( MapMatrix::South | MapMatrix::East ) }
+void MapMatrix::slotMoveMapSE() { MATRIX_MOVE( MapMatrix::South | MapMatrix::East ); }
 
 void MapMatrix::slotZoomIn()
 {

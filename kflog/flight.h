@@ -18,6 +18,7 @@
 #ifndef FLIGHT_H
 #define FLIGHT_H
 
+#include <time.h>
 #include <baseflightelement.h>
 #include <flighttask.h>
 #include <optimization.h>
@@ -101,7 +102,7 @@ class Flight : public BaseFlightElement
 	  /**
 	   * @return the starttime.
 	   */
-  	int getStartTime() const;
+  	time_t getStartTime() const;
 	  /**
 	   * @return the start-site.
 	   */
@@ -109,7 +110,7 @@ class Flight : public BaseFlightElement
     /**
      * @return the landing time.
      */
-    int getLandTime() const;
+    time_t getLandTime() const;
     /**
      * @return the index to the landing point.
      */
@@ -150,13 +151,13 @@ class Flight : public BaseFlightElement
      * to the given time.
      * @return the point
      */
-    flightPoint getPointByTime(int time);
+    flightPoint getPointByTime(time_t time);
     /**
      * Searches the point of the flight, which time is the nearest
      * to the given time.
      * @return the index of the point
      */
-    int getPointIndexByTime(int time);
+    int getPointIndexByTime(time_t time);
     /**
      * Draws the flight an the task into the given painter. Reimplemented
      * from BaseMapElement.
@@ -323,8 +324,8 @@ class Flight : public BaseFlightElement
     QList<flightPoint> route;
 
     QRect bBoxFlight;
-    int landTime;
-    int startTime;
+    time_t startTime;
+    time_t landTime;
     unsigned int startIndex; // index to take-off point
     unsigned int landIndex;  // index to landing point
     int taskBegin; //index to begin of task

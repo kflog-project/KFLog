@@ -607,9 +607,8 @@ void KFLogApp::slotShowPointInfo(const QPoint pos,
     const struct flightPoint& point)
 {
   statusBar()->clear();
+  statusTimeL->setText(printTime(point.time, true));
   QString text;
-  text.sprintf("%s", (const char*)printTime(point.time, true));
-  statusTimeL->setText(text);
   text.sprintf("%4d m  ", point.height);
   statusAltitudeL->setText(text);
   text.sprintf("%3.1f km/h  ", getSpeed(point));
@@ -1355,7 +1354,7 @@ void KFLogApp::slotEnableMessages(){
 
 /** Connects the dialogs addWaypoint signal to the waypoint object. */
 void KFLogApp::slotRegisterWaypointDialog(QWidget * dialog){
-  connect(dialog, SIGNAL(addWaypoint(Waypoint *)), waypoints, SLOT(slotAddWaypoint(Waypoint *)));  
+  connect(dialog, SIGNAL(addWaypoint(Waypoint *)), waypoints, SLOT(slotAddWaypoint(Waypoint *)));
 }
 
 /** Called to force display of the "Tip of the Day" dialog. */

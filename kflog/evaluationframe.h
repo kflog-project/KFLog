@@ -90,7 +90,7 @@ class EvaluationFrame : public QFrame
     int secWidth;
     int secWidthOld;
 
-    int centerTime;
+    time_t centerTime;
 
     Flight* flight;
 

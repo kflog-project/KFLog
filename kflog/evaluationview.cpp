@@ -51,15 +51,12 @@ EvaluationView::EvaluationView(QScrollView* parent, EvaluationDialog* dialog)
 
 
   mouseB = NoButton | NotReached;
-//  cursor1 = flight->taskBegin;
-//  cursor2 = flight->TaskEnd;
-//  flight = evalDialog->getFlight();
   cursor1 = 0;
-  cursor2 = 86400;
+  cursor2 = 0;
 
-  cursor_alt = 200000;
+  cursor_alt = 0;
 
-  isFlight = false;
+  flight = NULL;
 
   setMouseTracking(true);
 
@@ -91,7 +88,6 @@ void EvaluationView::paintEvent(QPaintEvent* event = 0)
 
 void EvaluationView::mousePressEvent(QMouseEvent* event)
 {
-  flight = evalDialog->getFlight();
 
   int x1 = ( cursor1 - startTime ) / secWidth
              + X_ABSTAND ;
@@ -119,9 +115,8 @@ void EvaluationView::mousePressEvent(QMouseEvent* event)
 
 void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
 {
-  flight = evalDialog->getFlight();
 
-  int time_alt, x;
+  time_t time_alt, x;
   int cursor = -1;
 
   if (flight) {
@@ -157,7 +152,7 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
     if(cursor == 1)
       {
         cursor1 =  flight->getPointByTime(
-                  ( event->pos().x() - X_ABSTAND ) * secWidth + startTime).time;
+                  (time_t)(( event->pos().x() - X_ABSTAND ) * secWidth + startTime)).time;
 
         if(cursor1 > cursor2) cursor1 = cursor2;
         x = ( cursor1 - startTime ) / secWidth + X_ABSTAND ;
@@ -165,7 +160,7 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
     else if(cursor == 2)
       {
         cursor2 =  flight->getPointByTime(
-                   ( event->pos().x() - X_ABSTAND ) * secWidth + startTime).time;
+                   (time_t)(( event->pos().x() - X_ABSTAND ) * secWidth + startTime)).time;
 
         if(cursor2 < cursor1) cursor2 = cursor1;
         x = ( cursor2 - startTime ) / secWidth + X_ABSTAND ;
@@ -184,7 +179,6 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
 
 void EvaluationView::mouseMoveEvent(QMouseEvent* event)
 {
-  flight = evalDialog->getFlight();
 
   int x1 = (( cursor1 - startTime ) / secWidth)
              + X_ABSTAND ;
@@ -207,22 +201,21 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
     else if(mouseB != (LeftButton | NotReached) &&
             mouseB != (NoButton | Reached))
       {
-      // Koordinaten in Bildschirm Koordinaten
-        int cursor = flight->getPointByTime((event->pos().x() - X_ABSTAND )
-                             * secWidth + startTime).time;
+        // Koordinaten in Bildschirm Koordinaten
+        int cursor = flight->getPointByTime((time_t)((event->pos().x() - X_ABSTAND )
+                             * secWidth + startTime)).time - startTime;
 
-        __paintCursor(( cursor - startTime ) / secWidth
-                          + X_ABSTAND ,
-                      ( cursor_alt - startTime ) / secWidth
-                          + X_ABSTAND ,1,0);
+        __paintCursor( cursor  / secWidth + X_ABSTAND,
+                           (int)( cursor_alt - startTime ) / secWidth + X_ABSTAND,
+                           1,0 );
 
-        cursor_alt = flight->getPointByTime((event->pos().x() - X_ABSTAND ) *
-                            secWidth + startTime).time;
+        cursor_alt = flight->getPointByTime((time_t)((event->pos().x() - X_ABSTAND ) *
+                            secWidth + startTime)).time;
 
         //  kontinuierliches Update der Anzeige
         // was wird in Mouse Release noch gebraucht??
-        int cursor_1 = cursor1;
-        int cursor_2 = cursor2;
+        time_t cursor_1 = cursor1;
+        time_t cursor_2 = cursor2;
 
         if(mouseB == (MidButton | Reached) ||
               mouseB == (MidButton | NotReached))
@@ -492,9 +485,42 @@ void EvaluationView::drawCurve(bool arg_vario, bool arg_speed,
             bool arg_baro, unsigned int arg_glatt_va, unsigned int arg_glatt_v,
             unsigned int arg_glatt_h, unsigned int secW)
 {
-  Flight* flight = evalDialog->getFlight();
-  if (flight) {
-    isFlight = true;
+  Flight* newFlight = evalDialog->getFlight();
+  if ( flight != newFlight )
+  {
+    flight = newFlight;
+    if ( flight ) {
+      cursor1 = startTime = flight->getStartTime();
+      cursor2 = landTime = flight->getLandTime();
+    }
+    else {
+      cursor1 = 0;
+      cursor2 = 0;
+    }
+
+  }
+
+  if ( flight ) {
+    cursor1 = MAX(startTime,cursor1);
+    cursor2 = MAX(startTime,cursor2);
+    cursor1 = MIN(landTime,cursor1);
+    cursor2 = MIN(landTime,cursor2);
+
+    secWidth = secW;
+    int width = (landTime - startTime) / secWidth + (KOORD_DISTANCE * 2) + 20;
+
+    this->resize(MAX(width, scrollFrame->visibleWidth()),
+                 scrollFrame->viewport()->height());
+
+    pixBuffer->resize(MAX(width, scrollFrame->visibleWidth()),
+                      scrollFrame->viewport()->height());
+
+    pixBufferKurve->resize(width, scrollFrame->viewport()->height());
+    pixBufferYAxis->resize(KOORD_DISTANCE + 1,
+        scrollFrame->viewport()->height());
+    pixBuffer->fill(white);
+    scrollFrame->addChild(this);
+
 
     setMouseTracking(true);
 
@@ -504,35 +530,6 @@ void EvaluationView::drawCurve(bool arg_vario, bool arg_speed,
     glatt_va = arg_glatt_va;
     glatt_v = arg_glatt_v;
     glatt_h = arg_glatt_h;
-
-    startTime = flight->getStartTime();
-    landTime = flight->getLandTime();
-    
-    // Correct the landtime for overnight-flights by adding one day (e.g. 86400 sec.):
-    if(startTime > landTime)  {  landTime += 86400;  }
-
-    cursor1 = MAX(startTime,cursor1);
-    cursor2 = MAX(startTime,cursor2);
-    cursor1 = MIN(landTime,cursor1);
-    cursor2 = MIN(landTime,cursor2);
-
-    secWidth = secW;
-
-    int width = (landTime - startTime) / secWidth + (KOORD_DISTANCE * 2) + 20;
-
-    this->resize(MAX(width, scrollFrame->visibleWidth()),
-                 scrollFrame->viewport()->height());
-
-    pixBuffer->resize(MAX(width, scrollFrame->visibleWidth()),
-                      scrollFrame->viewport()->height());
-    pixBuffer->fill(white);
-
-    pixBufferKurve->resize(width, scrollFrame->viewport()->height());
-    pixBufferYAxis->resize(KOORD_DISTANCE + 1,
-        scrollFrame->viewport()->height());
-
-
-    scrollFrame->addChild(this);
 
     __draw();
 
@@ -546,7 +543,6 @@ void EvaluationView::drawCurve(bool arg_vario, bool arg_speed,
 
 void EvaluationView::__draw()
 {
-  Flight* flight = evalDialog->getFlight();
   // Skalierungsfaktor -- vertical
   scale_v = getSpeed(flight->getPoint(Flight::V_MAX)) /
           ((double)(this->height() - 2*Y_ABSTAND));
@@ -643,7 +639,7 @@ void EvaluationView::__draw()
   int xpos = 0;
 
   // Wendepunkte
-  QList<Waypoint> wP;
+  QList<Waypoint>  wP;
   QString timeText = 0;
 
   wP = flight->getWPList();

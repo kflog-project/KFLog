@@ -20,6 +20,7 @@
 
 #include <wp.h>
 #include <waypoint.h>
+#include <time.h>
 
 #define PI 3.141592654
 
@@ -59,6 +60,9 @@ QString printPos(int coord, bool isLat = true);
  * Converts the given time (in sec.) into a readable string.
  * ( hh:mm:ss )
  */
+QString printTime(time_t time, bool isZero = false, bool isSecond = true);
+
+// Same convesion for time delays
 QString printTime(int time, bool isZero = false, bool isSecond = true);
 
 /**

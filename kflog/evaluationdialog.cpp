@@ -123,6 +123,12 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
   flightPoint p1;
   flightPoint p2;
 
+  if ( !flight )
+  {
+    emit textChanged(htmlText);
+    return;
+  }
+
   switch(flight->getTypeID()) {
   case BaseMapElement::Flight:
     p1 = flight->getPoint(index1);
@@ -249,8 +255,11 @@ void EvaluationDialog::slotShowFlightData()
 
     // GRUNDWERTE setzen
     updateText(0, flight->getRouteLength() - 1, true);
-    emit flightChanged();
   }
+  else
+    updateText(0, 0, false);
+    
+  emit flightChanged();
 }
 /** No descriptions */
 Flight* EvaluationDialog::getFlight()

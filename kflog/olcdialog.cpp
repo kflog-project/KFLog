@@ -281,7 +281,7 @@ void OLCDialog::__fillDataFields()
       temp.sprintf("%.2f km", wpList.at(loop)->distance);
       item->setText(taskColDist, temp);
 
-      unsigned int time;
+      time_t time;
       if (wpList.at(loop)->fixTime != 0)
         {
           time = wpList.at(loop)->fixTime;

@@ -18,6 +18,7 @@
 #ifndef WP_STRUCT
 #define WP_STRUCT
 
+#include <time.h>
 #include <qpoint.h>
 #include <qstring.h>
 #include <qptrcollection.h>
@@ -40,7 +41,7 @@ struct flightPoint
       will be filled when drawn on map */
   int surfaceHeight;
   /** The time, the point was registered by the logger. */
-  unsigned int time;
+  time_t time;
   /** The elevation difference to the previous Point*/
   int dH;
   /** The time difference to the previous Point*/
@@ -51,6 +52,7 @@ struct flightPoint
   float bearing;
   /** Kreisflug 0 oder Streckenflug 1*/
   unsigned int f_state;
+
 };
 
 /**

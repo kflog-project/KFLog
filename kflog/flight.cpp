@@ -76,7 +76,7 @@
       wpL.current()->fixTime = route.at( a )->time;
 
 Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName,
-    QString gType, QString gID, int cClass, QList<Waypoint> wpL, QDate d)
+   QString gType, QString gID, int cClass, QList<Waypoint> wpL, QDate d)
   : BaseFlightElement("flight", BaseMapElement::Flight, fName),
     recorderID(recID),
     pilotName(pName),
@@ -89,10 +89,10 @@ Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName
     va_min(0),
     va_max(0),
     route(r),
-    landTime(route.last()->time),
-    landIndex(route.count()-1),
-    startIndex(0),
     startTime(route.at(0)->time),
+    landTime(route.last()->time),
+    startIndex(0),
+    landIndex(route.count()-1),
 //    origTask(FlightTask(wpL, true, QString::null)),
 //    optimizedTask(FlightTask(QString::null)),
     origTask(FlightTask(wpL, true, i18n("Origninal task"))),
@@ -417,7 +417,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
       /* tries to find the elevation of the surface under the point */
       // send a signal with the curPointA, and the index of the point [ n * delta - (delta - 1) ] */
-      
+
       curPointA = curPointB;
     }
 }
@@ -433,40 +433,48 @@ QString Flight::getTaskTypeString(bool isOrig) const
       return optimizedTask.getTaskTypeString();
 }
 
-flightPoint Flight::getPointByTime(int time)
+flightPoint Flight::getPointByTime(time_t time)
 {
   return getPoint(getPointIndexByTime(time));
 }
 
-int Flight::getPointIndexByTime(int time)
+int Flight::getPointIndexByTime(time_t time)
 {
-  int diff, n, sp, ep;
+ int diff, n, sp, ep;
 
-  if(getLandTime() - time < time - getStartTime())
-    {
-      n = -1;
-      sp = route.count() - 1;
-      ep = 0;
-    }
-  else
-    {
-      n = 1;
-      sp = 0;
-      ep = route.count() - 1;
-    }
+  // Estimate a near point on the route to reduce linear search
+  diff = (route.last()->time - route.at(0)->time) / route.count();
+  sp = (time - route.at(0)->time) / diff;
+  if ( sp < 0 )
+    sp = 0;
+  if ( sp > route.count()-1 )
+    sp = route.count()-1;
 
-  diff = getPoint(sp).time - time;
+  // sp is now hopefully an index near to the wanted fix time
+  if( route.at(sp)->time < time ) {
+    n = 1;
+    ep = route.count() - 1;
+  }
+  else {
+    n = -1;
+    ep = 0;
+  }
+
+  diff = route.at(sp)->time - time;
   diff = ABS(diff);
 
-  for(int l = sp + n; l < (int)route.count() && l >= 0; l += n)
+  if ( sp != ep )
+  {
+    for(int l = sp+n; l != ep; l += n) // l < (int)route.count() && l >= 0; l += n)
     {
-      int a = getPoint(l).time - time;
-      if(ABS(a) > diff)
-          return l - n;
+      int a = route.at(l)->time - time;
+      a = ABS(a);
+      if( a > diff )
+        return l-n;
 
-      diff = getPoint(l).time - time;
-      diff = ABS(diff);
+      diff = a;
     }
+  }
 
   return ep;
 }
@@ -611,14 +619,14 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
     text.sprintf("%.0f km",distance / 1000);
     result.append(text);
     text.sprintf("%s (%.1f %%)",
-        (const char*)printTime( ( route.at(end)->time - route.at(start)->time -
+        (const char*)printTime( (int)( route.at(end)->time - route.at(start)->time -
             ( kurbel_r + kurbel_l + kurbel_v ) ) ),
         (float)( route.at(end)->time - route.at(start)->time -
-                ( kurbel_r + kurbel_l + kurbel_v ) ) /
-            (float)( route.at(end)->time - route.at(start)->time ) * 100.0 );
+            ( kurbel_r + kurbel_l + kurbel_v ) ) /
+                (float)( route.at(end)->time - route.at(start)->time ) * 100.0 );
     result.append(text);
     text.sprintf("%s",
-        (const char*)printTime(route.at(end)->time - route.at(start)->time));
+        (const char*)printTime((int)(route.at(end)->time - route.at(start)->time)));
     result.append(text);
     text.sprintf("%.0f m",s_height_pos   + k_height_pos_r
                         + k_height_pos_l + k_height_pos_v);
@@ -672,11 +680,11 @@ QString Flight::getPoints(bool isOrig)
 
 int Flight::getCompetitionClass() const  { return competitionClass; }
 
-int Flight::getLandTime() const { return landTime; }
+time_t Flight::getLandTime() const { return landTime; }
 
 QString Flight::getPilot() const { return pilotName; }
 
-int Flight::getStartTime() const { return startTime; }
+time_t Flight::getStartTime() const { return startTime; }
 
 int Flight::getStartIndex() const { return startIndex; }
 
@@ -915,7 +923,6 @@ bool Flight::optimizeTask()
       numSteps = __calculateBestTask(start, stop, stepB, idList, taskValue, false);
       secondSteps += numSteps;
     }
-
   step = stepB;
 
   secondSteps = 0;

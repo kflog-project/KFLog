@@ -18,6 +18,7 @@
 #ifndef EVALUATIONVIEW_H
 #define EVALUATIONVIEW_H
 
+#include <time.h>
 #include <qpixmap.h>
 #include <qscrollview.h>
 #include <qwidget.h>
@@ -50,8 +51,9 @@ class EvaluationView : public QWidget
   virtual QSize sizeHint();
 
   // Cursor Positionen
-  unsigned int cursor1;
-  unsigned int cursor2;
+  time_t cursor1;
+  time_t cursor2;
+  time_t cursor_alt;
 
  protected:
   /**
@@ -92,9 +94,9 @@ class EvaluationView : public QWidget
   /* Wieso meckert der Compiler, wenn hier nur "QPixmap" statt eines
    * Pointers steht ?????
    */
-  unsigned int startTime;
-  unsigned int landTime;
-  unsigned int curTime;
+  time_t startTime;
+  time_t landTime;
+  time_t curTime;
   /**
     * Dieser Wert gibt den Abstand zwischen zwei Zeichenpunkten in
     * Sekunden an.
@@ -119,12 +121,8 @@ class EvaluationView : public QWidget
 
   int mouseB;
   int leftB;
-  // Cursor Positionen
-  unsigned int cursor_alt;
 
   Flight* flight;
-
-  bool isFlight;
 
 //  QPixmap pixCursor1;
 //  QPixmap pixCursor2;

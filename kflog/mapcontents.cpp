@@ -1083,8 +1083,8 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   in >> createDateTime;
 
   unsigned int gesamt_elemente = 0;
-  unsigned int river = 0;
-  unsigned int rivert = 0;
+//unused  unsigned int river = 0;
+//unused  unsigned int rivert = 0;
   while(!in.eof())
     {
       in >> typeIn;
@@ -1262,9 +1262,10 @@ bool MapContents::loadFlight(QFile& igcFile)
   QString pilotName, gliderType, gliderID, recorderID;
   QDate date;
   char latChar, lonChar;
-  bool launched = false, append = true, isFirst = true, isFirstWP = true;
+  bool launched = false, /* unused append = true,*/ isFirst = true, isFirstWP = true;
   int dT, lat, latmin, latTemp, lon, lonmin, lonTemp, baroAltTemp, gpsAltTemp;
-  int hh = 0, mm = 0, ss = 0, curTime = 0, preTime = 0;
+  int hh = 0, mm = 0, ss = 0;
+  time_t curTime = 0, preTime = 0;
   int cClass = Flight::NotSet;
 
   float v, speed;
@@ -1307,8 +1308,8 @@ bool MapContents::loadFlight(QFile& igcFile)
   unsigned int wp_count = 0;
   int last0 = -1;
   bool isHeader = true;
-
   bool isAus = false;
+  time_t timeToDay = 0;
 
   //
   // Sequence of records in the igc-file:
@@ -1386,6 +1387,22 @@ bool MapContents::loadFlight(QFile& igcFile)
               else
                   date.setYMD(s.mid(9, 2).toInt(),
                       s.mid(7, 2).toInt(), s.mid(5, 2).toInt());
+
+              struct tm bt;
+              bt.tm_sec = 0;
+              bt.tm_min = 0;
+              bt.tm_hour = 0;
+              bt.tm_mday = date.day();
+              bt.tm_mon = date.month() - 1;
+              bt.tm_year = date.year() - 1900;
+              bt.tm_wday = date.dayOfWeek() - 1;
+              bt.tm_yday = date.dayOfYear() - 1;
+              bt.tm_isdst = 0;
+              bt.tm_gmtoff = 0;
+              bt.tm_zone = NULL;//"GMT";
+
+              timeToDay = mktime (&bt) ;
+
             }
           else if(s.mid(1, 4).upper() == "FCCL")
             {
@@ -1433,7 +1450,7 @@ bool MapContents::loadFlight(QFile& igcFile)
               continue;
             }
 
-          curTime = 3600 * hh + 60 * mm + ss;
+          curTime = timeToDay + 3600 * hh + 60 * mm + ss;
 
           newPoint.time = curTime;
           newPoint.origP = WGSPoint(latTemp, lonTemp);
@@ -1476,7 +1493,9 @@ bool MapContents::loadFlight(QFile& igcFile)
             {
               // The new fix as a smaller timestamp. Therefore we assume, that
               // we have an overnight-flight. So we must add one day (e.g. 86400 sec.)
+              timeToDay += 86400;
               curTime += 86400;
+              newPoint.time = curTime;
             }
           dT = MAX( (curTime - preTime), 1);
 
@@ -2422,7 +2441,7 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
   QString pilotName, gliderType, gliderID, recorderID;
   QDate date;
   char latChar, lonChar, validChar;
-  bool launched = false, append = true, isFirst = true, isFirstWP = true;
+  bool launched = false, append = true, isFirst = true;//unused , isFirstWP = true;
   int dT, lat, latmin, latTemp, lon, lonmin, lonTemp;
   int hh = 0, mm = 0, ss = 0, curTime = 0, preTime = 0;
   int cClass = Flight::NotSet;
@@ -2433,8 +2452,8 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
   flightPoint prePoint;
   QList<flightPoint> flightRoute;
   QList<Waypoint> wpList;
-  Waypoint* newWP;
-  Waypoint* preWP;
+//unused  Waypoint* newWP;
+//unused  Waypoint* preWP;
   bool isValid = true;
 
   //
@@ -2472,10 +2491,10 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile){
   extern const MapMatrix _globalMapMatrix;
 
   int lineCount = 0;
-  unsigned int wp_count = 0;
-  int last0 = -1;
-  bool isHeader = true;
-  bool isAus = false;
+//unused  unsigned int wp_count = 0;
+//unused  int last0 = -1;
+//unused  bool isHeader = true;
+//unused  bool isAus = false;
 
   float spd, brng, magdev,fLat, fLon;
   int day, month, year;	
@@ -2774,13 +2793,13 @@ bool MapContents::importGardownFile(QFile& gardownFile){
 
   int lineCount = 0;
   unsigned int wp_count = 0;
-  int last0 = -1;
-  bool isHeader = true;
-  bool isAus = false;
+//  int last0 = -1;
+//  bool isHeader = true;
+//  bool isAus = false;
 
   float spd, brng, magdev,fLat, fLon;
-  int day, month, year;	
-  char magdevChar, checksum[2];
+//  int day, month, year;
+//  char magdevChar, checksum[2];
 
 
   while (!stream.eof())
