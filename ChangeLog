@@ -1,6 +1,14 @@
 $Id$
 
 
+2002-01-27 Heiner <heiner@kflog.org>
+
+  * Changed drawing of airspaces slightly.
+
+  * Started to integrate the printing-dialog into the standard
+    KPrinterDialog.
+
+
 2002-01-26 Thomas <thomas@kflog.org>
 
   * Process animation keystrokes using KActions and slots.
