@@ -143,7 +143,7 @@ QString Airspace::getInfoString() const
       case BaseMapElement::LowFlight:
         text = "Low Flight";
         break;
-      case BaseMapElement::TMZ:
+      case BaseMapElement::Tmz:
         text = "TMZ";
         break;
       default:

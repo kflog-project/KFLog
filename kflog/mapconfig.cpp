@@ -94,11 +94,20 @@ MapConfig::MapConfig()
   restrBorder = new bool[6];
   tmzBorder = new bool[6];
 
+  trailBorder = new bool[6];
   roadBorder = new bool[6];
   highwayBorder = new bool[6];
   railBorder = new bool[6];
+  rail_dBorder = new bool[6];
+  aerialcableBorder = new bool[6];
   riverBorder = new bool[6];
+  river_tBorder = new bool[6];
+  canalBorder = new bool[6];
   cityBorder = new bool[6];
+
+  forestBorder = new bool[6];
+  glacierBorder = new bool[6];
+  packiceBorder = new bool[6];
 }
 
 MapConfig::~MapConfig()
@@ -141,12 +150,23 @@ void MapConfig::slotReadConfig()
   while(tmzPenList.remove());
   while(tmzBrushList.remove());
 
+  while(trailPenList.remove());
   while(roadPenList.remove());
   while(highwayPenList.remove());
   while(riverPenList.remove());
+  while(river_tPenList.remove());
+  while(river_tBrushList.remove());
+  while(canalPenList.remove());
   while(railPenList.remove());
+  while(rail_dPenList.remove());
   while(cityPenList.remove());
   while(cityBrushList.remove());
+  while(forestPenList.remove());
+  while(forestBrushList.remove());
+  while(glacierPenList.remove());
+  while(glacierBrushList.remove());
+  while(packicePenList.remove());
+  while(packiceBrushList.remove());
 
   config->setGroup("Topography");
   READ_TOPO("SubTerrain", LEVEL_SUB)
@@ -209,6 +229,14 @@ void MapConfig::slotReadConfig()
         ROAD_PEN_STYLE_1, ROAD_PEN_STYLE_2, ROAD_PEN_STYLE_3, ROAD_PEN_STYLE_4,
         PRINT_ROAD_PEN_STYLE_1, PRINT_ROAD_PEN_STYLE_2)
 
+  READ_PEN("Trail", trailPenList, trailBorder,
+        TRAIL_COLOR_1, TRAIL_COLOR_2, TRAIL_COLOR_3, TRAIL_COLOR_4,
+        PRINT_TRAIL_COLOR_1, PRINT_TRAIL_COLOR_2,
+        TRAIL_PEN_1, TRAIL_PEN_2, TRAIL_PEN_3, TRAIL_PEN_4,
+        PRINT_TRAIL_PEN_1, PRINT_TRAIL_PEN_2,
+        TRAIL_PEN_STYLE_1, TRAIL_PEN_STYLE_2, TRAIL_PEN_STYLE_3, TRAIL_PEN_STYLE_4,
+        PRINT_TRAIL_PEN_STYLE_1, PRINT_TRAIL_PEN_STYLE_2)
+
   READ_PEN("River", riverPenList, riverBorder,
         RIVER_COLOR_1, RIVER_COLOR_2, RIVER_COLOR_3, RIVER_COLOR_4,
         PRINT_RIVER_COLOR_1, PRINT_RIVER_COLOR_2,
@@ -217,6 +245,14 @@ void MapConfig::slotReadConfig()
         RIVER_PEN_STYLE_1, RIVER_PEN_STYLE_2, RIVER_PEN_STYLE_3, RIVER_PEN_STYLE_4,
         PRINT_RIVER_PEN_STYLE_1, PRINT_RIVER_PEN_STYLE_2)
 
+  READ_PEN("Canal", canalPenList, canalBorder,
+        CANAL_COLOR_1, CANAL_COLOR_2, CANAL_COLOR_3, CANAL_COLOR_4,
+        PRINT_CANAL_COLOR_1, PRINT_CANAL_COLOR_2,
+        CANAL_PEN_1, CANAL_PEN_2, CANAL_PEN_3, CANAL_PEN_4,
+        PRINT_CANAL_PEN_1, PRINT_CANAL_PEN_2,
+        CANAL_PEN_STYLE_1, CANAL_PEN_STYLE_2, CANAL_PEN_STYLE_3, CANAL_PEN_STYLE_4,
+        PRINT_CANAL_PEN_STYLE_1, PRINT_CANAL_PEN_STYLE_2)
+
   READ_PEN("Rail", railPenList, railBorder,
         RAIL_COLOR_1, RAIL_COLOR_2, RAIL_COLOR_3, RAIL_COLOR_4,
         PRINT_RAIL_COLOR_1, PRINT_RAIL_COLOR_2,
@@ -224,6 +260,23 @@ void MapConfig::slotReadConfig()
         PRINT_RAIL_PEN_1, PRINT_RAIL_PEN_2,
         RAIL_PEN_STYLE_1, RAIL_PEN_STYLE_2, RAIL_PEN_STYLE_3, RAIL_PEN_STYLE_4,
         PRINT_RAIL_PEN_STYLE_1, PRINT_RAIL_PEN_STYLE_2)
+
+  READ_PEN("Rail_D", rail_dPenList, rail_dBorder,
+        RAIL_D_COLOR_1, RAIL_D_COLOR_2, RAIL_D_COLOR_3, RAIL_D_COLOR_4,
+        PRINT_RAIL_D_COLOR_1, PRINT_RAIL_D_COLOR_2,
+        RAIL_D_PEN_1, RAIL_D_PEN_2, RAIL_D_PEN_3, RAIL_D_PEN_4,
+        PRINT_RAIL_D_PEN_1, PRINT_RAIL_D_PEN_2,
+        RAIL_D_PEN_STYLE_1, RAIL_D_PEN_STYLE_2, RAIL_D_PEN_STYLE_3, RAIL_D_PEN_STYLE_4,
+        PRINT_RAIL_D_PEN_STYLE_1, PRINT_RAIL_D_PEN_STYLE_2)
+
+  READ_PEN("Aerial_Cable", aerialcablePenList, aerialcableBorder,
+        AERIAL_CABLE_COLOR_1, AERIAL_CABLE_COLOR_2, AERIAL_CABLE_COLOR_3, AERIAL_CABLE_COLOR_4,
+        PRINT_AERIAL_CABLE_COLOR_1, PRINT_AERIAL_CABLE_COLOR_2,
+        AERIAL_CABLE_PEN_1, AERIAL_CABLE_PEN_2, AERIAL_CABLE_PEN_3, AERIAL_CABLE_PEN_4,
+        PRINT_AERIAL_CABLE_PEN_1, PRINT_AERIAL_CABLE_PEN_2,
+        AERIAL_CABLE_PEN_STYLE_1, AERIAL_CABLE_PEN_STYLE_2, AERIAL_CABLE_PEN_STYLE_3, AERIAL_CABLE_PEN_STYLE_4,
+        PRINT_AERIAL_CABLE_PEN_STYLE_1, PRINT_AERIAL_CABLE_PEN_STYLE_2)
+
 
   READ_PEN("Highway", highwayPenList, highwayBorder,
         HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
@@ -271,6 +324,65 @@ void MapConfig::slotReadConfig()
       cityBrushList.append(new QBrush(PRINT_CITY_BRUSH_COLOR_2, Qt::SolidPattern));
       READ_BORDER(cityBorder);
     }
+
+  READ_PEN_BRUSH("Forest", forestPenList, forestBorder, forestBrushList,
+        FRST_COLOR_1, FRST_COLOR_2, FRST_COLOR_3, FRST_COLOR_4,
+        PRINT_FRST_COLOR_1, PRINT_FRST_COLOR_2,
+        FRST_PEN_1, FRST_PEN_2, FRST_PEN_3, FRST_PEN_4,
+        PRINT_FRST_PEN_1, PRINT_FRST_PEN_2,
+        FRST_PEN_STYLE_1, FRST_PEN_STYLE_2, FRST_PEN_STYLE_3, FRST_PEN_STYLE_4,
+        PRINT_FRST_PEN_STYLE_1, PRINT_FRST_PEN_STYLE_2,
+        FRST_BRUSH_COLOR_1, FRST_BRUSH_COLOR_2,
+        FRST_BRUSH_COLOR_3, FRST_BRUSH_COLOR_4,
+        PRINT_FRST_BRUSH_COLOR_1, PRINT_FRST_BRUSH_COLOR_2,
+        FRST_BRUSH_STYLE_1, FRST_BRUSH_STYLE_2,
+        FRST_BRUSH_STYLE_3, FRST_BRUSH_STYLE_4,
+        PRINT_FRST_BRUSH_STYLE_1, PRINT_FRST_BRUSH_STYLE_2)
+
+  READ_PEN_BRUSH("Glacier", glacierPenList, glacierBorder, glacierBrushList,
+        GLACIER_COLOR_1, GLACIER_COLOR_2, GLACIER_COLOR_3, GLACIER_COLOR_4,
+        PRINT_GLACIER_COLOR_1, PRINT_GLACIER_COLOR_2,
+        GLACIER_PEN_1, GLACIER_PEN_2, GLACIER_PEN_3, GLACIER_PEN_4,
+        PRINT_GLACIER_PEN_1, PRINT_GLACIER_PEN_2,
+        GLACIER_PEN_STYLE_1, GLACIER_PEN_STYLE_2, GLACIER_PEN_STYLE_3, GLACIER_PEN_STYLE_4,
+        PRINT_GLACIER_PEN_STYLE_1, PRINT_GLACIER_PEN_STYLE_2,
+        GLACIER_BRUSH_COLOR_1, GLACIER_BRUSH_COLOR_2,
+        GLACIER_BRUSH_COLOR_3, GLACIER_BRUSH_COLOR_4,
+        PRINT_GLACIER_BRUSH_COLOR_1, PRINT_GLACIER_BRUSH_COLOR_2,
+        GLACIER_BRUSH_STYLE_1, GLACIER_BRUSH_STYLE_2,
+        GLACIER_BRUSH_STYLE_3, GLACIER_BRUSH_STYLE_4,
+        PRINT_GLACIER_BRUSH_STYLE_1, PRINT_GLACIER_BRUSH_STYLE_2)
+
+  READ_PEN_BRUSH("PackIce", packicePenList, packiceBorder, packiceBrushList,
+        PACK_ICE_COLOR_1, PACK_ICE_COLOR_2, PACK_ICE_COLOR_3, PACK_ICE_COLOR_4,
+        PRINT_PACK_ICE_COLOR_1, PRINT_PACK_ICE_COLOR_2,
+        PACK_ICE_PEN_1, PACK_ICE_PEN_2, PACK_ICE_PEN_3, PACK_ICE_PEN_4,
+        PRINT_PACK_ICE_PEN_1, PRINT_PACK_ICE_PEN_2,
+        PACK_ICE_PEN_STYLE_1, PACK_ICE_PEN_STYLE_2, PACK_ICE_PEN_STYLE_3, PACK_ICE_PEN_STYLE_4,
+        PRINT_PACK_ICE_PEN_STYLE_1, PRINT_PACK_ICE_PEN_STYLE_2,
+        PACK_ICE_BRUSH_COLOR_1, PACK_ICE_BRUSH_COLOR_2,
+        PACK_ICE_BRUSH_COLOR_3, PACK_ICE_BRUSH_COLOR_4,
+        PRINT_PACK_ICE_BRUSH_COLOR_1, PRINT_PACK_ICE_BRUSH_COLOR_2,
+        PACK_ICE_BRUSH_STYLE_1, PACK_ICE_BRUSH_STYLE_2,
+        PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4,
+        PRINT_PACK_ICE_BRUSH_STYLE_1, PRINT_PACK_ICE_BRUSH_STYLE_2)
+
+
+  READ_PEN_BRUSH("River_T", river_tPenList, river_tBorder, river_tBrushList,
+        RIVER_T_COLOR_1, RIVER_T_COLOR_2, RIVER_T_COLOR_3, RIVER_T_COLOR_4,
+        PRINT_RIVER_T_COLOR_1, PRINT_RIVER_T_COLOR_2,
+        RIVER_T_PEN_1, RIVER_T_PEN_2, RIVER_T_PEN_3, RIVER_T_PEN_4,
+        PRINT_RIVER_T_PEN_1, PRINT_RIVER_T_PEN_2,
+        RIVER_T_PEN_STYLE_1, RIVER_T_PEN_STYLE_2, RIVER_T_PEN_STYLE_3, RIVER_T_PEN_STYLE_4,
+        PRINT_RIVER_T_PEN_STYLE_1, PRINT_RIVER_T_PEN_STYLE_2,
+        RIVER_T_BRUSH_COLOR_1, RIVER_T_BRUSH_COLOR_2,
+        RIVER_T_BRUSH_COLOR_3, RIVER_T_BRUSH_COLOR_4,
+        PRINT_RIVER_T_BRUSH_COLOR_1, PRINT_RIVER_T_BRUSH_COLOR_2,
+        RIVER_T_BRUSH_STYLE_1, RIVER_T_BRUSH_STYLE_2,
+        RIVER_T_BRUSH_STYLE_3, RIVER_T_BRUSH_STYLE_4,
+        PRINT_RIVER_T_BRUSH_STYLE_1, PRINT_RIVER_T_BRUSH_STYLE_2)
+
+
 
   READ_PEN_BRUSH("Airspace A", airAPenList, airABorder, airABrushList,
         AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
@@ -577,15 +689,26 @@ QPen MapConfig::__getPen(unsigned int typeID, int sIndex)
 {
   switch(typeID)
     {
+      case BaseMapElement::Trail:
+          return *trailPenList.at(sIndex);
       case BaseMapElement::Road:
           return *roadPenList.at(sIndex);
       case BaseMapElement::Highway:
           return *highwayPenList.at(sIndex);
       case BaseMapElement::Railway:
           return *railPenList.at(sIndex);
+      case BaseMapElement::Railway_D:
+          return *rail_dPenList.at(sIndex);
+      case BaseMapElement::Aerial_Cable:
+          return *aerialcablePenList.at(sIndex);
       case BaseMapElement::River:
       case BaseMapElement::Lake:
           return *riverPenList.at(sIndex);
+      case BaseMapElement::River_T:
+      case BaseMapElement::Lake_T:
+          return *river_tPenList.at(sIndex);
+      case BaseMapElement::Canal:
+          return *canalPenList.at(sIndex);
       case BaseMapElement::City:
           return *cityPenList.at(sIndex);
       case BaseMapElement::AirA:
@@ -612,8 +735,14 @@ QPen MapConfig::__getPen(unsigned int typeID, int sIndex)
           return *lowFPenList.at(sIndex);
       case BaseMapElement::Restricted:
           return *restrPenList.at(sIndex);
-      case BaseMapElement::TMZ:
+      case BaseMapElement::Tmz:
           return *tmzPenList.at(sIndex);
+      case BaseMapElement::Forest:
+          return *forestPenList.at(sIndex);
+      case BaseMapElement::Glacier:
+          return *glacierPenList.at(sIndex);
+      case BaseMapElement::PackIce:
+          return *packicePenList.at(sIndex);
       default:
           return *roadPenList.at(sIndex);
     }
@@ -623,15 +752,28 @@ bool MapConfig::isBorder(unsigned int typeID)
 {
   switch(typeID)
     {
+      case BaseMapElement::Trail:
+          return trailBorder[scaleIndex];
       case BaseMapElement::Road:
           return roadBorder[scaleIndex];
       case BaseMapElement::Highway:
           return highwayBorder[scaleIndex];
       case BaseMapElement::Railway:
           return railBorder[scaleIndex];
+      case BaseMapElement::Railway_D:
+          return rail_dBorder[scaleIndex];
+      case BaseMapElement::Aerial_Cable:
+          return aerialcableBorder[scaleIndex];
+
+      case BaseMapElement::Canal:
+          return canalBorder[scaleIndex];
       case BaseMapElement::River:
       case BaseMapElement::Lake:
           return riverBorder[scaleIndex];
+      case BaseMapElement::River_T:
+      case BaseMapElement::Lake_T:
+          return river_tBorder[scaleIndex];
+
       case BaseMapElement::City:
           return cityBorder[scaleIndex];
       case BaseMapElement::AirA:
@@ -658,8 +800,15 @@ bool MapConfig::isBorder(unsigned int typeID)
           return lowFBorder[scaleIndex];
       case BaseMapElement::Restricted:
           return restrBorder[scaleIndex];
-      case BaseMapElement::TMZ:
+      case BaseMapElement::Tmz:
           return tmzBorder[scaleIndex];
+      case BaseMapElement::Forest:
+          return forestBorder[scaleIndex];
+      case BaseMapElement::Glacier:
+          return glacierBorder[scaleIndex];
+      case BaseMapElement::PackIce:
+          return packiceBorder[scaleIndex];
+
     }
 
   /* Should never happen ... */
@@ -670,17 +819,38 @@ bool MapConfig::isPrintBorder(unsigned int typeID)
 {
   switch(typeID)
     {
+      case BaseMapElement::Trail:
+          return trailBorder[printScaleIndex];
       case BaseMapElement::Road:
           return roadBorder[printScaleIndex];
       case BaseMapElement::Highway:
           return highwayBorder[printScaleIndex];
       case BaseMapElement::Railway:
           return railBorder[printScaleIndex];
+      case BaseMapElement::Railway_D:
+          return rail_dBorder[printScaleIndex];
+      case BaseMapElement::Aerial_Cable:
+          return aerialcableBorder[printScaleIndex];
+      case BaseMapElement::Canal:
+          return canalBorder[printScaleIndex];
+
+
       case BaseMapElement::River:
       case BaseMapElement::Lake:
           return riverBorder[printScaleIndex];
+      case BaseMapElement::River_T:
+      case BaseMapElement::Lake_T:
+          return river_tBorder[printScaleIndex];
+
       case BaseMapElement::City:
           return cityBorder[printScaleIndex];
+      case BaseMapElement::Forest:
+          return forestBorder[printScaleIndex];
+      case BaseMapElement::Glacier:
+          return glacierBorder[printScaleIndex];
+      case BaseMapElement::PackIce:
+          return packiceBorder[printScaleIndex];
+
     }
   /* Should never happen ... */
   return true;
@@ -733,8 +903,10 @@ QBrush MapConfig::__getBrush(unsigned int typeID, int sIndex)
           return *lowFBrushList.at(sIndex);
       case BaseMapElement::Restricted:
           return *restrBrushList.at(sIndex);
-      case BaseMapElement::TMZ:
+      case BaseMapElement::Tmz:
           return *tmzBrushList.at(sIndex);
+      case BaseMapElement::Forest:
+          return *forestBrushList.at(sIndex);
     }
   return QBrush();
 }
@@ -806,16 +978,16 @@ QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
       case BaseMapElement::Landmark:
         iconName = "landmark.xpm";
         break;
-      case BaseMapElement::VOR:
+      case BaseMapElement::Vor:
         iconName = "vor.xpm";
         break;
-      case BaseMapElement::VORDME:
+      case BaseMapElement::VorDme:
         iconName = "vordme.xpm";
         break;
-      case BaseMapElement::VORTAC:
+      case BaseMapElement::VorTac:
         iconName = "vortac.xpm";
         break;
-      case BaseMapElement::NDB:
+      case BaseMapElement::Ndb:
         iconName = "ndb.xpm";
         break;
       default:

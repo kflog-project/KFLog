@@ -45,7 +45,7 @@ class ConfigPrintElement : public QFrame
     /** */
     enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
         AirA, AirB, AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
-        LowFlight, Restricted, TMZ};
+        LowFlight, Restricted, TMZ, Forest};
 
   public slots:
     /** */
@@ -116,6 +116,8 @@ class ConfigPrintElement : public QFrame
     QList<QPen> highwayPenList;
     QList<QPen> cityPenList;
     QList<QBrush> cityBrushList;
+    QList<QPen> forestPenList;
+    QList<QBrush> forestBrushList;
 
     bool* airABorder;
     bool* airBBorder;
@@ -136,6 +138,7 @@ class ConfigPrintElement : public QFrame
     bool* railBorder;
     bool* riverBorder;
     bool* cityBorder;
+    bool* forestBorder;
 
     int oldElement;
     int currentElement;

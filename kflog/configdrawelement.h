@@ -45,7 +45,8 @@ class ConfigDrawElement : public QFrame
     /** */
     enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
         AirA, AirB, AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
-        LowFlight, Restricted, TMZ};
+        LowFlight, Restricted, TMZ, Forest, Trail, Railway_D, Aerial_Cable, River_T,
+        Glacier, PackIce};
 
   public slots:
     /** */
@@ -131,13 +132,34 @@ class ConfigDrawElement : public QFrame
     QList<QBrush> restrBrushList;
     QList<QPen> tmzPenList;
     QList<QBrush> tmzBrushList;
-
+/*
     QList<QPen> roadPenList;
     QList<QPen> railPenList;
     QList<QPen> riverPenList;
     QList<QPen> highwayPenList;
     QList<QPen> cityPenList;
     QList<QBrush> cityBrushList;
+    QList<QPen> forestPenList;
+    QList<QBrush> forestBrushList;
+*/
+    QList<QPen> highwayPenList;
+    QList<QPen> roadPenList;
+    QList<QPen> trailPenList;
+    QList<QPen> railPenList;
+    QList<QPen> rail_dPenList;
+    QList<QPen> aerialcablePenList;
+    QList<QPen> riverPenList;
+    QList<QPen> river_tPenList;
+    QList<QBrush> river_tBrushList;
+    QList<QPen> canalPenList;
+    QList<QPen> cityPenList;
+    QList<QBrush> cityBrushList;
+    QList<QPen> forestPenList;
+    QList<QPen> glacierPenList;
+    QList<QPen> packicePenList;
+    QList<QBrush> forestBrushList;
+    QList<QBrush> glacierBrushList;
+    QList<QBrush> packiceBrushList;
 
     bool* airABorder;
     bool* airBBorder;
@@ -152,12 +174,28 @@ class ConfigDrawElement : public QFrame
     bool* lowFBorder;
     bool* restrBorder;
     bool* tmzBorder;
-
+/*
     bool* roadBorder;
     bool* highwayBorder;
     bool* railBorder;
     bool* riverBorder;
     bool* cityBorder;
+    bool* forestBorder;
+*/
+    bool* trailBorder;
+    bool* roadBorder;
+    bool* highwayBorder;
+    bool* railBorder;
+    bool* rail_dBorder;
+    bool* aerialcableBorder;
+    bool* riverBorder;
+    bool* river_tBorder;
+    bool* canalBorder;
+    bool* cityBorder;
+
+    bool* forestBorder;
+    bool* glacierBorder;
+    bool* packiceBorder;
 
     int oldElement;
     int currentElement;

@@ -285,6 +285,8 @@ bool Flight::__isVisible() const
 
 void Flight::printMapElement(QPainter* targetPainter, bool isText)
 {
+  warning("print Flight");
+
   flightPoint* pointA;
   flightPoint* pointB;
   flightPoint* pointC;

@@ -369,7 +369,7 @@ MapPrint::MapPrint(bool flightLoaded)
   __drawGrid(selectedScale, &printPainter, pS, mapBorder, mapCenter.y(),
       dX, dY, TOP_LEFT_X + 30, TOP_RIGHT_X - 30, TOP_LEFT_Y + 30,
       BOT_LEFT_Y - 95);
-
+/*
   // draw waypoints
   __drawWaypoints(selectedScale, &printPainter, pS, mapBorder, mapCenter.y(),
       dX, dY, TOP_LEFT_X + 30, TOP_RIGHT_X - 30, TOP_LEFT_Y + 30,
@@ -379,7 +379,7 @@ MapPrint::MapPrint(bool flightLoaded)
   __drawTask(selectedScale, &printPainter, pS, mapBorder, mapCenter.y(),
       dX, dY, TOP_LEFT_X + 30, TOP_RIGHT_X - 30, TOP_LEFT_Y + 30,
       BOT_LEFT_Y - 95);
-
+*/
   printPainter.setClipRect(leftMargin + 15, topMargin + 15,
       pS.width() - leftMargin - rightMargin - 30,
       pS.height() - topMargin - bottomMargin - 63);
@@ -809,7 +809,7 @@ void MapPrint::__drawWaypoints(const double selectedScale, QPainter* wpP, const 
 }
 
 /** Prints the task, if defined, to the supplied QPainter */
-void MapPrint::__drawTask(const double selectedScale, QPainter* taskP, const QSize pS, const QRect mapBorder, const int mapCenterLon,     const double dX, const double dY, const double gridLeft,     const double gridRight, const double gridTop, const double gridBot){
+/* void MapPrint::__drawTask(const double selectedScale, QPainter* taskP, const QSize pS, const QRect mapBorder, const int mapCenterLon,     const double dX, const double dY, const double gridLeft,     const double gridRight, const double gridTop, const double gridBot){
  extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
   QList<wayPoint> *wpList;
@@ -826,3 +826,5 @@ void MapPrint::__drawTask(const double selectedScale, QPainter* taskP, const QSi
     task->printMapElement( taskP, false, dX, dY);
    }
 }
+
+*/

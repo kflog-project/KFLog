@@ -197,7 +197,7 @@
 #define BUTTONROW(penC, penW, penS, brushC, brushS, row) \
   penC = new KColorButton(parent); \
   penC->setMaximumWidth(35); \
-  penW = new QSpinBox(1, 9, 1, parent); \
+  penW = new QSpinBox(0, 9, 1, parent); \
   penW->setMaximumWidth(40); \
   penS = new KComboBox(parent); \
   penS->setMaximumWidth(45); \
@@ -237,6 +237,15 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
   railBorder = new bool[4];
   riverBorder = new bool[4];
   cityBorder = new bool[4];
+  forestBorder = new bool[4];
+
+  trailBorder = new bool[4];
+  rail_dBorder = new bool[4];
+  aerialcableBorder = new bool[4];
+  river_tBorder = new bool[4];
+  canalBorder = new bool[4];
+  glacierBorder = new bool[4];
+  packiceBorder = new bool[4];
 
   airAPenList.setAutoDelete(true);
   airABrushList.setAutoDelete(true);
@@ -269,6 +278,26 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
   railPenList.setAutoDelete(true);
   cityPenList.setAutoDelete(true);
 
+  forestPenList.setAutoDelete(true);
+  forestBrushList.setAutoDelete(true);
+
+  trailPenList.setAutoDelete(true);
+  rail_dPenList.setAutoDelete(true);
+  aerialcablePenList.setAutoDelete(true);
+  river_tPenList.setAutoDelete(true);
+  canalPenList.setAutoDelete(true);
+  glacierPenList.setAutoDelete(true);
+  packicePenList.setAutoDelete(true);
+
+  glacierBrushList.setAutoDelete(true);
+  packiceBrushList.setAutoDelete(true);
+
+  config->setGroup("Trail");
+  READ_PEN(trailPenList, TRAIL_COLOR_1, TRAIL_COLOR_2, TRAIL_COLOR_3, TRAIL_COLOR_4,
+        TRAIL_PEN_1, TRAIL_PEN_2, TRAIL_PEN_3, TRAIL_PEN_4,
+        TRAIL_PEN_STYLE_1, TRAIL_PEN_STYLE_2, TRAIL_PEN_STYLE_3, TRAIL_PEN_STYLE_4)
+  READ_BORDER(trailBorder);
+
   config->setGroup("Road");
   READ_PEN(roadPenList, ROAD_COLOR_1, ROAD_COLOR_2, ROAD_COLOR_3, ROAD_COLOR_4,
         ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4,
@@ -281,17 +310,38 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
         RIVER_PEN_STYLE_1, RIVER_PEN_STYLE_2, RIVER_PEN_STYLE_3, RIVER_PEN_STYLE_4)
   READ_BORDER(riverBorder);
 
+  config->setGroup("Canal");
+  READ_PEN(canalPenList, CANAL_COLOR_1, CANAL_COLOR_2, CANAL_COLOR_2,
+        CANAL_COLOR_4, CANAL_PEN_1, CANAL_PEN_2, CANAL_PEN_3, CANAL_PEN_4,
+        CANAL_PEN_STYLE_1, CANAL_PEN_STYLE_2, CANAL_PEN_STYLE_3, CANAL_PEN_STYLE_4)
+  READ_BORDER(canalBorder);
+
   config->setGroup("Rail");
   READ_PEN(railPenList, RAIL_COLOR_1, RAIL_COLOR_2, RAIL_COLOR_3, RAIL_COLOR_4,
         RAIL_PEN_1, RAIL_PEN_2, RAIL_PEN_3, RAIL_PEN_4,
         RAIL_PEN_STYLE_1, RAIL_PEN_STYLE_2, RAIL_PEN_STYLE_3, RAIL_PEN_STYLE_4)
   READ_BORDER(railBorder);
 
+  config->setGroup("RailD");
+  READ_PEN(rail_dPenList, RAIL_D_COLOR_1, RAIL_D_COLOR_2, RAIL_D_COLOR_3,
+        RAIL_D_COLOR_4, RAIL_D_PEN_1, RAIL_D_PEN_2, RAIL_D_PEN_3, RAIL_D_PEN_4,
+        RAIL_D_PEN_STYLE_1, RAIL_D_PEN_STYLE_2, RAIL_D_PEN_STYLE_3, RAIL_D_PEN_STYLE_4)
+  READ_BORDER(rail_dBorder);
+
+  config->setGroup("Aerial Cable");
+  READ_PEN(aerialcablePenList, AERIAL_CABLE_COLOR_1, AERIAL_CABLE_COLOR_2,
+        AERIAL_CABLE_COLOR_3, AERIAL_CABLE_COLOR_4, AERIAL_CABLE_PEN_1,
+        AERIAL_CABLE_PEN_2, AERIAL_CABLE_PEN_3, AERIAL_CABLE_PEN_4,
+        AERIAL_CABLE_PEN_STYLE_1, AERIAL_CABLE_PEN_STYLE_2,
+        AERIAL_CABLE_PEN_STYLE_3, AERIAL_CABLE_PEN_STYLE_4)
+  READ_BORDER(aerialcableBorder);
+
   config->setGroup("Highway");
   READ_PEN(highwayPenList, HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
         HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4,
         HIGH_PEN_STYLE_1, HIGH_PEN_STYLE_2, HIGH_PEN_STYLE_3, HIGH_PEN_STYLE_4)
   READ_BORDER(highwayBorder);
+
 
   //
   // In version <= 2.0.1, the fillcolor of cities is called "Color" instead
@@ -323,6 +373,46 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
       cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_4, Qt::SolidPattern));
     }
   READ_BORDER(cityBorder);
+
+  config->setGroup("River_T");
+  READ_PEN(river_tPenList, RIVER_T_COLOR_1, RIVER_T_COLOR_2, RIVER_T_COLOR_2,
+        RIVER_T_COLOR_4, RIVER_T_PEN_1, RIVER_T_PEN_2, RIVER_T_PEN_3, RIVER_T_PEN_4,
+        RIVER_T_PEN_STYLE_1, RIVER_T_PEN_STYLE_2, RIVER_T_PEN_STYLE_3, RIVER_T_PEN_STYLE_4)
+  READ_BRUSH(river_tBrushList, RIVER_T_BRUSH_COLOR_1, RIVER_T_BRUSH_COLOR_2,
+        RIVER_T_BRUSH_COLOR_3, RIVER_T_BRUSH_COLOR_4, RIVER_T_BRUSH_STYLE_1,
+        RIVER_T_BRUSH_STYLE_2, RIVER_T_BRUSH_STYLE_3, RIVER_T_BRUSH_STYLE_4)
+  READ_BORDER(river_tBorder);
+
+
+  config->setGroup("Forest");
+  READ_PEN(forestPenList, FRST_COLOR_1, FRST_COLOR_2, FRST_COLOR_3,
+        FRST_COLOR_4, FRST_PEN_1, FRST_PEN_2, FRST_PEN_3, FRST_PEN_4,
+        FRST_PEN_STYLE_1, FRST_PEN_STYLE_2, FRST_PEN_STYLE_3,
+        FRST_PEN_STYLE_4)
+  READ_BRUSH(forestBrushList, FRST_BRUSH_COLOR_1, FRST_BRUSH_COLOR_2,
+        FRST_BRUSH_COLOR_3, FRST_BRUSH_COLOR_4, FRST_BRUSH_STYLE_1,
+        FRST_BRUSH_STYLE_2, FRST_BRUSH_STYLE_3, FRST_BRUSH_STYLE_4)
+  READ_BORDER(forestBorder);
+
+  config->setGroup("Glacier");
+  READ_PEN(glacierPenList, GLACIER_COLOR_1, GLACIER_COLOR_2, GLACIER_COLOR_3,
+        GLACIER_COLOR_4, GLACIER_PEN_1, GLACIER_PEN_2, GLACIER_PEN_3, GLACIER_PEN_4,
+        GLACIER_PEN_STYLE_1, GLACIER_PEN_STYLE_2, GLACIER_PEN_STYLE_3,
+        GLACIER_PEN_STYLE_4)
+  READ_BRUSH(glacierBrushList, GLACIER_BRUSH_COLOR_1, GLACIER_BRUSH_COLOR_2,
+        GLACIER_BRUSH_COLOR_3, GLACIER_BRUSH_COLOR_4, GLACIER_BRUSH_STYLE_1,
+        GLACIER_BRUSH_STYLE_2, GLACIER_BRUSH_STYLE_3, GLACIER_BRUSH_STYLE_4)
+  READ_BORDER(glacierBorder);
+
+  config->setGroup("Pack Ice");
+  READ_PEN(packicePenList, PACK_ICE_COLOR_1, PACK_ICE_COLOR_2, PACK_ICE_COLOR_3,
+        PACK_ICE_COLOR_4, PACK_ICE_PEN_1, PACK_ICE_PEN_2, PACK_ICE_PEN_3, PACK_ICE_PEN_4,
+        PACK_ICE_PEN_STYLE_1, PACK_ICE_PEN_STYLE_2, PACK_ICE_PEN_STYLE_3,
+        PACK_ICE_PEN_STYLE_4)
+  READ_BRUSH(packiceBrushList, PACK_ICE_BRUSH_COLOR_1, PACK_ICE_BRUSH_COLOR_2,
+        PACK_ICE_BRUSH_COLOR_3, PACK_ICE_BRUSH_COLOR_4, PACK_ICE_BRUSH_STYLE_1,
+        PACK_ICE_BRUSH_STYLE_2, PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4)
+  READ_BORDER(packiceBorder);
 
   config->setGroup("Airspace A");
   READ_PEN(airAPenList, AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
@@ -531,13 +621,22 @@ void ConfigDrawElement::slotOk()
   config->setGroup("General Options");
   config->writeEntry("Version", "2.0.2");
 
+
+  WRITE_PEN("Trail", trailPenList, trailBorder);
+
   WRITE_PEN("Road", roadPenList, roadBorder);
 
   WRITE_PEN("Highway", highwayPenList, highwayBorder);
 
   WRITE_PEN("Rail", railPenList, railBorder);
 
+  WRITE_PEN("Rail_D", rail_dPenList, rail_dBorder);
+
+  WRITE_PEN("Aerial Cable", aerialcablePenList, aerialcableBorder);
+
   WRITE_PEN("River", riverPenList, riverBorder);
+
+  WRITE_PEN("Canal", canalPenList, canalBorder);
 
   WRITE_PEN("City", cityPenList, cityBorder);
 
@@ -567,12 +666,24 @@ void ConfigDrawElement::slotOk()
 
   WRITE_BRUSH("TMZ", tmzBrushList, tmzPenList, tmzBorder);
 
+  WRITE_BRUSH("Forest", forestBrushList, forestPenList, forestBorder);
+
+  WRITE_BRUSH("River_T", river_tBrushList, river_tPenList, river_tBorder);
+
+  WRITE_BRUSH("Glacier", glacierBrushList, glacierPenList, glacierBorder);
+
+  WRITE_BRUSH("Pack Ice", packiceBrushList, packicePenList, packiceBorder);
+
   config->sync();
   config->setGroup(0);
 }
 
 void ConfigDrawElement::slotDefaultElements()
 {
+  DEFAULT_PEN(trailPenList, trailBorder, TRAIL_COLOR_1, TRAIL_COLOR_2,
+      TRAIL_COLOR_3, TRAIL_COLOR_4,
+      TRAIL_PEN_1, TRAIL_PEN_2, TRAIL_PEN_3, TRAIL_PEN_4)
+
   DEFAULT_PEN(roadPenList, roadBorder, ROAD_COLOR_1, ROAD_COLOR_2,
       ROAD_COLOR_3, ROAD_COLOR_4,
       ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4)
@@ -585,9 +696,30 @@ void ConfigDrawElement::slotDefaultElements()
       RIVER_COLOR_3, RIVER_COLOR_4,
       RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4)
 
+  DEFAULT_PEN(canalPenList, canalBorder, CANAL_COLOR_1, CANAL_COLOR_2,
+      CANAL_COLOR_3, CANAL_COLOR_4,
+      CANAL_PEN_1, CANAL_PEN_2, CANAL_PEN_3, CANAL_PEN_4)
+
   DEFAULT_PEN(railPenList, railBorder, RAIL_COLOR_1, RAIL_COLOR_2,
       RAIL_COLOR_3, RAIL_COLOR_4,
       RAIL_PEN_1, RAIL_PEN_2, RAIL_PEN_3, RAIL_PEN_4)
+
+  DEFAULT_PEN(rail_dPenList, rail_dBorder, RAIL_D_COLOR_1, RAIL_D_COLOR_2,
+      RAIL_D_COLOR_3, RAIL_D_COLOR_4,
+      RAIL_D_PEN_1, RAIL_D_PEN_2, RAIL_D_PEN_3, RAIL_D_PEN_4)
+
+  DEFAULT_PEN(aerialcablePenList, aerialcableBorder, AERIAL_CABLE_COLOR_1, AERIAL_CABLE_COLOR_2,
+      AERIAL_CABLE_COLOR_3, AERIAL_CABLE_COLOR_4,
+      AERIAL_CABLE_PEN_1, AERIAL_CABLE_PEN_2, AERIAL_CABLE_PEN_3, AERIAL_CABLE_PEN_4)
+
+  DEFAULT_PEN_BRUSH(river_tPenList, river_tBorder, river_tBrushList,
+      RIVER_T_COLOR_1, RIVER_T_COLOR_2, RIVER_T_COLOR_3, RIVER_T_COLOR_4,
+      RIVER_T_PEN_1, RIVER_T_PEN_2, RIVER_T_PEN_3, RIVER_T_PEN_4,
+      RIVER_T_BRUSH_COLOR_1, RIVER_T_BRUSH_COLOR_2,
+      RIVER_T_BRUSH_COLOR_3, RIVER_T_BRUSH_COLOR_4,
+      RIVER_T_BRUSH_STYLE_1, RIVER_T_BRUSH_STYLE_2,
+      RIVER_T_BRUSH_STYLE_3, RIVER_T_BRUSH_STYLE_4)
+
 
   DEFAULT_PEN_BRUSH(cityPenList, cityBorder, cityBrushList,
       CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3, CITY_COLOR_4,
@@ -596,6 +728,31 @@ void ConfigDrawElement::slotDefaultElements()
       CITY_BRUSH_COLOR_3, CITY_BRUSH_COLOR_4,
       CITY_BRUSH_STYLE_1, CITY_BRUSH_STYLE_2,
       CITY_BRUSH_STYLE_3, CITY_BRUSH_STYLE_4)
+
+  DEFAULT_PEN_BRUSH(forestPenList, forestBorder, forestBrushList,
+      FRST_COLOR_1, FRST_COLOR_2, FRST_COLOR_3, FRST_COLOR_4,
+      FRST_PEN_1, FRST_PEN_2, FRST_PEN_3, FRST_PEN_4,
+      FRST_BRUSH_COLOR_1, FRST_BRUSH_COLOR_2,
+      FRST_BRUSH_COLOR_3, FRST_BRUSH_COLOR_4,
+      FRST_BRUSH_STYLE_1, FRST_BRUSH_STYLE_2,
+      FRST_BRUSH_STYLE_3, FRST_BRUSH_STYLE_4)
+
+  DEFAULT_PEN_BRUSH(glacierPenList, glacierBorder, glacierBrushList,
+      GLACIER_COLOR_1, GLACIER_COLOR_2, GLACIER_COLOR_3, GLACIER_COLOR_4,
+      GLACIER_PEN_1, GLACIER_PEN_2, GLACIER_PEN_3, GLACIER_PEN_4,
+      GLACIER_BRUSH_COLOR_1, GLACIER_BRUSH_COLOR_2,
+      GLACIER_BRUSH_COLOR_3, GLACIER_BRUSH_COLOR_4,
+      GLACIER_BRUSH_STYLE_1, GLACIER_BRUSH_STYLE_2,
+      GLACIER_BRUSH_STYLE_3, GLACIER_BRUSH_STYLE_4)
+
+  DEFAULT_PEN_BRUSH(packicePenList, packiceBorder, packiceBrushList,
+      PACK_ICE_COLOR_1, PACK_ICE_COLOR_2, PACK_ICE_COLOR_3, PACK_ICE_COLOR_4,
+      PACK_ICE_PEN_1, PACK_ICE_PEN_2, PACK_ICE_PEN_3, PACK_ICE_PEN_4,
+      PACK_ICE_BRUSH_COLOR_1, PACK_ICE_BRUSH_COLOR_2,
+      PACK_ICE_BRUSH_COLOR_3, PACK_ICE_BRUSH_COLOR_4,
+      PACK_ICE_BRUSH_STYLE_1, PACK_ICE_BRUSH_STYLE_2,
+      PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4)
+
 
   DEFAULT_PEN_BRUSH(airAPenList, airABorder, airABrushList,
       AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
@@ -703,6 +860,9 @@ void ConfigDrawElement::slotSelectElement(int elementID)
 
   switch(oldElement)
     {
+      case Trail:
+        SAVE_PEN(trailPenList, trailBorder)
+        break;
       case Road:
         SAVE_PEN(roadPenList, roadBorder)
         break;
@@ -712,8 +872,22 @@ void ConfigDrawElement::slotSelectElement(int elementID)
       case Railway:
         SAVE_PEN(railPenList, railBorder)
         break;
+      case Railway_D:
+        SAVE_PEN(rail_dPenList, rail_dBorder)
+        break;
+      case Aerial_Cable:
+        SAVE_PEN(aerialcablePenList, aerialcableBorder)
+        break;
       case River:
         SAVE_PEN(riverPenList, riverBorder)
+        break;
+      case Canal:
+        SAVE_PEN(canalPenList, canalBorder)
+        break;
+
+      case River_T:
+        SAVE_PEN(river_tPenList, river_tBorder)
+        SAVE_BRUSH(river_tBrushList)
         break;
       case City:
         SAVE_PEN(cityPenList, cityBorder)
@@ -771,12 +945,24 @@ void ConfigDrawElement::slotSelectElement(int elementID)
         SAVE_PEN(tmzPenList, tmzBorder)
         SAVE_BRUSH(tmzBrushList)
         break;
+      case Forest:
+        SAVE_PEN(forestPenList, forestBorder);
+        SAVE_BRUSH(forestBrushList);
+      case Glacier:
+        SAVE_PEN(glacierPenList, glacierBorder);
+        SAVE_BRUSH(glacierBrushList);
+      case PackIce:
+        SAVE_PEN(packicePenList, packiceBorder);
+        SAVE_BRUSH(packiceBrushList);
       default:
         break;
     }
 
   switch(elementID)
     {
+      case Trail:
+        SHOW_PEN(trailPenList, trailBorder)
+        break;
       case Road:
         SHOW_PEN(roadPenList, roadBorder)
         break;
@@ -786,8 +972,20 @@ void ConfigDrawElement::slotSelectElement(int elementID)
       case Railway:
         SHOW_PEN(railPenList, railBorder)
         break;
+      case Railway_D:
+        SHOW_PEN(rail_dPenList, rail_dBorder)
+        break;
+      case Aerial_Cable:
+        SHOW_PEN(aerialcablePenList, aerialcableBorder)
+        break;
       case River:
         SHOW_PEN(riverPenList, riverBorder)
+        break;
+      case Canal:
+        SHOW_PEN(canalPenList, canalBorder)
+        break;
+      case River_T:
+        SHOW_PEN(river_tPenList, river_tBorder)
         break;
       case City:
         SHOW_PEN(cityPenList, cityBorder)
@@ -845,6 +1043,16 @@ void ConfigDrawElement::slotSelectElement(int elementID)
         SHOW_PEN(tmzPenList, tmzBorder)
         SHOW_BRUSH(tmzBrushList)
         break;
+      case Forest:
+        SHOW_PEN(forestPenList, forestBorder);
+        SHOW_BRUSH(forestBrushList);
+      case Glacier:
+        SHOW_PEN(glacierPenList, glacierBorder);
+        SHOW_BRUSH(glacierBrushList);
+      case PackIce:
+        SHOW_PEN(packicePenList, packiceBorder);
+        SHOW_BRUSH(packiceBrushList);
+        break;
     }
 
   oldElement = elementID;
@@ -878,6 +1086,10 @@ void ConfigDrawElement::slotToggleFirst(bool toggle)
       case Danger:
       case Restricted:
       case TMZ:
+      case Forest:
+      case Glacier:
+      case PackIce:
+      case River_T:
         border1PenStyle->setEnabled(toggle);
         border1BrushColor->setEnabled(toggle);
         border1BrushStyle->setEnabled(toggle);
@@ -921,6 +1133,10 @@ void ConfigDrawElement::slotToggleSecond(bool toggle)
       case Danger:
       case Restricted:
       case TMZ:
+      case Forest:
+      case Glacier:
+      case PackIce:
+      case River_T:
         border2PenStyle->setEnabled(toggle);
         border2BrushColor->setEnabled(toggle);
         border2BrushStyle->setEnabled(toggle);
@@ -964,6 +1180,10 @@ void ConfigDrawElement::slotToggleThird(bool toggle)
       case Danger:
       case Restricted:
       case TMZ:
+      case Forest:
+      case Glacier:
+      case PackIce:
+      case River_T:
         border3PenStyle->setEnabled(toggle);
         border3BrushColor->setEnabled(toggle);
         border3BrushStyle->setEnabled(toggle);
@@ -1005,6 +1225,10 @@ void ConfigDrawElement::slotToggleForth(bool toggle)
       case Danger:
       case Restricted:
       case TMZ:
+      case Forest:
+      case Glacier:
+      case PackIce:
+      case River_T:
         border4PenStyle->setEnabled(toggle);
         border4BrushColor->setEnabled(toggle);
         border4BrushStyle->setEnabled(toggle);

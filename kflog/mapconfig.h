@@ -209,12 +209,24 @@ class MapConfig : public QObject
     QList<QPen> tmzPenList;
     QList<QBrush> tmzBrushList;
 
-    QList<QPen> roadPenList;
-    QList<QPen> railPenList;
-    QList<QPen> riverPenList;
     QList<QPen> highwayPenList;
+    QList<QPen> roadPenList;
+    QList<QPen> trailPenList;
+    QList<QPen> railPenList;
+    QList<QPen> rail_dPenList;
+    QList<QPen> aerialcablePenList;
+    QList<QPen> riverPenList;
+    QList<QPen> river_tPenList;
+    QList<QBrush> river_tBrushList;
+    QList<QPen> canalPenList;
     QList<QPen> cityPenList;
     QList<QBrush> cityBrushList;
+    QList<QPen> forestPenList;
+    QList<QPen> glacierPenList;
+    QList<QPen> packicePenList;
+    QList<QBrush> forestBrushList;
+    QList<QBrush> glacierBrushList;
+    QList<QBrush> packiceBrushList;
     /**
      */
     bool* airABorder;
@@ -231,11 +243,20 @@ class MapConfig : public QObject
     bool* restrBorder;
     bool* tmzBorder;
 
+    bool* trailBorder;
     bool* roadBorder;
     bool* highwayBorder;
     bool* railBorder;
+    bool* rail_dBorder;
+    bool* aerialcableBorder;
     bool* riverBorder;
+    bool* river_tBorder;
+    bool* canalBorder;
     bool* cityBorder;
+
+    bool* forestBorder;
+    bool* glacierBorder;
+    bool* packiceBorder;
     /**
      * The current scaleindex for displaying the map. The index is set
      * from the mapmatrix-object each time, the map is zoomed.

@@ -17,11 +17,12 @@
 
 #include "lineelement.h"
 
-LineElement::LineElement(QString n, unsigned int t, QPointArray pA, bool isV)
-  : BaseMapElement(n, t),
+LineElement::LineElement(QString name, unsigned int t, QPointArray pA, bool isV)
+  : BaseMapElement(name, t),
     projPointArray(pA), bBox(pA.boundingRect()), valley(isV), closed(false)
 {
-  if(typeID == BaseMapElement::Lake || typeID == BaseMapElement::City)
+  if(typeID == BaseMapElement::Lake || typeID == BaseMapElement::City ||
+      typeID == BaseMapElement::Forest)
       closed = true;
 }
 
@@ -67,7 +68,8 @@ void LineElement::drawMapElement(QPainter* targetP, QPainter* maskP)
   else
     {
       maskP->setPen(QPen(Qt::color1, drawP.width(), drawP.style()));
-      maskP->setBrush(QBrush(Qt::color1, Qt::SolidPattern));
+//      maskP->setBrush(QBrush(Qt::color1, Qt::SolidPattern));
+      maskP->setBrush(QBrush(Qt::color1, glConfig->getDrawBrush(typeID).style()));
     }
 
   if(typeID == BaseMapElement::City)
@@ -100,6 +102,15 @@ void LineElement::drawMapElement(QPainter* targetP, QPainter* maskP)
           targetP->setBrush(QBrush(drawP.color(), QBrush::SolidPattern));
       else
           targetP->setBrush(glConfig->getDrawBrush(typeID));
+
+      //
+      // Forests do not have an outline.
+      //
+      if(typeID == BaseMapElement::Forest)
+        {
+          maskP->setPen(QPen(Qt::color1, 0, Qt::NoPen));
+          targetP->setPen(QPen(drawP.color(), 0, Qt::NoPen));
+        }
 
       maskP->drawPolygon(pA);
       targetP->drawPolygon(pA);

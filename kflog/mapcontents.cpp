@@ -17,6 +17,7 @@
 
 #include <cmath>
 #include <stdlib.h>
+#include <iostream.h>
 
 #include "mapcontents.h"
 #include <mapcalc.h>
@@ -67,7 +68,7 @@
 #define FILE_TYPE_TERRAIN 0x54
 #define FILE_TYPE_MAP     0x4d
 #define FILE_TYPE_AERO    0x41
-#define FILE_FORMAT_ID    100
+#define FILE_FORMAT_ID    101
 
 #define CHECK_BORDER if(i == 0) { \
     border.north = lat_temp;   border.south = lat_temp; \
@@ -134,7 +135,7 @@ MapContents::MapContents()
   railList.setAutoDelete(true);
   reportList.setAutoDelete(true);
   roadList.setAutoDelete(true);
-  stationList.setAutoDelete(true);
+//  stationList.setAutoDelete(true);
   topoList.setAutoDelete(true);
   wpList.setAutoDelete(false);
 }
@@ -446,10 +447,10 @@ bool MapContents::__readAsciiFile(const char* fileName)
                     break;
                   case BaseMapElement::Outlanding:
                     break;
-                  case BaseMapElement::VOR:
-                  case BaseMapElement::VORDME:
-                  case BaseMapElement::VORTAC:
-                  case BaseMapElement::NDB:
+                  case BaseMapElement::Vor:
+                  case BaseMapElement::VorDme:
+                  case BaseMapElement::VorTac:
+                  case BaseMapElement::Ndb:
                     navList.append(new RadioPoint(name, alias, abbr, type,
                         wgsPos, position, frequency));
                     break;
@@ -464,6 +465,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
                   case BaseMapElement::Restricted:
                   case BaseMapElement::Danger:
                   case BaseMapElement::LowFlight:
+                  case BaseMapElement::Tmz:
                     airspaceList.append(new Airspace(name, type, tA,
                         uLimit, uLimitType, lLimit, lLimitType));
                     break;
@@ -485,16 +487,20 @@ bool MapContents::__readAsciiFile(const char* fileName)
                     break;
                   case BaseMapElement::Highway:
                   case BaseMapElement::Road:
+                  case BaseMapElement::Trail:
                     roadList.append(new LineElement(name, type, tA));
                     break;
                   case BaseMapElement::Railway:
+                  case BaseMapElement::Railway_D:
                     railList.append(new LineElement(name, type, tA));
                     break;
                   case BaseMapElement::AerialRailway:
                     railList.append(new LineElement(name, type, tA));
                     break;
                   case BaseMapElement::Lake:
+                  case BaseMapElement::Lake_T:
                   case BaseMapElement::River:
+                  case BaseMapElement::River_T:
                     hydroList.append(new LineElement(name, type, tA, sortID));
                     break;
                   case BaseMapElement::Spot:
@@ -502,6 +508,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
                         position, elev));
                     break;
                   case BaseMapElement::Glacier:
+                  case BaseMapElement::PackIce:
                     topoList.append(new LineElement(name, type, tA));
                     break;
                   case BaseMapElement::Isohypse:
@@ -624,6 +631,9 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 //      valley -= 1;
 //      valley *= -1;
       // We must ignore it, when sort is more than 3 or less than 0!
+
+//      valley = 0;
+
       if(sort >= 0 && sort <= 3)
         {
           for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
@@ -922,7 +932,7 @@ bool MapContents::__readAirspaceFile(const char* pathName)
           case BaseMapElement::Danger:
           case BaseMapElement::LowFlight:
           case BaseMapElement::Restricted:
-          case BaseMapElement::TMZ:
+          case BaseMapElement::Tmz:
             in >> name;
             in >> idString;
             in >> icaoName;
@@ -980,12 +990,13 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   QDataStream in(&eingabe);
   in.setVersion(2);
 
-  Q_UINT8 typeIn;
-  Q_INT8 loadTypeID, sort;
+  Q_UINT8 typeIn, lm_typ;
+  Q_INT8 loadTypeID, sort, elev;
   Q_UINT16 loadSecID, formatID;
   Q_INT32 lat_temp, lon_temp;
-  Q_UINT32 magic, locLength;
+  Q_UINT32 magic, locLength = 0;
   QDateTime createDateTime;
+  QString name = "";
 
   in >> magic;
   if(magic != KFLOG_FILE_MAGIC)  return false;
@@ -998,6 +1009,11 @@ bool MapContents::__readBinaryFile(const int fileSecID,
     {
       // to old ...
     }
+//  else if(formatID == "2")
+//    {
+      // Current Fileformat
+
+//    }
   else if(formatID > FILE_FORMAT_ID)
     {
       // to young ...
@@ -1010,44 +1026,86 @@ bool MapContents::__readBinaryFile(const int fileSecID,
 
   in >> createDateTime;
 
+  unsigned int gesamt_elemente = 0;
+  unsigned int river = 0;
+  unsigned int rivert = 0;
+
   while(!in.eof())
     {
       in >> typeIn;
       locLength = 0;
+      name = "";
 
       QPointArray tA;
+
+      gesamt_elemente++;
 
       switch (typeIn)
         {
           case BaseMapElement::Highway:
-            READ_POINT_LIST
-            roadList.append(new LineElement("Highway", typeIn, tA));
-            break;
           case BaseMapElement::Road:
-            READ_POINT_LIST
-            roadList.append(new LineElement("Road", typeIn, tA));
-            break;
+          case BaseMapElement::Trail:
           case BaseMapElement::Railway:
+          case BaseMapElement::Railway_D:
+          case BaseMapElement::Aerial_Cable:
             READ_POINT_LIST
-            roadList.append(new LineElement("Railway", typeIn, tA));
-            break;
-          case BaseMapElement::River:
-            READ_POINT_LIST
-            hydroList.append(new LineElement("River", typeIn, tA));
+            roadList.append(new LineElement("", typeIn, tA));
             break;
           case BaseMapElement::Canal:
+          case BaseMapElement::River:
+          case BaseMapElement::River_T:
+            if(formatID >= FILE_FORMAT_ID) in >> name;
             READ_POINT_LIST
-            hydroList.append(new LineElement("Canal", typeIn, tA));
+            hydroList.append(new LineElement(name, typeIn, tA));
             break;
           case BaseMapElement::City:
             in >> sort;
+            if(formatID >= FILE_FORMAT_ID) in >> name;
             READ_POINT_LIST
-            cityList.append(new LineElement("City", typeIn, tA, sort));
+            cityList.append(new LineElement(name, typeIn, tA, sort));
             break;
           case BaseMapElement::Lake:
+          case BaseMapElement::Lake_T:
             in >> sort;
+            if(formatID >= FILE_FORMAT_ID) in >> name;
             READ_POINT_LIST
-            hydroList.append(new LineElement("Lake", typeIn, tA, sort));
+            hydroList.append(new LineElement(name, typeIn, tA, sort));
+            break;
+          case BaseMapElement::Forest:
+          case BaseMapElement::Glacier:
+          case BaseMapElement::PackIce:
+            in >> sort;
+            if(formatID >= FILE_FORMAT_ID) in >> name;
+            READ_POINT_LIST
+            topoList.append(new LineElement(name, typeIn, tA, sort));
+            break;
+          case BaseMapElement::Village:
+            if(formatID >= FILE_FORMAT_ID) in >> name;
+            in >> lat_temp;
+            in >> lon_temp;
+            villageList.append(new SinglePoint(name, "", typeIn,
+              WGSPoint(lat_temp, lon_temp),
+              _globalMapMatrix.wgsToMap(lat_temp, lon_temp)));
+            break;
+          case BaseMapElement::Spot:
+            if(formatID >= FILE_FORMAT_ID) in >> elev;
+            in >> lat_temp;
+            in >> lon_temp;
+            obstacleList.append(new SinglePoint("Spot", "", typeIn,
+              WGSPoint(lat_temp, lon_temp),
+              _globalMapMatrix.wgsToMap(lat_temp, lon_temp)));
+            break;
+          case BaseMapElement::Landmark:
+            if(formatID >= FILE_FORMAT_ID)
+              {
+                in >> lm_typ;
+                in >> name;
+              }
+            in >> lat_temp;
+            in >> lon_temp;
+            landmarkList.append(new SinglePoint(name, "", typeIn,
+              WGSPoint(lat_temp, lon_temp),
+              _globalMapMatrix.wgsToMap(lat_temp, lon_temp)));
             break;
         }
     }
@@ -1664,8 +1722,12 @@ void MapContents::proofeSection(bool isPrint)
                   // Nun müssen die korrekten Dateien geladen werden ...
                   __readTerrainFile(secID, FILE_TYPE_GROUND);
                   __readTerrainFile(secID, FILE_TYPE_TERRAIN);
+
+//cout << row << " / " << col << endl;
                   __readBinaryFile(secID, FILE_TYPE_MAP);
 
+
+// cout << "secID " << secID << endl;
                   sectionArray.setBit( secID, true );
                 }
             }
@@ -1694,16 +1756,16 @@ unsigned int MapContents::getListLength(int listIndex) const
       return reportList.count();
     case CityList:
       return cityList.count();
-//    case VillageList:
-//      return villageList.count();
+    case VillageList:
+      return villageList.count();
     case LandmarkList:
       return landmarkList.count();
     case RoadList:
       return roadList.count();
     case RailList:
       return railList.count();
-    case StationList:
-      return stationList.count();
+//    case StationList:
+//      return stationList.count();
     case HydroList:
       return hydroList.count();
     case TopoList:
@@ -1750,16 +1812,16 @@ BaseMapElement* MapContents::getElement(int listIndex, unsigned int index)
       return reportList.at(index);
     case CityList:
       return cityList.at(index);
-//    case VillageList:
-//      return villageList.at(index);
+    case VillageList:
+      return villageList.at(index);
     case LandmarkList:
       return landmarkList.at(index);
     case RoadList:
       return roadList.at(index);
     case RailList:
       return railList.at(index);
-    case StationList:
-      return stationList.at(index);
+//    case StationList:
+//      return stationList.at(index);
     case HydroList:
       return hydroList.at(index);
     case TopoList:
@@ -1787,12 +1849,12 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
         return obstacleList.at(index);
       case ReportList:
         return reportList.at(index);
-//      case VillageList:
-//        return villageList.at(index);
+      case VillageList:
+        return villageList.at(index);
       case LandmarkList:
         return landmarkList.at(index);
-      case StationList:
-        return stationList.at(index);
+//      case StationList:
+//        return stationList.at(index);
       default:
         return 0;
     }
@@ -1809,10 +1871,11 @@ void MapContents::slotReloadMapData()
   obstacleList.clear();
   reportList.clear();
   cityList.clear();
+  villageList.clear();
   landmarkList.clear();
   roadList.clear();
   railList.clear();
-  stationList.clear();
+//  stationList.clear();
   hydroList.clear();
   topoList.clear();
   isoList.clear();
@@ -1972,7 +2035,7 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
             }
         }
 
-      targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1));
+      targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1, Qt::NoPen));
       targetP->setBrush(QBrush(_globalMapConfig.getIsoColor(height),
           QBrush::SolidPattern));
       for(unsigned int loop2 = 0; loop2 < isoList.at(loop)->count(); loop2++)

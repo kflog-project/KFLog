@@ -126,6 +126,8 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   kontList.append(check_speed->sizeHint().width() * 6 + 5);
   kontSplitter->setSizes(kontList);
 
+//  kontSplitter->setResizeMode(graphFrame,QSplitter::FollowSizeHint);
+
 
   // gespeicherte Daten
   KConfig* config = KGlobal::config();
@@ -257,6 +259,8 @@ void EvaluationFrame::slotUpdateCursorText(QString text)
 
 void EvaluationFrame::resizeEvent(QResizeEvent* event)
 {
+  warning("EvaluationFrame::resizeEvent");
+
   QFrame::resizeEvent(event);
   slotShowGraph();
 }

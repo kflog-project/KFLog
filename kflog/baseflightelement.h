@@ -65,6 +65,16 @@ class BaseFlightElement : public BaseMapElement
      * number 'index'
 	   */
     virtual int searchStepPrevPoint(int index,  flightPoint & fP, int step);
+    /**
+     * Virtual function for printing the element.
+     *
+     * The function must be implemented in the child-classes.
+     * @param  printP  The painter to draw the element into.
+     *
+     * @param  isText  Shows, if the text of some mapelements should
+     *                 be printed.
+     */
+    virtual void printMapElement(QPainter* printP, bool isText);
 
   protected:
     /** */

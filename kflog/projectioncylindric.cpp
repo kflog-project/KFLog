@@ -17,6 +17,8 @@
 
 #include <cmath>
 
+#include <iostream.h>
+
 #include "projectioncylindric.h"
 
 #define PI 3.141592654

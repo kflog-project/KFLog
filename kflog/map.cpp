@@ -603,7 +603,7 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
         {
           if(wp.projP == taskPointList.at(n)->projP)
             {
-              warning("lösche Punkt %d", n);
+//              warning("lösche Punkt %d", n);
               taskPointList.remove(n);
             }
         }
@@ -627,7 +627,7 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
           if(planning == 1)
             {
               // neuen Punkt an Task Liste anhängen
-              warning("hänge Punkt an");
+//              warning("hänge Punkt an");
 
               taskPointList.append(new wayPoint);
               w = taskPointList.last();
@@ -672,7 +672,7 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
           else if(planning == 3)
             {
               planning = 2;
-              warning("insert - verschiebe Punkt?");
+//              warning("insert - verschiebe Punkt?");
               taskPointList.insert(moveWPindex,new wayPoint);
               w = taskPointList.at(moveWPindex);
 
@@ -696,9 +696,14 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
               // hier müssen noch mehr Sachen übergeben werden
             } //planning == 3
         } // found
-      else if(planning != 2)
+
+/*
+      else if(planning != 2 && event->state() == QEvent::ShiftButton)
         {
+          warning("No WP found !!!");
           // nothing found, try to create a free waypoint
+          // only when shift is pressed!!!
+
           WaypointDialog *waypointDlg = new WaypointDialog(this);
           QPoint p = _globalMapMatrix.mapToWgs(current);
 
@@ -710,49 +715,56 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
 
           if (waypointDlg->exec() == QDialog::Accepted)
             {
-              if (!waypointDlg->name->text().isEmpty())
+              if (waypointDlg->name->text().isEmpty())
                 {
-                  if(planning == 3)
-                    {
-                      // insert a moved point
-                      taskPointList.insert(moveWPindex,new wayPoint);
-                      w = taskPointList.at(moveWPindex);
-                      planning = 2;
-                    }
-                  else
-                    {
-                      // append a new point
-                      taskPointList.append(new wayPoint);
-                      w = taskPointList.last();
-                    }
-
-                  w->name = waypointDlg->name->text().left(6).upper();
-                  w->description = waypointDlg->description->text();
-                  w->type = waypointDlg->getWaypointType();
-                  w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
-                  w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
-                  w->projP = _globalMapMatrix.wgsToMap(w->origP.lat(), w->origP.lon());
-                  w->elevation = waypointDlg->elevation->text().toInt();
-                  w->icao = waypointDlg->icao->text().upper();
-                  w->frequency = waypointDlg->frequency->text().toDouble();
-                  w->runway = waypointDlg->runway->text().toInt();
-                  w->length = waypointDlg->length->text().toInt();
-                  w->surface = waypointDlg->getSurface();
-                  w->comment = waypointDlg->comment->text();
-                  w->isLandable = waypointDlg->isLandable->isChecked();
-                  w->sector1 = 0;
-                  w->sector2 = 0;
-                  w->sectorFAI = 0;
+                   // Perhaps we should add this feature to the Waypoint Dialog
+                   w->name = i18n("New WAYPOINT");
                 }
+              else
+                {
+                   w->name = waypointDlg->name->text().left(6).upper();
+                }
+
+              if(planning == 3)
+                {
+                  // insert a moved point
+                  taskPointList.insert(moveWPindex,new wayPoint);
+                  w = taskPointList.at(moveWPindex);
+                  planning = 2;
+                }
+              else
+                {
+                  // append a new point
+                  taskPointList.append(new wayPoint);
+                  w = taskPointList.last();
+                }
+
+              w->description = waypointDlg->description->text();
+              w->type = waypointDlg->getWaypointType();
+              w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+              w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
+              w->projP = _globalMapMatrix.wgsToMap(w->origP.lat(), w->origP.lon());
+              w->elevation = waypointDlg->elevation->text().toInt();
+              w->icao = waypointDlg->icao->text().upper();
+              w->frequency = waypointDlg->frequency->text().toDouble();
+              w->runway = waypointDlg->runway->text().toInt();
+              w->length = waypointDlg->length->text().toInt();
+              w->surface = waypointDlg->getSurface();
+              w->comment = waypointDlg->comment->text();
+              w->isLandable = waypointDlg->isLandable->isChecked();
+              w->sector1 = 0;
+              w->sector2 = 0;
+              w->sectorFAI = 0;
             }
           delete waypointDlg;
         }
+      */
     } // left button
 
   // Aufgabe zeichnen
   if(taskPointList.count() > 0)
     {
-      warning("zeichen");
+//      warning("zeichen");
       pixPlan.fill(white);
       ((FlightTask *)baseFlight)->setWaypointList(taskPointList);
       __drawPlannedTask();
@@ -811,13 +823,13 @@ warning("Map::mousePressEvent: planning=%d", planning);
     }
   else if(event->button() == LeftButton)
     {
-      if(planning)  __graphicalPlanning(current, event);
-
       if(event->state() == QEvent::ShiftButton)
         {
           // select WayPoint
           QRegExp blank("[ ]");
           bool found = false;
+
+          // add WPList !!!
           int searchList[] = {MapContents::GliderList, MapContents::AirportList};
           for (int l = 0; l < 2; l++)
             {
@@ -835,7 +847,7 @@ warning("Map::mousePressEvent: planning=%d", planning);
         	        if (dX < delta && dY < delta)
         	          {
           	          wayPoint *w = new wayPoint;
-  	                   w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
+  	                  w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
                       w->description = hitElement->getName();
           	          w->type = hitElement->getTypeID();
                       w->origP = hitElement->getWGSPosition();
@@ -860,25 +872,52 @@ warning("Map::mousePressEvent: planning=%d", planning);
 
   	      if (!found)
   	        {
-      	      // add an 'free' waypoint
-              wayPoint *w = new wayPoint;
-              // leave name empty, this will generate an syntetic name
-              w->type = BaseMapElement::Landmark;
-              QPoint tmp(_globalMapMatrix.mapToWgs(current));
-              w->origP = WGSPoint(tmp.y(), tmp.x());
-              w->isLandable = false;
-              w->elevation = 0;
-              w->frequency = 0.0;
-              w->surface = -1;
-              w->runway = 0;
-              w->length = 0;
-              w->sectorFAI = 0;
-              w->sector1 = 0;
-              w->sector2 = 0;
+              warning("new waypoint");
 
-              emit waypointSelected(w);
+              WaypointDialog *waypointDlg = new WaypointDialog(this);
+              QPoint p = _globalMapMatrix.mapToWgs(current);
+
+              // initialize dialog
+              waypointDlg->setWaypointType(BaseMapElement::Landmark);
+              waypointDlg->longitude->setText(printPos(p.x(), false));
+              waypointDlg->latitude->setText(printPos(p.y(), true));
+              waypointDlg->setSurface(-1);
+
+              if (waypointDlg->exec() == QDialog::Accepted)
+                {
+
+          	      // add an 'free' waypoint
+                  wayPoint *w = new wayPoint;
+                  // leave name empty, this will generate an syntetic name
+
+                  if(!waypointDlg->name->text().isEmpty())
+                    w->name = waypointDlg->name->text().left(6).upper();
+
+                  w->description = waypointDlg->description->text();
+                  w->type = waypointDlg->getWaypointType();
+                  w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+                  w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
+                  w->projP = _globalMapMatrix.wgsToMap(w->origP.lat(), w->origP.lon());
+                  w->elevation = waypointDlg->elevation->text().toInt();
+                  w->icao = waypointDlg->icao->text().upper();
+                  w->frequency = waypointDlg->frequency->text().toDouble();
+                  w->runway = waypointDlg->runway->text().toInt();
+                  w->length = waypointDlg->length->text().toInt();
+                  w->surface = waypointDlg->getSurface();
+                  w->comment = waypointDlg->comment->text();
+                  w->isLandable = waypointDlg->isLandable->isChecked();
+                  w->sector1 = 0;
+                  w->sector2 = 0;
+                  w->sectorFAI = 0;
+
+                  emit waypointSelected(w);
+                }
+              delete waypointDlg;
+
   	        }
         }
+
+      if(planning)  __graphicalPlanning(current, event);
     }
   else if(event->button() == RightButton && event->state() == ControlButton)
     {
@@ -1340,13 +1379,17 @@ void Map::slotActivatePlanning()
       pixPlan.fill(white);
       prePlanPos.setX(-999);
       prePlanPos.setY(-999);
+warning("start");
+      mainApp->slotStatusMsg(i18n("To finish the planing, press <STRG> and the right mouse button!"));
     }
   else
     {
       // Planen "ausschalten"
       planning = 0;
       __showLayer();
+      mainApp->slotStatusMsg("");
       emit taskPlanningEnd();
+warning("ende");
 /*	  pixPlan.fill(white);
   	prePlanPos.setX(-999);
 	  prePlanPos.setY(-999);

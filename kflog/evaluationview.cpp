@@ -515,15 +515,17 @@ void EvaluationView::drawCurve(bool arg_vario, bool arg_speed,
 
     secWidth = secW;
 
-    this->resize((landTime - startTime) / secWidth
-        + (KOORD_DISTANCE * 2)  ,
-        scrollFrame->viewport()->height());
+    int width = (landTime - startTime) / secWidth + (KOORD_DISTANCE * 2) + 20;
 
-    pixBuffer->resize((landTime - startTime) / secWidth + (KOORD_DISTANCE * 2),
-        scrollFrame->viewport()->height());
-    pixBufferKurve->resize((landTime - startTime) / secWidth
-         + (KOORD_DISTANCE * 2) ,
-        scrollFrame->viewport()->height());
+
+    this->resize(MAX(width, scrollFrame->visibleWidth()),
+                 scrollFrame->viewport()->height());
+
+    pixBuffer->resize(MAX(width, scrollFrame->visibleWidth()),
+                      scrollFrame->viewport()->height());
+    pixBuffer->fill(white);
+
+    pixBufferKurve->resize(width, scrollFrame->viewport()->height());
     pixBufferYAxis->resize(KOORD_DISTANCE + 1,
         scrollFrame->viewport()->height());
 
@@ -752,4 +754,9 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
 
       paint.end();
     }
+}
+
+void EvaluationView::resizeEvent(QResizeEvent* event)
+{
+  warning("EvaluationView::Resize Event");
 }

@@ -27,6 +27,7 @@ SinglePoint::SinglePoint(QString n, QString gps, unsigned int t,
 
 }
 
+
 SinglePoint::~SinglePoint()
 {
 

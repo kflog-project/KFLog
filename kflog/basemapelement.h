@@ -66,7 +66,7 @@ class BaseMapElement
      * @param  isText  Shows, if the text of some mapelements should
      *                 be printed.
      */
-    virtual void printMapElement(QPainter* printP, bool isText) const;
+    virtual void printMapElement(QPainter* printP, bool isText);
     /**
      * @return the name of the element.
      */
@@ -85,19 +85,39 @@ class BaseMapElement
      * List of all accessable element-types:
      * @see #typeID
      */
-    enum objectType {NotSelected = 0,
-        IntAirport = 1, Airport = 2, MilAirport = 3, CivMilAirport = 4,
-        Airfield = 5, ClosedAirfield = 6, CivHeliport = 7, MilHeliport = 8,
-        AmbHeliport = 9, Glidersite = 10, UltraLight = 11, HangGlider = 12,
-        Parachute = 13, Ballon = 14, Outlanding = 15, VOR = 16, VORDME = 17,
-        VORTAC = 18, NDB = 19, CompPoint = 20, AirA = 21, AirB = 22,
-        AirC = 23, AirD = 24, AirElow = 25, AirEhigh = 26, AirF = 27,
-        ControlC = 28, ControlD = 29, Danger = 30, LowFlight = 31,
-        Restricted = 32, TMZ = 33, Obstacle = 34, LightObstacle = 35,
+    enum objectType {
+        NotSelected = 0,
+        IntAirport = INT_AIRPORT,
+        Airport = AIRPORT,
+        MilAirport = MIL_AIRPORT,
+        CivMilAirport = CIVMIL_AIRPORT,
+        Airfield = AIRFIELD,
+        ClosedAirfield = CLOSED_AIRFIELD,
+        CivHeliport = CIV_HELIPORT,
+        MilHeliport = MIL_HELIPORT,
+        AmbHeliport = AMB_HELIPORT,
+        Glidersite = GLIDERSITE,
+        UltraLight = ULTRALIGHT,
+        HangGlider = HANGGLIDER,
+        Parachute = PARACHUTE,
+        Ballon = BALLON,
+        Outlanding = OUTLANDING,
+        Vor = VOR,
+        VorDme = VORDME,
+        VorTac = VORTAC,
+        Ndb = NDB,
+        CompPoint = COMPPOINT,
+        AirA = AIR_A, AirB = AIR_B, AirC = AIR_C, AirD = AIR_D, AirElow = AIR_E_LOW, AirEhigh = AIR_E_HIGH,
+        AirF = AIR_F, ControlC = CONTROL_C, ControlD = CONTROL_D, Danger = DANGER,
+        LowFlight = LOW_FLIGHT,
+        Restricted = RESTRICTED, Tmz = TMZ, Obstacle = OBSTACLE,
+        LightObstacle = LIGHT_OBSTACLE,
         ObstacleGroup = 36, LightObstacleGroup = 37, Spot = 38, Isohypse = 39,
-        Glacier = 40, Border = 41, City = 42, Village = 43, Landmark = 44,
+        Glacier = 40, PackIce = PACK_ICE, Border = 41, City = 42, Village = 43, Landmark = 44,
         Highway = 45, Road = 46, Railway = 47, AerialRailway = 48, Lake = 49,
-        River = 50, Canal = 51, Flight = 52, Task = 53, FlightGroup = 54};
+        River = 50, Canal = 51, Flight = 52, Task = 53, FlightGroup = 54,
+        Trail = TRAIL, Railway_D = RAILWAY_D, Aerial_Cable = AERIAL_CABLE,
+        River_T = RIVER_T, Lake_T = LAKE_T, Forest = FOREST};
     /**
      * The three types of elevation-data used in the maps.
      */

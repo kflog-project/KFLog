@@ -49,23 +49,14 @@
 #define LEVEL_50 QColor(208, 234, 151)
 #define LEVEL_75 QColor(222, 243, 164)
 #define LEVEL_100 QColor(237, 252, 178)
-
 #define LEVEL_150 QColor(237, 248, 175)
-
 #define LEVEL_200 QColor(236, 241, 169)
-
 #define LEVEL_250 QColor(236, 235, 165)
-
 #define LEVEL_300 QColor(236, 230, 160)
-
 #define LEVEL_350 QColor(236, 225, 156)
-
 #define LEVEL_400 QColor(236, 219, 151)
-
 #define LEVEL_450 QColor(236, 214, 147)
-
 #define LEVEL_500 QColor(236, 208, 142)
-
 #define LEVEL_600 QColor(235, 198, 133)
 #define LEVEL_700 QColor(235, 187, 124)
 #define LEVEL_800 QColor(235, 176, 115)
@@ -105,6 +96,31 @@
 
 // Default-Values for map-element:
 //
+// [Trail]
+#define TRAIL_COLOR_1  QColor(255,100,100)
+#define TRAIL_COLOR_2  QColor(255,100,100)
+#define TRAIL_COLOR_3  QColor(255,100,100)
+#define TRAIL_COLOR_4  QColor(255,100,100)
+
+#define TRAIL_PEN_1 2
+#define TRAIL_PEN_2 2
+#define TRAIL_PEN_3 1
+#define TRAIL_PEN_4 1
+
+#define TRAIL_PEN_STYLE_1 Qt::SolidLine
+#define TRAIL_PEN_STYLE_2 Qt::SolidLine
+#define TRAIL_PEN_STYLE_3 Qt::SolidLine
+#define TRAIL_PEN_STYLE_4 Qt::SolidLine
+
+#define PRINT_TRAIL_COLOR_1  QColor(255,100,100)
+#define PRINT_TRAIL_COLOR_2  QColor(255,100,100)
+
+#define PRINT_TRAIL_PEN_1 2
+#define PRINT_TRAIL_PEN_2 2
+
+#define PRINT_TRAIL_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_TRAIL_PEN_STYLE_2 Qt::SolidLine
+
 // [Road]
 #define ROAD_COLOR_1  QColor(255,100,100)
 #define ROAD_COLOR_2  QColor(255,100,100)
@@ -179,6 +195,56 @@
 
 #define PRINT_RAIL_PEN_STYLE_1 Qt::DashLine
 #define PRINT_RAIL_PEN_STYLE_2 Qt::DashLine
+
+// [Railway_d]
+#define RAIL_D_COLOR_1  QColor(80,80,80)
+#define RAIL_D_COLOR_2  QColor(80,80,80)
+#define RAIL_D_COLOR_3  QColor(80,80,80)
+#define RAIL_D_COLOR_4  QColor(80,80,80)
+
+#define RAIL_D_PEN_1 2
+#define RAIL_D_PEN_2 2
+#define RAIL_D_PEN_3 1
+#define RAIL_D_PEN_4 1
+
+#define RAIL_D_PEN_STYLE_1 Qt::DashLine
+#define RAIL_D_PEN_STYLE_2 Qt::DashLine
+#define RAIL_D_PEN_STYLE_3 Qt::DashLine
+#define RAIL_D_PEN_STYLE_4 Qt::DashLine
+
+#define PRINT_RAIL_D_COLOR_1  QColor(80,80,80)
+#define PRINT_RAIL_D_COLOR_2  QColor(80,80,80)
+
+#define PRINT_RAIL_D_PEN_1 2
+#define PRINT_RAIL_D_PEN_2 2
+
+#define PRINT_RAIL_D_PEN_STYLE_1 Qt::DashLine
+#define PRINT_RAIL_D_PEN_STYLE_2 Qt::DashLine
+
+// [Aerial Cable]
+#define AERIAL_CABLE_COLOR_1  QColor(80,80,80)
+#define AERIAL_CABLE_COLOR_2  QColor(80,80,80)
+#define AERIAL_CABLE_COLOR_3  QColor(80,80,80)
+#define AERIAL_CABLE_COLOR_4  QColor(80,80,80)
+
+#define AERIAL_CABLE_PEN_1 2
+#define AERIAL_CABLE_PEN_2 2
+#define AERIAL_CABLE_PEN_3 1
+#define AERIAL_CABLE_PEN_4 1
+
+#define AERIAL_CABLE_PEN_STYLE_1 Qt::DashLine
+#define AERIAL_CABLE_PEN_STYLE_2 Qt::DashLine
+#define AERIAL_CABLE_PEN_STYLE_3 Qt::DashLine
+#define AERIAL_CABLE_PEN_STYLE_4 Qt::DashLine
+
+#define PRINT_AERIAL_CABLE_COLOR_1  QColor(80,80,80)
+#define PRINT_AERIAL_CABLE_COLOR_2  QColor(80,80,80)
+
+#define PRINT_AERIAL_CABLE_PEN_1 2
+#define PRINT_AERIAL_CABLE_PEN_2 2
+
+#define PRINT_AERIAL_CABLE_PEN_STYLE_1 Qt::DashLine
+#define PRINT_AERIAL_CABLE_PEN_STYLE_2 Qt::DashLine
 
 // [River]
 #define RIVER_COLOR_1 QColor(70,70,195)
@@ -268,6 +334,170 @@
 #define PRINT_CITY_BRUSH_COLOR_1 QColor(255,250,100)
 #define PRINT_CITY_BRUSH_COLOR_2 QColor(255,250,100)
 
+// [Forest]
+#define FRST_COLOR_1 QColor(255,250,100)
+#define FRST_COLOR_2 QColor(255,250,100)
+#define FRST_COLOR_3 QColor(255,250,100)
+#define FRST_COLOR_4 QColor(255,250,100)
+
+#define FRST_PEN_1 2
+#define FRST_PEN_2 2
+#define FRST_PEN_3 2
+#define FRST_PEN_4 2
+
+#define FRST_PEN_STYLE_1 Qt::SolidLine
+#define FRST_PEN_STYLE_2 Qt::SolidLine
+#define FRST_PEN_STYLE_3 Qt::SolidLine
+#define FRST_PEN_STYLE_4 Qt::SolidLine
+
+#define FRST_BRUSH_COLOR_1 QColor(255,250,100)
+#define FRST_BRUSH_COLOR_2 QColor(255,250,100)
+#define FRST_BRUSH_COLOR_3 QColor(255,250,100)
+#define FRST_BRUSH_COLOR_4 QColor(255,250,100)
+
+#define FRST_BRUSH_STYLE_1 Qt::SolidPattern
+#define FRST_BRUSH_STYLE_2 Qt::SolidPattern
+#define FRST_BRUSH_STYLE_3 Qt::SolidPattern
+#define FRST_BRUSH_STYLE_4 Qt::SolidPattern
+
+#define PRINT_FRST_COLOR_1 QColor(255,250,100)
+#define PRINT_FRST_COLOR_2 QColor(255,250,100)
+
+#define PRINT_FRST_PEN_1 2
+#define PRINT_FRST_PEN_2 2
+
+#define PRINT_FRST_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_FRST_PEN_STYLE_2 Qt::SolidLine
+
+#define PRINT_FRST_BRUSH_COLOR_1 QColor(255,250,100)
+#define PRINT_FRST_BRUSH_COLOR_2 QColor(255,250,100)
+
+#define PRINT_FRST_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_FRST_BRUSH_STYLE_2 Qt::SolidPattern
+
+// [Glacier]
+#define GLACIER_COLOR_1 QColor(255,250,100)
+#define GLACIER_COLOR_2 QColor(255,250,100)
+#define GLACIER_COLOR_3 QColor(255,250,100)
+#define GLACIER_COLOR_4 QColor(255,250,100)
+
+#define GLACIER_PEN_1 2
+#define GLACIER_PEN_2 2
+#define GLACIER_PEN_3 2
+#define GLACIER_PEN_4 2
+
+#define GLACIER_PEN_STYLE_1 Qt::SolidLine
+#define GLACIER_PEN_STYLE_2 Qt::SolidLine
+#define GLACIER_PEN_STYLE_3 Qt::SolidLine
+#define GLACIER_PEN_STYLE_4 Qt::SolidLine
+
+#define GLACIER_BRUSH_COLOR_1 QColor(255,250,100)
+#define GLACIER_BRUSH_COLOR_2 QColor(255,250,100)
+#define GLACIER_BRUSH_COLOR_3 QColor(255,250,100)
+#define GLACIER_BRUSH_COLOR_4 QColor(255,250,100)
+
+#define GLACIER_BRUSH_STYLE_1 Qt::SolidPattern
+#define GLACIER_BRUSH_STYLE_2 Qt::SolidPattern
+#define GLACIER_BRUSH_STYLE_3 Qt::SolidPattern
+#define GLACIER_BRUSH_STYLE_4 Qt::SolidPattern
+
+#define PRINT_GLACIER_COLOR_1 QColor(255,250,100)
+#define PRINT_GLACIER_COLOR_2 QColor(255,250,100)
+
+#define PRINT_GLACIER_PEN_1 2
+#define PRINT_GLACIER_PEN_2 2
+
+#define PRINT_GLACIER_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_GLACIER_PEN_STYLE_2 Qt::SolidLine
+
+#define PRINT_GLACIER_BRUSH_COLOR_1 QColor(255,250,100)
+#define PRINT_GLACIER_BRUSH_COLOR_2 QColor(255,250,100)
+
+#define PRINT_GLACIER_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_GLACIER_BRUSH_STYLE_2 Qt::SolidPattern
+
+// [Pack Ice]
+#define PACK_ICE_COLOR_1 QColor(255,250,100)
+#define PACK_ICE_COLOR_2 QColor(255,250,100)
+#define PACK_ICE_COLOR_3 QColor(255,250,100)
+#define PACK_ICE_COLOR_4 QColor(255,250,100)
+
+#define PACK_ICE_PEN_1 2
+#define PACK_ICE_PEN_2 2
+#define PACK_ICE_PEN_3 2
+#define PACK_ICE_PEN_4 2
+
+#define PACK_ICE_PEN_STYLE_1 Qt::SolidLine
+#define PACK_ICE_PEN_STYLE_2 Qt::SolidLine
+#define PACK_ICE_PEN_STYLE_3 Qt::SolidLine
+#define PACK_ICE_PEN_STYLE_4 Qt::SolidLine
+
+#define PACK_ICE_BRUSH_COLOR_1 QColor(255,250,100)
+#define PACK_ICE_BRUSH_COLOR_2 QColor(255,250,100)
+#define PACK_ICE_BRUSH_COLOR_3 QColor(255,250,100)
+#define PACK_ICE_BRUSH_COLOR_4 QColor(255,250,100)
+
+#define PACK_ICE_BRUSH_STYLE_1 Qt::SolidPattern
+#define PACK_ICE_BRUSH_STYLE_2 Qt::SolidPattern
+#define PACK_ICE_BRUSH_STYLE_3 Qt::SolidPattern
+#define PACK_ICE_BRUSH_STYLE_4 Qt::SolidPattern
+
+#define PRINT_PACK_ICE_COLOR_1 QColor(255,250,100)
+#define PRINT_PACK_ICE_COLOR_2 QColor(255,250,100)
+
+#define PRINT_PACK_ICE_PEN_1 2
+#define PRINT_PACK_ICE_PEN_2 2
+
+#define PRINT_PACK_ICE_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_PACK_ICE_PEN_STYLE_2 Qt::SolidLine
+
+#define PRINT_PACK_ICE_BRUSH_COLOR_1 QColor(255,250,100)
+#define PRINT_PACK_ICE_BRUSH_COLOR_2 QColor(255,250,100)
+
+#define PRINT_PACK_ICE_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_PACK_ICE_BRUSH_STYLE_2 Qt::SolidPattern
+
+// [RIVER_t]
+#define RIVER_T_COLOR_1 QColor(255,250,100)
+#define RIVER_T_COLOR_2 QColor(255,250,100)
+#define RIVER_T_COLOR_3 QColor(255,250,100)
+#define RIVER_T_COLOR_4 QColor(255,250,100)
+
+#define RIVER_T_PEN_1 2
+#define RIVER_T_PEN_2 2
+#define RIVER_T_PEN_3 2
+#define RIVER_T_PEN_4 2
+
+#define RIVER_T_PEN_STYLE_1 Qt::SolidLine
+#define RIVER_T_PEN_STYLE_2 Qt::SolidLine
+#define RIVER_T_PEN_STYLE_3 Qt::SolidLine
+#define RIVER_T_PEN_STYLE_4 Qt::SolidLine
+
+#define RIVER_T_BRUSH_COLOR_1 QColor(255,250,100)
+#define RIVER_T_BRUSH_COLOR_2 QColor(255,250,100)
+#define RIVER_T_BRUSH_COLOR_3 QColor(255,250,100)
+#define RIVER_T_BRUSH_COLOR_4 QColor(255,250,100)
+
+#define RIVER_T_BRUSH_STYLE_1 Qt::SolidPattern
+#define RIVER_T_BRUSH_STYLE_2 Qt::SolidPattern
+#define RIVER_T_BRUSH_STYLE_3 Qt::SolidPattern
+#define RIVER_T_BRUSH_STYLE_4 Qt::SolidPattern
+
+#define PRINT_RIVER_T_COLOR_1 QColor(255,250,100)
+#define PRINT_RIVER_T_COLOR_2 QColor(255,250,100)
+
+#define PRINT_RIVER_T_PEN_1 2
+#define PRINT_RIVER_T_PEN_2 2
+
+#define PRINT_RIVER_T_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_RIVER_T_PEN_STYLE_2 Qt::SolidLine
+
+#define PRINT_RIVER_T_BRUSH_COLOR_1 QColor(255,250,100)
+#define PRINT_RIVER_T_BRUSH_COLOR_2 QColor(255,250,100)
+
+#define PRINT_RIVER_T_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_RIVER_T_BRUSH_STYLE_2 Qt::SolidPattern
+
 // [Airspace A]
 #define AIRA_PEN_1 4
 #define AIRA_PEN_2 3
@@ -308,7 +538,6 @@
 
 #define PRINT_AIRA_BRUSH_STYLE_1 Qt::NoBrush
 #define PRINT_AIRA_BRUSH_STYLE_2 Qt::NoBrush
-
 
 // [Airspace B]
 #define AIRB_PEN_1 4

@@ -183,6 +183,7 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
   railBorder = new bool[2];
   riverBorder = new bool[2];
   cityBorder = new bool[2];
+  forestBorder = new bool[2];
 
   airAPenList.setAutoDelete(true);
   airABrushList.setAutoDelete(true);
@@ -214,6 +215,8 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
   riverPenList.setAutoDelete(true);
   railPenList.setAutoDelete(true);
   cityPenList.setAutoDelete(true);
+  forestPenList.setAutoDelete(true);
+  forestBrushList.setAutoDelete(true);
 
   READ_PEN("Road", roadPenList, roadBorder,
         PRINT_ROAD_COLOR_1, PRINT_ROAD_COLOR_2,
@@ -264,6 +267,13 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
       cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_4, Qt::SolidPattern));
       READ_BORDER(cityBorder);
     }
+
+  READ_PEN_BRUSH("Forest", forestPenList, forestBorder, forestBrushList,
+        PRINT_FRST_COLOR_1, PRINT_FRST_COLOR_2,
+        PRINT_FRST_PEN_1, PRINT_FRST_PEN_2,
+        PRINT_FRST_PEN_STYLE_1, PRINT_FRST_PEN_STYLE_2,
+        PRINT_FRST_BRUSH_COLOR_1, PRINT_FRST_BRUSH_COLOR_2,
+        PRINT_FRST_BRUSH_STYLE_1, PRINT_FRST_BRUSH_STYLE_2)
 
   READ_PEN_BRUSH("Airspace A", airAPenList, airABorder, airABrushList,
         PRINT_AIRA_COLOR_1, PRINT_AIRA_COLOR_2,
@@ -458,6 +468,8 @@ void ConfigPrintElement::slotOk()
 
   WRITE_BRUSH("TMZ", tmzBrushList, tmzPenList, tmzBorder);
 
+  WRITE_BRUSH("Forest", forestBrushList, forestPenList, forestBorder);
+
   config->sync();
   config->setGroup(0);
 }
@@ -490,6 +502,13 @@ void ConfigPrintElement::slotDefaultElements()
       Qt::SolidLine, Qt::SolidLine,
       PRINT_CITY_BRUSH_COLOR_1, PRINT_CITY_BRUSH_COLOR_2,
       PRINT_CITY_BRUSH_STYLE_1, PRINT_CITY_BRUSH_STYLE_2)
+
+  DEFAULT_PEN_BRUSH(forestPenList, forestBorder, forestBrushList,
+      PRINT_FRST_COLOR_1, PRINT_FRST_COLOR_2,
+      PRINT_FRST_PEN_1, PRINT_FRST_PEN_2,
+      PRINT_FRST_PEN_STYLE_1, PRINT_FRST_PEN_STYLE_2,
+      PRINT_FRST_BRUSH_COLOR_1, PRINT_FRST_BRUSH_COLOR_2,
+      PRINT_FRST_BRUSH_STYLE_1, PRINT_FRST_BRUSH_STYLE_2)
 
   DEFAULT_PEN_BRUSH(airAPenList, airABorder, airABrushList,
       PRINT_AIRA_COLOR_1, PRINT_AIRA_COLOR_2,
@@ -653,6 +672,10 @@ void ConfigPrintElement::slotSelectElement(int elementID)
         SAVE_PEN(tmzPenList, tmzBorder)
         SAVE_BRUSH(tmzBrushList)
         break;
+      case Forest:
+        SAVE_PEN(forestPenList, forestBorder)
+        SAVE_BRUSH(forestBrushList)
+        break;
       default:
         break;
     }
@@ -727,6 +750,10 @@ void ConfigPrintElement::slotSelectElement(int elementID)
         SHOW_PEN(tmzPenList, tmzBorder)
         SHOW_BRUSH(tmzBrushList)
         break;
+      case Forest:
+        SHOW_PEN(forestPenList, forestBorder)
+        SHOW_BRUSH(forestBrushList)
+        break;
     }
 
   oldElement = elementID;
@@ -760,6 +787,7 @@ void ConfigPrintElement::slotToggleFirst(bool toggle)
       case Danger:
       case Restricted:
       case TMZ:
+      case Forest:
         border1PenStyle->setEnabled(toggle);
         border1BrushColor->setEnabled(toggle);
         border1BrushStyle->setEnabled(toggle);
@@ -801,6 +829,7 @@ void ConfigPrintElement::slotToggleSecond(bool toggle)
       case Danger:
       case Restricted:
       case TMZ:
+      case Forest:
         border2PenStyle->setEnabled(toggle);
         border2BrushColor->setEnabled(toggle);
         border2BrushStyle->setEnabled(toggle);

@@ -44,6 +44,7 @@ class SinglePoint : public BaseMapElement
      * @param  typeID  The typeid
      * @param  pos  The projected position
      * @param  wgsPos  The original WGS-position
+     * @param elevation The elevation of the point when avaible
      */
     SinglePoint(QString name, QString gps, unsigned int typeID,
         WGSPoint wgsPos, QPoint pos, unsigned int elevation = 0);

@@ -261,25 +261,31 @@ void KFLogConfig::__addMapTab()
 
   elementSelect = new KComboBox(mapPage, "elementSelect");
 //  elementSelect->setMaximumWidth(300);
-  elementSelect->insertItem(i18n("Road"), Road);
-  elementSelect->insertItem(i18n("Highway"), Highway);
-  elementSelect->insertItem(i18n("Railway"), Railway);
-  elementSelect->insertItem(i18n("River / Lake"), River);
-  elementSelect->insertItem(i18n("Canal"), Canal);
-  elementSelect->insertItem(i18n("City"), City);
-  elementSelect->insertItem(i18n("Airspace A"), AirA);
-  elementSelect->insertItem(i18n("Airspace B"), AirB);
-  elementSelect->insertItem(i18n("Airspace C"), AirC);
-  elementSelect->insertItem(i18n("Airspace D"), AirD);
-  elementSelect->insertItem(i18n("Airspace E (low)"), AirElow);
-  elementSelect->insertItem(i18n("Airspace E (high)"), AirEhigh);
-  elementSelect->insertItem(i18n("Airspace F"), AirF);
-  elementSelect->insertItem(i18n("Control C"), ControlC);
-  elementSelect->insertItem(i18n("Control D"), ControlD);
-  elementSelect->insertItem(i18n("Danger"), Danger);
-  elementSelect->insertItem(i18n("Low flight area"), LowFlight);
-  elementSelect->insertItem(i18n("Restricted"), Restricted);
-  elementSelect->insertItem(i18n("TMZ"), TMZ);
+  elementSelect->insertItem(i18n("Road"), KFLogConfig::Road);
+  elementSelect->insertItem(i18n("Highway"), KFLogConfig::Highway);
+  elementSelect->insertItem(i18n("Railway"), KFLogConfig::Railway);
+  elementSelect->insertItem(i18n("River / Lake"), KFLogConfig::River);
+  elementSelect->insertItem(i18n("Canal"), KFLogConfig::Canal);
+  elementSelect->insertItem(i18n("City"), KFLogConfig::City);
+  elementSelect->insertItem(i18n("Airspace A"), KFLogConfig::AirA);
+  elementSelect->insertItem(i18n("Airspace B"), KFLogConfig::AirB);
+  elementSelect->insertItem(i18n("Airspace C"), KFLogConfig::AirC);
+  elementSelect->insertItem(i18n("Airspace D"), KFLogConfig::AirD);
+  elementSelect->insertItem(i18n("Airspace E (low)"), KFLogConfig::AirElow);
+  elementSelect->insertItem(i18n("Airspace E (high)"), KFLogConfig::AirEhigh);
+  elementSelect->insertItem(i18n("Airspace F"), KFLogConfig::AirF);
+  elementSelect->insertItem(i18n("Control C"), KFLogConfig::ControlC);
+  elementSelect->insertItem(i18n("Control D"), KFLogConfig::ControlD);
+  elementSelect->insertItem(i18n("Danger"), KFLogConfig::Danger);
+  elementSelect->insertItem(i18n("Low flight area"), KFLogConfig::LowFlight);
+  elementSelect->insertItem(i18n("Restricted"), KFLogConfig::Restricted);
+  elementSelect->insertItem(i18n("TMZ"), KFLogConfig::Tmz);
+  // Reihenfolge ???
+  elementSelect->insertItem(i18n("Forest"), KFLogConfig::Forest);
+  elementSelect->insertItem(i18n("Trail"), KFLogConfig::Trail);
+  elementSelect->insertItem(i18n("double Railway"), KFLogConfig::Railway_D);
+  elementSelect->insertItem(i18n("Aerial Cable"), KFLogConfig::Aerial_Cable);
+  elementSelect->insertItem(i18n("temporarily River / Lake"), KFLogConfig::River_T);
 
   QPushButton* defaultElements = new QPushButton(i18n("Default"), mapPage,
       "defaultElements");

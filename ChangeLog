@@ -1,9 +1,32 @@
 $Id$
 
 
+2002-07-07 Heiner <heiner@kflog.org>
+
+  * Prepared release 2.0.7
+
+
+2002-07-06 Florian <florian@kflog.org>
+
+  * Added more mapelement-types.
+
+
+2002-07-04 Heiner <heiner@kflog.org>
+
+  * Added recognition of mapfile-format-version and defined
+    the new format wich more element-types and fields.
+
+
+2002-07-01 Florian <florian@kflog.org>
+
+  * Made some Modifications relating the handling of new
+    Waypoints by clicking into the map
+
+
 2002-06-30 Heiner <heiner@kflog.org>
 
   * Added Andrees patch (CenterToDialog) to HEAD.
+
 
 2002-06-26 Harry <harry@kflog.org>
 

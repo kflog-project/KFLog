@@ -333,7 +333,7 @@ switch to first task in file */
     /**
      * villageList contains all villages.
      */
-//    QList<SinglePoint> villageList;
+    QList<SinglePoint> villageList;
     /**
      * landmarkList contains all landmarks.
      */
@@ -349,7 +349,7 @@ switch to first task in file */
     /**
      * stationList contains all stations.
      */
-    QList<SinglePoint> stationList;
+//    QList<SinglePoint> stationList;
     /**
      * hydroList contains all shorelines, rivers, lakes, ...
      */

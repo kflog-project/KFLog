@@ -57,7 +57,7 @@ class EvaluationView : public QWidget
   /**
     * Redefinition of the resizeEvent.
     */
-//  virtual void resizeEvent(QResizeEvent* event);
+ virtual void resizeEvent(QResizeEvent* event);
   /**
     */
   virtual void mousePressEvent(QMouseEvent* event);

@@ -194,7 +194,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
 
 void EvaluationDialog::resizeEvent(QResizeEvent* event)
 {
-//  warning("EvaluationDialog::resizeEvent");
+ // warning("EvaluationDialog::resizeEvent");
 
   QDialog::resizeEvent(event);
 

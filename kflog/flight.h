@@ -150,7 +150,7 @@ class Flight : public BaseFlightElement
      */
     virtual void drawMapElement(QPainter* targetP, QPainter* maskP);
     /** */
-    virtual void printMapElement(QPainter* targetP, bool isText);
+    virtual void printMapElement(QPainter* printP, bool isText);
     /**
      * @return the point with the index "n"
      */

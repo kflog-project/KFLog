@@ -258,8 +258,9 @@ void KFLogApp::initActions()
       CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
       "evaluate_flight");
 
+  // We can't use CTRL-W, because this shortcut is reserved for closing a file ...
   viewWaypoints = new KToggleAction(i18n("Show waypoints"), "waypoint",
-      CTRL+Key_W, this, SLOT(slotToggleWaypointsDock()), actionCollection(),
+      0, this, SLOT(slotToggleWaypointsDock()), actionCollection(),
       "waypoints");
 
   viewTasks = new KToggleAction(i18n("Show tasks"), "task",
@@ -271,8 +272,8 @@ void KFLogApp::initActions()
 
 
   // Disabled for the next release, because we only have the window ...
-  olcDeclaration = new KAction(i18n("send OLC-Declaration"), 0,
-      this, SLOT(slotOlcDeclaration()), actionCollection(), "olc_declaration");
+//  olcDeclaration = new KAction(i18n("send OLC-Declaration"), 0,
+//      this, SLOT(slotOlcDeclaration()), actionCollection(), "olc_declaration");
 
   //Animation actions
   animateFlightStart = new KAction(i18n("&Start Flight Animation"), "1rightarrow",
@@ -333,7 +334,7 @@ void KFLogApp::initActions()
   //  flightMenu->insert(viewWaypoints);
   flightMenu->insert(viewFlightDataType);
   flightMenu->insert(viewIgc3D);
-  flightMenu->insert(olcDeclaration);
+//  flightMenu->insert(olcDeclaration);
 //  flightMenu->insert(mapPlanning);
   flightMenu->popupMenu()->insertSeparator();
   flightMenu->insert(animateFlightStart);

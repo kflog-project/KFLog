@@ -559,6 +559,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
           w1 = ( ( glMapMatrix->print(wpList.at(loop)->angle) + PI ) / PI )
                   * 180.0 * 16.0 * -1.0;
 
+
           tempP = glMapMatrix->print(wpList.at(loop)->projP);
           double qx = -R1 + tempP.x();
           double qy = -R1 + tempP.y();
