@@ -165,12 +165,12 @@ class FlightTask : public BaseFlightElement
    * calculate sectors for valid FAI Areas
    */    
   void calcFAISector(double leg, double legBearing, double from, double to, double step, double dist,
-                     double toLat, double toLon, QPointArray *pA, bool upwards);
+                     double toLat, double toLon, QPointArray *pA, bool upwards, bool isRightOfRoute);
   /**
    * calculate side sectors for valid FAI Areas
    */    
   void calcFAISectorSide(double leg, double legBearing, double from, double to, double step, double toLat,
-                         double toLon, bool less500, QPointArray *pA, bool upwards);
+                         double toLon, bool less500, QPointArray *pA, bool upwards, bool isRightOfRoute);
   /**
    * true, if the task is the original task of a flight as read from
    * the igc-file.

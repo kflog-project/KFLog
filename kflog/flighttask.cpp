@@ -28,6 +28,8 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
+#include <qvaluevector.h>
+
 #define PRE_ID loop - 1
 #define CUR_ID loop
 #define NEXT_ID loop + 1
@@ -368,14 +370,15 @@ bool FlightTask::isFAI(double d_wp, double d1, double d2, double d3)
   return false;
 }
 
-void FlightTask::drawMapElement(QPainter* targetPainter,
-                                QPainter* maskPainter)
+void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
   double w1;
   unsigned int loop, i;
   struct faiAreaSector *sect;
   QPoint tempP;
   QRect r;
+  QString label;
+  QPointArray pA;
 
   // Strecke und Sektoren zeichnen
   //  if(flightType != NotSet)
@@ -561,22 +564,36 @@ void FlightTask::drawMapElement(QPainter* targetPainter,
     for (loop = 0; loop < FAISectList.count(); loop++) {
       sect = FAISectList.at(loop);
       sect->pos->drawMapElement(targetPainter, maskPainter);
-      r = sect->pos->getBoundingBox();
-      tempP = glMapMatrix->map(r.bottomLeft());
-      bBoxTask.setLeft(MIN(tempP.x(), bBoxTask.left()));
-      bBoxTask.setTop(MAX(tempP.y(), bBoxTask.top()));
-      tempP = glMapMatrix->map(r.topRight());
-      bBoxTask.setRight(MAX(tempP.x(), bBoxTask.right()));
-      bBoxTask.setBottom(MIN(tempP.y(), bBoxTask.bottom()));
-      //      for (i = 1; i < sect->pos.count(); i++) {
-      //        tempP = glMapMatrix->map(sect->pos.at(i - 1));
-      //        targetPainter->drawLine(tempP, glMapMatrix->map(sect->pos.at(i)));
-      //        maskPainter->drawLine(tempP, glMapMatrix->map(sect->pos.at(i)));
-      //        bBoxTask.setLeft(MIN(tempP.x(), bBoxTask.left()));
-      //        bBoxTask.setTop(MAX(tempP.y(), bBoxTask.top()));
-      //        bBoxTask.setRight(MAX(tempP.x(), bBoxTask.right()));
-      //        bBoxTask.setBottom(MIN(tempP.y(), bBoxTask.bottom()));
-      //      }
+      label = sect->pos->getName();
+      pA = glMapMatrix->map(sect->pos->getPointArray());
+
+      if (label == "FAILow500Sector" || label == "FAIHigh500Sector") {
+        label.sprintf("%.0f km", sect->dist);
+        tempP = pA[0];
+        targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
+        targetPainter->setBrush(QBrush(QColor(0, 255, 128)));
+        targetPainter->setBackgroundMode(Qt::OpaqueMode);
+        maskPainter->setBackgroundMode(Qt::OpaqueMode);
+//         maskPainter->setPen(QPen(QColor(0, 255, 128), 2));
+//         maskPainter->setBrush(QBrush(Qt::color1));
+        targetPainter->drawText(tempP, label);
+        maskPainter->drawText(tempP, label);
+        targetPainter->setBackgroundMode(Qt::TransparentMode);
+        maskPainter->setBackgroundMode(Qt::TransparentMode);
+      }
+      else {
+        r = pA.boundingRect();
+        tempP = r.topLeft();
+        bBoxTask.setLeft(MIN(tempP.x(), bBoxTask.left()));
+        bBoxTask.setTop(MAX(tempP.y(), bBoxTask.top()));
+        bBoxTask.setRight(MAX(tempP.x(), bBoxTask.right()));
+        bBoxTask.setBottom(MIN(tempP.y(), bBoxTask.bottom()));
+        tempP = r.bottomRight();
+        bBoxTask.setLeft(MIN(tempP.x(), bBoxTask.left()));
+        bBoxTask.setTop(MAX(tempP.y(), bBoxTask.top()));
+        bBoxTask.setRight(MAX(tempP.x(), bBoxTask.right()));
+        bBoxTask.setBottom(MIN(tempP.y(), bBoxTask.bottom()));
+      }
     }
   }    
 }
@@ -584,9 +601,11 @@ void FlightTask::drawMapElement(QPainter* targetPainter,
 void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
 {
   double w1;
-  unsigned int loop, i;
+  unsigned int loop;
   struct faiAreaSector *sect;
   QPoint tempP;
+  QString label;
+  QPointArray pA;
 
   // Strecke und Sektoren zeichnen
   if(flightType != FlightTask::NotSet)
@@ -718,21 +737,35 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
 
   // Area based planning
   if (getPlanningType() == FAIArea && wpList.count() > 3) {
-    targetPainter->setBrush(QBrush::NoBrush);
-
     for (loop = 0; loop < FAISectList.count(); loop++) {
       sect = FAISectList.at(loop);
-      if (sect->dist < 500.0) {
-        targetPainter->setPen(QPen(Qt::red, 2));
+      sect->pos->printMapElement(targetPainter, false);
+      label = sect->pos->getName();
+      if (label == "FAILow500Sector" || label == "FAIHigh500Sector") {
+        label.sprintf("%.0f km", sect->dist);
+        pA = sect->pos->getPointArray();
+        tempP = glMapMatrix->print(pA[0]);
+        targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
+        targetPainter->setBrush(QBrush(QColor(0, 255, 128)));
+        targetPainter->setBackgroundMode(Qt::OpaqueMode);
+        targetPainter->drawText(tempP, label);
+        targetPainter->setBackgroundMode(Qt::TransparentMode);
       }
-      else {
-        targetPainter->setPen(QPen(Qt::green, 2));
-      }
+    }
+//     targetPainter->setBrush(QBrush::NoBrush);
+
+//     for (loop = 0; loop < FAISectList.count(); loop++) {
+//       sect = FAISectList.at(loop);
+//       if (sect->dist < 500.0) {
+//         targetPainter->setPen(QPen(Qt::red, 2));
+//       }
+//       else {
+//         targetPainter->setPen(QPen(Qt::green, 2));
+//       }
       //      for (i = 1; i < sect->pos.count(); i++) {
       //        tempP = glMapMatrix->print(*sect->pos.at(i - 1));
       //        targetPainter->drawLine(tempP, glMapMatrix->print(*sect->pos.at(i)));
       //      }
-    }
   }
 }
 
@@ -1183,6 +1216,8 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
   unsigned int loop, i;
   struct faiAreaSector *sect;
   QPoint tempP;
+  QString label;
+  QPointArray pA;
 
   // Strecke und Sektoren zeichnen
   if(flightType != FlightTask::NotSet)
@@ -1314,20 +1349,20 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
 
   // Area based planning
   if (getPlanningType() == FAIArea && wpList.count() > 3) {
-    targetPainter->setBrush(QBrush::NoBrush);
-
     for (loop = 0; loop < FAISectList.count(); loop++) {
       sect = FAISectList.at(loop);
-      if (sect->dist < 500.0) {
-        targetPainter->setPen(QPen(Qt::red, 2));
+      sect->pos->printMapElement(targetPainter, false);
+      label = sect->pos->getName();
+      if (label == "FAILow500Sector" || label == "FAIHigh500Sector") {
+        label.sprintf("%.0f km", sect->dist);
+        pA = sect->pos->getPointArray();
+        tempP = glMapMatrix->print(pA[0]);
+        targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
+        targetPainter->setBrush(QBrush(QColor(0, 255, 128)));
+        targetPainter->setBackgroundMode(Qt::OpaqueMode);
+        targetPainter->drawText(tempP, label);
+        targetPainter->setBackgroundMode(Qt::TransparentMode);
       }
-      else {
-        targetPainter->setPen(QPen(Qt::green, 2));
-      }
-      //      for (i = 1; i < sect->pos.count(); i++) {
-      //        tempP = glMapMatrix->print(sect->pos.at(i - 1)->lat(), sect->pos.at(i - 1)->lon(), dX, dY);
-      //        targetPainter->drawLine(tempP, glMapMatrix->print(sect->pos.at(i - 1)->lat(), sect->pos.at(i - 1)->lon(), dX, dY));
-      //      }
     }
   }
 }
@@ -1362,8 +1397,8 @@ QString FlightTask::getFAIDistanceString()
     dist = wpList.at(2)->distance;
     range = getFAIDistance(dist);
     txt.sprintf("%.2f km - %.2f km",
-                range.minLength28 >= 500.0 ? range.minLength25 : range.minLength28,
-                range.maxLength25 < 500.0 ? range.maxLength28 : range.maxLength25);
+                range.minLength28 < 500.0 ? range.minLength28 : range.minLength25,
+                range.maxLength25 > 500.0 ? range.maxLength25 : range.maxLength28);
   }
 
   return txt;
@@ -1373,8 +1408,8 @@ struct faiRange FlightTask::getFAIDistance(double leg)
 {
   struct faiRange r;
 
-  r.minLength28 = QMIN(leg + leg / 44.0 * 56.0, 499.99); // maximal 500
-  r.maxLength28 = QMIN(leg + leg / 28.0 * 72.0, 499.99); // maximal 500
+  r.minLength28 = QMIN(leg + leg / 44.0 * 56.0, 500.0); // maximal 500
+  r.maxLength28 = QMIN(leg + leg / 28.0 * 72.0, 500.0); // maximal 500
   r.minLength25 = QMAX(leg + leg / 45.0 * 55.0, 500.0); // minimal 500
   r.maxLength25 = QMAX(4.0 * leg, 500.0);               // minimal 500
  
@@ -1386,12 +1421,14 @@ void FlightTask::calcFAIArea()
   struct wayPoint *wp1;
   struct wayPoint *wp2;
   double minDist;
-  double maxDist;
   double trueCourse;
   double tmpDist;
   QPointArray pointArray;
   struct faiAreaSector *areaSector;
-  
+  QValueVector<bool> sides;
+  unsigned int i;
+  bool isRightOfRoute;
+
   if (wpList.count() > 2) {
     wp1 = wpList.at(1);
     wp2 = wpList.at(2);
@@ -1403,95 +1440,109 @@ void FlightTask::calcFAIArea()
 
     struct faiRange faiR = getFAIDistance(leg);
 
-    minDist = faiR.minLength28 >= 500.0 ? faiR.minLength25 : faiR.minLength28;
-    maxDist = faiR.maxLength25 <= 500.0 ? faiR.maxLength28 : faiR.maxLength25;
+    minDist = faiR.minLength28 < 500.0 ? faiR.minLength28 : faiR.minLength25 ;
 
     trueCourse = tc(lat1, lon1, lat2, lon2);
 
     FAISectList.clear();
 
-    // first calc the surrounding area of FAI < 500 km
-    // first sector
-    calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, minDist, lat2, lon2, &pointArray, false);
-    // first side upwards
-    calcFAISectorSide(leg, trueCourse, minDist, faiR.maxLength28, 1, lat2, lon2, true, &pointArray, true);
-    // last sector
-    calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, faiR.maxLength28, lat2, lon2, &pointArray, true);
-    // second side downwards
-    calcFAISectorSide(leg, trueCourse, faiR.maxLength28, minDist, 1, lat2, lon2, true, &pointArray, false);
-
-    areaSector = new faiAreaSector;
-    areaSector->dist = minDist;
-    areaSector->pos = new LineElement("FAILow500", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, true);
-    FAISectList.append(areaSector);
-
-    // now calc all sectors for FAI < 500 km
-    tmpDist = minDist;
-    while (tmpDist < faiR.maxLength28) {
-      pointArray.resize(0);
-      calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, tmpDist, lat2, lon2, &pointArray, true);
-      areaSector = new faiAreaSector;
-      areaSector->dist = tmpDist;
-      areaSector->pos = new LineElement("FAILow500", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, false);
-      FAISectList.append(areaSector);
-
-      tmpDist += (50.0 - fmod(tmpDist, 50.0));
-      tmpDist = QMIN(tmpDist, faiR.maxLength28);
-    }
-    // last sector for < 500 km FAI
-    if (faiR.minLength28 < faiR.maxLength28) {
-      pointArray.resize(0);
-      calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, tmpDist, lat2, lon2, &pointArray, true);
-      areaSector = new faiAreaSector;
-      areaSector->dist = tmpDist;
-      areaSector->pos = new LineElement("FAILow500", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, false);
-      FAISectList.append(areaSector);
+    // determne with sides to calculate
+    if (getPlanningDirection() & leftOfRoute) {
+      sides.push_back(false);
     }
 
-    if (faiR.minLength25 < faiR.maxLength25) {
+    if (getPlanningDirection() & rightOfRoute) {
+      sides.push_back(true);
+    }
+    
+    for (i = 0; i < sides.size(); i++) {
       pointArray.resize(0);
-      // first calc the surrounding area of FAI > 500 km
-      // first sector
-      calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, faiR.minLength25, lat2, lon2, &pointArray, false);
-      // first side upwards
-      calcFAISectorSide(leg, trueCourse, faiR.minLength25, faiR.maxLength25, 1, lat2, lon2, false, &pointArray, true);
-      // last sector
-      calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, faiR.maxLength25, lat2, lon2, &pointArray, true);
-      // second side downwards
-      calcFAISectorSide(leg, trueCourse, faiR.maxLength25, faiR.minLength25, 1, lat2, lon2, false, &pointArray, false);
+      isRightOfRoute = sides[i];
 
-      areaSector = new faiAreaSector;
-      areaSector->dist = faiR.minLength25;
-      areaSector->pos = new LineElement("FAIHigh500", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, true);
-      FAISectList.append(areaSector);
+      if (faiR.minLength28 < faiR.maxLength28) {
+        // first calc the surrounding area of FAI < 500 km
+        // first sector
+        calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, minDist, lat2, lon2, &pointArray, false, isRightOfRoute);
+        // first side upwards
+        calcFAISectorSide(leg, trueCourse, minDist, faiR.maxLength28, 1, lat2, lon2, true, &pointArray, true, isRightOfRoute);
+        // last sector
+        calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, faiR.maxLength28, lat2, lon2, &pointArray, true, isRightOfRoute);
+        // second side downwards
+        calcFAISectorSide(leg, trueCourse, faiR.maxLength28, minDist, 1, lat2, lon2, true, &pointArray, false, isRightOfRoute);
 
-      tmpDist = faiR.minLength25;
-      while (tmpDist < faiR.maxLength25) {
-        pointArray.resize(0);
-        calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, tmpDist, lat2, lon2, &pointArray, true);
         areaSector = new faiAreaSector;
-        areaSector->dist = tmpDist;
-        areaSector->pos = new LineElement("FAIHigh500", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, false);
+        areaSector->dist = minDist;
+        areaSector->pos = new LineElement("FAILow500Area", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, true);
         FAISectList.append(areaSector);
 
-        tmpDist += (50.0 - fmod(tmpDist, 50.0));
-        tmpDist = QMIN(tmpDist, faiR.maxLength25);
+        // now calc all sectors for FAI < 500 km
+        tmpDist = minDist;
+        while (tmpDist < faiR.maxLength28) {
+          pointArray.resize(0);
+          calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, tmpDist, lat2, lon2, &pointArray, true, isRightOfRoute);
+          areaSector = new faiAreaSector;
+          areaSector->dist = tmpDist;
+          areaSector->pos = new LineElement("FAILow500Sector", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, false);
+          FAISectList.append(areaSector);
+
+          tmpDist += (50.0 - fmod(tmpDist, 50.0));
+          tmpDist = QMIN(tmpDist, faiR.maxLength28);
+        }
+        // last sector for < 500 km FAI
+        if (faiR.minLength28 < faiR.maxLength28) {
+          pointArray.resize(0);
+          calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, tmpDist, lat2, lon2, &pointArray, true, isRightOfRoute);
+          areaSector = new faiAreaSector;
+          areaSector->dist = tmpDist;
+          areaSector->pos = new LineElement("FAILow500Sector", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, false);
+          FAISectList.append(areaSector);
+        }
       }
-      // last sector for > 500 km FAI
       if (faiR.minLength25 < faiR.maxLength25) {
         pointArray.resize(0);
-        calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, tmpDist, lat2, lon2, &pointArray, true);
+        // first calc the surrounding area of FAI > 500 km
+        // first sector
+        calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, faiR.minLength25, lat2, lon2, &pointArray, false, isRightOfRoute);
+        // first side upwards
+        calcFAISectorSide(leg, trueCourse, faiR.minLength25, faiR.maxLength25, 1, lat2, lon2, false, &pointArray, true, isRightOfRoute);
+        // last sector
+        calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, faiR.maxLength25, lat2, lon2, &pointArray, true, isRightOfRoute);
+        // second side downwards
+        calcFAISectorSide(leg, trueCourse, faiR.maxLength25, faiR.minLength25, 1, lat2, lon2, false, &pointArray, false, isRightOfRoute);
+
         areaSector = new faiAreaSector;
-        areaSector->dist = tmpDist;
-        areaSector->pos = new LineElement("FAIHigh500", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, false);
+        areaSector->dist = faiR.minLength25;
+        areaSector->pos = new LineElement("FAIHigh500Area", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, true);
         FAISectList.append(areaSector);
+
+        tmpDist = faiR.minLength25;
+        while (tmpDist < faiR.maxLength25) {
+          pointArray.resize(0);
+          calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, tmpDist, lat2, lon2, &pointArray, true, isRightOfRoute);
+          areaSector = new faiAreaSector;
+          areaSector->dist = tmpDist;
+          areaSector->pos = new LineElement("FAIHigh500Sector", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, false);
+          FAISectList.append(areaSector);
+
+          tmpDist += (50.0 - fmod(tmpDist, 50.0));
+          tmpDist = QMIN(tmpDist, faiR.maxLength25);
+        }
+        // last sector for > 500 km FAI
+        if (faiR.minLength25 < faiR.maxLength25) {
+          pointArray.resize(0);
+          calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, tmpDist, lat2, lon2, &pointArray, true, isRightOfRoute);
+          areaSector = new faiAreaSector;
+          areaSector->dist = tmpDist;
+          areaSector->pos = new LineElement("FAIHigh500Sector", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, false);
+          FAISectList.append(areaSector);
+        }
       }
     }
   }
 }
 
 void FlightTask::calcFAISector(double leg, double legBearing, double from, double to, double step, double dist, double toLat,
-                               double toLon, QPointArray *pA, bool upwards)
+                               double toLon, QPointArray *pA, bool upwards, bool isRightOfRoute)
 {
   extern MapMatrix _globalMapMatrix;
 
@@ -1516,9 +1567,8 @@ void FlightTask::calcFAISector(double leg, double legBearing, double from, doubl
     c = dist - leg - b;
 
     if (c >= minDist && c <= maxDist) {
-      //      if (getPlanningDirection() & leftOfRoute) {
       w = angle(leg, b, c);
-      p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing + w, b));
+      p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, isRightOfRoute ? legBearing - w : legBearing + w, b));
       pA->putPoints(i++, 1, p.lat(), p.lon());
     }
     
@@ -1532,7 +1582,7 @@ void FlightTask::calcFAISector(double leg, double legBearing, double from, doubl
 }
 
 void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, double to, double step, double toLat,
-                                   double toLon, bool less500, QPointArray *pA, bool upwards)
+                                   double toLon, bool less500, QPointArray *pA, bool upwards, bool isRightOfRoute)
 {
   extern MapMatrix _globalMapMatrix;
 
@@ -1565,31 +1615,16 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
     c = dist - leg - b;
 
     if (c >= dist * minPercent && c <= dist * maxPercent) {
-      //      if (getPlanningDirection() & leftOfRoute) {
       if (upwards) {
         w = angle(leg, b, c);
       }
       else {
         w = angle(leg, c, b);
       }
-      p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing + w, upwards ? b : c));
+      p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, isRightOfRoute ? legBearing - w : legBearing + w, 
+                                                        upwards ? b : c));
       pA->putPoints(i++, 1, p.lat(), p.lon());
     }
-
-    //      if (getPlanningDirection() & rightOfRoute) {
-    //        w = angle(leg, b, c);
-    //        p = new WGSPoint();
-    //        *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing - w, b));
-    //        // append point to current sector
-    ////        sect2->pos.append(p);
-    //
-    //        w = angle(leg, c, b);
-    //        p = new WGSPoint();
-    //        *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing - w, c));
-    //        // append point to current sector
-    ////        sect4->pos.append(p);
-    //      }
-    //    }
 
     if (upwards) {
       dist += step;

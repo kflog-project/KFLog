@@ -70,7 +70,7 @@ class LineElement : public BaseMapElement
   virtual bool isValley() const;
   /** No descriptions */
   QRect getBoundingBox() { return bBox; }
-
+  QPointArray getPointArray() { return projPointArray; }
  protected:
   /**
    * Proofes, if the object is in the drawing-area of the map.
