@@ -729,7 +729,7 @@ void KFLogConfig::__addIDTab()
 
   QGroupBox* contestGroup = new QGroupBox(idPage, "contestGroup");
   contestGroup->setTitle(i18n("Contest Type") + ":");
-  idLayout->addMultiCellWidget(contestGroup, 17, 20, 0, 4);
+  idLayout->addMultiCellWidget(contestGroup, 18, 21, 0, 4);
   contestType = new KComboBox(idPage, "contestType");
   contestType->setEditable(false);
   int count=0;
@@ -739,8 +739,8 @@ void KFLogConfig::__addIDTab()
     contestType->insertURL(temp_str,count);
     count++;
   }
-  idLayout->addWidget(new QLabel(i18n("Contest Type"), idPage), 18, 1);
-  idLayout->addWidget(contestType, 18, 3);  
+  idLayout->addWidget(new QLabel(i18n("Contest Type"), idPage), 19, 1);
+  idLayout->addWidget(contestType, 19, 3);  
   
   idLayout->addColSpacing(0, 10);
   idLayout->addColSpacing(2, 10);
@@ -763,9 +763,9 @@ void KFLogConfig::__addIDTab()
 //  idLayout->addRowSpacing(15, 10);
   idLayout->addRowSpacing(16, 20);
   idLayout->addRowSpacing(17, 20);
-  idLayout->addRowSpacing(18, 5);
-  idLayout->addRowSpacing(19, 5);
-  idLayout->addRowSpacing(20, 5);
+  idLayout->addRowSpacing(18, 25);
+  idLayout->addRowSpacing(19, 10);
+  idLayout->addRowSpacing(20, 10);
 
 //  idLayout->setRowStretch(17, 1);
 
