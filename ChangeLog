@@ -1,5 +1,9 @@
 $Id$
 
+2003-01-21 Harry <harry@kflog.org>
+
+  * Fixed bug in draw empty FAI Areas, show TC in Dataview and TaskDialog
+
 
 2003-01-20 Heiner <heiner@kflog.org>
 

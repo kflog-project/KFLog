@@ -83,6 +83,7 @@ private: // Private attributes
   int colType;
   int colWaypoint;
   int colDist;
+  int colCourse;
 };
 
 #endif

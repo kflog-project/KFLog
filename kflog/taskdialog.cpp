@@ -29,6 +29,7 @@
 #include "taskdialog.h"
 #include "mapcontents.h"
 #include "translationlist.h"
+#include "mapcalc.h"
 
 extern TranslationList taskTypes;
 
@@ -115,6 +116,7 @@ void TaskDialog::__initDialog()
   colType = route->addColumn(i18n("Type"));
   colWaypoint = route->addColumn(i18n("Waypoint"));
   colDist = route->addColumn(i18n("Distance"));
+  colCourse = route->addColumn(i18n("TC"));
 
   l = new QLabel(route, i18n("&Task"), this);
 
@@ -247,12 +249,12 @@ void TaskDialog::slotSetPlanningDirection(int)
 
 void TaskDialog::fillWaypoints()
 {
-  wayPoint *wp;
+  wayPoint *wp, *wpPrev;
   QListViewItem *item, *lastItem = 0;
   QString txt;
 
   route->clear();
-  for (wp = wpList.first(); wp; wp = wpList.next()) {
+  for (wp = wpList.first(); wp; wpPrev = wp, wp = wpList.next()) {
     item = new QListViewItem(route, lastItem);
     switch (wp->type) {
     case FlightTask::TakeOff:
@@ -282,6 +284,9 @@ void TaskDialog::fillWaypoints()
     if (lastItem) {
       txt.sprintf("%.2f km", wp->distance);
       item->setText(colDist, txt);
+
+      txt.sprintf("%03.0f°", getTrueCourse(wp->origP, wpPrev->origP));
+      item->setText(colCourse, txt);
     }
     lastItem = item;
   }

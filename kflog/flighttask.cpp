@@ -1443,7 +1443,9 @@ void FlightTask::calcFAIArea()
     minDist = faiR.minLength28 < 500.0 ? faiR.minLength28 : faiR.minLength25 ;
 
     trueCourse = tc(lat1, lon1, lat2, lon2);
-
+    QString huhu;
+    huhu.sprintf("%03.0f", polar(wp2->origP.lat() - wp1->origP.lat(), wp2->origP.lon() - wp1->origP.lon()) * 180.0 / PI);
+    warning(huhu);
     FAISectList.clear();
 
     // determne with sides to calculate
@@ -1470,20 +1472,24 @@ void FlightTask::calcFAIArea()
         // second side downwards
         calcFAISectorSide(leg, trueCourse, faiR.maxLength28, minDist, 1, lat2, lon2, true, &pointArray, false, isRightOfRoute);
 
-        areaSector = new faiAreaSector;
-        areaSector->dist = minDist;
-        areaSector->pos = new LineElement("FAILow500Area", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, true);
-        FAISectList.append(areaSector);
+        if (!pointArray.isNull()) {
+          areaSector = new faiAreaSector;
+          areaSector->dist = minDist;
+          areaSector->pos = new LineElement("FAILow500Area", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, true);
+          FAISectList.append(areaSector);
+        }
 
         // now calc all sectors for FAI < 500 km
         tmpDist = minDist;
         while (tmpDist < faiR.maxLength28) {
           pointArray.resize(0);
           calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, tmpDist, lat2, lon2, &pointArray, true, isRightOfRoute);
-          areaSector = new faiAreaSector;
-          areaSector->dist = tmpDist;
-          areaSector->pos = new LineElement("FAILow500Sector", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, false);
-          FAISectList.append(areaSector);
+          if (!pointArray.isNull()) {
+            areaSector = new faiAreaSector;
+            areaSector->dist = tmpDist;
+            areaSector->pos = new LineElement("FAILow500Sector", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, false);
+            FAISectList.append(areaSector);
+          }
 
           tmpDist += (50.0 - fmod(tmpDist, 50.0));
           tmpDist = QMIN(tmpDist, faiR.maxLength28);
@@ -1492,10 +1498,12 @@ void FlightTask::calcFAIArea()
         if (faiR.minLength28 < faiR.maxLength28) {
           pointArray.resize(0);
           calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, tmpDist, lat2, lon2, &pointArray, true, isRightOfRoute);
-          areaSector = new faiAreaSector;
-          areaSector->dist = tmpDist;
-          areaSector->pos = new LineElement("FAILow500Sector", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, false);
-          FAISectList.append(areaSector);
+          if (!pointArray.isNull()) {
+            areaSector = new faiAreaSector;
+            areaSector->dist = tmpDist;
+            areaSector->pos = new LineElement("FAILow500Sector", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, false);
+            FAISectList.append(areaSector);
+          }
         }
       }
       if (faiR.minLength25 < faiR.maxLength25) {
@@ -1510,20 +1518,23 @@ void FlightTask::calcFAIArea()
         // second side downwards
         calcFAISectorSide(leg, trueCourse, faiR.maxLength25, faiR.minLength25, 1, lat2, lon2, false, &pointArray, false, isRightOfRoute);
 
-        areaSector = new faiAreaSector;
-        areaSector->dist = faiR.minLength25;
-        areaSector->pos = new LineElement("FAIHigh500Area", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, true);
-        FAISectList.append(areaSector);
+        if (!pointArray.isNull()) {
+          areaSector = new faiAreaSector;
+          areaSector->dist = faiR.minLength25;
+          areaSector->pos = new LineElement("FAIHigh500Area", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, true);
+          FAISectList.append(areaSector);
+        }
 
         tmpDist = faiR.minLength25;
         while (tmpDist < faiR.maxLength25) {
           pointArray.resize(0);
           calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, tmpDist, lat2, lon2, &pointArray, true, isRightOfRoute);
-          areaSector = new faiAreaSector;
-          areaSector->dist = tmpDist;
-          areaSector->pos = new LineElement("FAIHigh500Sector", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, false);
-          FAISectList.append(areaSector);
-
+          if (!pointArray.isNull()) {
+            areaSector = new faiAreaSector;
+            areaSector->dist = tmpDist;
+            areaSector->pos = new LineElement("FAIHigh500Sector", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, false);
+            FAISectList.append(areaSector);
+          }
           tmpDist += (50.0 - fmod(tmpDist, 50.0));
           tmpDist = QMIN(tmpDist, faiR.maxLength25);
         }
@@ -1531,10 +1542,12 @@ void FlightTask::calcFAIArea()
         if (faiR.minLength25 < faiR.maxLength25) {
           pointArray.resize(0);
           calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, tmpDist, lat2, lon2, &pointArray, true, isRightOfRoute);
-          areaSector = new faiAreaSector;
-          areaSector->dist = tmpDist;
-          areaSector->pos = new LineElement("FAIHigh500Sector", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, false);
-          FAISectList.append(areaSector);
+          if (!pointArray.isNull()) {
+            areaSector = new faiAreaSector;
+            areaSector->dist = tmpDist;
+            areaSector->pos = new LineElement("FAIHigh500Sector", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, false);
+            FAISectList.append(areaSector);
+          }
         }
       }
     }

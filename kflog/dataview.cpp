@@ -55,6 +55,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
   QString htmlText;
   QString txt, tmp;
   QString idString, timeString;
+  struct wayPoint *wp;
 
   htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
       <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
@@ -64,30 +65,31 @@ QString DataView::__writeTaskInfo(FlightTask* task)
 
   for(unsigned int loop = 0; loop < wpList.count(); loop++)
     {
+      wp = wpList.at(loop);
       if(loop > 0)
         {
-          tmp.sprintf("%.2f km",wpList.at(loop)->distance);
-
+          tmp.sprintf("%.2f km / %03.0f°", wp->distance, getTrueCourse(wp->origP, wpList.at(loop - 1)->origP));
           htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
               tmp + "</TD></TR>";
         }
+
       idString.sprintf("%d", loop);
 
-      if(wpList.at(loop)->sector1 != 0)
-          timeString = printTime(wpList.at(loop)->sector1);
-      else if(wpList.at(loop)->sector2 != 0)
-          timeString = printTime(wpList.at(loop)->sector2);
-      else if(wpList.at(loop)->sectorFAI != 0)
-          timeString = printTime(wpList.at(loop)->sectorFAI);
+      if(wp->sector1 != 0)
+          timeString = printTime(wp->sector1);
+      else if(wp->sector2 != 0)
+          timeString = printTime(wp->sector2);
+      else if(wp->sectorFAI != 0)
+          timeString = printTime(wp->sectorFAI);
       else
           timeString = "--";
 
       htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
-          wpList.at(loop)->name + "</A></TD>\
+          wp->name + "</A></TD>\
           <TD ALIGN=right>" + timeString + "</TD></TR>\
           <TR><TD WIDTH=15></TD>\
-          <TD>" + printPos(wpList.at(loop)->origP.lat()) + "</TD>\
-          <TD ALIGN=right>" + printPos(wpList.at(loop)->origP.lon(), false) +
+          <TD>" + printPos(wp->origP.lat()) + "</TD>\
+          <TD ALIGN=right>" + printPos(wp->origP.lon(), false) +
           "</TD></TR>";
     }
 

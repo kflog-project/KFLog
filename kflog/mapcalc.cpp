@@ -140,6 +140,10 @@ float getBearing(flightPoint p1, flightPoint p2)
                        ( p2.projP.y() - p1.projP.y() ) );
 }
 
+double getTrueCourse(WGSPoint p1, WGSPoint p2)
+{
+  return p1 != p2 ? polar(p1.lat() - p2.lat(), p1.lon() - p2.lon()) * 180.0 / PI : 0.0;
+}
 
 double polar(double x, double y)
 {

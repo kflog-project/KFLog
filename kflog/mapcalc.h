@@ -95,4 +95,7 @@ double angle(double a, double b, double c);
 /* calculate pos of point from dist and bearing */ 
 WGSPoint posOfDistAndBearing(double lat1, double lon1, double bearing, double dist);
 
+/* calculate true course from prev point (p2) */
+double getTrueCourse(WGSPoint p1, WGSPoint p2);
+
 #endif
