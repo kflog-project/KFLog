@@ -16,7 +16,7 @@
 ***********************************************************************/
 #include <kmessagebox.h>
 #include <klocale.h>
-#include "klineeditdlg.h"
+#include "kinputdialog.h"
 
 #include "waypointdict.h"
 
@@ -69,7 +69,7 @@ bool WaypointDict::insertItem(Waypoint *e)
             i18n("&Overwrite")
            )) {
       case KMessageBox::Yes:   //rename
-        newName=KLineEditDlg::getText(i18n("Waypoint name"), i18n("Please enter a new name for the waypoint"), e->name, &OK);
+        newName=KInputDialog::getText(i18n("Waypoint name"), i18n("Please enter a new name for the waypoint"), e->name, &OK);
         if (OK) {
           e->name=newName;
           return insertItem(e); //recursive call!
