@@ -49,7 +49,7 @@
 #define FILE_FORMAT_ID_2    101
 
 
-WaypointCatalog::WaypointCatalog(QString name)
+WaypointCatalog::WaypointCatalog(const QString& name)
   : modified(false), onDisc(false)
 {
   static int catalogNr = 1;
@@ -60,10 +60,11 @@ WaypointCatalog::WaypointCatalog(QString name)
   if (name == QString::null) {
     QString t;
     t.setNum(catalogNr++);
-    name = i18n("unnamed") + t;
+    catalogName = i18n("unnamed") + t;
   }
-  catalogName = name;
-  path = wayPointDir + "/" + name + ".kflogwp";
+  else
+    catalogName = name;
+  path = wayPointDir + "/" + catalogName + ".kflogwp";
 
   showAll = true;
   showAirports = showGliderSites = showOtherSites = showObstacle = showLandmark = showOutlanding =
@@ -77,7 +78,7 @@ WaypointCatalog::~WaypointCatalog()
 }
 
 /** read a catalog from file */
-bool WaypointCatalog::read(QString &catalog)
+bool WaypointCatalog::read(const QString& catalog)
 {
   bool ok = false;
   bool needConvert = false;
@@ -118,7 +119,9 @@ bool WaypointCatalog::read(QString &catalog)
             needConvert = true;
           }
 
-          if (!wpList.insertItem(w)) {
+          if (!wpList.insertItem(w))
+          {
+            delete w;
             break;
           }
         }
@@ -142,11 +145,11 @@ bool WaypointCatalog::read(QString &catalog)
 
     }
     else {
-      KMessageBox::error(0, QString ("<qt><B>%1</B><BR>").arg(catalog) + i18n("permission denied!") + "</qt>", i18n("Error occurred!"));
+      KMessageBox::error(0, QString("<qt><B>%1</B><BR>").arg(catalog) + i18n ("permission denied!") + "</qt>", i18n("Error occurred!"));
     }
   }
   else {
-    KMessageBox::error(0, QString ("<qt><B>%1</B><BR>").arg(catalog) + i18n("not found!") + "</qt>", i18n("Error occurred!"));
+    KMessageBox::error(0, QString("<qt><B>%1</B><BR>").arg(catalog) + i18n("not found!") + "</qt>", i18n("Error occurred!"));
   }
 
   return ok;
@@ -211,14 +214,14 @@ bool WaypointCatalog::write()
     onDisc = true;
   }
   else {
-    KMessageBox::error(0, QString ("<qt><B>%1</B><BR>").arg(fName) + i18n ("permission denied!")+ "</qt>", i18n("Error occurred!"));
+    KMessageBox::error(0, QString ("<qt><B>%1</B><BR>").arg(fName) + i18n("permission denied!") + "</qt>", i18n("Error occurred!"));
   }
 
   QApplication::restoreOverrideCursor();
   return ok;
 }
 
-bool WaypointCatalog::writeBinairy()
+bool WaypointCatalog::writeBinary()
 {
   bool ok = true;
 
@@ -294,7 +297,7 @@ bool WaypointCatalog::writeBinairy()
 }
 
 /** No descriptions */
-bool WaypointCatalog::importVolkslogger(QString & filename){
+bool WaypointCatalog::importVolkslogger(const QString& filename){
  QFileInfo fInfo(filename);
  QFile f(filename);
 
@@ -415,7 +418,9 @@ bool WaypointCatalog::importVolkslogger(QString & filename){
         }
         w->origP = WGSPoint(latTemp, lonTemp);
 
-        if (!wpList.insertItem(w)) {
+        if (!wpList.insertItem(w))
+        {
+          delete w;
           break;
         }
       }
@@ -434,11 +439,22 @@ bool WaypointCatalog::importVolkslogger(QString & filename){
 bool WaypointCatalog::save(bool alwaysAskName){
   QString fName = path;
 
-
+  if (fName.right(4).lower() == ".da4")
+    if (KMessageBox::warningYesNoCancel(
+                NULL,
+                i18n("<qt>This type is not supported.<br>Save in KFLog format ?<BR><B>%1</B></qt>").arg(fName),
+                i18n("Save changes?"),
+                i18n("Save"),
+                i18n("Discard")) == KMessageBox::Yes)
+              alwaysAskName = true;
+  
   if (!onDisc || alwaysAskName) {
-    fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n*.kwp *.KWP|Cumulus and KFLogEmbedded waypoints (*.kwp)", 0, i18n("Save waypoint catalog"));
+    fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n"
+                                               "*.kwp *.KWP|Cumulus and KFLogEmbedded waypoints (*.kwp)\n"
+                                               "*.txt *.TXT|Filser txt waypoints (*.txt)",
+                                               0, i18n("Save waypoint catalog"));
     if(!fName.isEmpty()) {
-      if ((fName.right(8) != ".kflogwp") && (fName.right(4) != ".kwp")) {
+      if ((fName.right(8) != ".kflogwp") && (fName.right(4) != ".kwp") && (fName.right(4) != ".txt")) {
         fName += ".kflogwp";
       }
       path = fName;
@@ -450,21 +466,258 @@ bool WaypointCatalog::save(bool alwaysAskName){
 
   if (fName.right(8) == ".kflogwp")
     return write();
-    
-  return writeBinairy();    
+  else if (fName.right(4) == ".txt")
+    return writeFilserTXT (fName);
+  else  
+    return writeBinary();    
 }
 
-/** This function calls either read or readBinairy depending on the filename of the catalog. */
-bool WaypointCatalog::load(QString & catalog){
-  if (catalog.right(8) == ".kflogwp")
+/** This function calls either read or readBinary depending on the filename of the catalog. */
+bool WaypointCatalog::load(const QString& catalog){
+  if (catalog.right(8).lower() == ".kflogwp")
     return read(catalog);
+  else if (catalog.right(4).lower() == ".txt")
+    return readFilserTXT (catalog);
+  else if (catalog.right(4).lower() == ".da4")
+    return readFilserDA4 (catalog);
+  else
+    return readBinary(catalog);
+}
 
-  return readBinairy(catalog);
+/** read a waypoint catalog from a filser txt file */
+bool WaypointCatalog::readFilserTXT (const QString& catalog)
+{
+  qDebug ("WaypointCatalog::readFilserTXT (%s)", catalog.latin1());
+  QFile f(catalog);
 
+  if (f.exists())
+  {
+    if (f.open(IO_ReadOnly))
+    {
+      while (!f.atEnd())
+      {
+        QString line;
+        Q_LONG result = f.readLine (line, 256);
+        if (result > 0)
+        {
+          QStringList list = QStringList::split (",", line, true);
+          if (list[0] == "*") // comment/header line
+            continue;
+          Waypoint *w = new Waypoint;
+          w->name = list [1];
+          w->description = "";
+          w->icao = "";
+//        why don't we have type "turnpoint" ?
+          if (list[2].upper() == "TP")
+            w->type = BaseMapElement::Landmark;
+          else if (list[2].upper() == "APT")
+            w->type = BaseMapElement::Airfield;
+          else if (list[2].upper() == "OUTLAN")
+            w->type = BaseMapElement::Outlanding;
+          else if (list[2].upper() == "MARKER")
+            w->type = BaseMapElement::Landmark;
+          else 
+            w->type = BaseMapElement::Landmark;
+          w->origP.setLat((int)(list[3].toDouble() * 600000.0));
+          w->origP.setLon((int)(list[4].toDouble() * 600000.0));
+          w->elevation = (int)(list[5].toInt() * 0.3048); // don't we have conversion constants ?
+          w->frequency = list[6].toDouble() / 1000.0;
+          w->isLandable = false;
+          w->length = list[7].toInt(); // length ?!
+          w->runway = list[8].toInt(); // direction ?!
+          QChar surface = list[9].upper()[0];
+          switch (surface)
+          {
+            case 'G': w->surface = Airport::Grass;
+                  break;
+            case 'C': w->surface = Airport::Concrete;
+                  break;
+            default:  w->surface = Airport::Unknown;
+          }
+          w->comment = i18n("Imported from %1").arg(catalog);
+          w->importance = 3;
+          
+          if (!wpList.insertItem(w))
+          {
+            delete w;
+            break;
+          }
+        }
+      }
+      onDisc = true;
+      path = catalog;
+      return true;
+    }
+  }
+  return false;
+}
+
+/** write a waypoint catalog into a filser txt file */
+bool WaypointCatalog::writeFilserTXT (const QString& catalog)
+{
+  qDebug ("WaypointCatalog::writeFilserTXT (%s)", catalog.latin1());
+  QFile f(catalog);
+
+  if (f.open(IO_WriteOnly))
+  {
+    QTextStream out (&f);
+    out << "*,TpName,Type,Latitiude,Longitude,Altitude,Frequency,RWY,RWYdir,RWYtype,TCA,TC" << endl;
+    QDictIterator<Waypoint> it(wpList);
+    for (Waypoint* w = it.current(); w != 0; w = ++it)
+    {
+      out << "," << w->name << ",";
+      switch (w->type)
+      {
+        case BaseMapElement::Landmark:
+          out << "TP,";
+          break;
+        case BaseMapElement::Airfield:
+          out << "APT,";
+          break;
+        case BaseMapElement::Outlanding:
+          out << "OUTLAN,";
+          break;
+        default:
+          out << "MARKER,";
+      }
+      out << w->origP.lat()/600000.0 << ",";
+      out << w->origP.lon()/600000.0 << ",";
+      out << (int)(w->elevation/0.3048) << ",";
+      out << (int)(w->frequency*1000) << ",";
+      out << w->length << ",";
+      out << w->runway << ",";
+      switch (w->surface)
+      {
+        case Airport::Grass:
+          out << "G,";
+          break;
+        case Airport::Concrete:
+          out << "C,";
+          break;
+        default:
+          out << "U,";
+      }
+      out << "3,I,,," << endl;
+    }
+    return true;
+  }
+  return false;
+}
+
+/**
+  * This helper function converts floating point numbers that are stored in filser binary files
+  * into normal float numbers.
+  */
+float FloatFromSwappedBits(Q_UINT32 bits)
+{
+  // the numbers are 32 bit float values with reversed byte order
+  union
+  {
+    float    f32;
+    Q_UINT32 u32;
+    Q_UINT8  bytes[4];
+  } u;
+
+  // put in the reversed bytes
+  u.u32 = bits;
+  // swap them into normal order
+  Q_UINT8 tmp = u.bytes[0]; u.bytes[0] = u.bytes[3]; u.bytes[3] = tmp;
+  tmp = u.bytes[1]; u.bytes[1] = u.bytes[2]; u.bytes[2] = tmp;
+  // read out the float value
+  return u.f32;
+}
+
+/** read a waypoint catalog from a filser binary file */
+bool WaypointCatalog::readFilserDA4 (const QString& catalog)
+{
+  qDebug ("WaypointCatalog::readFilserDA4 (%s)", catalog.latin1());
+  QFile f(catalog);
+
+  if (f.exists())
+  {
+    if (f.open(IO_ReadOnly))
+    {
+      QDataStream in(&f);
+      while (!in.eof())
+      {
+        Q_INT8 type;
+        in >> type;
+        char pName [9];
+        in.readRawBytes (pName, 9);
+        Q_UINT32 ulat;
+        in >> ulat;
+        Q_UINT32 ulon;
+        in >> ulon;
+        Q_INT16 elev;
+        in >> elev;
+        Q_INT32 freq;
+        in >> freq;
+        Q_UINT16 len;
+        in >> len;
+        Q_UINT8 dir;
+        in >> dir;
+        Q_UINT8 surface;
+        in >> surface;
+        Q_UINT8 tca;
+        in >> tca;
+        Q_UINT16 tc;
+        in >> tc;
+
+        if (type >= 1 && type <= 4)
+        {
+          if (QString (pName).stripWhiteSpace().isEmpty())
+            continue;
+          Waypoint *w = new Waypoint;
+          w->name = pName;
+          w->description = "";
+          w->icao = "";
+          switch (type)
+          {
+            case 1:  w->type = BaseMapElement::Landmark; // should be turnpoint
+                     break;
+            case 2:  w->type = BaseMapElement::Airfield;
+                     break;
+            case 3:  w->type = BaseMapElement::Outlanding;
+                     break;
+            case 4:  w->type = BaseMapElement::Landmark;
+                     break;
+            default: w->type = BaseMapElement::Landmark;
+          }
+          w->origP.setLat((int)(FloatFromSwappedBits(ulat)*600000.0));
+          w->origP.setLon((int)(FloatFromSwappedBits(ulon)*600000.0));
+          w->elevation = (int)(elev * 0.3048); // don't we have conversion constants ?
+          w->frequency = FloatFromSwappedBits (freq);
+          w->isLandable = false;
+          w->length = len; // length ?!
+          w->runway = dir; // direction ?!
+          switch (surface)
+          {
+            case 'G': w->surface = Airport::Grass;
+                  break;
+            case 'C': w->surface = Airport::Concrete;
+                  break;
+            default:  w->surface = Airport::Unknown;
+          }
+          w->comment = i18n("Imported from %1").arg(catalog);
+          w->importance = 3;
+
+          if (!wpList.insertItem(w))
+          {
+            delete w;
+            break;
+          }
+        }
+      }
+      onDisc = true;
+      path = catalog;
+      return true;
+    }
+  }
+  return false;
 }
 
 /** read a catalog from file */
-bool WaypointCatalog::readBinairy(QString &catalog)
+bool WaypointCatalog::readBinary(const QString &catalog)
 {
   bool ok = false;
 
@@ -555,8 +808,10 @@ bool WaypointCatalog::readBinairy(QString &catalog)
           w->importance = wpImportance;
           //qDebug("Waypoint read: %s (%s - %s)",w->name.latin1(),w->description.latin1(),w->icao.latin1());
 
-          if (!wpList.insertItem(w)) {
+          if (!wpList.insertItem(w))
+          {
             qDebug("odd... error reading waypoints");
+            delete w;
             break;
           }
         }
@@ -566,10 +821,10 @@ bool WaypointCatalog::readBinairy(QString &catalog)
 
         ok = true;
         if (fileFormat<FILE_FORMAT_ID_2) //write file back in newer format
-          writeBinairy();
+          writeBinary();
     }
     else {
-      KMessageBox::error(0, QString ("<qt><B>%1</B><BR>").arg(catalog) + i18n("permission denied!") + "</qt>", i18n("Error occurred!"));
+      KMessageBox::error(0, QString("<qt><B>%1</B><BR>").arg(catalog) + "permission denied!" + "</qt>", i18n("Error occurred!"));
     }
   }
   else {
