@@ -2,7 +2,14 @@
 
 SUBDIRS = kflog po doc 
 
-EXTRA_DIST = kflog.kdevprj AUTHORS COPYING ChangeLog INSTALL README TODO kflog.lsm kflog.spec 
+EXTRA_DIST = kflog.kdevprj AUTHORS COPYING ChangeLog INSTALL README TODO kflog.lsm kflog.spec README-MAP 
+
+install-data-local:
+	$(mkinstalldirs) $$(kde_datadir)/kflog/mapdata/
+	$(INSTALL_DATA) $(srcdir)/README-MAP $$(kde_datadir)/kflog/mapdata/
+
+uninstall-local:
+	-rm -f $$(kde_datadir)/kflog/mapdata/
 
 ####### kdevelop will overwrite this part!!! (end)############
 # not a GNU package. You can remove this line, if 

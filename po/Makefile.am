@@ -3,6 +3,13 @@
 
 EXTRA_DIST = de.gmo kflog.pot 
 
+install-data-local:
+	$(mkinstalldirs) $$(kde_locale)/de/
+	$(INSTALL_DATA) $(srcdir)/de.gmo $$(kde_locale)/de/kflog.mo
+
+uninstall-local:
+	-rm -f $$(kde_locale)/de/kflog.mo
+
 ####### kdevelop will overwrite this part!!! (end)############
 POFILES = AUTO
 

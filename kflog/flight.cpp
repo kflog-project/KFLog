@@ -656,35 +656,40 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
       maskPainter->setPen(QPen(Qt::color1, 4));
       if(glMapMatrix->isSwitchScale())
-          targetPainter->setPen(QPen(QColor(0,0,200), 4));
+        {
+          /*******************************************************************
+           **
+           ** Dynamische Farben im Flug:
+           **
+           **   Zur Zeit nur für Vario. Sollte für alle wichtigen Werte
+           **   möglich sein. Dazu muss der Wert wählbar sein. Farben
+           **   als Legende ausgeben ???
+           **
+           ******************************************************************/
+
+           if(pointA->dH < 0)
+            {
+//            targetPainter->setPen(QPen(QColor(255,
+//              MIN((int)(10.0 * -pointA->dH), 255),
+//              MIN((int)(5.0 * -pointA->dH), 255)), 4));
+                targetPainter->setPen(QPen(QColor(255,0,0), 4));
+            }
+           else
+            {
+ //         targetPainter->setPen(QPen(QColor(MIN((int)(5.0 * pointA->dH), 255),
+ //             MIN((int)(10.0 * pointA->dH), 255), 255), 4));
+
+              targetPainter->setPen(QPen(QColor(0,255,0), 4));
+             }
+        }
+
+//          targetPainter->setPen(QPen(QColor(0,0,200), 4));
       else
         {
           maskPainter->setPen(QPen(Qt::color1, 3));
           targetPainter->setPen(QPen(QColor(0,0,200), 3));
         }
 
-      /*******************************************************************
-       **
-       ** Dynamische Farben im Flug:
-       **
-       **   Zur Zeit nur für Vario. Sollte für alle wichtigen Werte
-       **   möglich sein. Dazu muss der Wert wählbar sein. Farben
-       **   als Legende ausgeben ???
-       **
-       ******************************************************************/
-      /*
-      if(pointA->dH < 0)
-        {
-          targetPainter->setPen(QPen(QColor(255,
-              MIN((int)(10.0 * -pointA->dH), 255),
-              MIN((int)(5.0 * -pointA->dH), 255)), 4));
-        }
-      else
-        {
-          targetPainter->setPen(QPen(QColor(MIN((int)(5.0 * pointA->dH), 255),
-              MIN((int)(10.0 * pointA->dH), 255), 255), 4));
-        }
-      */
 
       targetPainter->drawLine(curPointA, curPointB);
       maskPainter->drawLine(curPointA, curPointB);

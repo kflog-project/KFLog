@@ -1,13 +1,14 @@
 Begin3
 Title:          KFLog 
 Version:        2.0.1
-Entered-date:   
-Description:    
-Keywords:        
-Author:         Heiner Lamprecht <heiner@kflog.de> 
-Maintained-by:  Heiner Lamprecht <heiner@kflog.de> 
-Primary-site:   	        
-Home-page:      http:// 
+Entered-date:   12NOV2001
+Description:    soaring-pilot-software for KDE. It is used to display, analyze
+                and evaluate flights logged with a gps-logger.
+Keywords:       KDE, Qt, X11, GPS, ICAO, aviation, maps, soaring
+Author:         heiner@kflog.de (Heiner Lamprecht), florian@kflog.de (Florian Ehinger)
+Maintained-by:  heiner@kflog.de (Heiner Lamprecht)
+Primary-site:   ftp://ftp.kde.org/pub/kde/unstable/apps/utils/
+Home-page:      http://www.kflog.de
 Original-site:  
 Platforms:       Linux and other Unices
 Copying-policy: GNU Public License

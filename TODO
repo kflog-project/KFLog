@@ -1,25 +1,15 @@
 $Id$
 
-/*************************************************************************
- *
- * Vor PreRelease:
- *
- */
-
-* alle Icons erzeugen !!!
-
-
-* Kartenbewegungen als KAction (inkl. Tastaturbefehl)
-
-
-* Webseite aktualisieren
-
 
 /*************************************************************************
  *
  * Nach PreRelease
  *
  */
+
+
+* Kartenbewegungen als KAction (inkl. Tastaturbefehl)
+
 
 * LineElement::readConfig() sollte nur einmal ausgeführt werden (ausserhalb
   von LineElement). Die entsprechenden Daten können dann abgerufen werden ...
@@ -46,9 +36,6 @@ $Id$
 
 * Maßstabs-Angabe nach Zentrieren auf Flug/Aufgabe zunächst nicht richtig.
   Maßstab müsste zunächst "geprüft" werden ...
-
-
-* deutsche Übersetzung!
 
 
 * Luftraum-Nummern korrigieren

@@ -1300,7 +1300,22 @@ void MapContents::proofeSection()
       KStandardDirs* globalDirs = KGlobal::dirs();
       QString pathName;
       pathName = globalDirs->findResource("appdata", "mapdata/");
-      __readAsciiFile(pathName + "airspace.out");
+
+      QStringList airfields;
+      airfields = globalDirs->findAllResources("appdata", "mapdata/airfields/*.out");
+      for ( QStringList::Iterator it = airfields.begin(); it != airfields.end(); ++it ) {
+        __readAsciiFile((*it).latin1());
+//        warning( "%s", (*it).latin1() );
+      }
+
+      QStringList airspace;
+      airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.out");
+      for ( QStringList::Iterator it = airspace.begin(); it != airspace.end(); ++it ) {
+        __readAsciiFile((*it).latin1());
+//        warning( "%s", (*it).latin1() );
+      }
+
+
 //      __readAsciiFile(pathName + "airfields/deutschland.out");
 //      __readAsciiFile("/home/heiner/Lufträume.out");
       isFirst = false;

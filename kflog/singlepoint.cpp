@@ -133,8 +133,16 @@ void SinglePoint::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
   curPos = glMapMatrix->map(position);
 
-  targetPainter->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
-    QPixmap(KGlobal::dirs()->findResource("appdata", "mapicons/") + iconName));
+  if(glMapMatrix->isSwitchScale())
+    {
+      targetPainter->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
+      QPixmap(KGlobal::dirs()->findResource("appdata", "mapicons/") + iconName));
+    }
+  else
+    {
+      targetPainter->drawPixmap(curPos.x() - iconSize / 2, curPos.y() - iconSize / 2,
+      QPixmap(KGlobal::dirs()->findResource("appdata", "mapicons/small/") + iconName));
+    }
 }
 
 void SinglePoint::setWaypoint(bool isW)
