@@ -34,3 +34,7 @@ void RadioPoint::printMapElement(QPainter* printPainter) const
 {
 
 }
+
+QString RadioPoint::getFrequency() const { return frequency; }
+
+QString RadioPoint::getICAO() const { return icao; }

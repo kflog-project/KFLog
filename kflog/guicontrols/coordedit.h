@@ -45,9 +45,6 @@ class LatEdit : public CoordEdit  {
 public:
 	LatEdit(QWidget *parent=0, const char *name=0);
 	~LatEdit() {};
-  /** No descriptions */
-  int seconds();
-  void __formatCoord(int degree, int min, int sec, int sign);
 };
 
 class LongEdit : public CoordEdit  {
@@ -55,8 +52,5 @@ class LongEdit : public CoordEdit  {
 public:
 	LongEdit(QWidget *parent=0, const char *name=0);
 	~LongEdit() {};
-  /** No descriptions */
-  int seconds();
-  void __formatCoord(int degree, int min, int sec, int sign);
 };
 #endif

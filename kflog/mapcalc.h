@@ -80,6 +80,4 @@ float getBearing(flightPoint p1, flightPoint p2);
  */
 double polar(double x, double y);
 
-/* convert position to internal units of 1/10000 min. */
-int pos2Units(const QString &pos, bool isLat);
 #endif

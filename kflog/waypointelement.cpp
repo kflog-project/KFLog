@@ -18,7 +18,7 @@
 #include "waypointelement.h"
 
 WaypointElement::WaypointElement()
-  : type(-1)
+  : type(-1), surface(-1), runway(0), length(0), elevation(0), frequency(0.0)
 {
 }
 WaypointElement::~WaypointElement(){

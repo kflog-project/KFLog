@@ -71,6 +71,10 @@ class RadioPoint : public SinglePoint
      */
     virtual void printMapElement(QPainter* printPainter) const;
 
+    /* return frequency */
+    virtual QString getFrequency() const;
+    /* return ICAO name */
+    virtual QString getICAO() const;
   protected:
     /**
      * The frequency

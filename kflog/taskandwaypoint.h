@@ -68,6 +68,7 @@ private: // Private attributes
   int idWaypointCatalogSave;
   int idWaypointCatalogImport;
   int idWaypointCatalogClose;
+  int idWaypointImportFromMap;
   int idWaypointNew;
   int idWaypointEdit;
   int idWaypointDelete;
@@ -94,6 +95,7 @@ private slots: // Private slots
   void slotSwitchWaypointCatalog(int idx);
   void showTaskPopup(int row, int col, int button, const QPoint &mousePos);
   void showWaypointPopup(int row, int col, int button, const QPoint &mousePos);
+  void slotImportWaypointFromMap();
 public slots: // Public slots
 };
 

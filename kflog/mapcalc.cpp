@@ -163,31 +163,3 @@ double polar(double x, double y)
   return angle;
 }
 
-/* convert position to internal units of 1/10000 min. */
-int pos2Units(const QString &pos, bool isLat)
-{
-  int degree, min, sec, result = 0;
-
-  if (isLat) {
-    degree = pos.left(2).toInt();
-    min = pos.mid(4, 2).toInt();
-    sec = pos.mid(8, 2).toInt();
-  }
-  else {
-    degree = pos.left(3).toInt();
-    min = pos.mid(5, 2).toInt();
-    sec = pos.mid(9, 2).toInt();
-  }
-
-  result = (degree * 600000) + (min * 10000) + (sec * 10000 / 60);
-  result++;
-
-  if (isLat && pos.right(1) == "S") {
-    result = -result;
-  }
-  else if (pos.right(1) == "W") {
-    result = -result;
-  }
-
-  return result;
-}

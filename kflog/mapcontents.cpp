@@ -180,7 +180,7 @@ int MapContents::degreeToNum(QString inDegree)
    *  [g]gg° mm' ss"
    *  dddddddddd
    */
-  QRegExp degree("^[0-9]?[0-9]°[ ]*[0-9][0-9]'[ ]*[0-9][0-9]\"");
+  QRegExp degree("^[0-9]?[0-9][0-9]°[ ]*[0-9][0-9]'[ ]*[0-9][0-9]\"");
   QRegExp number("^-?[0-9]+$");
 
   if(number.match(inDegree) != -1)

@@ -1,7 +1,7 @@
 # KDE tags expanded automatically by am_edit - $Revision$ 
-# Makefile.in generated automatically by automake 1.4-p5 from Makefile.am
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
-# Copyright (C) 1994, 1995-8, 1999, 2001 Free Software Foundation, Inc.
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -206,8 +206,8 @@ EXTRA_DIST = de.gmo kflog.pot no.gmo sv.gmo fr.gmo
 ####### kdevelop will overwrite this part!!! (end)############
 #>- POFILES = AUTO
 #>+ 2
-POFILES = de.po fr.po no.po sv.po
-GMOFILES = de.gmo fr.gmo no.gmo sv.gmo
+POFILES = de.po no.po sv.po fr.po
+GMOFILES = de.gmo no.gmo sv.gmo fr.gmo
 mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -255,6 +255,17 @@ distdir: distdir-nls  $(DISTFILES)
 	distdir=`cd $(distdir) && pwd`; \
 	cd $(top_srcdir) \
 	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu po/Makefile
+#>- 	@for file in $(DISTFILES); do \
+#>- 	  d=$(srcdir); \
+#>- 	  if test -d $$d/$$file; then \
+#>- 	    cp -pr $$/$$file $(distdir)/$$file; \
+#>- 	  else \
+#>- 	    test -f $(distdir)/$$file \
+#>- 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+#>- 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+#>- 	  fi; \
+#>- 	done
+#>+ 10
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -396,24 +407,24 @@ merge:
 de.gmo: de.po
 	rm -f de.gmo; $(GMSGFMT) -o de.gmo $(srcdir)/de.po
 	test ! -f de.gmo || touch de.gmo
-fr.gmo: fr.po
-	rm -f fr.gmo; $(GMSGFMT) -o fr.gmo $(srcdir)/fr.po
-	test ! -f fr.gmo || touch fr.gmo
 no.gmo: no.po
 	rm -f no.gmo; $(GMSGFMT) -o no.gmo $(srcdir)/no.po
 	test ! -f no.gmo || touch no.gmo
 sv.gmo: sv.po
 	rm -f sv.gmo; $(GMSGFMT) -o sv.gmo $(srcdir)/sv.po
 	test ! -f sv.gmo || touch sv.gmo
+fr.gmo: fr.po
+	rm -f fr.gmo; $(GMSGFMT) -o fr.gmo $(srcdir)/fr.po
+	test ! -f fr.gmo || touch fr.gmo
 
 #>+ 3
 clean-nls:
-	-rm -f  de.gmo fr.gmo no.gmo sv.gmo
+	-rm -f  de.gmo no.gmo sv.gmo fr.gmo
 
 #>+ 9
 install-nls:
 install-nls:
-	@for base in de fr no sv ; do \
+	@for base in de no sv fr ; do \
 	  echo $(INSTALL_DATA) $$base.gmo $(DESTDIR)$(kde_locale)/$$base/LC_MESSAGES/$(PACKAGE).mo ;\
 	  $(mkinstalldirs) $(DESTDIR)$(kde_locale)/$$base/LC_MESSAGES ; \
 	  test ! -f $$base.gmo || $(INSTALL_DATA) $$base.gmo $(DESTDIR)$(kde_locale)/$$base/LC_MESSAGES/$(PACKAGE).mo ;\
@@ -423,9 +434,9 @@ install-nls:
 #>+ 6
 uninstall-nls:
 	rm -f $(DESTDIR)$(kde_locale)/de/LC_MESSAGES/$(PACKAGE).mo
-	rm -f $(DESTDIR)$(kde_locale)/fr/LC_MESSAGES/$(PACKAGE).mo
 	rm -f $(DESTDIR)$(kde_locale)/no/LC_MESSAGES/$(PACKAGE).mo
 	rm -f $(DESTDIR)$(kde_locale)/sv/LC_MESSAGES/$(PACKAGE).mo
+	rm -f $(DESTDIR)$(kde_locale)/fr/LC_MESSAGES/$(PACKAGE).mo
 
 #>+ 2
 all-nls: $(GMOFILES)

@@ -59,9 +59,9 @@ bool WaypointCatalog::read(QString &catalog)
           QDomNamedNodeMap nm =  nl.item(i).attributes();
           WaypointElement *w = new WaypointElement;
 
-          w->name = nm.namedItem("Name").toAttr().value();
+          w->name = nm.namedItem("Name").toAttr().value().left(6).upper();
           w->description = nm.namedItem("Description").toAttr().value();
-          w->icao = nm.namedItem("ICAO").toAttr().value();
+          w->icao = nm.namedItem("ICAO").toAttr().value().upper();
           w->type = nm.namedItem("Type").toAttr().value().toInt();
           w->pos.setY(nm.namedItem("Latitude").toAttr().value().toInt());
           w->pos.setX(nm.namedItem("Longitude").toAttr().value().toInt());

@@ -38,19 +38,14 @@ bool WaypointList::insertItem(WaypointElement *e)
   if ((tmp = find(e->name)) != 0) {
     switch (KMessageBox::warningYesNoCancel(0, i18n("Waypoint<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Overwrite it?").arg(e->name))) {
     case KMessageBox::Yes:
-      tmp->description = e->description;
-      tmp->type = e->type;
-      tmp->pos = e->pos;
-      tmp->elevation = e->elevation;
-      tmp->icao = e->icao;
-      tmp->frequency = e->frequency;
-      tmp->runway = e->runway;
-      tmp->length = e->length;
-      tmp->surface = e->surface;
-      tmp->comment = e->comment;
-      tmp->isLandable = e->isLandable;
+      remove(e->name);
+      insert(e->name, e);
+      break;
+    case KMessageBox::No:
+      delete e;
       break;
     case KMessageBox::Cancel:
+      delete e;
       ins = false;
       break;
     }
