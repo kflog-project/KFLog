@@ -2009,6 +2009,9 @@ void Map::slotShowCurrentFlight()
     if (((FlightTask *)f)->getWPList().count() < 1) {
       slotActivatePlanning();
     }
+    else {
+      planning = 2;
+    }
   }
 
   // Hier wird der Flug 2x neu gezeichnet, denn erst beim

@@ -135,7 +135,7 @@ class FlightTask : public BaseFlightElement
   /*
    * The task-types
    */
-  enum TaskType {Route, FAIArea};
+  enum TaskType {Route, FAIArea, AAT};
   /*
    * The directions FAIAreas
    */

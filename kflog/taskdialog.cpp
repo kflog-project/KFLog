@@ -28,6 +28,9 @@
 
 #include "taskdialog.h"
 #include "mapcontents.h"
+#include "translationlist.h"
+
+extern TranslationList taskTypes;
 
 TaskDialog::TaskDialog(QWidget *parent, const char *name )
   : KDialog(parent, name, true)
@@ -74,15 +77,16 @@ void TaskDialog::__initDialog()
   header->addWidget(l);
   header->addWidget(name);
 
-  // Create an exclusive button group
-  QButtonGroup *bgrp1 = new QButtonGroup(1, QGroupBox::Vertical, i18n("Planning"), this);
-  connect(bgrp1, SIGNAL(clicked(int)), SLOT(slotSetPlanningType(int)));
-  bgrp1->setExclusive(true);
+  // Create a combo box for taskTypes
+  planningTypes = new KComboBox(false, this, "planningType");
+  connect(planningTypes, SIGNAL(activated(int)), SLOT(slotSetPlanningType(int)));
+  l = new QLabel(planningTypes, i18n("Task T&ype") + ":", this);
 
-  // insert 2 radiobuttons
-  routeBased = new QRadioButton(i18n( "&Route based"), bgrp1);
-  routeBased->setChecked(true);
-  areaBased = new QRadioButton(i18n("&Area based"), bgrp1);
+  TranslationElement *te;
+  // init comboboxes
+  for (te = taskTypes.first(); te != 0; te = taskTypes.next()) {
+    planningTypes->insertItem(te->text);
+  }
 
   // Create an non-exclusive button group
   QButtonGroup *bgrp2 = new QButtonGroup(1, QGroupBox::Vertical, i18n("Side of FAI area"), this);
@@ -97,7 +101,8 @@ void TaskDialog::__initDialog()
   taskType = new QLabel(this);
   taskType->setMinimumWidth(100);
 
-  type->addWidget(bgrp1);
+  type->addWidget(l);
+  type->addWidget(planningTypes);
   type->addWidget(bgrp2);
   type->addStretch();
   type->addWidget(taskType);
@@ -190,13 +195,15 @@ void TaskDialog::polish()
   waypoints->sort();
 }
 
-void TaskDialog::slotSetPlanningType(int)
+void TaskDialog::slotSetPlanningType(int idx)
 {
   unsigned int n, cnt;
+  int id;
 
-  if (areaBased->isChecked()) {
-    cnt = wpList.count();
-    
+  id = taskTypes.at(idx)->id;
+  switch (id) {
+  case FlightTask::FAIArea:
+    cnt = wpList.count();    
     left->setEnabled(true);
     right->setEnabled(true);
     left->setChecked(pTask->getPlanningDirection() & FlightTask::leftOfRoute);
@@ -208,17 +215,16 @@ void TaskDialog::slotSetPlanningType(int)
       }
       pTask->setWaypointList(wpList);
     }        
-    pTask->setPlanningType(FlightTask::FAIArea);
-  }
-  else {
+    break;
+  case FlightTask::Route:
     left->setEnabled(false);
     right->setEnabled(false);
     left->setChecked(false);
     right->setChecked(false);
-
-    pTask->setPlanningType(FlightTask::Route);
+    break;
   }
 
+  pTask->setPlanningType(id);
   fillWaypoints();
   enableWaypointButtons();
   route->setSelected(route->firstChild(), true);
@@ -395,24 +401,18 @@ void TaskDialog::setTask(FlightTask *orig)
       wpList.append(wp);
     }
   }
+  
   pTask->setWaypointList(wpList);
   pTask->setPlanningType(orig->getPlanningType());
   pTask->setPlanningDirection(orig->getPlanningDirection());
 
   name->setText(pTask->getFileName());
-  switch (pTask->getPlanningType()) {
-  case FlightTask::Route:
-    routeBased->setChecked(true);
-    break;
-  case FlightTask::FAIArea:
-    areaBased->setChecked(true);
-    break;
-  }
+  planningTypes->setCurrentItem(taskTypes.idxById(pTask->getPlanningType()));
 
   left->setChecked(pTask->getPlanningDirection() & FlightTask::leftOfRoute);
   right->setChecked(pTask->getPlanningDirection() & FlightTask::rightOfRoute);
 
-  slotSetPlanningType(-1);
+  slotSetPlanningType(taskTypes.idxById(pTask->getPlanningType()));
 }
 
 /** No descriptions */

@@ -97,6 +97,7 @@ KFLogApp::KFLogApp()
   // initialize internal translation lists
   initSurfaces();
   initTypes();
+  initTaskTypes();
 
   connect(&_globalMapMatrix, SIGNAL(displayMatrixValues(int, bool)),
       &_globalMapConfig, SLOT(slotSetMatrixValues(int, bool)));
@@ -1193,8 +1194,9 @@ void KFLogApp::initTaskTypes()
 {
   taskTypes.setAutoDelete(true);
 
-  taskTypes.append(new TranslationElement(FlightTask::Route, i18n("Normal Route")));
+  taskTypes.append(new TranslationElement(FlightTask::Route, i18n("Traditional Route")));
   taskTypes.append(new TranslationElement(FlightTask::FAIArea, i18n("FAI Area")));
+  taskTypes.append(new TranslationElement(FlightTask::AAT, i18n("Area Assigned")));
 
   taskTypes.sort();
 }

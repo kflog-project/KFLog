@@ -27,6 +27,7 @@
 
 #include <kdialog.h>
 #include <klistbox.h>
+#include <kcombobox.h>
 
 #include "guicontrols/kfloglistview.h"
 #include "flighttask.h"
@@ -71,10 +72,7 @@ private: // Private attributes
   QLineEdit *name;
   QLabel *taskType;
 
-  /**  */
-  QRadioButton *areaBased;
-  /**  */
-  QRadioButton *routeBased;
+  KComboBox *planningTypes;
   QCheckBox *left;
   QCheckBox *right;
 
