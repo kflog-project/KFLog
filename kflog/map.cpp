@@ -1440,6 +1440,7 @@ void Map::__redrawMap()
 
   __drawGrid();
   __drawMap();
+  __drawScale();
   __drawFlight();
   __drawWaypoints();
 //  __drawPlannedTask();
@@ -2618,3 +2619,136 @@ void Map::slotMapInfoTimeout() {
   __displayMapInfo(mapInfoTimerStartpoint, true);
 
 }
+
+/** Draws a scale indicator on the pixmap. */
+void Map::__drawScale(){
+  QPainter scaleP(&pixAirspace);
+  QPainter scalePMask(&bitAirspaceMask);
+  
+  QPen pen;
+  QBrush brush(white);
+
+//  pen.setColor(QColor(10,10,10));
+  pen.setColor(Qt::black);
+  pen.setWidth(3);
+  pen.setCapStyle(RoundCap);
+  scaleP.setPen(pen);
+
+  QPen mPen;
+  QBrush mBrush(Qt::color1);
+  mPen.setColor(Qt::color1);
+  mPen.setWidth(3);
+  mPen.setCapStyle(RoundCap);
+  scalePMask.setPen(mPen);
+  
+  extern MapMatrix _globalMapMatrix;
+  double scale = _globalMapMatrix.getScale(MapMatrix::CurrentScale);
+
+  
+
+  /** select appropriate length of bar. This needs to be done for each unit
+    * seperately, because else you'd get weird, broken barlengts.
+    * Note: not all possible units are taken into account (meters, feet),
+    * because we are not going to use these for horizontal distances (at least
+    * not externaly.) */
+  /**
+   * Because KFLog does not support different units yet, this code is commented out.
+   
+  Distance barLen;
+  int len=1;
+  switch (barLen.getUnit()) {
+  case Distance::kilometers:
+    len=50;
+    if (scale<475) len=25;
+    if (scale<240) len=10;
+    if (scale<100) len=5;
+    if (scale<50) len=3;
+    barLen.setKilometers(len);
+    break;
+
+  case Distance::miles:
+    len=30;
+    if (scale<475) len=12;
+    if (scale<200) len=6;
+    if (scale<95) len=4;
+    if (scale<60) len=2;
+    barLen.setMiles(len);
+    break;
+
+  case Distance::nautmiles:
+    len=25;
+    if (scale<450) len=10;
+    if (scale<175) len=5;
+    if (scale<90) len=3;
+    if (scale<55) len=1;
+    barLen.setNautMiles(len);
+    break;
+
+  default: //should not happen, other units are not used for horizontal distances.
+    len=50;
+    if (scale<475) len=25;
+    if (scale<240) len=10;
+    if (scale<100) len=5;
+    if (scale<50) len=3;
+    barLen.setKilometers(len);
+    break;
+
+  };
+  */
+
+    int len=200;
+    if (scale<1300) len=100;
+    if (scale<800) len=50;
+    if (scale<475) len=25;
+    if (scale<240) len=10;
+    if (scale<100) len=5;
+    if (scale<50) len=3;
+    
+
+  //determine how long the bar should be in pixels
+    int drawLength = (int)(len*1000/scale);
+    //int drawLength = (int)(barLen.getMeters()/scale);
+  //...and where to start drawing.
+  int leftXPos=this->width()-drawLength-5;
+  //Now, draw the bar
+  scaleP.drawLine(leftXPos,this->height()-5,this->width()-5,this->height()-5);       //main bar
+  pen.setWidth(2);
+  scaleP.setPen(pen);
+  scaleP.drawLine(leftXPos,this->height()-9,leftXPos,this->height()-1);              //left endbar
+  scaleP.drawLine(this->width()-5,this->height()-9,this->width()-5,this->height()-1);//right endbar
+
+  scalePMask.drawLine(leftXPos,this->height()-5,this->width()-5,this->height()-5);       //main bar
+  mPen.setWidth(2);
+  scalePMask.setPen(mPen);
+  scalePMask.drawLine(leftXPos,this->height()-9,leftXPos,this->height()-1);              //left endbar
+  scalePMask.drawLine(this->width()-5,this->height()-9,this->width()-5,this->height()-1);//right endbar
+
+  qDebug("Drawlength: %d",drawLength);
+  
+  //get the string to draw
+  QString scaleText=i18n("%1 km").arg(len);
+  //QString scaleText=barLen.getText(true,0);
+  //get some metrics for this string
+  QRect txtRect=scaleP.fontMetrics().boundingRect(scaleText);
+  int leftTPos=this->width()+int((drawLength-txtRect.width())/2)-drawLength-5;
+
+  //draw white box to draw text on
+  scaleP.setBrush(brush);
+  scaleP.setPen(NoPen);
+  //scaleP.drawRect(leftTPos,this->height()-txtRect.height()+2, txtRect.width(), txtRect.height()+4); //-2);
+  scaleP.drawRect(leftTPos-1,this->height()-txtRect.height()-4, txtRect.width()+4, txtRect.height()+4); //-2);
+
+  scalePMask.setBrush(mBrush);
+  scalePMask.setPen(NoPen);
+  //scalePMask.drawRect(leftTPos,this->height()-txtRect.height()+2, txtRect.width(), txtRect.height()+4); //-2);
+  scalePMask.drawRect(leftTPos-1,this->height()-txtRect.height()-4, txtRect.width()+4, txtRect.height()+4); //-2);
+  
+  //draw text itself
+  scaleP.setPen(pen);
+  scaleP.drawText(leftTPos,this->height()-7+txtRect.height()/2,scaleText);
+  scaleP.end();
+
+  scalePMask.end();
+}
+
+

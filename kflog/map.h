@@ -209,6 +209,10 @@ class Map : public QWidget
      */
     void __drawGrid();
     /**
+      * Draws a scale on the pixmap.
+      */
+    void __drawScale();
+    /**
      * Sets the crosshair cursor
      */
     void __setCursor();
