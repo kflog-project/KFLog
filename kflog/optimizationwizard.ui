@@ -3,7 +3,7 @@
 <author>Christof Bodner</author>
 <widget class="QWizard">
     <property name="name">
-        <cstring>Form1</cstring>
+        <cstring>OLC_Optimization</cstring>
     </property>
     <property name="geometry">
         <rect>
@@ -14,7 +14,7 @@
         </rect>
     </property>
     <property name="caption">
-        <string>Form1</string>
+        <string>OLC Optimization</string>
     </property>
     <widget class="QWidget">
         <property name="name">
@@ -258,19 +258,19 @@
     <connection>
         <sender>kPushButton2</sender>
         <signal>pressed()</signal>
-        <receiver>Form1</receiver>
+        <receiver>OLC_Optimization</receiver>
         <slot>slotSetTimes()</slot>
     </connection>
     <connection>
         <sender>btnStop</sender>
         <signal>pressed()</signal>
-        <receiver>Form1</receiver>
+        <receiver>OLC_Optimization</receiver>
         <slot>slotStopOptimization()</slot>
     </connection>
     <connection>
         <sender>btnStart</sender>
         <signal>pressed()</signal>
-        <receiver>Form1</receiver>
+        <receiver>OLC_Optimization</receiver>
         <slot>slotStartOptimization()</slot>
     </connection>
 </connections>

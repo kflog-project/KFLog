@@ -34,12 +34,13 @@
 #include <mapcalc.h>
 #include <klocale.h>
 
-EvaluationDialog::EvaluationDialog(QWidget *parent)
+EvaluationDialog::EvaluationDialog(QWidget *parent,bool staysOnTop)
 : QDialog(parent, "EvaluationsDialog", false)
 {
   setCaption(i18n("Flightevaluation:"));
 
-  setWFlags(getWFlags() | WStyle_StaysOnTop);
+  if (staysOnTop)
+    setWFlags(getWFlags() | WStyle_StaysOnTop);
 
   // Auswahl - Kopfzeile
 /*  QFrame* oben = new QFrame(this, "frame_oben");

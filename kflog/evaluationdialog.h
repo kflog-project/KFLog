@@ -42,7 +42,7 @@ class EvaluationDialog : public QDialog
 
  public:
   /** */
-  EvaluationDialog(QWidget *parent);
+  EvaluationDialog(QWidget *parent,bool staysOnTop=true);
   /** */
   ~EvaluationDialog();
   /**
