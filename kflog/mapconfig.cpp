@@ -15,14 +15,12 @@
 **
 ***********************************************************************/
 
-#include "mapconfig.h"
 
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kstddirs.h>
 #include <qnamespace.h>
 
-#include "basemapelement.h"
 #include "flight.h"
 #include "mapdefaults.h"
 
