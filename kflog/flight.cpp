@@ -95,7 +95,7 @@ Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName
     landIndex(route.count()-1),
 //    origTask(FlightTask(wpL, true, QString::null)),
 //    optimizedTask(FlightTask(QString::null)),
-    origTask(FlightTask(wpL, true, i18n("Origninal task"))),
+    origTask(FlightTask(wpL, true, i18n("Original task"))),
     optimizedTask(FlightTask(i18n("Optimized task"))),
     optimized(false),
     nAnimationIndex(0),

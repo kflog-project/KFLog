@@ -304,7 +304,7 @@ void KFLogConfig::__addMapTab()
   elementSelect-> insertItem(i18n("Glacier"), KFLogConfig::Glacier);
   elementSelect-> insertItem(i18n("Pack Ice"), KFLogConfig::PackIce);
   elementSelect-> insertItem(i18n("FAI Area <500 km"), KFLogConfig::FAIAreaLow500);
-  elementSelect-> insertItem(i18n("FAI Area >P0 km"), KFLogConfig::FAIAreaHigh500);
+  elementSelect-> insertItem(i18n("FAI Area >500 km"), KFLogConfig::FAIAreaHigh500);
 
   QPushButton* defaultElements = new QPushButton(i18n("Default"), mapPage,
       "defaultElements");
