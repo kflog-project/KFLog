@@ -170,10 +170,10 @@ void DataView::setFlightData()
             break;
           case BaseMapElement::Task:
             if(e->getWPList().count())
-                flightDataText->setText(__writeTaskInfo((FlightTask*)e));
+                htmlText = __writeTaskInfo((FlightTask*)e);
             else
               {
-                flightDataText->setText(i18n(
+                htmlText = i18n(
                   "You can select waypoints with the left mouse button."
                   "You can also select free waypoints by clicking anywhere in the map."
                   "<br><br>"
@@ -183,7 +183,7 @@ void DataView::setFlightData()
                   "<br>"
                   "To finish the task, press &lt;CTRL&gt; and click the right mouse button.<br>"
                   "It's possible to move and delete taskpoints from the finished task."
-                  ));
+                  );
               }
             break;
           case BaseMapElement::FlightGroup:
