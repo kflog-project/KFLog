@@ -27,6 +27,7 @@
 #include <signal.h>
 
 #include <klocale.h>
+#include <ctype.h>
 
 /**
  * The device-name of the port.
