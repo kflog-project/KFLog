@@ -22,38 +22,82 @@
 #include <qlineedit.h>
 
 /**
+  *@short baseclass for @ref LatEdit and @ref LongEdit
   *@author Harald Maier
+  *
+  * Implements a widget for editing a coordinate
   */
 
 class CoordEdit : public QLineEdit  {
    Q_OBJECT
 public:
+ /**
+  * Constructor. Takes the default @ref QWidget arguments
+  */
 	CoordEdit(QWidget *parent=0, const char *name=0);
+ /**
+  * Destructor
+  */ 
 	~CoordEdit() {};
+ /**
+  * A key is pressed. Processes the key to see if it's valid input.
+  */ 
 	void keyPressEvent (QKeyEvent *e);
+ /**
+  * The widget gets the focus
+  */ 
 	void focusInEvent (QFocusEvent *e);
-  /** No descriptions */
+  /**
+   * The widget is shown
+   */
   void showEvent(QShowEvent *);
 protected:
-  /** No descriptions */
+  /**
+   * Contains the mask used for the entrywidget
+   */
 	QString mask;
+  /**
+   * Sets the valid directions (EW vs NS)
+   */
 	QString validDirection;
 public slots: // Public slots
-  /** No descriptions */
+  /**
+   * Clears the widget
+   */
   void clear();
 };
 
+/**
+ * @short Implements a Latitude editor widget
+ * @author Harald Maier
+ */
 class LatEdit : public CoordEdit  {
    Q_OBJECT
 public:
+ /**
+  * Constructor. Takes the default @ref QWidget arguments
+  */
 	LatEdit(QWidget *parent=0, const char *name=0);
+ /**
+  * Destructor
+  */
 	~LatEdit() {};
 };
 
+/**
+ * @short Implements a Longitude editor widget
+ * @author Harald Maier
+ */
 class LongEdit : public CoordEdit  {
    Q_OBJECT
 public:
+ /**
+  * Constructor. Takes the default @ref QWidget arguments
+  */
 	LongEdit(QWidget *parent=0, const char *name=0);
+ /**
+  * Destructor
+  */
 	~LongEdit() {};
 };
 #endif
