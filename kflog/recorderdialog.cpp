@@ -518,8 +518,6 @@ void RecorderDialog::slotConnectRecorder()
 
   setCursor(WaitCursor);
  
-  apiID->setText(libName);
-
   funcH = dlsym(libHandle, "openRecorder");
   CHECK_ERROR_EXIT
 
@@ -528,7 +526,8 @@ void RecorderDialog::slotConnectRecorder()
     CHECK_ERROR_EXIT
 
     serID->setText(((QString (*)())funcH)());
-    isConnected = true;    
+    isConnected = true;
+    slotEnablePages();
     slotReadDatabase();
   }
   else {
@@ -552,6 +551,10 @@ void RecorderDialog::slotCloseRecorder()
     CHECK_ERROR_EXIT
 
     err = ((int (*)())funcH)();
+    libName = "";
+    apiID->setText(libName);
+    serID->clear();
+    isOpen = false;
   }
 }
 
@@ -691,6 +694,9 @@ int RecorderDialog::__openLib(QString libN)
   char* error;
   void* funcH;
 
+  libName = "";
+  apiID->setText(libName);
+
   libHandle = dlopen(KGlobal::dirs()->findResource("lib", libN), RTLD_NOW);
 
   CHECK_ERROR_RETURN
@@ -700,6 +706,7 @@ int RecorderDialog::__openLib(QString libN)
   CHECK_ERROR_RETURN
 
   libName = ((QString (*)())funcH)();
+  apiID->setText(libName);
 
   isOpen = true;
 
@@ -760,7 +767,7 @@ void RecorderDialog::slotReadTasks()
     }
     else {
       for (t = frTasks.first(); t != 0; t = frTasks.next()) {
-        task = new FlightTask(_globalMapContents.genTaskName());
+        task = new FlightTask(t->name == "" ? _globalMapContents.genTaskName() : t->name);
         wpList = new QList<wayPoint>;
         for (frTp = t->wayPoints.first(); frTp != 0; frTp = t->wayPoints.next()) {
           wp = new wayPoint;
@@ -771,7 +778,7 @@ void RecorderDialog::slotReadTasks()
           wp->sector1 = 0;
           wp->sector2 = 0;
           wp->sectorFAI = 0;
-          wp->elevation = 0;
+          wp->elevation = frTp->elevation;
           wp->frequency = 0;
           wp->isLandable = true;
           wp->runway = -1;
@@ -866,6 +873,8 @@ void RecorderDialog::slotWriteTasks()
         frTp->latPos = wp->origP.lat();
         frTp->lonPos = wp->origP.lon();
         frTp->type = wp->type;
+        frTp->elevation = wp->elevation;
+
         t->wayPoints.append(frTp);
       }
     }
@@ -920,10 +929,11 @@ void RecorderDialog::slotReadWaypoints()
         }
         wp->type = frWp->isAirport ? BaseMapElement::Airfield : -1;
 
-        wp->elevation =0;
+        wp->elevation = frWp->point.elevation;
         wp->frequency = 0;
         wp->runway = -1;
         wp->length = -1;
+	wp->comment = frWp->comment;
 
         w->wpList.insertItem(wp);
       }
@@ -978,6 +988,8 @@ void RecorderDialog::slotWriteWaypoints()
       frWp->point.name = wp->name;
       frWp->point.latPos = wp->origP.lat();
       frWp->point.lonPos = wp->origP.lon();
+      frWp->point.elevation = wp->elevation;
+      frWp->comment = wp->comment;
       frWp->isLandable = wp->isLandable;
       frWp->isHardSurface = 
         wp->surface == Airport::Asphalt | 
@@ -1040,6 +1052,7 @@ void RecorderDialog::slotRecorderTypeChanged(const QString &name)
   if(isOpen && libName != name) {
     // closing old lib
     dlclose(libHandle);
+    slotCloseRecorder();
     isConnected = isOpen = false;
     slotEnablePages();
   }

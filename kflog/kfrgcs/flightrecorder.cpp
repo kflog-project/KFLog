@@ -301,6 +301,7 @@ int readTasks(QList<FRTask> *tasks)
         tp->latPos = (int)(wp->lat * 600000.0);
         tp->lonPos = (int)(wp->lon * 600000.0);
         tp->type = FlightTask::RouteP;
+	tp->elevation = 0;
 
         if (task->wayPoints.count() == 0) {
           // append take off

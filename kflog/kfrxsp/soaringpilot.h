@@ -19,9 +19,9 @@
 #define SOARINGPILOT_H
 
 #include <qstring.h>
-#include <qstringlist.h>
 
-#include <termios.h>
+#include <../frstructs.h>
+#include <../flighttask.h>
 
 /**Implementation for SoaringPilot.
 
@@ -34,14 +34,23 @@ public:
   SoaringPilot();
   ~SoaringPilot();
   /** No descriptions */
-  int close();
+  int closeLogger();
   /** No descriptions */
-  int open(char *port, int baud);
+  int openLogger(char *port, int baud);
+  int downloadWaypoints(QList<FRWaypoint> *waypoints);
+  int uploadWaypoints(QList<FRWaypoint> *waypoints);
+  int downloadTasks(QList<FRTask> *tasks);
+  int uploadTasks(QList<FRTask> *tasks);
 private: // Private methods
   /** write a file like structure to the device */
   int writeFile(QStringList &file);
-  /** read a file like structure to the device */
+  /** read a file like structure from the device */
   int readFile(QStringList &file);
+  int coordToDegree(QString &s);
+  QString degreeToDegMin(int d, bool isLat);
+  QString degreeToDegMinSec(int d, bool isLat);
+  int feetToMeter(QString &s);
+  QString meterToFeet(int m);
 };
 
 #endif

@@ -81,6 +81,7 @@ struct FRTaskPoint
   int latPos;
   int lonPos;
   int type;
+  int elevation; // in m
 };
 
 /** */
@@ -91,6 +92,7 @@ struct FRWaypoint
   int isHardSurface;
   int isAirport;
   int isCheckpoint;
+  QString comment;
 };
 
 /** */

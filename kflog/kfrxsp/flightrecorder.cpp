@@ -14,28 +14,16 @@
 **   $Id$
 **
 ***********************************************************************/
-
-//#include <iostream.h>
-
 #include <unistd.h>
 #include <ctype.h>
 
 #include <klocale.h>
-//#include <qarray.h>
-//#include <qfile.h>
-//#include <qlist.h>
-//#include <qstring.h>
 
-#include <../frstructs.h>
-#include <../flighttask.h>
 #include "soaringpilot.h"
 
-#define MAX(a,b)   ( ( a > b ) ? a : b )
-#define MIN(a,b)   ( ( a < b ) ? a : b )
-
 int breakTransfer = 0;
-unsigned int maxNrTasks = -1;
-unsigned int maxNrWaypoints = -1;
+unsigned int maxNrTasks = (unsigned int) -1;
+unsigned int maxNrWaypoints = (unsigned int) -1;
 unsigned int maxNrWaypointsPerTask = 10;
 unsigned int maxNrPilots = 0;
 
@@ -57,10 +45,12 @@ extern "C"
   /** */
   int closeRecorder();
   /** write flight declaration to recorder */
-  int writeDeclaration(FRTaskDeclaration *taskDecl, 
-                       QList<FRTaskPoint> *taskPoints);
+  /*  not available for SP */
+  /* int writeDeclaration(FRTaskDeclaration *taskDecl, 
+     QList<FRTaskPoint> *taskPoints); */
   /** read waypoint and flight declaration form from recorder into mem */
-  int readDatabase();
+  /*  not available for SP */
+  /* int readDatabase(); */
   /** read tasks from recorder */
   int readTasks(QList<FRTask> *tasks);
   /** write tasks to recorder */
@@ -70,6 +60,7 @@ extern "C"
   /** write waypoints to recorder */
   int writeWaypoints(QList<FRWaypoint> *waypoints);
 }
+
 
 /*************************************************************************
 **
@@ -132,6 +123,7 @@ int getFlightDir(QList<FRDirEntry>* dirList)
 int downloadFlight(int flightID, int secMode, char* fileName)
 {
   //return vl.read_igcfile(fileName, flightID, secMode) == VLA_ERR_NOERR;
+  return 1;
 }
 
 QString getRecorderSerialNo()
@@ -141,12 +133,12 @@ QString getRecorderSerialNo()
 
 int openRecorder(char* pName, int baud)
 {
-  return sp.open(pName, baud);
+  return sp.openLogger(pName, baud);
 }
 
 int closeRecorder()
 {
-  return sp.close();
+  return sp.closeLogger();
 }
 
 int writeDeclaration(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> *taskPoints)
@@ -162,7 +154,7 @@ int writeDeclaration(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> *taskPoints
 //
 //  strcpy(vl.declaration.flightinfo.gliderid,
 //         taskDecl->gliderID.leftJustify(7, ' ', true));
-//  strcpy(vl.declaration.flightinfo.glidertype,
+//  strcpy(vl.declaration.flightinfo.gliderty
 //         taskDecl->gliderType.leftJustify(12, ' ', true));
 //  strcpy(vl.declaration.flightinfo.competitionid,
 //         taskDecl->compID.leftJustify(3, ' ', true));
@@ -200,57 +192,9 @@ int writeDeclaration(FRTaskDeclaration* taskDecl, QList<FRTaskPoint> *taskPoints
   return 1;
 }
 
-int readDatabase()
-{
-//  return vl.read_db_and_declaration() == VLA_ERR_NOERR;
-  return 1;
-}
-
 int readTasks(QList<FRTask> *tasks)
 {
-//  FRTask *task;
-//  FRTaskPoint *tp;
-//  VLAPI_DATA::ROUTE *r;
-//  VLAPI_DATA::WPT *wp;
-//  int taskCnt;
-//  unsigned int wpCnt;
-//
-//  for (taskCnt = 0; taskCnt < vl.database.nroutes; taskCnt++) {
-//    r = &(vl.database.routes[taskCnt]);
-//    task = new FRTask;
-//    task->name = r->name;
-//    for (wpCnt = 0; wpCnt < maxNrWaypointsPerTask; wpCnt++) {
-//      wp = &(r->wpt[wpCnt]);
-//      if (isalnum(wp->name[0])) {
-//        tp = new FRTaskPoint;
-//        tp->name = wp->name;
-//        tp->latPos = (int)(wp->lat * 600000.0);
-//        tp->lonPos = (int)(wp->lon * 600000.0);
-//        tp->type = FlightTask::RouteP;
-//
-//        if (task->wayPoints.count() == 0) {
-//          // append take off
-//          tp->type = FlightTask::TakeOff;
-//          task->wayPoints.append(tp);
-//          // make copy for begin
-//          tp = new FRTaskPoint;
-//          *tp = *(task->wayPoints.first());
-//          tp->type = FlightTask::Begin;
-//        }
-//        task->wayPoints.append(tp);
-//      }
-//    }
-//    // modify last for end of task
-//    task->wayPoints.last()->type = FlightTask::End;
-//    // make copy for landing
-//    tp = new FRTaskPoint;
-//    *tp = *(task->wayPoints.last());
-//    tp->type = FlightTask::Landing;
-//    task->wayPoints.append(tp);
-//
-//    tasks->append(task);
-//  }
-  return 1;
+  return sp.downloadTasks(tasks);
 }
 
 int writeTasks(QList<FRTask> *tasks)
@@ -309,65 +253,10 @@ int writeTasks(QList<FRTask> *tasks)
 
 int readWaypoints(QList<FRWaypoint> *waypoints)
 {
-//  int n;
-//  FRWaypoint *frWp;
-//  FRTaskPoint *tp;
-//  VLAPI_DATA::WPT *wp;
-//
-//  for (n = 0; n < vl.database.nwpts; n++) {
-//    wp = &(vl.database.wpts[n]);
-//    frWp = new FRWaypoint;
-//    tp = &frWp->point;
-//
-//    tp->name = wp->name;
-//    tp->name = tp->name.stripWhiteSpace();
-//
-//    tp->latPos = (int)(wp->lat * 600000.0);
-//    tp->lonPos = (int)(wp->lon * 600000.0);
-//    frWp->isLandable = (wp->typ & VLAPI_DATA::WPT::WPTTYP_L) > 0;
-//    frWp->isHardSurface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0;
-//    frWp->isAirport = (wp->typ & VLAPI_DATA::WPT::WPTTYP_A) > 0;
-//    frWp->isCheckpoint = (wp->typ & VLAPI_DATA::WPT::WPTTYP_C) > 0;
-//
-//    waypoints->append(frWp);
-//  }
-  return 1;
+  return sp.downloadWaypoints(waypoints);
 }
 
 int writeWaypoints(QList<FRWaypoint> *waypoints)
 {
-//  FRWaypoint *frWp;
-//  FRTaskPoint *tp;
-//  VLAPI_DATA::WPT *wp;
-//  unsigned int wpCnt;
-//
-//  // delete old waypoints
-//  if(vl.database.wpts != 0) {
-//    delete[] vl.database.wpts;
-//    vl.database.wpts = 0;
-//  }
-//  // create new, check max possible wapoints
-//  vl.database.nwpts = MIN(waypoints->count(), maxNrWaypoints);
-//  vl.database.wpts = new VLAPI_DATA::WPT[vl.database.nwpts];
-//
-//  wpCnt = 0;
-//  for (frWp = waypoints->first(); frWp != 0; frWp = waypoints->next()) {
-//    // should never happen
-//    if (wpCnt >= maxNrWaypoints) {
-//      break;
-//    }
-//    wp = &(vl.database.wpts[wpCnt++]);
-//    tp = &frWp->point;
-//    strcpy(wp->name, tp->name.leftJustify(6, ' ', true));
-//    wp->lat = tp->latPos / 600000.0;
-//    wp->lon = tp->lonPos / 600000.0;
-//    wp->typ =
-//      (frWp->isLandable ? VLAPI_DATA::WPT::WPTTYP_L : 0) |
-//      (frWp->isHardSurface ? VLAPI_DATA::WPT::WPTTYP_H : 0) |
-//      (frWp->isAirport ? VLAPI_DATA::WPT::WPTTYP_A : 0) |
-//      (frWp->isCheckpoint ? VLAPI_DATA::WPT::WPTTYP_C : 0);
-//  }
-//
-//  return vl.write_db_and_declaration() == VLA_ERR_NOERR;
-  return 1;
+  return sp.uploadWaypoints(waypoints);
 }
