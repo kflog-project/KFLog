@@ -2463,7 +2463,7 @@ void Map::slotMpNewWaypoint(){
     }
 
     if (!found) {
-      warning("new waypoint");
+      //warning("new waypoint");
 
       WaypointDialog *waypointDlg = new WaypointDialog(this);
       emit regWaypointDialog(waypointDlg); //register the dialog and connect it's signals.

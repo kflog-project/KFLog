@@ -16,6 +16,7 @@
 ***********************************************************************/
 #include <kmessagebox.h>
 #include <klocale.h>
+#include "klineeditdlg.h"
 
 #include "waypointdict.h"
 
@@ -33,16 +34,29 @@ bool WaypointDict::insertItem(Waypoint *e)
 {
   Waypoint *tmp;
   bool ins = true;
-
+  bool OK = false;
+  QString newName;
+  
   if ((tmp = find(e->name)) != 0) {
-    switch (KMessageBox::warningYesNoCancel(0, "<qt>" + i18n("Waypoint<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Overwrite it?").arg(e->name) + "</qt>")) {
-    case KMessageBox::Yes:
+    switch (KMessageBox::warningYesNoCancel(0,
+                                                                       "<qt>" + i18n("Waypoint<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Do you want to overwrite it or rename the waypoint you are adding?").arg(e->name) + "</qt>",
+                                                                       i18n("Add waypoint"),
+                                                                        i18n("Overwrite"),
+                                                                        i18n("Rename")
+                                                                      )) {
+    case KMessageBox::Yes:   //overwrite
       remove(e->name);
       insert(e->name, e);
       break;
-    case KMessageBox::No:
-      // no break !!
-    case KMessageBox::Cancel:
+    case KMessageBox::No:    //rename
+       newName=KLineEditDlg::getText(i18n("Waypoint name"), i18n("Please enter a new name for the waypoint"), e->name, &OK);
+       if (OK) {
+         e->name=newName;
+         return insertItem(e); //recursive call!
+         break;
+       }
+       //no break!
+    case KMessageBox::Cancel:   //cancel
       delete e;
       ins = false;
       break;

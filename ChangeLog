@@ -1,5 +1,20 @@
 $Id$
 
+2003-07-07 André Somers <andre@kflog.org>
+
+  * Made it possible to rename a waypoint if a waypoint with the same name is allready
+    in the catalog and you try to add a new one. This also fixes the weird situation that
+    there was no functional difference between the No and the Cancel options and the fact
+    that Yes, No, and Cancel were not appropriate button labels.
+
+
+2003-07-05 André Somers <andre@kflog.org>
+
+  * Made the mapinfo boxes appear as popups (like tooltips) if you hold the mouse over an
+    interesting object on the map. The mapinfo is also accessible through the new context
+    menu.
+
+
 2003-07-04 André Somers <andre@kflog.org>
 
   * Added a contextmenu to the map

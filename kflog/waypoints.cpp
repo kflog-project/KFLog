@@ -720,6 +720,7 @@ void Waypoints::slotAddWaypoint(Waypoint *w)
     waypointCatalogs.current()->modified = true;
     fillWaypoints();
   }
+    
 }
 
 void Waypoints::slotCopyWaypoint2Task()
