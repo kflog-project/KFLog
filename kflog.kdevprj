@@ -19,18 +19,18 @@ type=DATA
 [Config for BinMakefileAm]
 addcxxflags=
 bin_program=kflog
-cxxflags=-O0 -g3 -pg -Wall
-ldadd=-lm -lkfile -lkdeui -lkdecore $(LIB_QT)
+cxxflags=\s-O0 -g3 -Wall
+ldadd=\s-lm $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
 ldflags=
 
 [General]
-AMChanged=false
+AMChanged=true
 author=Heiner Lamprecht
-configure_args=--with-qt-dir=/usr/lib/qt2 --prefix=/opt/kde2
+configure_args=--prefix=/opt/kde2
 email=heiner@kflog.de
 kdevprj_version=1.3
-lfv_open_groups=GNU,Headers,Others,User Interface
-make_options=-j1
+lfv_open_groups=GNU,Icons,Others,Translations,User Interface
+make_options=\s-j1
 makefiles=Makefile.am,kflog/Makefile.am,doc/Makefile.am,doc/en/Makefile.am,po/Makefile.am
 modifyMakefiles=true
 project_name=KFLog
@@ -48,17 +48,27 @@ install=false
 install_location=
 type=DATA
 
+[KPP]
+kpp_appgrp=
+kpp_bldroot=/tmp/test/
+kpp_icon=0
+kpp_license=5
+kpp_summary=Gutes Programm
+kpp_url=http://www.kflog.de/
+kpp_version=2.0.1
+
 [LFV Groups]
 GNU=AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,NEWS
 Headers=*.h,*.hh,*.hxx,*.hpp,*.H
+Icons=*.png
 Others=*
 Sources=*.cpp,*.c,*.cc,*.C,*.cxx,*.ec,*.ecpp,*.lxx,*.l++,*.ll,*.l
 Translations=*.po
 User Interface=*.kdevdlg,*.ui,*.rc
-groups=Headers,Sources,User Interface,Translations,GNU,Others
+groups=Icons,Headers,Sources,User Interface,Translations,GNU,Others
 
 [Makefile.am]
-files=kflog.kdevprj,AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,kflog.lsm
+files=kflog.kdevprj,AUTHORS,COPYING,ChangeLog,INSTALL,README,TODO,kflog.lsm,kflog.spec
 sub_dirs=kflog,po,doc
 type=normal
 
@@ -101,8 +111,14 @@ install=false
 install_location=
 type=DATA
 
+[kflog.spec]
+dist=true
+install=false
+install_location=
+type=DATA
+
 [kflog/Makefile.am]
-files=kflog/main.cpp,kflog/kflog.cpp,kflog/kflog.h,kflog/kflogui.rc,kflog/kflog.desktop,kflog/lo32-app-kflog.png,kflog/lo16-app-kflog.png,kflog/mapcontrolview.h,kflog/mapcontrolview.cpp,kflog/mapcalc.cpp,kflog/mapcalc.h,kflog/wp.h,kflog/dataview.cpp,kflog/dataview.h,kflog/map.cpp,kflog/map.h,kflog/basemapelement.cpp,kflog/basemapelement.h,kflog/mapcontents.cpp,kflog/mapcontents.h,kflog/resource.h,kflog/airport.cpp,kflog/airport.h,kflog/airspace.cpp,kflog/airspace.h,kflog/elevpoint.cpp,kflog/elevpoint.h,kflog/glidersite.cpp,kflog/glidersite.h,kflog/isohypse.cpp,kflog/isohypse.h,kflog/lineelement.cpp,kflog/lineelement.h,kflog/radiopoint.cpp,kflog/radiopoint.h,kflog/singlepoint.cpp,kflog/singlepoint.h,kflog/mapmatrix.cpp,kflog/mapmatrix.h,kflog/flight.cpp,kflog/flight.h,kflog/flighttask.cpp,kflog/flighttask.h,kflog/kflogstartlogo.cpp,kflog/kflogstartlogo.h,kflog/printdialog.h,kflog/printdialog.cpp,kflog/kflogconfig.cpp,kflog/kflogconfig.h,kflog/mapdefaults.h,kflog/evaluationdialog.cpp,kflog/evaluationdialog.h,kflog/evaluationview.cpp,kflog/evaluationview.h
+files=kflog/main.cpp,kflog/kflog.cpp,kflog/kflog.h,kflog/kflogui.rc,kflog/kflog.desktop,kflog/mapcontrolview.h,kflog/mapcontrolview.cpp,kflog/mapcalc.cpp,kflog/mapcalc.h,kflog/wp.h,kflog/dataview.cpp,kflog/dataview.h,kflog/map.cpp,kflog/map.h,kflog/basemapelement.cpp,kflog/basemapelement.h,kflog/mapcontents.cpp,kflog/mapcontents.h,kflog/resource.h,kflog/airport.cpp,kflog/airport.h,kflog/airspace.cpp,kflog/airspace.h,kflog/elevpoint.cpp,kflog/elevpoint.h,kflog/glidersite.cpp,kflog/glidersite.h,kflog/isohypse.cpp,kflog/isohypse.h,kflog/lineelement.cpp,kflog/lineelement.h,kflog/radiopoint.cpp,kflog/radiopoint.h,kflog/singlepoint.cpp,kflog/singlepoint.h,kflog/mapmatrix.cpp,kflog/mapmatrix.h,kflog/flight.cpp,kflog/flight.h,kflog/flighttask.cpp,kflog/flighttask.h,kflog/kflogstartlogo.cpp,kflog/kflogstartlogo.h,kflog/printdialog.h,kflog/printdialog.cpp,kflog/kflogconfig.cpp,kflog/kflogconfig.h,kflog/mapdefaults.h,kflog/evaluationdialog.cpp,kflog/evaluationdialog.h,kflog/evaluationview.cpp,kflog/evaluationview.h,kflog/hi16-app-kflog.png,kflog/hi32-app-kflog.png,kflog/hi48-app-kflog.png,kflog/hi16-mimetype-x-igc.png,kflog/hi32-mimetype-x-igc.png,kflog/hi48-mimetype-x-igc.png,kflog/x-igc.desktop,kflog/hi22-action-movemap_e.png,kflog/hi22-action-movemap_n.png,kflog/hi22-action-movemap_ne.png,kflog/hi22-action-movemap_nw.png,kflog/hi22-action-movemap_s.png,kflog/hi22-action-movemap_se.png,kflog/hi22-action-movemap_sw.png,kflog/hi22-action-movemap_w.png,kflog/hi16-action-flightevaluation.png,kflog/hi22-action-flightevaluation.png,kflog/hi32-action-flightevaluation.png,kflog/hi16-action-centerflight.png,kflog/hi16-action-centertask.png,kflog/hi22-action-centerflight.png,kflog/hi22-action-centertask.png
 sub_dirs=
 type=prog_main
 
@@ -226,6 +242,132 @@ install=false
 install_location=
 type=HEADER
 
+[kflog/hi16-action-centerflight.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi16-action-centertask.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi16-action-flightevaluation.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi16-app-kflog.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi16-mimetype-x-igc.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi22-action-centerflight.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi22-action-centertask.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi22-action-flightevaluation.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi22-action-movemap_e.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi22-action-movemap_n.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi22-action-movemap_ne.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi22-action-movemap_nw.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi22-action-movemap_s.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi22-action-movemap_se.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi22-action-movemap_sw.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi22-action-movemap_w.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi32-action-flightevaluation.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi32-app-kflog.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi32-mimetype-x-igc.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi48-app-kflog.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[kflog/hi48-mimetype-x-igc.png]
+dist=true
+install=false
+install_location=
+type=DATA
+
 [kflog/isohypse.cpp]
 dist=true
 install=false
@@ -297,18 +439,6 @@ dist=true
 install=false
 install_location=
 type=HEADER
-
-[kflog/lo16-app-kflog.png]
-dist=true
-install=true
-install_location=$$(kde_icondir)/locolor/16x16/apps/kflog.png
-type=DATA
-
-[kflog/lo32-app-kflog.png]
-dist=true
-install=true
-install_location=$$(kde_icondir)/locolor/32x32/apps/kflog.png
-type=DATA
 
 [kflog/main.cpp]
 dist=true
@@ -430,6 +560,31 @@ install=false
 install_location=
 type=HEADER
 
+[kflog/x-igc.desktop]
+dist=true
+install=false
+install_location=
+type=DATA
+
 [po/Makefile.am]
+files=po/de.po,po/de.gmo,po/kflog.pot
 sub_dirs=
 type=po
+
+[po/de.gmo]
+dist=true
+install=false
+install_location=
+type=DATA
+
+[po/de.po]
+dist=false
+install=false
+install_location=
+type=PO
+
+[po/kflog.pot]
+dist=true
+install=false
+install_location=
+type=DATA

@@ -24,37 +24,14 @@
 #include <mapmatrix.h>
 
 /**
- * Anzahl der Maßstabsbereiche
- */
-#define SCALE_NUM 10
-
-/**
- * Maßstabsgrenzen
- */
-double _scale[SCALE_NUM];
-
-/**
- * aktueller Maßstab
- */
-double _currentScale;
-
-/**
- * Arrays zum Festlegen, welche Kartenobjekte bei welchem
- * Maßstab angezeigt werden sollen. Der Einfachheit halber wird für
- * jeden Objekt-Typ eine Grenze festgelegt. Damit kann typeID zur Erkennung
- * verwendet werden.
- */
-bool _showElements[72];
-int _scaleBorder[72];
-
-/**
- * Kurzbeschreibung des Programms
+ * Short description of what KFLog is.
  */
 static const char *description =
     I18N_NOOP("KFLog - The K-Flight-Logger");
 
 /**
- *
+ * Contains all mapelements and takes control over drawing or printing
+ * the elements.
  */
 MapContents _globalMapContents;
 
@@ -64,7 +41,7 @@ MapContents _globalMapContents;
 MapMatrix _globalMapMatrix;
 
 /**
- * Auflistung der Kommandozeilen-Optionen
+ * List of commandline-options
  */
 static KCmdLineOptions options[] =
 {
@@ -102,7 +79,7 @@ int main(int argc, char *argv[])
 		
 		  if (args->count())
     		{
-//          kflog->openDocumentFile(args->arg(0));
+    		  _globalMapContents.loadFlight((QString)args->arg(0));
           kflog->slotStartComplete();
     		}
 		  else

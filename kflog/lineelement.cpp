@@ -72,7 +72,6 @@ void LineElement::readConfig()
   drawColor[4] = Qt::color0;
   drawPenSize[4] = 0;
 
-
   switch(typeID)
     {
       case Highway:
@@ -125,127 +124,7 @@ void LineElement::printMapElement(QPainter* printPainter, const double dX,
       const double dY, const int mapCenterLon, const double scale,
       const struct elementBorder mapBorder)
 {
-  if(!__isVisible()) return;
 
-  extern const double _scale[];
-  extern const int _scaleBorder[];
-
-  bool show = true;
-  bool highwayShow = false;
-  bool isClosed = false;
-
-  switch(typeID) {
-    case Highway:
-      show = true;
-      if(scale < _scale[5]) {
-        printPainter->setPen(QPen(QColor(255,100,100), 5));
-        highwayShow = true;
-      } else if(scale < _scale[6]){
-        printPainter->setPen(QPen(QColor(255,100,100), 3));
-      } else if(scale < _scale[7]){
-        printPainter->setPen(QPen(QColor(255,100,100), 2));
-      } else {
-        printPainter->setPen(QPen(QColor(255,100,100), 1));
-      }
-      break;
-    case Road:
-      show = false;
-      printPainter->setPen(QPen(QColor(200,100,100), 1));
-      if(scale <= _scale[_scaleBorder[typeID]]) {
-        if(scale <= _scale[6]) {
-          show = true;
-          printPainter->setPen(QPen(QColor(200,100,100), 2));
-        } else if(scale <= _scale[7]) {
-          show = true;
-          printPainter->setPen(QPen(QColor(200,100,100), 1));
-        }
-      }
-      printPainter->setBrush(QBrush::NoBrush);
-      break;
-    case Railway:
-      show = false;
-      if(scale <= _scale[_scaleBorder[typeID]]) {
-        if(scale <= _scale[6]) {
-          printPainter->setPen(QPen(QColor(75,75,75), 2, QPen::DashLine));
-        } else {
-          printPainter->setPen(QPen(QColor(75,75,75), 1, QPen::DashLine));
-        }
-        show = true;
-        printPainter->setBrush(QBrush::NoBrush);
-      }
-      break;
-    case AerialRailway:
-      show = false;
-      if(scale <= _scale[_scaleBorder[typeID]]) {
-        show = true;
-        printPainter->setBrush(QBrush::NoBrush);
-        printPainter->setPen(QPen(QColor(0,0,0), 2, QPen::DashDotLine));
-      }
-      break;
-    case Lake:
-      isClosed = true;
-    case River:
-      show = false;
-      if(scale <= _scale[_scaleBorder[typeID]]) {
-        show = true;
-        if(scale <= _scale[5]) {
-          printPainter->setPen(QPen(QColor(100,100,255), 3, QPen::DotLine));
-        } else if(scale <= _scale[6]) {
-          printPainter->setPen(QPen(QColor(100,100,255), 2, QPen::DotLine));
-        } else {
-          printPainter->setPen(QPen(QColor(100,100,255), 1, QPen::DotLine));
-        }
-        printPainter->setBrush(QBrush(QColor(100,200,255), QBrush::SolidPattern));
-      }
-      break;
-  }
-
-  if(show) {
-    QPointArray pA;// = __projectElement(dX, dY, mapCenterLon, scale);
-
-    if(isClosed) {
-      printPainter->drawPolygon(pA);
-    } else {
-      printPainter->drawPolyline(pA);
-      if(highwayShow) {
-        printPainter->setPen(QPen(QColor(255,255,255), 1));
-        printPainter->drawPolyline(pA);
-      }
-    }
-  }
-}
-
-QRegion* LineElement::drawRegion(QPainter* targetPainter, QPainter* maskPainter)
-{
-  if(!__isVisible()) return (new QRegion());
-
-  extern const MapMatrix _globalMapMatrix;
-
-  QPointArray tA = _globalMapMatrix.map(projPointArray);
-
-  extern const double _currentScale, _scale[];
-
-  int index = 0;
-  if(_currentScale <= _scale[0]) index = 1;
-  else if(_currentScale <= _scale[1]) index = 2;
-  else if(_currentScale <= _scale[2]) index = 3;
-
-  if(valley)
-    {
-      maskPainter->setBrush(QBrush(Qt::color0, fillBrushStyle));
-    }
-  else
-    {
-      maskPainter->setBrush(QBrush(Qt::color1, fillBrushStyle));
-    }
-  maskPainter->setPen(QPen(Qt::color1, drawPenSize[index], drawPenStyle));
-  maskPainter->drawPolygon(tA);
-
-  targetPainter->setBrush(QBrush(fillColor, fillBrushStyle));
-  targetPainter->setPen(QPen(drawColor[index], drawPenSize[index]));
-  targetPainter->drawPolygon(tA);
-
-  return (new QRegion(tA));
 }
 
 void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
@@ -253,14 +132,9 @@ void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
 {
   if(!__isVisible()) return;
 
-  extern const MapMatrix _globalMapMatrix;
-  extern const double _currentScale, _scale[];
+  int index = glMapMatrix->getScaleRange();
 
-  int index = 0;
-  if(_currentScale <= _scale[1]) index = 0;
-  else if(_currentScale <= _scale[2]) index = 1;
-  else if(_currentScale <= _scale[3]) index = 2;
-  else index = 3;
+  if(!border[index]) return;
 
   if(valley)
     {
@@ -278,7 +152,7 @@ void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
   // Hier wird immer mit der gleichen Farbe gefüllt ...
   targetPainter->setBrush(QBrush(drawColor[index], QBrush::SolidPattern));
 
-  QPointArray pA = _globalMapMatrix.map(projPointArray);
+  QPointArray pA = glMapMatrix->map(projPointArray);
 
   /********************************/
   if(typeID == BaseMapElement::City && isFirst)
@@ -317,10 +191,6 @@ void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
     }
 }
 
-bool LineElement::__isVisible() const
-{
-  extern const MapMatrix _globalMapMatrix;
-  return _globalMapMatrix.isVisible(bBox);
-}
+bool LineElement::__isVisible() const  {  return glMapMatrix->isVisible(bBox);  }
 
 bool LineElement::isValley() const  {  return valley;  }

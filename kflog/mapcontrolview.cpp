@@ -20,6 +20,7 @@
 #include <kflog.h>
 #include <map.h>
 #include <mapcalc.h>
+#include <mapmatrix.h>
 
 #include <kiconloader.h>
 #include <klocale.h>
@@ -31,23 +32,24 @@
 MapControlView::MapControlView(QWidget* parent, Map* map)
 : QWidget(parent)
 {
-
   QLabel* mapControl = new QLabel(i18n("<B>Map-control:</B>"), parent);
   mapControl->setMinimumHeight(mapControl->sizeHint().height() + 5);
 
   QFrame* navFrame = new QFrame(parent);
-  QPushButton* nwB = new QPushButton("NW", navFrame);
+  QPushButton* nwB = new QPushButton(navFrame);
+  nwB->setPixmap(BarIcon("movemap_nw"));
   nwB->setFixedHeight(35);
   nwB->setFixedWidth(35);
   QPushButton* nB = new QPushButton(navFrame);
-  nB->setPixmap(BarIcon("1uparrow"));
+  nB->setPixmap(BarIcon("movemap_n"));
   nB->setFixedHeight(35);
   nB->setFixedWidth(35);
-  QPushButton* neB = new QPushButton("NE", navFrame);
+  QPushButton* neB = new QPushButton(navFrame);
+  neB->setPixmap(BarIcon("movemap_ne"));
   neB->setFixedHeight(35);
   neB->setFixedWidth(35);
   QPushButton* wB = new QPushButton(navFrame);
-  wB->setPixmap(BarIcon("1leftarrow"));
+  wB->setPixmap(BarIcon("movemap_e"));
   wB->setFixedHeight(35);
   wB->setFixedWidth(35);
   QPushButton* cenB = new QPushButton(navFrame);
@@ -55,18 +57,19 @@ MapControlView::MapControlView(QWidget* parent, Map* map)
   cenB->setFixedHeight(35);
   cenB->setFixedWidth(35);
   QPushButton* eB = new QPushButton(navFrame);
-  eB->setPixmap(BarIcon("1rightarrow"));
+  eB->setPixmap(BarIcon("movemap_w"));
   eB->setFixedHeight(35);
   eB->setFixedWidth(35);
   QPushButton* swB = new QPushButton(navFrame);
-  swB->setPixmap(BarIcon("1downleftarrow"));
+  swB->setPixmap(BarIcon("movemap_sw"));
   swB->setFixedHeight(35);
   swB->setFixedWidth(35);
   QPushButton* sB = new QPushButton(navFrame);
-  sB->setPixmap(BarIcon("1downarrow"));
+  sB->setPixmap(BarIcon("movemap_s"));
   sB->setFixedHeight(35);
   sB->setFixedWidth(35);
-  QPushButton* seB = new QPushButton("SE", navFrame);
+  QPushButton* seB = new QPushButton(navFrame);
+  seB->setPixmap(BarIcon("movemap_se"));
   seB->setFixedHeight(35);
   seB->setFixedWidth(35);
 
@@ -106,7 +109,7 @@ MapControlView::MapControlView(QWidget* parent, Map* map)
   setScaleLabel->setMinimumWidth( setScaleLabel->sizeHint().width());
 
   setScaleLabel->setMinimumHeight(setScaleLabel->sizeHint().height());
-  currentScaleSlider = new QSlider(2,135,1,0, QSlider::Horizontal,parent);
+  currentScaleSlider = new QSlider(2,105,1,0, QSlider::Horizontal,parent);
   currentScaleSlider->setMinimumHeight(
           currentScaleSlider->sizeHint().height());
 
@@ -148,31 +151,28 @@ MapControlView::~MapControlView()
 
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Slots
-//////////////////////////////////////////////////////////////////////////
 void MapControlView::slotShowMapData(QSize mapSize)
 {
-  extern const double _currentScale;
+  extern MapMatrix _globalMapMatrix;
+  const double cScale = _globalMapMatrix.getScale();
 
   QString temp;
 
   temp.sprintf("<TT>%.1f / %.1f</TT>",
-      mapSize.height() * _currentScale / 1000.0,
-      mapSize.width() * _currentScale / 1000.0);
+      mapSize.height() * cScale / 1000.0,
+      mapSize.width() * cScale / 1000.0);
   dimText->setText(temp);
 
-  currentScaleValue->display(_currentScale);
-  currentScaleSlider->setValue(__getScaleValue(_currentScale));
+  currentScaleValue->display(cScale);
+  currentScaleSlider->setValue(__getScaleValue(cScale));
 }
 
 void MapControlView::slotSetScale()
 {
-  extern double _currentScale;
+  extern MapMatrix _globalMapMatrix;
 
-  if( _currentScale != __getScaleValue( currentScaleValue->value() ) )
+  if( _globalMapMatrix.getScale() != __getScaleValue( currentScaleValue->value() ) )
     {
-      extern MapMatrix _globalMapMatrix;
       _globalMapMatrix.setScale(currentScaleValue->value());
       emit(scaleChanged());
     }
@@ -198,13 +198,13 @@ int MapControlView::__getScaleValue(double scale)
 
 void MapControlView::slotShowScaleChange(int value)
 {
-  extern double _scale[];
+  extern MapMatrix _globalMapMatrix;
 
   currentScaleValue->display(__setScaleValue(value));
 
-  if(currentScaleValue->value() > _scale[9])
-      currentScaleSlider->setValue(__getScaleValue(_scale[9]));
+  if(currentScaleValue->value() > _globalMapMatrix.getScale(MapMatrix::UpperLimit))
+      currentScaleSlider->setValue(_globalMapMatrix.getScale(MapMatrix::UpperLimit));
 
-  if(currentScaleValue->value() < _scale[0])
-      currentScaleSlider->setValue(__getScaleValue(_scale[0]));
+  if(currentScaleValue->value() < _globalMapMatrix.getScale(MapMatrix::LowerLimit))
+      currentScaleSlider->setValue(_globalMapMatrix.getScale(MapMatrix::LowerLimit));
 }

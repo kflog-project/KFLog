@@ -92,6 +92,34 @@ Airspace::~Airspace()
 
 }
 
+QRegion* Airspace::drawRegion(QPainter* targetPainter, QPainter* maskPainter)
+{
+  if(!__isVisible()) return (new QRegion());
+
+  QPointArray tA = glMapMatrix->map(projPointArray);
+
+  int index = glMapMatrix->getScaleRange();
+
+  if(valley)
+    {
+      maskPainter->setBrush(QBrush(Qt::color0, fillBrushStyle));
+    }
+  else
+    {
+      maskPainter->setBrush(QBrush(Qt::color1, fillBrushStyle));
+    }
+  maskPainter->setPen(QPen(Qt::color1, drawPenSize[index], drawPenStyle));
+  maskPainter->drawPolygon(tA);
+
+  targetPainter->setBrush(QBrush(fillColor, fillBrushStyle));
+  // Bislang kann die Dartellung der Lufträume nicht konfiguriert werden ...
+//  targetPainter->setPen(QPen(drawColor[index], drawPenSize[index]));
+  targetPainter->setPen(QPen(drawColor[0], drawPenSize[index]));
+  targetPainter->drawPolygon(tA);
+
+  return (new QRegion(tA));
+}
+
 unsigned int Airspace::getUpperL() const { return uLimit; }
 
 unsigned int Airspace::getLowerL() const { return lLimit; }
@@ -191,9 +219,8 @@ void Airspace::printMapElement(QPainter* printPainter)
 {
 //  if(!__isPrintable()) return;
 
-  extern const MapMatrix _globalMapMatrix;
   printPainter->setPen(QPen(QColor(255,0,0), 4));
-  printPainter->drawPolygon(_globalMapMatrix.print(projPointArray));
+  printPainter->drawPolygon(glMapMatrix->print(projPointArray));
 }
 
 void Airspace::printMapElement(QPainter* printPainter, const double dX,

@@ -28,6 +28,7 @@
 
 #include <qbitmap.h>
 #include <qdatetime.h>
+#include <qdragobject.h>
 #include <qfont.h>
 #include <qfileinfo.h>
 #include <qpainter.h>
@@ -47,9 +48,6 @@
 #include <singlepoint.h>
 #include <resource.h>
 
-#define PROOF_LAYER(a,b,c) if(a){bitBlt(&b,0,0,&c,0,0,-1,-1,NotEraseROP);}
-#define PROOF_BUTTON(a,b) if(a){mainApp->toolBar()->getButton(b)->toggle();}
-
 //#define NUM_TO_RAD(a) ( PI * a ) / 108000000.0 )
 //
 //#define MAP_X calc_X_Lambert(NUM_TO_RAD(mapCenterLat), 0)
@@ -57,21 +55,6 @@
 //
 //#define DELTA_X ( ( this->width() / 2 ) - ( MAP_X / _currentScale * RADIUS ) )
 //#define DELTA_Y ( ( this->height() / 2 ) - ( MAP_Y / _currentScale * RADIUS ) )
-
-#define DRAW_LOOP(a,b) for(unsigned int loop = 0; loop < \
-    _globalMapContents.getListLength(a); loop++) { \
-    _current = _globalMapContents.getElement(a, loop); \
-    _current->drawMapElement(b, dX, dY, mapCenterLon, mapBorder); \
-  }
-
-#define SHOW_LAYER(a,b) a = mainApp->toolBar()->isButtonOn(b); \
-      mainApp->menuBar()->setItemChecked(b, a);
-
-#define SET_BORDER(a,b,c) _scaleBorder[BaseMapElement::a] = \
-      config->readNumEntry(b,c);
-
-#define SHOW_ELEMENT(a,b) _showElements[BaseMapElement::a] = \
-      config->readBoolEntry(b, true);
 
 #define MATRIX_MOVE(a) extern MapMatrix _globalMapMatrix; \
     _globalMapMatrix.moveMap(a); \
@@ -87,10 +70,6 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   mainApp(m), prePos(-50, -50), preCur1(-50, -50), preCur2(-50, -50), posNum(1),
     indexLength(0)
 {
-  extern double _scale[];
-  extern int _scaleBorder[];
-  extern bool _showElements[];
-
   // defining the cursor for the map:
   static const unsigned char cross_bits[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -164,109 +143,13 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   cityRegList->setAutoDelete(true);
   displayFlights = false;
 
-  KConfig *config = kapp->config();
-
-  config->setGroup("MapLayer");
-  showAddSites = config->readBoolEntry("AddSites", true);
-  showAirport  = config->readBoolEntry("Airport",  true);
-  showAirspace = config->readBoolEntry("Airspace", true);
-  showCity     = config->readBoolEntry("City",     true);
-  showFlight   = config->readBoolEntry("Flight",   true);
-  showGlider   = config->readBoolEntry("Glider",   true);
-  showHydro    = config->readBoolEntry("Hydro",    true);
-  showLand     = config->readBoolEntry("Land",     true);
-  showNav      = config->readBoolEntry("Nav",      true);
-  showOut      = config->readBoolEntry("Out",      true);
-  showRail     = config->readBoolEntry("Rail",     true);
-  showRoad     = config->readBoolEntry("Road",     true);
-  showTopo     = config->readBoolEntry("Topo",     true);
-  showWaypoint = config->readBoolEntry("Waypoint", true);
-
-  config->setGroup("MapScale");
-  _scale[0] = config->readNumEntry("Scale0", ID_BORDER_L);
-  _scale[1] = config->readNumEntry("Scale1", ID_BORDER_1);
-  _scale[2] = config->readNumEntry("Scale2", ID_BORDER_2);
-  _scale[3] = config->readNumEntry("Scale3", ID_BORDER_3);
-  _scale[4] = config->readNumEntry("Scale4", ID_BORDER_4);
-  _scale[5] = config->readNumEntry("Scale5", ID_BORDER_5);
-  _scale[6] = config->readNumEntry("Scale6", ID_BORDER_6);
-  _scale[7] = config->readNumEntry("Scale7", ID_BORDER_7);
-  _scale[8] = config->readNumEntry("Scale8", ID_BORDER_8);
-  _scale[9] = config->readNumEntry("Scale9", ID_BORDER_U);
-
-  config->setGroup("MapBorder");
-  SET_BORDER(River,              "Hydro", 6)
-  SET_BORDER(Lake,               "Hydro", 6)
-  SET_BORDER(Railway,            "RailTrack",5)
-  SET_BORDER(AerialRailway,      "AerialTrack",3)
-  SET_BORDER(Obstacle,           "Obstacle",4)
-  SET_BORDER(LightObstacle,      "Obstacle",4)
-  SET_BORDER(ObstacleGroup,      "Obstacle",4)
-  SET_BORDER(LightObstacleGroup, "Obstacle",4)
-  SET_BORDER(Spot,               "Spot",2)
-  SET_BORDER(Highway,            "Highway",6)
-  SET_BORDER(Road,               "MidRoad",4)
-  SET_BORDER(Landmark,           "Landmark",2)
-  SET_BORDER(City,               "HugeCity",6)
-  SET_BORDER(Village,            "Village",3)
-  SET_BORDER(AirA,               "Airspace",9)
-  SET_BORDER(AirB,               "Airspace",9)
-  SET_BORDER(AirC,               "Airspace",9)
-  SET_BORDER(AirD,               "Airspace",9)
-  SET_BORDER(ControlD,           "Airspace",9)
-  SET_BORDER(AirElow,            "Airspace",9)
-  SET_BORDER(AirEhigh,           "Airspace",9)
-  SET_BORDER(AirF,               "Airspace",9)
-  SET_BORDER(Restricted,         "Airspace",9)
-  SET_BORDER(Danger,             "Airspace",9)
-  SET_BORDER(LowFlight,          "Airspace",9)
-  SET_BORDER(VOR,                "Radio",4)
-  SET_BORDER(VORDME,             "Radio",4)
-  SET_BORDER(VORTAC,             "Radio",4)
-  SET_BORDER(NDB,                "Radio",4)
-  SET_BORDER(CompPoint,          "Radio",4)
-  SET_BORDER(IntAirport,         "Airport",4)
-  SET_BORDER(Airport,            "Airport",4)
-  SET_BORDER(MilAirport,         "Airport",4)
-  SET_BORDER(CivMilAirport,      "Airport",4)
-  SET_BORDER(Airfield,           "Airport",4)
-  SET_BORDER(ClosedAirfield,     "Airport",4)
-  SET_BORDER(CivHeliport,        "Airport",4)
-  SET_BORDER(MilHeliport,        "Airport",4)
-  SET_BORDER(AmbHeliport,        "Airport",4)
-  SET_BORDER(Glidersite,         "GliderSites",4)
-  SET_BORDER(Outlanding,         "Outlanding",3)
-  SET_BORDER(UltraLight,         "AddSites",3)
-  SET_BORDER(HangGlider,         "AddSites",3)
-  SET_BORDER(Parachute,          "AddSites",3)
-  SET_BORDER(Ballon,             "AddSites",3)
-
-  config->setGroup("ShowElements");
-  SHOW_ELEMENT(VOR,            "VOR")
-  SHOW_ELEMENT(VORDME,         "VORDME")
-  SHOW_ELEMENT(VORTAC,         "VORTAC")
-  SHOW_ELEMENT(NDB,            "NDB")
-  SHOW_ELEMENT(CompPoint,      "CompPoint")
-  SHOW_ELEMENT(IntAirport,     "IntAirport")
-  SHOW_ELEMENT(Airport,        "Airport")
-  SHOW_ELEMENT(MilAirport,     "MilAirport")
-  SHOW_ELEMENT(CivMilAirport,  "CivMilAirport")
-  SHOW_ELEMENT(Airfield,       "Airfield")
-  SHOW_ELEMENT(ClosedAirfield, "ClosedAirfield")
-  SHOW_ELEMENT(CivHeliport,    "CivHeliport")
-  SHOW_ELEMENT(MilHeliport,    "MilHeliport")
-  SHOW_ELEMENT(AmbHeliport,    "AmbHeliport")
-  SHOW_ELEMENT(UltraLight,     "UltraLight")
-  SHOW_ELEMENT(HangGlider,     "HangGlider")
-  SHOW_ELEMENT(Parachute,      "Parachute")
-  SHOW_ELEMENT(Ballon,         "Ballon")
-
   const QBitmap cross(32, 32, cross_bits, true);
   const QCursor crossCursor(cross, cross);
 
-  this->setMouseTracking(true);
-  this->setBackgroundColor(QColor(255,255,255));
-  this->setCursor(crossCursor);
+  setMouseTracking(true);
+  setBackgroundColor(QColor(255,255,255));
+  setCursor(crossCursor);
+  setAcceptDrops(true);
 
   QWhatsThis::add(this, i18n("<B>The map</B>"
          "<P>To move or scale the map, please use the buttons in the "
@@ -282,97 +165,16 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
 
 Map::~Map()
 {
-  extern const double _currentScale, _scale[];
-  extern const int _scaleBorder[];
-  extern const bool _showElements[];
-
-  KConfig *config = kapp->config();
-
-  config->setGroup("General");
-  config->writeEntry("MapScale",   _currentScale);
-  config->writeEntry("MapCenterX", mapCenterLon);
-  config->writeEntry("MapCenterY", mapCenterLat);
-
-  config->setGroup("MapLayer");
-  config->writeEntry("AddSites", showAddSites);
-  config->writeEntry("Airport",  showAirport);
-  config->writeEntry("Airspace", showAirspace);
-  config->writeEntry("City",     showCity);
-  config->writeEntry("Flight",   showFlight);
-  config->writeEntry("Glider",   showGlider);
-  config->writeEntry("Hydro",    showHydro);
-  config->writeEntry("Land",     showLand);
-  config->writeEntry("Nav",      showNav);
-  config->writeEntry("Out",      showOut);
-  config->writeEntry("Rail",     showRail);
-  config->writeEntry("Road",     showRoad);
-  config->writeEntry("Topo",     showTopo);
-  config->writeEntry("Waypoint", showWaypoint);
-
-  config->setGroup("MapScale");
-  config->writeEntry("Scale0", _scale[0]);
-  config->writeEntry("Scale1", _scale[1]);
-  config->writeEntry("Scale2", _scale[2]);
-  config->writeEntry("Scale3", _scale[3]);
-  config->writeEntry("Scale4", _scale[4]);
-  config->writeEntry("Scale5", _scale[5]);
-  config->writeEntry("Scale6", _scale[6]);
-  config->writeEntry("Scale7", _scale[7]);
-  config->writeEntry("Scale8", _scale[8]);
-  config->writeEntry("Scale9", _scale[9]);
-
-  config->setGroup("MapBorder");
-  config->writeEntry("ShoreLine",       _scaleBorder[ID_SHORELINE]);
-  config->writeEntry("BigHydro",        _scaleBorder[ID_BIGHYDRO]);
-  config->writeEntry("MidHydro",        _scaleBorder[ID_MIDHYDRO]);
-  config->writeEntry("SmallHydro",      _scaleBorder[ID_SMALLHYDRO]);
-  config->writeEntry("Dam",             _scaleBorder[ID_DAM]);
-  config->writeEntry("RailTrack",       _scaleBorder[ID_RAILTRACK]);
-  config->writeEntry("AerialTrack",     _scaleBorder[ID_AERIALTRACK]);
-  config->writeEntry("Station",         _scaleBorder[ID_STATION]);
-  config->writeEntry("Obstacle",        _scaleBorder[ID_OBSTACLE]);
-  config->writeEntry("Spot",            _scaleBorder[ID_SPOT]);
-  config->writeEntry("Pass",            _scaleBorder[ID_PASS]);
-  config->writeEntry("Glacier",         _scaleBorder[ID_GLACIER]);
-  config->writeEntry("Highway",         _scaleBorder[ID_HIGHWAY]);
-  config->writeEntry("HighwayEntry",    _scaleBorder[ID_HIGHWAY_E]);
-  config->writeEntry("MidRoad",         _scaleBorder[ID_MIDROAD]);
-  config->writeEntry("SmallRoad",       _scaleBorder[ID_SMALLROAD]);
-  config->writeEntry("Landmark",        _scaleBorder[ID_LANDMARK]);
-  config->writeEntry("HugeCity",        _scaleBorder[ID_HUGECITY]);
-  config->writeEntry("BigCity",         _scaleBorder[ID_BIGCITY]);
-  config->writeEntry("MidCity",         _scaleBorder[ID_MIDCITY]);
-  config->writeEntry("SmallCity",       _scaleBorder[ID_SMALLCITY]);
-  config->writeEntry("Village",         _scaleBorder[ID_VILLAGE]);
-  config->writeEntry("Airspace",        _scaleBorder[ID_AIRSPACE]);
-  config->writeEntry("Radio",           _scaleBorder[ID_RADIO]);
-  config->writeEntry("Airport",         _scaleBorder[ID_AIRPORT]);
-  config->writeEntry("GliderSites",     _scaleBorder[ID_GLIDERSITE]);
-  config->writeEntry("Outlanding",      _scaleBorder[ID_OUTLANDING]);
-  config->writeEntry("Waypoints",       _scaleBorder[ID_WAYPOINTS]);
-  config->writeEntry("AddSites",        _scaleBorder[ID_ADDSITES]);
-
-  config->setGroup("ShowElements");
-  config->writeEntry("VOR",             _showElements[ID_VOR]);
-  config->writeEntry("VORDME",          _showElements[ID_VORDME]);
-  config->writeEntry("VORTAC",          _showElements[ID_VORTAC]);
-  config->writeEntry("NDB",             _showElements[ID_NDB]);
-  config->writeEntry("CompPoint",       _showElements[ID_COMPPOINT]);
-  config->writeEntry("IntAirport",      _showElements[ID_INTAIRPORT]);
-  config->writeEntry("Airport",         _showElements[ID_AIRPORTEL]);
-  config->writeEntry("MilAirport",      _showElements[ID_MAIRPORT]);
-  config->writeEntry("CivMilAirport",   _showElements[ID_CMAIRPORT]);
-  config->writeEntry("Airfield",        _showElements[ID_AIRFIELD]);
-  config->writeEntry("ClosedAirfield",  _showElements[ID_CLOSEDAIR]);
-  config->writeEntry("CivHeliport",     _showElements[ID_CHELIPORT]);
-  config->writeEntry("MilHeliport",     _showElements[ID_MHELIPORT]);
-  config->writeEntry("AmbHeliport",     _showElements[ID_AHELIPORT]);
-  config->writeEntry("UltraLight",      _showElements[ID_ULTRALIGHT]);
-  config->writeEntry("HangGlider",      _showElements[ID_HANGGLIDER]);
-  config->writeEntry("Parachute",       _showElements[ID_PARACHUTE]);
-  config->writeEntry("Ballon",          _showElements[ID_BALLON]);
-
-  config->setGroup(0);
+//  extern const double _currentScale;
+//
+//  KConfig *config = kapp->config();
+//
+//  config->setGroup("General");
+//  config->writeEntry("MapScale",   _currentScale);
+//  config->writeEntry("MapCenterX", mapCenterLon);
+//  config->writeEntry("MapCenterY", mapCenterLat);
+//
+//  config->setGroup(0);
 
   delete[] indexList;
 }
@@ -409,8 +211,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
 void Map::mousePressEvent(QMouseEvent* event)
 {
-  extern double _currentScale, _scale[];
   extern MapContents _globalMapContents;
+  extern const MapMatrix _globalMapMatrix;
 
   const QPoint current = event->pos();
 
@@ -459,22 +261,44 @@ void Map::mousePressEvent(QMouseEvent* event)
             }
         }
 
-      if(showGlider)
+//      if(showGlider)
         {
           /*
            * Segelflugplätze, soweit vorhanden, kommen als erster Eintrag
            */
-          QPoint gliderPos;
+          QPoint sitePos;
           double dX, dY, delta;
 
           delta = 16.0;
           // Ist die Grenze noch aktuell ???
-          if(_currentScale > _scale[3]) delta = 8.0;
+          if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
 
           for(unsigned int loop = 0;
                 loop < _globalMapContents.getListLength(
                         MapContents::GliderList); loop++)
             {
+              hitElement = _globalMapContents.getElement(
+                      MapContents::GliderList, loop);
+              sitePos = ((SinglePoint*)hitElement)->getMapPosition();
+
+              dX = sitePos.x() - current.x();
+              dY = sitePos.y() - current.y();
+
+              // Abstand entspricht der Icon-Größe.
+              if( ( ( dX < delta ) && ( dX > -delta ) ) &&
+                  ( ( dY < delta ) && ( dY > -delta ) ) )
+                {
+//                  warning("Zeige Infos an ...");
+                  text = text + ((SinglePoint*)hitElement)->getInfoString();
+                  /*
+                   * Text anzeigen
+                   */
+                  QWhatsThis::enterWhatsThisMode();
+                  QWhatsThis::leaveWhatsThisMode(text);
+                  isAirport = true;
+                }
+            }
+            /*
               hitElement = _globalMapContents.getElement(
                         MapContents::GliderList, loop);
               gliderPos = ((SinglePoint*)hitElement)->getMapPosition();
@@ -503,6 +327,7 @@ void Map::mousePressEvent(QMouseEvent* event)
                   show = true;
                 }
             }
+            */
         }
 
 //      if(showAirport)
@@ -512,7 +337,7 @@ void Map::mousePressEvent(QMouseEvent* event)
 
           delta = 16.0; // Ist die Grenze noch aktuell ???
           text = "";    // Wir wollen _nur_ Flugplätze anzeigen!
-          if(_currentScale > _scale[3]) delta = 8.0;
+          if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
 
           for(unsigned int loop = 0;
                 loop < _globalMapContents.getListLength(
@@ -586,8 +411,6 @@ void Map::paintEvent(QPaintEvent* event = 0)
 
 void Map::__drawGrid()
 {
-  extern const double _currentScale, _scale[];
-
   extern const MapMatrix _globalMapMatrix;
   const QRect mapBorder = _globalMapMatrix.getViewBorder();
 
@@ -604,10 +427,21 @@ void Map::__drawGrid()
   int step = 60;
   int gridStep = 1;
   int lineWidth = 1;
-  if(_currentScale < _scale[4])      step = 10;
-  else if(_currentScale < _scale[6]) step = 30;
-  else if(_currentScale < _scale[8]) gridStep = 2;
-  else gridStep = 4;
+
+  switch(_globalMapMatrix.getScaleRange())
+    {
+      case 0:
+        step = 10;
+        break;
+      case 1:
+        step = 30;
+        break;
+      case 2:
+        gridStep = 2;
+        break;
+      default:
+        gridStep = 4;
+    }
 
   QPoint cP, cP2;
 
@@ -700,9 +534,6 @@ void Map::__drawMap()
   airspaceRegList->clear();
   cityRegList->clear();
 
-  extern double _currentScale, _scale[];
-  extern int _scaleBorder[];
-  extern bool _showElements[];
   extern MapContents _globalMapContents;
 
   BaseMapElement* _current;
@@ -714,15 +545,11 @@ void Map::__drawMap()
   xPos = new int[posNum];
   yPos = new int[posNum];
 
-  // Statusbar noch nicht "genial" eingestellt ...
-  mainApp->slotSetProgress(0);
-
   pixIsoMap.fill(QColor(96,128,248));
 
   _globalMapContents.drawIsoList(&isoMapP, &mapMaskP);
 
-  if(_currentScale <= _scale[_scaleBorder[ID_GLACIER]])
-      _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::TopoList);
+  _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::TopoList);
 
   mainApp->slotSetProgress(5);
 
@@ -736,8 +563,7 @@ void Map::__drawMap()
 
   mainApp->slotSetProgress(15);
 
-  if(_currentScale <= _scale[_scaleBorder[ID_HIGHWAY]])
-      _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::HighwayList);
+  _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::HighwayList);
 
   mainApp->slotSetProgress(20);
 
@@ -759,82 +585,66 @@ void Map::__drawMap()
 
   mainApp->slotSetProgress(40);
 
-//  if(_currentScale <= _scale[_scaleBorder[ID_VILLAGE]])
-//      _globalMapContents.drawList(&uMapP, MapContents::VillageList);
+//  _globalMapContents.drawList(&uMapP, MapContents::VillageList);
 
   mainApp->slotSetProgress(45);
 
-  if(_currentScale <= _scale[_scaleBorder[ID_LANDMARK]])
-      _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::LandmarkList);
+  _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::LandmarkList);
 
   mainApp->slotSetProgress(50);
 
-  if(_currentScale <= _scale[_scaleBorder[ID_OBSTACLE]])
-      _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::ObstacleList);
+  _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::ObstacleList);
 
   mainApp->slotSetProgress(55);
 
-  if(_currentScale <= _scale[_scaleBorder[ID_RADIO]])
-      _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::ReportList);
+  _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::ReportList);
 
   mainApp->slotSetProgress(60);
 
-  if(_currentScale <= _scale[_scaleBorder[ID_RADIO]])
-      _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::NavList);
+  _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::NavList);
 
   mainApp->slotSetProgress(65);
 
-//  if(_currentScale <= _scale[_scaleBorder[ID_AIRSPACE]])
-    unsigned int max = _globalMapContents.getListLength(
-              MapContents::AirspaceList);
-
-    for(unsigned int loop = 0; loop < max; loop++)
-      {
-        _current = _globalMapContents.getElement(
-            MapContents::AirspaceList, loop);
+  for(unsigned int loop = 0; loop < _globalMapContents.getListLength(
+              MapContents::AirspaceList); loop++)
+    {
+      _current = _globalMapContents.getElement(
+          MapContents::AirspaceList, loop);
         // wir sollten nur die Lufträume in der Liste speichern, die
         // tatsächlich gezeichnet werden. Dann geht die Suche schneller.
-//        airspaceRegList->append(_current->drawRegion(&airSpaceP, &mapMaskP));
-        airspaceRegList->append(_current->drawRegion(&airSpaceP,
+      airspaceRegList->append(_current->drawRegion(&airSpaceP,
             &airspaceMaskP));
-      }
+    }
 
   mainApp->slotSetProgress(70);
 
-  if((_currentScale <= _scale[_scaleBorder[ID_AIRPORT]]) && _showElements[5])
-    for(unsigned int loop = 0; loop < _globalMapContents.getListLength(
-          MapContents::IntAirportList); loop++)
-      {
-        _current = _globalMapContents.getElement(
-              MapContents::IntAirportList, loop);
-        _current->drawRegion(&aSitesP, &mapMaskP);
-      }
+  for(unsigned int loop = 0; loop < _globalMapContents.getListLength(
+        MapContents::IntAirportList); loop++)
+    {
+      _current = _globalMapContents.getElement(
+            MapContents::IntAirportList, loop);
+      _current->drawMapElement(&aSitesP, &mapMaskP);
+    }
 
   mainApp->slotSetProgress(75);
 
-  if(_currentScale <= _scale[_scaleBorder[ID_AIRPORT]])
-      _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::AirportList);
+  _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::AirportList);
 
   mainApp->slotSetProgress(80);
 
-  if(_currentScale <= _scale[_scaleBorder[ID_ADDSITES]])
-      _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::AddSitesList);
+  _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::AddSitesList);
 
   mainApp->slotSetProgress(85);
 
-  if(_currentScale <= _scale[_scaleBorder[ID_OUTLANDING]])
-      _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::OutList);
+  _globalMapContents.drawList(&aSitesP, &mapMaskP, MapContents::OutList);
 
   mainApp->slotSetProgress(90);
 
-  if(_currentScale <= _scale[_scaleBorder[ID_GLIDERSITE]])
-      _globalMapContents.drawList(&gliderP, &mapMaskP, MapContents::GliderList);
+  _globalMapContents.drawList(&gliderP, &mapMaskP, MapContents::GliderList);
 
   mainApp->slotSetProgress(95);
 
   _globalMapContents.drawList(&flightP, &flightMaskP, MapContents::FlightList);
-
-  mainApp->slotSetProgress(100);
 
   // Closing the painter ...
   aSitesP.end();
@@ -860,8 +670,31 @@ void Map::resizeEvent(QResizeEvent* event)
   emit changed(event->size());
 }
 
+void Map::dragEnterEvent(QDragEnterEvent* event)
+{
+  event->accept(QTextDrag::canDecode(event));
+}
+
+void Map::dropEvent(QDropEvent* event)
+{
+//  QString text;
+//  QStrList tempList;
+
+//  if(QUriDrag::decode(event, tempList))
+//    {
+//      warning("Anzahl: %d", tempList.count());
+//      for(unsigned int loop = 0; loop < tempList.count(); loop++)
+//        {
+//          warning("  %s", tempList.at(loop));
+//        }
+//    }
+}
+
 void Map::__redrawMap()
 {
+  // Statusbar noch nicht "genial" eingestellt ...
+  mainApp->slotSetProgress(0);
+
   pixAllSites.fill(white);
   pixAirspace.fill(white);
   pixGlider.fill(white);
@@ -891,6 +724,8 @@ void Map::__redrawMap()
 
   slotShowLayer();
 
+  mainApp->slotSetProgress(100);
+
   slotDrawCursor(temp1,temp2);
 }
 
@@ -906,21 +741,6 @@ void Map::slotRedrawMap()
 
 void Map::slotShowLayer()
 {
-  SHOW_LAYER(showAddSites, ID_LAYER_ADDSITES)
-  SHOW_LAYER(showAirport,  ID_LAYER_AIRPORT)
-  SHOW_LAYER(showAirspace, ID_LAYER_AIRSPACE)
-  SHOW_LAYER(showCity,     ID_LAYER_CITY)
-  SHOW_LAYER(showFlight,   ID_LAYER_FLIGHT)
-  SHOW_LAYER(showGlider,   ID_LAYER_GLIDER)
-  SHOW_LAYER(showHydro,    ID_LAYER_HYDRO)
-  SHOW_LAYER(showLand,     ID_LAYER_LAND)
-  SHOW_LAYER(showNav,      ID_LAYER_NAV)
-  SHOW_LAYER(showOut,      ID_LAYER_OUT)
-  SHOW_LAYER(showRail,     ID_LAYER_RAIL)
-  SHOW_LAYER(showRoad,     ID_LAYER_ROAD)
-  SHOW_LAYER(showTopo,     ID_LAYER_TOPO)
-  SHOW_LAYER(showWaypoint, ID_LAYER_WAYPOINT)
-
 //  pixBuffer.fill(QColor(239,238,236));
   /* Wg. der Höhenlinien mal geändert ... */
 //  pixBuffer.fill(white);
@@ -933,6 +753,7 @@ void Map::slotShowLayer()
   bitBlt(&pixBuffer, 0, 0, &pixUnderMap);
   bitBlt(&pixBuffer, 0, 0, &pixAllSites, 0, 0, -1, -1, NotEraseROP);
   bitBlt(&pixBuffer, 0, 0, &pixAirspace, 0, 0, -1, -1, NotEraseROP);
+  bitBlt(&pixBuffer, 0, 0, &pixGlider, 0, 0, -1, -1, NotEraseROP);
 //  bitBlt(&pixBuffer, 0, 0, &pixFlight, 0, 0, -1, -1, NotEraseROP);
   bitBlt(&pixBuffer, 0, 0, &pixFlight);
   bitBlt(&pixBuffer, 0, 0, &pixGrid, 0, 0, -1, -1, NotEraseROP);
@@ -1137,4 +958,14 @@ void Map::slotDeleteFlightLayer()
   pixFlight.fill(white);
   bitFlightMask.fill(black);
   slotShowLayer();
+}
+
+void Map::slotOptimzeFlight()
+{
+// if(!flightList.count()) return;
+//extern MapContents _globalMapContents;
+//  if(_globalMapContents.getFlight()->optimizeTask()) {
+//    showFlightData(flightList.current());
+  //  mainApp->getMap()->showFlightLayer(true);
+//  }
 }

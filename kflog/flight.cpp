@@ -55,8 +55,8 @@
 /* Die Einstellungen können mal in die Voreinstellungsdatei wandern ... */
 #define FAI_POINT 2.0
 #define NORMAL_POINT 1.75
-#define R1 (3000.0 / _currentScale)
-#define R2 (500.0 / _currentScale)
+#define R1 (3000.0 / glMapMatrix->getScale())
+#define R2 (500.0 / glMapMatrix->getScale())
 
 #define GET_SPEED(a) ( (float)a->dS / (float)a->dT )
 #define GET_VARIO(a) ( (float)a->dH / (float)a->dT )
@@ -96,7 +96,7 @@ Flight::Flight(QString fName, QList<flightPoint> r, QString pName,
 
   // Die Wegpunkte müssen einzeln übergeben werden, da sie gleichzeitig
   // geprüft werden ...
-  warning("Länge: %d", wpL.count());
+//  warning("Länge: %d", wpL.count());
 
   wpList = wpL;
 
@@ -119,8 +119,8 @@ int vermischt = 0;
       else if(route.at(n)->f_state == Vermischt) vermischt++;
     }
 
-  warning("Rechts:    %d \nLinks:     %d \nVermischt: %d", rechts, links,vermischt);
-  warning("Gesamtanzahl: %d", route.count());
+//  warning("Rechts:    %d \nLinks:     %d \nVermischt: %d", rechts, links,vermischt);
+//  warning("Gesamtanzahl: %d", route.count());
 
 }
 
@@ -417,30 +417,24 @@ double Flight::__sectorangle(int loop, bool isDraw)
 bool Flight::__isVisible() const
 {
   return true;
-//  extern const MapMatrix _globalMapMatrix;
-//  return _globalMapMatrix.isVisible(bBox);
+//  return glMapMatrix->isVisible(bBox);
 }
 
 void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
   if(!__isVisible()) return;
 
-  extern const MapMatrix _globalMapMatrix;
-
-  extern double _scale[], _currentScale;
   struct flightPoint* pointA;
   struct flightPoint* pointB;
   QPoint curPointA, curPointB;
   double w1;
 
-
   // Strecke und Sektoren zeichnen
   if(flightType != NotSet)
     {
-      extern const MapMatrix _globalMapMatrix;
       QPoint tempP;
 
-      warning("StreckenType: %d", flightType);
+//      warning("StreckenType: %d", flightType);
 
       for(unsigned int loop = 0; loop < wpList.count(); loop++)
         {
@@ -451,10 +445,10 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
            *
            *    schein noch nicht immer zu stimmen!!!
            */
-          w1 = ( ( _globalMapMatrix.map(wpList.at(loop)->angle) + PI ) / PI )
+          w1 = ( ( glMapMatrix->map(wpList.at(loop)->angle) + PI ) / PI )
                   * 180.0 * 16.0 * -1.0;
 
-          tempP = _globalMapMatrix.map(wpList.at(loop)->projP);
+          tempP = glMapMatrix->map(wpList.at(loop)->projP);
           double qx = -R1 + tempP.x();
           double qy = -R1 + tempP.y();
           double gx = -R2 + tempP.x();
@@ -505,16 +499,16 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                       }
                     else
                       {
-                        targetPainter->setPen(QPen(QColor(255, 0, 255), 3));
+                        targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
                       }
 
                     maskPainter->setPen(QPen(Qt::color1, 3));
                     targetPainter->drawLine(
-                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
-                        _globalMapMatrix.map(wpList.at(loop)->projP));
+                        glMapMatrix->map(wpList.at(loop - 1)->projP),
+                        glMapMatrix->map(wpList.at(loop)->projP));
                     maskPainter->drawLine(
-                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
-                        _globalMapMatrix.map(wpList.at(loop)->projP));
+                        glMapMatrix->map(wpList.at(loop - 1)->projP),
+                        glMapMatrix->map(wpList.at(loop)->projP));
                   }
                 break;
               case Flight::Begin:
@@ -536,11 +530,11 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                     targetPainter->setPen(QPen(QColor(255, 0, 0), 2));
                     maskPainter->setPen(QPen(Qt::color1, 2));
                     targetPainter->drawLine(
-                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
-                        _globalMapMatrix.map(wpList.at(loop)->projP));
+                        glMapMatrix->map(wpList.at(loop - 1)->projP),
+                        glMapMatrix->map(wpList.at(loop)->projP));
                     maskPainter->drawLine(
-                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
-                        _globalMapMatrix.map(wpList.at(loop)->projP));
+                        glMapMatrix->map(wpList.at(loop - 1)->projP),
+                        glMapMatrix->map(wpList.at(loop)->projP));
                   }
                 break;
 
@@ -557,8 +551,8 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
                 targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
                 targetPainter->drawLine(
-                    _globalMapMatrix.map(wpList.at(loop-1)->projP),
-                    _globalMapMatrix.map(wpList.at(loop)->projP));
+                    glMapMatrix->map(wpList.at(loop-1)->projP),
+                    glMapMatrix->map(wpList.at(loop)->projP));
 
                 maskPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
                 maskPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
@@ -571,16 +565,16 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                   }
                 else
                   {
-                    targetPainter->setPen(QPen(QColor(255, 0, 255), 3));
+                    targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
                   }
 
                 maskPainter->setPen(QPen(Qt::color1, 3));
                 targetPainter->drawLine(
-                  _globalMapMatrix.map(wpList.at(loop - 1)->projP),
-                  _globalMapMatrix.map(wpList.at(loop)->projP));
+                  glMapMatrix->map(wpList.at(loop - 1)->projP),
+                  glMapMatrix->map(wpList.at(loop)->projP));
                 maskPainter->drawLine(
-                  _globalMapMatrix.map(wpList.at(loop - 1)->projP),
-                  _globalMapMatrix.map(wpList.at(loop)->projP));
+                  glMapMatrix->map(wpList.at(loop - 1)->projP),
+                  glMapMatrix->map(wpList.at(loop)->projP));
                 break;
 
               default:
@@ -591,7 +585,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                   {
                     if(flightType == FAI_S || flightType == Dreieck_S)
                       {
-                        targetPainter->setPen(QPen(QColor(255, 0, 255), 3));
+                        targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
                       }
                     else
                       {
@@ -600,25 +594,26 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
                     maskPainter->setPen(QPen(Qt::color1, 2));
                     targetPainter->drawLine(
-                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
-                        _globalMapMatrix.map(wpList.at(loop)->projP));
+                        glMapMatrix->map(wpList.at(loop - 1)->projP),
+                        glMapMatrix->map(wpList.at(loop)->projP));
                     maskPainter->drawLine(
-                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
-                        _globalMapMatrix.map(wpList.at(loop)->projP));
+                        glMapMatrix->map(wpList.at(loop - 1)->projP),
+                        glMapMatrix->map(wpList.at(loop)->projP));
                   }
 
+                // Linie Um Start Lande Punkt
                 targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
                 targetPainter->setBrush(QBrush::NoBrush);
                 maskPainter->setPen(QPen(Qt::color1, 2));
                 maskPainter->setBrush(QBrush::NoBrush);
 
                 targetPainter->drawEllipse(
-                  _globalMapMatrix.map(wpList.at(loop)->projP).x() - 8,
-                  _globalMapMatrix.map(wpList.at(loop)->projP).y() - 8,
+                  glMapMatrix->map(wpList.at(loop)->projP).x() - 8,
+                  glMapMatrix->map(wpList.at(loop)->projP).y() - 8,
                       16, 16);
                 maskPainter->drawEllipse(
-                  _globalMapMatrix.map(wpList.at(loop)->projP).x() - 8,
-                  _globalMapMatrix.map(wpList.at(loop)->projP).y() - 8,
+                  glMapMatrix->map(wpList.at(loop)->projP).x() - 8,
+                  glMapMatrix->map(wpList.at(loop)->projP).y() - 8,
                       16, 16);
                 break;
             }
@@ -629,25 +624,24 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
         // Strecke bei Start auf Schenkel
         if(flightType == FAI_S || flightType == Dreieck_S)
             {
-              warning("Strecke: %d - %d",tBegin,tEnd);
-              targetPainter->setPen(QPen(QColor(255, 0, 255), 3));
+//              warning("Strecke: %d - %d",tBegin,tEnd);
+              targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
               maskPainter->setPen(QPen(Qt::color1, 3));
               targetPainter->drawLine(
-                  _globalMapMatrix.map(wpList.at(2)->projP),
-                  _globalMapMatrix.map(wpList.at(wpList.count() - 3)->projP));
+                  glMapMatrix->map(wpList.at(2)->projP),
+                  glMapMatrix->map(wpList.at(wpList.count() - 3)->projP));
               maskPainter->drawLine(
-                  _globalMapMatrix.map(wpList.at(2)->projP),
-                  _globalMapMatrix.map(wpList.at(wpList.count() - 3)->projP));
+                  glMapMatrix->map(wpList.at(2)->projP),
+                  glMapMatrix->map(wpList.at(wpList.count() - 3)->projP));
     }
 
 
 // Flugweg
 
   unsigned int delta = 1;
-  if(_currentScale > _scale[ID_BORDER_SMALL])          delta = 8;
-  else if(_currentScale > _scale[ID_BORDER_SMALL - 1]) delta = 4;
+  if(glMapMatrix->isSwitchScale())  delta = 8;
 
-  curPointA = _globalMapMatrix.map(route.at(0)->projP);
+  curPointA = glMapMatrix->map(route.at(0)->projP);
   bBoxFlight.setLeft(curPointA.x());
   bBoxFlight.setTop(curPointA.y());
   bBoxFlight.setRight(curPointA.x());
@@ -658,7 +652,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       pointA = route.at(n - delta);
       pointB = route.at(n);
 
-      curPointB = _globalMapMatrix.map(pointB->projP);
+      curPointB = glMapMatrix->map(pointB->projP);
 
       bBoxFlight.setLeft(MIN(curPointB.x(), bBoxFlight.left()));
       bBoxFlight.setTop(MAX(curPointB.y(), bBoxFlight.top()));
@@ -666,14 +660,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       bBoxFlight.setBottom(MIN(curPointB.y(), bBoxFlight.bottom()));
 
       maskPainter->setPen(QPen(Qt::color1, 4));
-      if(_currentScale < _scale[ID_BORDER_SMALL - 1])
-        {
-          if(pointA->dH < 0)
-              targetPainter->setPen(QPen(QColor(255,0,0), 4));
-          else
-              targetPainter->setPen(QPen(QColor(0,255,0), 4));
-        }
-      else if(_currentScale < _scale[5])
+      if(glMapMatrix->isSwitchScale())
           targetPainter->setPen(QPen(QColor(0,0,200), 4));
       else
         {
@@ -706,24 +693,6 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
       targetPainter->drawLine(curPointA, curPointB);
       maskPainter->drawLine(curPointA, curPointB);
-
-      // Aufwinde Kreisen
-      // Wenn die Kringel beibehalten werden, müsste eine weitere
-      // Grenze eingeführt werden ...
-//      if(_currentScale < _scale[1])
-//        {
-/*        if(route.at(n)->f_state == Rechts ||
-           route.at(n)->f_state == Links ||
-           route.at(n)->f_state == Vermischt)
-           {
-              targetPainter->setBrush(QBrush::NoBrush);
-              targetPainter->setPen(QPen(QColor(255,255,0), 2));
-              targetPainter->drawEllipse(curPointB.x() - 10,
-                  curPointB.y() - 10,20,20);
-              maskPainter->drawEllipse(curPointB.x() - 10,
-                  curPointB.y() - 10,20,20);
-            } */
-//        }
 
       curPointA = curPointB;
     }
@@ -854,9 +823,8 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
   float s_height_pos = 0;
   float s_height_neg = 0;
 
-//  noch abchecken, dass start => 0 und end <= fluglänge
-  if(end > route.count() - 1) end = route.count() - 1;
-  if(start < 0) start = 0;
+  //  noch abchecken, dass end <= fluglänge
+  end = MIN(route.count() - 1, end);
 
   for(unsigned int n = start; n < end; n++)
     {
@@ -919,9 +887,9 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
     QStrList ergebnis;
     QString text;
 
-  warning("Rechts: %d", kurbel_r);
-  warning("Links: %d", kurbel_l);
-  warning("Vermischt: %d", kurbel_v);
+//  warning("Rechts: %d", kurbel_r);
+//  warning("Links: %d", kurbel_l);
+//  warning("Vermischt: %d", kurbel_v);
 
     // Kreisflug
     text.sprintf("%s (%.1f %%)", (const char*)printTime(kurbel_r),
@@ -1102,22 +1070,19 @@ bool Flight::isOptimized() const { return (origList.count() != 0); }
 
 int Flight::searchPoint(QPoint cPoint, struct flightPoint* searchPoint)
 {
-  extern const double _currentScale, _scale[];
-  extern const MapMatrix _globalMapMatrix;
-
   unsigned int delta = 1;
   int index = -1;
 
   double minDist = 1000.0, distance = 0.0;
 
-  if(_currentScale > _scale[ID_BORDER_SMALL])          delta = 8;
-  else if(_currentScale > _scale[ID_BORDER_SMALL - 1]) delta = 4;
+  if(glMapMatrix->isSwitchScale())
+      delta = 8;
 
   QPoint fPoint;
 
   for(unsigned int loop = 0; loop < route.count(); loop = loop + delta)
     {
-      fPoint = _globalMapMatrix.map(route.at(loop)->projP);
+      fPoint = glMapMatrix->map(route.at(loop)->projP);
       int dX = cPoint.x() - fPoint.x();
       int dY = cPoint.y() - fPoint.y();
       distance = sqrt( (dX * dX) + (dY * dY) );
@@ -1167,7 +1132,7 @@ void Flight::__setWaypointType()
   // Kein Wendepunkt definiert
   if (wpList.count() < 4) return;
 
-  warning("WendePunkte: %d",wpList.count());
+  // warning("WendePunkte: %d",wpList.count());
   wpList.at(0)->type = Flight::TakeOff;
   wpList.at(1)->type = Flight::Begin;
 
@@ -1187,17 +1152,17 @@ void Flight::__appendWaypoint(struct wayPoint* newPoint)
 {
 warning("Flight::__appendWaypoint");
   if(wpList.count() && dist(wpList.last(), newPoint) <= 0.1) return;
-warning("------------------------> 1");
+//warning("------------------------> 1");
   wpList.append(newPoint);
 
   if(tEnd == 0 && wpList.count() > 2)
     {
-warning("------------------------> 2");
+//warning("------------------------> 2");
       int loop = 0;
 
       for(int n = wpList.count() - 3; n >= 0; n--)
         {
-warning("------------------------> 3 (%d)", loop);
+// warning("------------------------> 3 (%d)", loop);
           loop++;
           if(newPoint->origP == wpList.at(n)->origP)
             {
@@ -1205,7 +1170,7 @@ warning("------------------------> 3 (%d)", loop);
 
               tEnd = wpList.count() - 1;
               tBegin = n;
-warning("Begin: %d / Ende: %d", tBegin, tEnd);
+//warning("Begin: %d / Ende: %d", tBegin, tEnd);
               wpList.at(tEnd)->type = Flight::End;
               wpList.at(tBegin)->type = Flight::Begin;
 
@@ -1312,7 +1277,7 @@ warning("Flight::__checkType()");
                  + dist(wpList.at(2), wpList.at(4));
 
 
-            warning("dist: %.2f  dist_d: %.2f",distance_tot,distance_tot_d);
+            //warning("dist: %.2f  dist_d: %.2f",distance_tot,distance_tot_d);
             if(__isFAI(distance_tot_d, dist(wpList.at(2),
                   wpList.at(4)), wpList.at(3)->distance,
                   wpList.at(4)->distance))
@@ -1686,7 +1651,7 @@ warning("Flight::__checkWaypoints()");
       cerr << "Nach FAI Regeln erfüllt!\n";
     }
 
-  double wertDist = 0, F;
+  double wertDist = 0, F = 1;
 
   if(dmstCount != tEnd - tBegin)
     {
@@ -1749,7 +1714,7 @@ warning("Flight::__checkWaypoints()");
   cerr << "malus: " << dmstMalus << endl;
   cerr << "Index: " << gliderIndex << endl;
   cerr << "Entfernung: " << wertDist << endl;
-  cerr << taskPoints << endl;
+  cerr << "Punkte: " << taskPoints << endl;
 
 
   if (time_error)

@@ -142,11 +142,27 @@ MapContents::~MapContents()
   topoList.~QList();
 }
 
-int MapContents::degreeToNum(const char* degree)
+int MapContents::degreeToNum(const char* inDegree)
 {
+  /*
+   * Das Parsen insgesamt sollte nochmal überarbeitet werden!
+   */
   int deg = 0, min = 0, sec = 0;
-  int result;
+  int result = 0;
   int count = 0;
+
+  char* degree;
+  degree = new char[strlen(inDegree)];
+  int n = 0;
+
+  // Löschen aller Leerzeichen, damit das Parsen unten klappt.
+  for(unsigned int loop = 0; loop < strlen(inDegree); loop++)
+    {
+      if(inDegree[loop] == ' ') continue;
+
+      degree[n] = inDegree[loop];
+      n++;
+    }
 
   QRegExp number("^-?[0-9]+$");
   QRegExp deg1("[°.]");
@@ -236,7 +252,6 @@ int MapContents::degreeToNum(const char* degree)
     }
   else if( deg3.match(degree) != -1 )
     {
-warning("es folgen \"echte\" Sekunden");
       // es folgen "echte" Sekunden
       switch( deg3.match(degree) )
         {
@@ -266,9 +281,8 @@ warning("es folgen \"echte\" Sekunden");
   result = (int) ((600000 * deg) + (10000 * (min + (sec * pow(10,-count)))));
 
   if(dir.match(degree) >= 0) return -result;
-warning("Ergebins: %d", result);
-  return result;
 
+  return result;
 }
 
 void MapContents::closeFlight()
@@ -600,7 +614,6 @@ bool MapContents::__readAsciiFile(const char* fileName)
               switch (type)
                 {
                   case BaseMapElement::IntAirport:
-                    break;
                   case BaseMapElement::Airport:
                   case BaseMapElement::MilAirport:
                   case BaseMapElement::CivMilAirport:
@@ -1321,18 +1334,10 @@ Flight* MapContents::getFlight()
   return 0;
 }
 
-QList<Flight>* MapContents::getFlightList()
-{
-    warning("%d",flightList.count());
-    warning("-->  %s",flightList.at(0)->getFileName());
-    warning("getFlightList\n");
-    return &flightList;
-}
+QList<Flight>* MapContents::getFlightList()  {  return &flightList;  }
 
 bool MapContents::loadFlight(QFile igcFile)
 {
-  warning("MapContents::loadFlight(%s)", (const char*)igcFile.name());
-
   float temp_bearing = 0.0;
 
   QFileInfo fInfo(igcFile);
@@ -1584,35 +1589,33 @@ bool MapContents::loadFlight(QFile igcFile)
               lonTemp = lon * 600000 + lonmin * 10;
 
               if(latTemp != 0 && lonTemp != 0)
-               {
-                 if(latChar == 'S') latTemp = -latTemp;
-                 if(lonChar == 'W') lonTemp = -lonTemp;
+                {
+                  if(latChar == 'S') latTemp = -latTemp;
+                  if(lonChar == 'W') lonTemp = -lonTemp;
 
-                 newWP = new wayPoint;
-                 newWP->name = s.mid(18,20);
-                 newWP->origP = QPoint(latTemp, lonTemp);
-                 newWP->projP = _globalMapMatrix.wgsToMap(newWP->origP);
-                 newWP->sector1 = 0;
-                 newWP->sector2 = 0;
-                 newWP->sectorFAI = 0;
-                 newWP->angle = -100;
-                 newWP->type = Flight::NotSet;
-                 if(isFirstWP)
-                    newWP->distance = 0;
-                 else
-                     newWP->distance = dist(latTemp, lonTemp,
-                 preWP->origP.y(), preWP->origP.x());
-                 if(!isFirstWP && newWP->distance <= 0.1)  continue;
-                 wpList.append(newWP);
-                 isFirstWP = false;
-                 preWP = newWP;
-               }
-             else
-               {
-
-                  // Sinnvoller wäre es aus der IGC DAtei auszulesen wieviele
+                  newWP = new wayPoint;
+                  newWP->name = s.mid(18,20);
+                  newWP->origP = QPoint(latTemp, lonTemp);
+                  newWP->projP = _globalMapMatrix.wgsToMap(newWP->origP);
+                  newWP->sector1 = 0;
+                  newWP->sector2 = 0;
+                  newWP->sectorFAI = 0;
+                  newWP->angle = -100;
+                  newWP->type = Flight::NotSet;
+                  if(isFirstWP)
+                      newWP->distance = 0;
+                  else
+                      newWP->distance = dist(latTemp, lonTemp,
+                  preWP->origP.y(), preWP->origP.x());
+                  if(!isFirstWP && newWP->distance <= 0.1)  continue;
+                  wpList.append(newWP);
+                  isFirstWP = false;
+                  preWP = newWP;
+                }
+              else
+                {
+                  // Sinnvoller wäre es aus der IGC Datei auszulesen wieviele
                   // WendePunkte es gibt. <- Ist IGC Datei immer korrekt??
-
                   if(wp_count != 0 && last0 != wp_count -1)
                     {
                       newWP = new wayPoint;
@@ -1628,7 +1631,7 @@ bool MapContents::loadFlight(QFile igcFile)
                       wpList.append(newWP);
                     }
                   last0 = wp_count;
-               }
+                }
               wp_count++;
             }
         }
@@ -1647,18 +1650,16 @@ bool MapContents::loadFlight(QFile igcFile)
 
   importProgress.close();
 
-
   flightList.append(new Flight(QFileInfo(igcFile).fileName(), flightRoute,
       pilotName, gliderType, gliderID, wpList, date));
-  warning("Erstelle FlightList");
 
   return true;
 }
 
 void MapContents::proofeSection()
 {
-  extern const MapMatrix _globalMapMatrix;
-  const QRect mapBorder = _globalMapMatrix.getViewBorder();
+  extern MapMatrix _globalMapMatrix;
+  QRect mapBorder = _globalMapMatrix.getViewBorder();
 
   int westCorner = ( ( mapBorder.left() / 600000 / 2 ) * 2 + 180 ) / 2;
   int eastCorner = ( ( mapBorder.right() / 600000 / 2 ) * 2 + 180 ) / 2;
@@ -1672,8 +1673,12 @@ void MapContents::proofeSection()
 
   if(isFirst)
     {
-//      __readAsciiFile("/home/heiner/Entwicklung/import/luftraume.out");
-//      __readAsciiFile("/home/heiner/Entwicklung/KFLog_Daten/karte/kflog_sites.out");
+      KStandardDirs* globalDirs = KGlobal::dirs();
+      QString pathName;
+      pathName = globalDirs->findResource("appdata", "mapdata/");
+      __readAsciiFile(pathName + "airspace.out");
+//      __readAsciiFile(pathName + "airfields/deutschland.out");
+//      __readAsciiFile("/home/heiner/Lufträume.out");
       isFirst = false;
     }
 
@@ -1700,8 +1705,6 @@ void MapContents::proofeSection()
 unsigned int MapContents::getListLength(int listIndex) const
 {
   switch(listIndex) {
-//    case IntAirportList:
-//      return intairportList.count();
     case AirportList:
       return airportList.count();
     case GliderList:
@@ -1758,8 +1761,6 @@ GliderSite* MapContents::getGlidersite(unsigned int index)
 BaseMapElement* MapContents::getElement(int listIndex, unsigned int index)
 {
   switch(listIndex) {
-//    case IntAirportList:
-//      return intairportList.at(index);
     case AirportList:
       return airportList.at(index);
     case GliderList:

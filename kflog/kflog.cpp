@@ -22,25 +22,29 @@
 
 // include files for QT
 #include <qdir.h>
+#include <qkeycode.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qprinter.h>
 #include <qpainter.h>
+#include <qprinter.h>
 
 // include files for KDE
-#include <kedittoolbar.h>
-#include <kiconloader.h>
-#include <kfiledialog.h>
-#include <kmessagebox.h>
-#include <kfiledialog.h>
-#include <kmenubar.h>
-#include <klocale.h>
 #include <kconfig.h>
+#include <kedittoolbar.h>
+#include <kfiledialog.h>
+#include <kiconloader.h>
+#include <kio/netaccess.h>
+#include <kkeydialog.h>
+#include <klocale.h>
+#include <kmenubar.h>
+#include <kmessagebox.h>
+#include <knotifyclient.h>
 #include <kstdaction.h>
 
 // application specific includes
 #include "kflog.h"
 #include <dataview.h>
+#include <evaluationdialog.h>
 #include <kflogconfig.h>
 #include <kflogstartlogo.h>
 #include <map.h>
@@ -48,7 +52,6 @@
 #include <mapcontents.h>
 #include <mapcontrolview.h>
 #include <mapmatrix.h>
-#include <evaluationdialog.h>
 
 #define STATUS_LABEL(a,b,c) \
   a = new KStatusBarLabel( "", 0, statusBar() ); \
@@ -60,10 +63,6 @@
   a->setAlignment( c | AlignVCenter );
 //  a->setIndent(10);
 
-
-#define HOME_DEFAULT_LAT 29125200
-#define HOME_DEFAULT_LON 5364500
-
 KFLogApp::KFLogApp(QWidget* , const char* name)
   : KDockMainWindow(0, name), showStartLogo(false)
 {
@@ -71,7 +70,7 @@ KFLogApp::KFLogApp(QWidget* , const char* name)
 
   config->setGroup("General Options");
 
-  if (config->readBoolEntry("Logo",true) && (!kapp->isRestored() ) )
+  if (config->readBoolEntry("Logo",false) && (!kapp->isRestored() ) )
     {
       showStartLogo = true;
       startLogo = new KFLogStartLogo();
@@ -87,11 +86,12 @@ KFLogApp::KFLogApp(QWidget* , const char* name)
 
   readOptions();
 
-  filePrint->setEnabled(true);
+//  filePrint->setEnabled(true);
   viewData->setChecked(true);
   viewMapControl->setChecked(true);
   viewCenterTask->setEnabled(false);
   viewCenterFlight->setEnabled(false);
+  flightEvaluation->setEnabled(false);
 }
 
 KFLogApp::~KFLogApp()
@@ -101,163 +101,77 @@ KFLogApp::~KFLogApp()
 
 void KFLogApp::initActions()
 {
-  extern MapContents _globalMapContents;
-  fileOpen = new KAction(i18n("&Open Flight"), BarIcon("fileopen"),
+  fileOpen = new KAction(i18n("&Open Flight"), "fileopen",
       KStdAccel::key(KStdAccel::Open), this, SLOT(slotFileOpen()),
       actionCollection(), "file_open");
   fileOpenRecent = KStdAction::openRecent(this,
       SLOT(slotFileOpenRecent(const KURL&)), actionCollection());
-  fileClose = new KAction(i18n("Close Flight"), BarIcon("fileclose"),
-      KStdAccel::key(KStdAccel::Close), map, SLOT(slotDeleteFlightLayer()),
+  fileClose = new KAction(i18n("Close Flight"), "fileclose",
+      KStdAccel::key(KStdAccel::Close), this, SLOT(slotFileClose()),
       actionCollection(), "file_close");
-  filePrint = KStdAction::print(this, SLOT(slotFilePrint()),
-      actionCollection());
-  fileQuit = KStdAction::quit(this, SLOT(slotFileQuit()), actionCollection());
+/*
+ * Printing not available yet ...
+ *  filePrint = KStdAction::print(this, SLOT(slotFilePrint()),
+ *      actionCollection());
+ */
+  KStdAction::quit(this, SLOT(slotFileQuit()), actionCollection());
 
   viewRedraw = KStdAction::redisplay(map, SLOT(slotRedrawMap()),
       actionCollection());
-  viewCenterTask = new KAction(i18n("Center to &Task"), 0, 0, map,
+  viewRedraw->setAccel(Key_F5);
+
+  viewCenterTask = new KAction(i18n("Center to &Task"), "centertask",
+      Key_F6, map,
       SLOT(slotCenterToTask()), actionCollection(), "view_center_task");
-  viewCenterFlight = new KAction(i18n("Center to &Flight"), 0, 0, map,
+  viewCenterFlight = new KAction(i18n("Center to &Flight"), "centerflight",
+      Key_F7, map,
       SLOT(slotCenterToFlight()), actionCollection(), "view_center_flight");
-  viewCenterHome = new KAction(i18n("Center to &Homesite"),
-      SmallIcon("gohome"), 0, map, SLOT(slotCenterToHome()),
-      actionCollection(), "view_center_home");
-  viewZoomIn = KStdAction::zoomIn(map, SLOT(slotZoomIn()),
+
+  new KAction(i18n("Center to &Homesite"), "gohome",
+      KStdAccel::key(KStdAccel::Home), map,
+      SLOT(slotCenterToHome()), actionCollection(), "view_center_home");
+
+  KStdAction::zoomIn(map, SLOT(slotZoomIn()),
       actionCollection());
-  viewZoomOut = KStdAction::zoomOut(map, SLOT(slotZoomOut()),
+  KStdAction::zoomOut(map, SLOT(slotZoomOut()),
       actionCollection());
   /*
    * Wir brauchen dringend Icons für diese beiden Aktionen, damit man
    * es auch in die Werkzeugleisten packen kann!
    */
-  viewData = new KToggleAction(i18n("Show Flightdata"), 0, 0, this,
+  viewData = new KToggleAction(i18n("Show Flightdata"), 0, this,
       SLOT(slotToggleDataView()), actionCollection(), "toggle_data_view");
-  viewMapControl = new KToggleAction(i18n("Show Mapcontrol"), 0, 0, this,
+  viewMapControl = new KToggleAction(i18n("Show Mapcontrol"), 0, this,
       SLOT(slotToggleMapControl()), actionCollection(), "toggle_map_control");
 
   viewToolBar = KStdAction::showToolbar(this, SLOT(slotViewToolBar()),
       actionCollection());
   viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()),
       actionCollection());
-  configToolBar = KStdAction::configureToolbars(this,
+
+  KStdAction::configureToolbars(this,
       SLOT(slotConfigureToolbars()), actionCollection());
-  configKFLog = new KAction(i18n("Configure &KFLog"), SmallIcon("configure"), 0,
-      this, SLOT(slotConfigureKFLog()), actionCollection(), "configure_kflog");
+  KStdAction::keyBindings(this,
+      SLOT(slotConfigureKeyBindings()), actionCollection());
 
-  flightEvaluation = new KAction(i18n("Evaluation"), 0, 0, this,
-      SLOT(slotEvaluateFlight()), actionCollection(), "evaluate_flight");
-  flightOptimization = new KAction(i18n("Optimize"), 0, 0, map,
-      SLOT(slotOptimzeFlight()), actionCollection(), "optimize_flight");
+  KStdAction::preferences(this, SLOT(slotConfigureKFLog()), actionCollection());
 
-
-  fileOpen->setStatusText(i18n("Opens an existing flight"));
-  fileOpenRecent->setStatusText(i18n("Opens a recently used flight"));
-  filePrint ->setStatusText(i18n("Prints out the actual map"));
-  fileQuit->setStatusText(i18n("Quits KFLog"));
-  viewToolBar->setStatusText(i18n("Enables/disables the toolbar"));
-  viewStatusBar->setStatusText(i18n("Enables/disables the statusbar"));
-
-  // use the absolute path to your kflogui.rc file for testing purpose in createGUI();
-  createGUI("/home/heiner/Entwicklung/kflog2/kflog/kflogui.rc");
-}
-
-void KFLogApp::initMenuBar()
-{
-//  file_menu = new QPopupMenu;
-
+  flightEvaluation = new KAction(i18n("Evaluation"), "flightevaluation",
+      CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
+      "evaluate_flight");
 /*
-  mapMenu = new QPopupMenu();
-  mapMenu->setCheckable(true);
-  mapMenu->insertItem(LAYER_ICON_HYDRO,
-            i18n("H&ydrography"), ID_LAYER_HYDRO);
-  mapMenu->insertItem(LAYER_ICON_TOPO,
-            i18n("&Topography"), ID_LAYER_TOPO);
-  mapMenu->insertItem(LAYER_ICON_ROAD,
-            i18n("&Highways and roads"), ID_LAYER_ROAD);
-  mapMenu->insertItem(LAYER_ICON_RAIL,
-            i18n("&Railways and stations"), ID_LAYER_RAIL);
-  mapMenu->insertItem(LAYER_ICON_CITY,
-            i18n("&Cities and villages"), ID_LAYER_CITY);
-  mapMenu->insertItem(LAYER_ICON_LAND,
-            i18n("&Landmarks"), ID_LAYER_LAND);
-  mapMenu->insertItem(LAYER_ICON_NAV,
-            i18n("&Navigation facilities"), ID_LAYER_NAV);
-  mapMenu->insertItem(LAYER_ICON_ADDSITES,
-            i18n("Additional &sites"), ID_LAYER_ADDSITES);
-  mapMenu->insertItem(LAYER_ICON_AIRPORT,
-            i18n("&Airports"), ID_LAYER_AIRPORT);
-  mapMenu->insertItem(LAYER_ICON_GLIDER,
-            i18n("&Glider-sites"), ID_LAYER_GLIDER);
-  mapMenu->insertItem(LAYER_ICON_AIRSPACE,
-            i18n("A&irspace-structure"), ID_LAYER_AIRSPACE);
-  mapMenu->insertItem(LAYER_ICON_OUT,
-            i18n("&Outlandingfields"), ID_LAYER_OUT);
-  mapMenu->insertItem(LAYER_ICON_WAYPOINT,
-            i18n("&Waypoints"), ID_LAYER_WAYPOINT);
-  mapMenu->insertItem(LAYER_ICON_FLIGHT,
-            i18n("&Flights"), ID_LAYER_FLIGHT);
-
-  QObject::connect(mapMenu, SIGNAL(activated(int)), SLOT(slotMenuLayer(int)));
+  new KAction(i18n("Evaluation"),
+      "/opt/kde2/share/apps/kflog/toolbar/auswertung.png",
+      CTRL+Key_E, this,
+      SLOT(slotEvaluateFlight()), actionCollection(), "evaluate_flight");
 */
-//  viewMenu = new QPopupMenu();
-//  viewMenu->setCheckable(true);
-//  viewMenu->insertItem(SmallIcon("reload"), i18n("Redraw Map"), ID_REDRAW);
-//  viewMenu->insertItem(i18n("center to &task"), ID_CENTER_TASK);
-//  viewMenu->insertItem(i18n("center to &flight"), ID_CENTER_FLIGHT);
-//  viewMenu->insertItem(i18n("&Layer"), mapMenu);
-//  viewMenu->insertItem(SmallIcon("viewmag+"), i18n("Zoom in"), ID_ZOOM_IN);
-//  viewMenu->insertItem(SmallIcon("viewmag-"), i18n("Zoom out"), ID_ZOOM_OUT);
-//  viewMenu->insertSeparator();
-//  viewMenu->insertItem(i18n("Tool&bar"), ID_VIEW_TOOLBAR);
-//  viewMenu->insertItem(i18n("&Statusbar"), ID_VIEW_STATUSBAR );
+//  new KAction(i18n("Optimize"), 0, 0, map,
+//      SLOT(slotOptimzeFlight()), actionCollection(), "optimize_flight");
 
-//  viewMenu->setItemChecked(ID_VIEW_TOOLBAR, bViewToolbar);
-//  viewMenu->setItemChecked(ID_VIEW_STATUSBAR, bViewStatusbar);
+  fileOpen->setStatusText(i18n("Open flight"));
+//  filePrint ->setStatusText(i18n("Print map"));
 
-//  viewMenu->setAccel(CTRL+Key_R, ID_REDRAW);
-//  viewMenu->setAccel(CTRL+Key_F, ID_CENTER_FLIGHT);
-//  viewMenu->setAccel(CTRL+Key_T, ID_CENTER_TASK);
-//  viewMenu->setAccel(Key_Plus, ID_ZOOM_IN);
-//  viewMenu->setAccel(Key_Minus, ID_ZOOM_OUT);
-
-//  confMenu = new QPopupMenu();
-//  confMenu->insertItem(i18n("Configure &map"), ID_CONF_MAP);
-//  confMenu->insertItem(i18n("KFLog-&setup"), ID_CONF_KFLOG);
-
-//  flightMenu = new QPopupMenu();
-//  flightMenu->insertItem(i18n("Auswertung"), ID_FLIGHT_EVALUATION);
-//  flightMenu->insertItem(i18n("Optimize task"), ID_FLIGHT_OPTIMIZE);
-//  flightMenu->insertSeparator();
-//  flightMenu->insertItem(SmallIcon("fileprint"), i18n("&Print flightdata"),
-//            ID_FLIGHT_PRINT);
-//  flightMenu->setAccel(Key_F9, ID_FLIGHT_EVALUATION);
-//  flightMenu->setAccel(Key_F10, ID_FLIGHT_OPTIMIZE);
-//  flightMenu->setAccel(Key_F8, ID_FLIGHT_PRINT);
-
-//  helpMenu = new QPopupMenu();
-//  helpMenu->insertItem(SmallIcon("contents"),
-//        i18n("User &Manual"), this, SLOT(slotHelpContents()),0,
-//            ID_HELP_CONTENTS);
-//  helpMenu->insertSeparator();
-  /* KFLog-Icon einsetzen ...*/
-//  helpMenu->insertItem(i18n("&About KFLog..."), this, SLOT(slotHelpAbout()),0,
-//            ID_HELP_ABOUT);
-
-//  menuBar()->insertItem(i18n("&File"), file_menu);
-//  menuBar()->insertItem(i18n("&View"), viewMenu);
-//  menuBar()->insertItem(i18n("&Options"), confMenu);
-//  menuBar()->insertItem(i18n("F&light"), flightMenu);
-//  menuBar()->insertSeparator();
-//  menuBar()->insertItem(i18n("&Help"), helpMenu);
-
-//	KAccel* key_accel = new KAccel(this);
-//	key_accel->connectItem(KAccel::Help, kapp, SLOT(appHelpActivated()));
-
-//  CONNECT_CMD(file_menu);
-//  CONNECT_CMD(viewMenu);
-//  CONNECT_CMD(confMenu);
-//  CONNECT_CMD(flightMenu);
+  createGUI("/home/heiner/Entwicklung/kflog2/kflog/kflogui.rc");
 }
 
 void KFLogApp::initStatusBar()
@@ -266,7 +180,6 @@ void KFLogApp::initStatusBar()
   statusProgress = new KProgress(statusBar());
   statusProgress->setFixedWidth(120);
   statusProgress->setFixedHeight( statusProgress->sizeHint().height() - 4 );
-//  statusProgress->setBarStyle( KProgress::Blocked );
   statusProgress->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
   statusProgress->setMargin( 0 );
   statusProgress->setLineWidth(0);
@@ -333,12 +246,12 @@ void KFLogApp::initView()
       SLOT(slotRedrawMap()));
 }
 
-void KFLogApp::showCoords(QPoint pos)
-{
-  statusBar()->clear();
-  statusLatL->setText(printPos(pos.y()));
-  statusLonL->setText(printPos(pos.x(), false));
-}
+//void KFLogApp::showCoords(QPoint pos)
+//{
+//  statusBar()->clear();
+//  statusLatL->setText(printPos(pos.y()));
+//  statusLonL->setText(printPos(pos.x(), false));
+//}
 
 void KFLogApp::showPointInfo(QPoint pos, struct flightPoint* point)
 {
@@ -408,19 +321,10 @@ void KFLogApp::readOptions()
 
   if(!size.isEmpty())  resize(size);
 
-  // initialize the mapmatrix
-  config->setGroup("Map Data");
-  int mapCenterLat = config->readNumEntry("Center Latitude", 29100000);
-  int mapCenterLon = config->readNumEntry("Center Longitude", 5400000);
-  double scale = config->readDoubleNumEntry("Map Scale", 200);
-  double v1 = config->readDoubleNumEntry("Parallel1", 32400000);
-  double v2 = config->readDoubleNumEntry("Parallel2", 30000000);
-  int homeLat = config->readNumEntry("Homesite Latitude", HOME_DEFAULT_LAT);
-  int homeLon = config->readNumEntry("Homesite Longitude", HOME_DEFAULT_LON);
-
   extern MapMatrix _globalMapMatrix;
-  _globalMapMatrix.initMatrix(mapCenterLat, mapCenterLon, scale, v1, v2,
-      homeLat, homeLon);
+  _globalMapMatrix.initMatrix();
+
+  BaseMapElement::glMapMatrix = &_globalMapMatrix;
 }
 
 bool KFLogApp::queryExit()
@@ -435,28 +339,53 @@ bool KFLogApp::queryExit()
 
 void KFLogApp::slotSetProgress(int value)  { statusProgress->setValue(value); }
 
+void KFLogApp::slotFileClose()
+{
+  map->slotDeleteFlightLayer();
+  extern MapContents _globalMapContents;
+  if(_globalMapContents.getFlightList()->count() == 0)
+    {
+      viewCenterTask->setEnabled(false);
+      viewCenterFlight->setEnabled(false);
+      flightEvaluation->setEnabled(false);
+    }
+}
+
 void KFLogApp::slotFileOpen()
 {
   slotStatusMsg(i18n("Opening file..."));
 
-  QString fName = KFileDialog::getOpenFileName(flightDir, "*.igc *.IGC", this);
+//  QString fName = KFileDialog::getOpenFileName(flightDir, "*.igc *.IGC", this);
+  KURL fUrl = KFileDialog::getOpenURL(flightDir, "*.igc *.IGC", this);
 
-  if(fName != NULL)
+  if(fUrl.isEmpty())  return;
+
+  QString fName;
+  if(fUrl.isLocalFile())
+      fName = fUrl.path();
+  else if(!KIO::NetAccess::download(fUrl, fName))
     {
-      QFileInfo fInfo(fName);
-      flightDir = fInfo.dirPath();
-      extern MapContents _globalMapContents;
-      if(_globalMapContents.loadFlight(fName))
-        {
-          dataView->setFlightData(_globalMapContents.getFlight());
-          viewCenterTask->setEnabled(true);
-          viewCenterFlight->setEnabled(true);
-          // Hier wird die Karte leider 2x neu gezeichnet, denn erst
-          // beim ersten Zeichnen werden die Rahmen von Flug und Aufgabe
-          // bestimmt.
-          map->slotRedrawMap();
-          map->slotCenterToFlight();
-        }
+      KNotifyClient::event(i18n("Can not download file %1").arg(fUrl.url()));
+      return;
+    }
+
+  QFileInfo fInfo(fName);
+  flightDir = fInfo.dirPath();
+  extern MapContents _globalMapContents;
+  if(_globalMapContents.loadFlight(fName))
+    {
+      dataView->setFlightData(_globalMapContents.getFlight());
+      viewCenterTask->setEnabled(true);
+      viewCenterFlight->setEnabled(true);
+      flightEvaluation->setEnabled(true);
+
+      fileOpenRecent->addURL(fUrl);
+
+      // Hier wird die Karte leider 2x neu gezeichnet, denn erst
+      // beim ersten Zeichnen werden die Rahmen von Flug und Aufgabe
+      // bestimmt.
+      map->slotRedrawMap();
+      map->slotCenterToFlight();
     }
 
   slotStatusMsg(i18n("Ready."));
@@ -468,7 +397,17 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
 
   extern MapContents _globalMapContents;
   if(url.isLocalFile())
-      _globalMapContents.loadFlight(url.fileName());
+    {
+      if(_globalMapContents.loadFlight(url.path()))
+        {
+          dataView->setFlightData(_globalMapContents.getFlight());
+          viewCenterTask->setEnabled(true);
+          viewCenterFlight->setEnabled(true);
+          flightEvaluation->setEnabled(true);
+          map->slotRedrawMap();
+          map->slotCenterToFlight();
+        }
+    }
 
   slotStatusMsg(i18n("Ready."));
 }
@@ -564,10 +503,15 @@ void KFLogApp::slotEvaluateFlight()
 void KFLogApp::slotConfigureToolbars()
 {
   saveMainWindowSettings( KGlobal::config(), "MainWindow" );
-  KEditToolbar dlg(actionCollection());
+  KEditToolbar dlg(actionCollection(), xmlFile());
   connect(&dlg, SIGNAL(newToolbarConfig()), this, SLOT(slotNewToolbarConfig()));
 
   if (dlg.exec())  createGUI();
+}
+
+void KFLogApp::slotConfigureKeyBindings()
+{
+  KKeyDialog::configureKeys(actionCollection(), xmlFile());
 }
 
 void KFLogApp::slotConfigureKFLog()
@@ -583,14 +527,12 @@ void KFLogApp::slotNewToolbarConfig()
    applyMainWindowSettings( KGlobal::config(), "MainWindow" );
 }
 
-void KFLogApp::slotStartComplete() { if(showStartLogo)  delete startLogo; }
+void KFLogApp::slotStartComplete()
+{
+  if(showStartLogo)
+      delete startLogo;
 
-
-void KFLogApp::slotOptimizeFlight(){
-// if(!flightList.count()) return;
-//extern MapContents _globalMapContents;
-//  if(_globalMapContents.getFlight()->optimizeTask()) {
-//    showFlightData(flightList.current());
-  //  mainApp->getMap()->showFlightLayer(true);
-//  }
+  // Methode wird nur aufgerufen, wenn ein FLug per Kommandozeile
+  // übergeben wurde. In diesem Fall muss die Karte neu gezeichnet werden
+//  map->slotRedrawMap();
 }

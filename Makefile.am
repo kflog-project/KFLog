@@ -2,7 +2,7 @@
 
 SUBDIRS = kflog po doc 
 
-EXTRA_DIST = kflog.kdevprj AUTHORS COPYING ChangeLog INSTALL README TODO kflog.lsm 
+EXTRA_DIST = kflog.kdevprj AUTHORS COPYING ChangeLog INSTALL README TODO kflog.lsm kflog.spec 
 
 ####### kdevelop will overwrite this part!!! (end)############
 # not a GNU package. You can remove this line, if 
@@ -29,3 +29,5 @@ EXTRA_DIST = admin
 dist-hook:
 	cd $(top_distdir) && perl admin/am_edit -padmin
 	cd $(top_distdir) && $(MAKE) -f admin/Makefile.common subdirs
+	
+KDE_ICON = AUTO

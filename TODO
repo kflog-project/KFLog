@@ -6,11 +6,36 @@ $Id$
  *
  */
 
+* alle Icons erzeugen !!!
+
+
+* Kartenbewegungen als KAction (inkl. Tastaturbefehl)
+
+
+* Webseite aktualisieren
+
+
+/*************************************************************************
+ *
+ * Nach PreRelease
+ *
+ */
+
 * LineElement::readConfig() sollte nur einmal ausgeführt werden (ausserhalb
   von LineElement). Die entsprechenden Daten können dann abgerufen werden ...
 
+  -> zentrales KFLogConfigData-Objekt hält alle Zeicheneinstellungen
+     (könnte auch Bestandteil von MapContents werden?!?)
 
-* Konfiguration der Darstellung
+  -> Alle Kartenobjekte haben einen Pointer auf dieses Objekt
+
+  -> beim Zeichnen werden die entsprechenden Angaben jedesmal von dort
+     genommen.
+
+  -> Das gilt auch für die Icons bei SinglePoint.
+
+  -> Der Konfigurations-Dialog liest die Daten ebenfalls von diesem Objekt
+     und sorgt dafür, dass dieses Objekt die geänderten Daten aufnimmt.
 
 
 * Was passiert, wenn Maßstab negativ wird ???
@@ -23,26 +48,11 @@ $Id$
   Maßstab müsste zunächst "geprüft" werden ...
 
 
-* alle Icons erzeugen !!!
-
-
 * deutsche Übersetzung!
-
-
-* Tastatureinstellung
-
-
-* Kreuze nach EvaluationDialog löschen
 
 
 * Luftraum-Nummern korrigieren
 
-
-/*************************************************************************
- *
- * Nach PreRelease
- *
- */
 
 * Drucken:
 
@@ -62,6 +72,9 @@ $Id$
      Höhen über 0M ist in den 0°E Dateien ...
 
   -> Die 0-Meter-Linie ist in vielen Fällen noch falsch.
+
+  -> Grundlinien im Binnenland können zu Rechtecken zusammengefasst werden
+     (Grenzen löschen ...)
 
   -> Die Grundhöhe einzelner Kacheln ist zu niedrig.
 

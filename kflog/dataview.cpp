@@ -33,7 +33,7 @@ DataView::DataView(QWidget* parent)
 //  QFrame* mapElementFrame = new QFrame(this);
 //  QFrame* searchDataFrame = new QFrame(this);
 
-  addTab(flightDataFrame, i18n("&Flight"));
+  addTab(flightDataFrame, i18n("Flight"));
 //  addTab(taskDataFrame, i18n("&Task"));
 //  addTab(mapElementFrame, i18n("&Map"));
 //  addTab(searchDataFrame, i18n("&Search"));

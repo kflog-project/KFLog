@@ -17,6 +17,9 @@
 
 #include <cmath>
 
+#include <kapp.h>
+#include <kconfig.h>
+
 #include "mapmatrix.h"
 
 #define VAR1   ( cos(v1) * cos(v1) )
@@ -37,6 +40,17 @@
 #define NUM_TO_RAD(num) ( ( PI * (double)(num) ) / 108000000.0 )
 #define RAD_TO_NUM(rad) ( (int)( (rad) * 108000000.0 / PI ) )
 
+// the scale-borders
+#define VAL_BORDER_L                      10
+#define VAL_BORDER_U                    1500
+#define VAL_BORDER_1                     100
+#define VAL_BORDER_2                     500
+#define VAL_BORDER_3                    1000
+
+// Anfangs-Position (Poltringen)
+#define HOME_DEFAULT_LAT 29125200
+#define HOME_DEFAULT_LON 5364500
+
 MapMatrix::MapMatrix()
   : cScale(0), rotationArc(0)
 {
@@ -48,7 +62,15 @@ MapMatrix::MapMatrix()
 
 MapMatrix::~MapMatrix()
 {
-
+//  KConfig *config = kapp->config();
+//
+//  config->setGroup("Scale");
+//  config->writeEntry("Lower Limit", scaleBorders[LowerLimit]);
+//  config->writeEntry("Border 1", scaleBorders[Border1]);
+//  config->writeEntry("Border 2", scaleBorders[Border2]);
+//  config->writeEntry("Border 3", scaleBorders[Border3]);
+//  config->writeEntry("Switch Scale", scaleBorders[SwitchScale]);
+//  config->writeEntry("Upper Limit", scaleBorders[UpperLimit]);
 }
 
 QPoint MapMatrix::wgsToMap(QPoint origPoint) const
@@ -100,6 +122,23 @@ bool MapMatrix::isVisible(QRect itemBorder) const
 //  return ( ( mapBorder.intersects(itemBorder) ) &&
 //           ( itemBorder.width() * ( MAX_SCALE / cScale ) > 2 ) &&
 //           ( itemBorder.height() * ( MAX_SCALE / cScale ) > 2 ) );
+}
+
+int MapMatrix::getScaleRange()  const
+{
+  if(cScale <= scaleBorders[Border1])
+      return LowerLimit;
+   else if(cScale <= scaleBorders[Border2])
+      return Border1;
+   else if(cScale <= scaleBorders[Border3])
+      return Border2;
+   else
+      return Border3;
+}
+
+bool MapMatrix::isSwitchScale() const
+{
+  return cScale <= scaleBorders[SwitchScale];
 }
 
 QPointArray MapMatrix::map(QPointArray origArray) const
@@ -169,7 +208,16 @@ QPoint MapMatrix::getMapCenter() const
   return QPoint(mapCenterLat, mapCenterLon);
 }
 
-double MapMatrix::scale() const  { return cScale; }
+double MapMatrix::getScale(unsigned int type)
+{
+  if(type == MapMatrix::CurrentScale)
+      return cScale;
+  else if(type < MapMatrix::CurrentScale)
+      return scaleBorders[type];
+  else
+      qFatal("MapMatrix::getScale(): Value too large!");
+      return 0.0;
+}
 
 void MapMatrix::centerToMouse(QPoint center)
 {
@@ -258,10 +306,6 @@ void MapMatrix::moveMap(int dir)
 
 void MapMatrix::createMatrix(QSize newSize)
 {
-  // Nicht gerde ideal, vielleicht kann _currentScale mal rausfliegen ...
-  extern double _currentScale;
-  _currentScale = cScale;
-
   const QPoint tempPoint(wgsToMap(mapCenterLat, mapCenterLon));
 
   worldMatrix.reset();
@@ -356,22 +400,51 @@ void MapMatrix::scaleSub(QSize mapSize)
 
 void MapMatrix::setScale(double nScale)  {  cScale = nScale;  }
 
-void MapMatrix::initMatrix(int centerLat, int centerLon, double scale,
-        double nv1, double nv2, int hLat, int hLon)
+void MapMatrix::initMatrix()
 {
-  v1 = nv1;
-  v2 = nv2;
+  KConfig *config = kapp->config();
+
+  config->setGroup("Map Data");
+  mapCenterLat = config->readNumEntry("Center Latitude", 29100000);
+  mapCenterLon = config->readNumEntry("Center Longitude", 5400000);
+  cScale = config->readDoubleNumEntry("Map Scale", 200);
+  v1 = config->readDoubleNumEntry("Parallel1", 32400000);
+  v2 = config->readDoubleNumEntry("Parallel2", 30000000);
+  homeLat = config->readNumEntry("Homesite Latitude", HOME_DEFAULT_LAT);
+  homeLon = config->readNumEntry("Homesite Longitude", HOME_DEFAULT_LON);
+
+  config->setGroup("Scale");
+  scaleBorders[LowerLimit] = config->readNumEntry("Lower Limit", VAL_BORDER_L);
+  scaleBorders[Border1] = config->readNumEntry("Border 1", VAL_BORDER_1);
+  scaleBorders[Border2] = config->readNumEntry("Border 2", VAL_BORDER_2);
+  scaleBorders[Border3] = config->readNumEntry("Border 3", VAL_BORDER_3);
+  scaleBorders[SwitchScale] = config->readNumEntry("Switch Scale", VAL_BORDER_2);
+  scaleBorders[UpperLimit] = config->readNumEntry("Upper Limit", VAL_BORDER_2);
 
   var1 = cos(v1)*cos(v1);
   var2 = sin(v1)+sin(v2);
+}
 
-  mapCenterLat = centerLat;
-  mapCenterLon = centerLon;
+void MapMatrix::saveMatrix()
+{
+  KConfig *config = kapp->config();
 
-  homeLat = hLat;
-  homeLon = hLon;
+  config->setGroup("Map Data");
+  config->writeEntry("Center Latitude", mapCenterLat);
+  config->writeEntry("Center Longitude", mapCenterLon);
+  config->writeEntry("Map Scale", cScale);
+  config->writeEntry("Parallel1", v1);
+  config->writeEntry("Parallel2", v2);
+  config->writeEntry("Homesite Latitude", homeLat);
+  config->writeEntry("Homesite Longitude", homeLon);
 
-  cScale = scale;
+  config->setGroup("Scale");
+  config->writeEntry("Lower Limit", scaleBorders[LowerLimit]);
+  config->writeEntry("Border 1", scaleBorders[Border1]);
+  config->writeEntry("Border 2", scaleBorders[Border2]);
+  config->writeEntry("Border 3", scaleBorders[Border3]);
+  config->writeEntry("Switch Scale", scaleBorders[SwitchScale]);
+  config->writeEntry("Upper Limit", scaleBorders[UpperLimit]);
 }
 
 double MapMatrix::__calc_Y_Lambert(double latitude, double longitude) const

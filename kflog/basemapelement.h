@@ -23,6 +23,8 @@
 
 #include <qpainter.h>
 
+#include <mapmatrix.h>
+
 /**
  * Baseclass for all mapelements. The class will be inherited by all
  * classes implementing the map-elements. The clas provides several
@@ -72,11 +74,6 @@
     virtual unsigned int getTypeID() const;
     /** */
     virtual void readConfig();
-    /**
-     * Returns the position of the map-object in the current map.
-     * The position will be set to (-1000,-1000) during contruction.
-     */
-//    virtual QPoint getMapPosition() const;
     /**
      * List of all accessable element-types:
      * @see #typeID
@@ -145,7 +142,9 @@
      * The three types of elevation-data used in the maps.
      */
     enum elevationType {NotSet, MSL, GND, FL};
+
     /** */
+    static MapMatrix* glMapMatrix;
 
   protected:
     /**

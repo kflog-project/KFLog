@@ -128,6 +128,9 @@ KFLogConfig::~KFLogConfig()
 
 void KFLogConfig::slotOk()
 {
+  // Die aktuell angezeigten Angaben müssen noch gespeichert werden ...
+  slotSelectElement(oldElement);
+
   config->setGroup("Path");
   config->writeEntry("DefaultFlightDirectory", igcPathE->text());
   config->writeEntry("DefaultTaskDirectory", taskPathE->text());
@@ -140,9 +143,6 @@ void KFLogConfig::slotOk()
   config->writeEntry("Border 1", reduce1N->value());
   config->writeEntry("Border 2", reduce2N->value());
   config->writeEntry("Border 3", reduce3N->value());
-
-  // Die aktuell angezeigten Angaben müssen noch gespeichert werden ...
-  slotSelectElement(oldElement);
 
   config->setGroup("Road");
   WRITE_DRAW_VALUES(roadPenList, roadBorder);
@@ -223,7 +223,7 @@ void KFLogConfig::slotSelectElement(int elementID)
             cityPenList.at(4)->setColor(outLineColor->color());
             cityPenList.at(4)->setWidth(outLinePen->value());
             break;
-          }
+        }
     }
 
   switch(elementID)

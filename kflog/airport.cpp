@@ -28,12 +28,13 @@
 
 Airport::Airport(QString n, QString a, QString abbr, unsigned int t,
   QPoint pos, unsigned int e, const char* f, bool v, bool wP)
-: RadioPoint(n, abbr, t, pos, f, 0, wP),
+: RadioPoint(n, abbr, t, pos, f, a, wP),
   elevation(e), vdf(v)
 {
   switch(typeID)
     {
       case BaseMapElement::Airport:
+      case BaseMapElement::IntAirport:
         iconName = "airport.xpm";
         break;
       case MilAirport:
@@ -79,7 +80,7 @@ QString Airport::getInfoString() const
 
   temp.sprintf("%d", elevation);
   text = "<TABLE BORDER=0><TR><TD>"
-      "<IMG SRC=/opt/kde/share/apps/kflog/map_icons/" + iconName + ">" +
+      "<IMG SRC=/opt/kde2/share/apps/kflog/mapicons/" + iconName + ">" +
       "</TD><TD>" + name + " (" + alias + ")</TD></TR>" +
       "<TR><TD></TD><TD><FONT SIZE=-1>" + temp + "m" +
       "<BR>" + frequency + "</FONT></TD></TR></TABLE>";
@@ -98,10 +99,7 @@ void Airport::printMapElement(QPainter* printPainter, const double dX,
 {
   if(!__isVisible()) return;
 
-  extern const double _scale[];
-
-  struct drawPoint printPos;// = __projectElement(dX, dY,
-//      mapCenterLon, scale);
+  struct drawPoint printPos;
 
   printPainter->setPen(QPen(QColor(0,0,0), 3));
   printPainter->setBrush(QBrush::NoBrush);
@@ -109,11 +107,6 @@ void Airport::printMapElement(QPainter* printPainter, const double dX,
 
   char* kflog_dir = "/kflog/map/";
   int iconSize = 20;
-
-  if(scale > _scale[ID_BORDER_SMALL]) {
-    kflog_dir = "/kflog/map/small/";
-    iconSize = 10;
-  }
 
   QString iconName;
   switch(typeID) {

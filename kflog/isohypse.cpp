@@ -41,9 +41,8 @@ Isohypse::~Isohypse()
 
 void Isohypse::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
-  extern const MapMatrix _globalMapMatrix;
-  if(_globalMapMatrix.isVisible(bBox))
-      targetPainter->drawPolygon(_globalMapMatrix.map(projPointArray));
+  if(glMapMatrix->isVisible(bBox))
+      targetPainter->drawPolygon(glMapMatrix->map(projPointArray));
 }
 
 int Isohypse::getElevation() const { return elevation; }

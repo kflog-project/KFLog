@@ -29,14 +29,13 @@
 
 #include "wp.h"
 
-
 class EvaluationView;
 class Flight;
 
 /**
-  * @author Heiner Lamprecht, Florian Ehinger
-  * @version $Id$
-  */
+ * @author Heiner Lamprecht, Florian Ehinger
+ * @version $Id$
+ */
 class EvaluationDialog : public QDialog
 {
   Q_OBJECT
@@ -47,12 +46,12 @@ class EvaluationDialog : public QDialog
   /** */
   ~EvaluationDialog();
   /**
-    * Called, whenever a flight is loaded or closed, so that the listbox
-    * contains all loaded flight.
-    */
+   * Called, whenever a flight is loaded or closed, so that the listbox
+   * contains all loaded flight.
+   */
   void updateListBox();
 
-   /*
+  /**
    *
    */
   void updateText(int index1, int index2, bool updateAll = false);
@@ -70,11 +69,14 @@ class EvaluationDialog : public QDialog
   void slotBaroGlatt(int glatt);
   void slotSpeedGlatt(int glatt);
 
-  void slotScale(unsigned int secWidth);
+  void slotScale(int secWidth);
+
+  void hide();
+
  protected:
   /**
-    * Redefinition of the resizeEvent.
-    */
+   * Redefinition of the resizeEvent.
+   */
   virtual void resizeEvent(QResizeEvent* event);
 
  private:
@@ -91,11 +93,10 @@ class EvaluationDialog : public QDialog
   QCheckBox* check_speed;
   QComboBox* combo_flight;
 
-  QSpinBox* spin_vario;
-  QSpinBox* spin_baro;
-  QSpinBox* spin_speed;
-
-  QSpinBox* spin_scale;
+  QSpinBox* spinVario;
+  QSpinBox* spinBaro;
+  QSpinBox* spinSpeed;
+  QSpinBox* spinScale;
 
   QList<Flight>* flightList;
 

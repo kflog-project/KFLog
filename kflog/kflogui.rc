@@ -1,19 +1,32 @@
-<!DOCTYPE kpartgui>
-<kpartgui name="kflog" version="2.0.1">
-<MenuBar>
-  <Menu name="view"><text>&amp;View</text>
-    <Action name="view_center_task"/>
-    <Action name="view_center_flight"/>
-    <Action name="view_center_home"/>
-    <Separator name="separator_0" />
-    <Action name="toggle_data_view"/>
-    <Action name="toggle_map_control"/>
+<!DOCTYPE kpartgui ><kpartgui version="2.0.1" name="kflog" >
+ <MenuBar>
+  <Menu name="view" >
+   <text>&amp;View</text>
+   <Action name="view_center_task" />
+   <Action name="view_center_flight" />
+   <Action name="view_center_home" />
   </Menu>
-  <Menu name="settings"><text>&amp;Settings</text>
-    <Action name="configure_kflog"/>
+  <Menu name="flight" >
+   <text>F&amp;light</text>
+   <Action name="evaluate_flight" />
   </Menu>
-  <Menu name="flight"><text>&amp;Flight</text>
-    <Action name="evaluate_flight"/>
+  <Menu name="settings" >
+   <Action name="toggle_data_view" />
+   <Action name="toggle_map_control" />
   </Menu>
-</MenuBar>
+ </MenuBar>
+ <ToolBar noMerge="1" name="mainToolBar" >
+  <text>Main Toolbar</text>
+  <Action name="file_open" />
+  <Separator weakSeparator="1" name="separator_0" />
+  <Action name="view_zoom_in" />
+  <Action name="view_zoom_out" />
+  <Action name="view_redisplay" />
+  <Separator weakSeparator="1" name="separator_0" />
+  <Action name="view_center_home" />
+  <Action name="view_center_task" />
+  <Action name="view_center_flight" />
+  <Separator weakSeparator="1" name="separator_0" />
+  <Action name="evaluate_flight" />
+ </ToolBar>
 </kpartgui>

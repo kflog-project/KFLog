@@ -69,9 +69,6 @@ void SinglePoint::printMapElement(QPainter* printPainter, const double dX,
       const double dY, const int mapCenterLon, const double scale,
       const struct elementBorder mapBorder)
 {
-  extern const double _scale[];
-  extern const bool _showElements[];
-
   if(!__isVisible()) return;
 
   struct drawPoint printPos;// = __projectElement(dX, dY, mapCenterLon, scale);
@@ -79,11 +76,6 @@ void SinglePoint::printMapElement(QPainter* printPainter, const double dX,
   printPainter->setPen(QPen(QColor(0,0,0), 2));
   char* kflog_dir = "/kflog/map/";
   int iconSize = 16;
-
-  if(scale > _scale[ID_BORDER_SMALL]) {
-    kflog_dir = "/kflog/map/small/";
-    iconSize = 8;
-  }
 
   QString iconName;
   bool show = true;
@@ -103,19 +95,14 @@ void SinglePoint::printMapElement(QPainter* printPainter, const double dX,
         }
     }
 
-  show = _showElements[typeID];
-
-//  if(show)
 //    printPainter->drawPixmap(printPos.x - iconSize, printPos.y - iconSize,
 //              Icon(KApplication::kde_datadir() + kflog_dir + iconName));
 }
 
 bool SinglePoint::__isVisible() const
 {
-  extern const MapMatrix _globalMapMatrix;
-
-//  return _globalMapMatrix.isVisible(_globalMapMatrix.map(position));
-  return _globalMapMatrix.isVisible(position);
+//  return glMapMatrix->isVisible(glMapMatrix->map(position));
+  return glMapMatrix->isVisible(position);
 }
 
 void SinglePoint::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
@@ -126,19 +113,9 @@ void SinglePoint::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       return;
     }
 
-  extern const double _currentScale, _scale[];
-  extern const bool _showElements[];
-
   targetPainter->setPen(QPen(QColor(0,0,0), 2));
   char* kflog_dir = "/kflog/map/";
   int iconSize = 16;
-
-//  if(_currentScale > _scale[ID_BORDER_SMALL])
-//    {
-//      kflog_dir = "/kflog/map/small/";
-//      iconSize = 8;
-//    }
-
   bool show = true;
 
   if(iconName == 0)
@@ -155,14 +132,10 @@ void SinglePoint::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
         }
     }
 
-  show = _showElements[typeID];
+  curPos = glMapMatrix->map(position);
 
-  extern MapMatrix _globalMapMatrix;
-  curPos = _globalMapMatrix.map(position);
-//  targetPainter->drawEllipse(curPos.x() - 4, curPos.y() - 4, 8, 8);
-//  if(show)
-    targetPainter->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
-          QPixmap("/opt/kde/share/apps/kflog/map_icons/" + iconName));
+  targetPainter->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
+      QPixmap("/opt/kde2/share/apps/kflog/mapicons/" + iconName));
 }
 
 void SinglePoint::setWaypoint(bool isW)

@@ -119,13 +119,6 @@ class MapContents
         RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
         WaypointList, DigitList, FlightList};
 
-/*
-    enum listID {NotSet = 0, IntAirportList, AirportList, GliderList,
-        AddSitesList, OutList, NavList, AirspaceList, ObstacleList, ReportList,
-        CityList, VillageList, LandmarkList,
-        RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
-        WaypointList, DigitList, FlightList};
-*/
     static int degreeToNum(const char* degree);
 
   private:

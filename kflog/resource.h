@@ -37,21 +37,6 @@
    verwendet werden) */
 #define ABS(a)     ( ( a > -a ) ? a : -a )
 
-// the scale-borders
-#define ID_BORDER_L                      10
-#define ID_BORDER_U                    1000
-#define ID_BORDER_1                      20
-#define ID_BORDER_2                      45
-#define ID_BORDER_3                      90
-//
-#define ID_BORDER_4                     180
-#define ID_BORDER_5                     220
-#define ID_BORDER_6                     360
-#define ID_BORDER_7                     520
-#define ID_BORDER_8                     800
-// the border, where icons became small
-#define ID_BORDER_SMALL                   4
-
 // Macros for "scaleBorder"
 #define ID_SHORELINE                      0
 #define ID_BIGHYDRO                       1

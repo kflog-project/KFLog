@@ -31,9 +31,31 @@
 #define X_ABSTAND 60
 #define Y_ABSTAND 30
 
+EvaluationView::EvaluationView(QScrollView* parent, EvaluationDialog* dialog)
+: QWidget(parent, "EvaluationView", false),
+  startTime(0), secWidth(5), scrollFrame(parent), evalDialog(dialog)
+{
+  pixBuffer = new QPixmap;
+  pixBuffer->resize(scrollFrame->viewport()->size());
+
+  mouseB = NoButton | NotReached;
+  cursor1 = 0;
+  cursor2 = 86400;
+
+  cursor_alt = 200000;
+
+  setMouseTracking(true);
+
+  setBackgroundColor(QColor(white));
+}
+
+EvaluationView::~EvaluationView()
+{
+  delete pixBuffer;
+}
+
 void EvaluationView::resizeEvent(QResizeEvent* event)
 {
-warning("  EvaluationView::resizeEvent()");
   pixBuffer->resize(event->size());
   scrollFrame->addChild(this);
 }
@@ -206,8 +228,6 @@ QPoint EvaluationView::__baroPoint(int height, int durch[], int gn, int i)
   for(int loop = 0; loop < MIN(gn, (i * 2 + 1)); loop++)
       gesamt += durch[loop];
 
-//  warning("-----> scale_h %.3f", scale_h);
-
   int y = this->height() - (int)( ( gesamt / MIN(gn, (i * 2 + 1)) ) / scale_h )
                                                   - Y_ABSTAND;
 
@@ -249,7 +269,6 @@ QPoint EvaluationView::__varioPoint(float vario, float durch[], int gn, int i)
 
 void EvaluationView::__drawCsystem(QPainter* painter, bool vario, bool speed, bool baro)
 {
-  warning("__drawCsystem");
   /*
    * Die Schleife unten kann nicht terminieren, wenn scale_h negativ ist!
    */
@@ -309,9 +328,6 @@ void EvaluationView::__drawCsystem(QPainter* painter, bool vario, bool speed, bo
       if(scale_h > 10)     dh = 500;
       else if(scale_h > 8) dh = 250;
       else if(scale_h > 3) dh = 200;
-
-      warning("scale_h: %.2f -- dh: %d",scale_h,dh);
-      warning("this->height: %d", this->height());
 
       int h = dh;
       painter->setFont(QFont("helvetica",10));
@@ -388,8 +404,6 @@ void EvaluationView::__drawCsystem(QPainter* painter, bool vario, bool speed, bo
       else if(scale_v > 0.6) dv = 25;
       else if(scale_v > 0.3) dv = 20;
 
-      warning("scale_v: %.2f -- dv: %d",scale_v,dv);
-
       int v = dv;
       painter->setFont(QFont("helvetica",10));
 
@@ -409,19 +423,15 @@ void EvaluationView::__drawCsystem(QPainter* painter, bool vario, bool speed, bo
     }
 }
 
-
-
 void EvaluationView::drawCurve(Flight* current, bool vario, bool speed,
             bool baro, unsigned int glatt_va, unsigned int glatt_v,
             unsigned int glatt_h, unsigned int secW)
 {
-  warning("drawCurve");
   setMouseTracking(true);
 
   flight = current;
   startTime = flight->getStartTime();
   landTime = flight->getLandTime();
-
 
   cursor1 = MAX(startTime,cursor1);
   cursor2 = MAX(startTime,cursor2);
@@ -432,15 +442,13 @@ void EvaluationView::drawCurve(Flight* current, bool vario, bool speed,
 
 //  paint.begin(this);
 
-
-
   // Skalierungsfaktor -- horizontal
   // Sekunde / Punkt
 //  warning("secWidth: %d", secWidth);
 //  secWidth = (landTime - startTime) / ((double)(scrollFrame->viewport()->width() -
 //                                              2*X_ABSTAND));
 
-  warning("secWidth: %d", secWidth);
+//  warning("secWidth: %d", secWidth);
 
   this->resize((landTime - startTime) / secWidth + X_ABSTAND * 2,
       scrollFrame->viewport()->height());
@@ -457,8 +465,6 @@ void EvaluationView::drawCurve(Flight* current, bool vario, bool speed,
   scale_va = MAX(getVario(flight->getPoint(Flight::VA_MAX)),
               ( -1.0 * getVario(current->getPoint(Flight::VA_MIN))) ) /
           ((double)(this->height() - 2*Y_ABSTAND) / 2.0);
-
-
 
   //
   unsigned int gn_v = glatt_v * 2 + 1;
@@ -492,7 +498,6 @@ void EvaluationView::drawCurve(Flight* current, bool vario, bool speed,
   QPointArray baroArray(current->getRouteLength());
   QPointArray varioArray(current->getRouteLength());
   QPointArray speedArray(current->getRouteLength());
-
 
   for(unsigned int loop = 0; loop < current->getRouteLength(); loop++)
     {
@@ -542,10 +547,7 @@ void EvaluationView::drawCurve(Flight* current, bool vario, bool speed,
   pixBuffer->fill(white);
   QPainter paint(pixBuffer);
 
-
   __drawCsystem(&paint, vario, speed, baro);
-
-
 
   int xpos = 0;
 
@@ -560,7 +562,6 @@ void EvaluationView::drawCurve(Flight* current, bool vario, bool speed,
   }
 
   */
-
 
   if(vario)
     {
@@ -590,7 +591,6 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
   // Bildschirmkoordinaten !!
   QPainter paint;
 
-//  warning("Male Linie xpos: %d calt: %d",xpos,calt);
   if(move == 1)
     {
       paint.begin(this);
@@ -658,27 +658,4 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
       paint.drawPolygon(flagArray);
       paint.end();
     }
-}
-
-EvaluationView::EvaluationView(QScrollView* parent, EvaluationDialog* dialog)
-: QWidget(parent, "EvaluationView", false),
-  startTime(0), secWidth(5), scrollFrame(parent), evalDialog(dialog)
-{
-  pixBuffer = new QPixmap;
-  pixBuffer->resize(scrollFrame->viewport()->size());
-
-  mouseB = NoButton | NotReached;
-  cursor1 = 0;
-  cursor2 = 86400;
-
-  cursor_alt = 200000;
-
-  setMouseTracking(true);
-  warning("Maustracking; %d", this->hasMouseTracking());
-  setBackgroundColor(QColor(white));
-}
-
-EvaluationView::~EvaluationView()
-{
-  delete pixBuffer;
 }

@@ -313,9 +313,6 @@ QString PrintDialog::__createMapPrint()
    */
   printer.setOutputFileName(fileName);
 
-  extern const double _scale[];
-  extern const int _scaleBorder[];
-  extern const bool _showElements[];
   if(scaleSelect->currentItem() > 5)
       fatal("KFLog: Wrong number of items in combobox \"scaleSelect\"");
 
@@ -416,57 +413,7 @@ QString PrintDialog::__createMapPrint()
 
   extern MapContents _globalMapContents;
   BaseMapElement* _current;
-/*
-  if(selectedScale <= _scale[_scaleBorder[ID_GLACIER]] && showTopo)
-      PRINT_LOOP(MapContents::TopoList)
 
-  if(showHydro) PRINT_LOOP(MapContents::HydroList)
-
-  if(showRoad) PRINT_LOOP(MapContents::RoadList)
-
-  if(selectedScale <= _scale[_scaleBorder[ID_HIGHWAY]] && showRoad)
-      PRINT_LOOP(MapContents::HighwayList)
-
-  if(selectedScale <= _scale[_scaleBorder[ID_HIGHWAY_E]] && showRoad)
-      PRINT_LOOP(MapContents::HighwayEntryList)
-
-  if(showRail) PRINT_LOOP(MapContents::RailList)
-
-  if(showCity) PRINT_LOOP(MapContents::CityList)
-
-  if(selectedScale <= _scale[_scaleBorder[ID_VILLAGE]] && showCity)
-      PRINT_LOOP(MapContents::VillageList)
-
-  if(selectedScale <= _scale[_scaleBorder[ID_LANDMARK]] && showLand)
-      PRINT_LOOP(MapContents::LandmarkList)
-
-  if(selectedScale <= _scale[_scaleBorder[ID_OBSTACLE]] && showTopo)
-      PRINT_LOOP(MapContents::ObstacleList)
-
-  if(selectedScale <= _scale[_scaleBorder[ID_RADIO]] && showNav)
-      PRINT_LOOP(MapContents::ReportList)
-
-  if(selectedScale <= _scale[_scaleBorder[ID_RADIO]] && showNav)
-      PRINT_LOOP(MapContents::NavList)
-
-  if(selectedScale <= _scale[_scaleBorder[ID_AIRSPACE]] && showAirspace)
-      PRINT_LOOP(MapContents::AirspaceList)
-
-  if(selectedScale <= _scale[_scaleBorder[ID_AIRPORT]] && _showElements[5])
-      PRINT_LOOP(MapContents::IntAirportList)
-
-  if(selectedScale <= _scale[_scaleBorder[ID_AIRPORT]] && showAirport)
-      PRINT_LOOP(MapContents::AirportList)
-
-  if(selectedScale <= _scale[_scaleBorder[ID_ADDSITES]] && showAddSites)
-      PRINT_LOOP(MapContents::AddSitesList)
-
-  if(selectedScale <= _scale[_scaleBorder[ID_OUTLANDING]] && showOut)
-      PRINT_LOOP(MapContents::OutList)
-
-  if(selectedScale <= _scale[_scaleBorder[ID_GLIDERSITE]] && showGlider)
-      PRINT_LOOP(MapContents::GliderList)
-*/
 //    if(displayFlights) __drawFlight();
 
 //  _globalMapMatrix.createPrintMatrix(scaleRange[scaleSelect->currentItem()] / 2,

@@ -17,15 +17,11 @@
 
 #ifndef KFLOG_H
 #define KFLOG_H
- 
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-// include files for Qt
-
-// include files for KDE
 #include <kapp.h>
 #include <kdockwidget.h>
 #include <kmainwindow.h>
@@ -40,16 +36,6 @@ class KFLogConfig;
 class KFLogStartLogo;
 
 /**
- * The base class for KFLog application windows. It sets up the main
- * window and reads the config file as well as providing a menubar, toolbar
- * and statusbar. An instance of KFLogView creates your center view, which is connected
- * to the window's Doc object.
- * KFLogApp reimplements the methods that KMainWindow provides for main window handling and supports
- * full session management as well as using KActions.
- * @see KDockMainWindow
- * @see KApplication
- * @see KConfig
- *
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
@@ -60,15 +46,14 @@ class KFLogApp : public KDockMainWindow
   friend class KFLogView;
 
   public:
-    /** construtor of KFLogApp, calls all init functions to create the application.
-     */
+    /** */
     KFLogApp(QWidget* parent=0, const char* name=0);
     /** */
     ~KFLogApp();
     /** */
     void showPointInfo(QPoint, struct flightPoint* point);
     /** display the coordinates in the statusbar*/
-    void showCoords(QPoint);
+//    void showCoords(QPoint);
     /** */
     void clearPointInfo(QPoint);
 
@@ -82,8 +67,6 @@ class KFLogApp : public KDockMainWindow
     /** */
     void initStatusBar();
     /** */
-    void initMenuBar();
-    /** */
     void initView();
     /**  */
     virtual bool queryExit();
@@ -92,9 +75,9 @@ class KFLogApp : public KDockMainWindow
     /** */
     void slotFileOpen();
     /** */
-
-    /** */
     void slotFileOpenRecent(const KURL& url);
+    /** */
+    void slotFileClose();
     /** */
     void slotFilePrint();
     /** */
@@ -112,6 +95,8 @@ class KFLogApp : public KDockMainWindow
     /** */
     void slotConfigureToolbars();
     /** */
+    void slotConfigureKeyBindings();
+    /** */
     void slotConfigureKFLog();
     /** */
     void slotNewToolbarConfig();
@@ -121,8 +106,7 @@ class KFLogApp : public KDockMainWindow
     void slotStartComplete();
     /** */
     void slotEvaluateFlight();
-    /** */
-    void slotOptimizeFlight();
+
   private:
     /** the configuration object of the application */
     KConfig *config;
@@ -159,22 +143,23 @@ class KFLogApp : public KDockMainWindow
     KAction* fileOpen;
     KAction* fileClose;
     KRecentFilesAction* fileOpenRecent;
-    KAction* filePrint;
+//    KAction* filePrint;
     KAction* fileQuit;
     KToggleAction* viewToolBar;
     KToggleAction* viewStatusBar;
     KAction* configToolBar;
+    KAction* configKeyBindings;
     KAction* viewRedraw;
     KAction* viewCenterTask;
     KAction* viewCenterFlight;
     KAction* viewCenterHome;
-    KAction* viewZoomIn;
-    KAction* viewZoomOut;
+//    KAction* viewZoomIn;
+//    KAction* viewZoomOut;
     KToggleAction* viewData;
     KToggleAction* viewMapControl;
-    KAction* configKFLog;
+//    KAction* configKFLog;
     KAction* flightEvaluation;
-    KAction* flightOptimization;
+//    KAction* flightOptimization;
     /** */
     Map* map;
     /** */

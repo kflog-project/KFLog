@@ -59,6 +59,8 @@ class GliderSite : public RadioPoint
      */
     bool isWinch() const;
     /** */
+    virtual QString getInfoString() const;
+    /** */
     virtual void printMapElement(QPainter* printPainter, const double dX,
         const double dY, const int mapCenterLon, const double scale,
         const struct elementBorder mapBorder);

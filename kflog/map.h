@@ -107,8 +107,10 @@ class Map : public QWidget
     void slotPrintMap();
     /** */
     void slotDrawCursor(QPoint p1, QPoint p2);
-  /** Löscht den Fluglayer */
-  void slotDeleteFlightLayer();
+    /** Löscht den Fluglayer */
+    void slotDeleteFlightLayer();
+    /** */
+    void slotOptimzeFlight();
 
   signals:
     /** */
@@ -132,6 +134,14 @@ class Map : public QWidget
      * Redefinition of the resizeEvent.
      */
     virtual void resizeEvent(QResizeEvent* event);
+    /**
+     * Redifinition of the dragEnterEvent.
+     */
+    virtual void dragEnterEvent(QDragEnterEvent* event);
+    /**
+     * Redifinition of the dropEvent.
+     */
+    virtual void dropEvent(QDropEvent* event);
 
   private:
     /**

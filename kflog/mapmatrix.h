@@ -71,15 +71,16 @@ class MapMatrix
      */
     void createMatrix(QSize newSize);
     /** */
-    double scale() const;
+    double getScale(unsigned int type = MapMatrix::CurrentScale);
     /** */
     QRect getViewBorder() const;
     /** */
     QRect getPrintBorder(double a1, double a2, double b1, double b2,
         double c1, double c2, double d1, double d2) const;
     /** */
-    void initMatrix(int centerLat, int centerLon, double scale,
-        double v1, double v2, int hLat, int hLon);
+    void initMatrix();
+    /** */
+    void saveMatrix();
     /** */
     QWMatrix* createPrintMatrix(double scale, QSize pS, int dX = 0, int dY = 0,
         bool rotate = false);
@@ -94,6 +95,11 @@ class MapMatrix
     /** */
     enum MoveDirection {NotSet = 0, North = 1, West = 2, East = 4,
         South = 8, Home = 16};
+    /**
+     * CurrentScale muss immer die größte Zahl sein!
+     */
+    enum ScaleType {LowerLimit = 0, Border1 = 1, Border2 = 2, Border3 = 3,
+        UpperLimit = 4, SwitchScale = 5, CurrentScale = 6};
     /** */
     void moveMap(int dir);
     /** */
@@ -104,6 +110,10 @@ class MapMatrix
     QPoint mapToWgs(QPoint pos) const;
     /** */
     void setScale(double);
+    /** */
+    int getScaleRange() const;
+    /** */
+    bool isSwitchScale() const;
 
     QPoint getMapCenter() const;
 
@@ -177,6 +187,8 @@ class MapMatrix
     double pScale;
     /** */
     double rotationArc;
+    /** */
+    int scaleBorders[6];
 };
 
 #endif

@@ -44,6 +44,10 @@ class Airspace : public LineElement
      * Destructor, does nothing special.
      */
     ~Airspace();
+    /**
+     * Draws the element into the given painter.
+     */
+    virtual QRegion* drawRegion(QPainter* targetPainter, QPainter* maskPainter);
     /** */
     virtual void printMapElement(QPainter* printPainter, const double dX,
         const double dY, const int mapCenterLon, const double scale,

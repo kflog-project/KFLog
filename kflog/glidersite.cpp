@@ -54,6 +54,20 @@ void GliderSite::printMapElement(QPainter* printPainter)
 
 }
 
+QString GliderSite::getInfoString() const
+{
+  QString text, temp;
+
+  temp.sprintf("%d", elevation);
+  text = "<TABLE BORDER=0><TR><TD>"
+      "<IMG SRC=/opt/kde2/share/apps/kflog/mapicons/" + iconName + ">" +
+      "</TD><TD>" + name + " (" + alias + ")</TD></TR>" +
+      "<TR><TD></TD><TD><FONT SIZE=-1>" + temp + "m" +
+      "<BR>" + frequency + "</FONT></TD></TR></TABLE>";
+
+  return text;
+}
+
 void GliderSite::printMapElement(QPainter* printPainter, const double dX,
     const double dY, const int mapCenterLon, const double scale,
     const struct elementBorder mapBorder)

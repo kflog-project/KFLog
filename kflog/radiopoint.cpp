@@ -61,25 +61,5 @@ void RadioPoint::printMapElement(QPainter* printPainter, const double dX,
       const double dY, const int mapCenterLon, const double scale,
       const struct elementBorder mapBorder)
 {
-  if(!__isVisible()) return;
 
-  extern const double _scale[];
-  extern const bool _showElements[];
-
-  struct drawPoint printPos;// = __projectElement(dX, dY,
-//      mapCenterLon, scale);
-
-  printPainter->setPen(QPen(QColor(0,0,0), 2));
-  char* kflog_dir = "/kflog/map/";
-  int iconSize = 16;
-
-  if(scale > _scale[ID_BORDER_SMALL]) {
-    kflog_dir = "/kflog/map/small/";
-    iconSize = 8;
-  }
-
-  if(_showElements[typeID]) {
-//    printPainter->drawPixmap(printPos.x - iconSize, printPos.y - iconSize,
-//      Icon(KApplication::kde_datadir() + kflog_dir + iconName));
-  }
 }
