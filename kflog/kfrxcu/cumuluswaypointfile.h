@@ -24,7 +24,7 @@
 
 #include <qobject.h>
 #include "../waypoint.h"
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qstring.h>
 
 /**
@@ -42,12 +42,12 @@ public:
    * Tries to save the waypoints in the list, and returns NOTIMPLEMENTED (-2), ERROR (-1) or OK (1).
    * @returns NOTIMPLEMENTED (-2), ERROR (-1) or OK (1).
    */
-  int save(QString file, QList<Waypoint> *waypoints);
+  int save(const QString& file, QPtrList<Waypoint> *waypoints);
   /**
    * Loads the waypoints into the QList, and returns the number of loaded waypoints.
    * @returns Number of waypoints loaded.
    */
-  int load(QString file, QList<Waypoint> *waypoints);
+  int load(const QString& file, QPtrList<Waypoint> *waypoints);
 };
 
 #endif

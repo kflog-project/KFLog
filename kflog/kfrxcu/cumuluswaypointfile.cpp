@@ -30,7 +30,7 @@ CumulusWaypointFile::~CumulusWaypointFile(){
 }
 
 /** loads the waypoints into the QList, and returns the number of loaded waypoints. */
-int CumulusWaypointFile::load(QString file, QList<Waypoint> *waypoints){
+int CumulusWaypointFile::load(const QString& file, QPtrList<Waypoint> *waypoints){
   bool ok = false;
   int cnt=0;
   int ret=FO_ERROR;
@@ -143,7 +143,7 @@ int CumulusWaypointFile::load(QString file, QList<Waypoint> *waypoints){
 }
 
 /** Tries to save the waypoints in the list, and returns NOTIMPLEMENTED (-2), ERROR (-1) or OK (1). */
-int CumulusWaypointFile::save(QString file, QList<Waypoint> *waypoints){
+int CumulusWaypointFile::save(const QString& file, QPtrList<Waypoint> *waypoints){
   QString wpName="";
   QString wpDescription="";
   QString wpICAO="";
