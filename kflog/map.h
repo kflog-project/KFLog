@@ -242,10 +242,6 @@ class Map : public QWidget
 		 */
 		QTimer* timerAnimate;
 		/**
-     * Animation index
-		 */
-		int nAnimateIndex;
-		/**
 			* contains planning task points
 			* enthält die Punkte!!!
 			*/

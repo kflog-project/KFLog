@@ -208,6 +208,18 @@ class Flight : public BaseMapElement
      */
     QStrList getHeader();
     /**
+		 * Increments the nAnimationIndex member
+     */
+    void setAnimationNextIndex(void);
+  /** sets the bAnimationActive flag */
+  void setAnimationActive(bool b);
+    /**
+		 * Sets the nAnimationIndex member to 'n'
+		 */
+    void setAnimationIndex(int n);
+  /** returns the bAnimationActive flag */
+  bool getAnimationActive(void);
+    /**
      * The waypoint-types.
      */
     enum WaypointType {NotSet = 0, TakeOff = 1, Begin = 2, RouteP = 4,
@@ -271,6 +283,13 @@ class Flight : public BaseMapElement
     FlightTask optimizedTask;
 
     bool optimized;
+
+    /**
+		 * Index into flight used for animation
+		 */
+    int nAnimationIndex;
+    /**  */
+    bool bAnimationActive;
 };
 
 #endif

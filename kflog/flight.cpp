@@ -74,7 +74,9 @@ Flight::Flight(QString fName, QString recID, QList<flightPoint> r, QString pName
     landTime(route.last()->time),
     startTime(route.at(0)->time),
     origTask(FlightTask(wpL, true)),
-    optimized(false)
+    optimized(false),
+    nAnimationIndex(0),
+    bAnimationActive(false)
 {
   origTask.checkWaypoints(route, gliderType);
 
@@ -321,6 +323,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   flightPoint* pointB;
   flightPoint* pointC;
   QPoint curPointA, curPointB;
+  unsigned int nStop;
 
   if(optimized)
       optimizedTask.drawMapElement(targetPainter, maskPainter);
@@ -338,14 +341,19 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   bBoxFlight.setRight(curPointA.x());
   bBoxFlight.setBottom(curPointA.y());
 
-  for(unsigned int n = delta; n < route.count(); n = n + delta)
+  if (!bAnimationActive)
+    nStop = route.count();
+  else
+    nStop = nAnimationIndex;
+
+  for(unsigned int n = delta; n < nStop; n = n + delta)
     {
       pointA = route.at(n - delta);
       pointB = route.at(n);
-      if(n + delta < route.count())
+      if(n + delta < nStop)
           pointC = route.at(n + delta);
       else
-          pointC = route.last();
+          pointC = route.at(nStop);
 
       curPointB = glMapMatrix->map(pointB->projP);
 
@@ -902,4 +910,30 @@ int Flight::searchGetPrevPoint(int index, flightPoint& searchPoint)
  	// now update searchPoint struct
   searchPoint = *route.at(index);
   return index;
+}
+
+/** Sets the nAnimationIndex member to 'n' */
+void Flight::setAnimationIndex(int n){
+  if ((n >= 0) && (getRouteLength() >= (unsigned int)n))
+	  nAnimationIndex = n;
+}
+
+/** Increments the nAnimationIndex member */
+void Flight::setAnimationNextIndex(void){
+	if (getRouteLength() >= (unsigned int)nAnimationIndex+1)
+	  nAnimationIndex++;
+  else {
+		nAnimationIndex = (int)getRouteLength();
+    bAnimationActive = false;	//stop the animation of this flight
+  }
+}
+
+/** sets the bAnimationActive flag */
+void Flight::setAnimationActive(bool b){
+  bAnimationActive = b;
+}
+
+/** returns the bAnimationActive flag */
+bool Flight::getAnimationActive(void){
+  return bAnimationActive;
 }

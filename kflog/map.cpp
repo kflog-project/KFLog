@@ -1237,25 +1237,23 @@ void Map::slotDeleteFlightLayer()
  */
 void Map::slotAnimateFlightStart()
 {
-  extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
   flightPoint cP;
   int index;
 
-  if (_globalMapContents.getFlight()){
-    // erase cursor at the current position
-    index = _globalMapContents.searchFlightPoint(prePos, cP);
-     bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-                 prePos.x() - 20, prePos.y() - 20, 40, 40);
-    // go to the start
-    if ((index = _globalMapContents.searchGetPrevFlightPoint(1, cP)) != -1){
-      emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
-      prePos = _globalMapMatrix.map(cP.projP);
-      preIndex = index;
-      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
-       timerAnimate->start( 50, FALSE );                 // 50ms multi-shot timer
-       nAnimateIndex = 0;
+  if (_globalMapContents.getFlightList()){
+		// loop through all and set animation index to start
+		for(unsigned int loop = 0; loop < _globalMapContents.getFlightList()->count(); loop++){
+         _globalMapContents.getFlightList()->at(loop)->setAnimationIndex(0);
+         _globalMapContents.getFlightList()->at(loop)->setAnimationActive(true);
     }
+
+		// force redraw
+    // having set animationFlag in flights should draw only to animation index.
+	  slotRedrawFlight();
+		
+    // 50ms multi-shot timer
+    timerAnimate->start( 10, FALSE );
   }
 }
 
@@ -1265,27 +1263,23 @@ void Map::slotAnimateFlightStart()
  */
 void Map::slotAnimateFlightTimeout()
 {
-  extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
-  flightPoint cP;
-  int length;
+  bool bDone = true;
 
-  if (_globalMapContents.getFlight()){
-    length = _globalMapContents.getFlight()->getRouteLength()-1;
-    if ((nAnimateIndex < length) && (nAnimateIndex >= 0)){
-      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-                   prePos.x() - 20, prePos.y() - 20, 40, 40);
-      nAnimateIndex = _globalMapContents.searchGetNextFlightPoint(nAnimateIndex, cP);
-      emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
-      prePos = _globalMapMatrix.map(cP.projP);
-      preIndex = nAnimateIndex;
-      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
-    } else {
-      // last flightPoint reached, stop animation
-      timerAnimate->stop();
-      nAnimateIndex = 0;
+  if (_globalMapContents.getFlightList()){
+		// loop through all and increment animation index
+		for(unsigned int loop = 0; loop < _globalMapContents.getFlightList()->count(); loop++){
+       _globalMapContents.getFlightList()->at(loop)->setAnimationNextIndex();
+       if (_globalMapContents.getFlightList()->at(loop)->getAnimationActive())
+				 bDone = false;
     }
   }
+	// force redraw
+  slotRedrawFlight();
+
+	// if one of the flights still is active, bDone will be false
+  if (bDone)
+   timerAnimate->stop();
 }
 
 /**
@@ -1294,10 +1288,18 @@ void Map::slotAnimateFlightTimeout()
  */
 void Map::slotAnimateFlightStop()
 {
+  extern MapContents _globalMapContents;
+
   // stop animation on user request.
   if (timerAnimate->isActive()){
     timerAnimate->stop();
-    nAnimateIndex = 0;
+    if (_globalMapContents.getFlightList()){
+		  // loop through all and increment animation index
+		  for(unsigned int loop = 0; loop < _globalMapContents.getFlightList()->count(); loop++){
+        _globalMapContents.getFlightList()->at(loop)->setAnimationActive(false);
+      }
+    }
+    slotRedrawFlight();
   }
 }
 
