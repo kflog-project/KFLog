@@ -26,7 +26,7 @@ ldadd=-lkdeprint -lm $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
 ldflags=
 
 [General]
-AMChanged=true
+AMChanged=false
 author=Heiner Lamprecht
 configure_args=--prefix=/opt/kde2 --enable-debug
 email=heiner@kflog.org
