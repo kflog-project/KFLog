@@ -24,6 +24,8 @@
 #include <flight.h>
 #include <mapcalc.h>
 
+#include "iostream.h"
+
 DataView::DataView(QWidget* parent)
 : QFrame(parent, "FlightData")
 {
@@ -41,25 +43,28 @@ DataView::~DataView()
 
 }
 
-void DataView::slotShowTaskText(QList<wayPoint> taskPoints, QPoint current)
+void DataView::slotShowTaskText(QList<wayPoint> taskPointList, QPoint current)
 {
   QString htmlText = "";
   QString tmp;
   double distance = 0;
 
-  if(taskPoints.count() > 0)
+cout << "DataV. Anzahl WP: " << taskPointList.count() << endl;
+
+  if(taskPointList.count() > 0)
   {
     QPoint pre_position, position;
 
-    pre_position = taskPoints.at(0)->projP;
+    pre_position = taskPointList.at(0)->origP;
     QString name;
 
-    for(unsigned int n = 0; n < taskPoints.count(); n++)
+    for(unsigned int n = 0; n < taskPointList.count(); n++)
     	{
-  	  	position = taskPoints.at(n)->projP;
+        cout << "DV Nr. " << n << "  Name: " << taskPointList.at(n)->name << endl;    	
+  	  	position = taskPointList.at(n)->origP;
 		 	  distance += dist(pre_position.y(),pre_position.x(),position.y(),position.x());			
 			
-  		 	name = taskPoints.at(n)->name;
+  		 	name = taskPointList.at(n)->name;
 	  		htmlText += (QString)"<b>" + name + "</b>" + "<br>" +
 		  							printPos(position.x(), false) + " / " + printPos(position.y()) + "<br>";
 			  pre_position = position;
@@ -70,11 +75,11 @@ void DataView::slotShowTaskText(QList<wayPoint> taskPoints, QPoint current)
   }
 
   // Frage
-  if(taskPoints.count() == 0)
+  if(taskPointList.count() == 0)
     {
       htmlText += "Bitte wählen Sie den <b>Starort</b> der Aufgabe in der Karte<br>";
     }
-  else if(taskPoints.count() == 1)
+  else if(taskPointList.count() == 1)
     {
       htmlText += "<br><b>Abflugpunkt?</b><br>";
     }

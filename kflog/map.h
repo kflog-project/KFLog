@@ -101,7 +101,7 @@ class Map : public QWidget
     /**
     	*
     	*/
-    void showTaskText(QList<wayPoint> taskPoints, QPoint current);
+    void showTaskText(QList<wayPoint> taskPointList, QPoint current);
     /** */
     void showPoint(const QPoint pos);
     /** */
@@ -246,7 +246,7 @@ class Map : public QWidget
 			* contains planning task points
 			* enthält die Punkte!!!
 			*/
-		QList<wayPoint> taskPoints;
+		QList<wayPoint> taskPointList;
 		// 0 keine Planung 1 Planung 2 Planung Aufgabe Abgeschlossen
 //		enum planning {NoPlanning = 0, Planning = 1, TaskFinished = 2};
 		int planning;
