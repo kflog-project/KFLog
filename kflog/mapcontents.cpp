@@ -1126,19 +1126,69 @@ bool MapContents::loadFlight(QFile igcFile)
   // This regexp is used to check the syntax of the position-lines in
   // the igc-file.
   //
+  // BHHMMSSDDMMMMMNDDDMMMMMEVPPPPPGGGGGAAASSNNN
+  //
+  // HHMMSS       : Time of Fix, given in UTC                 6 byte
+  //
+  // DDMMmmmN/S   : Latitude (degree, minutes,                8 byte
+  //                decimal of minutes)
+  //
+  //
   //                       quality
   //    time   lat      lon   |   h   GPS   ???
   //   |----||------||-------|||---||----||----?
   // ^B0944584832663N00856771EA0037700400100004
   //
-  QRegExp positionLine("^B[0-2][0-9][0-6][0-9][0-6][0-9][0-9][0-9][0-6][0-9][0-9][0-9][0-9][NS][0-1][0-9][0-9][0-6][0-9][0-9][0-9][0-9][EW][AV][0-9,-][0-9][0-9][0-9][0-9][0-9,-][0-9][0-9][0-9][0-9]");
+  QRegExp bRecord("^B[0-2][0-9][0-6][0-9][0-6][0-9][0-9][0-9][0-6][0-9][0-9][0-9][0-9][NS][0-1][0-9][0-9][0-6][0-9][0-9][0-9][0-9][EW][AV][0-9,-][0-9][0-9][0-9][0-9][0-9,-][0-9][0-9][0-9][0-9]");
 
   extern const MapMatrix _globalMapMatrix;
 
   int lineCount = 0;
   unsigned int wp_count = 0;
   int last0 = -1;
+  bool isHeader = true;
 
+  //
+  // Sequence of records in the igc-file:
+  //
+  // A : FR manufactorer (single line, required)
+  //
+  // H : Header (multiple lines, required)
+  //
+  // I : Fix extension (single line, optional)
+  //
+  // J : Extension of K-record (single line, optional but required,
+  //     if the K-record is used)
+  //
+  // C : Task-Definition (multiple lines, optional)
+  //     the first C-record contains the UTC-date and UTC-time of the
+  //     declaration, the local time of the intended das of the flight,
+  //     the task ID, the number of points and a textstring which can
+  //     be used to describe the task
+  //
+  // L : Logbook entry (multiple lines, optional, multiple occurrencies,
+  //     may only appear after the H, I and J records, but before the G-record)
+  //
+  // D : Differential GPS (single line, optional, placed after all H, I, J
+  //     records but before the first B-record)
+  //
+  // F : Initial Satellite Constallation (single line, optional)
+  //
+  // <---------------------------- End of Header ---------------------------->
+  //
+  // B : Logged Fix (multiple lines)
+  //
+  // K : Extension data as defined in the J Record (single line,
+  //     multiple ocurrencies)
+  //
+  // F : Constallation change (single line, multiple ocurrencies)
+  //
+  // E : Pilot-Event [PEV] (single lines, multiple ocurrencies)
+  //
+  // <----------------------------- End of Body ----------------------------->
+  //
+  // G : Digital signature of the file
+  //
   while (!stream.eof())
     {
       if(importProgress.wasCancelled()) return false;
@@ -1148,8 +1198,7 @@ bool MapContents::loadFlight(QFile igcFile)
       s = stream.readLine();
       filePos += s.length();
       importProgress.setProgress(( filePos * 200 ) / fileLength);
-
-      if(s.mid(0,1) == "A")
+      if(s.mid(0,1) == "A" && isHeader)
         {
           // We have an menufactorer-id
           if(s.mid(1,3).upper() == "GCS")
@@ -1187,7 +1236,7 @@ bool MapContents::loadFlight(QFile igcFile)
           else
               recorderID = "unknown (" + s.mid(4,3) + ")";
         }
-      else if(s.mid(0,1) == "H")
+      else if(s.mid(0,1) == "H" && isHeader)
         {
           // We have a headerline
           if(s.mid(1,4).upper() == "FPLT")
@@ -1201,11 +1250,13 @@ bool MapContents::loadFlight(QFile igcFile)
         }
       else if(s.mid(0,1) == "B")
         {
+          isHeader = false;
+
           //
           // We have a point.
           // But we must proofe the linesyntax first.
           //
-          if(positionLine.match(s) == -1)
+          if(bRecord.match(s) == -1)
             {
               // IO-Error !!!
               QString lineNr;
@@ -1348,7 +1399,7 @@ bool MapContents::loadFlight(QFile igcFile)
               preTime = curTime;
             }
         }
-      else if(s.mid(0,1) == "C")
+      else if(s.mid(0,1) == "C" && isHeader)
         {
           if( ( ( ( s.mid( 8,1) == "N" ) || ( s.mid( 8,1) == "S" ) ) ||
                 ( ( s.mid(17,1) == "W" ) || ( s.mid(17,1) == "E" ) ) ))

@@ -310,12 +310,6 @@ void Map::mousePressEvent(QMouseEvent* event)
   bool show = false, isAirport = false;
 
   SinglePoint *hitElement;
-  wayPoint  *tempWP = new wayPoint;
-  tempWP->name = "";
-//  tempWP->projP = ;
-//   tempWP->origP = "";
-
-//  wayPoint  tempWP;
   QString text;
 
   QPoint sitePos;
@@ -326,13 +320,14 @@ void Map::mousePressEvent(QMouseEvent* event)
 
   if(event->button() == MidButton)
     {
+      warning(" -> 1");
       _globalMapMatrix.centerToPoint(event->pos());
       _globalMapMatrix.createMatrix(this->size());
       __redrawMap();
     }
   else if(event->button() == LeftButton)
     {
-
+      warning(" -> 2");
       //    _start = event->pos();
       if (shiftButton)
         {
@@ -384,10 +379,13 @@ void Map::mousePressEvent(QMouseEvent* event)
         }
       else if(planning == 1 || planning == 2 || planning == 3)
         {
+
+
+
           /**
-            * Planen
-            *
-            **/
+           * Planen
+           *
+           **/
           double dX_old = delta + 10;
           double dY_old = delta + 10;
           /*
@@ -400,20 +398,14 @@ void Map::mousePressEvent(QMouseEvent* event)
               hitElement = (SinglePoint*)_globalMapContents.getElement(
 								       MapContents::GliderList, loop);
 							
-							tempWP->name = hitElement->getWPName();
-							tempWP->origP = hitElement->getWGSPosition();
-							tempWP->elevation = hitElement->getElevation();
-							tempWP->projP = hitElement->getPosition();
-							// hier müssen noch mehr Sachen übergeben werden
-							
               sitePos = hitElement->getMapPosition();
-    
+
               dX = abs(sitePos.x() - current.x());
               dY = abs(sitePos.y() - current.y());
 
               // Abstand entspricht der Icon-Größe.
-              if( (( dX < delta )  && ( dY < delta )) &&
-                  (( dX < dX_old ) && ( dY < dY_old )) )
+              if( ( ( dX < delta )  && ( dY < delta ) ) &&
+                  ( ( dX < dX_old ) && ( dY < dY_old ) ) )
                 {
                   // im Bereich eines WP
                   dX_old = dX;
@@ -433,16 +425,15 @@ void Map::mousePressEvent(QMouseEvent* event)
                         {
                           // neuen Punkt an Task Liste anhängen
                           warning("hänge Punkt an");
-                          taskPointList.append(tempWP);
+
+                          taskPointList.append(new wayPoint);
+            							taskPointList.last()->name = hitElement->getWPName();
+						            	taskPointList.last()->origP = hitElement->getWGSPosition();
+             							taskPointList.last()->elevation = hitElement->getElevation();
+            							taskPointList.last()->projP = hitElement->getPosition();
+						            	// hier müssen noch mehr Sachen übergeben werden
 
 
-  /*                        cout << "Punkt: " << tempWP->name << " - " <<
-                                  printPos(taskPointList.getLast()->projP.y()) << " / " <<
-                                   printPos(taskPointList.getLast()->projP.x()) << "\n\n" << endl;
-                         cout << "       " << tempWP->name << " - " <<
-                                  printPos(taskPointList.getLast()->origP.y()) << " / " <<
-                                   printPos(taskPointList.getLast()->origP.x()) << "\n\n" << endl;
-                                   */
                         }
                     
                       // Aufgabe zeichnen
@@ -472,7 +463,14 @@ void Map::mousePressEvent(QMouseEvent* event)
                     {
                       planning = 2;
                       warning("insert - verschiebe Punkt?");
-                      taskPointList.insert(moveWPindex,tempWP);
+                      taskPointList.insert(moveWPindex,new wayPoint);
+
+         							taskPointList.at(moveWPindex)->name = hitElement->getWPName();
+				            	taskPointList.at(moveWPindex)->origP = hitElement->getWGSPosition();
+         							taskPointList.at(moveWPindex)->elevation = hitElement->getElevation();
+         							taskPointList.at(moveWPindex)->projP = hitElement->getPosition();
+				            	// hier müssen noch mehr Sachen übergeben werden
+
                 
                       // Aufgabe zeichnen
                       if(taskPointList.count() > 1)
@@ -484,10 +482,12 @@ void Map::mousePressEvent(QMouseEvent* event)
                     }
                 }
             }
+
         }
     }
   else if(event->button() == RightButton)
     {
+      warning(" -> 3");
       if(planning == 1 || planning == 3)
         {
           QPoint preSitePos, nextSitePos;
@@ -920,6 +920,7 @@ void Map::__drawFlight()
 
 void Map::__drawPlannedTask()
 {
+warning("Map::__drawPlannedTask()");
   extern const MapMatrix _globalMapMatrix;
 
   // Strecke zeichnen
@@ -1041,7 +1042,7 @@ void Map::slotRedrawMap()
 
 void Map::slotActivatePlanning()
 {
-  if(planning == 0)
+  if(planning != 1)
     {
       planning = 1;
 
@@ -1054,6 +1055,7 @@ void Map::slotActivatePlanning()
       // Planen "ausschalten"
       planning = 0;
       __showLayer();
+      emit taskPlanningEnd();
 /*	  pixPlan.fill(white);
   	prePlanPos.setX(-999);
 	  prePlanPos.setY(-999);

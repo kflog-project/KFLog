@@ -49,8 +49,6 @@ void DataView::slotShowTaskText(QList<wayPoint> taskPointList, QPoint current)
   QString tmp;
   double distance = 0;
 
-cout << "DataV. Anzahl WP: " << taskPointList.count() << endl;
-
   if(taskPointList.count() > 0)
   {
     QPoint pre_position, position;
@@ -60,7 +58,6 @@ cout << "DataV. Anzahl WP: " << taskPointList.count() << endl;
 
     for(unsigned int n = 0; n < taskPointList.count(); n++)
     	{
-        cout << "DV Nr. " << n << "  Name: " << taskPointList.at(n)->name << endl;    	
   	  	position = taskPointList.at(n)->origP;
 		 	  distance += dist(pre_position.y(),pre_position.x(),position.y(),position.x());			
 			
@@ -170,4 +167,10 @@ void DataView::setFlightData(Flight* cF)
 void DataView::slotWPSelected(const QString &url)
 {
   emit wpSelected(url.toUInt());
+}
+
+void DataView::slotClearView()
+{
+  QString htmlText = "";
+  flightDataText->setText(htmlText);
 }

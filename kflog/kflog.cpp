@@ -130,6 +130,7 @@ KFLogApp::KFLogApp()
   // Plannung
   connect(map, SIGNAL(showTaskText(QList<wayPoint>, QPoint)),
       dataView, SLOT(slotShowTaskText(QList<wayPoint>, QPoint)));
+  connect(map, SIGNAL(taskPlanningEnd()), dataView, SLOT(slotClearView()));
   connect(map, SIGNAL(showPoint(const QPoint)),
       this, SLOT(slotShowPointInfo(const QPoint)));
 }

@@ -63,6 +63,10 @@ class DataView : public QFrame
     	* Setzt die Infos zur gerade aktuellen Aufgabe (Planung)
     	*/
     void slotShowTaskText(QList<wayPoint> taskPointList, QPoint current);
+    /**
+      * Löscht den Inhalt von Dataview
+      */
+    void slotClearView();
 
   private:
     /**

@@ -103,6 +103,8 @@ class Map : public QWidget
     	*/
     void showTaskText(QList<wayPoint> taskPointList, QPoint current);
     /** */
+    void taskPlanningEnd();
+    /** */
     void showPoint(const QPoint pos);
     /** */
     void pointClicked(QPoint);
