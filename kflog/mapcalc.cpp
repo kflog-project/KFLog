@@ -35,19 +35,19 @@ double dist(double lat1, double lon1, double lat2, double lon2)
   return dist / 1000.0;
 }
 
-double dist(struct wayPoint* wp1, struct wayPoint* wp2)
+double dist(wayPoint* wp1, wayPoint* wp2)
 {
   return ( dist( wp1->origP.x(), wp1->origP.y(),
                  wp2->origP.x(), wp2->origP.y() ) );
 }
 
-double dist(struct wayPoint* wp, struct flightPoint* fp)
+double dist(wayPoint* wp, flightPoint* fp)
 {
   return ( dist( wp->origP.x(), wp->origP.y(),
                  fp->origP.x(), fp->origP.y() ) );
 }
 
-double dist(struct flightPoint* fp1, struct flightPoint* fp2)
+double dist(flightPoint* fp1,  flightPoint* fp2)
 {
   return ( dist( fp1->origP.x(), fp1->origP.y(),
                  fp2->origP.x(), fp2->origP.y() ) );
@@ -126,11 +126,11 @@ QString printTime(int time, bool isZero, bool isSecond)
   return ( hour + ":" + min );
 }
 
-float getSpeed(struct flightPoint p) { return (float)p.dS / (float)p.dT * 3.6; }
+float getSpeed(flightPoint p) { return (float)p.dS / (float)p.dT * 3.6; }
 
-float getVario(struct flightPoint p) { return (float)p.dH / (float)p.dT; }
+float getVario(flightPoint p) { return (float)p.dH / (float)p.dT; }
 
-float getBearing(struct flightPoint p1, struct flightPoint p2)
+float getBearing(flightPoint p1, flightPoint p2)
 {
   return (float)polar( ( p2.projP.x() - p1.projP.x() ),
                        ( p2.projP.y() - p1.projP.y() ) );

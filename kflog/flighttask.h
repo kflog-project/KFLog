@@ -36,7 +36,7 @@ class FlightTask : public BaseMapElement
     /** */
     ~FlightTask();
     /** */
-    void appendWaypoint(struct wayPoint* newPoint);
+    void appendWaypoint(wayPoint* newPoint);
     /**
      * The waypoint-types.
      */
@@ -49,7 +49,7 @@ class FlightTask : public BaseMapElement
      * the igc-file.
      */
     bool isOrig;
-    QList<struct wayPoint> wpList;
+    QList<wayPoint> wpList;
     unsigned int task_end;
     unsigned int task_begin;
 };

@@ -55,7 +55,7 @@ void DataView::setFlightData(Flight* cF)
           " / " + h.at(1) + "</TD></TR>" +
       "</TABLE>" + "<HR NOSHADE>";
 
-  QList<struct wayPoint>* wpList = cF->getWPList();
+  QList<wayPoint>* wpList = cF->getWPList();
 
   if(wpList->count())
     {

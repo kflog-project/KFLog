@@ -28,7 +28,7 @@ FlightTask::~FlightTask()
 
 }
 
-void FlightTask::appendWaypoint(struct wayPoint* newPoint)
+void FlightTask::appendWaypoint(wayPoint* newPoint)
 {
 //  wpList.append(newPoint);
 //

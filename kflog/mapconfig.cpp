@@ -443,7 +443,7 @@ QPen MapConfig::getPrintPen(unsigned int typeID)
   return __getPen(typeID, printScaleIndex);
 }
 
-QPen MapConfig::getDrawPen(struct flightPoint* fP)
+QPen MapConfig::getDrawPen(flightPoint* fP)
 {
   //
   // Dynamische Farben im Flug:

@@ -37,7 +37,7 @@ QString GliderSite::getFrequency() const { return frequency; }
 
 unsigned int GliderSite::getElevation() const { return elevation; }
 
-struct runway GliderSite::getRunway(int index) const { return rwData[index]; }
+runway GliderSite::getRunway(int index) const { return rwData[index]; }
 
 unsigned int GliderSite::getRunwayNumber() const { return rwNum; }
 

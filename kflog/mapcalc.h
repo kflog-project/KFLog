@@ -36,17 +36,17 @@ double dist(double lat1, double lon1, double lat2, double lon2);
 /**
  * Calculates the distance between two given points (in km).
  */
-double dist(struct wayPoint* wp1, struct wayPoint* wp2);
+double dist(wayPoint* wp1, wayPoint* wp2);
 
 /**
  * Calculates the distance between two given points (in km).
  */
-double dist(struct wayPoint* wp, struct flightPoint* fp);
+double dist(wayPoint* wp, flightPoint* fp);
 
 /**
  * Calculates the distance between two given points (in km).
  */
-double dist(struct flightPoint* fp1, struct flightPoint* fp2);
+double dist( flightPoint* fp1, flightPoint* fp2);
 
 /**
  * Converts the given coordinate into a readable string.
@@ -63,17 +63,17 @@ QString printTime(int time, bool isZero = false, bool isSecond = true);
 /**
  * Calculates the vario of a given point
  */
-float getVario(struct flightPoint p);
+float getVario(flightPoint p);
 
 /**
  * Calculates the speed of a given point
  */
-float getSpeed(struct flightPoint p);
+float getSpeed(flightPoint p);
 
 /**
  * Calculates the bearing to the previous point
  */
-float getBearing(struct flightPoint p1, struct flightPoint p2);
+float getBearing(flightPoint p1, flightPoint p2);
 
 /**
  * Converts a x/y position into a polar-coordinate.

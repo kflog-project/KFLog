@@ -57,7 +57,7 @@ class Airport : public RadioPoint
     /**
      * @return a runway-struct, containing the data of the given runway.
      */
-    struct runway getRunway(int index = 0) const;
+    runway getRunway(int index = 0) const;
     /**
      * @return the number of runways.
      */
@@ -96,7 +96,7 @@ class Airport : public RadioPoint
     /**
      * Contains the runway-data.
      */
-    struct runway* rwData;
+    runway* rwData;
     /**
      * Contains the number of runways.
      */

@@ -46,7 +46,7 @@ class Flight : public BaseMapElement
 	   */
     Flight(QString fileName,
   	    QList<flightPoint> route, QString pName, QString gType,
-        QString gID, QList<struct wayPoint> wpL, QString date);
+        QString gID, QList<wayPoint> wpL, QString date);
 	  /**
 	   * Destroys the flight-object.
 	   */
@@ -132,7 +132,7 @@ class Flight : public BaseMapElement
      * to the given time.
      * @return the point
      */
-    struct flightPoint getPointByTime(int time);
+    flightPoint getPointByTime(int time);
     /**
      * Searches the point of the flight, which time is the nearest
      * to the given time.
@@ -149,14 +149,14 @@ class Flight : public BaseMapElement
     /**
      * @return the point with the index "n"
      */
-    struct flightPoint getPoint(int n);
+    flightPoint getPoint(int n);
     /**
 	   * @param  isOrig  "true", if the original-task should be used.
 	   *                 The default is "false". If the flight has not been
 	   *                 optimized, the original-task will be used in any case.
 	   * @return the list of waypoints
      */
-    QList<struct wayPoint>* getWPList(bool isOrig = false);
+    QList<wayPoint>* getWPList(bool isOrig = false);
     /**
      * @return the filename of the igc-file
      */
@@ -179,15 +179,15 @@ class Flight : public BaseMapElement
      *                      with the flightpoint found.
      * @return the index of the flightpoint or -1 if no point is found.
      */
-    int searchPoint(QPoint cPoint, struct flightPoint& searchPoint);
+    int searchPoint(QPoint cPoint, flightPoint& searchPoint);
     /**
 		 * Get the previous FlightPoint before number 'index'
 		 */
-    int searchGetPrevPoint(int index, struct flightPoint& searchPoint);
+    int searchGetPrevPoint(int index, flightPoint& searchPoint);
     /**
 		 * Get the next FlightPoint after number 'index'
 		 */
-    int searchGetNextPoint(int index, struct flightPoint& searchPoint);
+    int searchGetNextPoint(int index, flightPoint& searchPoint);
     /**
      * @return "true" if the flight has been optimized.
      */
@@ -248,8 +248,8 @@ class Flight : public BaseMapElement
     void __setOptimizeRange(unsigned int start[], unsigned int stop[],
         unsigned int idList[], unsigned int id, unsigned int step);
     /** */
-    double __calculateOptimizePoints(struct flightPoint* fp1,
-        struct flightPoint* fp2, struct flightPoint* fp3);
+    double __calculateOptimizePoints(flightPoint* fp1,
+        flightPoint* fp2, flightPoint* fp3);
     /**
      * Findet die Art der Strecke heraus
      */
@@ -271,8 +271,8 @@ class Flight : public BaseMapElement
 
     QString date;
 
-    QList<struct wayPoint> wpList;
-    QList<struct wayPoint> origList;
+    QList<wayPoint> wpList;
+    QList<wayPoint> origList;
 
     double distance_tot;
     double distance_wp;
@@ -285,7 +285,7 @@ class Flight : public BaseMapElement
 
     double taskPoints;
     QString sourceFileName;
-    struct flightPoint* drawRoute;
+    flightPoint* drawRoute;
     unsigned int drawLength;
     unsigned int v_max;
     unsigned int h_max;

@@ -149,7 +149,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
         bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
             prePos.x() - 20, prePos.y() - 20, 40, 40);
 
-    struct flightPoint cP;
+    flightPoint cP;
 
     if((index = _globalMapContents.searchFlightPoint(event->pos(), cP)) != -1)
       {
@@ -255,7 +255,7 @@ void Map::mousePressEvent(QMouseEvent* event)
 
       if(_globalMapContents.getFlightList()->count() > 0)
         {
-          QList<struct wayPoint>* wpList =
+          QList<wayPoint>* wpList =
               _globalMapContents.getFlight()->getWPList();
 
           delta = 25;
@@ -828,7 +828,7 @@ void Map::keyPressEvent( QKeyEvent* event)
 {
   extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
-  struct flightPoint cP;
+  flightPoint cP;
   int index;
   int preindex;
 
@@ -947,7 +947,7 @@ void Map::keyPressEvent( QKeyEvent* event)
 void Map::slotAnimateFlight(){
   extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
-  struct flightPoint cP;
+  flightPoint cP;
   int length;
 
   if (_globalMapContents.getFlight()){

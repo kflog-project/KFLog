@@ -53,7 +53,7 @@
 #define SCALE 10.0
 
 Flight::Flight(QString fName, QList<flightPoint> r, QString pName,
-    QString gType, QString gID, QList<struct wayPoint> wpL, QString d)
+    QString gType, QString gID, QList<wayPoint> wpL, QString d)
   : BaseMapElement("flight", BaseMapElement::Flight),
     pilotName(pName),
     gliderType(gType),
@@ -138,8 +138,8 @@ void Flight::__setOptimizeRange(unsigned int start[], unsigned int stop[],
   stop[2] = start[2] + ( 2 * step );
 }
 
-double Flight::__calculateOptimizePoints(struct flightPoint* fp1,
-    struct flightPoint* fp2, struct flightPoint* fp3)
+double Flight::__calculateOptimizePoints(flightPoint* fp1,
+    flightPoint* fp2, flightPoint* fp3)
 {
   double dist1 = dist(fp1, fp2);
   double dist2 = dist(fp2, fp3);
@@ -244,7 +244,7 @@ unsigned int Flight::__calculateBestTask(unsigned int start[],
 {
   unsigned int numSteps = 0;
   double temp = 0;
-  struct flightPoint *pointA, *pointB, *pointC;
+  flightPoint *pointA, *pointB, *pointC;
 
   for(unsigned int loopA = start[0]; loopA < stop[0]; loopA += step)
     {
@@ -356,9 +356,9 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
   if(!__isVisible()) return;
 
-  struct flightPoint* pointA;
-  struct flightPoint* pointB;
-  struct flightPoint* pointC;
+  flightPoint* pointA;
+  flightPoint* pointB;
+  flightPoint* pointC;
   QPoint curPointA, curPointB;
   double w1;
 
@@ -606,7 +606,7 @@ QString Flight::getRouteType(bool isOrig) const
     }
 }
 
-struct flightPoint Flight::getPointByTime(int time)
+flightPoint Flight::getPointByTime(int time)
 {
   int diff, n, sp, ep;
 
@@ -674,7 +674,7 @@ int Flight::getPointByTime_i(int time)
   return ep;
 }
 
-struct flightPoint Flight::getPoint(int n)
+flightPoint Flight::getPoint(int n)
 {
   if(n >= 0 && n < (int)route.count())  return *route.at(n);
 
@@ -952,7 +952,7 @@ const char* Flight::getFileName() const { return sourceFileName; }
 
 bool Flight::isOptimized() const { return (origList.count() != 0); }
 
-int Flight::searchPoint(QPoint cPoint, struct flightPoint& searchPoint)
+int Flight::searchPoint(QPoint cPoint, flightPoint& searchPoint)
 {
   unsigned int delta = 1;
   int index = -1;
@@ -1496,7 +1496,7 @@ void Flight::__checkWaypoints()
 
 }
 
-QList<struct wayPoint>* Flight::getWPList(bool isOrig)
+QList<wayPoint>* Flight::getWPList(bool isOrig)
 {
   if(isOrig && isOptimized()) return &origList;
 
@@ -1620,12 +1620,12 @@ bool Flight::optimizeTask()
 
 //  if(KMsgBox::yesNo(0, i18n("Optimizing"), text, KMsgBox::QUESTION) == 1) {
 //    origList.clear();
-//    struct wayPoint* cPoint;
+//    wayPoint* cPoint;
 //    for(unsigned int loop = 0; loop < wpList.count(); loop++) {
       /*
        * Kompliziert, aber wir brauchen eine echte Kopie der Punkte!
        */
-//      cPoint = new struct wayPoint;
+//      cPoint = new wayPoint;
 //      cPoint->angle = wpList.at(loop)->angle;
 //      cPoint->distance = wpList.at(loop)->distance;
 //      cPoint->latitude = wpList.at(loop)->latitude;
@@ -1672,7 +1672,7 @@ bool Flight::optimizeTask()
 }
 
 /** Get the next FlightPoint after number 'index' */
-int Flight::searchGetNextPoint(int index, struct flightPoint& searchPoint)
+int Flight::searchGetNextPoint(int index, flightPoint& searchPoint)
 {
   // only move to next if not at last point
   if ((index < route.count()-1) && (index > 0))
@@ -1684,7 +1684,7 @@ int Flight::searchGetNextPoint(int index, struct flightPoint& searchPoint)
 }
 
 /** Get the previous FlightPoint before number 'index' */
-int Flight::searchGetPrevPoint(int index, struct flightPoint& searchPoint)
+int Flight::searchGetPrevPoint(int index, flightPoint& searchPoint)
 {
 	// only move to next is not first point
   if ((index > 1) && (index <= route.count()-1))

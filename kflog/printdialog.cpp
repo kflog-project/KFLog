@@ -584,7 +584,7 @@ QString PrintDialog::__createMapPrint()
 }
 
 void PrintDialog::__printPositionData(QPainter* painter,
-        struct flightPoint* cPoint, int yPos, const char* text,
+        flightPoint* cPoint, int yPos, const char* text,
         bool printVario, bool printSpeed)
 {
   QString temp;
@@ -611,7 +611,7 @@ void PrintDialog::__printPositionData(QPainter* painter,
 }
 
 void PrintDialog::__printPositionData(QPainter* painter,
-        struct wayPoint* cPoint, int yPos)
+        wayPoint* cPoint, int yPos)
 {
   /*
    * Wenn Punkt nicht erreicht wurde, sollte alles in italic sein.
@@ -657,7 +657,7 @@ QString PrintDialog::__createFlightPrint()
 
   QString temp;
 
-  struct flightPoint cPoint;
+  flightPoint cPoint;
 
   QPainter painter(&printer);
 //    painter.drawLine(0,0,10,10);
@@ -718,7 +718,7 @@ QString PrintDialog::__createFlightPrint()
             (const char*)currentFlight->getPoints(true));
   painter.drawText(125, 355, temp);
 
-  QList<struct wayPoint>* wpList = currentFlight->getWPList(true);
+  QList<wayPoint>* wpList = currentFlight->getWPList(true);
   int yPos = 375;
   for(unsigned int loop = 0; loop < wpList->count(); loop++)
     {

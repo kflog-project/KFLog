@@ -556,12 +556,12 @@ void EvaluationView::__draw()
   unsigned int gn_va = glatt_va * 2 + 1;
   unsigned int gn_h = glatt_h * 2 + 1;
 
-  int baro_d[gn_h];
-  int baro_d_last[gn_h];
-  float speed_d[gn_v];
-  float speed_d_last[gn_v];
-  float vario_d[gn_va];
-  float vario_d_last[gn_va];
+  int   *baro_d       = new int[gn_h];
+  int   *baro_d_last  = new int[gn_h];
+  float *speed_d      = new float[gn_v];
+  float *speed_d_last = new float[gn_v];
+  float *vario_d      = new float[gn_va];
+  float *vario_d_last = new float[gn_va];
 
   for(unsigned int loop = 0; loop < gn_h; loop++)
     {
@@ -575,7 +575,7 @@ void EvaluationView::__draw()
     }
   for(unsigned int loop = 0; loop < gn_va; loop++)
     {
-       vario_d[loop] = getVario(flight->getPoint(loop));
+      vario_d[loop] = getVario(flight->getPoint(loop));
       vario_d_last[loop] =
           getVario(flight->getPoint(flight->getRouteLength() - loop - 1));
     }
@@ -639,7 +639,7 @@ void EvaluationView::__draw()
   int xpos = 0;
 
   // Wendepunkte
-  QList<struct wayPoint>* wP;
+  QList<wayPoint>* wP;
   QString timeText = 0;
 
   wP = flight->getWPList();
@@ -693,6 +693,14 @@ void EvaluationView::__draw()
         + X_ABSTAND ,-2000,0,1);
    __paintCursor(( cursor2 - startTime ) / secWidth
         + X_ABSTAND ,-2000,0,2);
+
+  delete [] baro_d;
+  delete [] baro_d_last;
+  delete [] speed_d;
+  delete [] speed_d_last;
+  delete [] vario_d;
+  delete [] vario_d_last;
+
 
 }
 

@@ -153,7 +153,7 @@ class MapContents : public QObject
      *
      * @return the index of the flightpoint or -1 if no point is found.
      */
-    int searchFlightPoint(QPoint cPos, struct flightPoint& fP);
+    int searchFlightPoint(QPoint cPos, flightPoint& fP);
     /**
      * Closes all loaded flights
      */
@@ -171,19 +171,19 @@ class MapContents : public QObject
     /**
 		 * Get the contents of the next FlightPoint after number 'index'
 	   */
-    int searchGetNextFlightPoint(int index, struct flightPoint & fP);
+    int searchGetNextFlightPoint(int index, flightPoint & fP);
     /**
 		 * Get the contents of the previous FlightPoint before number 'index'
 	   */
-    int searchGetPrevFlightPoint(int index, struct flightPoint & fP);
+    int searchGetPrevFlightPoint(int index, flightPoint & fP);
 		/**
 		 * Get the contents of the next FlightPoint 'step' indexes after number 'index'
 		 */
-  	int searchStepNextFlightPoint(int index, struct flightPoint & fP, int step);
+  	int searchStepNextFlightPoint(int index, flightPoint & fP, int step);
   	/**
 		 * Get the contents of the previous FlightPoint 'step' indexes before number 'index'
 		 */
-  	int searchStepPrevFlightPoint(int index, struct flightPoint & fP, int step);
+  	int searchStepPrevFlightPoint(int index,  flightPoint & fP, int step);
     /**
      * The index of Mapelement-Lists.
      */
@@ -326,7 +326,8 @@ class MapContents : public QObject
     /**
      * Array containing the evevations of all possible isohypses.
      */
-    int* isoLines;
+    static const int isoLines[];
+
     /** Should be deleted somtime ... */
     bool isFirst;
 };

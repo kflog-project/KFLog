@@ -116,16 +116,17 @@
       in >> rwOpen; \
     }
 
+// Liste der Höhenstufen (insg. 46 Stufen):
+const int MapContents::isoLines[] = { 0, 10, 25, 50, 75, 100, 200, 300, 400,
+          500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500,
+          2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250,
+          5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750,
+          8000, 8250, 8500, 8750};
+
+
 MapContents::MapContents()
   : isFirst(true)
 {
-  // Liste der Höhenstufen (insg. 46 Stufen):
-  // Compiler gibt hier eine Warnung aus. Gibt es eine andere Möglichkeit?
-  isoLines = new int[ISO_LINE_NUM] = { 0, 10, 25, 50, 75, 100, 200, 300, 400,
-            500, 600, 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500,
-            2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250,
-            5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750,
-            8000, 8250, 8500, 8750};
 
   sectionArray.resize(MAX_FILE_COUNT);
   for(unsigned int loop = 0; loop < MAX_FILE_COUNT; loop++)
@@ -153,7 +154,6 @@ MapContents::MapContents()
 
 MapContents::~MapContents()
 {
-  delete[] isoLines;
   // Hier müssen ALLE Listen gelöscht werden!!!
   airportList.~QList();
   airspaceList.~QList();
@@ -1016,7 +1016,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   return true;
 }
 
-int MapContents::searchFlightPoint(QPoint cPos, struct flightPoint& fP)
+int MapContents::searchFlightPoint(QPoint cPos, flightPoint& fP)
 {
   if(flightList.count())
       return (flightList.current()->searchPoint(cPos, fP));
@@ -1094,12 +1094,12 @@ bool MapContents::loadFlight(QFile igcFile)
 
   float v, speed;
 
-  struct flightPoint newPoint;
-  struct flightPoint prePoint;
+  flightPoint newPoint;
+  flightPoint prePoint;
   QList<flightPoint> flightRoute;
-  QList<struct wayPoint> wpList;
-  struct wayPoint* newWP;
-  struct wayPoint* preWP;
+  QList<wayPoint> wpList;
+  wayPoint* newWP;
+  wayPoint* preWP;
   bool isValid;
   //
   // This regexp is used to check the syntax of the position-lines in
@@ -1716,7 +1716,7 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
 }
 
 /** Get the contents of the previous FlightPoint before number 'index' */
-int MapContents::searchGetPrevFlightPoint(int index, struct flightPoint & fP)
+int MapContents::searchGetPrevFlightPoint(int index, flightPoint & fP)
 {
 	if(flightList.count()){
 		return (flightList.current()->searchGetPrevPoint(index, fP));
@@ -1725,7 +1725,7 @@ int MapContents::searchGetPrevFlightPoint(int index, struct flightPoint & fP)
 }
 
 /** Get the contents of the next FlightPoint after number 'index' */
-int MapContents::searchGetNextFlightPoint(int index, struct flightPoint & fP)
+int MapContents::searchGetNextFlightPoint(int index, flightPoint & fP)
 {
 	if(flightList.count()){
 		return (flightList.current()->searchGetNextPoint(index, fP));
@@ -1734,7 +1734,7 @@ int MapContents::searchGetNextFlightPoint(int index, struct flightPoint & fP)
 }
 
 /** Get the contents of the next FlightPoint 'step' indexes after number 'index' */
-int MapContents::searchStepNextFlightPoint(int index, struct flightPoint & fP, int step)
+int MapContents::searchStepNextFlightPoint(int index, flightPoint & fP, int step)
 {
   if((flightList.count()) && (step > 0)){
     if (index+step < flightList.current()->getRouteLength()-1)
@@ -1747,7 +1747,7 @@ int MapContents::searchStepNextFlightPoint(int index, struct flightPoint & fP, i
 }
 
 /** Get the contents of the previous FlightPoint 'step' indexes before number 'index' */
-int MapContents::searchStepPrevFlightPoint(int index, struct flightPoint & fP, int step)
+int MapContents::searchStepPrevFlightPoint(int index, flightPoint & fP, int step)
 {
   if((flightList.count()) && (step > 0)){
     if (index-step > 0)

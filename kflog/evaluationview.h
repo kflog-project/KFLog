@@ -25,6 +25,7 @@
 class Flight;
 class EvaluationDialog;
 
+
 /**
   * @author Heiner Lamprecht, Florian Ehinger
   * @version $Id$
