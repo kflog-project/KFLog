@@ -21,6 +21,7 @@
 #include <qlayout.h>
 #include <qtimer.h>
 #include <klocale.h>
+#include "resource.h"
 
 TopoLegend::TopoLegend(QWidget *parent, const char *name ) : QScrollView(parent,name) {
   extern MapConfig _globalMapConfig;
@@ -38,6 +39,9 @@ TopoLegend::TopoLegend(QWidget *parent, const char *name ) : QScrollView(parent,
   this->addChild(levelLayout);        //we are using the QVBox above as our main and single widget
   this->setHScrollBarMode(AlwaysOff); //no horizontal scrollbar 
   this->setResizePolicy(AutoOneFit);  //make sure everything fits nicely
+
+  QFontMetrics fm=this->fontMetrics(); //get a QFontMetrics object
+  int minwidth=0;
   
   for (int i=50; i>=0; --i) {         //loop over levels defined above in reversed order
     lbl=new QLabel(levelLayout);      //create a new label as a child of the QVBox
@@ -49,11 +53,14 @@ TopoLegend::TopoLegend(QWidget *parent, const char *name ) : QScrollView(parent,
     } else {
       lbl->setText(i18n("label used for normal level in legend", "%1 - %2 m").arg(levels[i]).arg(levels[i+1]));
     }
+    lbl->setMinimumSize(fm.size(0,lbl->text()).width(),0);
+    minwidth=MAX(minwidth,fm.size(0,lbl->text()).width());
+    
     lbl->setBackgroundMode(FixedColor);                        //set the label to get a fixed bg color
     lbl->setBackgroundColor(_globalMapConfig.getIsoColor(i));  //get the appropriate color from the mapconfig
     labelList.append(lbl);                                     //and add the label to our label list
   }
-
+  this->setMinimumSize(minwidth+30,0);
   currentHighlight=-1;
 }
 
