@@ -1913,7 +1913,7 @@ bool Map::__getTaskWaypoint(QPoint current, struct wayPoint *wp, QList<wayPoint>
 }
 /** Puts the waypoints of the active waypoint catalog to the map */
 void Map::__drawWaypoints(){
- int i, n, x, y;
+  int i, n;
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
   QList<wayPoint> * wpList;
@@ -1938,6 +1938,9 @@ void Map::__drawWaypoints(){
 	 // draw marker
      wpPainter.drawRect(p.x() - 4,p.y() - 4, 8, 8);
      wpMaskPainter.drawRect(p.x() - 4,p.y() - 4, 8, 8);
+     // draw name of wp
+     wpPainter.drawText(p.x()+6, p.y(), wp->name, -1);
+     wpMaskPainter.drawText(p.x()+6, p.y(), wp->name, -1);
    }
 
   // clean up
