@@ -22,6 +22,7 @@
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qradiobutton.h>
+#include <qcheckbox.h>
 #include <qdict.h>
 
 #include <kdialog.h>
@@ -51,6 +52,7 @@ private slots: // Private slots
   /** No descriptions */
   void slotSetPlanningType(int);
   /** No descriptions */
+  void slotSetPlanningDirection(int);
   void polish();
   void slotMoveUp();
   void slotMoveDown();
@@ -71,6 +73,9 @@ private: // Private attributes
   QRadioButton *areaBased;
   /**  */
   QRadioButton *routeBased;
+  QCheckBox *left;
+  QCheckBox *right;
+
   KFLogListView *route;
   QPushButton *back;
   QPushButton *forward;

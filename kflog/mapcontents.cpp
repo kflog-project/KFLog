@@ -2103,7 +2103,7 @@ void MapContents::slotNewTask()
   emit newTaskAdded(f);
 
   emit currentFlightChanged();
-  emit activatePlanning();
+//  emit activatePlanning();
 }
 
 /** create a new, empty flight group */
@@ -2827,6 +2827,8 @@ bool MapContents::loadTask(QFile path)
 
     for (uint i = 0; i < nl.count(); i++) {
       QDomNodeList childNodes = nl.item(i).childNodes();
+      QDomNamedNodeMap nmTask =  nl.item(i).attributes();
+
       wpList.clear();
       for (uint childIdx = 0; childIdx < childNodes.count(); childIdx++) {
         QDomNamedNodeMap nm =  childNodes.item(childIdx).attributes();
@@ -2850,6 +2852,8 @@ bool MapContents::loadTask(QFile path)
         wpList.append(w);
       }
       f = new FlightTask(wpList, false, genTaskName());
+      f->setPlanningType(nmTask.namedItem("PlanningType").toAttr().value().toInt());
+      f->setPlanningDirection(nmTask.namedItem("PlanningDirection").toAttr().value().toInt());
       // remember first task in file
       if (firstTask == 0) {
         firstTask = f;

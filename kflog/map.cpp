@@ -1996,7 +1996,7 @@ void Map::slotShowCurrentFlight()
 
   if (f->getTypeID() == BaseMapElement::Task) {
     if (((FlightTask *)f)->getWPList().count() < 1) {
-      planning = 1;
+      slotActivatePlanning();
     }
   }
 

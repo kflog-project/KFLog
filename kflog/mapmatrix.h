@@ -144,6 +144,14 @@ class MapMatrix : public QObject
      */
     QPoint map(QPoint point) const;
     /**
+     * Maps the given projected point into the current map-matrix.
+     *
+     * @param  point  The point to be mapped
+     *
+     * @return the mapped point
+     */
+    QPoint map(QPoint *point) const;
+    /**
      * Maps the given bearing into the current map-matrix.
      *
      * @param  bearing  The bearing to be mapped

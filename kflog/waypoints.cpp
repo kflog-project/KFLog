@@ -45,14 +45,20 @@
 extern MapContents _globalMapContents;
 extern MapMatrix _globalMapMatrix;
 
-Waypoints::Waypoints(QWidget *parent, const char *name )
+Waypoints::Waypoints(QWidget *parent, const char *name, QString *catalog)
   : QFrame(parent, name)
 {
   addWaypointWindow(this);
   addPopupMenu();
 
   waypointCatalogs.setAutoDelete(true);
-  slotNewWaypointCatalog();
+
+  if (catalog == 0) {
+    slotNewWaypointCatalog();
+  }
+  else {
+    openCatalog(*catalog);
+  }
 
   waypointDlg = new WaypointDialog(this);
   connect(waypointDlg, SIGNAL(addWaypoint()), SLOT(slotAddWaypoint()));
@@ -178,25 +184,7 @@ void Waypoints::slotOpenWaypointCatalog()
 
   QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)", this, i18n("Open waypoint catalog"));
 
-  if(!fName.isEmpty()) {
-    int newItem = catalogName->count();
-    WaypointCatalog *w = new WaypointCatalog;
-
-    // read from disk
-    if (!w->read(fName)) {
-      delete w;
-    }
-    else {
-      w->onDisc = true;
-      w->path = fName;
-
-      waypointCatalogs.append(w);
-      catalogName->insertItem(w->path);
-
-      catalogName->setCurrentItem(newItem);
-      slotSwitchWaypointCatalog(newItem);
-    }
-  }
+  openCatalog(fName);
 }
 
 /** No descriptions */
@@ -754,5 +742,28 @@ void Waypoints::slotImportWaypointFromFile(){
       w->modified = false;
     }
     fillWaypoints();
+  }
+}
+
+void Waypoints::openCatalog(QString &catalog)
+{
+  if(!catalog.isEmpty()) {
+    int newItem = catalogName->count();
+    WaypointCatalog *w = new WaypointCatalog;
+
+    // read from disk
+    if (!w->read(catalog)) {
+      delete w;
+    }
+    else {
+      w->onDisc = true;
+      w->path = catalog;
+
+      waypointCatalogs.append(w);
+      catalogName->insertItem(w->path);
+
+      catalogName->setCurrentItem(newItem);
+      slotSwitchWaypointCatalog(newItem);
+    }
   }
 }

@@ -125,7 +125,9 @@ void Tasks::slotEditTask()
     //td.name->setText(ft->getFileName());
     td.setTask(ft);
     if (td.exec() == QDialog::Accepted) {
-      *ft = *td.getTask();
+      ft->setWaypointList(td.getTask()->getWPList());
+      ft->setPlanningType(td.getTask()->getPlanningType());
+      ft->setPlanningDirection(td.getTask()->getPlanningDirection());
       slotUpdateTask();
       flightSelected(ft);
     }
@@ -170,6 +172,8 @@ void Tasks::slotSaveTask()
 
       t = doc.createElement("Task");
       t.setAttribute("Type", ft->getTaskTypeString());
+      t.setAttribute("PlanningType", ft->getPlanningType());
+      t.setAttribute("PlanningDirection", ft->getPlanningDirection());
       root.appendChild(t);
 
       wpList = ft->getWPList();
@@ -239,6 +243,8 @@ void Tasks::slotSaveAllTask()
 
       t = doc.createElement("Task");
       t.setAttribute("Type", ft->getTaskTypeString());
+      t.setAttribute("PlanningType", ft->getPlanningType());
+      t.setAttribute("PlanningDirection", ft->getPlanningDirection());
       root.appendChild(t);
 
       wpList = ft->getWPList();

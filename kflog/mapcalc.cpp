@@ -18,6 +18,8 @@
 #include <cmath>
 #include <mapcalc.h>
 
+#include "mapmatrix.h"
+
 double dist(double lat1, double lon1, double lat2, double lon2)
 {
   double pi_180 = PI / 108000000.0;
@@ -161,5 +163,66 @@ double polar(double x, double y)
   if(angle > (2 * PI))  angle = angle - (2 * PI);
 
   return angle;
+}
+
+double int2rad(int deg)
+{
+  return (double)deg * PI / 108000000.0;
+}
+
+double rad2int(double rad)
+{
+  return (int) (rad * 108000000.0 / PI);
+}
+
+double angle(double a, double b, double c)
+{
+  double a1, b1, c1, tmp;
+  a1 = a / RADIUS * 1000.0;
+  b1 = b / RADIUS * 1000.0;
+  c1 = c / RADIUS * 1000.0;
+  
+  tmp = (cos(c1) - cos(a1) * cos(b1)) / sin(a1) / sin(b1);
+  if (tmp > 1.0) {
+    tmp = 1.0;
+  }
+  else if (tmp < -1.0) {
+    tmp = -1.0;
+  }
+
+  return acos(tmp);
+}
+
+double tc(double lat1, double lon1, double lat2, double lon2)
+{
+  return fmod(atan2(sin(lon1-lon2)*cos(lat2), 
+		    cos(lat1)*sin(lat2)-sin(lat1)*cos(lat2)*cos(lon1-lon2)),
+	      2.0 * PI) + PI;
+}
+
+WGSPoint posOfDistAndBearing(double lat1, double lon1, double bearing, double dist)
+{
+  double tmp, lon;
+  double tLat, tLon;
+
+  dist = dist / RADIUS * 1000.0;
+  tmp = sin(lat1) * cos(dist) + cos(lat1) * sin(dist) * cos(bearing);
+
+  if (tmp > 1.0) {
+    tmp = 1.0;
+  }
+  else if (tmp < -1.0) {
+    tmp = -1.0;
+  }
+
+  tLat = asin(tmp);
+  
+
+  lon = atan2(sin(bearing) * sin(dist) * cos(lat1),
+	      cos(dist) - sin(lat1) * (sin(lat1) * cos(dist) + 
+				       cos(lat1) * sin(dist) * cos(bearing)));
+  tLon = -fmod(lon1 - lon + PI, 2.0 * PI) + PI;
+
+  return WGSPoint(rad2int(tLat), rad2int(tLon));
 }
 

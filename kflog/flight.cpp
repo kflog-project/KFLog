@@ -609,7 +609,7 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
     return result;
 }
 
-QString Flight::getDistance(bool isOrig) const
+QString Flight::getDistance(bool isOrig)
 {
   if(isOrig || !optimized)
       return origTask.getTotalDistanceString();
@@ -625,7 +625,7 @@ FlightTask Flight::getTask(bool isOrig)
       return optimizedTask;
 }
 
-QString Flight::getTaskDistance(bool isOrig) const
+QString Flight::getTaskDistance(bool isOrig)
 {
   if(isOrig || !optimized)
       return origTask.getTaskDistanceString();
@@ -633,7 +633,7 @@ QString Flight::getTaskDistance(bool isOrig) const
       return optimizedTask.getTaskDistanceString();
 }
 
-QString Flight::getPoints(bool isOrig) const
+QString Flight::getPoints(bool isOrig)
 {
   if(isOrig || !optimized)
       return origTask.getPointsString();
@@ -861,7 +861,7 @@ bool Flight::optimizeTask()
    * hier die Berechnung der Punkte vereinfachen!
    */
   QString text, distText, pointText;
-  if(FlightTask::isFAI(dist1, dist2, dist3, totalDist))
+  if(FlightTask::isFAI(totalDist, dist1, dist2, dist3))
       pointText.sprintf(" %d (FAI)", (int)(totalDist * 2.0 * 0.85));
   else
       pointText.sprintf(" %d", (int)(totalDist * 1.75 * 0.85));

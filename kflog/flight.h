@@ -78,7 +78,7 @@ class Flight : public BaseFlightElement
 	   *                 optimized, the original-task will be used in any case.
 	   * @return the distance between all reached waypoints
 	   */
-    QString getDistance(bool isOrig = false) const;
+    QString getDistance(bool isOrig = false);
     /** */
     FlightTask getTask(bool isOrig = false);
 	  /**
@@ -87,14 +87,14 @@ class Flight : public BaseFlightElement
 	   *                 optimized, the original-task will be used in any case.
 	   * @return the distance of the task
 	   */
-    QString getTaskDistance(bool isOrig = false) const;
+    QString getTaskDistance(bool isOrig = false);
     /**
 	   * @param  isOrig  "true", if the original-task should be used.
 	   *                 The default is "false". If the flight has not been
 	   *                 optimized, the original-task will be used in any case.
 	   * @return the dmst-points of the flight.
      */
-    QString getPoints(bool isOrig = false) const;
+    QString getPoints(bool isOrig = false);
 	  /**
 	   * @return the starttime.
 	   */

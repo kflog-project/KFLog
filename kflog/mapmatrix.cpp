@@ -207,6 +207,11 @@ QPoint MapMatrix::map(QPoint origPoint) const
   return worldMatrix.map(origPoint);
 }
 
+QPoint MapMatrix::map(QPoint *origPoint) const
+{
+  return worldMatrix.map(*origPoint);
+}
+
 double MapMatrix::map(double arc) const
 {
   return (arc + rotationArc);

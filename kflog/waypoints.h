@@ -38,7 +38,7 @@
 class Waypoints : public QFrame  {
    Q_OBJECT
 public:
-	Waypoints(QWidget *parent=0, const char *name=0);
+	Waypoints(QWidget *parent = 0, const char *name = 0, QString *catalog = 0);
 	~Waypoints();
 	/* save changes in catalogs, return success */
   bool saveChanges();
@@ -51,6 +51,7 @@ private: // Private methods
   void fillWaypoints();
   /** read filter and store in catalog */
   void getFilterData();
+  void openCatalog(QString &catalog);
 private: // Private attributes
   /** popup menu for waypoint's */
   KPopupMenu *wayPointPopup;

@@ -75,19 +75,30 @@ void TaskDialog::__initDialog()
   header->addWidget(name);
 
   // Create an exclusive button group
-  QButtonGroup *bgrp = new QButtonGroup(1, QGroupBox::Vertical, i18n("Planning"), this);
-  connect(bgrp, SIGNAL(clicked(int)), SLOT(slotSetPlanningType(int)));
-  bgrp->setExclusive(true);
+  QButtonGroup *bgrp1 = new QButtonGroup(1, QGroupBox::Vertical, i18n("Planning"), this);
+  connect(bgrp1, SIGNAL(clicked(int)), SLOT(slotSetPlanningType(int)));
+  bgrp1->setExclusive(true);
 
   // insert 2 radiobuttons
-  routeBased = new QRadioButton(i18n( "&Route based"), bgrp);
+  routeBased = new QRadioButton(i18n( "&Route based"), bgrp1);
   routeBased->setChecked(true);
-  areaBased = new QRadioButton(i18n("&Area based"), bgrp);
+  areaBased = new QRadioButton(i18n("&Area based"), bgrp1);
+
+  // Create an non-exclusive button group
+  QButtonGroup *bgrp2 = new QButtonGroup(1, QGroupBox::Vertical, i18n("Side of FAI area"), this);
+  connect(bgrp2, SIGNAL(clicked(int)), SLOT(slotSetPlanningDirection(int)));
+  bgrp2->setExclusive(false);
+
+  // insert 2 checkbuttons
+  left = new QCheckBox(i18n( "&left"), bgrp2);
+  left->setChecked(true);
+  right = new QCheckBox(i18n("ri&ght"), bgrp2);
 
   taskType = new QLabel(this);
   taskType->setMinimumWidth(100);
 
-  type->addWidget(bgrp);
+  type->addWidget(bgrp1);
+  type->addWidget(bgrp2);
   type->addStretch();
   type->addWidget(taskType);
 
@@ -179,6 +190,11 @@ void TaskDialog::slotSetPlanningType(int)
   if (areaBased->isChecked()) {
     forward->setEnabled(false);
     back->setEnabled(false);
+    left->setEnabled(true);
+    right->setEnabled(true);
+    left->setChecked(pTask->getPlanningDirection() & FlightTask::leftOfRoute);
+    right->setChecked(pTask->getPlanningDirection() & FlightTask::rightOfRoute);
+
     cnt = wpList.count();
     if (cnt > 4) {
       // remove route points
@@ -187,14 +203,36 @@ void TaskDialog::slotSetPlanningType(int)
       }
       pTask->setWaypointList(wpList);
     }        
+    pTask->setPlanningType(FlightTask::AreaBased);
   }
   else {
     forward->setEnabled(true);
     back->setEnabled(true);
+    left->setEnabled(false);
+    right->setEnabled(false);
+    left->setChecked(false);
+    right->setChecked(false);
+
+    pTask->setPlanningType(FlightTask::RouteBased);
   }
 
   fillWaypoints();
   route->setSelected(route->firstChild(), true);
+}
+
+void TaskDialog::slotSetPlanningDirection(int)
+{
+  int dir = 0;
+
+  if (left->isChecked()) {
+    dir |= FlightTask::leftOfRoute;
+  }
+
+  if (right->isChecked()) {
+    dir |= FlightTask::rightOfRoute;
+  }
+
+  pTask->setPlanningDirection(dir);
 }
 
 void TaskDialog::fillWaypoints()
@@ -279,6 +317,10 @@ void TaskDialog::slotReplaceWaypoint()
     wpList.remove(curPos);
     struct wayPoint *wp = new wayPoint;
     *wp = *waypointDict[selText];
+     wp->sector1 = 0;
+     wp->sector2 = 0;
+     wp->sectorFAI = 0;
+
     wpList.insert(curPos, wp);
     pTask->setWaypointList(wpList);
     fillWaypoints();
@@ -294,6 +336,10 @@ void TaskDialog::slotAddWaypoint()
   if (!selText.isEmpty()) {
     struct wayPoint *wp = new wayPoint;
     *wp = *waypointDict[selText];
+     wp->sector1 = 0;
+     wp->sector2 = 0;
+     wp->sectorFAI = 0;
+
     wpList.insert(cnt - 2, wp);
     pTask->setWaypointList(wpList);
     fillWaypoints();
@@ -327,8 +373,7 @@ void TaskDialog::setTask(FlightTask *orig)
   }
 
   // make a work copy of the task with at least 4 points
-  *pTask = *orig;
-  wpList = pTask->getWPList();
+  wpList = orig->getWPList();
   wayPoint *wp;
   if (wpList.count() < 4) {
     for (unsigned int i = wpList.count(); i < 4; i++) {
@@ -337,12 +382,17 @@ void TaskDialog::setTask(FlightTask *orig)
       wp->origP.setLon(config->readNumEntry("Homesite Longitude"));
       wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
       wp->name = config->readEntry("Homesite").left(6).upper();
+      wp->sector1 = 0;
+      wp->sector2 = 0;
+      wp->sectorFAI = 0;
 
       wpList.append(wp);
     }
-    pTask->setWaypointList(wpList);
   }
-      
+  pTask->setWaypointList(wpList);
+  pTask->setPlanningType(orig->getPlanningType());
+  pTask->setPlanningDirection(orig->getPlanningDirection());
+
   name->setText(pTask->getFileName());
   switch (pTask->getPlanningType()) {
   case FlightTask::RouteBased:
@@ -352,6 +402,9 @@ void TaskDialog::setTask(FlightTask *orig)
     areaBased->setChecked(true);
     break;
   }
+
+  left->setChecked(pTask->getPlanningDirection() & FlightTask::leftOfRoute);
+  right->setChecked(pTask->getPlanningDirection() & FlightTask::rightOfRoute);
 
   slotSetPlanningType(-1);
 }

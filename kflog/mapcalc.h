@@ -80,4 +80,19 @@ float getBearing(flightPoint p1, flightPoint p2);
  */
 double polar(double x, double y);
 
+/* convert internal point into radians */
+double int2rad(int deg);
+
+/* convert radians into internal point */
+double rad2int(double rad);
+
+/* calculate true course in radians to point 2 */
+double tc(double lat1, double lon1, double lat2, double lon2);
+
+/* calculate angle between leg a and b in radians */
+double angle(double a, double b, double c);
+
+/* calculate pos of point from dist and bearing */ 
+WGSPoint posOfDistAndBearing(double lat1, double lon1, double bearing, double dist);
+
 #endif

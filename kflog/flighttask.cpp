@@ -32,7 +32,10 @@
 #define CUR_ID loop
 #define NEXT_ID loop + 1
 
-/* Die Einstellungen kˆnnen mal in die Voreinstellungsdatei wandern ... */
+#define MAX(a,b)   ( ( a > b ) ? a : b )
+#define MIN(a,b)   ( ( a < b ) ? a : b )
+
+/* Die Einstellungen kÅˆnnen mal in die Voreinstellungsdatei wandern ... */
 #define FAI_POINT 2.0
 #define NORMAL_POINT 1.75
 #define R1 (3000.0 / glMapMatrix->getScale())
@@ -41,10 +44,13 @@
 FlightTask::FlightTask(QString fName)
   : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(false),
-    __planningType(RouteBased)
+    flightType(FlightTask::NotSet),
+    __planningType(RouteBased),
+    __planningDirection(leftOfRoute)
 {
 warning("FlightTask(QString fName)");
 
+  FAISectList.setAutoDelete(true); 
 }
 
 
@@ -52,7 +58,8 @@ FlightTask::FlightTask(QList<wayPoint> wpL, bool isO, QString fName)
   : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(isO),
     wpList(wpL),
-    __planningType(RouteBased)
+    __planningType(RouteBased),
+    __planningDirection(leftOfRoute)
 {
 warning("FlightTask(QList<wayPoint> wpL, bool isO, QString fName)");
   //only do this if wpList is not empty!
@@ -73,6 +80,8 @@ warning("FlightTask(QList<wayPoint> wpL, bool isO, QString fName)");
       for(unsigned int loop = 0; loop < wpList.count(); loop++)
          __sectorangle(loop, false);
    }
+
+  FAISectList.setAutoDelete(true); 
 }
 
 FlightTask::~FlightTask()
@@ -89,10 +98,12 @@ void FlightTask::__checkType()
   distance_total = 0;
   double distance_task_d = 0;
 
-  for(unsigned int loop = 1; loop <= wpList.count() - 1; loop++)
-  {
+  if (wpList.count() > 0) {
+    for(unsigned int loop = 1; loop <= wpList.count() - 1; loop++)
+    {
 //warning("distance: %f",wpList.at(loop)->distance);
       distance_total += wpList.at(loop)->distance;
+    }
   }
 //warning("Total Distance: %f",distance_total);
 
@@ -115,7 +126,7 @@ void FlightTask::__checkType()
             flightType = FlightTask::NotSet;
             break;
           case 1:
-            // Zielr¸ckkehr
+            // ZielrÅ¸ckkehr
             flightType = FlightTask::ZielR;
             break;
           case 2:
@@ -129,11 +140,11 @@ void FlightTask::__checkType()
             break;
           case 3:
             // Start auf Schenkel oder Vieleck
-            // Vieleck Ja/Nein kann endg¸ltig erst bei der Analyse des Fluges
+            // Vieleck Ja/Nein kann endgÅ¸ltig erst bei der Analyse des Fluges
             // bestimmt werden!
             //
             // Erste Abfrage je nachdem ob Vieleck oder Dreieck mehr Punkte geben
-            // w¸rde
+            // wÅ¸rde
             distance_task_d = distance_task - wpList.at(2)->distance
                  - wpList.at(5)->distance + dist(wpList.at(2), wpList.at(4));
 
@@ -160,7 +171,7 @@ void FlightTask::__checkType()
               }
             break;
           case 5:
-            // 2x Dreieck nur als FAI g¸ltig
+            // 2x Dreieck nur als FAI gÅ¸ltig
             flightType = Unknown;
             if( (distance_task / 2 <= 100) && (wpList.at(1) == wpList.at(4)) &&
                     (wpList.at(2) == wpList.at(5)) &&
@@ -281,8 +292,8 @@ double FlightTask::__sectorangle(unsigned int loop, bool isDraw)
         break;
     }
 
-  // Nur nˆtig bei der ‹berpr¸fung der Wegpunkte,
-  // w¸rde beim Zeichnen zu Fehlern f¸hren
+  // Nur nÅˆtig bei der Å‹berprÅ¸fung der Wegpunkte,
+  // wÅ¸rde beim Zeichnen zu Fehlern fÅ¸hren
   if(!isDraw) sectorAngle += PI;
 
   if(sectorAngle > (2 * PI)) sectorAngle = sectorAngle - (2 * PI);
@@ -348,7 +359,8 @@ bool FlightTask::isFAI(double d_wp, double d1, double d2, double d3)
       ( d1 >= 0.28 * d_wp && d2 >= 0.28 * d_wp && d3 >= 0.28 * d_wp ) )
       // small FAI
       return true;
-  else if( ( d1 > 0.25 * d_wp && d2 > 0.25 * d_wp && d3 > 0.25 * d_wp ) &&
+  else if( d_wp >= 500.0 &&
+           ( d1 > 0.25 * d_wp && d2 > 0.25 * d_wp && d3 > 0.25 * d_wp ) &&
            ( d1 <= 0.45 * d_wp && d2 <= 0.45 * d_wp && d3 <= 0.45 * d_wp ) )
       // large FAI
       return true;
@@ -360,14 +372,15 @@ void FlightTask::drawMapElement(QPainter* targetPainter,
     QPainter* maskPainter)
 {
   double w1;
+  unsigned int loop, i;
+  struct faiAreaSector *sect;
+  QPoint tempP;
+
   // Strecke und Sektoren zeichnen
 //  if(flightType != NotSet)
   if(flightType != 99999)
     {
-      QPoint tempP;
-
-
-      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+      for(loop = 0; loop < wpList.count(); loop++)
         {
           /*
            * w1 ist die Winkelhalbierende des Sektors!!!
@@ -541,17 +554,44 @@ void FlightTask::drawMapElement(QPainter* targetPainter,
       maskPainter->drawLine(glMapMatrix->map(wpList.at(2)->projP),
           glMapMatrix->map(wpList.at(wpList.count() - 3)->projP));
     }
+
+  // Area based planning
+  if (getPlanningType() == AreaBased && wpList.count() > 3) {
+    targetPainter->setBrush(QBrush::NoBrush);
+    maskPainter->setBrush(QBrush::NoBrush);
+    maskPainter->setPen(QPen(Qt::color1, 2));
+    
+    for (loop = 0; loop < FAISectList.count(); loop++) {
+      sect = FAISectList.at(loop);
+      if (sect->dist < 500.0) {
+        targetPainter->setPen(QPen(Qt::red, 2));
+      }
+      else {
+        targetPainter->setPen(QPen(Qt::green, 2));
+      }
+      for (i = 1; i < sect->pos.count(); i++) {
+        tempP = glMapMatrix->map(sect->pos.at(i - 1));
+        targetPainter->drawLine(tempP, glMapMatrix->map(sect->pos.at(i)));
+        maskPainter->drawLine(tempP, glMapMatrix->map(sect->pos.at(i)));
+        bBoxTask.setLeft(MIN(tempP.x(), bBoxTask.left()));
+        bBoxTask.setTop(MAX(tempP.y(), bBoxTask.top()));
+        bBoxTask.setRight(MAX(tempP.x(), bBoxTask.right()));
+        bBoxTask.setBottom(MIN(tempP.y(), bBoxTask.bottom()));
+      }
+    }
+  }    
 }
 
 void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
 {
   double w1;
+  unsigned int loop, i;
+  struct faiAreaSector *sect;
+  QPoint tempP;
 
   // Strecke und Sektoren zeichnen
   if(flightType != FlightTask::NotSet)
     {
-      QPoint tempP;
-
       for(unsigned int loop = 0; loop < wpList.count(); loop++)
         {
           /*
@@ -676,9 +716,28 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
       targetPainter->drawLine(glMapMatrix->print(wpList.at(2)->projP),
           glMapMatrix->print(wpList.at(wpList.count() - 3)->projP));
     }
+
+  // Area based planning
+  if (getPlanningType() == AreaBased && wpList.count() > 3) {
+    targetPainter->setBrush(QBrush::NoBrush);
+
+    for (loop = 0; loop < FAISectList.count(); loop++) {
+      sect = FAISectList.at(loop);
+      if (sect->dist < 500.0) {
+        targetPainter->setPen(QPen(Qt::red, 2));
+      }
+      else {
+        targetPainter->setPen(QPen(Qt::green, 2));
+      }
+      for (i = 1; i < sect->pos.count(); i++) {
+        tempP = glMapMatrix->print(*sect->pos.at(i - 1));
+        targetPainter->drawLine(tempP, glMapMatrix->print(*sect->pos.at(i)));
+      }
+    }
+  }
 }
 
-int FlightTask::getPlannedPoints() const
+int FlightTask::getPlannedPoints()
 {
 
   KConfig* config = KGlobal::config();
@@ -689,7 +748,7 @@ int FlightTask::getPlannedPoints() const
   double pointZielS = config->readDoubleNumEntry("ZielSPoint", 1.5);
 
   /*
-   * Aufgabe vollst‰ndig erf¸llt
+   * Aufgabe vollstÅ‰ndig erfÅ¸llt
    *        F: Punkte/km
    *        I: Index des Flugzeuges
    *        f & I noch abfragen !!!!
@@ -724,9 +783,9 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
     QString gliderType)
 {
   /*
-   *   ‹berpr¸ft, ob die Sektoren der Wendepunkte erreicht wurden
+   *   Å‹berprÅ¸ft, ob die Sektoren der Wendepunkte erreicht wurden
    *
-   *   SOLLTE NOCHMALS ‹BERARBEITET WERDEN
+   *   SOLLTE NOCHMALS Å‹BERARBEITET WERDEN
    *
    */
   bool time_error = false;
@@ -777,11 +836,11 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
 
       __sectorangle(loop, false);
       /*
-       * Pr¸fung, ob Flugpunkte in den Sektoren liegen.
+       * PrÅ¸fung, ob Flugpunkte in den Sektoren liegen.
        *
        *      Ein Index 0 bei den Sektoren zeigt an, dass der Sektor
-       *      _nicht_ erreicht wurde. Dies f¸hrt an Mitternacht zu
-       *      einem mˆglichen Fehler ...
+       *      _nicht_ erreicht wurde. Dies fÅ¸hrt an Mitternacht zu
+       *      einem mÅˆglichen Fehler ...
        */
       for(unsigned int pLoop = startIndex + 1; pLoop < route.count(); pLoop++)
         {
@@ -797,7 +856,7 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
               if(!wpList.at(loop)->sectorFAI)
                   wpList.at(loop)->sectorFAI = route.at(pLoop)->time;
 
-              // ... daher ist ein Abbruch mˆglich!
+              // ... daher ist ein Abbruch mÅˆglich!
               startIndex = pLoop;
               break;
             }
@@ -838,7 +897,7 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
                       if(!wpList.at(loop)->sector1)
                         {
                           wpList.at(loop)->sector1 = route.at(pLoop)->time;
-                          // ... daher ist ein Abbruch mˆglich!
+                          // ... daher ist ein Abbruch mÅˆglich!
                           startIndex = pLoop;
                           break;
                         }
@@ -862,7 +921,7 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
     }
 
   /*
-   * ‹berpr¸fen der Aufgabe
+   * Å‹berprÅ¸fen der Aufgabe
    */
   int faiCount = 0;
   unsigned int dmstCount = 0;
@@ -920,7 +979,7 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
           // Landung auf letztem Wegpunkt
         }
       else
-          // Auﬂenlandung -- Wertung: + 1Punkt bis zur Auﬂenlandung
+          // AuÅﬂenlandung -- Wertung: + 1Punkt bis zur AuÅﬂenlandung
           aussenlande = dist(wpList.at(1 + dmstCount), route.last());
     }
   else
@@ -932,7 +991,7 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
     }
 
 
-// jetzt in __setDistance noch ¸bernehmen
+// jetzt in __setDistance noch Å¸bernehmen
   distance_wert = 0;
   double F = 1;
 
@@ -954,7 +1013,7 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
   else
     {
       /*
-       * Aufgabe vollst‰ndig erf¸llt
+       * Aufgabe vollstÅ‰ndig erfÅ¸llt
        *        F: Punkte/km
        *        I: Index des Flugzeuges
        *        f & I noch abfragen !!!!
@@ -1001,7 +1060,7 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
 
 }
 
-QString FlightTask::getTotalDistanceString() const
+QString FlightTask::getTotalDistanceString()
 {
   if(flightType == FlightTask::NotSet)  return "--";
 
@@ -1012,17 +1071,21 @@ QString FlightTask::getTotalDistanceString() const
 }
 
 
-QString FlightTask::getTaskDistanceString() const
+QString FlightTask::getTaskDistanceString()
 {
   if(flightType == FlightTask::NotSet)  return "--";
 
   QString distString;
-  distString.sprintf("%.2f km", distance_task);
-
+  if (getPlanningType() == RouteBased) {
+    distString.sprintf("%.2f km", distance_task);
+  }
+  else {
+    distString = getFAIDistanceString();
+  }
   return distString;
 }
 
-QString FlightTask::getPointsString() const
+QString FlightTask::getPointsString()
 {
   if(flightType == FlightTask::NotSet)  return "--";
 
@@ -1049,6 +1112,10 @@ void FlightTask::setWaypointList(QList<wayPoint> wpL)
 
   for(unsigned int loop = 0; loop < wpList.count(); loop++)
       __sectorangle(loop, false);
+
+  if (getPlanningType() == AreaBased) {
+    calcFAIArea();
+  }
 }
 /** No descriptions */
 //QString FlightTask::getFlightInfoString()
@@ -1133,7 +1200,7 @@ void FlightTask::__setDMSTPoints()
 //  else
 //    {
 //      /*
-//       *  Aufgabe vollst‰ndig erf¸llt
+//       *  Aufgabe vollstÅ‰ndig erfÅ¸llt
 //       *        F: Punkte/km
 //       *        I: Index des Flugzeuges
 //       *        f & I noch abfragen !!!!
@@ -1174,12 +1241,13 @@ void FlightTask::__setDMSTPoints()
 void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX, double dY)
 {
   double w1;
+  unsigned int loop, i;
+  struct faiAreaSector *sect;
+  QPoint tempP;
 
   // Strecke und Sektoren zeichnen
   if(flightType != FlightTask::NotSet)
     {
-      QPoint tempP;
-
       for(unsigned int loop = 0; loop < wpList.count(); loop++)
         {
           /*
@@ -1304,10 +1372,274 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
 			glMapMatrix->print(wpList.at(2)->origP.lat(), wpList.at(2)->origP.lon(), dX, dY),
           	glMapMatrix->print(wpList.at(wpList.count() - 3)->origP.lat(), wpList.at(wpList.count() - 3)->origP.lon() , dX, dY));
     }
+
+  // Area based planning
+  if (getPlanningType() == AreaBased && wpList.count() > 3) {
+    targetPainter->setBrush(QBrush::NoBrush);
+
+    for (loop = 0; loop < FAISectList.count(); loop++) {
+      sect = FAISectList.at(loop);
+      if (sect->dist < 500.0) {
+        targetPainter->setPen(QPen(Qt::red, 2));
+      }
+      else {
+        targetPainter->setPen(QPen(Qt::green, 2));
+      }
+      for (i = 1; i < sect->pos.count(); i++) {
+        tempP = glMapMatrix->print(sect->pos.at(i - 1)->lat(), sect->pos.at(i - 1)->lon(), dX, dY);
+        targetPainter->drawLine(tempP, glMapMatrix->print(sect->pos.at(i - 1)->lat(), sect->pos.at(i - 1)->lon(), dX, dY));
+      }
+    }
+  }
 }
 
 void FlightTask::setPlanningType(int type)
 {
   __planningType = type;
   __setWaypointType();
+  if (getPlanningType() == AreaBased) {
+    calcFAIArea();
+  }
 }
+
+void FlightTask::setPlanningDirection(int dir)
+{
+  __planningDirection = dir;
+ if (getPlanningType() == AreaBased) {
+    calcFAIArea();
+  }
+}
+
+QString FlightTask::getFAIDistanceString()
+{
+  QString txt;
+  double dist;
+  struct faiRange range;
+
+  if (wpList.count() < 4) {
+    txt = "0.0 km - 0.0 km";
+  }
+  else {
+    dist = wpList.at(2)->distance;
+    range = getFAIDistance(dist);
+    txt.sprintf("%.2f km - %.2f km",
+      range.minLength28 >= 500.0 ? range.minLength25 : range.minLength28,
+      range.maxLength25 <= 500.0 ? range.maxLength28 : range.maxLength25);
+  }
+
+  return txt;
+}
+
+struct faiRange FlightTask::getFAIDistance(double leg)
+{
+  struct faiRange r;
+
+  r.minLength28 = QMIN(leg + leg / 44.0 * 56.0, 500.0); // maximal 500
+  r.maxLength28 = QMIN(leg + leg / 28.0 * 72.0, 500.0); // maximal 500
+  r.minLength25 = QMAX(leg + leg / 45.0 * 55.0, 500.0); // minimal 500
+  r.maxLength25 = QMAX(4.0 * leg, 500.0);               // minimal 500
+ 
+  return r;
+}
+
+void FlightTask::calcFAIArea()
+{
+  struct wayPoint *wp1;
+  struct wayPoint *wp2;
+  double minDist;
+  double maxDist;
+  double trueCourse;
+  double tmpDist;
+
+  if (wpList.count() > 2) {
+    wp1 = wpList.at(1);
+    wp2 = wpList.at(2);
+    double lat1 = int2rad(wp1->origP.lat());
+    double lon1 = -int2rad(wp1->origP.lon());
+    double lat2 = int2rad(wp2->origP.lat());
+    double lon2 = -int2rad(wp2->origP.lon());
+    double leg = wp2->distance;
+
+    struct faiRange faiR = getFAIDistance(leg);
+
+    minDist = faiR.minLength28 >= 500.0 ? faiR.minLength25 : faiR.minLength28;
+    maxDist = faiR.maxLength25 <= 500.0 ? faiR.maxLength28 : faiR.maxLength25;
+
+    trueCourse = tc(lat1, lon1, lat2, lon2);
+
+    FAISectList.clear();
+
+    tmpDist = minDist;
+    // FAI < 500 km
+    while (tmpDist < faiR.maxLength28) {
+      calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, tmpDist, lat2, lon2);
+      tmpDist += (50.0 - fmod(tmpDist, 50.0));
+      tmpDist = QMIN(tmpDist, faiR.maxLength28);
+    }
+    // last sector for < 500 km FAI
+    if (faiR.minLength28 < faiR.maxLength28) {
+      calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, tmpDist, lat2, lon2);
+    }
+
+    if (minDist < faiR.maxLength28 && faiR.minLength28 < faiR.maxLength28) {
+      calcFAISectorSide(leg, trueCourse, minDist, faiR.maxLength28, 1, lat2, lon2, true);
+    }
+
+    // FAI >= 500 km
+    tmpDist = faiR.minLength25;
+    while (tmpDist < faiR.maxLength25) {
+      calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, tmpDist, lat2, lon2);
+      tmpDist += (50.0 - fmod(tmpDist, 50.0));
+      tmpDist = QMIN(tmpDist, faiR.maxLength25);
+    }
+    // last sector for >= 500 km FAI
+    if (faiR.minLength25 < faiR.maxLength25) {
+      calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, tmpDist, lat2, lon2);
+    }
+
+    if (faiR.minLength25 < faiR.maxLength25) {
+      calcFAISectorSide(leg, trueCourse, faiR.minLength25, faiR.maxLength25, 1, lat2, lon2, false);
+    }
+  }
+}
+
+void FlightTask::calcFAISector(double leg, double legBearing, double from, double to, double step, double dist, double toLat,
+  double toLon)
+{
+  extern MapMatrix _globalMapMatrix;
+
+  double percent, maxDist, minDist;
+  double b, c;
+  double w;
+  struct WGSPoint *p;
+  struct faiAreaSector *sect1;
+  struct faiAreaSector *sect2;
+
+  if (getPlanningDirection() & leftOfRoute) {
+    sect1 = new faiAreaSector;
+    sect1->pos.setAutoDelete(true);
+    sect1->dist = dist;
+    FAISectList.append(sect1);
+  }
+
+  if (getPlanningDirection() & rightOfRoute) {
+    sect2 = new faiAreaSector;
+    sect2->pos.setAutoDelete(true);
+    sect2->dist = dist;
+    FAISectList.append(sect2);
+  }
+
+  minDist = dist * from / 100.0;
+  maxDist = dist * to / 100.0;
+
+  for (percent = from; percent <= to; percent += step) {
+    b = percent * dist / 100.0;
+    c = dist - leg - b;
+
+    if (c >= minDist && c <= maxDist) {
+      if (getPlanningDirection() & leftOfRoute) {
+        w = angle(leg, b, c);
+        p = new WGSPoint();
+        *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing + w, b));
+        // append point to current sector
+        sect1->pos.append(p);
+      }
+
+      if (getPlanningDirection() & rightOfRoute) {
+        w = angle(leg, b, c);
+        p = new WGSPoint();
+        *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing - w, b));
+        // append point to current sector
+        sect2->pos.append(p);
+      }
+    }
+  }
+}
+
+void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, double to, double step, double toLat,
+  double toLon, bool less500)
+{
+  extern MapMatrix _globalMapMatrix;
+
+  double dist = from;
+  double b, c;
+  double w;
+  double minPercent, maxPercent;
+  struct WGSPoint *p;
+  struct faiAreaSector *sect1;
+  struct faiAreaSector *sect2;
+  struct faiAreaSector *sect3;
+  struct faiAreaSector *sect4;
+
+  if (getPlanningDirection() & leftOfRoute) {
+    sect1 = new faiAreaSector;
+    sect1->pos.setAutoDelete(true);
+    sect1->dist = dist;
+    sect3 = new faiAreaSector;
+    sect3->pos.setAutoDelete(true);
+    sect3->dist = dist;
+    FAISectList.append(sect1);
+    FAISectList.append(sect3);
+  }
+
+  if (getPlanningDirection() & rightOfRoute) {
+    sect2 = new faiAreaSector;
+    sect2->pos.setAutoDelete(true);
+    sect2->dist = dist;
+    sect4 = new faiAreaSector;
+    sect4->pos.setAutoDelete(true);
+    sect4->dist = dist;
+    FAISectList.append(sect2);
+    FAISectList.append(sect4);
+  }
+
+  if (less500) {
+    minPercent = 0.28;
+    maxPercent = 0.44;
+  }
+  else {
+    minPercent = 0.25;
+    maxPercent = 0.45;
+  }
+
+  for (dist = from; dist <= to; dist += step) {
+    if (less500) {
+      b = dist * minPercent >= leg ? (dist * 0.56) - leg : dist * minPercent;
+    }
+    else {
+      b = dist * 0.3 >= leg ? (dist * 0.55) - leg : dist * minPercent;
+    }
+    c = dist - leg - b;
+
+    if (c >= dist * minPercent && c <= dist * maxPercent) {
+      if (getPlanningDirection() & leftOfRoute) {
+        w = angle(leg, b, c);
+        p = new WGSPoint();
+        *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing + w, b));
+        // append point to current sector
+        sect1->pos.append(p);
+
+        w = angle(leg, c, b);
+        p = new WGSPoint();
+        *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing + w, c));
+        // append point to current sector
+        sect3->pos.append(p);
+      }
+
+      if (getPlanningDirection() & rightOfRoute) {
+        w = angle(leg, b, c);
+        p = new WGSPoint();
+        *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing - w, b));
+        // append point to current sector
+        sect2->pos.append(p);
+
+        w = angle(leg, c, b);
+        p = new WGSPoint();
+        *p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, legBearing - w, c));
+        // append point to current sector
+        sect4->pos.append(p);
+      }
+    }
+  }
+}  
+

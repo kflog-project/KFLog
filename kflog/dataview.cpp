@@ -53,6 +53,8 @@ DataView::~DataView()
 QString DataView::__writeTaskInfo(FlightTask* task)
 {
   QString htmlText;
+  QString txt, tmp;
+  QString idString, timeString;
 
   htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
       <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
@@ -64,13 +66,11 @@ QString DataView::__writeTaskInfo(FlightTask* task)
     {
       if(loop > 0)
         {
-          QString tmp;
           tmp.sprintf("%.2f km",wpList.at(loop)->distance);
 
           htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
               tmp + "</TD></TR>";
         }
-      QString idString, timeString;
       idString.sprintf("%d", loop);
 
       if(wpList.at(loop)->sector1 != 0)
@@ -91,10 +91,10 @@ QString DataView::__writeTaskInfo(FlightTask* task)
           "</TD></TR>";
     }
 
-  QString pointString;
-  pointString.sprintf("%d", task->getPlannedPoints());
+  if (task->getPlanningType() == FlightTask::RouteBased) {
+    txt.sprintf("%d", task->getPlannedPoints());
 
-  htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
+    htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
       ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
       task->getTotalDistanceString() + "</TD></TR>\
       <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Task Distance") +
@@ -102,7 +102,23 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       task->getTaskDistanceString() + "</TD></TR>\
       <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Points") +
       ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-      pointString + "</TD></TR></TABLE>";
+      txt + "</TD></TR></TABLE>";
+  }
+  else { // area based
+    if (wpList.count() < 3) {
+      tmp = "--";
+    }
+    else {
+      tmp.sprintf("%.2f km", wpList.at(2)->distance);
+    }
+
+    htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Leg Distance") +
+      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+      tmp + "</TD></TR>\
+      <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("FAI Distance") +
+      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+      task->getFAIDistanceString() + "</TD></TR></TABLE>";
+  }
 
   return htmlText;
 }

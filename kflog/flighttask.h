@@ -23,6 +23,20 @@
 #include <qlist.h>
 #include <qrect.h>
 
+struct faiRange {
+  double minLength28;
+  double maxLength28;
+  double minLength25;
+  double maxLength25;
+};
+
+struct faiAreaSector {
+  /* total distance with route and this sector */
+  double dist;
+  /* pos on map */
+  QList<WGSPoint> pos;
+};
+
 /**
  * Contains the data of a task.
  *
@@ -87,21 +101,26 @@ class FlightTask : public BaseFlightElement
     void checkWaypoints(QList<flightPoint> route,
         QString gliderType);
     /** */
-    int getPlannedPoints() const;
+    int getPlannedPoints() ;
     /** */
-    QString getTotalDistanceString() const;
+    QString getTotalDistanceString() ;
     /** */
-    QString getTaskDistanceString() const;
+    QString getTaskDistanceString() ;
+    /** calc min and max distance for FAI triangles*/
+    QString getFAIDistanceString() ;
     /** */
-    QString getPointsString() const;
+    QString getPointsString() ;
     /** */
     QRect getRect() const;
     /** */
+    struct faiRange getFAIDistance(double leg);
     void setWaypointList(QList<wayPoint> wpL);
     /** No descriptions */
 //    virtual QString getFlightInfoString();
     void setPlanningType(int type);
     int getPlanningType() { return __planningType; };
+    void setPlanningDirection(int dir);
+    int getPlanningDirection() { return __planningDirection; };
     /**
      * The waypoint-types.
      */
@@ -117,6 +136,10 @@ class FlightTask : public BaseFlightElement
      * The planning-types
      */
     enum PlanningType {RouteBased, AreaBased};
+    /*
+     * The planning-directions
+     */
+    enum PlanningDirection {leftOfRoute = 1, rightOfRoute = 2};
   private:
     /**
      * Checkes the type of the task.
@@ -134,6 +157,20 @@ class FlightTask : public BaseFlightElement
      * Set the DMST_Points
      */
     void __setDMSTPoints();
+    /**
+     * calculate an area for all FAI triangle depending on 2 points
+     */    
+    void calcFAIArea();
+    /**
+     * calculate sectors for valid FAI Areas
+     */    
+    void calcFAISector(double leg, double legBearing, double from, double to, double step, double dist,
+                                double toLat, double toLon);
+    /**
+     * calculate side sectors for valid FAI Areas
+     */    
+    void calcFAISectorSide(double leg, double legBearing, double from, double to, double step, double toLat,
+			                              double toLon, bool less500);
     /**
      * true, if the task is the original task of a flight as read from
      * the igc-file.
@@ -158,6 +195,9 @@ class FlightTask : public BaseFlightElement
     /** Aufgaben Länge*/
     double distance_task;
     int __planningType;
+    QList<faiAreaSector> FAISectList;
+    /* direction of area planning */
+    int __planningDirection;
 };
 
 #endif

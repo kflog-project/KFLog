@@ -260,7 +260,7 @@ void KFLogApp::initActions()
 
   // We can't use CTRL-W, because this shortcut is reserved for closing a file ...
   viewWaypoints = new KToggleAction(i18n("Show waypoints"), "waypoint",
-      0, this, SLOT(slotToggleWaypointsDock()), actionCollection(),
+      CTRL+Key_W, this, SLOT(slotToggleWaypointsDock()), actionCollection(),
       "waypoints");
 
   viewTasks = new KToggleAction(i18n("Show tasks"), "task",
