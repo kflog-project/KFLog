@@ -195,6 +195,11 @@ public:
    * _errorinfo is reset afterwards.
    */
   QString lastError();
+  
+  /**
+   * Sets a pointer to the parent widget (recorder dialog).
+   */
+  void setParent(QWidget * _parent);
     
 protected:
   /**
@@ -217,6 +222,12 @@ protected:
    * Optionally contains additional info about an error.
    */
   QString _errorinfo; 
+   
+  /**
+   * Contains a reference to the parent widget. This is needed to make KDE's KIO mechanism
+   * work properly.
+   */
+  QWidget* _parent;
    
 signals:
   /**

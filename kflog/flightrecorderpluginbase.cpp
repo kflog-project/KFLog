@@ -36,9 +36,11 @@ FlightRecorderPluginBase::transferStruct FlightRecorderPluginBase::transferData 
 };
 int FlightRecorderPluginBase::transferDataMax = 14;
 
-FlightRecorderPluginBase::FlightRecorderPluginBase(){
+FlightRecorderPluginBase::FlightRecorderPluginBase() 
+{
   _isConnected=false;
   _errorinfo="";
+  _parent=0;
 
   //initialize capabilities to none. This class is never instanciated, so this could be skipped
   _capabilities.maxNrTasks = 0;             //maximum number of tasks
@@ -76,4 +78,8 @@ QString FlightRecorderPluginBase::lastError(){
   QString ret=_errorinfo;
   _errorinfo="";
   return ret;
+}
+
+void FlightRecorderPluginBase::setParent(QWidget* parent) {
+  _parent = parent;
 }
