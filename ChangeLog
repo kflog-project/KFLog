@@ -15,6 +15,10 @@ $Id$
   * Fix: rectangle too small to zoom to was not removed from map
 
 
+2003-04-28 Heiner <heiner@kflog.org>
+  * Fixed some problem in evaluating over-night-flights.
+
+  
 2003-04-27 Heiner <heiner@kflog.org>
 
   * Completed the mouse-zoomig. Now the side-ratio of the current map-window
