@@ -82,13 +82,13 @@ QSize EvaluationCanvas::sizeHint()
 
 void EvaluationCanvas::paintEvent(QPaintEvent*)
 {
-  bitBlt(pixBuffer, 0, 0, pixBufferKurve);
-
-  if(!((vario && speed) || (vario && baro) || (baro && speed)))
-    {
-      bitBlt(pixBuffer, scrollFrame->contentsX(),0, pixBufferYAxis);
-    }
-  bitBlt(this, 0, 0, pixBuffer);
+ // bitBlt(pixBuffer, 0, 0, pixBufferKurve);
+ //
+ // if(!((vario && speed) || (vario && baro) || (baro && speed)))
+ //  {
+ //     bitBlt(pixBuffer, scrollFrame->contentsX(),0, pixBufferYAxis);
+ //   }
+ // bitBlt(this, 0, 0, pixBuffer);
 }
 
 
@@ -299,7 +299,7 @@ QPoint EvaluationCanvas::__varioPoint(float durch[], int gn, int i)
   //  return QPoint(x, y);
 }
 
-void EvaluationCanvas::__drawCsystem(QPainter * painter)
+void EvaluationCanvas::__drawCsystem(QPainter* painter)
 {
   /*
    * Die Schleife unten kann nicht terminieren, wenn scale_h negativ ist!
@@ -312,37 +312,55 @@ void EvaluationCanvas::__drawCsystem(QPainter * painter)
     return;
   //  if(!baro && !vario && !speed) return;
 
+  warning("zeichne in QCANVAS");
   QString text;
 
   int breite = ((landTime - startTime) / secWidth)
                + (KOORD_DISTANCE * 2) ;
-  int hoehe = scrollFrame->viewport()->height();
+  int hoehe = canvas->height();
+
+  warning("Breite %d Höhe %d",breite,hoehe);
 
   //Koordinatenachsen
-  painter->setPen(QPen(QColor(0,0,0), 1));
+  QPainter paint(this);
+  paint.setPen(QPen(QColor(0,0,0), 1));
 
-  QCanvasLine xAxisLine = QCanvasLine(canvas);
-  xAxisLine.setPoints(KOORD_DISTANCE,hoehe - Y_ABSTAND, breite,hoehe - Y_ABSTAND);
-  QCanvasLine yAxisLine = QCanvasLine(canvas);
-  yAxisLine.setPoints(KOORD_DISTANCE,hoehe - Y_ABSTAND, KOORD_DISTANCE, Y_ABSTAND);
+  QCanvasLine* xAxisLine = new QCanvasLine(canvas);
+  xAxisLine->setPen(QPen(QColor(0,0,0), 1));
+  xAxisLine->setPoints(KOORD_DISTANCE,hoehe - Y_ABSTAND, breite,hoehe - Y_ABSTAND);
 
-  //yAxisLine.draw(*painter);
-  //xAxisLine.draw(*painter);
+  QCanvasLine* yAxisLine = new QCanvasLine(canvas);
+  yAxisLine->setPen(QPen(QColor(0,230,0), 3));
+  yAxisLine->setPoints(KOORD_DISTANCE,hoehe - Y_ABSTAND, KOORD_DISTANCE, Y_ABSTAND);
+  warning("Koordinaten: %d/%d -> %d/%d",KOORD_DISTANCE,hoehe - Y_ABSTAND, KOORD_DISTANCE, Y_ABSTAND);
+
+
+  yAxisLine->show();
+  xAxisLine->show();
+
+
+  /*
+  QCanvasEllipse* test = new QCanvasEllipse( 100, 100, canvas );
+  test->setX(50);
+  test->setY(50);
+  test->setBrush( QColor(134,34,156) );
+  test->show();
+*/
 
 
   // Vario Null Linie
   //painter->setPen(QPen(QColor(255,100,100), 2));
-  QCanvasLine varioZeroLine = QCanvasLine(canvas);
-  varioZeroLine.setPoints(KOORD_DISTANCE, hoehe / 2, breite, hoehe / 2);
+  QCanvasLine* varioZeroLine =  new QCanvasLine(canvas);
+  varioZeroLine->setPen(QPen(QColor(255,100,100), 2));
+  varioZeroLine->setPoints(KOORD_DISTANCE, hoehe / 2, breite, hoehe / 2);
+  varioZeroLine->show();
 
 
-  /*
-
-    // Zeitachse
-    int time_plus, time_small_plus;
-    if(secWidth > 22)
-      {
-        time_plus = 3600;
+  // Zeitachse
+  int time_plus, time_small_plus;
+  if(secWidth > 22)
+    {
+      time_plus = 3600;
         time_small_plus = 1800;
       }
     else if (secWidth > 14)
@@ -365,37 +383,53 @@ void EvaluationCanvas::__drawCsystem(QPainter * painter)
     int time_small = (((startTime - 1) / time_small_plus) + 1)
                          * time_small_plus - startTime;
 
+    unsigned int n = 0;
     //draw big scalemarks and time labels
     while(time / (int)secWidth < breite - 2*KOORD_DISTANCE)
       {
-        painter->setPen(QPen(QColor(0,0,0), 2));
-        painter->drawLine(X_ABSTAND + (time / secWidth), hoehe - Y_ABSTAND,
+      	n++;
+	QCanvasLine* timeLine_$n =  new QCanvasLine(canvas);
+	timeLine_$n->setPen(QPen(QColor(0,0,0), 2));
+  	timeLine_$n->setPoints(X_ABSTAND + (time / secWidth), hoehe - Y_ABSTAND,
                     X_ABSTAND + (time / secWidth), hoehe - Y_ABSTAND + 10);
+  	timeLine_$n->show();
 
-        painter->setPen(QPen(QColor(0,0,0), 1));
-        text = printTime(startTime + time,true,false);         //changed false to true to make sure the time reads 12:00 and not 12: 0 on the axis
-        painter->drawText(X_ABSTAND + (time / secWidth) - 40,
-                           hoehe - 21, 80, 20, AlignCenter, text);
+
+	QCanvasText* timeText_$n = new QCanvasText(printTime(startTime + time,true,false), 	canvas);
+        timeText_$n->setColor(QColor(0,0,0));
+	timeText_$n->setTextFlags(AlignCenter);
+	timeText_$n->setX(X_ABSTAND + (time / secWidth) - 40);
+	timeText_$n->setY(hoehe - 21, 80, 20);
+	timeText_$n->show();
 
         time += time_plus;
       }
 
     // draw little scale marks (min)
+    n = 0;
     while(time_small / (int)secWidth < breite - 2*KOORD_DISTANCE)
       {
-        painter->setPen(QPen(QColor(0,0,0), 1));
-        painter->drawLine(X_ABSTAND + (time_small / secWidth), hoehe - Y_ABSTAND,
-               X_ABSTAND + (time_small / secWidth), hoehe - Y_ABSTAND + 5);
+      	n++;
+	QCanvasLine* timeLineSmall_$n =  new QCanvasLine(canvas);
+	timeLineSmall_$n->setPen(QPen(QColor(0,0,0), 1));
+  	timeLineSmall_$n->setPoints(X_ABSTAND + (time_small / secWidth), hoehe - Y_ABSTAND,
+                    X_ABSTAND + (time_small / secWidth), hoehe - Y_ABSTAND + 5);
+  	timeLineSmall_$n->show();
 
         time_small += time_small_plus;
       }
 
 
+/*
+ Schon weiter oben oder nicht?
 
     // Y Achsen
+    QCanvasLine* yA
     painterText.setPen(QPen(QColor(0,0,0), 1));
     painterText.drawLine(KOORD_DISTANCE,hoehe - Y_ABSTAND,
                          KOORD_DISTANCE, Y_ABSTAND);
+*/
+
 
 
     if(!vario && !speed && baro)
@@ -407,25 +441,38 @@ void EvaluationCanvas::__drawCsystem(QPainter * painter)
         else if(scale_h > 3) dh = 200;
 
         int h = dh;
-        painterText.setFont(QFont("helvetica",10));
 
+	n = 0;
         while(h / scale_h < hoehe - (Y_ABSTAND * 2))
           {
-            painterText.setPen(QPen(QColor(100,100,255), 1));
-            text.sprintf("%d m",h);
-            painterText.drawText(0,hoehe - (int)( h / scale_h ) - Y_ABSTAND - 10,
-                             KOORD_DISTANCE - 3,20,Qt::AlignRight | Qt::AlignVCenter,text);
+	    n++;
+	    QCanvasText* baroText_$n = new QCanvasText(canvas);
+	    baroText_$n->setFont(QFont("helvetica",10));
+            baroText_$n->setColor(QColor(100,100,255));
+            baroText_$n->setTextFlags(Qt::AlignRight | Qt::AlignVCenter,text);
 
+            text.sprintf("%d m",h);
+	    baroText_$n->setText(text);
+	    baroText_$n->setX(0);
+	    baroText_$n->setY(hoehe - (int)( h / scale_h ) - Y_ABSTAND - 10);
+	    baroText_$n->show();
+
+//            painterText.drawText(0,hoehe - (int)( h / scale_h ) - Y_ABSTAND - 10,
+//                             KOORD_DISTANCE - 3,20,Qt::AlignRight | Qt::AlignVCenter,text);
+
+
+            QCanvasLine* baroLine_$n = new QCanvasLine(canvas);
 
             if(h == 1000 || h == 2000 || h == 3000 || h == 4000 ||
                   h == 5000 || h == 6000 || h == 7000 || h == 8000 || h == 9000)
-                painter->setPen(QPen(QColor(200,200,255), 2));
+                baroLine_$n->setPen(QPen(QColor(200,200,255), 2));
             else
-                painter->setPen(QPen(QColor(200,200,255), 1));
+                baroLine_$n->setPen(QPen(QColor(200,200,255), 1));
 
-            painter->drawLine(KOORD_DISTANCE - 3,
+            baroLine_$n->setPoints(KOORD_DISTANCE - 3,
                         hoehe - (int)( h / scale_h ) - Y_ABSTAND,
                         breite - 20,hoehe - (int)( h / scale_h ) - Y_ABSTAND);
+	    baroLine_$n->show();
 
             h += dh;
           }
@@ -433,8 +480,11 @@ void EvaluationCanvas::__drawCsystem(QPainter * painter)
     else if(!speed && !baro && vario)
       {
         // Variogramm
-        painter->setPen(QPen(QColor(255,100,100), 1));
-        painter->drawLine(KOORD_DISTANCE, (hoehe / 2), breite - 20, (hoehe / 2));
+	// Nulllinie
+	QCanvasLine* varioZeroLine = new QCanvasLine(canvas);
+        varioZeroLine->setPen(QPen(QColor(255,100,100), 1));
+        varioZeroLine->setPoints(KOORD_DISTANCE, (hoehe / 2), breite - 20, (hoehe / 2));
+	varioZeroLine->show();
 
         float dva = 2.0;
         if(scale_va > 0.15)      dva = 5.0;
@@ -442,8 +492,10 @@ void EvaluationCanvas::__drawCsystem(QPainter * painter)
         else if(scale_va > 0.08) dva = 2.5;
 
         float va = 0;
-        painterText.setFont(QFont("helvetica",8));
+	QCanvasText* varioText = new QCanvasText(canvas);
+        varioText->setFont(QFont("helvetica",8));
 
+	n = 0;
         while(va / scale_va < (hoehe / 2) - Y_ABSTAND)
           {
             text.sprintf("%.1f m/s",va);
@@ -502,6 +554,8 @@ void EvaluationCanvas::__drawCsystem(QPainter * painter)
       painterText.end();
 
       */
+
+      canvas->update();
 
 }
 
