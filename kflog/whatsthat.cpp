@@ -86,7 +86,7 @@ void WhatsThat::mousePressEvent( QMouseEvent* e )
         anchor = doc->anchorAt( e->pos() -  QPoint( hMargin, vMargin) );
       return;
     }
-    hide();
+    //hide();
 }
 
 void WhatsThat::mouseReleaseEvent( QMouseEvent*  )
