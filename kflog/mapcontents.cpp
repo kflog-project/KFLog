@@ -11,29 +11,14 @@
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
 **
-**   $Id$
+
 **
 ***********************************************************************/
 
 #include <cmath>
 #include <iostream>
 #include <stdlib.h>
-
-
-#include <stdio.h>
-#include <cstdlib>
-
-// Datei-handling:
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-#include <signal.h>
-#include <termios.h>
-#include <time.h>
 #include <unistd.h>
-
-
 
 #include <kconfig.h>
 #include <kfiledialog.h>
@@ -1711,7 +1696,7 @@ void MapContents::proofeSection(bool isPrint)
    {
      stop = false;
      warning("Supress that the Dialogs appears a second time");
-     return;
+//     return;
    }
 
       
