@@ -285,6 +285,10 @@ void DataView::slotWPSelected(const QString &url)
   extern MapContents _globalMapContents;
   BaseFlightElement* e = _globalMapContents.getFlight();
 
+  // this seems to happen sometimes, prevent crash
+  if (!e)
+    return;
+
   switch(e->getTypeID()) {
     case BaseMapElement::Flight:
       emit wpSelected(url.toUInt());
