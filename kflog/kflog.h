@@ -270,6 +270,8 @@ class KFLogApp : public KDockMainWindow
    * Display dialog to ask for coordinates and center map on that point.
    */
   void slotCenterTo();
+  /** Re-enables all messages turned off using "Don't show this dialog again" checkboxes. */
+  void slotEnableMessages();
 
  private:
   /**
@@ -414,6 +416,7 @@ class KFLogApp : public KDockMainWindow
    * Action to show the evaluationdialog.
    */
   KAction* flightEvaluation;
+  KAction* resetConfirmations;
   /**
    * Action to optimize flight for OLC declaration.
    */

@@ -89,7 +89,7 @@ void Optimization::enableRun(){
 }
 
 void Optimization::run(){
-
+ /*
   double *L;                        // length values
   unsigned int *w;                  // waypoints
   double length;                    // solution length
@@ -108,7 +108,7 @@ void Optimization::run(){
   
   // allocate memory
   L=(double *) malloc((n+1)*(LEGS+1)*sizeof(double));
-  w=(unsigned int *) malloc((n+1)*(LEGS+1)*sizeof(unsigned int));
+  w=(uint *) malloc((n+1)*(LEGS+1)*sizeof(uint));
   
   for (i=0;i<=n-1;i++){
     L[i+0*n]=0;
@@ -167,5 +167,5 @@ void Optimization::run(){
 
     if(progress)
       progress->setProgress(0);
-    optimized=true;
+    optimized=true;*/
 }

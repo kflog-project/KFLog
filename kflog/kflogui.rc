@@ -17,6 +17,7 @@
    <Action name="toggle_map" />
    <Action name="waypoints" />
    <Action name="tasks" />
+   <Action name="reset_confirmations" />
   </Menu>
   <Action name="window" />
  </MenuBar>

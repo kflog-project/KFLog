@@ -280,6 +280,11 @@ void KFLogApp::initActions()
   olcDeclaration = new KAction(i18n("send OLC-Declaration"), 0,
       this, SLOT(slotOlcDeclaration()), actionCollection(), "olc_declaration");
 
+  // Reset confirmations
+  resetConfirmations = new KAction(i18n("Reset confirmations"), "configure", 0,
+      this, SLOT(slotEnableMessages()), actionCollection(), "reset_confirmations");
+      
+  
   //Animation actions
   animateFlightStart = new KAction(i18n("&Start Flight Animation"), "1rightarrow",
 			Key_F12, map, SLOT(slotAnimateFlightStart()), actionCollection(),
@@ -1223,4 +1228,9 @@ void KFLogApp::initTaskTypes()
   taskTypes.append(new TranslationElement(FlightTask::AAT, i18n("Area Assigned")));
 
   taskTypes.sort();
+}
+
+/** Re-enables all messages turned off using "Don't show this dialog again" checkboxes. */
+void KFLogApp::slotEnableMessages(){
+  KMessageBox::enableAllMessages();
 }

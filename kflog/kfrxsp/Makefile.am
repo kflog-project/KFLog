@@ -5,14 +5,14 @@ lib_LTLIBRARIES = libkfrxsp.la
 INCLUDES = $(all_includes)
 
 
-LDFLAGS =             
+LDFLAGS =           
 
 
 libkfrxsp_la_LDFLAGS = -version-info 0:0:0
 
 libkfrxsp_la_METASOURCES = AUTO
 
-libkfrxsp_la_SOURCES = flightrecorder.cpp soaringpilot.cpp 
+libkfrxsp_la_SOURCES = soaringpilot.cpp flightrecorder.cpp 
 
 
 EXTRA_DIST = xsp.desktop soaringpilot.cpp soaringpilot.h flightrecorder.cpp 

@@ -24,6 +24,7 @@
 #include <klineedit.h>
 
 #include <qcheckbox.h>
+#include <qpushbutton.h>
 #include <qstringlist.h>
 #include <qwidget.h>
 
@@ -32,6 +33,7 @@
 #include "flighttask.h"
 #include "waypointlist.h"
 #include "guicontrols/kfloglistview.h"
+#include "flightrecorderpluginbase.h"
 
 /**
  * Provides a dialog-window for accessing the flightrecorder.
@@ -77,6 +79,7 @@ class RecorderDialog : public KDialogBase
     int __openLib(QString libN);
     /** */
     void __addSettingsPage();
+    void __setRecorderConnectionType(FlightRecorderPluginBase::TransferMode);
     /** */
     void __addFlightPage();
     /** */
@@ -112,7 +115,13 @@ class RecorderDialog : public KDialogBase
     /** */
     KComboBox* selectType;
     KComboBox* selectPort;
+    QLabel* selectPortLabel;
     KComboBox* selectBaud;
+    QLabel* selectBaudLabel;
+    KLineEdit* selectURL;
+    QLabel* selectURLLabel;
+    QPushButton* cmdConnect;
+    
     /** */
     QLabel* serID;
     QLabel* apiID;
@@ -173,8 +182,16 @@ class RecorderDialog : public KDialogBase
     KLineEdit* compClass;
     KLineEdit* compID;
     KComboBox* taskSelection;
+
+    QPushButton* cmdDownloadWaypoints;
+    QPushButton* cmdUploadWaypoints;
+    
+    QPushButton* cmdDownloadTasks;
+    QPushButton* cmdUploadTasks;
   /**  */
   bool isConnected;
+  FlightRecorderPluginBase * activeRecorder;
+  
   private slots:
     void slotSwitchTask(int idx);
   /** Enable/Disable pages when not connected to a recorder */

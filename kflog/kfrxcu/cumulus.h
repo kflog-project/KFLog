@@ -1,12 +1,12 @@
 /***********************************************************************
 **
-**   soaringpilot.h
+**   cumulus.h
 **
 **   This file is part of KFLog2.
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by Harald Maier
+**   Copyright (c):  2003 by André Somers
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -15,25 +15,24 @@
 **
 ***********************************************************************/
 
-#ifndef SOARINGPILOT_H
-#define SOARINGPILOT_H
+#ifndef CUMULUS_H
+#define CUMULUS_H
+
+
+/**
+ * This class presents a plugin to interface with the Zaurus as if it
+ * were a flightrecorder.
+ * @author André Somers
+ */
 
 #include <qstring.h>
-
-#include <../frstructs.h>
-#include <../flighttask.h>
 #include <../flightrecorderpluginbase.h>
 
-/**Implementation for SoaringPilot.
-
-  *@author Harald Maier
-  */
-
-class SoaringPilot:public FlightRecorderPluginBase
+class Cumulus:public FlightRecorderPluginBase
 {
 public: 
-  SoaringPilot();
-  ~SoaringPilot();
+  Cumulus();
+  ~Cumulus();
 
   /**
    * Returns the name of the lib.
@@ -50,7 +49,7 @@ public:
   /**
    *
    */
-  virtual int downloadFlight(int flightID, int secMode, const QString fileName);
+  virtual int downloadFlight(int flightID, int secMode, QString fileName);
   /**
    * get recorder info serial id
    */
@@ -70,11 +69,7 @@ public:
   /**
    * Write flight declaration to recorder
    */
-  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint> *taskPoints);
-  /**
-   * Read waypoint and flight declaration form from recorder into mem
-   */
-  virtual int readDatabase();
+  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint> *taskPoints); 
   /**
    * Read tasks from recorder
    */
@@ -92,25 +87,9 @@ public:
    */
   virtual int writeWaypoints(QList<Waypoint> *waypoints);
 
-private: //moved from public to private. The above funtions use the functions below.  
-  /** No descriptions */
-  int closeLogger();
-  /** No descriptions */
-  int openLogger(const char *port, int baud);
-  int downloadWaypoints(QList<Waypoint> *waypoints);
-  int uploadWaypoints(QList<Waypoint> *waypoints);
-  int downloadTasks(QList<FlightTask> *tasks);
-  int uploadTasks(QList<FlightTask> *tasks);
-private: // Private methods
-  /** write a file like structure to the device */
-  int writeFile(QStringList &file);
-  /** read a file like structure from the device */
-  int readFile(QStringList &file);
-  int coordToDegree(QString &s);
-  QString degreeToDegMin(int d, bool isLat);
-  QString degreeToDegMinSec(int d, bool isLat);
-  int feetToMeter(QString &s);
-  QString meterToFeet(int m);
+protected:
+  QString _tmpWaypointFile;
+  QString _URL;  
 };
 
 #endif

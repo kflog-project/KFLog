@@ -55,6 +55,22 @@ void releaseTTY(int signal)
 
 SoaringPilot::SoaringPilot()
 {
+  //Set Flightrecorders capabilities. Defaults are 0 and false.
+  _capabilities.maxNrTasks = 0;             //maximum number of tasks
+  _capabilities.maxNrWaypoints = 0;         //maximum number of waypoints
+  _capabilities.maxNrWaypointsPerTask = 10; //maximum number of waypoints per task
+  _capabilities.maxNrPilots = 0;            //maximum number of pilots
+
+  _capabilities.supDlWaypoint = true;      //supports downloading of waypoints?
+  _capabilities.supUlWaypoint = true;      //supports uploading of waypoints?
+  _capabilities.supDlFlight = true;        //supports downloading of flights?
+  //_capabilities.supUlFlight = true;        //supports uploading of flights?
+  //_capabilities.supSignedFlight = true;    //supports downloading in of signed flights?
+  _capabilities.supDlTask = true;          //supports downloading of tasks?
+  _capabilities.supUlTask = true;          //supports uploading of tasks?
+  //_capabilities.supUlDeclaration = true;   //supports uploading of declarations?
+  //End set capabilities.
+
   portID = -1;
 }
 
@@ -63,7 +79,7 @@ SoaringPilot::~SoaringPilot()
 }
 
 /** No descriptions */
-int SoaringPilot::openLogger(char *port, int baud)
+int SoaringPilot::openLogger(const char *port, int baud)
 {
   speed_t speed;
 
@@ -151,9 +167,11 @@ int SoaringPilot::openLogger(char *port, int baud)
 
     // Activating the port-settings
     tcsetattr(portID, TCSANOW, &newTermEnv);
+    _isConnected=true;
     return 1;
   }
   else {
+    _isConnected=false;
     return 0;
   }
 }
@@ -162,7 +180,8 @@ int SoaringPilot::openLogger(char *port, int baud)
 int SoaringPilot::closeLogger()
 {
   if (portID != -1) {
-    tcsetattr(portID, TCSANOW, &oldTermEnv);  
+    tcsetattr(portID, TCSANOW, &oldTermEnv);
+    _isConnected=false;  
     return 1;
   }
   else {
@@ -523,3 +542,112 @@ QString SoaringPilot::meterToFeet(int m)
   feet.sprintf("%.0fF", m / 0.3048);
   return feet;
 }
+
+
+/** New access methods - embedded in FlightRecorderPluginBase
+    ========================================================= */
+
+
+/**
+ * Returns the name of the lib.
+ */
+QString SoaringPilot::getLibName() {
+  return "libkfrxsp"; 
+}
+
+/**
+ * Returns the transfermode this plugin supports.
+ */
+FlightRecorderPluginBase::TransferMode SoaringPilot::getTransferMode() {
+  return FlightRecorderPluginBase::serial;
+}
+
+/**
+ * Returns a list of recorded flights in this device.
+ */
+int SoaringPilot::getFlightDir(QList<FRDirEntry>*) {
+  return FR_OK;
+  /* André: I don't quite get this one. Shouldn't this return some FRDirEntries? */
+}
+
+/**
+ *
+ */
+int SoaringPilot::downloadFlight(int flightID, int secMode, QString fileName) {
+  return FR_OK;
+}
+
+/**
+ * get recorder info serial id
+ */
+QString SoaringPilot::getRecorderSerialNo() {
+  return "000";
+}
+
+/**
+ * Opens the recorder for serial communication.
+ */
+int SoaringPilot::openRecorder(const QString portName, int baud) {
+  
+  return this->openLogger(portName.latin1(), baud); //using Latin 1 should be save, because the portname will not contain unicode
+}
+
+/**
+ * Closes the connection with the flightrecorder.
+ */
+int SoaringPilot::closeRecorder() {
+  return this->closeLogger();
+}
+
+/**
+ * Read tasks from recorder
+ */
+int SoaringPilot::readTasks(QList<FlightTask> *tasks) {
+  return this->downloadTasks(tasks);
+}
+
+/**
+ * Write tasks to recorder
+ */
+int SoaringPilot::writeTasks(QList<FlightTask> *tasks) {
+  return this->uploadTasks(tasks);
+}
+
+/**
+ * Read waypoints from recorder
+ */
+int SoaringPilot::readWaypoints(QList<Waypoint> *waypoints) {
+  return this->downloadWaypoints(waypoints);
+}
+
+/**
+ * Write waypoints to recorder
+ */
+int SoaringPilot::writeWaypoints(QList<Waypoint> *waypoints) {
+  return this->uploadWaypoints(waypoints);
+}
+
+/** NOT IMLEMENTED
+    ============================================*/
+
+/**
+ * Opens the recorder for other communication.
+ */
+int SoaringPilot::openRecorder(QString URL) {
+  return FR_NOTSUPPORTED;
+}
+
+ /**
+ * Write flight declaration to recorder
+ */
+int SoaringPilot::writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint> *taskPoints) {
+  return FR_NOTSUPPORTED;
+}
+
+/**
+ * Read waypoint and flight declaration form from recorder into mem
+ */
+int SoaringPilot::readDatabase() {
+  return FR_OK;
+}
+
