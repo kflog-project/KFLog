@@ -1275,22 +1275,19 @@ void Map::slotAnimateFlightStart()
 		// force redraw
     // having set animationFlag in flights should draw only to animation index.
 	  slotRedrawFlight();
-		
+
     // 50ms multi-shot timer
-    timerAnimate->start( 10, FALSE );
+    timerAnimate->start( 25, FALSE );
   }
 }
 
 /**
  * Animation slot.
- * Called for every timeout of the animation timer. Advances the crosshair one single step.
+ * Called for every timeout of the animation timer.
  */
 void Map::slotAnimateFlightTimeout()
 {
   extern MapContents _globalMapContents;
-  extern MapMatrix _globalMapMatrix;
-  flightPoint cP;
-  int length, nAnimateIndex;
   Flight *f = (Flight *)_globalMapContents.getFlight();
   bool bDone = true;
   QList<Flight> flightList;
@@ -1310,35 +1307,17 @@ void Map::slotAnimateFlightTimeout()
     return;
   }
 
-  length = flightList.at(0)->getRouteLength()-1;
-  nAnimateIndex = flightList.at(0)->getAnimationIndex();
-  if ((nAnimateIndex < length) && (nAnimateIndex >= 0)){
-    bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-                 prePos.x() - 20, prePos.y() - 20, 40, 40);
-    nAnimateIndex = flightList.at(0)->searchGetNextPoint(nAnimateIndex, cP);
-    emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
-    prePos = _globalMapMatrix.map(cP.projP);
-    preIndex = nAnimateIndex;
-    bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
-
-		// loop through all and increment animation index
-		for(unsigned int loop = 0; loop < flightList.count(); loop++){
-		  f = flightList.at(loop);
-      f->setAnimationNextIndex();
+	// loop through all and increment animation index
+ 	for(unsigned int loop = 0; loop < flightList.count(); loop++){
+ 	  f = flightList.at(loop);
+     f->setAnimationNextIndex();
      if (f->getAnimationActive())
-			 bDone = false;
-    }
-  } else {
-    // last flightPoint reached, stop animation
-    timerAnimate->stop();
-		// loop through all and reset animation index
-		for(unsigned int loop = 0; loop < flightList.count(); loop++){
-		  flightList.at(loop)->setAnimationIndex(0);
-		}
-  }
-	
+ 		  bDone = false;
+   }
+
 	// force redraw
-  slotRedrawFlight();
+  __drawFlight();
+  __showLayer();
 
 	// if one of the flights still is active, bDone will be false
   if (bDone)
