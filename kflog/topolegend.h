@@ -34,12 +34,12 @@ public:
 	~TopoLegend();
 
 protected:
-  QList<QLabel*> labelList;
-  int _itemHeight;
+  QList<QLabel> labelList;
   
 public slots: // Public slots
   /** Makes sure the indicated level is visible. */
-  void ensureLevelVisible(unsigned int level);
+  void highlightLevel(int level);
+
 };
 
 #endif

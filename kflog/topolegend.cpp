@@ -19,9 +19,14 @@
 #include <qvbox.h>
 #include "mapconfig.h"
 #include <qlayout.h>
+#include <qtimer.h>
+#include <klocale.h>
 
 TopoLegend::TopoLegend(QWidget *parent, const char *name ) : QScrollView(parent,name) {
   extern MapConfig _globalMapConfig;
+  
+  //These are the levels used, as defined in mapconfig.cpp.
+  //For internal reasons, -1 and 10000 are added to the list.
   int levels[] = {
       -1,0,10,25,50,75,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,
       1250,1500,1750,2000,2250,2500,2750,3000,3250,3500,3750,4000,4250,4500,4750,
@@ -29,38 +34,47 @@ TopoLegend::TopoLegend(QWidget *parent, const char *name ) : QScrollView(parent,
   
   QLabel * lbl;
   QVBox* levelLayout = new QVBox(this->viewport());
-  //QHBoxLayout * lo=new QHBoxLayout(this->viewport());
-  //lo->addWidget(levelLayout);
   
-  this->addChild(levelLayout);
-  this->setHScrollBarMode(AlwaysOff);  
-  this->setResizePolicy(AutoOneFit);
+  this->addChild(levelLayout);        //we are using the QVBox above as our main and single widget
+  this->setHScrollBarMode(AlwaysOff); //no horizontal scrollbar 
+  this->setResizePolicy(AutoOneFit);  //make sure everything fits nicely
   
-  for (int i=50; i>=0; --i) {
-    lbl=new QLabel(levelLayout);
+  for (int i=50; i>=0; --i) {         //loop over levels defined above in reversed order
+    lbl=new QLabel(levelLayout);      //create a new label as a child of the QVBox
     lbl->setAlignment(AlignHCenter);
-    if (i==50) {
-      lbl->setText(QString(">= %1 m").arg(levels[i]));
+    if (i==50) {                      //set the text. Normally, this is "xx - yy m", but the first and last get a different one
+      lbl->setText(i18n("label used for top level in legend", ">= %1 m").arg(levels[i]));
     } else if(i==0) {
-      lbl->setText(QString("< 0 m"));
+      lbl->setText(i18n("label used for lowest level (blue level) in legend", "< 0 m (water)"));
     } else {
-      lbl->setText(QString("%1 - %2 m").arg(levels[i]).arg(levels[i+1]));
+      lbl->setText(i18n("label used for normal level in legend", "%1 - %2 m").arg(levels[i]).arg(levels[i+1]));
     }
-    lbl->setBackgroundMode(FixedColor);
-    lbl->setBackgroundColor(_globalMapConfig.getIsoColor(i));
+    lbl->setBackgroundMode(FixedColor);                        //set the label to get a fixed bg color
+    lbl->setBackgroundColor(_globalMapConfig.getIsoColor(i));  //get the appropriate color from the mapconfig
+    labelList.append(lbl);                                     //and add the label to our label list
   }
-  _itemHeight=lbl->height();
-  ensureLevelVisible(0);
 }
 
 TopoLegend::~TopoLegend(){
 }
 
 /** Makes sure the indicated level is visible. */
-void TopoLegend::ensureLevelVisible(unsigned int level){
-  int y=0;
-  if (level>51) level=51;
+void TopoLegend::highlightLevel(int level){
+
+  //make sure it's visible, but only if this is a valid level!
+  if (level >=0 && level<51) {
+    int y=labelList.at(50-level)->y();
+    this->ensureVisible(10,y);
+  }
   
-  y=int((51-level + 0.5) * _itemHeight);
-  this->ensureVisible(10,y);
+  //highlight the selected label
+  for (int i=0;i<51;i++) {
+    if (i==(50-level)) {
+      labelList.at(i)->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+    } else {
+      labelList.at(i)->setFrameStyle( QFrame::NoFrame );
+    }
+  }
 }
+
+

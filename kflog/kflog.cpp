@@ -269,7 +269,7 @@ void KFLogApp::initActions()
       CTRL+Key_T, this, SLOT(slotToggleTasksDock()), actionCollection(),
       "tasks");
 
-  viewLegend = new KToggleAction(i18n("Show legend"), "legend",
+  viewLegend = new KToggleAction(i18n("Show legend"), 0,
       CTRL+Key_L, this, SLOT(slotToggleLegendDock()), actionCollection(),
       "toggle_legend");
 
@@ -481,7 +481,6 @@ void KFLogApp::initView()
 
   legend = new TopoLegend(legendDock);
   legendDock->setWidget(legend);
-  legend->ensureLevelVisible(1);
   
   /* Arguments for manualDock():
    * dock target, dock side, relation target/this (in percent)
