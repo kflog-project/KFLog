@@ -1675,7 +1675,7 @@ bool Flight::optimizeTask()
 int Flight::searchGetNextPoint(int index, flightPoint& searchPoint)
 {
   // only move to next if not at last point
-  if ((index < route.count()-1) && (index > 0))
+  if ((index < route.count()-1) && (index >= 0))
 		index += 1;
 
 	// now update searchPoint struct
