@@ -183,6 +183,10 @@ void KFLogApp::initActions()
       0, this, SLOT(slotOpenRecorderDialog()), actionCollection(),
       "recorderdialog");
 
+  fileImportFlightGearFile = new KAction(i18n("Import FlightGear File"), "import_flightgear",
+      0, this, SLOT(slotImportFlightGearFile()), actionCollection(),
+      "flightgear");
+
   KStdAction::print(this, SLOT(slotFilePrint()), actionCollection());
 
   flightPrint = new KAction(i18n("Print Flightdata"), "fileprint",
@@ -1143,4 +1147,35 @@ void KFLogApp::initTypes()
   waypointTypes.append(new TranslationElement(BaseMapElement::Village, i18n("Village")));
 
   waypointTypes.sort();
+}
+/** No descriptions */
+void KFLogApp::slotImportFlightGearFile(){
+  slotStatusMsg(i18n("Opening file..."));
+
+  KFileDialog* dlg = new KFileDialog(flightDir, "*.flightgear *.FLIGHTGEAR", this,
+      i18n("Select FlightGear File"), true);
+  dlg->exec();
+
+  KURL fUrl = dlg->selectedURL();
+
+//  KURL fUrl = KFileDialog::getOpenURL(flightDir, "*.igc *.IGC", this);
+
+  if(fUrl.isEmpty())  return;
+
+  QString fName;
+  if(fUrl.isLocalFile())
+      fName = fUrl.path();
+  else if(!KIO::NetAccess::download(fUrl, fName))
+    {
+      KNotifyClient::event(i18n("Can not download file %1").arg(fUrl.url()));
+      return;
+    }
+
+  QFileInfo fInfo(fName);
+  flightDir = fInfo.dirPath();
+  extern MapContents _globalMapContents;
+  if(_globalMapContents.importFlightGearFile(fName))
+      fileOpenRecent->addURL(fUrl);
+
+  slotStatusMsg(i18n("Ready."));
 }

@@ -140,7 +140,7 @@ MapContents::MapContents()
 MapContents::~MapContents()
 {
   // Hier müssen ALLE Listen gelöscht werden!!!
-  airportList.~QList();
+/*  airportList.~QList();
   airspaceList.~QList();
   cityList.~QList();
   gliderList.~QList();
@@ -155,6 +155,7 @@ MapContents::~MapContents()
   roadList.~QList();
   stationList.~QList();
   topoList.~QList();
+*/
 }
 
 int MapContents::degreeToNum(QString inDegree)
@@ -2043,4 +2044,328 @@ void MapContents::slotSetFlight(BaseFlightElement *f)
     flightList.findRef(f);
     emit currentFlightChanged();
   }
+}
+
+/** No descriptions */
+bool MapContents::importFlightGearFile(QFile flightgearFile){
+  float temp_bearing = 0.0;
+
+  QFileInfo fInfo(flightgearFile);
+  if(!fInfo.exists())
+    {
+      KMessageBox::error(0,
+          i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(flightgearFile.name()));
+      return false;
+    }
+  if(!fInfo.size())
+    {
+      KMessageBox::sorry(0,
+          i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(flightgearFile.name()));
+      return false;
+    }
+  //
+  // We need a better format-identification then only the extension ...
+  //
+  if(((QString)fInfo.extension()).lower() != "flightgear")
+    {
+      KMessageBox::error(0,
+          i18n("The selected file<BR><B>%1</B><BR>is not an flightgear-file!").arg(flightgearFile.name()));
+      return false;
+    }
+
+  if(!flightgearFile.open(IO_ReadOnly))
+    {
+      KMessageBox::error(0,
+          i18n("You don't have permission to access file<BR><B>%1</B>").arg(flightgearFile.name()),
+          i18n("No permission"));
+      return false;
+    }
+
+  QProgressDialog importProgress(0,0,true);
+
+  importProgress.setCaption(i18n("Import mapfile ..."));
+  importProgress.setLabelText(
+      i18n("Please wait while loading file<BR><B>%1</B>").arg(flightgearFile.name()));
+  importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
+  importProgress.setTotalSteps(200);
+  importProgress.show();
+  importProgress.setMinimumDuration(0);
+
+  importProgress.setProgress(0);
+
+  unsigned int fileLength = fInfo.size();
+  unsigned int filePos = 0;
+  QString s;
+  QTextStream stream(&flightgearFile);
+
+
+  QString pilotName, gliderType, gliderID, recorderID;
+  QDate date;
+  char latChar, lonChar, validChar;
+  bool launched = false, append = true, isFirst = true, isFirstWP = true;
+  int dT, lat, latmin, latTemp, lon, lonmin, lonTemp;
+  int hh = 0, mm = 0, ss = 0, curTime = 0, preTime = 0;
+  int cClass = Flight::NotSet;
+
+  float v, speed;
+
+  flightPoint newPoint;
+  flightPoint prePoint;
+  QList<flightPoint> flightRoute;
+  QList<wayPoint> wpList;
+  wayPoint* newWP;
+  wayPoint* preWP;
+  bool isValid = true;
+
+  //
+  // This regexp is used to check the syntax of the position-lines in
+  // the flightear-file.
+  //
+  //  $GPRMC,200009,A,3736.811,N,12221.432,W,000.0,297.9,1903102,000.0,E*5C
+  //  $PGRMZ,04,f,3*2F
+  //
+  // Format spec:
+  //
+  // all fields comma separated
+  // $GPRMC 	header
+  // 200009		UTC position (hhmmss)
+  // A					status (A= data valid, V data not valid)
+  // 3736.811	Lat (ddmm.mmm)
+  // N					N/S indicator
+  // 12221.432 	Long (ddmm.mmm)
+  // W				E/W indicator
+  // 000.0			Speed over ground
+  // 297.9			Course over ground
+  // 1903102		date (ddmmyy) ..    2002 = 102
+  // 000.0			magnetic deviation
+  //					E/W indicator
+  // *5C			    checksum (*nn)
+  //
+  // $PGRMZ		Private message
+  // 04				- contents can be ignored
+  // f					- contents can be ignored
+  // 3					- contents can be ignored
+  // *2F				checksum (*nn)
+  //
+  QRegExp bRecord("^[$]GPRMC,[0-9][0-9][0-9][0-9][0-9][0-9],[AV],[0-9][0-9][0-9][0-9]\\.[0-9][0-9][0-9],[NS],[0-9][0-9][0-9][0-9][0-9]\\.[0-9][0-9][0-9],[EW],[0-9][0-9][0-9]\\.[0-9],[0-9][0-9][0-9]\\.[0-9],[0-9][0-9][0-9][0-9][0-9][0-9][0-9],[0-9][0-9][0-9]\\.[0-9],[EW],[*][0-9][0-9]$");
+
+  extern const MapMatrix _globalMapMatrix;
+
+  int lineCount = 0;
+  unsigned int wp_count = 0;
+  int last0 = -1;
+  bool isHeader = true;
+  bool isAus = false;
+
+  float spd, brng, magdev,fLat, fLon;
+  int day, month, year;	
+  char magdevChar, checksum[2];
+
+
+  while (!stream.eof())
+    {
+      if(importProgress.wasCancelled()) return false;
+
+      lineCount++;
+
+      s = stream.readLine();
+      filePos += s.length();
+      importProgress.setProgress(( filePos * 200 ) / fileLength);
+
+		if(s.mid(0,6) == "$GPRMC")
+        {
+          //
+          // We have a point.
+          // But we must proofe the linesyntax first.
+          //
+/*          if(bRecord.match(s) == -1)
+            {
+              // IO-Error !!!
+              QString lineNr;
+              lineNr.sprintf("%d", lineCount);
+              KMessageBox::error(0,
+//                  i18n("Syntax-error while loading FlightGear-file"
+//                      "<BR><B>%1</B><BR>Aborting!").arg(flightgearFile.name()),
+//                  i18n("Error in FlightGear-file"));
+//              warning("KFLog: Error in reading line %d in FlightGear-file %s",
+                i18n("Sorry, but this function is not yet available"
+                      "<BR><B>%1</B><BR>Aborting!").arg(flightgearFile.name()),
+                i18n("Sorry..."));
+                warning("KFLog: reading line %d in unspported FlightGear-file %s",
+                lineCount, (const char*)flightgearFile.name());
+
+              return false;
+            }
+*/
+		spd = 0;
+   		brng = 0;
+   		magdev = 0;
+   		fLat = 0;
+   		fLon = 0;
+
+		  // file is ok, now read data from line
+          sscanf(s.mid(7,8), "%2d%2d%2d,%1c", &hh, &mm, &ss, &validChar);
+          sscanf(s.mid(16,10), "%2d%f,1%c", &lat, &fLat, &latChar);
+          sscanf(s.mid(27,11), "%3d%f,%1c", &lon, &fLon, &lonChar);
+          sscanf(s.mid(39,12), "%f,%f", &spd, &brng);
+          sscanf(s.mid(51,7), "%2d%2d%3d", &day, &month, &year);
+          sscanf(s.mid(59,10), "%f,%1c*%2c", &magdev,&magdevChar,&checksum);
+
+		  // NMEA year is number of years after 1900
+          year +=1900;
+
+		  // skip if lat & lon = 000.0N
+		  if ((lat == 0.0) && (lon == 0.0))
+			continue;
+
+		  latmin = fLat * 1000;
+          lonmin = fLon * 1000;
+  		
+		  // convert to internal KFLog format
+	      latTemp = lat * 600000 + latmin * 10;
+          lonTemp = lon * 600000 + lonmin * 10;
+
+          if(latChar == 'S') latTemp = -latTemp;
+          if(lonChar == 'W') lonTemp = -lonTemp;
+		 	
+          curTime = 3600 * hh + 60 * mm + ss;
+
+          newPoint.time = curTime;
+          newPoint.origP = WGSPoint(latTemp, lonTemp);
+          newPoint.projP = _globalMapMatrix.wgsToMap(newPoint.origP);
+          newPoint.f_state = Flight::Straight;
+
+          if(s.mid(14,1) == "A")
+              isValid = true;
+          else if(s.mid(14,1) == "V")
+              isValid = false;
+          else
+              fatal("FEHLER!");
+
+          if(isFirst)
+            {
+              prePoint = newPoint;
+              preTime = curTime;
+              isFirst = false;
+              newPoint.dS = 0;
+              newPoint.dH = 0;
+              newPoint.dT = 0;
+              newPoint.bearing = 0;
+              speed = 0;
+              v = 0;
+              continue;
+            }
+          //
+          // dtime may change, even if the intervall, in wich the
+          // logger gets the position, is allways the same. If the
+          // intervall is f.e. 10 sec, dtime may change to 11 or 9 sec.
+          //
+          // In some files curTime and preTime are the same. In this case
+          // we set dT = 1 to avoid a floating-point-exeption ...
+          //
+          dT = MAX( (curTime - preTime), 1);
+ 		  newPoint.height = 0;
+ 		  newPoint.gpsHeight = 0;
+          newPoint.dT = dT;
+          newPoint.dH = newPoint.height - prePoint.height;
+          newPoint.dS = (int)(dist(latTemp, lonTemp,
+              prePoint.origP.lat(), prePoint.origP.lon()) * 1000.0);
+
+          prePoint.bearing = getBearing(prePoint,newPoint) - temp_bearing;
+
+          if(prePoint.bearing > PI)
+            {
+              prePoint.bearing = prePoint.bearing - 2.0 * PI;
+            }
+          else if(prePoint.bearing < -PI)
+            {
+              prePoint.bearing =  prePoint.bearing + 2.0 * PI;
+            }
+
+          if(prePoint.bearing > PI || prePoint.bearing < -PI)
+            {
+              warning("Wir haben ein Problem --- Bearing > 180");
+            }
+
+          temp_bearing = getBearing(prePoint,newPoint);
+
+          speed = 3600 * spd ;  // [km/h]
+          v = newPoint.dH / dT * 1.0;       // [m/s]
+
+          //
+		  // Landing detection is not valid for FlightGear files, hence only accept launced at first fix
+          //
+          if(launched)
+            {
+              flightRoute.last()->bearing = prePoint.bearing;
+              flightRoute.append(new flightPoint);
+              *(flightRoute.last()) = newPoint;
+
+              if(!isValid)  continue;
+
+              if(!append)
+                {
+                  if( ( speed > 10 ) && ( ( v > 0.5 ) || ( v < -0.5 ) ) )
+                      append = true;
+                  else
+                      // We are realy back on the ground, again.
+                      // Now we can stop reading the file!
+                      break;
+                }
+              //
+              // Die Landebedingungen sind, besonders bei einem großen
+              // Zeitabstand der Messungen noch nicht korrekt!
+              //
+              // Bedingung sollte über mehrere Punkte gehen. Ausserdem
+              // eventuell anhand dS und dH erfolgen.
+              //
+              //
+              if( ( speed < 10 ) && ( ( v < 0.5 ) && ( v > -0.5 ) ) )
+                  // We might be back on the ground, again. But
+                  // we wait for the next point.
+                  append = false;
+            }
+          else
+            {
+                  launched = true;
+                  flightRoute.append(new flightPoint);
+                  *(flightRoute.last()) = prePoint;
+            }
+          //
+          // We only want to compare with valid points ...
+          //
+          if(isValid)
+            {
+              prePoint = newPoint;
+              preTime = curTime;
+            }
+        }
+      else if(s.mid(0,6) == "$PGRMZ")
+      {
+       	// ignore private data for now...
+ 		continue;
+      }
+    }
+
+  // close the import dialog, clean up and add the FlightRoute we just created
+  importProgress.close();
+
+  if(!launched || !flightRoute.count())
+    {
+      KMessageBox::error(0,
+          i18n("The selected file<BR><B>%1</B><BR>contains no flight!").arg(flightgearFile.name()));
+      return false;
+    }
+
+  recorderID = "flightgear";
+  pilotName = "flightgear";
+  gliderType = "flightgear";
+  gliderID = "flightgear";
+  cClass = 0;
+
+  flightList.append(new Flight(flightgearFile.name(), recorderID,
+      flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
+
+  emit currentFlightChanged();
+  return true;
 }

@@ -170,6 +170,8 @@ class MapContents : public QObject
      *                 is one of N, S, E, W.
      */
     static int degreeToNum(QString degree);
+  /** No descriptions */
+  bool importFlightGearFile(QFile flightgearFile);
     /**
 		 * Get the contents of the next FlightPoint after number 'index'
 	   */

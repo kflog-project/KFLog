@@ -241,6 +241,8 @@ class KFLogApp : public KDockMainWindow
       *  olc Declaration
       **/
     void slotOlcDeclaration();
+    /** No descriptions */
+    void slotImportFlightGearFile();
 
   private:
     /**
@@ -386,6 +388,8 @@ class KFLogApp : public KDockMainWindow
     KAction* flightPrint;
     /** */
     KAction* fileRecorder;
+    /** */
+    KAction* fileImportFlightGearFile;
     /** */
     KToggleAction* viewWaypoints;
 		/**
