@@ -473,9 +473,9 @@ void Map::mousePressEvent(QMouseEvent* event)
 	      loop < _globalMapContents.getListLength(
 						      MapContents::AirportList); loop++)
 	    {
-	      hitElement = _globalMapContents.getElement(
-							 MapContents::AirportList, loop);
-	      sitePos = ((SinglePoint*)hitElement)->getMapPosition();
+	      hitElement = (SinglePoint*)_globalMapContents.getElement(
+								       MapContents::AirportList, loop);
+	      sitePos = hitElement->getMapPosition();
 
 	      dX = sitePos.x() - current.x();
 	      dY = sitePos.y() - current.y();
@@ -484,7 +484,7 @@ void Map::mousePressEvent(QMouseEvent* event)
 	      if( ( ( dX < delta ) && ( dX > -delta ) ) &&
 		  ( ( dY < delta ) && ( dY > -delta ) ) )
 		{
-		  text = text + ((SinglePoint*)hitElement)->getInfoString();
+		  text = text + hitElement->getInfoString();
 		  // Text anzeigen
 		  QWhatsThis::enterWhatsThisMode();
 		  QWhatsThis::leaveWhatsThisMode(text);
@@ -494,8 +494,8 @@ void Map::mousePressEvent(QMouseEvent* event)
 
 	  if(_globalMapContents.getFlightList()->count() > 0)
 	    {
-	      QList<wayPoint> wpList =
-		_globalMapContents.getFlight()->getWPList();
+	      QList<wayPoint>* wpList =
+                _globalMapContents.getFlight()->getWPList();
 
 	      delta = 25;
 	      bool isWP = false;
@@ -580,11 +580,11 @@ void Map::mousePressEvent(QMouseEvent* event)
 	    {
 	      if(airspaceRegList->at(loop)->contains(current))
 		{
-		  hitElement = _globalMapContents.getElement(
-							     MapContents::AirspaceList, loop);
+		  hitElement = (SinglePoint*)_globalMapContents.getElement(
+									   MapContents::AirspaceList, loop);
 
-		  text = text + "<LI>" + ((Airspace*)hitElement)->getInfoString()
-		    + "</LI>";
+		  text = text + "<LI>" + hitElement->getInfoString()
+                    + "</LI>";
 		  show = true;
 		}
 	    }
@@ -598,26 +598,27 @@ void Map::mousePressEvent(QMouseEvent* event)
 	    }
 	}
     }
+}
 
-  void Map::paintEvent(QPaintEvent* event = 0)
-    {
-      if(event == 0)
-	bitBlt(this, 0, 0, &pixBuffer);
-      else
-	bitBlt(this, event->rect().topLeft(), &pixBuffer, event->rect());
+void Map::paintEvent(QPaintEvent* event = 0)
+{
+  if(event == 0)
+    bitBlt(this, 0, 0, &pixBuffer);
+  else
+    bitBlt(this, event->rect().topLeft(), &pixBuffer, event->rect());
 
-      /* Cursor-Position zurücksetzen! */
-      prePos.setX(-50);
-      prePos.setY(-50);
-    }
+  /* Cursor-Position zurücksetzen! */
+  prePos.setX(-50);
+  prePos.setY(-50);
+}
 
-  void Map::__drawGrid()
-    {
-      extern const MapMatrix _globalMapMatrix;
-      const QRect mapBorder = _globalMapMatrix.getViewBorder();
+void Map::__drawGrid()
+{
+  extern const MapMatrix _globalMapMatrix;
+  const QRect mapBorder = _globalMapMatrix.getViewBorder();
 
-      QPainter gridP(&pixGrid);
-      gridP.setBrush(NoBrush);
+  QPainter gridP(&pixGrid);
+  gridP.setBrush(NoBrush);
 
       // die Kanten des Bereichs
       const int lon1 = mapBorder.left() / 600000 - 1;
