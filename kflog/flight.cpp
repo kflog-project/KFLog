@@ -383,7 +383,10 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
       QPen drawP = glConfig->getDrawPen(pointB);
       drawP.setCapStyle(Qt::SquareCap);
+      QColor HeightC(QColor("darkblue").light(100 + (int)(pointB->height/20)));
+      drawP.setColor(HeightC);
       targetPainter->setPen(drawP);
+
       maskPainter->setPen(QPen(Qt::color1, drawP.width(),
           Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
 
