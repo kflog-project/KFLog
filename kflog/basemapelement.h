@@ -100,7 +100,7 @@ class BaseMapElement
         UltraLight = ULTRALIGHT,
         HangGlider = HANGGLIDER,
         Parachute = PARACHUTE,
-        Ballon = BALLON,
+        Balloon = BALLOON,
         Outlanding = OUTLANDING,
         Vor = VOR,
         VorDme = VORDME,

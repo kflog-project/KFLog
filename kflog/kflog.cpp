@@ -1273,7 +1273,7 @@ void KFLogApp::initTypes()
   waypointTypes.append(new TranslationElement(BaseMapElement::Airfield, i18n("Airfield")));
   waypointTypes.append(new TranslationElement(BaseMapElement::Airport, i18n("Airport")));
   waypointTypes.append(new TranslationElement(BaseMapElement::AmbHeliport, i18n("Ambul. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Ballon, i18n("Ballon")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Balloon, i18n("Balloon")));
   waypointTypes.append(new TranslationElement(BaseMapElement::City, i18n("City")));
   waypointTypes.append(new TranslationElement(BaseMapElement::CivHeliport, i18n("Civil Heliport")));
   waypointTypes.append(new TranslationElement(BaseMapElement::IntAirport, i18n("Int. Airport")));

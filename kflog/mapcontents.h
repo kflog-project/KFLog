@@ -376,7 +376,7 @@ switch to first task in file */
     QPtrList<GliderSite> gliderList;
     /**
      * addSitesList contains all, ultra-light,
-     * hang-glider-sites, free-ballon-sites, parachute-jumping-sites.
+     * hang-glider-sites, free-balloon-sites, parachute-jumping-sites.
      */
     QPtrList<SinglePoint> addSitesList;
     /**

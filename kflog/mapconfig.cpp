@@ -1050,8 +1050,8 @@ QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
       case BaseMapElement::Parachute:
         iconName = "jump.xpm";
         break;
-      case BaseMapElement::Ballon:
-        iconName = "ballon.xpm";
+      case BaseMapElement::Balloon:
+        iconName = "balloon.xpm";
         break;
       case BaseMapElement::CompPoint:
         iconName = "compoint.xpm";
