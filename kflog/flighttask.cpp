@@ -725,6 +725,8 @@ void FlightTask::checkWaypoints(QList<flightPoint> route,
 
   if(flightType == FlightTask::NotSet) return;
 
+  if(!wpList.count()) return;
+
   int gliderIndex = 100, preTime = 0;
   KConfig* config = KGlobal::config();
   config->setGroup("FlightPoints");

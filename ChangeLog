@@ -1,6 +1,11 @@
 $Id$
 
 
+2002-04-27 Florian <florian@kflog.org>
+
+  * Cleaned up graphical planning.
+
+
 2002-04-27 Heiner <heiner@kflog.org>
 
   * Fixed some minor bugs in planning

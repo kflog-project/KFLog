@@ -206,19 +206,21 @@ void MapContents::closeFlight()
    * close current flight
    */
   BaseFlightElement *f = flightList.current();
-  if (f != 0) {
-    for (unsigned int i = 0; i < flightList.count(); i++) {
-      FlightGroup *fg = (FlightGroup *) flightList.at(i);
-      if (fg->getTypeID() == BaseMapElement::FlightGroup) {
-        fg->removeFlight(f);
-      }
+  if(f != 0)
+    {
+      for (unsigned int i = 0; i < flightList.count(); i++)
+        {
+          FlightGroup *fg = (FlightGroup *) flightList.at(i);
+          if(fg->getTypeID() == BaseMapElement::FlightGroup)
+              fg->removeFlight(f);
+
+        }
+
+      flightList.remove(f);
+      if (flightList.current() == 0) flightList.last();
+
+      emit currentFlightChanged();
     }
-    flightList.remove(f);
-    if (flightList.current() == 0) {
-      flightList.last();
-    }
-    emit currentFlightChanged();
-  }
 }
 
 bool MapContents::__readAsciiFile(const char* fileName)
@@ -1868,10 +1870,10 @@ void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
             topoList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case FlightList:
-//        for(unsigned int loop = 0; loop < flightList.count(); loop++)
-          if (flightList.count() > 0) {
+        // In some cases, getFlightIndex returns a non-valid index :-(
+        if (flightList.count() > 0 && getFlightIndex() >= 0 &&
+              getFlightIndex() < (int)flightList.count())
             flightList.at(getFlightIndex())->drawMapElement(targetPainter, maskPainter);
-          }
         break;
       default:
         return;

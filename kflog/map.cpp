@@ -48,7 +48,7 @@
 Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   : QWidget(parent, name),
     mainApp(m), prePos(-50, -50), preCur1(-50, -50), preCur2(-50, -50),
-    tempTask(""), preSnapPoint(-999, -999)
+    planning(-1), tempTask(""), preSnapPoint(-999, -999)
 {
   // defining the cursor for the map:
   static const unsigned char cross_bits[] = {
@@ -165,19 +165,17 @@ void Map::mouseMoveEvent(QMouseEvent* event)
       if(_globalMapMatrix.isSwitchScale()) delta = 16.0;
 
       // If we are near to the last temp-point of the task,
-      // we can exit ...
+      // and SHIFT is not pressed, we can exit ...
       if( (abs(current.x() - preSnapPoint.x()) <= delta) &&
-          (abs(current.y() - preSnapPoint.y()) <= delta) )  return;
+          (abs(current.y() - preSnapPoint.y()) <= delta) &&
+          event->state() != QEvent::ShiftButton )  return;
 
       BaseFlightElement *f = _globalMapContents.getFlight();
 
       if(!f)  return;
 
-//      struct wayPoint wp;
-
       QList<wayPoint> taskPointList = f->getWPList();
       QList<wayPoint> tempTaskPointList = f->getWPList();
-//      bool found = __getTaskWaypoint(current, &wp, taskPointList);
       // 3: Task beendet verschieben eines Punktes
 
       QPoint preSitePos, nextSitePos;
@@ -293,17 +291,21 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                   // delete temp WP
 //                  warning(" ---> 3");
 //                  __drawPlannedTask();
-//                  __showLayer();
 
                   if(event->state() == QEvent::ShiftButton)
                     {
+//                      bitPlanMask.fill(Qt::color0);
+//                      pixPlan.fill(white);
+//                      __showLayer();
                       // temporärer Weg
                       if(planning == 3)
                         {
                           //verschieben
                           tempTaskPointList.insert(moveWPindex,new wayPoint);
                           tempTaskPointList.at(moveWPindex)->name = "";
-                          tempTaskPointList.at(moveWPindex)->origP = _globalMapMatrix.mapToWgs(event->pos());
+                          QPoint tmp(_globalMapMatrix.mapToWgs(event->pos()));
+//                          tempTaskPointList.at(moveWPindex)->origP = _globalMapMatrix.mapToWgs(event->pos());
+                          tempTaskPointList.at(moveWPindex)->origP = WGSPoint(tmp.y(), tmp.x());
                           tempTaskPointList.at(moveWPindex)->projP =
                                 _globalMapMatrix.wgsToMap(tempTaskPointList.at(moveWPindex)->origP);
                           tempTaskPointList.at(moveWPindex)->sectorFAI = 0;
@@ -316,7 +318,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                           //anhängen
                           tempTaskPointList.append(new wayPoint);
                           tempTaskPointList.last()->name = "test";
-                          tempTaskPointList.last()->origP = _globalMapMatrix.mapToWgs(event->pos());
+                          QPoint tmp(_globalMapMatrix.mapToWgs(event->pos()));
+                          tempTaskPointList.last()->origP = WGSPoint(tmp.y(), tmp.x());
                           tempTaskPointList.last()->projP =
                                 _globalMapMatrix.wgsToMap(tempTaskPointList.last()->origP);
                           tempTaskPointList.last()->sectorFAI = 0;
@@ -325,8 +328,11 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                           // hier müssen noch mehr Sachen übergeben werden
                         }
 
+
                     tempTask.setWaypointList(tempTaskPointList);
-                    __drawPlannedTask(false);
+//                    __drawPlannedTask(false);
+                    emit showTaskText(&tempTask);
+
                   }
                 prePlanPos = point;
               }
@@ -644,7 +650,7 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
               // hier müssen noch mehr Sachen übergeben werden
             } //planning == 3
         } // found
-      else
+      else if(planning != 2)
         {
           // nothing found, try to create a free waypoint
           WaypointDialog *waypointDlg = new WaypointDialog(this);
@@ -660,13 +666,26 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
             {
               if (!waypointDlg->name->text().isEmpty())
                 {
-                  struct wayPoint *w = new wayPoint;
+                  struct wayPoint *w;
+                  if(planning == 3)
+                    {
+                      // insert a moved point
+                      taskPointList.insert(moveWPindex,new wayPoint);
+                      w = taskPointList.at(moveWPindex);
+                      planning = 2;
+                    }
+                  else
+                    {
+                      // append a new point
+                      taskPointList.append(new wayPoint);
+                      w = taskPointList.last();
+                    }
 
                   w->name = waypointDlg->name->text().left(6).upper();
                   w->description = waypointDlg->description->text();
                   w->type = waypointDlg->getWaypointType();
-                  w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
-                  w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+                  w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
+                  w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
                   w->projP = _globalMapMatrix.wgsToMap(w->origP.lat(), w->origP.lon());
                   w->elevation = waypointDlg->elevation->text().toInt();
                   w->icao = waypointDlg->icao->text().upper();
@@ -679,8 +698,6 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
                   w->sector1 = 0;
                   w->sector2 = 0;
                   w->sectorFAI = 0;
-
-                  taskPointList.append(w);
                 }
             }
           delete waypointDlg;
@@ -696,10 +713,32 @@ void Map::__graphicalPlanning(QPoint current, QMouseEvent* event)
       __drawPlannedTask();
       __showLayer();
     }
+
+  if(planning == 2)
+    {
+      moveWPindex = -999;
+
+      prePlanPos.setX(-999);
+      prePlanPos.setY(-999);
+
+      emit taskPlanningEnd();
+    }
+}
+
+void Map::keyReleaseEvent(QKeyEvent* event)
+{
+warning("key Release");
+
+  if(event->state() == QEvent::ShiftButton)
+    {
+      warning("key Release");
+      __showLayer();
+    }
 }
 
 void Map::mousePressEvent(QMouseEvent* event)
 {
+warning("Map::mousePressEvent: planning=%d", planning);
   // First: delete the cursor, if visible:
   if(prePos.x() >= 0)
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
@@ -717,10 +756,6 @@ void Map::mousePressEvent(QMouseEvent* event)
   double dX, dY, delta(16.0);
 
   if(_globalMapMatrix.isSwitchScale()) delta = 8.0;
-
-  BaseFlightElement *f = _globalMapContents.getFlight();
-  if (f != 0)
-      QList<wayPoint> taskPointList = f->getWPList();
 
   if(event->button() == MidButton)
     {

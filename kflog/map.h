@@ -126,6 +126,10 @@ class Map : public QWidget
      */
     virtual void mouseMoveEvent(QMouseEvent* event);
     /**
+     * redraw the current map if state == ShiftButton
+     */
+    virtual void keyReleaseEvent(QKeyEvent* event);
+    /**
      * Redefinition of the paintEvent.
      */
     virtual void paintEvent(QPaintEvent* event);
