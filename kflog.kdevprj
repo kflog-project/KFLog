@@ -23,12 +23,12 @@ cflags=
 cppflags=
 cxxflags=\s-O3 -Wall
 ldadd=-lkdeprint -lm $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT)
-ldflags=\s            \s
+ldflags=\s             \s
 
 [General]
-AMChanged=false
+AMChanged=true
 author=Heiner Lamprecht
-configure_args=--prefix=/opt/kde3 --enable-debug=full
+configure_args=\s--build=i386-linux --host=i386-linux --target=i386-linux --prefix=/opt/kde3 --enable-debug\s
 email=heiner@kflog.org
 kdevprj_version=1.3
 lfv_open_groups=GNU,Übersetzungen
@@ -40,7 +40,7 @@ project_type=mini_kde2
 sgml_file=/home/heiner/tmp/kflog_neu/doc/en/index.docbook
 short_info=
 sub_dir=kflog/
-version=2.0.7
+version=2.1.0
 version_control=CVS
 workspace=1
 
@@ -57,7 +57,7 @@ kpp_icon=0
 kpp_license=5
 kpp_summary=Soaring-pilot-software for KDE
 kpp_url=http://www.kflog.org/
-kpp_version=2.0.7
+kpp_version=2.1.0
 
 [LFV Groups]
 Andere=*
