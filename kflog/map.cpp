@@ -203,12 +203,19 @@ void Map::mouseMoveEvent(QMouseEvent* event)
           planP.setBrush(NoBrush);
           planP.setPen(QPen(QColor(255,0,0), 5));
 
-        
+          // Alle Listen mit Punktdaten durchgehen!
+          QArray<int> contentArray(2);
+          contentArray.at(0) = MapContents::GliderList;
+          contentArray.at(1) = MapContents::AirportList;
+
+          for(unsigned int n = 0; n < contentArray.count(); n++)
+            {
+
           for(unsigned int loop = 0;
                 loop < _globalMapContents.getListLength(
-						        MapContents::GliderList); loop++)
+						        contentArray.at(n)); loop++)
             {
-              hitElement = _globalMapContents.getElement(MapContents::GliderList, loop);
+              hitElement = _globalMapContents.getElement(contentArray.at(n), loop);
 							
               sitePos = ((SinglePoint*)hitElement)->getMapPosition();
               
@@ -249,7 +256,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
                 }
             }
-                
+
+            }
 
           if(prePlanPos.x() >= 0)
             {
@@ -295,6 +303,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
             }
           planP.end();            
         }
+
 //      emit showTaskText(task,_globalMapMatrix.mapToWgs(point));
     }
 
@@ -607,12 +616,20 @@ void Map::mousePressEvent(QMouseEvent* event)
           /*
            *  Muss für alle Punktdaten durchgeführt werden
            */
-          for(unsigned int loop = 0;
+          QArray<int> contentArray(2);
+          contentArray.at(0) = MapContents::GliderList;
+          contentArray.at(1) = MapContents::AirportList;
+
+          for(unsigned int n = 0; n < contentArray.count(); n++)
+            {
+
+
+            for(unsigned int loop = 0;
               loop < _globalMapContents.getListLength(
-						      MapContents::GliderList); loop++)
+						      contentArray.at(n)); loop++)
             {
               hitElement = (SinglePoint*)_globalMapContents.getElement(
-								       MapContents::GliderList, loop);
+								       contentArray.at(n), loop);
 							
               sitePos = hitElement->getMapPosition();
 
@@ -626,16 +643,23 @@ void Map::mousePressEvent(QMouseEvent* event)
                   // im Bereich eines WP
                   dX_old = dX;
                   dY_old = dY;
+
                   
                   if(planning == 1)
                     {
-                      if(!taskPointList.isEmpty() &&
-                         hitElement->getPosition().x() == taskPointList.getLast()->projP.x())
+                      if(!taskPointList.isEmpty() && event->state() == QEvent::ControlButton)
                         {
                           // gleicher Punkt --> löschen
-                          warning("lösche Punkt");
-                          taskPointList.removeLast();
-                          pixPlan.fill(white);
+                          for(unsigned int n = 0; n < taskPointList.count(); n++)
+                            {
+                               if(hitElement->getPosition().x() == taskPointList.at(n)->projP.x() &&
+                                  hitElement->getPosition().y() == taskPointList.at(n)->projP.y())
+                                 {
+                                   warning("lösche Punkt %d", n);
+                                   taskPointList.remove(n);
+                                   pixPlan.fill(white);
+                                 }
+                            }
                         }
                       else
                         {
@@ -708,10 +732,13 @@ void Map::mousePressEvent(QMouseEvent* event)
                 }
             }
 
+            } // ende for Array
+
         }
     }
   else if(event->button() == RightButton)
     {
+
 //      warning(" -> 3");
       if(planning == 1 || planning == 3)
         {

@@ -141,6 +141,10 @@ class Map : public QWidget
 
   private:
     /**
+     * functionality for the graphical Planning
+     */
+    void __graphicalPlanning();
+    /**
      * Redraws the map.
      */
     void __redrawMap();
