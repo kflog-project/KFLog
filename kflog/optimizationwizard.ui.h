@@ -10,6 +10,7 @@
 void OptimizationWizard::init()
 {
   evaluation =  new EvaluationDialog(this);
+  setWFlags(getWFlags() | WStyle_StaysOnTop); // doesn't do the trick. Evaluation Dlg is on top
   flight=(Flight*)_globalMapContents.getFlight();
   route=flight->getRoute();
   optimization = new Optimization(0, route.count(), route,progress);
