@@ -110,6 +110,9 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   bitPlanMask.resize( PIX_WIDTH, PIX_HEIGHT );
   bitFlightMask.resize( PIX_WIDTH, PIX_HEIGHT );
 
+  pixAnimate.resize(32,32);
+  pixAnimate.fill(white);
+
   airspaceRegList = new QList<QRegion>;
   airspaceRegList->setAutoDelete(true);
 
@@ -1255,6 +1258,7 @@ void Map::slotCenterToTask()
  */
 void Map::slotAnimateFlightStart()
 {
+  extern MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
   Flight *f = (Flight *)_globalMapContents.getFlight();
   if (f){
@@ -1276,13 +1280,21 @@ void Map::slotAnimateFlightStart()
       }
       break;
 		}
-		// force redraw
-		// flights will not be visible as nAnimationIndex is zero for all flights to animate.
-	  slotRedrawFlight();
+	// force redraw
+	// flights will not be visible as nAnimationIndex is zero for all flights to animate.
+	slotRedrawFlight();
 
-		// prepare the pixmap for next timeout
-		__drawFlight();
-    __showLayer();
+	// prepare the pixmap for next timeout
+	__drawFlight();
+     __showLayer();
+
+	// save what will be under the flag
+    flightPoint cP = f->getPoint(0);
+    prePos = _globalMapMatrix.map(cP.projP);
+    preAnimationPos = prePos;
+	bitBlt(&pixAnimate, 0, 0, &pixBuffer, prePos.x(), prePos.y()-32, 32, 32, CopyROP );
+	// put flag
+	bitBlt(&pixBuffer, prePos.x(), prePos.y()-32, &pixCursor2 );
 
     // 50ms multi-shot timer
     timerAnimate->start( 50, FALSE );
@@ -1322,33 +1334,27 @@ void Map::slotAnimateFlightTimeout()
       break;
 		}
       //write info from current point on statusbar
-      cP = f->getPoint(f->getAnimationIndex());
-      emit showFlightPoint(_globalMapMatrix.map(cP.projP), cP);
+      cP = f->getPoint((f->getAnimationIndex()));
+      prePos = _globalMapMatrix.map(cP.projP);
+
+      emit showFlightPoint(prePos, cP);
+
+      // erase prev indicator-flag
+      bitBlt(&pixBuffer, preAnimationPos.x(), preAnimationPos.y()-32, &pixAnimate);
+
+    	// redraw flight up to this point, blt the pixmap onto the already created pixmap
+      __drawFlight();
+      pixFlight.setMask(bitFlightMask);
+      bitBlt(&pixBuffer, 0, 0, &pixFlight);
+
+      //save for next timeout
+      bitBlt(&pixAnimate, 0, 0, &pixBuffer, prePos.x(), prePos.y()-32, 32, 32, CopyROP);
+      preAnimationPos = prePos;
+
+      // add indicator-flag
+      bitBlt(&pixBuffer, prePos.x(), prePos.y()-32, &pixCursor2);
   }
-	// redraw flight up to this point, blt the pixmap onto the already created pixmap
-	// and force the repaint of the map.
-  __drawFlight();
-
-  pixFlight.setMask(bitFlightMask);
-  bitBlt(&pixBuffer, 0, 0, &pixFlight);
-
-
-/*
-  if ((index = f->searchGetNextPoint(f->getAnimationIndex()-1, cP)) != -1){
-    prePos = _globalMapMatrix.map(cP.projP);
-    if (index == 1){
-			bitBlt(&pixUnderLastCursor, 0, 0, &pixBuffer, prePos.x()-50, prePos.y()-50, 75, 75, CopyROP );			
-		  prevP = cP;
-    }
-		if  (index >= 1)
-	    bitBlt(&pixBuffer, prePos.x()-50, prePos.y()-50, &pixUnderLastCursor, 0, 0, 75, 75, CopyROP );
-		bitBlt(&pixUnderLastCursor, 0, 0, &pixBuffer, prePos.x()-50, prePos.y()-50, 75, 75, CopyROP );
-    pixFlight.setMask(bitFlightMask);
-		prevP = cP;
-		bitBlt(&pixBuffer, prePos.x()-32, prePos.y()-32, &pixCursor1);
-	}
-
-*/	
+  // force paint event
   paintEvent();
 
 	// if one of the flights still is active, bDone will be false

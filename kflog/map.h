@@ -188,6 +188,7 @@ class Map : public QWidget
     QPixmap pixCursorBuffer2;
     QPixmap pixCursor1;
     QPixmap pixCursor2;
+    QPixmap pixAnimate;
     /**
      * Contains the grid, needed as the basis.
      */
@@ -230,6 +231,7 @@ class Map : public QWidget
     /** */
     QPoint prePos;
     QPoint prePlanPos;
+    QPoint preAnimationPos;
     QPoint preCur1;
     QPoint preCur2;
     int preIndex;
