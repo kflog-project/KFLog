@@ -193,8 +193,8 @@ void Waypoints::slotCopy2Catalog(int id){
   if (item != 0) {
     QString tmp = item->text(colName);
     wpt=waypointCatalogs.current()->wpList.find(tmp);
-    waypointCatalogs.at(id)->wpList.insertItem(new Waypoint(wpt));
-    waypointCatalogs.at(id)->modified=true;
+    if (waypointCatalogs.at(id)->wpList.insertItem(new Waypoint(wpt)))
+      waypointCatalogs.at(id)->modified=true;
   }
   
 }
@@ -208,11 +208,13 @@ void Waypoints::slotMove2Catalog(int id){
   
   if (item != 0) {
     QString tmp = item->text(colName);
-    wpt=waypointCatalogs.current()->wpList.take(tmp);
-    waypointCatalogs.current()->modified = true;
-    waypointCatalogs.at(id)->wpList.insertItem(wpt);
-    waypointCatalogs.at(id)->modified=true;
-    delete item;
+    wpt=waypointCatalogs.current()->wpList.find(tmp);
+    if (waypointCatalogs.at(id)->wpList.insertItem(new Waypoint(wpt))) {
+      waypointCatalogs.current()->wpList.remove(tmp);
+      waypointCatalogs.current()->modified = true;
+      waypointCatalogs.at(id)->modified = true;
+      delete item;
+    }      
   }
 
 }
