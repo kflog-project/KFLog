@@ -185,7 +185,6 @@ class Map : public QWidget
     QPoint prePos;
     QPoint preCur1;
     QPoint preCur2;
-    int preIndex;
     /**
      * Contains the regions of all visible airspaces. The list is needed to
      * find the airspace-data when the users selects a airspace in the map.

@@ -149,13 +149,11 @@ void Map::mouseMoveEvent(QMouseEvent* event)
     {
       emit showFlightPoint(_globalMapMatrix.mapToWgs(event->pos()), cP);
       prePos = _globalMapMatrix.map(cP.projP);
-      preIndex = index;
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
     }
   else
     {
       emit showPoint(_globalMapMatrix.mapToWgs(event->pos()));
-
       prePos.setX(-50);
       prePos.setY(-50);
     }
@@ -825,9 +823,11 @@ void Map::keyPressEvent( QKeyEvent* event)
   extern MapContents _globalMapContents;
   struct flightPoint cP;
   int index;
+  int preindex;
 
   // is log loaded and point selected with mouse?
   if (prePos.x() >= 0){
+    preindex = _globalMapContents.searchFlightPoint(prePos, cP);
   	switch ( event->key() ){
 			/**
 			 * Single-step
@@ -836,10 +836,9 @@ void Map::keyPressEvent( QKeyEvent* event)
        	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
  	   		  					 prePos.x() - 20, prePos.y() - 20, 40, 40);
 		    // get the next point, preIndex now holds last index
-				if ((index = _globalMapContents.searchGetNextFlightPoint(preIndex, cP)) != -1){
+				if ((index = _globalMapContents.searchGetNextFlightPoint(preindex, cP)) != -1){
           emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
           prePos = _globalMapMatrix.map(cP.projP);
-					preIndex = index;
           bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
 				}
 				event->accept();	// set by default really
@@ -848,10 +847,9 @@ void Map::keyPressEvent( QKeyEvent* event)
   	   	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
     								 prePos.x() - 20, prePos.y() - 20, 40, 40);
 		    // get the next point, preIndex now holds last index
-				if ((index = _globalMapContents.searchGetPrevFlightPoint(preIndex, cP)) != -1){
+				if ((index = _globalMapContents.searchGetPrevFlightPoint(preindex, cP)) != -1){
           emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
           prePos = _globalMapMatrix.map(cP.projP);
-					preIndex = index;
           bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
 				}
 				event->accept();	// set by default really
@@ -863,10 +861,9 @@ void Map::keyPressEvent( QKeyEvent* event)
   	   	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
     								 prePos.x() - 20, prePos.y() - 20, 40, 40);
 		    // get the next point, preIndex now holds last index
-				if ((index = _globalMapContents.searchStepNextFlightPoint(preIndex, cP, 20)) != -1){
+				if ((index = _globalMapContents.searchStepNextFlightPoint(preindex, cP, 20)) != -1){
           emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
           prePos = _globalMapMatrix.map(cP.projP);
-					preIndex = index;
           bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
 				}
 				event->accept();	// set by default really
@@ -875,10 +872,9 @@ void Map::keyPressEvent( QKeyEvent* event)
   	   	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
     								 prePos.x() - 20, prePos.y() - 20, 40, 40);
 		    // get the next point, preIndex now holds last index
-				if ((index = _globalMapContents.searchStepPrevFlightPoint(preIndex, cP, 20)) != -1){
+				if ((index = _globalMapContents.searchStepPrevFlightPoint(preindex, cP, 20)) != -1){
           emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
           prePos = _globalMapMatrix.map(cP.projP);
-					preIndex = index;
           bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
 				}
 				event->accept();	// set by default really
