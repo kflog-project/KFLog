@@ -678,7 +678,7 @@ type=SOURCE
 [kflog/kfrgcs/gcs.desktop]
 dist=true
 install=true
-install_location=$$(kde_datadir)/kflog/
+install_location=$$(kde_datadir)/kflog/logger/gcs.desktop
 type=DATA
 
 [kflog/kfrgcs/grecord.cpp]

@@ -18,10 +18,10 @@ libkfrgcs_la_SOURCES = dbbconv.cpp flightrecorder.cpp grecord.cpp utils.cpp vlco
 EXTRA_DIST = vlapi2.cpp vlapi2.h vlapihlp.cpp vlapisys_linux.cpp vlconv.cpp utils.cpp grecord.cpp flightrecorder.cpp dbbconv.cpp dbbconv.h grecord.h utils.h vla_support.h vlapierr.h vlapihlp.h vlapityp.h vlconv.h README gcs.desktop 
 
 install-data-local:
-	$(mkinstalldirs) $(kde_datadir)/kflog/
-	$(INSTALL_DATA) $(srcdir)/gcs.desktop $(kde_datadir)/kflog/
+	$(mkinstalldirs) $(kde_datadir)/kflog/logger/
+	$(INSTALL_DATA) $(srcdir)/gcs.desktop $(kde_datadir)/kflog/logger/gcs.desktop
 
 uninstall-local:
-	-rm -f $(kde_datadir)/kflog/
+	-rm -f $(kde_datadir)/kflog/logger/gcs.desktop
 
 ####### kdevelop will overwrite this part!!! (end)############
