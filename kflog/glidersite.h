@@ -82,7 +82,7 @@ class GliderSite : public RadioPoint
      * @param  isText  Shows, if the text of some mapelements should
      *                 be printed.
      */
-    virtual void printMapElement(QPainter* printP, bool isText) const;
+    virtual void printMapElement(QPainter* printP, bool isText);
 
   private:
     /**

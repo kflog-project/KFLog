@@ -70,7 +70,7 @@ class SinglePoint : public BaseMapElement
      * @param  isText  Shows, if the text of some mapelements should
      *                 be printed.
      */
-    virtual void printMapElement(QPainter* printP, bool isText) const;
+    virtual void printMapElement(QPainter* printP, bool isText);
     /**
      * @return the projected position of the element.
      */

@@ -56,7 +56,7 @@ QString GliderSite::getInfoString() const
   return text;
 }
 
-void GliderSite::printMapElement(QPainter* printPainter, bool isText) const
+void GliderSite::printMapElement(QPainter* printPainter, bool isText)
 {
   if(!__isVisible()) return;
 

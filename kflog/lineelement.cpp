@@ -32,7 +32,7 @@ LineElement::~LineElement()
 
 }
 
-void LineElement::printMapElement(QPainter* printPainter, bool isText) const
+void LineElement::printMapElement(QPainter* printPainter, bool isText)
 {
   if(!glConfig->isPrintBorder(typeID)) return;
 

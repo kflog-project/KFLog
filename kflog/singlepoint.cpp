@@ -34,7 +34,7 @@ SinglePoint::~SinglePoint()
 
 }
 
-void SinglePoint::printMapElement(QPainter* printPainter, bool isText) const
+void SinglePoint::printMapElement(QPainter* printPainter, bool isText)
 {
   if(!__isVisible()) return;
 

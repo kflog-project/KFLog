@@ -73,7 +73,7 @@ class RadioPoint : public SinglePoint
      * @param  isText  Shows, if the text of some mapelements should
      *                 be printed.
      */
-    virtual void printMapElement(QPainter* printPainter, bool isText) const;
+    virtual void printMapElement(QPainter* printPainter, bool isText);
 
     /* return frequency */
     virtual QString getFrequency() const;
