@@ -486,10 +486,10 @@ void KFLogApp::initView()
    * dock target, dock side, relation target/this (in percent)
    */
   dataViewDock->manualDock( mapViewDock, KDockWidget::DockRight, 71 );
-  mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 75 );
+  tasksDock->manualDock(dataViewDock, KDockWidget::DockBottom, 50);
+  mapControlDock->manualDock( tasksDock, KDockWidget::DockBottom, 75 );
   waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 71);
-  tasksDock->manualDock(waypointsDock, KDockWidget::DockRight, 50);
-  legendDock->manualDock(mapViewDock, KDockWidget::DockRight, 50);
+  legendDock->manualDock(waypointsDock, KDockWidget::DockRight, 90);
   
   connect(map, SIGNAL(changed(QSize)), mapControl,
       SLOT(slotShowMapData(QSize)));
