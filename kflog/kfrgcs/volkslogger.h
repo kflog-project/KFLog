@@ -1,6 +1,6 @@
 /***********************************************************************
 **
-**   soaringpilot.h
+**   volkslogger.h
 **
 **   This file is part of KFLog2.
 **
@@ -15,26 +15,22 @@
 **
 ***********************************************************************/
 
-#ifndef SOARINGPILOT_H
-#define SOARINGPILOT_H
-
-#include <qstring.h>
+#ifndef VOLKSLOGGER_H
+#define VOLKSLOGGER_H
 
 #include <../frstructs.h>
 #include <../flighttask.h>
 #include <../flightrecorderpluginbase.h>
 
-/**Implementation for SoaringPilot.
-
+/**
   *@author Harald Maier
   */
 
-class SoaringPilot:public FlightRecorderPluginBase
+class Volkslogger : public FlightRecorderPluginBase
 {
 public: 
-  SoaringPilot();
-  ~SoaringPilot();
-
+  Volkslogger();
+  ~Volkslogger();
   /**
    * Returns the name of the lib.
    */
@@ -91,17 +87,8 @@ public:
    * Write waypoints to recorder
    */
   virtual int writeWaypoints(QList<Waypoint> *waypoints);
-
-private: // Private methods
-  /** write a file like structure to the device */
-  int writeFile(QStringList &file);
-  /** read a file like structure from the device */
-  int readFile(QStringList &file);
-  int coordToDegree(QString &s);
-  QString degreeToDegMin(int d, bool isLat);
-  QString degreeToDegMinSec(int d, bool isLat);
-  int feetToMeter(QString &s);
-  QString meterToFeet(int m);
+private:
+  bool haveDatabase;
 };
 
 #endif

@@ -781,7 +781,7 @@ install_location=
 type=SOURCE
 
 [kflog/kfrgcs/Makefile.am]
-files=kflog/kfrgcs/dbbconv.cpp,kflog/kfrgcs/dbbconv.h,kflog/kfrgcs/flightrecorder.cpp,kflog/kfrgcs/gcs.desktop,kflog/kfrgcs/grecord.cpp,kflog/kfrgcs/grecord.h,kflog/kfrgcs/README,kflog/kfrgcs/utils.cpp,kflog/kfrgcs/utils.h,kflog/kfrgcs/vla_support.h,kflog/kfrgcs/vlapi2.cpp,kflog/kfrgcs/vlapi2.h,kflog/kfrgcs/vlapierr.h,kflog/kfrgcs/vlapihlp.cpp,kflog/kfrgcs/vlapihlp.h,kflog/kfrgcs/vlapisys_linux.cpp,kflog/kfrgcs/vlapityp.h,kflog/kfrgcs/vlconv.cpp,kflog/kfrgcs/vlconv.h
+files=kflog/kfrgcs/dbbconv.cpp,kflog/kfrgcs/dbbconv.h,kflog/kfrgcs/flightrecorder.cpp,kflog/kfrgcs/gcs.desktop,kflog/kfrgcs/grecord.cpp,kflog/kfrgcs/grecord.h,kflog/kfrgcs/README,kflog/kfrgcs/utils.cpp,kflog/kfrgcs/utils.h,kflog/kfrgcs/vla_support.h,kflog/kfrgcs/vlapi2.cpp,kflog/kfrgcs/vlapi2.h,kflog/kfrgcs/vlapierr.h,kflog/kfrgcs/vlapihlp.cpp,kflog/kfrgcs/vlapihlp.h,kflog/kfrgcs/vlapisys_linux.cpp,kflog/kfrgcs/vlapityp.h,kflog/kfrgcs/vlconv.cpp,kflog/kfrgcs/vlconv.h,kflog/kfrgcs/volkslogger.cpp,kflog/kfrgcs/volkslogger.h
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=kfrgcs
 sub_dirs=
@@ -901,6 +901,18 @@ install=false
 install_location=
 type=HEADER
 
+[kflog/kfrgcs/volkslogger.cpp]
+dist=true
+install=false
+install_location=
+type=SOURCE
+
+[kflog/kfrgcs/volkslogger.h]
+dist=true
+install=false
+install_location=
+type=HEADER
+
 [kflog/kfrgmn/Makefile.am]
 files=kflog/kfrgmn/flightrecorder.cpp,kflog/kfrgmn/flightrecorder.h,kflog/kfrgmn/garmin.cpp,kflog/kfrgmn/garmin.h,kflog/kfrgmn/garmintypes.h,kflog/kfrgmn/gmn.desktop,kflog/kfrgmn/README
 sharedlib_LDFLAGS=-version-info 0:0:0
@@ -958,7 +970,7 @@ install_location=
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=kfrxcu
 sub_dirs=
-type=static_library
+type=DATA
 
 [kflog/kfrxcu/cumulus.cpp]
 dist=true
@@ -992,8 +1004,8 @@ type=SOURCE
 
 [kflog/kfrxcu/xcu.desktop]
 dist=true
-install=false
-install_location=
+install=true
+install_location=$$(kde_datadir)/kflog/logger/xcu.desktop
 type=DATA
 
 [kflog/kfrxsp/Makefile.am]

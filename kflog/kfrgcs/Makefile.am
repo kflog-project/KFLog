@@ -12,10 +12,10 @@ libkfrgcs_la_LDFLAGS = -version-info 0:0:0
 
 libkfrgcs_la_METASOURCES = AUTO
 
-libkfrgcs_la_SOURCES = vlconv.cpp vlapisys_linux.cpp vlapihlp.cpp vlapi2.cpp utils.cpp grecord.cpp flightrecorder.cpp dbbconv.cpp 
+libkfrgcs_la_SOURCES = volkslogger.cpp vlconv.cpp vlapisys_linux.cpp vlapihlp.cpp vlapi2.cpp utils.cpp grecord.cpp flightrecorder.cpp dbbconv.cpp 
 
 
-EXTRA_DIST = dbbconv.cpp dbbconv.h flightrecorder.cpp gcs.desktop grecord.cpp grecord.h README utils.cpp utils.h vla_support.h vlapi2.cpp vlapi2.h vlapierr.h vlapihlp.cpp vlapihlp.h vlapisys_linux.cpp vlapityp.h vlconv.cpp vlconv.h 
+EXTRA_DIST = dbbconv.cpp dbbconv.h flightrecorder.cpp gcs.desktop grecord.cpp grecord.h README utils.cpp utils.h vla_support.h vlapi2.cpp vlapi2.h vlapierr.h vlapihlp.cpp vlapihlp.h vlapisys_linux.cpp vlapityp.h vlconv.cpp vlconv.h volkslogger.cpp volkslogger.h 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_datadir)/kflog/logger/

@@ -56,10 +56,10 @@ void releaseTTY(int signal)
 SoaringPilot::SoaringPilot()
 {
   //Set Flightrecorders capabilities. Defaults are 0 and false.
-  _capabilities.maxNrTasks = 0;             //maximum number of tasks
-  _capabilities.maxNrWaypoints = 0;         //maximum number of waypoints
-  _capabilities.maxNrWaypointsPerTask = 10; //maximum number of waypoints per task
-  _capabilities.maxNrPilots = 0;            //maximum number of pilots
+  _capabilities.maxNrTasks = (unsigned int) -1;             //maximum number of tasks
+  _capabilities.maxNrWaypoints = (unsigned int) -1;         //maximum number of waypoints
+  _capabilities.maxNrWaypointsPerTask = (unsigned int) -1; //maximum number of waypoints per task
+  _capabilities.maxNrPilots = 1;            //maximum number of pilots
 
   _capabilities.supDlWaypoint = true;      //supports downloading of waypoints?
   _capabilities.supUlWaypoint = true;      //supports uploading of waypoints?
@@ -78,117 +78,6 @@ SoaringPilot::~SoaringPilot()
 {
 }
 
-/** No descriptions */
-int SoaringPilot::openLogger(const char *port, int baud)
-{
-  speed_t speed;
-
-  /* eventuell als Mode zusätzlich O_NONBLOCK ??? */
-  portID = open(port, O_RDWR | O_NOCTTY);
-
-  if(portID != -1) {
-    //
-    // Before we change any port-settings, we must establish a
-    // signal-handler, which is used to restore the port-settings
-    // after terminating the programm.
-    //    Because a SIGKILL-signal removes the programm immediately,
-    // the status of the port will be undefined.
-    //
-    struct sigaction sact;
-
-    sact.sa_handler = releaseTTY;
-    sigaction(SIGHUP, &sact, NULL);
-    sigaction(SIGINT, &sact, NULL);
-    sigaction(SIGPIPE, &sact, NULL);
-    sigaction(SIGTERM, &sact, NULL);
-
-    ////////////////////////////////////////////////////////////////////////
-    //
-    // port-configuration
-    //
-
-    // reading the current port-settings
-    tcgetattr(portID, &newTermEnv);
-
-    // storing the port-settings to restore them ...
-    oldTermEnv = newTermEnv;
-
-    if(baud >= 115200) speed = B115200;
-    else if(baud >= 57600) speed = B57600;
-    else if(baud >= 38400) speed = B38400;
-    else if(baud >= 19200) speed = B19200;
-    else if(baud >=  9600) speed = B9600;
-    else if(baud >=  4800) speed = B4800;
-    else if(baud >=  2400) speed = B2400;
-    else if(baud >=  1800) speed = B1800;
-    else if(baud >=  1200) speed = B1200;
-    else if(baud >=   600) speed = B600;
-    else if(baud >=   300) speed = B300;
-    else if(baud >=   200) speed = B200;
-    else if(baud >=   150) speed = B150;
-    else if(baud >=   110) speed = B110;
-    else speed = B75;
-
-    cfsetospeed(&newTermEnv, speed);
-    cfsetispeed(&newTermEnv, speed);
-
-    // input flags  
-    newTermEnv.c_iflag |= CREAD;   // (wichtig!)
-    newTermEnv.c_iflag |= CLOCAL;  // (wichtig!)
-    newTermEnv.c_iflag &= ~IGNCR;  // (wichtig!)
-    newTermEnv.c_iflag &= ~ISTRIP; // dont strip
-    newTermEnv.c_iflag &= ~ICRNL; // don't change newline (\n) in carriage-return (\r)
-    newTermEnv.c_iflag &= ~INLCR; // don't change carriage-return (\r) in newline (\n)
-    newTermEnv.c_iflag &= ~IXON; // disable XON flow-control on output  
-    newTermEnv.c_iflag &= ~IXOFF; // disable XON flow-control on intput
-    newTermEnv.c_iflag |= IGNBRK; // ignore break
-    newTermEnv.c_iflag &= ~BRKINT; // dont signal break
-
-    // control flags
-    newTermEnv.c_cflag |= CRTSCTS; // Hardware control on output
-    newTermEnv.c_cflag |= CS8; // Bytesize = 8
-    newTermEnv.c_cflag &= ~CSTOPB; // 1 stop-bit
-    newTermEnv.c_cflag &= ~PARENB; // no parity
-
-    // control characters
-    newTermEnv.c_cc[VMIN] = 0; // don't wait for a character
-    newTermEnv.c_cc[VTIME] = 1; // wait at least 1 msec.
-
-    // output flags
-    newTermEnv.c_oflag &= ~OPOST; // no post processing
-    newTermEnv.c_oflag &= ~ONLCR; // don't change newline (\n) in carriage-return (\r)
-    newTermEnv.c_oflag &= ~OCRNL; // don't change carriage-return (\r) in newline (\n)
-    
-    // line flags
-    newTermEnv.c_lflag &= ~ICANON; // enable raw-mode (diable canonical-mode)
-    newTermEnv.c_lflag &= ~IEXTEN; // no extended processing
-    newTermEnv.c_lflag &= ~ISIG; // don't interpret INTR, QUIT, SUSP or DSUSP
-    newTermEnv.c_lflag &= ~ECHO;// echo input characters
-
-    // Activating the port-settings
-    tcsetattr(portID, TCSANOW, &newTermEnv);
-    _isConnected=true;
-    return 1;
-  }
-  else {
-    _isConnected=false;
-    return 0;
-  }
-}
-
-/** No descriptions */
-int SoaringPilot::closeLogger()
-{
-  if (portID != -1) {
-    tcsetattr(portID, TCSANOW, &oldTermEnv);
-    _isConnected=false;  
-    return 1;
-  }
-  else {
-    return 0;
-  }
-}
-
 /** write a file like structure to the device */
 int SoaringPilot::writeFile(QStringList &file)
 {
@@ -200,11 +89,11 @@ int SoaringPilot::writeFile(QStringList &file)
     p = *line;
     for (unsigned int len = 0; len < (*line).length(); len++) {
       if (write(portID, p + len, sizeof(char)) != 1) {
-        return 0;
+        return FR_ERROR;
       }
     }
   }
-  return 1;
+  return FR_OK;
 }
 
 /** read a file like structure from the device */
@@ -237,220 +126,7 @@ int SoaringPilot::readFile(QStringList &file)
       }
     }
   }
-  return 1;
-}
-
-/** No descriptions */
-int SoaringPilot::downloadWaypoints(QList<Waypoint> *waypoints)
-{
-  QStringList file;
-  QStringList::iterator line;
-  QStringList tokens;
-  QString tmp;
-  int ret;
-  Waypoint *frWp;
-
-  //** -------------------------------------------------------------
-  //**      SOARINGPILOT Version 1.8.8 Waypoints
-  //**      Date: 20 Feb 2003
-  //** -------------------------------------------------------------
-  //1,48:00.000N,009:00.000E,590F,ATLSFMH,KFLOG,Remark,000000000000000000
-  ret = readFile(file);
-  if (ret) {
-    for (line = file.begin(); line != file.end(); ++line) {
-      tokens = QStringList::split(",", *line, true);
-      if (tokens.size() >= 6) {
-        frWp = new Waypoint(tokens[5].stripWhiteSpace());
-        frWp->origP.setPos(coordToDegree(tokens[1]), coordToDegree(tokens[2]));
-        frWp->elevation = feetToMeter(tokens[3]);
-
-        tmp = tokens[4];
-        frWp->isLandable = (tmp.contains('A') > 0) || (tmp.contains('L') > 0);
-        if (frWp->isLandable) {
-          frWp->surface = tmp.contains('A') > 0 ? Airport::Asphalt : Airport::Grass;
-          frWp->type = tmp.contains('A') > 0 ? BaseMapElement::Airfield : BaseMapElement::Glidersite;
-        }
-        else {
-          frWp->surface = -1;
-          frWp->type = -1;
-        }
-
-        frWp->comment = tokens[6];
-
-        waypoints->append(frWp);
-      }
-    }
-  }
-  return ret;
-}
-
-/** No descriptions */
-int SoaringPilot::uploadWaypoints(QList<Waypoint> *waypoints)
-{
-  QStringList file;
-  QString tmp, typ;
-  Waypoint *frWp;
-  int line = 1;
-  //** -------------------------------------------------------------
-  //**      SOARINGPILOT Version 1.8.8 Waypoints
-  //**      Date: 20 Feb 2003
-  //** -------------------------------------------------------------
-  //1,48:00.000N,009:00.000E,590F,ATLSFMH,KFLOG,Remark,000000000000000000
-  for (frWp = waypoints->first(); frWp != 0; frWp = waypoints->next()) {
-    typ = "";
-    if (frWp->isLandable) {
-      switch(frWp->type) {
-        case BaseMapElement::Airfield:
-        case BaseMapElement::Airport:
-        case BaseMapElement::IntAirport:
-        case BaseMapElement::MilAirport:
-        case BaseMapElement::CivMilAirport:
-          typ += "AL";
-          break;
-        case BaseMapElement::Glidersite:
-          typ += "L";
-          break;
-      }
-    }
-    tmp.sprintf("%d,%s,%s,%s,%s,%s,%s\r\n", 
-                line++, 
-                degreeToDegMin(frWp->origP.lat(), true).latin1(),
-                degreeToDegMin(frWp->origP.lon(), false).latin1(),
-                meterToFeet(frWp->elevation).latin1(),
-                typ.latin1(),
-                frWp->name.latin1(),
-                frWp->comment.latin1());
-    file.append(tmp);
-  }
-  return writeFile(file);
-}
-
-int SoaringPilot::downloadTasks(QList<FlightTask> *tasks)
-{
-  QStringList file;
-  QStringList::iterator line;
-  QStringList tokens;
-  QString tmp;
-  QString nam;
-  int ret;
-  Waypoint *wp;
-  QList <Waypoint> wpList;
-  unsigned int nrPoints;
-  bool takeoff, landing;
-  
-  // ** -------------------------------------------------------------
-  // **      SOARINGPILOT Version 1.8.8 Tasks
-  // **      Date: 22 Feb 2003
-  // ** -------------------------------------------------------------
-  // TS,NewTsk1,6,TL
-  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
-  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
-  // TW,48:06:43.20N,009:45:49.80E,1903F,BIBERA,
-  // TW,48:17:16.02N,009:27:40.98E,2323F,HAYING,
-  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
-  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
-  // TE
-  ret = readFile(file);
-  if (ret) {
-    for (line = file.begin(); line != file.end(); ++line) {
-      tokens = QStringList::split(",", *line, true);
-      warning(*line);
-
-      if (tokens.size() >= 3 && tokens[0] == "TS") {
-        wpList.clear();
-        nam = tokens[1];
-        nrPoints = tokens[2].toInt();
-        // check for takeoff and landing
-        takeoff = (tokens.size() >= 4 && tokens[3].contains("T"));
-        landing = (tokens.size() >= 4 && tokens[3].contains("L"));
-
-        while (++line != file.end()) {
-          warning(*line);
-          tokens = QStringList::split(",", *line, true);
-          if (tokens.size() >= 5 && tokens[0] == "TW") {
-            wp = new Waypoint;
-            wp->name = tokens[4];
-            wp->origP.setPos(coordToDegree(tokens[1]), coordToDegree(tokens[2]));
-            wp->elevation = feetToMeter(tokens[3]);
-            wp->type = FlightTask::RouteP;
-            wpList.append(wp);
-          }
-          else if (tokens.size() >= 1 && tokens[0] == "TE") {
-            // check with declaration
-            if (nrPoints != wpList.count()) {
-              return 0;
-            }
-            break;
-          }
-        }
-
-        if (!takeoff) {// append takeoff, copy of first point
-          wpList.prepend(new Waypoint(wpList.first()));
-        }
-        if (!landing) {// append landing, copy of last point
-          wpList.append(new Waypoint(wpList.last()));
-        }
-
-        nrPoints = wpList.count();
-        if (nrPoints >= 2) {
-          wpList.at(nrPoints - 1)->type = FlightTask::End;
-          wpList.at(nrPoints - 2)->type = FlightTask::Landing;
-          wpList.at(1)->type = FlightTask::Begin;
-          wpList.at(0)->type = FlightTask::TakeOff;
-        }
-
-        tasks->append(new FlightTask(wpList, true, nam));
-      }
-    }
-  }
-  return ret;
-}
-
-int SoaringPilot::uploadTasks(QList<FlightTask> *tasks)
-{
-  QStringList file;
-  QString tmp, typ;
-  FlightTask *task;
-  Waypoint *wp;
-  QList <Waypoint> wpList;
-  int nrPoints;
-  // ** -------------------------------------------------------------
-  // **      SOARINGPILOT Version 1.8.8 Tasks
-  // **      Date: 22 Feb 2003
-  // ** -------------------------------------------------------------
-  // TS,NewTsk1,6,TL
-  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
-  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
-  // TW,48:06:43.20N,009:45:49.80E,1903F,BIBERA,
-  // TW,48:17:16.02N,009:27:40.98E,2323F,HAYING,
-  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
-  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
-  // TE
-
-  for (task = tasks->first(); task != 0; task = tasks->next()) {
-    wpList = task->getWPList();
-    nrPoints = wpList.count();
-    if (nrPoints >= 4) {
-      // complete task with takeoff and landing
-      typ = "TL";
-    }
-    else {
-      typ = "";
-    }
-    tmp.sprintf("TS,%s,%d,%s\r\n", task->getFileName().latin1(), nrPoints, typ.latin1());
-    file.append(tmp);
-    for (wp = wpList.first(); wp != 0; wp = wpList.next()) {
-      tmp.sprintf("TW,%s,%s,%s,%s\r\n", 
-                  degreeToDegMinSec(wp->origP.lat(), true).latin1(),
-                  degreeToDegMinSec(wp->origP.lon(), false).latin1(),
-                  meterToFeet(wp->elevation).latin1(),
-                  wp->name.latin1());
-      file.append(tmp);
-    }
-    file.append("TE\r\n");
-  }
-
-  return writeFile(file);
+  return FR_OK;
 }
 
 /** No descriptions */
@@ -551,21 +227,24 @@ QString SoaringPilot::meterToFeet(int m)
 /**
  * Returns the name of the lib.
  */
-QString SoaringPilot::getLibName() {
+QString SoaringPilot::getLibName()
+{
   return "libkfrxsp"; 
 }
 
 /**
  * Returns the transfermode this plugin supports.
  */
-FlightRecorderPluginBase::TransferMode SoaringPilot::getTransferMode() {
+FlightRecorderPluginBase::TransferMode SoaringPilot::getTransferMode()
+{
   return FlightRecorderPluginBase::serial;
 }
 
 /**
  * Returns a list of recorded flights in this device.
  */
-int SoaringPilot::getFlightDir(QList<FRDirEntry>*) {
+int SoaringPilot::getFlightDir(QList<FRDirEntry>*)
+{
   return FR_OK;
   /* André: I don't quite get this one. Shouldn't this return some FRDirEntries? */
 }
@@ -573,58 +252,355 @@ int SoaringPilot::getFlightDir(QList<FRDirEntry>*) {
 /**
  *
  */
-int SoaringPilot::downloadFlight(int flightID, int secMode, QString fileName) {
+int SoaringPilot::downloadFlight(int flightID, int secMode, QString fileName)
+{
   return FR_OK;
 }
 
 /**
  * get recorder info serial id
  */
-QString SoaringPilot::getRecorderSerialNo() {
+QString SoaringPilot::getRecorderSerialNo()
+{
   return "000";
 }
 
 /**
  * Opens the recorder for serial communication.
  */
-int SoaringPilot::openRecorder(const QString portName, int baud) {
-  
-  return this->openLogger(portName.latin1(), baud); //using Latin 1 should be save, because the portname will not contain unicode
+int SoaringPilot::openRecorder(const QString portName, int baud)
+{
+  speed_t speed;
+
+  /* eventuell als Mode zusätzlich O_NONBLOCK ??? */
+  portID = open(portName, O_RDWR | O_NOCTTY);
+
+  if(portID != -1) {
+    //
+    // Before we change any port-settings, we must establish a
+    // signal-handler, which is used to restore the port-settings
+    // after terminating the programm.
+    //    Because a SIGKILL-signal removes the programm immediately,
+    // the status of the port will be undefined.
+    //
+    struct sigaction sact;
+
+    sact.sa_handler = releaseTTY;
+    sigaction(SIGHUP, &sact, NULL);
+    sigaction(SIGINT, &sact, NULL);
+    sigaction(SIGPIPE, &sact, NULL);
+    sigaction(SIGTERM, &sact, NULL);
+
+    ////////////////////////////////////////////////////////////////////////
+    //
+    // port-configuration
+    //
+
+    // reading the current port-settings
+    tcgetattr(portID, &newTermEnv);
+
+    // storing the port-settings to restore them ...
+    oldTermEnv = newTermEnv;
+
+    if(baud >= 115200) speed = B115200;
+    else if(baud >= 57600) speed = B57600;
+    else if(baud >= 38400) speed = B38400;
+    else if(baud >= 19200) speed = B19200;
+    else if(baud >=  9600) speed = B9600;
+    else if(baud >=  4800) speed = B4800;
+    else if(baud >=  2400) speed = B2400;
+    else if(baud >=  1800) speed = B1800;
+    else if(baud >=  1200) speed = B1200;
+    else if(baud >=   600) speed = B600;
+    else if(baud >=   300) speed = B300;
+    else if(baud >=   200) speed = B200;
+    else if(baud >=   150) speed = B150;
+    else if(baud >=   110) speed = B110;
+    else speed = B75;
+
+    cfsetospeed(&newTermEnv, speed);
+    cfsetispeed(&newTermEnv, speed);
+
+    // input flags
+    newTermEnv.c_iflag |= CREAD;   // (wichtig!)
+    newTermEnv.c_iflag |= CLOCAL;  // (wichtig!)
+    newTermEnv.c_iflag &= ~IGNCR;  // (wichtig!)
+    newTermEnv.c_iflag &= ~ISTRIP; // dont strip
+    newTermEnv.c_iflag &= ~ICRNL; // don't change newline (\n) in carriage-return (\r)
+    newTermEnv.c_iflag &= ~INLCR; // don't change carriage-return (\r) in newline (\n)
+    newTermEnv.c_iflag &= ~IXON; // disable XON flow-control on output
+    newTermEnv.c_iflag &= ~IXOFF; // disable XON flow-control on intput
+    newTermEnv.c_iflag |= IGNBRK; // ignore break
+    newTermEnv.c_iflag &= ~BRKINT; // dont signal break
+
+    // control flags
+    newTermEnv.c_cflag |= CRTSCTS; // Hardware control on output
+    newTermEnv.c_cflag |= CS8; // Bytesize = 8
+    newTermEnv.c_cflag &= ~CSTOPB; // 1 stop-bit
+    newTermEnv.c_cflag &= ~PARENB; // no parity
+
+    // control characters
+    newTermEnv.c_cc[VMIN] = 0; // don't wait for a character
+    newTermEnv.c_cc[VTIME] = 1; // wait at least 1 msec.
+
+    // output flags
+    newTermEnv.c_oflag &= ~OPOST; // no post processing
+    newTermEnv.c_oflag &= ~ONLCR; // don't change newline (\n) in carriage-return (\r)
+    newTermEnv.c_oflag &= ~OCRNL; // don't change carriage-return (\r) in newline (\n)
+
+    // line flags
+    newTermEnv.c_lflag &= ~ICANON; // enable raw-mode (diable canonical-mode)
+    newTermEnv.c_lflag &= ~IEXTEN; // no extended processing
+    newTermEnv.c_lflag &= ~ISIG; // don't interpret INTR, QUIT, SUSP or DSUSP
+    newTermEnv.c_lflag &= ~ECHO;// echo input characters
+
+    // Activating the port-settings
+    tcsetattr(portID, TCSANOW, &newTermEnv);
+    _isConnected=true;
+    return FR_OK;
+  }
+  else {
+    _isConnected=false;
+    return FR_ERROR;
+  }
 }
 
 /**
  * Closes the connection with the flightrecorder.
  */
 int SoaringPilot::closeRecorder() {
-  return this->closeLogger();
+  if (portID != -1) {
+    tcsetattr(portID, TCSANOW, &oldTermEnv);
+    _isConnected=false;
+    return FR_OK;
+  }
+
+  else {
+    return FR_ERROR;
+  }
 }
 
 /**
  * Read tasks from recorder
  */
-int SoaringPilot::readTasks(QList<FlightTask> *tasks) {
-  return this->downloadTasks(tasks);
+int SoaringPilot::readTasks(QList<FlightTask> *tasks)
+{
+  QStringList file;
+  QStringList::iterator line;
+  QStringList tokens;
+  QString tmp;
+  QString nam;
+  int ret;
+  Waypoint *wp;
+  QList <Waypoint> wpList;
+  unsigned int nrPoints;
+  bool takeoff, landing;
+
+  // ** -------------------------------------------------------------
+  // **      SOARINGPILOT Version 1.8.8 Tasks
+  // **      Date: 22 Feb 2003
+  // ** -------------------------------------------------------------
+  // TS,NewTsk1,6,TL
+  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
+  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
+  // TW,48:06:43.20N,009:45:49.80E,1903F,BIBERA,
+  // TW,48:17:16.02N,009:27:40.98E,2323F,HAYING,
+  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
+  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
+  // TE
+  ret = readFile(file);
+  if (ret == FR_OK) {
+    for (line = file.begin(); line != file.end(); ++line) {
+      tokens = QStringList::split(",", *line, true);
+      warning(*line);
+
+      if (tokens.size() >= 3 && tokens[0] == "TS") {
+        wpList.clear();
+        nam = tokens[1];
+        nrPoints = tokens[2].toInt();
+        // check for takeoff and landing
+        takeoff = (tokens.size() >= 4 && tokens[3].contains("T"));
+        landing = (tokens.size() >= 4 && tokens[3].contains("L"));
+
+        while (++line != file.end()) {
+          warning(*line);
+          tokens = QStringList::split(",", *line, true);
+          if (tokens.size() >= 5 && tokens[0] == "TW") {
+            wp = new Waypoint;
+            wp->name = tokens[4];
+            wp->origP.setPos(coordToDegree(tokens[1]), coordToDegree(tokens[2]));
+            wp->elevation = feetToMeter(tokens[3]);
+            wp->type = FlightTask::RouteP;
+            wpList.append(wp);
+          }
+          else if (tokens.size() >= 1 && tokens[0] == "TE") {
+            // check with declaration
+            if (nrPoints != wpList.count()) {
+              return 0;
+            }
+            break;
+          }
+        }
+
+        if (!takeoff) {// append takeoff, copy of first point
+          wpList.prepend(new Waypoint(wpList.first()));
+        }
+        if (!landing) {// append landing, copy of last point
+          wpList.append(new Waypoint(wpList.last()));
+        }
+
+        nrPoints = wpList.count();
+        if (nrPoints >= 2) {
+          wpList.at(nrPoints - 1)->type = FlightTask::End;
+          wpList.at(nrPoints - 2)->type = FlightTask::Landing;
+          wpList.at(1)->type = FlightTask::Begin;
+          wpList.at(0)->type = FlightTask::TakeOff;
+        }
+
+        tasks->append(new FlightTask(wpList, true, nam));
+      }
+    }
+  }
+  return ret;
 }
 
 /**
  * Write tasks to recorder
  */
-int SoaringPilot::writeTasks(QList<FlightTask> *tasks) {
-  return this->uploadTasks(tasks);
+int SoaringPilot::writeTasks(QList<FlightTask> *tasks)
+{
+  QStringList file;
+  QString tmp, typ;
+  FlightTask *task;
+  Waypoint *wp;
+  QList <Waypoint> wpList;
+  int nrPoints;
+  // ** -------------------------------------------------------------
+  // **      SOARINGPILOT Version 1.8.8 Tasks
+  // **      Date: 22 Feb 2003
+  // ** -------------------------------------------------------------
+  // TS,NewTsk1,6,TL
+  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
+  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
+  // TW,48:06:43.20N,009:45:49.80E,1903F,BIBERA,
+  // TW,48:17:16.02N,009:27:40.98E,2323F,HAYING,
+  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
+  // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
+  // TE
+
+  for (task = tasks->first(); task != 0; task = tasks->next()) {
+    wpList = task->getWPList();
+    nrPoints = wpList.count();
+    if (nrPoints >= 4) {
+      // complete task with takeoff and landing
+      typ = "TL";
+    }
+    else {
+      typ = "";
+    }
+    tmp.sprintf("TS,%s,%d,%s\r\n", task->getFileName().latin1(), nrPoints, typ.latin1());
+    file.append(tmp);
+    for (wp = wpList.first(); wp != 0; wp = wpList.next()) {
+      tmp.sprintf("TW,%s,%s,%s,%s\r\n",
+                  degreeToDegMinSec(wp->origP.lat(), true).latin1(),
+                  degreeToDegMinSec(wp->origP.lon(), false).latin1(),
+                  meterToFeet(wp->elevation).latin1(),
+                  wp->name.latin1());
+      file.append(tmp);
+    }
+    file.append("TE\r\n");
+  }
+
+  return writeFile(file);
 }
 
 /**
  * Read waypoints from recorder
  */
-int SoaringPilot::readWaypoints(QList<Waypoint> *waypoints) {
-  return this->downloadWaypoints(waypoints);
+int SoaringPilot::readWaypoints(QList<Waypoint> *waypoints)
+{
+  QStringList file;
+  QStringList::iterator line;
+  QStringList tokens;
+  QString tmp;
+  int ret;
+  Waypoint *frWp;
+
+  //** -------------------------------------------------------------
+  //**      SOARINGPILOT Version 1.8.8 Waypoints
+  //**      Date: 20 Feb 2003
+  //** -------------------------------------------------------------
+  //1,48:00.000N,009:00.000E,590F,ATLSFMH,KFLOG,Remark,000000000000000000
+  ret = readFile(file);
+  if (ret == FR_OK) {
+    for (line = file.begin(); line != file.end(); ++line) {
+      tokens = QStringList::split(",", *line, true);
+      if (tokens.size() >= 6) {
+        frWp = new Waypoint(tokens[5].stripWhiteSpace());
+        frWp->origP.setPos(coordToDegree(tokens[1]), coordToDegree(tokens[2]));
+        frWp->elevation = feetToMeter(tokens[3]);
+
+        tmp = tokens[4];
+        frWp->isLandable = (tmp.contains('A') > 0) || (tmp.contains('L') > 0);
+        if (frWp->isLandable) {
+          frWp->surface = tmp.contains('A') > 0 ? Airport::Asphalt : Airport::Grass;
+          frWp->type = tmp.contains('A') > 0 ? BaseMapElement::Airfield : BaseMapElement::Glidersite;
+        }
+        else {
+          frWp->surface = -1;
+          frWp->type = -1;
+        }
+
+        frWp->comment = tokens[6];
+
+        waypoints->append(frWp);
+      }
+    }
+  }
+  return ret;
 }
 
 /**
  * Write waypoints to recorder
  */
-int SoaringPilot::writeWaypoints(QList<Waypoint> *waypoints) {
-  return this->uploadWaypoints(waypoints);
+int SoaringPilot::writeWaypoints(QList<Waypoint> *waypoints)
+{
+  QStringList file;
+  QString tmp, typ;
+  Waypoint *frWp;
+  int line = 1;
+  //** -------------------------------------------------------------
+  //**      SOARINGPILOT Version 1.8.8 Waypoints
+  //**      Date: 20 Feb 2003
+  //** -------------------------------------------------------------
+  //1,48:00.000N,009:00.000E,590F,ATLSFMH,KFLOG,Remark,000000000000000000
+  for (frWp = waypoints->first(); frWp != 0; frWp = waypoints->next()) {
+    typ = "";
+    if (frWp->isLandable) {
+      switch(frWp->type) {
+        case BaseMapElement::Airfield:
+        case BaseMapElement::Airport:
+        case BaseMapElement::IntAirport:
+        case BaseMapElement::MilAirport:
+        case BaseMapElement::CivMilAirport:
+          typ += "AL";
+          break;
+        case BaseMapElement::Glidersite:
+          typ += "L";
+          break;
+      }
+    }
+    tmp.sprintf("%d,%s,%s,%s,%s,%s,%s\r\n",
+                line++,
+                degreeToDegMin(frWp->origP.lat(), true).latin1(),
+                degreeToDegMin(frWp->origP.lon(), false).latin1(),
+                meterToFeet(frWp->elevation).latin1(),
+                typ.latin1(),
+                frWp->name.latin1(),
+                frWp->comment.latin1());
+    file.append(tmp);
+  }
+  return writeFile(file);
 }
 
 /** NOT IMLEMENTED
@@ -633,21 +609,23 @@ int SoaringPilot::writeWaypoints(QList<Waypoint> *waypoints) {
 /**
  * Opens the recorder for other communication.
  */
-int SoaringPilot::openRecorder(QString URL) {
+int SoaringPilot::openRecorder(QString URL)
+{
   return FR_NOTSUPPORTED;
 }
 
  /**
  * Write flight declaration to recorder
  */
-int SoaringPilot::writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint> *taskPoints) {
+int SoaringPilot::writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint> *taskPoints)
+{
   return FR_NOTSUPPORTED;
 }
 
 /**
  * Read waypoint and flight declaration form from recorder into mem
  */
-int SoaringPilot::readDatabase() {
-  return FR_OK;
+int SoaringPilot::readDatabase()
+{
+  return FR_NOTSUPPORTED;
 }
-
