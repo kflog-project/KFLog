@@ -115,7 +115,7 @@ class Igc3DView : public QWidget
 	 * 3D box for flight
 	 */
 	Igc3DPolyhedron* flightbox;
-
+  void mousePressEvent(QMouseEvent* event);
 public slots: // Public slots
   /** No descriptions */
   void slotRedraw();

@@ -100,6 +100,8 @@ class FlightTask : public BaseFlightElement
     void setWaypointList(QList<wayPoint> wpL);
     /** No descriptions */
 //    virtual QString getFlightInfoString();
+    void setPlanningType(int type);
+    int getPlanningType() { return __planningType; };
     /**
      * The waypoint-types.
      */
@@ -111,6 +113,10 @@ class FlightTask : public BaseFlightElement
     enum FlightType {ZielS = 1, ZielR = 2, FAI = 3, Dreieck = 4, FAI_S = 5,
                    Dreieck_S = 6, Abgebrochen = 7, Unknown = 8, FAI_2 = 9,
                    FAI_S2 = 10, FAI_3 = 11, FAI_S3 = 12, Vieleck = 13};
+    /*
+     * The planning-types
+     */
+    enum PlanningType {RouteBased, AreaBased};
   private:
     /**
      * Checkes the type of the task.
@@ -151,6 +157,7 @@ class FlightTask : public BaseFlightElement
     double distance_wert;
     /** Aufgaben Länge*/
     double distance_task;
+    int __planningType;
 };
 
 #endif

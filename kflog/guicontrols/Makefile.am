@@ -1,10 +1,9 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
+noinst_LIBRARIES = libguicontrols.a
 
 INCLUDES = $(all_includes)
 
 libguicontrols_a_METASOURCES = AUTO
-
-noinst_LIBRARIES = libguicontrols.a
 
 libguicontrols_a_SOURCES = kfloglistview.cpp coordedit.cpp 
 

@@ -1994,6 +1994,12 @@ void Map::slotShowCurrentFlight()
 
   planning = 0;
 
+  if (f->getTypeID() == BaseMapElement::Task) {
+    if (((FlightTask *)f)->getWPList().count() < 1) {
+      planning = 1;
+    }
+  }
+
   // Hier wird der Flug 2x neu gezeichnet, denn erst beim
   // ersten Zeichnen werden die Rahmen von Flug und Aufgabe
   // bestimmt.

@@ -31,6 +31,7 @@
 
 #include "tasks.h"
 #include "mapcontents.h"
+#include "taskdialog.h"
 
 Tasks::Tasks(QWidget *parent, const char *name ) : QFrame(parent,name)
 {
@@ -57,6 +58,8 @@ void Tasks::addTaskWindow(QWidget *parent)
 
   colName = tasks->addColumn(i18n("Name"));
   colDesc = tasks->addColumn(i18n("Description"));
+  colTaskDist = tasks->addColumn(i18n("Task dist."));
+  colTotalDist = tasks->addColumn(i18n("Total dist."));
 
   tasks->loadConfig();
 
@@ -113,6 +116,20 @@ void Tasks::slotOpenTask()
 
 void Tasks::slotEditTask()
 {
+  TaskDialog td(this, "taskdialog");
+  QListViewItem *item = tasks->currentItem();
+  FlightTask *ft;
+
+  if (item != 0) {
+    ft = taskList.find(item->text(colName));
+    //td.name->setText(ft->getFileName());
+    td.setTask(ft);
+    if (td.exec() == QDialog::Accepted) {
+      *ft = *td.getTask();
+      slotUpdateTask();
+      flightSelected(ft);
+    }
+  }
 }
 
 void Tasks::slotDeleteTask()
@@ -291,6 +308,8 @@ void Tasks::slotAppendTask(FlightTask *f)
   item = new QListViewItem(tasks);
   item->setText(colName, f->getFileName());
   item->setText(colDesc, f->getTaskTypeString());
+  item->setText(colTaskDist, f->getTaskDistanceString());
+  item->setText(colTotalDist, f->getTotalDistanceString());
 
 //  tasks->setCurrentItem(item);
 }
@@ -307,6 +326,7 @@ void Tasks::setCurrentTask()
     while (item != 0) {
       if (item->text(colName) == n) {
         tasks->setCurrentItem(item);
+        oldItem = item;
         break;
       }
       item = item->nextSibling();
@@ -318,7 +338,8 @@ void Tasks::slotSelectTask(QListViewItem *item)
 {
   FlightTask *ft;
 
-  if (item != 0) {
+  if (item != 0 && item != oldItem) {
+    oldItem = item;
     ft = taskList.find(item->text(colName));
     if (ft != 0) {
       emit flightSelected(ft);
@@ -334,6 +355,8 @@ void Tasks::slotUpdateTask()
   if (item != 0) {
     ft = taskList.find(item->text(colName));
     item->setText(colDesc, ft->getTaskTypeString());
+    item->setText(colTaskDist, ft->getTaskDistanceString());
+    item->setText(colTotalDist, ft->getTotalDistanceString());
   }
 }
 

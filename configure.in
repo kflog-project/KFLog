@@ -67,6 +67,7 @@ doc/en/Makefile \
 kflog/Makefile \
 kflog/guicontrols/Makefile \
 kflog/kfrgcs/Makefile \
+kflog/kfrgmn/Makefile \
 kflog/map-icons/Makefile \
 kflog/map-icons/small/Makefile \
 kflog/pics/Makefile \

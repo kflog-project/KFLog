@@ -1,0 +1,83 @@
+/***********************************************************************
+**
+**   taskdialog.h
+**
+**   This file is part of KFLog2.
+**
+************************************************************************
+**
+**   Copyright (c):  2002 by Harald Maier
+**
+**   This file is distributed under the terms of the General Public
+**   Licence. See the file COPYING for more information.
+**
+**   $Id$
+**
+***********************************************************************/
+
+#ifndef TASKDIALOG_H
+#define TASKDIALOG_H
+
+#include <qwidget.h>
+#include <qlineedit.h>
+#include <qlabel.h>
+#include <qradiobutton.h>
+#include <qdict.h>
+
+#include <kdialog.h>
+#include <klistbox.h>
+
+#include "guicontrols/kfloglistview.h"
+#include "flighttask.h"
+#include "wp.h"
+
+/**
+  *@author Harald Maier
+  */
+
+class TaskDialog : public KDialog  {
+   Q_OBJECT
+public: 
+   TaskDialog(QWidget *parent=0, const char *name=0);
+   ~TaskDialog();
+   void setTask(FlightTask *orig);
+   FlightTask *getTask() { return pTask; }
+private: // Private methods
+  /** No descriptions */
+  void __initDialog();
+  void fillWaypoints();
+public: // Public attributes
+private slots: // Private slots
+  /** No descriptions */
+  void slotSetPlanningType(int);
+  /** No descriptions */
+  void polish();
+  void slotMoveUp();
+  void slotMoveDown();
+  void slotReplaceWaypoint();
+  void slotAddWaypoint();
+  void slotRemoveWaypoint();
+private: // Private attributes
+  /**  */
+  KListBox *waypoints;
+  QDict<wayPoint> waypointDict;
+  QList<wayPoint> wpList;
+  FlightTask *pTask;
+  /**  */
+  QLineEdit *name;
+  QLabel *taskType;
+
+  /**  */
+  QRadioButton *areaBased;
+  /**  */
+  QRadioButton *routeBased;
+  KFLogListView *route;
+  QPushButton *back;
+  QPushButton *forward;
+
+  int colType;
+  int colWaypoint;
+  int colDist;
+};
+
+#endif

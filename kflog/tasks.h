@@ -44,6 +44,8 @@ private: // Private attributes
 
   int colName;
   int colDesc;
+  int colTaskDist;
+  int colTotalDist;
 
   int idTaskEdit;
   int idTaskDelete;
@@ -53,6 +55,7 @@ private: // Private attributes
   QDict <FlightTask> taskList;
 
   QString path;
+  QListViewItem *oldItem;
 private: // Private methods
   /** No descriptions */
   void addTaskWindow(QWidget *parent);

@@ -40,7 +40,8 @@
 
 FlightTask::FlightTask(QString fName)
   : BaseFlightElement("task", BaseMapElement::Task, fName),
-    isOrig(false)
+    isOrig(false),
+    __planningType(RouteBased)
 {
 warning("FlightTask(QString fName)");
 
@@ -50,7 +51,8 @@ warning("FlightTask(QString fName)");
 FlightTask::FlightTask(QList<wayPoint> wpL, bool isO, QString fName)
   : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(isO),
-    wpList(wpL)
+    wpList(wpL),
+    __planningType(RouteBased)
 {
 warning("FlightTask(QList<wayPoint> wpL, bool isO, QString fName)");
   //only do this if wpList is not empty!
@@ -1302,4 +1304,10 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
 			glMapMatrix->print(wpList.at(2)->origP.lat(), wpList.at(2)->origP.lon(), dX, dY),
           	glMapMatrix->print(wpList.at(wpList.count() - 3)->origP.lat(), wpList.at(wpList.count() - 3)->origP.lon() , dX, dY));
     }
+}
+
+void FlightTask::setPlanningType(int type)
+{
+  __planningType = type;
+  __setWaypointType();
 }
