@@ -55,9 +55,9 @@ void DataView::setFlightData(Flight* cF)
           " / " + h.at(1) + "</TD></TR>" +
       "</TABLE>" + "<HR NOSHADE>";
 
-  QList<wayPoint>* wpList = cF->getWPList();
+  QList<wayPoint> wpList = cF->getWPList();
 
-  if(wpList->count())
+  if(wpList.count())
     {
 //      htmlText += "<B>" + i18n("Task") + ":</B>" +
 //          "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>";
@@ -65,12 +65,12 @@ void DataView::setFlightData(Flight* cF)
           "<TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
           i18n("Task") + ":</B></TD></TR>";
 
-      for(unsigned int loop = 0; loop < wpList->count(); loop++)
+      for(unsigned int loop = 0; loop < wpList.count(); loop++)
         {
           if(loop > 0)
             {
               QString tmp;
-              tmp.sprintf("%.2f km",wpList->at(loop)->distance);
+              tmp.sprintf("%.2f km",wpList.at(loop)->distance);
 
               htmlText += (QString)"<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
                     tmp + "</TD></TR>";
@@ -78,22 +78,22 @@ void DataView::setFlightData(Flight* cF)
           QString timeText;
           QString idString;
           idString.sprintf("%d", loop);
-          if(wpList->at(loop)->sector1 != 0)
-              timeText = printTime(wpList->at(loop)->sector1);
-          else if(wpList->at(loop)->sector2 != 0)
-              timeText = printTime(wpList->at(loop)->sector2);
-          else if(wpList->at(loop)->sectorFAI != 0)
-              timeText = printTime(wpList->at(loop)->sectorFAI);
+          if(wpList.at(loop)->sector1 != 0)
+              timeText = printTime(wpList.at(loop)->sector1);
+          else if(wpList.at(loop)->sector2 != 0)
+              timeText = printTime(wpList.at(loop)->sector2);
+          else if(wpList.at(loop)->sectorFAI != 0)
+              timeText = printTime(wpList.at(loop)->sectorFAI);
           else
               timeText = (QString)"--";
 
           htmlText += (QString)"<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
-              wpList->at(loop)->name + "</A></TD>" +
+              wpList.at(loop)->name + "</A></TD>" +
               "<TD ALIGN=right>" + timeText + "</TD></TR>"+
               "<TR><TD WIDTH=15></TD>" +
-              "<TD>" + printPos(wpList->at(loop)->origP.x()) +
+              "<TD>" + printPos(wpList.at(loop)->origP.x()) +
               "</TD>" +
-              "<TD ALIGN=right>" + printPos(wpList->at(loop)->origP.y(), false) +
+              "<TD ALIGN=right>" + printPos(wpList.at(loop)->origP.y(), false) +
               "</TD></TR>";
         }
       htmlText += (QString)"<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +

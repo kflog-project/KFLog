@@ -60,8 +60,6 @@ class Map : public QWidget
     void slotDeleteFlightLayer();
     /** */
     void slotRedrawFlight();
-    /** */
-    void slotOptimzeFlight();
     /**
 		 * Animation slot.
 		 * Called for every timeout of the animation timer. Advances the crosshair one single step.

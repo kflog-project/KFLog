@@ -84,8 +84,6 @@ void EvaluationView::paintEvent(QPaintEvent* event = 0)
       bitBlt(pixBuffer, scrollFrame->contentsX(),0, pixBufferYAxis);
     }
   bitBlt(this, 0, 0, pixBuffer);
-
-//  warning("paintEvent");
 }
 
 void EvaluationView::mousePressEvent(QMouseEvent* event)
@@ -166,8 +164,8 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
     }
   else return;
 
-  evalDialog->updateText(flight->getPointByTime_i(cursor1),
-                         flight->getPointByTime_i(cursor2), true);
+  evalDialog->updateText(flight->getPointIndexByTime(cursor1),
+                         flight->getPointIndexByTime(cursor2), true);
 
   __draw();
 
@@ -206,8 +204,7 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
                     ( cursor_alt - startTime ) / secWidth
                         + X_ABSTAND ,1,0);
 
-      cursor_alt = flight->getPointByTime((event->pos().x() - X_ABSTAND
-                           ) *
+      cursor_alt = flight->getPointByTime((event->pos().x() - X_ABSTAND ) *
                           secWidth + startTime).time;
 
       //  kontinuierliches Update der Anzeige
@@ -216,35 +213,26 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
       int cursor_2 = cursor2;
 
       if(mouseB == (MidButton | Reached) ||
-          mouseB == (MidButton | NotReached))
-        {
+            mouseB == (MidButton | NotReached))
           cursor_1 = cursor;
-        }
       else if(mouseB == (RightButton | Reached) ||
             mouseB == (RightButton | NotReached))
-        {
           cursor_2 = cursor;
-        }
       else if(mouseB == (LeftButton | Reached))
         {
           if(leftB == 1)
-            {
               cursor_1 = cursor;
-            }
           else
-            {
               cursor_2 = cursor;
-            }
         }
 
-      evalDialog->updateText(flight->getPointByTime_i(cursor_1),
-                             flight->getPointByTime_i(cursor_2));
+      evalDialog->updateText(flight->getPointIndexByTime(cursor_1),
+                             flight->getPointIndexByTime(cursor_2));
     }
-
 }
 
 
-QPoint EvaluationView::__baroPoint(int height, int durch[], int gn, int i)
+QPoint EvaluationView::__baroPoint(int durch[], int gn, int i)
 {
   int x = ( curTime - startTime ) / secWidth + X_ABSTAND ;
 
@@ -259,7 +247,7 @@ QPoint EvaluationView::__baroPoint(int height, int durch[], int gn, int i)
   return QPoint(x, y);
 }
 
-QPoint EvaluationView::__speedPoint(float speed, float durch[], int gn, int i)
+QPoint EvaluationView::__speedPoint(float durch[], int gn, int i)
 {
   int x = ( curTime - startTime ) / secWidth + X_ABSTAND ;
   //  = Abstand am Anfang der Kurve
@@ -280,7 +268,7 @@ QPoint EvaluationView::__speedPoint(float speed, float durch[], int gn, int i)
   return QPoint(x, y);
 }
 
-QPoint EvaluationView::__varioPoint(float vario, float durch[], int gn, int i)
+QPoint EvaluationView::__varioPoint(float durch[], int gn, int i)
 {
   int x = ( curTime - startTime ) / secWidth + X_ABSTAND ;
   // PRE_GRAPH_DISTANCE = Abstand am Anfang der Kurve
@@ -606,26 +594,24 @@ void EvaluationView::__draw()
        * unsigned übergeben werden ...
        */
       if(loop < flight->getRouteLength() - glatt_h)
-          baroArray.setPoint(loop,
-              __baroPoint(flight->getPoint(loop).height, baro_d, gn_h, loop));
+          baroArray.setPoint(loop, __baroPoint(baro_d, gn_h, loop));
       else
-          baroArray.setPoint(loop,
-              __baroPoint(flight->getPoint(loop).height, baro_d_last, gn_h,
+          baroArray.setPoint(loop, __baroPoint(baro_d_last, gn_h,
                         flight->getRouteLength() - loop - 1));
       if(loop < flight->getRouteLength() - glatt_va)
           varioArray.setPoint(loop,
-              __varioPoint(getVario(flight->getPoint(loop)), vario_d, gn_va, loop));
+              __varioPoint(vario_d, gn_va, loop));
       else
           varioArray.setPoint(loop,
-              __varioPoint(getVario(flight->getPoint(loop)), vario_d_last, gn_va,
+              __varioPoint(vario_d_last, gn_va,
                         flight->getRouteLength() - loop - 1));
 
       if(loop < flight->getRouteLength() - glatt_v)
           speedArray.setPoint(loop,
-              __speedPoint(getSpeed(flight->getPoint(loop)), speed_d, gn_v, loop));
+              __speedPoint(speed_d, gn_v, loop));
       else
           speedArray.setPoint(loop,
-              __speedPoint(getSpeed(flight->getPoint(loop)), speed_d_last, gn_v,
+              __speedPoint(speed_d_last, gn_v,
                         flight->getRouteLength() - loop - 1));
     }
 
@@ -637,29 +623,29 @@ void EvaluationView::__draw()
   int xpos = 0;
 
   // Wendepunkte
-  QList<wayPoint>* wP;
+  QList<wayPoint> wP;
   QString timeText = 0;
 
   wP = flight->getWPList();
-  for(unsigned int n = 1; n < wP->count() - 1; n++)
+  for(unsigned int n = 1; n < wP.count() - 1; n++)
     {
-      xpos = (wP->at(n)->sector1 - startTime ) / secWidth + X_ABSTAND;
+      xpos = (wP.at(n)->sector1 - startTime ) / secWidth + X_ABSTAND;
 
       paint.setPen(QPen(QColor(100,100,100), 3));
       paint.drawLine(xpos, this->height() - Y_ABSTAND, xpos, Y_ABSTAND + 5);
       paint.setPen(QPen(QColor(0,0,0), 3));
       paint.setFont(QFont("helvetica",8));
       paint.drawText (xpos - 40, Y_ABSTAND - 20 - 5,80,10, AlignCenter,
-             wP->at(n)->name);
+             wP.at(n)->name);
 //      paint.drawText(xpos - 25, Y_ABSTAND - 5, wP->at(n)->name);
-      if(wP->at(n)->sector1 != 0)
-          timeText = printTime(wP->at(n)->sector1);
-      else if(wP->at(n)->sector2 != 0)
-          timeText = printTime(wP->at(n)->sector2);
-      else if(wP->at(n)->sectorFAI != 0)
-          timeText = printTime(wP->at(n)->sectorFAI);
+      if(wP.at(n)->sector1 != 0)
+          timeText = printTime(wP.at(n)->sector1);
+      else if(wP.at(n)->sector2 != 0)
+          timeText = printTime(wP.at(n)->sector2);
+      else if(wP.at(n)->sectorFAI != 0)
+          timeText = printTime(wP.at(n)->sectorFAI);
       paint.setFont(QFont("helvetica",7));
-      paint.drawText (xpos - 40, Y_ABSTAND - 10 - 5,80,10,
+      paint.drawText(xpos - 40, Y_ABSTAND - 10 - 5, 80, 10,
                           AlignCenter,timeText);
     }
 

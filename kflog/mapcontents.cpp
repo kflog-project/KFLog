@@ -1036,6 +1036,16 @@ int MapContents::searchFlightPoint(QPoint cPos, flightPoint& fP)
   return -1;
 }
 
+//void MapContents::optimzeFlight()
+//{
+//  if(flightList()->count() &&
+//        flightList->current()->optimizeTask())
+//    {
+//      __redrawMap();
+//      showFlightData(_globalMapContents.getFlight());
+//    }
+//}
+
 Flight* MapContents::getFlight()
 {
   if(flightList.count())  return flightList.current();
@@ -1340,7 +1350,7 @@ bool MapContents::loadFlight(QFile igcFile)
                 {
                   // Sinnvoller wäre es aus der IGC Datei auszulesen wieviele
                   // WendePunkte es gibt. <- Ist IGC Datei immer korrekt??
-                  if(wp_count != 0 && last0 != wp_count -1)
+                  if(wp_count != 0 && last0 != (int)(wp_count - 1))
                     {
                       newWP = new wayPoint;
                       newWP->name =  preWP->name;
@@ -1420,12 +1430,12 @@ void MapContents::proofeSection(bool isPrint)
       for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
           __readAirspaceFile((*it).latin1());
 
-      airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.out");
-      for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
-        {
-          __readAsciiFile((*it).latin1());
-          warning( "%s", (*it).latin1() );
-        }
+//      airspace = globalDirs->findAllResources("appdata", "mapdata/airspace/*.out");
+//      for(QStringList::Iterator it = airspace.begin(); it != airspace.end(); it++)
+//        {
+//          __readAsciiFile((*it).latin1());
+//          warning( "%s", (*it).latin1() );
+//        }
 
       isFirst = false;
     }
@@ -1748,7 +1758,7 @@ int MapContents::searchGetNextFlightPoint(int index, flightPoint & fP)
 int MapContents::searchStepNextFlightPoint(int index, flightPoint & fP, int step)
 {
   if((flightList.count()) && (step > 0)){
-    if (index+step < flightList.current()->getRouteLength()-1)
+    if (index+step < (int)flightList.current()->getRouteLength()-1)
       index += step;
     else
 			index = flightList.current()->getRouteLength()-1;

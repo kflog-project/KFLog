@@ -19,13 +19,7 @@ $Id$
   -> später: auf Wunsch auch alle Wendepunkte, je in eigenen Ausschnitt gezoomt)
 
 
-* DropEvent in Map hier einbauen ...
-
-
-* PrintDialog entfernen
-
-
-* FlightTask einführen
+* Punkte beim Optimieren noch nach aussen verschieben.
 
 
 /*************************************************************************

@@ -253,7 +253,7 @@ void Map::mousePressEvent(QMouseEvent* event)
 
       if(_globalMapContents.getFlightList()->count() > 0)
         {
-          QList<wayPoint>* wpList =
+          QList<wayPoint> wpList =
               _globalMapContents.getFlight()->getWPList();
 
           delta = 25;
@@ -261,9 +261,9 @@ void Map::mousePressEvent(QMouseEvent* event)
           QString wpText;
           wpText = "<B>Waypoint:</B><UL>";
 
-          for(unsigned int loop = 0; loop < wpList->count(); loop++)
+          for(unsigned int loop = 0; loop < wpList.count(); loop++)
             {
-              sitePos = _globalMapMatrix.map(wpList->at(loop)->projP);
+              sitePos = _globalMapMatrix.map(wpList.at(loop)->projP);
 
               dX = sitePos.x() - current.x();
               dY = sitePos.y() - current.y();
@@ -276,19 +276,19 @@ void Map::mousePressEvent(QMouseEvent* event)
 
                   QString tmpText, timeText;
 
-                  if(wpList->at(loop)->sector1 != 0)
+                  if(wpList.at(loop)->sector1 != 0)
                     {
-                      timeText = printTime(wpList->at(loop)->sector1);
+                      timeText = printTime(wpList.at(loop)->sector1);
                       tmpText = i18n("Sector 1");
                     }
-                  else if(wpList->at(loop)->sector2 != 0)
+                  else if(wpList.at(loop)->sector2 != 0)
                     {
-                      timeText = printTime(wpList->at(loop)->sector2);
+                      timeText = printTime(wpList.at(loop)->sector2);
                       tmpText = i18n("Sector 2");
                     }
-                  else if(wpList->at(loop)->sectorFAI != 0)
+                  else if(wpList.at(loop)->sectorFAI != 0)
                     {
-                      timeText = printTime(wpList->at(loop)->sectorFAI);
+                      timeText = printTime(wpList.at(loop)->sectorFAI);
                       tmpText = i18n("FAI-Sector");
                     }
                   else
@@ -296,27 +296,27 @@ void Map::mousePressEvent(QMouseEvent* event)
                       timeText = "&nbsp;" + i18n("not reached");
                     }
 
-                  switch(wpList->at(loop)->type)
+                  switch(wpList.at(loop)->type)
                     {
-                      case Flight::TakeOff:
+                      case FlightTask::TakeOff:
                         tmpText = i18n("Take Off");
                         break;
-                      case Flight::Begin:
+                      case FlightTask::Begin:
                         tmpText = i18n("Begin of task");
                         break;
-                      case Flight::End:
+                      case FlightTask::End:
                         tmpText = i18n("End of task");
                         break;
-                      case Flight::Landing:
+                      case FlightTask::Landing:
                         tmpText = i18n("Landing");
                         break;
                     }
 
-                  wpText = wpText + "<LI><B>" + wpList->at(loop)->name +
+                  wpText = wpText + "<LI><B>" + wpList.at(loop)->name +
                       "</B>  " +
                       "&nbsp;" + timeText + " / " + tmpText + "<BR>" +
-                      printPos(wpList->at(loop)->origP.x()) + " / " +
-                      printPos(wpList->at(loop)->origP.y(), false) + "</LI>";
+                      printPos(wpList.at(loop)->origP.x()) + " / " +
+                      printPos(wpList.at(loop)->origP.y(), false) + "</LI>";
                 }
             }
 
@@ -617,17 +617,14 @@ void Map::dragEnterEvent(QDragEnterEvent* event)
 
 void Map::dropEvent(QDropEvent* event)
 {
-//  QString text;
-//  QStrList tempList;
+  QStringList dropList;
 
-//  if(QUriDrag::decode(event, tempList))
-//    {
-//      warning("Anzahl: %d", tempList.count());
-//      for(unsigned int loop = 0; loop < tempList.count(); loop++)
-//        {
-//          warning("  %s", tempList.at(loop));
-//        }
-//    }
+  if(QUriDrag::decodeToUnicodeUris(event, dropList))
+    {
+      for(QStringList::Iterator it = dropList.begin();
+              it != dropList.end(); it++)
+          mainApp->slotFileOpenRecent((*it).latin1());
+    }
 }
 
 void Map::__redrawMap()
@@ -760,14 +757,14 @@ void Map::slotCenterToWaypoint(const unsigned int id)
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
 
-  if(id >= _globalMapContents.getFlight()->getWPList()->count())
+  if(id >= _globalMapContents.getFlight()->getWPList().count())
     {
       warning("KFLog: Map::slotCenterToWaypoint: wrong Waypoint-ID");
       return;
     }
 
   _globalMapMatrix.centerToPoint(_globalMapMatrix.map(
-      _globalMapContents.getFlight()->getWPList()->at(id)->projP));
+      _globalMapContents.getFlight()->getWPList().at(id)->projP));
   _globalMapMatrix.slotSetScale(_globalMapMatrix.getScale(MapMatrix::LowerLimit));
 
   emit changed(this->size());
@@ -807,16 +804,6 @@ void Map::slotDeleteFlightLayer()
   pixFlight.fill(white);
   bitFlightMask.fill(black);
   __showLayer();
-}
-
-void Map::slotOptimzeFlight()
-{
-// if(!flightList.count()) return;
-//extern MapContents _globalMapContents;
-//  if(_globalMapContents.getFlight()->optimizeTask()) {
-//    showFlightData(flightList.current());
-  //  mainApp->getMap()->showFlightLayer(true);
-//  }
 }
 
 /**

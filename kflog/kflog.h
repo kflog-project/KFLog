@@ -212,6 +212,8 @@ class KFLogApp : public KDockMainWindow
      */
     void slotSelectFlightData(int listItem);
     /** */
+    void slotOptimizeFlight();
+    /** */
     void slotTaskAndWaypoint();
 
   private:
@@ -341,7 +343,7 @@ class KFLogApp : public KDockMainWindow
      * Action to show the evaluationdialog.
      */
     KAction* flightEvaluation;
-//    KAction* flightOptimization;
+    KAction* flightOptimization;
     /** */
     KAction* flightPrint;
     /** */

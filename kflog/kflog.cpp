@@ -40,6 +40,7 @@
 #include "kflog.h"
 #include <dataview.h>
 #include <evaluationdialog.h>
+#include <flight.h>
 #include <flightdataprint.h>
 #include <igcpreview.h>
 #include <kflogconfig.h>
@@ -214,8 +215,8 @@ void KFLogApp::initActions()
       CTRL+Key_T, this, SLOT(slotTaskAndWaypoint()), actionCollection(),
       "task_and_waypoint");
 
-//  new KAction(i18n("Optimize"), "flight_optimize", 0, map,
-//      SLOT(slotOptimzeFlight()), actionCollection(), "optimize_flight");
+  flightOptimization = new KAction(i18n("Optimize"), "wizard", 0,
+      this, SLOT(slotOptimizeFlight()), actionCollection(), "optimize_flight");
 
   //Animation actions
   animateFlightStart = new KAction(i18n("&Start Flight Animation"), "1rightarrow",
@@ -265,6 +266,7 @@ void KFLogApp::initActions()
   KActionMenu* flightMenu = new KActionMenu(i18n("F&light"),
       actionCollection(), "flight");
   flightMenu->insert(flightEvaluation);
+  flightMenu->insert(flightOptimization);
   flightMenu->insert(taskAndWaypoint);
   flightMenu->insert(viewFlightDataType);
   flightMenu->popupMenu()->insertSeparator();
@@ -686,8 +688,20 @@ void KFLogApp::slotEvaluateFlight()
   connect(eval, SIGNAL(showCursor(QPoint, QPoint)), map,
       SLOT(slotDrawCursor(QPoint, QPoint)));
 
-  eval->slotShowFlightData(0);  // <- hier wird angenommen, dass mindestens
-                                // ein Element vorhanden ist ...
+  eval->slotShowFlightData(0);  // We assume, that at least one flight
+                                // is loaded ...
+}
+
+void KFLogApp::slotOptimizeFlight()
+{
+  extern MapContents _globalMapContents;
+  if(_globalMapContents.getFlightList()->count() &&
+      _globalMapContents.getFlightList()->current()->optimizeTask())
+    {
+      // Okay, update flightdata and redraw map
+      dataView->setFlightData(_globalMapContents.getFlight());
+      map->slotRedrawFlight();
+    }
 }
 
 void KFLogApp::slotConfigureToolbars()

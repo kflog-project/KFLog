@@ -69,11 +69,11 @@ class EvaluationView : public QWidget
  private:
   void __drawCsystem(QPainter* painter);
   /** */
-  QPoint __baroPoint(int height, int baro_d[], int gn, int i);
+  QPoint __baroPoint(int baro_d[], int gn, int i);
   /** */
-  QPoint __varioPoint(float vario, float vario_d[], int gn, int i);
+  QPoint __varioPoint(float vario_d[], int gn, int i);
   /** */
-  QPoint __speedPoint(float speed, float speed_d[], int gn, int i);
+  QPoint __speedPoint(float speed_d[], int gn, int i);
 
   void __paintCursor(int xpos, int calt, int move, int cursor);
   /** Zeichnet die Kurven */

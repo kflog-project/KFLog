@@ -1,10 +1,20 @@
 $Id$
 
 
+2002-02-10 Heiner <heiner@kflog.org>
+
+  * Created the class FlightTask and moved all task-related stuff
+    there from Flight.
+
+  * Added optimization of the task.
+
+
 2002-02-09 Heiner <heiner@kflog.org>
 
   * Fixed MapContents and IDCPreview to support logger, that produce
     some strange igc-header.
+
+  * Added drag'n drop. The user now can drag an igc-file onto the map.
 
 
 2002-02-04 Thomas <thomas@kflog.org>
@@ -33,6 +43,12 @@ $Id$
   * Process animation keystrokes using KActions and slots.
 
 
+2002-01-25 Florian <florian@kflog.org>
+
+  * Added Airspace A and Airspace B in the map and in the
+    configuration-dialog.
+
+
 2002-01-24 Thomas <thomas@kflog.org>
 
   * Added start/stop of animation of current flight using F12/F11 keys.
@@ -40,6 +56,13 @@ $Id$
   * Jump to start/end of flight with Home/End keys.
 
   * Enabled multi-stepping through flight using PgUp/PgDn keys.
+
+
+2002-01-24 Heiner <heiner@kflog.org>
+
+  * Fixed two minor bugs: Whenever the map-scale or -size is changed,
+    the mapcontrolwidget updates his data. And when the mouse leaves
+    the map, the cursor on the flight-track is removed.
 
 
 2002-01-23 Thomas <thomas@kflog.org>

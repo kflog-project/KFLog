@@ -19,6 +19,7 @@
 #define FLIGHT_H
 
 #include <basemapelement.h>
+#include <flighttask.h>
 #include <wp.h>
 
 #include <qlist.h>
@@ -138,7 +139,7 @@ class Flight : public BaseMapElement
      * to the given time.
      * @return the index of the point
      */
-    int getPointByTime_i(int time);
+    int getPointIndexByTime(int time);
     /**
      * Draws the flight an the task into the given painter. Reimplemented
      * from BaseMapElement.
@@ -158,7 +159,7 @@ class Flight : public BaseMapElement
 	   *                 optimized, the original-task will be used in any case.
 	   * @return the list of waypoints
      */
-    QList<wayPoint>* getWPList(bool isOrig = false);
+    QList<wayPoint> getWPList(bool isOrig = false);
     /**
      * @return the filename of the igc-file
      */
@@ -198,8 +199,6 @@ class Flight : public BaseMapElement
      * @return the bounding-box of the flight.
      */
     QRect getFlightRect() const;
-    /** */
-    QRect getWGSFlightRect() const;
     /**
      * @return the bounding-box of the task.
      */
@@ -229,18 +228,6 @@ class Flight : public BaseMapElement
     enum FlightState {Straight = 0, LeftTurn = 1, RightTurn = 2, MixedTurn = 3};
 
   private:
-    /**
-     * Proofes the type of the task and sets the status of thewaypoints.
-     */
-    void __setWaypointType();
-    /**
-     * Proofes, if the task is a FAI-triangle
-     */
-    bool __isFAI(double distance_wp, double dist1, double dist2, double dist3);
-    /**
-     * Calculates the sector.
-     */
-    double __sectorangle(int n, bool isDraw = true);
     /** */
     unsigned int __calculateBestTask(unsigned int start[], unsigned int stop[],
         unsigned int step, unsigned int idList[],
@@ -254,12 +241,6 @@ class Flight : public BaseMapElement
     /** */
     double __calculateOptimizePoints(flightPoint* fp1,
         flightPoint* fp2, flightPoint* fp3);
-    /**
-     * Findet die Art der Strecke heraus
-     */
-    void __checkType();
-    /** */
-  	void __checkWaypoints();
 	  /** */
   	void __checkMaxMin();
   	/** */
@@ -270,24 +251,7 @@ class Flight : public BaseMapElement
 	  QString pilotName;
     QString gliderType;
     QString gliderID;
-    QString startSite;
-    QString landSite;
-
     QString date;
-
-    QList<wayPoint> wpList;
-    QList<wayPoint> origList;
-
-    double distance_tot;
-    double distance_wp;
-
-    unsigned int flightType;
-    unsigned int origType;
-    double origDistanceWP;
-    double origDistanceTot;
-    double origPoints;
-
-    double taskPoints;
     QString sourceFileName;
     flightPoint* drawRoute;
     unsigned int drawLength;
@@ -299,10 +263,13 @@ class Flight : public BaseMapElement
     QList<flightPoint> route;
 
     QRect bBoxFlight;
-    QRect bBoxTask;
-    QRect wgsBoxFlight;
     int landTime;
     int startTime;
+
+    FlightTask origTask;
+    FlightTask optimizedTask;
+
+    bool optimized;
 };
 
 #endif

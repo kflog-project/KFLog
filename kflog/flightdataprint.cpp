@@ -219,11 +219,11 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
             (const char*)currentFlight->getPoints(true));
   painter.drawText(125, 355, temp);
 
-  QList<wayPoint>* wpList = currentFlight->getWPList(true);
+  QList<wayPoint> wpList = currentFlight->getWPList(true);
   int yPos = 375;
-  for(unsigned int loop = 0; loop < wpList->count(); loop++)
+  for(unsigned int loop = 0; loop < wpList.count(); loop++)
     {
-      __printPositionData(&painter, wpList->at(loop), yPos);
+      __printPositionData(&painter, wpList.at(loop), yPos);
       yPos += 13;
     }
 
@@ -244,9 +244,9 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
       painter.drawText(125, yPos, temp);
       yPos += 20;
 
-      for(unsigned int loop = 0; loop < wpList->count(); loop++)
+      for(unsigned int loop = 0; loop < wpList.count(); loop++)
         {
-          __printPositionData(&painter, wpList->at(loop), yPos);
+          __printPositionData(&painter, wpList.at(loop), yPos);
           yPos += 13;
         }
     }
