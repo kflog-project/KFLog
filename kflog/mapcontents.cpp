@@ -1732,3 +1732,34 @@ int MapContents::searchGetNextFlightPoint(int index, struct flightPoint & fP)
 	}
 	return -1;
 }
+
+/** Get the contents of the next FlightPoint 'step' indexes after number 'index' */
+int MapContents::searchStepNextFlightPoint(int index, struct flightPoint & fP, int step)
+{
+  int i;
+
+  if((flightList.count()) && (step > 0)){
+    for (i=1; i < step; i++){
+  	  flightList.current()->searchGetNextPoint(index, fP);
+		  index++;			
+    }
+    return (flightList.current()->searchGetNextPoint(index, fP));
+	}
+	return -1;
+}
+
+/** Get the contents of the previous FlightPoint 'step' indexes before number 'index' */
+int MapContents::searchStepPrevFlightPoint(int index, struct flightPoint & fP, int step)
+{
+  int i;
+
+  if((flightList.count()) && (step > 0)){
+    for (i=1; i < step; i++){
+  	  flightList.current()->searchGetNextPoint(index, fP);
+		  index--;			
+    }
+    return (flightList.current()->searchGetNextPoint(index, fP));
+	}
+	return -1;
+}
+

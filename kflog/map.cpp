@@ -833,8 +833,8 @@ void Map::keyPressEvent( QKeyEvent* event)
 			 * Single-step
 			 */
    		case Key_Up:
-  	   	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-    								 prePos.x() - 20, prePos.y() - 20, 40, 40);
+       	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
+ 	   		  					 prePos.x() - 20, prePos.y() - 20, 40, 40);
 		    // get the next point, preIndex now holds last index
 				if ((index = _globalMapContents.searchGetNextFlightPoint(preIndex, cP)) != -1){
           emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
@@ -859,11 +859,11 @@ void Map::keyPressEvent( QKeyEvent* event)
 			/**
 			 * Multi-step
 			 */
-/*   		case Key_PageUp:
+   		case Key_PageUp:
   	   	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
     								 prePos.x() - 20, prePos.y() - 20, 40, 40);
 		    // get the next point, preIndex now holds last index
-				if ((index = _globalMapContents.searchGetNextFlightPoint(preIndex, cP)) != -1){
+				if ((index = _globalMapContents.searchStepNextFlightPoint(preIndex, cP, 20)) != -1){
           emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
           prePos = _globalMapMatrix.map(cP.projP);
 					preIndex = index;
@@ -875,7 +875,7 @@ void Map::keyPressEvent( QKeyEvent* event)
   	   	bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
     								 prePos.x() - 20, prePos.y() - 20, 40, 40);
 		    // get the next point, preIndex now holds last index
-				if ((index = _globalMapContents.searchGetPrevFlightPoint(preIndex, cP)) != -1){
+				if ((index = _globalMapContents.searchStepPrevFlightPoint(preIndex, cP, 20)) != -1){
           emit showFlightPoint(_globalMapMatrix.wgsToMap(cP.origP), cP);
           prePos = _globalMapMatrix.map(cP.projP);
 					preIndex = index;
@@ -883,7 +883,6 @@ void Map::keyPressEvent( QKeyEvent* event)
 				}
 				event->accept();	// set by default really
       	break;
- */
 			default:
 	 	  	event->ignore();
       	break;

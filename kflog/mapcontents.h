@@ -176,6 +176,14 @@ class MapContents : public QObject
 		 * Get the contents of the previous FlightPoint before number 'index'
 	   */
     int searchGetPrevFlightPoint(int index, struct flightPoint & fP);
+		/**
+		 * Get the contents of the next FlightPoint 'step' indexes after number 'index'
+		 */
+  	int searchStepNextFlightPoint(int index, struct flightPoint & fP, int step);
+  	/**
+		 * Get the contents of the previous FlightPoint 'step' indexes before number 'index'
+		 */
+  	int searchStepPrevFlightPoint(int index, struct flightPoint & fP, int step);
     /**
      * The index of Mapelement-Lists.
      */

@@ -1,5 +1,9 @@
 $Id$
 
+2002-01-24 Thomas <thomas@kflog.org>
+
+  * Enabled multi-stepping through flight using PgUp/PgDn keys.
+
 
 2002-01-23 Thomas <thomas@kflog.org>
 
