@@ -30,6 +30,8 @@ BaseMapElement::~BaseMapElement()
 
 bool BaseMapElement::__isVisible() const { return true; }
 
+void BaseMapElement::readConfig()  { }
+
 void BaseMapElement::printMapElement(QPainter* printP, const double dX,
       const double dY, const int mapCenterLon, const double scale,
       const struct elementBorder mapBorder)

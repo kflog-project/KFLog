@@ -50,26 +50,36 @@ LineElement::LineElement(QString n, unsigned int t, QPointArray pA, bool isV)
   fillBrushStyle(QBrush::SolidPattern),
   projPointArray(pA), bBox(pA.boundingRect()), valley(isV), closed(false)
 {
-  ///////////////////////////////////////////////////////////////////////
-  //
-  // Hier wird zuviel Code abgearbeitet, wenn ein abgeleitetes Objekt
-  // erzeugt wird !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  //
-  ///////////////////////////////////////////////////////////////////////
-  KConfig* config = KGlobal::config();
-
-  fillColor.setRgb(0, 0, 0);
+  fillColor.setRgb(100, 255, 100);
 
   border = new bool[5];
   drawPenSize = new int[5];
   drawColor = new QColor[5];
 
+  // Das muss nur bei "echten" LineElementen ablaufen.
+  readConfig();
+}
+
+LineElement::~LineElement()
+{
+
+}
+
+void LineElement::readConfig()
+{
+  KConfig* config = KGlobal::config();
+
   drawColor[4] = Qt::color0;
   drawPenSize[4] = 0;
+
 
   switch(typeID)
     {
       case Highway:
+        config->setGroup("Highway");
+        READ_PEN(HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
+            HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4)
+        break;
       case MidRoad:
       case SmallRoad:
         config->setGroup("Road");
@@ -96,22 +106,17 @@ LineElement::LineElement(QString n, unsigned int t, QPointArray pA, bool isV)
       case BigCity:
       case MidCity:
       case SmallCity:
-        config->setGroup("CITY");
+        config->setGroup("City");
         READ_PEN(CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3, CITY_COLOR_4,
             1, 1, 1, 1)
         drawColor[4] = config->readColorEntry("Outline Color",
-            new QColor(Qt::color0));
+            new CITY_COLOR_5);
         drawPenSize[4] = config->readNumEntry("Outline Size", 1);
         closed = true;
         break;
     }
 
   READ_BORDER
-}
-
-LineElement::~LineElement()
-{
-
 }
 
 void LineElement::printMapElement(QPainter* printPainter)
@@ -295,14 +300,10 @@ void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
   extern const double _currentScale, _scale[];
 
   int index = 0;
-  if(_currentScale <= _scale[2]) index = 1;
+  if(_currentScale <= _scale[1]) index = 0;
+  else if(_currentScale <= _scale[2]) index = 1;
   else if(_currentScale <= _scale[3]) index = 2;
-  else if(_currentScale <= _scale[4]) index = 3;
-  else if(_currentScale <= _scale[5]) index = 4;
-  else if(_currentScale <= _scale[6]) index = 5;
-  else if(_currentScale <= _scale[7]) index = 6;
-  else if(_currentScale <= _scale[8]) index = 7;
-  else index = 8;
+  else index = 3;
 
   if(valley)
     {
@@ -316,16 +317,17 @@ void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
     }
 
   targetPainter->setPen(QPen(drawColor[index], drawPenSize[index]));
-  targetPainter->setBrush(QBrush(fillColor, QBrush::SolidPattern));
+
+  // Hier wird immer mit der gleichen Farbe gefüllt ...
+  targetPainter->setBrush(QBrush(drawColor[index], QBrush::SolidPattern));
 
   QPointArray pA = _globalMapMatrix.map(projPointArray);
 
   /********************************/
   if(typeID == 37 && isFirst)
     {
-//      targetPainter->setPen(QPen(drawColor[index], drawPenSize[index]));
-      targetPainter->setPen(QPen(drawColor[index], drawPenSize[index] * 3));
-      maskPainter->setPen(QPen(Qt::color1, drawPenSize[index] * 3));
+      targetPainter->setPen(QPen(drawColor[4], drawPenSize[4] * 3));
+      maskPainter->setPen(QPen(Qt::color1, drawPenSize[4] * 3));
       maskPainter->drawPolygon(pA);
       targetPainter->drawPolyline(pA);
 
@@ -333,7 +335,7 @@ void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
     }
   else if(typeID == 37 && !isFirst)
     {
-      targetPainter->setPen(QPen(fillColor, 0));
+      targetPainter->setPen(QPen(drawColor[index], 0));
       targetPainter->drawPolygon(pA);
 
       return;
@@ -349,7 +351,7 @@ void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
     {
       maskPainter->drawPolyline(pA);
       targetPainter->drawPolyline(pA);
-      if(typeID == Highway && _currentScale < _scale[5])
+      if(typeID == Highway && drawPenSize[index] > 4)
         {
           // Mittellinie zeichnen
           targetPainter->setPen(QPen(QColor(255,255,255), 1));

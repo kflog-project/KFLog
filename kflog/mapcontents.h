@@ -105,6 +105,8 @@ class MapContents
      *
      */
     int searchFlightPoint(QPoint cPos, struct flightPoint* fP);
+    /** */
+    void readConfig();
     /**
      * The listid.
      */

@@ -70,6 +70,8 @@ class BaseMapElement
      * Returns the typeID of the element.
      */
     virtual unsigned int getTypeID() const;
+    /** */
+    virtual void readConfig();
     /**
      * Returns the position of the map-object in the current map.
      * The position will be set to (-1000,-1000) during contruction.

@@ -66,6 +66,8 @@ class LineElement : public BaseMapElement
     virtual void printMapElement(QPainter* printPainter);
     /** */
     virtual bool isValley() const;
+    /** */
+    virtual void readConfig();
 
   protected:
     /** */

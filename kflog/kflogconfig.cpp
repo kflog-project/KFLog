@@ -16,6 +16,7 @@
 ***********************************************************************/
 
 #include "kflogconfig.h"
+#include <mapcontents.h>
 #include <mapdefaults.h>
 
 #include <unistd.h>
@@ -139,6 +140,9 @@ void KFLogConfig::slotOk()
   config->writeEntry("Border 2", reduce2N->value());
   config->writeEntry("Border 3", reduce3N->value());
 
+  // Die aktuell angezeigten Angaben müssen noch gespeichert werden ...
+  slotSelectElement(oldElement);
+
   config->setGroup("Road");
   WRITE_DRAW_VALUES(roadPenList, roadBorder);
 
@@ -156,6 +160,11 @@ void KFLogConfig::slotOk()
   config->writeEntry("Outline Color", cityPenList.at(4)->color());
   config->writeEntry("Outline Size", cityPenList.at(4)->width()); \
   config->writeEntry("Border 5", cityBorder[4]); \
+
+  config->sync();
+
+  extern MapContents _globalMapContents;
+  _globalMapContents.readConfig();
 
   close();
 }
@@ -206,6 +215,7 @@ void KFLogConfig::slotSelectElement(int elementID)
             SAVE_PEN(cityPenList, cityBorder)
             cityBorder[4] = outLine->isChecked();
             cityPenList.at(4)->setColor(outLineColor->color());
+            cityPenList.at(4)->setWidth(outLinePen->value());
             break;
           }
     }
@@ -377,7 +387,7 @@ void KFLogConfig::slotDefaultElements()
   DEFAULT_PEN(cityPenList, cityBorder, CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3,
       CITY_COLOR_4, 1, 1, 1, 1)
 
-  cityPenList.at(4)->setColor(CITY_COLOR_4);
+  cityPenList.at(4)->setColor(CITY_COLOR_5);
   cityPenList.at(4)->setWidth(CITY_OUTLINE);
   cityBorder[4] = true;
 
@@ -461,13 +471,13 @@ void KFLogConfig::__addMapTab()
         config->readNumEntry("Pen Size 1", HIGH_PEN_1)));
   highwayPenList.append(new QPen(config->readColorEntry("Color 2",
         new HIGH_COLOR_2),
-        config->readNumEntry("Pen Size 1", HIGH_PEN_2)));
+        config->readNumEntry("Pen Size 2", HIGH_PEN_2)));
   highwayPenList.append(new QPen(config->readColorEntry("Color 3",
         new HIGH_COLOR_3),
-        config->readNumEntry("Pen Size 1", HIGH_PEN_3)));
+        config->readNumEntry("Pen Size 3", HIGH_PEN_3)));
   highwayPenList.append(new QPen(config->readColorEntry("Color 4",
         new HIGH_COLOR_4),
-        config->readNumEntry("Pen Size 1", HIGH_PEN_4)));
+        config->readNumEntry("Pen Size 4", HIGH_PEN_4)));
   READ_BORDER(highwayBorder);
 
   config->setGroup("City");

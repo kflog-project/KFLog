@@ -1866,3 +1866,21 @@ void MapContents::drawIsoList(QPainter* targetPainter, QPainter* maskPainter)
               maskPainter);
     }
 }
+
+void MapContents::readConfig()
+{
+  for(unsigned int loop = 0; loop < roadList.count(); loop++)
+      roadList.at(loop)->readConfig();
+
+  for(unsigned int loop = 0; loop < highwayList.count(); loop++)
+      highwayList.at(loop)->readConfig();
+
+  for(unsigned int loop = 0; loop < railList.count(); loop++)
+      railList.at(loop)->readConfig();
+
+  for(unsigned int loop = 0; loop < hydroList.count(); loop++)
+      hydroList.at(loop)->readConfig();
+
+  for(unsigned int loop = 0; loop < cityList.count(); loop++)
+      cityList.at(loop)->readConfig();
+}
