@@ -49,5 +49,11 @@ int Isohypse::getElevation() const { return elevation; }
  */
 QRegion* Isohypse::getRegion()
 {
+  //qDebug("getting rect");
+  //QRect br=projPointArray.boundingRect();
+  //for (int i=0; i<projPointArray.count();i++) qDebug("  %d, %d", projPointArray.point(i).x(), projPointArray.point(i).y());
+  //qDebug("bounding rect: %d, %d, %d, %d", br.left(), br.top(), br.right(), br.bottom());
+
+  //AS: This may lead to a crash with large coordinates, or so it seems.
   return new QRegion(projPointArray);
 }

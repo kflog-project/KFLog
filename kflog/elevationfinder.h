@@ -62,6 +62,10 @@ public:
      * method to get an ElevationFinder object!
      */
     static ElevationFinder * instance();
+    /**
+     * @returns true if KFLog we rely on the isohypses to find the elevation for a position.
+     */
+    bool useIsohypseForElevation() {return !useOGIE;};
     
 private slots:
     void timeout();

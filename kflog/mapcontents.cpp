@@ -2234,6 +2234,7 @@ void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
 void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
 {
   int height = 0;
+  bool useIsohypseElevationList = ElevationFinder::instance()->useIsohypseForElevation();
 
   extern MapConfig _globalMapConfig;
 
@@ -2272,12 +2273,13 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
               isoListEntry* entry=new isoListEntry(reg, height);
               regIsoLines.append(entry);
             }
-	  if( !(iso2 -> regionStored) )
-	  {
-		iso2->regionStored = true;
-		isoListEntry* entry=new isoListEntry( iso2->getRegion(), height );
-		regIsoLinesWorld.append( entry );
-	  }
+          if( !(iso2 -> regionStored) && useIsohypseElevationList)
+            {
+              iso2->regionStored = true;
+              // AS: There is a problem with creating regions with large coordinates, or so it seems.
+              isoListEntry* entry=new isoListEntry( iso2->getRegion(), height );
+              regIsoLinesWorld.append( entry );
+            }
         }
     }
 }
