@@ -46,29 +46,8 @@ SinglePoint::SinglePoint(QString n, QString abbr, unsigned int t,
       case CompPoint:
         iconName = "compoint.xpm";
         break;
-      case Oiltank:
-        iconName = "oiltank.xpm";
-        break;
-      case Factory:
-        iconName = "factory.xpm";
-        break;
-      case Castle:
-        iconName = "castle.xpm";
-        break;
-      case Church:
-        iconName = "church.xpm";
-        break;
-      case Tower:
-        iconName = "tower.xpm";
-        break;
-      case HighwayEntry:
-        iconName = "highway.xpm";
-        break;
-      case RailwayBridge:
-        iconName = "railbridge.xpm";
-        break;
-      case Station:
-        iconName = "station.xpm";
+      case Landmark:
+        iconName = "landmark.xpm";
         break;
       default:
         iconName = "";
@@ -113,22 +92,16 @@ void SinglePoint::printMapElement(QPainter* printPainter, const double dX,
    * Hier sollte mal für eine bessere Qualität der Icons gesorgt werden.
    * Eventuell kann man die Icons ja hier zeichnen lassen ?!?
    */
-  if(iconName == 0) {
-    switch(typeID) {
-      case Village:
-        printPainter->setBrush(QBrush::NoBrush);
-        printPainter->drawEllipse(printPos.x - 5, printPos.y - 5, 10, 10);
-        return;
-      case Dam:
-        printPainter->setBrush(QBrush(QColor(0,0,0), QBrush::SolidPattern));
-        printPainter->setPen(QPen(QColor(0,0,0), 1));
-        return;
-      case Lock:
-        printPainter->setBrush(QBrush::NoBrush);
-        printPainter->setPen(QPen(QColor(0,0,0), 1));
-        return;
+  if(iconName == 0)
+    {
+      switch(typeID)
+        {
+          case Village:
+            printPainter->setBrush(QBrush::NoBrush);
+            printPainter->drawEllipse(printPos.x - 5, printPos.y - 5, 10, 10);
+            return;
+        }
     }
-  }
 
   show = _showElements[typeID];
 
@@ -178,14 +151,6 @@ void SinglePoint::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
           case Village:
             targetPainter->setBrush(QBrush::NoBrush);
             targetPainter->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
-            return;
-          case Dam:
-            targetPainter->setBrush(QBrush(QColor(0,0,0), QBrush::SolidPattern));
-            targetPainter->setPen(QPen(QColor(0,0,0), 1));
-            return;
-          case Lock:
-            targetPainter->setBrush(QBrush::NoBrush);
-            targetPainter->setPen(QPen(QColor(0,0,0), 1));
             return;
         }
     }

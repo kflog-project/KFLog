@@ -96,13 +96,14 @@ Flight::Flight(QString fName, QList<flightPoint> r, QString pName,
 
   // Die Wegpunkte müssen einzeln übergeben werden, da sie gleichzeitig
   // geprüft werden ...
-  for(unsigned int loop = 0; loop < wpL.count(); loop++)
-      wpList.append(wpL.at(loop));
+  warning("Länge: %d", wpL.count());
 
+  wpList = wpL;
 
   __setWaypointType();
 
   __checkType();
+
   __checkWaypoints();
   __checkMaxMin();
   __flightState();
@@ -223,7 +224,7 @@ void Flight::__flightState()
 
       // Überprüfen ob man rausgefallen ist !!!
 
-      warning("Bearing %d", route.at(n)->bearing);
+
 
       // Bedingungen für Kreisflug müssen noch geprüft werden !!!
       // Bei kleinen Zeitabständen extra Abfrage
@@ -235,8 +236,8 @@ void Flight::__flightState()
         {
 
           weiter = 0;
-warning("##################################################################");
-          warning("Kreisflug %s",(const char*)printTime(route.at(n)->time));
+//warning("##################################################################");
+//          warning("Kreisflug %s",(const char*)printTime(route.at(n)->time));
           // Drehrichtung
           if(route.at(n)->bearing > 0)
             {
@@ -260,7 +261,7 @@ warning("##################################################################");
           // Zeit zwischen zwei Kreisflügen höchstens 20s
         {
 
-          warning("Wir fliegen im Kreis");
+//          warning("Wir fliegen im Kreis");
           // Endpunkt des Kreisfluges
 
           e_point = n - weiter - 1;
@@ -374,7 +375,6 @@ double Flight::__sectorangle(int loop, bool isDraw)
   switch(wpList.at(loop)->type)
     {
       case Begin:
-      case (TakeOff | Begin):
         // directions to the next point
         sectorAngle = __polar(
             ( wpList.at(CUR_ID)->projP.x() - wpList.at(NEXT_ID)->projP.x() ),
@@ -396,7 +396,6 @@ double Flight::__sectorangle(int loop, bool isDraw)
             sectorAngle = sectorAngle - PI;
         break;
       case End:
-      case (End | Landing):
         // direction to the previous point:
         sectorAngle = __polar(
             ( wpList.at(CUR_ID)->projP.x() - wpList.at(PRE_ID)->projP.x() ),
@@ -434,10 +433,14 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   QPoint curPointA, curPointB;
   double w1;
 
-  if(wpList.count() > 1)
+
+  // Strecke und Sektoren zeichnen
+  if(flightType != NotSet)
     {
       extern const MapMatrix _globalMapMatrix;
       QPoint tempP;
+
+      warning("StreckenType: %d", flightType);
 
       for(unsigned int loop = 0; loop < wpList.count(); loop++)
         {
@@ -495,7 +498,16 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                 maskPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
                 if(loop)
                   {
-                    targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
+                    if((flightType == FAI_S || flightType == Dreieck_S) &&
+                        loop == 2)
+                      {
+                        targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
+                      }
+                    else
+                      {
+                        targetPainter->setPen(QPen(QColor(255, 0, 255), 3));
+                      }
+
                     maskPainter->setPen(QPen(Qt::color1, 3));
                     targetPainter->drawLine(
                         _globalMapMatrix.map(wpList.at(loop - 1)->projP),
@@ -517,12 +529,12 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                 maskPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
                 maskPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
 
+                // Linie von Startpunkt zum Aufgaben Beginn
+                //
                 if(loop)
                   {
-                    targetPainter->setPen(QPen(QColor(50, 50, 50), 3,
-                        QPen::DashLine));
-                    maskPainter->setPen(QPen(Qt::color1, 3,
-                        QPen::DashLine));
+                    targetPainter->setPen(QPen(QColor(255, 0, 0), 2));
+                    maskPainter->setPen(QPen(Qt::color1, 2));
                     targetPainter->drawLine(
                         _globalMapMatrix.map(wpList.at(loop - 1)->projP),
                         _globalMapMatrix.map(wpList.at(loop)->projP));
@@ -531,6 +543,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                         _globalMapMatrix.map(wpList.at(loop)->projP));
                   }
                 break;
+
               case Flight::End:
                 targetPainter->setPen(QPen(QColor(50, 50, 50), 2));
                 targetPainter->setBrush(QBrush(QColor(0, 0, 255),
@@ -541,6 +554,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
                 targetPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
                 targetPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
+
                 targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
                 targetPainter->drawLine(
                     _globalMapMatrix.map(wpList.at(loop-1)->projP),
@@ -548,59 +562,86 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
                 maskPainter->drawEllipse(gx, gy, 2 * R2, 2 * R2);
                 maskPainter->drawPie(qx, qy, 2 * R1, 2 * R1, w1 - 720, 1440);
-                maskPainter->setPen(QPen(QColor(50, 50, 50), 3));
+
+
+                // Strecke
+                if(flightType == FAI_S || flightType == Dreieck_S)
+                  {
+                    targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
+                  }
+                else
+                  {
+                    targetPainter->setPen(QPen(QColor(255, 0, 255), 3));
+                  }
+
+                maskPainter->setPen(QPen(Qt::color1, 3));
+                targetPainter->drawLine(
+                  _globalMapMatrix.map(wpList.at(loop - 1)->projP),
+                  _globalMapMatrix.map(wpList.at(loop)->projP));
                 maskPainter->drawLine(
-                    _globalMapMatrix.map(wpList.at(loop-1)->projP),
-                    _globalMapMatrix.map(wpList.at(loop)->projP));
+                  _globalMapMatrix.map(wpList.at(loop - 1)->projP),
+                  _globalMapMatrix.map(wpList.at(loop)->projP));
                 break;
-              case ( Flight::End | Flight::Landing ):
-                if(loop)
-                  {
-                    targetPainter->setPen(QPen(QColor(50,50,50), 3));
-                    maskPainter->setPen(QPen(Qt::color1, 3));
 
-                    targetPainter->drawLine(
-                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
-                        _globalMapMatrix.map(wpList.at(loop)->projP));
-                    maskPainter->drawLine(
-                        _globalMapMatrix.map(wpList.at(loop - 1)->projP),
-                        _globalMapMatrix.map(wpList.at(loop)->projP));
-                  }
-                break;
               default:
+                // Kann noch Start und Landepunkt sein.
+
+                // Linie von Startpunkt zum Aufgaben Beginn
                 if(loop)
                   {
-                    targetPainter->setPen(QPen(QColor(50, 50, 50), 3,
-                        QPen::DashLine));
-                    maskPainter->setPen(QPen(Qt::color1, 3,
-                        QPen::DashLine));
+                    if(flightType == FAI_S || flightType == Dreieck_S)
+                      {
+                        targetPainter->setPen(QPen(QColor(255, 0, 255), 3));
+                      }
+                    else
+                      {
+                        targetPainter->setPen(QPen(QColor(0, 0, 255), 2));
+                      }
 
+                    maskPainter->setPen(QPen(Qt::color1, 2));
                     targetPainter->drawLine(
                         _globalMapMatrix.map(wpList.at(loop - 1)->projP),
                         _globalMapMatrix.map(wpList.at(loop)->projP));
-
                     maskPainter->drawLine(
                         _globalMapMatrix.map(wpList.at(loop - 1)->projP),
                         _globalMapMatrix.map(wpList.at(loop)->projP));
-
-                    targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
-                    targetPainter->setBrush(QBrush::NoBrush);
-                    maskPainter->setPen(QPen(Qt::color1, 2));
-                    maskPainter->setBrush(QBrush::NoBrush);
-
-                    targetPainter->drawEllipse(
-                        _globalMapMatrix.map(wpList.at(loop)->projP).x() - 8,
-                        _globalMapMatrix.map(wpList.at(loop)->projP).y() - 8,
-                        16, 16);
-                    maskPainter->drawEllipse(
-                        _globalMapMatrix.map(wpList.at(loop)->projP).x() - 8,
-                        _globalMapMatrix.map(wpList.at(loop)->projP).y() - 8,
-                        16, 16);
                   }
+
+                targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
+                targetPainter->setBrush(QBrush::NoBrush);
+                maskPainter->setPen(QPen(Qt::color1, 2));
+                maskPainter->setBrush(QBrush::NoBrush);
+
+                targetPainter->drawEllipse(
+                  _globalMapMatrix.map(wpList.at(loop)->projP).x() - 8,
+                  _globalMapMatrix.map(wpList.at(loop)->projP).y() - 8,
+                      16, 16);
+                maskPainter->drawEllipse(
+                  _globalMapMatrix.map(wpList.at(loop)->projP).x() - 8,
+                  _globalMapMatrix.map(wpList.at(loop)->projP).y() - 8,
+                      16, 16);
                 break;
             }
+
+            }
         }
+
+        // Strecke bei Start auf Schenkel
+        if(flightType == FAI_S || flightType == Dreieck_S)
+            {
+              warning("Strecke: %d - %d",tBegin,tEnd);
+              targetPainter->setPen(QPen(QColor(255, 0, 255), 3));
+              maskPainter->setPen(QPen(Qt::color1, 3));
+              targetPainter->drawLine(
+                  _globalMapMatrix.map(wpList.at(2)->projP),
+                  _globalMapMatrix.map(wpList.at(wpList.count() - 3)->projP));
+              maskPainter->drawLine(
+                  _globalMapMatrix.map(wpList.at(2)->projP),
+                  _globalMapMatrix.map(wpList.at(wpList.count() - 3)->projP));
     }
+
+
+// Flugweg
 
   unsigned int delta = 1;
   if(_currentScale > _scale[ID_BORDER_SMALL])          delta = 8;
@@ -624,7 +665,6 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       bBoxFlight.setRight(MAX(curPointB.x(), bBoxFlight.right()));
       bBoxFlight.setBottom(MIN(curPointB.y(), bBoxFlight.bottom()));
 
-      // Strecke einzeichnen
       maskPainter->setPen(QPen(Qt::color1, 4));
       if(_currentScale < _scale[ID_BORDER_SMALL - 1])
         {
@@ -667,11 +707,12 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       targetPainter->drawLine(curPointA, curPointB);
       maskPainter->drawLine(curPointA, curPointB);
 
+      // Aufwinde Kreisen
       // Wenn die Kringel beibehalten werden, müsste eine weitere
       // Grenze eingeführt werden ...
 //      if(_currentScale < _scale[1])
 //        {
-        if(route.at(n)->f_state == Rechts ||
+/*        if(route.at(n)->f_state == Rechts ||
            route.at(n)->f_state == Links ||
            route.at(n)->f_state == Vermischt)
            {
@@ -681,7 +722,7 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                   curPointB.y() - 10,20,20);
               maskPainter->drawEllipse(curPointB.x() - 10,
                   curPointB.y() - 10,20,20);
-            }
+            } */
 //        }
 
       curPointA = curPointB;
@@ -1121,15 +1162,22 @@ void Flight::__setWaypointType()
    * Setzt den Status der Wendepunkte
    *
    */
+
+
+  // Kein Wendepunkt definiert
+  if (wpList.count() < 4) return;
+
+  warning("WendePunkte: %d",wpList.count());
   wpList.at(0)->type = Flight::TakeOff;
   wpList.at(1)->type = Flight::Begin;
-  wpList.at(wpList.count() - 2)->type = Flight::End;
-  wpList.at(wpList.count() - 1)->type = Flight::Landing;
 
-  for(unsigned int n = 2; n < wpList.count() - 2; n++)
+  for(unsigned int n = 2; n + 2 < wpList.count(); n++)
   {
     wpList.at(n)->type = Flight::RouteP;
   }
+
+  wpList.at(wpList.count() - 2)->type = Flight::End;
+  wpList.at(wpList.count() - 1)->type = Flight::Landing;
 
 }
 
@@ -1205,48 +1253,177 @@ warning("Begin: %d / Ende: %d", tBegin, tEnd);
 
 void Flight::__checkType()
 {
+  /**
+    * Findet den Typ der Strecke heraus
+    *
+    *
+    **/
+
 warning("Flight::__checkType()");
   distance_tot = 0;
-warning("tBegin: %d / tEnd: %d", tBegin, tEnd);
-  for(int loop = tBegin + 1; loop <= tEnd; loop++)
+  double distance_tot_d = 0;
+/// Nicht gesetzt wird vermutlich auch nicht mehr gebraucht!!
+//warning("tBegin: %d / tEnd: %d", tBegin, tEnd);
+
+  if(wpList.count() < 4)
     {
-warning("Durchlauf: %d", loop);
+      // Fehlerhafte Eingabe
+      flightType = NotSet;
+      return;
+    }
+
+  for(unsigned int loop = 2; loop <= wpList.count() - 2; loop++)
+    {
       wpList.at(loop)->distance = dist(wpList.at(loop - 1), wpList.at(loop));
       distance_tot = distance_tot + wpList.at(loop)->distance;
     }
-warning("hallo");
-  switch(tEnd - tBegin)
-    {
-      case 0:
-        break;
-      case 1:           // Zielstrecke
-        flightType = ZielS;
-        break;
-      case 2:           // Zielrückkehr
-        flightType = ZielR;
-        break;
-      case 3:
-        if(__isFAI(distance_tot,wpList.at(tBegin + 1)->distance,
-              wpList.at(tBegin + 2)->distance,
-              wpList.at(tBegin + 3)->distance))
-           flightType = FAI;
-        else
-            flightType = Dreieck;
-        break;
-      case 4:           // Start auf Schenkel oder Vieleck
-        distance_tot = distance_tot - wpList.at(tBegin + 1)->distance
-               - wpList.at(tBegin + 4)->distance
-               + dist(wpList.at(tBegin + 1), wpList.at(tBegin + 3));
 
-        if(__isFAI(distance_tot, dist(wpList.at(tBegin + 1),
-                wpList.at(tBegin + 3)), wpList.at(tBegin + 2)->distance,
-              wpList.at(tBegin + 3)->distance))
-            flightType = FAI_S;
-        else
-            flightType = Dreieck_S;
-        break;
-      default:
-        flightType = Unknown;
+  if(dist(wpList.at(1),wpList.at(wpList.count() - 2)) < 1.0)
+    {
+      switch(wpList.count() - 4)
+        {
+          case 0:
+            // Fehler
+            flightType = NotSet;
+            break;
+          case 1:
+            // Zielrückkehr
+            flightType = ZielR;
+            break;
+          case 2:
+            // FAI Dreieck
+            if(__isFAI(distance_tot,wpList.at(2)->distance,
+                wpList.at(3)->distance,
+                wpList.at(4)->distance))
+               flightType = FAI;
+            else
+              // Dreieck
+              flightType = Dreieck;
+            break;
+          case 3:
+            // Start auf Schenkel oder Vieleck
+            // Vieleck Ja/Nein kann endgültig erst bei der Analyse des Fluges
+            // bestimmt werden!
+            //
+            // Erste Abfrage je nachdem ob Vieleck oder Dreieck mehr Punkte geben
+            // würde
+            distance_tot_d = distance_tot - wpList.at(2)->distance
+                 - wpList.at(5)->distance
+                 + dist(wpList.at(2), wpList.at(4));
+
+
+            warning("dist: %.2f  dist_d: %.2f",distance_tot,distance_tot_d);
+            if(__isFAI(distance_tot_d, dist(wpList.at(2),
+                  wpList.at(4)), wpList.at(3)->distance,
+                  wpList.at(4)->distance))
+              {
+                if(distance_tot > distance_tot_d * (1.0 + 1.0/3.0))
+                  {
+                    flightType = Vieleck;
+                  }
+                else
+                  {
+                    flightType = FAI_S;
+                    distance_tot = distance_tot_d;
+                  }
+              }
+            else
+              {
+                if(distance_tot > distance_tot_d * (1.0 + 1.0/6.0))
+                  {
+                    flightType = Vieleck;
+                  }
+                else
+                  {
+                    flightType = Dreieck_S;
+                    distance_tot = distance_tot_d;
+                  }
+              }
+
+            break;
+          case 5:
+            // 2x Dreieck nur als FAI gültig
+            flightType = Unknown;
+            if( (distance_tot / 2 <= 100) &&
+                (wpList.at(1) == wpList.at(4)) &&
+                (wpList.at(2) == wpList.at(5)) &&
+                (wpList.at(3) == wpList.at(6)) &&
+                __isFAI(distance_tot / 2,
+                        wpList.at(2)->distance,
+                        wpList.at(3)->distance,
+                        wpList.at(4)->distance))
+              {
+                flightType = FAI_2;
+              }
+            break;
+          case 6:
+            // 2x Dreieck auf Schenkel FAI
+            flightType = Unknown;
+            distance_tot = distance_tot - wpList.at(2)->distance
+                 - wpList.at(5)->distance
+                 + dist(wpList.at(2), wpList.at(4)) * 2;
+
+            if( (distance_tot / 2 <= 100) &&
+                (wpList.at(2) == wpList.at(5)) &&
+                (wpList.at(3) == wpList.at(6)) &&
+                (wpList.at(4) == wpList.at(7)) &&
+            __isFAI(distance_tot, dist(wpList.at(2),
+                  wpList.at(4)), wpList.at(3)->distance,
+                  wpList.at(4)->distance))
+              flightType = FAI_S2;
+
+            break;
+          case 8:
+            // 3x FAI Dreieck
+            flightType = Unknown;
+            if( (distance_tot / 3 <= 100) &&
+                (wpList.at(1) == wpList.at(4)) &&
+                (wpList.at(2) == wpList.at(5)) &&
+                (wpList.at(3) == wpList.at(6)) &&
+                (wpList.at(1) == wpList.at(7)) &&
+                (wpList.at(2) == wpList.at(8)) &&
+                (wpList.at(3) == wpList.at(9)) &&
+                __isFAI(distance_tot / 3,
+                        wpList.at(2)->distance,
+                        wpList.at(3)->distance,
+                        wpList.at(4)->distance))
+              {
+                flightType = FAI_3;
+              }
+            break;
+          case 9:
+            // 3x FAI Dreieck Start auf Schenkel
+            distance_tot = distance_tot - wpList.at(2)->distance
+                 - wpList.at(5)->distance
+                 + dist(wpList.at(2), wpList.at(4)) * 3;
+
+            flightType = Unknown;
+            if( (distance_tot / 3 <= 100) &&
+                (wpList.at(2) == wpList.at(5)) &&
+                (wpList.at(3) == wpList.at(6)) &&
+                (wpList.at(4) == wpList.at(7)) &&
+                (wpList.at(2) == wpList.at(8)) &&
+                (wpList.at(3) == wpList.at(9)) &&
+                (wpList.at(4) == wpList.at(10)) &&
+                 __isFAI(distance_tot, dist(wpList.at(2),
+                         wpList.at(4)), wpList.at(3)->distance,
+                         wpList.at(4)->distance))
+              flightType = FAI_S3;
+          default:
+            flightType = Unknown;
+        }
+    }
+  else
+    {
+      if(wpList.count() <= 1 + 4)
+        {
+          // Zielstrecke
+          flightType = ZielS;
+        }
+      else
+        {
+          flightType = Unknown;
+        }
     }
 }
 
@@ -1279,6 +1456,16 @@ void Flight::__checkMaxMin()
 
 void Flight::__checkWaypoints()
 {
+  /*
+   *   Überprüft, ob die Sektoren der Wendepunkte erreicht wurden
+   *
+   *   SOLLTE NOCHMALS ÜBERARBEITET WERDEN
+   *
+   */
+
+
+  bool time_error = false;
+
   if(flightType == NotSet) return;
 warning("Flight::__checkWaypoints()");
 
@@ -1302,50 +1489,35 @@ warning("Flight::__checkWaypoints()");
 
   for(unsigned int loop = 0; loop < route.count(); loop++)
     {
-      if(loop)
+      if(loop && (route.at(loop)->time - preTime > 70))
         {
-          if(route.at(loop)->time - preTime > 7)
-            {
-              /*
-               *           Zeitabstand zwischen Loggerpunkten ist zu gross!
-               *                      (vgl. Code Sportif 3, Ziffer 1.9.2.1)
-               */
-              KMessageBox::error(0,
-                  i18n("The time intervall between two points<BR>"
-                       "of the flight is more than 70 sec.!<BR>"
-                       "Due to Code Sportif 3, Nr. 1.9.2.1,<BR>"
-                       "the flight can not be valued!"));
-              return;
-              ////////////////////////////////////////////////////////////////
-              // sonstige Reaktion ????
-              ////////////////////////////////////////////////////////////////
-            }
+          /*
+           *           Zeitabstand zwischen Loggerpunkten ist zu gross!
+           *                      (vgl. Code Sportif 3, Ziffer 1.9.2.1)
+           */
+          time_error = true;
         }
+
       preTime = route.at(loop)->time;
     }
 
-  // Überprüfen von Start und Landung Abstand noch überdenken!!!!!
+
+// Noch nötig ???
   if(dist(wpList.at(0), route.at(1)) < 1.0)
     {
       wpList.at(0)->sector1 = route.at(0)->time;
-      if(wpList.at(0)->type == FreeP)  wpList.at(0)->type = ( TakeOff );
-      else  wpList.at(0)->type = ( wpList.at(0)->type | TakeOff );
-    }
-  else
-    {
-      // Was passiert, wenn der Start woanders erfolgte ???
     }
 
   if(dist(wpList.last(), route.last()) < 1.0)
     {
       wpList.last()->sector1 = route.last()->time;
-      if(wpList.last()->type == FreeP)  wpList.last()->type = ( Landing );
-      else  wpList.last()->type = ( wpList.last()->type | Landing );
     }
-  else
-    {
-      // Was passiert, wenn die Landung woanders erfolgte ???
-    }
+
+
+
+
+
+
 
   unsigned int startIndex = 0, dummy = 0;
 
@@ -1566,10 +1738,10 @@ warning("Flight::__checkWaypoints()");
   if(origList.count())
     {
       /*
-       * Optimierter Flug: 15% abziehen
+       * Optimierter Flug: 10% abziehen
        */
       taskPoints -= ( taskPoints * (malusValue / 100.0) );
-      cerr << "reduziere Punkte um 15%\n";
+      cerr << "reduziere Punkte um 10%\n";
     }
 
   cerr << "dmstCount " << dmstCount << endl;
@@ -1578,6 +1750,17 @@ warning("Flight::__checkWaypoints()");
   cerr << "Index: " << gliderIndex << endl;
   cerr << "Entfernung: " << wertDist << endl;
   cerr << taskPoints << endl;
+
+
+  if (time_error)
+   {
+     KMessageBox::error(0,
+        i18n("The time intervall between two points<BR>"
+             "of the flight is more than 70 sec.!<BR>"
+             "Due to Code Sportif 3, Nr. 1.9.2.1,<BR>"
+             "the flight can not be valued!"));
+   }
+
 }
 
 QList<struct wayPoint>* Flight::getWPList(bool isOrig)
@@ -1754,3 +1937,4 @@ bool Flight::optimizeTask()
 //  }
   return false;
 }
+

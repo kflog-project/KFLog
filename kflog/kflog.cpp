@@ -101,13 +101,14 @@ KFLogApp::~KFLogApp()
 
 void KFLogApp::initActions()
 {
+  extern MapContents _globalMapContents;
   fileOpen = new KAction(i18n("&Open Flight"), BarIcon("fileopen"),
       KStdAccel::key(KStdAccel::Open), this, SLOT(slotFileOpen()),
       actionCollection(), "file_open");
   fileOpenRecent = KStdAction::openRecent(this,
       SLOT(slotFileOpenRecent(const KURL&)), actionCollection());
   fileClose = new KAction(i18n("Close Flight"), BarIcon("fileclose"),
-      KStdAccel::key(KStdAccel::Close), this, SLOT(slotFileClose()),
+      KStdAccel::key(KStdAccel::Close), map, SLOT(slotDeleteFlightLayer()),
       actionCollection(), "file_close");
   filePrint = KStdAction::print(this, SLOT(slotFilePrint()),
       actionCollection());
@@ -146,6 +147,9 @@ void KFLogApp::initActions()
 
   flightEvaluation = new KAction(i18n("Evaluation"), 0, 0, this,
       SLOT(slotEvaluateFlight()), actionCollection(), "evaluate_flight");
+  flightOptimization = new KAction(i18n("Optimize"), 0, 0, map,
+      SLOT(slotOptimzeFlight()), actionCollection(), "optimize_flight");
+
 
   fileOpen->setStatusText(i18n("Opens an existing flight"));
   fileOpenRecent->setStatusText(i18n("Opens a recently used flight"));
@@ -302,7 +306,7 @@ void KFLogApp::initView()
   setMainDockWidget(mapViewDock);
 
   QFrame* mapViewFrame = new QFrame(mapViewDock);
-  map = new Map(this, mapViewFrame);
+  map = new Map(this, mapViewFrame, "KFLog-Map");
 
   QVBoxLayout* mapLayout = new QVBoxLayout(mapViewFrame,2,1);
   mapLayout->addWidget(map);
@@ -469,10 +473,6 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
   slotStatusMsg(i18n("Ready."));
 }
 
-void KFLogApp::slotFileClose()
-{
-
-}
 
 void KFLogApp::slotFilePrint()
 {
@@ -584,3 +584,13 @@ void KFLogApp::slotNewToolbarConfig()
 }
 
 void KFLogApp::slotStartComplete() { if(showStartLogo)  delete startLogo; }
+
+
+void KFLogApp::slotOptimizeFlight(){
+// if(!flightList.count()) return;
+//extern MapContents _globalMapContents;
+//  if(_globalMapContents.getFlight()->optimizeTask()) {
+//    showFlightData(flightList.current());
+  //  mainApp->getMap()->showFlightLayer(true);
+//  }
+}

@@ -36,24 +36,11 @@ Airspace::Airspace(QString n, unsigned int t, QPointArray pA)
         drawColor[0] = QColor(0,120,0);
         fillBrushStyle = QBrush::NoBrush;
         break;
-      case AirCtemp:
-        PEN_THICKNESS(3,3,3,3,3,3,3,3,3)
-        drawColor[0] = QColor(0,120,0);
-        fillColor = QColor(0,200,0);
-        fillBrushStyle = QBrush::Dense6Pattern;
-        break;
       case AirD:
         PEN_THICKNESS(3,3,3,3,3,3,3,3,3)
         drawPenStyle = QPen::DashLine;
         drawColor[0] = QColor(0,180,0);
         fillBrushStyle = QBrush::NoBrush;
-        break;
-      case AirDtemp:
-        PEN_THICKNESS(3,3,3,3,3,3,3,3,3)
-        drawPenStyle = QPen::DashLine;
-        drawColor[0] = QColor(0,180,0);
-        fillColor = QColor(120,255,120);
-        fillBrushStyle = QBrush::FDiagPattern;
         break;
       case AirElow:
         PEN_THICKNESS(3,3,3,3,2,2,2,2,2)
@@ -154,11 +141,9 @@ QString Airspace::getInfoString()
   switch(typeID)
     {
       case BaseMapElement::AirC:
-      case BaseMapElement::AirCtemp:
         text = "C";
         break;
       case BaseMapElement::AirD:
-      case BaseMapElement::AirDtemp:
         text = "D";
         break;
       case BaseMapElement::AirElow:
@@ -223,16 +208,8 @@ void Airspace::printMapElement(QPainter* printPainter, const double dX,
         printPainter->setBrush(QBrush::NoBrush);
         printPainter->setPen(QPen(QColor(0,120,0), 3));
         break;
-      case AirCtemp:
-        printPainter->setBrush(QBrush(QColor(150,150,150), QBrush::HorPattern));
-        printPainter->setPen(QPen(QColor(0,120,0), 3));
-        break;
       case AirD:
         printPainter->setBrush(QBrush::NoBrush);
-        printPainter->setPen(QPen(QColor(0,180,0), 3, QPen::DashLine));
-        break;
-      case AirDtemp:
-        printPainter->setBrush(QBrush(QColor(150,150,150), QBrush::VerPattern));
         printPainter->setPen(QPen(QColor(0,180,0), 3, QPen::DashLine));
         break;
       case AirElow:

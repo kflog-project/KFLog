@@ -143,7 +143,8 @@ class Flight : public BaseMapElement
      * The flight-types.
      */
     enum FlightType {ZielS = 1, ZielR = 2, FAI = 3, Dreieck = 4, FAI_S = 5,
-                   Dreieck_S = 6, Abgebrochen = 7, Unknown = 8};
+                   Dreieck_S = 6, Abgebrochen = 7, Unknown = 8, FAI_2 = 9,
+                   FAI_S2 = 10, FAI_3 = 11, FAI_S3 = 12, Vieleck = 13};
     /**
      * Return Values for the Min/Max Points
      */

@@ -45,7 +45,7 @@ class Map : public QWidget
      * time. It also creates the icon used as a cursor in the map, and
      * connects some tool-bar-button for controling the map.
      */
-    Map(KFLogApp* main, QFrame* parent);
+    Map(KFLogApp* main, QFrame* parent, const char* name);
     /**
      * Destroys the Map-object and saves the current scale and center of the
      * map, so the map will appear the same, when KFLog is started next.
@@ -107,6 +107,8 @@ class Map : public QWidget
     void slotPrintMap();
     /** */
     void slotDrawCursor(QPoint p1, QPoint p2);
+  /** Löscht den Fluglayer */
+  void slotDeleteFlightLayer();
 
   signals:
     /** */

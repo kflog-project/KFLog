@@ -80,8 +80,7 @@ void LineElement::readConfig()
         READ_PEN(HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
             HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4)
         break;
-      case MidRoad:
-      case SmallRoad:
+      case Road:
         config->setGroup("Road");
         READ_PEN(ROAD_COLOR_1, ROAD_COLOR_2, ROAD_COLOR_3, ROAD_COLOR_4,
             ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4)
@@ -91,21 +90,19 @@ void LineElement::readConfig()
         READ_PEN(RAIL_COLOR_1, RAIL_COLOR_2, RAIL_COLOR_3, RAIL_COLOR_4,
             RAIL_PEN_1, RAIL_PEN_2, RAIL_PEN_3, RAIL_PEN_4)
         break;
-      case BigLake:
-      case MidLake:
-      case SmallLake:
+      case Lake:
         closed = true;
-      case BigRiver:
-      case MidRiver:
-      case SmallRiver:
+      case River:
         config->setGroup("River");
         READ_PEN(RIVER_COLOR_1, RIVER_COLOR_2, RIVER_COLOR_3, RIVER_COLOR_4,
             RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4)
         break;
-      case HugeCity:
-      case BigCity:
-      case MidCity:
-      case SmallCity:
+      case Canal:
+        config->setGroup("Canal");
+        READ_PEN(CANAL_COLOR_1, CANAL_COLOR_2, CANAL_COLOR_3, CANAL_COLOR_4,
+            CANAL_PEN_1, CANAL_PEN_2, CANAL_PEN_3, CANAL_PEN_4)
+        break;
+      case City:
         config->setGroup("City");
         READ_PEN(CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3, CITY_COLOR_4,
             1, 1, 1, 1)
@@ -151,7 +148,7 @@ void LineElement::printMapElement(QPainter* printPainter, const double dX,
         printPainter->setPen(QPen(QColor(255,100,100), 1));
       }
       break;
-    case MidRoad:
+    case Road:
       show = false;
       printPainter->setPen(QPen(QColor(200,100,100), 1));
       if(scale <= _scale[_scaleBorder[typeID]]) {
@@ -162,14 +159,6 @@ void LineElement::printMapElement(QPainter* printPainter, const double dX,
           show = true;
           printPainter->setPen(QPen(QColor(200,100,100), 1));
         }
-      }
-      printPainter->setBrush(QBrush::NoBrush);
-      break;
-    case SmallRoad:
-      show = false;
-      if(scale <= _scale[_scaleBorder[typeID]]) {
-        show = true;
-        printPainter->setPen(QPen(QColor(200,50,50), 1));
       }
       printPainter->setBrush(QBrush::NoBrush);
       break;
@@ -193,17 +182,9 @@ void LineElement::printMapElement(QPainter* printPainter, const double dX,
         printPainter->setPen(QPen(QColor(0,0,0), 2, QPen::DashDotLine));
       }
       break;
-    case Coast:
-      show = false;
-      if(scale <= _scale[_scaleBorder[typeID]]) {
-        show = true;
-        printPainter->setBrush(QBrush(QColor(50,200,255), QBrush::SolidPattern));
-        printPainter->setPen(QPen(QColor(50,50,255), 1));
-      }
-      break;
-    case BigLake:
+    case Lake:
       isClosed = true;
-    case BigRiver:
+    case River:
       show = false;
       if(scale <= _scale[_scaleBorder[typeID]]) {
         show = true;
@@ -215,30 +196,6 @@ void LineElement::printMapElement(QPainter* printPainter, const double dX,
           printPainter->setPen(QPen(QColor(100,100,255), 1, QPen::DotLine));
         }
         printPainter->setBrush(QBrush(QColor(100,200,255), QBrush::SolidPattern));
-      }
-      break;
-    case MidLake:
-      isClosed = true;
-    case MidRiver:
-      show = false;
-      if(scale <= _scale[_scaleBorder[typeID]]) {
-        show = true;
-        if(scale <= _scale[6]) {
-          printPainter->setPen(QPen(QColor(100,100,255), 2, QPen::DotLine));
-        } else {
-          printPainter->setPen(QPen(QColor(100,100,255), 1, QPen::DotLine));
-        }
-        printPainter->setBrush(QBrush(QColor(75,200,255), QBrush::SolidPattern));
-      }
-      break;
-    case SmallLake:
-      isClosed = true;
-    case SmallRiver:
-      show = false;
-      if(scale <= _scale[_scaleBorder[typeID]]) {
-        show = true;
-        printPainter->setPen(QPen(QColor(100,100,255), 1, QPen::DotLine));
-        printPainter->setBrush(QBrush(QColor(50,200,255), QBrush::SolidPattern));
       }
       break;
   }
@@ -324,7 +281,7 @@ void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
   QPointArray pA = _globalMapMatrix.map(projPointArray);
 
   /********************************/
-  if(typeID == 37 && isFirst)
+  if(typeID == BaseMapElement::City && isFirst)
     {
       targetPainter->setPen(QPen(drawColor[4], drawPenSize[4] * 3));
       maskPainter->setPen(QPen(Qt::color1, drawPenSize[4] * 3));
@@ -333,7 +290,7 @@ void LineElement::drawMapElement(QPainter* targetPainter, QPainter* maskPainter,
 
       return;
     }
-  else if(typeID == 37 && !isFirst)
+  else if(typeID == BaseMapElement::City && !isFirst)
     {
       targetPainter->setPen(QPen(drawColor[index], 0));
       targetPainter->drawPolygon(pA);

@@ -82,8 +82,8 @@
 #define PIX_WIDTH  QApplication::desktop()->width()
 #define PIX_HEIGHT QApplication::desktop()->height()
 
-Map::Map(KFLogApp *m, QFrame* parent)
-: QWidget(parent),
+Map::Map(KFLogApp *m, QFrame* parent, const char* name)
+: QWidget(parent, name),
   mainApp(m), prePos(-50, -50), preCur1(-50, -50), preCur2(-50, -50), posNum(1),
     indexLength(0)
 {
@@ -195,42 +195,24 @@ Map::Map(KFLogApp *m, QFrame* parent)
   _scale[9] = config->readNumEntry("Scale9", ID_BORDER_U);
 
   config->setGroup("MapBorder");
-  SET_BORDER(Coast,              "ShoreLine", 6)
-  SET_BORDER(BigRiver,           "BigHydro", 6)
-  SET_BORDER(BigLake,            "BigHydro", 6)
-  SET_BORDER(MidRiver,           "MidHydro", 5)
-  SET_BORDER(MidLake,            "MidHydro", 5)
-  SET_BORDER(SmallRiver,         "SmallHydro", 3)
-  SET_BORDER(SmallLake,          "SmallHydro", 3)
-  SET_BORDER(Dam,                "Dam",2)
+  SET_BORDER(River,              "Hydro", 6)
+  SET_BORDER(Lake,               "Hydro", 6)
   SET_BORDER(Railway,            "RailTrack",5)
   SET_BORDER(AerialRailway,      "AerialTrack",3)
-  SET_BORDER(Station,            "Station",3)
   SET_BORDER(Obstacle,           "Obstacle",4)
   SET_BORDER(LightObstacle,      "Obstacle",4)
   SET_BORDER(ObstacleGroup,      "Obstacle",4)
   SET_BORDER(LightObstacleGroup, "Obstacle",4)
   SET_BORDER(Spot,               "Spot",2)
-  SET_BORDER(Pass,               "Pass",2)
-  SET_BORDER(Glacier,            "Glacier",4)
   SET_BORDER(Highway,            "Highway",6)
-  SET_BORDER(HighwayEntry,       "HighwayEntry",2)
-  SET_BORDER(MidRoad,            "MidRoad",4)
-  SET_BORDER(SmallRoad,          "SmallRoad",3)
-  SET_BORDER(Oiltank,            "Landmark",2)
-  SET_BORDER(Factory,            "Landmark",2)
-  SET_BORDER(Castle,             "Landmark",2)
-  SET_BORDER(Church,             "Landmark",2)
-  SET_BORDER(Tower,              "Landmark",2)
-  SET_BORDER(HugeCity,           "HugeCity",6)
-  SET_BORDER(BigCity,            "BigCity",5)
-  SET_BORDER(MidCity,            "MidCity",4)
-  SET_BORDER(SmallCity,          "SmallCity",3)
+  SET_BORDER(Road,               "MidRoad",4)
+  SET_BORDER(Landmark,           "Landmark",2)
+  SET_BORDER(City,               "HugeCity",6)
   SET_BORDER(Village,            "Village",3)
+  SET_BORDER(AirA,               "Airspace",9)
+  SET_BORDER(AirB,               "Airspace",9)
   SET_BORDER(AirC,               "Airspace",9)
-  SET_BORDER(AirCtemp,           "Airspace",9)
   SET_BORDER(AirD,               "Airspace",9)
-  SET_BORDER(AirDtemp,           "Airspace",9)
   SET_BORDER(ControlD,           "Airspace",9)
   SET_BORDER(AirElow,            "Airspace",9)
   SET_BORDER(AirEhigh,           "Airspace",9)
@@ -254,7 +236,6 @@ Map::Map(KFLogApp *m, QFrame* parent)
   SET_BORDER(AmbHeliport,        "Airport",4)
   SET_BORDER(Glidersite,         "GliderSites",4)
   SET_BORDER(Outlanding,         "Outlanding",3)
-  SET_BORDER(WayPoint,           "Waypoints",3)
   SET_BORDER(UltraLight,         "AddSites",3)
   SET_BORDER(HangGlider,         "AddSites",3)
   SET_BORDER(Parachute,          "AddSites",3)
@@ -1145,5 +1126,15 @@ void Map::showFlightLayer(bool redrawFlight)
   if(!showFlight)
     mainApp->toolBar()->getButton(ID_LAYER_FLIGHT)->toggle();
 
+  slotShowLayer();
+}
+
+/** Löscht den Fluglayer */
+void Map::slotDeleteFlightLayer()
+{
+  extern MapContents _globalMapContents;
+  _globalMapContents.closeFlight();
+  pixFlight.fill(white);
+  bitFlightMask.fill(black);
   slotShowLayer();
 }

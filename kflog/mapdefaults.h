@@ -37,6 +37,12 @@
 // Farbe #5 wird zur Zeit für die Füllung der Seen verwendet ...
 #define RIVER_COLOR_5 QColor(96,128,248)
 
+// Farbe nich endgültig ;-)
+#define CANAL_COLOR_1 QColor(70,195,70)
+#define CANAL_COLOR_2 QColor(70,195,70)
+#define CANAL_COLOR_3 QColor(70,195,70)
+#define CANAL_COLOR_4 QColor(70,195,70)
+
 #define CITY_COLOR_1 QColor(255,250,100)
 #define CITY_COLOR_2 QColor(255,250,100)
 #define CITY_COLOR_3 QColor(255,250,100)
@@ -53,6 +59,11 @@
 #define RIVER_PEN_2 2
 #define RIVER_PEN_3 1
 #define RIVER_PEN_4 1
+
+#define CANAL_PEN_1 2
+#define CANAL_PEN_2 2
+#define CANAL_PEN_3 1
+#define CANAL_PEN_4 1
 
 #define RAIL_PEN_1 2
 #define RAIL_PEN_2 2

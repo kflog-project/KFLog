@@ -92,7 +92,7 @@ class KFLogApp : public KDockMainWindow
     /** */
     void slotFileOpen();
     /** */
-    void slotFileClose();
+
     /** */
     void slotFileOpenRecent(const KURL& url);
     /** */
@@ -121,7 +121,8 @@ class KFLogApp : public KDockMainWindow
     void slotStartComplete();
     /** */
     void slotEvaluateFlight();
-
+    /** */
+    void slotOptimizeFlight();
   private:
     /** the configuration object of the application */
     KConfig *config;
@@ -173,6 +174,7 @@ class KFLogApp : public KDockMainWindow
     KToggleAction* viewMapControl;
     KAction* configKFLog;
     KAction* flightEvaluation;
+    KAction* flightOptimization;
     /** */
     Map* map;
     /** */

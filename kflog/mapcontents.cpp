@@ -50,9 +50,6 @@
 #define MAX_FILE_COUNT 16200
 #define ISO_LINE_NUM 46
 
-#define MAP_FILE_FORMAT "#KFLog-Map-file Version: 0.6 (c) 2000 The KFLog-Team"
-#define DEM_FILE_FORMAT "#KFLog-DEM-file Version: 0.6 (c) 2000 The KFLog-Team"
-
 #define KFLOG_FILE_MAGIC  0x404b464c
 #define FILE_TYPE_GROUND  0x47
 #define FILE_TYPE_TERRAIN 0x54
@@ -70,7 +67,8 @@
     border.west = MIN(border.west, lon_temp); \
   }
 
-#define READ_POINT_LIST tA.resize(locLength); \
+#define READ_POINT_LIST  in >> locLength; \
+  tA.resize(locLength); \
   for(unsigned int i = 0; i < locLength; i++) { \
     in >> lat_temp;          in >> lon_temp; \
     tA.setPoint(i, _globalMapMatrix.wgsToMap(lat_temp, lon_temp)); \
@@ -107,8 +105,6 @@ MapContents::MapContents()
   airspaceList.setAutoDelete(true);
   gliderList.setAutoDelete(true);
   flightList.setAutoDelete(true);
-  highEntryList.setAutoDelete(true);
-  highwayList.setAutoDelete(true);
   hydroList.setAutoDelete(true);
   landmarkList.setAutoDelete(true);
   navList.setAutoDelete(true);
@@ -134,8 +130,6 @@ MapContents::~MapContents()
   cityList.~QList();
   gliderList.~QList();
   flightList.~QList();
-  highEntryList.~QList();
-  highwayList.~QList();
   hydroList.~QList();
   landmarkList.~QList();
   navList.~QList();
@@ -275,6 +269,16 @@ warning("es folgen \"echte\" Sekunden");
 warning("Ergebins: %d", result);
   return result;
 
+}
+
+void MapContents::closeFlight()
+{
+  /*
+   * Schließt alle Flüge
+   *
+   * Später vielleicht Auswahl von Einzelnen
+   */
+  flightList.clear();
 }
 
 int MapContents::__degreeToNum(const char* degree)
@@ -634,9 +638,7 @@ bool MapContents::__readAsciiFile(const char* fileName)
                         frequency, alias));
                     break;
                   case BaseMapElement::AirC:
-                  case BaseMapElement::AirCtemp:
                   case BaseMapElement::AirD:
-                  case BaseMapElement::AirDtemp:
                   case BaseMapElement::ControlD:
                   case BaseMapElement::AirElow:
                   case BaseMapElement::AirEhigh:
@@ -659,54 +661,27 @@ bool MapContents::__readAsciiFile(const char* fileName)
 //                    reportList.append(
 //                        new SinglePoint(name, abbr, type, position, isWayP));
                     break;
-                  case BaseMapElement::HugeCity:
-                  case BaseMapElement::BigCity:
-                  case BaseMapElement::MidCity:
-                  case BaseMapElement::SmallCity:
+                  case BaseMapElement::City:
                     cityList.append(new LineElement(name, type, tA, sortID));
                     break;
-                  case BaseMapElement::Oiltank:
-                  case BaseMapElement::Factory:
-                  case BaseMapElement::Castle:
-                  case BaseMapElement::Church:
-                  case BaseMapElement::Tower:
+                  case BaseMapElement::Landmark:
                     break;
                   case BaseMapElement::Highway:
-                    highwayList.append(new LineElement(name, type, tA));
-                    break;
-                  case BaseMapElement::HighwayEntry:
-                    break;
-                  case BaseMapElement::MidRoad:
-                  case BaseMapElement::SmallRoad:
+                  case BaseMapElement::Road:
                     roadList.append(new LineElement(name, type, tA));
-                    break;
-                  case BaseMapElement::RoadBridge:
-                  case BaseMapElement::RoadTunnel:
                     break;
                   case BaseMapElement::Railway:
                     railList.append(new LineElement(name, type, tA));
-                    break;
-                  case BaseMapElement::RailwayBridge:
-                  case BaseMapElement::Station:
                     break;
                   case BaseMapElement::AerialRailway:
                     newLine = new LineElement(name, type, tA);
                     railList.append(new LineElement(name, type, tA));
                     break;
-                  case BaseMapElement::Coast:
-                  case BaseMapElement::BigLake:
-                  case BaseMapElement::MidLake:
-                  case BaseMapElement::SmallLake:
-                  case BaseMapElement::BigRiver:
-                  case BaseMapElement::MidRiver:
-                  case BaseMapElement::SmallRiver:
+                  case BaseMapElement::Lake:
+                  case BaseMapElement::River:
                     hydroList.append(new LineElement(name, type, tA, sortID));
                     break;
-                  case BaseMapElement::Dam:
-                  case BaseMapElement::Lock:
-                    break;
                   case BaseMapElement::Spot:
-                  case BaseMapElement::Pass:
                     obstacleList.append(new ElevPoint(0, 0, type, position,
                         elev, isWayP));
                     break;
@@ -742,7 +717,7 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 
   KStandardDirs* globalDirs = KGlobal::dirs();
   QString pathName;
-  pathName.sprintf("kflog/mapdata/%c_%.4d.kfl", fileTypeID, fileSecID);
+  pathName.sprintf("kflog/mapdata/%c_%.5d.kfl", fileTypeID, fileSecID);
   pathName = globalDirs->findResource("data", pathName);
 
   if(pathName == 0)
@@ -847,7 +822,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
 
   KStandardDirs* globalDirs = KGlobal::dirs();
   QString pathName;
-  pathName.sprintf("kflog/mapdata/%c_%.4d.kfl", fileTypeID, fileSecID);
+  pathName.sprintf("kflog/mapdata/%c_%.5d.kfl", fileTypeID, fileSecID);
   pathName = globalDirs->findResource("data", pathName);
 
   if(pathName == 0)
@@ -867,7 +842,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   in.setVersion(2);
 
   Q_UINT8 typeIn;
-  Q_INT8 loadTypeID;
+  Q_INT8 loadTypeID, sort;
   Q_UINT16 loadSecID, formatID;
   Q_INT32 lat_temp, lon_temp;
   Q_UINT32 magic, locLength;
@@ -918,25 +893,34 @@ bool MapContents::__readBinaryFile(const int fileSecID,
       switch (typeIn)
         {
           case BaseMapElement::Highway:
-            in >> locLength;
-
             READ_POINT_LIST
-
-            highwayList.append(new LineElement("Road", typeIn, tA));
+            roadList.append(new LineElement("Highway", typeIn, tA));
             break;
-          case BaseMapElement::MidRoad:
-            in >> locLength;
-
+          case BaseMapElement::Road:
             READ_POINT_LIST
-
             roadList.append(new LineElement("Road", typeIn, tA));
             break;
           case BaseMapElement::Railway:
-            in >> locLength;
-
             READ_POINT_LIST
-
             roadList.append(new LineElement("Railway", typeIn, tA));
+            break;
+          case BaseMapElement::River:
+            READ_POINT_LIST
+            hydroList.append(new LineElement("River", typeIn, tA));
+            break;
+          case BaseMapElement::Canal:
+            READ_POINT_LIST
+            hydroList.append(new LineElement("Canal", typeIn, tA));
+            break;
+          case BaseMapElement::City:
+            in >> sort;
+            READ_POINT_LIST
+            cityList.append(new LineElement("City", typeIn, tA, sort));
+            break;
+          case BaseMapElement::Lake:
+            in >> sort;
+            READ_POINT_LIST
+            hydroList.append(new LineElement("Lake", typeIn, tA, sort));
             break;
         }
     }
@@ -1427,6 +1411,9 @@ bool MapContents::loadFlight(QFile igcFile)
   extern const MapMatrix _globalMapMatrix;
 
   int lineCount = 0;
+  unsigned int wp_count = 0;
+  int last0 = -1;
+
   while (!stream.eof())
     {
       if(importProgress.wasCancelled()) return false;
@@ -1585,38 +1572,64 @@ bool MapContents::loadFlight(QFile igcFile)
       else if(s.mid(0,1) == "C")
         {
           if( ( ( ( s.mid( 8,1) == "N" ) || ( s.mid( 8,1) == "S" ) ) ||
-                ( ( s.mid(17,1) == "W" ) || ( s.mid(17,1) == "E" ) ) ) &&
-              ( s.mid(18,20) != 0 ) )
+                ( ( s.mid(17,1) == "W" ) || ( s.mid(17,1) == "E" ) ) ))
             {
+
               // We have a waypoint
               sscanf(s.mid(1,17), "%2d%5d%1c%3d%5d%1c",
                   &lat, &latmin, &latChar, &lon, &lonmin, &lonChar);
+
+
               latTemp = lat * 600000 + latmin * 10;
               lonTemp = lon * 600000 + lonmin * 10;
 
-              if(latChar == 'S') latTemp = -latTemp;
-              if(lonChar == 'W') lonTemp = -lonTemp;
+              if(latTemp != 0 && lonTemp != 0)
+               {
+                 if(latChar == 'S') latTemp = -latTemp;
+                 if(lonChar == 'W') lonTemp = -lonTemp;
 
-              newWP = new wayPoint;
-              newWP->name = s.mid(18,20);
-              newWP->origP = QPoint(latTemp, lonTemp);
-              newWP->projP = _globalMapMatrix.wgsToMap(newWP->origP);
-              newWP->sector1 = 0;
-              newWP->sector2 = 0;
-              newWP->sectorFAI = 0;
-              newWP->angle = -100;
-              newWP->type = Flight::NotSet;
-              if(isFirstWP)
-                  newWP->distance = 0;
-              else
-                  newWP->distance = dist(latTemp, lonTemp,
-                      preWP->origP.y(), preWP->origP.x());
+                 newWP = new wayPoint;
+                 newWP->name = s.mid(18,20);
+                 newWP->origP = QPoint(latTemp, lonTemp);
+                 newWP->projP = _globalMapMatrix.wgsToMap(newWP->origP);
+                 newWP->sector1 = 0;
+                 newWP->sector2 = 0;
+                 newWP->sectorFAI = 0;
+                 newWP->angle = -100;
+                 newWP->type = Flight::NotSet;
+                 if(isFirstWP)
+                    newWP->distance = 0;
+                 else
+                     newWP->distance = dist(latTemp, lonTemp,
+                 preWP->origP.y(), preWP->origP.x());
+                 if(!isFirstWP && newWP->distance <= 0.1)  continue;
+                 wpList.append(newWP);
+                 isFirstWP = false;
+                 preWP = newWP;
+               }
+             else
+               {
 
-              if(!isFirstWP && newWP->distance <= 0.1)  continue;
+                  // Sinnvoller wäre es aus der IGC DAtei auszulesen wieviele
+                  // WendePunkte es gibt. <- Ist IGC Datei immer korrekt??
 
-              wpList.append(newWP);
-              isFirstWP = false;
-              preWP = newWP;
+                  if(wp_count != 0 && last0 != wp_count -1)
+                    {
+                      newWP = new wayPoint;
+                      newWP->name =  preWP->name;
+                      newWP->origP = preWP->origP;
+                      newWP->projP = preWP->projP;
+                      newWP->sector1 = 0;
+                      newWP->sector2 = 0;
+                      newWP->sectorFAI = 0;
+                      newWP->angle = -100;
+                      newWP->type = Flight::NotSet;
+
+                      wpList.append(newWP);
+                    }
+                  last0 = wp_count;
+               }
+              wp_count++;
             }
         }
       else if(s.mid(0,1) == "L")
@@ -1633,6 +1646,7 @@ bool MapContents::loadFlight(QFile igcFile)
     }
 
   importProgress.close();
+
 
   flightList.append(new Flight(QFileInfo(igcFile).fileName(), flightRoute,
       pilotName, gliderType, gliderID, wpList, date));
@@ -1667,10 +1681,10 @@ void MapContents::proofeSection()
     {
       for(int col = westCorner; col <= eastCorner; col++)
         {
-          if( !sectionArray.testBit( row + ( col + ( row * 89 ) ) ) )
+          if( !sectionArray.testBit( row + ( col + ( row * 179 ) ) ) )
             {
               // Kachel fehlt!
-              int secID = row + ( col + ( row * 89 ) );
+              int secID = row + ( col + ( row * 179 ) );
 
               /* Nun müssen die korrekten Dateien geladen werden ... */
               __readTerrainFile(secID, FILE_TYPE_GROUND);
@@ -1708,10 +1722,6 @@ unsigned int MapContents::getListLength(int listIndex) const
 //      return villageList.count();
     case LandmarkList:
       return landmarkList.count();
-    case HighwayList:
-      return highwayList.count();
-    case HighwayEntryList:
-      return highEntryList.count();
     case RoadList:
       return roadList.count();
     case RailList:
@@ -1770,10 +1780,6 @@ BaseMapElement* MapContents::getElement(int listIndex, unsigned int index)
 //      return villageList.at(index);
     case LandmarkList:
       return landmarkList.at(index);
-    case HighwayList:
-      return highwayList.at(index);
-    case HighwayEntryList:
-      return highEntryList.at(index);
     case RoadList:
       return roadList.at(index);
     case RailList:
@@ -1810,8 +1816,6 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
 //      return villageList.at(index);
     case LandmarkList:
       return landmarkList.at(index);
-    case HighwayEntryList:
-      return highEntryList.at(index);
     case StationList:
       return stationList.at(index);
     default:
@@ -1862,10 +1866,6 @@ void MapContents::printList(QPainter* targetPainter, unsigned int listID)
       case LandmarkList:
         for(unsigned int loop = 0; loop < landmarkList.count(); loop++)
             landmarkList.at(loop)->printMapElement(targetPainter);
-        break;
-      case HighwayList:
-        for(unsigned int loop = 0; loop < highwayList.count(); loop++)
-            highwayList.at(loop)->printMapElement(targetPainter);
         break;
       case RoadList:
         for(unsigned int loop = 0; loop < roadList.count(); loop++)
@@ -1938,10 +1938,6 @@ void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
       case LandmarkList:
         for(unsigned int loop = 0; loop < landmarkList.count(); loop++)
             landmarkList.at(loop)->drawMapElement(targetPainter, maskPainter);
-        break;
-      case HighwayList:
-        for(unsigned int loop = 0; loop < highwayList.count(); loop++)
-            highwayList.at(loop)->drawMapElement(targetPainter, maskPainter);
         break;
       case RoadList:
         for(unsigned int loop = 0; loop < roadList.count(); loop++)
@@ -2117,9 +2113,6 @@ void MapContents::readConfig()
 {
   for(unsigned int loop = 0; loop < roadList.count(); loop++)
       roadList.at(loop)->readConfig();
-
-  for(unsigned int loop = 0; loop < highwayList.count(); loop++)
-      highwayList.at(loop)->readConfig();
 
   for(unsigned int loop = 0; loop < railList.count(); loop++)
       railList.at(loop)->readConfig();

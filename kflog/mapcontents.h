@@ -107,15 +107,25 @@ class MapContents
     int searchFlightPoint(QPoint cPos, struct flightPoint* fP);
     /** */
     void readConfig();
+    /** Close a flight */
+    void closeFlight();
     /**
      * The listid.
      */
+
     enum listID {NotSet = 0, IntAirportList, AirportList, GliderList,
         AddSitesList, OutList, NavList, AirspaceList, ObstacleList, ReportList,
         CityList, VillageList, LandmarkList, HighwayList, HighwayEntryList,
         RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
         WaypointList, DigitList, FlightList};
 
+/*
+    enum listID {NotSet = 0, IntAirportList, AirportList, GliderList,
+        AddSitesList, OutList, NavList, AirspaceList, ObstacleList, ReportList,
+        CityList, VillageList, LandmarkList,
+        RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
+        WaypointList, DigitList, FlightList};
+*/
     static int degreeToNum(const char* degree);
 
   private:
@@ -180,14 +190,6 @@ class MapContents
      * landmarkList contains all landmarks.
      */
     QList<SinglePoint> landmarkList;
-    /**
-     * highwayList contains all highways.
-     */
-    QList<LineElement> highwayList;
-    /**
-     * highEntryList contains all highwayentries.
-     */
-    QList<SinglePoint> highEntryList;
     /**
      * roadList contails all roads.
      */

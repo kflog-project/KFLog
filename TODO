@@ -1,11 +1,58 @@
 $Id$
 
+/*************************************************************************
+ *
+ * Vor PreRelease:
+ *
+ */
+
+* LineElement::readConfig() sollte nur einmal ausgeführt werden (ausserhalb
+  von LineElement). Die entsprechenden Daten können dann abgerufen werden ...
+
+
+* Konfiguration der Darstellung
+
+
+* Was passiert, wenn Maßstab negativ wird ???
+
+
+* Welche Variablen und Funktionen werden tatsächlich benutzt ???
+
+
+* Maßstabs-Angabe nach Zentrieren auf Flug/Aufgabe zunächst nicht richtig.
+  Maßstab müsste zunächst "geprüft" werden ...
+
+
+* alle Icons erzeugen !!!
+
+
+* deutsche Übersetzung!
+
+
+* Tastatureinstellung
+
+
+* Kreuze nach EvaluationDialog löschen
+
+
+* Luftraum-Nummern korrigieren
+
+
+/*************************************************************************
+ *
+ * Nach PreRelease
+ *
+ */
+
 * Drucken:
 
   -> Die einzelnen Kartenobjekte müssen noch gedruckt werden.
      Das sollte auch direkt über MapContents laufen ...
 
   -> Das Bild ist auf dem Papier noch verschoben.
+
+
+* Zusätzliche Lufträume im Programm noch nicht bekannt.
 
 
 * Kartenfehler:
@@ -28,8 +75,13 @@ $Id$
 
   -> Flusskacheln prüfen
 
+  -> Türkei: Städte
 
-* Welche Variablen und Funktionen werden tatsächlich benutzt ???
+  -> GB, Irland, Niederlande: Seen
+
+  -> Niederlande: Flüsse
+
+  -> Donau und Rhein lückenhaft
 
 
 * Flug Darstellung:
@@ -41,28 +93,9 @@ $Id$
   -> Textdarstellung überarbeiten
 
 
-* Flug schliessen
-
-
-* Was passiert, wenn Maßstab negativ wird ???
-
-
-* Maßstabs-Angabe nach Zentrieren auf Flug/Aufgabe zunächst nicht richtig.
-  Maßstab müsste zunächst "geprüft" werden ...
-
-
-* alle Icons erzeugen !!!
-
-
 * Beim Suchen nach Flugplätzen, ... tauchen "weit weg gezeichnete" Punkte
   plötzlich wieder auf ...
 
-
-/**************************************************************************
- **                                                                      **
- ** Nach der nächsten Release:                                           **
- **                                                                      **
- **************************************************************************/
 
 * Die Kartenelemente werden in der Regel zweimal gezeichnet: in den Layer
   und in die Maske. Das sollte vereinfacht werden !!!
