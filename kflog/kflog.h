@@ -384,6 +384,10 @@ class KFLogApp : public KDockMainWindow
      * The igc3d dialog
      */
  		KAction* viewIgc3D;
+ 		/**
+ 		  * The Task Planning
+ 		  */
+ 		KToggleAction* mapPlanning;
 		/**
      * The map-widget.
      */

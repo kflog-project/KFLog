@@ -117,7 +117,6 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   setAcceptDrops(true);
 
   // For Planning
-  planning = 1;
   pixPlan.fill(white);
   prePlanPos.setX(-999);
   prePlanPos.setY(-999);  
@@ -953,6 +952,19 @@ void Map::slotRedrawMap()
 
   __redrawMap();
 }
+
+void Map::slotActivatePlanning()
+{
+  if(planning == 0)
+    {
+      planning = 1;
+    }
+  else
+    {
+      planning = 0;
+    }
+}
+
 
 void Map::__showLayer()
 {

@@ -90,6 +90,7 @@ class Map : public QWidget
     void slotFlightHome();
     void slotFlightEnd();
 
+    void slotActivatePlanning();
   signals:
     /** */
     void changed(QSize);

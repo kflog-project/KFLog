@@ -208,6 +208,12 @@ void KFLogApp::initActions()
   viewMap = new KToggleAction(i18n("Show Map"), 0, this,
       SLOT(slotToggleMap()), actionCollection(), "toggle_map");
 
+  /**
+    * Graphical Planning
+    */
+  mapPlanning = new KToggleAction(i18n("graphical Taskplanning"), Key_F4,
+      map, SLOT(slotActivatePlanning()), actionCollection(), "activate_planning");
+
   viewToolBar = KStdAction::showToolbar(this, SLOT(slotViewToolBar()),
       actionCollection());
   viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()),
@@ -258,6 +264,7 @@ void KFLogApp::initActions()
 			CTRL+Key_R, this, SLOT(slotFlightViewIgc3D()), actionCollection(),
 			"view_flight_3D");
 
+			
   KSelectAction* viewFlightDataType = new KSelectAction(
       i18n("Show Flightdata"), "idea", 0,
       actionCollection(), "view_flight_data");
@@ -282,6 +289,8 @@ void KFLogApp::initActions()
   flightMenu->insert(flightOptimization);
   flightMenu->insert(viewTaskAndWaypoint);
   flightMenu->insert(viewFlightDataType);
+  flightMenu->insert(viewIgc3D);
+  flightMenu->insert(mapPlanning);
   flightMenu->popupMenu()->insertSeparator();
   flightMenu->insert(animateFlightStart);
   flightMenu->insert(animateFlightStop);
@@ -291,7 +300,7 @@ void KFLogApp::initActions()
   flightMenu->insert(stepFlightStepPrev);
   flightMenu->insert(stepFlightHome);
   flightMenu->insert(stepFlightEnd);
-  flightMenu->insert(viewIgc3D);
+
 
   KStdAction::configureToolbars(this,
       SLOT(slotConfigureToolbars()), actionCollection());
