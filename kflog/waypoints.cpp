@@ -227,7 +227,11 @@ void Waypoints::slotOpenWaypointCatalog()
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory",
                                           getpwuid(getuid())->pw_dir);
 
-  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n*.kwp *.KWP|Cumulus and KFLogEmbedded waypoints (*.kwp)\n*.kflogwp *.KFLOGWP *.kwp *.KWP|All supported waypoint formats", this, i18n("Open waypoint catalog"));
+  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|" + i18n ("KFLog waypoints") + " (*.kflogwp)\n"
+                                                            "*.kwp *.KWP|" + i18n ("Cumulus and KFLogEmbedded waypoints") + " (*.kwp)\n"
+                                                            "*.txt *.TXT|" + i18n ("Filser txt waypoints") + " (*.txt)\n"
+                                                            "*.da4 *.DA4|" + i18n ("Filser da4 waypoints") + " (*.da4)\n"
+                                                            "*.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT|" + i18n ("All supported waypoint formats"), this, i18n("Open waypoint catalog"));
 
   openCatalog(fName);
 }
@@ -870,7 +874,7 @@ void Waypoints::slotImportWaypointFromFile(){
 
    // we should not include types we don't support (yet). Also, the strings should be translated.                                       
 //  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT) \n *.gdn *.GDN|Waypoint file (Garmin format, *.gdn *.GDN) \n *|All files", this, i18n("Import waypoints from file"));
-  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.dbt *.DBT|" + i18n("Waypoint file (Volkslogger format") + ", *.dbt *:DBT)", this, i18n("Import waypoints from file"));
+  QString fName = KFileDialog::getOpenFileName(wayPointDir, i18n("*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT)"), this, i18n("Import waypoints from file"));
 
   if(!fName.isEmpty()) {
     WaypointCatalog *w = waypointCatalogs.current();
