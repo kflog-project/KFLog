@@ -109,7 +109,7 @@ QSize Igc3DView::sizeHint()
   return qs;
 }
 
-void Igc3DView::paintEvent(QPaintEvent* event = 0)
+void Igc3DView::paintEvent(QPaintEvent*)
 {
 	/**
    * call the drawing function for the view
@@ -365,6 +365,6 @@ void Igc3DView::slotShowFlight()
   this->reset();
 }
 /** No descriptions */
-void Igc3DView::mousePressEvent(QMouseEvent* event){
+void Igc3DView::mousePressEvent(QMouseEvent* /*event*/){
 	DISPLAY_HELP_MESSAGE
 }
