@@ -13155,7 +13155,7 @@ done
 
 
 
-ac_config_files="$ac_config_files ./Makefile doc/Makefile doc/en/Makefile kflog/Makefile kflog/guicontrols/Makefile kflog/kfrgcs/Makefile kflog/kfrgmn/Makefile kflog/map-icons/Makefile kflog/map-icons/small/Makefile kflog/pics/Makefile po/Makefile"
+ac_config_files="$ac_config_files ./Makefile doc/Makefile doc/en/Makefile kflog/Makefile kflog/guicontrols/Makefile kflog/kfrfil/Makefile kflog/kfrgcs/Makefile kflog/kfrgmn/Makefile kflog/map-icons/Makefile kflog/map-icons/small/Makefile kflog/pics/Makefile po/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -13649,6 +13649,7 @@ do
   "doc/en/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/en/Makefile" ;;
   "kflog/Makefile" ) CONFIG_FILES="$CONFIG_FILES kflog/Makefile" ;;
   "kflog/guicontrols/Makefile" ) CONFIG_FILES="$CONFIG_FILES kflog/guicontrols/Makefile" ;;
+  "kflog/kfrfil/Makefile" ) CONFIG_FILES="$CONFIG_FILES kflog/kfrfil/Makefile" ;;
   "kflog/kfrgcs/Makefile" ) CONFIG_FILES="$CONFIG_FILES kflog/kfrgcs/Makefile" ;;
   "kflog/kfrgmn/Makefile" ) CONFIG_FILES="$CONFIG_FILES kflog/kfrgmn/Makefile" ;;
   "kflog/map-icons/Makefile" ) CONFIG_FILES="$CONFIG_FILES kflog/map-icons/Makefile" ;;
