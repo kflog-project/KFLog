@@ -49,7 +49,7 @@ class Igc3DDialog : public QDialog
 
  public:
   /** */
-  Igc3DDialog();
+  Igc3DDialog(QWidget *parent);
   /** */
   ~Igc3DDialog();
 
@@ -59,7 +59,7 @@ class Igc3DDialog : public QDialog
   /**
    * shows the flight data
 	 */
-  void slotShowFlightData(int n);
+  void slotShowFlightData();
   /**
    * Hide slot
 	 */
@@ -76,6 +76,9 @@ class Igc3DDialog : public QDialog
    *
    */
   Igc3DView* igc3dView;
+signals: // Signals
+  /** No descriptions */
+  void flightChanged();
 };
 
 #endif

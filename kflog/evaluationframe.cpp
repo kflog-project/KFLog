@@ -163,7 +163,6 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
 
   this->connect(spinScale, SIGNAL(valueChanged(int)),
         SLOT(slotScale(int)));
-
 }
 
 EvaluationFrame::~EvaluationFrame()

@@ -119,6 +119,8 @@ class Igc3DView : public QWidget
 public slots: // Public slots
   /** No descriptions */
   void slotRedraw();
+  /** No descriptions */
+  void slotShowFlight();
 };
 
 #endif

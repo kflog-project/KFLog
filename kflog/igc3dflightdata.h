@@ -73,6 +73,9 @@ class Igc3DFlightData
 		Igc3DViewState *state;
 		//int arraylength;
 	
+private: // Private methods
+  /** reset data structures */
+  void reset();
 };
 
 #endif

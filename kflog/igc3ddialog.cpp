@@ -30,12 +30,15 @@
 #include <mapcalc.h>
 #include <klocale.h>
 
-Igc3DDialog::Igc3DDialog()
-: QDialog(0, "Igc3D", false)
+Igc3DDialog::Igc3DDialog(QWidget *parent)
+: QDialog(parent, "Igc3D", false)
 {
   setCaption( i18n("KFLog - 3D View") );
+  setWFlags(getWFlags() | WStyle_StaysOnTop);
 
-	Igc3DView* igc3dView = new Igc3DView(this);
+  Igc3DView* igc3dView = new Igc3DView(this);
+  connect(this, SIGNAL(flightChanged()), igc3dView,
+      SLOT(slotShowFlight()));
 
   QBoxLayout * layout = new QHBoxLayout( this, 0, -1, "horizontal" );
 //  QLabel* label = new QLabel( this, 0, 0 );
@@ -75,13 +78,13 @@ void Igc3DDialog::resizeEvent(QResizeEvent* event)
 
 
 
-void Igc3DDialog::slotShowFlightData(int n)
+void Igc3DDialog::slotShowFlightData()
 {
 //  warning("Igc3DDialog::slotShowFlightData");
 //  this->setCaption(i18n("FlightIgc3D:") + flightList->at(n)->getPilot()
 //                    + "  " + flightList->at(n)->getDate());
 
-//  emit flightChanged(flightList->at(n));
+  emit flightChanged();
 }
 
 

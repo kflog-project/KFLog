@@ -69,6 +69,7 @@ class EvaluationDialog : public QDialog
  public slots:
   /** */
   void slotShowFlightData();
+  void hide();
 
  protected:
   /**

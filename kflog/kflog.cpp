@@ -357,8 +357,6 @@ void KFLogApp::initView()
   dataViewDock = createDockWidget("Flight-Data", 0, 0, i18n("Flight-Data"));
   mapControlDock = createDockWidget("Map-Control", 0, 0, i18n("Map-Control"));
   waypointsDock = createDockWidget("Waypoints", 0, 0, i18n("Waypoints"));
-//  taskDock = createDockWidget("Tasks", 0, 0, i18n("Tasks"));
-  evaluation = new EvaluationDialog(this);
 
   extern MapContents _globalMapContents;
 
@@ -429,11 +427,6 @@ void KFLogApp::initView()
       SLOT(slotShowCurrentFlight()));
   connect(&_globalMapContents, SIGNAL(currentFlightChanged()), dataView,
       SLOT(setFlightData()));
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), evaluation,
-      SLOT(slotShowFlightData()));
-
-  connect(evaluation, SIGNAL(showCursor(QPoint, QPoint)), map,
-      SLOT(slotDrawCursor(QPoint, QPoint)));
 }
 
 void KFLogApp::slotShowPointInfo(const QPoint pos,
@@ -693,7 +686,14 @@ void KFLogApp::slotSelectFlightData(int id)
 
 void KFLogApp::slotEvaluateFlight()
 {
-  evaluation->show();
+  EvaluationDialog* evaluation =  new EvaluationDialog(this);
+  extern MapContents _globalMapContents;
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), evaluation,
+      SLOT(slotShowFlightData()));
+  connect(evaluation, SIGNAL(showCursor(QPoint, QPoint)), map,
+      SLOT(slotDrawCursor(QPoint, QPoint)));
+
+//  evaluation->show();
 }
 
 void KFLogApp::slotOptimizeFlight()
@@ -758,12 +758,10 @@ void KFLogApp::slotStartComplete()
 
 void KFLogApp::slotFlightViewIgc3D()
 {
+  Igc3DDialog * igc3d = new Igc3DDialog(this);
   extern MapContents _globalMapContents;
-  Flight *f = (Flight *)_globalMapContents.getFlight();
-  if(f && f->getTypeID() == BaseMapElement::Flight){
-	  Igc3DDialog * igc3d = new Igc3DDialog();
-    igc3d->show();
-  }
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), igc3d,
+      SLOT(slotShowFlightData()));
 }
 
 bool KFLogApp::queryClose()

@@ -89,7 +89,8 @@ EvaluationDialog::EvaluationDialog(QWidget *parent)
 //  connect(combo_flight, SIGNAL(activated(int)),
 //        SLOT(slotShowFlightData()));
 //  connect(close, SIGNAL(clicked()), SLOT(reject()));
-//  show();
+  show();
+  resizeEvent(0);
 }
 
 EvaluationDialog::~EvaluationDialog()
@@ -244,4 +245,10 @@ Flight* EvaluationDialog::getFlight()
   else {
     return 0;
   }
+}
+
+void EvaluationDialog::hide()
+{
+//warning("EvaluationDialog::hide()");
+  this->EvaluationDialog::~EvaluationDialog();
 }

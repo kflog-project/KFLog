@@ -278,10 +278,6 @@ class KFLogApp : public KDockMainWindow
      */
     DataView* dataView;
     /**
-     * The evaluation dialog
-     */
-    EvaluationDialog* evaluation;
-    /**
      * The progessbar in the statusbar. Used during drawing the map to display
      * the percentage of what is allready drawn.
      *

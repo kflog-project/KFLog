@@ -1,5 +1,12 @@
 $Id$
 
+2002-04-16 Harry <harry@kflog.org>
+
+  * Show current flight in 3D
+	
+  * Size Evaluation Dialog
+
+	
 2002-04-10 Harry <harry@kflog.org>
 
   * Cleanup of old classes

@@ -49,39 +49,20 @@ Igc3DView::Igc3DView(Igc3DDialog* dialog)
 {
   isFlight = false;
   setBackgroundColor(QColor(white));
-  extern MapContents _globalMapContents;
 
-	//
-	setFocusPolicy(QWidget::StrongFocus);
+  setFocusPolicy(QWidget::StrongFocus);
 
   // create members
-	this->state = new Igc3DViewState();
-	this->flightbox = new Igc3DPolyhedron(state);
-	this->flight = new Igc3DFlightData(state);
+  this->state = new Igc3DViewState();
+  this->flightbox = new Igc3DPolyhedron(state);
+  this->flight = new Igc3DFlightData(state);
 
   // set size
-	state->height = this->height();
-	state->width = this->width();
-	state->timerflag = 0;
+  state->height = this->height();
+  state->width = this->width();
+  state->timerflag = 0;
 
-  /**
-	 * Now we would read our igc-file, but it is already open and
-	 * is accessed by member flight
-	 */
-
-  // load the igc3dflightdata list from the original list
-	flight->load((Flight*)_globalMapContents.getFlight());
-
-  flight->koord2dist();
-	
-	change_zfactor(state->zfactor);
-	
-	//flight->add_shadow();
-	state->deltay = state->deltay + state->deltayoffset;
-	state->flight_trace = 1;
-	state->flight_shadow = 1;
-	this->reset();
-
+  slotShowFlight();
 }
 
 Igc3DView::~Igc3DView()
@@ -341,4 +322,26 @@ void Igc3DView::set_flight_marker(int i)
 	if(state->timerflag == 0){
 		__draw();
 	}
+}
+/** No descriptions */
+void Igc3DView::slotShowFlight()
+{
+  /**
+  * Now we would read our igc-file, but it is already open and
+  * is accessed by member flight
+  */
+
+  // load the igc3dflightdata list from the original list
+  extern MapContents _globalMapContents;
+  flight->load((Flight*)_globalMapContents.getFlight());
+
+  flight->koord2dist();
+  	
+  change_zfactor(state->zfactor);
+  	
+  //flight->add_shadow();
+  state->deltay = state->deltay + state->deltayoffset;
+  state->flight_trace = 1;
+  state->flight_shadow = 1;
+  this->reset();
 }
