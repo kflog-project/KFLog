@@ -652,7 +652,7 @@ type=DATA
 
 [kflog/kfrgcs/Makefile.am]
 files=kflog/kfrgcs/vlapi2.cpp,kflog/kfrgcs/vlapi2.h,kflog/kfrgcs/vlapihlp.cpp,kflog/kfrgcs/vlapisys_linux.cpp,kflog/kfrgcs/vlconv.cpp,kflog/kfrgcs/utils.cpp,kflog/kfrgcs/grecord.cpp,kflog/kfrgcs/flightrecorder.cpp,kflog/kfrgcs/dbbconv.cpp,kflog/kfrgcs/dbbconv.h,kflog/kfrgcs/grecord.h,kflog/kfrgcs/utils.h,kflog/kfrgcs/vla_support.h,kflog/kfrgcs/vlapierr.h,kflog/kfrgcs/vlapihlp.h,kflog/kfrgcs/vlapityp.h,kflog/kfrgcs/vlconv.h,kflog/kfrgcs/README,kflog/kfrgcs/gcs.desktop
-sharedlib_LDFLAGS=-version-info 0:0:1
+sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=kfrgcs
 sub_dirs=
 type=shared_library
