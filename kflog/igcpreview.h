@@ -23,6 +23,8 @@
 #include <qlabel.h>
 
 /**
+ * @short File preview for open file dialog
+ *
  * Provides a file-preview in the open-file-dialog. Only the header of
  * a local igc-file is displayed. Non-local files are not used. The
  * preview displays the date, the pilotname, the glider-type and -id and

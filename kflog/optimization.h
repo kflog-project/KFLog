@@ -25,8 +25,10 @@
 #include "wp.h"
 #include "mapcalc.h"
 
-/**This class optimizes a task according to the OLC 2003 rules
-  *@author Christof Bodner
+/**
+  * This class optimizes a task according to the OLC 2003 rules
+  * @author Christof Bodner
+  * @version $Id$
   */
 
 #define LEGS 6  // number of legs
@@ -34,20 +36,41 @@
 class Optimization : public QObject{
   Q_OBJECT
 public:
-/**
-  Constructor for the route with the first resp. last point allowed
-  an optional progress bar can be specified
+ /**
+  * Constructor for the route with the first resp. last point allowed
+  * an optional progress bar can be specified, since optimizing can take
+  * a long time.
+  *
+  * @param firstPoint Index of first point in the @ref route ?
+  * @param lastPoint Index of last point in the @ref route ?
+  * @param route List of flightpoints that together consitute the route this flight used.
+  * @param progressBar optional reference to a progressbar to indicate optimisation progress.
   */
   Optimization(unsigned int firstPoint, unsigned int lastPoint, QList<flightPoint> route,KProgress* progressBar=0);
+ /**
+  * Destructor
+  */ 
   ~Optimization();
-/**
-  returns the indizes, the points and the distance of the optimized task
+ /**
+  * @return the indices, the points awarded and the distance of the optimized task
   */
-  double optimizationResult(unsigned int pointList[LEGS+3],double *points);
+  double optimizationResult(unsigned int pointList[LEGS+3],double *points);  //where is the distance returned?
 public slots:
+ /**
+  * Starts optimisation of the given route
+  */
   void run();
+ /**
+  * ?
+  */
   void setTimes(unsigned int start_int, unsigned int stop_int);
+ /**
+  * Cancels optimisation
+  */ 
   void stopRun();
+ /**
+  * ?
+  */ 
   void enableRun();
 private:
   double weight(unsigned int k); // different weight for the legs
