@@ -18,7 +18,7 @@
 #ifndef PROJECTIONLAMBERT_H
 #define PROJECTIONLAMBERT_H
 
-#include <projectionbase.h>
+#include "projectionbase.h"
 
 /**
  * This class provides a conical orthomorphic projection ("Lambert-projection").

@@ -20,8 +20,8 @@
 
 #include <qwidget.h>
 
-#include <basemapelement.h>
-#include <wp.h>
+#include "basemapelement.h"
+#include "wp.h"
 
 /**
  * @author Harald Maier

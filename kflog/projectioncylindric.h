@@ -18,7 +18,7 @@
 #ifndef PROJECTIONCYLINDRIC_H
 #define PROJECTIONCYLINDRIC_H
 
-#include <projectionbase.h>
+#include "projectionbase.h"
 
 /**
  * This class provides a cylindrical projection.

@@ -18,7 +18,7 @@
 #ifndef FLIGHTTASK_H
 #define FLIGHTTASK_H
 
-#include <baseflightelement.h>
+#include "baseflightelement.h"
 
 #include <qlist.h>
 #include <qrect.h>

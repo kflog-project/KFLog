@@ -103,6 +103,7 @@ bool WaypointCatalog::read(QString &catalog)
           w->surface = nm.namedItem("Surface").toAttr().value().toInt();
           w->comment = nm.namedItem("Comment").toAttr().value();
           w->importance = nm.namedItem("Importance").toAttr().value().toInt();
+
           if (w->runway == 0 && w->length == 0) {
             // old format, convert it to new
             w->runway = w->length = -1;
@@ -155,7 +156,18 @@ bool WaypointCatalog::write()
   QString fName = path;
   QDictIterator<wayPoint> it(wpList);
 
-  
+  if (!onDisc) {
+    fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)", 0, i18n("Save waypoint catalog"));
+    if(!fName.isEmpty()) {
+      if (fName.right(8) != ".kflogwp") {
+        fName += ".kflogwp";
+      }
+    }
+    else {
+      return false;
+    }
+  }
+
   QApplication::setOverrideCursor( Qt::waitCursor );
 
   doc.appendChild(root);
@@ -232,7 +244,6 @@ bool WaypointCatalog::writeBinairy()
     out << Q_UINT16(FILE_FORMAT_ID_2); //use the new format with importance field.
 
     for (w = it.current(); w != 0; w = ++it) {
-
       wpName=w->name;
       wpDescription=w->description;
       wpICAO=w->icao;
@@ -262,18 +273,15 @@ bool WaypointCatalog::writeBinairy()
       out << wpSurface;
       out << wpComment;
       out << wpImportance;
-
     }
-
     f.close();
     path = fName;
     modified = false;
     onDisc = true;
   }
   else {
-    KMessageBox::error(0, QObject::tr("<B>%1</B><BR>permission denied!").arg(fName), QObject::tr("Error occurred!"));
+    KMessageBox::error(0, i18n("<B>%1</B><BR>permission denied!").arg(fName), i18n("Error occurred!"));
   }
-
   return ok;
 }
 
@@ -437,10 +445,10 @@ bool WaypointCatalog::save(bool alwaysAskName){
   QString fName = path;
 
 
-  if (!onDisc or alwaysAskName) {
+  if (!onDisc || alwaysAskName) {
     fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n*.kwp *.KWP|Cumulus and KFLogEmbedded waypoints (*.kwp)", 0, i18n("Save waypoint catalog"));
     if(!fName.isEmpty()) {
-      if ((fName.right(8) != ".kflogwp") and (fName.right(4) != ".kwp")) {
+      if ((fName.right(8) != ".kflogwp") && (fName.right(4) != ".kwp")) {
         fName += ".kflogwp";
       }
       path = fName;

@@ -18,12 +18,12 @@
 #ifndef BASEMAPELEMENT_H
 #define BASEMAPELEMENT_H
 
-#include <resource.h>
+#include "resource.h"
 
 #include <qpainter.h>
 
-#include <mapmatrix.h>
-#include <mapconfig.h>
+#include "mapmatrix.h"
+#include "mapconfig.h"
 
 /**
  * This is the baseclass for all mapelements. The class will be inherited

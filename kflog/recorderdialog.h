@@ -24,11 +24,14 @@
 #include <kconfig.h>
 #include <kdialogbase.h>
 #include <klineedit.h>
-#include <klistview.h>
 
 #include <qcheckbox.h>
 #include <qstringlist.h>
 #include <qwidget.h>
+
+#include "flighttask.h"
+#include "waypointlist.h"
+#include "guicontrols/kfloglistview.h"
 
 /**
  * Provides a dialog-window for accessing the flightrecorder.
@@ -54,8 +57,19 @@ class RecorderDialog : public KDialogBase
     /** */
     void slotDownloadFlight();
     /** */
-    void slotWriteTask();
-
+    void slotWriteDeclaration();
+    /** */
+    void slotReadTasks();
+    /** */
+    void slotWriteTasks();
+    /** */
+    void slotCloseRecorder();
+    /** */
+    void slotReadDatabase();
+    /** */
+    void slotReadWaypoints();
+    /** */
+    void slotWriteWaypoints();
   private:
     /** */
     int __fillDirList();
@@ -66,13 +80,21 @@ class RecorderDialog : public KDialogBase
     /** */
     void __addFlightPage();
     /** */
+    void __addDeclarationPage();
+    /** */
     void __addTaskPage();
+    /** */
+    void __addWaypointPage();
     /** */
     QFrame* flightPage;
     /** */
     QFrame* settingsPage;
     /** */
+    QFrame* waypointPage;
+    /** */
     QFrame* taskPage;
+    /** */
+    QFrame* declarationPage;
     /** */
     KConfig* config;
     /** */
@@ -80,13 +102,18 @@ class RecorderDialog : public KDialogBase
     /** */
     KComboBox* selectType;
     KComboBox* selectPort;
+    KComboBox* selectBaud;
     /** */
     QLabel* serID;
     QLabel* apiID;
     /** */
-    KListView* flightList;
+    KFLogListView* flightList;
     /** */
-    KListView* taskList;
+    KFLogListView* declarationList;
+    /** */
+    KFLogListView* taskList;
+    /** */
+    KFLogListView* waypointList;
     /** */
     QCheckBox* useFastDownload;
     /** */
@@ -101,6 +128,8 @@ class RecorderDialog : public KDialogBase
     bool isOpen;
     /** */
     QList<FRDirEntry> dirList;
+    QList<FlightTask> *tasks;
+    WaypointList *waypoints;
     /** */
     QStringList libNameList;
     /** */
@@ -111,17 +140,31 @@ class RecorderDialog : public KDialogBase
     int colFirstPoint;
     int colLastPoint;
     /** */
+    int declarationColID;
+    int declarationColName;
+    int declarationColLat;
+    int declarationColLon;
+    /** */
     int taskColID;
     int taskColName;
-    int taskColLat;
-    int taskColLon;
+    int taskColDesc;
+    int taskColTask;
+    int taskColTotal;
     /** */
+    int waypointColID;
+    int waypointColName;
+    int waypointColLat;
+    int waypointColLon;
+
     KLineEdit* pilotName;
     KLineEdit* copilotName;
     KComboBox* gliderID;
     KLineEdit* gliderType;
     KLineEdit* compClass;
     KLineEdit* compID;
+    KComboBox* taskSelection;
+  private slots:
+    void slotSwitchTask(int idx);
 };
 
 #endif

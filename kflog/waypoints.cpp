@@ -308,7 +308,7 @@ void Waypoints::slotEditWaypoint()
   QString tmp, oldName;
 
   if (item != 0) {
-    WaypointList *wl = &waypointCatalogs.current()->wpList;
+    WaypointDict *wl = &waypointCatalogs.current()->wpList;
     oldName = item->text(colName);
     wayPoint *w = wl->find(oldName);
 
@@ -569,7 +569,7 @@ void Waypoints::slotImportWaypointFromMap()
   SinglePoint *s;
   wayPoint *w;
   WaypointCatalog *c = waypointCatalogs.current();
-  WaypointList *wl = &(c->wpList);
+  WaypointDict *wl = &(c->wpList);
   unsigned int i;
   int type, loop;
   WGSPoint p;
@@ -690,7 +690,7 @@ void Waypoints::slotFilterWaypoints()
 /** add a new waypoint from outside */
 void Waypoints::slotAddWaypoint(wayPoint *w)
 {
-  WaypointList *wl = &waypointCatalogs.current()->wpList;
+  WaypointDict *wl = &waypointCatalogs.current()->wpList;
   int loop = 1;
   if (w->name.isEmpty()) {
     w->name.sprintf("WPT%03d", loop);
@@ -710,7 +710,7 @@ void Waypoints::slotCopyWaypoint2Task()
   QListViewItem *item = waypoints->currentItem();
 
   if (item != 0) {
-    WaypointList *wl = &waypointCatalogs.current()->wpList;
+    WaypointDict *wl = &waypointCatalogs.current()->wpList;
     wayPoint *w = wl->find(item->text(colName));
 
     emit copyWaypoint2Task(w);
@@ -723,7 +723,7 @@ void Waypoints::slotCenterMap()
 
   if (item != 0)
     {
-      WaypointList *wl = &waypointCatalogs.current()->wpList;
+      WaypointDict *wl = &waypointCatalogs.current()->wpList;
       wayPoint *w = wl->find(item->text(colName));
 
       emit centerMap(w->origP.lat(), w->origP.lon());
@@ -842,8 +842,20 @@ void Waypoints::openCatalog(QString &catalog)
 void Waypoints::slotSetWaypointCatalogName(QString catalog){
 	this->openCatalog(catalog);
 }
+
 /** return the current waypoint catalog */
 WaypointCatalog * Waypoints::getCurrentCatalog()
 {
   return waypointCatalogs.current();
+}
+
+void Waypoints::slotAddCatalog(WaypointCatalog *w)
+{
+  int newItem = catalogName->count();
+
+  waypointCatalogs.append(w);
+  catalogName->insertItem(w->path);
+
+  catalogName->setCurrentItem(newItem);
+  slotSwitchWaypointCatalog(newItem);
 }

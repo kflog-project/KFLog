@@ -17,6 +17,7 @@
 
 #include <time.h>
 #include <qstring.h>
+#include <qlist.h>
 
 /**
  *
@@ -79,4 +80,22 @@ struct FRTaskPoint
   QString name;
   int latPos;
   int lonPos;
+  int type;
+};
+
+/** */
+struct FRWaypoint
+{
+  struct FRTaskPoint point;
+  int isLandable;
+  int isHardSurface;
+  int isAirport;
+  int isCheckpoint;
+};
+
+/** */
+struct FRTask
+{
+  QString name;
+  QList <FRTaskPoint> wayPoints;
 };

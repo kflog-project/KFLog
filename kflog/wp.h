@@ -20,8 +20,8 @@
 
 #include <qpoint.h>
 #include <qstring.h>
-
-#include <mapmatrix.h>
+#include <qptrcollection.h>
+#include "mapmatrix.h"
 
 /**
  * This struct contains one flightpoint.

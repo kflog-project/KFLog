@@ -21,8 +21,8 @@
 #include <qobject.h>
 #include <qwmatrix.h>
 
-#include <projectionlambert.h>
-#include <projectioncylindric.h>
+#include "projectionlambert.h"
+#include "projectioncylindric.h"
 
 /**
  * This class is used to handle WGS-coordinates. It inherits QPoint.

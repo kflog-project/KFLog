@@ -1017,6 +1017,7 @@ void KFLogApp::slotOpenRecorderDialog()
 {
   RecorderDialog* dlg = new RecorderDialog(this, config, "recorderDialog");
   dlg->exec();
+  delete dlg;
 }
 
 void KFLogApp::initSurfaces()

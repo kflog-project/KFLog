@@ -36,14 +36,14 @@
   */
 
 class Waypoints : public QFrame  {
-   Q_OBJECT
+  Q_OBJECT
 public:
-	Waypoints(QWidget *parent = 0, const char *name = 0, QString *catalog = 0);
-	~Waypoints();
-	/* save changes in catalogs, return success */
+  Waypoints(QWidget *parent = 0, const char *name = 0, QString *catalog = 0);
+  ~Waypoints();
+  /* save changes in catalogs, return success */
   bool saveChanges();
   /** return the current waypoint catalog */
-  WaypointCatalog * getCurrentCatalog();
+  WaypointCatalog *getCurrentCatalog();
 private: // Private methods
   /** No descriptions */
   void addWaypointWindow(QWidget *parent);
@@ -77,7 +77,7 @@ private: // Private attributes
   /**  */
   WaypointDialog *waypointDlg;
   WaypointImpFilterDialog *importFilterDlg;
-
+  
   /** column index for waypoints */
   int colName;
   int colDesc;
@@ -118,6 +118,8 @@ public slots: // Public slots
   void slotFilterWaypoints();
   /** add a new waypoint from outside */
   void slotAddWaypoint(wayPoint *w);
+  /** add a new waypoint from outside */
+  void slotAddCatalog(WaypointCatalog *w);
   /** No descriptions */
   void slotImportWaypointFromFile();
   /* No descriptions */

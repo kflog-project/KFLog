@@ -17,41 +17,16 @@
 
 #include "waypointlist.h"
 
-#include <kmessagebox.h>
-#include <klocale.h>
 
 WaypointList::WaypointList()
 {
-  setAutoDelete(true);
 }
 
 WaypointList::~WaypointList()
 {
 }
 
-/** insert a new item into the list and check if waypoint already exist */
-bool WaypointList::insertItem(wayPoint *e)
+int WaypointList::compareItems(QPtrCollection::Item item1, QPtrCollection::Item item2)
 {
-  wayPoint *tmp;
-  bool ins = true;
-
-  if ((tmp = find(e->name)) != 0) {
-    switch (KMessageBox::warningYesNoCancel(0, i18n("Waypoint<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Overwrite it?").arg(e->name))) {
-    case KMessageBox::Yes:
-      remove(e->name);
-      insert(e->name, e);
-      break;
-    case KMessageBox::No:
-      // no break !!
-    case KMessageBox::Cancel:
-      delete e;
-      ins = false;
-      break;
-    }
-  }
-  else {
-    insert(e->name, e);
-  }
-
-  return ins;
+  return (((struct wayPoint *)item1)->name.compare(((struct wayPoint *)item2)->name));
 }

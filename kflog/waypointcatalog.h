@@ -18,7 +18,7 @@
 #ifndef WAYPOINTCATALOG_H
 #define WAYPOINTCATALOG_H
 
-#include "waypointlist.h"
+#include "waypointdict.h"
 
 /**
   *@author Harald Maier
@@ -65,7 +65,7 @@ public:
 
 public: // Public attributes
   /**  */
-  WaypointList wpList;
+  WaypointDict wpList;
   QString path;
   bool modified;
 private: // Private attributes
