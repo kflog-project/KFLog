@@ -55,48 +55,73 @@ QString DataView::__writeTaskInfo(FlightTask* task)
   QString htmlText;
   QString txt, tmp,speed;
   QString idString, timeString;
-  struct wayPoint *wp;
-
+  struct wayPoint *wp1, *wp2;
+  int t1, t2;
+  
   htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
       <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
       i18n("Task") + ":</B></TD></TR>";
 
   QList<wayPoint> wpList = task->getWPList();
 
-  for(unsigned int loop = 0; loop < wpList.count(); loop++)
-    {
-      wp = wpList.at(loop);
-      if(loop > 0)
-        {
-          tmp.sprintf("%.2f km / %03.0f° / %.1f km/h",
-            wp->distance,
-            getTrueCourse(wp->origP, wpList.at(loop - 1)->origP),
-            wp->distance/(wp->sectorFAI-wpList.at(loop-1)->sectorFAI)*3600.0);
-          htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
-              tmp + "</TD></TR>";
-        }
+  for(unsigned int loop = 0; loop < wpList.count(); loop++) {
+    wp1 = wpList.at(loop);
+      
+    if(wp1->sector1 != 0) {
+      timeString = printTime(wp1->sector1);
+      t1 = wp1->sector1;
+    }
+    else if(wp1->sector2 != 0) {
+      timeString = printTime(wp1->sector2);
+      t1 = wp1->sector2;
+    }
+    else if(wp1->sectorFAI != 0) {
+      timeString = printTime(wp1->sectorFAI);
+      t1 = wp1->sectorFAI;
+    }
+    else {
+      timeString = "--";
+      t1 = 0;
+    }
 
-      idString.sprintf("%d", loop);
+    if(loop > 0) {
+      wp2 = wpList.at(loop - 1);
+      if(wp2->sector1 != 0) {
+        t2 = wp2->sector1;
+      }
+      else if(wp2->sector2 != 0) {
+        t2 = wp2->sector2;
+      }
+      else if(wp2->sectorFAI != 0) {
+        t2 = wp2->sectorFAI;
+      }
+      else {
+        t2 = 0;
+      }
 
-      if(wp->sector1 != 0)
-          timeString = printTime(wp->sector1);
-      else if(wp->sector2 != 0)
-          timeString = printTime(wp->sector2);
-      else if(wp->sectorFAI != 0)
-          timeString = printTime(wp->sectorFAI);
-      else
-          timeString = "--";
+      tmp.sprintf("t1 : %d, t2 : %d", t1, t2);
+      warning(tmp);
+      
+      tmp.sprintf("%.2f km / %03.0f° / %.1f km/h",
+                  wp1->distance,
+                  getTrueCourse(wp1->origP, wp2->origP),
+                  (t1 - t2 != 0) ? wp1->distance / (t1 - t2) * 3600.0 : 0.0);
+      htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" +
+        tmp + "</TD></TR>";
+    }
 
-      htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
-          wp->name + "</A></TD>\
+    idString.sprintf("%d", loop);
+
+    htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
+      wp1->name + "</A></TD>\
           <TD ALIGN=right>" + timeString + "</TD></TR>\
           <TR><TD WIDTH=15></TD>\
-          <TD>" + printPos(wp->origP.lat()) + "</TD>\
-          <TD ALIGN=right>" + printPos(wp->origP.lon(), false) +
-          "</TD></TR>";
-    }
+          <TD>" + printPos(wp1->origP.lat()) + "</TD>\
+          <TD ALIGN=right>" + printPos(wp1->origP.lon(), false) +
+      "</TD></TR>";
+  }
   
-  if (task->getTaskType()==FlightTask::OLC){
+  if (task->getTaskType() == FlightTask::OLC){
     txt.sprintf("%.2f", task->getOlcPoints());
     speed.sprintf("%.2f",task->getAverageSpeed());
     htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Total Distance") +
@@ -113,9 +138,8 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       txt + "</TD>" +
       "</TR></TABLE>";
   }
-  else
-  {
-    if  (task->getPlanningType()==FlightTask::Route){
+  else {
+    if (task->getPlanningType() == FlightTask::Route) {
       txt.sprintf("%d", task->getPlannedPoints());
       htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("total Distance") +
         ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
@@ -127,11 +151,13 @@ QString DataView::__writeTaskInfo(FlightTask* task)
         ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
         txt + "</TD></TR></TABLE>";
     }
-    else{  // area based
-      if (wpList.count() < 3)
+    else {  // area based
+      if (wpList.count() < 3) {
         tmp = "--";
-      else
+      }
+      else {
         tmp.sprintf("%.2f km", wpList.at(2)->distance);
+      }
       htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + i18n("Leg Distance") +
         ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
         tmp + "</TD></TR>\
@@ -142,7 +168,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
   }
   return htmlText;
 }
-
+  
 void DataView::slotShowTaskText(FlightTask* task)
 {
   QList<wayPoint> taskPointList = task->getWPList();

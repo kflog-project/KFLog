@@ -1115,7 +1115,7 @@ QString FlightTask::getTaskDistanceString()
 
   QString distString;
 
-  if (flightType=OLC)
+  if (flightType == OLC)
     distString.sprintf("%.2f km",distance_wert);
   else
     if (getPlanningType() == Route) {
@@ -1142,7 +1142,7 @@ QString FlightTask::getPointsString()
 
   QString pointString;
 
-  if (flightType=OLC)
+  if (flightType == OLC)
     pointString.sprintf("%.2f", olcPoints);
   else{    
     int points1 = (int) taskPoints;

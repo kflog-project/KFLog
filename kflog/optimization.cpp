@@ -62,7 +62,7 @@ double Optimization::optimizationResult(unsigned int retList[LEGS+1], double *re
 void Optimization::run(){
 
   double *L;                        // length values
-  int *w;                           // waypoints
+  unsigned int *w;                           // waypoints
   double length;                    // solution length
 
   unsigned int i,j,k;               // loop variables
@@ -82,7 +82,7 @@ void Optimization::run(){
   importProgress.setMinimumDuration(0);
   importProgress.setProgress(0);
   importProgress.show();
-  if (importProgress.wasCancelled()) return 0;
+  if (importProgress.wasCancelled()) return;
 #endif
   
   // allocate memory
