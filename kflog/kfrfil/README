@@ -1,0 +1,17 @@
+$Id$
+
+libkfrfil:
+
+The files in this directory are used for the recorder-backend for
+Filser recorders. The lib is called "libkfrfil" ("kfr" indicates,
+that it is a kde-lib for accessing flight-recorders and "fil" is the
+appreviation of Filser as it is used in the igc-files).
+
+The lib will be installed in $KDE_LIB. The file "fil.desktop" will
+be installed in $KDE_DATA/kflog/logger/ and is used to indicate, that
+the lib is installed. It will be searched by KFLog each time the
+recorder-dialog is opened.
+
+The files in this directory are based on the work of 
+Christian Fughe (wwwocf@kajo.home, C.M.Fughe@wtb.tue.nl) .
+

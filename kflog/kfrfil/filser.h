@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by Harald Maier
+**   Copyright (c):  2003 by Christian Fughe, Harald Maier
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -25,7 +25,7 @@
 #include <../flightrecorderpluginbase.h>
 
 /**
-  *@author Harald Maier
+  *@author Christian Fughe, Harald Maier
   */
 
 #define FLIGHT_INDEX_WIDTH 96 /* Bytes per record of the flight  */

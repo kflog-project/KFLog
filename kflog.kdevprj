@@ -816,11 +816,17 @@ install_location=$$(kde_datadir)/kflog/kflogui.rc
 type=DATA
 
 [kflog/kfrfil/Makefile.am]
-files=kflog/kfrfil/fil.desktop,kflog/kfrfil/flightrecorder.cpp,kflog/kfrfil/filser.cpp,kflog/kfrfil/filser.h
+files=kflog/kfrfil/fil.desktop,kflog/kfrfil/flightrecorder.cpp,kflog/kfrfil/filser.cpp,kflog/kfrfil/filser.h,kflog/kfrfil/README
 sharedlib_LDFLAGS=-version-info 0:0:0
 sharedlib_rootname=kfrfil
 sub_dirs=
 type=shared_library
+
+[kflog/kfrfil/README]
+dist=true
+install=false
+install_location=
+type=DATA
 
 [kflog/kfrfil/fil.desktop]
 dist=true

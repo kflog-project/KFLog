@@ -128,9 +128,9 @@ void Optimization::run(){
     L[i+0*n]=0;
   }
   
-   for (i = 0; i < route.count(); i++){
-     rp[i] = route.at(i);
-   }
+  for (i = 0; i < route.count(); i++){
+    rp[i] = route.at(i);
+  }
   
   for (k=1;k<=LEGS;k++){
     ii = (k-1)*n;
