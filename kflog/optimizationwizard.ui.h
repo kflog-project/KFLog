@@ -84,56 +84,58 @@ void OptimizationWizard::slotStartOptimization()
 //      + i18n("If you want to use this task and replace the old, press \"Finish\",\nelse press \"Cancel\"");
   text = "<div align=\"center\"<caption><b>";
   text += i18n("Optimization Result")+"</b></div><table align=\"center\"><thead><tr>";
-  text += i18n("<th scope=col></th><th scope=col>Time</th><th scope=col>Latitude</th><th scope=col>Longitude</th><th ALIGN=right scope=col>Distance</th></tr>");
-  text += i18n("</thead><tbody>");
+  text += "<th scope=col></th><th scope=col>" + i18n("Time") + "</th><th scope=col>";
+  text += i18n("Latitude") + "</th><th scope=col>"+i18n("Longitude")+"</th><th ALIGN=right scope=col>";
+  text += i18n("Distance") + "</th></tr>";
+  text += "</thead><tbody>";
 
-  text += i18n("<tr><td>Begin of Soaring</td><td>")
+  text += "<tr><td>" + i18n("Begin of Soaring") + "</td><td>"
       + printTime(route.at(idList[0])->time,true) + "</td><td>"
       + printPos(route.at(idList[0])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[0])->origP.lon(), false) + "</td><td></td></tr>";
-  text += i18n("<tr><td>Begin of Task</td><td>")
+  text += "<tr><td>" + i18n("Begin of Task") + "</td><td>"
       + printTime(route.at(idList[1])->time,true) + "</td><td>"
       + printPos(route.at(idList[1])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[1])->origP.lon(), false) + "</td><td></td></tr>";
-  text += i18n("<tr><td>1.Turnpoint</td><td>")
+  text += "<tr><td>" + i18n("1.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[2])->time,true) + "</td><td>"
       + printPos(route.at(idList[2])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[2])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[1]),route.at(idList[2])),0,'f',2);
-  text += i18n("<tr><td>2.Turnpoint</td><td>")
+  text += "<tr><td>" + i18n("2.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[3])->time,true) + "</td><td>"
       + printPos(route.at(idList[3])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[3])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[2]),route.at(idList[3])),0,'f',2);
-  text += i18n("<tr><td>3.Turnpoint</td><td>")
+  text += "<tr><td>" + i18n("3.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[4])->time,true) + "</td><td>"
       + printPos(route.at(idList[4])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[4])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[3]),route.at(idList[4])),0,'f',2);
-  text += i18n("<tr><td>4.Turnpoint</td><td>")
+  text += "<tr><td>" + i18n("4.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[5])->time,true) + "</td><td>"
       + printPos(route.at(idList[5])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[5])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[4]),route.at(idList[5])),0,'f',2);
-  text += i18n("<tr><td>5.Turnpoint</td><td>")
+  text += "<tr><td>" +i18n("5.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[6])->time,true) + "</td><td>"
       + printPos(route.at(idList[6])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[6])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[5]),route.at(idList[6])),0,'f',2);
-  text += i18n("<tr><td>End of Task</td><td>")
+  text += "<tr><td>" + i18n("End of Task") + "</td><td>"
       + printTime(route.at(idList[7])->time,true) + "</td><td>"
       + printPos(route.at(idList[7])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[7])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[6]),route.at(idList[7])),0,'f',2);
-  text += i18n("<tr><td>End of Soaring</td><td>")
+  text += "<tr><td>" + i18n("End of Soaring") + "</td><td>"
       + printTime(route.at(idList[8])->time,true) + "</td><td>"
       + printPos(route.at(idList[8])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[8])->origP.lon(), false) + "</td><td></td></tr>";
   text += "</tbody></table><th>";
 
   text += "<table align=\"center\">";
-  text += "<tr><td><b>" + i18n("Summary: Distance:");
-  text += distText + i18n(" Points(raw):");
+  text += "<tr><td><b>" + i18n("Summary:") + " " + i18n("Distance:");
+  text += distText + " " + i18n("Points(raw):");
   text += rawPointText+"</b></td></tr>";
   text += "</table>";
 
