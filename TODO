@@ -16,10 +16,6 @@ Next Steps
 
 * Planning:
 
-  The handling doesn't seem to be intuitive. The task-definition-dialog should
-  appear in the dataview as soon as planning begins. That would be the easiest
-  way to combine both visual planning and waypoint-selecting.
-
   We should printout a list of all waypoints and airfields along a planned task.
   When printing a task-map, the borders for the area-based-task is hardly visible
   and not yet configurable. We do not have a task-type "area-based" yet, so the
@@ -42,7 +38,7 @@ Next Steps
   be redrawn after that. There should be an easier handling for that.
 
   We cannot configure the colour of the elevation-lines or configure, which
-  lines should be drawn. We too need a sort of map-legend.
+  lines should be drawn.
 
 
 * Evaluation:
