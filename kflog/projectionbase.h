@@ -35,19 +35,19 @@ class ProjectionBase
     /** */
     const int projectionType() const {  return projType;  };
     /** */
-    virtual double projectX(double latitude, double longitude) const;
+    virtual double projectX(double latitude, double longitude) const = 0;
     /** */
-    virtual double projectY(double latitude, double longitude) const;
+    virtual double projectY(double latitude, double longitude) const = 0;
     /** */
-    virtual double invertLat(double x, double y) const;
+    virtual double invertLat(double x, double y) const = 0;
     /** */
-    virtual double invertLon(double x, double y) const;
+    virtual double invertLon(double x, double y) const = 0;
     /** */
-    virtual double getRotationArc(int x, int y) const;
+    virtual double getRotationArc(int x, int y) const = 0;
     /** */
-    virtual int getTranslationX(int width, int x) const;
+    virtual int getTranslationX(int width, int x) const = 0;
     /** */
-    virtual int getTranslationY(int height, int y) const;
+    virtual int getTranslationY(int height, int y) const = 0;
     /**
      * List of possible projection-types.
      */
