@@ -1257,6 +1257,9 @@ void Map::slotAnimateFlightStart()
   extern MapContents _globalMapContents;
   Flight *f = (Flight *)_globalMapContents.getFlight();
   if (f){
+  	// save this one to speed up timeout code
+    flightToAnimate = f;
+
     switch(f->getTypeID()) {
     case BaseMapElement::Flight:
       f->setAnimationIndex(0);
@@ -1273,11 +1276,15 @@ void Map::slotAnimateFlightStart()
       break;
 		}
 		// force redraw
-    // having set animationFlag in flights should draw only to animation index.
+		// flights will not be visible as nAnimationIndex is zero for all flights to animate.
 	  slotRedrawFlight();
 
+		// prepare the pixmap for next timeout
+		__drawFlight();
+    __showLayer();
+
     // 50ms multi-shot timer
-    timerAnimate->start( 25, FALSE );
+    timerAnimate->start( 50, FALSE );
   }
 }
 
@@ -1287,37 +1294,57 @@ void Map::slotAnimateFlightStart()
  */
 void Map::slotAnimateFlightTimeout()
 {
+  extern MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
-  Flight *f = (Flight *)_globalMapContents.getFlight();
+  flightPoint cP, prevP;
+  Flight *f  = flightToAnimate; // = (Flight *)_globalMapContents.getFlight();
   bool bDone = true;
-  QList<Flight> flightList;
+  int index;
+  static QPixmap pixUnderLastCursor = QPixmap( 75, 75, -1, QPixmap::DefaultOptim );
 
-  if (!f) {
-    return;
+  if (f){
+    switch(f->getTypeID()) {
+    case BaseMapElement::Flight:
+      f->setAnimationNextIndex();
+      if (f->isAnimationActive())
+	      bDone = false;
+      break;
+    case BaseMapElement::FlightGroup:
+		  // loop through all and set animation index to start
+		  QList<Flight> flightList = ((FlightGroup*)flightToAnimate)->getFlightList();
+  		for(unsigned int loop = 0; loop < flightList.count(); loop++){
+  		  f = flightList.at(loop);
+        f->setAnimationNextIndex();
+        if (f->isAnimationActive())
+ 		      bDone = false;
+      }
+      break;
+		}
   }
-
-  switch (f->getTypeID()) {
-  case BaseMapElement::Flight:
-    flightList.append(f);
-    break;
-  case BaseMapElement::FlightGroup:
-    flightList = ((FlightGroup *)f)->getFlightList();
-    break;
-  default:
-    return;
-  }
-
-	// loop through all and increment animation index
- 	for(unsigned int loop = 0; loop < flightList.count(); loop++){
- 	  f = flightList.at(loop);
-     f->setAnimationNextIndex();
-     if (f->getAnimationActive())
- 		  bDone = false;
-   }
-
-	// force redraw
+	// redraw flight up to this point, blt the pixmap onto the already created pixmap
+	// and force the repaint of the map.
   __drawFlight();
-  __showLayer();
+
+  pixFlight.setMask(bitFlightMask);
+  bitBlt(&pixBuffer, 0, 0, &pixFlight);
+
+/*
+  if ((index = f->searchGetNextPoint(f->getAnimationIndex()-1, cP)) != -1){
+    prePos = _globalMapMatrix.map(cP.projP);
+    if (index == 1){
+			bitBlt(&pixUnderLastCursor, 0, 0, &pixBuffer, prePos.x()-50, prePos.y()-50, 75, 75, CopyROP );			
+		  prevP = cP;
+    }
+		if  (index >= 1)
+	    bitBlt(&pixBuffer, prePos.x()-50, prePos.y()-50, &pixUnderLastCursor, 0, 0, 75, 75, CopyROP );
+		bitBlt(&pixUnderLastCursor, 0, 0, &pixBuffer, prePos.x()-50, prePos.y()-50, 75, 75, CopyROP );
+    pixFlight.setMask(bitFlightMask);
+		prevP = cP;
+		bitBlt(&pixBuffer, prePos.x()-32, prePos.y()-32, &pixCursor1);
+	}
+
+*/	
+  paintEvent();
 
 	// if one of the flights still is active, bDone will be false
   if (bDone)

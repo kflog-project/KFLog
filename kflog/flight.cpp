@@ -369,29 +369,37 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
         curPointA = curPointB;
       }
   } else {
-    if (nAnimationIndex >=1){
-      pointA = route.at(nAnimationIndex-1);
-      pointB = route.at(nAnimationIndex);
+    nStop = (unsigned int)nAnimationIndex;
+    for(unsigned int n = delta; n < nStop; n = n + delta)
+      {
+        pointA = route.at(n - delta);
+        pointB = route.at(n);
+        if(n + delta < nStop)
+            pointC = route.at(n + delta);
+        else
+            pointC = route.at(nStop);
 
-      curPointA = glMapMatrix->map(pointA->projP);
-      curPointB = glMapMatrix->map(pointB->projP);
+        curPointB = glMapMatrix->map(pointB->projP);
 
-      bBoxFlight.setLeft(MIN(curPointA.x(), curPointB.x()));
-      bBoxFlight.setTop(MAX(curPointA.y(), curPointB.y()));
-      bBoxFlight.setRight(MAX(curPointA.x(), curPointB.x()));
-      bBoxFlight.setBottom(MIN(curPointA.y(), curPointB.y()));
+        bBoxFlight.setLeft(MIN(curPointB.x(), bBoxFlight.left()));
+        bBoxFlight.setTop(MAX(curPointB.y(), bBoxFlight.top()));
+        bBoxFlight.setRight(MAX(curPointB.x(), bBoxFlight.right()));
+        bBoxFlight.setBottom(MIN(curPointB.y(), bBoxFlight.bottom()));
 
-      QPen drawP = glConfig->getDrawPen(pointB);
-      drawP.setCapStyle(Qt::SquareCap);
-      targetPainter->setPen(drawP);
-      maskPainter->setPen(QPen(Qt::color1, drawP.width(),
-          Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
+        QPen drawP = glConfig->getDrawPen(pointB);
+        drawP.setCapStyle(Qt::SquareCap);
+        targetPainter->setPen(drawP);
+        maskPainter->setPen(QPen(Qt::color1, drawP.width(),
+            Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
 
-      targetPainter->drawLine(curPointA, curPointB);
-      maskPainter->drawLine(curPointA, curPointB);
-    }
+        targetPainter->drawLine(curPointA, curPointB);
+        maskPainter->drawLine(curPointA, curPointB);
+
+        curPointA = curPointB;
+      }
   }
 }
+
 
 QString Flight::getID() const { return gliderID; }
 
@@ -1049,7 +1057,7 @@ void Flight::setAnimationActive(bool b){
 }
 
 /** returns the bAnimationActive flag */
-bool Flight::getAnimationActive(void){
+bool Flight::isAnimationActive(void){
   return bAnimationActive;
 }
 /** No descriptions */

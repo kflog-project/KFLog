@@ -224,7 +224,7 @@ class Flight : public BaseFlightElement
 		 */
     void setAnimationIndex(int n);
   /** returns the bAnimationActive flag */
-  bool getAnimationActive(void);
+  bool isAnimationActive(void);
   /** No descriptions */
   int getAnimationIndex();
     /**
