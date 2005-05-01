@@ -23,21 +23,35 @@
 GliderSite::GliderSite(QString n, QString icao, QString gps, WGSPoint wgsPos,
         QPoint pos, unsigned int elev, const char* f, bool w)
 : RadioPoint(n, icao, gps, BaseMapElement::Glidersite, wgsPos, pos, f, elev),
-  winch(w)
+  winch(w),
+  rwData(0)
 {
 
 }
 
 GliderSite::~GliderSite()
 {
-
+  delete rwData;
+  rwData=0;
 }
 
 QString GliderSite::getFrequency() const { return frequency; }
 
-runway GliderSite::getRunway(int index) const { return rwData[index]; }
+runway *GliderSite::getRunway(int index) const
+{ 
+  if (!rwData)
+    return 0;
 
-unsigned int GliderSite::getRunwayNumber() const { return rwNum; }
+  return rwData->at(index); 
+}
+
+unsigned int GliderSite::getRunwayNumber() const 
+{ 
+  if (!rwData)
+    return 0;
+
+  return rwData->count(); 
+}
 
 bool GliderSite::isWinch() const { return winch; }
 
@@ -100,5 +114,17 @@ void GliderSite::printMapElement(QPainter* printPainter, bool isText)
           printPos.y() + iconSize + 4, name);
       printPainter->drawText(printPos.x() - 15,
           printPos.y() + iconSize + 14, frequency);
+    }
+}
+
+
+void GliderSite::addRunway(runway* r)
+{
+    if (r) {
+      if (!rwData) {
+        rwData=new QPtrList<runway>;
+        rwData->setAutoDelete(true);
+      }
+      rwData->append(r);
     }
 }

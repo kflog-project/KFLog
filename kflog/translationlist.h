@@ -34,12 +34,23 @@ public:
 	TranslationList();
 	~TranslationList();
   virtual int compareItems(QCollection::Item e1, QCollection::Item e2);
-  /** No descriptions */
+  /** 
+   * adds an item to the list
+   */
   void append(const TranslationElement *item);
-  /** return index by ID */
+  /** 
+   * return index by ID 
+   */
   int idxById(int id);
-  /** return a transaltion element item by given id */
+  /** 
+   * return a transaltion element item by given id 
+   */
   TranslationElement *itemById(int id);
+  /** 
+   * return a transaltion text by given id, or an empty text if the item does not exist
+   */
+  QString itemText(int id);
+
 private: // Private attributes
   /** index list elements by id */
   QIntDict<TranslationElement> idIndex;

@@ -48,3 +48,14 @@ TranslationElement *TranslationList::itemById(int id)
 {
   return idIndex[id];
 }
+
+QString TranslationList::itemText(int id)
+{
+  TranslationElement *te=itemById(id);
+  if (te) {
+    return te->text;
+  } else {
+    qWarning("Translation element id %d not found!", id);
+    return QString::null;
+  }
+}

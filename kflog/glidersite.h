@@ -20,6 +20,7 @@
 
 #include "radiopoint.h"
 #include "runway.h"
+#include <qptrlist.h>
 
 /**
  * This class provides handling the glider-sites.
@@ -40,7 +41,7 @@ class GliderSite : public RadioPoint
      * @param  wgsPos  The original WGS-position
      * @param  elevation  The elevation
      * @param  frequency  The frequency
-     * @param  winsh  "true", if only winsh-launch is available
+     * @param  winch  "true", if only winch-launch is available
      */
     GliderSite(QString name, QString icao, QString abbr, WGSPoint wgsPos,
         QPoint pos, unsigned int elevation, const char* frequency, bool winch);
@@ -55,7 +56,7 @@ class GliderSite : public RadioPoint
     /**
      * @return a runway-struct, containing the data of the given runway.
      */
-    runway getRunway(int index = 0) const;
+    runway* getRunway(int index = 0) const;
     /**
      * @return the number of runways.
      */
@@ -83,6 +84,10 @@ class GliderSite : public RadioPoint
      *                 be printed.
      */
     virtual void printMapElement(QPainter* printP, bool isText);
+    /**
+     * Adds a runway to the list of runways, and takes ownership of the runway object.
+     */
+    void addRunway(runway* r);
 
   private:
     /**
@@ -93,11 +98,7 @@ class GliderSite : public RadioPoint
     /**
      * Contains the runway-data.
      */
-    runway* rwData;
-    /**
-     * Contains the number of runways.
-     */
-    unsigned int rwNum;
+    QPtrList<runway>* rwData;
 };
 
 #endif

@@ -519,12 +519,12 @@ void Waypoints::fillWaypoints()
     item->setText(colName, w->name);
     item->setText(colDesc, w->description);
     item->setText(colICAO, w->icao);
-    item->setText(colType, w->type == -1 ? QString::null : waypointTypes.itemById(w->type)->text);
+    item->setText(colType, w->type == -1 ? QString::null : waypointTypes.itemText(w->type));
     item->setText(colLat, printPos(w->origP.lat(), true));
     item->setText(colLong, printPos(w->origP.lon(), false));
     tmp.sprintf("%d", w->elevation);
     item->setText(colElev, tmp);
-    tmp.sprintf("%.3f", w->frequency);
+    w->frequency > 1 ? tmp.sprintf("%.3f", w->frequency) : tmp=QString::null;
     item->setText(colFrequency, tmp);
     item->setText(colLandable, w->isLandable == true ? i18n("Yes") : QString::null);
     if (w->runway > -1) {
@@ -542,7 +542,7 @@ void Waypoints::fillWaypoints()
     }
     item->setText(colLength, tmp);
 
-    item->setText(colSurface, w->surface == -1 ? QString::null : surfaces.itemById(w->surface)->text);
+    item->setText(colSurface, w->surface == -1 ? QString::null : surfaces.itemText(w->surface));
     item->setText(colComment, w->comment);
     item->setPixmap(colName, _globalMapConfig.getPixmap(w->type,false,true));
   }
@@ -625,6 +625,7 @@ void Waypoints::slotCloseWaypointCatalog()
 void Waypoints::slotImportWaypointFromMap()
 {
   SinglePoint *s;
+  Airport *a;
   Waypoint *w;
   WaypointCatalog *c = waypointCatalogs.current();
   WaypointDict *wl = &(c->wpList);
@@ -712,12 +713,18 @@ void Waypoints::slotImportWaypointFromMap()
           w->icao = ((RadioPoint *) s)->getICAO();
           w->frequency = ((RadioPoint *) s)->getFrequency().toDouble();
           w->isLandable = true;
-          //        if (a->getRunwayNumber()) {
-          //          runway r = a->getRunway(0);
-          //          w->runway = r.direction;
-          //          w->length = r.length;
-          //          w->surface = r.surface;
-          //        }
+          a = dynamic_cast<Airport*>(s);
+          if (a) {
+            if (a->getRunwayNumber()) {
+qDebug("importing runway");
+              runway* r = a->getRunway(0);
+              if (r) {
+                w->runway = r->direction;
+                w->length = r->length;
+                w->surface = r->surface;
+              }
+            }
+          }
           break;
         default:
           w->isLandable = false;

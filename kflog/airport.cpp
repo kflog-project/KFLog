@@ -23,21 +23,35 @@
 Airport::Airport(QString n, QString i, QString abbr, unsigned int t,
   WGSPoint wgsPos, QPoint pos, unsigned int e, const char* f, bool v)
   : RadioPoint(n, i, abbr, t, wgsPos, pos, f, e),
-    vdf(v)
+    vdf(v),
+    rwData(0)
 {
 
 }
 
 Airport::~Airport()
 {
-
+  delete rwData;
+  rwData=0;
 }
 
 QString Airport::getFrequency() const { return frequency; }
 
-runway Airport::getRunway(int index) const { return rwData[index]; }
+runway* Airport::getRunway(int index) const 
+{ 
+  if (!rwData)
+    return 0;
 
-unsigned int Airport::getRunwayNumber() const { return rwNum; }
+  return rwData->at(index); 
+}
+
+unsigned int Airport::getRunwayNumber() const 
+{ 
+  if (!rwData)
+    return 0;
+
+  return rwData->count(); 
+}
 
 QString Airport::getInfoString() const
 {
@@ -217,3 +231,15 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
       printPainter->drawText(printPos.x() - 10,
           printPos.y() + iconSize + 4, name);
 }
+
+void Airport::addRunway(runway* r)
+{
+    if (r) {
+      if (!rwData) {
+        rwData=new QPtrList<runway>;
+        rwData->setAutoDelete(true);
+      }
+      rwData->append(r);
+    }
+}
+

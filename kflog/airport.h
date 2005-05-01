@@ -20,6 +20,7 @@
 
 #include "radiopoint.h"
 #include "runway.h"
+#include <qptrlist.h>
 
 /**
   * This class is used for handling airports. The object can be one of
@@ -57,7 +58,7 @@ class Airport : public RadioPoint
     /**
      * @return a runway-struct, containing the data of the given runway.
      */
-    runway getRunway(int index = 0) const;
+    runway* getRunway(int index = 0) const;
     /**
      * @return the number of runways.
      */
@@ -83,6 +84,10 @@ class Airport : public RadioPoint
      * Used to define the surface of a runway.
      */
     enum SurfaceType {Unknown = 0, Grass = 1, Asphalt = 2, Concrete = 3};
+    /**
+     * Adds a runway to the list of runways, and takes ownership of the runway object.
+     */
+    void addRunway(runway* r);
 
   private:
     /**
@@ -91,11 +96,7 @@ class Airport : public RadioPoint
     /**
      * Contains the runway-data.
      */
-    runway* rwData;
-    /**
-     * Contains the number of runways.
-     */
-    unsigned int rwNum;
+    QPtrList<runway>* rwData;
 };
 
 #endif

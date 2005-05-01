@@ -91,12 +91,13 @@
 #define READ_POINT_LIST  in >> locLength; \
   tA.resize(locLength); \
   if (locLength == 0) { \
-    qDebug("zero length pointlist!"); \
-  } \
-  for(unsigned int i = 0; i < locLength; i++) { \
-    in >> lat_temp;          in >> lon_temp; \
-    tA.setPoint(i, _globalMapMatrix.wgsToMap(lat_temp, lon_temp)); \
- }
+    qDebug("zero length pointlist! (type %d)", typeIn); \
+  } else { \
+    for(unsigned int i = 0; i < locLength; i++) { \
+      in >> lat_temp;          in >> lon_temp; \
+      tA.setPoint(i, _globalMapMatrix.wgsToMap(lat_temp, lon_temp)); \
+    } \
+  }
 
 #define READ_CONTACT_DATA in >> contactCount; \
   for(unsigned int loop = 0; loop < contactCount; loop++) \
@@ -106,13 +107,19 @@
       in >> callSign; \
     }
 
-#define READ_RUNWAY_DATA in >> rwCount; \
+#define READ_RUNWAY_DATA(site) in >> rwCount; \
   for(unsigned int loop = 0; loop < rwCount; loop++) \
     { \
       in >> rwDirection; \
       in >> rwLength; \
       in >> rwMaterial; \
       in >> rwOpen; \
+      runway* rw = new runway; \
+      rw->length = rwLength; \
+      rw->direction = rwDirection; \
+      rw->surface = rwMaterial; \
+      rw->isOpen = rwOpen; \
+      site->addRunway(rw); \
     }
 
 // Liste der Höhenstufen (insg. 50 Stufen):
@@ -762,6 +769,8 @@ bool MapContents::__readAirfieldFile(const char* pathName)
   QPoint position;
   WGSPoint wgsPos;
 
+  Airport* ap; GliderSite* gs;
+
   in >> magic;
   if(magic != KFLOG_FILE_MAGIC)  return false;
 
@@ -789,6 +798,7 @@ bool MapContents::__readAirfieldFile(const char* pathName)
       in >> typeIn;
 
       count++;
+      ap=0; gs=0;
 
       //
       //  Die Werte müssen wieder zurückgesetzt werden!
@@ -819,13 +829,15 @@ bool MapContents::__readAirfieldFile(const char* pathName)
 
             READ_CONTACT_DATA
 
-            READ_RUNWAY_DATA
-
             wgsPos.setPos(lat_temp, lon_temp);
             position = _globalMapMatrix.wgsToMap(wgsPos);
 
-            airportList.append(new Airport(name, icaoName, gpsName, typeIn,
-                wgsPos, position, elevation, frequency, (bool)vdf));
+            ap=new Airport(name, icaoName, gpsName, typeIn,
+                wgsPos, position, elevation, frequency, (bool)vdf);
+
+            READ_RUNWAY_DATA(ap)
+
+            airportList.append(ap);
             break;
           case BaseMapElement::ClosedAirfield:
             in >> name;
@@ -875,13 +887,15 @@ bool MapContents::__readAirfieldFile(const char* pathName)
 
             READ_CONTACT_DATA
 
-            READ_RUNWAY_DATA
-
             wgsPos.setPos(lat_temp, lon_temp);
             position = _globalMapMatrix.wgsToMap(wgsPos);
 
-            gliderList.append(new GliderSite(name, icaoName, gpsName,
-                wgsPos, position, elevation, frequency, isWinch));
+            gs=new GliderSite(name, icaoName, gpsName,
+                wgsPos, position, elevation, frequency, isWinch);
+
+            READ_RUNWAY_DATA(gs)
+
+            gliderList.append(gs);
 
             break;
         }
