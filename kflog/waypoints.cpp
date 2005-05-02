@@ -626,6 +626,7 @@ void Waypoints::slotImportWaypointFromMap()
 {
   SinglePoint *s;
   Airport *a;
+  GliderSite *gs;
   Waypoint *w;
   WaypointCatalog *c = waypointCatalogs.current();
   WaypointDict *wl = &(c->wpList);
@@ -713,15 +714,26 @@ void Waypoints::slotImportWaypointFromMap()
           w->icao = ((RadioPoint *) s)->getICAO();
           w->frequency = ((RadioPoint *) s)->getFrequency().toDouble();
           w->isLandable = true;
-          a = dynamic_cast<Airport*>(s);
+          a = dynamic_cast<Airport*>(s); //try casting to an airfield
           if (a) {
             if (a->getRunwayNumber()) {
-qDebug("importing runway");
               runway* r = a->getRunway(0);
               if (r) {
                 w->runway = r->direction;
                 w->length = r->length;
                 w->surface = r->surface;
+              }
+            }
+          } else { //try casting to an airfield did not work, try glider site
+            gs = dynamic_cast<GliderSite*>(s);
+            if (gs) {
+              if (gs->getRunwayNumber()) {
+                runway* r = gs->getRunway(0);
+                if (r) {
+                  w->runway = r->direction;
+                  w->length = r->length;
+                  w->surface = r->surface;
+                }
               }
             }
           }
