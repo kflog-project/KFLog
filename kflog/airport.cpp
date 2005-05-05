@@ -60,13 +60,21 @@ QString Airport::getInfoString() const
   //bool isType2=false; //Doesn't work yet, runway info is not read.
   //if (typeID==BaseMapElement::Airfield)
   //  isType2=(getRunway().surface==Grass);
-    
+  
+  // @AP: suppress an empty frequency
+  QString tmp;
+
+  if( frequency.left(1) != "0" )
+    {
+      tmp = frequency;
+    }
+
   text.sprintf("%d", elevation);
   text = "<TABLE BORDER=0><TR><TD>"
       "<IMG SRC=" + path + glConfig->getPixmapName(typeID) + ">" +
       "</TD><TD>" + name + " (" + icao + ")</TD></TR>" +
       "<TR><TD></TD><TD><FONT SIZE=-1>" + text + "m" +
-      "<BR>" + frequency + "</FONT></TD></TR></TABLE>";
+      "<BR>" + tmp + "</FONT></TD></TR></TABLE>";
 
   return text;
 }
