@@ -265,6 +265,12 @@ int Cumulus::readTasks(QPtrList<FlightTask> *tasks){
             wp->icao = ( *tmpList.at( 5 ) ).latin1();
             wp->description = ( *tmpList.at( 6 ) ).latin1();
             wp->frequency = ( (QString)( *tmpList.at( 7 ) ).latin1() ).toDouble();
+            wp->comment = ( *tmpList.at( 8 ) ).latin1();
+            wp->isLandable = ( (QString)( *tmpList.at( 9 ) ).latin1() ).toInt();
+            wp->runway = ( (QString)( *tmpList.at( 10 ) ).latin1() ).toInt();
+            wp->length = ( (QString)( *tmpList.at( 11 ) ).latin1() ).toInt();
+            wp->surface = ( (QString)( *tmpList.at( 12 ) ).latin1() ).toInt();
+            wp->type = ( (QString)( *tmpList.at( 13 ) ).latin1() ).toInt();
           }
         else if( line.mid( 0, 2 ) == "TE" && isTask )
           {
@@ -340,8 +346,8 @@ int Cumulus::writeTasks(QPtrList<FlightTask> *tasks){
           *stream << "TW," << wp->origP.x() << "," << wp->origP.y() << ","
             << wp->elevation << "," << wp->name << "," << wp->icao << ","
             << wp->description << "," << wp->frequency << ","
-            << wp->comment << "," << wp->isLandable << wp->runway << ","
-            << wp->length << "," << wp->surface
+            << wp->comment << "," << wp->isLandable << "," << wp->runway << ","
+            << wp->length << "," << wp->surface<< "," << wp->type
             << endl;
         }
       *stream << "TE" << endl;
