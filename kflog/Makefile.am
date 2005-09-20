@@ -3,7 +3,20 @@ bin_PROGRAMS = kflog
 
 ## INCLUDES were found outside kdevelop specific part
 
-kflog_SOURCES = da4record.cpp evaluationcanvas.cpp whatsthat.cpp tasklistviewitem.cpp flightlistviewitem.cpp objecttree.cpp helpwindow.cpp downloadlist.cpp topolegend.cpp optimizationwizard.cpp waypoint.cpp flightrecorderpluginbase.cpp optimization.cpp waypointdict.cpp taskdialog.cpp centertodialog.cpp waypoints.cpp waypointlist.cpp waypointimpfilterdialog.cpp waypointdialog.cpp waypointcatalog.cpp translationlist.cpp translationelement.cpp taskdataprint.cpp singlepoint.cpp recorderdialog.cpp radiopoint.cpp projectionlambert.cpp projectioncylindric.cpp projectionbase.cpp olcdialog.cpp mapprint.cpp mapmatrix.cpp mapcontrolview.cpp mapcontents.cpp mapconfig.cpp mapcalc.cpp map.cpp lineelement.cpp kflogstartlogo.cpp kflogconfig.cpp isohypse.cpp igcpreview.cpp igc3dviewstate.cpp igc3dview.cpp igc3dpolyhedron.cpp igc3dflightdata.cpp igc3ddialog.cpp glidersite.cpp flighttask.cpp flightselectiondialog.cpp flightgroup.cpp flightdataprint.cpp flight.cpp evaluationview.cpp evaluationframe.cpp evaluationdialog.cpp dataview.cpp configprintelement.cpp configdrawelement.cpp basemapelement.cpp baseflightelement.cpp airspace.cpp airport.cpp kflog.cpp main.cpp elevationfinder.cpp
+kflog_SOURCES = da4record.cpp whatsthat.cpp tasklistviewitem.cpp \
+	flightlistviewitem.cpp objecttree.cpp helpwindow.cpp downloadlist.cpp topolegend.cpp \
+	optimizationwizard.cpp waypoint.cpp flightrecorderpluginbase.cpp optimization.cpp \
+	waypointdict.cpp taskdialog.cpp centertodialog.cpp waypoints.cpp waypointlist.cpp \
+	waypointimpfilterdialog.cpp waypointdialog.cpp waypointcatalog.cpp translationlist.cpp \
+	translationelement.cpp taskdataprint.cpp singlepoint.cpp recorderdialog.cpp radiopoint.cpp \
+	projectionlambert.cpp projectioncylindric.cpp projectionbase.cpp olcdialog.cpp mapprint.cpp \
+	mapmatrix.cpp mapcontrolview.cpp mapcontents.cpp mapconfig.cpp mapcalc.cpp map.cpp \
+	lineelement.cpp kflogstartlogo.cpp kflogconfig.cpp isohypse.cpp igcpreview.cpp \
+	igc3dviewstate.cpp igc3dview.cpp igc3dpolyhedron.cpp igc3dflightdata.cpp igc3ddialog.cpp \
+	glidersite.cpp flighttask.cpp flightselectiondialog.cpp flightgroup.cpp \
+	flightdataprint.cpp flight.cpp evaluationview.cpp evaluationframe.cpp evaluationdialog.cpp \
+	dataview.cpp configprintelement.cpp configdrawelement.cpp basemapelement.cpp \
+	baseflightelement.cpp airspace.cpp airport.cpp kflog.cpp main.cpp elevationfinder.cpp
 kflog_LDADD   = ./guicontrols/libguicontrols.a ./kfrgcs/libkfrgcs.la ./kfrgmn/libkfrgmn.la ./kfrfil/libkfrfil.la ./kfrxsp/libkfrxsp.la ./kfrxcu/libkfrxcu.la ./opengl_igc/libopengl_igc.la -lkdeprint -lGL -lm $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
 
 SUBDIRS = guicontrols kfrgcs kfrgmn map-icons pics kfrfil kfrxsp kfrxcu opengl_igc 
