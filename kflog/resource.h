@@ -150,6 +150,8 @@
 #define FLIGHT_GROUP     63
 #define FAI_AREA_LOW     64
 #define FAI_AREA_HIGH    65
+#define SU_SECTOR        66 // used by cumulus for other special sectors
+#define EMPTY_POINT      67 // used by cumulus for empty points
 
 /*
  * In einigen ASCII-Dateien taucht der Typ 71 für Kanäle auf,
