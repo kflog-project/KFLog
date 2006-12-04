@@ -1,0 +1,22 @@
+/* XPM */           
+static char *vor[]={
+"16 16 3 1",       
+"  c None",         
+". c #000000",      
+"x c #000000",      
+"                ", 
+"                ", 
+".....xxxxx......", 
+".   xxxxxxx    .", 
+".  xx      xx  .", 
+". xx        xx .", 
+".xx          xx.", 
+"xx     xx     xx", 
+"xx     xx     xx", 
+".xx          xx.", 
+". xx        xx .", 
+".  xx      xx  .", 
+".   xxxxxxx    .", 
+".....xxxxx......", 
+"                ", 
+"                "};
