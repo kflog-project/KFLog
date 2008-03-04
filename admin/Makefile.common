@@ -22,8 +22,8 @@ cvs:
 	@autoconf
 	@if test -r configure.in.in ; then \
 	  perl -pi -e 'print "if test \"x\$$with_fast_perl\" = \"xyes\" ;\
-	  then\n  perl -i.bak \$$ac_aux_dir/conf.change.pl \$$CONFIG_STATUS\
-	  || mv \$$CONFIG_STATUS.bak \$$CONFIG_STATUS;\
+	  then\n  perl -i.bak \$$ac_aux_dir/conf.change.pl \$$CONFIG_STATUS ||\
+	  mv \$$CONFIG_STATUS.bak \$$CONFIG_STATUS;\
 	  \n  rm -f \$$CONFIG_STATUS.bak;\nfi\
 	  \n" if /^\s*chmod\s+.*\+x\s+.*CONFIG_STATUS/;' configure ;\
 	fi
@@ -61,8 +61,8 @@ dist:
 	autoconf; \
 	if test -r configure.in.in ; then \
 	  perl -pi -e 'print "if test \"x\$$with_fast_perl\" = \"xyes\" ;\
-	  then\n  perl -i.bak \$$ac_aux_dir/conf.change.pl \$$CONFIG_STATUS\
-	  || mv \$$CONFIG_STATUS.bak \$$CONFIG_STATUS;\
+	  then\n  perl -i.bak \$$ac_aux_dir/conf.change.pl \$$CONFIG_STATUS ||\
+	  mv \$$CONFIG_STATUS.bak \$$CONFIG_STATUS;\
 	  \n  rm -f \$$CONFIG_STATUS.bak;\nfi\
 	  \n" if /^\s*chmod\s+.*\+x\s+.*CONFIG_STATUS/;' configure ;\
 	fi ;\
