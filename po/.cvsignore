@@ -1,8 +1,0 @@
-Makefile
-Makefile.in
-*.moc.cpp
-*.moc
-*_meta_unload.cpp
-.libs
-.deps
-*.gmo
