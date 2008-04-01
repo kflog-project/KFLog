@@ -1,5 +1,11 @@
 $Id$
 
+2008-04-01 Hendrik Hoeth <hoeth@linta.de>
+
+  * Repository cleanup
+  * Make kflog 64-bit aware
+  * Basic support for Cambridge 300 series flight recorders
+
 2005-01-01 André Somers <andre@kflog.org>
 
   * Runway information: runways are now stored when read, and used when
