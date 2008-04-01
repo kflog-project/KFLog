@@ -261,7 +261,7 @@ void DataView::setFlightData()
                 Flight *flight = fl.at(loop);
                 // store pointer of flight instead of index
                 // flight list of mapcontents will change
-                idString.sprintf("%ld", (long int)flight);
+                idString.sprintf("%lu", (unsigned long)flight);
                 fi.setFile(flight->getFileName());
 
                 htmlText += "<TR><TD><A HREF=" + idString + ">" +

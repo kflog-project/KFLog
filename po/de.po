@@ -987,11 +987,11 @@ msgstr "Luftraum F"
 
 #: kflogconfig.cpp:292
 msgid "Control C"
-msgstr "Kontrolzone C"
+msgstr "Kontrollzone C"
 
 #: kflogconfig.cpp:293
 msgid "Control D"
-msgstr "Kontrolzone D"
+msgstr "Kontrollzone D"
 
 #: kflogconfig.cpp:294
 msgid "Danger"
@@ -1195,7 +1195,7 @@ msgstr "Auswählen"
 
 #: kflogconfig.cpp:905
 msgid "Select default waypoint catalog"
-msgstr "Standart Wendepunktkatalog wählen"
+msgstr "Standard Wendepunktkatalog wählen"
 
 #: main.cpp:55
 msgid "export to png graphics file"
@@ -1274,13 +1274,13 @@ msgstr "Entwickler (3D-Dialog)"
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
-msgstr "Heiner Lamprecht,Eggert Ehmke"
+msgstr "Heiner Lamprecht, Eggert Ehmke"
 
 #: main.cpp:108 _translatorinfo.cpp:3
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
-msgstr "heiner@kflog.org,eggert@kflog.org"
+msgstr "heiner@kflog.org, eggert@kflog.org"
 
 #: map.cpp:136
 msgid ""
@@ -1298,7 +1298,7 @@ msgstr ""
 "<B>Kartenkontrolle</B> um die Karte zu verschieben oder den Maßstab zu "
 "ändern ben. Mit Hilfe der rechten Maustaste können Sie die Karte zentrieren. "
 "</P> <P>Um den Maßstab zu verändern, benutzen Sie die Buttons in der Toolbar "
-"oder den Schieber in der Kartenkontrolle.Sie können auch die Tasten \"&lt;"
+"oder den Schieber in der Kartenkontrolle. Sie können auch die Tasten \"&lt;"
 "Ctrl&gt;&lt;+&gt;\" oder \"+\" (vergrößern) und \"&lt;Ctrl&gt;&lt;-&gt;\" "
 "oder \"-\"(verkleinern) benutzen. </P> <P>Mit den Pfeiltasten und den Tasten "
 "auf dem numerischen Tastenblock kann die Karte ebenfalls verschoben werden, "
