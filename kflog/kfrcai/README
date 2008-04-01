@@ -1,0 +1,20 @@
+$Id$
+
+libkfrcai:
+
+These files are used for the recorder backend for Cambridge 300 series
+flight recorders. The lib is called "libkfrcai" ("kfr" indicates that
+it is a kde-lib for accessing flight recorders and "cai" is the
+abbreviation of Cambridge Aero Instruments).
+
+The lib will be installed in $KDE_LIB. The file "cai.desktop" will
+be installed in $KDE_DATA/kflog/logger/ and is used to indicate that
+the lib is installed. It will be searched by KFLog each time the
+recorder dialog is opened.
+
+The files in this directory are written by Hendrik Hoeth <hoeth@linta.de>
+but also contain code sniplets from other kflog flight recorder plugins.
+The information about the protocol is taken from Cambridge's "Data Port
+User's Guide SV-517 Revision 2.2" which can be found here:
+http://cambridge-aero.com/manuals/dataport_300_sv517_rev21.pdf
+
