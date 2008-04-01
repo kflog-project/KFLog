@@ -19,18 +19,14 @@
 #define RESSOURCE_H
 
 /* liefert den größeren der beiden übergebenen Werte zurück. */
-//#define MAX(a,b)   ( ( a > b ) ? a : b )
-// this is a C++ extension. Is is supported by all compiler versions?
-// it runs fine on gcc 3.2
-#define MAX(a,b)   ( a >? b )
+#define MAX(X,Y) ((X) > (Y) ? (X) : (Y))
 
 /* liefert den kleineren der beiden übergebenen Werte zurück. */
-//#define MIN(a,b)   ( ( a < b ) ? a : b )
-#define MIN(a,b)   ( a <? b )
+#define MIN(X,Y) ((X) < (Y) ? (X) : (Y)) 
 
 /* Liefert den Betrag (sollte nicht bei übergebenen Funktionen
    verwendet werden) */
-#define ABS(a)     ( ( a > -a ) ? a : -a )
+#define ABS(a)     ( (a) > (-a) ? a : -a )
 
 #define ID_STATUS_MSG               1001
 
