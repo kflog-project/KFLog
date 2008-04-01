@@ -5,7 +5,7 @@ lib_LTLIBRARIES = libopengl_igc.la
 INCLUDES = $(all_includes)
 
 
-LDFLAGS =                
+AM_LDFLAGS =                
 
 
 libopengl_igc_la_LDFLAGS = -version-info 1:0:0
