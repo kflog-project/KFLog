@@ -1,0 +1,12 @@
+$Id$
+
+dataport_300_sv517_rev22.txt is the text version of the original
+Cambridge's "Data Port User's Guide SV-517 Revision 2.2" which can be
+found here:
+http://cambridge-aero.com/manuals/dataport_300_sv517_rev21.pdf
+
+It has a number of errors, so dataport_300_sv517_rev23.txt is a
+corrected version (well, there are still several open questions)
+which was sent to Gary Kammerer at Cambridge.
+
+Any new changes should get a new file name!
