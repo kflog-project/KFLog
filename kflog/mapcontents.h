@@ -347,17 +347,6 @@ class MapContents : public QObject
      */
     bool __readTerrainFile(const int fileSecID, const int fileTypeID);
     /**
-     * Reads a new ascii map file.
-     *
-     * NOTE: This function is obsolete and will be removed in further
-     * releases!!!
-     *
-     * @param  fileName  The name of the mapfile
-     *
-     * @return "true", when the file has successfully been loaded
-     */
-    bool __readAsciiFile(const char* fileName);
-    /**
      * airportList contains all airports.
      */
     QPtrList<Airport> airportList;
