@@ -648,7 +648,7 @@ void Waypoints::slotImportWaypointFromMap()
       searchLists.append(MapContents::AirportList);
     }
     if (c->showAll || c->showGliderSites) {
-      searchLists.append(MapContents::GliderList);
+      searchLists.append(MapContents::GliderSiteList);
     }
     if (c->showAll || c->showOtherSites) {
       searchLists.append(MapContents::AddSitesList);

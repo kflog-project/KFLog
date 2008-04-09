@@ -1663,7 +1663,7 @@ unsigned int MapContents::getListLength(int listIndex) const
   switch(listIndex) {
   case AirportList:
     return airportList.count();
-  case GliderList:
+  case GliderSiteList:
     return gliderSiteList.count();
   case OutList:
     return outList.count();
@@ -1723,7 +1723,7 @@ BaseMapElement* MapContents::getElement(int listIndex, unsigned int index)
   switch(listIndex) {
   case AirportList:
     return airportList.at(index);
-  case GliderList:
+  case GliderSiteList:
     return gliderSiteList.at(index);
   case OutList:
     return outList.at(index);
@@ -1764,7 +1764,7 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
   switch(listIndex) {
   case AirportList:
     return airportList.at(index);
-  case GliderList:
+  case GliderSiteList:
     return gliderSiteList.at(index);
   case OutList:
     return outList.at(index);
@@ -1871,6 +1871,60 @@ void MapContents::printContents(QPainter* targetPainter, bool isText)
 }
 
 
+/*
+void MapContents::drawList(QPainter* targetPainter,
+                           unsigned int listID)
+{
+  //const char *list="";
+  //uint len = 0;
+
+  //QTime t;
+  //t.start();
+
+  //FIXME remove the maskpainter completely
+  QPainter* maskPainter = 0;
+
+  switch(listID) {
+  case AirportList:
+    //list="AirportList";
+    //len=airportList.count();
+    showProgress2WaitScreen( tr("Drawing airports") );
+    for (int i = 0; i < airportList.size(); i++)
+      airportList.at(i)->drawMapElement(targetPainter, maskPainter);
+    break;
+
+  case GliderSiteList:
+    //list="GliderSiteList";
+    //len=gliderSiteList.count();
+    showProgress2WaitScreen( tr("Drawing gilder sites") );
+    for (int i = 0; i < gliderSiteList.size(); i++)
+      gliderSiteList.at(i)->drawMapElement(targetPainter, maskPainter);
+    break;
+
+  case OutList:
+    //list="OutList";
+    //len=outList.count();
+    showProgress2WaitScreen( tr("Drawing outlanding sites") );
+    for (int i = 0; i < outList.size(); i++)
+      outList.at(i)->drawMapElement(targetPainter, maskPainter);
+    break;
+
+  case NavList:
+    //list="NavList";
+    //len=navList.count();
+    showProgress2WaitScreen( tr("Drawing navigation elements") );
+    for (int i = 0; i < navList.size(); i++)
+      navList.at(i)->drawMapElement(targetPainter, maskPainter);
+    break;
+
+  case AirspaceList:
+    //list="AirspaceList";
+    //len=airspaceList.count();
+    showProgress2WaitScreen( tr("Drawing airspaces") );
+    for (int i = 0; i < airspaceList.size(); i++)
+      airspaceList.at(i)->drawMapElement(targetPainter, maskPainter);
+    break;
+*/
 void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
     unsigned int listID)
 {
@@ -1880,7 +1934,7 @@ void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
         for(BaseMapElement* airport = airportList.first(); airport; airport = airportList.next())
             airport->drawMapElement(targetPainter, maskPainter);
         break;
-      case GliderList:
+      case GliderSiteList:
         for(BaseMapElement* glider = gliderSiteList.first(); glider; glider = gliderSiteList.next())
             glider->drawMapElement(targetPainter, maskPainter);
         break;

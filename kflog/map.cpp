@@ -546,10 +546,10 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 
   for(unsigned int loop = 0;
       loop < _globalMapContents.getListLength(
-                      MapContents::GliderList); loop++)
+                      MapContents::GliderSiteList); loop++)
     {
       hitElement = (SinglePoint*)_globalMapContents.getElement(
-          MapContents::GliderList, loop);
+          MapContents::GliderSiteList, loop);
       sitePos = hitElement->getMapPosition();
 
       double dX = abs (sitePos.x() - current.x());
@@ -1005,7 +1005,7 @@ void Map::mousePressEvent(QMouseEvent* event)
             bool found = false;
 
             // add WPList !!!
-            int searchList[] = {MapContents::GliderList, MapContents::AirportList};
+            int searchList[] = {MapContents::GliderSiteList, MapContents::AirportList};
             for (int l = 0; l < 2; l++)
               {
                        for(unsigned int loop = 0;
@@ -1306,7 +1306,7 @@ void Map::__drawMap()
 
   mainApp->slotSetProgress(90);
 
-  _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::GliderList);
+  _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::GliderSiteList);
 
   mainApp->slotSetProgress(95);
 
@@ -2251,7 +2251,7 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QPtrList<Waypoi
        *  Muss für alle Punktdaten durchgeführt werden
        */
       QArray<int> contentArray(2);
-      contentArray.at(0) = MapContents::GliderList;
+      contentArray.at(0) = MapContents::GliderSiteList;
       contentArray.at(1) = MapContents::AirportList;
 
       for(unsigned int n = 0; n < contentArray.count(); n++)
@@ -2520,7 +2520,7 @@ void Map::slotMpNewWaypoint(){
    bool found = false;
 
     // add WPList !!!
-    int searchList[] = {MapContents::GliderList, MapContents::AirportList};
+    int searchList[] = {MapContents::GliderSiteList, MapContents::AirportList};
     for (int l = 0; l < 2; l++) {
       for(unsigned int loop = 0; loop < _globalMapContents.getListLength(searchList[l]); loop++) {
         hitElement = (RadioPoint*)_globalMapContents.getElement(searchList[l], loop);

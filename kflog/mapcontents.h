@@ -217,7 +217,7 @@ class MapContents : public QObject
     /**
      * The index of Mapelement-Lists.
      */
-    enum MapContentsListID {NotSet = 0, AirportList, GliderList,
+    enum MapContentsListID {NotSet = 0, AirportList, GliderSiteList,
         AddSitesList, OutList, NavList, AirspaceList, ObstacleList, ReportList,
         CityList, VillageList, LandmarkList, HighwayList, HighwayEntryList,
         RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,

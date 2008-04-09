@@ -223,7 +223,7 @@ int WaypointImpFilterDialog::getCenterRef()
 
 void WaypointImpFilterDialog::polish()
 {
-  int searchList[] = {MapContents::GliderList, MapContents::AirportList};
+  int searchList[] = {MapContents::GliderSiteList, MapContents::AirportList};
 
   KDialog::polish();
   for (int l = 0; l < 2; l++) {
