@@ -932,7 +932,6 @@ QPtrList<BaseFlightElement>* MapContents::getFlightList()
   return &flightList;
 }
 
-QPtrList<Waypoint>* MapContents::getWaypointList()  {  return &wpList;  }
 
 bool MapContents::loadFlight(QFile& igcFile)
 {

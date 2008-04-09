@@ -73,161 +73,186 @@ class isoListEntry {
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
+
 class MapContents : public QObject
 {
   Q_OBJECT
 
   public:
-    /**
-     * Creates a new MapContents-object.
-     */
-    MapContents();
-    /**
-     * Destructor, deletes all lists.
-     */
-    ~MapContents();
-    /**
-     * @return the current length of the given list.
-     *
-     * @param  listIndex  the index of the list.
-     */
-    unsigned int getListLength(int listIndex) const;
-    /**
-     * Proofes, which mapsections are needed to draw the map and loads
-     * the missing sections.
-     *
-     * @param  isPrint  "true", if the map should be printed.
-     */
-    void proofeSection(bool isPrint = false);
-    /**
-     * @return a pointer to the BaseMapElement of the given mapelement in
-     *         the list.
-     *
-     * @param  listIndex  the index of the list containing the element
-     * @param  index  the index of the element in the list
-     */
-    BaseMapElement* getElement(int listIndex, unsigned int index);
-    /**
-     * @return a pointer to the given airspace
-     *
-     * @param  index  the list-index of the airspace
-     */
-    Airspace* getAirspace(unsigned int index);
-    /**
-     * @returns a pointer to the given glidersite
-     *
-     * @param  index  the list-index of the glidersite
-     */
-    GliderSite* getGlidersite(unsigned int index);
-    /**
-     * @return a pointer to the given airport
-     *
-     * @param  index  the list-index of the airport
-     */
-    Airport* getAirport(unsigned int index);
-    /**
-     * @return a pointer to the SinglePoint of the given mapelement
-     *
-     * @param  listIndex  the index of the list containing the element
-     * @param  index  the index of the element in the list
-     */
-    SinglePoint* getSinglePoint(int listIndex, unsigned int index);
-    /**
-     * Draws all elements of a list into the painter.
-     *
-     * @param  targetP  The painter to draw the elements into
-     * @param  maskP  The maskpainter of targetP
-     * @param  listID  The index of the list to be drawn
-     */
-    void drawList(QPainter* targetPainter, QPainter* maskPainter,
-        unsigned int listID);
-    /**
-     * Draws all isohypses into the given painter
-     *
-     * @param  targetP  The painter to draw the elements into
-     * @param  maskP  The maskpainter of targetP
-     */
-    void drawIsoList(QPainter* targetP, QPainter* maskP);
-    /**
-     * Prints the whole content of the map into the given painter.
-     *
-     * @param  targetP  The painter to draw the elements into
-     *
-     * @param  isText  Shows, if the text of some mapelements should
-     *                 be printed.
-     */
-    void printContents(QPainter* targetP, bool isText);
-    /**
-     * Loads a new flight-file.
-     *
-     * @param  file  The path to the igc-file
-     * @return "true", when the file has successfully been loaded
-     */
-    bool loadFlight(QFile&);
-    /**
-     * @return a pointer to the current flight
-     */
-    BaseFlightElement* getFlight();
-    /**
-     * @return a pointer to the current flight index
-     */
-    int getFlightIndex() { return flightList.at(); };
-    /**
-     * @returns the flightList
-     */
-    QPtrList<BaseFlightElement>* getFlightList();
-    /**
-     * @returns the wpList
-     */
-    QPtrList<Waypoint>* getWaypointList();
-    /**
-     * Searches the first point of the current flight, which distance to the
-     * mousecursor is less than 30 pixel. If no point is found, -1 is
-     * returned.
-     *
-     * @see Flight::searchPoint
-     *
-     * @param  cPoint  The map-position of the mousecursor.
-     * @param  searchPoint  A pointer to a flightpoint. Will be filled
-     *                      with the flightpoint found.
-     *
-     * @return the index of the flightpoint or -1 if no point is found.
-     */
-    int searchFlightPoint(QPoint cPos, flightPoint& fP);
-    /**
-     * Converts the longitute or latitute into the internal format.
-     *
-     * @param  degree  The position to be converted. The string must
-     *                 have the format:<BR>
-     *                 <TT>[g]gg.mm'ss"X</TT> where <TT>g</TT>, <TT>m</TT>,
-     *                 <TT>s</TT> are any digits from 0 to 9 and <TT>X</TT>
-     *                 is one of N, S, E, W.
-     */
-    static int degreeToNum(QString degree);
-    /** No descriptions */
-    bool importFlightGearFile(QFile& flightgearFile);
-    /** Imports a file downloaded with Gardown in DOS  */
-    bool importGardownFile(QFile& gardownFile);
-    /** read a task file and append all tasks to flight list switch to first task in file */
-    bool loadTask(QFile& path);
-    /** generate new task name */
-    QString genTaskName();
-    /** generate a task name, using the suggestion given. Prevents double task names */
-    QString genTaskName(QString suggestion);
-    /**
-     * The index of Mapelement-Lists.
-     */
-    enum MapContentsListID {NotSet = 0, AirportList, GliderSiteList,
-        AddSitesList, OutList, NavList, AirspaceList, ObstacleList, ReportList,
-        CityList, VillageList, LandmarkList, HighwayList, HighwayEntryList,
-        RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
-        WaypointList, DigitList, FlightList};
-    inline QPtrList<isoListEntry>* getIsohypseRegions(){return &regIsoLines;};
-    /**
-     * find the terrain elevation for the given point
-     * @returns the elevation in meters or -1 if the elevation could not be found.
-     */
-    int getElevation(QPoint);
+  /**
+   * The index of Mapelement-Lists.
+   */
+  enum MapContentsListID {NotSet = 0, AirportList, GliderSiteList,
+                          AddSitesList, OutList, NavList, AirspaceList,
+                          ObstacleList, ReportList, CityList, VillageList,
+                          LandmarkList, HighwayList, HighwayEntryList,
+                          RoadList, RailList, StationList, HydroList,
+                          TopoList, IsohypseList,
+                          WaypointList, DigitList, FlightList};
+
+  /**
+   * Creates a new MapContents-object.
+   */
+  MapContents();
+
+  /**
+   * Destructor, deletes all lists.
+   */
+  ~MapContents();
+
+  /**
+   * @return the current length of the given list.
+   *
+   * @param  listIndex  the index of the list.
+   */
+  unsigned int getListLength(int listIndex) const;
+
+  /**
+   * Proofes, which mapsections are needed to draw the map and loads
+   * the missing sections.
+   *
+   * @param  isPrint  "true", if the map should be printed.
+   */
+  void proofeSection(bool isPrint = false);
+  /**
+   * @return a pointer to the BaseMapElement of the given mapelement in
+   *         the list.
+   *
+   * @param  listIndex  the index of the list containing the element
+   * @param  index  the index of the element in the list
+   */
+  BaseMapElement* getElement(int listIndex, unsigned int index);
+
+  /**
+   * @return a pointer to the given airspace
+   *
+   * @param  index  the list-index of the airspace
+   */
+  Airspace* getAirspace(unsigned int index);
+
+  /**
+   * @returns a pointer to the given glidersite
+   *
+   * @param  index  the list-index of the glidersite
+   */
+  GliderSite* getGlidersite(unsigned int index);
+
+  /**
+   * @return a pointer to the given airport
+   *
+   * @param  index  the list-index of the airport
+   */
+  Airport* getAirport(unsigned int index);
+
+  /**
+   * @return a pointer to the SinglePoint of the given mapelement
+   *
+   * @param  listIndex  the index of the list containing the element
+   * @param  index  the index of the element in the list
+   */
+  SinglePoint* getSinglePoint(int listIndex, unsigned int index);
+
+  /**
+   * Draws all elements of a list into the painter.
+   *
+   * @param  targetP  The painter to draw the elements into
+   * @param  maskP  The maskpainter of targetP
+   * @param  listID  The index of the list to be drawn
+   */
+  void drawList(QPainter* targetPainter, QPainter* maskPainter,
+                unsigned int listID);
+
+  /**
+   * Draws all isohypses into the given painter
+   *
+   * @param  targetP  The painter to draw the elements into
+   * @param  maskP  The maskpainter of targetP
+   */
+  void drawIsoList(QPainter* targetP, QPainter* maskP);
+
+  /**
+   * Prints the whole content of the map into the given painter.
+   *
+   * @param  targetP  The painter to draw the elements into
+   *
+   * @param  isText  Shows, if the text of some mapelements should
+   *                 be printed.
+   */
+  void printContents(QPainter* targetP, bool isText);
+
+  /**
+   * @returns the waypoint list
+   */
+  QPtrList<Waypoint>* getWaypointList()
+  {
+    return &wpList;
+  };
+
+  /**
+   * Loads a new flight-file.
+   *
+   * @param  file  The path to the igc-file
+   * @return "true", when the file has successfully been loaded
+   */
+  bool loadFlight(QFile&);
+
+  /**
+   * @return a pointer to the current flight
+   */
+  BaseFlightElement* getFlight();
+
+  /**
+   * @return a pointer to the current flight index
+   */
+  int getFlightIndex() { return flightList.at(); };
+
+  /**
+   * @returns the flightList
+   */
+  QPtrList<BaseFlightElement>* getFlightList();
+
+
+  /**
+   * Searches the first point of the current flight, which distance to the
+   * mousecursor is less than 30 pixel. If no point is found, -1 is
+   * returned.
+   *
+   * @see Flight::searchPoint
+   *
+   * @param  cPoint  The map-position of the mousecursor.
+   * @param  searchPoint  A pointer to a flightpoint. Will be filled
+   *                      with the flightpoint found.
+   *
+   * @return the index of the flightpoint or -1 if no point is found.
+   */
+  int searchFlightPoint(QPoint cPos, flightPoint& fP);
+
+  /**
+   * Converts the longitute or latitute into the internal format.
+   *
+   * @param  degree  The position to be converted. The string must
+   *                 have the format:<BR>
+   *                 <TT>[g]gg.mm'ss"X</TT> where <TT>g</TT>, <TT>m</TT>,
+   *                 <TT>s</TT> are any digits from 0 to 9 and <TT>X</TT>
+   *                 is one of N, S, E, W.
+   */
+  static int degreeToNum(QString degree);
+  /** No descriptions */
+  bool importFlightGearFile(QFile& flightgearFile);
+  /** Imports a file downloaded with Gardown in DOS  */
+  bool importGardownFile(QFile& gardownFile);
+  /** read a task file and append all tasks to flight list switch to first task in file */
+  bool loadTask(QFile& path);
+  /** generate new task name */
+  QString genTaskName();
+  /** generate a task name, using the suggestion given. Prevents double task names */
+  QString genTaskName(QString suggestion);
+  inline QPtrList<isoListEntry>* getIsohypseRegions(){return &regIsoLines;};
+  /**
+   * find the terrain elevation for the given point
+   * @returns the elevation in meters or -1 if the elevation could not be found.
+   */
+  int getElevation(QPoint);
 
   public slots:
   /**
@@ -255,9 +280,9 @@ class MapContents : public QObject
   /** Re-projects any flights and tasks that may be loaded. */
   void reProject();
 
-signals:
+ signals:
   /**
-   * emitted during maploading to display a message f.e. in the
+   * emitted during map loading to display a message f.e. in the
    * splash-screen of the mainwindow.
    */
   void loadingMessage(QString message);
@@ -278,6 +303,7 @@ signals:
    * do not exists.
    */
   void errorOnMapLoading();
+
   /**
    * Activates the graphical planning
    */
@@ -287,10 +313,12 @@ signals:
    *  Map contents have changed
    */
   void contentsChanged();
+
   /**
    * Emitted if a new flight was added to the flightlist.
    */
   void newFlightAdded(Flight *);
+
   /**
    * Emitted if the current flight has changed.
    */
@@ -300,7 +328,7 @@ signals:
    */
   void closingFlight(BaseFlightElement*);
 
-private:
+ private:
 
   // Short structure to handle the optional entries in an igc file
   class bOption {
@@ -312,40 +340,42 @@ private:
    * Displays a messagebox and asks, wether the mapfiles shall be downloaded.
    */
   void __askForDownload();
-    /**
-     * Reads a binary map file containing airfields.
-     *
-     * @param  fileName  The path and name of the airfield-file.
-     */
-    bool __readAirfieldFile(const char* pathName);
-    /**
-     * Reads a binary map file containing airspaces.
-     *
-     * @param  fileName  The path and name of the airspace-file.
-     */
-    bool __readAirspaceFile(const char* pathName);
-    /**
-     * Reads a new binary map file.
-     *
-     * @param  fileSecID  The sectionID of the mapfile
-     * @param  fileTypeID  The typeID of the mapfile ("G" for ground-data,
-     *                     "M" for additional mapdata and "T" for
-     *                     terraindata)
-     *
-     * @return "true", when the file has successfully been loaded
-     */
-    bool __readBinaryFile(const int fileSecID, const char fileTypeID);
-    /**
-     * Reads a new binary terrain-map file.
-     *
-     * @param  fileSecID  The sectionID of the mapfile
-     * @param  fileTypeID  The typeID of the mapfile ("G" for ground-data,
-     *                     "M" for additional mapdata and "T" for
-     *                     terraindata)
-     *
-     * @return "true", when the file has successfully been loaded
-     */
-    bool __readTerrainFile(const int fileSecID, const int fileTypeID);
+  /**
+   * Reads a binary map file containing airfields.
+   *
+   * @param  fileName  The path and name of the airfield-file.
+   */
+  bool __readAirfieldFile(const char* pathName);
+  /**
+   * Reads a binary map file containing airspaces.
+   *
+   * @param  fileName  The path and name of the airspace-file.
+   */
+  bool __readAirspaceFile(const char* pathName);
+  /**
+   * Reads a new binary map file.
+   *
+   * @param  fileSecID  The sectionID of the mapfile
+   * @param  fileTypeID  The typeID of the mapfile ("G" for ground-data,
+   *                     "M" for additional mapdata and "T" for
+   *                     terraindata)
+   *
+   * @return "true", when the file has successfully been loaded
+   */
+  bool __readBinaryFile(const int fileSecID, const char fileTypeID);
+
+  /**
+   * Reads a new binary terrain-map file.
+   *
+   * @param  fileSecID  The sectionID of the mapfile
+   * @param  fileTypeID  The typeID of the mapfile ("G" for ground-data,
+   *                     "M" for additional mapdata and "T" for
+   *                     terraindata)
+   *
+   * @return "true", when the file has successfully been loaded
+   */
+  bool __readTerrainFile(const int fileSecID, const int fileTypeID);
+
   /**
    * airportList contains all airports.
    */
@@ -377,6 +407,7 @@ private:
 
    */
   QPtrList<Airspace> airspaceList;
+
   /**
    * obstacleList contains all obstacles and -groups, as well
    * as the spots and passes.
@@ -470,8 +501,8 @@ private:
   /** */
   DownloadList* downloadList;
 
-private slots: // Private slots
-  /**
+ private slots: // Private slots
+  /*
    * Connected to the signal currentFlightChanged, and used to resend
    * the signal with the current flight as an argument.
    */
