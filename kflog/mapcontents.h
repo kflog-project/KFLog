@@ -219,7 +219,7 @@ class MapContents : public QObject
      */
     enum MapContentsListID {NotSet = 0, AirportList, GliderList,
         AddSitesList, OutList, NavList, AirspaceList, ObstacleList, ReportList,
-        CityList, PopulationList, LandmarkList, HighwayList, HighwayEntryList,
+        CityList, VillageList, LandmarkList, HighwayList, HighwayEntryList,
         RoadList, RailList, StationList, HydroList, TopoList, IsohypseList,
         WaypointList, DigitList, FlightList};
     inline QPtrList<isoListEntry>* getIsohypseRegions(){return &regIsoLines;};
@@ -396,9 +396,9 @@ class MapContents : public QObject
      */
     QPtrList<LineElement> cityList;
     /**
-     * populationList contains all villages, towns & cities (points).
+     * villageList contains all villages, towns & cities (points).
      */
-    QPtrList<SinglePoint> populationList;
+    QPtrList<SinglePoint> villageList;
     /**
      * landmarkList contains all landmarks.
      */

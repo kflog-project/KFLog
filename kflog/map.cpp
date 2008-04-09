@@ -1258,7 +1258,7 @@ void Map::__drawMap()
 
   mainApp->slotSetProgress(40);
 
-  _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::PopulationList);
+  _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::VillageList);
 
   mainApp->slotSetProgress(45);
 

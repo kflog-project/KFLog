@@ -148,6 +148,8 @@
 #define FAI_AREA_HIGH    65
 #define SU_SECTOR        66 // used by cumulus for other special sectors
 #define EMPTY_POINT      67 // used by cumulus for empty points
+#define PROHIBITED       68 // Prohibited airspace
+
 
 /*
  * In einigen ASCII-Dateien taucht der Typ 71 für Kanäle auf,
@@ -184,6 +186,5 @@
 #define LM_STATION    15
 #define LM_BRIDGE     16
 #define LM_FERRY      17
-
 
 #endif // RESOURCE_H

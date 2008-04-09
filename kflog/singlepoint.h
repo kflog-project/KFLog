@@ -22,7 +22,7 @@
 
 /**
  * Mapelement used for small objects. The object can be one of:
- * UltraLight, HangGlider, Parachute, Balloon, PopulationPlace
+ * UltraLight, HangGlider, Parachute, Balloon, Village
  * or Landmark. Consists only of a name and a position.
  *
  * @see BaseMapElement#objectType

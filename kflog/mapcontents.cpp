@@ -1172,12 +1172,12 @@ bool MapContents::__readBinaryFile(const int fileSecID,
             READ_POINT_LIST
             topoList.append(new LineElement(name, typeIn, tA, sort));
             break;
-          case BaseMapElement::PopulationPlace:
+          case BaseMapElement::Village:
           // Maybe there is a problem because of the new field index for singlepoints
             if(formatID >= FILE_FORMAT_ID) in >> name;
             in >> lat_temp;
             in >> lon_temp;
-            populationList.append(new SinglePoint(name, "", typeIn,
+            villageList.append(new SinglePoint(name, "", typeIn,
                 WGSPoint(lat_temp, lon_temp),
                 _globalMapMatrix.wgsToMap(lat_temp, lon_temp)));
             break;
@@ -1988,8 +1988,8 @@ unsigned int MapContents::getListLength(int listIndex) const
       return reportList.count();
     case CityList:
       return cityList.count();
-    case PopulationList:
-      return populationList.count();
+    case VillageList:
+      return villageList.count();
     case LandmarkList:
       return landmarkList.count();
     case RoadList:
@@ -2044,8 +2044,8 @@ BaseMapElement* MapContents::getElement(int listIndex, unsigned int index)
       return reportList.at(index);
     case CityList:
       return cityList.at(index);
-    case PopulationList:
-      return populationList.at(index);
+    case VillageList:
+      return villageList.at(index);
     case LandmarkList:
       return landmarkList.at(index);
     case RoadList:
@@ -2081,8 +2081,8 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
         return obstacleList.at(index);
       case ReportList:
         return reportList.at(index);
-      case PopulationList:
-        return populationList.at(index);
+      case VillageList:
+        return villageList.at(index);
       case LandmarkList:
         return landmarkList.at(index);
 //      case StationList:
@@ -2110,7 +2110,7 @@ void MapContents::slotReloadMapData()
   obstacleList.clear();
   reportList.clear();
   cityList.clear();
-  populationList.clear();
+  villageList.clear();
   landmarkList.clear();
   roadList.clear();
   railList.clear();
@@ -2145,8 +2145,8 @@ void MapContents::printContents(QPainter* targetPainter, bool isText)
   for(BaseMapElement* city = cityList.first(); city; city = cityList.next())
       city->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* population = populationList.first(); population; population = populationList.next())
-      population->printMapElement(targetPainter, isText);
+  for(BaseMapElement* village = villageList.first(); village; village = villageList.next())
+      village->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* nav = navList.first(); nav; nav = navList.next())
       nav->printMapElement(targetPainter, isText);
@@ -2212,9 +2212,9 @@ void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
         for(BaseMapElement* city = cityList.first(); city; city = cityList.next())
             city->drawMapElement(targetPainter, maskPainter);
         break;
-      case PopulationList:
-        for(BaseMapElement* population = populationList.first(); population; population = populationList.next())
-            population->drawMapElement(targetPainter, maskPainter);
+      case VillageList:
+        for(BaseMapElement* village = villageList.first(); village; village = villageList.next())
+            village->drawMapElement(targetPainter, maskPainter);
         break;
       case LandmarkList:
         for(BaseMapElement* landmark = landmarkList.first(); landmark; landmark = landmarkList.next())

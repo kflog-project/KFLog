@@ -77,7 +77,7 @@ void SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
   targetP->setPen(QPen(QColor(0,255,255), 3));
   int iconSize = 8;
 
-  if(typeID == BaseMapElement::PopulationPlace)
+  if(typeID == BaseMapElement::Village)
    {
       targetP->setPen(QPen(QColor(0, 0, 0), 3));
       maskP->setPen(QPen(Qt::color1, 2));
