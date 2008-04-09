@@ -137,13 +137,13 @@ MapContents::MapContents()
 //  for(unsigned int loop = 0; loop < MAX_FILE_COUNT; loop++)
 //      sectionArray.clearBit(loop);
 
-  // Wir nehmen zunächst 4 Schachtelungstiefen an ...
+  // Wir nehmen zunaechst 4 Schachtelungstiefen an ...
   for(unsigned int loop = 0; loop < ( ISO_LINE_NUM * 4 ); loop++)
       isoList.append(new QPtrList<Isohypse>);
 
   airportList.setAutoDelete(true);
   airspaceList.setAutoDelete(true);
-  gliderList.setAutoDelete(true);
+  gliderSiteList.setAutoDelete(true);
   flightList.setAutoDelete(true);
   hydroList.setAutoDelete(true);
   landmarkList.setAutoDelete(true);
@@ -170,7 +170,7 @@ MapContents::~MapContents()
 /*  airportList.~QPtrList();
   airspaceList.~QPtrList();
   cityList.~QPtrList();
-  gliderList.~QPtrList();
+  gliderSiteList.~QPtrList();
   flightList.~QPtrList();
   hydroList.~QPtrList();
   landmarkList.~QPtrList();
@@ -589,7 +589,7 @@ bool MapContents::__readAirfieldFile(const char* pathName)
 
             READ_RUNWAY_DATA(gs)
 
-            gliderList.append(gs);
+            gliderSiteList.append(gs);
 
             break;
         }
@@ -1657,127 +1657,132 @@ void MapContents::proofeSection(bool isPrint)
     }
 }
 
+
 unsigned int MapContents::getListLength(int listIndex) const
 {
   switch(listIndex) {
-    case AirportList:
-      return airportList.count();
-    case GliderList:
-      return gliderList.count();
-    case OutList:
-      return outList.count();
-    case NavList:
-      return navList.count();
-    case AirspaceList:
-      return airspaceList.count();
-    case ObstacleList:
-      return obstacleList.count();
-    case ReportList:
-      return reportList.count();
-    case CityList:
-      return cityList.count();
-    case VillageList:
-      return villageList.count();
-    case LandmarkList:
-      return landmarkList.count();
-    case RoadList:
-      return roadList.count();
-    case RailList:
-      return railList.count();
-//    case StationList:
-//      return stationList.count();
-    case HydroList:
-      return hydroList.count();
-    case TopoList:
-      return topoList.count();
-//    case IsohypseList:
-//      //warning("Anzahl der Höhenlinien: %d", isohypseList.count());
-//      return isohypseList.count();
-    default:
-      return 0;
+  case AirportList:
+    return airportList.count();
+  case GliderList:
+    return gliderSiteList.count();
+  case OutList:
+    return outList.count();
+  case NavList:
+    return navList.count();
+  case AirspaceList:
+    return airspaceList.count();
+  case ObstacleList:
+    return obstacleList.count();
+  case ReportList:
+    return reportList.count();
+  case CityList:
+    return cityList.count();
+  case VillageList:
+    return villageList.count();
+  case LandmarkList:
+    return landmarkList.count();
+  case RoadList:
+    return roadList.count();
+  case RailList:
+    return railList.count();
+  //case StationList:
+  //  return stationList.count();
+  case HydroList:
+    return hydroList.count();
+  case TopoList:
+    return topoList.count();
+  //    case IsohypseList:
+  //      //warning("Anzahl der Höhenlinien: %d", isohypseList.count());
+  //      return isohypseList.count();
+  default:
+    return 0;
   }
 }
+
 
 Airspace* MapContents::getAirspace(unsigned int index)
 {
   return airspaceList.at(index);
 }
 
+
 Airport* MapContents::getAirport(unsigned int index)
 {
   return airportList.at(index);
 }
 
+
 GliderSite* MapContents::getGlidersite(unsigned int index)
 {
-  return gliderList.at(index);
+  return gliderSiteList.at(index);
 }
+
 
 BaseMapElement* MapContents::getElement(int listIndex, unsigned int index)
 {
   switch(listIndex) {
-    case AirportList:
-      return airportList.at(index);
-    case GliderList:
-      return gliderList.at(index);
-    case OutList:
-      return outList.at(index);
-    case NavList:
-      return navList.at(index);
-    case AirspaceList:
-      return airspaceList.at(index);
-    case ObstacleList:
-      return obstacleList.at(index);
-    case ReportList:
-      return reportList.at(index);
-    case CityList:
-      return cityList.at(index);
-    case VillageList:
-      return villageList.at(index);
-    case LandmarkList:
-      return landmarkList.at(index);
-    case RoadList:
-      return roadList.at(index);
-    case RailList:
-      return railList.at(index);
-//    case StationList:
-//      return stationList.at(index);
-    case HydroList:
-      return hydroList.at(index);
-    case TopoList:
-      return topoList.at(index);
-    default:
-      // Should never happen!
-      fatal("KFLog: trying to acces unknown mapelementlist");
-      return 0;
+  case AirportList:
+    return airportList.at(index);
+  case GliderList:
+    return gliderSiteList.at(index);
+  case OutList:
+    return outList.at(index);
+  case NavList:
+    return navList.at(index);
+  case AirspaceList:
+    return airspaceList.at(index);
+  case ObstacleList:
+    return obstacleList.at(index);
+  case ReportList:
+    return reportList.at(index);
+  case CityList:
+    return cityList.at(index);
+  case VillageList:
+    return villageList.at(index);
+  case LandmarkList:
+    return landmarkList.at(index);
+  case RoadList:
+    return roadList.at(index);
+  case RailList:
+    return railList.at(index);
+  //case StationList:
+  //  return stationList.at(index);
+  case HydroList:
+    return hydroList.at(index);
+  case TopoList:
+    return topoList.at(index);
+  default:
+    // Should never happen!
+    fatal("KFLog: trying to access unknown map element list");
+    return 0;
   }
 }
 
+
 SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
 {
-  switch(listIndex)
-    {
-      case AirportList:
-        return airportList.at(index);
-      case GliderList:
-        return gliderList.at(index);
-      case OutList:
-        return outList.at(index);
-      case NavList:
-        return navList.at(index);
-      case ObstacleList:
-        return obstacleList.at(index);
-      case ReportList:
-        return reportList.at(index);
-      case VillageList:
-        return villageList.at(index);
-      case LandmarkList:
-        return landmarkList.at(index);
-//      case StationList:
-//        return stationList.at(index);
-      default:
-        return 0;
-    }
+  switch(listIndex) {
+  case AirportList:
+    return airportList.at(index);
+  case GliderList:
+    return gliderSiteList.at(index);
+  case OutList:
+    return outList.at(index);
+  case NavList:
+    return navList.at(index);
+  case ObstacleList:
+    return obstacleList.at(index);
+  case ReportList:
+    return reportList.at(index);
+  case VillageList:
+    return villageList.at(index);
+  case LandmarkList:
+    return landmarkList.at(index);
+  //case StationList:
+  //  return stationList.at(index);
+  default:
+    return 0;
+  }
 }
 
 void MapContents::slotDownloadFinished()
@@ -1790,7 +1795,7 @@ void MapContents::slotDownloadFinished()
 void MapContents::slotReloadMapData()
 {
   airportList.clear();
-  gliderList.clear();
+  gliderSiteList.clear();
   addSitesList.clear();
   outList.clear();
   navList.clear();
@@ -1814,55 +1819,57 @@ void MapContents::slotReloadMapData()
   sectionArray.fill(false);
 }
 
+
 void MapContents::printContents(QPainter* targetPainter, bool isText)
 {
   proofeSection(true);
 
   for(BaseMapElement* topo = topoList.first(); topo; topo = topoList.next())
-      topo->printMapElement(targetPainter, isText);
+    topo->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* hydro = hydroList.first(); hydro; hydro = hydroList.next())
-      hydro->printMapElement(targetPainter, isText);
+    hydro->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* rail = railList.first(); rail; rail = railList.next())
-      rail->printMapElement(targetPainter, isText);
+    rail->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* road = roadList.first(); road; road = roadList.next())
-      road->printMapElement(targetPainter, isText);
+    road->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* city = cityList.first(); city; city = cityList.next())
-      city->printMapElement(targetPainter, isText);
+    city->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* village = villageList.first(); village; village = villageList.next())
-      village->printMapElement(targetPainter, isText);
+    village->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* nav = navList.first(); nav; nav = navList.next())
-      nav->printMapElement(targetPainter, isText);
+    nav->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* airspace = airspaceList.first(); airspace; airspace = airspaceList.next())
-      airspace->printMapElement(targetPainter, isText);
+    airspace->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* obstacle = obstacleList.first(); obstacle; obstacle = obstacleList.next())
-      obstacle->printMapElement(targetPainter, isText);
+    obstacle->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* report = reportList.first(); report; report = reportList.next())
-      report->printMapElement(targetPainter, isText);
+    report->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* landmark = landmarkList.first(); landmark; landmark = landmarkList.next())
-      landmark->printMapElement(targetPainter, isText);
+    landmark->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* airport = airportList.first(); airport; airport = airportList.next())
-      airport->printMapElement(targetPainter, isText);
+    airport->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* glider = gliderList.first(); glider; glider = gliderList.next())
-      glider->printMapElement(targetPainter, isText);
+  for(BaseMapElement* glider = gliderSiteList.first(); glider; glider = gliderSiteList.next())
+    glider->printMapElement(targetPainter, isText);
 
   for(BaseMapElement* out = outList.first(); out; out = outList.next())
-      out->printMapElement(targetPainter, isText);
+    out->printMapElement(targetPainter, isText);
 
   for(unsigned int loop = 0; loop < flightList.count(); loop++)
-      flightList.at(loop)->printMapElement(targetPainter, isText);
+    flightList.at(loop)->printMapElement(targetPainter, isText);
 }
+
 
 void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
     unsigned int listID)
@@ -1874,7 +1881,7 @@ void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
             airport->drawMapElement(targetPainter, maskPainter);
         break;
       case GliderList:
-        for(BaseMapElement* glider = gliderList.first(); glider; glider = gliderList.next())
+        for(BaseMapElement* glider = gliderSiteList.first(); glider; glider = gliderSiteList.next())
             glider->drawMapElement(targetPainter, maskPainter);
         break;
       case OutList:

@@ -230,88 +230,88 @@ class MapContents : public QObject
     int getElevation(QPoint);
 
   public slots:
-    /**
-     * Close current flight
-     */
-    void closeFlight();
-    /** No descriptions */
-    void slotSetFlight(int id);
-    /** No descriptions */
-    void slotSetFlight(BaseFlightElement *);
-    /** create a new, empty flight group */
-    void slotNewFlightGroup();
-    /** create a new, empty task */
-    void slotNewTask();
-    /** append task to flight list */
-    void slotAppendTask(FlightTask *f);
-    /** No descriptions */
-    void slotEditFlightGroup();
-    /** */
-    void slotReloadMapData();
-    /*
-    *  automatic download has finished
-    */
-    void slotDownloadFinished();
-    /** Re-projects any flights and tasks that may be loaded. */
-    void reProject();
+  /**
+   * Close current flight
+   */
+  void closeFlight();
+  /** No descriptions */
+  void slotSetFlight(int id);
+  /** No descriptions */
+  void slotSetFlight(BaseFlightElement *);
+  /** create a new, empty flight group */
+  void slotNewFlightGroup();
+  /** create a new, empty task */
+  void slotNewTask();
+  /** append task to flight list */
+  void slotAppendTask(FlightTask *f);
+  /** No descriptions */
+  void slotEditFlightGroup();
+  /** */
+  void slotReloadMapData();
+  /*
+  *  automatic download has finished
+  */
+  void slotDownloadFinished();
+  /** Re-projects any flights and tasks that may be loaded. */
+  void reProject();
 
-  signals:
-    /**
-     * emitted during maploading to display a message f.e. in the
-     * splash-screen of the mainwindow.
-     */
-    void loadingMessage(QString message);
-    /**
-     * signal that a new flight/task/flight group become active
-     */
-    void currentFlightChanged();
-    /**
-     * signal that a new task has been created
-     */
-    void newTaskAdded(FlightTask *);
-    /**
-     * signal emitted when new task has been created
-     */
-    void taskHelp(QString);
-    /**
-     * Emitted, when no mapfiles are found, or the when the map-directories
-     * do not exists.
-     */
-    void errorOnMapLoading();
-    /**
-     * Activates the graphical planning
-     */
-    void activatePlanning();
+signals:
+  /**
+   * emitted during maploading to display a message f.e. in the
+   * splash-screen of the mainwindow.
+   */
+  void loadingMessage(QString message);
+  /**
+   * signal that a new flight/task/flight group become active
+   */
+  void currentFlightChanged();
+  /**
+   * signal that a new task has been created
+   */
+  void newTaskAdded(FlightTask *);
+  /**
+   * signal emitted when new task has been created
+   */
+  void taskHelp(QString);
+  /**
+   * Emitted, when no mapfiles are found, or the when the map-directories
+   * do not exists.
+   */
+  void errorOnMapLoading();
+  /**
+   * Activates the graphical planning
+   */
+  void activatePlanning();
 
-    /**
-     *  Map contents have changed
-     */
-    void contentsChanged();
-    /**
-     * Emitted if a new flight was added to the flightlist.
-     */
-    void newFlightAdded(Flight *);
-    /**
-     * Emitted if the current flight has changed.
-     */
-    void currentFlightChanged(BaseFlightElement*);
-    /**
-     * Emitted if a flight (task/group) is about to be closed
-     */
-    void closingFlight(BaseFlightElement*);
+  /**
+   *  Map contents have changed
+   */
+  void contentsChanged();
+  /**
+   * Emitted if a new flight was added to the flightlist.
+   */
+  void newFlightAdded(Flight *);
+  /**
+   * Emitted if the current flight has changed.
+   */
+  void currentFlightChanged(BaseFlightElement*);
+  /**
+   * Emitted if a flight (task/group) is about to be closed
+   */
+  void closingFlight(BaseFlightElement*);
 
-  private:
+private:
 
-    // Short structure to handle the optional entries in an igc file
-    class bOption {
-      public:
-        int begin, length;
-        char mnemonic[4];
-    };
-    /**
-     * Displays a messagebox and asks, wether the mapfiles shall be downloaded.
-     */
-    void __askForDownload();
+  // Short structure to handle the optional entries in an igc file
+  class bOption {
+    public:
+      int begin, length;
+      char mnemonic[4];
+  };
+  /**
+   * Displays a messagebox and asks, wether the mapfiles shall be downloaded.
+   */
+  void __askForDownload();
     /**
      * Reads a binary map file containing airfields.
      *
@@ -346,124 +346,136 @@ class MapContents : public QObject
      * @return "true", when the file has successfully been loaded
      */
     bool __readTerrainFile(const int fileSecID, const int fileTypeID);
-    /**
-     * airportList contains all airports.
-     */
-    QPtrList<Airport> airportList;
-    /**
-     * gliderList contains all glider-sites.
-     */
-    QPtrList<GliderSite> gliderList;
-    /**
-     * addSitesList contains all, ultra-light,
-     * hang-glider-sites, free-balloon-sites, parachute-jumping-sites.
-     */
-    QPtrList<SinglePoint> addSitesList;
-    /**
-     * outList contains all outlanding-fields.
-     */
-    QPtrList<SinglePoint> outList;
-    /**
-     * navList contains all radio navigation facilities.
-     */
-    QPtrList<RadioPoint> navList;
-    /**
-     * airspaceList contails all airspaces.
-     */
-    QPtrList<Airspace> airspaceList;
-    /**
-     * obstacleList contains all obstacles and -groups, as well
-     * as the spots and passes.
-     */
-    QPtrList<SinglePoint> obstacleList;
-    /**
-     * reportList contains all reporting points.
-     */
-    QPtrList<SinglePoint> reportList;
-    /**
-     * cityList contails all cities (areas).
-     */
-    QPtrList<LineElement> cityList;
-    /**
-     * villageList contains all villages, towns & cities (points).
-     */
-    QPtrList<SinglePoint> villageList;
-    /**
-     * landmarkList contains all landmarks.
-     */
-    QPtrList<SinglePoint> landmarkList;
-    /**
-     * roadList contails all roads.
-     */
-    QPtrList<LineElement> roadList;
-    /**
-     * railList contains all railways and aerial railways.
-     */
-    QPtrList<LineElement> railList;
-    /**
-     * stationList contains all stations.
-     */
-//    QPtrList<SinglePoint> stationList;
-    /**
-     * hydroList contains all shorelines, rivers, lakes, ...
-     */
-    QPtrList<LineElement> hydroList;
-    /**
-     * topoList contains all topographical objects.
-     */
-    QPtrList<LineElement> topoList;
-    /**
-     * isohypseList contains all isohypses.
-     */
-    QPtrList< QPtrList<Isohypse> > isoList;
-    /**
-     * Contains list of all loaded Flight and FlightTask objects, wich are
-     * both subclasses of BaseFlightElement.
-     */
-    QPtrList<BaseFlightElement> flightList;
-    /**
-     * This list is reset every time the current WaypointCatalog is changed.
-     */
-    QPtrList<Waypoint> wpList;
-    /**
-     * List of all map-section. Contains a "1" for all loaded section-files,
-     * otherwise "0".
-     */
-    QBitArray sectionArray;
-    /**
-     * Array containing the evevations of all possible isohypses.
-     */
-    static const int isoLines[];
-    /** */
-    QString mapDir;
-    /**
-     * Used to determine, if we must display messageboxes on missing
-     * map-directories.
-     */
-    int isFirstLoad;
-    /**
-     * List of all drawn isohypses.
-     * Used to find the elevation belonging to a point on the map.
-     */
-    QPtrList<isoListEntry> regIsoLines;
-    /**
-     * List of all loaded isohypses (in world coordinates).
-     * Used to find the elevation belonging to a flightpoint.
-     */
-    QPtrList<isoListEntry> regIsoLinesWorld;
-    /**
-     * downloads File from www.kflog.org, optionally waits until finished (blocking operation)
-     */
-    void __downloadFile(QString fileName, QString destString, bool wait=false);
-    /** */
-    DownloadList* downloadList;
+  /**
+   * airportList contains all airports.
+   */
+  QPtrList<Airport> airportList;
 
-  private slots: // Private slots
-    /**
-     * Connected to the signal currentFlightChanged, and used to resend
-     * the signal with the current flight as an argument.
-     */
-    void slotReSendFlightChanged();
+  /**
+   * gliderSiteList contains all glider-sites.
+   */
+  QPtrList<GliderSite> gliderSiteList;
+
+  /**
+   * addSitesList contains all, ultra-light,
+   * hang-glider-sites, free-balloon-sites, parachute-jumping-sites.
+   */
+  QPtrList<SinglePoint> addSitesList;
+
+  /**
+   * outList contains all outlanding-fields.
+   */
+  QPtrList<SinglePoint> outList;
+
+  /**
+   * navList contains all radio navigation facilities.
+   */
+  QPtrList<RadioPoint> navList;
+
+  /**
+   * airspaceList contails all airspaces.
+
+   */
+  QPtrList<Airspace> airspaceList;
+  /**
+   * obstacleList contains all obstacles and -groups, as well
+   * as the spots and passes.
+   */
+  QPtrList<SinglePoint> obstacleList;
+
+  /**
+   * reportList contains all reporting points.
+   */
+  QPtrList<SinglePoint> reportList;
+
+  /**
+   * cityList contails all cities (areas).
+   */
+  QPtrList<LineElement> cityList;
+
+  /**
+   * villageList contains all villages, towns & cities (points).
+   */
+    QPtrList<SinglePoint> villageList;
+
+  /**
+   * landmarkList contains all landmarks.
+   */
+  QPtrList<SinglePoint> landmarkList;
+
+  /**
+   * roadList contails all roads.
+   */
+  QPtrList<LineElement> roadList;
+  /**
+   * railList contains all railways and aerial railways.
+   */
+  QPtrList<LineElement> railList;
+  /**
+   * stationList contains all stations.
+   */
+//  QPtrList<SinglePoint> stationList;
+  /**
+   * hydroList contains all shorelines, rivers, lakes, ...
+   */
+  QPtrList<LineElement> hydroList;
+  /**
+   * topoList contains all topographical objects.
+   */
+  QPtrList<LineElement> topoList;
+  /**
+   * isohypseList contains all isohypses.
+   */
+  QPtrList< QPtrList<Isohypse> > isoList;
+  /**
+   * Contains list of all loaded Flight and FlightTask objects, wich are
+   * both subclasses of BaseFlightElement.
+   */
+  QPtrList<BaseFlightElement> flightList;
+  /**
+   * This list is reset every time the current WaypointCatalog is changed.
+   */
+  QPtrList<Waypoint> wpList;
+  /**
+   * List of all map-section. Contains a "1" for all loaded section-files,
+   * otherwise "0".
+   */
+  QBitArray sectionArray;
+  /**
+   * Array containing the evevations of all possible isohypses.
+   */
+  static const int isoLines[];
+  /** */
+  QString mapDir;
+  /**
+   * Used to determine, if we must display messageboxes on missing
+   * map-directories.
+   */
+  int isFirstLoad;
+  /**
+   * List of all drawn isohypses.
+   * Used to find the elevation belonging to a point on the map.
+   */
+  QPtrList<isoListEntry> regIsoLines;
+
+  /**
+   * List of all loaded isohypses (in world coordinates).
+   * Used to find the elevation belonging to a flightpoint.
+   */
+  QPtrList<isoListEntry> regIsoLinesWorld;
+  /**
+   * downloads File from www.kflog.org, optionally waits until finished (blocking operation)
+   */
+  void __downloadFile(QString fileName, QString destString, bool wait=false);
+  /** */
+  DownloadList* downloadList;
+
+private slots: // Private slots
+  /**
+   * Connected to the signal currentFlightChanged, and used to resend
+   * the signal with the current flight as an argument.
+   */
+  void slotReSendFlightChanged();
 };
 
 enum AutoDownloadType {ADT_NotSet = 0, Automatic, Inhibited};
