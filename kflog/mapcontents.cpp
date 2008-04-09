@@ -1988,58 +1988,6 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
     }
 }
 
-/** Get the contents of the previous FlightPoint before number 'index' */
-/*
-int MapContents::searchGetPrevFlightPoint(int index, flightPoint & fP)
-{
-  Flight *f = (Flight *)getFlight();
-  if(f && f->getTypeID() == BaseMapElement::Flight) {
-    return f->searchGetPrevPoint(index, fP);
-        }
-        return -1;
-}
-*/
-/** Get the contents of the next FlightPoint after number 'index' */
-/*
-int MapContents::searchGetNextFlightPoint(int index, flightPoint & fP)
-{
-  Flight *f = (Flight *)getFlight();
-  if(f && f->getTypeID() == BaseMapElement::Flight) {
-    return f->searchGetNextPoint(index, fP);
-  }
-        return -1;
-}
-*/
-/** Get the contents of the next FlightPoint 'step' indexes after number 'index' */
-/*
-int MapContents::searchStepNextFlightPoint(int index, flightPoint & fP, int step)
-{
-  Flight *f = (Flight *)getFlight();
-  if(f && f->getTypeID() == BaseMapElement::Flight && (step > 0)) {
-    if (index+step < (int)f->getRouteLength()-1)
-      index += step;
-    else
-                        index = f->getRouteLength()-1;
-    return f->searchGetNextPoint(index, fP);
-        }
-        return -1;
-}
-*/
-/** Get the contents of the previous FlightPoint 'step' indexes before number 'index' */
-/*
-int MapContents::searchStepPrevFlightPoint(int index, flightPoint & fP, int step)
-{
-  Flight *f = (Flight *)getFlight();
-  if(f && f->getTypeID() == BaseMapElement::Flight && (step > 0)) {
-    if (index-step > 0)
-      index -= step;
-    else
-                        index = 1;
-    return f->searchGetPrevPoint(index, fP);
-        }
-        return -1;
-}
-*/
 /** create a new, empty task */
 void MapContents::slotNewTask()
 {
