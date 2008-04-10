@@ -43,10 +43,12 @@ class MapMatrix : public QObject
      * Creates a new mapmatrix-object.
      */
     MapMatrix();
+
     /**
      * Destructor
      */
     ~MapMatrix();
+
     /**
      * Converts the given geographic-data into the current map-projection.
      *
@@ -56,6 +58,7 @@ class MapMatrix : public QObject
      * @return the projected point
      */
     QPoint wgsToMap(const QPoint& point) const;
+
     /**
      * Converts the given geographic-data into the current map-projection.
      *
@@ -76,6 +79,7 @@ class MapMatrix : public QObject
      * @return the projected rectangle
      */
     QRect wgsToMap(const QRect& rect) const;
+
     /**
      * Maps the given projected pointarray into the current map-matrix.
      *
@@ -100,6 +104,8 @@ class MapMatrix : public QObject
      * @return the mapped point
      */
 //    QPoint map(QPoint *point) const;
+
+
     /**
      * Maps the given bearing into the current map-matrix.
      *
@@ -134,6 +140,7 @@ class MapMatrix : public QObject
      * @return the selected scale
      */
     double getScale(unsigned int type = MapMatrix::CurrentScale);
+
     /**
      * @return the lat/lon-border of the current map.
      */
@@ -142,20 +149,24 @@ class MapMatrix : public QObject
      * @return the lat/lon-border of the current print-map.
      */
     QRect getPrintBorder() const;
+
     /**
      * @return the lat/lon-border of the current map.
      */
     QRect getPrintBorder(double a1, double a2, double b1, double b2,
         double c1, double c2, double d1, double d2) const;
+
     /**
      * Initializes the matrix for printing the map.
      */
     void createPrintMatrix(double scale, const QSize& pS, int dX = 0, int dY = 0,
         bool rotate = false);
+
     /**
      * Initializes the matrix for displaying the map.
      */
     void createMatrix(const QSize& newSize);
+
     /**
      * @return "true", if the given point in visible in the current map.
      */
@@ -164,6 +175,7 @@ class MapMatrix : public QObject
      * @return "true", if the given rectangle intersects with the current map.
      */
     bool isVisible(const QRect& itemBorder) const;
+
     /** */
     enum MoveDirection {NotSet = 0, North = 1, West = 2, East = 4,
         South = 8, Home = 16};
@@ -171,11 +183,12 @@ class MapMatrix : public QObject
      * CurrentScale muss immer die größte Zahl sein!
      */
     enum ScaleType {LowerLimit = 0, Border1 = 1, Border2 = 2, Border3 = 3,
-        UpperLimit = 4, SwitchScale = 5, CurrentScale = 6};
+                    UpperLimit = 4, SwitchScale = 5, CurrentScale = 6};
     /**
      * Centers the map to the given point.
      */
     void centerToPoint(const QPoint&);
+
     /**
      * Centers the map to the given rectangle and scales the map, so that
      * the rectangle will be seen completly.
@@ -184,28 +197,43 @@ class MapMatrix : public QObject
      * @param addBorder Adds a border of 6.5 km if true.
      */
     double centerToRect(const QRect&, const QSize& = QSize(0,0), bool addBorder = true);
+
     /** */
     QPoint mapToWgs(const QPoint& pos) const;
+
     /**
      *
      */
     int getScaleRange() const;
+
     /**
      * @return "true", if the current scale is smaller than the switch-scale.
      */
     bool isSwitchScale() const;
+
     /**
      * @return the lat/lon-position of the map-center.
      */
     QPoint getMapCenter(bool isPrint = false) const;
+
     /** */
     void centerToLatLon(const QPoint& center);
+
     /** */
     void centerToLatLon(int latitude, int longitude);
+
     /** */
     void writeMatrixOptions();
 
-  public slots:
+    /**
+     * @returns the current projectiontype
+     */
+    ProjectionBase * getProjection() const
+    {
+        return currentProjection;
+    };
+
+public slots:
     /** */
     void slotInitMatrix();
     /** */
@@ -238,12 +266,15 @@ class MapMatrix : public QObject
   signals:
     /** */
     void displayMatrixValues(int, bool);
+
     /** */
     void printMatrixValues(int);
+
     /**
      * Emitted each time the matrix has changed.
      */
     void matrixChanged();
+
     /**
      * Emitted each time the projection changed.
      */
@@ -270,12 +301,15 @@ class MapMatrix : public QObject
      * Returns the longitude of the given map-point
      */
 //    int __invert_Lambert_Lon(double x, double y) const;
+
     /**
      */
     QPoint __mapToWgs(const QPoint&) const;
+
     /**
      */
     QPoint __mapToWgs(int x, int y) const;
+
     /**
      */
     QWMatrix worldMatrix;
@@ -302,13 +336,17 @@ class MapMatrix : public QObject
      * The latitude of the center of the map.
      */
     int mapCenterLat;
+
     /**
      * The longitude of the center of the map.
      */
     int mapCenterLon;
+
     /** */
     int printCenterLat;
     int printCenterLon;
+
+
     /**
      * Contains the geographical border of the map (lat/lon).
      */
@@ -332,12 +370,9 @@ class MapMatrix : public QObject
 
     /** */
     ProjectionBase* currentProjection;
-    /** */
-    ProjectionLambert lambertProjection;
-    /** */
-    ProjectionCylindric cylindricalProjection;
-    /** */
-    int currentProjectionType;
+    /** optimisation to prevent recurring recalculation of this value */
+    int _MaxScaleToCScaleRatio;
+
 };
 
 #endif

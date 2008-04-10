@@ -280,11 +280,11 @@ double FlightTask::__sectorangle(unsigned int loop, bool isDraw)
       break;
     }
 
-  // Nur nötig bei der Überprüfung der Wegpunkte,
-  // würde beim Zeichnen zu Fehlern führen
-  if(!isDraw) sectorAngle += PI;
+  // Nur nötig bei der Überprüfung der Wegpunkte,
+  // würde beim Zeichnen zu Fehlern führen
+  if(!isDraw) sectorAngle += M_PI;
 
-  if(sectorAngle > (2 * PI)) sectorAngle = sectorAngle - (2 * PI);
+  if(sectorAngle > (2 * M_PI)) sectorAngle = sectorAngle - (2 * M_PI);
 
   wpList.at(CUR_ID)->angle = sectorAngle;
 
@@ -377,7 +377,7 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
            * w1 ist die Winkelhalbierende des Sektors!!!
            *      (Angaben in 1/16 Grad)
            */
-          w1 = ( ( glMapMatrix->map(wpList.at(loop)->angle) + PI ) / PI )
+          w1 = ( ( glMapMatrix->map(wpList.at(loop)->angle) + M_PI ) / M_PI )
             * 180.0 * 16.0 * -1.0;
 
           tempP = glMapMatrix->map(wpList.at(loop)->projP);
@@ -599,7 +599,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
            * w1 ist die Winkelhalbierende des Sektors!!!
            *      (Angaben in 1/16 Grad)
            */
-          w1 = ( ( glMapMatrix->print(wpList.at(loop)->angle) + PI ) / PI )
+          w1 = ( ( glMapMatrix->print(wpList.at(loop)->angle) + M_PI ) / M_PI )
             * 180.0 * 16.0 * -1.0;
 
 
@@ -897,7 +897,7 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
               deltaAngle = sqrt( ( pointAngle - wpList.at(loop)->angle ) *
                                  ( pointAngle - wpList.at(loop)->angle ) );
 
-              if(deltaAngle <= (0.25 * PI))
+              if(deltaAngle <= (0.25 * M_PI))
                 {
                   // Wir sind im FAI-Sektor ...
                   if(!wpList.at(loop)->sectorFAI)
@@ -916,7 +916,7 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
 
                     }
                 }
-              else if(deltaAngle <= (0.5 * PI))
+              else if(deltaAngle <= (0.5 * M_PI))
                 {
                   // "nur" in Sektor 2
                   if(!wpList.at(loop)->sector2)
@@ -1236,7 +1236,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
            * w1 ist die Winkelhalbierende des Sektors!!!
            *      (Angaben in 1/16 Grad)
            */
-          w1 = ( ( glMapMatrix->print(wpList.at(loop)->angle) + PI ) / PI )
+          w1 = ( ( glMapMatrix->print(wpList.at(loop)->angle) + M_PI ) / M_PI )
             * 180.0 * 16.0 * -1.0;
 
           tempP = glMapMatrix->print(wpList.at(loop)->origP.lat(), wpList.at(loop)->origP.lon() , dX, dY);
@@ -1441,7 +1441,7 @@ void FlightTask::calcFAIArea()
 
     trueCourse = tc(lat1, lon1, lat2, lon2);
     QString huhu;
-    huhu.sprintf("%03.0f", polar(wp2->origP.lat() - wp1->origP.lat(), wp2->origP.lon() - wp1->origP.lon()) * 180.0 / PI);
+    huhu.sprintf("%03.0f", polar(wp2->origP.lat() - wp1->origP.lat(), wp2->origP.lon() - wp1->origP.lon()) * 180.0 / M_PI);
     warning(huhu);
     FAISectList.clear();
 

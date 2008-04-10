@@ -184,7 +184,7 @@ void Flight::__flightState()
       // Bedingungen für Kreisflug müssen noch geprüft werden !!!
       // Bei kleinen Zeitabständen extra Abfrage
       // Noch mehr Zeitabschnitte einfügen ab ca 25° - 35° Kursänderung
-      if(( fabs(route.at(n)->bearing) > route.at(n)->dT * PI / 20.0))
+      if(( fabs(route.at(n)->bearing) > route.at(n)->dT * M_PI / 20.0))
         {
           weiter = 0;
           // Drehrichtung

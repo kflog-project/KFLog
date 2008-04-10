@@ -254,6 +254,18 @@ class MapContents : public QObject
    */
   int getElevation(QPoint);
 
+  /**
+   * this function serves as a substitute for the not existing
+   * QDir::entryInfoList with complete path information
+   */
+  static void addDir(QStringList& list, const QString& path, const QString& filter);
+
+  /**
+   * @AP: Compares two projection objects for equality.
+   * @returns true if equal; otherwise false
+   */
+  static bool compareProjections(ProjectionBase* p1, ProjectionBase* p2);
+
   public slots:
   /**
    * Close current flight
@@ -389,6 +401,7 @@ class MapContents : public QObject
   /**
    * addSitesList contains all, ultra-light,
    * hang-glider-sites, free-balloon-sites, parachute-jumping-sites.
+   * FIXME: Currently those sites are stored somewhere else?!?
    */
   QPtrList<SinglePoint> addSitesList;
 

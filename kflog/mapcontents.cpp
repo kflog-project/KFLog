@@ -41,23 +41,24 @@
 #include <qstring.h>
 #include <qtextstream.h>
 
-#include <airport.h>
-#include <airspace.h>
-#include <basemapelement.h>
-#include <downloadlist.h>
-#include <flight.h>
-#include <flightgroup.h>
-#include <flightselectiondialog.h>
-#include <glidersite.h>
-#include <isohypse.h>
-#include <kflog.h>
-#include <lineelement.h>
-#include <mapcalc.h>
-#include <mapcontents.h>
-#include <mapmatrix.h>
-#include <radiopoint.h>
-#include <singlepoint.h>
-#include <elevationfinder.h>
+#include "mapcontents.h"
+#include "mapmatrix.h"
+#include "mapcalc.h"
+#include "airport.h"
+#include "airspace.h"
+#include "basemapelement.h"
+#include "downloadlist.h"
+#include "flight.h"
+#include "flightgroup.h"
+#include "flightselectiondialog.h"
+#include "glidersite.h"
+#include "isohypse.h"
+#include "kflog.h"
+#include "lineelement.h"
+#include "radiopoint.h"
+#include "singlepoint.h"
+#include "elevationfinder.h"
+#include "openairparser.h"
 
 /*
  * Used as bit-masks to determine, if we must display
@@ -78,14 +79,14 @@
 #define FILE_TYPE_AERO    0x41
 #define FILE_FORMAT_ID    101
 
-#define CHECK_BORDER if(i == 0) { \
+#define CHECK_BORDER if(i == 0) {                       \
     border.north = lat_temp;   border.south = lat_temp; \
-    border.east = lon_temp;    border.west = lon_temp; \
-  } else { \
-    border.north = MAX(border.north, lat_temp); \
-    border.south = MIN(border.south, lat_temp); \
-    border.east = MAX(border.east, lon_temp); \
-    border.west = MIN(border.west, lon_temp); \
+    border.east = lon_temp;    border.west = lon_temp;  \
+  } else {                                              \
+    border.north = MAX(border.north, lat_temp);         \
+    border.south = MIN(border.south, lat_temp);         \
+    border.east = MAX(border.east, lon_temp);           \
+    border.west = MIN(border.west, lon_temp);           \
   }
 
 #define READ_POINT_LIST  in >> locLength; \
@@ -99,7 +100,7 @@
     } \
   }
 
-#define READ_CONTACT_DATA in >> contactCount; \
+#define READ_CONTACT_DATA in >> contactCount;                           \
   for(unsigned int loop = 0; loop < contactCount; loop++) \
     { \
       in >> frequency; \
@@ -122,12 +123,15 @@
       site->addRunway(rw); \
     }
 
-// Liste der Höhenstufen (insg. 50 Stufen):
-const int MapContents::isoLines[] = { 0, 10, 25, 50, 75, 100, 150, 200, 250,
-          300, 350, 400, 450, 500, 600, 700, 800, 900, 1000, 1250, 1500, 1750,
-          2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500,
-          4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250,
-          7500, 7750, 8000, 8250, 8500, 8750};
+// List of altitude-levels (50 in total):
+const int MapContents::isoLines[] =
+  {
+    0, 10, 25, 50, 75, 100, 150, 200, 250,
+    300, 350, 400, 450, 500, 600, 700, 800, 900, 1000, 1250, 1500, 1750,
+    2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500,
+    4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250,
+    7500, 7750, 8000, 8250, 8500, 8750
+  };
 
 MapContents::MapContents()
   : isFirstLoad(0)
@@ -744,7 +748,7 @@ bool MapContents::__readAirspaceFile(const char* pathName)
 }
 
 bool MapContents::__readBinaryFile(const int fileSecID,
-    const char fileTypeID)
+                                   const char fileTypeID)
 {
   extern const MapMatrix _globalMapMatrix;
 
@@ -1269,16 +1273,16 @@ bool MapContents::loadFlight(QFile& igcFile)
 
           prePoint.bearing = getBearing(prePoint,newPoint) - temp_bearing;
 
-          if(prePoint.bearing > PI)
+          if(prePoint.bearing > M_PI)
             {
-              prePoint.bearing = prePoint.bearing - 2.0 * PI;
+              prePoint.bearing = prePoint.bearing - 2.0 * M_PI;
             }
-          else if(prePoint.bearing < -PI)
+          else if(prePoint.bearing < -M_PI)
             {
-              prePoint.bearing =  prePoint.bearing + 2.0 * PI;
+              prePoint.bearing =  prePoint.bearing + 2.0 * M_PI;
             }
 
-          if(prePoint.bearing > PI || prePoint.bearing < -PI)
+          if(prePoint.bearing > M_PI || prePoint.bearing < -M_PI)
             {
               warning("Wir haben ein Problem --- Bearing > 180");
             }
@@ -1287,7 +1291,7 @@ bool MapContents::loadFlight(QFile& igcFile)
 
           // Versuch der Ausklink-Erkennung ...
           if(launched && ((isAus != true) &&
-              (fabs(prePoint.bearing) > (prePoint.dT * PI / 30.0))))
+              (fabs(prePoint.bearing) > (prePoint.dT * M_PI / 30.0))))
             {
               warning("Ausklinken erkannt nach %s",
                 (const char*)printTime(preTime));
@@ -2048,6 +2052,69 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
     }
 }
 
+void MapContents::addDir (QStringList& list, const QString& _path, const QString& filter)
+{
+  //  qDebug ("addDir (%s, %s)", _path.toLatin1().data(), filter.toLatin1().data());
+  QDir path (_path, filter);
+
+  //JD was a bit annoyed by many notifications about nonexisting dirs
+  if ( ! path.exists() )
+    return;
+
+  QStringList entries (path.entryList());
+
+  for (QStringList::Iterator it = entries.begin(); it != entries.end(); ++it ) {
+    bool found = false;
+    // look for other entries with same filename
+    for (QStringList::Iterator it2 =  list.begin(); it2 != list.end(); ++it2) {
+      QFileInfo path2 (*it2);
+      if (path2.fileName() == *it)
+        found = true;
+    }
+    if (!found)
+      list += path.absFilePath (*it);
+  }
+  //  qDebug ("entries: %s", list.join(";").toLatin1().data());
+}
+
+/**
+ * Compares two projection objects for equality.
+ * @Returns true if equal; otherwise false
+ */
+bool MapContents::compareProjections(ProjectionBase* p1, ProjectionBase* p2)
+{
+  if( p1->projectionType() != p2->projectionType() ) {
+    return false;
+  }
+
+  if( p1->projectionType() == ProjectionBase::Lambert ) {
+    ProjectionLambert* l1 = (ProjectionLambert *) p1;
+    ProjectionLambert* l2 = (ProjectionLambert *) p2;
+
+    if( l1->getStandardParallel1() != l2->getStandardParallel1() ||
+        l1->getStandardParallel2() != l2->getStandardParallel2() ||
+        l1->getOrigin() != l2->getOrigin() ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  if( p1->projectionType() == ProjectionBase::Cylindric ) {
+    ProjectionCylindric* c1 = (ProjectionCylindric*) p1;
+    ProjectionCylindric* c2 = (ProjectionCylindric*) p2;
+
+    if( c1->getStandardParallel() != c2->getStandardParallel() ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  // What's that? Det kennen wir noch nicht :( Rejection!
+
+  return false;
+}
 /** create a new, empty task */
 void MapContents::slotNewTask()
 {
@@ -2415,16 +2482,16 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile)
 
           prePoint.bearing = getBearing(prePoint,newPoint) - temp_bearing;
 
-          if(prePoint.bearing > PI)
+          if(prePoint.bearing > M_PI)
             {
-              prePoint.bearing = prePoint.bearing - 2.0 * PI;
+              prePoint.bearing = prePoint.bearing - 2.0 * M_PI;
             }
-          else if(prePoint.bearing < -PI)
+          else if(prePoint.bearing < -M_PI)
             {
-              prePoint.bearing =  prePoint.bearing + 2.0 * PI;
+              prePoint.bearing =  prePoint.bearing + 2.0 * M_PI;
             }
 
-          if(prePoint.bearing > PI || prePoint.bearing < -PI)
+          if(prePoint.bearing > M_PI || prePoint.bearing < -M_PI)
             {
               warning("We have a problem --- Bearing > 180");
             }
@@ -2723,16 +2790,16 @@ bool MapContents::importGardownFile(QFile& gardownFile){
 
           prePoint.bearing = getBearing(prePoint,newPoint) - temp_bearing;
 
-          if(prePoint.bearing > PI)
+          if(prePoint.bearing > M_PI)
             {
-              prePoint.bearing = prePoint.bearing - 2.0 * PI;
+              prePoint.bearing = prePoint.bearing - 2.0 * M_PI;
             }
-          else if(prePoint.bearing < -PI)
+          else if(prePoint.bearing < -M_PI)
             {
-              prePoint.bearing =  prePoint.bearing + 2.0 * PI;
+              prePoint.bearing =  prePoint.bearing + 2.0 * M_PI;
             }
 
-          if(prePoint.bearing > PI || prePoint.bearing < -PI)
+          if(prePoint.bearing > M_PI || prePoint.bearing < -M_PI)
             {
               warning("We have a problem --- Bearing > 180");
             }

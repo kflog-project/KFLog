@@ -22,19 +22,27 @@
 #include "waypoint.h"
 #include <time.h>
 
-#define PI  3.141592654
-#define PI2 6.28318530718
+#define PI2 M_PI*2
 
 /**
- * The earth's radius used for calculation, given in Meter.
+ * The earth's radius used for calculation, given in Meters
  * NOTE: We use the earth as a sphere, not as a spheroid!
  */
-#define RADIUS 6370289.509
+#define RADIUS 6371000 // FAI Radius, this was the prevoius radius ->6370290
+#define RADIUS_kfl (RADIUS / (360.0 * 600000.0))
+
+// Define nautical mile in meters according to earth radius of KFL
+#define MILE_kfl  (PI2 * RADIUS / (360.0 * 60.0))
 
 /**
  * Calculates the distance between two given points (in km).
  */
 double dist(double lat1, double lon1, double lat2, double lon2);
+
+/**
+ * Calculates the distance between two given points (in km).
+ */
+double dist(QPoint* p1, QPoint* p2);
 
 /**
  * Calculates the distance between two given points (in km).
@@ -117,7 +125,6 @@ double outsideVector(double angle1, double angle2);
 double normalize(double angle);
 
 int normalize(int angle);
-
 
 /**
   * Calculates the difference between two angles, returning the smallest

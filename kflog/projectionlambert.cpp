@@ -1,126 +1,198 @@
 /***********************************************************************
-**
-**   projectionlambert.cpp
-**
-**   This file is part of KFLog2.
-**
-************************************************************************
-**
-**   Copyright (c):  2002 by Heiner Lamprecht
-**
-**   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
-**
-**   $Id$
-**
-***********************************************************************/
+ **
+ **   projectionlambert.cpp
+ **
+ **   This file is part of KFLog2.
+ **
+ ************************************************************************
+ **
+ **   Copyright (c):  2002 by Heiner Lamprecht
+ **
+ **   This file is distributed under the terms of the General Public
+ **   Licence. See the file COPYING for more information.
+ **
+ **   $Id$
+ **
+ ***********************************************************************/
 
 #include <cmath>
-
-#include <iostream>
-
 #include "projectionlambert.h"
 
-#define PI 3.141592654
-#define NUM_TO_RAD(num) ( ( PI * (double)(num) ) / 108000000.0 )
+#define NUM_TO_RAD(num) ( (M_PI / 108000000.0) * (double)(num) )
+
 
 ProjectionLambert::ProjectionLambert(int v1_new, int v2_new, int orig_new)
-  : ProjectionBase(ProjectionBase::Lambert)
 {
+  i_v1=v1_new;
+  i_v2=v2_new;
+  i_origin=orig_new;
+  last_lat=0;
+  last_lon=0;
+  project_XY_arg_lat=0.0;
+  project_XY_arg_lon=0.0;
+
   initProjection(v1_new, v2_new, orig_new);
 }
 
-ProjectionLambert::~ProjectionLambert()
+ProjectionLambert::ProjectionLambert(QDataStream & s)
 {
-
+  // @AP: valgrind said, do initialize internal variables :-))
+  i_v1 = 0;
+  i_v2 = 0;
+  i_origin = 0;
+    
+  loadParameters(s);
 }
+
+ProjectionLambert::~ProjectionLambert()
+{}
+
 
 bool ProjectionLambert::initProjection(int v1_new, int v2_new, int orig_new)
 {
   bool changed(false);
 
+  /**
+   * If either of the standard parallels > 90 degrees or < -90 degrees use default
+   */
   if(v1_new > 54000000.0 || v1_new < -54000000.0 ||
-      v2_new > 54000000.0 || v2_new < -54000000.0)
-    {
-      // values out of range, resetting to default
-      changed = (v1 == NUM_TO_RAD(32400000.0) || v2 == NUM_TO_RAD(30000000.0));
+     v2_new > 54000000.0 || v2_new < -54000000.0) {
+    // values out of range, resetting to default, v1 = 54 degrees, v2 = 50 degrees
+    // better check in input dlg and not here???
+    changed = (v1 != NUM_TO_RAD(32400000.0) || v2 != NUM_TO_RAD(30000000.0));
 
-      v1 = NUM_TO_RAD(32400000.0);
-      v2 = NUM_TO_RAD(30000000.0);
-    }
-  else
-    {
-      changed = (v1 == NUM_TO_RAD(v1_new) || v2 == NUM_TO_RAD(v2_new));
+    v1 = NUM_TO_RAD(32400000.0);
+    v2 = NUM_TO_RAD(30000000.0);
+    i_v1=32400000;
+    i_v2=30000000;
+  } else {
+    changed = ((i_v1 != v1_new) || (i_v2 != v2_new));
 
-      v1 = NUM_TO_RAD(v1_new);
-      v2 = NUM_TO_RAD(v2_new);
-    }
+    v1 = NUM_TO_RAD(v1_new);
+    v2 = NUM_TO_RAD(v2_new);
+    i_v1=v1_new;
+    i_v2=v2_new;
+  }
 
-  sin_v1 = sin(v1);
-  sin_v1_2 = sin_v1 * sin_v1;
-  sin_v2 = sin(v2);
-  sin_v2_2 = sin_v2 * sin_v2;
-  cos_v1 = cos(v1);
-  cos_v1_2 = cos_v1 * cos_v1;
-  var1 = cos_v1 * cos_v1;
-  var2 = sin_v1 + sin_v2;
-  var3 = sin_v1 * sin_v2;
+  sinv1 = sin(v1);
+  sinv1_2 = sinv1 * sinv1;
+  sinv2 = sin(v2);
+  sinv2_2 = sinv2 * sinv2;
+  cosv1 = cos(v1);
+  cosv1_2 = cosv1 * cosv1;
+  cosv2 = cos(v2);
+  //var1 = cosv1 * cosv1;
+  //var2 = sinv1 + sinv2;
+  var1 = sinv1 + sinv2;
+  var2 = -(1 + sinv1*sinv2)/var1;
+  var3 = var1/4;
+  var4 = 1.0/(2.0*var3);
 
-  changed = changed || ( origin == NUM_TO_RAD(orig_new) );
+  last_lat =0;
+  last_lon=0;
+
+  changed = changed || ( i_origin != orig_new );
   origin = NUM_TO_RAD(orig_new);
+  i_origin=orig_new;
 
   return changed;
 }
 
-double ProjectionLambert::projectX(double latitude, double longitude) const
-{
-  longitude -= origin;
 
-  return ( 2 * ( sqrt( var1 + ( sin_v1 - sin(latitude) ) * var2 ) / var2 )
-             * sin( var2 * longitude / 2 ) );
+double ProjectionLambert::projectX(const double& latitude, const double& longitude)
+{
+  if (last_lat!=latitude) {
+    last_lat=latitude;
+    project_XY_arg_lat= var4*sqrt(cosv1_2 + (sinv1 - sin(latitude))*var1); //store result, we'll probably need it again soon!
+  }
+  if (last_lon!=longitude) {
+    last_lon=longitude;
+    project_XY_arg_lon=  2.0 * var3 * (longitude - origin);
+  }
+
+  return ( project_XY_arg_lat )
+    * sin( project_XY_arg_lon );
 }
 
-double ProjectionLambert::projectY(double latitude, double longitude) const
-{
-  longitude -= origin;
 
-  return ( 2 * ( sqrt( var1 + ( sin_v1 - sin(latitude) ) * var2 ) / var2 )
-             * cos( var2 * longitude / 2 ) );
+double ProjectionLambert::projectY(const double& latitude, const double& longitude)
+{
+  if (last_lat!=latitude) {
+    last_lat=latitude;
+    project_XY_arg_lat= var4*(sqrt(cosv1_2 + (sinv1 - sin(latitude))*var1)); //store result, we'll probably need it again soon!
+  }
+  if (last_lon!=longitude) {
+    last_lon=longitude;
+    project_XY_arg_lon= 2.0*var3*(longitude - origin);
+  }
+
+  return ( project_XY_arg_lat)
+    * cos( project_XY_arg_lon );
 }
 
-double ProjectionLambert::invertLat(double x, double y) const
-{
-  double lat = -asin(
-              ( -4.0 * cos_v1_2 - 4.0 * sin_v1_2
-                -4.0 * var3
-                + x * x * sin_v1_2 + sin_v1_2 * y * y
-                + 2.0 * x * x * var3 + 2.0 * sin_v1
-                * sin_v2 * y * y + x * x * sin_v2_2
-                + sin_v2_2 * y * y
-                ) /
-              var2 / 4 );
 
-  return lat;
+double ProjectionLambert::invertLat(const double& x, const double& y) const
+{
+  //    double lat =
+  //              -asin(
+  //                ( -4.0 * cosv1_2 - 4.0 * sinv1_2 -4.0 * sinv1 * sinv2
+  //                 + x * x * sinv1_2 + sinv1_2 * y * y
+  //                 + 2.0 * x * x * sinv1 * sinv2 + 2.0 * sinv1 * sinv2 * y * y
+  //                 + x * x * sinv2_2 + sinv2_2 * y * y ) / ( sinv1 + sinv2 ) / 4 );
+
+  return -asin(var2 + var3*(x*x + y*y));
 }
 
-double ProjectionLambert::invertLon(double x, double y) const
+
+double ProjectionLambert::invertLon(const double& x, const double& y) const
 {
-  double lon = 2.0 * atan( x / y ) / var2;
+  double lon = 2.0 * atan( x / y ) / ( sinv1 + sinv2 );
 
   return lon + origin;
 }
 
-double ProjectionLambert::getRotationArc(int x, int y) const
+
+double ProjectionLambert::getRotationArc(const int x, const int y) const
 {
   return atan(x * 1.0 / y * 1.0);
 }
 
-int ProjectionLambert::getTranslationX(int width, int x) const
+
+int ProjectionLambert::getTranslationX(const int width, const int ) const
 {
   return width / 2;
 }
 
-int ProjectionLambert::getTranslationY(int height, int y) const
+
+int ProjectionLambert::getTranslationY(const int height, const int y) const
 {
   return (height / 2) - y;
 }
+
+
+/**
+ * Saves the parameters specific to this projection to a stream
+ */
+void ProjectionLambert::saveParameters(QDataStream & s)
+{
+  s << Q_INT32(i_v1);
+  s << Q_INT32(i_v2);
+  s << Q_INT32(i_origin);
+}
+
+
+/**
+ * Loads the parameters specific to this projection from a stream
+ */
+void ProjectionLambert::loadParameters(QDataStream & s)
+{
+  Q_INT32 i1=0;
+  Q_INT32 i2=0;
+  Q_INT32 i3=0;
+  s >> i1;
+  s >> i2;
+  s >> i3;
+
+  initProjection(i1, i2, i3);
+}
+

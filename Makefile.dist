@@ -1,5 +1,5 @@
 all: 
-	@echo "This Makefile is only for the CVS repository"
+	@echo "This Makefile is only for the SVN repository"
 	@echo "This will be deleted before making the distribution"
 	@echo ""
 	@if test ! -d admin; then \

@@ -28,7 +28,7 @@ static const char *monthAbb[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Ju
 
 double dist(double lat1, double lon1, double lat2, double lon2)
 {
-  double pi_180 = PI / 108000000.0;
+  double pi_180 = M_PI / 108000000.0;
   double dlat = lat1 - lat2;
   double dlon = lon1 - lon2;
 
@@ -59,6 +59,12 @@ double dist(flightPoint* fp1,  flightPoint* fp2)
 {
   return ( dist( fp1->origP.lat(), fp1->origP.lon(),
                  fp2->origP.lat(), fp2->origP.lon() ) );
+}
+
+double dist(QPoint* p1, QPoint* p2)
+{
+    return ( dist( double(p1->x()), double(p1->y()),
+                   double(p2->x()), double(p2->y()) ));
 }
 
 /*
@@ -186,7 +192,7 @@ float getBearing(flightPoint p1, flightPoint p2)
 
 double getTrueCourse(WGSPoint p1, WGSPoint p2)
 {
-  return p1 != p2 ? polar(p1.lat() - p2.lat(), p1.lon() - p2.lon()) * 180.0 / PI : 0.0;
+  return p1 != p2 ? polar(p1.lat() - p2.lat(), p1.lon() - p2.lon()) * 180.0 / M_PI : 0.0;
 }
 
 double polar(double x, double y)
@@ -197,30 +203,30 @@ double polar(double x, double y)
   //
   if(x >= -0.001 && x <= 0.001)
     {
-      if(y < 0.0) return ( 1.5 * PI );
-      else  return ( 0.5 * PI );
+      if(y < 0.0) return ( 1.5 * M_PI );
+      else  return ( 0.5 * M_PI );
     }
 
   // Punkt liegt auf der neg. X-Achse
-  if(x < 0.0)  angle = atan( y / x ) + PI;
+  if(x < 0.0)  angle = atan( y / x ) + M_PI;
   else  angle = atan( y / x );
 
   // Neg. value not allowed.
-  if(angle < 0.0)  angle = 2 * PI + angle;
+  if(angle < 0.0)  angle = 2 * M_PI + angle;
 
-  if(angle > (2 * PI))  angle = angle - (2 * PI);
+  if(angle > (2 * M_PI))  angle = angle - (2 * M_PI);
 
   return angle;
 }
 
 double int2rad(int deg)
 {
-  return (double)deg * PI / 108000000.0;
+  return (double)deg * M_PI / 108000000.0;
 }
 
 double rad2int(double rad)
 {
-  return (int) (rad * 108000000.0 / PI);
+  return (int) (rad * 108000000.0 / M_PI);
 }
 
 double angle(double a, double b, double c)
@@ -245,7 +251,7 @@ double tc(double lat1, double lon1, double lat2, double lon2)
 {
   return fmod(atan2(sin(lon1-lon2)*cos(lat2),
                     cos(lat1)*sin(lat2)-sin(lat1)*cos(lat2)*cos(lon1-lon2)),
-              2.0 * PI) + PI;
+              2.0 * M_PI) + M_PI;
 }
 
 WGSPoint posOfDistAndBearing(double lat1, double lon1, double bearing, double dist)
@@ -269,7 +275,7 @@ WGSPoint posOfDistAndBearing(double lat1, double lon1, double bearing, double di
   lon = atan2(sin(bearing) * sin(dist) * cos(lat1),
               cos(dist) - sin(lat1) * (sin(lat1) * cos(dist) +
                                        cos(lat1) * sin(dist) * cos(bearing)));
-  tLon = -fmod(lon1 - lon + PI, 2.0 * PI) + PI;
+  tLon = -fmod(lon1 - lon + M_PI, 2.0 * M_PI) + M_PI;
 
   return WGSPoint((int)rad2int(tLat), (int)rad2int(tLon));
 }
@@ -290,14 +296,14 @@ float getBearing(QPoint p1, QPoint p2)
 
     if (dy>=-0.001 && dy<=0.001)
       {
-        if (dx < 0.0) return (1.5 * PI);
-        else return (0.5 * PI);
+        if (dx < 0.0) return (1.5 * M_PI);
+        else return (0.5 * M_PI);
       }
 
       angle=atan(dx/-dy);
-      if (dy>0.0) angle+= PI;
-      if (angle<0) angle+=(2 * PI);
-      if (angle>(2* PI )) angle-=(2* PI);
+      if (dy>0.0) angle+= M_PI;
+      if (angle<0) angle+=(2 * M_PI);
+      if (angle>(2* M_PI )) angle-=(2* M_PI);
 
       return angle;
 
@@ -314,13 +320,13 @@ double outsideVector(QPoint center, QPoint p1, QPoint p2){
   double v2=getBearing(center, p2);
 
   double res1=(v1+v2)/2;
-  double res2=res1+PI;
+  double res2=res1+M_PI;
 
   res1=normalize(res1);
   res2=normalize(res2);
 
 
-  if(res1-MIN(v1,v2)<0.5 * PI) {
+  if(res1-MIN(v1,v2)<0.5 * M_PI) {
     return res1;
   } else {
     return res2;
@@ -330,13 +336,13 @@ double outsideVector(QPoint center, QPoint p1, QPoint p2){
 
 double outsideVector(double angle1, double angle2) {
   double res1=(angle1+angle2)/2;
-  double res2=res1+PI;
+  double res2=res1+M_PI;
 
   res1=normalize(res1);
   res2=normalize(res2);
 
 
-  if(res1-MIN(angle1,angle2)<0.5 * PI) {
+  if(res1-MIN(angle1,angle2)<0.5 * M_PI) {
     return res1;
   } else {
     return res2;
@@ -368,8 +374,8 @@ double angleDiff(double ang1, double ang2) {
   double a1=normalize(ang1);
   double a2=normalize(ang2);
   double a=a2-a1;
-  if (a>PI) return(a-PI2);
-  if (a<-PI) return(a+PI2);
+  if (a>M_PI) return(a-PI2);
+  if (a<-M_PI) return(a+PI2);
   return a;
 }
 

@@ -52,7 +52,7 @@ KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
   : KDialogBase(IconList, i18n("KFlog Setup"), Ok|Cancel, Ok,
       parent, name, true, true),
     config(cnf),
-    currentProjType(-1)
+    currentProjType(ProjectionBase::Unknown)
 {
   __addIDTab();
   __addPathTab();
@@ -72,7 +72,7 @@ KFLogConfig::~KFLogConfig()
 
 void KFLogConfig::slotOk()
 {
-  slotSelectProjection(-1);
+  slotSelectProjection(ProjectionBase::Unknown);
 
   config-> setGroup("General Options");
   config-> writeEntry("Version", "2.0.2");
@@ -162,26 +162,26 @@ void KFLogConfig::slotSelectProjection(int index)
 {
   switch(currentProjType)
     {
-      case 0:
+      case ProjectionBase::Lambert:
         lambertV1 = MapContents::degreeToNum(firstParallel-> text());
         lambertV2 = MapContents::degreeToNum(secondParallel-> text());
         lambertOrigin = MapContents::degreeToNum(originLongitude-> text());
         break;
-      case 1:
+      case ProjectionBase::Cylindric:
         cylinPar = MapContents::degreeToNum(firstParallel-> text());
         break;
     }
 
   switch(index)
     {
-      case 0:    // Lambert
+      case ProjectionBase::Lambert:
         secondParallel-> setEnabled(true);
         originLongitude-> setEnabled(true);
         firstParallel-> setText(printPos(lambertV1, true));
         secondParallel-> setText(printPos(lambertV2, true));
         originLongitude-> setText(printPos(lambertOrigin, false));
         break;
-      case 1:    // plate carre
+      case ProjectionBase::Cylindric:
         secondParallel-> setEnabled(false);
         originLongitude-> setEnabled(false);
         firstParallel-> setText(printPos(cylinPar, true));
@@ -233,10 +233,10 @@ void KFLogConfig::slotDefaultProjection()
 
   cylinPar = 27000000;
 
-  currentProjType = -1;
+  currentProjType = ProjectionBase::Unknown;
 
-  projectionSelect-> setCurrentItem(0);
-  slotSelectProjection(0);
+  projectionSelect-> setCurrentItem(ProjectionBase::Lambert);
+  slotSelectProjection(ProjectionBase::Lambert);
 }
 
 void KFLogConfig::slotDefaultScale()
@@ -422,7 +422,7 @@ void KFLogConfig::__addProjectionTab()
   cylinPar = config-> readNumEntry("Parallel", 27000000);
 
   config-> setGroup("Map Data");
-  int projIndex = config-> readNumEntry("Projection Type", 0);
+  int projIndex = config->readNumEntry("Projection Type", ProjectionBase::Lambert);
 
   projectionSelect-> setCurrentItem(projIndex);
   slotSelectProjection(projIndex);

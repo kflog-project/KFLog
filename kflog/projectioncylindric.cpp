@@ -1,88 +1,82 @@
 /***********************************************************************
-**
-**   projectioncylindric.cpp
-**
-**   This file is part of KFLog2.
-**
-************************************************************************
-**
-**   Copyright (c):  2002 by Heiner Lamprecht
-**
-**   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
-**
-**   $Id$
-**
-***********************************************************************/
+ **
+ **   projectioncylindric.cpp
+ **
+ **   This file is part of KFLog2.
+ **
+ ************************************************************************
+ **
+ **   Copyright (c):  2002 by Heiner Lamprecht, 2007 Axel Pauli
+ **
+ **   This file is distributed under the terms of the General Public
+ **   Licence. See the file COPYING for more information.
+ **
+ **   $Id$
+ **
+ ***********************************************************************/
 
 #include <cmath>
-
-#include <iostream>
-
 #include "projectioncylindric.h"
 
-#define PI 3.141592654
-#define NUM_TO_RAD(num) ( ( PI * (double)(num) ) / 108000000.0 )
+#define NUM_TO_RAD(num) ( M_PI  / 108000000.0 * (double)(num) )
 
-ProjectionCylindric::ProjectionCylindric(double v1_new)
+ProjectionCylindric::ProjectionCylindric(int v1_new)
 {
-  initProjection((int)v1_new);
+  v1 = 0.0;
+  i_v1 = 0;
+  initProjection(v1_new);
+}
+
+ProjectionCylindric::ProjectionCylindric(QDataStream & s)
+{
+  v1 = 0.0;
+  i_v1 = 0;
+  loadParameters(s);
 }
 
 ProjectionCylindric::~ProjectionCylindric()
 {
-
 }
+
 
 bool ProjectionCylindric::initProjection(int v1_new)
 {
   bool changed(false);
 
-  if(v1_new > 54000000 || v1_new < -54000000)
-    {
-      changed = ( v1 == NUM_TO_RAD(27000000) );
-      v1 = NUM_TO_RAD(27000000);
-    }
-  else
-    {
-      changed = ( v1 == NUM_TO_RAD(v1_new) );
-      v1 = NUM_TO_RAD(v1_new);
-    }
+  if(v1_new > 54000000 || v1_new < -54000000) {
+    // this is >90° or <-90°: take default of 45°;
+    // better check in input dlg and not here???
+    changed = ( v1 != NUM_TO_RAD(27000000) );
+    v1 = NUM_TO_RAD(27000000);
+    i_v1=27000000;
+  } else {
+    changed = ( i_v1 != v1_new );
+    v1 = NUM_TO_RAD(v1_new);
+    i_v1=v1_new;
+  }
 
-  cos_v1 = cos (v1);
+  cos_v1=cos(v1);
 
-  return true;
+  return changed;
 }
 
-double ProjectionCylindric::projectX(double latitude, double longitude) const
+
+/**
+ * Saves the parameters specific to this projection to a stream
+ */
+void ProjectionCylindric::saveParameters(QDataStream & s)
 {
-  return longitude * cos_v1;
+  s << Q_INT32(i_v1);
 }
 
-double ProjectionCylindric::projectY(double latitude, double longitude) const
+
+/**
+ * Loads the parameters specific to this projection from a stream
+ */
+void ProjectionCylindric::loadParameters(QDataStream & s)
 {
-  return -latitude;
+  Q_INT32 i=0;
+  s >> i;
+  initProjection(i);
 }
 
-double ProjectionCylindric::invertLat(double /*x*/, double y) const
-{
-  return -y;
-}
-
-double ProjectionCylindric::invertLon(double x, double /*y*/) const
-{
-  return x / cos_v1;
-}
-
-// We do not rotate the map at all ...
-double ProjectionCylindric::getRotationArc(int /*x*/, int /*y*/) const  {  return 0;  }
-
-int ProjectionCylindric::getTranslationX(int width, int x) const
-{
-  return width / 2 - x;
-}
-
-int ProjectionCylindric::getTranslationY(int height, int y) const
-{
-  return (height / 2) - y;
-}
