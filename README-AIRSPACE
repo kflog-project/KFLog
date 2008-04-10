@@ -1,7 +1,3 @@
-This directory is used for the airspace-files.
+This directory is used for the airspace files.
 
-If You want to obtain a monthly renewed airspace-file, please visit the KFLog-Homepage.
-
-You can find the airspace-files at:
-
-http://maproom.kflog.org/
+Airspace files in OpenAir format are supported. The file name must end with ".txt".
