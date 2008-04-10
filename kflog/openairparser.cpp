@@ -56,16 +56,14 @@
 // version used for files created from OpenAir data
 #define FILE_VERSION_AIRSPACE_C 200
 
-extern MapContents*  _globalMapContents;
-extern MapMatrix*    _globalMapMatrix;
+extern MapContents  _globalMapContents;
+extern MapMatrix    _globalMapMatrix;
 
 OpenAirParser::OpenAirParser()
 {
-  _doCompile = false;
   _boundingBox = (QRect *) 0;
   _bufData = (QCString *) 0;
   _outbuf = (QDataStream *) 0;
-  h_projection = (ProjectionBase *) 0;
 
   initializeBaseMapping();
 }
@@ -73,9 +71,6 @@ OpenAirParser::OpenAirParser()
 
 OpenAirParser::~OpenAirParser()
 {
-  if( h_projection ) {
-    delete h_projection;
-  }
 }
 
 /**
@@ -100,8 +95,7 @@ uint OpenAirParser::load( QPtrList<Airspace>& list )
       globalDirs->findResource("data", "kflog/mapdata/"));
   QStringList preselect;
 
-  MapContents::addDir(preselect, mapDir + "/airspaces", "*.txt");
-  MapContents::addDir(preselect, mapDir + "/airspaces", "*.txc");
+  MapContents::addDir(preselect, mapDir + "/airspace", "*.txt");
 
   if(preselect.count() == 0)
     {
@@ -109,115 +103,13 @@ uint OpenAirParser::load( QPtrList<Airspace>& list )
       return loadCounter;
     }
 
-
-
-  // source files follows compiled files
-  preselect.sort();
-
   while ( ! preselect.isEmpty() ) {
-    QString txtName, txcName;
-    _doCompile = false;
+    QString txtName = preselect.first();
 
-    if ( preselect.first().contains( QString(".txt") ) ) {
-      // there can't be the same name txc after this txt
-      // parse found txt file
-      txtName = preselect.first();
-      _doCompile = true;
-
-      if( parse( txtName, list ) )
-        loadCounter++;
-
-      preselect.remove( preselect.begin() );
-      continue;
-    }
-
-    // At first we found a binary file with the extension txc.
-    txcName = preselect.first();
-
-    // Now we have to check if there's to find a source file with
-    // extension txt after the binary file
-    txcName = preselect.first();
-    preselect.remove( preselect.begin() );
-    txtName = txcName;
-    txtName.replace( txtName.length()-1, 1, QString("t") );
-
-    if ( ! preselect.isEmpty() && txtName == preselect.first() ) {
-      preselect.remove( preselect.begin() );
-      // We found the related source file and will do some checks to
-      // decide which type of file will be read in.
-
-      // Lets check, if we can read the header of the compiled file
-      if( ! setHeaderData( txcName ) ) {
-        // Compiled file format is not the expected one, remove
-        // wrong file and start a reparsing of source file.
-        unlink( txcName.latin1() );
-        _doCompile = true;
-
-        if( parse( txtName, list ) )
-          loadCounter++;
-
-        preselect.remove( preselect.begin() );
-        continue;
-      }
-
-      // Do a date-time check. If the source file is younger in its
-      // modification time as the compiled file, a new compilation
-      // must be forced.
-
-      QFileInfo fi(txtName);
-      QDateTime lastModTxt = fi.lastModified();
-
-      if( h_creationDateTime < lastModTxt ) {
-        // Modification date-time of source is younger as from
-        // compiled file. Therefore we do start a reparsing of the
-        // source file.
-        unlink( txcName.latin1() );
-        _doCompile = true;
-        if( parse( txtName, list ) )
-          loadCounter++;
-        continue;
-      }
-
-      // Check date-time against the config file
-      QString confName = fi.dirPath(TRUE) + "/" + fi.baseName() + "_mappings.conf";
-      QFileInfo fiConf( confName );
-
-      if( fiConf.exists() && fi.isReadable() &&
-          h_creationDateTime < fiConf.lastModified() ) {
-        // Conf file was modified, make a new compilation. It is not
-        // deeper checked, what was modified due to the effort and
-        // in the assumption that a config file will not be changed
-        // every minute.
-        unlink( txcName.latin1() );
-        _doCompile = true;
-        if( parse( txtName, list ) )
-          loadCounter++;
-        continue;
-      }
-
-      // Check, if the projection has been changed in the meantime
-      ProjectionBase *currentProjection = _globalMapMatrix->getProjection();
-
-      if( ! MapContents::compareProjections( h_projection, currentProjection ) ) {
-        // Projection has changed in the meantime
-        if(  h_projection ) {
-          delete h_projection;
-          h_projection = 0;
-        }
-
-        unlink( txcName.latin1() );
-        _doCompile = true;
-        if( parse( txtName, list ) )
-          loadCounter++;
-        continue;
-      }
-    }
-
-    // we will read the compiled file, because a source file is not to
-    // find after it or all checks were successfully passed
-    if( readCompiledFile( txcName, list ) )
+    if( parse( txtName, list ) )
       loadCounter++;
 
+    preselect.remove( preselect.begin() );
   } // End of While
 
   qDebug("OpenAirParser: %d OpenAir file(s) loaded in %dms", loadCounter, t.elapsed());
@@ -238,22 +130,6 @@ bool OpenAirParser::parse(const QString& path, QPtrList<Airspace>& list)
 
   resetState();
   initializeStringMapping( path );
-
-  if( _doCompile ) {
-    // we open a buffer for temporary storage of extracted airspace
-    // elements
-    _bufData = new QCString();
-    _buffer = new QBuffer();
-    _outbuf = new QDataStream();
-
-#ifdef BOUNDING_BOX
-    _boundingBox = new QRect();
-#endif
-
-    _buffer->setBuffer( *_bufData );
-    _buffer->open(IO_ReadWrite);
-    _outbuf->setDevice( _buffer );
-  }
 
   QTextStream in(&source);
   //start parsing
@@ -285,64 +161,6 @@ bool OpenAirParser::parse(const QString& path, QPtrList<Airspace>& list)
           _objCounter, fi.fileName().latin1(), t.elapsed() );
 
   source.close();
-
-  // handle creation of a compiled file version
-  if( _doCompile ) {
-    // close opened buffer
-    _buffer->close();
-
-    if( _objCounter ) {
-      // airspace objects were created during parsing, we will save
-      // them in a txc file.
-      QFile compFile;
-      QDataStream out;
-
-      // build the compiled file name with the extension .txc from
-      // the source file name
-      QString cfn = fi.dirPath( true ) + "/" + fi.baseName() + ".txc";
-
-      compFile.setName( cfn );
-      out.setDevice( &compFile );
-
-      if( !compFile.open(IO_WriteOnly) ) {
-        // Can't open output file, reset compile flag
-        qWarning("OpenAirParser: Cannot open file %s!", cfn.latin1());
-        _doCompile = false;
-      } else {
-
-        qDebug("OpenAirParser: writing file %s", cfn.latin1());
-
-        // create compiled binary version
-        out << Q_UINT32( KFLOG_FILE_MAGIC );
-        out << Q_INT8( FILE_TYPE_AIRSPACE_C );
-        out << UINT16( FILE_VERSION_AIRSPACE_C );
-        out << QDateTime::currentDateTime();
-        SaveProjection( out, _globalMapMatrix->getProjection() );
-
-#ifdef BOUNDING_BOX
-
-        out << *_boundingBox;
-#endif
-        // write data on airspaces from buffer
-        out << *_bufData;
-        compFile.close();
-      }
-    }
-
-    // delete all dynamically allocated objects
-
-#ifdef BOUNDING_BOX
-    delete _boundingBox;
-    _boundingBox = 0;
-#endif
-
-    delete _outbuf;
-    _outbuf  = 0;
-    delete _buffer;
-    _buffer  = 0;
-    delete _bufData;
-    _bufData = 0;
-  }
 
   return true;
 }
@@ -489,41 +307,22 @@ void OpenAirParser::newPA()
 
 void OpenAirParser::finishAirspace()
 {
-  extern MapMatrix * _globalMapMatrix;
-
   uint cnt=asPA.count();
-  for (uint i=0; i<cnt; i++)
-    asPA.setPoint(i, _globalMapMatrix->wgsToMap(asPA.point(i)));
+  QPointArray PA(cnt);
+  for (uint i=0; i<cnt; i++) {
+    PA.setPoint(i, _globalMapMatrix.wgsToMap(asPA.point(i)));
+  }
 
-  Airspace * a= new Airspace(asName,
-                             asType,
-                             asPA,
-                             asUpper, asUpperType,
-                             asLower, asLowerType);
+  Airspace * a = new Airspace(asName,
+                              asType,
+                              PA,
+                              asUpper, asUpperType,
+                              asLower, asLowerType);
   _airlist.append(a);
   _objCounter++;
   _isCurrentAirspace = false;
   // qDebug("finalized airspace %s. %d points in airspace", asName.latin1(), cnt);
 
-  if( _doCompile ) {
-    // we temporary save the airspace element in a memory buffer to
-    // store it persistently later on in a binary file.
-    ShortSave( *_outbuf, asName );
-    *_outbuf << Q_UINT8( asType );
-    *_outbuf << Q_UINT8( asLowerType );
-    *_outbuf << Q_INT16( asLower );
-    *_outbuf << Q_UINT8( asUpperType );
-    *_outbuf << Q_INT16( asUpper );
-    ShortSave( *_outbuf, asPA );
-
-#ifdef BOUNDING_BOX
-
-    if( !asPA.isEmpty() ) {
-      *_boundingBox |= asPA.boundingRect();
-    }
-#endif
-
-  }
 }
 
 
@@ -1122,127 +921,6 @@ void OpenAirParser::addArc(const double& rX, const double& rY,
   }
 }
 
-/**
- * Read the content of a compiled file and put it into the passed
- * list.
- *
- * @param path Full name with path of OpenAir binary file
- * @param list All airspace objects have to be stored in this list
- * @returns true (success) or false (error occured)
- */
-bool OpenAirParser::readCompiledFile( QString &path, QPtrList<Airspace>& list )
-{
-  QTime t;
-  t.start();
-
-  QFile inFile(path);
-
-  if( !inFile.open(IO_ReadOnly) ) {
-    qWarning("OpenAirParser: Cannot open airspace file %s!", path.latin1());
-    return false;
-  }
-
-  QDataStream in(&inFile);
-
-  // This was the order used by ealier cumulus
-  // implementations. Because OpenAir does not support these all a
-  // subset from the original implementation is only used to spare
-  // memory and to get a better performance.
-
-  Q_UINT32 magic;
-  Q_INT8 fileType;
-  Q_UINT16 fileVersion;
-  QDateTime creationDateTime;
-
-#ifdef BOUNDING_BOX
-
-  QRect boundingBox;
-#endif
-
-  ProjectionBase *projectionFromFile;
-  Q_INT32 buflen;
-
-  in >> magic;
-
-  if( magic != KFLOG_FILE_MAGIC ) {
-    qWarning( "OpenAirParser: wrong magic key %x read! Aborting ...", h_magic );
-    inFile.close();
-    return false;
-  }
-
-  in >> fileType;
-
-  if( fileType != FILE_TYPE_AIRSPACE_C ) {
-    qWarning( "OpenAirParser: wrong file type %x read! Aborting ...", h_fileType );
-    inFile.close();
-    return false;
-  }
-
-  in >> fileVersion;
-
-  if( fileVersion != FILE_VERSION_AIRSPACE_C ) {
-    qWarning( "OpenAirParser: wrong file version %x read! Aborting ...", h_fileVersion );
-    inFile.close();
-    return false;
-  }
-
-  in >> creationDateTime;
-
-  projectionFromFile = LoadProjection(in);
-
-  // projectionFromFile is allocated dynamically, we don't need it
-  // here. Therefore it is immediately deleted to avoid memory leaks.
-  delete projectionFromFile;
-  projectionFromFile = 0;
-
-#ifdef BOUNDING_BOX
-
-  in >> boundingBox;
-#endif
-
-  // because we're used a buffer during output, the buffer length will
-  // be written too. Now we have to read it but don't need it because
-  // we access directly to the opened file.
-  in >> buflen;
-
-  uint counter = 0;
-
-  QString name;
-  Q_UINT8 type;
-  Q_UINT8 lowerType;
-  Q_INT16 lower;
-  Q_UINT8 upperType;
-  Q_INT16 upper;
-  QPointArray pa;
-
-  while( ! in.atEnd() ) {
-    counter++;
-    pa.resize(0);
-
-    ShortLoad(in, name);
-    in >> type;
-    in >> lowerType;
-    in >> lower;
-    in >> upperType;
-    in >> upper;
-    ShortLoad( in, pa );
-
-    Airspace *a = new Airspace( name,
-                                (BaseMapElement::objectType) type,
-                                pa,
-                                upper, (BaseMapElement::elevationType) upperType,
-                                lower, (BaseMapElement::elevationType) lowerType );
-    list.append(a);
-  }
-
-  inFile.close();
-
-  //qDebug( "OpenAirParser: %d airspace objects read from file %s in %dms",
-  //       counter, basename(path.latin1()), t.elapsed() );
-
-  return true;
-}
-
 
 /**
  * Get the header data of a compiled file and put it in the class
@@ -1258,12 +936,6 @@ bool OpenAirParser::setHeaderData( QString &path )
   h_magic = 0;
   h_fileType = 0;
   h_fileVersion = 0;
-
-  if( h_projection ) {
-    // delete an older projection object
-    delete  h_projection;
-    h_projection = 0;
-  }
 
   QFile inFile(path);
   if( !inFile.open(IO_ReadOnly) ) {
@@ -1298,8 +970,6 @@ bool OpenAirParser::setHeaderData( QString &path )
   }
 
   in >> h_creationDateTime;
-
-  h_projection = LoadProjection(in);
 
 #ifdef BOUNDING_BOX
   in >> h_boundingBox;

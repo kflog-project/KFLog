@@ -38,8 +38,8 @@ class Airspace : public LineElement
      * lowerType give the value for the lower limit.
      */
     Airspace(const QString& n, unsigned int t, const QPointArray& pA,
-            unsigned int upper, unsigned int upperType,
-            unsigned int lower, unsigned int lowerType);
+             unsigned int upper, unsigned int upperType,
+             unsigned int lower, unsigned int lowerType);
     /**
      * Destructor, does nothing special.
      */

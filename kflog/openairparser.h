@@ -109,16 +109,6 @@ private:  //memberfunctions
     void initializeBaseMapping();
 
     /**
-     * Read the content of a compiled file and put it into the passed
-     * list.
-     *
-     * @param path Full name with path of OpenAir binary file
-     * @param list All airspace objects have to be stored in this list
-     * @returns true (success) or false (error occured)
-     */
-    bool readCompiledFile( QString &path, QPtrList<Airspace>& list );
-
-    /**
      * Get the header data of a compiled file and put it in the class
      * variables.
      *
@@ -148,8 +138,6 @@ private: //members
     QMap<QString, BaseMapElement::objectType> m_baseTypeMap;
     QMap<QString, QString> m_stringTypeMap;
 
-    // compile flag
-    bool _doCompile;
     // bounding box
     QRect *_boundingBox;
     // temporary data buffer
@@ -163,7 +151,6 @@ private: //members
     UINT16 h_fileVersion;
     QDateTime h_creationDateTime;
     QRect h_boundingBox;
-    ProjectionBase *h_projection;
     bool h_headerIsValid;
 };
 

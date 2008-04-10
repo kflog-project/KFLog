@@ -139,7 +139,7 @@ QPoint MapMatrix::wgsToMap(int lat, int lon) const
 {
   return QPoint((int)(currentProjection->projectX(NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
                     RADIUS / MAX_SCALE),
-      (int)(currentProjection->projectY(NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
+                (int)(currentProjection->projectY(NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
                     RADIUS / MAX_SCALE));
 
 //  return QPoint(__calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
@@ -582,12 +582,11 @@ void MapMatrix::createPrintMatrix(double printScale, const QSize& pSize, int dX,
    * Nordhalbkugel. Auf der Südhalbkugel stimmen die Werte nur
    * näherungsweise.
    */
-  QPoint tCenter = __mapToWgs(invertMatrix.map(QPoint(pSize.width() / 2, 0)));
+  QPoint tCenter  = __mapToWgs(invertMatrix.map(QPoint(pSize.width() / 2, 0)));
   QPoint tlCorner = __mapToWgs(invertMatrix.map(QPoint(0, 0)));
   QPoint trCorner = __mapToWgs(invertMatrix.map(QPoint(pSize.width(), 0)));
   QPoint blCorner = __mapToWgs(invertMatrix.map(QPoint(0, pSize.height())));
-  QPoint brCorner = __mapToWgs(invertMatrix.map(QPoint(pSize.width(),
-      pSize.height())));
+  QPoint brCorner = __mapToWgs(invertMatrix.map(QPoint(pSize.width(), pSize.height())));
 
   printBorder.setTop(tCenter.y());
   printBorder.setLeft(tlCorner.x());

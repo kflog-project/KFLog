@@ -359,12 +359,6 @@ class MapContents : public QObject
    */
   bool __readAirfieldFile(const char* pathName);
   /**
-   * Reads a binary map file containing airspaces.
-   *
-   * @param  fileName  The path and name of the airspace-file.
-   */
-  bool __readAirspaceFile(const char* pathName);
-  /**
    * Reads a new binary map file.
    *
    * @param  fileSecID  The sectionID of the mapfile
