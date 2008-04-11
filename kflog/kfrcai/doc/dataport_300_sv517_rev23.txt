@@ -314,40 +314,40 @@ Message format:
 
 Here are the rules:
 
-1.1.    All characters are displayable ASCII, except the CR which terminates the
-        message.
+1.    All characters are displayable ASCII, except the CR which terminates the
+      message.
 
-2.      There must be at least six delimiters (commas) in the message.
+2.    There must be at least six delimiters (commas) in the message.
 
-3.      The reserved field is ignored.
+3.    The reserved field is ignored.
 
-4.      Latitude is always ten characters:  DDMM.MMMMH, where H is 'N' or 'S',
-        and must be in upper case.
+4.    Latitude is always ten characters:  DDMM.MMMMH, where H is 'N' or 'S',
+      and must be in upper case.
 
-5.      Longitude is always eleven characters:  DDDMM.MMMMH, where H is 'E' or
-        'W', and must be in upper case.
+5.    Longitude is always eleven characters:  DDDMM.MMMMH, where H is 'E' or
+      'W', and must be in upper case.
 
-6.      Elevation is in meters, whole numbers.
+6.    Elevation is in meters, whole numbers.
 
-7.      Navpoint ID (NPID) range is 1-9999.
+7.    Navpoint ID (NPID) range is 1-9999.
 
-8.      Attribute (ATTR) range is 1-65535.
+8.    Attribute (ATTR) range is 1-65535.
 
-9.      The "text" field begins after the seventh delimiter of the message and
-        contains a 12-character NAME, and a 12-character REMARK.  Any displayable
-        character is legal in the NAME or REMARK. In the special case of points
-        whose "Airspace" attribute bit is set, the REMARK field must contain
-        three four-byte quantities (leading zeroes required): radius (tenths of
-        nautical miles, 1-65535), floor (meters, 0-65535), ceiling (meters, 0-
-        65535). For example, a REMARK of 025000002134 on a navpoint with the
-        Airspace attribute sets the radius to 25.0 nmi, the floor to zero, and
-        the ceiling to 2134 meters.
+9.    The "text" field begins after the seventh delimiter of the message and
+      contains a 12-character NAME, and a 12-character REMARK.  Any displayable
+      character is legal in the NAME or REMARK. In the special case of points
+      whose "Airspace" attribute bit is set, the REMARK field must contain
+      three four-byte quantities (leading zeroes required): radius (tenths of
+      nautical miles, 1-65535), floor (meters, 0-65535), ceiling (meters, 0-
+      65535). For example, a REMARK of 025000002134 on a navpoint with the
+      Airspace attribute sets the radius to 25.0 nmi, the floor to zero, and
+      the ceiling to 2134 meters.
 
-10.     The handling of missing data:
+10.   The handling of missing data:
 
-11.     Points carrying the Airspace bit may not have "short" NAME or REMARK
-        fields. Other points may have short fields, and the 302 will pad them
-        with blanks to yield 12 characters for NAME and 12 characters for REMARK.
+11.   Points carrying the Airspace bit may not have "short" NAME or REMARK
+      fields. Other points may have short fields, and the 302 will pad them
+      with blanks to yield 12 characters for NAME and 12 characters for REMARK.
 
 Attribute encoding
 
