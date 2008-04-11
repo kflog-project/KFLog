@@ -2,7 +2,7 @@
 
                   Data Port User's Guide   SV-517 Revision 2.3
 
-                               October 25, 2007
+                               April 11, 2008
 
 
 
@@ -725,7 +725,7 @@ Length: WSize (obtained in the C <No Arg> Command above)
 Element        Length     Comments
 Latitude       4          In TTOM (See below for explanation)
 Longitude      4          In TTOM (See below for explanation)
-Elevation      2          In Feet
+Elevation      2          In meters
 ID             2
 Attribute      2          See C command in section VII
 Name           12
@@ -1289,7 +1289,6 @@ Changed to Rev 2.2
 March 25, 2003
 Add documentation for active pilot and margin height. Changed !W to !w
 
-October 25, 2007
+April 11, 2008
 Fixed a couple of minor errors.
 Fixed description of the error checking algorithm for large replies.
-
