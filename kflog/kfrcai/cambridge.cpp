@@ -31,6 +31,7 @@
 #include <qfile.h>
 #include <math.h>
 
+#include "../waypoint.h"
 
 #define STX        0x03
 
@@ -45,6 +46,20 @@
 
 #define TIMEOUT_ERROR  -1
 #define CHECKSUM_ERROR -2
+
+
+// Cambridge waypoint attributes are using bit arrays
+#define CAI_TURNPOINT        1
+#define CAI_AIRFIELD         2
+#define CAI_MARKPOINT        4 
+#define CAI_LANDINGPOINT     8
+#define CAI_STARTPOINT      16
+#define CAI_FINISHPOINT     32
+#define CAI_HOMEPOINT       64
+#define CAI_THERMALPOINT   128
+#define CAI_WAYPOINT       256
+#define CAI_AIRSPACE       512
+
 
 const char* c36 = "0123456789abcdefghijklmnopqrstuvwxyz";
 
@@ -115,8 +130,10 @@ int extractInteger(unsigned char* buf, int start, int count)
   if (count > 2)
     foo += (int)buf[start+count-3]*256*256;
   if (count > 3)
+    foo += (int)buf[start+count-4]*256*256*256;
+  if (count > 4)
   {
-    warning("extractInteger(): Not supported for more than 3 byte");
+    warning("extractInteger(): Not supported for more than 4 byte");
     return -1;
   }
   return foo;
@@ -512,22 +529,27 @@ int Cambridge::downloadFlight(int flightID, int secMode, const QString& fileName
     return FR_ERROR;
   }
 }
+
 int Cambridge::writeDeclaration(FRTaskDeclaration *taskDecl, QPtrList<Waypoint> *taskPoints)
 {
   return FR_NOTSUPPORTED;
 }
+
 int Cambridge::readDatabase()
 {
   return FR_NOTSUPPORTED;
 }
+
 int Cambridge::readTasks(QPtrList<FlightTask> *tasks)
 {
   return FR_NOTSUPPORTED;
 }
+
 int Cambridge::writeTasks(QPtrList<FlightTask> *tasks)
 {
   return FR_NOTSUPPORTED;
 }
+
 int Cambridge::readWaypoints(QPtrList<Waypoint> *waypoints)
 {
   unsigned char reply[2048];
@@ -541,15 +563,56 @@ int Cambridge::readWaypoints(QPtrList<Waypoint> *waypoints)
 
   replysize = readReply("c", UPS_MODE, reply);
   if (replysize==TIMEOUT_ERROR) return FR_ERROR;
-  int Npoints = extractInteger(reply,0,2);
+  unsigned int Npoints = extractInteger(reply,0,2);
   qDebug("There are %d waypoints on the recorder", Npoints);
 
-  replysize = readReply("c 0", UPS_MODE, reply);
-  if (replysize==TIMEOUT_ERROR) return FR_ERROR;
-  debugHex (reply,64);
+  int Wsize = extractInteger(reply,2,1);
+  if (Wsize != 38) {
+    qDebug("Waypoint size is %d bytes, should be 38!", Wsize);
+    return FR_ERROR;
+  }
 
+  Waypoint * frWp;
+  for (size_t i=0; i<Npoints; i++) {
+    QString cmd;
+    cmd.sprintf ("c %d", i);
+    replysize = readReply(cmd, UPS_MODE, reply);
+    if (replysize==TIMEOUT_ERROR) return FR_ERROR;
+    int lat = extractInteger(reply,  0,  4) -  54000000; // Equator is at 54000000 TTOM
+    int lon = extractInteger(reply,  4,  4) - 108000000; // Greenwich is at 108000000 TTOM
+    int elv = extractInteger(reply,  8,  2);
+    int  id = extractInteger(reply, 10,  2);
+    int att = extractInteger(reply, 12,  2);
+    QString name   = extractString(reply, 14, 12);
+    QString remark = extractString(reply, 26, 12);
+    // debugHex (reply,64);
+    // qDebug ("lat = %d", lat);
+    // qDebug ("lon = %d", lon);
+    // qDebug ("elv = %d", elv);
+    // qDebug (" id = %d",  id);
+    // qDebug ("att = %d", att);
+    // qDebug ("name = "+name);
+    // qDebug ("remark = "+remark);
+    int type = NOT_SELECTED;
+    bool landable = false;
+    if (att & CAI_AIRFIELD) {
+      type = AIRFIELD;
+      landable = true;
+    } else {
+      type = LANDMARK;
+    }
+    frWp = new Waypoint;
+    frWp->name = name;
+    frWp->comment = remark;
+    frWp->origP.setPos(lat, lon);
+    frWp->elevation = elv;
+    frWp->type = type;
+    frWp->isLandable = landable;
+    waypoints->append(frWp);
+  }
   return FR_OK;
 }
+
 int Cambridge::writeWaypoints(QPtrList<Waypoint> *waypoints)
 {
   return FR_NOTSUPPORTED;
