@@ -31,8 +31,6 @@
 #include <qfile.h>
 #include <math.h>
 
-#include "../waypoint.h"
-
 #define STX        0x03
 
 // command mode
@@ -583,8 +581,8 @@ int Cambridge::readWaypoints(QPtrList<Waypoint> *waypoints)
     int elv = extractInteger(reply,  8,  2);
     int  id = extractInteger(reply, 10,  2);
     int att = extractInteger(reply, 12,  2);
-    QString name   = extractString(reply, 14, 12);
-    QString remark = extractString(reply, 26, 12);
+    QString name   = extractString(reply, 14, 12).stripWhiteSpace();
+    QString remark = extractString(reply, 26, 12).stripWhiteSpace();
     // debugHex (reply,64);
     // qDebug ("lat = %d", lat);
     // qDebug ("lon = %d", lon);
@@ -593,16 +591,17 @@ int Cambridge::readWaypoints(QPtrList<Waypoint> *waypoints)
     // qDebug ("att = %d", att);
     // qDebug ("name = "+name);
     // qDebug ("remark = "+remark);
-    int type = NOT_SELECTED;
+    int type = BaseMapElement::NotSelected;
     bool landable = false;
     if (att & CAI_AIRFIELD) {
-      type = AIRFIELD;
+      type = BaseMapElement::Airfield;
       landable = true;
     } else {
-      type = LANDMARK;
+      type = BaseMapElement::Landmark;
     }
     frWp = new Waypoint;
     frWp->name = name;
+    frWp->description = name;
     frWp->comment = remark;
     frWp->origP.setPos(lat, lon);
     frWp->elevation = elv;
