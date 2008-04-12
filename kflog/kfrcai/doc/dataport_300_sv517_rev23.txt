@@ -2,7 +2,7 @@
 
                   Data Port User's Guide   SV-517 Revision 2.3
 
-                               April 11, 2008
+                               April 12, 2008
 
 
 
@@ -247,23 +247,23 @@ LOG 0         NMEA Output.  See section XII for the specification of the NMEA
               output.
 
 LOG 8         Data Logging information.  This sub-mode shows the following:
-                       A hexadecimal representation of the latest record,
-                       The record length,
-                       The address where the next record will be stored,
-                       And the date and time of the latest record.
+                     A hexadecimal representation of the latest record,
+                     The record length,
+                     The address where the next record will be stored,
+                     And the date and time of the latest record.
 
 LOG 12        Raw sensor outputs. This sub-mode shows the following:
-                       24 bit absolute pressure (~13000000 at sea level)
-                       24 bit Pitot/static pressure(~8400000 with no pressure)
-                       G Meter X Axis (32768 +- 2000 at zero G and 8000 Cts./G)
-                       G Meter Y Axis (32768 +- 2000 at zero G and 8000 Cts./G)
-                       Barometer sensor channel; raw outputs vary.
-                       Barometer sensor Temperature channel; raw outputs vary.
-                       10 bit Backup Battery Voltage.
-                       10 bit Engine Noise Level.
-                       10 bit Main Power Voltage.
-                       Hexidecimal representation of "Port 7" logic levels.
-                       OAT probe (High negative value (< -400) indicates trouble)
+                     24 bit absolute pressure (~13000000 at sea level)
+                     24 bit Pitot/static pressure(~8400000 with no pressure)
+                     G Meter X Axis (32768 +- 2000 at zero G and 8000 Cts./G)
+                     G Meter Y Axis (32768 +- 2000 at zero G and 8000 Cts./G)
+                     Barometer sensor channel; raw outputs vary.
+                     Barometer sensor Temperature channel; raw outputs vary.
+                     10 bit Backup Battery Voltage.
+                     10 bit Engine Noise Level.
+                     10 bit Main Power Voltage.
+                     Hexidecimal representation of "Port 7" logic levels.
+                     OAT probe (High negative value (< -400) indicates trouble)
 
 
 
@@ -457,9 +457,9 @@ Here are the rules:
       Dry Weight      In KG.
       Liters          Ballast capacity
       Reserved        Ignored
-      ConfigWord      Bits 15­1 of the Config word are reserved. Bit 0 controls
-                      the configuration lock feature. A 0 in this bit indicates
-                      that the Configuration is locked.
+      ConfigWord      Bits 1 to 15 of the Config word are reserved. Bit 0
+		      controls the configuration lock feature. A 0 in this bit
+		      indicates that the Configuration is locked.
 
 Example G Message:
 G,Ventus CM,RB,48,98,172,200,60,0,65535
@@ -510,7 +510,7 @@ Here are the rules:
              Slow:  Enroute Logging Interval (Seconds)
              Fast:  Close Logging Interval (Seconds)
              Gap:   Time between Flight Logs (Minutes)
-             SPD:   Minimum Speed to force flight logging (Knots)
+             SPD:   Minimum Speed to force flight logging (10ths of Knots)
              DB:    STF Dead Band (10ths of M/S)
              R:     Reserved
              UW:    Unit Word: Bits described below
@@ -790,8 +790,8 @@ Element           Length    Comments
 Type              12        Glider Type
 ID                12        Glider ID
 L/D               1         Best L/D
-VM                1         Best Glide Speed
-V2                1         2 M/S Sink Speed
+VM                1         Best Glide Speed (in km/h)
+V2                1         2 M/S Sink Speed (in km/h)
 Reserved          1
 Weight            2         kg
 Ballast Capacity  2         Liters
@@ -1296,5 +1296,5 @@ October 25, 2007
 Fixed some minor errors.
 Fixed description of the error checking algorithm for large replies.
 
-April 11, 2008
+April 12, 2008
 Fixed several errors.

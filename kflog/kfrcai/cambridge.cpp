@@ -145,18 +145,21 @@ Cambridge::Cambridge()
                                  bps09600 |
                                  bps19200 |
                                  bps38400 |
-                                 bps57600 ; //  bps115200 doesn't work for me?!?
-  _capabilities.maxNrWaypoints = 9999;      //maximum number of waypoints
-  _capabilities.maxNrWaypointsPerTask = 15; //maximum number of waypoints per task
+                                 bps57600 ;  //  bps115200 doesn't work for me?!?
+  _capabilities.maxNrWaypoints = 9999;       //maximum number of waypoints
+  _capabilities.maxNrWaypointsPerTask = 15;  //maximum number of waypoints per task
   _capabilities.supDlWaypoint = true;        //supports downloading of waypoints?
   _capabilities.supUlWaypoint = true;        //supports uploading of waypoints?
+  _capabilities.supUlDeclaration = true;     //supports uploading of declarations?
   _capabilities.supDspRecorderType = true;   //supports display of recorder type
   _capabilities.supDspSerialNumber = true;   //supports display of serial number
-  _capabilities.supDspPilotName = true;
-  _capabilities.supDspGliderType = true;
-  _capabilities.supDspGliderID = true;
+  _capabilities.supDspPilotName = true;      //supports display of pilot name
+  _capabilities.supDspGliderType = true;     //supports display of glider type
+  _capabilities.supDspGliderID = true;       //supports display of glider ID
   _capabilities.supDlFlight = true;          //supports downloading of flights?
-  _capabilities.supSignedFlight = true;      //supports downloading in of signed flights?
+  // In fact we _only_ support signed files, so let's disable
+  // the "fast download" button, because it doesn't do anything:
+  _capabilities.supSignedFlight = false;     //supports downloading in of signed flights?
   portID = -1;
 }
 
@@ -357,11 +360,13 @@ int Cambridge::getBasicData(FR_BasicData& data)
   replysize = readReply("o 0", UPS_MODE, reply);
   if (replysize==TIMEOUT_ERROR) return FR_ERROR;
   _basicData.pilotName = extractString(reply,0,24);
+  // debugHex (reply,64);
 
   replysize = readReply("g 0", UPS_MODE, reply);
   if (replysize==TIMEOUT_ERROR) return FR_ERROR;
   _basicData.gliderType = extractString(reply,0,12);
   _basicData.gliderID = extractString(reply,12,12);
+  // debugHex (reply,64);
 
   _basicData.competitionID = QString("???");
   data = _basicData;
