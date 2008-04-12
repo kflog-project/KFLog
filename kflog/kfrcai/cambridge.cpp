@@ -146,6 +146,8 @@ Cambridge::Cambridge()
                                  bps19200 |
                                  bps38400 |
                                  bps57600 ; //  bps115200 doesn't work for me?!?
+  _capabilities.maxNrWaypoints = 9999;      //maximum number of waypoints
+  _capabilities.maxNrWaypointsPerTask = 15; //maximum number of waypoints per task
   _capabilities.supDlWaypoint = true;        //supports downloading of waypoints?
   _capabilities.supUlWaypoint = true;        //supports uploading of waypoints?
   _capabilities.supDspRecorderType = true;   //supports display of recorder type
@@ -614,7 +616,61 @@ int Cambridge::readWaypoints(QPtrList<Waypoint> *waypoints)
 
 int Cambridge::writeWaypoints(QPtrList<Waypoint> *waypoints)
 {
-  return FR_NOTSUPPORTED;
+  // go into command mode, then delete old waypoints and go to download mode
+  wb(STX);
+  wait_ms(100);
+  sendCommand("clear points");
+  wait_ms(1000);
+  sendCommand("download");
+  wait_ms(100);
+  for (int i=0; i<waypoints->count(); i++) {
+    QString name = waypoints->at(i)->description.left(12);
+    QString lat = lat2cai(waypoints->at(i)->origP.x());
+    QString lon = lon2cai(waypoints->at(i)->origP.y());
+    QString elv = QString().sprintf("%d", waypoints->at(i)->elevation);
+    QString  id = QString().sprintf("%d", i+1);
+    int attribute = CAI_TURNPOINT;
+    switch (waypoints->at(i)->type) {
+      case BaseMapElement::IntAirport:
+      case BaseMapElement::Airport:
+      case BaseMapElement::MilAirport:
+      case BaseMapElement::CivMilAirport:
+      case BaseMapElement::Airfield:
+      case BaseMapElement::Glidersite:
+      case BaseMapElement::UltraLight:
+        attribute = attribute|CAI_AIRFIELD;
+    }
+    QString att = QString().sprintf("%d", attribute);
+    QString caiwp = "C,," + lat + "," + lon + "," + elv + "," + id + "," + att + "," + name + "," + name;
+    qDebug(caiwp);
+    sendCommand(caiwp);
+    wait_ms(50);
+  }
+  sendCommand("c,-1");
+  wait_ms(50);
+  return FR_OK;
+}
+
+QString Cambridge::lat2cai(int lat)
+{
+  QString hemisphere = (lat>=0) ? "N" : "S";
+  lat = abs(lat);
+  int deg = lat/600000;
+  double min = (lat%600000)/10000.;
+  QString result = QString().sprintf("%02d%07.4lf", deg, min);
+  result += hemisphere;
+  return result;
+}
+
+QString Cambridge::lon2cai(int lon)
+{
+  QString hemisphere = (lon>=0) ? "E" : "W";
+  lon = abs(lon);
+  int deg = lon/600000;
+  double min = (lon%600000)/10000.;
+  QString result = QString().sprintf("%03d%07.4lf", deg, min);
+  result += hemisphere;
+  return result;
 }
 
 

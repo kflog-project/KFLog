@@ -309,7 +309,8 @@ DOWNLOAD MESSAGE C:   NAVPOINT
 
 Message format:
 
-     C,reserved,latitude,longitude,elevation,NPID,ATTR,NAME,REMARK
+     A: C,reserved,latitude,longitude,elevation,NPID,ATTR,NAME,REMARK
+     B: C,-1
 
 
 Here are the rules:
@@ -321,19 +322,22 @@ Here are the rules:
 
 3.    The reserved field is ignored.
 
-4.    Latitude is always ten characters:  DDMM.MMMMH, where H is 'N' or 'S',
+4.    Messages of format A define a navpoint. The navpoints are not saved
+      until the format B is sent.
+
+5.    Latitude is always ten characters:  DDMM.MMMMH, where H is 'N' or 'S',
       and must be in upper case.
 
-5.    Longitude is always eleven characters:  DDDMM.MMMMH, where H is 'E' or
+6.    Longitude is always eleven characters:  DDDMM.MMMMH, where H is 'E' or
       'W', and must be in upper case.
 
-6.    Elevation is in meters, whole numbers.
+7.    Elevation is in meters, whole numbers.
 
-7.    Navpoint ID (NPID) range is 1-9999.
+8.    Navpoint ID (NPID) range is 1-9999.
 
-8.    Attribute (ATTR) range is 1-65535.
+9.    Attribute (ATTR) range is 1-65535.
 
-9.    The "text" field begins after the seventh delimiter of the message and
+10.   The "text" field begins after the seventh delimiter of the message and
       contains a 12-character NAME, and a 12-character REMARK.  Any displayable
       character is legal in the NAME or REMARK. In the special case of points
       whose "Airspace" attribute bit is set, the REMARK field must contain
@@ -343,9 +347,9 @@ Here are the rules:
       Airspace attribute sets the radius to 25.0 nmi, the floor to zero, and
       the ceiling to 2134 meters.
 
-10.   The handling of missing data:
+11.   The handling of missing data:
 
-11.   Points carrying the Airspace bit may not have "short" NAME or REMARK
+12.   Points carrying the Airspace bit may not have "short" NAME or REMARK
       fields. Other points may have short fields, and the 302 will pad them
       with blanks to yield 12 characters for NAME and 12 characters for REMARK.
 
@@ -368,8 +372,6 @@ Bit   Meaning
 10-15 Reserved
 
 
-
-
 Example C messages:
 
 C,7,4404.8000N,07200.5000W,185,1,11,Dean Memorl
@@ -385,6 +387,7 @@ C,5,4456.4000N,07305.8000W,102,9,11,Franklin CtyRwy 1 S end
 C,6,4313.2000N,07242.8000W,240,10,11,N Windham   Rwy 9 W end
 C,8,4413.3000N,07248.0000W,442,11,11,Philips     Rwy 30 S end
 C,9,4346.7000N,07145.2000W,130,12,512,Restricted 025000002134
+C,-1
 
 
 DOWNLOAD MESSAGE D: DECLARATION
@@ -1289,6 +1292,9 @@ Changed to Rev 2.2
 March 25, 2003
 Add documentation for active pilot and margin height. Changed !W to !w
 
-April 11, 2008
-Fixed a couple of minor errors.
+October 25, 2007
+Fixed some minor errors.
 Fixed description of the error checking algorithm for large replies.
+
+April 11, 2008
+Fixed several errors.

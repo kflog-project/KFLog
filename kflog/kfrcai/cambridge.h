@@ -97,19 +97,39 @@ public:
   virtual int writeWaypoints(QPtrList<Waypoint> *waypoints);
 private:
   bool haveDatabase;
-  /*
-   * write byte
-   */
-  int wb(unsigned char c);
+
   /*
    * wait some time in ms
    */
   void wait_ms(const int);
-  unsigned char *readData(unsigned char *buf_p, int count);
+
+  /*
+   * write byte to logger
+   */
+  int wb(unsigned char c);
+
+  /*
+   * send a command to the logger
+   */
   int sendCommand(QString cmd);
+
+  /*
+   * read data from logger
+   */
+  unsigned char *readData(unsigned char *buf_p, int count);
   int readReply(QString cmd, int mode, unsigned char *reply);
+
+  /*
+   * calculate checksums to check the data received from the logger
+   */
   int calcChecksum8(unsigned char *buf, int count);
   int calcChecksum16(unsigned char *buf, int count);
+
+  /*
+   * convert latitude and longitude to the format needed for writing waypoints to the logger
+   */
+  QString lat2cai(int lat);
+  QString lon2cai(int lon);
 };
 
 #endif
