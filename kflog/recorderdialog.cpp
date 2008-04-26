@@ -147,35 +147,42 @@ void RecorderDialog::__addSettingsPage()
   apiID = new QLabel(settingsPage);
   apiID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   apiID->setBackgroundMode( PaletteLight );
+  apiID->setEnabled(false);
 
   lblSerID = new QLabel(i18n("Serial-Nr."), settingsPage);
   serID = new QLabel(i18n("no recorder connected"), settingsPage);
   serID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   serID->setBackgroundMode( PaletteLight );
+  serID->setEnabled(false);
 
   lblRecType = new QLabel(i18n("Recorder Type"), settingsPage);
   recType = new QLabel (settingsPage);
   recType->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   recType->setBackgroundMode( PaletteLight );
+  recType->setEnabled(false);
 
   lblPltName = new QLabel(i18n("Pilot Name"), settingsPage);
   pltName = new QLabel (settingsPage);
   pltName->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   pltName->setBackgroundMode( PaletteLight );
+  pltName->setEnabled(false);
 
   lblGldType = new QLabel(i18n("Glider Type"), settingsPage);
   gldType = new QLabel (settingsPage);
   gldType->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   gldType->setBackgroundMode( PaletteLight );
+  gldType->setEnabled(false);
 
   lblGldID = new QLabel(i18n("Glider ID"), settingsPage);
   gldID = new QLabel (settingsPage);
   gldID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   gldID->setBackgroundMode( PaletteLight );
+  gldID->setEnabled(false);
 
   compID = new QLabel (settingsPage);
   compID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   compID->setBackgroundMode( PaletteLight );
+  compID->setEnabled(false);
 
   sLayout->addMultiCellWidget(sGroup, 0, 6, 0, 7);
   sLayout->addWidget(new QLabel(i18n("Type"), settingsPage), 1, 1, AlignRight);
@@ -1382,6 +1389,8 @@ void RecorderDialog::slotDisablePages()
   waypointPage->setEnabled(false);
   taskPage->setEnabled(false);
   declarationPage->setEnabled(false);
+  //pilotPage->setEnabled(false);
+  //configPage->setEnabled(false);
 }
 
 /** Enable/Disable pages when (not) connected to a recorder */
@@ -1468,12 +1477,7 @@ void RecorderDialog::slotNewSpeed (int speed)
 /** No descriptions */
 void RecorderDialog::__addPilotPage()
 {
-
-  return; //We are not going to do that now, since there is nothing to display
-
-/*  pilotPage = addPage(i18n("Pilots"), i18n("List of pilots"),
-                      KGlobal::instance()->iconLoader()->loadIcon("pilot", KIcon::NoGroup, KIcon::SizeLarge));
-*/
+  return;
   pilotPage = addPage(i18n("Pilots"), i18n("List of pilots"),
                       KGlobal::instance()->iconLoader()->loadIcon("identity",
                                                                   KIcon::NoGroup,
@@ -1483,8 +1487,7 @@ void RecorderDialog::__addPilotPage()
 /** No descriptions */
 void RecorderDialog::__addConfigPage()
 {
-  return; //We are not going to do that now, since there is nothing to display
-
+  return;
   configPage = addPage(i18n("Configuration"), i18n("Recorder configuration"),
                        KGlobal::instance()->iconLoader()->loadIcon("configure",
                                                                    KIcon::Panel,
