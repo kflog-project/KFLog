@@ -128,10 +128,10 @@ class RecorderDialog : public KDialogBase
     void __addWaypointPage();
     /** */
     void fillTaskList();
-  /** No descriptions */
-  void __addConfigPage();
-  /** No descriptions */
-  void __addPilotPage();
+    /** No descriptions */
+    void __addConfigPage();
+    /** No descriptions */
+    void __addPilotPage();
     /** */
     QFrame* flightPage;
     /** */
