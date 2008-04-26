@@ -62,6 +62,10 @@ public:
    * get recorder basic data
    */
   virtual int getBasicData(FR_BasicData&);
+  /*
+   * get recorder config data
+   */
+  virtual int getConfigData(FR_ConfigData&);
   /**
    * Opens the recorder for serial communication. (Not implemented.)
    */

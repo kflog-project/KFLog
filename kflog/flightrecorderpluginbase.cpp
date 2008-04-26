@@ -48,7 +48,7 @@ FlightRecorderPluginBase::FlightRecorderPluginBase()
   _capabilities.maxNrWaypointsPerTask = 0;  //maximum number of waypoints per task
   _capabilities.maxNrPilots = 0;            //maximum number of pilots
   _capabilities.transferSpeeds = bps00000;  //supported transfer speeds (all)
-  
+
   _capabilities.supDlWaypoint = false;      //supports downloading of waypoints?
   _capabilities.supUlWaypoint = false;      //supports uploading of waypoints?
   _capabilities.supDlFlight = false;        //supports downloading of flights?
@@ -64,6 +64,16 @@ FlightRecorderPluginBase::FlightRecorderPluginBase()
   _capabilities.supDspGliderType = false;   //supports display of glider type
   _capabilities.supDspCompetitionID = false;//supports display of competition ID
   _capabilities.supAutoSpeed = false;       //supports automatic transfer speed detection
+
+  _capabilities.supEditGliderID = false;    //supports changing the glider ID
+  _capabilities.supEditGliderType = false;  //supports changing the glider type
+  _capabilities.supEditGliderPolar = false; //supports editing the glider polar
+  _capabilities.supEditUnits = false;       //supports changing units (speed, altitude, distance, ...)
+  _capabilities.supEditPilotName = false;   //supports changing the pilot name
+  _capabilities.supEditGoalAlt = false;     //supports changing arrival altitude
+  _capabilities.supEditArvRadius = false;   //supports changing arrival radius
+  _capabilities.supEditAudio = false;       //supports changing vario audio settings
+  _capabilities.supEditLogInterval = false; //supports changing logging intervals
 }
 
 

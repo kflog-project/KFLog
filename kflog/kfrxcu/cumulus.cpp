@@ -162,6 +162,11 @@ int Cumulus::getBasicData(FR_BasicData& data)
   return FR_OK;
 }
 
+int Cumulus::getConfigData(FR_ConfigData& data)
+{
+  return FR_NOTSUPPORTED;
+}
+
 /**
  * Opens the recorder for other communication.
  */

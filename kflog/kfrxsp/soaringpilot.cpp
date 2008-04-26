@@ -399,6 +399,11 @@ int SoaringPilot::getBasicData(FR_BasicData& data)
   return FR_OK;
 }
 
+int SoaringPilot::getConfigData(FR_ConfigData& data)
+{
+  return FR_NOTSUPPORTED;
+}
+
 /**
  * Opens the recorder for serial communication.
  */

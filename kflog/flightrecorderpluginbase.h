@@ -55,7 +55,7 @@
  * </pre>
  * as implementation of the not supported memberfunctions.
  */
-    
+
 class FlightRecorderPluginBase:public QObject {
 Q_OBJECT
 public: 
@@ -113,6 +113,16 @@ public:
     bool supDspGliderType;   //supports display of glider type
     bool supDspCompetitionID;//supports display of competition ID
     bool supAutoSpeed;       //supports automatic transfer speed detection
+
+    bool supEditGliderID;    //supports changing the glider ID
+    bool supEditGliderType;  //supports changing the glider type
+    bool supEditGliderPolar; //supports editing the glider polar
+    bool supEditUnits;       //supports changing units (speed, altitude, distance, ...)
+    bool supEditPilotName;   //supports changing the pilot name
+    bool supEditGoalAlt;     //supports changing arrival altitude
+    bool supEditArvRadius;   //supports changing arrival radius
+    bool supEditAudio;       //supports changing vario audio settings
+    bool supEditLogInterval; //supports changing logging intervals
   };
 
   struct FR_BasicData
@@ -124,7 +134,30 @@ public:
     QString gliderID;
     QString competitionID;
   };
-  
+
+  struct FR_ConfigData
+  {
+    /* polar data: */
+    int LD;              // best L/D
+    int speedLD;         // speed at best L/D in km/h
+    int speedV2;         // speed at 2 m/s sink in km/h
+    int dryweight;       // dry weight of glider in kg
+    int maxwater;        // max water ballast in liters
+
+    /* instrument settings: */
+    int sloginterval;    // close logging interval in seconds
+    int lloginterval;    // enroute logging interval in seconds
+    int gaptime;         // time between flights in minutes
+    int stfdeadband;     // speed-to-fly dead band in 10ths of m/s
+    int compensation;    // total energy, super netto, netto
+    int minloggingspd;   // min speed to force flight logging in 10ths of knots
+    bool sinktone;       // sink tone
+    int approachradius;  // approach radius in meters
+    int arrivalradius;   // arrival radius in meters
+    int goalalt;         // goal altitude in 10ths of meters
+    unsigned char units; // units (vario, altitude, temperatur, pressure, distance, speed)
+  };
+
   FlightRecorderPluginBase();
   virtual ~FlightRecorderPluginBase();
 
@@ -147,7 +180,11 @@ public:
   /**
    * get recorder basic data
    */
-  virtual int getBasicData(FR_BasicData&) = 0;
+  virtual int getBasicData(FR_BasicData&)=0;
+  /**
+   * get recorder config data
+   */
+  virtual int getConfigData(FR_ConfigData&)=0;
   /**
    * Opens the recorder for serial communication.
    */
@@ -195,12 +232,12 @@ public:
    * _errorinfo is reset afterwards.
    */
   QString lastError();
-  
+
   /**
    * Sets a pointer to the parent widget (recorder dialog).
    */
   void setParent(QWidget * _parent);
-    
+
 protected:
   /**
    * Is the flightrecorder connected?
@@ -219,16 +256,21 @@ protected:
   FR_BasicData _basicData;
 
   /**
+   * The flightrecorders config data.
+   */
+  FR_ConfigData _configdata;
+
+  /**
    * Optionally contains additional info about an error.
    */
   QString _errorinfo; 
-   
+
   /**
    * Contains a reference to the parent widget. This is needed to make KDE's KIO mechanism
    * work properly.
    */
   QWidget* _parent;
-   
+
 signals:
   /**
    * May be emitted when transfering data

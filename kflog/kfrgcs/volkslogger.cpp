@@ -183,6 +183,11 @@ int Volkslogger::getBasicData(FR_BasicData& data)
   return FR_OK;
 }
 
+int Volkslogger::getConfigData(FR_ConfigData& data)
+{
+  return FR_NOTSUPPORTED;
+}
+
 int Volkslogger::openRecorder(const QString& pName, int baud)
 {
   int err;

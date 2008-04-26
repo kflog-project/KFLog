@@ -59,6 +59,10 @@ public:
     * get basic flight recorder data
     */
   int getBasicData(FR_BasicData&);
+  /*
+   * get recorder config data
+   */
+  virtual int getConfigData(FR_ConfigData&);
   /**
    * Opens the recorder for serial communication. (Not implemented.)
    */

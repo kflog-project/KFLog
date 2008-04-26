@@ -555,6 +555,11 @@ int Filser::getBasicData(FR_BasicData& data)
   return rc;
 }
 
+int Filser::getConfigData(FR_ConfigData& data)
+{
+  return FR_NOTSUPPORTED;
+}
+
 int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileName)
 {
   int rc;

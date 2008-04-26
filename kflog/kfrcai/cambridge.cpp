@@ -360,17 +360,22 @@ int Cambridge::getBasicData(FR_BasicData& data)
   replysize = readReply("o 0", UPS_MODE, reply);
   if (replysize==TIMEOUT_ERROR) return FR_ERROR;
   _basicData.pilotName = extractString(reply,0,24);
-  // debugHex (reply,64);
+  debugHex (reply,64);
 
   replysize = readReply("g 0", UPS_MODE, reply);
   if (replysize==TIMEOUT_ERROR) return FR_ERROR;
   _basicData.gliderType = extractString(reply,0,12);
   _basicData.gliderID = extractString(reply,12,12);
-  // debugHex (reply,64);
+  debugHex (reply,64);
 
   _basicData.competitionID = QString("???");
   data = _basicData;
   return FR_OK;
+}
+
+int Cambridge::getConfigData(FR_ConfigData& data)
+{
+  return FR_NOTSUPPORTED;
 }
 
 int Cambridge::getFlightDir(QPtrList<FRDirEntry>* dirList)

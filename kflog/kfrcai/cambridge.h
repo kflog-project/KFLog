@@ -52,6 +52,10 @@ public:
    */
   virtual int getBasicData(FR_BasicData&);
   /*
+   * get recorder config data
+   */
+  virtual int getConfigData(FR_ConfigData&);
+  /*
    * Opens the recorder for serial communication.
    */
   virtual int openRecorder(const QString& portName, int baud);
