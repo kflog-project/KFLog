@@ -91,6 +91,14 @@ class RecorderDialog : public KDialogBase
      */
     void slotReadDatabase();
     /**
+     * Reads the data on things like glider polar and variometer settings
+     */
+    void slotReadConfig();
+    /**
+     * Reads the data on things like glider polar and variometer settings
+     */
+    void slotWriteConfig();
+    /**
      * Reads the waypointlist from the recorder
      */
     void slotReadWaypoints();
@@ -240,6 +248,9 @@ class RecorderDialog : public KDialogBase
     
     QPushButton* cmdDownloadTasks;
     QPushButton* cmdUploadTasks;
+
+    QPushButton* cmdDownloadConfig;
+    QPushButton* cmdUploadConfig;
   /**  */
   bool isConnected;
   FlightRecorderPluginBase * activeRecorder;

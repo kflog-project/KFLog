@@ -58,6 +58,15 @@
 #define CAI_WAYPOINT       256
 #define CAI_AIRSPACE       512
 
+// Units for the variometer setting use bit arrays
+#define CAI_UNIT_VARIO_KTS        1
+#define CAI_UNIT_ALT_FT           2
+#define CAI_UNIT_TEMP_F           4 
+#define CAI_UNIT_BARO_INHG        8
+#define CAI_UNIT_DIST_NM         16
+#define CAI_UNIT_DIST_SM         32
+#define CAI_UNIT_SPD_KTS         64
+#define CAI_UNIT_SPD_MPH        128
 
 const char* c36 = "0123456789abcdefghijklmnopqrstuvwxyz";
 
@@ -160,6 +169,8 @@ Cambridge::Cambridge()
   // In fact we _only_ support signed files, so let's disable
   // the "fast download" button, because it doesn't do anything:
   _capabilities.supSignedFlight = false;     //supports downloading in of signed flights?
+  //
+  _capabilities.supEditAudio = true;
   portID = -1;
 }
 
@@ -360,22 +371,77 @@ int Cambridge::getBasicData(FR_BasicData& data)
   replysize = readReply("o 0", UPS_MODE, reply);
   if (replysize==TIMEOUT_ERROR) return FR_ERROR;
   _basicData.pilotName = extractString(reply,0,24);
-  debugHex (reply,64);
+  //debugHex (reply,64);
 
   replysize = readReply("g 0", UPS_MODE, reply);
   if (replysize==TIMEOUT_ERROR) return FR_ERROR;
   _basicData.gliderType = extractString(reply,0,12);
   _basicData.gliderID = extractString(reply,12,12);
-  debugHex (reply,64);
+  //debugHex (reply,64);
 
-  _basicData.competitionID = QString("???");
+  _basicData.competitionID = QString("");
   data = _basicData;
   return FR_OK;
 }
 
 int Cambridge::getConfigData(FR_ConfigData& data)
 {
-  return FR_NOTSUPPORTED;
+  unsigned char reply[2048];
+  int replysize = 0;
+
+  // go into command mode, then switch to upload mode
+  wb(STX);
+  wait_ms(100);
+  sendCommand("upload");
+  wait_ms(100);
+
+  replysize = readReply("g 0", UPS_MODE, reply);
+  if (replysize==TIMEOUT_ERROR) return FR_ERROR;
+  _configData.LD        = extractInteger(reply,24,1);
+  _configData.speedLD   = extractInteger(reply,25,1);
+  _configData.speedV2   = extractInteger(reply,26,1);
+  _configData.dryweight = extractInteger(reply,28,2);
+  _configData.maxwater  = extractInteger(reply,30,2);
+
+  //debugHex (reply,64);
+  qDebug("_configData.LD             %d", _configData.LD       );
+  qDebug("_configData.speedLD        %d", _configData.speedLD  );
+  qDebug("_configData.speedV2        %d", _configData.speedV2  );
+  qDebug("_configData.dryweight      %d", _configData.dryweight);
+  qDebug("_configData.maxwater       %d", _configData.maxwater );
+
+  replysize = readReply("o 0", UPS_MODE, reply);
+  if (replysize==TIMEOUT_ERROR) return FR_ERROR;
+  _basicData.pilotName       = extractString(reply,0,24);
+  _configData.sinktone       = (bool)extractInteger(reply,26,1);
+  _configData.totalenergyfg  = (bool)extractInteger(reply,27,1);
+  _configData.fgdiffalt      = (bool)extractInteger(reply,28,1);
+  _configData.approachradius = extractInteger(reply,30,2);
+  _configData.arrivalradius  = extractInteger(reply,32,2);
+  _configData.sloginterval   = extractInteger(reply,34,2);
+  _configData.floginterval   = extractInteger(reply,36,2);
+  _configData.gaptime        = extractInteger(reply,38,2);
+  _configData.minloggingspd  = extractInteger(reply,40,2);
+  _configData.stfdeadband    = extractInteger(reply,42,1);
+  _configData.units          = extractInteger(reply,44,1);
+  _configData.goalalt        = extractInteger(reply,48,2);
+
+  //debugHex (reply,64);
+  qDebug("_configData.sinktone       %d", _configData.sinktone      );
+  qDebug("_configData.totalenergyfg  %d", _configData.totalenergyfg );
+  qDebug("_configData.fgdiffalt      %d", _configData.fgdiffalt     );
+  qDebug("_configData.approachradius %d", _configData.approachradius);
+  qDebug("_configData.arrivalradius  %d", _configData.arrivalradius );
+  qDebug("_configData.sloginterval   %d", _configData.sloginterval  );
+  qDebug("_configData.floginterval   %d", _configData.floginterval  );
+  qDebug("_configData.gaptime        %d", _configData.gaptime       );
+  qDebug("_configData.minloggingspd  %d", _configData.minloggingspd );
+  qDebug("_configData.stfdeadband    %d", _configData.stfdeadband   );
+  qDebug("_configData.units          %d", _configData.units         );
+  qDebug("_configData.goalalt        %d", _configData.goalalt       );
+
+  data = _configData;
+  return FR_OK;
 }
 
 int Cambridge::getFlightDir(QPtrList<FRDirEntry>* dirList)

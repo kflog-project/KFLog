@@ -114,11 +114,11 @@ public:
     bool supDspCompetitionID;//supports display of competition ID
     bool supAutoSpeed;       //supports automatic transfer speed detection
 
+    bool supEditPilotName;   //supports changing the pilot name
     bool supEditGliderID;    //supports changing the glider ID
     bool supEditGliderType;  //supports changing the glider type
     bool supEditGliderPolar; //supports editing the glider polar
     bool supEditUnits;       //supports changing units (speed, altitude, distance, ...)
-    bool supEditPilotName;   //supports changing the pilot name
     bool supEditGoalAlt;     //supports changing arrival altitude
     bool supEditArvRadius;   //supports changing arrival radius
     bool supEditAudio;       //supports changing vario audio settings
@@ -145,17 +145,19 @@ public:
     int maxwater;        // max water ballast in liters
 
     /* instrument settings: */
-    int sloginterval;    // close logging interval in seconds
-    int lloginterval;    // enroute logging interval in seconds
-    int gaptime;         // time between flights in minutes
-    int stfdeadband;     // speed-to-fly dead band in 10ths of m/s
-    int compensation;    // total energy, super netto, netto
-    int minloggingspd;   // min speed to force flight logging in 10ths of knots
     bool sinktone;       // sink tone
+    bool totalenergyfg;  // total energy final glide
+    bool fgdiffalt;      // final glide altitude difference
     int approachradius;  // approach radius in meters
     int arrivalradius;   // arrival radius in meters
-    int goalalt;         // goal altitude in 10ths of meters
+    int sloginterval;    // enroute logging interval in seconds
+    int floginterval;    // close logging interval in seconds
+    int gaptime;         // time between flights in minutes
+    int minloggingspd;   // min speed to force flight logging in 10ths of knots
+    int stfdeadband;     // speed-to-fly dead band in 10ths of m/s
     unsigned char units; // units (vario, altitude, temperatur, pressure, distance, speed)
+    int goalalt;         // goal altitude in 10ths of meters
+    int compensation;    // total energy, super netto, netto
   };
 
   FlightRecorderPluginBase();
@@ -258,7 +260,7 @@ protected:
   /**
    * The flightrecorders config data.
    */
-  FR_ConfigData _configdata;
+  FR_ConfigData _configData;
 
   /**
    * Optionally contains additional info about an error.

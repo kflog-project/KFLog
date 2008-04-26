@@ -738,8 +738,7 @@ void RecorderDialog::slotReadFlightList()
 
   statusDlg->show();
 
-  // Jetzt muss das Flugverzeichnis vom Logger gelesen werden!
-  // Now we need to read the flightdeclaration from the logger!
+  // Now we need to read the flight list from the logger!
 
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
   flightList->clear();
@@ -1383,6 +1382,23 @@ void RecorderDialog::slotReadDatabase()
   }
 }
 
+void RecorderDialog::slotReadConfig()
+{
+  if (!activeRecorder) return;
+  FlightRecorderPluginBase::FR_Capabilities cap = activeRecorder->capabilities();
+
+  FlightRecorderPluginBase::FR_ConfigData dat;
+  int ret = activeRecorder->getConfigData(dat);
+  if (ret == FR_OK)
+  {
+  }
+}
+
+void RecorderDialog::slotWriteConfig()
+{
+  qDebug("slotWriteConfig: Not implemented yet");
+}
+
 void RecorderDialog::slotDisablePages()
 {
   flightPage->setEnabled(false);
@@ -1390,7 +1406,7 @@ void RecorderDialog::slotDisablePages()
   taskPage->setEnabled(false);
   declarationPage->setEnabled(false);
   //pilotPage->setEnabled(false);
-  //configPage->setEnabled(false);
+  configPage->setEnabled(false);
 }
 
 /** Enable/Disable pages when (not) connected to a recorder */
@@ -1402,7 +1418,7 @@ void RecorderDialog::slotEnablePages()
   taskPage->setEnabled(false);
   declarationPage->setEnabled(false);
   //pilotPage->setEnabled(false);
-  //configPage->setEnabled(false);
+  configPage->setEnabled(false);
 
   //Then, if there is an active recorder, and that recorder is connected,
   //  selectively re-activate them.
@@ -1435,7 +1451,18 @@ void RecorderDialog::slotEnablePages()
     }
 
     //pilotpage  -  not available yet
-    //configpage -  not available yet
+
+    //configpage
+    if (cap.supEditGliderID     ||
+        cap.supEditGliderType   ||
+        cap.supEditGliderPolar  ||
+        cap.supEditUnits        ||
+        cap.supEditGoalAlt      ||
+        cap.supEditArvRadius    ||
+        cap.supEditAudio        ||
+        cap.supEditLogInterval) {
+      configPage->setEnabled(true);
+    }
   }
 
 }
@@ -1477,7 +1504,7 @@ void RecorderDialog::slotNewSpeed (int speed)
 /** No descriptions */
 void RecorderDialog::__addPilotPage()
 {
-  return;
+  return; // We don't need the page (yet).
   pilotPage = addPage(i18n("Pilots"), i18n("List of pilots"),
                       KGlobal::instance()->iconLoader()->loadIcon("identity",
                                                                   KIcon::NoGroup,
@@ -1487,9 +1514,30 @@ void RecorderDialog::__addPilotPage()
 /** No descriptions */
 void RecorderDialog::__addConfigPage()
 {
-  return;
   configPage = addPage(i18n("Configuration"), i18n("Recorder configuration"),
                        KGlobal::instance()->iconLoader()->loadIcon("configure",
                                                                    KIcon::Panel,
                                                                    KIcon::SizeLarge));
+
+  QGridLayout* configLayout = new QGridLayout(configPage, 16, 8, 10, 1);
+
+  QGroupBox* gGroup = new QGroupBox(configPage, "gliderGroup");
+  gGroup->setTitle(i18n("Glider Settings") + ":");
+
+  QGroupBox* vGroup = new QGroupBox(configPage, "varioGroup");
+  vGroup->setTitle(i18n("Variometer Settings") + ":");
+
+  configLayout->addMultiCellWidget(gGroup, 0, 6, 0, 7);
+  configLayout->addMultiCellWidget(vGroup, 7, 14, 0, 7);
+
+//  configLayout->addWidget(new QLabel(i18n("Type"), configPage), 1, 0, AlignRight);
+
+  cmdUploadConfig = new QPushButton(i18n("write config to recorder"), configPage);
+  connect(cmdUploadConfig, SIGNAL(clicked()), SLOT(slotWriteConfig()));
+  configLayout->addWidget(cmdUploadConfig, 15, 0);
+
+  cmdDownloadConfig = new QPushButton(i18n("read config from recorder"), configPage);
+  connect(cmdDownloadConfig, SIGNAL(clicked()), SLOT(slotReadConfig()));
+  configLayout->addWidget(cmdDownloadConfig, 15, 4);
+
 }
