@@ -22,7 +22,7 @@
 #include "resource.h"
 
 
-static const char *timeFormat[4] = {"%2d:%2d", "%2d:%2d:%2d", "%02d:%02d", "%02d:%02d:%02d"};
+static const char *timeFormat[6] = {"%2d:%2d", "%2d:%2d:%2d", "%02d:%02d", "%02d:%02d:%02d", "%2d:%02d", "%2d:%02d:%02d"};
 
 static const char *monthAbb[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
@@ -132,7 +132,7 @@ QString printTime(time_t time, bool isZero, bool isSecond)
 }
 
 
-QString printTime(int time, bool isZero, bool isSecond)
+QString printTime(int time, bool isZero, bool isSecond, bool noZeroHour)
 {
   QString tmpbuf;
 
@@ -140,7 +140,9 @@ QString printTime(int time, bool isZero, bool isSecond)
   int mm = (time - (hh * 3600)) / 60;
   int ss = time - (hh * 3600) - mm * 60;
 
-  return tmpbuf.sprintf(timeFormat[isSecond + 2*isZero], hh, mm, ss);
+  if(noZeroHour==true) isZero = true;
+
+  return tmpbuf.sprintf(timeFormat[isSecond + 2*isZero + 2*noZeroHour], hh, mm, ss);
 }
 
 time_t timeToDay(const int year, const int month, const int day, const char *monabb)

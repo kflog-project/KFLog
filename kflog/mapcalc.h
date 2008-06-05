@@ -72,7 +72,7 @@ QString printPos(int coord, bool isLat = true);
 QString printTime(time_t time, bool isZero = false, bool isSecond = true);
 
 // Conversion for time delays
-QString printTime(int time, bool isZero = false, bool isSecond = true);
+QString printTime(int time, bool isZero = false, bool isSecond = true, bool noZeroHour = false);
 
 // Compute the time_t equivalent from  year [1970 - ...], month  [ 1-12], day [1-31]
 time_t timeToDay(const int year, const int month, const int day, const char *monabb = NULL);

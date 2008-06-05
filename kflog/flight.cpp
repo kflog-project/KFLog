@@ -11,6 +11,8 @@
 **                :  1999/10/03 Some fixes by Jan Max Walter Krueger
 **                :  ( jkrueger@physics.otago.ac.nz )
 **
+**                :  2008 Improvements by Constantijn Neeteson
+**
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
 **
@@ -146,13 +148,13 @@ void Flight::__setOptimizeRange(unsigned int start[], unsigned int stop[],
    * Die benutzten Abschnitte müssen komplett innerhalb des Fluges liegen.
    * Daher werden sie hier ggf. verschoben.
    */
-  start[0] = MAX(idList[id], step) - step;
+  start[0] = std::max(idList[id], step) - step;
   start[1] = idList[id + 1] - step;
-  start[2] = MIN(idList[id + 2] + step, route.count()) - ( 2 * step );
+  start[2] = std::min(idList[id + 2] + step, route.count()) - ( 2 * step );
 
   stop[0] = start[0] + ( 2 * step );
   stop[1] = start[1] + ( 2 * step );
-  stop[2] = MIN(start[2] + ( 2 * step ), route.count() - 1);
+  stop[2] = std::min(start[2] + ( 2 * step ), route.count() - 1);
 }
 
 double Flight::__calculateOptimizePoints(flightPoint* fp1,
@@ -173,70 +175,84 @@ void Flight::__flightState()
   int s_point = -1;
   int e_point = -1;
 
-  int weiter = 0;
+  int proceed = 0;
+  unsigned int delta_T, m;
+  float bearing;
 
-  int dreh = 0;
+  float circles = 0;
+  float circles_abs = 0;
 
   for(unsigned int n = 0; n < route.count(); n++)
     {
-      // Überprüfen ob man rausgefallen ist !!!
-
-      // Bedingungen für Kreisflug müssen noch geprüft werden !!!
-      // Bei kleinen Zeitabständen extra Abfrage
-      // Noch mehr Zeitabschnitte einfügen ab ca 25° - 35° Kursänderung
-      if(( fabs(route.at(n)->bearing) > route.at(n)->dT * M_PI / 20.0))
-        {
-          weiter = 0;
-          // Drehrichtung
-          if(route.at(n)->bearing > 0)
-              dreh++;
-          else
-              dreh--;
+      // calculate the change in bearing over 10 sec.
+      delta_T = 0;
+      bearing = 0;
+      m = n;
+      while(delta_T<10)
+      {
+        delta_T += route.at(m)->dT;
+        bearing += route.at(m)->bearing;
+        m++;
+        if(m==route.count())
+          break;
+      }
+      // if the change in bearing is more than 65 deg in the next 10 sec., the glider will be in a thermal
+      if(fabs(bearing *180*10/(M_PI*delta_T)) > 65)
+      {
+          proceed = 0;
+          // Turn direction (Drehrichtung)
+          // filter large/unrealistic bearing changes: include only changes in bearing which are smaller than 22.5 deg/sec
+          if(fabs(route.at(n)->bearing*180/(M_PI*route.at(n)->dT)) < 22.5)
+          {
+            circles += route.at(n)->bearing;
+            circles_abs += fabs(route.at(n)->bearing);
+          }
 
           // Kreisflug eingeleitet
           if(s_point < 0)
               s_point = n;
-        }
+      }
       else if(s_point > -1 &&
-              route.at(n)->time - route.at(n - weiter)->time  >= 20 &&
-              route.at(n - weiter)->time - route.at(s_point)->time > 20)
-        {
-          // Zeit eines Kreisfluges mindestens 20s
-          // Zeit zwischen zwei Kreisflügen höchstens 20s
+              route.at(n)->time - route.at(n - proceed)->time  >= 20 &&
+              route.at(n - proceed)->time - route.at(s_point)->time > 45)
+      {
+          // Circling time at least 20 s (Zeit eines Kreisfluges mindestens 20s)
+          // Time between two thermals at most 20 s (Zeit zwischen zwei Kreisflügen höchstens 20s)
 
-          // Endpunkt des Kreisfluges
-
-          e_point = n - weiter - 1;
+          // Endpoint of the thermal flight (Endpunkt des Kreisfluges)
+          e_point = n - proceed - 1;
 
           // Punkte zwischen s_point und e_point setzen
           for(int n = s_point; n <=  e_point; n++)
             {
-              if((e_point - s_point) * 0.8 <= dreh)
-                  route.at(n)->f_state = Flight::RightTurn;
-              else if((e_point - s_point) * 0.8 >= - dreh)
-                  route.at(n)->f_state = Flight::LeftTurn;
+              // if 80% of the turns are to the right, then the thermal flight will be to the right
+              if(circles>circles_abs*0.8)
+                route.at(n)->f_state = Flight::RightTurn;
+              else if(circles<-circles_abs*0.8)
+                route.at(n)->f_state = Flight::LeftTurn;
               else
-                  // vermischt
-                  route.at(n)->f_state = Flight::MixedTurn;
+                route.at(n)->f_state = Flight::MixedTurn;
             }
           s_point = - 1;
           e_point = - 1;
-          dreh = 0;
-          weiter = 0;
-        }
+          circles = 0;
+          circles_abs = 0;
+          proceed = 0;
+      }
       else
-        {
-          if( (route.at(n)->time - route.at(n - weiter)->time)  >= 20)
+      {
+          if( (route.at(n)->time - route.at(n - proceed)->time)  >= 20)
             {
               // Kreisflug war unter 20s und wird daher nicht gewertet
               s_point = - 1;
               e_point = - 1;
-              dreh = 0;
-              weiter = 0;
+              circles = 0;
+              circles_abs = 0;
+              proceed = 0;
             }
           // 4 Punkte warten bis wir endgültig rausgehen ;-)
-          weiter++;
-        }
+          proceed++;
+      }
     }
 }
 
@@ -248,19 +264,19 @@ unsigned int Flight::__calculateBestTask(unsigned int start[],
   double temp = 0;
   flightPoint *pointA, *pointB, *pointC;
 
-  for(unsigned int loopA = start[0]; loopA <= MIN(stop[0], route.count() - 1); loopA += step)
+  for(unsigned int loopA = start[0]; loopA <= std::min(stop[0], route.count() - 1); loopA += step)
     {
       pointA = route.at(loopA);
 
       if(isTotal) start[1] = loopA + step;
 
-      for(unsigned int loopB = start[1]; loopB <= MIN(stop[1], route.count() - 1); loopB += step)
+      for(unsigned int loopB = start[1]; loopB <= std::min(stop[1], route.count() - 1); loopB += step)
         {
           pointB = route.at(loopB);
 
           if(isTotal) start[2] = loopB + step;
 
-          for(unsigned int loopC = start[2]; loopC <= MIN(stop[2], route.count() - 1); loopC += step)
+          for(unsigned int loopC = start[2]; loopC <= std::min(stop[2], route.count() - 1); loopC += step)
             {
               pointC = route.at(loopC);
               temp = __calculateOptimizePoints(pointA, pointB, pointC);
@@ -341,10 +357,10 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
 
       curPointB = glMapMatrix->print(pointB->projP);
 
-      bBoxFlight.setLeft(MIN(curPointB.x(), bBoxFlight.left()));
-      bBoxFlight.setTop(MAX(curPointB.y(), bBoxFlight.top()));
-      bBoxFlight.setRight(MAX(curPointB.x(), bBoxFlight.right()));
-      bBoxFlight.setBottom(MIN(curPointB.y(), bBoxFlight.bottom()));
+      bBoxFlight.setLeft(std::min(curPointB.x(), bBoxFlight.left()));
+      bBoxFlight.setTop(std::max(curPointB.y(), bBoxFlight.top()));
+      bBoxFlight.setRight(std::max(curPointB.x(), bBoxFlight.right()));
+      bBoxFlight.setBottom(std::min(curPointB.y(), bBoxFlight.bottom()));
 
       QPen drawP = glConfig->getDrawPen(pointB);
       drawP.setCapStyle(Qt::SquareCap);
@@ -398,10 +414,10 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
       curPointB = glMapMatrix->map(pointB->projP);
 
-      bBoxFlight.setLeft(MIN(curPointB.x(), bBoxFlight.left()));
-      bBoxFlight.setTop(MAX(curPointB.y(), bBoxFlight.top()));
-      bBoxFlight.setRight(MAX(curPointB.x(), bBoxFlight.right()));
-      bBoxFlight.setBottom(MIN(curPointB.y(), bBoxFlight.bottom()));
+      bBoxFlight.setLeft(std::min(curPointB.x(), bBoxFlight.left()));
+      bBoxFlight.setTop(std::max(curPointB.y(), bBoxFlight.top()));
+      bBoxFlight.setRight(std::max(curPointB.x(), bBoxFlight.right()));
+      bBoxFlight.setBottom(std::min(curPointB.y(), bBoxFlight.bottom()));
 
       QPen drawP = glConfig->getDrawPen(pointB);
       drawP.setCapStyle(Qt::SquareCap);
@@ -510,7 +526,7 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
   float s_height_pos = 0, s_height_neg = 0;
 
   //  noch abchecken, dass end <= fluglänge
-  end = MIN(route.count() - 1, end);
+  end = std::min(route.count() - 1, end);
 
   for(unsigned int n = start; n < end; n++)
     {
@@ -554,83 +570,124 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
     QStrList result;
     QString text;
 
-    // Kreisflug
-    text.sprintf("%s (%.1f %%)", (const char*)printTime(kurbel_r),
-        (float)kurbel_r /
-            (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
+    // Kreisflug / Circling
+    //index: 0 right turn time
+    text.sprintf("<small>%.1f%%</small> %s",
+                 (float) kurbel_r / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0,
+                 (const char*)printTime(kurbel_r, true, true, true) );
     result.append(text);
-    text.sprintf("%s (%.1f %%)", (const char*)printTime(kurbel_l),
-        (float)kurbel_l /
-            (float)( route.at(end)->time - route.at(start)->time) * 100.0);
+    //index: 1 left turn time
+    text.sprintf("<small>%.1f%%</small> %s",
+                 (float) kurbel_l / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0,
+                 (const char*)printTime(kurbel_l, true, true, true) );
     result.append(text);
-    text.sprintf("%s (%.1f %%)", (const char*)printTime(kurbel_v),
-        (float)kurbel_v /
-            (float)(route.at(end)->time - route.at(start)->time ) * 100.0);
+    //index: 2 mixed turn time
+    text.sprintf("<small>%.1f%%</small> %s",
+                 (float) kurbel_v / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0,
+                 (const char*)printTime(kurbel_v, true, true, true) );
     result.append(text);
-    text.sprintf("%s (%.1f %%)",
-        (const char*)printTime((kurbel_r + kurbel_l + kurbel_v)),
-        (float)(kurbel_r + kurbel_l + kurbel_v) /
-            (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
+    //index: 3 total turn time
+    text.sprintf("<small>%.1f%%</small> %s",
+                 (float)(kurbel_r + kurbel_l + kurbel_v) / (float)( route.at(end)->time - route.at(start)->time ) * 100.0,
+                 (const char*)printTime((kurbel_r + kurbel_l + kurbel_v), true, true, true) );
     result.append(text);
 
+    //index: 4 right turn vario
     text.sprintf("%.2f m/s",(k_height_pos_r + k_height_neg_r) /
-             (route.at(end)->time - route.at(start)->time));
+             (kurbel_r));
     result.append(text);
+    //index: 5 left turn vario
     text.sprintf("%.2f m/s",(k_height_pos_l + k_height_neg_l) /
-             (route.at(end)->time - route.at(start)->time));
+             (kurbel_l));
     result.append(text);
+    //index: 6 mixed turn vario
     text.sprintf("%.2f m/s",(k_height_pos_v + k_height_neg_v) /
-             (route.at(end)->time - route.at(start)->time));
+             (kurbel_v));
     result.append(text);
+    //index: 7 total turn vario
     text.sprintf("%.2f m/s",
              (k_height_pos_r + k_height_pos_l + k_height_pos_v +
               k_height_neg_r + k_height_neg_l + k_height_neg_v) /
-             (route.at(end)->time - route.at(start)->time));
+             (kurbel_r + kurbel_l + kurbel_v));
     result.append(text);
 
+    //index: 8 right turn dH
     text.sprintf("%.0f m",k_height_pos_r);
     result.append(text);
+    //index: 9 left turn dH
     text.sprintf("%.0f m",k_height_pos_l);
     result.append(text);
+    //index: 10 mixed turn dH
     text.sprintf("%.0f m",k_height_pos_v);
     result.append(text);
+    //index: 11 total turn dH
     text.sprintf("%.0f m",k_height_pos_r + k_height_pos_l + k_height_pos_v);
     result.append(text);
+    //index: 12 right turn -dH
     text.sprintf("%.0f m",k_height_neg_r);
     result.append(text);
+    //index: 13 left turn -dH
     text.sprintf("%.0f m",k_height_neg_l);
     result.append(text);
+    //index: 14 mixed turn -dH
     text.sprintf("%.0f m",k_height_neg_v);
     result.append(text);
+    //index: 15 total turn -dH
     text.sprintf("%.0f m",k_height_neg_r + k_height_neg_l + k_height_neg_v);
     result.append(text);
-
-    // Strecke
-    text.sprintf("%.0f",distance / (s_height_pos + s_height_pos));
+    //index: 16 right turn dH netto
+    text.sprintf("%.0f m",k_height_pos_r + k_height_neg_r);
     result.append(text);
+    //index: 17 left turn dH netto
+    text.sprintf("%.0f m",k_height_pos_l + k_height_neg_l);
+    result.append(text);
+    //index: 18 mixed turn dH netto
+    text.sprintf("%.0f m",k_height_pos_v + k_height_neg_v);
+    result.append(text);
+    //index: 19 total turn dH netto
+    text.sprintf("%.0f m",k_height_pos_r + k_height_pos_l + k_height_pos_v  +  k_height_neg_r + k_height_neg_l + k_height_neg_v);
+    result.append(text);
+
+    // Strecke / Straight
+    //index: 20 straight L/D
+    text.sprintf("%.0f",distance / (s_height_pos + s_height_neg) *-1);
+    result.append(text);
+    //index: 21 straight speed
     text.sprintf("%.1f km/h",distance /
           ((float)(route.at(end)->time - route.at(start)->time -
           (kurbel_r + kurbel_l + kurbel_v))) * 3.6);
     result.append(text);
+    //index: 22 straight dH
     text.sprintf("%.0f m",s_height_pos);
     result.append(text);
+    //index: 23 straight -dH
     text.sprintf("%.0f m",s_height_neg);
     result.append(text);
+    //index: 24 straight dH netto
+    text.sprintf("%.0f m",s_height_pos + s_height_neg);
+    result.append(text);
+    //index: 25 straight total distance
     text.sprintf("%.0f km",distance / 1000);
     result.append(text);
-    text.sprintf("%s (%.1f %%)",
-        (const char*)printTime( (int)( route.at(end)->time - route.at(start)->time -
-            ( kurbel_r + kurbel_l + kurbel_v ) ) ),
+    //index: 26 straight time
+    text.sprintf("<small>%.1f%%</small> %s",
         (float)( route.at(end)->time - route.at(start)->time -
             ( kurbel_r + kurbel_l + kurbel_v ) ) /
-                (float)( route.at(end)->time - route.at(start)->time ) * 100.0 );
+                (float)( route.at(end)->time - route.at(start)->time ) * 100.0,
+        (const char*)printTime( (int)( route.at(end)->time - route.at(start)->time -
+            ( kurbel_r + kurbel_l + kurbel_v ) ) , true, true, true) );
     result.append(text);
+
+    //Total
+    //index: 27 total time
     text.sprintf("%s",
-        (const char*)printTime((int)(route.at(end)->time - route.at(start)->time)));
+        (const char*)printTime((int)(route.at(end)->time - route.at(start)->time), true, true, true));
     result.append(text);
+    //index: 28 total dH
     text.sprintf("%.0f m",s_height_pos   + k_height_pos_r
                         + k_height_pos_l + k_height_pos_v);
     result.append(text);
+    //index: 29 total -dH
     text.sprintf("%.0f m",s_height_neg   + k_height_neg_r
                         + k_height_neg_l + k_height_neg_v);
     result.append(text);
@@ -644,6 +701,75 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
     // Distanz - StreckenZeit - Gesamtzeit - Ges. Höhengewinn - Ges Höhenverlust
 
     return result;
+}
+
+QPtrList<statePoint> Flight::getFlightStates(unsigned int start, unsigned int end)
+{
+  int dH_pos = 0, dH_neg = 0;
+  int duration = 0;
+  int n_start = 0;
+  int distance = 0;
+  float circ_angle_sum = 0;
+  float vario = 0;
+  unsigned int state = 9;
+  QPtrList<statePoint> state_list;
+  statePoint state_info;
+
+  //  noch abchecken, dass end <= fluglÃ¯Â¿Â½nge
+  end = std::min(route.count() - 1, end);
+
+  for(unsigned int n = start; n < end; n++)
+    {
+      // copy info about previous state into state_list, when state changes
+      if(state!=route.at(n)->f_state)
+      {
+        if(state!=9)
+        {
+            state_info.f_state = state;
+            state_info.start_time = route.at(n_start)->time;
+            state_info.end_time = route.at(n)->time;
+            state_info.duration = duration;
+            if(state==Flight::Straight)
+              //cruising:
+              //distance based on dS
+              state_info.distance = distance/1000.0;
+            else
+              //circling:
+              //distance of a straight line between start and end point
+              state_info.distance = dist(route.at(n_start), route.at(n));
+            state_info.speed = state_info.distance/duration*3600.0;
+            state_info.L_D = state_info.distance*1000.0/(route.at(n_start)->height-route.at(n)->height);
+            state_info.circles = fabs(circ_angle_sum/(2*M_PI));
+            if(duration>0) //to prevent a buffer overflow
+                vario = (route.at(n)->height-route.at(n_start)->height)/((float) duration);
+            //cout << state << " " << distance << " " << dist(route.at(n_start), route.at(n)) << endl;
+            state_info.vario = vario;
+            state_info.dH_pos = dH_pos;
+            state_info.dH_neg = dH_neg;
+
+            state_list.append(new statePoint);
+            *(state_list.last()) = state_info;
+        }
+
+        //reset for next state
+        state = route.at(n)->f_state;
+        dH_pos = 0;
+        dH_neg = 0;
+        duration = 0;
+        distance = 0;
+        circ_angle_sum = 0;
+        n_start = n;
+      }
+      if(route.at(n)->dH > 0)
+        dH_pos += route.at(n)->dH;
+      else
+        dH_neg += route.at(n)->dH;
+      duration += route.at(n)->dT;
+      distance += route.at(n)->dS;
+      circ_angle_sum += route.at(n)->bearing;
+    }
+
+    return state_list;
 }
 
 QString Flight::getDistance(bool isOrig)
@@ -919,7 +1045,7 @@ bool Flight::optimizeTask()
   for(unsigned int loop = 0; loop < NUM_TASKS_POINTS; loop++)
       idTempList[loop] = idList[loop];
 
-  unsigned int stepB = MAX(step / 6, 4);
+  unsigned int stepB = std::max((int)step / 6, 4);
 
   for(unsigned int loop = 0; loop < NUM_TASKS; loop++)
     {

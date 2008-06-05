@@ -6,7 +6,8 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2001 Heiner Lamprecht, Florian Ehinger
+**   Copyright (c):  2001 Heiner Lamprecht, Florian Ehinger, Jan Max Walter Krueger
+**                :  2008 Constantijn Neeteson
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -30,11 +31,23 @@
 #include <qstrlist.h>
 #include <qptrlist.h>
 
-/**
+struct statePoint
+{
+  int f_state;
+  time_t start_time;
+  time_t end_time;
+  int duration;
+  float distance;
+  float speed;
+  float L_D;
+  float circles;
+  float vario;
+  int dH_pos;
+  int dH_neg;
+};
+
+/*
  * Contains the logged flight-data.
- *
- * @author Heiner Lamprecht, Florian Ehinger, Jan Max Walter Krueger
- * @version $Id$
  */
 class Flight : public BaseFlightElement
 {
@@ -142,6 +155,16 @@ class Flight : public BaseFlightElement
      *              is 0, the last point of the flight will be used.
      */
     QStrList getFlightValues(unsigned int start = 0, unsigned int end = 0);
+    /**
+     * Creates a list with info about every state.
+     * @return the info-statelist
+     * @param  start  the index of the first point of the section. If the
+     *                index is 0, the first point of the flight will be
+     *                used.
+     * @param  end  the index of the last point of the section. If the index
+     *              is 0, the last point of the flight will be used.
+     */
+    QPtrList<statePoint> getFlightStates(unsigned int start = 0, unsigned int end = 0);
     /**
      * @return the date of the flight.
      */
