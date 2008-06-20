@@ -653,32 +653,32 @@ QPen MapConfig::getDrawPen(flightPoint* fP,bool overrideSwitch/*=false*/)
         if(fP->dH < 0)
           {
             red = 0;
-            green = MAX(0, (int)(220 - 2.0 * -fP->dH));
+            green = std::max(0, (int)(220 - 2.0 * -fP->dH));
             blue = 220;
           }
         else
           {
             red = 220;
             green = 0;
-            blue = MAX(0, (int)(220 - 2.0 * fP->dH));
+            blue = std::max(0, (int)(220 - 2.0 * fP->dH));
           }
         break;
       case MapConfig::Speed:
         red = 0;
-        green = MIN(255, (int)(0.0 + (fP->dS / MAX(1, fP->dT)) * 5.0));
+        green = std::min(255, (int)(0.0 + (fP->dS / std::max(1, fP->dT)) * 5.0));
         blue = 255;
         break;
       case MapConfig::Altitude:
         if(fP->height < 1000.0)
           {
-            red = MAX(0, (int)(100.0 - fP->height * 0.3));
+            red = std::max(0, (int)(100.0 - fP->height * 0.3));
             green = 0;
-            blue = MIN(255, (int)(100.0 + fP->height * 0.2));
+            blue = std::min(255, (int)(100.0 + fP->height * 0.2));
           }
         else
           {
             red = 0;
-            green = MIN(255, (int)(0.0 + 0.2 * (fP->height - 1000.0)));
+            green = std::min(255, (int)(0.0 + 0.2 * (fP->height - 1000.0)));
             blue = 255;
           }
         break;

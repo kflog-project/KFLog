@@ -248,14 +248,14 @@ int Volkslogger::writeDeclaration(FRTaskDeclaration* taskDecl, QPtrList<Waypoint
   vl.declaration.task.startpoint.lat = tp->origP.lat() / 600000.0;
   vl.declaration.task.startpoint.lon = tp->origP.lon() / 600000.0;
 
-  for(loop = 2; loop < MIN(taskPoints->count() - 2, 12); loop++) {
+  for(loop = 2; loop < std::min(int(taskPoints->count()) - 2, 12); loop++) {
     tp = taskPoints->at(loop);
     strcpy(vl.declaration.task.turnpoints[loop - 2].name, tp->name.left(6));
     vl.declaration.task.turnpoints[loop - 2].lat = tp->origP.lat() / 600000.0;
     vl.declaration.task.turnpoints[loop - 2].lon = tp->origP.lon() / 600000.0;
   }
 
-  vl.declaration.task.nturnpoints = MAX(MIN((int)taskPoints->count() - 4, 12), 0);
+  vl.declaration.task.nturnpoints = std::max(std::min((int)taskPoints->count() - 4, 12), 0);
 
   // End of Task
   tp = taskPoints->at(taskPoints->count() - 2);
@@ -349,7 +349,7 @@ int Volkslogger::writeTasks(QPtrList<FlightTask> *tasks)
     vl.database.routes = 0;
   }
   // create new, check max possible tasks
-  vl.database.nroutes = MIN(tasks->count(), _capabilities.maxNrTasks);
+  vl.database.nroutes = std::min(tasks->count(), _capabilities.maxNrTasks);
   vl.database.routes = new VLAPI_DATA::ROUTE[vl.database.nroutes];
 
   taskCnt = 0;
@@ -436,7 +436,7 @@ int Volkslogger::writeWaypoints(QPtrList<Waypoint> *waypoints)
     vl.database.wpts = 0;
   }
   // create new, check max possible wapoints
-  vl.database.nwpts = MIN(waypoints->count(), _capabilities.maxNrWaypoints);
+  vl.database.nwpts = std::min(waypoints->count(), _capabilities.maxNrWaypoints);
   vl.database.wpts = new VLAPI_DATA::WPT[vl.database.nwpts];
 
   wpCnt = 0;

@@ -278,10 +278,10 @@ QPoint EvaluationView::__baroPoint(int durch[], int gn, int i)
 
   int gesamt = 0;
 
-  for(int loop = 0; loop < MIN(gn, (i * 2 + 1)); loop++)
+  for(int loop = 0; loop < std::min(gn, (i * 2 + 1)); loop++)
       gesamt += durch[loop];
 
-  int y = this->height() - (int)( ( gesamt / MIN(gn, (i * 2 + 1)) ) / scale_h )
+  int y = this->height() - (int)( ( gesamt / std::min(gn, (i * 2 + 1)) ) / scale_h )
                                                   - Y_ABSTAND;
 
   return QPoint(x, y);
@@ -299,10 +299,10 @@ QPoint EvaluationView::__speedPoint(float durch[], int gn, int i)
    * des Arrays stehen. Das klappt am Anfang der Kurve sehr gut, am Ende würde es unter
    * Umständen zu Fehlern führen ...
    */
-  for(int loop = 0; loop < MIN(gn, (i * 2 + 1)); loop++)
+  for(int loop = 0; loop < std::min(gn, (i * 2 + 1)); loop++)
       gesamt += durch[loop];
 
-  int y = this->height() - (int)( ( gesamt / MIN(gn, (i *  2 + 1)) ) / scale_v )
+  int y = this->height() - (int)( ( gesamt / std::min(gn, (i *  2 + 1)) ) / scale_v )
                                                   - Y_ABSTAND;
 
   return QPoint(x, y);
@@ -314,10 +314,10 @@ QPoint EvaluationView::__varioPoint(float durch[], int gn, int i)
   // PRE_GRAPH_DISTANCE = Abstand am Anfang der Kurve
 
   float gesamt = 0;
-  for(int loop = 0; loop < MIN(gn, (i * 2 + 1)); loop++)
+  for(int loop = 0; loop < std::min(gn, (i * 2 + 1)); loop++)
       gesamt += durch[loop];
 
-  int y = (this->height() / 2) - (int)( ( gesamt / MIN(gn, (i * 2 + 1)) ) / scale_va );
+  int y = (this->height() / 2) - (int)( ( gesamt / std::min(gn, (i * 2 + 1)) ) / scale_va );
 
   return QPoint(x, y);
 }
@@ -538,18 +538,18 @@ void EvaluationView::drawCurve(bool arg_vario, bool arg_speed,
   }
 
   if ( flight ) {
-    cursor1 = MAX(startTime,cursor1);
-    cursor2 = MAX(startTime,cursor2);
-    cursor1 = MIN(landTime,cursor1);
-    cursor2 = MIN(landTime,cursor2);
+    cursor1 = std::max(startTime,cursor1);
+    cursor2 = std::max(startTime,cursor2);
+    cursor1 = std::min(landTime,cursor1);
+    cursor2 = std::min(landTime,cursor2);
 
     secWidth = secW;
     int width = (landTime - startTime) / secWidth + (KOORD_DISTANCE * 2) + 20;
 
-    this->resize(MAX(width, scrollFrame->visibleWidth()),
+    this->resize(std::max(width, scrollFrame->visibleWidth()),
                  scrollFrame->viewport()->height());
 
-    pixBuffer->resize(MAX(width, scrollFrame->visibleWidth()),
+    pixBuffer->resize(std::max(width, scrollFrame->visibleWidth()),
                       scrollFrame->viewport()->height());
 
     pixBufferKurve->resize(width, scrollFrame->viewport()->height());
@@ -585,8 +585,8 @@ void EvaluationView::__draw()
           ((double)(this->height() - 2*Y_ABSTAND));
   scale_h = flight->getPoint(Flight::H_MAX).height /
           ((double)(this->height() - 2*Y_ABSTAND));
-  scale_va = MAX(getVario(flight->getPoint(Flight::VA_MAX)),
-              ( -1.0 * getVario(flight->getPoint(Flight::VA_MIN))) ) /
+  scale_va = std::max((double)getVario(flight->getPoint(Flight::VA_MAX)),
+              ( -1.0 * (double)getVario(flight->getPoint(Flight::VA_MIN))) ) /
           ((double)(this->height() - 2*Y_ABSTAND) / 2.0);
 
   //

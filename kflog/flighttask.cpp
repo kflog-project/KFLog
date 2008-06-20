@@ -35,15 +35,7 @@
 #define CUR_ID loop
 #define NEXT_ID loop + 1
 
-#ifndef MAX
-#define MAX(a,b)   ( ( a > b ) ? a : b )
-#endif
-
-#ifndef MIN
-#define MIN(a,b)   ( ( a < b ) ? a : b )
-#endif
-
-/* Die Einstellungen können mal in die Voreinstellungsdatei wandern ... */
+/* Die Einstellungen können mal in die Voreinstellungsdatei wandern ... */
 #define FAI_POINT 2.0
 #define NORMAL_POINT 1.75
 #define R1 (3000.0 / glMapMatrix->getScale())
@@ -389,10 +381,10 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
           if(loop)
             {
-              bBoxTask.setLeft(MIN(tempP.x(), bBoxTask.left()));
-              bBoxTask.setTop(MAX(tempP.y(), bBoxTask.top()));
-              bBoxTask.setRight(MAX(tempP.x(), bBoxTask.right()));
-              bBoxTask.setBottom(MIN(tempP.y(), bBoxTask.bottom()));
+              bBoxTask.setLeft(std::min(tempP.x(), bBoxTask.left()));
+              bBoxTask.setTop(std::max(tempP.y(), bBoxTask.top()));
+              bBoxTask.setRight(std::max(tempP.x(), bBoxTask.right()));
+              bBoxTask.setBottom(std::min(tempP.y(), bBoxTask.bottom()));
             }
           else
             {
@@ -567,15 +559,15 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       else {
         r = pA.boundingRect();
         tempP = r.topLeft();
-        bBoxTask.setLeft(MIN(tempP.x(), bBoxTask.left()));
-        bBoxTask.setTop(MAX(tempP.y(), bBoxTask.top()));
-        bBoxTask.setRight(MAX(tempP.x(), bBoxTask.right()));
-        bBoxTask.setBottom(MIN(tempP.y(), bBoxTask.bottom()));
+        bBoxTask.setLeft(std::min(tempP.x(), bBoxTask.left()));
+        bBoxTask.setTop(std::max(tempP.y(), bBoxTask.top()));
+        bBoxTask.setRight(std::max(tempP.x(), bBoxTask.right()));
+        bBoxTask.setBottom(std::min(tempP.y(), bBoxTask.bottom()));
         tempP = r.bottomRight();
-        bBoxTask.setLeft(MIN(tempP.x(), bBoxTask.left()));
-        bBoxTask.setTop(MAX(tempP.y(), bBoxTask.top()));
-        bBoxTask.setRight(MAX(tempP.x(), bBoxTask.right()));
-        bBoxTask.setBottom(MIN(tempP.y(), bBoxTask.bottom()));
+        bBoxTask.setLeft(std::min(tempP.x(), bBoxTask.left()));
+        bBoxTask.setTop(std::max(tempP.y(), bBoxTask.top()));
+        bBoxTask.setRight(std::max(tempP.x(), bBoxTask.right()));
+        bBoxTask.setBottom(std::min(tempP.y(), bBoxTask.bottom()));
       }
     }
   }

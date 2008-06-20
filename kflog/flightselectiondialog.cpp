@@ -180,7 +180,7 @@ void FlightSelectionDialog::slotMoveUp()
   if (i != -1) {
     QString s = sFlights->text(i);
     sFlights->removeItem(i);
-    newItem = MAX(0, i - 1);
+    newItem = std::max(0, i - 1);
     sFlights->insertItem(s, newItem);
     sFlights->setCurrentItem(newItem);
     BaseFlightElement *e = selectedFlights.take(i);
@@ -197,7 +197,7 @@ void FlightSelectionDialog::slotMoveDown()
   if (i != -1) {
     QString s = sFlights->text(i);
     sFlights->removeItem(i);
-    newItem = MIN(sFlights->count(), (unsigned int)i + 1);
+    newItem = std::min(sFlights->count(), (unsigned int)i + 1);
     sFlights->insertItem(s, newItem);
     sFlights->setCurrentItem(newItem);
     BaseFlightElement *e = selectedFlights.take(i);

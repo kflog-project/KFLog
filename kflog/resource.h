@@ -18,15 +18,7 @@
 #ifndef RESSOURCE_H
 #define RESSOURCE_H
 
-/* liefert den größeren der beiden übergebenen Werte zurück. */
-#define MAX(X,Y) ((X) > (Y) ? (X) : (Y))
-
-/* liefert den kleineren der beiden übergebenen Werte zurück. */
-#define MIN(X,Y) ((X) < (Y) ? (X) : (Y)) 
-
-/* Liefert den Betrag (sollte nicht bei übergebenen Funktionen
-   verwendet werden) */
-#define ABS(a)     ( (a) > (-a) ? a : -a )
+#include <algorithm>
 
 #define ID_STATUS_MSG               1001
 

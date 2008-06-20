@@ -17,6 +17,7 @@
 
 #include <ctype.h>
 #include <iostream>
+#include <cmath>
 #include <stdlib.h>
 
 #include <kapp.h>
@@ -421,8 +422,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
         double width = event->pos().x() - beginDrag.x();
         double height = event->pos().y() - beginDrag.y();
-        const double widthRatio = ABS(width / this->width());
-        const double heightRatio = ABS(height / this->height());
+        const double widthRatio = fabs(width / this->width());
+        const double heightRatio = fabs(height / this->height());
 
         if(widthRatio > heightRatio)
           {
@@ -925,8 +926,8 @@ void Map::mouseReleaseEvent(QMouseEvent* event)
         {
           double width = event->pos().x() - beginDrag.x();
           double height = event->pos().y() - beginDrag.y();
-          const double widthRatio = ABS(width / this->width());
-          const double heightRatio = ABS(height / this->height());
+          const double widthRatio = fabs(width / this->width());
+          const double heightRatio = fabs(height / this->height());
 
           if(widthRatio > heightRatio)
             {
@@ -2427,7 +2428,7 @@ void Map::__findElevation(const QPoint& coord){
   for(unsigned int i=0; i<list->count();i++) {
     entry=list->at(i);
     if (entry->region->contains(coord))
-      height=MAX(height,entry->height);
+      height=std::max(height,entry->height);
   }
 
   emit elevation(height);

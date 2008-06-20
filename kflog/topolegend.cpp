@@ -60,7 +60,7 @@ TopoLegend::TopoLegend(QWidget *parent, const char *name ) : QScrollView(parent,
       lbl->setText(i18n("label used for normal level in legend", "%1 - %2 m").arg(levels[i]).arg(levels[i+1]));
     }
     lbl->setMinimumSize(fm.size(0,lbl->text()).width(),0);
-    minwidth=MAX(minwidth,fm.size(0,lbl->text()).width());
+    minwidth=std::max(minwidth,fm.size(0,lbl->text()).width());
     
     lbl->setBackgroundMode(FixedColor);                        //set the label to get a fixed bg color
     lbl->setBackgroundColor(_globalMapConfig.getIsoColor(i));  //get the appropriate color from the mapconfig

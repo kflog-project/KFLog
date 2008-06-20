@@ -27,9 +27,6 @@
 #define MAX_SCALE 10.0
 #define MIN_SCALE 500000.0
 
-#define MAX(a,b)   ( ( a > b ) ? a : b )
-#define MIN(a,b)   ( ( a < b ) ? a : b )
-
 #define MATRIX_MOVE(a)  \
     __moveMap(a);
 
@@ -406,7 +403,7 @@ double MapMatrix::centerToRect(const QRect& center, const QSize& pS, bool addBor
     yScaleDelta = height / pS.height();
   }
 
-  double tempScale = MAX(cScale * MAX(xScaleDelta, yScaleDelta),
+  double tempScale = std::max(cScale * std::max(xScaleDelta, yScaleDelta),
                          MAX_SCALE);
 
   // Only change if difference is too large:
@@ -518,7 +515,7 @@ void MapMatrix::createMatrix(const QSize& newSize)
   viewBorder.setTop(tCenter.y());
   viewBorder.setLeft(tlCorner.x());
   viewBorder.setRight(trCorner.x());
-  viewBorder.setBottom(MIN(blCorner.y(), brCorner.y()));
+  viewBorder.setBottom(std::min(blCorner.y(), brCorner.y()));
 
   mapBorder = invertMatrix.map(QRect(0,0, newSize.width(), newSize.height()));
   mapViewSize = newSize;
@@ -591,7 +588,7 @@ void MapMatrix::createPrintMatrix(double printScale, const QSize& pSize, int dX,
   printBorder.setTop(tCenter.y());
   printBorder.setLeft(tlCorner.x());
   printBorder.setRight(trCorner.x());
-  printBorder.setBottom(MIN(blCorner.y(), brCorner.y()));
+  printBorder.setBottom(std::min(blCorner.y(), brCorner.y()));
 
 //  return &printMatrix;
 }
@@ -616,14 +613,14 @@ void MapMatrix::slotMoveMapSE() { MATRIX_MOVE( MapMatrix::South | MapMatrix::Eas
 
 void MapMatrix::slotZoomIn()
 {
-  cScale = MAX( ( cScale / 1.25 ), MAX_SCALE);
+  cScale = std::max( ( cScale / 1.25 ), MAX_SCALE);
   createMatrix(matrixSize);
   emit matrixChanged();
 }
 
 void MapMatrix::slotZoomOut()
 {
-  cScale = MIN( ( cScale * 1.25 ), MIN_SCALE);
+  cScale = std::min( ( cScale * 1.25 ), MIN_SCALE);
   createMatrix(matrixSize);
   emit matrixChanged();
 }
@@ -687,8 +684,8 @@ void MapMatrix::slotInitMatrix()
   scaleBorders[SwitchScale] = config->readNumEntry("Switch Scale", VAL_BORDER_S);
   scaleBorders[UpperLimit] = config->readNumEntry("Upper Limit", VAL_BORDER_U);
 
-  cScale = MIN(cScale, scaleBorders[UpperLimit]);
-  cScale = MAX(cScale, scaleBorders[LowerLimit]);
+  cScale = std::min(cScale, double(scaleBorders[UpperLimit]));
+  cScale = std::max(cScale, double(scaleBorders[LowerLimit]));
 
   bool initChanged = false;
 

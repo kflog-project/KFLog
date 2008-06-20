@@ -83,10 +83,10 @@
     border.north = lat_temp;   border.south = lat_temp; \
     border.east = lon_temp;    border.west = lon_temp;  \
   } else {                                              \
-    border.north = MAX(border.north, lat_temp);         \
-    border.south = MIN(border.south, lat_temp);         \
-    border.east = MAX(border.east, lon_temp);           \
-    border.west = MIN(border.west, lon_temp);           \
+    border.north = std::max(border.north, lat_temp);         \
+    border.south = std::min(border.south, lat_temp);         \
+    border.east = std::max(border.east, lon_temp);           \
+    border.west = std::min(border.west, lon_temp);           \
   }
 
 #define READ_POINT_LIST  in >> locLength; \
@@ -1120,7 +1120,7 @@ bool MapContents::loadFlight(QFile& igcFile)
           //
           // In some files curTime and preTime are the same. In this case
           // we set dT = 1 to avoid a floating-point-exeption ...
-          dT = MAX( (curTime - preTime), 1);
+          dT = std::max( (curTime - preTime), time_t(1));
           newPoint.dT = dT;
           newPoint.dH = newPoint.height - prePoint.height;
           newPoint.dS = (int)(dist(latTemp, lonTemp,
@@ -2239,7 +2239,7 @@ bool MapContents::importFlightGearFile(QFile& flightgearFile)
           //
           // In some files curTime and preTime are the same. In this case
           // we set dT = 1 to avoid a floating-point-exeption ...
-          dT = MAX( (curTime - preTime), 1);
+          dT = std::max( (curTime - preTime), time_t(1));
           newPoint.height = 0;
           newPoint.gpsHeight = 0;
           newPoint.dT = dT;
@@ -2549,7 +2549,7 @@ bool MapContents::importGardownFile(QFile& gardownFile){
           //
           // In some files curTime and preTime are the same. In this case
           // we set dT = 1 to avoid a floating-point-exeption ...
-          dT = MAX( (curTime - preTime), 1);
+          dT = std::max( (curTime - preTime), time_t(1));
           newPoint.dT = dT;
           newPoint.dH = newPoint.height - prePoint.height;
           newPoint.dS = (int)(dist(latTemp, lonTemp,
@@ -2796,7 +2796,7 @@ int MapContents::getElevation(QPoint coord)
   for(unsigned int i = 0; i < regIsoLinesWorld.count(); i++) {
     entry = regIsoLinesWorld.at(i);
     if (entry->region->contains(coord))
-      height=MAX(height,entry->height);
+      height=std::max(height,entry->height);
   }
   if (height == -1)
     return height;

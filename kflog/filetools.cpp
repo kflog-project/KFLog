@@ -29,7 +29,7 @@ void ShortSave (QDataStream &s, const QCString &str )
     }
 
   Q_INT8 len;
-  len=MIN(str.size(), 255);
+  len=std::min(str.size(), uint(255));
   s << len;
   s.writeRawBytes( str.data(), len );
 }

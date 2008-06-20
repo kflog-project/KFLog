@@ -152,12 +152,12 @@ void GLView::addFlight(Flight* flight)
         QPen drawP = _globalMapConfig.getDrawPen(&fPoint,true);
         qglColor(drawP.color());
         glVertex3i(  actx,  acty, actz );
-        maxx=MAX(actx,maxx);
-        minx=MIN(actx,minx);
-        maxy=MAX(acty,maxy);
-        miny=MIN(acty,miny);
-        maxz=MAX(actz,maxz);
-        minz=MIN(actz,minz);
+        maxx=std::max(long(actx),maxx);
+        minx=std::min(long(actx),minx);
+        maxy=std::max(long(acty),maxy);
+        miny=std::min(long(acty),miny);
+        maxz=std::max(long(actz),maxz);
+        minz=std::min(long(actz),minz);
       }
       glEnd();
       glEndList();
@@ -167,8 +167,8 @@ void GLView::addFlight(Flight* flight)
       deltaZ=-(maxz+minz)/2.0;
       flightList.append(list);
       // change Bounding Box
-      scale=MAX(abs(maxx-minx),abs(maxy-miny));
-      scale=MAX(scale,abs(maxz-minz));
+      scale=std::max(abs(maxx-minx),abs(maxy-miny));
+      scale=std::max(double(scale),fabs(maxz-minz));
       scale=1.0/scale;
       if (boxObject)
         glDeleteLists( boxObject, 1 );

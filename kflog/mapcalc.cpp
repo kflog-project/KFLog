@@ -328,7 +328,7 @@ double outsideVector(QPoint center, QPoint p1, QPoint p2){
   res2=normalize(res2);
 
 
-  if(res1-MIN(v1,v2)<0.5 * M_PI) {
+  if(res1-std::min(v1,v2)<0.5 * M_PI) {
     return res1;
   } else {
     return res2;
@@ -344,7 +344,7 @@ double outsideVector(double angle1, double angle2) {
   res2=normalize(res2);
 
 
-  if(res1-MIN(angle1,angle2)<0.5 * M_PI) {
+  if(res1-std::min(angle1,angle2)<0.5 * M_PI) {
     return res1;
   } else {
     return res2;

@@ -477,14 +477,14 @@ int Flight::getPointIndexByTime(time_t time)
   }
 
   diff = route.at(sp)->time - time;
-  diff = ABS(diff);
+  diff = abs(diff);
 
   if ( sp != ep )
   {
     for(int l = sp+n; l != ep; l += n) // l < (int)route.count() && l >= 0; l += n)
     {
       int a = route.at(l)->time - time;
-      a = ABS(a);
+      a = abs(a);
       if( a > diff )
         return l-n;
 
