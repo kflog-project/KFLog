@@ -287,7 +287,7 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 
   QString pathName;
   pathName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
-  pathName = mapDir + "/" + pathName;
+  pathName = mapDir + "/landscape/" + pathName;
 
   if(pathName == 0)
       // Data does not exist ...
@@ -302,7 +302,7 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 
       QString fileName;
       fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
-      __downloadFile(fileName,mapDir);
+      __downloadFile(fileName,mapDir + "/landscape");
 
       return false;
     }
@@ -609,7 +609,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
 
   QString pathName;
   pathName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
-  pathName = mapDir + "/" + pathName;
+  pathName = mapDir + "/landscape/" + pathName;
   if(pathName == 0)
       // File does not exist ...
       return false;
@@ -623,7 +623,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
 
       QString fileName;
       fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
-      __downloadFile(fileName,mapDir);
+      __downloadFile(fileName,mapDir + "/landscape");
 
       return false;
     }
@@ -1323,13 +1323,13 @@ void MapContents::__askForDownload()
         ret = KMessageBox::questionYesNoCancel(0,i18n("<qt>There are no map-files in the directory<br><b>%1"
             "</b><br>yet. Do you want to download the data automatically?<br>"
             "(You need to have write permissions. If you want to change the directory, "
-            "press \"Cancel\" and change it in the Settings menu.)</qt>").arg(mapDir));
+            "press \"Cancel\" and change it in the Settings menu.)</qt>").arg(mapDir + "/landscape"));
         switch (ret)
           {
             case KMessageBox::Yes:
               config->writeEntry("Automatic Map Download",Automatic,false); //this is temporary, will be overwritten later
-              __downloadFile("G_03699.kfl",mapDir,true);
-              if(QFile(mapDir+"/G_03699.kfl").exists())
+              __downloadFile("G_03699.kfl",mapDir + "/landscape",true);
+              if(QFile(mapDir+"/landscape/G_03699.kfl").exists())
                 {
                   config->writeEntry("Automatic Map Download",Automatic);
                 }
@@ -1339,7 +1339,7 @@ void MapContents::__askForDownload()
                     i18n("<qt>The directory <b>%1</b> is either not writeable<br>"
                     "or the server <b>%2</b> is not reachable.<br>"
                     "Please specify the correct path in the Settings dialog and check the internet connection!<br>"
-                    " Restart KFLog afterwards.</qt>").arg(mapDir).arg (config->readPathEntry("Mapserver","http://maproom.kflog.org/data/")));
+                    " Restart KFLog afterwards.</qt>").arg(mapDir + "/landscape").arg (config->readPathEntry("Mapserver","http://maproom.kflog.org/data/")));
                 }
             break;
           case KMessageBox::No:
@@ -1401,12 +1401,12 @@ void MapContents::proofeSection(bool isPrint)
 
       isFirstLoad |= MAP_LOADED;
 
-      if(QDir(mapDir).entryList("*.kfl").isEmpty())
+      if(QDir(mapDir + "/landscape").entryList("*.kfl").isEmpty())
           __askForDownload();
 
       emit errorOnMapLoading();
     }
-  else if(QDir(mapDir).entryList("*.kfl").isEmpty())
+  else if(QDir(mapDir + "/landscape").entryList("*.kfl").isEmpty())
     {
       emit errorOnMapLoading();
       __askForDownload();

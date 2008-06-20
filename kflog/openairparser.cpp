@@ -95,7 +95,7 @@ uint OpenAirParser::load( QPtrList<Airspace>& list )
       globalDirs->findResource("data", "kflog/mapdata/"));
   QStringList preselect;
 
-  MapContents::addDir(preselect, mapDir + "/airspace", "*.txt");
+  MapContents::addDir(preselect, mapDir + "/airspaces", "*.txt");
 
   if(preselect.count() == 0)
     {
