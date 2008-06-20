@@ -3,26 +3,201 @@ bin_PROGRAMS = kflog
 
 ## INCLUDES were found outside kdevelop specific part
 
-kflog_SOURCES = da4record.cpp whatsthat.cpp tasklistviewitem.cpp \
-	flightlistviewitem.cpp objecttree.cpp helpwindow.cpp downloadlist.cpp topolegend.cpp \
-	optimizationwizard.cpp waypoint.cpp flightrecorderpluginbase.cpp optimization.cpp \
-	waypointdict.cpp taskdialog.cpp centertodialog.cpp waypoints.cpp waypointlist.cpp \
-	waypointimpfilterdialog.cpp waypointdialog.cpp waypointcatalog.cpp translationlist.cpp \
-	translationelement.cpp taskdataprint.cpp singlepoint.cpp recorderdialog.cpp radiopoint.cpp \
-	projectionlambert.cpp projectioncylindric.cpp projectionbase.cpp olcdialog.cpp mapprint.cpp \
-	mapmatrix.cpp mapcontrolview.cpp mapcontents.cpp mapconfig.cpp mapcalc.cpp map.cpp \
-	openairparser.cpp filetools.cpp distance.cpp \
-	lineelement.cpp kflogstartlogo.cpp kflogconfig.cpp isohypse.cpp igcpreview.cpp \
-	igc3dviewstate.cpp igc3dview.cpp igc3dpolyhedron.cpp igc3dflightdata.cpp igc3ddialog.cpp \
-	glidersite.cpp flighttask.cpp flightselectiondialog.cpp flightgroup.cpp \
-	flightdataprint.cpp flight.cpp evaluationview.cpp evaluationframe.cpp evaluationdialog.cpp \
-	dataview.cpp configprintelement.cpp configdrawelement.cpp basemapelement.cpp \
-	baseflightelement.cpp airspace.cpp airport.cpp kflog.cpp main.cpp elevationfinder.cpp
+kflog_SOURCES = \
+	airport.cpp \
+	airspace.cpp \
+	baseflightelement.cpp \
+	basemapelement.cpp \
+	centertodialog.cpp \
+	configdrawelement.cpp \
+	configprintelement.cpp \
+	da4record.cpp \
+	dataview.cpp \
+	distance.cpp \
+	downloadlist.cpp \
+	elevationfinder.cpp \
+	evaluationdialog.cpp \
+	evaluationframe.cpp \
+	evaluationview.cpp \
+	filetools.cpp \
+	flight.cpp \
+	flightdataprint.cpp \
+	flightgroup.cpp \
+	flightlistviewitem.cpp \
+	flightrecorderpluginbase.cpp \
+	flightselectiondialog.cpp \
+	flighttask.cpp \
+	glidersite.cpp \
+	helpwindow.cpp \
+	igc3ddialog.cpp \
+	igc3dflightdata.cpp \
+	igc3dpolyhedron.cpp \
+	igc3dview.cpp \
+	igc3dviewstate.cpp \
+	igcpreview.cpp \
+	isohypse.cpp \
+	kflog.cpp \
+	kflogconfig.cpp \
+	kflogstartlogo.cpp \
+	lineelement.cpp \
+	main.cpp \
+	map.cpp \
+	mapcalc.cpp \
+	mapconfig.cpp \
+	mapcontents.cpp \
+	mapcontrolview.cpp \
+	mapmatrix.cpp \
+	mapprint.cpp \
+	objecttree.cpp \
+	olcdialog.cpp \
+	openairparser.cpp \
+	optimization.cpp \
+	optimizationwizard.cpp \
+	projectionbase.cpp \
+	projectioncylindric.cpp \
+	projectionlambert.cpp \
+	radiopoint.cpp \
+	recorderdialog.cpp \
+	singlepoint.cpp \
+	taskdataprint.cpp \
+	taskdialog.cpp \
+	tasklistviewitem.cpp \
+	topolegend.cpp \
+	translationelement.cpp \
+	translationlist.cpp \
+	waypoint.cpp \
+	waypointcatalog.cpp \
+	waypointdialog.cpp \
+	waypointdict.cpp \
+	waypointimpfilterdialog.cpp \
+	waypointlist.cpp \
+	waypoints.cpp \
+	whatsthat.cpp
+
 kflog_LDADD   = ./guicontrols/libguicontrols.a ./kfrgcs/libkfrgcs.la ./kfrgmn/libkfrgmn.la ./kfrcai/libkfrcai.la ./kfrfil/libkfrfil.la ./kfrxsp/libkfrxsp.la ./kfrxcu/libkfrxcu.la ./opengl_igc/libopengl_igc.la -lkdeprint -lGL -lm $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
 
 SUBDIRS = guicontrols kfrgcs kfrgmn map-icons pics kfrcai kfrfil kfrxsp kfrxcu opengl_igc 
 
-EXTRA_DIST = main.cpp kflog.cpp kflog.h kflog.desktop airport.cpp airport.h airspace.cpp airspace.h baseflightelement.cpp baseflightelement.h basemapelement.cpp basemapelement.h configdrawelement.cpp configdrawelement.h configprintelement.cpp configprintelement.h dataview.cpp dataview.h evaluationdialog.cpp evaluationdialog.h evaluationframe.cpp evaluationframe.h evaluationview.cpp evaluationview.h flight.cpp flight.h flightdataprint.cpp flightdataprint.h flightgroup.cpp flightgroup.h flightselectiondialog.cpp flightselectiondialog.h flighttask.cpp flighttask.h glidersite.cpp glidersite.h frstructs.h hi16-action-centerflight.png hi16-action-centertask.png hi16-action-flightevaluation.png hi16-action-stepback.png hi16-action-stepforward.png hi16-action-waypoint.png hi16-app-kflog.png hi16-mimetype-igc.png hi22-action-centerflight.png hi22-action-centertask.png hi22-action-flightevaluation.png hi22-action-movemap_e.png hi22-action-movemap_n.png hi22-action-movemap_ne.png hi22-action-movemap_nw.png hi22-action-movemap_s.png hi22-action-movemap_se.png hi22-action-movemap_sw.png hi22-action-movemap_w.png hi22-action-stepback.png hi22-action-waypoint.png hi22-action-stepforward.png hi32-action-flightevaluation.png hi32-action-projection.png hi32-app-kflog.png hi32-mimetype-igc.png hi48-app-kflog.png hi48-mimetype-igc.png igc3ddialog.cpp igc3ddialog.h igc3dflightdata.cpp igc3dflightdata.h igc3dpolyhedron.cpp igc3dpolyhedron.h igc3dview.cpp igc3dview.h igc3dviewstate.cpp igc3dviewstate.h igcpreview.h igcpreview.cpp isohypse.cpp isohypse.h kflogconfig.cpp kflogconfig.h kflogrc kflogstartlogo.cpp kflogstartlogo.h kflogui.rc lineelement.cpp lineelement.h map.cpp map.h mapcalc.cpp mapcalc.h mapconfig.cpp mapconfig.h mapcontents.cpp mapcontents.h openairparser.cpp openairparser.h filetools.cpp filetools.h distance.cpp distance.h mapcontrolview.cpp mapcontrolview.h mapdefaults.h mapmatrix.h mapmatrix.cpp mapprint.cpp mapprint.h olcdialog.cpp olcdialog.h projectionbase.cpp projectioncylindric.cpp projectionbase.h projectioncylindric.h projectionlambert.cpp projectionlambert.h radiopoint.cpp radiopoint.h recorderdialog.cpp recorderdialog.h resource.h runway.h singlepoint.cpp singlepoint.h taskdataprint.cpp taskdataprint.h translationelement.cpp translationelement.h translationlist.cpp translationlist.h waypointcatalog.cpp waypointcatalog.h waypointdialog.cpp waypointdialog.h waypointimpfilterdialog.cpp waypointimpfilterdialog.h waypointlist.cpp waypointlist.h waypoints.cpp waypoints.h wp.h hi16-action-save_all.png hi22-action-save_all.png centertodialog.cpp centertodialog.h hi22-action-centerwaypoint.png hi16-action-centerwaypoint.png hi22-action-centerto.png taskdialog.cpp taskdialog.h hi22-action-task.png hi16-action-task.png waypointdict.cpp waypointdict.h hi48-mimetype-declaration.png hi48-mimetype-task.png hi48-mimetype-waypoint.png hi48-mimetype-pilot.png optimization.cpp optimization.h flightrecorderpluginbase.cpp flightrecorderpluginbase.h waypoint.cpp waypoint.h optimizationwizard.cpp optimizationwizard.h topolegend.cpp topolegend.h wgspoint.h gliders.h downloadlist.cpp downloadlist.h contestlist.h contests.h helpwindow.cpp helpwindow.h objecttree.cpp objecttree.h flightlistviewitem.cpp flightlistviewitem.h tasklistviewitem.cpp tasklistviewitem.h whatsthat.cpp whatsthat.h evaluationcanvas.cpp evaluationcanvas.h da4record.cpp da4record.h elevationfinder.cpp elevationfinder.h
+EXTRA_DIST = \
+	airport.cpp airport.h \
+	airspace.cpp airspace.h \
+	baseflightelement.cpp baseflightelement.h \
+	basemapelement.cpp basemapelement.h \
+	centertodialog.cpp centertodialog.h \
+	configdrawelement.cpp configdrawelement.h \
+	configprintelement.cpp configprintelement.h \
+	contestlist.h contests.h \
+	da4record.cpp da4record.h \
+	dataview.cpp dataview.h \
+	distance.cpp distance.h \
+	downloadlist.cpp downloadlist.h \
+	elevationfinder.cpp elevationfinder.h \
+	evaluationcanvas.cpp evaluationcanvas.h \
+	evaluationdialog.cpp evaluationdialog.h \
+	evaluationframe.cpp evaluationframe.h \
+	evaluationview.cpp evaluationview.h \
+	filetools.cpp filetools.h \
+	flight.cpp flight.h \
+	flightdataprint.cpp flightdataprint.h \
+	flightgroup.cpp flightgroup.h \
+	flightlistviewitem.cpp flightlistviewitem.h \
+	flightrecorderpluginbase.cpp flightrecorderpluginbase.h \
+	flightselectiondialog.cpp flightselectiondialog.h \
+	flighttask.cpp flighttask.h \
+	frstructs.h \
+	gliders.h \
+	glidersite.cpp glidersite.h \
+	helpwindow.cpp helpwindow.h \
+	igc3ddialog.cpp igc3ddialog.h \
+	igc3dflightdata.cpp igc3dflightdata.h \
+	igc3dpolyhedron.cpp igc3dpolyhedron.h \
+	igc3dview.cpp igc3dview.h \
+	igc3dviewstate.cpp igc3dviewstate.h \
+	igcpreview.cpp igcpreview.h \
+	isohypse.cpp isohypse.h \
+	kflog.cpp kflog.h kflog.desktop \
+	kflogconfig.cpp kflogconfig.h \
+	kflogrc \
+	kflogui.rc \
+	kflogstartlogo.cpp kflogstartlogo.h \
+	lineelement.cpp lineelement.h \
+	main.cpp \
+	map.cpp map.h \
+	mapcalc.cpp mapcalc.h \
+	mapconfig.cpp mapconfig.h \
+	mapcontents.cpp mapcontents.h \
+	mapcontrolview.cpp mapcontrolview.h \
+	mapdefaults.h \
+	mapmatrix.cpp mapmatrix.h \
+	mapprint.cpp mapprint.h \
+	objecttree.cpp objecttree.h \
+	olcdialog.cpp olcdialog.h \
+	openairparser.cpp openairparser.h \
+	optimization.cpp optimization.h \
+	optimizationwizard.cpp optimizationwizard.h \
+	projectionbase.cpp projectionbase.h \
+	projectioncylindric.cpp projectioncylindric.h \
+	projectionlambert.cpp projectionlambert.h \
+	radiopoint.cpp radiopoint.h \
+	recorderdialog.cpp recorderdialog.h \
+	resource.h \
+	runway.h \
+	singlepoint.cpp singlepoint.h \
+	taskdataprint.cpp taskdataprint.h \
+	taskdialog.cpp taskdialog.h \
+	tasklistviewitem.cpp tasklistviewitem.h \
+	topolegend.cpp topolegend.h \
+	translationelement.cpp translationelement.h \
+	translationlist.cpp translationlist.h \
+	waypoint.cpp waypoint.h \
+	waypointcatalog.cpp waypointcatalog.h \
+	waypointdialog.cpp waypointdialog.h \
+	waypointdict.cpp waypointdict.h \
+	waypointimpfilterdialog.cpp waypointimpfilterdialog.h \
+	waypointlist.cpp waypointlist.h \
+	waypoints.cpp waypoints.h \
+	wgspoint.h \
+	whatsthat.cpp whatsthat.h \
+	wp.h \
+	hi16-action-centerflight.png \
+	hi16-action-centertask.png \
+	hi16-action-centerwaypoint.png \
+	hi16-action-flightevaluation.png \
+	hi16-action-save_all.png \
+	hi16-action-stepback.png \
+	hi16-action-stepforward.png \
+	hi16-action-task.png \
+	hi16-action-waypoint.png \
+	hi16-app-kflog.png \
+	hi16-mimetype-igc.png \
+	hi22-action-centerflight.png \
+	hi22-action-centertask.png \
+	hi22-action-centerto.png \
+	hi22-action-centerwaypoint.png \
+	hi22-action-flightevaluation.png \
+	hi22-action-movemap_e.png \
+	hi22-action-movemap_n.png \
+	hi22-action-movemap_ne.png \
+	hi22-action-movemap_nw.png \
+	hi22-action-movemap_s.png \
+	hi22-action-movemap_se.png \
+	hi22-action-movemap_sw.png \
+	hi22-action-movemap_w.png \
+	hi22-action-save_all.png \
+	hi22-action-stepback.png \
+	hi22-action-stepforward.png \
+	hi22-action-task.png \
+	hi22-action-waypoint.png \
+	hi32-action-flightevaluation.png \
+	hi32-action-projection.png \
+	hi32-app-kflog.png \
+	hi32-mimetype-igc.png \
+	hi48-app-kflog.png \
+	hi48-mimetype-declaration.png \
+	hi48-mimetype-igc.png \
+	hi48-mimetype-pilot.png \
+	hi48-mimetype-task.png \
+	hi48-mimetype-waypoint.png
 
 install-data-local:
 	$(mkinstalldirs) $(kde_appsdir)/Applications/
