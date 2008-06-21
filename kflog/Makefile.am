@@ -72,6 +72,7 @@ kflog_SOURCES = \
 	waypointimpfilterdialog.cpp \
 	waypointlist.cpp \
 	waypoints.cpp \
+	welt2000.cpp \
 	whatsthat.cpp
 
 kflog_LDADD   = ./guicontrols/libguicontrols.a ./kfrgcs/libkfrgcs.la ./kfrgmn/libkfrgmn.la ./kfrcai/libkfrcai.la ./kfrfil/libkfrfil.la ./kfrxsp/libkfrxsp.la ./kfrxcu/libkfrxcu.la ./opengl_igc/libopengl_igc.la -lkdeprint -lGL -lm $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
@@ -156,6 +157,7 @@ EXTRA_DIST = \
 	waypointimpfilterdialog.cpp waypointimpfilterdialog.h \
 	waypointlist.cpp waypointlist.h \
 	waypoints.cpp waypoints.h \
+	welt2000.cpp welt2000.h \
 	wgspoint.h \
 	whatsthat.cpp whatsthat.h \
 	wp.h \

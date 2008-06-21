@@ -59,6 +59,7 @@
 #include "singlepoint.h"
 #include "elevationfinder.h"
 #include "openairparser.h"
+#include "welt2000.h"
 
 /*
  * Used as bit-masks to determine, if we must display
@@ -115,11 +116,7 @@
       in >> rwLength; \
       in >> rwMaterial; \
       in >> rwOpen; \
-      runway* rw = new runway; \
-      rw->length = rwLength; \
-      rw->direction = rwDirection; \
-      rw->surface = rwMaterial; \
-      rw->isOpen = rwOpen; \
+      runway* rw = new runway( rwLength, rwDirection, rwMaterial, rwOpen); \
       site->addRunway(rw); \
     }
 
@@ -409,194 +406,6 @@ bool MapContents::__readTerrainFile(const int fileSecID,
             }
         }
 
-    }
-
-  return true;
-}
-
-bool MapContents::__readAirfieldFile(const char* pathName)
-{
-  extern const MapMatrix _globalMapMatrix;
-
-  if(pathName == 0)
-      // Data does not exist
-      return false;
-
-
-  QFile eingabe(pathName);
-  if(!eingabe.open(IO_ReadOnly))
-    {
-      // Data exists, but can't be read:
-      // We need a messagebox
-     warning("KFLog: Can not open airfields file %s", (const char*)pathName);
-
-//      QString fileName;
-//      fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
-//      dest = config->readPathEntry("DefaultMapDirectory");
-//      __downloadFile(fileName,dest);
-
-      return false;
-    }
-
-  QDataStream in(&eingabe);
-  in.setVersion(2);
-
-  Q_UINT8 typeIn;
-  Q_INT8 loadTypeID;
-  Q_UINT16 formatID;
-  Q_INT32 lat_temp, lon_temp;
-  Q_UINT32 magic;
-  QDateTime createDateTime;
-
-  QString name;
-  QString idString, icaoName, gpsName;
-  Q_INT16 elevation;
-  Q_INT8 isWinch, vdf;
-
-  QString frequency;
-  Q_INT8 contactType;
-  QString callSign;
-  Q_UINT8 contactCount;
-
-  Q_UINT8 rwCount;
-  // 0 -> 36
-  Q_UINT8 rwDirection;
-  Q_UINT16 rwLength;
-  Q_UINT8 rwMaterial;
-  Q_INT8 rwOpen;
-  QPoint position;
-  WGSPoint wgsPos;
-
-  Airport* ap; GliderSite* gs;
-
-  in >> magic;
-  if(magic != KFLOG_FILE_MAGIC)  return false;
-
-  in >> loadTypeID;
-  if(loadTypeID != FILE_TYPE_AERO)  return false;
-
-  in >> formatID;
-  if(formatID < FILE_FORMAT_ID)
-    {
-      // zu alt ...
-    }
-  else if(formatID > FILE_FORMAT_ID)
-    {
-      // zu neu ...
-      warning("KFLog: Fileformat too new. Aborting ...");
-      return false;
-    }
-
-  in >> createDateTime;
-
-  int count = 0;
-
-  while(!in.eof())
-    {
-      in >> typeIn;
-
-      count++;
-      ap=0; gs=0;
-
-      //
-      //  Die Werte müssen wieder zurückgesetzt werden!
-      //
-
-      //
-      // Bislang wird immer nur die letzte eingelesene Frequenz an das
-      // Element übergeben, da die Elemente noch nicht mit mehreren
-      // Frequenzen umgehen können.
-      //
-      // Die Landebahndaten werden zwar eingelesen, aber nicht verarbeitet.
-      //
-      switch (typeIn)
-        {
-          case BaseMapElement::IntAirport:
-          case BaseMapElement::Airport:
-          case BaseMapElement::MilAirport:
-          case BaseMapElement::CivMilAirport:
-          case BaseMapElement::Airfield:
-          case BaseMapElement::UltraLight:
-            in >> name;
-            in >> idString;
-            in >> icaoName;
-            in >> gpsName;
-            in >> lat_temp;
-            in >> lon_temp;
-            in >> elevation;
-
-            READ_CONTACT_DATA
-
-            wgsPos.setPos(lat_temp, lon_temp);
-            position = _globalMapMatrix.wgsToMap(wgsPos);
-
-            ap=new Airport(name, icaoName, gpsName, typeIn,
-                wgsPos, position, elevation, frequency, (bool)vdf);
-
-            READ_RUNWAY_DATA(ap)
-
-            airportList.append(ap);
-            break;
-          case BaseMapElement::ClosedAirfield:
-            in >> name;
-            in >> idString;
-            in >> icaoName;
-            in >> gpsName;
-            in >> lat_temp;
-            in >> lon_temp;
-            in >> elevation;
-
-            wgsPos.setPos(lat_temp, lon_temp);
-            position = _globalMapMatrix.wgsToMap(wgsPos);
-
-            airportList.append(new Airport(name, icaoName, gpsName, typeIn,
-                wgsPos, position, 0, 0, 0));
-
-            break;
-          case BaseMapElement::CivHeliport:
-          case BaseMapElement::MilHeliport:
-          case BaseMapElement::AmbHeliport:
-            in >> name;
-            in >> idString;
-            in >> icaoName;
-            in >> gpsName;
-            in >> lat_temp;
-            in >> lon_temp;
-            in >> elevation;
-
-            READ_CONTACT_DATA
-
-            wgsPos.setPos(lat_temp, lon_temp);
-            position = _globalMapMatrix.wgsToMap(wgsPos);
-
-            airportList.append(new Airport(name, icaoName, gpsName, typeIn,
-                wgsPos, position, elevation, frequency, 0));
-
-            break;
-          case BaseMapElement::Glidersite:
-            in >> name;
-            in >> idString;
-            in >> icaoName;
-            in >> gpsName;
-            in >> lat_temp;
-            in >> lon_temp;
-            in >> elevation;
-            in >> isWinch;
-
-            READ_CONTACT_DATA
-
-            wgsPos.setPos(lat_temp, lon_temp);
-            position = _globalMapMatrix.wgsToMap(wgsPos);
-
-            gs=new GliderSite(name, icaoName, gpsName,
-                wgsPos, position, elevation, frequency, isWinch);
-
-            READ_RUNWAY_DATA(gs)
-
-            gliderSiteList.append(gs);
-
-            break;
-        }
     }
 
   return true;
@@ -1437,48 +1246,15 @@ void MapContents::proofeSection(bool isPrint)
 
   // Checking for Airspaces
   if (airspaceList.isEmpty()) {
-      OpenAirParser oap;
-      oap.load( airspaceList );
+    OpenAirParser oap;
+    oap.load( airspaceList );
   }
 
   // Checking for Airfields
-  if (airportList.isEmpty())
-    {  //we only need to load the airports if the list is still empty.
-      QDir airfieldDir(mapDir + "/airfields/");
-      if(!airfieldDir.exists())
-        {
-          emit errorOnMapLoading();
-          if(!(isFirstLoad & AIRFIELD_LOADED))
-            {
-              isFirstLoad |= AIRFIELD_LOADED;
-              KMessageBox::error(0,
-                "<qt>" +
-                i18n("The directory for the airfield-files does not exist:") +
-                "<br><b>" + airfieldDir.path() + "</b>"  +
-                "</qt>", i18n("Directory not found"));
-            }
-        }
-      else
-        {
-          emit loadingMessage(i18n("Loading airfielddata ..."));
-          QStringList airfields;
-          airfields = airfieldDir.entryList("*.kfl");
-          if(airfields.count() == 0)
-            {
-              // No mapfiles found
-              emit errorOnMapLoading();
-              KMessageBox::information(0,
-                i18n("The directory for the airfield-files is empty.\n"
-                     "To download the files, please visit our homepage:\n") +
-                     "http://maproom.kflog.org/", i18n("directory empty"), "NoAirfieldFiles");
-            }
-          else
-            {
-              for(QStringList::Iterator it = airfields.begin(); it != airfields.end(); it++)
-                  __readAirfieldFile(airfieldDir.path() + "/" + (*it).latin1());
-            }
-        }
-    }
+  if (airportList.isEmpty()) {
+    Welt2000 welt2000;
+    welt2000.load( airportList, gliderSiteList);
+  }
 }
 
 
