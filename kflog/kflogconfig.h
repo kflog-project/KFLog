@@ -105,6 +105,10 @@ class KFLogConfig : public KDialogBase
     void slotDefaultWaypoint();
     /** */
     void slotSearchDefaultWaypoint();
+    /** */
+    void slotFilterChanged(const QString&);
+    /** */
+    void slotHomeRadiusChanged(int radius);
   private:
     /** */
     void __addIDTab();
@@ -122,9 +126,10 @@ class KFLogConfig : public KDialogBase
     int __setScaleValue(int value);
     /** */
     int __getScaleValue(double value);
-  /** Add a tab for waypoint catalog configuration at sartup
-Setting will be overwritten by commandline switch */
-  void __addWaypointTab();
+    /** */
+    void __addAirfieldTab();
+    /** */
+    void __addWaypointTab();
     /** */
     QFrame* idPage;
     /** */
@@ -137,6 +142,8 @@ Setting will be overwritten by commandline switch */
     QFrame* projPage;
     /** */
     QFrame* scalePage;
+    /** */
+    QFrame* airfieldPage;
     /** */
     QFrame* waypointPage;
     /** */
@@ -153,6 +160,9 @@ Setting will be overwritten by commandline switch */
     QLineEdit* preNameE;
     QLineEdit* surNameE;
     QLineEdit* dateOfBirthE;
+    QLineEdit* filterE;
+    QSpinBox* homeRadiusE;
+    bool needUpdateWelt2000;
 
     QSlider* lLimit;
     QSlider* uLimit;

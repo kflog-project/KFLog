@@ -195,6 +195,7 @@ EXTRA_DIST = \
 	hi32-app-kflog.png \
 	hi32-mimetype-igc.png \
 	hi48-app-kflog.png \
+	hi48-mimetype-airfield.png \
 	hi48-mimetype-declaration.png \
 	hi48-mimetype-igc.png \
 	hi48-mimetype-pilot.png \
@@ -278,6 +279,8 @@ install-data-local:
 	$(INSTALL_DATA) $(srcdir)/hi22-action-task.png $(kde_icondir)/hicolor/22x22/actions/task.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/16x16/actions/
 	$(INSTALL_DATA) $(srcdir)/hi16-action-task.png $(kde_icondir)/hicolor/16x16/actions/task.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/mimetypes/
+	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-airfield.png $(kde_icondir)/hicolor/48x48/mimetypes/airfield.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/mimetypes/
 	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-declaration.png $(kde_icondir)/hicolor/48x48/mimetypes/declaration.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/mimetypes/

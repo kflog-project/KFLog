@@ -59,6 +59,7 @@ KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
   __addScaleTab();
   __addMapTab();
   __addProjectionTab();
+  __addAirfieldTab();
 //  __addTopographyTab();
   __addWaypointTab();
 
@@ -99,6 +100,8 @@ void KFLogConfig::slotOk()
   config-> writeEntry("Homesite Longitude",
       MapContents::degreeToNum(homeLonE-> text()));
   config-> writeEntry("Projection Type", projectionSelect->currentItem());
+  config-> writeEntry("Welt2000CountryFilter", filterE->text());
+  config-> writeEntry("Welt2000HomeRadius", homeRadiusE->text());
 
   config-> setGroup("Lambert Projection");
   config-> writeEntry("Parallel1", lambertV1);
@@ -821,6 +824,56 @@ int KFLogConfig::__getScaleValue(double scale)
   else if(scale <= 1000) return (((int) scale - 500) / 20 + 70);
   else if(scale <= 2000) return (((int) scale - 1000) / 50 + 95);
   else return (((int) scale - 2000) / 100 + 125);
+}
+
+/** Add a tab for airfield (Welt2000) configuration.*/
+void KFLogConfig::__addAirfieldTab()
+{
+  config-> setGroup("Map Data");
+
+  airfieldPage = addPage(i18n("Airfields"), i18n("Airfield Configuration"),
+      KGlobal::instance()-> iconLoader()->loadIcon("airfield", KIcon::NoGroup,
+          KIcon::SizeLarge));
+
+  QGridLayout* airfieldLayout = new QGridLayout(airfieldPage, 15, 6, 1, 1);
+
+  QGroupBox* welt2000Group = new QGroupBox(airfieldPage, "welt2000Group");
+  welt2000Group-> setTitle(i18n("Welt2000") + ":");
+
+  filterE = new QLineEdit(airfieldPage, "filterE");
+
+  airfieldLayout->addMultiCellWidget(welt2000Group, 0, 4, 0, 6);
+  airfieldLayout->addWidget(new QLabel(i18n("Country Filter"), airfieldPage), 1, 1);
+  airfieldLayout->addWidget(filterE, 1, 3);
+
+  airfieldLayout->addWidget(new QLabel(i18n("Home Radius"), airfieldPage), 3, 1);
+  homeRadiusE = new QSpinBox(airfieldPage, "homeRadiusE");
+  homeRadiusE->setRange( 0, 10000 );
+  homeRadiusE->setLineStep( 10 );
+  homeRadiusE->setButtonSymbols(QSpinBox::PlusMinus);
+  airfieldLayout->addWidget( homeRadiusE, 3, 3 );
+  airfieldLayout->addWidget( new QLabel( "km", airfieldPage), 3, 4 );
+
+  filterE-> setText(config->readEntry("Welt2000CountryFilter", ""));
+  homeRadiusE-> setValue(config->readNumEntry("Welt2000HomeRadius", 0));
+
+  if (filterE->text() != "")
+    homeRadiusE->setEnabled(false);
+  needUpdateWelt2000 = false;
+  connect(filterE, SIGNAL(textChanged(const QString&)), SLOT(slotFilterChanged(const QString&)) );
+  connect(homeRadiusE, SIGNAL(valueChanged(int)), SLOT(slotHomeRadiusChanged(int)));
+}
+
+void KFLogConfig::slotFilterChanged(const QString& filter) {
+  needUpdateWelt2000 = true;
+  if (filter != "")
+    homeRadiusE->setEnabled(false);
+  else
+    homeRadiusE->setEnabled(true);
+}
+
+void KFLogConfig::slotHomeRadiusChanged(int radius) {
+  needUpdateWelt2000 = true;
 }
 
 /** Add a tab for waypoint catalog configuration at sartup
