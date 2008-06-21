@@ -833,8 +833,8 @@ bool Welt2000::parse( QString& path,
 
       if( ! ok )
         {
-          qWarning( "W2000, Line %d: %s (%s) missing or wrong elevation, set value to 0!",
-                    lineNo, afName.latin1(), country.latin1() );
+          //qWarning( "W2000, Line %d: %s (%s) missing or wrong elevation, set value to 0!",
+          //          lineNo, afName.latin1(), country.latin1() );
           elevation = 0;
         }
 
@@ -846,8 +846,8 @@ bool Welt2000::parse( QString& path,
 
       if( !ok || f < 117.97 || f > 137.0 )
         {
-          qWarning( "W2000, Line %d: %s (%s) missing or wrong frequency, set value to 0!",
-                    lineNo, afName.latin1(), country.latin1() );
+          //qWarning( "W2000, Line %d: %s (%s) missing or wrong frequency, set value to 0!",
+          //          lineNo, afName.latin1(), country.latin1() );
           frequency = "000.000";
         }
 
@@ -874,8 +874,8 @@ bool Welt2000::parse( QString& path,
 
       if( ! ok )
         {
-          qWarning( "W2000, Line %d: %s (%s) missing or wrong runway direction, set value to 0!",
-                    lineNo, afName.latin1(), country.latin1() );
+          //qWarning( "W2000, Line %d: %s (%s) missing or wrong runway direction, set value to 0!",
+          //          lineNo, afName.latin1(), country.latin1() );
           rwDir = 0;
         }
 
@@ -892,8 +892,8 @@ bool Welt2000::parse( QString& path,
 
       if( ! ok )
         {
-          qWarning( "W2000, Line %d: %s (%s) missing or wrong runway length, set value to 0!",
-                    lineNo, afName.latin1(), country.latin1() );
+          //qWarning( "W2000, Line %d: %s (%s) missing or wrong runway length, set value to 0!",
+          //          lineNo, afName.latin1(), country.latin1() );
           rwLen = 0;
         }
       else
