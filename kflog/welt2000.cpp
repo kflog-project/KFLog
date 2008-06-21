@@ -96,7 +96,7 @@ Welt2000::~Welt2000()
  * be the original ascii file or a compiled version of it. The results
  * are put in the passed lists
  */
-bool Welt2000::load( QPtrList<Airport>& airportList, QPtrList<GliderSite>& gliderList )
+bool Welt2000::load( QPtrList<Airport>& airportList, QPtrList<GliderSite>& gliderSiteList )
 {
   // Rename WELT2000.TXT -> welt2000.txt.
   QString wl = "welt2000.txt";
@@ -126,7 +126,7 @@ bool Welt2000::load( QPtrList<Airport>& airportList, QPtrList<GliderSite>& glide
   }
 
   // parse source file
-  return parse( w2PathTxt, airportList, gliderList, true );
+  return parse( w2PathTxt, airportList, gliderSiteList, true );
 }
 
 
@@ -372,7 +372,7 @@ bool Welt2000::readConfigEntries( QString &path )
  */
 bool Welt2000::parse( QString& path,
                       QPtrList<Airport>& airportList,
-                      QPtrList<GliderSite>& gliderList,
+                      QPtrList<GliderSite>& gliderSiteList,
                       bool doCompile )
 {
   QTime t;
@@ -954,7 +954,7 @@ bool Welt2000::parse( QString& path,
           GliderSite *gl = new GliderSite( afName, icao.stripWhiteSpace(), gpsName.upper(),
                                            wgsPos, position, elevation, frequency, false );
 
-          gliderList.append( gl );
+          gliderSiteList.append( gl );
         }
 
     } // End of while( ! in.atEnd() )

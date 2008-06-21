@@ -169,7 +169,7 @@ public:
      * @param glidertList All gilder fields have to be stored in this list
      * @returns true (success) or false (error occured)
      */
-    bool load( QPtrList<Airport>& airportList, QPtrList<GliderSite>& gliderList );
+    bool load( QPtrList<Airport>& airportList, QPtrList<GliderSite>& gliderSiteList );
 
 private:
 
@@ -186,7 +186,7 @@ private:
      */
     bool parse( QString& path,
                 QPtrList<Airport>& airportList,
-                QPtrList<GliderSite>& gliderList,
+                QPtrList<GliderSite>& gliderSiteList,
                 bool doCompile=false );
 
     /**
