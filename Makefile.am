@@ -5,19 +5,19 @@ SUBDIRS = kflog po doc
 EXTRA_DIST = kflog.kdevprj admin AUTHORS COPYING ChangeLog INSTALL README TODO kflog.lsm README-MAP kflog.spec README-AIRFIELDS README-AIRSPACE tips 
 
 install-data-local:
-	$(mkinstalldirs) $(kde_datadir)/kflog/mapdata/
-	$(INSTALL_DATA) $(srcdir)/README-MAP $(kde_datadir)/kflog/mapdata/README-MAP
+	$(mkinstalldirs) $(kde_datadir)/kflog/mapdata/landscape/
+	$(INSTALL_DATA) $(srcdir)/README-MAP $(kde_datadir)/kflog/mapdata/landscape/README-MAP
 	$(mkinstalldirs) $(kde_datadir)/kflog/mapdata/airfields/
 	$(INSTALL_DATA) $(srcdir)/README-AIRFIELDS $(kde_datadir)/kflog/mapdata/airfields/README-AIRFIELDS
-	$(mkinstalldirs) $(kde_datadir)/kflog/mapdata/airspace/
-	$(INSTALL_DATA) $(srcdir)/README-AIRSPACE $(kde_datadir)/kflog/mapdata/airspace/README-AIRSPACE
+	$(mkinstalldirs) $(kde_datadir)/kflog/mapdata/airspaces/
+	$(INSTALL_DATA) $(srcdir)/README-AIRSPACE $(kde_datadir)/kflog/mapdata/airspaces/README-AIRSPACE
 	$(mkinstalldirs) $(kde_datadir)/kflog/
 	$(INSTALL_DATA) $(srcdir)/tips $(kde_datadir)/kflog/tips
 
 uninstall-local:
-	-rm -f $(kde_datadir)/kflog/mapdata/README-MAP
+	-rm -f $(kde_datadir)/kflog/mapdata/landscape/README-MAP
 	-rm -f $(kde_datadir)/kflog/mapdata/airfields/README-AIRFIELDS
-	-rm -f $(kde_datadir)/kflog/mapdata/airspace/README-AIRSPACE
+	-rm -f $(kde_datadir)/kflog/mapdata/airspaces/README-AIRSPACE
 	-rm -f $(kde_datadir)/kflog/tips
 
 ####### kdevelop will overwrite this part!!! (end)############
