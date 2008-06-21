@@ -832,6 +832,10 @@ void Waypoints::slotSetHome()
     config->writeEntry("Homesite Latitude", w->origP.lat());
     config->writeEntry("Homesite Longitude", w->origP.lon());
 
+    // update airfield lists from Welt2000 if home site changes:
+    extern MapContents  _globalMapContents;
+    _globalMapContents.slotReloadMapData();
+
     config->setGroup(0);
   }
 }

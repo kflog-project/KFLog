@@ -1389,7 +1389,6 @@ void MapContents::slotDownloadFinished()
 {
   qWarning("slotDownloadFinished()");
   slotReloadMapData();
-  emit contentsChanged();
 }
 
 void MapContents::slotReloadMapData()
@@ -1417,6 +1416,7 @@ void MapContents::slotReloadMapData()
       isoList.append(new QPtrList<Isohypse>);
 
   sectionArray.fill(false);
+  emit contentsChanged();
 }
 
 

@@ -125,6 +125,12 @@ void KFLogConfig::slotOk()
   config-> setGroup(0);
 
   emit scaleChanged((int)lLimitN->value(), (int)uLimitN->value());
+
+  if (needUpdateWelt2000) {
+    extern MapContents  _globalMapContents;
+    _globalMapContents.slotReloadMapData();
+  }
+
   emit configOk();
   accept();
 }
@@ -806,6 +812,10 @@ void KFLogConfig::__addIDTab()
   contestType-> setCurrentItem(config->readNumEntry("Contest", 0));
 
   config-> setGroup(0);
+
+  // update airfield lists from Welt2000 if home site changes:
+  connect(homeLatE, SIGNAL(textChanged(const QString&)), SLOT(slotFilterChanged(const QString&)) );
+  connect(homeLonE, SIGNAL(textChanged(const QString&)), SLOT(slotFilterChanged(const QString&)) );
 }
 
 int KFLogConfig::__setScaleValue(int value)
