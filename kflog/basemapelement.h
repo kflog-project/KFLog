@@ -66,7 +66,7 @@ public:
   /**
    * The three types of elevation-data used in the maps.
    */
-  enum elevationType {NotSet, MSL, GND, FL, UNLTD};
+  enum elevationType {NotSet, MSL, GND, FL, STD, UNLTD};
 
   /**
    * Creates a new (virtual) mapelement.

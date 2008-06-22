@@ -80,6 +80,9 @@ QString Airspace::getInfoString() const
         else
             tempL = "GND";
         break;
+      case STD:
+        tempL.sprintf("%d STD", lLimit);
+        break;
       case FL:
         tempL.sprintf("FL %d", lLimit);
         break;
@@ -99,11 +102,14 @@ QString Airspace::getInfoString() const
       case GND:
         tempU.sprintf("%d GND", uLimit);
         break;
+      case STD:
+        tempU.sprintf("%d STD", uLimit);
+        break;
       case FL:
         tempU.sprintf("FL %d", uLimit);
         break;
       case UNLTD:
-        tempL = i18n("Unlimited");
+        tempU = i18n("Unlimited");
       default: ;
     }
 

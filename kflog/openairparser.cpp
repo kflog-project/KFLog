@@ -485,7 +485,7 @@ void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& 
     if (part=="AMSL" || part=="MSL") {
       newType=BaseMapElement::MSL;
     }
-    else if (part=="GND" || part=="SFC" || part=="ASFC") {
+    else if (part=="GND" || part=="SFC" || part=="ASFC" || part=="AGL") {
       newType=BaseMapElement::GND;
     }
     else if (part.startsWith("UNL")) {
@@ -493,6 +493,9 @@ void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& 
     }
     else if (part=="FL") {
       newType=BaseMapElement::FL;
+    }
+    else if (part=="STD") {
+      newType=BaseMapElement::STD;
     }
         
     if( type == BaseMapElement::NotSet && newType != BaseMapElement::NotSet ) {

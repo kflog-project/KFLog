@@ -60,21 +60,21 @@ class Airspace : public LineElement
      */
     unsigned int getLowerL() const;
     /**
-     * Returns the type of the upper limit (MSN, GND, FL)
+     * Returns the type of the upper limit (MSL, GND, FL, STD)
      * @see BaseMapElement#elevationType
      * @see #uLimitType
      */
     unsigned int getUpperT() const;
     /**
-     * Returns the type of the lower limit (MSN, GND, FL)
+     * Returns the type of the lower limit (MSL, GND, FL, STD)
      * @see BaseMapElement#elevationType
      * @see #lLimitType
      */
     unsigned int getLowerT() const;
     /**
-     * The three types of elevation-data used in the maps.
+     * The types of elevation-data used in the maps.
      */
-    enum LimitType {NotSet, MSL, GND, FL};
+    enum LimitType {NotSet, MSL, GND, FL, STD};
     /**
      * Returns a html-text-string about the airspace containing the name,
      * the type and the borders.
