@@ -91,6 +91,8 @@ int main(int argc, char *argv[])
       qstrdup(i18n("Maintenance, Core-developer, Mapdata")), "florian@kflog.org");    
   aboutData.addAuthor("Heiner Lamprecht",
       qstrdup(i18n("Maintenance, Core-developer")), "heiner@kflog.org");
+  aboutData.addAuthor("Hendrik Hoeth",
+      qstrdup(i18n("Maintenance, Developer")), "hoeth@linta.de");
   aboutData.addAuthor("Andr\303\251 Somers",
       qstrdup(i18n("Developer (Waypoint-handling, Plugin architecture, ...)")), "andre@kflog.org");
   aboutData.addAuthor("Christof Bodner",
