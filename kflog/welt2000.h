@@ -130,7 +130,6 @@
 #define _welt2000_h
 
 #include <qmap.h>
-#include <qlist.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qrect.h>
