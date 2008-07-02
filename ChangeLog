@@ -1,8 +1,27 @@
 $Id$
 
+2008-06-21 Hendrik Hoeth <hoeth@linta.de>
+
+  * Support for WELT2000 airfield files. Old airfield files are not
+    supported anymore.
+  * Changed mapdata directory stucture
+  * More cleanup, Cambridge 300 stuff, ...
+
+2008-06-05 Hendrik Hoeth <hoeth@linta.de>
+
+  * Improved flight evaluation (patch by Constantijn Neeteson)
+  * Improvements for Cambridge 300 series flight recorder support
+
+2008-04-11 Hendrik Hoeth <hoeth@linta.de>
+
+  * Support for OpenAir airspace files. The old airspace format
+    is not supported anymore.
+  * Improvements for Cambridge 300 series flight recorder support
+  * Repository cleanup
+
 2008-04-01 Hendrik Hoeth <hoeth@linta.de>
 
-  * Repository cleanup
+  * Repository cleanup and bugfixes
   * Make kflog 64-bit aware
   * Basic support for Cambridge 300 series flight recorders
 
