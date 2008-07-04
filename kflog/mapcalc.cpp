@@ -186,10 +186,55 @@ float getSpeed(flightPoint p) { return (float)p.dS / (float)p.dT * 3.6; }
 
 float getVario(flightPoint p) { return (float)p.dH / (float)p.dT; }
 
+/**
+   Calculate the bearing from point p1 to point p2 from WGS84
+   coordinates to avoid distortions caused by projection to the map.
+   source: openairparser.cpp
+*/
 float getBearing(flightPoint p1, flightPoint p2)
 {
-  return (float)polar( ( p2.projP.x() - p1.projP.x() ),
-                       ( p2.projP.y() - p1.projP.y() ) );
+  // Arcus computing constant for kflog corordinates. PI is devided by
+  // 180 degrees multiplied with 600.000 because one degree in kflog
+  // is multiplied with this resolution factor.
+  const float pi_180 = M_PI / 108000000.0;
+
+  // qDebug( "x1=%d y1=%d, x2=%d y2=%d",  p1.x(), p1.y(), p2.x(), p2.y() );
+
+  int dx = p2.origP.x() - p1.origP.x(); // latitude
+  int dy = p2.origP.y() - p1.origP.y(); // longitude
+
+  // compute latitude distance in meters
+  float latDist = dx * MILE_kfl / 10000.; // b
+
+  // compute latitude average
+  float latAv = ( ( p2.origP.x() + p1.origP.x() ) / 2.0);
+
+  // compute longitude distance in meters
+  float lonDist = dy * cos( pi_180 * latAv ) * MILE_kfl / 10000.; // a
+
+  // compute angle
+  float angle = asin( fabs(lonDist) / hypot( latDist, lonDist ) );
+
+  // double angleOri = angle;
+
+  // assign computed angle to the right quadrant
+  if( dx >= 0 && dy < 0 ) {
+    angle = (2 * M_PI) - angle;
+  } else if( dx <=0 && dy <= 0 ) {
+    angle =  M_PI + angle;
+  } else if( dx < 0 && dy >= 0 ) {
+    angle = M_PI - angle;
+  }
+
+  // no bearing can be calculated when the two points are on the same location
+  if( dx==0 && dy==0) {
+    angle = 0;
+  }
+
+  //qDebug( "dx=%d, dy=%d - AngleRadCorr=%f, AngleGradCorr=%f",
+  //  dx, dy, angle, angle * 180/M_PI);
+
+  return angle;
 }
 
 double getTrueCourse(WGSPoint p1, WGSPoint p2)

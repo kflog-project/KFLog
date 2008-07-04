@@ -1,5 +1,10 @@
 $Id$
 
+2008-07-04 Hendrik Hoeth <hoeth@linta.de>
+
+  * Major improvement to the circling detection for flight evaluation
+    (patch by Constantijn Neeteson)
+
 2008-06-21 Hendrik Hoeth <hoeth@linta.de>
 
   * Support for WELT2000 airfield files. Old airfield files are not

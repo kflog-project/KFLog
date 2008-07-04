@@ -191,7 +191,7 @@ void Flight::__flightState()
       while(delta_T<10)
       {
         delta_T += route.at(m)->dT;
-        bearing += route.at(m)->bearing;
+        bearing += fabs(route.at(m)->bearing);
         m++;
         if(m==route.count())
           break;

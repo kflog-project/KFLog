@@ -604,6 +604,8 @@ QPtrList<BaseFlightElement>* MapContents::getFlightList()
 bool MapContents::loadFlight(QFile& igcFile)
 {
   float temp_bearing = 0.0;
+  float temp_bearing_diff = 0.0;
+  bool nextZeroBearing = false;
 
   QFileInfo fInfo(igcFile);
   if(!fInfo.exists())
@@ -935,7 +937,18 @@ bool MapContents::loadFlight(QFile& igcFile)
           newPoint.dS = (int)(dist(latTemp, lonTemp,
               prePoint.origP.lat(), prePoint.origP.lon()) * 1000.0);
 
-          prePoint.bearing = getBearing(prePoint,newPoint) - temp_bearing;
+          // Calculate the relative bearing between this and previous point
+          // if the location of points is the same, the relative bearing must be zero for the next point. This is
+          //    achieved by setting the nextZeroBearing to true and in the next loop this will be taken into account
+          if(nextZeroBearing)
+            prePoint.bearing = 0;
+          else
+            prePoint.bearing = getBearing(prePoint,newPoint) - temp_bearing;
+          if((newPoint.origP.x() - prePoint.origP.x())==0  &&  (newPoint.origP.y() - prePoint.origP.y())==0)
+            nextZeroBearing = true;
+          else
+            nextZeroBearing = false;
+
 
           if(prePoint.bearing > M_PI)
             {
@@ -951,7 +964,27 @@ bool MapContents::loadFlight(QFile& igcFile)
               warning("Wir haben ein Problem --- Bearing > 180");
             }
 
-          temp_bearing = getBearing(prePoint,newPoint);
+          // Update the temp bearing only when the location of the points is not the same
+          if((newPoint.origP.x() - prePoint.origP.x())!=0  &&  (newPoint.origP.y() - prePoint.origP.y())!=0)
+            temp_bearing = getBearing(prePoint,newPoint);
+
+          // If the interval time of the log is high, the glider could have made a turn which is larger than 180 deg.
+          // It is possible to recognise this by looking at the second derivative of the bearing: when the change in
+          // bearing_diff is more than 180 deg in 7 sec, it can be assumed that the turn direction remains the same
+          if(newPoint.dT>5 && fabs((prePoint.bearing-temp_bearing_diff)*7/newPoint.dT) > M_PI)
+          {
+            if(prePoint.bearing>0)
+            {
+              prePoint.bearing = -2*M_PI+prePoint.bearing;
+            }
+            else if(prePoint.bearing<0)
+            {
+              prePoint.bearing = 2*M_PI-prePoint.bearing;
+            }
+          }
+
+          temp_bearing_diff = prePoint.bearing;
+
 
           // Versuch der Ausklink-Erkennung ...
           if(launched && ((isAus != true) &&
