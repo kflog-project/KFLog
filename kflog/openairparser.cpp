@@ -143,6 +143,9 @@ bool OpenAirParser::parse(const QString& path, QPtrList<Airspace>& list)
     } else if (line.isEmpty()) {
       //empty line, ignore
     } else {
+      // delete comments at the end of the line before parsing it
+      line = QStringList::split('*', line)[0];
+      line = QStringList::split('#', line)[0];
       parseLine(line);
     }
     line=in.readLine();
@@ -563,7 +566,7 @@ bool OpenAirParser::parseCoordinatePart(QString& line, int& lat, int& lon)
     600000, 10000, 166.666666667, 0
   };
   const double factor100[4]= {
-    600000, 10000, 100.0, 0
+    600000, 600000, 10000, 0
   };
   bool decimal=false;
   int cur_factor=0;
@@ -588,8 +591,8 @@ bool OpenAirParser::parseCoordinatePart(QString& line, int& lat, int& lon)
       part=line.mid(pos, len).toInt(&ok);
       if (ok) {
         if( decimal )   {
-          value+=(int) rint(part * factor100[cur_factor]);
-          // qDebug("part=%f add=%d v=%d  cf=%d %d", part, int(part * factor[cur_factor]), value, cur_factor, decimal );
+          value+=(int) rint(part / pow(10,len) * factor100[cur_factor]);
+          // qDebug("part=%f add=%d v=%d  cf=%d %d", part, int(part / pow(10,len) * factor100[cur_factor]), value, cur_factor, decimal );
         } else {
           value+=(int) rint(part * factor[cur_factor]);
           // qDebug("part=%f add=%d v=%d  cf=%d %d", part, int(part * factor[cur_factor]), value, cur_factor, decimal );
