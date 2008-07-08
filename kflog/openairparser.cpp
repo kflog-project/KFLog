@@ -736,7 +736,7 @@ bool OpenAirParser::makeAngleArc(QString line)
   double kmr = radius * MILE_kfl / 1000.;
   //qDebug( "distLat=%f, distLon=%f, radius=%fkm", distLat, distLon, kmr );
 
-  addArc( kmr/(distLat/10000.), kmr/(distLon/10000.), angle1, angle2 );
+  addArc( kmr/(distLat/10000.), kmr/(distLon/10000.), angle1/180*M_PI, angle2/180*M_PI );
   return true;
 }
 
@@ -876,7 +876,7 @@ void OpenAirParser::addArc(const double& rX, const double& rY,
   //qDebug("addArc() dir=%d, a1=%f a2=%f",_direction, angle1*180/M_PI , angle2*180/M_PI );
 
   double x, y;
-  int pai= asPA.count();
+  int pai=asPA.count();
 
   if (_direction>0) {
     if (angle1>=angle2)
@@ -886,45 +886,28 @@ void OpenAirParser::addArc(const double& rX, const double& rY,
       angle1+=2.0*M_PI;
   }
 
-  asPA.resize(pai+abs(int(((angle2-angle1)*180)/(STEP_WIDTH*M_PI)))+2);
+  int nsteps=abs(int(((angle2-angle1)*180)/(STEP_WIDTH*M_PI)))+2;
+  asPA.resize(pai+nsteps);
 
   //qDebug("delta=%d pai=%d",int(((angle2-angle1)*180)/(STEP_WIDTH*M_PI)), pai );
 
   const double step=(STEP_WIDTH*M_PI)/180.0;
 
-  if (_direction>0) { //clockwise
-    for (double phi=angle1; phi<angle2; phi+=step) {
-      x = ( cos(phi)*rX ) + _center.x();
-      y = ( sin(phi)*rY ) + _center.y();
-
-      /*
-        QString xs = WGSPoint::printPos((int) rint(x), true );
-        QString ys = WGSPoint::printPos((int) rint(y), false );
-
-        qDebug("pai[%d], X=%f-%s, Y=%f-%s",
-        pai,
-        x, xs.latin1(),
-        y, ys.latin1());
-      */
-
-      asPA.setPoint(pai, (int) rint(x), (int) rint(y));
-      pai++;
-    }
-    x = ( cos(angle2)*rX ) + _center.x();
-    y = ( sin(angle2)*rY ) + _center.y();
+  double phi=angle1;
+  for (int i=0; i<nsteps-1; i++) {
+    x = ( cos(phi)*rX ) + _center.x();
+    y = ( sin(phi)*rY ) + _center.y();
     asPA.setPoint(pai, (int) rint(x), (int) rint(y));
-  } else {
-    for (double phi=angle1; phi>angle2; phi-=step) {
-      x = ( cos(phi)*rX ) + _center.x();
-      y = ( sin(phi)*rY ) + _center.y();
-      //qDebug("pai[%d], X=%f, Y=%f", pai, x, y);
-      asPA.setPoint(pai, (int) rint(x), (int) rint(y));
-      pai++;
+    pai++;
+    if (_direction>0) { //clockwise
+      phi+=step;
+    } else {
+      phi-=step;
     }
-    x = ( cos(angle2)*rX ) + _center.x();
-    y = ( sin(angle2)*rY ) + _center.y();
-    asPA.setPoint(pai, (int) rint(x), (int) rint(y));
   }
+  x = ( cos(angle2)*rX ) + _center.x();
+  y = ( sin(angle2)*rY ) + _center.y();
+  asPA.setPoint(pai, (int) rint(x), (int) rint(y));
 }
 
 
