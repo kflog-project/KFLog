@@ -1,5 +1,9 @@
 $Id$
 
+2008-07-08 Hendrik Hoeth <hoeth@linta.de>
+
+  * A number of bugfixes in the openairparser
+
 2008-07-04 Hendrik Hoeth <hoeth@linta.de>
 
   * Major improvement to the circling detection for flight evaluation
