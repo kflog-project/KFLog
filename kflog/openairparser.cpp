@@ -439,6 +439,7 @@ void OpenAirParser::parseType(QString& line)
 void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& type, int& alt)
 {
   bool convertFromMeters=false;
+  bool altitudeIsFeet=false;
   QString input = line;
   QStringList elements;
   int len=0, pos=0;
@@ -515,6 +516,12 @@ void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& 
       continue;
     }
 
+    //see if it is a way of setting units to feet
+    if (part=="FT") {
+      altitudeIsFeet=true;
+      continue;
+    }
+
     //see if it is a way of setting units to meters
     if (part=="M") {
       convertFromMeters=true;
@@ -529,6 +536,8 @@ void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& 
 
     //ignore other parts
   }
+  if( altitudeIsFeet && type == BaseMapElement::NotSet )
+      type = BaseMapElement::MSL;
 
   if (convertFromMeters)
     alt = (int) rint( alt/Distance::mFromFeet);
