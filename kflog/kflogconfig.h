@@ -23,6 +23,7 @@
 
 #include <kcolorbutton.h>
 #include <kcombobox.h>
+#include <qcombobox.h>
 #include <qcheckbox.h>
 #include <qlcdnumber.h>
 #include <qlineedit.h>
@@ -65,6 +66,9 @@ class KFLogConfig : public KDialogBase
     void scaleChanged(int min, int max);
     /** */
     void configOk();
+    /** */
+    void newDrawType(int type);
+
 
   public slots:
     /** */
@@ -109,11 +113,17 @@ class KFLogConfig : public KDialogBase
     void slotFilterChanged(const QString&);
     /** */
     void slotHomeRadiusChanged(int radius);
+    /**
+    * slot needed to trigger an update of the menu Flight=>Show Flightdata
+    */
+    void slotDrawTypeSelect();
   private:
     /** */
     void __addIDTab();
     /** */
     void __addMapTab();
+    /** */
+    void __addFlightTab();
     /** */
     void __addPathTab();
     /** */
@@ -134,6 +144,8 @@ class KFLogConfig : public KDialogBase
     QFrame* idPage;
     /** */
     QFrame* mapPage;
+    /** */
+    QFrame* flightPage;
     /** */
     QFrame* pathPage;
     /** */
@@ -161,8 +173,10 @@ class KFLogConfig : public KDialogBase
     QLineEdit* surNameE;
     QLineEdit* dateOfBirthE;
     QLineEdit* filterE;
+    QSpinBox* flightPathWidthE;
     QSpinBox* homeRadiusE;
     bool needUpdateWelt2000;
+    bool needUpdateDrawType;
 
     QSlider* lLimit;
     QSlider* uLimit;
@@ -179,6 +193,7 @@ class KFLogConfig : public KDialogBase
     QLCDNumber* reduce2N;
     QLCDNumber* reduce3N;
     KComboBox* elementSelect;
+    QComboBox* drawTypeSelect;
     KComboBox* projectionSelect;
     KComboBox* contestType;
     LatEdit* firstParallel;
@@ -186,6 +201,12 @@ class KFLogConfig : public KDialogBase
     LongEdit* originLongitude;
     QButtonGroup *waypointButtonGroup;
     QPushButton* catalogPathSearch;
+    KColorButton* flightTypeLeftTurnColor;
+    KColorButton* flightTypeRightTurnColor;
+    KColorButton* flightTypeMixedTurnColor;
+    KColorButton* flightTypeStraightColor;
+    KColorButton* flightTypeSolidColor;
+    KColorButton* flightTypeEngineNoiseColor;
 
     int cylinPar;
     int lambertV1;

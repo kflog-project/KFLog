@@ -77,11 +77,18 @@ class MapConfig : public QObject
     /**
      * @param  fP  The flightpoint, which is used to determine the color
      *             of the line.
-     * @param  overrideSwitch always return the color if true, regardless of
-     *                        the zoom factor
+     * @param  va_min       [m/s] minimum vario reading of the whole flight
+     * @param  va_max       [m/s] maximum vario reading of the whole flight
+     * @param  altitude_max [m]   maximum altitude of the whole flight (minimum altitude is assumed to be 0 m)
+     * @param  speed_max    [m/s] maximum velocity during the whole flight
      * @return the pen for drawing a line between two flightpoints of a flight.
      */
-    QPen getDrawPen(flightPoint* fP, bool overrideSwitch=false);
+    QPen getDrawPen(flightPoint* fP, float va_min=-10, float va_max=10, int altitude_max = 5000, float speed_max=80);
+    /**
+     * @param  c  A value between 0.0 and 1.0
+     * @return Color from dark red(0.0)->red->yellow->green->cyan->blue->dark blue(1.0)
+     */
+    QColor getRainbowColor(float c);
     /**
      * @param  type  The typeID of the element.
      *
@@ -149,7 +156,7 @@ class MapConfig : public QObject
      *
      * @see #slotSetFlightDataType
      */
-    enum DrawFlightPoint {Vario, Speed, Altitude, Cycling, Solid};
+    enum DrawFlightPoint {Altitude, Cycling, Speed, Vario, Solid};
 
   public slots:
     /**

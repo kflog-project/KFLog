@@ -78,8 +78,7 @@
 
 
 MapConfig::MapConfig()
-  : scaleIndex(0), printScaleIndex(0), isSwitch(false),
-    drawFType(MapConfig::Vario)
+  : scaleIndex(0), printScaleIndex(0), isSwitch(false)
 {
   airABorder = new bool[6];
   airBBorder = new bool[6];
@@ -605,13 +604,19 @@ void MapConfig::slotReadConfig()
 
   config->setGroup("Scale");
   _drawWpLabelScale = config->readNumEntry("Waypoint Label", WPLABEL);
-  
+
   config->setGroup(0);
 
   emit configChanged();
 }
 
-void MapConfig::slotSetFlightDataType(int type)  {  drawFType = type;  }
+void MapConfig::slotSetFlightDataType(int type)
+{
+  drawFType = type;
+  KConfig* config = KGlobal::config();
+  config-> setGroup("Flight");
+  config-> writeEntry("Draw Type", type);
+}
 
 void MapConfig::slotSetMatrixValues(int index, bool sw)
 {
@@ -630,7 +635,7 @@ QPen MapConfig::getPrintPen(unsigned int typeID)
   return __getPen(typeID, printScaleIndex);
 }
 
-QPen MapConfig::getDrawPen(flightPoint* fP,bool overrideSwitch/*=false*/)
+QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*=10*/, int altitude_max/*= 5000*/, float speed_max/*=80*/)
 {
   //
   // Dynamische Farben im Flug:
@@ -641,47 +646,34 @@ QPen MapConfig::getDrawPen(flightPoint* fP,bool overrideSwitch/*=false*/)
   //   I would prefer colors adjusted for each flights histogram.
   //
 
-  if(!isSwitch && !overrideSwitch)
-    return QPen(QColor(0,100,200), 3);
-
+  KConfig* config = KGlobal::config();
+  config-> setGroup("Flight");
   int red = 0, green = 0, blue = 0;
-  int width = 4;
+  int width = config->readNumEntry("flightPathWidth", 4);
+  float vario_range;
+  QColor color;
 
   switch(drawFType)
     {
       case MapConfig::Vario:
-        if(fP->dH < 0)
-          {
-            red = 0;
-            green = std::max(0, (int)(220 - 2.0 * -fP->dH));
-            blue = 220;
-          }
+        if(abs(va_min)>va_max)
+          vario_range = 2*abs(va_min);
         else
-          {
-            red = 220;
-            green = 0;
-            blue = std::max(0, (int)(220 - 2.0 * fP->dH));
-          }
+          vario_range = 2*va_max;
+        if(vario_range>10.0) //filter high vario values, probably due to a wrong GPS-fix
+          vario_range = 10.0;
+        color = getRainbowColor(0.5-(fP->dH/fP->dT)/vario_range);
         break;
+
       case MapConfig::Speed:
-        red = 0;
-        green = std::min(255, (int)(0.0 + (fP->dS / std::max(1, fP->dT)) * 5.0));
-        blue = 255;
+        speed_max -= 15;
+        color = getRainbowColor(1-(fP->dS/std::max(1, fP->dT)-15)/speed_max);
         break;
+
       case MapConfig::Altitude:
-        if(fP->height < 1000.0)
-          {
-            red = std::max(0, (int)(100.0 - fP->height * 0.3));
-            green = 0;
-            blue = std::min(255, (int)(100.0 + fP->height * 0.2));
-          }
-        else
-          {
-            red = 0;
-            green = std::min(255, (int)(0.0 + 0.2 * (fP->height - 1000.0)));
-            blue = 255;
-          }
+        color = getRainbowColor((float)fP->height/altitude_max);
         break;
+
       case MapConfig::Cycling:
         switch(fP->f_state)
           {
@@ -689,43 +681,106 @@ QPen MapConfig::getDrawPen(flightPoint* fP,bool overrideSwitch/*=false*/)
               red = 255;
               green = 50;
               blue = 0;
+              color = config->readColorEntry("Color Left Turn", new QColor(red, green, blue));
               break;
             case Flight::RightTurn:
               red = 50;
               green = 255;
               blue = 0;
+              color = config->readColorEntry("Color Right Turn", new QColor(red, green, blue));
               break;
             case Flight::MixedTurn:
               red = 200;
               green = 0;
               blue = 200;
+              color = config->readColorEntry("Color Mixed Turn", new QColor(red, green, blue));
               break;
             case Flight::Straight:
             default:
               red = 0;
               green = 50;
               blue = 255;
+              color = config->readColorEntry("Color Straight", new QColor(red, green, blue));
               break;
           }
         break;
+
       case MapConfig::Solid:
       default:
         red = 0;
         green = 100;
         blue = 200;
+        color = config->readColorEntry("Color Solid", new QColor(red, green, blue));
         break;
     }
 
   // Simple aproach to see "engine was running"
   if ( fP->engineNoise > 350 ) {
-    //  Put a white strip there in every case
+    //  Put a white (or configured color) strip there in every case
     red = 255;
     green = 255;
     blue = 255;
+    color = config->readColorEntry("Color Engine Noise", new QColor(red, green, blue));
   }
 
 
-  return QPen(QColor(red, green, blue), width);
+  return QPen(color, width);
+}
+
+QColor MapConfig::getRainbowColor(float c)
+{
+  int red, green, blue;
+
+  if(c<0.0)
+  { //dark red
+    red     = 100;
+    green   = 0;
+    blue    = 0;
+  }
+  else if(c<(1.0/6.0))
+  { //dark red -> red
+    red     = (int)(100+c*6*155);
+    green   = 0;
+    blue    = 0;
+  }
+  else if(c<(2.0/6.0))
+  { //red -> yellow
+    red     = 255;
+    green   = (int)((c-1.0/6.0)*6*255);
+    blue    = 0;
+  }
+  else if(c<(3.0/6.0))
+  { //yellow -> green
+    red     = (int)(255-(c-2.0/6.0)*6*255);
+    green   = 255;
+    blue    = 0;
+  }
+  else if(c<(4.0/6.0))
+  { //green -> cyan
+    red     = 0;
+    green   = 255;
+    blue    = (int)((c-3.0/6.0)*6*255);
+  }
+  else if(c<(5.0/6.0))
+  { //cyan -> blue
+    red     = 0;
+    green   = (int)(255-(c-4.0/6.0)*6*255);
+    blue    = 255;
+  }
+  else if(c<1.0)
+  { //blue -> dark blue
+    red     = 0;
+    green   = 0;
+    blue    = (int)(255-(c-5.0/6.0)*6*155);
+  }
+  else
+  { //dark blue
+    red     = 0;
+    green   = 0;
+    blue    = 100;
+  }
+
+  return QColor(red, green, blue);
 }
 
 QPen MapConfig::getDrawPen(unsigned int typeID)

@@ -58,6 +58,7 @@ KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
   __addPathTab();
   __addScaleTab();
   __addMapTab();
+  __addFlightTab();
   __addProjectionTab();
   __addAirfieldTab();
 //  __addTopographyTab();
@@ -76,7 +77,7 @@ void KFLogConfig::slotOk()
   slotSelectProjection(ProjectionBase::Unknown);
 
   config-> setGroup("General Options");
-  config-> writeEntry("Version", "2.0.2");
+  config-> writeEntry("Version", "2.2.0");
 
   config-> setGroup("Path");
   config-> writeEntry("DefaultFlightDirectory", igcPathE->text());
@@ -102,6 +103,21 @@ void KFLogConfig::slotOk()
   config-> writeEntry("Projection Type", projectionSelect->currentItem());
   config-> writeEntry("Welt2000CountryFilter", filterE->text());
   config-> writeEntry("Welt2000HomeRadius", homeRadiusE->text());
+
+  config-> setGroup("Flight");
+  if(needUpdateDrawType)
+  {
+    config-> writeEntry("Draw Type", drawTypeSelect->currentItem());
+    //update menu Flight=>Show Flightdata
+    emit newDrawType(drawTypeSelect->currentItem());
+  }
+  config-> writeEntry("Color Left Turn", flightTypeLeftTurnColor->color());
+  config-> writeEntry("Color Right Turn", flightTypeRightTurnColor->color());
+  config-> writeEntry("Color Mixed Turn", flightTypeMixedTurnColor->color());
+  config-> writeEntry("Color Straight", flightTypeStraightColor->color());
+  config-> writeEntry("Color Solid", flightTypeSolidColor->color());
+  config-> writeEntry("Color Engine Noise", flightTypeEngineNoiseColor->color());
+  config-> writeEntry("flightPathWidth", flightPathWidthE->text());
 
   config-> setGroup("Lambert Projection");
   config-> writeEntry("Parallel1", lambertV1);
@@ -361,6 +377,82 @@ void KFLogConfig::__addMapTab()
 
   drawConfig-> slotSelectElement(0);
   printConfig-> slotSelectElement(0);
+}
+
+void KFLogConfig::__addFlightTab()
+{
+  config-> setGroup("Flight");
+
+  flightPage = addPage(i18n("Flight Display"), i18n("Flight Display Configuration"),
+      KGlobal::instance()-> iconLoader()->loadIcon("flightpath", KIcon::NoGroup,
+          KIcon::SizeLarge));
+
+  QGridLayout* flightLayout = new QGridLayout(flightPage, 17, 40, 8, 1);
+
+  QGroupBox* flightPathLineGroup = new QGroupBox(flightPage, "flightDisplayGroup");
+  flightPathLineGroup-> setTitle(i18n("Flight Path Line") + ":");
+  flightLayout->addMultiCellWidget(flightPathLineGroup, 0, 4, 0, 39);
+
+
+  drawTypeSelect = new QComboBox(flightPage, "drawTypeSelect");
+  drawTypeSelect-> insertItem(i18n("Altitude"), MapConfig::Altitude);
+  drawTypeSelect-> insertItem(i18n("Cycling"),  MapConfig::Cycling);
+  drawTypeSelect-> insertItem(i18n("Speed"),    MapConfig::Speed);
+  drawTypeSelect-> insertItem(i18n("Vario"),    MapConfig::Vario);
+  drawTypeSelect-> insertItem(i18n("Solid"),    MapConfig::Solid);
+  drawTypeSelect-> setCurrentItem(config->readNumEntry("Draw Type"));
+
+  flightLayout->addWidget(new QLabel(i18n("type") + ":", flightPage), 1, 1);
+  flightLayout->addWidget(drawTypeSelect, 1, 10);
+
+
+  flightPathWidthE = new QSpinBox(flightPage, "flightPathWidthE");
+  flightPathWidthE->setRange( 0, 9 );
+  flightPathWidthE->setLineStep( 1 );
+  flightPathWidthE->setValue(config->readNumEntry("flightPathWidth", 4));
+
+  flightLayout->addWidget(new QLabel(i18n("width") + ":", flightPage), 3, 1);
+  flightLayout->addWidget( flightPathWidthE, 3, 10);
+
+
+  QGroupBox* flightPathColorGroup = new QGroupBox(flightPage, "flightDisplayGroup");
+  flightPathColorGroup-> setTitle(i18n("Flight Path Cycling Colors") + ":");
+  flightLayout->addMultiCellWidget(flightPathColorGroup, 5, 14, 0, 39);
+
+  flightTypeLeftTurnColor = new KColorButton(config->readColorEntry("Color Left Turn", new QColor(255, 50, 0)), flightPage);
+  flightLayout->addWidget(new QLabel(i18n("left turn") + ":", flightPage), 6, 1);
+  flightLayout->addWidget( flightTypeLeftTurnColor, 6, 10);
+
+  flightTypeRightTurnColor = new KColorButton(config->readColorEntry("Color Right Turn", new QColor(50, 255, 0)), flightPage);
+  flightLayout->addWidget(new QLabel(i18n("right turn") + ":", flightPage), 7, 1);
+  flightLayout->addWidget( flightTypeRightTurnColor, 7, 10);
+
+  flightTypeMixedTurnColor = new KColorButton(config->readColorEntry("Color Mixed Turn", new QColor(200, 0, 200)), flightPage);
+  flightLayout->addWidget(new QLabel(i18n("mixed turn") + ":", flightPage), 8, 1);
+  flightLayout->addWidget( flightTypeMixedTurnColor, 8, 10);
+
+  flightTypeStraightColor = new KColorButton(config->readColorEntry("Color Straight", new QColor(0, 50, 255)), flightPage);
+  flightLayout->addWidget(new QLabel(i18n("straight") + ":", flightPage), 9, 1);
+  flightLayout->addWidget( flightTypeStraightColor, 9, 10);
+
+
+  flightTypeSolidColor = new KColorButton(config->readColorEntry("Color Solid", new QColor(0, 100, 200)), flightPage);
+  flightLayout->addWidget(new QLabel(i18n("solid") + ":", flightPage), 11, 1);
+  flightLayout->addWidget( flightTypeSolidColor, 11, 10);
+
+  flightTypeEngineNoiseColor = new KColorButton(config->readColorEntry("Color Engine Noise", new QColor(255, 255, 255)), flightPage);
+  flightLayout->addWidget(new QLabel(i18n("engine noise") + ":", flightPage), 13, 1);
+  flightLayout->addWidget( flightTypeEngineNoiseColor, 13, 10);
+
+
+  needUpdateDrawType = false;
+  connect(drawTypeSelect, SIGNAL(activated(int)), SLOT(slotDrawTypeSelect()));
+
+}
+
+void KFLogConfig::slotDrawTypeSelect()
+{
+  needUpdateDrawType = true;
 }
 
 void KFLogConfig::__addProjectionTab()

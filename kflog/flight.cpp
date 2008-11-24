@@ -346,6 +346,11 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
   bBoxFlight.setRight(curPointA.x());
   bBoxFlight.setBottom(curPointA.y());
 
+  float vario_min = getPoint(VA_MIN).dH/getPoint(VA_MIN).dT;
+  float vario_max = getPoint(VA_MAX).dH/getPoint(VA_MAX).dT;
+  int altitude_max = getPoint(H_MAX).height;
+  float speed_max = getPoint(V_MAX).dS/getPoint(V_MAX).dT;
+
   for(unsigned int n = delta; n < route.count(); n = n + delta)
     {
       pointA = route.at(n - delta);
@@ -362,7 +367,7 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
       bBoxFlight.setRight(std::max(curPointB.x(), bBoxFlight.right()));
       bBoxFlight.setBottom(std::min(curPointB.y(), bBoxFlight.bottom()));
 
-      QPen drawP = glConfig->getDrawPen(pointB);
+      QPen drawP = glConfig->getDrawPen(pointB, vario_min, vario_max, altitude_max, speed_max);
       drawP.setCapStyle(Qt::SquareCap);
       targetPainter->setPen(drawP);
 
@@ -403,6 +408,11 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   else
     nStop = nAnimationIndex;
 
+  float vario_min = getPoint(VA_MIN).dH/getPoint(VA_MIN).dT;
+  float vario_max = getPoint(VA_MAX).dH/getPoint(VA_MAX).dT;
+  int altitude_max = getPoint(H_MAX).height;
+  float speed_max = getPoint(V_MAX).dS/getPoint(V_MAX).dT;
+
   for(unsigned int n = delta; n < nStop; n = n + delta)
     {
       pointA = route.at(n - delta);
@@ -419,10 +429,8 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       bBoxFlight.setRight(std::max(curPointB.x(), bBoxFlight.right()));
       bBoxFlight.setBottom(std::min(curPointB.y(), bBoxFlight.bottom()));
 
-      QPen drawP = glConfig->getDrawPen(pointB);
+      QPen drawP = glConfig->getDrawPen(pointB, vario_min, vario_max, altitude_max, speed_max);
       drawP.setCapStyle(Qt::SquareCap);
-//      QColor HeightC(QColor("darkblue").light(100 + (int)(pointB->height/20)));
-//      drawP.setColor(HeightC);
       targetPainter->setPen(drawP);
 
       maskPainter->setPen(QPen(Qt::color1, drawP.width(),

@@ -572,6 +572,10 @@ class KFLogApp : public KDockMainWindow
    */
   bool showStartLogo;
   KPopupMenu* windowMenu;
+  /**
+   * A select menu to change the colors of the flight path, which can be based on altitude, cycling, speed, vario and solid.
+   */
+  KSelectAction* viewFlightDataType;
 
   private slots: // Private slots
   /**

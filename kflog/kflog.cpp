@@ -139,9 +139,6 @@ KFLogApp::KFLogApp()
 
   activateDock();
 
-  // Heavy workaround! MapConfig should tell KFLogApp, which type is selected!
-  slotSelectFlightData(0);
-
   connect(&_globalMapMatrix, SIGNAL(matrixChanged()), map,
       SLOT(slotRedrawMap()));
   connect(map, SIGNAL(showFlightPoint(const QPoint&, const flightPoint&)),
@@ -377,7 +374,7 @@ void KFLogApp::initActions()
                         0, this, SLOT(slotFlightViewIgcOpenGL()), actionCollection(),
                         "view_flight_opengl");
 
-  KSelectAction* viewFlightDataType = new KSelectAction(
+  viewFlightDataType = new KSelectAction(
       i18n("Show Flightdata"), "idea", 0,
       actionCollection(), "view_flight_data");
 
@@ -392,8 +389,8 @@ void KFLogApp::initActions()
   dataList.append(i18n("Solid"));
 
   viewFlightDataType->setItems(dataList);
-  // Heavy workaround! MapConfig should tell KFLogApp, which type is selected!
-  viewFlightDataType->setCurrentItem(0);
+  config-> setGroup("Flight");
+  viewFlightDataType->setCurrentItem(config->readNumEntry("Draw Type", MapConfig::Altitude));
 
   KActionMenu* flightMenu = new KActionMenu(i18n("F&light"),
       actionCollection(), "flight");
@@ -934,23 +931,24 @@ void KFLogApp::slotSelectFlightData(int id)
 {
   switch(id)
     {
-      case 0:    // Altitude
+      case MapConfig::Altitude:    // Altitude
         emit flightDataTypeChanged(MapConfig::Altitude);
         break;
-      case 1:    // Cycling
+      case MapConfig::Cycling:     // Cycling
         emit flightDataTypeChanged(MapConfig::Cycling);
         break;
-      case 2:    // Speed
+      case MapConfig::Speed:       // Speed
         emit flightDataTypeChanged(MapConfig::Speed);
         break;
-      case 3:    // Vario
+      case MapConfig::Vario:       // Vario
         emit flightDataTypeChanged(MapConfig::Vario);
         break;
-      case 4:    // Solid color
+      case MapConfig::Solid:       // Solid color
         emit flightDataTypeChanged(MapConfig::Solid);
         break;
     }
   map->slotRedrawFlight();
+  viewFlightDataType->setCurrentItem(id);
 }
 
 /*
@@ -1049,6 +1047,8 @@ void KFLogApp::slotConfigureKFLog()
       SLOT(reProject()));
 
   connect(confDlg, SIGNAL(configOk()), map, SLOT(slotRedrawMap()));
+
+  connect(confDlg, SIGNAL(newDrawType(int)), this, SLOT(slotSelectFlightData(int)));
 
   confDlg->exec();
 

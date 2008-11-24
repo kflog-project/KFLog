@@ -1,5 +1,10 @@
 $Id$
 
+2008-11-24 Hendrik Hoeth <hoeth@linta.de>
+
+  * Improvement of the flight path display
+    (patch by Constantijn Neeteson)
+
 2008-07-08 Hendrik Hoeth <hoeth@linta.de>
 
   * A number of bugfixes in the openairparser

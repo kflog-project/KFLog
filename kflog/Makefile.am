@@ -196,6 +196,7 @@ EXTRA_DIST = \
 	hi32-mimetype-igc.png \
 	hi48-app-kflog.png \
 	hi48-mimetype-airfield.png \
+	hi48-mimetype-flightpath.png \
 	hi48-mimetype-declaration.png \
 	hi48-mimetype-igc.png \
 	hi48-mimetype-pilot.png \
@@ -284,6 +285,8 @@ install-data-local:
 	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/mimetypes/
 	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-declaration.png $(kde_icondir)/hicolor/48x48/mimetypes/declaration.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/mimetypes/
+	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-flightpath.png $(kde_icondir)/hicolor/48x48/mimetypes/flightpath.png
+	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/mimetypes/
 	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-task.png $(kde_icondir)/hicolor/48x48/mimetypes/task.png
 	$(mkinstalldirs) $(kde_icondir)/hicolor/48x48/mimetypes/
 	$(INSTALL_DATA) $(srcdir)/hi48-mimetype-waypoint.png $(kde_icondir)/hicolor/48x48/mimetypes/waypoint.png
@@ -329,6 +332,8 @@ uninstall-local:
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/centerto.png
 	-rm -f $(kde_icondir)/hicolor/22x22/actions/task.png
 	-rm -f $(kde_icondir)/hicolor/16x16/actions/task.png
+	-rm -f $(kde_icondir)/hicolor/48x48/mimetypes/airfield.png
+	-rm -f $(kde_icondir)/hicolor/48x48/mimetypes/flightpath.png
 	-rm -f $(kde_icondir)/hicolor/48x48/mimetypes/declaration.png
 	-rm -f $(kde_icondir)/hicolor/48x48/mimetypes/task.png
 	-rm -f $(kde_icondir)/hicolor/48x48/mimetypes/waypoint.png
