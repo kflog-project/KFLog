@@ -269,7 +269,7 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
         PRINT_RAIL_PEN_1, PRINT_RAIL_PEN_2,
         PRINT_RAIL_PEN_STYLE_1, PRINT_RAIL_PEN_STYLE_2)
 
-  READ_PEN("RailD", rail_dPenList, rail_dBorder,
+  READ_PEN("Rail_D", rail_dPenList, rail_dBorder,
         PRINT_RAIL_D_COLOR_1, PRINT_RAIL_D_COLOR_2,
         PRINT_RAIL_D_PEN_1, PRINT_RAIL_D_PEN_2,
         PRINT_RAIL_D_PEN_STYLE_1, PRINT_RAIL_D_PEN_STYLE_2)
@@ -551,7 +551,7 @@ void ConfigPrintElement::slotOk()
 
   WRITE_PEN("Rail", railPenList, railBorder);
 
-  WRITE_PEN("RailD", rail_dPenList, rail_dBorder);
+  WRITE_PEN("Rail_D", rail_dPenList, rail_dBorder);
 
   WRITE_PEN("Aerial Cable", aerialcablePenList, aerialcableBorder);
 

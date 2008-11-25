@@ -1,5 +1,9 @@
 $Id$
 
+2008-11-25 Hendrik Hoeth <hoeth@linta.de>
+
+  * Bugfix for printing configuration of double railways
+
 2008-11-24 Hendrik Hoeth <hoeth@linta.de>
 
   * Improvement of the flight path display

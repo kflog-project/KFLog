@@ -331,7 +331,7 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
         RAIL_PEN_STYLE_1, RAIL_PEN_STYLE_2, RAIL_PEN_STYLE_3, RAIL_PEN_STYLE_4)
   READ_BORDER(railBorder);
 
-  config-> setGroup("RailD");
+  config-> setGroup("Rail_D");
   READ_PEN(rail_dPenList, RAIL_D_COLOR_1, RAIL_D_COLOR_2, RAIL_D_COLOR_3,
         RAIL_D_COLOR_4, RAIL_D_PEN_1, RAIL_D_PEN_2, RAIL_D_PEN_3, RAIL_D_PEN_4,
         RAIL_D_PEN_STYLE_1, RAIL_D_PEN_STYLE_2, RAIL_D_PEN_STYLE_3, RAIL_D_PEN_STYLE_4)
