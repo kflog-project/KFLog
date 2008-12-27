@@ -317,21 +317,21 @@ OptimizationWizard::~OptimizationWizard()
  */
 void OptimizationWizard::languageChange()
 {
-    setCaption( tr( "OLC Optimization" ) );
-    groupBox1->setTitle( tr( "Task Start/End Point" ) );
+    setCaption( i18n( "OLC Optimization" ) );
+    groupBox1->setTitle( i18n( "Task Start/End Point" ) );
     lblStartHeight->setText( tr( "1999m" ) );
     lblStopTime->setText( tr( "11:11:11" ) );
     lblDiffHeight->setText( tr( "1999m" ) );
-    textLabel1_3_2_2->setText( tr( "<p align=\"right\">Difference:</p>" ) );
+    textLabel1_3_2_2->setText( "<p align=\"right\">" + i18n( "Difference" ) + ":</p>" );
     lblStartTime->setText( tr( "11:11:11" ) );
-    textLabel1_4_2->setText( tr( "<p align=\"right\">Start of Task:</p>" ) );
-    textLabel1_2_2_2->setText( tr( "<p align=\"right\">End of Task:</p>" ) );
+    textLabel1_4_2->setText( "<p align=\"right\">" + i18n( "Start of Task" ) + ":</p>" );
+    textLabel1_2_2_2->setText( "<p align=\"right\">" + i18n( "End of Task" ) + ":</p>" );
     lblStopHeight->setText( tr( "1999m" ) );
     lblDiffTime->setText( tr( "11:11:11" ) );
-    kPushButton2->setText( tr( "Set Times" ) );
-    setTitle( page, tr( "Task start and end times" ) );
-    btnStart->setText( tr( "Start Optimization" ) );
-    btnStop->setText( tr( "Stop Optimization" ) );
-    setTitle( page_2, tr( "Optimization" ) );
+    kPushButton2->setText( i18n( "Set Times" ) );
+    setTitle( page, i18n( "Task start and end times" ) );
+    btnStart->setText( i18n( "Start Optimization" ) );
+    btnStop->setText( i18n( "Stop Optimization" ) );
+    setTitle( page_2, i18n( "Optimization" ) );
 }
 

@@ -1,3 +1,19 @@
+How to update kflog.pot and merge it with a language file:
+
+* Navigate in the shell to the kflog directory (.../kflog2/)
+
+* Execute:
+	make -f admin/Makefile.common package-messages
+
+* Execute: (lang.po must be replaced by the language po-file)
+	msgmerge -UN po/lang.po po/kflog.pot
+
+Constantijn Neeteson
+
+
+===================================================================
+
+
 How to update an allready existing translation:
 
 * Save the old translation wherever You like
