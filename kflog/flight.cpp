@@ -105,6 +105,7 @@ Flight::Flight(const QString& fName, const QString& recID, const QPtrList<flight
 {
   origTask.checkWaypoints(route, gliderType);
 
+  __calculateBasicInformation();
   __checkMaxMin();
   __flightState();
 
@@ -191,7 +192,7 @@ void Flight::__flightState()
       while(delta_T<10)
       {
         delta_T += route.at(m)->dT;
-        bearing += fabs(route.at(m)->bearing);
+        bearing += fabs(route.at(m)->dBearing);
         m++;
         if(m==route.count())
           break;
@@ -202,10 +203,10 @@ void Flight::__flightState()
           proceed = 0;
           // Turn direction (Drehrichtung)
           // filter large/unrealistic bearing changes: include only changes in bearing which are smaller than 22.5 deg/sec
-          if(fabs(route.at(n)->bearing*180/(M_PI*route.at(n)->dT)) < 22.5)
+          if(fabs(route.at(n)->dBearing*180/(M_PI*route.at(n)->dT)) < 22.5)
           {
-            circles += route.at(n)->bearing;
-            circles_abs += fabs(route.at(n)->bearing);
+            circles += route.at(n)->dBearing;
+            circles_abs += fabs(route.at(n)->dBearing);
           }
 
           // Kreisflug eingeleitet
@@ -254,6 +255,79 @@ void Flight::__flightState()
           proceed++;
       }
     }
+}
+
+void Flight::__calculateBasicInformation()
+{
+  /**BUG: wrong bearings are given in flights with a high log-interval and with windy conditions. This results in incorrect turning directions of thermals*/
+  float        prevBearing = 0, nextBearing = 0 , diffBearing = 0, prevDiffBearing = 0;
+  unsigned int points = route.count();
+
+  for(unsigned int n = 0; n < points; n++)
+  {
+    if(n==0)
+    {
+      route.at(n)->dH = 0;
+      route.at(n)->dT = 0;
+      route.at(n)->dS = 0;
+
+      route.at(n)->bearing  = getBearing(*route.at(n), *route.at(n+1));
+      route.at(n)->dBearing = 0;
+    }
+    else if(n==(points-1))
+    {
+      route.at(n)->dH = route.at(n)->height - route.at(n-1)->height;
+      route.at(n)->dT = std::max( (route.at(n)->time - route.at(n-1)->time), time_t(1));
+      route.at(n)->dS = (int)(dist(route.at(n)->origP.lat(), route.at(n)->origP.lon(), route.at(n-1)->origP.lat(), route.at(n-1)->origP.lon()) * 1000.0);
+
+      route.at(n)->bearing  = getBearing(*route.at(n-1), *route.at(n));
+      route.at(n)->dBearing = __diffAngle(route.at(n-1)->bearing, route.at(n)->bearing);
+    }
+    //calculate the bearing by calculating the average between the bearing with the previous and next point
+    else
+    {
+      route.at(n)->dH = route.at(n)->height - route.at(n-1)->height;
+      route.at(n)->dT = std::max( (route.at(n)->time - route.at(n-1)->time), time_t(1));
+      route.at(n)->dS = (int)(dist(route.at(n)->origP.lat(), route.at(n)->origP.lon(), route.at(n-1)->origP.lat(), route.at(n-1)->origP.lon()) * 1000.0);
+
+      prevBearing = getBearing(*route.at(n-1), *route.at(n));
+      nextBearing = getBearing(*route.at(n), *route.at(n+1));
+      diffBearing = __diffAngle(prevBearing, nextBearing);
+
+      //in windy conditions large changes in diffBearing can occur, which means that the plane suddenly changes its turn direction
+      if(fabs(prevDiffBearing-diffBearing)*9/route.at(n)->dT > M_PI)
+        diffBearing = -diffBearing;
+
+      //calculate the bearing as an average of the previous and the next bearing
+      if(diffBearing<0)
+        route.at(n)->bearing = fabs(diffBearing)/2+nextBearing;
+      else
+        route.at(n)->bearing = fabs(diffBearing)/2+prevBearing;
+
+      //be sure that the bearing is not larger than 360 degrees
+      if(route.at(n)->bearing > 2.0*M_PI)
+        route.at(n)->bearing  = route.at(n)->bearing - 2.0*M_PI;
+
+      route.at(n)->dBearing = __diffAngle(route.at(n-1)->bearing, route.at(n)->bearing);
+      //in windy conditions large changes in dBearing can occur, which means that the plane suddenly changes its turn direction
+      if((route.at(n)->dBearing-route.at(n-1)->dBearing)*9/route.at(n)->dT>270/180*M_PI && route.at(n)->dBearing>0)
+        route.at(n)->dBearing = route.at(n)->dBearing - 2*M_PI;
+      else if((route.at(n)->dBearing-route.at(n-1)->dBearing)*9/route.at(n)->dT<(-270/180*M_PI) && route.at(n)->dBearing<0)
+        route.at(n)->dBearing = route.at(n)->dBearing + 2*M_PI;
+
+      prevDiffBearing = diffBearing;
+    }
+  }
+}
+
+float Flight::__diffAngle(float firstAngle, float secondAngle) {
+  float diffAngle = secondAngle-firstAngle;
+  //make the absolute value of bearing smaller than 180 degree
+  if(diffAngle > M_PI)
+    diffAngle-= 2.0*M_PI;
+  else if(diffAngle < -M_PI)
+    diffAngle+= 2.0*M_PI;
+  return diffAngle;
 }
 
 unsigned int Flight::__calculateBestTask(unsigned int start[],

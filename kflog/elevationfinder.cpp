@@ -95,7 +95,7 @@ int ElevationFinder::findDEMelevation(const QPoint& coordinates)
 
   QRect r(QPoint(demBR.x(), demTL.y()), QPoint(demTL.x(), demBR.y()));
   if ( !r.contains(coordinates.x(), coordinates.y()) ) {
-    qDebug("Requested point outside DEM coverage.");
+    //qDebug("Requested point outside DEM coverage.");
     return -1;
   }
   int row = (demTL.x() - coordinates.x()) / demGridLat;

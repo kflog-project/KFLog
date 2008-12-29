@@ -1,5 +1,13 @@
 $Id$
 
+2008-12-29 Constantijn Neeteson <kflog@neeteson.net>
+
+  * Further improvements in circling detection and the calculation
+    of the bearings
+  * Gardown/Garmin files must now be opened instead of imported
+  * Removed FlightGear filetype support
+  * Updated Dutch language file
+
 2008-11-25 Hendrik Hoeth <hoeth@linta.de>
 
   * Bugfix for printing configuration of double railways

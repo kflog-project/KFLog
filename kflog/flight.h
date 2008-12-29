@@ -329,9 +329,13 @@ class Flight : public BaseFlightElement
   	virtual bool __isVisible() const;
   	/** Kreisflug?? */
   	void __flightState();
+    /** calculate the basic en-route information, like dT, dH, dS, dBearing and bearing */
+    void __calculateBasicInformation();
+    /** calculates the smallest difference of two angles */
+    float __diffAngle(float firstAngle, float secondAngle);
 
     QString recorderID;
-	  QString pilotName;
+    QString pilotName;
     QString gliderType;
     QString gliderID;
     QDate date;

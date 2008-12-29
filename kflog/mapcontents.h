@@ -189,13 +189,9 @@ class MapContents : public QObject
   };
 
   /**
-   * Loads a new flight-file.
-   *
-   * @param  file  The path to the igc-file
-   * @return "true", when the file has successfully been loaded
+   * @param flight adds a flight to flightList
    */
-  bool loadFlight(QFile&);
-
+  void appendFlight(Flight* flight);
   /**
    * @return a pointer to the current flight
    */
@@ -211,22 +207,6 @@ class MapContents : public QObject
    */
   QPtrList<BaseFlightElement>* getFlightList();
 
-
-  /**
-   * Searches the first point of the current flight, which distance to the
-   * mousecursor is less than 30 pixel. If no point is found, -1 is
-   * returned.
-   *
-   * @see Flight::searchPoint
-   *
-   * @param  cPoint  The map-position of the mousecursor.
-   * @param  searchPoint  A pointer to a flightpoint. Will be filled
-   *                      with the flightpoint found.
-   *
-   * @return the index of the flightpoint or -1 if no point is found.
-   */
-  int searchFlightPoint(QPoint cPos, flightPoint& fP);
-
   /**
    * Converts the longitute or latitute into the internal format.
    *
@@ -237,10 +217,6 @@ class MapContents : public QObject
    *                 is one of N, S, E, W.
    */
   static int degreeToNum(QString degree);
-  /** No descriptions */
-  bool importFlightGearFile(QFile& flightgearFile);
-  /** Imports a file downloaded with Gardown in DOS  */
-  bool importGardownFile(QFile& gardownFile);
   /** read a task file and append all tasks to flight list switch to first task in file */
   bool loadTask(QFile& path);
   /** generate new task name */
@@ -341,13 +317,6 @@ class MapContents : public QObject
   void closingFlight(BaseFlightElement*);
 
  private:
-
-  // Short structure to handle the optional entries in an igc file
-  class bOption {
-    public:
-      int begin, length;
-      char mnemonic[4];
-  };
   /**
    * Displays a messagebox and asks, wether the mapfiles shall be downloaded.
    */

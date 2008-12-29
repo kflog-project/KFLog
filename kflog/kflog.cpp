@@ -49,6 +49,7 @@
 #include "evaluationview.h"
 #include "flight.h"
 #include "flightdataprint.h"
+#include "flightloader.h"
 #include "helpwindow.h"
 #include "igcpreview.h"
 #include "kflogconfig.h"
@@ -193,14 +194,6 @@ void KFLogApp::initActions()
   fileRecorder = new KAction(i18n("Open Recorder"), "connect_no", 0, this,
       SLOT(slotOpenRecorderDialog()), actionCollection(),
       "recorderdialog");
-
-  fileImportFlightGearFile = new KAction(i18n("Import FlightGear File"), "fileopen",
-      0, this, SLOT(slotImportFlightGearFile()), actionCollection(),
-      "file_import_flightgear");
-
-  fileImportGardownFile = new KAction(i18n("Import Gardown File"), "fileopen",
-      0, this, SLOT(slotImportGardownFile()), actionCollection(),
-      "file_import_gardown");
 
   KStdAction::print(this, SLOT(slotFilePrint()), actionCollection());
 
@@ -730,6 +723,11 @@ void KFLogApp::slotFileOpen()
       i18n("Select IGC-File"), true);
   IGCPreview* preview = new IGCPreview(dlg);
   dlg->setPreviewWidget(preview);
+  QString filter;
+  filter.append("*.igc *.flightgear *.trk *.gdn |"+i18n("All flight type files"));
+  filter.append("\n*.igc|"+i18n("IGC (*.igc)"));
+  filter.append("\n*.trk *.gdn|"+i18n("Garmin (*.trk, *.gdn)"));
+  dlg->setFilter(filter);
   dlg->setCaption(i18n("Open flight"));
   dlg->exec();
 
@@ -750,9 +748,9 @@ void KFLogApp::slotFileOpen()
 
   QFileInfo fInfo(fName);
   flightDir = fInfo.dirPath();
-  extern MapContents _globalMapContents;
+  FlightLoader flightLoader;
   QFile file (fName);
-  if(_globalMapContents.loadFlight(file))
+  if(flightLoader.openFlight(file))
       fileOpenRecent->addURL(fUrl);
 
   slotStatusMsg(i18n("Ready."));
@@ -763,6 +761,7 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
   slotStatusMsg(i18n("Opening file..."));
 
   extern MapContents _globalMapContents;
+  FlightLoader flightLoader;
   if(url.isLocalFile())
     {
       QFile file (url.path());
@@ -773,7 +772,7 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
 
       } else {
         //try to open as flight
-        if(_globalMapContents.loadFlight(file))
+        if(flightLoader.openFlight(file))
           {
             // Just a workaround. It's the only way to not have the item
             // checked after loading the flight. Otherwise we had to take
@@ -1306,71 +1305,6 @@ void KFLogApp::initTypes()
   waypointTypes.sort();
 }
 
-/** No descriptions */
-void KFLogApp::slotImportFlightGearFile(){
-  slotStatusMsg(i18n("Opening file..."));
-
-  KFileDialog* dlg = new KFileDialog(flightDir, "*.flightgear *.FLIGHTGEAR", this,
-      i18n("Select FlightGear File"), true);
-  dlg->exec();
-
-  KURL fUrl = dlg->selectedURL();
-
-//  KURL fUrl = KFileDialog::getOpenURL(flightDir, "*.igc *.IGC", this);
-
-  if(fUrl.isEmpty())  return;
-
-  QString fName;
-  if(fUrl.isLocalFile())
-      fName = fUrl.path();
-  else if(!KIO::NetAccess::download(fUrl, fName))
-    {
-      KNotifyClient::event(i18n("Can not download file %1").arg(fUrl.url()));
-      return;
-    }
-
-  QFileInfo fInfo(fName);
-  flightDir = fInfo.dirPath();
-  extern MapContents _globalMapContents;
-  QFile file (fName);
-  if(_globalMapContents.importFlightGearFile(file))
-      fileOpenRecent->addURL(fUrl);
-
-  slotStatusMsg(i18n("Ready."));
-}
-
-/** Import a file from Gardown (DOS)  */
-void KFLogApp::slotImportGardownFile(){
-  slotStatusMsg(i18n("Opening file..."));
-
-  KFileDialog* dlg = new KFileDialog(flightDir, "*.gdn *.GDN *.trk *TRK", this,
-      i18n("Select Gardown File"), true);
-  dlg->exec();
-
-  KURL fUrl = dlg->selectedURL();
-
-//  KURL fUrl = KFileDialog::getOpenURL(flightDir, "*.igc *.IGC", this);
-
-  if(fUrl.isEmpty())  return;
-
-  QString fName;
-  if(fUrl.isLocalFile())
-      fName = fUrl.path();
-  else if(!KIO::NetAccess::download(fUrl, fName))
-    {
-      KNotifyClient::event(i18n("Can not download file %1").arg(fUrl.url()));
-      return;
-    }
-
-  QFileInfo fInfo(fName);
-  flightDir = fInfo.dirPath();
-  extern MapContents _globalMapContents;
-  QFile file (fName);
-  if(_globalMapContents.importGardownFile(file))
-      fileOpenRecent->addURL(fUrl);
-
-  slotStatusMsg(i18n("Ready."));
-}
 /** No descriptions */
 void KFLogApp::slotSavePixmap( KURL url, int width, int height ){
   map->slotSavePixmap(url,width,height);

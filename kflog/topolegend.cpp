@@ -62,7 +62,7 @@ TopoLegend::TopoLegend(QWidget *parent, const char *name ) : QScrollView(parent,
     lbl->setMinimumSize(fm.size(0,lbl->text()).width(),0);
     minwidth=std::max(minwidth,fm.size(0,lbl->text()).width());
     
-    lbl->setBackgroundMode(FixedColor);                        //set the label to get a fixed bg color
+    //lbl->setBackgroundMode(FixedColor);                        //set the label to get a fixed bg color
     lbl->setBackgroundColor(_globalMapConfig.getIsoColor(i));  //get the appropriate color from the mapconfig
     labelList.append(lbl);                                     //and add the label to our label list
   }

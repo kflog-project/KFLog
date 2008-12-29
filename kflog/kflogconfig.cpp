@@ -416,7 +416,7 @@ void KFLogConfig::__addFlightTab()
 
 
   QGroupBox* flightPathColorGroup = new QGroupBox(flightPage, "flightDisplayGroup");
-  flightPathColorGroup-> setTitle(i18n("Flight Path Cycling Colors") + ":");
+  flightPathColorGroup-> setTitle(i18n("Flight Path Colors") + ":");
   flightLayout->addMultiCellWidget(flightPathColorGroup, 5, 14, 0, 39);
 
   flightTypeLeftTurnColor = new KColorButton(config->readColorEntry("Color Left Turn", new QColor(255, 50, 0)), flightPage);
