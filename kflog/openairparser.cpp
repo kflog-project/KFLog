@@ -96,6 +96,7 @@ uint OpenAirParser::load( QPtrList<Airspace>& list )
   QStringList preselect;
 
   MapContents::addDir(preselect, mapDir + "/airspaces", "*.txt");
+  MapContents::addDir(preselect, mapDir + "/airspaces", "*.TXT");
 
   if(preselect.count() == 0)
     {
