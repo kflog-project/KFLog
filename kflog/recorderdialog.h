@@ -29,6 +29,9 @@
 #include <qstringlist.h>
 #include <qwidget.h>
 #include <qdict.h>
+#include <qradiobutton.h>
+#include <qbuttongroup.h>
+#include <qspinbox.h>
 
 #include "frstructs.h"
 #include "waypointcatalog.h"
@@ -91,11 +94,7 @@ class RecorderDialog : public KDialogBase
      */
     void slotReadDatabase();
     /**
-     * Reads the data on things like glider polar and variometer settings
-     */
-    void slotReadConfig();
-    /**
-     * Reads the data on things like glider polar and variometer settings
+     * Writes the data on things like glider polar and variometer settings
      */
     void slotWriteConfig();
     /**
@@ -175,11 +174,11 @@ class RecorderDialog : public KDialogBase
     QLabel* lblApiID;
     QLabel* recType;
     QLabel* lblRecType;
-    QLabel* pltName;
+    KLineEdit* pltName;
     QLabel* lblPltName;
-    QLabel* gldType;
+    KLineEdit* gldType;
     QLabel* lblGldType;
-    QLabel* gldID;
+    KLineEdit* gldID;
     QLabel* lblGldID;
     QLabel* compID;
     /** */
@@ -235,6 +234,8 @@ class RecorderDialog : public KDialogBase
     int waypointColLat;
     int waypointColLon;
 
+    FlightRecorderPluginBase::FR_BasicData basicdata;
+    FlightRecorderPluginBase::FR_ConfigData configdata;
     KLineEdit* pilotName;
     KLineEdit* copilotName;
     KLineEdit* gliderID;
@@ -249,8 +250,32 @@ class RecorderDialog : public KDialogBase
     QPushButton* cmdDownloadTasks;
     QPushButton* cmdUploadTasks;
 
-    QPushButton* cmdDownloadConfig;
+    QPushButton* cmdUploadBasicConfig;
     QPushButton* cmdUploadConfig;
+
+    QButtonGroup* unitAltButtonGroup;
+    QButtonGroup* unitVarioButtonGroup;
+    QButtonGroup* unitSpeedButtonGroup;
+    QButtonGroup* unitQNHButtonGroup;
+    QButtonGroup* unitTempButtonGroup;
+    QButtonGroup* unitDistButtonGroup;
+
+    QCheckBox* sinktone;
+
+    QSpinBox* LD;
+    QSpinBox* speedLD;
+    QSpinBox* speedV2;
+    QSpinBox* dryweight;
+    QSpinBox* maxwater;
+
+    QSpinBox* approachradius;
+    QSpinBox* arrivalradius;
+    QSpinBox* goalalt;
+    QSpinBox* sloginterval;
+    QSpinBox* floginterval;
+    QSpinBox* gaptime;
+    QSpinBox* minloggingspd;
+    QSpinBox* stfdeadband;
   /**  */
   bool isConnected;
   FlightRecorderPluginBase * activeRecorder;

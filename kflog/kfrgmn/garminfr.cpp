@@ -131,6 +131,11 @@ int GarminFR::getConfigData(FR_ConfigData& data)
   return FR_NOTSUPPORTED;
 }
 
+int GarminFR::writeConfigData(FR_BasicData& basicdata, FR_ConfigData& configdata)
+{
+  return FR_NOTSUPPORTED;
+}
+
 /**
  * Opens the recorder for serial communication.
  */

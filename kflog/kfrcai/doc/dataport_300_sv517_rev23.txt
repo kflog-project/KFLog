@@ -2,7 +2,7 @@
 
                   Data Port User's Guide   SV-517 Revision 2.3
 
-                               April 12, 2008
+                               February 1, 2009
 
 
 
@@ -522,8 +522,8 @@ Here are the rules:
                            0:     Meters
                            1:     Feet
                     2:     Temperature
-                           0:     Celcius
-                           1:     Fahrenheight
+                           0:     Celsius
+                           1:     Fahrenheit
                     3:     Barometer
                            0:     Millibars
                            1:     InHG
@@ -533,7 +533,7 @@ Here are the rules:
                            10:    SMI
                            11:    Reserved
                     6-7:   Speed
-                           00:    M/S
+                           00:    km/h
                            01:    Kts
                            10:    MPH
                            11:    Reserved
@@ -1168,7 +1168,7 @@ $GPRMB,<1>,<2>,<3>,,<5>,<6>,<7>,<8>,<9>,<10>,<11>,,<13>*hh<CR><LF>
 <6>     Destination Npt. lat. format DDMM.MM (leading zeros will be transmitted)
 <7>     Destination Npt. lat. hemisphere ­ N/S
 <8>     Destination Npt. lon. format DDDMM.MM (leading zeros will be transmitted)
-<9>     Destination Npt. lat. hemisphere ­ E/W
+<9>     Destination Npt. lon. hemisphere ­ E/W
 <10>    Range from present position to distination Navpoint, format XXXX.X,
         nautical miles (leading zeros will be transmitted)
         Bearing from present position to destination Navpoint, format XXX.X,
@@ -1297,4 +1297,7 @@ Fixed some minor errors.
 Fixed description of the error checking algorithm for large replies.
 
 April 12, 2008
+Fixed several errors.
+
+February 1, 2009
 Fixed several errors.

@@ -162,22 +162,21 @@ void RecorderDialog::__addSettingsPage()
   recType->setEnabled(false);
 
   lblPltName = new QLabel(i18n("Pilot Name"), settingsPage);
-  pltName = new QLabel (settingsPage);
-  pltName->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-  pltName->setBackgroundMode( PaletteLight );
+  pltName = new KLineEdit (settingsPage, "pltName");
   pltName->setEnabled(false);
 
   lblGldType = new QLabel(i18n("Glider Type"), settingsPage);
-  gldType = new QLabel (settingsPage);
-  gldType->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-  gldType->setBackgroundMode( PaletteLight );
+  gldType = new KLineEdit (settingsPage, "gldType");
   gldType->setEnabled(false);
 
   lblGldID = new QLabel(i18n("Glider ID"), settingsPage);
-  gldID = new QLabel (settingsPage);
-  gldID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-  gldID->setBackgroundMode( PaletteLight );
+  gldID = new KLineEdit (settingsPage, "gldID");
   gldID->setEnabled(false);
+
+  cmdUploadBasicConfig = new QPushButton(i18n("write config to recorder"), settingsPage);
+  // disable this button until we read the information from the flight recorder:
+  cmdUploadBasicConfig->setEnabled(false);
+  connect(cmdUploadBasicConfig, SIGNAL(clicked()), SLOT(slotWriteConfig()));
 
   compID = new QLabel (settingsPage);
   compID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
@@ -212,6 +211,8 @@ void RecorderDialog::__addSettingsPage()
   sLayout->addWidget(lblGldID, 13, 4, AlignRight);
   sLayout->addMultiCellWidget(gldID, 13, 13, 5, 5);
   sLayout->addMultiCellWidget(compID, 13, 13, 6, 6);
+
+  sLayout->addWidget(cmdUploadBasicConfig, 15, 5, 6);
 
   sLayout->setColStretch(0, 1);
   sLayout->setColStretch(7, 1);
@@ -347,6 +348,13 @@ void RecorderDialog::__setRecorderCapabilities()
     compID->hide();
   }
 
+  if (cap.supEditGliderID     ||
+      cap.supEditGliderType   ||
+      cap.supEditPilotName) {
+    cmdUploadBasicConfig->show();
+  } else {
+    cmdUploadBasicConfig->hide();
+  }
   if (cap.supAutoSpeed)
     selectSpeedLabel->setText(i18n("Transfer speed:\n(automatic)"));
   else
@@ -459,10 +467,10 @@ void RecorderDialog::__addDeclarationPage()
   writeDeclaration->setMaximumWidth(writeDeclaration->sizeHint().width() + 15);
 
   tLayout->addMultiCellWidget(declarationList, 0, 0, 0, 6);
-  tLayout->addWidget(new QLabel(i18n("Pilot") + "1:", declarationPage), 2, 0,
+  tLayout->addWidget(new QLabel(i18n("Pilot") + " 1:", declarationPage), 2, 0,
                      AlignRight);
   tLayout->addWidget(pilotName, 2, 2);
-  tLayout->addWidget(new QLabel(i18n("Pilot") + "2:", declarationPage), 2, 4,
+  tLayout->addWidget(new QLabel(i18n("Pilot") + " 2:", declarationPage), 2, 4,
                      AlignRight);
   tLayout->addWidget(copilotName, 2, 6);
   tLayout->addWidget(new QLabel(i18n("Glider-ID") + ":", declarationPage), 4,
@@ -1347,22 +1355,21 @@ void RecorderDialog::slotReadDatabase()
   if (!activeRecorder) return;
   FlightRecorderPluginBase::FR_Capabilities cap = activeRecorder->capabilities();
 
-  FlightRecorderPluginBase::FR_BasicData dat;
-  int ret = activeRecorder->getBasicData(dat);
+  int ret = activeRecorder->getBasicData(basicdata);
   if (ret == FR_OK)
   {
     if (cap.supDspSerialNumber)
-      serID->setText(dat.serialNumber);
+      serID->setText(basicdata.serialNumber);
     if (cap.supDspRecorderType)
-      recType->setText(dat.recorderType);
+      recType->setText(basicdata.recorderType);
     if (cap.supDspPilotName)
-      pltName->setText(dat.pilotName);
+      pltName->setText(basicdata.pilotName.stripWhiteSpace());
     if (cap.supDspGliderType)
-      gldType->setText(dat.gliderType);
+      gldType->setText(basicdata.gliderType.stripWhiteSpace());
     if (cap.supDspGliderID)
-      gldID->setText(dat.gliderID);
+      gldID->setText(basicdata.gliderID.stripWhiteSpace());
     if (cap.supDspCompetitionID)
-      compID->setText(dat.competitionID);
+      compID->setText(basicdata.competitionID.stripWhiteSpace());
   }
   else
   {
@@ -1380,23 +1387,102 @@ void RecorderDialog::slotReadDatabase()
                          i18n("Recorder Connection"));       //Using the Sorry box is a bit friendlier than Error...
     }
   }
-}
-
-void RecorderDialog::slotReadConfig()
-{
-  if (!activeRecorder) return;
-  FlightRecorderPluginBase::FR_Capabilities cap = activeRecorder->capabilities();
-
-  FlightRecorderPluginBase::FR_ConfigData dat;
-  int ret = activeRecorder->getConfigData(dat);
-  if (ret == FR_OK)
-  {
+  if (cap.supEditGliderID     ||
+      cap.supEditGliderType   ||
+      cap.supEditGliderPolar  ||
+      cap.supEditPilotName    ||
+      cap.supEditUnits        ||
+      cap.supEditGoalAlt      ||
+      cap.supEditArvRadius    ||
+      cap.supEditAudio        ||
+      cap.supEditLogInterval) {
+    int ret = activeRecorder->getConfigData(configdata);
+    if (ret == FR_OK)
+    {
+      // now that we read the information from the logger, we can enable the write button:
+      cmdUploadConfig->setEnabled(true);
+      LD->setValue(configdata.LD);
+      speedLD->setValue(configdata.speedLD);
+      speedV2->setValue(configdata.speedV2);
+      dryweight->setValue(configdata.dryweight);
+      maxwater->setValue(configdata.maxwater);
+      sinktone->setChecked(configdata.sinktone);
+      approachradius->setValue(configdata.approachradius);
+      arrivalradius->setValue(configdata.arrivalradius);
+      goalalt->setValue(configdata.goalalt);
+      sloginterval->setValue(configdata.sloginterval);
+      floginterval->setValue(configdata.floginterval);
+      gaptime->setValue(configdata.gaptime);
+      minloggingspd->setValue(configdata.minloggingspd);
+      stfdeadband->setValue(configdata.stfdeadband);
+      unitVarioButtonGroup->setButton(configdata.units & FlightRecorderPluginBase::FR_Unit_Vario_kts);
+      unitAltButtonGroup->setButton(configdata.units & FlightRecorderPluginBase::FR_Unit_Alt_ft);
+      unitTempButtonGroup->setButton(configdata.units & FlightRecorderPluginBase::FR_Unit_Temp_F);
+      unitQNHButtonGroup->setButton(configdata.units & FlightRecorderPluginBase::FR_Unit_Baro_inHg);
+      unitDistButtonGroup->setButton(configdata.units & (FlightRecorderPluginBase::FR_Unit_Dist_nm|FlightRecorderPluginBase::FR_Unit_Dist_sm));
+      unitSpeedButtonGroup->setButton(configdata.units & (FlightRecorderPluginBase::FR_Unit_Spd_kts|FlightRecorderPluginBase::FR_Unit_Spd_mph));
+    }
+  }
+  if (cap.supEditGliderID     ||
+      cap.supEditGliderType   ||
+      cap.supEditPilotName) {
+      cmdUploadBasicConfig->setEnabled(true);
+      pltName->setEnabled(true);
+      gldType->setEnabled(true);
+      gldID->setEnabled(true);
   }
 }
 
+
 void RecorderDialog::slotWriteConfig()
 {
-  qDebug("slotWriteConfig: Not implemented yet");
+  if (!activeRecorder) return;
+
+  basicdata.pilotName = pltName->text();
+  basicdata.gliderType = gldType->text();
+  basicdata.gliderID = gldID->text();
+  basicdata.competitionID = compID->text();
+
+  configdata.LD = atoi(LD->text());
+  configdata.speedLD = atoi(speedLD->text());
+  configdata.speedV2 = atoi(speedV2->text());
+  configdata.dryweight = atoi(dryweight->text());
+  configdata.maxwater = atoi(maxwater->text());
+
+  configdata.sinktone = (int)sinktone->isChecked();
+
+  configdata.approachradius = atoi(approachradius->text());
+  configdata.arrivalradius = atoi(arrivalradius->text());
+  configdata.goalalt = atoi(goalalt->text());
+  configdata.sloginterval = atoi(sloginterval->text());
+  configdata.floginterval = atoi(floginterval->text());
+  configdata.gaptime = atoi(gaptime->text());
+  configdata.minloggingspd = atoi(minloggingspd->text());
+  configdata.stfdeadband = atoi(stfdeadband->text());
+
+  configdata.units = unitAltButtonGroup->selectedId()   |
+                     unitVarioButtonGroup->selectedId() |
+                     unitSpeedButtonGroup->selectedId() |
+                     unitQNHButtonGroup->selectedId()   |
+                     unitTempButtonGroup->selectedId()  |
+                     unitDistButtonGroup->selectedId();
+  int ret = activeRecorder->writeConfigData(basicdata, configdata);
+  if (ret != FR_OK)
+  {
+    QString errorDetails=activeRecorder->lastError();
+    if (!errorDetails.isEmpty()) {
+      KMessageBox::detailedSorry(this,
+                         i18n("Sorry, could not write configuration to recorder.\n"
+                              "Please check connections and settings."),
+                         errorDetails,
+                         i18n("Recorder Connection"));       //Using the Sorry box is a bit friendlier than Error...
+    } else {
+      KMessageBox::sorry(this,
+                         i18n("Sorry, could not write configuration to recorder.\n"
+                              "Please check connections and settings."),
+                         i18n("Recorder Connection"));       //Using the Sorry box is a bit friendlier than Error...
+    }
+  }
 }
 
 void RecorderDialog::slotDisablePages()
@@ -1453,9 +1539,7 @@ void RecorderDialog::slotEnablePages()
     //pilotpage  -  not available yet
 
     //configpage
-    if (cap.supEditGliderID     ||
-        cap.supEditGliderType   ||
-        cap.supEditGliderPolar  ||
+    if (cap.supEditGliderPolar  ||
         cap.supEditUnits        ||
         cap.supEditGoalAlt      ||
         cap.supEditArvRadius    ||
@@ -1527,17 +1611,214 @@ void RecorderDialog::__addConfigPage()
   QGroupBox* vGroup = new QGroupBox(configPage, "varioGroup");
   vGroup->setTitle(i18n("Variometer Settings") + ":");
 
-  configLayout->addMultiCellWidget(gGroup, 0, 6, 0, 7);
-  configLayout->addMultiCellWidget(vGroup, 7, 14, 0, 7);
+  configLayout->addMultiCellWidget(gGroup, 0, 4, 0, 7);
+  configLayout->addMultiCellWidget(vGroup, 5, 14, 0, 7);
 
-//  configLayout->addWidget(new QLabel(i18n("Type"), configPage), 1, 0, AlignRight);
+  QGridLayout *ggrid = new QGridLayout(gGroup, 3, 4, 15, 1);
+
+  ggrid->addWidget(new QLabel(i18n("Best L/D:"), gGroup), 0, 0);
+  LD = new QSpinBox (gGroup, "LD");
+  LD->setRange(0, 255);
+  LD->setLineStep(1);
+  LD->setButtonSymbols(QSpinBox::PlusMinus);
+  LD->setEnabled(true);
+  LD->setValue(0);
+  ggrid->addWidget(LD, 0, 1);
+
+  ggrid->addWidget(new QLabel(i18n("Best L/D speed (km/h):"), gGroup), 1, 0);
+  speedLD = new QSpinBox (gGroup, "speedLD");
+  speedLD->setRange(0, 255);
+  speedLD->setLineStep(1);
+  speedLD->setButtonSymbols(QSpinBox::PlusMinus);
+  speedLD->setEnabled(true);
+  speedLD->setValue(0);
+  ggrid->addWidget(speedLD, 1, 1);
+
+  ggrid->addWidget(new QLabel(i18n("2 m/s sink speed (km/h):"), gGroup), 2, 0);
+  speedV2 = new QSpinBox (gGroup, "speedV2");
+  speedV2->setRange(0, 255);
+  speedV2->setLineStep(1);
+  speedV2->setButtonSymbols(QSpinBox::PlusMinus);
+  speedV2->setEnabled(true);
+  speedV2->setValue(0);
+  ggrid->addWidget(speedV2, 2, 1);
+
+  ggrid->addWidget(new QLabel(i18n("Dry weight (kg):"), gGroup), 0, 2);
+  dryweight = new QSpinBox (gGroup, "dryweight");
+  dryweight->setRange(0, 1000);
+  dryweight->setLineStep(1);
+  dryweight->setButtonSymbols(QSpinBox::PlusMinus);
+  dryweight->setEnabled(true);
+  dryweight->setValue(0);
+  ggrid->addWidget(dryweight, 0, 3);
+
+  ggrid->addWidget(new QLabel(i18n("Max. water ballast (l):"), gGroup), 1, 2);
+  maxwater = new QSpinBox (gGroup, "maxwater");
+  maxwater->setRange(0, 500);
+  maxwater->setLineStep(1);
+  maxwater->setButtonSymbols(QSpinBox::PlusMinus);
+  maxwater->setEnabled(true);
+  maxwater->setValue(0);
+  ggrid->addWidget(maxwater, 1, 3);
+
+
+  QGridLayout *vgrid = new QGridLayout(vGroup, 9, 7, 15, 1);
+
+  vgrid->addWidget(new QLabel(i18n("Approach radius (m):"), vGroup), 0, 0);
+  approachradius = new QSpinBox (vGroup, "approachradius");
+  approachradius->setRange(0, 65535);
+  approachradius->setLineStep(10);
+  approachradius->setButtonSymbols(QSpinBox::PlusMinus);
+  approachradius->setEnabled(true);
+  approachradius->setValue(0);
+  vgrid->addWidget(approachradius, 0, 1);
+
+  vgrid->addWidget(new QLabel(i18n("Arrival radius (m):"), vGroup), 2, 0);
+  arrivalradius = new QSpinBox (vGroup, "arrivalradius");
+  arrivalradius->setRange(0, 65535);
+  arrivalradius->setLineStep(10);
+  arrivalradius->setButtonSymbols(QSpinBox::PlusMinus);
+  arrivalradius->setEnabled(true);
+  arrivalradius->setValue(0);
+  vgrid->addWidget(arrivalradius, 2, 1);
+
+  vgrid->addWidget(new QLabel(i18n("Goal altitude (m):"), vGroup), 4, 0);
+  goalalt = new QSpinBox (vGroup, "goalalt");
+  goalalt->setRange(0, 6553);
+  goalalt->setLineStep(1);
+  goalalt->setButtonSymbols(QSpinBox::PlusMinus);
+  goalalt->setEnabled(true);
+  goalalt->setValue(0);
+  vgrid->addWidget(goalalt, 4, 1);
+
+  vgrid->addWidget(new QLabel(i18n("Min. flight time (min):"), vGroup), 6, 0);
+  gaptime = new QSpinBox (vGroup, "gaptime");
+  gaptime->setRange(0, 600);
+  gaptime->setLineStep(1);
+  gaptime->setButtonSymbols(QSpinBox::PlusMinus);
+  gaptime->setEnabled(true);
+  gaptime->setValue(0);
+  vgrid->addWidget(gaptime, 6, 1);
+
+  vgrid->addWidget(new QLabel(i18n("Slow log interval (s):"), vGroup), 0, 2);
+  sloginterval = new QSpinBox (vGroup, "sloginterval");
+  sloginterval->setRange(0, 600);
+  sloginterval->setLineStep(1);
+  sloginterval->setButtonSymbols(QSpinBox::PlusMinus);
+  sloginterval->setEnabled(true);
+  sloginterval->setValue(0);
+  vgrid->addWidget(sloginterval, 0, 3);
+
+  vgrid->addWidget(new QLabel(i18n("Fast log interval (s):"), vGroup), 2, 2);
+  floginterval = new QSpinBox (vGroup, "floginterval");
+  floginterval->setRange(0, 600);
+  floginterval->setLineStep(1);
+  floginterval->setButtonSymbols(QSpinBox::PlusMinus);
+  floginterval->setEnabled(true);
+  floginterval->setValue(0);
+  vgrid->addWidget(floginterval, 2, 3);
+
+  vgrid->addWidget(new QLabel(i18n("Min. logging spd (km/h):"), vGroup), 4, 2);
+  minloggingspd = new QSpinBox (vGroup, "minloggingspd");
+  minloggingspd->setRange(0, 100);
+  minloggingspd->setLineStep(1);
+  minloggingspd->setButtonSymbols(QSpinBox::PlusMinus);
+  minloggingspd->setEnabled(true);
+  minloggingspd->setValue(0);
+  vgrid->addWidget(minloggingspd, 4, 3);
+
+  vgrid->addWidget(new QLabel(i18n("Audio dead-band (km/h):"), vGroup), 6, 2);
+  stfdeadband = new QSpinBox (vGroup, "stfdeadband");
+  stfdeadband->setRange(0, 90);
+  stfdeadband->setLineStep(1);
+  stfdeadband->setButtonSymbols(QSpinBox::PlusMinus);
+  stfdeadband->setEnabled(true);
+  stfdeadband->setValue(0);
+  vgrid->addWidget(stfdeadband, 6, 3);
+
+  vgrid->addWidget(new QLabel("     ", vGroup), 0, 4);  // Just a filler
+
+  vgrid->addWidget(new QLabel(i18n("Altitude:"), vGroup), 0, 5);
+  unitAltButtonGroup = new QButtonGroup(vGroup);
+  unitAltButtonGroup-> hide();
+  unitAltButtonGroup-> setExclusive(true);
+  QRadioButton *rb = new QRadioButton(i18n("m"), vGroup);
+  unitAltButtonGroup-> insert(rb, 0);
+  vgrid->addWidget(rb, 1, 5);
+  rb = new QRadioButton(i18n("ft"), vGroup);
+  unitAltButtonGroup-> insert(rb, FlightRecorderPluginBase::FR_Unit_Alt_ft);
+  vgrid->addWidget(rb, 2, 5);
+
+  vgrid->addWidget(new QLabel(i18n("QNH:"), vGroup), 5, 5);
+  unitQNHButtonGroup = new QButtonGroup(vGroup);
+  unitQNHButtonGroup-> hide();
+  unitQNHButtonGroup-> setExclusive(true);
+  rb = new QRadioButton(i18n("mbar"), vGroup);
+  unitQNHButtonGroup-> insert(rb, 0);
+  vgrid->addWidget(rb, 6, 5);
+  rb = new QRadioButton(i18n("inHg"), vGroup);
+  unitQNHButtonGroup-> insert(rb, FlightRecorderPluginBase::FR_Unit_Baro_inHg);
+  vgrid->addWidget(rb, 7, 5);
+
+  vgrid->addWidget(new QLabel(i18n("Speed:"), vGroup), 0, 6);
+  unitSpeedButtonGroup = new QButtonGroup(vGroup);
+  unitSpeedButtonGroup-> hide();
+  unitSpeedButtonGroup-> setExclusive(true);
+  rb = new QRadioButton(i18n("km/h"), vGroup);
+  unitSpeedButtonGroup-> insert(rb, 0);
+  vgrid->addWidget(rb, 1, 6);
+  rb = new QRadioButton(i18n("kts"), vGroup);
+  unitSpeedButtonGroup-> insert(rb, FlightRecorderPluginBase::FR_Unit_Spd_kts);
+  vgrid->addWidget(rb, 2, 6);
+  rb = new QRadioButton(i18n("mph"), vGroup);
+  unitSpeedButtonGroup-> insert(rb, FlightRecorderPluginBase::FR_Unit_Spd_mph);
+  vgrid->addWidget(rb, 3, 6);
+
+  vgrid->addWidget(new QLabel(i18n("Vario:"), vGroup), 5, 6);
+  unitVarioButtonGroup = new QButtonGroup(vGroup);
+  unitVarioButtonGroup-> hide();
+  unitVarioButtonGroup-> setExclusive(true);
+  rb = new QRadioButton(i18n("m/s"), vGroup);
+  unitVarioButtonGroup-> insert(rb, 0);
+  vgrid->addWidget(rb, 6, 6);
+  rb = new QRadioButton(i18n("kts"), vGroup);
+  unitVarioButtonGroup-> insert(rb, FlightRecorderPluginBase::FR_Unit_Vario_kts);
+  vgrid->addWidget(rb, 7, 6);
+
+  vgrid->addWidget(new QLabel(i18n("Distance:"), vGroup), 0, 7);
+  unitDistButtonGroup = new QButtonGroup(vGroup);
+  unitDistButtonGroup-> hide();
+  unitDistButtonGroup-> setExclusive(true);
+  rb = new QRadioButton(i18n("km"), vGroup);
+  unitDistButtonGroup-> insert(rb, 0);
+  vgrid->addWidget(rb, 1, 7);
+  rb = new QRadioButton(i18n("nm"), vGroup);
+  unitDistButtonGroup-> insert(rb, FlightRecorderPluginBase::FR_Unit_Dist_nm);
+  vgrid->addWidget(rb, 2, 7);
+  rb = new QRadioButton(i18n("sm"), vGroup);
+  unitDistButtonGroup-> insert(rb, FlightRecorderPluginBase::FR_Unit_Dist_sm);
+  vgrid->addWidget(rb, 3, 7);
+
+  vgrid->addWidget(new QLabel(i18n("Temp.:"), vGroup), 5, 7);
+  unitTempButtonGroup = new QButtonGroup(vGroup);
+  unitTempButtonGroup-> hide();
+  unitTempButtonGroup-> setExclusive(true);
+  rb = new QRadioButton(i18n("C"), vGroup);
+  unitTempButtonGroup-> insert(rb, 0);
+  vgrid->addWidget(rb, 6, 7);
+  rb = new QRadioButton(i18n("F"), vGroup);
+  unitTempButtonGroup-> insert(rb, FlightRecorderPluginBase::FR_Unit_Temp_F);
+  vgrid->addWidget(rb, 7, 7);
+
+  sinktone = new QCheckBox(i18n("sink tone"), vGroup);
+  sinktone->setChecked(true);
+  vgrid->addWidget(sinktone, 8, 2);
+
 
   cmdUploadConfig = new QPushButton(i18n("write config to recorder"), configPage);
+  // disable this button until we read the information from the flight recorder:
+  cmdUploadConfig->setEnabled(false);
   connect(cmdUploadConfig, SIGNAL(clicked()), SLOT(slotWriteConfig()));
-  configLayout->addWidget(cmdUploadConfig, 15, 0);
-
-  cmdDownloadConfig = new QPushButton(i18n("read config from recorder"), configPage);
-  connect(cmdDownloadConfig, SIGNAL(clicked()), SLOT(slotReadConfig()));
-  configLayout->addWidget(cmdDownloadConfig, 15, 4);
+  configLayout->addWidget(cmdUploadConfig, 15, 6);
 
 }

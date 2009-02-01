@@ -55,6 +55,10 @@ public:
    * get recorder config data
    */
   virtual int getConfigData(FR_ConfigData&);
+  /**
+   * write recorder basic and config data
+   */
+  virtual int writeConfigData(FR_BasicData&, FR_ConfigData&);
   /*
    * Opens the recorder for serial communication.
    */

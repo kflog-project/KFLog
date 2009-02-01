@@ -135,6 +135,17 @@ public:
     QString competitionID;
   };
 
+  enum FR_Units {
+    FR_Unit_Vario_kts =   1,
+    FR_Unit_Alt_ft    =   2,
+    FR_Unit_Temp_F    =   4,
+    FR_Unit_Baro_inHg =   8,
+    FR_Unit_Dist_nm   =  16,
+    FR_Unit_Dist_sm   =  32,
+    FR_Unit_Spd_kts   =  64,
+    FR_Unit_Spd_mph   = 128
+  };
+
   struct FR_ConfigData
   {
     /* polar data: */
@@ -187,6 +198,10 @@ public:
    * get recorder config data
    */
   virtual int getConfigData(FR_ConfigData&)=0;
+  /**
+   * write recorder basic and config data
+   */
+  virtual int writeConfigData(FR_BasicData&, FR_ConfigData&)=0;
   /**
    * Opens the recorder for serial communication.
    */

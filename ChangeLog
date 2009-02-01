@@ -1,5 +1,10 @@
 $Id$
 
+2009-02-01 Hendrik Hoeth <hoeth@linta.de>
+
+  * Basic support for changing glider and pilot information in
+    Cambridge 300 series flight recorders
+
 2008-12-29 Constantijn Neeteson <kflog@neeteson.net>
 
   * Further improvements in circling detection and the calculation

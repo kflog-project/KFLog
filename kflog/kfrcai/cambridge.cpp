@@ -58,16 +58,6 @@
 #define CAI_WAYPOINT       256
 #define CAI_AIRSPACE       512
 
-// Units for the variometer setting use bit arrays
-#define CAI_UNIT_VARIO_KTS        1
-#define CAI_UNIT_ALT_FT           2
-#define CAI_UNIT_TEMP_F           4 
-#define CAI_UNIT_BARO_INHG        8
-#define CAI_UNIT_DIST_NM         16
-#define CAI_UNIT_DIST_SM         32
-#define CAI_UNIT_SPD_KTS         64
-#define CAI_UNIT_SPD_MPH        128
-
 const char* c36 = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 /*
@@ -170,7 +160,15 @@ Cambridge::Cambridge()
   // the "fast download" button, because it doesn't do anything:
   _capabilities.supSignedFlight = false;     //supports downloading in of signed flights?
   //
+  _capabilities.supEditGliderID = true;
+  _capabilities.supEditGliderType = true;
+  _capabilities.supEditGliderPolar = true;
+  _capabilities.supEditPilotName = true;
+  _capabilities.supEditUnits = true;
+  _capabilities.supEditGoalAlt = true;
+  _capabilities.supEditArvRadius = true;
   _capabilities.supEditAudio = true;
+  _capabilities.supEditLogInterval = true;
   portID = -1;
 }
 
@@ -421,10 +419,10 @@ int Cambridge::getConfigData(FR_ConfigData& data)
   _configData.sloginterval   = extractInteger(reply,34,2);
   _configData.floginterval   = extractInteger(reply,36,2);
   _configData.gaptime        = extractInteger(reply,38,2);
-  _configData.minloggingspd  = extractInteger(reply,40,2);
-  _configData.stfdeadband    = extractInteger(reply,42,1);
-  _configData.units          = extractInteger(reply,44,1);
-  _configData.goalalt        = extractInteger(reply,48,2);
+  _configData.minloggingspd  = (extractInteger(reply,40,2)+1)*0.1852; // convert to km/h
+  _configData.stfdeadband    = (extractInteger(reply,42,1)+1)*0.36;  // convert to km/h
+  _configData.units          = extractInteger(reply,45,1);
+  _configData.goalalt        = extractInteger(reply,48,2)/10;    // convert to meters
 
   //debugHex (reply,64);
   qDebug("_configData.sinktone       %d", _configData.sinktone      );
@@ -441,6 +439,70 @@ int Cambridge::getConfigData(FR_ConfigData& data)
   qDebug("_configData.goalalt        %d", _configData.goalalt       );
 
   data = _configData;
+  return FR_OK;
+}
+
+int Cambridge::writeConfigData(FR_BasicData& basicdata, FR_ConfigData& configdata)
+{
+  basicdata.pilotName = basicdata.pilotName.leftJustify(24, ' ', true);
+  basicdata.gliderType = basicdata.gliderType.leftJustify(12, ' ', true);
+  basicdata.gliderID = basicdata.gliderID.leftJustify(12, ' ', true);
+  configdata.minloggingspd /= 0.1852; // convert to 10ths of knots
+  configdata.stfdeadband /= 0.36;  // convert to 10ths of m/s
+  configdata.goalalt *= 10;    // convert to 10ths of meters
+  // go into command mode, then send glider and pilot information
+  wb(STX);
+  wait_ms(100);
+  sendCommand("download");
+  wait_ms(100);
+  QString LD        = QString().sprintf("%d", configdata.LD       );
+  QString speedLD   = QString().sprintf("%d", configdata.speedLD  );
+  QString speedV2   = QString().sprintf("%d", configdata.speedV2  );
+  QString dryweight = QString().sprintf("%d", configdata.dryweight);
+  QString maxwater  = QString().sprintf("%d", configdata.maxwater );
+  QString caiglider = "G," + basicdata.gliderType
+                     + "," + basicdata.gliderID
+                     + "," + LD
+                     + "," + speedLD
+                     + "," + speedV2
+                     + "," + dryweight
+                     + "," + maxwater
+                     + ",0,65535";
+  sendCommand(caiglider);
+  qDebug(caiglider);
+  wait_ms(1500);
+  QString sinktone       = QString().sprintf("%d", configdata.sinktone      );
+  QString totalenergyfg  = QString().sprintf("%d", configdata.totalenergyfg );
+  QString fgdiffalt      = QString().sprintf("%d", configdata.fgdiffalt     );
+  QString approachradius = QString().sprintf("%d", configdata.approachradius);
+  QString arrivalradius  = QString().sprintf("%d", configdata.arrivalradius );
+  QString sloginterval   = QString().sprintf("%d", configdata.sloginterval  );
+  QString floginterval   = QString().sprintf("%d", configdata.floginterval  );
+  QString gaptime        = QString().sprintf("%d", configdata.gaptime       );
+  QString minloggingspd  = QString().sprintf("%d", configdata.minloggingspd );
+  QString stfdeadband    = QString().sprintf("%d", configdata.stfdeadband   );
+  QString units          = QString().sprintf("%d", configdata.units         );
+  QString goalalt        = QString().sprintf("%d", configdata.goalalt       );
+  QString caipilot = "O," + basicdata.pilotName
+                    + "," + "0"
+                    + "," + "0"
+                    + "," + sinktone      
+                    + "," + "1"  // totalenergyfg
+                    + "," + "1"  // fgdiffalt
+                    + "," + "0"
+                    + "," + approachradius
+                    + "," + arrivalradius 
+                    + "," + sloginterval  
+                    + "," + floginterval  
+                    + "," + gaptime       
+                    + "," + minloggingspd 
+                    + "," + stfdeadband   
+                    + "," + "0"
+                    + "," + units         
+                    + "," + goalalt;
+  qDebug(caipilot);
+  sendCommand(caipilot);
+  wait_ms(1000);
   return FR_OK;
 }
 
