@@ -1236,7 +1236,7 @@ instrument settings
 
 The format is:
 
-!W,<1>,<2>,<3>,<4>,<5>,<6>,<7>,<8>,<9>,<10>,<11>,<12>,<13>*hh<CR><LF>
+!w,<1>,<2>,<3>,<4>,<5>,<6>,<7>,<8>,<9>,<10>,<11>,<12>,<13>*hh<CR><LF>
 <1>    Vector wind direction in degrees
 <2>    Vector wind speed in 10ths of meters per second
 <3>    Vector wind age in seconds
