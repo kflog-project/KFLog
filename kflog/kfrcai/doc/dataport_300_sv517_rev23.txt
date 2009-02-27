@@ -1223,7 +1223,8 @@ The PCAID sentence format is:
 $PCAID,<1>,<2>,<3>,<4>*hh<CR><LF>
 
 <1>     Logged 'L' Last point Logged 'N' Last Point not logged
-<2>     Barometer Altitude in meters (Leading zeros will be transmitted)
+<2>     Barometer Altitude (i.e. above 1013.2 mbar) in meters. Leading zeros
+        will be transmitted.
 <3>     Engine Noise Level
 <4>     Log Flags
 *hh     Checksum, XOR of all bytes of the sentence after the `$' and before the
@@ -1242,7 +1243,7 @@ The format is:
 <3>    Vector wind age in seconds
 <4>    Component wind in 10ths of Meters per second + 500 (500 = 0, 495 = 0.5 m/s
        tailwind)
-<5>    True altitude in Meters + 1000
+<5>    True altitude (i.e. above MSL) in Meters + 1000
 <6>    Instrument QNH setting
 <7>    True airspeed in 100ths of Meters per second
 <8>    Variometer reading in 10ths of knots + 200
