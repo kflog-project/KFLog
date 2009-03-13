@@ -1238,7 +1238,8 @@ instrument settings
 The format is:
 
 !w,<1>,<2>,<3>,<4>,<5>,<6>,<7>,<8>,<9>,<10>,<11>,<12>,<13>*hh<CR><LF>
-<1>    Vector wind direction in degrees
+<1>    Vector wind direction in degrees (direction into which the wind points,
+       i.e. 115 = wind comes from 295 degrees)
 <2>    Vector wind speed in 10ths of meters per second
 <3>    Vector wind age in seconds
 <4>    Component wind in 10ths of Meters per second + 500 (500 = 0, 495 = 0.5 m/s
@@ -1301,4 +1302,5 @@ April 12, 2008
 Fixed several errors.
 
 February 1, 2009
-Fixed several errors.
+Fixed several errors. Clarify descriptions of vector wind direction and
+pressure altitude in NMEA sentences.
