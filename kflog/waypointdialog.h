@@ -27,7 +27,7 @@
 #include <qpushbutton.h>
 
 #include <kcombobox.h>
-#include <kdialog.h>
+#include <qdialog.h>
 
 /**
   *@short Create and edit waypoints
@@ -38,7 +38,7 @@
   *@version  $Id$
   */
 
-class WaypointDialog : public KDialog  {
+class WaypointDialog : public QDialog  {
    Q_OBJECT
 public: 
 	WaypointDialog(QWidget *parent=0, const char *name=0);

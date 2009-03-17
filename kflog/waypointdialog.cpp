@@ -32,7 +32,7 @@ extern TranslationList surfaces;
 extern TranslationList waypointTypes;
 
 WaypointDialog::WaypointDialog(QWidget *parent, const char *name)
- : KDialog(parent, name, true)
+ : QDialog(parent, name, true)
 {
   setCaption(i18n("Waypoint definition"));
   __initDialog();

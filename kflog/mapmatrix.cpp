@@ -87,15 +87,15 @@ MapMatrix::MapMatrix()
     mapCenterLat(0), mapCenterLon(0), printCenterLat(0), printCenterLon(0),
     cScale(0), rotationArc(0), printArc(0)
 {
-  viewBorder.setTop(32000000);
-  viewBorder.setBottom(25000000);
-  viewBorder.setLeft(2000000);
-  viewBorder.setRight(7000000);
+  viewBorder.setTop(29126344);
+  viewBorder.setBottom(29124144);
+  viewBorder.setLeft(5349456);
+  viewBorder.setRight(5379397);
 
-  printBorder.setTop(32000000);
-  printBorder.setBottom(25000000);
-  printBorder.setLeft(2000000);
-  printBorder.setRight(7000000);
+  printBorder.setTop(29126344);
+  printBorder.setBottom(29124144);
+  printBorder.setLeft(5349456);
+  printBorder.setRight(5379397);
 
   int projectionType = ProjectionBase::Lambert;
   if( projectionType == ProjectionBase::Lambert ) {
@@ -650,7 +650,7 @@ void MapMatrix::slotInitMatrix()
     mapCenterLat = config->readNumEntry("Center Latitude", HOME_DEFAULT_LAT);
     mapCenterLon = config->readNumEntry("Center Longitude", HOME_DEFAULT_LON);
     cScale = config->readDoubleNumEntry("Map Scale", 200);
-    }
+  }
 
   int newProjectionType = config->readNumEntry("Projection Type", ProjectionBase::Lambert);
 

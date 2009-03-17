@@ -1,5 +1,11 @@
 $Id$
 
+2009-03-17 Hendrik Hoeth <hoeth@linta.de>
+
+  * If KFLog was closed in another mode than map view (i.e. viewing
+    the waypoint list or the evaluation window) it started downloading
+    lots of map files after the next startup. This is fixed now.
+
 2009-02-01 Hendrik Hoeth <hoeth@linta.de>
 
   * Basic support for changing glider and pilot information in

@@ -607,8 +607,8 @@ void MapContents::__askForDownload()
           {
             case KMessageBox::Yes:
               config->writeEntry("Automatic Map Download",Automatic,false); //this is temporary, will be overwritten later
-              __downloadFile("G_03699.kfl",mapDir + "/landscape",true);
-              if(QFile(mapDir+"/landscape/G_03699.kfl").exists())
+              __downloadFile("G_03694.kfl",mapDir + "/landscape",true);
+              if(QFile(mapDir+"/landscape/G_03694.kfl").exists())
                 {
                   config->writeEntry("Automatic Map Download",Automatic);
                 }
