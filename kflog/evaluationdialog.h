@@ -90,7 +90,6 @@ class EvaluationDialog : public QWidget
   /*
    * Was ist mit diesen labels ???
    */
-  QScrollView* graphFrame;
   QTextView* textLabel;
   QComboBox* combo_flight;
   Flight* flight;

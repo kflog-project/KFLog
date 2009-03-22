@@ -179,9 +179,8 @@ void KFLogApp::initActions()
   extern MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
 
-  new KAction(i18n("&Open Flight"), "fileopen",
-      KStdAccel::Open, this, SLOT(slotFileOpen()),
-      actionCollection(), "file_open");
+  new KAction(i18n("&Open Flight"), "fileopen", CTRL+Key_O,
+      this, SLOT(slotFileOpen()), actionCollection(), "file_open");
   new KAction(i18n("&Open Task"), "fileopen",  CTRL+Key_T,
       this, SLOT(slotTaskOpen()), actionCollection(), "file_open_task");
 

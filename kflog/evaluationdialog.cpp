@@ -1,6 +1,6 @@
 /***********************************************************************
 **
-**   evaluationview.cpp
+**   evaluationdialog.cpp
 **
 **   This file is part of KFLog.
 **
