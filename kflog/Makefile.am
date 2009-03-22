@@ -94,7 +94,6 @@ EXTRA_DIST = \
 	distance.cpp distance.h \
 	downloadlist.cpp downloadlist.h \
 	elevationfinder.cpp elevationfinder.h \
-	evaluationcanvas.cpp evaluationcanvas.h \
 	evaluationdialog.cpp evaluationdialog.h \
 	evaluationframe.cpp evaluationframe.h \
 	evaluationview.cpp evaluationview.h \
