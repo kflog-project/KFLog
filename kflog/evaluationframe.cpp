@@ -143,11 +143,11 @@ warning("EvaluationFrame::EvaluationFrame");
   sliderVario->setValue(glatt_va);
   glatt_v = config->readNumEntry("Speed Smoothness",0);
   sliderSpeed->setValue(glatt_v);
-  glatt_h = config->readNumEntry("Elevation Smoothness",0);
+  glatt_h = config->readNumEntry("Altitude Smoothness",0);
   sliderBaro->setValue(glatt_h);
   check_vario->setChecked(config->readBoolEntry("Vario",true));
   check_speed->setChecked(config->readBoolEntry("Speed",true));
-  check_baro->setChecked(config->readBoolEntry("Elevation",true));
+  check_baro->setChecked(config->readBoolEntry("Altitude",true));
 
   config->setGroup(0);
 
@@ -178,10 +178,10 @@ EvaluationFrame::~EvaluationFrame()
   config->setGroup("Evaluation");
   config->writeEntry("Scale Time",secWidth);
   config->writeEntry("Vario Smoothness",glatt_va);
-  config->writeEntry("Elevation Smoothness",glatt_h);
+  config->writeEntry("Altitude Smoothness",glatt_h);
   config->writeEntry("Speed Smoothness",glatt_v);
   config->writeEntry("Vario",check_vario->isChecked());
-  config->writeEntry("Elevation",check_baro->isChecked());
+  config->writeEntry("Altitude",check_baro->isChecked());
   config->writeEntry("Speed",check_speed->isChecked());
 }
 

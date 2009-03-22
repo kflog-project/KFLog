@@ -1,1 +1,17 @@
+Known bugs
+==========
 
+- evaluation window opens with the wrong size
+
+- configure needs to check for OpenGL and if it's not available, we
+  either need to complain or we need to disable the GL-3D-view.
+
+- not a bug: draw airfields with correct runway orientation.
+
+- segfault when editing a waypoint, wahrscheinlich in
+  void Waypoints::slotEditWaypoint(Waypoint* w)
+
+- close kflog in evaluation/waypoint mode. open kflog. load flight.
+  -> lots of mapfiles are downloaded. Why?
+
+- show engine noise in evaluation window
