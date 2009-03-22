@@ -27,18 +27,18 @@
 #include <qlayout.h>
 #include <qsplitter.h>
 
-#define X_ABSTAND 100
+#define X_DISTANCE 100
 
 EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   : QFrame(parent),
   flight(0)
 {
 warning("EvaluationFrame::EvaluationFrame");
-  // variable Kontrolle
-  QSplitter* kontSplitter = new QSplitter(QSplitter::Horizontal, this);
+  // variable control
+  QSplitter* controlSplitter = new QSplitter(QSplitter::Horizontal, this);
 
   // View
-  graphFrame = new QScrollView(kontSplitter);
+  graphFrame = new QScrollView(controlSplitter);
   graphFrame->setResizePolicy(QScrollView::AutoOne);
   graphFrame->setHScrollBarMode(QScrollView::AlwaysOn);
   graphFrame->setVScrollBarMode(QScrollView::AlwaysOff);
@@ -53,98 +53,98 @@ warning("EvaluationFrame::EvaluationFrame");
   cursorLabel->setVScrollBarMode(QScrollView::AlwaysOff);
   cursorLabel->setHScrollBarMode(QScrollView::AlwaysOff);
 
-  // Kontrollelemente
-  QFrame* kontrolle = new QFrame(kontSplitter);
-  kontrolle->setMinimumWidth(1);
+  // Control elements
+  QFrame* control = new QFrame(controlSplitter);
+  control->setMinimumWidth(1);
 
-  QLabel* scale_label = new QLabel(i18n("Time scale:"),kontrolle);
+  QLabel* scale_label = new QLabel(i18n("Time scale:"),control);
   scale_label->setAlignment(AlignHCenter);
-  spinScale = new QSpinBox(1,60,1,kontrolle);
+  spinScale = new QSpinBox(1,60,1,control);
 
-  QLabel* label_glaettung = new QLabel(i18n("Smoothness:"),kontrolle);
+  QLabel* label_glaettung = new QLabel(i18n("Smoothness:"),control);
   label_glaettung->setAlignment(AlignHCenter);
 
-  sliderVario = new QSlider(0,10,1,0,QSlider::Vertical,kontrolle);
-  sliderBaro  = new QSlider(0,10,1,0,QSlider::Vertical,kontrolle);
-  sliderSpeed = new QSlider(0,10,1,0,QSlider::Vertical,kontrolle);
+  sliderVario = new QSlider(0,10,1,0,QSlider::Vertical,control);
+  sliderBaro  = new QSlider(0,10,1,0,QSlider::Vertical,control);
+  sliderSpeed = new QSlider(0,10,1,0,QSlider::Vertical,control);
   sliderVario->sizeHint().setHeight(20);
   sliderBaro->sizeHint().setHeight(20);
   sliderSpeed->sizeHint().setHeight(20);
 
-  check_vario = new QCheckBox(kontrolle);
-  check_baro = new QCheckBox(kontrolle);
-  check_speed = new QCheckBox(kontrolle);
+  check_vario = new QCheckBox(control);
+  check_baro = new QCheckBox(control);
+  check_speed = new QCheckBox(control);
 
-  //kontrolle->setMaximumWidth(scale_label->sizeHint().width() + 10);
+  //control->setMaximumWidth(scale_label->sizeHint().width() + 10);
 
-  QLabel* label_vario = new QLabel(i18n("V"),kontrolle);
-  QLabel* label_baro  = new QLabel(i18n("H"),kontrolle);
-  QLabel* label_speed = new QLabel(i18n("S"),kontrolle);
+  QLabel* label_vario = new QLabel(i18n("V"),control);
+  QLabel* label_baro  = new QLabel(i18n("H"),control);
+  QLabel* label_speed = new QLabel(i18n("S"),control);
   label_vario->setAlignment(AlignHCenter);
   label_baro->setAlignment(AlignHCenter);
   label_speed->setAlignment(AlignHCenter);
 
-  QGridLayout* mittelayout = new QGridLayout( this, 3, 1 );
+  QGridLayout* centerlayout = new QGridLayout( this, 3, 1 );
 
-  QGridLayout* kontrolllayout = new QGridLayout( kontrolle, 12, 6, 5, 1 );
+  QGridLayout* controllayout = new QGridLayout( control, 12, 6, 5, 1 );
 
-  mittelayout->addWidget(kontSplitter, 0, 0);
-  mittelayout->addWidget(cursorLabel, 2, 0);
+  centerlayout->addWidget(controlSplitter, 0, 0);
+  centerlayout->addWidget(cursorLabel, 2, 0);
 
-  mittelayout->setRowStretch( 0, 1 );
-  mittelayout->setRowStretch( 1, 0 );
-  mittelayout->addRowSpacing( 1, 5 );
-  mittelayout->setRowStretch( 2, 0 );
+  centerlayout->setRowStretch( 0, 1 );
+  centerlayout->setRowStretch( 1, 0 );
+  centerlayout->addRowSpacing( 1, 5 );
+  centerlayout->setRowStretch( 2, 0 );
 
-  kontrolllayout->addMultiCellWidget(scale_label,1,1,0,6);
-  kontrolllayout->addMultiCellWidget(spinScale,3,3,2,5);
-  kontrolllayout->addMultiCellWidget(label_glaettung,5,5,0,6);
-  kontrolllayout->addWidget(sliderBaro,7,1);
-  kontrolllayout->addWidget(sliderVario,7,3);
-  kontrolllayout->addWidget(sliderSpeed,7,5);
-  kontrolllayout->addWidget(check_baro,9,1);
-  kontrolllayout->addWidget(check_vario,9,3);
-  kontrolllayout->addWidget(check_speed,9,5);
-  kontrolllayout->addWidget(label_baro,11,1);
-  kontrolllayout->addWidget(label_vario,11,3);
-  kontrolllayout->addWidget(label_speed,11,5);
+  controllayout->addMultiCellWidget(scale_label,1,1,0,6);
+  controllayout->addMultiCellWidget(spinScale,3,3,2,5);
+  controllayout->addMultiCellWidget(label_glaettung,5,5,0,6);
+  controllayout->addWidget(sliderBaro,7,1);
+  controllayout->addWidget(sliderVario,7,3);
+  controllayout->addWidget(sliderSpeed,7,5);
+  controllayout->addWidget(check_baro,9,1);
+  controllayout->addWidget(check_vario,9,3);
+  controllayout->addWidget(check_speed,9,5);
+  controllayout->addWidget(label_baro,11,1);
+  controllayout->addWidget(label_vario,11,3);
+  controllayout->addWidget(label_speed,11,5);
 
-  kontrolllayout->addColSpacing(1,sliderBaro->sizeHint().width() + 4);
-  kontrolllayout->addColSpacing(3,sliderVario->sizeHint().width() + 4);
-  kontrolllayout->addColSpacing(5,sliderSpeed->sizeHint().width() + 4);
-  kontrolllayout->setColStretch(0,2);
-  kontrolllayout->setColStretch(2,1);
-  kontrolllayout->setColStretch(4,1);
-  kontrolllayout->setColStretch(6,2);
-  kontrolllayout->addRowSpacing(2,5);
-  kontrolllayout->addRowSpacing(4,10);
-  kontrolllayout->addRowSpacing(6,5);
-  kontrolllayout->addRowSpacing(8,5);
-  kontrolllayout->addRowSpacing(10,5);
-  kontrolllayout->setRowStretch(12,3);
+  controllayout->addColSpacing(1,sliderBaro->sizeHint().width() + 4);
+  controllayout->addColSpacing(3,sliderVario->sizeHint().width() + 4);
+  controllayout->addColSpacing(5,sliderSpeed->sizeHint().width() + 4);
+  controllayout->setColStretch(0,2);
+  controllayout->setColStretch(2,1);
+  controllayout->setColStretch(4,1);
+  controllayout->setColStretch(6,2);
+  controllayout->addRowSpacing(2,5);
+  controllayout->addRowSpacing(4,10);
+  controllayout->addRowSpacing(6,5);
+  controllayout->addRowSpacing(8,5);
+  controllayout->addRowSpacing(10,5);
+  controllayout->setRowStretch(12,3);
   
-// Setzt die Anfangsgrößen des Splitters
+// Set default size of the window splitting
   typedef QValueList<int> testList;
-  testList kontList;
-  kontList.append(400);
-  kontList.append(scale_label->sizeHint().width() + 10);
-  kontSplitter->setSizes(kontList);
+  testList controlList;
+  controlList.append(400);
+  controlList.append(scale_label->sizeHint().width() + 10);
+  controlSplitter->setSizes(controlList);
 
-//  kontSplitter->setResizeMode(graphFrame,QSplitter::FollowSizeHint);
+//  controlSplitter->setResizeMode(graphFrame,QSplitter::FollowSizeHint);
 
 
-  // gespeicherte Daten
+  // load settings from config file
   KConfig* config = KGlobal::config();
 
   config->setGroup("Evaluation");
   secWidth = config->readNumEntry("Scale Time",10);
   spinScale->setValue(secWidth);
-  glatt_va = config->readNumEntry("Vario Smoothness",0);
-  sliderVario->setValue(glatt_va);
-  glatt_v = config->readNumEntry("Speed Smoothness",0);
-  sliderSpeed->setValue(glatt_v);
-  glatt_h = config->readNumEntry("Altitude Smoothness",0);
-  sliderBaro->setValue(glatt_h);
+  smoothness_va = config->readNumEntry("Vario Smoothness",0);
+  sliderVario->setValue(smoothness_va);
+  smoothness_v = config->readNumEntry("Speed Smoothness",0);
+  sliderSpeed->setValue(smoothness_v);
+  smoothness_h = config->readNumEntry("Altitude Smoothness",0);
+  sliderBaro->setValue(smoothness_h);
   check_vario->setChecked(config->readBoolEntry("Vario",true));
   check_speed->setChecked(config->readBoolEntry("Speed",true));
   check_baro->setChecked(config->readBoolEntry("Altitude",true));
@@ -159,11 +159,11 @@ warning("EvaluationFrame::EvaluationFrame");
         SLOT(slotShowGraph()));
 
   this->connect(sliderVario, SIGNAL(valueChanged(int)),
-        SLOT(slotVarioGlatt(int)));
+        SLOT(slotVarioSmoothness(int)));
   this->connect(sliderSpeed, SIGNAL(valueChanged(int)),
-        SLOT(slotSpeedGlatt(int)));
+        SLOT(slotSpeedSmoothness(int)));
   this->connect(sliderBaro, SIGNAL(valueChanged(int)),
-        SLOT(slotBaroGlatt(int)));
+        SLOT(slotBaroSmoothness(int)));
 
   this->connect(spinScale, SIGNAL(valueChanged(int)),
         SLOT(slotScale(int)));
@@ -177,9 +177,9 @@ EvaluationFrame::~EvaluationFrame()
 
   config->setGroup("Evaluation");
   config->writeEntry("Scale Time",secWidth);
-  config->writeEntry("Vario Smoothness",glatt_va);
-  config->writeEntry("Altitude Smoothness",glatt_h);
-  config->writeEntry("Speed Smoothness",glatt_v);
+  config->writeEntry("Vario Smoothness",smoothness_va);
+  config->writeEntry("Altitude Smoothness",smoothness_h);
+  config->writeEntry("Speed Smoothness",smoothness_v);
   config->writeEntry("Vario",check_vario->isChecked());
   config->writeEntry("Altitude",check_baro->isChecked());
   config->writeEntry("Speed",check_speed->isChecked());
@@ -196,36 +196,36 @@ void EvaluationFrame::slotShowGraph()
 {
   // draw the curves
   evalView->drawCurve(check_vario->isChecked(), check_speed->isChecked(),
-    check_baro->isChecked(), glatt_va, glatt_v, glatt_h, secWidth);
+    check_baro->isChecked(), smoothness_va, smoothness_v, smoothness_h, secWidth);
 
   if (flight && flight->getTypeID() == BaseMapElement::Flight) {
     int contentsX = (( centerTime - flight->getStartTime() ) / secWidth)
-               + X_ABSTAND ;
+               + X_DISTANCE ;
     graphFrame->center(contentsX,0);
   }
 }
 
 
-void EvaluationFrame::slotVarioGlatt(int g)
+void EvaluationFrame::slotVarioSmoothness(int s)
 {
-  // gibt den Glästtungsfaktor zurück
-  glatt_va = g;
+  // set smoothness factor and redraw graph
+  smoothness_va = s;
 
   slotShowGraph();
 }
 
-void EvaluationFrame::slotBaroGlatt(int g)
+void EvaluationFrame::slotBaroSmoothness(int s)
 {
-  // gibt den Glättungsfaktor zurück
-  glatt_h = g;
+  // set smoothness factor and redraw graph
+  smoothness_h = s;
 
   slotShowGraph();
 }
 
-void EvaluationFrame::slotSpeedGlatt(int g)
+void EvaluationFrame::slotSpeedSmoothness(int s)
 {
-  // gibt den Glättungsfaktor zurück
-  glatt_v = g;
+  // set smoothness factor and redraw graph
+  smoothness_v = s;
 
   slotShowGraph();
 }
@@ -234,11 +234,11 @@ void EvaluationFrame::slotScale(int g)
 {
   if(flight == NULL)  return;
   
-  // gibt den Scalierungsfaktor zurück
+  // set scale factor
   secWidth = g;
 
   int contentsX = graphFrame->contentsX() + ( graphFrame->width() / 2 );
-  centerTime = flight->getPointByTime((contentsX - X_ABSTAND) *
+  centerTime = flight->getPointByTime((contentsX - X_DISTANCE) *
                           secWidthOld + flight->getStartTime()).time;
 
   secWidthOld = secWidth;

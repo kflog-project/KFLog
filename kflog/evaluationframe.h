@@ -50,11 +50,11 @@ class EvaluationFrame : public QFrame
 
   public slots:
     /** */
-    void slotVarioGlatt(int glatt);
+    void slotVarioSmoothness(int s);
     /** */
-    void slotBaroGlatt(int glatt);
+    void slotBaroSmoothness(int s);
     /** */
-    void slotSpeedGlatt(int glatt);
+    void slotSpeedSmoothness(int s);
     /** */
     void slotScale(int secWidth);
     /** */
@@ -83,9 +83,9 @@ class EvaluationFrame : public QFrame
     QSlider* sliderSpeed;
     QSpinBox* spinScale;
 
-    int glatt_va;
-    int glatt_v;
-    int glatt_h;
+    int smoothness_va;
+    int smoothness_v;
+    int smoothness_h;
 
     int secWidth;
     int secWidthOld;

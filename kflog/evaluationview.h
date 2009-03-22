@@ -43,8 +43,8 @@ class EvaluationView : public QWidget
   ~EvaluationView();
   /** */
   void drawCurve(bool vario, bool speed, bool baro,
-           unsigned int glatt_va, unsigned int glatt_v,
-           unsigned int glatt_h, unsigned int secWidth);
+           unsigned int smoothness_va, unsigned int smoothness_v,
+           unsigned int smoothness_h, unsigned int secWidth);
 
   /** */
   enum CursorStatus { Reached = 8, NotReached = 16};
@@ -103,7 +103,8 @@ class EvaluationView : public QWidget
    */
   QPoint lastPointerPosition;
    /**
-    * Contains a reference to a buffer that contains the pointer for the current position, so we only need to draw it once
+    * Contains a reference to a buffer that contains the pointer
+    * for the current position, so we only need to draw it once
     */
   QPixmap* pixPointer;
    /**
@@ -111,14 +112,15 @@ class EvaluationView : public QWidget
     */
   QBitmap* bitPointerMask;
    /**
-    * Contains a reference to a buffer that contains the contents of the graph under the position where the pointer was drawn
+    * Contains a reference to a buffer that contains the contents
+    * of the graph under the position where the pointer was drawn
     */
   QPixmap* pixPointerBuffer;
   
   void __paintCursor(int xpos, int calt, int move, int cursor);
-  /** Zeichnet die Kurven */
+  /** Draw graphs */
   void __draw();
-  /** Zeichnet die Y Achse */
+  /** Draw y-axis */
   void __drawYAxis();
   
   /** Behält den Inhalt der Zeichnung. */
@@ -141,9 +143,9 @@ class EvaluationView : public QWidget
   float scale_h;
   float scale_va;
 
-  unsigned int glatt_va;
-  unsigned int glatt_v;
-  unsigned int glatt_h;
+  unsigned int smoothness_va;
+  unsigned int smoothness_v;
+  unsigned int smoothness_h;
 
   bool baro;
   bool vario;
@@ -161,7 +163,10 @@ class EvaluationView : public QWidget
 //  QPixmap pixCursor1;
 //  QPixmap pixCursor2;
 public slots: // Public slots
-  /** Shows a pointer under the time axis to indicate the position of flightPoint fp in the graph. If fp=0, then the flightpoint is removed. */
+  /* Shows a pointer under the time axis to indicate the
+   * position of flightPoint fp in the graph. If fp=0,
+   * then the flightpoint is removed.
+   */
   void slotShowPointer(const flightPoint * fp=0);
 
   
