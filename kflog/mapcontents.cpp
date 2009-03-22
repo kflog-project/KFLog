@@ -1,20 +1,20 @@
-/***********************************************************************
-**
-**   mapcontents.cpp
-**
-**   This file is part of KFLog2.
-**
-**   $Id$
-**
-************************************************************************
-**
-**   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**
-**   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
-**
-**
-***********************************************************************/
+/**********************************************************************
+ **
+ **   mapcontents.cpp
+ **
+ **   This file is part of KFLog2.
+ **
+ **   $Id$
+ **
+ ************************************************************************
+ **
+ **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
+ **
+ **   This file is distributed under the terms of the General Public
+ **   Licence. See the file COPYING for more information.
+ **
+ **
+ ***********************************************************************/
 
 #include <cmath>
 #include <iostream>
@@ -65,20 +65,32 @@
  * Used as bit-masks to determine, if we must display
  * messageboxes on missing map-directories.
  */
-#define AIRSPACE_LOADED 2
-#define AIRFIELD_LOADED 4
 #define MAP_LOADED 8
 
-#define MAX_FILE_COUNT 16200
+// number of last map tile, possible range goes 0...16200
+#define MAX_TILE_NUMBER 16200
+
+// number of different isoline levels
 #define ISO_LINE_NUM 50
 
-#define KFLOG_FILE_MAGIC  0x404b464c
-#define FILE_TYPE_GROUND  0x47
-#define FILE_TYPE_TERRAIN 0x54
-#define FILE_TYPE_MAP     0x4d
-#define FILE_TYPE_LM      0x4c
-#define FILE_TYPE_AERO    0x41
-#define FILE_FORMAT_ID    101
+// general KFLOG file token: @KFL
+#define KFLOG_FILE_MAGIC    0x404b464c
+
+// uncompiled map file types
+#define FILE_TYPE_AERO        0x41
+#define FILE_TYPE_GROUND      0x47
+#define FILE_TYPE_TERRAIN     0x54
+#define FILE_TYPE_MAP         0x4d
+#define FILE_TYPE_LM          0x4c
+
+// versions
+// The *_OLD files are based on GTOPO30 data. Support for this will disappear in the QT4 release.
+// The newer files are based on SRTM3 data.
+#define FILE_VERSION_GROUND_OLD   100
+#define FILE_VERSION_GROUND       102
+#define FILE_VERSION_TERRAIN_OLD  100
+#define FILE_VERSION_TERRAIN      102
+#define FILE_VERSION_MAP          101
 
 #define CHECK_BORDER if(i == 0) {                       \
     border.north = lat_temp;   border.south = lat_temp; \
@@ -120,26 +132,23 @@
       site->addRunway(rw); \
     }
 
-// List of altitude-levels (50 in total):
+// List of elevation levels (50 in total):
 const int MapContents::isoLines[] =
-  {
-    0, 10, 25, 50, 75, 100, 150, 200, 250,
-    300, 350, 400, 450, 500, 600, 700, 800, 900, 1000, 1250, 1500, 1750,
-    2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500,
-    4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250,
-    7500, 7750, 8000, 8250, 8500, 8750
-  };
+{
+  0, 10, 25, 50, 75, 100, 150, 200, 250,
+  300, 350, 400, 450, 500, 600, 700, 800, 900, 1000, 1250, 1500, 1750,
+  2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500,
+  4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250,
+  7500, 7750, 8000, 8250, 8500, 8750
+};
 
 MapContents::MapContents()
   : isFirstLoad(0)
 {
-  sectionArray.resize(MAX_FILE_COUNT);
+  sectionArray.resize(MAX_TILE_NUMBER);
   sectionArray.fill(false);
-//  for(unsigned int loop = 0; loop < MAX_FILE_COUNT; loop++)
-//      sectionArray.clearBit(loop);
 
-  // Wir nehmen zunaechst 4 Schachtelungstiefen an ...
-  for(unsigned int loop = 0; loop < ( ISO_LINE_NUM * 4 ); loop++)
+  for(unsigned int loop = 0; loop < ISO_LINE_NUM; loop++)
       isoList.append(new QPtrList<Isohypse>);
 
   airportList.setAutoDelete(true);
@@ -277,8 +286,8 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
     }
 }
 
-bool MapContents::__readTerrainFile(const int fileSecID,
-    const int fileTypeID)
+bool MapContents::__readTerrainFile( const int fileSecID,
+                                     const int fileTypeID)
 {
   extern const MapMatrix _globalMapMatrix;
 
@@ -287,22 +296,21 @@ bool MapContents::__readTerrainFile(const int fileSecID,
   pathName = mapDir + "/landscape/" + pathName;
 
   if(pathName == 0)
-      // Data does not exist ...
-      return false;
+    // Data does not exist ...
+    return false;
 
   QFile eingabe(pathName);
-  if(!eingabe.open(IO_ReadOnly))
-    {
-      // Data exists, but can't be read:
-      // We need a messagebox
-      warning("KFLog: Can not open terrainfile %s", (const char*)pathName);
+  if(!eingabe.open(IO_ReadOnly)) {
+    // Data exists, but can't be read:
+    // We need a messagebox
+    warning("KFLog: Can not open terrainfile %s", (const char*)pathName);
 
-      QString fileName;
-      fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
-      __downloadFile(fileName,mapDir + "/landscape");
+    QString fileName;
+    fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
+    __downloadFile(fileName,mapDir + "/landscape");
 
-      return false;
-    }
+    return false;
+  }
 
   QDataStream in(&eingabe);
 
@@ -314,46 +322,56 @@ bool MapContents::__readTerrainFile(const int fileSecID,
   QDateTime createDateTime;
 
   in >> magic;
-  if(magic != KFLOG_FILE_MAGIC)
-    {
-      // wrong dataformat !!!
-      warning("KFLog: Trying to open old or invalid map-file; aborting!");
-      warning(pathName);
-      return false;
-    }
+  if(magic != KFLOG_FILE_MAGIC) {
+    // not a .kfl file
+    warning("KFLog: Trying to open old or invalid map-file; aborting!");
+    warning(pathName);
+    return false;
+  }
 
   in >> loadTypeID;
-  if(loadTypeID != fileTypeID)
-    {
-      // loaded wrong datatype ...
-//      warning("<------------------ Falsche Typ-ID");
-      return false;
-    }
+  if(loadTypeID != fileTypeID) {
+    // wrong data type
+    return false;
+  }
 
   in >> formatID;
-  if(formatID < FILE_FORMAT_ID)
-    {
-      // to old ...
-    }
-  else if(formatID > FILE_FORMAT_ID)
-    {
-      // to new ...
-      warning("KFLog: Fileformat too new. Aborting ...");
-      return false;
-    }
+  // Determine, which file format id is expected
+  int expFormatID, expOldFormatID;
+
+  if ( fileTypeID == FILE_TYPE_TERRAIN ) {
+    expFormatID = FILE_VERSION_TERRAIN;
+    expOldFormatID = FILE_VERSION_TERRAIN_OLD;
+  } else {
+    expFormatID = FILE_VERSION_GROUND;
+    expOldFormatID = FILE_VERSION_GROUND_OLD;
+  }
+
+  if (formatID < expFormatID && formatID != expOldFormatID) {
+    warning("KFLog: File format too old! (version %d, expecting: %d)",
+        formatID, expFormatID );
+    return false;
+  } else if (formatID > expFormatID) {
+    warning("KFLog: File format too new! (version %d, expecting: %d)",
+        formatID, expFormatID );
+    return false;
+  }
+
+  if (formatID == expOldFormatID) {   // this is for old terrain and ground files
+    warning("KFLog: You are using old map files. Please consider re-installing\n"
+            "       the terrain and ground files. Support for the old file format\n"
+            "       will seize in the next major KFLog release.");
+  }
+
   in >> loadSecID;
-  if(loadSecID != fileSecID)
-    {
-      // Problem!!!
-//      warning("<------------------- Falsche Kachel-ID");
-      return false;
-    }
+  if(loadSecID != fileSecID) {
+    // wrong tile number.
+    return false;
+  }
   in >> createDateTime;
 
   while(!in.eof())
     {
-      int sort_temp;
-
       Q_UINT8 type;
       Q_INT16 elevation;
       Q_INT8 valley, sort;
@@ -367,44 +385,37 @@ bool MapContents::__readTerrainFile(const int fileSecID,
 
       QPointArray tA(locLength);
 
-      for(int i = 0; i < locLength; i++)
-        {
-          in >> latList_temp;
-          in >> lonList_temp;
+      for(int i = 0; i < locLength; i++) {
+        in >> latList_temp;
+        in >> lonList_temp;
 
-          tA.setPoint(i, _globalMapMatrix.wgsToMap(latList_temp,
-              lonList_temp));
-        }
-      sort_temp = -1;
+        tA.setPoint(i, _globalMapMatrix.wgsToMap(latList_temp, lonList_temp));
+      }
 
-//      valley -= 1;
-//      valley *= -1;
-      // We must ignore it, when sort is more than 3 or less than 0!
-
-//      valley = 0;
-
-      // the groundlines 0m do not need a sort id
-      if(elevation <= 0)
-        {
-      sort = 0;
-      valley = 0;
+      if (formatID == expOldFormatID) {   // this is for old terrain and ground files
+        // the groundlines 0m do not need a sort id
+        if(elevation <= 0) {
+          sort = 0;
+          valley = 0;
         }
 
-      if(sort >= 0 && sort <= 3)
-        {
+        int sort_temp = -1;
+        if(sort >= 0 && sort <= 3) {
           for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
               if(isoLines[pos] == elevation)
-                  sort_temp = ISO_LINE_NUM * (int)sort + pos + 0;
+                  sort_temp = pos;
 
           // If sort_temp is -1 here, we have an unused elevation and
           // must ignore it!
-
-          if(sort_temp != -1)
-            {
-              Isohypse* newItem = new Isohypse(tA, elevation, valley);
-              isoList.at(sort_temp)->append(newItem);
-            }
+          if(sort_temp != -1) {
+            Isohypse* newItem = new Isohypse(tA, elevation, valley);
+            isoList.at(sort_temp)->append(newItem);
+          }
         }
+      } else {  // the SRTM3 based files store the elevation index in "sort"
+        Isohypse* newItem = new Isohypse(tA, elevation, valley);
+        isoList.at(sort)->append(newItem);
+      }
 
     }
 
@@ -455,21 +466,15 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   if(loadTypeID != fileTypeID)  return false;
 
   in >> formatID;
-  if(formatID < FILE_FORMAT_ID)
-    {
-      // to old ...
-    }
-//  else if(formatID == "2")
-//    {
-      // Current Fileformat
-
-//    }
-  else if(formatID > FILE_FORMAT_ID)
-    {
-      // to young ...
-      warning("KFLog: Fileformat too new. Aborting ...");
-      return false;
-    }
+  if(formatID < FILE_VERSION_MAP) {
+    warning("KFLog: File format too old! (version %d, expecting: %d)",
+        formatID, FILE_VERSION_MAP );
+    return false;
+  } else if(formatID > FILE_VERSION_MAP) {
+    warning("KFLog: File format too new! (version %d, expecting: %d)",
+        formatID, FILE_VERSION_MAP );
+    return false;
+  }
 
   in >> loadSecID;
   if(loadSecID != fileSecID)  return false;
@@ -477,94 +482,89 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   in >> createDateTime;
 
   unsigned int gesamt_elemente = 0;
-//unused  unsigned int river = 0;
-//unused  unsigned int rivert = 0;
-  while(!in.eof())
-    {
-      in >> typeIn;
-      locLength = 0;
-      name = "";
+  while(!in.eof()) {
+    in >> typeIn;
+    locLength = 0;
+    name = "";
 
-      QPointArray tA;
+    QPointArray tA;
 
-      gesamt_elemente++;
+    gesamt_elemente++;
 
-      switch (typeIn)
-        {
-          case BaseMapElement::Highway:
-          case BaseMapElement::Road:
-          case BaseMapElement::Trail:
-          case BaseMapElement::Railway:
-          case BaseMapElement::Railway_D:
-          case BaseMapElement::Aerial_Cable:
-            READ_POINT_LIST
-            roadList.append(new LineElement("", typeIn, tA));
-            break;
-          case BaseMapElement::Canal:
-          case BaseMapElement::River:
-          case BaseMapElement::River_T:
-            if(formatID >= FILE_FORMAT_ID) in >> name;
-            READ_POINT_LIST
-            hydroList.append(new LineElement(name, typeIn, tA));
-            break;
-          case BaseMapElement::City:
-            in >> sort;
-            if(formatID >= FILE_FORMAT_ID) in >> name;
-            READ_POINT_LIST
-            cityList.append(new LineElement(name, typeIn, tA, sort));
-            break;
-          case BaseMapElement::Lake:
-          case BaseMapElement::Lake_T:
-            in >> sort;
-            if(formatID >= FILE_FORMAT_ID) in >> name;
-            READ_POINT_LIST
-            hydroList.append(new LineElement(name, typeIn, tA, sort));
-            break;
-          case BaseMapElement::PackIce:
-            // is currently not being used
-            // stays anyway because of errors in the MapBin in the Data
-            //qDebug("filepointer: %d", eingabe.at());
-            READ_POINT_LIST
-            if(formatID >= FILE_FORMAT_ID) in >> name;
-            break;
-          case BaseMapElement::Forest:
-          case BaseMapElement::Glacier:
-            in >> sort;
-            if(formatID >= FILE_FORMAT_ID) in >> name;
-            READ_POINT_LIST
-            topoList.append(new LineElement(name, typeIn, tA, sort));
-            break;
-          case BaseMapElement::Village:
-          // Maybe there is a problem because of the new field index for singlepoints
-            if(formatID >= FILE_FORMAT_ID) in >> name;
-            in >> lat_temp;
-            in >> lon_temp;
-            villageList.append(new SinglePoint(name, "", typeIn,
-                WGSPoint(lat_temp, lon_temp),
-                _globalMapMatrix.wgsToMap(lat_temp, lon_temp)));
-            break;
-          case BaseMapElement::Spot:
-            if(formatID >= FILE_FORMAT_ID) in >> elev;
-            in >> lat_temp;
-            in >> lon_temp;
-            obstacleList.append(new SinglePoint("Spot", "", typeIn,
-              WGSPoint(lat_temp, lon_temp),
-              _globalMapMatrix.wgsToMap(lat_temp, lon_temp), 0, index));
-            break;
-          case BaseMapElement::Landmark:
-            if(formatID >= FILE_FORMAT_ID)
-              {
-                in >> lm_typ;
-                in >> name;
-              }
-            in >> lat_temp;
-            in >> lon_temp;
-            landmarkList.append(new SinglePoint(name, "", typeIn,
-              WGSPoint(lat_temp, lon_temp),
-              _globalMapMatrix.wgsToMap(lat_temp, lon_temp),0,lm_typ));
-            break;
+    switch (typeIn) {
+      case BaseMapElement::Highway:
+      case BaseMapElement::Road:
+      case BaseMapElement::Trail:
+      case BaseMapElement::Railway:
+      case BaseMapElement::Railway_D:
+      case BaseMapElement::Aerial_Cable:
+        READ_POINT_LIST
+        roadList.append(new LineElement("", typeIn, tA));
+        break;
+      case BaseMapElement::Canal:
+      case BaseMapElement::River:
+      case BaseMapElement::River_T:
+        if(formatID >= FILE_VERSION_MAP) in >> name;
+        READ_POINT_LIST
+        hydroList.append(new LineElement(name, typeIn, tA));
+        break;
+      case BaseMapElement::City:
+        in >> sort;
+        if(formatID >= FILE_VERSION_MAP) in >> name;
+        READ_POINT_LIST
+        cityList.append(new LineElement(name, typeIn, tA, sort));
+        break;
+      case BaseMapElement::Lake:
+      case BaseMapElement::Lake_T:
+        in >> sort;
+        if(formatID >= FILE_VERSION_MAP) in >> name;
+        READ_POINT_LIST
+        hydroList.append(new LineElement(name, typeIn, tA, sort));
+        break;
+      case BaseMapElement::PackIce:
+        // is currently not being used
+        // stays anyway because of errors in the MapBin in the Data
+        //qDebug("filepointer: %d", eingabe.at());
+        READ_POINT_LIST
+        if(formatID >= FILE_VERSION_MAP) in >> name;
+        break;
+      case BaseMapElement::Forest:
+      case BaseMapElement::Glacier:
+        in >> sort;
+        if(formatID >= FILE_VERSION_MAP) in >> name;
+        READ_POINT_LIST
+        topoList.append(new LineElement(name, typeIn, tA, sort));
+        break;
+      case BaseMapElement::Village:
+      // Maybe there is a problem because of the new field index for singlepoints
+        if(formatID >= FILE_VERSION_MAP) in >> name;
+        in >> lat_temp;
+        in >> lon_temp;
+        villageList.append(new SinglePoint(name, "", typeIn,
+            WGSPoint(lat_temp, lon_temp),
+            _globalMapMatrix.wgsToMap(lat_temp, lon_temp)));
+        break;
+      case BaseMapElement::Spot:
+        if(formatID >= FILE_VERSION_MAP) in >> elev;
+        in >> lat_temp;
+        in >> lon_temp;
+        obstacleList.append(new SinglePoint("Spot", "", typeIn,
+            WGSPoint(lat_temp, lon_temp),
+            _globalMapMatrix.wgsToMap(lat_temp, lon_temp), 0, index));
+        break;
+      case BaseMapElement::Landmark:
+        if(formatID >= FILE_VERSION_MAP) {
+          in >> lm_typ;
+          in >> name;
         }
+        in >> lat_temp;
+        in >> lon_temp;
+        landmarkList.append(new SinglePoint(name, "", typeIn,
+          WGSPoint(lat_temp, lon_temp),
+          _globalMapMatrix.wgsToMap(lat_temp, lon_temp),0,lm_typ));
+        break;
     }
+  }
   return true;
 }
 
@@ -881,8 +881,7 @@ void MapContents::slotReloadMapData()
   topoList.clear();
   isoList.clear();
 
-  // We assume a depth of 4 so far
-  for(unsigned int loop = 0; loop < ( ISO_LINE_NUM * 4 ); loop++)
+  for(unsigned int loop = 0; loop < ISO_LINE_NUM; loop++)
       isoList.append(new QPtrList<Isohypse>);
 
   sectionArray.fill(false);

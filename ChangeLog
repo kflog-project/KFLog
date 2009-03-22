@@ -1,5 +1,12 @@
 $Id$
 
+2009-03-22 Hendrik Hoeth <hoeth@linta.de>
+
+  * <ctrl>-o actually opens a flight now.
+  * Support for the new terrain and ground file format. The new files
+    will have the elevation index stored in the "sort" field (which
+    we didn't use previously).
+
 2009-03-17 Hendrik Hoeth <hoeth@linta.de>
 
   * If KFLog was closed in another mode than map view (i.e. viewing
