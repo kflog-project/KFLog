@@ -70,17 +70,11 @@ case $AUTOMAKE_STRING in
     ;;
   automake*1.6.* | automake*1.7* | automake*1.8* | automake*1.9* | automake*1.10*)
     echo "*** $AUTOMAKE_STRING found."
-    UNSERMAKE=no
     ;;
   "" )
     echo "*** AUTOMAKE NOT FOUND!."
     echo "*** KDE requires automake $required_automake_version"
     exit 1
-    ;;
-  *unsermake* ) :
-    echo "*** YOU'RE USING UNSERMAKE."
-    echo "*** GOOD LUCK!! :)"
-    UNSERMAKE=unsermake
     ;;
   * )
     echo "*** YOU'RE USING $AUTOMAKE_STRING."
@@ -137,10 +131,8 @@ fi
 echo "*** Creating Makefile templates"
 $AUTOMAKE || exit 1
 
-if test "$UNSERMAKE" = no; then
-  echo "*** Postprocessing Makefile templates"
-  perl -w admin/am_edit || exit 1
-fi
+echo "*** Postprocessing Makefile templates"
+perl -w admin/am_edit || exit 1
 
 if egrep "^cvs-local:" $makefile_am >/dev/null; then \
   strip_makefile
@@ -190,10 +182,10 @@ if egrep "^AM_CONFIG_HEADER" configure.in >/dev/null 2>&1; then
   touch config.h.in
 fi
 $AUTOMAKE --foreign || exit 1
-if test "$UNSERMAKE" = no; then
-  echo "*** Postprocessing Makefile templates"
-  perl -w admin/am_edit || exit 1
-fi
+
+echo "*** Postprocessing Makefile templates"
+perl -w admin/am_edit || exit 1
+
 call_and_fix_autoconf
 touch stamp-h.in
 if grep "^cvs-local:" $makefile_am >/dev/null; then
@@ -224,12 +216,7 @@ $AUTOHEADER
 touch config.h.in
 $AUTOMAKE
 AUTOMAKE_STRING=`$AUTOMAKE --version | head -n 1`
-case $AUTOMAKE_STRING in
-  *unsermake* ) :
-    ;;
-  *)
-     perl -w ../admin/am_edit --path=../admin
-esac
+perl -w ../admin/am_edit --path=../admin
 call_and_fix_autoconf
 touch stamp-h.in
 }

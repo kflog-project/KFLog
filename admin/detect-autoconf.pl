@@ -210,21 +210,13 @@ $autoconf = findBest('autoconf', @paths);
 $autoheader = findProgram('autoheader', $autoconf_suffix);
 $autom4te = findProgram('autom4te', $autoconf_suffix);
 
-# Get best automake, and look for unsermake to possibly override it.
+# Get best automake
 $automake = findBest('automake', @paths);
-$unsermake = "";
-# backward compatible: if $UNSERMAKE points to a path, use it
-$unsermake = findProgram('unsermake') if (defined($ENV{'UNSERMAKE'}) and $ENV{'UNSERMAKE'} =~ /\//);
-# new compatible: if it says 'yes', use the one from path
-$unsermake = which('unsermake') if ($ENV{'UNSERMAKE'} ne 'no');
 
 ($automake_suffix) = $automake =~ /.*automake(.*)$/;
 
 # Find matching automake companions.
 $aclocal = findProgram('aclocal', $automake_suffix);
-
-# Use unsermake if we found it.
-$automake = "$unsermake -c" if ($unsermake and $aclocal);
 
 $which = findWhich();
 
