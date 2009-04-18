@@ -197,7 +197,7 @@ int Volkslogger::openRecorder(const QString& pName, int baud)
 {
   int err;
   portName = (char *)pName.latin1();
-  
+
   if((err = vl.open(1, 5, 0, baud)) != VLA_ERR_NOERR) {
     warning(i18n("No logger found!"));
     _isConnected = false;
@@ -205,7 +205,7 @@ int Volkslogger::openRecorder(const QString& pName, int baud)
   else {
     _isConnected = true;
   }
-  
+
   return err == VLA_ERR_NOERR ? FR_OK : FR_ERROR;
 }
 

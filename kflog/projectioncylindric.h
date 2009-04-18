@@ -38,7 +38,7 @@ class ProjectionCylindric : public ProjectionBase
   virtual ~ProjectionCylindric();
 
   /** */
-  virtual const ProjectionType projectionType() const
+  virtual ProjectionType projectionType() const
   {
     return Cylindric;
   };
@@ -118,7 +118,7 @@ class ProjectionCylindric : public ProjectionBase
   /**
    * @AP: Returns the standard parallel as integer
    */
-  const int getStandardParallel() const
+  int getStandardParallel() const
   {
     return i_v1;
   };

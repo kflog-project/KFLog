@@ -42,7 +42,7 @@ public:
   /**
    * @Returns the initial value
    */
-  const int getStandardParallel1() const
+  int getStandardParallel1() const
   {
     return i_v1;
   };
@@ -50,7 +50,7 @@ public:
   /**
    * @Returns the initial value
    */
-  const int getStandardParallel2() const
+  int getStandardParallel2() const
   {
     return i_v2;
   };
@@ -58,13 +58,13 @@ public:
   /**
    * @Returns the initial value
    */
-  const int getOrigin() const
+  int getOrigin() const
   {
     return i_origin;
   };
 
   /** */
-  virtual const ProjectionType projectionType() const
+  virtual ProjectionType projectionType() const
   {
     return Lambert;
   };

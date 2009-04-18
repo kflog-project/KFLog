@@ -136,7 +136,7 @@ int16 VLA_XFR::sendcommand(byte cmd, byte param1, byte param2) {
   // Kommando verschicken ( ENQ,Daten,CRC )
   serial_out(ENQ);
   wait_ms(d);
-  for(i=0; i<sizeof(cmdarray); i++) {
+  for(i=0; i<(int)sizeof(cmdarray); i++) {
     crc16 = UpdateCRC(cmdarray[i],crc16);
     serial_out(cmdarray[i]);
     wait_ms(d);
@@ -202,10 +202,9 @@ int32 VLA_XFR::readlog(lpb puffer, int32 maxlen) {
   int32 gcs_counter = 0;
   byte  c;
   int16 dle_r = 0;
-  word crc16;
+  word crc16  = 0;
   int16 start = 0;
   int16 ende  = 0;
-  int32 i;
   lpb p;
   int pp = 0; 
   progress_reset();
@@ -338,7 +337,7 @@ VLA_ERROR VLA_XFR::dbbput(lpb dbbbuffer, int32 dbbsize) {
   serial_empty_io_buffers();
   sendcommand(cmd_PDB,0,0); // muß noch mit Timeout versehen werden
   // auf Löschende warten
-  while ( serial_in(&c) && !test_user_break() );
+  while ( serial_in(&c) && !test_user_break() ) ;
   // Fehlerbehandlung
   if (test_user_break())
     if (clear_user_break() == 1) {
@@ -365,7 +364,7 @@ VLA_ERROR VLA_XFR::dbbput(lpb dbbbuffer, int32 dbbsize) {
   serial_out(crc16%256);
   wait_ms(td);
   // auf Bestätigung warten
-  while ( serial_in(&c) && !test_user_break());
+  while ( serial_in(&c) && !test_user_break()) ;
   // Fehlerbehandlung
   if (test_user_break()) {
     if (clear_user_break() == 1) {
@@ -845,7 +844,7 @@ void VLAPI_DATA::WPT::put(lpb p) {
   // Koordinaten zurückschreiben
   llat = labs((long)(lat * 60000.0));
   llon = labs((long)(lon * 60000.0));
-  p[6] = typ&0x7f | ((lon<0)?0x80:0);
+  p[6] = (typ&0x7f) | ((lon<0)?0x80:0);
   p[7] = (byte)((llat >> 16) | ((lat<0)?0x80:0));
   llat = llat & 0x0000ffff;
   p[8] = (byte) (llat >> 8);

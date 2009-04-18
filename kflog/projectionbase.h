@@ -42,7 +42,7 @@ class ProjectionBase
   virtual ~ProjectionBase();
 
   /** */
-  virtual const ProjectionType projectionType() const = 0;
+  virtual ProjectionType projectionType() const = 0;
 
   /** */
   virtual double projectX(const double& latitude, const double& longitude)  = 0;

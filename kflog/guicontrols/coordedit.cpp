@@ -74,15 +74,15 @@ void CoordEdit::keyPressEvent (QKeyEvent *e)
       col--;
       setCursorPosition(col);
       while (!inputCols.contains(mask.mid(col,1))) setCursorPosition(--col); //move cursor in front of previous editable character
-      break;      
+      break;
     case Key_Right:
       col++;
       setCursorPosition(col);
       while (!inputCols.contains(mask.mid(col,1))) setCursorPosition(++col); //move cursor in front of next editable character
       break;
     default:
-      
-      if (col == text().length() - 1) {
+
+      if (col == (int)text().length() - 1) {
         if (validDirection.contains(s)) {
           setText(text().replace(text().length() - 1, 1, s));
           setCursorPosition(text().length());
@@ -95,7 +95,7 @@ void CoordEdit::keyPressEvent (QKeyEvent *e)
           setCursorPosition(++col);
           // jump to next number field
           //col++;
-          if (col < text().length() && mask[col] != '0') {
+          if ((col < (int)text().length()) && (mask[col] != '0')) {
             setCursorPosition(col + 2);
           }
         }

@@ -471,19 +471,19 @@ long convert_gcs(int igcfile_version, FILE *Ausgabedatei, lpb bin_puffer, int oo
    word enl;
  } igcfix;
 
- int		l;
- int    	ende;
+ int		l = 0;
+ int		ende;
 
- long   	time_relative;  // relative Zeit vom Aufzeichnungsbeginn an
+ long		time_relative = 0;  // relative Zeit vom Aufzeichnungsbeginn an
  long		temptime;
  long		decl_time;
  tm		firsttime;
  tm		realtime;
- byte 		Haupttyp;
+ byte		Haupttyp;
  byte		Untertyp;
- lpb	 	p;
+ lpb		p;
  lpb		p2;
- long 		pl;
+ long		pl;
  char		PILOT[40];
  int            tzh,tzm;
 // word           keysn;
@@ -878,7 +878,7 @@ long convert_gcs(int igcfile_version, FILE *Ausgabedatei, lpb bin_puffer, int oo
 			igcfix.pressure_alt = pressure2altitude(igcfix.press);
 
 			strftime(igcfix.time,sizeof(igcfix.time),"%H%M%S",&realtime);
-			fprintf(Ausgabedatei,"B%06s%02u%05u%c%03u%05u%c%c%05ld%05ld%03u",
+			fprintf(Ausgabedatei,"B%6s%02u%05u%c%03u%05u%c%c%05ld%05ld%03u",
 			      igcfix.time,
 			      igcfix.latdeg, igcfix.latmin,
 			      ((igcfix.lat<0) ? 'S':'N'),
@@ -914,10 +914,10 @@ long convert_gcs(int igcfile_version, FILE *Ausgabedatei, lpb bin_puffer, int oo
 			Untertyp = (p2[0]);
 			switch (Untertyp) {
 			case FLDEPEV : strftime(igcfix.time,sizeof(igcfix.time),"%H%M%S",&realtime);
-				       fprintf(Ausgabedatei,"E%06sPEVEVENTBUTTON PRESSED\n",igcfix.time);
+				       fprintf(Ausgabedatei,"E%6sPEVEVENTBUTTON PRESSED\n",igcfix.time);
 				       break;
 			case FLDETKF : strftime(igcfix.time,sizeof(igcfix.time),"%H%M%S",&realtime);
-				       fprintf(Ausgabedatei,"LGCSTKF%06sTAKEOFF DETECTED\n",igcfix.time);
+				       fprintf(Ausgabedatei,"LGCSTKF%6sTAKEOFF DETECTED\n",igcfix.time);
 				       break;
 			};
 			break;
@@ -978,9 +978,9 @@ int conv_dir(DIRENTRY* flights, lpb p, int countonly) {
 	byte Haupttyp,Untertyp;
 	byte l; // Länge des DS
 	lpb p2; // Zeiger auf Beginn des Inhalts eines vrb oder vrt
-	tm olddate;
+	tm olddate = de.firsttime;
 	int	olddate_flg = 0;
-	int	flight_of_day;
+	int	flight_of_day = 0;
 	long temptime;
 	tm timetm1;
 	int bfv = 0;
