@@ -1,0 +1,209 @@
+New maps for KFLog
+==================
+
+
+
+Current data basis
+------------------
+
+The current KFLog maps are based on GTOPO30 DEM data and DCW vector map
+data. These data sources are outdated, have low resolution and accuracy,
+there are known problems like offsets, missing/wrong roads, ...
+Therefore we decided to create new map files.
+
+New data sources
+----------------
+
+Terrain and ground files
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+- http://srtm.csi.cgiar.org/[] -- void-filled SRTM3 data, available
+  between 56S to 60N. We will most likely be using version 4.1. Download
+  is available at http://srtm.csi.cgiar.org/SELECTION/inputCoord.asp[].
+
+- http://www.viewfinderpanoramas.org/dem3.html[] -- DEM data derived
+  from topographic maps, available for large parts of the landmass not
+  covered by SRTM, especially Europe and Asia. Coverage is shown at
+  http://www.viewfinderpanoramas.org/Coverage%20map%20viewfinderpanoramas_org3.htm[]
+
+- http://www.geobase.ca/geobase/en/data/cded/index.html[] -- Canadian
+  Digital Elevation Data. Resolution between 0.75 and 12 arcseconds.
+
+- http://geogratis.gc.ca/geogratis/en/product/search.do?id=28954[] --
+  CanVec is a digital topographic map of Canada.
+
+- http://edc2.usgs.gov/geodata/index.php[] -- US DEM data. Probably only
+  needed for Alaska, since continental US is covered by SRTM.
+
+- http://edc.usgs.gov/products/elevation/gtopo30/gtopo30.html[] --
+  GTOPO30. This is low-resolution data, but it's available for the whole
+  globe, so we can use it for all the areas not covered by anything
+  else (but I don't think we have any users in those regions).
+
+
+Other map data
+~~~~~~~~~~~~~~
+
+VMAP0 is an update of the Digital Chart of the World (DCW), but as DCW
+it has a low resolution and accuracy, and it's also quite outdated. We
+should only use it where nothing better is available. VMAP0 can be
+downloaded in shape format from http://gis-lab.info/qa/vmap0-eng.html[]. 
+
+Inland water
+^^^^^^^^^^^^
+
+- http://edc.usgs.gov/products/elevation/swbd.html[] -- SRTM Water Body
+  Database (SWBD)
+- http://ccm.jrc.ec.europa.eu/[] -- Catchment Characterisation and
+  Modelling. Rivers, lakes, and land-sea boundary in Europe, based on
+  SRTM, SWBD, and national DEMs, verified using Landsat. North of 60N:
+  Sweden, Norway, Finland 100m resolution. Iceland and Russia based on
+  GTOPO30, i.e. we should use viewfinderpanoramas data for these
+  countries.
+- http://www.viewfinderpanoramas.org/contours2.html[] -- Contour data
+  derived from topographic paper maps. Covers large areas north of 60N
+  in Europe and Asia.
+
+Canada
+^^^^^^
+- http://www.geobase.ca/geobase/en/data/cded/index.html[] -- just about
+  everything.
+- http://geogratis.gc.ca/geogratis/en/product/search.do?id=28954[]
+
+USA
+^^^^
+- http://edc2.usgs.gov/geodata/index.php[] -- DEM
+- http://www.census.gov/geo/www/tiger/[] -- TIGER. Transportation,
+  water, towns, ... Everything.
+
+Netherlands
+^^^^^^^^^^^
+- Openstreetmap has a complete road coverage (donated by 
+  http://www.and.com/[Automotive Navigation Data]). That dataset also
+  seems to include information about towns/villages. More information:
+  http://wiki.openstreetmap.org/wiki/AND_Data[]
+
+India
+^^^^^
+- Openstreetmap has major road coverage (donated by 
+  http://www.and.com/[Automotive Navigation Data]). More information:
+  http://wiki.openstreetmap.org/wiki/AND_Data[]
+
+New Zealand
+^^^^^^^^^^^
+- http://www.linz.govt.nz/[] -- complete roads, probably more?
+  License seems to be okay (Openstreetmap can use the data, too).
+
+Australia
+^^^^^^^^^
+- http://www.ga.gov.au/nmd/products/digidat/100k.htm[] -- everything.
+
+More links
+^^^^^^^^^^
+- http://wiki.openstreetmap.org/wiki/Importing_Government_Data[]
+- http://wiki.openstreetmap.org/wiki/Import/Catalogue[]
+- http://wiki.openstreetmap.org/wiki/Potential_Datasources[]
+- http://freegis.org/database/?cat=1[]
+
+
+KFLog file format description
+-----------------------------
+
+KFLog and Cumulus use a binary format for their map files. There are
+four different file types:
+
+- G_XXXXX.kfl -- Ground files. Basically a land/sea mask.
+- T_XXXXX.kfl -- Terrain files. This is ground elevation data.
+- M_XXXXX.kfl -- Mapdata files. Roads, rivers, lakes, cities, ...
+- L_XXXXX.kfl -- Landmark files. Towers, mines, ruins, train stations, ...
+
+The XXXXX specifies the tile number. It is based on the center latitude
+and longitude of the tile. Each tile covers a 2x2 degree area, and tile
+borders are at even degree values, so the tile centers are always odd
+degrees. The tile number is calculated as
+`180*int((LAT-90)/-2) + int((LON+180)/2)`
+and filled to five digits with leading zeros. For this calculation the
+latitude and longitude is given in degrees. North and east are positive,
+south and west are negative.
+
+Coordinate values inside the files are specified as integer values and
+calculated as `rint(LAT*600000)` and `rint(LON*600000)`, where `LAT` and
+`LON` are floats (degrees with decimals). North and east are positive,
+south and west are negative.
+
+
+All files are read in from kflog/mapcontents.cpp.
+
+Terrain and ground files
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The files have a short file header. Then an arbitrary number of isolines
+follows. Each isoline has itself a short header, followed by
+latitude/longitude coordinate pairs. The number of coordinate pairs is
+specified in the isoline header.
+
+There are 50 discrete elevation levels, which are indexed from 0 to 49.
+The elevation is measured in meters above sea level. The elevation
+levels are:
+
+0, 10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600,
+700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000,
+3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750,
+6000, 6250, 6500, 6750, 7000, 7250, 7500, 7750, 8000, 8250, 8500, 8750
+
+Ground files hold the 0 meter isolines. They mark the sea/land mask.
+Since the 0 meter elevation is already covered by the ground files, the
+terrain files start with 10 meters as lowest elevation. The format of
+these two files is exactly the same.
+
+Isolines must always be closed.
+
+Isolines are plotted from low to high elevation, and from low to high
+`sort` index. Most isolines have `sort=0`. For a valley that is
+completely surrounded by mountains (like a crater), a higher `sort`
+index is required, so that the lower elevation isolines of the valley
+plotted after the surrounding mountain and therefore not painted over.
+A crater in a mountain in a crater would require an even higher `sort`
+index. The allowed `sort` values are 0, 1, 2, 3.
+
+'TODO: Describe clockwise/counterclockwise, make sort more explicit'
+
+.File header
+[options="header"]
+|====================================
+| Bytes   |  Description
+| 4       |  KFLog file identifier "@KFL" (0x404b464c)
+| 1       |  File type ID "T" (0x54, terrain) or "G" (0x47, ground)
+| 2       |  File format version (102 for ground and terrain)
+| 2       |  Tile number
+| 8       |  Creation time (QDateTime QDateTime::currentDateTime())
+|====================================
+
+.Isoline
+[options="header"]
+|====================================
+| Bytes   |  Description
+| 1       |  Object type. Isolines are 0x46.
+| 2       |  Elevation in meters.
+| 1       |  Elevation index (0 for 0 meters, 1 for 10 meters, ...)
+| 1       |  Plotting order index `sort` (see above)
+| 4       |  Number of coordinate pairs for this isoline
+| 4       |  Latitude
+| 4       |  Longitude
+| 4       |  Latitude
+| 4       |  Longitude
+| ...     |  ...
+|====================================
+
+
+Mapdata files
+~~~~~~~~~~~~~
+
+To be written ...
+
+
+Landmark files
+~~~~~~~~~~~~~~
+
+To be written ...
+
