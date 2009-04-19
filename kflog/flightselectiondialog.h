@@ -48,6 +48,8 @@ private: // Private attributes
   KListBox *sFlights;
 private slots: // Private slots
   /** No descriptions */
+  void slotAccept();
+  /** No descriptions */
   void slotAddOne();
   /** No descriptions */
   void slotAddAll();

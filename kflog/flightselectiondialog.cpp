@@ -19,6 +19,7 @@
 
 #include <qlayout.h>
 #include <qlabel.h>
+#include <qmessagebox.h>
 #include <qpushbutton.h>
 
 #include <klocale.h>
@@ -60,7 +61,7 @@ void FlightSelectionDialog::__initDialog()
 
   b = new QPushButton(i18n("&Ok"), this);
   b->setDefault(true);
-  connect(b, SIGNAL(clicked()), SLOT(accept()));
+  connect(b, SIGNAL(clicked()), SLOT(slotAccept()));
   buttons->addWidget(b);
   b = new QPushButton(i18n("&Cancel"), this);
   connect(b, SIGNAL(clicked()), SLOT(reject()));
@@ -115,6 +116,17 @@ void FlightSelectionDialog::__initDialog()
   topLayout->addLayout(buttons);
 
 }
+
+/** No descriptions */
+void FlightSelectionDialog::slotAccept()
+{
+  if(selectedFlights.count()>0)
+    accept();
+  else
+    if(QMessageBox::Yes == QMessageBox::warning(0, i18n("No flights selected"), "<qt>" + i18n("No flights are selected, so no flight group can be made. Do you want to close this screen?") + "</qt>", QMessageBox::Yes, QMessageBox::No))
+      reject();
+}
+
 /** No descriptions */
 void FlightSelectionDialog::slotAddOne()
 {

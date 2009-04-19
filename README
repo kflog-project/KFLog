@@ -1,9 +1,6 @@
 Known bugs
 ==========
 
-- time stamps in map and evaluation windows depend on time zone.
-  They should be UTC.
-
 - evaluation window opens with the wrong size
 
 - configure needs to check for OpenGL and if it's not available, we

@@ -11,7 +11,7 @@
 **                :  1999/10/03 Some fixes by Jan Max Walter Krueger
 **                :  ( jkrueger@physics.otago.ac.nz )
 **
-**                :  2008 Improvements by Constantijn Neeteson
+**                :  2008, 2009 Improvements by Constantijn Neeteson
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -793,55 +793,50 @@ QPtrList<statePoint> Flight::getFlightStates(unsigned int start, unsigned int en
   int distance = 0;
   float circ_angle_sum = 0;
   float vario = 0;
-  unsigned int state = 9;
+  unsigned int state = route.at(start)->f_state;
   QPtrList<statePoint> state_list;
   statePoint state_info;
 
-  //  noch abchecken, dass end <= fluglï¿½nge
   end = std::min(route.count() - 1, end);
 
   for(unsigned int n = start; n < end; n++)
-    {
+  {
       // copy info about previous state into state_list, when state changes
-      if(state!=route.at(n)->f_state)
-      {
-        if(state!=9)
-        {
-            state_info.f_state = state;
-            state_info.start_time = route.at(n_start)->time;
-            state_info.end_time = route.at(n)->time;
-            state_info.duration = duration;
-            if(state==Flight::Straight)
-              //cruising:
-              //distance based on dS
-              state_info.distance = distance/1000.0;
-            else
-              //circling:
-              //distance of a straight line between start and end point
-              state_info.distance = dist(route.at(n_start), route.at(n));
-            state_info.speed = state_info.distance/duration*3600.0;
-            state_info.L_D = state_info.distance*1000.0/(route.at(n_start)->height-route.at(n)->height);
-            state_info.circles = fabs(circ_angle_sum/(2*M_PI));
-            if(duration>0) //to prevent a buffer overflow
-                vario = (route.at(n)->height-route.at(n_start)->height)/((float) duration);
-            //cout << state << " " << distance << " " << dist(route.at(n_start), route.at(n)) << endl;
-            state_info.vario = vario;
-            state_info.dH_pos = dH_pos;
-            state_info.dH_neg = dH_neg;
+    if(state!=route.at(n)->f_state || n==(end-1))
+    {
+      state_info.f_state = state;
+      state_info.start_time = route.at(n_start)->time;
+      state_info.end_time = route.at(n)->time;
+      state_info.duration = duration;
+      if(state==Flight::Straight)
+        //cruising:
+        //distance based on dS
+        state_info.distance = distance/1000.0;
+      else
+        //circling:
+        //distance of a straight line between start and end point
+        state_info.distance = dist(route.at(n_start), route.at(n));
+      state_info.speed = state_info.distance/duration*3600.0;
+      state_info.L_D = state_info.distance*1000.0/(route.at(n_start)->height-route.at(n)->height);
+      state_info.circles = fabs(circ_angle_sum/(2*M_PI));
+      if(duration>0) //to prevent a buffer overflow
+        vario = (route.at(n)->height-route.at(n_start)->height)/((float) duration);
+      state_info.vario = vario;
+      state_info.dH_pos = dH_pos;
+      state_info.dH_neg = dH_neg;
 
-            state_list.append(new statePoint);
-            *(state_list.last()) = state_info;
-        }
+      state_list.append(new statePoint);
+      *(state_list.last()) = state_info;
 
-        //reset for next state
-        state = route.at(n)->f_state;
-        dH_pos = 0;
-        dH_neg = 0;
-        duration = 0;
-        distance = 0;
-        circ_angle_sum = 0;
-        n_start = n;
-      }
+      //reset for next state
+      state = route.at(n)->f_state;
+      dH_pos = 0;
+      dH_neg = 0;
+      duration = 0;
+      distance = 0;
+      circ_angle_sum = 0;
+      n_start = n;
+    }
       if(route.at(n)->dH > 0)
         dH_pos += route.at(n)->dH;
       else

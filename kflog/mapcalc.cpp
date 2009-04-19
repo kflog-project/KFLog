@@ -174,10 +174,8 @@ time_t timeToDay(const int year, const int month, const int day, const char *mon
   bt.tm_gmtoff = 0; // Seconds east of UTC
   bt.tm_zone = NULL; // Timezone abbreviation.
 
-  // mktime tries to return a local time with respect to daylight save time
-  time_t ret = mktime(&bt);
-  // Fiddle out the dst and gmtoff because we want a UTC based time
-  ret += (bt.tm_gmtoff - (bt.tm_isdst == 1) ? 3600 : 0);
+  // get UTC time
+  time_t ret = timegm(&bt);
 
   return ret;
 }
