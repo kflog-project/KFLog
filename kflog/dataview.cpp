@@ -107,8 +107,8 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       }
 
       tmp.sprintf("t1 : %d, t2 : %d", t1, t2);
-      warning(tmp);
-      
+      //warning(tmp);
+
       tmp.sprintf("%.2f km / %03.0f° / %.1f km/h",
                   wp1->distance,
                   getTrueCourse(wp1->origP, wp2->origP),

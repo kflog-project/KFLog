@@ -16,13 +16,16 @@
 ***********************************************************************/
 
 //program specific includes
-#include "objecttree.h"
-#include "flightlistviewitem.h"
-#include "tasklistviewitem.h"
 #include "flight.h"
+#include "flightlistviewitem.h"
+#include "flightgroup.h"
+#include "flightgrouplistviewitem.h"
+#include "flightselectiondialog.h"
 #include "flighttask.h"
 #include "mapcontents.h"
+#include "objecttree.h"
 #include "taskdialog.h"
+#include "tasklistviewitem.h"
 
 //qt includes
 #include <qcursor.h>
@@ -49,29 +52,24 @@ ObjectTree::ObjectTree(QWidget *parent, const char *name ) : QListView(parent,na
   setRootIsDecorated(true);
   setSorting(-1);
   //setSelectionMode(Extended);
-  
+
   colName = addColumn(i18n("Name"));
   colDesc = addColumn(i18n("Description"));
-  
+
   FlightRoot = new QListViewItem(this,i18n("Flights"));
   FlightRoot->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup, KIcon::SizeSmall));
   FlightRoot->setSelectable(false);
 
-  /* removed for now, as the concept is likely to disapear
-  FlightGroupRoot = new QListViewItem(this,FlightRoot,i18n("Flight groups"));
-  FlightGroupRoot->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("flightgroup", KIcon::NoGroup, KIcon::SizeSmall));
-  FlightGroupRoot->setSelectable(false);
-  */
   TaskRoot = new QListViewItem(this,FlightRoot,i18n("Tasks"));
   TaskRoot->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("task", KIcon::NoGroup, KIcon::SizeSmall));
   TaskRoot->setSelectable(false);
   /*
    * end listview setup
    */
-   
+
   connect(this, SIGNAL(selectionChanged(QListViewItem*)),SLOT(slotSelected(QListViewItem*)));
   connect(this, SIGNAL(rightButtonPressed(QListViewItem *, const QPoint &, int)), SLOT(showTaskPopup(QListViewItem *, const QPoint &, int)));
-  
+
   currentFlightElement=0;
 }
 
@@ -82,20 +80,27 @@ ObjectTree::~ObjectTree(){
  * Called if a new flight has been added.
  */
 void ObjectTree::slotNewFlightAdded(Flight * flight){
-  QListViewItem * node=new FlightListViewItem(FlightRoot,flight);
+  new FlightListViewItem(FlightRoot,flight);
+}
+
+/**
+ * Called if a new flightgroup has been created or loaded.
+ */
+void ObjectTree::slotNewFlightGroupAdded(FlightGroup * flightGroup){
+  new FlightGroupListViewItem(FlightRoot,flightGroup);
 }
 
 /**
  * Called if a new task has been created or loaded.
  */
 void ObjectTree::slotNewTaskAdded(FlightTask * task){
-  QListViewItem * node=new TaskListViewItem(TaskRoot,task);
+  new TaskListViewItem(TaskRoot,task);
 }
 
 /** Called if the selection has changed. */
 void ObjectTree::slotSelected(QListViewItem * itm){
   extern MapContents _globalMapContents;
-  
+
   if (!itm) return;
   BaseFlightElement * flt=0;
 
@@ -103,26 +108,31 @@ void ObjectTree::slotSelected(QListViewItem * itm){
     case FLIGHTLISTVIEWITEM_TYPEID:
       flt=((FlightListViewItem*)itm)->flight;
       break;
+    case FLIGHTGROUPLISTVIEWITEM_TYPEID:
+      flt=((FlightGroupListViewItem*)itm)->flightGroup;
+      break;
     case TASKLISTVIEWITEM_TYPEID:
       flt=((TaskListViewItem*)itm)->task;
       break;
     default:
       flt=0;
   }
-  
+
   if (flt && flt!=_globalMapContents.getFlight())
     emit selectedFlight(flt);
-  
+
 }
 
 /** This slot is called if the currently selected flight has changed. */
-void ObjectTree::slotSelectedFlightChanged(BaseFlightElement * bfe){
-  QListViewItem * itm=findFlightElement(bfe);
+void ObjectTree::slotSelectedFlightChanged(){
+  extern MapContents _globalMapContents;
+  QListViewItem * itm=findFlightElement(_globalMapContents.getFlight());
 
   if (itm) {
     if (!itm->isSelected()) setSelected(itm,true);
+    slotFlightChanged();
     ensureItemVisible(itm);
-    currentFlightElement=bfe;
+    currentFlightElement=_globalMapContents.getFlight();
     return;
   }
 }
@@ -137,6 +147,9 @@ void ObjectTree::slotFlightChanged(){
       case FLIGHTLISTVIEWITEM_TYPEID:
         ((FlightListViewItem*)itm)->update();
         break;
+      case FLIGHTGROUPLISTVIEWITEM_TYPEID:
+        ((FlightGroupListViewItem*)itm)->update();
+        break;
       case TASKLISTVIEWITEM_TYPEID:
         ((TaskListViewItem*)itm)->update();
         break;
@@ -144,7 +157,6 @@ void ObjectTree::slotFlightChanged(){
         warning("Listviewitem of unknown type");
     }
   }
-    
 }
 
 /**
@@ -174,7 +186,7 @@ QListViewItem * ObjectTree::findFlightElement(BaseFlightElement * bfe){
       itm=itm->nextSibling();
     }
   }
-  
+
   return 0;
 }
 
@@ -193,7 +205,7 @@ void ObjectTree::slotCloseFlight(BaseFlightElement* bfe) {
   QListViewItem * itm=findFlightElement(bfe);
   if (bfe==currentFlightElement) currentFlightElement=0;
   delete itm;
-} 
+}
 
 /** The following code has been taken from tasks.cpp.
   **   Copyright (c):  2002 by Harald Maier       */
@@ -215,21 +227,35 @@ void ObjectTree::showTaskPopup(QListViewItem *item, const QPoint &, int)
   taskPopup->setItemEnabled(idTaskSaveAll, TaskRoot->childCount() && currentFlightElementType()==BaseMapElement::Task);
 
   //flight items
-  taskPopup->setItemEnabled(idFlightClose, FlightRoot->childCount() && currentFlightElementType()==BaseMapElement::Flight);
+  taskPopup->setItemEnabled(idFlightGroupEdit, FlightRoot->childCount() && currentFlightElementType()==BaseMapElement::FlightGroup);
+  taskPopup->setItemEnabled(idFlightClose, FlightRoot->childCount() && (currentFlightElementType()==BaseMapElement::Flight || currentFlightElementType()==BaseMapElement::FlightGroup));
   taskPopup->setItemEnabled(idFlightOptimize, FlightRoot->childCount() && currentFlightElementType()==BaseMapElement::Flight);
   taskPopup->setItemEnabled(idFlightOptimizeOLC, FlightRoot->childCount() && currentFlightElementType()==BaseMapElement::Flight);
- 
+
   taskPopup->exec(QCursor::pos());
 }
 
 void ObjectTree::addPopupMenu()
 {
   taskPopup = new KPopupMenu(this);
+  taskPopup->insertTitle(SmallIcon("flight"), i18n("Flights"), 0);
+  taskPopup->insertItem(SmallIcon("fileopen"), i18n("&Open flight"), this, SIGNAL(openFlight()));
+  taskPopup->insertItem(SmallIcon("filenew"), i18n("New flight &group"), this,
+    SIGNAL(newFlightGroup()));
+  idFlightGroupEdit = taskPopup->insertItem(SmallIcon("wizard"), i18n("Edit flight group"), this,
+    SIGNAL(editFlightGroup()));
+  idFlightOptimize = taskPopup->insertItem(SmallIcon("wizard"), i18n("O&ptimize flight"), this,
+    SIGNAL(optimizeFlight()));
+  idFlightOptimizeOLC = taskPopup->insertItem(SmallIcon("wizard"), i18n("O&ptimize flight (OLC)"), this,
+    SIGNAL(optimizeFlightOLC()));
+  idFlightClose = taskPopup->insertItem(SmallIcon("fileclose"), i18n("&Close flight (group)"), this,
+    SLOT(slotDeleteTask()));
+
   taskPopup->insertTitle(SmallIcon("task"), i18n("Tasks"), 0);
   taskPopup->insertItem(SmallIcon("filenew"), i18n("&New task"), this,
-    SLOT(slotNewTask()));
+    SIGNAL(newTask()));
   taskPopup->insertItem(SmallIcon("fileopen"), i18n("Open &task"), this,
-    SLOT(slotOpenTask()));
+    SIGNAL(openTask()));
   idTaskEdit = taskPopup->insertItem(SmallIcon("wizard"), i18n("&Edit task"), this,
     SLOT(slotEditTask()));
   idTaskDelete = taskPopup->insertItem(SmallIcon("fileclose"), i18n("&Close task"), this,
@@ -240,26 +266,17 @@ void ObjectTree::addPopupMenu()
   idTaskSaveAll = taskPopup->insertItem(SmallIcon("save_all"), i18n("Save &all task's"), this,
     SLOT(slotSaveAllTask()));
 
-  taskPopup->insertTitle(SmallIcon("flight"), i18n("Flights"), 0);
-  taskPopup->insertItem(SmallIcon("fileopen"), i18n("&Open flight"), this, SIGNAL(openFlight()));
-  idFlightOptimize = taskPopup->insertItem(SmallIcon("wizard"), i18n("O&ptimize flight"), this,
-    SIGNAL(optimizeFlight()));
-  idFlightOptimizeOLC = taskPopup->insertItem(SmallIcon("wizard"), i18n("O&ptimize flight (OLC)"), this,
-    SIGNAL(optimizeFlightOLC()));
-  idFlightClose = taskPopup->insertItem(SmallIcon("fileclose"), i18n("&Close flight"), this,
-    SLOT(slotDeleteTask()));
 }
 
 void ObjectTree::slotEditTask()
 {
   TaskDialog td(this, "taskdialog");
-  QListViewItem *item = currentItem();
   FlightTask *ft;
 
   if (currentFlightElement != 0) {
     if (currentFlightElement->getTypeID()==BaseMapElement::Task) {
       ft = (FlightTask*) currentFlightElement;
-      
+
       //td.name->setText(ft->getFileName());
       td.setTask(ft);
       if (td.exec() == QDialog::Accepted) {
@@ -273,7 +290,6 @@ void ObjectTree::slotEditTask()
       }
     }
   }
-  
 }
 
 /*
@@ -281,7 +297,7 @@ void ObjectTree::slotEditTask()
 */
 void ObjectTree::slotDeleteTask()
 {
-  if (currentFlightElementType()==BaseMapElement::Task || currentFlightElementType()==BaseMapElement::Flight) {
+  if (currentFlightElementType()==BaseMapElement::Task || currentFlightElementType()==BaseMapElement::Flight || currentFlightElementType()==BaseMapElement::FlightGroup) {
 //    currentFlightElement=0;
 //    delete currentItem();
     emit closeTask();
@@ -309,7 +325,7 @@ void ObjectTree::slotSaveTask()
   } else {
     return;
   }
-  
+
   fName = KFileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, i18n("Save task"));
   if(!fName.isEmpty()) {
     if (fName.right(9) != ".kflogtsk") {
@@ -347,7 +363,6 @@ void ObjectTree::slotSaveTask()
 
         t.appendChild(child);
       }
-    
 
     f.setName(fName);
     if (f.open(IO_WriteOnly)) {
@@ -437,16 +452,6 @@ void ObjectTree::slotSaveAllTask()
     QApplication::restoreOverrideCursor();
   }
 
-}
-
-void ObjectTree::slotNewTask()
-{
-  emit newTask();
-}
-
-void ObjectTree::slotOpenTask()
-{
-  emit openTask();
 }
 
 void ObjectTree::dragEnterEvent(QDragEnterEvent* event)

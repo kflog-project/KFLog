@@ -1,5 +1,13 @@
 $Id$
 
+2009-04-21 Constantijn Neeteson <kflog@neeteson.net>
+
+  * Bugfix in mapcalc.cpp: the time is now always shown in UTC,
+    regardless of the timezone
+  * Bugfix in flight.cpp: the first and last flightstage are now
+    shown in the evaluation dialog
+  * GUI improvement in handling flightgroups
+
 2009-03-22 Hendrik Hoeth <hoeth@linta.de>
 
   * <ctrl>-o actually opens a flight now.
@@ -69,7 +77,7 @@ $Id$
   * Make kflog 64-bit aware
   * Basic support for Cambridge 300 series flight recorders
 
-2005-01-01 AndrÃ© Somers <andre@kflog.org>
+2005-01-01 André Somers <andre@kflog.org>
 
   * Runway information: runways are now stored when read, and used when
     waypoints are imported from the map.
@@ -162,7 +170,7 @@ $Id$
   * backported architecture independant code for Filser plugin from kflogembedded
 
 
-2003-07-07 Andrï¿½Somers <andre@kflog.org>
+2003-07-07 André Somers <andre@kflog.org>
 
   * Made it possible to rename a waypoint if a waypoint with the same name is allready
     in the catalog and you try to add a new one. This also fixes the weird situation that
@@ -170,14 +178,14 @@ $Id$
     that Yes, No, and Cancel were not appropriate button labels.
 
 
-2003-07-05 Andrï¿½Somers <andre@kflog.org>
+2003-07-05 André Somers <andre@kflog.org>
 
   * Made the mapinfo boxes appear as popups (like tooltips) if you hold the mouse over an
     interesting object on the map. The mapinfo is also accessible through the new context
     menu.
 
 
-2003-07-04 Andrï¿½Somers <andre@kflog.org>
+2003-07-04 André Somers <andre@kflog.org>
 
   * Added a contextmenu to the map
 
@@ -231,7 +239,7 @@ $Id$
     All these data can now be fetched by new function getBasicData.
 
 
-2003-05-23 Andrï¿½Somers <andre@kflog.org>
+2003-05-23 André Somers <andre@kflog.org>
 
   * Added separate desktop entry for SDI posigraph
 
@@ -261,7 +269,7 @@ $Id$
   * Improved GCC 3.3 / ISO C++ compatibility
 
 
-2003-05-03 Andrï¿½Somers <andre@kflog.org>
+2003-05-03 André Somers <andre@kflog.org>
 
   * Added a Tip of the Day
 
@@ -273,7 +281,7 @@ $Id$
   * Tagged and prepared Release 2.1.0
 
 
-2003-04-29 Andrï¿½<andre@kflog.org>
+2003-04-29 André <andre@kflog.org>
 
   * Addition: implict start of dragZoom. Just start dragging anywhere on
     the map and it will automaticly start
@@ -294,14 +302,14 @@ $Id$
     is used and no additional border is added to the rectangle.
 
 
-2003-04-27 Andrï¿½<andre@kflog.org>
+2003-04-27 André <andre@kflog.org>
 
   * Cleaned up and fixed handling of new waypoints.
 
   * Fixed crash on changing the projection with loaded tasks.
 
 
-2003-04-26 Andrï¿½<andre@kflog.org>
+2003-04-26 André <andre@kflog.org>
 
   * Removed bug where KFLog would crash if you tried to add a waypoint from
     the map and there was no catalog opened. Fixed by creating a new catalog
@@ -335,7 +343,7 @@ $Id$
     The Dialog will no longer appears two times
 
 
-2003-04-25 Andrï¿½<andre@kflog.org>
+2003-04-25 André <andre@kflog.org>
 
   * Removed bug where flight and task were not drawn in the correct
     position after a change in the projection.
@@ -353,7 +361,7 @@ $Id$
   * added default keys for map handling
 
 
-2003-04-12 Andrï¿½<andre@kflog.org>
+2003-04-12 André <andre@kflog.org>
 
   * Waypoints can now be copied and moved between catalogs.
 
@@ -371,7 +379,7 @@ $Id$
   * Changed the printer-dialog the way, that the configuration-tabs are opened.
 
 
-2003-03-09 Andrï¿½<andre@kflog.org>
+2003-03-09 André <andre@kflog.org>
 
   * Added a legend for the elevations.
 

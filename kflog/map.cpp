@@ -1546,7 +1546,7 @@ void Map::slotActivatePlanning()
       pixPlan.fill(white);
       prePlanPos.setX(-999);
       prePlanPos.setY(-999);
-warning("start");
+//warning("start");
       mainApp->slotStatusMsg(i18n("To finish the planing, press <STRG> and the right mouse button!"));
     }
   else
@@ -1556,7 +1556,7 @@ warning("start");
       __showLayer();
       mainApp->slotStatusMsg("");
       emit taskPlanningEnd();
-warning("ende");
+//warning("ende");
 /*          pixPlan.fill(white);
           prePlanPos.setX(-999);
           prePlanPos.setY(-999);

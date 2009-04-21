@@ -583,10 +583,12 @@ void KFLogApp::initView()
       SLOT(setFlightData()));
   connect(&_globalMapContents, SIGNAL(newFlightAdded(Flight*)), objectTree,
       SLOT(slotNewFlightAdded(Flight*)));
+  connect(&_globalMapContents, SIGNAL(newFlightGroupAdded(FlightGroup*)), objectTree,
+      SLOT(slotNewFlightGroupAdded(FlightGroup*)));
   connect(&_globalMapContents, SIGNAL(newTaskAdded(FlightTask*)), objectTree,
       SLOT(slotNewTaskAdded(FlightTask*)));
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged(BaseFlightElement*)), objectTree,
-      SLOT(slotSelectedFlightChanged(BaseFlightElement*)));
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), objectTree,
+      SLOT(slotSelectedFlightChanged()));
 
   connect(waypoints, SIGNAL(copyWaypoint2Task(Waypoint *)),
       map, SLOT(slotAppendWaypoint2Task(Waypoint *)));
@@ -601,6 +603,8 @@ void KFLogApp::initView()
   connect(objectTree, SIGNAL(newTask()), &_globalMapContents, SLOT(slotNewTask()));
   connect(objectTree, SIGNAL(openTask()), this, SLOT(slotTaskOpen()));
   connect(objectTree, SIGNAL(closeTask()), &_globalMapContents, SLOT(closeFlight()));
+  connect(objectTree, SIGNAL(newFlightGroup()), &_globalMapContents, SLOT(slotNewFlightGroup()));
+  connect(objectTree, SIGNAL(editFlightGroup()), &_globalMapContents, SLOT(slotEditFlightGroup()));
   connect(objectTree, SIGNAL(openFlight()), this, SLOT(slotFileOpen()));
   connect(objectTree, SIGNAL(openFile(const KURL&)), this, SLOT(slotFileOpenRecent(const KURL&)));
   connect(objectTree, SIGNAL(optimizeFlight()), this, SLOT(slotOptimizeFlight()));

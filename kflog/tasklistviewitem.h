@@ -19,7 +19,7 @@
 #define TASKLISTVIEWITEM_H
 
 #include <qlistview.h>
-#define TASKLISTVIEWITEM_TYPEID 10002
+#define TASKLISTVIEWITEM_TYPEID 10003
 
 class FlightTask;
 

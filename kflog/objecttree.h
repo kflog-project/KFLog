@@ -25,6 +25,7 @@
 
 class BaseFlightElement;
 class Flight;
+class FlightGroup;
 class FlightTask;
 
 /**
@@ -68,7 +69,7 @@ private:
   /**
    * Contains a reference to the rootnode for flightgroups
    */
-  QListViewItem * FlightGroupRoot;
+  //QListViewItem * FlightGroupRoot;
   /**
    * Contains a reference to the rootnode for tasks
    */
@@ -85,6 +86,7 @@ private:
   /**
    * References for flight-related items in the popupmenu
    */
+  int idFlightGroupEdit;
   int idFlightClose;
   int idFlightOptimize;
   int idFlightOptimizeOLC;
@@ -95,26 +97,28 @@ private:
    
 public slots: // Public slots
   /**
-   * Called if a new flight has been added.
+   * Called when a new flight has been added.
    */
   void slotNewFlightAdded(Flight *);
   /**
-   * Called if a new task has been created or loaded.
+   * Called when a new flightgroup has been added.
+   */
+  void slotNewFlightGroupAdded(FlightGroup *);
+  /**
+   * Called when a new task has been created or loaded.
    */
   void slotNewTaskAdded(FlightTask *);
   /**
    * This slot is called if the currently selected flight has changed.
    */
-  void slotSelectedFlightChanged(BaseFlightElement *);
+  void slotSelectedFlightChanged();
   /** Signaled if the current flight was somehow changed.  */
   void slotFlightChanged();
-  void slotNewTask();
   /** Signaled if a flightelement is going to be closed. Used to remove the item from the list. */
   void slotCloseFlight(BaseFlightElement*);
 
 private slots: // Private slots
   /** No descriptions */
-  void slotOpenTask();
   void slotEditTask();
   void slotDeleteTask();
   void slotSaveTask();
@@ -143,6 +147,14 @@ signals: // Signals
    * indicate that a baseflightelement should be closed
    */
   void closeTask();
+  /**
+   * indicate that a new flight group should be created
+   */
+  void newFlightGroup();
+  /**
+   * indicate that the current flight group must be edited
+   */
+  void editFlightGroup();
   /**
    * indicate that a flight should be opened. Is used to show the OpenFlight dialog
    */

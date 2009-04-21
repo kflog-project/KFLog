@@ -48,7 +48,7 @@ FlightTask::FlightTask(const QString& fName)
     __planningType(Route),
     __planningDirection(leftOfRoute)
 {
-  warning("FlightTask(QString fName)");
+  //warning("FlightTask(QString fName)");
 
   FAISectList.setAutoDelete(true);
 }
@@ -61,7 +61,7 @@ FlightTask::FlightTask(const QPtrList<Waypoint>& wpL, bool isO, const QString& f
     __planningType(Route),
     __planningDirection(leftOfRoute)
 {
-  warning("FlightTask(QPtrList<wayPoint> wpL, bool isO, QString fName)");
+  //warning("FlightTask(QPtrList<wayPoint> wpL, bool isO, QString fName)");
   setWaypointList(wpL);
   FAISectList.setAutoDelete(true);
 }
@@ -1127,7 +1127,7 @@ QRect FlightTask::getRect() const  {  return bBoxTask;  }
 
 void FlightTask::setWaypointList(const QPtrList<Waypoint>& wpL)
 {
-  warning("setWaypointList(QPtrList<wayPoint> wpL)");
+  //warning("setWaypointList(QPtrList<wayPoint> wpL)");
   wpList = wpL;
 
   isOrig = false;

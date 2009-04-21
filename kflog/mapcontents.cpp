@@ -171,7 +171,6 @@ MapContents::MapContents()
   downloadList = new DownloadList();
 
   connect(downloadList,SIGNAL(allDownloadsFinished()),this,SLOT(slotDownloadFinished()));
-  connect(this,SIGNAL(currentFlightChanged()),SLOT(slotReSendFlightChanged()));
 }
 
 MapContents::~MapContents()
@@ -1189,7 +1188,9 @@ void MapContents::slotNewFlightGroup()
 
       tmp.sprintf("GROUP%03d", gCount++);
 
-      flightList.append(new FlightGroup(fl, tmp));
+      FlightGroup * flightGroup = new FlightGroup(fl, tmp);
+      flightList.append(flightGroup);
+      emit newFlightGroupAdded(flightGroup);
       emit currentFlightChanged();
     }
   delete fsd;
@@ -1401,13 +1402,6 @@ void MapContents::reProject()
       fe->reProject();
     }
 }
-
-/** Connected to the signal currentFlightChanged, and used to resend the signal with the current flight as an argument. */
-void MapContents::slotReSendFlightChanged()
-{
-    emit currentFlightChanged(getFlight());
-}
-
 
 /*!
     \fn MapContents::getElevation(QPoint)

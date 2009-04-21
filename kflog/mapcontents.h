@@ -31,6 +31,7 @@
 class Airport;
 class Airspace;
 class Flight;
+class FlightGroup;
 class GliderSite;
 class Isohypse;
 class LineElement;
@@ -308,9 +309,10 @@ class MapContents : public QObject
   void newFlightAdded(Flight *);
 
   /**
-   * Emitted if the current flight has changed.
+   * Emitted if a new flightgroup was added to the flightlist.
    */
-  void currentFlightChanged(BaseFlightElement*);
+  void newFlightGroupAdded(FlightGroup *);
+
   /**
    * Emitted if a flight (task/group) is about to be closed
    */
@@ -476,13 +478,6 @@ class MapContents : public QObject
   void __downloadFile(QString fileName, QString destString, bool wait=false);
   /** */
   DownloadList* downloadList;
-
- private slots: // Private slots
-  /*
-   * Connected to the signal currentFlightChanged, and used to resend
-   * the signal with the current flight as an argument.
-   */
-  void slotReSendFlightChanged();
 };
 
 enum AutoDownloadType {ADT_NotSet = 0, Automatic, Inhibited};

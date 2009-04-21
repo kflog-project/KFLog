@@ -23,6 +23,7 @@ kflog_SOURCES = \
 	flight.cpp \
 	flightdataprint.cpp \
 	flightgroup.cpp \
+	flightgrouplistviewitem.cpp \
 	flightlistviewitem.cpp \
 	flightloader.cpp \
 	flightrecorderpluginbase.cpp \
@@ -101,6 +102,7 @@ EXTRA_DIST = \
 	flight.cpp flight.h \
 	flightdataprint.cpp flightdataprint.h \
 	flightgroup.cpp flightgroup.h \
+	flightgrouplistviewitem.cpp flightgrouplistviewitem.h \
 	flightlistviewitem.cpp flightlistviewitem.h \
 	flightloader.cpp flightloader.h \
 	flightrecorderpluginbase.cpp flightrecorderpluginbase.h \
