@@ -1,0 +1,45 @@
+
+# Load the common functions that do the real work:
+. mapconversion_functions.grass
+
+
+# Load raster map files:
+r.in.gdal input="$HOME/grassdata/viewfinderpanoramas_scandinavia/P29/N61W007.hgt" output="N61W007"
+r.in.gdal input="$HOME/grassdata/viewfinderpanoramas_scandinavia/P29/N61W008.hgt" output="N61W008"
+r.in.gdal input="$HOME/grassdata/viewfinderpanoramas_scandinavia/P29/N62W007.hgt" output="N62W007"
+r.in.gdal input="$HOME/grassdata/viewfinderpanoramas_scandinavia/P29/N62W008.hgt" output="N62W008"
+
+# Borders of the region we want to convert:
+S=61
+N=63
+W=-8
+E=-6
+
+# Allow for a little overlap to adjacent regions:
+S=`echo $S - 0.05 | bc`
+N=`echo $N + 0.05 | bc`
+W=`echo $W - 0.05 | bc`
+E=`echo $E + 0.05 | bc`
+g.region s=$S n=$N w=$W e=$E res=00:00:03
+
+# The maps from viewfinderpanorama are not null() in the
+# ocean (unlike SRTM), so we set the oceans to null():
+set_sealevel_to_null N61W007 N61W008 N62W007 N62W008
+
+# Combine the individual raster maps into a single map:
+merge_maps newfile1 N61W007 N61W008 N62W007 N62W008
+
+# Cleanup:
+g.remove rast=N61W007,N61W008,N62W007,N62W008
+
+# Create the tiles (lat and lon are coordinates of the tile center!):
+for LAT in 61 63 ; do
+  for LON in -7 ; do
+    calculate_tile T $LAT $LON
+    calculate_tile G $LAT $LON
+  done
+done
+
+# Cleanup:
+g.remove rast=newfile1
+

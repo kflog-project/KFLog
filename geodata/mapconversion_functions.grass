@@ -1,0 +1,107 @@
+## 
+
+set_sealevel_to_null()
+{
+  for i in $* ; do
+    r.mapcalc $i="if($i==0, null(), $i)"
+  done
+}
+
+merge_maps()
+{
+  case $# in
+    3)
+      r.mapcalc $1="if(isnull($2), $3, $2)"
+    ;;
+    4)
+      r.mapcalc $1="if(isnull($2), if(isnull($3), $4, $3), $2)"
+    ;;
+    5)
+      r.mapcalc $1="if(isnull($2), if(isnull($3), if(isnull($4), $5, $4), $3), $2)"
+    ;;
+    6)
+      r.mapcalc $1="if(isnull($2), if(isnull($3), if(isnull($4), if(isnull($5), $6, $5), $4), $3), $2)"
+    ;;
+    7)
+      r.mapcalc $1="if(isnull($2), if(isnull($3), if(isnull($4), if(isnull($5), if(isnull($6), $7, $6), $5), $4), $3), $2)"
+    ;;
+    8)
+      r.mapcalc $1="if(isnull($2), if(isnull($3), if(isnull($4), if(isnull($5), if(isnull($6), if(isnull($7), $8, $7), $6), $5), $4), $3), $2)"
+    ;;
+    9)
+      r.mapcalc $1="if(isnull($2), if(isnull($3), if(isnull($4), if(isnull($5), if(isnull($6), if(isnull($7), if(isnull($8), $9, $8), $7), $6), $5), $4), $3), $2)"
+    ;;
+    *)
+      echo "Can't merge more than 8 maps!"
+    ;;
+  esac
+}
+
+
+calculate_tile()
+{
+  TYPE=$1
+  LAT=$2
+  LON=$3
+
+  ## Calculate tile number:
+  TILE=`python -c "print '%s_%05d' %(\"$TYPE\", 180*int(($LAT-90)/-2) + int(($LON+180)/2))"`
+  echo $TILE
+  N=$((LAT+1))
+  S=$((LAT-1))
+  E=$((LON+1))
+  W=$((LON-1))
+
+  ## You need to adjust the resolution in two places (if
+  ## you want to change it, that is).
+  ##
+  ## First we make the region somewhat larger than the tile
+  S=`echo $S - 0.035 | bc`
+  N=`echo $N + 0.035 | bc`
+  W=`echo $W - 0.035 | bc`
+  E=`echo $E + 0.035 | bc`
+  g.region s=$S n=$N w=$W e=$E res=00:00:09
+  if [ $TYPE == "T" ] ; then
+    # terrain files: Set oceans to "0" and keep any other elevation
+    r.mapcalc r$TILE="if(isnull(newfile1),0,newfile1)"
+  elif [ $TYPE == "G" ] ; then
+    # ground files: Set the ocean to -1 and the rest to 1
+    r.mapcalc r$TILE="if(isnull(newfile1),-1,1)"
+  fi
+  ## Now we make the region even larger, which guarantees
+  ## a nice behaviour at tile edges.
+  S=`echo $S - 0.015 | bc`
+  N=`echo $N + 0.015 | bc`
+  W=`echo $W - 0.015 | bc`
+  E=`echo $E + 0.015 | bc`
+  g.region s=$S n=$N w=$W e=$E res=00:00:09
+  if [ $TYPE == "T" ] ; then
+    r.mapcalc r$TILE="if(isnull(r$TILE),0,r$TILE)"
+  elif [ $TYPE == "G" ] ; then
+    r.mapcalc r$TILE="if(isnull(r$TILE),-1,r$TILE)"
+  fi
+
+  if [ $TYPE == "T" ] ; then
+    r.contour r$TILE output=$TILE levels=10,25,50,75,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,1250,1500,1750,2000,2250,2500,2750,3000,3250,3500,3750,4000,4250,4500,4750,5000,5250,5500,5750,6000,6250,6500,6750,7000,7250,7500,7750,8000,8250,8500,8750
+  elif [ $TYPE == "G" ] ; then
+    r.contour r$TILE output=$TILE levels=0
+  fi
+  # First cleanup of isolines:
+  v.clean $TILE out=c$TILE type=line tool=prune
+
+  ## Simplify isolines to save memory space. This probably
+  ## needs to be change to an algorithm that doesn't allow
+  ## isolines to cross.
+  #v.generalize input=c$TILE output=cc$TILE method=reumann thresh=0.001 --o
+  #v.generalize input=cc$TILE output=ccc$TILE method=remove_small thresh=0.03 --o
+  v.generalize input=c$TILE output=cc$TILE method=lang --o
+  v.generalize input=cc$TILE output=ccc$TILE method=remove_small thresh=0.03 --o
+
+  ## Export isolines as ascii file
+  v.out.ascii input=ccc$TILE output=$TILE format=standard
+
+  ## cleanup
+  g.remove vect=$TILE,c$TILE,cc$TILE,ccc$TILE
+  g.remove rast=r$TILE
+}
+

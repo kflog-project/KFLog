@@ -207,3 +207,19 @@ Landmark files
 
 To be written ...
 
+
+Creating maps with GRASS
+------------------------
+
+GRASS is an open source Geographic Information System (GIS). The GRASS
+webpage is located at http://grass.osgeo.org/[]. We use it to process
+the geographic data from which the KFLog map files are derived.
+
+Short instructions:
+
+- start a GRASS session and parse e.g. `faeroes.grass`. This will create
+  ascii output files with the elevation data.
+- run write_terrain_file with a tile number as argument. This will read
+  the ascii file and write out a KFLog file.
+
+
