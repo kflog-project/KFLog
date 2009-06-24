@@ -92,9 +92,16 @@ calculate_tile()
   ## Simplify isolines to save memory space. This probably
   ## needs to be change to an algorithm that doesn't allow
   ## isolines to cross.
+  ## reumann isn't nice
   #v.generalize input=c$TILE output=cc$TILE method=reumann thresh=0.001 --o
   #v.generalize input=cc$TILE output=ccc$TILE method=remove_small thresh=0.03 --o
-  v.generalize input=c$TILE output=cc$TILE method=lang --o
+  #
+  ## lang isn't very pretty, either, but better than reumann
+  #v.generalize input=c$TILE output=cc$TILE method=lang --o
+  #v.generalize input=cc$TILE output=ccc$TILE method=remove_small thresh=0.03 --o
+  #
+  ## douglas_reduction gives somewhat larger files, but much nicer ones
+  v.generalize input=c$TILE output=cc$TILE method=douglas_reduction threshold=0.0010 --o
   v.generalize input=cc$TILE output=ccc$TILE method=remove_small thresh=0.03 --o
 
   ## Export isolines as ascii file
