@@ -29,17 +29,10 @@ const int isoLines[] =
 
 void process_terrain_file (const Q_INT16 saveSecID, const Q_INT8 saveTypeID) {
 
-  // Setup a hash used as reverse mapping from isoLine value to array index
-  // to speed up loading of ground and terrain files.
-  std::map<int, int> isoHash;
-  for ( int i = 0; i < ISO_LINE_NUM; i++ ) {
-    isoHash.insert( std::pair<int, int>(isoLines[i],i) );
-  }
-
   // Open input file. This is a GRASS ascii file, generated with
   // v.out.ascii input=<map> output=<file> format=standard
   QString infilename;
-  infilename.sprintf("/home/hoeth/grassdata/%c_%.5d", saveTypeID, saveSecID);
+  infilename.sprintf("%c_%.5d", saveTypeID, saveSecID);
   QFile infile(infilename);
   infile.open(IO_ReadOnly);
   QTextStream in(&infile);
@@ -72,18 +65,14 @@ void process_terrain_file (const Q_INT16 saveSecID, const Q_INT8 saveTypeID) {
   // Write isolines (0x46 is the isoline type)
   Q_UINT8 type = 0x46;
   Q_INT16 elevation = 0;
-  Q_INT8 valley = 0x01;
-  Q_INT8 sort = 0;
   Q_INT32 locLength = 0;
   char cdummy;
   double ddummy;
   double lat, lon;
   std::vector<Q_INT32> latlist, lonlist;
 
-  Q_INT32 count = 0;
+  Q_INT32 index = 0;
   while(!in.eof()) {
-    count++;
-    if (! (count%500)) std::cout << count << " isolines done." << std::endl;
     latlist.clear();
     lonlist.clear();
     in >> cdummy >> locLength >> cdummy;
@@ -96,19 +85,17 @@ void process_terrain_file (const Q_INT16 saveSecID, const Q_INT8 saveTypeID) {
     }
     in >> ddummy >> ddummy;
 
-    // store elevation index in "sort" to save CPU time when
-    // reading the files in cumulus
-    sort = isoHash[elevation];
     if (locLength > 2) {
       out << type;
+      out << index;
       out << elevation;
-      out << valley;
-      out << sort;
       out << locLength;
       for (Q_INT32 i=locLength-1; i>=0; i--) {
         out << latlist[i];
         out << lonlist[i];
       }
+      index++;
+      if (! (index%500)) std::cout << index << " isolines done." << std::endl;
     }
   }
 
@@ -156,7 +143,6 @@ void process_binary_file (const Q_INT16 saveSecID, const Q_INT8 saveTypeID) {
   // Write lake shores (0x31 is the lake type)
   Q_UINT8 type = 0x31;
   Q_INT16 elevation = 0;
-  Q_INT8 valley = 0x01;
   Q_INT8 sort = 0;
   Q_INT32 locLength = 0;
   QString name = "";

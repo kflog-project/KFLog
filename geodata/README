@@ -120,7 +120,7 @@ four different file types:
 The XXXXX specifies the tile number. It is based on the center latitude
 and longitude of the tile. Each tile covers a 2x2 degree area, and tile
 borders are at even degree values, so the tile centers are always odd
-degrees. The tile number is calculated as
+degrees. The tile number is calculated from the center coordinates as
 `180*int((LAT-90)/-2) + int((LON+180)/2)`
 and filled to five digits with leading zeros. For this calculation the
 latitude and longitude is given in degrees. North and east are positive,
@@ -142,9 +142,8 @@ follows. Each isoline has itself a short header, followed by
 latitude/longitude coordinate pairs. The number of coordinate pairs is
 specified in the isoline header.
 
-There are 50 discrete elevation levels, which are indexed from 0 to 49.
-The elevation is measured in meters above sea level. The elevation
-levels are:
+There are 50 discrete elevation levels. The elevation is measured in
+meters above sea level. The elevation levels are:
 
 0, 10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600,
 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000,
@@ -158,15 +157,15 @@ these two files is exactly the same.
 
 Isolines must always be closed.
 
-Isolines are plotted from low to high elevation, and from low to high
-`sort` index. Most isolines have `sort=0`. For a valley that is
-completely surrounded by mountains (like a crater), a higher `sort`
-index is required, so that the lower elevation isolines of the valley
-plotted after the surrounding mountain and therefore not painted over.
-A crater in a mountain in a crater would require an even higher `sort`
-index. The allowed `sort` values are 0, 1, 2, 3.
+Isolines are plotted as filled polygons, so they need to be plotted from
+outer to inner isolines (usually that is from low to high elevation,
+with the exception of depressions which are completely surrounded by
+higher terrain). To save CPU time in Cumulus and KFLog, the plotting
+order is determined during the terrain file generation. Each isoline has
+an ID that is unique (not globally, but within a tile), and if the
+isolines are plotted with ascending ID, the topography is correct.
 
-'TODO: Describe clockwise/counterclockwise, make sort more explicit'
+'TODO: Describe clockwise/counterclockwise'
 
 .File header
 [options="header"]
@@ -184,9 +183,8 @@ index. The allowed `sort` values are 0, 1, 2, 3.
 |====================================
 | Bytes   |  Description
 | 1       |  Object type. Isolines are 0x46.
+| 4       |  Isoline ID. If isolines are plotted with ascending ID, the topography is correct.
 | 2       |  Elevation in meters.
-| 1       |  Elevation index (0 for 0 meters, 1 for 10 meters, ...)
-| 1       |  Plotting order index `sort` (see above)
 | 4       |  Number of coordinate pairs for this isoline
 | 4       |  Latitude
 | 4       |  Longitude
@@ -222,4 +220,5 @@ Short instructions:
 - run write_terrain_file with a tile number as argument. This will read
   the ascii file and write out a KFLog file.
 
+'TODO: Those short instructions are not up to date anymore. Fix this.'
 
