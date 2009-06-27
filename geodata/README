@@ -124,7 +124,10 @@ degrees. The tile number is calculated from the center coordinates as
 `180*int((LAT-90)/-2) + int((LON+180)/2)`
 and filled to five digits with leading zeros. For this calculation the
 latitude and longitude is given in degrees. North and east are positive,
-south and west are negative.
+south and west are negative. Essentially the counting starts at 90N,180W
+and runs eastwards through the longitudes and southwards through the
+latitudes. To calculate the center coordinates from a given tile number,
+you can use `LAT=89-((int(TILE)/180)*2)` and `LON=((TILE%180)*2)-179`.
 
 Coordinate values inside the files are specified as integer values and
 calculated as `rint(LAT*600000)` and `rint(LON*600000)`, where `LAT` and
@@ -161,9 +164,9 @@ Isolines are plotted as filled polygons, so they need to be plotted from
 outer to inner isolines (usually that is from low to high elevation,
 with the exception of depressions which are completely surrounded by
 higher terrain). To save CPU time in Cumulus and KFLog, the plotting
-order is determined during the terrain file generation. Each isoline has
-an ID that is unique (not globally, but within a tile), and if the
-isolines are plotted with ascending ID, the topography is correct.
+order is determined during the terrain file generation, and the isolines
+must be stored in the proper order in the terrain files. If they are
+plotted in the order they appear in the file, the topography is correct.
 
 'TODO: Describe clockwise/counterclockwise'
 
@@ -182,8 +185,6 @@ isolines are plotted with ascending ID, the topography is correct.
 [options="header"]
 |====================================
 | Bytes   |  Description
-| 1       |  Object type. Isolines are 0x46.
-| 4       |  Isoline ID. If isolines are plotted with ascending ID, the topography is correct.
 | 2       |  Elevation in meters.
 | 4       |  Number of coordinate pairs for this isoline
 | 4       |  Latitude

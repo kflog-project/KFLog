@@ -62,8 +62,7 @@ void process_terrain_file (const Q_INT16 saveSecID, const Q_INT8 saveTypeID) {
   out << createDateTime;
 
 
-  // Write isolines (0x46 is the isoline type)
-  Q_UINT8 type = 0x46;
+  // Write isolines
   Q_INT16 elevation = 0;
   Q_INT32 locLength = 0;
   char cdummy;
@@ -71,7 +70,7 @@ void process_terrain_file (const Q_INT16 saveSecID, const Q_INT8 saveTypeID) {
   double lat, lon;
   std::vector<Q_INT32> latlist, lonlist;
 
-  Q_INT32 index = 0;
+  int count = 0;
   while(!in.eof()) {
     latlist.clear();
     lonlist.clear();
@@ -86,16 +85,14 @@ void process_terrain_file (const Q_INT16 saveSecID, const Q_INT8 saveTypeID) {
     in >> ddummy >> ddummy;
 
     if (locLength > 2) {
-      out << type;
-      out << index;
       out << elevation;
       out << locLength;
       for (Q_INT32 i=locLength-1; i>=0; i--) {
         out << latlist[i];
         out << lonlist[i];
       }
-      index++;
-      if (! (index%500)) std::cout << index << " isolines done." << std::endl;
+      count++;
+      if (! (count%500)) std::cout << count << " isolines done." << std::endl;
     }
   }
 
