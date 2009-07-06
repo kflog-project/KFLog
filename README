@@ -15,3 +15,7 @@ Known bugs
   -> lots of mapfiles are downloaded. Why?
 
 - show engine noise in evaluation window
+
+- if the font size in KDE is too large, the numbers in the status
+  bar are truncated (e.g. the speed). Maybe we can give those boxes
+  a variable size?
