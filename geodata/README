@@ -158,7 +158,8 @@ Since the 0 meter elevation is already covered by the ground files, the
 terrain files start with 10 meters as lowest elevation. The format of
 these two files is exactly the same.
 
-Isolines must always be closed.
+Isolines don't have to be closed; the last and first point are connected
+automatically.
 
 Isolines are plotted as filled polygons, so they need to be plotted from
 outer to inner isolines (usually that is from low to high elevation,
@@ -173,25 +174,25 @@ plotted in the order they appear in the file, the topography is correct.
 .File header
 [options="header"]
 |====================================
-| Bytes   |  Description
-| 4       |  KFLog file identifier "@KFL" (0x404b464c)
-| 1       |  File type ID "T" (0x54, terrain) or "G" (0x47, ground)
-| 2       |  File format version (102 for ground and terrain)
-| 2       |  Tile number
-| 8       |  Creation time (QDateTime QDateTime::currentDateTime())
+| Bytes  | Representation |  Description
+| 4      |                |  KFLog file identifier "@KFL" (0x404b464c)
+| 1      |                |  File type ID "T" (0x54, terrain) or "G" (0x47, ground)
+| 2      | Q_UINT16       |  File format version (102 for ground and terrain)
+| 2      | Q_INT16        |  Tile number
+| 8      | QDateTime      |  Creation time (QDateTime QDateTime::currentDateTime())
 |====================================
 
 .Isoline
 [options="header"]
 |====================================
-| Bytes   |  Description
-| 2       |  Elevation in meters.
-| 4       |  Number of coordinate pairs for this isoline
-| 4       |  Latitude
-| 4       |  Longitude
-| 4       |  Latitude
-| 4       |  Longitude
-| ...     |  ...
+| Bytes  | Representation |  Description
+| 2      | Q_INT16        |  Elevation in meters.
+| 4      | Q_INT32        |  Number of coordinate pairs for this isoline
+| 4      | Q_INT32        |  Latitude
+| 4      | Q_INT32        |  Longitude
+| 4      | Q_INT32        |  Latitude
+| 4      | Q_INT32        |  Longitude
+| ...    |  ...           |  ...
 |====================================
 
 
