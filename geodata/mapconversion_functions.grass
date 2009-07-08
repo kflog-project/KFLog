@@ -87,7 +87,20 @@ calculate_tile()
     r.contour r$TILE output=$TILE levels=0
   fi
   # First cleanup of isolines:
-  v.clean $TILE out=c$TILE type=line tool=prune
+  v.clean $TILE out=c$TILE type=line tool=prune --o
+  v.generalize input=c$TILE output=cc$TILE method=remove_small thresh=0.03 --o
+  v.type input=cc$TILE output=c$TILE type=line,boundary --o
+  v.clean --o input=c$TILE output=cc$TILE tool=bpol,rmdupl err=intersections
+
+  # Converting to lines in order to work around a GRASS bug:
+  v.type input=cc$TILE output=c$TILE type=boundary,line --o
+  v.generalize input=c$TILE output=cc$TILE method=remove_small thresh=0.03 --o
+
+  # Write out a temporary version, calculate the isoline drawing order,
+  # and read the file back in
+  v.out.ascii input=cc$TILE output=$TILE format=standard
+  ./sort_contours.py $TILE
+  v.in.ascii -z input=$TILE output=c$TILE format=standard --o
 
   ## Simplify isolines to save memory space. This probably
   ## needs to be change to an algorithm that doesn't allow
@@ -107,8 +120,10 @@ calculate_tile()
   ## Export isolines as ascii file
   v.out.ascii input=ccc$TILE output=$TILE format=standard
 
+  ./clip_tile.py $TILE
+
   ## cleanup
-  g.remove vect=$TILE,c$TILE,cc$TILE,ccc$TILE
+  g.remove vect=$TILE,c$TILE,cc$TILE,ccc$TILE,intersections
   g.remove rast=r$TILE
 }
 
