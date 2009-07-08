@@ -130,12 +130,17 @@ isolines = read_grassfile(file)
 polygons = []
 newisolines = []
 for i,isoline in enumerate(isolines):
-    line = Isoline(isoline.elevation)
     poly = isoline.as_polygon() & bbox
-    if (poly.nPoints() >= 3):
-        for p in Polygon.Utils.pointList(poly):
-            line.prepend(Coordinates(p[0],p[1]))
-        newisolines.append(line)
+    # The clipping might split a polygon into multiple contours,
+    # so we need to loop over all contours in the clipped polygon.
+    for c in range(len(poly)):
+        if (poly.nPoints(c) >= 3):
+            line = Isoline(isoline.elevation)
+            foobar = Polygon.Polygon(poly.contour(c))
+            for p in Polygon.Utils.pointList(foobar):
+                line.prepend(Coordinates(p[0],p[1]))
+            line.append(line[0])
+            newisolines.append(line)
 
 write_grassfile(file, newisolines, range(len(newisolines)))
 

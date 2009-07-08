@@ -118,11 +118,15 @@ def read_grassfile(file):
 
 file = sys.argv[1]
 
+print "reading isolines"
 isolines = read_grassfile(file)
 
 polygons = []
 for i,isoline in enumerate(isolines):
     polygons.append(isoline.as_polygon())
+
+print "%d polygons creates" % len(polygons)
+
 
 deps = {}
 independent = []
@@ -130,8 +134,15 @@ for i,isoline in enumerate(isolines):
     deps[i] = []
     for j in range(len(isolines)):
         if (i==j): continue
+        # If i is inside j, then i depends on j
         if polygons[j].isInside(isoline[0].lon(),isoline[0].lat()):
-            deps[i].append(j)
+            # If j also claims to be inside i, the smaller one wins.
+            # This can happen if they share the first point.
+            if polygons[i].isInside(isolines[j][0].lon(),isolines[j][0].lat()):
+                if (polygons[j].area() > polygons[i].area()):
+                    deps[i].append(j)
+            else:
+                deps[i].append(j)
     if (len(deps[i])==0):
         independent.append(i)
         del deps[i]
@@ -147,6 +158,9 @@ while (len(independent)>0):
         if (len(deps[i])==0):
             independent.append(i)
             del deps[i]
+
+print "%d sorted isolines will be written" % len(sorted)
+print "%d lines still have dependencies" % len(deps.keys())
 
 write_grassfile(file, isolines, sorted)
 

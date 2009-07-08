@@ -187,8 +187,8 @@ int main(int argc, char* argv[]) {
   Q_UINT16 saveSecID = atoi(argv[1]);
   std::cout << "Processing tile T_" << saveSecID << std::endl;
   process_terrain_file (saveSecID, FILE_TYPE_TERRAIN);
-  //std::cout << "Processing tile G_" << saveSecID << std::endl;
-  //process_terrain_file (saveSecID, FILE_TYPE_GROUND);
+  std::cout << "Processing tile G_" << saveSecID << std::endl;
+  process_terrain_file (saveSecID, FILE_TYPE_GROUND);
   //std::cout << "Processing tile M_" << saveSecID << std::endl;
   //process_binary_file (saveSecID, FILE_TYPE_MAP);
 
