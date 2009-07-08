@@ -49,7 +49,7 @@ void process_terrain_file (const Q_INT16 saveSecID, const Q_INT8 saveTypeID) {
   QFile outfile(outfilename);
   outfile.open(IO_WriteOnly);
   QDataStream out(&outfile);
-  out.setVersion(2);
+  out.setVersion(6);  // QDataStream::Qt_3_3
 
   // Write output file header
   Q_UINT32 magic = KFLOG_FILE_MAGIC;
@@ -124,7 +124,7 @@ void process_binary_file (const Q_INT16 saveSecID, const Q_INT8 saveTypeID) {
   QFile outfile(outfilename);
   outfile.open(IO_WriteOnly);
   QDataStream out(&outfile);
-  out.setVersion(2);
+  out.setVersion(6);  // QDataStream::Qt_3_3
 
   // Write output file header
   Q_UINT32 magic = KFLOG_FILE_MAGIC;
