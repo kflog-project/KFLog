@@ -312,8 +312,7 @@ bool MapContents::__readTerrainFile( const int fileSecID,
   }
 
   QDataStream in(&eingabe);
-
-  in.setVersion(2);
+  in.setVersion(6);  // QDataStream::Qt_3_3
 
   Q_INT8 loadTypeID;
   Q_UINT16 loadSecID, formatID;
@@ -448,7 +447,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
     }
 
   QDataStream in(&eingabe);
-  in.setVersion(2);
+  in.setVersion(6);  // QDataStream::Qt_3_3
 
   Q_UINT8 typeIn, lm_typ, index;
   Q_INT8 loadTypeID, sort, elev;
