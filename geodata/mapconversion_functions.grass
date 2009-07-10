@@ -9,7 +9,11 @@ set_sealevel_to_null()
 
 merge_maps()
 {
+  echo "now merging $(($#-1)) maps: $*"
   case $# in
+    2)
+      r.mapcalc $1=$2
+    ;;
     3)
       r.mapcalc $1="if(isnull($2), $3, $2)"
     ;;
@@ -31,8 +35,11 @@ merge_maps()
     9)
       r.mapcalc $1="if(isnull($2), if(isnull($3), if(isnull($4), if(isnull($5), if(isnull($6), if(isnull($7), if(isnull($8), $9, $8), $7), $6), $5), $4), $3), $2)"
     ;;
+    10)
+      r.mapcalc $1="if(isnull($2), if(isnull($3), if(isnull($4), if(isnull($5), if(isnull($6), if(isnull($7), if(isnull($8), if(isnull($9), ${10}, $9), $8), $7), $6), $5), $4), $3), $2)"
+    ;;
     *)
-      echo "Can't merge more than 8 maps!"
+      echo "Can't merge more than 9 maps!"
     ;;
   esac
 }
