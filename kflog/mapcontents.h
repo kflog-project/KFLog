@@ -454,6 +454,10 @@ class MapContents : public QObject
    * Array containing the evevations of all possible isohypses.
    */
   static const int isoLines[];
+  /**
+   * Hash isoLines index
+   */
+  std::map<int, int> isoHash;
   /** */
   QString mapDir;
   /**

@@ -145,6 +145,13 @@ const int MapContents::isoLines[] =
 MapContents::MapContents()
   : isFirstLoad(0)
 {
+  // Setup a hash used as reverse mapping from isoLine value to array index to
+  // speed up loading of ground and terrain files.
+  for ( int i = 0; i < ISO_LINE_NUM; i++ ) {
+    isoHash.insert( std::pair<int, int>(isoLines[i],i) );
+  }
+
+
   sectionArray.resize(MAX_TILE_NUMBER);
   sectionArray.fill(false);
 
@@ -298,8 +305,8 @@ bool MapContents::__readTerrainFile( const int fileSecID,
     // Data does not exist ...
     return false;
 
-  QFile eingabe(pathName);
-  if(!eingabe.open(IO_ReadOnly)) {
+  QFile mapfile(pathName);
+  if(!mapfile.open(IO_ReadOnly)) {
     // Data exists, but can't be read:
     // We need a messagebox
     warning("KFLog: Can not open terrainfile %s", (const char*)pathName);
@@ -311,7 +318,7 @@ bool MapContents::__readTerrainFile( const int fileSecID,
     return false;
   }
 
-  QDataStream in(&eingabe);
+  QDataStream in(&mapfile);
   in.setVersion(6);  // QDataStream::Qt_3_3
 
   Q_INT8 loadTypeID;
@@ -375,11 +382,16 @@ bool MapContents::__readTerrainFile( const int fileSecID,
       Q_INT8 valley, sort;
       Q_INT32 locLength, latList_temp, lonList_temp;
 
-      in >> type;
-      in >> elevation;
-      in >> valley;
-      in >> sort;
-      in >> locLength;
+      if (formatID == expOldFormatID) {   // this is for old terrain and ground files
+        in >> type;
+        in >> elevation;
+        in >> valley;
+        in >> sort;
+        in >> locLength;
+      } else {
+        in >> elevation;
+        in >> locLength;
+      }
 
       QPointArray tA(locLength);
 
@@ -390,30 +402,11 @@ bool MapContents::__readTerrainFile( const int fileSecID,
         tA.setPoint(i, _globalMapMatrix.wgsToMap(latList_temp, lonList_temp));
       }
 
-      if (formatID == expOldFormatID) {   // this is for old terrain and ground files
-        // the groundlines 0m do not need a sort id
-        if(elevation <= 0) {
-          sort = 0;
-          valley = 0;
-        }
+      sort = 0;
+      valley = 0;
 
-        int sort_temp = -1;
-        if(sort >= 0 && sort <= 3) {
-          for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
-              if(isoLines[pos] == elevation)
-                  sort_temp = pos;
-
-          // If sort_temp is -1 here, we have an unused elevation and
-          // must ignore it!
-          if(sort_temp != -1) {
-            Isohypse* newItem = new Isohypse(tA, elevation, valley);
-            isoList.at(sort_temp)->append(newItem);
-          }
-        }
-      } else {  // the SRTM3 based files store the elevation index in "sort"
-        Isohypse* newItem = new Isohypse(tA, elevation, valley);
-        isoList.at(sort)->append(newItem);
-      }
+      Isohypse* newItem = new Isohypse(tA, elevation, valley);
+      isoList.at(isoHash[elevation])->append(newItem);
 
     }
 
@@ -432,8 +425,8 @@ bool MapContents::__readBinaryFile(const int fileSecID,
       // File does not exist ...
       return false;
 
-  QFile eingabe(pathName);
-  if(!eingabe.open(IO_ReadOnly))
+  QFile mapfile(pathName);
+  if(!mapfile.open(IO_ReadOnly))
     {
       // Data exists, but can't be read:
       // We need a messagebox
@@ -446,7 +439,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
       return false;
     }
 
-  QDataStream in(&eingabe);
+  QDataStream in(&mapfile);
   in.setVersion(6);  // QDataStream::Qt_3_3
 
   Q_UINT8 typeIn, lm_typ, index;
@@ -522,7 +515,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
       case BaseMapElement::PackIce:
         // is currently not being used
         // stays anyway because of errors in the MapBin in the Data
-        //qDebug("filepointer: %d", eingabe.at());
+        //qDebug("filepointer: %d", mapfile.at());
         READ_POINT_LIST
         if(formatID >= FILE_VERSION_MAP) in >> name;
         break;
