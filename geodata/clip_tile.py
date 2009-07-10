@@ -102,17 +102,19 @@ def read_grassfile(file):
     lines = infile.readlines()
     infile.close()
 
+    # reverse ordering to increase speed (pop(0) is sloooooow!)
+    lines.reverse()
     for i in range(10):
-        lines.pop(0)
+        lines.pop()
 
     while (len(lines) > 0):
-        loclength = int(lines.pop(0).split()[1])
+        loclength = int(lines.pop().split()[1])
         for i in range(loclength):
-            lon,lat,elev = lines.pop(0).split()
+            lon,lat,elev = lines.pop().split()
             if (i==0):
                 isoline = Isoline(int(elev))
             isoline.append(Coordinates(float(lon),float(lat)))
-        lines.pop(0)
+        lines.pop()
         isolines.append(isoline)
     return isolines
 

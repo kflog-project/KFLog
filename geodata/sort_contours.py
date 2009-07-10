@@ -101,37 +101,45 @@ def read_grassfile(file):
     lines = infile.readlines()
     infile.close()
 
+    # reverse ordering to increase speed (pop(0) is sloooooow!)
+    lines.reverse()
     for i in range(10):
-        lines.pop(0)
+        lines.pop()
 
     while (len(lines) > 0):
-        loclength = int(lines.pop(0).split()[1])
+        loclength = int(lines.pop().split()[1])
         for i in range(loclength):
-            lon,lat,elev = lines.pop(0).split()
+            lon,lat,elev = lines.pop().split()
             if (i==0):
                 isoline = Isoline(int(elev))
             isoline.append(Coordinates(float(lon),float(lat)))
-        lines.pop(0)
+        lines.pop()
         isolines.append(isoline)
+        if (len(isolines)%200 == 0):
+            print "   ... %d isolines read" %len(isolines)
     return isolines
 
 
 file = sys.argv[1]
 
-print "reading isolines"
+print "reading isolines ..."
 isolines = read_grassfile(file)
+print "finished reading %d isolines" %len(isolines)
 
+print "creating polygons"
 polygons = []
 for i,isoline in enumerate(isolines):
     polygons.append(isoline.as_polygon())
 
-print "%d polygons creates" % len(polygons)
+print "%d polygons created" % len(polygons)
 
-
+print "calculating dependencies ..."
 deps = {}
 independent = []
 for i,isoline in enumerate(isolines):
     deps[i] = []
+    if (i%200 == 0 and i!=0):
+        print "   ... %d polygons processed" %i
     for j in range(len(isolines)):
         if (i==j): continue
         # If i is inside j, then i depends on j
@@ -146,11 +154,12 @@ for i,isoline in enumerate(isolines):
     if (len(deps[i])==0):
         independent.append(i)
         del deps[i]
+print "finished calculating dependencies"
 
+print "solving the dependency tree"
 sorted = []
-
 while (len(independent)>0):
-    line = independent.pop(0)
+    line = independent.pop()
     sorted.append(line)
     for i in deps.keys():
         if (deps[i].count(line)>0):
@@ -160,7 +169,8 @@ while (len(independent)>0):
             del deps[i]
 
 print "%d sorted isolines will be written" % len(sorted)
-print "%d lines still have dependencies" % len(deps.keys())
+if (len(deps.keys())!=0):
+    print "ERROR: %d lines still have dependencies" % len(deps.keys())
 
 write_grassfile(file, isolines, sorted)
 
