@@ -11,6 +11,7 @@ $Id$
     isolines. But at least KFLog can understand both the old and the
     new format. We'll have to fix this once support for the old format
     ceases.
+  * Updated URLs in the Tips of the Day
 
 2009-04-21 Constantijn Neeteson <kflog@neeteson.net>
 

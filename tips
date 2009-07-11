@@ -13,7 +13,7 @@ from <A HREF="http://maproom.kflog.org/">http://maproom.kflog.org/</A>?</p>
 
 <tip category="KFLog|General">
 <html>
-<p>...that we would be pleased if you <A HREF="http://bugtraq.kflog.org/">let us know</A>
+<p>...that we would be pleased if you <A HREF="mailto:kflog-user@kflog.org">let us know</A>
 about any bug you encounter or any suggestion for enhancements?</p>
 </html>
 </tip>
@@ -35,9 +35,8 @@ you will get a dialog to enter some information on the waypoint.</p>
 
 <tip category="KFLog|General">
 <html>
-<p>...that KFLog has two projects forked off for use on the PDA:
-<A HREF="http://embedded.kflog.org/">KFLogEmbedded</A>, a mobile
-version of KFLog, and <A HREF="http://cumulus.kflog.org/">Cumulus</A>,
+<p>...that KFLog has a project forked off for use on the PDA:
+<A HREF="http://www.kflog.org/cumulus/">Cumulus</A> is a
 a flightcomputer based on KFLog? KFLog is the only one providing a
 complete suite for your soaring needs!</p>
 </html>
