@@ -660,6 +660,7 @@ void MapMatrix::slotInitMatrix()
     delete currentProjection;
     switch(newProjectionType) {
     case ProjectionBase::Lambert:
+      config->setGroup("Lambert Projection");
       currentProjection = new ProjectionLambert(config->readNumEntry("Parallel1", 32400000),
                                                 config->readNumEntry("Parallel2", 30000000),
                                                 config->readNumEntry("Origin", 0));
@@ -668,6 +669,7 @@ void MapMatrix::slotInitMatrix()
     //case ProjectionBase::Cylindric:
     default:
       // fallback is cylindrical
+      config->setGroup("Cylindrical Projection");
       currentProjection = new ProjectionCylindric(config->readNumEntry("Parallel", 27000000));
       qDebug ("Map projection changed to Cylinder");
       break;
@@ -690,11 +692,13 @@ void MapMatrix::slotInitMatrix()
   bool initChanged = false;
 
   if (currentProjection->projectionType() == ProjectionBase::Lambert) {
+    config->setGroup("Lambert Projection");
     initChanged = ((ProjectionLambert*)currentProjection)->initProjection(
               config->readNumEntry("Parallel1", 32400000),
               config->readNumEntry("Parallel2", 30000000),
               config->readNumEntry("Origin", 0));
   } else if (currentProjection->projectionType() == ProjectionBase::Cylindric) {
+    config->setGroup("Cylindrical Projection");
     initChanged = ((ProjectionCylindric*)currentProjection)->initProjection(
               config->readNumEntry("Parallel", 27000000));
   }

@@ -68,7 +68,7 @@ public:
   {
     return Lambert;
   };
-    
+
   /**
    * returns the x-position.
    *
