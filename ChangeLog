@@ -1,5 +1,17 @@
 $Id$
 
+2009-07-11 Hendrik Hoeth <hoeth@linta.de>
+
+  * Bugfix in mapmatrix.cpp: We never actually used the map projection
+    settings for the standard parallels which the user defined, because
+    we looked for the values in the wrong config file section and ended
+    up using the defaults instead.
+  * Basic support for the new terrain file format. We don't get
+    depressions right, because we use the wrong plotting order for
+    isolines. But at least KFLog can understand both the old and the
+    new format. We'll have to fix this once support for the old format
+    ceases.
+
 2009-04-21 Constantijn Neeteson <kflog@neeteson.net>
 
   * Bugfix in mapcalc.cpp: the time is now always shown in UTC,

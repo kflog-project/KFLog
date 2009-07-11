@@ -365,7 +365,7 @@ bool MapContents::__readTerrainFile( const int fileSecID,
   if (formatID == expOldFormatID) {   // this is for old terrain and ground files
     warning("KFLog: You are using old map files. Please consider re-installing\n"
             "       the terrain and ground files. Support for the old file format\n"
-            "       will seize in the next major KFLog release.");
+            "       will cease in the next major KFLog release.");
   }
 
   in >> loadSecID;
