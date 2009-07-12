@@ -35,6 +35,16 @@ Terrain and ground files
 - http://edc2.usgs.gov/geodata/index.php[] -- US DEM data. Probably only
   needed for Alaska, since continental US is covered by SRTM.
 
+- http://nsidc.org/data/nsidc-0082.html[] -- Radarsat Antarctic Mapping
+  Project DEM. Complete coverage of Antarctica with 200m resolution. This
+  data is also available from http://www.viewfinderpanoramas.org/dem3.html[]
+  (remapped to 3 arcseconds). The data was recorded in 2000.
+
+- http://nsidc.org/data/nsidc-0304.html[] -- 500 m Laser Altimetry DEM
+  of Antarctica, north of 86°S. This data was recorded between 2003 and
+  2005, i.e. it is quite a bit newer than the RAMP data, but at lower
+  resolution and it doesn't cover the whole continent.
+
 - http://edc.usgs.gov/products/elevation/gtopo30/gtopo30.html[] --
   GTOPO30. This is low-resolution data, but it's available for the whole
   globe, so we can use it for all the areas not covered by anything
@@ -159,7 +169,8 @@ terrain files start with 10 meters as lowest elevation. The format of
 these two files is exactly the same.
 
 Isolines don't have to be closed; the last and first point are connected
-automatically.
+automatically when drawing a polygon in Qt. Nevertheless we close the
+isolines in the files.
 
 Isolines are plotted as filled polygons, so they need to be plotted from
 outer to inner isolines (usually that is from low to high elevation,

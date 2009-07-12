@@ -80,19 +80,19 @@ int main(int argc, char *argv[])
    */
   KAboutData aboutData( "kflog", "KFLog",
       VERSION, qstrdup(i18n("KFLog - The K-Flight-Logger")), KAboutData::License_GPL,
-      "(c) 2001, 2002, 2003, The KFLog-Team",
+      "(c) 2001-2009, The KFLog-Team",
       qstrdup(i18n("The maps used for KFLog are derived from both\n"
           "the GTOPO30-data and the Digital Chart of the World.\n"
           "If You have no mapfiles installed, please visit\n"
           "our homepage to download the area You need.")),
-      "http://www.kflog.org", "bugs@kflog.org");
+      "http://www.kflog.org", "kflog-devel@kflog.org");
 
   aboutData.addAuthor("Florian Ehinger",
       qstrdup(i18n("Maintenance, Core-developer, Mapdata")), "florian@kflog.org");    
   aboutData.addAuthor("Heiner Lamprecht",
       qstrdup(i18n("Maintenance, Core-developer")), "heiner@kflog.org");
   aboutData.addAuthor("Hendrik Hoeth",
-      qstrdup(i18n("Maintenance, Developer")), "hoeth@linta.de");
+      qstrdup(i18n("Maintenance, Developer, Mapdata")), "hoeth@linta.de");
   aboutData.addAuthor("Andr\303\251 Somers",
       qstrdup(i18n("Developer (Waypoint-handling, Plugin architecture, ...)")), "andre@kflog.org");
   aboutData.addAuthor("Christof Bodner",
