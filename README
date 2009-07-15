@@ -3,19 +3,22 @@ Known bugs
 
 - evaluation window opens with the wrong size
 
-- configure needs to check for OpenGL and if it's not available, we
-  either need to complain or we need to disable the GL-3D-view.
-
-- not a bug: draw airfields with correct runway orientation.
-
-- segfault when editing a waypoint, wahrscheinlich in
+- segfault when editing a waypoint, probably in
   void Waypoints::slotEditWaypoint(Waypoint* w)
 
 - close kflog in evaluation/waypoint mode. open kflog. load flight.
   -> lots of mapfiles are downloaded. Why?
 
-- show engine noise in evaluation window
-
 - if the font size in KDE is too large, the numbers in the status
   bar are truncated (e.g. the speed). Maybe we can give those boxes
   a variable size?
+
+not really bugs
+===============
+
+- configure needs to check for OpenGL and if it's not available, we
+  either need to complain or we need to disable the GL-3D-view.
+
+- not a bug: draw airfields with correct runway orientation.
+
+- show engine noise in evaluation window
