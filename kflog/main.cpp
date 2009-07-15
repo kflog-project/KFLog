@@ -81,8 +81,9 @@ int main(int argc, char *argv[])
   KAboutData aboutData( "kflog", "KFLog",
       VERSION, qstrdup(i18n("KFLog - The K-Flight-Logger")), KAboutData::License_GPL,
       "(c) 2001-2009, The KFLog-Team",
-      qstrdup(i18n("The maps used for KFLog are derived from both\n"
-          "the GTOPO30-data and the Digital Chart of the World.\n"
+      qstrdup(i18n("The maps used for KFLog are derived from the\n"
+          "void-filled CGIAR SRTM data (http://srtm.csi.cgiar.org),\n"
+          "the GTOPO30-data, and the Digital Chart of the World.\n"
           "If You have no mapfiles installed, please visit\n"
           "our homepage to download the area You need.")),
       "http://www.kflog.org", "kflog-devel@kflog.org");
