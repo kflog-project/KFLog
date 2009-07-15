@@ -1,5 +1,9 @@
 $Id$
 
+2009-07-14 Hendrik Hoeth <hoeth@linta.de>
+
+  * New URL for mapfiles. The new file format will be the default now. 
+
 2009-07-12 Hendrik Hoeth <hoeth@linta.de>
 
   * Use same terrain colors as in Cumulus

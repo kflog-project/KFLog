@@ -274,7 +274,7 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
   if (config->readNumEntry("Automatic Map Download")==Inhibited)
       return;
 
-  KURL src = KURL(config->readPathEntry("Mapserver","http://maproom.kflog.org/data/"));
+  KURL src = KURL(config->readPathEntry("Mapserver","http://maproom.kflog.org/mapdata/data/landscape/"));
   KURL dest = KURL(destString);
   src.addPath(fileName);
   dest.addPath(fileName);
@@ -391,6 +391,10 @@ bool MapContents::__readTerrainFile( const int fileSecID,
       } else {
         in >> elevation;
         in >> locLength;
+      }
+
+      if (elevation < 0) {
+        elevation = 0;
       }
 
       QPointArray tA(locLength);
@@ -609,7 +613,7 @@ void MapContents::__askForDownload()
                     i18n("<qt>The directory <b>%1</b> is either not writeable<br>"
                     "or the server <b>%2</b> is not reachable.<br>"
                     "Please specify the correct path in the Settings dialog and check the internet connection!<br>"
-                    " Restart KFLog afterwards.</qt>").arg(mapDir + "/landscape").arg (config->readPathEntry("Mapserver","http://maproom.kflog.org/data/")));
+                    " Restart KFLog afterwards.</qt>").arg(mapDir + "/landscape").arg (config->readPathEntry("Mapserver","http://maproom.kflog.org/mapdata/data/landscape/")));
                 }
             break;
           case KMessageBox::No:
@@ -621,7 +625,7 @@ void MapContents::__askForDownload()
         KMessageBox::information(0,
             i18n("<qt>The directory for the map-files is empty.<br>"
                   "To download the files, please visit our homepage:<br>"
-                  "<b>http://maproom.kflog.org/</b></qt>"), i18n("directory empty"), "NoMapFiles");
+                  "<b>http://www.kflog.org/maproom/</b></qt>"), i18n("directory empty"), "NoMapFiles");
         break;
       case (Automatic):
         break;

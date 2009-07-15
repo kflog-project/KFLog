@@ -155,9 +155,10 @@ follows. Each isoline has itself a short header, followed by
 latitude/longitude coordinate pairs. The number of coordinate pairs is
 specified in the isoline header.
 
-There are 50 discrete elevation levels. The elevation is measured in
+There are 62 discrete elevation levels. The elevation is measured in
 meters above sea level. The elevation levels are:
 
+-450, -400 -350, -300 -250, -200 -150, -100 -75, -50, -25, -10,
 0, 10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600,
 700, 800, 900, 1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000,
 3250, 3500, 3750, 4000, 4250, 4500, 4750, 5000, 5250, 5500, 5750,
@@ -165,7 +166,7 @@ meters above sea level. The elevation levels are:
 
 Ground files hold the 0 meter isolines. They mark the sea/land mask.
 Since the 0 meter elevation is already covered by the ground files, the
-terrain files start with 10 meters as lowest elevation. The format of
+terrain files do not include the 0 meter elevation data. The format of
 these two files is exactly the same.
 
 Isolines don't have to be closed; the last and first point are connected
