@@ -1,0 +1,76 @@
+#! /bin/bash
+
+# Load the common functions that do the real work:
+. mapconversion_functions.grass
+
+# Borders of the region we want to convert:
+S_BBOX=$1
+N_BBOX=$2
+W_BBOX=$3
+E_BBOX=$4
+
+echo "Bounding box:"
+echo S_BBOX=$S_BBOX
+echo N_BBOX=$N_BBOX
+echo W_BBOX=$W_BBOX
+echo E_BBOX=$E_BBOX
+
+# Load raster map files:
+X=$(( (W_BBOX + 180)/5 ))
+Y=$(( -1*(S_BBOX-64)/5 ))
+r.in.gdal input="$HOME/grassdata/srtm3_cgiar/srtm_`printf %02d $(( (X+0)%72 + 1 ))`_`printf %02d $((Y-0))`.tif" output="r1"
+r.in.gdal input="$HOME/grassdata/srtm3_cgiar/srtm_`printf %02d $(( (X+0)%72 + 1 ))`_`printf %02d $((Y-1))`.tif" output="r2"
+r.in.gdal input="$HOME/grassdata/srtm3_cgiar/srtm_`printf %02d $(( (X+0)%72 + 1 ))`_`printf %02d $((Y-2))`.tif" output="r3"
+r.in.gdal input="$HOME/grassdata/srtm3_cgiar/srtm_`printf %02d $(( (X+1)%72 + 1 ))`_`printf %02d $((Y-0))`.tif" output="r4"
+r.in.gdal input="$HOME/grassdata/srtm3_cgiar/srtm_`printf %02d $(( (X+1)%72 + 1 ))`_`printf %02d $((Y-1))`.tif" output="r5"
+r.in.gdal input="$HOME/grassdata/srtm3_cgiar/srtm_`printf %02d $(( (X+1)%72 + 1 ))`_`printf %02d $((Y-2))`.tif" output="r6"
+r.in.gdal input="$HOME/grassdata/srtm3_cgiar/srtm_`printf %02d $(( (X+2)%72 + 1 ))`_`printf %02d $((Y-0))`.tif" output="r7"
+r.in.gdal input="$HOME/grassdata/srtm3_cgiar/srtm_`printf %02d $(( (X+2)%72 + 1 ))`_`printf %02d $((Y-1))`.tif" output="r8"
+r.in.gdal input="$HOME/grassdata/srtm3_cgiar/srtm_`printf %02d $(( (X+2)%72 + 1 ))`_`printf %02d $((Y-2))`.tif" output="r9"
+
+# Check which maps have been loaded.
+MAPS=""
+for i in r9 r8 r7 r6 r5 r4 r3 r2 r1 ; do
+  g.list rast | grep -qP "\b$i\b" && MAPS=" $i$MAPS"
+done
+
+# If there are no maps in this region: exit
+if [[ $MAPS == "" ]] ; then
+  echo "No maps found in this region"
+  exit
+fi
+
+# Allow for a little overlap to adjacent regions:
+S=`echo $S_BBOX - 0.05 | bc`
+N=`echo $N_BBOX + 0.05 | bc`
+W=`echo $W_BBOX - 0.05 | bc`
+E=`echo $E_BBOX + 0.05 | bc`
+g.region s=$S n=$N w=$W e=$E res=00:00:03
+
+# Combine the individual raster maps into a single map:
+merge_maps newfile1 $MAPS
+
+# Cleanup:
+g.remove rast=r1,r2,r3,r4,r5,r6,r7,r8,r9
+
+# Create the tiles (lat and lon are coordinates of the tile center!):
+for ((LAT=$((S_BBOX+1)) ; LAT<N_BBOX ; LAT=$((LAT+2)) )) ; do
+  # If the region spans over 180E/180W we need to do some magic ...
+  if [[ $E_BBOX -eq -178 ]] ; then
+    for LON in 173 175 177 179 -179 ; do
+      calculate_tile T $LAT $LON
+      calculate_tile G $LAT $LON
+    done
+  else
+    for ((LON=$((W_BBOX+1)) ; LON<E_BBOX ; LON=$((LON+2)) )) ; do
+      calculate_tile T $LAT $LON
+      calculate_tile G $LAT $LON
+    done
+  fi
+done
+
+# Cleanup:
+g.remove rast=newfile1
+
+mv T_* G_* terrainfiles_uncompiled/
+
