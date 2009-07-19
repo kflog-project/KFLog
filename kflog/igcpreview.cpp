@@ -17,7 +17,7 @@
 
 #include "igcpreview.h"
 
-#include <kfile.h>
+#include <qfileinfo.h>
 #include <klocale.h>
 #include <kurl.h>
 #include <qlayout.h>

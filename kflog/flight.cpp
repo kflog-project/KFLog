@@ -29,12 +29,8 @@
 #include "mapmatrix.h"
 #include "optimizationwizard.h"
 
-//#include <kapp.h>
-//#include <kconfig.h>
-#include <kglobal.h>
 #include <klocale.h>
-#include <kmessagebox.h>
-#include <ktextbrowser.h>
+#include <qmessagebox.h>
 #include <qpixmap.h>
 #include <qptrlist.h>
 
@@ -1177,8 +1173,8 @@ bool Flight::optimizeTask()
       + i18n("Distance:") + distText + i18n("Points:") + pointText + "\n\n"
       + i18n("Do You want to use this task and replace the old?");
 
-  if(KMessageBox::questionYesNo(0, text, i18n("Optimizing")) ==
-        KMessageBox::Yes)
+  if(QMessageBox::question(0, i18n("Optimizing"), text, QMessageBox::Yes, QMessageBox::No) ==
+        QMessageBox::Yes)
     {
       QPtrList<Waypoint> wpL;
 

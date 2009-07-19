@@ -23,12 +23,10 @@
 #include <qpushbutton.h>
 
 #include <klocale.h>
-#include <kseparator.h>
-#include <kglobal.h>
 #include <kiconloader.h>
 
 FlightSelectionDialog::FlightSelectionDialog(QWidget *parent, const char *name )
- : KDialog(parent, name, true)
+ : QDialog(parent, name, true)
 {
   setCaption(i18n("Flight selection"));
   __initDialog();
@@ -78,7 +76,7 @@ void FlightSelectionDialog::__initDialog()
   smallButtons->addWidget(b);
   smallButtons->addStretch();
 
-  aFlights = new KListBox(this, "availableFlights");
+  aFlights = new QListBox(this, "availableFlights");
   l = new QLabel(aFlights, i18n("&available Flights"), this);
   leftLayout->addWidget(l);
   leftLayout->addWidget(aFlights);
@@ -102,7 +100,7 @@ void FlightSelectionDialog::__initDialog()
   middleLayout->addWidget(b);
   middleLayout->addStretch();
 
-  sFlights = new KListBox(this, "selectedFlights");
+  sFlights = new QListBox(this, "selectedFlights");
   l = new QLabel(sFlights, i18n("&selected Flights"), this);
   rightLayout->addWidget(l);
   rightLayout->addWidget(sFlights);
@@ -112,7 +110,6 @@ void FlightSelectionDialog::__initDialog()
   topGroup->addLayout(middleLayout);
   topGroup->addLayout(rightLayout);
   topLayout->addLayout(topGroup);
-  topLayout->addWidget(new KSeparator(this));
   topLayout->addLayout(buttons);
 
 }
@@ -219,7 +216,7 @@ void FlightSelectionDialog::slotMoveDown()
 
 void FlightSelectionDialog::polish()
 {
-  KDialog::polish();
+  QDialog::polish();
   unsigned int i;
   BaseFlightElement *f;
 

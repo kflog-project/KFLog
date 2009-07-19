@@ -21,11 +21,7 @@
 #include <stdlib.h>
 
 #include <kconfig.h>
-#include <kfiledialog.h>
-#include <kglobal.h>
 #include <klocale.h>
-#include <kmessagebox.h>
-#include <kstddirs.h>
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include <kio/scheduler.h>
@@ -35,7 +31,9 @@
 #include <qdir.h>
 #include <qdom.h>
 #include <qfile.h>
+#include <qfiledialog.h>
 #include <qfileinfo.h>
+#include <qmessagebox.h>
 #include <qprogressdialog.h>
 #include <qregexp.h>
 #include <qstring.h>
@@ -274,8 +272,8 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
   if (config->readNumEntry("Automatic Map Download")==Inhibited)
       return;
 
-  KURL src = KURL(config->readPathEntry("Mapserver","http://maproom.kflog.org/mapdata/data/landscape/"));
-  KURL dest = KURL(destString);
+  QUrl src = QUrl(config->readPathEntry("Mapserver","http://maproom.kflog.org/mapdata/data/landscape/"));
+  QUrl dest = QUrl(destString);
   src.addPath(fileName);
   dest.addPath(fileName);
 
@@ -284,7 +282,7 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
       KIO::NetAccess::copy(src, dest, 0); // waits until file is transmitted
       QString errorString = KIO::NetAccess::lastErrorString();
       if (errorString!="")
-          KMessageBox::error(0,errorString);
+          QMessageBox::warning(0, "Error", errorString, QMessageBox::Ok, 0);
     }
   else
     {
@@ -594,13 +592,14 @@ void MapContents::__askForDownload()
     {
       case (ADT_NotSet):
         config->writeEntry("Automatic Map Download",Inhibited,false); //this is temporary, will be overwritten later
-        ret = KMessageBox::questionYesNoCancel(0,i18n("<qt>There are no map-files in the directory<br><b>%1"
+        ret = QMessageBox::question(0, i18n("Automatic map download"),
+                  i18n("<qt>There are no map-files in the directory<br><b>%1"
             "</b><br>yet. Do you want to download the data automatically?<br>"
             "(You need to have write permissions. If you want to change the directory, "
-            "press \"Cancel\" and change it in the Settings menu.)</qt>").arg(mapDir + "/landscape"));
+            "press \"Cancel\" and change it in the Settings menu.)</qt>").arg(mapDir + "/landscape"), QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
         switch (ret)
           {
-            case KMessageBox::Yes:
+            case QMessageBox::Yes:
               config->writeEntry("Automatic Map Download",Automatic,false); //this is temporary, will be overwritten later
               __downloadFile("G_03694.kfl",mapDir + "/landscape",true);
               if(QFile(mapDir+"/landscape/G_03694.kfl").exists())
@@ -609,23 +608,23 @@ void MapContents::__askForDownload()
                 }
               else
                 {
-                  KMessageBox::information(0,
+                  QMessageBox::information(0, i18n("No write access"),
                     i18n("<qt>The directory <b>%1</b> is either not writeable<br>"
                     "or the server <b>%2</b> is not reachable.<br>"
                     "Please specify the correct path in the Settings dialog and check the internet connection!<br>"
-                    " Restart KFLog afterwards.</qt>").arg(mapDir + "/landscape").arg (config->readPathEntry("Mapserver","http://maproom.kflog.org/mapdata/data/landscape/")));
+                    " Restart KFLog afterwards.</qt>").arg(mapDir + "/landscape").arg (config->readPathEntry("Mapserver","http://maproom.kflog.org/mapdata/data/landscape/")), QMessageBox::Ok);
                 }
             break;
-          case KMessageBox::No:
+          case QMessageBox::No:
             config->writeEntry("Automatic Map Download",Inhibited);
             break;
           }
         break;
       case (Inhibited):
-        KMessageBox::information(0,
+        QMessageBox::information(0, i18n("Directory empty"),
             i18n("<qt>The directory for the map-files is empty.<br>"
                   "To download the files, please visit our homepage:<br>"
-                  "<b>http://www.kflog.org/maproom/</b></qt>"), i18n("directory empty"), "NoMapFiles");
+                  "<b>http://www.kflog.org/maproom/</b></qt>"), QMessageBox::Ok);
         break;
       case (Automatic):
         break;
@@ -662,14 +661,13 @@ void MapContents::proofeSection(bool isPrint)
   if(mapDir.isNull() && !(isFirstLoad & MAP_LOADED))
     {
       /* The mapdirectory does not exist. Ask the user */
-      KMessageBox::error(0,
+      QMessageBox::warning(0, i18n("Directory not found"),
         "<qt>" +
         i18n("The directory for the map-files does not exist.") + "<br>" +
         i18n("Please select the directory in which the files are located.") +
-        "</qt>",
-        i18n("Directory not found"));
+        "</qt>", QMessageBox::Ok, 0);
 
-      mapDir = KFileDialog::getExistingDirectory(0,0,i18n("Select map directory...") );
+      mapDir = QFileDialog::getExistingDirectory(QString::null, 0, 0, i18n("Select map directory...") );
 
       config->writeEntry("DefaultMapDirectory", mapDir);
 
@@ -1266,19 +1264,19 @@ bool MapContents::loadTask(QFile& path)
 
   if(!fInfo.exists())
     {
-      KMessageBox::error(0,  "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(path.name()) + "</qt>");
+      QMessageBox::warning(0, i18n("File does not exist"), "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(path.name()) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
 
   if(!fInfo.size())
     {
-      KMessageBox::sorry(0, "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(path.name()) + "</qt>");
+      QMessageBox::warning(0, i18n("File is empty"), "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(path.name()) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
 
   if(!path.open(IO_ReadOnly))
     {
-      KMessageBox::error(0, "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(path.name()) + "</qt>");
+      QMessageBox::warning(0, i18n("No permission"), "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(path.name()) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
 
@@ -1341,7 +1339,7 @@ bool MapContents::loadTask(QFile& path)
     }
   else
     {
-      KMessageBox::error(0, i18n("wrong doctype ") + doc.doctype().name(), i18n("Error occurred!"));
+      QMessageBox::warning(0, i18n("Error occurred!"), i18n("wrong doctype ") + doc.doctype().name(), QMessageBox::Ok, 0);
       return false;
     }
 }

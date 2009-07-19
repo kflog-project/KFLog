@@ -17,12 +17,11 @@
 
 #include "dataview.h"
 
-#include <kglobal.h>
 #include <klocale.h>
 
-#include <qlayout.h>
-#include <qstrlist.h>
 #include <qfileinfo.h>
+#include <qlayout.h>
+#include <qmessagebox.h>
 
 #include <flight.h>
 #include <mapcalc.h>
@@ -30,18 +29,15 @@
 #include <flightgroup.h>
 #include <mapcontents.h>
 
-#include <kmessagebox.h>
-#include <iostream>
-
 DataView::DataView(QWidget* parent)
 : QFrame(parent, "FlightData")
 {
-  flightDataText = new KTextBrowser(this, "flightDataBrowser", true);
+  flightDataText = new QTextBrowser(this, "flightDataBrowser");
 
   QHBoxLayout* flightLayout = new QHBoxLayout(this, 5);
   flightLayout->addWidget(flightDataText);
 
-  connect(flightDataText, SIGNAL(urlClick(const QString &)), this,
+  connect(flightDataText, SIGNAL(linkClicked(const QString &)), this,
       SLOT(slotWPSelected(const QString &)));
 }
 
@@ -295,7 +291,7 @@ void DataView::slotWPSelected(const QString &url)
       break;
     case BaseMapElement::Task:
       if (url == "EDITTASK") {
-        KMessageBox::information(0, "This will bring up the task editing dialog");
+        QMessageBox::information(0, i18n("Edit task"), i18n("This will bring up the task editing dialog"), QMessageBox::Ok);
       }
       else {
         emit wpSelected(url.toUInt());
@@ -310,6 +306,7 @@ void DataView::slotWPSelected(const QString &url)
       }
       break;
   }
+  setFlightData();
 }
 
 void DataView::slotClearView()

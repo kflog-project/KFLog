@@ -20,7 +20,6 @@
 #endif
 
 #include <pwd.h>
-#include <unistd.h>
 #include <cmath>
 
 #include "waypointcatalog.h"
@@ -28,21 +27,19 @@
 #include "kfrgcs/vlapi2.h"
 #include "da4record.h"
 
-#include <qdom.h>
-#include <qapplication.h>
-
-#include <kfiledialog.h>
 #include <klocale.h>
-#include <kmessagebox.h>
-
 #include <kconfig.h>
 #include <kglobal.h>
-#include <kstddirs.h>
+
+#include <qapplication.h>
 #include <qdatastream.h>
 #include <qdatetime.h>
 #include <qdir.h>
+#include <qdom.h>
 #include <qfile.h>
+#include <qfiledialog.h>
 #include <qfileinfo.h>
+#include <qmessagebox.h>
 #include <qprogressdialog.h>
 #include <qregexp.h>
 #include <qstring.h>
@@ -138,7 +135,7 @@ bool WaypointCatalog::read(const QString& catalog)
         ok = true;
       }
       else {
-        KMessageBox::error(0, i18n("wrong doctype ") + doc.doctype().name(), i18n("Error occurred!"));
+        QMessageBox::critical(0, i18n("Error occurred!"), i18n("wrong doctype ") + doc.doctype().name(), QMessageBox::Ok, 0);
       }
 
       f.close();
@@ -150,11 +147,11 @@ bool WaypointCatalog::read(const QString& catalog)
 
     }
     else {
-      KMessageBox::error(0, QString("<qt><B>%1</B><BR>").arg(catalog) + i18n ("permission denied!") + "</qt>", i18n("Error occurred!"));
+      QMessageBox::critical(0, i18n("Error occurred!"), QString("<qt><B>%1</B><BR>").arg(catalog) + i18n ("permission denied!") + "</qt>", QMessageBox::Ok, 0);
     }
   }
   else {
-    KMessageBox::error(0, QString("<qt><B>%1</B><BR>").arg(catalog) + i18n("not found!") + "</qt>", i18n("Error occurred!"));
+    QMessageBox::critical(0, i18n("Error occurred!"), QString("<qt><B>%1</B><BR>").arg(catalog) + i18n("not found!") + "</qt>", QMessageBox::Ok, 0);
   }
   return ok;
 }
@@ -219,7 +216,7 @@ bool WaypointCatalog::write()
     onDisc = true;
   }
   else {
-    KMessageBox::error(0, QString ("<qt><B>%1</B><BR>").arg(fName) + i18n("permission denied!") + "</qt>", i18n("Error occurred!"));
+    QMessageBox::critical(0, i18n("Error occurred!"), QString ("<qt><B>%1</B><BR>").arg(fName) + i18n("permission denied!") + "</qt>", QMessageBox::Ok, 0);
   }
 
   QApplication::restoreOverrideCursor();
@@ -296,7 +293,7 @@ bool WaypointCatalog::writeBinary()
     onDisc = true;
   }
   else {
-    KMessageBox::error(0, QString ("<qt><B>%1</B><BR>").arg(fName) + i18n("permission denied!") + "</qt>", i18n("Error occurred!"));
+    QMessageBox::critical(0, i18n("Error occurred!"), QString ("<qt><B>%1</B><BR>").arg(fName) + i18n("permission denied!") + "</qt>", QMessageBox::Ok, 0);
   }
   return ok;
 }
@@ -308,14 +305,14 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
 
   if(!fInfo.exists())
     {
-      KMessageBox::error(0,
-          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(filename) + "</qt>");
+      QMessageBox::critical(0, i18n("Error occurred!"),
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(filename) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
   if(!fInfo.size())
     {
-      KMessageBox::sorry(0,
-          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(filename) + "</qt>");
+      QMessageBox::warning(0, i18n("Error occurred!"),
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(filename) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
   //
@@ -323,16 +320,17 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
   //
   if(((QString)fInfo.extension()).lower() != "dbt")
     {
-      KMessageBox::error(0,
-          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is not a Volkslogger-file!").arg(filename) + "</qt>");
+      QMessageBox::critical(0, i18n("Error occurred!"),
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is not a Volkslogger-file!").arg(filename) + "</qt>",
+          QMessageBox::Ok, 0);
       return false;
     }
 
   if(!f.open(IO_ReadOnly))
     {
-      KMessageBox::error(0,
-          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(filename) + "</qt>",
-          i18n("No permission"));
+      QMessageBox::critical(0,
+          i18n("No permission"),
+          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(filename) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
 
@@ -446,18 +444,18 @@ bool WaypointCatalog::save(bool alwaysAskName){
 
   // check for unsupported file types - currently cup
 
-  if (fName.right(4).lower() == ".cup")
-    if (KMessageBox::warningYesNoCancel(
-                NULL,
-                i18n("<qt>Saving in the current file format is not supported.<br>Save in another format ?<BR><B>%1</B></qt>").arg(fName),
-                i18n("Save changes?"),
-                i18n("Save"),
-                i18n("Discard")) == KMessageBox::Yes)
-              alwaysAskName = true;
-
+  if (fName.right(4).lower() == ".cup") {
+    QMessageBox saveBox(i18n("Save changes?"),
+                        i18n("<qt>Saving in the current file format is not supported.<br>Save in another format? <BR><B>%1</B></qt>").arg(fName),
+                        QMessageBox::Warning, QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
+    saveBox.setButtonText(QMessageBox::Yes, "Save");
+    saveBox.setButtonText(QMessageBox::No, "Discard");
+    if(saveBox.exec()==QMessageBox::Yes)
+      alwaysAskName = true;
+  }
 
   if (!onDisc || alwaysAskName) {
-    fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n"
+    fName = QFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n"
                                                "*.kwp *.KWP|Cumulus and KFLogEmbedded waypoints (*.kwp)\n"
                                                "*.txt *.TXT|Filser txt waypoints (*.txt)\n"
                                                "*.da4 *.DA4|Filser da4 waypoints (*.da4)",
@@ -812,7 +810,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
           writeBinary();
     }
     else {
-      KMessageBox::error(0, QString("<qt><B>%1</B><BR>").arg(catalog) + "permission denied!" + "</qt>", i18n("Error occurred!"));
+      QMessageBox::critical(0, i18n("Error occurred!"), QString("<qt><B>%1</B><BR>").arg(catalog) + "permission denied!" + "</qt>", QMessageBox::Ok, 0);
     }
   }
   else {

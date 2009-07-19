@@ -18,8 +18,8 @@
 #ifndef DATAVIEW_H
 #define DATAVIEW_H
 
-#include <ktextbrowser.h>
 #include <qframe.h>
+#include <qtextbrowser.h>
 
 #include "flighttask.h"
 class Flight;
@@ -77,7 +77,7 @@ class DataView : public QFrame
     /**
      * The textwidget
      */
-    KTextBrowser* flightDataText;
+    QTextBrowser* flightDataText;
 };
 
 #endif

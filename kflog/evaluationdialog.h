@@ -18,7 +18,6 @@
 #ifndef EVALUATIONDIALOG_H
 #define EVALUATIONDIALOG_H
 
-#include <kdockwidget.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
@@ -27,6 +26,7 @@
 #include <qspinbox.h>
 #include <qslider.h>
 #include <qtextview.h>
+
 #include "wp.h"
 #include "evaluationframe.h"
 

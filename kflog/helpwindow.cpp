@@ -16,18 +16,13 @@
 
 #include "helpwindow.h"
 
-#include <qvbox.h>
-#include "mapconfig.h"
 #include <qlayout.h>
-#include <qtimer.h>
-#include <klocale.h>
-#include "resource.h"
 
 HelpWindow::HelpWindow(QWidget* parent)
 : QFrame(parent, "helpText")
 {
 
-  helpText = new KTextBrowser(this, "helpBrowser", true);
+  helpText = new QTextBrowser(this, "helpBrowser");
 
   QHBoxLayout* layout = new QHBoxLayout(this, 5);
   layout->addWidget(helpText);

@@ -30,13 +30,12 @@
 //qt includes
 #include <qcursor.h>
 #include <qdragobject.h>
+#include <qfiledialog.h>
+#include <qmessagebox.h>
 
 //kde includes
 #include <klocale.h>
-#include <kglobal.h>
 #include <kiconloader.h>
-#include <kfiledialog.h>
-#include <kmessagebox.h>
 
 
 
@@ -326,7 +325,7 @@ void ObjectTree::slotSaveTask()
     return;
   }
 
-  fName = KFileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, i18n("Save task"));
+  fName = QFileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, 0, i18n("Save task"));
   if(!fName.isEmpty()) {
     if (fName.right(9) != ".kflogtsk") {
       fName += ".kflogtsk";
@@ -372,7 +371,7 @@ void ObjectTree::slotSaveTask()
       path = fName;
     }
     else {
-      KMessageBox::error(0, "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", i18n("Error occurred!"));
+      QMessageBox::warning(0, i18n("No permission"), "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", QMessageBox::Ok, 0);
     }
 
     QApplication::restoreOverrideCursor();
@@ -395,7 +394,7 @@ void ObjectTree::slotSaveAllTask()
   wpList.setAutoDelete(false);
   uint i;
 
-  fName = KFileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, i18n("Save task"));
+  fName = QFileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, 0, i18n("Save task"));
   if(!fName.isEmpty()) {
     if (fName.right(9) != ".kflogtsk") {
       fName += ".kflogtsk";
@@ -446,7 +445,7 @@ void ObjectTree::slotSaveAllTask()
       path = fName;
     }
     else {
-      KMessageBox::error(0, "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", i18n("Error occurred!"));
+      QMessageBox::warning(0, i18n("Permission denied"), "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", QMessageBox::Ok, 0);
     }
 
     QApplication::restoreOverrideCursor();

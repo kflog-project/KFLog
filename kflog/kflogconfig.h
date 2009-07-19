@@ -22,7 +22,6 @@
 #include <kdialogbase.h>
 
 #include <kcolorbutton.h>
-#include <kcombobox.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
 #include <qlcdnumber.h>
@@ -192,10 +191,10 @@ class KFLogConfig : public KDialogBase
     QLCDNumber* reduce1N;
     QLCDNumber* reduce2N;
     QLCDNumber* reduce3N;
-    KComboBox* elementSelect;
+    QComboBox* elementSelect;
     QComboBox* drawTypeSelect;
-    KComboBox* projectionSelect;
-    KComboBox* contestType;
+    QComboBox* projectionSelect;
+    QComboBox* contestType;
     LatEdit* firstParallel;
     LatEdit* secondParallel;
     LongEdit* originLongitude;

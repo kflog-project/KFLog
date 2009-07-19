@@ -237,9 +237,9 @@ void RecorderDialog::__addSettingsPage()
   configRec = KGlobal::dirs()->findAllResources("appdata", "logger/*.desktop");
 
   if(configRec.count() == 0) {
-    KMessageBox::error(this,
-                       i18n("There are no recorder-libraries installed."),
-                       i18n("No recorders installed."));
+    QMessageBox::critical(this,
+                       i18n("No recorders installed."),
+                       i18n("There are no recorder-libraries installed."), QMessageBox::Ok, 0);
   }
 
   libNameList.clear();
@@ -707,10 +707,10 @@ void RecorderDialog::slotConnectRecorder()
                          errorDetails,
                          i18n("Recorder Connection"));       //Using the Sorry box is a bit friendlier than Error...
     } else {
-      KMessageBox::sorry(this,
+      QMessageBox::warning(this,
+                         i18n("Recorder Connection"),
                          i18n("Sorry, could not connect to recorder.\n"
-                              "Please check connections and settings."),
-                         i18n("Recorder Connection"));       //Using the Sorry box is a bit friendlier than Error...
+                              "Please check connections and settings."), QMessageBox::Ok, 0);       //Using the Sorry box is a bit friendlier than Error...
     }
   }
 }
@@ -762,9 +762,9 @@ void RecorderDialog::slotReadFlightList()
                                  errorDetails,
                                  i18n("Library Error"));
     } else {
-      KMessageBox::error(this,
-                         i18n("There was an error reading the flight list!"),
-                         i18n("Library Error"));
+      QMessageBox::critical(this,
+                         i18n("Library Error"),
+                         i18n("There was an error reading the flight list!"), QMessageBox::Ok, 0);
     }
     return;
   }
@@ -775,9 +775,9 @@ void RecorderDialog::slotReadFlightList()
   if (dirList.count()==0) {
     delete statusDlg;
     QApplication::restoreOverrideCursor();
-    KMessageBox::sorry(this,
-                            i18n("There were no flights recorded in the recorder."),
-                            i18n("Download result"));
+    QMessageBox::warning(this,
+                            i18n("Download result"),
+                            i18n("There were no flights recorded in the recorder."), QMessageBox::Ok, 0);
     return;
   }
 
@@ -883,9 +883,9 @@ void RecorderDialog::slotDownloadFlight()
                                  errorDetails,
                                  i18n("Library Error"));
     } else {
-      KMessageBox::error(this,
-                         i18n("There was an error downloading the flight!"),
-                         i18n("Library Error"));
+      QMessageBox::critical(this,
+                         i18n("Library Error"),
+                         i18n("There was an error downloading the flight!"), QMessageBox::Ok, 0);
     }
   }
   //TODO: handle returnvalues!
@@ -915,9 +915,9 @@ void RecorderDialog::slotWriteDeclaration()
   if (!activeRecorder) return;
   kapp->processEvents();
   if (!activeRecorder->capabilities().supUlDeclaration) {
-    KMessageBox::sorry(this,
-                       i18n("Function not implemented"),
-                       i18n("Declaration upload"));
+    QMessageBox::warning(this,
+                       i18n("Declaration upload"),
+                       i18n("Function not implemented"), QMessageBox::Ok, 0);
     return;
   }
 
@@ -931,9 +931,9 @@ void RecorderDialog::slotWriteDeclaration()
 
     //evaluate result
     if (ret==FR_NOTSUPPORTED) {
-      KMessageBox::sorry(this,
-                         i18n("Function not implemented"),
-                         i18n("Declaration upload"));
+      QMessageBox::warning(this,
+                         i18n("Declaration upload"),
+                         i18n("Function not implemented"), QMessageBox::Ok, 0);
       return;
     }
 
@@ -944,9 +944,9 @@ void RecorderDialog::slotWriteDeclaration()
                            errorDetails,
                            i18n("Library Error"));
       } else {
-        KMessageBox::error(this,
-                           i18n("There was an error writing the declaration!"),
-                           i18n("Library Error"));
+        QMessageBox::critical(this,
+                           i18n("Library Error"),
+                           i18n("There was an error writing the declaration!"), QMessageBox::Ok, 0);
       }
       return;
     }
@@ -1062,9 +1062,9 @@ void RecorderDialog::slotReadTasks()
 
   if (!activeRecorder) return;
   if (!activeRecorder->capabilities().supDlTask) {
-    KMessageBox::sorry(this,
-                       i18n("Function not implemented"),
-                       i18n("Task download"));
+    QMessageBox::warning(this,
+                       i18n("Task download"),
+                       i18n("Function not implemented"), QMessageBox::Ok, 0);
     return;
   }
 
@@ -1077,9 +1077,9 @@ void RecorderDialog::slotReadTasks()
                          errorDetails,
                          i18n("Library Error"));
     } else {
-      KMessageBox::error(this,
-                         i18n("Cannot read tasks from recorder"),
-                         i18n("Library Error"));
+      QMessageBox::critical(this,
+                         i18n("Library Error"),
+                         i18n("Cannot read tasks from recorder"), QMessageBox::Ok, 0);
     }
   }
   else {
@@ -1127,9 +1127,9 @@ void RecorderDialog::slotWriteTasks()
 
   if (!activeRecorder) return;
   if (!activeRecorder->capabilities().supUlTask) {
-    KMessageBox::sorry(this,
-                       i18n("Function not implemented"),
-                       i18n("Task upload"));
+    QMessageBox::warning(this,
+                       i18n("Task upload"),
+                       i18n("Function not implemented"), QMessageBox::Ok, 0);
     delete statusDlg;
     return;
   }
@@ -1139,14 +1139,14 @@ void RecorderDialog::slotWriteTasks()
   maxNrWayPointsPerTask = activeRecorder->capabilities().maxNrWaypointsPerTask;
 
   if (maxNrTasks == 0) {
-    KMessageBox::error(this,
-                       i18n("Cannot obtain max number of tasks!"),
-                       i18n("Library Error"));
+    QMessageBox::critical(this,
+                       i18n("Library Error"),
+                       i18n("Cannot obtain max number of tasks!"), QMessageBox::Ok, 0);
   }
   else if (maxNrWayPointsPerTask == 0) {
-    KMessageBox::error(this,
-                       i18n("Cannot obtain max number of waypoints per task!"),
-                       i18n("Library Error"));
+    QMessageBox::critical(this,
+                       i18n("Library Error"),
+                       i18n("Cannot obtain max number of waypoints per task!"), QMessageBox::Ok, 0);
   }
   else {
     for (task = tasks->first(); task; task = tasks->next()) {
@@ -1194,9 +1194,9 @@ void RecorderDialog::slotWriteTasks()
                            errorDetails,
                            i18n("Library Error"));
       } else {
-        KMessageBox::error(this,
-                           i18n("Cannot write tasks to recorder"),
-                           i18n("Library Error"));
+        QMessageBox::critical(this,
+                           i18n("Library Error"),
+                           i18n("Cannot write tasks to recorder"), QMessageBox::Ok, 0);
       }
     } else {
       KMessageBox::information(this,
@@ -1220,9 +1220,9 @@ void RecorderDialog::slotReadWaypoints()
 
   if (!activeRecorder) return;
   if (!activeRecorder->capabilities().supDlWaypoint) {
-    KMessageBox::sorry(this,
-                       i18n("Function not implemented"),
-                       i18n("Waypoint download"));
+    QMessageBox::warning(this,
+                       i18n("Waypoint download"),
+                       i18n("Function not implemented"), QMessageBox::Ok, 0);
     return;
   }
 
@@ -1244,9 +1244,9 @@ void RecorderDialog::slotReadWaypoints()
                          errorDetails,
                          i18n("Library Error"));
     } else {
-      KMessageBox::error(this,
-                         i18n("Cannot read waypoints from recorder"),
-                         i18n("Library Error"));
+      QMessageBox::critical(this,
+                         i18n("Library Error"),
+                         i18n("Cannot read waypoints from recorder"), QMessageBox::Ok, 0);
     }
 
   } else {
@@ -1293,18 +1293,18 @@ void RecorderDialog::slotWriteWaypoints()
   if (!activeRecorder) return;
 
   if (!activeRecorder->capabilities().supUlWaypoint) {
-    KMessageBox::sorry(this,
-                       i18n("Function not implemented"),
-                       i18n("Waypoint upload"));
+    QMessageBox::warning(this,
+                       i18n("Waypoint upload"),
+                       i18n("Function not implemented"), QMessageBox::Ok, 0);
     return;
   }
 
   maxNrWaypoints = activeRecorder->capabilities().maxNrWaypoints;
 
   if (maxNrWaypoints == 0) {
-    KMessageBox::error(this,
-                       i18n("Cannot obtain maximum number of waypoints from lib."),
-                       i18n("Library Error"));
+    QMessageBox::critical(this,
+                       i18n("Library Error"),
+                       i18n("Cannot obtain maximum number of waypoints from lib."), QMessageBox::Ok, 0);
   }
   else {
     for (wp = waypoints->first(); wp; wp = waypoints->next()){
@@ -1333,9 +1333,9 @@ void RecorderDialog::slotWriteWaypoints()
                            errorDetails,
                            i18n("Library Error"));
       } else {
-        KMessageBox::error(this,
-                           i18n("Cannot write waypoints to recorder."),
-                           i18n("Library Error"));
+        QMessageBox::critical(this,
+                           i18n("Library Error"),
+                           i18n("Cannot write waypoints to recorder."), QMessageBox::Ok, 0);
       }
     } else {
       QApplication::restoreOverrideCursor();
@@ -1381,10 +1381,10 @@ void RecorderDialog::slotReadDatabase()
                          errorDetails,
                          i18n("Recorder Connection"));       //Using the Sorry box is a bit friendlier than Error...
     } else {
-      KMessageBox::sorry(this,
+      QMessageBox::warning(this,
+                         i18n("Recorder Connection"),
                          i18n("Sorry, could not connect to recorder.\n"
-                              "Please check connections and settings."),
-                         i18n("Recorder Connection"));       //Using the Sorry box is a bit friendlier than Error...
+                              "Please check connections and settings."), QMessageBox::Ok, 0);       //Using the Sorry box is a bit friendlier than Error...
     }
   }
   if (cap.supEditGliderID     ||
@@ -1477,10 +1477,10 @@ void RecorderDialog::slotWriteConfig()
                          errorDetails,
                          i18n("Recorder Connection"));       //Using the Sorry box is a bit friendlier than Error...
     } else {
-      KMessageBox::sorry(this,
+      QMessageBox::warning(this,
+                         i18n("Recorder Connection"),
                          i18n("Sorry, could not write configuration to recorder.\n"
-                              "Please check connections and settings."),
-                         i18n("Recorder Connection"));       //Using the Sorry box is a bit friendlier than Error...
+                              "Please check connections and settings."), QMessageBox::Ok, 0);       //Using the Sorry box is a bit friendlier than Error...
     }
   }
 }

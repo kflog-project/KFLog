@@ -22,6 +22,7 @@
 // include files for QT
 #include <qdir.h>
 #include <qlayout.h>
+#include <qmessagebox.h>
 #include <qprinter.h>
 #include <qregexp.h>
 #include <qtextstream.h>
@@ -606,7 +607,7 @@ void KFLogApp::initView()
   connect(objectTree, SIGNAL(newFlightGroup()), &_globalMapContents, SLOT(slotNewFlightGroup()));
   connect(objectTree, SIGNAL(editFlightGroup()), &_globalMapContents, SLOT(slotEditFlightGroup()));
   connect(objectTree, SIGNAL(openFlight()), this, SLOT(slotFileOpen()));
-  connect(objectTree, SIGNAL(openFile(const KURL&)), this, SLOT(slotFileOpenRecent(const KURL&)));
+  connect(objectTree, SIGNAL(openFile(const QUrl&)), this, SLOT(slotFileOpenRecent(const KURL&)));
   connect(objectTree, SIGNAL(optimizeFlight()), this, SLOT(slotOptimizeFlight()));
   connect(objectTree, SIGNAL(optimizeFlightOLC()), this, SLOT(slotOptimizeFlightOLC()));
 
@@ -809,8 +810,7 @@ void KFLogApp::slotOlcDeclaration()
 
   if(f->getTypeID() != BaseMapElement::Flight)
     {
-      KMessageBox::sorry(this, i18n("You can only send flights to the OLC!"),
-          i18n("No flight found"));
+      QMessageBox::warning(this, i18n("No flight found"), i18n("You can only send flights to the OLC!"), QMessageBox::Ok, 0);
       return;
     }
 
@@ -837,8 +837,8 @@ void KFLogApp::slotFlightPrint()
             break;
           default:
             QString tmp;
-            tmp.sprintf(i18n("Not yet available for type : %d"), f->getTypeID());
-            KMessageBox::sorry(0, tmp);
+            tmp.sprintf(i18n("Not yet available for type: %d"), f->getTypeID());
+            QMessageBox::warning(0, i18n("Type not available"), tmp, QMessageBox::Ok, 0);
         }
     }
   slotStatusMsg(i18n("Ready."));
@@ -1309,7 +1309,7 @@ void KFLogApp::initTypes()
 }
 
 /** No descriptions */
-void KFLogApp::slotSavePixmap( KURL url, int width, int height ){
+void KFLogApp::slotSavePixmap( QUrl url, int width, int height ){
   map->slotSavePixmap(url,width,height);
 }
 

@@ -200,11 +200,11 @@
   penC-> setMinimumWidth(35); \
   penW = new QSpinBox(0, 9, 1, parent); \
   penW-> setMinimumWidth(35); \
-  penS = new KComboBox(parent); \
+  penS = new QComboBox(parent); \
   penS-> setMinimumWidth(35); \
   brushC = new KColorButton(parent); \
   brushC-> setMinimumWidth(35); \
-  brushS = new KComboBox(parent); \
+  brushS = new QComboBox(parent); \
   brushS-> setMinimumWidth(35); \
   FILLSTYLE(penS, brushS) \
   penC-> setMaximumHeight(brushS->sizeHint().height()); \

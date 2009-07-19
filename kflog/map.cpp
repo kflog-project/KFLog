@@ -15,21 +15,15 @@
 **
 ***********************************************************************/
 
-#include <ctype.h>
-#include <iostream>
 #include <cmath>
-#include <stdlib.h>
 
-#include <kapp.h>
 #include <kconfig.h>
-#include <kfiledialog.h>
 #include <klocale.h>
-#include <knotifyclient.h>
 #include <kstddirs.h>
-#include <kglobal.h>
 #include <kiconloader.h>
 
 #include <qdragobject.h>
+#include <qfiledialog.h>
 #include <qpainter.h>
 #include <qregexp.h>
 #include <qtimer.h>
@@ -1404,7 +1398,7 @@ void Map::dropEvent(QDropEvent* event)
     {
       for(QStringList::Iterator it = dropList.begin();
               it != dropList.end(); it++)
-          mainApp->slotFileOpenRecent((*it).latin1());
+          mainApp->slotFileOpenRecent(*it);
     }
 }
 
@@ -1463,12 +1457,12 @@ void Map::__redrawMap()
 }
 
 /** Save Map to PNG-file with width,heigt. Use actual size if width=0 & height=0 */
-void Map::slotSavePixmap(KURL fUrl, int width, int height){
+void Map::slotSavePixmap(QUrl fUrl, int width, int height){
 
   int w_orig,h_orig;
   extern MapContents _globalMapContents;
 
-  if(fUrl.isEmpty())  return;
+  if(fUrl.isValid())  return;
 
   QString fName;
   if(fUrl.isLocalFile())
@@ -1513,10 +1507,10 @@ void Map::slotSavePixmap(KURL fUrl, int width, int height){
 
 void Map::slotSavePixmap()
 {
-  KFileDialog* dlg = new KFileDialog(0, "*.png *.PNG", this,
-      i18n("Select PNG-File"), true);
+  QFileDialog* dlg = new QFileDialog(this, i18n("Select PNG-File"), true);
+  dlg->addFilter("*.png *.PNG");
   dlg->exec();
-  slotSavePixmap(dlg->selectedURL(),0,0);
+  slotSavePixmap(dlg->url(),0,0);
 }
 
 void Map::slotRedrawFlight()

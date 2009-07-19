@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
             config->setGroup("CommentSettings");
             config->writeEntry("ShowComment",args->isSet("comment"),false);
             warning("Writing PNG...");
-            KURL url((QString)args->getOption("export-png"));
+            QUrl url((QString)args->getOption("export-png"));
             kflog->slotSavePixmap(url,args->getOption("width").toInt(),args->getOption("height").toInt());
           }
 

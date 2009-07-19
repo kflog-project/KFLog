@@ -17,11 +17,11 @@
 
 #include <kconfig.h>
 #include <klocale.h>
-#include <kmessagebox.h>
 
 #include <qdatetime.h>
 #include <qfile.h>
 #include <qfileinfo.h>
+#include <qmessagebox.h>
 #include <qprogressdialog.h>
 #include <qregexp.h>
 #include <qstring.h>
@@ -38,21 +38,20 @@ bool FlightLoader::openFlight(QFile& flightFile)
   QFileInfo fInfo(flightFile);
   if(!fInfo.exists())
     {
-      KMessageBox::error(0,
-          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(flightFile.name()) + "</qt>");
+      QMessageBox::warning(0, i18n("File does not exist"),
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(flightFile.name()) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
   if(!fInfo.size())
     {
-      KMessageBox::sorry(0,
-          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(flightFile.name()) + "</qt>");
+      QMessageBox::warning(0, i18n("File is empty"),
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(flightFile.name()) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
   if(!flightFile.open(IO_ReadOnly))
     {
-      KMessageBox::error(0,
-          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(flightFile.name() + "</qt>"),
-          i18n("No permission"));
+      QMessageBox::warning(0, i18n("No permission to file"),
+          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(flightFile.name() + "</qt>"), QMessageBox::Ok, 0);
       return false;
     }
   //
@@ -68,9 +67,8 @@ bool FlightLoader::openFlight(QFile& flightFile)
   }
   else
   {
-      KMessageBox::error(0,
-          "<qt>" + i18n("Couldn't open the file, because it has an unknown file extension").arg("</qt>"),
-          i18n("Unknown file extension"));
+      QMessageBox::warning(0, i18n("Unknown file extension"),
+          "<qt>" + i18n("Couldn't open the file, because it has an unknown file extension").arg("</qt>"), QMessageBox::Ok, 0);
       return false;
   }
 }
@@ -278,10 +276,9 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
               // IO-Error !!!
               QString lineNr;
               lineNr.sprintf("%d", lineCount);
-              KMessageBox::error(0,
+              QMessageBox::warning(0, i18n("Syntax-error in IGC-file"),
                   "<qt>" + i18n("Syntax-error while loading igc-file"
-                      "<BR><B>%1</B><BR>Aborting!").arg(igcFile.name()) + "</qt>",
-                  i18n("Error in IGC-file"));
+                      "<BR><B>%1</B><BR>Aborting!").arg(igcFile.name()) + "</qt>", QMessageBox::Ok, 0);
               warning("KFLog: Error in reading line %d in igc-file %s",
                   lineCount, (const char*)igcFile.name());
               return false;
@@ -405,8 +402,8 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
   if(!flightRoute.count())
     {
-      KMessageBox::error(0,
-          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>contains no flight!").arg(igcFile.name()) + "</qt>");
+      QMessageBox::warning(0, i18n("File contains no flight"),
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>contains no flight!").arg(igcFile.name()) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
 
@@ -560,8 +557,8 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
 
   if(!flightRoute.count())
     {
-      KMessageBox::error(0,
-          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>contains no flight!").arg(gardownFile.name()) + "</qt>");
+      QMessageBox::warning(0, i18n("File contains no flight"),
+          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>contains no flight!").arg(gardownFile.name()) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
 

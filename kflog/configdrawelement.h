@@ -20,8 +20,9 @@
 
 #include <kconfig.h>
 #include <kcolorbutton.h>
-#include <kcombobox.h>
+
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qframe.h>
 #include <qlcdnumber.h>
 #include <qlineedit.h>
@@ -92,20 +93,20 @@ class ConfigDrawElement : public QFrame
     QPushButton* border2Button;
     QPushButton* border3Button;
 
-    KComboBox* border1PenStyle;
-    KComboBox* border2PenStyle;
-    KComboBox* border3PenStyle;
-    KComboBox* border4PenStyle;
+    QComboBox* border1PenStyle;
+    QComboBox* border2PenStyle;
+    QComboBox* border3PenStyle;
+    QComboBox* border4PenStyle;
 
     KColorButton* border1BrushColor;
     KColorButton* border2BrushColor;
     KColorButton* border3BrushColor;
     KColorButton* border4BrushColor;
 
-    KComboBox* border1BrushStyle;
-    KComboBox* border2BrushStyle;
-    KComboBox* border3BrushStyle;
-    KComboBox* border4BrushStyle;
+    QComboBox* border1BrushStyle;
+    QComboBox* border2BrushStyle;
+    QComboBox* border3BrushStyle;
+    QComboBox* border4BrushStyle;
 
     QPtrList<QPen> airAPenList;
     QPtrList<QBrush> airABrushList;

@@ -16,13 +16,10 @@
 ***********************************************************************/
 
 #include "downloadlist.h"
-#include <kio/netaccess.h>
-#include <kio/scheduler.h>
-#include <kmessagebox.h>
-#include <klocale.h>
-#include <kconfig.h>
 #include "map.h"
 #include "mapcontents.h"
+
+#include <kconfig.h>
 
 DownloadList::DownloadList(){
   srcList.setAutoDelete(true);
@@ -33,15 +30,15 @@ DownloadList::DownloadList(){
 DownloadList::~DownloadList(){
 }
 
-void DownloadList::copyKURL(KURL* src, KURL* dest){
+void DownloadList::copyKURL(QUrl* src, QUrl* dest){
   QStringList::Iterator it = banList.find(src->fileName());
   qWarning(QString("it:%1").arg(*it));
   if ((*it)!=""){ // URL found in banList
 //    qWarning("found.");
     return;
   }
-  srcList.append(new KURL(src->url()));
-  destList.append(new KURL (dest->url()));
+  srcList.append(new QUrl(src->toString()));
+  destList.append(new QUrl(dest->toString()));
   __schedule();
 }
 
@@ -68,8 +65,8 @@ void DownloadList::__schedule(){
     return;
   if (!srcList.isEmpty()){
     downloadRunning=true;
-    KURL* src = srcList.take(0);
-    KURL* dest = destList.take(0);
+    QUrl* src = srcList.take(0);
+    QUrl* dest = destList.take(0);
     actualURL=src->fileName();
     qWarning(QString("actualURL:%1").arg(actualURL));
     KIO::Job* job = new KIO::FileCopyJob(*src, *dest, 0644, false, false, false, true);

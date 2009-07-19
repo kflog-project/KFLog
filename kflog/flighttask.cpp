@@ -16,19 +16,16 @@
  ***********************************************************************/
 
 #include "flighttask.h"
+#include "mapcalc.h"
 #include "translationlist.h"
 
-#include "mapcalc.h"
-
 #include <cmath>
-
-#include <iostream>
 
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <kmessagebox.h>
 
+#include <qmessagebox.h>
 #include <qvaluevector.h>
 
 #define PRE_ID loop - 1
@@ -108,7 +105,7 @@ void FlightTask::__checkType()
           flightType = FlightTask::NotSet;
           break;
         case 1:
-          // Zielrückkehr
+          // Zielrückkehr
           flightType = FlightTask::ZielR;
           break;
         case 2:
@@ -122,11 +119,11 @@ void FlightTask::__checkType()
           break;
         case 3:
           // Start auf Schenkel oder Vieleck
-          // Vieleck Ja/Nein kann endgültig erst bei der Analyse des Fluges
+          // Vieleck Ja/Nein kann endgültig erst bei der Analyse des Fluges
           // bestimmt werden!
           //
           // Erste Abfrage je nachdem ob Vieleck oder Dreieck mehr Punkte geben
-          // würde
+          // würde
           distance_task_d = distance_task - wpList.at(2)->distance
             - wpList.at(5)->distance + dist(wpList.at(2), wpList.at(4));
 
@@ -153,7 +150,7 @@ void FlightTask::__checkType()
             }
           break;
         case 5:
-          // 2x Dreieck nur als FAI gültig
+          // 2x Dreieck nur als FAI gültig
           flightType = Unknown;
           if( (distance_task / 2 <= 100) && (wpList.at(1) == wpList.at(4)) &&
               (wpList.at(2) == wpList.at(5)) &&
@@ -747,7 +744,7 @@ int FlightTask::getPlannedPoints()
   double pointZielS = config->readDoubleNumEntry("ZielSPoint", 1.5);
 
   /*
-   * Aufgabe vollständig erfüllt
+   * Aufgabe vollständig erfüllt
    *        F: Punkte/km
    *        I: Index des Flugzeuges
    *        f & I noch abfragen !!!!
@@ -787,9 +784,9 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
                                 const QString& gliderType)
 {
   /*
-   *   Überprüft, ob die Sektoren der Wendepunkte erreicht wurden
+   *   Überprüft, ob die Sektoren der Wendepunkte erreicht wurden
    *
-   *   SOLLTE NOCHMALS ÜBERARBEITET WERDEN
+   *   SOLLTE NOCHMALS ÜBERARBEITET WERDEN
    *
    */
   bool time_error = false;
@@ -840,11 +837,11 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
 
       __sectorangle(loop, false);
       /*
-       * Prüfung, ob Flugpunkte in den Sektoren liegen.
+       * Prüfung, ob Flugpunkte in den Sektoren liegen.
        *
        *      Ein Index 0 bei den Sektoren zeigt an, dass der Sektor
-       *      _nicht_ erreicht wurde. Dies führt an Mitternacht zu
-       *      einem möglichen Fehler ...
+       *      _nicht_ erreicht wurde. Dies führt an Mitternacht zu
+       *      einem möglichen Fehler ...
        */
       for(unsigned int pLoop = startIndex + 1; pLoop < route.count(); pLoop++)
         {
@@ -860,7 +857,7 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
               if(!wpList.at(loop)->sectorFAI)
                 wpList.at(loop)->sectorFAI = route.at(pLoop)->time;
 
-              // ... daher ist ein Abbruch möglich!
+              // ... daher ist ein Abbruch möglich!
               startIndex = pLoop;
               break;
             }
@@ -901,7 +898,7 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
                       if(!wpList.at(loop)->sector1)
                         {
                           wpList.at(loop)->sector1 = route.at(pLoop)->time;
-                          // ... daher ist ein Abbruch möglich!
+                          // ... daher ist ein Abbruch möglich!
                           startIndex = pLoop;
                           break;
                         }
@@ -925,7 +922,7 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
     }
 
   /*
-   * Überprüfen der Aufgabe
+   * Überprüfen der Aufgabe
    */
   int faiCount = 0;
   unsigned int dmstCount = 0;
@@ -934,8 +931,8 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
 
   if ((wpList.at(1)->sector1 == 0) && showWarnings)
     {
-      KMessageBox::information(0,
-                               i18n("You have not reached the first waypoint of your task."));
+      QMessageBox::information(0, i18n("Not reached first waypoint"),
+                               i18n("You have not reached the first waypoint of your task."), QMessageBox::Ok);
       return;
     }
 
@@ -956,8 +953,8 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
               // Wendepunkt nicht erreicht!!
               if ((loop == 2) && showWarnings)
                 {
-                  KMessageBox::information(0,
-                                           i18n("You have not reached the first waypoint of your task."));
+                  QMessageBox::information(0, i18n("Not reached first waypoint"),
+                                           i18n("You have not reached the first waypoint of your task."), QMessageBox::Ok);
                   return;
                 }
               /*
@@ -975,8 +972,8 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
     {
       home = false;
       if(showWarnings)
-        KMessageBox::error(0,
-                           i18n("You have not reached the last point of your task."));
+        QMessageBox::warning(0, i18n("Not reached last waypoint"),
+                           i18n("You have not reached the last point of your task."), QMessageBox::Ok, 0);
 
       if(dist(wpList.at(1 + dmstCount), route.last()) < 1.0)
         {
@@ -995,7 +992,7 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
     }
 
 
-  // jetzt in __setDistance noch übernehmen
+  // jetzt in __setDistance noch übernehmen
   distance_wert = 0;
   double F = 1;
 
@@ -1017,7 +1014,7 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
   else
     {
       /*
-       * Aufgabe vollständig erfüllt
+       * Aufgabe vollständig erfüllt
        *        F: Punkte/km
        *        I: Index des Flugzeuges
        *        f & I noch abfragen !!!!
@@ -1055,11 +1052,11 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
 
   if (time_error && showWarnings)
     {
-      KMessageBox::error(0,
-                         "<qt>" + i18n("The time intervall between two points<BR>"
+      QMessageBox::warning(0, i18n("Incorrect time interval"),
+                         "<qt>" + i18n("The time interval between two points "
                               "of the flight is more than 70 sec.!<BR>"
-                              "Due to Code Sportif 3, Nr. 1.9.2.1,<BR>"
-                              "the flight can not be valued!") + "</qt>");
+                              "Due to Code Sportif 3, Nr. 1.9.2.1, "
+                              "the flight can not be valued!") + "</qt>", QMessageBox::Ok, 0);
     }
 
 }
@@ -1172,7 +1169,7 @@ void FlightTask::__setDMSTPoints()
   //  else
   //    {
   //      /*
-  //       *  Aufgabe vollständig erfüllt
+  //       *  Aufgabe vollständig erfüllt
   //       *        F: Punkte/km
   //       *        I: Index des Flugzeuges
   //       *        f & I noch abfragen !!!!

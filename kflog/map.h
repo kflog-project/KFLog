@@ -56,7 +56,7 @@ class Map : public QWidget
   /** Puts the waypoints of the active waypoint catalog to the map */
   void __drawWaypoints();
   /** No descriptions */
-  void slotSavePixmap(KURL fUrl, int width, int height);
+  void slotSavePixmap(QUrl fUrl, int width, int height);
 
   public slots:
     /** */

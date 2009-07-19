@@ -22,8 +22,8 @@
 #include "mapcontents.h"
 
 #include <kconfig.h>
-#include <kglobal.h>
 #include <klocale.h>
+
 #include <qlayout.h>
 #include <qsplitter.h>
 

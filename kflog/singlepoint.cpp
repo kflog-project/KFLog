@@ -17,8 +17,6 @@
 
 #include "singlepoint.h"
 
-#include <kstddirs.h>
-
 SinglePoint::SinglePoint(const QString& n, const QString& gps, unsigned int t,
       WGSPoint wgsP, QPoint pos, unsigned int elev, unsigned int lmt)
   : BaseMapElement(n, t),

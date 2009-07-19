@@ -19,10 +19,7 @@
 #define IGC3DVIEW_H
 
 // Qt headers
-#include <qpixmap.h>
-#include <qscrollview.h>
 #include <qwidget.h>
-#include <qframe.h>
 
 // Application headers
 #include "igc3dviewstate.h"

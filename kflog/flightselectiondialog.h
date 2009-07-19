@@ -20,16 +20,15 @@
 
 #include "baseflightelement.h"
 
+#include <qdialog.h>
+#include <qlistbox.h>
 #include <qwidget.h>
-
-#include <kdialog.h>
-#include <klistbox.h>
 
 /**Dialog for selecting flights
   *@author Harald Maier
   */
 
-class FlightSelectionDialog : public KDialog  {
+class FlightSelectionDialog : public QDialog  {
    Q_OBJECT
 public: // Public attributes
   /**  */
@@ -43,9 +42,9 @@ private: // Private methods
   void __initDialog();
 private: // Private attributes
   /**  */
-  KListBox *aFlights;
+  QListBox *aFlights;
   /**  */
-  KListBox *sFlights;
+  QListBox *sFlights;
 private slots: // Private slots
   /** No descriptions */
   void slotAccept();

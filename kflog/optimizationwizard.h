@@ -13,22 +13,23 @@
 #include <qvariant.h>
 #include <qpixmap.h>
 #include <qwizard.h>
-#include "evaluationdialog.h"
+
 #include "flight.h"
 #include "map.h"
 #include "mapcontents.h"
 
-class QVBoxLayout;
-class QHBoxLayout;
-class QGridLayout;
 class EvaluationDialog;
-class KProgress;
-class KPushButton;
-class KTextBrowser;
 class QFrame;
 class QGroupBox;
+class QGridLayout;
+class QHBoxLayout;
 class QLabel;
+class QProgressBar;
+class QPushButton;
+class QTextBrowser;
+class QVBoxLayout;
 class QWidget;
+
 extern MapContents _globalMapContents;
 
 class OptimizationWizard : public QWizard
@@ -51,13 +52,13 @@ public:
     QLabel* textLabel1_2_2_2;
     QLabel* lblStopHeight;
     QLabel* lblDiffTime;
-    KPushButton* kPushButton2;
+    QPushButton* kPushButton2;
     QWidget* page_2;
-    KTextBrowser* kTextBrowser1;
+    QTextBrowser* kTextBrowser1;
     QFrame* frame3;
-    KProgress* progress;
-    KPushButton* btnStart;
-    KPushButton* btnStop;
+    QProgressBar* progress;
+    QPushButton* btnStart;
+    QPushButton* btnStop;
 
     virtual void init();
     virtual double optimizationResult( unsigned int pointList[LEGS+3], double * points );

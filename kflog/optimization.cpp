@@ -23,10 +23,13 @@
 ***********************************************************************/
 
 #include "optimization.h"
+
 #include <klocale.h>
-#include <kmessagebox.h>
 #include <kapplication.h>
+
+#include <qmessagebox.h>
 #include <qptrlist.h>
+
 #include <stdlib.h>
 
 // different weight for last two legs
@@ -41,7 +44,7 @@ double Optimization::weight(unsigned int k){
   }
 }
 
-Optimization::Optimization(unsigned int firstPoint, unsigned int lastPoint, QPtrList<flightPoint> ptr_route, KProgress* progressBar){
+Optimization::Optimization(unsigned int firstPoint, unsigned int lastPoint, QPtrList<flightPoint> ptr_route, QProgressBar* progressBar){
   original_route = ptr_route;
   setTimes(0,original_route.count());
   optimized=false;
@@ -64,7 +67,7 @@ double Optimization::optimizationResult(unsigned int* retList, double *retPoints
     retList[i]=original_route.find(route.at(pointList[j]));
     if (pointList[j]>original_route.count()){
       qWarning(QString("##k:%1\tstart:%2\t\tpointList[k]:%3").arg(i).arg(start).arg(pointList[i]));
-      KMessageBox::error(0,"Sorry optimization fault. Report error (including IGC-File) to <christof.bodner@gmx.net>");
+      QMessageBox::warning(0, "Optimization fault", "Sorry optimization fault. Report error (including IGC-File) to <christof.bodner@gmx.net>", QMessageBox::Ok, 0);
       return -1.0;
     }
     j++;

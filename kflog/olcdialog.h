@@ -18,14 +18,11 @@
 #ifndef OLCDIALOG_H
 #define OLCDIALOG_H
 
-#include <kcombobox.h>
-#include <klistview.h>
-#include <krestrictedline.h>
-#include <kcombobox.h>
-
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qdialog.h>
 #include <qlabel.h>
+#include <qlistview.h>
 
 #include "flight.h"
 
@@ -65,27 +62,27 @@ class OLCDialog : public QDialog
      */
     void __fillDataFields();
     /** */
-    KLineEdit* preName;
+    QLineEdit* preName;
     /** */
-    KLineEdit* surName;
+    QLineEdit* surName;
     /** */
-    KRestrictedLine* birthday;
+    QLineEdit* birthday;
     /** */
-    KComboBox* gliderType;
+    QComboBox* gliderType;
     /** */
-    KLineEdit* gliderID;
+    QLineEdit* gliderID;
     /** */
-    KListView* taskList;
+    QListView* taskList;
     /** */
 //    KRestrictedLine* daec;
     /** */
     QCheckBox* pureGlider;
     /** */
-    KComboBox* classSelect;
+    QComboBox* classSelect;
     /** */
-    KLineEdit* startPoint;
+    QLineEdit* startPoint;
     /** */
-    KRestrictedLine* startTime;
+    QLineEdit* startTime;
     /** */
     QLabel* startPos;
     /** */
@@ -93,7 +90,7 @@ class OLCDialog : public QDialog
     /** */
     QLabel* routePoints;
     /** */
-    KComboBox* olcName;
+    QComboBox* olcName;
     /** */
     Flight* currentFlight;
     /** */

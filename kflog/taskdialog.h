@@ -18,16 +18,15 @@
 #ifndef TASKDIALOG_H
 #define TASKDIALOG_H
 
-#include <qwidget.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qradiobutton.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
+#include <qdialog.h>
 #include <qdict.h>
-
-#include <kdialog.h>
-#include <klistbox.h>
-#include <kcombobox.h>
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qlistbox.h>
+#include <qradiobutton.h>
+#include <qwidget.h>
 
 #include "guicontrols/kfloglistview.h"
 #include "flighttask.h"
@@ -37,7 +36,7 @@
   *@author Harald Maier
   */
 
-class TaskDialog : public KDialog  {
+class TaskDialog : public QDialog  {
    Q_OBJECT
 public: 
    TaskDialog(QWidget *parent=0, const char *name=0);
@@ -64,7 +63,7 @@ private slots: // Private slots
   void slotRemoveWaypoint();
 private: // Private attributes
   /**  */
-  KListBox *waypoints;
+  QListBox *waypoints;
   QDict<Waypoint> waypointDict;
   QPtrList<Waypoint> wpList;
   FlightTask *pTask;
@@ -72,7 +71,7 @@ private: // Private attributes
   QLineEdit *name;
   QLabel *taskType;
 
-  KComboBox *planningTypes;
+  QComboBox *planningTypes;
   QCheckBox *left;
   QCheckBox *right;
 

@@ -24,16 +24,18 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kseparator.h>
-#include <kmessagebox.h>
 #include <kprocess.h>
-#include <qdatetime.h>
-#include <kfiledialog.h>
 
+#include <qdatetime.h>
 #include <qfile.h>
+#include <qfiledialog.h>
 #include <qgroupbox.h>
 #include <qlayout.h>
+#include <qlineedit.h>
+#include <qmessagebox.h>
 #include <qpushbutton.h>
 #include <qregexp.h>
+#include <qurl.h>
 
 // for the initialisation of the KComboBoxes
 #include "gliders.h"
@@ -71,7 +73,7 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
   mainLayout->addMultiCellWidget(new KSeparator(this), 1, 1, 0, 6);
   mainLayout->addMultiCellWidget(new KSeparator(this), 3, 3, 0, 6);
 
-  olcName = new KComboBox(this);
+  olcName = new QComboBox(this);
   olcName->setEditable(false);
 
   QPushButton* okButton = new QPushButton(i18n("Send"), this);
@@ -103,9 +105,9 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
   dlgLayout->addMultiCellWidget(new QGroupBox(i18n("Task"), midFrame),
       15, 21, 0, 14);
 
-  preName = new KLineEdit(midFrame);
-  surName = new KLineEdit(midFrame);
-  birthday = new KRestrictedLine(midFrame, "birthday", "0123456789.-");
+  preName = new QLineEdit(midFrame);
+  surName = new QLineEdit(midFrame);
+  birthday = new QLineEdit("", "99.99.9999", midFrame, "birthday");
 
   QPushButton* pilotB = new QPushButton(midFrame);
   pilotB->setPixmap(BarIcon("find"));
@@ -116,12 +118,12 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
 //  gliderB->setPixmap(BarIcon("find"));
 //  gliderB->setMaximumWidth(pilotB->sizeHint().width() + 10);
 //  gliderB->setMaximumHeight(pilotB->sizeHint().height() + 10);
-  gliderType=new KComboBox(midFrame);
-  gliderID = new KLineEdit(midFrame);
+  gliderType=new QComboBox(midFrame);
+  gliderID = new QLineEdit(midFrame);
 //  daec = new KRestrictedLine(midFrame, "daec", "0123456789");
 
   pureGlider = new QCheckBox(i18n("pure glider"), midFrame);
-  classSelect = new KComboBox(midFrame);
+  classSelect = new QComboBox(midFrame);
   classSelect->setEditable(false);
   classSelect->insertItem(i18n("not set"));
   classSelect->insertItem(i18n("Club"));
@@ -131,13 +133,13 @@ OLCDialog::OLCDialog(QWidget* parent, const char* name, Flight* cF)
   classSelect->insertItem(i18n("double seater"));
   classSelect->insertItem(i18n("open"));
 
-  startPoint = new KLineEdit(midFrame);
-  startTime = new KRestrictedLine(midFrame,"startTime","0123456789:");
+  startPoint = new QLineEdit(midFrame);
+  startTime = new QLineEdit("", "99:99:99", midFrame, "startTime");
   startPos = new QLabel(midFrame);
   startPos->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   startPos->setBackgroundMode( PaletteLight );
 
-  taskList = new KListView(midFrame);
+  taskList = new QListView(midFrame);
   taskColID = taskList->addColumn(i18n("ID"));
   taskColWP = taskList->addColumn(i18n("Waypoint"));
   taskColLat = taskList->addColumn(i18n("Latitude"));
@@ -235,7 +237,7 @@ void OLCDialog::__fillDataFields()
   while( gliderList[count].index != -1)
   {
     QString temp_str=QString("%1 (%2)").arg(gliderList[count].name).arg(gliderList[count].index);
-    gliderType->insertURL(temp_str,count);
+    gliderType->insertItem(temp_str,count);
     if (temp_str.find(currentFlight->getHeader().at(2),0,false)!=-1)
       gliderType->setCurrentItem(count);
     count++;
@@ -245,7 +247,7 @@ void OLCDialog::__fillDataFields()
   while( contestList[count].index != -1)
   {
     QString temp_str=QString("OLC-%1").arg(contestList[count].name);
-    olcName->insertURL(temp_str,count);
+    olcName->insertItem(temp_str,count);
     count++;
   }
 
@@ -355,30 +357,30 @@ void OLCDialog::__fillDataFields()
 void OLCDialog::slotSave()
 {
   if (currentFlight->getTask().getTaskType()!=FlightTask::OLC2003){
-    KMessageBox::error(0,
-        i18n("The flight has not been optimized for the OLC!"),
-        i18n("Not optimized for OLC"));
+    QMessageBox::warning(0,
+        i18n("Not optimized for OLC"),
+        i18n("The flight has not been optimized for the OLC!"), QMessageBox::Ok, 0);
     return;
   }
 
   QString link = composeOLCString(false);
-  QString olcFileName = KFileDialog::getSaveFileName();
+  QString olcFileName = QFileDialog::getSaveFileName();
   if (olcFileName==QString::null) return;
   
   QFile igcFile(currentFlight->getFileName());
   if(!igcFile.open(IO_ReadOnly))
     {
-      KMessageBox::error(0,
-          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(igcFile.name())+ "</qt>",
-          i18n("No permission"));
+      QMessageBox::warning(0,
+          i18n("No permission"),
+          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(igcFile.name())+ "</qt>", QMessageBox::Ok, 0);
       return;
     }
   QFile olcFile(olcFileName);
   if (!olcFile.open( IO_WriteOnly ))
     {
-      KMessageBox::error(0,
-          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(olcFile.name()) + "</qt>",
-          i18n("No permission"));
+      QMessageBox::warning(0,
+          i18n("No permission"),
+          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(olcFile.name()) + "</qt>");
       return;
     }
 
@@ -394,9 +396,9 @@ void OLCDialog::slotSave()
 void OLCDialog::slotSend()
 {
   if (currentFlight->getTask().getTaskType()!=FlightTask::OLC2003){
-    KMessageBox::error(0,
-        i18n("The flight has not been optimized for the OLC!"),
-        i18n("Not optimized for OLC"));
+    QMessageBox::warning(0,
+        i18n("Not optimized for OLC"),
+        i18n("The flight has not been optimized for the OLC!"), QMessageBox::Ok, 0);
     return;
   }
 
@@ -575,7 +577,8 @@ QString OLCDialog::composeOLCString(bool withURL)
 //    }
 
   // IGC File
-  link = link + "&software=" + "kflog-" + VERSION + "&IGCigcIGC=" + KURL::encode_string(igcString);
+  QUrl::encode(igcString);
+  link = link + "&software=" + "kflog-" + VERSION + "&IGCigcIGC=" + igcString;
 
   // Link für Hängegleiter:
   //   http://www.segelflugszene.de/olc-cgi/holc-d/olc

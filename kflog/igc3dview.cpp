@@ -18,26 +18,12 @@
 #include "igc3dview.h"
 
 // Qt headers
-#include <kapp.h>
-#include <kglobal.h>
-#include <kstddirs.h>
-#include <qcheckbox.h>
-#include <qspinbox.h>
-#include <qslider.h>
-#include <qcombobox.h>
-#include <qlayout.h>
 #include <qmessagebox.h>
 
 // KDE headers
 #include <klocale.h>
 
 // Application headers
-#include "igc3ddialog.h"
-#include "flight.h"
-#include "resource.h"
-#include "mapcalc.h"
-#include "igc3dpolyhedron.h"
-#include "igc3dviewstate.h"
 #include "mapcontents.h"
 
 

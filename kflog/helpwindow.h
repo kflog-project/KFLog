@@ -17,8 +17,8 @@
 #ifndef HELPWINDOW_H
 #define HELPWINDOW_H
 
-#include <ktextbrowser.h>
 #include <qframe.h>
+#include <qtextbrowser.h>
 
 /**Generates a HelpWindow.
   *@author Florian Ehinger
@@ -50,7 +50,7 @@ class HelpWindow : public QFrame
     /**
      * The textwidget
      */
-    KTextBrowser* helpText;
+    QTextBrowser* helpText;
 
 };
 

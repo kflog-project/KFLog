@@ -18,10 +18,10 @@
 #ifndef OBJECTTREE_H
 #define OBJECTTREE_H
 
-#include <qwidget.h>
 #include <qlistview.h>
-#include <kpopupmenu.h>
 #include <kurl.h>
+#include <qwidget.h>
+#include <kpopupmenu.h>
 
 class BaseFlightElement;
 class Flight;

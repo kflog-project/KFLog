@@ -9,21 +9,19 @@
 
 #include "optimizationwizard.h"
 
-#include <qvariant.h>
-#include <kprogress.h>
-#include <kpushbutton.h>
-#include <ktextbrowser.h>
 #include <qcolor.h>
 #include <qframe.h>
 #include <qgroupbox.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qwidget.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
 #include <qimage.h>
+#include <qlabel.h>
+#include <qlayout.h>
 #include <qpixmap.h>
+#include <qpushbutton.h>
+#include <qtextbrowser.h>
+#include <qtooltip.h>
+#include <qvariant.h>
+#include <qwhatsthis.h>
+#include <qwidget.h>
 
 #include "evaluationdialog.h"
 #include "optimizationwizard.ui.h"
@@ -244,7 +242,7 @@ OptimizationWizard::OptimizationWizard( QWidget* parent, const char* name, bool 
     layout3->addWidget( lblDiffTime, 2, 1 );
     layout12->addWidget( groupBox1 );
 
-    kPushButton2 = new KPushButton( page, "kPushButton2" );
+    kPushButton2 = new QPushButton( page, "kPushButton2" );
     kPushButton2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, kPushButton2->sizePolicy().hasHeightForWidth() ) );
     layout12->addWidget( kPushButton2 );
     layout14->addLayout( layout12 );
@@ -256,7 +254,7 @@ OptimizationWizard::OptimizationWizard( QWidget* parent, const char* name, bool 
 
     layout13 = new QVBoxLayout( 0, 0, 6, "layout13"); 
 
-    kTextBrowser1 = new KTextBrowser( page_2, "kTextBrowser1" );
+    kTextBrowser1 = new QTextBrowser( page_2, "kTextBrowser1" );
     layout13->addWidget( kTextBrowser1 );
 
     layout12_2 = new QHBoxLayout( 0, 0, 6, "layout12_2"); 
@@ -271,17 +269,17 @@ OptimizationWizard::OptimizationWizard( QWidget* parent, const char* name, bool 
 
     layout5 = new QVBoxLayout( 0, 0, 6, "layout5"); 
 
-    progress = new KProgress( frame3, "progress" );
+    progress = new QProgressBar( frame3, "progress" );
     progress->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, progress->sizePolicy().hasHeightForWidth() ) );
     layout5->addWidget( progress );
 
     layout2 = new QHBoxLayout( 0, 0, 6, "layout2"); 
 
-    btnStart = new KPushButton( frame3, "btnStart" );
+    btnStart = new QPushButton( frame3, "btnStart" );
     btnStart->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, btnStart->sizePolicy().hasHeightForWidth() ) );
     layout2->addWidget( btnStart );
 
-    btnStop = new KPushButton( frame3, "btnStop" );
+    btnStop = new QPushButton( frame3, "btnStop" );
     btnStop->setEnabled( FALSE );
     btnStop->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, btnStop->sizePolicy().hasHeightForWidth() ) );
     layout2->addWidget( btnStop );

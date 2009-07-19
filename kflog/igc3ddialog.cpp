@@ -18,7 +18,6 @@
 #include "igc3ddialog.h"
 
 // Qt headers
-#include <kapp.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
 #include <qlayout.h>

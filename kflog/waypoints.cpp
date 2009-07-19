@@ -27,23 +27,19 @@
 #include "mapconfig.h"
 
 #include <pwd.h>
-#include <stdlib.h>
-#include <unistd.h>
 
 #include <qcursor.h>
+#include <qfiledialog.h>
 #include <qlayout.h>
 #include <qlabel.h>
+#include <qmessagebox.h>
 #include <qsizepolicy.h>
 #include <qpushbutton.h>
 #include <qregexp.h>
 
 #include <klocale.h>
 #include <kiconloader.h>
-#include <kfiledialog.h>
-#include <kmessagebox.h>
-#include <kglobal.h>
 #include <kconfig.h>
-#include <kapp.h>
 
 extern MapContents _globalMapContents;
 extern MapMatrix _globalMapMatrix;
@@ -230,7 +226,7 @@ void Waypoints::slotOpenWaypointCatalog()
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory",
                                           getpwuid(getuid())->pw_dir);
 
-  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|" + i18n ("KFLog waypoints") + " (*.kflogwp)\n"
+  QString fName = QFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|" + i18n ("KFLog waypoints") + " (*.kflogwp)\n"
                                                             "*.kwp *.KWP|" + i18n ("Cumulus and KFLogEmbedded waypoints") + " (*.kwp)\n"
                                                             "*.txt *.TXT|" + i18n ("Filser txt waypoints") + " (*.txt)\n"
                                                             "*.da4 *.DA4|" + i18n ("Filser da4 waypoints") + " (*.da4)\n"
@@ -302,19 +298,19 @@ bool Waypoints::saveChanges()
     {
       if (w->modified)
         {
-          switch(KMessageBox::warningYesNoCancel(
-                this,
-                i18n("<qt>The waypoint file has been modified.<br>Save changes to<BR><B>%1</B></qt>").arg(w->path),
-                i18n("Save changes?"),
-                i18n("Save"),
-                i18n("Discard")))
+          QMessageBox saveBox(i18n("Save changes?"),
+              i18n("<qt>The waypoint file has been modified.<br>Save changes to<BR><B>%1</B></qt>").arg(w->path),
+              QMessageBox::Warning, QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
+          saveBox.setButtonText(QMessageBox::Yes, i18n("Save"));
+          saveBox.setButtonText(QMessageBox::No, i18n("Discard"));
+          switch(saveBox.exec())
             {
-            case KMessageBox::Yes:
+            case QMessageBox::Yes:
               // Hier zwischenzeitlich auf binärformat umgestellt ...
               if (!w->save()) //Binary())
                 return false;
               break;
-            case KMessageBox::Cancel:
+            case QMessageBox::Cancel:
               return false;
             }
         }
@@ -423,10 +419,11 @@ void Waypoints::slotDeleteWaypoint(Waypoint* wp)
 {
   if (wp)
   {
-    if (KMessageBox::warningContinueCancel (this,
-        i18n("<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>").arg(wp->name),
-        i18n("Delete waypoint?"),
-        i18n("&Delete")) == KMessageBox::Continue)
+    QMessageBox waypointBox(i18n("Delete waypoint?"),
+                            i18n("<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>").arg(wp->name),
+                            QMessageBox::Warning, QMessageBox::Ok, QMessageBox::Cancel, 0);
+    waypointBox.setButtonText(QMessageBox::Ok, i18n("&Delete"));
+    if (waypointBox.exec()== QMessageBox::Ok)
     {
       waypointCatalogs.current()->wpList.remove(wp->name);
       waypointCatalogs.current()->modified = true;
@@ -442,10 +439,11 @@ void Waypoints::slotDeleteWaypoint()
 
   if (item != 0) {
     QString tmp = item->text(colName);
-    if (KMessageBox::warningContinueCancel (this,
-        i18n("<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>").arg(tmp),
-        i18n("Delete waypoint?"),
-        i18n("&Delete")) == KMessageBox::Continue)
+    QMessageBox waypointBox(i18n("Delete waypoint?"),
+                            i18n("<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>").arg(tmp),
+                            QMessageBox::Warning, QMessageBox::Ok, QMessageBox::Cancel, 0);
+    waypointBox.setButtonText(QMessageBox::Ok, i18n("&Delete"));
+    if (waypointBox.exec() == QMessageBox::Ok)
     {
       waypointCatalogs.current()->wpList.remove(tmp);
       waypointCatalogs.current()->modified = true;
@@ -579,7 +577,7 @@ void Waypoints::slotImportWaypointCatalog()
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory",
                                           getpwuid(getuid())->pw_dir);
 
-  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n*|All files", this, i18n("Import waypoint catalog"));
+  QString fName = QFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n*|All files", this, i18n("Import waypoint catalog"));
 
   if(!fName.isEmpty()) {
     WaypointCatalog *w = waypointCatalogs.current();
@@ -598,13 +596,15 @@ void Waypoints::slotCloseWaypointCatalog()
   int cnt;
 
   if (w->modified) {
-    switch(KMessageBox::warningYesNoCancel(this, "<qt>" + i18n("Save changes to<BR><B>%1</B>").arg(w->path) + "</qt>")) {
-    case KMessageBox::Yes:
+    switch(QMessageBox::warning(this, i18n("Save"),
+           "<qt>" + i18n("Save changes to<BR><B>%1</B>").arg(w->path) + "</qt>",
+           QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel)) {
+    case QMessageBox::Yes:
       if (!w->save()) {
         return;
       }
       break;
-    case KMessageBox::Cancel:
+    case QMessageBox::Cancel:
       return;
     }
   }
@@ -906,7 +906,7 @@ void Waypoints::slotImportWaypointFromFile(){
 
    // we should not include types we don't support (yet). Also, the strings should be translated.
 //  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT) \n *.gdn *.GDN|Waypoint file (Garmin format, *.gdn *.GDN) \n *|All files", this, i18n("Import waypoints from file"));
-  QString fName = KFileDialog::getOpenFileName(wayPointDir, i18n("*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT)"), this, i18n("Import waypoints from file"));
+  QString fName = QFileDialog::getOpenFileName(wayPointDir, i18n("*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT)"), this, i18n("Import waypoints from file"));
 
   if(!fName.isEmpty()) {
     WaypointCatalog *w = waypointCatalogs.current();
@@ -915,7 +915,7 @@ void Waypoints::slotImportWaypointFromFile(){
     w->modified = true;
     if (fName.right(4).lower() == ".dbt"){
             w->importVolkslogger(fName);
-      //    } else if (fName.right(4).lower() == "*.gdn"){
+      //    } else if (fName.right(4).lower() == "*.gdn"){
       //    w->importGarmin(fName);
     } else {
       w->modified = false;

@@ -15,21 +15,19 @@
 **
 ***********************************************************************/
 
+#include "evaluationdialog.h"
 #include "evaluationview.h"
+#include "flight.h"
+#include "resource.h"
+#include "mapcalc.h"
 
-#include <kapp.h>
-#include <kglobal.h>
 #include <kstddirs.h>
+
 #include <qcheckbox.h>
 #include <qspinbox.h>
 #include <qslider.h>
 #include <qcombobox.h>
 #include <qlayout.h>
-
-#include "evaluationdialog.h"
-#include "flight.h"
-#include "resource.h"
-#include "mapcalc.h"
 
 // needs to be the same as in EvaluationFrame!!!
 #define X_DISTANCE 100

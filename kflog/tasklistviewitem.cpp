@@ -18,7 +18,9 @@
 #include "tasklistviewitem.h"
 #include "flighttask.h"
 #include "waypoint.h"
+
 #include <qurl.h>
+
 #include <klocale.h>
 #include <kglobal.h>
 #include <kiconloader.h>
@@ -89,8 +91,5 @@ void TaskListViewItem::createChildren(){
       subItem->setSelectable(false);
       subItem->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("centerwaypoint", KIcon::NoGroup, KIcon::SizeSmall));
     }
-  }  
+  }
 }
-
-
-

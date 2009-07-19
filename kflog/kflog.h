@@ -32,7 +32,8 @@
 #include <kprogress.h>
 #include <kpopupmenu.h>
 #include <kstatusbar.h>
-#include <kurl.h>
+
+#include <qurl.h>
 
 class DataView;
 class HelpWindow;
@@ -263,7 +264,7 @@ class KFLogApp : public KDockMainWindow
   /** */
   void slotOptimizeFlight();
   /** */
-  void slotSavePixmap(KURL url, int width, int height);
+  void slotSavePixmap(QUrl url, int width, int height);
   /** */
   void slotFlightViewIgc3D();
   /** */

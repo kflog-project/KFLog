@@ -14,17 +14,16 @@
  **   $Id$
  **
  ***********************************************************************/
+#include <qbuttongroup.h>
 #include <qlayout.h>
 #include <qlabel.h>
+#include <qmessagebox.h>
 #include <qpushbutton.h>
-#include <qbuttongroup.h>
 
-#include <klocale.h>
-#include <kseparator.h>
-#include <kglobal.h>
-#include <kiconloader.h>
-#include <kmessagebox.h>
 #include <kconfig.h>
+#include <kiconloader.h>
+#include <klocale.h>
+#include <kmessagebox.h>
 
 #include "taskdialog.h"
 #include "mapcontents.h"
@@ -34,7 +33,7 @@
 extern TranslationList taskTypes;
 
 TaskDialog::TaskDialog(QWidget *parent, const char *name )
-  : KDialog(parent, name, true)
+  : QDialog(parent, name, true)
 {
   setCaption(i18n("Task definition"));
   __initDialog();
@@ -79,7 +78,7 @@ void TaskDialog::__initDialog()
   header->addWidget(name);
 
   // Create a combo box for taskTypes
-  planningTypes = new KComboBox(false, this, "planningType");
+  planningTypes = new QComboBox(false, this, "planningType");
   connect(planningTypes, SIGNAL(activated(int)), SLOT(slotSetPlanningType(int)));
   l = new QLabel(planningTypes, i18n("Task T&ype") + ":", this);
 
@@ -153,7 +152,7 @@ void TaskDialog::__initDialog()
   middleLayout->addWidget(forward);
   middleLayout->addStretch();
 
-  waypoints = new KListBox(this, "waypoints");
+  waypoints = new QListBox(this, "waypoints");
   l = new QLabel(waypoints, i18n("&Waypoint's"), this);
   rightLayout->addWidget(l);
   rightLayout->addWidget(waypoints);
@@ -165,17 +164,17 @@ void TaskDialog::__initDialog()
   topLayout->addLayout(header);
   topLayout->addLayout(type);
   topLayout->addLayout(topGroup);
-  topLayout->addWidget(new KSeparator(this));
+  //topLayout->addWidget(new KSeparator(this));
   topLayout->addLayout(buttons);
 }
 
 /** No descriptions */
 void TaskDialog::polish()
 {
-  KDialog::polish();
+  QDialog::polish();
 
   if (pTask == 0) {
-    KMessageBox::error(this, "INTERNAL ERROR:\nNo task set!");
+    QMessageBox::critical(this, "Internal error", "INTERNAL ERROR:\nNo task set!", QMessageBox::Ok, 0);
     reject();
   }
 

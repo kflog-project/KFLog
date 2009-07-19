@@ -32,12 +32,12 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
-#include <kurl.h>
+#include <qurl.h>
 #include <kio/jobclasses.h>
 
 class DownloadList : public QObject{
   Q_OBJECT
-  
+
   public:
    /**
     * Constructor
@@ -50,7 +50,7 @@ class DownloadList : public QObject{
    /**
     * Adds a copy-task to the list of downloads
     */
-    void copyKURL(KURL* src, KURL* dest);
+    void copyKURL(QUrl* src, QUrl* dest);
   public slots: //should probably be protected?
    /**
     * Called if a download has finished. Resets @ref downloadRunning to false
@@ -76,12 +76,12 @@ class DownloadList : public QObject{
     * List of source URL's
     * @see destList
     */
-    QPtrList<KURL> srcList;
+    QPtrList<QUrl> srcList;
    /**
     * List of target URL's
     * @see srcList
     */
-    QPtrList<KURL> destList;
+    QPtrList<QUrl> destList;
    /**
     * List of URL's which cannot be retrieved
     */

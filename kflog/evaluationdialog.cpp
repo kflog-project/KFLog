@@ -19,21 +19,19 @@
 #include "evaluationdialog.h"
 #include "evaluationframe.h"
 #include "evaluationview.h"
+#include "flight.h"
+#include "mapcalc.h"
 #include "mapcontents.h"
 
-#include <kapp.h>
 #include <kconfig.h>
-#include <kglobal.h>
-#include <qspinbox.h>
+#include <klocale.h>
+
 #include <qcombobox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+#include <qspinbox.h>
 #include <qsplitter.h>
 #include <qvaluelist.h>
-
-#include "flight.h"
-#include "mapcalc.h"
-#include <klocale.h>
 
 EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[])
   : QWidget(parent, name)

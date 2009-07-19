@@ -33,12 +33,12 @@
 //#include <sys/types.h>
 #include <stdlib.h>
 
-#include <kfiledialog.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kstddirs.h>
 #include <ktabctl.h>
 
+#include <qfiledialog.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
@@ -153,7 +153,7 @@ void KFLogConfig::slotOk()
 
 void KFLogConfig::slotSearchFlightPath()
 {
-  QString temp = KFileDialog::getExistingDirectory(igcPathE-> text(), this,
+  QString temp = QFileDialog::getExistingDirectory(igcPathE-> text(), this, 0,
       i18n("Select Default-Directory for the IGC-Files"));
 
   if(temp != 0)  igcPathE-> setText(temp);
@@ -161,7 +161,7 @@ void KFLogConfig::slotSearchFlightPath()
 
 void KFLogConfig::slotSearchMapPath()
 {
-  QString temp = KFileDialog::getExistingDirectory(mapPathE-> text(), this,
+  QString temp = QFileDialog::getExistingDirectory(mapPathE-> text(), this, 0,
       i18n("Select Directory for the Map-Files"));
 
   if(temp != 0)  mapPathE-> setText(temp);
@@ -169,7 +169,7 @@ void KFLogConfig::slotSearchMapPath()
 
 void KFLogConfig::slotSearchTaskPath()
 {
-  QString temp = KFileDialog::getExistingDirectory(taskPathE-> text(), this,
+  QString temp = QFileDialog::getExistingDirectory(taskPathE-> text(), this, 0,
       i18n("Select Default-Directory for the Task-Files"));
 
   if(temp != 0)  taskPathE-> setText(temp);
@@ -177,7 +177,7 @@ void KFLogConfig::slotSearchTaskPath()
 
 void KFLogConfig::slotSearchWaypointPath()
 {
-  QString temp = KFileDialog::getExistingDirectory(waypointPathE-> text(), this,
+  QString temp = QFileDialog::getExistingDirectory(waypointPathE-> text(), this, 0,
       i18n("Select Default-Directory for the Waypoint-Files"));
 
   if(temp != 0)  waypointPathE-> setText(temp);
@@ -299,7 +299,7 @@ void KFLogConfig::__addMapTab()
   QGroupBox* elementBox = new QGroupBox(mapPage, "elementBox");
   elementBox-> setTitle(i18n("visible Map-Elements"));
 
-  elementSelect = new KComboBox(mapPage, "elementSelect");
+  elementSelect = new QComboBox(mapPage, "elementSelect");
 //  elementSelect-> setMaximumWidth(300);
   elementSelect-> insertItem(i18n("Road"), KFLogConfig::Road);
   elementSelect-> insertItem(i18n("Highway"), KFLogConfig::Highway);
@@ -464,7 +464,7 @@ void KFLogConfig::__addProjectionTab()
   QGroupBox* projType = new QGroupBox(projPage, "projectionSelectBox");
   projType-> setTitle(i18n("Type of Projection") + ":");
 
-  projectionSelect = new KComboBox(projPage, "projectionSelect");
+  projectionSelect = new QComboBox(projPage, "projectionSelect");
   projectionSelect-> insertItem(i18n("Conical orthomorphic (Lambert)"));
   projectionSelect-> insertItem(i18n("Cylindrical Equidistant (Plate Carre)"));
 
@@ -850,13 +850,13 @@ void KFLogConfig::__addIDTab()
   QGroupBox* contestGroup = new QGroupBox(idPage, "contestGroup");
   contestGroup-> setTitle(i18n("Contest Type") + ":");
   idLayout-> addMultiCellWidget(contestGroup, 18, 21, 0, 4);
-  contestType = new KComboBox(idPage, "contestType");
+  contestType = new QComboBox(idPage, "contestType");
   contestType-> setEditable(false);
   int count=0;
   while( contestList[count].index != -1)
   {
     QString temp_str=QString("OLC-%1").arg(contestList[count].name);
-    contestType-> insertURL(temp_str,count);
+    contestType-> insertItem(temp_str,count);
     count++;
   }
   idLayout-> addWidget(new QLabel(i18n("Contest Type"), idPage), 19, 1);
@@ -1056,8 +1056,8 @@ void KFLogConfig::slotSelectDefaultCatalog(int item)
 
 void KFLogConfig::slotSearchDefaultWaypoint()
 {
-  QString temp = KFileDialog::getOpenFileName(catalogPathE-> text(), "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)",
-    this, i18n("Select default waypoint catalog"));
+  QString temp = QFileDialog::getOpenFileName(catalogPathE-> text(), "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)",
+    this, 0, i18n("Select default waypoint catalog"));
 
     if(temp != 0) {
       catalogPathE-> setText(temp);
