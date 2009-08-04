@@ -1,5 +1,9 @@
 $Id$
 
+2009-07-19 Constantijn Neeteson <kflog@neeteson.net>
+
+  * Converted several KDE calls to their QT counterparts
+
 2009-07-14 Hendrik Hoeth <hoeth@linta.de>
 
   * Acknowledge CGIAR as source of our terrain mapdata

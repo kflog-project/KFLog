@@ -41,7 +41,7 @@ Terrain and ground files
   (remapped to 3 arcseconds). The data was recorded in 2000.
 
 - http://nsidc.org/data/nsidc-0304.html[] -- 500 m Laser Altimetry DEM
-  of Antarctica, north of 86°S. This data was recorded between 2003 and
+  of Antarctica, north of 86S. This data was recorded between 2003 and
   2005, i.e. it is quite a bit newer than the RAMP data, but at lower
   resolution and it doesn't cover the whole continent.
 

@@ -272,8 +272,8 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
   if (config->readNumEntry("Automatic Map Download")==Inhibited)
       return;
 
-  QUrl src = QUrl(config->readPathEntry("Mapserver","http://maproom.kflog.org/mapdata/data/landscape/"));
-  QUrl dest = QUrl(destString);
+  QUrl src = QUrl(config->readPathEntry("Mapserver","http://maproom.kflog.org:80/mapdata/data/landscape/"));
+  QUrl dest = QUrl("file:/" + destString);
   src.addPath(fileName);
   dest.addPath(fileName);
 
