@@ -700,7 +700,8 @@ void MapContents::proofeSection(bool isPrint)
                   __readTerrainFile(secID, FILE_TYPE_GROUND);
                   __readTerrainFile(secID, FILE_TYPE_TERRAIN);
                   __readBinaryFile(secID, FILE_TYPE_MAP);
-                  __readBinaryFile(secID, FILE_TYPE_LM);
+                  // Let's not plot all those circles on the map ...
+                  // __readBinaryFile(secID, FILE_TYPE_LM);
                   sectionArray.setBit( secID, true );
                 }
             }
