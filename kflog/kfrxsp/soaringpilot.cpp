@@ -31,7 +31,6 @@
 #include <qstringlist.h>
 #include <qdict.h>
 
-#include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
 
@@ -142,7 +141,7 @@ int SoaringPilot::readFile(QStringList &file)
     else {
       // waiting 5 secs. for response
       if (time(NULL) - t1 > 5) {
-        _errorinfo = i18n("No response from recorder within 5 seconds!");
+        _errorinfo = tr("No response from recorder within 5 seconds!");
         return FR_ERROR;
       }      
     }
@@ -279,7 +278,7 @@ int SoaringPilot::getFlightDir(QPtrList<FRDirEntry> *dirList)
   startTime_t = 0;
   startTime = *gmtime(&startTime_t);
 
-  entry->pilotName = i18n("Please select flight from SoaringPilot and start transfer");
+  entry->pilotName = tr("Please select flight from SoaringPilot and start transfer");
   entry->gliderID = "";
   entry->firstTime = startTime;
   entry->lastTime = startTime;
@@ -364,14 +363,14 @@ int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QStrin
           }
         }
         else {
-          _errorinfo = i18n("invalid file structure\n\nHFTDE record expexted");
+          _errorinfo = tr("invalid file structure\n\nHFTDE record expexted");
           ret = FR_ERROR;
           break;
         }
 
         f.setName(dir + _fileName);
         if (!f.open(IO_WriteOnly)) {
-          _errorinfo = i18n("IO error while saving file ") + _fileName;
+          _errorinfo = tr("IO error while saving file ") + _fileName;
           ret = FR_ERROR;
           break;
         }
@@ -580,8 +579,8 @@ int SoaringPilot::readTasks(QPtrList<FlightTask> *tasks)
           else if (tokens.size() >= 1 && tokens[0] == "TE") {
             // check with declaration
             if (nrPoints != wpList.count()) {
-              _errorinfo = i18n("invalid task definition in task ") +
-                nam + "\n" + i18n("Nr of waypoints differ from task header");
+              _errorinfo = tr("invalid task definition in task ") +
+                nam + "\n" + tr("Nr of waypoints differ from task header");
               return FR_ERROR;
             }
             break;

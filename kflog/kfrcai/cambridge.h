@@ -22,18 +22,6 @@
 #include "../flighttask.h"
 #include "../flightrecorderpluginbase.h"
 
-/**
-  * This plugin should work under QtEmbedded (Version 2.3.3) and Qt (Version 3.x)
-  * we take care of this by some defines
-  */
-#if QT_VERSION < 0x030000
-#define i18n tr
-#define QPtrList QList
-#else
-#include <klocale.h>
-#endif
-
-
 class Cambridge : public FlightRecorderPluginBase
 {
 public: 

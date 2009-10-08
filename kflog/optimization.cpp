@@ -24,7 +24,6 @@
 
 #include "optimization.h"
 
-#include <klocale.h>
 #include <kapplication.h>
 
 #include <qmessagebox.h>

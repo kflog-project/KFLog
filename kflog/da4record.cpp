@@ -23,7 +23,6 @@
 #endif
 
 #include <cmath>
-#include <klocale.h>
 #include "da4record.h"
 
 Q_UINT16 U16Swap (Q_UINT16 u16)
@@ -230,7 +229,7 @@ Waypoint* DA4WPRecord::newWaypoint () const
   wp->length = len(); // length ?!
   wp->runway = dir(); // direction ?!
   wp->surface = surface();
-  wp->comment = i18n("Imported from Filser");
+  wp->comment = QObject::tr("Imported from Filser");
   wp->importance = 3;
 
   return wp;

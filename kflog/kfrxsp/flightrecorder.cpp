@@ -17,8 +17,6 @@
 #include <unistd.h>
 #include <ctype.h>
 
-#include <klocale.h>
-
 #include "soaringpilot.h"
 
 int breakTransfer = 0;

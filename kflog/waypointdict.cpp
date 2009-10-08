@@ -15,7 +15,6 @@
 **
 ***********************************************************************/
 #include <kmessagebox.h>
-#include <klocale.h>
 #include <kdeversion.h>
 #if KDE_IS_VERSION(3,2,0)
   #undef OLDVERSION   //workaround for older KDE versions that lack kinputdialog
@@ -74,21 +73,21 @@ bool WaypointDict::insertItem(Waypoint *e)
     {
 #ifdef OLDVERSION
       switch (KMessageBox::warningContinueCancel(0,
-            "<qt>" + i18n("A waypoint with the name<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Do you want to overwrite the existing waypoint?").arg(e->name) + "</qt>",
-            i18n("Add waypoint"),
-            i18n("&Overwrite")
+            "<qt>" + QObject::tr("A waypoint with the name<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Do you want to overwrite the existing waypoint?").arg(e->name) + "</qt>",
+            QObject::tr("Add waypoint"),
+            QObject::tr("&Overwrite")
            )) {
 #endif
 #ifndef OLDVERSION
       switch (KMessageBox::warningYesNoCancel(0,
-            "<qt>" + i18n("A waypoint with the name<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Do you want to rename the waypoint you are adding or overwrite the existing waypoint?").arg(e->name) + "</qt>",
-            i18n("Add waypoint"),
-            i18n("&Rename"),
-            i18n("&Overwrite")
+            "<qt>" + QObject::tr("A waypoint with the name<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Do you want to rename the waypoint you are adding or overwrite the existing waypoint?").arg(e->name) + "</qt>",
+            QObject::tr("Add waypoint"),
+            QObject::tr("&Rename"),
+            QObject::tr("&Overwrite")
            )) {
 
       case KMessageBox::Yes:   //rename
-        newName=KInputDialog::getText(i18n("Waypoint name"), i18n("Please enter a new name for the waypoint"), e->name, &OK);
+        newName=KInputDialog::getText(QObject::tr("Waypoint name"), QObject::tr("Please enter a new name for the waypoint"), e->name, &OK);
         if (OK) {
           e->name=newName;
           return insertItem(e); //recursive call!

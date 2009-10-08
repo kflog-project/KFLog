@@ -18,8 +18,6 @@
 #include <unistd.h>
 #include <ctype.h>
 
-#include <klocale.h>
-
 #include "garminfr.h"
 
 extern "C"

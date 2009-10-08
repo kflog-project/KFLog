@@ -18,8 +18,6 @@
 #include "flightgroup.h"
 #include "mapcalc.h"
 
-#include <klocale.h>
-
 FlightGroup::FlightGroup(const QString& fName)
   : BaseFlightElement("flight group", BaseMapElement::FlightGroup, fName)
 {

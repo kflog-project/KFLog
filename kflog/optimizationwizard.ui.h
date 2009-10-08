@@ -7,8 +7,6 @@
 ** place of a destructor.
 *****************************************************************************/
 
-#include <klocale.h>
-
 void OptimizationWizard::init()
 {
 //  next two lines are a hack to fix initial evaluation widget size bug
@@ -22,8 +20,8 @@ void OptimizationWizard::init()
   optimization = new Optimization(0, route.count(), route,progress);
   slotSetTimes();
   QString text = "<DIV ALIGN=CENTER>";
-  text += i18n("The task has not been optimized for the OLC, yet") +
-      "<br>" + i18n("Press \"Start Optimization\" to begin");
+  text += tr("The task has not been optimized for the OLC, yet") +
+      "<br>" + tr("Press \"Start Optimization\" to begin");
   text += "</DIV>";
   kTextBrowser1->setText(text);
 }
@@ -50,7 +48,7 @@ void OptimizationWizard::slotStartOptimization()
   QString text, distText, rawPointText;
   rawPointText.sprintf(" %.2f", points);
   distText.sprintf(" %.2f km  ", distance);
-//  text = i18n("The task has been optimized for the OLC.\nThe best task found is:\n\n");
+//  text = tr("The task has been optimized for the OLC.\nThe best task found is:\n\n");
 //  text = text + "\tBOT:  "
 //      + printTime(route.at(idList[0])->time,true) + " : \t"
 //      + printPos(route.at(idList[0])->origP.lat()) + " / "
@@ -80,70 +78,70 @@ void OptimizationWizard::slotStartOptimization()
 //      + printPos(route.at(idList[6])->origP.lat()) + " / "
 //      + printPos(route.at(idList[6])->origP.lon(), false)
 //      + QString(" (%1km):  ").arg(dist(route.at(idList[5]),route.at(idList[6])),0,'f',2)
-//      + i18n("\n\nDistance:\t") + distText + "\n" + i18n("Points(raw):\t") + rawPointText + "\n\n"
-//      + i18n("If you want to use this task and replace the old, press \"Finish\",\nelse press \"Cancel\"");
+//      + tr("\n\nDistance:\t") + distText + "\n" + tr("Points(raw):\t") + rawPointText + "\n\n"
+//      + tr("If you want to use this task and replace the old, press \"Finish\",\nelse press \"Cancel\"");
   text = "<div align=\"center\"<caption><b>";
-  text += i18n("Optimization Result")+"</b></div><table align=\"center\"><thead><tr>";
-  text += "<th scope=col></th><th scope=col>" + i18n("Time") + "</th><th scope=col>";
-  text += i18n("Latitude") + "</th><th scope=col>"+i18n("Longitude")+"</th><th ALIGN=right scope=col>";
-  text += i18n("Distance") + "</th></tr>";
+  text += tr("Optimization Result")+"</b></div><table align=\"center\"><thead><tr>";
+  text += "<th scope=col></th><th scope=col>" + tr("Time") + "</th><th scope=col>";
+  text += tr("Latitude") + "</th><th scope=col>"+tr("Longitude")+"</th><th ALIGN=right scope=col>";
+  text += tr("Distance") + "</th></tr>";
   text += "</thead><tbody>";
 
-  text += "<tr><td>" + i18n("Begin of Soaring") + "</td><td>"
+  text += "<tr><td>" + tr("Begin of Soaring") + "</td><td>"
       + printTime(route.at(idList[0])->time,true) + "</td><td>"
       + printPos(route.at(idList[0])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[0])->origP.lon(), false) + "</td><td></td></tr>";
-  text += "<tr><td>" + i18n("Begin of Task") + "</td><td>"
+  text += "<tr><td>" + tr("Begin of Task") + "</td><td>"
       + printTime(route.at(idList[1])->time,true) + "</td><td>"
       + printPos(route.at(idList[1])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[1])->origP.lon(), false) + "</td><td></td></tr>";
-  text += "<tr><td>" + i18n("1.Turnpoint") + "</td><td>"
+  text += "<tr><td>" + tr("1.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[2])->time,true) + "</td><td>"
       + printPos(route.at(idList[2])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[2])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[1]),route.at(idList[2])),0,'f',2);
-  text += "<tr><td>" + i18n("2.Turnpoint") + "</td><td>"
+  text += "<tr><td>" + tr("2.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[3])->time,true) + "</td><td>"
       + printPos(route.at(idList[3])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[3])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[2]),route.at(idList[3])),0,'f',2);
-  text += "<tr><td>" + i18n("3.Turnpoint") + "</td><td>"
+  text += "<tr><td>" + tr("3.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[4])->time,true) + "</td><td>"
       + printPos(route.at(idList[4])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[4])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[3]),route.at(idList[4])),0,'f',2);
-  text += "<tr><td>" + i18n("4.Turnpoint") + "</td><td>"
+  text += "<tr><td>" + tr("4.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[5])->time,true) + "</td><td>"
       + printPos(route.at(idList[5])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[5])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[4]),route.at(idList[5])),0,'f',2);
-  text += "<tr><td>" +i18n("5.Turnpoint") + "</td><td>"
+  text += "<tr><td>" +tr("5.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[6])->time,true) + "</td><td>"
       + printPos(route.at(idList[6])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[6])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[5]),route.at(idList[6])),0,'f',2);
-  text += "<tr><td>" + i18n("End of Task") + "</td><td>"
+  text += "<tr><td>" + tr("End of Task") + "</td><td>"
       + printTime(route.at(idList[7])->time,true) + "</td><td>"
       + printPos(route.at(idList[7])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[7])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[6]),route.at(idList[7])),0,'f',2);
-  text += "<tr><td>" + i18n("End of Soaring") + "</td><td>"
+  text += "<tr><td>" + tr("End of Soaring") + "</td><td>"
       + printTime(route.at(idList[8])->time,true) + "</td><td>"
       + printPos(route.at(idList[8])->origP.lat()) + "</td><td>"
       + printPos(route.at(idList[8])->origP.lon(), false) + "</td><td></td></tr>";
   text += "</tbody></table><th>";
 
   text += "<table align=\"center\">";
-  text += "<tr><td><b>" + i18n("Summary:") + " " + i18n("Distance:");
-  text += distText + " " + i18n("Points(raw):");
+  text += "<tr><td><b>" + tr("Summary:") + " " + tr("Distance:");
+  text += distText + " " + tr("Points(raw):");
   text += rawPointText+"</b></td></tr>";
   text += "</table>";
 
   int heightDiff = route.at(idList[8])->height - route.at(idList[0])->height;
   if (heightDiff<-1000)
-    text += "<div align=\"center\"><b>" + i18n("WARNING! THE HEIGHT DIFFERENCE IS TOO LARGE!<br>This is not a valid OLC task. Go back and correct the start and/or end times.")+"</b></div>";
+    text += "<div align=\"center\"><b>" + tr("WARNING! THE HEIGHT DIFFERENCE IS TOO LARGE!<br>This is not a valid OLC task. Go back and correct the start and/or end times.")+"</b></div>";
   
-  text += "<div align=\"center\">"+i18n("If you want to use this task and replace the old, press \"Finish\", else press \"Cancel\"")+"</div>";
+  text += "<div align=\"center\">"+tr("If you want to use this task and replace the old, press \"Finish\", else press \"Cancel\"")+"</div>";
 
   kTextBrowser1->setText(text);
 //  next();

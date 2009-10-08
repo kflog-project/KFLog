@@ -21,7 +21,6 @@
 #include <qdir.h>
 #include <qtextstream.h>
 #include <kio/jobclasses.h>
-#include <klocale.h>
 #include <kio/netaccess.h>
 #include <kio/scheduler.h>
 #include <ktempfile.h>
@@ -68,7 +67,7 @@ Cumulus::~Cumulus(){
  */
 QString Cumulus::getLibName() const
 {
-  return i18n("Cumulus/KFLog-e plugin, version %1").arg("0.2");
+  return tr("Cumulus/KFLog-e plugin, version %1").arg("0.2");
 }
 
 
@@ -91,7 +90,7 @@ int Cumulus::getFlightDir(QPtrList<FRDirEntry>* flist){
     //directory exists
     if (!KIO::NetAccess::dircopy(KURL(_URL + homePath() + "Documents/application/x-igc"),
         KURL(getTmpFlightDir()->name()), _parent)) {
-      _errorinfo=i18n("There was a problem transfering the flights from the PDA.");
+      _errorinfo=tr("There was a problem transfering the flights from the PDA.");
       return FR_ERROR;
     }  
     
@@ -99,7 +98,7 @@ int Cumulus::getFlightDir(QPtrList<FRDirEntry>* flist){
     //qDebug("tmp dir name: %s", flightdir.absPath().latin1());
     if (flightdir.count()==0) {
       //the directory contains no igc files
-      _errorinfo=i18n("There are no flights recorded on the PDA.");
+      _errorinfo=tr("There are no flights recorded on the PDA.");
       return FR_ERROR;
     }
     
@@ -126,7 +125,7 @@ int Cumulus::getFlightDir(QPtrList<FRDirEntry>* flist){
         
   } else {
     //directory does not exist
-    _errorinfo=i18n("There are no flights recorded on the PDA.");
+    _errorinfo=tr("There are no flights recorded on the PDA.");
     return FR_ERROR;
   }
   return res;
@@ -142,7 +141,7 @@ int Cumulus::downloadFlight(int flightID, int /*secMode*/, const QString& fileNa
         fileName, -1, true, false , _parent))
     return FR_OK;
   
-  _errorinfo=i18n("There was a problem copying the flight from the temporary to the new location.");
+  _errorinfo=tr("There was a problem copying the flight from the temporary to the new location.");
   return FR_ERROR;
 }
 
@@ -192,7 +191,7 @@ int Cumulus::openRecorder(const QString& URL){
     return FR_OK;
   } else {
     _isConnected=false;
-    _errorinfo=i18n("<qt>Could not connect to PDA, or the following file did not exist:<br><br>%1</qt>").arg(kurl.prettyURL());
+    _errorinfo=tr("<qt>Could not connect to PDA, or the following file did not exist:<br><br>%1</qt>").arg(kurl.prettyURL());
     return FR_ERROR;
   }
 }
@@ -215,14 +214,14 @@ int Cumulus::readTasks(QPtrList<FlightTask> *tasks){
   int res=FR_NOTSUPPORTED;
   qDebug("CuFR line %d", __LINE__);
   if (!_isConnected) {                  //check if we are connected
-    _errorinfo=i18n("Not connected to PDA!");
+    _errorinfo=tr("Not connected to PDA!");
     return FR_ERROR;
   }
 
   if (KIO::NetAccess::exists(KURL(_URL + homePath() + QString("tasks.tsk")), true, _parent)) {
     if (!KIO::NetAccess::download(KURL(_URL + homePath() + QString("tasks.tsk")), _tmpTasksFile, _parent)) {
       warning("Something wend wrong trying to download the tasks file!");
-      _errorinfo=i18n("Could not download tasks file from PDA.");
+      _errorinfo=tr("Could not download tasks file from PDA.");
       return FR_ERROR;
     }
       
@@ -232,7 +231,7 @@ int Cumulus::readTasks(QPtrList<FlightTask> *tasks){
     if( !f.open( IO_ReadOnly ) )
     {
       // could not read file ...
-      _errorinfo=i18n("Could not read temporary task file downloaded from PDA.");
+      _errorinfo=tr("Could not read temporary task file downloaded from PDA.");
       return FR_ERROR;
     }
 
@@ -297,7 +296,7 @@ int Cumulus::readTasks(QPtrList<FlightTask> *tasks){
     KIO::NetAccess::removeTempFile( _tmpTasksFile );
     if (tasks->count()==0)
       {
-        _errorinfo=i18n("No tasks defined on PDA.");
+        _errorinfo=tr("No tasks defined on PDA.");
         return FR_ERROR;
       }
     else 
@@ -307,7 +306,7 @@ int Cumulus::readTasks(QPtrList<FlightTask> *tasks){
       }  
     
   } else {
-    _errorinfo=i18n("Tasks not found on PDA.");
+    _errorinfo=tr("Tasks not found on PDA.");
     return FR_ERROR;
   }
   return res;
@@ -321,7 +320,7 @@ int Cumulus::writeTasks(QPtrList<FlightTask> *tasks){
   int res= FR_NOTSUPPORTED;
   
   if (tasks->count()==0) {
-    _errorinfo=i18n("There were no tasks to upload.");
+    _errorinfo=tr("There were no tasks to upload.");
     return FR_ERROR;
   }
   
@@ -333,7 +332,7 @@ int Cumulus::writeTasks(QPtrList<FlightTask> *tasks){
   if( !stream )
   {
     // could not open file ...
-    _errorinfo=i18n("Could not open temporary task file for writing.");
+    _errorinfo=tr("Could not open temporary task file for writing.");
     return FR_ERROR;
   }
   
@@ -366,7 +365,7 @@ int Cumulus::writeTasks(QPtrList<FlightTask> *tasks){
      
   if (!tmpFile.close())
     {
-      _errorinfo=i18n("There was an error writing to the temporary task file.");
+      _errorinfo=tr("There was an error writing to the temporary task file.");
       return FR_ERROR;
     }
 
@@ -374,7 +373,7 @@ int Cumulus::writeTasks(QPtrList<FlightTask> *tasks){
   KURL tskurl(_URL + homePath() + QString("tasks.tsk"));
   if (!KIO::NetAccess::upload(tmpFile.name(), tskurl, _parent))
     {
-      _errorinfo=i18n("There was an error uploading the task file to the PDA.");
+      _errorinfo=tr("There was an error uploading the task file to the PDA.");
       return FR_ERROR;
     }
   KIO::chmod(tskurl, 0666); //make file readable and writable for everybody
@@ -390,7 +389,7 @@ int Cumulus::readWaypoints(QPtrList<Waypoint> *waypoints){
   int ret=0;
 
   if (!_isConnected) {                  //check if we are connected
-    _errorinfo=i18n("Not connected to PDA!");
+    _errorinfo=tr("Not connected to PDA!");
     return FR_ERROR;
   }
 
@@ -399,7 +398,7 @@ int Cumulus::readWaypoints(QPtrList<Waypoint> *waypoints){
   //qDebug("Trying to access %s",QString(_URL + "/home/root/cumulus.kwp").latin1());
   if (!KIO::NetAccess::download(KURL(_URL + homePath() + "Applications/cumulus/cumulus.kwp"),_tmpWaypointFile, _parent)) {
     warning("Something wend wrong trying to download the waypointfile!");
-    _errorinfo=i18n("Could not download waypointfile from PDA.");
+    _errorinfo=tr("Could not download waypointfile from PDA.");
     return FR_ERROR;
   }
 
@@ -423,14 +422,14 @@ int Cumulus::readWaypoints(QPtrList<Waypoint> *waypoints){
 int Cumulus::writeWaypoints(QPtrList<Waypoint> *waypoints){
   int ret=FR_NOTSUPPORTED;
   if (!_isConnected) {                  //check if we are connected
-    _errorinfo=i18n("Not connected to PDA!");
+    _errorinfo=tr("Not connected to PDA!");
     return FR_ERROR;
   }
 
   KTempFile f;                          //create a temporary file,
   f.setAutoDelete(true);                //  and set autodelete to true.
   if (f.status()!=0) {                  //check to see if a temporary file could be created.
-    _errorinfo=i18n("Could not create temporary file. Please check your writepermissions.");
+    _errorinfo=tr("Could not create temporary file. Please check your writepermissions.");
     return FR_ERROR;
   }
   CumulusWaypointFile* wpfile=new CumulusWaypointFile;  //create a new CumulusWaypointFile,
@@ -441,7 +440,7 @@ int Cumulus::writeWaypoints(QPtrList<Waypoint> *waypoints){
       KIO::chmod(wpurl, 0666); //make file readable and writable for everybody
       ret=FR_OK;
     } else {
-      _errorinfo=i18n("Upload of temporary file to PDA failed.");
+      _errorinfo=tr("Upload of temporary file to PDA failed.");
       ret=FR_ERROR;
     }
   }
@@ -504,7 +503,7 @@ FRDirEntry* Cumulus::getFlightInfo(QString filename) {
   bool isFirst = true;
   bool hasFirstB = false;
 
-  QString previewText, waypointText("<EM>" + i18n("no task given") + "</EM>");
+  QString previewText, waypointText("<EM>" + tr("no task given") + "</EM>");
 
   while (!stream.eof())
     {

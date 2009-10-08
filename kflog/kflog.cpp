@@ -35,7 +35,6 @@
 #include <kiconloader.h>
 #include <kio/netaccess.h>
 #include <kkeydialog.h>
-#include <klocale.h>
 #include <kmenubar.h>
 #include <knotifyclient.h>
 #include <kstdaction.h>
@@ -178,32 +177,32 @@ void KFLogApp::initActions()
   extern MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
 
-  new KAction(i18n("&Open Flight"), "fileopen", CTRL+Key_O,
+  new KAction(tr("&Open Flight"), "fileopen", CTRL+Key_O,
       this, SLOT(slotFileOpen()), actionCollection(), "file_open");
-  new KAction(i18n("&Open Task"), "fileopen",  CTRL+Key_T,
+  new KAction(tr("&Open Task"), "fileopen",  CTRL+Key_T,
       this, SLOT(slotTaskOpen()), actionCollection(), "file_open_task");
 
   fileOpenRecent = KStdAction::openRecent(this,
       SLOT(slotFileOpenRecent(const KURL&)), actionCollection());
-  fileClose = new KAction(i18n("&Close Flight"), "fileclose",
+  fileClose = new KAction(tr("&Close Flight"), "fileclose",
       CTRL+Key_W, &_globalMapContents, SLOT(closeFlight()),
       actionCollection(), "file_close");
 
-  fileRecorder = new KAction(i18n("Open Recorder"), "connect_no", 0, this,
+  fileRecorder = new KAction(tr("Open Recorder"), "connect_no", 0, this,
       SLOT(slotOpenRecorderDialog()), actionCollection(),
       "recorderdialog");
 
   KStdAction::print(this, SLOT(slotFilePrint()), actionCollection());
 
-  savePixmap = new KAction(i18n("Export to PNG..."), "image", 0, map,
+  savePixmap = new KAction(tr("Export to PNG..."), "image", 0, map,
       SLOT(slotSavePixmap()), actionCollection(), "file_save_as");
 
-  flightPrint = new KAction(i18n("Print Flightdata"), "fileprint", 0, this,
+  flightPrint = new KAction(tr("Print Flightdata"), "fileprint", 0, this,
       SLOT(slotFlightPrint()), actionCollection(), "file_print_preview");
 
   KStdAction::quit(this, SLOT(slotFileQuit()), actionCollection());
 
-  KActionMenu* mapMoveMenu = new KActionMenu(i18n("Move map"), "move",
+  KActionMenu* mapMoveMenu = new KActionMenu(tr("Move map"), "move",
       actionCollection(), "move_map");
   mapMoveMenu->setDelayed(false);
 
@@ -211,55 +210,55 @@ void KFLogApp::initActions()
       actionCollection());
   viewRedraw->setAccel(Key_F5);
 
-  viewCenterTask = new KAction(i18n("Center to &Task"), "centertask",
+  viewCenterTask = new KAction(tr("Center to &Task"), "centertask",
       Key_F6, map,
       SLOT(slotCenterToTask()), actionCollection(), "view_actual_size");
 
-  viewCenterFlight = new KAction(i18n("Center to &Flight"), "centerflight",
+  viewCenterFlight = new KAction(tr("Center to &Flight"), "centerflight",
       Key_F7, map,
       SLOT(slotCenterToFlight()), actionCollection(), "view_fit_to_page");
 
-  new KAction(i18n("Center to &Homesite"), "gohome",
+  new KAction(tr("Center to &Homesite"), "gohome",
       CTRL+Key_Home, &_globalMapMatrix,
       SLOT(slotCenterToHome()), actionCollection(), "view_fit_to_width");
 
-  viewCenterTo = new KAction(i18n("Center to..."), "centerto", Key_F8, this,
+  viewCenterTo = new KAction(tr("Center to..."), "centerto", Key_F8, this,
       SLOT(slotCenterTo()), actionCollection(), "view_fit_to_height");
 
-//  flightEvaluation = new KAction(i18n("Evaluation"), "flightevaluation",
+//  flightEvaluation = new KAction(tr("Evaluation"), "flightevaluation",
 //      CTRL+Key_E, this, SLOT(slotEvaluateFlight()), actionCollection(),
 //      "evaluate_flight");
 
 
-  mapMoveMenu->insert(new KAction(i18n("move map north-west"), "movemap_nw",
+  mapMoveMenu->insert(new KAction(tr("move map north-west"), "movemap_nw",
       KShortcut("7"),
       &_globalMapMatrix, SLOT(slotMoveMapNW()), actionCollection(), "move_map_nw"));
 
-  mapMoveMenu->insert(new KAction(i18n("move map north"), "movemap_n",
+  mapMoveMenu->insert(new KAction(tr("move map north"), "movemap_n",
       KShortcut("Up;8"),
       &_globalMapMatrix, SLOT(slotMoveMapN()), actionCollection(), "move_map_n"));
 
-  mapMoveMenu->insert(new KAction(i18n("move map northeast"), "movemap_ne",
+  mapMoveMenu->insert(new KAction(tr("move map northeast"), "movemap_ne",
       KShortcut("9"),
       &_globalMapMatrix, SLOT(slotMoveMapNE()), actionCollection(), "move_map_ne"));
 
-  mapMoveMenu->insert(new KAction(i18n("move map west"), "movemap_w",
+  mapMoveMenu->insert(new KAction(tr("move map west"), "movemap_w",
       KShortcut("Left;4"),
       &_globalMapMatrix, SLOT(slotMoveMapW()), actionCollection(), "move_map_w"));
 
-  mapMoveMenu->insert(new KAction(i18n("move map east"), "movemap_e",
+  mapMoveMenu->insert(new KAction(tr("move map east"), "movemap_e",
       KShortcut("Right;6"),
       &_globalMapMatrix, SLOT(slotMoveMapE()), actionCollection(), "move_map_e"));
 
-  mapMoveMenu->insert(new KAction(i18n("move map south-west"), "movemap_sw",
+  mapMoveMenu->insert(new KAction(tr("move map south-west"), "movemap_sw",
       KShortcut("1"),
       &_globalMapMatrix, SLOT(slotMoveMapSW()), actionCollection(), "move_map_sw"));
 
-  mapMoveMenu->insert(new KAction(i18n("move map south"), "movemap_s",
+  mapMoveMenu->insert(new KAction(tr("move map south"), "movemap_s",
       KShortcut("Down;2"),
       &_globalMapMatrix, SLOT(slotMoveMapS()), actionCollection(), "move_map_s"));
 
-  mapMoveMenu->insert(new KAction(i18n("move map south-east"), "movemap_se",
+  mapMoveMenu->insert(new KAction(tr("move map south-east"), "movemap_se",
       KShortcut("3"),
       &_globalMapMatrix, SLOT(slotMoveMapSE()), actionCollection(), "move_map_se"));
 
@@ -277,104 +276,104 @@ void KFLogApp::initActions()
   viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()),
       actionCollection());
 
-  viewData = new KToggleAction(i18n("Show Flight&data"), "view_detailed", 0, this,
+  viewData = new KToggleAction(tr("Show Flight&data"), "view_detailed", 0, this,
       SLOT(slotToggleDataView()), actionCollection(), "toggle_data_view");
 
-  viewHelpWindow = new KToggleAction(i18n("Show &HelpWindow"), "info",
+  viewHelpWindow = new KToggleAction(tr("Show &HelpWindow"), "info",
       CTRL+Key_H, this, SLOT(slotToggleHelpWindow()), actionCollection(),
       "toggle_help_window");
 
-  viewEvaluationWindow = new KToggleAction(i18n("Show &EvaluationWindow"), "history",
+  viewEvaluationWindow = new KToggleAction(tr("Show &EvaluationWindow"), "history",
       CTRL+Key_E, this, SLOT(slotToggleEvaluationWindow()), actionCollection(),
       "toggle_evaluation_window");
 
-  viewMapControl = new KToggleAction(i18n("Show Map&control"), 0, this,
+  viewMapControl = new KToggleAction(tr("Show Map&control"), 0, this,
       SLOT(slotToggleMapControl()), actionCollection(), "toggle_map_control");
 
-  viewMap = new KToggleAction(i18n("Show &Map"), 0, this,
+  viewMap = new KToggleAction(tr("Show &Map"), 0, this,
       SLOT(slotToggleMap()), actionCollection(), "toggle_map");
 
   // We can't use CTRL-W, because this shortcut is reserved for closing a file ...
-  viewWaypoints = new KToggleAction(i18n("Show &Waypoints"), "waypoint",
+  viewWaypoints = new KToggleAction(tr("Show &Waypoints"), "waypoint",
       CTRL+Key_R, this, SLOT(slotToggleWaypointsDock()), actionCollection(),
       "waypoints");
 
-  viewLegend = new KToggleAction(i18n("Show &Legend"), "blend",
+  viewLegend = new KToggleAction(tr("Show &Legend"), "blend",
       CTRL+Key_L, this, SLOT(slotToggleLegendDock()), actionCollection(),
       "toggle_legend");
 
-  viewObjectTree = new KToggleAction(i18n("Show KFLog&Browser"), "view_tree",
+  viewObjectTree = new KToggleAction(tr("Show KFLog&Browser"), "view_tree",
       CTRL+Key_B, this, SLOT(slotToggleObjectTreeDock()), actionCollection(),
       "toggle_objectTree");
 
-  flightOptimization = new KAction(i18n("Optimize"), "wizard", 0,
+  flightOptimization = new KAction(tr("Optimize"), "wizard", 0,
       this, SLOT(slotOptimizeFlight()), actionCollection(), "optimize_flight");
 
 
-  flightOptimizationOLC = new KAction(i18n("Optimize (OLC)"), "wizard", 0,
+  flightOptimizationOLC = new KAction(tr("Optimize (OLC)"), "wizard", 0,
       this, SLOT(slotOptimizeFlightOLC()), actionCollection(), "optimize_flight_olc");
 
 
   //Animation actions
-  animateFlightStart = new KAction(i18n("&Start Flight Animation"), "1rightarrow",
+  animateFlightStart = new KAction(tr("&Start Flight Animation"), "1rightarrow",
                         Key_F12, map, SLOT(slotAnimateFlightStart()), actionCollection(),
                         "start_animate");
-  animateFlightStop = new KAction(i18n("Stop Flight &Animation"), "player_stop",
+  animateFlightStop = new KAction(tr("Stop Flight &Animation"), "player_stop",
                         Key_F11, map, SLOT(slotAnimateFlightStop()), actionCollection(),
                         "stop_animate");
         //Stepping actions
-        stepFlightNext = new KAction(i18n("Next Flight Point"), "forward",
+        stepFlightNext = new KAction(tr("Next Flight Point"), "forward",
                         CTRL+Key_Up, map, SLOT(slotFlightNext()), actionCollection(),
                   "next_flight_point");
-        stepFlightPrev = new KAction(i18n("Prev Flight Point"), "back",
+        stepFlightPrev = new KAction(tr("Prev Flight Point"), "back",
                         CTRL+Key_Down, map, SLOT(slotFlightPrev()), actionCollection(),
                         "prev_flight_point");
-        stepFlightHome = new KAction(i18n("First Flight Point"), "start",
+        stepFlightHome = new KAction(tr("First Flight Point"), "start",
                         Key_Home, map, SLOT(slotFlightHome()), actionCollection(),
                         "first_flight_point");
-        stepFlightEnd = new KAction(i18n("Last Flight Point"), "finish",
+        stepFlightEnd = new KAction(tr("Last Flight Point"), "finish",
                         Key_End, map, SLOT(slotFlightEnd()), actionCollection(),
                         "last_flight_point");
-        stepFlightStepNext = new KAction(i18n("Step +10 Flight Points"), "stepforward",
+        stepFlightStepNext = new KAction(tr("Step +10 Flight Points"), "stepforward",
                         Key_PageUp, map, SLOT(slotFlightStepNext()), actionCollection(),
                         "next_step_flight_point");
-        stepFlightStepPrev = new KAction(i18n("Step -10 Flight Points"), "stepback",
+        stepFlightStepPrev = new KAction(tr("Step -10 Flight Points"), "stepback",
                         Key_PageDown, map, SLOT(slotFlightStepPrev()), actionCollection(),
                         "prev_step_flight_point");
 
         /**
          * Igc3d action
          */
-        viewIgc3D = new KAction(i18n("View flight in 3D"), "vectorgfx",
+        viewIgc3D = new KAction(tr("View flight in 3D"), "vectorgfx",
                         CTRL+Key_R, this, SLOT(slotFlightViewIgc3D()), actionCollection(),
                         "view_flight_3D");
 
         /**
          * OpenGL action
          */
-        viewIgcOpenGL = new KAction(i18n("View flight in 3D (OpenGL)"), "openglgfx",
+        viewIgcOpenGL = new KAction(tr("View flight in 3D (OpenGL)"), "openglgfx",
                         0, this, SLOT(slotFlightViewIgcOpenGL()), actionCollection(),
                         "view_flight_opengl");
 
   viewFlightDataType = new KSelectAction(
-      i18n("Show Flightdata"), "idea", 0,
+      tr("Show Flightdata"), "idea", 0,
       actionCollection(), "view_flight_data");
 
   connect(viewFlightDataType, SIGNAL(activated(int)), this,
       SLOT(slotSelectFlightData(int)));
 
   QStringList dataList;
-  dataList.append(i18n("Altitude"));
-  dataList.append(i18n("Cycling"));
-  dataList.append(i18n("Speed"));
-  dataList.append(i18n("Vario"));
-  dataList.append(i18n("Solid"));
+  dataList.append(tr("Altitude"));
+  dataList.append(tr("Cycling"));
+  dataList.append(tr("Speed"));
+  dataList.append(tr("Vario"));
+  dataList.append(tr("Solid"));
 
   viewFlightDataType->setItems(dataList);
   config-> setGroup("Flight");
   viewFlightDataType->setCurrentItem(config->readNumEntry("Draw Type", MapConfig::Altitude));
 
-  KActionMenu* flightMenu = new KActionMenu(i18n("F&light"),
+  KActionMenu* flightMenu = new KActionMenu(tr("F&light"),
       actionCollection(), "flight");
   flightMenu->insert(viewEvaluationWindow);
   flightMenu->insert(flightOptimization);
@@ -403,16 +402,16 @@ void KFLogApp::initActions()
 
   KStdAction::preferences(this, SLOT(slotConfigureKFLog()), actionCollection());
 
-  KActionMenu *w = new KActionMenu(i18n("&Window"), "igc",
+  KActionMenu *w = new KActionMenu(tr("&Window"), "igc",
       actionCollection(), "window");
   windowMenu = w->popupMenu();
   windowMenu->setCheckable(true);
   connect(windowMenu, SIGNAL(aboutToShow()), this, SLOT(slotWindowsMenuAboutToShow()));
 
-  KActionMenu *m = new KActionMenu(i18n("&New"), "filenew", actionCollection(), "file_new");
-  m->popupMenu()->insertItem(SmallIcon("waypoint"), i18n("&Waypoint"), waypoints, SLOT(slotNewWaypoint()));
-  m->popupMenu()->insertItem(SmallIcon("task"), i18n("&Task"), &_globalMapContents, SLOT(slotNewTask()), CTRL+Key_N);
-  m->popupMenu()->insertItem(i18n("&Flight group"), &_globalMapContents, SLOT(slotNewFlightGroup()));
+  KActionMenu *m = new KActionMenu(tr("&New"), "filenew", actionCollection(), "file_new");
+  m->popupMenu()->insertItem(SmallIcon("waypoint"), tr("&Waypoint"), waypoints, SLOT(slotNewWaypoint()));
+  m->popupMenu()->insertItem(SmallIcon("task"), tr("&Task"), &_globalMapContents, SLOT(slotNewTask()), CTRL+Key_N);
+  m->popupMenu()->insertItem(tr("&Flight group"), &_globalMapContents, SLOT(slotNewFlightGroup()));
 
   createGUI();
 }
@@ -454,14 +453,14 @@ void KFLogApp::initStatusBar()
 void KFLogApp::initView()
 {
   // we need icons for these parts ...
-  mapViewDock = createDockWidget("Map", 0, 0, i18n("Map"));
-  dataViewDock = createDockWidget("Flight-Data", 0, 0, i18n("Flight-Data"));
-  helpWindowDock = createDockWidget("Help", 0, 0, i18n("Help"));
-  evaluationWindowDock = createDockWidget("Evaluation", 0, 0, i18n("Evaluation"));
-  mapControlDock = createDockWidget("Map-Control", 0, 0, i18n("Map-Control"));
-  waypointsDock = createDockWidget("Waypoints", 0, 0, i18n("Waypoints"));
-  legendDock = createDockWidget("Legend", 0, 0, i18n("Legend"));
-  objectTreeDock = createDockWidget("LoadedObjects", 0, 0, i18n("KFLog Browser"));
+  mapViewDock = createDockWidget("Map", 0, 0, tr("Map"));
+  dataViewDock = createDockWidget("Flight-Data", 0, 0, tr("Flight-Data"));
+  helpWindowDock = createDockWidget("Help", 0, 0, tr("Help"));
+  evaluationWindowDock = createDockWidget("Evaluation", 0, 0, tr("Evaluation"));
+  mapControlDock = createDockWidget("Map-Control", 0, 0, tr("Map-Control"));
+  waypointsDock = createDockWidget("Waypoints", 0, 0, tr("Waypoints"));
+  legendDock = createDockWidget("Legend", 0, 0, tr("Legend"));
+  objectTreeDock = createDockWidget("LoadedObjects", 0, 0, tr("KFLog Browser"));
   extern MapContents _globalMapContents;
 
 
@@ -709,18 +708,18 @@ void KFLogApp::slotSetProgress(int value)  { statusProgress->setValue(value); }
 
 void KFLogApp::slotFileOpen()
 {
-  slotStatusMsg(i18n("Opening file..."));
+  slotStatusMsg(tr("Opening file..."));
 
   KFileDialog* dlg = new KFileDialog(flightDir, "*.igc *.IGC", this,
-      i18n("Select IGC-File"), true);
+      tr("Select IGC-File"), true);
   IGCPreview* preview = new IGCPreview(dlg);
   dlg->setPreviewWidget(preview);
   QString filter;
-  filter.append("*.igc *.flightgear *.trk *.gdn |"+i18n("All flight type files"));
-  filter.append("\n*.igc|"+i18n("IGC (*.igc)"));
-  filter.append("\n*.trk *.gdn|"+i18n("Garmin (*.trk, *.gdn)"));
+  filter.append("*.igc *.flightgear *.trk *.gdn |"+tr("All flight type files"));
+  filter.append("\n*.igc|"+tr("IGC (*.igc)"));
+  filter.append("\n*.trk *.gdn|"+tr("Garmin (*.trk, *.gdn)"));
   dlg->setFilter(filter);
-  dlg->setCaption(i18n("Open flight"));
+  dlg->setCaption(tr("Open flight"));
   dlg->exec();
 
   KURL fUrl = dlg->selectedURL();
@@ -734,7 +733,7 @@ void KFLogApp::slotFileOpen()
       fName = fUrl.path();
   else if(!KIO::NetAccess::download(fUrl, fName))
     {
-      KNotifyClient::event(i18n("Can not download file %1").arg(fUrl.url()));
+      KNotifyClient::event(tr("Can not download file %1").arg(fUrl.url()));
       return;
     }
 
@@ -745,12 +744,12 @@ void KFLogApp::slotFileOpen()
   if(flightLoader.openFlight(file))
       fileOpenRecent->addURL(fUrl);
 
-  slotStatusMsg(i18n("Ready."));
+  slotStatusMsg(tr("Ready."));
 }
 
 void KFLogApp::slotFileOpenRecent(const KURL& url)
 {
-  slotStatusMsg(i18n("Opening file..."));
+  slotStatusMsg(tr("Opening file..."));
 
   extern MapContents _globalMapContents;
   FlightLoader flightLoader;
@@ -774,22 +773,22 @@ void KFLogApp::slotFileOpenRecent(const KURL& url)
        } // .kflogtsk
     } //isLocalFile
 
-  slotStatusMsg(i18n("Ready."));
+  slotStatusMsg(tr("Ready."));
 }
 
 void KFLogApp::slotFilePrint()
 {
-  slotStatusMsg(i18n("Printing..."));
+  slotStatusMsg(tr("Printing..."));
 
   // viewCenterFlight is enabled, when a flight is loaded ...
   MapPrint::MapPrint(viewCenterFlight->isEnabled());
 
-  slotStatusMsg(i18n("Ready."));
+  slotStatusMsg(tr("Ready."));
 }
 
 void KFLogApp::slotFlightPrint()
 {
-  slotStatusMsg(i18n("Printing..."));
+  slotStatusMsg(tr("Printing..."));
 
   extern MapContents _globalMapContents;
   BaseFlightElement *f = _globalMapContents.getFlight();
@@ -805,16 +804,16 @@ void KFLogApp::slotFlightPrint()
             break;
           default:
             QString tmp;
-            tmp.sprintf(i18n("Not yet available for type: %d"), f->getTypeID());
-            QMessageBox::warning(0, i18n("Type not available"), tmp, QMessageBox::Ok, 0);
+            tmp.sprintf(tr("Not yet available for type: %d"), f->getTypeID());
+            QMessageBox::warning(0, tr("Type not available"), tmp, QMessageBox::Ok, 0);
         }
     }
-  slotStatusMsg(i18n("Ready."));
+  slotStatusMsg(tr("Ready."));
 }
 
 void KFLogApp::slotFileQuit()
 {
-  slotStatusMsg(i18n("Exiting..."));
+  slotStatusMsg(tr("Exiting..."));
   //saveOptions();   //Now done in queryClose
 
   close();
@@ -822,26 +821,26 @@ void KFLogApp::slotFileQuit()
 
 void KFLogApp::slotViewToolBar()
 {
-  slotStatusMsg(i18n("Toggling toolbar..."));
+  slotStatusMsg(tr("Toggling toolbar..."));
 
   if(!viewToolBar->isChecked())
       toolBar("mainToolBar")->hide();
   else
       toolBar("mainToolBar")->show();
 
-  slotStatusMsg(i18n("Ready."));
+  slotStatusMsg(tr("Ready."));
 }
 
 void KFLogApp::slotViewStatusBar()
 {
-  slotStatusMsg(i18n("Toggle the statusbar..."));
+  slotStatusMsg(tr("Toggle the statusbar..."));
 
   if(!viewStatusBar->isChecked())
       statusBar()->hide();
   else
       statusBar()->show();
 
-  slotStatusMsg(i18n("Ready."));
+  slotStatusMsg(tr("Ready."));
 }
 
 void KFLogApp::slotStatusMsg(const QString &text)
@@ -946,7 +945,7 @@ void KFLogApp::slotSelectFlightData(int id)
 
 void KFLogApp::slotCenterTo()
 {
-  CenterToDialog* center = new CenterToDialog(this, i18n("center-to-dialog"));
+  CenterToDialog* center = new CenterToDialog(this, tr("center-to-dialog"));
 
   extern MapMatrix _globalMapMatrix;
 
@@ -1226,10 +1225,10 @@ void KFLogApp::initSurfaces()
 {
   surfaces.setAutoDelete(true);
 
-  surfaces.append(new TranslationElement(Airport::Unknown, i18n("Unknown")));
-  surfaces.append(new TranslationElement(Airport::Grass, i18n("Grass")));
-  surfaces.append(new TranslationElement(Airport::Asphalt, i18n("Asphalt")));
-  surfaces.append(new TranslationElement(Airport::Concrete, i18n("Concrete")));
+  surfaces.append(new TranslationElement(Airport::Unknown, tr("Unknown")));
+  surfaces.append(new TranslationElement(Airport::Grass, tr("Grass")));
+  surfaces.append(new TranslationElement(Airport::Asphalt, tr("Asphalt")));
+  surfaces.append(new TranslationElement(Airport::Concrete, tr("Concrete")));
 
   surfaces.sort();
 }
@@ -1239,35 +1238,35 @@ void KFLogApp::initTypes()
   waypointTypes.setAutoDelete(true);
 
   // don't know if we really need all of them
-  waypointTypes.append(new TranslationElement(BaseMapElement::NotSelected, i18n("(not selected)")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::AerialRailway, i18n("Aerial railway")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Airfield, i18n("Airfield")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Airport, i18n("Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::AmbHeliport, i18n("Ambul. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Balloon, i18n("Balloon")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::City, i18n("City")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::CivHeliport, i18n("Civil Heliport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::IntAirport, i18n("Int. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::MilAirport, i18n("Mil. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::CivMilAirport, i18n("Civil/Mil. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::ClosedAirfield, i18n("Closed Airfield")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Glidersite, i18n("Glider site")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::HangGlider, i18n("Hang glider")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Highway, i18n("Highway")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Landmark, i18n("Landmark")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::MilHeliport, i18n("Mil. Heliport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::UltraLight, i18n("Ultralight")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Parachute, i18n("Parachute")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Outlanding, i18n("Outlanding")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Obstacle, i18n("Obstacle")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::ObstacleGroup, i18n("Obstacle group")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacleGroup, i18n("Obstacle group (lighted)")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacle, i18n("Obstacle (lighted)")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Railway, i18n("Railway")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Road, i18n("Road")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Village, i18n("Village,City")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Turnpoint, i18n("Turnpoint")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Thermal, i18n("Thermal")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::NotSelected, tr("(not selected)")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::AerialRailway, tr("Aerial railway")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Airfield, tr("Airfield")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Airport, tr("Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::AmbHeliport, tr("Ambul. Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Balloon, tr("Balloon")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::City, tr("City")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::CivHeliport, tr("Civil Heliport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::IntAirport, tr("Int. Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::MilAirport, tr("Mil. Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::CivMilAirport, tr("Civil/Mil. Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::ClosedAirfield, tr("Closed Airfield")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Glidersite, tr("Glider site")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::HangGlider, tr("Hang glider")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Highway, tr("Highway")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Landmark, tr("Landmark")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::MilHeliport, tr("Mil. Heliport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::UltraLight, tr("Ultralight")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Parachute, tr("Parachute")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Outlanding, tr("Outlanding")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Obstacle, tr("Obstacle")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::ObstacleGroup, tr("Obstacle group")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacleGroup, tr("Obstacle group (lighted)")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacle, tr("Obstacle (lighted)")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Railway, tr("Railway")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Road, tr("Road")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Village, tr("Village,City")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Turnpoint, tr("Turnpoint")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Thermal, tr("Thermal")));
 
   waypointTypes.sort();
 }
@@ -1280,11 +1279,11 @@ void KFLogApp::slotSavePixmap( QUrl url, int width, int height ){
 /** No descriptions */
 void KFLogApp::slotTaskOpen()
 {
-  slotStatusMsg(i18n("Opening file..."));
+  slotStatusMsg(tr("Opening file..."));
 
   KFileDialog* dlg = new KFileDialog(flightDir, "*.kflogtsk *.KFLOGTSK", this,
-      i18n("Select Task-File"), true);
-  dlg->setCaption(i18n("Open task"));
+      tr("Select Task-File"), true);
+  dlg->setCaption(tr("Open task"));
   dlg->exec();
 
   KURL fUrl = dlg->selectedURL();
@@ -1298,7 +1297,7 @@ void KFLogApp::slotTaskOpen()
       fName = fUrl.path();
   else if(!KIO::NetAccess::download(fUrl, fName))
     {
-      KNotifyClient::event(i18n("Can not download file %1").arg(fUrl.url()));
+      KNotifyClient::event(tr("Can not download file %1").arg(fUrl.url()));
       return;
     }
 
@@ -1309,7 +1308,7 @@ void KFLogApp::slotTaskOpen()
   if (_globalMapContents.loadTask(file))
       fileOpenRecent->addURL(fUrl);
 
-  slotStatusMsg(i18n("Ready."));
+  slotStatusMsg(tr("Ready."));
 }
 
 /* Slot to set filename for WaypointCatalog */
@@ -1323,9 +1322,9 @@ void KFLogApp::initTaskTypes()
 {
   taskTypes.setAutoDelete(true);
 
-  taskTypes.append(new TranslationElement(FlightTask::Route, i18n("Traditional Route")));
-  taskTypes.append(new TranslationElement(FlightTask::FAIArea, i18n("FAI Area")));
-  //taskTypes.append(new TranslationElement(FlightTask::AAT, i18n("Area Assigned")));
+  taskTypes.append(new TranslationElement(FlightTask::Route, tr("Traditional Route")));
+  taskTypes.append(new TranslationElement(FlightTask::FAIArea, tr("FAI Area")));
+  //taskTypes.append(new TranslationElement(FlightTask::AAT, tr("Area Assigned")));
 
   taskTypes.sort();
 }

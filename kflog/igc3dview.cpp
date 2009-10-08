@@ -20,9 +20,6 @@
 // Qt headers
 #include <qmessagebox.h>
 
-// KDE headers
-#include <klocale.h>
-
 // Application headers
 #include "mapcontents.h"
 
@@ -30,15 +27,15 @@
 #define X_ABSTAND 100
 #define Y_ABSTAND 30
 
-#define DISPLAY_HELP_MESSAGE QMessageBox::information( this, i18n("Help for 3D view"), \
-                                      i18n("Basic key functions:\n\n" \
+#define DISPLAY_HELP_MESSAGE QMessageBox::information( this, tr("Help for 3D view"), \
+                                      tr("Basic key functions:\n\n" \
                                                                                                 "Left/Right :\t rotate \n"  \
                                                                                                 "Up/Down : \t tilt \n"        \
                                                                                                 "+/- : \t zoom \n"               \
                                                                                                 "S : \t \t toggle shadow \n" \
                                                                                                 "B : \t \t toggle back \n"       \
                                                                                                 "F : \t \t toggle front \n"),     \
-                                      i18n("&Ok"), 0,  0 );
+                                      tr("&Ok"), 0,  0 );
 
 
 

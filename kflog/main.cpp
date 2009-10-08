@@ -17,7 +17,6 @@
 
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
-#include <klocale.h>
 #include <kconfig.h>
 
 #include <qtimer.h>
@@ -79,9 +78,9 @@ int main(int argc, char *argv[])
    * but this version works!
    */
   KAboutData aboutData( "kflog", "KFLog",
-      VERSION, qstrdup(i18n("KFLog - The K-Flight-Logger")), KAboutData::License_GPL,
+      VERSION, qstrdup(QObject::tr("KFLog - The K-Flight-Logger")), KAboutData::License_GPL,
       "(c) 2001-2009, The KFLog-Team",
-      qstrdup(i18n("The maps used for KFLog are derived from the\n"
+      qstrdup(QObject::tr("The maps used for KFLog are derived from the\n"
           "void-filled CGIAR SRTM data (http://srtm.csi.cgiar.org),\n"
           "the GTOPO30-data, and the Digital Chart of the World.\n"
           "If You have no mapfiles installed, please visit\n"
@@ -89,26 +88,26 @@ int main(int argc, char *argv[])
       "http://www.kflog.org", "kflog-devel@kflog.org");
 
   aboutData.addAuthor("Florian Ehinger",
-      qstrdup(i18n("Maintenance, Core-developer, Mapdata")), "florian@kflog.org");    
+      qstrdup(QObject::tr("Maintenance, Core-developer, Mapdata")), "florian@kflog.org");    
   aboutData.addAuthor("Heiner Lamprecht",
-      qstrdup(i18n("Maintenance, Core-developer")), "heiner@kflog.org");
+      qstrdup(QObject::tr("Maintenance, Core-developer")), "heiner@kflog.org");
   aboutData.addAuthor("Hendrik Hoeth",
-      qstrdup(i18n("Maintenance, Developer, Mapdata")), "hoeth@linta.de");
+      qstrdup(QObject::tr("Maintenance, Developer, Mapdata")), "hoeth@linta.de");
   aboutData.addAuthor("Andr\303\251 Somers",
-      qstrdup(i18n("Developer (Waypoint-handling, Plugin architecture, ...)")), "andre@kflog.org");
+      qstrdup(QObject::tr("Developer (Waypoint-handling, Plugin architecture, ...)")), "andre@kflog.org");
   aboutData.addAuthor("Christof Bodner",
-      qstrdup(i18n("Developer (OLC Optimization)")), "christof@kflog.org");      
+      qstrdup(QObject::tr("Developer (OLC Optimization)")), "christof@kflog.org");      
   aboutData.addAuthor("Eggert Ehmke",
-      qstrdup(i18n("Developer")), "eggert@kflog.org");      
+      qstrdup(QObject::tr("Developer")), "eggert@kflog.org");      
   aboutData.addAuthor("Harald Maier",
-      qstrdup(i18n("Developer (Waypoint-Dialog, Task-handling)")), "harry@kflog.org");
+      qstrdup(QObject::tr("Developer (Waypoint-Dialog, Task-handling)")), "harry@kflog.org");
   aboutData.addAuthor("Thomas Nielsen",
-      qstrdup(i18n("Developer (3D-Dialog)")), "thomas@kflog.org");
+      qstrdup(QObject::tr("Developer (3D-Dialog)")), "thomas@kflog.org");
   aboutData.addAuthor("Jan Krüger",
-      qstrdup(i18n("Developer (3D-Dialog)")), "jan@kflog.org");
+      qstrdup(QObject::tr("Developer (3D-Dialog)")), "jan@kflog.org");
 
-  aboutData.setTranslator(qstrdup(i18n("_: NAME OF TRANSLATORS\nYour names")),
-    qstrdup(i18n("_: EMAIL OF TRANSLATORS\nYour emails")));
+  aboutData.setTranslator(qstrdup(QObject::tr("_: NAME OF TRANSLATORS\nYour names")),
+    qstrdup(QObject::tr("_: EMAIL OF TRANSLATORS\nYour emails")));
 
   KCmdLineArgs::init( argc, argv, &aboutData );
   KCmdLineArgs::addCmdLineOptions( options );

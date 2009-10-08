@@ -23,7 +23,6 @@
 #include "mapmatrix.h"
 //#include <mapprintdialogpage.h>
 
-#include <klocale.h>
 #include <kprinter.h>
 
 #include <qgroupbox.h>
@@ -56,32 +55,32 @@ MapPrintDialogPage::MapPrintDialogPage(QStringList sList, QWidget *parent,
   : KPrintDialogPage(parent,name),
     scaleList(sList)
 {
-  setTitle(i18n("Map"));
+  setTitle(QObject::tr("Map"));
 
-  QGroupBox* scaleBox = new QGroupBox(i18n("Map print"), this);
+  QGroupBox* scaleBox = new QGroupBox(QObject::tr("Map print"), this);
 
   scaleSelect = new QComboBox(this);
   scaleSelect->insertStringList(scaleList);
 
-  printTitle = new QCheckBox(i18n("Print Pagetitle"), this);
+  printTitle = new QCheckBox(QObject::tr("Print Pagetitle"), this);
   titleInput = new QLineEdit(this);
 
   connect(printTitle, SIGNAL(toggled(bool)), titleInput,
       SLOT(setEnabled(bool)));
 
-  printLegend = new QCheckBox(i18n("Print Legend"), this);
-  printText = new QCheckBox(i18n("Print Text"), this);
+  printLegend = new QCheckBox(QObject::tr("Print Legend"), this);
+  printText = new QCheckBox(QObject::tr("Print Text"), this);
   printText->setChecked(true);
 
   if(printFlight)
     {
       // Hier müssen noch Infos über den Flug hin!!!
-      titleInput->setText(i18n("Flight Track") + ":");
+      titleInput->setText(QObject::tr("Flight Track") + ":");
     }
 
   QGridLayout* pageLayout = new QGridLayout(this, 5, 7);
   pageLayout->addMultiCellWidget(scaleBox, 0, 6, 0, 4);
-  pageLayout->addWidget(new QLabel(i18n("Map scale") + ":", this), 1, 1);
+  pageLayout->addWidget(new QLabel(QObject::tr("Map scale") + ":", this), 1, 1);
   pageLayout->addWidget(scaleSelect, 1, 3);
   pageLayout->addWidget(printTitle, 3, 1);
   pageLayout->addWidget(titleInput, 3, 3);
@@ -175,8 +174,8 @@ MapPrint::MapPrint(bool flightLoaded)
 
   if(flightLoaded)
     {
-      scaleList.append(i18n("Center to Flight"));
-      scaleList.append(i18n("Center to Task"));
+      scaleList.append(QObject::tr("Center to Flight"));
+      scaleList.append(QObject::tr("Center to Task"));
     }
 
   dialogPage = new MapPrintDialogPage(scaleList, 0, "MapPrintDialogPage", false);
@@ -185,7 +184,7 @@ MapPrint::MapPrint(bool flightLoaded)
 //  KPrinter printer;
   printer.addDialogPage(dialogPage);
 
-  if(!printer.setup(0, i18n("Map print"), true))  return;
+  if(!printer.setup(0, QObject::tr("Map print"), true))  return;
 
   scaleRange = new double[6];
   scaleRange[0] = 1000.0 / 72 * 25.4;          /* 1:1.000.000 */

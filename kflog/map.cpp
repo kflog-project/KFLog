@@ -18,7 +18,6 @@
 #include <cmath>
 
 #include <kconfig.h>
-#include <klocale.h>
 #include <kstddirs.h>
 #include <kiconloader.h>
 
@@ -128,7 +127,7 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
   prePlanPos.setX(-999);
   prePlanPos.setY(-999);
 
-  QWhatsThis::add(this, i18n("<B>The map</B>"
+  QWhatsThis::add(this, QObject::tr("<B>The map</B>"
                              "<P>To move or scale the map, please use the buttons in the "
                              "<B>Map-control</B>-area. Or center the map to the current "
                              "cursor-positon by using the right mouse-button.</P>"
@@ -474,7 +473,7 @@ QString getInfoString (Waypoint* wp)
   else
     text += "<TD></TD>";
 
-  text += "<TD>" + i18n("Waypoint:") + " " + wp->name;
+  text += "<TD>" + QObject::tr("Waypoint:") + " " + wp->name;
   if (!wp->icao.isEmpty())
     text += QString (" (%1)").arg(wp->icao);
   text += "</TD></TR>";
@@ -613,37 +612,37 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
               if(wpList.at(loop)->sector1 != 0)
                 {
                   timeText = printTime(wpList.at(loop)->sector1);
-                  tmpText = i18n("Sector 1");
+                  tmpText = QObject::tr("Sector 1");
                 }
               else if(wpList.at(loop)->sector2 != 0)
                 {
                   timeText = printTime(wpList.at(loop)->sector2);
-                  tmpText = i18n("Sector 2");
+                  tmpText = QObject::tr("Sector 2");
                 }
 
               else if(wpList.at(loop)->sectorFAI != 0)
                 {
                   timeText = printTime(wpList.at(loop)->sectorFAI);
-                  tmpText = i18n("FAI-Sector");
+                  tmpText = QObject::tr("FAI-Sector");
                 }
               else
                 {
-                  timeText = "&nbsp;" + i18n("not reached");
+                  timeText = "&nbsp;" + QObject::tr("not reached");
                 }
 
               switch(wpList.at(loop)->type)
                 {
                   case FlightTask::TakeOff:
-                    tmpText = i18n("Take Off");
+                    tmpText = QObject::tr("Take Off");
                     break;
                   case FlightTask::Begin:
-                    tmpText = i18n("Begin of task");
+                    tmpText = QObject::tr("Begin of task");
                     break;
                   case FlightTask::End:
-                    tmpText = i18n("End of task");
+                    tmpText = QObject::tr("End of task");
                     break;
                   case FlightTask::Landing:
-                    tmpText = i18n("Landing");
+                    tmpText = QObject::tr("Landing");
                     break;
                 }
 
@@ -676,7 +675,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
     return;
   }
 
-  text += "<B>" + i18n("Airspace-Structure") + ":</B><UL>";
+  text += "<B>" + QObject::tr("Airspace-Structure") + ":</B><UL>";
 
   for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
     {
@@ -831,7 +830,7 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
               if (waypointDlg->name->text().isEmpty())
                 {
                    // Perhaps we should add this feature to the Waypoint Dialog
-                   w->name = i18n("New WAYPOINT");
+                   w->name = QObject::tr("New WAYPOINT");
                 }
               else
                 {
@@ -1488,9 +1487,9 @@ void Map::slotSavePixmap(QUrl fUrl, int width, int height){
     QFont font;
     int by=pixBuffer.height()-35;
     int bw=pixBuffer.width()-10;
-    QString text=i18n("%1 with %2 (%3) on %4").arg(flight->getPilot()).arg(flight->getType()).arg(flight->getID()).arg(flight->getDate().toString());
+    QString text=QObject::tr("%1 with %2 (%3) on %4").arg(flight->getPilot()).arg(flight->getType()).arg(flight->getID()).arg(flight->getDate().toString());
     bufferP.setFont(font);
-          bufferP.drawText(10,by+15,bw,25,AlignLeft,i18n("created by KFLog (www.kflog.org)"));
+          bufferP.drawText(10,by+15,bw,25,AlignLeft,QObject::tr("created by KFLog (www.kflog.org)"));
     font.setBold(true);
     font.setPointSize( 18 );
     bufferP.setFont(font);
@@ -1507,7 +1506,7 @@ void Map::slotSavePixmap(QUrl fUrl, int width, int height){
 
 void Map::slotSavePixmap()
 {
-  QFileDialog* dlg = new QFileDialog(this, i18n("Select PNG-File"), true);
+  QFileDialog* dlg = new QFileDialog(this, QObject::tr("Select PNG-File"), true);
   dlg->addFilter("*.png *.PNG");
   dlg->exec();
   slotSavePixmap(dlg->url(),0,0);
@@ -1541,7 +1540,7 @@ void Map::slotActivatePlanning()
       prePlanPos.setX(-999);
       prePlanPos.setY(-999);
 //warning("start");
-      mainApp->slotStatusMsg(i18n("To finish the planing, press <STRG> and the right mouse button!"));
+      mainApp->slotStatusMsg(QObject::tr("To finish the planing, press <STRG> and the right mouse button!"));
     }
   else
     {
@@ -2455,22 +2454,22 @@ void Map::__createPopupMenu(){
 
   mapPopup=new KPopupMenu(this);
 
-  mapPopup->insertTitle(/*SmallIcon("task")*/ 0, i18n("Map"), 0);
-  idMpAddWaypoint  = mapPopup->insertItem(SmallIcon("filenew"), i18n("&New waypoint"), this, SLOT(slotMpNewWaypoint()));
-  idMpEditWaypoint = mapPopup->insertItem(SmallIcon("wizard"), i18n("&Edit waypoint"), this, SLOT(slotMpEditWaypoint()));
-  idMpDeleteWaypoint = mapPopup->insertItem(SmallIcon("editdelete"), i18n("&Delete waypoint"), this, SLOT(slotMpDeleteWaypoint()));
+  mapPopup->insertTitle(/*SmallIcon("task")*/ 0, QObject::tr("Map"), 0);
+  idMpAddWaypoint  = mapPopup->insertItem(SmallIcon("filenew"), QObject::tr("&New waypoint"), this, SLOT(slotMpNewWaypoint()));
+  idMpEditWaypoint = mapPopup->insertItem(SmallIcon("wizard"), QObject::tr("&Edit waypoint"), this, SLOT(slotMpEditWaypoint()));
+  idMpDeleteWaypoint = mapPopup->insertItem(SmallIcon("editdelete"), QObject::tr("&Delete waypoint"), this, SLOT(slotMpDeleteWaypoint()));
 
   mapPopup->insertSeparator();
 
-  idMpEndPlanning  = mapPopup->insertItem(i18n("&End taskplanning"), this, SLOT(slotMpEndPlanning()));
-  mapPopup->insertItem(SmallIcon("info"), i18n("&Show map info..."), this, SLOT(slotMpShowMapInfo()));
+  idMpEndPlanning  = mapPopup->insertItem(QObject::tr("&End taskplanning"), this, SLOT(slotMpEndPlanning()));
+  mapPopup->insertItem(SmallIcon("info"), QObject::tr("&Show map info..."), this, SLOT(slotMpShowMapInfo()));
 
   mapPopup->insertSeparator();
 
-  idMpCenterMap  = mapPopup->insertItem(SmallIcon("centerto"), i18n("&Center map"), this, SLOT(slotMpCenterMap()));
+  idMpCenterMap  = mapPopup->insertItem(SmallIcon("centerto"), QObject::tr("&Center map"), this, SLOT(slotMpCenterMap()));
 
-  idMpZoomIn = mapPopup->insertItem(SmallIcon("viewmag+"), i18n("Zoom &In"), &_globalMapMatrix, SLOT(slotZoomIn()));
-  idMpZoomOut = mapPopup->insertItem(SmallIcon("viewmag-"), i18n("Zoom &Out"), &_globalMapMatrix, SLOT(slotZoomOut()));
+  idMpZoomIn = mapPopup->insertItem(SmallIcon("viewmag+"), QObject::tr("Zoom &In"), &_globalMapMatrix, SLOT(slotZoomIn()));
+  idMpZoomOut = mapPopup->insertItem(SmallIcon("viewmag-"), QObject::tr("Zoom &Out"), &_globalMapMatrix, SLOT(slotZoomOut()));
   /*
   idMpAddTaskPoint
  */
@@ -2722,7 +2721,7 @@ void Map::__drawScale(){
   scalePMask.drawLine(this->width()-5,this->height()-9,this->width()-5,this->height()-1);//right endbar
 
   //get the string to draw
-  QString scaleText=i18n("%1 km").arg(len);
+  QString scaleText=QObject::tr("%1 km").arg(len);
   //QString scaleText=barLen.getText(true,0);
   //get some metrics for this string
   QRect txtRect=scaleP.fontMetrics().boundingRect(scaleText);

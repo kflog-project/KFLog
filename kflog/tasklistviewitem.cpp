@@ -21,7 +21,6 @@
 
 #include <qurl.h>
 
-#include <klocale.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 
@@ -60,32 +59,31 @@ void TaskListViewItem::update(){
 /** This function populates the node with data from the task */
 void TaskListViewItem::createChildren(){
   QUrl url(task->getFileName());
-  KLocale loc("");
   QString wpName;
   
   setText(0,url.fileName());
   setText(1,task->getPlanningTypeString());
   //setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup, KIcon::SizeSmall));
 
-  QListViewItem * subItem=new QListViewItem((QListViewItem*)this,i18n("Type"),task->getPlanningTypeString());
+  QListViewItem * subItem=new QListViewItem((QListViewItem*)this,QObject::tr("Type"),task->getPlanningTypeString());
   subItem->setSelectable(false);
-  subItem=new QListViewItem((QListViewItem*)this,subItem,i18n("Distance"),task->getTaskDistanceString());
+  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Distance"),task->getTaskDistanceString());
   subItem->setSelectable(false);
-  subItem=new QListViewItem((QListViewItem*)this,subItem,i18n("Points"),task->getPointsString());
+  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Points"),task->getPointsString());
   subItem->setSelectable(false);
 
   if (!task->getWPList().isEmpty()) {
     int wpCount=task->getWPList().count();
-    QListViewItem * wpSubItem=new QListViewItem((QListViewItem*)this,subItem,i18n("Waypoints"),i18n("%1 waypoints in task").arg(wpCount));
+    QListViewItem * wpSubItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Waypoints"),QObject::tr("%1 waypoints in task").arg(wpCount));
     wpSubItem->setSelectable(false);
     wpSubItem->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("waypoint", KIcon::NoGroup, KIcon::SizeSmall));
 
     for (int i=0;i<wpCount;i++) {
-      wpName=i18n("Turnpoint");
-      if (i==0) wpName=i18n("Takeoff");
-      if (i==1) wpName=i18n("Start");
-      if (i==wpCount-2) wpName=i18n("Finish");
-      if (i==wpCount-1) wpName=i18n("Landing");
+      wpName=QObject::tr("Turnpoint");
+      if (i==0) wpName=QObject::tr("Takeoff");
+      if (i==1) wpName=QObject::tr("Start");
+      if (i==wpCount-2) wpName=QObject::tr("Finish");
+      if (i==wpCount-1) wpName=QObject::tr("Landing");
 
       subItem=new QListViewItem(wpSubItem,subItem,wpName,task->getWPList().at(i)->name);
       subItem->setSelectable(false);

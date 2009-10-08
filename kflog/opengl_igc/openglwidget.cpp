@@ -17,7 +17,6 @@
 
 #include <qlayout.h>
 #include <kmessagebox.h>
-#include <klocale.h>
 #include <qlabel.h>
 #include "openglwidget.h"
 #include "glview.h"
@@ -29,7 +28,7 @@ OpenGLWidget::OpenGLWidget(QWidget* parent, char *name)
 
    if (!glview->isValid())
    {
-     QString text=i18n("No OpenGL extension for display found! Check your configuration!");
+     QString text=tr("No OpenGL extension for display found! Check your configuration!");
      KMessageBox::error(0, "<qt>" + text +"</qt>");
      QLabel* label= new QLabel(text,this);
      label->setAlignment( AlignHCenter|AlignVCenter );

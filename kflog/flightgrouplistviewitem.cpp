@@ -18,7 +18,6 @@
 #include "flight.h"
 #include "flightgroup.h"
 #include <kglobal.h>
-#include <klocale.h>
 #include <kiconloader.h>
 
 FlightGroupListViewItem::FlightGroupListViewItem(QListViewItem * parent, FlightGroup * flightGroup):QListViewItem(parent){
@@ -60,7 +59,7 @@ void FlightGroupListViewItem::createChildren(){
   QPtrList<Flight::Flight> flights = flightGroup->getFlightList();
 
   setText(0,flightGroup->getFileName());
-  setText(1,tmp.sprintf("%d ", flights.count())+i18n("flights"));
+  setText(1,tmp.sprintf("%d ", flights.count())+QObject::tr("flights"));
   //setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup, KIcon::SizeSmall));
 
   QListViewItem * subItem;

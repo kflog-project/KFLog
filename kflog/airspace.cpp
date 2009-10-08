@@ -17,8 +17,6 @@
 
 #include "airspace.h"
 
-#include <klocale.h>
-
 Airspace::Airspace(const QString& n, unsigned int t, const QPointArray& pA, unsigned int u,
       unsigned int uType, unsigned int l, unsigned int lType)
   : LineElement(n, t, pA),
@@ -87,7 +85,7 @@ QString Airspace::getInfoString() const
         tempL.sprintf("FL %d", lLimit);
         break;
       case UNLTD:
-        tempL = i18n("Unlimited");
+        tempL = QObject::tr("Unlimited");
       default: ;
     }
 
@@ -109,7 +107,7 @@ QString Airspace::getInfoString() const
         tempU.sprintf("FL %d", uLimit);
         break;
       case UNLTD:
-        tempU = i18n("Unlimited");
+        tempU = QObject::tr("Unlimited");
       default: ;
     }
 
@@ -155,7 +153,7 @@ QString Airspace::getInfoString() const
         text = "TMZ";
         break;
       default:
-        text = "<B><EM>" + i18n("unknown") + "</EM></B>";
+        text = "<B><EM>" + QObject::tr("unknown") + "</EM></B>";
         break;
     }
 

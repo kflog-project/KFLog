@@ -27,7 +27,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <kaction.h>
-#include <klocale.h>
 #include "../flight.h"
 #include "../resource.h"
 #include "../mapcontents.h"

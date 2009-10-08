@@ -27,7 +27,6 @@
 #include "kfrgcs/vlapi2.h"
 #include "da4record.h"
 
-#include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
 
@@ -64,7 +63,7 @@ WaypointCatalog::WaypointCatalog(const QString& name)
   if (name == QString::null) {
     QString t;
     t.setNum(catalogNr++);
-    catalogName = i18n("unnamed") + t;
+    catalogName = QObject::tr("unnamed") + t;
   }
   else
     catalogName = name;
@@ -135,7 +134,7 @@ bool WaypointCatalog::read(const QString& catalog)
         ok = true;
       }
       else {
-        QMessageBox::critical(0, i18n("Error occurred!"), i18n("wrong doctype ") + doc.doctype().name(), QMessageBox::Ok, 0);
+        QMessageBox::critical(0, QObject::tr("Error occurred!"), QObject::tr("wrong doctype ") + doc.doctype().name(), QMessageBox::Ok, 0);
       }
 
       f.close();
@@ -147,11 +146,11 @@ bool WaypointCatalog::read(const QString& catalog)
 
     }
     else {
-      QMessageBox::critical(0, i18n("Error occurred!"), QString("<qt><B>%1</B><BR>").arg(catalog) + i18n ("permission denied!") + "</qt>", QMessageBox::Ok, 0);
+      QMessageBox::critical(0, QObject::tr("Error occurred!"), QString("<qt><B>%1</B><BR>").arg(catalog) + QObject::tr("permission denied!") + "</qt>", QMessageBox::Ok, 0);
     }
   }
   else {
-    QMessageBox::critical(0, i18n("Error occurred!"), QString("<qt><B>%1</B><BR>").arg(catalog) + i18n("not found!") + "</qt>", QMessageBox::Ok, 0);
+    QMessageBox::critical(0, QObject::tr("Error occurred!"), QString("<qt><B>%1</B><BR>").arg(catalog) + QObject::tr("not found!") + "</qt>", QMessageBox::Ok, 0);
   }
   return ok;
 }
@@ -169,7 +168,7 @@ bool WaypointCatalog::write()
   QDictIterator<Waypoint> it(wpList);
 /*
   if (!onDisc) {
-    fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)", 0, i18n("Save waypoint catalog"));
+    fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)", 0, QObject::tr("Save waypoint catalog"));
     if(!fName.isEmpty()) {
       if (fName.right(8) != ".kflogwp") {
         fName += ".kflogwp";
@@ -216,7 +215,7 @@ bool WaypointCatalog::write()
     onDisc = true;
   }
   else {
-    QMessageBox::critical(0, i18n("Error occurred!"), QString ("<qt><B>%1</B><BR>").arg(fName) + i18n("permission denied!") + "</qt>", QMessageBox::Ok, 0);
+    QMessageBox::critical(0, QObject::tr("Error occurred!"), QString ("<qt><B>%1</B><BR>").arg(fName) + QObject::tr("permission denied!") + "</qt>", QMessageBox::Ok, 0);
   }
 
   QApplication::restoreOverrideCursor();
@@ -293,7 +292,7 @@ bool WaypointCatalog::writeBinary()
     onDisc = true;
   }
   else {
-    QMessageBox::critical(0, i18n("Error occurred!"), QString ("<qt><B>%1</B><BR>").arg(fName) + i18n("permission denied!") + "</qt>", QMessageBox::Ok, 0);
+    QMessageBox::critical(0, QObject::tr("Error occurred!"), QString ("<qt><B>%1</B><BR>").arg(fName) + QObject::tr("permission denied!") + "</qt>", QMessageBox::Ok, 0);
   }
   return ok;
 }
@@ -305,14 +304,14 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
 
   if(!fInfo.exists())
     {
-      QMessageBox::critical(0, i18n("Error occurred!"),
-          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>does not exist!").arg(filename) + "</qt>", QMessageBox::Ok, 0);
+      QMessageBox::critical(0, QObject::tr("Error occurred!"),
+          "<qt>" + QObject::tr("The selected file<BR><B>%1</B><BR>does not exist!").arg(filename) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
   if(!fInfo.size())
     {
-      QMessageBox::warning(0, i18n("Error occurred!"),
-          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is empty!").arg(filename) + "</qt>", QMessageBox::Ok, 0);
+      QMessageBox::warning(0, QObject::tr("Error occurred!"),
+          "<qt>" + QObject::tr("The selected file<BR><B>%1</B><BR>is empty!").arg(filename) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
   //
@@ -320,8 +319,8 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
   //
   if(((QString)fInfo.extension()).lower() != "dbt")
     {
-      QMessageBox::critical(0, i18n("Error occurred!"),
-          "<qt>" + i18n("The selected file<BR><B>%1</B><BR>is not a Volkslogger-file!").arg(filename) + "</qt>",
+      QMessageBox::critical(0, QObject::tr("Error occurred!"),
+          "<qt>" + QObject::tr("The selected file<BR><B>%1</B><BR>is not a Volkslogger-file!").arg(filename) + "</qt>",
           QMessageBox::Ok, 0);
       return false;
     }
@@ -329,16 +328,16 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
   if(!f.open(IO_ReadOnly))
     {
       QMessageBox::critical(0,
-          i18n("No permission"),
-          "<qt>" + i18n("You don't have permission to access file<BR><B>%1</B>").arg(filename) + "</qt>", QMessageBox::Ok, 0);
+          QObject::tr("No permission"),
+          "<qt>" + QObject::tr("You don't have permission to access file<BR><B>%1</B>").arg(filename) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
 
   QProgressDialog importProgress(0,0,true);
 
-  importProgress.setCaption(i18n("Import file ..."));
+  importProgress.setCaption(QObject::tr("Import file ..."));
   importProgress.setLabelText(
-      "<qt>" + i18n("Please wait while loading file<BR><B>%1</B>").arg(filename) + "</qt>");
+      "<qt>" + QObject::tr("Please wait while loading file<BR><B>%1</B>").arg(filename) + "</qt>");
   importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
   importProgress.setTotalSteps(200);
   importProgress.show();
@@ -445,8 +444,8 @@ bool WaypointCatalog::save(bool alwaysAskName){
   // check for unsupported file types - currently cup
 
   if (fName.right(4).lower() == ".cup") {
-    QMessageBox saveBox(i18n("Save changes?"),
-                        i18n("<qt>Saving in the current file format is not supported.<br>Save in another format? <BR><B>%1</B></qt>").arg(fName),
+    QMessageBox saveBox(QObject::tr("Save changes?"),
+                        QObject::tr("<qt>Saving in the current file format is not supported.<br>Save in another format? <BR><B>%1</B></qt>").arg(fName),
                         QMessageBox::Warning, QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
     saveBox.setButtonText(QMessageBox::Yes, "Save");
     saveBox.setButtonText(QMessageBox::No, "Discard");
@@ -459,7 +458,7 @@ bool WaypointCatalog::save(bool alwaysAskName){
                                                "*.kwp *.KWP|Cumulus and KFLogEmbedded waypoints (*.kwp)\n"
                                                "*.txt *.TXT|Filser txt waypoints (*.txt)\n"
                                                "*.da4 *.DA4|Filser da4 waypoints (*.da4)",
-                                               0, i18n("Save waypoint catalog"));
+                                               0, QObject::tr("Save waypoint catalog"));
     if(!fName.isEmpty()) {
       if ((fName.right(8) != ".kflogwp") &&
           (fName.right(4) != ".kwp") &&
@@ -549,7 +548,7 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
                   break;
             default:  w->surface = Airport::Unknown;
           }
-          w->comment = i18n("Imported from %1").arg(catalog);
+          w->comment = QObject::tr("Imported from %1").arg(catalog);
           w->importance = 1;
 
           if (!wpList.insertItem(w))
@@ -810,11 +809,11 @@ bool WaypointCatalog::readBinary(const QString &catalog)
           writeBinary();
     }
     else {
-      QMessageBox::critical(0, i18n("Error occurred!"), QString("<qt><B>%1</B><BR>").arg(catalog) + "permission denied!" + "</qt>", QMessageBox::Ok, 0);
+      QMessageBox::critical(0, QObject::tr("Error occurred!"), QString("<qt><B>%1</B><BR>").arg(catalog) + "permission denied!" + "</qt>", QMessageBox::Ok, 0);
     }
   }
   else {
-    //KMessageBox::error(0, i18n("<qt><B>%1</B><BR>not found!</qt>").arg(catalog), i18n("Error occurred!"));
+    //KMessageBox::error(0, QObject::tr("<qt><B>%1</B><BR>not found!</qt>").arg(catalog), QObject::tr("Error occurred!"));
     qDebug("Waypoint catalog not found.");
   }
 

@@ -34,7 +34,6 @@
 #include <stdlib.h>
 
 #include <kiconloader.h>
-#include <klocale.h>
 #include <kstddirs.h>
 #include <ktabctl.h>
 
@@ -48,7 +47,7 @@
 #include "guicontrols/coordedit.h"
 
 KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
-  : KDialogBase(IconList, i18n("KFlog Setup"), Ok|Cancel, Ok,
+  : KDialogBase(IconList, tr("KFlog Setup"), Ok|Cancel, Ok,
       parent, name, true, true),
     config(cnf),
     currentProjType(ProjectionBase::Unknown)
@@ -152,7 +151,7 @@ void KFLogConfig::slotOk()
 void KFLogConfig::slotSearchFlightPath()
 {
   QString temp = QFileDialog::getExistingDirectory(igcPathE-> text(), this, 0,
-      i18n("Select Default-Directory for the IGC-Files"));
+      tr("Select Default-Directory for the IGC-Files"));
 
   if(temp != 0)  igcPathE-> setText(temp);
 }
@@ -160,7 +159,7 @@ void KFLogConfig::slotSearchFlightPath()
 void KFLogConfig::slotSearchMapPath()
 {
   QString temp = QFileDialog::getExistingDirectory(mapPathE-> text(), this, 0,
-      i18n("Select Directory for the Map-Files"));
+      tr("Select Directory for the Map-Files"));
 
   if(temp != 0)  mapPathE-> setText(temp);
 }
@@ -168,7 +167,7 @@ void KFLogConfig::slotSearchMapPath()
 void KFLogConfig::slotSearchTaskPath()
 {
   QString temp = QFileDialog::getExistingDirectory(taskPathE-> text(), this, 0,
-      i18n("Select Default-Directory for the Task-Files"));
+      tr("Select Default-Directory for the Task-Files"));
 
   if(temp != 0)  taskPathE-> setText(temp);
 }
@@ -176,7 +175,7 @@ void KFLogConfig::slotSearchTaskPath()
 void KFLogConfig::slotSearchWaypointPath()
 {
   QString temp = QFileDialog::getExistingDirectory(waypointPathE-> text(), this, 0,
-      i18n("Select Default-Directory for the Waypoint-Files"));
+      tr("Select Default-Directory for the Waypoint-Files"));
 
   if(temp != 0)  waypointPathE-> setText(temp);
 }
@@ -290,46 +289,46 @@ void KFLogConfig::slotDefaultPath()
 
 void KFLogConfig::__addMapTab()
 {
-  mapPage = addPage(i18n("Map-Elements"),i18n("Map Configuration"),
+  mapPage = addPage(tr("Map-Elements"),tr("Map Configuration"),
       KGlobal::instance()-> iconLoader()->loadIcon("kflog", KIcon::NoGroup,
           KIcon::SizeLarge));
 
   QGroupBox* elementBox = new QGroupBox(mapPage, "elementBox");
-  elementBox-> setTitle(i18n("visible Map-Elements"));
+  elementBox-> setTitle(tr("visible Map-Elements"));
 
   elementSelect = new QComboBox(mapPage, "elementSelect");
 //  elementSelect-> setMaximumWidth(300);
-  elementSelect-> insertItem(i18n("Road"), KFLogConfig::Road);
-  elementSelect-> insertItem(i18n("Highway"), KFLogConfig::Highway);
-  elementSelect-> insertItem(i18n("Railway"), KFLogConfig::Railway);
-  elementSelect-> insertItem(i18n("River / Lake"), KFLogConfig::River);
-  elementSelect-> insertItem(i18n("Canal"), KFLogConfig::Canal);
-  elementSelect-> insertItem(i18n("City"), KFLogConfig::City);
-  elementSelect-> insertItem(i18n("Airspace A"), KFLogConfig::AirA);
-  elementSelect-> insertItem(i18n("Airspace B"), KFLogConfig::AirB);
-  elementSelect-> insertItem(i18n("Airspace C"), KFLogConfig::AirC);
-  elementSelect-> insertItem(i18n("Airspace D"), KFLogConfig::AirD);
-  elementSelect-> insertItem(i18n("Airspace E (low)"), KFLogConfig::AirElow);
-  elementSelect-> insertItem(i18n("Airspace E (high)"), KFLogConfig::AirEhigh);
-  elementSelect-> insertItem(i18n("Airspace F"), KFLogConfig::AirF);
-  elementSelect-> insertItem(i18n("Control C"), KFLogConfig::ControlC);
-  elementSelect-> insertItem(i18n("Control D"), KFLogConfig::ControlD);
-  elementSelect-> insertItem(i18n("Danger"), KFLogConfig::Danger);
-  elementSelect-> insertItem(i18n("Low flight area"), KFLogConfig::LowFlight);
-  elementSelect-> insertItem(i18n("Restricted"), KFLogConfig::Restricted);
-  elementSelect-> insertItem(i18n("TMZ"), KFLogConfig::Tmz);
+  elementSelect-> insertItem(tr("Road"), KFLogConfig::Road);
+  elementSelect-> insertItem(tr("Highway"), KFLogConfig::Highway);
+  elementSelect-> insertItem(tr("Railway"), KFLogConfig::Railway);
+  elementSelect-> insertItem(tr("River / Lake"), KFLogConfig::River);
+  elementSelect-> insertItem(tr("Canal"), KFLogConfig::Canal);
+  elementSelect-> insertItem(tr("City"), KFLogConfig::City);
+  elementSelect-> insertItem(tr("Airspace A"), KFLogConfig::AirA);
+  elementSelect-> insertItem(tr("Airspace B"), KFLogConfig::AirB);
+  elementSelect-> insertItem(tr("Airspace C"), KFLogConfig::AirC);
+  elementSelect-> insertItem(tr("Airspace D"), KFLogConfig::AirD);
+  elementSelect-> insertItem(tr("Airspace E (low)"), KFLogConfig::AirElow);
+  elementSelect-> insertItem(tr("Airspace E (high)"), KFLogConfig::AirEhigh);
+  elementSelect-> insertItem(tr("Airspace F"), KFLogConfig::AirF);
+  elementSelect-> insertItem(tr("Control C"), KFLogConfig::ControlC);
+  elementSelect-> insertItem(tr("Control D"), KFLogConfig::ControlD);
+  elementSelect-> insertItem(tr("Danger"), KFLogConfig::Danger);
+  elementSelect-> insertItem(tr("Low flight area"), KFLogConfig::LowFlight);
+  elementSelect-> insertItem(tr("Restricted"), KFLogConfig::Restricted);
+  elementSelect-> insertItem(tr("TMZ"), KFLogConfig::Tmz);
   // Reihenfolge ???
-  elementSelect-> insertItem(i18n("Forest"), KFLogConfig::Forest);
-  elementSelect-> insertItem(i18n("Trail"), KFLogConfig::Trail);
-  elementSelect-> insertItem(i18n("double Railway"), KFLogConfig::Railway_D);
-  elementSelect-> insertItem(i18n("Aerial Cable"), KFLogConfig::Aerial_Cable);
-  elementSelect-> insertItem(i18n("temporarily River / Lake"), KFLogConfig::River_T);
-  elementSelect-> insertItem(i18n("Glacier"), KFLogConfig::Glacier);
-  elementSelect-> insertItem(i18n("Pack Ice"), KFLogConfig::PackIce);
-  elementSelect-> insertItem(i18n("FAI Area <500 km"), KFLogConfig::FAIAreaLow500);
-  elementSelect-> insertItem(i18n("FAI Area >500 km"), KFLogConfig::FAIAreaHigh500);
+  elementSelect-> insertItem(tr("Forest"), KFLogConfig::Forest);
+  elementSelect-> insertItem(tr("Trail"), KFLogConfig::Trail);
+  elementSelect-> insertItem(tr("double Railway"), KFLogConfig::Railway_D);
+  elementSelect-> insertItem(tr("Aerial Cable"), KFLogConfig::Aerial_Cable);
+  elementSelect-> insertItem(tr("temporarily River / Lake"), KFLogConfig::River_T);
+  elementSelect-> insertItem(tr("Glacier"), KFLogConfig::Glacier);
+  elementSelect-> insertItem(tr("Pack Ice"), KFLogConfig::PackIce);
+  elementSelect-> insertItem(tr("FAI Area <500 km"), KFLogConfig::FAIAreaLow500);
+  elementSelect-> insertItem(tr("FAI Area >500 km"), KFLogConfig::FAIAreaHigh500);
 
-  QPushButton* defaultElements = new QPushButton(i18n("Default"), mapPage,
+  QPushButton* defaultElements = new QPushButton(tr("Default"), mapPage,
       "defaultElements");
   defaultElements-> setMaximumWidth(defaultElements->sizeHint().width() + 10);
   defaultElements-> setMinimumHeight(defaultElements->sizeHint().height() + 2);
@@ -341,8 +340,8 @@ void KFLogConfig::__addMapTab()
   QFrame* printFrame = new QFrame(tabView, "ConfigDrawFrame");
   ConfigPrintElement* printConfig = new ConfigPrintElement(printFrame, config);
 
-  tabView-> addTab(screenFrame, i18n("Display"));
-  tabView-> addTab(printFrame, i18n("Print"));
+  tabView-> addTab(screenFrame, tr("Display"));
+  tabView-> addTab(printFrame, tr("Print"));
 
   QGridLayout* elLayout = new QGridLayout(mapPage, 7, 5, 8, 1);
   elLayout-> addMultiCellWidget(elementBox, 0, 4, 0, 4);
@@ -381,26 +380,26 @@ void KFLogConfig::__addFlightTab()
 {
   config-> setGroup("Flight");
 
-  flightPage = addPage(i18n("Flight Display"), i18n("Flight Display Configuration"),
+  flightPage = addPage(tr("Flight Display"), tr("Flight Display Configuration"),
       KGlobal::instance()-> iconLoader()->loadIcon("flightpath", KIcon::NoGroup,
           KIcon::SizeLarge));
 
   QGridLayout* flightLayout = new QGridLayout(flightPage, 17, 40, 8, 1);
 
   QGroupBox* flightPathLineGroup = new QGroupBox(flightPage, "flightDisplayGroup");
-  flightPathLineGroup-> setTitle(i18n("Flight Path Line") + ":");
+  flightPathLineGroup-> setTitle(tr("Flight Path Line") + ":");
   flightLayout->addMultiCellWidget(flightPathLineGroup, 0, 4, 0, 39);
 
 
   drawTypeSelect = new QComboBox(flightPage, "drawTypeSelect");
-  drawTypeSelect-> insertItem(i18n("Altitude"), MapConfig::Altitude);
-  drawTypeSelect-> insertItem(i18n("Cycling"),  MapConfig::Cycling);
-  drawTypeSelect-> insertItem(i18n("Speed"),    MapConfig::Speed);
-  drawTypeSelect-> insertItem(i18n("Vario"),    MapConfig::Vario);
-  drawTypeSelect-> insertItem(i18n("Solid"),    MapConfig::Solid);
+  drawTypeSelect-> insertItem(tr("Altitude"), MapConfig::Altitude);
+  drawTypeSelect-> insertItem(tr("Cycling"),  MapConfig::Cycling);
+  drawTypeSelect-> insertItem(tr("Speed"),    MapConfig::Speed);
+  drawTypeSelect-> insertItem(tr("Vario"),    MapConfig::Vario);
+  drawTypeSelect-> insertItem(tr("Solid"),    MapConfig::Solid);
   drawTypeSelect-> setCurrentItem(config->readNumEntry("Draw Type"));
 
-  flightLayout->addWidget(new QLabel(i18n("type") + ":", flightPage), 1, 1);
+  flightLayout->addWidget(new QLabel(tr("type") + ":", flightPage), 1, 1);
   flightLayout->addWidget(drawTypeSelect, 1, 10);
 
 
@@ -409,37 +408,37 @@ void KFLogConfig::__addFlightTab()
   flightPathWidthE->setLineStep( 1 );
   flightPathWidthE->setValue(config->readNumEntry("flightPathWidth", 4));
 
-  flightLayout->addWidget(new QLabel(i18n("width") + ":", flightPage), 3, 1);
+  flightLayout->addWidget(new QLabel(tr("width") + ":", flightPage), 3, 1);
   flightLayout->addWidget( flightPathWidthE, 3, 10);
 
 
   QGroupBox* flightPathColorGroup = new QGroupBox(flightPage, "flightDisplayGroup");
-  flightPathColorGroup-> setTitle(i18n("Flight Path Colors") + ":");
+  flightPathColorGroup-> setTitle(tr("Flight Path Colors") + ":");
   flightLayout->addMultiCellWidget(flightPathColorGroup, 5, 14, 0, 39);
 
   flightTypeLeftTurnColor = new KColorButton(config->readColorEntry("Color Left Turn", new QColor(255, 50, 0)), flightPage);
-  flightLayout->addWidget(new QLabel(i18n("left turn") + ":", flightPage), 6, 1);
+  flightLayout->addWidget(new QLabel(tr("left turn") + ":", flightPage), 6, 1);
   flightLayout->addWidget( flightTypeLeftTurnColor, 6, 10);
 
   flightTypeRightTurnColor = new KColorButton(config->readColorEntry("Color Right Turn", new QColor(50, 255, 0)), flightPage);
-  flightLayout->addWidget(new QLabel(i18n("right turn") + ":", flightPage), 7, 1);
+  flightLayout->addWidget(new QLabel(tr("right turn") + ":", flightPage), 7, 1);
   flightLayout->addWidget( flightTypeRightTurnColor, 7, 10);
 
   flightTypeMixedTurnColor = new KColorButton(config->readColorEntry("Color Mixed Turn", new QColor(200, 0, 200)), flightPage);
-  flightLayout->addWidget(new QLabel(i18n("mixed turn") + ":", flightPage), 8, 1);
+  flightLayout->addWidget(new QLabel(tr("mixed turn") + ":", flightPage), 8, 1);
   flightLayout->addWidget( flightTypeMixedTurnColor, 8, 10);
 
   flightTypeStraightColor = new KColorButton(config->readColorEntry("Color Straight", new QColor(0, 50, 255)), flightPage);
-  flightLayout->addWidget(new QLabel(i18n("straight") + ":", flightPage), 9, 1);
+  flightLayout->addWidget(new QLabel(tr("straight") + ":", flightPage), 9, 1);
   flightLayout->addWidget( flightTypeStraightColor, 9, 10);
 
 
   flightTypeSolidColor = new KColorButton(config->readColorEntry("Color Solid", new QColor(0, 100, 200)), flightPage);
-  flightLayout->addWidget(new QLabel(i18n("solid") + ":", flightPage), 11, 1);
+  flightLayout->addWidget(new QLabel(tr("solid") + ":", flightPage), 11, 1);
   flightLayout->addWidget( flightTypeSolidColor, 11, 10);
 
   flightTypeEngineNoiseColor = new KColorButton(config->readColorEntry("Color Engine Noise", new QColor(255, 255, 255)), flightPage);
-  flightLayout->addWidget(new QLabel(i18n("engine noise") + ":", flightPage), 13, 1);
+  flightLayout->addWidget(new QLabel(tr("engine noise") + ":", flightPage), 13, 1);
   flightLayout->addWidget( flightTypeEngineNoiseColor, 13, 10);
 
 
@@ -455,25 +454,25 @@ void KFLogConfig::slotDrawTypeSelect()
 
 void KFLogConfig::__addProjectionTab()
 {
-  projPage = addPage(i18n("Map-Projection"),i18n("Configuration of Map-Projection"),
+  projPage = addPage(tr("Map-Projection"),tr("Configuration of Map-Projection"),
       KGlobal::instance()-> iconLoader()->loadIcon("projection", KIcon::NoGroup,
           KIcon::SizeLarge));
 
   QGroupBox* projType = new QGroupBox(projPage, "projectionSelectBox");
-  projType-> setTitle(i18n("Type of Projection") + ":");
+  projType-> setTitle(tr("Type of Projection") + ":");
 
   projectionSelect = new QComboBox(projPage, "projectionSelect");
-  projectionSelect-> insertItem(i18n("Conical orthomorphic (Lambert)"));
-  projectionSelect-> insertItem(i18n("Cylindrical Equidistant (Plate Carre)"));
+  projectionSelect-> insertItem(tr("Conical orthomorphic (Lambert)"));
+  projectionSelect-> insertItem(tr("Cylindrical Equidistant (Plate Carre)"));
 
   QGroupBox* projConf = new QGroupBox(projPage, "projectionSelectBox");
-  projConf-> setTitle(i18n("Setup Projection") + ":");
+  projConf-> setTitle(tr("Setup Projection") + ":");
 
   firstParallel = new LatEdit(projPage, "firstParallel");
   secondParallel = new LatEdit(projPage, "secondParallel");
   originLongitude = new LongEdit(projPage, "originLongitude");
 
-  QPushButton* defaultProj = new QPushButton(i18n("Default"), projPage,
+  QPushButton* defaultProj = new QPushButton(tr("Default"), projPage,
       "defaultScale");
   defaultProj-> setMaximumWidth(defaultProj->sizeHint().width() + 10);
   defaultProj-> setMinimumHeight(defaultProj->sizeHint().height() + 2);
@@ -482,13 +481,13 @@ void KFLogConfig::__addProjectionTab()
   projLayout-> addMultiCellWidget(projType, 0, 2, 0, 6);
   projLayout-> addMultiCellWidget(projectionSelect, 1, 1, 1, 5);
   projLayout-> addMultiCellWidget(projConf, 4, 10, 0, 6);
-  projLayout-> addWidget(new QLabel(i18n("1. Standard Parallel") + ":", projPage),
+  projLayout-> addWidget(new QLabel(tr("1. Standard Parallel") + ":", projPage),
       5, 1);
   projLayout-> addWidget(firstParallel, 5, 3);
-  projLayout-> addWidget(new QLabel(i18n("2. Standard Parallel") + ":", projPage),
+  projLayout-> addWidget(new QLabel(tr("2. Standard Parallel") + ":", projPage),
       7, 1);
   projLayout-> addWidget(secondParallel, 7, 3);
-  projLayout-> addWidget(new QLabel(i18n("Origin Longitude") + ":", projPage),
+  projLayout-> addWidget(new QLabel(tr("Origin Longitude") + ":", projPage),
       9, 1);
   projLayout-> addWidget(originLongitude, 9, 3);
 
@@ -540,14 +539,14 @@ void KFLogConfig::__addScaleTab()
   int b2 = config-> readNumEntry("Border 2", BORDER_2);
   int b3 = config-> readNumEntry("Border 3", BORDER_3);
 
-  scalePage = addPage(i18n("Map-Scales"),i18n("Map-Scale Configuration"),
+  scalePage = addPage(tr("Map-Scales"),tr("Map-Scale Configuration"),
       KGlobal::instance()-> iconLoader()->loadIcon("viewmag", KIcon::NoGroup,
           KIcon::SizeLarge));
 
   QGroupBox* scaleLimits = new QGroupBox(scalePage, "scaleLimitBox");
-  scaleLimits-> setTitle(i18n("Scale-Range:"));
+  scaleLimits-> setTitle(tr("Scale-Range:"));
 
-  QLabel* lLimitText = new QLabel(i18n("lower limit"), scalePage);
+  QLabel* lLimitText = new QLabel(tr("lower limit"), scalePage);
   lLimit = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
   lLimit-> setMinimumHeight(lLimit->sizeHint().height() + 5);
   lLimit-> setMaximumHeight(lLimit->sizeHint().height() + 20);
@@ -557,7 +556,7 @@ void KFLogConfig::__addScaleTab()
   lLimit-> setValue(__getScaleValue(ll));
   lLimitN-> display(ll);
 
-  QLabel* uLimitText = new QLabel(i18n("upper limit"), scalePage);
+  QLabel* uLimitText = new QLabel(tr("upper limit"), scalePage);
   uLimit = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
   uLimit-> setMinimumHeight(uLimit->sizeHint().height() + 5);
   uLimit-> setMaximumHeight(uLimit->sizeHint().height() + 20);
@@ -568,7 +567,7 @@ void KFLogConfig::__addScaleTab()
   QGroupBox* borderBox = new QGroupBox(scalePage, "borderBox");
   borderBox-> setTitle("Scale-Thresholds:");
 
-  QLabel* switchText = new QLabel(i18n("use small icons"), scalePage);
+  QLabel* switchText = new QLabel(tr("use small icons"), scalePage);
   switchScale = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
   switchScale-> setMinimumHeight(switchScale->sizeHint().height() + 5);
   switchScale-> setMaximumHeight(switchScale->sizeHint().height() + 20);
@@ -576,7 +575,7 @@ void KFLogConfig::__addScaleTab()
   switchScale-> setValue(__getScaleValue(sw));
   switchScaleN-> display(sw);
 
-  QLabel* wpLabelText = new QLabel(i18n("draw waypoint labels"), scalePage);
+  QLabel* wpLabelText = new QLabel(tr("draw waypoint labels"), scalePage);
   wpLabel = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
   wpLabel-> setMinimumHeight(switchScale->sizeHint().height() + 5);
   wpLabel-> setMaximumHeight(switchScale->sizeHint().height() + 20);
@@ -584,7 +583,7 @@ void KFLogConfig::__addScaleTab()
   wpLabel-> setValue(__getScaleValue(wl));
   wpLabelN-> display(wl);
 
-  QLabel* reduce1Text = new QLabel(i18n("threshold #1"), scalePage);
+  QLabel* reduce1Text = new QLabel(tr("threshold #1"), scalePage);
   reduce1 = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
   reduce1-> setMinimumHeight(reduce1->sizeHint().height() + 5);
   reduce1-> setMaximumHeight(reduce1->sizeHint().height() + 20);
@@ -592,7 +591,7 @@ void KFLogConfig::__addScaleTab()
   reduce1-> setValue(__getScaleValue(b1));
   reduce1N-> display(b1);
 
-  QLabel* reduce2Text = new QLabel(i18n("threshold #2"), scalePage);
+  QLabel* reduce2Text = new QLabel(tr("threshold #2"), scalePage);
   reduce2 = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
   reduce2-> setMinimumHeight(reduce2->sizeHint().height() + 5);
   reduce2-> setMaximumHeight(reduce2->sizeHint().height() + 20);
@@ -600,7 +599,7 @@ void KFLogConfig::__addScaleTab()
   reduce2-> setValue(__getScaleValue(b2));
   reduce2N-> display(b2);
 
-  QLabel* reduce3Text = new QLabel(i18n("threshold #3"), scalePage);
+  QLabel* reduce3Text = new QLabel(tr("threshold #3"), scalePage);
   reduce3 = new QSlider(2,105,1,0, QSlider::Horizontal, scalePage);
   reduce3-> setMinimumHeight(reduce3->sizeHint().height() + 5);
   reduce3-> setMaximumHeight(reduce3->sizeHint().height() + 20);
@@ -608,7 +607,7 @@ void KFLogConfig::__addScaleTab()
   reduce3-> setValue(__getScaleValue(b3));
   reduce3N-> display(b3);
 
-  QPushButton* defaultScale = new QPushButton(i18n("Default"), scalePage,
+  QPushButton* defaultScale = new QPushButton(tr("Default"), scalePage,
       "defaultScale");
   defaultScale-> setMaximumWidth(defaultScale->sizeHint().width() + 10);
   defaultScale-> setMinimumHeight(defaultScale->sizeHint().height() + 2);
@@ -679,14 +678,14 @@ void KFLogConfig::__addPathTab()
   QString mapDir = config-> readEntry("DefaultMapDirectory",
       KGlobal::dirs()-> findResource("appdata", "mapdata/"));
 
-  pathPage = addPage(i18n("Paths"),i18n("Path Configuration"),
+  pathPage = addPage(tr("Paths"),tr("Path Configuration"),
       KGlobal::instance()-> iconLoader()->loadIcon("fileopen", KIcon::NoGroup,
           KIcon::SizeLarge));
 
   QGridLayout* pathLayout = new QGridLayout(pathPage, 17, 5, 8, 1);
 
   QGroupBox* igcGroup = new QGroupBox(pathPage, "igcGroup");
-  igcGroup-> setTitle(i18n("Flight-directory:"));
+  igcGroup-> setTitle(tr("Flight-directory:"));
 
   igcPathE  = new QLineEdit(pathPage, "igcPathE");
   igcPathE-> setMinimumWidth(150);
@@ -713,7 +712,7 @@ void KFLogConfig::__addPathTab()
   pathLayout-> setRowStretch(3, 1);
 
   QGroupBox* taskGroup = new QGroupBox(pathPage, "taskGroup");
-  taskGroup-> setTitle(i18n("Task-directory:"));
+  taskGroup-> setTitle(tr("Task-directory:"));
 
   taskPathE = new QLineEdit(pathPage, "taskPathE");
   taskPathE-> setMinimumWidth(150);
@@ -736,7 +735,7 @@ void KFLogConfig::__addPathTab()
   pathLayout-> setRowStretch(7, 1);
 
   QGroupBox* waypointGroup = new QGroupBox(pathPage, "waypointGroup");
-  waypointGroup-> setTitle(i18n("Waypoint-directory:"));
+  waypointGroup-> setTitle(tr("Waypoint-directory:"));
 
   waypointPathE = new QLineEdit(pathPage, "waypointPathE");
   waypointPathE-> setMinimumWidth(150);
@@ -759,7 +758,7 @@ void KFLogConfig::__addPathTab()
   pathLayout-> setRowStretch(11, 1);
 
   QGroupBox* mapGroup = new QGroupBox(pathPage, "mapGroup");
-  mapGroup-> setTitle(i18n("Map-directory:"));
+  mapGroup-> setTitle(tr("Map-directory:"));
 
   mapPathE = new QLineEdit(pathPage, "mapPathE");
   mapPathE-> setMinimumWidth(150);
@@ -778,7 +777,7 @@ void KFLogConfig::__addPathTab()
   pathLayout-> addRowSpacing(13, 10);
   pathLayout-> addRowSpacing(14, 10);
 
-  QPushButton* defaultPath = new QPushButton(i18n("Default"), pathPage,
+  QPushButton* defaultPath = new QPushButton(tr("Default"), pathPage,
       "defaultPath");
   defaultPath-> setMaximumWidth(defaultPath->sizeHint().width() + 10);
   defaultPath-> setMinimumHeight(defaultPath->sizeHint().height() + 2);
@@ -799,36 +798,36 @@ void KFLogConfig::__addPathTab()
 
 void KFLogConfig::__addTopographyTab()
 {
-  topoPage = addPage(i18n("Topography"),i18n("Topography Configuration"),
+  topoPage = addPage(tr("Topography"),tr("Topography Configuration"),
       KGlobal::instance()-> iconLoader()->loadIcon("kflog", KIcon::NoGroup,
           KIcon::SizeLarge));
 }
 
 void KFLogConfig::__addIDTab()
 {
-  idPage = addPage(i18n("Identity"),i18n("Personal Information"),
+  idPage = addPage(tr("Identity"),tr("Personal Information"),
       KGlobal::instance()-> iconLoader()->loadIcon("identity", KIcon::NoGroup,
           KIcon::SizeLarge));
 
   QGridLayout* idLayout = new QGridLayout(idPage, 18, 5, 8, 1);
 
   QGroupBox* pilotGroup = new QGroupBox(idPage, "pilotGroup");
-  pilotGroup-> setTitle(i18n("Pilot") + ":");
+  pilotGroup-> setTitle(tr("Pilot") + ":");
 
   preNameE = new QLineEdit(idPage, "preNameE");
   surNameE = new QLineEdit(idPage, "surNameE");
   dateOfBirthE = new QLineEdit(idPage, "dateOfBirthE");
 
   idLayout-> addMultiCellWidget(pilotGroup, 0, 7, 0, 4);
-  idLayout-> addWidget(new QLabel(i18n("Prename"), idPage), 2, 1);
+  idLayout-> addWidget(new QLabel(tr("Prename"), idPage), 2, 1);
   idLayout-> addWidget(preNameE, 2, 3);
-  idLayout-> addWidget(new QLabel(i18n("Surname"), idPage), 4, 1);
+  idLayout-> addWidget(new QLabel(tr("Surname"), idPage), 4, 1);
   idLayout-> addWidget(surNameE, 4, 3);
-  idLayout-> addWidget(new QLabel(i18n("Birthday"), idPage), 6, 1);
+  idLayout-> addWidget(new QLabel(tr("Birthday"), idPage), 6, 1);
   idLayout-> addWidget(dateOfBirthE, 6, 3);
 
   QGroupBox* homeGroup = new QGroupBox(idPage, "homeGroup");
-  homeGroup-> setTitle(i18n("Homesite") + ":");
+  homeGroup-> setTitle(tr("Homesite") + ":");
 
   homeNameE = new QLineEdit(idPage, "homeNameE");
   homeNameE-> setMinimumWidth(150);
@@ -838,11 +837,11 @@ void KFLogConfig::__addIDTab()
   homeLonE-> setMinimumWidth(150);
 
   idLayout-> addMultiCellWidget(homeGroup, 9, 16, 0, 4);
-  idLayout-> addWidget(new QLabel(i18n("Homesite"), idPage), 11, 1);
+  idLayout-> addWidget(new QLabel(tr("Homesite"), idPage), 11, 1);
   idLayout-> addWidget(homeNameE, 11, 3);
-  idLayout-> addWidget(new QLabel(i18n("Latitude"), idPage), 13, 1);
+  idLayout-> addWidget(new QLabel(tr("Latitude"), idPage), 13, 1);
   idLayout-> addWidget(homeLatE, 13, 3);
-  idLayout-> addWidget(new QLabel(i18n("Longitude"), idPage), 15, 1);
+  idLayout-> addWidget(new QLabel(tr("Longitude"), idPage), 15, 1);
   idLayout-> addWidget(homeLonE, 15, 3);
 
   idLayout-> addColSpacing(0, 10);
@@ -915,22 +914,22 @@ void KFLogConfig::__addAirfieldTab()
 {
   config-> setGroup("Map Data");
 
-  airfieldPage = addPage(i18n("Airfields"), i18n("Airfield Configuration"),
+  airfieldPage = addPage(tr("Airfields"), tr("Airfield Configuration"),
       KGlobal::instance()-> iconLoader()->loadIcon("airfield", KIcon::NoGroup,
           KIcon::SizeLarge));
 
   QGridLayout* airfieldLayout = new QGridLayout(airfieldPage, 15, 6, 1, 1);
 
   QGroupBox* welt2000Group = new QGroupBox(airfieldPage, "welt2000Group");
-  welt2000Group-> setTitle(i18n("Welt2000") + ":");
+  welt2000Group-> setTitle(tr("Welt2000") + ":");
 
   filterE = new QLineEdit(airfieldPage, "filterE");
 
   airfieldLayout->addMultiCellWidget(welt2000Group, 0, 4, 0, 6);
-  airfieldLayout->addWidget(new QLabel(i18n("Country Filter"), airfieldPage), 1, 1);
+  airfieldLayout->addWidget(new QLabel(tr("Country Filter"), airfieldPage), 1, 1);
   airfieldLayout->addWidget(filterE, 1, 3);
 
-  airfieldLayout->addWidget(new QLabel(i18n("Home Radius"), airfieldPage), 3, 1);
+  airfieldLayout->addWidget(new QLabel(tr("Home Radius"), airfieldPage), 3, 1);
   homeRadiusE = new QSpinBox(airfieldPage, "homeRadiusE");
   homeRadiusE->setRange( 0, 10000 );
   homeRadiusE->setLineStep( 10 );
@@ -968,13 +967,13 @@ void KFLogConfig::__addWaypointTab()
   int catalogType = config-> readNumEntry("DefaultWaypointCatalog", LastUsed);
   QString catalogName = config-> readEntry("DefaultCatalogName", "");
 
-  waypointPage = addPage(i18n("Waypoints"), i18n("Catalog Configuration"),
+  waypointPage = addPage(tr("Waypoints"), tr("Catalog Configuration"),
       KGlobal::instance()-> iconLoader()->loadIcon("waypoint", KIcon::NoGroup,
           KIcon::SizeLarge));
 
   QVBoxLayout *top = new QVBoxLayout(waypointPage, 5);
 
-  QGroupBox *group = new QGroupBox(i18n("Default Catalog:"), waypointPage, "catalogConfiguration");
+  QGroupBox *group = new QGroupBox(tr("Default Catalog:"), waypointPage, "catalogConfiguration");
   QGridLayout *grid = new QGridLayout(group, 4, 2, 25, 5);
 
   waypointButtonGroup = new QButtonGroup(group);
@@ -982,13 +981,13 @@ void KFLogConfig::__addWaypointTab()
   waypointButtonGroup-> setExclusive(true);
   connect(waypointButtonGroup, SIGNAL(clicked(int)), SLOT(slotSelectDefaultCatalog(int)));
 
-  QRadioButton *rb = new QRadioButton(i18n("Empty"), group);
+  QRadioButton *rb = new QRadioButton(tr("Empty"), group);
   waypointButtonGroup-> insert(rb, Empty);
   grid-> addWidget(rb, 0, 0);
-  rb = new QRadioButton(i18n("Last used"), group);
+  rb = new QRadioButton(tr("Last used"), group);
   waypointButtonGroup-> insert(rb, LastUsed);
   grid-> addWidget(rb, 1, 0);
-  rb = new QRadioButton(i18n("Specific"), group);
+  rb = new QRadioButton(tr("Specific"), group);
   waypointButtonGroup-> insert(rb, Specific);
   grid-> addWidget(rb, 2, 0);
   catalogPathE = new QLineEdit(group);
@@ -1003,7 +1002,7 @@ void KFLogConfig::__addWaypointTab()
 
   connect(catalogPathSearch, SIGNAL(clicked()), SLOT(slotSearchDefaultWaypoint()));
 
-  QPushButton* defaultCatalog = new QPushButton(i18n("Default"), waypointPage,
+  QPushButton* defaultCatalog = new QPushButton(tr("Default"), waypointPage,
       "defaultWaypointPath");
   defaultCatalog-> setMaximumWidth(defaultCatalog->sizeHint().width() + 10);
   defaultCatalog-> setMinimumHeight(defaultCatalog->sizeHint().height() + 2);
@@ -1039,7 +1038,7 @@ void KFLogConfig::slotSelectDefaultCatalog(int item)
 void KFLogConfig::slotSearchDefaultWaypoint()
 {
   QString temp = QFileDialog::getOpenFileName(catalogPathE-> text(), "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)",
-    this, 0, i18n("Select default waypoint catalog"));
+    this, 0, tr("Select default waypoint catalog"));
 
     if(temp != 0) {
       catalogPathE-> setText(temp);

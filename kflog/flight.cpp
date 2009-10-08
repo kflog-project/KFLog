@@ -93,8 +93,8 @@ Flight::Flight(const QString& fName, const QString& recID, const QPtrList<flight
     landIndex(route.count()-1),
 //    origTask(FlightTask(wpL, true, QString::null)),
 //    optimizedTask(FlightTask(QString::null)),
-    origTask(FlightTask(wpL, true, i18n("Original task"))),
-    optimizedTask(FlightTask(i18n("Optimized task"))),
+    origTask(FlightTask(wpL, true, QObject::tr("Original task"))),
+    optimizedTask(FlightTask(QObject::tr("Optimized task"))),
     optimized(false),
     nAnimationIndex(0),
     bAnimationActive(false)
@@ -980,7 +980,7 @@ QPtrList<Waypoint> Flight::getOriginalWPList() {  return origTask.getWPList();  
 
 bool Flight::optimizeTaskOLC(Map* map)
 {
-  OptimizationWizard* wizard = new OptimizationWizard(0,i18n("Optimization for OLC"));
+  OptimizationWizard* wizard = new OptimizationWizard(0,QObject::tr("Optimization for OLC"));
   wizard->setMapContents(map);
   int wizard_ret = wizard->exec();
   if (wizard_ret==QDialog::Rejected) {
@@ -997,27 +997,27 @@ bool Flight::optimizeTaskOLC(Map* map)
 
       QPtrList<Waypoint> wpL;
 
-      APPEND_WAYPOINT_OLC2003(startIndex, 0, i18n("Take-Off"))
+      APPEND_WAYPOINT_OLC2003(startIndex, 0, QObject::tr("Take-Off"))
       APPEND_WAYPOINT_OLC2003(idList[0], dist(route.at(idList[0]), route.at(0)),
-          i18n("Begin of Soaring"))
+          QObject::tr("Begin of Soaring"))
       APPEND_WAYPOINT_OLC2003(idList[1], dist(route.at(idList[1]), route.at(1)),
-          i18n("Begin of Task"))
+          QObject::tr("Begin of Task"))
       APPEND_WAYPOINT_OLC2003(idList[2], dist(route.at(idList[2]),
-          route.at(idList[1])), i18n("Optimize 1"))
+          route.at(idList[1])), QObject::tr("Optimize 1"))
       APPEND_WAYPOINT_OLC2003(idList[3], dist(route.at(idList[3]),
-          route.at(idList[2])), i18n("Optimize 2"))
+          route.at(idList[2])), QObject::tr("Optimize 2"))
       APPEND_WAYPOINT_OLC2003(idList[4], dist(route.at(idList[4]),
-          route.at(idList[3])), i18n("Optimize 3"))
+          route.at(idList[3])), QObject::tr("Optimize 3"))
       APPEND_WAYPOINT_OLC2003(idList[5], dist(route.at(idList[5]),
-          route.at(idList[4])), i18n("Optimize 4"))
+          route.at(idList[4])), QObject::tr("Optimize 4"))
       APPEND_WAYPOINT_OLC2003(idList[6], dist(route.at(idList[6]),
-          route.at(idList[5])), i18n("Optimize 5"))
+          route.at(idList[5])), QObject::tr("Optimize 5"))
       APPEND_WAYPOINT_OLC2003(idList[7], dist(route.at(idList[7]),
-          route.at(idList[6])), i18n("End of Task"))
+          route.at(idList[6])), QObject::tr("End of Task"))
       APPEND_WAYPOINT_OLC2003(idList[8], dist(route.at(idList[8]),
-          route.at(idList[7])), i18n("End of Soaring"))
+          route.at(idList[7])), QObject::tr("End of Soaring"))
       APPEND_WAYPOINT_OLC2003(landIndex, dist(route.getLast(),
-          route.at(idList[8])), i18n("Landing"))
+          route.at(idList[8])), QObject::tr("Landing"))
 
       optimizedTask.setWaypointList(wpL);
       optimizedTask.checkWaypoints(route, gliderType);
@@ -1162,7 +1162,7 @@ bool Flight::optimizeTask()
       pointText.sprintf(" %d", (int)(totalDist * 1.75 * 0.85));
 
   distText.sprintf(" %.2f km  ", totalDist);
-  text = i18n("The task has been optimized. The best task found is:\n\n");
+  text = QObject::tr("The task has been optimized. The best task found is:\n\n");
   text = text + "\t1:  "
       + printPos(route.at(idList[0])->origP.lat()) + " / "
       + printPos(route.at(idList[0])->origP.lon(), false) + "\n\t2:  "
@@ -1170,25 +1170,25 @@ bool Flight::optimizeTask()
       + printPos(route.at(idList[1])->origP.lon(), false) + "\n\t3:  "
       + printPos(route.at(idList[2])->origP.lat()) + " / "
       + printPos(route.at(idList[2])->origP.lon(), false) + "\n\n\t"
-      + i18n("Distance:") + distText + i18n("Points:") + pointText + "\n\n"
-      + i18n("Do You want to use this task and replace the old?");
+      + QObject::tr("Distance:") + distText + QObject::tr("Points:") + pointText + "\n\n"
+      + QObject::tr("Do You want to use this task and replace the old?");
 
-  if(QMessageBox::question(0, i18n("Optimizing"), text, QMessageBox::Yes, QMessageBox::No) ==
+  if(QMessageBox::question(0, QObject::tr("Optimizing"), text, QMessageBox::Yes, QMessageBox::No) ==
         QMessageBox::Yes)
     {
       QPtrList<Waypoint> wpL;
 
-      APPEND_WAYPOINT(0, 0, i18n("Take-Off"))
-      APPEND_WAYPOINT(0, 0, i18n("Begin of Task"))
+      APPEND_WAYPOINT(0, 0, QObject::tr("Take-Off"))
+      APPEND_WAYPOINT(0, 0, QObject::tr("Begin of Task"))
       APPEND_WAYPOINT(idList[0], dist(route.at(idList[0]), route.at(0)),
-          i18n("Optimize 1"))
+          QObject::tr("Optimize 1"))
       APPEND_WAYPOINT(idList[1], dist(route.at(idList[1]),
-          route.at(idList[0])), i18n("Optimize 2"))
+          route.at(idList[0])), QObject::tr("Optimize 2"))
       APPEND_WAYPOINT(idList[2], dist(route.at(idList[2]),
-          route.at(idList[1])), i18n("Optimize 3"))
+          route.at(idList[1])), QObject::tr("Optimize 3"))
       APPEND_WAYPOINT(0, dist(route.at(0), route.at(idList[1])),
-          i18n("End of Task"))
-      APPEND_WAYPOINT(0, 0, i18n("Landing"))
+          QObject::tr("End of Task"))
+      APPEND_WAYPOINT(0, 0, QObject::tr("Landing"))
 
       optimizedTask.setWaypointList(wpL);
       optimizedTask.checkWaypoints(route, gliderType);

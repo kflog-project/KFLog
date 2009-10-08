@@ -310,7 +310,7 @@ int Cambridge::openRecorder(const QString& pName, int baud)
     return FR_OK;
     }
   else {
-    warning(i18n("No logger found!"));
+    warning(tr("No logger found!"));
     _isConnected = false;
     return FR_ERROR;
   }
@@ -663,7 +663,7 @@ int Cambridge::downloadFlight(int flightID, int secMode, const QString& fileName
   }
   else
   {
-    warning(i18n("cannot open igc file ") + fileName);
+    warning(tr("cannot open igc file ") + fileName);
     return FR_ERROR;
   }
 }

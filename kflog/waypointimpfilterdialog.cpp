@@ -27,8 +27,6 @@
 #include <qradiobutton.h>
 #include <qlistbox.h>
 
-#include <klocale.h>
-
 extern MapContents _globalMapContents;
 extern MapMatrix _globalMapMatrix;
 
@@ -42,42 +40,42 @@ WaypointImpFilterDialog::WaypointImpFilterDialog(QWidget *parent, const char *na
   QVBoxLayout *vbox1 = new QVBoxLayout();
   QVBoxLayout *vbox2 = new QVBoxLayout();
 
-  setCaption(i18n("Filter waypoints"));
+  setCaption(tr("Filter waypoints"));
 
   // create non-exclusive buttongroup for type filter
-  QButtonGroup *grp1 = new QButtonGroup(1, QGroupBox::Horizontal, i18n("Type"), this);
+  QButtonGroup *grp1 = new QButtonGroup(1, QGroupBox::Horizontal, tr("Type"), this);
 
   grp1->setExclusive(false);
 
   // insert checkboxes
-  useAll = new QCheckBox(i18n("&Use all"), grp1);
+  useAll = new QCheckBox(tr("&Use all"), grp1);
   useAll->setChecked(true);
   grp1->addSpace(0);
-  airports = new QCheckBox(i18n("&Airports"), grp1);
-  gliderSites = new QCheckBox(i18n("&Glider sites"), grp1);
-  otherSites = new QCheckBox(i18n("&Other sites"), grp1);
-  outlanding = new QCheckBox(i18n("Ou&tlanding fields"), grp1);
-  obstacle = new QCheckBox(i18n("O&bstacles"), grp1);
-  landmark = new QCheckBox(i18n("&Landmarks"), grp1);
-  station = new QCheckBox(i18n("&Stations"), grp1);
+  airports = new QCheckBox(tr("&Airports"), grp1);
+  gliderSites = new QCheckBox(tr("&Glider sites"), grp1);
+  otherSites = new QCheckBox(tr("&Other sites"), grp1);
+  outlanding = new QCheckBox(tr("Ou&tlanding fields"), grp1);
+  obstacle = new QCheckBox(tr("O&bstacles"), grp1);
+  landmark = new QCheckBox(tr("&Landmarks"), grp1);
+  station = new QCheckBox(tr("&Stations"), grp1);
 
   // create group box for area filter
-  QGroupBox *grp2 = new QGroupBox(2, QGroupBox::Horizontal, i18n("Area"), this);
-  new QLabel(i18n("From"), grp2);
+  QGroupBox *grp2 = new QGroupBox(2, QGroupBox::Horizontal, tr("Area"), this);
+  new QLabel(tr("From"), grp2);
   grp2->addSpace(0);
-  new QLabel(i18n("Lat"), grp2);
-  new QLabel(i18n("Long"), grp2);
+  new QLabel(tr("Lat"), grp2);
+  new QLabel(tr("Long"), grp2);
   fromLat = new LatEdit(grp2);
   fromLong = new LongEdit(grp2);
-  new QLabel(i18n("To"), grp2);
+  new QLabel(tr("To"), grp2);
   grp2->addSpace(0);
-  new QLabel(i18n("Lat"), grp2);
-  new QLabel(i18n("Long"), grp2);
+  new QLabel(tr("Lat"), grp2);
+  new QLabel(tr("Long"), grp2);
   toLat = new LatEdit(grp2);
   toLong = new LongEdit(grp2);
 
   // create group box for radius filter
-  QGroupBox *grp3 = new QGroupBox(i18n("Radius"), this);
+  QGroupBox *grp3 = new QGroupBox(tr("Radius"), this);
   QVBoxLayout *vbox3 = new QVBoxLayout(grp3, 10);
 
   // create an invisible bouttengroup
@@ -86,25 +84,25 @@ WaypointImpFilterDialog::WaypointImpFilterDialog(QWidget *parent, const char *na
   connect(bg, SIGNAL(clicked(int)), SLOT(selectRadius(int)));
 
   QGridLayout *grid = new QGridLayout(4, 5);
-  QRadioButton *rb = new QRadioButton(i18n("Position"), grp3);
+  QRadioButton *rb = new QRadioButton(tr("Position"), grp3);
   rb->setChecked(true);
   bg->insert(rb, CENTER_POS);
   grid->addWidget(rb, 0, 0);
-  rb = new QRadioButton(i18n("Homesite"), grp3);
+  rb = new QRadioButton(tr("Homesite"), grp3);
   bg->insert(rb, CENTER_HOMESITE);
   grid->addWidget(rb, 1, 0);
-  rb = new QRadioButton(i18n("Center of map"), grp3);
+  rb = new QRadioButton(tr("Center of map"), grp3);
   bg->insert(rb, CENTER_MAP);
   grid->addWidget(rb, 2, 0);
-  rb = new QRadioButton(i18n("Airfield"), grp3);
+  rb = new QRadioButton(tr("Airfield"), grp3);
   bg->insert(rb, CENTER_AIRPORT);
   grid->addWidget(rb, 3, 0);
 
   // create a grid layout for input fields
-  grid->addWidget(new QLabel(i18n("Lat"), grp3), 0, 1);
+  grid->addWidget(new QLabel(tr("Lat"), grp3), 0, 1);
   posLat = new LatEdit(grp3);
   grid->addWidget(posLat, 0, 2);
-  grid->addWidget(new QLabel(i18n("Long"), grp3), 0, 3);
+  grid->addWidget(new QLabel(tr("Long"), grp3), 0, 3);
   posLong = new LongEdit(grp3);
   grid->addWidget(posLong, 0, 4);
   refAirport = new QComboBox(false, grp3);
@@ -117,7 +115,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog(QWidget *parent, const char *na
 
   vbox3->addSpacing(10);
   vbox3->addLayout(grid);
-  vbox3->addWidget(new QLabel(i18n("Radius (km)"), grp3));
+  vbox3->addWidget(new QLabel(tr("Radius (km)"), grp3));
   vbox3->addWidget(radius);
 
   vbox1->addWidget(grp1);
@@ -132,15 +130,15 @@ WaypointImpFilterDialog::WaypointImpFilterDialog(QWidget *parent, const char *na
 
   top->addLayout(hbox);
 
-  QPushButton *b = new QPushButton(i18n("&Clear"), this);
+  QPushButton *b = new QPushButton(tr("&Clear"), this);
   connect(b, SIGNAL(clicked()), this, SLOT(slotClear()));
   buttons->addWidget(b);
   buttons->addStretch();
-  b = new QPushButton(i18n("&Ok"), this);
+  b = new QPushButton(tr("&Ok"), this);
   b->setDefault(true);
   connect(b, SIGNAL(clicked()), this, SLOT(accept()));
   buttons->addWidget(b);
-  b = new QPushButton(i18n("&Cancel"), this);
+  b = new QPushButton(tr("&Cancel"), this);
   connect(b, SIGNAL(clicked()), this, SLOT(reject()));
   buttons->addWidget(b);
 

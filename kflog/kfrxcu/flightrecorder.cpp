@@ -17,8 +17,6 @@
 #include <unistd.h>
 #include <ctype.h>
 
-#include <klocale.h>
-
 #include "cumulus.h"
 
 extern "C"

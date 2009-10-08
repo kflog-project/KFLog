@@ -26,7 +26,6 @@
 #include <time.h>
 #include <signal.h>
 
-#include <klocale.h>
 #include <ctype.h>
 
 /**
@@ -199,7 +198,7 @@ int Volkslogger::openRecorder(const QString& pName, int baud)
   portName = (char *)pName.latin1();
 
   if((err = vl.open(1, 5, 0, baud)) != VLA_ERR_NOERR) {
-    warning(i18n("No logger found!"));
+    warning(tr("No logger found!"));
     _isConnected = false;
   }
   else {

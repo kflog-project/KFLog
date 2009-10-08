@@ -48,17 +48,6 @@
   *@author Christian Fughe, Harald Maier
   */
 
-/**
-  * This plugin should work under QtEmbedded (Version 2.3.3) and Qt (Version 3.x)
-  * we take care of this by some defines
-  */
-#if QT_VERSION < 0x030000
-#define i18n tr
-#define QPtrList QList
-#else
-#include <klocale.h>
-#endif
-
 #define FLIGHT_INDEX_WIDTH 0x60 /* Bytes per record of the flight  */
                                 /* index. (96)                     */
 #define LX_MEM_RET 7            /* Number of bytes returned by     */

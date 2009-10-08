@@ -24,7 +24,6 @@
 #include "mapcontents.h"
 
 #include <kconfig.h>
-#include <klocale.h>
 
 #include <qcombobox.h>
 #include <qlayout.h>
@@ -38,14 +37,14 @@ EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[])
 {
   warning("EvaluationDialog::EvaluationDialog");
 
-  setCaption(i18n("Flightevaluation:"));
+  setCaption(tr("Flightevaluation:"));
 
 //  if (staysOnTop)
 //    setWFlags(getWFlags() | WStyle_StaysOnTop);
 
   // Auswahl - Kopfzeile
 /*  QFrame* oben = new QFrame(this, "frame_oben");
-  QLabel* o1 = new QLabel(i18n("Flight:"), oben);
+  QLabel* o1 = new QLabel(tr("Flight:"), oben);
   o1->setAlignment(AlignRight);
   combo_flight = new QComboBox(oben, "combo_oben");
   o1->setMinimumHeight(o1->sizeHint().height() + 10);
@@ -70,7 +69,7 @@ EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[])
   textLabel = new QTextView(textSplitter);
   textLabel->setMinimumHeight(1);
 
-//  QPushButton* close = new QPushButton(i18n("Close"),this);
+//  QPushButton* close = new QPushButton(tr("Close"),this);
 //  close->setMinimumHeight(close->sizeHint().height() + 5);
 //  close->setMaximumWidth(close->sizeHint().width() + 5);
 
@@ -183,12 +182,12 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
         QStrList erg = flight->getFlightValues(index1, index2);
 
         htmlText = (QString) "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-                              <TR><TD width='50'><B>" + i18n("Circling") + "</B></TD> \
-                              <TD align='right'><I>" + i18n("Time") + "</I></TD> \
-                              <TD align='right'><I>" + i18n("Vario") + "</I></TD> \
-                              <TD align='right'><I>" + i18n("Alt. Gain") + "</I></TD> \
-                              <TD align='right'><I>" + i18n("Alt. Loss") + "</I></TD></TR> \
-                              <TD align='right'><I>" + i18n("Alt. Netto") + "</I></TD></TR>";
+                              <TR><TD width='50'><B>" + tr("Circling") + "</B></TD> \
+                              <TD align='right'><I>" + tr("Time") + "</I></TD> \
+                              <TD align='right'><I>" + tr("Vario") + "</I></TD> \
+                              <TD align='right'><I>" + tr("Alt. Gain") + "</I></TD> \
+                              <TD align='right'><I>" + tr("Alt. Loss") + "</I></TD></TR> \
+                              <TD align='right'><I>" + tr("Alt. Netto") + "</I></TD></TR>";
         htmlText += (QString) "<TR><TD>total:</TD> \
                            <TD ALIGN=right WIDTH=130>" + erg.at(3) + \
                           "</TD><TD ALIGN=right>" + (QString)erg.at(7) + \
@@ -219,14 +218,14 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
                           "</TD></TR>";
 
         htmlText += (QString) "<TR><TD colspan='7'></TD></TR> \
-                                        <TR><TD><B>" + i18n("Straight") + "</B></TD> \
-                                        <TD align='right'><I>" + i18n("Time") + "</I></TD> \
-                                        <TD align='right'><I>" + i18n("tot. Distance") + "</I></TD> \
-                                        <TD align='right'><I>" + i18n("Alt. Gain") + "</I></TD> \
-                                        <TD align='right'><I>" + i18n("Alt. Loss") + "</I></TD> \
-                                        <TD align='right'><I>" + i18n("Alt. Netto") + "</I></TD> \
-                                        <TD align='right'><I>" + i18n("Speed") + "</I></TD> \
-                                        <TD align='right'><I>" + i18n("L/D ratio") + "</I></TD></TR>";
+                                        <TR><TD><B>" + tr("Straight") + "</B></TD> \
+                                        <TD align='right'><I>" + tr("Time") + "</I></TD> \
+                                        <TD align='right'><I>" + tr("tot. Distance") + "</I></TD> \
+                                        <TD align='right'><I>" + tr("Alt. Gain") + "</I></TD> \
+                                        <TD align='right'><I>" + tr("Alt. Loss") + "</I></TD> \
+                                        <TD align='right'><I>" + tr("Alt. Netto") + "</I></TD> \
+                                        <TD align='right'><I>" + tr("Speed") + "</I></TD> \
+                                        <TD align='right'><I>" + tr("L/D ratio") + "</I></TD></TR>";
         htmlText += (QString) "<TR><TD></TD> \
                                         <TD ALIGN=right>" + erg.at(26) + "</TD> \
                                         <TD ALIGN=right>" + erg.at(25) + "</TD> \
@@ -238,7 +237,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
                                         </TR>";
 
         htmlText += (QString) "<TR><TD colspan='7'></TD></TR>" + \
-                                        "<TR><TD><B>" + i18n("Total") + "</B></TD> \
+                                        "<TR><TD><B>" + tr("Total") + "</B></TD> \
                                         <TD ALIGN=right>" + erg.at(27) + "</TD> \
                                         <TD></TD> \
                                         <TD ALIGN=right>" + erg.at(28) + "</TD> \
@@ -248,35 +247,35 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
         QPtrList<statePoint> state_list;
         QString text = "";
         state_list = flight->getFlightStates(index1, index2);
-        htmlText += (QString) "<TABLE border='0' cellpadding='0' cellspacing='0'><TR><TD><B>" + i18n("Flight sections") + "</B></TR> \
+        htmlText += (QString) "<TABLE border='0' cellpadding='0' cellspacing='0'><TR><TD><B>" + tr("Flight sections") + "</B></TR> \
                                 <TR> \
-                                <TD align='left'><I>" + i18n("Type") + "</I></TD> \
-                                <TD align='center'><I>" + i18n("Start") + "</I></TD> \
-                                <TD align='center'><I>" + i18n("End") + "</I></TD> \
-                                <TD align='center'><I>" + i18n("Time") + "</I></TD> \
-                                <TD align='right'><I>" + i18n("Alt. Gain") + "</I></TD> \
-                                <TD align='right'><I>" + i18n("Alt. Loss") + "</I></TD> \
-                                <TD align='right'><I>" + i18n("Alt. Netto") + "</I></TD> \
-                                <TD align='right'><I>" + i18n("Distance") + "</I></TD> \
-                                <TD align='center'><I>" + i18n("Speed") + "</I></TD> \
-                                <TD align='right'><I>" + i18n("L/D") + "</I></TD> \
-                                <TD align='center'><I>" + i18n("Vario") + "</I></TD></TR>";
+                                <TD align='left'><I>" + tr("Type") + "</I></TD> \
+                                <TD align='center'><I>" + tr("Start") + "</I></TD> \
+                                <TD align='center'><I>" + tr("End") + "</I></TD> \
+                                <TD align='center'><I>" + tr("Time") + "</I></TD> \
+                                <TD align='right'><I>" + tr("Alt. Gain") + "</I></TD> \
+                                <TD align='right'><I>" + tr("Alt. Loss") + "</I></TD> \
+                                <TD align='right'><I>" + tr("Alt. Netto") + "</I></TD> \
+                                <TD align='right'><I>" + tr("Distance") + "</I></TD> \
+                                <TD align='center'><I>" + tr("Speed") + "</I></TD> \
+                                <TD align='right'><I>" + tr("L/D") + "</I></TD> \
+                                <TD align='center'><I>" + tr("Vario") + "</I></TD></TR>";
 
         for(unsigned int n = 0; n<state_list.count(); n++)
         {
           if(n%10==0 && n!=0)
             htmlText += (QString) "<TR> \
-                        <TD align='left'><I>" + i18n("Type") + "</I></TD> \
-                        <TD align='center'><I>" + i18n("Start") + "</I></TD> \
-                        <TD align='center'><I>" + i18n("End") + "</I></TD> \
-                        <TD align='center'><I>" + i18n("Time") + "</I></TD> \
-                        <TD align='right'><I>" + i18n("Alt. Gain") + "</I></TD> \
-                        <TD align='right'><I>" + i18n("Alt. Loss") + "</I></TD> \
-                        <TD align='right'><I>" + i18n("Alt. Netto") + "</I></TD> \
-                        <TD align='right'><I>" + i18n("Distance") + "</I></TD> \
-                        <TD align='center'><I>" + i18n("Speed") + "</I></TD> \
-                        <TD align='right'><I>" + i18n("L/D") + "</I></TD> \
-                        <TD align='center'><I>" + i18n("Vario") + "</I></TD></TR>";
+                        <TD align='left'><I>" + tr("Type") + "</I></TD> \
+                        <TD align='center'><I>" + tr("Start") + "</I></TD> \
+                        <TD align='center'><I>" + tr("End") + "</I></TD> \
+                        <TD align='center'><I>" + tr("Time") + "</I></TD> \
+                        <TD align='right'><I>" + tr("Alt. Gain") + "</I></TD> \
+                        <TD align='right'><I>" + tr("Alt. Loss") + "</I></TD> \
+                        <TD align='right'><I>" + tr("Alt. Netto") + "</I></TD> \
+                        <TD align='right'><I>" + tr("Distance") + "</I></TD> \
+                        <TD align='center'><I>" + tr("Speed") + "</I></TD> \
+                        <TD align='right'><I>" + tr("L/D") + "</I></TD> \
+                        <TD align='center'><I>" + tr("Vario") + "</I></TD></TR>";
 
           switch(state_list.at(n)->f_state)
           {
@@ -329,12 +328,12 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
     break;
   case BaseMapElement::Task:
     emit textChanged(QString::null);
-    htmlText = "<DIV ALIGN=CENTER>" + i18n("Cannot evaluate task") +
+    htmlText = "<DIV ALIGN=CENTER>" + tr("Cannot evaluate task") +
       "</DIV>";
     break;
   case BaseMapElement::FlightGroup:
     emit textChanged(QString::null);
-    htmlText = "<DIV ALIGN=CENTER>" + i18n("Cannot (yet) evaluate a flight group") +
+    htmlText = "<DIV ALIGN=CENTER>" + tr("Cannot (yet) evaluate a flight group") +
       "</DIV>";
     break;
   }
@@ -376,11 +375,11 @@ void EvaluationDialog::slotShowFlightData()
 
   if (flight) {
     if (flight->getTypeID() == BaseMapElement::Flight) {
-      setCaption(i18n("Flightevaluation:") + flight->getPilot() + "  "
+      setCaption(tr("Flightevaluation:") + flight->getPilot() + "  "
         + flight->getDate().toString());
     }
     else {
-      setCaption(i18n("Flightevaluation:"));
+      setCaption(tr("Flightevaluation:"));
     }
 
     // GRUNDWERTE setzen

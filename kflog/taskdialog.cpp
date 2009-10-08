@@ -22,7 +22,6 @@
 
 #include <kconfig.h>
 #include <kiconloader.h>
-#include <klocale.h>
 #include <qmessagebox.h>
 
 #include "taskdialog.h"
@@ -35,7 +34,7 @@ extern TranslationList taskTypes;
 TaskDialog::TaskDialog(QWidget *parent, const char *name )
   : QDialog(parent, name, true)
 {
-  setCaption(i18n("Task definition"));
+  setCaption(tr("Task definition"));
   __initDialog();
   setMinimumWidth(500);
   setMinimumHeight(300);
@@ -63,24 +62,24 @@ void TaskDialog::__initDialog()
   QHBoxLayout *smallButtons = new QHBoxLayout(5);
 
   buttons->addStretch();
-  b = new QPushButton(i18n("&Ok"), this);
+  b = new QPushButton(tr("&Ok"), this);
   b->setDefault(true);
   connect(b, SIGNAL(clicked()), SLOT(accept()));
   buttons->addWidget(b);
-  b = new QPushButton(i18n("&Cancel"), this);
+  b = new QPushButton(tr("&Cancel"), this);
   connect(b, SIGNAL(clicked()), SLOT(reject()));
   buttons->addWidget(b);
 
   name = new QLineEdit(this);
   name->setReadOnly(true);
-  l = new QLabel(name, i18n("&Name") + ":", this);
+  l = new QLabel(name, tr("&Name") + ":", this);
   header->addWidget(l);
   header->addWidget(name);
 
   // Create a combo box for taskTypes
   planningTypes = new QComboBox(false, this, "planningType");
   connect(planningTypes, SIGNAL(activated(int)), SLOT(slotSetPlanningType(int)));
-  l = new QLabel(planningTypes, i18n("Task T&ype") + ":", this);
+  l = new QLabel(planningTypes, tr("Task T&ype") + ":", this);
 
   TranslationElement *te;
   // init comboboxes
@@ -89,14 +88,14 @@ void TaskDialog::__initDialog()
   }
 
   // Create an non-exclusive button group
-  QButtonGroup *bgrp2 = new QButtonGroup(1, QGroupBox::Vertical, i18n("Side of FAI area"), this);
+  QButtonGroup *bgrp2 = new QButtonGroup(1, QGroupBox::Vertical, tr("Side of FAI area"), this);
   connect(bgrp2, SIGNAL(clicked(int)), SLOT(slotSetPlanningDirection(int)));
   bgrp2->setExclusive(false);
 
   // insert 2 checkbuttons
-  left = new QCheckBox(i18n( "&left"), bgrp2);
+  left = new QCheckBox(tr( "&left"), bgrp2);
   left->setChecked(true);
-  right = new QCheckBox(i18n("ri&ght"), bgrp2);
+  right = new QCheckBox(tr("ri&ght"), bgrp2);
 
   taskType = new QLabel(this);
   taskType->setMinimumWidth(100);
@@ -113,12 +112,12 @@ void TaskDialog::__initDialog()
   route->setAllColumnsShowFocus(true);
   connect(route, SIGNAL(currentChanged(QListViewItem *)), SLOT(enableWaypointButtons()));
   
-  colType = route->addColumn(i18n("Type"));
-  colWaypoint = route->addColumn(i18n("Waypoint"));
-  colDist = route->addColumn(i18n("Distance"));
-  colCourse = route->addColumn(i18n("TC"));
+  colType = route->addColumn(tr("Type"));
+  colWaypoint = route->addColumn(tr("Waypoint"));
+  colDist = route->addColumn(tr("Distance"));
+  colCourse = route->addColumn(tr("TC"));
 
-  l = new QLabel(route, i18n("&Task"), this);
+  l = new QLabel(route, tr("&Task"), this);
 
   route->loadConfig();
 
@@ -153,7 +152,7 @@ void TaskDialog::__initDialog()
   middleLayout->addStretch();
 
   waypoints = new QListBox(this, "waypoints");
-  l = new QLabel(waypoints, i18n("&Waypoint's"), this);
+  l = new QLabel(waypoints, tr("&Waypoint's"), this);
   rightLayout->addWidget(l);
   rightLayout->addWidget(waypoints);
 
@@ -205,15 +204,15 @@ void TaskDialog::slotSetPlanningType(int idx)
   id = taskTypes.at(idx)->id;
   switch (id) {
   case FlightTask::FAIArea:
-    QMessageBox::information (this, i18n("Task Type FAI Area:\n"
+    QMessageBox::information (this, tr("Task Type FAI Area:\n"
       "You can define a task with either takeoff, start, end and landing or "
       "takeoff, start, end, landing and one additional route point.\n"
       "The FAI area calculation will be made with start and end point or start and route point, "
       "depending wether the route point is defined or not\n"
       "Deleting takeoff start, end and landing points is not possible, "
       "but you can replace them with other waypoints.\n"
-      "New waypoints will be added after the selected one."), i18n("Task selection"),
-      i18n("Do not show this message again."));
+      "New waypoints will be added after the selected one."), tr("Task selection"),
+      tr("Do not show this message again."));
     cnt = wpList.count();    
     left->setEnabled(true);
     right->setEnabled(true);
@@ -228,12 +227,12 @@ void TaskDialog::slotSetPlanningType(int idx)
     }        
     break;
   case FlightTask::Route:
-    QMessageBox::information (this, i18n("Task Type Traditional Route:\n"
+    QMessageBox::information (this, tr("Task Type Traditional Route:\n"
       "You can define a task with takeoff, start, end, landing and route points. "
       "Deleting takeoff start, end and landing is not possible, "
       "but you can replace them with other waypoints.\n"
-      "New waypoints will be added after the selected one."), i18n("Task selection"),
-      i18n("Do not show this message again."));
+      "New waypoints will be added after the selected one."), tr("Task selection"),
+      tr("Do not show this message again."));
     left->setEnabled(false);
     right->setEnabled(false);
     left->setChecked(false);
@@ -273,22 +272,22 @@ void TaskDialog::fillWaypoints()
     item = new QListViewItem(route, lastItem);
     switch (wp->type) {
     case FlightTask::TakeOff:
-      txt = i18n("Take Off");
+      txt = tr("Take Off");
       break;
     case FlightTask::Begin:
-      txt = i18n("Begin of Task");
+      txt = tr("Begin of Task");
       break;
     case FlightTask::RouteP:
-      txt = i18n("Route Point");
+      txt = tr("Route Point");
       break;
     case FlightTask::End:
-      txt = i18n("End of Task");
+      txt = tr("End of Task");
       break;
     case FlightTask::FreeP:
-      txt = i18n("Free Point");
+      txt = tr("Free Point");
       break;
     case FlightTask::Landing:
-      txt = i18n("Landing");
+      txt = tr("Landing");
       break;
     default:
       txt = "???";

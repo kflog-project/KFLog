@@ -20,7 +20,6 @@
 #include "config.h"
 #include "mapcalc.h"
 
-#include <klocale.h>
 #include <kprinter.h>
 
 // p_w and p_h given in mm
@@ -168,23 +167,23 @@ TaskDataPrint::TaskDataPrint(FlightTask* task)
   QPainter painter(&printer);
 
   painter.setFont(QFont("helvetica", 18, QFont::Bold));
-  painter.drawText(50, 50, i18n("Flightplanning") + ":");
+  painter.drawText(50, 50, QObject::tr("Flightplanning") + ":");
   painter.setPen(QPen(QColor(0, 0, 0), 2));
   painter.drawLine(50, 56, 545, 56);
 
   painter.setFont(QFont("helvetica", 10));
-  painter.drawText(50, 100, i18n("Task-Type") + ":");
+  painter.drawText(50, 100, QObject::tr("Task-Type") + ":");
   painter.drawText(125, 100, task->getTaskTypeString());
-  painter.drawText(50, 115, i18n("total Distance") + ":");
+  painter.drawText(50, 115, QObject::tr("total Distance") + ":");
   painter.drawText(125, 115, task->getTotalDistanceString());
-  painter.drawText(50, 130, i18n("Task-Distance") + ":");
+  painter.drawText(50, 130, QObject::tr("Task-Distance") + ":");
   painter.drawText(125, 130, task->getTaskDistanceString());
 
   painter.setPen(QPen(QColor(0,0,0), 1));
   painter.drawLine(50, 175, 545, 175);
 
   painter.setFont(QFont("helvetica", 12, QFont::Bold));
-  painter.drawText(50, 170, i18n("Task") + ":");
+  painter.drawText(50, 170, QObject::tr("Task") + ":");
 
   painter.setFont(QFont("helvetica", 10));
 

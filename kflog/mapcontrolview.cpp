@@ -22,7 +22,6 @@
 #include "mapmatrix.h"
 
 #include <kiconloader.h>
-#include <klocale.h>
 
 #include <qpushbutton.h>
 #include <qlabel.h>
@@ -103,7 +102,7 @@ MapControlView::MapControlView(QWidget* parent)
   navLayout->setRowStretch(4,1);
   navLayout->activate();
 
-  QLabel* dimLabel = new QLabel(i18n("Height / Width [km]:"), parent);
+  QLabel* dimLabel = new QLabel(tr("Height / Width [km]:"), parent);
   dimLabel->setMinimumHeight(dimLabel->sizeHint().height() + 5);
   dimText = new QLabel("125 / 130", parent);
   dimText->setAlignment( AlignCenter );
@@ -111,12 +110,12 @@ MapControlView::MapControlView(QWidget* parent)
   dimText->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   dimText->setBackgroundMode( PaletteLight );
 
-  QLabel* currentScaleLabel = new QLabel(i18n("Scale:"), parent);
+  QLabel* currentScaleLabel = new QLabel(tr("Scale:"), parent);
   currentScaleLabel->setMinimumHeight(
           currentScaleLabel->sizeHint().height() + 10);
   currentScaleValue = new QLCDNumber(5,parent);
 
-  QLabel* setScaleLabel = new QLabel(i18n("Set scale:"), parent);
+  QLabel* setScaleLabel = new QLabel(tr("Set scale:"), parent);
   setScaleLabel->setMinimumWidth( setScaleLabel->sizeHint().width());
 
   setScaleLabel->setMinimumHeight(setScaleLabel->sizeHint().height());

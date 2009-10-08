@@ -22,13 +22,12 @@
 #include <qmessagebox.h>
 #include <qpushbutton.h>
 
-#include <klocale.h>
 #include <kiconloader.h>
 
 FlightSelectionDialog::FlightSelectionDialog(QWidget *parent, const char *name )
  : QDialog(parent, name, true)
 {
-  setCaption(i18n("Flight selection"));
+  setCaption(tr("Flight selection"));
   __initDialog();
 
   availableFlights.setAutoDelete(false);
@@ -57,11 +56,11 @@ void FlightSelectionDialog::__initDialog()
 
   buttons->addStretch();
 
-  b = new QPushButton(i18n("&Ok"), this);
+  b = new QPushButton(tr("&Ok"), this);
   b->setDefault(true);
   connect(b, SIGNAL(clicked()), SLOT(slotAccept()));
   buttons->addWidget(b);
-  b = new QPushButton(i18n("&Cancel"), this);
+  b = new QPushButton(tr("&Cancel"), this);
   connect(b, SIGNAL(clicked()), SLOT(reject()));
   buttons->addWidget(b);
 
@@ -77,7 +76,7 @@ void FlightSelectionDialog::__initDialog()
   smallButtons->addStretch();
 
   aFlights = new QListBox(this, "availableFlights");
-  l = new QLabel(aFlights, i18n("&available Flights"), this);
+  l = new QLabel(aFlights, tr("&available Flights"), this);
   leftLayout->addWidget(l);
   leftLayout->addWidget(aFlights);
 
@@ -101,7 +100,7 @@ void FlightSelectionDialog::__initDialog()
   middleLayout->addStretch();
 
   sFlights = new QListBox(this, "selectedFlights");
-  l = new QLabel(sFlights, i18n("&selected Flights"), this);
+  l = new QLabel(sFlights, tr("&selected Flights"), this);
   rightLayout->addWidget(l);
   rightLayout->addWidget(sFlights);
   rightLayout->addLayout(smallButtons);
@@ -120,7 +119,7 @@ void FlightSelectionDialog::slotAccept()
   if(selectedFlights.count()>0)
     accept();
   else
-    if(QMessageBox::Yes == QMessageBox::warning(0, i18n("No flights selected"), "<qt>" + i18n("No flights are selected, so no flight group can be made. Do you want to close this screen?") + "</qt>", QMessageBox::Yes, QMessageBox::No))
+    if(QMessageBox::Yes == QMessageBox::warning(0, tr("No flights selected"), "<qt>" + tr("No flights are selected, so no flight group can be made. Do you want to close this screen?") + "</qt>", QMessageBox::Yes, QMessageBox::No))
       reject();
 }
 

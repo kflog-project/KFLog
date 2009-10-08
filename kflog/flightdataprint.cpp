@@ -20,7 +20,6 @@
 #include "config.h"
 #include "mapcalc.h"
 
-#include <klocale.h>
 #include <kprinter.h>
 
 // p_w and p_h given in mm
@@ -163,7 +162,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
   font.setWeight(QFont::Bold);
 
   painter.setFont( font );
-  painter.drawText(50, 50, i18n("Flightanalysis") + ":");
+  painter.drawText(50, 50, QObject::tr("Flightanalysis") + ":");
   painter.setPen(QPen(QColor(0, 0, 0), 2));
   painter.drawLine(50, 56, 545, 56);
 //  painter.setFont(QFont("helvetica", 10, QFont::Normal, true));
@@ -174,15 +173,15 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
   
   painter.setFont( font );
   painter.drawText(50, 58, 495, 20, Qt::AlignTop | Qt::AlignRight,
-      (QString)i18n("File") + ": " + currentFlight->getFileName());
+      (QString)QObject::tr("File") + ": " + currentFlight->getFileName());
 
   font.setItalic( false );
   painter.setFont( font );
-  painter.drawText(50, 100, i18n("Date") + ":");
+  painter.drawText(50, 100, QObject::tr("Date") + ":");
   painter.drawText(125, 100, currentFlight->getDate().toString());
-  painter.drawText(50, 115, i18n("Pilot") + ":");
+  painter.drawText(50, 115, QObject::tr("Pilot") + ":");
   painter.drawText(125, 115, currentFlight->getPilot());
-  painter.drawText(50, 130, i18n("Glider") + ":");
+  painter.drawText(50, 130, QObject::tr("Glider") + ":");
   painter.drawText(125, 130,
         currentFlight->getType() + " / " + currentFlight->getID());
 
@@ -192,35 +191,35 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
   font.setPointSize( 12 );
   font.setWeight( QFont::Bold );
   painter.setFont( font );
-  painter.drawText(50, 170, i18n("Flighttrack") + ":");
+  painter.drawText(50, 170, QObject::tr("Flighttrack") + ":");
 
   font.setWeight( QFont::Normal );
   font.setPointSize( 9 );
   painter.setFont( font );
-  painter.drawText(50, 190, i18n("Duration") + ":");
+  painter.drawText(50, 190, QObject::tr("Duration") + ":");
   painter.drawText(125, 190,
       printTime(currentFlight->getLandTime() - currentFlight->getStartTime()));
 
   cPoint = currentFlight->getPoint(currentFlight->getStartIndex());
-  __printPositionData(&painter, &cPoint, 210, i18n("Takeoff") + ":");
+  __printPositionData(&painter, &cPoint, 210, QObject::tr("Takeoff") + ":");
 
   cPoint = currentFlight->getPoint(currentFlight->getLandIndex());
-  __printPositionData(&painter, &cPoint, 223, i18n("Landing") + ":");
+  __printPositionData(&painter, &cPoint, 223, QObject::tr("Landing") + ":");
 
   cPoint = currentFlight->getPoint(Flight::H_MAX);
-  __printPositionData(&painter, &cPoint, 248, i18n("max. Altitude") + ":",
+  __printPositionData(&painter, &cPoint, 248, QObject::tr("max. Altitude") + ":",
       true, true);
 
   cPoint = currentFlight->getPoint(Flight::VA_MAX);
-  __printPositionData(&painter, &cPoint, 261, i18n("max. Vario") + ":",
+  __printPositionData(&painter, &cPoint, 261, QObject::tr("max. Vario") + ":",
       true, true);
 
   cPoint = currentFlight->getPoint(Flight::VA_MIN);
-  __printPositionData(&painter, &cPoint, 274, i18n("min. Vario") + ":",
+  __printPositionData(&painter, &cPoint, 274, QObject::tr("min. Vario") + ":",
       true, true);
 
   cPoint = currentFlight->getPoint(Flight::V_MAX);
-  __printPositionData(&painter, &cPoint, 287, i18n("max. Speed") + ":",
+  __printPositionData(&painter, &cPoint, 287, QObject::tr("max. Speed") + ":",
       true, true);
 
   painter.setPen(QPen(QColor(0,0,0), 1));
@@ -229,14 +228,14 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
   font.setPointSize( 12 );
   font.setWeight( QFont::Bold );
   painter.setFont( font );
-  painter.drawText(50, 335, i18n("Task") + ":");
+  painter.drawText(50, 335, QObject::tr("Task") + ":");
 
   font.setPointSize( 9 );
   font.setWeight( QFont::Normal );
   painter.setFont( font );
 
-  painter.drawText(50, 355, i18n("Typ") + ":");
-  temp = i18n("%1  Track: %2  Points: %3").arg(
+  painter.drawText(50, 355, QObject::tr("Typ") + ":");
+  temp = QObject::tr("%1  Track: %2  Points: %3").arg(
             (const char*)currentFlight->getTaskTypeString(true)).arg(
             (const char*)currentFlight->getDistance(true)).arg(
             (const char*)currentFlight->getPoints(true));
@@ -258,7 +257,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
       font.setPointSize( 12 );
       font.setWeight( QFont::Bold );
       painter.setFont( font );
-      painter.drawText(50, yPos, i18n("Optimized Task") + ":");
+      painter.drawText(50, yPos, QObject::tr("Optimized Task") + ":");
       yPos += 5;
 
       painter.setPen(QPen(QColor(0,0,0), 1));
@@ -269,8 +268,8 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
       painter.setFont( font );
       yPos += 15;
 
-      painter.drawText(50, yPos, i18n("Typ") + ":");
-      temp = i18n("%1  Track: %2  Points: %3").arg(
+      painter.drawText(50, yPos, QObject::tr("Typ") + ":");
+      temp = QObject::tr("%1  Track: %2  Points: %3").arg(
             (const char*)currentFlight->getTaskTypeString()).arg(
             (const char*)currentFlight->getDistance()).arg(
             (const char*)currentFlight->getPoints());

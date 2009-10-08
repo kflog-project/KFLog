@@ -34,7 +34,6 @@
 #include <qmessagebox.h>
 
 //kde includes
-#include <klocale.h>
 #include <kiconloader.h>
 
 
@@ -52,14 +51,14 @@ ObjectTree::ObjectTree(QWidget *parent, const char *name ) : QListView(parent,na
   setSorting(-1);
   //setSelectionMode(Extended);
 
-  colName = addColumn(i18n("Name"));
-  colDesc = addColumn(i18n("Description"));
+  colName = addColumn(tr("Name"));
+  colDesc = addColumn(tr("Description"));
 
-  FlightRoot = new QListViewItem(this,i18n("Flights"));
+  FlightRoot = new QListViewItem(this,tr("Flights"));
   FlightRoot->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup, KIcon::SizeSmall));
   FlightRoot->setSelectable(false);
 
-  TaskRoot = new QListViewItem(this,FlightRoot,i18n("Tasks"));
+  TaskRoot = new QListViewItem(this,FlightRoot,tr("Tasks"));
   TaskRoot->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("task", KIcon::NoGroup, KIcon::SizeSmall));
   TaskRoot->setSelectable(false);
   /*
@@ -237,32 +236,32 @@ void ObjectTree::showTaskPopup(QListViewItem *item, const QPoint &, int)
 void ObjectTree::addPopupMenu()
 {
   taskPopup = new KPopupMenu(this);
-  taskPopup->insertTitle(SmallIcon("flight"), i18n("Flights"), 0);
-  taskPopup->insertItem(SmallIcon("fileopen"), i18n("&Open flight"), this, SIGNAL(openFlight()));
-  taskPopup->insertItem(SmallIcon("filenew"), i18n("New flight &group"), this,
+  taskPopup->insertTitle(SmallIcon("flight"), tr("Flights"), 0);
+  taskPopup->insertItem(SmallIcon("fileopen"), tr("&Open flight"), this, SIGNAL(openFlight()));
+  taskPopup->insertItem(SmallIcon("filenew"), tr("New flight &group"), this,
     SIGNAL(newFlightGroup()));
-  idFlightGroupEdit = taskPopup->insertItem(SmallIcon("wizard"), i18n("Edit flight group"), this,
+  idFlightGroupEdit = taskPopup->insertItem(SmallIcon("wizard"), tr("Edit flight group"), this,
     SIGNAL(editFlightGroup()));
-  idFlightOptimize = taskPopup->insertItem(SmallIcon("wizard"), i18n("O&ptimize flight"), this,
+  idFlightOptimize = taskPopup->insertItem(SmallIcon("wizard"), tr("O&ptimize flight"), this,
     SIGNAL(optimizeFlight()));
-  idFlightOptimizeOLC = taskPopup->insertItem(SmallIcon("wizard"), i18n("O&ptimize flight (OLC)"), this,
+  idFlightOptimizeOLC = taskPopup->insertItem(SmallIcon("wizard"), tr("O&ptimize flight (OLC)"), this,
     SIGNAL(optimizeFlightOLC()));
-  idFlightClose = taskPopup->insertItem(SmallIcon("fileclose"), i18n("&Close flight (group)"), this,
+  idFlightClose = taskPopup->insertItem(SmallIcon("fileclose"), tr("&Close flight (group)"), this,
     SLOT(slotDeleteTask()));
 
-  taskPopup->insertTitle(SmallIcon("task"), i18n("Tasks"), 0);
-  taskPopup->insertItem(SmallIcon("filenew"), i18n("&New task"), this,
+  taskPopup->insertTitle(SmallIcon("task"), tr("Tasks"), 0);
+  taskPopup->insertItem(SmallIcon("filenew"), tr("&New task"), this,
     SIGNAL(newTask()));
-  taskPopup->insertItem(SmallIcon("fileopen"), i18n("Open &task"), this,
+  taskPopup->insertItem(SmallIcon("fileopen"), tr("Open &task"), this,
     SIGNAL(openTask()));
-  idTaskEdit = taskPopup->insertItem(SmallIcon("wizard"), i18n("&Edit task"), this,
+  idTaskEdit = taskPopup->insertItem(SmallIcon("wizard"), tr("&Edit task"), this,
     SLOT(slotEditTask()));
-  idTaskDelete = taskPopup->insertItem(SmallIcon("fileclose"), i18n("&Close task"), this,
+  idTaskDelete = taskPopup->insertItem(SmallIcon("fileclose"), tr("&Close task"), this,
     SLOT(slotDeleteTask()));
   taskPopup->insertSeparator();
-  idTaskSave = taskPopup->insertItem(SmallIcon("filesave"), i18n("&Save this task"), this,
+  idTaskSave = taskPopup->insertItem(SmallIcon("filesave"), tr("&Save this task"), this,
     SLOT(slotSaveTask()));
-  idTaskSaveAll = taskPopup->insertItem(SmallIcon("save_all"), i18n("Save &all task's"), this,
+  idTaskSaveAll = taskPopup->insertItem(SmallIcon("save_all"), tr("Save &all task's"), this,
     SLOT(slotSaveAllTask()));
 
 }
@@ -325,7 +324,7 @@ void ObjectTree::slotSaveTask()
     return;
   }
 
-  fName = QFileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, 0, i18n("Save task"));
+  fName = QFileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, 0, tr("Save task"));
   if(!fName.isEmpty()) {
     if (fName.right(9) != ".kflogtsk") {
       fName += ".kflogtsk";
@@ -371,7 +370,7 @@ void ObjectTree::slotSaveTask()
       path = fName;
     }
     else {
-      QMessageBox::warning(0, i18n("No permission"), "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", QMessageBox::Ok, 0);
+      QMessageBox::warning(0, tr("No permission"), "<qt>" + tr("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", QMessageBox::Ok, 0);
     }
 
     QApplication::restoreOverrideCursor();
@@ -394,7 +393,7 @@ void ObjectTree::slotSaveAllTask()
   wpList.setAutoDelete(false);
   uint i;
 
-  fName = QFileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, 0, i18n("Save task"));
+  fName = QFileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, 0, tr("Save task"));
   if(!fName.isEmpty()) {
     if (fName.right(9) != ".kflogtsk") {
       fName += ".kflogtsk";
@@ -445,7 +444,7 @@ void ObjectTree::slotSaveAllTask()
       path = fName;
     }
     else {
-      QMessageBox::warning(0, i18n("Permission denied"), "<qt>" + i18n("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", QMessageBox::Ok, 0);
+      QMessageBox::warning(0, tr("Permission denied"), "<qt>" + tr("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", QMessageBox::Ok, 0);
     }
 
     QApplication::restoreOverrideCursor();

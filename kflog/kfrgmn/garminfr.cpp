@@ -20,7 +20,6 @@
 
 #include <unistd.h>
 
-#include <klocale.h>
 #include <qmemarray.h>
 #include <qfile.h>
 #include <qptrlist.h>
@@ -90,10 +89,10 @@ int GarminFR::getFlightDir(QPtrList<FRDirEntry>* dirList){
   dirList->clear();
 
 
-  warning(i18n("opening port"));
+  warning(tr("opening port"));
   gmn.openComm(portName);
 
-  warning(i18n("requesting tracklog"));
+  warning(tr("requesting tracklog"));
   gmn.getTrackLog();
 
   gmn.closeComm();
@@ -145,7 +144,7 @@ int GarminFR::openRecorder(const QString& portName, int baud) {
 
   if (!gmn.openComm(this->portName))
     {
-      warning(i18n("No logger found!"));
+      warning(tr("No logger found!"));
       return FR_ERROR;
     }
 
@@ -278,7 +277,7 @@ int openRecorder(char* pName)
 
   if (!gmn.openComm(portName))
     {
-      warning(i18n("No logger found!"));
+      warning(tr("No logger found!"));
       return -1;
     }
 

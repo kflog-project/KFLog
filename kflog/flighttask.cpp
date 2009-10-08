@@ -23,7 +23,6 @@
 
 #include <kconfig.h>
 #include <kglobal.h>
-#include <klocale.h>
 
 #include <qmessagebox.h>
 #include <qvaluevector.h>
@@ -317,18 +316,18 @@ QString FlightTask::getTaskTypeString() const
 {
   switch(flightType)
     {
-    case FlightTask::NotSet:       return i18n("not set");
-    case FlightTask::ZielS:        return i18n("Free Distance");
-    case FlightTask::ZielR:        return i18n("Free Out and Return Distance");
-    case FlightTask::FAI:          return i18n("FAI Triangle");
-    case FlightTask::Dreieck:      return i18n("Triangle");
-    case FlightTask::FAI_S:        return i18n("FAI Triangle Start on leg");
-    case FlightTask::Dreieck_S:    return i18n("Triangle Start on leg");
-    case FlightTask::OLC2003:      return i18n("OLC optimized (2003 rules)");
-    case FlightTask::Abgebrochen:  return i18n("???");
+    case FlightTask::NotSet:       return QObject::tr("not set");
+    case FlightTask::ZielS:        return QObject::tr("Free Distance");
+    case FlightTask::ZielR:        return QObject::tr("Free Out and Return Distance");
+    case FlightTask::FAI:          return QObject::tr("FAI Triangle");
+    case FlightTask::Dreieck:      return QObject::tr("Triangle");
+    case FlightTask::FAI_S:        return QObject::tr("FAI Triangle Start on leg");
+    case FlightTask::Dreieck_S:    return QObject::tr("Triangle Start on leg");
+    case FlightTask::OLC2003:      return QObject::tr("OLC optimized (2003 rules)");
+    case FlightTask::Abgebrochen:  return QObject::tr("???");
     }
 
-  return i18n("Unknown");
+  return QObject::tr("Unknown");
 }
 
 bool FlightTask::isFAI(double d_wp, double d1, double d2, double d3)
@@ -931,8 +930,8 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
 
   if ((wpList.at(1)->sector1 == 0) && showWarnings)
     {
-      QMessageBox::information(0, i18n("Not reached first waypoint"),
-                               i18n("You have not reached the first waypoint of your task."), QMessageBox::Ok);
+      QMessageBox::information(0, QObject::tr("Not reached first waypoint"),
+                               QObject::tr("You have not reached the first waypoint of your task."), QMessageBox::Ok);
       return;
     }
 
@@ -953,8 +952,8 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
               // Wendepunkt nicht erreicht!!
               if ((loop == 2) && showWarnings)
                 {
-                  QMessageBox::information(0, i18n("Not reached first waypoint"),
-                                           i18n("You have not reached the first waypoint of your task."), QMessageBox::Ok);
+                  QMessageBox::information(0, QObject::tr("Not reached first waypoint"),
+                                           QObject::tr("You have not reached the first waypoint of your task."), QMessageBox::Ok);
                   return;
                 }
               /*
@@ -972,8 +971,8 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
     {
       home = false;
       if(showWarnings)
-        QMessageBox::warning(0, i18n("Not reached last waypoint"),
-                           i18n("You have not reached the last point of your task."), QMessageBox::Ok, 0);
+        QMessageBox::warning(0, QObject::tr("Not reached last waypoint"),
+                           QObject::tr("You have not reached the last point of your task."), QMessageBox::Ok, 0);
 
       if(dist(wpList.at(1 + dmstCount), route.last()) < 1.0)
         {
@@ -1052,8 +1051,8 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
 
   if (time_error && showWarnings)
     {
-      QMessageBox::warning(0, i18n("Incorrect time interval"),
-                         "<qt>" + i18n("The time interval between two points "
+      QMessageBox::warning(0, QObject::tr("Incorrect time interval"),
+                         "<qt>" + QObject::tr("The time interval between two points "
                               "of the flight is more than 70 sec.!<BR>"
                               "Due to Code Sportif 3, Nr. 1.9.2.1, "
                               "the flight can not be valued!") + "</qt>", QMessageBox::Ok, 0);

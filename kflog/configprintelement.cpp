@@ -20,7 +20,6 @@
 #include "mapdefaults.h"
 
 #include <kiconloader.h>
-#include <klocale.h>
 #include <kstddirs.h>
 
 #include <qgroupbox.h>
@@ -449,8 +448,8 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
 
   config-> setGroup(0);
 
-  border1 = new QCheckBox(i18n("1:500.000"), parent);
-  border2 = new QCheckBox(i18n("scale-limit"), parent);
+  border1 = new QCheckBox(tr("1:500.000"), parent);
+  border2 = new QCheckBox(tr("scale-limit"), parent);
 
   QString picDir = KGlobal::dirs()-> findResource("appdata", "pics/");
 
@@ -460,9 +459,9 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent, KConfig* cnf)
   border1Button-> setFixedHeight(border1Button->sizeHint().height() + 3);
 
   QGridLayout* elLayout = new QGridLayout(parent, 10, 15, 5, 1);
-  elLayout-> addWidget(new QLabel(i18n("draw up to"), parent), 1, 1);
-  elLayout-> addMultiCellWidget(new QLabel(i18n("Pen"), parent), 1, 1, 3, 7);
-  elLayout-> addMultiCellWidget(new QLabel(i18n("Brush"), parent), 1, 1, 9, 11);
+  elLayout-> addWidget(new QLabel(tr("draw up to"), parent), 1, 1);
+  elLayout-> addMultiCellWidget(new QLabel(tr("Pen"), parent), 1, 1, 3, 7);
+  elLayout-> addMultiCellWidget(new QLabel(tr("Brush"), parent), 1, 1, 9, 11);
   elLayout-> addWidget(border1, 3, 1);
   elLayout-> addWidget(border1Button, 3, 13);
   elLayout-> addWidget(border2, 5, 1);

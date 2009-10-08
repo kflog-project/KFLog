@@ -268,12 +268,12 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
     indexByte = buf[0];
 
     if ((bufP - buf) != FLIGHT_INDEX_WIDTH) {
-      _errorinfo = i18n("getFlightDir(): Wrong amount of bytes from LX-device");
+      _errorinfo = tr("getFlightDir(): Wrong amount of bytes from LX-device");
       rc = FR_ERROR;
       break;
     }
     else if (calcCrcBuf(buf, FLIGHT_INDEX_WIDTH - 1) != buf[FLIGHT_INDEX_WIDTH - 1]) {
-      _errorinfo = i18n("getFlightDir(): Bad CRC");
+      _errorinfo = tr("getFlightDir(): Bad CRC");
       rc = FR_ERROR;
       break;
     }
@@ -327,7 +327,7 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
       dirList->append(entry);
 
       if (indexByte != 0 && indexByte != 1) {
-        _errorinfo = i18n("getFlightDir(): Wrong index byte");
+        _errorinfo = tr("getFlightDir(): Wrong index byte");
         rc = FR_ERROR;
         break;
       }
@@ -335,7 +335,7 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
   }
   if (flightIndex.isEmpty())
   {
-    _errorinfo = i18n("getFlightDir(): no flights available in LX-device");
+    _errorinfo = tr("getFlightDir(): no flights available in LX-device");
     rc = FR_ERROR;
   }
 
@@ -352,7 +352,7 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
     KTempFile tmpigc;                          //create a temporary file,
     tmpigc.setAutoDelete(true);                //  and set autodelete to true.
     if (tmpigc.status()!=0) {                  //check to see if a temporary file could be created.
-      _errorinfo=i18n("Could not create temporary file. Please check your writepermissions.");
+      _errorinfo=tr("Could not create temporary file. Please check your writepermissions.");
       return FR_ERROR;
     }
 
@@ -467,7 +467,7 @@ int Filser::getBasicData(FR_BasicData& data)
   // debugHex (buf, buffersize);
 
   if ((bufP - buf) < min_data) {
-    _errorinfo = i18n("getBasicData(): Wrong amount of bytes from LX-device");
+    _errorinfo = tr("getBasicData(): Wrong amount of bytes from LX-device");
     _basicData.recorderType = QString("n.a.");
     _basicData.serialNumber = QString("n.a.");
   }
@@ -475,7 +475,7 @@ int Filser::getBasicData(FR_BasicData& data)
   // we cannot calculate a checksum because we ignored the rest of the data
   else if (calcCrcBuf(buf, buffersize - 1) != buf[buffersize - 1])
   {
-    _errorinfo = i18n("getBasicData(): Bad CRC");
+    _errorinfo = tr("getBasicData(): Bad CRC");
     rc = FR_ERROR;
   }
   */
@@ -530,7 +530,7 @@ int Filser::getBasicData(FR_BasicData& data)
 
   if (calcCrcBuf(buf, BASIC_LENGTH) != buf[BASIC_LENGTH])
   {
-    _errorinfo = i18n("getBasicData(): Bad CRC");
+    _errorinfo = tr("getBasicData(): Bad CRC");
     rc = FR_ERROR;
   }
   //
@@ -590,13 +590,13 @@ int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileNam
         rc = FR_OK;
       }
       else {
-        _errorinfo += i18n("\ncheck igc file for further info");
+        _errorinfo += tr("\ncheck igc file for further info");
         rc = FR_ERROR;
       }
       fclose(f);
     }
     else {
-      _errorinfo = i18n("cannot open igc file ") + fileName;
+      _errorinfo = tr("cannot open igc file ") + fileName;
       rc = FR_ERROR;
     }
   }
@@ -677,7 +677,7 @@ int Filser::openRecorder(const QString& pName, int baud)
     _da4BufferValid = false;
 
     if(!AutoBaud()){
-      warning(i18n("No baudrate found!"));
+      warning(tr("No baudrate found!"));
       _isConnected = false;
       return FR_ERROR;
     };
@@ -686,7 +686,7 @@ int Filser::openRecorder(const QString& pName, int baud)
     return FR_OK;
     }
   else {
-    warning(i18n("No logger found!"));
+    warning(tr("No logger found!"));
     _isConnected = false;
     return FR_ERROR;
   }
@@ -704,7 +704,7 @@ bool Filser::defMem(struct flightTable *ft)
   flight_start_adr = (ft->record[4] << 16) + (ft->record[1] << 8) + (ft->record[2]);
 
   if(ft->record[3]) {
-    _errorinfo = i18n("Invalid memory size in the flight table from the LX-device.");
+    _errorinfo = tr("Invalid memory size in the flight table from the LX-device.");
     return false;
   }
 
@@ -713,7 +713,7 @@ bool Filser::defMem(struct flightTable *ft)
   flight_end_adr = (ft->record[4+4] << 16) +(ft->record[1+4]<< 8) + (ft->record[2+4]);
 
   if(ft->record[7]) {
-    _errorinfo = i18n("Invalid memory size in the flight table from the LX-device.");
+    _errorinfo = tr("Invalid memory size in the flight table from the LX-device.");
     return false;
   }
 
@@ -730,7 +730,7 @@ bool Filser::defMem(struct flightTable *ft)
   }
   tcdrain (portID);
   if (rb() != ACK) {
-    _errorinfo = i18n("Invalid response from LX-device.");
+    _errorinfo = tr("Invalid response from LX-device.");
     return false;
   }
   return true;
@@ -750,7 +750,7 @@ bool Filser::getMemSection(unsigned char *memSection, int size)
   }
 
   if(calcCrcBuf(memSection, size-1) != memSection[size-1]) {
-    _errorinfo = i18n("get_mem_sections(): Bad CRC");
+    _errorinfo = tr("get_mem_sections(): Bad CRC");
     return false;
   }
   return true;
@@ -796,7 +796,7 @@ bool Filser::getLoggerData(unsigned char *memSection, int sectionSize)
       bufP = readData(bufP, (bufP2 + count + 1 - bufP));
     }
     if (calcCrcBuf(bufP2, count) != bufP2[count]) {
-      _errorinfo = i18n("get_logger_data(): Bad CRC");
+      _errorinfo = tr("get_logger_data(): Bad CRC");
       delete memContents;
       memContents = 0;
       contentSize = 0;
@@ -987,7 +987,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
         i++;
         fil_p++;
         if(fil_p > fil_p_last) {
-          _errorinfo = i18n("unexpected end of '.fil'-file");
+          _errorinfo = tr("unexpected end of '.fil'-file");
           return false;
         }
       }
@@ -1439,7 +1439,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
     default:        /* ???? */
       fprintf(figc, "L%sUNKNOWN%#x\r\n", manufactureKey, fil_p[0]);
       fil_p++;
-      _errorinfo = i18n("unexpected record id in '.fil'-file");
+      _errorinfo = tr("unexpected record id in '.fil'-file");
       return false;
       break;
     }
@@ -1611,7 +1611,7 @@ bool Filser::AutoBaud()
       // waiting 10 secs. for response
 //      qDebug ("ret = %x", ret);
       if (time(NULL) - t1 > 10) {
-        _errorinfo = i18n("No response from recorder within 10 seconds!\nDid you press WRITE/RTE?");
+        _errorinfo = tr("No response from recorder within 10 seconds!\nDid you press WRITE/RTE?");
         rc = false;
         break;
       }
@@ -1715,7 +1715,7 @@ bool Filser::check4Device()
       // waiting 10 secs. for response
 //      qDebug ("ret = %x", ret);
       if (time(NULL) - t1 > 10) {
-        _errorinfo = i18n("No response from recorder within 10 seconds!\nDid you press WRITE/RTE?");
+        _errorinfo = tr("No response from recorder within 10 seconds!\nDid you press WRITE/RTE?");
         rc = false;
         break;
       }
@@ -2013,7 +2013,7 @@ int Filser::readDA4Buffer()
   }
   if (rb () != calcCrcBuf (&_da4Buffer, sizeof (DA4Buffer)))
   {
-    _errorinfo = i18n("Filser::readWaypoints(): Bad CRC");
+    _errorinfo = tr("Filser::readWaypoints(): Bad CRC");
     qDebug (_errorinfo);
     return FR_ERROR;
   }
@@ -2094,13 +2094,13 @@ int Filser::writeDA4Buffer()
   }
   else if (result == NAK)
   {
-    _errorinfo = i18n("Filser::writeDA4Buffer: Bad CRC");
+    _errorinfo = tr("Filser::writeDA4Buffer: Bad CRC");
     qDebug (_errorinfo);
     return FR_ERROR;
   }
   else
   {
-    _errorinfo = i18n ("Filser::writeDA4Buffer: transfer failed");
+    _errorinfo = tr ("Filser::writeDA4Buffer: transfer failed");
     qDebug (_errorinfo);
     return FR_ERROR;
   }

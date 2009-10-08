@@ -22,7 +22,6 @@
 #include "mapcontents.h"
 
 #include <kconfig.h>
-#include <klocale.h>
 
 #include <qlayout.h>
 #include <qsplitter.h>
@@ -57,11 +56,11 @@ warning("EvaluationFrame::EvaluationFrame");
   QFrame* control = new QFrame(controlSplitter);
   control->setMinimumWidth(1);
 
-  QLabel* scale_label = new QLabel(i18n("Time scale:"),control);
+  QLabel* scale_label = new QLabel(tr("Time scale:"),control);
   scale_label->setAlignment(AlignHCenter);
   spinScale = new QSpinBox(1,60,1,control);
 
-  QLabel* label_glaettung = new QLabel(i18n("Smoothness:"),control);
+  QLabel* label_glaettung = new QLabel(tr("Smoothness:"),control);
   label_glaettung->setAlignment(AlignHCenter);
 
   sliderVario = new QSlider(0,10,1,0,QSlider::Vertical,control);
@@ -77,9 +76,9 @@ warning("EvaluationFrame::EvaluationFrame");
 
   //control->setMaximumWidth(scale_label->sizeHint().width() + 10);
 
-  QLabel* label_vario = new QLabel(i18n("V"),control);
-  QLabel* label_baro  = new QLabel(i18n("H"),control);
-  QLabel* label_speed = new QLabel(i18n("S"),control);
+  QLabel* label_vario = new QLabel(tr("V"),control);
+  QLabel* label_baro  = new QLabel(tr("H"),control);
+  QLabel* label_speed = new QLabel(tr("S"),control);
   label_vario->setAlignment(AlignHCenter);
   label_baro->setAlignment(AlignHCenter);
   label_speed->setAlignment(AlignHCenter);

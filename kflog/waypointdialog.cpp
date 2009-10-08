@@ -24,7 +24,6 @@
 #include <qlayout.h>
 #include <qlabel.h>
 
-#include <klocale.h>
 #include <kseparator.h>
 #include <kapp.h>
 
@@ -34,7 +33,7 @@ extern TranslationList waypointTypes;
 WaypointDialog::WaypointDialog(QWidget *parent, const char *name)
  : QDialog(parent, name, true)
 {
-  setCaption(i18n("Waypoint definition"));
+  setCaption(tr("Waypoint definition"));
   __initDialog();
 
   TranslationElement *te;
@@ -66,81 +65,81 @@ void WaypointDialog::__initDialog()
 
   buttons->addStretch();
 
-  applyButton = new QPushButton(i18n("&Apply"), this);
+  applyButton = new QPushButton(tr("&Apply"), this);
   connect(applyButton, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
   buttons->addWidget(applyButton);
-  b = new QPushButton(i18n("&Ok"), this);
+  b = new QPushButton(tr("&Ok"), this);
   b->setDefault(true);
   connect(b, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
   connect(b, SIGNAL(clicked()), SLOT(accept()));
   buttons->addWidget(b);
-  b = new QPushButton(i18n("&Cancel"), this);
+  b = new QPushButton(tr("&Cancel"), this);
   connect(b, SIGNAL(clicked()), SLOT(reject()));
   buttons->addWidget(b);
 
   name = new QLineEdit(this);
   name->setFocus();
   layout->addWidget(name, 1, 0);
-  l = new QLabel(name, QString("%1:").arg(i18n("&Name")), this);
+  l = new QLabel(name, QString("%1:").arg(tr("&Name")), this);
   layout->addWidget(l, 0, 0);
 
   description = new QLineEdit(this);
   layout->addWidget(description, 1, 1);
-  l = new QLabel(description, QString("%1:").arg(i18n("&Description")), this);
+  l = new QLabel(description, QString("%1:").arg(tr("&Description")), this);
   layout->addWidget(l, 0, 1);
 
   waypointType = new KComboBox(false, this);
   waypointType->setCompletionMode(KGlobalSettings::CompletionAuto);
   layout->addWidget(waypointType, 1, 2);
-  l = new QLabel(waypointType, QString("%1:").arg(i18n("&Type")), this);
+  l = new QLabel(waypointType, QString("%1:").arg(tr("&Type")), this);
   layout->addWidget(l, 0, 2);
 
   latitude = new LatEdit(this);
   layout->addWidget(latitude, 3, 0);
-  l = new QLabel(latitude, QString("%1:").arg(i18n("&Latitude")), this);
+  l = new QLabel(latitude, QString("%1:").arg(tr("&Latitude")), this);
   layout->addWidget(l, 2, 0);
 
   longitude = new LongEdit(this);
   layout->addWidget(longitude, 3, 1);
-  l = new QLabel(longitude, QString("%1:").arg(i18n("L&ongitude")), this);
+  l = new QLabel(longitude, QString("%1:").arg(tr("L&ongitude")), this);
   layout->addWidget(l, 2, 1);
 
   elevation = new QLineEdit(this);
   layout->addWidget(elevation, 3, 2);
-  l = new QLabel(elevation, i18n("%1 (m):").arg(i18n("&Elevation")), this);
+  l = new QLabel(elevation, tr("%1 (m):").arg(tr("&Elevation")), this);
   layout->addWidget(l, 2, 2);
 
   icao = new QLineEdit(this);
   layout->addWidget(icao, 5, 0);
-  l = new QLabel(icao, i18n("&ICAO:"), this);
+  l = new QLabel(icao, tr("&ICAO:"), this);
   layout->addWidget(l, 4, 0);
 
   frequency = new QLineEdit(this);
   layout->addWidget(frequency, 5, 1);
-  l = new QLabel(frequency, QString("%1:").arg(i18n("&Frequency")), this);
+  l = new QLabel(frequency, QString("%1:").arg(tr("&Frequency")), this);
   layout->addWidget(l, 4, 1);
 
-  isLandable = new QCheckBox(i18n("L&andable"), this);
+  isLandable = new QCheckBox(tr("L&andable"), this);
   layout->addWidget(isLandable, 5, 2);
 
   runway = new QLineEdit(this);
   layout->addWidget(runway, 7, 0);
-  l = new QLabel(runway, QString("%1:").arg(i18n("&Runway")), this);
+  l = new QLabel(runway, QString("%1:").arg(tr("&Runway")), this);
   layout->addWidget(l, 6, 0);
 
   length = new QLineEdit(this);
   layout->addWidget(length, 7, 1);
-  l = new QLabel(length, i18n("%1 (m):").arg(i18n("Len&gth")), this);
+  l = new QLabel(length, tr("%1 (m):").arg(tr("Len&gth")), this);
   layout->addWidget(l, 6, 1);
 
   surface = new KComboBox(false, this);
   layout->addWidget(surface, 7, 2);
-  l = new QLabel(surface, QString("%1:").arg(i18n("&Surface")), this);
+  l = new QLabel(surface, QString("%1:").arg(tr("&Surface")), this);
   layout->addWidget(l, 6, 2);
 
   comment = new QLineEdit(this);
   layout->addMultiCellWidget(comment, 9, 9, 0, 2);
-  l = new QLabel(comment, QString("%1:").arg(i18n("&Comment")), this);
+  l = new QLabel(comment, QString("%1:").arg(tr("&Comment")), this);
   layout->addWidget(l, 8, 0);
 
   topLayout->addLayout(layout);

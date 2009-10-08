@@ -19,8 +19,8 @@
 #include "tasklistviewitem.h"
 #include "flight.h"
 #include <qurl.h>
-#include <klocale.h>
 #include <kglobal.h>
+#include <klocale.h>
 #include <kiconloader.h>
 
 FlightListViewItem::FlightListViewItem(QListViewItem * parent, Flight * flight):QListViewItem(parent){
@@ -64,19 +64,19 @@ void FlightListViewItem::createChildren(){
   setText(1,loc.formatDate(flight->getDate(),true) + ": " + flight->getPilot());
   //setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup, KIcon::SizeSmall));
 
-  QListViewItem * subItem=new QListViewItem((QListViewItem*)this,i18n("Pilot"),flight->getPilot());
+  QListViewItem * subItem=new QListViewItem((QListViewItem*)this,QObject::tr("Pilot"),flight->getPilot());
   subItem->setSelectable(false);
-  subItem=new QListViewItem((QListViewItem*)this,subItem,i18n("Date"),loc.formatDate(flight->getDate(),false));
+  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Date"),loc.formatDate(flight->getDate(),false));
   subItem->setSelectable(false);
-  subItem=new QListViewItem((QListViewItem*)this,subItem,i18n("Glider"),flight->getType() + ", " + flight->getID());
+  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Glider"),flight->getType() + ", " + flight->getID());
   subItem->setSelectable(false);
-  subItem=new QListViewItem((QListViewItem*)this,subItem,i18n("Points"),flight->getPoints(true));
+  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Points"),flight->getPoints(true));
   subItem->setSelectable(false);
   if (flight->isOptimized()){
-    subItem=new QListViewItem((QListViewItem*)this,subItem,i18n("Points (optimized)"),flight->getPoints(false));
+    subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Points (optimized)"),flight->getPoints(false));
     subItem->setSelectable(false);
   }
-  subItem=new QListViewItem((QListViewItem*)this,subItem,i18n("Total distance"),flight->getDistance(true));
+  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Total distance"),flight->getDistance(true));
   subItem->setSelectable(false);
   subItem=new TaskListViewItem((QListViewItem*)this, &flight->getTask(true), subItem);
   subItem->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("task", KIcon::NoGroup, KIcon::SizeSmall));

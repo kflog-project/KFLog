@@ -18,8 +18,6 @@
 #include "centertodialog.h"
 #include "mapcontents.h"
 
-#include <klocale.h>
-
 #include <qgrid.h>
 #include <qlabel.h>
 #include <qapplication.h>
@@ -27,15 +25,15 @@
 CenterToDialog::CenterToDialog(QWidget *parent, const char *name )
   : KDialogBase(parent, name)
 {
-  setCaption(i18n("Center to ..."));
+  setCaption(tr("Center to ..."));
 
   QGrid* page = this->makeGridMainWidget(2, QGrid::Horizontal);
 
-  new QLabel( i18n("Latitude"), page, "captionLat");
+  new QLabel( tr("Latitude"), page, "captionLat");
   latE = new LatEdit(page, "latitude");
   latE->setMinimumWidth(150);
 
-  new QLabel( i18n("Longitude"), page, "captionLong");
+  new QLabel( tr("Longitude"), page, "captionLong");
   longE = new LongEdit(page, "longitude");
   longE->setMinimumWidth(150);
 

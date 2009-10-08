@@ -18,7 +18,6 @@
 #include "igcpreview.h"
 
 #include <qfileinfo.h>
-#include <klocale.h>
 #include <kurl.h>
 #include <qlayout.h>
 #include <qtextstream.h>
@@ -83,7 +82,7 @@ void IGCPreview::showPreview(const KURL &url)
 
   bool isFirst = true;
 
-  QString previewText, waypointText("<EM>" + i18n("no task given") + "</EM>");
+  QString previewText, waypointText("<EM>" + tr("no task given") + "</EM>");
 
   while (!stream.eof())
     {

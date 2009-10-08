@@ -17,7 +17,6 @@
 
 #include "airport.h"
 
-#include <klocale.h>
 #include <kstddirs.h>
 
 Airport::Airport(QString n, QString i, QString abbr, unsigned int t,

@@ -37,7 +37,6 @@
 #include <qpushbutton.h>
 #include <qregexp.h>
 
-#include <klocale.h>
 #include <kiconloader.h>
 #include <kconfig.h>
 
@@ -77,19 +76,19 @@ void Waypoints::addWaypointWindow(QWidget *parent)
   waypoints->setShowSortIndicator(true);
   waypoints->setAllColumnsShowFocus(true);
 
-  colName = waypoints->addColumn(i18n("Name"));
-  colDesc = waypoints->addColumn(i18n("Description"));
-  colICAO = waypoints->addColumn(i18n("ICAO"));
-  colType = waypoints->addColumn(i18n("Type"));
-  colLat = waypoints->addColumn(i18n("Latitude"));
-  colLong = waypoints->addColumn(i18n("Longitude"));
-  colElev = waypoints->addColumn(i18n("Elevation (m)"));
-  colFrequency = waypoints->addColumn(i18n("Frequency"));
-  colLandable = waypoints->addColumn(i18n("Landable"));
-  colRunway = waypoints->addColumn(i18n("Runway"));
-  colLength = waypoints->addColumn(i18n("Length (m)"));
-  colSurface = waypoints->addColumn(i18n("Surface"));
-  colComment = waypoints->addColumn(i18n("Comment"));
+  colName = waypoints->addColumn(tr("Name"));
+  colDesc = waypoints->addColumn(tr("Description"));
+  colICAO = waypoints->addColumn(tr("ICAO"));
+  colType = waypoints->addColumn(tr("Type"));
+  colLat = waypoints->addColumn(tr("Latitude"));
+  colLong = waypoints->addColumn(tr("Longitude"));
+  colElev = waypoints->addColumn(tr("Elevation (m)"));
+  colFrequency = waypoints->addColumn(tr("Frequency"));
+  colLandable = waypoints->addColumn(tr("Landable"));
+  colRunway = waypoints->addColumn(tr("Runway"));
+  colLength = waypoints->addColumn(tr("Length (m)"));
+  colSurface = waypoints->addColumn(tr("Surface"));
+  colComment = waypoints->addColumn(tr("Comment"));
 
   waypoints->setColumnAlignment(colElev, AlignRight);
   waypoints->setColumnAlignment(colFrequency, AlignRight);
@@ -105,7 +104,7 @@ void Waypoints::addWaypointWindow(QWidget *parent)
 
   // header
   QHBoxLayout *header = new QHBoxLayout(5);
-  QLabel *l = new QLabel(QString("%1:").arg(i18n("Waypoints")), parent);
+  QLabel *l = new QLabel(QString("%1:").arg(tr("Waypoints")), parent);
   l->setMaximumWidth(l->sizeHint().width() + 5);
 
   catalogName = new QComboBox(false, parent);
@@ -118,7 +117,7 @@ void Waypoints::addWaypointWindow(QWidget *parent)
   fileOpen->setSizePolicy(sp);
   connect(fileOpen, SIGNAL(clicked()), SLOT(slotOpenWaypointCatalog()));
 
-  QPushButton *filter = new QPushButton(i18n("Filter"), parent);
+  QPushButton *filter = new QPushButton(tr("Filter"), parent);
   sp = filter->sizePolicy();
   sp.setHorData(QSizePolicy::Fixed);
   filter->setSizePolicy(sp);
@@ -144,38 +143,38 @@ void Waypoints::addPopupMenu()
 
 
   wayPointPopup->insertTitle(SmallIcon("waypoint"), "Waypoint's", 0);
-  wayPointPopup->insertItem(SmallIcon("waypoint"), i18n("&New catalog"), this,
+  wayPointPopup->insertItem(SmallIcon("waypoint"), tr("&New catalog"), this,
                             SLOT(slotNewWaypointCatalog()));
-  wayPointPopup->insertItem(SmallIcon("fileopen"), i18n("&Open catalog"), this,
+  wayPointPopup->insertItem(SmallIcon("fileopen"), tr("&Open catalog"), this,
                             SLOT(slotOpenWaypointCatalog()));
-  idWaypointCatalogImport = wayPointPopup->insertItem(i18n("&Import catalog"), this,
+  idWaypointCatalogImport = wayPointPopup->insertItem(tr("&Import catalog"), this,
                                                       SLOT(slotImportWaypointCatalog()));
-  idWaypointImportFromMap = wayPointPopup->insertItem(i18n("Import from &map"), this,
+  idWaypointImportFromMap = wayPointPopup->insertItem(tr("Import from &map"), this,
                                                       SLOT(slotImportWaypointFromMap()));
-  idWaypointImportFromFile = wayPointPopup->insertItem(i18n("Import from &file"), this,
+  idWaypointImportFromFile = wayPointPopup->insertItem(tr("Import from &file"), this,
                                                        SLOT(slotImportWaypointFromFile()));
-  idWaypointCatalogSave = wayPointPopup->insertItem(SmallIcon("filesave"), i18n("&Save catalog"), this,
+  idWaypointCatalogSave = wayPointPopup->insertItem(SmallIcon("filesave"), tr("&Save catalog"), this,
                                                     SLOT(slotSaveWaypointCatalog()));
-  idWaypointCatalogSaveAs = wayPointPopup->insertItem(SmallIcon("filesave"), i18n("&Save catalog as..."), this,
+  idWaypointCatalogSaveAs = wayPointPopup->insertItem(SmallIcon("filesave"), tr("&Save catalog as..."), this,
                                                       SLOT(slotSaveWaypointCatalogAs()));
-  idWaypointCatalogClose = wayPointPopup->insertItem(SmallIcon("fileclose"), i18n("&Close catalog"), this,
+  idWaypointCatalogClose = wayPointPopup->insertItem(SmallIcon("fileclose"), tr("&Close catalog"), this,
                                                      SLOT(slotCloseWaypointCatalog()));
   wayPointPopup->insertSeparator();
-  idWaypointNew = wayPointPopup->insertItem(SmallIcon("filenew"), i18n("New &waypoint"), this,
+  idWaypointNew = wayPointPopup->insertItem(SmallIcon("filenew"), tr("New &waypoint"), this,
                                             SLOT(slotNewWaypoint()));
-  idWaypointEdit = wayPointPopup->insertItem(SmallIcon("wizard"), i18n("&Edit waypoint"), this,
+  idWaypointEdit = wayPointPopup->insertItem(SmallIcon("wizard"), tr("&Edit waypoint"), this,
                                              SLOT(slotEditWaypoint()));
-  idWaypointDelete = wayPointPopup->insertItem(SmallIcon("editdelete"), i18n("&Delete waypoint"), this,
+  idWaypointDelete = wayPointPopup->insertItem(SmallIcon("editdelete"), tr("&Delete waypoint"), this,
                                                SLOT(slotDeleteWaypoint()));
-  idWaypointCopy2Catalog = wayPointPopup->insertItem(SmallIcon("editcopy"), i18n("Copy to &catalog"), catalogCopySubPopup);
-  idWaypointMove2Catalog = wayPointPopup->insertItem(SmallIcon("editmove"), i18n("Move to &catalog"), catalogMoveSubPopup);
+  idWaypointCopy2Catalog = wayPointPopup->insertItem(SmallIcon("editcopy"), tr("Copy to &catalog"), catalogCopySubPopup);
+  idWaypointMove2Catalog = wayPointPopup->insertItem(SmallIcon("editmove"), tr("Move to &catalog"), catalogMoveSubPopup);
 
   wayPointPopup->insertSeparator();
-  idWaypointCopy2Task = wayPointPopup->insertItem(SmallIcon("editcopy"), i18n("Copy to &task"), this,
+  idWaypointCopy2Task = wayPointPopup->insertItem(SmallIcon("editcopy"), tr("Copy to &task"), this,
                                                   SLOT(slotCopyWaypoint2Task()));
-  idWaypointCenterMap = wayPointPopup->insertItem(SmallIcon("centerwaypoint"), i18n("Center map on waypoint"), this,
+  idWaypointCenterMap = wayPointPopup->insertItem(SmallIcon("centerwaypoint"), tr("Center map on waypoint"), this,
                                                   SLOT(slotCenterMap()));
-  idWaypointSetHome = wayPointPopup->insertItem(SmallIcon("gohome"), i18n("Set Homesite"), this,
+  idWaypointSetHome = wayPointPopup->insertItem(SmallIcon("gohome"), tr("Set Homesite"), this,
                                                 SLOT(slotSetHome()));
 
   connect(catalogCopySubPopup, SIGNAL(activated(int)), this, SLOT(slotCopy2Catalog(int)));
@@ -226,12 +225,12 @@ void Waypoints::slotOpenWaypointCatalog()
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory",
                                           getpwuid(getuid())->pw_dir);
 
-  QString fName = QFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|" + i18n ("KFLog waypoints") + " (*.kflogwp)\n"
-                                                            "*.kwp *.KWP|" + i18n ("Cumulus and KFLogEmbedded waypoints") + " (*.kwp)\n"
-                                                            "*.txt *.TXT|" + i18n ("Filser txt waypoints") + " (*.txt)\n"
-                                                            "*.da4 *.DA4|" + i18n ("Filser da4 waypoints") + " (*.da4)\n"
-                                                            "*.cup *.CUP|" + i18n ("SeeYou cup waypoints") + " (*.cup)\n"
-                                                            "*.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT|" + i18n ("All supported waypoint formats"), this, i18n("Open waypoint catalog"));
+  QString fName = QFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|" + tr ("KFLog waypoints") + " (*.kflogwp)\n"
+                                                            "*.kwp *.KWP|" + tr ("Cumulus and KFLogEmbedded waypoints") + " (*.kwp)\n"
+                                                            "*.txt *.TXT|" + tr ("Filser txt waypoints") + " (*.txt)\n"
+                                                            "*.da4 *.DA4|" + tr ("Filser da4 waypoints") + " (*.da4)\n"
+                                                            "*.cup *.CUP|" + tr ("SeeYou cup waypoints") + " (*.cup)\n"
+                                                            "*.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT|" + tr ("All supported waypoint formats"), this, tr("Open waypoint catalog"));
 
   openCatalog(fName);
 }
@@ -298,11 +297,11 @@ bool Waypoints::saveChanges()
     {
       if (w->modified)
         {
-          QMessageBox saveBox(i18n("Save changes?"),
-              i18n("<qt>The waypoint file has been modified.<br>Save changes to<BR><B>%1</B></qt>").arg(w->path),
+          QMessageBox saveBox(tr("Save changes?"),
+              tr("<qt>The waypoint file has been modified.<br>Save changes to<BR><B>%1</B></qt>").arg(w->path),
               QMessageBox::Warning, QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
-          saveBox.setButtonText(QMessageBox::Yes, i18n("Save"));
-          saveBox.setButtonText(QMessageBox::No, i18n("Discard"));
+          saveBox.setButtonText(QMessageBox::Yes, tr("Save"));
+          saveBox.setButtonText(QMessageBox::No, tr("Discard"));
           switch(saveBox.exec())
             {
             case QMessageBox::Yes:
@@ -419,10 +418,10 @@ void Waypoints::slotDeleteWaypoint(Waypoint* wp)
 {
   if (wp)
   {
-    QMessageBox waypointBox(i18n("Delete waypoint?"),
-                            i18n("<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>").arg(wp->name),
+    QMessageBox waypointBox(tr("Delete waypoint?"),
+                            tr("<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>").arg(wp->name),
                             QMessageBox::Warning, QMessageBox::Ok, QMessageBox::Cancel, 0);
-    waypointBox.setButtonText(QMessageBox::Ok, i18n("&Delete"));
+    waypointBox.setButtonText(QMessageBox::Ok, tr("&Delete"));
     if (waypointBox.exec()== QMessageBox::Ok)
     {
       waypointCatalogs.current()->wpList.remove(wp->name);
@@ -439,10 +438,10 @@ void Waypoints::slotDeleteWaypoint()
 
   if (item != 0) {
     QString tmp = item->text(colName);
-    QMessageBox waypointBox(i18n("Delete waypoint?"),
-                            i18n("<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>").arg(tmp),
+    QMessageBox waypointBox(tr("Delete waypoint?"),
+                            tr("<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>").arg(tmp),
                             QMessageBox::Warning, QMessageBox::Ok, QMessageBox::Cancel, 0);
-    waypointBox.setButtonText(QMessageBox::Ok, i18n("&Delete"));
+    waypointBox.setButtonText(QMessageBox::Ok, tr("&Delete"));
     if (waypointBox.exec() == QMessageBox::Ok)
     {
       waypointCatalogs.current()->wpList.remove(tmp);
@@ -524,7 +523,7 @@ void Waypoints::fillWaypoints()
     item->setText(colElev, tmp);
     w->frequency > 1 ? tmp.sprintf("%.3f", w->frequency) : tmp=QString::null;
     item->setText(colFrequency, tmp);
-    item->setText(colLandable, w->isLandable == true ? i18n("Yes") : QString::null);
+    item->setText(colLandable, w->isLandable == true ? tr("Yes") : QString::null);
     if (w->runway > -1) {
       tmp.sprintf("%02d", w->runway);
     }
@@ -577,7 +576,7 @@ void Waypoints::slotImportWaypointCatalog()
   QString wayPointDir = config->readEntry("DefaultWaypointDirectory",
                                           getpwuid(getuid())->pw_dir);
 
-  QString fName = QFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n*|All files", this, i18n("Import waypoint catalog"));
+  QString fName = QFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n*|All files", this, tr("Import waypoint catalog"));
 
   if(!fName.isEmpty()) {
     WaypointCatalog *w = waypointCatalogs.current();
@@ -596,8 +595,8 @@ void Waypoints::slotCloseWaypointCatalog()
   int cnt;
 
   if (w->modified) {
-    switch(QMessageBox::warning(this, i18n("Save"),
-           "<qt>" + i18n("Save changes to<BR><B>%1</B>").arg(w->path) + "</qt>",
+    switch(QMessageBox::warning(this, tr("Save"),
+           "<qt>" + tr("Save changes to<BR><B>%1</B>").arg(w->path) + "</qt>",
            QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel)) {
     case QMessageBox::Yes:
       if (!w->save()) {
@@ -773,7 +772,7 @@ void Waypoints::slotFilterWaypoints()
 void Waypoints::slotAddWaypoint(Waypoint *w)
 {
   if (!waypointCatalogs.current()) { //let's make sure we have a waypointcatalog
-    WaypointCatalog * wpc=new WaypointCatalog(i18n("unnamed"));
+    WaypointCatalog * wpc=new WaypointCatalog(tr("unnamed"));
     slotAddCatalog(wpc);
   }
 
@@ -905,8 +904,8 @@ void Waypoints::slotImportWaypointFromFile(){
                                           getpwuid(getuid())->pw_dir);
 
    // we should not include types we don't support (yet). Also, the strings should be translated.
-//  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT) \n *.gdn *.GDN|Waypoint file (Garmin format, *.gdn *.GDN) \n *|All files", this, i18n("Import waypoints from file"));
-  QString fName = QFileDialog::getOpenFileName(wayPointDir, i18n("*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT)"), this, i18n("Import waypoints from file"));
+//  QString fName = KFileDialog::getOpenFileName(wayPointDir, "*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT) \n *.gdn *.GDN|Waypoint file (Garmin format, *.gdn *.GDN) \n *|All files", this, tr("Import waypoints from file"));
+  QString fName = QFileDialog::getOpenFileName(wayPointDir, tr("*.dbt *.DBT|Waypoint file (Volkslogger format, *.dbt *:DBT)"), this, tr("Import waypoints from file"));
 
   if(!fName.isEmpty()) {
     WaypointCatalog *w = waypointCatalogs.current();

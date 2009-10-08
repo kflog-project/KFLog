@@ -27,12 +27,11 @@
 
 // Application headers
 #include "mapcalc.h"
-#include <klocale.h>
 
 Igc3DDialog::Igc3DDialog(QWidget *parent)
 : QDialog(parent, "Igc3D", false)
 {
-  setCaption( i18n("KFLog - 3D View") );
+  setCaption( tr("KFLog - 3D View") );
   setWFlags(getWFlags() | WStyle_StaysOnTop);
 
   Igc3DView* igc3dView = new Igc3DView(this);
@@ -51,7 +50,7 @@ Igc3DDialog::Igc3DDialog(QWidget *parent)
 	vs->height = 650;
   vs->width = 500;
 
-//  label->setText( i18n("  Toolbar will\n  go here.") );
+//  label->setText( tr("  Toolbar will\n  go here.") );
 //  label->setFixedWidth( label->sizeHint().width() + 10 );
 
 	layout->addWidget( igc3dView );
@@ -80,7 +79,7 @@ void Igc3DDialog::resizeEvent(QResizeEvent* event)
 void Igc3DDialog::slotShowFlightData()
 {
 //  warning("Igc3DDialog::slotShowFlightData");
-//  this->setCaption(i18n("FlightIgc3D:") + flightList->at(n)->getPilot()
+//  this->setCaption(tr("FlightIgc3D:") + flightList->at(n)->getPilot()
 //                    + "  " + flightList->at(n)->getDate().toString());
 
   emit flightChanged();
