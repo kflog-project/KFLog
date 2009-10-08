@@ -194,7 +194,6 @@ class KFLogConfig : public KDialogBase
     QComboBox* elementSelect;
     QComboBox* drawTypeSelect;
     QComboBox* projectionSelect;
-    QComboBox* contestType;
     LatEdit* firstParallel;
     LatEdit* secondParallel;
     LongEdit* originLongitude;

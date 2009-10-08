@@ -287,10 +287,6 @@ class KFLogApp : public KDockMainWindow
   void slotModifyMenu();
   /** */
   void slotOpenRecorderDialog();
-  /**
-   *  olc Declaration
-   **/
-  void slotOlcDeclaration();
   /** No descriptions */
   void slotTaskOpen();
   /** No descriptions */
@@ -499,7 +495,7 @@ class KFLogApp : public KDockMainWindow
 //  KAction* flightEvaluation;
   KAction* resetConfirmations;
   /**
-   * Action to optimize flight for OLC declaration.
+   * Action to optimize flight.
    */
   KAction* flightOptimizationOLC;
   KAction* flightOptimization;
@@ -535,8 +531,6 @@ class KFLogApp : public KDockMainWindow
    * The OpenGL dialog
    */
   KAction* viewIgcOpenGL;
-  /** */
-  KAction* olcDeclaration;
   /**
    * The Task Planning
    */

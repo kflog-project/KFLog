@@ -51,7 +51,6 @@ kflog_SOURCES = \
 	mapmatrix.cpp \
 	mapprint.cpp \
 	objecttree.cpp \
-	olcdialog.cpp \
 	openairparser.cpp \
 	optimization.cpp \
 	optimizationwizard.cpp \
@@ -89,7 +88,6 @@ EXTRA_DIST = \
 	centertodialog.cpp centertodialog.h \
 	configdrawelement.cpp configdrawelement.h \
 	configprintelement.cpp configprintelement.h \
-	contestlist.h contests.h \
 	da4record.cpp da4record.h \
 	dataview.cpp dataview.h \
 	distance.cpp distance.h \
@@ -135,7 +133,6 @@ EXTRA_DIST = \
 	mapmatrix.cpp mapmatrix.h \
 	mapprint.cpp mapprint.h \
 	objecttree.cpp objecttree.h \
-	olcdialog.cpp olcdialog.h \
 	openairparser.cpp openairparser.h \
 	optimization.cpp optimization.h \
 	optimizationwizard.cpp optimizationwizard.h \

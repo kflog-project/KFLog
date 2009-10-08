@@ -60,7 +60,6 @@
 #include "mapcontents.h"
 #include "mapcontrolview.h"
 #include "mapprint.h"
-#include "olcdialog.h"
 #include "recorderdialog.h"
 #include "taskdataprint.h"
 #include "waypoints.h"
@@ -316,10 +315,6 @@ void KFLogApp::initActions()
       this, SLOT(slotOptimizeFlightOLC()), actionCollection(), "optimize_flight_olc");
 
 
-  // Disabled for the next release, because we only have the window ...
-  olcDeclaration = new KAction(i18n("send OLC-Declaration"), 0,
-      this, SLOT(slotOlcDeclaration()), actionCollection(), "olc_declaration");
-
   //Animation actions
   animateFlightStart = new KAction(i18n("&Start Flight Animation"), "1rightarrow",
                         Key_F12, map, SLOT(slotAnimateFlightStart()), actionCollection(),
@@ -388,7 +383,6 @@ void KFLogApp::initActions()
   flightMenu->insert(viewFlightDataType);
   flightMenu->insert(viewIgc3D);
   flightMenu->insert(viewIgcOpenGL);
-  flightMenu->insert(olcDeclaration);
 //  flightMenu->insert(mapPlanning);
   flightMenu->popupMenu()->insertSeparator();
   flightMenu->insert(animateFlightStart);
@@ -793,26 +787,6 @@ void KFLogApp::slotFilePrint()
   slotStatusMsg(i18n("Ready."));
 }
 
-void KFLogApp::slotOlcDeclaration()
-{
-  // currently not available ...
-
-  extern MapContents _globalMapContents;
-  Flight* f = (Flight*)_globalMapContents.getFlight();
-
-  if(f == NULL)  return;
-
-  if(f->getTypeID() != BaseMapElement::Flight)
-    {
-      QMessageBox::warning(this, i18n("No flight found"), i18n("You can only send flights to the OLC!"), QMessageBox::Ok, 0);
-      return;
-    }
-
-  OLCDialog* dlg = new OLCDialog(this, "olc-dialog", f);
-
-  dlg->show();
-}
-
 void KFLogApp::slotFlightPrint()
 {
   slotStatusMsg(i18n("Printing..."));
@@ -1154,7 +1128,6 @@ void KFLogApp::slotModifyMenu()
 //            flightEvaluation->setEnabled(true);
             flightOptimization->setEnabled(true);
             flightOptimizationOLC->setEnabled(true);
-            olcDeclaration->setEnabled(true);
             animateFlightStart->setEnabled(true);
             animateFlightStop->setEnabled(true);
             stepFlightNext->setEnabled(true);
@@ -1176,7 +1149,6 @@ void KFLogApp::slotModifyMenu()
 //            flightEvaluation->setEnabled(false);
             flightOptimization->setEnabled(false);
             flightOptimizationOLC->setEnabled(false);
-            olcDeclaration->setEnabled(false);
             animateFlightStart->setEnabled(false);
             animateFlightStop->setEnabled(false);
             stepFlightNext->setEnabled(false);
@@ -1198,7 +1170,6 @@ void KFLogApp::slotModifyMenu()
 //            flightEvaluation->setEnabled(true);
             flightOptimization->setEnabled(true);
             flightOptimizationOLC->setEnabled(true);
-            olcDeclaration->setEnabled(true);
             animateFlightStart->setEnabled(true);
             animateFlightStop->setEnabled(true);
             stepFlightNext->setEnabled(true);
@@ -1223,7 +1194,6 @@ void KFLogApp::slotModifyMenu()
 //      flightEvaluation->setEnabled(false);
       flightOptimization->setEnabled(false);
       flightOptimizationOLC->setEnabled(false);
-      olcDeclaration->setEnabled(false);
       animateFlightStart->setEnabled(false);
       animateFlightStop->setEnabled(false);
       stepFlightNext->setEnabled(false);
