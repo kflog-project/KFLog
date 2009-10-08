@@ -37,7 +37,6 @@
 #include <kkeydialog.h>
 #include <klocale.h>
 #include <kmenubar.h>
-#include <kmessagebox.h>
 #include <knotifyclient.h>
 #include <kstdaction.h>
 #include <ktip.h>
@@ -187,8 +186,8 @@ void KFLogApp::initActions()
 
   fileOpenRecent = KStdAction::openRecent(this,
       SLOT(slotFileOpenRecent(const KURL&)), actionCollection());
-  fileClose = new KAction(i18n("Close Flight"), "fileclose",
-      KStdAccel::Close, &_globalMapContents, SLOT(closeFlight()),
+  fileClose = new KAction(i18n("&Close Flight"), "fileclose",
+      CTRL+Key_W, &_globalMapContents, SLOT(closeFlight()),
       actionCollection(), "file_close");
 
   fileRecorder = new KAction(i18n("Open Recorder"), "connect_no", 0, this,
@@ -222,7 +221,7 @@ void KFLogApp::initActions()
       SLOT(slotCenterToFlight()), actionCollection(), "view_fit_to_page");
 
   new KAction(i18n("Center to &Homesite"), "gohome",
-      KStdAccel::Home, &_globalMapMatrix,
+      CTRL+Key_Home, &_globalMapMatrix,
       SLOT(slotCenterToHome()), actionCollection(), "view_fit_to_width");
 
   viewCenterTo = new KAction(i18n("Center to..."), "centerto", Key_F8, this,
@@ -320,11 +319,6 @@ void KFLogApp::initActions()
   // Disabled for the next release, because we only have the window ...
   olcDeclaration = new KAction(i18n("send OLC-Declaration"), 0,
       this, SLOT(slotOlcDeclaration()), actionCollection(), "olc_declaration");
-
-  // Reset confirmations
-  resetConfirmations = new KAction(i18n("Reset confirmations"), "configure", 0,
-      this, SLOT(slotEnableMessages()), actionCollection(), "reset_confirmations");
-
 
   //Animation actions
   animateFlightStart = new KAction(i18n("&Start Flight Animation"), "1rightarrow",
@@ -1364,11 +1358,6 @@ void KFLogApp::initTaskTypes()
   //taskTypes.append(new TranslationElement(FlightTask::AAT, i18n("Area Assigned")));
 
   taskTypes.sort();
-}
-
-/** Re-enables all messages turned off using "Don't show this dialog again" checkboxes. */
-void KFLogApp::slotEnableMessages(){
-  KMessageBox::enableAllMessages();
 }
 
 /** Connects the dialogs addWaypoint signal to the waypoint object. */

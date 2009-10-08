@@ -27,7 +27,6 @@
 #include <kapp.h>
 #include <kdockwidget.h>
 #include <kmainwindow.h>
-#include <kaccel.h>
 #include <kaction.h>
 #include <kprogress.h>
 #include <kpopupmenu.h>
@@ -300,8 +299,6 @@ class KFLogApp : public KDockMainWindow
    * Display dialog to ask for coordinates and center map on that point.
    */
   void slotCenterTo();
-  /** Re-enables all messages turned off using "Don't show this dialog again" checkboxes. */
-  void slotEnableMessages();
   /** Connects the dialogs addWaypoint signal to the waypoint object. */
   void slotRegisterWaypointDialog(QWidget * dialog);
  private:

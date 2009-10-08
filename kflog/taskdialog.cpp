@@ -23,7 +23,7 @@
 #include <kconfig.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#include <kmessagebox.h>
+#include <qmessagebox.h>
 
 #include "taskdialog.h"
 #include "mapcontents.h"
@@ -205,7 +205,7 @@ void TaskDialog::slotSetPlanningType(int idx)
   id = taskTypes.at(idx)->id;
   switch (id) {
   case FlightTask::FAIArea:
-    KMessageBox::information (this, i18n("Task Type FAI Area:\n"
+    QMessageBox::information (this, i18n("Task Type FAI Area:\n"
       "You can define a task with either takeoff, start, end and landing or "
       "takeoff, start, end, landing and one additional route point.\n"
       "The FAI area calculation will be made with start and end point or start and route point, "
@@ -228,7 +228,7 @@ void TaskDialog::slotSetPlanningType(int idx)
     }        
     break;
   case FlightTask::Route:
-    KMessageBox::information (this, i18n("Task Type Traditional Route:\n"
+    QMessageBox::information (this, i18n("Task Type Traditional Route:\n"
       "You can define a task with takeoff, start, end, landing and route points. "
       "Deleting takeoff start, end and landing is not possible, "
       "but you can replace them with other waypoints.\n"
