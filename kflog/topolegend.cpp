@@ -53,11 +53,11 @@ TopoLegend::TopoLegend(QWidget *parent, const char *name ) : QScrollView(parent,
     lbl=new QLabel(levelLayout);      //create a new label as a child of the QVBox
     lbl->setAlignment(AlignHCenter);
     if (i==50) {                      //set the text. Normally, this is "xx - yy m", but the first and last get a different one
-      lbl->setText(tr("label used for top level in legend", ">= %1 m").arg(levels[i]));
+      lbl->setText(QString().sprintf(">= %d m", levels[i]));
     } else if(i==0) {
-      lbl->setText(tr("label used for lowest level (blue level) in legend", "< 0 m (water)"));
+      lbl->setText("< 0 m (water)");
     } else {
-      lbl->setText(tr("label used for normal level in legend", "%1 - %2 m").arg(levels[i]).arg(levels[i+1]));
+      lbl->setText(QString().sprintf("%d - %d m", levels[i], levels[i+1]));
     }
     lbl->setMinimumSize(fm.size(0,lbl->text()).width(),0);
     minwidth=std::max(minwidth,fm.size(0,lbl->text()).width());
