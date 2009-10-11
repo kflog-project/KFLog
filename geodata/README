@@ -187,8 +187,8 @@ plotted in the order they appear in the file, the topography is correct.
 [options="header"]
 |====================================
 | Bytes  | Representation |  Description
-| 4      |                |  KFLog file identifier "@KFL" (0x404b464c)
-| 1      |                |  File type ID "T" (0x54, terrain) or "G" (0x47, ground)
+| 4      | Q_INT32        |  KFLog file identifier "@KFL" (0x404b464c)
+| 1      | Q_INT8         |  File type ID "T" (0x54, terrain) or "G" (0x47, ground)
 | 2      | Q_UINT16       |  File format version (102 for ground and terrain)
 | 2      | Q_INT16        |  Tile number
 | 8      | QDateTime      |  Creation time (QDateTime QDateTime::currentDateTime())
