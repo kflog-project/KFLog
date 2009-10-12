@@ -18,7 +18,6 @@
 #ifndef CONFIGPRINTELEMENT_H
 #define CONFIGPRINTELEMENT_H
 
-#include <kconfig.h>
 #include <kcolorbutton.h>
 
 #include <qcheckbox.h>
@@ -41,7 +40,7 @@ class ConfigPrintElement : public QFrame
   Q_OBJECT
 
   public:
-    ConfigPrintElement(QWidget* parent, KConfig* cnf);
+    ConfigPrintElement(QWidget* parent);
     ~ConfigPrintElement();
     /** */
 //    enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
@@ -64,7 +63,6 @@ class ConfigPrintElement : public QFrame
     void slotOk();
 
   private:
-    KConfig* config;
     QCheckBox* border1;
     QCheckBox* border2;
 
@@ -169,6 +167,11 @@ class ConfigPrintElement : public QFrame
 
     int oldElement;
     int currentElement;
+
+    /** this is a temporary function and it is not needed in Qt 4 */
+    QString __color2String(QColor);
+    /** this is a temporary function and it is not needed in Qt 4 */
+    QColor __string2Color(QString);
 };
 
 #endif

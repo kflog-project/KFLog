@@ -25,6 +25,7 @@
 #include <qmessagebox.h>
 #include <qprinter.h>
 #include <qregexp.h>
+#include <qsettings.h>
 #include <qtextstream.h>
 #include <qgl.h>
 
@@ -81,7 +82,7 @@
 TranslationList surfaces;
 TranslationList waypointTypes;
 TranslationList taskTypes;
-
+extern QSettings _settings;
 
 KFLogApp::KFLogApp()
   : KDockMainWindow(0, "KFLogMainWindow"), showStartLogo(false)
@@ -95,7 +96,7 @@ KFLogApp::KFLogApp()
   config->setGroup("General Options");
   showStartLogo=false;
 
-  if (config->readBoolEntry("Logo", true) && (!kapp->isRestored() ) )
+  if (_settings.readBoolEntry("/GeneralOptions/Logo", true) && (!kapp->isRestored() ) )
     {
       showStartLogo = true;
       startLogo = new KFLogStartLogo();
@@ -106,9 +107,9 @@ KFLogApp::KFLogApp()
   initSurfaces();
   initTypes();
   initTaskTypes();
-  
+
   ElevationFinder::instance();
-  
+
   connect(&_globalMapMatrix, SIGNAL(displayMatrixValues(int, bool)),
       &_globalMapConfig, SLOT(slotSetMatrixValues(int, bool)));
   connect(&_globalMapMatrix, SIGNAL(printMatrixValues(int)),
@@ -370,8 +371,7 @@ void KFLogApp::initActions()
   dataList.append(tr("Solid"));
 
   viewFlightDataType->setItems(dataList);
-  config-> setGroup("Flight");
-  viewFlightDataType->setCurrentItem(config->readNumEntry("Draw Type", MapConfig::Altitude));
+  viewFlightDataType->setCurrentItem(_settings.readNumEntry("/Flight/DrawType", MapConfig::Altitude));
 
   KActionMenu* flightMenu = new KActionMenu(tr("F&light"),
       actionCollection(), "flight");
@@ -639,24 +639,21 @@ void KFLogApp::slotShowPointInfo(const QPoint& pos)
 
 void KFLogApp::saveOptions()
 {
-  config->setGroup("General Options");
-  config->writeEntry("Geometry", size());
-  config->writeEntry("Show Toolbar", viewToolBar->isChecked());
-  config->writeEntry("Show Statusbar",viewStatusBar->isChecked());
-  config->writeEntry("ToolBarPos", (int) toolBar("mainToolBar")->barPos());
+  _settings.writeEntry("/GeneralOptions/GeometryWidth", size().width());
+  _settings.writeEntry("/GeneralOptions/GeometryHeight", size().height());
+  _settings.writeEntry("/GeneralOptions/ShowToolbar", viewToolBar->isChecked());
+  _settings.writeEntry("/GeneralOptions/ShowStatusbar",viewStatusBar->isChecked());
+  _settings.writeEntry("/GeneralOptions/ToolBarPos", (int) toolBar("mainToolBar")->barPos());
 
-  config->setGroup("Waypoints");
-  qDebug("saving options...");
-  if (config->readNumEntry("DefaultWaypointCatalog", KFLogConfig::LastUsed) ==
+  //qDebug("saving options...");
+  if (_settings.readNumEntry("/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed) ==
       KFLogConfig::LastUsed && waypoints->getCurrentCatalog() != NULL)
     {
       // Only write the path, if a waypoint-catalog is opened.
       // Otherwise KFLog crashes on a clean installation.
-      qDebug("saving catalog name");
-      config->writeEntry("DefaultCatalogName", waypoints->getCurrentCatalog()->path);
+      //qDebug("saving catalog name");
+      _settings.writeEntry("/Waypoints/DefaultCatalogName", waypoints->getCurrentCatalog()->path);
     }
-
-  config->setGroup(0);
 
   writeDockConfig(config, "Window Layout");
 
@@ -665,35 +662,32 @@ void KFLogApp::saveOptions()
 
 void KFLogApp::readOptions()
 {
-  config->setGroup("General Options");
-
   // bar status settings
-  bool bViewToolbar = config->readBoolEntry("Show Toolbar", true);
+  bool bViewToolbar = _settings.readBoolEntry("/GeneralOptions/ShowToolbar", true);
   viewToolBar->setChecked(bViewToolbar);
   slotViewToolBar();
 
-  bool bViewStatusbar = config->readBoolEntry("Show Statusbar", true);
+  bool bViewStatusbar = _settings.readBoolEntry("/GeneralOptions/ShowStatusbar", true);
   viewStatusBar->setChecked(bViewStatusbar);
   slotViewStatusBar();
 
   // bar position settings
   KToolBar::BarPosition toolBarPos;
-  toolBarPos=(KToolBar::BarPosition) config->readNumEntry("ToolBarPos",
+  toolBarPos=(KToolBar::BarPosition) _settings.readNumEntry("/GeneralOptions/ToolBarPos",
       KToolBar::Top);
   toolBar("mainToolBar")->setBarPos(toolBarPos);
-  QSize size=config->readSizeEntry("Geometry", new QSize(950,700));
+  QSize size(_settings.readNumEntry("/GeneralOptions/GeometryWidth", 950),
+             _settings.readNumEntry("/GeneralOptions/GeometryHeight", 700));
 
   // initialize the recent file list
   fileOpenRecent->loadEntries(config,"Recent Files");
-  config->setGroup("Path");
-  flightDir = config->readEntry("DefaultFlightDirectory",
+  flightDir = _settings.readEntry("/Path/DefaultFlightDirectory",
       getpwuid(getuid())->pw_dir);
-  taskDir = config->readEntry("DefaultWaypointDirectory",
+  taskDir = _settings.readEntry("/Path/DefaultWaypointDirectory",
       getpwuid(getuid())->pw_dir);
 
-  config->setGroup("Scale");
-  mapControl->slotSetMinMaxValue(config->readNumEntry("Lower Limit", 10),
-      config->readNumEntry("Upper Limit", 1500));
+  mapControl->slotSetMinMaxValue(_settings.readNumEntry("/Scale/Lower Limit", 10),
+                                 _settings.readNumEntry("/Scale/Upper Limit", 1500));
 
   if(!size.isEmpty())  resize(size);
 
@@ -1002,7 +996,7 @@ void KFLogApp::slotConfigureKeyBindings()
 
 void KFLogApp::slotConfigureKFLog()
 {
-  KFLogConfig* confDlg = new KFLogConfig(this, config, "kflogconfig");
+  KFLogConfig* confDlg = new KFLogConfig(this, "kflogconfig");
 
   connect(confDlg, SIGNAL(scaleChanged(int, int)), mapControl,
       SLOT(slotSetMinMaxValue(int, int)));
@@ -1053,7 +1047,7 @@ void KFLogApp::slotFlightViewIgcOpenGL()
   #define CHECK_ERROR_EXIT  error = (char *)dlerror(); \
     if(error != NULL) \
       { \
-        warning(error); \
+        warning("%s", error); \
         return; \
       }
 
@@ -1065,7 +1059,7 @@ void KFLogApp::slotFlightViewIgcOpenGL()
   char* (*getCaption)();
   getCaption = (char* (*) ()) dlsym(libHandle, "getCaption");
   CHECK_ERROR_EXIT
-  qWarning((*getCaption)());
+  qWarning("%s", (*getCaption)());
 
   QWidget* (*run)();
   run = (QWidget* (*) ()) dlsym(libHandle, "getMainWidget");
@@ -1212,7 +1206,7 @@ void KFLogApp::slotOpenRecorderDialog()
 {
   extern MapContents _globalMapContents;
 
-  RecorderDialog* dlg = new RecorderDialog(this, config, "recorderDialog");
+  RecorderDialog* dlg = new RecorderDialog(this, "recorderDialog");
   connect(dlg, SIGNAL(addCatalog(WaypointCatalog *)), waypoints,
     SLOT(slotAddCatalog(WaypointCatalog *)));
   connect(dlg, SIGNAL(addTask(FlightTask *)), &_globalMapContents,

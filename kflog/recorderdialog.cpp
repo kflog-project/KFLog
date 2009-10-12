@@ -33,23 +33,23 @@
 #include <knotifyclient.h>
 
 #include <qapplication.h>
-#include <qlabel.h>
+#include <qdir.h>
 #include <qgroupbox.h>
+#include <qlabel.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
+#include <qsettings.h>
 #include <qstringlist.h>
 #include <qtimer.h>
 #include <qwhatsthis.h>
-#include <qdir.h>
 
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "airport.h"
 
-RecorderDialog::RecorderDialog(QWidget *parent, KConfig* cnf, const char *name)
+RecorderDialog::RecorderDialog(QWidget *parent, const char *name)
   : KDialogBase(IconList, i18n("Flightrecorder-Dialog"), Close, Close,
                 parent, name, true, true),
-    config(cnf),
     loggerConf(0),
     isOpen(false),
     isConnected(false),
@@ -91,12 +91,13 @@ RecorderDialog::RecorderDialog(QWidget *parent, KConfig* cnf, const char *name)
 
 RecorderDialog::~RecorderDialog()
 {
-  config->setGroup("Recorder Dialog");
-  config->writeEntry("Name", selectType->currentText());
-  config->writeEntry("Port", selectPort->currentItem());
-  config->writeEntry("Baud", _selectSpeed->currentItem());
-  config->writeEntry("URL",  selectURL->text());
-  config->setGroup(0);
+  extern QSettings _settings;
+
+  _settings.writeEntry("/RecorderDialog/Name", selectType->currentText());
+  _settings.writeEntry("/RecorderDialog/Port", selectPort->currentItem());
+  _settings.writeEntry("/RecorderDialog/Baud", _selectSpeed->currentItem());
+  _settings.writeEntry("/RecorderDialog/URL",  selectURL->text());
+
   slotCloseRecorder();
   delete waypoints;
   delete tasks;
@@ -244,13 +245,13 @@ void RecorderDialog::__addSettingsPage()
 
   libNameList.clear();
 
-  config->setGroup("Recorder Dialog");
-  selectPort->setCurrentItem(config->readNumEntry("Port", 0));
-  _selectSpeed->setCurrentItem(config->readNumEntry("Baud", 0));
-  QString name(config->readEntry("Name", 0));
+  extern QSettings _settings;
+
+  selectPort->setCurrentItem(_settings.readNumEntry("/RecorderDialog/Port", 0));
+  _selectSpeed->setCurrentItem(_settings.readNumEntry("/RecorderDialog/Baud", 0));
+  QString name(_settings.readEntry("/RecorderDialog/Name", 0));
   QString pluginName;
-  selectURL->setText(config->readEntry("URL", ""));
-  config->setGroup(0);
+  selectURL->setText(_settings.readEntry("/RecorderDialog/URL", ""));
 
   for(QStringList::Iterator it = configRec.begin(); it != configRec.end(); it++) {
     if(loggerConf != NULL) {
@@ -506,10 +507,9 @@ void RecorderDialog::__addDeclarationPage()
     gliderType->insertItem(QString(gliderList[idx++].name));
   }
 
-  config->setGroup("Personal Data");
-  pilotName->setText(config->readEntry("PilotName", ""));
+  extern QSettings _settings;
 
-  config->setGroup(0);
+  pilotName->setText(_settings.readEntry("/PersonalData/PilotName", ""));
 
   for (e = tasks->first(); e; e = tasks->next()) {
     taskSelection->insertItem(e->getFileName() + " " + e->getTaskTypeString());
@@ -653,7 +653,7 @@ void RecorderDialog::slotConnectRecorder()
   int speed = _selectSpeed->currentText().toInt();
 
   if(!__openLib(name)) {
-    warning(i18n("Could not open lib!"));
+    warning("%s", (const char*)i18n("Could not open lib!"));
     return;
   }
 
@@ -663,7 +663,7 @@ void RecorderDialog::slotConnectRecorder()
   switch (activeRecorder->getTransferMode()) {
   case FlightRecorderPluginBase::serial:
     if(portName.isEmpty()) {
-      warning(i18n("No port given!"));
+      warning("%s", (const char*)i18n("No port given!"));
       isConnected=false;
       break;
     }
@@ -674,7 +674,7 @@ void RecorderDialog::slotConnectRecorder()
     selectURL->setText(selectURL->text().stripWhiteSpace());
     QString URL = selectURL->text();
     if (URL.isEmpty()) {
-      warning(i18n("No URL entered!"));
+      warning("%s", (const char*)i18n("No URL entered!"));
       QApplication::restoreOverrideCursor();
       isConnected=false;
       break;
@@ -813,17 +813,17 @@ void RecorderDialog::slotDownloadFlight()
     return;
   }
 
-  config->setGroup("Path");
+  extern QSettings _settings;
   // If no DefaultFlightDirectory is configured, we must use $HOME instead of the root-directory
-  QString flightDir = config->readEntry("DefaultFlightDirectory", QDir::homeDirPath());
+  QString flightDir = _settings.readEntry("/Path/DefaultFlightDirectory", QDir::homeDirPath());
 
   QString fileName = flightDir + "/";
 
   int flightID(item->text(colID).toInt() - 1);
 
   //warning("Loading flight %d (%d)", flightID, flightList->itemPos(item));
-  warning(dirList.at(flightID)->longFileName);
-  warning(dirList.at(flightID)->shortFileName);
+  warning("%s", (const char*)dirList.at(flightID)->longFileName);
+  warning("%s", (const char*)dirList.at(flightID)->shortFileName);
 
 //  QTimer::singleShot( 0, this, SLOT(slotDisablePages()) );
 
@@ -862,7 +862,7 @@ void RecorderDialog::slotDownloadFlight()
 
   kapp->processEvents();
 
-  warning(fileName);
+  warning("%s", (const char*)fileName);
 
   if (!activeRecorder) return;
 
@@ -877,7 +877,7 @@ void RecorderDialog::slotDownloadFlight()
   if (ret == FR_ERROR) {
     warning("ERROR");
     if ((errorDetails = activeRecorder->lastError()) != "") {
-      warning(errorDetails);
+      warning("%s", (const char*)errorDetails);
       KMessageBox::detailedError(this,
                                  i18n("There was an error downloading the flight!"),
                                  errorDetails,
@@ -997,7 +997,7 @@ bool RecorderDialog::__openLib(const QString& libN)
   error = (char *)dlerror();
   if (error != NULL)
   {
-    warning(error);
+    warning("%s", (const char*)error);
     return false;
   }
 
@@ -1567,7 +1567,7 @@ void RecorderDialog::slotRecorderTypeChanged(const QString&) // name)
 
   }
   if(!__openLib(name)) {
-    warning(i18n("Could not open lib!"));
+    warning("%s", (const char*)i18n("Could not open lib!"));
     __setRecorderConnectionType(FlightRecorderPluginBase::none);
     return;
   }

@@ -19,8 +19,6 @@
 #include "map.h"
 #include "mapcontents.h"
 
-#include <kconfig.h>
-
 DownloadList::DownloadList(){
   srcList.setAutoDelete(true);
   destList.setAutoDelete(true);
@@ -47,8 +45,6 @@ void DownloadList::slotDownloadFinished(KIO::Job* job){
   downloadRunning=false;
   int error;
   error=job->error();
-  KConfig* config = KGlobal::config();
-  config->setGroup("General Options");
   if (error){
     if (errorList.findIndex(error)==-1){
       job->showErrorDialog();

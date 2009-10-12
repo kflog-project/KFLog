@@ -21,10 +21,10 @@
 
 #include <cmath>
 
-#include <kconfig.h>
 #include <kglobal.h>
 
 #include <qmessagebox.h>
+#include <qsettings.h>
 #include <qvaluevector.h>
 
 #define PRE_ID loop - 1
@@ -734,13 +734,11 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
 
 int FlightTask::getPlannedPoints()
 {
+  extern QSettings _settings;
 
-  KConfig* config = KGlobal::config();
-  config->setGroup("FlightPoints");
-
-  double pointFAI = config->readDoubleNumEntry("FAIPoint", 2.0);
-  double pointNormal = config->readDoubleNumEntry("NormalPoint", 1.75);
-  double pointZielS = config->readDoubleNumEntry("ZielSPoint", 1.5);
+  double pointFAI = _settings.readDoubleEntry("/FlightPoints/FAIPoint", 2.0);
+  double pointNormal = _settings.readDoubleEntry("/FlightPoints/NormalPoint", 1.75);
+  double pointZielS = _settings.readDoubleEntry("/FlightPoints/ZielSPoint", 1.5);
 
   /*
    * Aufgabe vollständig erfüllt
@@ -795,25 +793,20 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
   if(!wpList.count()) return;
 
   int gliderIndex = 100, preTime = 0;
-  KConfig* config = KGlobal::config();
-  config->setGroup("General Options");
-  bool showWarnings = config->readBoolEntry("ShowWaypointWarnings",true);
-  config->setGroup("FlightPoints");
 
-  double pointFAI = config->readDoubleNumEntry("FAIPoint", 2.0);
-  double pointNormal = config->readDoubleNumEntry("NormalPoint", 1.75);
-  double pointCancel = config->readDoubleNumEntry("CancelPoint", 1.0);
-  double pointZielS = config->readDoubleNumEntry("ZielSPoint", 1.5);
-  double malusValue = config->readDoubleNumEntry("MalusValue", 15.0);
-  double sectorMalus = config->readDoubleNumEntry("SectorMalus", -0.1);
+  extern QSettings _settings;
+
+  bool showWarnings = _settings.readBoolEntry("/GeneralOptions/ShowWaypointWarnings",true);
+
+  double pointFAI = _settings.readDoubleEntry("/FlightPoints/FAIPoint", 2.0);
+  double pointNormal = _settings.readDoubleEntry("/FlightPoints/NormalPoint", 1.75);
+  double pointCancel = _settings.readDoubleEntry("/FlightPoints/CancelPoint", 1.0);
+  double pointZielS = _settings.readDoubleEntry("/FlightPoints/ZielSPoint", 1.5);
+  double malusValue = _settings.readDoubleEntry("/FlightPoints/MalusValue", 15.0);
+  double sectorMalus = _settings.readDoubleEntry("/FlightPoints/SectorMalus", -0.1);
 
   if(gliderType != 0L)
-    {
-      config->setGroup("GliderTypes");
-      gliderIndex = config->readNumEntry(gliderType, 100);
-    }
-
-  config->setGroup(0);
+    gliderIndex = _settings.readNumEntry("/GliderTypes/"+gliderType, 100);
 
   for(unsigned int loop = 0; loop < route.count(); loop++)
     {

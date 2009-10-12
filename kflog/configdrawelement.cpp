@@ -26,6 +26,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+#include <qsettings.h>
 
 #define SAVE_PEN(a, b) \
     b[0] = border1-> isChecked(); \
@@ -83,65 +84,68 @@
     border4BrushColor-> setColor(a.at(3)->color()); \
     border4BrushStyle-> setCurrentItem(a.at(3)->style());
 
-#define READ_BORDER(a) \
-    a[0] = config-> readBoolEntry("Border 1", true); \
-    a[1] = config-> readBoolEntry("Border 2", true); \
-    a[2] = config-> readBoolEntry("Border 3", true); \
-    a[3] = config-> readBoolEntry("Border 4", true);
+#define READ_BORDER(g, a) \
+    group = g; \
+    a[0] = _settings.readBoolEntry("/"+group.append("/Border1"), true); \
+    a[1] = _settings.readBoolEntry("/"+group.append("/Border2"), true); \
+    a[2] = _settings.readBoolEntry("/"+group.append("/Border3"), true); \
+    a[3] = _settings.readBoolEntry("/"+group.append("/Border4"), true);
 
-#define READ_PEN(A, C1, C2, C3, C4, P1, P2, P3, P4, S1, S2, S3, S4) \
-  A.append(new QPen(config-> readColorEntry("Color 1", new C1), \
-        config-> readNumEntry("Pen Size 1", P1), \
-        (Qt::PenStyle)config-> readNumEntry("Pen Style 1", S1))); \
-  A.append(new QPen(config-> readColorEntry("Color 2", new C2), \
-        config-> readNumEntry("Pen Size 2", P2), \
-        (Qt::PenStyle)config-> readNumEntry("Pen Style 2", S2))); \
-  A.append(new QPen(config-> readColorEntry("Color 3", new C3), \
-        config-> readNumEntry("Pen Size 3", P3), \
-        (Qt::PenStyle)config-> readNumEntry("Pen Style 3", S3))); \
-  A.append(new QPen(config-> readColorEntry("Color 4", new C4), \
-        config-> readNumEntry("Pen Size 4", P4), \
-        (Qt::PenStyle)config-> readNumEntry("Pen Style 4", S4)));
+#define READ_PEN(g, a, b, C1, C2, C3, C4, P1, P2, P3, P4, S1, S2, S3, S4) \
+  READ_BORDER(g, a); \
+  b.append(new QPen(__string2Color(_settings.readEntry("/"+group.append("/Color1"), __color2String(C1))), \
+        _settings.readNumEntry("/"+group.append("/PenSize1"), P1), \
+        (Qt::PenStyle)_settings.readNumEntry("/"+group.append("/PenStyle1"), S1))); \
+  b.append(new QPen(__string2Color(_settings.readEntry("/"+group.append("/Color2"), __color2String(C2))), \
+        _settings.readNumEntry("/"+group.append("/PenSize2"), P2), \
+        (Qt::PenStyle)_settings.readNumEntry("/"+group.append("/PenStyle2"), S2))); \
+  b.append(new QPen(__string2Color(_settings.readEntry("/"+group.append("/Color3"), __color2String(C3))), \
+        _settings.readNumEntry("/"+group.append("/PenSize3"), P3), \
+        (Qt::PenStyle)_settings.readNumEntry("/"+group.append("/PenStyle3"), S3))); \
+  b.append(new QPen(__string2Color(_settings.readEntry("/"+group.append("/Color4"), __color2String(C4))), \
+        _settings.readNumEntry("/"+group.append("/PenSize4"), P4), \
+        (Qt::PenStyle)_settings.readNumEntry("/"+group.append("/PenStyle4"), S4)));
 
-#define READ_BRUSH(A, C1, C2, C3, C4, S1, S2, S3, S4) \
-  A.append(new QBrush(config-> readColorEntry("Brush Color 1", new C1), \
-        (Qt::BrushStyle)config-> readNumEntry("Brush Style 1", S1))); \
-  A.append(new QBrush(config-> readColorEntry("Brush Color 2", new C2), \
-        (Qt::BrushStyle)config-> readNumEntry("Brush Style 2", S2))); \
-  A.append(new QBrush(config-> readColorEntry("Brush Color 3", new C3), \
-        (Qt::BrushStyle)config-> readNumEntry("Brush Style 3", S3))); \
-  A.append(new QBrush(config-> readColorEntry("Brush Color 4", new C4), \
-        (Qt::BrushStyle)config-> readNumEntry("Brush Style 4", S4))); \
+#define READ_BRUSH(g, a, b, c, C1, C2, C3, C4, P1, P2, P3, P4, S1, S2, S3, S4, CB1, CB2, CB3, CB4, SB1, SB2, SB3, SB4) \
+  READ_PEN(g, a, b, C1, C2, C3, C4, P1, P2, P3, P4, S1, S2, S3, S4); \
+  c.append(new QBrush(__string2Color(_settings.readEntry("/"+group.append("/BrushColor1"), __color2String(CB1))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/"+group.append("/BrushStyle1"), SB1))); \
+  c.append(new QBrush(__string2Color(_settings.readEntry("/"+group.append("/BrushColor2"), __color2String(CB2))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/"+group.append("/BrushStyle2"), SB2))); \
+  c.append(new QBrush(__string2Color(_settings.readEntry("/"+group.append("/BrushColor3"), __color2String(CB3))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/"+group.append("/BrushStyle3"), SB3))); \
+  c.append(new QBrush(__string2Color(_settings.readEntry("/"+group.append("/BrushColor4"), __color2String(CB4))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/"+group.append("/BrushStyle4"), SB4))); \
 
-#define WRITE_PEN(Group, a, b) \
-    config-> setGroup(Group); \
-    config-> writeEntry("Color 1", a.at(0)->color()); \
-    config-> writeEntry("Color 2", a.at(1)->color()); \
-    config-> writeEntry("Color 3", a.at(2)->color()); \
-    config-> writeEntry("Color 4", a.at(3)->color()); \
-    config-> writeEntry("Pen Size 1", a.at(0)->width()); \
-    config-> writeEntry("Pen Size 2", a.at(1)->width()); \
-    config-> writeEntry("Pen Size 3", a.at(2)->width()); \
-    config-> writeEntry("Pen Size 4", a.at(3)->width()); \
-    config-> writeEntry("Pen Style 1", a.at(0)->style()); \
-    config-> writeEntry("Pen Style 2", a.at(1)->style()); \
-    config-> writeEntry("Pen Style 3", a.at(2)->style()); \
-    config-> writeEntry("Pen Style 4", a.at(3)->style()); \
-    config-> writeEntry("Border 1", b[0]); \
-    config-> writeEntry("Border 2", ( b[1] && b[0] ) ); \
-    config-> writeEntry("Border 3", ( b[2] && b[1] && b[0] ) ); \
-    config-> writeEntry("Border 4", ( b[3] && b[2] && b[1] && b[0] ) );
+#define WRITE_PEN(g, a, b) \
+    group = g; \
+    _settings.writeEntry("/"+group.append("/Color1"), __color2String(a.at(0)->color())); \
+    _settings.writeEntry("/"+group.append("/Color2"), __color2String(a.at(1)->color())); \
+    _settings.writeEntry("/"+group.append("/Color3"), __color2String(a.at(2)->color())); \
+    _settings.writeEntry("/"+group.append("/Color4"), __color2String(a.at(3)->color())); \
+    _settings.writeEntry("/"+group.append("/PenSize1"), (int)a.at(0)->width()); \
+    _settings.writeEntry("/"+group.append("/PenSize2"), (int)a.at(1)->width()); \
+    _settings.writeEntry("/"+group.append("/PenSize3"), (int)a.at(2)->width()); \
+    _settings.writeEntry("/"+group.append("/PenSize4"), (int)a.at(3)->width()); \
+    _settings.writeEntry("/"+group.append("/PenStyle1"), a.at(0)->style()); \
+    _settings.writeEntry("/"+group.append("/PenStyle2"), a.at(1)->style()); \
+    _settings.writeEntry("/"+group.append("/PenStyle3"), a.at(2)->style()); \
+    _settings.writeEntry("/"+group.append("/PenStyle4"), a.at(3)->style()); \
+    _settings.writeEntry("/"+group.append("/Border1"), b[0]); \
+    _settings.writeEntry("/"+group.append("/Border2"), ( b[1] && b[0] ) ); \
+    _settings.writeEntry("/"+group.append("/Border3"), ( b[2] && b[1] && b[0] ) ); \
+    _settings.writeEntry("/"+group.append("/Border4"), ( b[3] && b[2] && b[1] && b[0] ) );
 
-#define WRITE_BRUSH(Group, a, b, c) \
-    WRITE_PEN(Group,b,c) \
-    config-> writeEntry("Brush Color 1", a.at(0)->color()); \
-    config-> writeEntry("Brush Color 2", a.at(1)->color()); \
-    config-> writeEntry("Brush Color 3", a.at(2)->color()); \
-    config-> writeEntry("Brush Color 4", a.at(3)->color()); \
-    config-> writeEntry("Brush Style 1", a.at(0)->style()); \
-    config-> writeEntry("Brush Style 2", a.at(1)->style()); \
-    config-> writeEntry("Brush Style 3", a.at(2)->style()); \
-    config-> writeEntry("Brush Style 4", a.at(3)->style());
+#define WRITE_BRUSH(g, a, b, c) \
+    WRITE_PEN(g,b,c) \
+    _settings.writeEntry("/"+group.append("/BrushColor1"), __color2String(a.at(0)->color())); \
+    _settings.writeEntry("/"+group.append("/BrushColor2"), __color2String(a.at(1)->color())); \
+    _settings.writeEntry("/"+group.append("/BrushColor3"), __color2String(a.at(2)->color())); \
+    _settings.writeEntry("/"+group.append("/BrushColor4"), __color2String(a.at(3)->color())); \
+    _settings.writeEntry("/"+group.append("/BrushStyle1"), a.at(0)->style()); \
+    _settings.writeEntry("/"+group.append("/BrushStyle2"), a.at(1)->style()); \
+    _settings.writeEntry("/"+group.append("/BrushStyle3"), a.at(2)->style()); \
+    _settings.writeEntry("/"+group.append("/BrushStyle4"), a.at(3)->style());
 
 #define DEFAULT_PEN(a, b, C1, C2, C3, C4, P1, P2, P3, P4) \
     a.at(0)-> setColor(C1); \
@@ -214,9 +218,10 @@
   elLayout-> addWidget(brushC, row, 9); \
   elLayout-> addWidget(brushS, row, 11);
 
-ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
-  : QFrame(parent, "configdrawelement"),
-    config(cnf), oldElement(-1)
+extern QSettings _settings;
+
+ConfigDrawElement::ConfigDrawElement(QWidget* parent)
+  : QFrame(parent, "configdrawelement"), oldElement(-1)
 {
   airABorder = new bool[4];
   airBBorder = new bool[4];
@@ -300,264 +305,186 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
   faiAreaHigh500PenList.setAutoDelete(true);
   faiAreaHigh500BrushList.setAutoDelete(true);
 
-  config-> setGroup("Trail");
-  READ_PEN(trailPenList, TRAIL_COLOR_1, TRAIL_COLOR_2, TRAIL_COLOR_3, TRAIL_COLOR_4,
-        TRAIL_PEN_1, TRAIL_PEN_2, TRAIL_PEN_3, TRAIL_PEN_4,
-        TRAIL_PEN_STYLE_1, TRAIL_PEN_STYLE_2, TRAIL_PEN_STYLE_3, TRAIL_PEN_STYLE_4)
-  READ_BORDER(trailBorder);
+  QString group;
+  READ_PEN("Trail", trailBorder, trailPenList,
+           TRAIL_COLOR_1, TRAIL_COLOR_2, TRAIL_COLOR_3, TRAIL_COLOR_4,
+           TRAIL_PEN_1, TRAIL_PEN_2, TRAIL_PEN_3, TRAIL_PEN_4,
+           TRAIL_PEN_STYLE_1, TRAIL_PEN_STYLE_2, TRAIL_PEN_STYLE_3, TRAIL_PEN_STYLE_4)
 
-  config-> setGroup("Road");
-  READ_PEN(roadPenList, ROAD_COLOR_1, ROAD_COLOR_2, ROAD_COLOR_3, ROAD_COLOR_4,
-        ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4,
-        ROAD_PEN_STYLE_1, ROAD_PEN_STYLE_2, ROAD_PEN_STYLE_3, ROAD_PEN_STYLE_4)
-  READ_BORDER(roadBorder);
+  READ_PEN("Road", roadBorder, roadPenList,
+           ROAD_COLOR_1, ROAD_COLOR_2, ROAD_COLOR_3, ROAD_COLOR_4,
+           ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4,
+           ROAD_PEN_STYLE_1, ROAD_PEN_STYLE_2, ROAD_PEN_STYLE_3, ROAD_PEN_STYLE_4)
 
-  config-> setGroup("River");
-  READ_PEN(riverPenList, RIVER_COLOR_1, RIVER_COLOR_2, RIVER_COLOR_3,
-        RIVER_COLOR_4, RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4,
-        RIVER_PEN_STYLE_1, RIVER_PEN_STYLE_2, RIVER_PEN_STYLE_3, RIVER_PEN_STYLE_4)
-  READ_BORDER(riverBorder);
+  READ_PEN("River", riverBorder, riverPenList,
+           RIVER_COLOR_1, RIVER_COLOR_2, RIVER_COLOR_3, RIVER_COLOR_4,
+           RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4,
+           RIVER_PEN_STYLE_1, RIVER_PEN_STYLE_2, RIVER_PEN_STYLE_3, RIVER_PEN_STYLE_4)
 
-  config-> setGroup("Canal");
-  READ_PEN(canalPenList, CANAL_COLOR_1, CANAL_COLOR_2, CANAL_COLOR_3,
-        CANAL_COLOR_4, CANAL_PEN_1, CANAL_PEN_2, CANAL_PEN_3, CANAL_PEN_4,
-        CANAL_PEN_STYLE_1, CANAL_PEN_STYLE_2, CANAL_PEN_STYLE_3, CANAL_PEN_STYLE_4)
-  READ_BORDER(canalBorder);
+  READ_PEN("Canal", canalBorder, canalPenList,
+           CANAL_COLOR_1, CANAL_COLOR_2, CANAL_COLOR_3, CANAL_COLOR_4,
+           CANAL_PEN_1, CANAL_PEN_2, CANAL_PEN_3, CANAL_PEN_4,
+           CANAL_PEN_STYLE_1, CANAL_PEN_STYLE_2, CANAL_PEN_STYLE_3, CANAL_PEN_STYLE_4)
 
-  config-> setGroup("Rail");
-  READ_PEN(railPenList, RAIL_COLOR_1, RAIL_COLOR_2, RAIL_COLOR_3, RAIL_COLOR_4,
-        RAIL_PEN_1, RAIL_PEN_2, RAIL_PEN_3, RAIL_PEN_4,
-        RAIL_PEN_STYLE_1, RAIL_PEN_STYLE_2, RAIL_PEN_STYLE_3, RAIL_PEN_STYLE_4)
-  READ_BORDER(railBorder);
+  READ_PEN("Rail", railBorder, railPenList,
+           RAIL_COLOR_1, RAIL_COLOR_2, RAIL_COLOR_3, RAIL_COLOR_4,
+           RAIL_PEN_1, RAIL_PEN_2, RAIL_PEN_3, RAIL_PEN_4,
+           RAIL_PEN_STYLE_1, RAIL_PEN_STYLE_2, RAIL_PEN_STYLE_3, RAIL_PEN_STYLE_4)
 
-  config-> setGroup("Rail_D");
-  READ_PEN(rail_dPenList, RAIL_D_COLOR_1, RAIL_D_COLOR_2, RAIL_D_COLOR_3,
-        RAIL_D_COLOR_4, RAIL_D_PEN_1, RAIL_D_PEN_2, RAIL_D_PEN_3, RAIL_D_PEN_4,
-        RAIL_D_PEN_STYLE_1, RAIL_D_PEN_STYLE_2, RAIL_D_PEN_STYLE_3, RAIL_D_PEN_STYLE_4)
-  READ_BORDER(rail_dBorder);
+  READ_PEN("RailD", rail_dBorder, rail_dPenList,
+           RAIL_D_COLOR_1, RAIL_D_COLOR_2, RAIL_D_COLOR_3, RAIL_D_COLOR_4,
+           RAIL_D_PEN_1, RAIL_D_PEN_2, RAIL_D_PEN_3, RAIL_D_PEN_4,
+           RAIL_D_PEN_STYLE_1, RAIL_D_PEN_STYLE_2, RAIL_D_PEN_STYLE_3, RAIL_D_PEN_STYLE_4)
 
-  config-> setGroup("Aerial Cable");
-  READ_PEN(aerialcablePenList, AERIAL_CABLE_COLOR_1, AERIAL_CABLE_COLOR_2,
-        AERIAL_CABLE_COLOR_3, AERIAL_CABLE_COLOR_4, AERIAL_CABLE_PEN_1,
-        AERIAL_CABLE_PEN_2, AERIAL_CABLE_PEN_3, AERIAL_CABLE_PEN_4,
-        AERIAL_CABLE_PEN_STYLE_1, AERIAL_CABLE_PEN_STYLE_2,
-        AERIAL_CABLE_PEN_STYLE_3, AERIAL_CABLE_PEN_STYLE_4)
-  READ_BORDER(aerialcableBorder);
+  READ_PEN("AerialCable", aerialcableBorder, aerialcablePenList,
+           AERIAL_CABLE_COLOR_1, AERIAL_CABLE_COLOR_2, AERIAL_CABLE_COLOR_3, AERIAL_CABLE_COLOR_4,
+           AERIAL_CABLE_PEN_1, AERIAL_CABLE_PEN_2, AERIAL_CABLE_PEN_3, AERIAL_CABLE_PEN_4,
+           AERIAL_CABLE_PEN_STYLE_1, AERIAL_CABLE_PEN_STYLE_2, AERIAL_CABLE_PEN_STYLE_3, AERIAL_CABLE_PEN_STYLE_4)
 
-  config-> setGroup("Highway");
-  READ_PEN(highwayPenList, HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
-        HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4,
-        HIGH_PEN_STYLE_1, HIGH_PEN_STYLE_2, HIGH_PEN_STYLE_3, HIGH_PEN_STYLE_4)
-  READ_BORDER(highwayBorder);
+  READ_PEN("Highway", highwayBorder, highwayPenList,
+           HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
+           HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4,
+           HIGH_PEN_STYLE_1, HIGH_PEN_STYLE_2, HIGH_PEN_STYLE_3, HIGH_PEN_STYLE_4)
 
+  READ_BRUSH("City", cityBorder, cityPenList, cityBrushList,
+             CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3, CITY_COLOR_4,
+             CITY_PEN_1, CITY_PEN_2, CITY_PEN_3, CITY_PEN_4,
+             CITY_PEN_STYLE_1, CITY_PEN_STYLE_2, CITY_PEN_STYLE_3, CITY_PEN_STYLE_4,
+             CITY_BRUSH_COLOR_1, CITY_BRUSH_COLOR_2, CITY_BRUSH_COLOR_3, CITY_BRUSH_COLOR_4,
+             CITY_BRUSH_STYLE_1, CITY_BRUSH_STYLE_2, CITY_BRUSH_STYLE_3, CITY_BRUSH_STYLE_4)
 
-  //
-  // In version <= 2.0.1, the fillcolor of cities is called "Color" instead
-  // of "Brush Color", so we must look, which version of configfile we read.
-  //
-  config-> setGroup("General Options");
-  if(config-> hasKey("Version") && config->readEntry("Version") >= "2.0.2")
-    {
-      config-> setGroup("City");
-      // PenStyle and BrushStyle are not used for cities ...
-      READ_PEN(cityPenList, CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3,
-            CITY_COLOR_4, CITY_PEN_1, CITY_PEN_2, CITY_PEN_3, CITY_PEN_4,
-            Qt::SolidLine, Qt::SolidLine, Qt::SolidLine, Qt::SolidLine)
-      READ_BRUSH(cityBrushList, CITY_BRUSH_COLOR_1, CITY_BRUSH_COLOR_2,
-          CITY_BRUSH_COLOR_3, CITY_BRUSH_COLOR_4, Qt::SolidPattern,
-          Qt::SolidPattern, Qt::SolidPattern, Qt::SolidPattern)
-    }
-  else
-    {
-      // We assume to have an old configfile ...
-      config-> setGroup("City");
-      cityPenList.append(new QPen(CITY_COLOR_1, 1));
-      cityPenList.append(new QPen(CITY_COLOR_2, 1));
-      cityPenList.append(new QPen(CITY_COLOR_3, 1));
-      cityPenList.append(new QPen(CITY_COLOR_4, 1));
-      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_1, Qt::SolidPattern));
-      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_2, Qt::SolidPattern));
-      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_3, Qt::SolidPattern));
-      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_4, Qt::SolidPattern));
-    }
-  READ_BORDER(cityBorder);
+  READ_BRUSH("RiverT", river_tBorder, river_tPenList, river_tBrushList,
+             RIVER_T_COLOR_1, RIVER_T_COLOR_2, RIVER_T_COLOR_3, RIVER_T_COLOR_4,
+             RIVER_T_PEN_1, RIVER_T_PEN_2, RIVER_T_PEN_3, RIVER_T_PEN_4,
+             RIVER_T_PEN_STYLE_1, RIVER_T_PEN_STYLE_2, RIVER_T_PEN_STYLE_3, RIVER_T_PEN_STYLE_4,
+             RIVER_T_BRUSH_COLOR_1, RIVER_T_BRUSH_COLOR_2, RIVER_T_BRUSH_COLOR_3, RIVER_T_BRUSH_COLOR_4,
+             RIVER_T_BRUSH_STYLE_1, RIVER_T_BRUSH_STYLE_2, RIVER_T_BRUSH_STYLE_3, RIVER_T_BRUSH_STYLE_4)
 
-  config-> setGroup("River_T");
-  READ_PEN(river_tPenList, RIVER_T_COLOR_1, RIVER_T_COLOR_2, RIVER_T_COLOR_3,
-        RIVER_T_COLOR_4, RIVER_T_PEN_1, RIVER_T_PEN_2, RIVER_T_PEN_3, RIVER_T_PEN_4,
-        RIVER_T_PEN_STYLE_1, RIVER_T_PEN_STYLE_2, RIVER_T_PEN_STYLE_3, RIVER_T_PEN_STYLE_4)
-  READ_BRUSH(river_tBrushList, RIVER_T_BRUSH_COLOR_1, RIVER_T_BRUSH_COLOR_2,
-        RIVER_T_BRUSH_COLOR_3, RIVER_T_BRUSH_COLOR_4, RIVER_T_BRUSH_STYLE_1,
-        RIVER_T_BRUSH_STYLE_2, RIVER_T_BRUSH_STYLE_3, RIVER_T_BRUSH_STYLE_4)
-  READ_BORDER(river_tBorder);
+  READ_BRUSH("Forest", forestBorder, forestPenList, forestBrushList,
+             FRST_COLOR_1, FRST_COLOR_2, FRST_COLOR_3, FRST_COLOR_4,
+             FRST_PEN_1, FRST_PEN_2, FRST_PEN_3, FRST_PEN_4,
+             FRST_PEN_STYLE_1, FRST_PEN_STYLE_2, FRST_PEN_STYLE_3, FRST_PEN_STYLE_4,
+             FRST_BRUSH_COLOR_1, FRST_BRUSH_COLOR_2, FRST_BRUSH_COLOR_3, FRST_BRUSH_COLOR_4,
+             FRST_BRUSH_STYLE_1, FRST_BRUSH_STYLE_2, FRST_BRUSH_STYLE_3, FRST_BRUSH_STYLE_4)
 
+  READ_BRUSH("Glacier", glacierBorder, glacierPenList, glacierBrushList,
+             GLACIER_COLOR_1, GLACIER_COLOR_2, GLACIER_COLOR_3, GLACIER_COLOR_4,
+             GLACIER_PEN_1, GLACIER_PEN_2, GLACIER_PEN_3, GLACIER_PEN_4,
+             GLACIER_PEN_STYLE_1, GLACIER_PEN_STYLE_2, GLACIER_PEN_STYLE_3, GLACIER_PEN_STYLE_4,
+             GLACIER_BRUSH_COLOR_1, GLACIER_BRUSH_COLOR_2, GLACIER_BRUSH_COLOR_3, GLACIER_BRUSH_COLOR_4,
+             GLACIER_BRUSH_STYLE_1, GLACIER_BRUSH_STYLE_2, GLACIER_BRUSH_STYLE_3, GLACIER_BRUSH_STYLE_4)
 
-  config-> setGroup("Forest");
-  READ_PEN(forestPenList, FRST_COLOR_1, FRST_COLOR_2, FRST_COLOR_3,
-        FRST_COLOR_4, FRST_PEN_1, FRST_PEN_2, FRST_PEN_3, FRST_PEN_4,
-        FRST_PEN_STYLE_1, FRST_PEN_STYLE_2, FRST_PEN_STYLE_3,
-        FRST_PEN_STYLE_4)
-  READ_BRUSH(forestBrushList, FRST_BRUSH_COLOR_1, FRST_BRUSH_COLOR_2,
-        FRST_BRUSH_COLOR_3, FRST_BRUSH_COLOR_4, FRST_BRUSH_STYLE_1,
-        FRST_BRUSH_STYLE_2, FRST_BRUSH_STYLE_3, FRST_BRUSH_STYLE_4)
-  READ_BORDER(forestBorder);
+  READ_BRUSH("PackIce", packiceBorder, packicePenList, packiceBrushList,
+             PACK_ICE_COLOR_1, PACK_ICE_COLOR_2, PACK_ICE_COLOR_3, PACK_ICE_COLOR_4,
+             PACK_ICE_PEN_1, PACK_ICE_PEN_2, PACK_ICE_PEN_3, PACK_ICE_PEN_4,
+             PACK_ICE_PEN_STYLE_1, PACK_ICE_PEN_STYLE_2, PACK_ICE_PEN_STYLE_3, PACK_ICE_PEN_STYLE_4,
+             PACK_ICE_BRUSH_COLOR_1, PACK_ICE_BRUSH_COLOR_2, PACK_ICE_BRUSH_COLOR_3, PACK_ICE_BRUSH_COLOR_4,
+             PACK_ICE_BRUSH_STYLE_1, PACK_ICE_BRUSH_STYLE_2, PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4)
 
-  config-> setGroup("Glacier");
-  READ_PEN(glacierPenList, GLACIER_COLOR_1, GLACIER_COLOR_2, GLACIER_COLOR_3,
-        GLACIER_COLOR_4, GLACIER_PEN_1, GLACIER_PEN_2, GLACIER_PEN_3, GLACIER_PEN_4,
-        GLACIER_PEN_STYLE_1, GLACIER_PEN_STYLE_2, GLACIER_PEN_STYLE_3,
-        GLACIER_PEN_STYLE_4)
-  READ_BRUSH(glacierBrushList, GLACIER_BRUSH_COLOR_1, GLACIER_BRUSH_COLOR_2,
-        GLACIER_BRUSH_COLOR_3, GLACIER_BRUSH_COLOR_4, GLACIER_BRUSH_STYLE_1,
-        GLACIER_BRUSH_STYLE_2, GLACIER_BRUSH_STYLE_3, GLACIER_BRUSH_STYLE_4)
-  READ_BORDER(glacierBorder);
+  READ_BRUSH("AirspaceA", airABorder, airAPenList, airABrushList,
+             AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
+             AIRA_PEN_1, AIRA_PEN_2, AIRA_PEN_3, AIRA_PEN_4,
+             AIRA_PEN_STYLE_1, AIRA_PEN_STYLE_2, AIRA_PEN_STYLE_3, AIRA_PEN_STYLE_4,
+             AIRA_BRUSH_COLOR_1, AIRA_BRUSH_COLOR_2, AIRA_BRUSH_COLOR_3, AIRA_BRUSH_COLOR_4,
+             AIRA_BRUSH_STYLE_1, AIRA_BRUSH_STYLE_2, AIRA_BRUSH_STYLE_3, AIRA_BRUSH_STYLE_4)
 
-  config-> setGroup("Pack Ice");
-  READ_PEN(packicePenList, PACK_ICE_COLOR_1, PACK_ICE_COLOR_2, PACK_ICE_COLOR_3,
-        PACK_ICE_COLOR_4, PACK_ICE_PEN_1, PACK_ICE_PEN_2, PACK_ICE_PEN_3, PACK_ICE_PEN_4,
-        PACK_ICE_PEN_STYLE_1, PACK_ICE_PEN_STYLE_2, PACK_ICE_PEN_STYLE_3,
-        PACK_ICE_PEN_STYLE_4)
-  READ_BRUSH(packiceBrushList, PACK_ICE_BRUSH_COLOR_1, PACK_ICE_BRUSH_COLOR_2,
-        PACK_ICE_BRUSH_COLOR_3, PACK_ICE_BRUSH_COLOR_4, PACK_ICE_BRUSH_STYLE_1,
-        PACK_ICE_BRUSH_STYLE_2, PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4)
-  READ_BORDER(packiceBorder);
+  READ_BRUSH("AirspaceB", airBBorder, airBPenList, airBBrushList,
+             AIRB_COLOR_1, AIRB_COLOR_2, AIRB_COLOR_3, AIRB_COLOR_4,
+             AIRB_PEN_1, AIRB_PEN_2, AIRB_PEN_3, AIRB_PEN_4,
+             AIRB_PEN_STYLE_1, AIRB_PEN_STYLE_2, AIRB_PEN_STYLE_3, AIRB_PEN_STYLE_4, 
+             AIRB_BRUSH_COLOR_1, AIRB_BRUSH_COLOR_2, AIRB_BRUSH_COLOR_3, AIRB_BRUSH_COLOR_4,
+             AIRB_BRUSH_STYLE_1, AIRB_BRUSH_STYLE_2, AIRB_BRUSH_STYLE_3, AIRB_BRUSH_STYLE_4)
 
-  config-> setGroup("Airspace A");
-  READ_PEN(airAPenList, AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
-        AIRA_PEN_1, AIRA_PEN_2, AIRA_PEN_3, AIRA_PEN_4,
-        AIRA_PEN_STYLE_1, AIRA_PEN_STYLE_2, AIRA_PEN_STYLE_3, AIRA_PEN_STYLE_4)
-  READ_BRUSH(airABrushList, AIRA_BRUSH_COLOR_1, AIRA_BRUSH_COLOR_2,
-        AIRA_BRUSH_COLOR_3, AIRA_BRUSH_COLOR_4, AIRA_BRUSH_STYLE_1,
-        AIRA_BRUSH_STYLE_2, AIRA_BRUSH_STYLE_3, AIRA_BRUSH_STYLE_4)
-  READ_BORDER(airABorder);
+  READ_BRUSH("AirspaceC", airCBorder, airCPenList, airCBrushList,
+             AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
+             AIRC_PEN_1, AIRC_PEN_2, AIRC_PEN_3, AIRC_PEN_4,
+             AIRC_PEN_STYLE_1, AIRC_PEN_STYLE_2, AIRC_PEN_STYLE_3, AIRC_PEN_STYLE_4,
+             AIRC_BRUSH_COLOR_1, AIRC_BRUSH_COLOR_2, AIRC_BRUSH_COLOR_3, AIRC_BRUSH_COLOR_4,
+             AIRC_BRUSH_STYLE_1, AIRC_BRUSH_STYLE_2, AIRC_BRUSH_STYLE_3, AIRC_BRUSH_STYLE_4)
 
-  config-> setGroup("Airspace B");
-  READ_PEN(airBPenList, AIRB_COLOR_1, AIRB_COLOR_2, AIRB_COLOR_3, AIRB_COLOR_4,
-        AIRB_PEN_1, AIRB_PEN_2, AIRB_PEN_3, AIRB_PEN_4,
-        AIRB_PEN_STYLE_1, AIRB_PEN_STYLE_2, AIRB_PEN_STYLE_3, AIRB_PEN_STYLE_4)
-  READ_BRUSH(airBBrushList, AIRB_BRUSH_COLOR_1, AIRB_BRUSH_COLOR_2,
-        AIRB_BRUSH_COLOR_3, AIRB_BRUSH_COLOR_4, AIRB_BRUSH_STYLE_1,
-        AIRB_BRUSH_STYLE_2, AIRB_BRUSH_STYLE_3, AIRB_BRUSH_STYLE_4)
-  READ_BORDER(airBBorder);
+  READ_BRUSH("AirspaceD", airDBorder, airDPenList, airDBrushList,
+             AIRD_COLOR_1, AIRD_COLOR_2, AIRD_COLOR_3, AIRD_COLOR_4,
+             AIRD_PEN_1, AIRD_PEN_2, AIRD_PEN_3, AIRD_PEN_4,
+             AIRD_PEN_STYLE_1, AIRD_PEN_STYLE_2, AIRD_PEN_STYLE_3, AIRD_PEN_STYLE_4,
+             AIRD_BRUSH_COLOR_1, AIRD_BRUSH_COLOR_2, AIRD_BRUSH_COLOR_3, AIRD_BRUSH_COLOR_4,
+             AIRD_BRUSH_STYLE_1, AIRD_BRUSH_STYLE_2, AIRD_BRUSH_STYLE_3, AIRD_BRUSH_STYLE_4)
 
-  config-> setGroup("Airspace C");
-  READ_PEN(airCPenList, AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
-        AIRC_PEN_1, AIRC_PEN_2, AIRC_PEN_3, AIRC_PEN_4,
-        AIRC_PEN_STYLE_1, AIRC_PEN_STYLE_2, AIRC_PEN_STYLE_3, AIRC_PEN_STYLE_4)
-  READ_BRUSH(airCBrushList, AIRC_BRUSH_COLOR_1, AIRC_BRUSH_COLOR_2,
-        AIRC_BRUSH_COLOR_3, AIRC_BRUSH_COLOR_4, AIRC_BRUSH_STYLE_1,
-        AIRC_BRUSH_STYLE_2, AIRC_BRUSH_STYLE_3, AIRC_BRUSH_STYLE_4)
-  READ_BORDER(airCBorder);
+  READ_BRUSH("AirspaceELow", airElBorder, airElPenList, airElBrushList,
+             AIREL_COLOR_1, AIREL_COLOR_2, AIREL_COLOR_3, AIREL_COLOR_4,
+             AIREL_PEN_1, AIREL_PEN_2, AIREL_PEN_3, AIREL_PEN_4,
+             AIREL_PEN_STYLE_1, AIREL_PEN_STYLE_2, AIREL_PEN_STYLE_3, AIREL_PEN_STYLE_4,
+             AIREL_BRUSH_COLOR_1, AIREL_BRUSH_COLOR_2, AIREL_BRUSH_COLOR_3, AIREL_BRUSH_COLOR_4,
+             AIREL_BRUSH_STYLE_1, AIREL_BRUSH_STYLE_2, AIREL_BRUSH_STYLE_3, AIREL_BRUSH_STYLE_4)
 
-  config-> setGroup("Airspace D");
-  READ_PEN(airDPenList, AIRD_COLOR_1, AIRD_COLOR_2, AIRD_COLOR_3, AIRD_COLOR_4,
-        AIRD_PEN_1, AIRD_PEN_2, AIRD_PEN_3, AIRD_PEN_4,
-        AIRD_PEN_STYLE_1, AIRD_PEN_STYLE_2, AIRD_PEN_STYLE_3, AIRD_PEN_STYLE_4)
-  READ_BRUSH(airDBrushList, AIRD_BRUSH_COLOR_1, AIRD_BRUSH_COLOR_2,
-        AIRD_BRUSH_COLOR_3, AIRD_BRUSH_COLOR_4, AIRD_BRUSH_STYLE_1,
-        AIRD_BRUSH_STYLE_2, AIRD_BRUSH_STYLE_3, AIRD_BRUSH_STYLE_4)
-  READ_BORDER(airDBorder);
+  READ_BRUSH("AirspaceEHigh", airEhBorder, airEhPenList, airEhBrushList,
+             AIREH_COLOR_1, AIREH_COLOR_2, AIREH_COLOR_3, AIREH_COLOR_4,
+             AIREH_PEN_1, AIREH_PEN_2, AIREH_PEN_3, AIREH_PEN_4,
+             AIREH_PEN_STYLE_1, AIREH_PEN_STYLE_2, AIREH_PEN_STYLE_3, AIREH_PEN_STYLE_4,
+             AIREH_BRUSH_COLOR_1, AIREH_BRUSH_COLOR_2, AIREH_BRUSH_COLOR_3, AIREH_BRUSH_COLOR_4,
+             AIREH_BRUSH_STYLE_1, AIREH_BRUSH_STYLE_2, AIREH_BRUSH_STYLE_3, AIREH_BRUSH_STYLE_4)
 
-  config-> setGroup("Airspace E low");
-  READ_PEN(airElPenList, AIREL_COLOR_1, AIREL_COLOR_2, AIREL_COLOR_3,
-        AIREL_COLOR_4, AIREL_PEN_1, AIREL_PEN_2, AIREL_PEN_3, AIREL_PEN_4,
-        AIREL_PEN_STYLE_1, AIREL_PEN_STYLE_2, AIREL_PEN_STYLE_3, AIREL_PEN_STYLE_4)
-  READ_BRUSH(airElBrushList, AIREL_BRUSH_COLOR_1, AIREL_BRUSH_COLOR_2,
-        AIREL_BRUSH_COLOR_3, AIREL_BRUSH_COLOR_4, AIREL_BRUSH_STYLE_1,
-        AIREL_BRUSH_STYLE_2, AIREL_BRUSH_STYLE_3, AIREL_BRUSH_STYLE_4)
-  READ_BORDER(airElBorder);
+  READ_BRUSH("AirspaceF", airFBorder, airFPenList, airFBrushList,
+             AIRF_COLOR_1, AIRF_COLOR_2, AIRF_COLOR_3, AIRF_COLOR_4,
+             AIRF_PEN_1, AIRF_PEN_2, AIRF_PEN_3, AIRF_PEN_4,
+             AIRF_PEN_STYLE_1, AIRF_PEN_STYLE_2, AIRF_PEN_STYLE_3, AIRF_PEN_STYLE_4,
+             AIRF_BRUSH_COLOR_1, AIRF_BRUSH_COLOR_2, AIRF_BRUSH_COLOR_3, AIRF_BRUSH_COLOR_4,
+             AIRF_BRUSH_STYLE_1, AIRF_BRUSH_STYLE_2, AIRF_BRUSH_STYLE_3, AIRF_BRUSH_STYLE_4)
 
-  config-> setGroup("Airspace E high");
-  READ_PEN(airEhPenList, AIREH_COLOR_1, AIREH_COLOR_2, AIREH_COLOR_3,
-        AIREH_COLOR_4, AIREH_PEN_1, AIREH_PEN_2, AIREH_PEN_3, AIREH_PEN_4,
-        AIREH_PEN_STYLE_1, AIREH_PEN_STYLE_2, AIREH_PEN_STYLE_3, AIREH_PEN_STYLE_4)
-  READ_BRUSH(airEhBrushList, AIREH_BRUSH_COLOR_1, AIREH_BRUSH_COLOR_2,
-        AIREH_BRUSH_COLOR_3, AIREH_BRUSH_COLOR_4, AIREH_BRUSH_STYLE_1,
-        AIREH_BRUSH_STYLE_2, AIREH_BRUSH_STYLE_3, AIREH_BRUSH_STYLE_4)
-  READ_BORDER(airEhBorder);
+  READ_BRUSH("ControlC", ctrCBorder, ctrCPenList, ctrCBrushList,
+             CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
+             CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
+             CTRC_PEN_STYLE_1, CTRC_PEN_STYLE_2, CTRC_PEN_STYLE_3, CTRC_PEN_STYLE_4,
+             CTRC_BRUSH_COLOR_1, CTRC_BRUSH_COLOR_2, CTRC_BRUSH_COLOR_3, CTRC_BRUSH_COLOR_4,
+             CTRC_BRUSH_STYLE_1, CTRC_BRUSH_STYLE_2, CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4)
 
-  config-> setGroup("Airspace F");
-  READ_PEN(airFPenList, AIRF_COLOR_1, AIRF_COLOR_2, AIRF_COLOR_3,
-        AIRF_COLOR_4, AIRF_PEN_1, AIRF_PEN_2, AIRF_PEN_3, AIRF_PEN_4,
-        AIRF_PEN_STYLE_1, AIRF_PEN_STYLE_2, AIRF_PEN_STYLE_3, AIRF_PEN_STYLE_4)
-  READ_BRUSH(airFBrushList, AIRF_BRUSH_COLOR_1, AIRF_BRUSH_COLOR_2,
-        AIRF_BRUSH_COLOR_3, AIRF_BRUSH_COLOR_4, AIRF_BRUSH_STYLE_1,
-        AIRF_BRUSH_STYLE_2, AIRF_BRUSH_STYLE_3, AIRF_BRUSH_STYLE_4)
-  READ_BORDER(airFBorder);
+  READ_BRUSH("ControlD", ctrDBorder, ctrDPenList, ctrDBrushList,
+             CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
+             CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4,
+             CTRD_PEN_STYLE_1, CTRD_PEN_STYLE_2, CTRD_PEN_STYLE_3, CTRD_PEN_STYLE_4,
+             CTRD_BRUSH_COLOR_1, CTRD_BRUSH_COLOR_2, CTRD_BRUSH_COLOR_3, CTRD_BRUSH_COLOR_4,
+             CTRD_BRUSH_STYLE_1, CTRD_BRUSH_STYLE_2, CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4)
 
-  config-> setGroup("Control C");
-  READ_PEN(ctrCPenList, CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
-        CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
-        CTRC_PEN_STYLE_1, CTRC_PEN_STYLE_2, CTRC_PEN_STYLE_3, CTRC_PEN_STYLE_4)
-  READ_BRUSH(ctrCBrushList, CTRC_BRUSH_COLOR_1, CTRC_BRUSH_COLOR_2,
-        CTRC_BRUSH_COLOR_3, CTRC_BRUSH_COLOR_4, CTRC_BRUSH_STYLE_1,
-        CTRC_BRUSH_STYLE_2, CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4)
-  READ_BORDER(ctrCBorder);
+  READ_BRUSH("Danger", dangerBorder, dangerPenList, dangerBrushList,
+             DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
+             DNG_PEN_1, DNG_PEN_2, DNG_PEN_3, DNG_PEN_4,
+             DNG_PEN_STYLE_1, DNG_PEN_STYLE_2, DNG_PEN_STYLE_3, DNG_PEN_STYLE_4,
+             DNG_BRUSH_COLOR_1, DNG_BRUSH_COLOR_2, DNG_BRUSH_COLOR_3, DNG_BRUSH_COLOR_4,
+             DNG_BRUSH_STYLE_1, DNG_BRUSH_STYLE_2, DNG_BRUSH_STYLE_3, DNG_BRUSH_STYLE_4)
 
-  config-> setGroup("Control D");
-  READ_PEN(ctrDPenList, CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
-        CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4,
-        CTRD_PEN_STYLE_1, CTRD_PEN_STYLE_2, CTRD_PEN_STYLE_3, CTRD_PEN_STYLE_4)
-  READ_BRUSH(ctrDBrushList, CTRD_BRUSH_COLOR_1, CTRD_BRUSH_COLOR_2,
-        CTRD_BRUSH_COLOR_3, CTRD_BRUSH_COLOR_4, CTRD_BRUSH_STYLE_1,
-        CTRD_BRUSH_STYLE_2, CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4)
-  READ_BORDER(ctrDBorder);
+  READ_BRUSH("LowFlight", lowFBorder, lowFPenList, lowFBrushList,
+             LOWF_COLOR_1, LOWF_COLOR_2, LOWF_COLOR_3, LOWF_COLOR_4,
+             LOWF_PEN_1, LOWF_PEN_2, LOWF_PEN_3, LOWF_PEN_4,
+             LOWF_PEN_STYLE_1, LOWF_PEN_STYLE_2, LOWF_PEN_STYLE_3, LOWF_PEN_STYLE_4,
+             LOWF_BRUSH_COLOR_1, LOWF_BRUSH_COLOR_2, LOWF_BRUSH_COLOR_3, LOWF_BRUSH_COLOR_4,
+             LOWF_BRUSH_STYLE_1, LOWF_BRUSH_STYLE_2, LOWF_BRUSH_STYLE_3, LOWF_BRUSH_STYLE_4)
 
-  config-> setGroup("Danger");
-  READ_PEN(dangerPenList, DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
-        DNG_PEN_1, DNG_PEN_2, DNG_PEN_3, DNG_PEN_4,
-        DNG_PEN_STYLE_1, DNG_PEN_STYLE_2, DNG_PEN_STYLE_3, DNG_PEN_STYLE_4)
-  READ_BRUSH(dangerBrushList, DNG_BRUSH_COLOR_1, DNG_BRUSH_COLOR_2,
-        DNG_BRUSH_COLOR_3, DNG_BRUSH_COLOR_4, DNG_BRUSH_STYLE_1,
-        DNG_BRUSH_STYLE_2, DNG_BRUSH_STYLE_3, DNG_BRUSH_STYLE_4)
-  READ_BORDER(dangerBorder);
+  READ_BRUSH("RestrictedArea", restrBorder, restrPenList, restrBrushList,
+             RES_COLOR_1, RES_COLOR_2, RES_COLOR_3, RES_COLOR_4,
+             RES_PEN_1, RES_PEN_2, RES_PEN_3, RES_PEN_4,
+             RES_PEN_STYLE_1, RES_PEN_STYLE_2, RES_PEN_STYLE_3, RES_PEN_STYLE_4,
+             RES_BRUSH_COLOR_1, RES_BRUSH_COLOR_2, RES_BRUSH_COLOR_3, RES_BRUSH_COLOR_4,
+             RES_BRUSH_STYLE_1, RES_BRUSH_STYLE_2, RES_BRUSH_STYLE_3, RES_BRUSH_STYLE_4)
 
-  config-> setGroup("Low Flight");
-  READ_PEN(lowFPenList, LOWF_COLOR_1, LOWF_COLOR_2, LOWF_COLOR_3, LOWF_COLOR_4,
-        LOWF_PEN_1, LOWF_PEN_2, LOWF_PEN_3, LOWF_PEN_4,
-        LOWF_PEN_STYLE_1, LOWF_PEN_STYLE_2, LOWF_PEN_STYLE_3, LOWF_PEN_STYLE_4)
-  READ_BRUSH(lowFBrushList, LOWF_BRUSH_COLOR_1, LOWF_BRUSH_COLOR_2,
-        LOWF_BRUSH_COLOR_3, LOWF_BRUSH_COLOR_4, LOWF_BRUSH_STYLE_1,
-        LOWF_BRUSH_STYLE_2, LOWF_BRUSH_STYLE_3, LOWF_BRUSH_STYLE_4)
-  READ_BORDER(lowFBorder);
+  READ_BRUSH("TMZ", tmzBorder, tmzPenList, tmzBrushList,
+             TMZ_COLOR_1, TMZ_COLOR_2, TMZ_COLOR_3, TMZ_COLOR_4,
+             TMZ_PEN_1, TMZ_PEN_2, TMZ_PEN_3, TMZ_PEN_4,
+             TMZ_PEN_STYLE_1, TMZ_PEN_STYLE_2, TMZ_PEN_STYLE_3, TMZ_PEN_STYLE_4,
+             TMZ_BRUSH_COLOR_1, TMZ_BRUSH_COLOR_2, TMZ_BRUSH_COLOR_3, TMZ_BRUSH_COLOR_4,
+             TMZ_BRUSH_STYLE_1, TMZ_BRUSH_STYLE_2, TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4)
 
-  config-> setGroup("Restricted Area");
-  READ_PEN(restrPenList, RES_COLOR_1, RES_COLOR_2, RES_COLOR_3, RES_COLOR_4,
-        RES_PEN_1, RES_PEN_2, RES_PEN_3, RES_PEN_4,
-        RES_PEN_STYLE_1, RES_PEN_STYLE_2, RES_PEN_STYLE_3, RES_PEN_STYLE_4)
-  READ_BRUSH(restrBrushList, RES_BRUSH_COLOR_1, RES_BRUSH_COLOR_2,
-        RES_BRUSH_COLOR_3, RES_BRUSH_COLOR_4, RES_BRUSH_STYLE_1,
-        RES_BRUSH_STYLE_2, RES_BRUSH_STYLE_3, RES_BRUSH_STYLE_4)
-  READ_BORDER(restrBorder);
+  READ_BRUSH("FAIAreaLow500", faiAreaLow500Border, faiAreaLow500PenList, faiAreaLow500BrushList,
+             FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
+             FAI_LOW_500_PEN_1, FAI_LOW_500_PEN_2, FAI_LOW_500_PEN_3, FAI_LOW_500_PEN_4,
+             FAI_LOW_500_PEN_STYLE_1, FAI_LOW_500_PEN_STYLE_2, FAI_LOW_500_PEN_STYLE_3, FAI_LOW_500_PEN_STYLE_4,
+             FAI_LOW_500_BRUSH_COLOR_1, FAI_LOW_500_BRUSH_COLOR_2, FAI_LOW_500_BRUSH_COLOR_3, FAI_LOW_500_BRUSH_COLOR_4,
+             FAI_LOW_500_BRUSH_STYLE_1, FAI_LOW_500_BRUSH_STYLE_2, FAI_LOW_500_BRUSH_STYLE_3, FAI_LOW_500_BRUSH_STYLE_4)
 
-  config-> setGroup("TMZ");
-  READ_PEN(tmzPenList, TMZ_COLOR_1, TMZ_COLOR_2, TMZ_COLOR_3, TMZ_COLOR_4,
-        TMZ_PEN_1, TMZ_PEN_2, TMZ_PEN_3, TMZ_PEN_4,
-        TMZ_PEN_STYLE_1, TMZ_PEN_STYLE_2, TMZ_PEN_STYLE_3, TMZ_PEN_STYLE_4)
-  READ_BRUSH(tmzBrushList, TMZ_BRUSH_COLOR_1, TMZ_BRUSH_COLOR_2,
-        TMZ_BRUSH_COLOR_3, TMZ_BRUSH_COLOR_4, TMZ_BRUSH_STYLE_1,
-        TMZ_BRUSH_STYLE_2, TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4)
-  READ_BORDER(tmzBorder);
-
-  config-> setGroup("FAIAreaLow500");
-  READ_PEN(faiAreaLow500PenList, FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
-        FAI_LOW_500_PEN_1, FAI_LOW_500_PEN_2, FAI_LOW_500_PEN_3, FAI_LOW_500_PEN_4,
-        FAI_LOW_500_PEN_STYLE_1, FAI_LOW_500_PEN_STYLE_2, FAI_LOW_500_PEN_STYLE_3, FAI_LOW_500_PEN_STYLE_4)
-  READ_BRUSH(faiAreaLow500BrushList, FAI_LOW_500_BRUSH_COLOR_1, FAI_LOW_500_BRUSH_COLOR_2,
-        FAI_LOW_500_BRUSH_COLOR_3, FAI_LOW_500_BRUSH_COLOR_4, FAI_LOW_500_BRUSH_STYLE_1,
-        FAI_LOW_500_BRUSH_STYLE_2, FAI_LOW_500_BRUSH_STYLE_3, FAI_LOW_500_BRUSH_STYLE_4)
-  READ_BORDER(faiAreaLow500Border);
-
-  config-> setGroup("FAIAreaHigh500");
-  READ_PEN(faiAreaHigh500PenList, FAI_HIGH_500_COLOR_1, FAI_HIGH_500_COLOR_2, FAI_HIGH_500_COLOR_3, FAI_HIGH_500_COLOR_4,
-        FAI_HIGH_500_PEN_1, FAI_HIGH_500_PEN_2, FAI_HIGH_500_PEN_3, FAI_HIGH_500_PEN_4,
-        FAI_HIGH_500_PEN_STYLE_1, FAI_HIGH_500_PEN_STYLE_2, FAI_HIGH_500_PEN_STYLE_3, FAI_HIGH_500_PEN_STYLE_4)
-  READ_BRUSH(faiAreaHigh500BrushList, FAI_HIGH_500_BRUSH_COLOR_1, FAI_HIGH_500_BRUSH_COLOR_2,
-        FAI_HIGH_500_BRUSH_COLOR_3, FAI_HIGH_500_BRUSH_COLOR_4, FAI_HIGH_500_BRUSH_STYLE_1,
-        FAI_HIGH_500_BRUSH_STYLE_2, FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4)
-  READ_BORDER(faiAreaHigh500Border);
-
-  config-> setGroup(0);
+  READ_BRUSH("FAIAreaHigh500", faiAreaHigh500Border, faiAreaHigh500PenList, faiAreaHigh500BrushList,
+             FAI_HIGH_500_COLOR_1, FAI_HIGH_500_COLOR_2, FAI_HIGH_500_COLOR_3, FAI_HIGH_500_COLOR_4,
+             FAI_HIGH_500_PEN_1, FAI_HIGH_500_PEN_2, FAI_HIGH_500_PEN_3, FAI_HIGH_500_PEN_4,
+             FAI_HIGH_500_PEN_STYLE_1, FAI_HIGH_500_PEN_STYLE_2, FAI_HIGH_500_PEN_STYLE_3, FAI_HIGH_500_PEN_STYLE_4,
+             FAI_HIGH_500_BRUSH_COLOR_1, FAI_HIGH_500_BRUSH_COLOR_2, FAI_HIGH_500_BRUSH_COLOR_3, FAI_HIGH_500_BRUSH_COLOR_4,
+             FAI_HIGH_500_BRUSH_STYLE_1, FAI_HIGH_500_BRUSH_STYLE_2, FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4)
 
   border1 = new QCheckBox(tr("threshold #1"), parent);
   border2 = new QCheckBox(tr("threshold #2"), parent);
@@ -673,8 +600,7 @@ void ConfigDrawElement::slotOk()
   // Die aktuell angezeigten Angaben müssen noch gespeichert werden ...
   slotSelectElement(oldElement);
 
-  config-> setGroup("General Options");
-  config-> writeEntry("Version", "2.0.2");
+  QString group;
 
   WRITE_PEN("Trail", trailPenList, trailBorder);
 
@@ -684,9 +610,9 @@ void ConfigDrawElement::slotOk()
 
   WRITE_PEN("Rail", railPenList, railBorder);
 
-  WRITE_PEN("Rail_D", rail_dPenList, rail_dBorder);
+  WRITE_PEN("RailD", rail_dPenList, rail_dBorder);
 
-  WRITE_PEN("Aerial Cable", aerialcablePenList, aerialcableBorder);
+  WRITE_PEN("AerialCable", aerialcablePenList, aerialcableBorder);
 
   WRITE_PEN("River", riverPenList, riverBorder);
 
@@ -694,46 +620,43 @@ void ConfigDrawElement::slotOk()
 
   WRITE_PEN("City", cityPenList, cityBorder);
 
-  WRITE_BRUSH("Airspace A", airABrushList, airAPenList, airABorder);
+  WRITE_BRUSH("AirspaceA", airABrushList, airAPenList, airABorder);
 
-  WRITE_BRUSH("Airspace B", airBBrushList, airBPenList, airBBorder);
+  WRITE_BRUSH("AirspaceB", airBBrushList, airBPenList, airBBorder);
 
-  WRITE_BRUSH("Airspace C", airCBrushList, airCPenList, airCBorder);
+  WRITE_BRUSH("AirspaceC", airCBrushList, airCPenList, airCBorder);
 
-  WRITE_BRUSH("Airspace D", airDBrushList, airDPenList, airDBorder);
+  WRITE_BRUSH("AirspaceD", airDBrushList, airDPenList, airDBorder);
 
-  WRITE_BRUSH("Airspace E low", airElBrushList, airElPenList, airElBorder);
+  WRITE_BRUSH("AirspaceELow", airElBrushList, airElPenList, airElBorder);
 
-  WRITE_BRUSH("Airspace E high", airEhBrushList, airEhPenList, airEhBorder);
+  WRITE_BRUSH("AirspaceEHigh", airEhBrushList, airEhPenList, airEhBorder);
 
-  WRITE_BRUSH("Airspace F", airFBrushList, airFPenList, airFBorder);
+  WRITE_BRUSH("AirspaceF", airFBrushList, airFPenList, airFBorder);
 
-  WRITE_BRUSH("Control C", ctrCBrushList, ctrCPenList, ctrCBorder);
+  WRITE_BRUSH("ControlC", ctrCBrushList, ctrCPenList, ctrCBorder);
 
-  WRITE_BRUSH("Control D", ctrDBrushList, ctrDPenList, ctrDBorder);
+  WRITE_BRUSH("ControlD", ctrDBrushList, ctrDPenList, ctrDBorder);
 
   WRITE_BRUSH("Danger", dangerBrushList, dangerPenList, dangerBorder);
 
-  WRITE_BRUSH("Low Flight", lowFBrushList, lowFPenList, lowFBorder);
+  WRITE_BRUSH("LowFlight", lowFBrushList, lowFPenList, lowFBorder);
 
-  WRITE_BRUSH("Restricted Area", restrBrushList, restrPenList, restrBorder);
+  WRITE_BRUSH("RestrictedArea", restrBrushList, restrPenList, restrBorder);
 
   WRITE_BRUSH("TMZ", tmzBrushList, tmzPenList, tmzBorder);
 
   WRITE_BRUSH("Forest", forestBrushList, forestPenList, forestBorder);
 
-  WRITE_BRUSH("River_T", river_tBrushList, river_tPenList, river_tBorder);
+  WRITE_BRUSH("RiverT", river_tBrushList, river_tPenList, river_tBorder);
 
   WRITE_BRUSH("Glacier", glacierBrushList, glacierPenList, glacierBorder);
 
-  WRITE_BRUSH("Pack Ice", packiceBrushList, packicePenList, packiceBorder);
+  WRITE_BRUSH("PackIce", packiceBrushList, packicePenList, packiceBorder);
 
   WRITE_BRUSH("FAIAreaLow500", faiAreaLow500BrushList, faiAreaLow500PenList, faiAreaLow500Border);
 
   WRITE_BRUSH("FAIAreaHigh500", faiAreaHigh500BrushList, faiAreaHigh500PenList, faiAreaHigh500Border);
-
-  config-> sync();
-  config-> setGroup(0);
 }
 
 void ConfigDrawElement::slotDefaultElements()
@@ -1393,4 +1316,19 @@ void ConfigDrawElement::slotSetForth()
   border4PenStyle-> setCurrentItem(border3PenStyle->currentItem());
   border4BrushColor-> setColor(border3BrushColor->color());
   border4BrushStyle-> setCurrentItem(border3BrushStyle->currentItem());
+}
+
+/** this is a temporary function and it is not needed in Qt 4 */
+QString ConfigDrawElement::__color2String(QColor color)
+{
+  QString colstr;
+  colstr.sprintf("%d;%d;%d", color.red(), color.green(), color.blue());
+  return colstr;
+}
+
+/** this is a temporary function and it is not needed in Qt 4 */
+QColor ConfigDrawElement::__string2Color(QString colstr)
+{
+  QColor color(colstr.section(";", 0, 0).toInt(), colstr.section(";", 1, 1).toInt(), colstr.section(";", 2, 2).toInt());
+  return color;
 }

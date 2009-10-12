@@ -27,7 +27,6 @@
 #include "kfrgcs/vlapi2.h"
 #include "da4record.h"
 
-#include <kconfig.h>
 #include <kglobal.h>
 
 #include <qapplication.h>
@@ -41,6 +40,7 @@
 #include <qmessagebox.h>
 #include <qprogressdialog.h>
 #include <qregexp.h>
+#include <qsettings.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qtextstream.h>
@@ -57,9 +57,8 @@ WaypointCatalog::WaypointCatalog(const QString& name)
 {
   static int catalogNr = 1;
 
-  KConfig* config = KGlobal::config();
-  config->setGroup("Path");
-  QString wayPointDir = config->readEntry("DefaultWaypointDirectory", getpwuid(getuid())->pw_dir);
+  extern QSettings _settings;
+  QString wayPointDir = _settings.readEntry("/Path/DefaultWaypointDirectory", getpwuid(getuid())->pw_dir);
   if (name == QString::null) {
     QString t;
     t.setNum(catalogNr++);

@@ -17,7 +17,6 @@
 
 #include <cmath>
 
-#include <kconfig.h>
 #include <kstddirs.h>
 #include <kiconloader.h>
 
@@ -25,6 +24,7 @@
 #include <qfiledialog.h>
 #include <qpainter.h>
 #include <qregexp.h>
+#include <qsettings.h>
 #include <qtimer.h>
 #include <qwhatsthis.h>
 
@@ -306,7 +306,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                       prePlanPos.setY(-999);
                     }
 
-                  warning(wp.name);
+                  warning("%s", (const char*)wp.name);
                 }
             }
 
@@ -1457,9 +1457,9 @@ void Map::__redrawMap()
 
 /** Save Map to PNG-file with width,heigt. Use actual size if width=0 & height=0 */
 void Map::slotSavePixmap(QUrl fUrl, int width, int height){
-
-  int w_orig,h_orig;
   extern MapContents _globalMapContents;
+  extern QSettings _settings;
+  int w_orig,h_orig;
 
   if(fUrl.isValid())  return;
 
@@ -1477,9 +1477,7 @@ void Map::slotSavePixmap(QUrl fUrl, int width, int height){
     slotCenterToFlight();
   }
 
-  KConfig* config = KGlobal::config();
-  config->setGroup("CommentSettings");
-  if (config->readBoolEntry("ShowComment"))
+  if (_settings.readBoolEntry("/CommentSettings/ShowComment"))
   {
     Flight* flight = (Flight*)_globalMapContents.getFlight();
     QPainter bufferP(&pixBuffer);

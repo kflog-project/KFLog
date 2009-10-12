@@ -41,7 +41,7 @@
 GLView::GLView( QWidget* parent, const char* name )
     : QGLWidget( parent, name )
 {
-    // These values should be stored KConfig
+    // These values should be stored QSettings
     xRot = -45.0;
     yRot = 0.0;
     zRot = -30.0;                        // default object rotation

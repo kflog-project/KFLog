@@ -17,11 +17,10 @@
 
 #include <stdlib.h>
 // include files for QT
+#include <qsettings.h>
 
 // include files for KDE
-#include <kconfig.h>
 #include <kapp.h>
-
 
 // include files for project
 #include "coordedit.h"
@@ -119,11 +118,9 @@ void CoordEdit::showEvent(QShowEvent *)
 LatEdit::LatEdit(QWidget *parent, const char *name, int base ) : CoordEdit(parent, name)
 {
   if (base==0) {
-    KConfig *config = kapp->config();
+    extern QSettings _settings;
 
-    config->setGroup("Map Data");
-    base = config->readNumEntry("Homesite Latitude", 1);
-    config->setGroup(0);
+    base = _settings.readNumEntry("/MapData/HomesiteLatitude", 1);
   }
   mask = "00° 00' 00\" S";
   if (base>0) mask = "00° 00' 00\" N";
@@ -131,13 +128,11 @@ LatEdit::LatEdit(QWidget *parent, const char *name, int base ) : CoordEdit(paren
 }
 
 LongEdit::LongEdit(QWidget *parent, const char *name, int base ) : CoordEdit(parent, name)
-{  
+{
   if (base==0) {
-    KConfig *config = kapp->config();
+    extern QSettings _settings;
 
-    config->setGroup("Map Data");
-    base = config->readNumEntry("Homesite Longitude", 1);
-    config->setGroup(0);
+    base = _settings.readNumEntry("/MapData/HomesiteLongitude", 1);
   }
   mask = "000° 00' 00\" W";
   if (base>0) mask = "000° 00' 00\" E";

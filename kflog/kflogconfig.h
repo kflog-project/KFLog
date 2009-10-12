@@ -18,21 +18,20 @@
 #ifndef KFLOGCONFIG_H
 #define KFLOGCONFIG_H
 
-#include <kconfig.h>
+#include <kcolorbutton.h>
 #include <kdialogbase.h>
 
-#include <kcolorbutton.h>
-#include <qcombobox.h>
+#include <qbuttongroup.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qlcdnumber.h>
 #include <qlineedit.h>
-#include <qptrlist.h>
 #include <qpen.h>
+#include <qpushbutton.h>
+#include <qptrlist.h>
 #include <qslider.h>
 #include <qspinbox.h>
 #include <qwidget.h>
-#include <qbuttongroup.h>
-#include <qpushbutton.h>
 
 class KFLogApp;
 class LatEdit;
@@ -50,7 +49,7 @@ class KFLogConfig : public KDialogBase
 
   public:
     /** */
-    KFLogConfig(QWidget* parent, KConfig* config, const char* name);
+    KFLogConfig(QWidget* parent, const char* name);
     /** */
     ~KFLogConfig();
     /** */
@@ -111,7 +110,7 @@ class KFLogConfig : public KDialogBase
     /** */
     void slotFilterChanged(const QString&);
     /** */
-    void slotHomeRadiusChanged(int radius);
+    void slotHomeRadiusChanged();
     /**
     * slot needed to trigger an update of the menu Flight=>Show Flightdata
     */
@@ -139,6 +138,11 @@ class KFLogConfig : public KDialogBase
     void __addAirfieldTab();
     /** */
     void __addWaypointTab();
+
+    /** this is a temporary function and it is not needed in Qt 4 */
+    QString __color2String(QColor);
+    /** this is a temporary function and it is not needed in Qt 4 */
+    QColor __string2Color(QString);
     /** */
     QFrame* idPage;
     /** */
@@ -157,8 +161,6 @@ class KFLogConfig : public KDialogBase
     QFrame* airfieldPage;
     /** */
     QFrame* waypointPage;
-    /** */
-    KConfig* config;
     /** */
     QLineEdit* igcPathE;
     QLineEdit* taskPathE;

@@ -24,6 +24,7 @@
 #include <qfileinfo.h>
 #include <qpoint.h>
 #include <qregexp.h>
+#include <qsettings.h>
 #include <qtextstream.h>
 
 #include "airport.h"
@@ -39,7 +40,6 @@
 #include "wgspoint.h"
 #include "distance.h"
 
-#include "kconfig.h"
 #include "kglobal.h"
 #include <kstandarddirs.h>
 
@@ -61,6 +61,7 @@
 
 extern MapContents  _globalMapContents;
 extern MapMatrix    _globalMapMatrix;
+extern QSettings _settings;
 
 Welt2000::Welt2000()
 {
@@ -104,9 +105,7 @@ bool Welt2000::load( QPtrList<Airport>& airportList, QPtrList<GliderSite>& glide
   QString sd = "/airfields/";
 
   KStandardDirs* globalDirs = KGlobal::dirs();
-  KConfig* config = KGlobal::config();
-  config->setGroup("Path");
-  QString mapDir = config->readEntry("DefaultMapDirectory",
+  QString mapDir = _settings.readEntry("/Path/DefaultMapDirectory",
       globalDirs->findResource("data", "kflog/mapdata/"));
 
   QString pl = mapDir + sd + wl;
@@ -373,7 +372,7 @@ bool Welt2000::readConfigEntries( QString &path )
 bool Welt2000::parse( QString& path,
                       QPtrList<Airport>& airportList,
                       QPtrList<GliderSite>& gliderSiteList,
-                      bool doCompile )
+                      bool /*doCompile*/ )
 {
   QTime t;
   t.start();
@@ -408,9 +407,7 @@ bool Welt2000::parse( QString& path,
   // Check, if in GeneralConfig other definitions exist. These will
   // overwrite the definitions in the config file.
 
-  KConfig* config = KGlobal::config();
-  config->setGroup("Map Data");
-  QString cFilter = config->readEntry("Welt2000CountryFilter", "");
+  QString cFilter = _settings.readEntry("/MapData/Welt2000CountryFilter", "");
 
   if( cFilter.length() > 0 )
     {
@@ -422,7 +419,7 @@ bool Welt2000::parse( QString& path,
       for( uint i = 0; i < clist.count(); i++ )
         {
           QString e = clist[i].stripWhiteSpace().upper();
-      
+
           if( c_countryList.contains(e) )
             continue;
 
@@ -433,8 +430,7 @@ bool Welt2000::parse( QString& path,
     }
 
   // get home radius from config data
-  config->setGroup("Map Data");
-  int radius = config->readNumEntry("Welt2000HomeRadius", 0);
+  int radius = _settings.readNumEntry("/MapData/Welt2000HomeRadius", 0);
 
   if( radius == 0 )
     {
@@ -476,7 +472,7 @@ bool Welt2000::parse( QString& path,
 
   uint lineNo = 0;
   QString lastName = "";
-  uint counter = 0;
+//  uint counter = 0;
   uint lastCounter = 0;
 
   // statistics counter
@@ -797,9 +793,8 @@ bool Welt2000::parse( QString& path,
           // read point. Is the distance is over the user defined
           // value away we will ignore this point.
 
-          config->setGroup("Map Data");
-          QPoint home( config->readNumEntry("Homesite Latitude"),
-                       config->readNumEntry("Homesite Longitude") );
+          QPoint home( _settings.readNumEntry("/MapData/HomesiteLatitude"),
+                       _settings.readNumEntry("/MapData/HomesiteLongitude") );
           QPoint af( lat, lon );
 
           double d = dist( &home, &af );
@@ -935,7 +930,7 @@ bool Welt2000::parse( QString& path,
         af++;
 
       // create an runway object
-      runway *rw = new runway( rwLen ,rwDir*10, rwSurface, 1 );
+      new runway( rwLen ,rwDir*10, rwSurface, 1 );
 
       if( afType != BaseMapElement::Glidersite )
         {

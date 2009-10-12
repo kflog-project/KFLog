@@ -298,16 +298,6 @@
 #define PRINT_CANAL_PEN_STYLE_2 Qt::SolidLine
 
 // [City]
-#define CITY_BRUSH_COLOR_1 QColor(255,250,100)
-#define CITY_BRUSH_COLOR_2 QColor(255,250,100)
-#define CITY_BRUSH_COLOR_3 QColor(255,250,100)
-#define CITY_BRUSH_COLOR_4 QColor(255,250,100)
-
-#define CITY_BRUSH_STYLE_1 Qt::SolidPattern
-#define CITY_BRUSH_STYLE_2 Qt::SolidPattern
-#define CITY_BRUSH_STYLE_3 Qt::SolidPattern
-#define CITY_BRUSH_STYLE_4 Qt::SolidPattern
-
 #define CITY_COLOR_1 QColor(0,0,0)
 #define CITY_COLOR_2 QColor(0,0,0)
 #define CITY_COLOR_3 QColor(0,0,0)
@@ -318,13 +308,20 @@
 #define CITY_PEN_3 1
 #define CITY_PEN_4 1
 
+#define CITY_PEN_STYLE_1 Qt::SolidLine
+#define CITY_PEN_STYLE_2 Qt::SolidLine
+#define CITY_PEN_STYLE_3 Qt::SolidLine
+#define CITY_PEN_STYLE_4 Qt::SolidLine
+
 #define CITY_BRUSH_COLOR_1 QColor(255,250,100)
 #define CITY_BRUSH_COLOR_2 QColor(255,250,100)
 #define CITY_BRUSH_COLOR_3 QColor(255,250,100)
 #define CITY_BRUSH_COLOR_4 QColor(255,250,100)
 
-#define PRINT_CITY_BRUSH_STYLE_1 Qt::SolidPattern
-#define PRINT_CITY_BRUSH_STYLE_2 Qt::SolidPattern
+#define CITY_BRUSH_STYLE_1 Qt::SolidPattern
+#define CITY_BRUSH_STYLE_2 Qt::SolidPattern
+#define CITY_BRUSH_STYLE_3 Qt::SolidPattern
+#define CITY_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_CITY_COLOR_1 QColor(0,0,0)
 #define PRINT_CITY_COLOR_2 QColor(0,0,0)
@@ -332,8 +329,14 @@
 #define PRINT_CITY_PEN_1 1
 #define PRINT_CITY_PEN_2 1
 
+#define PRINT_CITY_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_CITY_PEN_STYLE_2 Qt::SolidLine
+
 #define PRINT_CITY_BRUSH_COLOR_1 QColor(255,250,100)
 #define PRINT_CITY_BRUSH_COLOR_2 QColor(255,250,100)
+
+#define PRINT_CITY_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_CITY_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Forest]
 #define FRST_COLOR_1 QColor(12,86,35)
