@@ -18,6 +18,7 @@
 #ifndef MAPMATRIX_H
 #define MAPMATRIX_H
 
+#include <algorithm>
 #include <qobject.h>
 #include <qwmatrix.h>
 

@@ -18,6 +18,7 @@
 #ifndef MAPCONTENTS_H
 #define MAPCONTENTS_H
 
+#include <map>
 #include <qbitarray.h>
 #include <qfile.h>
 #include <qptrlist.h>
