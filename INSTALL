@@ -15,9 +15,9 @@ reconfiguring, and a file `config.log' containing compiler output
 
    If you need to do unusual things to compile the package, please try
 to figure out how `configure' could check whether to do them, and mail
-diffs or instructions to the address given in the `README' so they can
-be considered for the next release.  If at some point `config.cache'
-contains results you don't want to keep, you may remove or edit it.
+diffs or instructions to <kflog-devel@kflog.org> so they can be considered
+for the next release.  If at some point `config.cache' contains results
+you don't want to keep, you may remove or edit it.
 
    The file `configure.in' is used to create `configure' by a program
 called `autoconf'.  You only need `configure.in' if you want to change
@@ -104,8 +104,8 @@ Optional Features
 `configure', where FEATURE indicates an optional part of the package.
 They may also pay attention to `--with-PACKAGE' options, where PACKAGE
 is something like `gnu-as' or `x' (for the X Window System).  The
-`README' should mention any `--enable-' and `--with-' options that the
-package recognizes.
+`configure --help' should mention any `--enable-' and `--with-' options
+that the package recognizes.
 
    For packages that use the X Window System, `configure' can usually
 find the X include and library files automatically, but if it doesn't,
