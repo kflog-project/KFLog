@@ -29,9 +29,9 @@
 
 #include <qdict.h>
 #include <qfile.h>
-#include <qsettings.h>
 #include <qstringlist.h>
 
+#include <kconfig.h>
 #include <kglobal.h>
 
 #include "../airport.h"
@@ -311,8 +311,10 @@ int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QStrin
 
   flightCount.setAutoDelete(true);
 
-  extern QSettings _settings;
-  dir = _settings.readEntry("/Path/DefaultFlightDirectory") + "/";
+  KConfig* config = KGlobal::config();
+  config->setGroup("Path");
+  dir = config->readEntry("DefaultFlightDirectory") + "/";
+  config->setGroup(0);
 
   bool shortName = (_fileName.upper().find("SHORT.IGC") != -1);
 
@@ -396,12 +398,12 @@ int SoaringPilot::getBasicData(FR_BasicData& data)
   return FR_OK;
 }
 
-int SoaringPilot::getConfigData(FR_ConfigData& /*data*/)
+int SoaringPilot::getConfigData(FR_ConfigData& data)
 {
   return FR_NOTSUPPORTED;
 }
 
-int SoaringPilot::writeConfigData(FR_BasicData& /*basicdata*/, FR_ConfigData& /*configdata*/)
+int SoaringPilot::writeConfigData(FR_BasicData& basicdata, FR_ConfigData& configdata)
 {
   return FR_NOTSUPPORTED;
 }

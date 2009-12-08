@@ -34,15 +34,14 @@
 #include <qlayout.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
-#include <qsettings.h>
 #include <qsizepolicy.h>
 #include <qregexp.h>
 
 #include <kiconloader.h>
+#include <kconfig.h>
 
 extern MapContents _globalMapContents;
 extern MapMatrix _globalMapMatrix;
-extern QSettings _settings;
 
 Waypoints::Waypoints(QWidget *parent, const char *name, const QString& /*catalog*/)
   : QFrame(parent, name)
@@ -221,7 +220,9 @@ void Waypoints::slotMove2Catalog(int id){
 /** open a catalog and set it active */
 void Waypoints::slotOpenWaypointCatalog()
 {
-  QString wayPointDir = _settings.readEntry("/Path/DefaultWaypointDirectory",
+  KConfig* config = KGlobal::config();
+  config->setGroup("Path");
+  QString wayPointDir = config->readEntry("DefaultWaypointDirectory",
                                           getpwuid(getuid())->pw_dir);
 
   QString fName = QFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|" + tr ("KFLog waypoints") + " (*.kflogwp)\n"
@@ -570,7 +571,9 @@ void Waypoints::slotSaveWaypointCatalogAs()
 
 void Waypoints::slotImportWaypointCatalog()
 {
-  QString wayPointDir = _settings.readEntry("/Path/DefaultWaypointDirectory",
+  KConfig* config = KGlobal::config();
+  config->setGroup("Path");
+  QString wayPointDir = config->readEntry("DefaultWaypointDirectory",
                                           getpwuid(getuid())->pw_dir);
 
   QString fName = QFileDialog::getOpenFileName(wayPointDir, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n*|All files", this, tr("Import waypoint catalog"));
@@ -633,6 +636,8 @@ void Waypoints::slotImportWaypointFromMap()
   QRegExp blank("[ ]");
   QValueList<int> searchLists;
   QValueList<int>::Iterator searchListsIt;
+  KConfig* config = KGlobal::config();
+  config->setGroup("Map Data");
   bool filterRadius, filterArea;
 
   if (importFilterDlg->exec() == QDialog::Accepted) {
@@ -814,25 +819,31 @@ void Waypoints::slotCenterMap()
 
 void Waypoints::slotSetHome()
 {
+  KConfig* config = KGlobal::config();
+  config->setGroup("Map Data");
   QListViewItem *item = waypoints->currentItem();
 
   if (item != 0) {
     WaypointDict *wl = &waypointCatalogs.current()->wpList;
     Waypoint *w = wl->find(item->text(colName));
 
-    _settings.writeEntry("/MapData/Homesite", w->name);
-    _settings.writeEntry("/MapData/HomesiteLatitude", w->origP.lat());
-    _settings.writeEntry("/MapData/HomesiteLongitude", w->origP.lon());
+    config->writeEntry("Homesite", w->name);
+    config->writeEntry("Homesite Latitude", w->origP.lat());
+    config->writeEntry("Homesite Longitude", w->origP.lon());
 
     // update airfield lists from Welt2000 if home site changes:
     extern MapContents  _globalMapContents;
     _globalMapContents.slotReloadMapData();
+
+    config->setGroup(0);
   }
 }
 
 void Waypoints::getFilterData()
 {
   WGSPoint p;
+  KConfig* config = KGlobal::config();
+  config->setGroup("Map Data");
   WaypointCatalog *c = waypointCatalogs.current();
 
   c->showAll = importFilterDlg->useAll->isChecked();
@@ -855,8 +866,8 @@ void Waypoints::getFilterData()
     c->radiusLong = _globalMapContents.degreeToNum(importFilterDlg->posLong->text());
     break;
   case CENTER_HOMESITE:
-    c->radiusLat = _settings.readNumEntry("/MapData/HomesiteLatitude");
-    c->radiusLong = _settings.readNumEntry("/MapData/HomesiteLongitude");
+    c->radiusLat = config->readNumEntry("Homesite Latitude");
+    c->radiusLong = config->readNumEntry("Homesite Longitude");
     break;
   case CENTER_MAP:
     p = _globalMapMatrix.getMapCenter(false);
@@ -887,7 +898,9 @@ void Waypoints::getFilterData()
 }
 /** No descriptions */
 void Waypoints::slotImportWaypointFromFile(){
-  QString wayPointDir = _settings.readEntry("/Path/DefaultWaypointDirectory",
+  KConfig* config = KGlobal::config();
+  config->setGroup("Path");
+  QString wayPointDir = config->readEntry("DefaultWaypointDirectory",
                                           getpwuid(getuid())->pw_dir);
 
    // we should not include types we don't support (yet). Also, the strings should be translated.

@@ -23,11 +23,11 @@
 #include "mapcalc.h"
 #include "mapcontents.h"
 
+#include <kconfig.h>
 
 #include <qcombobox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qsettings.h>
 #include <qspinbox.h>
 #include <qsplitter.h>
 #include <qvaluelist.h>
@@ -94,11 +94,14 @@ EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[])
 */
   
  /* No longer necessary with the KDockWidget  
-  extern QSettings _settings;
+  KConfig* config = KGlobal::config();
+
+  config->setGroup("Evaluation");
+
 
   int dlgWidth, dlgHeight;
-  dlgWidth = _settings.readNumEntry("/Evaluation/DialogWidth", 800);
-  dlgHeight = _settings.readNumEntry("/Evaluation/DialogHeight", 600);
+  dlgWidth = config->readNumEntry("Dialog Width", 800);
+  dlgHeight = config->readNumEntry("Dialog Height", 600);
 
   resize(dlgWidth, dlgHeight);
 
@@ -124,10 +127,11 @@ EvaluationDialog::~EvaluationDialog()
   emit(showCursor(QPoint(-100,-100), QPoint(-100,-100)));
 
   // Save settings
-  extern QSettings _settings;
+  KConfig* config = KGlobal::config();
 
-  _settings.writeEntry("/Evaluation/DialogWidth", width());
-  _settings.writeEntry("/Evaluation/DialogHeight", height());
+  config->setGroup("Evaluation");
+  config->writeEntry("Dialog Width", width());
+  config->writeEntry("Dialog Height", height());
 }
 
 void EvaluationDialog::updateText(int index1, int index2, bool updateAll)

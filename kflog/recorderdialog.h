@@ -20,6 +20,7 @@
 
 #include <kapp.h>
 #include <kcombobox.h>
+#include <kconfig.h>
 #include <kdialogbase.h>
 #include <klineedit.h>
 
@@ -53,7 +54,7 @@ class RecorderDialog : public KDialogBase
     /**
      * Constructor
      */
-    RecorderDialog(QWidget *parent, const char *name);
+    RecorderDialog(QWidget *parent, KConfig* cnf, const char *name);
     /**
      * Destructor
      */
@@ -110,7 +111,7 @@ class RecorderDialog : public KDialogBase
     /**
      */
     void slotNewSpeed(int);
-
+    
   private:
     /** */
     int __fillDirList();
@@ -153,6 +154,8 @@ class RecorderDialog : public KDialogBase
     /** */
     QFrame* configPage;
     /** */
+    KConfig* config;
+    /** */
     KConfig* loggerConf;
     /** */
     KComboBox* selectType;
@@ -163,7 +166,7 @@ class RecorderDialog : public KDialogBase
     KLineEdit* selectURL;
     QLabel* selectURLLabel;
     QPushButton* cmdConnect;
-
+    
     /** */
     QLabel* serID;
     QLabel* lblSerID;

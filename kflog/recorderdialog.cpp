@@ -38,7 +38,6 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
-#include <qsettings.h>
 #include <qstringlist.h>
 #include <qtimer.h>
 #include <qwhatsthis.h>
@@ -47,9 +46,10 @@
 #include "mapcontents.h"
 #include "airport.h"
 
-RecorderDialog::RecorderDialog(QWidget *parent, const char *name)
+RecorderDialog::RecorderDialog(QWidget *parent, KConfig* cnf, const char *name)
   : KDialogBase(IconList, i18n("Flightrecorder-Dialog"), Close, Close,
                 parent, name, true, true),
+    config(cnf),
     loggerConf(0),
     isOpen(false),
     isConnected(false),
@@ -91,13 +91,12 @@ RecorderDialog::RecorderDialog(QWidget *parent, const char *name)
 
 RecorderDialog::~RecorderDialog()
 {
-  extern QSettings _settings;
-
-  _settings.writeEntry("/RecorderDialog/Name", selectType->currentText());
-  _settings.writeEntry("/RecorderDialog/Port", selectPort->currentItem());
-  _settings.writeEntry("/RecorderDialog/Baud", _selectSpeed->currentItem());
-  _settings.writeEntry("/RecorderDialog/URL",  selectURL->text());
-
+  config->setGroup("Recorder Dialog");
+  config->writeEntry("Name", selectType->currentText());
+  config->writeEntry("Port", selectPort->currentItem());
+  config->writeEntry("Baud", _selectSpeed->currentItem());
+  config->writeEntry("URL",  selectURL->text());
+  config->setGroup(0);
   slotCloseRecorder();
   delete waypoints;
   delete tasks;
@@ -245,13 +244,13 @@ void RecorderDialog::__addSettingsPage()
 
   libNameList.clear();
 
-  extern QSettings _settings;
-
-  selectPort->setCurrentItem(_settings.readNumEntry("/RecorderDialog/Port", 0));
-  _selectSpeed->setCurrentItem(_settings.readNumEntry("/RecorderDialog/Baud", 0));
-  QString name(_settings.readEntry("/RecorderDialog/Name", 0));
+  config->setGroup("Recorder Dialog");
+  selectPort->setCurrentItem(config->readNumEntry("Port", 0));
+  _selectSpeed->setCurrentItem(config->readNumEntry("Baud", 0));
+  QString name(config->readEntry("Name", 0));
   QString pluginName;
-  selectURL->setText(_settings.readEntry("/RecorderDialog/URL", ""));
+  selectURL->setText(config->readEntry("URL", ""));
+  config->setGroup(0);
 
   for(QStringList::Iterator it = configRec.begin(); it != configRec.end(); it++) {
     if(loggerConf != NULL) {
@@ -260,7 +259,7 @@ void RecorderDialog::__addSettingsPage()
 
     loggerConf = new KConfig((*it).latin1());
     if(!loggerConf->hasGroup("Logger Data")) {
-      warning(i18n("Configfile %1 is corrupt!").arg((*it).latin1()));
+      warning("%s", (const char*)i18n("Configfile %1 is corrupt!").arg((*it).latin1()));
     }
     loggerConf->setGroup("Logger Data");
     pluginName=loggerConf->readEntry("Name");
@@ -507,9 +506,10 @@ void RecorderDialog::__addDeclarationPage()
     gliderType->insertItem(QString(gliderList[idx++].name));
   }
 
-  extern QSettings _settings;
+  config->setGroup("Personal Data");
+  pilotName->setText(config->readEntry("PilotName", ""));
 
-  pilotName->setText(_settings.readEntry("/PersonalData/PilotName", ""));
+  config->setGroup(0);
 
   for (e = tasks->first(); e; e = tasks->next()) {
     taskSelection->insertItem(e->getFileName() + " " + e->getTaskTypeString());
@@ -813,9 +813,9 @@ void RecorderDialog::slotDownloadFlight()
     return;
   }
 
-  extern QSettings _settings;
+  config->setGroup("Path");
   // If no DefaultFlightDirectory is configured, we must use $HOME instead of the root-directory
-  QString flightDir = _settings.readEntry("/Path/DefaultFlightDirectory", QDir::homeDirPath());
+  QString flightDir = config->readEntry("DefaultFlightDirectory", QDir::homeDirPath());
 
   QString fileName = flightDir + "/";
 

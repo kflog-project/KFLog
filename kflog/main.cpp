@@ -17,8 +17,8 @@
 
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
+#include <kconfig.h>
 
-#include <qsettings.h>
 #include <qtimer.h>
 
 #include "kflog.h"
@@ -43,11 +43,6 @@ MapMatrix _globalMapMatrix;
  * Contains all configuration-info for drawing and printing the elements.
  */
 MapConfig _globalMapConfig;
-
-/**
- * Contains all settings of KFLog.
- */
-QSettings _settings;
 
 /**
  * List of commandline-options
@@ -120,7 +115,6 @@ int main(int argc, char *argv[])
   KApplication app;
 
   BaseMapElement::initMapElement(&_globalMapMatrix, &_globalMapConfig);
-  _settings.setPath("KFLog", "KFLog");
 
   if (app.isRestored())
     {
@@ -130,35 +124,38 @@ int main(int argc, char *argv[])
     {
       KFLogApp * kflog = new KFLogApp();
       KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+      KConfig* config = KGlobal::config();
 
       QString waypointsOptionArg = args->getOption("waypoints");
       if (!waypointsOptionArg.isEmpty()){
-        warning("WaypointCatalog specified at startup : %s", (const char*)waypointsOptionArg);
+        warning("WaypointCatalog specified at startup : " + waypointsOptionArg );
         kflog->slotSetWaypointCatalog(waypointsOptionArg);
       }
       else {
         // read the user configuration
-        int useCatalog = _settings.readNumEntry("/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed);
+        config->setGroup("Waypoints");
+        int useCatalog = config->readNumEntry("DefaultWaypointCatalog", 
+                                              KFLogConfig::LastUsed);
         switch (useCatalog) {
         case KFLogConfig::LastUsed:
           // no break;
         case KFLogConfig::Specific:
-          waypointsOptionArg = _settings.readEntry("/Waypoints/DefaultCatalogName", "");
+          waypointsOptionArg = config->readEntry("DefaultCatalogName", "");
           kflog->slotSetWaypointCatalog(waypointsOptionArg);
         }
       }
 
       if (args->count()){
           if (args->isSet("export-png")){
-            /* FIXME: this setting should be removed when the program closes (was not the case before the Qt3->Qt4 transition)*/
-            _settings.writeEntry("/GeneralOptions/ShowWaypointWarnings", false);
+            config->setGroup("General Options");
+            config->writeEntry("ShowWaypointWarnings",false,false);
           }
 
           kflog->slotFileOpenRecent((QString)args->arg(0));
 
           if (args->isSet("export-png")){
-            /* FIXME: this setting should be removed when the program closes (was not the case before the Qt3->Qt4 transition)*/
-            _settings.writeEntry("/CommentSettings/ShowComment", args->isSet("comment"));
+            config->setGroup("CommentSettings");
+            config->writeEntry("ShowComment",args->isSet("comment"),false);
             warning("Writing PNG...");
             QUrl url((QString)args->getOption("export-png"));
             kflog->slotSavePixmap(url,args->getOption("width").toInt(),args->getOption("height").toInt());
@@ -173,8 +170,8 @@ int main(int argc, char *argv[])
       }
       QTimer::singleShot(700, kflog, SLOT(slotStartComplete()));
 
-      args->clear();
+  		args->clear();
     }
 
   return app.exec();
-}
+}  

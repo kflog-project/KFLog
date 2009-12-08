@@ -329,11 +329,6 @@ class MapConfig : public QObject
      */
     int drawFType;
     int _drawWpLabelScale;
-
-    /** this is a temporary function and it is not needed in Qt 4 */
-    QString __color2String(QColor);
-    /** this is a temporary function and it is not needed in Qt 4 */
-    QColor __string2Color(QString);
 };
 
 #endif

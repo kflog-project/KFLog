@@ -19,8 +19,8 @@
 #include <qlayout.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
-#include <qsettings.h>
 
+#include <kconfig.h>
 #include <kiconloader.h>
 
 #include "taskdialog.h"
@@ -388,7 +388,8 @@ void TaskDialog::slotRemoveWaypoint()
 
 void TaskDialog::setTask(FlightTask *orig)
 {
-  extern QSettings _settings;
+  KConfig* config = KGlobal::config();
+  config->setGroup("Map Data");
   extern MapMatrix _globalMapMatrix;
 
   if (pTask == 0) {
@@ -401,10 +402,10 @@ void TaskDialog::setTask(FlightTask *orig)
   if (wpList.count() < 4) {
     for (unsigned int i = wpList.count(); i < 4; i++) {
       wp = new Waypoint;
-      wp->origP.setLat(_settings.readNumEntry("/MapData/HomesiteLatitude"));
-      wp->origP.setLon(_settings.readNumEntry("/MapData/HomesiteLongitude"));
+      wp->origP.setLat(config->readNumEntry("Homesite Latitude"));
+      wp->origP.setLon(config->readNumEntry("Homesite Longitude"));
       wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
-      wp->name = _settings.readEntry("/MapData/Homesite").left(6).upper();
+      wp->name = config->readEntry("Homesite").left(6).upper();
 
       wpList.append(wp);
     }

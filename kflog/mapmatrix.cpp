@@ -17,7 +17,8 @@
 
 #include <cmath>
 
-#include <qsettings.h>
+#include <kapp.h>
+#include <kconfig.h>
 #include "mapmatrix.h"
 
 // Projektions-Maßstab
@@ -80,10 +81,10 @@ WGSPoint &WGSPoint::operator=( const QPoint &p )
 **  MapMatrix
 **
 *************************************************************************/
-extern QSettings _settings;
 
 MapMatrix::MapMatrix()
-  : mapCenterLat(0), mapCenterLon(0), printCenterLat(0), printCenterLon(0),
+  : 
+    mapCenterLat(0), mapCenterLon(0), printCenterLat(0), printCenterLon(0),
     cScale(0), rotationArc(0), printArc(0)
 {
   viewBorder.setTop(29126344);
@@ -114,9 +115,14 @@ MapMatrix::~MapMatrix()
 
 void MapMatrix::writeMatrixOptions()
 {
-  _settings.writeEntry("/MapData/CenterLatitude", mapCenterLat);
-  _settings.writeEntry("/MapData/CenterLongitude", mapCenterLon);
-  _settings.writeEntry("/MapData/MapScale", cScale);
+  KConfig *config = kapp->config();
+
+  config->setGroup("Map Data");
+  config->writeEntry("Center Latitude", mapCenterLat);
+  config->writeEntry("Center Longitude", mapCenterLon);
+  config->writeEntry("Map Scale", cScale);
+
+  config->setGroup(0);
 }
 
 
@@ -424,40 +430,43 @@ QPoint MapMatrix::mapToWgs(const QPoint& pos) const
 
 void MapMatrix::__moveMap(int dir)
 {
-  switch(dir)
-  {
-    case North:
-      mapCenterLat = viewBorder.top();
-      break;
-    case North | West:
-      mapCenterLat = viewBorder.top();
-      mapCenterLon = viewBorder.left();
-      break;
-    case North | East:
-      mapCenterLat = viewBorder.top();
-      mapCenterLon = viewBorder.right();
-      break;
-    case West:
-      mapCenterLon = viewBorder.left();
-      break;
-    case East:
-      mapCenterLon = viewBorder.right();
-      break;
-    case South:
-      mapCenterLat = viewBorder.bottom();
-      break;
-    case South | West:
-      mapCenterLat = viewBorder.bottom();
-      mapCenterLon = viewBorder.left();
-      break;
-    case South | East:
-      mapCenterLat = viewBorder.bottom();
-      mapCenterLon = viewBorder.right();
-      break;
-    case Home:
-      mapCenterLat = _settings.readNumEntry("/MapData/HomesiteLatitude", HOME_DEFAULT_LAT);
-      mapCenterLon = _settings.readNumEntry("/MapData/HomesiteLongitude", HOME_DEFAULT_LON);
-  }
+  switch(dir) {
+  case North:
+    mapCenterLat = viewBorder.top();
+    break;
+  case North | West:
+    mapCenterLat = viewBorder.top();
+    mapCenterLon = viewBorder.left();
+    break;
+  case North | East:
+    mapCenterLat = viewBorder.top();
+    mapCenterLon = viewBorder.right();
+    break;
+  case West:
+    mapCenterLon = viewBorder.left();
+    break;
+  case East:
+    mapCenterLon = viewBorder.right();
+    break;
+  case South:
+    mapCenterLat = viewBorder.bottom();
+    break;
+  case South | West:
+    mapCenterLat = viewBorder.bottom();
+    mapCenterLon = viewBorder.left();
+    break;
+  case South | East:
+    mapCenterLat = viewBorder.bottom();
+    mapCenterLon = viewBorder.right();
+    break;
+  case Home:
+    KConfig *config = kapp->config();
+
+        config->setGroup("Map Data");
+        mapCenterLat = config->readNumEntry("Homesite Latitude", HOME_DEFAULT_LAT);
+        mapCenterLon = config->readNumEntry("Homesite Longitude", HOME_DEFAULT_LON);
+        config->setGroup(0);
+    }
 
   createMatrix(matrixSize);
   emit matrixChanged();
@@ -627,6 +636,9 @@ void MapMatrix::slotSetScale(double nScale)
 
 void MapMatrix::slotInitMatrix()
 {
+  KConfig *config = kapp->config();
+
+  config->setGroup("Map Data");
   //
   // The scale is set to 0 in the constructor. Here we read the scale and
   // the mapcenter only the first time. Otherwise the values would change
@@ -635,12 +647,12 @@ void MapMatrix::slotInitMatrix()
   //                                                Fixed 2001-12-14
   if(cScale <= 0) {
     // @ee we want to center to the last position !
-    mapCenterLat = _settings.readNumEntry("/MapData/CenterLatitude", HOME_DEFAULT_LAT);
-    mapCenterLon = _settings.readNumEntry("/MapData/CenterLongitude", HOME_DEFAULT_LON);
-    cScale = _settings.readDoubleEntry("/MapData/MapScale", 200);
+    mapCenterLat = config->readNumEntry("Center Latitude", HOME_DEFAULT_LAT);
+    mapCenterLon = config->readNumEntry("Center Longitude", HOME_DEFAULT_LON);
+    cScale = config->readDoubleNumEntry("Map Scale", 200);
   }
 
-  int newProjectionType = _settings.readNumEntry("/MapData/ProjectionType", ProjectionBase::Lambert);
+  int newProjectionType = config->readNumEntry("Projection Type", ProjectionBase::Lambert);
 
   bool projChanged = newProjectionType != currentProjection->projectionType();
 
@@ -648,15 +660,17 @@ void MapMatrix::slotInitMatrix()
     delete currentProjection;
     switch(newProjectionType) {
     case ProjectionBase::Lambert:
-      currentProjection = new ProjectionLambert(_settings.readNumEntry("/LambertProjection/Parallel1", 32400000),
-                                                _settings.readNumEntry("/LambertProjection/Parallel2", 30000000),
-                                                _settings.readNumEntry("/LambertProjection/Origin", 0));
+      config->setGroup("Lambert Projection");
+      currentProjection = new ProjectionLambert(config->readNumEntry("Parallel1", 32400000),
+                                                config->readNumEntry("Parallel2", 30000000),
+                                                config->readNumEntry("Origin", 0));
       qDebug ("Map projection changed to Lambert");
       break;
     //case ProjectionBase::Cylindric:
     default:
       // fallback is cylindrical
-      currentProjection = new ProjectionCylindric(_settings.readNumEntry("/CylindricalProjection/Parallel", 27000000));
+      config->setGroup("Cylindrical Projection");
+      currentProjection = new ProjectionCylindric(config->readNumEntry("Parallel", 27000000));
       qDebug ("Map projection changed to Cylinder");
       break;
     }
@@ -664,12 +678,13 @@ void MapMatrix::slotInitMatrix()
 
   if(projChanged) emit projectionChanged();
 
-  scaleBorders[LowerLimit] = _settings.readNumEntry("/Scale/Lower Limit", VAL_BORDER_L);
-  scaleBorders[Border1] = _settings.readNumEntry("/Scale/Border1", VAL_BORDER_1);
-  scaleBorders[Border2] = _settings.readNumEntry("/Scale/Border2", VAL_BORDER_2);
-  scaleBorders[Border3] = _settings.readNumEntry("/Scale/Border3", VAL_BORDER_3);
-  scaleBorders[SwitchScale] = _settings.readNumEntry("/Scale/SwitchScale", VAL_BORDER_S);
-  scaleBorders[UpperLimit] = _settings.readNumEntry("/Scale/UpperLimit", VAL_BORDER_U);
+  config->setGroup("Scale");
+  scaleBorders[LowerLimit] = config->readNumEntry("Lower Limit", VAL_BORDER_L);
+  scaleBorders[Border1] = config->readNumEntry("Border 1", VAL_BORDER_1);
+  scaleBorders[Border2] = config->readNumEntry("Border 2", VAL_BORDER_2);
+  scaleBorders[Border3] = config->readNumEntry("Border 3", VAL_BORDER_3);
+  scaleBorders[SwitchScale] = config->readNumEntry("Switch Scale", VAL_BORDER_S);
+  scaleBorders[UpperLimit] = config->readNumEntry("Upper Limit", VAL_BORDER_U);
 
   cScale = std::min(cScale, double(scaleBorders[UpperLimit]));
   cScale = std::max(cScale, double(scaleBorders[LowerLimit]));
@@ -677,13 +692,15 @@ void MapMatrix::slotInitMatrix()
   bool initChanged = false;
 
   if (currentProjection->projectionType() == ProjectionBase::Lambert) {
+    config->setGroup("Lambert Projection");
     initChanged = ((ProjectionLambert*)currentProjection)->initProjection(
-              _settings.readNumEntry("/LambertProjection/Parallel1", 32400000),
-              _settings.readNumEntry("/LambertProjection/Parallel2", 30000000),
-              _settings.readNumEntry("/LambertProjection/Origin", 0));
+              config->readNumEntry("Parallel1", 32400000),
+              config->readNumEntry("Parallel2", 30000000),
+              config->readNumEntry("Origin", 0));
   } else if (currentProjection->projectionType() == ProjectionBase::Cylindric) {
+    config->setGroup("Cylindrical Projection");
     initChanged = ((ProjectionCylindric*)currentProjection)->initProjection(
-              _settings.readNumEntry("/CylindricalProjection/Parallel", 27000000));
+              config->readNumEntry("Parallel", 27000000));
   }
 
   if(projChanged || initChanged)
