@@ -15,8 +15,8 @@
 **
 ***********************************************************************/
 
-#include <kcmdlineargs.h>
 #include <kaboutdata.h>
+#include <kcmdlineargs.h>
 #include <kconfig.h>
 
 #include <qtimer.h>
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 
       QString waypointsOptionArg = args->getOption("waypoints");
       if (!waypointsOptionArg.isEmpty()){
-        warning("WaypointCatalog specified at startup : " + waypointsOptionArg );
+        warning("WaypointCatalog specified at startup : %s", (const char*)waypointsOptionArg );
         kflog->slotSetWaypointCatalog(waypointsOptionArg);
       }
       else {
@@ -150,8 +150,7 @@ int main(int argc, char *argv[])
             config->setGroup("General Options");
             config->writeEntry("ShowWaypointWarnings",false,false);
           }
-
-          kflog->slotFileOpenRecent((QString)args->arg(0));
+          kflog->slotOpenFile( (const char*)args->arg(0) );
 
           if (args->isSet("export-png")){
             config->setGroup("CommentSettings");

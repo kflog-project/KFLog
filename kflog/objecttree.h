@@ -162,7 +162,7 @@ signals: // Signals
   /**
    * Indicate that a file should be opened
    */
-  void openFile(const KURL&);
+  void openFile(const char*);
   /**
    * Indicate that the current flight should be optimized
    */

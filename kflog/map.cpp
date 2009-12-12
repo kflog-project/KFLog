@@ -1397,7 +1397,7 @@ void Map::dropEvent(QDropEvent* event)
     {
       for(QStringList::Iterator it = dropList.begin();
               it != dropList.end(); it++)
-          mainApp->slotFileOpenRecent(*it);
+          mainApp->slotOpenFile(*it);
     }
 }
 

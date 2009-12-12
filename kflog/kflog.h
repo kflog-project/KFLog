@@ -27,11 +27,10 @@
 #include <kapp.h>
 #include <kdockwidget.h>
 #include <kmainwindow.h>
-#include <kaction.h>
 #include <kprogress.h>
-#include <kpopupmenu.h>
 #include <kstatusbar.h>
 
+#include <qaction.h>
 #include <qurl.h>
 
 class DataView;
@@ -109,16 +108,20 @@ class KFLogApp : public KDockMainWindow
   bool queryClose();
 
   public slots:
-    /**
-     * Displays the position of the mousecursor and some info (time,
-     * altitude, speed, vario) about the selected flightpoint in the
-     * statusbar.
-     *
-     * @param mouseP   The lat/lon position under the mousecursor.
-     * @param flightP  Pointer to the flightpoint.
-     */
-    void slotShowPointInfo(const QPoint& mousePosition,
-                           const flightPoint& point);
+  /**
+   * Opens a about-dialog.
+   */
+  void slotShowAbout();
+  /**
+   * Displays the position of the mousecursor and some info (time,
+   * altitude, speed, vario) about the selected flightpoint in the
+   * statusbar.
+   *
+   * @param mouseP   The lat/lon position under the mousecursor.
+   * @param flightP  Pointer to the flightpoint.
+   */
+  void slotShowPointInfo(const QPoint& mousePosition,
+                         const flightPoint& point);
   /**
    * Displays the position of the mousecursor in the statusbar and
    * deletes the text of the other statusbar-fields.
@@ -127,14 +130,24 @@ class KFLogApp : public KDockMainWindow
   /**
    * Opens a file-open-dialog.
    */
-  void slotFileOpen();
+  void slotOpenFile();
+  /**
+   * Opens the file given in url.
+   */
+  void slotOpenFile(const char* surl);
+  /**
+   * Opens a task-file-open-dialog.
+   */
+  void slotOpenTask();
   /**
    * Opens a selected recently opened flight.
-   *
-   * @param  url  The url that the user has selected.
    */
-  void slotFileOpenRecent(const KURL& url);
+  void slotOpenRecentFile();
   /**
+   * Updates the recent file list.
+   */
+  void slotSetCurrentFile(const QString &fileName);
+ /**
    * Opens the printing-dialog to print the map.
    */
   void slotFilePrint();
@@ -144,14 +157,6 @@ class KFLogApp : public KDockMainWindow
    * Calls saveConfig() and closes the application.
    */
   void slotFileQuit();
-  /**
-   * Shows or hides the toolbar.
-   */
-  void slotViewToolBar();
-  /**
-   * Shows or hides the statusbar.
-   */
-  void slotViewStatusBar();
   /**
    * Displays a message in the statusbar.
    *
@@ -163,13 +168,17 @@ class KFLogApp : public KDockMainWindow
    */
   void slotToggleDataView();
   /**
+    * Shows or hides the Evaluation window
+    */
+  void slotToggleEvaluationWindow();
+  /**
    * Shows or hides the Help Window.
    */
   void slotToggleHelpWindow();
   /**
-    * Shows or hides the Evaluation window
-    */
-  void slotToggleEvaluationWindow();
+   * Shows or hides the object-widget.
+   */
+  void slotToggleLegendDock();
   /**
    * Shows or hides the mapcontrol-widget.
    */
@@ -179,17 +188,21 @@ class KFLogApp : public KDockMainWindow
    */
   void slotToggleMap();
   /**
-   * Shows or hides the waypoints-widget.
-   */
-  void slotToggleWaypointsDock();
-  /**
    * Shows or hides the legend-widget.
    */
   void slotToggleObjectTreeDock();
   /**
-   * Shows or hides the object-widget.
+   * Shows or hides the toolbar.
    */
-  void slotToggleLegendDock();
+  void slotToggleToolBar();
+  /**
+   * Shows or hides the statusbar.
+   */
+  void slotToggleStatusBar();
+  /**
+   * Shows or hides the waypoints-widget.
+   */
+  void slotToggleWaypointsDock();
   /**
    * Opens a dialog for configuration of the toolbar.
    */
@@ -221,30 +234,45 @@ class KFLogApp : public KDockMainWindow
    */
 //   void slotEvaluateFlight();
   /**
-   * Hides the mapcontrol-widget. Called, when the user has closed or
-   * undocked the widget.
-   */
-  void slotHideMapControlDock();
-  /**
-   * Hides the map-widget. Called, when the user has closed or
-   * undocked the widget.
-   */
-  void slotHideMapViewDock();
-  /**
    * Hides the dataview-widget. Called, when the user has closed or
    * undocked the widget.
    */
   void slotHideDataViewDock();
+  /**
+    * Hides the EvaluationWindow. Called, when the user has closed or
+    * undocked the widget.
+    */
+  void slotHideEvaluationWindowDock();
   /**
    * Hides the HelpWindow. Called, when the user has closed or
    * undocked the widget.
    */
   void slotHideHelpWindowDock();
   /**
-    * Hides the EvaluationWindow. Called, when the user has closed or
-    * undocked the widget.
-    */
-  void slotHideEvaluationWindowDock();
+   * Hides the Legend-widget. Called, when the user has closed or
+   * undocked the widget.
+   */
+  void slotHideLegendDock();
+  /**
+   * Hides the map-widget. Called, when the user has closed or
+   * undocked the widget.
+   */
+  void slotHideMapViewDock();
+  /**
+   * Hides the mapcontrol-widget. Called, when the user has closed or
+   * undocked the widget.
+   */
+  void slotHideMapControlDock();
+  /**
+   * Hides the Objects-widget. Called, when the user has closed or
+   * undocked the widget.
+   */
+  void slotHideObjectTreeDock();
+  /**
+   * Hides the Waypoints-widget. Called, when the user has closed or
+   * undocked the widget.
+   */
+  void slotHideWaypointsDock();
   /**
    * Checks the status of all dock-widgets and updates the menu.
    */
@@ -268,27 +296,10 @@ class KFLogApp : public KDockMainWindow
   void slotFlightViewIgc3D();
   /** */
   void slotFlightViewIgcOpenGL();
-  /**
-   * Hides the Waypoints-widget. Called, when the user has closed or
-   * undocked the widget.
-   */
-  void slotHideWaypointsDock();
-  /**
-   * Hides the Legend-widget. Called, when the user has closed or
-   * undocked the widget.
-   */
-  void slotHideLegendDock();
-  /**
-   * Hides the Objects-widget. Called, when the user has closed or
-   * undocked the widget.
-   */
-  void slotHideObjectTreeDock();
   /** set menu items enabled/disabled */
   void slotModifyMenu();
   /** */
   void slotOpenRecorderDialog();
-  /** No descriptions */
-  void slotTaskOpen();
   /** No descriptions */
   void slotSetWaypointCatalog(QString catalog);
   /**
@@ -307,41 +318,23 @@ class KFLogApp : public KDockMainWindow
    */
   KConfig *config;
   /**
-   * Dockwidget to handle the mapcontrol.
-   *
-   * @see mapControl
-   */
-  KDockWidget* mapControlDock;
-  /**
-   * Dockwidget to handle the map.
-   *
-   * @see map
-   */
-  KDockWidget* mapViewDock;
-  /**
    * Dockwidget to handle the dataview-widget.
-   *
-   * @see dataView
+   * The dataview-widget. Embedded in dataViewDock
    */
   KDockWidget* dataViewDock;
-  /**
-   * Dockwidget to handle the helpWindow.
-   *
-   * @see helpWindow
-   */
-  KDockWidget* helpWindowDock;
+  DataView* dataView;
   /**
    * Dockwidget to handle the EvaluationWindow.
-   *
-   * @see evaluationWindow
+   * The evalutionWindow. Embedded in evaluationWindowDock
    */
   KDockWidget* evaluationWindowDock;  
+  EvaluationDialog* evaluationWindow;
   /**
-   * Dockwidget to handle the waypoints-widget.
-   *
-   * @see taskAndWaypoint
+   * Dockwidget to handle the helpWindow.
+   * The helpWindow. Embedded in helpWindowDock
    */
-  KDockWidget* waypointsDock;
+  KDockWidget* helpWindowDock;
+  HelpWindow* helpWindow;
   /**
    * Dockwidget to handle the legend-widget.
    *
@@ -350,6 +343,18 @@ class KFLogApp : public KDockMainWindow
   KDockWidget* legendDock;
   TopoLegend* legend;
   /**
+   * Dockwidget to handle the map.
+   * The map-widget.
+   */
+  KDockWidget* mapViewDock;
+  Map* map;
+  /**
+   * Dockwidget to handle the mapcontrol.
+   * The mapcontrol-widget. Embedded in mapControlDock
+   */
+  KDockWidget* mapControlDock;
+  MapControlView* mapControl;
+  /**
    * Dockwidget to handle the object view
    *
    * @see ObjectView
@@ -357,30 +362,11 @@ class KFLogApp : public KDockMainWindow
   KDockWidget* objectTreeDock;
   ObjectTree* objectTree;
   /**
-   * The mapcontrol-widget. Embedded in mapControlDock
-   *
-   * @see mapControlDock
+   * Dockwidget to handle the waypoints-widget.
+   * The waypoints-widget.
    */
-  
-  MapControlView* mapControl;
-  /**
-   * The dataview-widget. Embedded in dataViewDock
-   *
-   * @see dataViewDock
-   */
-  DataView* dataView;
-  /**
-   * The helpWindow. Embedded in helpWindowDock
-   *
-   * @see helpWindowDock
-   */
-  HelpWindow* helpWindow;
-  /**
-   * The evalutionWindow. Embedded in evaluationWindowDock
-   *
-   * @see evaluationWindowDock
-   */
-  EvaluationDialog* evaluationWindow;    
+  KDockWidget* waypointsDock;
+  Waypoints *waypoints;
   /**
    * The progessbar in the statusbar. Used during drawing the map to display
    * the percentage of what is allready drawn.
@@ -431,114 +417,74 @@ class KFLogApp : public KDockMainWindow
    */
   KStatusBarLabel* statusLonL;
   /**
-   * Action for closing all displayed flight. Disabled, when no flight
-   * is loaded.
+   * Actions for the menu File
    */
-  KAction* fileClose;
+  QAction* fileNewWaypoint;
+  QAction* fileNewTask;
+  QAction* fileNewFlightGroup;
+  QAction* fileOpenFlight;
+  QAction* fileOpenTask;
+  QPopupMenu* fileOpenRecent;
+  QAction* fileClose;
+  QAction* fileSavePixmap;
+  QAction* filePrint;
+  QAction* filePrintFlight;
+  QAction* fileOpenRecorder;
+  QAction* fileQuit;
   /**
-   * Standard-action to handle the recently opened flights.
+   * Actions for the menu View
    */
-  KRecentFilesAction* fileOpenRecent;
+  QAction* viewCenterTask;
+  QAction* viewCenterFlight;
+  QAction* viewCenterHomesite;
+  QAction* viewCenterTo;
+  QAction* viewZoomIn;
+  QAction* viewZoomOut;
+  QAction* viewZoom;
+  QAction* viewRedraw;
+  QAction* viewMoveNW;
+  QAction* viewMoveN;
+  QAction* viewMoveNE;
+  QAction* viewMoveW;
+  QAction* viewMoveE;
+  QAction* viewMoveSW;
+  QAction* viewMoveS;
+  QAction* viewMoveSE;
   /**
-   * Action to handle the toolbar.
+   * Actions for the menu Flight
    */
-  KToggleAction* viewToolBar;
+  QAction* flightEvaluationWindow;
+  QAction* flightOptimization;
+  QAction* flightOptimizationOLC;
+  QPopupMenu* flightDataType;
+  QAction* flightIgc3D;
+  QAction* flightIgcOpenGL;
+  QAction* flightAnimateStart;
+  QAction* flightAnimateStop;
+  QAction* flightAnimateNext;
+  QAction* flightAnimatePrev;
+  QAction* flightAnimate10Next;
+  QAction* flightAnimate10Prev;
+  QAction* flightAnimateHome;
+  QAction* flightAnimateEnd;
   /**
-   * Action to handle the statusbar.
+   * Action for the menu Window
    */
-  KToggleAction* viewStatusBar;
+  QPopupMenu* windowMenu;
   /**
-   * Action to center the map to display the task. Disabled when no
-   * flight is loaded.
+   * Actions for the menu Settings
    */
-  KAction* viewCenterTask;
-  /**
-   * Action to center the map to display the flight. Disabled when no
-   * flight is loaded.
-   */
-  KAction* viewCenterFlight;
-  /**
-   * Action to center the map on a location to be chosen by the user in a dialog.
-   */
-  KAction* viewCenterTo;
-  /**
-   * Action to handle the dataview.
-   */
-  KToggleAction* viewData;
-  /**
-   * Action to handle the helpWindow.
-   */
-  KToggleAction* viewHelpWindow;
-  /**
-   * Action to handle the evalutionWindow.
-   */
-  KToggleAction* viewEvaluationWindow;  
-  /**
-   * Action to handle the mapcontrol.
-   */
-  KToggleAction* viewMapControl;
-  /**
-   * Action to handle the map.
-   */
-  KToggleAction* viewMap;
-  /**
-   * Action to handle the legend.
-   */
-  KToggleAction* viewObjectTree;
-  /**
-   * Action to handle the objectView.
-   */
-  KToggleAction* viewLegend;
-  /**
-   * Action to show the evaluationdialog.
-   */
-//  KAction* flightEvaluation;
-  KAction* resetConfirmations;
-  /**
-   * Action to optimize flight.
-   */
-  KAction* flightOptimizationOLC;
-  KAction* flightOptimization;
-  /** */
-  KAction* flightPrint;
-  /** */
-  KAction* fileRecorder;
-  /** */
-  KToggleAction* viewWaypoints;
-   /**
-   * Action to start the animation
-   */		
-  KAction* animateFlightStart;
-  /**
-   * Action to stop the animation
-   */		
-  KAction* animateFlightStop;
-  /**
-   * Steppings actions.
-   */
-  KAction* stepFlightNext;
-  KAction* stepFlightPrev;
-  KAction* stepFlightHome;
-  KAction* stepFlightEnd;
-  KAction* stepFlightStepNext;
-  KAction* stepFlightStepPrev;
-  KAction* savePixmap;
-  /**
-   * The igc3d dialog
-   */
-  KAction* viewIgc3D;
-  /**
-   * The OpenGL dialog
-   */
-  KAction* viewIgcOpenGL;
-  /**
-   * The Task Planning
-   */
-  KToggleAction* mapPlanning;
-  /**
-   * The map-widget.
-   */
-  Map* map;
+  QPopupMenu* settings;
+  QAction* settingsEvaluationWindow;
+  QAction* settingsFlightData;
+  QAction* settingsHelpWindow;
+  QAction* settingsLegend;
+  QAction* settingsMap;
+  QAction* settingsMapControl;
+  QAction* settingsObjectTree;
+  QAction* settingsStatusBar;
+  QAction* settingsToolBar;
+  QAction* settingsWaypoints;
   /**
    * The flight-directory.
    */
@@ -548,24 +494,19 @@ class KFLogApp : public KDockMainWindow
    */
   QString taskDir;
   /**
-   * The waypoints-widget.
-   */
-  Waypoints *waypoints;
-  /**
    * True, when the startup-window should be displayed.
    */
   bool showStartLogo;
-  KPopupMenu* windowMenu;
-  /**
-   * A select menu to change the colors of the flight path, which can be based on altitude, cycling, speed, vario and solid.
-   */
-  KSelectAction* viewFlightDataType;
 
   private slots: // Private slots
   /**
    * insert available flights into menu
    */
   void slotWindowsMenuAboutToShow();
+  /**
+   * Called to the What's This? mode.
+   */
+  void slotWhatsThis();
   /**
    * Called to force display of the "Tip of the Day" dialog.
    */
