@@ -22,3 +22,14 @@ not really bugs
 - not a bug: draw airfields with correct runway orientation.
 
 - show engine noise in evaluation window
+
+
+Things that disappeared while we got rid of KDE
+===============================================
+
+- tip of the day
+
+- option to change waypoint when a waypoint with the same name as an
+  existing waypoint is created. Right now we only offer "overwrite"
+  and "cancel", not "change name".
+

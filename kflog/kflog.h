@@ -507,10 +507,6 @@ class KFLogApp : public KDockMainWindow
    * Called to the What's This? mode.
    */
   void slotWhatsThis();
-  /**
-   * Called to force display of the "Tip of the Day" dialog.
-   */
-  void slotTipOfDay();
 
 };
  

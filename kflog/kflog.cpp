@@ -40,7 +40,6 @@
 #include <kmenubar.h>
 #include <knotifyclient.h>
 #include <kstdaction.h>
-#include <ktip.h>
 #include <ktoolbar.h>
 
 // application specific includes
@@ -165,7 +164,6 @@ KFLogApp::KFLogApp()
       evaluationWindow, SLOT(slotShowFlightPoint(const QPoint&, const flightPoint&)));
 
   slotCheckDockWidgetStatus();
-  KTipDialog::showTip(this, "kflog/tips");
 }
 
 KFLogApp::~KFLogApp()
@@ -435,7 +433,6 @@ void KFLogApp::initActions()
   //FIXME: link to manual must be added
   help->insertItem(SmallIcon("contexthelp"), tr("What's This?"), this, SLOT(slotWhatsThis()), CTRL+Key_F1);
   //FIXME: dialog to swith application language must be added
-  help->insertItem(SmallIcon("idea"), tr("Tip of the day"), this, SLOT(slotTipOfDay()));
   help->insertItem(SmallIcon("kflog"), tr("About KFLog"), this, SLOT(slotShowAbout()));
 
   // toolbar
@@ -1447,7 +1444,3 @@ void KFLogApp::slotWhatsThis(){
   QWhatsThis::enterWhatsThisMode();
 }
 
-/** Called to force display of the "Tip of the Day" dialog. */
-void KFLogApp::slotTipOfDay(){
-  KTipDialog::showTip(this,"kflog/tips",true);
-}
