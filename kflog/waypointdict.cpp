@@ -14,18 +14,7 @@
 **   $Id$
 **
 ***********************************************************************/
-#include <kmessagebox.h>
-#include <kdeversion.h>
-#if KDE_IS_VERSION(3,2,0)
-  #undef OLDVERSION   //workaround for older KDE versions that lack kinputdialog
-#else
-  #define OLDVERSION 1    //workaround for older KDE versions that lack kinputdialog
-#endif
-
-#ifndef OLDVERSION
-  #include "kinputdialog.h"
-#endif
-
+#include <qmessagebox.h>
 
 #include "waypointdict.h"
 
@@ -71,36 +60,16 @@ bool WaypointDict::insertItem(Waypoint *e)
   {
     if (notEqual (*tmp, *e))
     {
-#ifdef OLDVERSION
-      switch (KMessageBox::warningContinueCancel(0,
+      switch (QMessageBox::warning(0, "Waypoint exists",
             "<qt>" + QObject::tr("A waypoint with the name<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Do you want to overwrite the existing waypoint?").arg(e->name) + "</qt>",
-            QObject::tr("Add waypoint"),
+            QObject::tr("Cancel"),
             QObject::tr("&Overwrite")
            )) {
-#endif
-#ifndef OLDVERSION
-      switch (KMessageBox::warningYesNoCancel(0,
-            "<qt>" + QObject::tr("A waypoint with the name<BR><BR><B>%1</B><BR><BR>is already in current catalog.<BR><BR>Do you want to rename the waypoint you are adding or overwrite the existing waypoint?").arg(e->name) + "</qt>",
-            QObject::tr("Add waypoint"),
-            QObject::tr("&Rename"),
-            QObject::tr("&Overwrite")
-           )) {
-
-      case KMessageBox::Yes:   //rename
-        newName=KInputDialog::getText(QObject::tr("Waypoint name"), QObject::tr("Please enter a new name for the waypoint"), e->name, &OK);
-        if (OK) {
-          e->name=newName;
-          return insertItem(e); //recursive call!
-          break;
-        }
-        //no break!
-#endif
-      case KMessageBox::Cancel:   //cancel
+      case QMessageBox::Abort:   //cancel
         delete e;
         ins = false;
         break;
-      case KMessageBox::No:          //overwrite, new version
-      case KMessageBox::Continue:    //overwrite, old version
+      case QMessageBox::Ok:      //overwrite, old version
         remove(e->name);
         insert(e->name, e);
         break;
@@ -114,7 +83,3 @@ bool WaypointDict::insertItem(Waypoint *e)
   return ins;
 }
 
-#ifdef OLDVERSION
-  //make sure we are not messing up something else elsewhere
-  #undef OLDVERSION
-#endif
