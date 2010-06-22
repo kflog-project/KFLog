@@ -18,7 +18,7 @@
 
 #include <cmath>
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <kconfig.h>
 #include <kstandarddirs.h>

@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <stdlib.h>
+#include <cstdlib>
 // include files for QT
 
 // include files for KDE

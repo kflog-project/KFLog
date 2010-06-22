@@ -25,7 +25,7 @@
 #include "glview.h"
 
 #include <math.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <kaction.h>
 #include "../flight.h"
 #include "../resource.h"

@@ -17,7 +17,7 @@
 
 //standard libs includes
 #include <math.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
 
 //Qt includes

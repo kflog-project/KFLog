@@ -31,7 +31,7 @@
 #include <unistd.h>
 #include <pwd.h>
 //#include <sys/types.h>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <kiconloader.h>
 #include <kstddirs.h>

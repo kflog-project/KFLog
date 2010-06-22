@@ -17,7 +17,7 @@
 
 #include "soaringpilot.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
 #include <ctype.h>
 #include <sys/types.h>

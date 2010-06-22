@@ -21,7 +21,7 @@
 ***********************************************************************/
 
 #include <cmath>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "flight.h"
 

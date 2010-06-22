@@ -29,7 +29,7 @@
 #include <qmessagebox.h>
 #include <qptrlist.h>
 
-#include <stdlib.h>
+#include <cstdlib>
 
 // different weight for last two legs
 double Optimization::weight(unsigned int k){
