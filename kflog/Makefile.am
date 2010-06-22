@@ -76,9 +76,9 @@ kflog_SOURCES = \
 	welt2000.cpp \
 	whatsthat.cpp
 
-kflog_LDADD   = ./guicontrols/libguicontrols.a ./kfrgcs/libkfrgcs.la ./kfrgmn/libkfrgmn.la ./kfrcai/libkfrcai.la ./kfrfil/libkfrfil.la ./kfrxsp/libkfrxsp.la ./kfrxcu/libkfrxcu.la ./opengl_igc/libopengl_igc.la -lkdeprint -lGL -lm $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
+kflog_LDADD   = ./guicontrols/libguicontrols.a ./kfrgcs/libkfrgcs.la ./kfrgmn/libkfrgmn.la ./kfrcai/libkfrcai.la ./kfrfil/libkfrfil.la ./kfrxsp/libkfrxsp.la ./opengl_igc/libopengl_igc.la -lkdeprint -lGL -lm $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
 
-SUBDIRS = guicontrols kfrgcs kfrgmn map-icons pics kfrcai kfrfil kfrxsp kfrxcu opengl_igc 
+SUBDIRS = guicontrols kfrgcs kfrgmn map-icons pics kfrcai kfrfil kfrxsp opengl_igc 
 
 EXTRA_DIST = \
 	airport.cpp airport.h \

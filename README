@@ -33,3 +33,7 @@ Things that disappeared while we got rid of KDE
   existing waypoint is created. Right now we only offer "overwrite"
   and "cancel", not "change name".
 
+- Cumulus flight recorder plugin -- this thing wouldn't work with
+  the current Cumulus versions anyhow.
+
+
