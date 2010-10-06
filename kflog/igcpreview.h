@@ -18,8 +18,7 @@
 #ifndef IGCPREVIEW_H
 #define IGCPREVIEW_H
 
-#include <kpreviewwidgetbase.h>
-
+#include <qfiledialog.h>
 #include <qlabel.h>
 
 /**
@@ -33,7 +32,7 @@
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
-class IGCPreview : public KPreviewWidgetBase
+class IGCPreview : public QLabel, public QFilePreview
 {
   Q_OBJECT
 
@@ -52,17 +51,11 @@ class IGCPreview : public KPreviewWidgetBase
   public slots:
     /**
      * This slot is called every time the user selects another file in
-     * the file dialog. Reimplemented from KPreviewWidgetBase.
+     * the file dialog. Reimplemented from QFilePreview.
      *
      * @param  url  The url of the selected file
      */
-    virtual void showPreview(const KURL &url);
-    /**
-     * This is called when e.g. the selection is cleared or when multiple
-     * selections exist, or the directory is changed. Reimplemented from
-     * KPreviewWidgetBase.
-     */
-    virtual void clearPreview();
+    virtual void previewUrl(const QUrl &url);
 
   private:
     /**

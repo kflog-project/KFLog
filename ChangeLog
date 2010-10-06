@@ -1,5 +1,27 @@
 $Id$
 
+2010-10-05 Constantijn Neeteson <kflog@neeteson.net>
+
+  * automatic map download disabled, waiting for Qt4 classes (see downloadlist.cpp
+    and mapcontents.cpp)
+  * the layout of the Recorder and KFLogConfig dialog has been changed
+  * dockwidgets are now standard turned off in the mainwindow, because the layout is
+    ugly. Hopefully it is solvable in Qt4. In the meantim they can be made visible
+    by selecting them in the Settings menu.
+  * The positions of the dockwidgets and toolbar are not stored when KFLog quits.
+  * KAbout has been removed. The contents is still available in main.cpp.
+    Qt doesn't have an about class, so this has to be written by ourselfs.
+  * In some messageboxes there was a checkbox to disable the same message in the
+    future. Also, some messageboxes of recorderdialog contained a small screen with
+    detailed information about an error. QMessageBox doesn't support this and
+    therefore it has been removed.
+  * The shortcuts and toolbar cannot be edited anymore, because Qt lacks the
+    widgets that KDE had.
+  * all files are now stored in %HOME%/.kflog/, it is not possible in Qt to find a
+    dir like /usr/share/apps/kflog. I did not change this in the makefiles, because
+    the automake configuration doesn't work properly anymore on my pc. I suggest
+    that we change to qmake for build automation.
+
 2009-10-08 Hendrik Hoeth <hoeth@linta.de>
 
   * Eliminated more KDE dependencies

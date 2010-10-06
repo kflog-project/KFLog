@@ -17,64 +17,62 @@
 
 #include "mapcontrolview.h"
 
-#include "kflog.h"
 #include "mapcalc.h"
 #include "mapmatrix.h"
 
-#include <kiconloader.h>
-
-#include <qpushbutton.h>
+#include <qdir.h>
 #include <qlabel.h>
 #include <qlayout.h>
+#include <qpushbutton.h>
 
 #define DELTA 4
 
 MapControlView::MapControlView(QWidget* parent)
-  : QWidget(parent, "mapcontrolview")
+  : QFrame(parent, "mapcontrolview")
 {
-  QFrame* navFrame = new QFrame(parent);
+  QFrame* navFrame = new QFrame(this);
   QPushButton* nwB = new QPushButton(navFrame);
-  nwB->setPixmap(BarIcon("movemap_nw"));
+  nwB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_nw_22.png");
   nwB->setFixedHeight(nwB->sizeHint().height() + DELTA);
   nwB->setFixedWidth(nwB->sizeHint().width() + DELTA);
 
   QPushButton* nB = new QPushButton(navFrame);
-  nB->setPixmap(BarIcon("movemap_n"));
+  nB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_n_22.png");
   nB->setFixedHeight(nB->sizeHint().height() + DELTA);
   nB->setFixedWidth(nB->sizeHint().width() + DELTA);
 
   QPushButton* neB = new QPushButton(navFrame);
-  neB->setPixmap(BarIcon("movemap_ne"));
+  neB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_ne_22.png");
   neB->setFixedHeight(neB->sizeHint().height() + DELTA);
   neB->setFixedWidth(neB->sizeHint().width() + DELTA);
 
   QPushButton* wB = new QPushButton(navFrame);
-  wB->setPixmap(BarIcon("movemap_w"));
+  wB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_w_22.png");
   wB->setFixedHeight(wB->sizeHint().height() + DELTA);
   wB->setFixedWidth(wB->sizeHint().width() + DELTA);
 
   QPushButton* cenB = new QPushButton(navFrame);
-  cenB->setPixmap(BarIcon("gohome"));
+  cenB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_gohome_22.png");
   cenB->setFixedHeight(cenB->sizeHint().height() + DELTA);
   cenB->setFixedWidth(cenB->sizeHint().width() + DELTA);
 
   QPushButton* eB = new QPushButton(navFrame);
-  eB->setPixmap(BarIcon("movemap_e"));
+  eB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_e_22.png");
   eB->setFixedHeight(eB->sizeHint().height() + DELTA);
   eB->setFixedWidth(eB->sizeHint().width() + DELTA);
 
   QPushButton* swB = new QPushButton(navFrame);
-  swB->setPixmap(BarIcon("movemap_sw"));
+  swB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_sw_22.png");
   swB->setFixedHeight(swB->sizeHint().height() + DELTA);
   swB->setFixedWidth(swB->sizeHint().width() + DELTA);
 
   QPushButton* sB = new QPushButton(navFrame);
-  sB->setPixmap(BarIcon("movemap_s"));
+  sB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_s_22.png");
   sB->setFixedHeight(sB->sizeHint().height() + DELTA);
   sB->setFixedWidth(sB->sizeHint().width() + DELTA);
 
   QPushButton* seB = new QPushButton(navFrame);
-  seB->setPixmap(BarIcon("movemap_se"));
+  seB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_se_22.png");
   seB->setFixedHeight(seB->sizeHint().height() + DELTA);
   seB->setFixedWidth(seB->sizeHint().width() + DELTA);
 
@@ -102,28 +100,28 @@ MapControlView::MapControlView(QWidget* parent)
   navLayout->setRowStretch(4,1);
   navLayout->activate();
 
-  QLabel* dimLabel = new QLabel(tr("Height / Width [km]:"), parent);
+  QLabel* dimLabel = new QLabel(tr("Height / Width [km]:"), this, "Height/With QLabel");
   dimLabel->setMinimumHeight(dimLabel->sizeHint().height() + 5);
-  dimText = new QLabel("125 / 130", parent);
+  dimText = new QLabel("125 / 130", this, "Dimension text QLabel");
   dimText->setAlignment( AlignCenter );
 
   dimText->setFrameStyle( QFrame::Panel | QFrame::Sunken );
   dimText->setBackgroundMode( PaletteLight );
 
-  QLabel* currentScaleLabel = new QLabel(tr("Scale:"), parent);
+  QLabel* currentScaleLabel = new QLabel(tr("Scale:"), this, "Scale QLabel");
   currentScaleLabel->setMinimumHeight(
           currentScaleLabel->sizeHint().height() + 10);
-  currentScaleValue = new QLCDNumber(5,parent);
+  currentScaleValue = new QLCDNumber(5,this);
 
-  QLabel* setScaleLabel = new QLabel(tr("Set scale:"), parent);
+  QLabel* setScaleLabel = new QLabel(tr("Set scale:"), this, "Set scale QLabel");
   setScaleLabel->setMinimumWidth( setScaleLabel->sizeHint().width());
 
   setScaleLabel->setMinimumHeight(setScaleLabel->sizeHint().height());
-  currentScaleSlider = new QSlider(2,105,1,0, QSlider::Horizontal,parent);
+  currentScaleSlider = new QSlider(2,105,1,0, QSlider::Horizontal,this);
   currentScaleSlider->setMinimumHeight(
           currentScaleSlider->sizeHint().height());
 
-  QGridLayout* controlLayout = new QGridLayout(parent,6,4,5,5, "controlLayout");
+  QGridLayout* controlLayout = new QGridLayout(this,6,4,5,5, "controlLayout");
 
 //   controlLayout->addMultiCellWidget(mapControl,0,0,0,3);
   controlLayout->addMultiCellWidget(navFrame,0,2,0,1);

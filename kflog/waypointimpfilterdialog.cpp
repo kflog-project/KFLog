@@ -15,23 +15,23 @@
 **
 ***********************************************************************/
 
-#include "waypointimpfilterdialog.h"
 #include "mapcontents.h"
+#include "waypointimpfilterdialog.h"
 
-#include <qlayout.h>
-#include <qgroupbox.h>
 #include <qbuttongroup.h>
 #include <qlabel.h>
+#include <qlayout.h>
+#include <qlistbox.h>
+#include <qgroupbox.h>
 #include <qpushbutton.h>
 #include <qstringlist.h>
 #include <qradiobutton.h>
-#include <qlistbox.h>
 
 extern MapContents _globalMapContents;
 extern MapMatrix _globalMapMatrix;
 
 WaypointImpFilterDialog::WaypointImpFilterDialog(QWidget *parent, const char *name)
- : KDialog(parent, name, true),
+ : QDialog(parent, name, true),
  center(0)
 {
   QVBoxLayout *top = new QVBoxLayout(this, 5);
@@ -223,7 +223,7 @@ void WaypointImpFilterDialog::polish()
 {
   int searchList[] = {MapContents::GliderSiteList, MapContents::AirportList};
 
-  KDialog::polish();
+  QDialog::polish();
   for (int l = 0; l < 2; l++) {
     for(unsigned int loop = 0; loop < _globalMapContents.getListLength(searchList[l]);
       loop++) {

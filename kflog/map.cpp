@@ -17,30 +17,29 @@
 
 #include <cmath>
 
-#include <kconfig.h>
-#include <kstddirs.h>
-#include <kiconloader.h>
-
+#include <qapplication.h>
+#include <qdir.h>
 #include <qdragobject.h>
 #include <qfiledialog.h>
 #include <qpainter.h>
 #include <qregexp.h>
+#include <qsettings.h>
 #include <qtimer.h>
 #include <qwhatsthis.h>
 
 #include "airspace.h"
 #include "flight.h"
 #include "flightgroup.h"
-#include "kflog.h"
 #include "map.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "mapmatrix.h"
-#include "singlepoint.h"
 #include "radiopoint.h"
+#include "resource.h"
+#include "singlepoint.h"
+#include "translationlist.h"
 #include "waypoints.h"
 #include "waypointdialog.h"
-#include "resource.h"
 #include "whatsthat.h"
 
 
@@ -57,9 +56,9 @@
 #define MAP_INFO_DELAY 1000
 
 
-Map::Map(KFLogApp *m, QFrame* parent, const char* name)
-  : QWidget(parent, name),
-    mainApp(m), prePos(-50, -50), preCur1(-50, -50), preCur2(-50, -50),
+Map::Map(QWidget* parent, const char* name)
+  : QFrame(parent, name),
+    prePos(-50, -50), preCur1(-50, -50), preCur2(-50, -50),
     planning(-1), tempTask(""), isDrawing(FALSE), preSnapPoint(-999, -999)
 {
   QBitmap bitCursorMask;
@@ -86,10 +85,8 @@ Map::Map(KFLogApp *m, QFrame* parent, const char* name)
 
   pixCursor.setMask(bitCursorMask);
 
-  pixCursor1 = QPixmap(KGlobal::dirs()->findResource("appdata",
-                                                     "pics/flag_green.png"));
-  pixCursor2 = QPixmap(KGlobal::dirs()->findResource("appdata",
-                                                     "pics/flag_red.png"));
+  pixCursor1 = QPixmap(QDir::homeDirPath() + "/.kflog/pics/flag_green.png");
+  pixCursor2 = QPixmap(QDir::homeDirPath() + "/.kflog/pics/flag_red.png");
 
   pixCursorBuffer1.resize(32,32);
   pixCursorBuffer1.fill(white);
@@ -463,7 +460,7 @@ QString getInfoString (Waypoint* wp)
   extern MapConfig _globalMapConfig;
   extern TranslationList waypointTypes;
 
-  QString path = KGlobal::dirs()->findResource("appdata", "mapicons/");
+  QString path = QDir::homeDirPath() + "/.kflog/mapicons/";
 
   QString text = "<TABLE BORDER=0><TR>";
 
@@ -1226,51 +1223,48 @@ void Map::__drawMap()
 
   _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::TopoList);
 
-  mainApp->slotSetProgress(5);
+  emit setStatusBarProgress(5);
 
   _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::CityList);
 
   _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::HydroList);
 
-  mainApp->slotSetProgress(10);
+  emit setStatusBarProgress(10);
 
   _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::RoadList);
 
-  mainApp->slotSetProgress(15);
+  emit setStatusBarProgress(15);
 
   _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::HighwayList);
 
-  mainApp->slotSetProgress(20);
-
-  mainApp->slotSetProgress(25);
+  emit setStatusBarProgress(20);
+  emit setStatusBarProgress(25);
 
   _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::RailList);
 
-  mainApp->slotSetProgress(30);
-
-  mainApp->slotSetProgress(35);
-
-  mainApp->slotSetProgress(40);
+  emit setStatusBarProgress(30);
+  emit setStatusBarProgress(35);
+  emit setStatusBarProgress(40);
 
   _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::VillageList);
 
-  mainApp->slotSetProgress(45);
+  emit setStatusBarProgress(45);
 
   _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::LandmarkList);
 
-  mainApp->slotSetProgress(50);
+  emit setStatusBarProgress(50);
 
   _globalMapContents.drawList(&uMapP, &mapMaskP, MapContents::ObstacleList);
 
-  mainApp->slotSetProgress(55);
+  emit setStatusBarProgress(55);
 
   _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::ReportList);
 
-  mainApp->slotSetProgress(60);
+  emit setStatusBarProgress(60);
 
   _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::NavList);
 
-  mainApp->slotSetProgress(65);
+  emit setStatusBarProgress(65);
 
   Airspace* currentAirS;
   for(unsigned int loop = 0; loop < _globalMapContents.getListLength(
@@ -1284,25 +1278,25 @@ void Map::__drawMap()
             &airspaceMaskP));
     }
 
-  mainApp->slotSetProgress(70);
+  emit setStatusBarProgress(70);
 
-  mainApp->slotSetProgress(75);
+  emit setStatusBarProgress(75);
 
   _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::AirportList);
 
-  mainApp->slotSetProgress(80);
+  emit setStatusBarProgress(80);
 
   _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::AddSitesList);
 
-  mainApp->slotSetProgress(85);
+  emit setStatusBarProgress(85);
 
   _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::OutList);
 
-  mainApp->slotSetProgress(90);
+  emit setStatusBarProgress(90);
 
   _globalMapContents.drawList(&aeroP, &mapMaskP, MapContents::GliderSiteList);
 
-  mainApp->slotSetProgress(95);
+  emit setStatusBarProgress(95);
 
   // Closing the painter ...
   aeroP.end();
@@ -1395,9 +1389,8 @@ void Map::dropEvent(QDropEvent* event)
 
   if(QUriDrag::decodeToUnicodeUris(event, dropList))
     {
-      for(QStringList::Iterator it = dropList.begin();
-              it != dropList.end(); it++)
-          mainApp->slotOpenFile(*it);
+      for(QStringList::Iterator it = dropList.begin(); it != dropList.end(); it++)
+          emit openFile(*it);
     }
 }
 
@@ -1409,7 +1402,7 @@ void Map::__redrawMap()
 
 //  qWarning("__redrawMap()");
   // Statusbar not set "geniously" so far...
-  mainApp->slotSetProgress(0);
+  emit setStatusBarProgress(0);
 
   pixPlan.fill(white);
 
@@ -1448,7 +1441,7 @@ void Map::__redrawMap()
 
   __showLayer();
 
-  mainApp->slotSetProgress(100);
+  emit setStatusBarProgress(100);
 
   slotDrawCursor(temp1,temp2);
 
@@ -1457,9 +1450,9 @@ void Map::__redrawMap()
 
 /** Save Map to PNG-file with width,heigt. Use actual size if width=0 & height=0 */
 void Map::slotSavePixmap(QUrl fUrl, int width, int height){
-
-  int w_orig,h_orig;
   extern MapContents _globalMapContents;
+  extern QSettings _settings;
+  int w_orig,h_orig;
 
   if(fUrl.isValid())  return;
 
@@ -1477,9 +1470,7 @@ void Map::slotSavePixmap(QUrl fUrl, int width, int height){
     slotCenterToFlight();
   }
 
-  KConfig* config = KGlobal::config();
-  config->setGroup("CommentSettings");
-  if (config->readBoolEntry("ShowComment"))
+  if (_settings.readBoolEntry("/KFLog/CommentSettings/ShowComment"))
   {
     Flight* flight = (Flight*)_globalMapContents.getFlight();
     QPainter bufferP(&pixBuffer);
@@ -1540,14 +1531,14 @@ void Map::slotActivatePlanning()
       prePlanPos.setX(-999);
       prePlanPos.setY(-999);
 //warning("start");
-      mainApp->slotStatusMsg(QObject::tr("To finish the planing, press <STRG> and the right mouse button!"));
+      emit setStatusBarMsg(QObject::tr("To finish the planing, press <CTRL> and the right mouse button!"));
     }
   else
     {
       // Planen "ausschalten"
       planning = 0;
       __showLayer();
-      mainApp->slotStatusMsg("");
+      emit setStatusBarMsg("");
       emit taskPlanningEnd();
 //warning("ende");
 /*          pixPlan.fill(white);
@@ -2452,24 +2443,24 @@ void Map::__setCursor()
 void Map::__createPopupMenu(){
   extern MapMatrix _globalMapMatrix;
 
-  mapPopup=new KPopupMenu(this);
+  mapPopup=new QPopupMenu(this);
 
-  mapPopup->insertTitle(/*SmallIcon("task")*/ 0, QObject::tr("Map"), 0);
-  idMpAddWaypoint  = mapPopup->insertItem(SmallIcon("filenew"), QObject::tr("&New waypoint"), this, SLOT(slotMpNewWaypoint()));
-  idMpEditWaypoint = mapPopup->insertItem(SmallIcon("wizard"), QObject::tr("&Edit waypoint"), this, SLOT(slotMpEditWaypoint()));
-  idMpDeleteWaypoint = mapPopup->insertItem(SmallIcon("editdelete"), QObject::tr("&Delete waypoint"), this, SLOT(slotMpDeleteWaypoint()));
+//  mapPopup->insertTitle(/*SmallIcon("task")*/ 0, QObject::tr("Map"), 0);
+  idMpAddWaypoint  = mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_filenew_16.png"), QObject::tr("&New waypoint"), this, SLOT(slotMpNewWaypoint()));
+  idMpEditWaypoint = mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_wizard_16.png"), QObject::tr("&Edit waypoint"), this, SLOT(slotMpEditWaypoint()));
+  idMpDeleteWaypoint = mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_editdelete_16.png"), QObject::tr("&Delete waypoint"), this, SLOT(slotMpDeleteWaypoint()));
 
   mapPopup->insertSeparator();
 
   idMpEndPlanning  = mapPopup->insertItem(QObject::tr("&End taskplanning"), this, SLOT(slotMpEndPlanning()));
-  mapPopup->insertItem(SmallIcon("info"), QObject::tr("&Show map info..."), this, SLOT(slotMpShowMapInfo()));
+  mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_info_16.png"), QObject::tr("&Show map info..."), this, SLOT(slotMpShowMapInfo()));
 
   mapPopup->insertSeparator();
 
-  idMpCenterMap  = mapPopup->insertItem(SmallIcon("centerto"), QObject::tr("&Center map"), this, SLOT(slotMpCenterMap()));
+  idMpCenterMap  = mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/centerto_22.png"), QObject::tr("&Center map"), this, SLOT(slotMpCenterMap()));
 
-  idMpZoomIn = mapPopup->insertItem(SmallIcon("viewmag+"), QObject::tr("Zoom &In"), &_globalMapMatrix, SLOT(slotZoomIn()));
-  idMpZoomOut = mapPopup->insertItem(SmallIcon("viewmag-"), QObject::tr("Zoom &Out"), &_globalMapMatrix, SLOT(slotZoomOut()));
+  idMpZoomIn = mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_viewmag+_16.png"), QObject::tr("Zoom &In"), &_globalMapMatrix, SLOT(slotZoomIn()));
+  idMpZoomOut = mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_viewmag-_16.png"), QObject::tr("Zoom &Out"), &_globalMapMatrix, SLOT(slotZoomOut()));
   /*
   idMpAddTaskPoint
  */

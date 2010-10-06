@@ -83,6 +83,9 @@ private: // Private attributes
   int colWaypoint;
   int colDist;
   int colCourse;
+
+  unsigned int getCurrentPosition();
+  void setSelected(unsigned int position);
 };
 
 #endif

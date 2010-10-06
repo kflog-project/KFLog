@@ -24,12 +24,12 @@
 #include "guicontrols/kfloglistview.h"
 #include "waypoint.h"
 
-#include <qframe.h>
-#include <qsplitter.h>
 #include <qcombobox.h>
+#include <qframe.h>
+#include <qpopupmenu.h>
 #include <qptrlist.h>
+#include <qsplitter.h>
 
-#include <kpopupmenu.h>
 
 /**
  *@short Waypoint-frame for display in interface
@@ -67,9 +67,9 @@ class Waypoints : public QFrame  {
   void openCatalog(QString &catalog);
  private: // Private attributes
   /** popup menu for waypoint's */
-  KPopupMenu *wayPointPopup;
-  KPopupMenu *catalogCopySubPopup;
-  KPopupMenu *catalogMoveSubPopup;
+  QPopupMenu *wayPointPopup;
+  QPopupMenu *catalogCopySubPopup;
+  QPopupMenu *catalogMoveSubPopup;
   
   /**  */
   QComboBox *catalogName;

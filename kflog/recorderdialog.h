@@ -18,27 +18,26 @@
 #ifndef RECORDERDIALOG_H
 #define RECORDERDIALOG_H
 
-#include <kapp.h>
-#include <kcombobox.h>
-#include <kconfig.h>
-#include <kdialogbase.h>
-#include <klineedit.h>
-
+#include <qbuttongroup.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
+#include <qdialog.h>
+#include <qdict.h>
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qlistview.h>
 #include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qspinbox.h>
 #include <qstringlist.h>
 #include <qwidget.h>
-#include <qdict.h>
-#include <qradiobutton.h>
-#include <qbuttongroup.h>
-#include <qspinbox.h>
 
-#include "frstructs.h"
-#include "waypointcatalog.h"
-#include "flighttask.h"
-#include "waypointlist.h"
-#include "guicontrols/kfloglistview.h"
 #include "flightrecorderpluginbase.h"
+#include "flighttask.h"
+#include "frstructs.h"
+#include "guicontrols/kfloglistview.h"
+#include "waypointcatalog.h"
+#include "waypointlist.h"
 
 /**
  * Provides a dialog-window for accessing the flightrecorder.
@@ -46,7 +45,7 @@
  * @author Heiner Lamprecht
  * @version $Id$
  */
-class RecorderDialog : public KDialogBase
+class RecorderDialog : public QDialog
 {
   Q_OBJECT
 
@@ -54,7 +53,7 @@ class RecorderDialog : public KDialogBase
     /**
      * Constructor
      */
-    RecorderDialog(QWidget *parent, KConfig* cnf, const char *name);
+    RecorderDialog(QWidget *parent, const char *name);
     /**
      * Destructor
      */
@@ -65,6 +64,7 @@ class RecorderDialog : public KDialogBase
      * Connects the currently selected recorder using the information entered (bautrate, port, URL, etc.)
      */
     void slotConnectRecorder();
+    void slotPageChanged(QListViewItem *currentItem);
     /**
      * Read the flightlist from the recorder
      */
@@ -139,6 +139,9 @@ class RecorderDialog : public KDialogBase
     void __addConfigPage();
     /** No descriptions */
     void __addPilotPage();
+    QGridLayout *configLayout;
+    QListView *setupTree;
+    QFrame *activePage;
     /** */
     QFrame* flightPage;
     /** */
@@ -154,16 +157,12 @@ class RecorderDialog : public KDialogBase
     /** */
     QFrame* configPage;
     /** */
-    KConfig* config;
-    /** */
-    KConfig* loggerConf;
-    /** */
-    KComboBox* selectType;
-    KComboBox* selectPort;
+    QComboBox* selectType;
+    QComboBox* selectPort;
     QLabel* selectPortLabel;
-    KComboBox* _selectSpeed;
+    QComboBox* _selectSpeed;
     QLabel* selectSpeedLabel;
-    KLineEdit* selectURL;
+    QLineEdit* selectURL;
     QLabel* selectURLLabel;
     QPushButton* cmdConnect;
     
@@ -174,11 +173,11 @@ class RecorderDialog : public KDialogBase
     QLabel* lblApiID;
     QLabel* recType;
     QLabel* lblRecType;
-    KLineEdit* pltName;
+    QLineEdit* pltName;
     QLabel* lblPltName;
-    KLineEdit* gldType;
+    QLineEdit* gldType;
     QLabel* lblGldType;
-    KLineEdit* gldID;
+    QLineEdit* gldID;
     QLabel* lblGldID;
     QLabel* compID;
     /** */
@@ -236,13 +235,13 @@ class RecorderDialog : public KDialogBase
 
     FlightRecorderPluginBase::FR_BasicData basicdata;
     FlightRecorderPluginBase::FR_ConfigData configdata;
-    KLineEdit* pilotName;
-    KLineEdit* copilotName;
-    KLineEdit* gliderID;
-    KComboBox* gliderType;
-    KLineEdit* compClass;
-    KLineEdit* editCompID;
-    KComboBox* taskSelection;
+    QLineEdit* pilotName;
+    QLineEdit* copilotName;
+    QLineEdit* gliderID;
+    QComboBox* gliderType;
+    QLineEdit* compClass;
+    QLineEdit* editCompID;
+    QComboBox* taskSelection;
 
     QPushButton* cmdDownloadWaypoints;
     QPushButton* cmdUploadWaypoints;

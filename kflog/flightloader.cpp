@@ -15,14 +15,11 @@
 **
 ***********************************************************************/
 
-#include <kconfig.h>
-
 #include <qdatetime.h>
-#include <qfile.h>
-#include <qfileinfo.h>
 #include <qmessagebox.h>
 #include <qprogressdialog.h>
 #include <qregexp.h>
+#include <qsettings.h>
 #include <qstring.h>
 #include <qtextstream.h>
 
@@ -67,7 +64,7 @@ bool FlightLoader::openFlight(QFile& flightFile)
   else
   {
       QMessageBox::warning(0, QObject::tr("Unknown file extension"),
-          "<qt>" + QObject::tr("Couldn't open the file, because it has an unknown file extension").arg("</qt>"), QMessageBox::Ok, 0);
+          "<qt>" + QObject::tr("Couldn't open the file, because it has an unknown file extension") + "</qt>", QMessageBox::Ok, 0);
       return false;
   }
 }
@@ -75,6 +72,7 @@ bool FlightLoader::openFlight(QFile& flightFile)
 /** Parses an igc-file */
 bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 {
+  extern QSettings _settings;
 
   QProgressDialog importProgress(0,0,true);
 
@@ -193,11 +191,8 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
       if(s.mid(0,1) == "A" && isHeader)
         {
           // We have an manufactorer-id
-          KGlobal::config()->setGroup("Manufactorer ID");
-          recorderID = KGlobal::config()->readEntry(s.mid(1,3).upper(),
-            QObject::tr("unknown manufactorer"));
+          recorderID = _settings.readEntry("/KFLog/ManufactorerID/"+s.mid(1,3).upper(), QObject::tr("unknown manufactorer"));
           recorderID = recorderID + " (" + s.mid(4,3) + ")";
-          KGlobal::config()->setGroup(0);
         }
       else if(s.mid(0,1) == "H" && isHeader)
         {
@@ -223,10 +218,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           else if(s.mid(1, 4).upper() == "FCCL")
             {
               // Searching the config-file for the Competition-Class
-              KGlobal::config()->setGroup("CompetitionClasses");
-              cClass = KGlobal::config()->readNumEntry(
-                  s.mid(s.find(':')+1,100).upper(), Flight::Unknown);
-              KGlobal::config()->setGroup(0);
+              cClass = _settings.readNumEntry("/KFLog/CompetitionClasses/"+s.mid(s.find(':')+1,100).upper(), Flight::Unknown);
             }
         }
       else if ( s.mid(0,1) == "I" )

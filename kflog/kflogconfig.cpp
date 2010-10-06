@@ -28,30 +28,44 @@
 #include "mapcontents.h"
 #include "mapdefaults.h"
 
-#include <unistd.h>
-#include <pwd.h>
-//#include <sys/types.h>
 #include <cstdlib>
+#include <pwd.h>
+#include <unistd.h>
 
-#include <kiconloader.h>
-#include <kstddirs.h>
-#include <ktabctl.h>
-
+#include <qcolordialog.h>
+#include <qdir.h>
 #include <qfiledialog.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+#include <qpushbutton.h>
+#include <qtabwidget.h>
 #include <qradiobutton.h>
+#include <qsettings.h>
 
 #include "guicontrols/coordedit.h"
 
-KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
-  : KDialogBase(IconList, tr("KFlog Setup"), Ok|Cancel, Ok,
-      parent, name, true, true),
-    config(cnf),
+extern QSettings _settings;
+
+KFLogConfig::KFLogConfig(QWidget* parent)
+  : QDialog(parent, "KFLog setup (KFLogConfig)"),
     currentProjType(ProjectionBase::Unknown)
 {
+  configLayout = new QGridLayout(this, 2, 3, 1, -1, "main layout of KFLogConfig");
+
+  setupTree = new QListView(this, "setupTree");
+  setupTree->addColumn("Menu");
+  setupTree->hideColumn(1);
+
+  configLayout->addWidget(setupTree, 0, 0);
+  connect(setupTree, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(slotPageChanged(QListViewItem *)));
+
+  QPushButton *saveButton = new QPushButton(tr("&Save"), this);
+  configLayout->addWidget(saveButton, 1, 1);
+  QPushButton *cancelButton = new QPushButton(tr("&Cancel"), this);
+  configLayout->addWidget(cancelButton, 1, 2);
+
   __addIDTab();
   __addPathTab();
   __addScaleTab();
@@ -59,10 +73,19 @@ KFLogConfig::KFLogConfig(QWidget* parent, KConfig* cnf, const char* name)
   __addFlightTab();
   __addProjectionTab();
   __addAirfieldTab();
-//  __addTopographyTab();
   __addWaypointTab();
 
-  connect( this, SIGNAL(okClicked()), SLOT(slotOk()) );
+  setupTree->hideColumn(1);
+  this->setFixedWidth(637);
+  setupTree->setFixedWidth(137);
+  setupTree->setColumnWidth(137, 1);
+  setupTree->setResizeMode(QListView::NoColumn);
+  activePage = idPage;
+  idPage->show();
+  activePage->setFixedWidth(500);
+
+  connect(saveButton, SIGNAL(clicked()), SLOT(slotOk()));
+  connect(cancelButton, SIGNAL(clicked()), SLOT(close()));
 }
 
 KFLogConfig::~KFLogConfig()
@@ -70,72 +93,112 @@ KFLogConfig::~KFLogConfig()
 
 }
 
+void KFLogConfig::slotPageChanged(QListViewItem *currentItem)
+{
+  if(currentItem->text(1)=="Airfields")
+  {
+    activePage->hide();
+    airfieldPage->show();
+    activePage = airfieldPage;
+  }
+  else if(currentItem->text(1)=="Flight Display")
+  {
+    activePage->hide();
+    flightPage->show();
+    activePage = flightPage;
+  }
+  else if(currentItem->text(1)=="Identity")
+  {
+    activePage->hide();
+    idPage->show();
+    activePage = idPage;
+  }
+  else if(currentItem->text(1)=="Map-Elements")
+  {
+    activePage->hide();
+    mapPage->show();
+    activePage = mapPage;
+  }
+  else if(currentItem->text(1)=="Paths")
+  {
+    activePage->hide();
+    pathPage->show();
+    activePage = pathPage;
+  }
+  else if(currentItem->text(1)=="Map-Projection")
+  {
+    activePage->hide();
+    projPage->show();
+    activePage = projPage;
+  }
+  else if(currentItem->text(1)=="Map-Scales")
+  {
+    activePage->hide();
+    waypointPage->show();
+    activePage = waypointPage;
+  }
+  else if(currentItem->text(1)=="Waypoints")
+  {
+    activePage->hide();
+    airfieldPage->show();
+    activePage = airfieldPage;
+  }
+  activePage->setFixedWidth(500);
+  setupTree->hideColumn(1);
+}
+
 void KFLogConfig::slotOk()
 {
   slotSelectProjection(ProjectionBase::Unknown);
 
-  config-> setGroup("General Options");
-  config-> writeEntry("Version", "2.2.0");
+  _settings.writeEntry("/KFLog/GeneralOptions/Version", "3.0.0");
 
-  config-> setGroup("Path");
-  config-> writeEntry("DefaultFlightDirectory", igcPathE->text());
-  config-> writeEntry("DefaultTaskDirectory", taskPathE->text());
-  config-> writeEntry("DefaultWaypointDirectory", waypointPathE->text());
-  config-> writeEntry("DefaultMapDirectory", mapPathE->text());
+  _settings.writeEntry("/KFLog/Path/DefaultFlightDirectory", igcPathE->text());
+  _settings.writeEntry("/KFLog/Path/DefaultTaskDirectory", taskPathE->text());
+  _settings.writeEntry("/KFLog/Path/DefaultWaypointDirectory", waypointPathE->text());
+  _settings.writeEntry("/KFLog/Path/DefaultMapDirectory", mapPathE->text());
 
-  config-> setGroup("Scale");
-  config-> writeEntry("Lower Limit", lLimitN->value());
-  config-> writeEntry("Upper Limit", uLimitN->value());
-  config-> writeEntry("Switch Scale", switchScaleN->value());
-  config-> writeEntry("Waypoint Label", wpLabelN->value());
-  config-> writeEntry("Border 1", reduce1N->value());
-  config-> writeEntry("Border 2", reduce2N->value());
-  config-> writeEntry("Border 3", reduce3N->value());
+  _settings.writeEntry("/KFLog/Scale/LowerLimit", lLimitN->value());
+  _settings.writeEntry("/KFLog/Scale/UpperLimit", uLimitN->value());
+  _settings.writeEntry("/KFLog/Scale/SwitchScale", switchScaleN->value());
+  _settings.writeEntry("/KFLog/Scale/WaypointLabel", wpLabelN->value());
+  _settings.writeEntry("/KFLog/Scale/Border1", reduce1N->value());
+  _settings.writeEntry("/KFLog/Scale/Border2", reduce2N->value());
+  _settings.writeEntry("/KFLog/Scale/Border3", reduce3N->value());
 
-  config-> setGroup("Map Data");
-  config-> writeEntry("Homesite", homeNameE->text());
-  config-> writeEntry("Homesite Latitude",
-      MapContents::degreeToNum(homeLatE-> text()));
-  config-> writeEntry("Homesite Longitude",
-      MapContents::degreeToNum(homeLonE-> text()));
-  config-> writeEntry("Projection Type", projectionSelect->currentItem());
-  config-> writeEntry("Welt2000CountryFilter", filterE->text());
-  config-> writeEntry("Welt2000HomeRadius", homeRadiusE->text());
+  _settings.writeEntry("/KFLog/MapData/Homesite", homeNameE->text());
+  _settings.writeEntry("/KFLog/MapData/HomesiteLatitude", MapContents::degreeToNum(homeLatE-> text()));
+  _settings.writeEntry("/KFLog/MapData/HomesiteLongitude", MapContents::degreeToNum(homeLonE-> text()));
+  _settings.writeEntry("/KFLog/MapData/ProjectionType", projectionSelect->currentItem());
+  _settings.writeEntry("/KFLog/MapData/Welt2000CountryFilter", filterE->text());
+  _settings.writeEntry("/KFLog/MapData/Welt2000HomeRadius", homeRadiusE->text());
 
-  config-> setGroup("Flight");
   if(needUpdateDrawType)
   {
-    config-> writeEntry("Draw Type", drawTypeSelect->currentItem());
+    _settings.writeEntry("/KFLog/Flight/DrawType", drawTypeSelect->currentItem());
     //update menu Flight=>Show Flightdata
     emit newDrawType(drawTypeSelect->currentItem());
   }
-  config-> writeEntry("Color Left Turn", flightTypeLeftTurnColor->color());
-  config-> writeEntry("Color Right Turn", flightTypeRightTurnColor->color());
-  config-> writeEntry("Color Mixed Turn", flightTypeMixedTurnColor->color());
-  config-> writeEntry("Color Straight", flightTypeStraightColor->color());
-  config-> writeEntry("Color Solid", flightTypeSolidColor->color());
-  config-> writeEntry("Color Engine Noise", flightTypeEngineNoiseColor->color());
-  config-> writeEntry("flightPathWidth", flightPathWidthE->text());
+  _settings.writeEntry("/KFLog/Flight/ColorLeftTurn", __color2String(flightTypeLeftTurnColor));
+  _settings.writeEntry("/KFLog/Flight/ColorRightTurn", __color2String(flightTypeRightTurnColor));
+  _settings.writeEntry("/KFLog/Flight/ColorMixedTurn", __color2String(flightTypeMixedTurnColor));
+  _settings.writeEntry("/KFLog/Flight/ColorStraight", __color2String(flightTypeStraightColor));
+  _settings.writeEntry("/KFLog/Flight/ColorSolid", __color2String(flightTypeSolidColor));
+  _settings.writeEntry("/KFLog/Flight/ColorEngineNoise", __color2String(flightTypeEngineNoiseColor));
+  _settings.writeEntry("/KFLog/Flight/flightPathWidth", flightPathWidthE->text());
 
-  config-> setGroup("Lambert Projection");
-  config-> writeEntry("Parallel1", lambertV1);
-  config-> writeEntry("Parallel2", lambertV2);
-  config-> writeEntry("Origin", lambertOrigin);
+  _settings.writeEntry("/KFLog/LambertProjection/Parallel1", lambertV1);
+  _settings.writeEntry("/KFLog/LambertProjection/Parallel2", lambertV2);
+  _settings.writeEntry("/KFLog/LambertProjection/Origin", lambertOrigin);
 
-  config-> setGroup("Cylindrical Projection");
-  config-> writeEntry("Parallel", cylinPar);
+  _settings.writeEntry("/KFLog/CylindricalProjection/Parallel", cylinPar);
 
-  config-> setGroup("Personal Data");
-  config-> writeEntry("PreName", preNameE->text());
-  config-> writeEntry("SurName", surNameE->text());
-  config-> writeEntry("Birthday", dateOfBirthE->text());
+  _settings.writeEntry("/KFLog/PersonalData/PreName", preNameE->text());
+  _settings.writeEntry("/KFLog/PersonalData/SurName", surNameE->text());
+  _settings.writeEntry("/KFLog/PersonalData/Birthday", dateOfBirthE->text());
 
-  config-> setGroup("Waypoints");
-  config-> writeEntry("DefaultWaypointCatalog", waypointButtonGroup->id(waypointButtonGroup->selected()));
-  config-> writeEntry("DefaultCatalogName", catalogPathE->text());
-
-  config-> sync();
-  config-> setGroup(0);
+  _settings.writeEntry("/KFLog/Waypoints/DefaultWaypointCatalog", waypointButtonGroup->id(waypointButtonGroup->selected()));
+  _settings.writeEntry("/KFLog/Waypoints/DefaultCatalogName", catalogPathE->text());
 
   emit scaleChanged((int)lLimitN->value(), (int)uLimitN->value());
 
@@ -284,14 +347,17 @@ void KFLogConfig::slotDefaultPath()
   igcPathE-> setText(getpwuid(getuid())->pw_dir);
   taskPathE-> setText(getpwuid(getuid())->pw_dir);
   waypointPathE-> setText(getpwuid(getuid())->pw_dir);
-  mapPathE-> setText(KGlobal::dirs()->findResource("appdata", "mapdata/"));
+  mapPathE-> setText(QDir::homeDirPath() + "/.kflog/mapdata/");
 }
 
 void KFLogConfig::__addMapTab()
 {
-  mapPage = addPage(tr("Map-Elements"),tr("Map Configuration"),
-      KGlobal::instance()-> iconLoader()->loadIcon("kflog", KIcon::NoGroup,
-          KIcon::SizeLarge));
+  QListViewItem *item = new QListViewItem(setupTree, tr("Map-Elements"), "Map-Elements");
+  item->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/kflog_32.png");
+
+  mapPage = new QFrame(this, "Map Configuration");
+  mapPage->hide();
+  configLayout->addMultiCellWidget(mapPage, 0, 0, 1, 2);
 
   QGroupBox* elementBox = new QGroupBox(mapPage, "elementBox");
   elementBox-> setTitle(tr("visible Map-Elements"));
@@ -333,12 +399,12 @@ void KFLogConfig::__addMapTab()
   defaultElements-> setMaximumWidth(defaultElements->sizeHint().width() + 10);
   defaultElements-> setMinimumHeight(defaultElements->sizeHint().height() + 2);
 
-  KTabCtl* tabView = new KTabCtl(mapPage);
+  QTabWidget* tabView = new QTabWidget(mapPage);
   QFrame* screenFrame = new QFrame(tabView, "ConfigDrawFrame");
-  ConfigDrawElement* drawConfig = new ConfigDrawElement(screenFrame, config);
+  ConfigDrawElement* drawConfig = new ConfigDrawElement(screenFrame);
 
   QFrame* printFrame = new QFrame(tabView, "ConfigDrawFrame");
-  ConfigPrintElement* printConfig = new ConfigPrintElement(printFrame, config);
+  ConfigPrintElement* printConfig = new ConfigPrintElement(printFrame);
 
   tabView-> addTab(screenFrame, tr("Display"));
   tabView-> addTab(printFrame, tr("Print"));
@@ -378,11 +444,12 @@ void KFLogConfig::__addMapTab()
 
 void KFLogConfig::__addFlightTab()
 {
-  config-> setGroup("Flight");
+  QListViewItem *item = new QListViewItem(setupTree, tr("Flight Display"), "Flight Display");
+  item->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/flightpath_32.png");
 
-  flightPage = addPage(tr("Flight Display"), tr("Flight Display Configuration"),
-      KGlobal::instance()-> iconLoader()->loadIcon("flightpath", KIcon::NoGroup,
-          KIcon::SizeLarge));
+  flightPage = new QFrame(this, "Flight Display Configuration");
+  flightPage->hide();
+  configLayout->addMultiCellWidget(flightPage, 0, 0, 1, 2);
 
   QGridLayout* flightLayout = new QGridLayout(flightPage, 17, 40, 8, 1);
 
@@ -397,7 +464,7 @@ void KFLogConfig::__addFlightTab()
   drawTypeSelect-> insertItem(tr("Speed"),    MapConfig::Speed);
   drawTypeSelect-> insertItem(tr("Vario"),    MapConfig::Vario);
   drawTypeSelect-> insertItem(tr("Solid"),    MapConfig::Solid);
-  drawTypeSelect-> setCurrentItem(config->readNumEntry("Draw Type"));
+  drawTypeSelect-> setCurrentItem(_settings.readNumEntry("/KFLog/Flight/DrawType"));
 
   flightLayout->addWidget(new QLabel(tr("type") + ":", flightPage), 1, 1);
   flightLayout->addWidget(drawTypeSelect, 1, 10);
@@ -406,7 +473,7 @@ void KFLogConfig::__addFlightTab()
   flightPathWidthE = new QSpinBox(flightPage, "flightPathWidthE");
   flightPathWidthE->setRange( 0, 9 );
   flightPathWidthE->setLineStep( 1 );
-  flightPathWidthE->setValue(config->readNumEntry("flightPathWidth", 4));
+  flightPathWidthE->setValue(_settings.readNumEntry("/KFLog/Flight/flightPathWidth", 4));
 
   flightLayout->addWidget(new QLabel(tr("width") + ":", flightPage), 3, 1);
   flightLayout->addWidget( flightPathWidthE, 3, 10);
@@ -416,30 +483,77 @@ void KFLogConfig::__addFlightTab()
   flightPathColorGroup-> setTitle(tr("Flight Path Colors") + ":");
   flightLayout->addMultiCellWidget(flightPathColorGroup, 5, 14, 0, 39);
 
-  flightTypeLeftTurnColor = new KColorButton(config->readColorEntry("Color Left Turn", new QColor(255, 50, 0)), flightPage);
   flightLayout->addWidget(new QLabel(tr("left turn") + ":", flightPage), 6, 1);
-  flightLayout->addWidget( flightTypeLeftTurnColor, 6, 10);
+  flightTypeLeftTurnColor = __string2Color(_settings.readEntry("/KFLog/Flight/ColorLeftTurn", "255;50;0"));
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(82,14);
+  buttonPixmap->fill(flightTypeLeftTurnColor);
+  flightTypeLeftTurnColorButton = new QPushButton(flightPage);
+  flightTypeLeftTurnColorButton->setPixmap(*buttonPixmap);
+  flightTypeLeftTurnColorButton->setFixedHeight(24);
+  flightTypeLeftTurnColorButton->setFixedWidth(92);
+  flightLayout->addWidget( flightTypeLeftTurnColorButton, 6, 10);
+  connect(flightTypeLeftTurnColorButton, SIGNAL(clicked()), this, SLOT(slotSelectFlightTypeLeftTurnColor()));
 
-  flightTypeRightTurnColor = new KColorButton(config->readColorEntry("Color Right Turn", new QColor(50, 255, 0)), flightPage);
   flightLayout->addWidget(new QLabel(tr("right turn") + ":", flightPage), 7, 1);
-  flightLayout->addWidget( flightTypeRightTurnColor, 7, 10);
+  flightTypeRightTurnColor = __string2Color(_settings.readEntry("/KFLog/Flight/ColorRightTurn", "50;255;0"));
+  buttonPixmap = new QPixmap();
+  buttonPixmap->resize(82,14);
+  buttonPixmap->fill(flightTypeRightTurnColor);
+  flightTypeRightTurnColorButton = new QPushButton(flightPage);
+  flightTypeRightTurnColorButton->setPixmap(*buttonPixmap);
+  flightTypeRightTurnColorButton->setFixedHeight(24);
+  flightTypeRightTurnColorButton->setFixedWidth(92);
+  flightLayout->addWidget( flightTypeRightTurnColorButton, 7, 10);
+  connect(flightTypeRightTurnColorButton, SIGNAL(clicked()), this, SLOT(slotSelectFlightTypeRightTurnColor()));
 
-  flightTypeMixedTurnColor = new KColorButton(config->readColorEntry("Color Mixed Turn", new QColor(200, 0, 200)), flightPage);
   flightLayout->addWidget(new QLabel(tr("mixed turn") + ":", flightPage), 8, 1);
-  flightLayout->addWidget( flightTypeMixedTurnColor, 8, 10);
+  flightTypeMixedTurnColor = __string2Color(_settings.readEntry("/KFLog/Flight/ColorMixedTurn", "200;0;200"));
+  buttonPixmap = new QPixmap();
+  buttonPixmap->resize(82,14);
+  buttonPixmap->fill(flightTypeMixedTurnColor);
+  flightTypeMixedTurnColorButton = new QPushButton(flightPage);
+  flightTypeMixedTurnColorButton->setPixmap(*buttonPixmap);
+  flightTypeMixedTurnColorButton->setFixedHeight(24);
+  flightTypeMixedTurnColorButton->setFixedWidth(92);
+  flightLayout->addWidget( flightTypeMixedTurnColorButton, 8, 10);
+  connect(flightTypeMixedTurnColorButton, SIGNAL(clicked()), this, SLOT(slotSelectFlightTypeMixedTurnColor()));
 
-  flightTypeStraightColor = new KColorButton(config->readColorEntry("Color Straight", new QColor(0, 50, 255)), flightPage);
   flightLayout->addWidget(new QLabel(tr("straight") + ":", flightPage), 9, 1);
-  flightLayout->addWidget( flightTypeStraightColor, 9, 10);
+  flightTypeStraightColor = __string2Color(_settings.readEntry("/KFLog/Flight/ColorStraight", "0;50;255"));
+  buttonPixmap = new QPixmap();
+  buttonPixmap->resize(82,14);
+  buttonPixmap->fill(flightTypeStraightColor);
+  flightTypeStraightColorButton = new QPushButton(flightPage);
+  flightTypeStraightColorButton->setPixmap(*buttonPixmap);
+  flightTypeStraightColorButton->setFixedHeight(24);
+  flightTypeStraightColorButton->setFixedWidth(92);
+  flightLayout->addWidget( flightTypeStraightColorButton, 9, 10);
+  connect(flightTypeStraightColorButton, SIGNAL(clicked()), this, SLOT(slotSelectFlightTypeStraightColor()));
 
-
-  flightTypeSolidColor = new KColorButton(config->readColorEntry("Color Solid", new QColor(0, 100, 200)), flightPage);
   flightLayout->addWidget(new QLabel(tr("solid") + ":", flightPage), 11, 1);
-  flightLayout->addWidget( flightTypeSolidColor, 11, 10);
+  flightTypeSolidColor = __string2Color(_settings.readEntry("/KFLog/Flight/ColorSolid", "0;100;200"));
+  buttonPixmap = new QPixmap();
+  buttonPixmap->resize(82,14);
+  buttonPixmap->fill(flightTypeSolidColor);
+  flightTypeSolidColorButton = new QPushButton(flightPage);
+  flightTypeSolidColorButton->setPixmap(*buttonPixmap);
+  flightTypeSolidColorButton->setFixedHeight(24);
+  flightTypeSolidColorButton->setFixedWidth(92);
+  flightLayout->addWidget( flightTypeSolidColorButton, 11, 10);
+  connect(flightTypeSolidColorButton, SIGNAL(clicked()), this, SLOT(slotSelectFlightTypeSolidColor()));
 
-  flightTypeEngineNoiseColor = new KColorButton(config->readColorEntry("Color Engine Noise", new QColor(255, 255, 255)), flightPage);
   flightLayout->addWidget(new QLabel(tr("engine noise") + ":", flightPage), 13, 1);
-  flightLayout->addWidget( flightTypeEngineNoiseColor, 13, 10);
+  flightTypeEngineNoiseColor = __string2Color(_settings.readEntry("/KFLog/Flight/ColorEngineNoise", "255;255;255"));
+  buttonPixmap = new QPixmap();
+  buttonPixmap->resize(82,14);
+  buttonPixmap->fill(flightTypeEngineNoiseColor);
+  flightTypeEngineNoiseColorButton = new QPushButton(flightPage);
+  flightTypeEngineNoiseColorButton->setPixmap(*buttonPixmap);
+  flightTypeEngineNoiseColorButton->setFixedHeight(24);
+  flightTypeEngineNoiseColorButton->setFixedWidth(92);
+  flightLayout->addWidget( flightTypeEngineNoiseColorButton, 13, 10);
+  connect(flightTypeEngineNoiseColorButton, SIGNAL(clicked()), this, SLOT(slotSelectFlightTypeEngineNoiseColor()));
 
 
   needUpdateDrawType = false;
@@ -454,9 +568,12 @@ void KFLogConfig::slotDrawTypeSelect()
 
 void KFLogConfig::__addProjectionTab()
 {
-  projPage = addPage(tr("Map-Projection"),tr("Configuration of Map-Projection"),
-      KGlobal::instance()-> iconLoader()->loadIcon("projection", KIcon::NoGroup,
-          KIcon::SizeLarge));
+  QListViewItem *item = new QListViewItem(setupTree, tr("Map-Projection"), "Map-Projection");
+  item->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/projection_32.png");
+
+  projPage = new QFrame(this, "Configuration of Map-Projection");
+  projPage->hide();
+  configLayout->addMultiCellWidget(projPage, 0, 0, 1, 2);
 
   QGroupBox* projType = new QGroupBox(projPage, "projectionSelectBox");
   projType-> setTitle(tr("Type of Projection") + ":");
@@ -508,40 +625,36 @@ void KFLogConfig::__addProjectionTab()
   projLayout-> addRowSpacing(15, 10);
 
   connect(defaultProj, SIGNAL(clicked()), SLOT(slotDefaultProjection()));
-  connect(projectionSelect, SIGNAL(activated(int)),
-      SLOT(slotSelectProjection(int)));
+  connect(projectionSelect, SIGNAL(activated(int)), SLOT(slotSelectProjection(int)));
 
-  config-> setGroup("Lambert Projection");
-  lambertV1 = config-> readNumEntry("Parallel1", 32400000);
-  lambertV2 = config-> readNumEntry("Parallel2", 30000000);
-  lambertOrigin = config-> readNumEntry("Origin", 0);
+  lambertV1 = _settings.readNumEntry("/KFLog/LambertProjection/Parallel1", 32400000);
+  lambertV2 = _settings.readNumEntry("/KFLog/LambertProjection/Parallel2", 30000000);
+  lambertOrigin = _settings.readNumEntry("/KFLog/LambertProjection/Origin", 0);
 
-  config-> setGroup("Cylindrical Projection");
-  cylinPar = config-> readNumEntry("Parallel", 27000000);
+  cylinPar = _settings.readNumEntry("/KFLog/CylindricalProjection/Parallel", 27000000);
 
-  config-> setGroup("Map Data");
-  int projIndex = config->readNumEntry("Projection Type", ProjectionBase::Lambert);
+  int projIndex = _settings.readNumEntry("/KFLog/MapData/Projection Type", ProjectionBase::Lambert);
 
   projectionSelect-> setCurrentItem(projIndex);
   slotSelectProjection(projIndex);
-
-  config-> setGroup(0);
 }
 
 void KFLogConfig::__addScaleTab()
 {
-  config-> setGroup("Scale");
-  int ll = config-> readNumEntry("Lower Limit", L_LIMIT);
-  int ul = config-> readNumEntry("Upper Limit", U_LIMIT);
-  int sw = config-> readNumEntry("Switch Scale", SWITCH_S);
-  int wl = config-> readNumEntry("Waypoint Label", WPLABEL);
-  int b1 = config-> readNumEntry("Border 1", BORDER_1);
-  int b2 = config-> readNumEntry("Border 2", BORDER_2);
-  int b3 = config-> readNumEntry("Border 3", BORDER_3);
+  int ll = _settings.readNumEntry("/KFLog/Scale/LowerLimit", L_LIMIT);
+  int ul = _settings.readNumEntry("/KFLog/Scale/UpperLimit", U_LIMIT);
+  int sw = _settings.readNumEntry("/KFLog/Scale/SwitchScale", SWITCH_S);
+  int wl = _settings.readNumEntry("/KFLog/Scale/WaypointLabel", WPLABEL);
+  int b1 = _settings.readNumEntry("/KFLog/Scale/Border1", BORDER_1);
+  int b2 = _settings.readNumEntry("/KFLog/Scale/Border2", BORDER_2);
+  int b3 = _settings.readNumEntry("/KFLog/Scale/Border3", BORDER_3);
 
-  scalePage = addPage(tr("Map-Scales"),tr("Map-Scale Configuration"),
-      KGlobal::instance()-> iconLoader()->loadIcon("viewmag", KIcon::NoGroup,
-          KIcon::SizeLarge));
+  QListViewItem *item = new QListViewItem(setupTree, tr("Map-Scales"), "Map-Scales");
+  item->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/kde_viewmag_32.png");
+
+  scalePage = new QFrame(this, "Map-Scale Configuration");
+  scalePage->hide();
+  configLayout->addMultiCellWidget(scalePage, 0, 0, 1, 2);
 
   QGroupBox* scaleLimits = new QGroupBox(scalePage, "scaleLimitBox");
   scaleLimits-> setTitle(tr("Scale-Range:"));
@@ -662,25 +775,21 @@ void KFLogConfig::__addScaleTab()
   connect(reduce1, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleA(int)));
   connect(reduce2, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleB(int)));
   connect(reduce3, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleC(int)));
-
-  config-> setGroup(0);
 }
 
 void KFLogConfig::__addPathTab()
 {
-  config-> setGroup("Path");
-  QString flightDir = config-> readEntry("DefaultFlightDirectory",
-      getpwuid(getuid())-> pw_dir);
-  QString taskDir = config-> readEntry("DefaultTaskDirectory",
-      getpwuid(getuid())-> pw_dir);
-  QString wayPointDir = config-> readEntry("DefaultWaypointDirectory",
-      getpwuid(getuid())-> pw_dir);
-  QString mapDir = config-> readEntry("DefaultMapDirectory",
-      KGlobal::dirs()-> findResource("appdata", "mapdata/"));
+  QString flightDir = _settings.readEntry("/KFLog/Path/DefaultFlightDirectory", getpwuid(getuid())-> pw_dir);
+  QString taskDir = _settings.readEntry("/KFLog/Path/DefaultTaskDirectory", getpwuid(getuid())-> pw_dir);
+  QString wayPointDir = _settings.readEntry("/KFLog/Path/DefaultWaypointDirectory", getpwuid(getuid())-> pw_dir);
+  QString mapDir = _settings.readEntry("/KFLog/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata/");
 
-  pathPage = addPage(tr("Paths"),tr("Path Configuration"),
-      KGlobal::instance()-> iconLoader()->loadIcon("fileopen", KIcon::NoGroup,
-          KIcon::SizeLarge));
+  QListViewItem *item = new QListViewItem(setupTree, tr("Paths"), "Paths");
+  item->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_32.png");
+
+  pathPage = new QFrame(this, "Path Configuration");
+  pathPage->hide();
+  configLayout->addMultiCellWidget(pathPage, 0, 0, 1, 2);
 
   QGridLayout* pathLayout = new QGridLayout(pathPage, 17, 5, 8, 1);
 
@@ -692,7 +801,7 @@ void KFLogConfig::__addPathTab()
   igcPathE-> setText(flightDir);
 
   QPushButton* igcPathSearch = new QPushButton(pathPage);
-  igcPathSearch-> setPixmap(BarIcon("fileopen"));
+  igcPathSearch-> setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png");
   igcPathSearch-> setMinimumWidth(igcPathSearch->sizeHint().width() + 5);
   igcPathSearch-> setMinimumHeight(igcPathSearch->sizeHint().height() + 5);
 
@@ -719,7 +828,7 @@ void KFLogConfig::__addPathTab()
   taskPathE-> setText(taskDir);
 
   QPushButton* taskPathSearch = new QPushButton(pathPage);
-  taskPathSearch-> setPixmap(BarIcon("fileopen"));
+  taskPathSearch-> setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png");
   taskPathSearch-> setMinimumWidth(taskPathSearch->sizeHint().width() + 5);
   taskPathSearch-> setMinimumHeight(taskPathSearch->sizeHint().height() + 5);
 
@@ -742,7 +851,7 @@ void KFLogConfig::__addPathTab()
   waypointPathE-> setText(wayPointDir);
 
   QPushButton* waypointPathSearch = new QPushButton(pathPage);
-  waypointPathSearch-> setPixmap(BarIcon("fileopen"));
+  waypointPathSearch-> setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png");
   waypointPathSearch-> setMinimumWidth(waypointPathSearch->sizeHint().width() + 5);
   waypointPathSearch-> setMinimumHeight(waypointPathSearch->sizeHint().height() + 5);
 
@@ -765,7 +874,7 @@ void KFLogConfig::__addPathTab()
   mapPathE-> setText(mapDir);
 
   QPushButton* mapPathSearch = new QPushButton(pathPage);
-  mapPathSearch-> setPixmap(BarIcon("fileopen"));
+  mapPathSearch-> setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png");
   mapPathSearch-> setMinimumWidth(mapPathSearch->sizeHint().width() + 5);
   mapPathSearch-> setMinimumHeight(mapPathSearch->sizeHint().height() + 5);
 
@@ -792,22 +901,16 @@ void KFLogConfig::__addPathTab()
   connect(taskPathSearch, SIGNAL(clicked()), SLOT(slotSearchTaskPath()));
   connect(waypointPathSearch, SIGNAL(clicked()), SLOT(slotSearchWaypointPath()));
   connect(defaultPath, SIGNAL(clicked()), SLOT(slotDefaultPath()));
-
-  config-> setGroup(0);
-}
-
-void KFLogConfig::__addTopographyTab()
-{
-  topoPage = addPage(tr("Topography"),tr("Topography Configuration"),
-      KGlobal::instance()-> iconLoader()->loadIcon("kflog", KIcon::NoGroup,
-          KIcon::SizeLarge));
 }
 
 void KFLogConfig::__addIDTab()
 {
-  idPage = addPage(tr("Identity"),tr("Personal Information"),
-      KGlobal::instance()-> iconLoader()->loadIcon("identity", KIcon::NoGroup,
-          KIcon::SizeLarge));
+  QListViewItem *item = new QListViewItem(setupTree, tr("Identity"), "Identity");
+  item->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/kde_identity_32.png");
+
+  idPage = new QFrame(this, "Personal Information");
+  configLayout->addMultiCellWidget(idPage, 0, 0, 1, 2);
+  idPage->hide();
 
   QGridLayout* idLayout = new QGridLayout(idPage, 18, 5, 8, 1);
 
@@ -871,20 +974,13 @@ void KFLogConfig::__addIDTab()
 
 //  idLayout-> setRowStretch(17, 1);
 
-  config-> setGroup("Map Data");
+  homeLatE-> setText(printPos(_settings.readNumEntry("/KFLog/MapData/Homesite Latitude", HOME_DEFAULT_LAT), true));
+  homeLonE-> setText(printPos(_settings.readNumEntry("/KFLog/MapData/Homesite Longitude", HOME_DEFAULT_LON), false));
+  homeNameE-> setText(_settings.readEntry("/KFLog/MapData/Homesite", ""));
 
-  homeLatE-> setText(printPos(config->readNumEntry("Homesite Latitude",
-      HOME_DEFAULT_LAT), true));
-  homeLonE-> setText(printPos(config->readNumEntry("Homesite Longitude",
-      HOME_DEFAULT_LON), false));
-  homeNameE-> setText(config->readEntry("Homesite", ""));
-
-  config-> setGroup("Personal Data");
-  preNameE-> setText(config->readEntry("PreName", ""));
-  surNameE-> setText(config->readEntry("SurName", ""));
-  dateOfBirthE-> setText(config->readEntry("Birthday", ""));
-
-  config-> setGroup(0);
+  preNameE-> setText(_settings.readEntry("/KFLog/PersonalData/PreName", ""));
+  surNameE-> setText(_settings.readEntry("/KFLog/PersonalData/SurName", ""));
+  dateOfBirthE-> setText(_settings.readEntry("/KFLog/PersonalData/Birthday", ""));
 
   // update airfield lists from Welt2000 if home site changes:
   connect(homeLatE, SIGNAL(textChanged(const QString&)), SLOT(slotFilterChanged(const QString&)) );
@@ -912,11 +1008,12 @@ int KFLogConfig::__getScaleValue(double scale)
 /** Add a tab for airfield (Welt2000) configuration.*/
 void KFLogConfig::__addAirfieldTab()
 {
-  config-> setGroup("Map Data");
+  QListViewItem *item = new QListViewItem(setupTree, tr("Airfields"), "Airfields");
+  item->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/airfield_32.png");
 
-  airfieldPage = addPage(tr("Airfields"), tr("Airfield Configuration"),
-      KGlobal::instance()-> iconLoader()->loadIcon("airfield", KIcon::NoGroup,
-          KIcon::SizeLarge));
+  airfieldPage = new QFrame(this, "Airfield Configuration");
+  airfieldPage->hide();
+  configLayout->addMultiCellWidget(airfieldPage, 0, 0, 1, 2);
 
   QGridLayout* airfieldLayout = new QGridLayout(airfieldPage, 15, 6, 1, 1);
 
@@ -937,14 +1034,14 @@ void KFLogConfig::__addAirfieldTab()
   airfieldLayout->addWidget( homeRadiusE, 3, 3 );
   airfieldLayout->addWidget( new QLabel( "km", airfieldPage), 3, 4 );
 
-  filterE-> setText(config->readEntry("Welt2000CountryFilter", ""));
-  homeRadiusE-> setValue(config->readNumEntry("Welt2000HomeRadius", 0));
+  filterE-> setText(_settings.readEntry("/KFLog/MapData/Welt2000CountryFilter", ""));
+  homeRadiusE-> setValue(_settings.readNumEntry("/KFLog/MapData/Welt2000HomeRadius", 0));
 
   if (filterE->text() != "")
     homeRadiusE->setEnabled(false);
   needUpdateWelt2000 = false;
   connect(filterE, SIGNAL(textChanged(const QString&)), SLOT(slotFilterChanged(const QString&)) );
-  connect(homeRadiusE, SIGNAL(valueChanged(int)), SLOT(slotHomeRadiusChanged(int)));
+  connect(homeRadiusE, SIGNAL(valueChanged(int)), SLOT(slotHomeRadiusChanged()));
 }
 
 void KFLogConfig::slotFilterChanged(const QString& filter) {
@@ -955,7 +1052,7 @@ void KFLogConfig::slotFilterChanged(const QString& filter) {
     homeRadiusE->setEnabled(true);
 }
 
-void KFLogConfig::slotHomeRadiusChanged(int radius) {
+void KFLogConfig::slotHomeRadiusChanged() {
   needUpdateWelt2000 = true;
 }
 
@@ -963,13 +1060,15 @@ void KFLogConfig::slotHomeRadiusChanged(int radius) {
 Setting will be overwritten by commandline switch */
 void KFLogConfig::__addWaypointTab()
 {
-  config-> setGroup("Waypoints");
-  int catalogType = config-> readNumEntry("DefaultWaypointCatalog", LastUsed);
-  QString catalogName = config-> readEntry("DefaultCatalogName", "");
+  int catalogType = _settings.readNumEntry("/KFLog/Waypoints/DefaultWaypointCatalog", LastUsed);
+  QString catalogName = _settings.readEntry("/KFLog/Waypoints/DefaultCatalogName", "");
 
-  waypointPage = addPage(tr("Waypoints"), tr("Catalog Configuration"),
-      KGlobal::instance()-> iconLoader()->loadIcon("waypoint", KIcon::NoGroup,
-          KIcon::SizeLarge));
+  QListViewItem *item = new QListViewItem(setupTree, tr("Waypoints"), "Waypoints");
+  item->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/waypoint_32.png");
+
+  waypointPage = new QFrame(this, "Catalog Configuration");
+  waypointPage->hide();
+  configLayout->addMultiCellWidget(waypointPage, 0, 0, 1, 2);
 
   QVBoxLayout *top = new QVBoxLayout(waypointPage, 5);
 
@@ -995,7 +1094,7 @@ void KFLogConfig::__addWaypointTab()
   catalogPathE-> setText(catalogName);
 
   catalogPathSearch = new QPushButton(group);
-  catalogPathSearch-> setPixmap(BarIcon("fileopen"));
+  catalogPathSearch-> setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png");
   catalogPathSearch-> setMinimumWidth(catalogPathSearch->sizeHint().width() + 5);
   catalogPathSearch-> setMinimumHeight(catalogPathSearch->sizeHint().height() + 5);
   grid-> addWidget(catalogPathSearch, 3, 1);
@@ -1014,8 +1113,6 @@ void KFLogConfig::__addWaypointTab()
   top-> addWidget(defaultCatalog, AlignLeft);
 
   slotSelectDefaultCatalog(catalogType);
-
-  config-> setGroup(0);
 }
 
 void KFLogConfig::slotDefaultWaypoint()
@@ -1043,4 +1140,73 @@ void KFLogConfig::slotSearchDefaultWaypoint()
     if(temp != 0) {
       catalogPathE-> setText(temp);
     }
+}
+
+void KFLogConfig::slotSelectFlightTypeLeftTurnColor()
+{
+  flightTypeLeftTurnColor = QColorDialog::getColor(flightTypeLeftTurnColor, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(82,14);
+  buttonPixmap->fill(flightTypeLeftTurnColor);
+  flightTypeLeftTurnColorButton->setPixmap(*buttonPixmap);
+}
+
+void KFLogConfig::slotSelectFlightTypeRightTurnColor()
+{
+  flightTypeRightTurnColor = QColorDialog::getColor(flightTypeRightTurnColor, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(82,14);
+  buttonPixmap->fill(flightTypeRightTurnColor);
+  flightTypeRightTurnColorButton->setPixmap(*buttonPixmap);
+}
+
+void KFLogConfig::slotSelectFlightTypeMixedTurnColor()
+{
+  flightTypeMixedTurnColor = QColorDialog::getColor(flightTypeMixedTurnColor, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(82,14);
+  buttonPixmap->fill(flightTypeMixedTurnColor);
+  flightTypeMixedTurnColorButton->setPixmap(*buttonPixmap);
+}
+
+void KFLogConfig::slotSelectFlightTypeStraightColor()
+{
+  flightTypeStraightColor = QColorDialog::getColor(flightTypeStraightColor, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(82,14);
+  buttonPixmap->fill(flightTypeStraightColor);
+  flightTypeStraightColorButton->setPixmap(*buttonPixmap);
+}
+
+void KFLogConfig::slotSelectFlightTypeSolidColor()
+{
+  flightTypeSolidColor = QColorDialog::getColor(flightTypeSolidColor, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(82,14);
+  buttonPixmap->fill(flightTypeSolidColor);
+  flightTypeSolidColorButton->setPixmap(*buttonPixmap);
+}
+
+void KFLogConfig::slotSelectFlightTypeEngineNoiseColor()
+{
+  flightTypeEngineNoiseColor = QColorDialog::getColor(flightTypeEngineNoiseColor, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(82,14);
+  buttonPixmap->fill(flightTypeEngineNoiseColor);
+  flightTypeEngineNoiseColorButton->setPixmap(*buttonPixmap);
+}
+
+/** this is a temporary function and it is not needed in Qt 4 */
+QString KFLogConfig::__color2String(QColor color)
+{
+  QString colstr;
+  colstr.sprintf("%d;%d;%d", color.red(), color.green(), color.blue());
+  return colstr;
+}
+
+/** this is a temporary function and it is not needed in Qt 4 */
+QColor KFLogConfig::__string2Color(QString colstr)
+{
+  QColor color(colstr.section(";", 0, 0).toInt(), colstr.section(";", 1, 1).toInt(), colstr.section(";", 2, 2).toInt());
+  return color;
 }

@@ -21,13 +21,12 @@
 #include "guicontrols/coordedit.h"
 #include "waypoint.h"
 
-#include <qwidget.h>
-#include <qlineedit.h>
 #include <qcheckbox.h>
-#include <qpushbutton.h>
-
-#include <kcombobox.h>
+#include <qcombobox.h>
 #include <qdialog.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <qwidget.h>
 
 /**
   *@short Create and edit waypoints
@@ -98,9 +97,9 @@ private slots: // Private slots
   void slotAddWaypoint();
 private:
   /**  */
-  KComboBox *waypointType;
+  QComboBox *waypointType;
   /**  */
-  KComboBox *surface;
+  QComboBox *surface;
   QPushButton *applyButton;
 };
 

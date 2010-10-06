@@ -18,7 +18,7 @@
 #ifndef CENTERTODIALOG_H
 #define CENTERTODIALOG_H
 
-#include <kdialogbase.h>
+#include <qdialog.h>
 
 #include "guicontrols/coordedit.h"
 /**
@@ -31,7 +31,7 @@
  * @author André Somers
  * @version $Id$
  */
-class CenterToDialog : public KDialogBase
+class CenterToDialog : public QDialog
 {
   Q_OBJECT
 

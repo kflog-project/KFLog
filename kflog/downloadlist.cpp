@@ -19,8 +19,6 @@
 #include "map.h"
 #include "mapcontents.h"
 
-#include <kconfig.h>
-
 DownloadList::DownloadList(){
   srcList.setAutoDelete(true);
   destList.setAutoDelete(true);
@@ -30,35 +28,35 @@ DownloadList::DownloadList(){
 DownloadList::~DownloadList(){
 }
 
-void DownloadList::copyKURL(QUrl* src, QUrl* dest){
-  QStringList::Iterator it = banList.find(src->fileName());
-  qWarning(QString("it:%1").arg(*it));
-  if ((*it)!=""){ // URL found in banList
-//    qWarning("found.");
-    return;
-  }
-  srcList.append(new QUrl(src->toString()));
-  destList.append(new QUrl(dest->toString()));
-  __schedule();
-}
+// Temporarily disabled during transition to Qt4. Use QNetworkAccessManager in Qt4.
+//void DownloadList::copyKURL(QUrl* src, QUrl* dest){
+//  QStringList::Iterator it = banList.find(src->fileName());
+//  qWarning(QString("it:%1").arg(*it));
+//  if ((*it)!=""){ // URL found in banList
+////    qWarning("found.");
+//    return;
+//  }
+//  srcList.append(new QUrl(src->toString()));
+//  destList.append(new QUrl(dest->toString()));
+//  __schedule();
+//}
 
-void DownloadList::slotDownloadFinished(KIO::Job* job){
-  QStringList errorStrings;
-  downloadRunning=false;
-  int error;
-  error=job->error();
-  KConfig* config = KGlobal::config();
-  config->setGroup("General Options");
-  if (error){
-    if (errorList.findIndex(error)==-1){
-      job->showErrorDialog();
-      errorList.append(error);
-    }
-    banList.prepend(actualURL);
-  }
-  emit downloadFinished();
-  __schedule();
-}
+// Temporarily disabled during transition to Qt4. Use QNetworkAccessManager in Qt4.
+//void DownloadList::slotDownloadFinished(KIO::Job* job){
+//  QStringList errorStrings;
+//  downloadRunning=false;
+//  int error;
+//  error=job->error();
+//  if (error){
+//    if (errorList.findIndex(error)==-1){
+//      job->showErrorDialog();
+//      errorList.append(error);
+//    }
+//    banList.prepend(actualURL);
+//  }
+//  emit downloadFinished();
+//  __schedule();
+//}
 
 void DownloadList::__schedule(){
   if (downloadRunning)
@@ -69,11 +67,12 @@ void DownloadList::__schedule(){
     QUrl* dest = destList.take(0);
     actualURL=src->fileName();
     qWarning(QString("actualURL:%1").arg(actualURL));
-    KIO::Job* job = new KIO::FileCopyJob(*src, *dest, 0644, false, false, false, true);
-//    delete src;
-//    delete dest;
-    connect( job, SIGNAL(result(KIO::Job*)),
-             this, SLOT(slotDownloadFinished(KIO::Job*)) );
+// Temporarily disabled during transition to Qt4. Use QNetworkAccessManager in Qt4.
+//    KIO::Job* job = new KIO::FileCopyJob(*src, *dest, 0644, false, false, false, true);
+////    delete src;
+////    delete dest;
+//    connect( job, SIGNAL(result(KIO::Job*)),
+//             this, SLOT(slotDownloadFinished(KIO::Job*)) );
   }
   else {
     emit allDownloadsFinished();

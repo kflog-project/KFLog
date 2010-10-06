@@ -22,7 +22,7 @@
 
 #include <qlcdnumber.h>
 #include <qslider.h>
-#include <qwidget.h>
+#include <qframe.h>
 
 class KFLogApp;
 
@@ -35,7 +35,7 @@ class KFLogApp;
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
-class MapControlView : public QWidget
+class MapControlView : public QFrame
 {
   Q_OBJECT
 

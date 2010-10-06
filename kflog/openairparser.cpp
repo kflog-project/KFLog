@@ -21,27 +21,25 @@
 #include <unistd.h>
 
 //Qt includes
+#include <qdir.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qregexp.h>
+#include <qsettings.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qtextstream.h>
 
-#include "kconfig.h"
-#include "kglobal.h"
-#include <kstandarddirs.h>
-
 //project includes
-#include "resource.h"
 #include "airspace.h"
-#include "openairparser.h"
+#include "filetools.h"
+#include "distance.h"
 #include "mapcalc.h"
 #include "mapmatrix.h"
 #include "mapcontents.h"
+#include "openairparser.h"
 #include "projectionbase.h"
-#include "filetools.h"
-#include "distance.h"
+#include "resource.h"
 
 // All is prepared for additional calculation, storage and
 // reconstruction of a bounding box. Be free to switch on/off it via
@@ -84,15 +82,12 @@ OpenAirParser::~OpenAirParser()
 
 uint OpenAirParser::load( QPtrList<Airspace>& list )
 {
+  extern QSettings _settings;
   QTime t;
   t.start();
   uint loadCounter = 0; // number of successfully loaded files
 
-  KStandardDirs* globalDirs = KGlobal::dirs();
-  KConfig* config = KGlobal::config();
-  config->setGroup("Path");
-  QString mapDir = config->readEntry("DefaultMapDirectory",
-      globalDirs->findResource("data", "kflog/mapdata/"));
+  QString mapDir = _settings.readEntry("/KFLog/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata/");
   QStringList preselect;
 
   MapContents::addDir(preselect, mapDir + "/airspaces", "*.txt");

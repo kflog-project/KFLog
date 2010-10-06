@@ -17,26 +17,20 @@
 
 #include "kflogstartlogo.h"
 
-#include <kapp.h>
-#include <kstddirs.h>
-
+#include <qapplication.h>
 #include <qbitmap.h>
+#include <qdir.h>
 #include <qpixmap.h>
 
-//KFLogStartLogo::KFLogStartLogo()
-//    : QWidget( 0, "KFlogStartWindow",  WStyle_Customize | WStyle_StaysOnTop |
-//             WStyle_NoBorder )
-//{
 KFLogStartLogo::KFLogStartLogo()
     : QWidget( 0, "KFlogStartWindow",  WStyle_Customize | WStyle_NoBorder )
 {
-//  QPixmap pm(locate("appdata", "pics/entwurf_splash.png"));
-  QPixmap pm(locate("appdata", "pics/splash.png"));
+  QPixmap pm(QDir::homeDirPath() + "/.kflog/pics/splash.png");
 
   setBackgroundPixmap(pm);
-  setMask(QBitmap(locate("appdata", "pics/splash_mask.png")));
+  setMask(QBitmap(QDir::homeDirPath() + "/.kflog/pics/splash_mask.png"));
 
-  QWidget *desktop = KApplication::desktop();
+  QWidget *desktop = QApplication::desktop();
   QRect rect = desktop->geometry();
   move(rect.x() + (rect.width() - pm.width())/2,
        rect.y() + (rect.height() - pm.height())/2);

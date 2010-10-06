@@ -17,8 +17,6 @@
 #include "flightgrouplistviewitem.h"
 #include "flight.h"
 #include "flightgroup.h"
-#include <kglobal.h>
-#include <kiconloader.h>
 
 FlightGroupListViewItem::FlightGroupListViewItem(QListViewItem * parent, FlightGroup * flightGroup):QListViewItem(parent){
   this->flightGroup=flightGroup;

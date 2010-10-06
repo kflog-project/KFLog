@@ -15,19 +15,15 @@
 **
 ***********************************************************************/
 
-#include "waypointdialog.h"
-#include "translationlist.h"
-#include "kflog.h"
-#include "mapcontents.h"
 #include "airport.h"
+#include "mapcontents.h"
+#include "translationlist.h"
+#include "waypointdialog.h"
 
 #include <qlayout.h>
 #include <qlabel.h>
 
-#include <kseparator.h>
-#include <kapp.h>
-
-extern TranslationList surfaces;
+extern TranslationList surfaceTypes;
 extern TranslationList waypointTypes;
 
 WaypointDialog::WaypointDialog(QWidget *parent, const char *name)
@@ -42,7 +38,7 @@ WaypointDialog::WaypointDialog(QWidget *parent, const char *name)
     waypointType->insertItem(te->text);
   }
 
-  for (te = surfaces.first(); te != 0; te = surfaces.next()) {
+  for (te = surfaceTypes.first(); te != 0; te = surfaceTypes.next()) {
     surface->insertItem(te->text);
   }
   setSurface(Airport::NotSet);
@@ -88,8 +84,8 @@ void WaypointDialog::__initDialog()
   l = new QLabel(description, QString("%1:").arg(tr("&Description")), this);
   layout->addWidget(l, 0, 1);
 
-  waypointType = new KComboBox(false, this);
-  waypointType->setCompletionMode(KGlobalSettings::CompletionAuto);
+  waypointType = new QComboBox(false, this);
+  waypointType->setAutoCompletion(true);
   layout->addWidget(waypointType, 1, 2);
   l = new QLabel(waypointType, QString("%1:").arg(tr("&Type")), this);
   layout->addWidget(l, 0, 2);
@@ -132,7 +128,7 @@ void WaypointDialog::__initDialog()
   l = new QLabel(length, tr("%1 (m):").arg(tr("Len&gth")), this);
   layout->addWidget(l, 6, 1);
 
-  surface = new KComboBox(false, this);
+  surface = new QComboBox(false, this);
   layout->addWidget(surface, 7, 2);
   l = new QLabel(surface, QString("%1:").arg(tr("&Surface")), this);
   layout->addWidget(l, 6, 2);
@@ -143,7 +139,6 @@ void WaypointDialog::__initDialog()
   layout->addWidget(l, 8, 0);
 
   topLayout->addLayout(layout);
-  topLayout->addWidget(new KSeparator(this));
   topLayout->addLayout(buttons);
 }
 
@@ -219,7 +214,7 @@ int WaypointDialog::getSurface()
   int s = surface->currentItem();
 
   if (s != -1) {
-    s = surfaces.at(s)->id;
+    s = surfaceTypes.at(s)->id;
   }
 
   return s;
@@ -240,7 +235,7 @@ translate internal id to index */
 void WaypointDialog::setSurface(int s)
 {
   if (s != -1) {
-    s = surfaces.idxById(s);
+    s = surfaceTypes.idxById(s);
   }
   surface->setCurrentItem(s);
 }

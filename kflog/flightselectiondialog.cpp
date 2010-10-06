@@ -17,12 +17,11 @@
 
 #include "flightselectiondialog.h"
 
+#include <qdir.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
-
-#include <kiconloader.h>
 
 FlightSelectionDialog::FlightSelectionDialog(QWidget *parent, const char *name )
  : QDialog(parent, name, true)
@@ -66,11 +65,11 @@ void FlightSelectionDialog::__initDialog()
 
   smallButtons->addStretch();
   b = new QPushButton(this);
-  b->setPixmap(KGlobal::instance()->iconLoader()->loadIcon("up", KIcon::NoGroup, KIcon::SizeSmall));
+  b->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_up_16.png");
   connect(b, SIGNAL(clicked()), SLOT(slotMoveUp()));
   smallButtons->addWidget(b);
   b = new QPushButton(this);
-  b->setPixmap(KGlobal::instance()->iconLoader()->loadIcon("down", KIcon::NoGroup, KIcon::SizeSmall));
+  b->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_down_16.png");
   connect(b, SIGNAL(clicked()), SLOT(slotMoveDown()));
   smallButtons->addWidget(b);
   smallButtons->addStretch();
@@ -82,19 +81,19 @@ void FlightSelectionDialog::__initDialog()
 
   middleLayout->addStretch();
   b = new QPushButton(this);
-  b->setPixmap(KGlobal::instance()->iconLoader()->loadIcon("forward", KIcon::NoGroup, KIcon::SizeSmall));
+  b->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_forward_16.png");
   connect(b, SIGNAL(clicked()), SLOT(slotAddOne()));
   middleLayout->addWidget(b);
   b = new QPushButton(this);
-  b->setPixmap(KGlobal::instance()->iconLoader()->loadIcon("stepforward", KIcon::NoGroup, KIcon::SizeSmall));
+  b->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_2rightarrow_16.png");
   connect(b, SIGNAL(clicked()), SLOT(slotAddAll()));
   middleLayout->addWidget(b);
   b = new QPushButton(this);
-  b->setPixmap(KGlobal::instance()->iconLoader()->loadIcon("back", KIcon::NoGroup, KIcon::SizeSmall));
+  b->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_back_16.png");
   connect(b, SIGNAL(clicked()), SLOT(slotRemoveOne()));
   middleLayout->addWidget(b);
   b = new QPushButton(this);
-  b->setPixmap(KGlobal::instance()->iconLoader()->loadIcon("stepback", KIcon::NoGroup, KIcon::SizeSmall));
+  b->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_2leftarrow_16.png");
   connect(b, SIGNAL(clicked()), SLOT(slotRemoveAll()));
   middleLayout->addWidget(b);
   middleLayout->addStretch();

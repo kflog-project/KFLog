@@ -19,10 +19,8 @@
 #include "flighttask.h"
 #include "waypoint.h"
 
+#include <qdir.h>
 #include <qurl.h>
-
-#include <kglobal.h>
-#include <kiconloader.h>
 
 TaskListViewItem::TaskListViewItem(QListViewItem * parent,
                                    FlightTask * task,
@@ -76,7 +74,7 @@ void TaskListViewItem::createChildren(){
     int wpCount=task->getWPList().count();
     QListViewItem * wpSubItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Waypoints"),QObject::tr("%1 waypoints in task").arg(wpCount));
     wpSubItem->setSelectable(false);
-    wpSubItem->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("waypoint", KIcon::NoGroup, KIcon::SizeSmall));
+    wpSubItem->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/waypoint_16.png");
 
     for (int i=0;i<wpCount;i++) {
       wpName=QObject::tr("Turnpoint");
@@ -87,7 +85,7 @@ void TaskListViewItem::createChildren(){
 
       subItem=new QListViewItem(wpSubItem,subItem,wpName,task->getWPList().at(i)->name);
       subItem->setSelectable(false);
-      subItem->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("centerwaypoint", KIcon::NoGroup, KIcon::SizeSmall));
+      subItem->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/centerwaypoint_16.png");
     }
   }
 }

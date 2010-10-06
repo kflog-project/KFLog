@@ -17,8 +17,7 @@
 
 #include "glidersite.h"
 
-#include <kiconloader.h>
-#include <kstddirs.h>
+#include <qdir.h>
 
 GliderSite::GliderSite(QString n, QString icao, QString gps, WGSPoint wgsPos,
         QPoint pos, unsigned int elev, const char* f, bool w)
@@ -58,7 +57,7 @@ bool GliderSite::isWinch() const { return winch; }
 QString GliderSite::getInfoString() const
 {
   QString text;
-  QString path = KGlobal::dirs()->findResource("appdata", "mapicons/");
+  QString path = QDir::homeDirPath() + "/.kflog/mapicons/";
 
   // @AP: suppress an empty frequency
   QString tmp;

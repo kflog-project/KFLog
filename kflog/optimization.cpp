@@ -24,8 +24,7 @@
 
 #include "optimization.h"
 
-#include <kapplication.h>
-
+#include <qapplication.h>
 #include <qmessagebox.h>
 #include <qptrlist.h>
 
@@ -139,7 +138,7 @@ void Optimization::run(){
     wLeg = weight(k);
     
     for (i=0;i<n-1;i++){
-      kapp->processEvents();
+      qApp->processEvents();
       if (stopit){
           free(L);
           free(w);

@@ -36,4 +36,23 @@ Things that disappeared while we got rid of KDE
 - Cumulus flight recorder plugin -- this thing wouldn't work with
   the current Cumulus versions anyhow.
 
+- automatic map download disabled, waiting for Qt4 classes (see downloadlist.cpp
+  and mapcontents.cpp)
+  
+- dockwidgets are standard turned off in the mainwindow, because the layout is
+  ugly. Hopefully it is solvable in Qt4. In the meantim they can be made visible
+  by selecting them in the Settings menu.
+  
+- The positions of the dockwidgets and toolbar are not stored when KFLog quits.
 
+- KAbout has been removed. The contents is still available in main.cpp.
+  Qt doesn't have an about class, so this has to be written by ourselfs.
+
+- The shortcuts and toolbar cannot be edited anymore, because Qt lacks the
+  widgets that KDE had.
+
+- In some messageboxes there was a checkbox to disable the same message in the
+  future. Also, some messageboxes of recorderdialog contained a small screen with
+  detailed information about an error. QMessageBox doesn't support this and
+  therefore it has been removed.
+    

@@ -16,66 +16,14 @@
 ***********************************************************************/
 
 
-#include <kglobal.h>
-#include <kconfig.h>
-#include <kstddirs.h>
+#include <qdir.h>
 #include <qnamespace.h>
+#include <qsettings.h>
 
 #include "flight.h"
 #include "mapdefaults.h"
 
-#define READ_TOPO(a,b) \
-  topographyColorList.append(new QColor(config->readColorEntry(a, new b)));
-
-#define READ_BORDER(a) \
-    a[0] = config->readBoolEntry("Border 1", true); \
-    a[1] = config->readBoolEntry("Border 2", true); \
-    a[2] = config->readBoolEntry("Border 3", true); \
-    a[3] = config->readBoolEntry("Border 4", true); \
-    a[4] = config->readBoolEntry("Print Border 1", true); \
-    a[5] = config->readBoolEntry("Print Border 2", true);
-
-#define READ_PEN(G, A, B, C1, C2, C3, C4, C5, C6, P1, P2, P3, P4, P5, P6, \
-    S1, S2, S3, S4, S5, S6) \
-  config->setGroup(G); \
-  READ_BORDER(B) \
-  A.append(new QPen(config->readColorEntry("Color 1", new C1), \
-        config->readNumEntry("Pen Size 1", P1), \
-        (Qt::PenStyle)config->readNumEntry("Pen Style 1", S1))); \
-  A.append(new QPen(config->readColorEntry("Color 2", new C2), \
-        config->readNumEntry("Pen Size 2", P2), \
-        (Qt::PenStyle)config->readNumEntry("Pen Style 2", S2))); \
-  A.append(new QPen(config->readColorEntry("Color 3", new C3), \
-        config->readNumEntry("Pen Size 3", P3), \
-        (Qt::PenStyle)config->readNumEntry("Pen Style 3", S3))); \
-  A.append(new QPen(config->readColorEntry("Color 4", new C4), \
-        config->readNumEntry("Pen Size 4", P4), \
-        (Qt::PenStyle)config->readNumEntry("Pen Style 4", S4))); \
-  A.append(new QPen(config->readColorEntry("Print Color 1", new C5), \
-        config->readNumEntry("Print Pen Size 1", P5), \
-        (Qt::PenStyle)config->readNumEntry("Print Pen Style 1", S5))); \
-  A.append(new QPen(config->readColorEntry("Print Color 2", new C6), \
-        config->readNumEntry("Print Pen Size 2", P6), \
-        (Qt::PenStyle)config->readNumEntry("Print Pen Style 2", S6)));
-
-#define READ_PEN_BRUSH(G, a, B, A, C1, C2, C3, C4, C5, C6, P1, P2, P3, P4, P5, P6, \
-    S1, S2, S3, S4, S5, S6, C7, C8, C9, C10, C11, C12, S7, S8, S9, S10, S11, S12) \
-  READ_PEN(G, a, B, C1, C2, C3, C4, C5, C6, P1, P2, P3, P4, P5, P6, \
-        S1, S2, S3, S4, S5, S6) \
-  A.append(new QBrush(config->readColorEntry("Brush Color 1", new C7), \
-        (Qt::BrushStyle)config->readNumEntry("Brush Style 1", S7))); \
-  A.append(new QBrush(config->readColorEntry("Brush Color 2", new C8), \
-        (Qt::BrushStyle)config->readNumEntry("Brush Style 2", S8))); \
-  A.append(new QBrush(config->readColorEntry("Brush Color 3", new C9), \
-        (Qt::BrushStyle)config->readNumEntry("Brush Style 3", S9))); \
-  A.append(new QBrush(config->readColorEntry("Brush Color 4", new C10), \
-        (Qt::BrushStyle)config->readNumEntry("Brush Style 4", S10))); \
-  A.append(new QBrush(config->readColorEntry("Print Brush Color 1", new C11), \
-        (Qt::BrushStyle)config->readNumEntry("Print Brush Style 1", S11))); \
-  A.append(new QBrush(config->readColorEntry("Print Brush Color 2", new C12), \
-        (Qt::BrushStyle)config->readNumEntry("Print Brush Style 2", S12)));
-
-
+extern QSettings _settings;
 
 MapConfig::MapConfig()
   : scaleIndex(0), printScaleIndex(0), isSwitch(false)
@@ -120,7 +68,6 @@ MapConfig::~MapConfig()
 
 void MapConfig::slotReadConfig()
 {
-  KConfig* config = KGlobal::config();
   /* Unfortunately, a ~QList() doesn't work, so we must remove all
    * item manualy ;-(
    */
@@ -175,165 +122,138 @@ void MapConfig::slotReadConfig()
   while(faiAreaHigh500PenList.remove());
   while(faiAreaHigh500BrushList.remove());
 
-  config->setGroup("Topography");
-  READ_TOPO("SubTerrain", COLOR_LEVEL_SUB)
-  READ_TOPO("0M",    COLOR_LEVEL_0)
-  READ_TOPO("10M",   COLOR_LEVEL_10)
-  READ_TOPO("25M",   COLOR_LEVEL_25)
-  READ_TOPO("50M",   COLOR_LEVEL_50)
-  READ_TOPO("75M",   COLOR_LEVEL_75)
-  READ_TOPO("100M",  COLOR_LEVEL_100)
-  READ_TOPO("150M",  COLOR_LEVEL_150)
-  READ_TOPO("200M",  COLOR_LEVEL_200)
-  READ_TOPO("250M",  COLOR_LEVEL_250)
-  READ_TOPO("300M",  COLOR_LEVEL_300)
-  READ_TOPO("350M",  COLOR_LEVEL_350)
-  READ_TOPO("400M",  COLOR_LEVEL_400)
-  READ_TOPO("450M",  COLOR_LEVEL_450)
-  READ_TOPO("500M",  COLOR_LEVEL_500)
-  READ_TOPO("600M",  COLOR_LEVEL_600)
-  READ_TOPO("700M",  COLOR_LEVEL_700)
-  READ_TOPO("800M",  COLOR_LEVEL_800)
-  READ_TOPO("900M",  COLOR_LEVEL_900)
-  READ_TOPO("1000M", COLOR_LEVEL_1000)
-  READ_TOPO("1250M", COLOR_LEVEL_1250)
-  READ_TOPO("1500M", COLOR_LEVEL_1500)
-  READ_TOPO("1750M", COLOR_LEVEL_1750)
-  READ_TOPO("2000M", COLOR_LEVEL_2000)
-  READ_TOPO("2250M", COLOR_LEVEL_2250)
-  READ_TOPO("2500M", COLOR_LEVEL_2500)
-  READ_TOPO("2750M", COLOR_LEVEL_2750)
-  READ_TOPO("3000M", COLOR_LEVEL_3000)
-  READ_TOPO("3250M", COLOR_LEVEL_3250)
-  READ_TOPO("3500M", COLOR_LEVEL_3500)
-  READ_TOPO("3750M", COLOR_LEVEL_3750)
-  READ_TOPO("4000M", COLOR_LEVEL_4000)
-  READ_TOPO("4250M", COLOR_LEVEL_4250)
-  READ_TOPO("4500M", COLOR_LEVEL_4500)
-  READ_TOPO("4750M", COLOR_LEVEL_4750)
-  READ_TOPO("5000M", COLOR_LEVEL_5000)
-  READ_TOPO("5250M", COLOR_LEVEL_5250)
-  READ_TOPO("5500M", COLOR_LEVEL_5500)
-  READ_TOPO("5750M", COLOR_LEVEL_5750)
-  READ_TOPO("6000M", COLOR_LEVEL_6000)
-  READ_TOPO("6250M", COLOR_LEVEL_6250)
-  READ_TOPO("6500M", COLOR_LEVEL_6500)
-  READ_TOPO("6750M", COLOR_LEVEL_6750)
-  READ_TOPO("7000M", COLOR_LEVEL_7000)
-  READ_TOPO("7250M", COLOR_LEVEL_7250)
-  READ_TOPO("7500M", COLOR_LEVEL_7500)
-  READ_TOPO("7750M", COLOR_LEVEL_7750)
-  READ_TOPO("8000M", COLOR_LEVEL_8000)
-  READ_TOPO("8250M", COLOR_LEVEL_8250)
-  READ_TOPO("8500M", COLOR_LEVEL_8500)
-  READ_TOPO("8750M", COLOR_LEVEL_8750)
+  __readTopo("SubTerrain", COLOR_LEVEL_SUB);
+  __readTopo("0M",    COLOR_LEVEL_0);
+  __readTopo("10M",   COLOR_LEVEL_10);
+  __readTopo("25M",   COLOR_LEVEL_25);
+  __readTopo("50M",   COLOR_LEVEL_50);
+  __readTopo("75M",   COLOR_LEVEL_75);
+  __readTopo("100M",  COLOR_LEVEL_100);
+  __readTopo("150M",  COLOR_LEVEL_150);
+  __readTopo("200M",  COLOR_LEVEL_200);
+  __readTopo("250M",  COLOR_LEVEL_250);
+  __readTopo("300M",  COLOR_LEVEL_300);
+  __readTopo("350M",  COLOR_LEVEL_350);
+  __readTopo("400M",  COLOR_LEVEL_400);
+  __readTopo("450M",  COLOR_LEVEL_450);
+  __readTopo("500M",  COLOR_LEVEL_500);
+  __readTopo("600M",  COLOR_LEVEL_600);
+  __readTopo("700M",  COLOR_LEVEL_700);
+  __readTopo("800M",  COLOR_LEVEL_800);
+  __readTopo("900M",  COLOR_LEVEL_900);
+  __readTopo("1000M", COLOR_LEVEL_1000);
+  __readTopo("1250M", COLOR_LEVEL_1250);
+  __readTopo("1500M", COLOR_LEVEL_1500);
+  __readTopo("1750M", COLOR_LEVEL_1750);
+  __readTopo("2000M", COLOR_LEVEL_2000);
+  __readTopo("2250M", COLOR_LEVEL_2250);
+  __readTopo("2500M", COLOR_LEVEL_2500);
+  __readTopo("2750M", COLOR_LEVEL_2750);
+  __readTopo("3000M", COLOR_LEVEL_3000);
+  __readTopo("3250M", COLOR_LEVEL_3250);
+  __readTopo("3500M", COLOR_LEVEL_3500);
+  __readTopo("3750M", COLOR_LEVEL_3750);
+  __readTopo("4000M", COLOR_LEVEL_4000);
+  __readTopo("4250M", COLOR_LEVEL_4250);
+  __readTopo("4500M", COLOR_LEVEL_4500);
+  __readTopo("4750M", COLOR_LEVEL_4750);
+  __readTopo("5000M", COLOR_LEVEL_5000);
+  __readTopo("5250M", COLOR_LEVEL_5250);
+  __readTopo("5500M", COLOR_LEVEL_5500);
+  __readTopo("5750M", COLOR_LEVEL_5750);
+  __readTopo("6000M", COLOR_LEVEL_6000);
+  __readTopo("6250M", COLOR_LEVEL_6250);
+  __readTopo("6500M", COLOR_LEVEL_6500);
+  __readTopo("6750M", COLOR_LEVEL_6750);
+  __readTopo("7000M", COLOR_LEVEL_7000);
+  __readTopo("7250M", COLOR_LEVEL_7250);
+  __readTopo("7500M", COLOR_LEVEL_7500);
+  __readTopo("7750M", COLOR_LEVEL_7750);
+  __readTopo("8000M", COLOR_LEVEL_8000);
+  __readTopo("8250M", COLOR_LEVEL_8250);
+  __readTopo("8500M", COLOR_LEVEL_8500);
+  __readTopo("8750M", COLOR_LEVEL_8750);
   
 
-  READ_PEN("Road", roadPenList, roadBorder,
+  __readPen("Road", &roadPenList, roadBorder,
         ROAD_COLOR_1, ROAD_COLOR_2, ROAD_COLOR_3, ROAD_COLOR_4,
         PRINT_ROAD_COLOR_1, PRINT_ROAD_COLOR_2,
         ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4,
         PRINT_ROAD_PEN_1, PRINT_ROAD_PEN_2,
         ROAD_PEN_STYLE_1, ROAD_PEN_STYLE_2, ROAD_PEN_STYLE_3, ROAD_PEN_STYLE_4,
-        PRINT_ROAD_PEN_STYLE_1, PRINT_ROAD_PEN_STYLE_2)
+        PRINT_ROAD_PEN_STYLE_1, PRINT_ROAD_PEN_STYLE_2);
 
-  READ_PEN("Trail", trailPenList, trailBorder,
+  __readPen("Trail", &trailPenList, trailBorder,
         TRAIL_COLOR_1, TRAIL_COLOR_2, TRAIL_COLOR_3, TRAIL_COLOR_4,
         PRINT_TRAIL_COLOR_1, PRINT_TRAIL_COLOR_2,
         TRAIL_PEN_1, TRAIL_PEN_2, TRAIL_PEN_3, TRAIL_PEN_4,
         PRINT_TRAIL_PEN_1, PRINT_TRAIL_PEN_2,
         TRAIL_PEN_STYLE_1, TRAIL_PEN_STYLE_2, TRAIL_PEN_STYLE_3, TRAIL_PEN_STYLE_4,
-        PRINT_TRAIL_PEN_STYLE_1, PRINT_TRAIL_PEN_STYLE_2)
+        PRINT_TRAIL_PEN_STYLE_1, PRINT_TRAIL_PEN_STYLE_2);
 
-  READ_PEN("River", riverPenList, riverBorder,
+  __readPen("River", &riverPenList, riverBorder,
         RIVER_COLOR_1, RIVER_COLOR_2, RIVER_COLOR_3, RIVER_COLOR_4,
         PRINT_RIVER_COLOR_1, PRINT_RIVER_COLOR_2,
         RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4,
         PRINT_RIVER_PEN_1, PRINT_RIVER_PEN_2,
         RIVER_PEN_STYLE_1, RIVER_PEN_STYLE_2, RIVER_PEN_STYLE_3, RIVER_PEN_STYLE_4,
-        PRINT_RIVER_PEN_STYLE_1, PRINT_RIVER_PEN_STYLE_2)
+        PRINT_RIVER_PEN_STYLE_1, PRINT_RIVER_PEN_STYLE_2);
 
-  READ_PEN("Canal", canalPenList, canalBorder,
+  __readPen("Canal", &canalPenList, canalBorder,
         CANAL_COLOR_1, CANAL_COLOR_2, CANAL_COLOR_3, CANAL_COLOR_4,
         PRINT_CANAL_COLOR_1, PRINT_CANAL_COLOR_2,
         CANAL_PEN_1, CANAL_PEN_2, CANAL_PEN_3, CANAL_PEN_4,
         PRINT_CANAL_PEN_1, PRINT_CANAL_PEN_2,
         CANAL_PEN_STYLE_1, CANAL_PEN_STYLE_2, CANAL_PEN_STYLE_3, CANAL_PEN_STYLE_4,
-        PRINT_CANAL_PEN_STYLE_1, PRINT_CANAL_PEN_STYLE_2)
+        PRINT_CANAL_PEN_STYLE_1, PRINT_CANAL_PEN_STYLE_2);
 
-  READ_PEN("Rail", railPenList, railBorder,
+  __readPen("Rail", &railPenList, railBorder,
         RAIL_COLOR_1, RAIL_COLOR_2, RAIL_COLOR_3, RAIL_COLOR_4,
         PRINT_RAIL_COLOR_1, PRINT_RAIL_COLOR_2,
         RAIL_PEN_1, RAIL_PEN_2, RAIL_PEN_3, RAIL_PEN_4,
         PRINT_RAIL_PEN_1, PRINT_RAIL_PEN_2,
         RAIL_PEN_STYLE_1, RAIL_PEN_STYLE_2, RAIL_PEN_STYLE_3, RAIL_PEN_STYLE_4,
-        PRINT_RAIL_PEN_STYLE_1, PRINT_RAIL_PEN_STYLE_2)
+        PRINT_RAIL_PEN_STYLE_1, PRINT_RAIL_PEN_STYLE_2);
 
-  READ_PEN("Rail_D", rail_dPenList, rail_dBorder,
+  __readPen("Rail_D", &rail_dPenList, rail_dBorder,
         RAIL_D_COLOR_1, RAIL_D_COLOR_2, RAIL_D_COLOR_3, RAIL_D_COLOR_4,
         PRINT_RAIL_D_COLOR_1, PRINT_RAIL_D_COLOR_2,
         RAIL_D_PEN_1, RAIL_D_PEN_2, RAIL_D_PEN_3, RAIL_D_PEN_4,
         PRINT_RAIL_D_PEN_1, PRINT_RAIL_D_PEN_2,
         RAIL_D_PEN_STYLE_1, RAIL_D_PEN_STYLE_2, RAIL_D_PEN_STYLE_3, RAIL_D_PEN_STYLE_4,
-        PRINT_RAIL_D_PEN_STYLE_1, PRINT_RAIL_D_PEN_STYLE_2)
+        PRINT_RAIL_D_PEN_STYLE_1, PRINT_RAIL_D_PEN_STYLE_2);
 
-  READ_PEN("Aerial_Cable", aerialcablePenList, aerialcableBorder,
+  __readPen("Aerial_Cable", &aerialcablePenList, aerialcableBorder,
         AERIAL_CABLE_COLOR_1, AERIAL_CABLE_COLOR_2, AERIAL_CABLE_COLOR_3, AERIAL_CABLE_COLOR_4,
         PRINT_AERIAL_CABLE_COLOR_1, PRINT_AERIAL_CABLE_COLOR_2,
         AERIAL_CABLE_PEN_1, AERIAL_CABLE_PEN_2, AERIAL_CABLE_PEN_3, AERIAL_CABLE_PEN_4,
         PRINT_AERIAL_CABLE_PEN_1, PRINT_AERIAL_CABLE_PEN_2,
         AERIAL_CABLE_PEN_STYLE_1, AERIAL_CABLE_PEN_STYLE_2, AERIAL_CABLE_PEN_STYLE_3, AERIAL_CABLE_PEN_STYLE_4,
-        PRINT_AERIAL_CABLE_PEN_STYLE_1, PRINT_AERIAL_CABLE_PEN_STYLE_2)
+        PRINT_AERIAL_CABLE_PEN_STYLE_1, PRINT_AERIAL_CABLE_PEN_STYLE_2);
 
 
-  READ_PEN("Highway", highwayPenList, highwayBorder,
+  __readPen("Highway", &highwayPenList, highwayBorder,
         HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
         PRINT_HIGH_COLOR_1, PRINT_HIGH_COLOR_2,
         HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4,
         PRINT_HIGH_PEN_1, PRINT_HIGH_PEN_2,
         HIGH_PEN_STYLE_1, HIGH_PEN_STYLE_2, HIGH_PEN_STYLE_3, HIGH_PEN_STYLE_4,
-        PRINT_HIGH_PEN_STYLE_1, PRINT_HIGH_PEN_STYLE_2)
-  /*
-   * In version <= 2.0.1, the fillcolor of cities is called "Color" instead
-   * of "Brush Color", so we must look, which version of configfile we read.
-   */
-  config->setGroup("General Options");
-  if(config->hasKey("Version") && config->readEntry("Version") >= "2.0.2")
-    {
-      // PenStyle and BrushStyle are not used for cities ...
-      READ_PEN_BRUSH("City", cityPenList, cityBorder, cityBrushList,
-            CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3,
-            CITY_COLOR_4, PRINT_CITY_COLOR_1, PRINT_CITY_COLOR_2,
-            CITY_PEN_1, CITY_PEN_2, CITY_PEN_3, CITY_PEN_4,
-            PRINT_CITY_PEN_1, PRINT_CITY_PEN_2,
-            Qt::SolidLine, Qt::SolidLine, Qt::SolidLine, Qt::SolidLine,
-            Qt::SolidLine, Qt::SolidLine,
-            CITY_BRUSH_COLOR_1, CITY_BRUSH_COLOR_2,
-            CITY_BRUSH_COLOR_3, CITY_BRUSH_COLOR_4,
-            PRINT_CITY_BRUSH_COLOR_1, PRINT_CITY_BRUSH_COLOR_2,
-            Qt::SolidPattern, Qt::SolidPattern, Qt::SolidPattern,
-            Qt::SolidPattern, Qt::SolidPattern, Qt::SolidPattern)
-    }
-  else
-    {
-      // We assume to have an old configfile ...
-      config->setGroup("City");
-      cityPenList.append(new QPen(CITY_COLOR_1, 1));
-      cityPenList.append(new QPen(CITY_COLOR_2, 1));
-      cityPenList.append(new QPen(CITY_COLOR_3, 1));
-      cityPenList.append(new QPen(CITY_COLOR_4, 1));
-      cityPenList.append(new QPen(PRINT_CITY_COLOR_1, 1));
-      cityPenList.append(new QPen(PRINT_CITY_COLOR_2, 1));
-      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_1, Qt::SolidPattern));
-      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_2, Qt::SolidPattern));
-      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_3, Qt::SolidPattern));
-      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_4, Qt::SolidPattern));
-      cityBrushList.append(new QBrush(PRINT_CITY_BRUSH_COLOR_1, Qt::SolidPattern));
-      cityBrushList.append(new QBrush(PRINT_CITY_BRUSH_COLOR_2, Qt::SolidPattern));
-      READ_BORDER(cityBorder);
-    }
+        PRINT_HIGH_PEN_STYLE_1, PRINT_HIGH_PEN_STYLE_2);
 
-  READ_PEN_BRUSH("Forest", forestPenList, forestBorder, forestBrushList,
+  __readPenBrush("City", &cityPenList, cityBorder, &cityBrushList,
+        CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3,
+        CITY_COLOR_4, PRINT_CITY_COLOR_1, PRINT_CITY_COLOR_2,
+        CITY_PEN_1, CITY_PEN_2, CITY_PEN_3, CITY_PEN_4,
+        PRINT_CITY_PEN_1, PRINT_CITY_PEN_2,
+        Qt::SolidLine, Qt::SolidLine, Qt::SolidLine, Qt::SolidLine,
+        Qt::SolidLine, Qt::SolidLine,
+        CITY_BRUSH_COLOR_1, CITY_BRUSH_COLOR_2,
+        CITY_BRUSH_COLOR_3, CITY_BRUSH_COLOR_4,
+        PRINT_CITY_BRUSH_COLOR_1, PRINT_CITY_BRUSH_COLOR_2,
+        Qt::SolidPattern, Qt::SolidPattern, Qt::SolidPattern,
+        Qt::SolidPattern, Qt::SolidPattern, Qt::SolidPattern);
+
+  __readPenBrush("Forest", &forestPenList, forestBorder, &forestBrushList,
         FRST_COLOR_1, FRST_COLOR_2, FRST_COLOR_3, FRST_COLOR_4,
         PRINT_FRST_COLOR_1, PRINT_FRST_COLOR_2,
         FRST_PEN_1, FRST_PEN_2, FRST_PEN_3, FRST_PEN_4,
@@ -345,9 +265,9 @@ void MapConfig::slotReadConfig()
         PRINT_FRST_BRUSH_COLOR_1, PRINT_FRST_BRUSH_COLOR_2,
         FRST_BRUSH_STYLE_1, FRST_BRUSH_STYLE_2,
         FRST_BRUSH_STYLE_3, FRST_BRUSH_STYLE_4,
-        PRINT_FRST_BRUSH_STYLE_1, PRINT_FRST_BRUSH_STYLE_2)
+        PRINT_FRST_BRUSH_STYLE_1, PRINT_FRST_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("Glacier", glacierPenList, glacierBorder, glacierBrushList,
+  __readPenBrush("Glacier", &glacierPenList, glacierBorder, &glacierBrushList,
         GLACIER_COLOR_1, GLACIER_COLOR_2, GLACIER_COLOR_3, GLACIER_COLOR_4,
         PRINT_GLACIER_COLOR_1, PRINT_GLACIER_COLOR_2,
         GLACIER_PEN_1, GLACIER_PEN_2, GLACIER_PEN_3, GLACIER_PEN_4,
@@ -359,9 +279,9 @@ void MapConfig::slotReadConfig()
         PRINT_GLACIER_BRUSH_COLOR_1, PRINT_GLACIER_BRUSH_COLOR_2,
         GLACIER_BRUSH_STYLE_1, GLACIER_BRUSH_STYLE_2,
         GLACIER_BRUSH_STYLE_3, GLACIER_BRUSH_STYLE_4,
-        PRINT_GLACIER_BRUSH_STYLE_1, PRINT_GLACIER_BRUSH_STYLE_2)
+        PRINT_GLACIER_BRUSH_STYLE_1, PRINT_GLACIER_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("PackIce", packicePenList, packiceBorder, packiceBrushList,
+  __readPenBrush("PackIce", &packicePenList, packiceBorder, &packiceBrushList,
         PACK_ICE_COLOR_1, PACK_ICE_COLOR_2, PACK_ICE_COLOR_3, PACK_ICE_COLOR_4,
         PRINT_PACK_ICE_COLOR_1, PRINT_PACK_ICE_COLOR_2,
         PACK_ICE_PEN_1, PACK_ICE_PEN_2, PACK_ICE_PEN_3, PACK_ICE_PEN_4,
@@ -373,9 +293,9 @@ void MapConfig::slotReadConfig()
         PRINT_PACK_ICE_BRUSH_COLOR_1, PRINT_PACK_ICE_BRUSH_COLOR_2,
         PACK_ICE_BRUSH_STYLE_1, PACK_ICE_BRUSH_STYLE_2,
         PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4,
-        PRINT_PACK_ICE_BRUSH_STYLE_1, PRINT_PACK_ICE_BRUSH_STYLE_2)
+        PRINT_PACK_ICE_BRUSH_STYLE_1, PRINT_PACK_ICE_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("River_T", river_tPenList, river_tBorder, river_tBrushList,
+  __readPenBrush("River_T", &river_tPenList, river_tBorder, &river_tBrushList,
         RIVER_T_COLOR_1, RIVER_T_COLOR_2, RIVER_T_COLOR_3, RIVER_T_COLOR_4,
         PRINT_RIVER_T_COLOR_1, PRINT_RIVER_T_COLOR_2,
         RIVER_T_PEN_1, RIVER_T_PEN_2, RIVER_T_PEN_3, RIVER_T_PEN_4,
@@ -387,9 +307,9 @@ void MapConfig::slotReadConfig()
         PRINT_RIVER_T_BRUSH_COLOR_1, PRINT_RIVER_T_BRUSH_COLOR_2,
         RIVER_T_BRUSH_STYLE_1, RIVER_T_BRUSH_STYLE_2,
         RIVER_T_BRUSH_STYLE_3, RIVER_T_BRUSH_STYLE_4,
-        PRINT_RIVER_T_BRUSH_STYLE_1, PRINT_RIVER_T_BRUSH_STYLE_2)
+        PRINT_RIVER_T_BRUSH_STYLE_1, PRINT_RIVER_T_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("Airspace A", airAPenList, airABorder, airABrushList,
+  __readPenBrush("Airspace A", &airAPenList, airABorder, &airABrushList,
         AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
         PRINT_AIRA_COLOR_1, PRINT_AIRA_COLOR_2,
         AIRA_PEN_1, AIRA_PEN_2, AIRA_PEN_3, AIRA_PEN_4,
@@ -401,9 +321,9 @@ void MapConfig::slotReadConfig()
         PRINT_AIRA_BRUSH_COLOR_1, PRINT_AIRA_BRUSH_COLOR_2,
         AIRA_BRUSH_STYLE_1, AIRA_BRUSH_STYLE_2,
         AIRA_BRUSH_STYLE_3, AIRA_BRUSH_STYLE_4,
-        PRINT_AIRA_BRUSH_STYLE_1, PRINT_AIRA_BRUSH_STYLE_2)
+        PRINT_AIRA_BRUSH_STYLE_1, PRINT_AIRA_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("Airspace B", airBPenList, airBBorder, airBBrushList,
+  __readPenBrush("Airspace B", &airBPenList, airBBorder, &airBBrushList,
         AIRB_COLOR_1, AIRB_COLOR_2, AIRB_COLOR_3, AIRB_COLOR_4,
         PRINT_AIRB_COLOR_1, PRINT_AIRB_COLOR_2,
         AIRB_PEN_1, AIRB_PEN_2, AIRB_PEN_3, AIRB_PEN_4,
@@ -415,9 +335,9 @@ void MapConfig::slotReadConfig()
         PRINT_AIRB_BRUSH_COLOR_1, PRINT_AIRB_BRUSH_COLOR_2,
         AIRB_BRUSH_STYLE_1, AIRB_BRUSH_STYLE_2,
         AIRB_BRUSH_STYLE_3, AIRB_BRUSH_STYLE_4,
-        PRINT_AIRB_BRUSH_STYLE_1, PRINT_AIRB_BRUSH_STYLE_2)
+        PRINT_AIRB_BRUSH_STYLE_1, PRINT_AIRB_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("Airspace C", airCPenList, airCBorder, airCBrushList,
+  __readPenBrush("Airspace C", &airCPenList, airCBorder, &airCBrushList,
         AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
         PRINT_AIRC_COLOR_1, PRINT_AIRC_COLOR_2,
         AIRC_PEN_1, AIRC_PEN_2, AIRC_PEN_3, AIRC_PEN_4,
@@ -429,9 +349,9 @@ void MapConfig::slotReadConfig()
         PRINT_AIRC_BRUSH_COLOR_1, PRINT_AIRC_BRUSH_COLOR_2,
         AIRC_BRUSH_STYLE_1, AIRC_BRUSH_STYLE_2,
         AIRC_BRUSH_STYLE_3, AIRC_BRUSH_STYLE_4,
-        PRINT_AIRC_BRUSH_STYLE_1, PRINT_AIRC_BRUSH_STYLE_2)
+        PRINT_AIRC_BRUSH_STYLE_1, PRINT_AIRC_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("Airspace D", airDPenList, airDBorder, airDBrushList,
+  __readPenBrush("Airspace D", &airDPenList, airDBorder, &airDBrushList,
         AIRD_COLOR_1, AIRD_COLOR_2, AIRD_COLOR_3, AIRD_COLOR_4,
         PRINT_AIRD_COLOR_1, PRINT_AIRD_COLOR_2,
         AIRD_PEN_1, AIRD_PEN_2, AIRD_PEN_3, AIRD_PEN_4,
@@ -443,9 +363,9 @@ void MapConfig::slotReadConfig()
         PRINT_AIRD_BRUSH_COLOR_1, PRINT_AIRD_BRUSH_COLOR_2,
         AIRD_BRUSH_STYLE_1, AIRD_BRUSH_STYLE_2,
         AIRD_BRUSH_STYLE_3, AIRD_BRUSH_STYLE_4,
-        PRINT_AIRD_BRUSH_STYLE_1, PRINT_AIRD_BRUSH_STYLE_2)
+        PRINT_AIRD_BRUSH_STYLE_1, PRINT_AIRD_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("Airspace E low", airElPenList, airElBorder, airElBrushList,
+  __readPenBrush("Airspace E low", &airElPenList, airElBorder, &airElBrushList,
         AIREL_COLOR_1, AIREL_COLOR_2, AIREL_COLOR_3, AIREL_COLOR_4,
         PRINT_AIREL_COLOR_1, PRINT_AIREL_COLOR_2,
         AIREL_PEN_1, AIREL_PEN_2, AIREL_PEN_3, AIREL_PEN_4,
@@ -457,9 +377,9 @@ void MapConfig::slotReadConfig()
         PRINT_AIREL_BRUSH_COLOR_1, PRINT_AIREL_BRUSH_COLOR_2,
         AIREL_BRUSH_STYLE_1, AIREL_BRUSH_STYLE_2,
         AIREL_BRUSH_STYLE_3, AIREL_BRUSH_STYLE_4,
-        PRINT_AIREL_BRUSH_STYLE_1, PRINT_AIREL_BRUSH_STYLE_2)
+        PRINT_AIREL_BRUSH_STYLE_1, PRINT_AIREL_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("Airspace E high", airEhPenList, airEhBorder, airEhBrushList,
+  __readPenBrush("Airspace E high", &airEhPenList, airEhBorder, &airEhBrushList,
         AIREH_COLOR_1, AIREH_COLOR_2, AIREH_COLOR_3, AIREH_COLOR_4,
         PRINT_AIREH_COLOR_1, PRINT_AIREH_COLOR_2,
         AIREH_PEN_1, AIREH_PEN_2, AIREH_PEN_3, AIREH_PEN_4,
@@ -471,9 +391,9 @@ void MapConfig::slotReadConfig()
         PRINT_AIREH_BRUSH_COLOR_1, PRINT_AIREH_BRUSH_COLOR_2,
         AIREH_BRUSH_STYLE_1, AIREH_BRUSH_STYLE_2,
         AIREH_BRUSH_STYLE_3, AIREH_BRUSH_STYLE_4,
-        PRINT_AIREH_BRUSH_STYLE_1, PRINT_AIREH_BRUSH_STYLE_2)
+        PRINT_AIREH_BRUSH_STYLE_1, PRINT_AIREH_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("Airspace F", airFPenList, airFBorder, airFBrushList,
+  __readPenBrush("Airspace F", &airFPenList, airFBorder, &airFBrushList,
         AIRF_COLOR_1, AIRF_COLOR_2, AIRF_COLOR_3, AIRF_COLOR_4,
         PRINT_AIRF_COLOR_1, PRINT_AIRF_COLOR_2,
         AIRF_PEN_1, AIRF_PEN_2, AIRF_PEN_3, AIRF_PEN_4,
@@ -485,9 +405,9 @@ void MapConfig::slotReadConfig()
         PRINT_AIRF_BRUSH_COLOR_1, PRINT_AIRF_BRUSH_COLOR_2,
         AIRF_BRUSH_STYLE_1, AIRF_BRUSH_STYLE_2,
         AIRF_BRUSH_STYLE_3, AIRF_BRUSH_STYLE_4,
-        PRINT_AIRF_BRUSH_STYLE_1, PRINT_AIRF_BRUSH_STYLE_2)
+        PRINT_AIRF_BRUSH_STYLE_1, PRINT_AIRF_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("Control C", ctrCPenList, ctrCBorder,ctrCBrushList,
+  __readPenBrush("Control C", &ctrCPenList, ctrCBorder, &ctrCBrushList,
         CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
         PRINT_CTRC_COLOR_1, PRINT_CTRC_COLOR_2,
         CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
@@ -499,9 +419,9 @@ void MapConfig::slotReadConfig()
         PRINT_CTRC_BRUSH_COLOR_1, PRINT_CTRC_BRUSH_COLOR_2,
         CTRC_BRUSH_STYLE_1, CTRC_BRUSH_STYLE_2,
         CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4,
-        PRINT_CTRC_BRUSH_STYLE_1, PRINT_CTRC_BRUSH_STYLE_2)
+        PRINT_CTRC_BRUSH_STYLE_1, PRINT_CTRC_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("Control D", ctrDPenList, ctrDBorder, ctrDBrushList,
+  __readPenBrush("Control D", &ctrDPenList, ctrDBorder, &ctrDBrushList,
         CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
         PRINT_CTRD_COLOR_1, PRINT_CTRD_COLOR_2,
         CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4,
@@ -513,9 +433,9 @@ void MapConfig::slotReadConfig()
         PRINT_CTRD_BRUSH_COLOR_1, PRINT_CTRD_BRUSH_COLOR_2,
         CTRD_BRUSH_STYLE_1, CTRD_BRUSH_STYLE_2,
         CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4,
-        PRINT_CTRD_BRUSH_STYLE_1, PRINT_CTRD_BRUSH_STYLE_2)
+        PRINT_CTRD_BRUSH_STYLE_1, PRINT_CTRD_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("Danger", dangerPenList, dangerBorder, dangerBrushList,
+  __readPenBrush("Danger", &dangerPenList, dangerBorder, &dangerBrushList,
         DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
         PRINT_DNG_COLOR_1, PRINT_DNG_COLOR_2,
         DNG_PEN_1, DNG_PEN_2, DNG_PEN_3, DNG_PEN_4,
@@ -527,9 +447,9 @@ void MapConfig::slotReadConfig()
         PRINT_DNG_BRUSH_COLOR_1, PRINT_DNG_BRUSH_COLOR_2,
         DNG_BRUSH_STYLE_1, DNG_BRUSH_STYLE_2,
         DNG_BRUSH_STYLE_3, DNG_BRUSH_STYLE_4,
-        PRINT_DNG_BRUSH_STYLE_1, PRINT_DNG_BRUSH_STYLE_2)
+        PRINT_DNG_BRUSH_STYLE_1, PRINT_DNG_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("Low Flight", lowFPenList, lowFBorder,lowFBrushList,
+  __readPenBrush("Low Flight", &lowFPenList, lowFBorder, &lowFBrushList,
         LOWF_COLOR_1, LOWF_COLOR_2, LOWF_COLOR_3, LOWF_COLOR_4,
         PRINT_LOWF_COLOR_1, PRINT_LOWF_COLOR_2,
         LOWF_PEN_1, LOWF_PEN_2, LOWF_PEN_3, LOWF_PEN_4,
@@ -541,9 +461,9 @@ void MapConfig::slotReadConfig()
         PRINT_LOWF_BRUSH_COLOR_1, PRINT_LOWF_BRUSH_COLOR_2,
         LOWF_BRUSH_STYLE_1, LOWF_BRUSH_STYLE_2,
         LOWF_BRUSH_STYLE_3, LOWF_BRUSH_STYLE_4,
-        PRINT_LOWF_BRUSH_STYLE_1, PRINT_LOWF_BRUSH_STYLE_2)
+        PRINT_LOWF_BRUSH_STYLE_1, PRINT_LOWF_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("Restricted Area", restrPenList, restrBorder, restrBrushList,
+  __readPenBrush("Restricted Area", &restrPenList, restrBorder, &restrBrushList,
         RES_COLOR_1, RES_COLOR_2, RES_COLOR_3, RES_COLOR_4,
         PRINT_RES_COLOR_1, PRINT_RES_COLOR_2,
         RES_PEN_1, RES_PEN_2, RES_PEN_3, RES_PEN_4,
@@ -555,9 +475,9 @@ void MapConfig::slotReadConfig()
         PRINT_RES_BRUSH_COLOR_1, PRINT_RES_BRUSH_COLOR_2,
         RES_BRUSH_STYLE_1, RES_BRUSH_STYLE_2,
         RES_BRUSH_STYLE_3, RES_BRUSH_STYLE_4,
-        PRINT_RES_BRUSH_STYLE_1, PRINT_RES_BRUSH_STYLE_2)
+        PRINT_RES_BRUSH_STYLE_1, PRINT_RES_BRUSH_STYLE_2);
 
-  READ_PEN_BRUSH("TMZ", tmzPenList, tmzBorder, tmzBrushList,
+  __readPenBrush("TMZ", &tmzPenList, tmzBorder, &tmzBrushList,
         TMZ_COLOR_1, TMZ_COLOR_2, TMZ_COLOR_3, TMZ_COLOR_4,
         PRINT_TMZ_COLOR_1, PRINT_TMZ_COLOR_2,
         TMZ_PEN_1, TMZ_PEN_2, TMZ_PEN_3, TMZ_PEN_4,
@@ -569,9 +489,9 @@ void MapConfig::slotReadConfig()
         PRINT_TMZ_BRUSH_COLOR_1, PRINT_TMZ_BRUSH_COLOR_2,
         TMZ_BRUSH_STYLE_1, TMZ_BRUSH_STYLE_2,
         TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4,
-        PRINT_TMZ_BRUSH_STYLE_1, PRINT_TMZ_BRUSH_STYLE_2)
+        PRINT_TMZ_BRUSH_STYLE_1, PRINT_TMZ_BRUSH_STYLE_2);
 
-    READ_PEN_BRUSH("FAIAreaLow500", faiAreaLow500PenList, faiAreaLow500Border, faiAreaLow500BrushList,
+    __readPenBrush("FAIAreaLow500", &faiAreaLow500PenList, faiAreaLow500Border, &faiAreaLow500BrushList,
         FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
         PRINT_FAI_LOW_500_COLOR_1, PRINT_FAI_LOW_500_COLOR_2,
         FAI_LOW_500_PEN_1, FAI_LOW_500_PEN_2, FAI_LOW_500_PEN_3, FAI_LOW_500_PEN_4,
@@ -583,9 +503,9 @@ void MapConfig::slotReadConfig()
         PRINT_FAI_LOW_500_BRUSH_COLOR_1, PRINT_FAI_LOW_500_BRUSH_COLOR_2,
         FAI_LOW_500_BRUSH_STYLE_1, FAI_LOW_500_BRUSH_STYLE_2,
         FAI_LOW_500_BRUSH_STYLE_3, FAI_LOW_500_BRUSH_STYLE_4,
-        PRINT_FAI_LOW_500_BRUSH_STYLE_1, PRINT_FAI_LOW_500_BRUSH_STYLE_2)
+        PRINT_FAI_LOW_500_BRUSH_STYLE_1, PRINT_FAI_LOW_500_BRUSH_STYLE_2);
 
-    READ_PEN_BRUSH("FAIAreaHigh500", faiAreaHigh500PenList, faiAreaHigh500Border, faiAreaHigh500BrushList,
+    __readPenBrush("FAIAreaHigh500", &faiAreaHigh500PenList, faiAreaHigh500Border, &faiAreaHigh500BrushList,
         FAI_HIGH_500_COLOR_1, FAI_HIGH_500_COLOR_2, FAI_HIGH_500_COLOR_3, FAI_HIGH_500_COLOR_4,
         PRINT_FAI_HIGH_500_COLOR_1, PRINT_FAI_HIGH_500_COLOR_2,
         FAI_HIGH_500_PEN_1, FAI_HIGH_500_PEN_2, FAI_HIGH_500_PEN_3, FAI_HIGH_500_PEN_4,
@@ -597,15 +517,11 @@ void MapConfig::slotReadConfig()
         PRINT_FAI_HIGH_500_BRUSH_COLOR_1, PRINT_FAI_HIGH_500_BRUSH_COLOR_2,
         FAI_HIGH_500_BRUSH_STYLE_1, FAI_HIGH_500_BRUSH_STYLE_2,
         FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4,
-        PRINT_FAI_HIGH_500_BRUSH_STYLE_1, PRINT_FAI_HIGH_500_BRUSH_STYLE_2)
+        PRINT_FAI_HIGH_500_BRUSH_STYLE_1, PRINT_FAI_HIGH_500_BRUSH_STYLE_2);
 
-  config->setGroup("Flight");
-  drawFType = config->readNumEntry("Draw Type", MapConfig::Speed);
+    drawFType = _settings.readNumEntry("/KFLog/Flight/DrawType", MapConfig::Speed);
 
-  config->setGroup("Scale");
-  _drawWpLabelScale = config->readNumEntry("Waypoint Label", WPLABEL);
-
-  config->setGroup(0);
+    _drawWpLabelScale = _settings.readNumEntry("/KFLog/Scale/WaypointLabel", WPLABEL);
 
   emit configChanged();
 }
@@ -613,9 +529,7 @@ void MapConfig::slotReadConfig()
 void MapConfig::slotSetFlightDataType(int type)
 {
   drawFType = type;
-  KConfig* config = KGlobal::config();
-  config-> setGroup("Flight");
-  config-> writeEntry("Draw Type", type);
+  _settings.writeEntry("/KFLog/Flight/DrawType", type);
 }
 
 void MapConfig::slotSetMatrixValues(int index, bool sw)
@@ -646,10 +560,9 @@ QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*
   //   I would prefer colors adjusted for each flights histogram.
   //
 
-  KConfig* config = KGlobal::config();
-  config-> setGroup("Flight");
+  extern QSettings _settings;
+  int width = _settings.readNumEntry("/KFLog/Flight/flightPathWidth", 4);
   int red = 0, green = 0, blue = 0;
-  int width = config->readNumEntry("flightPathWidth", 4);
   float vario_range;
   QColor color;
 
@@ -681,26 +594,26 @@ QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*
               red = 255;
               green = 50;
               blue = 0;
-              color = config->readColorEntry("Color Left Turn", new QColor(red, green, blue));
+              color = __string2Color(_settings.readEntry("/KFLog/Flight/ColorLeftTurn", __color2String(QColor(red, green, blue))));
               break;
             case Flight::RightTurn:
               red = 50;
               green = 255;
               blue = 0;
-              color = config->readColorEntry("Color Right Turn", new QColor(red, green, blue));
+              color = __string2Color(_settings.readEntry("/KFLog/Flight/ColorRightTurn", __color2String(QColor(red, green, blue))));
               break;
             case Flight::MixedTurn:
               red = 200;
               green = 0;
               blue = 200;
-              color = config->readColorEntry("Color Mixed Turn", new QColor(red, green, blue));
+              color = __string2Color(_settings.readEntry("/KFLog/Flight/ColorMixedTurn", __color2String(QColor(red, green, blue))));
               break;
             case Flight::Straight:
             default:
               red = 0;
               green = 50;
               blue = 255;
-              color = config->readColorEntry("Color Straight", new QColor(red, green, blue));
+              color = __string2Color(_settings.readEntry("/KFLog/Flight/ColorStraight", __color2String(QColor(red, green, blue))));
               break;
           }
         break;
@@ -710,7 +623,7 @@ QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*
         red = 0;
         green = 100;
         blue = 200;
-        color = config->readColorEntry("Color Solid", new QColor(red, green, blue));
+        color = __string2Color(_settings.readEntry("/KFLog/Flight/ColorSolid", __color2String(QColor(red, green, blue))));
         break;
     }
 
@@ -720,7 +633,7 @@ QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*
     red = 255;
     green = 255;
     blue = 255;
-    color = config->readColorEntry("Color Engine Noise", new QColor(red, green, blue));
+    color = __string2Color(_settings.readEntry("/KFLog/Flight/ColorEngineNoise", __color2String(QColor(red, green, blue))));
   }
 
 
@@ -1041,11 +954,9 @@ QPixmap MapConfig::getPixmap(unsigned int typeID, bool isWinch)
   QString iconName(getPixmapName(typeID, isWinch));
 
   if(isSwitch)
-      return QPixmap(KGlobal::dirs()->findResource("appdata",
-          "mapicons/" + iconName));
+      return QPixmap(QDir::homeDirPath() + "/.kflog/mapicons/" + iconName);
 
-  return QPixmap(KGlobal::dirs()->findResource("appdata",
-      "mapicons/small/" + iconName));
+  return QPixmap(QDir::homeDirPath() + "/.kflog/mapicons/small/" + iconName);
 }
 
 QPixmap MapConfig::getPixmap(unsigned int typeID, bool isWinch, bool smallIcon)
@@ -1053,11 +964,9 @@ QPixmap MapConfig::getPixmap(unsigned int typeID, bool isWinch, bool smallIcon)
   QString iconName(getPixmapName(typeID, isWinch));
 
   if(smallIcon)
-      return QPixmap(KGlobal::dirs()->findResource("appdata",
-          "mapicons/small/" + iconName));
+      return QPixmap(QDir::homeDirPath() + "/.kflog/mapicons/small/" + iconName);
 
-  return QPixmap(KGlobal::dirs()->findResource("appdata",
-      "mapicons/" + iconName));
+  return QPixmap(QDir::homeDirPath() + "/.kflog/mapicons/" + iconName);
 }
 
 QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
@@ -1185,3 +1094,85 @@ Qt::PenStyle MapConfig::getIsoPenStyle(int height)
   }
   return style;
 }
+
+void MapConfig::__readBorder(QString group, bool *b)
+{
+  b[0] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border1", true);
+  b[1] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border2", true);
+  b[2] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border3", true);
+  b[3] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border4", true);
+  b[4] = _settings.readBoolEntry("/KFLog/Map/"+group+"/PrintBorder1", true);
+  b[5] = _settings.readBoolEntry("/KFLog/Map/"+group+"/PrintBorder2", true);
+}
+
+void MapConfig::__readPen(QString group, QPtrList<QPen> *penList, bool *b,
+    QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4, QColor defaultColor5, QColor defaultColor6,
+    int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4, int defaultPenSize5, int defaultPenSize6,
+    Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4, Qt::PenStyle defaultPenStyle5, Qt::PenStyle defaultPenStyle6)
+{
+  __readBorder(group, b);
+  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color1", __color2String(defaultColor1))),
+        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize1", defaultPenSize1),
+        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle1", defaultPenStyle1)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color2", __color2String(defaultColor2))),
+        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize2", defaultPenSize2),
+        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle2", defaultPenStyle2)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color3", __color2String(defaultColor3))),
+        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize3", defaultPenSize2),
+        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle3", defaultPenStyle3)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color4", __color2String(defaultColor4))),
+        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize4", defaultPenSize2),
+        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle4", defaultPenStyle4)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/PrintColor1", __color2String(defaultColor5))),
+        _settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenSize1", defaultPenSize5),
+        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenStyle1", defaultPenStyle5)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/PrintColor2", __color2String(defaultColor6))),
+        _settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenSize2", defaultPenSize6),
+        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenStyle2", defaultPenStyle6)));
+}
+
+void MapConfig::__readPenBrush(QString group, QPtrList<QPen> *penList, bool *b, QPtrList<QBrush> *brushList,
+    QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4, QColor defaultColor5, QColor defaultColor6,
+    int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4, int defaultPenSize5, int defaultPenSize6,
+    Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4, Qt::PenStyle defaultPenStyle5, Qt::PenStyle defaultPenStyle6,
+    QColor defaultBrushColor1, QColor defaultBrushColor2, QColor defaultBrushColor3, QColor defaultBrushColor4, QColor defaultBrushColor5, QColor defaultBrushColor6,
+    Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2, Qt::BrushStyle defaultBrushStyle3, Qt::BrushStyle defaultBrushStyle4, Qt::BrushStyle defaultBrushStyle5, Qt::BrushStyle defaultBrushStyle6)
+{
+  __readPen(group, penList, b,
+      defaultColor1, defaultColor2, defaultColor3, defaultColor4, defaultColor5, defaultColor6,
+      defaultPenSize1, defaultPenSize2, defaultPenSize3, defaultPenSize4, defaultPenSize5, defaultPenSize6,
+      defaultPenStyle1, defaultPenStyle2, defaultPenStyle3, defaultPenStyle4, defaultPenStyle5, defaultPenStyle6);
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor1", __color2String(defaultBrushColor1))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle1", defaultBrushStyle1))); \
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor2", __color2String(defaultBrushColor2))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle2", defaultBrushStyle2))); \
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor3", __color2String(defaultBrushColor3))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle3", defaultBrushStyle3))); \
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor4", __color2String(defaultBrushColor4))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle4", defaultBrushStyle4)));
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/PrintBrushColor1", __color2String(defaultBrushColor5))),
+        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintBrushStyle1", defaultBrushStyle5)));
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/PrintBrushColor2", __color2String(defaultBrushColor6))),
+        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintBrushStyle2", defaultBrushStyle6)));
+}
+
+void MapConfig::__readTopo(QString entry, QColor color)
+{
+  topographyColorList.append(new QColor(__string2Color(_settings.readEntry("/KFLog/Map/Topography/" + entry, __color2String(color)))));
+}
+
+/** this is a temporary function and it is not needed in Qt 4 */
+QString MapConfig::__color2String(QColor color)
+{
+  QString colstr;
+  colstr.sprintf("%d;%d;%d", color.red(), color.green(), color.blue());
+  return colstr;
+}
+
+/** this is a temporary function and it is not needed in Qt 4 */
+QColor MapConfig::__string2Color(QString colstr)
+{
+  QColor color(colstr.section(";", 0, 0).toInt(), colstr.section(";", 1, 1).toInt(), colstr.section(";", 2, 2).toInt());
+  return color;
+}
+

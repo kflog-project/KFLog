@@ -15,18 +15,17 @@
  **
  ***********************************************************************/
 #include <qbuttongroup.h>
+#include <qdir.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
+#include <qsettings.h>
 
-#include <kconfig.h>
-#include <kiconloader.h>
-
-#include "taskdialog.h"
-#include "mapcontents.h"
-#include "translationlist.h"
 #include "mapcalc.h"
+#include "mapcontents.h"
+#include "taskdialog.h"
+#include "translationlist.h"
 
 extern TranslationList taskTypes;
 
@@ -122,11 +121,11 @@ void TaskDialog::__initDialog()
 
   smallButtons->addStretch();
   b = new QPushButton(this);
-  b->setPixmap(KGlobal::instance()->iconLoader()->loadIcon("up", KIcon::NoGroup, KIcon::SizeSmall));
+  b->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_up_16.png");
   connect(b, SIGNAL(clicked()), SLOT(slotMoveUp()));
   smallButtons->addWidget(b);
   b = new QPushButton(this);
-  b->setPixmap(KGlobal::instance()->iconLoader()->loadIcon("down", KIcon::NoGroup, KIcon::SizeSmall));
+  b->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_down_16.png");
   connect(b, SIGNAL(clicked()), SLOT(slotMoveDown()));
   smallButtons->addWidget(b);
   smallButtons->addStretch();
@@ -137,15 +136,15 @@ void TaskDialog::__initDialog()
 
   middleLayout->addStretch();
   back = new QPushButton(this);
-  back->setPixmap(KGlobal::instance()->iconLoader()->loadIcon("back", KIcon::NoGroup, KIcon::SizeSmall));
+  back->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_back_16.png");
   connect(back, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
   middleLayout->addWidget(back);
   b = new QPushButton(this);
-  b->setPixmap(KGlobal::instance()->iconLoader()->loadIcon("reload", KIcon::NoGroup, KIcon::SizeSmall));
+  b->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_reload_16.png");
   connect(b, SIGNAL(clicked()), SLOT(slotReplaceWaypoint()));
   middleLayout->addWidget(b);
   forward = new QPushButton(this);
-  forward->setPixmap(KGlobal::instance()->iconLoader()->loadIcon("forward", KIcon::NoGroup, KIcon::SizeSmall));
+  forward->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_forward_16.png");
   connect(forward, SIGNAL(clicked()), SLOT(slotRemoveWaypoint()));
   middleLayout->addWidget(forward);
   middleLayout->addStretch();
@@ -203,15 +202,16 @@ void TaskDialog::slotSetPlanningType(int idx)
   id = taskTypes.at(idx)->id;
   switch (id) {
   case FlightTask::FAIArea:
-    QMessageBox::information (this, tr("Task Type FAI Area:\n"
+    QMessageBox::information (this, tr("Task selection"), tr("Task Type FAI Area:\n"
       "You can define a task with either takeoff, start, end and landing or "
       "takeoff, start, end, landing and one additional route point.\n"
       "The FAI area calculation will be made with start and end point or start and route point, "
       "depending wether the route point is defined or not\n"
       "Deleting takeoff start, end and landing points is not possible, "
       "but you can replace them with other waypoints.\n"
-      "New waypoints will be added after the selected one."), tr("Task selection"),
-      tr("Do not show this message again."));
+      "New waypoints will be added after the selected one."),
+//      tr("Do not show this message again."),
+      tr("Ok"));
     cnt = wpList.count();    
     left->setEnabled(true);
     right->setEnabled(true);
@@ -226,12 +226,13 @@ void TaskDialog::slotSetPlanningType(int idx)
     }        
     break;
   case FlightTask::Route:
-    QMessageBox::information (this, tr("Task Type Traditional Route:\n"
+    QMessageBox::information (this, tr("Task selection"), tr("Task Type Traditional Route:\n"
       "You can define a task with takeoff, start, end, landing and route points. "
       "Deleting takeoff start, end and landing is not possible, "
       "but you can replace them with other waypoints.\n"
-      "New waypoints will be added after the selected one."), tr("Task selection"),
-      tr("Do not show this message again."));
+      "New waypoints will be added after the selected one."),
+//      tr("Do not show this message again."),
+      tr("Ok"));
     left->setEnabled(false);
     right->setEnabled(false);
     left->setChecked(false);
@@ -307,9 +308,33 @@ void TaskDialog::fillWaypoints()
   taskType->setText(pTask->getTaskTypeString());
 }
 
+unsigned int TaskDialog::getCurrentPosition()
+{
+  QListViewItemIterator item(route);
+  int i = 0;
+  while(item.current()) {
+    if(item.current() == route->currentItem())
+      return i;
+    i++;
+    ++item;
+  }
+}
+
+void TaskDialog::setSelected(unsigned int position)
+{
+  QListViewItemIterator item(route);
+  int i = 0;
+  while(item.current()) {
+    if(i == position)
+      route->setSelected(item.current(), true);
+    i++;
+    ++item;
+  }
+}
+
 void TaskDialog::slotMoveUp()
 {
-  int curPos = route->itemIndex(route->currentItem());
+  unsigned int curPos = getCurrentPosition();
   Waypoint *wp;
 
   if (curPos) {
@@ -317,13 +342,13 @@ void TaskDialog::slotMoveUp()
     wpList.insert(curPos - 1, wp);
     pTask->setWaypointList(wpList);
     fillWaypoints();
-    route->setSelected(route->itemAtIndex(curPos - 1), true);
+    setSelected(curPos - 1);
   }
 }
 
 void TaskDialog::slotMoveDown()
 {
-  unsigned int curPos = route->itemIndex(route->currentItem());
+  unsigned int curPos = getCurrentPosition();
   Waypoint *wp;
 
   if (curPos < wpList.count() - 1) {
@@ -331,14 +356,14 @@ void TaskDialog::slotMoveDown()
     wpList.insert(curPos + 1, wp);
     pTask->setWaypointList(wpList);
     fillWaypoints();
-    route->setSelected(route->itemAtIndex(curPos + 1), true);
+    setSelected(curPos + 1);
   }
 }
 
 void TaskDialog::slotReplaceWaypoint()
 {
   unsigned int cnt = wpList.count();
-  unsigned int curPos = route->itemIndex(route->currentItem());
+  unsigned int curPos = getCurrentPosition();
   QString selText = waypoints->currentText();
 
   if (!selText.isEmpty()) {
@@ -349,14 +374,14 @@ void TaskDialog::slotReplaceWaypoint()
     wpList.insert(curPos, wp);
     pTask->setWaypointList(wpList);
     fillWaypoints();
-    route->setSelected(route->itemAtIndex(curPos + 1 < cnt ? curPos + 1 : cnt), true);
+    setSelected(curPos + 1 < cnt ? curPos + 1 : cnt);
   }
 }
 
 void TaskDialog::slotAddWaypoint()
 {
   QString selText = waypoints->currentText();
-  unsigned int pos = route->itemIndex(route->selectedItem());
+  unsigned int pos = getCurrentPosition();
   
   if (!selText.isEmpty()) {
     Waypoint *wp = new Waypoint;
@@ -365,7 +390,7 @@ void TaskDialog::slotAddWaypoint()
     wpList.insert(pos + 1, wp);
     pTask->setWaypointList(wpList);
     fillWaypoints();
-    route->setSelected(route->itemAtIndex(pos + 1), true);
+    setSelected(pos + 1);
     enableWaypointButtons();
   }
 }
@@ -373,14 +398,14 @@ void TaskDialog::slotAddWaypoint()
 void TaskDialog::slotRemoveWaypoint()
 {
   unsigned int cnt = wpList.count();
-  unsigned int curPos = route->itemIndex(route->currentItem());
+  unsigned int curPos = getCurrentPosition();
 
   if (cnt > 4) {
     if (curPos > 1 && curPos < cnt - 2) {
       wpList.remove(curPos);
       pTask->setWaypointList(wpList);
       fillWaypoints();
-      route->setSelected(route->itemAtIndex(curPos), true);
+      setSelected(curPos);
       enableWaypointButtons();
     }
   }
@@ -388,8 +413,7 @@ void TaskDialog::slotRemoveWaypoint()
 
 void TaskDialog::setTask(FlightTask *orig)
 {
-  KConfig* config = KGlobal::config();
-  config->setGroup("Map Data");
+  extern QSettings _settings;
   extern MapMatrix _globalMapMatrix;
 
   if (pTask == 0) {
@@ -402,10 +426,10 @@ void TaskDialog::setTask(FlightTask *orig)
   if (wpList.count() < 4) {
     for (unsigned int i = wpList.count(); i < 4; i++) {
       wp = new Waypoint;
-      wp->origP.setLat(config->readNumEntry("Homesite Latitude"));
-      wp->origP.setLon(config->readNumEntry("Homesite Longitude"));
+      wp->origP.setLat(_settings.readNumEntry("/KFLog/MapData/HomesiteLatitude"));
+      wp->origP.setLon(_settings.readNumEntry("/KFLog/MapData/HomesiteLongitude"));
       wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
-      wp->name = config->readEntry("Homesite").left(6).upper();
+      wp->name = _settings.readEntry("/KFLog/MapData/Homesite").left(6).upper();
 
       wpList.append(wp);
     }
@@ -428,7 +452,7 @@ void TaskDialog::setTask(FlightTask *orig)
 void TaskDialog::enableWaypointButtons()
 {
   unsigned int cnt = wpList.count();
-  unsigned int pos = route->itemIndex(route->selectedItem());
+  unsigned int pos = getCurrentPosition();
 
   switch (pTask->getPlanningType()) {
   case FlightTask::Route:

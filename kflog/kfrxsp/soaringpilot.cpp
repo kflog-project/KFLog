@@ -18,21 +18,19 @@
 #include "soaringpilot.h"
 
 #include <cstdlib>
-#include <unistd.h>
 #include <ctype.h>
+#include <fcntl.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <termios.h>
 #include <time.h>
-#include <signal.h>
+#include <unistd.h>
 
 #include <qdict.h>
 #include <qfile.h>
+#include <qsettings.h>
 #include <qstringlist.h>
-
-#include <kconfig.h>
-#include <kglobal.h>
 
 #include "../airport.h"
 
@@ -311,10 +309,8 @@ int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QStrin
 
   flightCount.setAutoDelete(true);
 
-  KConfig* config = KGlobal::config();
-  config->setGroup("Path");
-  dir = config->readEntry("DefaultFlightDirectory") + "/";
-  config->setGroup(0);
+  extern QSettings _settings;
+  dir = _settings.readEntry("/KFLog/Path/DefaultFlightDirectory") + "/";
 
   bool shortName = (_fileName.upper().find("SHORT.IGC") != -1);
 

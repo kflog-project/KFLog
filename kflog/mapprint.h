@@ -18,14 +18,13 @@
 #ifndef MAPPRINT_H
 #define MAPPRINT_H
 
-#include <kdeprint/kprintdialogpage.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
+#include <qdialog.h>
 #include <qlineedit.h>
 #include <qmap.h>
 #include <qstring.h>
 #include <qstringlist.h>
-
 #include <qpainter.h>
 
 /**
@@ -35,7 +34,7 @@
  * @author Heiner Lamprecht
  * @version $Id$
  */
-class MapPrintDialogPage : public KPrintDialogPage
+class MapPrintDialogPage : public QDialog
 {
   public:
     /** */
@@ -44,9 +43,7 @@ class MapPrintDialogPage : public KPrintDialogPage
     /** */
     ~MapPrintDialogPage();
     /** */
-    void getOptions( QMap<QString,QString>& opts, bool incldef = false );
-    /** */
-    void setOptions( const QMap<QString,QString>& opts );
+    void getOptions(QString *printScale, bool *printTitle, bool *printText, bool *printLegend);
 
   private:
     /** */

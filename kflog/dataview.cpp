@@ -20,7 +20,6 @@
 #include <qfileinfo.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
-#include <klocale.h>
 
 #include <flight.h>
 #include <mapcalc.h>
@@ -260,8 +259,7 @@ void DataView::setFlightData()
                 fi.setFile(flight->getFileName());
 
                 htmlText += "<TR><TD><A HREF=" + idString + ">" +
-                  fi.fileName() + "</A></TD><TD ALIGN=right>" +
-                  KGlobal::locale()->formatDate(flight->getDate(), true) + "</TD></TR>\
+                  fi.fileName() + "</A></TD><TD ALIGN=right>" + flight->getDate().toString(Qt::LocalDate) + "</TD></TR>\
                   <TR><TD>" + flight->getDistance() + "</TD><TD ALIGN=right>" +
                   printTime(flight->getLandTime() - flight->getStartTime()) + "</TD></TR>";
               }

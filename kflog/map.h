@@ -18,17 +18,15 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "kflog.h"
-
-#include <qregion.h>
-#include <qwidget.h>
 #include <qbitmap.h>
-#include <kpopupmenu.h>
-
+#include <qframe.h>
 #include <qpointarray.h>
+#include <qpopupmenu.h>
+#include <qregion.h>
 #include <qtimer.h>
+#include <qurl.h>
 
-#include "flight.h"
+#include "flighttask.h"
 #include "waypointcatalog.h"
 
 /**
@@ -39,7 +37,7 @@
  */
 class Flight;
 
-class Map : public QWidget
+class Map : public QFrame
 {
   Q_OBJECT
 
@@ -48,7 +46,7 @@ class Map : public QWidget
      * The constructor creates a new Map-object and
      * creates the icon used as a cursor in the map.
      */
-    Map(KFLogApp* main, QFrame* parent, const char* name);
+    Map(QWidget* parent, const char* name=0);
     /**
      * Destroys the Map-object.
      */
@@ -112,6 +110,12 @@ class Map : public QWidget
   signals:
     /** */
     void changed(QSize);
+    /** */
+    void setStatusBarProgress(int value);
+    /** */
+    void setStatusBarMsg(const QString&);
+    /** */
+    void openFile(const char* surl);
     /** */
     void showFlightPoint(const QPoint& pos, const flightPoint& point);
     /**
@@ -221,7 +225,7 @@ class Map : public QWidget
     /**
      * Pointer to the current KFLog-instance.
      */
-    KFLogApp* mainApp;
+//    KFLog* mainApp;
     /**
       * Display Infos about MapItems
       */
@@ -354,7 +358,7 @@ class Map : public QWidget
     /**
      * Popupmenu under the right mousebutton
      */
-    KPopupMenu *mapPopup;
+    QPopupMenu *mapPopup;
     /**
      * ID's of menuitems
      */

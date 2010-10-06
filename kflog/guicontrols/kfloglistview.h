@@ -19,21 +19,25 @@
 #ifndef KFLOGLISTVIEW_H
 #define KFLOGLISTVIEW_H
 
+#include <qlistview.h>
 #include <qstring.h>
 #include <qwidget.h>
-
-#include <klistview.h>
 
 /**a KListView that store and load its configuration
   *@author Harald Maier
   */
 
-class KFLogListView : public KListView  {
+class KFLogListView : public QListView  {
    Q_OBJECT
 public:
 	KFLogListView(const char *persistendName, QWidget *parent=0, const char *name=0);
 	KFLogListView(QWidget *parent=0, const char *name=0);
 	~KFLogListView();
+
+  //source: http://api.kde.org/3.5-api/kdelibs-apidocs/kdeui/html/klistview_8cpp_source.html#l01858
+  int itemIndex( const QListViewItem * ) const;
+  //source: http://api.kde.org/3.5-api/kdelibs-apidocs/kdeui/html/klistview_8cpp_source.html#l01877
+  QListViewItem* itemAtIndex(int );
 private: // Private attributes
   /**  */
   QString confName;

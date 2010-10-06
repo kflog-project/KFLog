@@ -18,33 +18,40 @@
 #include "centertodialog.h"
 #include "mapcontents.h"
 
-#include <qgrid.h>
-#include <qlabel.h>
 #include <qapplication.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qpushbutton.h>
+#include <qwidget.h>
 
 CenterToDialog::CenterToDialog(QWidget *parent, const char *name )
-  : KDialogBase(parent, name)
+  : QDialog(parent, name)
 {
   setCaption(tr("Center to ..."));
 
-  QGrid* page = this->makeGridMainWidget(2, QGrid::Horizontal);
+  QGridLayout* grid = new QGridLayout(this, 3, 3, 3);
 
-  new QLabel( tr("Latitude"), page, "captionLat");
-  latE = new LatEdit(page, "latitude");
+  grid->addWidget(new QLabel( tr("Latitude"), this, "captionLat"), 0, 0);
+  latE = new LatEdit(this, "latitude");
   latE->setMinimumWidth(150);
+  grid->addMultiCellWidget(latE, 0, 0, 1, 2);
 
-  new QLabel( tr("Longitude"), page, "captionLong");
-  longE = new LongEdit(page, "longitude");
+  grid->addWidget(new QLabel( tr("Longitude"), this, "captionLong"), 1, 0);
+  longE = new LongEdit(this, "longitude");
   longE->setMinimumWidth(150);
+  grid->addMultiCellWidget(longE, 1, 1, 1, 2);
 
-  connect(this, SIGNAL(okClicked()), this, SLOT(slotOk()));
+  QPushButton *okButton = new QPushButton( "&Ok", this );
+  grid->addWidget(okButton, 2, 1);
+  QPushButton *cancelButton = new QPushButton( "&Cancel", this );
+  grid->addWidget(cancelButton, 2, 2);
+
+  connect(okButton, SIGNAL(clicked()), this, SLOT(slotOk()));
+  connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
   connect(latE, SIGNAL(returnPressed()), this, SLOT(slotOk()));
   connect(longE, SIGNAL(returnPressed()), this, SLOT(slotOk()));
   
-  showButtonApply(false);
   latE->setFocus();
-  
-  disableResize();
 }
 
 CenterToDialog::~CenterToDialog()
@@ -56,7 +63,6 @@ void CenterToDialog::slotOk()
 {
   hide();
   qApp->processEvents();
-  emit centerTo(MapContents::degreeToNum(latE->text()),
-    MapContents::degreeToNum(longE->text()));
+  emit centerTo(MapContents::degreeToNum(latE->text()), MapContents::degreeToNum(longE->text()));
   close();
 }

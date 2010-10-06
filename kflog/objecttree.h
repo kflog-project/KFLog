@@ -19,9 +19,8 @@
 #define OBJECTTREE_H
 
 #include <qlistview.h>
-#include <kurl.h>
+#include <qpopupmenu.h>
 #include <qwidget.h>
-#include <kpopupmenu.h>
 
 class BaseFlightElement;
 class Flight;
@@ -75,7 +74,7 @@ private:
    */
   QListViewItem * TaskRoot;
 
-  KPopupMenu *taskPopup;
+  QPopupMenu *taskPopup;
   /**
    * References for task-related items in the popupmenu
    */

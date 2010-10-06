@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
+**   Copyright (c):  2010 by Constantijn Neeteson, Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -18,15 +18,13 @@
 #ifndef KFLOGCONFIG_H
 #define KFLOGCONFIG_H
 
-#include <kcolorbutton.h>
-#include <kconfig.h>
-#include <kdialogbase.h>
-
 #include <qbuttongroup.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
+#include <qdialog.h>
 #include <qlcdnumber.h>
 #include <qlineedit.h>
+#include <qlistview.h>
 #include <qptrlist.h>
 #include <qpen.h>
 #include <qpushbutton.h>
@@ -44,13 +42,13 @@ class LongEdit;
  * @author Heiner Lamprecht
  * @version $Id$
  */
-class KFLogConfig : public KDialogBase
+class KFLogConfig : public QDialog
 {
   Q_OBJECT
 
   public:
     /** */
-    KFLogConfig(QWidget* parent, KConfig* config, const char* name);
+    KFLogConfig(QWidget* parent);
     /** */
     ~KFLogConfig();
     /** */
@@ -72,6 +70,7 @@ class KFLogConfig : public KDialogBase
   public slots:
     /** */
     void slotOk();
+    void slotPageChanged(QListViewItem *currentItem);
     /** */
     void slotDefaultPath();
     /** */
@@ -111,11 +110,23 @@ class KFLogConfig : public KDialogBase
     /** */
     void slotFilterChanged(const QString&);
     /** */
-    void slotHomeRadiusChanged(int radius);
+    void slotHomeRadiusChanged();
     /**
     * slot needed to trigger an update of the menu Flight=>Show Flightdata
     */
     void slotDrawTypeSelect();
+    /** */
+    void slotSelectFlightTypeLeftTurnColor();
+    /** */
+    void slotSelectFlightTypeRightTurnColor();
+    /** */
+    void slotSelectFlightTypeMixedTurnColor();
+    /** */
+    void slotSelectFlightTypeStraightColor();
+    /** */
+    void slotSelectFlightTypeSolidColor();
+    /** */
+    void slotSelectFlightTypeEngineNoiseColor();
   private:
     /** */
     void __addIDTab();
@@ -125,8 +136,6 @@ class KFLogConfig : public KDialogBase
     void __addFlightTab();
     /** */
     void __addPathTab();
-    /** */
-    void __addTopographyTab();
     /** */
     void __addProjectionTab();
     /** */
@@ -139,6 +148,15 @@ class KFLogConfig : public KDialogBase
     void __addAirfieldTab();
     /** */
     void __addWaypointTab();
+
+    /** this is a temporary function and it is not needed in Qt 4 */
+    QString __color2String(QColor);
+    /** this is a temporary function and it is not needed in Qt 4 */
+    QColor __string2Color(QString);
+
+    QGridLayout *configLayout;
+    QListView *setupTree;
+    QFrame *activePage;
     /** */
     QFrame* idPage;
     /** */
@@ -157,8 +175,6 @@ class KFLogConfig : public KDialogBase
     QFrame* airfieldPage;
     /** */
     QFrame* waypointPage;
-    /** */
-    KConfig* config;
     /** */
     QLineEdit* igcPathE;
     QLineEdit* taskPathE;
@@ -199,12 +215,18 @@ class KFLogConfig : public KDialogBase
     LongEdit* originLongitude;
     QButtonGroup *waypointButtonGroup;
     QPushButton* catalogPathSearch;
-    KColorButton* flightTypeLeftTurnColor;
-    KColorButton* flightTypeRightTurnColor;
-    KColorButton* flightTypeMixedTurnColor;
-    KColorButton* flightTypeStraightColor;
-    KColorButton* flightTypeSolidColor;
-    KColorButton* flightTypeEngineNoiseColor;
+    QPushButton* flightTypeLeftTurnColorButton;
+    QColor flightTypeLeftTurnColor;
+    QPushButton* flightTypeRightTurnColorButton;
+    QColor flightTypeRightTurnColor;
+    QPushButton* flightTypeMixedTurnColorButton;
+    QColor flightTypeMixedTurnColor;
+    QPushButton* flightTypeStraightColorButton;
+    QColor flightTypeStraightColor;
+    QPushButton* flightTypeSolidColorButton;
+    QColor flightTypeSolidColor;
+    QPushButton* flightTypeEngineNoiseColorButton;
+    QColor flightTypeEngineNoiseColor;
 
     int cylinPar;
     int lambertV1;

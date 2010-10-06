@@ -22,111 +22,64 @@
 #include <config.h>
 #endif
 
+#include "dataview.h"
+#include "evaluationdialog.h"
+#include "helpwindow.h"
+#include "kflogstartlogo.h"
+#include "map.h"
+#include "mapcontrolview.h"
+#include "objecttree.h"
 #include "translationlist.h"
+#include "topolegend.h"
+#include "waypoints.h"
 
-#include <kapp.h>
-#include <kdockwidget.h>
-#include <kmainwindow.h>
-#include <kprogress.h>
-#include <kstatusbar.h>
-
+#include <qnetworkprotocol.h>
 #include <qaction.h>
+#include <qlabel.h>
+#include <qmainwindow.h>
+#include <qprogressbar.h>
 #include <qurl.h>
 
-class DataView;
-class HelpWindow;
-class EvaluationDialog;
-class Map;
-class MapControlView;
-class KFLogConfig;
-class KFLogStartLogo;
-class Waypoints;
-class flightPoint;
-class EvaluationDialog;
-class TopoLegend;
-class ObjectTree;
-
-/**
- * Mainwindow for KFLog.
- *
- * @author Heiner Lamprecht, Florian Ehinger
- * @version $Id$
- */
-
-class KFLogApp : public KDockMainWindow
+class KFLog : public QMainWindow
 {
   Q_OBJECT
 
-    public:
-  /**
-   * Constructor.
-   */
-  KFLogApp();
-  /**
-   * Destructor.
-   */
-  ~KFLogApp();
-  
- signals:
-  /**
-   * Emitted, when the user selects a new flightdatatype.
-   *
-   * @param  type  The id of the selected data-type
-   */
-  void flightDataTypeChanged(int type);
+public:
+  KFLog();
+  virtual
+  ~KFLog();
 
- protected:
-  /**
-   * Writes the window-geometry, statusbar- and toolbarstate and the
-   * layoutstate of the dockwidgets.
-   */
-  void saveOptions();
-  /**
-   * Reads the window-geometry, statusbar- and toolbarstate and the
-   * layoutstate of the dockwidgets.
-   */
-  void readOptions();
-  /**
-   * Initializes all actions
-   */
-  void initActions();
-  /**
-   * Initializes the statusbar
-   */
-  void initStatusBar();
-  /**
-   * Initializes the mainwindow.
-   */
-  void initView();
-  /** No descriptions */
-  void initSurfaces();
-  /** No descriptions */
-  void initTypes();
-  /** No descriptions */
-  void initTaskTypes();
-  /* ask for outstanding changes */
-  bool queryClose();
+  signals:
+   /**
+    * Emitted, when the user selects a new flightdatatype.
+    *
+    * @param  type  The id of the selected data-type
+    */
+   void flightDataTypeChanged(int type);
 
-  public slots:
+public slots:
+  // Reimplemented from QWidget
+  void closeEvent(QCloseEvent *e);
   /**
-   * Opens a about-dialog.
-   */
-  void slotShowAbout();
+  * Display dialog to ask for coordinates and center map on that point.
+  */
+  void slotCenterTo();
   /**
-   * Displays the position of the mousecursor and some info (time,
-   * altitude, speed, vario) about the selected flightpoint in the
-   * statusbar.
-   *
-   * @param mouseP   The lat/lon position under the mousecursor.
-   * @param flightP  Pointer to the flightpoint.
+   * Opens a dialog for configuraion of KFLog.
    */
-  void slotShowPointInfo(const QPoint& mousePosition,
-                         const flightPoint& point);
+  void slotConfigureKFLog();
   /**
-   * Displays the position of the mousecursor in the statusbar and
-   * deletes the text of the other statusbar-fields.
+   * Opens the printing-dialog to print the map.
    */
-  void slotShowPointInfo(const QPoint&);
+  void slotFilePrint();
+  /** */
+  void slotFlightPrint();
+  /** */
+  void slotFlightViewIgc3D();
+  /** */
+  void slotFlightViewIgcOpenGL();
+  /** set menu items enabled/disabled */
+  void slotModifyMenu();
   /**
    * Opens a file-open-dialog.
    */
@@ -143,26 +96,66 @@ class KFLogApp : public KDockMainWindow
    * Opens a selected recently opened flight.
    */
   void slotOpenRecentFile();
+  /** */
+  void slotOpenRecorderDialog();
+  /** optimize flight for OLC declaration*/
+  void slotOptimizeFlightOLC();
+  /** */
+  void slotOptimizeFlight();
+  /** Connects the dialogs addWaypoint signal to the waypoint object. */
+  void slotRegisterWaypointDialog(QWidget * dialog);
+  /**
+   * Called, when the user selects a data-type from the menu. Emits
+   * flightDataTypeChanged(int)
+   *
+   * @param  menuItem  The id of the selected listitem.
+   *
+   * @see #flightDataTypeChanged(int)
+   */
+  void slotSelectFlightData(int listItem);
   /**
    * Updates the recent file list.
    */
   void slotSetCurrentFile(const QString &fileName);
- /**
-   * Opens the printing-dialog to print the map.
-   */
-  void slotFilePrint();
-  /** */
-  void slotFlightPrint();
   /**
-   * Calls saveConfig() and closes the application.
+   * Displays the position of the mousecursor and some info (time,
+   * altitude, speed, vario) about the selected flightpoint in the
+   * statusbar.
+   *
+   * @param mouseP   The lat/lon position under the mousecursor.
+   * @param flightP  Pointer to the flightpoint.
    */
-  void slotFileQuit();
+  void slotSetPointInfo(const QPoint& mousePosition,
+                         const flightPoint& point);
+  /**
+   * Displays the position of the mousecursor in the statusbar and
+   * deletes the text of the other statusbar-fields.
+   */
+  void slotSetPointInfo(const QPoint&);
+  /**
+   * Updates the progressbar in the statusbar.
+   *
+   * @param  value  The new value of the progressbar, given in percent;
+   */
+  void slotSetProgress(int value);
   /**
    * Displays a message in the statusbar.
    *
    * @param  text  The message to be displayed.
    */
-  void slotStatusMsg(const QString& text);
+  void slotSetStatusMsg(const QString& text);
+  /** */
+  void slotSetWaypointCatalog(QString catalog);
+  /**
+   * Checks the status of all dock-widgets and updates the menu.
+   */
+  void slotCheckDockWidgetStatus();
+  /** */
+  void slotSavePixmap(QUrl url, int width, int height);
+  /**
+   * Hides the startup-window.
+   */
+  void slotStartComplete();
   /**
    * Shows or hides the dataview-widget.
    */
@@ -179,14 +172,14 @@ class KFLogApp : public KDockMainWindow
    * Shows or hides the object-widget.
    */
   void slotToggleLegendDock();
+//  /**
+//   * Shows or hides the map-widget.
+//   */
+//  void slotToggleMap();
   /**
    * Shows or hides the mapcontrol-widget.
    */
   void slotToggleMapControl();
-  /**
-   * Shows or hides the map-widget.
-   */
-  void slotToggleMap();
   /**
    * Shows or hides the legend-widget.
    */
@@ -204,218 +197,92 @@ class KFLogApp : public KDockMainWindow
    */
   void slotToggleWaypointsDock();
   /**
-   * Opens a dialog for configuration of the toolbar.
+   * Called to the What's This? mode.
    */
-  void slotConfigureToolbars();
+  void slotWhatsThis();
   /**
-   * Opens a dialog for configuration of the keybindings of the actions.
+   * insert available flights into menu
    */
-  void slotConfigureKeyBindings();
+  void slotWindowsMenuAboutToShow();
+
+protected:
   /**
-   * Opens a dialog for configuraion of KFLog.
+   * Writes the window-geometry, statusbar- and toolbarstate and the
+   * layoutstate of the dockwidgets.
    */
-  void slotConfigureKFLog();
+  void saveOptions();
   /**
-   * Rereads the configuration of the toolbar.
+   * Reads the window-geometry, statusbar- and toolbarstate and the
+   * layoutstate of the dockwidgets.
    */
-  void slotNewToolbarConfig();
-  /**
-   * Updates the progressbar in the statusbar.
-   *
-   * @param  value  The new value of the progressbar, given in percent;
-   */
-  void slotSetProgress(int value);
-  /**
-   * Hides the startup-window.
-   */
-  void slotStartComplete();
-  /**
-   * Opens an evaluation-dialog. // Now as a Dockwidget
-   */
-//   void slotEvaluateFlight();
-  /**
-   * Hides the dataview-widget. Called, when the user has closed or
-   * undocked the widget.
-   */
-  void slotHideDataViewDock();
-  /**
-    * Hides the EvaluationWindow. Called, when the user has closed or
-    * undocked the widget.
-    */
-  void slotHideEvaluationWindowDock();
-  /**
-   * Hides the HelpWindow. Called, when the user has closed or
-   * undocked the widget.
-   */
-  void slotHideHelpWindowDock();
-  /**
-   * Hides the Legend-widget. Called, when the user has closed or
-   * undocked the widget.
-   */
-  void slotHideLegendDock();
-  /**
-   * Hides the map-widget. Called, when the user has closed or
-   * undocked the widget.
-   */
-  void slotHideMapViewDock();
-  /**
-   * Hides the mapcontrol-widget. Called, when the user has closed or
-   * undocked the widget.
-   */
-  void slotHideMapControlDock();
-  /**
-   * Hides the Objects-widget. Called, when the user has closed or
-   * undocked the widget.
-   */
-  void slotHideObjectTreeDock();
-  /**
-   * Hides the Waypoints-widget. Called, when the user has closed or
-   * undocked the widget.
-   */
-  void slotHideWaypointsDock();
-  /**
-   * Checks the status of all dock-widgets and updates the menu.
-   */
-  void slotCheckDockWidgetStatus();
-  /**
-   * Called, when the user selects a data-type  from the menu. Emits
-   * flightDataTypeChanged(int)
-   *
-   * @param  menuItem  The id of the selected listitem.
-   *
-   * @see #flightDataTypeChanged(int)
-   */
-  void slotSelectFlightData(int listItem);
-  /** optimize flight for OLC declaration*/
-  void slotOptimizeFlightOLC();
-  /** */
-  void slotOptimizeFlight();
-  /** */
-  void slotSavePixmap(QUrl url, int width, int height);
-  /** */
-  void slotFlightViewIgc3D();
-  /** */
-  void slotFlightViewIgcOpenGL();
-  /** set menu items enabled/disabled */
-  void slotModifyMenu();
-  /** */
-  void slotOpenRecorderDialog();
-  /** No descriptions */
-  void slotSetWaypointCatalog(QString catalog);
-  /**
-   * Display dialog to ask for coordinates and center map on that point.
-   */
-  void slotCenterTo();
-  /** Connects the dialogs addWaypoint signal to the waypoint object. */
-  void slotRegisterWaypointDialog(QWidget * dialog);
- private:
-  /**
-   * The startup-window.
-   */
-  KFLogStartLogo* startLogo;
-  /**
-   * The configuration object of the application
-   */
-  KConfig *config;
+  void readOptions();
+
+private:
+  /** Initialises all QDockWindows */
+  void initDockWindows();
+  /** Initialises QMenuBar */
+  void initMenuBar();
+  /** Initialises the QStatusBar */
+  void initStatusBar();
+  /** Initialises surface types */
+  void initSurfaceTypes();
+  /** Initialises task types*/
+  void initTaskTypes();
+  /** Initialises toolbar*/
+  void initToolBar();
+  /** Initialises waypoint types*/
+  void initWaypointTypes();
   /**
    * Dockwidget to handle the dataview-widget.
    * The dataview-widget. Embedded in dataViewDock
    */
-  KDockWidget* dataViewDock;
+  QDockWindow* dataViewDock;
   DataView* dataView;
   /**
    * Dockwidget to handle the EvaluationWindow.
    * The evalutionWindow. Embedded in evaluationWindowDock
    */
-  KDockWidget* evaluationWindowDock;  
+  QDockWindow* evaluationWindowDock;
   EvaluationDialog* evaluationWindow;
   /**
    * Dockwidget to handle the helpWindow.
    * The helpWindow. Embedded in helpWindowDock
    */
-  KDockWidget* helpWindowDock;
+  QDockWindow* helpWindowDock;
   HelpWindow* helpWindow;
   /**
    * Dockwidget to handle the legend-widget.
    *
    * @see TopoLegend
    */
-  KDockWidget* legendDock;
+  QDockWindow* legendDock;
   TopoLegend* legend;
   /**
    * Dockwidget to handle the map.
    * The map-widget.
    */
-  KDockWidget* mapViewDock;
+  QDockWindow* mapViewDock;
   Map* map;
   /**
    * Dockwidget to handle the mapcontrol.
    * The mapcontrol-widget. Embedded in mapControlDock
    */
-  KDockWidget* mapControlDock;
+  QDockWindow* mapControlDock;
   MapControlView* mapControl;
   /**
    * Dockwidget to handle the object view
    *
    * @see ObjectView
    */
-  KDockWidget* objectTreeDock;
+  QDockWindow* objectTreeDock;
   ObjectTree* objectTree;
   /**
    * Dockwidget to handle the waypoints-widget.
    * The waypoints-widget.
    */
-  KDockWidget* waypointsDock;
-  Waypoints *waypoints;
-  /**
-   * The progessbar in the statusbar. Used during drawing the map to display
-   * the percentage of what is allready drawn.
-   *
-   * @see slotSetProgress
-   */
-  KProgress* statusProgress;
-  /**
-   * The label to display a message in the statusbar.
-   *
-   * @see slotStatusMsg
-   */
-  KStatusBarLabel* statusLabel;
-  /**
-   * The label to display the time of a selected flight-point.
-   *
-   * @see slotShowPointInfo
-   */
-  KStatusBarLabel* statusTimeL;
-  /**
-   * The label to display the altitude of a selected flight-point.
-   *
-   * @see slotShowPointInfo
-   */
-  KStatusBarLabel* statusAltitudeL;
-  /**
-   * The label to display the vario of a selected flight-point.
-   *
-   * @see slotShowPointInfo
-   */
-  KStatusBarLabel* statusVarioL;
-  /**
-   * The label to display the speed of a selected flight-point.
-   *
-   * @see slotShowPointInfo
-   */
-  KStatusBarLabel* statusSpeedL;
-  /**
-   * The label to display the latitude of the position under the mousecursor.
-   *
-   * @see slotShowPointInfo
-   */
-  KStatusBarLabel* statusLatL;
-  /**
-   * The label to display the longitude of the position under the mousecursor.
-   *
-   * @see slotShowPointInfo
-   */
-  KStatusBarLabel* statusLonL;
+  QDockWindow* waypointsDock;
+  Waypoints* waypoints;
+  QToolBar* toolBar;
   /**
    * Actions for the menu File
    */
@@ -479,12 +346,69 @@ class KFLogApp : public KDockMainWindow
   QAction* settingsFlightData;
   QAction* settingsHelpWindow;
   QAction* settingsLegend;
-  QAction* settingsMap;
+//  QAction* settingsMap;
   QAction* settingsMapControl;
   QAction* settingsObjectTree;
   QAction* settingsStatusBar;
   QAction* settingsToolBar;
   QAction* settingsWaypoints;
+  /**
+   * True, when the startup-window should be displayed.
+   */
+  bool showStartLogo;
+  /**
+   * The startup-window.
+   */
+  KFLogStartLogo* startLogo;
+  /**
+   * The progressbar in the statusbar. Used during drawing the map to display
+   * the percentage of what is allready drawn.
+   *
+   * @see slotSetProgress
+   */
+  QProgressBar* statusProgress;
+  /**
+   * The label to display a message in the statusbar.
+   *
+   * @see slotStatusMsg
+   */
+  QLabel* statusLabel;
+  /**
+   * The label to display the time of a selected flight-point.
+   *
+   * @see slotShowPointInfo
+   */
+  QLabel* statusTimeL;
+  /**
+   * The label to display the altitude of a selected flight-point.
+   *
+   * @see slotShowPointInfo
+   */
+  QLabel* statusAltitudeL;
+  /**
+   * The label to display the vario of a selected flight-point.
+   *
+   * @see slotShowPointInfo
+   */
+  QLabel* statusVarioL;
+  /**
+   * The label to display the speed of a selected flight-point.
+   *
+   * @see slotShowPointInfo
+   */
+  QLabel* statusSpeedL;
+  /**
+   * The label to display the latitude of the position under the mousecursor.
+   *
+   * @see slotShowPointInfo
+   */
+  QLabel* statusLatL;
+  /**
+   * The label to display the longitude of the position under the mousecursor.
+   *
+   * @see slotShowPointInfo
+   */
+  QLabel* statusLonL;
   /**
    * The flight-directory.
    */
@@ -493,21 +417,6 @@ class KFLogApp : public KDockMainWindow
    * The task and waypoints directory.
    */
   QString taskDir;
-  /**
-   * True, when the startup-window should be displayed.
-   */
-  bool showStartLogo;
-
-  private slots: // Private slots
-  /**
-   * insert available flights into menu
-   */
-  void slotWindowsMenuAboutToShow();
-  /**
-   * Called to the What's This? mode.
-   */
-  void slotWhatsThis();
-
 };
  
 #endif // KFLOG_H

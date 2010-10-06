@@ -15,30 +15,25 @@
 **
 ***********************************************************************/
 
-#include "igcpreview.h"
-
 #include <qfileinfo.h>
-#include <kurl.h>
-#include <qlayout.h>
 #include <qtextstream.h>
 
+#include "igcpreview.h"
 #include "mapcalc.h"
 
 IGCPreview::IGCPreview(QWidget* parent)
-  : KPreviewWidgetBase(parent, "IGC-PreviewWidget")
+  : QLabel(parent), QFilePreview()
 {
-  textLabel = new QLabel(this);
-  QVBoxLayout* layout = new QVBoxLayout(this, 5, 1);
-  layout->addWidget(textLabel);
+  textLabel = this;
   textLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 }
 
 IGCPreview::~IGCPreview()
 {
-
+  textLabel->setText("");
 }
 
-void IGCPreview::showPreview(const KURL &url)
+void IGCPreview::previewUrl(const QUrl &url)
 {
   /******************************************************************
    * Sample Header:
@@ -133,5 +128,3 @@ void IGCPreview::showPreview(const KURL &url)
 
     textLabel->setText(previewText);
 }
-
-void IGCPreview::clearPreview()  {  textLabel->setText("");  }

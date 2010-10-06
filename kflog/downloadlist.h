@@ -32,8 +32,8 @@
 
 #include <qobject.h>
 #include <qptrlist.h>
+#include <qstringlist.h>
 #include <qurl.h>
-#include <kio/jobclasses.h>
 
 class DownloadList : public QObject{
   Q_OBJECT
@@ -50,13 +50,15 @@ class DownloadList : public QObject{
    /**
     * Adds a copy-task to the list of downloads
     */
-    void copyKURL(QUrl* src, QUrl* dest);
+// Temporarily disabled during transition to Qt4. Use QNetworkAccessManager in Qt4.
+//    void copyKURL(QUrl* src, QUrl* dest);
   public slots: //should probably be protected?
    /**
     * Called if a download has finished. Resets @ref downloadRunning to false
     * and calls @ref __schedule to see if a new download should be started.
     */
-    void slotDownloadFinished(KIO::Job* job);
+// Temporarily disabled during transition to Qt4. Use QNetworkAccessManager in Qt4.
+//    void slotDownloadFinished(KIO::Job* job);
   signals:
    /**
     * Emitted if a download is finished

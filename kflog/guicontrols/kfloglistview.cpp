@@ -17,18 +17,17 @@
 
 #include "kfloglistview.h"
 #include <qheader.h>
-
-#include <kconfig.h>
-#include <kglobal.h>
+#include <qsettings.h>
+#include <qstringlist.h>
 
 KFLogListView::KFLogListView(const char *persistendName, QWidget *parent, const char *name)
-  : KListView(parent, name)
+  : QListView(parent, name)
 {
   confName = persistendName;
 }
 
 KFLogListView::KFLogListView(QWidget *parent, const char *name)
-  : KListView(parent, name)
+  : QListView(parent, name)
 {
   confName = QString::null;
 }
@@ -44,17 +43,17 @@ KFLogListView::~KFLogListView()
 void KFLogListView::storeConfig()
 {
   if (!confName.isEmpty()) {
-    KConfig* config = KGlobal::config();
-    config->setGroup(confName);
+    extern QSettings _settings;
 
-    QValueList<int> l;
+    QStringList l;
+    QString convertInt;
     QHeader *h = header();
     for (int i = 0; i < h->count(); i++) {
-      l.append(i);
-      l.append(h->mapToSection(i));
+      l.append(convertInt.setNum(i));
+      l.append(convertInt.setNum(h->mapToSection(i)));
     }
 
-    config->writeEntry("ColumnToSection", l);
+    _settings.writeEntry("/KFLog/"+confName+"/ColumnToSection", l);
   }
 }
 
@@ -62,19 +61,54 @@ void KFLogListView::storeConfig()
 void KFLogListView::loadConfig()
 {
   if (!confName.isEmpty()) {
-    KConfig* config = KGlobal::config();
-    config->setGroup(confName);
+    extern QSettings _settings;
 
-    QValueList<int> l = config->readIntListEntry("ColumnToSection");
-    QValueList<int>::Iterator it;
+    QStringList l = _settings.readListEntry("/KFLog/"+confName+"/ColumnToSection");
+    QStringList::Iterator it;
     QHeader *h = header();
-	int col, section;
-	
+    int col, section;
+
     for (it = l.begin(); it != l.end(); ++it) {
-      col = *it;
+      col = (*it).toInt();
       ++it;
-      section = *it;
+      section = (*it).toInt();
       h->moveSection(section, col);
     }
   }
+}
+
+//source: http://api.kde.org/3.5-api/kdelibs-apidocs/kdeui/html/klistview_8cpp_source.html#l01858
+int KFLogListView::itemIndex( const QListViewItem *item ) const
+{
+    if ( !item )
+        return -1;
+
+    if ( item == firstChild() )
+        return 0;
+    else {
+        QListViewItemIterator it(firstChild());
+        uint j = 0;
+        for ( ; it.current() && it.current() != item; ++it, ++j ) ;
+
+        if( !it.current() )
+          return -1;
+
+        return j;
+    }
+}
+
+//source: http://api.kde.org/3.5-api/kdelibs-apidocs/kdeui/html/klistview_8cpp_source.html#l01877
+QListViewItem* KFLogListView::itemAtIndex(int index)
+{
+   if (index<0)
+      return 0;
+
+   int j(0);
+   for (QListViewItemIterator it=firstChild(); it.current(); ++it)
+   {
+      if (j==index)
+         return it.current();
+      ++j;
+   };
+   return 0;
 }

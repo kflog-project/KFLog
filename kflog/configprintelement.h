@@ -18,16 +18,15 @@
 #ifndef CONFIGPRINTELEMENT_H
 #define CONFIGPRINTELEMENT_H
 
-#include <kconfig.h>
-#include <kcolorbutton.h>
-
 #include <qcheckbox.h>
+#include <qcolor.h>
 #include <qcombobox.h>
 #include <qframe.h>
 #include <qlcdnumber.h>
 #include <qlineedit.h>
 #include <qptrlist.h>
 #include <qpen.h>
+#include <qpushbutton.h>
 #include <qslider.h>
 #include <qspinbox.h>
 
@@ -41,7 +40,7 @@ class ConfigPrintElement : public QFrame
   Q_OBJECT
 
   public:
-    ConfigPrintElement(QWidget* parent, KConfig* cnf);
+    ConfigPrintElement(QWidget* parent);
     ~ConfigPrintElement();
     /** */
 //    enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
@@ -63,13 +62,43 @@ class ConfigPrintElement : public QFrame
     /** */
     void slotOk();
 
+  private slots:
+  void slotSelectBorder1Color();
+  void slotSelectBorder2Color();
+  void slotSelectBorder1BrushColor();
+  void slotSelectBorder2BrushColor();
+
   private:
-    KConfig* config;
+    void __defaultPen(QPtrList<QPen> *penList, bool *b,
+        QColor defaultColor1, QColor defaultColor2, int defaultPenSize1, int defaultPenSize2,
+        Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2);
+    void __defaultPenBrush(QPtrList<QPen> *penList, bool *b, QPtrList<QBrush> *brushList,
+        QColor defaultColor1, QColor defaultColor2, int defaultPenSize1, int defaultPenSize2,
+        Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, QColor defaultBrushColor1, QColor defaultBrushColor2,
+        Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2);
+    void __fillStyle(QComboBox *pen, QComboBox *brush);
+    void __readBorder(QString group, bool *b);
+    void __readPen(QString group, QPtrList<QPen> *penList, bool *b,
+        QColor defaultColor1, QColor defaultColor2, int defaultPenSize1, int defaultPenSize2,
+        Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2);
+    void __readPenBrush(QString group, QPtrList<QPen> *penList, bool *b, QPtrList<QBrush> *brushList,
+        QColor defaultColor1, QColor defaultColor2, int defaultPenSize1, int defaultPenSize2,
+        Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, QColor defaultBrushColor1, QColor defaultBrushColor2,
+        Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2);
+    void __saveBrush(QPtrList<QBrush> *brushList);
+    void __savePen(QPtrList<QPen> *penList, bool *b);
+    void __showBrush(QPtrList<QBrush> *brushList);
+    void __showPen(QPtrList<QPen> *a, bool *b);
+    void __writeBrush(QString group, QPtrList<QBrush> *brushList, QPtrList<QPen> *penList, bool *b);
+    void __writePen(QString group, QPtrList<QPen> *penList, bool *b);
+
     QCheckBox* border1;
     QCheckBox* border2;
 
-    KColorButton* border1Color;
-    KColorButton* border2Color;
+    QColor border1Color;
+    QPushButton* border1ColorButton;
+    QColor border2Color;
+    QPushButton* border2ColorButton;
 
     QSpinBox* border1Pen;
     QSpinBox* border2Pen;
@@ -79,8 +108,10 @@ class ConfigPrintElement : public QFrame
     QComboBox* border1PenStyle;
     QComboBox* border2PenStyle;
 
-    KColorButton* border1BrushColor;
-    KColorButton* border2BrushColor;
+    QColor border1BrushColor;
+    QPushButton* border1BrushColorButton;
+    QColor border2BrushColor;
+    QPushButton* border2BrushColorButton;
 
     QComboBox* border1BrushStyle;
     QComboBox* border2BrushStyle;
@@ -169,6 +200,11 @@ class ConfigPrintElement : public QFrame
 
     int oldElement;
     int currentElement;
+
+    /** this is a temporary function and it is not needed in Qt 4 */
+    QString __color2String(QColor);
+    /** this is a temporary function and it is not needed in Qt 4 */
+    QColor __string2Color(QString);
 };
 
 #endif

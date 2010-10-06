@@ -21,9 +21,9 @@
 #include "mapcalc.h"
 #include "mapcontents.h"
 
-#include <kconfig.h>
 
 #include <qlayout.h>
+#include <qsettings.h>
 #include <qsplitter.h>
 
 #define X_DISTANCE 100
@@ -32,7 +32,7 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   : QFrame(parent),
   flight(0)
 {
-warning("EvaluationFrame::EvaluationFrame");
+//warning("EvaluationFrame::EvaluationFrame");
   // variable control
   QSplitter* controlSplitter = new QSplitter(QSplitter::Horizontal, this);
 
@@ -133,22 +133,19 @@ warning("EvaluationFrame::EvaluationFrame");
 
 
   // load settings from config file
-  KConfig* config = KGlobal::config();
+  extern QSettings _settings;
 
-  config->setGroup("Evaluation");
-  secWidth = config->readNumEntry("Scale Time",10);
+  secWidth = _settings.readNumEntry("/KFLog/Evaluation/ScaleTime",10);
   spinScale->setValue(secWidth);
-  smoothness_va = config->readNumEntry("Vario Smoothness",0);
+  smoothness_va = _settings.readNumEntry("/KFLog/Evaluation/VarioSmoothness",0);
   sliderVario->setValue(smoothness_va);
-  smoothness_v = config->readNumEntry("Speed Smoothness",0);
+  smoothness_v = _settings.readNumEntry("/KFLog/Evaluation/SpeedSmoothness",0);
   sliderSpeed->setValue(smoothness_v);
-  smoothness_h = config->readNumEntry("Altitude Smoothness",0);
+  smoothness_h = _settings.readNumEntry("/KFLog/Evaluation/AltitudeSmoothness",0);
   sliderBaro->setValue(smoothness_h);
-  check_vario->setChecked(config->readBoolEntry("Vario",true));
-  check_speed->setChecked(config->readBoolEntry("Speed",true));
-  check_baro->setChecked(config->readBoolEntry("Altitude",true));
-
-  config->setGroup(0);
+  check_vario->setChecked(_settings.readBoolEntry("/KFLog/Evaluation/Vario",true));
+  check_speed->setChecked(_settings.readBoolEntry("/KFLog/Evaluation/Speed",true));
+  check_baro->setChecked(_settings.readBoolEntry("/KFLog/Evaluation/Altitude",true));
 
   this->connect(check_vario, SIGNAL(clicked()),
         SLOT(slotShowGraph()));
@@ -170,18 +167,17 @@ warning("EvaluationFrame::EvaluationFrame");
 
 EvaluationFrame::~EvaluationFrame()
 {
- warning("EvaluationFrame::~EvaluationFrame()");
+// warning("EvaluationFrame::~EvaluationFrame()");
   // Save settings
-  KConfig* config = KGlobal::config();
+  extern QSettings _settings;
 
-  config->setGroup("Evaluation");
-  config->writeEntry("Scale Time",secWidth);
-  config->writeEntry("Vario Smoothness",smoothness_va);
-  config->writeEntry("Altitude Smoothness",smoothness_h);
-  config->writeEntry("Speed Smoothness",smoothness_v);
-  config->writeEntry("Vario",check_vario->isChecked());
-  config->writeEntry("Altitude",check_baro->isChecked());
-  config->writeEntry("Speed",check_speed->isChecked());
+  _settings.writeEntry("/KFLog/Evaluation/ScaleTime", secWidth);
+  _settings.writeEntry("/KFLog/Evaluation/VarioSmoothness", smoothness_va);
+  _settings.writeEntry("/KFLog/Evaluation/AltitudeSmoothness", smoothness_h);
+  _settings.writeEntry("/KFLog/Evaluation/SpeedSmoothness", smoothness_v);
+  _settings.writeEntry("/KFLog/Evaluation/Vario", check_vario->isChecked());
+  _settings.writeEntry("/KFLog/Evaluation/Altitude", check_baro->isChecked());
+  _settings.writeEntry("/KFLog/Evaluation/Speed", check_speed->isChecked());
 }
 
 void EvaluationFrame::slotShowFlight()
@@ -252,7 +248,7 @@ void EvaluationFrame::slotUpdateCursorText(QString text)
 
 void EvaluationFrame::resizeEvent(QResizeEvent* event)
 {
-  warning("EvaluationFrame::resizeEvent");
+//  warning("EvaluationFrame::resizeEvent");
 
   slotShowGraph();
   QFrame::resizeEvent(event);

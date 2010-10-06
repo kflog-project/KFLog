@@ -24,7 +24,6 @@
 #include <qptrlist.h>
 #include <qobject.h>
 #include <qstrlist.h>
-#include <kio/jobclasses.h>
 
 #include "downloadlist.h"
 #include "flighttask.h"

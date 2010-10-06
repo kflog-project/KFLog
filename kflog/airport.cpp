@@ -17,7 +17,7 @@
 
 #include "airport.h"
 
-#include <kstddirs.h>
+#include <qdir.h>
 
 Airport::Airport(QString n, QString i, QString abbr, unsigned int t,
   WGSPoint wgsPos, QPoint pos, unsigned int e, const char* f, bool v)
@@ -55,7 +55,7 @@ unsigned int Airport::getRunwayNumber() const
 QString Airport::getInfoString() const
 {
   QString text;
-  QString path = KGlobal::dirs()->findResource("appdata", "mapicons/");
+  QString path = QDir::homeDirPath() + "/.kflog/mapicons/";
   //bool isType2=false; //Doesn't work yet, runway info is not read.
   //if (typeID==BaseMapElement::Airfield)
   //  isType2=(getRunway().surface==Grass);

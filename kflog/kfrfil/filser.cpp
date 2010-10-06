@@ -27,10 +27,11 @@
 #include <cmath>
 #include <string.h>
 
+#include <qdir.h>
+#include <qfile.h>
 #include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
-#include <ktempfile.h>
 
 #include "../airport.h"
 #include "filser.h"
@@ -349,8 +350,11 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
   //                   purpose, the time consuming retrieval can be
   //                   removed.
   else {
-    KTempFile tmpigc;                          //create a temporary file,
-    tmpigc.setAutoDelete(true);                //  and set autodelete to true.
+    // FIXME: Use QTemporaryFile in Qt4
+    QDir::setCurrent(QDir::homeDirPath() + "/.kflog");
+    QFile tmpigc;
+    tmpigc.setName("tmpigc");
+
     if (tmpigc.status()!=0) {                  //check to see if a temporary file could be created.
       _errorinfo=tr("Could not create temporary file. Please check your writepermissions.");
       return FR_ERROR;
@@ -383,6 +387,8 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
                                                                   // Please, keep it this way.
       warning(dirList->at(i)->longFileName + "   " + dirList->at(i)->shortFileName);
     }
+    QDir::setCurrent(QDir::homeDirPath() + "/.kflog");
+    tmpigc.remove("tmpigc");
   }
 
   _keepalive->blockSignals(false);

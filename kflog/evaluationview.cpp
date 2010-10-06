@@ -21,9 +21,8 @@
 #include "resource.h"
 #include "mapcalc.h"
 
-#include <kstddirs.h>
-
 #include <qcheckbox.h>
+#include <qdir.h>
 #include <qspinbox.h>
 #include <qslider.h>
 #include <qcombobox.h>
@@ -799,10 +798,8 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
           paint.setBrush(QBrush(QColor(200,0,0), SolidPattern));
         }
 
-      QPixmap pixCursor1 = QPixmap(KGlobal::dirs()->findResource("appdata",
-          "pics/flag_green.png"));
-      QPixmap pixCursor2 = QPixmap(KGlobal::dirs()->findResource("appdata",
-          "pics/flag_red.png"));
+      QPixmap pixCursor1 = QPixmap(QDir::homeDirPath() + "/.kflog/pics/flag_green.png");
+      QPixmap pixCursor2 = QPixmap(QDir::homeDirPath() + "/.kflog/pics/flag_red.png");
 
       // draw new line
       paint.drawLine(xpos, this->height() - Y_DISTANCE, xpos, Y_DISTANCE);

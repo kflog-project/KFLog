@@ -18,10 +18,9 @@
 #include "flightlistviewitem.h"
 #include "tasklistviewitem.h"
 #include "flight.h"
+
+#include <qdir.h>
 #include <qurl.h>
-#include <kglobal.h>
-#include <klocale.h>
-#include <kiconloader.h>
 
 FlightListViewItem::FlightListViewItem(QListViewItem * parent, Flight * flight):QListViewItem(parent){
   this->flight=flight;
@@ -58,15 +57,14 @@ void FlightListViewItem::update(){
 /** Creates the childnodes for this flightnode. */
 void FlightListViewItem::createChildren(){
   QUrl url(flight->getFileName());
-  KLocale loc("");
 
-  setText(0,url.fileName());
-  setText(1,loc.formatDate(flight->getDate(),true) + ": " + flight->getPilot());
+  setText(0, url.fileName());
+  setText(1, flight->getDate().toString(Qt::LocalDate) + ": " + flight->getPilot());
   //setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup, KIcon::SizeSmall));
 
   QListViewItem * subItem=new QListViewItem((QListViewItem*)this,QObject::tr("Pilot"),flight->getPilot());
   subItem->setSelectable(false);
-  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Date"),loc.formatDate(flight->getDate(),false));
+  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Date"), flight->getDate().toString(Qt::LocalDate));
   subItem->setSelectable(false);
   subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Glider"),flight->getType() + ", " + flight->getID());
   subItem->setSelectable(false);
@@ -79,11 +77,12 @@ void FlightListViewItem::createChildren(){
   subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Total distance"),flight->getDistance(true));
   subItem->setSelectable(false);
   subItem=new TaskListViewItem((QListViewItem*)this, &flight->getTask(true), subItem);
-  subItem->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("task", KIcon::NoGroup, KIcon::SizeSmall));
+  QPixmap taskPic = QPixmap(QDir::homeDirPath() + "/.kflog/pics/task_16.png");
+  subItem->setPixmap(0, taskPic);
   subItem->setSelectable(false);
   if (flight->isOptimized()){
     subItem=new TaskListViewItem((QListViewItem*)this, &flight->getTask(false), subItem);
-    subItem->setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("task", KIcon::NoGroup, KIcon::SizeSmall));
+    subItem->setPixmap(0, taskPic);
     subItem->setSelectable(false);
   }
 }

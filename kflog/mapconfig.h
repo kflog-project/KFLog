@@ -217,6 +217,18 @@ class MapConfig : public QObject
      * @return the pen
      */
     QPen __getPen(unsigned int typeID, int sIndex);
+    void __readBorder(QString group, bool *b);
+    void __readPen(QString group, QPtrList<QPen> *penList, bool *b,
+        QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4, QColor defaultColor5, QColor defaultColor6,
+        int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4, int defaultPenSize5, int defaultPenSize6,
+        Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4, Qt::PenStyle defaultPenStyle5, Qt::PenStyle defaultPenStyle6);
+    void __readPenBrush(QString group, QPtrList<QPen> *penList, bool *b, QPtrList<QBrush> *brushList,
+        QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4, QColor defaultColor5, QColor defaultColor6,
+        int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4, int defaultPenSize5, int defaultPenSize6,
+        Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4, Qt::PenStyle defaultPenStyle5, Qt::PenStyle defaultPenStyle6,
+        QColor defaultBrushColor1, QColor defaultBrushColor2, QColor defaultBrushColor3, QColor defaultBrushColor4, QColor defaultBrushColor5, QColor defaultBrushColor6,
+        Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2, Qt::BrushStyle defaultBrushStyle3, Qt::BrushStyle defaultBrushStyle4, Qt::BrushStyle defaultBrushStyle5, Qt::BrushStyle defaultBrushStyle6);
+    void __readTopo(QString entry, QColor color);
 
     QPtrList<QColor> topographyColorList;
 
@@ -329,6 +341,11 @@ class MapConfig : public QObject
      */
     int drawFType;
     int _drawWpLabelScale;
+
+    /** this is a temporary function and it is not needed in Qt 4 */
+    QString __color2String(QColor);
+    /** this is a temporary function and it is not needed in Qt 4 */
+    QColor __string2Color(QString);
 };
 
 #endif

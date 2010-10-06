@@ -26,7 +26,7 @@
 
 #include <math.h>
 #include <cstdlib>
-#include <kaction.h>
+
 #include "../flight.h"
 #include "../resource.h"
 #include "../mapcontents.h"

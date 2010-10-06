@@ -24,12 +24,10 @@
 #include <cstdlib>
 
 #include "flight.h"
-
 #include "mapcalc.h"
 #include "mapmatrix.h"
 #include "optimizationwizard.h"
 
-#include <klocale.h>
 #include <qmessagebox.h>
 #include <qpixmap.h>
 #include <qptrlist.h>
@@ -113,7 +111,7 @@ Flight::Flight(const QString& fName, const QString& recID, const QPtrList<flight
   header.append(pilotName);
   header.append(gliderID);
   header.append(gliderType);
-  header.append(KGlobal::locale()->formatDate(date, true));
+  header.append(date.toString(Qt::LocalDate));
   header.append(printTime(route.last()->time - route.at(0)->time));
   header.append(getTaskTypeString());
   header.append(getDistance());

@@ -23,12 +23,12 @@
 #include "mapmatrix.h"
 //#include <mapprintdialogpage.h>
 
-#include <kprinter.h>
-
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpainter.h>
+#include <qprinter.h>
+#include <qpushbutton.h>
 
 #define TOP_LEFT_X   ( ( 0 + leftMargin ) * 2 )
 #define TOP_LEFT_Y   ( ( 0 + topMargin ) * 2 )
@@ -52,12 +52,13 @@
 
 MapPrintDialogPage::MapPrintDialogPage(QStringList sList, QWidget *parent,
     const char *name, bool printFlight)
-  : KPrintDialogPage(parent,name),
+  : QDialog(parent,name),
     scaleList(sList)
 {
-  setTitle(QObject::tr("Map"));
+  setCaption(QObject::tr("Map"));
+  setModal(true);
 
-  QGroupBox* scaleBox = new QGroupBox(QObject::tr("Map print"), this);
+  QGroupBox *scaleBox = new QGroupBox(QObject::tr("Map print"), this);
 
   scaleSelect = new QComboBox(this);
   scaleSelect->insertStringList(scaleList);
@@ -65,8 +66,7 @@ MapPrintDialogPage::MapPrintDialogPage(QStringList sList, QWidget *parent,
   printTitle = new QCheckBox(QObject::tr("Print Pagetitle"), this);
   titleInput = new QLineEdit(this);
 
-  connect(printTitle, SIGNAL(toggled(bool)), titleInput,
-      SLOT(setEnabled(bool)));
+  connect(printTitle, SIGNAL(toggled(bool)), titleInput, SLOT(setEnabled(bool)));
 
   printLegend = new QCheckBox(QObject::tr("Print Legend"), this);
   printText = new QCheckBox(QObject::tr("Print Text"), this);
@@ -78,8 +78,8 @@ MapPrintDialogPage::MapPrintDialogPage(QStringList sList, QWidget *parent,
       titleInput->setText(QObject::tr("Flight Track") + ":");
     }
 
-  QGridLayout* pageLayout = new QGridLayout(this, 5, 7);
-  pageLayout->addMultiCellWidget(scaleBox, 0, 6, 0, 4);
+  QGridLayout* pageLayout = new QGridLayout(this, 6, 7);
+  pageLayout->addMultiCellWidget(scaleBox, 0, 7, 0, 4);
   pageLayout->addWidget(new QLabel(QObject::tr("Map scale") + ":", this), 1, 1);
   pageLayout->addWidget(scaleSelect, 1, 3);
   pageLayout->addWidget(printTitle, 3, 1);
@@ -87,20 +87,29 @@ MapPrintDialogPage::MapPrintDialogPage(QStringList sList, QWidget *parent,
   pageLayout->addWidget(printLegend, 5, 1);
   pageLayout->addWidget(printText, 5, 3);
 
-  pageLayout->addColSpacing(0, 10);
-  pageLayout->addColSpacing(2, 5);
+  pageLayout->setColSpacing(0, 10);
+  pageLayout->setColSpacing(2, 5);
   pageLayout->setColStretch(3, 1);
-  pageLayout->addColSpacing(4, 10);
+  pageLayout->setColSpacing(4, 10);
 
-  pageLayout->addRowSpacing(0, 25);
-  pageLayout->addRowSpacing(2, 15);
-  pageLayout->addRowSpacing(4, 15);
-  pageLayout->setRowStretch(6, 2);
-  pageLayout->addRowSpacing(6, 10);
+  pageLayout->setRowSpacing(0, 25);
+  pageLayout->setRowSpacing(2, 15);
+  pageLayout->setRowSpacing(4, 15);
+  pageLayout->setRowSpacing(5, 3);
+  pageLayout->setRowStretch(7, 2);
+  pageLayout->setRowSpacing(7, 10);
+
+  QPushButton *okButton = new QPushButton("&Ok", this);
+  pageLayout->addWidget(okButton, 6, 1);
+  connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
+  QPushButton *cancelButton = new QPushButton("&Cancel", this);
+  pageLayout->addWidget(cancelButton, 6, 3);
+  connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
   // Unused widgets disabled:
 
   printTitle->setEnabled(false);
+  titleInput->setEnabled(false);
   printLegend->setEnabled(false);
 }
 
@@ -109,50 +118,18 @@ MapPrintDialogPage::~MapPrintDialogPage()
 
 }
 
-void MapPrintDialogPage::getOptions(QMap<QString,QString>& opts, bool incldef)
+void MapPrintDialogPage::getOptions(QString *printScale, bool *bPrintTitle, bool *bPrintText, bool *bPrintLegend)
 {
-  QString temp;
-
-  opts["kde-kflog-printscale"] = scaleSelect->currentText();
-
-  opts["kde-kflog-printtitle"] = temp.sprintf("%d",
-      printTitle->isChecked());
-
-  opts["kde-kflog-printtext"] = temp.sprintf("%d",
-      printText->isChecked());
-
-  opts["kde-kflog-printlegend"] = temp.sprintf("%d",
-      printLegend->isChecked());
-}
-
-void MapPrintDialogPage::setOptions( const QMap<QString,QString>& opts )
-{
-  if(opts["kde-kflog-printscale"] == NULL)
-      scaleSelect->setCurrentItem(0);
+  *printScale = scaleSelect->currentText();
+  if(printTitle->isEnabled())
+    *bPrintTitle = printTitle->isChecked();
   else
-      scaleSelect->setCurrentItem(scaleList.findIndex(
-          opts["kde-kflog-printscale"]));
-
-  if(opts["kde-kflog-printtitle"] == NULL)
-    {
-      printTitle->setChecked(false);
-      titleInput->setEnabled(false);
-    }
+    *bPrintTitle = false;
+  *bPrintText = printText->isChecked();
+  if(printLegend->isEnabled())
+    *bPrintLegend = printLegend->isChecked();
   else
-    {
-      printTitle->setChecked((opts["kde-kflog-printtitle"]).toInt());
-      titleInput->setEnabled((opts["kde-kflog-printtitle"]).toInt());
-    }
-
-  if(opts["kde-kflog-printlegend"] == NULL)
-      printLegend->setChecked(false);
-  else
-      printLegend->setChecked((opts["kde-kflog-printlegend"]).toInt());
-
-  if(opts["kde-kflog-printtext"] == NULL)
-      printText->setChecked(false);
-  else
-      printText->setChecked((opts["kde-kflog-printtext"]).toInt());
+    *bPrintLegend = false;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -179,12 +156,13 @@ MapPrint::MapPrint(bool flightLoaded)
     }
 
   dialogPage = new MapPrintDialogPage(scaleList, 0, "MapPrintDialogPage", false);
+  if(dialogPage->exec()==QDialog::Rejected)
+    return;
 
-  KPrinter printer(true, QPrinter::PrinterResolution);
-//  KPrinter printer;
-  printer.addDialogPage(dialogPage);
+  QPrinter printer(QPrinter::PrinterResolution);
 
-  if(!printer.setup(0, QObject::tr("Map print"), true))  return;
+  if(!printer.setup(0))
+    return;
 
   scaleRange = new double[6];
   scaleRange[0] = 1000.0 / 72 * 25.4;          /* 1:1.000.000 */
@@ -194,7 +172,11 @@ MapPrint::MapPrint(bool flightLoaded)
   scaleRange[4] =   50.0 / 72 * 25.4;          /* 1:50.000    */
   scaleRange[5] =   25.0 / 72 * 25.4;          /* 1:25.000    */
 
-  QMap<QString,QString> opts = printer.options();
+  QString printScale;
+  bool printTitle;
+  bool printText;
+  bool printLegend;
+  dialogPage->getOptions(&printScale, &printTitle, &printText, &printLegend);
 
   printer.setDocName("kflog-map.ps");
   printer.setCreator((QString)"KFLog " + VERSION);
@@ -205,97 +187,97 @@ MapPrint::MapPrint(bool flightLoaded)
 
   switch (printer.pageSize())
     {
-      case KPrinter::A0: // (841 x 1189 mm)
+      case QPrinter::A0: // (841 x 1189 mm)
         CALC_FORMAT(841, 1189)
         break;
-      case KPrinter::A1: // (594 x 841 mm)
+      case QPrinter::A1: // (594 x 841 mm)
         CALC_FORMAT(594, 841)
         break;
-      case KPrinter::A2: // (420 x 594 mm)
+      case QPrinter::A2: // (420 x 594 mm)
         CALC_FORMAT(420, 594)
         break;
-      case KPrinter::A3: // (297 x 420 mm)
+      case QPrinter::A3: // (297 x 420 mm)
         CALC_FORMAT(297, 420)
         break;
-      case KPrinter::A4: // (210x297 mm, 8.26x11.7 inches)
+      case QPrinter::A4: // (210x297 mm, 8.26x11.7 inches)
         CALC_FORMAT(210, 297)
         break;
-      case KPrinter::A5: // (148 x 210 mm)
+      case QPrinter::A5: // (148 x 210 mm)
         CALC_FORMAT(148, 210)
         break;
-      case KPrinter::A6: // (105 x 148 mm)
+      case QPrinter::A6: // (105 x 148 mm)
         CALC_FORMAT(105, 148)
         break;
-      case KPrinter::A7: // (74 x 105 mm)
+      case QPrinter::A7: // (74 x 105 mm)
         CALC_FORMAT(74, 105)
         break;
-      case KPrinter::A8: // (52 x 74 mm)
+      case QPrinter::A8: // (52 x 74 mm)
         CALC_FORMAT(52, 74)
         break;
-      case KPrinter::A9: // (37 x 52 mm)
+      case QPrinter::A9: // (37 x 52 mm)
         CALC_FORMAT(37, 52)
         break;
-      case KPrinter::B0: // (1030 x 1456 mm)
+      case QPrinter::B0: // (1030 x 1456 mm)
         CALC_FORMAT(1030, 1456)
         break;
-      case KPrinter::B1: // (728 x 1030 mm)
+      case QPrinter::B1: // (728 x 1030 mm)
         CALC_FORMAT(728, 1030)
         break;
-      case KPrinter::B10: // (32 x 45 mm)
+      case QPrinter::B10: // (32 x 45 mm)
         CALC_FORMAT(32, 45)
         break;
-      case KPrinter::B2: // (515 x 728 mm)
+      case QPrinter::B2: // (515 x 728 mm)
         CALC_FORMAT(515, 728)
         break;
-      case KPrinter::B3: // (364 x 515 mm)
+      case QPrinter::B3: // (364 x 515 mm)
         CALC_FORMAT(364, 515)
         break;
-      case KPrinter::B4: // (257 x 364 mm)
+      case QPrinter::B4: // (257 x 364 mm)
         CALC_FORMAT(257, 364)
         break;
-      case KPrinter::B5: // (182 x 257 mm, 7.17x10.13 inches)
+      case QPrinter::B5: // (182 x 257 mm, 7.17x10.13 inches)
         CALC_FORMAT(182, 257)
         break;
-      case KPrinter::B6: // (128 x 182 mm)
+      case QPrinter::B6: // (128 x 182 mm)
         CALC_FORMAT(128, 182)
         break;
-      case KPrinter::B7: // (91 x 128 mm)
+      case QPrinter::B7: // (91 x 128 mm)
         CALC_FORMAT(91, 128)
         break;
-      case KPrinter::B8: // (64 x 91 mm)
+      case QPrinter::B8: // (64 x 91 mm)
         CALC_FORMAT(64, 91)
         break;
-      case KPrinter::B9: // (45 x 64 mm)
+      case QPrinter::B9: // (45 x 64 mm)
         CALC_FORMAT(45, 64)
         break;
-      case KPrinter::C5E: // (163 x 229 mm)
+      case QPrinter::C5E: // (163 x 229 mm)
         CALC_FORMAT(163, 229)
         break;
-      case KPrinter::Comm10E: // (105 x 241 mm, US Common #10 Envelope)
+      case QPrinter::Comm10E: // (105 x 241 mm, US Common #10 Envelope)
         CALC_FORMAT(105, 241)
         break;
-      case KPrinter::DLE: // (110 x 220 mm)
+      case QPrinter::DLE: // (110 x 220 mm)
         CALC_FORMAT(110, 220)
         break;
-      case KPrinter::Executive: // (7.5x10 inches, 191x254 mm)
+      case QPrinter::Executive: // (7.5x10 inches, 191x254 mm)
         CALC_FORMAT(191, 254)
         break;
-      case KPrinter::Folio: // (210 x 330 mm)
+      case QPrinter::Folio: // (210 x 330 mm)
         CALC_FORMAT(210, 330)
         break;
-      case KPrinter::Ledger: // (432 x 279 mm)
+      case QPrinter::Ledger: // (432 x 279 mm)
         CALC_FORMAT(432, 279)
         break;
-      case KPrinter::Legal: // (8.5x14 inches, 216x356 mm)
+      case QPrinter::Legal: // (8.5x14 inches, 216x356 mm)
         CALC_FORMAT(216, 356)
         break;
-      case KPrinter::Letter: // (8.5x11 inches, 216x279 mm)
+      case QPrinter::Letter: // (8.5x11 inches, 216x279 mm)
         CALC_FORMAT(216, 279)
         break;
-      case KPrinter::Tabloid: // (279 x 432 mm)
+      case QPrinter::Tabloid: // (279 x 432 mm)
         CALC_FORMAT(279, 432)
         break;
-      case KPrinter::NPageSize: // "Custom"
+      case QPrinter::NPageSize: // "Custom"
       default:
         // Until we find a better solution, fallback is DIN-A4 ...
         CALC_FORMAT(210, 297)
@@ -304,12 +286,11 @@ MapPrint::MapPrint(bool flightLoaded)
 
   QSize pS;
 
-  if(printer.orientation() == KPrinter::Portrait)
+  if(printer.orientation() == QPrinter::Portrait)
        pS = QSize(width, height);
   else
        pS = QSize(height, width);
 
-  printer.setRealPageSize(pS);
   printer.setFullPage(true);
 
   // Okay, now lets start creating the printout ...
@@ -329,15 +310,14 @@ MapPrint::MapPrint(bool flightLoaded)
   double selectedScale;
   QPoint mapCenter;
 
-  if(scaleList.findIndex(opts["kde-kflog-printscale"]) == 6)
+  if(scaleList.findIndex(printScale) == 6)
       selectedScale = _globalMapMatrix.centerToRect(
           ((Flight *)_globalMapContents.getFlight())->getFlightRect(), pS - QSize(100,163));
-  else if(scaleList.findIndex(opts["kde-kflog-printscale"]) == 7)
+  else if(scaleList.findIndex(printScale) == 7)
       selectedScale = _globalMapMatrix.centerToRect(
           ((Flight *)_globalMapContents.getFlight())->getTaskRect(), pS - QSize(100,163));
   else
-      selectedScale = scaleRange[scaleList.findIndex(
-          opts["kde-kflog-printscale"])];
+      selectedScale = scaleRange[scaleList.findIndex(printScale)];
 
   _globalMapMatrix.createPrintMatrix(selectedScale, pS);
   mapCenter = _globalMapMatrix.getMapCenter();
@@ -386,14 +366,12 @@ MapPrint::MapPrint(bool flightLoaded)
       pS.height() - topMargin - bottomMargin - 63);
 
   // Workaround. It moves the map slightly upwards ...
-  if(scaleList.findIndex(opts["kde-kflog-printscale"]) == 6 ||
-          scaleList.findIndex(opts["kde-kflog-printscale"]) == 7)
+  if(scaleList.findIndex(printScale) == 6 || scaleList.findIndex(printScale) == 7)
       dY -= 32;
 
   _globalMapMatrix.createPrintMatrix(selectedScale, pS * 2, (int)dX, (int)dY);
 
-  _globalMapContents.printContents(&printPainter,
-      ((QString)opts["kde-kflog-printtext"]).toInt());
+  _globalMapContents.printContents(&printPainter, printText);
 
   printPainter.setClipRect(0, 0, pS.width(), pS.height());
 
@@ -402,7 +380,7 @@ MapPrint::MapPrint(bool flightLoaded)
   bool show5 = false;
   unsigned int stop10, stop1 = 10, stop_small10 = 0, stop_small1 = 10;
 
-  switch(scaleList.findIndex(opts["kde-kflog-printscale"]))
+  switch(scaleList.findIndex(printScale))
     {
       case 0:
         scaleText = "1:1.000.000";

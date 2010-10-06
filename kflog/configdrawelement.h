@@ -18,16 +18,15 @@
 #ifndef CONFIGDRAWELEMENT_H
 #define CONFIGDRAWELEMENT_H
 
-#include <kconfig.h>
-#include <kcolorbutton.h>
-
 #include <qcheckbox.h>
+#include <qcolor.h>
 #include <qcombobox.h>
 #include <qframe.h>
 #include <qlcdnumber.h>
 #include <qlineedit.h>
 #include <qptrlist.h>
 #include <qpen.h>
+#include <qpushbutton.h>
 #include <qslider.h>
 #include <qspinbox.h>
 
@@ -41,7 +40,7 @@ class ConfigDrawElement : public QFrame
   Q_OBJECT
 
   public:
-    ConfigDrawElement(QWidget* parent, KConfig* cnf);
+    ConfigDrawElement(QWidget* parent);
     ~ConfigDrawElement();
     /** */
 //    enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
@@ -72,17 +71,54 @@ class ConfigDrawElement : public QFrame
     /** */
     void slotOk();
 
+  private slots:
+  void slotSelectBorder1Color();
+  void slotSelectBorder2Color();
+  void slotSelectBorder3Color();
+  void slotSelectBorder4Color();
+  void slotSelectBorder1BrushColor();
+  void slotSelectBorder2BrushColor();
+  void slotSelectBorder3BrushColor();
+  void slotSelectBorder4BrushColor();
+
   private:
-    KConfig* config;
+    void __defaultPen(QPtrList<QPen> *penList, bool *b,
+        QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4,
+        int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4);
+    void __defaultPenBrush(QPtrList<QPen> *penList, bool *b, QPtrList<QBrush> *brushList,
+        QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4,
+        int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4,
+        QColor defaultBrushColor1, QColor defaultBrushColor2, QColor defaultBrushColor3, QColor defaultBrushColor4,
+        Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2, Qt::BrushStyle defaultBrushStyle3, Qt::BrushStyle defaultBrushStyle4);
+    void __fillStyle(QComboBox *pen, QComboBox *brush);
+    void __readBorder(QString group, bool *b);
+    void __readPen(QString group, QPtrList<QPen> *penList,
+        QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4,
+        int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4,
+        Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4);
+    void __readBrush(QString group, QPtrList<QBrush> *brushList,
+        QColor defaultBrushColor1, QColor defaultBrushColor2, QColor defaultBrushColor3, QColor defaultBrushColor4,
+        Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2, Qt::BrushStyle defaultBrushStyle3, Qt::BrushStyle defaultBrushStyle4);
+    void __saveBrush(QPtrList<QBrush> *brushList);
+    void __savePen(QPtrList<QPen> *penList, bool *b);
+    void __showBrush(QPtrList<QBrush> *brushList);
+    void __showPen(QPtrList<QPen> *a, bool *b);
+    void __writeBrush(QString group, QPtrList<QBrush> *brushList, QPtrList<QPen> *penList, bool *b);
+    void __writePen(QString group, QPtrList<QPen> *penList, bool *b);
+
     QCheckBox* border1;
     QCheckBox* border2;
     QCheckBox* border3;
     QCheckBox* border4;
 
-    KColorButton* border1Color;
-    KColorButton* border2Color;
-    KColorButton* border3Color;
-    KColorButton* border4Color;
+    QColor border1Color;
+    QPushButton* border1ColorButton;
+    QColor border2Color;
+    QPushButton* border2ColorButton;
+    QColor border3Color;
+    QPushButton* border3ColorButton;
+    QColor border4Color;
+    QPushButton* border4ColorButton;
 
     QSpinBox* border1Pen;
     QSpinBox* border2Pen;
@@ -98,10 +134,14 @@ class ConfigDrawElement : public QFrame
     QComboBox* border3PenStyle;
     QComboBox* border4PenStyle;
 
-    KColorButton* border1BrushColor;
-    KColorButton* border2BrushColor;
-    KColorButton* border3BrushColor;
-    KColorButton* border4BrushColor;
+    QColor border1BrushColor;
+    QPushButton* border1BrushColorButton;
+    QColor border2BrushColor;
+    QPushButton* border2BrushColorButton;
+    QColor border3BrushColor;
+    QPushButton* border3BrushColorButton;
+    QColor border4BrushColor;
+    QPushButton* border4BrushColorButton;
 
     QComboBox* border1BrushStyle;
     QComboBox* border2BrushStyle;
@@ -221,6 +261,11 @@ class ConfigDrawElement : public QFrame
 
     int oldElement;
     int currentElement;
+
+    /** this is a temporary function and it is not needed in Qt 4 */
+    QString __color2String(QColor);
+    /** this is a temporary function and it is not needed in Qt 4 */
+    QColor __string2Color(QString);
 };
 
 #endif

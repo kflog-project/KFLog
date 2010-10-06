@@ -19,204 +19,18 @@
 #include "kflogconfig.h"
 #include "mapdefaults.h"
 
-#include <kiconloader.h>
-#include <kstddirs.h>
-
+#include <qcolordialog.h>
+#include <qdir.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qpushbutton.h>
+#include <qsettings.h>
 
-#define SAVE_PEN(a, b) \
-    b[0] = border1-> isChecked(); \
-    a.at(0)-> setColor(border1Color->color()); \
-    a.at(0)-> setWidth(border1Pen->value()); \
-    a.at(0)-> setStyle((Qt::PenStyle)(border1PenStyle->currentItem() + 1)); \
-    b[1] = border2-> isChecked(); \
-    a.at(1)-> setColor(border2Color->color()); \
-    a.at(1)-> setWidth(border2Pen->value()); \
-    a.at(1)-> setStyle((Qt::PenStyle)(border2PenStyle->currentItem() + 1)); \
-    b[2] = border3-> isChecked(); \
-    a.at(2)-> setColor(border3Color->color()); \
-    a.at(2)-> setWidth(border3Pen->value()); \
-    a.at(2)-> setStyle((Qt::PenStyle)(border3PenStyle->currentItem() + 1)); \
-    b[3] = border4-> isChecked(); \
-    a.at(3)-> setColor(border4Color->color()); \
-    a.at(3)-> setWidth(border4Pen->value()); \
-    a.at(3)-> setStyle((Qt::PenStyle)(border4PenStyle->currentItem() + 1)); \
+extern QSettings _settings;
 
-#define SAVE_BRUSH(a) \
-    a.at(0)-> setColor(border1BrushColor->color()); \
-    a.at(0)-> setStyle((Qt::BrushStyle)border1BrushStyle->currentItem()); \
-    a.at(1)-> setColor(border2BrushColor->color()); \
-    a.at(1)-> setStyle((Qt::BrushStyle)border2BrushStyle->currentItem()); \
-    a.at(2)-> setColor(border3BrushColor->color()); \
-    a.at(2)-> setStyle((Qt::BrushStyle)border3BrushStyle->currentItem()); \
-    a.at(3)-> setColor(border4BrushColor->color()); \
-    a.at(3)-> setStyle((Qt::BrushStyle)border4BrushStyle->currentItem());
-
-#define SHOW_PEN(a, b) \
-    border1-> setChecked(b[0]); \
-    border1Color-> setColor(a.at(0)->color()); \
-    border1Pen-> setValue(a.at(0)->width()); \
-    border1PenStyle-> setCurrentItem(a.at(0)->style() - 1); \
-    border2-> setChecked(b[1]); \
-    border2Color-> setColor(a.at(1)->color()); \
-    border2Pen-> setValue(a.at(1)->width()); \
-    border2PenStyle-> setCurrentItem(a.at(1)->style() - 1); \
-    border3-> setChecked(b[2]); \
-    border3Color-> setColor(a.at(2)->color()); \
-    border3Pen-> setValue(a.at(2)->width()); \
-    border3PenStyle-> setCurrentItem(a.at(2)->style() - 1); \
-    border4-> setChecked(b[3]); \
-    border4Color-> setColor(a.at(3)->color()); \
-    border4Pen-> setValue(a.at(3)->width()); \
-    border4PenStyle-> setCurrentItem(a.at(3)->style() - 1);
-
-#define SHOW_BRUSH(a) \
-    border1BrushColor-> setColor(a.at(0)->color()); \
-    border1BrushStyle-> setCurrentItem(a.at(0)->style()); \
-    border2BrushColor-> setColor(a.at(1)->color()); \
-    border2BrushStyle-> setCurrentItem(a.at(1)->style()); \
-    border3BrushColor-> setColor(a.at(2)->color()); \
-    border3BrushStyle-> setCurrentItem(a.at(2)->style()); \
-    border4BrushColor-> setColor(a.at(3)->color()); \
-    border4BrushStyle-> setCurrentItem(a.at(3)->style());
-
-#define READ_BORDER(a) \
-    a[0] = config-> readBoolEntry("Border 1", true); \
-    a[1] = config-> readBoolEntry("Border 2", true); \
-    a[2] = config-> readBoolEntry("Border 3", true); \
-    a[3] = config-> readBoolEntry("Border 4", true);
-
-#define READ_PEN(A, C1, C2, C3, C4, P1, P2, P3, P4, S1, S2, S3, S4) \
-  A.append(new QPen(config-> readColorEntry("Color 1", new C1), \
-        config-> readNumEntry("Pen Size 1", P1), \
-        (Qt::PenStyle)config-> readNumEntry("Pen Style 1", S1))); \
-  A.append(new QPen(config-> readColorEntry("Color 2", new C2), \
-        config-> readNumEntry("Pen Size 2", P2), \
-        (Qt::PenStyle)config-> readNumEntry("Pen Style 2", S2))); \
-  A.append(new QPen(config-> readColorEntry("Color 3", new C3), \
-        config-> readNumEntry("Pen Size 3", P3), \
-        (Qt::PenStyle)config-> readNumEntry("Pen Style 3", S3))); \
-  A.append(new QPen(config-> readColorEntry("Color 4", new C4), \
-        config-> readNumEntry("Pen Size 4", P4), \
-        (Qt::PenStyle)config-> readNumEntry("Pen Style 4", S4)));
-
-#define READ_BRUSH(A, C1, C2, C3, C4, S1, S2, S3, S4) \
-  A.append(new QBrush(config-> readColorEntry("Brush Color 1", new C1), \
-        (Qt::BrushStyle)config-> readNumEntry("Brush Style 1", S1))); \
-  A.append(new QBrush(config-> readColorEntry("Brush Color 2", new C2), \
-        (Qt::BrushStyle)config-> readNumEntry("Brush Style 2", S2))); \
-  A.append(new QBrush(config-> readColorEntry("Brush Color 3", new C3), \
-        (Qt::BrushStyle)config-> readNumEntry("Brush Style 3", S3))); \
-  A.append(new QBrush(config-> readColorEntry("Brush Color 4", new C4), \
-        (Qt::BrushStyle)config-> readNumEntry("Brush Style 4", S4))); \
-
-#define WRITE_PEN(Group, a, b) \
-    config-> setGroup(Group); \
-    config-> writeEntry("Color 1", a.at(0)->color()); \
-    config-> writeEntry("Color 2", a.at(1)->color()); \
-    config-> writeEntry("Color 3", a.at(2)->color()); \
-    config-> writeEntry("Color 4", a.at(3)->color()); \
-    config-> writeEntry("Pen Size 1", a.at(0)->width()); \
-    config-> writeEntry("Pen Size 2", a.at(1)->width()); \
-    config-> writeEntry("Pen Size 3", a.at(2)->width()); \
-    config-> writeEntry("Pen Size 4", a.at(3)->width()); \
-    config-> writeEntry("Pen Style 1", a.at(0)->style()); \
-    config-> writeEntry("Pen Style 2", a.at(1)->style()); \
-    config-> writeEntry("Pen Style 3", a.at(2)->style()); \
-    config-> writeEntry("Pen Style 4", a.at(3)->style()); \
-    config-> writeEntry("Border 1", b[0]); \
-    config-> writeEntry("Border 2", ( b[1] && b[0] ) ); \
-    config-> writeEntry("Border 3", ( b[2] && b[1] && b[0] ) ); \
-    config-> writeEntry("Border 4", ( b[3] && b[2] && b[1] && b[0] ) );
-
-#define WRITE_BRUSH(Group, a, b, c) \
-    WRITE_PEN(Group,b,c) \
-    config-> writeEntry("Brush Color 1", a.at(0)->color()); \
-    config-> writeEntry("Brush Color 2", a.at(1)->color()); \
-    config-> writeEntry("Brush Color 3", a.at(2)->color()); \
-    config-> writeEntry("Brush Color 4", a.at(3)->color()); \
-    config-> writeEntry("Brush Style 1", a.at(0)->style()); \
-    config-> writeEntry("Brush Style 2", a.at(1)->style()); \
-    config-> writeEntry("Brush Style 3", a.at(2)->style()); \
-    config-> writeEntry("Brush Style 4", a.at(3)->style());
-
-#define DEFAULT_PEN(a, b, C1, C2, C3, C4, P1, P2, P3, P4) \
-    a.at(0)-> setColor(C1); \
-    a.at(0)-> setWidth(P1); \
-    a.at(1)-> setColor(C2); \
-    a.at(1)-> setWidth(P2); \
-    a.at(2)-> setColor(C3); \
-    a.at(2)-> setWidth(P3); \
-    a.at(3)-> setColor(C4); \
-    a.at(3)-> setWidth(P4); \
-    b[0] = true; \
-    b[1] = true; \
-    b[2] = true; \
-    b[3] = true;
-
-#define DEFAULT_PEN_BRUSH(A, b, a, C1, C2, C3, C4, P1, P2, P3, P4, \
-    C5, C6, C7, C8, S5, S6, S7, S8) \
-    DEFAULT_PEN(A, b, C1, C2, C3, C4, P1, P2, P3, P4) \
-    a.at(0)-> setColor(C5); \
-    a.at(0)-> setStyle(S5); \
-    a.at(1)-> setColor(C6); \
-    a.at(1)-> setStyle(S6); \
-    a.at(2)-> setColor(C7); \
-    a.at(2)-> setStyle(S7); \
-    a.at(3)-> setColor(C8); \
-    a.at(3)-> setStyle(S8);
-
-// Qt::PenStyle-Enum starts with NoPen = 0, therefor we reduce the
-// value by 1. We must use the same order as Qt::PenStyle.
-// Qt::BrushStyle "NoBrush" is allowed ...
-#define FILLSTYLE(pen,brush) \
-  pen-> insertItem(QPixmap(picDir + "solid.png"), Qt::SolidLine - 1); \
-  pen-> insertItem(QPixmap(picDir + "dashed.png"), Qt::DashLine - 1); \
-  pen-> insertItem(QPixmap(picDir + "dotted.png"), Qt::DotLine - 1); \
-  pen-> insertItem(QPixmap(picDir + "dashdot.png"), Qt::DashDotLine - 1); \
-  pen-> insertItem(QPixmap(picDir + "dashdotdot.png"), Qt::DashDotDotLine - 1); \
-  brush-> insertItem("no", Qt::NoBrush); \
-  brush-> insertItem(QPixmap(picDir + "brush0.png"), Qt::SolidPattern); \
-  brush-> insertItem(QPixmap(picDir + "brush1.png"), Qt::Dense1Pattern); \
-  brush-> insertItem(QPixmap(picDir + "brush2.png"), Qt::Dense2Pattern); \
-  brush-> insertItem(QPixmap(picDir + "brush3.png"), Qt::Dense3Pattern); \
-  brush-> insertItem(QPixmap(picDir + "brush4.png"), Qt::Dense4Pattern); \
-  brush-> insertItem(QPixmap(picDir + "brush5.png"), Qt::Dense5Pattern); \
-  brush-> insertItem(QPixmap(picDir + "brush6.png"), Qt::Dense6Pattern); \
-  brush-> insertItem(QPixmap(picDir + "brush7.png"), Qt::Dense7Pattern); \
-  brush-> insertItem(QPixmap(picDir + "brush8.png"), Qt::HorPattern); \
-  brush-> insertItem(QPixmap(picDir + "brush9.png"), Qt::VerPattern); \
-  brush-> insertItem(QPixmap(picDir + "brush10.png"), Qt::CrossPattern); \
-  brush-> insertItem(QPixmap(picDir + "brush11.png"), Qt::BDiagPattern); \
-  brush-> insertItem(QPixmap(picDir + "brush12.png"), Qt::FDiagPattern); \
-  brush-> insertItem(QPixmap(picDir + "brush13.png"), Qt::DiagCrossPattern);
-
-#define BUTTONROW(penC, penW, penS, brushC, brushS, row) \
-  penC = new KColorButton(parent); \
-  penC-> setMinimumWidth(35); \
-  penW = new QSpinBox(0, 9, 1, parent); \
-  penW-> setMinimumWidth(35); \
-  penS = new QComboBox(parent); \
-  penS-> setMinimumWidth(35); \
-  brushC = new KColorButton(parent); \
-  brushC-> setMinimumWidth(35); \
-  brushS = new QComboBox(parent); \
-  brushS-> setMinimumWidth(35); \
-  FILLSTYLE(penS, brushS) \
-  penC-> setMaximumHeight(brushS->sizeHint().height()); \
-  brushC-> setMaximumHeight(brushS->sizeHint().height()); \
-  elLayout-> addWidget(penC, row, 3); \
-  elLayout-> addWidget(penW, row, 5); \
-  elLayout-> addWidget(penS, row, 7); \
-  elLayout-> addWidget(brushC, row, 9); \
-  elLayout-> addWidget(brushS, row, 11);
-
-ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
+ConfigDrawElement::ConfigDrawElement(QWidget* parent)
   : QFrame(parent, "configdrawelement"),
-    config(cnf), oldElement(-1)
+    oldElement(-1)
 {
   airABorder = new bool[4];
   airBBorder = new bool[4];
@@ -300,284 +114,231 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
   faiAreaHigh500PenList.setAutoDelete(true);
   faiAreaHigh500BrushList.setAutoDelete(true);
 
-  config-> setGroup("Trail");
-  READ_PEN(trailPenList, TRAIL_COLOR_1, TRAIL_COLOR_2, TRAIL_COLOR_3, TRAIL_COLOR_4,
+  __readPen("Trail", &trailPenList, TRAIL_COLOR_1, TRAIL_COLOR_2, TRAIL_COLOR_3, TRAIL_COLOR_4,
         TRAIL_PEN_1, TRAIL_PEN_2, TRAIL_PEN_3, TRAIL_PEN_4,
-        TRAIL_PEN_STYLE_1, TRAIL_PEN_STYLE_2, TRAIL_PEN_STYLE_3, TRAIL_PEN_STYLE_4)
-  READ_BORDER(trailBorder);
+        TRAIL_PEN_STYLE_1, TRAIL_PEN_STYLE_2, TRAIL_PEN_STYLE_3, TRAIL_PEN_STYLE_4);
+  __readBorder("Trail", trailBorder);
 
-  config-> setGroup("Road");
-  READ_PEN(roadPenList, ROAD_COLOR_1, ROAD_COLOR_2, ROAD_COLOR_3, ROAD_COLOR_4,
+  __readPen("Road", &roadPenList, ROAD_COLOR_1, ROAD_COLOR_2, ROAD_COLOR_3, ROAD_COLOR_4,
         ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4,
-        ROAD_PEN_STYLE_1, ROAD_PEN_STYLE_2, ROAD_PEN_STYLE_3, ROAD_PEN_STYLE_4)
-  READ_BORDER(roadBorder);
+        ROAD_PEN_STYLE_1, ROAD_PEN_STYLE_2, ROAD_PEN_STYLE_3, ROAD_PEN_STYLE_4);
+  __readBorder("Road", roadBorder);
 
-  config-> setGroup("River");
-  READ_PEN(riverPenList, RIVER_COLOR_1, RIVER_COLOR_2, RIVER_COLOR_3,
+  __readPen("River", &riverPenList, RIVER_COLOR_1, RIVER_COLOR_2, RIVER_COLOR_3,
         RIVER_COLOR_4, RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4,
-        RIVER_PEN_STYLE_1, RIVER_PEN_STYLE_2, RIVER_PEN_STYLE_3, RIVER_PEN_STYLE_4)
-  READ_BORDER(riverBorder);
+        RIVER_PEN_STYLE_1, RIVER_PEN_STYLE_2, RIVER_PEN_STYLE_3, RIVER_PEN_STYLE_4);
+  __readBorder("River", riverBorder);
 
-  config-> setGroup("Canal");
-  READ_PEN(canalPenList, CANAL_COLOR_1, CANAL_COLOR_2, CANAL_COLOR_3,
+  __readPen("Canal", &canalPenList, CANAL_COLOR_1, CANAL_COLOR_2, CANAL_COLOR_3,
         CANAL_COLOR_4, CANAL_PEN_1, CANAL_PEN_2, CANAL_PEN_3, CANAL_PEN_4,
-        CANAL_PEN_STYLE_1, CANAL_PEN_STYLE_2, CANAL_PEN_STYLE_3, CANAL_PEN_STYLE_4)
-  READ_BORDER(canalBorder);
+        CANAL_PEN_STYLE_1, CANAL_PEN_STYLE_2, CANAL_PEN_STYLE_3, CANAL_PEN_STYLE_4);
+  __readBorder("Canal", canalBorder);
 
-  config-> setGroup("Rail");
-  READ_PEN(railPenList, RAIL_COLOR_1, RAIL_COLOR_2, RAIL_COLOR_3, RAIL_COLOR_4,
+  __readPen("Rail", &railPenList, RAIL_COLOR_1, RAIL_COLOR_2, RAIL_COLOR_3, RAIL_COLOR_4,
         RAIL_PEN_1, RAIL_PEN_2, RAIL_PEN_3, RAIL_PEN_4,
-        RAIL_PEN_STYLE_1, RAIL_PEN_STYLE_2, RAIL_PEN_STYLE_3, RAIL_PEN_STYLE_4)
-  READ_BORDER(railBorder);
+        RAIL_PEN_STYLE_1, RAIL_PEN_STYLE_2, RAIL_PEN_STYLE_3, RAIL_PEN_STYLE_4);
+  __readBorder("Rail", railBorder);
 
-  config-> setGroup("Rail_D");
-  READ_PEN(rail_dPenList, RAIL_D_COLOR_1, RAIL_D_COLOR_2, RAIL_D_COLOR_3,
+  __readPen("Rail_D", &rail_dPenList, RAIL_D_COLOR_1, RAIL_D_COLOR_2, RAIL_D_COLOR_3,
         RAIL_D_COLOR_4, RAIL_D_PEN_1, RAIL_D_PEN_2, RAIL_D_PEN_3, RAIL_D_PEN_4,
-        RAIL_D_PEN_STYLE_1, RAIL_D_PEN_STYLE_2, RAIL_D_PEN_STYLE_3, RAIL_D_PEN_STYLE_4)
-  READ_BORDER(rail_dBorder);
+        RAIL_D_PEN_STYLE_1, RAIL_D_PEN_STYLE_2, RAIL_D_PEN_STYLE_3, RAIL_D_PEN_STYLE_4);
+  __readBorder("Rail_D", rail_dBorder);
 
-  config-> setGroup("Aerial Cable");
-  READ_PEN(aerialcablePenList, AERIAL_CABLE_COLOR_1, AERIAL_CABLE_COLOR_2,
+  __readPen("Aerial Cable", &aerialcablePenList, AERIAL_CABLE_COLOR_1, AERIAL_CABLE_COLOR_2,
         AERIAL_CABLE_COLOR_3, AERIAL_CABLE_COLOR_4, AERIAL_CABLE_PEN_1,
         AERIAL_CABLE_PEN_2, AERIAL_CABLE_PEN_3, AERIAL_CABLE_PEN_4,
         AERIAL_CABLE_PEN_STYLE_1, AERIAL_CABLE_PEN_STYLE_2,
-        AERIAL_CABLE_PEN_STYLE_3, AERIAL_CABLE_PEN_STYLE_4)
-  READ_BORDER(aerialcableBorder);
+        AERIAL_CABLE_PEN_STYLE_3, AERIAL_CABLE_PEN_STYLE_4);
+  __readBorder("Aerial Cable", aerialcableBorder);
 
-  config-> setGroup("Highway");
-  READ_PEN(highwayPenList, HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
+  __readPen("Highway", &highwayPenList, HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
         HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4,
-        HIGH_PEN_STYLE_1, HIGH_PEN_STYLE_2, HIGH_PEN_STYLE_3, HIGH_PEN_STYLE_4)
-  READ_BORDER(highwayBorder);
+        HIGH_PEN_STYLE_1, HIGH_PEN_STYLE_2, HIGH_PEN_STYLE_3, HIGH_PEN_STYLE_4);
+  __readBorder("Highway", highwayBorder);
 
+  // PenStyle and BrushStyle are not used for cities ...
+  __readPen("City", &cityPenList, CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3,
+        CITY_COLOR_4, CITY_PEN_1, CITY_PEN_2, CITY_PEN_3, CITY_PEN_4,
+        Qt::SolidLine, Qt::SolidLine, Qt::SolidLine, Qt::SolidLine);
+  __readBrush("City", &cityBrushList, CITY_BRUSH_COLOR_1, CITY_BRUSH_COLOR_2,
+      CITY_BRUSH_COLOR_3, CITY_BRUSH_COLOR_4, Qt::SolidPattern,
+      Qt::SolidPattern, Qt::SolidPattern, Qt::SolidPattern);
+  __readBorder("City", cityBorder);
 
-  //
-  // In version <= 2.0.1, the fillcolor of cities is called "Color" instead
-  // of "Brush Color", so we must look, which version of configfile we read.
-  //
-  config-> setGroup("General Options");
-  if(config-> hasKey("Version") && config->readEntry("Version") >= "2.0.2")
-    {
-      config-> setGroup("City");
-      // PenStyle and BrushStyle are not used for cities ...
-      READ_PEN(cityPenList, CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3,
-            CITY_COLOR_4, CITY_PEN_1, CITY_PEN_2, CITY_PEN_3, CITY_PEN_4,
-            Qt::SolidLine, Qt::SolidLine, Qt::SolidLine, Qt::SolidLine)
-      READ_BRUSH(cityBrushList, CITY_BRUSH_COLOR_1, CITY_BRUSH_COLOR_2,
-          CITY_BRUSH_COLOR_3, CITY_BRUSH_COLOR_4, Qt::SolidPattern,
-          Qt::SolidPattern, Qt::SolidPattern, Qt::SolidPattern)
-    }
-  else
-    {
-      // We assume to have an old configfile ...
-      config-> setGroup("City");
-      cityPenList.append(new QPen(CITY_COLOR_1, 1));
-      cityPenList.append(new QPen(CITY_COLOR_2, 1));
-      cityPenList.append(new QPen(CITY_COLOR_3, 1));
-      cityPenList.append(new QPen(CITY_COLOR_4, 1));
-      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_1, Qt::SolidPattern));
-      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_2, Qt::SolidPattern));
-      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_3, Qt::SolidPattern));
-      cityBrushList.append(new QBrush(CITY_BRUSH_COLOR_4, Qt::SolidPattern));
-    }
-  READ_BORDER(cityBorder);
-
-  config-> setGroup("River_T");
-  READ_PEN(river_tPenList, RIVER_T_COLOR_1, RIVER_T_COLOR_2, RIVER_T_COLOR_3,
+  __readPen("River_T", &river_tPenList, RIVER_T_COLOR_1, RIVER_T_COLOR_2, RIVER_T_COLOR_3,
         RIVER_T_COLOR_4, RIVER_T_PEN_1, RIVER_T_PEN_2, RIVER_T_PEN_3, RIVER_T_PEN_4,
-        RIVER_T_PEN_STYLE_1, RIVER_T_PEN_STYLE_2, RIVER_T_PEN_STYLE_3, RIVER_T_PEN_STYLE_4)
-  READ_BRUSH(river_tBrushList, RIVER_T_BRUSH_COLOR_1, RIVER_T_BRUSH_COLOR_2,
+        RIVER_T_PEN_STYLE_1, RIVER_T_PEN_STYLE_2, RIVER_T_PEN_STYLE_3, RIVER_T_PEN_STYLE_4);
+  __readBrush("River_T", &river_tBrushList, RIVER_T_BRUSH_COLOR_1, RIVER_T_BRUSH_COLOR_2,
         RIVER_T_BRUSH_COLOR_3, RIVER_T_BRUSH_COLOR_4, RIVER_T_BRUSH_STYLE_1,
-        RIVER_T_BRUSH_STYLE_2, RIVER_T_BRUSH_STYLE_3, RIVER_T_BRUSH_STYLE_4)
-  READ_BORDER(river_tBorder);
+        RIVER_T_BRUSH_STYLE_2, RIVER_T_BRUSH_STYLE_3, RIVER_T_BRUSH_STYLE_4);
+  __readBorder("River_T", river_tBorder);
 
-
-  config-> setGroup("Forest");
-  READ_PEN(forestPenList, FRST_COLOR_1, FRST_COLOR_2, FRST_COLOR_3,
+  __readPen("Forest", &forestPenList, FRST_COLOR_1, FRST_COLOR_2, FRST_COLOR_3,
         FRST_COLOR_4, FRST_PEN_1, FRST_PEN_2, FRST_PEN_3, FRST_PEN_4,
         FRST_PEN_STYLE_1, FRST_PEN_STYLE_2, FRST_PEN_STYLE_3,
-        FRST_PEN_STYLE_4)
-  READ_BRUSH(forestBrushList, FRST_BRUSH_COLOR_1, FRST_BRUSH_COLOR_2,
+        FRST_PEN_STYLE_4);
+  __readBrush("Forest", &forestBrushList, FRST_BRUSH_COLOR_1, FRST_BRUSH_COLOR_2,
         FRST_BRUSH_COLOR_3, FRST_BRUSH_COLOR_4, FRST_BRUSH_STYLE_1,
-        FRST_BRUSH_STYLE_2, FRST_BRUSH_STYLE_3, FRST_BRUSH_STYLE_4)
-  READ_BORDER(forestBorder);
+        FRST_BRUSH_STYLE_2, FRST_BRUSH_STYLE_3, FRST_BRUSH_STYLE_4);
+  __readBorder("Forest", forestBorder);
 
-  config-> setGroup("Glacier");
-  READ_PEN(glacierPenList, GLACIER_COLOR_1, GLACIER_COLOR_2, GLACIER_COLOR_3,
+  __readPen("Glacier", &glacierPenList, GLACIER_COLOR_1, GLACIER_COLOR_2, GLACIER_COLOR_3,
         GLACIER_COLOR_4, GLACIER_PEN_1, GLACIER_PEN_2, GLACIER_PEN_3, GLACIER_PEN_4,
         GLACIER_PEN_STYLE_1, GLACIER_PEN_STYLE_2, GLACIER_PEN_STYLE_3,
-        GLACIER_PEN_STYLE_4)
-  READ_BRUSH(glacierBrushList, GLACIER_BRUSH_COLOR_1, GLACIER_BRUSH_COLOR_2,
+        GLACIER_PEN_STYLE_4);
+  __readBrush("Glacier", &glacierBrushList, GLACIER_BRUSH_COLOR_1, GLACIER_BRUSH_COLOR_2,
         GLACIER_BRUSH_COLOR_3, GLACIER_BRUSH_COLOR_4, GLACIER_BRUSH_STYLE_1,
-        GLACIER_BRUSH_STYLE_2, GLACIER_BRUSH_STYLE_3, GLACIER_BRUSH_STYLE_4)
-  READ_BORDER(glacierBorder);
+        GLACIER_BRUSH_STYLE_2, GLACIER_BRUSH_STYLE_3, GLACIER_BRUSH_STYLE_4);
+  __readBorder("Glacier", glacierBorder);
 
-  config-> setGroup("Pack Ice");
-  READ_PEN(packicePenList, PACK_ICE_COLOR_1, PACK_ICE_COLOR_2, PACK_ICE_COLOR_3,
+  __readPen("Pack Ice", &packicePenList, PACK_ICE_COLOR_1, PACK_ICE_COLOR_2, PACK_ICE_COLOR_3,
         PACK_ICE_COLOR_4, PACK_ICE_PEN_1, PACK_ICE_PEN_2, PACK_ICE_PEN_3, PACK_ICE_PEN_4,
         PACK_ICE_PEN_STYLE_1, PACK_ICE_PEN_STYLE_2, PACK_ICE_PEN_STYLE_3,
-        PACK_ICE_PEN_STYLE_4)
-  READ_BRUSH(packiceBrushList, PACK_ICE_BRUSH_COLOR_1, PACK_ICE_BRUSH_COLOR_2,
+        PACK_ICE_PEN_STYLE_4);
+  __readBrush("Pack Ice", &packiceBrushList, PACK_ICE_BRUSH_COLOR_1, PACK_ICE_BRUSH_COLOR_2,
         PACK_ICE_BRUSH_COLOR_3, PACK_ICE_BRUSH_COLOR_4, PACK_ICE_BRUSH_STYLE_1,
-        PACK_ICE_BRUSH_STYLE_2, PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4)
-  READ_BORDER(packiceBorder);
+        PACK_ICE_BRUSH_STYLE_2, PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4);
+  __readBorder("Pack Ice", packiceBorder);
 
-  config-> setGroup("Airspace A");
-  READ_PEN(airAPenList, AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
+  __readPen("Airspace A", &airAPenList, AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
         AIRA_PEN_1, AIRA_PEN_2, AIRA_PEN_3, AIRA_PEN_4,
-        AIRA_PEN_STYLE_1, AIRA_PEN_STYLE_2, AIRA_PEN_STYLE_3, AIRA_PEN_STYLE_4)
-  READ_BRUSH(airABrushList, AIRA_BRUSH_COLOR_1, AIRA_BRUSH_COLOR_2,
+        AIRA_PEN_STYLE_1, AIRA_PEN_STYLE_2, AIRA_PEN_STYLE_3, AIRA_PEN_STYLE_4);
+  __readBrush("Airspace A", &airABrushList, AIRA_BRUSH_COLOR_1, AIRA_BRUSH_COLOR_2,
         AIRA_BRUSH_COLOR_3, AIRA_BRUSH_COLOR_4, AIRA_BRUSH_STYLE_1,
-        AIRA_BRUSH_STYLE_2, AIRA_BRUSH_STYLE_3, AIRA_BRUSH_STYLE_4)
-  READ_BORDER(airABorder);
+        AIRA_BRUSH_STYLE_2, AIRA_BRUSH_STYLE_3, AIRA_BRUSH_STYLE_4);
+  __readBorder("Airspace A", airABorder);
 
-  config-> setGroup("Airspace B");
-  READ_PEN(airBPenList, AIRB_COLOR_1, AIRB_COLOR_2, AIRB_COLOR_3, AIRB_COLOR_4,
+  __readPen("Airspace B", &airBPenList, AIRB_COLOR_1, AIRB_COLOR_2, AIRB_COLOR_3, AIRB_COLOR_4,
         AIRB_PEN_1, AIRB_PEN_2, AIRB_PEN_3, AIRB_PEN_4,
-        AIRB_PEN_STYLE_1, AIRB_PEN_STYLE_2, AIRB_PEN_STYLE_3, AIRB_PEN_STYLE_4)
-  READ_BRUSH(airBBrushList, AIRB_BRUSH_COLOR_1, AIRB_BRUSH_COLOR_2,
+        AIRB_PEN_STYLE_1, AIRB_PEN_STYLE_2, AIRB_PEN_STYLE_3, AIRB_PEN_STYLE_4);
+  __readBrush("Airspace B", &airBBrushList, AIRB_BRUSH_COLOR_1, AIRB_BRUSH_COLOR_2,
         AIRB_BRUSH_COLOR_3, AIRB_BRUSH_COLOR_4, AIRB_BRUSH_STYLE_1,
-        AIRB_BRUSH_STYLE_2, AIRB_BRUSH_STYLE_3, AIRB_BRUSH_STYLE_4)
-  READ_BORDER(airBBorder);
+        AIRB_BRUSH_STYLE_2, AIRB_BRUSH_STYLE_3, AIRB_BRUSH_STYLE_4);
+  __readBorder("Airspace B", airBBorder);
 
-  config-> setGroup("Airspace C");
-  READ_PEN(airCPenList, AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
+  __readPen("Airspace C", &airCPenList, AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
         AIRC_PEN_1, AIRC_PEN_2, AIRC_PEN_3, AIRC_PEN_4,
-        AIRC_PEN_STYLE_1, AIRC_PEN_STYLE_2, AIRC_PEN_STYLE_3, AIRC_PEN_STYLE_4)
-  READ_BRUSH(airCBrushList, AIRC_BRUSH_COLOR_1, AIRC_BRUSH_COLOR_2,
+        AIRC_PEN_STYLE_1, AIRC_PEN_STYLE_2, AIRC_PEN_STYLE_3, AIRC_PEN_STYLE_4);
+  __readBrush("Airspace C", &airCBrushList, AIRC_BRUSH_COLOR_1, AIRC_BRUSH_COLOR_2,
         AIRC_BRUSH_COLOR_3, AIRC_BRUSH_COLOR_4, AIRC_BRUSH_STYLE_1,
-        AIRC_BRUSH_STYLE_2, AIRC_BRUSH_STYLE_3, AIRC_BRUSH_STYLE_4)
-  READ_BORDER(airCBorder);
+        AIRC_BRUSH_STYLE_2, AIRC_BRUSH_STYLE_3, AIRC_BRUSH_STYLE_4);
+  __readBorder("Airspace C", airCBorder);
 
-  config-> setGroup("Airspace D");
-  READ_PEN(airDPenList, AIRD_COLOR_1, AIRD_COLOR_2, AIRD_COLOR_3, AIRD_COLOR_4,
+  __readPen("Airspace D", &airDPenList, AIRD_COLOR_1, AIRD_COLOR_2, AIRD_COLOR_3, AIRD_COLOR_4,
         AIRD_PEN_1, AIRD_PEN_2, AIRD_PEN_3, AIRD_PEN_4,
-        AIRD_PEN_STYLE_1, AIRD_PEN_STYLE_2, AIRD_PEN_STYLE_3, AIRD_PEN_STYLE_4)
-  READ_BRUSH(airDBrushList, AIRD_BRUSH_COLOR_1, AIRD_BRUSH_COLOR_2,
+        AIRD_PEN_STYLE_1, AIRD_PEN_STYLE_2, AIRD_PEN_STYLE_3, AIRD_PEN_STYLE_4);
+  __readBrush("Airspace D", &airDBrushList, AIRD_BRUSH_COLOR_1, AIRD_BRUSH_COLOR_2,
         AIRD_BRUSH_COLOR_3, AIRD_BRUSH_COLOR_4, AIRD_BRUSH_STYLE_1,
-        AIRD_BRUSH_STYLE_2, AIRD_BRUSH_STYLE_3, AIRD_BRUSH_STYLE_4)
-  READ_BORDER(airDBorder);
+        AIRD_BRUSH_STYLE_2, AIRD_BRUSH_STYLE_3, AIRD_BRUSH_STYLE_4);
+  __readBorder("Airspace D", airDBorder);
 
-  config-> setGroup("Airspace E low");
-  READ_PEN(airElPenList, AIREL_COLOR_1, AIREL_COLOR_2, AIREL_COLOR_3,
+  __readPen("Airspace E low", &airElPenList, AIREL_COLOR_1, AIREL_COLOR_2, AIREL_COLOR_3,
         AIREL_COLOR_4, AIREL_PEN_1, AIREL_PEN_2, AIREL_PEN_3, AIREL_PEN_4,
-        AIREL_PEN_STYLE_1, AIREL_PEN_STYLE_2, AIREL_PEN_STYLE_3, AIREL_PEN_STYLE_4)
-  READ_BRUSH(airElBrushList, AIREL_BRUSH_COLOR_1, AIREL_BRUSH_COLOR_2,
+        AIREL_PEN_STYLE_1, AIREL_PEN_STYLE_2, AIREL_PEN_STYLE_3, AIREL_PEN_STYLE_4);
+  __readBrush("Airspace E low", &airElBrushList, AIREL_BRUSH_COLOR_1, AIREL_BRUSH_COLOR_2,
         AIREL_BRUSH_COLOR_3, AIREL_BRUSH_COLOR_4, AIREL_BRUSH_STYLE_1,
-        AIREL_BRUSH_STYLE_2, AIREL_BRUSH_STYLE_3, AIREL_BRUSH_STYLE_4)
-  READ_BORDER(airElBorder);
+        AIREL_BRUSH_STYLE_2, AIREL_BRUSH_STYLE_3, AIREL_BRUSH_STYLE_4);
+  __readBorder("Airspace E low", airElBorder);
 
-  config-> setGroup("Airspace E high");
-  READ_PEN(airEhPenList, AIREH_COLOR_1, AIREH_COLOR_2, AIREH_COLOR_3,
+  __readPen("Airspace E high", &airEhPenList, AIREH_COLOR_1, AIREH_COLOR_2, AIREH_COLOR_3,
         AIREH_COLOR_4, AIREH_PEN_1, AIREH_PEN_2, AIREH_PEN_3, AIREH_PEN_4,
-        AIREH_PEN_STYLE_1, AIREH_PEN_STYLE_2, AIREH_PEN_STYLE_3, AIREH_PEN_STYLE_4)
-  READ_BRUSH(airEhBrushList, AIREH_BRUSH_COLOR_1, AIREH_BRUSH_COLOR_2,
+        AIREH_PEN_STYLE_1, AIREH_PEN_STYLE_2, AIREH_PEN_STYLE_3, AIREH_PEN_STYLE_4);
+  __readBrush("Airspace E high", &airEhBrushList, AIREH_BRUSH_COLOR_1, AIREH_BRUSH_COLOR_2,
         AIREH_BRUSH_COLOR_3, AIREH_BRUSH_COLOR_4, AIREH_BRUSH_STYLE_1,
-        AIREH_BRUSH_STYLE_2, AIREH_BRUSH_STYLE_3, AIREH_BRUSH_STYLE_4)
-  READ_BORDER(airEhBorder);
+        AIREH_BRUSH_STYLE_2, AIREH_BRUSH_STYLE_3, AIREH_BRUSH_STYLE_4);
+  __readBorder("Airspace E high", airEhBorder);
 
-  config-> setGroup("Airspace F");
-  READ_PEN(airFPenList, AIRF_COLOR_1, AIRF_COLOR_2, AIRF_COLOR_3,
+  __readPen("Airspace F", &airFPenList, AIRF_COLOR_1, AIRF_COLOR_2, AIRF_COLOR_3,
         AIRF_COLOR_4, AIRF_PEN_1, AIRF_PEN_2, AIRF_PEN_3, AIRF_PEN_4,
-        AIRF_PEN_STYLE_1, AIRF_PEN_STYLE_2, AIRF_PEN_STYLE_3, AIRF_PEN_STYLE_4)
-  READ_BRUSH(airFBrushList, AIRF_BRUSH_COLOR_1, AIRF_BRUSH_COLOR_2,
+        AIRF_PEN_STYLE_1, AIRF_PEN_STYLE_2, AIRF_PEN_STYLE_3, AIRF_PEN_STYLE_4);
+  __readBrush("Airspace F", &airFBrushList, AIRF_BRUSH_COLOR_1, AIRF_BRUSH_COLOR_2,
         AIRF_BRUSH_COLOR_3, AIRF_BRUSH_COLOR_4, AIRF_BRUSH_STYLE_1,
-        AIRF_BRUSH_STYLE_2, AIRF_BRUSH_STYLE_3, AIRF_BRUSH_STYLE_4)
-  READ_BORDER(airFBorder);
+        AIRF_BRUSH_STYLE_2, AIRF_BRUSH_STYLE_3, AIRF_BRUSH_STYLE_4);
+  __readBorder("Airspace F", airFBorder);
 
-  config-> setGroup("Control C");
-  READ_PEN(ctrCPenList, CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
+  __readPen("Control C", &ctrCPenList, CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
         CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
-        CTRC_PEN_STYLE_1, CTRC_PEN_STYLE_2, CTRC_PEN_STYLE_3, CTRC_PEN_STYLE_4)
-  READ_BRUSH(ctrCBrushList, CTRC_BRUSH_COLOR_1, CTRC_BRUSH_COLOR_2,
+        CTRC_PEN_STYLE_1, CTRC_PEN_STYLE_2, CTRC_PEN_STYLE_3, CTRC_PEN_STYLE_4);
+  __readBrush("Control C", &ctrCBrushList, CTRC_BRUSH_COLOR_1, CTRC_BRUSH_COLOR_2,
         CTRC_BRUSH_COLOR_3, CTRC_BRUSH_COLOR_4, CTRC_BRUSH_STYLE_1,
-        CTRC_BRUSH_STYLE_2, CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4)
-  READ_BORDER(ctrCBorder);
+        CTRC_BRUSH_STYLE_2, CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4);
+  __readBorder("Control C", ctrCBorder);
 
-  config-> setGroup("Control D");
-  READ_PEN(ctrDPenList, CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
+  __readPen("Control D", &ctrDPenList, CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
         CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4,
-        CTRD_PEN_STYLE_1, CTRD_PEN_STYLE_2, CTRD_PEN_STYLE_3, CTRD_PEN_STYLE_4)
-  READ_BRUSH(ctrDBrushList, CTRD_BRUSH_COLOR_1, CTRD_BRUSH_COLOR_2,
+        CTRD_PEN_STYLE_1, CTRD_PEN_STYLE_2, CTRD_PEN_STYLE_3, CTRD_PEN_STYLE_4);
+  __readBrush("Control D", &ctrDBrushList, CTRD_BRUSH_COLOR_1, CTRD_BRUSH_COLOR_2,
         CTRD_BRUSH_COLOR_3, CTRD_BRUSH_COLOR_4, CTRD_BRUSH_STYLE_1,
-        CTRD_BRUSH_STYLE_2, CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4)
-  READ_BORDER(ctrDBorder);
+        CTRD_BRUSH_STYLE_2, CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4);
+  __readBorder("Control D", ctrDBorder);
 
-  config-> setGroup("Danger");
-  READ_PEN(dangerPenList, DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
+  __readPen("Danger", &dangerPenList, DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
         DNG_PEN_1, DNG_PEN_2, DNG_PEN_3, DNG_PEN_4,
-        DNG_PEN_STYLE_1, DNG_PEN_STYLE_2, DNG_PEN_STYLE_3, DNG_PEN_STYLE_4)
-  READ_BRUSH(dangerBrushList, DNG_BRUSH_COLOR_1, DNG_BRUSH_COLOR_2,
+        DNG_PEN_STYLE_1, DNG_PEN_STYLE_2, DNG_PEN_STYLE_3, DNG_PEN_STYLE_4);
+  __readBrush("Danger", &dangerBrushList, DNG_BRUSH_COLOR_1, DNG_BRUSH_COLOR_2,
         DNG_BRUSH_COLOR_3, DNG_BRUSH_COLOR_4, DNG_BRUSH_STYLE_1,
-        DNG_BRUSH_STYLE_2, DNG_BRUSH_STYLE_3, DNG_BRUSH_STYLE_4)
-  READ_BORDER(dangerBorder);
+        DNG_BRUSH_STYLE_2, DNG_BRUSH_STYLE_3, DNG_BRUSH_STYLE_4);
+  __readBorder("Danger", dangerBorder);
 
-  config-> setGroup("Low Flight");
-  READ_PEN(lowFPenList, LOWF_COLOR_1, LOWF_COLOR_2, LOWF_COLOR_3, LOWF_COLOR_4,
+  __readPen("Low Flight", &lowFPenList, LOWF_COLOR_1, LOWF_COLOR_2, LOWF_COLOR_3, LOWF_COLOR_4,
         LOWF_PEN_1, LOWF_PEN_2, LOWF_PEN_3, LOWF_PEN_4,
-        LOWF_PEN_STYLE_1, LOWF_PEN_STYLE_2, LOWF_PEN_STYLE_3, LOWF_PEN_STYLE_4)
-  READ_BRUSH(lowFBrushList, LOWF_BRUSH_COLOR_1, LOWF_BRUSH_COLOR_2,
+        LOWF_PEN_STYLE_1, LOWF_PEN_STYLE_2, LOWF_PEN_STYLE_3, LOWF_PEN_STYLE_4);
+  __readBrush("Low Flight", &lowFBrushList, LOWF_BRUSH_COLOR_1, LOWF_BRUSH_COLOR_2,
         LOWF_BRUSH_COLOR_3, LOWF_BRUSH_COLOR_4, LOWF_BRUSH_STYLE_1,
-        LOWF_BRUSH_STYLE_2, LOWF_BRUSH_STYLE_3, LOWF_BRUSH_STYLE_4)
-  READ_BORDER(lowFBorder);
+        LOWF_BRUSH_STYLE_2, LOWF_BRUSH_STYLE_3, LOWF_BRUSH_STYLE_4);
+  __readBorder("Low Flight", lowFBorder);
 
-  config-> setGroup("Restricted Area");
-  READ_PEN(restrPenList, RES_COLOR_1, RES_COLOR_2, RES_COLOR_3, RES_COLOR_4,
+  __readPen("Restricted Area", &restrPenList, RES_COLOR_1, RES_COLOR_2, RES_COLOR_3, RES_COLOR_4,
         RES_PEN_1, RES_PEN_2, RES_PEN_3, RES_PEN_4,
-        RES_PEN_STYLE_1, RES_PEN_STYLE_2, RES_PEN_STYLE_3, RES_PEN_STYLE_4)
-  READ_BRUSH(restrBrushList, RES_BRUSH_COLOR_1, RES_BRUSH_COLOR_2,
+        RES_PEN_STYLE_1, RES_PEN_STYLE_2, RES_PEN_STYLE_3, RES_PEN_STYLE_4);
+  __readBrush("Restricted Area", &restrBrushList, RES_BRUSH_COLOR_1, RES_BRUSH_COLOR_2,
         RES_BRUSH_COLOR_3, RES_BRUSH_COLOR_4, RES_BRUSH_STYLE_1,
-        RES_BRUSH_STYLE_2, RES_BRUSH_STYLE_3, RES_BRUSH_STYLE_4)
-  READ_BORDER(restrBorder);
+        RES_BRUSH_STYLE_2, RES_BRUSH_STYLE_3, RES_BRUSH_STYLE_4);
+  __readBorder("Restricted Area", restrBorder);
 
-  config-> setGroup("TMZ");
-  READ_PEN(tmzPenList, TMZ_COLOR_1, TMZ_COLOR_2, TMZ_COLOR_3, TMZ_COLOR_4,
+  __readPen("TMZ", &tmzPenList, TMZ_COLOR_1, TMZ_COLOR_2, TMZ_COLOR_3, TMZ_COLOR_4,
         TMZ_PEN_1, TMZ_PEN_2, TMZ_PEN_3, TMZ_PEN_4,
-        TMZ_PEN_STYLE_1, TMZ_PEN_STYLE_2, TMZ_PEN_STYLE_3, TMZ_PEN_STYLE_4)
-  READ_BRUSH(tmzBrushList, TMZ_BRUSH_COLOR_1, TMZ_BRUSH_COLOR_2,
+        TMZ_PEN_STYLE_1, TMZ_PEN_STYLE_2, TMZ_PEN_STYLE_3, TMZ_PEN_STYLE_4);
+  __readBrush("TMZ", &tmzBrushList, TMZ_BRUSH_COLOR_1, TMZ_BRUSH_COLOR_2,
         TMZ_BRUSH_COLOR_3, TMZ_BRUSH_COLOR_4, TMZ_BRUSH_STYLE_1,
-        TMZ_BRUSH_STYLE_2, TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4)
-  READ_BORDER(tmzBorder);
+        TMZ_BRUSH_STYLE_2, TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4);
+  __readBorder("TMZ", tmzBorder);
 
-  config-> setGroup("FAIAreaLow500");
-  READ_PEN(faiAreaLow500PenList, FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
+  __readPen("FAIAreaLow500", &faiAreaLow500PenList, FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
         FAI_LOW_500_PEN_1, FAI_LOW_500_PEN_2, FAI_LOW_500_PEN_3, FAI_LOW_500_PEN_4,
-        FAI_LOW_500_PEN_STYLE_1, FAI_LOW_500_PEN_STYLE_2, FAI_LOW_500_PEN_STYLE_3, FAI_LOW_500_PEN_STYLE_4)
-  READ_BRUSH(faiAreaLow500BrushList, FAI_LOW_500_BRUSH_COLOR_1, FAI_LOW_500_BRUSH_COLOR_2,
+        FAI_LOW_500_PEN_STYLE_1, FAI_LOW_500_PEN_STYLE_2, FAI_LOW_500_PEN_STYLE_3, FAI_LOW_500_PEN_STYLE_4);
+  __readBrush("FAIAreaLow500", &faiAreaLow500BrushList, FAI_LOW_500_BRUSH_COLOR_1, FAI_LOW_500_BRUSH_COLOR_2,
         FAI_LOW_500_BRUSH_COLOR_3, FAI_LOW_500_BRUSH_COLOR_4, FAI_LOW_500_BRUSH_STYLE_1,
-        FAI_LOW_500_BRUSH_STYLE_2, FAI_LOW_500_BRUSH_STYLE_3, FAI_LOW_500_BRUSH_STYLE_4)
-  READ_BORDER(faiAreaLow500Border);
+        FAI_LOW_500_BRUSH_STYLE_2, FAI_LOW_500_BRUSH_STYLE_3, FAI_LOW_500_BRUSH_STYLE_4);
+  __readBorder("FAIAreaLow500", faiAreaLow500Border);
 
-  config-> setGroup("FAIAreaHigh500");
-  READ_PEN(faiAreaHigh500PenList, FAI_HIGH_500_COLOR_1, FAI_HIGH_500_COLOR_2, FAI_HIGH_500_COLOR_3, FAI_HIGH_500_COLOR_4,
+  __readPen("FAIAreaHigh500", &faiAreaHigh500PenList, FAI_HIGH_500_COLOR_1, FAI_HIGH_500_COLOR_2, FAI_HIGH_500_COLOR_3, FAI_HIGH_500_COLOR_4,
         FAI_HIGH_500_PEN_1, FAI_HIGH_500_PEN_2, FAI_HIGH_500_PEN_3, FAI_HIGH_500_PEN_4,
-        FAI_HIGH_500_PEN_STYLE_1, FAI_HIGH_500_PEN_STYLE_2, FAI_HIGH_500_PEN_STYLE_3, FAI_HIGH_500_PEN_STYLE_4)
-  READ_BRUSH(faiAreaHigh500BrushList, FAI_HIGH_500_BRUSH_COLOR_1, FAI_HIGH_500_BRUSH_COLOR_2,
+        FAI_HIGH_500_PEN_STYLE_1, FAI_HIGH_500_PEN_STYLE_2, FAI_HIGH_500_PEN_STYLE_3, FAI_HIGH_500_PEN_STYLE_4);
+  __readBrush("FAIAreaHigh500", &faiAreaHigh500BrushList, FAI_HIGH_500_BRUSH_COLOR_1, FAI_HIGH_500_BRUSH_COLOR_2,
         FAI_HIGH_500_BRUSH_COLOR_3, FAI_HIGH_500_BRUSH_COLOR_4, FAI_HIGH_500_BRUSH_STYLE_1,
-        FAI_HIGH_500_BRUSH_STYLE_2, FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4)
-  READ_BORDER(faiAreaHigh500Border);
-
-  config-> setGroup(0);
+        FAI_HIGH_500_BRUSH_STYLE_2, FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4);
+  __readBorder("FAIAreaHigh500", faiAreaHigh500Border);
 
   border1 = new QCheckBox(tr("threshold #1"), parent);
   border2 = new QCheckBox(tr("threshold #2"), parent);
   border3 = new QCheckBox(tr("threshold #3"), parent);
   border4 = new QCheckBox(tr("scale-limit"), parent);
 
-  QString picDir = KGlobal::dirs()-> findResource("appdata", "pics/");
+  QString picDir = QDir::homeDirPath() + "/.kflog/pics/";
 
   border1Button = new QPushButton(parent);
-  border1Button-> setPixmap(BarIcon("down"));
-  border1Button-> setFixedWidth(border1Button->sizeHint().width() + 3);
-  border1Button-> setFixedHeight(border1Button->sizeHint().height() + 3);
+  border1Button-> setPixmap(picDir + "kde_down.png");
+  border1Button-> setFixedWidth(30);
+  border1Button-> setFixedHeight(30);
   border2Button = new QPushButton(parent);
-  border2Button-> setPixmap(BarIcon("down"));
-  border2Button-> setFixedWidth(border1Button->sizeHint().width() + 3);
-  border2Button-> setFixedHeight(border1Button->sizeHint().height() + 3);
+  border2Button-> setPixmap(picDir + "kde_down.png");
+  border2Button-> setFixedWidth(30);
+  border2Button-> setFixedHeight(30);
   border3Button = new QPushButton(parent);
-  border3Button-> setPixmap(BarIcon("down"));
-  border3Button-> setFixedWidth(border1Button->sizeHint().width() + 3);
-  border3Button-> setFixedHeight(border1Button->sizeHint().height() + 3);
+  border3Button-> setPixmap(picDir + "kde_down.png");
+  border3Button-> setFixedWidth(30);
+  border3Button-> setFixedHeight(30);
 
   QGridLayout* elLayout = new QGridLayout(parent, 10, 15, 5, 1);
   elLayout-> addWidget(new QLabel(tr("draw up to"), parent), 1, 1);
@@ -591,17 +352,89 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent, KConfig* cnf)
   elLayout-> addWidget(border3Button, 7, 13);
   elLayout-> addWidget(border4, 9, 1);
 
-  BUTTONROW(border1Color, border1Pen, border1PenStyle, border1BrushColor,
-      border1BrushStyle, 3);
+  border1ColorButton = new QPushButton(parent);
+  border1ColorButton->setFixedHeight(24);
+  border1ColorButton->setFixedWidth(55);
+  connect(border1ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1Color()));
+  border1Pen = new QSpinBox(0, 9, 1, parent);
+  border1Pen-> setMinimumWidth(35);
+  border1PenStyle = new QComboBox(parent);
+  border1PenStyle-> setMinimumWidth(35);
+  border1BrushColorButton = new QPushButton(parent);
+  border1BrushColorButton->setFixedHeight(24);
+  border1BrushColorButton->setFixedWidth(55);
+  connect(border1BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1BrushColor()));
+  border1BrushStyle = new QComboBox(parent);
+  border1BrushStyle-> setMinimumWidth(35);
+  __fillStyle(border1PenStyle, border1BrushStyle);
+  elLayout-> addWidget(border1ColorButton, 3, 3);
+  elLayout-> addWidget(border1Pen, 3, 5);
+  elLayout-> addWidget(border1PenStyle, 3, 7);
+  elLayout-> addWidget(border1BrushColorButton, 3, 9);
+  elLayout-> addWidget(border1BrushStyle, 3, 11);
 
-  BUTTONROW(border2Color, border2Pen, border2PenStyle, border2BrushColor,
-      border2BrushStyle, 5);
+  border2ColorButton = new QPushButton(parent);
+  border2ColorButton->setFixedHeight(24);
+  border2ColorButton->setFixedWidth(55);
+  connect(border2ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2Color()));
+  border2Pen = new QSpinBox(0, 9, 1, parent);
+  border2Pen-> setMinimumWidth(35);
+  border2PenStyle = new QComboBox(parent);
+  border2PenStyle-> setMinimumWidth(35);
+  border2BrushColorButton = new QPushButton(parent);
+  border2BrushColorButton->setFixedHeight(24);
+  border2BrushColorButton->setFixedWidth(55);
+  connect(border2BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2BrushColor()));
+  border2BrushStyle = new QComboBox(parent);
+  border2BrushStyle-> setMinimumWidth(35);
+  __fillStyle(border2PenStyle, border2BrushStyle);
+  elLayout-> addWidget(border2ColorButton, 5, 3);
+  elLayout-> addWidget(border2Pen, 5, 5);
+  elLayout-> addWidget(border2PenStyle, 5, 7);
+  elLayout-> addWidget(border2BrushColorButton, 5, 9);
+  elLayout-> addWidget(border2BrushStyle, 5, 11);
 
-  BUTTONROW(border3Color, border3Pen, border3PenStyle, border3BrushColor,
-      border3BrushStyle, 7);
+  border3ColorButton = new QPushButton(parent);
+  border3ColorButton->setFixedHeight(24);
+  border3ColorButton->setFixedWidth(55);
+  connect(border3ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder3Color()));
+  border3Pen = new QSpinBox(0, 9, 1, parent);
+  border3Pen-> setMinimumWidth(35);
+  border3PenStyle = new QComboBox(parent);
+  border3PenStyle-> setMinimumWidth(35);
+  border3BrushColorButton = new QPushButton(parent);
+  border3BrushColorButton->setFixedHeight(24);
+  border3BrushColorButton->setFixedWidth(55);
+  connect(border3BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder3BrushColor()));
+  border3BrushStyle = new QComboBox(parent);
+  border3BrushStyle-> setMinimumWidth(35);
+  __fillStyle(border3PenStyle, border3BrushStyle);
+  elLayout-> addWidget(border3ColorButton, 7, 3);
+  elLayout-> addWidget(border3Pen, 7, 5);
+  elLayout-> addWidget(border3PenStyle, 7, 7);
+  elLayout-> addWidget(border3BrushColorButton, 7, 9);
+  elLayout-> addWidget(border3BrushStyle, 7, 11);
 
-  BUTTONROW(border4Color, border4Pen, border4PenStyle, border4BrushColor,
-      border4BrushStyle, 9);
+  border4ColorButton = new QPushButton(parent);
+  border4ColorButton->setFixedHeight(24);
+  border4ColorButton->setFixedWidth(55);
+  connect(border4ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder4Color()));
+  border4Pen = new QSpinBox(0, 9, 1, parent);
+  border4Pen-> setMinimumWidth(35);
+  border4PenStyle = new QComboBox(parent);
+  border4PenStyle-> setMinimumWidth(35);
+  border4BrushColorButton = new QPushButton(parent);
+  border4BrushColorButton->setFixedHeight(24);
+  border4BrushColorButton->setFixedWidth(55);
+  connect(border4BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder4BrushColor()));
+  border4BrushStyle = new QComboBox(parent);
+  border4BrushStyle-> setMinimumWidth(35);
+  __fillStyle(border4PenStyle, border4BrushStyle);
+  elLayout-> addWidget(border4ColorButton, 9, 3);
+  elLayout-> addWidget(border4Pen, 9, 5);
+  elLayout-> addWidget(border4PenStyle, 9, 7);
+  elLayout-> addWidget(border4BrushColorButton, 9, 9);
+  elLayout-> addWidget(border4BrushStyle, 9, 11);
 
   elLayout-> addRowSpacing(0, 2);
   elLayout-> addRowSpacing(2, 5);
@@ -673,259 +506,325 @@ void ConfigDrawElement::slotOk()
   // Die aktuell angezeigten Angaben müssen noch gespeichert werden ...
   slotSelectElement(oldElement);
 
-  config-> setGroup("General Options");
-  config-> writeEntry("Version", "2.0.2");
+  __writePen("Trail", &trailPenList, trailBorder);
 
-  WRITE_PEN("Trail", trailPenList, trailBorder);
+  __writePen("Road", &roadPenList, roadBorder);
 
-  WRITE_PEN("Road", roadPenList, roadBorder);
+  __writePen("Highway", &highwayPenList, highwayBorder);
 
-  WRITE_PEN("Highway", highwayPenList, highwayBorder);
+  __writePen("Rail", &railPenList, railBorder);
 
-  WRITE_PEN("Rail", railPenList, railBorder);
+  __writePen("Rail_D", &rail_dPenList, rail_dBorder);
 
-  WRITE_PEN("Rail_D", rail_dPenList, rail_dBorder);
+  __writePen("Aerial Cable", &aerialcablePenList, aerialcableBorder);
 
-  WRITE_PEN("Aerial Cable", aerialcablePenList, aerialcableBorder);
+  __writePen("River", &riverPenList, riverBorder);
 
-  WRITE_PEN("River", riverPenList, riverBorder);
+  __writePen("Canal", &canalPenList, canalBorder);
 
-  WRITE_PEN("Canal", canalPenList, canalBorder);
+  __writePen("City", &cityPenList, cityBorder);
 
-  WRITE_PEN("City", cityPenList, cityBorder);
+  __writeBrush("Airspace A", &airABrushList, &airAPenList, airABorder);
 
-  WRITE_BRUSH("Airspace A", airABrushList, airAPenList, airABorder);
+  __writeBrush("Airspace B", &airBBrushList, &airBPenList, airBBorder);
 
-  WRITE_BRUSH("Airspace B", airBBrushList, airBPenList, airBBorder);
+  __writeBrush("Airspace C", &airCBrushList, &airCPenList, airCBorder);
 
-  WRITE_BRUSH("Airspace C", airCBrushList, airCPenList, airCBorder);
+  __writeBrush("Airspace D", &airDBrushList, &airDPenList, airDBorder);
 
-  WRITE_BRUSH("Airspace D", airDBrushList, airDPenList, airDBorder);
+  __writeBrush("Airspace E low", &airElBrushList, &airElPenList, airElBorder);
 
-  WRITE_BRUSH("Airspace E low", airElBrushList, airElPenList, airElBorder);
+  __writeBrush("Airspace E high", &airEhBrushList, &airEhPenList, airEhBorder);
 
-  WRITE_BRUSH("Airspace E high", airEhBrushList, airEhPenList, airEhBorder);
+  __writeBrush("Airspace F", &airFBrushList, &airFPenList, airFBorder);
 
-  WRITE_BRUSH("Airspace F", airFBrushList, airFPenList, airFBorder);
+  __writeBrush("Control C", &ctrCBrushList, &ctrCPenList, ctrCBorder);
 
-  WRITE_BRUSH("Control C", ctrCBrushList, ctrCPenList, ctrCBorder);
+  __writeBrush("Control D", &ctrDBrushList, &ctrDPenList, ctrDBorder);
 
-  WRITE_BRUSH("Control D", ctrDBrushList, ctrDPenList, ctrDBorder);
+  __writeBrush("Danger", &dangerBrushList, &dangerPenList, dangerBorder);
 
-  WRITE_BRUSH("Danger", dangerBrushList, dangerPenList, dangerBorder);
+  __writeBrush("Low Flight", &lowFBrushList, &lowFPenList, lowFBorder);
 
-  WRITE_BRUSH("Low Flight", lowFBrushList, lowFPenList, lowFBorder);
+  __writeBrush("Restricted Area", &restrBrushList, &restrPenList, restrBorder);
 
-  WRITE_BRUSH("Restricted Area", restrBrushList, restrPenList, restrBorder);
+  __writeBrush("TMZ", &tmzBrushList, &tmzPenList, tmzBorder);
 
-  WRITE_BRUSH("TMZ", tmzBrushList, tmzPenList, tmzBorder);
+  __writeBrush("Forest", &forestBrushList, &forestPenList, forestBorder);
 
-  WRITE_BRUSH("Forest", forestBrushList, forestPenList, forestBorder);
+  __writeBrush("River_T", &river_tBrushList, &river_tPenList, river_tBorder);
 
-  WRITE_BRUSH("River_T", river_tBrushList, river_tPenList, river_tBorder);
+  __writeBrush("Glacier", &glacierBrushList, &glacierPenList, glacierBorder);
 
-  WRITE_BRUSH("Glacier", glacierBrushList, glacierPenList, glacierBorder);
+  __writeBrush("Pack Ice", &packiceBrushList, &packicePenList, packiceBorder);
 
-  WRITE_BRUSH("Pack Ice", packiceBrushList, packicePenList, packiceBorder);
+  __writeBrush("FAIAreaLow500", &faiAreaLow500BrushList, &faiAreaLow500PenList, faiAreaLow500Border);
 
-  WRITE_BRUSH("FAIAreaLow500", faiAreaLow500BrushList, faiAreaLow500PenList, faiAreaLow500Border);
-
-  WRITE_BRUSH("FAIAreaHigh500", faiAreaHigh500BrushList, faiAreaHigh500PenList, faiAreaHigh500Border);
-
-  config-> sync();
-  config-> setGroup(0);
+  __writeBrush("FAIAreaHigh500", &faiAreaHigh500BrushList, &faiAreaHigh500PenList, faiAreaHigh500Border);
 }
 
 void ConfigDrawElement::slotDefaultElements()
 {
-  DEFAULT_PEN(trailPenList, trailBorder, TRAIL_COLOR_1, TRAIL_COLOR_2,
+  __defaultPen(&trailPenList, trailBorder, TRAIL_COLOR_1, TRAIL_COLOR_2,
       TRAIL_COLOR_3, TRAIL_COLOR_4,
-      TRAIL_PEN_1, TRAIL_PEN_2, TRAIL_PEN_3, TRAIL_PEN_4)
+      TRAIL_PEN_1, TRAIL_PEN_2, TRAIL_PEN_3, TRAIL_PEN_4);
 
-  DEFAULT_PEN(roadPenList, roadBorder, ROAD_COLOR_1, ROAD_COLOR_2,
+  __defaultPen(&roadPenList, roadBorder, ROAD_COLOR_1, ROAD_COLOR_2,
       ROAD_COLOR_3, ROAD_COLOR_4,
-      ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4)
+      ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4);
 
-  DEFAULT_PEN(highwayPenList, highwayBorder, HIGH_COLOR_1, HIGH_COLOR_2,
+  __defaultPen(&highwayPenList, highwayBorder, HIGH_COLOR_1, HIGH_COLOR_2,
       HIGH_COLOR_3, HIGH_COLOR_4,
-      HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4)
+      HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4);
 
-  DEFAULT_PEN(riverPenList, riverBorder, RIVER_COLOR_1, RIVER_COLOR_2,
+  __defaultPen(&riverPenList, riverBorder, RIVER_COLOR_1, RIVER_COLOR_2,
       RIVER_COLOR_3, RIVER_COLOR_4,
-      RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4)
+      RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4);
 
-  DEFAULT_PEN(canalPenList, canalBorder, CANAL_COLOR_1, CANAL_COLOR_2,
+  __defaultPen(&canalPenList, canalBorder, CANAL_COLOR_1, CANAL_COLOR_2,
       CANAL_COLOR_3, CANAL_COLOR_4,
-      CANAL_PEN_1, CANAL_PEN_2, CANAL_PEN_3, CANAL_PEN_4)
+      CANAL_PEN_1, CANAL_PEN_2, CANAL_PEN_3, CANAL_PEN_4);
 
-  DEFAULT_PEN(railPenList, railBorder, RAIL_COLOR_1, RAIL_COLOR_2,
+  __defaultPen(&railPenList, railBorder, RAIL_COLOR_1, RAIL_COLOR_2,
       RAIL_COLOR_3, RAIL_COLOR_4,
-      RAIL_PEN_1, RAIL_PEN_2, RAIL_PEN_3, RAIL_PEN_4)
+      RAIL_PEN_1, RAIL_PEN_2, RAIL_PEN_3, RAIL_PEN_4);
 
-  DEFAULT_PEN(rail_dPenList, rail_dBorder, RAIL_D_COLOR_1, RAIL_D_COLOR_2,
+  __defaultPen(&rail_dPenList, rail_dBorder, RAIL_D_COLOR_1, RAIL_D_COLOR_2,
       RAIL_D_COLOR_3, RAIL_D_COLOR_4,
-      RAIL_D_PEN_1, RAIL_D_PEN_2, RAIL_D_PEN_3, RAIL_D_PEN_4)
+      RAIL_D_PEN_1, RAIL_D_PEN_2, RAIL_D_PEN_3, RAIL_D_PEN_4);
 
-  DEFAULT_PEN(aerialcablePenList, aerialcableBorder, AERIAL_CABLE_COLOR_1, AERIAL_CABLE_COLOR_2,
+  __defaultPen(&aerialcablePenList, aerialcableBorder, AERIAL_CABLE_COLOR_1, AERIAL_CABLE_COLOR_2,
       AERIAL_CABLE_COLOR_3, AERIAL_CABLE_COLOR_4,
-      AERIAL_CABLE_PEN_1, AERIAL_CABLE_PEN_2, AERIAL_CABLE_PEN_3, AERIAL_CABLE_PEN_4)
+      AERIAL_CABLE_PEN_1, AERIAL_CABLE_PEN_2, AERIAL_CABLE_PEN_3, AERIAL_CABLE_PEN_4);
 
-  DEFAULT_PEN_BRUSH(river_tPenList, river_tBorder, river_tBrushList,
+  __defaultPenBrush(&river_tPenList, river_tBorder, &river_tBrushList,
       RIVER_T_COLOR_1, RIVER_T_COLOR_2, RIVER_T_COLOR_3, RIVER_T_COLOR_4,
       RIVER_T_PEN_1, RIVER_T_PEN_2, RIVER_T_PEN_3, RIVER_T_PEN_4,
       RIVER_T_BRUSH_COLOR_1, RIVER_T_BRUSH_COLOR_2,
       RIVER_T_BRUSH_COLOR_3, RIVER_T_BRUSH_COLOR_4,
       RIVER_T_BRUSH_STYLE_1, RIVER_T_BRUSH_STYLE_2,
-      RIVER_T_BRUSH_STYLE_3, RIVER_T_BRUSH_STYLE_4)
+      RIVER_T_BRUSH_STYLE_3, RIVER_T_BRUSH_STYLE_4);
 
 
-  DEFAULT_PEN_BRUSH(cityPenList, cityBorder, cityBrushList,
+  __defaultPenBrush(&cityPenList, cityBorder, &cityBrushList,
       CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3, CITY_COLOR_4,
       CITY_PEN_1, CITY_PEN_2, CITY_PEN_3, CITY_PEN_4,
       CITY_BRUSH_COLOR_1, CITY_BRUSH_COLOR_2,
       CITY_BRUSH_COLOR_3, CITY_BRUSH_COLOR_4,
       CITY_BRUSH_STYLE_1, CITY_BRUSH_STYLE_2,
-      CITY_BRUSH_STYLE_3, CITY_BRUSH_STYLE_4)
+      CITY_BRUSH_STYLE_3, CITY_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(forestPenList, forestBorder, forestBrushList,
+  __defaultPenBrush(&forestPenList, forestBorder, &forestBrushList,
       FRST_COLOR_1, FRST_COLOR_2, FRST_COLOR_3, FRST_COLOR_4,
       FRST_PEN_1, FRST_PEN_2, FRST_PEN_3, FRST_PEN_4,
       FRST_BRUSH_COLOR_1, FRST_BRUSH_COLOR_2,
       FRST_BRUSH_COLOR_3, FRST_BRUSH_COLOR_4,
       FRST_BRUSH_STYLE_1, FRST_BRUSH_STYLE_2,
-      FRST_BRUSH_STYLE_3, FRST_BRUSH_STYLE_4)
+      FRST_BRUSH_STYLE_3, FRST_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(glacierPenList, glacierBorder, glacierBrushList,
+  __defaultPenBrush(&glacierPenList, glacierBorder, &glacierBrushList,
       GLACIER_COLOR_1, GLACIER_COLOR_2, GLACIER_COLOR_3, GLACIER_COLOR_4,
       GLACIER_PEN_1, GLACIER_PEN_2, GLACIER_PEN_3, GLACIER_PEN_4,
       GLACIER_BRUSH_COLOR_1, GLACIER_BRUSH_COLOR_2,
       GLACIER_BRUSH_COLOR_3, GLACIER_BRUSH_COLOR_4,
       GLACIER_BRUSH_STYLE_1, GLACIER_BRUSH_STYLE_2,
-      GLACIER_BRUSH_STYLE_3, GLACIER_BRUSH_STYLE_4)
+      GLACIER_BRUSH_STYLE_3, GLACIER_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(packicePenList, packiceBorder, packiceBrushList,
+  __defaultPenBrush(&packicePenList, packiceBorder, &packiceBrushList,
       PACK_ICE_COLOR_1, PACK_ICE_COLOR_2, PACK_ICE_COLOR_3, PACK_ICE_COLOR_4,
       PACK_ICE_PEN_1, PACK_ICE_PEN_2, PACK_ICE_PEN_3, PACK_ICE_PEN_4,
       PACK_ICE_BRUSH_COLOR_1, PACK_ICE_BRUSH_COLOR_2,
       PACK_ICE_BRUSH_COLOR_3, PACK_ICE_BRUSH_COLOR_4,
       PACK_ICE_BRUSH_STYLE_1, PACK_ICE_BRUSH_STYLE_2,
-      PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4)
+      PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4);
 
 
-  DEFAULT_PEN_BRUSH(airAPenList, airABorder, airABrushList,
+  __defaultPenBrush(&airAPenList, airABorder, &airABrushList,
       AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
       AIRA_PEN_1, AIRA_PEN_2, AIRA_PEN_3, AIRA_PEN_4,
       AIRA_BRUSH_COLOR_1, AIRA_BRUSH_COLOR_2,
       AIRA_BRUSH_COLOR_3, AIRA_BRUSH_COLOR_4,
       AIRA_BRUSH_STYLE_1, AIRA_BRUSH_STYLE_2,
-      AIRA_BRUSH_STYLE_3, AIRA_BRUSH_STYLE_4)
+      AIRA_BRUSH_STYLE_3, AIRA_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(airBPenList, airBBorder, airBBrushList,
+  __defaultPenBrush(&airBPenList, airBBorder, &airBBrushList,
       AIRB_COLOR_1, AIRB_COLOR_2, AIRB_COLOR_3, AIRB_COLOR_4,
       AIRB_PEN_1, AIRB_PEN_2, AIRB_PEN_3, AIRB_PEN_4,
       AIRB_BRUSH_COLOR_1, AIRB_BRUSH_COLOR_2,
       AIRB_BRUSH_COLOR_3, AIRB_BRUSH_COLOR_4,
       AIRB_BRUSH_STYLE_1, AIRB_BRUSH_STYLE_2,
-      AIRB_BRUSH_STYLE_3, AIRB_BRUSH_STYLE_4)
+      AIRB_BRUSH_STYLE_3, AIRB_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(airCPenList, airCBorder, airCBrushList,
+  __defaultPenBrush(&airCPenList, airCBorder, &airCBrushList,
       AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
       AIRC_PEN_1, AIRC_PEN_2, AIRC_PEN_3, AIRC_PEN_4,
       AIRC_BRUSH_COLOR_1, AIRC_BRUSH_COLOR_2,
       AIRC_BRUSH_COLOR_3, AIRC_BRUSH_COLOR_4,
       AIRC_BRUSH_STYLE_1, AIRC_BRUSH_STYLE_2,
-      AIRC_BRUSH_STYLE_3, AIRC_BRUSH_STYLE_4)
+      AIRC_BRUSH_STYLE_3, AIRC_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(airDPenList, airDBorder, airDBrushList,
+  __defaultPenBrush(&airDPenList, airDBorder, &airDBrushList,
       AIRD_COLOR_1, AIRD_COLOR_2, AIRD_COLOR_3, AIRD_COLOR_4,
       AIRD_PEN_1, AIRD_PEN_2, AIRD_PEN_3, AIRD_PEN_4,
       AIRD_BRUSH_COLOR_1, AIRD_BRUSH_COLOR_2,
       AIRD_BRUSH_COLOR_3, AIRD_BRUSH_COLOR_4,
       AIRD_BRUSH_STYLE_1, AIRD_BRUSH_STYLE_2,
-      AIRD_BRUSH_STYLE_3, AIRD_BRUSH_STYLE_4)
+      AIRD_BRUSH_STYLE_3, AIRD_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(airElPenList, airElBorder, airElBrushList,
+  __defaultPenBrush(&airElPenList, airElBorder, &airElBrushList,
       AIREL_COLOR_1, AIREL_COLOR_2, AIREL_COLOR_3, AIREL_COLOR_4,
       AIREL_PEN_1, AIREL_PEN_2, AIREL_PEN_3, AIREL_PEN_4,
       AIREL_BRUSH_COLOR_1, AIREL_BRUSH_COLOR_2,
       AIREL_BRUSH_COLOR_3, AIREL_BRUSH_COLOR_4,
       AIREL_BRUSH_STYLE_1, AIREL_BRUSH_STYLE_2,
-      AIREL_BRUSH_STYLE_3, AIREL_BRUSH_STYLE_4)
+      AIREL_BRUSH_STYLE_3, AIREL_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(airEhPenList, airEhBorder, airEhBrushList,
+  __defaultPenBrush(&airEhPenList, airEhBorder, &airEhBrushList,
       AIREH_COLOR_1, AIREH_COLOR_2, AIREH_COLOR_3, AIREH_COLOR_4,
       AIREH_PEN_1, AIREH_PEN_2, AIREH_PEN_3, AIREH_PEN_4,
       AIREH_BRUSH_COLOR_1, AIREH_BRUSH_COLOR_2,
       AIREH_BRUSH_COLOR_3, AIREH_BRUSH_COLOR_4,
       AIREH_BRUSH_STYLE_1, AIREH_BRUSH_STYLE_2,
-      AIREH_BRUSH_STYLE_3, AIREH_BRUSH_STYLE_4)
+      AIREH_BRUSH_STYLE_3, AIREH_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(ctrCPenList, ctrCBorder, ctrCBrushList,
+  __defaultPenBrush(&ctrCPenList, ctrCBorder, &ctrCBrushList,
       CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
       CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
       CTRC_BRUSH_COLOR_1, CTRC_BRUSH_COLOR_2,
       CTRC_BRUSH_COLOR_3, CTRC_BRUSH_COLOR_4,
       CTRC_BRUSH_STYLE_1, CTRC_BRUSH_STYLE_2,
-      CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4)
+      CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(ctrDPenList, ctrDBorder, ctrDBrushList,
+  __defaultPenBrush(&ctrDPenList, ctrDBorder, &ctrDBrushList,
       CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
       CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4,
       CTRD_BRUSH_COLOR_1, CTRD_BRUSH_COLOR_2,
       CTRD_BRUSH_COLOR_3, CTRD_BRUSH_COLOR_4,
       CTRD_BRUSH_STYLE_1, CTRD_BRUSH_STYLE_2,
-      CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4)
+      CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(dangerPenList, dangerBorder, dangerBrushList,
+  __defaultPenBrush(&dangerPenList, dangerBorder, &dangerBrushList,
       DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
       DNG_PEN_1, DNG_PEN_2, DNG_PEN_3, DNG_PEN_4,
       DNG_BRUSH_COLOR_1, DNG_BRUSH_COLOR_2,
       DNG_BRUSH_COLOR_3, DNG_BRUSH_COLOR_4,
       DNG_BRUSH_STYLE_1, DNG_BRUSH_STYLE_2,
-      DNG_BRUSH_STYLE_3, DNG_BRUSH_STYLE_4)
+      DNG_BRUSH_STYLE_3, DNG_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(restrPenList, restrBorder, restrBrushList,
+  __defaultPenBrush(&restrPenList, restrBorder, &restrBrushList,
       RES_COLOR_1, RES_COLOR_2, RES_COLOR_3, RES_COLOR_4,
       RES_PEN_1, RES_PEN_2, RES_PEN_3, RES_PEN_4,
       RES_BRUSH_COLOR_1, RES_BRUSH_COLOR_2,
       RES_BRUSH_COLOR_3, RES_BRUSH_COLOR_4,
       RES_BRUSH_STYLE_1, RES_BRUSH_STYLE_2,
-      RES_BRUSH_STYLE_3, RES_BRUSH_STYLE_4)
+      RES_BRUSH_STYLE_3, RES_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(lowFPenList, lowFBorder, lowFBrushList,
+  __defaultPenBrush(&lowFPenList, lowFBorder, &lowFBrushList,
       LOWF_COLOR_1, LOWF_COLOR_2, LOWF_COLOR_3, LOWF_COLOR_4,
       LOWF_PEN_1, LOWF_PEN_2, LOWF_PEN_3, LOWF_PEN_4,
       LOWF_BRUSH_COLOR_1, LOWF_BRUSH_COLOR_2,
       LOWF_BRUSH_COLOR_3, LOWF_BRUSH_COLOR_4,
       LOWF_BRUSH_STYLE_1, LOWF_BRUSH_STYLE_2,
-      LOWF_BRUSH_STYLE_3, LOWF_BRUSH_STYLE_4)
+      LOWF_BRUSH_STYLE_3, LOWF_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(tmzPenList, tmzBorder, tmzBrushList,
+  __defaultPenBrush(&tmzPenList, tmzBorder, &tmzBrushList,
       TMZ_COLOR_1, TMZ_COLOR_2, TMZ_COLOR_3, TMZ_COLOR_4,
       TMZ_PEN_1, TMZ_PEN_2, TMZ_PEN_3, TMZ_PEN_4,
       TMZ_BRUSH_COLOR_1, TMZ_BRUSH_COLOR_2,
       TMZ_BRUSH_COLOR_3, TMZ_BRUSH_COLOR_4,
       TMZ_BRUSH_STYLE_1, TMZ_BRUSH_STYLE_2,
-      TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4)
+      TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(faiAreaLow500PenList, faiAreaLow500Border, faiAreaLow500BrushList,
+  __defaultPenBrush(&faiAreaLow500PenList, faiAreaLow500Border, &faiAreaLow500BrushList,
       FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
       FAI_LOW_500_PEN_1, FAI_LOW_500_PEN_2, FAI_LOW_500_PEN_3, FAI_LOW_500_PEN_4,
       FAI_LOW_500_BRUSH_COLOR_1, FAI_LOW_500_BRUSH_COLOR_2,
       FAI_LOW_500_BRUSH_COLOR_3, FAI_LOW_500_BRUSH_COLOR_4,
       FAI_LOW_500_BRUSH_STYLE_1, FAI_LOW_500_BRUSH_STYLE_2,
-      FAI_LOW_500_BRUSH_STYLE_3, FAI_LOW_500_BRUSH_STYLE_4)
+      FAI_LOW_500_BRUSH_STYLE_3, FAI_LOW_500_BRUSH_STYLE_4);
 
-  DEFAULT_PEN_BRUSH(faiAreaHigh500PenList, faiAreaHigh500Border, faiAreaHigh500BrushList,
+  __defaultPenBrush(&faiAreaHigh500PenList, faiAreaHigh500Border, &faiAreaHigh500BrushList,
       FAI_HIGH_500_COLOR_1, FAI_HIGH_500_COLOR_2, FAI_HIGH_500_COLOR_3, FAI_HIGH_500_COLOR_4,
       FAI_HIGH_500_PEN_1, FAI_HIGH_500_PEN_2, FAI_HIGH_500_PEN_3, FAI_HIGH_500_PEN_4,
       FAI_HIGH_500_BRUSH_COLOR_1, FAI_HIGH_500_BRUSH_COLOR_2,
       FAI_HIGH_500_BRUSH_COLOR_3, FAI_HIGH_500_BRUSH_COLOR_4,
       FAI_HIGH_500_BRUSH_STYLE_1, FAI_HIGH_500_BRUSH_STYLE_2,
-      FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4)
+      FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4);
 
   oldElement = -1;
   slotSelectElement(currentElement);
+}
+
+void ConfigDrawElement::slotSelectBorder1Color()
+{
+  border1Color = QColorDialog::getColor(border1Color, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(45, 14);
+  buttonPixmap->fill(border1Color);
+  border1ColorButton->setPixmap(*buttonPixmap);
+}
+
+void ConfigDrawElement::slotSelectBorder2Color()
+{
+  border2Color = QColorDialog::getColor(border2Color, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(45, 14);
+  buttonPixmap->fill(border2Color);
+  border2ColorButton->setPixmap(*buttonPixmap);
+}
+
+void ConfigDrawElement::slotSelectBorder3Color()
+{
+  border3Color = QColorDialog::getColor(border3Color, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(45, 14);
+  buttonPixmap->fill(border3Color);
+  border3ColorButton->setPixmap(*buttonPixmap);
+}
+
+void ConfigDrawElement::slotSelectBorder4Color()
+{
+  border4Color = QColorDialog::getColor(border4Color, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(45, 14);
+  buttonPixmap->fill(border4Color);
+  border4ColorButton->setPixmap(*buttonPixmap);
+}
+
+void ConfigDrawElement::slotSelectBorder1BrushColor()
+{
+  border1BrushColor = QColorDialog::getColor(border1BrushColor, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(45, 14);
+  buttonPixmap->fill(border1BrushColor);
+  border1BrushColorButton->setPixmap(*buttonPixmap);
+}
+
+void ConfigDrawElement::slotSelectBorder2BrushColor()
+{
+  border2BrushColor = QColorDialog::getColor(border2BrushColor, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(45, 14);
+  buttonPixmap->fill(border2BrushColor);
+  border2BrushColorButton->setPixmap(*buttonPixmap);
+}
+
+void ConfigDrawElement::slotSelectBorder3BrushColor()
+{
+  border3BrushColor = QColorDialog::getColor(border3BrushColor, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(45, 14);
+  buttonPixmap->fill(border3BrushColor);
+  border3BrushColorButton->setPixmap(*buttonPixmap);
+}
+
+void ConfigDrawElement::slotSelectBorder4BrushColor()
+{
+  border4BrushColor = QColorDialog::getColor(border4BrushColor, this);
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(45, 14);
+  buttonPixmap->fill(border4BrushColor);
+  border4BrushColorButton->setPixmap(*buttonPixmap);
 }
 
 void ConfigDrawElement::slotSelectElement(int elementID)
@@ -935,109 +834,109 @@ void ConfigDrawElement::slotSelectElement(int elementID)
   switch(oldElement)
     {
       case KFLogConfig::Trail:
-        SAVE_PEN(trailPenList, trailBorder)
+        __savePen(&trailPenList, trailBorder);
         break;
       case KFLogConfig::Road:
-        SAVE_PEN(roadPenList, roadBorder)
+        __savePen(&roadPenList, roadBorder);
         break;
       case KFLogConfig::Highway:
-        SAVE_PEN(highwayPenList, highwayBorder)
+        __savePen(&highwayPenList, highwayBorder);
         break;
       case KFLogConfig::Railway:
-        SAVE_PEN(railPenList, railBorder)
+        __savePen(&railPenList, railBorder);
         break;
       case KFLogConfig::Railway_D:
-        SAVE_PEN(rail_dPenList, rail_dBorder)
+        __savePen(&rail_dPenList, rail_dBorder);
         break;
       case KFLogConfig::Aerial_Cable:
-        SAVE_PEN(aerialcablePenList, aerialcableBorder)
+        __savePen(&aerialcablePenList, aerialcableBorder);
         break;
       case KFLogConfig::River:
-        SAVE_PEN(riverPenList, riverBorder)
+        __savePen(&riverPenList, riverBorder);
         break;
       case KFLogConfig::Canal:
-        SAVE_PEN(canalPenList, canalBorder)
+        __savePen(&canalPenList, canalBorder);
         break;
 
       case KFLogConfig::River_T:
-        SAVE_PEN(river_tPenList, river_tBorder)
-        SAVE_BRUSH(river_tBrushList)
+        __savePen(&river_tPenList, river_tBorder);
+        __saveBrush(&river_tBrushList);
         break;
       case KFLogConfig::City:
-        SAVE_PEN(cityPenList, cityBorder)
-        SAVE_BRUSH(cityBrushList)
+        __savePen(&cityPenList, cityBorder);
+        __saveBrush(&cityBrushList);
         break;
       case KFLogConfig::AirA:
-        SAVE_PEN(airAPenList, airABorder)
-        SAVE_BRUSH(airABrushList)
+        __savePen(&airAPenList, airABorder);
+        __saveBrush(&airABrushList);
         break;
       case KFLogConfig::AirB:
-        SAVE_PEN(airBPenList, airBBorder)
-        SAVE_BRUSH(airBBrushList)
+        __savePen(&airBPenList, airBBorder);
+        __saveBrush(&airBBrushList);
         break;
       case KFLogConfig::AirC:
-        SAVE_PEN(airCPenList, airCBorder)
-        SAVE_BRUSH(airCBrushList)
+        __savePen(&airCPenList, airCBorder);
+        __saveBrush(&airCBrushList);
         break;
       case KFLogConfig::AirD:
-        SAVE_PEN(airDPenList, airDBorder)
-        SAVE_BRUSH(airDBrushList)
+        __savePen(&airDPenList, airDBorder);
+        __saveBrush(&airDBrushList);
         break;
       case KFLogConfig::AirElow:
-        SAVE_PEN(airElPenList, airElBorder)
-        SAVE_BRUSH(airElBrushList)
+        __savePen(&airElPenList, airElBorder);
+        __saveBrush(&airElBrushList);
         break;
       case KFLogConfig::AirEhigh:
-        SAVE_PEN(airEhPenList, airEhBorder)
-        SAVE_BRUSH(airEhBrushList)
+        __savePen(&airEhPenList, airEhBorder);
+        __saveBrush(&airEhBrushList);
         break;
       case KFLogConfig::AirF:
-        SAVE_PEN(airFPenList, airFBorder)
-        SAVE_BRUSH(airFBrushList)
+        __savePen(&airFPenList, airFBorder);
+        __saveBrush(&airFBrushList);
         break;
       case KFLogConfig::ControlC:
-        SAVE_PEN(ctrCPenList, ctrCBorder)
-        SAVE_BRUSH(ctrCBrushList)
+        __savePen(&ctrCPenList, ctrCBorder);
+        __saveBrush(&ctrCBrushList);
         break;
       case KFLogConfig::ControlD:
-        SAVE_PEN(ctrDPenList, ctrDBorder)
-        SAVE_BRUSH(ctrDBrushList)
+        __savePen(&ctrDPenList, ctrDBorder);
+        __saveBrush(&ctrDBrushList);
         break;
       case KFLogConfig::Danger:
-        SAVE_PEN(dangerPenList, dangerBorder)
-        SAVE_BRUSH(dangerBrushList)
+        __savePen(&dangerPenList, dangerBorder);
+        __saveBrush(&dangerBrushList);
         break;
       case KFLogConfig::LowFlight:
-        SAVE_PEN(lowFPenList, lowFBorder)
-        SAVE_BRUSH(lowFBrushList)
+        __savePen(&lowFPenList, lowFBorder);
+        __saveBrush(&lowFBrushList);
         break;
       case KFLogConfig::Restricted:
-        SAVE_PEN(restrPenList, restrBorder)
-        SAVE_BRUSH(restrBrushList)
+        __savePen(&restrPenList, restrBorder);
+        __saveBrush(&restrBrushList);
         break;
       case KFLogConfig::Tmz:
-        SAVE_PEN(tmzPenList, tmzBorder)
-        SAVE_BRUSH(tmzBrushList)
+        __savePen(&tmzPenList, tmzBorder);
+        __saveBrush(&tmzBrushList);
         break;
       case KFLogConfig::Forest:
-        SAVE_PEN(forestPenList, forestBorder);
-        SAVE_BRUSH(forestBrushList);
+        __savePen(&forestPenList, forestBorder);
+        __saveBrush(&forestBrushList);
         break;
       case KFLogConfig::Glacier:
-        SAVE_PEN(glacierPenList, glacierBorder);
-        SAVE_BRUSH(glacierBrushList);
+        __savePen(&glacierPenList, glacierBorder);
+        __saveBrush(&glacierBrushList);
         break;
       case KFLogConfig::PackIce:
-        SAVE_PEN(packicePenList, packiceBorder);
-        SAVE_BRUSH(packiceBrushList);
+        __savePen(&packicePenList, packiceBorder);
+        __saveBrush(&packiceBrushList);
         break;
       case KFLogConfig::FAIAreaLow500:
-        SAVE_PEN(faiAreaLow500PenList, faiAreaLow500Border);
-        SAVE_BRUSH(faiAreaLow500BrushList);
+        __savePen(&faiAreaLow500PenList, faiAreaLow500Border);
+        __saveBrush(&faiAreaLow500BrushList);
         break;
       case KFLogConfig::FAIAreaHigh500:
-        SAVE_PEN(faiAreaHigh500PenList, faiAreaHigh500Border);
-        SAVE_BRUSH(faiAreaHigh500BrushList);
+        __savePen(&faiAreaHigh500PenList, faiAreaHigh500Border);
+        __saveBrush(&faiAreaHigh500BrushList);
         break;
       default:
         break;
@@ -1046,108 +945,108 @@ void ConfigDrawElement::slotSelectElement(int elementID)
   switch(elementID)
     {
       case KFLogConfig::Trail:
-        SHOW_PEN(trailPenList, trailBorder)
+        __showPen(&trailPenList, trailBorder);
         break;
       case KFLogConfig::Road:
-        SHOW_PEN(roadPenList, roadBorder)
+        __showPen(&roadPenList, roadBorder);
         break;
       case KFLogConfig::Highway:
-        SHOW_PEN(highwayPenList, highwayBorder)
+        __showPen(&highwayPenList, highwayBorder);
         break;
       case KFLogConfig::Railway:
-        SHOW_PEN(railPenList, railBorder)
+        __showPen(&railPenList, railBorder);
         break;
       case KFLogConfig::Railway_D:
-        SHOW_PEN(rail_dPenList, rail_dBorder)
+        __showPen(&rail_dPenList, rail_dBorder);
         break;
       case KFLogConfig::Aerial_Cable:
-        SHOW_PEN(aerialcablePenList, aerialcableBorder)
+        __showPen(&aerialcablePenList, aerialcableBorder);
         break;
       case KFLogConfig::River:
-        SHOW_PEN(riverPenList, riverBorder)
+        __showPen(&riverPenList, riverBorder);
         break;
       case KFLogConfig::Canal:
-        SHOW_PEN(canalPenList, canalBorder)
+        __showPen(&canalPenList, canalBorder);
         break;
       case KFLogConfig::River_T:
-        SHOW_PEN(river_tPenList, river_tBorder)
-        SHOW_BRUSH(river_tBrushList)
+        __showPen(&river_tPenList, river_tBorder);
+        __showBrush(&river_tBrushList);
         break;
       case KFLogConfig::City:
-        SHOW_PEN(cityPenList, cityBorder)
-        SHOW_BRUSH(cityBrushList)
+        __showPen(&cityPenList, cityBorder);
+        __showBrush(&cityBrushList);
         break;
       case KFLogConfig::AirA:
-        SHOW_PEN(airAPenList, airABorder)
-        SHOW_BRUSH(airABrushList)
+        __showPen(&airAPenList, airABorder);
+        __showBrush(&airABrushList);
         break;
       case KFLogConfig::AirB:
-        SHOW_PEN(airBPenList, airBBorder)
-        SHOW_BRUSH(airBBrushList)
+        __showPen(&airBPenList, airBBorder);
+        __showBrush(&airBBrushList);
         break;
       case KFLogConfig::AirC:
-        SHOW_PEN(airCPenList, airCBorder)
-        SHOW_BRUSH(airCBrushList)
+        __showPen(&airCPenList, airCBorder);
+        __showBrush(&airCBrushList);
         break;
       case KFLogConfig::AirD:
-        SHOW_PEN(airDPenList, airDBorder)
-        SHOW_BRUSH(airDBrushList)
+        __showPen(&airDPenList, airDBorder);
+        __showBrush(&airDBrushList);
         break;
       case KFLogConfig::AirElow:
-        SHOW_PEN(airElPenList, airElBorder)
-        SHOW_BRUSH(airElBrushList)
+        __showPen(&airElPenList, airElBorder);
+        __showBrush(&airElBrushList);
         break;
       case KFLogConfig::AirEhigh:
-        SHOW_PEN(airEhPenList, airEhBorder)
-        SHOW_BRUSH(airEhBrushList)
+        __showPen(&airEhPenList, airEhBorder);
+        __showBrush(&airEhBrushList);
         break;
       case KFLogConfig::AirF:
-        SHOW_PEN(airFPenList, airFBorder)
-        SHOW_BRUSH(airFBrushList)
+        __showPen(&airFPenList, airFBorder);
+        __showBrush(&airFBrushList);
         break;
       case KFLogConfig::ControlC:
-        SHOW_PEN(ctrCPenList, ctrCBorder)
-        SHOW_BRUSH(ctrCBrushList)
+        __showPen(&ctrCPenList, ctrCBorder);
+        __showBrush(&ctrCBrushList);
         break;
       case KFLogConfig::ControlD:
-        SHOW_PEN(ctrDPenList, ctrDBorder)
-        SHOW_BRUSH(ctrDBrushList)
+        __showPen(&ctrDPenList, ctrDBorder);
+        __showBrush(&ctrDBrushList);
         break;
       case KFLogConfig::Danger:
-        SHOW_PEN(dangerPenList, dangerBorder)
-        SHOW_BRUSH(dangerBrushList)
+        __showPen(&dangerPenList, dangerBorder);
+        __showBrush(&dangerBrushList);
         break;
       case KFLogConfig::LowFlight:
-        SHOW_PEN(lowFPenList, lowFBorder)
-        SHOW_BRUSH(lowFBrushList)
+        __showPen(&lowFPenList, lowFBorder);
+        __showBrush(&lowFBrushList);
         break;
       case KFLogConfig::Restricted:
-        SHOW_PEN(restrPenList, restrBorder)
-        SHOW_BRUSH(restrBrushList)
+        __showPen(&restrPenList, restrBorder);
+        __showBrush(&restrBrushList);
         break;
       case KFLogConfig::Tmz:
-        SHOW_PEN(tmzPenList, tmzBorder)
-        SHOW_BRUSH(tmzBrushList)
+        __showPen(&tmzPenList, tmzBorder);
+        __showBrush(&tmzBrushList);
         break;
       case KFLogConfig::Forest:
-        //SHOW_PEN(forestPenList, forestBorder);
-        SHOW_BRUSH(forestBrushList);
+        //__showPen(&forestPenList, forestBorder);
+        __showBrush(&forestBrushList);
         break;
       case KFLogConfig::Glacier:
-        SHOW_PEN(glacierPenList, glacierBorder);
-        SHOW_BRUSH(glacierBrushList);
+        __showPen(&glacierPenList, glacierBorder);
+        __showBrush(&glacierBrushList);
         break;
       case KFLogConfig::PackIce:
-        SHOW_PEN(packicePenList, packiceBorder);
-        SHOW_BRUSH(packiceBrushList);
+        __showPen(&packicePenList, packiceBorder);
+        __showBrush(&packiceBrushList);
         break;
       case KFLogConfig::FAIAreaLow500:
-        SHOW_PEN(faiAreaLow500PenList, faiAreaLow500Border);
-        SHOW_BRUSH(faiAreaLow500BrushList);
+        __showPen(&faiAreaLow500PenList, faiAreaLow500Border);
+        __showBrush(&faiAreaLow500BrushList);
         break;
       case KFLogConfig::FAIAreaHigh500:
-        SHOW_PEN(faiAreaHigh500PenList, faiAreaHigh500Border);
-        SHOW_BRUSH(faiAreaHigh500BrushList);
+        __showPen(&faiAreaHigh500PenList, faiAreaHigh500Border);
+        __showBrush(&faiAreaHigh500BrushList);
         break;
     }
 
@@ -1159,14 +1058,14 @@ void ConfigDrawElement::slotToggleFirst(bool toggle)
 {
   border1Button-> setEnabled(toggle);
   border1Pen-> setEnabled(toggle);
-  border1Color-> setEnabled(toggle);
+  border1ColorButton-> setEnabled(toggle);
   border2-> setEnabled(toggle);
 
   switch(currentElement)
     {
       case KFLogConfig::City:
         border1PenStyle-> setEnabled(false);
-        border1BrushColor-> setEnabled(toggle);
+        border1BrushColorButton-> setEnabled(toggle);
         border1BrushStyle-> setEnabled(false);
         break;
       case KFLogConfig::AirA:
@@ -1188,19 +1087,19 @@ void ConfigDrawElement::slotToggleFirst(bool toggle)
       case KFLogConfig::FAIAreaLow500:
       case KFLogConfig::FAIAreaHigh500:
         border1PenStyle-> setEnabled(toggle);
-        border1BrushColor-> setEnabled(toggle);
+        border1BrushColorButton-> setEnabled(toggle);
         border1BrushStyle-> setEnabled(toggle);
         break;
       case KFLogConfig::Forest:
-        border1Color-> setEnabled(false);
+        border1ColorButton-> setEnabled(false);
         border1Pen-> setEnabled(false);
         border1PenStyle-> setEnabled(false);
-        border1BrushColor-> setEnabled(toggle);
+        border1BrushColorButton-> setEnabled(toggle);
         border1BrushStyle-> setEnabled(toggle);
         break;
       default:
         border1PenStyle-> setEnabled(toggle);
-        border1BrushColor-> setEnabled(false);
+        border1BrushColorButton-> setEnabled(false);
         border1BrushStyle-> setEnabled(false);
     }
 
@@ -1214,14 +1113,14 @@ void ConfigDrawElement::slotToggleSecond(bool toggle)
 {
   border2Button-> setEnabled(toggle);
   border2Pen-> setEnabled(toggle);
-  border2Color-> setEnabled(toggle);
+  border2ColorButton-> setEnabled(toggle);
   border3-> setEnabled(toggle);
 
   switch(currentElement)
     {
       case KFLogConfig::City:
         border2PenStyle-> setEnabled(false);
-        border2BrushColor-> setEnabled(toggle);
+        border2BrushColorButton-> setEnabled(toggle);
         border2BrushStyle-> setEnabled(false);
         break;
       case KFLogConfig::AirA:
@@ -1243,19 +1142,19 @@ void ConfigDrawElement::slotToggleSecond(bool toggle)
       case KFLogConfig::FAIAreaLow500:
       case KFLogConfig::FAIAreaHigh500:
         border2PenStyle-> setEnabled(toggle);
-        border2BrushColor-> setEnabled(toggle);
+        border2BrushColorButton-> setEnabled(toggle);
         border2BrushStyle-> setEnabled(toggle);
         break;
       case KFLogConfig::Forest:
-        border2Color-> setEnabled(false);
+        border2ColorButton-> setEnabled(false);
         border2Pen-> setEnabled(false);
         border2PenStyle-> setEnabled(false);
-        border2BrushColor-> setEnabled(toggle);
+        border2BrushColorButton-> setEnabled(toggle);
         border2BrushStyle-> setEnabled(toggle);
         break;
       default:
         border2PenStyle-> setEnabled(toggle);
-        border2BrushColor-> setEnabled(false);
+        border2BrushColorButton-> setEnabled(false);
         border2BrushStyle-> setEnabled(false);
     }
 
@@ -1269,14 +1168,14 @@ void ConfigDrawElement::slotToggleThird(bool toggle)
 {
   border3Button-> setEnabled(toggle);
   border3Pen-> setEnabled(toggle);
-  border3Color-> setEnabled(toggle);
+  border3ColorButton-> setEnabled(toggle);
   border4-> setEnabled(toggle);
 
   switch(currentElement)
     {
       case KFLogConfig::City:
         border3PenStyle-> setEnabled(false);
-        border3BrushColor-> setEnabled(toggle);
+        border3BrushColorButton-> setEnabled(toggle);
         border3BrushStyle-> setEnabled(false);
         break;
       case KFLogConfig::AirA:
@@ -1298,19 +1197,19 @@ void ConfigDrawElement::slotToggleThird(bool toggle)
       case KFLogConfig::FAIAreaLow500:
       case KFLogConfig::FAIAreaHigh500:
         border3PenStyle-> setEnabled(toggle);
-        border3BrushColor-> setEnabled(toggle);
+        border3BrushColorButton-> setEnabled(toggle);
         border3BrushStyle-> setEnabled(toggle);
         break;
       case KFLogConfig::Forest:
-        border3Color-> setEnabled(false);
+        border3ColorButton-> setEnabled(false);
         border3Pen-> setEnabled(false);
         border3PenStyle-> setEnabled(false);
-        border3BrushColor-> setEnabled(toggle);
+        border3BrushColorButton-> setEnabled(toggle);
         border3BrushStyle-> setEnabled(toggle);
         break;
       default:
         border3PenStyle-> setEnabled(toggle);
-        border3BrushColor-> setEnabled(false);
+        border3BrushColorButton-> setEnabled(false);
         border3BrushStyle-> setEnabled(false);
     }
 
@@ -1322,14 +1221,14 @@ void ConfigDrawElement::slotToggleThird(bool toggle)
 
 void ConfigDrawElement::slotToggleForth(bool toggle)
 {
-  border4Color-> setEnabled(toggle);
+  border4ColorButton-> setEnabled(toggle);
   border4Pen-> setEnabled(toggle);
 
   switch(currentElement)
     {
       case KFLogConfig::City:
         border4PenStyle-> setEnabled(false);
-        border4BrushColor-> setEnabled(toggle);
+        border4BrushColorButton-> setEnabled(toggle);
         border4BrushStyle-> setEnabled(false);
         break;
       case KFLogConfig::AirA:
@@ -1351,46 +1250,313 @@ void ConfigDrawElement::slotToggleForth(bool toggle)
       case KFLogConfig::FAIAreaLow500:
       case KFLogConfig::FAIAreaHigh500:
         border4PenStyle-> setEnabled(toggle);
-        border4BrushColor-> setEnabled(toggle);
+        border4BrushColorButton-> setEnabled(toggle);
         border4BrushStyle-> setEnabled(toggle);
         break;
       case KFLogConfig::Forest:
-        border4Color-> setEnabled(false);
+        border4ColorButton-> setEnabled(false);
         border4Pen-> setEnabled(false);
         border4PenStyle-> setEnabled(false);
-        border4BrushColor-> setEnabled(toggle);
+        border4BrushColorButton-> setEnabled(toggle);
         border4BrushStyle-> setEnabled(toggle);
         break;
       default:
         border4PenStyle-> setEnabled(toggle);
-        border4BrushColor-> setEnabled(false);
+        border4BrushColorButton-> setEnabled(false);
         border4BrushStyle-> setEnabled(false);
     }
 }
 
 void ConfigDrawElement::slotSetSecond()
 {
-  border2Color-> setColor(border1Color->color());
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(45, 14);
+
+  border2Color = border1Color;
+  buttonPixmap->fill(border2Color);
+  border2ColorButton->setPixmap(*buttonPixmap);
   border2Pen-> setValue(border1Pen->value());
   border2PenStyle-> setCurrentItem(border1PenStyle->currentItem());
-  border2BrushColor-> setColor(border1BrushColor->color());
+  border2BrushColor = border1BrushColor;
+  buttonPixmap->fill(border2BrushColor);
+  border2BrushColorButton->setPixmap(*buttonPixmap);
   border2BrushStyle-> setCurrentItem(border1BrushStyle->currentItem());
 }
 
 void ConfigDrawElement::slotSetThird()
 {
-  border3Color-> setColor(border2Color->color());
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(45, 14);
+
+  border3Color = border2Color;
+  buttonPixmap->fill(border3Color);
+  border3ColorButton->setPixmap(*buttonPixmap);
   border3Pen-> setValue(border2Pen->value());
   border3PenStyle-> setCurrentItem(border2PenStyle->currentItem());
-  border3BrushColor-> setColor(border2BrushColor->color());
+  border3BrushColor = border2BrushColor;
+  buttonPixmap->fill(border3BrushColor);
+  border3BrushColorButton->setPixmap(*buttonPixmap);
   border3BrushStyle-> setCurrentItem(border2BrushStyle->currentItem());
 }
 
 void ConfigDrawElement::slotSetForth()
 {
-  border4Color-> setColor(border3Color->color());
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(45, 14);
+
+  border4Color = border3Color;
+  buttonPixmap->fill(border4Color);
+  border4ColorButton->setPixmap(*buttonPixmap);
   border4Pen-> setValue(border3Pen->value());
   border4PenStyle-> setCurrentItem(border3PenStyle->currentItem());
-  border4BrushColor-> setColor(border3BrushColor->color());
+  border4BrushColor = border3BrushColor;
+  buttonPixmap->fill(border4BrushColor);
+  border4BrushColorButton->setPixmap(*buttonPixmap);
   border4BrushStyle-> setCurrentItem(border3BrushStyle->currentItem());
+}
+
+void ConfigDrawElement::__defaultPen(QPtrList<QPen> *penList, bool *b,
+    QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4,
+    int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4)
+{
+  penList->at(0)-> setColor(defaultColor1);
+  penList->at(0)-> setWidth(defaultPenSize1);
+  penList->at(1)-> setColor(defaultColor2);
+  penList->at(1)-> setWidth(defaultPenSize2);
+  penList->at(2)-> setColor(defaultColor3);
+  penList->at(2)-> setWidth(defaultPenSize3);
+  penList->at(3)-> setColor(defaultColor4);
+  penList->at(3)-> setWidth(defaultPenSize4);
+  b[0] = true;
+  b[1] = true;
+  b[2] = true;
+  b[3] = true;
+}
+
+void ConfigDrawElement::__defaultPenBrush(QPtrList<QPen> *penList, bool *b, QPtrList<QBrush> *brushList,
+    QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4,
+    int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4,
+    QColor defaultBrushColor1, QColor defaultBrushColor2, QColor defaultBrushColor3, QColor defaultBrushColor4,
+    Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2, Qt::BrushStyle defaultBrushStyle3, Qt::BrushStyle defaultBrushStyle4)
+{
+  __defaultPen(penList, b, defaultColor1, defaultColor2, defaultColor3, defaultColor4,
+      defaultPenSize1, defaultPenSize2, defaultPenSize3, defaultPenSize4);
+  brushList->at(0)->setColor(defaultBrushColor1);
+  brushList->at(0)->setStyle(defaultBrushStyle1);
+  brushList->at(1)->setColor(defaultBrushColor2);
+  brushList->at(1)->setStyle(defaultBrushStyle2);
+  brushList->at(2)->setColor(defaultBrushColor3);
+  brushList->at(2)->setStyle(defaultBrushStyle3);
+  brushList->at(3)->setColor(defaultBrushColor4);
+  brushList->at(3)->setStyle(defaultBrushStyle4);
+}
+
+// Qt::PenStyle-Enum starts with NoPen = 0, therefor we reduce the
+// value by 1. We must use the same order as Qt::PenStyle.
+// Qt::BrushStyle "NoBrush" is allowed ...
+void ConfigDrawElement::__fillStyle(QComboBox *pen, QComboBox *brush)
+{
+  QString picDir = QDir::homeDirPath() + "/.kflog/pics/";
+
+  pen-> insertItem(QPixmap(picDir + "solid.png"), Qt::SolidLine - 1);
+  pen-> insertItem(QPixmap(picDir + "dashed.png"), Qt::DashLine - 1);
+  pen-> insertItem(QPixmap(picDir + "dotted.png"), Qt::DotLine - 1);
+  pen-> insertItem(QPixmap(picDir + "dashdot.png"), Qt::DashDotLine - 1);
+  pen-> insertItem(QPixmap(picDir + "dashdotdot.png"), Qt::DashDotDotLine - 1);
+  brush-> insertItem("no", Qt::NoBrush);
+  brush-> insertItem(QPixmap(picDir + "brush0.png"), Qt::SolidPattern);
+  brush-> insertItem(QPixmap(picDir + "brush1.png"), Qt::Dense1Pattern);
+  brush-> insertItem(QPixmap(picDir + "brush2.png"), Qt::Dense2Pattern);
+  brush-> insertItem(QPixmap(picDir + "brush3.png"), Qt::Dense3Pattern);
+  brush-> insertItem(QPixmap(picDir + "brush4.png"), Qt::Dense4Pattern);
+  brush-> insertItem(QPixmap(picDir + "brush5.png"), Qt::Dense5Pattern);
+  brush-> insertItem(QPixmap(picDir + "brush6.png"), Qt::Dense6Pattern);
+  brush-> insertItem(QPixmap(picDir + "brush7.png"), Qt::Dense7Pattern);
+  brush-> insertItem(QPixmap(picDir + "brush8.png"), Qt::HorPattern);
+  brush-> insertItem(QPixmap(picDir + "brush9.png"), Qt::VerPattern);
+  brush-> insertItem(QPixmap(picDir + "brush10.png"), Qt::CrossPattern);
+  brush-> insertItem(QPixmap(picDir + "brush11.png"), Qt::BDiagPattern);
+  brush-> insertItem(QPixmap(picDir + "brush12.png"), Qt::FDiagPattern);
+  brush-> insertItem(QPixmap(picDir + "brush13.png"), Qt::DiagCrossPattern);
+}
+
+void ConfigDrawElement::__readBorder(QString group, bool *b)
+{
+  b[0] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border1", true);
+  b[1] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border2", true);
+  b[2] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border3", true);
+  b[3] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border4", true);
+}
+
+void ConfigDrawElement::__readPen(QString group, QPtrList<QPen> *penList,
+    QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4,
+    int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4,
+    Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4)
+{
+  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color1", __color2String(defaultColor1))),
+        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize1", defaultPenSize1),
+        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle1", defaultPenStyle1)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color2", __color2String(defaultColor2))),
+        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize2", defaultPenSize2),
+        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle2", defaultPenStyle2)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color3", __color2String(defaultColor3))),
+        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize3", defaultPenSize2),
+        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle3", defaultPenStyle3)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color4", __color2String(defaultColor4))),
+        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize4", defaultPenSize2),
+        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle4", defaultPenStyle4)));
+}
+
+void ConfigDrawElement::__readBrush(QString group, QPtrList<QBrush> *brushList,
+    QColor defaultBrushColor1, QColor defaultBrushColor2, QColor defaultBrushColor3, QColor defaultBrushColor4,
+    Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2, Qt::BrushStyle defaultBrushStyle3, Qt::BrushStyle defaultBrushStyle4)
+{
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor1", __color2String(defaultBrushColor1))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle1", defaultBrushStyle1))); \
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor2", __color2String(defaultBrushColor2))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle2", defaultBrushStyle2))); \
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor3", __color2String(defaultBrushColor3))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle3", defaultBrushStyle3))); \
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor4", __color2String(defaultBrushColor4))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle4", defaultBrushStyle4)));
+}
+
+void ConfigDrawElement::__saveBrush(QPtrList<QBrush> *brushList)
+{
+  brushList->at(0)->setColor(border1BrushColor);
+  brushList->at(0)->setStyle((Qt::BrushStyle)border1BrushStyle->currentItem());
+  brushList->at(1)->setColor(border2BrushColor);
+  brushList->at(1)->setStyle((Qt::BrushStyle)border2BrushStyle->currentItem());
+  brushList->at(2)->setColor(border3BrushColor);
+  brushList->at(2)->setStyle((Qt::BrushStyle)border3BrushStyle->currentItem());
+  brushList->at(3)->setColor(border4BrushColor);
+  brushList->at(3)->setStyle((Qt::BrushStyle)border4BrushStyle->currentItem());
+}
+
+void ConfigDrawElement::__savePen(QPtrList<QPen> *penList, bool *b)
+{
+  b[0] = border1->isChecked();
+  penList->at(0)->setColor(border1Color);
+  penList->at(0)->setWidth(border1Pen->value());
+  penList->at(0)->setStyle((Qt::PenStyle)(border1PenStyle->currentItem() + 1));
+  b[1] = border2->isChecked();
+  penList->at(1)->setColor(border2Color);
+  penList->at(1)->setWidth(border2Pen->value());
+  penList->at(1)->setStyle((Qt::PenStyle)(border2PenStyle->currentItem() + 1));
+  b[2] = border3->isChecked();
+  penList->at(2)->setColor(border3Color);
+  penList->at(2)->setWidth(border3Pen->value());
+  penList->at(2)->setStyle((Qt::PenStyle)(border3PenStyle->currentItem() + 1));
+  b[3] = border4->isChecked();
+  penList->at(3)->setColor(border4Color);
+  penList->at(3)->setWidth(border4Pen->value());
+  penList->at(3)->setStyle((Qt::PenStyle)(border4PenStyle->currentItem() + 1));
+}
+
+void ConfigDrawElement::__showBrush(QPtrList<QBrush> *brushList)
+{
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(45, 14);
+
+  border1BrushColor = brushList->at(0)->color();
+  buttonPixmap->fill(border1BrushColor);
+  border1BrushColorButton->setPixmap(*buttonPixmap);
+  border1BrushStyle->setCurrentItem(brushList->at(0)->style());
+
+  border2BrushColor = brushList->at(1)->color();
+  buttonPixmap->fill(border1BrushColor);
+  border2BrushColorButton->setPixmap(*buttonPixmap);
+  border2BrushStyle->setCurrentItem(brushList->at(1)->style());
+
+  border3BrushColor = brushList->at(2)->color();
+  buttonPixmap->fill(border3BrushColor);
+  border3BrushColorButton->setPixmap(*buttonPixmap);
+  border3BrushStyle->setCurrentItem(brushList->at(2)->style());
+
+  border4BrushColor = brushList->at(3)->color();
+  buttonPixmap->fill(border4BrushColor);
+  border4BrushColorButton->setPixmap(*buttonPixmap);
+  border4BrushStyle->setCurrentItem(brushList->at(2)->style());
+}
+
+void ConfigDrawElement::__showPen(QPtrList<QPen> *penList, bool *b)
+{
+  QPixmap *buttonPixmap = new QPixmap();
+  buttonPixmap->resize(45, 14);
+
+  border1->setChecked(b[0]);
+  border1Color = penList->at(0)->color();
+  buttonPixmap->fill(border1Color);
+  border1ColorButton->setPixmap(*buttonPixmap);
+  border1Pen->setValue(penList->at(0)->width());
+  border1PenStyle->setCurrentItem(penList->at(0)->style() - 1);
+
+  border2->setChecked(b[1]);
+  border2Color = penList->at(1)->color();
+  buttonPixmap->fill(border2Color);
+  border2ColorButton->setPixmap(*buttonPixmap);
+  border2Pen->setValue(penList->at(1)->width());
+  border2PenStyle->setCurrentItem(penList->at(1)->style() - 1);
+
+  border3->setChecked(b[2]);
+  border3Color = penList->at(2)->color();
+  buttonPixmap->fill(border3Color);
+  border3ColorButton->setPixmap(*buttonPixmap);
+  border3Pen->setValue(penList->at(2)->width());
+  border3PenStyle->setCurrentItem(penList->at(2)->style() - 1);
+
+  border4->setChecked(b[3]);
+  border4Color = penList->at(3)->color();
+  buttonPixmap->fill(border4Color);
+  border4ColorButton->setPixmap(*buttonPixmap);
+  border4Pen->setValue(penList->at(3)->width());
+  border4PenStyle->setCurrentItem(penList->at(3)->style() - 1);
+}
+
+void ConfigDrawElement::__writeBrush(QString group, QPtrList<QBrush> *brushList, QPtrList<QPen> *penList, bool *b)
+{
+  __writePen(group, penList, b);
+  _settings.writeEntry("/KFLog/Map/"+group+"/BrushColor1", __color2String(brushList->at(0)->color()));
+  _settings.writeEntry("/KFLog/Map/"+group+"/BrushColor2", __color2String(brushList->at(1)->color()));
+  _settings.writeEntry("/KFLog/Map/"+group+"/BrushColor3", __color2String(brushList->at(2)->color()));
+  _settings.writeEntry("/KFLog/Map/"+group+"/BrushColor4", __color2String(brushList->at(3)->color()));
+  _settings.writeEntry("/KFLog/Map/"+group+"/BrushStyle1", brushList->at(0)->style());
+  _settings.writeEntry("/KFLog/Map/"+group+"/BrushStyle2", brushList->at(1)->style());
+  _settings.writeEntry("/KFLog/Map/"+group+"/BrushStyle3", brushList->at(2)->style());
+  _settings.writeEntry("/KFLog/Map/"+group+"/BrushStyle4", brushList->at(3)->style());
+}
+
+void ConfigDrawElement::__writePen(QString group, QPtrList<QPen> *penList, bool *b)
+{
+  _settings.writeEntry("/KFLog/Map/"+group+"/Color1", __color2String(penList->at(0)->color()));
+  _settings.writeEntry("/KFLog/Map/"+group+"/Color2", __color2String(penList->at(1)->color()));
+  _settings.writeEntry("/KFLog/Map/"+group+"/Color3", __color2String(penList->at(2)->color()));
+  _settings.writeEntry("/KFLog/Map/"+group+"/Color4", __color2String(penList->at(3)->color()));
+  _settings.writeEntry("/KFLog/Map/"+group+"/PenSize1", (int)penList->at(0)->width());
+  _settings.writeEntry("/KFLog/Map/"+group+"/PenSize2", (int)penList->at(1)->width());
+  _settings.writeEntry("/KFLog/Map/"+group+"/PenSize3", (int)penList->at(2)->width());
+  _settings.writeEntry("/KFLog/Map/"+group+"/PenSize4", (int)penList->at(3)->width());
+  _settings.writeEntry("/KFLog/Map/"+group+"/PenStyle1", penList->at(0)->style());
+  _settings.writeEntry("/KFLog/Map/"+group+"/PenStyle2", penList->at(1)->style());
+  _settings.writeEntry("/KFLog/Map/"+group+"/PenStyle3", penList->at(2)->style());
+  _settings.writeEntry("/KFLog/Map/"+group+"/PenStyle4", penList->at(3)->style());
+  _settings.writeEntry("/KFLog/Map/"+group+"/Border1", b[0]);
+  _settings.writeEntry("/KFLog/Map/"+group+"/Border2", ( b[1] && b[0] ) );
+  _settings.writeEntry("/KFLog/Map/"+group+"/Border3", ( b[2] && b[1] && b[0] ) );
+  _settings.writeEntry("/KFLog/Map/"+group+"/Border4", ( b[3] && b[2] && b[1] && b[0] ) );
+}
+
+/** this is a temporary function and it is not needed in Qt 4 */
+QString ConfigDrawElement::__color2String(QColor color)
+{
+  QString colstr;
+  colstr.sprintf("%d;%d;%d", color.red(), color.green(), color.blue());
+  return colstr;
+}
+
+/** this is a temporary function and it is not needed in Qt 4 */
+QColor ConfigDrawElement::__string2Color(QString colstr)
+{
+  QColor color(colstr.section(";", 0, 0).toInt(), colstr.section(";", 1, 1).toInt(), colstr.section(";", 2, 2).toInt());
+  return color;
 }

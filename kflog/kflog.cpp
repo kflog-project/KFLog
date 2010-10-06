@@ -15,174 +15,309 @@
 **
 ***********************************************************************/
 
-#include <unistd.h>
-#include <pwd.h>
 #include <dlfcn.h>
+#include <pwd.h>
 
-// include files for QT
-#include <qdir.h>
-#include <qlayout.h>
+#include <qapplication.h>
+#include <qmenubar.h>
 #include <qmessagebox.h>
-#include <qprinter.h>
-#include <qregexp.h>
-#include <qtextstream.h>
-#include <qgl.h>
+#include <qpopupmenu.h>
+#include <qsettings.h>
+#include <qstatusbar.h>
 #include <qwhatsthis.h>
 
-// include files for KDE
-#include <kaboutapplication.h>
-#include <kconfig.h>
-#include <kedittoolbar.h>
-#include <kfiledialog.h>
-#include <kiconloader.h>
-#include <kio/netaccess.h>
-#include <kkeydialog.h>
-#include <kmenubar.h>
-#include <knotifyclient.h>
-#include <kstdaction.h>
-#include <ktoolbar.h>
-
-// application specific includes
-#include "kflog.h"
 #include "airport.h"
-#include "basemapelement.h"
 #include "centertodialog.h"
-#include "dataview.h"
-#include "elevationfinder.h"
-#include "evaluationdialog.h"
-#include "evaluationview.h"
-#include "flight.h"
 #include "flightdataprint.h"
 #include "flightloader.h"
-#include "helpwindow.h"
 #include "igc3ddialog.h"
 #include "igcpreview.h"
+#include "kflog.h"
 #include "kflogconfig.h"
-#include "kflogstartlogo.h"
-#include "map.h"
-#include "mapcalc.h"
-#include "mapconfig.h"
 #include "mapcontents.h"
-#include "mapcontrolview.h"
 #include "mapprint.h"
-#include "objecttree.h"
 #include "recorderdialog.h"
 #include "taskdataprint.h"
-#include "topolegend.h"
-#include "waypoints.h"
+#include "translationlist.h"
 
-#define STATUS_LABEL(a,b,c) \
-  a = new KStatusBarLabel( "", 0, statusBar() ); \
-  a->setFixedWidth( b ); \
-  a->setFixedHeight( statusLabel->sizeHint().height() ); \
-  a->setFrameStyle( QFrame::NoFrame | QFrame::Plain ); \
-  a->setMargin(0); \
-  a->setLineWidth(0); \
-  a->setAlignment( c | AlignVCenter );
-
-TranslationList surfaces;
+TranslationList surfaceTypes;
 TranslationList waypointTypes;
 TranslationList taskTypes;
 
+extern QSettings _settings;
 
-KFLogApp::KFLogApp()
-  : KDockMainWindow(0, "KFLogMainWindow"), showStartLogo(false)
+KFLog::KFLog()
+  : QMainWindow(0, "KFLog main window")
 {
   extern MapConfig _globalMapConfig;
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
 
-  config = kapp->config();
-
-  config->setGroup("General Options");
   showStartLogo=false;
 
-  if (config->readBoolEntry("Logo", true) && (!kapp->isRestored() ) )
-    {
-      showStartLogo = true;
-      startLogo = new KFLogStartLogo();
-      startLogo->show();
-    }
-
-  // initialize internal translation lists
-  initSurfaces();
-  initTypes();
-  initTaskTypes();
-  
-  ElevationFinder::instance();
-  
-  connect(&_globalMapMatrix, SIGNAL(displayMatrixValues(int, bool)),
-      &_globalMapConfig, SLOT(slotSetMatrixValues(int, bool)));
-  connect(&_globalMapMatrix, SIGNAL(printMatrixValues(int)),
-      &_globalMapConfig, SLOT(slotSetPrintMatrixValues(int)));
-  connect(&_globalMapConfig, SIGNAL(configChanged()), &_globalMapMatrix,
-      SLOT(slotInitMatrix()));
-  connect(&_globalMapContents, SIGNAL(errorOnMapLoading()),
-      SLOT(slotStartComplete()));
-  connect(this, SIGNAL(flightDataTypeChanged(int)), &_globalMapConfig,
-      SLOT(slotSetFlightDataType(int)));
-  connect(&_globalMapMatrix, SIGNAL(projectionChanged()),
-      &_globalMapContents, SLOT(slotReloadMapData()));
+  if(_settings.readBoolEntry("/KFLog/GeneralOptions/Logo", true))
+  {
+    showStartLogo = true;
+    startLogo = new KFLogStartLogo();
+    startLogo->show();
+  }
+  connect(&_globalMapConfig, SIGNAL(configChanged()), &_globalMapMatrix, SLOT(slotInitMatrix()));
 
   _globalMapConfig.slotReadConfig();
 
+  initTaskTypes();
+  initSurfaceTypes();
+  initWaypointTypes();
+  if(showStartLogo && startLogo!=0)
+      startLogo->raise();
+
+  initDockWindows();
+  initMenuBar();
   initStatusBar();
-  initView();
-  if(showStartLogo && startLogo!=0)
-      startLogo->raise();
-
-  initActions();
-
-  if(showStartLogo && startLogo!=0)
-      startLogo->raise();
-
+  initToolBar();
   readOptions();
 
-  activateDock();
-
-  connect(&_globalMapMatrix, SIGNAL(matrixChanged()), map,
-      SLOT(slotRedrawMap()));
-  connect(map, SIGNAL(showFlightPoint(const QPoint&, const flightPoint&)),
-      this, SLOT(slotShowPointInfo(const QPoint&, const flightPoint&)));
-  // Plannung
-  connect(&_globalMapContents, SIGNAL(activatePlanning()),
-     map,SLOT(slotActivatePlanning()));
-
-  connect(&_globalMapContents, SIGNAL(taskHelp(QString)),
-      helpWindow, SLOT(slotShowHelpText(QString)) );
+  connect(map, SIGNAL(showFlightPoint(const QPoint&, const flightPoint&)), this, SLOT(slotSetPointInfo(const QPoint&, const flightPoint&)));
   connect(map, SIGNAL(taskPlanningEnd()), helpWindow, SLOT(slotClearView()) );
-
-  connect(map, SIGNAL(showTaskText(FlightTask*)),
-      dataView, SLOT(slotShowTaskText(FlightTask*)));
+  connect(map, SIGNAL(showTaskText(FlightTask*)), dataView, SLOT(slotShowTaskText(FlightTask*)));
   connect(map, SIGNAL(taskPlanningEnd()), dataView, SLOT(setFlightData()));
-  connect(map, SIGNAL(showPoint(const QPoint&)),
-      this, SLOT(slotShowPointInfo(const QPoint&)));
-  connect(&_globalMapContents, SIGNAL(contentsChanged()),map, SLOT(slotRedrawMap()));
-  slotModifyMenu();
+  connect(map, SIGNAL(showPoint(const QPoint&)), this, SLOT(slotSetPointInfo(const QPoint&)));
   connect(map, SIGNAL(showPoint(const QPoint&)), evaluationWindow, SLOT(slotRemoveFlightPoint()));
-  connect(map, SIGNAL(showFlightPoint(const QPoint&, const flightPoint&)),
-      evaluationWindow, SLOT(slotShowFlightPoint(const QPoint&, const flightPoint&)));
+  connect(map, SIGNAL(showFlightPoint(const QPoint&, const flightPoint&)), evaluationWindow, SLOT(slotShowFlightPoint(const QPoint&, const flightPoint&)));
+  connect(map, SIGNAL(changed(QSize)), mapControl, SLOT(slotShowMapData(QSize)));
+  connect(map, SIGNAL(waypointSelected(Waypoint *)), waypoints, SLOT(slotAddWaypoint(Waypoint *)));
+  connect(map, SIGNAL(waypointDeleted(Waypoint *)), waypoints, SLOT(slotDeleteWaypoint(Waypoint *)));
+  connect(map, SIGNAL(waypointEdited(Waypoint *)), waypoints, SLOT(slotEditWaypoint(Waypoint *)));
+  connect(map, SIGNAL(elevation(int)), legend, SLOT(highlightLevel(int)));
+  connect(map, SIGNAL(regWaypointDialog(QWidget *)), this, SLOT(slotRegisterWaypointDialog(QWidget *)));
+  connect(map, SIGNAL(openFile(const char *)), this, SLOT(slotOpenFile(const char *)));
+  connect(map, SIGNAL(setStatusBarProgress(int)), this, SLOT(slotSetProgress(int)));
+  connect(map, SIGNAL(setStatusBarMsg(const QString&)), this, SLOT(slotSetStatusMsg(const QString&)));
+
+  connect(mapControl, SIGNAL(scaleChanged(double)), &_globalMapMatrix, SLOT(slotSetScale(double)));
+
+  connect(dataView, SIGNAL(wpSelected(const unsigned int)), map, SLOT(slotCenterToWaypoint(const unsigned int)));
+  connect(dataView, SIGNAL(flightSelected(BaseFlightElement *)), &_globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
+  connect(dataView, SIGNAL(editFlightGroup()), &_globalMapContents, SLOT(slotEditFlightGroup()));
+
+  connect(&_globalMapConfig, SIGNAL(configChanged()), &_globalMapMatrix, SLOT(slotInitMatrix()));
+  connect(&_globalMapContents, SIGNAL(activatePlanning()), map,SLOT(slotActivatePlanning()));
+  connect(&_globalMapContents, SIGNAL(closingFlight(BaseFlightElement*)), objectTree, SLOT(slotCloseFlight(BaseFlightElement*)));
+  connect(&_globalMapContents, SIGNAL(contentsChanged()),map, SLOT(slotRedrawMap()));
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), this, SLOT(slotModifyMenu()));
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), dataView, SLOT(setFlightData()));
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), evaluationWindow, SLOT(slotShowFlightData()));
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), map, SLOT(slotShowCurrentFlight()));
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), objectTree, SLOT(slotSelectedFlightChanged()));
+  connect(&_globalMapContents, SIGNAL(errorOnMapLoading()), this, SLOT(slotStartComplete()));
+  connect(&_globalMapContents, SIGNAL(newFlightAdded(Flight*)), objectTree, SLOT(slotNewFlightAdded(Flight*)));
+  connect(&_globalMapContents, SIGNAL(newFlightGroupAdded(FlightGroup*)), objectTree, SLOT(slotNewFlightGroupAdded(FlightGroup*)));
+  connect(&_globalMapContents, SIGNAL(newTaskAdded(FlightTask*)), objectTree, SLOT(slotNewTaskAdded(FlightTask*)));
+  connect(&_globalMapContents, SIGNAL(taskHelp(QString)), helpWindow, SLOT(slotShowHelpText(QString)) );
+  connect(&_globalMapMatrix, SIGNAL(displayMatrixValues(int, bool)), &_globalMapConfig, SLOT(slotSetMatrixValues(int, bool)));
+  connect(&_globalMapMatrix, SIGNAL(matrixChanged()), map, SLOT(slotRedrawMap()));
+  connect(&_globalMapMatrix, SIGNAL(printMatrixValues(int)), &_globalMapConfig, SLOT(slotSetPrintMatrixValues(int)));
+  connect(&_globalMapMatrix, SIGNAL(projectionChanged()), &_globalMapContents, SLOT(slotReloadMapData()));
+
+  connect(waypoints, SIGNAL(copyWaypoint2Task(Waypoint *)), map, SLOT(slotAppendWaypoint2Task(Waypoint *)));
+  connect(waypoints, SIGNAL(waypointCatalogChanged( WaypointCatalog * )), map, SLOT(slotWaypointCatalogChanged( WaypointCatalog * )));
+  connect(waypoints, SIGNAL(centerMap(int, int)), &_globalMapMatrix, SLOT(slotCenterTo(int, int)));
+
+  connect(objectTree, SIGNAL(selectedFlight(BaseFlightElement *)), &_globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
+  connect(objectTree, SIGNAL(newTask()), &_globalMapContents, SLOT(slotNewTask()));
+  connect(objectTree, SIGNAL(openTask()), this, SLOT(slotOpenTask()));
+  connect(objectTree, SIGNAL(closeTask()), &_globalMapContents, SLOT(closeFlight()));
+  connect(objectTree, SIGNAL(newFlightGroup()), &_globalMapContents, SLOT(slotNewFlightGroup()));
+  connect(objectTree, SIGNAL(editFlightGroup()), &_globalMapContents, SLOT(slotEditFlightGroup()));
+  connect(objectTree, SIGNAL(openFlight()), this, SLOT(slotOpenFile()));
+  connect(objectTree, SIGNAL(openFile(const char*)), this, SLOT(slotOpenFile(const char*)));
+  connect(objectTree, SIGNAL(optimizeFlight()), this, SLOT(slotOptimizeFlight()));
+  connect(objectTree, SIGNAL(optimizeFlightOLC()), this, SLOT(slotOptimizeFlightOLC()));
+
+  connect(evaluationWindow, SIGNAL(showCursor(const QPoint&, const QPoint&)), map, SLOT(slotDrawCursor(const QPoint&, const QPoint&)));
+
+  connect(this, SIGNAL(flightDataTypeChanged(int)), &_globalMapConfig, SLOT(slotSetFlightDataType(int)));
 
   slotCheckDockWidgetStatus();
 }
 
-KFLogApp::~KFLogApp()
+KFLog::~KFLog()
 {
-  extern MapMatrix _globalMapMatrix;
+  _settings.~QSettings();
+  delete dataViewDock;
+  delete dataView;
+  delete evaluationWindowDock;
+  delete evaluationWindow;
+  delete helpWindowDock;
+  delete helpWindow;
+  delete legendDock;
+  delete legend;
+  delete mapViewDock;
+  delete map;
+  delete mapControlDock;
+  delete mapControl;
+  delete objectTreeDock;
+  delete objectTree;
+  delete waypointsDock;
+  delete waypoints;
+  delete fileNewWaypoint;
+  delete fileNewTask;
+  delete fileNewFlightGroup;
+  delete fileOpenFlight;
+  delete fileOpenTask;
+  delete fileClose;
+  delete fileSavePixmap;
+  delete filePrint;
+  delete filePrintFlight;
+  delete fileOpenRecorder;
+  delete fileQuit;
+  delete viewCenterTask;
+  delete viewCenterFlight;
+  delete viewCenterHomesite;
+  delete viewCenterTo;
+  delete viewZoomIn;
+  delete viewZoomOut;
+  delete viewZoom;
+  delete viewRedraw;
+  delete viewMoveNW;
+  delete viewMoveN;
+  delete viewMoveNE;
+  delete viewMoveW;
+  delete viewMoveE;
+  delete viewMoveSW;
+  delete viewMoveS;
+  delete viewMoveSE;
+  delete flightEvaluationWindow;
+  delete flightOptimization;
+  delete flightOptimizationOLC;
+  delete flightIgc3D;
+  delete flightIgcOpenGL;
+  delete flightAnimateStart;
+  delete flightAnimateStop;
+  delete flightAnimateNext;
+  delete flightAnimatePrev;
+  delete flightAnimate10Next;
+  delete flightAnimate10Prev;
+  delete flightAnimateHome;
+  delete flightAnimateEnd;
+  delete settingsEvaluationWindow;
+  delete settingsFlightData;
+  delete settingsHelpWindow;
+  delete settingsLegend;
+//  delete settingsMap;
+  delete settingsMapControl;
+  delete settingsObjectTree;
+  delete settingsStatusBar;
+  delete settingsToolBar;
+  delete settingsWaypoints;
+  delete fileOpenRecent;
+  delete flightDataType;
+  delete windowMenu;
+  delete settings;
+  delete startLogo;
+  delete statusLabel;
+  delete statusTimeL;
+  delete statusAltitudeL;
+  delete statusVarioL;
+  delete statusSpeedL;
+  delete statusLatL;
+  delete statusLonL;
+  delete statusProgress;
+  delete toolBar;
 
-  _globalMapMatrix.writeMatrixOptions();
 }
 
-void KFLogApp::initActions()
+void KFLog::closeEvent(QCloseEvent *e)
+{
+  saveOptions();
+  waypoints->saveChanges();
+
+  extern MapMatrix _globalMapMatrix;
+  _globalMapMatrix.writeMatrixOptions();
+  e->accept();
+}
+
+void KFLog::initDockWindows()
+{
+  dataViewDock = new QDockWindow(QDockWindow::InDock, this, "DataView QDockWindow");
+  dataViewDock->setResizeEnabled(true);
+  dataView = new DataView(dataViewDock);
+  dataViewDock->setWidget(dataView);
+  moveDockWindow(dataViewDock, Qt::DockRight);
+  setAppropriate(dataViewDock, true);
+  dataViewDock->hide();
+
+  evaluationWindowDock = new QDockWindow(QDockWindow::InDock, this, "EvaluationDialog QDockWindow");
+  evaluationWindow = new EvaluationDialog(evaluationWindowDock);
+  evaluationWindowDock->setWidget(evaluationWindow);
+  moveDockWindow(evaluationWindowDock, Qt::DockTornOff);
+  evaluationWindowDock->hide();
+
+  helpWindowDock = new QDockWindow(QDockWindow::InDock, this, "HelpWindow QDockWindow");
+  helpWindow = new HelpWindow(helpWindowDock);
+  helpWindowDock->setWidget(helpWindow);
+  moveDockWindow(helpWindowDock, Qt::DockTornOff);
+  helpWindowDock->hide();
+
+  legendDock = new QDockWindow(QDockWindow::InDock, this, "TopoLegend QDockWindow");
+  legend = new TopoLegend(legendDock);
+  legendDock->setWidget(legend);
+  moveDockWindow(legendDock, Qt::DockRight);
+  legendDock->hide();
+
+//  mapViewDock = new QDockWindow(QDockWindow::InDock, this, "Map QDockWindow");
+  map = new Map(this);
+  setCentralWidget(map);
+//  mapViewDock->setWidget(map);
+//  moveDockWindow(mapViewDock, Qt::DockUnmanaged);
+
+  mapControlDock = new QDockWindow(QDockWindow::InDock, this, "MapControlView QDockWindow");
+  mapControl = new MapControlView(mapControlDock);
+  mapControlDock->setWidget(mapControl);
+  moveDockWindow(mapControlDock, Qt::DockBottom);
+  mapControlDock->hide();
+
+  objectTreeDock = new QDockWindow(QDockWindow::InDock, this, "ObjectTree QDockWindow");
+  objectTree = new ObjectTree(objectTreeDock);
+  objectTreeDock->setWidget(objectTree);
+  moveDockWindow(objectTreeDock, Qt::DockBottom);
+  objectTreeDock->hide();
+
+  waypointsDock = new QDockWindow(QDockWindow::InDock, this, "Waypoint QDockWindow");
+  waypoints = new Waypoints(waypointsDock);
+  waypointsDock->setWidget(waypoints);
+  moveDockWindow(waypointsDock, Qt::DockBottom);
+  waypointsDock->hide();
+
+//  connect(dataViewDock, SIGNAL(iMBeingClosed()), SLOT(slotHideDataViewDock()));
+  connect(dataViewDock, SIGNAL(placeChanged(QDockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
+//  connect(evaluationWindowDock, SIGNAL(iMBeingClosed()), SLOT(slotHideEvaluationWindowDock()));
+  connect(evaluationWindowDock, SIGNAL(placeChanged(QDockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
+//  connect(helpWindowDock, SIGNAL(iMBeingClosed()), SLOT(slotHideHelpWindowDock()));
+  connect(helpWindowDock, SIGNAL(placeChanged(QDockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
+//  connect(legendDock, SIGNAL(iMBeingClosed()), SLOT(slotHideLegendDock()));
+  connect(legendDock, SIGNAL(placeChanged(QDockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
+//  connect(mapViewDock, SIGNAL(iMBeingClosed()), SLOT(slotHideMapViewDock()));
+//  connect(mapViewDock, SIGNAL(placeChanged(QDockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
+//  connect(mapControlDock, SIGNAL(iMBeingClosed()), SLOT(slotHideMapControlDock()));
+  connect(mapControlDock, SIGNAL(placeChanged(QDockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
+//  connect(objectTreeDock, SIGNAL(iMBeingClosed()), SLOT(slotHideObjectTreeDock()));
+  connect(objectTreeDock, SIGNAL(placeChanged(QDockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
+//  connect(waypointsDock, SIGNAL(iMBeingClosed()), SLOT(slotHideWaypointsDock()));
+  connect(waypointsDock, SIGNAL(placeChanged(QDockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
+
+}
+
+void KFLog::initMenuBar()
 {
   extern MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
 
   // File menu
 
-  fileNewWaypoint = new QAction(SmallIcon("waypoint"), tr("New &Waypoint"), 0, this, "file_new_waypoint");
+  fileNewWaypoint = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/waypoint_16.png"), tr("New &Waypoint"), 0, this, "file_new_waypoint");
   connect(fileNewWaypoint, SIGNAL(activated()), waypoints, SLOT(slotNewWaypoint()));
-  fileNewTask = new QAction(SmallIcon("task"), tr("New &Task"), CTRL+Key_N, this, "file_new_task");
+  fileNewTask = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/task_16.png"), tr("New &Task"), CTRL+Key_N, this, "file_new_task");
   connect(fileNewTask, SIGNAL(activated()), &_globalMapContents, SLOT(slotNewTask()));
   fileNewFlightGroup = new QAction(tr("New &Flight group"), 0, this, "file_new_flight_group");
   connect(fileNewFlightGroup, SIGNAL(activated()), &_globalMapContents, SLOT(slotNewFlightGroup()));
@@ -191,48 +326,47 @@ void KFLogApp::initActions()
   fileNewTask->addTo( fileNew );
   fileNewFlightGroup->addTo( fileNew );
 
-  fileOpenFlight = new QAction(SmallIcon("fileopen"), tr("&Open Flight"), CTRL+Key_O, this, "file_open_flight");
+  fileOpenFlight = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png"), tr("&Open Flight"), CTRL+Key_O, this, "file_open_flight");
   connect(fileOpenFlight, SIGNAL(activated()), this, SLOT(slotOpenFile()));
-  fileOpenTask = new QAction(SmallIcon("fileopen"), tr("Open &Task"), CTRL+Key_T, this, "file_open_task");
+  fileOpenTask = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png"), tr("Open &Task"), CTRL+Key_T, this, "file_open_task");
   connect(fileOpenTask, SIGNAL(activated()), this, SLOT(slotOpenTask()));
 
   fileOpenRecent = new QPopupMenu( this );
   QStringList datalist;
-  config->setGroup("General Options");
-  datalist = config->readListEntry("RecentFiles");
+  datalist = _settings.readListEntry("/KFLog/GeneralOptions/RecentFiles");
   int size = std::min((int)datalist.size(), 5);
   QAction *recentFileActs[size];
   for (int i = 0; i < size; ++i) {
     recentFileActs[i] = new QAction(this);
     recentFileActs[i]->setToolTip(datalist[i]); // FIXME: in Qt4 setData must be used
     recentFileActs[i]->setText(tr("%1 %2").arg(i + 1).arg(QFileInfo(datalist[i]).fileName()));
-    connect(recentFileActs[i], SIGNAL(activated()), this, SLOT(slotOpenRecentFile()));
+    connect(recentFileActs[i], SIGNAL(activated()), SLOT(slotOpenRecentFile()));
     recentFileActs[i]->addTo(fileOpenRecent);
   }
 
-  fileClose = new QAction(SmallIcon("cancel"), tr("&Close Flight/Task"), CTRL+Key_W, this, "file_close");
+  fileClose = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_cancel_16.png"), tr("&Close Flight/Task"), CTRL+Key_W, this, "file_close");
   connect(fileClose, SIGNAL(activated()), &_globalMapContents, SLOT(closeFlight()));
 
-  fileSavePixmap = new QAction(SmallIcon("image"), tr("Export to PNG..."), 0, this, "file_export_pixmap");
+  fileSavePixmap = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_image_16.png"), tr("Export to PNG..."), 0, this, "file_export_pixmap");
   connect(fileSavePixmap, SIGNAL(activated()), map, SLOT(slotSavePixmap()));
-  filePrint = new QAction(SmallIcon("fileprint"), tr("Print..."), CTRL+Key_P, this, "file_print");
+  filePrint = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileprint_16.png"), tr("Print..."), CTRL+Key_P, this, "file_print");
   connect(filePrint, SIGNAL(activated()), this, SLOT(slotFilePrint()));
-  filePrintFlight = new QAction(SmallIcon("fileprint"), tr("Print Flightdata"), 0, this, "file_print_flightdata");
+  filePrintFlight = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileprint_16.png"), tr("Print Flightdata"), 0, this, "file_print_flightdata");
   connect(filePrintFlight, SIGNAL(activated()), this, SLOT(slotFlightPrint()));
 
-  fileOpenRecorder = new QAction(SmallIcon("connect_no"), tr("Open Recorder"), 0, this, "file_open_recorder");
+  fileOpenRecorder = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_connect_no_16.png"), tr("Open Recorder"), 0, this, "file_open_recorder");
   connect(fileOpenRecorder, SIGNAL(activated()), this, SLOT(slotOpenRecorderDialog()));
 
-  fileQuit = new QAction(SmallIcon("exit"), "&Quit", CTRL+Key_Q, this, "file_quit");
+  fileQuit = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_exit_16.png"), "&Quit", CTRL+Key_Q, this, "file_quit");
   connect(fileQuit, SIGNAL(activated()), qApp, SLOT(closeAllWindows()));
   connect( qApp, SIGNAL( lastWindowClosed() ), qApp, SLOT( quit() ) );
 
   QPopupMenu * file = new QPopupMenu( this );
   menuBar()->insertItem( "&File", file );
-  file->insertItem(SmallIcon("filenew"), "&New", fileNew);
+  file->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_filenew_16.png"), "&New", fileNew);
   fileOpenFlight->addTo( file );
   fileOpenTask->addTo( file );
-  file->insertItem(SmallIcon("fileopen"), "&Open recent files", fileOpenRecent);
+  file->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png"), "&Open recent files", fileOpenRecent);
   fileClose->addTo( file );
   file->insertSeparator();
   fileSavePixmap->addTo( file );
@@ -246,39 +380,39 @@ void KFLogApp::initActions()
 
   // view menu
 
-  viewCenterTask = new QAction(SmallIcon("centertask"), tr("Center to &Task"), Key_F6, this, "view_center_task");
+  viewCenterTask = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/centertask_16.png"), tr("Center to &Task"), Key_F6, this, "view_center_task");
   connect(viewCenterTask, SIGNAL(activated()), map, SLOT(slotCenterToTask()));
-  viewCenterFlight = new QAction(SmallIcon("centerflight"), tr("Center to &Flight"), Key_F7, this, "view_center_flight");
+  viewCenterFlight = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/centerflight_16.png"), tr("Center to &Flight"), Key_F7, this, "view_center_flight");
   connect(viewCenterFlight, SIGNAL(activated()), map, SLOT(slotCenterToFlight()));
-  viewCenterHomesite = new QAction(SmallIcon("gohome"), tr("Center to &Homesite"), CTRL+Key_Home, this, "view_center_homeside");
+  viewCenterHomesite = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_gohome_16.png"), tr("Center to &Homesite"), CTRL+Key_Home, this, "view_center_homeside");
   connect(viewCenterHomesite, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotCenterToHome()));
-  viewCenterTo = new QAction(SmallIcon("centerto"), tr("&Center to..."), Key_F8, this, "view_center_to");
+  viewCenterTo = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/centerto_16.png"), tr("&Center to..."), Key_F8, this, "view_center_to");
   connect(viewCenterTo, SIGNAL(activated()), this, SLOT(slotCenterTo()));
 
-  viewZoomIn = new QAction(SmallIcon("viewmag+"), tr("Zoom &In"), CTRL+Key_Plus, this, "view_zoom_in");
+  viewZoomIn = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_viewmag+_16.png"), tr("Zoom &In"), CTRL+Key_Plus, this, "view_zoom_in");
   connect(viewZoomIn, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotZoomIn()));
-  viewZoomOut = new QAction(SmallIcon("viewmag-"), tr("Zoom &Out"), CTRL+Key_Minus, this, "view_zoom_out");
+  viewZoomOut = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_viewmag-_16.png"), tr("Zoom &Out"), CTRL+Key_Minus, this, "view_zoom_out");
   connect(viewZoomOut, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotZoomOut()));
-  viewZoom = new QAction(SmallIcon("viewmagfit"), tr("&Zoom..."), 0, this, "view_zoom");
+  viewZoom = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_viewmagfit_16.png"), tr("&Zoom..."), 0, this, "view_zoom");
   connect(viewZoom, SIGNAL(activated()), map, SLOT(slotZoomRect()));
-  viewRedraw = new QAction(SmallIcon("reload"), tr("&Redraw"), Key_F5, this, "view_redraw");
+  viewRedraw = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_reload_16.png"), tr("&Redraw"), Key_F5, this, "view_redraw");
   connect(viewRedraw, SIGNAL(activated()), map, SLOT(slotRedrawMap()));
 
-  viewMoveNW = new QAction(SmallIcon("movemap_nw"), tr("move map north-west"), Key_7, this, "view_move_nw");
+  viewMoveNW = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_nw_22.png"), tr("move map north-west"), Key_7, this, "view_move_nw");
   connect(viewMoveNW, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapNW()));
-  viewMoveN = new QAction(SmallIcon("movemap_n"), tr("move map north"), Key_8, this, "view_move_n");
+  viewMoveN = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_n_22.png"), tr("move map north"), Key_8, this, "view_move_n");
   connect(viewMoveN, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapN()));
-  viewMoveNE = new QAction(SmallIcon("movemap_ne"), tr("move map north-east"), Key_9, this, "view_move_ne");
+  viewMoveNE = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_ne_22.png"), tr("move map north-east"), Key_9, this, "view_move_ne");
   connect(viewMoveNE, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapNE()));
-  viewMoveW = new QAction(SmallIcon("movemap_w"), tr("move map west"), Key_4, this, "view_move_w");
+  viewMoveW = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_w_22.png"), tr("move map west"), Key_4, this, "view_move_w");
   connect(viewMoveW, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapW()));
-  viewMoveE = new QAction(SmallIcon("movemap_e"), tr("move map east"), Key_6, this, "view_move_e");
+  viewMoveE = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_e_22.png"), tr("move map east"), Key_6, this, "view_move_e");
   connect(viewMoveE, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapE()));
-  viewMoveSW = new QAction(SmallIcon("movemap_sw"), tr("move map south-west"), Key_1, this, "view_move_sw");
+  viewMoveSW = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_sw_22.png"), tr("move map south-west"), Key_1, this, "view_move_sw");
   connect(viewMoveSW, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapSW()));
-  viewMoveS = new QAction(SmallIcon("movemap_s"), tr("move map south"), Key_2, this, "view_move_s");
+  viewMoveS = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_s_22.png"), tr("move map south"), Key_2, this, "view_move_s");
   connect(viewMoveS, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapS()));
-  viewMoveSE = new QAction(SmallIcon("movemap_se"), tr("move map south-east"), Key_3, this, "view_move_se");
+  viewMoveSE = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_se_22.png"), tr("move map south-east"), Key_3, this, "view_move_se");
   connect(viewMoveSE, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapSE()));
 
   QPopupMenu * viewMove = new QPopupMenu( this );
@@ -303,16 +437,16 @@ void KFLogApp::initActions()
   viewZoom->addTo( view );
   viewRedraw->addTo( view );
   view->insertSeparator();
-  view->insertItem(SmallIcon("move"), "Move map", viewMove);
+  view->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_move_16.png"), "Move map", viewMove);
 
   // flight menu
 
-  flightEvaluationWindow = new QAction(SmallIcon("history"), tr("Show &EvaluationWindow"), CTRL+Key_E, this, "toggle_evaluation_window");
+  flightEvaluationWindow = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_history_16.png"), tr("Show &EvaluationWindow"), CTRL+Key_E, this, "toggle_evaluation_window");
   flightEvaluationWindow->setToggleAction(true);
   connect(flightEvaluationWindow, SIGNAL(activated()), this, SLOT(slotToggleEvaluationWindow()));
-  flightOptimization = new QAction(SmallIcon("wizard"), tr("Optimize"), 0, this, "optimize_flight");
+  flightOptimization = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_wizard_16.png"), tr("Optimize"), 0, this, "optimize_flight");
   connect(flightOptimization, SIGNAL(activated()), this, SLOT(slotOptimizeFlight()));
-  flightOptimizationOLC = new QAction(SmallIcon("wizard"), tr("Optimize (OLC)"), 0, this, "optimize_flight_olc");
+  flightOptimizationOLC = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_wizard_16.png"), tr("Optimize (OLC)"), 0, this, "optimize_flight_olc");
   connect(flightOptimizationOLC, SIGNAL(activated()), this, SLOT(slotOptimizeFlightOLC()));
 
   flightDataType = new QPopupMenu( this );
@@ -325,29 +459,28 @@ void KFLogApp::initActions()
   for (int i = 0; i < 5; ++i)
     flightDataType->insertItem(dataList[i], i);
   connect(flightDataType, SIGNAL(activated(int)), this, SLOT(slotSelectFlightData(int)));
-  config-> setGroup("Flight");
-  flightDataType->setItemChecked(config->readNumEntry("Draw Type", MapConfig::Altitude), true);
+  flightDataType->setItemChecked(_settings.readNumEntry("/KFLog/Flight/DrawType", MapConfig::Altitude), true);
 
-  flightIgc3D = new QAction(SmallIcon("vectorgfx"), tr("View flight in 3D"), CTRL+Key_R, this, "view_flight_3D");
+  flightIgc3D = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_vectorgfx_16.png"), tr("View flight in 3D"), CTRL+Key_R, this, "view_flight_3D");
   connect(flightIgc3D, SIGNAL(activated()), this, SLOT(slotFlightViewIgc3D()));
-  flightIgcOpenGL = new QAction(SmallIcon("openglgfx"), tr("View flight in 3D (OpenGL)"), 0, this, "view_flight_opengl");
+  flightIgcOpenGL = new QAction(/*SmallIcon("openglgfx"),*/ tr("View flight in 3D (OpenGL)"), 0, this, "view_flight_opengl");
   connect(flightIgcOpenGL, SIGNAL(activated()), this, SLOT(slotFlightViewIgcOpenGL()));
 
-  flightAnimateStart = new QAction(SmallIcon("1rightarrow"), tr("&Start Flight Animation"), Key_F12, this, "start_animate");
+  flightAnimateStart = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_1rightarrow_16.png"), tr("&Start Flight Animation"), Key_F12, this, "start_animate");
   connect(flightAnimateStart, SIGNAL(activated()), map, SLOT(slotAnimateFlightStart()));
-  flightAnimateStop = new QAction(SmallIcon("player_stop"), tr("Stop Flight &Animation"), Key_F11, this, "stop_animate");
+  flightAnimateStop = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_player_stop_16.png"), tr("Stop Flight &Animation"), Key_F11, this, "stop_animate");
   connect(flightAnimateStop, SIGNAL(activated()), map, SLOT(slotAnimateFlightStop()));
-  flightAnimateNext = new QAction(SmallIcon("forward"), tr("Next Flight Point"), CTRL+Key_Up, this, "next_flight_point");
+  flightAnimateNext = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_forward_16.png"), tr("Next Flight Point"), CTRL+Key_Up, this, "next_flight_point");
   connect(flightAnimateNext, SIGNAL(activated()), map, SLOT(slotFlightNext()));
-  flightAnimatePrev = new QAction(SmallIcon("back"), tr("Prev Flight Point"), CTRL+Key_Down, this, "prev_flight_point");
+  flightAnimatePrev = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_back_16.png"), tr("Prev Flight Point"), CTRL+Key_Down, this, "prev_flight_point");
   connect(flightAnimatePrev, SIGNAL(activated()), map, SLOT(slotFlightPrev()));
-  flightAnimate10Next = new QAction(SmallIcon("stepforward"), tr("Step +10 Flight Points"), Key_PageUp, this, "next_step_flight_point");
+  flightAnimate10Next = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_2rightarrow_16.png"), tr("Step +10 Flight Points"), Key_PageUp, this, "next_step_flight_point");
   connect(flightAnimate10Next, SIGNAL(activated()), map, SLOT(slotFlightStepNext()));
-  flightAnimate10Prev = new QAction(SmallIcon("stepback"), tr("Step -10 Flight Points"), Key_PageDown, this, "prev_step_flight_point");
+  flightAnimate10Prev = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_2leftarrow_16.png"),  tr("Step -10 Flight Points"), Key_PageDown, this, "prev_step_flight_point");
   connect(flightAnimate10Prev, SIGNAL(activated()), map, SLOT(slotFlightStepPrev()));
-  flightAnimateHome = new QAction(SmallIcon("start"), tr("First Flight Point"), Key_Home, this, "first_flight_point");
+  flightAnimateHome = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_start_16.png"), tr("First Flight Point"), Key_Home, this, "first_flight_point");
   connect(flightAnimateHome, SIGNAL(activated()), map, SLOT(slotFlightHome()));
-  flightAnimateEnd = new QAction(SmallIcon("finish"), tr("Last Flight Point"), Key_End, this, "last_flight_point");
+  flightAnimateEnd = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_finish_16.png"), tr("Last Flight Point"), Key_End, this, "last_flight_point");
   connect(flightAnimateEnd, SIGNAL(activated()), map, SLOT(slotFlightEnd()));
 
   QPopupMenu * flight = new QPopupMenu( this );
@@ -355,7 +488,7 @@ void KFLogApp::initActions()
   flightEvaluationWindow->addTo(flight);
   flightOptimization->addTo(flight);
   flightOptimizationOLC->addTo(flight);
-  flight->insertItem(SmallIcon("idea"), tr("Show Flightdata"), flightDataType);
+  flight->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_idea_16.png"), tr("Show Flightdata"), flightDataType);
   flightIgc3D->addTo(flight);
   flightIgcOpenGL->addTo(flight);
   flight->insertSeparator();
@@ -377,24 +510,24 @@ void KFLogApp::initActions()
 
   // settings menu
 
-  settingsEvaluationWindow = new QAction(SmallIcon("history"), tr("Show &EvaluationWindow"), CTRL+Key_E, this, "toggle_evaluation_window");
+  settingsEvaluationWindow = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_history_16.png"), tr("Show &EvaluationWindow"), CTRL+Key_E, this, "toggle_evaluation_window");
   settingsEvaluationWindow->setToggleAction(true);
   connect(settingsEvaluationWindow, SIGNAL(activated()), this, SLOT(slotToggleEvaluationWindow()));
-  settingsFlightData = new QAction(SmallIcon("view_detailed"), tr("Show Flight&data"), CTRL+Key_E, this, "toggle_data_view");
+  settingsFlightData = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_view_detailed_16.png"), tr("Show Flight&data"), CTRL+Key_E, this, "toggle_data_view");
   settingsFlightData->setToggleAction(true);
   connect(settingsFlightData, SIGNAL(activated()), this, SLOT(slotToggleDataView()));
-  settingsHelpWindow = new QAction(SmallIcon("info"), tr("Show HelpWindow"), CTRL+Key_H, this, "toggle_help_window");
+  settingsHelpWindow = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_info_16.png"), tr("Show HelpWindow"), CTRL+Key_H, this, "toggle_help_window");
   settingsHelpWindow->setToggleAction(true);
   connect(settingsHelpWindow, SIGNAL(activated()), this, SLOT(slotToggleHelpWindow()));
-  settingsObjectTree = new QAction(SmallIcon("view_tree"), tr("Show KFLog&Browser"), CTRL+Key_B, this, "view_tree");
+  settingsObjectTree = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_view_tree_16.png"), tr("Show KFLog&Browser"), CTRL+Key_B, this, "view_tree");
   settingsObjectTree->setToggleAction(true);
   connect(settingsObjectTree, SIGNAL(activated()), this, SLOT(slotToggleObjectTreeDock()));
-  settingsLegend = new QAction(SmallIcon("blend"), tr("Show Legend"), CTRL+Key_L, this, "toggle_legend");
+  settingsLegend = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_blend_16.png"), tr("Show Legend"), CTRL+Key_L, this, "toggle_legend");
   settingsLegend->setToggleAction(true);
   connect(settingsLegend, SIGNAL(activated()), this, SLOT(slotToggleLegendDock()));
-  settingsMap = new QAction(tr("Show &Map"), 0, this, "toggle_map");
-  settingsMap->setToggleAction(true);
-  connect(settingsMap, SIGNAL(activated()), this, SLOT(slotToggleMap()));
+//  settingsMap = new QAction(tr("Show &Map"), 0, this, "toggle_map");
+//  settingsMap->setToggleAction(true);
+//  connect(settingsMap, SIGNAL(activated()), this, SLOT(slotToggleMap()));
   settingsMapControl = new QAction(tr("Show Map&control"), 0, this, "toggle_map_control");
   settingsMapControl->setToggleAction(true);
   connect(settingsMapControl, SIGNAL(activated()), this, SLOT(slotToggleMapControl()));
@@ -404,7 +537,7 @@ void KFLogApp::initActions()
   settingsStatusBar = new QAction(tr("Show Statusbar"), 0, this, "toggle_statusbar");
   settingsStatusBar->setToggleAction(true);
   connect(settingsStatusBar, SIGNAL(activated()), this, SLOT(slotToggleStatusBar()));
-  settingsWaypoints = new QAction(SmallIcon("waypoint"), tr("Show &Waypoints"), CTRL+Key_R, this, "toggle_waypoints");
+  settingsWaypoints = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/waypoint_16.png"), tr("Show &Waypoints"), CTRL+Key_R, this, "toggle_waypoints");
   settingsWaypoints->setToggleAction(true);
   connect(settingsWaypoints, SIGNAL(activated()), this, SLOT(slotToggleWaypointsDock()));
 
@@ -415,47 +548,34 @@ void KFLogApp::initActions()
   settingsHelpWindow->addTo(settings);
   settingsObjectTree->addTo(settings);
   settingsLegend->addTo(settings);
-  settingsMap->addTo(settings);
+//  settingsMap->addTo(settings);
   settingsMapControl->addTo(settings);
   settingsToolBar->addTo(settings);
   settingsStatusBar->addTo(settings);
   // We can't use CTRL-W, because this shortcut is reserved for closing a file ...
   settingsWaypoints->addTo(settings);
   settings->insertSeparator();
-  settings->insertItem(SmallIcon("configure_shortcuts"), tr("Configure Shortcuts..."), this, SLOT(slotConfigureKeyBindings()));
-  settings->insertItem(SmallIcon("configure_toolbars"), tr("Configure Toolbars..."), this, SLOT(slotConfigureToolbars()));
-  settings->insertItem(SmallIcon("configure"), tr("KFLog &Setup..."), this, SLOT(slotConfigureKFLog()));
+//  settings->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_configure_shortcuts_16.png"), tr("Configure Shortcuts...") );//, this, SLOT(slotConfigureKeyBindings()));
+//  settings->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_configure_toolbars_16.png"), tr("Configure Toolbars...") );//, this, SLOT(slotConfigureToolbars()));
+  settings->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_configure_16.png"), tr("KFLog &Setup..."), this, SLOT(slotConfigureKFLog()));
 
   // help menu
 
   QPopupMenu * help = new QPopupMenu( this );
   menuBar()->insertItem( "&Help", help );
   //FIXME: link to manual must be added
-  help->insertItem(SmallIcon("contexthelp"), tr("What's This?"), this, SLOT(slotWhatsThis()), CTRL+Key_F1);
+  help->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_contexthelp_16.png"), tr("What's This?"), this, SLOT(slotWhatsThis()), CTRL+Key_F1);
   //FIXME: dialog to swith application language must be added
-  help->insertItem(SmallIcon("kflog"), tr("About KFLog"), this, SLOT(slotShowAbout()));
+//  help->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_idea_16.png"), tr("Tip of the day") );//, this, SLOT(slotTipOfDay()));
+//  help->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kflog_16.png"), tr("About KFLog") );//, this, SLOT(slotShowAbout()));
 
-  // toolbar
-
-  KToolBar * tb = toolBar();
-  fileOpenFlight->addTo(tb);
-  tb->addSeparator();
-  viewZoom->addTo(tb);
-  viewZoomIn->addTo(tb);
-  viewZoomOut->addTo(tb);
-  viewRedraw->addTo(tb);
-  tb->addSeparator();
-  viewCenterTask->addTo(tb);
-  viewCenterFlight->addTo(tb);
-  viewCenterHomesite->addTo(tb);
-  tb->addSeparator();
-  flightEvaluationWindow->addTo(tb);
+  menuBar()->insertItem("Dock Windows", createDockWindowMenu());
 }
 
-void KFLogApp::initStatusBar()
+void KFLog::initStatusBar()
 {
   /* Alternativ könnte der Balken auch nur während des Zeichnens erscheinen */
-  statusProgress = new KProgress(statusBar());
+  statusProgress = new QProgressBar(statusBar(), "progressBar_status_bar");
   statusProgress->setFixedWidth(120);
   statusProgress->setFixedHeight( statusProgress->sizeHint().height() - 4 );
   statusProgress->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
@@ -463,18 +583,59 @@ void KFLogApp::initStatusBar()
   statusProgress->setLineWidth(0);
   statusProgress->setBackgroundMode( QWidget::PaletteBackground );
 
-  statusLabel = new KStatusBarLabel( "", 0, statusBar() );
+  statusLabel = new QLabel(statusBar(), "text_label_status_bar");
   statusLabel->setFixedHeight( statusLabel->sizeHint().height() );
   statusLabel->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
   statusLabel->setMargin(0);
   statusLabel->setLineWidth(0);
 
-  STATUS_LABEL(statusTimeL, 80, AlignHCenter);
-  STATUS_LABEL(statusAltitudeL, 80, AlignRight);
-  STATUS_LABEL(statusVarioL, 80, AlignRight);
-  STATUS_LABEL(statusSpeedL, 100, AlignRight);
-  STATUS_LABEL(statusLatL, 110, AlignHCenter);
-  STATUS_LABEL(statusLonL, 110, AlignHCenter);
+  statusTimeL = new QLabel(statusBar(), "time_label_status_bar");
+  statusTimeL->setFixedWidth( 80 );
+  statusTimeL->setFixedHeight( statusLabel->sizeHint().height() );
+  statusTimeL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
+  statusTimeL->setMargin(0);
+  statusTimeL->setLineWidth(0);
+  statusTimeL->setAlignment( AlignHCenter | AlignVCenter );
+
+  statusAltitudeL = new QLabel(statusBar(), "altitude_label_status_bar");
+  statusAltitudeL->setFixedWidth( 80 );
+  statusAltitudeL->setFixedHeight( statusLabel->sizeHint().height() );
+  statusAltitudeL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
+  statusAltitudeL->setMargin(0);
+  statusAltitudeL->setLineWidth(0);
+  statusAltitudeL->setAlignment( AlignRight | AlignVCenter );
+
+  statusVarioL = new QLabel(statusBar(), "vario_label_status_bar");
+  statusVarioL->setFixedWidth( 80 );
+  statusVarioL->setFixedHeight( statusLabel->sizeHint().height() );
+  statusVarioL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
+  statusVarioL->setMargin(0);
+  statusVarioL->setLineWidth(0);
+  statusVarioL->setAlignment( AlignRight | AlignVCenter );
+
+  statusSpeedL = new QLabel(statusBar(), "speed_label_status_bar");
+  statusSpeedL->setFixedWidth( 100 );
+  statusSpeedL->setFixedHeight( statusLabel->sizeHint().height() );
+  statusSpeedL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
+  statusSpeedL->setMargin(0);
+  statusSpeedL->setLineWidth(0);
+  statusSpeedL->setAlignment( AlignRight | AlignVCenter );
+
+  statusLatL = new QLabel(statusBar(), "lat_label_status_bar");
+  statusLatL->setFixedWidth( 110 );
+  statusLatL->setFixedHeight( statusLabel->sizeHint().height() );
+  statusLatL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
+  statusLatL->setMargin(0);
+  statusLatL->setLineWidth(0);
+  statusLatL->setAlignment( AlignHCenter | AlignVCenter );
+
+  statusLonL = new QLabel(statusBar(), "lon_label_status_bar");
+  statusLonL->setFixedWidth( 110 );
+  statusLonL->setFixedHeight( statusLabel->sizeHint().height() );
+  statusLonL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
+  statusLonL->setMargin(0);
+  statusLonL->setLineWidth(0);
+  statusLonL->setAlignment( AlignHCenter | AlignVCenter );
 
   statusBar()->addWidget( statusLabel, 1, false );
   statusBar()->addWidget( statusTimeL, 0, false );
@@ -486,713 +647,158 @@ void KFLogApp::initStatusBar()
   statusBar()->addWidget( statusLonL, 0, false );
 }
 
-void KFLogApp::initView()
+void KFLog::initSurfaceTypes()
 {
-  // we need icons for these parts ...
-  mapViewDock = createDockWidget("Map", 0, 0, tr("Map"));
-  dataViewDock = createDockWidget("Flight-Data", 0, 0, tr("Flight-Data"));
-  helpWindowDock = createDockWidget("Help", 0, 0, tr("Help"));
-  evaluationWindowDock = createDockWidget("Evaluation", 0, 0, tr("Evaluation"));
-  mapControlDock = createDockWidget("Map-Control", 0, 0, tr("Map-Control"));
-  waypointsDock = createDockWidget("Waypoints", 0, 0, tr("Waypoints"));
-  legendDock = createDockWidget("Legend", 0, 0, tr("Legend"));
-  objectTreeDock = createDockWidget("LoadedObjects", 0, 0, tr("KFLog Browser"));
-  extern MapContents _globalMapContents;
+  surfaceTypes.setAutoDelete(true);
 
+  surfaceTypes.append(new TranslationElement(Airport::Unknown, tr("Unknown")));
+  surfaceTypes.append(new TranslationElement(Airport::Grass, tr("Grass")));
+  surfaceTypes.append(new TranslationElement(Airport::Asphalt, tr("Asphalt")));
+  surfaceTypes.append(new TranslationElement(Airport::Concrete, tr("Concrete")));
 
-  connect(mapControlDock, SIGNAL(iMBeingClosed()),
-      SLOT(slotHideMapControlDock()));
-  connect(mapControlDock, SIGNAL(hasUndocked()),
-      SLOT(slotHideMapControlDock()));
-  connect(mapViewDock, SIGNAL(iMBeingClosed()),
-      SLOT(slotHideMapViewDock()));
-  connect(mapViewDock, SIGNAL(hasUndocked()),
-      SLOT(slotHideMapViewDock()));
-  connect(dataViewDock, SIGNAL(iMBeingClosed()),
-      SLOT(slotHideDataViewDock()));
-  connect(dataViewDock, SIGNAL(hasUndocked()),
-      SLOT(slotHideDataViewDock()));
-  connect(helpWindowDock, SIGNAL(iMBeingClosed()),
-      SLOT(slotHideHelpWindowDock()));
-  connect(helpWindowDock, SIGNAL(hasUndocked()),
-      SLOT(slotHideHelpWindowDock()));
-  connect(evaluationWindowDock, SIGNAL(iMBeingClosed()),
-      SLOT(slotHideEvaluationWindowDock()));
-  connect(evaluationWindowDock, SIGNAL(hasUndocked()),
-      SLOT(slotHideEvaluationWindowDock()));
-  connect(waypointsDock, SIGNAL(iMBeingClosed()),
-      SLOT(slotHideWaypointsDock()));
-  connect(waypointsDock, SIGNAL(hasUndocked()),
-      SLOT(slotHideWaypointsDock()));
-   connect(legendDock, SIGNAL(iMBeingClosed()),
-      SLOT(slotHideLegendDock()));
-  connect(legendDock, SIGNAL(hasUndocked()),
-      SLOT(slotHideLegendDock()));
-  connect(objectTreeDock, SIGNAL(iMBeingClosed()),
-      SLOT(slotHideObjectTreeDock()));
-  connect(objectTreeDock, SIGNAL(hasUndocked()),
-      SLOT(slotHideObjectTreeDock()));
-
-  setView(mapViewDock);
-  setMainDockWidget(mapViewDock);
-
-  QFrame* mapViewFrame = new QFrame(mapViewDock);
-  map = new Map(this, mapViewFrame, "KFLog-Map");
-
-  QHBoxLayout* mapLayout = new QHBoxLayout(mapViewFrame,2,1);
-  mapLayout->addWidget(map);
-  mapLayout->activate();
-
-  QFrame* mapControlFrame = new QFrame(mapControlDock);
-  mapControl = new MapControlView(mapControlFrame);
-  mapControlDock->setWidget(mapControlFrame);
-
-  mapViewDock->setWidget(mapViewFrame);
-
-  dataView = new DataView(dataViewDock);
-  dataViewDock->setWidget(dataView);
-
-  helpWindow = new HelpWindow(helpWindowDock);
-  helpWindowDock->setWidget(helpWindow);
-
-  evaluationWindow = new EvaluationDialog(evaluationWindowDock);
-  evaluationWindowDock->setWidget(evaluationWindow);
-
-  waypoints = new Waypoints(waypointsDock);
-  waypointsDock->setWidget(waypoints);
-
-  legend = new TopoLegend(legendDock);
-  legendDock->setWidget(legend);
-
-  objectTree = new ObjectTree(objectTreeDock);
-  objectTreeDock->setWidget(objectTree);
-
-  /* Standard positions for the docking windows
-   * Arguments for manualDock():
-   * dock target, dock side, remaining space in target (in percent)
-   *
-   * (hl, 2004-03-12): per default, we want to have every dockwindow within the mainwindow.
-   */
-  objectTreeDock->manualDock( mapViewDock, KDockWidget::DockRight, 67 );
-  dataViewDock->manualDock( objectTreeDock, KDockWidget::DockBottom, 67 );
-  mapControlDock->manualDock( dataViewDock, KDockWidget::DockBottom, 62 );
-  helpWindowDock->manualDock( mapControlDock, KDockWidget::DockCenter);
-  waypointsDock->manualDock(mapViewDock, KDockWidget::DockBottom, 70);
-  legendDock->manualDock(waypointsDock, KDockWidget::DockRight, 90);
-  evaluationWindowDock->manualDock( mapViewDock, KDockWidget::DockCenter);
-
-  connect(map, SIGNAL(changed(QSize)), mapControl, SLOT(slotShowMapData(QSize)));
-  connect(map, SIGNAL(waypointSelected(Waypoint *)), waypoints, SLOT(slotAddWaypoint(Waypoint *)));
-  connect(map, SIGNAL(waypointDeleted(Waypoint *)), waypoints, SLOT(slotDeleteWaypoint(Waypoint *)));
-  connect(map, SIGNAL(waypointEdited(Waypoint *)), waypoints, SLOT(slotEditWaypoint(Waypoint *)));
-  connect(map, SIGNAL(elevation(int)), legend, SLOT(highlightLevel(int)));
-  connect(map, SIGNAL(regWaypointDialog(QWidget *)), this, SLOT(slotRegisterWaypointDialog(QWidget *)));
-
-  extern MapMatrix _globalMapMatrix;
-  connect(mapControl, SIGNAL(scaleChanged(double)), &_globalMapMatrix,
-      SLOT(slotSetScale(double)));
-
-  connect(dataView, SIGNAL(wpSelected(const unsigned int)), map,
-      SLOT(slotCenterToWaypoint(const unsigned int)));
-  connect(dataView, SIGNAL(flightSelected(BaseFlightElement *)), &_globalMapContents,
-      SLOT(slotSetFlight(BaseFlightElement *)));
-  connect(dataView, SIGNAL(editFlightGroup()), &_globalMapContents,
-      SLOT(slotEditFlightGroup()));
-
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), this,
-      SLOT(slotModifyMenu()));
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), map,
-      SLOT(slotShowCurrentFlight()));
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), dataView,
-      SLOT(setFlightData()));
-  connect(&_globalMapContents, SIGNAL(newFlightAdded(Flight*)), objectTree,
-      SLOT(slotNewFlightAdded(Flight*)));
-  connect(&_globalMapContents, SIGNAL(newFlightGroupAdded(FlightGroup*)), objectTree,
-      SLOT(slotNewFlightGroupAdded(FlightGroup*)));
-  connect(&_globalMapContents, SIGNAL(newTaskAdded(FlightTask*)), objectTree,
-      SLOT(slotNewTaskAdded(FlightTask*)));
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), objectTree,
-      SLOT(slotSelectedFlightChanged()));
-
-  connect(waypoints, SIGNAL(copyWaypoint2Task(Waypoint *)),
-      map, SLOT(slotAppendWaypoint2Task(Waypoint *)));
-
-  connect(waypoints, SIGNAL(waypointCatalogChanged( WaypointCatalog * )),
-      map, SLOT(slotWaypointCatalogChanged( WaypointCatalog * )));
-
-  connect(waypoints, SIGNAL(centerMap(int, int)),
-      &_globalMapMatrix, SLOT(slotCenterTo(int, int)));
-
-  connect(objectTree, SIGNAL(selectedFlight(BaseFlightElement *)), &_globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
-  connect(objectTree, SIGNAL(newTask()), &_globalMapContents, SLOT(slotNewTask()));
-  connect(objectTree, SIGNAL(openTask()), this, SLOT(slotOpenTask()));
-  connect(objectTree, SIGNAL(closeTask()), &_globalMapContents, SLOT(closeFlight()));
-  connect(objectTree, SIGNAL(newFlightGroup()), &_globalMapContents, SLOT(slotNewFlightGroup()));
-  connect(objectTree, SIGNAL(editFlightGroup()), &_globalMapContents, SLOT(slotEditFlightGroup()));
-  connect(objectTree, SIGNAL(openFlight()), this, SLOT(slotOpenFile()));
-  connect(objectTree, SIGNAL(openFile(const char*)), this, SLOT(slotOpenFile(const char*)));
-  connect(objectTree, SIGNAL(optimizeFlight()), this, SLOT(slotOptimizeFlight()));
-  connect(objectTree, SIGNAL(optimizeFlightOLC()), this, SLOT(slotOptimizeFlightOLC()));
-
-  connect(&_globalMapContents, SIGNAL(closingFlight(BaseFlightElement*)),
-      objectTree, SLOT(slotCloseFlight(BaseFlightElement*)));
-
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()),
-      evaluationWindow, SLOT(slotShowFlightData()));
-
-  connect(evaluationWindow, SIGNAL(showCursor(const QPoint&, const QPoint&)),
-      map, SLOT(slotDrawCursor(const QPoint&, const QPoint&)));
-
+  surfaceTypes.sort();
 }
 
-void KFLogApp::slotShowAbout()
+void KFLog::initTaskTypes()
 {
-  qDebug("aboutDialog");
-  KAboutApplication aboutDialog(this, "about", true);
-  aboutDialog.exec();
+  taskTypes.setAutoDelete(true);
+
+  taskTypes.append(new TranslationElement(FlightTask::Route, tr("Traditional Route")));
+  taskTypes.append(new TranslationElement(FlightTask::FAIArea, tr("FAI Area")));
+  //taskTypes.append(new TranslationElement(FlightTask::AAT, tr("Area Assigned")));
+
+  taskTypes.sort();
 }
 
-void KFLogApp::slotShowPointInfo(const QPoint& pos, const flightPoint& point)
+void KFLog::initToolBar()
 {
-  statusBar()->clear();
-  statusTimeL->setText(printTime(point.time, true));
-  QString text;
-  text.sprintf("%4d m  ", point.height);
-  statusAltitudeL->setText(text);
-  text.sprintf("%3.1f km/h  ", getSpeed(point));
-  statusSpeedL->setText(text);
-  text.sprintf("%2.1f m/s  ", getVario(point));
-  statusVarioL->setText(text);
-
-  statusLatL->setText(printPos(pos.y()));
-  statusLonL->setText(printPos(pos.x(), false));
+  toolBar = new QToolBar(this, "main toolbar");
+  fileOpenFlight->addTo(toolBar);
+  toolBar->addSeparator();
+  viewZoom->addTo(toolBar);
+  viewZoomIn->addTo(toolBar);
+  viewZoomOut->addTo(toolBar);
+  viewRedraw->addTo(toolBar);
+  toolBar->addSeparator();
+  viewCenterTask->addTo(toolBar);
+  viewCenterFlight->addTo(toolBar);
+  viewCenterHomesite->addTo(toolBar);
+  toolBar->addSeparator();
+  flightEvaluationWindow->addTo(toolBar);
 }
 
-void KFLogApp::slotShowPointInfo(const QPoint& pos)
+void KFLog::initWaypointTypes()
 {
-  statusBar()->clear();
-  statusTimeL->setText("");
-  statusAltitudeL->setText("");
-  statusSpeedL->setText("");
-  statusVarioL->setText("");
+  waypointTypes.setAutoDelete(true);
 
-  statusLatL->setText(printPos(pos.y()));
-  statusLonL->setText(printPos(pos.x(), false));
+  // don't know if we really need all of them
+  waypointTypes.append(new TranslationElement(BaseMapElement::NotSelected, tr("(not selected)")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::AerialRailway, tr("Aerial railway")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Airfield, tr("Airfield")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Airport, tr("Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::AmbHeliport, tr("Ambul. Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Balloon, tr("Balloon")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::City, tr("City")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::CivHeliport, tr("Civil Heliport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::IntAirport, tr("Int. Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::MilAirport, tr("Mil. Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::CivMilAirport, tr("Civil/Mil. Airport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::ClosedAirfield, tr("Closed Airfield")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Glidersite, tr("Glider site")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::HangGlider, tr("Hang glider")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Highway, tr("Highway")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Landmark, tr("Landmark")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::MilHeliport, tr("Mil. Heliport")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::UltraLight, tr("Ultralight")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Parachute, tr("Parachute")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Outlanding, tr("Outlanding")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Obstacle, tr("Obstacle")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::ObstacleGroup, tr("Obstacle group")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacleGroup, tr("Obstacle group (lighted)")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacle, tr("Obstacle (lighted)")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Railway, tr("Railway")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Road, tr("Road")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Village, tr("Village,City")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Turnpoint, tr("Turnpoint")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Thermal, tr("Thermal")));
+
+  waypointTypes.sort();
 }
 
-void KFLogApp::saveOptions()
+void KFLog::readOptions()
 {
-  config->setGroup("General Options");
-  config->writeEntry("Geometry", size());
-  config->writeEntry("Show Toolbar", toolBar("mainToolBar")->isShown());
-  config->writeEntry("Show Statusbar",statusBar()->isShown());
-  config->writeEntry("ToolBarPos", (int) toolBar("mainToolBar")->barPos());
-
-  config->setGroup("Waypoints");
-  qDebug("saving options...");
-  if (config->readNumEntry("DefaultWaypointCatalog", KFLogConfig::LastUsed) ==
-      KFLogConfig::LastUsed && waypoints->getCurrentCatalog() != NULL)
-    {
-      // Only write the path, if a waypoint-catalog is opened.
-      // Otherwise KFLog crashes on a clean installation.
-      qDebug("saving catalog name");
-      config->writeEntry("DefaultCatalogName", waypoints->getCurrentCatalog()->path);
-    }
-
-  config->setGroup(0);
-
-  writeDockConfig(config, "Window Layout");
-}
-
-void KFLogApp::readOptions()
-{
-  config->setGroup("General Options");
-
-  // bar status settings
-  bool bViewToolbar = config->readBoolEntry("Show Toolbar", true);
-  if(toolBar("mainToolBar")->isShown()!=bViewToolbar)
+  bool bViewToolbar = _settings.readBoolEntry("/KFLog/GeneralOptions/ShowToolbar", true);
+  if(toolBar->isShown()!=bViewToolbar)
     slotToggleToolBar();
 
-  bool bViewStatusbar = config->readBoolEntry("Show Statusbar", true);
+  bool bViewStatusbar = _settings.readBoolEntry("/KFLog/GeneralOptions/ShowStatusbar", true);
   if(statusBar()->isShown()!=bViewStatusbar)
     slotToggleStatusBar();
 
   // bar position settings
-  KToolBar::BarPosition toolBarPos;
-  toolBarPos=(KToolBar::BarPosition) config->readNumEntry("ToolBarPos",
-      KToolBar::Top);
-  toolBar("mainToolBar")->setBarPos(toolBarPos);
-  QSize size=config->readSizeEntry("Geometry", new QSize(950,700));
+  QSize size(_settings.readNumEntry("/KFLog/GeneralOptions/GeometryWidth", 950),
+             _settings.readNumEntry("/KFLog/GeneralOptions/GeometryHeight", 700));
 
-  config->setGroup("Path");
-  flightDir = config->readEntry("DefaultFlightDirectory",
-      getpwuid(getuid())->pw_dir);
-  taskDir = config->readEntry("DefaultWaypointDirectory",
-      getpwuid(getuid())->pw_dir);
+  if(!size.isEmpty())
+    resize(size);
 
-  config->setGroup("Scale");
-  mapControl->slotSetMinMaxValue(config->readNumEntry("Lower Limit", 10),
-      config->readNumEntry("Upper Limit", 1500));
+  // initialize the recent file list
+  flightDir = _settings.readEntry("/KFLog/Path/DefaultFlightDirectory", getpwuid(getuid())->pw_dir);
+  taskDir = _settings.readEntry("/KFLog/Path/DefaultWaypointDirectory", getpwuid(getuid())->pw_dir);
 
-  if(!size.isEmpty())  resize(size);
+  mapControl->slotSetMinMaxValue(_settings.readNumEntry("/KFLog/Scale/Lower Limit", 10),
+                                 _settings.readNumEntry("/KFLog/Scale/Upper Limit", 1500));
 
-  readDockConfig(config, "Window Layout");
+// FIXME: use QMainWindow::restoreState in Qt4
+// bar position settings
+//  KToolBar::BarPosition toolBarPos;
+//  toolBarPos=(KToolBar::BarPosition) _settings.readNumEntry("/KFLog/GeneralOptions/ToolBarPos", KToolBar::Top);
+//  toolBar("mainToolBar")->setBarPos(toolBarPos);
+//  readDockConfig(config, "Window Layout");
 }
 
-/////////////////////////////////////////////////////////////////////
-// SLOT IMPLEMENTATION
-/////////////////////////////////////////////////////////////////////
-
-void KFLogApp::slotSetProgress(int value)  { statusProgress->setValue(value); }
-
-void KFLogApp::slotOpenFile()
+void KFLog::saveOptions()
 {
-  slotStatusMsg(tr("Opening file..."));
+  _settings.writeEntry("/KFLog/GeneralOptions/GeometryWidth", size().width());
+  _settings.writeEntry("/KFLog/GeneralOptions/GeometryHeight", size().height());
+  _settings.writeEntry("/KFLog/GeneralOptions/ShowToolbar", toolBar->isShown());
+  _settings.writeEntry("/KFLog/GeneralOptions/ShowStatusbar", statusBar()->isShown());
 
-  KFileDialog* dlg = new KFileDialog(flightDir, "*.igc *.IGC", this,
-      tr("Select IGC-File"), true);
-  IGCPreview* preview = new IGCPreview(dlg);
-  dlg->setPreviewWidget(preview);
-  QString filter;
-  filter.append("*.igc *.flightgear *.trk *.gdn |"+tr("All flight type files"));
-  filter.append("\n*.igc|"+tr("IGC (*.igc)"));
-  filter.append("\n*.trk *.gdn|"+tr("Garmin (*.trk, *.gdn)"));
-  dlg->setFilter(filter);
-  dlg->setCaption(tr("Open flight"));
-  dlg->exec();
-
-  KURL fUrl = dlg->selectedURL();
-
-  if(fUrl.isEmpty())  return;
-
-  QString fName;
-  if(fUrl.isLocalFile())
-      fName = fUrl.path();
-  else if(!KIO::NetAccess::download(fUrl, fName, this))
+  qDebug("saving options...");
+  if (_settings.readNumEntry("/KFLog/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed) ==
+      KFLogConfig::LastUsed && waypoints->getCurrentCatalog() != NULL)
     {
-      KNotifyClient::event(this->winId(), tr("Can not download file %1").arg(fUrl.url()));
-      return;
+      // Only write the path, if a waypoint-catalog is opened.
+      // Otherwise KFLog crashes on a clean installation.
+      //qDebug("saving catalog name");
+      _settings.writeEntry("/KFLog/Waypoints/DefaultCatalogName", waypoints->getCurrentCatalog()->path);
     }
 
-  QFileInfo fInfo(fName);
-  flightDir = fInfo.dirPath();
-  FlightLoader flightLoader;
-  QFile file (fName);
-  if(flightLoader.openFlight(file))
-  {
-    slotSetCurrentFile(fName);
-  }
-
-  slotStatusMsg(tr("Ready."));
+// FIXME: use QMainWindow::saveState in Qt4
+//  _settings.writeEntry("/KFLog/GeneralOptions/ToolBarPos", (int) toolBar("mainToolBar")->barPos());
+//  writeDockConfig(config, "Window Layout");
 }
 
-void KFLogApp::slotOpenFile(const char* surl)
-{
-  slotStatusMsg(tr("Opening file..."));
-
-  extern MapContents _globalMapContents;
-  QUrl url = QUrl(surl);
-  if(url.isLocalFile())
-  {
-    QFile file (url.path());
-    if (url.fileName().right(9).lower()==".kflogtsk")
-    {
-      //this is probably a taskfile. Try to open it as a task
-      if (_globalMapContents.loadTask(file))
-        slotSetCurrentFile(url.path());
-    }
-    else
-    {
-      //try to open as flight
-      FlightLoader flightLoader;
-      if(flightLoader.openFlight(file))
-        slotSetCurrentFile(url.path());
-    } // .kflogtsk
-  } //isLocalFile
-
-  slotStatusMsg(tr("Ready."));
-}
-
-/**
- * Opens a task-file-open-dialog.
- */
-void KFLogApp::slotOpenTask()
-{
-  slotStatusMsg(tr("Opening file..."));
-
-  KFileDialog* dlg = new KFileDialog(flightDir, "*.kflogtsk *.KFLOGTSK", this,
-      tr("Select Task-File"), true);
-  dlg->setCaption(tr("Open task"));
-  dlg->exec();
-
-  KURL fUrl = dlg->selectedURL();
-
-  if(fUrl.isEmpty())  return;
-
-  QString fName;
-  if(fUrl.isLocalFile())
-      fName = fUrl.path();
-  else if(!KIO::NetAccess::download(fUrl, fName, this))
-    {
-      KNotifyClient::event(this->winId(), tr("Can not download file %1").arg(fUrl.url()));
-      return;
-    }
-
-  QFileInfo fInfo(fName);
-  flightDir = fInfo.dirPath();
-  extern MapContents _globalMapContents;
-  QFile file(fName);
-  if (_globalMapContents.loadTask(file))
-      slotSetCurrentFile(fName);
-
-  slotStatusMsg(tr("Ready."));
-}
-
-void KFLogApp::slotOpenRecentFile()
-{
-  QString fileName;
-  QAction *action = (QAction*)(sender());
-  if (action)
-    fileName = action->toolTip();
-  else
-    return;
-
-  slotStatusMsg(tr("Opening file..."));
-
-  extern MapContents _globalMapContents;
-  FlightLoader flightLoader;
-  QUrl url (fileName);
-  if(url.isLocalFile())
-  {
-    QFile file (url.path());
-    if (url.fileName().right(9).lower()==".kflogtsk")
-    {
-      //this is probably a taskfile. Try to open it as a task
-      if (_globalMapContents.loadTask(file))
-        slotSetCurrentFile(url.path());
-    }
-    else
-    {
-      //try to open as flight
-      if(flightLoader.openFlight(file))
-        slotSetCurrentFile(url.path());
-    } // .kflogtsk
-  } //isLocalFile
-
-  slotStatusMsg(tr("Ready."));
-}
-
-void KFLogApp::slotSetCurrentFile(const QString &fileName)
-{
-  config->setGroup("General Options");
-  QStringList files = config->readListEntry("RecentFiles"), newFiles;
-  int recentFilesMax = config->readNumEntry("RecentFilesMax", 5);
-  int index = 0;
-
-  newFiles.append(fileName);
-  for(QStringList::iterator it = files.begin(); (it != files.end() && index<=recentFilesMax); ++it)
-  {
-    if(*it!=fileName)
-    {
-      newFiles.append(*it);
-      index++;
-    }
-  }
-
-  config->writeEntry("RecentFiles", newFiles);
-
-  int size = std::min((int)newFiles.size(), 5);
-  QAction *recentFileActs[size];
-  fileOpenRecent->clear();
-  for (int i = 0; i < size; ++i) {
-    recentFileActs[i] = new QAction(this);
-    recentFileActs[i]->setToolTip(newFiles[i]); // FIXME: in Qt4 setData must be used
-    recentFileActs[i]->setText(tr("%1 %2").arg(i + 1).arg(QFileInfo(newFiles[i]).fileName()));
-    connect(recentFileActs[i], SIGNAL(activated()), this, SLOT(slotOpenRecentFile()));
-    recentFileActs[i]->addTo(fileOpenRecent);
-  }
-}
-
-void KFLogApp::slotFilePrint()
-{
-  slotStatusMsg(tr("Printing..."));
-
-  // viewCenterFlight is enabled, when a flight is loaded ...
-  MapPrint::MapPrint(viewCenterFlight->isEnabled());
-
-  slotStatusMsg(tr("Ready."));
-}
-
-void KFLogApp::slotFlightPrint()
-{
-  slotStatusMsg(tr("Printing..."));
-
-  extern MapContents _globalMapContents;
-  BaseFlightElement *f = _globalMapContents.getFlight();
-  if(f)
-    {
-      switch (f->getTypeID())
-        {
-          case BaseMapElement::Flight:
-            FlightDataPrint::FlightDataPrint((Flight *)f);
-            break;
-          case BaseMapElement::Task:
-            TaskDataPrint::TaskDataPrint((FlightTask*)f);
-            break;
-          default:
-            QString tmp;
-            tmp.sprintf(tr("Not yet available for type: %d"), f->getTypeID());
-            QMessageBox::warning(0, tr("Type not available"), tmp, QMessageBox::Ok, 0);
-        }
-    }
-  slotStatusMsg(tr("Ready."));
-}
-
-void KFLogApp::slotFileQuit()
-{
-  slotStatusMsg(tr("Exiting..."));
-  //saveOptions();   //Now done in queryClose
-
-  close();
-}
-
-void KFLogApp::slotStatusMsg(const QString &text)
-{
-  statusBar()->clear();
-  statusBar()->changeItem(text, ID_STATUS_MSG);
-}
-
-void KFLogApp::slotHideEvaluationWindowDock()  { flightEvaluationWindow->setOn(false); settingsEvaluationWindow->setOn(false); }
-
-void KFLogApp::slotHideDataViewDock()  { settingsFlightData->setOn(false); }
-
-void KFLogApp::slotHideHelpWindowDock()  { settingsHelpWindow->setOn(false); }
-
-void KFLogApp::slotHideObjectTreeDock() { settingsObjectTree->setOn(false); }
-
-void KFLogApp::slotHideLegendDock() { settingsLegend->setOn(false); }
-
-void KFLogApp::slotHideMapViewDock()  { settingsMap->setOn(false); }
-
-void KFLogApp::slotHideMapControlDock()  { settingsMapControl->setOn(false); }
-
-void KFLogApp::slotHideWaypointsDock() { settingsWaypoints->setOn(false); }
-
-void KFLogApp::slotCheckDockWidgetStatus()
-{
-  // Here is still a bug. The toggle status is invalid, when the widget is a non active
-  // TabWidget.
-  //          Florian
-  flightEvaluationWindow->setOn(evaluationWindowDock->isShown());
-  settingsEvaluationWindow->setOn(evaluationWindowDock->isShown());
-  settingsFlightData->setOn(dataViewDock->isShown());
-  settingsHelpWindow->setOn(helpWindowDock->isShown());
-  settingsObjectTree->setOn(objectTreeDock->isShown());
-  settingsLegend->setOn(legendDock->isShown());
-  settingsMap->setOn(mapViewDock->isShown());
-  settingsMapControl->setOn(mapControlDock->isShown());
-  settingsStatusBar->setOn(statusBar()->isShown());
-  settingsToolBar->setOn(toolBar("mainToolBar")->isShown());
-  settingsWaypoints->setOn(waypointsDock->isShown());
-}
-
-void KFLogApp::slotToggleDataView()  { dataViewDock->changeHideShowState(); slotCheckDockWidgetStatus(); }
-
-void KFLogApp::slotToggleHelpWindow()  { helpWindowDock->changeHideShowState(); slotCheckDockWidgetStatus(); }
-
-void KFLogApp::slotToggleEvaluationWindow()  { evaluationWindowDock->changeHideShowState(); slotCheckDockWidgetStatus(); }
-
-void KFLogApp::slotToggleLegendDock() { legendDock->changeHideShowState(); slotCheckDockWidgetStatus(); }
-
-void KFLogApp::slotToggleMapControl() { mapControlDock->changeHideShowState(); slotCheckDockWidgetStatus(); }
-
-void KFLogApp::slotToggleMap() { mapViewDock->changeHideShowState(); slotCheckDockWidgetStatus(); }
-
-void KFLogApp::slotToggleObjectTreeDock() { objectTreeDock->changeHideShowState(); slotCheckDockWidgetStatus(); }
-
-void KFLogApp::slotToggleStatusBar()
-{
-  slotStatusMsg(tr("Toggle the statusbar..."));
-
-  if(statusBar()->isShown())
-    statusBar()->hide();
-  else
-    statusBar()->show();
-
-  slotCheckDockWidgetStatus();
-  slotStatusMsg(tr("Ready."));
-}
-
-void KFLogApp::slotToggleToolBar()
-{
-  slotStatusMsg(tr("Toggling toolbar..."));
-
-  if(toolBar("mainToolBar")->isShown())
-      toolBar("mainToolBar")->hide();
-  else
-      toolBar("mainToolBar")->show();
-
-  slotCheckDockWidgetStatus();
-  slotStatusMsg(tr("Ready."));
-}
-
-void KFLogApp::slotToggleWaypointsDock() { waypointsDock->changeHideShowState(); slotCheckDockWidgetStatus(); }
-
-void KFLogApp::slotSelectFlightData(int id)
-{
-  switch(id)
-    {
-      case MapConfig::Altitude:    // Altitude
-        emit flightDataTypeChanged(MapConfig::Altitude);
-        break;
-      case MapConfig::Cycling:     // Cycling
-        emit flightDataTypeChanged(MapConfig::Cycling);
-        break;
-      case MapConfig::Speed:       // Speed
-        emit flightDataTypeChanged(MapConfig::Speed);
-        break;
-      case MapConfig::Vario:       // Vario
-        emit flightDataTypeChanged(MapConfig::Vario);
-        break;
-      case MapConfig::Solid:       // Solid color
-        emit flightDataTypeChanged(MapConfig::Solid);
-        break;
-    }
-  map->slotRedrawFlight();
-  for(int i=0; i<5; i++)
-    flightDataType->setItemChecked(i, false);
-  flightDataType->setItemChecked(id, true);
-}
-
-/*
- * Now as a Dockwidget
-
- void KFLogApp::slotEvaluateFlight()
-{
-  KDialog* dialog = new KDialog(this,"Evaluation Dialog");
-  EvaluationDialog* evaluation =  new EvaluationDialog(dialog);
-  QBoxLayout * l = new QVBoxLayout( dialog );
-  l->addWidget(evaluation);
-
-//  EvaluationDialog* evaluation =  new EvaluationDialog(this);
-  extern MapContents _globalMapContents;
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), evaluation,
-      SLOT(slotShowFlightData()));
-  connect(evaluation, SIGNAL(showCursor(QPoint, QPoint)), map,
-      SLOT(slotDrawCursor(QPoint, QPoint)));
-
-//  evaluation->show();
-  dialog->show();
-  dialog->resize(640,480);
-}
-*/
-
-void KFLogApp::slotCenterTo()
+void KFLog::slotCenterTo()
 {
   CenterToDialog* center = new CenterToDialog(this, tr("center-to-dialog"));
 
   extern MapMatrix _globalMapMatrix;
 
-  connect(center, SIGNAL(centerTo(int,int)), &_globalMapMatrix,
-    SLOT(slotCenterTo(int, int)));
+  connect(center, SIGNAL(centerTo(int,int)), &_globalMapMatrix, SLOT(slotCenterTo(int, int)));
 
   center->show();
 }
 
-void KFLogApp::slotOptimizeFlight()
-{
-  extern MapContents _globalMapContents;
-  Flight *f = (Flight *)_globalMapContents.getFlight();
-  if(f && f->getTypeID() == BaseMapElement::Flight)
-    {
-      if(f->optimizeTask())
-        {
-          // Okay, update flightdata and redraw map
-          dataView->setFlightData();
-          map->slotRedrawFlight();
-          objectTree->slotFlightChanged();
-        }
-    }
-}
-
-void KFLogApp::slotOptimizeFlightOLC()
-{
-  extern MapContents _globalMapContents;
-  Flight *f = (Flight *)_globalMapContents.getFlight();
-  if(f && f->getTypeID() == BaseMapElement::Flight){
-      if(f->optimizeTaskOLC(map))
-        {
-          // Okay, update flightdata and redraw map
-          dataView->setFlightData();
-          map->slotRedrawFlight();
-          objectTree->slotFlightChanged();
-        }
-  }
-}
-
-void KFLogApp::slotConfigureToolbars()
-{
-  saveMainWindowSettings( KGlobal::config(), "MainWindow" );
-  KEditToolbar dlg(actionCollection(), xmlFile());
-  connect(&dlg, SIGNAL(newToolbarConfig()), this, SLOT(slotNewToolbarConfig()));
-
-  if (dlg.exec())  createGUI();
-}
-
-void KFLogApp::slotConfigureKeyBindings()
-{
-  KKeyDialog::configure(actionCollection(), this);
-}
-
-void KFLogApp::slotConfigureKFLog()
-{
-  KFLogConfig* confDlg = new KFLogConfig(this, config, "kflogconfig");
-
-  connect(confDlg, SIGNAL(scaleChanged(int, int)), mapControl,
-      SLOT(slotSetMinMaxValue(int, int)));
-
-  extern MapConfig _globalMapConfig;
-  connect(confDlg, SIGNAL(configOk()), &_globalMapConfig,
-      SLOT(slotReadConfig()));
-
-  extern MapContents _globalMapContents;
-  connect(confDlg, SIGNAL(configOk()), &_globalMapContents,
-      SLOT(reProject()));
-
-  connect(confDlg, SIGNAL(configOk()), map, SLOT(slotRedrawMap()));
-
-  connect(confDlg, SIGNAL(newDrawType(int)), this, SLOT(slotSelectFlightData(int)));
-
-  confDlg->exec();
-
-  delete confDlg;
-}
-
-void KFLogApp::slotNewToolbarConfig()
-{
-   applyMainWindowSettings( KGlobal::config(), "MainWindow" );
-}
-
-void KFLogApp::slotStartComplete()
-{
-  if(showStartLogo && (startLogo != 0L))
-    {
-      delete startLogo;
-      startLogo = 0L;
-      showStartLogo=false;
-    }
-}
-
-void KFLogApp::slotFlightViewIgc3D()
+void KFLog::slotFlightViewIgc3D()
 {
   Igc3DDialog * igc3d = new Igc3DDialog(this);
   extern MapContents _globalMapContents;
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), igc3d,
-      SLOT(slotShowFlightData()));
+  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), igc3d, SLOT(slotShowFlightData()));
   extern MapContents _globalMapContents;
 }
 
-void KFLogApp::slotFlightViewIgcOpenGL()
+void KFLog::slotFlightViewIgcOpenGL()
 {
   #define CHECK_ERROR_EXIT  error = (char *)dlerror(); \
     if(error != NULL) \
@@ -1223,40 +829,8 @@ void KFLogApp::slotFlightViewIgcOpenGL()
   (void)(*addFlight)((Flight*)_globalMapContents.getFlight());
 }
 
-
-
-bool KFLogApp::queryClose()
-{
-  saveOptions();
-  if (waypoints->saveChanges()) {
-    return true;
-  }
-  return false;
-}
-
-/** insert available flights into menu */
-void KFLogApp::slotWindowsMenuAboutToShow()
-{
-  extern MapContents _globalMapContents;
-  QPtrList<BaseFlightElement> flights = *(_globalMapContents.getFlightList());
-  QPtrListIterator<BaseFlightElement> it(flights);
-  BaseFlightElement *flight;
-
-  windowMenu->clear();
-
-  for (int i = 0 ; it.current(); ++it , i++)
-    {
-      flight = it.current();
-      int id = windowMenu->insertItem(flight->getFileName(), &_globalMapContents,
-          SLOT(slotSetFlight(int)));
-
-      windowMenu->setItemParameter(id, i);
-      windowMenu->setItemChecked(id, _globalMapContents.getFlightIndex() == i);
-    }
-}
-
 /** set menu items enabled/disabled */
-void KFLogApp::slotModifyMenu()
+void KFLog::slotModifyMenu()
 {
   extern MapContents _globalMapContents;
   if (_globalMapContents.getFlightList()->count() > 0)
@@ -1348,99 +922,499 @@ void KFLogApp::slotModifyMenu()
     }
 }
 
-void KFLogApp::slotOpenRecorderDialog()
+void KFLog::slotOpenFile()
+{
+  QFileDialog* fd = new QFileDialog(this);
+  fd->setCaption(tr("Open flight"));
+  fd->setDir(flightDir);
+
+  QString filter;
+  filter.append(tr("All flight type files")+" (*.igc *.flightgear *.trk *.gdn);;");
+  filter.append(tr("IGC")+" (*.igc);;");
+  filter.append(tr("Garmin")+" (*.trk *.gdn)");
+  fd->setFilters(filter);
+
+  IGCPreview* preview = new IGCPreview(fd);
+  fd->setContentsPreviewEnabled( TRUE );
+  fd->setContentsPreview(preview, preview);
+  fd->setPreviewMode( QFileDialog::Contents );
+
+  if(fd->exec()==QDialog::Accepted)
+  {
+    QString fName = fd->selectedFile();
+    QUrl fUrl = QUrl(fName);
+    flightDir = fd->dirPath();
+
+    if(!fUrl.isValid())
+      return;
+
+    if(!fUrl.isLocalFile())
+      return;
+
+    FlightLoader flightLoader;
+    QFile file (fName);
+    if(flightLoader.openFlight(file))
+      slotSetCurrentFile(fName);
+  }
+
+  slotSetStatusMsg(tr("Ready."));
+}
+
+void KFLog::slotOpenFile(const char* surl)
+{
+  slotSetStatusMsg(tr("Opening file..."));
+
+  extern MapContents _globalMapContents;
+  QUrl url = QUrl(surl);
+  if(url.isLocalFile())
+  {
+    QFile file (url.path());
+    if (url.fileName().right(9).lower()==".kflogtsk")
+    {
+      //this is probably a taskfile. Try to open it as a task
+      if (_globalMapContents.loadTask(file))
+        slotSetCurrentFile(url.path());
+    }
+    else
+    {
+      //try to open as flight
+      FlightLoader flightLoader;
+      if(flightLoader.openFlight(file))
+        slotSetCurrentFile(url.path());
+    } // .kflogtsk
+  } //isLocalFile
+
+  slotSetStatusMsg(tr("Ready."));
+}
+
+/**
+ * Opens a task-file-open-dialog.
+ */
+void KFLog::slotOpenTask()
+{
+  slotSetStatusMsg(tr("Opening file..."));
+
+  QFileDialog* fd = new QFileDialog(this);
+  fd->setCaption(tr("Open task"));
+  fd->setDir(taskDir);
+
+  QString filter;
+  filter.append(tr("KFLog tasks")+"(*.kflogtsk *.KFLOGTSK)");
+  fd->setFilters(filter);
+
+  if(fd->exec()==QDialog::Accepted)
+  {
+    QString fName = fd->selectedFile();
+    QUrl fUrl = QUrl(fName);
+    taskDir = fd->dirPath();
+
+    if(!fUrl.isValid())
+      return;
+
+    if(!fUrl.isLocalFile())
+      return;
+
+    extern MapContents _globalMapContents;
+    QFile file(fName);
+    if (_globalMapContents.loadTask(file))
+        slotSetCurrentFile(fName);
+  }
+
+  slotSetStatusMsg(tr("Ready."));
+}
+
+void KFLog::slotOpenRecentFile()
+{
+  QString fileName;
+  QAction *action = (QAction*)(sender());
+  if (action)
+    fileName = action->toolTip();
+  else
+    return;
+
+  slotSetStatusMsg(tr("Opening file..."));
+
+  extern MapContents _globalMapContents;
+  FlightLoader flightLoader;
+  QUrl url (fileName);
+  if(url.isLocalFile())
+  {
+    QFile file (url.path());
+    if (url.fileName().right(9).lower()==".kflogtsk")
+    {
+      //this is probably a taskfile. Try to open it as a task
+      if (_globalMapContents.loadTask(file))
+        slotSetCurrentFile(url.path());
+    }
+    else
+    {
+      //try to open as flight
+      if(flightLoader.openFlight(file))
+        slotSetCurrentFile(url.path());
+    } // .kflogtsk
+  } //isLocalFile
+
+  slotSetStatusMsg(tr("Ready."));
+}
+
+void KFLog::slotOpenRecorderDialog()
 {
   extern MapContents _globalMapContents;
 
-  RecorderDialog* dlg = new RecorderDialog(this, config, "recorderDialog");
-  connect(dlg, SIGNAL(addCatalog(WaypointCatalog *)), waypoints,
-    SLOT(slotAddCatalog(WaypointCatalog *)));
-  connect(dlg, SIGNAL(addTask(FlightTask *)), &_globalMapContents,
-    SLOT(slotAppendTask(FlightTask *)));
+  RecorderDialog* dlg = new RecorderDialog(this, "recorderDialog");
+  connect(dlg, SIGNAL(addCatalog(WaypointCatalog *)), waypoints, SLOT(slotAddCatalog(WaypointCatalog *)));
+  connect(dlg, SIGNAL(addTask(FlightTask *)), &_globalMapContents, SLOT(slotAppendTask(FlightTask *)));
   dlg->exec();
   delete dlg;
 }
 
-void KFLogApp::initSurfaces()
+void KFLog::slotOptimizeFlight()
 {
-  surfaces.setAutoDelete(true);
-
-  surfaces.append(new TranslationElement(Airport::Unknown, tr("Unknown")));
-  surfaces.append(new TranslationElement(Airport::Grass, tr("Grass")));
-  surfaces.append(new TranslationElement(Airport::Asphalt, tr("Asphalt")));
-  surfaces.append(new TranslationElement(Airport::Concrete, tr("Concrete")));
-
-  surfaces.sort();
+  extern MapContents _globalMapContents;
+  Flight *f = (Flight *)_globalMapContents.getFlight();
+  if(f && f->getTypeID() == BaseMapElement::Flight)
+    {
+      if(f->optimizeTask())
+        {
+          // Okay, update flightdata and redraw map
+          dataView->setFlightData();
+          map->slotRedrawFlight();
+          objectTree->slotFlightChanged();
+        }
+    }
 }
 
-void KFLogApp::initTypes()
+void KFLog::slotOptimizeFlightOLC()
 {
-  waypointTypes.setAutoDelete(true);
-
-  // don't know if we really need all of them
-  waypointTypes.append(new TranslationElement(BaseMapElement::NotSelected, tr("(not selected)")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::AerialRailway, tr("Aerial railway")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Airfield, tr("Airfield")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Airport, tr("Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::AmbHeliport, tr("Ambul. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Balloon, tr("Balloon")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::City, tr("City")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::CivHeliport, tr("Civil Heliport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::IntAirport, tr("Int. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::MilAirport, tr("Mil. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::CivMilAirport, tr("Civil/Mil. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::ClosedAirfield, tr("Closed Airfield")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Glidersite, tr("Glider site")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::HangGlider, tr("Hang glider")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Highway, tr("Highway")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Landmark, tr("Landmark")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::MilHeliport, tr("Mil. Heliport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::UltraLight, tr("Ultralight")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Parachute, tr("Parachute")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Outlanding, tr("Outlanding")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Obstacle, tr("Obstacle")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::ObstacleGroup, tr("Obstacle group")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacleGroup, tr("Obstacle group (lighted)")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacle, tr("Obstacle (lighted)")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Railway, tr("Railway")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Road, tr("Road")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Village, tr("Village,City")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Turnpoint, tr("Turnpoint")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Thermal, tr("Thermal")));
-
-  waypointTypes.sort();
-}
-
-/** No descriptions */
-void KFLogApp::slotSavePixmap( QUrl url, int width, int height ){
-  map->slotSavePixmap(url,width,height);
-}
-
-/* Slot to set filename for WaypointCatalog */
-void KFLogApp::slotSetWaypointCatalog(QString catalog)
-{
-  waypoints->slotSetWaypointCatalogName( catalog );
-}
-
-/** No descriptions */
-void KFLogApp::initTaskTypes()
-{
-  taskTypes.setAutoDelete(true);
-
-  taskTypes.append(new TranslationElement(FlightTask::Route, tr("Traditional Route")));
-  taskTypes.append(new TranslationElement(FlightTask::FAIArea, tr("FAI Area")));
-  //taskTypes.append(new TranslationElement(FlightTask::AAT, tr("Area Assigned")));
-
-  taskTypes.sort();
+  extern MapContents _globalMapContents;
+  Flight *f = (Flight *)_globalMapContents.getFlight();
+  if(f && f->getTypeID() == BaseMapElement::Flight){
+      if(f->optimizeTaskOLC(map))
+        {
+          // Okay, update flightdata and redraw map
+          dataView->setFlightData();
+          map->slotRedrawFlight();
+          objectTree->slotFlightChanged();
+        }
+  }
 }
 
 /** Connects the dialogs addWaypoint signal to the waypoint object. */
-void KFLogApp::slotRegisterWaypointDialog(QWidget * dialog){
+void KFLog::slotRegisterWaypointDialog(QWidget * dialog){
   connect(dialog, SIGNAL(addWaypoint(Waypoint *)), waypoints, SLOT(slotAddWaypoint(Waypoint *)));
 }
 
+void KFLog::slotSavePixmap(QUrl url, int width, int height){
+  map->slotSavePixmap(url,width,height);
+}
+
+void KFLog::slotSelectFlightData(int id)
+{
+  switch(id)
+    {
+      case MapConfig::Altitude:    // Altitude
+        emit flightDataTypeChanged(MapConfig::Altitude);
+        break;
+      case MapConfig::Cycling:     // Cycling
+        emit flightDataTypeChanged(MapConfig::Cycling);
+        break;
+      case MapConfig::Speed:       // Speed
+        emit flightDataTypeChanged(MapConfig::Speed);
+        break;
+      case MapConfig::Vario:       // Vario
+        emit flightDataTypeChanged(MapConfig::Vario);
+        break;
+      case MapConfig::Solid:       // Solid color
+        emit flightDataTypeChanged(MapConfig::Solid);
+        break;
+    }
+  map->slotRedrawFlight();
+  for(int i=0; i<5; i++)
+    flightDataType->setItemChecked(i, false);
+  flightDataType->setItemChecked(id, true);
+}
+
+void KFLog::slotSetCurrentFile(const QString &fileName)
+{
+  QStringList files = _settings.readListEntry("/KFLog/GeneralOptions/RecentFiles");
+  QStringList newFiles;
+  int recentFilesMax = _settings.readNumEntry("/KFLog/GeneralOptions/RecentFilesMax", 5);
+  int index = 0;
+
+  newFiles.append(fileName);
+  for(QStringList::iterator it = files.begin(); (it != files.end() && index<=recentFilesMax); ++it)
+  {
+    if(*it!=fileName)
+    {
+      newFiles.append(*it);
+      index++;
+    }
+  }
+
+  _settings.writeEntry("/KFLog/GeneralOptions/RecentFiles", newFiles);
+
+  int size = std::min((int)newFiles.size(), 5);
+  QAction *recentFileActs[size];
+  fileOpenRecent->clear();
+  for (int i = 0; i < size; ++i) {
+    recentFileActs[i] = new QAction(this);
+    recentFileActs[i]->setToolTip(newFiles[i]); // FIXME: in Qt4 setData must be used
+    recentFileActs[i]->setText(tr("%1 %2").arg(i + 1).arg(QFileInfo(newFiles[i]).fileName()));
+    connect(recentFileActs[i], SIGNAL(activated()), this, SLOT(slotOpenRecentFile()));
+    recentFileActs[i]->addTo(fileOpenRecent);
+  }
+}
+
+void KFLog::slotSetPointInfo(const QPoint& pos, const flightPoint& point)
+{
+  statusBar()->clear();
+  statusTimeL->setText(printTime(point.time, true));
+  QString text;
+  text.sprintf("%4d m  ", point.height);
+  statusAltitudeL->setText(text);
+  text.sprintf("%3.1f km/h  ", getSpeed(point));
+  statusSpeedL->setText(text);
+  text.sprintf("%2.1f m/s  ", getVario(point));
+  statusVarioL->setText(text);
+
+  statusLatL->setText(printPos(pos.y()));
+  statusLonL->setText(printPos(pos.x(), false));
+}
+
+void KFLog::slotSetPointInfo(const QPoint& pos)
+{
+  statusBar()->clear();
+  statusTimeL->setText("");
+  statusAltitudeL->setText("");
+  statusSpeedL->setText("");
+  statusVarioL->setText("");
+
+  statusLatL->setText(printPos(pos.y()));
+  statusLonL->setText(printPos(pos.x(), false));
+}
+
+void KFLog::slotSetProgress(int value)
+{
+  statusProgress->setProgress(value);
+}
+
+void KFLog::slotSetStatusMsg(const QString &text)
+{
+  statusBar()->clear();
+//  statusBar()->message(text);
+  statusLabel->setText(text);
+}
+
+/* Slot to set filename for WaypointCatalog */
+void KFLog::slotSetWaypointCatalog(QString catalog)
+{
+  waypoints->slotSetWaypointCatalogName(catalog);
+}
+
+void KFLog::slotCheckDockWidgetStatus()
+{
+  // Here is still a bug. The toggle status is invalid, when the widget is a non active
+  // TabWidget.
+  //          Florian
+  flightEvaluationWindow->setOn(evaluationWindowDock->isShown());
+  settingsEvaluationWindow->setOn(evaluationWindowDock->isShown());
+  settingsFlightData->setOn(dataViewDock->isShown());
+  settingsHelpWindow->setOn(helpWindowDock->isShown());
+  settingsObjectTree->setOn(objectTreeDock->isShown());
+  settingsLegend->setOn(legendDock->isShown());
+//  settingsMap->setOn(mapViewDock->isShown());
+  settingsMapControl->setOn(mapControlDock->isShown());
+  settingsStatusBar->setOn(statusBar()->isShown());
+  settingsToolBar->setOn(toolBar->isShown());
+  settingsWaypoints->setOn(waypointsDock->isShown());
+}
+
+void KFLog::slotConfigureKFLog()
+{
+  KFLogConfig* confDlg = new KFLogConfig(this);
+
+  connect(confDlg, SIGNAL(scaleChanged(int, int)), mapControl, SLOT(slotSetMinMaxValue(int, int)));
+
+  extern MapConfig _globalMapConfig;
+  connect(confDlg, SIGNAL(configOk()), &_globalMapConfig, SLOT(slotReadConfig()));
+
+  extern MapContents _globalMapContents;
+  connect(confDlg, SIGNAL(configOk()), &_globalMapContents, SLOT(reProject()));
+
+  connect(confDlg, SIGNAL(configOk()), map, SLOT(slotRedrawMap()));
+
+  connect(confDlg, SIGNAL(newDrawType(int)), this, SLOT(slotSelectFlightData(int)));
+
+  confDlg->exec();
+
+  delete confDlg;
+}
+
+void KFLog::slotFilePrint()
+{
+  slotSetStatusMsg(tr("Printing..."));
+
+  // viewCenterFlight is enabled, when a flight is loaded ...
+  MapPrint::MapPrint(viewCenterFlight->isEnabled());
+
+  slotSetStatusMsg(tr("Ready."));
+}
+
+void KFLog::slotFlightPrint()
+{
+  slotSetStatusMsg(tr("Printing..."));
+
+  extern MapContents _globalMapContents;
+  BaseFlightElement *f = _globalMapContents.getFlight();
+  if(f)
+    {
+      switch (f->getTypeID())
+        {
+          case BaseMapElement::Flight:
+            FlightDataPrint::FlightDataPrint((Flight *)f);
+            break;
+          case BaseMapElement::Task:
+            TaskDataPrint::TaskDataPrint((FlightTask*)f);
+            break;
+          default:
+            QString tmp;
+            tmp.sprintf(tr("Not yet available for type: %d"), f->getTypeID());
+            QMessageBox::warning(0, tr("Type not available"), tmp, QMessageBox::Ok, 0);
+        }
+    }
+  slotSetStatusMsg(tr("Ready."));
+}
+
+void KFLog::slotStartComplete()
+{
+  if(showStartLogo && (startLogo != 0L))
+    {
+      delete startLogo;
+      startLogo = 0L;
+      showStartLogo=false;
+    }
+}
+
+void KFLog::slotToggleDataView()
+{
+  if(dataViewDock->isVisible())
+    dataViewDock->hide();
+  else
+    dataViewDock->show();
+  slotCheckDockWidgetStatus();
+}
+
+void KFLog::slotToggleEvaluationWindow()
+{
+  if(evaluationWindowDock->isVisible())
+    evaluationWindowDock->hide();
+  else
+    evaluationWindowDock->show();
+  slotCheckDockWidgetStatus();
+}
+
+void KFLog::slotToggleHelpWindow()
+{
+  if(helpWindowDock->isVisible())
+    helpWindowDock->hide();
+  else
+    helpWindowDock->show();
+  slotCheckDockWidgetStatus();
+}
+
+void KFLog::slotToggleLegendDock()
+{
+  if(legendDock->isVisible())
+    legendDock->hide();
+  else
+    legendDock->show();
+  slotCheckDockWidgetStatus();
+}
+
+// Map is now a background widget instead of a dock
+//void KFLog::slotToggleMap()
+//{
+//  if(mapViewDock->isVisible())
+//    mapViewDock->hide();
+//  else
+//    mapViewDock->show();
+////  slotCheckDockWidgetStatus();
+//}
+
+void KFLog::slotToggleMapControl()
+{
+  if(mapControlDock->isVisible())
+    mapControlDock->hide();
+  else
+    mapControlDock->show();
+  slotCheckDockWidgetStatus();
+}
+
+void KFLog::slotToggleObjectTreeDock()
+{
+  if(objectTreeDock->isVisible())
+    objectTreeDock->hide();
+  else
+    objectTreeDock->show();
+  slotCheckDockWidgetStatus();
+}
+
+void KFLog::slotToggleStatusBar()
+{
+  slotSetStatusMsg(tr("Toggle the statusbar..."));
+
+  if(statusBar()->isShown())
+    statusBar()->hide();
+  else
+    statusBar()->show();
+
+  slotCheckDockWidgetStatus();
+  slotSetStatusMsg(tr("Ready."));
+}
+
+void KFLog::slotToggleToolBar()
+{
+  slotSetStatusMsg(tr("Toggling toolbar..."));
+
+  if(toolBar->isShown())
+      toolBar->hide();
+  else
+      toolBar->show();
+
+  slotCheckDockWidgetStatus();
+  slotSetStatusMsg(tr("Ready."));
+}
+
+void KFLog::slotToggleWaypointsDock()
+{
+  if(waypointsDock->isVisible())
+    waypointsDock->hide();
+  else
+    waypointsDock->show();
+  slotCheckDockWidgetStatus();
+}
+
 /** Called to the What's This? mode. */
-void KFLogApp::slotWhatsThis(){
+void KFLog::slotWhatsThis(){
   QWhatsThis::enterWhatsThisMode();
 }
 
+/** insert available flights into menu */
+void KFLog::slotWindowsMenuAboutToShow()
+{
+  extern MapContents _globalMapContents;
+  QPtrList<BaseFlightElement> flights = *(_globalMapContents.getFlightList());
+  QPtrListIterator<BaseFlightElement> it(flights);
+  BaseFlightElement *flight;
+
+  windowMenu->clear();
+
+  for (int i = 0 ; it.current(); ++it , i++)
+    {
+      flight = it.current();
+      int id = windowMenu->insertItem(flight->getFileName(), &_globalMapContents, SLOT(slotSetFlight(int)));
+
+      windowMenu->setItemParameter(id, i);
+      windowMenu->setItemChecked(id, _globalMapContents.getFlightIndex() == i);
+    }
+}

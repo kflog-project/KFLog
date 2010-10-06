@@ -20,10 +20,13 @@
 
 #include <qbuffer.h>
 #include <qdatetime.h>
+#include <qdict.h>
+#include <qdir.h>
 #include <qfile.h>
 #include <qfileinfo.h>
 #include <qpoint.h>
 #include <qregexp.h>
+#include <qsettings.h>
 #include <qtextstream.h>
 
 #include "airport.h"
@@ -38,10 +41,6 @@
 #include "runway.h"
 #include "wgspoint.h"
 #include "distance.h"
-
-#include "kconfig.h"
-#include "kglobal.h"
-#include <kstandarddirs.h>
 
 #include "welt2000.h"
 
@@ -103,11 +102,8 @@ bool Welt2000::load( QPtrList<Airport>& airportList, QPtrList<GliderSite>& glide
   QString wu = "WELT2000.TXT";
   QString sd = "/airfields/";
 
-  KStandardDirs* globalDirs = KGlobal::dirs();
-  KConfig* config = KGlobal::config();
-  config->setGroup("Path");
-  QString mapDir = config->readEntry("DefaultMapDirectory",
-      globalDirs->findResource("data", "kflog/mapdata/"));
+  extern QSettings _settings;
+  QString mapDir = _settings.readEntry("/KFLog/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata");
 
   QString pl = mapDir + sd + wl;
   QString pu = mapDir + sd + wu;
@@ -408,9 +404,8 @@ bool Welt2000::parse( QString& path,
   // Check, if in GeneralConfig other definitions exist. These will
   // overwrite the definitions in the config file.
 
-  KConfig* config = KGlobal::config();
-  config->setGroup("Map Data");
-  QString cFilter = config->readEntry("Welt2000CountryFilter", "");
+  extern QSettings _settings;
+  QString cFilter = _settings.readEntry("/KFLog/MapData/Welt2000CountryFilter", "");
 
   if( cFilter.length() > 0 )
     {
@@ -433,8 +428,7 @@ bool Welt2000::parse( QString& path,
     }
 
   // get home radius from config data
-  config->setGroup("Map Data");
-  int radius = config->readNumEntry("Welt2000HomeRadius", 0);
+  int radius = _settings.readNumEntry("/KFLog/MapData/Welt2000HomeRadius", 0);
 
   if( radius == 0 )
     {
@@ -797,9 +791,8 @@ bool Welt2000::parse( QString& path,
           // read point. Is the distance is over the user defined
           // value away we will ignore this point.
 
-          config->setGroup("Map Data");
-          QPoint home( config->readNumEntry("Homesite Latitude"),
-                       config->readNumEntry("Homesite Longitude") );
+          QPoint home( _settings.readNumEntry("/KFLog/MapData/HomesiteLatitude"),
+                       _settings.readNumEntry("/KFLog/MapData/HomesiteLongitude") );
           QPoint af( lat, lon );
 
           double d = dist( &home, &af );
