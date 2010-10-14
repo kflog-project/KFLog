@@ -2,6 +2,10 @@ $Id$
 
 Implementation:
 
+  Hendrik Hoeth <hoeth@linta.de>
+
+  Constantijn Neeteson <kflog@neeteson.net>
+
   Heiner Lamprecht <heiner@kflog.org>
 
   Florian Ehinger <florian@kflog.org>
@@ -15,8 +19,6 @@ Implementation:
   André Somers <andre@kflog.org>
 
   Eggert Ehmke <eggert.ehmke@berlin.de>
-
-  Hendrik Hoeth <hoeth@linta.de>
 
 Translations:
 

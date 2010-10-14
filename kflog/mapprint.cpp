@@ -17,7 +17,7 @@
 
 #include "mapprint.h"
 
-#include "config.h"
+//#include "config.h"
 #include "flight.h"
 #include "mapcontents.h"
 #include "mapmatrix.h"
@@ -29,6 +29,8 @@
 #include <qpainter.h>
 #include <qprinter.h>
 #include <qpushbutton.h>
+
+#define VERSION "3.0"
 
 #define TOP_LEFT_X   ( ( 0 + leftMargin ) * 2 )
 #define TOP_LEFT_Y   ( ( 0 + topMargin ) * 2 )

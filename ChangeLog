@@ -2,6 +2,10 @@ $Id$
 
 2010-10-05 Constantijn Neeteson <kflog@neeteson.net>
 
+  * changed build automation to qmake. See INSTALL for installation instructions.
+
+2010-10-05 Constantijn Neeteson <kflog@neeteson.net>
+
   * automatic map download disabled, waiting for Qt4 classes (see downloadlist.cpp
     and mapcontents.cpp)
   * the layout of the Recorder and KFLogConfig dialog has been changed

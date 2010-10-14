@@ -17,10 +17,12 @@
 
 #include "flightdataprint.h"
 
-#include "config.h"
+//#include "config.h"
 #include "mapcalc.h"
 
 #include <qprinter.h>
+
+#define VERSION "3.0"
 
 FlightDataPrint::FlightDataPrint(Flight* currentFlight)
 {

@@ -643,7 +643,7 @@ void MapContents::proofeSection(bool isPrint)
   if(mapBorder.top() < 0) northCorner += 1;
   if(mapBorder.bottom() < 0) southCorner += 1;
 
-  mapDir = _settings.readEntry("/KFLog/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata/");
+  mapDir = _settings.readEntry("/KFLog/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata");
 
   // Checking for the MapFiles
   if(mapDir.isNull() && !(isFirstLoad & MAP_LOADED))
