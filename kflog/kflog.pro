@@ -1,3 +1,8 @@
+# KFLog qmake project file
+# $Id$
+
+QT += qt3support
+
 CONFIG += qt \
     warn_on \
     release
