@@ -1,3 +1,6 @@
+# qmake project file for KFLog
+# $Id$
+
 TEMPLATE = subdirs
 
 SUBDIRS =   kflog \
