@@ -21,15 +21,20 @@
 
 #include <qcolordialog.h>
 #include <qdir.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qsettings.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3GridLayout>
+#include <Q3Frame>
+#include <Q3PtrList>
 
 extern QSettings _settings;
 
 ConfigPrintElement::ConfigPrintElement(QWidget* parent)
-  : QFrame(parent, "ConfigPrintelement"),
+  : Q3Frame(parent, "ConfigPrintelement"),
     oldElement(-1)
 {
   airABorder = new bool[2];
@@ -302,7 +307,7 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent)
   border1Button-> setFixedWidth(30);
   border1Button-> setFixedHeight(30);
 
-  QGridLayout* elLayout = new QGridLayout(parent, 10, 15, 5, 1);
+  Q3GridLayout* elLayout = new Q3GridLayout(parent, 10, 15, 5, 1);
   elLayout-> addWidget(new QLabel(tr("draw up to"), parent), 1, 1);
   elLayout-> addMultiCellWidget(new QLabel(tr("Pen"), parent), 1, 1, 3, 7);
   elLayout-> addMultiCellWidget(new QLabel(tr("Brush"), parent), 1, 1, 9, 11);
@@ -1025,7 +1030,7 @@ void ConfigPrintElement::slotSetSecond()
   border2BrushStyle-> setCurrentItem(border1BrushStyle->currentItem());
 }
 
-void ConfigPrintElement::__defaultPen(QPtrList<QPen> *penList, bool *b,
+void ConfigPrintElement::__defaultPen(Q3PtrList<QPen> *penList, bool *b,
     QColor defaultColor1, QColor defaultColor2, int defaultPenSize1, int defaultPenSize2,
     Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2)
 {
@@ -1039,7 +1044,7 @@ void ConfigPrintElement::__defaultPen(QPtrList<QPen> *penList, bool *b,
   b[1] = true;
 }
 
-void ConfigPrintElement::__defaultPenBrush(QPtrList<QPen> *penList, bool *b, QPtrList<QBrush> *brushList,
+void ConfigPrintElement::__defaultPenBrush(Q3PtrList<QPen> *penList, bool *b, Q3PtrList<QBrush> *brushList,
     QColor defaultColor1, QColor defaultColor2, int defaultPenSize1, int defaultPenSize2,
     Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, QColor defaultBrushColor1, QColor defaultBrushColor2,
     Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2)
@@ -1086,7 +1091,7 @@ void ConfigPrintElement::__readBorder(QString group, bool *b)
   b[1] = _settings.readBoolEntry("/KFLog/Map/"+group+"/PrintBorder2", true);
 }
 
-void ConfigPrintElement::__readPen(QString group, QPtrList<QPen> *penList, bool *b,
+void ConfigPrintElement::__readPen(QString group, Q3PtrList<QPen> *penList, bool *b,
     QColor defaultColor1, QColor defaultColor2, int defaultPenSize1, int defaultPenSize2,
     Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2)
 {
@@ -1099,7 +1104,7 @@ void ConfigPrintElement::__readPen(QString group, QPtrList<QPen> *penList, bool 
         (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenStyle2", defaultPenStyle2)));
 }
 
-void ConfigPrintElement::__readPenBrush(QString group, QPtrList<QPen> *penList, bool *b, QPtrList<QBrush> *brushList,
+void ConfigPrintElement::__readPenBrush(QString group, Q3PtrList<QPen> *penList, bool *b, Q3PtrList<QBrush> *brushList,
     QColor defaultColor1, QColor defaultColor2, int defaultPenSize1, int defaultPenSize2,
     Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, QColor defaultBrushColor1, QColor defaultBrushColor2,
     Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2)
@@ -1112,7 +1117,7 @@ void ConfigPrintElement::__readPenBrush(QString group, QPtrList<QPen> *penList, 
         (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintBrushStyle2", defaultBrushStyle2)));
 }
 
-void ConfigPrintElement::__saveBrush(QPtrList<QBrush> *brushList)
+void ConfigPrintElement::__saveBrush(Q3PtrList<QBrush> *brushList)
 {
   brushList->at(0)->setColor(border1BrushColor);
   brushList->at(0)->setStyle((Qt::BrushStyle)border1BrushStyle->currentItem());
@@ -1120,7 +1125,7 @@ void ConfigPrintElement::__saveBrush(QPtrList<QBrush> *brushList)
   brushList->at(1)->setStyle((Qt::BrushStyle)border2BrushStyle->currentItem());
 }
 
-void ConfigPrintElement::__savePen(QPtrList<QPen> *penList, bool *b)
+void ConfigPrintElement::__savePen(Q3PtrList<QPen> *penList, bool *b)
 {
   b[0] = border1->isChecked();
   penList->at(0)->setColor(border1Color);
@@ -1132,7 +1137,7 @@ void ConfigPrintElement::__savePen(QPtrList<QPen> *penList, bool *b)
   penList->at(1)->setStyle((Qt::PenStyle)(border2PenStyle->currentItem() + 1));
 }
 
-void ConfigPrintElement::__showBrush(QPtrList<QBrush> *brushList)
+void ConfigPrintElement::__showBrush(Q3PtrList<QBrush> *brushList)
 {
   QPixmap *buttonPixmap = new QPixmap();
   buttonPixmap->resize(45, 14);
@@ -1148,7 +1153,7 @@ void ConfigPrintElement::__showBrush(QPtrList<QBrush> *brushList)
   border2BrushStyle->setCurrentItem(brushList->at(1)->style());
 }
 
-void ConfigPrintElement::__showPen(QPtrList<QPen> *penList, bool *b)
+void ConfigPrintElement::__showPen(Q3PtrList<QPen> *penList, bool *b)
 {
   QPixmap *buttonPixmap = new QPixmap();
   buttonPixmap->resize(45, 14);
@@ -1168,7 +1173,7 @@ void ConfigPrintElement::__showPen(QPtrList<QPen> *penList, bool *b)
   border2PenStyle->setCurrentItem(penList->at(1)->style() - 1);
 }
 
-void ConfigPrintElement::__writeBrush(QString group, QPtrList<QBrush> *brushList, QPtrList<QPen> *penList, bool *b)
+void ConfigPrintElement::__writeBrush(QString group, Q3PtrList<QBrush> *brushList, Q3PtrList<QPen> *penList, bool *b)
 {
   __writePen(group, penList, b);
   _settings.writeEntry("/KFLog/Map/"+group+"/PrintBrushColor1", __color2String(brushList->at(0)->color())); \
@@ -1177,7 +1182,7 @@ void ConfigPrintElement::__writeBrush(QString group, QPtrList<QBrush> *brushList
   _settings.writeEntry("/KFLog/Map/"+group+"/PrintBrushStyle2", brushList->at(1)->style());
 }
 
-void ConfigPrintElement::__writePen(QString group, QPtrList<QPen> *penList, bool *b)
+void ConfigPrintElement::__writePen(QString group, Q3PtrList<QPen> *penList, bool *b)
 {
   _settings.writeEntry("/KFLog/Map/"+group+"/PrintColor1", __color2String(penList->at(0)->color()));
   _settings.writeEntry("/KFLog/Map/"+group+"/PrintColor2", __color2String(penList->at(1)->color()));

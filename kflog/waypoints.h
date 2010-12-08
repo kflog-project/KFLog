@@ -18,17 +18,16 @@
 #ifndef WAYPOINTS_H
 #define WAYPOINTS_H
 
-#include "waypointimpfilterdialog.h"
-#include "waypointdialog.h"
-#include "waypointcatalog.h"
 #include "guicontrols/kfloglistview.h"
 #include "waypoint.h"
+#include "waypointcatalog.h"
+#include "waypointdialog.h"
+#include "waypointimpfilterdialog.h"
 
-#include <qcombobox.h>
-#include <qframe.h>
-#include <qpopupmenu.h>
-#include <qptrlist.h>
-#include <qsplitter.h>
+#include <QComboBox>
+#include <QFrame>
+#include <q3popupmenu.h>
+#include <QSplitter>
 
 
 /**
@@ -67,9 +66,9 @@ class Waypoints : public QFrame  {
   void openCatalog(QString &catalog);
  private: // Private attributes
   /** popup menu for waypoint's */
-  QPopupMenu *wayPointPopup;
-  QPopupMenu *catalogCopySubPopup;
-  QPopupMenu *catalogMoveSubPopup;
+  Q3PopupMenu *wayPointPopup;
+  Q3PopupMenu *catalogCopySubPopup;
+  Q3PopupMenu *catalogMoveSubPopup;
   
   /**  */
   QComboBox *catalogName;
@@ -91,7 +90,8 @@ class Waypoints : public QFrame  {
   int idWaypointMove2Catalog;
 
   /** all loaded catalogs */
-  QPtrList<WaypointCatalog> waypointCatalogs;
+  QList<WaypointCatalog*> waypointCatalogs;
+  WaypointCatalog *currentWaypointCatalog;
   /**  */
   WaypointDialog *waypointDlg;
   WaypointImpFilterDialog *importFilterDlg;
@@ -123,7 +123,7 @@ class Waypoints : public QFrame  {
   void slotCloseWaypointCatalog();
   void slotImportWaypointCatalog();
   void slotSwitchWaypointCatalog(int idx);
-  void showWaypointPopup(QListViewItem *, const QPoint &, int);
+  void showWaypointPopup(Q3ListViewItem *, const QPoint &, int);
   void slotImportWaypointFromMap();
   void slotCopyWaypoint2Task();
   void slotCenterMap();

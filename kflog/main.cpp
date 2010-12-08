@@ -15,9 +15,9 @@
 **
 ***********************************************************************/
 
-#include <qapplication.h>
-#include <qsettings.h>
-#include <qtimer.h>
+#include <QApplication>
+#include <QSettings>
+#include <QTimer>
 
 #include "kflog.h"
 #include "kflogconfig.h"
@@ -108,13 +108,13 @@ int main(int argc, char **argv)
 //      qstrdup(QObject::tr("Developer (Waypoint-Dialog, Task-handling)")), "harry@kflog.org");
 //  aboutData.addAuthor("Thomas Nielsen",
 //      qstrdup(QObject::tr("Developer (3D-Dialog)")), "thomas@kflog.org");
-//  aboutData.addAuthor("Jan Krüger",
+//  aboutData.addAuthor("Jan KrÃ¼ger",
 //      qstrdup(QObject::tr("Developer (3D-Dialog)")), "jan@kflog.org");
 //
 //  aboutData.setTranslator(qstrdup(QObject::tr("_: NAME OF TRANSLATORS\nYour names")),
 //    qstrdup(QObject::tr("_: EMAIL OF TRANSLATORS\nYour emails")));
 
-  QApplication qApp(argc, argv);
+  QApplication app(argc, argv);
   BaseMapElement::initMapElement(&_globalMapMatrix, &_globalMapConfig);
 
   QSettings _settings;
@@ -126,34 +126,34 @@ int main(int argc, char **argv)
   QString argument, fileOpenIGC, fileExportPNG, width = "640", height = "480";
   QString waypointsOptionArg;
   bool batch = false, comment = true, exportPNG = false, fileOpen = false;
-  for(unsigned int i = 0; i<qApp.argc(); i++) {
-    argument = QString(qApp.argv()[i]);
-    if(argument=="--batch" || argument=="-b")
+  for(int i = 0; i<app.argc(); i++) {
+    argument = QString(app.argv()[i]);
+    if(argument=="--batch" || argument=="-b") {
       batch = true;
-    else if((argument=="--export-png" || argument=="-e") && i+2<qApp.argc()) {
+    } else if((argument=="--export-png" || argument=="-e") && i+2<app.argc()) {
       exportPNG = true;
-      fileExportPNG = QString(qApp.argv()[i++]);
+      fileExportPNG = QString(app.argv()[i++]);
     } else if(argument=="--export-png" || argument=="-e") {
       exportPNG = true;
       fileExportPNG = QString("file:out.png");
-    } else if(argument=="--height" || argument=="-h")
-      if(i+2<qApp.argc())
-        height = QString(qApp.argv()[i++]);
-    else if(argument=="--width" || argument=="-w")
-      if(i+2<qApp.argc())
-        width = QString(qApp.argv()[i++]);
-    else if(argument=="--nocomment" || argument=="-c")
+    } else if(argument=="--height" || argument=="-h") {
+      if(i+2<app.argc())
+        height = QString(app.argv()[i++]);
+    } else if(argument=="--width" || argument=="-w") {
+      if(i+2<app.argc())
+        width = QString(app.argv()[i++]);
+    } else if(argument=="--nocomment" || argument=="-c") {
       comment = false;
-    else if(argument=="--waypoints" && i+1<qApp.argc())
-      waypointsOptionArg = qApp.argv()[i++];
-    else if(i!=0) {
+    } else if(argument=="--waypoints" && i+1<app.argc()) {
+      waypointsOptionArg = app.argv()[i++];
+    } else if(i!=0) {
       fileOpen = true;
-      fileOpenIGC = QString(qApp.argv()[i]);
+      fileOpenIGC = QString(app.argv()[i]);
     }
   }
 
   if(!waypointsOptionArg.isEmpty()) {
-    warning("WaypointCatalog specified at startup : %s", (const char*)waypointsOptionArg);
+    qWarning("WaypointCatalog specified at startup : %s", (const char*)waypointsOptionArg);
     kflog->slotSetWaypointCatalog(waypointsOptionArg);
   }
   else {
@@ -176,18 +176,18 @@ int main(int argc, char **argv)
 
       if(exportPNG){
         _settings.writeEntry("/KFLog/CommentSettings/ShowComment", comment);
-        warning("Writing PNG...");
+        qWarning("Writing PNG...");
         QUrl url(fileExportPNG);
         kflog->slotSavePixmap(url, width.toInt(), height.toInt());
       }
 
       if(batch){
-        warning("Exiting.");
+        qWarning("Exiting.");
         return 0;
       }
 
   }
   QTimer::singleShot(700, kflog, SLOT(slotStartComplete()));
 
-  return qApp.exec();
+  return app.exec();
 }

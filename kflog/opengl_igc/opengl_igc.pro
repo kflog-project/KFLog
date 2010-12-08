@@ -9,3 +9,5 @@ HEADERS =   openglwidget.h \
             glview.h
 
 DESTDIR = ../../release
+#The following line was inserted by qt3to4
+QT += xml  opengl qt3support 

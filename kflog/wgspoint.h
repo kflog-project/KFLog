@@ -23,7 +23,7 @@
 #ifndef WGSPOINT_H
 #define WGSPOINT_H
 
-#include <qpoint.h>
+#include <QPoint>
 
 class WGSPoint : public QPoint
 {

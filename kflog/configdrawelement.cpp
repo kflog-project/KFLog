@@ -21,15 +21,20 @@
 
 #include <qcolordialog.h>
 #include <qdir.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qsettings.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3GridLayout>
+#include <Q3Frame>
+#include <Q3PtrList>
 
 extern QSettings _settings;
 
 ConfigDrawElement::ConfigDrawElement(QWidget* parent)
-  : QFrame(parent, "configdrawelement"),
+  : Q3Frame(parent, "configdrawelement"),
     oldElement(-1)
 {
   airABorder = new bool[4];
@@ -340,7 +345,7 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent)
   border3Button-> setFixedWidth(30);
   border3Button-> setFixedHeight(30);
 
-  QGridLayout* elLayout = new QGridLayout(parent, 10, 15, 5, 1);
+  Q3GridLayout* elLayout = new Q3GridLayout(parent, 10, 15, 5, 1);
   elLayout-> addWidget(new QLabel(tr("draw up to"), parent), 1, 1);
   elLayout-> addMultiCellWidget(new QLabel(tr("Pen"), parent), 1, 1, 3, 7);
   elLayout-> addMultiCellWidget(new QLabel(tr("Brush"), parent), 1, 1, 9, 11);
@@ -1315,7 +1320,7 @@ void ConfigDrawElement::slotSetForth()
   border4BrushStyle-> setCurrentItem(border3BrushStyle->currentItem());
 }
 
-void ConfigDrawElement::__defaultPen(QPtrList<QPen> *penList, bool *b,
+void ConfigDrawElement::__defaultPen(Q3PtrList<QPen> *penList, bool *b,
     QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4,
     int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4)
 {
@@ -1333,7 +1338,7 @@ void ConfigDrawElement::__defaultPen(QPtrList<QPen> *penList, bool *b,
   b[3] = true;
 }
 
-void ConfigDrawElement::__defaultPenBrush(QPtrList<QPen> *penList, bool *b, QPtrList<QBrush> *brushList,
+void ConfigDrawElement::__defaultPenBrush(Q3PtrList<QPen> *penList, bool *b, Q3PtrList<QBrush> *brushList,
     QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4,
     int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4,
     QColor defaultBrushColor1, QColor defaultBrushColor2, QColor defaultBrushColor3, QColor defaultBrushColor4,
@@ -1388,9 +1393,9 @@ void ConfigDrawElement::__readBorder(QString group, bool *b)
   b[3] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border4", true);
 }
 
-void ConfigDrawElement::__readPen(QString group, QPtrList<QPen> *penList,
+void ConfigDrawElement::__readPen(QString group, Q3PtrList<QPen> *penList,
     QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4,
-    int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4,
+    int defaultPenSize1, int defaultPenSize2, int /*defaultPenSize3*/, int /*defaultPenSize4*/,
     Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4)
 {
   penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color1", __color2String(defaultColor1))),
@@ -1407,7 +1412,7 @@ void ConfigDrawElement::__readPen(QString group, QPtrList<QPen> *penList,
         (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle4", defaultPenStyle4)));
 }
 
-void ConfigDrawElement::__readBrush(QString group, QPtrList<QBrush> *brushList,
+void ConfigDrawElement::__readBrush(QString group, Q3PtrList<QBrush> *brushList,
     QColor defaultBrushColor1, QColor defaultBrushColor2, QColor defaultBrushColor3, QColor defaultBrushColor4,
     Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2, Qt::BrushStyle defaultBrushStyle3, Qt::BrushStyle defaultBrushStyle4)
 {
@@ -1421,7 +1426,7 @@ void ConfigDrawElement::__readBrush(QString group, QPtrList<QBrush> *brushList,
         (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle4", defaultBrushStyle4)));
 }
 
-void ConfigDrawElement::__saveBrush(QPtrList<QBrush> *brushList)
+void ConfigDrawElement::__saveBrush(Q3PtrList<QBrush> *brushList)
 {
   brushList->at(0)->setColor(border1BrushColor);
   brushList->at(0)->setStyle((Qt::BrushStyle)border1BrushStyle->currentItem());
@@ -1433,7 +1438,7 @@ void ConfigDrawElement::__saveBrush(QPtrList<QBrush> *brushList)
   brushList->at(3)->setStyle((Qt::BrushStyle)border4BrushStyle->currentItem());
 }
 
-void ConfigDrawElement::__savePen(QPtrList<QPen> *penList, bool *b)
+void ConfigDrawElement::__savePen(Q3PtrList<QPen> *penList, bool *b)
 {
   b[0] = border1->isChecked();
   penList->at(0)->setColor(border1Color);
@@ -1453,7 +1458,7 @@ void ConfigDrawElement::__savePen(QPtrList<QPen> *penList, bool *b)
   penList->at(3)->setStyle((Qt::PenStyle)(border4PenStyle->currentItem() + 1));
 }
 
-void ConfigDrawElement::__showBrush(QPtrList<QBrush> *brushList)
+void ConfigDrawElement::__showBrush(Q3PtrList<QBrush> *brushList)
 {
   QPixmap *buttonPixmap = new QPixmap();
   buttonPixmap->resize(45, 14);
@@ -1479,7 +1484,7 @@ void ConfigDrawElement::__showBrush(QPtrList<QBrush> *brushList)
   border4BrushStyle->setCurrentItem(brushList->at(2)->style());
 }
 
-void ConfigDrawElement::__showPen(QPtrList<QPen> *penList, bool *b)
+void ConfigDrawElement::__showPen(Q3PtrList<QPen> *penList, bool *b)
 {
   QPixmap *buttonPixmap = new QPixmap();
   buttonPixmap->resize(45, 14);
@@ -1513,7 +1518,7 @@ void ConfigDrawElement::__showPen(QPtrList<QPen> *penList, bool *b)
   border4PenStyle->setCurrentItem(penList->at(3)->style() - 1);
 }
 
-void ConfigDrawElement::__writeBrush(QString group, QPtrList<QBrush> *brushList, QPtrList<QPen> *penList, bool *b)
+void ConfigDrawElement::__writeBrush(QString group, Q3PtrList<QBrush> *brushList, Q3PtrList<QPen> *penList, bool *b)
 {
   __writePen(group, penList, b);
   _settings.writeEntry("/KFLog/Map/"+group+"/BrushColor1", __color2String(brushList->at(0)->color()));
@@ -1526,7 +1531,7 @@ void ConfigDrawElement::__writeBrush(QString group, QPtrList<QBrush> *brushList,
   _settings.writeEntry("/KFLog/Map/"+group+"/BrushStyle4", brushList->at(3)->style());
 }
 
-void ConfigDrawElement::__writePen(QString group, QPtrList<QPen> *penList, bool *b)
+void ConfigDrawElement::__writePen(QString group, Q3PtrList<QPen> *penList, bool *b)
 {
   _settings.writeEntry("/KFLog/Map/"+group+"/Color1", __color2String(penList->at(0)->color()));
   _settings.writeEntry("/KFLog/Map/"+group+"/Color2", __color2String(penList->at(1)->color()));

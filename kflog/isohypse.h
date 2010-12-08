@@ -18,8 +18,9 @@
 #ifndef ISOHYPSE_H
 #define ISOHYPSE_H
 
+#include <QRegion>
+
 #include "lineelement.h"
-#include <qregion.h>
 
 /**
  * This class is used for isohypses.
@@ -36,7 +37,7 @@ class Isohypse : public LineElement
      * @param  elev  The elevation
      * @param  isValles "true", if the area is a valley
      */
-    Isohypse(QPointArray pA, unsigned int elev, bool isValley);
+    Isohypse(Q3PointArray pA, unsigned int elev, bool isValley);
     /**
      * Destructor
      */

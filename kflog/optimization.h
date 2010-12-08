@@ -18,12 +18,11 @@
 #ifndef OPTIMIZATION_H
 #define OPTIMIZATION_H
 
-#include <qthread.h>
-#include <qprogressbar.h>
-#include <qptrlist.h>
-#include <qvaluelist.h>
-#include "wp.h"
+//#include <qthread.h>
+#include <QProgressBar>
+
 #include "mapcalc.h"
+#include "wp.h"
 
 /**
   * This class optimizes a task according to the OLC 2003 rules
@@ -46,7 +45,7 @@ public:
   * @param route List of flightpoints that together consitute the route this flight used.
   * @param progressBar optional reference to a progressbar to indicate optimisation progress.
   */
-  Optimization(unsigned int firstPoint, unsigned int lastPoint, QPtrList<flightPoint> route,QProgressBar* progressBar=0);
+  Optimization(unsigned int firstPoint, unsigned int lastPoint, QList<flightPoint*> route, QProgressBar *progressBar=0);
  /**
   * Destructor
   */ 
@@ -74,15 +73,15 @@ public slots:
   void enableRun();
 private:
   double weight(unsigned int k); // different weight for the legs
-  QPtrList<flightPoint> original_route;
-  QPtrList<flightPoint> route;
+  QList<flightPoint*> original_route;
+  QList<flightPoint*> route;
   double distance,points;
   unsigned int pointList[LEGS+1];   // solution points
   unsigned int start;    // first
   unsigned int stop;     // last valid point
   bool  optimized;
   bool  stopit;
-  QProgressBar* progress;
+  QProgressBar *progress;
 };
 
 #endif

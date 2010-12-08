@@ -129,10 +129,10 @@
 #ifndef _welt2000_h
 #define _welt2000_h
 
-#include <qmap.h>
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qrect.h>
+#include <QMap>
+#include <QString>
+#include <QStringList>
+#include <QRect>
 
 #include "basemapelement.h"
 #include "mapcontents.h"
@@ -168,7 +168,7 @@ public:
      * @param glidertList All gilder fields have to be stored in this list
      * @returns true (success) or false (error occured)
      */
-    bool load( QPtrList<Airport>& airportList, QPtrList<GliderSite>& gliderSiteList );
+    bool load(QList<Airport*> &airportList, QList<GliderSite*> &gliderSiteList);
 
 private:
 
@@ -183,9 +183,9 @@ private:
      *                  if flag is set to true. Default is false
      * @returns true (success) or false (error occured)
      */
-    bool parse( QString& path,
-                QPtrList<Airport>& airportList,
-                QPtrList<GliderSite>& gliderSiteList,
+    bool parse( QString &path,
+                QList<Airport*> &airportList,
+                QList<GliderSite*> &gliderSiteList,
                 bool doCompile=false );
 
     /**
@@ -239,9 +239,9 @@ private:
     double c_homeRadius;
 
     // header data members of compiled file
-    Q_UINT32 h_magic;
-    Q_INT8 h_fileType;
-    UINT16 h_fileVersion;
+    unsigned int h_magic;
+    char *h_fileType;
+    unsigned short h_fileVersion;
     QDateTime h_creationDateTime;
     QStringList h_countryList;
     double h_homeRadius;

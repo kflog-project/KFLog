@@ -18,9 +18,11 @@
 #ifndef WAYPOINT_H
 #define WAYPOINT_H
 
-#include "wgspoint.h"
 #include <time.h>
-#include <qstring.h>
+
+#include <QString>
+
+#include "wgspoint.h"
 
 /**
   *@short Class to contain waypoints
@@ -40,6 +42,7 @@ public:
   Waypoint(Waypoint *p);
   Waypoint(Waypoint &p);
   ~Waypoint();
+  bool operator<(Waypoint &wp);
   /**
    * The name of the waypoint.
    */

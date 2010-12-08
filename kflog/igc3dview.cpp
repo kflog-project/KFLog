@@ -19,6 +19,12 @@
 
 // Qt headers
 #include <qmessagebox.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QResizeEvent>
+#include <QMouseEvent>
+#include <QKeyEvent>
+#include <QPaintEvent>
 
 // Application headers
 #include "mapcontents.h"
@@ -35,7 +41,7 @@
                                                                                                 "S : \t \t toggle shadow \n" \
                                                                                                 "B : \t \t toggle back \n"       \
                                                                                                 "F : \t \t toggle front \n"),     \
-                                      tr("&Ok"), 0,  0 );
+                                      tr("&Ok"));
 
 
 
@@ -47,9 +53,9 @@ Igc3DView::Igc3DView(Igc3DDialog* dialog)
   igc3DDialog(dialog)
 {
   isFlight = false;
-  setBackgroundColor(QColor(white));
+  setBackgroundColor(QColor(Qt::white));
 
-  setFocusPolicy(QWidget::StrongFocus);
+  setFocusPolicy(Qt::StrongFocus);
 
   // create members
   this->state = new Igc3DViewState();
@@ -166,46 +172,46 @@ void Igc3DView::keyPressEvent ( QKeyEvent * k )
         int n;
 
         switch ( k->key() ) {
-                case Key_R:
+                case Qt::Key_R:
                         reset();
                         break;
 //                case Key_T:
 //                        state->flight_trace = (state->flight_trace + 1)%2;
 //                        break;
-                case Key_S:
+                case Qt::Key_S:
                         state->flight_shadow = (state->flight_shadow + 1)%2;
                         break;
-                case Key_B:
+                case Qt::Key_B:
                         state->polyhedron_back = (state->polyhedron_back + 1)%2;
                         break;
-                case Key_F:
+                case Qt::Key_F:
                         state->polyhedron_front = (state->polyhedron_front + 1)%2;
                         break;
-                case Key_Down:
+                case Qt::Key_Down:
                         n = (int)state->alpha-5;
                         change_alpha(n);
                         break;
-                case Key_Up:
+                case Qt::Key_Up:
                         n = (int)state->alpha+5;
                         change_alpha(n);
                         break;
-                case Key_Left:
+                case Qt::Key_Left:
                         n = (int)state->gamma+5;
                         change_gamma(n);
                         break;
-                case Key_Right:
+                case Qt::Key_Right:
                         n = (int)state->gamma-5;
                         change_gamma(n);
                         break;
-                case Key_Plus:
+                case Qt::Key_Plus:
                         n = (int)state->mag+2;
                         change_mag(n);
                         break;
-                case Key_Minus:
+                case Qt::Key_Minus:
                         n = (int)state->mag-2;
                         change_mag(n);
                         break;
-                case Key_F1:
+                case Qt::Key_F1:
                         DISPLAY_HELP_MESSAGE
                         break;
         }
@@ -217,7 +223,7 @@ void Igc3DView::reset()
         change_centering(0);
         state->reset();
 
-        //startTimer( state->ms_timer );
+        //timerID = startTimer( state->ms_timer );
 }
 
 Igc3DViewState* Igc3DView::getState()
@@ -282,8 +288,8 @@ void Igc3DView::change_fps(int i)
 {
         state->ms_timer = (int) (1000.0/i);
         if(state->timerflag == 1){
-                killTimers();
-                startTimer( state->ms_timer );
+                killTimer(timerID);
+                timerID = startTimer( state->ms_timer );
         }
 }
 

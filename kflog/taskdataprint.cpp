@@ -15,12 +15,10 @@
 **
 ***********************************************************************/
 
-#include "taskdataprint.h"
+#include <QPrinter>
 
-//#include "config.h"
 #include "mapcalc.h"
-
-#include <qprinter.h>
+#include "taskdataprint.h"
 
 #define VERSION "3.0"
 
@@ -62,7 +60,7 @@ TaskDataPrint::TaskDataPrint(FlightTask* task)
   painter.setFont(QFont("helvetica", 10));
 
   int yPos = 210;
-  for(unsigned int loop = 0; loop < task->getWPList().count(); loop++)
+  for(int loop = 0; loop < task->getWPList().count(); loop++)
     {
       cPoint = task->getWPList().at(loop);
       painter.drawText(50, yPos, cPoint->name);

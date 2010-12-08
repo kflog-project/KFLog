@@ -21,7 +21,7 @@
 #ifndef DISTANCE_H
 #define DISTANCE_H
 
-#include <qstring.h>
+#include <QString>
 
 /** @short Abstract Distance
  *

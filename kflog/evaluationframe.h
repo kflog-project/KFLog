@@ -21,18 +21,20 @@
 #include "evaluationview.h"
 
 #include <qcheckbox.h>
-#include <qframe.h>
-#include <qscrollview.h>
+#include <q3frame.h>
+#include <q3scrollview.h>
 #include <qslider.h>
 #include <qspinbox.h>
-#include <qtextview.h>
+#include <q3textview.h>
+//Added by qt3to4:
+#include <QResizeEvent>
 
 class EvaluationDialog;
 
 /**
  * @author Heiner Lamprecht
  */
-class EvaluationFrame : public QFrame
+class EvaluationFrame : public Q3Frame
 {
   Q_OBJECT
 
@@ -69,10 +71,10 @@ class EvaluationFrame : public QFrame
 
   private:
 
-    QScrollView* graphFrame;
+    Q3ScrollView* graphFrame;
     EvaluationView* evalView;
 
-    QTextView* cursorLabel;
+    Q3TextView* cursorLabel;
 
     QCheckBox* check_vario;
     QCheckBox* check_baro;

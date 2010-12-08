@@ -32,6 +32,8 @@
 #include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include "../airport.h"
 #include "filser.h"
@@ -152,7 +154,7 @@ void debugHex (const void* buf, unsigned int size)
       else
         line += ' ';
     }
-    qDebug (line);
+    qDebug("%s", (const char*)line.toLatin1());
   }
 }
 
@@ -233,7 +235,7 @@ FlightRecorderPluginBase::TransferMode Filser::getTransferMode() const
   return FlightRecorderPluginBase::serial;
 }
 
-int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
+int Filser::getFlightDir(QList<FRDirEntry*>* dirList)
 {
   qDebug ("Filser::getFlightDir");
   int flightCount = 0;
@@ -385,7 +387,8 @@ int Filser::getFlightDir(QPtrList<FRDirEntry>* dirList)
                                                                   // the counter of the flight
                                                                   // of the day (IGC tech specs).
                                                                   // Please, keep it this way.
-      warning(dirList->at(i)->longFileName + "   " + dirList->at(i)->shortFileName);
+      qWarning("%s   %s", (const char*)dirList->at(i)->longFileName.toLatin1(),
+                          (const char*)dirList->at(i)->shortFileName.toLatin1());
     }
     QDir::setCurrent(QDir::homeDirPath() + "/.kflog");
     tmpigc.remove("tmpigc");
@@ -507,7 +510,7 @@ int Filser::getBasicData(FR_BasicData& data)
   //                 check4Device() is doing this now too by 'while(0xff != rb());'.
   while(0xff != rb())
     lc++;
-  warning ("while _basicData: %d + %d (%d)", bufP - buf, lc, BUFSIZE);
+  qWarning ("while _basicData: %d + %d (%d)", bufP - buf, lc, BUFSIZE);
 
   if (!check4Device()) {
     _keepalive->blockSignals(false);
@@ -561,12 +564,12 @@ int Filser::getBasicData(FR_BasicData& data)
   return rc;
 }
 
-int Filser::getConfigData(FR_ConfigData& data)
+int Filser::getConfigData(FR_ConfigData& /*data*/)
 {
   return FR_NOTSUPPORTED;
 }
 
-int Filser::writeConfigData(FR_BasicData& basicdata, FR_ConfigData& configdata)
+int Filser::writeConfigData(FR_BasicData& /*basicdata*/, FR_ConfigData& /*configdata*/)
 {
   return FR_NOTSUPPORTED;
 }
@@ -683,7 +686,7 @@ int Filser::openRecorder(const QString& pName, int baud)
     _da4BufferValid = false;
 
     if(!AutoBaud()){
-      warning(tr("No baudrate found!"));
+      qWarning(tr("No baudrate found!"));
       _isConnected = false;
       return FR_ERROR;
     };
@@ -692,7 +695,7 @@ int Filser::openRecorder(const QString& pName, int baud)
     return FR_OK;
     }
   else {
-    warning(tr("No logger found!"));
+    qWarning(tr("No logger found!"));
     _isConnected = false;
     return FR_ERROR;
   }
@@ -997,7 +1000,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
           return false;
         }
       }
-      fprintf(figc, "L%sEMPTY%d\r\n", i, manufactureKey );
+      fprintf(figc, "L%dEMPTY%s\r\n", i, manufactureKey );
     }
     else if((fil_p[0] <= MAX_LSTRING) && (fil_p[0] > 0)) {
       fprintf(figc, "%.*s\r\n", fil_p[0], fil_p + 1);
@@ -1499,7 +1502,7 @@ unsigned char *Filser::readData(unsigned char *bufP, int count)
   int rc;
   switch (rc = read(portID, bufP, count)) {
   case -1:
-    warning("read_data(): ERROR");
+    qWarning("read_data(): ERROR");
     break;
   default:
     // qDebug ("readData: %x(%x)", rc, count);
@@ -1515,7 +1518,7 @@ unsigned char *Filser::writeData(unsigned char *bufP, int count)
   switch (rc = write(portID, bufP, count))
   {
   case -1:
-    warning("write_data(): ERROR");
+    qWarning("write_data(): ERROR");
     break;
   default:
     // qDebug ("writeData: %x(%x)", rc, count);
@@ -1565,7 +1568,7 @@ bool Filser::readMemSetting()
    *     (buf[5] == 0x0b)      stop page
    *     (buf[6] == 0x41)      CRC value
    */
-  warning("read_mem_setting(): all fine!!");
+  qWarning("read_mem_setting(): all fine!!");
 
   return true;
 }
@@ -1604,7 +1607,7 @@ bool Filser::AutoBaud()
 
     while(0xff != rb())       // 12.03.2005 Fughe: Make the stream really
       lc++;                   //                   empty!
-    warning ("while _AB: %d", lc);
+    qWarning ("while _AB: %d", lc);
     wb(SYN);
     tcdrain (portID);
 
@@ -1708,7 +1711,7 @@ bool Filser::check4Device()
 
     while(0xff != rb())         // 12.03.2005 Fughe: Make the stream really
       lc++;                     //                   empty!
-    warning ("while c4d: %d", lc);
+    qWarning ("while c4d: %d", lc);
     wb(SYN);
     tcdrain (portID);
 
@@ -1840,7 +1843,7 @@ int Filser::closeRecorder()
     ============================================*/
 
 
-int Filser::writeDeclaration(FRTaskDeclaration* , QPtrList<Waypoint>* )
+int Filser::writeDeclaration(FRTaskDeclaration* , QList<Waypoint*>* )
 {
   return FR_NOTSUPPORTED;
 }
@@ -1855,7 +1858,7 @@ int Filser::readDatabase()
   * read the da4 buffer and select tasks
   * tasks are contructed from waypoints in the same buffer !
   */
-int Filser::readTasks(QPtrList<FlightTask> * tasks)
+int Filser::readTasks(QList<FlightTask*> * tasks)
 {
   qDebug ("Filser::readTasks");
 
@@ -1863,15 +1866,15 @@ int Filser::readTasks(QPtrList<FlightTask> * tasks)
   if (result != FR_OK)
     return result;
 
-  for (unsigned int RecordNumber = 0; RecordNumber < _capabilities.maxNrTasks; RecordNumber++)
+  for (int RecordNumber = 0; RecordNumber < _capabilities.maxNrTasks; RecordNumber++)
   {
     emit progress (false, RecordNumber, _capabilities.maxNrTasks);
     if (_da4Buffer.tasks[RecordNumber].prg)
     {
       DA4TaskRecord record (&_da4Buffer.tasks[RecordNumber]);
-      QPtrList<Waypoint> wplist;
+      QList<Waypoint*> wplist;
       Waypoint* wp;
-      for (unsigned int i = 0; i < _capabilities.maxNrWaypointsPerTask; i++)
+      for (int i = 0; i < _capabilities.maxNrWaypointsPerTask; i++)
       {
         if (record.pnttype(i) != 0)
         {
@@ -1947,7 +1950,7 @@ int Filser::findWaypoint (Waypoint* wp)
   * they are constructed on the fly
   * write the buffer back to recorder
   */
-int Filser::writeTasks(QPtrList<FlightTask>* tasks)
+int Filser::writeTasks(QList<FlightTask*>* tasks)
 {
   qDebug ("Filser::writeTasks");
 
@@ -1956,7 +1959,8 @@ int Filser::writeTasks(QPtrList<FlightTask>* tasks)
     return result;
 
   int RecordNumber = 0;
-  for (FlightTask* task = tasks->first(); task; task = tasks->next())
+  FlightTask *task;
+  foreach(task, *tasks)
   {
     DA4TaskRecord taskrecord (&_da4Buffer.tasks[RecordNumber++]);
     taskrecord.clear();
@@ -1964,9 +1968,10 @@ int Filser::writeTasks(QPtrList<FlightTask>* tasks)
     if (RecordNumber >= (int)_capabilities.maxNrTasks)
       break;
     taskrecord.setPrg (1);
-    QPtrList<Waypoint> wplist = task->getWPList();
+    QList<Waypoint*> wplist = task->getWPList();
     int wpCnt = 0;
-    for (Waypoint* wp = wplist.first(); wp; wp = wplist.next())
+    Waypoint *wp;
+    foreach(wp, wplist)
     {
       // should never happen
       if (wpCnt >= (int)_capabilities.maxNrWaypointsPerTask)
@@ -2020,7 +2025,7 @@ int Filser::readDA4Buffer()
   if (rb () != calcCrcBuf (&_da4Buffer, sizeof (DA4Buffer)))
   {
     _errorinfo = tr("Filser::readWaypoints(): Bad CRC");
-    qDebug (_errorinfo);
+    qDebug ("%s", (const char*)_errorinfo.toLatin1());
     return FR_ERROR;
   }
   _da4BufferValid = true;
@@ -2031,7 +2036,7 @@ int Filser::readDA4Buffer()
   * read the waypoints from the lx recorder
   * read the da4 buffer and select waypoints
   */
-int Filser::readWaypoints(QPtrList<Waypoint>* wpList)
+int Filser::readWaypoints(QList<Waypoint*>* wpList)
 {
   qDebug ("Filser::readWaypoints");
 
@@ -2101,13 +2106,13 @@ int Filser::writeDA4Buffer()
   else if (result == NAK)
   {
     _errorinfo = tr("Filser::writeDA4Buffer: Bad CRC");
-    qDebug (_errorinfo);
+    qDebug ("%s", (const char*)_errorinfo.toLatin1());
     return FR_ERROR;
   }
   else
   {
     _errorinfo = tr ("Filser::writeDA4Buffer: transfer failed");
-    qDebug (_errorinfo);
+    qDebug ("%s", (const char*)_errorinfo.toLatin1());
     return FR_ERROR;
   }
 }
@@ -2118,7 +2123,7 @@ int Filser::writeDA4Buffer()
   * write waypoints
   * write the buffer back to recorder
   */
-int Filser::writeWaypoints(QPtrList<Waypoint>* wpList)
+int Filser::writeWaypoints(QList<Waypoint*>* wpList)
 {
   qDebug ("Filser::writeWaypoints");
 
@@ -2127,7 +2132,8 @@ int Filser::writeWaypoints(QPtrList<Waypoint>* wpList)
     return result;
 
   int RecordNumber = 0;
-  for (Waypoint* wp = wpList->first(); wp; wp = wpList->next())
+  Waypoint *wp;
+  foreach(wp, *wpList)
   {
     DA4WPRecord record (&_da4Buffer.waypoints[RecordNumber++]);
 

@@ -15,9 +15,9 @@
 **
 ***********************************************************************/
 
+#include "flight.h"
 #include "waypoint.h"
 #include "wp.h"
-#include "flight.h"
 
 Waypoint::Waypoint(QString nam, WGSPoint oP, int typ, QString _icao, QString _comment,
   int surf, int runw, int leng, int elev, double freq, bool isLand, QPoint pP,
@@ -58,6 +58,11 @@ Waypoint::Waypoint(Waypoint *p)
 Waypoint::Waypoint(Waypoint &p)
 {
   *this = p;
+}
+
+bool Waypoint::operator<(Waypoint &wp)
+{
+    return name<wp.name;
 }
 
 /////////////////////////////////////////////////////

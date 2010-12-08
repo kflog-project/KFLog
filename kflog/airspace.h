@@ -19,6 +19,8 @@
 #define AIRSPACE_H
 
 #include "lineelement.h"
+//Added by qt3to4:
+#include <Q3PointArray>
 
 /**
  * This class is used for the several airspaces. The object can be
@@ -37,7 +39,7 @@ class Airspace : public LineElement
      * of the airspace and the type of value (MSL, GND, FL); lower and
      * lowerType give the value for the lower limit.
      */
-    Airspace(const QString& n, unsigned int t, const QPointArray& pA,
+    Airspace(const QString& n, unsigned int t, const Q3PointArray& pA,
              unsigned int upper, unsigned int upperType,
              unsigned int lower, unsigned int lowerType);
     /**

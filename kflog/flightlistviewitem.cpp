@@ -20,9 +20,11 @@
 #include "flight.h"
 
 #include <qdir.h>
-#include <qurl.h>
+#include <q3url.h>
+//Added by qt3to4:
+#include <QPixmap>
 
-FlightListViewItem::FlightListViewItem(QListViewItem * parent, Flight * flight):QListViewItem(parent){
+FlightListViewItem::FlightListViewItem(Q3ListViewItem * parent, Flight * flight):Q3ListViewItem(parent){
   this->flight=flight;
 
   createChildren();
@@ -43,7 +45,7 @@ void FlightListViewItem::update(){
      
   
   //first, delete all childnodes
-  QListViewItem * itm = firstChild();
+  Q3ListViewItem * itm = firstChild();
   while (itm!=0) {
     delete itm;
     itm=firstChild();
@@ -56,32 +58,32 @@ void FlightListViewItem::update(){
 
 /** Creates the childnodes for this flightnode. */
 void FlightListViewItem::createChildren(){
-  QUrl url(flight->getFileName());
+  Q3Url url(flight->getFileName());
 
   setText(0, url.fileName());
   setText(1, flight->getDate().toString(Qt::LocalDate) + ": " + flight->getPilot());
   //setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup, KIcon::SizeSmall));
 
-  QListViewItem * subItem=new QListViewItem((QListViewItem*)this,QObject::tr("Pilot"),flight->getPilot());
+  Q3ListViewItem * subItem=new Q3ListViewItem((Q3ListViewItem*)this,QObject::tr("Pilot"),flight->getPilot());
   subItem->setSelectable(false);
-  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Date"), flight->getDate().toString(Qt::LocalDate));
+  subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Date"), flight->getDate().toString(Qt::LocalDate));
   subItem->setSelectable(false);
-  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Glider"),flight->getType() + ", " + flight->getID());
+  subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Glider"),flight->getType() + ", " + flight->getID());
   subItem->setSelectable(false);
-  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Points"),flight->getPoints(true));
+  subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Points"),flight->getPoints(true));
   subItem->setSelectable(false);
   if (flight->isOptimized()){
-    subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Points (optimized)"),flight->getPoints(false));
+    subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Points (optimized)"),flight->getPoints(false));
     subItem->setSelectable(false);
   }
-  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Total distance"),flight->getDistance(true));
+  subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Total distance"),flight->getDistance(true));
   subItem->setSelectable(false);
-  subItem=new TaskListViewItem((QListViewItem*)this, &flight->getTask(true), subItem);
+  subItem=new TaskListViewItem((Q3ListViewItem*)this, &flight->getTask(true), subItem);
   QPixmap taskPic = QPixmap(QDir::homeDirPath() + "/.kflog/pics/task_16.png");
   subItem->setPixmap(0, taskPic);
   subItem->setSelectable(false);
   if (flight->isOptimized()){
-    subItem=new TaskListViewItem((QListViewItem*)this, &flight->getTask(false), subItem);
+    subItem=new TaskListViewItem((Q3ListViewItem*)this, &flight->getTask(false), subItem);
     subItem->setPixmap(0, taskPic);
     subItem->setSelectable(false);
   }

@@ -22,6 +22,13 @@
 #include <config.h>
 #endif
 
+#include <QAction>
+#include <QLabel>
+#include <q3mainwindow.h>
+#include <q3networkprotocol.h>
+#include <q3progressbar.h>
+#include <QUrl>
+
 #include "dataview.h"
 #include "evaluationdialog.h"
 #include "helpwindow.h"
@@ -33,14 +40,7 @@
 #include "topolegend.h"
 #include "waypoints.h"
 
-#include <qnetworkprotocol.h>
-#include <qaction.h>
-#include <qlabel.h>
-#include <qmainwindow.h>
-#include <qprogressbar.h>
-#include <qurl.h>
-
-class KFLog : public QMainWindow
+class KFLog : public Q3MainWindow
 {
   Q_OBJECT
 
@@ -236,53 +236,53 @@ private:
    * Dockwidget to handle the dataview-widget.
    * The dataview-widget. Embedded in dataViewDock
    */
-  QDockWindow* dataViewDock;
+  Q3DockWindow* dataViewDock;
   DataView* dataView;
   /**
    * Dockwidget to handle the EvaluationWindow.
    * The evalutionWindow. Embedded in evaluationWindowDock
    */
-  QDockWindow* evaluationWindowDock;
+  Q3DockWindow* evaluationWindowDock;
   EvaluationDialog* evaluationWindow;
   /**
    * Dockwidget to handle the helpWindow.
    * The helpWindow. Embedded in helpWindowDock
    */
-  QDockWindow* helpWindowDock;
+  Q3DockWindow* helpWindowDock;
   HelpWindow* helpWindow;
   /**
    * Dockwidget to handle the legend-widget.
    *
    * @see TopoLegend
    */
-  QDockWindow* legendDock;
+  Q3DockWindow* legendDock;
   TopoLegend* legend;
   /**
    * Dockwidget to handle the map.
    * The map-widget.
    */
-  QDockWindow* mapViewDock;
+  Q3DockWindow* mapViewDock;
   Map* map;
   /**
    * Dockwidget to handle the mapcontrol.
    * The mapcontrol-widget. Embedded in mapControlDock
    */
-  QDockWindow* mapControlDock;
+  Q3DockWindow* mapControlDock;
   MapControlView* mapControl;
   /**
    * Dockwidget to handle the object view
    *
    * @see ObjectView
    */
-  QDockWindow* objectTreeDock;
+  Q3DockWindow* objectTreeDock;
   ObjectTree* objectTree;
   /**
    * Dockwidget to handle the waypoints-widget.
    * The waypoints-widget.
    */
-  QDockWindow* waypointsDock;
+  Q3DockWindow* waypointsDock;
   Waypoints* waypoints;
-  QToolBar* toolBar;
+  Q3ToolBar* toolBar;
   /**
    * Actions for the menu File
    */
@@ -291,7 +291,7 @@ private:
   QAction* fileNewFlightGroup;
   QAction* fileOpenFlight;
   QAction* fileOpenTask;
-  QPopupMenu* fileOpenRecent;
+  Q3PopupMenu* fileOpenRecent;
   QAction* fileClose;
   QAction* fileSavePixmap;
   QAction* filePrint;
@@ -323,7 +323,7 @@ private:
   QAction* flightEvaluationWindow;
   QAction* flightOptimization;
   QAction* flightOptimizationOLC;
-  QPopupMenu* flightDataType;
+  Q3PopupMenu* flightDataType;
   QAction* flightIgc3D;
   QAction* flightIgcOpenGL;
   QAction* flightAnimateStart;
@@ -337,11 +337,11 @@ private:
   /**
    * Action for the menu Window
    */
-  QPopupMenu* windowMenu;
+  Q3PopupMenu* windowMenu;
   /**
    * Actions for the menu Settings
    */
-  QPopupMenu* settings;
+  Q3PopupMenu* settings;
   QAction* settingsEvaluationWindow;
   QAction* settingsFlightData;
   QAction* settingsHelpWindow;
@@ -366,7 +366,7 @@ private:
    *
    * @see slotSetProgress
    */
-  QProgressBar* statusProgress;
+  Q3ProgressBar* statusProgress;
   /**
    * The label to display a message in the statusbar.
    *

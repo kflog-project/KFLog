@@ -18,7 +18,7 @@
 #include "flight.h"
 #include "flightgroup.h"
 
-FlightGroupListViewItem::FlightGroupListViewItem(QListViewItem * parent, FlightGroup * flightGroup):QListViewItem(parent){
+FlightGroupListViewItem::FlightGroupListViewItem(Q3ListViewItem * parent, FlightGroup * flightGroup):Q3ListViewItem(parent){
   this->flightGroup=flightGroup;
 
   createChildren();
@@ -39,7 +39,7 @@ void FlightGroupListViewItem::update(){
 
 
   //first, delete all childnodes
-  QListViewItem * itm = firstChild();
+  Q3ListViewItem * itm = firstChild();
   while (itm!=0) {
     delete itm;
     itm=firstChild();
@@ -54,16 +54,16 @@ void FlightGroupListViewItem::update(){
 void FlightGroupListViewItem::createChildren(){
   QString tmp;
 
-  QPtrList<Flight::Flight> flights = flightGroup->getFlightList();
+  QList<Flight::Flight*> flights = flightGroup->getFlightList();
 
   setText(0,flightGroup->getFileName());
   setText(1,tmp.sprintf("%d ", flights.count())+QObject::tr("flights"));
   //setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup, KIcon::SizeSmall));
 
-  QListViewItem * subItem;
-  for(unsigned int i=0;i<flights.count();i++)
+  Q3ListViewItem * subItem;
+  for(int i=0;i<flights.count();i++)
   {
-    subItem = new FlightListViewItem((QListViewItem*)this,flights.at(i));
+    subItem = new FlightListViewItem((Q3ListViewItem*)this,flights.at(i));
     subItem->setSelectable(false);
   }
 }

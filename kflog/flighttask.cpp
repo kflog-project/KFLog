@@ -21,9 +21,11 @@
 
 #include <cmath>
 
-#include <qmessagebox.h>
-#include <qsettings.h>
-#include <qvaluevector.h>
+#include <QMessageBox>
+#include <QSettings>
+#include <q3valuevector.h>
+//Added by qt3to4:
+#include <Q3PointArray>
 
 #define PRE_ID loop - 1
 #define CUR_ID loop
@@ -44,11 +46,11 @@ FlightTask::FlightTask(const QString& fName)
 {
   //warning("FlightTask(QString fName)");
 
-  FAISectList.setAutoDelete(true);
+//  FAISectList.setAutoDelete(true);
 }
 
 
-FlightTask::FlightTask(const QPtrList<Waypoint>& wpL, bool isO, const QString& fName)
+FlightTask::FlightTask(const QList<Waypoint*>& wpL, bool isO, const QString& fName)
   : BaseFlightElement("task", BaseMapElement::Task, fName),
     isOrig(isO),
 //    wpList(wpL),
@@ -57,7 +59,7 @@ FlightTask::FlightTask(const QPtrList<Waypoint>& wpL, bool isO, const QString& f
 {
   //warning("FlightTask(QPtrList<wayPoint> wpL, bool isO, QString fName)");
   setWaypointList(wpL);
-  FAISectList.setAutoDelete(true);
+//  FAISectList.setAutoDelete(true);
 }
 
 FlightTask::~FlightTask()
@@ -75,7 +77,7 @@ void FlightTask::__checkType()
   double distance_task_d = 0;
 
   if (wpList.count() > 0) {
-    for(unsigned int loop = 1; loop <= wpList.count() - 1; loop++)
+    for(int loop = 1; loop <= wpList.count() - 1; loop++)
       {
         //warning("distance: %f",wpList.at(loop)->distance);
         distance_total += wpList.at(loop)->distance;
@@ -346,18 +348,17 @@ bool FlightTask::isFAI(double d_wp, double d1, double d2, double d3)
 void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
   double w1;
-  unsigned int loop;
   struct faiAreaSector *sect;
   QPoint tempP;
   QRect r;
   QString label;
-  QPointArray pA;
+  Q3PointArray pA;
 
   // Strecke und Sektoren zeichnen
   //  if(flightType != NotSet)
   if(flightType != 99999)
     {
-      for(loop = 0; loop < wpList.count(); loop++)
+      for(int loop = 0; loop < wpList.count(); loop++)
         {
           /*
            * w1 ist die Winkelhalbierende des Sektors!!!
@@ -400,7 +401,7 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
               // Inneren Sektor erneut zeichnen, damit Trennlinien
               // zwischen Sekt. 1 und Zylinder verschwinden
-              targetPainter->setPen(QPen::NoPen);
+              targetPainter->setPen(Qt::NoPen);
               targetPainter->drawEllipse((int)(gx + 2), (int)(gy + 2),
                                          (int)((2 * R2) - 4), (int)((2 * R2) - 4));
 
@@ -430,12 +431,12 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
             case FlightTask::Begin:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 2));
               targetPainter->setBrush(QBrush(QColor(255, 0, 0),
-                                             QBrush::BDiagPattern));
+                                             Qt::BDiagPattern));
               targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
               targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
               maskPainter->setPen(QPen(Qt::color1, 2));
-              maskPainter->setBrush(QBrush(Qt::color1, QBrush::BDiagPattern));
+              maskPainter->setBrush(QBrush(Qt::color1, Qt::BDiagPattern));
               maskPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
               maskPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
@@ -459,10 +460,10 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
             case FlightTask::End:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 2));
               targetPainter->setBrush(QBrush(QColor(0, 0, 255),
-                                             QBrush::FDiagPattern));
+                                             Qt::FDiagPattern));
               maskPainter->setPen(QPen(Qt::color1, 2));
               maskPainter->setBrush(QBrush(Qt::color1,
-                                           QBrush::FDiagPattern));
+                                           Qt::FDiagPattern));
 
               targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
               targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
@@ -509,9 +510,9 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
               // Linie Um Start Lande Punkt
               targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
-              targetPainter->setBrush(QBrush::NoBrush);
+              targetPainter->setBrush(Qt::NoBrush);
               maskPainter->setPen(QPen(Qt::color1, 2));
-              maskPainter->setBrush(QBrush::NoBrush);
+              maskPainter->setBrush(Qt::NoBrush);
               break;
             }
         }
@@ -530,7 +531,7 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
   // Area based planning
   if (getPlanningType() == FAIArea && wpList.count() > 3) {
-    for (loop = 0; loop < FAISectList.count(); loop++) {
+    for(int loop = 0; loop < FAISectList.count(); loop++) {
       sect = FAISectList.at(loop);
       sect->pos->drawMapElement(targetPainter, maskPainter);
       label = sect->pos->getName();
@@ -567,19 +568,18 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   }
 }
 
-void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
+void FlightTask::printMapElement(QPainter* targetPainter, bool /*isText*/)
 {
   double w1;
-  unsigned int loop;
   struct faiAreaSector *sect;
   QPoint tempP;
   QString label;
-  QPointArray pA;
+  Q3PointArray pA;
 
   // Strecke und Sektoren zeichnen
   if(flightType != FlightTask::NotSet)
     {
-      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+      for(int loop = 0; loop < wpList.count(); loop++)
         {
           /*
            * w1 ist die Winkelhalbierende des Sektors!!!
@@ -607,7 +607,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
 
               // Inneren Sektor erneut zeichnen, damit Trennlinien
               // zwischen Sekt. 1 und Zylinder verschwinden
-              targetPainter->setPen(QPen::NoPen);
+              targetPainter->setPen(Qt::NoPen);
               targetPainter->drawEllipse((int)(gx + 2), (int)(gy + 2),
                                          (int)((2 * R2) - 4), (int)((2 * R2) - 4));
 
@@ -625,7 +625,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
             case FlightTask::Begin:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 1));
               targetPainter->setBrush(QBrush(QColor(255, 0, 0),
-                                             QBrush::BDiagPattern));
+                                             Qt::BDiagPattern));
               targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
               targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
@@ -642,7 +642,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
             case FlightTask::End:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 1));
               targetPainter->setBrush(QBrush(QColor(0, 0, 255),
-                                             QBrush::FDiagPattern));
+                                             Qt::FDiagPattern));
 
               targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
               targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
@@ -682,7 +682,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
 
               // Linie Um Start Lande Punkt
               targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
-              targetPainter->setBrush(QBrush::NoBrush);
+              targetPainter->setBrush(Qt::NoBrush);
               break;
             }
         }
@@ -698,7 +698,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText)
 
   // Area based planning
   if (getPlanningType() == FAIArea && wpList.count() > 3) {
-    for (loop = 0; loop < FAISectList.count(); loop++) {
+    for (int loop = 0; loop < FAISectList.count(); loop++) {
       sect = FAISectList.at(loop);
       sect->pos->printMapElement(targetPainter, false);
       label = sect->pos->getName();
@@ -775,8 +775,7 @@ double FlightTask::getOlcPoints()
   return  olcPoints;
 }
 
-void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
-                                const QString& gliderType)
+void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& gliderType)
 {
   /*
    *   Überprüft, ob die Sektoren der Wendepunkte erreicht wurden
@@ -806,7 +805,7 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
   if(gliderType != 0L)
     gliderIndex = _settings.readNumEntry("/KFLog/GliderTypes/"+gliderType, 100);
 
-  for(unsigned int loop = 0; loop < route.count(); loop++)
+  for(int loop = 0; loop < route.count(); loop++)
     {
       if(loop && (route.at(loop)->time - preTime > 70))
         /*
@@ -820,7 +819,7 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
 
   unsigned int startIndex = 0, dummy = 0;
 
-  for(unsigned int loop = 0; loop < wpList.count(); loop++)
+  for(int loop = 0; loop < wpList.count(); loop++)
     {
       double deltaAngle = 0.0, pointAngle = 0.0;
       dummy = 0;
@@ -833,7 +832,7 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
        *      _nicht_ erreicht wurde. Dies führt an Mitternacht zu
        *      einem möglichen Fehler ...
        */
-      for(unsigned int pLoop = startIndex + 1; pLoop < route.count(); pLoop++)
+      for(int pLoop = startIndex + 1; pLoop < route.count(); pLoop++)
         {
           if( wpList.at(loop)->projP == route.at(pLoop)->projP )
             {
@@ -927,7 +926,7 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
     }
 
   // Durchgehen der Wendepunkte
-  for(unsigned int loop = 1; loop < wpList.count() - 2; loop++)
+  for(int loop = 1; loop < wpList.count() - 2; loop++)
     {
       if(!stop)
         {
@@ -992,12 +991,12 @@ void FlightTask::checkWaypoints(QPtrList<flightPoint> route,
         {
           distance_wert = dist(wpList.at(wpList.count() - 1),
                                wpList.at(dmstCount));
-          for(unsigned int loop = 1; loop < 1 + dmstCount; loop++)
+          for(int loop = 1; loop < 1 + dmstCount; loop++)
             distance_wert = distance_wert + wpList.at(loop)->distance;
         }
       else
         {
-          for(unsigned int loop = 1; loop <= 1 + dmstCount; loop++)
+          for(int loop = 1; loop <= 1 + dmstCount; loop++)
             distance_wert = distance_wert + wpList.at(loop)->distance;
         }
     }
@@ -1112,9 +1111,8 @@ QString FlightTask::getPointsString()
 
 QRect FlightTask::getRect() const  {  return bBoxTask;  }
 
-void FlightTask::setWaypointList(const QPtrList<Waypoint>& wpL)
+void FlightTask::setWaypointList(const QList<Waypoint*>& wpL)
 {
-  //warning("setWaypointList(QPtrList<wayPoint> wpL)");
   wpList = wpL;
 
   isOrig = false;
@@ -1122,7 +1120,7 @@ void FlightTask::setWaypointList(const QPtrList<Waypoint>& wpL)
   __setWaypointType();
   __checkType();
 
-  for(unsigned int loop = 0; loop < wpList.count(); loop++)
+  for(int loop = 0; loop < wpList.count(); loop++)
     __sectorangle(loop, false);
 
   if (getPlanningType() == FAIArea) {
@@ -1197,19 +1195,18 @@ void FlightTask::__setDMSTPoints()
 }
 
 //TEST
-void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX, double dY)
+void FlightTask::printMapElement(QPainter* targetPainter, bool /*isText*/, double dX, double dY)
 {
   double w1;
-  unsigned int loop;
   struct faiAreaSector *sect;
   QPoint tempP;
   QString label;
-  QPointArray pA;
+  Q3PointArray pA;
 
   // Strecke und Sektoren zeichnen
   if(flightType != FlightTask::NotSet)
     {
-      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+      for(int loop = 0; loop < wpList.count(); loop++)
         {
           /*
            * w1 ist die Winkelhalbierende des Sektors!!!
@@ -1236,7 +1233,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
 
               // Inneren Sektor erneut zeichnen, damit Trennlinien
               // zwischen Sekt. 1 und Zylinder verschwinden
-              targetPainter->setPen(QPen::NoPen);
+              targetPainter->setPen(Qt::NoPen);
               targetPainter->drawEllipse((int)(gx + 2), (int)(gy + 2),
                                          (int)((2 * R2) - 4), (int)((2 * R2) - 4));
 
@@ -1253,7 +1250,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
               break;
             case FlightTask::Begin:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 1));
-              targetPainter->setBrush(QBrush(QColor(255, 0, 0), QBrush::BDiagPattern));
+              targetPainter->setBrush(QBrush(QColor(255, 0, 0), Qt::BDiagPattern));
               targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
               targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
@@ -1269,7 +1266,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
 
             case FlightTask::End:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 1));
-              targetPainter->setBrush(QBrush(QColor(0, 0, 255), QBrush::FDiagPattern));
+              targetPainter->setBrush(QBrush(QColor(0, 0, 255), Qt::FDiagPattern));
 
               targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
               targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
@@ -1309,7 +1306,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
 
               // Linie Um Start Lande Punkt
               targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
-              targetPainter->setBrush(QBrush::NoBrush);
+              targetPainter->setBrush(Qt::NoBrush);
               break;
             }
         }
@@ -1324,12 +1321,12 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool isText, double dX
     }
 
   // Area based planning
-  if (getPlanningType() == FAIArea && wpList.count() > 3) {
-    for (loop = 0; loop < FAISectList.count(); loop++) {
+  if(getPlanningType() == FAIArea && wpList.count() > 3) {
+    for(int loop = 0; loop < FAISectList.count(); loop++) {
       sect = FAISectList.at(loop);
       sect->pos->printMapElement(targetPainter, false);
       label = sect->pos->getName();
-      if (label == "FAILow500Sector" || label == "FAIHigh500Sector") {
+      if(label == "FAILow500Sector" || label == "FAIHigh500Sector") {
         label.sprintf("%.0f km", sect->dist);
         pA = sect->pos->getPointArray();
         tempP = glMapMatrix->print(pA[0]);
@@ -1399,10 +1396,9 @@ void FlightTask::calcFAIArea()
   double minDist;
   double trueCourse;
   double tmpDist;
-  QPointArray pointArray;
+  Q3PointArray pointArray;
   struct faiAreaSector *areaSector;
-  QValueVector<bool> sides;
-  unsigned int i;
+  Q3ValueVector<bool> sides;
   bool isRightOfRoute;
 
   if (wpList.count() > 2) {
@@ -1419,9 +1415,7 @@ void FlightTask::calcFAIArea()
     minDist = faiR.minLength28 < 500.0 ? faiR.minLength28 : faiR.minLength25 ;
 
     trueCourse = tc(lat1, lon1, lat2, lon2);
-    QString huhu;
-    huhu.sprintf("%03.0f", polar(wp2->origP.lat() - wp1->origP.lat(), wp2->origP.lon() - wp1->origP.lon()) * 180.0 / M_PI);
-    warning(huhu);
+    qWarning("%03.0f", polar(wp2->origP.lat() - wp1->origP.lat(), wp2->origP.lon() - wp1->origP.lon()) * 180.0 / M_PI);
     FAISectList.clear();
 
     // determne with sides to calculate
@@ -1433,7 +1427,7 @@ void FlightTask::calcFAIArea()
       sides.push_back(true);
     }
 
-    for (i = 0; i < sides.size(); i++) {
+    for (int i = 0; i < sides.size(); i++) {
       pointArray.resize(0);
       isRightOfRoute = sides[i];
 
@@ -1531,7 +1525,7 @@ void FlightTask::calcFAIArea()
 }
 
 void FlightTask::calcFAISector(double leg, double legBearing, double from, double to, double step, double dist, double toLat,
-                               double toLon, QPointArray *pA, bool upwards, bool isRightOfRoute)
+                               double toLon, Q3PointArray *pA, bool upwards, bool isRightOfRoute)
 {
   extern MapMatrix _globalMapMatrix;
 
@@ -1571,7 +1565,7 @@ void FlightTask::calcFAISector(double leg, double legBearing, double from, doubl
 }
 
 void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, double to, double step, double toLat,
-                                   double toLon, bool less500, QPointArray *pA, bool upwards, bool isRightOfRoute)
+                                   double toLon, bool less500, Q3PointArray *pA, bool upwards, bool isRightOfRoute)
 {
   extern MapMatrix _globalMapMatrix;
 
@@ -1638,19 +1632,13 @@ QString FlightTask::getPlanningTypeString()
 
 /** re-projects the points along the route to make sure the route is drawn correctly if the projection changes. */
 void FlightTask::reProject(){
-  QPtrListIterator<flightPoint> it(flightRoute);
   extern MapMatrix _globalMapMatrix;
 
-  for ( ; it.current(); ++it ) {
-      flightPoint *fp = it.current();
+  flightPoint *fp;
+  foreach(fp, flightRoute)
       fp->projP = _globalMapMatrix.wgsToMap(fp->origP);
-  }
 
-  QPtrListIterator<Waypoint> it2(wpList);
-  extern MapMatrix _globalMapMatrix;
-
-  for ( ; it2.current(); ++it2 ) {
-      Waypoint *wp = it2.current();
+  Waypoint *wp;
+  foreach(wp, wpList)
       wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
-  }
 }

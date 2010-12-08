@@ -16,8 +16,10 @@
 ***********************************************************************/
 
 #include "airspace.h"
+//Added by qt3to4:
+#include <Q3PointArray>
 
-Airspace::Airspace(const QString& n, unsigned int t, const QPointArray& pA, unsigned int u,
+Airspace::Airspace(const QString& n, unsigned int t, const Q3PointArray& pA, unsigned int u,
       unsigned int uType, unsigned int l, unsigned int lType)
   : LineElement(n, t, pA),
     lLimit(l), lLimitType(lType), uLimit(u), uLimitType(uType)
@@ -35,7 +37,7 @@ QRegion* Airspace::drawRegion(QPainter* targetP, QPainter* maskP)
 {
   if(!glConfig->isBorder(typeID) || !__isVisible()) return (new QRegion());
 
-  QPointArray tA = glMapMatrix->map(projPointArray);
+  Q3PointArray tA = glMapMatrix->map(projPointArray);
 
   if(tA.count() <= 1) return (new QRegion());
 

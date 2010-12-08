@@ -22,13 +22,12 @@
 **
 ***********************************************************************/
 
-#include "optimization.h"
-
-#include <qapplication.h>
-#include <qmessagebox.h>
-#include <qptrlist.h>
-
 #include <cstdlib>
+
+#include <QApplication>
+#include <QMessageBox>
+
+#include "optimization.h"
 
 // different weight for last two legs
 double Optimization::weight(unsigned int k){
@@ -42,7 +41,7 @@ double Optimization::weight(unsigned int k){
   }
 }
 
-Optimization::Optimization(unsigned int firstPoint, unsigned int lastPoint, QPtrList<flightPoint> ptr_route, QProgressBar* progressBar){
+Optimization::Optimization(unsigned int /*firstPoint*/, unsigned int /*lastPoint*/, QList<flightPoint*> ptr_route, QProgressBar *progressBar){
   original_route = ptr_route;
   setTimes(0,original_route.count());
   optimized=false;
@@ -61,10 +60,10 @@ double Optimization::optimizationResult(unsigned int* retList, double *retPoints
   int i=0;
   int j=0;
   retList[i++]=start;
-  for (i;i<=LEGS+1;i++){
-    retList[i]=original_route.find(route.at(pointList[j]));
+  for(;i<=LEGS+1;i++){
+    retList[i]=original_route.indexOf(route.at(pointList[j]));
     if (pointList[j]>original_route.count()){
-      qWarning(QString("##k:%1\tstart:%2\t\tpointList[k]:%3").arg(i).arg(start).arg(pointList[i]));
+      qWarning("##k:%d\tstart:%d\t\tpointList[k]:%d", i, start, pointList[i]);
       QMessageBox::warning(0, "Optimization fault", "Sorry optimization fault. Report error (including IGC-File) to <christof.bodner@gmx.net>", QMessageBox::Ok, 0);
       return -1.0;
     }
@@ -82,11 +81,11 @@ void Optimization::setTimes(unsigned int start_int, unsigned int stop_int){
   while ( route.count() != 0 ) {
     route.removeLast();
   }
-  qWarning(QString("Items in list:%1").arg(original_route.count()));
+  qWarning("Items in list:%d", original_route.count());
   // construct route
   for ( unsigned int i=start_int; i<=stop_int; i++)
     route.append(original_route.at(i));
-  qWarning(QString("Number of points for optimization:%1").arg(route.count()));
+  qWarning("Number of points for optimization:%d", route.count());
 }
 
 void Optimization::stopRun(){
@@ -99,9 +98,9 @@ void Optimization::enableRun(){
 void Optimization::run(){
   double *L;                        // length values
   unsigned int *w;                  // waypoints
-  double length;                    // solution length
+//  double length;                    // solution length
 
-  unsigned int i,j,k, ii;               // loop variables
+  int ii;                           // loop variables
   unsigned int n;                   // number of points
   double c;                         // temp variables
   unsigned int index;
@@ -109,11 +108,11 @@ void Optimization::run(){
   flightPoint **rp;
   
   n=route.count()+1;
-  qWarning(QString("Number of points to optimize: %1").arg(n));
+  qWarning("Number of points to optimize: %d", n);
   if(progress){
     progress->setMinimumWidth(progress->sizeHint().width() + 45);
-    progress->setTotalSteps(7*n);
-    progress->setProgress(0);
+    progress->setRange(0, 7*n);
+    progress->setValue(0);
   }
   
   // allocate memory
@@ -125,37 +124,37 @@ void Optimization::run(){
   Q_CHECK_PTR(w);
   Q_CHECK_PTR(rp);
 
-  for (i=0;i<=n-1;i++){
+  for(int i=0;i<=n-1;i++){
     L[i+0*n]=0;
   }
   
-  for (i = 0; i < route.count(); i++){
+  for(int i = 0; i < route.count(); i++){
     rp[i] = route.at(i);
   }
   
-  for (k=1;k<=LEGS;k++){
+  for(int k=1;k<=LEGS;k++){
     ii = (k-1)*n;
     wLeg = weight(k);
     
-    for (i=0;i<n-1;i++){
+    for(int i=0;i<n-1;i++){
       qApp->processEvents();
       if (stopit){
           free(L);
           free(w);
           free(rp);
-          progress->setProgress(0);
+          progress->setValue(0);
           optimized=false;
           return;
       }
       index=i+k*n;
 
       if(progress) {
-        progress->setProgress(index);
+        progress->setValue(index);
       }
       
       L[index]=0;
       c=0;
-      for (j=0;j<i;j++){
+      for(int j=0;j<i;j++){
         c=L[j+ii]+wLeg*dist(rp[j], rp[i]);
         if (c>L[index]){
           L[index]=c;
@@ -167,7 +166,7 @@ void Optimization::run(){
 
   // find maximal length i.e. points
   points=0;
-  for (i=0;i<n-1;i++){
+  for(int i=0;i<n-1;i++){
     if(L[i+LEGS*n]>points){
       points=L[i+LEGS*n];
       pointList[LEGS]=i;
@@ -175,10 +174,10 @@ void Optimization::run(){
   }
 
   // find waypoints
-  for (long k=LEGS-1;k>=0;k--){
-      qWarning(QString("  k:%1\tpointList[k+1]:%3").arg(k).arg(pointList[k+1]));
+  for(int k=LEGS-1;k>=0;k--){
+      qWarning("  k:%d\tpointList[k+1]:%d", k, (int)pointList[k+1]);
       pointList[k]=w[pointList[k+1]+(k+1)*n];
-      qWarning(QString("->k:%1\tpointList[k]:%3").arg(k).arg(pointList[k]));
+      qWarning("->k:%d\tpointList[k]:%d", k, (int)pointList[k]);
   }
 
   distance=dist(route.at(pointList[0]),route.at(pointList[1]))+
@@ -187,7 +186,7 @@ void Optimization::run(){
     dist(route.at(pointList[3]),route.at(pointList[4]))+
     dist(route.at(pointList[4]),route.at(pointList[5]))+
     dist(route.at(pointList[5]),route.at(pointList[6]));
-  qWarning(QString("Distance:%1\nPoints:%2").arg(distance).arg(points));
+  qWarning("Distance:%f\nPoints:%f", distance, points);
 
     // free memory
     free(L);
@@ -195,6 +194,6 @@ void Optimization::run(){
     free(rp);
 
     if(progress)
-      progress->setProgress(0);
+      progress->setValue(0);
     optimized=true;
 }

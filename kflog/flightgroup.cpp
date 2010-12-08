@@ -23,7 +23,7 @@ FlightGroup::FlightGroup(const QString& fName)
 {
 }
 
-FlightGroup::FlightGroup(const QPtrList <Flight::Flight>& fList, const QString& fName)
+FlightGroup::FlightGroup(const QList <Flight::Flight*>& fList, const QString& fName)
   : BaseFlightElement("flight group", BaseMapElement::FlightGroup, fName),
     flightList(fList)
 {
@@ -33,17 +33,16 @@ FlightGroup::~FlightGroup()
 {
 }
 
-QPtrList<Waypoint> FlightGroup::getWPList()
+QList<Waypoint*> FlightGroup::getWPList()
 {
-  QPtrList<Waypoint> tmp;
+  QList<Waypoint*> tmp;
   return tmp;
 }
 
 void FlightGroup::drawMapElement(QPainter* targetP, QPainter* maskP)
 {
-  unsigned int i;
   Flight::Flight *f;
-  for (i = 0; i < flightList.count(); i++) {
+  for(int i = 0; i < flightList.count(); i++) {
     f = flightList.at(i);
     f->drawMapElement(targetP, maskP);
   }
@@ -51,15 +50,14 @@ void FlightGroup::drawMapElement(QPainter* targetP, QPainter* maskP)
 
 void FlightGroup::printMapElement(QPainter* targetP, bool isText)
 {
-  unsigned int i;
   Flight::Flight *f;
-  for (i = 0; i < flightList.count(); i++) {
+  for(int i = 0; i < flightList.count(); i++) {
     f = flightList.at(i);
     f->printMapElement(targetP, isText);
   }
 }
 /** No descriptions */
-QPtrList<Flight::Flight> FlightGroup::getFlightList()
+QList<Flight::Flight*> FlightGroup::getFlightList()
 {
   return flightList;
 }
@@ -67,25 +65,21 @@ QPtrList<Flight::Flight> FlightGroup::getFlightList()
 /** remove flight from current group */
 void FlightGroup::removeFlight(BaseFlightElement *f)
 {
-  if (flightList.containsRef((Flight::Flight *)f)) {
-    flightList.take();
+  if (flightList.contains((Flight::Flight *)f)) {
+    flightList.removeOne((Flight::Flight *)f);
   }
 }
 
 /** No descriptions */
-void FlightGroup::setFlightList(QPtrList <Flight::Flight> fl)
+void FlightGroup::setFlightList(QList <Flight::Flight*> fl)
 {
   flightList = fl;
 }
 
 /** re-project the flights in this flightgroup. Reimplemented from BaseFlightElement. */
 void FlightGroup::reProject() {
-  QPtrListIterator<Flight::Flight> it(flightList);
-
-  for ( ; it.current(); ++it ) {
-      Flight::Flight *f = it.current();
-      f->reProject();
-  }
-
+  Flight::Flight *flight;
+  foreach(flight, flightList)
+      flight->reProject();
 }
 

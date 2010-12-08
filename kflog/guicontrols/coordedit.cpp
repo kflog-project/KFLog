@@ -19,6 +19,10 @@
 
 // include files for QT
 #include <qsettings.h>
+//Added by qt3to4:
+#include <QFocusEvent>
+#include <QShowEvent>
+#include <QKeyEvent>
 
 // include files for project
 #include "coordedit.h"
@@ -31,7 +35,8 @@ void CoordEdit::focusInEvent (QFocusEvent *e)
 {
   // overwrite default behavior of QLineEdit
   // fake a mouse event to prevent text highlight
-  e->setReason(QFocusEvent::Mouse);
+    //FIXME: QFocusEvent::setReason() doesn´ t exist in Qt4. Check whether it works without the setReason or use Qt::FocusPolicy.
+  //e->setReason(QFocusEvent::Mouse);
   QLineEdit::focusInEvent(e);
   // set cursor to start of line
   home(false);
@@ -45,7 +50,7 @@ void CoordEdit::keyPressEvent (QKeyEvent *e)
   bool isNumber;
   QString inputCols="0" + validDirection;
 
-  if (e->text().length()!=0 || e->key()==Key_Left || e->key()==Key_Right) {     //somehow, the original code let modifier keys through. This replacement does not.
+  if (e->text().length()!=0 || e->key()==Qt::Key_Left || e->key()==Qt::Key_Right) {     //somehow, the original code let modifier keys through. This replacement does not.
     s = e->text().upper();
     col = cursorPosition();
     if (hasMarkedText()) {
@@ -53,26 +58,26 @@ void CoordEdit::keyPressEvent (QKeyEvent *e)
     }
 
     switch (e->key()) {
-    case Key_Return:
-    case Key_Escape:
+    case Qt::Key_Return:
+    case Qt::Key_Escape:
       QLineEdit::keyPressEvent(e);
       break;
-    case Key_Backspace:
+    case Qt::Key_Backspace:
       while (!inputCols.contains(mask.mid(col-1,1))) setCursorPosition(--col); //move cursor to previous editable character
       col -= 1;
       setText(text().replace(col, 1, mask.mid(col, 1)));
       setCursorPosition(col);
       break;
-    case Key_Delete:
+    case Qt::Key_Delete:
       setText(text().replace(col, 1, mask.mid(col, 1)));
       setCursorPosition(col);
       break;
-    case Key_Left:
+    case Qt::Key_Left:
       col--;
       setCursorPosition(col);
       while (!inputCols.contains(mask.mid(col,1))) setCursorPosition(--col); //move cursor in front of previous editable character
       break;
-    case Key_Right:
+    case Qt::Key_Right:
       col++;
       setCursorPosition(col);
       while (!inputCols.contains(mask.mid(col,1))) setCursorPosition(++col); //move cursor in front of next editable character

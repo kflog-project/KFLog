@@ -21,8 +21,10 @@
 #include "baseflightelement.h"
 #include "lineelement.h"
 
-#include <qptrlist.h>
-#include <qrect.h>
+#include <QList>
+#include <QRect>
+//Added by qt3to4:
+#include <Q3PointArray>
 
 struct faiRange {
   double minLength28;
@@ -58,7 +60,7 @@ class FlightTask : public BaseFlightElement
    * @param  isOrig  true, if the task is the original task
    *                 of a flight.
    */
-  FlightTask(const QPtrList<Waypoint>& wpList, bool isOrig, const QString& fName);
+  FlightTask(const QList<Waypoint*>& wpList, bool isOrig, const QString& fName);
   /**
    */
   ~FlightTask();
@@ -80,7 +82,7 @@ class FlightTask : public BaseFlightElement
   /**
    * Returns the waypointlist.
    */
-  QPtrList<Waypoint> getWPList() { return wpList; };
+  QList<Waypoint*> getWPList() { return wpList; };
   /**
    * Returns the type of the task.
    * @see #TaskType
@@ -99,8 +101,7 @@ class FlightTask : public BaseFlightElement
   void printMapElement(QPainter* targetP, bool isText);
   void printMapElement(QPainter* targetP, bool isText, double dX, double dY);
   /** */
-  void checkWaypoints(QPtrList<flightPoint> route,
-                      const QString& gliderType);
+  void checkWaypoints(QList<flightPoint*> route, const QString& gliderType);
   /** */
   double getOlcPoints();
   /** */
@@ -120,7 +121,7 @@ class FlightTask : public BaseFlightElement
   /** */
   struct faiRange getFAIDistance(double leg);
   void setOptimizedTask(double points, double distance);
-  void setWaypointList(const QPtrList<Waypoint>& wpL);
+  void setWaypointList(const QList<Waypoint*>& wpL);
   /** No descriptions */
   void setPlanningType(int type);
   int getPlanningType() const { return __planningType; };
@@ -174,19 +175,19 @@ class FlightTask : public BaseFlightElement
    * calculate sectors for valid FAI Areas
    */    
   void calcFAISector(double leg, double legBearing, double from, double to, double step, double dist,
-                     double toLat, double toLon, QPointArray *pA, bool upwards, bool isRightOfRoute);
+                     double toLat, double toLon, Q3PointArray *pA, bool upwards, bool isRightOfRoute);
   /**
    * calculate side sectors for valid FAI Areas
    */    
   void calcFAISectorSide(double leg, double legBearing, double from, double to, double step, double toLat,
-                         double toLon, bool less500, QPointArray *pA, bool upwards, bool isRightOfRoute);
+                         double toLon, bool less500, Q3PointArray *pA, bool upwards, bool isRightOfRoute);
   /**
    * true, if the task is the original task of a flight as read from
    * the igc-file.
    */
   bool isOrig;
   /** */
-  QPtrList<Waypoint> wpList;
+  QList<Waypoint*> wpList;
   /** */
 //  unsigned int task_end;
   /** */
@@ -206,11 +207,11 @@ class FlightTask : public BaseFlightElement
   /** Aufgaben Länge*/
   double distance_task;
   int __planningType;
-  QPtrList<faiAreaSector> FAISectList;
+  QList<faiAreaSector*> FAISectList;
   /* direction of area planning */
   int __planningDirection;
   /* Route of flight */
-  QPtrList<flightPoint> flightRoute;
+  QList<flightPoint*> flightRoute;
 public slots: // Public slots
   /** re-projects the points along the route to make sure the route is drawn correctly if the projection changes. */
   void reProject();

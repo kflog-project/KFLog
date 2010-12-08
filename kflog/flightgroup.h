@@ -21,7 +21,7 @@
 #include "baseflightelement.h"
 #include "flight.h"
 
-#include <qptrlist.h>
+#include <QList>
 
 /**
  *@author Harald Maier
@@ -46,7 +46,7 @@ class FlightGroup : public BaseFlightElement
    * @param fList @ref QPtrList of flights to be included in the FlightGroup.
    * @returns new @ref FlightGroup object.
    */
-  FlightGroup(const QPtrList <Flight::Flight>& fList, const QString& fName);
+  FlightGroup(const QList <Flight::Flight*>& fList, const QString& fName);
   /**
    * Destructor
    */
@@ -54,7 +54,7 @@ class FlightGroup : public BaseFlightElement
   /**
    * @returns an empty waypoint list
    */
-  QPtrList<Waypoint> getWPList();
+  QList<Waypoint*> getWPList();
   /**
    * Draws the flight an the task for each fligth into the given painter. Reimplemented
    * from BaseMapElement.
@@ -72,19 +72,19 @@ class FlightGroup : public BaseFlightElement
   /**
    * @returns the list of flights contained in the group
    */
-  QPtrList<Flight::Flight> getFlightList();
+  QList<Flight::Flight*> getFlightList();
   /**
    * Removed the indicated object from the group.
    */
   void removeFlight(BaseFlightElement *f);
   /** No descriptions */
-  void setFlightList(QPtrList <Flight::Flight> fl);
+  void setFlightList(QList <Flight::Flight*> fl);
   /**
    * re-project the flights in this flightgroup. Reimplemented from BaseFlightElement.
    */
   void reProject();
  private:
-  QPtrList<Flight::Flight> flightList;
+  QList<Flight::Flight*> flightList;
 };
 
 #endif

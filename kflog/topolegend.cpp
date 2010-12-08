@@ -21,9 +21,12 @@
 
 #include <qlayout.h>
 #include <qtimer.h>
-#include <qvbox.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <Q3Frame>
+#include <QLabel>
 
-TopoLegend::TopoLegend(QWidget *parent, const char *name ) : QScrollView(parent,name) {
+TopoLegend::TopoLegend(QWidget *parent, const char *name ) : Q3ScrollView(parent,name) {
   extern MapConfig _globalMapConfig;
 
   //These are the levels used, as defined in mapconfig.cpp.
@@ -34,7 +37,7 @@ TopoLegend::TopoLegend(QWidget *parent, const char *name ) : QScrollView(parent,
       5000,5250,5500,5750,6000,6250,6500,6750,7000,7250,7500,7750,8000,8250,8500,8750,10000};
 
   QLabel * lbl;
-  QVBox* levelLayout = new QVBox(this->viewport());
+  Q3VBox* levelLayout = new Q3VBox(this->viewport());
 
   //set fontsize:
   QFont lblFnt=QFont(this->font());
@@ -51,7 +54,7 @@ TopoLegend::TopoLegend(QWidget *parent, const char *name ) : QScrollView(parent,
 
   for (int i=50; i>=0; --i) {         //loop over levels defined above in reversed order
     lbl=new QLabel(levelLayout);      //create a new label as a child of the QVBox
-    lbl->setAlignment(AlignHCenter);
+    lbl->setAlignment(Qt::AlignHCenter);
     if (i==50) {                      //set the text. Normally, this is "xx - yy m", but the first and last get a different one
       lbl->setText(QString().sprintf(">= %d m", levels[i]));
     } else if(i==0) {
@@ -81,7 +84,7 @@ void TopoLegend::highlightLevel(int level){
   if (level >=0 && level<51) {
     int y=labelList.at(50-level)->y();
     this->ensureVisible(10,y);
-    labelList.at(50-level)->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+    labelList.at(50-level)->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
   }
 
   //highlight the selected label
@@ -95,7 +98,7 @@ void TopoLegend::highlightLevel(int level){
   } */
 
   if (currentHighlight>=0 && currentHighlight<51)
-    labelList.at(50-currentHighlight)->setFrameStyle( QFrame::NoFrame );
+    labelList.at(50-currentHighlight)->setFrameStyle( Q3Frame::NoFrame );
   currentHighlight=level;
 
 }

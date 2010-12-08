@@ -18,26 +18,27 @@
 #ifndef RECORDERDIALOG_H
 #define RECORDERDIALOG_H
 
-#include <qbuttongroup.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qdialog.h>
-#include <qdict.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qlistview.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qspinbox.h>
-#include <qstringlist.h>
-#include <qwidget.h>
+#include <q3buttongroup.h>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDialog>
+#include <q3dict.h>
+#include <QLabel>
+#include <QLayout>
+#include <QLineEdit>
+#include <q3listview.h>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QSpinBox>
+#include <QStringList>
+#include <QWidget>
 
 #include "flightrecorderpluginbase.h"
 #include "flighttask.h"
 #include "frstructs.h"
 #include "guicontrols/kfloglistview.h"
 #include "waypointcatalog.h"
-#include "waypointlist.h"
+//#include "waypointlist.h
 
 /**
  * Provides a dialog-window for accessing the flightrecorder.
@@ -64,7 +65,7 @@ class RecorderDialog : public QDialog
      * Connects the currently selected recorder using the information entered (bautrate, port, URL, etc.)
      */
     void slotConnectRecorder();
-    void slotPageChanged(QListViewItem *currentItem);
+    void slotPageChanged(Q3ListViewItem *currentItem);
     /**
      * Read the flightlist from the recorder
      */
@@ -140,22 +141,22 @@ class RecorderDialog : public QDialog
     /** No descriptions */
     void __addPilotPage();
     QGridLayout *configLayout;
-    QListView *setupTree;
-    QFrame *activePage;
+    Q3ListView *setupTree;
+    Q3Frame *activePage;
     /** */
-    QFrame* flightPage;
+    Q3Frame* flightPage;
     /** */
-    QFrame* settingsPage;
+    Q3Frame* settingsPage;
     /** */
-    QFrame* waypointPage;
+    Q3Frame* waypointPage;
     /** */
-    QFrame* taskPage;
+    Q3Frame* taskPage;
     /** */
-    QFrame* declarationPage;
+    Q3Frame* declarationPage;
     /** */
-    QFrame* pilotPage;
+    Q3Frame* pilotPage;
     /** */
-    QFrame* configPage;
+    Q3Frame* configPage;
     /** */
     QComboBox* selectType;
     QComboBox* selectPort;
@@ -201,13 +202,13 @@ class RecorderDialog : public QDialog
     /** */
     bool isOpen;
     /** */
-    QPtrList<FRDirEntry> dirList;
-    QPtrList<FlightTask> *tasks;
-    WaypointList *waypoints;
+    QList<FRDirEntry*> dirList;
+    QList<FlightTask*> *tasks;
+    QList<Waypoint*> *waypoints;
     /**
      * Contains a list of librarynames wich can be accessed using the displayed name from the dropdown as a key
      */
-    QDict<QString> libNameList;
+    Q3Dict<QString> libNameList;
     /** */
     int colID;
     int colDate;
@@ -252,12 +253,12 @@ class RecorderDialog : public QDialog
     QPushButton* cmdUploadBasicConfig;
     QPushButton* cmdUploadConfig;
 
-    QButtonGroup* unitAltButtonGroup;
-    QButtonGroup* unitVarioButtonGroup;
-    QButtonGroup* unitSpeedButtonGroup;
-    QButtonGroup* unitQNHButtonGroup;
-    QButtonGroup* unitTempButtonGroup;
-    QButtonGroup* unitDistButtonGroup;
+    Q3ButtonGroup* unitAltButtonGroup;
+    Q3ButtonGroup* unitVarioButtonGroup;
+    Q3ButtonGroup* unitSpeedButtonGroup;
+    Q3ButtonGroup* unitQNHButtonGroup;
+    Q3ButtonGroup* unitTempButtonGroup;
+    Q3ButtonGroup* unitDistButtonGroup;
 
     QCheckBox* sinktone;
 

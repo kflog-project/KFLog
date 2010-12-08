@@ -7,24 +7,13 @@
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
 
+#include <QColor>
+#include <QImage>
+#include <QPushButton>
+#include <QToolTip>
+
 #include "optimizationwizard.h"
 
-#include <qcolor.h>
-#include <qframe.h>
-#include <qgroupbox.h>
-#include <qimage.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpixmap.h>
-#include <qpushbutton.h>
-#include <qtextbrowser.h>
-#include <qtooltip.h>
-#include <qvariant.h>
-#include <qwhatsthis.h>
-#include <qwidget.h>
-
-#include "evaluationdialog.h"
-#include "optimizationwizard.ui.h"
 static const char* const image0_data[] = { 
 "22 22 114 2",
 "Qt c None",
@@ -172,45 +161,45 @@ static const char* const image0_data[] = {
  *  The wizard will by default be modeless, unless you set 'modal' to
  *  TRUE to construct a modal wizard.
  */
-OptimizationWizard::OptimizationWizard( QWidget* parent, const char* name, bool modal, WFlags fl )
-    : QWizard( parent, name, modal, fl )
+OptimizationWizard::OptimizationWizard(QWidget* parent, Qt::WFlags fl)
+    : QWizard(parent, fl)
 ,
       image0( (const char **) image0_data )
 {
-    if ( !name )
-	setName( "OLC_Optimization" );
+    setName("Optimization for OLC");
 
-    page = new QWidget( this, "page" );
-    pageLayout = new QVBoxLayout( page, 11, 6, "pageLayout"); 
+    page = new QWizardPage(this);
+    page->setTitle(tr("Task start and end times"));
+    pageLayout = new QVBoxLayout( page, 11, 6, "pageLayout");
 
-    layout14 = new QVBoxLayout( 0, 0, 6, "layout14"); 
+    layout14 = new QVBoxLayout( 0, 0, 6, "layout14");
 
     evaluation = new EvaluationDialog( page, "evaluation" );
     evaluation->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, evaluation->sizePolicy().hasHeightForWidth() ) );
     evaluation->setMinimumSize( QSize( 100, 100 ) );
     layout14->addWidget( evaluation );
 
-    layout12 = new QHBoxLayout( 0, 0, 6, "layout12"); 
+    layout12 = new QHBoxLayout( 0, 0, 6, "layout12");
 
     groupBox1 = new QGroupBox( page, "groupBox1" );
     groupBox1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, groupBox1->sizePolicy().hasHeightForWidth() ) );
 
     QWidget* privateLayoutWidget = new QWidget( groupBox1, "layout3" );
     privateLayoutWidget->setGeometry( QRect( 10, 20, 290, 80 ) );
-    layout3 = new QGridLayout( privateLayoutWidget, 1, 1, 11, 6, "layout3"); 
+    layout3 = new QGridLayout( privateLayoutWidget, 1, 1, 11, 6, "layout3");
 
     lblStartHeight = new QLabel( privateLayoutWidget, "lblStartHeight" );
-    lblStartHeight->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignRight ) );
+    lblStartHeight->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
 
     layout3->addWidget( lblStartHeight, 0, 2 );
 
     lblStopTime = new QLabel( privateLayoutWidget, "lblStopTime" );
-    lblStopTime->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignRight ) );
+    lblStopTime->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
 
     layout3->addWidget( lblStopTime, 1, 1 );
 
     lblDiffHeight = new QLabel( privateLayoutWidget, "lblDiffHeight" );
-    lblDiffHeight->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignRight ) );
+    lblDiffHeight->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
 
     layout3->addWidget( lblDiffHeight, 2, 2 );
 
@@ -219,7 +208,7 @@ OptimizationWizard::OptimizationWizard( QWidget* parent, const char* name, bool 
     layout3->addWidget( textLabel1_3_2_2, 2, 0 );
 
     lblStartTime = new QLabel( privateLayoutWidget, "lblStartTime" );
-    lblStartTime->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignRight ) );
+    lblStartTime->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
 
     layout3->addWidget( lblStartTime, 0, 1 );
 
@@ -232,12 +221,12 @@ OptimizationWizard::OptimizationWizard( QWidget* parent, const char* name, bool 
     layout3->addWidget( textLabel1_2_2_2, 1, 0 );
 
     lblStopHeight = new QLabel( privateLayoutWidget, "lblStopHeight" );
-    lblStopHeight->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignRight ) );
+    lblStopHeight->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
 
     layout3->addWidget( lblStopHeight, 1, 2 );
 
     lblDiffTime = new QLabel( privateLayoutWidget, "lblDiffTime" );
-    lblDiffTime->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignRight ) );
+    lblDiffTime->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
 
     layout3->addWidget( lblDiffTime, 2, 1 );
     layout12->addWidget( groupBox1 );
@@ -247,33 +236,34 @@ OptimizationWizard::OptimizationWizard( QWidget* parent, const char* name, bool 
     layout12->addWidget( kPushButton2 );
     layout14->addLayout( layout12 );
     pageLayout->addLayout( layout14 );
-    addPage( page, "" );
+    addPage(page);
 
-    page_2 = new QWidget( this, "page_2" );
-    pageLayout_2 = new QVBoxLayout( page_2, 11, 6, "pageLayout_2"); 
+    page_2 = new QWizardPage(this);
+    page_2->setTitle(tr("Optimization"));
+    pageLayout_2 = new QVBoxLayout( page_2, 11, 6, "pageLayout_2");
 
-    layout13 = new QVBoxLayout( 0, 0, 6, "layout13"); 
+    layout13 = new QVBoxLayout( 0, 0, 6, "layout13");
 
     kTextBrowser1 = new QTextBrowser( page_2, "kTextBrowser1" );
     layout13->addWidget( kTextBrowser1 );
 
-    layout12_2 = new QHBoxLayout( 0, 0, 6, "layout12_2"); 
+    layout12_2 = new QHBoxLayout( 0, 0, 6, "layout12_2");
     QSpacerItem* spacer = new QSpacerItem( 21, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     layout12_2->addItem( spacer );
 
     frame3 = new QFrame( page_2, "frame3" );
     frame3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, frame3->sizePolicy().hasHeightForWidth() ) );
-    frame3->setFrameShape( QFrame::StyledPanel );
-    frame3->setFrameShadow( QFrame::Plain );
-    frame3Layout = new QVBoxLayout( frame3, 11, 6, "frame3Layout"); 
+    frame3->setFrameShape( Q3Frame::StyledPanel );
+    frame3->setFrameShadow( Q3Frame::Plain );
+    frame3Layout = new QVBoxLayout( frame3, 11, 6, "frame3Layout");
 
-    layout5 = new QVBoxLayout( 0, 0, 6, "layout5"); 
+    layout5 = new QVBoxLayout( 0, 0, 6, "layout5");
 
-    progress = new QProgressBar( frame3, "progress" );
+    progress = new QProgressBar(frame3);
     progress->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, progress->sizePolicy().hasHeightForWidth() ) );
     layout5->addWidget( progress );
 
-    layout2 = new QHBoxLayout( 0, 0, 6, "layout2"); 
+    layout2 = new QHBoxLayout( 0, 0, 6, "layout2");
 
     btnStart = new QPushButton( frame3, "btnStart" );
     btnStart->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, btnStart->sizePolicy().hasHeightForWidth() ) );
@@ -290,7 +280,7 @@ OptimizationWizard::OptimizationWizard( QWidget* parent, const char* name, bool 
     layout12_2->addItem( spacer_2 );
     layout13->addLayout( layout12_2 );
     pageLayout_2->addLayout( layout13 );
-    addPage( page_2, "" );
+    addPage(page_2);
     languageChange();
     resize( QSize(446, 329).expandedTo(minimumSizeHint()) );
 
@@ -327,9 +317,188 @@ void OptimizationWizard::languageChange()
     lblStopHeight->setText( tr( "1999m" ) );
     lblDiffTime->setText( tr( "11:11:11" ) );
     kPushButton2->setText( tr( "Set Times" ) );
-    setTitle( page, tr( "Task start and end times" ) );
     btnStart->setText( tr( "Start Optimization" ) );
     btnStop->setText( tr( "Stop Optimization" ) );
-    setTitle( page_2, tr( "Optimization" ) );
 }
 
+void OptimizationWizard::init()
+{
+//  next two lines are a hack to fix initial evaluation widget size bug
+  showMaximized();
+  showNormal();
+
+  resize(640,520);
+
+  flight=(Flight*)_globalMapContents.getFlight();
+  route=flight->getRoute();
+  optimization = new Optimization(0, route.count(), route,progress);
+  slotSetTimes();
+  QString text = "<DIV ALIGN=CENTER>";
+  text += tr("The task has not been optimized for the OLC, yet") +
+      "<br>" + tr("Press \"Start Optimization\" to begin");
+  text += "</DIV>";
+  kTextBrowser1->setText(text);
+}
+
+void OptimizationWizard::slotStartOptimization()
+{
+  optimization->enableRun();
+  btnStart->setEnabled(false);
+  btnStop->setEnabled(true);
+
+  optimization->run();
+
+  unsigned int idList[LEGS+3];
+  double points;
+  double distance = optimizationResult(idList,&points);
+
+  if (distance<0.0)  // optimization was canceled
+    return;
+
+//  setFinishEnabled ( page_2, true );
+  btnStop->setEnabled(false);
+  btnStart->setEnabled(true);
+
+  QString text, distText, rawPointText;
+  rawPointText.sprintf(" %.2f", points);
+  distText.sprintf(" %.2f km  ", distance);
+//  text = tr("The task has been optimized for the OLC.\nThe best task found is:\n\n");
+//  text = text + "\tBOT:  "
+//      + printTime(route.at(idList[0])->time,true) + " : \t"
+//      + printPos(route.at(idList[0])->origP.lat()) + " / "
+//      + printPos(route.at(idList[0])->origP.lon(), false)
+//      + QString("\n\t1.TP:  ")
+//      + printTime(route.at(idList[1])->time,true) + " : \t"
+//      + printPos(route.at(idList[1])->origP.lat()) + " / "
+//      + printPos(route.at(idList[1])->origP.lon(), false)
+//      + QString(" (%1km)\n\t2.TP:  ").arg(dist(route.at(idList[0]),route.at(idList[1])),0,'f',2)
+//      + printTime(route.at(idList[2])->time,true) + " : \t"
+//      + printPos(route.at(idList[2])->origP.lat()) + " / "
+//      + printPos(route.at(idList[2])->origP.lon(), false)
+//      + QString(" (%1km)\n\t3.TP:  ").arg(dist(route.at(idList[1]),route.at(idList[2])),0,'f',2)
+//      + printTime(route.at(idList[3])->time,true) + " : \t"
+//      + printPos(route.at(idList[3])->origP.lat()) + " / "
+//      + printPos(route.at(idList[3])->origP.lon(), false)
+//      + QString(" (%1km)\n\t4.TP:  ").arg(dist(route.at(idList[2]),route.at(idList[3])),0,'f',2)
+//      + printTime(route.at(idList[4])->time,true) + " : \t"
+//      + printPos(route.at(idList[4])->origP.lat()) + " / "
+//      + printPos(route.at(idList[4])->origP.lon(), false)
+//      + QString(" (%1km)\n\t5.TP:  ").arg(dist(route.at(idList[3]),route.at(idList[4])),0,'f',2)
+//      + printTime(route.at(idList[5])->time,true) + " : \t"
+//      + printPos(route.at(idList[5])->origP.lat()) + " / "
+//      + printPos(route.at(idList[5])->origP.lon(), false)
+//      + QString(" (%1km)\n\tEOT:  ").arg(dist(route.at(idList[4]),route.at(idList[5])),0,'f',2)
+//      + printTime(route.at(idList[6])->time,true) + " : \t"
+//      + printPos(route.at(idList[6])->origP.lat()) + " / "
+//      + printPos(route.at(idList[6])->origP.lon(), false)
+//      + QString(" (%1km):  ").arg(dist(route.at(idList[5]),route.at(idList[6])),0,'f',2)
+//      + tr("\n\nDistance:\t") + distText + "\n" + tr("Points(raw):\t") + rawPointText + "\n\n"
+//      + tr("If you want to use this task and replace the old, press \"Finish\",\nelse press \"Cancel\"");
+  text = "<div align=\"center\"<caption><b>";
+  text += tr("Optimization Result")+"</b></div><table align=\"center\"><thead><tr>";
+  text += "<th scope=col></th><th scope=col>" + tr("Time") + "</th><th scope=col>";
+  text += tr("Latitude") + "</th><th scope=col>"+tr("Longitude")+"</th><th ALIGN=right scope=col>";
+  text += tr("Distance") + "</th></tr>";
+  text += "</thead><tbody>";
+
+  text += "<tr><td>" + tr("Begin of Soaring") + "</td><td>"
+      + printTime(route.at(idList[0])->time,true) + "</td><td>"
+      + printPos(route.at(idList[0])->origP.lat()) + "</td><td>"
+      + printPos(route.at(idList[0])->origP.lon(), false) + "</td><td></td></tr>";
+  text += "<tr><td>" + tr("Begin of Task") + "</td><td>"
+      + printTime(route.at(idList[1])->time,true) + "</td><td>"
+      + printPos(route.at(idList[1])->origP.lat()) + "</td><td>"
+      + printPos(route.at(idList[1])->origP.lon(), false) + "</td><td></td></tr>";
+  text += "<tr><td>" + tr("1.Turnpoint") + "</td><td>"
+      + printTime(route.at(idList[2])->time,true) + "</td><td>"
+      + printPos(route.at(idList[2])->origP.lat()) + "</td><td>"
+      + printPos(route.at(idList[2])->origP.lon(), false) + "</td><td ALIGN=right>"
+      + QString("%1km</td></tr>").arg(dist(route.at(idList[1]),route.at(idList[2])),0,'f',2);
+  text += "<tr><td>" + tr("2.Turnpoint") + "</td><td>"
+      + printTime(route.at(idList[3])->time,true) + "</td><td>"
+      + printPos(route.at(idList[3])->origP.lat()) + "</td><td>"
+      + printPos(route.at(idList[3])->origP.lon(), false) + "</td><td ALIGN=right>"
+      + QString("%1km</td></tr>").arg(dist(route.at(idList[2]),route.at(idList[3])),0,'f',2);
+  text += "<tr><td>" + tr("3.Turnpoint") + "</td><td>"
+      + printTime(route.at(idList[4])->time,true) + "</td><td>"
+      + printPos(route.at(idList[4])->origP.lat()) + "</td><td>"
+      + printPos(route.at(idList[4])->origP.lon(), false) + "</td><td ALIGN=right>"
+      + QString("%1km</td></tr>").arg(dist(route.at(idList[3]),route.at(idList[4])),0,'f',2);
+  text += "<tr><td>" + tr("4.Turnpoint") + "</td><td>"
+      + printTime(route.at(idList[5])->time,true) + "</td><td>"
+      + printPos(route.at(idList[5])->origP.lat()) + "</td><td>"
+      + printPos(route.at(idList[5])->origP.lon(), false) + "</td><td ALIGN=right>"
+      + QString("%1km</td></tr>").arg(dist(route.at(idList[4]),route.at(idList[5])),0,'f',2);
+  text += "<tr><td>" +tr("5.Turnpoint") + "</td><td>"
+      + printTime(route.at(idList[6])->time,true) + "</td><td>"
+      + printPos(route.at(idList[6])->origP.lat()) + "</td><td>"
+      + printPos(route.at(idList[6])->origP.lon(), false) + "</td><td ALIGN=right>"
+      + QString("%1km</td></tr>").arg(dist(route.at(idList[5]),route.at(idList[6])),0,'f',2);
+  text += "<tr><td>" + tr("End of Task") + "</td><td>"
+      + printTime(route.at(idList[7])->time,true) + "</td><td>"
+      + printPos(route.at(idList[7])->origP.lat()) + "</td><td>"
+      + printPos(route.at(idList[7])->origP.lon(), false) + "</td><td ALIGN=right>"
+      + QString("%1km</td></tr>").arg(dist(route.at(idList[6]),route.at(idList[7])),0,'f',2);
+  text += "<tr><td>" + tr("End of Soaring") + "</td><td>"
+      + printTime(route.at(idList[8])->time,true) + "</td><td>"
+      + printPos(route.at(idList[8])->origP.lat()) + "</td><td>"
+      + printPos(route.at(idList[8])->origP.lon(), false) + "</td><td></td></tr>";
+  text += "</tbody></table><th>";
+
+  text += "<table align=\"center\">";
+  text += "<tr><td><b>" + tr("Summary:") + " " + tr("Distance:");
+  text += distText + " " + tr("Points(raw):");
+  text += rawPointText+"</b></td></tr>";
+  text += "</table>";
+
+  int heightDiff = route.at(idList[8])->height - route.at(idList[0])->height;
+  if (heightDiff<-1000)
+    text += "<div align=\"center\"><b>" + tr("WARNING! THE HEIGHT DIFFERENCE IS TOO LARGE!<br>This is not a valid OLC task. Go back and correct the start and/or end times.")+"</b></div>";
+
+  text += "<div align=\"center\">"+tr("If you want to use this task and replace the old, press \"Finish\", else press \"Cancel\"")+"</div>";
+
+  kTextBrowser1->setText(text);
+//  next();
+}
+
+void OptimizationWizard::slotStopOptimization()
+{
+    btnStart->setEnabled(true);
+    btnStop->setEnabled(false);
+    optimization->stopRun();
+}
+
+void OptimizationWizard::slotSetTimes()
+{
+  if (!evaluation)
+    return;
+  unsigned int start=evaluation->getTaskStart();
+  unsigned int stop=evaluation->getTaskEnd();
+  flightPoint startPoint=flight->getPoint(start);
+  flightPoint endPoint=flight->getPoint(stop);
+  lblStartTime->setText(QString("%1").arg(printTime(startPoint.time,true)));
+  lblStopTime->setText(QString("%1").arg(printTime(endPoint.time,true)));
+  lblDiffTime->setText(QString("%1").arg(printTime(endPoint.time-startPoint.time,true)));
+  lblStartHeight->setText(QString("%1m").arg(startPoint.height));
+  lblStopHeight->setText(QString("%1m").arg(endPoint.height));
+  lblDiffHeight->setText(QString("%1m").arg(endPoint.height-startPoint.height));
+  if (endPoint.height-startPoint.height<-1000)
+    lblDiffHeight->setPaletteForegroundColor(QColor(255,0,0));
+  else
+    lblDiffHeight->setPaletteForegroundColor(QColor(0,128,0));
+  optimization->setTimes(start,stop);
+}
+
+void OptimizationWizard::setMapContents( Map* _map )
+{
+    extern MapContents _globalMapContents;
+    connect(&_globalMapContents, SIGNAL(currentFlightChanged()), evaluation,
+        SLOT(slotShowFlightData()));
+    connect(evaluation, SIGNAL(showCursor(QPoint, QPoint)), _map,
+        SLOT(slotDrawCursor(QPoint, QPoint)));
+}
+
+double OptimizationWizard::optimizationResult( unsigned int* pointList, double * points )
+{
+    return optimization->optimizationResult( pointList,points );
+}

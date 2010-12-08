@@ -21,18 +21,16 @@
 #include <unistd.h>
 
 //Qt includes
-#include <qdir.h>
-#include <qfile.h>
-#include <qfileinfo.h>
-#include <qregexp.h>
-#include <qsettings.h>
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qtextstream.h>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QRegExp>
+#include <QSettings>
+#include <QStringList>
+#include <q3textstream.h>
 
 //project includes
 #include "airspace.h"
-#include "filetools.h"
 #include "distance.h"
 #include "mapcalc.h"
 #include "mapmatrix.h"
@@ -60,7 +58,7 @@ extern MapMatrix    _globalMapMatrix;
 OpenAirParser::OpenAirParser()
 {
   _boundingBox = (QRect *) 0;
-  _bufData = (QCString *) 0;
+  _bufData = (Q3CString *) 0;
   _outbuf = (QDataStream *) 0;
 
   initializeBaseMapping();
@@ -80,7 +78,7 @@ OpenAirParser::~OpenAirParser()
  *   file should be added to.
  */
 
-uint OpenAirParser::load( QPtrList<Airspace>& list )
+uint OpenAirParser::load( QList<Airspace*> &list )
 {
   extern QSettings _settings;
   QTime t;
@@ -113,13 +111,13 @@ uint OpenAirParser::load( QPtrList<Airspace>& list )
 }
 
 
-bool OpenAirParser::parse(const QString& path, QPtrList<Airspace>& list)
+bool OpenAirParser::parse(const QString& path, QList<Airspace*> &list)
 {
   QTime t;
   t.start();
   QFile source(path);
 
-  if (!source.open(IO_ReadOnly)) {
+  if (!source.open(QIODevice::ReadOnly)) {
     qWarning("OpenAirParser: Cannot open airspace file %s!", path.latin1());
     return false;
   }
@@ -127,7 +125,7 @@ bool OpenAirParser::parse(const QString& path, QPtrList<Airspace>& list)
   resetState();
   initializeStringMapping( path );
 
-  QTextStream in(&source);
+  Q3TextStream in(&source);
   //start parsing
   QString line=in.readLine();
   _lineNumber++;
@@ -307,7 +305,7 @@ void OpenAirParser::newPA()
 void OpenAirParser::finishAirspace()
 {
   uint cnt=asPA.count();
-  QPointArray PA(cnt);
+  Q3PointArray PA(cnt);
   for (uint i=0; i<cnt; i++) {
     PA.setPoint(i, _globalMapMatrix.wgsToMap(asPA.point(i)));
   }
@@ -377,12 +375,12 @@ void OpenAirParser::initializeStringMapping(const QString& mapFilePath)
   fi.setFile(path);
   if (fi.exists() && fi.isFile() && fi.isReadable()) {
     QFile f(path);
-    if (!f.open(IO_ReadOnly)) {
+    if (!f.open(QIODevice::ReadOnly)) {
       qWarning("OpenAirParser: Cannot open airspace mapping file %s!", path.latin1());
       return;
     }
 
-    QTextStream in(&f);
+    Q3TextStream in(&f);
     qDebug("Parsing mapping file '%s'.", path.latin1());
 
     //start parsing
@@ -450,7 +448,8 @@ void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& 
   //we start with the text parts
   QRegExp reg("[A-Za-z]+");
   while (line.length()>0) {
-    pos = reg.match(line, pos+len, &len);
+    pos = reg.indexIn(line, pos+len);
+    len = reg.matchedLength();
     if (pos<0) {
       break;
     }
@@ -465,7 +464,8 @@ void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& 
   pos=0;
   len=0;
   while (line.length()>0) {
-    pos = reg.match(line, pos+len, &len);
+    pos = reg.indexIn(line, pos+len);
+    len = reg.matchedLength();
     if (pos<0) {
       break;
     }
@@ -547,12 +547,12 @@ bool OpenAirParser::parseCoordinate(QString& line, int& lat, int& lon)
   bool result=true;
   line=line.upper();
 
-  int len=0, pos=0;
+  int pos=0;
   lat=0;
   lon=0;
 
   QRegExp reg("[NSEW]");
-  pos=reg.match(line, 0, &len);
+  pos = reg.indexIn(line);
   if (pos==-1)
     return false;
 
@@ -589,7 +589,8 @@ bool OpenAirParser::parseCoordinatePart(QString& line, int& lat, int& lon)
   }
 
   while (cur_factor<3 && line.length()) {
-    pos=reg.match(line,pos+len,&len);
+    pos = reg.indexIn(line, pos+len);
+    len = reg.matchedLength();
     if (pos==-1) {
       break;
     } else {
@@ -932,7 +933,7 @@ bool OpenAirParser::setHeaderData( QString &path )
   h_fileVersion = 0;
 
   QFile inFile(path);
-  if( !inFile.open(IO_ReadOnly) ) {
+  if( !inFile.open(QIODevice::ReadOnly) ) {
     qWarning("OpenAirParser: Cannot open airspace file %s!", path.latin1());
     return false;
   }
@@ -949,7 +950,7 @@ bool OpenAirParser::setHeaderData( QString &path )
 
   in >> h_fileType;
 
-  if( h_fileType != FILE_TYPE_AIRSPACE_C ) {
+  if( *h_fileType != FILE_TYPE_AIRSPACE_C ) {
     qWarning( "OpenAirParser: wrong file type %x read! Aborting ...", h_fileType );
     inFile.close();
     return false;

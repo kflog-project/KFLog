@@ -30,6 +30,10 @@
 #include "../flight.h"
 #include "../resource.h"
 #include "../mapcontents.h"
+//Added by qt3to4:
+#include <QWheelEvent>
+#include <Q3ValueList>
+#include <QMouseEvent>
 
 
 
@@ -65,7 +69,7 @@ GLView::~GLView()
 {
     if (boxObject)
       glDeleteLists( boxObject, 1 );
-    QValueList<GLuint>::iterator it;
+    Q3ValueList<GLuint>::iterator it;
     for ( it = flightList.begin(); it != flightList.end(); ++it )
       glDeleteLists((*it),1);
 }
@@ -83,7 +87,7 @@ void GLView::addShadow(Flight* flight)
 
       glNewList( list, GL_COMPILE );
 
-      qglColor( gray );                      // Shorthand for glColor3f or glIndex
+      qglColor( Qt::gray );                      // Shorthand for glColor3f or glIndex
       glLineWidth( 2.0 );
 
       flightPoint fPoint;
@@ -116,7 +120,7 @@ void GLView::addFlight(Flight* flight)
 
     if (flight){
       length=flight->getRouteLength();
-      qWarning(QString("Adding %1 points").arg(length));
+      qWarning("Adding %d points", length);
 
 //      extern MapMatrix _globalMapMatrix;
       extern MapConfig _globalMapConfig;
@@ -127,7 +131,7 @@ void GLView::addFlight(Flight* flight)
 
       glNewList( list, GL_COMPILE );
 
-      qglColor( blue );                      // Shorthand for glColor3f or glIndex
+      qglColor( Qt::blue );                      // Shorthand for glColor3f or glIndex
 
       glLineWidth( 2.0 );
 
@@ -210,7 +214,7 @@ void GLView::paintGL()
     // bounding box
     glCallList( boxObject );
     // flight list (including the shadows of the flights)
-    QValueList<GLuint>::iterator it;
+    Q3ValueList<GLuint>::iterator it;
     for ( it = flightList.begin(); it != flightList.end(); ++it )
       glCallList((*it));
 }
@@ -259,7 +263,7 @@ GLuint GLView::makeBoxObject()
     glNewList( list, GL_COMPILE );  // set mode = compile (=faster in rendering, but
                                     // no changes allowed
 
-    qglColor( white );                      // Shorthand for glColor3f or glIndex
+    qglColor( Qt::white );                      // Shorthand for glColor3f or glIndex
 
     glLineWidth( 2.0 );
 
@@ -340,7 +344,7 @@ void GLView::mousePressEvent ( QMouseEvent * e )
 
 void GLView::mouseMoveEvent ( QMouseEvent * e )
 {
-  if (e->state() & LeftButton){  // left button means translation
+  if (e->state() & Qt::LeftButton){  // left button means translation
     float phi=zRot/180.0*M_PI;
 //    qWarning(QString("phi:%1").arg(phi));
     float dx=(mouse_last.x()-e->x())/100.0/scale;
@@ -352,7 +356,7 @@ void GLView::mouseMoveEvent ( QMouseEvent * e )
     mouse_last=e->pos();
     updateGL();
   }
-  else if(e->state() & RightButton){  // right button is rotation
+  else if(e->state() & Qt::RightButton){  // right button is rotation
     zRot-=mouse_last.x()-e->x();
     xRot-=mouse_last.y()-e->y();
     mouse_last=e->pos();

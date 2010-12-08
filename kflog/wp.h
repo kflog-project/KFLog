@@ -21,9 +21,11 @@
 #include <time.h>
 #include <qpoint.h>
 #include <qstring.h>
-#include <qptrcollection.h>
-#include <qvaluevector.h>
-#include <qptrlist.h>
+#include <q3ptrcollection.h>
+#include <q3valuevector.h>
+#include <q3ptrlist.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #include "mapmatrix.h"
 
 /**
@@ -102,14 +104,14 @@ public:
 };
 
 // A flightPoint vector for fast iteration
-typedef QValueVector<flightPoint>  FixVector_TP;
+typedef Q3ValueVector<flightPoint>  FixVector_TP;
 typedef FixVector_TP::iterator         FixVectorIterator_TP;
 
 // A flightPoint list for fast element exchange
-typedef QValueList<flightPoint>  FixList_TP;
+typedef Q3ValueList<flightPoint>  FixList_TP;
 typedef FixList_TP::iterator         FixListIterator_TP;
-typedef QPtrList<flightPoint>       FixPtrList_TP;
-typedef QPtrListIterator<flightPoint>      FixPtrListIterator_TP;
+typedef Q3PtrList<flightPoint>       FixPtrList_TP;
+typedef Q3PtrListIterator<flightPoint>      FixPtrListIterator_TP;
 
 
 #endif

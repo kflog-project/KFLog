@@ -17,7 +17,7 @@
 
 #include "airport.h"
 
-#include <qdir.h>
+#include <QDir>
 
 Airport::Airport(QString n, QString i, QString abbr, unsigned int t,
   WGSPoint wgsPos, QPoint pos, unsigned int e, const char* f, bool v)
@@ -85,7 +85,7 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
   QPoint printPos(glMapMatrix->print(position));
 
   printPainter->setPen(QPen(QColor(0,0,0), 3));
-  printPainter->setBrush(QBrush::NoBrush);
+  printPainter->setBrush(Qt::NoBrush);
   printPainter->setFont(QFont("helvetica", 10));
 
   int iconSize = 20;
@@ -185,7 +185,7 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
             printPos.x() + iconSize - 4, printPos.y());
         break;
       case ClosedAirfield:
-        warning("ClosedAirfield");
+        qWarning("ClosedAirfield");
         isText = false;
         break;
       case CivHeliport:
@@ -221,11 +221,11 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
         break;
       case AmbHeliport:
         printPainter->setPen(QPen(QColor(255,255,255), 1));
-        printPainter->setBrush(QBrush(QColor(255,255,255), QBrush::SolidPattern));
+        printPainter->setBrush(QBrush(QColor(255,255,255), Qt::SolidPattern));
         printPainter->drawRect(printPos.x() - 9, printPos.y() - 9, 18, 18);
 
         printPainter->setPen(QPen(QColor(0,0,0), 1));
-        printPainter->setBrush(QBrush(QColor(0,0,0), QBrush::SolidPattern));
+        printPainter->setBrush(QBrush(QColor(0,0,0), Qt::SolidPattern));
         printPainter->drawRect(printPos.x() - 7, printPos.y() - 7, 14, 14);
         printPainter->setPen(QPen(QColor(255,255,255), 1));
         printPainter->setFont(QFont("helvetica", 13, QFont::Bold));
@@ -243,7 +243,7 @@ void Airport::addRunway(runway* r)
 {
     if (r) {
       if (!rwData) {
-        rwData=new QPtrList<runway>;
+        rwData=new Q3PtrList<runway>;
         rwData->setAutoDelete(true);
       }
       rwData->append(r);

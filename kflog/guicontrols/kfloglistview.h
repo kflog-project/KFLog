@@ -19,7 +19,7 @@
 #ifndef KFLOGLISTVIEW_H
 #define KFLOGLISTVIEW_H
 
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qstring.h>
 #include <qwidget.h>
 
@@ -27,7 +27,7 @@
   *@author Harald Maier
   */
 
-class KFLogListView : public QListView  {
+class KFLogListView : public Q3ListView  {
    Q_OBJECT
 public:
 	KFLogListView(const char *persistendName, QWidget *parent=0, const char *name=0);
@@ -35,9 +35,9 @@ public:
 	~KFLogListView();
 
   //source: http://api.kde.org/3.5-api/kdelibs-apidocs/kdeui/html/klistview_8cpp_source.html#l01858
-  int itemIndex( const QListViewItem * ) const;
+  int itemIndex( const Q3ListViewItem * ) const;
   //source: http://api.kde.org/3.5-api/kdelibs-apidocs/kdeui/html/klistview_8cpp_source.html#l01877
-  QListViewItem* itemAtIndex(int );
+  Q3ListViewItem* itemAtIndex(int );
 private: // Private attributes
   /**  */
   QString confName;

@@ -27,6 +27,8 @@
 #include <signal.h>
 
 #include <ctype.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 /**
  * The device-name of the port.
@@ -91,7 +93,7 @@ FlightRecorderPluginBase::TransferMode Volkslogger::getTransferMode() const
 
 QString Volkslogger::getLibName() const {  return "libkfrgcs";  }
 
-int Volkslogger::getFlightDir(QPtrList<FRDirEntry>* dirList)
+int Volkslogger::getFlightDir(QList<FRDirEntry*>* dirList)
 {
   dirList->clear();
   int err;
@@ -182,12 +184,12 @@ int Volkslogger::getBasicData(FR_BasicData& data)
   return FR_OK;
 }
 
-int Volkslogger::getConfigData(FR_ConfigData& data)
+int Volkslogger::getConfigData(FR_ConfigData& /*data*/)
 {
   return FR_NOTSUPPORTED;
 }
 
-int Volkslogger::writeConfigData(FR_BasicData& basicdata, FR_ConfigData& configdata)
+int Volkslogger::writeConfigData(FR_BasicData& /*basicdata*/, FR_ConfigData& /*configdata*/)
 {
   return FR_NOTSUPPORTED;
 }
@@ -198,7 +200,7 @@ int Volkslogger::openRecorder(const QString& pName, int baud)
   portName = (char *)pName.latin1();
 
   if((err = vl.open(1, 5, 0, baud)) != VLA_ERR_NOERR) {
-    warning(tr("No logger found!"));
+    qWarning(tr("No logger found!"));
     _isConnected = false;
   }
   else {
@@ -215,10 +217,10 @@ int Volkslogger::closeRecorder()
   return FR_OK;
 }
 
-int Volkslogger::writeDeclaration(FRTaskDeclaration* taskDecl, QPtrList<Waypoint> *taskPoints)
+int Volkslogger::writeDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint*> *taskPoints)
 {
   Waypoint *tp;
-  unsigned int loop;
+  int loop;
 
   if (!haveDatabase) {
     if (readDatabase() == FR_ERROR) {
@@ -282,14 +284,14 @@ int Volkslogger::readDatabase()
   }
 }
 
-int Volkslogger::readTasks(QPtrList<FlightTask> *tasks)
+int Volkslogger::readTasks(QList<FlightTask*> *tasks)
 {
-  QPtrList<Waypoint> taskPoints;
+  QList<Waypoint*> taskPoints;
   Waypoint *tp;
   VLAPI_DATA::ROUTE *r;
   VLAPI_DATA::WPT *wp;
   int taskCnt;
-  unsigned int wpCnt;
+  int wpCnt;
 
   if (!haveDatabase) {
     if (readDatabase() == FR_ERROR) {
@@ -331,15 +333,15 @@ int Volkslogger::readTasks(QPtrList<FlightTask> *tasks)
   return FR_OK;
 }
 
-int Volkslogger::writeTasks(QPtrList<FlightTask> *tasks)
+int Volkslogger::writeTasks(QList<FlightTask*> *tasks)
 {
   FlightTask *task;
-  QPtrList<Waypoint> taskPoints;
+  QList<Waypoint*> taskPoints;
   Waypoint *tp;
   VLAPI_DATA::ROUTE *r;
   VLAPI_DATA::WPT *wp;
-  unsigned int taskCnt;
-  unsigned int wpCnt;
+  int taskCnt = 0;
+  int wpCnt;
 
   if (!haveDatabase) {
     if (readDatabase() == FR_ERROR) {
@@ -356,8 +358,7 @@ int Volkslogger::writeTasks(QPtrList<FlightTask> *tasks)
   vl.database.nroutes = std::min(tasks->count(), _capabilities.maxNrTasks);
   vl.database.routes = new VLAPI_DATA::ROUTE[vl.database.nroutes];
 
-  taskCnt = 0;
-  for (task = tasks->first(); task != 0; task = tasks->next()) {
+  foreach(task, *tasks) {
     // should never happen
     if (taskCnt >= _capabilities.maxNrTasks) {
       break;
@@ -367,7 +368,7 @@ int Volkslogger::writeTasks(QPtrList<FlightTask> *tasks)
     strcpy(r->name, task->getFileName().leftJustify(14, ' ', true));
     wpCnt = 0;
     taskPoints = task->getWPList();
-    for (tp = taskPoints.first(); tp != 0; tp = taskPoints.next()) {
+    foreach(tp, taskPoints) {
       // should never happen
       if (wpCnt >= _capabilities.maxNrWaypointsPerTask) {
         break;
@@ -392,7 +393,7 @@ int Volkslogger::writeTasks(QPtrList<FlightTask> *tasks)
   return vl.write_db_and_declaration() == VLA_ERR_NOERR ? FR_OK : FR_ERROR;
 }
 
-int Volkslogger::readWaypoints(QPtrList<Waypoint> *waypoints)
+int Volkslogger::readWaypoints(QList<Waypoint*> *waypoints)
 {
   int n;
   Waypoint *frWp;
@@ -422,7 +423,7 @@ int Volkslogger::readWaypoints(QPtrList<Waypoint> *waypoints)
   return FR_OK;
 }
 
-int Volkslogger::writeWaypoints(QPtrList<Waypoint> *waypoints)
+int Volkslogger::writeWaypoints(QList<Waypoint*> *waypoints)
 {
   Waypoint *frWp;
   VLAPI_DATA::WPT *wp;
@@ -444,7 +445,7 @@ int Volkslogger::writeWaypoints(QPtrList<Waypoint> *waypoints)
   vl.database.wpts = new VLAPI_DATA::WPT[vl.database.nwpts];
 
   wpCnt = 0;
-  for (frWp = waypoints->first(); frWp != 0; frWp = waypoints->next()) {
+  foreach(frWp, *waypoints) {
     // should never happen
     if (wpCnt >= _capabilities.maxNrWaypoints) {
       break;

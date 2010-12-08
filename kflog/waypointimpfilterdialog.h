@@ -21,11 +21,11 @@
 #include "singlepoint.h"
 #include "guicontrols/coordedit.h"
 
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qdialog.h>
-#include <qdict.h>
-#include <qpoint.h>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDialog>
+#include <q3dict.h>
+#include <QPoint>
 
 /**filter import of waypoints from map
   *@author Harald Maier
@@ -73,7 +73,7 @@ public slots:
 private: // Private attributes
   /**  */
   int center;
-  QDict<SinglePoint> airportDict;
+  Q3Dict<SinglePoint> airportDict;
   QComboBox *refAirport;
 
 private slots:

@@ -20,28 +20,28 @@
 
 #include <termios.h>
 #include <stdio.h>
-#include <qtimer.h>
 
-#include <qglobal.h>
-#if QT_VERSION < 0x030000
+#include <QTimer>
 
-#include <qlist.h>
-#include "waypoint.h"
-#include "frstructs.h"
-#include "flighttask.h"
-#include "flightrecorderpluginbase.h"
-#include "da4record.h"
+//#include <qglobal.h>
+//#if QT_VERSION < 0x030000
+//
+//#include <qlist.h>
+//#include "waypoint.h"
+//#include "frstructs.h"
+//#include "flighttask.h"
+//#include "flightrecorderpluginbase.h"
+//#include "da4record.h"
+//
+//#else
 
-#else
-
-#include <qptrlist.h>
 #include "../waypoint.h"
 #include "../frstructs.h"
 #include "../flighttask.h"
 #include "../flightrecorderpluginbase.h"
 #include "../da4record.h"
 
-#endif
+//#endif
 
 
 /**
@@ -82,7 +82,7 @@ public:
   /**
    * Returns a list of recorded flights in this device.
    */
-  virtual int getFlightDir(QPtrList<FRDirEntry>*);
+  virtual int getFlightDir(QList<FRDirEntry*>*);
   /**
    *
    */
@@ -114,7 +114,7 @@ public:
   /**
    * Write flight declaration to recorder
    */
-  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QPtrList<Waypoint> *taskPoints);
+  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
   /**
    * Read waypoint and flight declaration form from recorder into mem
    */
@@ -122,19 +122,19 @@ public:
   /**
    * Read tasks from recorder
    */
-  virtual int readTasks(QPtrList<FlightTask> *tasks);
+  virtual int readTasks(QList<FlightTask*> *tasks);
   /**
    * Write tasks to recorder
    */
-  virtual int writeTasks(QPtrList<FlightTask> *tasks);
+  virtual int writeTasks(QList<FlightTask*> *tasks);
   /**
    * Read waypoints from recorder
    */
-  virtual int readWaypoints(QPtrList<Waypoint> *waypoints);
+  virtual int readWaypoints(QList<Waypoint*> *waypoints);
   /**
    * Write waypoints to recorder
    */
-  virtual int writeWaypoints(QPtrList<Waypoint> *waypoints);
+  virtual int writeWaypoints(QList<Waypoint*> *waypoints);
 
   static unsigned char calcCrcBuf(const void* buf, unsigned int count);
 
@@ -172,7 +172,7 @@ private:
   bool convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last);
   unsigned char *readData(unsigned char *buf_p, int count);
   unsigned char *writeData(unsigned char *buf_p, int count);
-  QPtrList <flightTable> flightIndex;
+  Q3PtrList <flightTable> flightIndex;
   char *wordtoserno(unsigned int Binaer);
   // true if the da4buffer is identical to the logger content
   bool _da4BufferValid;

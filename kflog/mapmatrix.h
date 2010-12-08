@@ -20,7 +20,9 @@
 
 #include <algorithm>
 #include <qobject.h>
-#include <qwmatrix.h>
+#include <qmatrix.h>
+//Added by qt3to4:
+#include <Q3PointArray>
 
 #include "projectionlambert.h"
 #include "projectioncylindric.h"
@@ -88,7 +90,7 @@ class MapMatrix : public QObject
      *
      * @return the mapped pointarray
      */
-    QPointArray map(const QPointArray& pArray) const;
+    Q3PointArray map(const Q3PointArray& pArray) const;
     /**
      * Maps the given projected point into the current map-matrix.
      *
@@ -134,7 +136,7 @@ class MapMatrix : public QObject
      *
      * @return the mapped pointarray
      */
-    QPointArray print(const QPointArray& pArray) const;
+    Q3PointArray print(const Q3PointArray& pArray) const;
     /**
      * @param  type  The type of scale to be returned.
      *
@@ -313,10 +315,10 @@ public slots:
 
     /**
      */
-    QWMatrix worldMatrix;
+    QMatrix worldMatrix;
     /**
      */
-    QWMatrix printMatrix;
+    QMatrix printMatrix;
     /**
      *
      */

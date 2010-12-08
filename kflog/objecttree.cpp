@@ -15,27 +15,26 @@
 **
 ***********************************************************************/
 
+//qt includes
+#include <QApplication>
+#include <QCursor>
+#include <QDomDocument>
+#include <QDomElement>
+#include <QDragEnterEvent>
+#include <q3dragobject.h>
+#include <q3filedialog.h>
+#include <QMessageBox>
+
 //program specific includes
-#include "flight.h"
-#include "flightlistviewitem.h"
-#include "flightgroup.h"
 #include "flightgrouplistviewitem.h"
+#include "flightlistviewitem.h"
 #include "flightselectiondialog.h"
-#include "flighttask.h"
 #include "mapcontents.h"
 #include "objecttree.h"
 #include "taskdialog.h"
 #include "tasklistviewitem.h"
 
-//qt includes
-#include <qapplication.h>
-#include <qcursor.h>
-#include <qdom.h>
-#include <qdragobject.h>
-#include <qfiledialog.h>
-#include <qmessagebox.h>
-
-ObjectTree::ObjectTree(QWidget *parent, const char *name ) : QListView(parent,name) {
+ObjectTree::ObjectTree(QWidget *parent, const char *name ) : Q3ListView(parent,name) {
   addPopupMenu();
   setAcceptDrops(true);
 
@@ -51,19 +50,19 @@ ObjectTree::ObjectTree(QWidget *parent, const char *name ) : QListView(parent,na
   colName = addColumn(tr("Name"));
   colDesc = addColumn(tr("Description"));
 
-  FlightRoot = new QListViewItem(this,tr("Flights"));
+  FlightRoot = new Q3ListViewItem(this,tr("Flights"));
   FlightRoot->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/igc_16.png");
   FlightRoot->setSelectable(false);
 
-  TaskRoot = new QListViewItem(this,FlightRoot,tr("Tasks"));
+  TaskRoot = new Q3ListViewItem(this,FlightRoot,tr("Tasks"));
   TaskRoot->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/task_16.png");
   TaskRoot->setSelectable(false);
   /*
    * end listview setup
    */
 
-  connect(this, SIGNAL(selectionChanged(QListViewItem*)),SLOT(slotSelected(QListViewItem*)));
-  connect(this, SIGNAL(rightButtonPressed(QListViewItem *, const QPoint &, int)), SLOT(showTaskPopup(QListViewItem *, const QPoint &, int)));
+  connect(this, SIGNAL(selectionChanged(Q3ListViewItem*)),SLOT(slotSelected(Q3ListViewItem*)));
+  connect(this, SIGNAL(rightButtonPressed(Q3ListViewItem *, const QPoint &, int)), SLOT(showTaskPopup(Q3ListViewItem *, const QPoint &, int)));
 
   currentFlightElement=0;
 }
@@ -93,7 +92,7 @@ void ObjectTree::slotNewTaskAdded(FlightTask * task){
 }
 
 /** Called if the selection has changed. */
-void ObjectTree::slotSelected(QListViewItem * itm){
+void ObjectTree::slotSelected(Q3ListViewItem * itm){
   extern MapContents _globalMapContents;
 
   if (!itm) return;
@@ -121,7 +120,7 @@ void ObjectTree::slotSelected(QListViewItem * itm){
 /** This slot is called if the currently selected flight has changed. */
 void ObjectTree::slotSelectedFlightChanged(){
   extern MapContents _globalMapContents;
-  QListViewItem * itm=findFlightElement(_globalMapContents.getFlight());
+  Q3ListViewItem * itm=findFlightElement(_globalMapContents.getFlight());
 
   if (itm) {
     if (!itm->isSelected()) setSelected(itm,true);
@@ -135,7 +134,7 @@ void ObjectTree::slotSelectedFlightChanged(){
 /** Signaled if the current flight was somehow changed.  */
 void ObjectTree::slotFlightChanged(){
   extern MapContents _globalMapContents;
-  QListViewItem * itm=findFlightElement(_globalMapContents.getFlight());
+  Q3ListViewItem * itm=findFlightElement(_globalMapContents.getFlight());
 
   if (itm) {
     switch (itm->rtti()) { //the rtti (Run Time Type Identification is used to see what kind of listview item we are dealing with
@@ -149,7 +148,7 @@ void ObjectTree::slotFlightChanged(){
         ((TaskListViewItem*)itm)->update();
         break;
       default:
-        warning("Listviewitem of unknown type");
+        qWarning("Listviewitem of unknown type");
     }
   }
 }
@@ -159,8 +158,8 @@ void ObjectTree::slotFlightChanged(){
  * given as an argument.
  * @returns a pointer to the QListViewItem if found, 0 otherwise.
  */
-QListViewItem * ObjectTree::findFlightElement(BaseFlightElement * bfe){
-  QListViewItem * itm=0;
+Q3ListViewItem * ObjectTree::findFlightElement(BaseFlightElement * bfe){
+  Q3ListViewItem * itm=0;
 
   if (FlightRoot->childCount()!=0) {
     itm = FlightRoot->firstChild();
@@ -197,7 +196,7 @@ int ObjectTree::currentFlightElementType() {
 }
 
 void ObjectTree::slotCloseFlight(BaseFlightElement* bfe) {
-  QListViewItem * itm=findFlightElement(bfe);
+  Q3ListViewItem * itm=findFlightElement(bfe);
   if (bfe==currentFlightElement) currentFlightElement=0;
   delete itm;
 }
@@ -205,7 +204,7 @@ void ObjectTree::slotCloseFlight(BaseFlightElement* bfe) {
 /** The following code has been taken from tasks.cpp.
   **   Copyright (c):  2002 by Harald Maier       */
 
-void ObjectTree::showTaskPopup(QListViewItem *item, const QPoint &, int)
+void ObjectTree::showTaskPopup(Q3ListViewItem */*item*/, const QPoint &, int)
 {
 /*  if (item != 0) {
     extern MapContents _globalMapContents;
@@ -232,7 +231,7 @@ void ObjectTree::showTaskPopup(QListViewItem *item, const QPoint &, int)
 
 void ObjectTree::addPopupMenu()
 {
-  taskPopup = new QPopupMenu(this);
+  taskPopup = new Q3PopupMenu(this);
 //  taskPopup->insertTitle(SmallIcon("flight"), tr("Flights"), 0);
   taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png"), tr("&Open flight"), this, SIGNAL(openFlight()));
   taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_filenew_16.png"), tr("New flight &group"), this,
@@ -311,9 +310,7 @@ void ObjectTree::slotSaveTask()
   QFile f;
   QString fName;
   //QListViewItem *item = currentItem();
-  QList <Waypoint> wpList;
-  wpList.setAutoDelete(false);
-  uint i;
+  QList<Waypoint*> wpList;
 
   //check if we are dealing with a task, and if so, set ft to reference the flighttask, else exit.
   if (currentFlightElementType()==BaseMapElement::Task) {
@@ -322,7 +319,7 @@ void ObjectTree::slotSaveTask()
     return;
   }
 
-  fName = QFileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, 0, tr("Save task"));
+  fName = Q3FileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, 0, tr("Save task"));
   if(!fName.isEmpty()) {
     if (fName.right(9) != ".kflogtsk") {
       fName += ".kflogtsk";
@@ -339,7 +336,7 @@ void ObjectTree::slotSaveTask()
       root.appendChild(t);
 
       wpList = ft->getWPList();
-      for (i = 0; i < wpList.count(); i++) {
+      for(int i = 0; i < wpList.count(); i++) {
         w = wpList.at(i);
 
         child = doc.createElement("Waypoint");
@@ -361,7 +358,7 @@ void ObjectTree::slotSaveTask()
       }
 
     f.setName(fName);
-    if (f.open(IO_WriteOnly)) {
+    if (f.open(QIODevice::WriteOnly)) {
       QString txt = doc.toString();
       f.writeBlock(txt, txt.length());
       f.close();
@@ -386,12 +383,10 @@ void ObjectTree::slotSaveAllTask()
   FlightTask *ft;
   QFile f;
   QString fName;
-  QListViewItem *item;
-  QList <Waypoint> wpList;
-  wpList.setAutoDelete(false);
-  uint i;
+  Q3ListViewItem *item;
+  QList<Waypoint*> wpList;
 
-  fName = QFileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, 0, tr("Save task"));
+  fName = Q3FileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, 0, tr("Save task"));
   if(!fName.isEmpty()) {
     if (fName.right(9) != ".kflogtsk") {
       fName += ".kflogtsk";
@@ -411,7 +406,7 @@ void ObjectTree::slotSaveAllTask()
       root.appendChild(t);
 
       wpList = ft->getWPList();
-      for (i = 0; i < wpList.count(); i++) {
+      for(int i = 0; i < wpList.count(); i++) {
         w = wpList.at(i);
 
         child = doc.createElement("Waypoint");
@@ -435,7 +430,7 @@ void ObjectTree::slotSaveAllTask()
     }
 
     f.setName(fName);
-    if (f.open(IO_WriteOnly)) {
+    if (f.open(QIODevice::WriteOnly)) {
       QString txt = doc.toString();
       f.writeBlock(txt, txt.length());
       f.close();
@@ -452,14 +447,14 @@ void ObjectTree::slotSaveAllTask()
 
 void ObjectTree::dragEnterEvent(QDragEnterEvent* event)
 {
-  event->accept(QTextDrag::canDecode(event));
+  event->accept(Q3TextDrag::canDecode(event));
 }
 
 void ObjectTree::dropEvent(QDropEvent* event)
 {
   QStringList dropList;
 
-  if(QUriDrag::decodeToUnicodeUris(event, dropList))
+  if(Q3UriDrag::decodeToUnicodeUris(event, dropList))
     {
       for(QStringList::Iterator it = dropList.begin();
               it != dropList.end(); it++)

@@ -20,19 +20,19 @@
 #include <iostream>
 #include <cstdlib>
 
-#include <qdatastream.h>
-#include <qdatetime.h>
-#include <qdir.h>
+#include <QDataStream>
+#include <QDateTime>
+#include <QDir>
 #include <qdom.h>
-#include <qfile.h>
-#include <qfiledialog.h>
-#include <qfileinfo.h>
-#include <qmessagebox.h>
-#include <qprogressdialog.h>
-#include <qregexp.h>
-#include <qsettings.h>
-#include <qstring.h>
-#include <qtextstream.h>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QNetworkRequest>
+#include <q3progressdialog.h>
+#include <QRegExp>
+#include <QSettings>
+#include <QString>
+#include <QTextStream>
 
 #include "airport.h"
 #include "airspace.h"
@@ -51,6 +51,8 @@
 #include "radiopoint.h"
 #include "singlepoint.h"
 #include "welt2000.h"
+
+#define VERSION "3.0"
 
 /*
  * Used as bit-masks to determine, if we must display
@@ -136,6 +138,8 @@ const int MapContents::isoLines[] =
 MapContents::MapContents()
   : isFirstLoad(0)
 {
+  currentFlight = 0;
+  downloadManager = 0;
   // Setup a hash used as reverse mapping from isoLine value to array index to
   // speed up loading of ground and terrain files.
   for ( int i = 0; i < ISO_LINE_NUM; i++ ) {
@@ -147,25 +151,8 @@ MapContents::MapContents()
   sectionArray.fill(false);
 
   for(unsigned int loop = 0; loop < ISO_LINE_NUM; loop++)
-      isoList.append(new QPtrList<Isohypse>);
+      isoList.append(new QList<Isohypse*>);
 
-  airportList.setAutoDelete(true);
-  airspaceList.setAutoDelete(true);
-  gliderSiteList.setAutoDelete(true);
-  flightList.setAutoDelete(true);
-  hydroList.setAutoDelete(true);
-  landmarkList.setAutoDelete(true);
-  navList.setAutoDelete(true);
-  obstacleList.setAutoDelete(true);
-  outList.setAutoDelete(true);
-  railList.setAutoDelete(true);
-  reportList.setAutoDelete(true);
-  roadList.setAutoDelete(true);
-//  stationList.setAutoDelete(true);
-  topoList.setAutoDelete(true);
-  wpList.setAutoDelete(false);
-  regIsoLines.setAutoDelete(true);
-  regIsoLinesWorld.setAutoDelete(true);
   downloadList = new DownloadList();
 
   connect(downloadList,SIGNAL(allDownloadsFinished()),this,SLOT(slotDownloadFinished()));
@@ -173,23 +160,50 @@ MapContents::MapContents()
 
 MapContents::~MapContents()
 {
-  // Hier müssen ALLE Listen gelöscht werden!!!
-/*  airportList.~QPtrList();
-  airspaceList.~QPtrList();
-  cityList.~QPtrList();
-  gliderSiteList.~QPtrList();
-  flightList.~QPtrList();
-  hydroList.~QPtrList();
-  landmarkList.~QPtrList();
-  navList.~QPtrList();
-  obstacleList.~QPtrList();
-  outList.~QPtrList();
-  railList.~QPtrList();
-  reportList.~QPtrList();
-  roadList.~QPtrList();
-  stationList.~QPtrList();
-  topoList.~QPtrList();
-*/
+  while(!addSitesList.empty())
+        delete addSitesList.takeFirst();
+  while(!airportList.empty())
+      delete airportList.takeFirst();
+  while(!airspaceList.empty())
+      delete airspaceList.takeFirst();
+  while(!cityList.empty())
+      delete cityList.takeFirst();
+//  while(!downloadList.empty())
+//      delete downloadList.takeFirst();
+  while(!gliderSiteList.empty())
+      delete gliderSiteList.takeFirst();
+  while(!flightList.empty())
+      delete flightList.takeFirst();
+  while(!hydroList.empty())
+      delete hydroList.takeFirst();
+  while(!isoList.empty())
+      delete isoList.takeFirst();
+  while(!landmarkList.empty())
+      delete landmarkList.takeFirst();
+  while(!navList.empty())
+      delete navList.takeFirst();
+  while(!obstacleList.empty())
+      delete obstacleList.takeFirst();
+  while(!outList.empty())
+      delete outList.takeFirst();
+  while(!railList.empty())
+      delete railList.takeFirst();
+  while(!regIsoLines.empty())
+      delete regIsoLines.takeFirst();
+  while(!regIsoLinesWorld.empty())
+      delete regIsoLinesWorld.takeFirst();
+  while(!reportList.empty())
+      delete reportList.takeFirst();
+  while(!roadList.empty())
+      delete roadList.takeFirst();
+//  while(!stationList.empty())
+//      delete stationList.takeFirst();
+  while(!topoList.empty())
+      delete topoList.takeFirst();
+  while(!villageList.empty())
+      delete villageList.takeFirst();
+  while(!wpList.empty())
+      delete wpList.takeFirst();
 }
 
 int MapContents::degreeToNum(QString inDegree)
@@ -197,28 +211,28 @@ int MapContents::degreeToNum(QString inDegree)
   /*
    * needed formats:
    *
-   *  [g]gg° mm' ss"
+   *  [g]ggÂ° mm' ss"
    *  dddddddddd
    */
-  QRegExp degree("^[0-9]?[0-9][0-9]°[ ]*[0-9][0-9]'[ ]*[0-9][0-9]\"");
+  QRegExp degree("^[0-9]?[0-9][0-9]Â°[ ]*[0-9][0-9]'[ ]*[0-9][0-9]\"");
   QRegExp number("^-?[0-9]+$");
 
-  if(number.match(inDegree) != -1)
+  if(number.indexIn(inDegree) != -1)
       return inDegree.toInt();
-  else if(degree.match(inDegree) != -1)
+  else if(degree.indexIn(inDegree) != -1)
     {
       int deg = 0, min = 0, sec = 0, result = 0;
 
-      QRegExp deg1("°");
-      deg = inDegree.mid(0, deg1.match(inDegree)).toInt();
-      inDegree = inDegree.mid(deg1.match(inDegree) + 1, inDegree.length());
+      QRegExp deg1("Â°");
+      deg = inDegree.mid(0, deg1.indexIn(inDegree)).toInt();
+      inDegree = inDegree.mid(deg1.indexIn(inDegree) + 1, inDegree.length());
 
       QRegExp deg2("'");
-      min = inDegree.mid(0, deg2.match(inDegree)).toInt();
-      inDegree = inDegree.mid(deg2.match(inDegree) + 1, inDegree.length());
+      min = inDegree.mid(0, deg2.indexIn(inDegree)).toInt();
+      inDegree = inDegree.mid(deg2.indexIn(inDegree) + 1, inDegree.length());
 
       QRegExp deg3("\"");
-      sec = inDegree.mid(0, deg3.match(inDegree)).toInt();
+      sec = inDegree.mid(0, deg3.indexIn(inDegree)).toInt();
 
       result = (int)((600000.0 * deg) + (10000.0 * (min + (sec / 60.0))));
 
@@ -226,7 +240,7 @@ int MapContents::degreeToNum(QString inDegree)
       result += 1;
 
       QRegExp dir("[swSW]$");
-      if(dir.match(inDegree) >= 0) return -result;
+      if(dir.indexIn(inDegree) >= 0) return -result;
 
       return result;
     }
@@ -240,35 +254,51 @@ void MapContents::closeFlight()
   /*
    * close current flight
    */
-  BaseFlightElement *f = flightList.current();
-  if(f != 0)
+  if(currentFlight != 0)
     {
-      emit closingFlight(f);
-      for (unsigned int i = 0; i < flightList.count(); i++)
+      emit closingFlight(currentFlight);
+      for (int i = 0; i < flightList.count(); i++)
         {
           FlightGroup *fg = (FlightGroup *) flightList.at(i);
           if(fg->getTypeID() == BaseMapElement::FlightGroup)
-              fg->removeFlight(f);
+              fg->removeFlight(currentFlight);
 
         }
 
-      flightList.remove(f);
-      if (flightList.current() == 0) flightList.last();
+      int i = flightList.indexOf(currentFlight);
+      if(i != -1)
+        delete flightList.takeAt(i);
+
+      currentFlight = flightList.last();
+      currentFlightListIndex = flightList.indexOf(currentFlight);
 
       emit currentFlightChanged();
     }
 }
 
-void MapContents::__downloadFile(QString fileName, QString destString, bool wait){
+void MapContents::__downloadFile(QString fileName, QString destString, bool /*wait*/){
   extern QSettings _settings;
 
   if (_settings.readNumEntry("/KFLog/GeneralOptions/AutomaticMapDownload")==Inhibited)
       return;
 
+  if(downloadManager==0) {
+    downloadManager = new QNetworkAccessManager(this);
+    connect(downloadManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(slotDownloadFinished(QNetworkReply*)));
+  }
+
   QUrl src = QUrl(_settings.readEntry("/KFLog/GeneralOptions/Mapserver","http://maproom.kflog.org:80/mapdata/data/landscape/"));
   QUrl dest = QUrl("file:/" + destString);
   src.addPath(fileName);
   dest.addPath(fileName);
+
+  downloadDestinations.append(QPair<QUrl, QUrl>(src, dest));
+
+  QNetworkRequest request;// = new QNetworkRequest(src);
+  request.setUrl(src);
+//  request.setRawHeader("User-Agent", (const char*)QString("KFLog " +_settings.readEntry("/KFLog/GeneralOptions/Version", VERSION)).toLatin1());
+
+  downloadManager->get(request);
 
 // Temporarily disabled during transition to Qt4. Use QNetworkAccessManager in Qt4.
 //  if (wait)
@@ -282,6 +312,45 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool wait
 //    {
 //      downloadList->copyKURL(&src,&dest);
 //    }
+}
+
+void MapContents::slotDownloadFinished(QNetworkReply *networkReply)
+{
+  QUrl src = networkReply->url();
+  QUrl dest;
+  QPair<QUrl, QUrl> pair;
+  foreach(pair, downloadDestinations) {
+    if(pair.first==src) {
+      dest = pair.second;
+      downloadDestinations.removeOne(pair);
+      break;
+    }
+  }
+
+  if(dest.isEmpty()) {
+    qDebug("Could not save file %s, because the destination could not be found.", (const char*)networkReply->url().toString().toLatin1());
+  }
+
+  QFile file(dest.toString());
+  qDebug("networkError=%d, fileError=%s, bytesAvailable=%d, dest=%s", networkReply->error(),
+         (const char*)file.errorString().toLatin1(),
+         networkReply->bytesAvailable(),
+         (const char*)dest.toString().toLatin1());
+  if(file.open(QIODevice::WriteOnly)) {
+//    while(networkReply->waitForReadyRead(100)){
+      QTextStream out(&file);
+      out << networkReply->readAll();
+  //    file.write(networkReply->readAll());
+//    }
+  qDebug("networkError=%d, fileError=%d, bytesAvailable=%d, dest=%s", networkReply->error(),
+         file.error(),
+         networkReply->bytesAvailable(),
+         (const char*)dest.toString().toLatin1());
+  }
+  qDebug("networkError=%d, fileError=%d, bytesAvailable=%d, dest=%s", networkReply->error(),
+         file.error(),
+         networkReply->bytesAvailable(),
+         (const char*)dest.toString().toLatin1());
 }
 
 bool MapContents::__readTerrainFile( const int fileSecID,
@@ -298,10 +367,10 @@ bool MapContents::__readTerrainFile( const int fileSecID,
     return false;
 
   QFile mapfile(pathName);
-  if(!mapfile.open(IO_ReadOnly)) {
+  if(!mapfile.open(QIODevice::ReadOnly)) {
     // Data exists, but can't be read:
     // We need a messagebox
-    warning("KFLog: Can not open terrainfile %s", (const char*)pathName);
+    qWarning("KFLog: Can not open terrainfile %s", (const char*)pathName);
 
     QString fileName;
     fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
@@ -321,8 +390,8 @@ bool MapContents::__readTerrainFile( const int fileSecID,
   in >> magic;
   if(magic != KFLOG_FILE_MAGIC) {
     // not a .kfl file
-    warning("KFLog: Trying to open old or invalid map-file; aborting!");
-    warning("%s", (const char*)pathName);
+    qWarning("KFLog: Trying to open old or invalid map-file; aborting!");
+    qWarning("%s", (const char*)pathName);
     return false;
   }
 
@@ -345,17 +414,17 @@ bool MapContents::__readTerrainFile( const int fileSecID,
   }
 
   if (formatID < expFormatID && formatID != expOldFormatID) {
-    warning("KFLog: File format too old! (version %d, expecting: %d)",
+    qWarning("KFLog: File format too old! (version %d, expecting: %d)",
         formatID, expFormatID );
     return false;
   } else if (formatID > expFormatID) {
-    warning("KFLog: File format too new! (version %d, expecting: %d)",
+    qWarning("KFLog: File format too new! (version %d, expecting: %d)",
         formatID, expFormatID );
     return false;
   }
 
   if (formatID == expOldFormatID) {   // this is for old terrain and ground files
-    warning("KFLog: You are using old map files. Please consider re-installing\n"
+    qWarning("KFLog: You are using old map files. Please consider re-installing\n"
             "       the terrain and ground files. Support for the old file format\n"
             "       will cease in the next major KFLog release.");
   }
@@ -389,7 +458,7 @@ bool MapContents::__readTerrainFile( const int fileSecID,
         elevation = 0;
       }
 
-      QPointArray tA(locLength);
+      Q3PointArray tA(locLength);
 
       for(int i = 0; i < locLength; i++) {
         in >> latList_temp;
@@ -422,11 +491,11 @@ bool MapContents::__readBinaryFile(const int fileSecID,
       return false;
 
   QFile mapfile(pathName);
-  if(!mapfile.open(IO_ReadOnly))
+  if(!mapfile.open(QIODevice::ReadOnly))
     {
       // Data exists, but can't be read:
       // We need a messagebox
-      warning("KFLog: Can not open mapfile %s", (const char*)pathName);
+      qWarning("KFLog: Can not open mapfile %s", (const char*)pathName);
 
       QString fileName;
       fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
@@ -454,11 +523,11 @@ bool MapContents::__readBinaryFile(const int fileSecID,
 
   in >> formatID;
   if(formatID < FILE_VERSION_MAP) {
-    warning("KFLog: File format too old! (version %d, expecting: %d)",
+    qWarning("KFLog: File format too old! (version %d, expecting: %d)",
         formatID, FILE_VERSION_MAP );
     return false;
   } else if(formatID > FILE_VERSION_MAP) {
-    warning("KFLog: File format too new! (version %d, expecting: %d)",
+    qWarning("KFLog: File format too new! (version %d, expecting: %d)",
         formatID, FILE_VERSION_MAP );
     return false;
   }
@@ -474,7 +543,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
     locLength = 0;
     name = "";
 
-    QPointArray tA;
+    Q3PointArray tA;
 
     gesamt_elemente++;
 
@@ -558,10 +627,10 @@ bool MapContents::__readBinaryFile(const int fileSecID,
 BaseFlightElement* MapContents::getFlight()
 {
   // if list is empty, NULL will be returned
-  return flightList.current();
+  return currentFlight;
 }
 
-QPtrList<BaseFlightElement>* MapContents::getFlightList()
+QList<BaseFlightElement*> *MapContents::getFlightList()
 {
   return &flightList;
 }
@@ -570,6 +639,8 @@ QPtrList<BaseFlightElement>* MapContents::getFlightList()
 void MapContents::appendFlight(Flight* flight)
 {
   flightList.append(flight);
+  currentFlight = flight;
+  currentFlightListIndex = flightList.indexOf(flightList.last());
 
   emit newFlightAdded((Flight*)flightList.last());
 
@@ -655,7 +726,7 @@ void MapContents::proofeSection(bool isPrint)
         tr("Please select the directory in which the files are located.") +
         "</qt>", QMessageBox::Ok, 0);
 
-      mapDir = QFileDialog::getExistingDirectory(QString::null, 0, 0, tr("Select map directory...") );
+      mapDir = QFileDialog::getExistingDirectory(0, tr("Select map directory..."));
 
       _settings.writeEntry("/KFLog/Path/DefaultMapDirectory", mapDir);
 
@@ -684,7 +755,7 @@ void MapContents::proofeSection(bool isPrint)
                   // Kachel fehlt!
                   int secID = row + ( col + ( row * 179 ) );
 
-                  // Nun müssen die korrekten Dateien geladen werden ...
+                  // Nun mÃ¼ssen die korrekten Dateien geladen werden ...
                   __readTerrainFile(secID, FILE_TYPE_GROUND);
                   __readTerrainFile(secID, FILE_TYPE_TERRAIN);
                   __readBinaryFile(secID, FILE_TYPE_MAP);
@@ -710,7 +781,7 @@ void MapContents::proofeSection(bool isPrint)
 }
 
 
-unsigned int MapContents::getListLength(int listIndex) const
+int MapContents::getListLength(int listIndex) const
 {
   switch(listIndex) {
   case AirportList:
@@ -744,7 +815,7 @@ unsigned int MapContents::getListLength(int listIndex) const
   case TopoList:
     return topoList.count();
   //    case IsohypseList:
-  //      //warning("Anzahl der Höhenlinien: %d", isohypseList.count());
+  //      //warning("Anzahl der HÃ¶henlinien: %d", isohypseList.count());
   //      return isohypseList.count();
   default:
     return 0;
@@ -754,19 +825,19 @@ unsigned int MapContents::getListLength(int listIndex) const
 
 Airspace* MapContents::getAirspace(unsigned int index)
 {
-  return airspaceList.at(index);
+  return airspaceList.value(index);
 }
 
 
 Airport* MapContents::getAirport(unsigned int index)
 {
-  return airportList.at(index);
+  return airportList.value(index);
 }
 
 
 GliderSite* MapContents::getGlidersite(unsigned int index)
 {
-  return gliderSiteList.at(index);
+  return gliderSiteList.value(index);
 }
 
 
@@ -774,38 +845,38 @@ BaseMapElement* MapContents::getElement(int listIndex, unsigned int index)
 {
   switch(listIndex) {
   case AirportList:
-    return airportList.at(index);
+    return airportList.value(index);
   case GliderSiteList:
-    return gliderSiteList.at(index);
+    return gliderSiteList.value(index);
   case OutList:
-    return outList.at(index);
+    return outList.value(index);
   case NavList:
-    return navList.at(index);
+    return navList.value(index);
   case AirspaceList:
-    return airspaceList.at(index);
+    return airspaceList.value(index);
   case ObstacleList:
-    return obstacleList.at(index);
+    return obstacleList.value(index);
   case ReportList:
-    return reportList.at(index);
+    return reportList.value(index);
   case CityList:
-    return cityList.at(index);
+    return cityList.value(index);
   case VillageList:
-    return villageList.at(index);
+    return villageList.value(index);
   case LandmarkList:
-    return landmarkList.at(index);
+    return landmarkList.value(index);
   case RoadList:
-    return roadList.at(index);
+    return roadList.value(index);
   case RailList:
-    return railList.at(index);
+    return railList.value(index);
   //case StationList:
-  //  return stationList.at(index);
+  //  return stationList.value(index);
   case HydroList:
-    return hydroList.at(index);
+    return hydroList.value(index);
   case TopoList:
-    return topoList.at(index);
+    return topoList.value(index);
   default:
     // Should never happen!
-    fatal("KFLog: trying to access unknown map element list");
+    qWarning("KFLog: trying to access unknown map element list");
     return 0;
   }
 }
@@ -815,23 +886,23 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
 {
   switch(listIndex) {
   case AirportList:
-    return airportList.at(index);
+    return airportList.value(index);
   case GliderSiteList:
-    return gliderSiteList.at(index);
+    return gliderSiteList.value(index);
   case OutList:
-    return outList.at(index);
+    return outList.value(index);
   case NavList:
-    return navList.at(index);
+    return navList.value(index);
   case ObstacleList:
-    return obstacleList.at(index);
+    return obstacleList.value(index);
   case ReportList:
-    return reportList.at(index);
+    return reportList.value(index);
   case VillageList:
-    return villageList.at(index);
+    return villageList.value(index);
   case LandmarkList:
-    return landmarkList.at(index);
+    return landmarkList.value(index);
   //case StationList:
-  //  return stationList.at(index);
+  //  return stationList.value(index);
   default:
     return 0;
   }
@@ -864,7 +935,7 @@ void MapContents::slotReloadMapData()
   isoList.clear();
 
   for(unsigned int loop = 0; loop < ISO_LINE_NUM; loop++)
-      isoList.append(new QPtrList<Isohypse>);
+      isoList.append(new QList<Isohypse*>);
 
   sectionArray.fill(false);
   emit contentsChanged();
@@ -875,112 +946,112 @@ void MapContents::printContents(QPainter* targetPainter, bool isText)
 {
   proofeSection(true);
 
-  for(BaseMapElement* topo = topoList.first(); topo; topo = topoList.next())
-    topo->printMapElement(targetPainter, isText);
+  BaseMapElement *element;
+  foreach(element, topoList)
+    element->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* hydro = hydroList.first(); hydro; hydro = hydroList.next())
-    hydro->printMapElement(targetPainter, isText);
+  foreach(element, hydroList)
+    element->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* rail = railList.first(); rail; rail = railList.next())
-    rail->printMapElement(targetPainter, isText);
+  foreach(element, railList)
+    element->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* road = roadList.first(); road; road = roadList.next())
-    road->printMapElement(targetPainter, isText);
+  foreach(element, cityList)
+    element->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* city = cityList.first(); city; city = cityList.next())
-    city->printMapElement(targetPainter, isText);
+  foreach(element, villageList)
+    element->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* village = villageList.first(); village; village = villageList.next())
-    village->printMapElement(targetPainter, isText);
+  foreach(element, navList)
+    element->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* nav = navList.first(); nav; nav = navList.next())
-    nav->printMapElement(targetPainter, isText);
+  foreach(element, airspaceList)
+    element->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* airspace = airspaceList.first(); airspace; airspace = airspaceList.next())
-    airspace->printMapElement(targetPainter, isText);
+  foreach(element, obstacleList)
+    element->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* obstacle = obstacleList.first(); obstacle; obstacle = obstacleList.next())
-    obstacle->printMapElement(targetPainter, isText);
+  foreach(element, reportList)
+    element->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* report = reportList.first(); report; report = reportList.next())
-    report->printMapElement(targetPainter, isText);
+  foreach(element, landmarkList)
+    element->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* landmark = landmarkList.first(); landmark; landmark = landmarkList.next())
-    landmark->printMapElement(targetPainter, isText);
+  foreach(element, airportList)
+    element->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* airport = airportList.first(); airport; airport = airportList.next())
-    airport->printMapElement(targetPainter, isText);
+  foreach(element, gliderSiteList)
+    element->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* glider = gliderSiteList.first(); glider; glider = gliderSiteList.next())
-    glider->printMapElement(targetPainter, isText);
+  foreach(element, outList)
+    element->printMapElement(targetPainter, isText);
 
-  for(BaseMapElement* out = outList.first(); out; out = outList.next())
-    out->printMapElement(targetPainter, isText);
-
-  for(unsigned int loop = 0; loop < flightList.count(); loop++)
-    flightList.at(loop)->printMapElement(targetPainter, isText);
+  foreach(element, flightList)
+    element->printMapElement(targetPainter, isText);
 }
 
 
 void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
     unsigned int listID)
 {
+  BaseMapElement *element;
   switch(listID)
     {
       case AirportList:
-        for(BaseMapElement* airport = airportList.first(); airport; airport = airportList.next())
-            airport->drawMapElement(targetPainter, maskPainter);
+        foreach(element, airportList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
       case GliderSiteList:
-        for(BaseMapElement* glider = gliderSiteList.first(); glider; glider = gliderSiteList.next())
-            glider->drawMapElement(targetPainter, maskPainter);
+        foreach(element, gliderSiteList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
       case OutList:
-        for(BaseMapElement* out = outList.first(); out; out = outList.next())
-            out->drawMapElement(targetPainter, maskPainter);
+        foreach(element, outList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
-        for(BaseMapElement* nav = navList.first(); nav; nav = navList.next())
-            nav->drawMapElement(targetPainter, maskPainter);
+      case NavList:
+        foreach(element, navList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
       case AirspaceList:
-        for(BaseMapElement* airspace = airspaceList.first(); airspace; airspace = airspaceList.next())
-            airspace->drawMapElement(targetPainter, maskPainter);
+        foreach(element, airspaceList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
       case ObstacleList:
-        for(BaseMapElement* obstacle = obstacleList.first(); obstacle; obstacle = obstacleList.next())
-            obstacle->drawMapElement(targetPainter, maskPainter);
+        foreach(element, obstacleList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
       case ReportList:
-        for(BaseMapElement* report = reportList.first(); report; report = reportList.next())
-            report->drawMapElement(targetPainter, maskPainter);
+        foreach(element, reportList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
       case CityList:
-        for(BaseMapElement* city = cityList.first(); city; city = cityList.next())
-            city->drawMapElement(targetPainter, maskPainter);
+        foreach(element, cityList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
       case VillageList:
-        for(BaseMapElement* village = villageList.first(); village; village = villageList.next())
-            village->drawMapElement(targetPainter, maskPainter);
+        foreach(element, villageList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
       case LandmarkList:
-        for(BaseMapElement* landmark = landmarkList.first(); landmark; landmark = landmarkList.next())
-            landmark->drawMapElement(targetPainter, maskPainter);
+        foreach(element, landmarkList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
       case RoadList:
-        for(BaseMapElement* road = roadList.first(); road; road = roadList.next())
-            road->drawMapElement(targetPainter, maskPainter);
+        foreach(element, roadList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
       case RailList:
-        for(BaseMapElement* rail = railList.first(); rail; rail = railList.next())
-            rail->drawMapElement(targetPainter, maskPainter);
+        foreach(element, railList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
       case HydroList:
-        for(BaseMapElement* hydro = hydroList.first(); hydro; hydro = hydroList.next())
-            hydro->drawMapElement(targetPainter, maskPainter);
+        foreach(element, hydroList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
       case TopoList:
-        for(BaseMapElement* topo = topoList.first(); topo; topo = topoList.next())
-            topo->drawMapElement(targetPainter, maskPainter);
+        foreach(element, topoList)
+            element->printMapElement(targetPainter, maskPainter);
         break;
       case FlightList:
         // In some cases, getFlightIndex returns a non-valid index :-(
@@ -1002,15 +1073,16 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
 
   regIsoLines.clear();
 
-  for(QPtrList<Isohypse>* iso = isoList.first(); iso; iso = isoList.next())
+  QList<Isohypse*> *iso;
+  foreach(iso, isoList)
     {
       if(iso->count() == 0) continue;
 
       for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
         {
-          if(isoLines[pos] == iso->getFirst()->getElevation())
+          if(isoLines[pos] == iso->first()->getElevation())
             {
-              if(iso->getFirst()->isValley())
+              if(iso->first()->isValley())
                   height = pos + 1;
               else
                   height = pos + 2;
@@ -1025,9 +1097,10 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
 //      targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1, Qt::NoPen));
       targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1, Qt::SolidLine));
       targetP->setBrush(QBrush(_globalMapConfig.getIsoColor(height),
-          QBrush::SolidPattern));
+          Qt::SolidPattern));
 
-      for(Isohypse* iso2 = iso->first(); iso2; iso2 = iso->next())
+      Isohypse *iso2;
+      foreach(iso2, *iso)
         {
           QRegion * reg = iso2->drawRegion(targetP, maskP);
           if(reg)
@@ -1114,6 +1187,7 @@ void MapContents::slotNewTask()
 {
   FlightTask *f = new FlightTask(genTaskName());
   flightList.append(f);
+  currentFlightListIndex = flightList.indexOf(flightList.last());
   emit newTaskAdded(f);
 
   QString helpText = "";
@@ -1146,16 +1220,15 @@ void MapContents::slotAppendTask(FlightTask *f)
 void MapContents::slotNewFlightGroup()
 {
   static int gCount = 1;
-  QPtrList <Flight> fl;
+  QList <Flight*> fl;
   BaseFlightElement *f;
-  unsigned int i;
   QString tmp;
 
   FlightSelectionDialog *fsd = new FlightSelectionDialog(0, "flight selection dialog");
 
-  for (i = 0; i < flightList.count(); i++)
+  for(int i = 0; i < flightList.count(); i++)
     {
-      f = flightList.at(i);
+      f = flightList.value(i);
       if (f->getTypeID() == BaseMapElement::Flight)
         {
           fsd->availableFlights.append(f);
@@ -1164,7 +1237,7 @@ void MapContents::slotNewFlightGroup()
 
   if (fsd->exec() == QDialog::Accepted)
     {
-      for (i = 0; i < fsd->selectedFlights.count(); i++)
+      for(int i = 0; i < fsd->selectedFlights.count(); i++)
         {
           fl.append((Flight *)fsd->selectedFlights.at(i));
         }
@@ -1173,6 +1246,7 @@ void MapContents::slotNewFlightGroup()
 
       FlightGroup * flightGroup = new FlightGroup(fl, tmp);
       flightList.append(flightGroup);
+      currentFlightListIndex = flightList.indexOf(flightList.last());
       emit newFlightGroupAdded(flightGroup);
       emit currentFlightChanged();
     }
@@ -1181,18 +1255,20 @@ void MapContents::slotNewFlightGroup()
 /** No descriptions */
 void MapContents::slotSetFlight(int id)
 {
-  if (id >= 0 && id < (int)flightList.count())
+  if (id >= 0 && id < flightList.count())
     {
       flightList.at(id);
+      currentFlightListIndex = id;
       emit currentFlightChanged();
     }
 }
 
 void MapContents::slotSetFlight(BaseFlightElement *f)
 {
-  if (flightList.containsRef(f))
+  if (flightList.count(f)>0)
     {
-      flightList.findRef(f);
+//      flightList.findRef(f);
+      currentFlightListIndex = flightList.indexOf(f);
       emit currentFlightChanged();
     }
 }
@@ -1200,11 +1276,9 @@ void MapContents::slotSetFlight(BaseFlightElement *f)
 /** No descriptions */
 void MapContents::slotEditFlightGroup()
 {
-  QPtrList <Flight> fl;
+  QList<Flight*> fl;
   BaseFlightElement *f;
   BaseFlightElement *fg;
-  unsigned int i;
-  QString tmp;
 
   FlightSelectionDialog *fsd = new FlightSelectionDialog(0, "flight selection dialog");
   fg = getFlight();
@@ -1212,12 +1286,12 @@ void MapContents::slotEditFlightGroup()
   if (fg->getTypeID() == BaseMapElement::FlightGroup)
     {
       fl = ((FlightGroup *)fg)->getFlightList();
-      for (i = 0; i < flightList.count(); i++)
+      for (int i = 0; i < flightList.count(); i++)
         {
           f = flightList.at(i);
           if (f->getTypeID() == BaseMapElement::Flight)
             {
-              if (fl.containsRef((Flight *)f))
+              if (fl.count((Flight *)f)>0)
                 {
                   fsd->selectedFlights.append(f);
                 }
@@ -1231,7 +1305,7 @@ void MapContents::slotEditFlightGroup()
       if (fsd->exec() == QDialog::Accepted)
         {
           fl.clear();
-          for (i = 0; i < fsd->selectedFlights.count(); i++)
+          for (int i = 0; i < fsd->selectedFlights.count(); i++)
             {
               fl.append((Flight *)fsd->selectedFlights.at(i));
             }
@@ -1263,14 +1337,14 @@ bool MapContents::loadTask(QFile& path)
       return false;
     }
 
-  if(!path.open(IO_ReadOnly))
+  if(!path.open(QIODevice::ReadOnly))
     {
       QMessageBox::warning(0, tr("No permission"), "<qt>" + tr("You don't have permission to access file<BR><B>%1</B>").arg(path.name()) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
 
   QDomDocument doc;
-  QPtrList<Waypoint> wpList;
+  QList<Waypoint*> wpList;
   FlightTask *f, *firstTask = 0;
 
   doc.setContent(&path);
@@ -1279,13 +1353,13 @@ bool MapContents::loadTask(QFile& path)
     {
       QDomNodeList nl = doc.elementsByTagName("Task");
 
-      for (uint i = 0; i < nl.count(); i++)
+      for(int i = 0; i < nl.count(); i++)
         {
           QDomNodeList childNodes = nl.item(i).childNodes();
           QDomNamedNodeMap nmTask =  nl.item(i).attributes();
 
           wpList.clear();
-          for (uint childIdx = 0; childIdx < childNodes.count(); childIdx++)
+          for(int childIdx = 0; childIdx < childNodes.count(); childIdx++)
             {
               QDomNamedNodeMap nm =  childNodes.item(childIdx).attributes();
 
@@ -1346,7 +1420,7 @@ QString MapContents::genTaskName(QString suggestion)
 {
   BaseFlightElement* bfe;
   FlightTask* ft=0;
-  for (bfe = flightList.first(); bfe; bfe = flightList.next()) {
+  foreach(bfe, flightList) {
     ft=dynamic_cast<FlightTask*>(bfe);
     if (ft) {
       if (ft->getName() == suggestion) {
@@ -1377,13 +1451,9 @@ isoListEntry::~isoListEntry()
 /** Re-projects any flights and tasks that may be loaded. */
 void MapContents::reProject()
 {
-  QPtrListIterator<BaseFlightElement> it(flightList); // iterator for flightlist
-
-  for ( ; it.current(); ++it )
-    {
-      BaseFlightElement *fe = it.current();
-      fe->reProject();
-    }
+  BaseFlightElement *flight;
+  foreach(flight, flightList)
+      flight->reProject();
 }
 
 /*!
@@ -1396,7 +1466,7 @@ int MapContents::getElevation(QPoint coord)
   isoListEntry* entry;
   int height=-1; //default 'unknown' value
 
-  for(unsigned int i = 0; i < regIsoLinesWorld.count(); i++) {
+  for(int i = 0; i < regIsoLinesWorld.count(); i++) {
     entry = regIsoLinesWorld.at(i);
     if (entry->region->contains(coord))
       height=std::max(height,entry->height);

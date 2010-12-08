@@ -69,7 +69,7 @@ double dist(QPoint* p1, QPoint* p2)
 
 /*
  * Die Funktion scheint noch Probleme zu haben, wenn die Position nahe an
- * 0° W/E liegt.
+ * 0Â° W/E liegt.
  */
 QString printPos(int coord, bool isLat)
 {
@@ -94,12 +94,12 @@ QString printPos(int coord, bool isLat)
     {
       if(coord < 0)
         {
-          posDeg.sprintf("%02d°", -degree);
+          posDeg.sprintf("%02dÂ°", -degree);
           pos = posDeg + posMin + posSec + " S";
         }
       else
         {
-          posDeg.sprintf("%02d°", degree);
+          posDeg.sprintf("%02dÂ°", degree);
           pos = posDeg + posMin + posSec + " N";
         }
     }
@@ -107,12 +107,12 @@ QString printPos(int coord, bool isLat)
     {
       if(coord < 0)
         {
-          posDeg.sprintf("%03d°", -degree);
+          posDeg.sprintf("%03dÂ°", -degree);
           pos = posDeg + posMin + posSec + " W";
         }
       else
         {
-          posDeg.sprintf("%03d°", degree);
+          posDeg.sprintf("%03dÂ°", degree);
           pos = posDeg + posMin + posSec + " E";
         }
     }

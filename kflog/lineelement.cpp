@@ -16,8 +16,10 @@
 ***********************************************************************/
 
 #include "lineelement.h"
+//Added by qt3to4:
+#include <Q3PointArray>
 
-LineElement::LineElement(QString name, unsigned int t, QPointArray pA, bool isV, bool isClosed)
+LineElement::LineElement(QString name, unsigned int t, Q3PointArray pA, bool isV, bool isClosed)
   : BaseMapElement(name, t),
     projPointArray(pA), bBox(pA.boundingRect()), valley(isV), closed(isClosed)
 {
@@ -32,7 +34,7 @@ LineElement::~LineElement()
 
 }
 
-void LineElement::printMapElement(QPainter* printPainter, bool isText)
+void LineElement::printMapElement(QPainter* printPainter, bool /*isText*/)
 {
   if(!glConfig->isPrintBorder(typeID)) return;
 
@@ -59,12 +61,12 @@ void LineElement::drawMapElement(QPainter* targetP, QPainter* maskP)
 
   QPen drawP(glConfig->getDrawPen(typeID));
 
-  QPointArray pA = glMapMatrix->map(projPointArray);
+  Q3PointArray pA = glMapMatrix->map(projPointArray);
 
   if(valley)
     {
       maskP->setPen(QPen(Qt::color0, drawP.width(), drawP.style()));
-      maskP->setBrush(QBrush(Qt::color0, QBrush::SolidPattern));
+      maskP->setBrush(QBrush(Qt::color0, Qt::SolidPattern));
     }
   else
     {
@@ -100,7 +102,7 @@ void LineElement::drawMapElement(QPainter* targetP, QPainter* maskP)
       // sections and we do not want to see section-borders in a lake ...
       //
       if(typeID == BaseMapElement::Lake)
-          targetP->setBrush(QBrush(drawP.color(), QBrush::SolidPattern));
+          targetP->setBrush(QBrush(drawP.color(), Qt::SolidPattern));
       else
           targetP->setBrush(glConfig->getDrawBrush(typeID));
 

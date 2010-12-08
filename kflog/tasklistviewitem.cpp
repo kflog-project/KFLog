@@ -20,11 +20,11 @@
 #include "waypoint.h"
 
 #include <qdir.h>
-#include <qurl.h>
+#include <q3url.h>
 
-TaskListViewItem::TaskListViewItem(QListViewItem * parent,
+TaskListViewItem::TaskListViewItem(Q3ListViewItem * parent,
                                    FlightTask * task,
-                                   QListViewItem* insertAfter):QListViewItem(parent, insertAfter){
+                                   Q3ListViewItem* insertAfter):Q3ListViewItem(parent, insertAfter){
   this->task=task;
   createChildren();
 }
@@ -43,7 +43,7 @@ void TaskListViewItem::update(){
 
 
   //first, delete all childnodes
-  QListViewItem * itm = firstChild();
+  Q3ListViewItem * itm = firstChild();
   while (itm!=0) {
     delete itm;
     itm=firstChild();
@@ -56,23 +56,23 @@ void TaskListViewItem::update(){
 
 /** This function populates the node with data from the task */
 void TaskListViewItem::createChildren(){
-  QUrl url(task->getFileName());
+  Q3Url url(task->getFileName());
   QString wpName;
   
   setText(0,url.fileName());
   setText(1,task->getPlanningTypeString());
   //setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup, KIcon::SizeSmall));
 
-  QListViewItem * subItem=new QListViewItem((QListViewItem*)this,QObject::tr("Type"),task->getPlanningTypeString());
+  Q3ListViewItem * subItem=new Q3ListViewItem((Q3ListViewItem*)this,QObject::tr("Type"),task->getPlanningTypeString());
   subItem->setSelectable(false);
-  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Distance"),task->getTaskDistanceString());
+  subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Distance"),task->getTaskDistanceString());
   subItem->setSelectable(false);
-  subItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Points"),task->getPointsString());
+  subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Points"),task->getPointsString());
   subItem->setSelectable(false);
 
   if (!task->getWPList().isEmpty()) {
     int wpCount=task->getWPList().count();
-    QListViewItem * wpSubItem=new QListViewItem((QListViewItem*)this,subItem,QObject::tr("Waypoints"),QObject::tr("%1 waypoints in task").arg(wpCount));
+    Q3ListViewItem * wpSubItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Waypoints"),QObject::tr("%1 waypoints in task").arg(wpCount));
     wpSubItem->setSelectable(false);
     wpSubItem->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/waypoint_16.png");
 
@@ -83,7 +83,7 @@ void TaskListViewItem::createChildren(){
       if (i==wpCount-2) wpName=QObject::tr("Finish");
       if (i==wpCount-1) wpName=QObject::tr("Landing");
 
-      subItem=new QListViewItem(wpSubItem,subItem,wpName,task->getWPList().at(i)->name);
+      subItem=new Q3ListViewItem(wpSubItem,subItem,wpName,task->getWPList().at(i)->name);
       subItem->setSelectable(false);
       subItem->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/centerwaypoint_16.png");
     }

@@ -23,7 +23,11 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qsplitter.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
+//Added by qt3to4:
+#include <QResizeEvent>
+#include <Q3BoxLayout>
+#include <Q3HBoxLayout>
 
 // Application headers
 #include "mapcalc.h"
@@ -32,13 +36,13 @@ Igc3DDialog::Igc3DDialog(QWidget *parent)
 : QDialog(parent, "Igc3D", false)
 {
   setCaption( tr("KFLog - 3D View") );
-  setWFlags(getWFlags() | WStyle_StaysOnTop);
+  setWindowFlags(windowFlags() | Qt::WStyle_StaysOnTop);
 
   Igc3DView* igc3dView = new Igc3DView(this);
   connect(this, SIGNAL(flightChanged()), igc3dView,
       SLOT(slotShowFlight()));
 
-  QBoxLayout * layout = new QHBoxLayout( this, 0, -1, "horizontal" );
+  Q3BoxLayout * layout = new Q3HBoxLayout( this, 0, -1, "horizontal" );
 //  QLabel* label = new QLabel( this, 0, 0 );
 
 	igc3dView->setMinimumWidth( 500 );

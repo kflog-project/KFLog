@@ -17,21 +17,22 @@
 
 #include "kflogstartlogo.h"
 
-#include <qapplication.h>
-#include <qbitmap.h>
-#include <qdir.h>
-#include <qpixmap.h>
+#include <QApplication>
+#include <QBitmap>
+#include <QDesktopWidget>
+#include <QDir>
+#include <QPixmap>
 
 KFLogStartLogo::KFLogStartLogo()
-    : QWidget( 0, "KFlogStartWindow",  WStyle_Customize | WStyle_NoBorder )
+    : QWidget( 0, "KFlogStartWindow",  Qt::WStyle_Customize | Qt::WStyle_NoBorder )
 {
   QPixmap pm(QDir::homeDirPath() + "/.kflog/pics/splash.png");
 
   setBackgroundPixmap(pm);
   setMask(QBitmap(QDir::homeDirPath() + "/.kflog/pics/splash_mask.png"));
 
-  QWidget *desktop = QApplication::desktop();
-  QRect rect = desktop->geometry();
+  QDesktopWidget *desktop = QApplication::desktop();
+  QRect rect = desktop->screenGeometry();
   move(rect.x() + (rect.width() - pm.width())/2,
        rect.y() + (rect.height() - pm.height())/2);
 

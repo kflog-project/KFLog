@@ -27,21 +27,25 @@
 #include "kfrgcs/vlapi2.h"
 #include "waypointcatalog.h"
 
-#include <qapplication.h>
-#include <qdatastream.h>
-#include <qdatetime.h>
-#include <qdir.h>
-#include <qdom.h>
-#include <qfile.h>
-#include <qfiledialog.h>
-#include <qfileinfo.h>
-#include <qmessagebox.h>
-#include <qprogressdialog.h>
-#include <qregexp.h>
-#include <qsettings.h>
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qtextstream.h>
+#include <QApplication>
+#include <QDataStream>
+#include <QDateTime>
+#include <QDir>
+#include <QDomDocument>
+#include <QDomElement>
+#include <QDomNamedNodeMap>
+#include <QDomNode>
+#include <QDomNodeList>
+#include <QFile>
+#include <q3filedialog.h>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <q3progressdialog.h>
+#include <QRegExp>
+#include <QSettings>
+#include <QString>
+#include <QStringList>
+#include <q3textstream.h>
 
 
 #define KFLOG_FILE_MAGIC    0x404b464c
@@ -75,6 +79,8 @@ WaypointCatalog::WaypointCatalog(const QString& name)
 
 WaypointCatalog::~WaypointCatalog()
 {
+  while(!wpList.empty())
+    delete wpList.takeFirst();
 }
 
 /** read a catalog from file */
@@ -85,7 +91,7 @@ bool WaypointCatalog::read(const QString& catalog)
   QFile f(catalog);
 
   if (f.exists()) {
-    if (f.open(IO_ReadOnly)) {
+    if (f.open(QIODevice::ReadOnly)) {
       QDomDocument doc;
 
       QApplication::setOverrideCursor(Qt::waitCursor);
@@ -94,7 +100,7 @@ bool WaypointCatalog::read(const QString& catalog)
       if (doc.doctype().name() == "KFLogWaypoint") {
         QDomNodeList nl = doc.elementsByTagName("Waypoint");
 
-        for (uint i = 0; i < nl.count(); i++) {
+        for(int i = 0; i < nl.count(); i++) {
           QDomNamedNodeMap nm =  nl.item(i).attributes();
           Waypoint *w = new Waypoint;
 
@@ -118,7 +124,7 @@ bool WaypointCatalog::read(const QString& catalog)
             w->runway = w->length = -1;
             needConvert = true;
           }
-          if (!wpList.insertItem(w))
+          if (!insertWaypoint(w))
           {
             //delete w;
             break;
@@ -162,7 +168,6 @@ bool WaypointCatalog::write()
   Waypoint *w;
   QFile f;
   QString fName = path;
-  QDictIterator<Waypoint> it(wpList);
 /*
   if (!onDisc) {
     fName = KFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)", 0, QObject::tr("Save waypoint catalog"));
@@ -180,7 +185,7 @@ bool WaypointCatalog::write()
 
   doc.appendChild(root);
 
-  for (w = it.current(); w != 0; w = ++it) {
+  foreach(w, wpList) {
     qDebug("writing waypoint %s (%s - %s)",w->name.latin1(),w->description.latin1(),w->icao.latin1());
     child = doc.createElement("Waypoint");
 
@@ -203,7 +208,7 @@ bool WaypointCatalog::write()
   }
 
   f.setName(fName);
-  if (f.open(IO_WriteOnly)) {
+  if (f.open(QIODevice::WriteOnly)) {
     QString txt = doc.toString();
     f.writeBlock(txt, txt.length());
     f.close();
@@ -241,10 +246,9 @@ bool WaypointCatalog::writeBinary()
   Waypoint *w;
   QFile f;
   QString fName = path;
-  QDictIterator<Waypoint> it(wpList);
 
   f.setName(fName);
-  if (f.open(IO_WriteOnly)) {
+  if (f.open(QIODevice::WriteOnly)) {
     QDataStream out(& f);
 
     //write fileheader
@@ -252,7 +256,7 @@ bool WaypointCatalog::writeBinary()
     out << Q_INT8(FILE_TYPE_WAYPOINTS);
     out << Q_UINT16(FILE_FORMAT_ID_2); //use the new format with importance field.
 
-    for (w = it.current(); w != 0; w = ++it) {
+    foreach(w, wpList) {
       wpName=w->name;
       wpDescription=w->description;
       wpICAO=w->icao;
@@ -322,7 +326,7 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
       return false;
     }
 
-  if(!f.open(IO_ReadOnly))
+  if(!f.open(QIODevice::ReadOnly))
     {
       QMessageBox::critical(0,
           QObject::tr("No permission"),
@@ -330,7 +334,7 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
       return false;
     }
 
-  QProgressDialog importProgress(0,0,true);
+  Q3ProgressDialog importProgress(0,0,true);
 
   importProgress.setCaption(QObject::tr("Import file ..."));
   importProgress.setLabelText(
@@ -347,7 +351,7 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
 
   QStringList s;
   QString line;
-  QTextStream stream(&f);
+  Q3TextStream stream(&f);
 
   int lat, lon, latTemp, lonTemp, latmin, lonmin;
   char latChar, lonChar;
@@ -401,15 +405,15 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
         //w->description = "<unknown>";
         //w->icao = "<unknown>";
 
-        if (flag & VLAPI_DATA::WPT::WPTTYP_L) {
-          if (flag & VLAPI_DATA::WPT::WPTTYP_H) {
+        if (flag.digitValue() & VLAPI_DATA::WPT::WPTTYP_L) {
+          if (flag.digitValue() & VLAPI_DATA::WPT::WPTTYP_H) {
             w->surface = Airport::Asphalt;
           }
           else {
             w->surface = Airport::Grass;
           }
 
-          if (flag & VLAPI_DATA::WPT::WPTTYP_A) {
+          if (flag.digitValue() & VLAPI_DATA::WPT::WPTTYP_A) {
             w->type = BaseMapElement::Airfield;
           }
 
@@ -417,7 +421,7 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
         }
         w->origP = WGSPoint(latTemp, lonTemp);
 
-        if (!wpList.insertItem(w))
+        if (!insertWaypoint(w))
         {
           delete w;
           break;
@@ -451,7 +455,7 @@ bool WaypointCatalog::save(bool alwaysAskName){
   }
 
   if (!onDisc || alwaysAskName) {
-    fName = QFileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n"
+    fName = Q3FileDialog::getSaveFileName(path, "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)\n"
                                                "*.kwp *.KWP|Cumulus and KFLogEmbedded waypoints (*.kwp)\n"
                                                "*.txt *.TXT|Filser txt waypoints (*.txt)\n"
                                                "*.da4 *.DA4|Filser da4 waypoints (*.da4)",
@@ -503,12 +507,12 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
 
   if (f.exists())
   {
-    if (f.open(IO_ReadOnly))
+    if (f.open(QIODevice::ReadOnly))
     {
       while (!f.atEnd())
       {
-        QString line;
-        Q_LONG result = f.readLine (line, 256);
+        char *line;
+        qlonglong result = f.readLine (line, 256);
         if (result > 0)
         {
           QStringList list = QStringList::split (",", line, true);
@@ -537,7 +541,7 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
           w->length = list[7].toInt(); // length ?!
           w->runway = list[8].toInt(); // direction ?!
           QChar surface = list[9].upper()[0];
-          switch (surface)
+          switch (surface.toAscii())
           {
             case 'G': w->surface = Airport::Grass;
                   break;
@@ -548,7 +552,7 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
           w->comment = QObject::tr("Imported from %1").arg(catalog);
           w->importance = 1;
 
-          if (!wpList.insertItem(w))
+          if (!insertWaypoint(w))
           {
             delete w;
             break;
@@ -569,12 +573,11 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
   qDebug ("WaypointCatalog::writeFilserTXT (%s)", catalog.latin1());
   QFile f(catalog);
 
-  if (f.open(IO_WriteOnly))
+  if (f.open(QIODevice::WriteOnly))
   {
-    QTextStream out (&f);
+    Q3TextStream out (&f);
     out << "*,TpName,Type,Latitiude,Longitude,Altitude,Frequency,RWY,RWYdir,RWYtype,TCA,TC" << endl;
-    QDictIterator<Waypoint> it(wpList);
-    for (Waypoint* w = it.current(); w != 0; w = ++it)
+    foreach(Waypoint* w, wpList)
     {
       out << "," << w->name << ",";
       switch (w->type)
@@ -623,7 +626,7 @@ bool WaypointCatalog::readFilserDA4 (const QString& catalog)
 
   if (f.exists())
   {
-    if (f.open(IO_ReadOnly))
+    if (f.open(QIODevice::ReadOnly))
     {
       QDataStream in(&f);
       DA4Buffer buffer;
@@ -638,7 +641,7 @@ bool WaypointCatalog::readFilserDA4 (const QString& catalog)
             continue;
           Waypoint *w = record.newWaypoint();
 
-          if (!wpList.insertItem(w))
+          if (!insertWaypoint(w))
           {
             delete w;
             break;
@@ -659,13 +662,12 @@ bool WaypointCatalog::writeFilserDA4 (const QString& catalog)
   qDebug ("WaypointCatalog::writeFilserDA4 (%s)", catalog.latin1());
   QFile f(catalog);
 
-  if (f.open(IO_WriteOnly))
+  if (f.open(QIODevice::WriteOnly))
   {
     QDataStream out (&f);
-    QDictIterator<Waypoint> it(wpList);
     DA4Buffer buffer;
     int RecordNumber = 0;
-    for (Waypoint* w = it.current(); w != 0; w = ++it)
+    foreach(Waypoint* w, wpList)
     {
       DA4WPRecord record (&buffer.waypoints[RecordNumber++]);
       record.setWaypoint(w);
@@ -725,7 +727,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
 
   QFile f(catalog);
   if (f.exists()) {
-    if (f.open(IO_ReadOnly)) {
+    if (f.open(QIODevice::ReadOnly)) {
 
       QDataStream in(&f);
       in.setVersion(2);
@@ -790,7 +792,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
           w->comment = wpComment;
           w->importance = wpImportance;
           //qDebug("Waypoint read: %s (%s - %s) offset %d-%d",w->name.latin1(),w->description.latin1(),w->icao.latin1(), startoffset, f.at());
-          if (!wpList.insertItem(w))
+          if (!insertWaypoint(w))
           {
             qDebug("odd... error reading waypoints");
             delete w;
@@ -826,16 +828,17 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
   if (f.exists())
   {
-    if (f.open(IO_ReadOnly))
+    if (f.open(QIODevice::ReadOnly))
     {
       while (!f.atEnd())
       {
         bool ok;
-        QString line;
-        Q_LONG result = f.readLine (line, 256);
+        char *tempChar = new char;
+        Q_LONG result = f.readLine (tempChar, 256);
 
         if (result > 0)
         {
+          QString line(tempChar);
           line.replace( QRegExp("[\r\n]"), "" );
           QStringList list = QStringList::split (",", line, true);
 
@@ -1053,7 +1056,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
 	      w->comment += list[10].replace( QRegExp("\""), "" );
 	    }
 
-          if (!wpList.insertItem(w))
+          if (!insertWaypoint(w))
           {
             //delete w; //even if inserting fails, the dict will delete the waypoint!
             qDebug("Error inserting waypoint in catalog");
@@ -1066,5 +1069,75 @@ bool WaypointCatalog::readCup (const QString& catalog)
       return true;
     }
   }
+  return false;
+}
+
+bool WaypointCatalog::insertWaypoint(Waypoint *newWaypoint)
+{
+//    Waypoint *tmp;
+  bool ins = true;
+  bool found = false;
+  Waypoint *existingWaypoint = findWaypoint(newWaypoint->name);
+
+  if(existingWaypoint) {
+    if(existingWaypoint->name != newWaypoint->name ||
+       existingWaypoint->angle != newWaypoint->angle ||
+       existingWaypoint->comment != newWaypoint->comment ||
+       existingWaypoint->description != newWaypoint->description ||
+       existingWaypoint->distance != newWaypoint->distance ||
+       existingWaypoint->elevation != newWaypoint->elevation ||
+       existingWaypoint->fixTime != newWaypoint->fixTime ||
+       existingWaypoint->frequency != newWaypoint->frequency ||
+       existingWaypoint->icao != newWaypoint->icao ||
+       existingWaypoint->importance != newWaypoint->importance ||
+       existingWaypoint->isLandable != newWaypoint->isLandable ||
+       existingWaypoint->length != newWaypoint->length ||
+       existingWaypoint->origP != newWaypoint->origP ||
+       existingWaypoint->runway != newWaypoint->runway ||
+       existingWaypoint->type != newWaypoint->type ||
+       existingWaypoint->surface != newWaypoint->surface)
+    {
+      switch(QMessageBox::warning(0, "Waypoint exists",
+                "<qt>" + QObject::tr("A waypoint with the name<BR><BR><B>%1</B> \
+                                     <BR><BR>is already in current catalog.<BR> \
+                                     <BR>Do you want to overwrite the existing waypoint?").arg(newWaypoint->name) + "</qt>",
+                QObject::tr("Cancel"),
+                QObject::tr("&Overwrite"))) {
+      case QMessageBox::Abort:   //cancel
+        delete newWaypoint;
+        ins = false;
+        break;
+      case QMessageBox::Ok:      //overwrite, old version
+        wpList.removeOne(existingWaypoint);
+        wpList.append(newWaypoint);
+        break;
+      }
+    } else {
+      wpList.append(newWaypoint);
+    }
+  }
+
+  return ins;
+}
+
+Waypoint *WaypointCatalog::findWaypoint(QString name)
+{
+  foreach(Waypoint *waypoint, wpList)
+    if(waypoint->name==name)
+      return waypoint;
+
+  return 0;
+}
+
+bool WaypointCatalog::removeWaypoint(QString name)
+{
+  foreach(Waypoint *waypoint, wpList) {
+    if(waypoint->name==name) {
+      wpList.removeOne(waypoint);
+      delete waypoint;
+      return true;
+    }
+  }
+
   return false;
 }

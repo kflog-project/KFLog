@@ -16,18 +16,18 @@
 ***********************************************************************/
 
 #include "kfloglistview.h"
-#include <qheader.h>
+#include <q3header.h>
 #include <qsettings.h>
 #include <qstringlist.h>
 
 KFLogListView::KFLogListView(const char *persistendName, QWidget *parent, const char *name)
-  : QListView(parent, name)
+  : Q3ListView(parent, name)
 {
   confName = persistendName;
 }
 
 KFLogListView::KFLogListView(QWidget *parent, const char *name)
-  : QListView(parent, name)
+  : Q3ListView(parent, name)
 {
   confName = QString::null;
 }
@@ -47,7 +47,7 @@ void KFLogListView::storeConfig()
 
     QStringList l;
     QString convertInt;
-    QHeader *h = header();
+    Q3Header *h = header();
     for (int i = 0; i < h->count(); i++) {
       l.append(convertInt.setNum(i));
       l.append(convertInt.setNum(h->mapToSection(i)));
@@ -65,7 +65,7 @@ void KFLogListView::loadConfig()
 
     QStringList l = _settings.readListEntry("/KFLog/"+confName+"/ColumnToSection");
     QStringList::Iterator it;
-    QHeader *h = header();
+    Q3Header *h = header();
     int col, section;
 
     for (it = l.begin(); it != l.end(); ++it) {
@@ -78,7 +78,7 @@ void KFLogListView::loadConfig()
 }
 
 //source: http://api.kde.org/3.5-api/kdelibs-apidocs/kdeui/html/klistview_8cpp_source.html#l01858
-int KFLogListView::itemIndex( const QListViewItem *item ) const
+int KFLogListView::itemIndex( const Q3ListViewItem *item ) const
 {
     if ( !item )
         return -1;
@@ -86,7 +86,7 @@ int KFLogListView::itemIndex( const QListViewItem *item ) const
     if ( item == firstChild() )
         return 0;
     else {
-        QListViewItemIterator it(firstChild());
+        Q3ListViewItemIterator it(firstChild());
         uint j = 0;
         for ( ; it.current() && it.current() != item; ++it, ++j ) ;
 
@@ -98,13 +98,13 @@ int KFLogListView::itemIndex( const QListViewItem *item ) const
 }
 
 //source: http://api.kde.org/3.5-api/kdelibs-apidocs/kdeui/html/klistview_8cpp_source.html#l01877
-QListViewItem* KFLogListView::itemAtIndex(int index)
+Q3ListViewItem* KFLogListView::itemAtIndex(int index)
 {
    if (index<0)
       return 0;
 
    int j(0);
-   for (QListViewItemIterator it=firstChild(); it.current(); ++it)
+   for (Q3ListViewItemIterator it=firstChild(); it.current(); ++it)
    {
       if (j==index)
          return it.current();

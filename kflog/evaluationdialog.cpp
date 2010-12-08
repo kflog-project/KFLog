@@ -16,21 +16,22 @@
 **
 ***********************************************************************/
 
+#include <QComboBox>
+#include <QLayout>
+#include <QList>
+#include <QPushButton>
+#include <QSettings>
+#include <QSpinBox>
+#include <QSplitter>
+#include <QStringList>
+#include <q3valuelist.h>
+
 #include "evaluationdialog.h"
 #include "evaluationframe.h"
 #include "evaluationview.h"
 #include "flight.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
-
-
-#include <qcombobox.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qsettings.h>
-#include <qspinbox.h>
-#include <qsplitter.h>
-#include <qvaluelist.h>
 
 EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[])
   : QWidget(parent, name)
@@ -53,7 +54,7 @@ EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[])
 
 
   // variable Textanzeige
-  QSplitter* textSplitter = new QSplitter(QSplitter::Vertical, this, "splitter");
+  QSplitter* textSplitter = new QSplitter(Qt::Vertical, this, "splitter");
 
   // Diagrammfenster - Mitte
   evalFrame = new EvaluationFrame(textSplitter, this);
@@ -66,7 +67,8 @@ EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[])
       SLOT(slotUpdateCursorText(QString)));
 
   // Textanzeige
-  textLabel = new QTextView(textSplitter);
+  textLabel = new QTextEdit(textSplitter);
+  textLabel->setReadOnly(true);
   textLabel->setMinimumHeight(1);
 
 //  QPushButton* close = new QPushButton(tr("Close"),this);
@@ -175,7 +177,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
 
     if(updateAll)
       {
-        QStrList erg = flight->getFlightValues(index1, index2);
+        QStringList erg = flight->getFlightValues(index1, index2);
 
         htmlText = (QString) "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
                               <TR><TD width='50'><B>" + tr("Circling") + "</B></TD> \
@@ -240,7 +242,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
                                         <TD ALIGN=right>" + erg.at(29) + "</TD> \
                                         </TR></TABLE><BR><BR><HR><BR><BR>";
 
-        QPtrList<statePoint> state_list;
+        QList<statePoint*> state_list;
         QString text = "";
         state_list = flight->getFlightStates(index1, index2);
         htmlText += (QString) "<TABLE border='0' cellpadding='0' cellspacing='0'><TR><TD><B>" + tr("Flight sections") + "</B></TR> \
@@ -257,7 +259,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
                                 <TD align='right'><I>" + tr("L/D") + "</I></TD> \
                                 <TD align='center'><I>" + tr("Vario") + "</I></TD></TR>";
 
-        for(unsigned int n = 0; n<state_list.count(); n++)
+        for(int n = 0; n<state_list.count(); n++)
         {
           if(n%10==0 && n!=0)
             htmlText += (QString) "<TR> \
@@ -399,7 +401,7 @@ Flight* EvaluationDialog::getFlight()
 
 void EvaluationDialog::hide()
 {
-warning("EvaluationDialog::hide()");
+qWarning("EvaluationDialog::hide()");
 //  this->EvaluationDialog::~EvaluationDialog();
 }
 

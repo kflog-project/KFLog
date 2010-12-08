@@ -27,10 +27,12 @@
 #include <time.h>
 #include <unistd.h>
 
-#include <qdict.h>
+#include <q3dict.h>
 #include <qfile.h>
 #include <qsettings.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include "../airport.h"
 
@@ -97,7 +99,7 @@ int SoaringPilot::writeFile(QStringList &file)
   for (line = file.begin(); line != file.end(); ++line) {
     *line += "\r\n";
     p = *line;
-    for (unsigned int len = 0; len < (*line).length(); len++) {
+    for (int len = 0; len < (*line).length(); len++) {
       if (write(portID, p + len, sizeof(char)) != 1) {
         return FR_ERROR;
       }
@@ -262,7 +264,7 @@ FlightRecorderPluginBase::TransferMode SoaringPilot::getTransferMode() const
  * Returns a list of recorded flights in this device.
  */
 
-int SoaringPilot::getFlightDir(QPtrList<FRDirEntry> *dirList)
+int SoaringPilot::getFlightDir(QList<FRDirEntry*> *dirList)
 {
   /* André: I don't quite get this one. Shouldn't this return some FRDirEntries? */
   // SearingPilot is something "special". It doesn't provide a flight directory
@@ -300,7 +302,7 @@ int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QStrin
   QString tmp;
   QString dir;
   QString key;
-  QDict<int> flightCount;
+  Q3Dict<int> flightCount;
   int *fc;
   int ret;
   QFile f;
@@ -365,7 +367,7 @@ int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QStrin
         }
 
         f.setName(dir + _fileName);
-        if (!f.open(IO_WriteOnly)) {
+        if (!f.open(QIODevice::WriteOnly)) {
           _errorinfo = tr("IO error while saving file ") + _fileName;
           ret = FR_ERROR;
           break;
@@ -394,12 +396,12 @@ int SoaringPilot::getBasicData(FR_BasicData& data)
   return FR_OK;
 }
 
-int SoaringPilot::getConfigData(FR_ConfigData& data)
+int SoaringPilot::getConfigData(FR_ConfigData& /*data*/)
 {
   return FR_NOTSUPPORTED;
 }
 
-int SoaringPilot::writeConfigData(FR_BasicData& basicdata, FR_ConfigData& configdata)
+int SoaringPilot::writeConfigData(FR_BasicData& /*basicdata*/, FR_ConfigData& /*configdata*/)
 {
   return FR_NOTSUPPORTED;
 }
@@ -523,7 +525,7 @@ int SoaringPilot::closeRecorder() {
 /**
  * Read tasks from recorder
  */
-int SoaringPilot::readTasks(QPtrList<FlightTask> *tasks)
+int SoaringPilot::readTasks(QList<FlightTask*> *tasks)
 {
   QStringList file;
   QStringList::iterator line;
@@ -532,8 +534,8 @@ int SoaringPilot::readTasks(QPtrList<FlightTask> *tasks)
   QString nam;
   int ret;
   Waypoint *wp;
-  QPtrList <Waypoint> wpList;
-  unsigned int nrPoints;
+  QList<Waypoint*> wpList;
+  int nrPoints;
   bool takeoff, landing;
   _errorinfo = "";
 
@@ -608,13 +610,13 @@ int SoaringPilot::readTasks(QPtrList<FlightTask> *tasks)
 /**
  * Write tasks to recorder
  */
-int SoaringPilot::writeTasks(QPtrList<FlightTask> *tasks)
+int SoaringPilot::writeTasks(QList<FlightTask*> *tasks)
 {
   QStringList file;
   QString tmp, typ;
   FlightTask *task;
   Waypoint *wp;
-  QPtrList <Waypoint> wpList;
+  QList <Waypoint*> wpList;
   int nrPoints;
   // ** -------------------------------------------------------------
   // **      SOARINGPILOT Version 1.8.8 Tasks
@@ -629,7 +631,7 @@ int SoaringPilot::writeTasks(QPtrList<FlightTask> *tasks)
   // TW,48:13:19.98N,009:54:25.02E,1765F,LAUPHE,
   // TE
 
-  for (task = tasks->first(); task != 0; task = tasks->next()) {
+  foreach(task, *tasks) {
     wpList = task->getWPList();
     nrPoints = wpList.count();
     if (nrPoints >= 4) {
@@ -641,7 +643,7 @@ int SoaringPilot::writeTasks(QPtrList<FlightTask> *tasks)
     }
     tmp.sprintf("TS,%s,%d,%s\r\n", task->getFileName().latin1(), nrPoints, typ.latin1());
     file.append(tmp);
-    for (wp = wpList.first(); wp != 0; wp = wpList.next()) {
+    foreach(wp, wpList) {
       tmp.sprintf("TW,%s,%s,%s,%s\r\n",
                   degreeToDegMinSec(wp->origP.lat(), true).latin1(),
                   degreeToDegMinSec(wp->origP.lon(), false).latin1(),
@@ -658,7 +660,7 @@ int SoaringPilot::writeTasks(QPtrList<FlightTask> *tasks)
 /**
  * Read waypoints from recorder
  */
-int SoaringPilot::readWaypoints(QPtrList<Waypoint> *waypoints)
+int SoaringPilot::readWaypoints(QList<Waypoint*> *waypoints)
 {
   QStringList file;
   QStringList::iterator line;
@@ -700,7 +702,7 @@ int SoaringPilot::readWaypoints(QPtrList<Waypoint> *waypoints)
 /**
  * Write waypoints to recorder
  */
-int SoaringPilot::writeWaypoints(QPtrList<Waypoint> *waypoints)
+int SoaringPilot::writeWaypoints(QList<Waypoint*> *waypoints)
 {
   QStringList file;
   QString tmp, typ;
@@ -711,7 +713,7 @@ int SoaringPilot::writeWaypoints(QPtrList<Waypoint> *waypoints)
   //**      Date: 20 Feb 2003
   //** -------------------------------------------------------------
   //1,48:00.000N,009:00.000E,590F,ATLSFMH,KFLOG,Remark,000000000000000000
-  for (frWp = waypoints->first(); frWp != 0; frWp = waypoints->next()) {
+  foreach(frWp, *waypoints) {
     typ = "";
     if (frWp->isLandable) {
       switch(frWp->type) {
@@ -754,7 +756,7 @@ int SoaringPilot::openRecorder(const QString& /*URL*/)
  /**
  * Write flight declaration to recorder
  */
-int SoaringPilot::writeDeclaration(FRTaskDeclaration * /*taskDecl*/, QPtrList<Waypoint> * /*taskPoints*/)
+int SoaringPilot::writeDeclaration(FRTaskDeclaration * /*taskDecl*/, QList<Waypoint*> * /*taskPoints*/)
 {
   return FR_NOTSUPPORTED;
 }

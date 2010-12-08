@@ -15,12 +15,10 @@
 **
 ***********************************************************************/
 
+#include <QPrinter>
+
 #include "flightdataprint.h"
-
-//#include "config.h"
 #include "mapcalc.h"
-
-#include <qprinter.h>
 
 #define VERSION "3.0"
 
@@ -127,9 +125,9 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
             (const char*)currentFlight->getPoints(true));
   painter.drawText(125, 355, temp);
 
-  QPtrList<Waypoint> wpList = currentFlight->getOriginalWPList(); // use original task
+  QList<Waypoint*> wpList = currentFlight->getOriginalWPList(); // use original task
   int yPos = 375;
-  for(unsigned int loop = 0; loop < wpList.count(); loop++)
+  for(int loop = 0; loop < wpList.count(); loop++)
     {
       __printPositionData(&painter, wpList.at(loop), yPos);
       yPos += 13;
@@ -162,7 +160,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
       painter.drawText(125, yPos, temp);
       yPos += 20;
 
-      for(unsigned int loop = 0; loop < wpList.count(); loop++)
+      for(int loop = 0; loop < wpList.count(); loop++)
         {
           __printPositionData(&painter, wpList.at(loop), yPos);
           yPos += 13;
@@ -205,8 +203,7 @@ void FlightDataPrint::__printPositionData(QPainter* painter,
     }
 }
 
-void FlightDataPrint::__printPositionData(QPainter* painter,
-        Waypoint* cPoint, int yPos)
+void FlightDataPrint::__printPositionData(QPainter *painter, Waypoint *cPoint, int yPos)
 {
   /*
    * Use italic font if waypoint was not reached

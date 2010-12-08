@@ -18,20 +18,22 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
+//Added by qt3to4:
+#include <Q3HBoxLayout>
 #include "openglwidget.h"
 #include "glview.h"
 
 OpenGLWidget::OpenGLWidget(QWidget* parent, char *name)
   :QWidget(parent,name){
    glview=new GLView(this,"OpenGL Viewer");
-   QHBoxLayout* flayout = new QHBoxLayout( this, 2, 2, "flayout");
+   Q3HBoxLayout* flayout = new Q3HBoxLayout( this, 2, 2, "flayout");
 
    if (!glview->isValid())
    {
      QString text=tr("No OpenGL extension for display found! Check your configuration!");
      QMessageBox::critical(this, tr("Error"), "<qt>" + text +"</qt>", QMessageBox::Ok, 0, 0 );
      QLabel* label= new QLabel(text,this);
-     label->setAlignment( AlignHCenter|AlignVCenter );
+     label->setAlignment( Qt::AlignHCenter|Qt::AlignVCenter );
      flayout->addWidget(label,1);
    }
    else

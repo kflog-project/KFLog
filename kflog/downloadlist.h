@@ -31,9 +31,11 @@
   */
 
 #include <qobject.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qstringlist.h>
-#include <qurl.h>
+#include <q3url.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 class DownloadList : public QObject{
   Q_OBJECT
@@ -78,12 +80,12 @@ class DownloadList : public QObject{
     * List of source URL's
     * @see destList
     */
-    QPtrList<QUrl> srcList;
+    Q3PtrList<Q3Url> srcList;
    /**
     * List of target URL's
     * @see srcList
     */
-    QPtrList<QUrl> destList;
+    Q3PtrList<Q3Url> destList;
    /**
     * List of URL's which cannot be retrieved
     */
@@ -100,7 +102,7 @@ class DownloadList : public QObject{
     * List used to prevent multiple display of same error,
     * which annoys the user (what we obviously do not want)
     */
-    QValueList<int> errorList;
+    Q3ValueList<int> errorList;
 };
 
 #endif

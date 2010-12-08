@@ -18,8 +18,8 @@
 #ifndef DATAVIEW_H
 #define DATAVIEW_H
 
-#include <qframe.h>
-#include <qtextbrowser.h>
+#include <QFrame>
+#include <QTextBrowser>
 
 #include "flighttask.h"
 class Flight;
@@ -47,7 +47,7 @@ class DataView : public QFrame
     /**
      * Emitted when the user selects one waypoint in the list.
      */
-    void wpSelected(const unsigned int id);
+    void wpSelected(const int id);
     /** No descriptions */
     void flightSelected(BaseFlightElement *);
     /** No descriptions */

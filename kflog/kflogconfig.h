@@ -18,23 +18,21 @@
 #ifndef KFLOGCONFIG_H
 #define KFLOGCONFIG_H
 
-#include <qbuttongroup.h>
-#include <qcombobox.h>
-#include <qcheckbox.h>
-#include <qdialog.h>
-#include <qlcdnumber.h>
-#include <qlineedit.h>
-#include <qlistview.h>
-#include <qptrlist.h>
-#include <qpen.h>
-#include <qpushbutton.h>
-#include <qslider.h>
-#include <qspinbox.h>
-#include <qwidget.h>
+#include <q3buttongroup.h>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QDialog>
+#include <QLayout>
+#include <QLCDNumber>
+#include <QLineEdit>
+#include <q3listview.h>
+#include <QPen>
+#include <QPushButton>
+#include <QSlider>
+#include <QSpinBox>
+#include <QWidget>
 
-class KFLogApp;
-class LatEdit;
-class LongEdit;
+#include "guicontrols/coordedit.h"
 
 /**
  * This class provides the config-dialog for KFLog.
@@ -70,7 +68,7 @@ class KFLogConfig : public QDialog
   public slots:
     /** */
     void slotOk();
-    void slotPageChanged(QListViewItem *currentItem);
+    void slotPageChanged(Q3ListViewItem *currentItem);
     /** */
     void slotDefaultPath();
     /** */
@@ -155,26 +153,26 @@ class KFLogConfig : public QDialog
     QColor __string2Color(QString);
 
     QGridLayout *configLayout;
-    QListView *setupTree;
-    QFrame *activePage;
+    Q3ListView *setupTree;
+    Q3Frame *activePage;
     /** */
-    QFrame* idPage;
+    Q3Frame* idPage;
     /** */
-    QFrame* mapPage;
+    Q3Frame* mapPage;
     /** */
-    QFrame* flightPage;
+    Q3Frame* flightPage;
     /** */
-    QFrame* pathPage;
+    Q3Frame* pathPage;
     /** */
-    QFrame* topoPage;
+    Q3Frame* topoPage;
     /** */
-    QFrame* projPage;
+    Q3Frame* projPage;
     /** */
-    QFrame* scalePage;
+    Q3Frame* scalePage;
     /** */
-    QFrame* airfieldPage;
+    Q3Frame* airfieldPage;
     /** */
-    QFrame* waypointPage;
+    Q3Frame* waypointPage;
     /** */
     QLineEdit* igcPathE;
     QLineEdit* taskPathE;
@@ -213,7 +211,7 @@ class KFLogConfig : public QDialog
     LatEdit* firstParallel;
     LatEdit* secondParallel;
     LongEdit* originLongitude;
-    QButtonGroup *waypointButtonGroup;
+    Q3ButtonGroup *waypointButtonGroup;
     QPushButton* catalogPathSearch;
     QPushButton* flightTypeLeftTurnColorButton;
     QColor flightTypeLeftTurnColor;

@@ -53,7 +53,7 @@ public:
   /**
    * Returns a list of recorded flights in this device. (Not implemented.)
    */
-  virtual int getFlightDir(QPtrList<FRDirEntry>*);
+  virtual int getFlightDir(QList<FRDirEntry*>*);
   /**
    * Downloads the indicated flight from the recorder.
    */
@@ -85,23 +85,23 @@ public:
   /**
    * Write flight declaration to recorder. (Not implemented.)
    */
-  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QPtrList<Waypoint> *taskPoints);
+  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
   /**
    * Read tasks from recorder. (Not implemented.)
    */
-  virtual int readTasks(QPtrList<FlightTask> *tasks);
+  virtual int readTasks(QList<FlightTask*> *tasks);
   /**
    * Write tasks to recorder. (Not implemented.)
    */
-  virtual int writeTasks(QPtrList<FlightTask> *tasks);
+  virtual int writeTasks(QList<FlightTask*> *tasks);
   /**
    * Read waypoints from recorder.
    */
-  virtual int readWaypoints(QPtrList<Waypoint> *waypoints);
+  virtual int readWaypoints(QList<Waypoint*> *waypoints);
   /**
    * Write waypoints to recorder.
    */
-  virtual int writeWaypoints(QPtrList<Waypoint> *waypoints);
+  virtual int writeWaypoints(QList<Waypoint*> *waypoints);
 
 protected:
   /**

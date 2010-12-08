@@ -18,7 +18,7 @@
 #ifndef TASKLISTVIEWITEM_H
 #define TASKLISTVIEWITEM_H
 
-#include <qlistview.h>
+#include <q3listview.h>
 #define TASKLISTVIEWITEM_TYPEID 10003
 
 class FlightTask;
@@ -27,7 +27,7 @@ class FlightTask;
   *@author André Somers
   */
 
-class TaskListViewItem : public QListViewItem  {
+class TaskListViewItem : public Q3ListViewItem  {
 public: 
   /**
    * Constructor.
@@ -36,7 +36,7 @@ public:
    * @param insertAfter Reference to @ref QListViewItem after which this item should
    *                    be inserted
    */
-  TaskListViewItem(QListViewItem * parent, FlightTask * task, QListViewItem* insertAfter=0);
+  TaskListViewItem(Q3ListViewItem * parent, FlightTask * task, Q3ListViewItem* insertAfter=0);
   /**
    * Destructor
    */

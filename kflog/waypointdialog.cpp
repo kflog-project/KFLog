@@ -22,6 +22,10 @@
 
 #include <qlayout.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3HBoxLayout>
+#include <Q3VBoxLayout>
 
 extern TranslationList surfaceTypes;
 extern TranslationList waypointTypes;
@@ -55,9 +59,9 @@ void WaypointDialog::__initDialog()
   QLabel *l;
   QPushButton *b;
 
-  QVBoxLayout *topLayout = new QVBoxLayout(this, 10);
-  QGridLayout *layout = new QGridLayout(11, 3, 5);
-  QHBoxLayout *buttons = new QHBoxLayout(10);
+  Q3VBoxLayout *topLayout = new Q3VBoxLayout(this, 10);
+  Q3GridLayout *layout = new Q3GridLayout(11, 3, 5);
+  Q3HBoxLayout *buttons = new Q3HBoxLayout(10);
 
   buttons->addStretch();
 

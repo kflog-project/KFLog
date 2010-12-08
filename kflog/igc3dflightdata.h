@@ -22,7 +22,7 @@
 #define IGC3DFLIGHTDATA_H
 
 #include <qpainter.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include "igc3dviewstate.h"
 #include "flight.h"

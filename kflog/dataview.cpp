@@ -17,14 +17,14 @@
 
 #include "dataview.h"
 
-#include <qfileinfo.h>
-#include <qlayout.h>
-#include <qmessagebox.h>
+#include <QFileInfo>
+#include <QHBoxLayout>
+#include <QMessageBox>
 
 #include <flight.h>
-#include <mapcalc.h>
-#include <flighttask.h>
 #include <flightgroup.h>
+#include <flighttask.h>
+#include <mapcalc.h>
 #include <mapcontents.h>
 
 DataView::DataView(QWidget* parent)
@@ -49,17 +49,17 @@ QString DataView::__writeTaskInfo(FlightTask* task)
   QString htmlText;
   QString txt, tmp,speed;
   QString idString, timeString;
-  Waypoint *wp1, *wp2;
-  int t1, t2;
+  Waypoint *wp1, *wp2 = 0;
+  int t1, t2, loop = 0;
   
   htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
       <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
       tr("Task") + ":</B></TD></TR>";
 
-  QPtrList<Waypoint> wpList = task->getWPList();
+  QList<Waypoint*> wpList = task->getWPList();
 
-  for(unsigned int loop = 0; loop < wpList.count(); loop++) {
-    wp1 = wpList.at(loop);
+  foreach(wp1, wpList) {//int loop = 0; loop < wpList.count(); loop++) {
+//    *wp1 = wpList.value(loop);
       
     if(wp1->fixTime != 0) {
       timeString = printTime(wp1->fixTime);
@@ -82,8 +82,8 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       t1 = 0;
     }
 
-    if(loop > 0) {
-      wp2 = wpList.at(loop - 1);
+    if(wp2!=0) {
+//      *wp2 = wpList.value(loop - 1);
       if(wp2->fixTime != 0) {
         t2 = wp2->fixTime;
       }
@@ -103,7 +103,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       tmp.sprintf("t1 : %d, t2 : %d", t1, t2);
       //warning(tmp);
 
-      tmp.sprintf("%.2f km / %03.0f∞ / %.1f km/h",
+      tmp.sprintf("%.2f km / %03.0f¬∞ / %.1f km/h",
                   wp1->distance,
                   getTrueCourse(wp1->origP, wp2->origP),
                   (t1 != 0 && t2 != 0) ? wp1->distance / (t1 - t2) * 3600.0 : 0.0);
@@ -120,6 +120,8 @@ QString DataView::__writeTaskInfo(FlightTask* task)
           <TD>" + printPos(wp1->origP.lat()) + "</TD>\
           <TD ALIGN=right>" + printPos(wp1->origP.lon(), false) +
       "</TD></TR>";
+    wp2 = wp1;
+    loop++;
   }
   
   if (task->getTaskType() == FlightTask::OLC2003){
@@ -172,7 +174,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
   
 void DataView::slotShowTaskText(FlightTask* task)
 {
-  QPtrList<Waypoint> taskPointList = task->getWPList();
+  QList<Waypoint*> taskPointList = task->getWPList();
   QString htmlText = "";
   QString tmp;
 
@@ -184,7 +186,7 @@ void DataView::slotShowTaskText(FlightTask* task)
   // Frage
   if(taskPointList.count() == 0)
     {
-      htmlText += "Bitte w‰hlen Sie den <b>Startort</b> der Aufgabe in der Karte<br>";
+      htmlText += "Bitte w√§hlen Sie den <b>Startort</b> der Aufgabe in der Karte<br>";
     }
   else if(taskPointList.count() == 1)
     {
@@ -204,8 +206,8 @@ void DataView::setFlightData()
   BaseFlightElement* e = _globalMapContents.getFlight();
   QString htmlText;
   QString idString;
-  QPtrList<Flight> fl;
-  QStrList h;
+  QList<Flight*> fl;
+  QStringList h;
   FlightTask fTask("");
   QFileInfo fi;
 
@@ -251,7 +253,7 @@ void DataView::setFlightData()
                 <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
                  tr("Flights") + ":</B></TD></TR>";
 
-              for (unsigned int loop = 0; loop < fl.count(); loop++) {
+              for (int loop = 0; loop < fl.count(); loop++) {
                 Flight *flight = fl.at(loop);
                 // store pointer of flight instead of index
                 // flight list of mapcontents will change
@@ -284,14 +286,14 @@ void DataView::slotWPSelected(const QString &url)
 
   switch(e->getTypeID()) {
     case BaseMapElement::Flight:
-      emit wpSelected(url.toUInt());
+      emit wpSelected(url.toInt());
       break;
     case BaseMapElement::Task:
       if (url == "EDITTASK") {
         QMessageBox::information(0, tr("Edit task"), tr("This will bring up the task editing dialog"), QMessageBox::Ok);
       }
       else {
-        emit wpSelected(url.toUInt());
+        emit wpSelected(url.toInt());
       }
       break;
     case BaseMapElement::FlightGroup:

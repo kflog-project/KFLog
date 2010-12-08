@@ -19,9 +19,11 @@
 #define EVALUATIONVIEW_H
 
 #include <time.h>
-#include <qpixmap.h>
-#include <qscrollview.h>
-#include <qwidget.h>
+
+#include <QPixmap>
+#include <q3scrollview.h>
+#include <QWidget>
+
 #include "wp.h"
 
 class Flight;
@@ -38,7 +40,7 @@ class EvaluationView : public QWidget
 
  public:
   /** */
-  EvaluationView(QScrollView* parent, EvaluationDialog* dialog);
+  EvaluationView(Q3ScrollView* parent, EvaluationDialog* dialog);
   /** */
   ~EvaluationView();
   /** */
@@ -151,7 +153,7 @@ class EvaluationView : public QWidget
   bool vario;
   bool speed;
 
-  QScrollView* scrollFrame;
+  Q3ScrollView* scrollFrame;
 
   EvaluationDialog* evalDialog;
 

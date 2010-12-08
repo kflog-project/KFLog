@@ -5,10 +5,8 @@ QT += qt3support
 
 CONFIG += qt \
     warn_on \
-    release
-
+    debug
 TEMPLATE = app
-
 SOURCES = airport.cpp \
     airspace.cpp \
     baseflightelement.cpp \
@@ -24,7 +22,6 @@ SOURCES = airport.cpp \
     evaluationdialog.cpp \
     evaluationframe.cpp \
     evaluationview.cpp \
-    filetools.cpp \
     flight.cpp \
     flightdataprint.cpp \
     flightgroup.cpp \
@@ -74,15 +71,12 @@ SOURCES = airport.cpp \
     waypoint.cpp \
     waypointcatalog.cpp \
     waypointdialog.cpp \
-    waypointdict.cpp \
     waypointimpfilterdialog.cpp \
-    waypointlist.cpp \
     waypoints.cpp \
     welt2000.cpp \
     whatsthat.cpp \
     guicontrols/coordedit.cpp \
     guicontrols/kfloglistview.cpp
-
 HEADERS = airport.h \
     airspace.h \
     baseflightelement.h \
@@ -98,7 +92,6 @@ HEADERS = airport.h \
     evaluationdialog.h \
     evaluationframe.h \
     evaluationview.h \
-    filetools.h \
     flight.h \
     flightdataprint.h \
     flightgroup.h \
@@ -152,9 +145,7 @@ HEADERS = airport.h \
     waypoint.h \
     waypointcatalog.h \
     waypointdialog.h \
-    waypointdict.h \
     waypointimpfilterdialog.h \
-    waypointlist.h \
     waypoints.h \
     welt2000.h \
     wgspoint.h \
@@ -162,20 +153,45 @@ HEADERS = airport.h \
     wp.h \
     guicontrols/coordedit.h \
     guicontrols/kfloglistview.h
-
-pics.extra = mkdir -p  ~/.kflog/pics/; \
-    cp -r ./pics/* ~/.kflog/pics; \
-    mkdir -p ~/.kflog/map-icons/; \
-    cp -r ./map-icons/* ~/.kflog/map-icons; \
-    mkdir -p ~/.kflog/mapdata/landscape; \
-    cp ../README-AIRSPACE ~/.kflog/mapdata/landscape/README-MAP; \
-    mkdir -p ~/.kflog/mapdata/airfields; \
-    cp ../README-AIRSPACE ~/.kflog/mapdata/airfields/README-AIRFIELDS; \
-    mkdir -p ~/.kflog/mapdata/airspaces; \
-    cp ../README-AIRSPACE ~/.kflog/mapdata/airspaces/README-AIRSPACE
+FORMS = optimizationwizard.ui
+pics.extra = mkdir \
+    -p \
+    ~/.kflog/pics/; \
+    cp \
+    -r \
+    ./pics/* \
+    ~/.kflog/pics; \
+    mkdir \
+    -p \
+    ~/.kflog/map-icons/; \
+    cp \
+    -r \
+    ./map-icons/* \
+    ~/.kflog/map-icons; \
+    mkdir \
+    -p \
+    ~/.kflog/mapdata/landscape; \
+    cp \
+    ../README-AIRSPACE \
+    ~/.kflog/mapdata/landscape/README-MAP; \
+    mkdir \
+    -p \
+    ~/.kflog/mapdata/airfields; \
+    cp \
+    ../README-AIRSPACE \
+    ~/.kflog/mapdata/airfields/README-AIRFIELDS; \
+    mkdir \
+    -p \
+    ~/.kflog/mapdata/airspaces; \
+    cp \
+    ../README-AIRSPACE \
+    ~/.kflog/mapdata/airspaces/README-AIRSPACE
 pics.path = ./pics
 pics.files = 
 INSTALLS += pics
-
 DESTDIR = ../release
 
+# The following line was inserted by qt3to4
+QT += xml \
+    qt3support \
+    network

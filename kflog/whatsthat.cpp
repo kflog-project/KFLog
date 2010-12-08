@@ -15,12 +15,15 @@
 **
 ***********************************************************************/
 
+#include <QApplication>
+#include <QCursor>
+#include <QDesktopWidget>
+#include <QMouseEvent>
+#include <QPainter>
+#include <q3stylesheet.h>
+#include <QToolTip>
+
 #include "whatsthat.h"
-#include <qtooltip.h>
-#include <qstylesheet.h>
-#include <qapplication.h>
-#include <qpainter.h>
-#include <qcursor.h>
 
 // shadowWidth not const, for XP drop-shadow-fu turns it to 0
 int shadowWidth = 6;   // also used as '5' and '6' and even '8' below
@@ -28,13 +31,13 @@ const int vMargin = 8;
 const int hMargin = 12;
 
 WhatsThat::WhatsThat( QWidget* w, const QString& txt, QWidget* parent, const char* name, int timeout, const QPoint * pos)
-    : QWidget( parent, name, WType_Popup ), text( txt ), pressed( FALSE ), widget( w )
+    : QWidget( parent, name, Qt::WType_Popup ), text( txt ), pressed( FALSE ), widget( w )
 {
     suggestedPos=0;
     if (pos) {
       suggestedPos=new QPoint(*pos);
     }  
-    setBackgroundMode( NoBackground );
+    setBackgroundMode( Qt::NoBackground );
     setPalette( QToolTip::palette() );
     setMouseTracking( TRUE );
 
@@ -44,9 +47,9 @@ WhatsThat::WhatsThat( QWidget* w, const QString& txt, QWidget* parent, const cha
     QRect r;
 
     doc = 0;
-    if ( QStyleSheet::mightBeRichText( text ) ) {
+    if ( Q3StyleSheet::mightBeRichText( text ) ) {
       QFont f = QApplication::font( this );
-      doc = new QSimpleRichText( text, f );
+      doc = new Q3SimpleRichText( text, f );
       doc->adjustSize();
       r.setRect( 0, 0, doc->width(), doc->height() );
     } else {
@@ -57,7 +60,7 @@ WhatsThat::WhatsThat( QWidget* w, const QString& txt, QWidget* parent, const cha
         sw = 300;
 
       r = fontMetrics().boundingRect( 0, 0, sw, 1000,
-          Qt::AlignTop + Qt::WordBreak + Qt::ExpandTabs,
+          Qt::AlignTop + Qt::TextWordWrap + Qt::TextExpandTabs,
           text );
     }
 
@@ -85,7 +88,7 @@ void WhatsThat::hide()
 void WhatsThat::mousePressEvent( QMouseEvent* e )
 {
     pressed = TRUE;
-    if ( e->button() == LeftButton && rect().contains( e->pos() ) ) {
+    if ( e->button() == Qt::LeftButton && rect().contains( e->pos() ) ) {
       if ( doc )
         anchor = doc->anchorAt( e->pos() -  QPoint( hMargin, vMargin) );
       return;
@@ -154,7 +157,7 @@ void WhatsThat::paintEvent( QPaintEvent* )
     if ( doc ) {
       doc->draw( &p, r.x(), r.y(), r, colorGroup(), 0 );
     } else {
-      p.drawText( r, AlignTop + WordBreak + ExpandTabs, text );
+      p.drawText( r, Qt::AlignTop + Qt::TextWordWrap + Qt::TextExpandTabs, text );
     }
 }
 

@@ -19,7 +19,10 @@
 #define GLVIEW_H
 
 #include <qgl.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
+//Added by qt3to4:
+#include <QMouseEvent>
+#include <QWheelEvent>
 
 class Flight;
 
@@ -54,7 +57,7 @@ private:
     QColor getBackgroundColor();		//returns the background color 
     						//should read from Settings dialog
     GLuint boxObject;
-    QValueList<GLuint> flightList;
+    Q3ValueList<GLuint> flightList;
     GLfloat xRot, yRot, zRot, deltaX, deltaY, deltaZ, scale, heightExaggerate;
     void slotRotateUp();
     void    mouseMoveEvent ( QMouseEvent * e );

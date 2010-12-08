@@ -153,7 +153,7 @@ unsigned char * GarminGPS::readPacket(int * bytesread)
 {
   unsigned char * bufptr;
   unsigned char buffer[MAX_PACKET_SIZE];
-  int done, start, end;
+  int done;
   int res;
   int totalread;
   unsigned char * packet;
@@ -211,11 +211,9 @@ int GarminGPS::writePacket(unsigned char * cmd, int len)
 
 void GarminGPS::dumpPacket(unsigned char * packet, int length)
 {
-  int i;
-
 #ifdef _GARMIN_DBG
   printf("::dumpPacket(): ");
-  for (i=0; i <=length; i++){
+  for(int i=0; i <=length; i++){
     printf("<0x%X>", *((unsigned char*)packet+i));
   }
   printf("\n");
@@ -227,12 +225,12 @@ void GarminGPS::dumpPacket(unsigned char * packet, int length)
 // Application Layer
 //
 //////////////////////////////////////////////////////////////////////////////////
-int GarminGPS::getPacketID(unsigned char * packet, int length)
+int GarminGPS::getPacketID(unsigned char * packet, int /*length*/)
 {
   return (int)*(packet+1);     // return packet ID byte
 }
 
-int GarminGPS::getNumberOfRecords(unsigned char * packet, int length)
+int GarminGPS::getNumberOfRecords(unsigned char * packet, int /*length*/)
 {
   // given that this is a valid Pid_Records packet, return the number of records
   int numrecords; 
@@ -244,7 +242,7 @@ int GarminGPS::getNumberOfRecords(unsigned char * packet, int length)
   return numrecords;
 }
 
-int GarminGPS::getModelNumber(unsigned char * packet, int length)
+int GarminGPS::getModelNumber(unsigned char * packet, int /*length*/)
 {
   int model;
 
@@ -255,7 +253,7 @@ int GarminGPS::getModelNumber(unsigned char * packet, int length)
   return model;
 }
 
-double GarminGPS::getSoftwareVersion(unsigned char * packet, int length)
+double GarminGPS::getSoftwareVersion(unsigned char * packet, int /*length*/)
 {
   double d_sw;
 
@@ -420,11 +418,10 @@ void GarminGPS::getWaypoints(void)
 
 
 
-void GarminGPS::dumpD300TrkPointTypePacket(unsigned char * packet, int length)
+void GarminGPS::dumpD300TrkPointTypePacket(unsigned char * packet, int /*length*/)
 {
-  int i;
   D300_Trk_Point_Type TrackRecord;
-  double d_lon, d_lat, d_lon_decimal, d_lat_decimal;
+  double d_lon, d_lat;
   int n_lon, n_lat;
   time_t gpstime, zerotime;
   char s_lon[10], s_lat[10];

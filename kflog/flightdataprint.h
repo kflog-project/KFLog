@@ -18,7 +18,7 @@
 #ifndef FLIGHTDATAPRINT_H
 #define FLIGHTDATAPRINT_H
 
-#include <qpainter.h>
+#include <QPainter>
 
 #include "flight.h"
 
@@ -40,8 +40,7 @@ class FlightDataPrint
           int yPos, const char* text, bool printVario = false,
           bool printSpeed = false);
   /** */
-  void __printPositionData(QPainter* painter, Waypoint* cPoint,
-          int yPos);
+  void __printPositionData(QPainter *painter, Waypoint *cPoint, int yPos);
   unsigned int time;
   unsigned int lasttime;
 };

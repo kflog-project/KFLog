@@ -21,8 +21,10 @@
 #include "baseflightelement.h"
 
 #include <qdialog.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qwidget.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 /**Dialog for selecting flights
   *@author Harald Maier
@@ -32,9 +34,9 @@ class FlightSelectionDialog : public QDialog  {
    Q_OBJECT
 public: // Public attributes
   /**  */
-  QPtrList<BaseFlightElement> availableFlights;
+  Q3PtrList<BaseFlightElement> availableFlights;
   /**  */
-  QPtrList<BaseFlightElement> selectedFlights;
+  Q3PtrList<BaseFlightElement> selectedFlights;
   FlightSelectionDialog(QWidget *parent=0, const char *name=0);
   ~FlightSelectionDialog();
 private: // Private methods
@@ -42,9 +44,9 @@ private: // Private methods
   void __initDialog();
 private: // Private attributes
   /**  */
-  QListBox *aFlights;
+  Q3ListBox *aFlights;
   /**  */
-  QListBox *sFlights;
+  Q3ListBox *sFlights;
 private slots: // Private slots
   /** No descriptions */
   void slotAccept();

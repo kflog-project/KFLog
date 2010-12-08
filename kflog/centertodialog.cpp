@@ -23,13 +23,15 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qwidget.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
 
 CenterToDialog::CenterToDialog(QWidget *parent, const char *name )
   : QDialog(parent, name)
 {
   setCaption(tr("Center to ..."));
 
-  QGridLayout* grid = new QGridLayout(this, 3, 3, 3);
+  Q3GridLayout* grid = new Q3GridLayout(this, 3, 3, 3);
 
   grid->addWidget(new QLabel( tr("Latitude"), this, "captionLat"), 0, 0);
   latE = new LatEdit(this, "latitude");

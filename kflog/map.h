@@ -18,13 +18,14 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include <qbitmap.h>
-#include <qframe.h>
-#include <qpointarray.h>
-#include <qpopupmenu.h>
-#include <qregion.h>
-#include <qtimer.h>
-#include <qurl.h>
+#include <QBitmap>
+#include <QFrame>
+#include <QList>
+#include <q3pointarray.h>
+#include <QMenu>
+#include <QRegion>
+#include <QTimer>
+#include <QUrl>
 
 #include "flighttask.h"
 #include "waypointcatalog.h"
@@ -64,7 +65,7 @@ class Map : public QFrame
     /** */
     void slotCenterToTask();
     /** */
-    void slotCenterToWaypoint(const unsigned int id);
+    void slotCenterToWaypoint(const int id);
     /** */
     void slotDrawCursor(const QPoint& p1, const QPoint& p2);
     /** */
@@ -239,7 +240,7 @@ class Map : public QFrame
      *   First look in task itself
      *   Second look in map contents
      */
-    bool __getTaskWaypoint(const QPoint& current, Waypoint *wp, QPtrList<Waypoint> &taskPointList);
+    bool __getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*> &taskPointList);
   /** Tries to locate the elevation for the given point, and emits a signal elevation if found. */
   void __findElevation(const QPoint& coord);
   /** Selects the correct items to show from the menu and then shows it. */
@@ -316,7 +317,7 @@ class Map : public QFrame
      * Contains the regions of all visible airspaces. The list is needed to
      * find the airspace-data when the users selects a airspace in the map.
      */
-    QPtrList<QRegion>* airspaceRegList;
+    Q3PtrList<QRegion>* airspaceRegList;
     /**
      * Animation timer
      */
@@ -358,7 +359,7 @@ class Map : public QFrame
     /**
      * Popupmenu under the right mousebutton
      */
-    QPopupMenu *mapPopup;
+    QMenu *mapPopup;
     /**
      * ID's of menuitems
      */

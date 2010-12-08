@@ -18,7 +18,7 @@
 #ifndef TRANSLATIONELEMENT_H
 #define TRANSLATIONELEMENT_H
 
-#include <qstring.h>
+#include <QString>
 
 /**This class may bes used for translation of nternal id's to
 text representations

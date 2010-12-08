@@ -11,7 +11,7 @@
 //
 #include "elevationfinder.h"
 #include <qapplication.h>
-#include <qtextstream.h>
+#include <q3textstream.h>
 #include <qdir.h>
 #include <qrect.h>
 #include <mapcontents.h>
@@ -89,7 +89,7 @@ int ElevationFinder::findDEMelevation(const QPoint& coordinates)
 
   if (!demFile) {
     demFile = new QFile(demFileName);
-    demFile->open(IO_ReadOnly);
+    demFile->open(QIODevice::ReadOnly);
     demStream = new QDataStream(demFile);
   }
 
@@ -152,12 +152,12 @@ bool ElevationFinder::tryOpenGLIGCexplorer()
 
   qDebug("config file found.");
 
-  if (! f.open(IO_ReadOnly)) {
+  if (! f.open(QIODevice::ReadOnly)) {
     qDebug("error opening file.");
     return false;
   }
 
-  QTextStream s(&f);
+  Q3TextStream s(&f);
   //let's try to find the DEM file in use from the configuration file
   while (true) {
     line = s.readLine();
@@ -213,8 +213,8 @@ bool ElevationFinder::tryOpenGLIGCexplorer()
 
   if (flags != 511) //we did not find all the fields we need
     return false;
-  debug("demTL.x(): %d, demTL.y() %d", demTL.x(), demTL.y());
-  debug("demBR.x(): %d, demBR.y() %d", demBR.x(), demBR.y());
+  qDebug("demTL.x(): %d, demTL.y() %d", demTL.x(), demTL.y());
+  qDebug("demBR.x(): %d, demBR.y() %d", demBR.x(), demBR.y());
 
   qDebug("good: found DEM file using openGLIGCexplorer's configuration file!");
   return true;

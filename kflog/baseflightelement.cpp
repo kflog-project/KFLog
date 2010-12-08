@@ -46,5 +46,5 @@ void BaseFlightElement::printMapElement(QPainter* printP, bool isT)
 */
 
 void BaseFlightElement::reProject() {
-  warning("BaseFlightElement::reProject()");
+  qWarning("BaseFlightElement::reProject()");
 }

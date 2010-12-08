@@ -18,7 +18,7 @@
 #ifndef KFLOGSTARTLOGO_H
 #define KFLOGSTARTLOGO_H
 
-#include <qwidget.h>
+#include <QWidget>
 
 /**
  * Creates the startup-window displaying the logo.

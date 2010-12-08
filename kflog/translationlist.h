@@ -20,20 +20,22 @@
 
 #include "translationelement.h"
 
-#include <qptrlist.h>
-#include <qintdict.h>
+#include <q3ptrlist.h>
+#include <q3intdict.h>
+//Added by qt3to4:
+#include <Q3PtrCollection>
 
 /**
   *@author Harald Maier
   */
 
-typedef QPtrList<TranslationElement> TranslationListBase;
+typedef Q3PtrList<TranslationElement> TranslationListBase;
 
 class TranslationList : public TranslationListBase {
 public: 
 	TranslationList();
 	~TranslationList();
-  virtual int compareItems(QCollection::Item e1, QCollection::Item e2);
+  virtual int compareItems(Q3PtrCollection::Item e1, Q3PtrCollection::Item e2);
   /** 
    * adds an item to the list
    */
@@ -53,7 +55,7 @@ public:
 
 private: // Private attributes
   /** index list elements by id */
-  QIntDict<TranslationElement> idIndex;
+  Q3IntDict<TranslationElement> idIndex;
 };
 
 #endif

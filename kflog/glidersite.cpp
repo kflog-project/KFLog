@@ -15,9 +15,9 @@
 **
 ***********************************************************************/
 
-#include "glidersite.h"
+#include <QDir>
 
-#include <qdir.h>
+#include "glidersite.h"
 
 GliderSite::GliderSite(QString n, QString icao, QString gps, WGSPoint wgsPos,
         QPoint pos, unsigned int elev, const char* f, bool w)
@@ -89,9 +89,9 @@ void GliderSite::printMapElement(QPainter* printPainter, bool isText)
       Qt::SquareCap, Qt::MiterJoin);
   QPen blackP = QPen(QColor(0, 0, 0), 3, Qt::SolidLine,
       Qt::SquareCap, Qt::MiterJoin);
-  QPointArray pointArray(5);
+  Q3PointArray pointArray(5);
 
-  printPainter->setBrush(QBrush::NoBrush);
+  printPainter->setBrush(Qt::NoBrush);
 
   printPainter->setPen(whiteP);
   printPainter->drawEllipse(printPos.x() - (iconSize / 2),
@@ -129,7 +129,7 @@ void GliderSite::addRunway(runway* r)
 {
     if (r) {
       if (!rwData) {
-        rwData=new QPtrList<runway>;
+        rwData=new Q3PtrList<runway>;
         rwData->setAutoDelete(true);
       }
       rwData->append(r);

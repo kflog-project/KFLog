@@ -23,56 +23,52 @@
 #include <cmath>
 #include <cstdlib>
 
+#include <QMessageBox>
+#include <QPixmap>
+
 #include "flight.h"
 #include "mapcalc.h"
 #include "mapmatrix.h"
 #include "optimizationwizard.h"
-
-#include <qmessagebox.h>
-#include <qpixmap.h>
-#include <qptrlist.h>
 
 /* Number of tasks to be handled during optimization */
 #define NUM_TASKS 25
 #define NUM_TASKS_POINTS ( NUM_TASKS * 3 )
 #define MAX_TASK_ID NUM_TASKS - 1
 
-/* Die Einstellungen können mal in die Voreinstellungsdatei wandern ... */
+/* Die Einstellungen kÃ¶nnen mal in die Voreinstellungsdatei wandern ... */
 #define FAI_POINT 2.0
 #define NORMAL_POINT 1.75
 
-#define GET_SPEED(a) ( (float)a->dS / (float)a->dT )
-#define GET_VARIO(a) ( (float)a->dH / (float)a->dT )
-
-/* Maximale Vergrößerung beim Prüfen! */
+/* Maximale VergrÃ¶ÃŸerung beim PrÃ¼fen! */
 #define SCALE 10.0
 
 #define APPEND_WAYPOINT(a, b, c) \
       wpL.append(new Waypoint); \
-      wpL.current()->origP = route.at( a )->origP; \
-      wpL.current()->projP = route.at( a )->projP; \
-      wpL.current()->distance = ( b ); \
-      wpL.current()->name = c; \
-      wpL.current()->sector1 = 0; \
-      wpL.current()->sector2 = 0; \
-      wpL.current()->sectorFAI = 0; \
-      wpL.current()->angle = -100; \
-      wpL.current()->fixTime = 0;
+      wpL.last()->origP = route.at( a )->origP; \
+      wpL.last()->projP = route.at( a )->projP; \
+      wpL.last()->distance = ( b ); \
+      wpL.last()->name = c; \
+      wpL.last()->sector1 = 0; \
+      wpL.last()->sector2 = 0; \
+      wpL.last()->sectorFAI = 0; \
+      wpL.last()->angle = -100; \
+      wpL.last()->fixTime = 0;
 
 #define APPEND_WAYPOINT_OLC2003(a, b, c) \
       wpL.append(new Waypoint); \
-      wpL.current()->origP = route.at( a )->origP; \
-      wpL.current()->projP = route.at( a )->projP; \
-      wpL.current()->distance = ( b ); \
-      wpL.current()->name = c; \
-      wpL.current()->sector1 = 0; \
-      wpL.current()->sector2 = 0; \
-      wpL.current()->sectorFAI = 0; \
-      wpL.current()->angle = -100; \
-      wpL.current()->fixTime = route.at( a )->time;
+      wpL.last()->origP = route.at( a )->origP; \
+      wpL.last()->projP = route.at( a )->projP; \
+      wpL.last()->distance = ( b ); \
+      wpL.last()->name = c; \
+      wpL.last()->sector1 = 0; \
+      wpL.last()->sector2 = 0; \
+      wpL.last()->sectorFAI = 0; \
+      wpL.last()->angle = -100; \
+      wpL.last()->fixTime = route.at( a )->time;
 
-Flight::Flight(const QString& fName, const QString& recID, const QPtrList<flightPoint>& r, const QString& pName,
-   const QString& gType, const QString& gID, int cClass, const QPtrList<Waypoint>& wpL, const QDate& d)
+Flight::Flight(const QString& fName, const QString& recID, const QList<flightPoint*>& r, const QString& pName,
+   const QString& gType, const QString& gID, int cClass, const QList<Waypoint*>& wpL, const QDate& d)
   : BaseFlightElement("flight", BaseMapElement::Flight, fName),
     recorderID(recID),
     pilotName(pName),
@@ -105,9 +101,9 @@ Flight::Flight(const QString& fName, const QString& recID, const QPtrList<flight
 
   // size and clear animation pixbuffer
   pixAnimate.resize(32,32);
-  pixAnimate.fill(QPixmap::white);
+  pixAnimate.fill(Qt::white);
 
-  // Die Liste könnte doch eigentlich permanent gespeichert werden ...
+  // Die Liste kÃ¶nnte doch eigentlich permanent gespeichert werden ...
   header.append(pilotName);
   header.append(gliderID);
   header.append(gliderType);
@@ -140,16 +136,16 @@ void Flight::__setOptimizeRange(unsigned int start[], unsigned int stop[],
     unsigned int idList[], unsigned int id, unsigned int step)
 {
   /*
-   * Die benutzten Abschnitte müssen komplett innerhalb des Fluges liegen.
+   * Die benutzten Abschnitte mÃ¼ssen komplett innerhalb des Fluges liegen.
    * Daher werden sie hier ggf. verschoben.
    */
   start[0] = std::max(idList[id], step) - step;
   start[1] = idList[id + 1] - step;
-  start[2] = std::min(idList[id + 2] + step, route.count()) - ( 2 * step );
+  start[2] = std::min((int)(idList[id + 2] + step), route.count()) - ( 2 * step );
 
   stop[0] = start[0] + ( 2 * step );
   stop[1] = start[1] + ( 2 * step );
-  stop[2] = std::min(start[2] + ( 2 * step ), route.count() - 1);
+  stop[2] = std::min((int)(start[2] + ( 2 * step )), route.count() - 1);
 }
 
 double Flight::__calculateOptimizePoints(flightPoint* fp1,
@@ -170,14 +166,14 @@ void Flight::__flightState()
   int s_point = -1;
   int e_point = -1;
 
-  int proceed = 0;
-  unsigned int delta_T, m;
+  int proceed = 0, m;
+  unsigned int delta_T;
   float bearing;
 
   float circles = 0;
   float circles_abs = 0;
 
-  for(unsigned int n = 0; n < route.count(); n++)
+  for(int n = 0; n < route.count(); n++)
     {
       // calculate the change in bearing over 10 sec.
       delta_T = 0;
@@ -212,7 +208,7 @@ void Flight::__flightState()
               route.at(n - proceed)->time - route.at(s_point)->time > 45)
       {
           // Circling time at least 20 s (Zeit eines Kreisfluges mindestens 20s)
-          // Time between two thermals at most 20 s (Zeit zwischen zwei Kreisflügen höchstens 20s)
+          // Time between two thermals at most 20 s (Zeit zwischen zwei KreisflÃ¼gen hÃ¶chstens 20s)
 
           // Endpoint of the thermal flight (Endpunkt des Kreisfluges)
           e_point = n - proceed - 1;
@@ -245,7 +241,7 @@ void Flight::__flightState()
               circles_abs = 0;
               proceed = 0;
             }
-          // 4 Punkte warten bis wir endgültig rausgehen ;-)
+          // 4 Punkte warten bis wir endgÃ¼ltig rausgehen ;-)
           proceed++;
       }
     }
@@ -332,19 +328,19 @@ unsigned int Flight::__calculateBestTask(unsigned int start[],
   double temp = 0;
   flightPoint *pointA, *pointB, *pointC;
 
-  for(unsigned int loopA = start[0]; loopA <= std::min(stop[0], route.count() - 1); loopA += step)
+  for(int loopA = start[0]; loopA <= std::min((int)stop[0], route.count() - 1); loopA += step)
     {
       pointA = route.at(loopA);
 
       if(isTotal) start[1] = loopA + step;
 
-      for(unsigned int loopB = start[1]; loopB <= std::min(stop[1], route.count() - 1); loopB += step)
+      for(int loopB = start[1]; loopB <= std::min((int)stop[1], route.count() - 1); loopB += step)
         {
           pointB = route.at(loopB);
 
           if(isTotal) start[2] = loopB + step;
 
-          for(unsigned int loopC = start[2]; loopC <= std::min(stop[2], route.count() - 1); loopC += step)
+          for(int loopC = start[2]; loopC <= std::min((int)stop[2], route.count() - 1); loopC += step)
             {
               pointC = route.at(loopC);
               temp = __calculateOptimizePoints(pointA, pointB, pointC);
@@ -391,7 +387,7 @@ bool Flight::__isVisible() const
 
 void Flight::printMapElement(QPainter* targetPainter, bool isText)
 {
-  warning("print Flight");
+  qWarning("print Flight");
 
   flightPoint* pointA;
   flightPoint* pointB;
@@ -405,7 +401,7 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
 
   // Flugweg
 
-  unsigned int delta = 1;
+  int delta = 1;
   if(!glMapMatrix->isSwitchScale())  delta = 8;
 
   curPointA = glMapMatrix->print(route.at(0)->projP);
@@ -419,7 +415,7 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
   int altitude_max = getPoint(H_MAX).height;
   float speed_max = getPoint(V_MAX).dS/getPoint(V_MAX).dT;
 
-  for(unsigned int n = delta; n < route.count(); n = n + delta)
+  for(int n = delta; n < route.count(); n = n + delta)
     {
       pointA = route.at(n - delta);
       pointB = route.at(n);
@@ -571,7 +567,7 @@ int Flight::getPointIndexByTime(time_t time)
   return ep;
 }
 
-QPtrList<flightPoint> Flight::getRoute() const{
+QList<flightPoint*> Flight::getRoute() const{
   return route;
 }
 
@@ -593,7 +589,7 @@ flightPoint Flight::getPoint(int n)
     }
 }
 
-QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
+QStringList Flight::getFlightValues(unsigned int start, unsigned int end)
 {
   float k_height_pos_l = 0, k_height_pos_r = 0, k_height_pos_v = 0;
   float k_height_neg_l = 0, k_height_neg_r = 0, k_height_neg_v = 0;
@@ -601,8 +597,8 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
   float distance = 0;
   float s_height_pos = 0, s_height_neg = 0;
 
-  //  noch abchecken, dass end <= fluglänge
-  end = std::min(route.count() - 1, end);
+  //  noch abchecken, dass end <= fluglÃ¤nge
+  end = std::min(route.count() - 1, (int)end);
 
   for(unsigned int n = start; n < end; n++)
     {
@@ -633,7 +629,7 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
             kurbel_v += route.at(n)->dT;
             break;
           default:
-           // immer oder bloß auf Strecke ??
+           // immer oder bloÃŸ auf Strecke ??
            distance += (float)route.at(n)->dS;
 
            if(route.at(n)->dH > 0)
@@ -643,7 +639,7 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
          }
     }
 
-    QStrList result;
+    QStringList result;
     QString text;
 
     // Kreisflug / Circling
@@ -768,18 +764,18 @@ QStrList Flight::getFlightValues(unsigned int start, unsigned int end)
                         + k_height_neg_l + k_height_neg_v);
     result.append(text);
 
-    // Rückgabe:
+    // RÃ¼ckgabe:
     // kurbelanteil r - l - v - g
     // mittleres Steigen r - l - v - g
-    // Höhengewinn r - l - v - g
-    // Höhenverlust r - l - v - g
-    // Gleitzahl - mittlere Geschw. - Höhengewinn - höhenverlust
-    // Distanz - StreckenZeit - Gesamtzeit - Ges. Höhengewinn - Ges Höhenverlust
+    // HÃ¶hengewinn r - l - v - g
+    // HÃ¶henverlust r - l - v - g
+    // Gleitzahl - mittlere Geschw. - HÃ¶hengewinn - hÃ¶henverlust
+    // Distanz - StreckenZeit - Gesamtzeit - Ges. HÃ¶hengewinn - Ges HÃ¶henverlust
 
     return result;
 }
 
-QPtrList<statePoint> Flight::getFlightStates(unsigned int start, unsigned int end)
+QList<statePoint*> Flight::getFlightStates(unsigned int start, unsigned int end)
 {
   int dH_pos = 0, dH_neg = 0;
   int duration = 0;
@@ -788,10 +784,10 @@ QPtrList<statePoint> Flight::getFlightStates(unsigned int start, unsigned int en
   float circ_angle_sum = 0;
   float vario = 0;
   unsigned int state = route.at(start)->f_state;
-  QPtrList<statePoint> state_list;
+  QList<statePoint*> state_list;
   statePoint state_info;
 
-  end = std::min(route.count() - 1, end);
+  end = std::min(route.count() - 1, (int)end);
 
   for(unsigned int n = start; n < end; n++)
   {
@@ -906,7 +902,7 @@ int Flight::searchPoint(const QPoint& cPoint, flightPoint& searchPoint)
 
   QPoint fPoint;
 
-  for(unsigned int loop = 0; loop < route.count(); loop = loop + delta)
+  for(int loop = 0; loop < route.count(); loop = loop + delta)
     {
       fPoint = glMapMatrix->map(route.at(loop)->projP);
       int dX = cPoint.x() - fPoint.x();
@@ -945,28 +941,37 @@ void Flight::__checkMaxMin()
   va_min = 0;
   float tmp, refv = .0, refh = .0, refva1 = .0 , refva2 = 500.;
 
-  QPtrListIterator<flightPoint> fp(route);
-  for( unsigned int loop = 0; (*fp); ++fp, loop++ )
-    {
-      if(loop)
-        {
-          // Fetch extreme values
-          if( (tmp=GET_SPEED((*fp))) > refv )
-              { v_max = loop; refv = tmp; }
+  flightPoint *fp;
+  unsigned int loop = 0;
+  foreach(fp, route) {
+      // Fetch extreme values
+      tmp = (float)fp->dS / (float)fp->dT;
+      if(tmp > refv) {
+          v_max = loop;
+          refv = tmp;
+      }
 
-          if( (tmp=(*fp)->height) > refh )
-              { h_max = loop; refh = tmp; }
+      tmp = fp->height;
+      if(tmp > refh) {
+          h_max = loop;
+          refh = tmp;
+      }
 
-          if( (tmp=GET_VARIO((*fp))) > refva1 )
-              { va_max = loop; refva1 = tmp; }
+      tmp = (float)fp->dH / (float)fp->dT;
+      if(tmp > refva1) {
+          va_max = loop;
+          refva1 = tmp;
+      }
+      if(tmp < refva2) {
+          va_min = loop;
+          refva2 = tmp;
+      }
 
-          if( (tmp=GET_VARIO((*fp))) < refva2 )
-              { va_min = loop; refva2 = tmp; }
-        }
-    }
+      loop++;
+  }
 }
 
-QPtrList<Waypoint> Flight::getWPList()
+QList<Waypoint*> Flight::getWPList()
 {
   if(!optimized)
     return origTask.getWPList();
@@ -974,11 +979,11 @@ QPtrList<Waypoint> Flight::getWPList()
     return optimizedTask.getWPList();
 }
 
-QPtrList<Waypoint> Flight::getOriginalWPList() {  return origTask.getWPList();  }
+QList<Waypoint*> Flight::getOriginalWPList() {  return origTask.getWPList();  }
 
 bool Flight::optimizeTaskOLC(Map* map)
 {
-  OptimizationWizard* wizard = new OptimizationWizard(0,QObject::tr("Optimization for OLC"));
+  OptimizationWizard* wizard = new OptimizationWizard();
   wizard->setMapContents(map);
   int wizard_ret = wizard->exec();
   if (wizard_ret==QDialog::Rejected) {
@@ -993,7 +998,7 @@ bool Flight::optimizeTaskOLC(Map* map)
   if (distance<0.0) // optimization was canceled
     return false;
 
-      QPtrList<Waypoint> wpL;
+      QList<Waypoint*> wpL;
 
       APPEND_WAYPOINT_OLC2003(startIndex, 0, QObject::tr("Take-Off"))
       APPEND_WAYPOINT_OLC2003(idList[0], dist(route.at(idList[0]), route.at(0)),
@@ -1014,7 +1019,7 @@ bool Flight::optimizeTaskOLC(Map* map)
           route.at(idList[6])), QObject::tr("End of Task"))
       APPEND_WAYPOINT_OLC2003(idList[8], dist(route.at(idList[8]),
           route.at(idList[7])), QObject::tr("End of Soaring"))
-      APPEND_WAYPOINT_OLC2003(landIndex, dist(route.getLast(),
+      APPEND_WAYPOINT_OLC2003(landIndex, dist(route.last(),
           route.at(idList[8])), QObject::tr("Landing"))
 
       optimizedTask.setWaypointList(wpL);
@@ -1088,8 +1093,8 @@ bool Flight::optimizeTask()
   unsigned int numSteps = 0, totalSteps = 0, secondSteps = 0,
       start[3], stop[3];
   /*
-   * in taskValues stehen jetzt die Längen der längsten Flüge.
-   * in idList die Indizes der drei Punkte dieser Flüge.
+   * in taskValues stehen jetzt die LÃ¤ngen der lÃ¤ngsten FlÃ¼ge.
+   * in idList die Indizes der drei Punkte dieser FlÃ¼ge.
    */
   unsigned int idList[NUM_TASKS_POINTS], idTempList[NUM_TASKS_POINTS];
   double taskValue[NUM_TASKS];
@@ -1148,9 +1153,9 @@ bool Flight::optimizeTask()
   double totalDist = dist1 + dist2 + dist3;
 
   /*
-   * Dialogfenster einfügen: Soll Optimierung übernommen werden ???
+   * Dialogfenster einfÃ¼gen: Soll Optimierung Ã¼bernommen werden ???
    *
-   * Da wir wissen, dass alle Wegpunkte erreicht worden sind, können wir
+   * Da wir wissen, dass alle Wegpunkte erreicht worden sind, kÃ¶nnen wir
    * hier die Berechnung der Punkte vereinfachen!
    */
   QString text, distText, pointText;
@@ -1174,7 +1179,7 @@ bool Flight::optimizeTask()
   if(QMessageBox::question(0, QObject::tr("Optimizing"), text, QMessageBox::Yes, QMessageBox::No) ==
         QMessageBox::Yes)
     {
-      QPtrList<Waypoint> wpL;
+      QList<Waypoint*> wpL;
 
       APPEND_WAYPOINT(0, 0, QObject::tr("Take-Off"))
       APPEND_WAYPOINT(0, 0, QObject::tr("Begin of Task"))
@@ -1248,7 +1253,7 @@ int Flight::searchStepPrevPoint(int index,  flightPoint & fP, int step)
   return searchGetPrevPoint(index, fP);
 }
 
-QStrList Flight::getHeader()  {  return header;  }
+QStringList Flight::getHeader()  {  return header;  }
 
 /** Sets the nAnimationIndex member to 'n' */
 void Flight::setAnimationIndex(int n)
@@ -1300,14 +1305,11 @@ void Flight::setLastAnimationPixmap(QPixmap pix)  {  pixAnimate = pix;  }
 
 /** Re-calculates all projections for this flight. */
 void Flight::reProject(){
-
-  QPtrListIterator<flightPoint> it(route);
   extern MapMatrix _globalMapMatrix;
 
-  for ( ; it.current(); ++it ) {
-      flightPoint *fp = it.current();
+  flightPoint *fp;
+  foreach(fp, route)
       fp->projP = _globalMapMatrix.wgsToMap(fp->origP);
-  }
 
   origTask.reProject();
   optimizedTask.reProject();

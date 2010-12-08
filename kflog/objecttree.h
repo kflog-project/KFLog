@@ -18,14 +18,13 @@
 #ifndef OBJECTTREE_H
 #define OBJECTTREE_H
 
-#include <qlistview.h>
-#include <qpopupmenu.h>
-#include <qwidget.h>
+#include <q3listview.h>
+#include <q3popupmenu.h>
+#include <QWidget>
 
-class BaseFlightElement;
-class Flight;
-class FlightGroup;
-class FlightTask;
+#include "flight.h"
+#include "flightgroup.h"
+#include "flighttask.h"
 
 /**
   * @short KFLogBrowser - Displays all currently loaded objects.
@@ -37,7 +36,7 @@ class FlightTask;
   * treeview, giving easy access to each object to the user.
   */
 
-class ObjectTree : public QListView  {
+class ObjectTree : public Q3ListView  {
    Q_OBJECT
 public:
   /**
@@ -64,7 +63,7 @@ private:
   /**
    * Contains a reference to the rootnode for flights
    */
-  QListViewItem * FlightRoot;
+  Q3ListViewItem * FlightRoot;
   /**
    * Contains a reference to the rootnode for flightgroups
    */
@@ -72,9 +71,9 @@ private:
   /**
    * Contains a reference to the rootnode for tasks
    */
-  QListViewItem * TaskRoot;
+  Q3ListViewItem * TaskRoot;
 
-  QPopupMenu *taskPopup;
+  Q3PopupMenu *taskPopup;
   /**
    * References for task-related items in the popupmenu
    */
@@ -123,11 +122,11 @@ private slots: // Private slots
   void slotSaveTask();
   void slotSaveAllTask();
   //void slotSelectTask(QListViewItem *item);
-  void showTaskPopup(QListViewItem *it, const QPoint &, int);
+  void showTaskPopup(Q3ListViewItem *it, const QPoint &, int);
   /**
    * Called if the selection has changed.
    */
-  void slotSelected(QListViewItem *);
+  void slotSelected(Q3ListViewItem *);
 
 signals: // Signals
   /**
@@ -177,7 +176,7 @@ protected: // Protected methods
    * given as an argument.
    * @returns a pointer to the QListViewItem if found, 0 otherwise.
    */
-  QListViewItem * findFlightElement(BaseFlightElement * bfe);
+  Q3ListViewItem * findFlightElement(BaseFlightElement * bfe);
   /** No descriptions */
   void addTaskWindow(QWidget *parent);
   void addPopupMenu();

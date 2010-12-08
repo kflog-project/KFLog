@@ -19,6 +19,9 @@
 #include <qdir.h>
 #include <qnamespace.h>
 #include <qsettings.h>
+//Added by qt3to4:
+#include <Q3PtrList>
+#include <QPixmap>
 
 #include "flight.h"
 #include "mapdefaults.h"
@@ -1077,7 +1080,7 @@ Qt::PenStyle MapConfig::getIsoPenStyle(int height)
 {
   // choose isoline style
   extern MapMatrix _globalMapMatrix;
-  PenStyle style=Qt::NoPen;
+  Qt::PenStyle style=Qt::NoPen;
 
   if (_globalMapMatrix.getScale()<100.0)   // make configurable
   {
@@ -1105,9 +1108,9 @@ void MapConfig::__readBorder(QString group, bool *b)
   b[5] = _settings.readBoolEntry("/KFLog/Map/"+group+"/PrintBorder2", true);
 }
 
-void MapConfig::__readPen(QString group, QPtrList<QPen> *penList, bool *b,
+void MapConfig::__readPen(QString group, Q3PtrList<QPen> *penList, bool *b,
     QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4, QColor defaultColor5, QColor defaultColor6,
-    int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4, int defaultPenSize5, int defaultPenSize6,
+    int defaultPenSize1, int defaultPenSize2, int /*defaultPenSize3*/, int /*defaultPenSize4*/, int defaultPenSize5, int defaultPenSize6,
     Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4, Qt::PenStyle defaultPenStyle5, Qt::PenStyle defaultPenStyle6)
 {
   __readBorder(group, b);
@@ -1131,7 +1134,7 @@ void MapConfig::__readPen(QString group, QPtrList<QPen> *penList, bool *b,
         (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenStyle2", defaultPenStyle6)));
 }
 
-void MapConfig::__readPenBrush(QString group, QPtrList<QPen> *penList, bool *b, QPtrList<QBrush> *brushList,
+void MapConfig::__readPenBrush(QString group, Q3PtrList<QPen> *penList, bool *b, Q3PtrList<QBrush> *brushList,
     QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4, QColor defaultColor5, QColor defaultColor6,
     int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4, int defaultPenSize5, int defaultPenSize6,
     Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4, Qt::PenStyle defaultPenStyle5, Qt::PenStyle defaultPenStyle6,

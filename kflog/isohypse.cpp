@@ -18,8 +18,10 @@
 #include "isohypse.h"
 
 #include "mapmatrix.h"
+//Added by qt3to4:
+#include <Q3PointArray>
 
-Isohypse::Isohypse(QPointArray pA, unsigned int elev, bool isV)
+Isohypse::Isohypse(Q3PointArray pA, unsigned int elev, bool isV)
 : LineElement(0, BaseMapElement::Isohypse, pA, isV),
   elevation(elev)
 {
@@ -31,11 +33,11 @@ Isohypse::~Isohypse()
 
 }
 
-QRegion* Isohypse::drawRegion(QPainter* targetP, QPainter* maskP)
+QRegion* Isohypse::drawRegion(QPainter* targetP, QPainter* /*maskP*/)
 {
   if(glMapMatrix->isVisible(bBox)) {
       targetP->drawPolygon(glMapMatrix->map(projPointArray));
-      QPointArray tA = glMapMatrix->map(projPointArray);
+      Q3PointArray tA = glMapMatrix->map(projPointArray);
       return new QRegion(tA);
   }
   return 0;

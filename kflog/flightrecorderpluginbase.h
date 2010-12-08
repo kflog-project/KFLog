@@ -29,13 +29,12 @@
 
 #include <termios.h>
 
-#include <qstring.h>
-#include <qptrlist.h>
-#include <qobject.h>
+#include <QList>
+#include <QString>
 
+#include "flighttask.h"
 #include "frstructs.h"
 #include "waypoint.h"
-#include "flighttask.h"
 
 // Standard FlightRecorder return values
 #define FR_ERROR -1          // Error
@@ -92,11 +91,11 @@ public:
   // FlightRecorder capabilities
   struct FR_Capabilities
   {
-    unsigned int maxNrTasks;             //maximum number of tasks
-    unsigned int maxNrWaypoints;         //maximum number of waypoints
-    unsigned int maxNrWaypointsPerTask;  //maximum number of waypoints per task
-    unsigned int maxNrPilots;            //maximum number of pilots
-    unsigned int transferSpeeds;         //the set of actual supported speeds
+    int maxNrTasks;             //maximum number of tasks
+    int maxNrWaypoints;         //maximum number of waypoints
+    int maxNrWaypointsPerTask;  //maximum number of waypoints per task
+    int maxNrPilots;            //maximum number of pilots
+    int transferSpeeds;         //the set of actual supported speeds
 
     bool supDlWaypoint;      //supports downloading of waypoints?
     bool supUlWaypoint;      //supports uploading of waypoints?
@@ -185,7 +184,7 @@ public:
   /**
    * Returns a list of recorded flights in this device.
    */
-  virtual int getFlightDir(QPtrList<FRDirEntry>*)=0;
+  virtual int getFlightDir(QList<FRDirEntry*>*)=0;
   /**
    * Downloads a specific flight.
    */
@@ -217,23 +216,23 @@ public:
   /**
    * Write flight declaration to recorder
    */
-  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QPtrList<Waypoint> *taskPoints)=0; 
+  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints)=0;
   /**
    * Read tasks from recorder
    */
-  virtual int readTasks(QPtrList<FlightTask> *tasks)=0;
+  virtual int readTasks(QList<FlightTask*> *tasks)=0;
   /**
    * Write tasks to recorder
    */
-  virtual int writeTasks(QPtrList<FlightTask> *tasks)=0;
+  virtual int writeTasks(QList<FlightTask*> *tasks)=0;
   /**
    * Read waypoints from recorder
    */
-  virtual int readWaypoints(QPtrList<Waypoint> *waypoints)=0;
+  virtual int readWaypoints(QList<Waypoint*> *waypoints)=0;
   /**
    * Write waypoints to recorder
    */
-  virtual int writeWaypoints(QPtrList<Waypoint> *waypoints)=0;
+  virtual int writeWaypoints(QList<Waypoint*> *waypoints)=0;
   /**
    * Returns whether the flighrecorder is connected.
    */

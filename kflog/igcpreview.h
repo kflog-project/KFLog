@@ -18,7 +18,7 @@
 #ifndef IGCPREVIEW_H
 #define IGCPREVIEW_H
 
-#include <qfiledialog.h>
+#include <q3filedialog.h>
 #include <qlabel.h>
 
 /**
@@ -32,7 +32,7 @@
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
-class IGCPreview : public QLabel, public QFilePreview
+class IGCPreview : public QLabel, public Q3FilePreview
 {
   Q_OBJECT
 
@@ -55,7 +55,7 @@ class IGCPreview : public QLabel, public QFilePreview
      *
      * @param  url  The url of the selected file
      */
-    virtual void previewUrl(const QUrl &url);
+    virtual void previewUrl(const Q3Url &url);
 
   private:
     /**

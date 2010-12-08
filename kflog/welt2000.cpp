@@ -18,20 +18,21 @@
 #include <math.h>
 #include <unistd.h>
 
-#include <qbuffer.h>
-#include <qdatetime.h>
-#include <qdict.h>
-#include <qdir.h>
-#include <qfile.h>
-#include <qfileinfo.h>
-#include <qpoint.h>
-#include <qregexp.h>
-#include <qsettings.h>
-#include <qtextstream.h>
+#include <QBuffer>
+#include <QByteArray>
+#include <QDateTime>
+#include <q3dict.h>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QPoint>
+#include <QRegExp>
+#include <QSettings>
+#include <q3textstream.h>
 
 #include "airport.h"
 #include "basemapelement.h"
-#include "filetools.h"
+//#include "filetools.h"
 #include "glidersite.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
@@ -95,7 +96,7 @@ Welt2000::~Welt2000()
  * be the original ascii file or a compiled version of it. The results
  * are put in the passed lists
  */
-bool Welt2000::load( QPtrList<Airport>& airportList, QPtrList<GliderSite>& gliderSiteList )
+bool Welt2000::load(QList<Airport*> &airportList, QList<GliderSite*> &gliderSiteList)
 {
   // Rename WELT2000.TXT -> welt2000.txt.
   QString wl = "welt2000.txt";
@@ -140,14 +141,14 @@ bool Welt2000::filter( QString& path )
   QString fout = path + ".filtered";
   QFile out(fout);
 
-  if( !in.open(IO_ReadOnly) )
+  if( !in.open(QIODevice::ReadOnly) )
     {
       qWarning("W2000: Cannot open airfield file %s!", path.latin1());
       return false;
     }
 
-  QTextStream ins(&in);
-  QTextStream outs;
+  Q3TextStream ins(&in);
+  Q3TextStream outs;
 
   uint outLines = 0; // counter for written lines
 
@@ -165,7 +166,7 @@ bool Welt2000::filter( QString& path )
             }
 
           // open output file for filtering
-          if( !out.open(IO_WriteOnly) )
+          if( !out.open(QIODevice::WriteOnly) )
             {
               in.close();
               qWarning("W2000: Cannot open temporary file %s!", fout.latin1());
@@ -266,13 +267,13 @@ bool Welt2000::readConfigEntries( QString &path )
 
   QFile in(path);
 
-  if( !in.open(IO_ReadOnly) )
+  if( !in.open(QIODevice::ReadOnly) )
     {
       qWarning("W2000: User has not provided a configuration file %s!", path.latin1());
       return false;
     }
 
-  QTextStream ins(&in);
+  Q3TextStream ins(&in);
 
   while( ! ins.atEnd() )
     {
@@ -305,7 +306,7 @@ bool Welt2000::readConfigEntries( QString &path )
           // remove first entry, it is the filter-country key
           list.remove( list.begin() );
 
-          for( uint i = 0; i < list.count(); i++ )
+          for(int i = 0; i < list.count(); i++)
             {
               QString e = list[i].stripWhiteSpace().upper();
 
@@ -366,9 +367,9 @@ bool Welt2000::readConfigEntries( QString &path )
  *                 if flag is set to true. Default is false.
  * returns true (success) or false (error occured)
  */
-bool Welt2000::parse( QString& path,
-                      QPtrList<Airport>& airportList,
-                      QPtrList<GliderSite>& gliderSiteList,
+bool Welt2000::parse( QString &path,
+                      QList<Airport*> &airportList,
+                      QList<GliderSite*> &gliderSiteList,
                       bool /*doCompile*/ )
 {
   QTime t;
@@ -384,13 +385,13 @@ bool Welt2000::parse( QString& path,
 
   QFile in(path);
 
-  if( !in.open(IO_ReadOnly) )
+  if( !in.open(QIODevice::ReadOnly) )
     {
       qWarning("W2000: Cannot open airfield file %s!", path.latin1());
       return false;
     }
 
-  QTextStream ins(&in);
+  Q3TextStream ins(&in);
 
   // look, if a config file is accessable. If yes read out its data.
   QFileInfo fi( path );
@@ -414,7 +415,7 @@ bool Welt2000::parse( QString& path,
 
       QStringList clist = QStringList::split( QRegExp("[, ]"), cFilter );
 
-      for( uint i = 0; i < clist.count(); i++ )
+      for(int i = 0; i < clist.count(); i++)
         {
           QString e = clist[i].stripWhiteSpace().upper();
       
@@ -448,9 +449,9 @@ bool Welt2000::parse( QString& path,
 
   // put all entries of contry list into a dictionary for faster
   // access
-  QDict<char> countryDict( 101, FALSE );
+  Q3Dict<char> countryDict( 101, FALSE );
 
-  for( uint i = 0; i < c_countryList.count(); i++ )
+  for(int i = 0; i < c_countryList.count(); i++)
     {
       // populate country dictionary
       countryDict.insert( c_countryList[i], c_countryList[i] );
@@ -460,8 +461,8 @@ bool Welt2000::parse( QString& path,
   QString compileFile;
   QFile   compFile;
   QDataStream out;
-  QCString bufdata;
-  QBuffer buffer(bufdata);
+  QByteArray bufdata;
+  QBuffer buffer(&bufdata);
   QDataStream outbuf;
 
 #ifdef BOUNDING_BOX
@@ -494,8 +495,9 @@ bool Welt2000::parse( QString& path,
   while( ! in.atEnd() )
     {
       bool ok;
-      QString line, buf;
-      int result = in.readLine(line, 128);
+      char *tempChar;
+      int result = in.readLine(tempChar, 128);
+      QString line(tempChar), buf;
       lineNo++;
 
       if( result <= 0 )
@@ -661,7 +663,7 @@ bool Welt2000::parse( QString& path,
       QChar lastChar(' ');
 
       // convert airfield names to upper-lower
-      for( uint i=0; i < afName.length(); i++ )
+      for(int i=0; i < afName.length(); i++)
         {
           if( lastChar == ' ' )
             {
@@ -985,7 +987,7 @@ bool Welt2000::setHeaderData( QString &path )
     }
 
   QFile inFile(path);
-  if( !inFile.open(IO_ReadOnly) )
+  if( !inFile.open(QIODevice::ReadOnly) )
     {
       qWarning("W2000: Cannot open airfield file %s!", path.latin1());
       return false;
@@ -1004,7 +1006,7 @@ bool Welt2000::setHeaderData( QString &path )
 
   in >> h_fileType;
 
-  if( h_fileType != FILE_TYPE_AIRFIELD_C )
+  if( *h_fileType != FILE_TYPE_AIRFIELD_C )
     {
       qWarning( "W2000: wrong file type %x read! Aborting ...", h_fileType );
       inFile.close();

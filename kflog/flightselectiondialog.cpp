@@ -22,6 +22,9 @@
 #include <qlabel.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <Q3HBoxLayout>
+#include <Q3VBoxLayout>
 
 FlightSelectionDialog::FlightSelectionDialog(QWidget *parent, const char *name )
  : QDialog(parent, name, true)
@@ -45,13 +48,13 @@ void FlightSelectionDialog::__initDialog()
   QLabel *l;
   QPushButton *b;
 
-  QVBoxLayout *topLayout = new QVBoxLayout(this, 10);
-  QVBoxLayout *leftLayout = new QVBoxLayout(5);
-  QVBoxLayout *middleLayout = new QVBoxLayout(5);
-  QVBoxLayout *rightLayout = new QVBoxLayout(5);
-  QHBoxLayout *topGroup = new QHBoxLayout(10);
-  QHBoxLayout *buttons = new QHBoxLayout(10);
-  QHBoxLayout *smallButtons = new QHBoxLayout(5);
+  Q3VBoxLayout *topLayout = new Q3VBoxLayout(this, 10);
+  Q3VBoxLayout *leftLayout = new Q3VBoxLayout(5);
+  Q3VBoxLayout *middleLayout = new Q3VBoxLayout(5);
+  Q3VBoxLayout *rightLayout = new Q3VBoxLayout(5);
+  Q3HBoxLayout *topGroup = new Q3HBoxLayout(10);
+  Q3HBoxLayout *buttons = new Q3HBoxLayout(10);
+  Q3HBoxLayout *smallButtons = new Q3HBoxLayout(5);
 
   buttons->addStretch();
 
@@ -74,7 +77,7 @@ void FlightSelectionDialog::__initDialog()
   smallButtons->addWidget(b);
   smallButtons->addStretch();
 
-  aFlights = new QListBox(this, "availableFlights");
+  aFlights = new Q3ListBox(this, "availableFlights");
   l = new QLabel(aFlights, tr("&available Flights"), this);
   leftLayout->addWidget(l);
   leftLayout->addWidget(aFlights);
@@ -98,7 +101,7 @@ void FlightSelectionDialog::__initDialog()
   middleLayout->addWidget(b);
   middleLayout->addStretch();
 
-  sFlights = new QListBox(this, "selectedFlights");
+  sFlights = new Q3ListBox(this, "selectedFlights");
   l = new QLabel(sFlights, tr("&selected Flights"), this);
   rightLayout->addWidget(l);
   rightLayout->addWidget(sFlights);

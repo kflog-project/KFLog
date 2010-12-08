@@ -23,12 +23,16 @@
 #include "mapmatrix.h"
 //#include <mapprintdialogpage.h>
 
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpainter.h>
 #include <qprinter.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3PointArray>
+#include <Q3PtrList>
 
 #define VERSION "3.0"
 
@@ -60,7 +64,7 @@ MapPrintDialogPage::MapPrintDialogPage(QStringList sList, QWidget *parent,
   setCaption(QObject::tr("Map"));
   setModal(true);
 
-  QGroupBox *scaleBox = new QGroupBox(QObject::tr("Map print"), this);
+  Q3GroupBox *scaleBox = new Q3GroupBox(QObject::tr("Map print"), this);
 
   scaleSelect = new QComboBox(this);
   scaleSelect->insertStringList(scaleList);
@@ -80,7 +84,7 @@ MapPrintDialogPage::MapPrintDialogPage(QStringList sList, QWidget *parent,
       titleInput->setText(QObject::tr("Flight Track") + ":");
     }
 
-  QGridLayout* pageLayout = new QGridLayout(this, 6, 7);
+  Q3GridLayout* pageLayout = new Q3GridLayout(this, 6, 7);
   pageLayout->addMultiCellWidget(scaleBox, 0, 7, 0, 4);
   pageLayout->addWidget(new QLabel(QObject::tr("Map scale") + ":", this), 1, 1);
   pageLayout->addWidget(scaleSelect, 1, 3);
@@ -306,8 +310,8 @@ MapPrint::MapPrint(bool flightLoaded)
 
   QPainter printPainter(&printer);
 
-  const QWMatrix oldMatrix = printPainter.worldMatrix();
-  QWMatrix newMatrix = printPainter.worldMatrix();
+  const QMatrix oldMatrix = printPainter.worldMatrix();
+  QMatrix newMatrix = printPainter.worldMatrix();
 
   double selectedScale;
   QPoint mapCenter;
@@ -685,7 +689,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
       for(int loop = 0; loop < (lat1 - lat2 + 1) ; loop++)
         {
           int size = (lon2 - lon1 + 1) * 10;
-          QPointArray pointArray(size);
+          Q3PointArray pointArray(size);
 
           for(int lonloop = 0; lonloop < size; lonloop++)
             {
@@ -718,7 +722,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
           int number = (int) (60.0 / step);
           for(int loop2 = 1; loop2 < number; loop2++)
             {
-              QPointArray pointArraySmall(size);
+              Q3PointArray pointArraySmall(size);
 
               for(int lonloop = 0; lonloop < size; lonloop++)
                 {
@@ -764,10 +768,13 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
     }
 }
 /** Prints the waypointlist to the supplied QPainter */
-void MapPrint::__drawWaypoints(const double selectedScale, QPainter* wpP, const QSize pS, const QRect mapBorder, const int mapCenterLon,     const double dX, const double dY, const double gridLeft,     const double gridRight, const double gridTop, const double gridBot){
+void MapPrint::__drawWaypoints(const double /*selectedScale*/, QPainter* wpP, const QSize /*pS*/,
+                               const QRect /*mapBorder*/, const int /*mapCenterLon*/, const double dX,
+                               const double dY, const double /*gridLeft*/, const double /*gridRight*/,
+                               const double /*gridTop*/, const double /*gridBot*/) {
   extern const MapMatrix _globalMapMatrix;
   extern MapContents _globalMapContents;
-  QPtrList<Waypoint> *wpList;
+  QList<Waypoint*> *wpList;
   Waypoint *wp;
   int i,n;
   QPoint p;

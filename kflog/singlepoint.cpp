@@ -32,7 +32,7 @@ SinglePoint::~SinglePoint()
 
 }
 
-void SinglePoint::printMapElement(QPainter* printPainter, bool isText)
+void SinglePoint::printMapElement(QPainter* printPainter, bool /*isText*/)
 {
   if(!__isVisible()) return;
 
@@ -48,7 +48,7 @@ void SinglePoint::printMapElement(QPainter* printPainter, bool isText)
    * Eventuell kann man die Icons ja hier zeichnen lassen ?!?
    */
   printPainter->setPen(QPen(QColor(0,50,50), 2));
-  printPainter->setBrush(QBrush::NoBrush);
+  printPainter->setBrush(Qt::NoBrush);
   printPainter->drawEllipse(printPos.x() - 5, printPos.y() - 5, 10, 10);
   return;
 
@@ -79,9 +79,9 @@ void SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
    {
       targetP->setPen(QPen(QColor(0, 0, 0), 3));
       maskP->setPen(QPen(Qt::color1, 2));
-      maskP->setBrush(QBrush::NoBrush);
+      maskP->setBrush(Qt::NoBrush);
       maskP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
-      targetP->setBrush(QBrush::NoBrush);
+      targetP->setBrush(Qt::NoBrush);
       targetP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
       return;
    }
@@ -114,9 +114,9 @@ void SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
           break;
       }
       maskP->setPen(QPen(Qt::color1, 2));
-      maskP->setBrush(QBrush::NoBrush);
+      maskP->setBrush(Qt::NoBrush);
       maskP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
-      targetP->setBrush(QBrush::NoBrush);
+      targetP->setBrush(Qt::NoBrush);
       targetP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
       return;
    }

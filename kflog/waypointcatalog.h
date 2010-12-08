@@ -18,8 +18,6 @@
 #ifndef WAYPOINTCATALOG_H
 #define WAYPOINTCATALOG_H
 
-#include "waypointdict.h"
-
 /**
   *@author Harald Maier
   */
@@ -55,6 +53,10 @@ public:
   bool save(bool alwaysAskName=false);
   /** This function calls either read or readBinary depending on the filename of the catalog. */
   bool load(const QString & catalog);
+  /** insert a new waypoint into the list and check if waypoint already exist */
+  bool insertWaypoint(Waypoint *newWaypoint);
+  Waypoint *findWaypoint(QString name);
+  bool removeWaypoint(QString name);
 
   /** filter for display/import */
   bool showAll;
@@ -77,7 +79,7 @@ public:
 
 public: // Public attributes
   /**  */
-  WaypointDict wpList;
+  QList<Waypoint*> wpList;
   QString path;
   bool modified;
   /**  */

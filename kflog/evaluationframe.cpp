@@ -25,47 +25,53 @@
 #include <qlayout.h>
 #include <qsettings.h>
 #include <qsplitter.h>
+//Added by qt3to4:
+#include <QResizeEvent>
+#include <Q3GridLayout>
+#include <Q3Frame>
+#include <Q3ValueList>
+#include <QLabel>
 
 #define X_DISTANCE 100
 
 EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
-  : QFrame(parent),
+  : Q3Frame(parent),
   flight(0)
 {
 //warning("EvaluationFrame::EvaluationFrame");
   // variable control
-  QSplitter* controlSplitter = new QSplitter(QSplitter::Horizontal, this);
+  QSplitter* controlSplitter = new QSplitter(Qt::Horizontal, this);
 
   // View
-  graphFrame = new QScrollView(controlSplitter);
-  graphFrame->setResizePolicy(QScrollView::AutoOne);
-  graphFrame->setHScrollBarMode(QScrollView::AlwaysOn);
-  graphFrame->setVScrollBarMode(QScrollView::AlwaysOff);
-  graphFrame->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  graphFrame->setBackgroundMode(PaletteLight);
+  graphFrame = new Q3ScrollView(controlSplitter);
+  graphFrame->setResizePolicy(Q3ScrollView::AutoOne);
+  graphFrame->setHScrollBarMode(Q3ScrollView::AlwaysOn);
+  graphFrame->setVScrollBarMode(Q3ScrollView::AlwaysOff);
+  graphFrame->setFrameStyle(Q3Frame::Panel | Q3Frame::Sunken);
+  graphFrame->setBackgroundMode(Qt::PaletteLight);
 
   evalView = new EvaluationView(graphFrame, dlg);
   graphFrame->addChild(evalView);
 
-  cursorLabel = new QTextView(this);
+  cursorLabel = new Q3TextView(this);
   cursorLabel->setFixedHeight(35);
-  cursorLabel->setVScrollBarMode(QScrollView::AlwaysOff);
-  cursorLabel->setHScrollBarMode(QScrollView::AlwaysOff);
+  cursorLabel->setVScrollBarMode(Q3ScrollView::AlwaysOff);
+  cursorLabel->setHScrollBarMode(Q3ScrollView::AlwaysOff);
 
   // Control elements
-  QFrame* control = new QFrame(controlSplitter);
+  Q3Frame* control = new Q3Frame(controlSplitter);
   control->setMinimumWidth(1);
 
   QLabel* scale_label = new QLabel(tr("Time scale:"),control);
-  scale_label->setAlignment(AlignHCenter);
+  scale_label->setAlignment(Qt::AlignHCenter);
   spinScale = new QSpinBox(1,60,1,control);
 
   QLabel* label_glaettung = new QLabel(tr("Smoothness:"),control);
-  label_glaettung->setAlignment(AlignHCenter);
+  label_glaettung->setAlignment(Qt::AlignHCenter);
 
-  sliderVario = new QSlider(0,10,1,0,QSlider::Vertical,control);
-  sliderBaro  = new QSlider(0,10,1,0,QSlider::Vertical,control);
-  sliderSpeed = new QSlider(0,10,1,0,QSlider::Vertical,control);
+  sliderVario = new QSlider(0,10,1,0,Qt::Vertical,control);
+  sliderBaro  = new QSlider(0,10,1,0,Qt::Vertical,control);
+  sliderSpeed = new QSlider(0,10,1,0,Qt::Vertical,control);
   sliderVario->sizeHint().setHeight(20);
   sliderBaro->sizeHint().setHeight(20);
   sliderSpeed->sizeHint().setHeight(20);
@@ -79,13 +85,13 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   QLabel* label_vario = new QLabel(tr("V"),control);
   QLabel* label_baro  = new QLabel(tr("H"),control);
   QLabel* label_speed = new QLabel(tr("S"),control);
-  label_vario->setAlignment(AlignHCenter);
-  label_baro->setAlignment(AlignHCenter);
-  label_speed->setAlignment(AlignHCenter);
+  label_vario->setAlignment(Qt::AlignHCenter);
+  label_baro->setAlignment(Qt::AlignHCenter);
+  label_speed->setAlignment(Qt::AlignHCenter);
 
-  QGridLayout* centerlayout = new QGridLayout( this, 3, 1 );
+  Q3GridLayout* centerlayout = new Q3GridLayout( this, 3, 1 );
 
-  QGridLayout* controllayout = new QGridLayout( control, 12, 6, 5, 1 );
+  Q3GridLayout* controllayout = new Q3GridLayout( control, 12, 6, 5, 1 );
 
   centerlayout->addWidget(controlSplitter, 0, 0);
   centerlayout->addWidget(cursorLabel, 2, 0);
@@ -123,7 +129,7 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   controllayout->setRowStretch(12,3);
   
 // Set default size of the window splitting
-  typedef QValueList<int> testList;
+  typedef Q3ValueList<int> testList;
   testList controlList;
   controlList.append(400);
   controlList.append(scale_label->sizeHint().width() + 10);
@@ -251,7 +257,7 @@ void EvaluationFrame::resizeEvent(QResizeEvent* event)
 //  warning("EvaluationFrame::resizeEvent");
 
   slotShowGraph();
-  QFrame::resizeEvent(event);
+  Q3Frame::resizeEvent(event);
 }
 
 unsigned int EvaluationFrame::getTaskStart(){

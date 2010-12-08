@@ -18,14 +18,14 @@
 #include "mapcontents.h"
 #include "waypointimpfilterdialog.h"
 
-#include <qbuttongroup.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qlistbox.h>
-#include <qgroupbox.h>
-#include <qpushbutton.h>
-#include <qstringlist.h>
-#include <qradiobutton.h>
+#include <q3buttongroup.h>
+#include <QLabel>
+#include <QLayout>
+#include <q3listbox.h>
+#include <q3groupbox.h>
+#include <QPushButton>
+#include <QStringList>
+#include <QRadioButton>
 
 extern MapContents _globalMapContents;
 extern MapMatrix _globalMapMatrix;
@@ -43,7 +43,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog(QWidget *parent, const char *na
   setCaption(tr("Filter waypoints"));
 
   // create non-exclusive buttongroup for type filter
-  QButtonGroup *grp1 = new QButtonGroup(1, QGroupBox::Horizontal, tr("Type"), this);
+  Q3ButtonGroup *grp1 = new Q3ButtonGroup(1, Qt::Horizontal, tr("Type"), this);
 
   grp1->setExclusive(false);
 
@@ -60,7 +60,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog(QWidget *parent, const char *na
   station = new QCheckBox(tr("&Stations"), grp1);
 
   // create group box for area filter
-  QGroupBox *grp2 = new QGroupBox(2, QGroupBox::Horizontal, tr("Area"), this);
+  Q3GroupBox *grp2 = new Q3GroupBox(2, Qt::Horizontal, tr("Area"), this);
   new QLabel(tr("From"), grp2);
   grp2->addSpace(0);
   new QLabel(tr("Lat"), grp2);
@@ -75,11 +75,11 @@ WaypointImpFilterDialog::WaypointImpFilterDialog(QWidget *parent, const char *na
   toLong = new LongEdit(grp2);
 
   // create group box for radius filter
-  QGroupBox *grp3 = new QGroupBox(tr("Radius"), this);
+  Q3GroupBox *grp3 = new Q3GroupBox(tr("Radius"), this);
   QVBoxLayout *vbox3 = new QVBoxLayout(grp3, 10);
 
   // create an invisible bouttengroup
-  QButtonGroup *bg = new QButtonGroup(this);
+  Q3ButtonGroup *bg = new Q3ButtonGroup(this);
   bg->hide();
   connect(bg, SIGNAL(clicked(int)), SLOT(selectRadius(int)));
 
@@ -224,15 +224,15 @@ void WaypointImpFilterDialog::polish()
   int searchList[] = {MapContents::GliderSiteList, MapContents::AirportList};
 
   QDialog::polish();
-  for (int l = 0; l < 2; l++) {
-    for(unsigned int loop = 0; loop < _globalMapContents.getListLength(searchList[l]);
+  for(int l = 0; l < 2; l++) {
+    for(int loop = 0; loop < _globalMapContents.getListLength(searchList[l]);
       loop++) {
         SinglePoint *hitElement = (SinglePoint *)_globalMapContents.getElement(searchList[l], loop);
         refAirport->insertItem(hitElement->getName());
         airportDict.insert(hitElement->getName(), hitElement);
       }
   }
-  refAirport->listBox()->sort();
+  refAirport->model()->sort(0);
 }
 
 WGSPoint WaypointImpFilterDialog::getAirportRef()

@@ -18,8 +18,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "distance.h"
 #include <cmath>
+
+#include "distance.h"
 
 //initializer for static membervariable
 Distance::distanceUnit Distance::_distanceUnit=kilometers;

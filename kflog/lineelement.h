@@ -19,6 +19,8 @@
 #define LINEELEMENT_H
 
 #include "basemapelement.h"
+//Added by qt3to4:
+#include <Q3PointArray>
 
 /**
  * Class used for all elements, which consist of a pointarray.
@@ -39,7 +41,7 @@ class LineElement : public BaseMapElement
    * @param  isVal  "true", if the element is a "valley".
    * @param  isClosed "true", if the element is a "closed area"
    */
-  LineElement(QString name, unsigned int t, QPointArray pA,
+  LineElement(QString name, unsigned int t, Q3PointArray pA,
               bool isVal = false, bool isClosed = false);
   /**
    * Destructor.
@@ -70,7 +72,7 @@ class LineElement : public BaseMapElement
   virtual bool isValley() const;
   /** @returns the bounding box for the lineelement */
   QRect getBoundingBox() { return bBox; }
-  QPointArray getPointArray() { return projPointArray; }
+  Q3PointArray getPointArray() { return projPointArray; }
  protected:
   /**
    * Proofes, if the object is in the drawing-area of the map.
@@ -82,7 +84,7 @@ class LineElement : public BaseMapElement
   /**
    * Contains the projected positions of the item.
    */
-  QPointArray projPointArray;
+  Q3PointArray projPointArray;
   /**
    * The bounding-box of the element.
    */

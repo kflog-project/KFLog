@@ -23,6 +23,7 @@
 #endif
 
 #include <cmath>
+
 #include "da4record.h"
 
 Q_UINT16 U16Swap (Q_UINT16 u16)
@@ -103,8 +104,7 @@ BaseMapElement::objectType DA4WPRecord::type () const
 
 void DA4WPRecord::setName (const QString& name)
 {
-  QCString sName (name.upper());
-  qstrncpy (_buffer->name, sName.leftJustify (8, ' ', true), 9);
+  qstrncpy (_buffer->name, name.upper().leftJustify (8, ' ', true), 9);
 }
 
 QString DA4WPRecord::name () const

@@ -20,16 +20,17 @@
  *    - I don't use error checking yet, but so far I simply ignore those bytes
  */
 
-#include "cambridge.h"
-#include <signal.h>
 #include <fcntl.h>
+#include <math.h>
+#include <signal.h>
 #include <unistd.h>
 
-#include <qregexp.h>
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qfile.h>
-#include <math.h>
+#include "cambridge.h"
+
+#include <QFile>
+#include <QRegExp>
+#include <QString>
+#include <QStringList>
 
 #define STX        0x03
 
@@ -106,7 +107,7 @@ void debugHex (const void* buf, unsigned int size)
       else
         line += ' ';
     }
-    qDebug (line);
+    qDebug("%s", (const char*)line.toLatin1());
   }
 }
 
@@ -130,7 +131,7 @@ int extractInteger(unsigned char* buf, int start, int count)
     foo += (int)buf[start+count-4]*256*256*256;
   if (count > 4)
   {
-    warning("extractInteger(): Not supported for more than 4 byte");
+    qWarning("extractInteger(): Not supported for more than 4 byte");
     return -1;
   }
   return foo;
@@ -310,13 +311,13 @@ int Cambridge::openRecorder(const QString& pName, int baud)
     return FR_OK;
     }
   else {
-    warning(tr("No logger found!"));
+    qWarning(tr("No logger found!"));
     _isConnected = false;
     return FR_ERROR;
   }
 }
 
-int Cambridge::openRecorder(const QString& URL)
+int Cambridge::openRecorder(const QString& /*URL*/)
 {
   return FR_NOTSUPPORTED;
 }
@@ -469,7 +470,7 @@ int Cambridge::writeConfigData(FR_BasicData& basicdata, FR_ConfigData& configdat
                      + "," + maxwater
                      + ",0,65535";
   sendCommand(caiglider);
-  qDebug(caiglider);
+  qDebug("%s", (const char*)caiglider.toLatin1());
   wait_ms(1500);
   QString sinktone       = QString().sprintf("%d", configdata.sinktone      );
   QString totalenergyfg  = QString().sprintf("%d", configdata.totalenergyfg );
@@ -500,13 +501,13 @@ int Cambridge::writeConfigData(FR_BasicData& basicdata, FR_ConfigData& configdat
                     + "," + "0"
                     + "," + units         
                     + "," + goalalt;
-  qDebug(caipilot);
+  qDebug("%s", (const char*)caipilot.toLatin1());
   sendCommand(caipilot);
   wait_ms(1000);
   return FR_OK;
 }
 
-int Cambridge::getFlightDir(QPtrList<FRDirEntry>* dirList)
+int Cambridge::getFlightDir(QList<FRDirEntry*>* dirList)
 {
   unsigned char reply[2048];
   int replysize = 0;
@@ -582,13 +583,13 @@ int Cambridge::getFlightDir(QPtrList<FRDirEntry>* dirList)
 
   // Now that we have a list of all flights we can give them
   // filenames:
-  for (size_t i=0; i<dirList->count(); i++) {
+  for(size_t i=0; i<dirList->count(); i++) {
     // Count flights that occurred on the same day
     int y = dirList->at(i)->firstTime.tm_year;
     int m = dirList->at(i)->firstTime.tm_mon;
     int d = dirList->at(i)->firstTime.tm_mday;
     int dayflightcounter = 1;
-    for (size_t j=i+1 ; j<dirList->count(); j++)
+    for(size_t j=i+1 ; j<dirList->count(); j++)
       if (y == dirList->at(j)->firstTime.tm_year &&
           m == dirList->at(j)->firstTime.tm_mon  &&
           d == dirList->at(j)->firstTime.tm_mday) dayflightcounter++;
@@ -607,11 +608,12 @@ int Cambridge::getFlightDir(QPtrList<FRDirEntry>* dirList)
                                  "cam",
                                  (const char*)_basicData.serialNumber,
                                  c36[dayflightcounter]);
-    warning(dirList->at(i)->longFileName + "   " + dirList->at(i)->shortFileName);
+    qWarning("%s   %s", (const char*)dirList->at(i)->longFileName.toLatin1(),
+                        (const char*)dirList->at(i)->shortFileName.toLatin1());
   }
 }
 
-int Cambridge::downloadFlight(int flightID, int secMode, const QString& fileName)
+int Cambridge::downloadFlight(int flightID, int /*secMode*/, const QString& fileName)
 {
   unsigned char reply[2048];
   int replysize = 0;
@@ -630,7 +632,7 @@ int Cambridge::downloadFlight(int flightID, int secMode, const QString& fileName
   if (replysize==TIMEOUT_ERROR) return FR_ERROR;
   if (extractString(reply,0,1)!="Y")
   {
-    warning("downloadFlight(): Flight %d not available", flightID);
+    qWarning("downloadFlight(): Flight %d not available", flightID);
     return FR_ERROR;
   }
   int bpp = extractInteger(reply,1,2);
@@ -655,7 +657,7 @@ int Cambridge::downloadFlight(int flightID, int secMode, const QString& fileName
 
   // write file
   QFile f(fileName);
-  if (f.open(IO_WriteOnly))
+  if (f.open(QIODevice::WriteOnly))
   {
     f.writeBlock((const char *)igcdata, igcdata.length());
     f.close();
@@ -663,12 +665,12 @@ int Cambridge::downloadFlight(int flightID, int secMode, const QString& fileName
   }
   else
   {
-    warning(tr("cannot open igc file ") + fileName);
+    qWarning(tr("cannot open igc file ") + fileName);
     return FR_ERROR;
   }
 }
 
-int Cambridge::writeDeclaration(FRTaskDeclaration *taskDecl, QPtrList<Waypoint> *taskPoints)
+int Cambridge::writeDeclaration(FRTaskDeclaration */*taskDecl*/, QList<Waypoint*> */*taskPoints*/)
 {
   return FR_NOTSUPPORTED;
 }
@@ -678,17 +680,17 @@ int Cambridge::readDatabase()
   return FR_NOTSUPPORTED;
 }
 
-int Cambridge::readTasks(QPtrList<FlightTask> *tasks)
+int Cambridge::readTasks(QList<FlightTask*> */*tasks*/)
 {
   return FR_NOTSUPPORTED;
 }
 
-int Cambridge::writeTasks(QPtrList<FlightTask> *tasks)
+int Cambridge::writeTasks(QList<FlightTask*> */*tasks*/)
 {
   return FR_NOTSUPPORTED;
 }
 
-int Cambridge::readWaypoints(QPtrList<Waypoint> *waypoints)
+int Cambridge::readWaypoints(QList<Waypoint*> *waypoints)
 {
   unsigned char reply[2048];
   int replysize = 0;
@@ -713,13 +715,13 @@ int Cambridge::readWaypoints(QPtrList<Waypoint> *waypoints)
   Waypoint * frWp;
   for (size_t i=0; i<Npoints; i++) {
     QString cmd;
-    cmd.sprintf ("c %d", i);
+    cmd.sprintf ("c %d", (int)i);
     replysize = readReply(cmd, UPS_MODE, reply);
     if (replysize==TIMEOUT_ERROR) return FR_ERROR;
     int lat = extractInteger(reply,  0,  4) -  54000000; // Equator is at 54000000 TTOM
     int lon = extractInteger(reply,  4,  4) - 108000000; // Greenwich is at 108000000 TTOM
     int elv = extractInteger(reply,  8,  2);
-    int  id = extractInteger(reply, 10,  2);
+//    int  id = extractInteger(reply, 10,  2);
     int att = extractInteger(reply, 12,  2);
     QString name   = extractString(reply, 14, 12).stripWhiteSpace();
     QString remark = extractString(reply, 26, 12).stripWhiteSpace();
@@ -752,7 +754,7 @@ int Cambridge::readWaypoints(QPtrList<Waypoint> *waypoints)
   return FR_OK;
 }
 
-int Cambridge::writeWaypoints(QPtrList<Waypoint> *waypoints)
+int Cambridge::writeWaypoints(QList<Waypoint*> *waypoints)
 {
   // go into command mode, then delete old waypoints and go to download mode
   wb(STX);
@@ -780,7 +782,7 @@ int Cambridge::writeWaypoints(QPtrList<Waypoint> *waypoints)
     }
     QString att = QString().sprintf("%d", attribute);
     QString caiwp = "C,," + lat + "," + lon + "," + elv + "," + id + "," + att + "," + name + "," + name;
-    qDebug(caiwp);
+    qDebug("%s", (const char*)caiwp.toLatin1());
     sendCommand(caiwp);
     wait_ms(50);
   }
@@ -834,7 +836,7 @@ unsigned char *Cambridge::readData(unsigned char *bufP, int count)
   int rc;
   switch (rc = read(portID, bufP, count)) {
   case -1:
-    warning("readData(): ERROR");
+    qWarning("readData(): ERROR");
     break;
   default:
     // qDebug ("readData: %x(%x)", rc, count);
@@ -882,7 +884,7 @@ int Cambridge::readReply(QString cmd, int mode, unsigned char *reply)
   // We might have to implement this later. Maybe.
   if (mode==CMD_MODE)
   {
-    warning("readReply(): CMD_MODE not yet supported!");
+    qWarning("readReply(): CMD_MODE not yet supported!");
     return 0;
   }
 
@@ -925,7 +927,7 @@ int Cambridge::readReply(QString cmd, int mode, unsigned char *reply)
 
     if (time(NULL)>(t1+10))
     {
-      warning("readReply(): timeout in logger communication");
+      qWarning("readReply(): timeout in logger communication");
       return TIMEOUT_ERROR;
     }
   }
@@ -954,7 +956,7 @@ int Cambridge::readReply(QString cmd, int mode, unsigned char *reply)
 
   if ((cmd_checksum!=YY) || (reply_checksum!=ZZ))
   {
-    warning("readReply(): got wrong checksum");
+    qWarning("readReply(): got wrong checksum");
     return CHECKSUM_ERROR;
   }
 

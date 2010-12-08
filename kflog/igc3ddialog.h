@@ -23,11 +23,13 @@
 #include <qcombobox.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
-#include <qptrlist.h>
-#include <qscrollview.h>
+#include <q3ptrlist.h>
+#include <q3scrollview.h>
 #include <qspinbox.h>
 #include <qslider.h>
-#include <qtextview.h>
+#include <q3textview.h>
+//Added by qt3to4:
+#include <QResizeEvent>
 
 // Appplication specific headers
 #include "flight.h"

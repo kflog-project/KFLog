@@ -14,13 +14,13 @@
  **   $Id$
  **
  ***********************************************************************/
-#include <qbuttongroup.h>
-#include <qdir.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qmessagebox.h>
-#include <qpushbutton.h>
-#include <qsettings.h>
+#include <q3buttongroup.h>
+#include <QDir>
+#include <QLabel>
+#include <QLayout>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QSettings>
 
 #include "mapcalc.h"
 #include "mapcontents.h"
@@ -86,7 +86,7 @@ void TaskDialog::__initDialog()
   }
 
   // Create an non-exclusive button group
-  QButtonGroup *bgrp2 = new QButtonGroup(1, QGroupBox::Vertical, tr("Side of FAI area"), this);
+  Q3ButtonGroup *bgrp2 = new Q3ButtonGroup(1, Qt::Vertical, tr("Side of FAI area"), this);
   connect(bgrp2, SIGNAL(clicked(int)), SLOT(slotSetPlanningDirection(int)));
   bgrp2->setExclusive(false);
 
@@ -108,7 +108,7 @@ void TaskDialog::__initDialog()
   route->setShowSortIndicator(false);
   route->setSorting(-1);
   route->setAllColumnsShowFocus(true);
-  connect(route, SIGNAL(currentChanged(QListViewItem *)), SLOT(enableWaypointButtons()));
+  connect(route, SIGNAL(currentChanged(Q3ListViewItem *)), SLOT(enableWaypointButtons()));
   
   colType = route->addColumn(tr("Type"));
   colWaypoint = route->addColumn(tr("Waypoint"));
@@ -149,7 +149,7 @@ void TaskDialog::__initDialog()
   middleLayout->addWidget(forward);
   middleLayout->addStretch();
 
-  waypoints = new QListBox(this, "waypoints");
+  waypoints = new Q3ListBox(this, "waypoints");
   l = new QLabel(waypoints, tr("&Waypoint's"), this);
   rightLayout->addWidget(l);
   rightLayout->addWidget(waypoints);
@@ -177,11 +177,11 @@ void TaskDialog::polish()
 
   // load current waypoint list from mapcontents
   extern MapContents _globalMapContents;
-  QPtrList<Waypoint>* wpList = _globalMapContents.getWaypointList();
+  QList<Waypoint*> *wpList = _globalMapContents.getWaypointList();
   Waypoint *wp;
   waypoints->clear();
   QString t;
-  for (wp = wpList->first(); wp; wp = wpList->next()) {
+  foreach(wp, *wpList) {
     if (!wp->description.isEmpty()) {
       t = wp->description;
     }
@@ -220,7 +220,7 @@ void TaskDialog::slotSetPlanningType(int idx)
     if (cnt > 5) {
       // remove route points
       for(n = cnt - 3; n > 2; n--) {
-        wpList.take(n);
+        wpList.removeAt(n);
       }
       pTask->setWaypointList(wpList);
     }        
@@ -264,12 +264,12 @@ void TaskDialog::slotSetPlanningDirection(int)
 void TaskDialog::fillWaypoints()
 {
   Waypoint *wp, *wpPrev;
-  QListViewItem *item, *lastItem = 0;
+  Q3ListViewItem *item, *lastItem = 0;
   QString txt;
 
   route->clear();
-  for (wp = wpList.first(); wp; wpPrev = wp, wp = wpList.next()) {
-    item = new QListViewItem(route, lastItem);
+  foreach(wp, wpList) {
+    item = new Q3ListViewItem(route, lastItem);
     switch (wp->type) {
     case FlightTask::TakeOff:
       txt = tr("Take Off");
@@ -303,6 +303,7 @@ void TaskDialog::fillWaypoints()
       item->setText(colCourse, txt);
     }
     lastItem = item;
+    wpPrev = wp;
   }
 
   taskType->setText(pTask->getTaskTypeString());
@@ -310,7 +311,7 @@ void TaskDialog::fillWaypoints()
 
 unsigned int TaskDialog::getCurrentPosition()
 {
-  QListViewItemIterator item(route);
+  Q3ListViewItemIterator item(route);
   int i = 0;
   while(item.current()) {
     if(item.current() == route->currentItem())
@@ -318,11 +319,12 @@ unsigned int TaskDialog::getCurrentPosition()
     i++;
     ++item;
   }
+  return 0;
 }
 
 void TaskDialog::setSelected(unsigned int position)
 {
-  QListViewItemIterator item(route);
+  Q3ListViewItemIterator item(route);
   int i = 0;
   while(item.current()) {
     if(i == position)
@@ -338,7 +340,7 @@ void TaskDialog::slotMoveUp()
   Waypoint *wp;
 
   if (curPos) {
-    wp = wpList.take(curPos);
+    wp = wpList.takeAt(curPos);
     wpList.insert(curPos - 1, wp);
     pTask->setWaypointList(wpList);
     fillWaypoints();
@@ -352,7 +354,7 @@ void TaskDialog::slotMoveDown()
   Waypoint *wp;
 
   if (curPos < wpList.count() - 1) {
-    wp = wpList.take(curPos);
+    wp = wpList.takeAt(curPos);
     wpList.insert(curPos + 1, wp);
     pTask->setWaypointList(wpList);
     fillWaypoints();
@@ -367,7 +369,7 @@ void TaskDialog::slotReplaceWaypoint()
   QString selText = waypoints->currentText();
 
   if (!selText.isEmpty()) {
-    wpList.remove(curPos);
+    wpList.removeAt(curPos);
     Waypoint *wp = new Waypoint;
     *wp = *waypointDict[selText];
 
@@ -402,7 +404,7 @@ void TaskDialog::slotRemoveWaypoint()
 
   if (cnt > 4) {
     if (curPos > 1 && curPos < cnt - 2) {
-      wpList.remove(curPos);
+      wpList.removeAt(curPos);
       pTask->setWaypointList(wpList);
       fillWaypoints();
       setSelected(curPos);

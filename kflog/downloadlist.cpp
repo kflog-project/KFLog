@@ -63,10 +63,10 @@ void DownloadList::__schedule(){
     return;
   if (!srcList.isEmpty()){
     downloadRunning=true;
-    QUrl* src = srcList.take(0);
-    QUrl* dest = destList.take(0);
+    Q3Url* src = srcList.take(0);
+//    Q3Url* dest = destList.take(0);
     actualURL=src->fileName();
-    qWarning(QString("actualURL:%1").arg(actualURL));
+    qWarning("actualURL:%s", (const char*)actualURL.toLatin1());
 // Temporarily disabled during transition to Qt4. Use QNetworkAccessManager in Qt4.
 //    KIO::Job* job = new KIO::FileCopyJob(*src, *dest, 0644, false, false, false, true);
 ////    delete src;

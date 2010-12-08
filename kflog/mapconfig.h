@@ -19,7 +19,7 @@
 #define MAPCONFIG_H
 
 #include <qbrush.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qobject.h>
 #include <qpen.h>
 #include <qpixmap.h>
@@ -218,11 +218,11 @@ class MapConfig : public QObject
      */
     QPen __getPen(unsigned int typeID, int sIndex);
     void __readBorder(QString group, bool *b);
-    void __readPen(QString group, QPtrList<QPen> *penList, bool *b,
+    void __readPen(QString group, Q3PtrList<QPen> *penList, bool *b,
         QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4, QColor defaultColor5, QColor defaultColor6,
         int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4, int defaultPenSize5, int defaultPenSize6,
         Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4, Qt::PenStyle defaultPenStyle5, Qt::PenStyle defaultPenStyle6);
-    void __readPenBrush(QString group, QPtrList<QPen> *penList, bool *b, QPtrList<QBrush> *brushList,
+    void __readPenBrush(QString group, Q3PtrList<QPen> *penList, bool *b, Q3PtrList<QBrush> *brushList,
         QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4, QColor defaultColor5, QColor defaultColor6,
         int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4, int defaultPenSize5, int defaultPenSize6,
         Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4, Qt::PenStyle defaultPenStyle5, Qt::PenStyle defaultPenStyle6,
@@ -230,57 +230,57 @@ class MapConfig : public QObject
         Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2, Qt::BrushStyle defaultBrushStyle3, Qt::BrushStyle defaultBrushStyle4, Qt::BrushStyle defaultBrushStyle5, Qt::BrushStyle defaultBrushStyle6);
     void __readTopo(QString entry, QColor color);
 
-    QPtrList<QColor> topographyColorList;
+    Q3PtrList<QColor> topographyColorList;
 
-    QPtrList<QPen> airAPenList;
-    QPtrList<QBrush> airABrushList;
-    QPtrList<QPen> airBPenList;
-    QPtrList<QBrush> airBBrushList;
-    QPtrList<QPen> airCPenList;
-    QPtrList<QBrush> airCBrushList;
-    QPtrList<QPen> airDPenList;
-    QPtrList<QBrush> airDBrushList;
-    QPtrList<QPen> airElPenList;
-    QPtrList<QBrush> airElBrushList;
-    QPtrList<QPen> airEhPenList;
-    QPtrList<QBrush> airEhBrushList;
-    QPtrList<QPen> airFPenList;
-    QPtrList<QBrush> airFBrushList;
-    QPtrList<QPen> ctrCPenList;
-    QPtrList<QBrush> ctrCBrushList;
-    QPtrList<QPen> ctrDPenList;
-    QPtrList<QBrush> ctrDBrushList;
-    QPtrList<QPen> lowFPenList;
-    QPtrList<QBrush> lowFBrushList;
-    QPtrList<QPen> dangerPenList;
-    QPtrList<QBrush> dangerBrushList;
-    QPtrList<QPen> restrPenList;
-    QPtrList<QBrush> restrBrushList;
-    QPtrList<QPen> tmzPenList;
-    QPtrList<QBrush> tmzBrushList;
+    Q3PtrList<QPen> airAPenList;
+    Q3PtrList<QBrush> airABrushList;
+    Q3PtrList<QPen> airBPenList;
+    Q3PtrList<QBrush> airBBrushList;
+    Q3PtrList<QPen> airCPenList;
+    Q3PtrList<QBrush> airCBrushList;
+    Q3PtrList<QPen> airDPenList;
+    Q3PtrList<QBrush> airDBrushList;
+    Q3PtrList<QPen> airElPenList;
+    Q3PtrList<QBrush> airElBrushList;
+    Q3PtrList<QPen> airEhPenList;
+    Q3PtrList<QBrush> airEhBrushList;
+    Q3PtrList<QPen> airFPenList;
+    Q3PtrList<QBrush> airFBrushList;
+    Q3PtrList<QPen> ctrCPenList;
+    Q3PtrList<QBrush> ctrCBrushList;
+    Q3PtrList<QPen> ctrDPenList;
+    Q3PtrList<QBrush> ctrDBrushList;
+    Q3PtrList<QPen> lowFPenList;
+    Q3PtrList<QBrush> lowFBrushList;
+    Q3PtrList<QPen> dangerPenList;
+    Q3PtrList<QBrush> dangerBrushList;
+    Q3PtrList<QPen> restrPenList;
+    Q3PtrList<QBrush> restrBrushList;
+    Q3PtrList<QPen> tmzPenList;
+    Q3PtrList<QBrush> tmzBrushList;
 
-    QPtrList<QPen> highwayPenList;
-    QPtrList<QPen> roadPenList;
-    QPtrList<QPen> trailPenList;
-    QPtrList<QPen> railPenList;
-    QPtrList<QPen> rail_dPenList;
-    QPtrList<QPen> aerialcablePenList;
-    QPtrList<QPen> riverPenList;
-    QPtrList<QPen> river_tPenList;
-    QPtrList<QBrush> river_tBrushList;
-    QPtrList<QPen> canalPenList;
-    QPtrList<QPen> cityPenList;
-    QPtrList<QBrush> cityBrushList;
-    QPtrList<QPen> forestPenList;
-    QPtrList<QPen> glacierPenList;
-    QPtrList<QPen> packicePenList;
-    QPtrList<QBrush> forestBrushList;
-    QPtrList<QBrush> glacierBrushList;
-    QPtrList<QBrush> packiceBrushList;
-    QPtrList<QPen> faiAreaLow500PenList;
-    QPtrList<QBrush> faiAreaLow500BrushList;
-    QPtrList<QPen> faiAreaHigh500PenList;
-    QPtrList<QBrush> faiAreaHigh500BrushList;
+    Q3PtrList<QPen> highwayPenList;
+    Q3PtrList<QPen> roadPenList;
+    Q3PtrList<QPen> trailPenList;
+    Q3PtrList<QPen> railPenList;
+    Q3PtrList<QPen> rail_dPenList;
+    Q3PtrList<QPen> aerialcablePenList;
+    Q3PtrList<QPen> riverPenList;
+    Q3PtrList<QPen> river_tPenList;
+    Q3PtrList<QBrush> river_tBrushList;
+    Q3PtrList<QPen> canalPenList;
+    Q3PtrList<QPen> cityPenList;
+    Q3PtrList<QBrush> cityBrushList;
+    Q3PtrList<QPen> forestPenList;
+    Q3PtrList<QPen> glacierPenList;
+    Q3PtrList<QPen> packicePenList;
+    Q3PtrList<QBrush> forestBrushList;
+    Q3PtrList<QBrush> glacierBrushList;
+    Q3PtrList<QBrush> packiceBrushList;
+    Q3PtrList<QPen> faiAreaLow500PenList;
+    Q3PtrList<QBrush> faiAreaLow500BrushList;
+    Q3PtrList<QPen> faiAreaHigh500PenList;
+    Q3PtrList<QBrush> faiAreaHigh500BrushList;
     /**
      */
     bool* airABorder;

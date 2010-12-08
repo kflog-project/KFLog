@@ -17,8 +17,8 @@
 #ifndef FLIGHTLOADER_H
 #define FLIGHTLOADER_H
 
-#include <qfile.h>
-#include <qfileinfo.h>
+#include <QFile>
+#include <QFileInfo>
 
 class FlightLoader
 {

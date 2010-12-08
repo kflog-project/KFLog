@@ -20,14 +20,14 @@
 
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qptrlist.h>
-#include <qscrollview.h>
+#include <q3ptrlist.h>
+#include <q3scrollview.h>
 
 /**Generates a legend for the topography levels used on the map.
   *@author André Somers
   */
 
-class TopoLegend : public QScrollView  {
+class TopoLegend : public Q3ScrollView  {
    Q_OBJECT
 public:
  /**
@@ -43,7 +43,7 @@ protected:
  /**
   * Contains a list of the labels that have been created
   */
-  QPtrList<QLabel> labelList;
+  Q3PtrList<QLabel> labelList;
  /**
   * Index of the currently highlighted elevation label
   */

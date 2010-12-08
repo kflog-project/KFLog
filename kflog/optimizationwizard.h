@@ -10,25 +10,19 @@
 #ifndef OLC_OPTIMIZATION_H
 #define OLC_OPTIMIZATION_H
 
-#include <qvariant.h>
-#include <qpixmap.h>
-#include <qwizard.h>
+#include <QGroupBox>
+#include <QLabel>
+#include <QLayout>
+#include <QPixmap>
+#include <QProgressBar>
+#include <QTextBrowser>
+#include <QVariant>
+#include <QWizard>
 
+#include "evaluationdialog.h"
 #include "flight.h"
 #include "map.h"
 #include "mapcontents.h"
-
-class EvaluationDialog;
-class QFrame;
-class QGroupBox;
-class QGridLayout;
-class QHBoxLayout;
-class QLabel;
-class QProgressBar;
-class QPushButton;
-class QTextBrowser;
-class QVBoxLayout;
-class QWidget;
 
 extern MapContents _globalMapContents;
 
@@ -37,10 +31,10 @@ class OptimizationWizard : public QWizard
     Q_OBJECT
 
 public:
-    OptimizationWizard( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+    OptimizationWizard(QWidget* parent = 0, Qt::WFlags fl = 0);
     ~OptimizationWizard();
 
-    QWidget* page;
+    QWizardPage *page;
     EvaluationDialog* evaluation;
     QGroupBox* groupBox1;
     QLabel* lblStartHeight;
@@ -53,7 +47,7 @@ public:
     QLabel* lblStopHeight;
     QLabel* lblDiffTime;
     QPushButton* kPushButton2;
-    QWidget* page_2;
+    QWizardPage* page_2;
     QTextBrowser* kTextBrowser1;
     QFrame* frame3;
     QProgressBar* progress;
@@ -71,7 +65,7 @@ public slots:
 
 protected:
     Flight* flight;
-    QPtrList<flightPoint> route;
+    QList<flightPoint*> route;
     Optimization* optimization;
 
     QVBoxLayout* pageLayout;

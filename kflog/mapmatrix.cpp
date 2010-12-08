@@ -18,6 +18,8 @@
 #include <cmath>
 
 #include <qsettings.h>
+//Added by qt3to4:
+#include <Q3PointArray>
 
 #include "mapmatrix.h"
 
@@ -206,7 +208,7 @@ bool MapMatrix::isSwitchScale() const
   return cScale <= scaleBorders[SwitchScale];
 }
 
-QPointArray MapMatrix::map(const QPointArray& origArray) const
+Q3PointArray MapMatrix::map(const Q3PointArray& origArray) const
 {
   return worldMatrix.map(origArray);
 }
@@ -228,7 +230,7 @@ double MapMatrix::map(double arc) const
   return (arc + rotationArc);
 }
 
-QPointArray MapMatrix::print(const QPointArray& pArray) const
+Q3PointArray MapMatrix::print(const Q3PointArray& pArray) const
 {
   return printMatrix.map(pArray);
 }
@@ -337,7 +339,7 @@ double MapMatrix::getScale(unsigned int type)
 void MapMatrix::centerToPoint(const QPoint& center)
 {
   bool result = true;
-  QWMatrix invertMatrix = worldMatrix.invert(&result);
+  QMatrix invertMatrix = worldMatrix.invert(&result);
   if(!result)
       // Houston, wir haben ein Problem !!!
       qFatal("KFLog: Cannot invert worldmatrix!");
@@ -415,7 +417,7 @@ double MapMatrix::centerToRect(const QRect& center, const QSize& pS, bool addBor
 QPoint MapMatrix::mapToWgs(const QPoint& pos) const
 {
   bool result = true;
-  QWMatrix invertMatrix = worldMatrix.invert(&result);
+  QMatrix invertMatrix = worldMatrix.invert(&result);
   if(!result)
     // Houston, we've got a problem !!!
     qFatal("KFLog: Cannot invert worldmatrix!");
@@ -478,7 +480,7 @@ void MapMatrix::createMatrix(const QSize& newSize)
       -sin(rotationArc) * scale, cos(rotationArc) * scale, 0, 0);
 
   /* Set the tranlation */
-  QWMatrix translateMatrix(1, 0, 0, 1,
+  QMatrix translateMatrix(1, 0, 0, 1,
       currentProjection->getTranslationX(newSize.width(),
           worldMatrix.map(tempPoint).x()),
       currentProjection->getTranslationY(newSize.height(),
@@ -488,7 +490,7 @@ void MapMatrix::createMatrix(const QSize& newSize)
 
   // Setting the viewBorder
   bool result = true;
-  QWMatrix invertMatrix = worldMatrix.invert(&result);
+  QMatrix invertMatrix = worldMatrix.invert(&result);
   if(!result)
     // Houston, wir haben ein Problem !!!
     qFatal("KFLog: Cannot invert worldmatrix!");
@@ -547,20 +549,20 @@ void MapMatrix::createPrintMatrix(double printScale, const QSize& pSize, int dX,
   /* Set the translation */
   if(dX == 0 && dY == 0)
     {
-      QWMatrix translateMatrix(1, 0, 0, 1, pSize.width() / 2,
+      QMatrix translateMatrix(1, 0, 0, 1, pSize.width() / 2,
         ( pSize.height() / 2 ) - printMatrix.map(tempPoint).y() );
 
       printMatrix = printMatrix * translateMatrix;
     }
   else
     {
-      QWMatrix translateMatrix(1, 0, 0, 1, dX, dY );
+      QMatrix translateMatrix(1, 0, 0, 1, dX, dY );
       printMatrix = printMatrix * translateMatrix;
     }
 
   /* Set the viewBorder */
   bool result = true;
-  QWMatrix invertMatrix = printMatrix.invert(&result);
+  QMatrix invertMatrix = printMatrix.invert(&result);
   if(!result)
       // Houston, wir haben ein Problem !!!
       qFatal("KFLog: Cannot invert worldmatrix!");

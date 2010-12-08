@@ -17,14 +17,17 @@
 #include "helpwindow.h"
 
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3HBoxLayout>
+#include <Q3Frame>
 
 HelpWindow::HelpWindow(QWidget* parent)
-: QFrame(parent, "helpText")
+: Q3Frame(parent, "helpText")
 {
 
-  helpText = new QTextBrowser(this, "helpBrowser");
+  helpText = new Q3TextBrowser(this, "helpBrowser");
 
-  QHBoxLayout* layout = new QHBoxLayout(this, 5);
+  Q3HBoxLayout* layout = new Q3HBoxLayout(this, 5);
   layout->addWidget(helpText);
 
   

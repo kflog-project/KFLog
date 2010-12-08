@@ -20,59 +20,56 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <qapplication.h>
-#include <qdir.h>
-#include <qfiledialog.h>
-#include <qgroupbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qlistbox.h>
-#include <qmessagebox.h>
-#include <qsettings.h>
-#include <qstringlist.h>
-#include <qtextstream.h>
-#include <qtimer.h>
-#include <qwhatsthis.h>
+#include <QApplication>
+#include <QDir>
+#include <q3filedialog.h>
+#include <q3groupbox.h>
+#include <QLayout>
+#include <q3listbox.h>
+#include <QMessageBox>
+#include <QSettings>
+#include <QStringList>
+#include <q3textstream.h>
+#include <QTime>
+#include <QTimer>
+#include <q3whatsthis.h>
 
 #include "airport.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "recorderdialog.h"
 
-RecorderDialog::RecorderDialog(QWidget *parent, const char *name)
+RecorderDialog::RecorderDialog(QWidget *parent, const char */*name*/)
   : QDialog(parent, "Flightrecorder-Dialog (RecorderDialog)"),
     isOpen(false),
     isConnected(false),
     activeRecorder(NULL)
 {
   extern MapContents _globalMapContents;
-  BaseFlightElement *e;
-  Waypoint *wp;
-  QPtrList<Waypoint> *tmp;
+  BaseFlightElement *element;
+  Waypoint *waypoint;
+  QList<Waypoint*> *tmp;
   tmp = _globalMapContents.getWaypointList();
-  waypoints = new WaypointList();
-  for (wp = tmp->first(); wp; wp = tmp->next()) {
-    waypoints->append(wp);
-  }
-  waypoints->sort();
+  waypoints = new QList<Waypoint*>;
+  foreach(waypoint, *tmp)
+    waypoints->append(waypoint);
+  qSort(waypoints->begin(), waypoints->end());
 
-  QPtrList<BaseFlightElement> *tList = _globalMapContents.getFlightList();
-  tasks = new QPtrList<FlightTask>;
+  QList<BaseFlightElement*> *tList = _globalMapContents.getFlightList();
+  tasks = new QList<FlightTask*>;
 
-  for (e = tList->first(); e; e = tList->next()) {
-    if (e->getTypeID() == BaseMapElement::Task) {
-      tasks->append((FlightTask*)e);
-    }
-  }
+  foreach(element, *tList)
+    if (element->getTypeID() == BaseMapElement::Task)
+      tasks->append((FlightTask*)element);
 
   configLayout = new QGridLayout(this, 2, 3, 1, -1, "main layout of RecorderDialog");
 
-  setupTree = new QListView(this, "setupTree");
+  setupTree = new Q3ListView(this, "setupTree");
   setupTree->addColumn("Menu");
   setupTree->hideColumn(1);
 
   configLayout->addWidget(setupTree, 0, 0);
-  connect(setupTree, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(slotPageChanged(QListViewItem *)));
+  connect(setupTree, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(slotPageChanged(Q3ListViewItem *)));
 
   QPushButton *closeButton = new QPushButton(tr("&Close"), this);
   connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
@@ -91,7 +88,7 @@ RecorderDialog::RecorderDialog(QWidget *parent, const char *name)
   setMinimumHeight(350);
   setupTree->setFixedWidth(145);
   setupTree->setColumnWidth(145, 1);
-  setupTree->setResizeMode(QListView::NoColumn);
+  setupTree->setResizeMode(Q3ListView::NoColumn);
   settingsPage->show();
   activePage = settingsPage;
   activePage->setFixedWidth(685);
@@ -117,16 +114,16 @@ void RecorderDialog::__addSettingsPage()
 {
   int typeID(0), typeLoop(0);
 
-  QListViewItem *item = new QListViewItem(setupTree, tr("Recorder"), "Recorder");
+  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Recorder"), "Recorder");
   item->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/kde_media-tape_48.png");
 
-  settingsPage = new QFrame(this, "Recorder Settings");
+  settingsPage = new Q3Frame(this, "Recorder Settings");
   settingsPage->hide();
   configLayout->addMultiCellWidget(settingsPage, 0, 0, 1, 2);
 
   QGridLayout* sLayout = new QGridLayout(settingsPage, 15, 8, 10, 1);
 
-  QGroupBox* sGroup = new QGroupBox(settingsPage, "homeGroup");
+  Q3GroupBox* sGroup = new Q3GroupBox(settingsPage, "homeGroup");
   sGroup->setTitle(tr("Settings") + ":");
 
   selectType = new QComboBox(settingsPage, "type-selection");
@@ -153,25 +150,25 @@ void RecorderDialog::__addSettingsPage()
   cmdConnect = new QPushButton(tr("Connect recorder"), settingsPage);
   cmdConnect->setMaximumWidth(cmdConnect->sizeHint().width() + 5);
 
-  QGroupBox* infoGroup = new QGroupBox(settingsPage, "infoGroup");
+  Q3GroupBox* infoGroup = new Q3GroupBox(settingsPage, "infoGroup");
   infoGroup->setTitle(tr("Info") + ":");
 
   lblApiID = new QLabel(tr("API-Version"), settingsPage);
   apiID = new QLabel(settingsPage);
-  apiID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-  apiID->setBackgroundMode( PaletteLight );
+  apiID->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
+  apiID->setBackgroundMode( Qt::PaletteLight );
   apiID->setEnabled(false);
 
   lblSerID = new QLabel(tr("Serial-Nr."), settingsPage);
   serID = new QLabel(tr("no recorder connected"), settingsPage);
-  serID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-  serID->setBackgroundMode( PaletteLight );
+  serID->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
+  serID->setBackgroundMode( Qt::PaletteLight );
   serID->setEnabled(false);
 
   lblRecType = new QLabel(tr("Recorder Type"), settingsPage);
   recType = new QLabel (settingsPage);
-  recType->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-  recType->setBackgroundMode( PaletteLight );
+  recType->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
+  recType->setBackgroundMode( Qt::PaletteLight );
   recType->setEnabled(false);
 
   lblPltName = new QLabel(tr("Pilot Name"), settingsPage);
@@ -192,40 +189,40 @@ void RecorderDialog::__addSettingsPage()
   connect(cmdUploadBasicConfig, SIGNAL(clicked()), SLOT(slotWriteConfig()));
 
   compID = new QLabel (settingsPage);
-  compID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-  compID->setBackgroundMode( PaletteLight );
+  compID->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
+  compID->setBackgroundMode( Qt::PaletteLight );
   compID->setEnabled(false);
 
   sLayout->addMultiCellWidget(sGroup, 0, 6, 0, 7);
-  sLayout->addWidget(new QLabel(tr("Type"), settingsPage), 1, 1, AlignRight);
+  sLayout->addWidget(new QLabel(tr("Type"), settingsPage), 1, 1, Qt::AlignRight);
   sLayout->addMultiCellWidget(selectType, 1, 1, 2, 6);
-  sLayout->addWidget(selectPortLabel, 3, 1, AlignRight);
+  sLayout->addWidget(selectPortLabel, 3, 1, Qt::AlignRight);
   sLayout->addMultiCellWidget(selectPort, 3, 3, 2, 3);
-  sLayout->addWidget(selectSpeedLabel, 3, 4, AlignRight);
+  sLayout->addWidget(selectSpeedLabel, 3, 4, Qt::AlignRight);
   sLayout->addMultiCellWidget(_selectSpeed, 3, 3, 5, 6);
-  sLayout->addWidget(selectURLLabel, 3, 1, AlignRight);
+  sLayout->addWidget(selectURLLabel, 3, 1, Qt::AlignRight);
   sLayout->addMultiCellWidget(selectURL, 3, 3, 2, 6);
   __setRecorderConnectionType(FlightRecorderPluginBase::none);
 
-  sLayout->addWidget(cmdConnect, 5, 6, AlignRight);
+  sLayout->addWidget(cmdConnect, 5, 6, Qt::AlignRight);
 
   sLayout->addMultiCellWidget(infoGroup, 8, 14, 0, 7);
-  sLayout->addWidget(lblApiID, 9, 1, AlignRight);
+  sLayout->addWidget(lblApiID, 9, 1, Qt::AlignRight);
   sLayout->addMultiCellWidget(apiID, 9, 9, 2, 3);
-  sLayout->addWidget(lblSerID, 11, 1, AlignRight);
+  sLayout->addWidget(lblSerID, 11, 1, Qt::AlignRight);
   sLayout->addMultiCellWidget(serID, 11, 11, 2, 3);
-  sLayout->addWidget(lblRecType, 13, 1, AlignRight);
+  sLayout->addWidget(lblRecType, 13, 1, Qt::AlignRight);
   sLayout->addMultiCellWidget(recType, 13, 13, 2, 3);
 
-  sLayout->addWidget(lblPltName, 9, 4, AlignRight);
+  sLayout->addWidget(lblPltName, 9, 4, Qt::AlignRight);
   sLayout->addMultiCellWidget(pltName, 9, 9, 5, 6);
-  sLayout->addWidget(lblGldType, 11, 4, AlignRight);
+  sLayout->addWidget(lblGldType, 11, 4, Qt::AlignRight);
   sLayout->addMultiCellWidget(gldType, 11, 11, 5, 6);
-  sLayout->addWidget(lblGldID, 13, 4, AlignRight);
+  sLayout->addWidget(lblGldID, 13, 4, Qt::AlignRight);
   sLayout->addMultiCellWidget(gldID, 13, 13, 5, 5);
   sLayout->addMultiCellWidget(compID, 13, 13, 6, 6);
 
-  sLayout->addWidget(cmdUploadBasicConfig, 15, 5, 6);
+  sLayout->addWidget(cmdUploadBasicConfig, 15, 5, Qt::AlignJustify);
 
   sLayout->setColStretch(0, 1);
   sLayout->setColStretch(7, 1);
@@ -274,10 +271,10 @@ void RecorderDialog::__addSettingsPage()
     settingFile.setName(*it);
     if(!settingFile.exists())
       continue;
-    if(!settingFile.open(IO_ReadOnly))
+    if(!settingFile.open(QIODevice::ReadOnly))
       continue;
 
-    QTextStream stream(&settingFile);
+    Q3TextStream stream(&settingFile);
     while (!stream.eof())
     {
       lineStream = stream.readLine();
@@ -297,7 +294,8 @@ void RecorderDialog::__addSettingsPage()
   }
 
   //sort if this style uses a listbox for the combobox
-  if (selectType->listBox()) selectType->listBox()->sort();
+  if(selectType->model())
+      selectType->model()->sort(0);
 
   selectType->setCurrentText(name);
   slotRecorderTypeChanged(selectType->text(typeID));
@@ -401,10 +399,10 @@ void RecorderDialog::__setRecorderCapabilities()
 
 void RecorderDialog::__addFlightPage()
 {
-  QListViewItem *item = new QListViewItem(setupTree, tr("Flights"), "Flights");
+  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Flights"), "Flights");
   item->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/igc_48.png");
 
-  flightPage = new QFrame(this, "Flights");
+  flightPage = new Q3Frame(this, "Flights");
   flightPage->hide();
   configLayout->addMultiCellWidget(flightPage, 0, 0, 1, 2);
 
@@ -435,9 +433,9 @@ void RecorderDialog::__addFlightPage()
   useFastDownload = new QCheckBox(tr("fast download"), flightPage);
   useFastDownload->setChecked(true);
 
-  QWhatsThis::add(useLongNames,
+  Q3WhatsThis::add(useLongNames,
                   tr("If checked, the long filenames are used."));
-  QWhatsThis::add(useFastDownload,
+  Q3WhatsThis::add(useFastDownload,
                   tr("If checked, the IGC-file will not be signed.<BR>"
                        "Note: Do not use fast download when "
                        "using the file for competitions."));
@@ -460,10 +458,10 @@ void RecorderDialog::__addDeclarationPage()
 {
   FlightTask *e;
 
-  QListViewItem *item = new QListViewItem(setupTree, tr("Declaration"), "Declaration");
+  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Declaration"), "Declaration");
   item->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/declaration_48.png");
 
-  declarationPage = new QFrame(this, "Flight Declaration");
+  declarationPage = new Q3Frame(this, "Flight Declaration");
   declarationPage->hide();
   configLayout->addMultiCellWidget(declarationPage, 0, 0, 1, 2);
 
@@ -480,11 +478,11 @@ void RecorderDialog::__addDeclarationPage()
 
   declarationList->setAllColumnsShowFocus(true);
   declarationList->setSorting(declarationColID, true);
-  declarationList->setSelectionMode(QListView::NoSelection);
+  declarationList->setSelectionMode(Q3ListView::NoSelection);
 
-  declarationList->setColumnAlignment(declarationColID, AlignRight);
-  declarationList->setColumnAlignment(declarationColLat, AlignRight);
-  declarationList->setColumnAlignment(declarationColLon, AlignRight);
+  declarationList->setColumnAlignment(declarationColID, Qt::AlignRight);
+  declarationList->setColumnAlignment(declarationColLat, Qt::AlignRight);
+  declarationList->setColumnAlignment(declarationColLon, Qt::AlignRight);
 
   declarationList->loadConfig();
 
@@ -501,24 +499,24 @@ void RecorderDialog::__addDeclarationPage()
 
   tLayout->addMultiCellWidget(declarationList, 0, 0, 0, 6);
   tLayout->addWidget(new QLabel(tr("Pilot") + " 1:", declarationPage), 2, 0,
-                     AlignRight);
+                     Qt::AlignRight);
   tLayout->addWidget(pilotName, 2, 2);
   tLayout->addWidget(new QLabel(tr("Pilot") + " 2:", declarationPage), 2, 4,
-                     AlignRight);
+                     Qt::AlignRight);
   tLayout->addWidget(copilotName, 2, 6);
   tLayout->addWidget(new QLabel(tr("Glider-ID") + ":", declarationPage), 4,
-                     0, AlignRight);
+                     0, Qt::AlignRight);
   tLayout->addWidget(gliderID, 4, 2);
   tLayout->addWidget(new QLabel(tr("Glidertype") + ":", declarationPage), 4,
-                     4, AlignRight);
+                     4, Qt::AlignRight);
   tLayout->addWidget(gliderType, 4, 6);
   tLayout->addWidget(new QLabel(tr("Comp. ID") + ":", declarationPage), 6,
-                     0, AlignRight);
+                     0, Qt::AlignRight);
   tLayout->addWidget(editCompID, 6, 2);
   tLayout->addWidget(new QLabel(tr("Comp. Class") + ":", declarationPage), 6,
-                     4, AlignRight);
+                     4, Qt::AlignRight);
   tLayout->addWidget(compClass, 6, 6);
-  tLayout->addMultiCellWidget(writeDeclaration, 8, 8, 4, 6, AlignRight);
+  tLayout->addMultiCellWidget(writeDeclaration, 8, 8, 4, 6, Qt::AlignRight);
 
   tLayout->addColSpacing(1, 5);
   tLayout->addColSpacing(3, 10);
@@ -543,15 +541,14 @@ void RecorderDialog::__addDeclarationPage()
 
   pilotName->setText(_settings.readEntry("/KFLog/PersonalData/PilotName", ""));
 
-  for (e = tasks->first(); e; e = tasks->next()) {
+  foreach(e, *tasks)
     taskSelection->insertItem(e->getFileName() + " " + e->getTaskTypeString());
-  }
 
   if (tasks->count()) {
     slotSwitchTask(0);
   }
   else {
-    warning("No tasks planned ...");
+    qWarning("No tasks planned ...");
 // Isn't it possible to write an declaration without a task?
     writeDeclaration->setEnabled(false);
   }
@@ -562,10 +559,10 @@ void RecorderDialog::__addDeclarationPage()
 
 void RecorderDialog::__addTaskPage()
 {
-  QListViewItem *item = new QListViewItem(setupTree, tr("Tasks"), "Tasks");
+  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Tasks"), "Tasks");
   item->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/task_48.png");
 
-  taskPage = new QFrame(this, "Tasks");
+  taskPage = new Q3Frame(this, "Tasks");
   taskPage->hide();
   configLayout->addMultiCellWidget(taskPage, 0, 0, 1, 2);
 
@@ -583,8 +580,8 @@ void RecorderDialog::__addTaskPage()
   taskList->setSorting(taskColID, true);
   taskList->setAllColumnsShowFocus(true);
 
-  taskList->setSelectionMode(QListView::NoSelection);
-  taskList->setColumnAlignment(taskColID, AlignRight);
+  taskList->setSelectionMode(Q3ListView::NoSelection);
+  taskList->setColumnAlignment(taskColID, Qt::AlignRight);
 
   taskList->loadConfig();
 
@@ -609,8 +606,9 @@ void RecorderDialog::fillTaskList()
   QString idS;
 
   taskList->clear();
-  for (FlightTask* task = tasks->first(); task; task = tasks->next()){
-    QListViewItem *item = new QListViewItem(taskList);
+  FlightTask* task;
+  foreach(task, *tasks){
+    Q3ListViewItem *item = new Q3ListViewItem(taskList);
     idS.sprintf("%3d", loop++);
     item->setText(taskColID, idS);
     item->setText(taskColName, task->getFileName());
@@ -625,12 +623,12 @@ void RecorderDialog::__addWaypointPage()
   Waypoint *wp;
   int loop = 1;
   QString idS;
-  QListViewItem *item;
+  Q3ListViewItem *item;
 
-  QListViewItem *itemMenu = new QListViewItem(setupTree, tr("Waypoints"), "Waypoints");
+  Q3ListViewItem *itemMenu = new Q3ListViewItem(setupTree, tr("Waypoints"), "Waypoints");
   itemMenu->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/waypoint_48.png");
 
-  waypointPage = new QFrame(this, "Waypoints");
+  waypointPage = new Q3Frame(this, "Waypoints");
   waypointPage->hide();
   configLayout->addMultiCellWidget(waypointPage, 0, 0, 1, 2);
 
@@ -648,11 +646,11 @@ void RecorderDialog::__addWaypointPage()
 
   waypointList->setAllColumnsShowFocus(true);
   waypointList->setSorting(waypointColID, true);
-  waypointList->setSelectionMode(QListView::NoSelection);
+  waypointList->setSelectionMode(Q3ListView::NoSelection);
 
-  waypointList->setColumnAlignment(waypointColID, AlignRight);
-  waypointList->setColumnAlignment(waypointColLat, AlignRight);
-  waypointList->setColumnAlignment(waypointColLon, AlignRight);
+  waypointList->setColumnAlignment(waypointColID, Qt::AlignRight);
+  waypointList->setColumnAlignment(waypointColLat, Qt::AlignRight);
+  waypointList->setColumnAlignment(waypointColLon, Qt::AlignRight);
 
   waypointList->loadConfig();
 
@@ -668,8 +666,8 @@ void RecorderDialog::__addWaypointPage()
   top->addWidget(waypointList);
   top->addLayout(buttons);
 
-  for (wp = waypoints->first(); wp; wp = waypoints->next()){
-    item = new QListViewItem(waypointList);
+  foreach(wp, *waypoints) {
+    item = new Q3ListViewItem(waypointList);
     idS.sprintf("%.3d", loop++);
     item->setText(waypointColID, idS);
     item->setText(waypointColName, wp->name);
@@ -689,7 +687,7 @@ void RecorderDialog::slotConnectRecorder()
   int speed = _selectSpeed->currentText().toInt();
 
   if(!__openLib(name)) {
-    warning("%s", (const char*)tr("Could not open lib!"));
+    qWarning("%s", (const char*)tr("Could not open lib!"));
     return;
   }
 
@@ -699,7 +697,7 @@ void RecorderDialog::slotConnectRecorder()
   switch (activeRecorder->getTransferMode()) {
   case FlightRecorderPluginBase::serial:
     if(portName.isEmpty()) {
-      warning("%s", (const char*)tr("No port given!"));
+      qWarning("%s", (const char*)tr("No port given!"));
       isConnected=false;
       break;
     }
@@ -710,7 +708,7 @@ void RecorderDialog::slotConnectRecorder()
     selectURL->setText(selectURL->text().stripWhiteSpace());
     QString URL = selectURL->text();
     if (URL.isEmpty()) {
-      warning("%s", (const char*)tr("No URL entered!"));
+      qWarning("%s", (const char*)tr("No URL entered!"));
       QApplication::restoreOverrideCursor();
       isConnected=false;
       break;
@@ -769,7 +767,7 @@ void RecorderDialog::slotCloseRecorder()
   }
 }
 
-void RecorderDialog::slotPageChanged(QListViewItem *currentItem)
+void RecorderDialog::slotPageChanged(Q3ListViewItem *currentItem)
 {
   if(currentItem->text(1)=="Configuration")
   {
@@ -824,8 +822,8 @@ void RecorderDialog::slotReadFlightList()
     return;
 
     QMessageBox* statusDlg = new QMessageBox ( tr("downloading flightlist"), tr("downloading flightlist"),
-      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
-      QMessageBox::NoButton, this, "statusDialog", true);
+      QMessageBox::Information, Qt::NoButton, Qt::NoButton,
+      Qt::NoButton, this, "statusDialog", true);
 
   statusDlg->show();
 
@@ -863,21 +861,22 @@ void RecorderDialog::slotReadFlightList()
     return;
   }
 
-  for(unsigned int loop = 0; loop < dirList.count(); loop++) {
-    FRDirEntry* e = dirList.at(loop);
-    QListViewItem* item = new QListViewItem(flightList);
-    idS.sprintf("%3d", loop + 1);
+  FRDirEntry* dirListItem;
+  int i = 1;
+  foreach(dirListItem, dirList) {
+    Q3ListViewItem* item = new Q3ListViewItem(flightList);
+    idS.sprintf("%3d", i++);
     item->setText(colID, idS);
-    day.sprintf("%d-%.2d-%.2d", e->firstTime.tm_year + 1900,
-                e->firstTime.tm_mon + 1, e->firstTime.tm_mday);
+    day.sprintf("%d-%.2d-%.2d", dirListItem->firstTime.tm_year + 1900,
+                dirListItem->firstTime.tm_mon + 1, dirListItem->firstTime.tm_mday);
     item->setText(colDate, day);
-    item->setText(colPilot, e->pilotName);
-    item->setText(colGlider, e->gliderID);
-    QTime time (e->firstTime.tm_hour, e->firstTime.tm_min,e->firstTime.tm_sec);
+    item->setText(colPilot, dirListItem->pilotName);
+    item->setText(colGlider, dirListItem->gliderID);
+    QTime time(dirListItem->firstTime.tm_hour, dirListItem->firstTime.tm_min, dirListItem->firstTime.tm_sec);
     item->setText(colFirstPoint, time.toString(Qt::LocalDate));
-    time = QTime(e->lastTime.tm_hour, e->lastTime.tm_min,e->lastTime.tm_sec);
+    time = QTime(dirListItem->lastTime.tm_hour, dirListItem->lastTime.tm_min, dirListItem->lastTime.tm_sec);
     item->setText(colLastPoint, time.toString(Qt::LocalDate));
-    time = QTime().addSecs (e->duration);
+    time = QTime().addSecs (dirListItem->duration);
     item->setText(colDuration, time.toString(Qt::LocalDate));
   }
   QApplication::restoreOverrideCursor();
@@ -887,7 +886,7 @@ void RecorderDialog::slotReadFlightList()
 
 void RecorderDialog::slotDownloadFlight()
 {
-  QListViewItem *item = flightList->currentItem();
+  Q3ListViewItem *item = flightList->currentItem();
   int ret;
   QString errorDetails;
 
@@ -904,28 +903,28 @@ void RecorderDialog::slotDownloadFlight()
   int flightID(item->text(colID).toInt() - 1);
 
   //warning("Loading flight %d (%d)", flightID, flightList->itemPos(item));
-  warning("%s", (const char*)dirList.at(flightID)->longFileName);
-  warning("%s", (const char*)dirList.at(flightID)->shortFileName);
+  qWarning("%s", (const char*)dirList.at(flightID)->longFileName);
+  qWarning("%s", (const char*)dirList.at(flightID)->shortFileName);
 
 //  QTimer::singleShot( 0, this, SLOT(slotDisablePages()) );
 
-  warning("fileName: %s", fileName.latin1());
+  qWarning("fileName: %s", fileName.latin1());
   if(useLongNames->isChecked()) {
     fileName += dirList.at(flightID)->longFileName.upper();
   }
   else {
     fileName += dirList.at(flightID)->shortFileName.upper();
   }
-  warning("flightdir: %s, filename: %s", flightDir.latin1(), fileName.latin1());
+  qWarning("flightdir: %s, filename: %s", flightDir.latin1(), fileName.latin1());
 //  KFileDialog* dlg = new KFileDialog(flightDir, "*.igc *.IGC ", this,
 //         tr("Select IGC File"), true);
-  QFileDialog* dlg = new QFileDialog(flightDir, tr("*.igc *.IGC|IGC files"), this, "Select IGC File");
+  Q3FileDialog* dlg = new Q3FileDialog(flightDir, tr("*.igc *.IGC|IGC files"), this, "Select IGC File");
   dlg->setSelection(fileName);
-  dlg->setMode(QFileDialog::AnyFile);
+  dlg->setMode(Q3FileDialog::AnyFile);
   dlg->setCaption(tr("Select IGC file to save to"));
   dlg->show();
 
-  QUrl fUrl = dlg->url();
+  Q3Url fUrl = dlg->url();
 
   if(fUrl.isLocalFile())
     fileName = fUrl.path();
@@ -933,13 +932,13 @@ void RecorderDialog::slotDownloadFlight()
     return;
 
   QMessageBox* statusDlg = new QMessageBox ( tr("downloading flight"), tr("downloading flight"),
-      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
-      QMessageBox::NoButton, this, "statusDialog", true);
+      QMessageBox::Information, Qt::NoButton, Qt::NoButton,
+      Qt::NoButton, this, "statusDialog", true);
   statusDlg->show();
 
   qApp->processEvents();
 
-  warning("%s", (const char*)fileName);
+  qWarning("%s", (const char*)fileName);
 
   if (!activeRecorder) return;
 
@@ -952,9 +951,9 @@ void RecorderDialog::slotDownloadFlight()
   qApp->processEvents();
   QApplication::restoreOverrideCursor();
   if (ret == FR_ERROR) {
-    warning("ERROR");
+    qWarning("ERROR");
     if ((errorDetails = activeRecorder->lastError()) != "") {
-      warning("%s", (const char*)errorDetails);
+      qWarning("%s", (const char*)errorDetails);
       QMessageBox::critical(this,
           tr("Library Error"),
           tr("There was an error downloading the flight!") + errorDetails, QMessageBox::Ok, 0);
@@ -974,8 +973,8 @@ void RecorderDialog::slotDownloadFlight()
 void RecorderDialog::slotWriteDeclaration()
 {
   QMessageBox* statusDlg = new QMessageBox ( tr("send declaration"), tr("send flightdeclaration to the recorder"),
-      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
-      QMessageBox::NoButton, this, "statusDialog", true);
+      QMessageBox::Information, Qt::NoButton, Qt::NoButton,
+      Qt::NoButton, this, "statusDialog", true);
   statusDlg->show();
 
   int ret;
@@ -999,9 +998,9 @@ void RecorderDialog::slotWriteDeclaration()
 
 
   if (taskSelection->currentItem() >= 0) {
-    QPtrList<Waypoint> wpList = tasks->at(taskSelection->currentItem())->getWPList();
+    QList<Waypoint*> wpList = tasks->at(taskSelection->currentItem())->getWPList();
 
-    warning("Writing task to logger...");
+    qWarning("Writing task to logger...");
 
     ret=activeRecorder->writeDeclaration(&taskDecl,&wpList);
 
@@ -1026,7 +1025,7 @@ void RecorderDialog::slotWriteDeclaration()
       return;
     }
 
-    warning("   ... ready (%d)", ret);
+    qWarning("   ... ready (%d)", ret);
     QMessageBox::information(this,
         tr("Declaration upload"),
         tr("The declaration was uploaded to the recorder."), QMessageBox::Ok, 0);
@@ -1048,11 +1047,11 @@ int RecorderDialog::__fillDirList()
 
 bool RecorderDialog::__openLib(const QString& libN)
 {
-  warning("__openLib(%s)", (const char*) libN);
+  qWarning("__openLib(%s)", (const char*) libN);
   char* error;
 
   if (libName==libN) {
-    warning("OK, Lib allready open.");
+    qWarning("OK, Lib allready open.");
     return true;
   }
   qDebug("Opening lib %s...",libN.latin1());
@@ -1073,21 +1072,21 @@ bool RecorderDialog::__openLib(const QString& libN)
   error = (char *)dlerror();
   if (error != NULL)
   {
-    warning("%s", (const char*)error);
+    qWarning("%s", (const char*)error);
     return false;
   }
 
   FlightRecorderPluginBase* (*getRecorder)();
   getRecorder = (FlightRecorderPluginBase* (*) ()) dlsym(libHandle, "getRecorder");
   if (!getRecorder) {
-    warning("getRecorder funtion not defined in lib. Lib can't be used.");
+    qWarning("getRecorder funtion not defined in lib. Lib can't be used.");
     return false;
   }
 
   activeRecorder=getRecorder();
 
   if(!activeRecorder) {
-    warning("No recorder object returned!");
+    qWarning("No recorder object returned!");
     return false;
   }
 
@@ -1107,10 +1106,11 @@ void RecorderDialog::slotSwitchTask(int idx)
 
   declarationList->clear();
   if(task) {
-    QPtrList<Waypoint> wpList = ((FlightTask*)task)->getWPList();
+    QList<Waypoint*> wpList = ((FlightTask*)task)->getWPList();
     int loop = 1;
-    for(Waypoint *wp = wpList.first(); wp; wp = wpList.next()) {
-      QListViewItem* item = new QListViewItem(declarationList);
+    Waypoint *wp;
+    foreach(wp, wpList) {
+      Q3ListViewItem* item = new Q3ListViewItem(declarationList);
       idS.sprintf("%2d", loop++);
       item->setText(declarationColID, idS);
       item->setText(declarationColName, wp->name);
@@ -1123,13 +1123,13 @@ void RecorderDialog::slotSwitchTask(int idx)
 void RecorderDialog::slotReadTasks()
 {
   QMessageBox* statusDlg = new QMessageBox ( tr("Downloading tasks"), tr("Downloading tasks"),
-      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
-      QMessageBox::NoButton, this, "statusDialog", true);
+      QMessageBox::Information, Qt::NoButton, Qt::NoButton,
+      Qt::NoButton, this, "statusDialog", true);
   statusDlg->show();
 
   FlightTask *task;
   Waypoint *wp;
-  QPtrList<Waypoint> wpList;
+  QList<Waypoint*> wpList;
   extern MapContents _globalMapContents;
   extern MapMatrix _globalMapMatrix;
   int ret;
@@ -1158,13 +1158,12 @@ void RecorderDialog::slotReadTasks()
     }
   }
   else {
-    for (task = tasks->first(); task; task = tasks->next()) {
+    foreach(task, *tasks) {
       wpList = task->getWPList();
       // here we overwrite the original task name (if needed) to get a unique internal name
       task->setTaskName(_globalMapContents.genTaskName(task->getFileName()));
-      for (wp = wpList.first(); wp; wp = wpList.next()) {
+      foreach(wp, wpList)
         wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
-      }
       task->setWaypointList(wpList);
       emit addTask(task);
       cnt++;
@@ -1182,20 +1181,19 @@ void RecorderDialog::slotReadTasks()
 void RecorderDialog::slotWriteTasks()
 {
   QMessageBox* statusDlg = new QMessageBox ( tr("send tasks to recorder"), tr("send tasks to recorder"),
-      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
-      QMessageBox::NoButton, this, "statusDialog", true);
+      QMessageBox::Information, Qt::NoButton, Qt::NoButton,
+      Qt::NoButton, this, "statusDialog", true);
   statusDlg->show();
 
 
-  unsigned int maxNrWayPointsPerTask;
-  unsigned int maxNrTasks;
+  int maxNrWayPointsPerTask;
+  int maxNrTasks;
   QString e;
   FlightTask *task;
   Waypoint *wp;
-  QPtrList<FlightTask> frTasks;
-  QPtrList<Waypoint> wpListOrig;
-  QPtrList<Waypoint> wpListCopy;
-  frTasks.setAutoDelete(true);
+  QList<FlightTask*> frTasks;
+  QList<Waypoint*> wpListOrig;
+  QList<Waypoint*> wpListCopy;
   int cnt=0;
   QString errorDetails;
 
@@ -1223,7 +1221,7 @@ void RecorderDialog::slotWriteTasks()
                        tr("Cannot obtain max number of waypoints per task!"), QMessageBox::Ok, 0);
   }
   else {
-    for (task = tasks->first(); task; task = tasks->next()) {
+    foreach(task, *tasks) {
       if (frTasks.count() > maxNrTasks) {
         e.sprintf(tr("Maximum number of %d tasks reached!\n"
                        "Further tasks will be ignored."), maxNrTasks);
@@ -1239,7 +1237,7 @@ void RecorderDialog::slotWriteTasks()
 
       wpListOrig = task->getWPList();
       wpListCopy.clear();
-      for (wp = wpListOrig.first(); wp; wp = wpListOrig.next()){
+      foreach(wp, wpListOrig){
         if (wpListCopy.count() > maxNrWayPointsPerTask) {
           e.sprintf(tr("Maximum number of turnpoints/task %d in %s reached!\n"
                          "Further turnpoints will be ignored."),
@@ -1277,6 +1275,8 @@ void RecorderDialog::slotWriteTasks()
     }
   }
 
+  while(!frTasks.empty())
+      delete frTasks.takeFirst();
   delete statusDlg;
 }
 
@@ -1285,7 +1285,7 @@ void RecorderDialog::slotReadWaypoints()
   int ret;
   int cnt=0;
   QString e;
-  QPtrList<Waypoint> frWaypoints;
+  QList<Waypoint*> frWaypoints;
   Waypoint *wp;
   QString errorDetails;
 
@@ -1298,8 +1298,8 @@ void RecorderDialog::slotReadWaypoints()
   }
 
   QMessageBox* statusDlg = new QMessageBox (tr("Reading waypoints"), tr("Reading Waypoints"),
-      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
-      QMessageBox::NoButton, this, "statusDialog", true);
+      QMessageBox::Information, Qt::NoButton, Qt::NoButton,
+      Qt::NoButton, this, "statusDialog", true);
   statusDlg->show();
 
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
@@ -1322,8 +1322,8 @@ void RecorderDialog::slotReadWaypoints()
   } else {
     WaypointCatalog *w = new WaypointCatalog(selectType->currentText() + "_" + serID->text());
     w->modified = true;
-    for (wp = frWaypoints.first(); wp; wp = frWaypoints.next()) {
-      w->wpList.insertItem(wp);
+    foreach(wp, frWaypoints) {
+      w->insertWaypoint(wp);
       cnt++;
     }
 
@@ -1341,14 +1341,14 @@ void RecorderDialog::slotReadWaypoints()
 void RecorderDialog::slotWriteWaypoints()
 {
   QMessageBox* statusDlg = new QMessageBox ( tr("send waypoints"), tr("send waypoints"),
-      QMessageBox::Information, QMessageBox::NoButton, QMessageBox::NoButton,
-      QMessageBox::NoButton, this, "statusDialog", true);
+      QMessageBox::Information, Qt::NoButton, Qt::NoButton,
+      Qt::NoButton, this, "statusDialog", true);
   statusDlg->show();
 
-  unsigned int maxNrWaypoints;
+  int maxNrWaypoints;
   QString e;
   Waypoint *wp;
-  QPtrList<Waypoint> frWaypoints;
+  QList<Waypoint*> frWaypoints;
   int cnt=0;
   QString errorDetails;
 
@@ -1375,7 +1375,7 @@ void RecorderDialog::slotWriteWaypoints()
                        tr("Cannot obtain maximum number of waypoints from lib."), QMessageBox::Ok, 0);
   }
   else {
-    for (wp = waypoints->first(); wp; wp = waypoints->next()){
+    foreach(wp, *waypoints) {
       if (frWaypoints.count() > maxNrWaypoints) {
         e.sprintf(tr("Maximum number of %d waypoints reached!\n"
                        "Further waypoints will be ignored."), maxNrWaypoints);
@@ -1630,7 +1630,7 @@ void RecorderDialog::slotRecorderTypeChanged(const QString&) // name)
 
   }
   if(!__openLib(name)) {
-    warning("%s", (const char*)tr("Could not open lib!"));
+    qWarning("%s", (const char*)tr("Could not open lib!"));
     __setRecorderConnectionType(FlightRecorderPluginBase::none);
     return;
   }
@@ -1663,19 +1663,19 @@ void RecorderDialog::__addPilotPage()
 /** No descriptions */
 void RecorderDialog::__addConfigPage()
 {
-  QListViewItem *item = new QListViewItem(setupTree, tr("Configuration"), "Configuration");
+  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Configuration"), "Configuration");
   item->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/kde_configure_48.png");
 
-  configPage = new QFrame(this, "Recorder configuration");
+  configPage = new Q3Frame(this, "Recorder configuration");
   configPage->hide();
   configLayout->addMultiCellWidget(configPage, 0, 0, 1, 2);
 
   QGridLayout* configLayout = new QGridLayout(configPage, 16, 8, 10, 1);
 
-  QGroupBox* gGroup = new QGroupBox(configPage, "gliderGroup");
+  Q3GroupBox* gGroup = new Q3GroupBox(configPage, "gliderGroup");
   gGroup->setTitle(tr("Glider Settings") + ":");
 
-  QGroupBox* vGroup = new QGroupBox(configPage, "varioGroup");
+  Q3GroupBox* vGroup = new Q3GroupBox(configPage, "varioGroup");
   vGroup->setTitle(tr("Variometer Settings") + ":");
 
   configLayout->addMultiCellWidget(gGroup, 0, 4, 0, 7);
@@ -1806,7 +1806,7 @@ void RecorderDialog::__addConfigPage()
   vgrid->addWidget(new QLabel("     ", vGroup), 0, 4);  // Just a filler
 
   vgrid->addWidget(new QLabel(tr("Altitude:"), vGroup), 0, 5);
-  unitAltButtonGroup = new QButtonGroup(vGroup);
+  unitAltButtonGroup = new Q3ButtonGroup(vGroup);
   unitAltButtonGroup-> hide();
   unitAltButtonGroup-> setExclusive(true);
   QRadioButton *rb = new QRadioButton(tr("m"), vGroup);
@@ -1817,7 +1817,7 @@ void RecorderDialog::__addConfigPage()
   vgrid->addWidget(rb, 2, 5);
 
   vgrid->addWidget(new QLabel(tr("QNH:"), vGroup), 5, 5);
-  unitQNHButtonGroup = new QButtonGroup(vGroup);
+  unitQNHButtonGroup = new Q3ButtonGroup(vGroup);
   unitQNHButtonGroup-> hide();
   unitQNHButtonGroup-> setExclusive(true);
   rb = new QRadioButton(tr("mbar"), vGroup);
@@ -1828,7 +1828,7 @@ void RecorderDialog::__addConfigPage()
   vgrid->addWidget(rb, 7, 5);
 
   vgrid->addWidget(new QLabel(tr("Speed:"), vGroup), 0, 6);
-  unitSpeedButtonGroup = new QButtonGroup(vGroup);
+  unitSpeedButtonGroup = new Q3ButtonGroup(vGroup);
   unitSpeedButtonGroup-> hide();
   unitSpeedButtonGroup-> setExclusive(true);
   rb = new QRadioButton(tr("km/h"), vGroup);
@@ -1842,7 +1842,7 @@ void RecorderDialog::__addConfigPage()
   vgrid->addWidget(rb, 3, 6);
 
   vgrid->addWidget(new QLabel(tr("Vario:"), vGroup), 5, 6);
-  unitVarioButtonGroup = new QButtonGroup(vGroup);
+  unitVarioButtonGroup = new Q3ButtonGroup(vGroup);
   unitVarioButtonGroup-> hide();
   unitVarioButtonGroup-> setExclusive(true);
   rb = new QRadioButton(tr("m/s"), vGroup);
@@ -1853,7 +1853,7 @@ void RecorderDialog::__addConfigPage()
   vgrid->addWidget(rb, 7, 6);
 
   vgrid->addWidget(new QLabel(tr("Distance:"), vGroup), 0, 7);
-  unitDistButtonGroup = new QButtonGroup(vGroup);
+  unitDistButtonGroup = new Q3ButtonGroup(vGroup);
   unitDistButtonGroup-> hide();
   unitDistButtonGroup-> setExclusive(true);
   rb = new QRadioButton(tr("km"), vGroup);
@@ -1867,7 +1867,7 @@ void RecorderDialog::__addConfigPage()
   vgrid->addWidget(rb, 3, 7);
 
   vgrid->addWidget(new QLabel(tr("Temp.:"), vGroup), 5, 7);
-  unitTempButtonGroup = new QButtonGroup(vGroup);
+  unitTempButtonGroup = new Q3ButtonGroup(vGroup);
   unitTempButtonGroup-> hide();
   unitTempButtonGroup-> setExclusive(true);
   rb = new QRadioButton(tr("C"), vGroup);

@@ -16,6 +16,8 @@
 ***********************************************************************/
 
 #include "translationlist.h"
+//Added by qt3to4:
+#include <Q3PtrCollection>
 
 TranslationList::TranslationList()
 {
@@ -25,7 +27,7 @@ TranslationList::TranslationList()
 TranslationList::~TranslationList(){
 }
 
-int TranslationList::compareItems(QCollection::Item e1, QCollection::Item e2)
+int TranslationList::compareItems(Q3PtrCollection::Item e1, Q3PtrCollection::Item e2)
 {
   return (((TranslationElement *)e1)->text.compare(((TranslationElement *)e2)->text));
 }
@@ -33,7 +35,7 @@ int TranslationList::compareItems(QCollection::Item e1, QCollection::Item e2)
 /** append new element and idex by id */
 void TranslationList::append(const TranslationElement *item)
 {
-  QGList::append((void *)item);
+  Q3GList::append((void *)item);
   // index by id
   idIndex.insert(item->id, item);
 }

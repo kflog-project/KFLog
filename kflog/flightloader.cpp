@@ -15,13 +15,13 @@
 **
 ***********************************************************************/
 
-#include <qdatetime.h>
-#include <qmessagebox.h>
-#include <qprogressdialog.h>
-#include <qregexp.h>
-#include <qsettings.h>
-#include <qstring.h>
-#include <qtextstream.h>
+#include <QDateTime>
+#include <QMessageBox>
+#include <q3progressdialog.h>
+#include <QRegExp>
+#include <QSettings>
+#include <QString>
+#include <q3textstream.h>
 
 #include "elevationfinder.h"
 #include "flight.h"
@@ -44,7 +44,7 @@ bool FlightLoader::openFlight(QFile& flightFile)
           "<qt>" + QObject::tr("The selected file<BR><B>%1</B><BR>is empty!").arg(flightFile.name()) + "</qt>", QMessageBox::Ok, 0);
       return false;
     }
-  if(!flightFile.open(IO_ReadOnly))
+  if(!flightFile.open(QIODevice::ReadOnly))
     {
       QMessageBox::warning(0, QObject::tr("No permission to file"),
           "<qt>" + QObject::tr("You don't have permission to access file<BR><B>%1</B>").arg(flightFile.name() + "</qt>"), QMessageBox::Ok, 0);
@@ -74,7 +74,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 {
   extern QSettings _settings;
 
-  QProgressDialog importProgress(0,0,true);
+  Q3ProgressDialog importProgress(0,0,true);
 
   importProgress.setCaption(QObject::tr("Loading flight..."));
   importProgress.setLabelText(
@@ -89,7 +89,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   unsigned int fileLength = fInfo.size();
   unsigned int filePos = 0;
   QString s;
-  QTextStream stream(&igcFile);
+  Q3TextStream stream(&igcFile);
 
   QString pilotName, gliderType, gliderID, recorderID;
   QDate date;
@@ -101,13 +101,13 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   int cClass = Flight::NotSet;
 
   flightPoint newPoint;
-  QPtrList<flightPoint> flightRoute;
-  QPtrList<Waypoint> wpList;
+  QList<flightPoint*> flightRoute;
+  QList<Waypoint*> wpList;
   Waypoint* newWP;
   Waypoint* preWP;
   //bool isValid = true;
 
-  QValueVector<bOption> options;
+  Q3ValueVector<bOption> options;
 
   //
   // This regexp is used to check the syntax of the position-lines in
@@ -240,7 +240,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           if ( nrOfOpts < 1 || nrOfOpts > 10 )
           {
             // Must be wrong
-            warning("KFLog: Too much options in line %d of igc-file %s",
+            qWarning("KFLog: Too much options in line %d of igc-file %s",
                   lineCount, (const char*)igcFile.name());
           }
 
@@ -262,7 +262,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           // We have a point.
           // But we must proofe the linesyntax first.
           //
-          if(bRecord.match(s) == -1)
+          if(bRecord.indexIn(s) == -1)
             {
               // IO-Error !!!
               QString lineNr;
@@ -270,7 +270,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
               QMessageBox::warning(0, QObject::tr("Syntax-error in IGC-file"),
                   "<qt>" + QObject::tr("Syntax-error while loading igc-file"
                       "<BR><B>%1</B><BR>Aborting!").arg(igcFile.name()) + "</qt>", QMessageBox::Ok, 0);
-              warning("KFLog: Error in reading line %d in igc-file %s",
+              qWarning("KFLog: Error in reading line %d in igc-file %s",
                   lineCount, (const char*)igcFile.name());
               return false;
             }
@@ -286,7 +286,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
           // Scan the optional parts of the B record
           newPoint.engineNoise = -1;
-          QValueVector<bOption>::iterator bOpt;
+          Q3ValueVector<bOption>::iterator bOpt;
           for ( bOpt = options.begin(); bOpt < options.end(); bOpt++ ) {
             // Parse only known options
             if ( strncasecmp((*bOpt).mnemonic, "ENL", 3) == 0 )
@@ -314,7 +314,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           else if(s.mid(24,1) == "A") //isValid = true;
             ;
           else
-              fatal("KFLog: Wrong value found in igc-line!");
+              qWarning("KFLog: Wrong value found in igc-line!");
 
           if(curTime < preTime)
             {
@@ -406,7 +406,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 /** Parses a file downloaded with Gardown in DOS or a Garmin *.trk file */
 bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
 
-  QProgressDialog importProgress(0,0,true);
+  Q3ProgressDialog importProgress(0,0,true);
 
   importProgress.setCaption(QObject::tr("Loading flight..."));
   importProgress.setLabelText(
@@ -421,7 +421,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
   unsigned int fileLength = fInfo.size();
   unsigned int filePos = 0;
   QString s;
-  QTextStream stream(&gardownFile);
+  Q3TextStream stream(&gardownFile);
 
   QString pilotName, gliderType, gliderID, recorderID;
   QDate date;
@@ -432,8 +432,8 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
   int cClass;
 
   flightPoint newPoint;
-  QPtrList<flightPoint> flightRoute;
-  QPtrList<Waypoint> wpList;
+  QList<flightPoint*> flightRoute;
+  QList<Waypoint*> wpList;
 
   //
   // This regexp is used to check the syntax of the position-lines in

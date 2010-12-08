@@ -20,6 +20,11 @@
 
 // Qt headers
 #include <qwidget.h>
+//Added by qt3to4:
+#include <QPaintEvent>
+#include <QResizeEvent>
+#include <QMouseEvent>
+#include <QKeyEvent>
 
 // Application headers
 #include "igc3dviewstate.h"
@@ -113,6 +118,7 @@ class Igc3DView : public QWidget
 	 */
 	Igc3DPolyhedron* flightbox;
   void mousePressEvent(QMouseEvent* event);
+  int timerID;
 public slots: // Public slots
   /** No descriptions */
   void slotRedraw();

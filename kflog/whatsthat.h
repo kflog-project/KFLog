@@ -18,10 +18,10 @@
 #ifndef WHATSTHAT_H
 #define WHATSTHAT_H
 
-#include <qwidget.h>
-#include <qtimer.h>
-#include <qstring.h>
-#include <qsimplerichtext.h>
+#include <q3simplerichtext.h>
+#include <QString>
+#include <QTimer>
+#include <QWidget>
 
 
 /**Rip-off from Qt's QWhatsThis system in order to be able to control the lifespan.
@@ -48,7 +48,7 @@ protected:
     
 private:
     QString text;
-    QSimpleRichText* doc;
+    Q3SimpleRichText* doc;
     QString anchor;
     bool pressed;
     QWidget* widget;

@@ -18,8 +18,8 @@
 #define FRSTRUCTS_H
 
 #include <time.h>
-#include <qstring.h>
-#include <qptrlist.h>
+
+#include <QString>
 
 /**
  *

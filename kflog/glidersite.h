@@ -20,7 +20,6 @@
 
 #include "radiopoint.h"
 #include "runway.h"
-#include <qptrlist.h>
 
 /**
  * This class provides handling the glider-sites.
@@ -98,7 +97,7 @@ class GliderSite : public RadioPoint
     /**
      * Contains the runway-data.
      */
-    QPtrList<runway>* rwData;
+    Q3PtrList<runway>* rwData;
 };
 
 #endif

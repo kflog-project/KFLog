@@ -20,16 +20,16 @@
 #define FLIGHT_H
 
 #include <time.h>
+
+#include <QDateTime>
+#include <QList>
+#include <QString>
+#include <QStringList>
+
 #include "baseflightelement.h"
 #include "flighttask.h"
-#include "optimization.h"
 #include "map.h"
-
-#include <qdatetime.h>
-#include <qptrlist.h>
-#include <qstring.h>
-#include <qstrlist.h>
-#include <qptrlist.h>
+#include "optimization.h"
 
 struct statePoint
 {
@@ -63,8 +63,8 @@ class Flight : public BaseFlightElement
 	   * @param  date  The date of the flight
 	   */
     Flight(const QString& fileName, const QString& recID,
-  	    const QPtrList<flightPoint>& route, const QString& pName, const QString& gType,
-        const QString& gID, int cClass, const QPtrList<Waypoint>& wpL, const QDate& date);
+            const QList<flightPoint*>& route, const QString& pName, const QString& gType,
+        const QString& gID, int cClass, const QList<Waypoint*>& wpL, const QDate& date);
 	  /**
 	   * Destroys the flight-object.
 	   */
@@ -135,7 +135,7 @@ class Flight : public BaseFlightElement
    /**
     * @return the route
     */
-    QPtrList<flightPoint> getRoute() const;
+    QList<flightPoint*> getRoute() const;
     /**
      * @return the number of logged points.
      */
@@ -154,7 +154,7 @@ class Flight : public BaseFlightElement
      * @param  end  the index of the last point of the section. If the index
      *              is 0, the last point of the flight will be used.
      */
-    QStrList getFlightValues(unsigned int start = 0, unsigned int end = 0);
+    QStringList getFlightValues(unsigned int start = 0, unsigned int end = 0);
     /**
      * Creates a list with info about every state.
      * @return the info-statelist
@@ -164,7 +164,7 @@ class Flight : public BaseFlightElement
      * @param  end  the index of the last point of the section. If the index
      *              is 0, the last point of the flight will be used.
      */
-    QPtrList<statePoint> getFlightStates(unsigned int start = 0, unsigned int end = 0);
+    QList<statePoint*> getFlightStates(unsigned int start = 0, unsigned int end = 0);
     /**
      * @return the date of the flight.
      */
@@ -197,11 +197,11 @@ class Flight : public BaseFlightElement
     /**
 	   * @return the list of optimized waypoints if task is optimized else then orig waypoints
      */
-    virtual QPtrList<Waypoint> getWPList();
+    virtual QList<Waypoint*> getWPList();
     /**
 	   * @return the original list of waypoints
      */
-    QPtrList<Waypoint> getOriginalWPList();
+    QList<Waypoint*> getOriginalWPList();
     /**
      * @return the type of the task
      */
@@ -257,7 +257,7 @@ class Flight : public BaseFlightElement
     /**
      * @return the header-info of the igc-file (date, pilot-name, ...)
      */
-    QStrList getHeader();
+    QStringList getHeader();
     /** @return the competition-class */
     int getCompetitionClass() const;
     /**
@@ -348,7 +348,7 @@ class Flight : public BaseFlightElement
     unsigned int va_min;
     unsigned int va_max;
 
-    QPtrList<flightPoint> route;
+    QList<flightPoint*> route;
 
     QRect bBoxFlight;
     time_t startTime;
@@ -373,7 +373,7 @@ class Flight : public BaseFlightElement
     QPoint preAnimationPos;
     QPixmap pixAnimate;
     /** */
-    QStrList header;
+    QStringList header;
 };
 
 #endif

@@ -18,15 +18,15 @@
 #ifndef TASKDIALOG_H
 #define TASKDIALOG_H
 
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qdialog.h>
-#include <qdict.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qlistbox.h>
-#include <qradiobutton.h>
-#include <qwidget.h>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDialog>
+#include <q3dict.h>
+#include <QLabel>
+#include <QLineEdit>
+#include <q3listbox.h>
+#include <QRadioButton>
+#include <QWidget>
 
 #include "guicontrols/kfloglistview.h"
 #include "flighttask.h"
@@ -63,9 +63,9 @@ private slots: // Private slots
   void slotRemoveWaypoint();
 private: // Private attributes
   /**  */
-  QListBox *waypoints;
-  QDict<Waypoint> waypointDict;
-  QPtrList<Waypoint> wpList;
+  Q3ListBox *waypoints;
+  Q3Dict<Waypoint> waypointDict;
+  QList<Waypoint*> wpList;
   FlightTask *pTask;
   /**  */
   QLineEdit *name;

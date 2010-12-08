@@ -58,7 +58,7 @@ public:
   /*
    * Returns a list of recorded flights in this device.
    */
-  virtual int getFlightDir(QPtrList<FRDirEntry>*);
+  virtual int getFlightDir(QList<FRDirEntry*>*);
   /*
    * Download flights from the recorder
    */
@@ -70,7 +70,7 @@ public:
   /*
    * Write flight declaration to recorder
    */
-  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QPtrList<Waypoint> *taskPoints);
+  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
   /*
    * Read waypoint and flight declaration form from recorder into mem
    */
@@ -78,19 +78,19 @@ public:
   /*
    * Read tasks from recorder
    */
-  virtual int readTasks(QPtrList<FlightTask> *tasks);
+  virtual int readTasks(QList<FlightTask*> *tasks);
   /*
    * Write tasks to recorder
    */
-  virtual int writeTasks(QPtrList<FlightTask> *tasks);
+  virtual int writeTasks(QList<FlightTask*> *tasks);
   /*
    * Read waypoints from recorder
    */
-  virtual int readWaypoints(QPtrList<Waypoint> *waypoints);
+  virtual int readWaypoints(QList<Waypoint*> *waypoints);
   /*
    * Write waypoints to recorder
    */
-  virtual int writeWaypoints(QPtrList<Waypoint> *waypoints);
+  virtual int writeWaypoints(QList<Waypoint*> *waypoints);
 private:
   bool haveDatabase;
 

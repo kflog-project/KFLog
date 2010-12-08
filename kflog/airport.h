@@ -20,7 +20,6 @@
 
 #include "radiopoint.h"
 #include "runway.h"
-#include <qptrlist.h>
 
 /**
   * This class is used for handling airports. The object can be one of
@@ -96,7 +95,7 @@ class Airport : public RadioPoint
     /**
      * Contains the runway-data.
      */
-    QPtrList<runway>* rwData;
+    Q3PtrList<runway>* rwData;
 };
 
 #endif

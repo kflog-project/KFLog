@@ -24,13 +24,16 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3Frame>
 
 #define DELTA 4
 
 MapControlView::MapControlView(QWidget* parent)
-  : QFrame(parent, "mapcontrolview")
+  : Q3Frame(parent, "mapcontrolview")
 {
-  QFrame* navFrame = new QFrame(this);
+  Q3Frame* navFrame = new Q3Frame(this);
   QPushButton* nwB = new QPushButton(navFrame);
   nwB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_nw_22.png");
   nwB->setFixedHeight(nwB->sizeHint().height() + DELTA);
@@ -76,7 +79,7 @@ MapControlView::MapControlView(QWidget* parent)
   seB->setFixedHeight(seB->sizeHint().height() + DELTA);
   seB->setFixedWidth(seB->sizeHint().width() + DELTA);
 
-  QGridLayout* navLayout = new QGridLayout(navFrame, 5, 5, 0, 2, "navLayout");
+  Q3GridLayout* navLayout = new Q3GridLayout(navFrame, 5, 5, 0, 2, "navLayout");
   navLayout->addWidget(nwB,1,1);
   navLayout->addWidget(nB,1,2);
   navLayout->addWidget(neB,1,3);
@@ -103,10 +106,10 @@ MapControlView::MapControlView(QWidget* parent)
   QLabel* dimLabel = new QLabel(tr("Height / Width [km]:"), this, "Height/With QLabel");
   dimLabel->setMinimumHeight(dimLabel->sizeHint().height() + 5);
   dimText = new QLabel("125 / 130", this, "Dimension text QLabel");
-  dimText->setAlignment( AlignCenter );
+  dimText->setAlignment( Qt::AlignCenter );
 
-  dimText->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-  dimText->setBackgroundMode( PaletteLight );
+  dimText->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
+  dimText->setBackgroundMode( Qt::PaletteLight );
 
   QLabel* currentScaleLabel = new QLabel(tr("Scale:"), this, "Scale QLabel");
   currentScaleLabel->setMinimumHeight(
@@ -117,11 +120,11 @@ MapControlView::MapControlView(QWidget* parent)
   setScaleLabel->setMinimumWidth( setScaleLabel->sizeHint().width());
 
   setScaleLabel->setMinimumHeight(setScaleLabel->sizeHint().height());
-  currentScaleSlider = new QSlider(2,105,1,0, QSlider::Horizontal,this);
+  currentScaleSlider = new QSlider(2,105,1,0, Qt::Horizontal,this);
   currentScaleSlider->setMinimumHeight(
           currentScaleSlider->sizeHint().height());
 
-  QGridLayout* controlLayout = new QGridLayout(this,6,4,5,5, "controlLayout");
+  Q3GridLayout* controlLayout = new Q3GridLayout(this,6,4,5,5, "controlLayout");
 
 //   controlLayout->addMultiCellWidget(mapControl,0,0,0,3);
   controlLayout->addMultiCellWidget(navFrame,0,2,0,1);

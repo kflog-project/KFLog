@@ -18,14 +18,13 @@
 #ifndef _openairparser_h
 #define _openairparser_h
 
-#include <qstring.h>
-#include <qptrlist.h>
-#include <qmap.h>
-#include <qrect.h>
-#include <qdatetime.h>
-#include <qcstring.h>
-#include <qbuffer.h>
-#include <qdatastream.h>
+#include <QBuffer>
+#include <q3cstring.h>
+#include <QDataStream>
+#include <QDateTime>
+#include <QMap>
+#include <QRect>
+#include <QString>
 
 #include "basemapelement.h"
 #include "projectionbase.h"
@@ -71,7 +70,7 @@ public:
      *   file should be added to.
      */
 
-    uint load( QPtrList<Airspace>& list );
+    uint load(QList<Airspace*> &list);
 
 private:  //memberfunctions
 
@@ -84,7 +83,7 @@ private:  //memberfunctions
      * @param list the list of Airspace objects the objects in this
      *   file should be added to.
      */
-    bool parse(const QString& path, QPtrList<Airspace>& list);
+    bool parse(const QString& path, QList<Airspace*> &list);
 
 
     void resetState();
@@ -118,14 +117,14 @@ private:  //memberfunctions
     bool setHeaderData( QString &path );
 
 private: //members
-    QPtrList<Airspace> _airlist;
+    Q3PtrList<Airspace> _airlist;
     uint _lineNumber;
     uint _objCounter; // counter for allocated objects
     bool _isCurrentAirspace;
     QString asName;
     //QString asTypeLetter;
     BaseMapElement::objectType asType;
-    QPointArray asPA;
+    Q3PointArray asPA;
     int asUpper;
     BaseMapElement::elevationType asUpperType;
     int asLower;
@@ -141,14 +140,14 @@ private: //members
     // bounding box
     QRect *_boundingBox;
     // temporary data buffer
-    QCString *_bufData;
+    Q3CString *_bufData;
     QBuffer *_buffer;
     QDataStream *_outbuf;
 
     // header data members of compiled file
-    Q_UINT32 h_magic;
-    Q_INT8 h_fileType;
-    UINT16 h_fileVersion;
+    unsigned int h_magic;
+    char *h_fileType;
+    unsigned short h_fileVersion;
     QDateTime h_creationDateTime;
     QRect h_boundingBox;
     bool h_headerIsValid;

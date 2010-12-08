@@ -30,7 +30,7 @@ RadioPoint::~RadioPoint()
 
 }
 
-void RadioPoint::printMapElement(QPainter* printPainter, bool isText)
+void RadioPoint::printMapElement(QPainter* /*printPainter*/, bool /*isText*/)
 {
 
 }

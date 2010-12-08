@@ -16,13 +16,15 @@
 ***********************************************************************/
 
 #include <qfileinfo.h>
-#include <qtextstream.h>
+#include <q3textstream.h>
+//Added by qt3to4:
+#include <QLabel>
 
 #include "igcpreview.h"
 #include "mapcalc.h"
 
 IGCPreview::IGCPreview(QWidget* parent)
-  : QLabel(parent), QFilePreview()
+  : QLabel(parent), Q3FilePreview()
 {
   textLabel = this;
   textLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
@@ -33,7 +35,7 @@ IGCPreview::~IGCPreview()
   textLabel->setText("");
 }
 
-void IGCPreview::previewUrl(const QUrl &url)
+void IGCPreview::previewUrl(const Q3Url &url)
 {
   /******************************************************************
    * Sample Header:
@@ -70,10 +72,10 @@ void IGCPreview::previewUrl(const QUrl &url)
       (((QString)fInfo.extension()).lower() != "igc"))  return;
 
   QFile igcFile(fName);
-  if(!igcFile.open(IO_ReadOnly))  return;
+  if(!igcFile.open(QIODevice::ReadOnly))  return;
 
   QString s, pilotName, gliderType, gliderID, date;
-  QTextStream stream(&igcFile);
+  Q3TextStream stream(&igcFile);
 
   bool isFirst = true;
 

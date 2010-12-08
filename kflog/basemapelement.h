@@ -29,12 +29,11 @@
 #ifndef BASEMAPELEMENT_H
 #define BASEMAPELEMENT_H
 
-#include "resource.h"
+#include <QPainter>
 
-#include <qpainter.h>
-
-#include "mapmatrix.h"
 #include "mapconfig.h"
+#include "mapmatrix.h"
+#include "resource.h"
 
 class BaseMapElement
 {

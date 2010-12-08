@@ -18,14 +18,13 @@
 #ifndef EVALUATIONDIALOG_H
 #define EVALUATIONDIALOG_H
 
-#include <qcombobox.h>
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <qptrlist.h>
-#include <qscrollview.h>
-#include <qspinbox.h>
-#include <qslider.h>
-#include <qtextview.h>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QLabel>
+#include <q3scrollview.h>
+#include <QSpinBox>
+#include <QSlider>
+#include <QTextEdit>
 
 #include "wp.h"
 #include "evaluationframe.h"
@@ -90,7 +89,7 @@ class EvaluationDialog : public QWidget
   /*
    * Was ist mit diesen labels ???
    */
-  QTextView* textLabel;
+  QTextEdit* textLabel;
   QComboBox* combo_flight;
   Flight* flight;
   EvaluationFrame* evalFrame;

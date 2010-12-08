@@ -16,7 +16,7 @@
 #ifndef FLIGHTGROUPLISTVIEWITEM_H
 #define FLIGHTGROUPLISTVIEWITEM_H
 
-#include <qlistview.h>
+#include <q3listview.h>
 #define FLIGHTGROUPLISTVIEWITEM_TYPEID 10002
 class FlightGroup;
 class Flight;
@@ -30,14 +30,14 @@ class Flight;
   * @ref FlightGroupListViewItem(QListViewItem * parent, FlightGroup * flightGroup) constructor.
   */
 
-class FlightGroupListViewItem : public QListViewItem  {
+class FlightGroupListViewItem : public Q3ListViewItem  {
 public:
   /**
    * Constructor.
    * @param parent Reference to parent @ref QListViewItem
    * @param flight Reference to @ref FlightGroup object to display
    */
-  FlightGroupListViewItem(QListViewItem * parent, FlightGroup * flightGroup);
+  FlightGroupListViewItem(Q3ListViewItem * parent, FlightGroup * flightGroup);
   /**
    * Destructor
    */

@@ -19,11 +19,13 @@
 #define MAPCONTENTS_H
 
 #include <map>
-#include <qbitarray.h>
-#include <qfile.h>
-#include <qptrlist.h>
-#include <qobject.h>
-#include <qstrlist.h>
+
+#include <QBitArray>
+#include <QFile>
+#include <QList>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
+#include <QObject>
 
 #include "downloadlist.h"
 #include "flighttask.h"
@@ -106,7 +108,7 @@ class MapContents : public QObject
    *
    * @param  listIndex  the index of the list.
    */
-  unsigned int getListLength(int listIndex) const;
+  int getListLength(int listIndex) const;
 
   /**
    * Proofes, which mapsections are needed to draw the map and loads
@@ -160,8 +162,7 @@ class MapContents : public QObject
    * @param  maskP  The maskpainter of targetP
    * @param  listID  The index of the list to be drawn
    */
-  void drawList(QPainter* targetPainter, QPainter* maskPainter,
-                unsigned int listID);
+  void drawList(QPainter* targetPainter, QPainter* maskPainter, unsigned int listID);
 
   /**
    * Draws all isohypses into the given painter
@@ -184,7 +185,7 @@ class MapContents : public QObject
   /**
    * @returns the waypoint list
    */
-  QPtrList<Waypoint>* getWaypointList()
+  QList<Waypoint*>* getWaypointList()
   {
     return &wpList;
   };
@@ -201,12 +202,12 @@ class MapContents : public QObject
   /**
    * @return a pointer to the current flight index
    */
-  int getFlightIndex() { return flightList.at(); };
+  int getFlightIndex() { return currentFlightListIndex; };
 
   /**
    * @returns the flightList
    */
-  QPtrList<BaseFlightElement>* getFlightList();
+  QList<BaseFlightElement*> *getFlightList();
 
   /**
    * Converts the longitute or latitute into the internal format.
@@ -224,7 +225,7 @@ class MapContents : public QObject
   QString genTaskName();
   /** generate a task name, using the suggestion given. Prevents double task names */
   QString genTaskName(QString suggestion);
-  inline QPtrList<isoListEntry>* getIsohypseRegions(){return &regIsoLines;};
+  inline QList<isoListEntry*>* getIsohypseRegions(){return &regIsoLines;};
   /**
    * find the terrain elevation for the given point
    * @returns the elevation in meters or -1 if the elevation could not be found.
@@ -266,6 +267,7 @@ class MapContents : public QObject
   *  automatic download has finished
   */
   void slotDownloadFinished();
+  void slotDownloadFinished(QNetworkReply *networkReply);
   /** Re-projects any flights and tasks that may be loaded. */
   void reProject();
 
@@ -356,95 +358,99 @@ class MapContents : public QObject
   /**
    * airportList contains all airports.
    */
-  QPtrList<Airport> airportList;
+  QList<Airport*> airportList;
 
   /**
    * gliderSiteList contains all glider-sites.
    */
-  QPtrList<GliderSite> gliderSiteList;
+  QList<GliderSite*> gliderSiteList;
 
   /**
    * addSitesList contains all, ultra-light,
    * hang-glider-sites, free-balloon-sites, parachute-jumping-sites.
    * FIXME: Currently those sites are stored somewhere else?!?
    */
-  QPtrList<SinglePoint> addSitesList;
+  QList<SinglePoint*> addSitesList;
 
   /**
    * outList contains all outlanding-fields.
    */
-  QPtrList<SinglePoint> outList;
+  QList<SinglePoint*> outList;
 
   /**
    * navList contains all radio navigation facilities.
    */
-  QPtrList<RadioPoint> navList;
+  QList<RadioPoint*> navList;
 
   /**
    * airspaceList contails all airspaces.
 
    */
-  QPtrList<Airspace> airspaceList;
+  QList<Airspace*> airspaceList;
 
   /**
    * obstacleList contains all obstacles and -groups, as well
    * as the spots and passes.
    */
-  QPtrList<SinglePoint> obstacleList;
+  QList<SinglePoint*> obstacleList;
 
   /**
    * reportList contains all reporting points.
    */
-  QPtrList<SinglePoint> reportList;
+  QList<SinglePoint*> reportList;
 
   /**
    * cityList contails all cities (areas).
    */
-  QPtrList<LineElement> cityList;
+  QList<LineElement*> cityList;
 
   /**
    * villageList contains all villages, towns & cities (points).
    */
-    QPtrList<SinglePoint> villageList;
+  QList<SinglePoint*> villageList;
 
   /**
    * landmarkList contains all landmarks.
    */
-  QPtrList<SinglePoint> landmarkList;
+  QList<SinglePoint*> landmarkList;
 
   /**
    * roadList contails all roads.
    */
-  QPtrList<LineElement> roadList;
+  QList<LineElement*> roadList;
   /**
    * railList contains all railways and aerial railways.
    */
-  QPtrList<LineElement> railList;
+  QList<LineElement*> railList;
   /**
    * stationList contains all stations.
    */
-//  QPtrList<SinglePoint> stationList;
+//  QList<SinglePoint*> stationList;
   /**
    * hydroList contains all shorelines, rivers, lakes, ...
    */
-  QPtrList<LineElement> hydroList;
+  QList<LineElement*> hydroList;
   /**
    * topoList contains all topographical objects.
    */
-  QPtrList<LineElement> topoList;
+  QList<LineElement*> topoList;
   /**
    * isohypseList contains all isohypses.
    */
-  QPtrList< QPtrList<Isohypse> > isoList;
+  QList< QList<Isohypse*>* > isoList;
   /**
    * Contains list of all loaded Flight and FlightTask objects, wich are
    * both subclasses of BaseFlightElement.
    */
-  QPtrList<BaseFlightElement> flightList;
+  QList<BaseFlightElement*> flightList;
+  /**
+   * Pointer to the current flight visible on the map and in the rest of the widgets
+   */
+  BaseFlightElement *currentFlight;
   /**
    * This list is reset every time the current WaypointCatalog is changed.
    */
-  QPtrList<Waypoint> wpList;
+  QList<Waypoint*> wpList;
   /**
    * List of all map-section. Contains a "1" for all loaded section-files,
    * otherwise "0".
@@ -469,19 +475,25 @@ class MapContents : public QObject
    * List of all drawn isohypses.
    * Used to find the elevation belonging to a point on the map.
    */
-  QPtrList<isoListEntry> regIsoLines;
+  QList<isoListEntry*> regIsoLines;
 
   /**
    * List of all loaded isohypses (in world coordinates).
    * Used to find the elevation belonging to a flightpoint.
    */
-  QPtrList<isoListEntry> regIsoLinesWorld;
+  QList<isoListEntry*> regIsoLinesWorld;
   /**
    * downloads File from www.kflog.org, optionally waits until finished (blocking operation)
    */
   void __downloadFile(QString fileName, QString destString, bool wait=false);
+  QList<QPair<QUrl,QUrl> > downloadDestinations;
   /** */
   DownloadList* downloadList;
+  QNetworkAccessManager *downloadManager;
+  /**
+   * index of the current flight in flightList
+   */
+  int currentFlightListIndex;
 };
 
 enum AutoDownloadType {ADT_NotSet = 0, Automatic, Inhibited};
