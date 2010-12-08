@@ -1,13 +1,18 @@
 # KFLog qmake project file
 # $Id$
 
-QT += qt3support
+QT += qt3support \
+      network \
+      xml
 
 CONFIG += qt \
     warn_on \
     debug
+    
 TEMPLATE = app
-SOURCES = airport.cpp \
+
+SOURCES = \
+    airport.cpp \
     airspace.cpp \
     baseflightelement.cpp \
     basemapelement.cpp \
@@ -77,7 +82,9 @@ SOURCES = airport.cpp \
     whatsthat.cpp \
     guicontrols/coordedit.cpp \
     guicontrols/kfloglistview.cpp
-HEADERS = airport.h \
+    
+HEADERS = \
+    airport.h \
     airspace.h \
     baseflightelement.h \
     basemapelement.h \
@@ -153,7 +160,9 @@ HEADERS = airport.h \
     wp.h \
     guicontrols/coordedit.h \
     guicontrols/kfloglistview.h
+    
 FORMS = optimizationwizard.ui
+
 pics.extra = mkdir \
     -p \
     ~/.kflog/pics/; \
@@ -186,12 +195,10 @@ pics.extra = mkdir \
     cp \
     ../README-AIRSPACE \
     ~/.kflog/mapdata/airspaces/README-AIRSPACE
+    
 pics.path = ./pics
 pics.files = 
-INSTALLS += pics
-DESTDIR = ../release
 
-# The following line was inserted by qt3to4
-QT += xml \
-    qt3support \
-    network
+INSTALLS += pics
+
+DESTDIR = ../release
