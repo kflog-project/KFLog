@@ -9,15 +9,13 @@
 **   Copyright (c):  2001 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#include <QApplication>
-#include <QSettings>
-#include <QTimer>
+#include <QtGui>
 
 #include "kflog.h"
 #include "kflogconfig.h"
@@ -27,13 +25,13 @@
 #include "mapmatrix.h"
 
 /**
- * Contains all mapelements and takes control over drawing or printing
+ * Contains all map elements and takes control over drawing or printing
  * the elements.
  */
 MapContents _globalMapContents;
 
 /**
- * Used for transforming the mapitems.
+ * Used for transforming the map items.
  */
 MapMatrix _globalMapMatrix;
 
@@ -45,10 +43,10 @@ MapConfig _globalMapConfig;
 /**
  * Contains all settings of KFLog.
  */
-QSettings _settings;
+QSettings _settings( QSettings::UserScope, "KFLog" );
 
 /**
- * List of commandline-options
+ * List of command line-options
  */
 
 //static KCmdLineOptions options[] =
@@ -114,79 +112,110 @@ int main(int argc, char **argv)
 //  aboutData.setTranslator(qstrdup(QObject::tr("_: NAME OF TRANSLATORS\nYour names")),
 //    qstrdup(QObject::tr("_: EMAIL OF TRANSLATORS\nYour emails")));
 
-  QApplication app(argc, argv);
-  BaseMapElement::initMapElement(&_globalMapMatrix, &_globalMapConfig);
+  QApplication app( argc, argv );
+  BaseMapElement::initMapElement( &_globalMapMatrix, &_globalMapConfig );
 
-  QSettings _settings;
-  _settings.setPath("KFLog.com", "KFLog");
+  QCoreApplication::setOrganizationName("KFLog");
+  QCoreApplication::setOrganizationDomain("www.kflog.org");
 
-  KFLog * kflog = new KFLog();
+  KFLog *kflog = new KFLog();
   kflog->show();
 
   QString argument, fileOpenIGC, fileExportPNG, width = "640", height = "480";
   QString waypointsOptionArg;
+
   bool batch = false, comment = true, exportPNG = false, fileOpen = false;
-  for(int i = 0; i<app.argc(); i++) {
-    argument = QString(app.argv()[i]);
-    if(argument=="--batch" || argument=="-b") {
-      batch = true;
-    } else if((argument=="--export-png" || argument=="-e") && i+2<app.argc()) {
-      exportPNG = true;
-      fileExportPNG = QString(app.argv()[i++]);
-    } else if(argument=="--export-png" || argument=="-e") {
-      exportPNG = true;
-      fileExportPNG = QString("file:out.png");
-    } else if(argument=="--height" || argument=="-h") {
-      if(i+2<app.argc())
-        height = QString(app.argv()[i++]);
-    } else if(argument=="--width" || argument=="-w") {
-      if(i+2<app.argc())
-        width = QString(app.argv()[i++]);
-    } else if(argument=="--nocomment" || argument=="-c") {
-      comment = false;
-    } else if(argument=="--waypoints" && i+1<app.argc()) {
-      waypointsOptionArg = app.argv()[i++];
-    } else if(i!=0) {
-      fileOpen = true;
-      fileOpenIGC = QString(app.argv()[i]);
+
+  for( int i = 0; i < app.argc(); i++ )
+    {
+      argument = QString( app.argv()[i] );
+      if( argument == "--batch" || argument == "-b" )
+        {
+          batch = true;
+        }
+      else if( (argument == "--export-png" || argument == "-e") && i + 2
+          < app.argc() )
+        {
+          exportPNG = true;
+          fileExportPNG = QString( app.argv()[i++] );
+        }
+      else if( argument == "--export-png" || argument == "-e" )
+        {
+          exportPNG = true;
+          fileExportPNG = QString( "file:out.png" );
+        }
+      else if( argument == "--height" || argument == "-h" )
+        {
+          if( i + 2 < app.argc() )
+            height = QString( app.argv()[i++] );
+        }
+      else if( argument == "--width" || argument == "-w" )
+        {
+          if( i + 2 < app.argc() )
+            width = QString( app.argv()[i++] );
+        }
+      else if( argument == "--nocomment" || argument == "-c" )
+        {
+          comment = false;
+        }
+      else if( argument == "--waypoints" && i + 1 < app.argc() )
+        {
+          waypointsOptionArg = app.argv()[i++];
+        }
+      else if( i != 0 )
+        {
+          fileOpen = true;
+          fileOpenIGC = QString( app.argv()[i] );
+        }
     }
-  }
 
-  if(!waypointsOptionArg.isEmpty()) {
-    qWarning("WaypointCatalog specified at startup : %s", (const char*)waypointsOptionArg);
-    kflog->slotSetWaypointCatalog(waypointsOptionArg);
-  }
-  else {
-    // read the user configuration
-    int useCatalog = _settings.readNumEntry("/KFLog/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed);
-    switch (useCatalog) {
-    case KFLogConfig::LastUsed:
-      // no break;
-    case KFLogConfig::Specific:
-      waypointsOptionArg = _settings.readEntry("/KFLog/Waypoints/DefaultCatalogName", "");
-      kflog->slotSetWaypointCatalog(waypointsOptionArg);
+  if( !waypointsOptionArg.isEmpty() )
+    {
+      qWarning() << "WaypointCatalog specified at startup"
+                 << waypointsOptionArg;
+
+      kflog->slotSetWaypointCatalog( waypointsOptionArg );
     }
-  }
+  else
+    {
+      // read the user configuration
+      int useCatalog = _settings.readNumEntry("/KFLog/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed );
 
-  if(fileOpen) {
-      if(exportPNG){
-        _settings.writeEntry("/KFLog/GeneralOptions/ShowWaypointWarnings", false);
-      }
-      kflog->slotOpenFile((const char*)fileOpenIGC);
+      switch( useCatalog )
+        {
+        case KFLogConfig::LastUsed:
+          // no break;
+        case KFLogConfig::Specific:
+          waypointsOptionArg = _settings.readEntry( "/KFLog/Waypoints/DefaultCatalogName", "" );
+          kflog->slotSetWaypointCatalog( waypointsOptionArg );
+        }
+    }
 
-      if(exportPNG){
-        _settings.writeEntry("/KFLog/CommentSettings/ShowComment", comment);
-        qWarning("Writing PNG...");
-        QUrl url(fileExportPNG);
-        kflog->slotSavePixmap(url, width.toInt(), height.toInt());
-      }
+  if( fileOpen )
+    {
+      if( exportPNG )
+        {
+          _settings.writeEntry( "/KFLog/GeneralOptions/ShowWaypointWarnings", false );
+        }
 
-      if(batch){
-        qWarning("Exiting.");
-        return 0;
-      }
+      kflog->slotOpenFile( (const char*) fileOpenIGC );
 
-  }
+      if( exportPNG )
+        {
+          _settings.writeEntry( "/KFLog/CommentSettings/ShowComment", comment );
+          qWarning() << "Writing PNG...";
+          QUrl url( fileExportPNG );
+          kflog->slotSavePixmap( url, width.toInt(), height.toInt() );
+        }
+
+      if( batch )
+        {
+          qWarning() << "Exiting.";
+          return 0;
+        }
+
+    }
+
   QTimer::singleShot(700, kflog, SLOT(slotStartComplete()));
 
   return app.exec();
