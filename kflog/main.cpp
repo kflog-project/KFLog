@@ -41,9 +41,10 @@ MapMatrix _globalMapMatrix;
 MapConfig _globalMapConfig;
 
 /**
- * Contains all settings of KFLog.
+ * Contains all settings of KFLog. The setting file is stored under
+ * $HOME/.config/KFLog as kflog.conf.
  */
-QSettings _settings( QSettings::UserScope, "KFLog" );
+QSettings _settings( QSettings::UserScope, "KFLog", "kflog" );
 
 /**
  * List of command line-options
@@ -117,6 +118,7 @@ int main(int argc, char **argv)
 
   QCoreApplication::setOrganizationName("KFLog");
   QCoreApplication::setOrganizationDomain("www.kflog.org");
+  QCoreApplication::setApplicationName("kflog");
 
   KFLog *kflog = new KFLog();
   kflog->show();
