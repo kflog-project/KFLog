@@ -2,7 +2,7 @@
 **
 **   evaluationframe.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
@@ -141,17 +141,17 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   // load settings from config file
   extern QSettings _settings;
 
-  secWidth = _settings.readNumEntry("/KFLog/Evaluation/ScaleTime",10);
+  secWidth = _settings.readNumEntry("/Evaluation/ScaleTime",10);
   spinScale->setValue(secWidth);
-  smoothness_va = _settings.readNumEntry("/KFLog/Evaluation/VarioSmoothness",0);
+  smoothness_va = _settings.readNumEntry("/Evaluation/VarioSmoothness",0);
   sliderVario->setValue(smoothness_va);
-  smoothness_v = _settings.readNumEntry("/KFLog/Evaluation/SpeedSmoothness",0);
+  smoothness_v = _settings.readNumEntry("/Evaluation/SpeedSmoothness",0);
   sliderSpeed->setValue(smoothness_v);
-  smoothness_h = _settings.readNumEntry("/KFLog/Evaluation/AltitudeSmoothness",0);
+  smoothness_h = _settings.readNumEntry("/Evaluation/AltitudeSmoothness",0);
   sliderBaro->setValue(smoothness_h);
-  check_vario->setChecked(_settings.readBoolEntry("/KFLog/Evaluation/Vario",true));
-  check_speed->setChecked(_settings.readBoolEntry("/KFLog/Evaluation/Speed",true));
-  check_baro->setChecked(_settings.readBoolEntry("/KFLog/Evaluation/Altitude",true));
+  check_vario->setChecked(_settings.readBoolEntry("/Evaluation/Vario",true));
+  check_speed->setChecked(_settings.readBoolEntry("/Evaluation/Speed",true));
+  check_baro->setChecked(_settings.readBoolEntry("/Evaluation/Altitude",true));
 
   this->connect(check_vario, SIGNAL(clicked()),
         SLOT(slotShowGraph()));
@@ -177,13 +177,13 @@ EvaluationFrame::~EvaluationFrame()
   // Save settings
   extern QSettings _settings;
 
-  _settings.writeEntry("/KFLog/Evaluation/ScaleTime", secWidth);
-  _settings.writeEntry("/KFLog/Evaluation/VarioSmoothness", smoothness_va);
-  _settings.writeEntry("/KFLog/Evaluation/AltitudeSmoothness", smoothness_h);
-  _settings.writeEntry("/KFLog/Evaluation/SpeedSmoothness", smoothness_v);
-  _settings.writeEntry("/KFLog/Evaluation/Vario", check_vario->isChecked());
-  _settings.writeEntry("/KFLog/Evaluation/Altitude", check_baro->isChecked());
-  _settings.writeEntry("/KFLog/Evaluation/Speed", check_speed->isChecked());
+  _settings.writeEntry("/Evaluation/ScaleTime", secWidth);
+  _settings.writeEntry("/Evaluation/VarioSmoothness", smoothness_va);
+  _settings.writeEntry("/Evaluation/AltitudeSmoothness", smoothness_h);
+  _settings.writeEntry("/Evaluation/SpeedSmoothness", smoothness_v);
+  _settings.writeEntry("/Evaluation/Vario", check_vario->isChecked());
+  _settings.writeEntry("/Evaluation/Altitude", check_baro->isChecked());
+  _settings.writeEntry("/Evaluation/Speed", check_speed->isChecked());
 }
 
 void EvaluationFrame::slotShowFlight()

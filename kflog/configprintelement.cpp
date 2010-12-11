@@ -2,7 +2,7 @@
 **
 **   configprintelement.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
@@ -1087,8 +1087,8 @@ void ConfigPrintElement::__fillStyle(QComboBox *pen, QComboBox *brush)
 
 void ConfigPrintElement::__readBorder(QString group, bool *b)
 {
-  b[0] = _settings.readBoolEntry("/KFLog/Map/"+group+"/PrintBorder1", true);
-  b[1] = _settings.readBoolEntry("/KFLog/Map/"+group+"/PrintBorder2", true);
+  b[0] = _settings.readBoolEntry("/Map/"+group+"/PrintBorder1", true);
+  b[1] = _settings.readBoolEntry("/Map/"+group+"/PrintBorder2", true);
 }
 
 void ConfigPrintElement::__readPen(QString group, Q3PtrList<QPen> *penList, bool *b,
@@ -1096,12 +1096,12 @@ void ConfigPrintElement::__readPen(QString group, Q3PtrList<QPen> *penList, bool
     Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2)
 {
   __readBorder(group, b);
-  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/PrintColor1", __color2String(defaultColor1))),
-        _settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenSize1", defaultPenSize1),
-        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenStyle1", defaultPenStyle1)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/PrintColor2", __color2String(defaultColor2))),
-        _settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenSize2", defaultPenSize2),
-        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenStyle2", defaultPenStyle2)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/PrintColor1", __color2String(defaultColor1))),
+        _settings.readNumEntry("/Map/"+group+"/PrintPenSize1", defaultPenSize1),
+        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PrintPenStyle1", defaultPenStyle1)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/PrintColor2", __color2String(defaultColor2))),
+        _settings.readNumEntry("/Map/"+group+"/PrintPenSize2", defaultPenSize2),
+        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PrintPenStyle2", defaultPenStyle2)));
 }
 
 void ConfigPrintElement::__readPenBrush(QString group, Q3PtrList<QPen> *penList, bool *b, Q3PtrList<QBrush> *brushList,
@@ -1111,10 +1111,10 @@ void ConfigPrintElement::__readPenBrush(QString group, Q3PtrList<QPen> *penList,
 {
   __readPen(group, penList, b, defaultColor1, defaultColor2, defaultPenSize1, defaultPenSize2,
       defaultPenStyle1, defaultPenStyle2);
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/PrintBrushColor1", __color2String(defaultBrushColor1))),
-        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintBrushStyle1", defaultBrushStyle1)));
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/PrintBrushColor2", __color2String(defaultBrushColor2))),
-        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintBrushStyle2", defaultBrushStyle2)));
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/PrintBrushColor1", __color2String(defaultBrushColor1))),
+        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/PrintBrushStyle1", defaultBrushStyle1)));
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/PrintBrushColor2", __color2String(defaultBrushColor2))),
+        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/PrintBrushStyle2", defaultBrushStyle2)));
 }
 
 void ConfigPrintElement::__saveBrush(Q3PtrList<QBrush> *brushList)
@@ -1176,22 +1176,22 @@ void ConfigPrintElement::__showPen(Q3PtrList<QPen> *penList, bool *b)
 void ConfigPrintElement::__writeBrush(QString group, Q3PtrList<QBrush> *brushList, Q3PtrList<QPen> *penList, bool *b)
 {
   __writePen(group, penList, b);
-  _settings.writeEntry("/KFLog/Map/"+group+"/PrintBrushColor1", __color2String(brushList->at(0)->color())); \
-  _settings.writeEntry("/KFLog/Map/"+group+"/PrintBrushColor2", __color2String(brushList->at(1)->color())); \
-  _settings.writeEntry("/KFLog/Map/"+group+"/PrintBrushStyle1", brushList->at(0)->style()); \
-  _settings.writeEntry("/KFLog/Map/"+group+"/PrintBrushStyle2", brushList->at(1)->style());
+  _settings.writeEntry("/Map/"+group+"/PrintBrushColor1", __color2String(brushList->at(0)->color())); \
+  _settings.writeEntry("/Map/"+group+"/PrintBrushColor2", __color2String(brushList->at(1)->color())); \
+  _settings.writeEntry("/Map/"+group+"/PrintBrushStyle1", brushList->at(0)->style()); \
+  _settings.writeEntry("/Map/"+group+"/PrintBrushStyle2", brushList->at(1)->style());
 }
 
 void ConfigPrintElement::__writePen(QString group, Q3PtrList<QPen> *penList, bool *b)
 {
-  _settings.writeEntry("/KFLog/Map/"+group+"/PrintColor1", __color2String(penList->at(0)->color()));
-  _settings.writeEntry("/KFLog/Map/"+group+"/PrintColor2", __color2String(penList->at(1)->color()));
-  _settings.writeEntry("/KFLog/Map/"+group+"/PrintPenSize1", (int)penList->at(0)->width());
-  _settings.writeEntry("/KFLog/Map/"+group+"/PrintPenSize2", (int)penList->at(1)->width());
-  _settings.writeEntry("/KFLog/Map/"+group+"/PrintPenStyle1", penList->at(0)->style());
-  _settings.writeEntry("/KFLog/Map/"+group+"/PrintPenStyle2", penList->at(1)->style());
-  _settings.writeEntry("/KFLog/Map/"+group+"/PrintBorder1", b[0]);
-  _settings.writeEntry("/KFLog/Map/"+group+"/PrintBorder2", ( b[1] && b[0] ) );
+  _settings.writeEntry("/Map/"+group+"/PrintColor1", __color2String(penList->at(0)->color()));
+  _settings.writeEntry("/Map/"+group+"/PrintColor2", __color2String(penList->at(1)->color()));
+  _settings.writeEntry("/Map/"+group+"/PrintPenSize1", (int)penList->at(0)->width());
+  _settings.writeEntry("/Map/"+group+"/PrintPenSize2", (int)penList->at(1)->width());
+  _settings.writeEntry("/Map/"+group+"/PrintPenStyle1", penList->at(0)->style());
+  _settings.writeEntry("/Map/"+group+"/PrintPenStyle2", penList->at(1)->style());
+  _settings.writeEntry("/Map/"+group+"/PrintBorder1", b[0]);
+  _settings.writeEntry("/Map/"+group+"/PrintBorder2", ( b[1] && b[0] ) );
 }
 
 /** this is a temporary function and it is not needed in Qt 4 */

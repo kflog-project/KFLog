@@ -104,11 +104,11 @@ bool Welt2000::load(QList<Airport*> &airportList, QList<GliderSite*> &gliderSite
   QString sd = "/airfields/";
 
   extern QSettings _settings;
-  QString mapDir = _settings.readEntry("/KFLog/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata");
+  QString mapDir = _settings.readEntry("/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata");
 
   QString pl = mapDir + sd + wl;
   QString pu = mapDir + sd + wu;
-  rename( pu.latin1(), pl.latin1() );
+  rename( pu.toLatin1().data(), pl.toLatin1().data() );
 
   QString w2PathTxt;
 
@@ -143,7 +143,7 @@ bool Welt2000::filter( QString& path )
 
   if( !in.open(QIODevice::ReadOnly) )
     {
-      qWarning("W2000: Cannot open airfield file %s!", path.latin1());
+      qWarning("W2000: Cannot open airfield file %s!", path.toLatin1().data());
       return false;
     }
 
@@ -169,13 +169,13 @@ bool Welt2000::filter( QString& path )
           if( !out.open(QIODevice::WriteOnly) )
             {
               in.close();
-              qWarning("W2000: Cannot open temporary file %s!", fout.latin1());
+              qWarning("W2000: Cannot open temporary file %s!", fout.toLatin1().data());
               return false;
             }
 
           outs.setDevice( &out );
-          outs << header1.latin1() << QDateTime::currentDateTime().toString().latin1() << '\n'
-               << header2.latin1() << '\n' << '\n';
+          outs << header1.toLatin1().data() << QDateTime::currentDateTime().toString().toLatin1().data() << '\n'
+               << header2.toLatin1().data() << '\n' << '\n';
           outLines += 2;
         }
 
@@ -192,7 +192,7 @@ bool Welt2000::filter( QString& path )
       // real comments are not filtered out
       if( line.startsWith("#") || line.startsWith("$") )
         {
-          outs << line.latin1() << '\n';
+          outs << line.toLatin1().data() << '\n';
           outLines++;
           continue;
         }
@@ -222,7 +222,7 @@ bool Welt2000::filter( QString& path )
           continue;
         }
 
-      outs << line.latin1() << '\n';
+      outs << line.toLatin1().data() << '\n';
       outLines++;
     }
 
@@ -232,12 +232,12 @@ bool Welt2000::filter( QString& path )
   if( outLines > 2 )
     {
       // overwrite old file with new extracted file
-      rename( fout.latin1(), path.latin1() );
+      rename( fout.toLatin1().data(), path.toLatin1().data() );
     }
   else
     {
       // remove unneeded file, if nothing could be extracted
-      unlink( fout.latin1() );
+      unlink( fout.toLatin1().data() );
     }
 
   return true;
@@ -269,7 +269,7 @@ bool Welt2000::readConfigEntries( QString &path )
 
   if( !in.open(QIODevice::ReadOnly) )
     {
-      qWarning("W2000: User has not provided a configuration file %s!", path.latin1());
+      qWarning("W2000: User has not provided a configuration file %s!", path.toLatin1().data());
       return false;
     }
 
@@ -336,7 +336,7 @@ bool Welt2000::readConfigEntries( QString &path )
               list[0] = list[0].stripWhiteSpace().upper(); // icao name of airfield
               list[1] = list[1].stripWhiteSpace(); // new map type for airfield
               c_icaoMap.insert( list[0], list[1] );
-              // qDebug("W2000: c_icaoMap.insert(%s, %s)", list[0].latin1(), list[1].latin1());
+              // qDebug("W2000: c_icaoMap.insert(%s, %s)", list[0].toLatin1().data(), list[1].toLatin1().data());
             }
           else if( list[0].contains("MAP_SHORT_NAME", false) )
             {
@@ -344,7 +344,7 @@ bool Welt2000::readConfigEntries( QString &path )
               list[0] = list[0].stripWhiteSpace(); // short name of airfield
               list[1] = list[1].stripWhiteSpace(); // new map type for airfield
               c_shortMap.insert( list[0], list[1] );
-              // qDebug("W2000: c_shortMap.insert(%s, %s)", list[0].latin1(), list[1].latin1());
+              // qDebug("W2000: c_shortMap.insert(%s, %s)", list[0].toLatin1().data(), list[1].toLatin1().data());
             }
         }
 
@@ -387,7 +387,7 @@ bool Welt2000::parse( QString &path,
 
   if( !in.open(QIODevice::ReadOnly) )
     {
-      qWarning("W2000: Cannot open airfield file %s!", path.latin1());
+      qWarning("W2000: Cannot open airfield file %s!", path.toLatin1().data());
       return false;
     }
 
@@ -406,7 +406,7 @@ bool Welt2000::parse( QString &path,
   // overwrite the definitions in the config file.
 
   extern QSettings _settings;
-  QString cFilter = _settings.readEntry("/KFLog/MapData/Welt2000CountryFilter", "");
+  QString cFilter = _settings.readEntry("/MapData/Welt2000CountryFilter", "");
 
   if( cFilter.length() > 0 )
     {
@@ -429,7 +429,7 @@ bool Welt2000::parse( QString &path,
     }
 
   // get home radius from config data
-  int radius = _settings.readNumEntry("/KFLog/MapData/Welt2000HomeRadius", 0);
+  int radius = _settings.readNumEntry("/MapData/Welt2000HomeRadius", 0);
 
   if( radius == 0 )
     {
@@ -714,7 +714,7 @@ bool Welt2000::parse( QString &path,
       if( ! ok )
         {
           qWarning( "W2000, Line %d: %s (%s) wrong latitude degree value, ignoring entry!",
-                    lineNo, afName.latin1(), country.latin1() );
+                    lineNo, afName.toLatin1().data(), country.toLatin1().data() );
           continue;
         }
 
@@ -723,7 +723,7 @@ bool Welt2000::parse( QString &path,
       if( ! ok )
         {
           qWarning( "W2000, Line %d: %s (%s) wrong latitude minute value, ignoring entry!",
-                    lineNo, afName.latin1(), country.latin1() );
+                    lineNo, afName.toLatin1().data(), country.toLatin1().data() );
           continue;
         }
 
@@ -732,7 +732,7 @@ bool Welt2000::parse( QString &path,
       if( ! ok )
         {
           qWarning( "W2000, Line %d: %s (%s) wrong latitude second value, ignoring entry!",
-                    lineNo, afName.latin1(), country.latin1() );
+                    lineNo, afName.toLatin1().data(), country.toLatin1().data() );
           continue;
         }
 
@@ -755,7 +755,7 @@ bool Welt2000::parse( QString &path,
       if( ! ok )
         {
           qWarning( "W2000, Line %d: %s (%s) wrong longitude degree value, ignoring entry!",
-                    lineNo, afName.latin1(), country.latin1() );
+                    lineNo, afName.toLatin1().data(), country.toLatin1().data() );
           continue;
         }
 
@@ -764,7 +764,7 @@ bool Welt2000::parse( QString &path,
       if( ! ok )
         {
           qWarning( "W2000, Line %d: %s (%s) wrong longitude minute value, ignoring entry!",
-                    lineNo, afName.latin1(), country.latin1() );
+                    lineNo, afName.toLatin1().data(), country.toLatin1().data() );
           continue;
         }
 
@@ -773,7 +773,7 @@ bool Welt2000::parse( QString &path,
       if( ! ok )
         {
           qWarning( "W2000, Line %d: %s (%s) wrong longitude second value, ignoring entry!",
-                    lineNo, afName.latin1(), country.latin1() );
+                    lineNo, afName.toLatin1().data(), country.toLatin1().data() );
           continue;
         }
 
@@ -793,8 +793,8 @@ bool Welt2000::parse( QString &path,
           // read point. Is the distance is over the user defined
           // value away we will ignore this point.
 
-          QPoint home( _settings.readNumEntry("/KFLog/MapData/HomesiteLatitude"),
-                       _settings.readNumEntry("/KFLog/MapData/HomesiteLongitude") );
+          QPoint home( _settings.readNumEntry("/MapData/HomesiteLatitude"),
+                       _settings.readNumEntry("/MapData/HomesiteLongitude") );
           QPoint af( lat, lon );
 
           double d = dist( &home, &af );
@@ -802,7 +802,7 @@ bool Welt2000::parse( QString &path,
           if( d > c_homeRadius )
             {
               // Distance is greater than defined radius in generalconfig
-              // qDebug("Ignoring Dist=%f, AF=%s", d, afName.latin1());
+              // qDebug("Ignoring Dist=%f, AF=%s", d, afName.toLatin1().data());
               continue;
             }
         }
@@ -829,7 +829,7 @@ bool Welt2000::parse( QString &path,
       if( ! ok )
         {
           //qWarning( "W2000, Line %d: %s (%s) missing or wrong elevation, set value to 0!",
-          //          lineNo, afName.latin1(), country.latin1() );
+          //          lineNo, afName.toLatin1().data(), country.toLatin1().data() );
           elevation = 0;
         }
 
@@ -842,7 +842,7 @@ bool Welt2000::parse( QString &path,
       if( !ok || f < 117.97 || f > 137.0 )
         {
           //qWarning( "W2000, Line %d: %s (%s) missing or wrong frequency, set value to 0!",
-          //          lineNo, afName.latin1(), country.latin1() );
+          //          lineNo, afName.toLatin1().data(), country.toLatin1().data() );
           frequency = "000.000";
         }
 
@@ -870,7 +870,7 @@ bool Welt2000::parse( QString &path,
       if( ! ok )
         {
           //qWarning( "W2000, Line %d: %s (%s) missing or wrong runway direction, set value to 0!",
-          //          lineNo, afName.latin1(), country.latin1() );
+          //          lineNo, afName.toLatin1().data(), country.toLatin1().data() );
           rwDir = 0;
         }
 
@@ -888,7 +888,7 @@ bool Welt2000::parse( QString &path,
       if( ! ok )
         {
           //qWarning( "W2000, Line %d: %s (%s) missing or wrong runway length, set value to 0!",
-          //          lineNo, afName.latin1(), country.latin1() );
+          //          lineNo, afName.toLatin1().data(), country.toLatin1().data() );
           rwLen = 0;
         }
       else
@@ -957,7 +957,7 @@ bool Welt2000::parse( QString &path,
   in.close();
 
   //qDebug( "W2000, Statistics from file %s: Parsing Time=%dms, Sum=%d, Airfields=%d, GL=%d, UL=%d",
-  //        basename(path.latin1()), t.elapsed(), af+gl+ul, af, gl, ul );
+  //        basename(path.toLatin1().data()), t.elapsed(), af+gl+ul, af, gl, ul );
 
   return true;
 }
@@ -989,7 +989,7 @@ bool Welt2000::setHeaderData( QString &path )
   QFile inFile(path);
   if( !inFile.open(QIODevice::ReadOnly) )
     {
-      qWarning("W2000: Cannot open airfield file %s!", path.latin1());
+      qWarning("W2000: Cannot open airfield file %s!", path.toLatin1().data());
       return false;
     }
 

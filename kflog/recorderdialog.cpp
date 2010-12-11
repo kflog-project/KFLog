@@ -2,7 +2,7 @@
 **
 **   recorderdialog.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
@@ -100,10 +100,10 @@ RecorderDialog::~RecorderDialog()
 {
   extern QSettings _settings;
 
-  _settings.writeEntry("/KFLog/RecorderDialog/Name", selectType->currentText());
-  _settings.writeEntry("/KFLog/RecorderDialog/Port", selectPort->currentItem());
-  _settings.writeEntry("/KFLog/RecorderDialog/Baud", _selectSpeed->currentItem());
-  _settings.writeEntry("/KFLog/RecorderDialog/URL",  selectURL->text());
+  _settings.writeEntry("/RecorderDialog/Name", selectType->currentText());
+  _settings.writeEntry("/RecorderDialog/Port", selectPort->currentItem());
+  _settings.writeEntry("/RecorderDialog/Baud", _selectSpeed->currentItem());
+  _settings.writeEntry("/RecorderDialog/URL",  selectURL->text());
 
   slotCloseRecorder();
   delete waypoints;
@@ -257,13 +257,13 @@ void RecorderDialog::__addSettingsPage()
 
   extern QSettings _settings;
 
-  selectPort->setCurrentItem(_settings.readNumEntry("/KFLog/RecorderDialog/Port", 0));
-  _selectSpeed->setCurrentItem(_settings.readNumEntry("/KFLog/RecorderDialog/Baud", 0));
-  QString name(_settings.readEntry("/KFLog/RecorderDialog/Name", 0)), fileName;
+  selectPort->setCurrentItem(_settings.readNumEntry("/RecorderDialog/Port", 0));
+  _selectSpeed->setCurrentItem(_settings.readNumEntry("/RecorderDialog/Baud", 0));
+  QString name(_settings.readEntry("/RecorderDialog/Name", 0)), fileName;
   QString pluginName = "";
   QString currentLibName = "";
   QString lineStream;
-  selectURL->setText(_settings.readEntry("/KFLog/RecorderDialog/URL", ""));
+  selectURL->setText(_settings.readEntry("/RecorderDialog/URL", ""));
   QFile settingFile;
 
   for(QStringList::Iterator it = configRec.begin(); it != configRec.end(); it++) {
@@ -539,7 +539,7 @@ void RecorderDialog::__addDeclarationPage()
 
   extern QSettings _settings;
 
-  pilotName->setText(_settings.readEntry("/KFLog/PersonalData/PilotName", ""));
+  pilotName->setText(_settings.readEntry("/PersonalData/PilotName", ""));
 
   foreach(e, *tasks)
     taskSelection->insertItem(e->getFileName() + " " + e->getTaskTypeString());
@@ -682,7 +682,7 @@ void RecorderDialog::slotConnectRecorder()
     return;
   portName = "/dev/" + selectPort->currentText();
   //QStringList::Iterator it = libNameList.at(selectType->currentItem());
-  //QString name = (*it).latin1();
+  //QString name = (*it).toLatin1().data();
   QString name=*libNameList[selectType->currentText()];
   int speed = _selectSpeed->currentText().toInt();
 
@@ -701,7 +701,7 @@ void RecorderDialog::slotConnectRecorder()
       isConnected=false;
       break;
     }
-    isConnected=(activeRecorder->openRecorder(portName.latin1(),speed)>=FR_OK);
+    isConnected=(activeRecorder->openRecorder(portName.toLatin1().data(),speed)>=FR_OK);
     break;
   case FlightRecorderPluginBase::URL:
   {
@@ -896,7 +896,7 @@ void RecorderDialog::slotDownloadFlight()
 
   extern QSettings _settings;
   // If no DefaultFlightDirectory is configured, we must use $HOME instead of the root-directory
-  QString flightDir = _settings.readEntry("/KFLog/Path/DefaultFlightDirectory", QDir::homeDirPath());
+  QString flightDir = _settings.readEntry("/Path/DefaultFlightDirectory", QDir::homeDirPath());
 
   QString fileName = flightDir + "/";
 
@@ -908,14 +908,14 @@ void RecorderDialog::slotDownloadFlight()
 
 //  QTimer::singleShot( 0, this, SLOT(slotDisablePages()) );
 
-  qWarning("fileName: %s", fileName.latin1());
+  qWarning("fileName: %s", fileName.toLatin1().data());
   if(useLongNames->isChecked()) {
     fileName += dirList.at(flightID)->longFileName.upper();
   }
   else {
     fileName += dirList.at(flightID)->shortFileName.upper();
   }
-  qWarning("flightdir: %s, filename: %s", flightDir.latin1(), fileName.latin1());
+  qWarning("flightdir: %s, filename: %s", flightDir.toLatin1().data(), fileName.toLatin1().data());
 //  KFileDialog* dlg = new KFileDialog(flightDir, "*.igc *.IGC ", this,
 //         tr("Select IGC File"), true);
   Q3FileDialog* dlg = new Q3FileDialog(flightDir, tr("*.igc *.IGC|IGC files"), this, "Select IGC File");
@@ -1054,7 +1054,7 @@ bool RecorderDialog::__openLib(const QString& libN)
     qWarning("OK, Lib allready open.");
     return true;
   }
-  qDebug("Opening lib %s...",libN.latin1());
+  qDebug("Opening lib %s...",libN.toLatin1().data());
 
   libName = "";
   apiID->setText("");
@@ -1241,7 +1241,7 @@ void RecorderDialog::slotWriteTasks()
         if (wpListCopy.count() > maxNrWayPointsPerTask) {
           e.sprintf(tr("Maximum number of turnpoints/task %d in %s reached!\n"
                          "Further turnpoints will be ignored."),
-                    maxNrWayPointsPerTask, task->getFileName().latin1());
+                    maxNrWayPointsPerTask, task->getFileName().toLatin1().data());
           if (QMessageBox::warning(this, tr("Recorder Warning"), e, tr("Continue"), tr("Cancel"))==1) {
             delete statusDlg;
             return;

@@ -2,7 +2,7 @@
  **
  **   taskdialog.cpp
  **
- **   This file is part of KFLog2.
+ **   This file is part of KFLog4.
  **
  ************************************************************************
  **
@@ -428,10 +428,10 @@ void TaskDialog::setTask(FlightTask *orig)
   if (wpList.count() < 4) {
     for (unsigned int i = wpList.count(); i < 4; i++) {
       wp = new Waypoint;
-      wp->origP.setLat(_settings.readNumEntry("/KFLog/MapData/HomesiteLatitude"));
-      wp->origP.setLon(_settings.readNumEntry("/KFLog/MapData/HomesiteLongitude"));
+      wp->origP.setLat(_settings.readNumEntry("/MapData/HomesiteLatitude"));
+      wp->origP.setLon(_settings.readNumEntry("/MapData/HomesiteLongitude"));
       wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
-      wp->name = _settings.readEntry("/KFLog/MapData/Homesite").left(6).upper();
+      wp->name = _settings.readEntry("/MapData/Homesite").left(6).upper();
 
       wpList.append(wp);
     }

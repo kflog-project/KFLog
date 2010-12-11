@@ -2,7 +2,7 @@
 **
 **   configdrawelement.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
@@ -1387,10 +1387,10 @@ void ConfigDrawElement::__fillStyle(QComboBox *pen, QComboBox *brush)
 
 void ConfigDrawElement::__readBorder(QString group, bool *b)
 {
-  b[0] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border1", true);
-  b[1] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border2", true);
-  b[2] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border3", true);
-  b[3] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border4", true);
+  b[0] = _settings.readBoolEntry("/Map/"+group+"/Border1", true);
+  b[1] = _settings.readBoolEntry("/Map/"+group+"/Border2", true);
+  b[2] = _settings.readBoolEntry("/Map/"+group+"/Border3", true);
+  b[3] = _settings.readBoolEntry("/Map/"+group+"/Border4", true);
 }
 
 void ConfigDrawElement::__readPen(QString group, Q3PtrList<QPen> *penList,
@@ -1398,32 +1398,32 @@ void ConfigDrawElement::__readPen(QString group, Q3PtrList<QPen> *penList,
     int defaultPenSize1, int defaultPenSize2, int /*defaultPenSize3*/, int /*defaultPenSize4*/,
     Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4)
 {
-  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color1", __color2String(defaultColor1))),
-        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize1", defaultPenSize1),
-        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle1", defaultPenStyle1)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color2", __color2String(defaultColor2))),
-        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize2", defaultPenSize2),
-        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle2", defaultPenStyle2)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color3", __color2String(defaultColor3))),
-        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize3", defaultPenSize2),
-        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle3", defaultPenStyle3)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color4", __color2String(defaultColor4))),
-        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize4", defaultPenSize2),
-        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle4", defaultPenStyle4)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/Color1", __color2String(defaultColor1))),
+        _settings.readNumEntry("/Map/"+group+"/PenSize1", defaultPenSize1),
+        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PenStyle1", defaultPenStyle1)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/Color2", __color2String(defaultColor2))),
+        _settings.readNumEntry("/Map/"+group+"/PenSize2", defaultPenSize2),
+        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PenStyle2", defaultPenStyle2)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/Color3", __color2String(defaultColor3))),
+        _settings.readNumEntry("/Map/"+group+"/PenSize3", defaultPenSize2),
+        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PenStyle3", defaultPenStyle3)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/Color4", __color2String(defaultColor4))),
+        _settings.readNumEntry("/Map/"+group+"/PenSize4", defaultPenSize2),
+        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PenStyle4", defaultPenStyle4)));
 }
 
 void ConfigDrawElement::__readBrush(QString group, Q3PtrList<QBrush> *brushList,
     QColor defaultBrushColor1, QColor defaultBrushColor2, QColor defaultBrushColor3, QColor defaultBrushColor4,
     Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2, Qt::BrushStyle defaultBrushStyle3, Qt::BrushStyle defaultBrushStyle4)
 {
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor1", __color2String(defaultBrushColor1))), \
-        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle1", defaultBrushStyle1))); \
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor2", __color2String(defaultBrushColor2))), \
-        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle2", defaultBrushStyle2))); \
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor3", __color2String(defaultBrushColor3))), \
-        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle3", defaultBrushStyle3))); \
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor4", __color2String(defaultBrushColor4))), \
-        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle4", defaultBrushStyle4)));
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/BrushColor1", __color2String(defaultBrushColor1))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/BrushStyle1", defaultBrushStyle1))); \
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/BrushColor2", __color2String(defaultBrushColor2))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/BrushStyle2", defaultBrushStyle2))); \
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/BrushColor3", __color2String(defaultBrushColor3))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/BrushStyle3", defaultBrushStyle3))); \
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/BrushColor4", __color2String(defaultBrushColor4))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/BrushStyle4", defaultBrushStyle4)));
 }
 
 void ConfigDrawElement::__saveBrush(Q3PtrList<QBrush> *brushList)
@@ -1521,34 +1521,34 @@ void ConfigDrawElement::__showPen(Q3PtrList<QPen> *penList, bool *b)
 void ConfigDrawElement::__writeBrush(QString group, Q3PtrList<QBrush> *brushList, Q3PtrList<QPen> *penList, bool *b)
 {
   __writePen(group, penList, b);
-  _settings.writeEntry("/KFLog/Map/"+group+"/BrushColor1", __color2String(brushList->at(0)->color()));
-  _settings.writeEntry("/KFLog/Map/"+group+"/BrushColor2", __color2String(brushList->at(1)->color()));
-  _settings.writeEntry("/KFLog/Map/"+group+"/BrushColor3", __color2String(brushList->at(2)->color()));
-  _settings.writeEntry("/KFLog/Map/"+group+"/BrushColor4", __color2String(brushList->at(3)->color()));
-  _settings.writeEntry("/KFLog/Map/"+group+"/BrushStyle1", brushList->at(0)->style());
-  _settings.writeEntry("/KFLog/Map/"+group+"/BrushStyle2", brushList->at(1)->style());
-  _settings.writeEntry("/KFLog/Map/"+group+"/BrushStyle3", brushList->at(2)->style());
-  _settings.writeEntry("/KFLog/Map/"+group+"/BrushStyle4", brushList->at(3)->style());
+  _settings.writeEntry("/Map/"+group+"/BrushColor1", __color2String(brushList->at(0)->color()));
+  _settings.writeEntry("/Map/"+group+"/BrushColor2", __color2String(brushList->at(1)->color()));
+  _settings.writeEntry("/Map/"+group+"/BrushColor3", __color2String(brushList->at(2)->color()));
+  _settings.writeEntry("/Map/"+group+"/BrushColor4", __color2String(brushList->at(3)->color()));
+  _settings.writeEntry("/Map/"+group+"/BrushStyle1", brushList->at(0)->style());
+  _settings.writeEntry("/Map/"+group+"/BrushStyle2", brushList->at(1)->style());
+  _settings.writeEntry("/Map/"+group+"/BrushStyle3", brushList->at(2)->style());
+  _settings.writeEntry("/Map/"+group+"/BrushStyle4", brushList->at(3)->style());
 }
 
 void ConfigDrawElement::__writePen(QString group, Q3PtrList<QPen> *penList, bool *b)
 {
-  _settings.writeEntry("/KFLog/Map/"+group+"/Color1", __color2String(penList->at(0)->color()));
-  _settings.writeEntry("/KFLog/Map/"+group+"/Color2", __color2String(penList->at(1)->color()));
-  _settings.writeEntry("/KFLog/Map/"+group+"/Color3", __color2String(penList->at(2)->color()));
-  _settings.writeEntry("/KFLog/Map/"+group+"/Color4", __color2String(penList->at(3)->color()));
-  _settings.writeEntry("/KFLog/Map/"+group+"/PenSize1", (int)penList->at(0)->width());
-  _settings.writeEntry("/KFLog/Map/"+group+"/PenSize2", (int)penList->at(1)->width());
-  _settings.writeEntry("/KFLog/Map/"+group+"/PenSize3", (int)penList->at(2)->width());
-  _settings.writeEntry("/KFLog/Map/"+group+"/PenSize4", (int)penList->at(3)->width());
-  _settings.writeEntry("/KFLog/Map/"+group+"/PenStyle1", penList->at(0)->style());
-  _settings.writeEntry("/KFLog/Map/"+group+"/PenStyle2", penList->at(1)->style());
-  _settings.writeEntry("/KFLog/Map/"+group+"/PenStyle3", penList->at(2)->style());
-  _settings.writeEntry("/KFLog/Map/"+group+"/PenStyle4", penList->at(3)->style());
-  _settings.writeEntry("/KFLog/Map/"+group+"/Border1", b[0]);
-  _settings.writeEntry("/KFLog/Map/"+group+"/Border2", ( b[1] && b[0] ) );
-  _settings.writeEntry("/KFLog/Map/"+group+"/Border3", ( b[2] && b[1] && b[0] ) );
-  _settings.writeEntry("/KFLog/Map/"+group+"/Border4", ( b[3] && b[2] && b[1] && b[0] ) );
+  _settings.writeEntry("/Map/"+group+"/Color1", __color2String(penList->at(0)->color()));
+  _settings.writeEntry("/Map/"+group+"/Color2", __color2String(penList->at(1)->color()));
+  _settings.writeEntry("/Map/"+group+"/Color3", __color2String(penList->at(2)->color()));
+  _settings.writeEntry("/Map/"+group+"/Color4", __color2String(penList->at(3)->color()));
+  _settings.writeEntry("/Map/"+group+"/PenSize1", (int)penList->at(0)->width());
+  _settings.writeEntry("/Map/"+group+"/PenSize2", (int)penList->at(1)->width());
+  _settings.writeEntry("/Map/"+group+"/PenSize3", (int)penList->at(2)->width());
+  _settings.writeEntry("/Map/"+group+"/PenSize4", (int)penList->at(3)->width());
+  _settings.writeEntry("/Map/"+group+"/PenStyle1", penList->at(0)->style());
+  _settings.writeEntry("/Map/"+group+"/PenStyle2", penList->at(1)->style());
+  _settings.writeEntry("/Map/"+group+"/PenStyle3", penList->at(2)->style());
+  _settings.writeEntry("/Map/"+group+"/PenStyle4", penList->at(3)->style());
+  _settings.writeEntry("/Map/"+group+"/Border1", b[0]);
+  _settings.writeEntry("/Map/"+group+"/Border2", ( b[1] && b[0] ) );
+  _settings.writeEntry("/Map/"+group+"/Border3", ( b[2] && b[1] && b[0] ) );
+  _settings.writeEntry("/Map/"+group+"/Border4", ( b[3] && b[2] && b[1] && b[0] ) );
 }
 
 /** this is a temporary function and it is not needed in Qt 4 */

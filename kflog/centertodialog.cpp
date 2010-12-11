@@ -2,7 +2,7 @@
 **
 **   centertodialog.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **

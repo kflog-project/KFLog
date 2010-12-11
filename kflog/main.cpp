@@ -2,7 +2,7 @@
 **
 **   main.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
@@ -17,12 +17,13 @@
 
 #include <QtGui>
 
-#include "kflog.h"
 #include "kflogconfig.h"
 #include "kflogstartlogo.h"
+#include "mainwindow.h"
 #include "mapconfig.h"
 #include "mapcontents.h"
 #include "mapmatrix.h"
+#include "target.h"
 
 /**
  * Contains all map elements and takes control over drawing or printing
@@ -119,8 +120,15 @@ int main(int argc, char **argv)
   QCoreApplication::setOrganizationName("KFLog");
   QCoreApplication::setOrganizationDomain("www.kflog.org");
   QCoreApplication::setApplicationName("kflog");
+  QCoreApplication::setApplicationVersion( KFLOG_VERSION );
 
-  KFLog *kflog = new KFLog();
+  // Reset the locale that is used for number formatting to "C" locale.
+  setlocale(LC_NUMERIC, "C");
+
+  // Make sure the application uses utf8 encoding for translated widgets
+  QTextCodec::setCodecForTr( QTextCodec::codecForName ("UTF-8") );
+
+  MainWindow *kflog = new MainWindow();
   kflog->show();
 
   QString argument, fileOpenIGC, fileExportPNG, width = "640", height = "480";
@@ -131,12 +139,12 @@ int main(int argc, char **argv)
   for( int i = 0; i < app.argc(); i++ )
     {
       argument = QString( app.argv()[i] );
+
       if( argument == "--batch" || argument == "-b" )
         {
           batch = true;
         }
-      else if( (argument == "--export-png" || argument == "-e") && i + 2
-          < app.argc() )
+      else if( (argument == "--export-png" || argument == "-e") && i + 2 < app.argc() )
         {
           exportPNG = true;
           fileExportPNG = QString( app.argv()[i++] );
@@ -181,14 +189,14 @@ int main(int argc, char **argv)
   else
     {
       // read the user configuration
-      int useCatalog = _settings.readNumEntry("/KFLog/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed );
+      int useCatalog = _settings.readNumEntry("/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed );
 
       switch( useCatalog )
         {
         case KFLogConfig::LastUsed:
           // no break;
         case KFLogConfig::Specific:
-          waypointsOptionArg = _settings.readEntry( "/KFLog/Waypoints/DefaultCatalogName", "" );
+          waypointsOptionArg = _settings.readEntry( "/Waypoints/DefaultCatalogName", "" );
           kflog->slotSetWaypointCatalog( waypointsOptionArg );
         }
     }
@@ -197,14 +205,14 @@ int main(int argc, char **argv)
     {
       if( exportPNG )
         {
-          _settings.writeEntry( "/KFLog/GeneralOptions/ShowWaypointWarnings", false );
+          _settings.writeEntry( "/GeneralOptions/ShowWaypointWarnings", false );
         }
 
       kflog->slotOpenFile( (const char*) fileOpenIGC );
 
       if( exportPNG )
         {
-          _settings.writeEntry( "/KFLog/CommentSettings/ShowComment", comment );
+          _settings.writeEntry( "/CommentSettings/ShowComment", comment );
           qWarning() << "Writing PNG...";
           QUrl url( fileExportPNG );
           kflog->slotSavePixmap( url, width.toInt(), height.toInt() );

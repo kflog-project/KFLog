@@ -2,7 +2,7 @@
 **
 **   waypointcatalog.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
@@ -60,7 +60,7 @@ WaypointCatalog::WaypointCatalog(const QString& name)
   static int catalogNr = 1;
 
   extern QSettings _settings;
-  QString wayPointDir = _settings.readEntry("/KFLog/Path/DefaultWaypointDirectory", getpwuid(getuid())->pw_dir);
+  QString wayPointDir = _settings.readEntry("/Path/DefaultWaypointDirectory", getpwuid(getuid())->pw_dir);
   if (name == QString::null) {
     QString t;
     t.setNum(catalogNr++);
@@ -186,7 +186,7 @@ bool WaypointCatalog::write()
   doc.appendChild(root);
 
   foreach(w, wpList) {
-    qDebug("writing waypoint %s (%s - %s)",w->name.latin1(),w->description.latin1(),w->icao.latin1());
+    qDebug("writing waypoint %s (%s - %s)",w->name.toLatin1().data(),w->description.toLatin1().data(),w->icao.toLatin1().data());
     child = doc.createElement("Waypoint");
 
     child.setAttribute("Name", w->name);
@@ -502,7 +502,7 @@ bool WaypointCatalog::load(const QString& catalog){
 /** read a waypoint catalog from a filser txt file */
 bool WaypointCatalog::readFilserTXT (const QString& catalog)
 {
-  qDebug ("WaypointCatalog::readFilserTXT (%s)", catalog.latin1());
+  qDebug ("WaypointCatalog::readFilserTXT (%s)", catalog.toLatin1().data());
   QFile f(catalog);
 
   if (f.exists())
@@ -570,7 +570,7 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
 /** write a waypoint catalog into a filser txt file */
 bool WaypointCatalog::writeFilserTXT (const QString& catalog)
 {
-  qDebug ("WaypointCatalog::writeFilserTXT (%s)", catalog.latin1());
+  qDebug ("WaypointCatalog::writeFilserTXT (%s)", catalog.toLatin1().data());
   QFile f(catalog);
 
   if (f.open(QIODevice::WriteOnly))
@@ -621,7 +621,7 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
 /** read a waypoint catalog from a filser da4 file */
 bool WaypointCatalog::readFilserDA4 (const QString& catalog)
 {
-  qDebug ("WaypointCatalog::readFilserDA4 (%s)", catalog.latin1());
+  qDebug ("WaypointCatalog::readFilserDA4 (%s)", catalog.toLatin1().data());
   QFile f(catalog);
 
   if (f.exists())
@@ -659,7 +659,7 @@ bool WaypointCatalog::readFilserDA4 (const QString& catalog)
 /** write a waypoint catalog into a filser da4 file */
 bool WaypointCatalog::writeFilserDA4 (const QString& catalog)
 {
-  qDebug ("WaypointCatalog::writeFilserDA4 (%s)", catalog.latin1());
+  qDebug ("WaypointCatalog::writeFilserDA4 (%s)", catalog.toLatin1().data());
   QFile f(catalog);
 
   if (f.open(QIODevice::WriteOnly))
@@ -791,7 +791,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
           w->surface = wpSurface;
           w->comment = wpComment;
           w->importance = wpImportance;
-          //qDebug("Waypoint read: %s (%s - %s) offset %d-%d",w->name.latin1(),w->description.latin1(),w->icao.latin1(), startoffset, f.at());
+          //qDebug("Waypoint read: %s (%s - %s) offset %d-%d",w->name.toLatin1().data(),w->description.toLatin1().data(),w->icao.toLatin1().data(), startoffset, f.at());
           if (!insertWaypoint(w))
           {
             qDebug("odd... error reading waypoints");
@@ -822,7 +822,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
 /** read a waypoint catalog from a SeeYou cup file, only waypoint part */
 bool WaypointCatalog::readCup (const QString& catalog)
 {
-  qDebug ("WaypointCatalog::readCup (%s)", catalog.latin1());
+  qDebug ("WaypointCatalog::readCup (%s)", catalog.toLatin1().data());
 
   QFile f(catalog);
 
@@ -988,7 +988,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
 	      if( ! ok )
 		{
-			qDebug("Error reading elevation '%s'.",list[5].left(list[5].length()-1).latin1());
+			qDebug("Error reading elevation '%s'.",list[5].left(list[5].length()-1).toLatin1().data());
 			delete w; continue;
 		}
 

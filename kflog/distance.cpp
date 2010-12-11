@@ -180,10 +180,10 @@ QString Distance::getText(bool withUnit, uint precision, uint chopOrder) const
   if (withUnit) {
 
     QString fms = QString("%1.") + prec + "f %s";
-    result.sprintf( fms.latin1(), dist, unit.latin1() );
+    result.sprintf( fms.toLatin1().data(), dist, unit.toLatin1().data() );
   } else {
     QString fms = QString("%1.") + prec + "f";
-    result.sprintf( fms.latin1(), dist );
+    result.sprintf( fms.toLatin1().data(), dist );
   }
   return result;
 }
@@ -242,10 +242,10 @@ QString Distance::getText(double meters, bool withUnit, int precision)
   } else {
     if (withUnit) {
       QString fms = QString("%1.") + prec + "f %s";
-      result.sprintf( fms.latin1(), dist, unit.latin1() );
+      result.sprintf( fms.toLatin1().data(), dist, unit.toLatin1().data() );
     } else {
       QString fms = QString("%1.") + prec + "f";
-      result.sprintf( fms.latin1(), dist);
+      result.sprintf( fms.toLatin1().data(), dist);
     }
   }
   return result;

@@ -165,7 +165,7 @@ bool ElevationFinder::tryOpenGLIGCexplorer()
       break;
     if ( line.isEmpty() )
       continue;
-    //qDebug("line: %s",line.latin1());
+    //qDebug("line: %s",line.toLatin1().data());
 
     if ( line.startsWith("DEM_FILE") ) {
       flags |= dem_name;
@@ -198,12 +198,12 @@ bool ElevationFinder::tryOpenGLIGCexplorer()
     if ( line.startsWith("DEM_GRID_LAT") ) {
       flags |= dem_grid_lat;
       demGridLat = int(line.mid(13).stripWhiteSpace().toDouble() * 600000.0);
-      qDebug("%s -> %d", line.mid(13).stripWhiteSpace().latin1(), demGridLat);
+      qDebug("%s -> %d", line.mid(13).stripWhiteSpace().toLatin1().data(), demGridLat);
     }
     if ( line.startsWith("DEM_GRID_LON") ) {
       flags |= dem_grid_lon;
       demGridLon = int(line.mid(13).stripWhiteSpace().toDouble() * 600000.0);
-      qDebug("%s -> %d", line.mid(13).stripWhiteSpace().latin1(), demGridLat);
+      qDebug("%s -> %d", line.mid(13).stripWhiteSpace().toLatin1().data(), demGridLat);
     }
 
     if (flags == 511) //all needed fields are found

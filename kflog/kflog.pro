@@ -1,4 +1,4 @@
-# KFLog qmake project file
+# KFLog4 qmake project file
 # $Id$
 
 QT += qt3support \
@@ -45,11 +45,11 @@ SOURCES = \
     igc3dviewstate.cpp \
     igcpreview.cpp \
     isohypse.cpp \
-    kflog.cpp \
     kflogconfig.cpp \
     kflogstartlogo.cpp \
     lineelement.cpp \
     main.cpp \
+    mainwindow.cpp \
     map.cpp \
     mapcalc.cpp \
     mapconfig.cpp \
@@ -119,10 +119,10 @@ HEADERS = \
     igc3dviewstate.h \
     igcpreview.h \
     isohypse.h \
-    kflog.h \
     kflogconfig.h \
     kflogstartlogo.h \
     lineelement.h \
+    mainwindow.h \
     map.h \
     mapcalc.h \
     mapconfig.h \
@@ -163,42 +163,27 @@ HEADERS = \
     
 FORMS = optimizationwizard.ui
 
-pics.extra = mkdir \
-    -p \
-    ~/.kflog/pics/; \
-    cp \
-    -r \
-    ./pics/* \
-    ~/.kflog/pics; \
-    mkdir \
-    -p \
-    ~/.kflog/map-icons/; \
-    cp \
-    -r \
-    ./map-icons/* \
-    ~/.kflog/map-icons; \
-    mkdir \
-    -p \
-    ~/.kflog/mapdata/landscape; \
-    cp \
-    ../README-AIRSPACE \
-    ~/.kflog/mapdata/landscape/README-MAP; \
-    mkdir \
-    -p \
-    ~/.kflog/mapdata/airfields; \
-    cp \
-    ../README-AIRSPACE \
-    ~/.kflog/mapdata/airfields/README-AIRFIELDS; \
-    mkdir \
-    -p \
-    ~/.kflog/mapdata/airspaces; \
-    cp \
-    ../README-AIRSPACE \
-    ~/.kflog/mapdata/airspaces/README-AIRSPACE
-    
-pics.path = ./pics
-pics.files = 
+# Note! qmake do prefix the .path variable with $(INSTALL_ROOT)
+# in the generated makefile. If the .path variable starts not with
+# a slash, $(INSTALL_ROOT) followed by the current path is added as
+# prefix to it.
 
-INSTALLS += pics
+pics.path  = /pics
+pics.files = pics/*
+
+map-icons.extra = install -d $(INSTALL_ROOT)/map-icons/small
+map-icons.path  = /map-icons
+map-icons.files = map-icons
+
+landscape.path  = /mapdata/landscape
+landscape.files = ../README-MAP
+
+airfields.path  = /mapdata/airfields
+airfields.files = ../README-AIRFIELDS
+
+airspaces.path  = /mapdata/airspaces
+airspaces.files = ../README-AIRSPACE
+
+INSTALLS += pics map-icons landscape airfields airspaces
 
 DESTDIR = ../release

@@ -2,7 +2,7 @@
 **
 **   igc3dflightdata.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
@@ -373,7 +373,7 @@ void Igc3DFlightData::read_igc_file(const QString& /*st*/)  // Cleanly handled w
             while ( !t.atEnd() ) {        // until end of file...
             line = t.readLine();       // line of text excluding '\n'
             ++linenum;
-            startchar = line[0].latin1();
+            startchar = line[0].toLatin1().data();
             //sscanf ((const char *) line, "%1s", &startchar);
             if (startchar == 'B') {
                 //sscanf ((const char *) line, "%*c%2f%2f%2f%2f%2f%3f%c%3f%2f%3f%c%c%5f%5f",
@@ -385,12 +385,12 @@ void Igc3DFlightData::read_igc_file(const QString& /*st*/)  // Cleanly handled w
                 lat = line.mid(7,2).toInt();
                 latmin = line.mid(9,2).toInt();
                 latmindez = line.mid(11,3).toInt();
-                NS = line[14].latin1();
+                NS = line[14].toLatin1().data();
                 lon = line.mid(15,3).toInt();
                 lonmin = line.mid(18,2).toInt();
                 lonmindez = line.mid(20,3).toInt();
-                EW = line[23].latin1();
-                AV = line[24].latin1();
+                EW = line[23].toLatin1().data();
+                AV = line[24].toLatin1().data();
                 hightlocal = line.mid(25,5).toInt();
                 gpshightlocal = line.mid(30,5).toInt();
                 if (AV == 'V'){ // Unsicherer Wert

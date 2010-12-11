@@ -2,7 +2,7 @@
  **
  **   flighttask.cpp
  **
- **   This file is part of KFLog2.
+ **   This file is part of KFLog4.
  **
  ************************************************************************
  **
@@ -734,9 +734,9 @@ int FlightTask::getPlannedPoints()
 {
   extern QSettings _settings;
 
-  double pointFAI = _settings.readDoubleEntry("/KFLog/FlightPoints/FAIPoint", 2.0);
-  double pointNormal = _settings.readDoubleEntry("/KFLog/FlightPoints/NormalPoint", 1.75);
-  double pointZielS = _settings.readDoubleEntry("/KFLog/FlightPoints/ZielSPoint", 1.5);
+  double pointFAI = _settings.readDoubleEntry("/FlightPoints/FAIPoint", 2.0);
+  double pointNormal = _settings.readDoubleEntry("/FlightPoints/NormalPoint", 1.75);
+  double pointZielS = _settings.readDoubleEntry("/FlightPoints/ZielSPoint", 1.5);
 
   /*
    * Aufgabe vollständig erfüllt
@@ -793,17 +793,17 @@ void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& glider
 
   extern QSettings _settings;
 
-  bool showWarnings = _settings.readBoolEntry("/KFLog/GeneralOptions/ShowWaypointWarnings",true);
+  bool showWarnings = _settings.readBoolEntry("/GeneralOptions/ShowWaypointWarnings",true);
 
-  double pointFAI = _settings.readDoubleEntry("/KFLog/FlightPoints/FAIPoint", 2.0);
-  double pointNormal = _settings.readDoubleEntry("/KFLog/FlightPoints/NormalPoint", 1.75);
-  double pointCancel = _settings.readDoubleEntry("/KFLog/FlightPoints/CancelPoint", 1.0);
-  double pointZielS = _settings.readDoubleEntry("/KFLog/FlightPoints/ZielSPoint", 1.5);
-  double malusValue = _settings.readDoubleEntry("/KFLog/FlightPoints/MalusValue", 15.0);
-  double sectorMalus = _settings.readDoubleEntry("/KFLog/FlightPoints/SectorMalus", -0.1);
+  double pointFAI = _settings.readDoubleEntry("/FlightPoints/FAIPoint", 2.0);
+  double pointNormal = _settings.readDoubleEntry("/FlightPoints/NormalPoint", 1.75);
+  double pointCancel = _settings.readDoubleEntry("/FlightPoints/CancelPoint", 1.0);
+  double pointZielS = _settings.readDoubleEntry("/FlightPoints/ZielSPoint", 1.5);
+  double malusValue = _settings.readDoubleEntry("/FlightPoints/MalusValue", 15.0);
+  double sectorMalus = _settings.readDoubleEntry("/FlightPoints/SectorMalus", -0.1);
 
   if(gliderType != 0L)
-    gliderIndex = _settings.readNumEntry("/KFLog/GliderTypes/"+gliderType, 100);
+    gliderIndex = _settings.readNumEntry("/GliderTypes/"+gliderType, 100);
 
   for(int loop = 0; loop < route.count(); loop++)
     {

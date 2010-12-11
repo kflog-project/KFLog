@@ -2,7 +2,7 @@
 **
 **   map.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
@@ -1466,7 +1466,7 @@ void Map::slotSavePixmap(QUrl fUrl, int width, int height){
   else
       return;
 
-  if (_settings.readBoolEntry("/KFLog/CommentSettings/ShowComment"))
+  if (_settings.readBoolEntry("/CommentSettings/ShowComment"))
   {
     Flight* flight = (Flight*)_globalMapContents.getFlight();
     QPainter bufferP(&pixBuffer);

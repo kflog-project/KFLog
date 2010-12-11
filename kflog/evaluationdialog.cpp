@@ -99,8 +99,8 @@ EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[])
   extern QSettings _settings;
 
   int dlgWidth, dlgHeight;
-  dlgWidth = _settings.readNumEntry("/KFLog/Evaluation/DialogWidth", 800);
-  dlgHeight = _settings.readNumEntry("/KFLog/Evaluation/DialogHeight", 600);
+  dlgWidth = _settings.readNumEntry("/Evaluation/DialogWidth", 800);
+  dlgHeight = _settings.readNumEntry("/Evaluation/DialogHeight", 600);
 
   resize(dlgWidth, dlgHeight);
 
@@ -128,8 +128,8 @@ EvaluationDialog::~EvaluationDialog()
   // Save settings
   extern QSettings _settings;
 
-  _settings.writeEntry("/KFLog/Evaluation/DialogWidth", width());
-  _settings.writeEntry("/KFLog/Evaluation/DialogHeight", height());
+  _settings.writeEntry("/Evaluation/DialogWidth", width());
+  _settings.writeEntry("/Evaluation/DialogHeight", height());
 }
 
 void EvaluationDialog::updateText(int index1, int index2, bool updateAll)

@@ -2,7 +2,7 @@
  **
  **   mapcontents.cpp
  **
- **   This file is part of KFLog2.
+ **   This file is part of KFLog4.
  **
  **   $Id$
  **
@@ -279,7 +279,7 @@ void MapContents::closeFlight()
 void MapContents::__downloadFile(QString fileName, QString destString, bool /*wait*/){
   extern QSettings _settings;
 
-  if (_settings.readNumEntry("/KFLog/GeneralOptions/AutomaticMapDownload")==Inhibited)
+  if (_settings.readNumEntry("/GeneralOptions/AutomaticMapDownload")==Inhibited)
       return;
 
   if(downloadManager==0) {
@@ -287,7 +287,7 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool /*wa
     connect(downloadManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(slotDownloadFinished(QNetworkReply*)));
   }
 
-  QUrl src = QUrl(_settings.readEntry("/KFLog/GeneralOptions/Mapserver","http://maproom.kflog.org:80/mapdata/data/landscape/"));
+  QUrl src = QUrl(_settings.readEntry("/GeneralOptions/Mapserver","http://maproom.kflog.org:80/mapdata/data/landscape/"));
   QUrl dest = QUrl("file:/" + destString);
   src.addPath(fileName);
   dest.addPath(fileName);
@@ -296,7 +296,7 @@ void MapContents::__downloadFile(QString fileName, QString destString, bool /*wa
 
   QNetworkRequest request;// = new QNetworkRequest(src);
   request.setUrl(src);
-//  request.setRawHeader("User-Agent", (const char*)QString("KFLog " +_settings.readEntry("/KFLog/GeneralOptions/Version", VERSION)).toLatin1());
+//  request.setRawHeader("User-Agent", (const char*)QString("KFLog " +_settings.readEntry("/GeneralOptions/Version", VERSION)).toLatin1());
 
   downloadManager->get(request);
 
@@ -652,10 +652,10 @@ void MapContents::__askForDownload()
   extern QSettings _settings;
   int ret=0;
 
-  switch (_settings.readNumEntry("/KFLog/GeneralOptions/AutomaticMapDownload",ADT_NotSet))
+  switch (_settings.readNumEntry("/GeneralOptions/AutomaticMapDownload",ADT_NotSet))
     {
       case (ADT_NotSet):
-        _settings.writeEntry("/KFLog/GeneralOptions/AutomaticMapDownload",Inhibited); //this is temporary, will be overwritten later
+        _settings.writeEntry("/GeneralOptions/AutomaticMapDownload",Inhibited); //this is temporary, will be overwritten later
         ret = QMessageBox::question(0, tr("Automatic map download"),
                   tr("<qt>There are no map-files in the directory<br><b>%1"
             "</b><br>yet. Do you want to download the data automatically?<br>"
@@ -664,21 +664,21 @@ void MapContents::__askForDownload()
         switch (ret)
           {
             case QMessageBox::Yes:
-              _settings.writeEntry("/KFLog/GeneralOptions/AutomaticMapDownload",Automatic); //this is temporary, will be overwritten later
+              _settings.writeEntry("/GeneralOptions/AutomaticMapDownload",Automatic); //this is temporary, will be overwritten later
               __downloadFile("G_03694.kfl",mapDir + "/landscape",true);
               if(QFile(mapDir+"/landscape/G_03694.kfl").exists())
-                _settings.writeEntry("/KFLog/GeneralOptions/AutomaticMapDownload",Automatic);
+                _settings.writeEntry("/GeneralOptions/AutomaticMapDownload",Automatic);
               else
                 {
                   QMessageBox::information(0, tr("No write access"),
                     tr("<qt>The directory <b>%1</b> is either not writeable<br>"
                     "or the server <b>%2</b> is not reachable.<br>"
                     "Please specify the correct path in the Settings dialog and check the internet connection!<br>"
-                    " Restart KFLog afterwards.</qt>").arg(mapDir + "/landscape").arg(_settings.readEntry("/KFLog/GeneralOptions/Mapserver", "http://maproom.kflog.org/mapdata/data/landscape/")), QMessageBox::Ok);
+                    " Restart KFLog afterwards.</qt>").arg(mapDir + "/landscape").arg(_settings.readEntry("/GeneralOptions/Mapserver", "http://maproom.kflog.org/mapdata/data/landscape/")), QMessageBox::Ok);
                 }
             break;
           case QMessageBox::No:
-            _settings.writeEntry("/KFLog/GeneralOptions/AutomaticMapDownload",Inhibited);
+            _settings.writeEntry("/GeneralOptions/AutomaticMapDownload",Inhibited);
             break;
           }
         break;
@@ -714,7 +714,7 @@ void MapContents::proofeSection(bool isPrint)
   if(mapBorder.top() < 0) northCorner += 1;
   if(mapBorder.bottom() < 0) southCorner += 1;
 
-  mapDir = _settings.readEntry("/KFLog/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata");
+  mapDir = _settings.readEntry("/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata");
 
   // Checking for the MapFiles
   if(mapDir.isNull() && !(isFirstLoad & MAP_LOADED))
@@ -728,7 +728,7 @@ void MapContents::proofeSection(bool isPrint)
 
       mapDir = QFileDialog::getExistingDirectory(0, tr("Select map directory..."));
 
-      _settings.writeEntry("/KFLog/Path/DefaultMapDirectory", mapDir);
+      _settings.writeEntry("/Path/DefaultMapDirectory", mapDir);
 
       isFirstLoad |= MAP_LOADED;
 

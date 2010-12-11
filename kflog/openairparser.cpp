@@ -85,7 +85,7 @@ uint OpenAirParser::load( QList<Airspace*> &list )
   t.start();
   uint loadCounter = 0; // number of successfully loaded files
 
-  QString mapDir = _settings.readEntry("/KFLog/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata/");
+  QString mapDir = _settings.readEntry("/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata/");
   QStringList preselect;
 
   MapContents::addDir(preselect, mapDir + "/airspaces", "*.txt");
@@ -118,7 +118,7 @@ bool OpenAirParser::parse(const QString& path, QList<Airspace*> &list)
   QFile source(path);
 
   if (!source.open(QIODevice::ReadOnly)) {
-    qWarning("OpenAirParser: Cannot open airspace file %s!", path.latin1());
+    qWarning("OpenAirParser: Cannot open airspace file %s!", path.toLatin1().data());
     return false;
   }
 
@@ -130,7 +130,7 @@ bool OpenAirParser::parse(const QString& path, QList<Airspace*> &list)
   QString line=in.readLine();
   _lineNumber++;
   while (!line.isNull()) {
-    //qDebug("reading line %d: '%s'", _lineNumber, line.latin1());
+    //qDebug("reading line %d: '%s'", _lineNumber, line.toLatin1().data());
     line = line.simplifyWhiteSpace();
     if (line.startsWith("*") || line.startsWith("#")) {
       //comment, ignore
@@ -155,7 +155,7 @@ bool OpenAirParser::parse(const QString& path, QList<Airspace*> &list)
 
   QFileInfo fi( path );
   qDebug( "OpenAirParser: %d airspace objects read from file %s in %dms",
-          _objCounter, fi.fileName().latin1(), t.elapsed() );
+          _objCounter, fi.fileName().toLatin1().data(), t.elapsed() );
 
   source.close();
 
@@ -318,7 +318,7 @@ void OpenAirParser::finishAirspace()
   _airlist.append(a);
   _objCounter++;
   _isCurrentAirspace = false;
-  // qDebug("finalized airspace %s. %d points in airspace", asName.latin1(), cnt);
+  // qDebug("finalized airspace %s. %d points in airspace", asName.toLatin1().data(), cnt);
 
 }
 
@@ -376,12 +376,12 @@ void OpenAirParser::initializeStringMapping(const QString& mapFilePath)
   if (fi.exists() && fi.isFile() && fi.isReadable()) {
     QFile f(path);
     if (!f.open(QIODevice::ReadOnly)) {
-      qWarning("OpenAirParser: Cannot open airspace mapping file %s!", path.latin1());
+      qWarning("OpenAirParser: Cannot open airspace mapping file %s!", path.toLatin1().data());
       return;
     }
 
     Q3TextStream in(&f);
-    qDebug("Parsing mapping file '%s'.", path.latin1());
+    qDebug("Parsing mapping file '%s'.", path.toLatin1().data());
 
     //start parsing
     QString line = in.readLine();
@@ -396,7 +396,7 @@ void OpenAirParser::initializeStringMapping(const QString& mapFilePath)
         if (pos>0 && pos < int(line.length())) {
           QString key = line.left(pos).simplifyWhiteSpace();
           QString value = line.mid(pos+1).simplifyWhiteSpace();
-          qDebug("  added '%s' => '%s' to mappings", key.latin1(), value.latin1());
+          qDebug("  added '%s' => '%s' to mappings", key.toLatin1().data(), value.toLatin1().data());
           m_stringTypeMap.replace(key, value);
         }
       }
@@ -412,14 +412,14 @@ void OpenAirParser::parseType(QString& line)
 
   if (!m_stringTypeMap.contains(line)) {
     //no mapping from the found type to a Cumulus basetype was found
-    qWarning("OpenAirParser: Line=%d Type, '%s' not mapped to basetype. Object not interpretted.", _lineNumber, line.latin1());
+    qWarning("OpenAirParser: Line=%d Type, '%s' not mapped to basetype. Object not interpretted.", _lineNumber, line.toLatin1().data());
     _isCurrentAirspace = false; //stop accepting other lines in this object
     return;
   } else {
     QString stringType = m_stringTypeMap[line];
     if (!m_baseTypeMap.contains(stringType)) {
       //the indicated basetype is not a valid Cumulus basetype.
-      qWarning("OpenAirParser:=Line %d, Type '%s' is not a valid basetype. Object not interpretted.", _lineNumber, stringType.latin1());
+      qWarning("OpenAirParser:=Line %d, Type '%s' is not a valid basetype. Object not interpretted.", _lineNumber, stringType.toLatin1().data());
       _isCurrentAirspace = false; //stop accepting other lines in this object
       return;
     } else {
@@ -443,7 +443,7 @@ void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& 
 
   type = BaseMapElement::NotSet;
   alt=0;
-  // qDebug("line %d: parsing altitude '%s'", _lineNumber, line.latin1());
+  // qDebug("line %d: parsing altitude '%s'", _lineNumber, line.toLatin1().data());
   //fist, split the string in parsable elements
   //we start with the text parts
   QRegExp reg("[A-Za-z]+");
@@ -454,7 +454,7 @@ void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& 
       break;
     }
     elements.append(line.mid(pos, len));
-    //qDebug("element: '%s'", line.mid(pos, len).latin1());
+    //qDebug("element: '%s'", line.mid(pos, len).toLatin1().data());
     //line=line.mid(len);
   }
 
@@ -470,7 +470,7 @@ void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& 
       break;
     }
     elements.append(line.mid(pos, len));
-    //qDebug("element: '%s'", line.mid(pos, len).latin1());
+    //qDebug("element: '%s'", line.mid(pos, len).toLatin1().data());
     line=line.mid(len);
   }
 
@@ -508,7 +508,7 @@ void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& 
       // elevation type. That can be only a mistake in the data
       // and will be ignored.
       qWarning( "OpenAirParser: Line=%d, '%s' contains more than one elevation type. Only first one is taken",
-                _lineNumber, input.latin1());
+                _lineNumber, input.toLatin1().data());
       continue;
     }
 
@@ -579,7 +579,7 @@ bool OpenAirParser::parseCoordinatePart(QString& line, int& lat, int& lon)
   bool ok=false, found=false;
   int value=0;
   int len=0, pos=0;
-  // qDebug("line=%s", line.latin1() );
+  // qDebug("line=%s", line.toLatin1().data() );
 
   QRegExp reg("[0-9]+");
 
@@ -664,7 +664,7 @@ bool OpenAirParser::parseVariable(QString line)
 
   QString variable=arguments[0].simplifyWhiteSpace().upper();
   QString value=arguments[1].simplifyWhiteSpace();
-  // qDebug("line %d: variable = '%s', value='%s'", _lineNumber, variable.latin1(), value.latin1());
+  // qDebug("line %d: variable = '%s', value='%s'", _lineNumber, variable.toLatin1().data(), value.toLatin1().data());
   if (variable=="X") {
     //coordinate
     return parseCoordinate(value, _center);
@@ -934,7 +934,7 @@ bool OpenAirParser::setHeaderData( QString &path )
 
   QFile inFile(path);
   if( !inFile.open(QIODevice::ReadOnly) ) {
-    qWarning("OpenAirParser: Cannot open airspace file %s!", path.latin1());
+    qWarning("OpenAirParser: Cannot open airspace file %s!", path.toLatin1().data());
     return false;
   }
 

@@ -2,7 +2,7 @@
 **
 **   objecttree.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
@@ -458,7 +458,7 @@ void ObjectTree::dropEvent(QDropEvent* event)
     {
       for(QStringList::Iterator it = dropList.begin();
               it != dropList.end(); it++)
-          emit openFile((*it).latin1());
+          emit openFile((*it).toLatin1().data());
     }
 }
 

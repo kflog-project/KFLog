@@ -2,7 +2,7 @@
  **
  **   mapmatrix.cpp
  **
- **   This file is part of KFLog2.
+ **   This file is part of KFLog4.
  **
  ************************************************************************
  **
@@ -118,9 +118,9 @@ MapMatrix::~MapMatrix()
 
 void MapMatrix::writeMatrixOptions()
 {
-  _settings.writeEntry("/KFLog/MapData/CenterLatitude", mapCenterLat);
-  _settings.writeEntry("/KFLog/MapData/CenterLongitude", mapCenterLon);
-  _settings.writeEntry("/KFLog/MapData/MapScale", cScale);
+  _settings.writeEntry("/MapData/CenterLatitude", mapCenterLat);
+  _settings.writeEntry("/MapData/CenterLongitude", mapCenterLon);
+  _settings.writeEntry("/MapData/MapScale", cScale);
 }
 
 
@@ -458,8 +458,8 @@ void MapMatrix::__moveMap(int dir)
     mapCenterLon = viewBorder.right();
     break;
   case Home:
-    mapCenterLat = _settings.readNumEntry("/KFLog/MapData/HomesiteLatitude", HOME_DEFAULT_LAT);
-    mapCenterLon = _settings.readNumEntry("/KFLog/MapData/HomesiteLongitude", HOME_DEFAULT_LON);
+    mapCenterLat = _settings.readNumEntry("/MapData/HomesiteLatitude", HOME_DEFAULT_LAT);
+    mapCenterLon = _settings.readNumEntry("/MapData/HomesiteLongitude", HOME_DEFAULT_LON);
     }
 
   createMatrix(matrixSize);
@@ -637,12 +637,12 @@ void MapMatrix::slotInitMatrix()
   //                                                Fixed 2001-12-14
   if(cScale <= 0) {
     // @ee we want to center to the last position !
-    mapCenterLat = _settings.readNumEntry("/KFLog/MapData/CenterLatitude", HOME_DEFAULT_LAT);
-    mapCenterLon = _settings.readNumEntry("/KFLog/MapData/CenterLongitude", HOME_DEFAULT_LON);
-    cScale = _settings.readDoubleEntry("/KFLog/MapData/MapScale", 200);
+    mapCenterLat = _settings.readNumEntry("/MapData/CenterLatitude", HOME_DEFAULT_LAT);
+    mapCenterLon = _settings.readNumEntry("/MapData/CenterLongitude", HOME_DEFAULT_LON);
+    cScale = _settings.readDoubleEntry("/MapData/MapScale", 200);
   }
 
-  int newProjectionType = _settings.readNumEntry("/KFLog/MapData/ProjectionType", ProjectionBase::Lambert);
+  int newProjectionType = _settings.readNumEntry("/MapData/ProjectionType", ProjectionBase::Lambert);
 
   bool projChanged = newProjectionType != currentProjection->projectionType();
 
@@ -650,15 +650,15 @@ void MapMatrix::slotInitMatrix()
     delete currentProjection;
     switch(newProjectionType) {
     case ProjectionBase::Lambert:
-      currentProjection = new ProjectionLambert(_settings.readNumEntry("/KFLog/LambertProjection/Parallel1", 32400000),
-                                                _settings.readNumEntry("/KFLog/LambertProjection/Parallel2", 30000000),
-                                                _settings.readNumEntry("/KFLog/LambertProjection/Origin", 0));
+      currentProjection = new ProjectionLambert(_settings.readNumEntry("/LambertProjection/Parallel1", 32400000),
+                                                _settings.readNumEntry("/LambertProjection/Parallel2", 30000000),
+                                                _settings.readNumEntry("/LambertProjection/Origin", 0));
       qDebug ("Map projection changed to Lambert");
       break;
     //case ProjectionBase::Cylindric:
     default:
       // fallback is cylindrical
-      currentProjection = new ProjectionCylindric(_settings.readNumEntry("/KFLog/CylindricalProjection/Parallel", 27000000));
+      currentProjection = new ProjectionCylindric(_settings.readNumEntry("/CylindricalProjection/Parallel", 27000000));
       qDebug ("Map projection changed to Cylinder");
       break;
     }
@@ -666,12 +666,12 @@ void MapMatrix::slotInitMatrix()
 
   if(projChanged) emit projectionChanged();
 
-  scaleBorders[LowerLimit] = _settings.readNumEntry("/KFLog/Scale/Lower Limit", VAL_BORDER_L);
-  scaleBorders[Border1] = _settings.readNumEntry("/KFLog/Scale/Border1", VAL_BORDER_1);
-  scaleBorders[Border2] = _settings.readNumEntry("/KFLog/Scale/Border2", VAL_BORDER_2);
-  scaleBorders[Border3] = _settings.readNumEntry("/KFLog/Scale/Border3", VAL_BORDER_3);
-  scaleBorders[SwitchScale] = _settings.readNumEntry("/KFLog/Scale/SwitchScale", VAL_BORDER_S);
-  scaleBorders[UpperLimit] = _settings.readNumEntry("/KFLog/Scale/UpperLimit", VAL_BORDER_U);
+  scaleBorders[LowerLimit] = _settings.readNumEntry("/Scale/Lower Limit", VAL_BORDER_L);
+  scaleBorders[Border1] = _settings.readNumEntry("/Scale/Border1", VAL_BORDER_1);
+  scaleBorders[Border2] = _settings.readNumEntry("/Scale/Border2", VAL_BORDER_2);
+  scaleBorders[Border3] = _settings.readNumEntry("/Scale/Border3", VAL_BORDER_3);
+  scaleBorders[SwitchScale] = _settings.readNumEntry("/Scale/SwitchScale", VAL_BORDER_S);
+  scaleBorders[UpperLimit] = _settings.readNumEntry("/Scale/UpperLimit", VAL_BORDER_U);
 
   cScale = std::min(cScale, double(scaleBorders[UpperLimit]));
   cScale = std::max(cScale, double(scaleBorders[LowerLimit]));
@@ -680,12 +680,12 @@ void MapMatrix::slotInitMatrix()
 
   if (currentProjection->projectionType() == ProjectionBase::Lambert) {
     initChanged = ((ProjectionLambert*)currentProjection)->initProjection(
-              _settings.readNumEntry("/KFLog/LambertProjection/Parallel1", 32400000),
-              _settings.readNumEntry("/KFLog/LambertProjection/Parallel2", 30000000),
-              _settings.readNumEntry("/KFLog/LambertProjection/Origin", 0));
+              _settings.readNumEntry("/LambertProjection/Parallel1", 32400000),
+              _settings.readNumEntry("/LambertProjection/Parallel2", 30000000),
+              _settings.readNumEntry("/LambertProjection/Origin", 0));
   } else if (currentProjection->projectionType() == ProjectionBase::Cylindric) {
     initChanged = ((ProjectionCylindric*)currentProjection)->initProjection(
-              _settings.readNumEntry("/KFLog/CylindricalProjection/Parallel", 27000000));
+              _settings.readNumEntry("/CylindricalProjection/Parallel", 27000000));
   }
 
   if(projChanged || initChanged)

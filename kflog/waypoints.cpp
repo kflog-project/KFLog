@@ -207,7 +207,7 @@ void Waypoints::slotMove2Catalog(int id){
 void Waypoints::slotOpenWaypointCatalog()
 {
   extern QSettings _settings;
-  QString wayPointDir = _settings.readEntry("/KFLog/Path/DefaultWaypointDirectory",
+  QString wayPointDir = _settings.readEntry("/Path/DefaultWaypointDirectory",
                                           getpwuid(getuid())->pw_dir);
 
   QString filter;
@@ -544,7 +544,7 @@ void Waypoints::slotSaveWaypointCatalogAs()
 void Waypoints::slotImportWaypointCatalog()
 {
   extern QSettings _settings;
-  QString wayPointDir = _settings.readEntry("/KFLog/Path/DefaultWaypointDirectory",
+  QString wayPointDir = _settings.readEntry("/Path/DefaultWaypointDirectory",
                                           getpwuid(getuid())->pw_dir);
 
   QString filter;
@@ -787,9 +787,9 @@ void Waypoints::slotSetHome()
     Waypoint *w = currentWaypointCatalog->findWaypoint(item->text(colName));
 
     extern QSettings _settings;
-    _settings.writeEntry("/KFLog/MapData/Homesite", w->name);
-    _settings.writeEntry("/KFLog/MapData/HomesiteLatitude", w->origP.lat());
-    _settings.writeEntry("/KFLog/MapData/HomesiteLongitude", w->origP.lon());
+    _settings.writeEntry("/MapData/Homesite", w->name);
+    _settings.writeEntry("/MapData/HomesiteLatitude", w->origP.lat());
+    _settings.writeEntry("/MapData/HomesiteLongitude", w->origP.lon());
 
     // update airfield lists from Welt2000 if home site changes:
     extern MapContents  _globalMapContents;
@@ -822,8 +822,8 @@ void Waypoints::getFilterData()
     currentWaypointCatalog->radiusLong = _globalMapContents.degreeToNum(importFilterDlg->posLong->text());
     break;
   case CENTER_HOMESITE:
-    currentWaypointCatalog->radiusLat = _settings.readNumEntry("/KFLog/MapData/HomesiteLatitude");
-    currentWaypointCatalog->radiusLong = _settings.readNumEntry("/KFLog/MapData/HomesiteLongitude");
+    currentWaypointCatalog->radiusLat = _settings.readNumEntry("/MapData/HomesiteLatitude");
+    currentWaypointCatalog->radiusLong = _settings.readNumEntry("/MapData/HomesiteLongitude");
     break;
   case CENTER_MAP:
     p = _globalMapMatrix.getMapCenter(false);
@@ -855,7 +855,7 @@ void Waypoints::getFilterData()
 /** No descriptions */
 void Waypoints::slotImportWaypointFromFile(){
   extern QSettings _settings;
-  QString wayPointDir = _settings.readEntry("/KFLog/Path/DefaultWaypointDirectory",
+  QString wayPointDir = _settings.readEntry("/Path/DefaultWaypointDirectory",
                                           getpwuid(getuid())->pw_dir);
 
    // we should not include types we don't support (yet). Also, the strings should be translated.

@@ -2,7 +2,7 @@
 **
 **   flightloader.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **   This class reads the flight files into the memory.
 **
 ************************************************************************
@@ -191,7 +191,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
       if(s.mid(0,1) == "A" && isHeader)
         {
           // We have an manufactorer-id
-          recorderID = _settings.readEntry("/KFLog/ManufactorerID/"+s.mid(1,3).upper(), QObject::tr("unknown manufactorer"));
+          recorderID = _settings.readEntry("/ManufactorerID/"+s.mid(1,3).upper(), QObject::tr("unknown manufactorer"));
           recorderID = recorderID + " (" + s.mid(4,3) + ")";
         }
       else if(s.mid(0,1) == "H" && isHeader)
@@ -218,7 +218,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           else if(s.mid(1, 4).upper() == "FCCL")
             {
               // Searching the config-file for the Competition-Class
-              cClass = _settings.readNumEntry("/KFLog/CompetitionClasses/"+s.mid(s.find(':')+1,100).upper(), Flight::Unknown);
+              cClass = _settings.readNumEntry("/CompetitionClasses/"+s.mid(s.find(':')+1,100).upper(), Flight::Unknown);
             }
         }
       else if ( s.mid(0,1) == "I" )
@@ -504,7 +504,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
             year += 1900;
           else
             year += 2000;
-          timeOfFlightDay = timeToDay(year, month, day, s.mid(31, 3).latin1());
+          timeOfFlightDay = timeToDay(year, month, day, s.mid(31, 3).toLatin1().data());
           sscanf(s.mid(38, 8), "%2d:%2d:%2d", &hh, &mm, &ss);
           curTime = timeOfFlightDay + 3600 * hh + 60 * mm + ss;
           sscanf(s.mid(47, 5), "%d", &height);

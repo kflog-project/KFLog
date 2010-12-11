@@ -2,7 +2,7 @@
 **
 **   mapconfig.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
@@ -522,9 +522,9 @@ void MapConfig::slotReadConfig()
         FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4,
         PRINT_FAI_HIGH_500_BRUSH_STYLE_1, PRINT_FAI_HIGH_500_BRUSH_STYLE_2);
 
-    drawFType = _settings.readNumEntry("/KFLog/Flight/DrawType", MapConfig::Speed);
+    drawFType = _settings.readNumEntry("/Flight/DrawType", MapConfig::Speed);
 
-    _drawWpLabelScale = _settings.readNumEntry("/KFLog/Scale/WaypointLabel", WPLABEL);
+    _drawWpLabelScale = _settings.readNumEntry("/Scale/WaypointLabel", WPLABEL);
 
   emit configChanged();
 }
@@ -532,7 +532,7 @@ void MapConfig::slotReadConfig()
 void MapConfig::slotSetFlightDataType(int type)
 {
   drawFType = type;
-  _settings.writeEntry("/KFLog/Flight/DrawType", type);
+  _settings.writeEntry("/Flight/DrawType", type);
 }
 
 void MapConfig::slotSetMatrixValues(int index, bool sw)
@@ -564,7 +564,7 @@ QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*
   //
 
   extern QSettings _settings;
-  int width = _settings.readNumEntry("/KFLog/Flight/flightPathWidth", 4);
+  int width = _settings.readNumEntry("/Flight/flightPathWidth", 4);
   int red = 0, green = 0, blue = 0;
   float vario_range;
   QColor color;
@@ -597,26 +597,26 @@ QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*
               red = 255;
               green = 50;
               blue = 0;
-              color = __string2Color(_settings.readEntry("/KFLog/Flight/ColorLeftTurn", __color2String(QColor(red, green, blue))));
+              color = __string2Color(_settings.readEntry("/Flight/ColorLeftTurn", __color2String(QColor(red, green, blue))));
               break;
             case Flight::RightTurn:
               red = 50;
               green = 255;
               blue = 0;
-              color = __string2Color(_settings.readEntry("/KFLog/Flight/ColorRightTurn", __color2String(QColor(red, green, blue))));
+              color = __string2Color(_settings.readEntry("/Flight/ColorRightTurn", __color2String(QColor(red, green, blue))));
               break;
             case Flight::MixedTurn:
               red = 200;
               green = 0;
               blue = 200;
-              color = __string2Color(_settings.readEntry("/KFLog/Flight/ColorMixedTurn", __color2String(QColor(red, green, blue))));
+              color = __string2Color(_settings.readEntry("/Flight/ColorMixedTurn", __color2String(QColor(red, green, blue))));
               break;
             case Flight::Straight:
             default:
               red = 0;
               green = 50;
               blue = 255;
-              color = __string2Color(_settings.readEntry("/KFLog/Flight/ColorStraight", __color2String(QColor(red, green, blue))));
+              color = __string2Color(_settings.readEntry("/Flight/ColorStraight", __color2String(QColor(red, green, blue))));
               break;
           }
         break;
@@ -626,7 +626,7 @@ QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*
         red = 0;
         green = 100;
         blue = 200;
-        color = __string2Color(_settings.readEntry("/KFLog/Flight/ColorSolid", __color2String(QColor(red, green, blue))));
+        color = __string2Color(_settings.readEntry("/Flight/ColorSolid", __color2String(QColor(red, green, blue))));
         break;
     }
 
@@ -636,7 +636,7 @@ QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*
     red = 255;
     green = 255;
     blue = 255;
-    color = __string2Color(_settings.readEntry("/KFLog/Flight/ColorEngineNoise", __color2String(QColor(red, green, blue))));
+    color = __string2Color(_settings.readEntry("/Flight/ColorEngineNoise", __color2String(QColor(red, green, blue))));
   }
 
 
@@ -1100,12 +1100,12 @@ Qt::PenStyle MapConfig::getIsoPenStyle(int height)
 
 void MapConfig::__readBorder(QString group, bool *b)
 {
-  b[0] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border1", true);
-  b[1] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border2", true);
-  b[2] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border3", true);
-  b[3] = _settings.readBoolEntry("/KFLog/Map/"+group+"/Border4", true);
-  b[4] = _settings.readBoolEntry("/KFLog/Map/"+group+"/PrintBorder1", true);
-  b[5] = _settings.readBoolEntry("/KFLog/Map/"+group+"/PrintBorder2", true);
+  b[0] = _settings.readBoolEntry("/Map/"+group+"/Border1", true);
+  b[1] = _settings.readBoolEntry("/Map/"+group+"/Border2", true);
+  b[2] = _settings.readBoolEntry("/Map/"+group+"/Border3", true);
+  b[3] = _settings.readBoolEntry("/Map/"+group+"/Border4", true);
+  b[4] = _settings.readBoolEntry("/Map/"+group+"/PrintBorder1", true);
+  b[5] = _settings.readBoolEntry("/Map/"+group+"/PrintBorder2", true);
 }
 
 void MapConfig::__readPen(QString group, Q3PtrList<QPen> *penList, bool *b,
@@ -1114,24 +1114,24 @@ void MapConfig::__readPen(QString group, Q3PtrList<QPen> *penList, bool *b,
     Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4, Qt::PenStyle defaultPenStyle5, Qt::PenStyle defaultPenStyle6)
 {
   __readBorder(group, b);
-  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color1", __color2String(defaultColor1))),
-        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize1", defaultPenSize1),
-        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle1", defaultPenStyle1)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color2", __color2String(defaultColor2))),
-        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize2", defaultPenSize2),
-        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle2", defaultPenStyle2)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color3", __color2String(defaultColor3))),
-        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize3", defaultPenSize2),
-        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle3", defaultPenStyle3)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/Color4", __color2String(defaultColor4))),
-        _settings.readNumEntry("/KFLog/Map/"+group+"/PenSize4", defaultPenSize2),
-        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PenStyle4", defaultPenStyle4)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/PrintColor1", __color2String(defaultColor5))),
-        _settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenSize1", defaultPenSize5),
-        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenStyle1", defaultPenStyle5)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/PrintColor2", __color2String(defaultColor6))),
-        _settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenSize2", defaultPenSize6),
-        (Qt::PenStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintPenStyle2", defaultPenStyle6)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/Color1", __color2String(defaultColor1))),
+        _settings.readNumEntry("/Map/"+group+"/PenSize1", defaultPenSize1),
+        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PenStyle1", defaultPenStyle1)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/Color2", __color2String(defaultColor2))),
+        _settings.readNumEntry("/Map/"+group+"/PenSize2", defaultPenSize2),
+        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PenStyle2", defaultPenStyle2)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/Color3", __color2String(defaultColor3))),
+        _settings.readNumEntry("/Map/"+group+"/PenSize3", defaultPenSize2),
+        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PenStyle3", defaultPenStyle3)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/Color4", __color2String(defaultColor4))),
+        _settings.readNumEntry("/Map/"+group+"/PenSize4", defaultPenSize2),
+        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PenStyle4", defaultPenStyle4)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/PrintColor1", __color2String(defaultColor5))),
+        _settings.readNumEntry("/Map/"+group+"/PrintPenSize1", defaultPenSize5),
+        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PrintPenStyle1", defaultPenStyle5)));
+  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/PrintColor2", __color2String(defaultColor6))),
+        _settings.readNumEntry("/Map/"+group+"/PrintPenSize2", defaultPenSize6),
+        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PrintPenStyle2", defaultPenStyle6)));
 }
 
 void MapConfig::__readPenBrush(QString group, Q3PtrList<QPen> *penList, bool *b, Q3PtrList<QBrush> *brushList,
@@ -1145,23 +1145,23 @@ void MapConfig::__readPenBrush(QString group, Q3PtrList<QPen> *penList, bool *b,
       defaultColor1, defaultColor2, defaultColor3, defaultColor4, defaultColor5, defaultColor6,
       defaultPenSize1, defaultPenSize2, defaultPenSize3, defaultPenSize4, defaultPenSize5, defaultPenSize6,
       defaultPenStyle1, defaultPenStyle2, defaultPenStyle3, defaultPenStyle4, defaultPenStyle5, defaultPenStyle6);
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor1", __color2String(defaultBrushColor1))), \
-        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle1", defaultBrushStyle1))); \
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor2", __color2String(defaultBrushColor2))), \
-        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle2", defaultBrushStyle2))); \
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor3", __color2String(defaultBrushColor3))), \
-        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle3", defaultBrushStyle3))); \
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/BrushColor4", __color2String(defaultBrushColor4))), \
-        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/BrushStyle4", defaultBrushStyle4)));
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/PrintBrushColor1", __color2String(defaultBrushColor5))),
-        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintBrushStyle1", defaultBrushStyle5)));
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/KFLog/Map/"+group+"/PrintBrushColor2", __color2String(defaultBrushColor6))),
-        (Qt::BrushStyle)_settings.readNumEntry("/KFLog/Map/"+group+"/PrintBrushStyle2", defaultBrushStyle6)));
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/BrushColor1", __color2String(defaultBrushColor1))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/BrushStyle1", defaultBrushStyle1))); \
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/BrushColor2", __color2String(defaultBrushColor2))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/BrushStyle2", defaultBrushStyle2))); \
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/BrushColor3", __color2String(defaultBrushColor3))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/BrushStyle3", defaultBrushStyle3))); \
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/BrushColor4", __color2String(defaultBrushColor4))), \
+        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/BrushStyle4", defaultBrushStyle4)));
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/PrintBrushColor1", __color2String(defaultBrushColor5))),
+        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/PrintBrushStyle1", defaultBrushStyle5)));
+  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/PrintBrushColor2", __color2String(defaultBrushColor6))),
+        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/PrintBrushStyle2", defaultBrushStyle6)));
 }
 
 void MapConfig::__readTopo(QString entry, QColor color)
 {
-  topographyColorList.append(new QColor(__string2Color(_settings.readEntry("/KFLog/Map/Topography/" + entry, __color2String(color)))));
+  topographyColorList.append(new QColor(__string2Color(_settings.readEntry("/Map/Topography/" + entry, __color2String(color)))));
 }
 
 /** this is a temporary function and it is not needed in Qt 4 */
