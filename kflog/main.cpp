@@ -122,6 +122,9 @@ int main(int argc, char **argv)
   QCoreApplication::setApplicationName("kflog");
   QCoreApplication::setApplicationVersion( KFLOG_VERSION );
 
+  // Set the compile date of the application.
+  _settings.writeEntry( "/Main/CompileDate", __DATE__ );
+
   // Reset the locale that is used for number formatting to "C" locale.
   setlocale(LC_NUMERIC, "C");
 
