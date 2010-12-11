@@ -9,7 +9,7 @@
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -17,15 +17,16 @@
 
 #include "kflogstartlogo.h"
 
-#include <QApplication>
-#include <QBitmap>
-#include <QDesktopWidget>
-#include <QDir>
-#include <QPixmap>
+#include <QtGui>
 
-KFLogStartLogo::KFLogStartLogo()
-    : QWidget( 0, "KFlogStartWindow",  Qt::WStyle_Customize | Qt::WStyle_NoBorder )
+KFLogStartLogo::KFLogStartLogo( QWidget *parent ) :
+  QWidget( parent, Qt::WStyle_Customize | Qt::WStyle_NoBorder | Qt::WindowStaysOnTopHint )
 {
+  setObjectName("KFLogStartLogo");
+
+  // Destroy widget automatically, if it gets the close call.
+  setAttribute(Qt::WA_DeleteOnClose);
+
   QPixmap pm(QDir::homeDirPath() + "/.kflog/pics/splash.png");
 
   setBackgroundPixmap(pm);
@@ -33,6 +34,7 @@ KFLogStartLogo::KFLogStartLogo()
 
   QDesktopWidget *desktop = QApplication::desktop();
   QRect rect = desktop->screenGeometry();
+
   move(rect.x() + (rect.width() - pm.width())/2,
        rect.y() + (rect.height() - pm.height())/2);
 
@@ -41,5 +43,5 @@ KFLogStartLogo::KFLogStartLogo()
 
 KFLogStartLogo::~KFLogStartLogo()
 {
-
+  qDebug() << "~KFLogStartLogo()";
 }

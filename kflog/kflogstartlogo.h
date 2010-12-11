@@ -21,10 +21,17 @@
 #include <QWidget>
 
 /**
+ * \class KFLogStartLogo
+ *
+ * \brief Creates the startup-window displaying the logo.
+ *
  * Creates the startup-window displaying the logo.
  *
- * @author Heiner Lamprecht, Florian Ehinger
- * @version $Id$
+ * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
+ *
+ * \date 2000-2010
+ *
+ * \version $Id$
  */
 class KFLogStartLogo : public QWidget
 {
@@ -32,7 +39,7 @@ class KFLogStartLogo : public QWidget
     /**
      * Creates a new startup-window.
      */
-    KFLogStartLogo();
+    KFLogStartLogo( QWidget *parent = 0 );
     /**
      * Destructor.
      */
