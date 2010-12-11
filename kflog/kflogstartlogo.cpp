@@ -20,7 +20,7 @@
 #include <QtGui>
 
 KFLogStartLogo::KFLogStartLogo( QWidget *parent ) :
-  QWidget( parent, Qt::WStyle_Customize | Qt::WStyle_NoBorder | Qt::WindowStaysOnTopHint )
+  QWidget( parent, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint )
 {
   setObjectName("KFLogStartLogo");
 
