@@ -17,20 +17,19 @@
 
 #include <cmath>
 
-#include <qsettings.h>
+#include <QtGui>
 //Added by qt3to4:
 #include <Q3PointArray>
 
 #include "mapmatrix.h"
 
-// Projektions-Maßstab
-// 10 Meter Höhe pro Pixel ist die stärkste Vergrößerung.
-// Bei dieser Vergrößerung erfolgt die eigentliche Projektion
+// Projektions-Maï¿½stab
+// 10 Meter Hï¿½he pro Pixel ist die stï¿½rkste Vergrï¿½ï¿½erung.
+// Bei dieser Vergrï¿½ï¿½erung erfolgt die eigentliche Projektion
 #define MAX_SCALE 10.0
 #define MIN_SCALE 500000.0
 
-#define MATRIX_MOVE(a)  \
-    __moveMap(a);
+#define MATRIX_MOVE(a) __moveMap(a);
 
 /**
  * The earth's radius used for calculation, given in Meters
@@ -85,10 +84,9 @@ WGSPoint &WGSPoint::operator=( const QPoint &p )
 *************************************************************************/
 extern QSettings _settings;
 
-MapMatrix::MapMatrix()
-  : 
-    mapCenterLat(0), mapCenterLon(0), printCenterLat(0), printCenterLon(0),
-    cScale(0), rotationArc(0), printArc(0)
+MapMatrix::MapMatrix() :
+  mapCenterLat(0), mapCenterLon(0), printCenterLat(0), printCenterLon(0),
+  cScale(0), rotationArc(0), printArc(0)
 {
   viewBorder.setTop(29126344);
   viewBorder.setBottom(29124144);
@@ -101,13 +99,17 @@ MapMatrix::MapMatrix()
   printBorder.setRight(5379397);
 
   int projectionType = ProjectionBase::Lambert;
-  if( projectionType == ProjectionBase::Lambert ) {
-    // qDebug("MapMatrixConst: Lambert");
-    currentProjection = new ProjectionLambert(32400000, 30000000, 0);
-  } else {
-    // qDebug("MapMatrixConst: Cylindric");
-    currentProjection = new ProjectionCylindric(27000000);
-  }
+
+  if (projectionType == ProjectionBase::Lambert)
+    {
+      // qDebug("MapMatrixConst: Lambert");
+      currentProjection = new ProjectionLambert(32400000, 30000000, 0);
+    }
+  else
+    {
+      // qDebug("MapMatrixConst: Cylindric");
+      currentProjection = new ProjectionCylindric(27000000);
+    }
 }
 
 
@@ -132,15 +134,10 @@ QPoint MapMatrix::wgsToMap(const QPoint& origPoint) const
 
 QPoint MapMatrix::wgsToMap(int lat, int lon) const
 {
-  return QPoint((int)(currentProjection->projectX(NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
-                    RADIUS / MAX_SCALE),
-                (int)(currentProjection->projectY(NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
-                    RADIUS / MAX_SCALE));
-
-//  return QPoint(__calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
-//                    RADIUS / MAX_SCALE,
-//                __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
-//                    RADIUS / MAX_SCALE);
+  return QPoint((int) rint(currentProjection->projectX(NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
+                      RADIUS / MAX_SCALE),
+                (int) rint(currentProjection->projectY(NUM_TO_RAD(lat), NUM_TO_RAD(lon)) *
+                      RADIUS / MAX_SCALE));
 }
 
 
@@ -158,11 +155,6 @@ QPoint MapMatrix::__mapToWgs(const QPoint& origPoint) const
 
 QPoint MapMatrix::__mapToWgs(int x, int y) const
 {
-//  double lat = __invert_Lambert_Lat(x * MAX_SCALE / RADIUS,
-//                                    y * MAX_SCALE / RADIUS);
-//  double lon = __invert_Lambert_Lon(x * MAX_SCALE / RADIUS,
-//                                    y * MAX_SCALE / RADIUS);
-
   double lat = RAD_TO_NUM(currentProjection->invertLat(x * (MAX_SCALE / RADIUS),
                                                        y * (MAX_SCALE / RADIUS)));
   double lon = RAD_TO_NUM(currentProjection->invertLon(x * (MAX_SCALE / RADIUS),
@@ -179,14 +171,10 @@ bool MapMatrix::isVisible(const QPoint& pos) const
 bool MapMatrix::isVisible(const QRect& itemBorder) const
 {
   // Grenze: Nahe 15Bit
-  // Vereinfachung kann zu Fehlern führen ...
+  // Vereinfachung kann zu Fehlern fï¿½hren ...
   return ( ( mapBorder.intersects(itemBorder) ) &&
            ( itemBorder.width() * ( MAX_SCALE / cScale ) < 30000 ) &&
            ( itemBorder.height() * ( MAX_SCALE / cScale ) < 30000 ) );
-
-//  return ( ( mapBorder.intersects(itemBorder) ) &&
-//           ( itemBorder.width() * ( MAX_SCALE / cScale ) > 2 ) &&
-//           ( itemBorder.height() * ( MAX_SCALE / cScale ) > 2 ) );
 }
 
 
@@ -217,13 +205,6 @@ QPoint MapMatrix::map(const QPoint& origPoint) const
 {
   return worldMatrix.map(origPoint);
 }
-
-/*
-QPoint MapMatrix::map(const QPoint *origPoint) const
-{
-  return worldMatrix.map(*origPoint);
-}
-*/
 
 double MapMatrix::map(double arc) const
 {
@@ -479,7 +460,7 @@ void MapMatrix::createMatrix(const QSize& newSize)
   worldMatrix.setMatrix(cos(rotationArc) * scale, sin(rotationArc) * scale,
       -sin(rotationArc) * scale, cos(rotationArc) * scale, 0, 0);
 
-  /* Set the tranlation */
+  /* Set the translation */
   QMatrix translateMatrix(1, 0, 0, 1,
       currentProjection->getTranslationX(newSize.width(),
           worldMatrix.map(tempPoint).x()),
@@ -497,8 +478,8 @@ void MapMatrix::createMatrix(const QSize& newSize)
 
   //
   // Die Berechnung der Kartengrenze funktioniert so nur auf der
-  // Nordhalbkugel. Auf der Südhalbkugel stimmen die Werte nur
-  // näherungsweise.
+  // Nordhalbkugel. Auf der SÃ¼dhalbkugel stimmen die Werte nur
+  // nÃ¤herungsweise.
   //
   QPoint tCenter  = __mapToWgs(invertMatrix.map(QPoint(newSize.width() / 2, 0)));
   QPoint tlCorner = __mapToWgs(invertMatrix.map(QPoint(0, 0)));
@@ -569,8 +550,8 @@ void MapMatrix::createPrintMatrix(double printScale, const QSize& pSize, int dX,
 
   /*
    * Die Berechnung der Kartengrenze funktioniert so nur auf der
-   * Nordhalbkugel. Auf der Südhalbkugel stimmen die Werte nur
-   * näherungsweise.
+   * Nordhalbkugel. Auf der Sï¿½dhalbkugel stimmen die Werte nur
+   * nï¿½herungsweise.
    */
   QPoint tCenter  = __mapToWgs(invertMatrix.map(QPoint(pSize.width() / 2, 0)));
   QPoint tlCorner = __mapToWgs(invertMatrix.map(QPoint(0, 0)));
@@ -631,9 +612,8 @@ void MapMatrix::slotInitMatrix()
 {
   //
   // The scale is set to 0 in the constructor. Here we read the scale and
-  // the mapcenter only the first time. Otherwise the values would change
+  // the map center only the first time. Otherwise the values would change
   // after configuring KFLog.
-  //
   //                                                Fixed 2001-12-14
   if(cScale <= 0) {
     // @ee we want to center to the last position !
@@ -653,18 +633,23 @@ void MapMatrix::slotInitMatrix()
       currentProjection = new ProjectionLambert(_settings.readNumEntry("/LambertProjection/Parallel1", 32400000),
                                                 _settings.readNumEntry("/LambertProjection/Parallel2", 30000000),
                                                 _settings.readNumEntry("/LambertProjection/Origin", 0));
-      qDebug ("Map projection changed to Lambert");
+
+      qDebug() << "Map projection changed to Lambert";
       break;
-    //case ProjectionBase::Cylindric:
+
+    case ProjectionBase::Cylindric:
     default:
       // fallback is cylindrical
       currentProjection = new ProjectionCylindric(_settings.readNumEntry("/CylindricalProjection/Parallel", 27000000));
-      qDebug ("Map projection changed to Cylinder");
+      qDebug << "Map projection changed to Cylinder";
       break;
     }
   }
 
-  if(projChanged) emit projectionChanged();
+  if(projChanged)
+    {
+      emit projectionChanged();
+    }
 
   scaleBorders[LowerLimit] = _settings.readNumEntry("/Scale/Lower Limit", VAL_BORDER_L);
   scaleBorders[Border1] = _settings.readNumEntry("/Scale/Border1", VAL_BORDER_1);
@@ -673,8 +658,8 @@ void MapMatrix::slotInitMatrix()
   scaleBorders[SwitchScale] = _settings.readNumEntry("/Scale/SwitchScale", VAL_BORDER_S);
   scaleBorders[UpperLimit] = _settings.readNumEntry("/Scale/UpperLimit", VAL_BORDER_U);
 
-  cScale = std::min(cScale, double(scaleBorders[UpperLimit]));
-  cScale = std::max(cScale, double(scaleBorders[LowerLimit]));
+  cScale = qMin(cScale, double(scaleBorders[UpperLimit]));
+  cScale = qMax(cScale, double(scaleBorders[LowerLimit]));
 
   bool initChanged = false;
 
@@ -689,5 +674,7 @@ void MapMatrix::slotInitMatrix()
   }
 
   if(projChanged || initChanged)
-    emit projectionChanged();
+    {
+      emit projectionChanged();
+    }
 }

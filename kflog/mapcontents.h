@@ -15,8 +15,8 @@
 **
 ***********************************************************************/
 
-#ifndef MAPCONTENTS_H
-#define MAPCONTENTS_H
+#ifndef MAP_CONTENTS_H
+#define MAP_CONTENTS_H
 
 #include <map>
 
@@ -47,7 +47,7 @@ class SinglePoint;
  * like this is created when the map is drawn, and is used to detect the
  * elevation at a given position, for instance under the mousecursor.
  *
- * @author André Somers
+ * @author Andrï¿½ Somers
  * @version $Id$
  */
 

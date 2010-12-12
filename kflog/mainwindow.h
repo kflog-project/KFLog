@@ -26,6 +26,8 @@
  * is initialized and handled here.
  *
  * \date 2001-2010
+ *
+ * \version $Id$
  */
 
 #ifndef MAIN_WINDOW_H
@@ -57,10 +59,15 @@ class MainWindow : public Q3MainWindow
 {
   Q_OBJECT
 
+  private:
+
+  Q_DISABLE_COPY ( MainWindow )
+
 public:
+
   MainWindow();
-  virtual
-  ~MainWindow();
+
+  virtual ~MainWindow();
 
   signals:
    /**

@@ -52,18 +52,23 @@ MainWindow::MainWindow() : Q3MainWindow(0, "KFLog main window")
   if(_settings.readBoolEntry("/GeneralOptions/Logo", true))
   {
     showStartLogo = true;
-    startLogo = new KFLogStartLogo();
+    startLogo = new KFLogStartLogo;
     startLogo->show();
   }
-  connect(&_globalMapConfig, SIGNAL(configChanged()), &_globalMapMatrix, SLOT(slotInitMatrix()));
+
+  connect( &_globalMapConfig, SIGNAL(configChanged()),
+           &_globalMapMatrix, SLOT(slotInitMatrix()) );
 
   _globalMapConfig.slotReadConfig();
 
   initTaskTypes();
   initSurfaceTypes();
   initWaypointTypes();
-  if(showStartLogo && startLogo!=0)
+
+  if(showStartLogo && startLogo != 0)
+    {
       startLogo->raise();
+    }
 
   initDockWindows();
   initMenuBar();
@@ -94,7 +99,6 @@ MainWindow::MainWindow() : Q3MainWindow(0, "KFLog main window")
   connect(dataView, SIGNAL(flightSelected(BaseFlightElement *)), &_globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
   connect(dataView, SIGNAL(editFlightGroup()), &_globalMapContents, SLOT(slotEditFlightGroup()));
 
-  connect(&_globalMapConfig, SIGNAL(configChanged()), &_globalMapMatrix, SLOT(slotInitMatrix()));
   connect(&_globalMapContents, SIGNAL(activatePlanning()), map,SLOT(slotActivatePlanning()));
   connect(&_globalMapContents, SIGNAL(closingFlight(BaseFlightElement*)), objectTree, SLOT(slotCloseFlight(BaseFlightElement*)));
   connect(&_globalMapContents, SIGNAL(contentsChanged()),map, SLOT(slotRedrawMap()));
@@ -208,7 +212,6 @@ MainWindow::~MainWindow()
   delete flightDataType;
   delete windowMenu;
   delete settings;
-  delete startLogo;
   delete statusLabel;
   delete statusTimeL;
   delete statusAltitudeL;
@@ -1281,11 +1284,11 @@ void MainWindow::slotFlightPrint()
 
 void MainWindow::slotStartComplete()
 {
-  if(showStartLogo && (startLogo != 0L))
+  if( showStartLogo && startLogo != static_cast<KFLogStartLogo *> (0) )
     {
-      delete startLogo;
-      startLogo = 0L;
-      showStartLogo=false;
+      startLogo->close();
+      startLogo = static_cast<KFLogStartLogo *> (0);
+      showStartLogo = false;
     }
 }
 

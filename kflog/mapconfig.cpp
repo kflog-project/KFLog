@@ -15,21 +15,20 @@
 **
 ***********************************************************************/
 
+#include <QtGui>
 
-#include <qdir.h>
-#include <qnamespace.h>
-#include <qsettings.h>
+//#include <qdir.h>
+//#include <qnamespace.h>
+//#include <qsettings.h>
 //Added by qt3to4:
 #include <Q3PtrList>
-#include <QPixmap>
 
 #include "flight.h"
 #include "mapdefaults.h"
 
 extern QSettings _settings;
 
-MapConfig::MapConfig()
-  : scaleIndex(0), printScaleIndex(0), isSwitch(false)
+MapConfig::MapConfig() : scaleIndex(0), printScaleIndex(0), isSwitch(false)
 {
   airABorder = new bool[6];
   airBBorder = new bool[6];
@@ -559,7 +558,7 @@ QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*
   //
   //   Farben als Legende ausgeben ???
   //
-  //   Farbwerte müssen noch eingestellt werden. Konfigurierbar???
+  //   Farbwerte mÃ¼ssen noch eingestellt werden. Konfigurierbar???
   //   I would prefer colors adjusted for each flights histogram.
   //
 

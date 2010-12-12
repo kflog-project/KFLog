@@ -2,6 +2,8 @@ $Id$
 
 Implementation:
 
+  Axel Pauli <axel@kflog.org>
+
   Hendrik Hoeth <hoeth@linta.de>
 
   Constantijn Neeteson <kflog@neeteson.net>
@@ -14,9 +16,9 @@ Implementation:
 
   Thomas Nielsen <thomas.nielsen@telelogic.com>
 
-  Jan Krüger <jkrueger@vortex.physik.uni-konstanz.de>
+  Jan KrÃ¼ger <jkrueger@vortex.physik.uni-konstanz.de>
 
-  André Somers <andre@kflog.org>
+  AndrÃ© Somers <andre@kflog.org>
 
   Eggert Ehmke <eggert.ehmke@berlin.de>
 
@@ -24,7 +26,7 @@ Translations:
 
   Norwegian: Thomas Nielsen <thomas.nielsen@telelogic.com>
 
-  Swedish: Göran Källqvist <kjellqvist@nordkalak.se>
+  Swedish: Gï¿½ran Kï¿½llqvist <kjellqvist@nordkalak.se>
 
   French: Helmut J. Rohs <helmut.rohs@t-online.de>
 
@@ -32,8 +34,7 @@ Translations:
 
   Italian: Andrea Gnesutta <gnes@mbox.zero.it>
   
-  Dutch: André Somers <andre@kflog.org>
-
+  Dutch: AndrÃ© Somers <andre@kflog.org>
 
 Additional work:
 
