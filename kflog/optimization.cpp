@@ -62,9 +62,13 @@ double Optimization::optimizationResult(unsigned int* retList, double *retPoints
   retList[i++]=start;
   for(;i<=LEGS+1;i++){
     retList[i]=original_route.indexOf(route.at(pointList[j]));
-    if (pointList[j]>original_route.count()){
+    if (pointList[j]> (uint) original_route.count()){
       qWarning("##k:%d\tstart:%d\t\tpointList[k]:%d", i, start, pointList[i]);
-      QMessageBox::warning(0, "Optimization fault", "Sorry optimization fault. Report error (including IGC-File) to <christof.bodner@gmx.net>", QMessageBox::Ok, 0);
+
+      QMessageBox::warning( 0, tr("Optimization fault"),
+                            tr("Sorry optimization fault. Report error (including IGC-File) to <christof.bodner@gmx.net>"),
+                            QMessageBox::Ok );
+
       return -1.0;
     }
     j++;
@@ -96,13 +100,12 @@ void Optimization::enableRun(){
 }
 
 void Optimization::run(){
-  double *L;                        // length values
-  unsigned int *w;                  // waypoints
-//  double length;                    // solution length
+  double *L;               // length values
+  unsigned int *w;         // waypoints
 
-  int ii;                           // loop variables
-  unsigned int n;                   // number of points
-  double c;                         // temp variables
+  int ii;                  // loop variables
+  int n;                   // number of points
+  double c;                // temp variables
   unsigned int index;
   double wLeg;
   flightPoint **rp;
