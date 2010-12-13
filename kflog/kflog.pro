@@ -14,6 +14,7 @@ TEMPLATE = app
 SOURCES = \
     airport.cpp \
     airspace.cpp \
+    authdialog.cpp \
     baseflightelement.cpp \
     basemapelement.cpp \
     centertodialog.cpp \
@@ -22,7 +23,7 @@ SOURCES = \
     da4record.cpp \
     dataview.cpp \
     distance.cpp \
-    downloadlist.cpp \
+    downloadmanager.cpp \
     elevationfinder.cpp \
     evaluationdialog.cpp \
     evaluationframe.cpp \
@@ -38,6 +39,7 @@ SOURCES = \
     flighttask.cpp \
     glidersite.cpp \
     helpwindow.cpp \
+    httpclient.cpp \
     igc3ddialog.cpp \
     igc3dflightdata.cpp \
     igc3dpolyhedron.cpp \
@@ -86,6 +88,7 @@ SOURCES = \
 HEADERS = \
     airport.h \
     airspace.h \
+    authdialog.h \
     baseflightelement.h \
     basemapelement.h \
     centertodialog.h \
@@ -94,7 +97,7 @@ HEADERS = \
     da4record.h \
     dataview.h \
     distance.h \
-    downloadlist.h \
+    downloadmanager.h \
     elevationfinder.h \
     evaluationdialog.h \
     evaluationframe.h \
@@ -112,6 +115,7 @@ HEADERS = \
     gliders.h \
     glidersite.h \
     helpwindow.h \
+    httpclient.h \
     igc3ddialog.h \
     igc3dflightdata.h \
     igc3dpolyhedron.h \

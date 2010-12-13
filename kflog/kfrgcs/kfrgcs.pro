@@ -1,3 +1,6 @@
+# KFLog4 qmake project file
+# $Id$
+
 TEMPLATE = lib
 
 SOURCES =   volkslogger.cpp \
@@ -21,13 +24,12 @@ HEADERS =   bbconv.h \
             vlconv.h \
             volkslogger.h
 
-logger.extra = mkdir -p  ~/.kflog/logger/; \
-               cp ./gcs.desktop ~/.kflog/logger; \
-               cp ./README ~/.kflog/logger
-logger.path = ../pics
-logger.files =
+logger.path  = /logger
+logger.files = gcs.desktop README
+
 INSTALLS += logger
 
 DESTDIR = ../../release
+
 #The following line was inserted by qt3to4
 QT += xml  qt3support 

@@ -1,3 +1,6 @@
+# KFLog4 qmake project file
+# $Id$
+
 TEMPLATE = lib
 
 SOURCES =   garminfr.cpp \
@@ -9,13 +12,12 @@ HEADERS =   flightrecorder.h \
             garmintypes.h \
             garminfr.h
 
-logger.extra = mkdir -p  ~/.kflog/logger/; \
-               cp ./gmn.desktop ~/.kflog/logger; \
-               cp ./README ~/.kflog/logger
-logger.path = ../pics
-logger.files =
+logger.path  = /logger
+logger.files = gmn.desktop README
+               
 INSTALLS += logger
 
 DESTDIR = ../../release
+
 #The following line was inserted by qt3to4
 QT += xml  qt3support 
