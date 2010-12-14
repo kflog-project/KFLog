@@ -151,16 +151,16 @@ MapControlView::MapControlView(QWidget* parent)
   connect(currentScaleSlider, SIGNAL(sliderReleased()),
             SLOT(slotSetScale()));
 
-  extern MapMatrix _globalMapMatrix;
-  connect(nwB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapNW()));
-  connect(nB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapN()));
-  connect(neB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapNE()));
-  connect(wB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapW()));
-  connect(cenB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotCenterToHome()));
-  connect(eB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapE()));
-  connect(swB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapSW()));
-  connect(sB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapS()));
-  connect(seB, SIGNAL(clicked()), &_globalMapMatrix, SLOT(slotMoveMapSE()));
+  extern MapMatrix *_globalMapMatrix;
+  connect(nwB, SIGNAL(clicked()), _globalMapMatrix, SLOT(slotMoveMapNW()));
+  connect(nB, SIGNAL(clicked()), _globalMapMatrix, SLOT(slotMoveMapN()));
+  connect(neB, SIGNAL(clicked()), _globalMapMatrix, SLOT(slotMoveMapNE()));
+  connect(wB, SIGNAL(clicked()), _globalMapMatrix, SLOT(slotMoveMapW()));
+  connect(cenB, SIGNAL(clicked()), _globalMapMatrix, SLOT(slotCenterToHome()));
+  connect(eB, SIGNAL(clicked()), _globalMapMatrix, SLOT(slotMoveMapE()));
+  connect(swB, SIGNAL(clicked()), _globalMapMatrix, SLOT(slotMoveMapSW()));
+  connect(sB, SIGNAL(clicked()), _globalMapMatrix, SLOT(slotMoveMapS()));
+  connect(seB, SIGNAL(clicked()), _globalMapMatrix, SLOT(slotMoveMapSE()));
 }
 
 MapControlView::~MapControlView()
@@ -170,8 +170,8 @@ MapControlView::~MapControlView()
 
 void MapControlView::slotShowMapData(QSize mapSize)
 {
-  extern MapMatrix _globalMapMatrix;
-  const double cScale = _globalMapMatrix.getScale();
+  extern MapMatrix *_globalMapMatrix;
+  const double cScale = _globalMapMatrix->getScale();
 
   QString temp;
 
@@ -215,13 +215,13 @@ int MapControlView::__getScaleValue(double scale)
 
 void MapControlView::slotShowScaleChange(int value)
 {
-  extern MapMatrix _globalMapMatrix;
+  extern MapMatrix *_globalMapMatrix;
 
   currentScaleValue->display(__setScaleValue(value));
 
-  if(currentScaleValue->value() > _globalMapMatrix.getScale(MapMatrix::UpperLimit))
-      currentScaleSlider->setValue((int)_globalMapMatrix.getScale(MapMatrix::UpperLimit));
+  if(currentScaleValue->value() > _globalMapMatrix->getScale(MapMatrix::UpperLimit))
+      currentScaleSlider->setValue((int)_globalMapMatrix->getScale(MapMatrix::UpperLimit));
 
-  if(currentScaleValue->value() < _globalMapMatrix.getScale(MapMatrix::LowerLimit))
-      currentScaleSlider->setValue((int)_globalMapMatrix.getScale(MapMatrix::LowerLimit));
+  if(currentScaleValue->value() < _globalMapMatrix->getScale(MapMatrix::LowerLimit))
+      currentScaleSlider->setValue((int)_globalMapMatrix->getScale(MapMatrix::LowerLimit));
 }

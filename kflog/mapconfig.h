@@ -61,7 +61,7 @@ public:
   /**
    * Creates a new MapConfig object.
    */
-  MapConfig();
+  MapConfig( QObject* object = 0 );
   /**
    * Destructor
    */

@@ -39,8 +39,8 @@
 #include "translationlist.h"
 #include "waypoints.h"
 
-extern MapContents _globalMapContents;
-extern MapMatrix _globalMapMatrix;
+extern MapContents *_globalMapContents;
+extern MapMatrix   *_globalMapMatrix;
 
 Waypoints::Waypoints(QWidget *parent, const char *name, const QString& /*catalog*/)
   : QFrame(parent, name)
@@ -361,8 +361,8 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
         w->name = waypointDlg->name->text().left(6).upper();
         w->description = waypointDlg->description->text();
         w->type = waypointDlg->getWaypointType();
-        w->origP.setLat(_globalMapContents.degreeToNum(waypointDlg->latitude->text()));
-        w->origP.setLon(_globalMapContents.degreeToNum(waypointDlg->longitude->text()));
+        w->origP.setLat(_globalMapContents->degreeToNum(waypointDlg->latitude->text()));
+        w->origP.setLon(_globalMapContents->degreeToNum(waypointDlg->longitude->text()));
         w->elevation = waypointDlg->elevation->text().toInt();
         w->icao = waypointDlg->icao->text().upper();
         w->frequency = waypointDlg->frequency->text().toDouble();
@@ -442,7 +442,7 @@ void Waypoints::fillWaypoints()
   bool filterRadius, filterArea;
   extern TranslationList surfaceTypes;
   extern TranslationList waypointTypes;
-  extern MapConfig _globalMapConfig;
+  extern MapConfig *_globalMapConfig;
 
   waypoints->clear();
 
@@ -517,7 +517,7 @@ void Waypoints::fillWaypoints()
 
     item->setText(colSurface, w->surface == -1 ? QString::null : surfaceTypes.itemText(w->surface));
     item->setText(colComment, w->comment);
-    item->setPixmap(colName, _globalMapConfig.getPixmap(w->type,false,true));
+    item->setPixmap(colName, _globalMapConfig->getPixmap(w->type,false,true));
   }
   emit waypointCatalogChanged(currentWaypointCatalog);
 }
@@ -616,7 +616,7 @@ void Waypoints::slotImportWaypointFromMap()
       searchLists.append(MapContents::AirportList);
     }
     if (currentWaypointCatalog->showAll || currentWaypointCatalog->showGliderSites) {
-      searchLists.append(MapContents::GliderSiteList);
+      searchLists.append(MapContents::GliderfieldList);
     }
     if (currentWaypointCatalog->showAll || currentWaypointCatalog->showOtherSites) {
       searchLists.append(MapContents::AddSitesList);
@@ -628,7 +628,7 @@ void Waypoints::slotImportWaypointFromMap()
       searchLists.append(MapContents::LandmarkList);
     }
     if (currentWaypointCatalog->showAll || currentWaypointCatalog->showOutlanding) {
-      searchLists.append(MapContents::OutList);
+      searchLists.append(MapContents::OutLandingList);
     }
     if (currentWaypointCatalog->showAll || currentWaypointCatalog->showStation) {
       searchLists.append(MapContents::StationList);
@@ -638,9 +638,9 @@ void Waypoints::slotImportWaypointFromMap()
     filterArea = (currentWaypointCatalog->areaLat2 != 1 && currentWaypointCatalog->areaLong2 != 1 && !filterRadius);
 
     for (searchListsIt =searchLists.begin(); searchListsIt != searchLists.end(); ++searchListsIt) {
-      for (int i = 0; i < _globalMapContents.getListLength(*searchListsIt); i++) {
+      for (int i = 0; i < _globalMapContents->getListLength(*searchListsIt); i++) {
 
-        s = (SinglePoint *)_globalMapContents.getElement(*searchListsIt, i);
+        s = (SinglePoint *)_globalMapContents->getElement(*searchListsIt, i);
         p = s->getWGSPosition();
 
         // check area
@@ -787,13 +787,13 @@ void Waypoints::slotSetHome()
     Waypoint *w = currentWaypointCatalog->findWaypoint(item->text(colName));
 
     extern QSettings _settings;
-    _settings.writeEntry("/MapData/Homesite", w->name);
-    _settings.writeEntry("/MapData/HomesiteLatitude", w->origP.lat());
-    _settings.writeEntry("/MapData/HomesiteLongitude", w->origP.lon());
+    _settings.setValue("/MapData/Homesite", w->name);
+    _settings.setValue("/MapData/HomesiteLatitude", w->origP.lat());
+    _settings.setValue("/MapData/HomesiteLongitude", w->origP.lon());
 
     // update airfield lists from Welt2000 if home site changes:
-    extern MapContents  _globalMapContents;
-    _globalMapContents.slotReloadMapData();
+    extern MapContents  *_globalMapContents;
+    _globalMapContents->slotReloadMapData();
   }
 }
 
@@ -811,22 +811,22 @@ void Waypoints::getFilterData()
   currentWaypointCatalog->showOutlanding = importFilterDlg->outlanding->isChecked();
   currentWaypointCatalog->showStation = importFilterDlg->station->isChecked();
 
-  currentWaypointCatalog->areaLat1 = _globalMapContents.degreeToNum(importFilterDlg->fromLat->text());
-  currentWaypointCatalog->areaLat2 = _globalMapContents.degreeToNum(importFilterDlg->toLat->text());
-  currentWaypointCatalog->areaLong1 = _globalMapContents.degreeToNum(importFilterDlg->fromLong->text());
-  currentWaypointCatalog->areaLong2 = _globalMapContents.degreeToNum(importFilterDlg->toLong->text());
+  currentWaypointCatalog->areaLat1 = _globalMapContents->degreeToNum(importFilterDlg->fromLat->text());
+  currentWaypointCatalog->areaLat2 = _globalMapContents->degreeToNum(importFilterDlg->toLat->text());
+  currentWaypointCatalog->areaLong1 = _globalMapContents->degreeToNum(importFilterDlg->fromLong->text());
+  currentWaypointCatalog->areaLong2 = _globalMapContents->degreeToNum(importFilterDlg->toLong->text());
 
   switch (importFilterDlg->getCenterRef()) {
   case CENTER_POS:
-    currentWaypointCatalog->radiusLat = _globalMapContents.degreeToNum(importFilterDlg->posLat->text());
-    currentWaypointCatalog->radiusLong = _globalMapContents.degreeToNum(importFilterDlg->posLong->text());
+    currentWaypointCatalog->radiusLat = _globalMapContents->degreeToNum(importFilterDlg->posLat->text());
+    currentWaypointCatalog->radiusLong = _globalMapContents->degreeToNum(importFilterDlg->posLong->text());
     break;
   case CENTER_HOMESITE:
     currentWaypointCatalog->radiusLat = _settings.readNumEntry("/MapData/HomesiteLatitude");
     currentWaypointCatalog->radiusLong = _settings.readNumEntry("/MapData/HomesiteLongitude");
     break;
   case CENTER_MAP:
-    p = _globalMapMatrix.getMapCenter(false);
+    p = _globalMapMatrix->getMapCenter(false);
     currentWaypointCatalog->radiusLat = p.lat();
     currentWaypointCatalog->radiusLong = p.lon();
     break;

@@ -146,60 +146,60 @@ void KFLogConfig::slotOk()
 {
   slotSelectProjection(ProjectionBase::Unknown);
 
-  _settings.writeEntry("/GeneralOptions/Version", "3.0");
+  _settings.setValue("/GeneralOptions/Version", "3.0");
 
-  _settings.writeEntry("/Path/DefaultFlightDirectory", igcPathE->text());
-  _settings.writeEntry("/Path/DefaultTaskDirectory", taskPathE->text());
-  _settings.writeEntry("/Path/DefaultWaypointDirectory", waypointPathE->text());
-  _settings.writeEntry("/Path/DefaultMapDirectory", mapPathE->text());
+  _settings.setValue("/Path/DefaultFlightDirectory", igcPathE->text());
+  _settings.setValue("/Path/DefaultTaskDirectory", taskPathE->text());
+  _settings.setValue("/Path/DefaultWaypointDirectory", waypointPathE->text());
+  _settings.setValue("/Path/DefaultMapDirectory", mapPathE->text());
 
-  _settings.writeEntry("/Scale/LowerLimit", lLimitN->value());
-  _settings.writeEntry("/Scale/UpperLimit", uLimitN->value());
-  _settings.writeEntry("/Scale/SwitchScale", switchScaleN->value());
-  _settings.writeEntry("/Scale/WaypointLabel", wpLabelN->value());
-  _settings.writeEntry("/Scale/Border1", reduce1N->value());
-  _settings.writeEntry("/Scale/Border2", reduce2N->value());
-  _settings.writeEntry("/Scale/Border3", reduce3N->value());
+  _settings.setValue("/Scale/LowerLimit", lLimitN->value());
+  _settings.setValue("/Scale/UpperLimit", uLimitN->value());
+  _settings.setValue("/Scale/SwitchScale", switchScaleN->value());
+  _settings.setValue("/Scale/WaypointLabel", wpLabelN->value());
+  _settings.setValue("/Scale/Border1", reduce1N->value());
+  _settings.setValue("/Scale/Border2", reduce2N->value());
+  _settings.setValue("/Scale/Border3", reduce3N->value());
 
-  _settings.writeEntry("/MapData/Homesite", homeNameE->text());
-  _settings.writeEntry("/MapData/HomesiteLatitude", MapContents::degreeToNum(homeLatE-> text()));
-  _settings.writeEntry("/MapData/HomesiteLongitude", MapContents::degreeToNum(homeLonE-> text()));
-  _settings.writeEntry("/MapData/ProjectionType", projectionSelect->currentItem());
-  _settings.writeEntry("/MapData/Welt2000CountryFilter", filterE->text());
-  _settings.writeEntry("/MapData/Welt2000HomeRadius", homeRadiusE->text());
+  _settings.setValue("/MapData/Homesite", homeNameE->text());
+  _settings.setValue("/MapData/HomesiteLatitude", MapContents::degreeToNum(homeLatE-> text()));
+  _settings.setValue("/MapData/HomesiteLongitude", MapContents::degreeToNum(homeLonE-> text()));
+  _settings.setValue("/MapData/ProjectionType", projectionSelect->currentItem());
+  _settings.setValue("/MapData/Welt2000CountryFilter", filterE->text());
+  _settings.setValue("/MapData/Welt2000HomeRadius", homeRadiusE->text());
 
   if(needUpdateDrawType)
   {
-    _settings.writeEntry("/Flight/DrawType", drawTypeSelect->currentItem());
+    _settings.setValue("/Flight/DrawType", drawTypeSelect->currentItem());
     //update menu Flight=>Show Flightdata
     emit newDrawType(drawTypeSelect->currentItem());
   }
-  _settings.writeEntry("/Flight/ColorLeftTurn", __color2String(flightTypeLeftTurnColor));
-  _settings.writeEntry("/Flight/ColorRightTurn", __color2String(flightTypeRightTurnColor));
-  _settings.writeEntry("/Flight/ColorMixedTurn", __color2String(flightTypeMixedTurnColor));
-  _settings.writeEntry("/Flight/ColorStraight", __color2String(flightTypeStraightColor));
-  _settings.writeEntry("/Flight/ColorSolid", __color2String(flightTypeSolidColor));
-  _settings.writeEntry("/Flight/ColorEngineNoise", __color2String(flightTypeEngineNoiseColor));
-  _settings.writeEntry("/Flight/flightPathWidth", flightPathWidthE->text());
+  _settings.setValue("/Flight/ColorLeftTurn", __color2String(flightTypeLeftTurnColor));
+  _settings.setValue("/Flight/ColorRightTurn", __color2String(flightTypeRightTurnColor));
+  _settings.setValue("/Flight/ColorMixedTurn", __color2String(flightTypeMixedTurnColor));
+  _settings.setValue("/Flight/ColorStraight", __color2String(flightTypeStraightColor));
+  _settings.setValue("/Flight/ColorSolid", __color2String(flightTypeSolidColor));
+  _settings.setValue("/Flight/ColorEngineNoise", __color2String(flightTypeEngineNoiseColor));
+  _settings.setValue("/Flight/flightPathWidth", flightPathWidthE->text());
 
-  _settings.writeEntry("/LambertProjection/Parallel1", lambertV1);
-  _settings.writeEntry("/LambertProjection/Parallel2", lambertV2);
-  _settings.writeEntry("/LambertProjection/Origin", lambertOrigin);
+  _settings.setValue("/LambertProjection/Parallel1", lambertV1);
+  _settings.setValue("/LambertProjection/Parallel2", lambertV2);
+  _settings.setValue("/LambertProjection/Origin", lambertOrigin);
 
-  _settings.writeEntry("/CylindricalProjection/Parallel", cylinPar);
+  _settings.setValue("/CylindricalProjection/Parallel", cylinPar);
 
-  _settings.writeEntry("/PersonalData/PreName", preNameE->text());
-  _settings.writeEntry("/PersonalData/SurName", surNameE->text());
-  _settings.writeEntry("/PersonalData/Birthday", dateOfBirthE->text());
+  _settings.setValue("/PersonalData/PreName", preNameE->text());
+  _settings.setValue("/PersonalData/SurName", surNameE->text());
+  _settings.setValue("/PersonalData/Birthday", dateOfBirthE->text());
 
-  _settings.writeEntry("/Waypoints/DefaultWaypointCatalog", waypointButtonGroup->id(waypointButtonGroup->selected()));
-  _settings.writeEntry("/Waypoints/DefaultCatalogName", catalogPathE->text());
+  _settings.setValue("/Waypoints/DefaultWaypointCatalog", waypointButtonGroup->id(waypointButtonGroup->selected()));
+  _settings.setValue("/Waypoints/DefaultCatalogName", catalogPathE->text());
 
   emit scaleChanged((int)lLimitN->value(), (int)uLimitN->value());
 
   if (needUpdateWelt2000) {
-    extern MapContents  _globalMapContents;
-    _globalMapContents.slotReloadMapData();
+    extern MapContents  *_globalMapContents;
+    _globalMapContents->slotReloadMapData();
   }
 
   emit configOk();

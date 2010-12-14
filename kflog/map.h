@@ -47,7 +47,7 @@ class Map : public QFrame
      * The constructor creates a new Map-object and
      * creates the icon used as a cursor in the map.
      */
-    Map(QWidget* parent, const char* name=0);
+    Map(QWidget* parent=0);
     /**
      * Destroys the Map-object.
      */
@@ -328,7 +328,7 @@ class Map : public QFrame
     Flight* flightToAnimate;
     /**
      * contains planning task points
-     * enthält die Punkte!!!
+     * enthï¿½lt die Punkte!!!
      */
  //   QPtrList<wayPoint> taskPointList;
     // 0 keine Planung 1 Planung 2 Planung Aufgabe Abgeschlossen

@@ -59,8 +59,8 @@
 // version used for files created from welt2000 data
 #define FILE_VERSION_AIRFIELD_C 201
 
-extern MapContents  _globalMapContents;
-extern MapMatrix    _globalMapMatrix;
+extern MapContents  *_globalMapContents;
+extern MapMatrix    *_globalMapMatrix;
 
 Welt2000::Welt2000()
 {
@@ -90,7 +90,6 @@ Welt2000::~Welt2000()
     }
 }
 
-
 /**
  * search on default places a welt2000 file and load it. A source can
  * be the original ascii file or a compiled version of it. The results
@@ -103,8 +102,7 @@ bool Welt2000::load(QList<Airport*> &airportList, QList<GliderSite*> &gliderSite
   QString wu = "WELT2000.TXT";
   QString sd = "/airfields/";
 
-  extern QSettings _settings;
-  QString mapDir = _settings.readEntry("/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata");
+  QString mapDir = _globalMapContents->getMapRootDirectory();
 
   QString pl = mapDir + sd + wl;
   QString pu = mapDir + sd + wu;
@@ -113,14 +111,17 @@ bool Welt2000::load(QList<Airport*> &airportList, QList<GliderSite*> &gliderSite
   QString w2PathTxt;
 
   QFile test;
-  test.setName(mapDir + "/airfields/welt2000.txt");
-  if (test.exists()) {
-    w2PathTxt=test.name();
-  }
-  else {
-    qWarning( "W2000: No Welt2000 files could be found in the map directories" );
-    return false;
-  }
+  test.setName( mapDir + "/airfields/welt2000.txt" );
+
+  if( test.exists() )
+    {
+      w2PathTxt = test.name();
+    }
+  else
+    {
+      qWarning( "W2000: No Welt2000 files could be found in the map directories" );
+      return false;
+    }
 
   // parse source file
   return parse( w2PathTxt, airportList, gliderSiteList, true );
@@ -495,15 +496,10 @@ bool Welt2000::parse( QString &path,
   while( ! in.atEnd() )
     {
       bool ok;
-      char *tempChar;
-      int result = in.readLine(tempChar, 128);
-      QString line(tempChar), buf;
-      lineNo++;
 
-      if( result <= 0 )
-        {
-          continue;
-        }
+      QString line, buf;
+      line = in.readLine(128);
+      lineNo++;
 
       // step over comment or invalid lines
       if( line.startsWith("#") || line.startsWith("$") ||
@@ -809,11 +805,11 @@ bool Welt2000::parse( QString &path,
 
 #ifdef BOUNDING_BOX
       // update the bounding box
-      _globalMapContents.AddPointToRect( boundingBox, QPoint(lat, lon) );
+      _globalMapContents->AddPointToRect( boundingBox, QPoint(lat, lon) );
 #endif
 
       WGSPoint wgsPos(lat, lon);
-      QPoint position = _globalMapMatrix.wgsToMap(wgsPos);
+      QPoint position = _globalMapMatrix->wgsToMap(wgsPos);
 
       // elevation
       buf = line.mid(41,4 ).stripWhiteSpace();
@@ -956,8 +952,8 @@ bool Welt2000::parse( QString &path,
 
   in.close();
 
-  //qDebug( "W2000, Statistics from file %s: Parsing Time=%dms, Sum=%d, Airfields=%d, GL=%d, UL=%d",
-  //        basename(path.toLatin1().data()), t.elapsed(), af+gl+ul, af, gl, ul );
+  qDebug( "W2000, Statistics from file %s: Parsing Time=%dms, Sum=%d, Airfields=%d, GL=%d, UL=%d",
+          basename(path.toLatin1().data()), t.elapsed(), af+gl+ul, af, gl, ul );
 
   return true;
 }

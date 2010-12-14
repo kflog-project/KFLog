@@ -11,7 +11,7 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id: authdialog.cpp 3817 2010-03-06 10:30:16Z axel $
+**   $Id$
 **
 ***********************************************************************/
 

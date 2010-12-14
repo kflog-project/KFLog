@@ -176,8 +176,8 @@ void TaskDialog::polish()
   }
 
   // load current waypoint list from mapcontents
-  extern MapContents _globalMapContents;
-  QList<Waypoint*> *wpList = _globalMapContents.getWaypointList();
+  extern MapContents *_globalMapContents;
+  QList<Waypoint*> *wpList = _globalMapContents->getWaypointList();
   Waypoint *wp;
   waypoints->clear();
   QString t;
@@ -416,7 +416,7 @@ void TaskDialog::slotRemoveWaypoint()
 void TaskDialog::setTask(FlightTask *orig)
 {
   extern QSettings _settings;
-  extern MapMatrix _globalMapMatrix;
+  extern MapMatrix *_globalMapMatrix;
 
   if (pTask == 0) {
     pTask = new FlightTask(orig->getFileName());
@@ -430,7 +430,7 @@ void TaskDialog::setTask(FlightTask *orig)
       wp = new Waypoint;
       wp->origP.setLat(_settings.readNumEntry("/MapData/HomesiteLatitude"));
       wp->origP.setLon(_settings.readNumEntry("/MapData/HomesiteLongitude"));
-      wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
+      wp->projP = _globalMapMatrix->wgsToMap(wp->origP);
       wp->name = _settings.readEntry("/MapData/Homesite").left(6).upper();
 
       wpList.append(wp);

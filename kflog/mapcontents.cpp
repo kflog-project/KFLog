@@ -17,22 +17,9 @@
  ***********************************************************************/
 
 #include <cmath>
-#include <iostream>
-#include <cstdlib>
 
-#include <QDataStream>
-#include <QDateTime>
-#include <QDir>
-#include <qdom.h>
-#include <QFileDialog>
-#include <QFileInfo>
-#include <QMessageBox>
-#include <QNetworkRequest>
-#include <q3progressdialog.h>
-#include <QRegExp>
-#include <QSettings>
-#include <QString>
-#include <QTextStream>
+#include <QtGui>
+#include <QtXml>
 
 #include "airport.h"
 #include "airspace.h"
@@ -44,6 +31,7 @@
 #include "glidersite.h"
 #include "isohypse.h"
 #include "lineelement.h"
+#include "mainwindow.h"
 #include "mapcontents.h"
 #include "mapmatrix.h"
 #include "mapcalc.h"
@@ -51,14 +39,6 @@
 #include "radiopoint.h"
 #include "singlepoint.h"
 #include "welt2000.h"
-
-#define VERSION "3.0"
-
-/*
- * Used as bit-masks to determine, if we must display
- * messageboxes on missing map-directories.
- */
-#define MAP_LOADED 8
 
 // number of last map tile, possible range goes 0...16200
 #define MAX_TILE_NUMBER 16200
@@ -102,7 +82,7 @@
   } else { \
     for(unsigned int i = 0; i < locLength; i++) { \
       in >> lat_temp;          in >> lon_temp; \
-      tA.setPoint(i, _globalMapMatrix.wgsToMap(lat_temp, lon_temp)); \
+      tA.setPoint(i, _globalMapMatrix->wgsToMap(lat_temp, lon_temp)); \
     } \
   }
 
@@ -135,31 +115,44 @@ const int MapContents::isoLines[] =
   7500, 7750, 8000, 8250, 8500, 8750
 };
 
-MapContents::MapContents()
-  : isFirstLoad(0)
+MapContents::MapContents( QObject* object ) :
+  QObject(object),
+  isFirstLoad(true)
 {
-  currentFlight = 0;
-  downloadManager = 0;
+  qDebug() << "MapContents()";
+
+  currentFlight  = 0;
+  downloadManger = 0;
+
   // Setup a hash used as reverse mapping from isoLine value to array index to
   // speed up loading of ground and terrain files.
-  for ( int i = 0; i < ISO_LINE_NUM; i++ ) {
-    isoHash.insert( std::pair<int, int>(isoLines[i],i) );
-  }
-
+  for ( int i = 0; i < ISO_LINE_NUM; i++ )
+    {
+      isoHash.insert( std::pair<int, int>(isoLines[i],i) );
+    }
 
   sectionArray.resize(MAX_TILE_NUMBER);
   sectionArray.fill(false);
 
-  for(unsigned int loop = 0; loop < ISO_LINE_NUM; loop++)
+  for( int loop = 0; loop < ISO_LINE_NUM; loop++ )
+    {
       isoList.append(new QList<Isohypse*>);
+    }
 
-  downloadList = new DownloadList();
+  // Create all needed map directories.
+  createMapDirectories();
 
-  connect(downloadList,SIGNAL(allDownloadsFinished()),this,SLOT(slotDownloadFinished()));
+  // The user is asked once after each startup, if he wants to download
+  // missing map files.
+  extern QSettings _settings;
+
+ _settings.setValue("/GeneralOptions/AutomaticMapDownload", ADT_NotSet);
 }
 
 MapContents::~MapContents()
 {
+  qDebug() << "~MapContents()";
+
   while(!addSitesList.empty())
         delete addSitesList.takeFirst();
   while(!airportList.empty())
@@ -170,8 +163,8 @@ MapContents::~MapContents()
       delete cityList.takeFirst();
 //  while(!downloadList.empty())
 //      delete downloadList.takeFirst();
-  while(!gliderSiteList.empty())
-      delete gliderSiteList.takeFirst();
+  while(!gliderfieldList.empty())
+      delete gliderfieldList.takeFirst();
   while(!flightList.empty())
       delete flightList.takeFirst();
   while(!hydroList.empty())
@@ -184,8 +177,8 @@ MapContents::~MapContents()
       delete navList.takeFirst();
   while(!obstacleList.empty())
       delete obstacleList.takeFirst();
-  while(!outList.empty())
-      delete outList.takeFirst();
+  while(!outLandingList.empty())
+      delete outLandingList.takeFirst();
   while(!railList.empty())
       delete railList.takeFirst();
   while(!regIsoLines.empty())
@@ -276,108 +269,178 @@ void MapContents::closeFlight()
     }
 }
 
-void MapContents::__downloadFile(QString fileName, QString destString, bool /*wait*/){
+
+/**
+ * Try to download a missing ground/terrain/map file.
+ *
+ * @param file The name of the file without any path prefixes.
+ * @param directory The destination directory.
+ *
+ */
+bool MapContents::__downloadMapFile( QString &file, QString &directory )
+{
   extern QSettings _settings;
 
-  if (_settings.readNumEntry("/GeneralOptions/AutomaticMapDownload")==Inhibited)
-      return;
+  if( _settings.value( "/GeneralOptions/AutomaticMapDownload", ADT_NotSet ).toInt() == Inhibited )
+    {
+      qDebug() << "Auto Download Inhibited";
+      return false;
+    }
 
-  if(downloadManager==0) {
-    downloadManager = new QNetworkAccessManager(this);
-    connect(downloadManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(slotDownloadFinished(QNetworkReply*)));
-  }
+  if( downloadManger == static_cast<DownloadManager *> (0) )
+    {
+      downloadManger = new DownloadManager(this);
 
-  QUrl src = QUrl(_settings.readEntry("/GeneralOptions/Mapserver","http://maproom.kflog.org:80/mapdata/data/landscape/"));
-  QUrl dest = QUrl("file:/" + destString);
-  src.addPath(fileName);
-  dest.addPath(fileName);
+      connect( downloadManger, SIGNAL(finished( int, int )),
+               this, SLOT(slotDownloadsFinished( int, int )) );
 
-  downloadDestinations.append(QPair<QUrl, QUrl>(src, dest));
+      connect( downloadManger, SIGNAL(networkError()),
+               this, SLOT(slotNetworkError()) );
+    }
 
-  QNetworkRequest request;// = new QNetworkRequest(src);
-  request.setUrl(src);
-//  request.setRawHeader("User-Agent", (const char*)QString("KFLog " +_settings.readEntry("/GeneralOptions/Version", VERSION)).toLatin1());
+  QString srvUrl =
+      _settings.value( "/GeneralOptions/Mapserver",
+                       "http://www.kflog.org/data/landscape/" ).toString();
 
-  downloadManager->get(request);
+  QString url = srvUrl + file;
+  QString dest = directory + "/" + file;
 
-// Temporarily disabled during transition to Qt4. Use QNetworkAccessManager in Qt4.
-//  if (wait)
-//    {
-//      KIO::NetAccess::copy(src, dest, 0); // waits until file is transmitted
-//      QString errorString = KIO::NetAccess::lastErrorString();
-//      if (errorString!="")
-//          QMessageBox::warning(0, "Error", errorString, QMessageBox::Ok, 0);
-//    }
-//  else
-//    {
-//      downloadList->copyKURL(&src,&dest);
-//    }
+  downloadManger->downloadRequest( url, dest );
+  return true;
 }
 
-void MapContents::slotDownloadFinished(QNetworkReply *networkReply)
+/** Called, if all downloads are finished. */
+void MapContents::slotDownloadsFinished( int requests, int errors )
 {
-  QUrl src = networkReply->url();
-  QUrl dest;
-  QPair<QUrl, QUrl> pair;
-  foreach(pair, downloadDestinations) {
-    if(pair.first==src) {
-      dest = pair.second;
-      downloadDestinations.removeOne(pair);
-      break;
+  extern MainWindow *_mainWindow;
+
+  // All has finished, free not more needed resources
+  downloadManger->deleteLater();
+  downloadManger = static_cast<DownloadManager *> (0);
+
+  // initiate a new load
+  slotReloadMapData();
+
+  QString msg;
+  msg = QString(tr("%1 download(s) with %2 error(s) done.")).arg(requests).arg(errors);
+
+  QMessageBox::information( _mainWindow,
+                            tr("Downloads finished"),
+                            msg );
+}
+
+/** Called, if a network error occurred during the downloads. */
+void MapContents::slotNetworkError()
+{
+  extern MainWindow *_mainWindow;
+
+  // A network error has occurred. We do stop all further downloads.
+  downloadManger->deleteLater();
+  downloadManger = static_cast<DownloadManager *> (0);
+
+  QString msg;
+  msg = QString(tr("Network error occurred.\nAll downloads are canceled!"));
+
+  QMessageBox::information( _mainWindow,
+                            tr("Network Error"),
+                            msg );
+}
+
+/**
+ * This slot is called to download the Welt2000 file from the internet.
+ */
+void MapContents::slotDownloadWelt2000()
+{
+  qDebug() << "MapContents::slotDownloadWelt2000()";
+
+  extern QSettings _settings;
+
+  if( __askUserForDownload() != Automatic )
+    {
+      qDebug() << "Welt2000: Auto Download Inhibited";
+      return;
     }
-  }
 
-  if(dest.isEmpty()) {
-    qDebug("Could not save file %s, because the destination could not be found.", (const char*)networkReply->url().toString().toLatin1());
-  }
+  if( downloadManger == static_cast<DownloadManager *> (0) )
+    {
+      downloadManger = new DownloadManager(this);
 
-  QFile file(dest.toString());
-  qDebug("networkError=%d, fileError=%s, bytesAvailable=%d, dest=%s", networkReply->error(),
-         (const char*)file.errorString().toLatin1(),
-         networkReply->bytesAvailable(),
-         (const char*)dest.toString().toLatin1());
-  if(file.open(QIODevice::WriteOnly)) {
-//    while(networkReply->waitForReadyRead(100)){
-      QTextStream out(&file);
-      out << networkReply->readAll();
-  //    file.write(networkReply->readAll());
-//    }
-  qDebug("networkError=%d, fileError=%d, bytesAvailable=%d, dest=%s", networkReply->error(),
-         file.error(),
-         networkReply->bytesAvailable(),
-         (const char*)dest.toString().toLatin1());
-  }
-  qDebug("networkError=%d, fileError=%d, bytesAvailable=%d, dest=%s", networkReply->error(),
-         file.error(),
-         networkReply->bytesAvailable(),
-         (const char*)dest.toString().toLatin1());
+      connect( downloadManger, SIGNAL(finished( int, int )),
+               this, SLOT(slotDownloadsFinished( int, int )) );
+
+      connect( downloadManger, SIGNAL(networkError()),
+               this, SLOT(slotNetworkError()) );
+    }
+
+  connect( downloadManger, SIGNAL(welt2000Downloaded()),
+           this, SLOT(slotReloadWelt2000Data()) );
+
+  QString welt2000FileName = _settings.value( "/MapData/Welt2000FileName", "WELT2000.TXT").toString();
+  QString welt2000Link     = _settings.value( "/MapData/Welt2000Link", "http://www.segelflug.de/vereine/welt2000/download").toString();
+
+  QString url  = welt2000Link + "/" + welt2000FileName;
+  QString dest = getMapRootDirectory() + "/airfields/welt2000.txt";
+
+  qDebug() << "URL=" << url;
+  qDebug() << "Dest=" << dest;
+
+  downloadManger->downloadRequest( url, dest );
+}
+
+/**
+ * Reload Welt2000 data file. Can be called after a configuration change or
+ * a dowonload.
+ */
+void MapContents::slotReloadWelt2000Data()
+{
+  //airportList.clear();
+  //gliderfieldList.clear();
+  qDeleteAll(airportList);
+  qDeleteAll(gliderfieldList);
+
+  qDebug() << "MapContents: Reloading Welt2000 started";
+
+  Welt2000 welt2000;
+
+  welt2000.load( airportList, gliderfieldList );
+
+  qDebug() << "MapContents: Reloading Welt2000 finished";
+
+  emit contentsChanged();
 }
 
 bool MapContents::__readTerrainFile( const int fileSecID,
                                      const int fileTypeID)
 {
-  extern const MapMatrix _globalMapMatrix;
+  extern const MapMatrix *_globalMapMatrix;
 
-  QString pathName;
-  pathName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
-  pathName = mapDir + "/landscape/" + pathName;
+  QString path, file;
 
-  if(pathName == 0)
-    // Data does not exist ...
-    return false;
+  path = getMapRootDirectory() + "/landscape/";
+
+  file.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
+
+  QString pathName = path + file;
 
   QFile mapfile(pathName);
-  if(!mapfile.open(QIODevice::ReadOnly)) {
-    // Data exists, but can't be read:
-    // We need a messagebox
-    qWarning("KFLog: Can not open terrainfile %s", (const char*)pathName);
 
-    QString fileName;
-    fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
-    __downloadFile(fileName,mapDir + "/landscape");
+  if(!mapfile.open(QIODevice::ReadOnly))
+    {
+      qWarning() << "KFLog: Can not open terrain file" << pathName;
 
-    return false;
-  }
+      int answer = __askUserForDownload();
+
+      if( answer == Automatic )
+        {
+          __downloadMapFile( file, path );
+        }
+      else
+        {
+          qDebug() << "No Auto Download";
+        }
+
+      return false;
+    }
 
   QDataStream in(&mapfile);
   in.setVersion(6);  // QDataStream::Qt_3_3
@@ -423,18 +486,26 @@ bool MapContents::__readTerrainFile( const int fileSecID,
     return false;
   }
 
-  if (formatID == expOldFormatID) {   // this is for old terrain and ground files
-    qWarning("KFLog: You are using old map files. Please consider re-installing\n"
-            "       the terrain and ground files. Support for the old file format\n"
-            "       will cease in the next major KFLog release.");
-  }
+#warning "Remove fallback terrain solution from code"
+
+  if (formatID == expOldFormatID)
+    {   // this is for old terrain and ground files
+      qWarning("KFLog: You are using old map files. Please consider re-installing\n"
+              "       the terrain and ground files. Support for the old file format\n"
+              "       will cease in the next major KFLog release.");
+    }
 
   in >> loadSecID;
   if(loadSecID != fileSecID) {
     // wrong tile number.
     return false;
   }
+
   in >> createDateTime;
+
+  qDebug("Reading File=%s, Magic=0x%x, TypeId=%c, formatId=%d, Date=%s",
+         file.toLatin1().data(), magic, loadTypeID, formatID,
+         createDateTime.toString(Qt::ISODate).toLatin1().data() );
 
   while(!in.eof())
     {
@@ -464,7 +535,7 @@ bool MapContents::__readTerrainFile( const int fileSecID,
         in >> latList_temp;
         in >> lonList_temp;
 
-        tA.setPoint(i, _globalMapMatrix.wgsToMap(latList_temp, lonList_temp));
+        tA.setPoint(i, _globalMapMatrix->wgsToMap(latList_temp, lonList_temp));
       }
 
       sort = 0;
@@ -481,25 +552,28 @@ bool MapContents::__readTerrainFile( const int fileSecID,
 bool MapContents::__readBinaryFile(const int fileSecID,
                                    const char fileTypeID)
 {
-  extern const MapMatrix _globalMapMatrix;
+  extern const MapMatrix *_globalMapMatrix;
 
-  QString pathName;
-  pathName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
-  pathName = mapDir + "/landscape/" + pathName;
-  if(pathName == 0)
-      // File does not exist ...
-      return false;
+  QString path, file;
+
+  path = getMapRootDirectory() + "/landscape/";
+
+  file.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
+
+  QString pathName = path + file;
 
   QFile mapfile(pathName);
+
   if(!mapfile.open(QIODevice::ReadOnly))
     {
-      // Data exists, but can't be read:
-      // We need a messagebox
-      qWarning("KFLog: Can not open mapfile %s", (const char*)pathName);
+      qWarning() << "KFLog: Can not open map file" << pathName;
 
-      QString fileName;
-      fileName.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
-      __downloadFile(fileName,mapDir + "/landscape");
+      int answer = __askUserForDownload();
+
+      if( answer == Automatic )
+        {
+          __downloadMapFile( file, path );
+        }
 
       return false;
     }
@@ -538,6 +612,11 @@ bool MapContents::__readBinaryFile(const int fileSecID,
   in >> createDateTime;
 
   unsigned int gesamt_elemente = 0;
+
+  qDebug("Reading File=%s, Magic=0x%x, TypeId=%c, formatId=%d, Date=%s",
+         file.toLatin1().data(), magic, loadTypeID, formatID,
+         createDateTime.toString(Qt::ISODate).toLatin1().data() );
+
   while(!in.eof()) {
     in >> typeIn;
     locLength = 0;
@@ -598,7 +677,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
         in >> lon_temp;
         villageList.append(new SinglePoint(name, "", typeIn,
             WGSPoint(lat_temp, lon_temp),
-            _globalMapMatrix.wgsToMap(lat_temp, lon_temp)));
+            _globalMapMatrix->wgsToMap(lat_temp, lon_temp)));
         break;
       case BaseMapElement::Spot:
         if(formatID >= FILE_VERSION_MAP) in >> elev;
@@ -606,7 +685,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
         in >> lon_temp;
         obstacleList.append(new SinglePoint("Spot", "", typeIn,
             WGSPoint(lat_temp, lon_temp),
-            _globalMapMatrix.wgsToMap(lat_temp, lon_temp), 0, index));
+            _globalMapMatrix->wgsToMap(lat_temp, lon_temp), 0, index));
         break;
       case BaseMapElement::Landmark:
         if(formatID >= FILE_VERSION_MAP) {
@@ -617,7 +696,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
         in >> lon_temp;
         landmarkList.append(new SinglePoint(name, "", typeIn,
           WGSPoint(lat_temp, lon_temp),
-          _globalMapMatrix.wgsToMap(lat_temp, lon_temp),0,lm_typ));
+          _globalMapMatrix->wgsToMap(lat_temp, lon_temp),0,lm_typ));
         break;
     }
   }
@@ -647,62 +726,172 @@ void MapContents::appendFlight(Flight* flight)
   emit currentFlightChanged();
 }
 
-void MapContents::__askForDownload()
+int MapContents::__askUserForDownload()
+{
+  qDebug() << "MapContents::__askUserForDownload()";
+
+  extern MainWindow *_mainWindow;
+  extern QSettings  _settings;
+
+  int result = _settings.readNumEntry( "/GeneralOptions/AutomaticMapDownload", ADT_NotSet );
+
+  if( isFirstLoad == true && result == ADT_NotSet )
+    {
+      _settings.setValue("/GeneralOptions/AutomaticMapDownload", Inhibited);
+
+      int ret = QMessageBox::question(_mainWindow, tr("Automatic data download?"),
+                tr("<html>There are data missing under the directory tree<br><b>%1."
+                "</b><br> Do you want to download these data automatically?<br>"
+                "(If you want to change the root directory, "
+                "press <i>Cancel</i> and change it in the Settings menu.)</html>")
+                 .arg( getMapRootDirectory() ),
+                 QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel );
+
+      switch (ret)
+        {
+          case QMessageBox::Yes:
+
+            _settings.setValue("/GeneralOptions/AutomaticMapDownload", Automatic);
+            result = Automatic;
+            isFirstLoad = false;
+
+            break;
+
+          case QMessageBox::No:
+
+            _settings.setValue( "/GeneralOptions/AutomaticMapDownload", Inhibited );
+            result = Inhibited;
+            isFirstLoad = false;
+            break;
+
+          case QMessageBox::Cancel:
+
+            _settings.setValue( "/GeneralOptions/AutomaticMapDownload", ADT_NotSet );
+            result = ADT_NotSet;
+            isFirstLoad = true;
+            break;
+        }
+    }
+
+  return result;
+}
+
+
+/**
+ * Checks the existence of the three required map directories.
+ *
+ * \return True if all is okay otherwise false.
+ */
+bool MapContents::checkMapDirectories()
+{
+  QString mapRootDir = getMapRootDirectory();
+
+  QStringList list;
+
+  list << "airspaces" << "airfields" << "landscape";
+
+  for( int i = 0; i < list.size(); i++ )
+    {
+      QDir dir( mapRootDir + "/" + list.at(i) );
+
+      if( ! dir.exists() || ! dir.isReadable() )
+        {
+          qWarning() << "Map directory:" << dir.absolutePath() << "does not exist!";
+          return false;
+        }
+
+      if( ! dir.isReadable() )
+        {
+          qWarning() << "Map directory:" << dir.absolutePath() << "not readable!";
+          return false;
+        }
+    }
+
+  return true;
+}
+
+/**
+ * Creates all required map directories.
+ *
+ * \return True if all is okay otherwise false.
+ */
+bool MapContents::createMapDirectories()
+{
+  qDebug() << "MapContents::createMapDirectories()";
+
+  QString mapRootDir = getMapRootDirectory();
+
+  QStringList list;
+
+  list << "airspaces" << "airfields" << "landscape";
+
+  for( int i = 0; i < list.size(); i++ )
+    {
+      QString path = mapRootDir + "/" + list.at(i);
+
+      QDir dir( path );
+
+      if( ! dir.exists() )
+        {
+          dir.mkpath( path );
+
+          if( ! dir.exists() )
+            {
+              qWarning() << "MapContents: Cannot create Map directory:" << path;
+              return false;
+            }
+        }
+
+      if( ! dir.isReadable() )
+        {
+          qWarning() << "MapContents: Map directory:" << path << "not readable!";
+          return false;
+        }
+    }
+
+  return true;
+}
+
+/**
+ * Returns the map root directory.
+ *
+ * \return The map root directory.
+ */
+QString MapContents::getMapRootDirectory()
 {
   extern QSettings _settings;
-  int ret=0;
 
-  switch (_settings.readNumEntry("/GeneralOptions/AutomaticMapDownload",ADT_NotSet))
+  QString mapDefRootDir = QDir::homePath() + "/.kflog/mapdata";
+
+  // qDebug() << "MapContents: mapDefRootDir:" << mapDefRootDir;
+
+  QString mapRootDir = _settings.value( "/Path/DefaultMapDirectory", "" ).toString();
+
+  if( mapRootDir.isEmpty() )
     {
-      case (ADT_NotSet):
-        _settings.writeEntry("/GeneralOptions/AutomaticMapDownload",Inhibited); //this is temporary, will be overwritten later
-        ret = QMessageBox::question(0, tr("Automatic map download"),
-                  tr("<qt>There are no map-files in the directory<br><b>%1"
-            "</b><br>yet. Do you want to download the data automatically?<br>"
-            "(You need to have write permissions. If you want to change the directory, "
-            "press \"Cancel\" and change it in the Settings menu.)</qt>").arg(mapDir + "/landscape"), QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
-        switch (ret)
-          {
-            case QMessageBox::Yes:
-              _settings.writeEntry("/GeneralOptions/AutomaticMapDownload",Automatic); //this is temporary, will be overwritten later
-              __downloadFile("G_03694.kfl",mapDir + "/landscape",true);
-              if(QFile(mapDir+"/landscape/G_03694.kfl").exists())
-                _settings.writeEntry("/GeneralOptions/AutomaticMapDownload",Automatic);
-              else
-                {
-                  QMessageBox::information(0, tr("No write access"),
-                    tr("<qt>The directory <b>%1</b> is either not writeable<br>"
-                    "or the server <b>%2</b> is not reachable.<br>"
-                    "Please specify the correct path in the Settings dialog and check the internet connection!<br>"
-                    " Restart KFLog afterwards.</qt>").arg(mapDir + "/landscape").arg(_settings.readEntry("/GeneralOptions/Mapserver", "http://maproom.kflog.org/mapdata/data/landscape/")), QMessageBox::Ok);
-                }
-            break;
-          case QMessageBox::No:
-            _settings.writeEntry("/GeneralOptions/AutomaticMapDownload",Inhibited);
-            break;
-          }
-        break;
-      case (Inhibited):
-        QMessageBox::information(0, tr("Directory empty"),
-            tr("<qt>The directory for the map-files is empty.<br>"
-                  "To download the files, please visit our homepage:<br>"
-                  "<b>http://www.kflog.org/maproom/</b></qt>"), QMessageBox::Ok);
-        break;
-      case (Automatic):
-        break;
+      qWarning() << "Settings item /Path/DefaultMapDirectory is empty!";
+      mapRootDir = mapDefRootDir;
+
+      _settings.setValue( "/Path/DefaultMapDirectory", mapRootDir );
     }
+
+  return mapRootDir;
 }
+
 
 void MapContents::proofeSection(bool isPrint)
 {
-  extern MapMatrix _globalMapMatrix;
-  extern QSettings _settings;
+  qDebug() << "MapContents::proofeSection() isPrint=" << isPrint;
+
+  extern MainWindow *_mainWindow;
+  extern MapMatrix  *_globalMapMatrix;
+  extern QSettings  _settings;
   QRect mapBorder;
 
   if(isPrint)
-      mapBorder = _globalMapMatrix.getPrintBorder();
+      mapBorder = _globalMapMatrix->getPrintBorder();
   else
-      mapBorder = _globalMapMatrix.getViewBorder();
+      mapBorder = _globalMapMatrix->getViewBorder();
 
   int westCorner = ( ( mapBorder.left() / 600000 / 2 ) * 2 + 180 ) / 2;
   int eastCorner = ( ( mapBorder.right() / 600000 / 2 ) * 2 + 180 ) / 2;
@@ -714,82 +903,81 @@ void MapContents::proofeSection(bool isPrint)
   if(mapBorder.top() < 0) northCorner += 1;
   if(mapBorder.bottom() < 0) southCorner += 1;
 
-  mapDir = _settings.readEntry("/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata");
-
-  // Checking for the MapFiles
-  if(mapDir.isNull() && !(isFirstLoad & MAP_LOADED))
+  if( ! checkMapDirectories() )
     {
-      /* The mapdirectory does not exist. Ask the user */
-      QMessageBox::warning(0, tr("Directory not found"),
-        "<qt>" +
-        tr("The directory for the map-files does not exist.") + "<br>" +
-        tr("Please select the directory in which the files are located.") +
-        "</qt>", QMessageBox::Ok, 0);
+      /* The map directory does not exist. Ask the user */
+      QMessageBox::warning(_mainWindow, tr("Map directories not found"),
+        "<html>" +
+        tr("The directories for the map files do not exist.") + "<br>" +
+        tr("Please select the map root directory.") +
+        "</html>", QMessageBox::Ok );
 
-      mapDir = QFileDialog::getExistingDirectory(0, tr("Select map directory..."));
+      mapDir = QFileDialog::getExistingDirectory( _mainWindow,
+                                                  tr("Select a map root directory!"),
+                                                  QDir::homeDirPath() );
 
-      _settings.writeEntry("/Path/DefaultMapDirectory", mapDir);
-
-      isFirstLoad |= MAP_LOADED;
-
-      if(QDir(mapDir + "/landscape").entryList("*.kfl").isEmpty())
-          __askForDownload();
-
-      emit errorOnMapLoading();
-    }
-  else if(QDir(mapDir + "/landscape").entryList("*.kfl").isEmpty())
-    {
-      emit errorOnMapLoading();
-      __askForDownload();
-    }
-  else
-    {
-      emit loadingMessage(tr("Loading mapdata ..."));
-
-      for(int row = northCorner; row <= southCorner; row++)
+      if(  mapDir.isEmpty() )
         {
-          for(int col = westCorner; col <= eastCorner; col++)
-            {
-              if( !sectionArray.testBit( row + ( col + ( row * 179 ) ) ) )
-                {
-                  // Kachel fehlt!
-                  int secID = row + ( col + ( row * 179 ) );
+          qWarning() << "MapContents::proofeSection(): File Dialog returned NIL!";
+          return;
+        }
 
-                  // Nun müssen die korrekten Dateien geladen werden ...
-                  __readTerrainFile(secID, FILE_TYPE_GROUND);
-                  __readTerrainFile(secID, FILE_TYPE_TERRAIN);
-                  __readBinaryFile(secID, FILE_TYPE_MAP);
-                  // Let's not plot all those circles on the map ...
-                  // __readBinaryFile(secID, FILE_TYPE_LM);
-                  sectionArray.setBit( secID, true );
-                }
+      _settings.setValue( "/Path/DefaultMapDirectory", mapDir );
+
+    }
+
+  emit loadingMessage(tr("Loading map data ..."));
+
+  for(int row = northCorner; row <= southCorner; row++)
+    {
+      for(int col = westCorner; col <= eastCorner; col++)
+        {
+          if( !sectionArray.testBit( row + ( col + ( row * 179 ) ) ) )
+            {
+              // Kachel fehlt!
+              int secID = row + ( col + ( row * 179 ) );
+
+              // Nun müssen die korrekten Dateien geladen werden ...
+              __readTerrainFile(secID, FILE_TYPE_GROUND);
+              __readTerrainFile(secID, FILE_TYPE_TERRAIN);
+              __readBinaryFile(secID, FILE_TYPE_MAP);
+              // Let's not plot all those circles on the map ...
+              // __readBinaryFile(secID, FILE_TYPE_LM);
+              sectionArray.setBit( secID, true );
             }
         }
     }
 
   // Checking for Airspaces
-  if (airspaceList.isEmpty()) {
-    OpenAirParser oap;
-    oap.load( airspaceList );
-  }
+  if( airspaceList.isEmpty() )
+    {
+      OpenAirParser oap;
+      oap.load( airspaceList );
+    }
 
-  // Checking for Airfields
-  if (airportList.isEmpty()) {
-    Welt2000 welt2000;
-    welt2000.load( airportList, gliderSiteList);
-  }
+  // Checking for Airfield, Gliderfield and Outlanding data
+  if( airportList.isEmpty() && gliderfieldList.isEmpty() )
+    {
+      Welt2000 welt2000;
+
+      if( !welt2000.load( airportList, gliderfieldList ) )
+        {
+          // Welt2000 load failed, try to download a new Welt2000 File
+          // from the Internet web page.
+          slotDownloadWelt2000();
+        }
+    }
 }
-
 
 int MapContents::getListLength(int listIndex) const
 {
   switch(listIndex) {
   case AirportList:
     return airportList.count();
-  case GliderSiteList:
-    return gliderSiteList.count();
-  case OutList:
-    return outList.count();
+  case GliderfieldList:
+    return gliderfieldList.count();
+  case OutLandingList:
+    return outLandingList.count();
   case NavList:
     return navList.count();
   case AirspaceList:
@@ -808,15 +996,10 @@ int MapContents::getListLength(int listIndex) const
     return roadList.count();
   case RailList:
     return railList.count();
-  //case StationList:
-  //  return stationList.count();
   case HydroList:
     return hydroList.count();
   case TopoList:
     return topoList.count();
-  //    case IsohypseList:
-  //      //warning("Anzahl der Höhenlinien: %d", isohypseList.count());
-  //      return isohypseList.count();
   default:
     return 0;
   }
@@ -837,7 +1020,7 @@ Airport* MapContents::getAirport(unsigned int index)
 
 GliderSite* MapContents::getGlidersite(unsigned int index)
 {
-  return gliderSiteList.value(index);
+  return gliderfieldList.value(index);
 }
 
 
@@ -846,10 +1029,10 @@ BaseMapElement* MapContents::getElement(int listIndex, unsigned int index)
   switch(listIndex) {
   case AirportList:
     return airportList.value(index);
-  case GliderSiteList:
-    return gliderSiteList.value(index);
-  case OutList:
-    return outList.value(index);
+  case GliderfieldList:
+    return gliderfieldList.value(index);
+  case OutLandingList:
+    return outLandingList.value(index);
   case NavList:
     return navList.value(index);
   case AirspaceList:
@@ -868,8 +1051,6 @@ BaseMapElement* MapContents::getElement(int listIndex, unsigned int index)
     return roadList.value(index);
   case RailList:
     return railList.value(index);
-  //case StationList:
-  //  return stationList.value(index);
   case HydroList:
     return hydroList.value(index);
   case TopoList:
@@ -887,10 +1068,10 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
   switch(listIndex) {
   case AirportList:
     return airportList.value(index);
-  case GliderSiteList:
-    return gliderSiteList.value(index);
-  case OutList:
-    return outList.value(index);
+  case GliderfieldList:
+    return gliderfieldList.value(index);
+  case OutLandingList:
+    return outLandingList.value(index);
   case NavList:
     return navList.value(index);
   case ObstacleList:
@@ -901,25 +1082,20 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, unsigned int index)
     return villageList.value(index);
   case LandmarkList:
     return landmarkList.value(index);
-  //case StationList:
-  //  return stationList.value(index);
   default:
     return 0;
   }
 }
 
-void MapContents::slotDownloadFinished()
-{
-  qWarning("slotDownloadFinished()");
-  slotReloadMapData();
-}
 
 void MapContents::slotReloadMapData()
 {
+  qDebug() << "MapContents::slotReloadMapData()";
+
   airportList.clear();
-  gliderSiteList.clear();
+  gliderfieldList.clear();
   addSitesList.clear();
-  outList.clear();
+  outLandingList.clear();
   navList.clear();
   airspaceList.clear();
   obstacleList.clear();
@@ -929,13 +1105,14 @@ void MapContents::slotReloadMapData()
   landmarkList.clear();
   roadList.clear();
   railList.clear();
-//  stationList.clear();
   hydroList.clear();
   topoList.clear();
   isoList.clear();
 
-  for(unsigned int loop = 0; loop < ISO_LINE_NUM; loop++)
+  for(int loop = 0; loop < ISO_LINE_NUM; loop++)
+    {
       isoList.append(new QList<Isohypse*>);
+    }
 
   sectionArray.fill(false);
   emit contentsChanged();
@@ -980,10 +1157,10 @@ void MapContents::printContents(QPainter* targetPainter, bool isText)
   foreach(element, airportList)
     element->printMapElement(targetPainter, isText);
 
-  foreach(element, gliderSiteList)
+  foreach(element, gliderfieldList)
     element->printMapElement(targetPainter, isText);
 
-  foreach(element, outList)
+  foreach(element, outLandingList)
     element->printMapElement(targetPainter, isText);
 
   foreach(element, flightList)
@@ -991,67 +1168,69 @@ void MapContents::printContents(QPainter* targetPainter, bool isText)
 }
 
 
-void MapContents::drawList(QPainter* targetPainter, QPainter* maskPainter,
-    unsigned int listID)
+void MapContents::drawList( QPainter* targetPainter,
+                            QPainter* maskPainter,
+                            unsigned int listID )
 {
   BaseMapElement *element;
+
   switch(listID)
     {
       case AirportList:
         foreach(element, airportList)
-            element->printMapElement(targetPainter, maskPainter);
+            element->drawMapElement(targetPainter, maskPainter);
         break;
-      case GliderSiteList:
-        foreach(element, gliderSiteList)
-            element->printMapElement(targetPainter, maskPainter);
+      case GliderfieldList:
+        foreach(element, gliderfieldList)
+            element->drawMapElement(targetPainter, maskPainter);
         break;
-      case OutList:
-        foreach(element, outList)
-            element->printMapElement(targetPainter, maskPainter);
+      case OutLandingList:
+        foreach(element, outLandingList)
+            element->drawMapElement(targetPainter, maskPainter);
         break;
       case NavList:
         foreach(element, navList)
-            element->printMapElement(targetPainter, maskPainter);
+            element->drawMapElement(targetPainter, maskPainter);
         break;
       case AirspaceList:
         foreach(element, airspaceList)
-            element->printMapElement(targetPainter, maskPainter);
+            element->drawMapElement(targetPainter, maskPainter);
         break;
       case ObstacleList:
         foreach(element, obstacleList)
-            element->printMapElement(targetPainter, maskPainter);
+            element->drawMapElement(targetPainter, maskPainter);
         break;
       case ReportList:
         foreach(element, reportList)
-            element->printMapElement(targetPainter, maskPainter);
+            element->drawMapElement(targetPainter, maskPainter);
         break;
       case CityList:
         foreach(element, cityList)
-            element->printMapElement(targetPainter, maskPainter);
+            element->drawMapElement(targetPainter, maskPainter);
         break;
       case VillageList:
         foreach(element, villageList)
-            element->printMapElement(targetPainter, maskPainter);
+            element->drawMapElement(targetPainter, maskPainter);
         break;
       case LandmarkList:
         foreach(element, landmarkList)
-            element->printMapElement(targetPainter, maskPainter);
+            element->drawMapElement(targetPainter, maskPainter);
         break;
       case RoadList:
         foreach(element, roadList)
-            element->printMapElement(targetPainter, maskPainter);
+            element->drawMapElement(targetPainter, maskPainter);
         break;
       case RailList:
         foreach(element, railList)
-            element->printMapElement(targetPainter, maskPainter);
+            element->drawMapElement(targetPainter, maskPainter);
         break;
       case HydroList:
         foreach(element, hydroList)
-            element->printMapElement(targetPainter, maskPainter);
+            element->drawMapElement(targetPainter, maskPainter);
         break;
       case TopoList:
         foreach(element, topoList)
-            element->printMapElement(targetPainter, maskPainter);
+            element->drawMapElement(targetPainter, maskPainter);
         break;
       case FlightList:
         // In some cases, getFlightIndex returns a non-valid index :-(
@@ -1069,7 +1248,7 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
   int height = 0;
   bool useIsohypseElevationList = ElevationFinder::instance()->useIsohypseForElevation();
 
-  extern MapConfig _globalMapConfig;
+  extern MapConfig *_globalMapConfig;
 
   regIsoLines.clear();
 
@@ -1091,12 +1270,8 @@ void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
             }
         }
 
-//      targetP->setPen(QPen(_globalMapConfig.getIsoPenColor(), 1,
-//        _globalMapConfig.getIsoPenStyle(iso->getFirst()->getElevation())));  // make configurable
-
-//      targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1, Qt::NoPen));
-      targetP->setPen(QPen(_globalMapConfig.getIsoColor(height), 1, Qt::SolidLine));
-      targetP->setBrush(QBrush(_globalMapConfig.getIsoColor(height),
+      targetP->setPen(QPen(_globalMapConfig->getIsoColor(height), 1, Qt::SolidLine));
+      targetP->setBrush(QBrush(_globalMapConfig->getIsoColor(height),
           Qt::SolidPattern));
 
       Isohypse *iso2;
@@ -1146,7 +1321,8 @@ void MapContents::addDir (QStringList& list, const QString& _path, const QString
 
 /**
  * Compares two projection objects for equality.
- * @Returns true if equal; otherwise false
+ *
+ * @returns true if equal; otherwise false
  */
 bool MapContents::compareProjections(ProjectionBase* p1, ProjectionBase* p2)
 {
@@ -1237,7 +1413,7 @@ void MapContents::slotNewFlightGroup()
 
   if (fsd->exec() == QDialog::Accepted)
     {
-      for(int i = 0; i < fsd->selectedFlights.count(); i++)
+      for( uint i = 0; i < fsd->selectedFlights.count(); i++ )
         {
           fl.append((Flight *)fsd->selectedFlights.at(i));
         }
@@ -1305,7 +1481,7 @@ void MapContents::slotEditFlightGroup()
       if (fsd->exec() == QDialog::Accepted)
         {
           fl.clear();
-          for (int i = 0; i < fsd->selectedFlights.count(); i++)
+          for ( uint i = 0; i < fsd->selectedFlights.count(); i++)
             {
               fl.append((Flight *)fsd->selectedFlights.at(i));
             }
@@ -1321,25 +1497,27 @@ void MapContents::slotEditFlightGroup()
 switch to first task in file */
 bool MapContents::loadTask(QFile& path)
 {
+  extern MainWindow *_mainWindow;
+
   QFileInfo fInfo(path);
 
-  extern const MapMatrix _globalMapMatrix;
+  extern const MapMatrix *_globalMapMatrix;
 
   if(!fInfo.exists())
     {
-      QMessageBox::warning(0, tr("File does not exist"), "<qt>" + tr("The selected file<BR><B>%1</B><BR>does not exist!").arg(path.name()) + "</qt>", QMessageBox::Ok, 0);
+      QMessageBox::warning( _mainWindow, tr("File does not exist"), "<html>" + tr("The selected file<BR><B>%1</B><BR>does not exist!").arg(path.name()) + "</html>", QMessageBox::Ok );
       return false;
     }
 
   if(!fInfo.size())
     {
-      QMessageBox::warning(0, tr("File is empty"), "<qt>" + tr("The selected file<BR><B>%1</B><BR>is empty!").arg(path.name()) + "</qt>", QMessageBox::Ok, 0);
+      QMessageBox::warning( _mainWindow, tr("File is empty"), "<html>" + tr("The selected file<BR><B>%1</B><BR>is empty!").arg(path.name()) + "</html>", QMessageBox::Ok );
       return false;
     }
 
   if(!path.open(QIODevice::ReadOnly))
     {
-      QMessageBox::warning(0, tr("No permission"), "<qt>" + tr("You don't have permission to access file<BR><B>%1</B>").arg(path.name()) + "</qt>", QMessageBox::Ok, 0);
+      QMessageBox::warning( _mainWindow, tr("No permission"), "<html>" + tr("You don't have permission to access file<BR><B>%1</B>").arg(path.name()) + "</html>", QMessageBox::Ok );
       return false;
     }
 
@@ -1370,7 +1548,7 @@ bool MapContents::loadTask(QFile& path)
               w->icao = nm.namedItem("ICAO").toAttr().value().upper();
               w->origP.setLat(nm.namedItem("Latitude").toAttr().value().toInt());
               w->origP.setLon(nm.namedItem("Longitude").toAttr().value().toInt());
-              w->projP = _globalMapMatrix.wgsToMap(w->origP);
+              w->projP = _globalMapMatrix->wgsToMap(w->origP);
               w->elevation = nm.namedItem("Elevation").toAttr().value().toInt();
               w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
               w->isLandable = nm.namedItem("Landable").toAttr().value().toInt();
@@ -1402,7 +1580,9 @@ bool MapContents::loadTask(QFile& path)
     }
   else
     {
-      QMessageBox::warning(0, tr("Error occurred!"), tr("wrong doctype ") + doc.doctype().name(), QMessageBox::Ok, 0);
+      QMessageBox::warning(_mainWindow,
+                           tr("Error occurred!"),
+                           tr("wrong doctype ") + doc.doctype().name(), QMessageBox::Ok);
       return false;
     }
 }
@@ -1461,15 +1641,13 @@ void MapContents::reProject()
  */
 int MapContents::getElevation(QPoint coord)
 {
-//   extern MapConfig _globalMapConfig;
-
   isoListEntry* entry;
   int height=-1; //default 'unknown' value
 
   for(int i = 0; i < regIsoLinesWorld.count(); i++) {
     entry = regIsoLinesWorld.at(i);
     if (entry->region->contains(coord))
-      height=std::max(height,entry->height);
+      height = qMax(height,entry->height);
   }
   if (height == -1)
     return height;

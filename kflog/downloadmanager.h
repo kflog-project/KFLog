@@ -11,7 +11,7 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id: downloadmanager.h 4502 2010-12-09 22:32:02Z axel $
+**   $Id$
 **
 ***********************************************************************/
 

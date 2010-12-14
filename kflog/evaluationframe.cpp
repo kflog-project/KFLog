@@ -177,19 +177,19 @@ EvaluationFrame::~EvaluationFrame()
   // Save settings
   extern QSettings _settings;
 
-  _settings.writeEntry("/Evaluation/ScaleTime", secWidth);
-  _settings.writeEntry("/Evaluation/VarioSmoothness", smoothness_va);
-  _settings.writeEntry("/Evaluation/AltitudeSmoothness", smoothness_h);
-  _settings.writeEntry("/Evaluation/SpeedSmoothness", smoothness_v);
-  _settings.writeEntry("/Evaluation/Vario", check_vario->isChecked());
-  _settings.writeEntry("/Evaluation/Altitude", check_baro->isChecked());
-  _settings.writeEntry("/Evaluation/Speed", check_speed->isChecked());
+  _settings.setValue("/Evaluation/ScaleTime", secWidth);
+  _settings.setValue("/Evaluation/VarioSmoothness", smoothness_va);
+  _settings.setValue("/Evaluation/AltitudeSmoothness", smoothness_h);
+  _settings.setValue("/Evaluation/SpeedSmoothness", smoothness_v);
+  _settings.setValue("/Evaluation/Vario", check_vario->isChecked());
+  _settings.setValue("/Evaluation/Altitude", check_baro->isChecked());
+  _settings.setValue("/Evaluation/Speed", check_speed->isChecked());
 }
 
 void EvaluationFrame::slotShowFlight()
 {
-  extern MapContents _globalMapContents;
-  flight = (Flight *)_globalMapContents.getFlight();
+  extern MapContents *_globalMapContents;
+  flight = (Flight *)_globalMapContents->getFlight();
   slotShowGraph();
 }
 

@@ -35,8 +35,12 @@
 #define MILE_kfl  (PI2 * RADIUS / (360.0 * 60.0))
 
 /**
- * Calculates the distance between two given points (in km).
+ * Calculates the distance between two given points according to great circle in km.
  */
+double distG(double lat1, double lon1, double lat2, double lon2);
+
+double distP(double lat1, double lon1, double lat2, double lon2);
+
 double dist(double lat1, double lon1, double lat2, double lon2);
 
 /**
@@ -61,7 +65,7 @@ double dist( flightPoint* fp1, flightPoint* fp2);
 
 /**
  * Converts the given coordinate into a readable string.
- * ( xxx,xxxx°[N,S,E,W] )
+ * ( xxx,xxxxï¿½[N,S,E,W] )
  */
 QString printPos(int coord, bool isLat = true);
 
@@ -109,7 +113,7 @@ double tc(double lat1, double lon1, double lat2, double lon2);
 /* calculate angle between leg a and b in radians */
 double angle(double a, double b, double c);
 
-/* calculate pos of point from dist and bearing */ 
+/* calculate pos of point from dist and bearing */
 WGSPoint posOfDistAndBearing(double lat1, double lon1, double bearing, double dist);
 
 /* calculate true course from prev point (p2) */

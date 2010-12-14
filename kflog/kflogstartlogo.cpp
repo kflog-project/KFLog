@@ -20,8 +20,10 @@
 #include <QtGui>
 
 KFLogStartLogo::KFLogStartLogo( QWidget *parent ) :
-  QWidget( parent, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint )
+  QWidget( parent, Qt::FramelessWindowHint )
 {
+  qDebug() << "KFLogStartLogo()";
+
   setObjectName("KFLogStartLogo");
 
   // Destroy widget automatically, if it gets the close call.

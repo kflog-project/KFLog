@@ -20,26 +20,12 @@
 #include "kflogconfig.h"
 #include "kflogstartlogo.h"
 #include "mainwindow.h"
-#include "mapconfig.h"
-#include "mapcontents.h"
-#include "mapmatrix.h"
 #include "target.h"
 
 /**
- * Contains all map elements and takes control over drawing or printing
- * the elements.
+ * Pointer to the main window.
  */
-MapContents _globalMapContents;
-
-/**
- * Used for transforming the map items.
- */
-MapMatrix _globalMapMatrix;
-
-/**
- * Contains all configuration-info for drawing and printing the elements.
- */
-MapConfig _globalMapConfig;
+MainWindow *_mainWindow = static_cast<MainWindow *> (0);
 
 /**
  * Contains all settings of KFLog. The setting file is stored under
@@ -115,7 +101,6 @@ int main(int argc, char **argv)
 //    qstrdup(QObject::tr("_: EMAIL OF TRANSLATORS\nYour emails")));
 
   QApplication app( argc, argv );
-  BaseMapElement::initMapElement( &_globalMapMatrix, &_globalMapConfig );
 
   QCoreApplication::setOrganizationName("KFLog");
   QCoreApplication::setOrganizationDomain("www.kflog.org");
@@ -123,7 +108,7 @@ int main(int argc, char **argv)
   QCoreApplication::setApplicationVersion( KFLOG_VERSION );
 
   // Set the compile date of the application.
-  _settings.writeEntry( "/Main/CompileDate", __DATE__ );
+  _settings.setValue( "/Main/CompileDate", __DATE__ );
 
   // Reset the locale that is used for number formatting to "C" locale.
   setlocale(LC_NUMERIC, "C");
@@ -131,8 +116,8 @@ int main(int argc, char **argv)
   // Make sure the application uses utf8 encoding for translated widgets
   QTextCodec::setCodecForTr( QTextCodec::codecForName ("UTF-8") );
 
-  MainWindow *kflog = new MainWindow();
-  kflog->show();
+  _mainWindow = new MainWindow();
+  _mainWindow->setVisible( true );
 
   QString argument, fileOpenIGC, fileExportPNG, width = "640", height = "480";
   QString waypointsOptionArg;
@@ -187,7 +172,7 @@ int main(int argc, char **argv)
       qWarning() << "WaypointCatalog specified at startup"
                  << waypointsOptionArg;
 
-      kflog->slotSetWaypointCatalog( waypointsOptionArg );
+      _mainWindow->slotSetWaypointCatalog( waypointsOptionArg );
     }
   else
     {
@@ -200,7 +185,7 @@ int main(int argc, char **argv)
           // no break;
         case KFLogConfig::Specific:
           waypointsOptionArg = _settings.readEntry( "/Waypoints/DefaultCatalogName", "" );
-          kflog->slotSetWaypointCatalog( waypointsOptionArg );
+          _mainWindow->slotSetWaypointCatalog( waypointsOptionArg );
         }
     }
 
@@ -208,17 +193,17 @@ int main(int argc, char **argv)
     {
       if( exportPNG )
         {
-          _settings.writeEntry( "/GeneralOptions/ShowWaypointWarnings", false );
+          _settings.setValue( "/GeneralOptions/ShowWaypointWarnings", false );
         }
 
-      kflog->slotOpenFile( (const char*) fileOpenIGC );
+      _mainWindow->slotOpenFile( (const char*) fileOpenIGC );
 
       if( exportPNG )
         {
-          _settings.writeEntry( "/CommentSettings/ShowComment", comment );
+          _settings.setValue( "/CommentSettings/ShowComment", comment );
           qWarning() << "Writing PNG...";
           QUrl url( fileExportPNG );
-          kflog->slotSavePixmap( url, width.toInt(), height.toInt() );
+          _mainWindow->slotSavePixmap( url, width.toInt(), height.toInt() );
         }
 
       if( batch )
@@ -229,7 +214,7 @@ int main(int argc, char **argv)
 
     }
 
-  QTimer::singleShot(700, kflog, SLOT(slotStartComplete()));
+  QTimer::singleShot(700, _mainWindow, SLOT(slotStartComplete()));
 
   return app.exec();
 }

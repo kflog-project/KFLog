@@ -17,9 +17,6 @@
 
 #include <QtGui>
 
-//#include <qdir.h>
-//#include <qnamespace.h>
-//#include <qsettings.h>
 //Added by qt3to4:
 #include <Q3PtrList>
 
@@ -28,8 +25,14 @@
 
 extern QSettings _settings;
 
-MapConfig::MapConfig() : scaleIndex(0), printScaleIndex(0), isSwitch(false)
+MapConfig::MapConfig( QObject* object ) :
+  QObject(object),
+  scaleIndex(0),
+  printScaleIndex(0),
+  isSwitch(false)
 {
+  qDebug() << "MapConfig()";
+
   airABorder = new bool[6];
   airBBorder = new bool[6];
   airCBorder = new bool[6];
@@ -65,7 +68,7 @@ MapConfig::MapConfig() : scaleIndex(0), printScaleIndex(0), isSwitch(false)
 
 MapConfig::~MapConfig()
 {
-
+  qDebug() << "~MapConfig()";
 }
 
 void MapConfig::slotReadConfig()
@@ -175,7 +178,7 @@ void MapConfig::slotReadConfig()
   __readTopo("8250M", COLOR_LEVEL_8250);
   __readTopo("8500M", COLOR_LEVEL_8500);
   __readTopo("8750M", COLOR_LEVEL_8750);
-  
+
 
   __readPen("Road", &roadPenList, roadBorder,
         ROAD_COLOR_1, ROAD_COLOR_2, ROAD_COLOR_3, ROAD_COLOR_4,
@@ -531,7 +534,7 @@ void MapConfig::slotReadConfig()
 void MapConfig::slotSetFlightDataType(int type)
 {
   drawFType = type;
-  _settings.writeEntry("/Flight/DrawType", type);
+  _settings.setValue("/Flight/DrawType", type);
 }
 
 void MapConfig::slotSetMatrixValues(int index, bool sw)
@@ -1071,17 +1074,17 @@ bool MapConfig::useSmallIcons(){
 
 /** Returns true if small icons are used, else returns false. */
 bool MapConfig::drawWpLabels(){
-  extern MapMatrix _globalMapMatrix;
-  return (_globalMapMatrix.getScale(MapMatrix::CurrentScale)<=_drawWpLabelScale);
+  extern MapMatrix *_globalMapMatrix;
+  return (_globalMapMatrix->getScale(MapMatrix::CurrentScale)<=_drawWpLabelScale);
 }
 
 Qt::PenStyle MapConfig::getIsoPenStyle(int height)
 {
   // choose isoline style
-  extern MapMatrix _globalMapMatrix;
+  extern MapMatrix *_globalMapMatrix;
   Qt::PenStyle style=Qt::NoPen;
 
-  if (_globalMapMatrix.getScale()<100.0)   // make configurable
+  if (_globalMapMatrix->getScale()<100.0)   // make configurable
   {
     if (height%1000==0)
       style=Qt::SolidLine;

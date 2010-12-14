@@ -1305,11 +1305,11 @@ void Flight::setLastAnimationPixmap(QPixmap pix)  {  pixAnimate = pix;  }
 
 /** Re-calculates all projections for this flight. */
 void Flight::reProject(){
-  extern MapMatrix _globalMapMatrix;
+  extern MapMatrix *_globalMapMatrix;
 
   flightPoint *fp;
   foreach(fp, route)
-      fp->projP = _globalMapMatrix.wgsToMap(fp->origP);
+      fp->projP = _globalMapMatrix->wgsToMap(fp->origP);
 
   origTask.reProject();
   optimizedTask.reProject();

@@ -52,8 +52,7 @@
 // version used for files created from OpenAir data
 #define FILE_VERSION_AIRSPACE_C 200
 
-extern MapContents  _globalMapContents;
-extern MapMatrix    _globalMapMatrix;
+extern MapMatrix    *_globalMapMatrix;
 
 OpenAirParser::OpenAirParser()
 {
@@ -307,7 +306,7 @@ void OpenAirParser::finishAirspace()
   uint cnt=asPA.count();
   Q3PointArray PA(cnt);
   for (uint i=0; i<cnt; i++) {
-    PA.setPoint(i, _globalMapMatrix.wgsToMap(asPA.point(i)));
+    PA.setPoint(i, _globalMapMatrix->wgsToMap(asPA.point(i)));
   }
 
   Airspace * a = new Airspace(asName,

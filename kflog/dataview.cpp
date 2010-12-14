@@ -17,9 +17,7 @@
 
 #include "dataview.h"
 
-#include <QFileInfo>
-#include <QHBoxLayout>
-#include <QMessageBox>
+#include <QtGui>
 
 #include <flight.h>
 #include <flightgroup.h>
@@ -27,16 +25,16 @@
 #include <mapcalc.h>
 #include <mapcontents.h>
 
-DataView::DataView(QWidget* parent)
-: QFrame(parent, "FlightData")
+DataView::DataView(QWidget* parent) : QFrame(parent)
 {
-  flightDataText = new QTextBrowser(this, "flightDataBrowser");
+  flightDataText = new QTextBrowser(this);
+  flightDataText->setObjectName( "FlightDataBrowser" );
 
   QHBoxLayout* flightLayout = new QHBoxLayout(this, 5);
   flightLayout->addWidget(flightDataText);
 
-  connect(flightDataText, SIGNAL(linkClicked(const QString &)), this,
-      SLOT(slotWPSelected(const QString &)));
+  connect( flightDataText, SIGNAL(anchorClicked(const QUrl &)),
+           this, SLOT(slotWPSelected(const QUrl &)) );
 }
 
 DataView::~DataView()
@@ -202,8 +200,8 @@ void DataView::slotShowTaskText(FlightTask* task)
 
 void DataView::setFlightData()
 {
-  extern MapContents _globalMapContents;
-  BaseFlightElement* e = _globalMapContents.getFlight();
+  extern MapContents *_globalMapContents;
+  BaseFlightElement* e = _globalMapContents->getFlight();
   QString htmlText;
   QString idString;
   QList<Flight*> fl;
@@ -227,7 +225,7 @@ void DataView::setFlightData()
             // have removed the rule
             //                                                     Heiner, 2003-01-02
             //
-            htmlText = (QString)"<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>" +
+            htmlText = QString("<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>") +
                 "<TR><TD>" + tr("Date") + ":</TD><TD>" + h.at(3) + "</TD></TR>" +
                 "<TR><TD>" + tr("Pilot") + ":</TD><TD> " + h.at(0) + "</TD></TR>" +
                 "<TR><TD>" + tr("Glider") + ":</TD><TD>" + h.at(2) +
@@ -275,10 +273,14 @@ void DataView::setFlightData()
     }
 }
 
-void DataView::slotWPSelected(const QString &url)
+void DataView::slotWPSelected(const QUrl &link)
 {
-  extern MapContents _globalMapContents;
-  BaseFlightElement* e = _globalMapContents.getFlight();
+  extern MapContents *_globalMapContents;
+  BaseFlightElement* e = _globalMapContents->getFlight();
+
+#warning "Check, if URL context is right ported here!"
+
+  QString url = link.toString();
 
   // this seems to happen sometimes, prevent crash
   if (!e)
@@ -290,7 +292,9 @@ void DataView::slotWPSelected(const QString &url)
       break;
     case BaseMapElement::Task:
       if (url == "EDITTASK") {
-        QMessageBox::information(0, tr("Edit task"), tr("This will bring up the task editing dialog"), QMessageBox::Ok);
+        QMessageBox::information(0, tr("Edit task"),
+            tr("This will bring up the task editing dialog"),
+            QMessageBox::Ok);
       }
       else {
         emit wpSelected(url.toInt());

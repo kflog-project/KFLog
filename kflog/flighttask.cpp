@@ -31,7 +31,7 @@
 #define CUR_ID loop
 #define NEXT_ID loop + 1
 
-/* Die Einstellungen können mal in die Voreinstellungsdatei wandern ... */
+/* Die Einstellungen kï¿½nnen mal in die Voreinstellungsdatei wandern ... */
 #define FAI_POINT 2.0
 #define NORMAL_POINT 1.75
 #define R1 (3000.0 / glMapMatrix->getScale())
@@ -104,7 +104,7 @@ void FlightTask::__checkType()
           flightType = FlightTask::NotSet;
           break;
         case 1:
-          // Zielrückkehr
+          // Zielrï¿½ckkehr
           flightType = FlightTask::ZielR;
           break;
         case 2:
@@ -118,11 +118,11 @@ void FlightTask::__checkType()
           break;
         case 3:
           // Start auf Schenkel oder Vieleck
-          // Vieleck Ja/Nein kann endgültig erst bei der Analyse des Fluges
+          // Vieleck Ja/Nein kann endgï¿½ltig erst bei der Analyse des Fluges
           // bestimmt werden!
           //
           // Erste Abfrage je nachdem ob Vieleck oder Dreieck mehr Punkte geben
-          // würde
+          // wï¿½rde
           distance_task_d = distance_task - wpList.at(2)->distance
             - wpList.at(5)->distance + dist(wpList.at(2), wpList.at(4));
 
@@ -149,7 +149,7 @@ void FlightTask::__checkType()
             }
           break;
         case 5:
-          // 2x Dreieck nur als FAI gültig
+          // 2x Dreieck nur als FAI gï¿½ltig
           flightType = Unknown;
           if( (distance_task / 2 <= 100) && (wpList.at(1) == wpList.at(4)) &&
               (wpList.at(2) == wpList.at(5)) &&
@@ -268,8 +268,8 @@ double FlightTask::__sectorangle(unsigned int loop, bool isDraw)
       break;
     }
 
-  // Nur nötig bei der Überprüfung der Wegpunkte,
-  // würde beim Zeichnen zu Fehlern führen
+  // Nur nï¿½tig bei der ï¿½berprï¿½fung der Wegpunkte,
+  // wï¿½rde beim Zeichnen zu Fehlern fï¿½hren
   if(!isDraw) sectorAngle += M_PI;
 
   if(sectorAngle > (2 * M_PI)) sectorAngle = sectorAngle - (2 * M_PI);
@@ -739,7 +739,7 @@ int FlightTask::getPlannedPoints()
   double pointZielS = _settings.readDoubleEntry("/FlightPoints/ZielSPoint", 1.5);
 
   /*
-   * Aufgabe vollständig erfüllt
+   * Aufgabe vollstï¿½ndig erfï¿½llt
    *        F: Punkte/km
    *        I: Index des Flugzeuges
    *        f & I noch abfragen !!!!
@@ -778,9 +778,9 @@ double FlightTask::getOlcPoints()
 void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& gliderType)
 {
   /*
-   *   Überprüft, ob die Sektoren der Wendepunkte erreicht wurden
+   *   ï¿½berprï¿½ft, ob die Sektoren der Wendepunkte erreicht wurden
    *
-   *   SOLLTE NOCHMALS ÜBERARBEITET WERDEN
+   *   SOLLTE NOCHMALS ï¿½BERARBEITET WERDEN
    *
    */
   bool time_error = false;
@@ -826,11 +826,11 @@ void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& glider
 
       __sectorangle(loop, false);
       /*
-       * Prüfung, ob Flugpunkte in den Sektoren liegen.
+       * Prï¿½fung, ob Flugpunkte in den Sektoren liegen.
        *
        *      Ein Index 0 bei den Sektoren zeigt an, dass der Sektor
-       *      _nicht_ erreicht wurde. Dies führt an Mitternacht zu
-       *      einem möglichen Fehler ...
+       *      _nicht_ erreicht wurde. Dies fï¿½hrt an Mitternacht zu
+       *      einem mï¿½glichen Fehler ...
        */
       for(int pLoop = startIndex + 1; pLoop < route.count(); pLoop++)
         {
@@ -846,7 +846,7 @@ void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& glider
               if(!wpList.at(loop)->sectorFAI)
                 wpList.at(loop)->sectorFAI = route.at(pLoop)->time;
 
-              // ... daher ist ein Abbruch möglich!
+              // ... daher ist ein Abbruch mï¿½glich!
               startIndex = pLoop;
               break;
             }
@@ -887,7 +887,7 @@ void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& glider
                       if(!wpList.at(loop)->sector1)
                         {
                           wpList.at(loop)->sector1 = route.at(pLoop)->time;
-                          // ... daher ist ein Abbruch möglich!
+                          // ... daher ist ein Abbruch mï¿½glich!
                           startIndex = pLoop;
                           break;
                         }
@@ -911,7 +911,7 @@ void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& glider
     }
 
   /*
-   * Überprüfen der Aufgabe
+   * ï¿½berprï¿½fen der Aufgabe
    */
   int faiCount = 0;
   unsigned int dmstCount = 0;
@@ -969,7 +969,7 @@ void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& glider
           // Landung auf letztem Wegpunkt
         }
       else
-        // Außenlandung -- Wertung: + 1Punkt bis zur Außenlandung
+        // Auï¿½enlandung -- Wertung: + 1Punkt bis zur Auï¿½enlandung
         aussenlande = dist(wpList.at(1 + dmstCount), route.last());
     }
   else
@@ -981,7 +981,7 @@ void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& glider
     }
 
 
-  // jetzt in __setDistance noch übernehmen
+  // jetzt in __setDistance noch ï¿½bernehmen
   distance_wert = 0;
   double F = 1;
 
@@ -1003,7 +1003,7 @@ void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& glider
   else
     {
       /*
-       * Aufgabe vollständig erfüllt
+       * Aufgabe vollstï¿½ndig erfï¿½llt
        *        F: Punkte/km
        *        I: Index des Flugzeuges
        *        f & I noch abfragen !!!!
@@ -1157,7 +1157,7 @@ void FlightTask::__setDMSTPoints()
   //  else
   //    {
   //      /*
-  //       *  Aufgabe vollständig erfüllt
+  //       *  Aufgabe vollstï¿½ndig erfï¿½llt
   //       *        F: Punkte/km
   //       *        I: Index des Flugzeuges
   //       *        f & I noch abfragen !!!!
@@ -1527,7 +1527,7 @@ void FlightTask::calcFAIArea()
 void FlightTask::calcFAISector(double leg, double legBearing, double from, double to, double step, double dist, double toLat,
                                double toLon, Q3PointArray *pA, bool upwards, bool isRightOfRoute)
 {
-  extern MapMatrix _globalMapMatrix;
+  extern MapMatrix *_globalMapMatrix;
 
   double percent, maxDist, minDist;
   double b, c;
@@ -1551,7 +1551,7 @@ void FlightTask::calcFAISector(double leg, double legBearing, double from, doubl
 
     if (c >= minDist && c <= maxDist) {
       w = angle(leg, b, c);
-      p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, isRightOfRoute ? legBearing - w : legBearing + w, b));
+      p = _globalMapMatrix->wgsToMap(posOfDistAndBearing(toLat, toLon, isRightOfRoute ? legBearing - w : legBearing + w, b));
       pA->putPoints(i++, 1, p.lat(), p.lon());
     }
 
@@ -1567,7 +1567,7 @@ void FlightTask::calcFAISector(double leg, double legBearing, double from, doubl
 void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, double to, double step, double toLat,
                                    double toLon, bool less500, Q3PointArray *pA, bool upwards, bool isRightOfRoute)
 {
-  extern MapMatrix _globalMapMatrix;
+  extern MapMatrix *_globalMapMatrix;
 
   double dist = from;
   double b, c;
@@ -1604,7 +1604,7 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
       else {
         w = angle(leg, c, b);
       }
-      p = _globalMapMatrix.wgsToMap(posOfDistAndBearing(toLat, toLon, isRightOfRoute ? legBearing - w : legBearing + w,
+      p = _globalMapMatrix->wgsToMap(posOfDistAndBearing(toLat, toLon, isRightOfRoute ? legBearing - w : legBearing + w,
                                                         upwards ? b : c));
       pA->putPoints(i++, 1, p.lat(), p.lon());
     }
@@ -1632,13 +1632,13 @@ QString FlightTask::getPlanningTypeString()
 
 /** re-projects the points along the route to make sure the route is drawn correctly if the projection changes. */
 void FlightTask::reProject(){
-  extern MapMatrix _globalMapMatrix;
+  extern MapMatrix *_globalMapMatrix;
 
   flightPoint *fp;
   foreach(fp, flightRoute)
-      fp->projP = _globalMapMatrix.wgsToMap(fp->origP);
+      fp->projP = _globalMapMatrix->wgsToMap(fp->origP);
 
   Waypoint *wp;
   foreach(wp, wpList)
-      wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
+      wp->projP = _globalMapMatrix->wgsToMap(wp->origP);
 }

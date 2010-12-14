@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by André Somers
+**   Copyright (c):  2003 by Andrï¿½ Somers
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -26,8 +26,9 @@
 #include <Q3Frame>
 #include <QLabel>
 
-TopoLegend::TopoLegend(QWidget *parent, const char *name ) : Q3ScrollView(parent,name) {
-  extern MapConfig _globalMapConfig;
+TopoLegend::TopoLegend(QWidget *parent, const char *name ) : Q3ScrollView(parent,name)
+{
+  extern MapConfig *_globalMapConfig;
 
   //These are the levels used, as defined in mapconfig.cpp.
   //For internal reasons, -1 and 10000 are added to the list.
@@ -46,7 +47,7 @@ TopoLegend::TopoLegend(QWidget *parent, const char *name ) : Q3ScrollView(parent
 
 
   this->addChild(levelLayout);        //we are using the QVBox above as our main and single widget
-  this->setHScrollBarMode(AlwaysOff); //no horizontal scrollbar 
+  this->setHScrollBarMode(AlwaysOff); //no horizontal scrollbar
   this->setResizePolicy(AutoOneFit);  //make sure everything fits nicely
 
   QFontMetrics fm=this->fontMetrics(); //get a QFontMetrics object
@@ -66,7 +67,7 @@ TopoLegend::TopoLegend(QWidget *parent, const char *name ) : Q3ScrollView(parent
     minwidth=std::max(minwidth,fm.size(0,lbl->text()).width());
 
     //lbl->setBackgroundMode(FixedColor);                        //set the label to get a fixed bg color
-    lbl->setBackgroundColor(_globalMapConfig.getIsoColor(i));  //get the appropriate color from the mapconfig
+    lbl->setBackgroundColor(_globalMapConfig->getIsoColor(i));  //get the appropriate color from the mapconfig
     labelList.append(lbl);                                     //and add the label to our label list
   }
   this->setMinimumSize(minwidth+30,0);

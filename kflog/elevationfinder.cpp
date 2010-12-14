@@ -4,7 +4,7 @@
 // Description:
 //
 //
-// Author: André Somers <andre@kflog.org>, (C) 2004
+// Author: Andrï¿½ Somers <andre@kflog.org>, (C) 2004
 //
 // Copyright: See COPYING file that comes with this distribution
 //
@@ -50,37 +50,37 @@ ElevationFinder * ElevationFinder::instance()
 
 int ElevationFinder::elevationWgs(const QPoint& coordinates)
 {
-  extern MapContents _globalMapContents;
-  extern MapMatrix _globalMapMatrix;
+  extern MapContents *_globalMapContents;
+  extern MapMatrix *_globalMapMatrix;
 
   if (useOGIE) //use openGLIGCexplorer's DEM file
     return findDEMelevation(coordinates);
 
   //use the 'old' method
-  return _globalMapContents.getElevation(_globalMapMatrix.wgsToMap(coordinates));
+  return _globalMapContents->getElevation(_globalMapMatrix->wgsToMap(coordinates));
 }
 
 int ElevationFinder::elevationMap(const QPoint& coordinates)
 {
-  extern MapContents _globalMapContents;
-  extern MapMatrix _globalMapMatrix;
+  extern MapContents *_globalMapContents;
+  extern MapMatrix *_globalMapMatrix;
 
   if (useOGIE) //use openGLIGCexplorer's DEM file
-    return findDEMelevation(_globalMapMatrix.mapToWgs(coordinates));
+    return findDEMelevation(_globalMapMatrix->mapToWgs(coordinates));
 
   //use the 'old' method
-  return _globalMapContents.getElevation(coordinates);
+  return _globalMapContents->getElevation(coordinates);
 }
 
 int ElevationFinder::elevation(const QPoint& WgsCoordinates, const QPoint& MapCoordinates)
 {
-  extern MapContents _globalMapContents;
+  extern MapContents *_globalMapContents;
 
   if (useOGIE) //use openGLIGCexplorer's DEM file
     return findDEMelevation(WgsCoordinates);
 
   //use the 'old' method
-  return _globalMapContents.getElevation(MapCoordinates);
+  return _globalMapContents->getElevation(MapCoordinates);
 }
 
 int ElevationFinder::findDEMelevation(const QPoint& coordinates)

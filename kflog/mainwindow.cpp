@@ -29,6 +29,8 @@
 #include "igcpreview.h"
 #include "kflogconfig.h"
 #include "mapcontents.h"
+#include "mapconfig.h"
+#include "mapmatrix.h"
 #include "mapprint.h"
 #include "recorderdialog.h"
 #include "taskdataprint.h"
@@ -41,11 +43,31 @@ TranslationList taskTypes;
 
 extern QSettings _settings;
 
+/**
+ * Contains all map elements and takes control over drawing or printing
+ * the elements.
+ */
+MapContents *_globalMapContents = static_cast<MapContents *> (0);
+
+/**
+ * Used for transforming the map items.
+ */
+MapMatrix *_globalMapMatrix =  static_cast<MapMatrix *> (0);
+
+/**
+ * Contains all configuration-info for drawing and printing the elements.
+ */
+MapConfig *_globalMapConfig = static_cast<MapConfig *> (0);
+
 MainWindow::MainWindow() : Q3MainWindow(0, "KFLog main window")
 {
-  extern MapConfig _globalMapConfig;
-  extern MapContents _globalMapContents;
-  extern MapMatrix _globalMapMatrix;
+  qDebug() << "MainWindow()";
+
+  _globalMapMatrix   = new MapMatrix(this);
+  _globalMapConfig   = new MapConfig(this);
+  _globalMapContents = new MapContents(this);
+
+  BaseMapElement::initMapElement( _globalMapMatrix, _globalMapConfig );
 
   showStartLogo=false;
 
@@ -53,13 +75,14 @@ MainWindow::MainWindow() : Q3MainWindow(0, "KFLog main window")
   {
     showStartLogo = true;
     startLogo = new KFLogStartLogo;
-    startLogo->show();
+    startLogo->setVisible( true );
+    startLogo->raise();
   }
 
-  connect( &_globalMapConfig, SIGNAL(configChanged()),
-           &_globalMapMatrix, SLOT(slotInitMatrix()) );
+  connect( _globalMapConfig, SIGNAL(configChanged()),
+           _globalMapMatrix, SLOT(slotInitMatrix()) );
 
-  _globalMapConfig.slotReadConfig();
+  _globalMapConfig->slotReadConfig();
 
   initTaskTypes();
   initSurfaceTypes();
@@ -93,40 +116,40 @@ MainWindow::MainWindow() : Q3MainWindow(0, "KFLog main window")
   connect(map, SIGNAL(setStatusBarProgress(int)), this, SLOT(slotSetProgress(int)));
   connect(map, SIGNAL(setStatusBarMsg(const QString&)), this, SLOT(slotSetStatusMsg(const QString&)));
 
-  connect(mapControl, SIGNAL(scaleChanged(double)), &_globalMapMatrix, SLOT(slotSetScale(double)));
+  connect(mapControl, SIGNAL(scaleChanged(double)), _globalMapMatrix, SLOT(slotSetScale(double)));
 
   connect(dataView, SIGNAL(wpSelected(const int)), map, SLOT(slotCenterToWaypoint(const int)));
-  connect(dataView, SIGNAL(flightSelected(BaseFlightElement *)), &_globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
-  connect(dataView, SIGNAL(editFlightGroup()), &_globalMapContents, SLOT(slotEditFlightGroup()));
+  connect(dataView, SIGNAL(flightSelected(BaseFlightElement *)), _globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
+  connect(dataView, SIGNAL(editFlightGroup()), _globalMapContents, SLOT(slotEditFlightGroup()));
 
-  connect(&_globalMapContents, SIGNAL(activatePlanning()), map,SLOT(slotActivatePlanning()));
-  connect(&_globalMapContents, SIGNAL(closingFlight(BaseFlightElement*)), objectTree, SLOT(slotCloseFlight(BaseFlightElement*)));
-  connect(&_globalMapContents, SIGNAL(contentsChanged()),map, SLOT(slotRedrawMap()));
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), this, SLOT(slotModifyMenu()));
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), dataView, SLOT(setFlightData()));
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), evaluationWindow, SLOT(slotShowFlightData()));
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), map, SLOT(slotShowCurrentFlight()));
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), objectTree, SLOT(slotSelectedFlightChanged()));
-  connect(&_globalMapContents, SIGNAL(errorOnMapLoading()), this, SLOT(slotStartComplete()));
-  connect(&_globalMapContents, SIGNAL(newFlightAdded(Flight*)), objectTree, SLOT(slotNewFlightAdded(Flight*)));
-  connect(&_globalMapContents, SIGNAL(newFlightGroupAdded(FlightGroup*)), objectTree, SLOT(slotNewFlightGroupAdded(FlightGroup*)));
-  connect(&_globalMapContents, SIGNAL(newTaskAdded(FlightTask*)), objectTree, SLOT(slotNewTaskAdded(FlightTask*)));
-  connect(&_globalMapContents, SIGNAL(taskHelp(QString)), helpWindow, SLOT(slotShowHelpText(QString)) );
-  connect(&_globalMapMatrix, SIGNAL(displayMatrixValues(int, bool)), &_globalMapConfig, SLOT(slotSetMatrixValues(int, bool)));
-  connect(&_globalMapMatrix, SIGNAL(matrixChanged()), map, SLOT(slotRedrawMap()));
-  connect(&_globalMapMatrix, SIGNAL(printMatrixValues(int)), &_globalMapConfig, SLOT(slotSetPrintMatrixValues(int)));
-  connect(&_globalMapMatrix, SIGNAL(projectionChanged()), &_globalMapContents, SLOT(slotReloadMapData()));
+  connect(_globalMapContents, SIGNAL(activatePlanning()), map,SLOT(slotActivatePlanning()));
+  connect(_globalMapContents, SIGNAL(closingFlight(BaseFlightElement*)), objectTree, SLOT(slotCloseFlight(BaseFlightElement*)));
+  connect(_globalMapContents, SIGNAL(contentsChanged()),map, SLOT(slotRedrawMap()));
+  connect(_globalMapContents, SIGNAL(currentFlightChanged()), this, SLOT(slotModifyMenu()));
+  connect(_globalMapContents, SIGNAL(currentFlightChanged()), dataView, SLOT(setFlightData()));
+  connect(_globalMapContents, SIGNAL(currentFlightChanged()), evaluationWindow, SLOT(slotShowFlightData()));
+  connect(_globalMapContents, SIGNAL(currentFlightChanged()), map, SLOT(slotShowCurrentFlight()));
+  connect(_globalMapContents, SIGNAL(currentFlightChanged()), objectTree, SLOT(slotSelectedFlightChanged()));
+  connect(_globalMapContents, SIGNAL(errorOnMapLoading()), this, SLOT(slotStartComplete()));
+  connect(_globalMapContents, SIGNAL(newFlightAdded(Flight*)), objectTree, SLOT(slotNewFlightAdded(Flight*)));
+  connect(_globalMapContents, SIGNAL(newFlightGroupAdded(FlightGroup*)), objectTree, SLOT(slotNewFlightGroupAdded(FlightGroup*)));
+  connect(_globalMapContents, SIGNAL(newTaskAdded(FlightTask*)), objectTree, SLOT(slotNewTaskAdded(FlightTask*)));
+  connect(_globalMapContents, SIGNAL(taskHelp(QString)), helpWindow, SLOT(slotShowHelpText(QString)) );
+  connect(_globalMapMatrix, SIGNAL(displayMatrixValues(int, bool)), _globalMapConfig, SLOT(slotSetMatrixValues(int, bool)));
+  connect(_globalMapMatrix, SIGNAL(matrixChanged()), map, SLOT(slotRedrawMap()));
+  connect(_globalMapMatrix, SIGNAL(printMatrixValues(int)), _globalMapConfig, SLOT(slotSetPrintMatrixValues(int)));
+  connect(_globalMapMatrix, SIGNAL(projectionChanged()), _globalMapContents, SLOT(slotReloadMapData()));
 
   connect(waypoints, SIGNAL(copyWaypoint2Task(Waypoint *)), map, SLOT(slotAppendWaypoint2Task(Waypoint *)));
   connect(waypoints, SIGNAL(waypointCatalogChanged( WaypointCatalog * )), map, SLOT(slotWaypointCatalogChanged( WaypointCatalog * )));
-  connect(waypoints, SIGNAL(centerMap(int, int)), &_globalMapMatrix, SLOT(slotCenterTo(int, int)));
+  connect(waypoints, SIGNAL(centerMap(int, int)), _globalMapMatrix, SLOT(slotCenterTo(int, int)));
 
-  connect(objectTree, SIGNAL(selectedFlight(BaseFlightElement *)), &_globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
-  connect(objectTree, SIGNAL(newTask()), &_globalMapContents, SLOT(slotNewTask()));
+  connect(objectTree, SIGNAL(selectedFlight(BaseFlightElement *)), _globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
+  connect(objectTree, SIGNAL(newTask()), _globalMapContents, SLOT(slotNewTask()));
   connect(objectTree, SIGNAL(openTask()), this, SLOT(slotOpenTask()));
-  connect(objectTree, SIGNAL(closeTask()), &_globalMapContents, SLOT(closeFlight()));
-  connect(objectTree, SIGNAL(newFlightGroup()), &_globalMapContents, SLOT(slotNewFlightGroup()));
-  connect(objectTree, SIGNAL(editFlightGroup()), &_globalMapContents, SLOT(slotEditFlightGroup()));
+  connect(objectTree, SIGNAL(closeTask()), _globalMapContents, SLOT(closeFlight()));
+  connect(objectTree, SIGNAL(newFlightGroup()), _globalMapContents, SLOT(slotNewFlightGroup()));
+  connect(objectTree, SIGNAL(editFlightGroup()), _globalMapContents, SLOT(slotEditFlightGroup()));
   connect(objectTree, SIGNAL(openFlight()), this, SLOT(slotOpenFile()));
   connect(objectTree, SIGNAL(openFile(const char*)), this, SLOT(slotOpenFile(const char*)));
   connect(objectTree, SIGNAL(optimizeFlight()), this, SLOT(slotOptimizeFlight()));
@@ -134,14 +157,13 @@ MainWindow::MainWindow() : Q3MainWindow(0, "KFLog main window")
 
   connect(evaluationWindow, SIGNAL(showCursor(const QPoint&, const QPoint&)), map, SLOT(slotDrawCursor(const QPoint&, const QPoint&)));
 
-  connect(this, SIGNAL(flightDataTypeChanged(int)), &_globalMapConfig, SLOT(slotSetFlightDataType(int)));
+  connect(this, SIGNAL(flightDataTypeChanged(int)), _globalMapConfig, SLOT(slotSetFlightDataType(int)));
 
   slotCheckDockWidgetStatus();
 }
 
 MainWindow::~MainWindow()
 {
-  _settings.~QSettings();
   delete dataViewDock;
   delete dataView;
   delete evaluationWindowDock;
@@ -221,7 +243,6 @@ MainWindow::~MainWindow()
   delete statusLonL;
   delete statusProgress;
   delete toolBar;
-
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)
@@ -229,13 +250,14 @@ void MainWindow::closeEvent(QCloseEvent *e)
   saveOptions();
   waypoints->saveChanges();
 
-  extern MapMatrix _globalMapMatrix;
-  _globalMapMatrix.writeMatrixOptions();
+  _globalMapMatrix->writeMatrixOptions();
   e->accept();
 }
 
 void MainWindow::initDockWindows()
 {
+  qDebug() << "MainWindow::initDockWindows()";
+
   dataViewDock = new Q3DockWindow(Q3DockWindow::InDock, this, "DataView QDockWindow");
   dataViewDock->setResizeEnabled(true);
   dataView = new DataView(dataViewDock);
@@ -307,17 +329,14 @@ void MainWindow::initDockWindows()
 
 void MainWindow::initMenuBar()
 {
-  extern MapMatrix _globalMapMatrix;
-  extern MapContents _globalMapContents;
-
   // File menu
 
   fileNewWaypoint = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/waypoint_16.png"), tr("New &Waypoint"), 0, this, "file_new_waypoint");
   connect(fileNewWaypoint, SIGNAL(activated()), waypoints, SLOT(slotNewWaypoint()));
   fileNewTask = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/task_16.png"), tr("New &Task"), Qt::CTRL+Qt::Key_N, this, "file_new_task");
-  connect(fileNewTask, SIGNAL(activated()), &_globalMapContents, SLOT(slotNewTask()));
+  connect(fileNewTask, SIGNAL(activated()), _globalMapContents, SLOT(slotNewTask()));
   fileNewFlightGroup = new QAction(tr("New &Flight group"), 0, this, "file_new_flight_group");
-  connect(fileNewFlightGroup, SIGNAL(activated()), &_globalMapContents, SLOT(slotNewFlightGroup()));
+  connect(fileNewFlightGroup, SIGNAL(activated()), _globalMapContents, SLOT(slotNewFlightGroup()));
   Q3PopupMenu * fileNew = new Q3PopupMenu( this );
   fileNewWaypoint->addTo( fileNew );
   fileNewTask->addTo( fileNew );
@@ -342,7 +361,7 @@ void MainWindow::initMenuBar()
   }
 
   fileClose = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_cancel_16.png"), tr("&Close Flight/Task"), Qt::CTRL+Qt::Key_W, this, "file_close");
-  connect(fileClose, SIGNAL(activated()), &_globalMapContents, SLOT(closeFlight()));
+  connect(fileClose, SIGNAL(activated()), _globalMapContents, SLOT(closeFlight()));
 
   fileSavePixmap = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_image_16.png"), tr("Export to PNG..."), 0, this, "file_export_pixmap");
   connect(fileSavePixmap, SIGNAL(activated()), map, SLOT(slotSavePixmap()));
@@ -382,35 +401,35 @@ void MainWindow::initMenuBar()
   viewCenterFlight = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/centerflight_16.png"), tr("Center to &Flight"), Qt::Key_F7, this, "view_center_flight");
   connect(viewCenterFlight, SIGNAL(activated()), map, SLOT(slotCenterToFlight()));
   viewCenterHomesite = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_gohome_16.png"), tr("Center to &Homesite"), Qt::CTRL+Qt::Key_Home, this, "view_center_homeside");
-  connect(viewCenterHomesite, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotCenterToHome()));
+  connect(viewCenterHomesite, SIGNAL(activated()), _globalMapMatrix, SLOT(slotCenterToHome()));
   viewCenterTo = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/centerto_16.png"), tr("&Center to..."), Qt::Key_F8, this, "view_center_to");
   connect(viewCenterTo, SIGNAL(activated()), this, SLOT(slotCenterTo()));
 
   viewZoomIn = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_viewmag+_16.png"), tr("Zoom &In"), Qt::CTRL+Qt::Key_Plus, this, "view_zoom_in");
-  connect(viewZoomIn, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotZoomIn()));
+  connect(viewZoomIn, SIGNAL(activated()), _globalMapMatrix, SLOT(slotZoomIn()));
   viewZoomOut = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_viewmag-_16.png"), tr("Zoom &Out"), Qt::CTRL+Qt::Key_Minus, this, "view_zoom_out");
-  connect(viewZoomOut, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotZoomOut()));
+  connect(viewZoomOut, SIGNAL(activated()), _globalMapMatrix, SLOT(slotZoomOut()));
   viewZoom = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_viewmagfit_16.png"), tr("&Zoom..."), 0, this, "view_zoom");
   connect(viewZoom, SIGNAL(activated()), map, SLOT(slotZoomRect()));
   viewRedraw = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_reload_16.png"), tr("&Redraw"), Qt::Key_F5, this, "view_redraw");
   connect(viewRedraw, SIGNAL(activated()), map, SLOT(slotRedrawMap()));
 
   viewMoveNW = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_nw_22.png"), tr("move map north-west"), Qt::Key_7, this, "view_move_nw");
-  connect(viewMoveNW, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapNW()));
+  connect(viewMoveNW, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapNW()));
   viewMoveN = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_n_22.png"), tr("move map north"), Qt::Key_8, this, "view_move_n");
-  connect(viewMoveN, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapN()));
+  connect(viewMoveN, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapN()));
   viewMoveNE = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_ne_22.png"), tr("move map north-east"), Qt::Key_9, this, "view_move_ne");
-  connect(viewMoveNE, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapNE()));
+  connect(viewMoveNE, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapNE()));
   viewMoveW = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_w_22.png"), tr("move map west"), Qt::Key_4, this, "view_move_w");
-  connect(viewMoveW, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapW()));
+  connect(viewMoveW, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapW()));
   viewMoveE = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_e_22.png"), tr("move map east"), Qt::Key_6, this, "view_move_e");
-  connect(viewMoveE, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapE()));
+  connect(viewMoveE, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapE()));
   viewMoveSW = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_sw_22.png"), tr("move map south-west"), Qt::Key_1, this, "view_move_sw");
-  connect(viewMoveSW, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapSW()));
+  connect(viewMoveSW, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapSW()));
   viewMoveS = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_s_22.png"), tr("move map south"), Qt::Key_2, this, "view_move_s");
-  connect(viewMoveS, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapS()));
+  connect(viewMoveS, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapS()));
   viewMoveSE = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_se_22.png"), tr("move map south-east"), Qt::Key_3, this, "view_move_se");
-  connect(viewMoveSE, SIGNAL(activated()), &_globalMapMatrix, SLOT(slotMoveMapSE()));
+  connect(viewMoveSE, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapSE()));
 
   Q3PopupMenu * viewMove = new Q3PopupMenu( this );
   viewMoveNW->addTo( viewMove );
@@ -756,10 +775,10 @@ void MainWindow::readOptions()
 
 void MainWindow::saveOptions()
 {
-  _settings.writeEntry("/GeneralOptions/GeometryWidth", size().width());
-  _settings.writeEntry("/GeneralOptions/GeometryHeight", size().height());
-  _settings.writeEntry("/GeneralOptions/ShowToolbar", toolBar->isShown());
-  _settings.writeEntry("/GeneralOptions/ShowStatusbar", statusBar()->isShown());
+  _settings.setValue("/GeneralOptions/GeometryWidth", size().width());
+  _settings.setValue("/GeneralOptions/GeometryHeight", size().height());
+  _settings.setValue("/GeneralOptions/ShowToolbar", toolBar->isShown());
+  _settings.setValue("/GeneralOptions/ShowStatusbar", statusBar()->isShown());
 
   qDebug("saving options...");
   if (_settings.readNumEntry("/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed) ==
@@ -768,11 +787,11 @@ void MainWindow::saveOptions()
       // Only write the path, if a waypoint-catalog is opened.
       // Otherwise KFLog crashes on a clean installation.
       //qDebug("saving catalog name");
-      _settings.writeEntry("/Waypoints/DefaultCatalogName", waypoints->getCurrentCatalog()->path);
+      _settings.setValue("/Waypoints/DefaultCatalogName", waypoints->getCurrentCatalog()->path);
     }
 
 // FIXME: use QMainWindow::saveState in Qt4
-//  _settings.writeEntry("/GeneralOptions/ToolBarPos", (int) toolBar("mainToolBar")->barPos());
+//  _settings.setValue("/GeneralOptions/ToolBarPos", (int) toolBar("mainToolBar")->barPos());
 //  writeDockConfig(config, "Window Layout");
 }
 
@@ -780,9 +799,7 @@ void MainWindow::slotCenterTo()
 {
   CenterToDialog* center = new CenterToDialog(this, tr("center-to-dialog"));
 
-  extern MapMatrix _globalMapMatrix;
-
-  connect(center, SIGNAL(centerTo(int,int)), &_globalMapMatrix, SLOT(slotCenterTo(int, int)));
+  connect(center, SIGNAL(centerTo(int,int)), _globalMapMatrix, SLOT(slotCenterTo(int, int)));
 
   center->show();
 }
@@ -790,9 +807,8 @@ void MainWindow::slotCenterTo()
 void MainWindow::slotFlightViewIgc3D()
 {
   Igc3DDialog * igc3d = new Igc3DDialog(this);
-  extern MapContents _globalMapContents;
-  connect(&_globalMapContents, SIGNAL(currentFlightChanged()), igc3d, SLOT(slotShowFlightData()));
-  extern MapContents _globalMapContents;
+
+  connect(_globalMapContents, SIGNAL(currentFlightChanged()), igc3d, SLOT(slotShowFlightData()));
 }
 
 void MainWindow::slotFlightViewIgcOpenGL()
@@ -822,17 +838,16 @@ void MainWindow::slotFlightViewIgcOpenGL()
   void (*addFlight)(Flight*);
   addFlight = (void (*) (Flight*)) dlsym(libHandle, "addFlight");
   CHECK_ERROR_EXIT
-  extern MapContents _globalMapContents;
-  (void)(*addFlight)((Flight*)_globalMapContents.getFlight());
+
+  (void)(*addFlight)((Flight*)_globalMapContents->getFlight());
 }
 
 /** set menu items enabled/disabled */
 void MainWindow::slotModifyMenu()
 {
-  extern MapContents _globalMapContents;
-  if (_globalMapContents.getFlightList()->count() > 0)
+  if (_globalMapContents->getFlightList()->count() > 0)
   {
-      switch(_globalMapContents.getFlight()->getTypeID())
+      switch(_globalMapContents->getFlight()->getTypeID())
         {
           case BaseMapElement::Flight:
             fileClose->setEnabled(true);
@@ -961,15 +976,15 @@ void MainWindow::slotOpenFile(const char* surl)
 {
   slotSetStatusMsg(tr("Opening file..."));
 
-  extern MapContents _globalMapContents;
   Q3Url url = Q3Url(surl);
+
   if(url.isLocalFile())
   {
     QFile file (url.path());
     if (url.fileName().right(9).lower()==".kflogtsk")
     {
       //this is probably a taskfile. Try to open it as a task
-      if (_globalMapContents.loadTask(file))
+      if (_globalMapContents->loadTask(file))
         slotSetCurrentFile(url.path());
     }
     else
@@ -1011,9 +1026,9 @@ void MainWindow::slotOpenTask()
     if(!fUrl.isLocalFile())
       return;
 
-    extern MapContents _globalMapContents;
     QFile file(fName);
-    if (_globalMapContents.loadTask(file))
+
+    if (_globalMapContents->loadTask(file))
         slotSetCurrentFile(fName);
   }
 
@@ -1031,7 +1046,6 @@ void MainWindow::slotOpenRecentFile()
 
   slotSetStatusMsg(tr("Opening file..."));
 
-  extern MapContents _globalMapContents;
   FlightLoader flightLoader;
   Q3Url url (fileName);
   if(url.isLocalFile())
@@ -1040,7 +1054,7 @@ void MainWindow::slotOpenRecentFile()
     if (url.fileName().right(9).lower()==".kflogtsk")
     {
       //this is probably a taskfile. Try to open it as a task
-      if (_globalMapContents.loadTask(file))
+      if (_globalMapContents->loadTask(file))
         slotSetCurrentFile(url.path());
     }
     else
@@ -1056,19 +1070,17 @@ void MainWindow::slotOpenRecentFile()
 
 void MainWindow::slotOpenRecorderDialog()
 {
-  extern MapContents _globalMapContents;
-
   RecorderDialog* dlg = new RecorderDialog(this, "recorderDialog");
   connect(dlg, SIGNAL(addCatalog(WaypointCatalog *)), waypoints, SLOT(slotAddCatalog(WaypointCatalog *)));
-  connect(dlg, SIGNAL(addTask(FlightTask *)), &_globalMapContents, SLOT(slotAppendTask(FlightTask *)));
+  connect(dlg, SIGNAL(addTask(FlightTask *)), _globalMapContents, SLOT(slotAppendTask(FlightTask *)));
   dlg->exec();
   delete dlg;
 }
 
 void MainWindow::slotOptimizeFlight()
 {
-  extern MapContents _globalMapContents;
-  Flight *f = (Flight *)_globalMapContents.getFlight();
+  Flight *f = (Flight *)_globalMapContents->getFlight();
+
   if(f && f->getTypeID() == BaseMapElement::Flight)
     {
       if(f->optimizeTask())
@@ -1083,8 +1095,8 @@ void MainWindow::slotOptimizeFlight()
 
 void MainWindow::slotOptimizeFlightOLC()
 {
-  extern MapContents _globalMapContents;
-  Flight *f = (Flight *)_globalMapContents.getFlight();
+  Flight *f = (Flight *)_globalMapContents->getFlight();
+
   if(f && f->getTypeID() == BaseMapElement::Flight){
       if(f->optimizeTaskOLC(map))
         {
@@ -1148,7 +1160,7 @@ void MainWindow::slotSetCurrentFile(const QString &fileName)
     }
   }
 
-  _settings.writeEntry("/GeneralOptions/RecentFiles", newFiles);
+  _settings.setValue("/GeneralOptions/RecentFiles", newFiles);
 
   int size = std::min((int)newFiles.size(), 5);
   QAction *recentFileActs[size];
@@ -1232,11 +1244,9 @@ void MainWindow::slotConfigureKFLog()
 
   connect(confDlg, SIGNAL(scaleChanged(int, int)), mapControl, SLOT(slotSetMinMaxValue(int, int)));
 
-  extern MapConfig _globalMapConfig;
-  connect(confDlg, SIGNAL(configOk()), &_globalMapConfig, SLOT(slotReadConfig()));
+  connect(confDlg, SIGNAL(configOk()), _globalMapConfig, SLOT(slotReadConfig()));
 
-  extern MapContents _globalMapContents;
-  connect(confDlg, SIGNAL(configOk()), &_globalMapContents, SLOT(reProject()));
+  connect(confDlg, SIGNAL(configOk()), _globalMapContents, SLOT(reProject()));
 
   connect(confDlg, SIGNAL(configOk()), map, SLOT(slotRedrawMap()));
 
@@ -1261,8 +1271,8 @@ void MainWindow::slotFlightPrint()
 {
   slotSetStatusMsg(tr("Printing..."));
 
-  extern MapContents _globalMapContents;
-  BaseFlightElement *f = _globalMapContents.getFlight();
+  BaseFlightElement *f = _globalMapContents->getFlight();
+
   if(f)
     {
       switch (f->getTypeID())
@@ -1399,8 +1409,7 @@ void MainWindow::slotWhatsThis(){
 /** insert available flights into menu */
 void MainWindow::slotWindowsMenuAboutToShow()
 {
-  extern MapContents _globalMapContents;
-  QList<BaseFlightElement*> flights = *(_globalMapContents.getFlightList());
+  QList<BaseFlightElement*> flights = *(_globalMapContents->getFlightList());
 //  Q3PtrListIterator<BaseFlightElement> it(flights);
   BaseFlightElement *flight;
 
@@ -1411,10 +1420,10 @@ void MainWindow::slotWindowsMenuAboutToShow()
 //  for (int i = 0 ; it.current(); ++it , i++)
     {
 //      flight = it.current();
-      int id = windowMenu->insertItem(flight->getFileName(), &_globalMapContents, SLOT(slotSetFlight(int)));
+      int id = windowMenu->insertItem(flight->getFileName(), _globalMapContents, SLOT(slotSetFlight(int)));
 
       windowMenu->setItemParameter(id, i);
-      windowMenu->setItemChecked(id, _globalMapContents.getFlightIndex() == i);
+      windowMenu->setItemChecked(id, _globalMapContents->getFlightIndex() == i);
       i++;
     }
 }

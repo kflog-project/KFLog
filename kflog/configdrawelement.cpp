@@ -1521,34 +1521,34 @@ void ConfigDrawElement::__showPen(Q3PtrList<QPen> *penList, bool *b)
 void ConfigDrawElement::__writeBrush(QString group, Q3PtrList<QBrush> *brushList, Q3PtrList<QPen> *penList, bool *b)
 {
   __writePen(group, penList, b);
-  _settings.writeEntry("/Map/"+group+"/BrushColor1", __color2String(brushList->at(0)->color()));
-  _settings.writeEntry("/Map/"+group+"/BrushColor2", __color2String(brushList->at(1)->color()));
-  _settings.writeEntry("/Map/"+group+"/BrushColor3", __color2String(brushList->at(2)->color()));
-  _settings.writeEntry("/Map/"+group+"/BrushColor4", __color2String(brushList->at(3)->color()));
-  _settings.writeEntry("/Map/"+group+"/BrushStyle1", brushList->at(0)->style());
-  _settings.writeEntry("/Map/"+group+"/BrushStyle2", brushList->at(1)->style());
-  _settings.writeEntry("/Map/"+group+"/BrushStyle3", brushList->at(2)->style());
-  _settings.writeEntry("/Map/"+group+"/BrushStyle4", brushList->at(3)->style());
+  _settings.setValue("/Map/"+group+"/BrushColor1", __color2String(brushList->at(0)->color()));
+  _settings.setValue("/Map/"+group+"/BrushColor2", __color2String(brushList->at(1)->color()));
+  _settings.setValue("/Map/"+group+"/BrushColor3", __color2String(brushList->at(2)->color()));
+  _settings.setValue("/Map/"+group+"/BrushColor4", __color2String(brushList->at(3)->color()));
+  _settings.setValue("/Map/"+group+"/BrushStyle1", brushList->at(0)->style());
+  _settings.setValue("/Map/"+group+"/BrushStyle2", brushList->at(1)->style());
+  _settings.setValue("/Map/"+group+"/BrushStyle3", brushList->at(2)->style());
+  _settings.setValue("/Map/"+group+"/BrushStyle4", brushList->at(3)->style());
 }
 
 void ConfigDrawElement::__writePen(QString group, Q3PtrList<QPen> *penList, bool *b)
 {
-  _settings.writeEntry("/Map/"+group+"/Color1", __color2String(penList->at(0)->color()));
-  _settings.writeEntry("/Map/"+group+"/Color2", __color2String(penList->at(1)->color()));
-  _settings.writeEntry("/Map/"+group+"/Color3", __color2String(penList->at(2)->color()));
-  _settings.writeEntry("/Map/"+group+"/Color4", __color2String(penList->at(3)->color()));
-  _settings.writeEntry("/Map/"+group+"/PenSize1", (int)penList->at(0)->width());
-  _settings.writeEntry("/Map/"+group+"/PenSize2", (int)penList->at(1)->width());
-  _settings.writeEntry("/Map/"+group+"/PenSize3", (int)penList->at(2)->width());
-  _settings.writeEntry("/Map/"+group+"/PenSize4", (int)penList->at(3)->width());
-  _settings.writeEntry("/Map/"+group+"/PenStyle1", penList->at(0)->style());
-  _settings.writeEntry("/Map/"+group+"/PenStyle2", penList->at(1)->style());
-  _settings.writeEntry("/Map/"+group+"/PenStyle3", penList->at(2)->style());
-  _settings.writeEntry("/Map/"+group+"/PenStyle4", penList->at(3)->style());
-  _settings.writeEntry("/Map/"+group+"/Border1", b[0]);
-  _settings.writeEntry("/Map/"+group+"/Border2", ( b[1] && b[0] ) );
-  _settings.writeEntry("/Map/"+group+"/Border3", ( b[2] && b[1] && b[0] ) );
-  _settings.writeEntry("/Map/"+group+"/Border4", ( b[3] && b[2] && b[1] && b[0] ) );
+  _settings.setValue("/Map/"+group+"/Color1", __color2String(penList->at(0)->color()));
+  _settings.setValue("/Map/"+group+"/Color2", __color2String(penList->at(1)->color()));
+  _settings.setValue("/Map/"+group+"/Color3", __color2String(penList->at(2)->color()));
+  _settings.setValue("/Map/"+group+"/Color4", __color2String(penList->at(3)->color()));
+  _settings.setValue("/Map/"+group+"/PenSize1", (int)penList->at(0)->width());
+  _settings.setValue("/Map/"+group+"/PenSize2", (int)penList->at(1)->width());
+  _settings.setValue("/Map/"+group+"/PenSize3", (int)penList->at(2)->width());
+  _settings.setValue("/Map/"+group+"/PenSize4", (int)penList->at(3)->width());
+  _settings.setValue("/Map/"+group+"/PenStyle1", penList->at(0)->style());
+  _settings.setValue("/Map/"+group+"/PenStyle2", penList->at(1)->style());
+  _settings.setValue("/Map/"+group+"/PenStyle3", penList->at(2)->style());
+  _settings.setValue("/Map/"+group+"/PenStyle4", penList->at(3)->style());
+  _settings.setValue("/Map/"+group+"/Border1", b[0]);
+  _settings.setValue("/Map/"+group+"/Border2", ( b[1] && b[0] ) );
+  _settings.setValue("/Map/"+group+"/Border3", ( b[2] && b[1] && b[0] ) );
+  _settings.setValue("/Map/"+group+"/Border4", ( b[3] && b[2] && b[1] && b[0] ) );
 }
 
 /** this is a temporary function and it is not needed in Qt 4 */

@@ -128,8 +128,8 @@ EvaluationDialog::~EvaluationDialog()
   // Save settings
   extern QSettings _settings;
 
-  _settings.writeEntry("/Evaluation/DialogWidth", width());
-  _settings.writeEntry("/Evaluation/DialogHeight", height());
+  _settings.setValue("/Evaluation/DialogWidth", width());
+  _settings.setValue("/Evaluation/DialogHeight", height());
 }
 
 void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
@@ -368,8 +368,8 @@ void EvaluationDialog::updateListBox()
 void EvaluationDialog::slotShowFlightData()
 {
 //  warning("EvaluationDialog::slotShowFlightData");
-  extern MapContents _globalMapContents;
-  flight = (Flight *)_globalMapContents.getFlight();
+  extern MapContents *_globalMapContents;
+  flight = (Flight *)_globalMapContents->getFlight();
 
   if (flight) {
     if (flight->getTypeID() == BaseMapElement::Flight) {

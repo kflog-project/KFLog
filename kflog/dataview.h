@@ -20,18 +20,32 @@
 
 #include <QFrame>
 #include <QTextBrowser>
+#include <QUrl>
 
-#include "flighttask.h"
+class BaseFlightElement;
 class Flight;
+class FlightTask;
 
 /**
- * Provides widgets for displaying the flight-data.
- * @author Heiner Lamprecht, Florian Ehinger
- * @version $Id$
+ * \class DataView
+ *
+ * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
+ *
+ * \brief Provides a widget for displaying the flight data.
+ *
+ * Provides a widget for displaying the flight data.
+ *
+ * \date 2001-2010
+ *
+ * \version $Id$
  */
 class DataView : public QFrame
 {
   Q_OBJECT
+
+  private:
+
+  Q_DISABLE_COPY ( DataView )
 
   public:
     /**
@@ -59,9 +73,9 @@ class DataView : public QFrame
      */
     void setFlightData();
     /**
-     * Called when the user clickes on one of the waypoint-links.
+     * Called when the user clicks on one of the waypoint links.
      */
-    void slotWPSelected(const QString &url);
+    void slotWPSelected(const QUrl &link);
     /**
       * Sets the contents to the currently active task
     	*/

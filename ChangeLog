@@ -1,5 +1,15 @@
 $Id$
 
+2010-10-14 Axel Pauli <axel@kflog.org>
+
+  * Modified install targets in all sub qmake files. $INSTALL_ROOT defines
+    the root install path now.
+  * Automatic map and Welt2000 file download added. The required classes were
+    taken over from Cumulus. Thanks to it ;-)
+  * Bugfix in MapContent class. Isoline drawing works again. Welt2000 parser
+    unfortunately not yet.
+  * Different Qt4 portage actions done.
+  
 2010-10-11 Axel Pauli <axel@kflog.org>
 
   * Global QSettings object must be initialized according to the requirements

@@ -15,6 +15,7 @@
 **
 ***********************************************************************/
 
+#include <stdlib.h>
 #include <cmath>
 #include "mapcalc.h"
 
@@ -26,9 +27,16 @@ static const char *timeFormat[6] = {"%2d:%2d", "%2d:%2d:%2d", "%02d:%02d", "%02d
 
 static const char *monthAbb[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-double dist(double lat1, double lon1, double lat2, double lon2)
+static const double rad = M_PI / 108000000.0; // Pi / (180 degrees * 600000 KFlog degrees)
+static const double pi_180 = M_PI / 108000000.0;
+
+/**
+ * Calculates the distance between two given points in km according to Pythagoras.
+ * For longer distances the result is often greater as calculated by great circle.
+ * Not more used in Cumulus.
+ */
+double distP(double lat1, double lon1, double lat2, double lon2)
 {
-  double pi_180 = M_PI / 108000000.0;
   double dlat = lat1 - lat2;
   double dlon = lon1 - lon2;
 
@@ -36,11 +44,56 @@ double dist(double lat1, double lon1, double lat2, double lon2)
   // Otherwise, the result would depend on the order of the parameters.
   double lat = ( lat1 + lat2 ) / 2.0;
 
-  double dist = RADIUS * sqrt( ( pi_180 * dlat * pi_180 * dlat )
-    + ( pi_180 * cos( pi_180 * lat ) * dlon *
-        pi_180 * cos( pi_180 * lat ) * dlon ) );
+  // Distance calculation according to Pythagoras
+  double dist = RADIUS * hypot (pi_180 * dlat, pi_180 * cos( pi_180 * lat ) * dlon);
 
   return dist / 1000.0;
+}
+
+/**
+ *  Distance calculation according to great circle. Unfit for very short
+ *  distances due to rounding errors but required for longer distances according
+ *  to FAI Code Sportif, Annex C. It is used as default in Cumulus.
+ *  http://sis-at.streckenflug.at/2009/pdf/cs_annex_c.pdf
+ */
+double distG(double lat1, double lon1, double lat2, double lon2)
+{
+  // See here for formula: http://williams.best.vwh.net/avform.htm#Dist and
+  // http://freenet-homepage.de/streckenflug/optigc.html
+  // s = 6371km * acos( sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(lon1-lon2) )
+  double dlon = lon1-lon2;
+
+  double arc = acos( sin(lat1*rad) * sin(lat2*rad) + cos(lat1*rad) * cos(lat2*rad) * cos(dlon*rad) );
+
+  // distance in Km
+  double dist = arc * RADIUS / 1000.;
+
+  return dist;
+}
+
+/**
+ * Distance calculation according to great circle. A mathematically equivalent formula,
+ * which is less subject to rounding error for short distances.
+ */
+double dist(double lat1, double lon1, double lat2, double lon2)
+{
+  // See here for formula: http://williams.best.vwh.net/avform.htm#Dist
+  // d = 6371km * 2 * asin( sqrt( sin((lat1-lat2)/2) ^2 + cos(lat1) * cos(lat2) * sin((lon1-lon2)/2) ^2 ) )
+  double dlon = (lon1-lon2) * rad / 2;
+  double dlat = (lat1-lat2) * rad / 2;
+
+  double sinLatd = sin(dlat);
+  sinLatd = sinLatd * sinLatd;
+
+  double sinLond = sin(dlon);
+  sinLond = sinLond * sinLond;
+
+  double arc = 2 * asin( sqrt( sinLatd + cos(lat1*rad) * cos(lat2*rad) * sinLond ) );
+
+  // distance in Km
+  double dist = arc * RADIUS / 1000.;
+
+  return dist;
 }
 
 double dist(Waypoint* wp1, Waypoint* wp2)

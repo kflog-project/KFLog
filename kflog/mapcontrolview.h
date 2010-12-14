@@ -15,16 +15,14 @@
 **
 ***********************************************************************/
 
-#ifndef MAPCONTROLVIEW_H
-#define MAPCONTROLVIEW_H
+#ifndef MAP_CONTROL_VIEW_H
+#define MAP_CONTROL_VIEW_H
 
 #include <qlabel.h>
 
 #include <qlcdnumber.h>
 #include <qslider.h>
 #include <q3frame.h>
-
-class KFLogApp;
 
 /**
  * Creates widgets for controling the mapview. The class will create

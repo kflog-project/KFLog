@@ -23,11 +23,10 @@
 #include <QBitArray>
 #include <QFile>
 #include <QList>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkReply>
 #include <QObject>
 
-#include "downloadlist.h"
+#include "downloadmanager.h"
+
 #include "flighttask.h"
 
 class Airport;
@@ -45,7 +44,7 @@ class SinglePoint;
  *
  * This class contains a @ref QRegion and a height. A list of entries
  * like this is created when the map is drawn, and is used to detect the
- * elevation at a given position, for instance under the mousecursor.
+ * elevation at a given position, for instance under the mouse cursor.
  *
  * @author Andr� Somers
  * @version $Id$
@@ -69,24 +68,32 @@ class isoListEntry {
 };
 
 /**
+ * \class MapContents
+ *
+ * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
+ *
+ * \brief Map content handler.
+ *
  * This class provides functions for accessing the contents of the map.
  * It takes control over loading all needed map-files.
- * The class contains several QPtrLists holding the mapelements.
+ * The class contains several QPtrLists holding the map elements.
  *
- * @author Heiner Lamprecht, Florian Ehinger
- * @version $Id$
+ * \version $Id$
  */
-
 class MapContents : public QObject
 {
   Q_OBJECT
 
+  private:
+
+  Q_DISABLE_COPY ( MapContents )
+
   public:
   /**
-   * The index of Mapelement-Lists.
+   * The index of Map element-Lists.
    */
-  enum MapContentsListID {NotSet = 0, AirportList, GliderSiteList,
-                          AddSitesList, OutList, NavList, AirspaceList,
+  enum MapContentsListID {NotSet = 0, AirportList, GliderfieldList,
+                          AddSitesList, OutLandingList, NavList, AirspaceList,
                           ObstacleList, ReportList, CityList, VillageList,
                           LandmarkList, HighwayList, HighwayEntryList,
                           RoadList, RailList, StationList, HydroList,
@@ -94,9 +101,14 @@ class MapContents : public QObject
                           WaypointList, DigitList, FlightList};
 
   /**
+   * Types used by automatic download actions.
+   */
+  enum AutoDownloadType {ADT_NotSet = 0, Automatic, Inhibited};
+
+  /**
    * Creates a new MapContents-object.
    */
-  MapContents();
+  MapContents( QObject* object = 0 );
 
   /**
    * Destructor, deletes all lists.
@@ -111,14 +123,14 @@ class MapContents : public QObject
   int getListLength(int listIndex) const;
 
   /**
-   * Proofes, which mapsections are needed to draw the map and loads
+   * Proofs, which map sections are needed to draw the map and loads
    * the missing sections.
    *
    * @param  isPrint  "true", if the map should be printed.
    */
   void proofeSection(bool isPrint = false);
   /**
-   * @return a pointer to the BaseMapElement of the given mapelement in
+   * @return a pointer to the BaseMapElement of the given map element in
    *         the list.
    *
    * @param  listIndex  the index of the list containing the element
@@ -148,7 +160,7 @@ class MapContents : public QObject
   Airport* getAirport(unsigned int index);
 
   /**
-   * @return a pointer to the SinglePoint of the given mapelement
+   * @return a pointer to the SinglePoint of the given map element
    *
    * @param  listIndex  the index of the list containing the element
    * @param  index  the index of the element in the list
@@ -168,7 +180,7 @@ class MapContents : public QObject
    * Draws all isohypses into the given painter
    *
    * @param  targetP  The painter to draw the elements into
-   * @param  maskP  The maskpainter of targetP
+   * @param  maskP  The mask painter of targetP
    */
   void drawIsoList(QPainter* targetP, QPainter* maskP);
 
@@ -177,7 +189,7 @@ class MapContents : public QObject
    *
    * @param  targetP  The painter to draw the elements into
    *
-   * @param  isText  Shows, if the text of some mapelements should
+   * @param  isText  Shows, if the text of some map elements should
    *                 be printed.
    */
   void printContents(QPainter* targetP, bool isText);
@@ -210,7 +222,7 @@ class MapContents : public QObject
   QList<BaseFlightElement*> *getFlightList();
 
   /**
-   * Converts the longitute or latitute into the internal format.
+   * Converts the longitude or latitude into the internal format.
    *
    * @param  degree  The position to be converted. The string must
    *                 have the format:<BR>
@@ -244,6 +256,27 @@ class MapContents : public QObject
    */
   static bool compareProjections(ProjectionBase* p1, ProjectionBase* p2);
 
+  /**
+   * Checks the existence of the three required map directories.
+   *
+   * \return True if all is okay otherwise false.
+   */
+  bool checkMapDirectories();
+
+  /**
+   * Creates all required map directories.
+   *
+   * \return True if all is okay otherwise false.
+   */
+  bool createMapDirectories();
+
+  /**
+   * Returns the map root directory.
+   *
+   * \return The map root directory.
+   */
+  QString getMapRootDirectory();
+
   public slots:
   /**
    * Close current flight
@@ -263,13 +296,27 @@ class MapContents : public QObject
   void slotEditFlightGroup();
   /** */
   void slotReloadMapData();
-  /*
-  *  automatic download has finished
-  */
-  void slotDownloadFinished();
-  void slotDownloadFinished(QNetworkReply *networkReply);
-  /** Re-projects any flights and tasks that may be loaded. */
+   /** Re-projects any flights and tasks that may be loaded. */
   void reProject();
+
+  /**
+   * This slot is called to download the Welt2000 file from the internet.
+   */
+  void slotDownloadWelt2000();
+
+  /**
+   * Reload Welt2000 data file. Can be called after a configuration change or
+   * a dowonload.
+   */
+  void slotReloadWelt2000Data();
+
+  private slots:
+
+  /** Called, if all downloads are finished. */
+  void slotDownloadsFinished( int requests, int errors );
+
+  /** Called, if a network error occurred during the downloads. */
+  void slotNetworkError();
 
  signals:
   /**
@@ -290,7 +337,7 @@ class MapContents : public QObject
    */
   void taskHelp(QString);
   /**
-   * Emitted, when no mapfiles are found, or the when the map-directories
+   * Emitted, when no map files are found, or the when the map-directories
    * do not exists.
    */
   void errorOnMapLoading();
@@ -321,10 +368,7 @@ class MapContents : public QObject
   void closingFlight(BaseFlightElement*);
 
  private:
-  /**
-   * Displays a messagebox and asks, wether the mapfiles shall be downloaded.
-   */
-  void __askForDownload();
+
   /**
    * Reads a binary map file containing airfields.
    *
@@ -361,21 +405,21 @@ class MapContents : public QObject
   QList<Airport*> airportList;
 
   /**
-   * gliderSiteList contains all glider-sites.
+   * gliderfieldList contains all glider-sites.
    */
-  QList<GliderSite*> gliderSiteList;
+  QList<GliderSite*> gliderfieldList;
 
   /**
-   * addSitesList contains all, ultra-light,
+   * addSitesList contains all, ultralight,
    * hang-glider-sites, free-balloon-sites, parachute-jumping-sites.
    * FIXME: Currently those sites are stored somewhere else?!?
    */
   QList<SinglePoint*> addSitesList;
 
   /**
-   * outList contains all outlanding-fields.
+   * outLandingList contains all outlanding-fields.
    */
-  QList<SinglePoint*> outList;
+  QList<SinglePoint*> outLandingList;
 
   /**
    * navList contains all radio navigation facilities.
@@ -383,7 +427,7 @@ class MapContents : public QObject
   QList<RadioPoint*> navList;
 
   /**
-   * airspaceList contails all airspaces.
+   * airspaceList contains all airspaces.
 
    */
   QList<Airspace*> airspaceList;
@@ -457,7 +501,7 @@ class MapContents : public QObject
    */
   QBitArray sectionArray;
   /**
-   * Array containing the evevations of all possible isohypses.
+   * Array containing the elevations of all possible isohypses.
    */
   static const int isoLines[];
   /**
@@ -467,10 +511,10 @@ class MapContents : public QObject
   /** */
   QString mapDir;
   /**
-   * Used to determine, if we must display messageboxes on missing
+   * Used to determine, if we must display message boxes on missing
    * map-directories.
    */
-  int isFirstLoad;
+  bool isFirstLoad;
   /**
    * List of all drawn isohypses.
    * Used to find the elevation belonging to a point on the map.
@@ -482,20 +526,28 @@ class MapContents : public QObject
    * Used to find the elevation belonging to a flightpoint.
    */
   QList<isoListEntry*> regIsoLinesWorld;
+
   /**
-   * downloads File from www.kflog.org, optionally waits until finished (blocking operation)
+   * Displays a message box and asks, weather the map files shall be downloaded.
    */
-  void __downloadFile(QString fileName, QString destString, bool wait=false);
-  QList<QPair<QUrl,QUrl> > downloadDestinations;
-  /** */
-  DownloadList* downloadList;
-  QNetworkAccessManager *downloadManager;
+  int __askUserForDownload();
+
+  /**
+   * Try to download a missing ground/terrain file.
+   *
+   * @param file The name of the file without any path prefixes.
+   * @param directory The destination directory.
+   *
+   */
+  bool __downloadMapFile( QString &file, QString &directory );
+
+  /** Manager to handle downloads of missing map file. */
+  DownloadManager *downloadManger;
+
   /**
    * index of the current flight in flightList
    */
   int currentFlightListIndex;
 };
-
-enum AutoDownloadType {ADT_NotSet = 0, Automatic, Inhibited};
 
 #endif

@@ -93,7 +93,7 @@ void ObjectTree::slotNewTaskAdded(FlightTask * task){
 
 /** Called if the selection has changed. */
 void ObjectTree::slotSelected(Q3ListViewItem * itm){
-  extern MapContents _globalMapContents;
+  extern MapContents *_globalMapContents;
 
   if (!itm) return;
   BaseFlightElement * flt=0;
@@ -112,29 +112,29 @@ void ObjectTree::slotSelected(Q3ListViewItem * itm){
       flt=0;
   }
 
-  if (flt && flt!=_globalMapContents.getFlight())
+  if (flt && flt!=_globalMapContents->getFlight())
     emit selectedFlight(flt);
 
 }
 
 /** This slot is called if the currently selected flight has changed. */
 void ObjectTree::slotSelectedFlightChanged(){
-  extern MapContents _globalMapContents;
-  Q3ListViewItem * itm=findFlightElement(_globalMapContents.getFlight());
+  extern MapContents *_globalMapContents;
+  Q3ListViewItem * itm=findFlightElement(_globalMapContents->getFlight());
 
   if (itm) {
     if (!itm->isSelected()) setSelected(itm,true);
     slotFlightChanged();
     ensureItemVisible(itm);
-    currentFlightElement=_globalMapContents.getFlight();
+    currentFlightElement=_globalMapContents->getFlight();
     return;
   }
 }
 
 /** Signaled if the current flight was somehow changed.  */
 void ObjectTree::slotFlightChanged(){
-  extern MapContents _globalMapContents;
-  Q3ListViewItem * itm=findFlightElement(_globalMapContents.getFlight());
+  extern MapContents *_globalMapContents;
+  Q3ListViewItem * itm=findFlightElement(_globalMapContents->getFlight());
 
   if (itm) {
     switch (itm->rtti()) { //the rtti (Run Time Type Identification is used to see what kind of listview item we are dealing with
@@ -207,8 +207,8 @@ void ObjectTree::slotCloseFlight(BaseFlightElement* bfe) {
 void ObjectTree::showTaskPopup(Q3ListViewItem */*item*/, const QPoint &, int)
 {
 /*  if (item != 0) {
-    extern MapContents _globalMapContents;
-    FlightTask *ft = (FlightTask *)_globalMapContents.getFlight();
+    extern MapContents *_globalMapContents;
+    FlightTask *ft = (FlightTask *)_globalMapContents->getFlight();
     if (ft != taskList.find(item->text(colName))) {
       slotSelectTask(item);
     }

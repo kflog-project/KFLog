@@ -128,8 +128,8 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   //
   QRegExp bRecord("^B[0-2][0-9][0-6][0-9][0-6][0-9][0-9][0-9][0-6][0-9][0-9][0-9][0-9][NS][0-1][0-9][0-9][0-6][0-9][0-9][0-9][0-9][EW][AV][0-9,-][0-9][0-9][0-9][0-9][0-9,-][0-9][0-9][0-9][0-9]");
 
-  extern const MapMatrix _globalMapMatrix;
-  extern MapContents _globalMapContents;
+  extern const MapMatrix *_globalMapMatrix;
+  extern MapContents *_globalMapContents;
   ElevationFinder * ef=ElevationFinder::instance();
 
   int lineCount = 0;
@@ -304,7 +304,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
           newPoint.time = curTime;
           newPoint.origP = WGSPoint(latTemp, lonTemp);
-          newPoint.projP = _globalMapMatrix.wgsToMap(newPoint.origP);
+          newPoint.projP = _globalMapMatrix->wgsToMap(newPoint.origP);
           newPoint.surfaceHeight = ef->elevation(newPoint.origP, newPoint.projP);
           newPoint.height = baroAltTemp;
           newPoint.gpsHeight = gpsAltTemp;
@@ -350,7 +350,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
                   newWP = new Waypoint;
                   newWP->name = s.mid(18,20);
                   newWP->origP = WGSPoint(latTemp, lonTemp);
-                  newWP->projP = _globalMapMatrix.wgsToMap(newWP->origP);
+                  newWP->projP = _globalMapMatrix->wgsToMap(newWP->origP);
                   newWP->type = Flight::NotSet;
                   if(isFirstWP)
                       newWP->distance = 0;
@@ -363,7 +363,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
                 }
               else
                 {
-                  // Sinnvoller wäre es aus der IGC Datei auszulesen wieviele
+                  // Sinnvoller wï¿½re es aus der IGC Datei auszulesen wieviele
                   // WendePunkte es gibt. <- Ist IGC Datei immer korrekt??
                   if(wp_count != 0 && last0 != (int)(wp_count - 1))
                     {
@@ -398,7 +398,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
       return false;
     }
 
-  _globalMapContents.appendFlight(new Flight(igcFile.name(), recorderID, flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
+  _globalMapContents->appendFlight(new Flight(igcFile.name(), recorderID, flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
   return true;
 
 }
@@ -445,8 +445,8 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
   //
   QRegExp bRecord("^[$]GPRMC,[0-9][0-9][0-9][0-9][0-9][0-9],[AV],[0-9][0-9][0-9][0-9]\\.[0-9][0-9][0-9],[NS],[0-9][0-9][0-9][0-9][0-9]\\.[0-9][0-9][0-9],[EW],[0-9][0-9][0-9]\\.[0-9],[0-9][0-9][0-9]\\.[0-9],[0-9][0-9][0-9][0-9][0-9][0-9][0-9],[0-9][0-9][0-9]\\.[0-9],[EW],[*][0-9][0-9]$");
 
-  extern const MapMatrix _globalMapMatrix;
-  extern MapContents _globalMapContents;
+  extern const MapMatrix *_globalMapMatrix;
+  extern MapContents *_globalMapContents;
   ElevationFinder * ef=ElevationFinder::instance();
 
   int lineCount = 0;
@@ -528,7 +528,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
 
           newPoint.time = curTime;
           newPoint.origP = WGSPoint(latTemp, lonTemp);
-          newPoint.projP = _globalMapMatrix.wgsToMap(newPoint.origP);
+          newPoint.projP = _globalMapMatrix->wgsToMap(newPoint.origP);
           newPoint.surfaceHeight = ef->elevation(newPoint.origP, newPoint.projP);
           newPoint.height = height;
           newPoint.gpsHeight = height;
@@ -559,7 +559,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
   gliderID   = "gardown";
   cClass     = Flight::NotSet;
 
-  _globalMapContents.appendFlight(new Flight(gardownFile.name(), recorderID, flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
+  _globalMapContents->appendFlight(new Flight(gardownFile.name(), recorderID, flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
   return true;
 
 }

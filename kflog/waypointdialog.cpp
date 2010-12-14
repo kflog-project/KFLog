@@ -167,7 +167,7 @@ void WaypointDialog::clear()
 void WaypointDialog::slotAddWaypoint()
 {
   QString text;
-  extern MapContents _globalMapContents;
+  extern MapContents *_globalMapContents;
 
   //if (!name->text().isEmpty()) { we accept an empty name. A syntetic one will be created.
     // insert a new waypoint to current catalog
@@ -175,8 +175,8 @@ void WaypointDialog::slotAddWaypoint()
     w->name = name->text().upper();
     w->description = description->text();
     w->type = getWaypointType();
-    w->origP.setLat(_globalMapContents.degreeToNum(latitude->text()));
-    w->origP.setLon(_globalMapContents.degreeToNum(longitude->text()));
+    w->origP.setLat(_globalMapContents->degreeToNum(latitude->text()));
+    w->origP.setLon(_globalMapContents->degreeToNum(longitude->text()));
     w->elevation = elevation->text().toInt();
     w->icao = icao->text().upper();
     w->frequency = frequency->text().toDouble();

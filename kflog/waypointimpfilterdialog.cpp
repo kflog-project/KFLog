@@ -27,8 +27,8 @@
 #include <QStringList>
 #include <QRadioButton>
 
-extern MapContents _globalMapContents;
-extern MapMatrix _globalMapMatrix;
+extern MapContents *_globalMapContents;
+extern MapMatrix   *_globalMapMatrix;
 
 WaypointImpFilterDialog::WaypointImpFilterDialog(QWidget *parent, const char *name)
  : QDialog(parent, name, true),
@@ -221,13 +221,13 @@ int WaypointImpFilterDialog::getCenterRef()
 
 void WaypointImpFilterDialog::polish()
 {
-  int searchList[] = {MapContents::GliderSiteList, MapContents::AirportList};
+  int searchList[] = {MapContents::GliderfieldList, MapContents::AirportList};
 
   QDialog::polish();
   for(int l = 0; l < 2; l++) {
-    for(int loop = 0; loop < _globalMapContents.getListLength(searchList[l]);
+    for(int loop = 0; loop < _globalMapContents->getListLength(searchList[l]);
       loop++) {
-        SinglePoint *hitElement = (SinglePoint *)_globalMapContents.getElement(searchList[l], loop);
+        SinglePoint *hitElement = (SinglePoint *)_globalMapContents->getElement(searchList[l], loop);
         refAirport->insertItem(hitElement->getName());
         airportDict.insert(hitElement->getName(), hitElement);
       }

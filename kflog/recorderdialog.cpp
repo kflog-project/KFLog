@@ -45,17 +45,17 @@ RecorderDialog::RecorderDialog(QWidget *parent, const char */*name*/)
     isConnected(false),
     activeRecorder(NULL)
 {
-  extern MapContents _globalMapContents;
+  extern MapContents *_globalMapContents;
   BaseFlightElement *element;
   Waypoint *waypoint;
   QList<Waypoint*> *tmp;
-  tmp = _globalMapContents.getWaypointList();
+  tmp = _globalMapContents->getWaypointList();
   waypoints = new QList<Waypoint*>;
   foreach(waypoint, *tmp)
     waypoints->append(waypoint);
   qSort(waypoints->begin(), waypoints->end());
 
-  QList<BaseFlightElement*> *tList = _globalMapContents.getFlightList();
+  QList<BaseFlightElement*> *tList = _globalMapContents->getFlightList();
   tasks = new QList<FlightTask*>;
 
   foreach(element, *tList)
@@ -100,10 +100,10 @@ RecorderDialog::~RecorderDialog()
 {
   extern QSettings _settings;
 
-  _settings.writeEntry("/RecorderDialog/Name", selectType->currentText());
-  _settings.writeEntry("/RecorderDialog/Port", selectPort->currentItem());
-  _settings.writeEntry("/RecorderDialog/Baud", _selectSpeed->currentItem());
-  _settings.writeEntry("/RecorderDialog/URL",  selectURL->text());
+  _settings.setValue("/RecorderDialog/Name", selectType->currentText());
+  _settings.setValue("/RecorderDialog/Port", selectPort->currentItem());
+  _settings.setValue("/RecorderDialog/Baud", _selectSpeed->currentItem());
+  _settings.setValue("/RecorderDialog/URL",  selectURL->text());
 
   slotCloseRecorder();
   delete waypoints;
@@ -1130,8 +1130,8 @@ void RecorderDialog::slotReadTasks()
   FlightTask *task;
   Waypoint *wp;
   QList<Waypoint*> wpList;
-  extern MapContents _globalMapContents;
-  extern MapMatrix _globalMapMatrix;
+  extern MapContents *_globalMapContents;
+  extern MapMatrix *_globalMapMatrix;
   int ret;
   int cnt=0;
   QString errorDetails;
@@ -1161,9 +1161,9 @@ void RecorderDialog::slotReadTasks()
     foreach(task, *tasks) {
       wpList = task->getWPList();
       // here we overwrite the original task name (if needed) to get a unique internal name
-      task->setTaskName(_globalMapContents.genTaskName(task->getFileName()));
+      task->setTaskName(_globalMapContents->genTaskName(task->getFileName()));
       foreach(wp, wpList)
-        wp->projP = _globalMapMatrix.wgsToMap(wp->origP);
+        wp->projP = _globalMapMatrix->wgsToMap(wp->origP);
       task->setWaypointList(wpList);
       emit addTask(task);
       cnt++;

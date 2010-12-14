@@ -1176,22 +1176,22 @@ void ConfigPrintElement::__showPen(Q3PtrList<QPen> *penList, bool *b)
 void ConfigPrintElement::__writeBrush(QString group, Q3PtrList<QBrush> *brushList, Q3PtrList<QPen> *penList, bool *b)
 {
   __writePen(group, penList, b);
-  _settings.writeEntry("/Map/"+group+"/PrintBrushColor1", __color2String(brushList->at(0)->color())); \
-  _settings.writeEntry("/Map/"+group+"/PrintBrushColor2", __color2String(brushList->at(1)->color())); \
-  _settings.writeEntry("/Map/"+group+"/PrintBrushStyle1", brushList->at(0)->style()); \
-  _settings.writeEntry("/Map/"+group+"/PrintBrushStyle2", brushList->at(1)->style());
+  _settings.setValue("/Map/"+group+"/PrintBrushColor1", __color2String(brushList->at(0)->color())); \
+  _settings.setValue("/Map/"+group+"/PrintBrushColor2", __color2String(brushList->at(1)->color())); \
+  _settings.setValue("/Map/"+group+"/PrintBrushStyle1", brushList->at(0)->style()); \
+  _settings.setValue("/Map/"+group+"/PrintBrushStyle2", brushList->at(1)->style());
 }
 
 void ConfigPrintElement::__writePen(QString group, Q3PtrList<QPen> *penList, bool *b)
 {
-  _settings.writeEntry("/Map/"+group+"/PrintColor1", __color2String(penList->at(0)->color()));
-  _settings.writeEntry("/Map/"+group+"/PrintColor2", __color2String(penList->at(1)->color()));
-  _settings.writeEntry("/Map/"+group+"/PrintPenSize1", (int)penList->at(0)->width());
-  _settings.writeEntry("/Map/"+group+"/PrintPenSize2", (int)penList->at(1)->width());
-  _settings.writeEntry("/Map/"+group+"/PrintPenStyle1", penList->at(0)->style());
-  _settings.writeEntry("/Map/"+group+"/PrintPenStyle2", penList->at(1)->style());
-  _settings.writeEntry("/Map/"+group+"/PrintBorder1", b[0]);
-  _settings.writeEntry("/Map/"+group+"/PrintBorder2", ( b[1] && b[0] ) );
+  _settings.setValue("/Map/"+group+"/PrintColor1", __color2String(penList->at(0)->color()));
+  _settings.setValue("/Map/"+group+"/PrintColor2", __color2String(penList->at(1)->color()));
+  _settings.setValue("/Map/"+group+"/PrintPenSize1", (int)penList->at(0)->width());
+  _settings.setValue("/Map/"+group+"/PrintPenSize2", (int)penList->at(1)->width());
+  _settings.setValue("/Map/"+group+"/PrintPenStyle1", penList->at(0)->style());
+  _settings.setValue("/Map/"+group+"/PrintPenStyle2", penList->at(1)->style());
+  _settings.setValue("/Map/"+group+"/PrintBorder1", b[0]);
+  _settings.setValue("/Map/"+group+"/PrintBorder2", ( b[1] && b[0] ) );
 }
 
 /** this is a temporary function and it is not needed in Qt 4 */

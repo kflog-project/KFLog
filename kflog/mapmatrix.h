@@ -19,7 +19,7 @@
 #define MAP_MATRIX_H
 
 #include <algorithm>
-#include <QObject.h>
+#include <QObject>
 #include <qmatrix.h>
 //Added by qt3to4:
 #include <Q3PointArray>
@@ -54,9 +54,9 @@ private:
 
 public:
   /**
-   * Creates a new mapmatrix-object.
+   * Creates a new map matrix-object.
    */
-  MapMatrix();
+  MapMatrix( QObject* object = 0 );
 
   /**
    * Destructor

@@ -1076,7 +1076,6 @@ bool WaypointCatalog::insertWaypoint(Waypoint *newWaypoint)
 {
 //    Waypoint *tmp;
   bool ins = true;
-  bool found = false;
   Waypoint *existingWaypoint = findWaypoint(newWaypoint->name);
 
   if(existingWaypoint) {

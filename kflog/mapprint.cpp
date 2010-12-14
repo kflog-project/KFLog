@@ -17,11 +17,9 @@
 
 #include "mapprint.h"
 
-//#include "config.h"
 #include "flight.h"
 #include "mapcontents.h"
 #include "mapmatrix.h"
-//#include <mapprintdialogpage.h>
 
 #include <q3groupbox.h>
 #include <qlabel.h>
@@ -80,7 +78,7 @@ MapPrintDialogPage::MapPrintDialogPage(QStringList sList, QWidget *parent,
 
   if(printFlight)
     {
-      // Hier müssen noch Infos über den Flug hin!!!
+      // Hier mï¿½ssen noch Infos ï¿½ber den Flug hin!!!
       titleInput->setText(QObject::tr("Flight Track") + ":");
     }
 
@@ -300,13 +298,12 @@ MapPrint::MapPrint(bool flightLoaded)
   printer.setFullPage(true);
 
   // Okay, now lets start creating the printout ...
-  extern MapMatrix _globalMapMatrix;
-
-  extern MapContents _globalMapContents;
+  extern MapMatrix   *_globalMapMatrix;
+  extern MapContents *_globalMapContents;
 
   // Store the current center and scale:
-  const QPoint cMapCenter = _globalMapMatrix.getMapCenter();
-  const double cMapScale = _globalMapMatrix.getScale(MapMatrix::CurrentScale);
+  const QPoint cMapCenter = _globalMapMatrix->getMapCenter();
+  const double cMapScale = _globalMapMatrix->getScale(MapMatrix::CurrentScale);
 
   QPainter printPainter(&printer);
 
@@ -317,27 +314,27 @@ MapPrint::MapPrint(bool flightLoaded)
   QPoint mapCenter;
 
   if(scaleList.findIndex(printScale) == 6)
-      selectedScale = _globalMapMatrix.centerToRect(
-          ((Flight *)_globalMapContents.getFlight())->getFlightRect(), pS - QSize(100,163));
+      selectedScale = _globalMapMatrix->centerToRect(
+          ((Flight *)_globalMapContents->getFlight())->getFlightRect(), pS - QSize(100,163));
   else if(scaleList.findIndex(printScale) == 7)
-      selectedScale = _globalMapMatrix.centerToRect(
-          ((Flight *)_globalMapContents.getFlight())->getTaskRect(), pS - QSize(100,163));
+      selectedScale = _globalMapMatrix->centerToRect(
+          ((Flight *)_globalMapContents->getFlight())->getTaskRect(), pS - QSize(100,163));
   else
       selectedScale = scaleRange[scaleList.findIndex(printScale)];
 
-  _globalMapMatrix.createPrintMatrix(selectedScale, pS);
-  mapCenter = _globalMapMatrix.getMapCenter();
+  _globalMapMatrix->createPrintMatrix(selectedScale, pS);
+  mapCenter = _globalMapMatrix->getMapCenter();
 
   int leftMargin = 35, rightMargin = 35, topMargin = 35, bottomMargin = 35;
 
-  QPoint delta(_globalMapMatrix.print(mapCenter.x(), mapCenter.y(), 0, 0));
+  QPoint delta(_globalMapMatrix->print(mapCenter.x(), mapCenter.y(), 0, 0));
 
   double dX = ( leftMargin + ( pS.width() - leftMargin - rightMargin ) / 2 )
         - delta.x();
   double dY = ( topMargin + ( pS.height() - topMargin - bottomMargin ) / 2 )
         - delta.y();
 
-  const QRect mapBorder = _globalMapMatrix.getPrintBorder(topMargin - dY, 0,
+  const QRect mapBorder = _globalMapMatrix->getPrintBorder(topMargin - dY, 0,
       BOT_LEFT_Y / 2 - dY, leftMargin - dX, topMargin - dY,
       pS.width() - rightMargin - dX, topMargin - dY, leftMargin - dX);
 
@@ -375,9 +372,9 @@ MapPrint::MapPrint(bool flightLoaded)
   if(scaleList.findIndex(printScale) == 6 || scaleList.findIndex(printScale) == 7)
       dY -= 32;
 
-  _globalMapMatrix.createPrintMatrix(selectedScale, pS * 2, (int)dX, (int)dY);
+  _globalMapMatrix->createPrintMatrix(selectedScale, pS * 2, (int)dX, (int)dY);
 
-  _globalMapContents.printContents(&printPainter, printText);
+  _globalMapContents->printContents(&printPainter, printText);
 
   printPainter.setClipRect(0, 0, pS.width(), pS.height());
 
@@ -569,8 +566,8 @@ MapPrint::MapPrint(bool flightLoaded)
   printPainter.end();
 
   // restoring the MapMatrix-values:
-  _globalMapMatrix.centerToLatLon(cMapCenter);
-  _globalMapMatrix.slotSetScale(cMapScale);
+  _globalMapMatrix->centerToLatLon(cMapCenter);
+  _globalMapMatrix->slotSetScale(cMapScale);
 }
 
 MapPrint::~MapPrint()
@@ -583,7 +580,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
     const double dX, const double dY, const double gridLeft,
     const double gridRight, const double gridTop, const double gridBot)
 {
-  extern const MapMatrix _globalMapMatrix;
+  extern const MapMatrix *_globalMapMatrix;
 
   gridP->setBrush(Qt::NoBrush);
 
@@ -596,7 +593,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
       const int lat2 = mapBorder.bottom() / 600000 - 1;
 
       /* Abstand zwischen zwei Linien in Minuten
-       * Wenn __drawGrid() aufgerufen wird, ist der Maßstab bereits
+       * Wenn __drawGrid() aufgerufen wird, ist der Maï¿½stab bereits
        * skaliert worden.
        */
       int step = 1;
@@ -607,21 +604,21 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
 
       QPoint cP, cP2, cP3, cP4;
 
-      /* Zunächst die Längengrade: */
+      /* Zunï¿½chst die Lï¿½ngengrade: */
       for(int loop = lon1; loop <= lon2; loop++)
         {
-          cP = _globalMapMatrix.print(mapBorder.top(), (loop * 600000),
+          cP = _globalMapMatrix->print(mapBorder.top(), (loop * 600000),
               dX, dY);
-          cP2 = _globalMapMatrix.print(mapBorder.bottom(), (loop * 600000),
+          cP2 = _globalMapMatrix->print(mapBorder.bottom(), (loop * 600000),
               dX, dY);
 
           /* Die Hauptlinien */
           gridP->setPen(QPen(QColor(0,0,0), 1));
           gridP->drawLine(cP.x(), cP.y(), cP2.x(), cP2.y());
 
-          // Hier könnte mal 'ne Abfrage hin, ob wir zu nah am Rand sind ...
+          // Hier kï¿½nnte mal 'ne Abfrage hin, ob wir zu nah am Rand sind ...
           gridP->setFont(QFont("helvetica", 14, QFont::Bold));
-          text.sprintf("%d°", loop);
+          text.sprintf("%dï¿½", loop);
           if(cP.x() > gridLeft && cP.x() < gridRight)
               gridP->drawText(cP.x() - 101, (int)gridTop - 28, 100, 50,
                   Qt::AlignTop | Qt::AlignRight, text);
@@ -634,9 +631,9 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
           int number = (int) (60.0 / step);
           for(int loop2 = 1; loop2 < number; loop2++)
             {
-              cP = _globalMapMatrix.print(mapBorder.top(),
+              cP = _globalMapMatrix->print(mapBorder.top(),
                   (int)((loop + (loop2 * step / 60.0)) * 600000), dX, dY);
-              cP2 = _globalMapMatrix.print(mapBorder.bottom(),
+              cP2 = _globalMapMatrix->print(mapBorder.bottom(),
                   (int)((loop + (loop2 * step / 60.0)) * 600000), dX, dY);
 
               if(loop2 == (number / 2.0))
@@ -651,7 +648,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
               if(cP.x() > gridLeft && cP.x() < gridRight)
                 {
                   gridP->drawLine(cP.x(), cP.y(), cP2.x(), cP2.y());
-                  text.sprintf("%d°", loop);
+                  text.sprintf("%dï¿½", loop);
                   gridP->drawText(cP.x() - 101, (int)gridTop - 27, 100, 50,
                       Qt::AlignTop | Qt::AlignRight, text);
                   text.sprintf("%d'", loop2 * step);
@@ -659,7 +656,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
                       Qt::AlignTop | Qt::AlignLeft, text);
                   if(cP2.x() > gridLeft && cP2.x() < gridRight)
                     {
-                      text.sprintf("%d°", loop);
+                      text.sprintf("%dï¿½", loop);
                       gridP->drawText(cP2.x() - 101, (int)gridBot + 3, 100, 50,
                           Qt::AlignTop | Qt::AlignRight, text);
                       text.sprintf("%d'", loop2 * step);
@@ -670,20 +667,20 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
             }
         }
 
-      /* Damit keine Längengrade in den Rand ragen, wird links und rechts je
-       * ein weißer Strich gezogen. Damit wird eventuell auch der Text des
-       * östlichsten Längengrades überdeckt.
+      /* Damit keine Lï¿½ngengrade in den Rand ragen, wird links und rechts je
+       * ein weiï¿½er Strich gezogen. Damit wird eventuell auch der Text des
+       * ï¿½stlichsten Lï¿½ngengrades ï¿½berdeckt.
        */
       gridP->setPen(QPen(QColor(255, 255, 255)));
       gridP->setBrush(QBrush(QColor(255, 255, 255), Qt::SolidPattern));
       gridP->drawRect((int)gridLeft - 30, (int)gridTop, 30, pS.height() * 2);
       gridP->drawRect((int)gridRight, (int)gridTop, 30, pS.height() * 2);
 
-      cP2 = _globalMapMatrix.print(mapBorder.top(), mapBorder.left(),
+      cP2 = _globalMapMatrix->print(mapBorder.top(), mapBorder.left(),
           dX, dY);
-      cP3 = _globalMapMatrix.print(mapBorder.bottom(), mapBorder.right(),
+      cP3 = _globalMapMatrix->print(mapBorder.bottom(), mapBorder.right(),
           dX, dY);
-      /* Hier könnte es noch passieren, dass die Breitengrade in den Rand
+      /* Hier kï¿½nnte es noch passieren, dass die Breitengrade in den Rand
        * hineinragen ...
        */
       for(int loop = 0; loop < (lat1 - lat2 + 1) ; loop++)
@@ -693,7 +690,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
 
           for(int lonloop = 0; lonloop < size; lonloop++)
             {
-              cP = _globalMapMatrix.print((lat2 + loop) * 600000,
+              cP = _globalMapMatrix->print((lat2 + loop) * 600000,
                         (int)((lon1 + (lonloop * 0.1)) * 600000), dX, dY);
               pointArray.setPoint(lonloop, cP.x(), cP.y());
               if(cP.x() < gridLeft)
@@ -710,7 +707,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
               gridP->setPen(QPen(QColor(0,0,0), 1));
               gridP->drawPolyline(pointArray);
               gridP->setFont(QFont("helvetica", 14, QFont::Bold));
-              text.sprintf("%d°", lat2 + loop);
+              text.sprintf("%dï¿½", lat2 + loop);
               gridP->drawText((int)gridLeft - 27, cP4.y() - 52, 100, 50,
                   Qt::AlignBottom | Qt::AlignLeft, text);
               gridP->drawText((int)gridRight + 3, cP4.y() - 52, 100, 50,
@@ -726,7 +723,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
 
               for(int lonloop = 0; lonloop < size; lonloop++)
                 {
-                  cP = _globalMapMatrix.print((int)((lat2 + loop +
+                  cP = _globalMapMatrix->print((int)((lat2 + loop +
                       (loop2 * (step / 60.0))) * 600000),
                       (int)((lon1 + (lonloop * 0.1)) * 600000),
                       dX, dY);
@@ -752,7 +749,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
                       gridP->setPen(QPen(QColor(0,0,0), 1, Qt::DotLine));
                       gridP->drawPolyline(pointArraySmall);
                     }
-                  text.sprintf("%d°", lat2 + loop);
+                  text.sprintf("%dï¿½", lat2 + loop);
                   gridP->drawText((int)gridLeft - 27, cP4.y() - 52, 100, 50,
                       Qt::AlignBottom | Qt::AlignLeft, text);
                   gridP->drawText((int)gridRight + 3, cP4.y() - 52, 100, 50,
@@ -772,8 +769,9 @@ void MapPrint::__drawWaypoints(const double /*selectedScale*/, QPainter* wpP, co
                                const QRect /*mapBorder*/, const int /*mapCenterLon*/, const double dX,
                                const double dY, const double /*gridLeft*/, const double /*gridRight*/,
                                const double /*gridTop*/, const double /*gridBot*/) {
-  extern const MapMatrix _globalMapMatrix;
-  extern MapContents _globalMapContents;
+  extern const MapMatrix *_globalMapMatrix;
+  extern MapContents     *_globalMapContents;
+
   QList<Waypoint*> *wpList;
   Waypoint *wp;
   int i,n;
@@ -782,12 +780,12 @@ void MapPrint::__drawWaypoints(const double /*selectedScale*/, QPainter* wpP, co
   wpP->setBrush(Qt::NoBrush);
   wpP->setPen(QPen(QColor(0,0,0), 1, Qt::SolidLine));
 
- wpList = _globalMapContents.getWaypointList() ;
+ wpList = _globalMapContents->getWaypointList() ;
 
   n = wpList->count();
   for (i=0; i < n; i++){
      wp = wpList->at(i);
-     p = _globalMapMatrix.print(wp->origP.lat(), wp->origP.lon(), dX, dY);
+     p = _globalMapMatrix->print(wp->origP.lat(), wp->origP.lon(), dX, dY);
          // draw marker and name
      wpP->drawRect(p.x() - 4,p.y() - 4, 8, 8);
      wpP->drawText(p.x()+6, p.y(), wp->name, -1);
@@ -796,15 +794,15 @@ void MapPrint::__drawWaypoints(const double /*selectedScale*/, QPainter* wpP, co
 
 /** Prints the task, if defined, to the supplied QPainter */
 /* void MapPrint::__drawTask(const double selectedScale, QPainter* taskP, const QSize pS, const QRect mapBorder, const int mapCenterLon,     const double dX, const double dY, const double gridLeft,     const double gridRight, const double gridTop, const double gridBot){
- extern const MapMatrix _globalMapMatrix;
-  extern MapContents _globalMapContents;
-  QPtrList<wayPoint> *wpList;
+  extern const MapMatrix *_globalMapMatrix;
+  extern MapContents     *_globalMapContents;
+  QPtrList<wayPoint>     *wpList;
   wayPoint *wp;
   int i,n;
   QPoint p;
   FlightTask* task;
 
-  task = (FlightTask*)_globalMapContents.getFlight();
+  task = (FlightTask*)_globalMapMatrix->getFlight();
 
   if(task && task->getTypeID() == BaseMapElement::Task) {
     taskP->setBrush(Qt::NoBrush);

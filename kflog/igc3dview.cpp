@@ -340,8 +340,8 @@ void Igc3DView::slotShowFlight()
   */
 
   // load the igc3dflightdata list from the original list
-  extern MapContents _globalMapContents;
-  flight->load((Flight*)_globalMapContents.getFlight());
+  extern MapContents *_globalMapContents;
+  flight->load((Flight*)_globalMapContents->getFlight());
 
   flight->koord2dist();
 

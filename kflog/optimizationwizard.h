@@ -24,8 +24,6 @@
 #include "map.h"
 #include "mapcontents.h"
 
-extern MapContents _globalMapContents;
-
 class OptimizationWizard : public QWizard
 {
     Q_OBJECT

@@ -23,9 +23,9 @@
 
 #include "mapmatrix.h"
 
-// Projektions-Ma�stab
-// 10 Meter H�he pro Pixel ist die st�rkste Vergr��erung.
-// Bei dieser Vergr��erung erfolgt die eigentliche Projektion
+// Projektions-Massstab
+// 10 Meter Höhe pro Pixel ist die stärkste Vergröerung.
+// Bei dieser Vergröerung erfolgt die eigentliche Projektion
 #define MAX_SCALE 10.0
 #define MIN_SCALE 500000.0
 
@@ -84,10 +84,13 @@ WGSPoint &WGSPoint::operator=( const QPoint &p )
 *************************************************************************/
 extern QSettings _settings;
 
-MapMatrix::MapMatrix() :
+MapMatrix::MapMatrix( QObject* object ) :
+  QObject( object ),
   mapCenterLat(0), mapCenterLon(0), printCenterLat(0), printCenterLon(0),
   cScale(0), rotationArc(0), printArc(0)
 {
+  qDebug() << "MapMatrix()";
+
   viewBorder.setTop(29126344);
   viewBorder.setBottom(29124144);
   viewBorder.setLeft(5349456);
@@ -115,14 +118,14 @@ MapMatrix::MapMatrix() :
 
 MapMatrix::~MapMatrix()
 {
+  qDebug() << "~MapMatrix()";
 }
-
 
 void MapMatrix::writeMatrixOptions()
 {
-  _settings.writeEntry("/MapData/CenterLatitude", mapCenterLat);
-  _settings.writeEntry("/MapData/CenterLongitude", mapCenterLon);
-  _settings.writeEntry("/MapData/MapScale", cScale);
+  _settings.setValue("/MapData/CenterLatitude", mapCenterLat);
+  _settings.setValue("/MapData/CenterLongitude", mapCenterLon);
+  _settings.setValue("/MapData/MapScale", cScale);
 }
 
 
@@ -447,7 +450,6 @@ void MapMatrix::__moveMap(int dir)
   emit matrixChanged();
 }
 
-
 void MapMatrix::createMatrix(const QSize& newSize)
 {
   const QPoint tempPoint(wgsToMap(mapCenterLat, mapCenterLon));
@@ -610,7 +612,8 @@ void MapMatrix::slotSetScale(double nScale)
 
 void MapMatrix::slotInitMatrix()
 {
-  //
+  qDebug() << "MapMatrix::slotInitMatrix()";
+
   // The scale is set to 0 in the constructor. Here we read the scale and
   // the map center only the first time. Otherwise the values would change
   // after configuring KFLog.
@@ -641,7 +644,7 @@ void MapMatrix::slotInitMatrix()
     default:
       // fallback is cylindrical
       currentProjection = new ProjectionCylindric(_settings.readNumEntry("/CylindricalProjection/Parallel", 27000000));
-      qDebug << "Map projection changed to Cylinder";
+      qDebug () << "Map projection changed to Cylinder";
       break;
     }
   }
