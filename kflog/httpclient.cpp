@@ -11,7 +11,7 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id: httpclient.cpp 4508 2010-12-13 19:44:20Z axel $
+**   $Id$
 **
 ***********************************************************************/
 
