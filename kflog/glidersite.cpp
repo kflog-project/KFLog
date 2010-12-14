@@ -57,7 +57,7 @@ bool GliderSite::isWinch() const { return winch; }
 QString GliderSite::getInfoString() const
 {
   QString text;
-  QString path = QDir::homeDirPath() + "/.kflog/mapicons/";
+  QString path = QDir::homePath() + "/.kflog/mapicons/";
 
   // @AP: suppress an empty frequency
   QString tmp;

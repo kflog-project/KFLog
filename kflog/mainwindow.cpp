@@ -331,9 +331,9 @@ void MainWindow::initMenuBar()
 {
   // File menu
 
-  fileNewWaypoint = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/waypoint_16.png"), tr("New &Waypoint"), 0, this, "file_new_waypoint");
+  fileNewWaypoint = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/waypoint_16.png"), tr("New &Waypoint"), 0, this, "file_new_waypoint");
   connect(fileNewWaypoint, SIGNAL(activated()), waypoints, SLOT(slotNewWaypoint()));
-  fileNewTask = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/task_16.png"), tr("New &Task"), Qt::CTRL+Qt::Key_N, this, "file_new_task");
+  fileNewTask = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/task_16.png"), tr("New &Task"), Qt::CTRL+Qt::Key_N, this, "file_new_task");
   connect(fileNewTask, SIGNAL(activated()), _globalMapContents, SLOT(slotNewTask()));
   fileNewFlightGroup = new QAction(tr("New &Flight group"), 0, this, "file_new_flight_group");
   connect(fileNewFlightGroup, SIGNAL(activated()), _globalMapContents, SLOT(slotNewFlightGroup()));
@@ -342,9 +342,9 @@ void MainWindow::initMenuBar()
   fileNewTask->addTo( fileNew );
   fileNewFlightGroup->addTo( fileNew );
 
-  fileOpenFlight = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png"), tr("&Open Flight"), Qt::CTRL+Qt::Key_O, this, "file_open_flight");
+  fileOpenFlight = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_fileopen_16.png"), tr("&Open Flight"), Qt::CTRL+Qt::Key_O, this, "file_open_flight");
   connect(fileOpenFlight, SIGNAL(activated()), this, SLOT(slotOpenFile()));
-  fileOpenTask = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png"), tr("Open &Task"), Qt::CTRL+Qt::Key_T, this, "file_open_task");
+  fileOpenTask = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_fileopen_16.png"), tr("Open &Task"), Qt::CTRL+Qt::Key_T, this, "file_open_task");
   connect(fileOpenTask, SIGNAL(activated()), this, SLOT(slotOpenTask()));
 
   fileOpenRecent = new Q3PopupMenu( this );
@@ -360,29 +360,29 @@ void MainWindow::initMenuBar()
     recentFileActs[i]->addTo(fileOpenRecent);
   }
 
-  fileClose = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_cancel_16.png"), tr("&Close Flight/Task"), Qt::CTRL+Qt::Key_W, this, "file_close");
+  fileClose = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_cancel_16.png"), tr("&Close Flight/Task"), Qt::CTRL+Qt::Key_W, this, "file_close");
   connect(fileClose, SIGNAL(activated()), _globalMapContents, SLOT(closeFlight()));
 
-  fileSavePixmap = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_image_16.png"), tr("Export to PNG..."), 0, this, "file_export_pixmap");
+  fileSavePixmap = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_image_16.png"), tr("Export to PNG..."), 0, this, "file_export_pixmap");
   connect(fileSavePixmap, SIGNAL(activated()), map, SLOT(slotSavePixmap()));
-  filePrint = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileprint_16.png"), tr("Print..."), Qt::CTRL+Qt::Key_P, this, "file_print");
+  filePrint = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_fileprint_16.png"), tr("Print..."), Qt::CTRL+Qt::Key_P, this, "file_print");
   connect(filePrint, SIGNAL(activated()), this, SLOT(slotFilePrint()));
-  filePrintFlight = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileprint_16.png"), tr("Print Flightdata"), 0, this, "file_print_flightdata");
+  filePrintFlight = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_fileprint_16.png"), tr("Print Flightdata"), 0, this, "file_print_flightdata");
   connect(filePrintFlight, SIGNAL(activated()), this, SLOT(slotFlightPrint()));
 
-  fileOpenRecorder = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_connect_no_16.png"), tr("Open Recorder"), 0, this, "file_open_recorder");
+  fileOpenRecorder = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_connect_no_16.png"), tr("Open Recorder"), 0, this, "file_open_recorder");
   connect(fileOpenRecorder, SIGNAL(activated()), this, SLOT(slotOpenRecorderDialog()));
 
-  fileQuit = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_exit_16.png"), "&Quit", Qt::CTRL+Qt::Key_Q, this, "file_quit");
+  fileQuit = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_exit_16.png"), "&Quit", Qt::CTRL+Qt::Key_Q, this, "file_quit");
   connect(fileQuit, SIGNAL(activated()), qApp, SLOT(closeAllWindows()));
   connect( qApp, SIGNAL( lastWindowClosed() ), qApp, SLOT( quit() ) );
 
   Q3PopupMenu * file = new Q3PopupMenu( this );
   menuBar()->insertItem( "&File", file );
-  file->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_filenew_16.png"), "&New", fileNew);
+  file->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_filenew_16.png"), "&New", fileNew);
   fileOpenFlight->addTo( file );
   fileOpenTask->addTo( file );
-  file->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png"), "&Open recent files", fileOpenRecent);
+  file->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_fileopen_16.png"), "&Open recent files", fileOpenRecent);
   fileClose->addTo( file );
   file->insertSeparator();
   fileSavePixmap->addTo( file );
@@ -396,39 +396,39 @@ void MainWindow::initMenuBar()
 
   // view menu
 
-  viewCenterTask = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/centertask_16.png"), tr("Center to &Task"), Qt::Key_F6, this, "view_center_task");
+  viewCenterTask = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/centertask_16.png"), tr("Center to &Task"), Qt::Key_F6, this, "view_center_task");
   connect(viewCenterTask, SIGNAL(activated()), map, SLOT(slotCenterToTask()));
-  viewCenterFlight = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/centerflight_16.png"), tr("Center to &Flight"), Qt::Key_F7, this, "view_center_flight");
+  viewCenterFlight = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/centerflight_16.png"), tr("Center to &Flight"), Qt::Key_F7, this, "view_center_flight");
   connect(viewCenterFlight, SIGNAL(activated()), map, SLOT(slotCenterToFlight()));
-  viewCenterHomesite = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_gohome_16.png"), tr("Center to &Homesite"), Qt::CTRL+Qt::Key_Home, this, "view_center_homeside");
+  viewCenterHomesite = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_gohome_16.png"), tr("Center to &Homesite"), Qt::CTRL+Qt::Key_Home, this, "view_center_homeside");
   connect(viewCenterHomesite, SIGNAL(activated()), _globalMapMatrix, SLOT(slotCenterToHome()));
-  viewCenterTo = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/centerto_16.png"), tr("&Center to..."), Qt::Key_F8, this, "view_center_to");
+  viewCenterTo = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/centerto_16.png"), tr("&Center to..."), Qt::Key_F8, this, "view_center_to");
   connect(viewCenterTo, SIGNAL(activated()), this, SLOT(slotCenterTo()));
 
-  viewZoomIn = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_viewmag+_16.png"), tr("Zoom &In"), Qt::CTRL+Qt::Key_Plus, this, "view_zoom_in");
+  viewZoomIn = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_viewmag+_16.png"), tr("Zoom &In"), Qt::CTRL+Qt::Key_Plus, this, "view_zoom_in");
   connect(viewZoomIn, SIGNAL(activated()), _globalMapMatrix, SLOT(slotZoomIn()));
-  viewZoomOut = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_viewmag-_16.png"), tr("Zoom &Out"), Qt::CTRL+Qt::Key_Minus, this, "view_zoom_out");
+  viewZoomOut = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_viewmag-_16.png"), tr("Zoom &Out"), Qt::CTRL+Qt::Key_Minus, this, "view_zoom_out");
   connect(viewZoomOut, SIGNAL(activated()), _globalMapMatrix, SLOT(slotZoomOut()));
-  viewZoom = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_viewmagfit_16.png"), tr("&Zoom..."), 0, this, "view_zoom");
+  viewZoom = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_viewmagfit_16.png"), tr("&Zoom..."), 0, this, "view_zoom");
   connect(viewZoom, SIGNAL(activated()), map, SLOT(slotZoomRect()));
-  viewRedraw = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_reload_16.png"), tr("&Redraw"), Qt::Key_F5, this, "view_redraw");
+  viewRedraw = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_reload_16.png"), tr("&Redraw"), Qt::Key_F5, this, "view_redraw");
   connect(viewRedraw, SIGNAL(activated()), map, SLOT(slotRedrawMap()));
 
-  viewMoveNW = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_nw_22.png"), tr("move map north-west"), Qt::Key_7, this, "view_move_nw");
+  viewMoveNW = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/movemap_nw_22.png"), tr("move map north-west"), Qt::Key_7, this, "view_move_nw");
   connect(viewMoveNW, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapNW()));
-  viewMoveN = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_n_22.png"), tr("move map north"), Qt::Key_8, this, "view_move_n");
+  viewMoveN = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/movemap_n_22.png"), tr("move map north"), Qt::Key_8, this, "view_move_n");
   connect(viewMoveN, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapN()));
-  viewMoveNE = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_ne_22.png"), tr("move map north-east"), Qt::Key_9, this, "view_move_ne");
+  viewMoveNE = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/movemap_ne_22.png"), tr("move map north-east"), Qt::Key_9, this, "view_move_ne");
   connect(viewMoveNE, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapNE()));
-  viewMoveW = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_w_22.png"), tr("move map west"), Qt::Key_4, this, "view_move_w");
+  viewMoveW = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/movemap_w_22.png"), tr("move map west"), Qt::Key_4, this, "view_move_w");
   connect(viewMoveW, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapW()));
-  viewMoveE = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_e_22.png"), tr("move map east"), Qt::Key_6, this, "view_move_e");
+  viewMoveE = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/movemap_e_22.png"), tr("move map east"), Qt::Key_6, this, "view_move_e");
   connect(viewMoveE, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapE()));
-  viewMoveSW = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_sw_22.png"), tr("move map south-west"), Qt::Key_1, this, "view_move_sw");
+  viewMoveSW = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/movemap_sw_22.png"), tr("move map south-west"), Qt::Key_1, this, "view_move_sw");
   connect(viewMoveSW, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapSW()));
-  viewMoveS = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_s_22.png"), tr("move map south"), Qt::Key_2, this, "view_move_s");
+  viewMoveS = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/movemap_s_22.png"), tr("move map south"), Qt::Key_2, this, "view_move_s");
   connect(viewMoveS, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapS()));
-  viewMoveSE = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_se_22.png"), tr("move map south-east"), Qt::Key_3, this, "view_move_se");
+  viewMoveSE = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/movemap_se_22.png"), tr("move map south-east"), Qt::Key_3, this, "view_move_se");
   connect(viewMoveSE, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapSE()));
 
   Q3PopupMenu * viewMove = new Q3PopupMenu( this );
@@ -453,16 +453,16 @@ void MainWindow::initMenuBar()
   viewZoom->addTo( view );
   viewRedraw->addTo( view );
   view->insertSeparator();
-  view->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_move_16.png"), "Move map", viewMove);
+  view->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_move_16.png"), "Move map", viewMove);
 
   // flight menu
 
-  flightEvaluationWindow = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_history_16.png"), tr("Show &EvaluationWindow"), Qt::CTRL+Qt::Key_E, this, "toggle_evaluation_window");
+  flightEvaluationWindow = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_history_16.png"), tr("Show &EvaluationWindow"), Qt::CTRL+Qt::Key_E, this, "toggle_evaluation_window");
   flightEvaluationWindow->setToggleAction(true);
   connect(flightEvaluationWindow, SIGNAL(activated()), this, SLOT(slotToggleEvaluationWindow()));
-  flightOptimization = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_wizard_16.png"), tr("Optimize"), 0, this, "optimize_flight");
+  flightOptimization = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_wizard_16.png"), tr("Optimize"), 0, this, "optimize_flight");
   connect(flightOptimization, SIGNAL(activated()), this, SLOT(slotOptimizeFlight()));
-  flightOptimizationOLC = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_wizard_16.png"), tr("Optimize (OLC)"), 0, this, "optimize_flight_olc");
+  flightOptimizationOLC = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_wizard_16.png"), tr("Optimize (OLC)"), 0, this, "optimize_flight_olc");
   connect(flightOptimizationOLC, SIGNAL(activated()), this, SLOT(slotOptimizeFlightOLC()));
 
   flightDataType = new Q3PopupMenu( this );
@@ -477,26 +477,26 @@ void MainWindow::initMenuBar()
   connect(flightDataType, SIGNAL(activated(int)), this, SLOT(slotSelectFlightData(int)));
   flightDataType->setItemChecked(_settings.readNumEntry("/Flight/DrawType", MapConfig::Altitude), true);
 
-  flightIgc3D = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_vectorgfx_16.png"), tr("View flight in 3D"), Qt::CTRL+Qt::Key_R, this, "view_flight_3D");
+  flightIgc3D = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_vectorgfx_16.png"), tr("View flight in 3D"), Qt::CTRL+Qt::Key_R, this, "view_flight_3D");
   connect(flightIgc3D, SIGNAL(activated()), this, SLOT(slotFlightViewIgc3D()));
   flightIgcOpenGL = new QAction(/*SmallIcon("openglgfx"),*/ tr("View flight in 3D (OpenGL)"), 0, this, "view_flight_opengl");
   connect(flightIgcOpenGL, SIGNAL(activated()), this, SLOT(slotFlightViewIgcOpenGL()));
 
-  flightAnimateStart = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_1rightarrow_16.png"), tr("&Start Flight Animation"), Qt::Key_F12, this, "start_animate");
+  flightAnimateStart = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_1rightarrow_16.png"), tr("&Start Flight Animation"), Qt::Key_F12, this, "start_animate");
   connect(flightAnimateStart, SIGNAL(activated()), map, SLOT(slotAnimateFlightStart()));
-  flightAnimateStop = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_player_stop_16.png"), tr("Stop Flight &Animation"), Qt::Key_F11, this, "stop_animate");
+  flightAnimateStop = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_player_stop_16.png"), tr("Stop Flight &Animation"), Qt::Key_F11, this, "stop_animate");
   connect(flightAnimateStop, SIGNAL(activated()), map, SLOT(slotAnimateFlightStop()));
-  flightAnimateNext = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_forward_16.png"), tr("Next Flight Point"), Qt::CTRL+Qt::Key_Up, this, "next_flight_point");
+  flightAnimateNext = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_forward_16.png"), tr("Next Flight Point"), Qt::CTRL+Qt::Key_Up, this, "next_flight_point");
   connect(flightAnimateNext, SIGNAL(activated()), map, SLOT(slotFlightNext()));
-  flightAnimatePrev = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_back_16.png"), tr("Prev Flight Point"), Qt::CTRL+Qt::Key_Down, this, "prev_flight_point");
+  flightAnimatePrev = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_back_16.png"), tr("Prev Flight Point"), Qt::CTRL+Qt::Key_Down, this, "prev_flight_point");
   connect(flightAnimatePrev, SIGNAL(activated()), map, SLOT(slotFlightPrev()));
-  flightAnimate10Next = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_2rightarrow_16.png"), tr("Step +10 Flight Points"), Qt::Key_PageUp, this, "next_step_flight_point");
+  flightAnimate10Next = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_2rightarrow_16.png"), tr("Step +10 Flight Points"), Qt::Key_PageUp, this, "next_step_flight_point");
   connect(flightAnimate10Next, SIGNAL(activated()), map, SLOT(slotFlightStepNext()));
-  flightAnimate10Prev = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_2leftarrow_16.png"),  tr("Step -10 Flight Points"), Qt::Key_PageDown, this, "prev_step_flight_point");
+  flightAnimate10Prev = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_2leftarrow_16.png"),  tr("Step -10 Flight Points"), Qt::Key_PageDown, this, "prev_step_flight_point");
   connect(flightAnimate10Prev, SIGNAL(activated()), map, SLOT(slotFlightStepPrev()));
-  flightAnimateHome = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_start_16.png"), tr("First Flight Point"), Qt::Key_Home, this, "first_flight_point");
+  flightAnimateHome = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_start_16.png"), tr("First Flight Point"), Qt::Key_Home, this, "first_flight_point");
   connect(flightAnimateHome, SIGNAL(activated()), map, SLOT(slotFlightHome()));
-  flightAnimateEnd = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_finish_16.png"), tr("Last Flight Point"), Qt::Key_End, this, "last_flight_point");
+  flightAnimateEnd = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_finish_16.png"), tr("Last Flight Point"), Qt::Key_End, this, "last_flight_point");
   connect(flightAnimateEnd, SIGNAL(activated()), map, SLOT(slotFlightEnd()));
 
   Q3PopupMenu * flight = new Q3PopupMenu( this );
@@ -504,7 +504,7 @@ void MainWindow::initMenuBar()
   flightEvaluationWindow->addTo(flight);
   flightOptimization->addTo(flight);
   flightOptimizationOLC->addTo(flight);
-  flight->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_idea_16.png"), tr("Show Flightdata"), flightDataType);
+  flight->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_idea_16.png"), tr("Show Flightdata"), flightDataType);
   flightIgc3D->addTo(flight);
   flightIgcOpenGL->addTo(flight);
   flight->insertSeparator();
@@ -526,19 +526,19 @@ void MainWindow::initMenuBar()
 
   // settings menu
 
-  settingsEvaluationWindow = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_history_16.png"), tr("Show &EvaluationWindow"), Qt::CTRL+Qt::Key_E, this, "toggle_evaluation_window");
+  settingsEvaluationWindow = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_history_16.png"), tr("Show &EvaluationWindow"), Qt::CTRL+Qt::Key_E, this, "toggle_evaluation_window");
   settingsEvaluationWindow->setToggleAction(true);
   connect(settingsEvaluationWindow, SIGNAL(activated()), this, SLOT(slotToggleEvaluationWindow()));
-  settingsFlightData = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_view_detailed_16.png"), tr("Show Flight&data"), Qt::CTRL+Qt::Key_E, this, "toggle_data_view");
+  settingsFlightData = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_view_detailed_16.png"), tr("Show Flight&data"), Qt::CTRL+Qt::Key_E, this, "toggle_data_view");
   settingsFlightData->setToggleAction(true);
   connect(settingsFlightData, SIGNAL(activated()), this, SLOT(slotToggleDataView()));
-  settingsHelpWindow = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_info_16.png"), tr("Show HelpWindow"), Qt::CTRL+Qt::Key_H, this, "toggle_help_window");
+  settingsHelpWindow = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_info_16.png"), tr("Show HelpWindow"), Qt::CTRL+Qt::Key_H, this, "toggle_help_window");
   settingsHelpWindow->setToggleAction(true);
   connect(settingsHelpWindow, SIGNAL(activated()), this, SLOT(slotToggleHelpWindow()));
-  settingsObjectTree = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_view_tree_16.png"), tr("Show KFLog&Browser"), Qt::CTRL+Qt::Key_B, this, "view_tree");
+  settingsObjectTree = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_view_tree_16.png"), tr("Show KFLog&Browser"), Qt::CTRL+Qt::Key_B, this, "view_tree");
   settingsObjectTree->setToggleAction(true);
   connect(settingsObjectTree, SIGNAL(activated()), this, SLOT(slotToggleObjectTreeDock()));
-  settingsLegend = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_blend_16.png"), tr("Show Legend"), Qt::CTRL+Qt::Key_L, this, "toggle_legend");
+  settingsLegend = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/kde_blend_16.png"), tr("Show Legend"), Qt::CTRL+Qt::Key_L, this, "toggle_legend");
   settingsLegend->setToggleAction(true);
   connect(settingsLegend, SIGNAL(activated()), this, SLOT(slotToggleLegendDock()));
 //  settingsMap = new QAction(tr("Show &Map"), 0, this, "toggle_map");
@@ -553,7 +553,7 @@ void MainWindow::initMenuBar()
   settingsStatusBar = new QAction(tr("Show Statusbar"), 0, this, "toggle_statusbar");
   settingsStatusBar->setToggleAction(true);
   connect(settingsStatusBar, SIGNAL(activated()), this, SLOT(slotToggleStatusBar()));
-  settingsWaypoints = new QAction(QPixmap(QDir::homeDirPath() + "/.kflog/pics/waypoint_16.png"), tr("Show &Waypoints"), Qt::CTRL+Qt::Key_R, this, "toggle_waypoints");
+  settingsWaypoints = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/waypoint_16.png"), tr("Show &Waypoints"), Qt::CTRL+Qt::Key_R, this, "toggle_waypoints");
   settingsWaypoints->setToggleAction(true);
   connect(settingsWaypoints, SIGNAL(activated()), this, SLOT(slotToggleWaypointsDock()));
 
@@ -571,19 +571,19 @@ void MainWindow::initMenuBar()
   // We can't use CTRL-W, because this shortcut is reserved for closing a file ...
   settingsWaypoints->addTo(settings);
   settings->insertSeparator();
-//  settings->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_configure_shortcuts_16.png"), tr("Configure Shortcuts...") );//, this, SLOT(slotConfigureKeyBindings()));
-//  settings->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_configure_toolbars_16.png"), tr("Configure Toolbars...") );//, this, SLOT(slotConfigureToolbars()));
-  settings->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_configure_16.png"), tr("KFLog &Setup..."), this, SLOT(slotConfigureKFLog()));
+//  settings->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_configure_shortcuts_16.png"), tr("Configure Shortcuts...") );//, this, SLOT(slotConfigureKeyBindings()));
+//  settings->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_configure_toolbars_16.png"), tr("Configure Toolbars...") );//, this, SLOT(slotConfigureToolbars()));
+  settings->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_configure_16.png"), tr("KFLog &Setup..."), this, SLOT(slotConfigureKFLog()));
 
   // help menu
 
   Q3PopupMenu * help = new Q3PopupMenu( this );
   menuBar()->insertItem( "&Help", help );
   //FIXME: link to manual must be added
-  help->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_contexthelp_16.png"), tr("What's This?"), this, SLOT(slotWhatsThis()), Qt::CTRL+Qt::Key_F1);
+  help->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_contexthelp_16.png"), tr("What's This?"), this, SLOT(slotWhatsThis()), Qt::CTRL+Qt::Key_F1);
   //FIXME: dialog to swith application language must be added
-//  help->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_idea_16.png"), tr("Tip of the day") );//, this, SLOT(slotTipOfDay()));
-//  help->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kflog_16.png"), tr("About KFLog") );//, this, SLOT(slotShowAbout()));
+//  help->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_idea_16.png"), tr("Tip of the day") );//, this, SLOT(slotTipOfDay()));
+//  help->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kflog_16.png"), tr("About KFLog") );//, this, SLOT(slotShowAbout()));
 
   menuBar()->insertItem("Dock Windows", createDockWindowMenu());
 }

@@ -84,7 +84,7 @@ uint OpenAirParser::load( QList<Airspace*> &list )
   t.start();
   uint loadCounter = 0; // number of successfully loaded files
 
-  QString mapDir = _settings.readEntry("/Path/DefaultMapDirectory", QDir::homeDirPath() + "/.kflog/mapdata/");
+  QString mapDir = _settings.readEntry("/Path/DefaultMapDirectory", QDir::homePath() + "/.kflog/mapdata/");
   QStringList preselect;
 
   MapContents::addDir(preselect, mapDir + "/airspaces", "*.txt");

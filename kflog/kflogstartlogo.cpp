@@ -29,10 +29,10 @@ KFLogStartLogo::KFLogStartLogo( QWidget *parent ) :
   // Destroy widget automatically, if it gets the close call.
   setAttribute(Qt::WA_DeleteOnClose);
 
-  QPixmap pm(QDir::homeDirPath() + "/.kflog/pics/splash.png");
+  QPixmap pm(QDir::homePath() + "/.kflog/pics/splash.png");
 
   setBackgroundPixmap(pm);
-  setMask(QBitmap(QDir::homeDirPath() + "/.kflog/pics/splash_mask.png"));
+  setMask(QBitmap(QDir::homePath() + "/.kflog/pics/splash_mask.png"));
 
   QDesktopWidget *desktop = QApplication::desktop();
   QRect rect = desktop->screenGeometry();

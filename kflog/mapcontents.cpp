@@ -146,7 +146,7 @@ MapContents::MapContents( QObject* object ) :
   // missing map files.
   extern QSettings _settings;
 
- _settings.setValue("/GeneralOptions/AutomaticMapDownload", ADT_NotSet);
+ _settings.setValue("/Internet/AutomaticMapDownload", ADT_NotSet);
 }
 
 MapContents::~MapContents()
@@ -281,7 +281,7 @@ bool MapContents::__downloadMapFile( QString &file, QString &directory )
 {
   extern QSettings _settings;
 
-  if( _settings.value( "/GeneralOptions/AutomaticMapDownload", ADT_NotSet ).toInt() == Inhibited )
+  if( _settings.value( "/Internet/AutomaticMapDownload", ADT_NotSet ).toInt() == Inhibited )
     {
       qDebug() << "Auto Download Inhibited";
       return false;
@@ -298,9 +298,10 @@ bool MapContents::__downloadMapFile( QString &file, QString &directory )
                this, SLOT(slotNetworkError()) );
     }
 
-  QString srvUrl =
-      _settings.value( "/GeneralOptions/Mapserver",
-                       "http://www.kflog.org/data/landscape/" ).toString();
+  QString srvUrl = _settings.value( "/MapData/MapServer",
+                                    "http://www.kflog.org/data/landscape/" ).toString();
+
+  _settings.setValue( "/MapData/MapServer", srvUrl );
 
   QString url = srvUrl + file;
   QString dest = directory + "/" + file;
@@ -377,6 +378,9 @@ void MapContents::slotDownloadWelt2000()
 
   QString welt2000FileName = _settings.value( "/MapData/Welt2000FileName", "WELT2000.TXT").toString();
   QString welt2000Link     = _settings.value( "/MapData/Welt2000Link", "http://www.segelflug.de/vereine/welt2000/download").toString();
+
+  _settings.setValue( "/MapData/Welt2000FileName", welt2000FileName );
+  _settings.setValue( "/MapData/Welt2000Link", welt2000Link );
 
   QString url  = welt2000Link + "/" + welt2000FileName;
   QString dest = getMapRootDirectory() + "/airfields/welt2000.txt";
@@ -733,11 +737,11 @@ int MapContents::__askUserForDownload()
   extern MainWindow *_mainWindow;
   extern QSettings  _settings;
 
-  int result = _settings.readNumEntry( "/GeneralOptions/AutomaticMapDownload", ADT_NotSet );
+  int result = _settings.readNumEntry( "/Internet/AutomaticMapDownload", ADT_NotSet );
 
   if( isFirstLoad == true && result == ADT_NotSet )
     {
-      _settings.setValue("/GeneralOptions/AutomaticMapDownload", Inhibited);
+      _settings.setValue("/Internet/AutomaticMapDownload", Inhibited);
 
       int ret = QMessageBox::question(_mainWindow, tr("Automatic data download?"),
                 tr("<html>There are data missing under the directory tree<br><b>%1."
@@ -751,7 +755,7 @@ int MapContents::__askUserForDownload()
         {
           case QMessageBox::Yes:
 
-            _settings.setValue("/GeneralOptions/AutomaticMapDownload", Automatic);
+            _settings.setValue("/Internet/AutomaticMapDownload", Automatic);
             result = Automatic;
             isFirstLoad = false;
 
@@ -759,14 +763,14 @@ int MapContents::__askUserForDownload()
 
           case QMessageBox::No:
 
-            _settings.setValue( "/GeneralOptions/AutomaticMapDownload", Inhibited );
+            _settings.setValue( "/Internet/AutomaticMapDownload", Inhibited );
             result = Inhibited;
             isFirstLoad = false;
             break;
 
           case QMessageBox::Cancel:
 
-            _settings.setValue( "/GeneralOptions/AutomaticMapDownload", ADT_NotSet );
+            _settings.setValue( "/Internet/AutomaticMapDownload", ADT_NotSet );
             result = ADT_NotSet;
             isFirstLoad = true;
             break;
@@ -914,7 +918,7 @@ void MapContents::proofeSection(bool isPrint)
 
       mapDir = QFileDialog::getExistingDirectory( _mainWindow,
                                                   tr("Select a map root directory!"),
-                                                  QDir::homeDirPath() );
+                                                  QDir::homePath() );
 
       if(  mapDir.isEmpty() )
         {

@@ -51,11 +51,11 @@ ObjectTree::ObjectTree(QWidget *parent, const char *name ) : Q3ListView(parent,n
   colDesc = addColumn(tr("Description"));
 
   FlightRoot = new Q3ListViewItem(this,tr("Flights"));
-  FlightRoot->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/igc_16.png");
+  FlightRoot->setPixmap(0, QDir::homePath() + "/.kflog/pics/igc_16.png");
   FlightRoot->setSelectable(false);
 
   TaskRoot = new Q3ListViewItem(this,FlightRoot,tr("Tasks"));
-  TaskRoot->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/task_16.png");
+  TaskRoot->setPixmap(0, QDir::homePath() + "/.kflog/pics/task_16.png");
   TaskRoot->setSelectable(false);
   /*
    * end listview setup
@@ -233,32 +233,32 @@ void ObjectTree::addPopupMenu()
 {
   taskPopup = new Q3PopupMenu(this);
 //  taskPopup->insertTitle(SmallIcon("flight"), tr("Flights"), 0);
-  taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png"), tr("&Open flight"), this, SIGNAL(openFlight()));
-  taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_filenew_16.png"), tr("New flight &group"), this,
+  taskPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_fileopen_16.png"), tr("&Open flight"), this, SIGNAL(openFlight()));
+  taskPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_filenew_16.png"), tr("New flight &group"), this,
     SIGNAL(newFlightGroup()));
-  idFlightGroupEdit = taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_wizard_16.png"), tr("Edit flight group"), this,
+  idFlightGroupEdit = taskPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_wizard_16.png"), tr("Edit flight group"), this,
     SIGNAL(editFlightGroup()));
-  idFlightOptimize = taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_wizard_16.png"), tr("O&ptimize flight"), this,
+  idFlightOptimize = taskPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_wizard_16.png"), tr("O&ptimize flight"), this,
     SIGNAL(optimizeFlight()));
-  idFlightOptimizeOLC = taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_wizard_16.png"), tr("O&ptimize flight (OLC)"), this,
+  idFlightOptimizeOLC = taskPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_wizard_16.png"), tr("O&ptimize flight (OLC)"), this,
     SIGNAL(optimizeFlightOLC()));
-  idFlightClose = taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileclose_16.png"), tr("&Close flight (group)"), this,
+  idFlightClose = taskPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_fileclose_16.png"), tr("&Close flight (group)"), this,
     SLOT(slotDeleteTask()));
 
 //  taskPopup->insertTitle(SmallIcon("task"), tr("Tasks"), 0);
   taskPopup->insertSeparator();
-  taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_filenew_16.png"), tr("&New task"), this,
+  taskPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_filenew_16.png"), tr("&New task"), this,
     SIGNAL(newTask()));
-  taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png"), tr("Open &task"), this,
+  taskPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_fileopen_16.png"), tr("Open &task"), this,
     SIGNAL(openTask()));
-  idTaskEdit = taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_wizard_16.png"), tr("&Edit task"), this,
+  idTaskEdit = taskPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_wizard_16.png"), tr("&Edit task"), this,
     SLOT(slotEditTask()));
-  idTaskDelete = taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileclose_16.png"), tr("&Close task"), this,
+  idTaskDelete = taskPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_fileclose_16.png"), tr("&Close task"), this,
     SLOT(slotDeleteTask()));
   taskPopup->insertSeparator();
-  idTaskSave = taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_filesave_16.png"), tr("&Save this task"), this,
+  idTaskSave = taskPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_filesave_16.png"), tr("&Save this task"), this,
     SLOT(slotSaveTask()));
-  idTaskSaveAll = taskPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_save_all_16.png"), tr("Save &all task's"), this,
+  idTaskSaveAll = taskPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_save_all_16.png"), tr("Save &all task's"), this,
     SLOT(slotSaveAllTask()));
 
 }

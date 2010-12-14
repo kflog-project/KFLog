@@ -35,47 +35,47 @@ MapControlView::MapControlView(QWidget* parent)
 {
   Q3Frame* navFrame = new Q3Frame(this);
   QPushButton* nwB = new QPushButton(navFrame);
-  nwB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_nw_22.png");
+  nwB->setPixmap(QDir::homePath() + "/.kflog/pics/movemap_nw_22.png");
   nwB->setFixedHeight(nwB->sizeHint().height() + DELTA);
   nwB->setFixedWidth(nwB->sizeHint().width() + DELTA);
 
   QPushButton* nB = new QPushButton(navFrame);
-  nB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_n_22.png");
+  nB->setPixmap(QDir::homePath() + "/.kflog/pics/movemap_n_22.png");
   nB->setFixedHeight(nB->sizeHint().height() + DELTA);
   nB->setFixedWidth(nB->sizeHint().width() + DELTA);
 
   QPushButton* neB = new QPushButton(navFrame);
-  neB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_ne_22.png");
+  neB->setPixmap(QDir::homePath() + "/.kflog/pics/movemap_ne_22.png");
   neB->setFixedHeight(neB->sizeHint().height() + DELTA);
   neB->setFixedWidth(neB->sizeHint().width() + DELTA);
 
   QPushButton* wB = new QPushButton(navFrame);
-  wB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_w_22.png");
+  wB->setPixmap(QDir::homePath() + "/.kflog/pics/movemap_w_22.png");
   wB->setFixedHeight(wB->sizeHint().height() + DELTA);
   wB->setFixedWidth(wB->sizeHint().width() + DELTA);
 
   QPushButton* cenB = new QPushButton(navFrame);
-  cenB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_gohome_22.png");
+  cenB->setPixmap(QDir::homePath() + "/.kflog/pics/kde_gohome_22.png");
   cenB->setFixedHeight(cenB->sizeHint().height() + DELTA);
   cenB->setFixedWidth(cenB->sizeHint().width() + DELTA);
 
   QPushButton* eB = new QPushButton(navFrame);
-  eB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_e_22.png");
+  eB->setPixmap(QDir::homePath() + "/.kflog/pics/movemap_e_22.png");
   eB->setFixedHeight(eB->sizeHint().height() + DELTA);
   eB->setFixedWidth(eB->sizeHint().width() + DELTA);
 
   QPushButton* swB = new QPushButton(navFrame);
-  swB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_sw_22.png");
+  swB->setPixmap(QDir::homePath() + "/.kflog/pics/movemap_sw_22.png");
   swB->setFixedHeight(swB->sizeHint().height() + DELTA);
   swB->setFixedWidth(swB->sizeHint().width() + DELTA);
 
   QPushButton* sB = new QPushButton(navFrame);
-  sB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_s_22.png");
+  sB->setPixmap(QDir::homePath() + "/.kflog/pics/movemap_s_22.png");
   sB->setFixedHeight(sB->sizeHint().height() + DELTA);
   sB->setFixedWidth(sB->sizeHint().width() + DELTA);
 
   QPushButton* seB = new QPushButton(navFrame);
-  seB->setPixmap(QDir::homeDirPath() + "/.kflog/pics/movemap_se_22.png");
+  seB->setPixmap(QDir::homePath() + "/.kflog/pics/movemap_se_22.png");
   seB->setFixedHeight(seB->sizeHint().height() + DELTA);
   seB->setFixedWidth(seB->sizeHint().width() + DELTA);
 

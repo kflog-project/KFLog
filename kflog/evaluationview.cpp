@@ -798,8 +798,8 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
           paint.setBrush(QBrush(QColor(200,0,0), Qt::SolidPattern));
         }
 
-      QPixmap pixCursor1 = QPixmap(QDir::homeDirPath() + "/.kflog/pics/flag_green.png");
-      QPixmap pixCursor2 = QPixmap(QDir::homeDirPath() + "/.kflog/pics/flag_red.png");
+      QPixmap pixCursor1 = QPixmap(QDir::homePath() + "/.kflog/pics/flag_green.png");
+      QPixmap pixCursor2 = QPixmap(QDir::homePath() + "/.kflog/pics/flag_red.png");
 
       // draw new line
       paint.drawLine(xpos, this->height() - Y_DISTANCE, xpos, Y_DISTANCE);

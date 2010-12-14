@@ -121,11 +121,11 @@ void TaskDialog::__initDialog()
 
   smallButtons->addStretch();
   b = new QPushButton(this);
-  b->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_up_16.png");
+  b->setPixmap(QDir::homePath() + "/.kflog/pics/kde_up_16.png");
   connect(b, SIGNAL(clicked()), SLOT(slotMoveUp()));
   smallButtons->addWidget(b);
   b = new QPushButton(this);
-  b->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_down_16.png");
+  b->setPixmap(QDir::homePath() + "/.kflog/pics/kde_down_16.png");
   connect(b, SIGNAL(clicked()), SLOT(slotMoveDown()));
   smallButtons->addWidget(b);
   smallButtons->addStretch();
@@ -136,15 +136,15 @@ void TaskDialog::__initDialog()
 
   middleLayout->addStretch();
   back = new QPushButton(this);
-  back->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_back_16.png");
+  back->setPixmap(QDir::homePath() + "/.kflog/pics/kde_back_16.png");
   connect(back, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
   middleLayout->addWidget(back);
   b = new QPushButton(this);
-  b->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_reload_16.png");
+  b->setPixmap(QDir::homePath() + "/.kflog/pics/kde_reload_16.png");
   connect(b, SIGNAL(clicked()), SLOT(slotReplaceWaypoint()));
   middleLayout->addWidget(b);
   forward = new QPushButton(this);
-  forward->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_forward_16.png");
+  forward->setPixmap(QDir::homePath() + "/.kflog/pics/kde_forward_16.png");
   connect(forward, SIGNAL(clicked()), SLOT(slotRemoveWaypoint()));
   middleLayout->addWidget(forward);
   middleLayout->addStretch();

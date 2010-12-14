@@ -55,7 +55,7 @@ unsigned int Airport::getRunwayNumber() const
 QString Airport::getInfoString() const
 {
   QString text;
-  QString path = QDir::homeDirPath() + "/.kflog/mapicons/";
+  QString path = QDir::homePath() + "/.kflog/mapicons/";
   //bool isType2=false; //Doesn't work yet, runway info is not read.
   //if (typeID==BaseMapElement::Airfield)
   //  isType2=(getRunway().surface==Grass);

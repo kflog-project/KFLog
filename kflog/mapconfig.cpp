@@ -959,9 +959,9 @@ QPixmap MapConfig::getPixmap(unsigned int typeID, bool isWinch)
   QString iconName(getPixmapName(typeID, isWinch));
 
   if(isSwitch)
-      return QPixmap(QDir::homeDirPath() + "/.kflog/mapicons/" + iconName);
+      return QPixmap(QDir::homePath() + "/.kflog/mapicons/" + iconName);
 
-  return QPixmap(QDir::homeDirPath() + "/.kflog/mapicons/small/" + iconName);
+  return QPixmap(QDir::homePath() + "/.kflog/mapicons/small/" + iconName);
 }
 
 QPixmap MapConfig::getPixmap(unsigned int typeID, bool isWinch, bool smallIcon)
@@ -969,9 +969,9 @@ QPixmap MapConfig::getPixmap(unsigned int typeID, bool isWinch, bool smallIcon)
   QString iconName(getPixmapName(typeID, isWinch));
 
   if(smallIcon)
-      return QPixmap(QDir::homeDirPath() + "/.kflog/mapicons/small/" + iconName);
+      return QPixmap(QDir::homePath() + "/.kflog/mapicons/small/" + iconName);
 
-  return QPixmap(QDir::homeDirPath() + "/.kflog/mapicons/" + iconName);
+  return QPixmap(QDir::homePath() + "/.kflog/mapicons/" + iconName);
 }
 
 QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)

@@ -74,7 +74,7 @@ void TaskListViewItem::createChildren(){
     int wpCount=task->getWPList().count();
     Q3ListViewItem * wpSubItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Waypoints"),QObject::tr("%1 waypoints in task").arg(wpCount));
     wpSubItem->setSelectable(false);
-    wpSubItem->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/waypoint_16.png");
+    wpSubItem->setPixmap(0, QDir::homePath() + "/.kflog/pics/waypoint_16.png");
 
     for (int i=0;i<wpCount;i++) {
       wpName=QObject::tr("Turnpoint");
@@ -85,7 +85,7 @@ void TaskListViewItem::createChildren(){
 
       subItem=new Q3ListViewItem(wpSubItem,subItem,wpName,task->getWPList().at(i)->name);
       subItem->setSelectable(false);
-      subItem->setPixmap(0, QDir::homeDirPath() + "/.kflog/pics/centerwaypoint_16.png");
+      subItem->setPixmap(0, QDir::homePath() + "/.kflog/pics/centerwaypoint_16.png");
     }
   }
 }

@@ -112,7 +112,7 @@ void Waypoints::addWaypointWindow(QWidget *parent)
   connect(catalogName, SIGNAL(activated(int)), SLOT(slotSwitchWaypointCatalog(int)));
 
   QPushButton *fileOpen = new QPushButton(parent);
-  fileOpen->setPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png");
+  fileOpen->setPixmap(QDir::homePath() + "/.kflog/pics/kde_fileopen_16.png");
   QSizePolicy sp = fileOpen->sizePolicy();
   sp.setHorData(QSizePolicy::Fixed);
   fileOpen->setSizePolicy(sp);
@@ -144,25 +144,25 @@ void Waypoints::addPopupMenu()
 
 
 //  wayPointPopup->insertTitle(SmallIcon("waypoint"), "Waypoint's", 0);
-  wayPointPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/waypoint_16.png"), tr("&New catalog"), this, SLOT(slotNewWaypointCatalog()));
-  wayPointPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileopen_16.png"), tr("&Open catalog"), this, SLOT(slotOpenWaypointCatalog()));
+  wayPointPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/waypoint_16.png"), tr("&New catalog"), this, SLOT(slotNewWaypointCatalog()));
+  wayPointPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_fileopen_16.png"), tr("&Open catalog"), this, SLOT(slotOpenWaypointCatalog()));
   idWaypointCatalogImport = wayPointPopup->insertItem(tr("&Import catalog"), this, SLOT(slotImportWaypointCatalog()));
   idWaypointImportFromMap = wayPointPopup->insertItem(tr("Import from &map"), this, SLOT(slotImportWaypointFromMap()));
   idWaypointImportFromFile = wayPointPopup->insertItem(tr("Import from &file"), this, SLOT(slotImportWaypointFromFile()));
-  idWaypointCatalogSave = wayPointPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_filesave_16.png"), tr("&Save catalog"), this, SLOT(slotSaveWaypointCatalog()));
-  idWaypointCatalogSaveAs = wayPointPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_filesaveas_16.png"), tr("&Save catalog as..."), this, SLOT(slotSaveWaypointCatalogAs()));
-  idWaypointCatalogClose = wayPointPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_fileclose_16.png"), tr("&Close catalog"), this, SLOT(slotCloseWaypointCatalog()));
+  idWaypointCatalogSave = wayPointPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_filesave_16.png"), tr("&Save catalog"), this, SLOT(slotSaveWaypointCatalog()));
+  idWaypointCatalogSaveAs = wayPointPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_filesaveas_16.png"), tr("&Save catalog as..."), this, SLOT(slotSaveWaypointCatalogAs()));
+  idWaypointCatalogClose = wayPointPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_fileclose_16.png"), tr("&Close catalog"), this, SLOT(slotCloseWaypointCatalog()));
   wayPointPopup->insertSeparator();
-  idWaypointNew = wayPointPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_filenew_16.png"), tr("New &waypoint"), this, SLOT(slotNewWaypoint()));
-  idWaypointEdit = wayPointPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_wizard_16.png"), tr("&Edit waypoint"), this, SLOT(slotEditWaypoint()));
-  idWaypointDelete = wayPointPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_editdelete_16.png"), tr("&Delete waypoint"), this, SLOT(slotDeleteWaypoint()));
-  idWaypointCopy2Catalog = wayPointPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_editcopy_16.png"), tr("Copy to &catalog"), catalogCopySubPopup);
-  idWaypointMove2Catalog = wayPointPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_move_16.png"), tr("Move to &catalog"), catalogMoveSubPopup);
+  idWaypointNew = wayPointPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_filenew_16.png"), tr("New &waypoint"), this, SLOT(slotNewWaypoint()));
+  idWaypointEdit = wayPointPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_wizard_16.png"), tr("&Edit waypoint"), this, SLOT(slotEditWaypoint()));
+  idWaypointDelete = wayPointPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_editdelete_16.png"), tr("&Delete waypoint"), this, SLOT(slotDeleteWaypoint()));
+  idWaypointCopy2Catalog = wayPointPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_editcopy_16.png"), tr("Copy to &catalog"), catalogCopySubPopup);
+  idWaypointMove2Catalog = wayPointPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_move_16.png"), tr("Move to &catalog"), catalogMoveSubPopup);
 
   wayPointPopup->insertSeparator();
-  idWaypointCopy2Task = wayPointPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_editcopy_16.png"), tr("Copy to &task"), this, SLOT(slotCopyWaypoint2Task()));
-  idWaypointCenterMap = wayPointPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/centerwaypoint_16.png"), tr("Center map on waypoint"), this, SLOT(slotCenterMap()));
-  idWaypointSetHome = wayPointPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_gohome_16.png"), tr("Set Homesite"), this, SLOT(slotSetHome()));
+  idWaypointCopy2Task = wayPointPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_editcopy_16.png"), tr("Copy to &task"), this, SLOT(slotCopyWaypoint2Task()));
+  idWaypointCenterMap = wayPointPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/centerwaypoint_16.png"), tr("Center map on waypoint"), this, SLOT(slotCenterMap()));
+  idWaypointSetHome = wayPointPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_gohome_16.png"), tr("Set Homesite"), this, SLOT(slotSetHome()));
 
   connect(catalogCopySubPopup, SIGNAL(activated(int)), this, SLOT(slotCopy2Catalog(int)));
   connect(catalogMoveSubPopup, SIGNAL(activated(int)), this, SLOT(slotMove2Catalog(int)));

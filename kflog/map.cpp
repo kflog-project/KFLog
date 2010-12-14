@@ -85,8 +85,8 @@ Map::Map(QWidget* parent)
 
   pixCursor.setMask(bitCursorMask);
 
-  pixCursor1 = QPixmap(QDir::homeDirPath() + "/.kflog/pics/flag_green.png");
-  pixCursor2 = QPixmap(QDir::homeDirPath() + "/.kflog/pics/flag_red.png");
+  pixCursor1 = QPixmap(QDir::homePath() + "/.kflog/pics/flag_green.png");
+  pixCursor2 = QPixmap(QDir::homePath() + "/.kflog/pics/flag_red.png");
 
   pixCursorBuffer1.resize(32,32);
   pixCursorBuffer1.fill(Qt::white);
@@ -460,7 +460,7 @@ QString getInfoString (Waypoint* wp)
   extern MapConfig *_globalMapConfig;
   extern TranslationList waypointTypes;
 
-  QString path = QDir::homeDirPath() + "/.kflog/mapicons/";
+  QString path = QDir::homePath() + "/.kflog/mapicons/";
 
   QString text = "<TABLE BORDER=0><TR>";
 
@@ -2453,21 +2453,21 @@ void Map::__createPopupMenu(){
   mapPopup=new Q3PopupMenu(this);
 
 //  mapPopup->insertTitle(/*SmallIcon("task")*/ 0, QObject::tr("Map"), 0);
-  idMpAddWaypoint  = mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_filenew_16.png"), QObject::tr("&New waypoint"), this, SLOT(slotMpNewWaypoint()));
-  idMpEditWaypoint = mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_wizard_16.png"), QObject::tr("&Edit waypoint"), this, SLOT(slotMpEditWaypoint()));
-  idMpDeleteWaypoint = mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_editdelete_16.png"), QObject::tr("&Delete waypoint"), this, SLOT(slotMpDeleteWaypoint()));
+  idMpAddWaypoint  = mapPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_filenew_16.png"), QObject::tr("&New waypoint"), this, SLOT(slotMpNewWaypoint()));
+  idMpEditWaypoint = mapPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_wizard_16.png"), QObject::tr("&Edit waypoint"), this, SLOT(slotMpEditWaypoint()));
+  idMpDeleteWaypoint = mapPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_editdelete_16.png"), QObject::tr("&Delete waypoint"), this, SLOT(slotMpDeleteWaypoint()));
 
   mapPopup->insertSeparator();
 
   idMpEndPlanning  = mapPopup->insertItem(QObject::tr("&End taskplanning"), this, SLOT(slotMpEndPlanning()));
-  mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_info_16.png"), QObject::tr("&Show map info..."), this, SLOT(slotMpShowMapInfo()));
+  mapPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_info_16.png"), QObject::tr("&Show map info..."), this, SLOT(slotMpShowMapInfo()));
 
   mapPopup->insertSeparator();
 
-  idMpCenterMap  = mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/centerto_22.png"), QObject::tr("&Center map"), this, SLOT(slotMpCenterMap()));
+  idMpCenterMap  = mapPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/centerto_22.png"), QObject::tr("&Center map"), this, SLOT(slotMpCenterMap()));
 
-  idMpZoomIn = mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_viewmag+_16.png"), QObject::tr("Zoom &In"), _globalMapMatrix, SLOT(slotZoomIn()));
-  idMpZoomOut = mapPopup->insertItem(QPixmap(QDir::homeDirPath() + "/.kflog/pics/kde_viewmag-_16.png"), QObject::tr("Zoom &Out"), _globalMapMatrix, SLOT(slotZoomOut()));
+  idMpZoomIn = mapPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_viewmag+_16.png"), QObject::tr("Zoom &In"), _globalMapMatrix, SLOT(slotZoomIn()));
+  idMpZoomOut = mapPopup->insertItem(QPixmap(QDir::homePath() + "/.kflog/pics/kde_viewmag-_16.png"), QObject::tr("Zoom &Out"), _globalMapMatrix, SLOT(slotZoomOut()));
   /*
   idMpAddTaskPoint
  */

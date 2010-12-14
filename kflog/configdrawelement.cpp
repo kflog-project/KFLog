@@ -330,7 +330,7 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent)
   border3 = new QCheckBox(tr("threshold #3"), parent);
   border4 = new QCheckBox(tr("scale-limit"), parent);
 
-  QString picDir = QDir::homeDirPath() + "/.kflog/pics/";
+  QString picDir = QDir::homePath() + "/.kflog/pics/";
 
   border1Button = new QPushButton(parent);
   border1Button-> setPixmap(picDir + "kde_down.png");
@@ -1361,7 +1361,7 @@ void ConfigDrawElement::__defaultPenBrush(Q3PtrList<QPen> *penList, bool *b, Q3P
 // Qt::BrushStyle "NoBrush" is allowed ...
 void ConfigDrawElement::__fillStyle(QComboBox *pen, QComboBox *brush)
 {
-  QString picDir = QDir::homeDirPath() + "/.kflog/pics/";
+  QString picDir = QDir::homePath() + "/.kflog/pics/";
 
   pen-> insertItem(QPixmap(picDir + "solid.png"), Qt::SolidLine - 1);
   pen-> insertItem(QPixmap(picDir + "dashed.png"), Qt::DashLine - 1);

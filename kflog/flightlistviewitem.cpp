@@ -79,7 +79,7 @@ void FlightListViewItem::createChildren(){
   subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Total distance"),flight->getDistance(true));
   subItem->setSelectable(false);
   subItem=new TaskListViewItem((Q3ListViewItem*)this, &flight->getTask(true), subItem);
-  QPixmap taskPic = QPixmap(QDir::homeDirPath() + "/.kflog/pics/task_16.png");
+  QPixmap taskPic = QPixmap(QDir::homePath() + "/.kflog/pics/task_16.png");
   subItem->setPixmap(0, taskPic);
   subItem->setSelectable(false);
   if (flight->isOptimized()){

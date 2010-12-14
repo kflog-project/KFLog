@@ -300,7 +300,7 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent)
   border1 = new QCheckBox(tr("1:500.000"), parent);
   border2 = new QCheckBox(tr("scale-limit"), parent);
 
-  QString picDir = QDir::homeDirPath() + "/.kflog/pics/";
+  QString picDir = QDir::homePath() + "/.kflog/pics/";
 
   border1Button = new QPushButton(parent);
   border1Button-> setPixmap(picDir + "kde_down.png");
@@ -1061,7 +1061,7 @@ void ConfigPrintElement::__defaultPenBrush(Q3PtrList<QPen> *penList, bool *b, Q3
 // Qt::BrushStyle "NoBrush" is allowed ...
 void ConfigPrintElement::__fillStyle(QComboBox *pen, QComboBox *brush)
 {
-  QString picDir = QDir::homeDirPath() + "/.kflog/pics/";
+  QString picDir = QDir::homePath() + "/.kflog/pics/";
 
   pen-> insertItem(QPixmap(picDir + "solid.png"), Qt::SolidLine - 1);
   pen-> insertItem(QPixmap(picDir + "dashed.png"), Qt::DashLine - 1);
