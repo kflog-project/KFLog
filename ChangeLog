@@ -9,6 +9,8 @@ $Id$
   * Bugfix in MapContent class. Isoline drawing works again. Welt2000 parser
     unfortunately not yet.
   * Different Qt4 portage actions done.
+  * Doxygen configuration files added to kflog subdirectory. Call
+    doyxgen to generate the html help files.
   
 2010-10-11 Axel Pauli <axel@kflog.org>
 
