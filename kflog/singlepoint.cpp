@@ -44,7 +44,7 @@ void SinglePoint::printMapElement(QPainter* printPainter, bool /*isText*/)
       iconSize = 8;
 
   /*
-   * Hier sollte mal für eine bessere Qualität der Icons gesorgt werden.
+   * Hier sollte mal fï¿½r eine bessere Qualitï¿½t der Icons gesorgt werden.
    * Eventuell kann man die Icons ja hier zeichnen lassen ?!?
    */
   printPainter->setPen(QPen(QColor(0,50,50), 2));
@@ -61,14 +61,13 @@ bool SinglePoint::__isVisible() const
   return glMapMatrix->isVisible(position);
 }
 
-void SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
+bool SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
 {
   if(!__isVisible())
     {
       curPos = QPoint(-50, -50);
-      return;
+      return false;
     }
-
 
   curPos = glMapMatrix->map(position);
 
@@ -83,7 +82,7 @@ void SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
       maskP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
       targetP->setBrush(Qt::NoBrush);
       targetP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
-      return;
+      return true;
    }
   else if(typeID == BaseMapElement::Landmark)
    {
@@ -118,7 +117,7 @@ void SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
       maskP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
       targetP->setBrush(Qt::NoBrush);
       targetP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
-      return;
+      return true;
    }
 
   if(glMapMatrix->isSwitchScale())
@@ -126,6 +125,8 @@ void SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
 
   targetP->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
       glConfig->getPixmap(typeID));
+
+  return true;
 }
 
 QString SinglePoint::getWPName() const { return gpsName; }

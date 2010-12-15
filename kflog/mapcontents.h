@@ -18,19 +18,20 @@
 #ifndef MAP_CONTENTS_H
 #define MAP_CONTENTS_H
 
-#include <map>
-
 #include <QBitArray>
 #include <QFile>
 #include <QList>
 #include <QObject>
+#include <QPainter>
+#include <QPoint>
 
 #include "downloadmanager.h"
-
 #include "flighttask.h"
+#include "isolist.h"
 
 class Airport;
 class Airspace;
+class Distance;
 class Flight;
 class FlightGroup;
 class GliderSite;
@@ -39,33 +40,8 @@ class LineElement;
 class RadioPoint;
 class SinglePoint;
 
-/**
- * @short Entry in the isolist
- *
- * This class contains a @ref QRegion and a height. A list of entries
- * like this is created when the map is drawn, and is used to detect the
- * elevation at a given position, for instance under the mouse cursor.
- *
- * @author Andr� Somers
- * @version $Id$
- */
-
-class isoListEntry {
-  public:
-    /**
-     * Constructor.
-     * @param region Region in coordinate system of the map-object, not in KFLog system
-     * @param height the elevation of the isoline in meters
-     */
-    isoListEntry(QRegion* region=0, int height=0);
-    /**
-     * Destructor
-     */
-    ~isoListEntry();
-
-    QRegion* region;
-    int height;
-};
+// number of isoline levels
+#define ISO_LINE_LEVELS 51
 
 /**
  * \class MapContents
@@ -77,6 +53,8 @@ class isoListEntry {
  * This class provides functions for accessing the contents of the map.
  * It takes control over loading all needed map-files.
  * The class contains several QPtrLists holding the map elements.
+ *
+ * \date 2000-2010
  *
  * \version $Id$
  */
@@ -180,9 +158,8 @@ class MapContents : public QObject
    * Draws all isohypses into the given painter
    *
    * @param  targetP  The painter to draw the elements into
-   * @param  maskP  The mask painter of targetP
    */
-  void drawIsoList(QPainter* targetP, QPainter* maskP);
+  void drawIsoList(QPainter* targetP);
 
   /**
    * Prints the whole content of the map into the given painter.
@@ -221,28 +198,28 @@ class MapContents : public QObject
    */
   QList<BaseFlightElement*> *getFlightList();
 
-  /**
-   * Converts the longitude or latitude into the internal format.
-   *
-   * @param  degree  The position to be converted. The string must
-   *                 have the format:<BR>
-   *                 <TT>[g]gg.mm'ss"X</TT> where <TT>g</TT>, <TT>m</TT>,
-   *                 <TT>s</TT> are any digits from 0 to 9 and <TT>X</TT>
-   *                 is one of N, S, E, W.
-   */
-  static int degreeToNum(QString degree);
   /** read a task file and append all tasks to flight list switch to first task in file */
   bool loadTask(QFile& path);
   /** generate new task name */
   QString genTaskName();
   /** generate a task name, using the suggestion given. Prevents double task names */
   QString genTaskName(QString suggestion);
-  inline QList<isoListEntry*>* getIsohypseRegions(){return &regIsoLines;};
+
+  /** Returns list of IsoHypse Regions */
+  IsoList* getIsohypseRegions()
+  {
+    return &pathIsoLines;
+  };
   /**
-   * find the terrain elevation for the given point
-   * @returns the elevation in meters or -1 if the elevation could not be found.
+   * Find the terrain elevation for the given point.
+   *
+   * \param coordMap The map coordinates of the point.
+   *
+   * \param errorDist Distance error value in meters
+   *
+   * \returns The elevation in meters or -1 if the elevation could not be found.
    */
-  int getElevation(QPoint);
+  int getElevation(const QPoint& coordMap, Distance* errorDist);
 
   /**
    * this function serves as a substitute for the not existing
@@ -353,12 +330,12 @@ class MapContents : public QObject
   void contentsChanged();
 
   /**
-   * Emitted if a new flight was added to the flightlist.
+   * Emitted if a new flight was added to the flight list.
    */
   void newFlightAdded(Flight *);
 
   /**
-   * Emitted if a new flightgroup was added to the flightlist.
+   * Emitted if a new flight group was added to the flight list.
    */
   void newFlightGroupAdded(FlightGroup *);
 
@@ -478,10 +455,16 @@ class MapContents : public QObject
    * topoList contains all topographical objects.
    */
   QList<LineElement*> topoList;
+
   /**
-   * isohypseList contains all isohypses.
+   * Isohypse map contains all isohypses above the ground of a tile in a list.
    */
-  QList< QList<Isohypse*>* > isoList;
+  QMap<int, QList<Isohypse> > terrainMap;
+  /**
+   * Isohypse map contains all ground isohypses of a tile in a list.
+   */
+  QMap<int, QList<Isohypse> > groundMap;
+
   /**
    * Contains list of all loaded Flight and FlightTask objects, wich are
    * both subclasses of BaseFlightElement.
@@ -500,14 +483,6 @@ class MapContents : public QObject
    * otherwise "0".
    */
   QBitArray sectionArray;
-  /**
-   * Array containing the elevations of all possible isohypses.
-   */
-  static const int isoLines[];
-  /**
-   * Hash isoLines index
-   */
-  std::map<int, int> isoHash;
   /** */
   QString mapDir;
   /**
@@ -515,17 +490,31 @@ class MapContents : public QObject
    * map-directories.
    */
   bool isFirstLoad;
-  /**
-   * List of all drawn isohypses.
-   * Used to find the elevation belonging to a point on the map.
-   */
-  QList<isoListEntry*> regIsoLines;
 
   /**
-   * List of all loaded isohypses (in world coordinates).
-   * Used to find the elevation belonging to a flightpoint.
+   * List of all drawn isohypses.
    */
-  QList<isoListEntry*> regIsoLinesWorld;
+  IsoList pathIsoLines;
+
+  /**
+   * Elevation where the next search for the current elevation will start.
+   * Set to one level higher than the current level by findElevation().
+   */
+  int _nextIsoLevel;
+  int _lastIsoLevel;
+  bool _isoLevelReset;
+  const IsoListEntry* _lastIsoEntry;
+
+  /**
+   * Array containing the used elevation levels in meters. Is used as help
+   * for reverse mapping elevation to array index.
+   */
+  static const short isoLevels[ISO_LINE_LEVELS];
+
+  /** Hash table with elevation in meters as key and related elevation
+   * index as value
+   */
+  QHash<short, uchar> isoHash;
 
   /**
    * Displays a message box and asks, weather the map files shall be downloaded.

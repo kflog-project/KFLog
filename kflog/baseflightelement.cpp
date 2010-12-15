@@ -17,10 +17,11 @@
 
 #include "baseflightelement.h"
 
-BaseFlightElement::BaseFlightElement(const QString& name, unsigned int typeID,
-      const QString& fName)
-  : BaseMapElement(name, typeID),
-    sourceFileName(fName)
+BaseFlightElement::BaseFlightElement( const QString& name,
+                                      const BaseMapElement::objectType type,
+                                      const QString& fName) :
+  BaseMapElement( name, type ),
+  sourceFileName( fName )
 {
 
 }

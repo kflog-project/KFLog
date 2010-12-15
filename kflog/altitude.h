@@ -7,7 +7,7 @@
 
     email                : axel@kflog.org
 
-    This file is part of Cumulus.
+    This file is part of KFLog4.
 
     $Id: altitude.h 4502 2010-12-09 22:32:02Z axel $
 

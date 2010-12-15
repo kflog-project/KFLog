@@ -162,8 +162,8 @@ void KFLogConfig::slotOk()
   _settings.setValue("/Scale/Border3", reduce3N->value());
 
   _settings.setValue("/MapData/Homesite", homeNameE->text());
-  _settings.setValue("/MapData/HomesiteLatitude", MapContents::degreeToNum(homeLatE-> text()));
-  _settings.setValue("/MapData/HomesiteLongitude", MapContents::degreeToNum(homeLonE-> text()));
+  _settings.setValue("/MapData/HomesiteLatitude", WGSPoint::degreeToNum(homeLatE-> text()));
+  _settings.setValue("/MapData/HomesiteLongitude", WGSPoint::degreeToNum(homeLonE-> text()));
   _settings.setValue("/MapData/ProjectionType", projectionSelect->currentItem());
   _settings.setValue("/MapData/Welt2000CountryFilter", filterE->text());
   _settings.setValue("/MapData/Welt2000HomeRadius", homeRadiusE->text());
@@ -243,12 +243,12 @@ void KFLogConfig::slotSelectProjection(int index)
   switch(currentProjType)
     {
       case ProjectionBase::Lambert:
-        lambertV1 = MapContents::degreeToNum(firstParallel-> text());
-        lambertV2 = MapContents::degreeToNum(secondParallel-> text());
-        lambertOrigin = MapContents::degreeToNum(originLongitude-> text());
+        lambertV1 = WGSPoint::degreeToNum(firstParallel-> text());
+        lambertV2 = WGSPoint::degreeToNum(secondParallel-> text());
+        lambertOrigin = WGSPoint::degreeToNum(originLongitude-> text());
         break;
       case ProjectionBase::Cylindric:
-        cylinPar = MapContents::degreeToNum(firstParallel-> text());
+        cylinPar = WGSPoint::degreeToNum(firstParallel-> text());
         break;
     }
 

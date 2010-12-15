@@ -24,6 +24,7 @@
 #include "airport.h"
 #include "airspace.h"
 #include "basemapelement.h"
+#include "distance.h"
 #include "elevationfinder.h"
 #include "flight.h"
 #include "flightgroup.h"
@@ -39,6 +40,7 @@
 #include "radiopoint.h"
 #include "singlepoint.h"
 #include "welt2000.h"
+#include "wgspoint.h"
 
 // number of last map tile, possible range goes 0...16200
 #define MAX_TILE_NUMBER 16200
@@ -69,10 +71,10 @@
     border.north = lat_temp;   border.south = lat_temp; \
     border.east = lon_temp;    border.west = lon_temp;  \
   } else {                                              \
-    border.north = std::max(border.north, lat_temp);         \
-    border.south = std::min(border.south, lat_temp);         \
-    border.east = std::max(border.east, lon_temp);           \
-    border.west = std::min(border.west, lon_temp);           \
+    border.north = qMax(border.north, lat_temp);        \
+    border.south = qMin(border.south, lat_temp);        \
+    border.east  = qMax(border.east, lon_temp);         \
+    border.west  = qMin(border.west, lon_temp);         \
   }
 
 #define READ_POINT_LIST  in >> locLength; \
@@ -105,10 +107,10 @@
       site->addRunway(rw); \
     }
 
-// List of elevation levels (50 in total):
-const int MapContents::isoLines[] =
+// List of elevation levels in meters (51 in total):
+const short MapContents::isoLevels[] =
 {
-  0, 10, 25, 50, 75, 100, 150, 200, 250,
+  -10, 0, 10, 25, 50, 75, 100, 150, 200, 250,
   300, 350, 400, 450, 500, 600, 700, 800, 900, 1000, 1250, 1500, 1750,
   2000, 2250, 2500, 2750, 3000, 3250, 3500, 3750, 4000, 4250, 4500,
   4750, 5000, 5250, 5500, 5750, 6000, 6250, 6500, 6750, 7000, 7250,
@@ -126,18 +128,18 @@ MapContents::MapContents( QObject* object ) :
 
   // Setup a hash used as reverse mapping from isoLine value to array index to
   // speed up loading of ground and terrain files.
-  for ( int i = 0; i < ISO_LINE_NUM; i++ )
+  for ( int i = 0; i < ISO_LINE_LEVELS; i++ )
     {
-      isoHash.insert( std::pair<int, int>(isoLines[i],i) );
+      isoHash.insert( isoLevels[i], i );
     }
+
+  _nextIsoLevel=10000;
+  _lastIsoLevel=-1;
+  _isoLevelReset=true;
+  _lastIsoEntry=0;
 
   sectionArray.resize(MAX_TILE_NUMBER);
   sectionArray.fill(false);
-
-  for( int loop = 0; loop < ISO_LINE_NUM; loop++ )
-    {
-      isoList.append(new QList<Isohypse*>);
-    }
 
   // Create all needed map directories.
   createMapDirectories();
@@ -152,94 +154,6 @@ MapContents::MapContents( QObject* object ) :
 MapContents::~MapContents()
 {
   qDebug() << "~MapContents()";
-
-  while(!addSitesList.empty())
-        delete addSitesList.takeFirst();
-  while(!airportList.empty())
-      delete airportList.takeFirst();
-  while(!airspaceList.empty())
-      delete airspaceList.takeFirst();
-  while(!cityList.empty())
-      delete cityList.takeFirst();
-//  while(!downloadList.empty())
-//      delete downloadList.takeFirst();
-  while(!gliderfieldList.empty())
-      delete gliderfieldList.takeFirst();
-  while(!flightList.empty())
-      delete flightList.takeFirst();
-  while(!hydroList.empty())
-      delete hydroList.takeFirst();
-  while(!isoList.empty())
-      delete isoList.takeFirst();
-  while(!landmarkList.empty())
-      delete landmarkList.takeFirst();
-  while(!navList.empty())
-      delete navList.takeFirst();
-  while(!obstacleList.empty())
-      delete obstacleList.takeFirst();
-  while(!outLandingList.empty())
-      delete outLandingList.takeFirst();
-  while(!railList.empty())
-      delete railList.takeFirst();
-  while(!regIsoLines.empty())
-      delete regIsoLines.takeFirst();
-  while(!regIsoLinesWorld.empty())
-      delete regIsoLinesWorld.takeFirst();
-  while(!reportList.empty())
-      delete reportList.takeFirst();
-  while(!roadList.empty())
-      delete roadList.takeFirst();
-//  while(!stationList.empty())
-//      delete stationList.takeFirst();
-  while(!topoList.empty())
-      delete topoList.takeFirst();
-  while(!villageList.empty())
-      delete villageList.takeFirst();
-  while(!wpList.empty())
-      delete wpList.takeFirst();
-}
-
-int MapContents::degreeToNum(QString inDegree)
-{
-  /*
-   * needed formats:
-   *
-   *  [g]gg° mm' ss"
-   *  dddddddddd
-   */
-  QRegExp degree("^[0-9]?[0-9][0-9]°[ ]*[0-9][0-9]'[ ]*[0-9][0-9]\"");
-  QRegExp number("^-?[0-9]+$");
-
-  if(number.indexIn(inDegree) != -1)
-      return inDegree.toInt();
-  else if(degree.indexIn(inDegree) != -1)
-    {
-      int deg = 0, min = 0, sec = 0, result = 0;
-
-      QRegExp deg1("°");
-      deg = inDegree.mid(0, deg1.indexIn(inDegree)).toInt();
-      inDegree = inDegree.mid(deg1.indexIn(inDegree) + 1, inDegree.length());
-
-      QRegExp deg2("'");
-      min = inDegree.mid(0, deg2.indexIn(inDegree)).toInt();
-      inDegree = inDegree.mid(deg2.indexIn(inDegree) + 1, inDegree.length());
-
-      QRegExp deg3("\"");
-      sec = inDegree.mid(0, deg3.indexIn(inDegree)).toInt();
-
-      result = (int)((600000.0 * deg) + (10000.0 * (min + (sec / 60.0))));
-
-      // We add 1 to avoid rounding-errors ...
-      result += 1;
-
-      QRegExp dir("[swSW]$");
-      if(dir.indexIn(inDegree) >= 0) return -result;
-
-      return result;
-    }
-
-  // Wrong format!!!
-  return 0;
 }
 
 void MapContents::closeFlight()
@@ -414,23 +328,29 @@ void MapContents::slotReloadWelt2000Data()
 }
 
 bool MapContents::__readTerrainFile( const int fileSecID,
-                                     const int fileTypeID)
+                                     const int fileTypeID )
 {
   extern const MapMatrix *_globalMapMatrix;
+
+  if ( fileTypeID != FILE_TYPE_TERRAIN && fileTypeID != FILE_TYPE_GROUND )
+    {
+      qWarning( "Requested terrain file type 0x%X is unsupported!", fileTypeID );
+      return false;
+    }
 
   QString path, file;
 
   path = getMapRootDirectory() + "/landscape/";
 
-  file.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
+  file.sprintf( "%c_%.5d.kfl", fileTypeID, fileSecID );
 
   QString pathName = path + file;
 
   QFile mapfile(pathName);
 
-  if(!mapfile.open(QIODevice::ReadOnly))
+  if( ! mapfile.open(QIODevice::ReadOnly) )
     {
-      qWarning() << "KFLog: Can not open terrain file" << pathName;
+      qWarning() << "KFLog: Can not open Terrain file" << pathName;
 
       int answer = __askUserForDownload();
 
@@ -440,115 +360,179 @@ bool MapContents::__readTerrainFile( const int fileSecID,
         }
       else
         {
-          qDebug() << "No Auto Download";
+          qDebug() << "Auto download is disabled! Bye";
         }
 
       return false;
     }
 
   QDataStream in(&mapfile);
-  in.setVersion(6);  // QDataStream::Qt_3_3
+  in.setVersion(QDataStream::Qt_3_3);
 
-  Q_INT8 loadTypeID;
-  Q_UINT16 loadSecID, formatID;
-  Q_UINT32 magic;
+  // qDebug("reading file %s", pathName.toLatin1().data());
+
+  qint8 loadTypeID;
+  quint16 loadSecID, formatID;
+  quint32 magic;
   QDateTime createDateTime;
 
   in >> magic;
-  if(magic != KFLOG_FILE_MAGIC) {
-    // not a .kfl file
-    qWarning("KFLog: Trying to open old or invalid map-file; aborting!");
-    qWarning("%s", (const char*)pathName);
-    return false;
-  }
-
   in >> loadTypeID;
-  if(loadTypeID != fileTypeID) {
-    // wrong data type
-    return false;
-  }
-
   in >> formatID;
-  // Determine, which file format id is expected
-  int expFormatID, expOldFormatID;
-
-  if ( fileTypeID == FILE_TYPE_TERRAIN ) {
-    expFormatID = FILE_VERSION_TERRAIN;
-    expOldFormatID = FILE_VERSION_TERRAIN_OLD;
-  } else {
-    expFormatID = FILE_VERSION_GROUND;
-    expOldFormatID = FILE_VERSION_GROUND_OLD;
-  }
-
-  if (formatID < expFormatID && formatID != expOldFormatID) {
-    qWarning("KFLog: File format too old! (version %d, expecting: %d)",
-        formatID, expFormatID );
-    return false;
-  } else if (formatID > expFormatID) {
-    qWarning("KFLog: File format too new! (version %d, expecting: %d)",
-        formatID, expFormatID );
-    return false;
-  }
-
-#warning "Remove fallback terrain solution from code"
-
-  if (formatID == expOldFormatID)
-    {   // this is for old terrain and ground files
-      qWarning("KFLog: You are using old map files. Please consider re-installing\n"
-              "       the terrain and ground files. Support for the old file format\n"
-              "       will cease in the next major KFLog release.");
-    }
-
   in >> loadSecID;
-  if(loadSecID != fileSecID) {
-    // wrong tile number.
-    return false;
-  }
-
   in >> createDateTime;
 
+  if( magic != KFLOG_FILE_MAGIC )
+    {
+      mapfile.close();
+
+      // We remove the wrong file to over come this dead lock by a new download
+      // of this file from the KFLog map room..
+      unlink( pathName.toLatin1().data() );
+
+      qWarning( "KFLog: %s Wrong magic key %x read! Abort loading...",
+                pathName.toLatin1().data(), magic );
+
+      return false;
+    }
+
+  if( loadTypeID != fileTypeID ) // wrong type
+    {
+      mapfile.close();
+
+      // We remove the wrong file to over come this dead lock by a new download
+      // of this file from the KFLog map room..
+      unlink( pathName.toLatin1().data() );
+
+      qWarning("KFLog: %s Wrong load type identifier %x read! Abort loading...",
+                pathName.toLatin1().data(), loadTypeID );
+
+      return false;
+    }
+
+  // Determine, which file format id is expected
+  int expFormatID;
+
+  if ( fileTypeID == FILE_TYPE_TERRAIN )
+    {
+      expFormatID = FILE_VERSION_TERRAIN;
+    }
+  else
+    {
+      expFormatID = FILE_VERSION_GROUND;
+    }
+
   qDebug("Reading File=%s, Magic=0x%x, TypeId=%c, formatId=%d, Date=%s",
-         file.toLatin1().data(), magic, loadTypeID, formatID,
+         pathName.toLatin1().data(), magic, loadTypeID, formatID,
          createDateTime.toString(Qt::ISODate).toLatin1().data() );
 
-  while(!in.eof())
+  // Check map file
+  if ( formatID < expFormatID )
     {
-      Q_UINT8 type;
-      Q_INT16 elevation;
-      Q_INT8 valley, sort;
-      Q_INT32 locLength, latList_temp, lonList_temp;
-
-      if (formatID == expOldFormatID) {   // this is for old terrain and ground files
-        in >> type;
-        in >> elevation;
-        in >> valley;
-        in >> sort;
-        in >> locLength;
-      } else {
-        in >> elevation;
-        in >> locLength;
-      }
-
-      if (elevation < 0) {
-        elevation = 0;
-      }
-
-      Q3PointArray tA(locLength);
-
-      for(int i = 0; i < locLength; i++) {
-        in >> latList_temp;
-        in >> lonList_temp;
-
-        tA.setPoint(i, _globalMapMatrix->wgsToMap(latList_temp, lonList_temp));
-      }
-
-      sort = 0;
-      valley = 0;
-
-      Isohypse* newItem = new Isohypse(tA, elevation, valley);
-      isoList.at(isoHash[elevation])->append(newItem);
-
+      // too old ...
+      qWarning("KFLog: File format too old! (version %d, expecting: %d) "
+               "Aborting ...", formatID, expFormatID );
+      return false;
     }
+  else if (formatID > expFormatID )
+    {
+      // too new ...
+      qWarning("KFLog: File format too new! (version %d, expecting: %d) "
+               "Aborting ...", formatID,expFormatID );
+      return false;
+    }
+
+  if ( loadSecID != fileSecID )
+    {
+      mapfile.close();
+      unlink( pathName.toLatin1().data() );
+
+      qWarning("KFLog: %s: Wrong section, bogus file name! Arborting ...",
+               pathName.toLatin1().data() );
+
+      return false;
+    }
+
+  while ( ! in.atEnd() )
+    {
+      qint16 elevation;
+      qint32 pointNumber, lat, lon;
+      QPolygon isoline;
+
+      in >> elevation;
+      in >> pointNumber;
+      isoline.resize( pointNumber );
+
+      for (int i = 0; i < pointNumber; i++)
+        {
+          in >> lat;
+          in >> lon;
+
+          // This is what causes the long delays, lots of floating point calculations
+          isoline.setPoint( i, _globalMapMatrix->wgsToMap(lat, lon));
+        }
+
+      // Check, if first point and last point of the isoline identical. In this
+      // case we can remove the last point and repeat the check.
+      for( int i = isoline.size() - 1; i >= 0; i-- )
+        {
+          if( isoline.point(0) == isoline.point(i) )
+             {
+               //qWarning( "Isoline Tile=%d has same start and end point. Remove end point.",
+               //           loadSecID );
+
+               // remove last point and check again
+               isoline.remove(i);
+               continue;
+             }
+
+          break;
+        }
+
+      if( isoline.size() < 3)
+        {
+          // ignore to small isolines
+          qWarning( "Isoline Tile=%d, elevation=%dm has to less points!",
+                     loadSecID, elevation );
+          continue;
+        }
+
+      // determine elevation index, 0 is returned as default for not existing values
+      uchar elevationIdx = isoHash.value( elevation, 0 );
+
+      Isohypse newItem( isoline, elevation, elevationIdx, fileSecID, fileTypeID );
+
+      // Check in which map the isohypse has to be stored. We do use two
+      // different maps, one for Ground and another for Terrain. The default
+      // is set to terrain because there are a lot more.
+      QMap<int, QList<Isohypse> > *usedMap = &terrainMap;
+
+      if( fileTypeID == FILE_TYPE_GROUND )
+        {
+          usedMap = &groundMap;
+        }
+
+      // Store new isohypse in the isomap. The tile section identifier is the key.
+      if( usedMap->contains( fileSecID ))
+        {
+          // append isohypse to existing vector
+          QList<Isohypse>& isoList = (*usedMap)[fileSecID];
+          isoList.append( newItem );
+        }
+      else
+        {
+          // create a new entry in the isomap
+          QList<Isohypse> isoList;
+          isoList.append( newItem );
+          usedMap->insert( fileSecID, isoList );
+        }
+
+      // qDebug("Isohypse added: Size=%d, Elevation=%d, FileTypeID=%c",
+      //       isoline.size(), elevation, fileTypeID );
+    }
+
+  // qDebug("loop=%d", loop);
+  mapfile.close();
 
   return true;
 }
@@ -583,7 +567,7 @@ bool MapContents::__readBinaryFile(const int fileSecID,
     }
 
   QDataStream in(&mapfile);
-  in.setVersion(6);  // QDataStream::Qt_3_3
+  in.setVersion(QDataStream::Qt_2_0);
 
   Q_UINT8 typeIn, lm_typ, index;
   Q_INT8 loadTypeID, sort, elev;
@@ -1111,7 +1095,10 @@ void MapContents::slotReloadMapData()
   railList.clear();
   hydroList.clear();
   topoList.clear();
-  isoList.clear();
+
+  // all isolines are cleared
+  groundMap.clear();
+  terrainMap.clear();
 
   for(int loop = 0; loop < ISO_LINE_NUM; loop++)
     {
@@ -1247,55 +1234,96 @@ void MapContents::drawList( QPainter* targetPainter,
     }
 }
 
-void MapContents::drawIsoList(QPainter* targetP, QPainter* maskP)
+void MapContents::drawIsoList( QPainter* targetP )
 {
-  int height = 0;
-  bool useIsohypseElevationList = ElevationFinder::instance()->useIsohypseForElevation();
+  // qDebug() << "MapContents::drawIsoList():";
+  QTime t;
+  t.start();
 
-  extern MapConfig *_globalMapConfig;
+  extern MapMatrix* _globalMapMatrix;
 
-  regIsoLines.clear();
+  _lastIsoEntry = 0;
+  _isoLevelReset = true;
+  pathIsoLines.clear();
 
-  QList<Isohypse*> *iso;
-  foreach(iso, isoList)
+  int count = 1; // draw only the ground
+
+  bool drawTerrain = true; // Could be switched off
+
+  // shall we draw the terrain too?
+  if( drawTerrain )
     {
-      if(iso->count() == 0) continue;
+      count++; // yes
+    }
 
-      for(unsigned int pos = 0; pos < ISO_LINE_NUM; pos++)
+  QMap< int, QList<Isohypse> >* isoMaps[2] = { &groundMap, &terrainMap };
+
+  for( int i = 0; i < count; i++ )
+    {
+      // assign the map to be drawn to the iterator
+      QMapIterator<int, QList<Isohypse> > it(*isoMaps[i]);
+
+      while (it.hasNext())
         {
-          if(isoLines[pos] == iso->first()->getElevation())
-            {
-              if(iso->first()->isValley())
-                  height = pos + 1;
-              else
-                  height = pos + 2;
+          // Iterate over all tiles in the isomap and fetch the isoline lists.
+          // The isoline list contains all isolines of a tile in ascending order.
+          it.next();
 
-              break;
+          // Check, if tile has a map overlapping otherwise we can ignore it
+          // completely.
+          QRect mapBorder = _globalMapMatrix->getViewBorder();
+
+          if( getTileBox( it.key() ).intersects(mapBorder) == false )
+            {
+              // qDebug("Tile=%d do not intersect", it.key() );
+              continue;
             }
-        }
 
-      targetP->setPen(QPen(_globalMapConfig->getIsoColor(height), 1, Qt::SolidLine));
-      targetP->setBrush(QBrush(_globalMapConfig->getIsoColor(height),
-          Qt::SolidPattern));
+          const QList<Isohypse> &isoList = it.value();
 
-      Isohypse *iso2;
-      foreach(iso2, *iso)
-        {
-          QRegion * reg = iso2->drawRegion(targetP, maskP);
-          if(reg)
+          for (int i = 0; i < isoList.size(); i++)
             {
-              isoListEntry* entry=new isoListEntry(reg, height);
-              regIsoLines.append(entry);
-            }
-          if( !(iso2 -> regionStored) && useIsohypseElevationList)
-            {
-              iso2->regionStored = true;
-              // AS: There is a problem with creating regions with large coordinates, or so it seems.
-              isoListEntry* entry=new isoListEntry( iso2->getRegion(), height );
-              regIsoLinesWorld.append( entry );
+              Isohypse isoLine = isoList.at(i);
+
+              // Choose contour color.
+              // The index of the isoList has a fixed relation to the isocolor list
+              // normally with an offset of one.
+              int colorIdx = isoLine.getElevationIndex();
+
+              targetP->setPen(QPen(_globalMapConfig->getIsoColor(colorIdx), 1, Qt::SolidLine));
+              targetP->setBrush(QBrush(_globalMapConfig->getIsoColor(colorIdx), Qt::SolidPattern));
+
+              // draw the single isoline
+              QPainterPath* Path = isoLine.drawRegion( targetP,
+                                                       _globalMapView->rect(),
+                                                       true,
+                                                       isolines );
+              if( Path )
+                {
+                  // store drawn path in extra list for elevation finding
+                  IsoListEntry entry( Path, isoLine.getElevation() );
+                  pathIsoLines.append( entry );
+                  //qDebug("  added Iso: %04x, %d", (int)reg, iso2.getElevation() );
+                }
             }
         }
     }
+
+  pathIsoLines.sort();
+  _isoLevelReset = false;
+
+  qDebug( "IsoList, drawTime=%dms", t.elapsed() );
+
+#if 0
+  QString isos;
+
+  for ( int l = 0; l < pathIsoLines.count(); l++ )
+    {
+      isos += QString("%1, ").arg(pathIsoLines.at(l).height);
+    }
+
+  qDebug( isos.toLatin1().data() );
+#endif
 }
 
 void MapContents::addDir (QStringList& list, const QString& _path, const QString& filter)
@@ -1617,21 +1645,6 @@ QString MapContents::genTaskName(QString suggestion)
 }
 
 
-/***********************************************
- * isoListEntry
- ***********************************************/
-
-isoListEntry::isoListEntry(QRegion* region, int height)
-{
-  this->region=region;
-  this->height=height;
-}
-
-isoListEntry::~isoListEntry()
-{
-  if(region) delete region;
-}
-
 /** Re-projects any flights and tasks that may be loaded. */
 void MapContents::reProject()
 {
@@ -1640,20 +1653,107 @@ void MapContents::reProject()
       flight->reProject();
 }
 
-/*!
-    \fn MapContents::getElevation(QPoint)
- */
-int MapContents::getElevation(QPoint coord)
-{
-  isoListEntry* entry;
-  int height=-1; //default 'unknown' value
 
-  for(int i = 0; i < regIsoLinesWorld.count(); i++) {
-    entry = regIsoLinesWorld.at(i);
-    if (entry->region->contains(coord))
-      height = qMax(height,entry->height);
-  }
-  if (height == -1)
-    return height;
-  return topoLevels[height];
+int MapContents::getElevation( const QPoint& coordMap, Distance* errorDist )
+{
+  const IsoListEntry* entry = 0;
+  int height = -1;
+  double error = 0.0;
+
+  // Use this only if input coordinate are WGS84 based
+  //QPoint coordP1 = _globalMapMatrix->wgsToMap(coordP.x(), coordP.y());
+  //QPoint coord   = _globalMapMatrix->map(coordP1);
+
+  QPoint coord = coordMap;
+
+  IsoList* list = getIsohypseRegions();
+
+  // qDebug("list->count() %d", list->count() );
+  //qDebug("==searching for elevation==");
+  //qDebug("_lastIsoLevel %d, _nextIsoLevel %d",_lastIsoLevel, _nextIsoLevel);
+  if (_isoLevelReset)
+    {
+      qDebug("findElevation: Busy rebuilding the isomap. Returning last known result...");
+      return _lastIsoLevel;
+    }
+
+  int cnt = list->count();
+
+  for ( int i=0; i<cnt; i++ )
+    {
+      entry = &(list->at(i));
+      // qDebug("i: %d entry->height %d contains %d",i,entry->height, entry->path->contains(coord) );
+      // qDebug("Point x:%d y:%d", coord.x(), coord.y() );
+      // qDebug("boundingRect l:%d r:%d t:%d b:%d", entry->path->boundingRect().left(),
+      //                                 entry->path->boundingRect().right(),
+      //                                 entry->path->boundingRect().top(),
+      //                                 entry->path->boundingRect().bottom() );
+
+      if (entry->height > height && /*there is no reason to search a lower level if we already have a hit on a higher one*/
+          entry->height <= _nextIsoLevel) /* since the odds of skipping a level between two fixes are not too high, we can ignore higher levels, making searching more efficient.*/
+        {
+          if (entry->height == _lastIsoLevel && _lastIsoEntry)
+            {
+              //qDebug("Trying previous entry...");
+              if (_lastIsoEntry->path->contains(coord))
+                {
+                  height = qMax(height, entry->height);
+                  //qDebug("Found on height %d",entry->height);
+                  break;
+                }
+            }
+
+          if (entry == _lastIsoEntry)
+            {
+              continue; //we already tried this one, and it wasn't it.
+            }
+
+          //qDebug("Probing on height %d...", entry->height);
+
+          if (entry->path->contains(coord))
+            {
+              height = qMax(height,entry->height);
+              //qDebug("Found on height %d",entry->height);
+              _lastIsoEntry = entry;
+              break;
+            }
+        }
+    }
+
+  _lastIsoLevel = height;
+
+  // if errorDist is set, set the correct error margin and correct height.
+  if(errorDist)
+    {
+      // The real altitude is between the current and the next
+      // isolevel, therefore reduce error by taking the middle
+      if ( height <100 )
+        {
+          _nextIsoLevel = height+25;
+          height += 12;
+          error=12.5;
+        }
+      else if ( (height >=100) && (height < 500) )
+        {
+          _nextIsoLevel = height+50;
+          height += 25;
+          error=25.0;
+        }
+      else if ( (height >=500) && (height < 1000) )
+        {
+          _nextIsoLevel = height+100;
+          height += 50;
+          error=50.0;
+        }
+      else
+        {
+          _nextIsoLevel = height+250;
+          height += 125;
+          error = 125.0;
+        }
+
+      errorDist->setMeters(error);
+    }
+
+  return height;
 }

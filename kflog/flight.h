@@ -186,8 +186,9 @@ class Flight : public BaseFlightElement
      * from BaseMapElement.
      * @param  targetP  The painter to draw the element into.
      * @param  maskP  The maskpainter for targetP
+     * \return always true
      */
-    virtual void drawMapElement(QPainter* targetP, QPainter* maskP);
+    virtual bool  drawMapElement(QPainter* targetP, QPainter* maskP);
     /** */
     virtual void printMapElement(QPainter* printP, bool isText);
     /**

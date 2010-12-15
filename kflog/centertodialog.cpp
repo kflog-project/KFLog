@@ -65,6 +65,6 @@ void CenterToDialog::slotOk()
 {
   hide();
   qApp->processEvents();
-  emit centerTo(MapContents::degreeToNum(latE->text()), MapContents::degreeToNum(longE->text()));
+  emit centerTo(WGSPoint::degreeToNum(latE->text()), WGSPoint::degreeToNum(longE->text()));
   close();
 }

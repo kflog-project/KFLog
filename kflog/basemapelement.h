@@ -2,44 +2,54 @@
 **
 **   basemapelement.h
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog4
 **
 ************************************************************************
 **
-**   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
+**   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
+**                   2008-2010 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
 /**
- * @short Baseclass for all mapelements
+ * \class BaseMapElement
  *
- * This is the baseclass for all mapelements. The class will be inherited
+ * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
+ *
+ * \brief Base class for all map elements
+ *
+ * This is the base class for all map elements. The class will be inherited
  * by all classes implementing the map-elements. The class provides several
- * virtual function for writing and drawing the elements. Additionaly,
- * the cass provides two enums for the element-type and the type of
+ * virtual function for writing and drawing the elements. Additionally,
+ * the class provides two enumerations for the element-type and the type of
  * elevation-values.
  *
+ * \date 2000-2010
  */
 
-#ifndef BASEMAPELEMENT_H
-#define BASEMAPELEMENT_H
+#ifndef BASE_MAP_ELEMENT_H
+#define BASE_MAP_ELEMENT_H
+
+#include "resource.h"
 
 #include <QPainter>
+#include <QString>
+#include <QHash>
+#include <QStringList>
 
-#include "mapconfig.h"
 #include "mapmatrix.h"
-#include "resource.h"
+#include "mapconfig.h"
 
 class BaseMapElement
 {
 public:
   /**
-   * List of all accessable element-types:
+   * List of all accessible element-types:
    * @see #typeID
    */
   enum objectType {
@@ -49,9 +59,9 @@ public:
     MilHeliport = MIL_HELIPORT, AmbHeliport = AMB_HELIPORT, Glidersite = GLIDERSITE, UltraLight = ULTRALIGHT,
     HangGlider = HANGGLIDER, Parachute = PARACHUTE, Balloon = BALLOON, Outlanding = OUTLANDING, Vor = VOR,
     VorDme = VORDME, VorTac = VORTAC, Ndb = NDB, CompPoint = COMPPOINT,
-    AirA = AIR_A, AirB = AIR_B, AirC = AIR_C, AirD = AIR_D, AirElow = AIR_E_LOW, AirEhigh = AIR_E_HIGH,
+    AirA = AIR_A, AirB = AIR_B, AirC = AIR_C, AirD = AIR_D, AirElow = AIR_E_LOW, AirEhigh = AIR_E_HIGH, WaveWindow = WAVE_WINDOW,
     AirF = AIR_F, ControlC = CONTROL_C, ControlD = CONTROL_D, Danger = DANGER,
-    LowFlight = LOW_FLIGHT, Restricted = RESTRICTED, Prohibited = PROHIBITED, Tmz = TMZ, SuSector = SU_SECTOR, Obstacle = OBSTACLE,
+    LowFlight = LOW_FLIGHT, Restricted = RESTRICTED, Prohibited = PROHIBITED, Tmz = TMZ, GliderSector = GLIDER_SECTOR, Obstacle = OBSTACLE,
     LightObstacle = LIGHT_OBSTACLE, ObstacleGroup = OBSTACLE_GROUP, LightObstacleGroup = LIGHT_OBSTACLE_GROUP,
     Spot = SPOT, Isohypse = ISOHYPSE, Glacier = GLACIER, PackIce = PACK_ICE, Border = BORDER, City = CITY,
     Village = VILLAGE, Landmark = LANDMARK, Highway = HIGHWAY, Road = ROAD, Railway = RAILWAY,
@@ -63,16 +73,20 @@ public:
     objectTypeSize /* leave this at the end */};
 
   /**
-   * The three types of elevation-data used in the maps.
+   * The five types of elevation-data used in the maps.
    */
-  enum elevationType {NotSet, MSL, GND, FL, STD, UNLTD};
+  enum elevationType { NotSet, MSL, GND, FL, STD, UNLTD };
 
   /**
-   * Creates a new (virtual) mapelement.
+   * Creates a new (virtual) map element.
+   *
    * @param  name  The name of the element.
-   * @param  typeID  The typeid of the element.
+   * @param  typeID  The type id of the element.
+   * @param  secID The number of the map segment.
    */
-  BaseMapElement(const QString& name = QString::null, unsigned int typeID = 0);
+  BaseMapElement( const QString& name,
+                  const objectType typeID = NotSelected,
+                  const unsigned short secID=0 );
 
   /**
    * Destructor
@@ -84,9 +98,10 @@ public:
    *
    * The function must be implemented in the child-classes.
    * @param  targetP  The painter to draw the element into.
-   * @param  maskP  The maskpainter for targetP
+   * @param  maskP    The maskpainter for targetP
+   * @return true, if element was drawn otherwise false.
    */
-  virtual void drawMapElement(QPainter* targetP, QPainter* maskP) = 0;
+  virtual bool drawMapElement(QPainter* targetP, QPainter* maskP) = 0;
 
   /**
    * Virtual function for printing the element.
@@ -94,19 +109,35 @@ public:
    * The function must be implemented in the child-classes.
    * @param  printP  The painter to draw the element into.
    *
-   * @param  isText  Shows, if the text of some mapelements should
-   *                 be printed.
+   * @param  isText  Shows, if the text of some map elements should be printed.
    */
-  virtual void printMapElement(QPainter* printP, bool isText) = 0;
+  virtual void printMapElement(QPainter* printP, bool isText);
 
   /**
    * @return the name of the element.
    */
-  virtual QString getName() const;
+  virtual const QString& getName() const
+  {
+    return name;
+  };
+
   /**
    * @return the typeID of the element.
    */
-  virtual unsigned int getTypeID() const;
+  virtual objectType getTypeID() const
+  {
+    return typeID;
+  };
+
+  /**
+   * Used to return a info string about the element.
+   * Should be reimplemented in subclasses.
+   */
+  virtual QString getInfoString() const
+    {
+      return QString( "" );
+    };
+
   /**
    * Initializes the static members of BaseMapelement.
    * @see glMapMatrix
@@ -115,25 +146,56 @@ public:
   static void initMapElement(MapMatrix* matrix, MapConfig* config);
 
   /**
-   * List of all accessable element-types.
-   *
-   * NOTE:  All changes shall be made in resource.h, because that file is shared with our
-   * map-conferting tools.  Otherwise it could lead to mapfiles not loadable anymore.
-   *
-   * @see #typeID
+   * Get translation string for BaseMapelement object type.
    */
+  static QString item2Text( const int objectType, QString defaultValue=QString("") );
+
+  /**
+   * Get BaseMapelement objectType for translation string.
+   */
+  static int text2Item( const QString& text );
+
+  /**
+   * Get sorted translations
+   */
+  static QStringList& getSortedTranslationList();
+
+  /**
+   * Write property of MapSegment.
+   */
+  virtual void setMapSegment( const unsigned short _newVal )
+    {
+      MapSegment = _newVal;
+    };
+
+  /**
+   * Read property of MapSegment.
+   */
+  virtual unsigned short getMapSegment() const
+    {
+      return MapSegment;
+    };
+
+  /**
+   * Compare two map elements by their names
+   */
+  bool operator < (const BaseMapElement& other) const
+    {
+      return getName() < other.getName();
+    };
+
+  /**
+   * Proofs, if the object is in the drawing area of the map.
+   *
+   * The function must be implemented in the derived classes.
+   * @return "true/false"
+   */
+  virtual bool isVisible() { return true; };
 
 protected:
-  /**
-   * Proofes, if the object is in the drawing-area of the map.
-   *
-   * The function must be implemented in the child-classes.
-   * @return "true"
-   */
-  virtual bool __isVisible() const;
 
   /**
-   * The name of the mapelement.
+   * The name of the map element.
    */
   QString name;
 
@@ -142,7 +204,18 @@ protected:
    * switch will produce no warnings ..
    * @see #objectType
    */
-  unsigned int typeID;
+  objectType typeID;
+
+  /**
+   * Static pointer to object translation relations
+   */
+  static QHash<int, QString> objectTranslations;
+  static QStringList sortedTranslations;
+
+  /**
+   * Static method for loading of object translations
+   */
+  static void loadTranslations();
 
   /**
    * Static pointer to _globalMapMatrix
@@ -156,6 +229,11 @@ protected:
    */
   static MapConfig* glConfig;
 
+  /**
+   * Holds the id of the map segment this map element belongs to.
+   * Storing this will enable unloading elements that are no longer needed.
+   */
+  unsigned short MapSegment;
 };
 
 #endif

@@ -361,8 +361,8 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
         w->name = waypointDlg->name->text().left(6).upper();
         w->description = waypointDlg->description->text();
         w->type = waypointDlg->getWaypointType();
-        w->origP.setLat(_globalMapContents->degreeToNum(waypointDlg->latitude->text()));
-        w->origP.setLon(_globalMapContents->degreeToNum(waypointDlg->longitude->text()));
+        w->origP.setLat(WGSPoint::degreeToNum(waypointDlg->latitude->text()));
+        w->origP.setLon(WGSPoint::degreeToNum(waypointDlg->longitude->text()));
         w->elevation = waypointDlg->elevation->text().toInt();
         w->icao = waypointDlg->icao->text().upper();
         w->frequency = waypointDlg->frequency->text().toDouble();
@@ -811,15 +811,15 @@ void Waypoints::getFilterData()
   currentWaypointCatalog->showOutlanding = importFilterDlg->outlanding->isChecked();
   currentWaypointCatalog->showStation = importFilterDlg->station->isChecked();
 
-  currentWaypointCatalog->areaLat1 = _globalMapContents->degreeToNum(importFilterDlg->fromLat->text());
-  currentWaypointCatalog->areaLat2 = _globalMapContents->degreeToNum(importFilterDlg->toLat->text());
-  currentWaypointCatalog->areaLong1 = _globalMapContents->degreeToNum(importFilterDlg->fromLong->text());
-  currentWaypointCatalog->areaLong2 = _globalMapContents->degreeToNum(importFilterDlg->toLong->text());
+  currentWaypointCatalog->areaLat1 = WGSPoint::degreeToNum(importFilterDlg->fromLat->text());
+  currentWaypointCatalog->areaLat2 = WGSPoint::degreeToNum(importFilterDlg->toLat->text());
+  currentWaypointCatalog->areaLong1 = WGSPoint::degreeToNum(importFilterDlg->fromLong->text());
+  currentWaypointCatalog->areaLong2 = WGSPoint::degreeToNum(importFilterDlg->toLong->text());
 
   switch (importFilterDlg->getCenterRef()) {
   case CENTER_POS:
-    currentWaypointCatalog->radiusLat = _globalMapContents->degreeToNum(importFilterDlg->posLat->text());
-    currentWaypointCatalog->radiusLong = _globalMapContents->degreeToNum(importFilterDlg->posLong->text());
+    currentWaypointCatalog->radiusLat = WGSPoint::degreeToNum(importFilterDlg->posLat->text());
+    currentWaypointCatalog->radiusLong = WGSPoint::degreeToNum(importFilterDlg->posLong->text());
     break;
   case CENTER_HOMESITE:
     currentWaypointCatalog->radiusLat = _settings.readNumEntry("/MapData/HomesiteLatitude");

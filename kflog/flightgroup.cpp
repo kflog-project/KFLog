@@ -39,13 +39,15 @@ QList<Waypoint*> FlightGroup::getWPList()
   return tmp;
 }
 
-void FlightGroup::drawMapElement(QPainter* targetP, QPainter* maskP)
+bool FlightGroup::drawMapElement(QPainter* targetP, QPainter* maskP)
 {
   Flight::Flight *f;
   for(int i = 0; i < flightList.count(); i++) {
     f = flightList.at(i);
     f->drawMapElement(targetP, maskP);
   }
+
+  return true;
 }
 
 void FlightGroup::printMapElement(QPainter* targetP, bool isText)

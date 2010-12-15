@@ -869,6 +869,7 @@ void MainWindow::slotModifyMenu()
             flightAnimateEnd->setEnabled(true);
             windowMenu->setEnabled(true);
             break;
+
           case BaseMapElement::Task:
             fileClose->setEnabled(true);
             filePrintFlight->setEnabled(true);
@@ -889,6 +890,7 @@ void MainWindow::slotModifyMenu()
             flightAnimateEnd->setEnabled(false);
             windowMenu->setEnabled(true);
             break;
+
           case BaseMapElement::FlightGroup:
             fileClose->setEnabled(true);
             filePrintFlight->setEnabled(true);
@@ -908,6 +910,9 @@ void MainWindow::slotModifyMenu()
             flightAnimateHome->setEnabled(true);
             flightAnimateEnd->setEnabled(true);
             windowMenu->setEnabled(true);
+            break;
+
+          default:
             break;
         }
   }

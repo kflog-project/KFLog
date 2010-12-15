@@ -51,32 +51,6 @@
 #define HOME_DEFAULT_LAT 29125200
 #define HOME_DEFAULT_LON 5364500
 
-
-/*************************************************************************
-**
-** WGSPoint
-**
-*************************************************************************/
-
-WGSPoint::WGSPoint()
-  : QPoint()
-{
-
-}
-
-WGSPoint::WGSPoint(int lat, int lon)
-  : QPoint(lat, lon)
-{
-
-}
-
-WGSPoint &WGSPoint::operator=( const QPoint &p )
-{
-  setPos(p.x(), p.y());
-  return *this;
-}
-
-
 /*************************************************************************
 **
 **  MapMatrix
@@ -86,8 +60,13 @@ extern QSettings _settings;
 
 MapMatrix::MapMatrix( QObject* object ) :
   QObject( object ),
-  mapCenterLat(0), mapCenterLon(0), printCenterLat(0), printCenterLon(0),
-  cScale(0), rotationArc(0), printArc(0)
+  mapCenterLat(0),
+  mapCenterLon(0),
+  printCenterLat(0),
+  printCenterLon(0),
+  cScale(0),
+  rotationArc(0),
+  printArc(0)
 {
   qDebug() << "MapMatrix()";
 
@@ -174,12 +153,31 @@ bool MapMatrix::isVisible(const QPoint& pos) const
 bool MapMatrix::isVisible(const QRect& itemBorder) const
 {
   // Grenze: Nahe 15Bit
-  // Vereinfachung kann zu Fehlern f�hren ...
+  // Vereinfachung kann zu Fehlern führen ...
   return ( ( mapBorder.intersects(itemBorder) ) &&
            ( itemBorder.width() * ( MAX_SCALE / cScale ) < 30000 ) &&
            ( itemBorder.height() * ( MAX_SCALE / cScale ) < 30000 ) );
 }
 
+bool MapMatrix::isVisible( const QRect& itemBorder, int typeID) const
+{
+  // qDebug("MapMatrix::isVisible(): w=%d h=%d", itemBorder.width(), itemBorder.height() );
+  if( typeID == BaseMapElement::Highway ||
+      typeID == BaseMapElement::Road ||
+      typeID == BaseMapElement::Trail ||
+      typeID == BaseMapElement::Railway ||
+      typeID == BaseMapElement::Railway_D ||
+      typeID == BaseMapElement::Aerial_Cable )
+    {
+      return ( ( mapBorder.intersects(itemBorder) ) &&
+               (itemBorder.width() < 10000) && (itemBorder.height() < 10000) );
+    }
+
+  return ( ( mapBorder.intersects(itemBorder) ) &&
+           (itemBorder.width() < 10000) && (itemBorder.height() < 10000) &&
+           (( itemBorder.width()*8  > ( cScale  ) ) ||
+            ( itemBorder.height()*8 > ( cScale  ) )) );
+}
 
 int MapMatrix::getScaleRange()  const
 {

@@ -403,6 +403,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
     }
 
+    // FIXME: check, what coordinates have to be used!
     __findElevation(current);
 
     if (dragZoomRect){
@@ -713,12 +714,12 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
 
   if(!taskPointList.isEmpty() && event->state() == Qt::ControlModifier)
     {
-      // gleicher Punkt --> l�schen
+      // gleicher Punkt --> löschen
       for(unsigned int n = taskPointList.count() - 1; n > 0; n--)
         {
           if(wp.projP == taskPointList.at(n)->projP)
             {
-//              warning("l�sche Punkt %d", n);
+//              warning("lösche Punkt %d", n);
               taskPointList.removeAt(n);
             }
         }
@@ -741,8 +742,8 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
         {
           if(planning == 1)
             {
-              // neuen Punkt an Task Liste anh�ngen
-//              warning("h�nge Punkt an");
+              // neuen Punkt an Task Liste anhängen
+//              warning("hänge Punkt an");
 
               taskPointList.append(new Waypoint);
               w = taskPointList.last();
@@ -848,8 +849,8 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
 
               w->description = waypointDlg->description->text();
               w->type = waypointDlg->getWaypointType();
-              w->origP.setLat(_globalMapContents->degreeToNum(waypointDlg->latitude->text()));
-              w->origP.setLon(_globalMapContents->degreeToNum(waypointDlg->longitude->text()));
+              w->origP.setLat(WGSPoint::degreeToNum(waypointDlg->latitude->text()));
+              w->origP.setLon(WGSPoint::degreeToNum(waypointDlg->longitude->text()));
               w->projP = _globalMapMatrix->wgsToMap(w->origP.lat(), w->origP.lon());
               w->elevation = waypointDlg->elevation->text().toInt();
               w->icao = waypointDlg->icao->text().upper();
@@ -995,19 +996,24 @@ void Map::mousePressEvent(QMouseEvent* event)
 
             // add WPList !!!
             int searchList[] = {MapContents::GliderfieldList, MapContents::AirportList};
-            for(int l = 0; l < 2; l++) {
-               for(int loop = 0; loop < _globalMapContents->getListLength(searchList[l]); loop++) {
-                  hitElement = (RadioPoint*)_globalMapContents->getElement(
-                      searchList[l], loop);
+
+            for(int l = 0; l < 2; l++)
+              {
+               for(int loop = 0; loop < _globalMapContents->getListLength(searchList[l]); loop++)
+                 {
+                  hitElement = (RadioPoint*)_globalMapContents->getElement(searchList[l], loop);
                   sitePos = hitElement->getMapPosition();
 
                   dX = abs(sitePos.x() - current.x());
                   dY = abs(sitePos.y() - current.y());
 
-                  // Abstand entspricht der Icon-Gr��e.
-                  if (dX < delta && dY < delta) {
+                  // Abstand entspricht der Icon-Grösse.
+                  if (dX < delta && dY < delta)
+                    {
                       Waypoint *w = new Waypoint;
-                      w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
+
+                      QString name = hitElement->getName();
+                      w->name = name.replace(blank, "").left(6).upper();
                       w->description = hitElement->getName();
                       w->type = hitElement->getTypeID();
                       w->origP = hitElement->getWGSPosition();
@@ -1217,7 +1223,7 @@ void Map::__drawMap()
 
   pixIsoMap.fill(QColor(96,128,248));
 
-  _globalMapContents->drawIsoList(&isoMapP, &mapMaskP);
+  _globalMapContents->drawIsoList( &isoMapP );
 
   _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::TopoList);
 
@@ -1773,24 +1779,27 @@ void Map::slotAnimateFlightStart()
             f->setAnimationIndex(0);
             f->setAnimationActive(true);
             break;
+
           case BaseMapElement::FlightGroup:
             // loop through all and set animation index to start
-            QList<Flight*> flightList = ((FlightGroup *)f)->getFlightList();
-            foreach(f, flightList) {
-                f->setAnimationIndex(0);
-                f->setAnimationActive(true);
+            {
+              QList<Flight*> flightList = ((FlightGroup *)f)->getFlightList();
+              foreach(f, flightList)
+                {
+                  f->setAnimationIndex(0);
+                  f->setAnimationActive(true);
+                }
+
+              break;
             }
+
+          default:
             break;
         }
         // force redraw
         // flights will not be visible as nAnimationIndex is zero for all flights to animate.
         slotRedrawFlight();
 
-        // prepare the pixmap for next timeout
-//            __drawFlight();
-//      __showLayer();
-
-            // save what will be under the flag
       switch(f->getTypeID())
         {
           case BaseMapElement::Flight:
@@ -1805,23 +1814,30 @@ void Map::slotAnimateFlightStart()
             // put flag
             bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2 );
            break;
+
           case BaseMapElement::FlightGroup:
-                        // loop through all and set animation index to start
-                        QList<Flight*> flightList = ((FlightGroup *)f)->getFlightList();
-                        for(int loop = 0; loop < flightList.count(); loop++)
+            // loop through all and set animation index to start
               {
-                cP = f->getPoint(0);
-                pos = _globalMapMatrix->map(cP.projP);
-                pix = f->getLastAnimationPixmap();
-                pix.paintEngine()->drawPixmap(QRect(QPoint(0, 0), pixBuffer.size()), pixBuffer, QRect(pos.x(), pos.y()-32, 32, 32));
-//                bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
-                f->setLastAnimationPos(pos);
-                f->setLastAnimationPixmap(pix);
-                // put flag
-                bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2 );
-                          }
-            break;
+                QList<Flight*> flightList = ((FlightGroup *)f)->getFlightList();
+                for(int loop = 0; loop < flightList.count(); loop++)
+                  {
+                    cP = f->getPoint(0);
+                    pos = _globalMapMatrix->map(cP.projP);
+                    pix = f->getLastAnimationPixmap();
+                    pix.paintEngine()->drawPixmap(QRect(QPoint(0, 0), pixBuffer.size()), pixBuffer, QRect(pos.x(), pos.y()-32, 32, 32));
+    //                bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
+                    f->setLastAnimationPos(pos);
+                    f->setLastAnimationPixmap(pix);
+                    // put flag
+                    bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2 );
+                  }
               }
+            break;
+
+          default:
+
+            break;
+           }
 
       // 50ms multi-shot timer
       timerAnimate->start( 50, FALSE );
@@ -1872,36 +1888,43 @@ void Map::slotAnimateFlightTimeout()
             bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2);
             break;
           case BaseMapElement::FlightGroup:
-                        // loop through all and set animation index to start
-                        QList<Flight*> flightList = ((FlightGroup*)flightToAnimate)->getFlightList();
-                        for(int loop = 0; loop < flightList.count(); loop++)
-              {
-                            f = flightList.at(loop);
-                f->setAnimationNextIndex();
-                if (f->isAnimationActive())
-                                 bDone = false;
-                //write info from current point on statusbar
-                cP = f->getPoint((f->getAnimationIndex()));
-                pos = _globalMapMatrix->map(cP.projP);
-                lastpos = f->getLastAnimationPos();
-                pix = f->getLastAnimationPixmap();
-                emit showFlightPoint(_globalMapMatrix->mapToWgs(pos), cP);
-                // erase prev indicator-flag
-                bitBlt(&pixBuffer, lastpos.x(), lastpos.y()-32, &pix);
-                      // redraw flight up to this point, blt the pixmap onto the already created pixmap
-                __drawFlight();
-                pixFlight.setMask(bitFlightMask);
-                bitBlt(&pixBuffer, 0, 0, &pixFlight);
-                //save for next timeout
-                pix.paintEngine()->drawPixmap(QRect(QPoint(0, 0), pixBuffer.size()), pixBuffer, QRect(pos.x(), pos.y()-32, 32, 32));
-//                bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
-                f->setLastAnimationPixmap(pix);
-                f->setLastAnimationPos(pos);
-                // add indicator-flag
-                bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2);
-              }
+            // loop through all and set animation index to start
+            {
+              QList<Flight*> flightList = ((FlightGroup*)flightToAnimate)->getFlightList();
+
+              for(int loop = 0; loop < flightList.count(); loop++)
+                {
+                              f = flightList.at(loop);
+                  f->setAnimationNextIndex();
+                  if (f->isAnimationActive())
+                                   bDone = false;
+                  //write info from current point on statusbar
+                  cP = f->getPoint((f->getAnimationIndex()));
+                  pos = _globalMapMatrix->map(cP.projP);
+                  lastpos = f->getLastAnimationPos();
+                  pix = f->getLastAnimationPixmap();
+                  emit showFlightPoint(_globalMapMatrix->mapToWgs(pos), cP);
+                  // erase prev indicator-flag
+                  bitBlt(&pixBuffer, lastpos.x(), lastpos.y()-32, &pix);
+                        // redraw flight up to this point, blt the pixmap onto the already created pixmap
+                  __drawFlight();
+                  pixFlight.setMask(bitFlightMask);
+                  bitBlt(&pixBuffer, 0, 0, &pixFlight);
+                  //save for next timeout
+                  pix.paintEngine()->drawPixmap(QRect(QPoint(0, 0), pixBuffer.size()), pixBuffer, QRect(pos.x(), pos.y()-32, 32, 32));
+  //                bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
+                  f->setLastAnimationPixmap(pix);
+                  f->setLastAnimationPos(pos);
+                  // add indicator-flag
+                  bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2);
+                }
+
+              break;
+            }
+
+          default:
             break;
-                    }
+         }
     }
   // force paint event
   paintEvent();
@@ -2172,6 +2195,7 @@ void Map::slotShowCurrentFlight()
   // ersten Zeichnen werden die Rahmen von Flug und Aufgabe
   // bestimmt.
   slotRedrawFlight();
+
   if(f)
     {
       switch(f->getTypeID())
@@ -2183,6 +2207,8 @@ void Map::slotShowCurrentFlight()
             break;
           case BaseMapElement::Task:
             slotCenterToTask();
+            break;
+          default:
             break;
         }
     }
@@ -2408,22 +2434,19 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
   __redrawMap();
 }
 
-/** Tries to locate the elevation for the given point, and emits a signal elevation if found. */
-void Map::__findElevation(const QPoint& coord){
+/**
+ * Tries to locate the elevation for the given point
+ * and emits a signal elevation if found.
+ *
+ * \param coordMap The map coordinates.
+ */
+void Map::__findElevation( const QPoint& coordMap )
+{
   extern MapContents *_globalMapContents;
-  isoListEntry* entry;
-  int height=0;
 
-  QList<isoListEntry*> *list = _globalMapContents->getIsohypseRegions();
-
-  for(int i=0; i<list->count();i++) {
-    entry=list->at(i);
-    if (entry->region->contains(coord))
-      height=std::max(height,entry->height);
-  }
+  int height = _globalMapContents->getElevation( coordMap, 0 );
 
   emit elevation(height);
-
 }
 
 void Map::__setCursor()
@@ -2524,7 +2547,9 @@ void Map::slotMpNewWaypoint(){
         // Abstand entspricht der Icon-Gr��e.
         if (dX < delta && dY < delta) {
           Waypoint *w = new Waypoint;
-          w->name = hitElement->getName().replace(blank, QString::null).left(6).upper();
+
+          QString name = hitElement->getName();
+          w->name = name.replace(blank, "").left(6).upper();
           w->description = hitElement->getName();
           w->type = hitElement->getTypeID();
           w->origP = hitElement->getWGSPosition();

@@ -16,12 +16,12 @@
 ***********************************************************************/
 
 #include "airport.h"
-#include "mapcontents.h"
 #include "translationlist.h"
 #include "waypointdialog.h"
+#include "wgspoint.h"
 
-#include <qlayout.h>
-#include <qlabel.h>
+#include <QtGui>
+
 //Added by qt3to4:
 #include <Q3GridLayout>
 #include <Q3HBoxLayout>
@@ -167,37 +167,35 @@ void WaypointDialog::clear()
 void WaypointDialog::slotAddWaypoint()
 {
   QString text;
-  extern MapContents *_globalMapContents;
 
-  //if (!name->text().isEmpty()) { we accept an empty name. A syntetic one will be created.
-    // insert a new waypoint to current catalog
-    Waypoint *w = new Waypoint;
-    w->name = name->text().upper();
-    w->description = description->text();
-    w->type = getWaypointType();
-    w->origP.setLat(_globalMapContents->degreeToNum(latitude->text()));
-    w->origP.setLon(_globalMapContents->degreeToNum(longitude->text()));
-    w->elevation = elevation->text().toInt();
-    w->icao = icao->text().upper();
-    w->frequency = frequency->text().toDouble();
-    text = runway->text();
-    if (!text.isEmpty()) {
-      w->runway = text.toInt();
-    }
+  // insert a new waypoint to current catalog
+  Waypoint *w = new Waypoint;
+  w->name = name->text().upper();
+  w->description = description->text();
+  w->type = getWaypointType();
+  w->origP.setLat(WGSPoint::degreeToNum(latitude->text()));
+  w->origP.setLon(WGSPoint::degreeToNum(longitude->text()));
+  w->elevation = elevation->text().toInt();
+  w->icao = icao->text().upper();
+  w->frequency = frequency->text().toDouble();
+  text = runway->text();
+  if (!text.isEmpty()) {
+    w->runway = text.toInt();
+  }
 
-    text = length->text();
-    if (!text.isEmpty()) {
-      w->length = text.toInt();
-    }
-    w->surface = getSurface();
-    w->isLandable = isLandable->isChecked();
-    w->comment = comment->text();
+  text = length->text();
+  if (!text.isEmpty()) {
+    w->length = text.toInt();
+  }
+  w->surface = getSurface();
+  w->isLandable = isLandable->isChecked();
+  w->comment = comment->text();
 
-    emit addWaypoint(w);
-    // clear should not be called when apply was pressed ...
-    // and when ok is pressed, the dialog is closed anyway.
-    // clear();
-  //}
+  emit addWaypoint(w);
+  // clear should not be called when apply was pressed ...
+  // and when ok is pressed, the dialog is closed anyway.
+  // clear();
+//}
 }
 
 /** return internal type of waypoint */

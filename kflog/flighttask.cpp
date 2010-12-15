@@ -21,8 +21,8 @@
 
 #include <cmath>
 
-#include <QMessageBox>
-#include <QSettings>
+#include <QtGui>
+
 #include <q3valuevector.h>
 //Added by qt3to4:
 #include <Q3PointArray>
@@ -31,7 +31,7 @@
 #define CUR_ID loop
 #define NEXT_ID loop + 1
 
-/* Die Einstellungen k�nnen mal in die Voreinstellungsdatei wandern ... */
+/* Die Einstellungen können mal in die Voreinstellungsdatei wandern ... */
 #define FAI_POINT 2.0
 #define NORMAL_POINT 1.75
 #define R1 (3000.0 / glMapMatrix->getScale())
@@ -219,7 +219,7 @@ void FlightTask::__checkType()
     }
 }
 
-double FlightTask::__sectorangle(unsigned int loop, bool isDraw)
+double FlightTask::__sectorangle(int loop, bool isDraw)
 {
   double nextAngle = 0.0, preAngle = 0.0, sectorAngle = 0.0;
 
@@ -345,14 +345,13 @@ bool FlightTask::isFAI(double d_wp, double d1, double d2, double d3)
   return false;
 }
 
-void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
+bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
   double w1;
   struct faiAreaSector *sect;
   QPoint tempP;
   QRect r;
   QString label;
-  Q3PointArray pA;
 
   // Strecke und Sektoren zeichnen
   //  if(flightType != NotSet)
@@ -535,11 +534,11 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       sect = FAISectList.at(loop);
       sect->pos->drawMapElement(targetPainter, maskPainter);
       label = sect->pos->getName();
-      pA = glMapMatrix->map(sect->pos->getPointArray());
+      QPolygon pp = glMapMatrix->map(sect->pos->getPolygon());
 
       if (label == "FAILow500Sector" || label == "FAIHigh500Sector") {
         label.sprintf("%.0f km", sect->dist);
-        tempP = pA[0];
+        tempP = pp[0];
         targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
         targetPainter->setBrush(QBrush(QColor(0, 255, 128)));
         targetPainter->setBackgroundMode(Qt::OpaqueMode);
@@ -552,7 +551,7 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
         maskPainter->setBackgroundMode(Qt::TransparentMode);
       }
       else {
-        r = pA.boundingRect();
+        r = pp.boundingRect();
         tempP = r.topLeft();
         bBoxTask.setLeft(std::min(tempP.x(), bBoxTask.left()));
         bBoxTask.setTop(std::max(tempP.y(), bBoxTask.top()));
@@ -566,6 +565,8 @@ void FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       }
     }
   }
+
+  return true;
 }
 
 void FlightTask::printMapElement(QPainter* targetPainter, bool /*isText*/)
@@ -704,8 +705,8 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool /*isText*/)
       label = sect->pos->getName();
       if (label == "FAILow500Sector" || label == "FAIHigh500Sector") {
         label.sprintf("%.0f km", sect->dist);
-        pA = sect->pos->getPointArray();
-        tempP = glMapMatrix->print(pA[0]);
+        QPolygon pp = sect->pos->getPolygon();
+        tempP = glMapMatrix->print(pp[0]);
         targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
         targetPainter->setBrush(QBrush(QColor(0, 255, 128)));
         targetPainter->setBackgroundMode(Qt::OpaqueMode);
@@ -802,8 +803,10 @@ void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& glider
   double malusValue = _settings.readDoubleEntry("/FlightPoints/MalusValue", 15.0);
   double sectorMalus = _settings.readDoubleEntry("/FlightPoints/SectorMalus", -0.1);
 
-  if(gliderType != 0L)
-    gliderIndex = _settings.readNumEntry("/GliderTypes/"+gliderType, 100);
+  if(! gliderType.isEmpty() )
+    {
+      gliderIndex = _settings.value("/GliderTypes/"+gliderType, 100).toInt();
+    }
 
   for(int loop = 0; loop < route.count(); loop++)
     {
@@ -911,10 +914,10 @@ void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& glider
     }
 
   /*
-   * �berpr�fen der Aufgabe
+   * überprüfen der Aufgabe
    */
   int faiCount = 0;
-  unsigned int dmstCount = 0;
+  int dmstCount = 0;
   double dmstMalus = 1.0, aussenlande = 0.0;
   bool home, stop = false;
 
@@ -981,7 +984,7 @@ void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& glider
     }
 
 
-  // jetzt in __setDistance noch �bernehmen
+  // jetzt in __setDistance noch übernehmen
   distance_wert = 0;
   double F = 1;
 
@@ -1201,7 +1204,6 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool /*isText*/, doubl
   struct faiAreaSector *sect;
   QPoint tempP;
   QString label;
-  Q3PointArray pA;
 
   // Strecke und Sektoren zeichnen
   if(flightType != FlightTask::NotSet)
@@ -1328,8 +1330,8 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool /*isText*/, doubl
       label = sect->pos->getName();
       if(label == "FAILow500Sector" || label == "FAIHigh500Sector") {
         label.sprintf("%.0f km", sect->dist);
-        pA = sect->pos->getPointArray();
-        tempP = glMapMatrix->print(pA[0]);
+        QPolygon pp = sect->pos->getPolygon();
+        tempP = glMapMatrix->print(pp[0]);
         targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
         targetPainter->setBrush(QBrush(QColor(0, 255, 128)));
         targetPainter->setBackgroundMode(Qt::OpaqueMode);
@@ -1525,7 +1527,7 @@ void FlightTask::calcFAIArea()
 }
 
 void FlightTask::calcFAISector(double leg, double legBearing, double from, double to, double step, double dist, double toLat,
-                               double toLon, Q3PointArray *pA, bool upwards, bool isRightOfRoute)
+                               double toLon, QPolygon *pp, bool upwards, bool isRightOfRoute)
 {
   extern MapMatrix *_globalMapMatrix;
 
@@ -1538,7 +1540,7 @@ void FlightTask::calcFAISector(double leg, double legBearing, double from, doubl
   minDist = dist * from / 100.0;
   maxDist = dist * to / 100.0;
 
-  i = pA->size();
+  i = pp->size();
   if (upwards) {
     percent = from;
   }
@@ -1552,7 +1554,7 @@ void FlightTask::calcFAISector(double leg, double legBearing, double from, doubl
     if (c >= minDist && c <= maxDist) {
       w = angle(leg, b, c);
       p = _globalMapMatrix->wgsToMap(posOfDistAndBearing(toLat, toLon, isRightOfRoute ? legBearing - w : legBearing + w, b));
-      pA->putPoints(i++, 1, p.lat(), p.lon());
+      pp->putPoints(i++, 1, p.lat(), p.lon());
     }
 
     if (upwards) {
@@ -1565,7 +1567,7 @@ void FlightTask::calcFAISector(double leg, double legBearing, double from, doubl
 }
 
 void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, double to, double step, double toLat,
-                                   double toLon, bool less500, Q3PointArray *pA, bool upwards, bool isRightOfRoute)
+                                   double toLon, bool less500, QPolygon *pp, bool upwards, bool isRightOfRoute)
 {
   extern MapMatrix *_globalMapMatrix;
 
@@ -1576,7 +1578,7 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
   unsigned int i;
   WGSPoint p;
 
-  i = pA->size();
+  i = pp->size();
 
   if (less500) {
     minPercent = 0.28;
@@ -1606,7 +1608,7 @@ void FlightTask::calcFAISectorSide(double leg, double legBearing, double from, d
       }
       p = _globalMapMatrix->wgsToMap(posOfDistAndBearing(toLat, toLon, isRightOfRoute ? legBearing - w : legBearing + w,
                                                         upwards ? b : c));
-      pA->putPoints(i++, 1, p.lat(), p.lon());
+      pp->putPoints(i++, 1, p.lat(), p.lon());
     }
 
     if (upwards) {

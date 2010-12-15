@@ -1,12 +1,12 @@
 /***********************************************************************
 **
-**   flightrecorderpluginbase.h
+**   flight recorderpluginbase.h
 **
 **   This file is part of KFLog4.
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by André Somers
+**   Copyright (c):  2003 by AndrÃ© Somers
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -15,20 +15,12 @@
 **
 ***********************************************************************/
 
-#ifndef FLIGHTRECORDERPLUGINBASE_H
-#define FLIGHTRECORDERPLUGINBASE_H
-
-
-/**
- * This class funtions as a baseclass for all flightrecorder plugins.
- * It features default implementation of all functions that return
- * 'not available' values. Just re-implement the functions you want
- * to support.
- * @author André Somers
- */
+#ifndef FLIGHT_RECORDER_PLUGIN_BASE_H
+#define FLIGHT_RECORDER_PLUGIN_BASE_H
 
 #include <termios.h>
 
+#include <QObject>
 #include <QList>
 #include <QString>
 
@@ -36,31 +28,43 @@
 #include "frstructs.h"
 #include "waypoint.h"
 
-// Standard FlightRecorder return values
+// Standard flight recorder return values
 #define FR_ERROR -1          // Error
 #define FR_NOTSUPPORTED -2   // Function not supported
 #define FR_OK 1              // OK, no problem.
 
 /**
- * @short Baseclass for all flightrecorder plugins
+ * \class flight recorderPluginBase
  *
- * This class funtions as a baseclass for all flightrecorderplugins. The
- * decending classes must re-implement all memberfuntions. Because
- * different flightrecorders have different capabilities, the capabilities
- * of a decendant class must be set in the constructor using a
- * @ref FR_Capabilities struct. Also, you need use
+ * \author AndrÃ© Somers, Axel Pauli
+ *
+ * \brief Base class for all flight recorder plugins
+ *
+ * This class funtions as a base class for all flight recorder plugins. The
+ * derived classes must re-implement all member funtions. Because
+ * different flight recorders have different capabilities, the capabilities
+ * of a derived class must be set in the constructor using a
+ * \ref FR_Capabilities structure. Also, you need use
  * <pre>
  *    return FR_NOTSUPPORTED;
  * </pre>
- * as implementation of the not supported memberfunctions.
+ * as implementation of the not supported member functions.
+ *
+ * \date 2003-2010
+ *
+ * \version $Id$
  */
 
-class FlightRecorderPluginBase:public QObject {
+class FlightRecorderPluginBase : public QObject
+{
+
 Q_OBJECT
-public: 
-  enum TransferMode{none, serial, URL};
+
+public:
+
+  enum TransferMode{ none, serial, URL };
   /* The none option is pretty useless, but is included for completeness
-     sake. It _is_ used in the flightrecorder dialog though! */
+     sake. It _is_ used in the flight recorder dialog though! */
 
   enum TransferBps  {bps00000 = 0x0000,
                      bps00075 = 0x0001,
@@ -88,7 +92,7 @@ public:
   static transferStruct transferData[];
   static int transferDataMax;
 
-  // FlightRecorder capabilities
+  /** flight recorder capabilities */
   struct FR_Capabilities
   {
     int maxNrTasks;             //maximum number of tasks
@@ -170,15 +174,16 @@ public:
     int compensation;    // total energy, super netto, netto
   };
 
-  FlightRecorderPluginBase();
+  FlightRecorderPluginBase( QObject *parent = 0 );
+
   virtual ~FlightRecorderPluginBase();
 
   /**
-   * Returns the name of the lib.
+   * Returns the name of the library.
    */
   virtual QString getLibName() const = 0;
   /**
-   * Returns the transfermode this plugin supports.
+   * Returns the transfer mode this plugin supports.
    */
   virtual TransferMode getTransferMode() const = 0;
   /**
@@ -210,7 +215,7 @@ public:
    */
   virtual int openRecorder(const QString& URL)=0;
   /**
-   * Closes the connection with the flightrecorder.
+   * Closes the connection with the flight recorder.
    */
   virtual int closeRecorder()=0;
   /**
@@ -234,17 +239,17 @@ public:
    */
   virtual int writeWaypoints(QList<Waypoint*> *waypoints)=0;
   /**
-   * Returns whether the flighrecorder is connected.
+   * Returns whether the flight recorder is connected.
    */
   inline bool isConnected(){return _isConnected;};
 
   /**
-   * Returns the flightrecorders capabilities.
+   * Returns the flight recorders capabilities.
    */
   inline FR_Capabilities capabilities(){return _capabilities;};
 
   /**
-   * Returns additional info about an error that occured (optional).
+   * Returns additional info about an error that occurred (optional).
    * _errorinfo is reset afterwards.
    */
   QString lastError();
@@ -256,23 +261,23 @@ public:
 
 protected:
   /**
-   * Is the flightrecorder connected?
+   * Is the flight recorder connected?
    */
   bool _isConnected;
 
   /**
-   * The flightrecorders capabilities.
+   * The flight recorders capabilities.
    * To be set in the constructor of depending classes.
    */
   FR_Capabilities _capabilities;
   /**
-   * The flightrecorders basic data.
+   * The flight recorders basic data.
    * To be set in the constructor of depending classes.
    */
   FR_BasicData _basicData;
 
   /**
-   * The flightrecorders config data.
+   * The flight recorders config data.
    */
   FR_ConfigData _configData;
 
@@ -288,18 +293,22 @@ protected:
   QWidget* _parent;
 
 signals:
+
   /**
-   * May be emitted when transfering data
-   *  bool finished is true if the datatransfer is complete
-   *  int progress is a measure how much progress has been made, relative to total
-   *  int total is the total progress to be made, for instance the total number of bytes to transfer
-   * May be used to display a progress dialog.
+   * May be emitted when transferring data
+   *
+   *  \param finished is true if the data transfer is complete
+   *  \param progress is a measure how much progress has been made, relative to total
+   *  \param total is the total progress to be made, for instance the total
+   *              number of bytes to transfer. May be used to display a
+   *              progress dialog.
    */
-  virtual void progress(bool finished, int progress, int total);
+  void progress(bool finished, int progress, int total);
+
   /**
    * May be emited when the actual transfer speed has changed
    */
-  virtual void newSpeed (int speed);
+  void newSpeed (int speed);
 };
 
 #endif

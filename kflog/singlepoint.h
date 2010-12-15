@@ -61,7 +61,7 @@ class SinglePoint : public BaseMapElement
      * @param  targetP  The painter to draw the element into.
      * @param  maskP  The maskpainter for targetP
      */
-    virtual void drawMapElement(QPainter* targetP, QPainter* maskP);
+    virtual bool drawMapElement(QPainter* targetP, QPainter* maskP);
     /**
      * Prints the element. Reimplemented from BaseMapElement.
      *

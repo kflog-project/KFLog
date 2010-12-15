@@ -7,7 +7,7 @@
 
     email                : axel@kflog.org
 
-    This file is part of Cumulus
+    This file is part of KFLog4.
 
     $Id$
 

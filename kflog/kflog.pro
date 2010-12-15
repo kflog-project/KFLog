@@ -14,6 +14,7 @@ TEMPLATE = app
 SOURCES = \
     airport.cpp \
     airspace.cpp \
+    altitude.cpp \
     authdialog.cpp \
     baseflightelement.cpp \
     basemapelement.cpp \
@@ -81,6 +82,7 @@ SOURCES = \
     waypointimpfilterdialog.cpp \
     waypoints.cpp \
     welt2000.cpp \
+    wgspoint.cpp \
     whatsthat.cpp \
     guicontrols/coordedit.cpp \
     guicontrols/kfloglistview.cpp
@@ -88,6 +90,7 @@ SOURCES = \
 HEADERS = \
     airport.h \
     airspace.h \
+    altitude.h \
     authdialog.h \
     baseflightelement.h \
     basemapelement.h \

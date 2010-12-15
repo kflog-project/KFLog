@@ -20,7 +20,8 @@
 
 #include <algorithm>
 #include <QObject>
-#include <qmatrix.h>
+#include <QMatrix>  // FIXME: QMatrix is  deprecated!
+
 //Added by qt3to4:
 #include <Q3PointArray>
 
@@ -110,15 +111,6 @@ public:
    * @return the mapped point
    */
   QPoint map(const QPoint& point) const;
-  /**
-   * Maps the given projected point into the current map-matrix.
-   *
-   * @param  point  The point to be mapped
-   *
-   * @return the mapped point
-   */
-//    QPoint map(QPoint *point) const;
-
 
   /**
    * Maps the given bearing into the current map-matrix.
@@ -189,12 +181,16 @@ public:
    * @return "true", if the given rectangle intersects with the current map.
    */
   bool isVisible(const QRect& itemBorder) const;
+  /**
+   * @return "true", if the given rectangle intersects with the current map.
+   */
+  bool isVisible( const QRect& itemBorder, int typeID) const;
 
   /** */
   enum MoveDirection {NotSet = 0, North = 1, West = 2, East = 4,
       South = 8, Home = 16};
   /**
-   * CurrentScale muss immer die gr��te Zahl sein!
+   * CurrentScale muss immer die gröte Zahl sein!
    */
   enum ScaleType {LowerLimit = 0, Border1 = 1, Border2 = 2, Border3 = 3,
                   UpperLimit = 4, SwitchScale = 5, CurrentScale = 6};
@@ -205,7 +201,7 @@ public:
 
   /**
    * Centers the map to the given rectangle and scales the map, so that
-   * the rectangle will be seen completly.
+   * the rectangle will be seen completely.
    * @param QRect Rectangle to zoom to
    * @param QSize
    * @param addBorder Adds a border of 6.5 km if true.
@@ -240,7 +236,7 @@ public:
   void writeMatrixOptions();
 
   /**
-   * @returns the current projectiontype
+   * @returns the current projection type
    */
   ProjectionBase * getProjection() const
   {
@@ -299,22 +295,6 @@ private:
    * Moves the map into the given direction.
    */
   void __moveMap(int dir);
-  /**
-   * Returns the x-coordinate for the Lambert-projection.
-   */
-//    double __calc_X_Lambert(double latitude, double longitude) const;
-  /**
-   * Returns the y-coordinate for the Lambert-projection.
-   */
-//    double __calc_Y_Lambert(double latitude, double longitude) const;
-  /**
-   * Returns the latitude of the given map-point
-   */
-//    int __invert_Lambert_Lat(double x, double y) const;
-  /**
-   * Returns the longitude of the given map-point
-   */
-//    int __invert_Lambert_Lon(double x, double y) const;
 
   /**
    */
@@ -333,13 +313,6 @@ private:
   /**
    *
    */
-//    double v1;
-  /**
-   *
-   */
-//    double v2;
-//    double var1;
-//    double var2;
   /**
    * The mapCenter is the position displayed in the center of the map.
    * It is used in two different ways:
@@ -386,7 +359,6 @@ private:
   ProjectionBase* currentProjection;
   /** optimization to prevent recurring recalculation of this value */
   int _MaxScaleToCScaleRatio;
-
 };
 
 #endif

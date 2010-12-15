@@ -57,7 +57,7 @@ int ElevationFinder::elevationWgs(const QPoint& coordinates)
     return findDEMelevation(coordinates);
 
   //use the 'old' method
-  return _globalMapContents->getElevation(_globalMapMatrix->wgsToMap(coordinates));
+  return _globalMapContents->getElevation( _globalMapMatrix->wgsToMap(coordinates), 0 );
 }
 
 int ElevationFinder::elevationMap(const QPoint& coordinates)
@@ -69,7 +69,7 @@ int ElevationFinder::elevationMap(const QPoint& coordinates)
     return findDEMelevation(_globalMapMatrix->mapToWgs(coordinates));
 
   //use the 'old' method
-  return _globalMapContents->getElevation(coordinates);
+  return _globalMapContents->getElevation( coordinates, 0 );
 }
 
 int ElevationFinder::elevation(const QPoint& WgsCoordinates, const QPoint& MapCoordinates)
@@ -80,7 +80,7 @@ int ElevationFinder::elevation(const QPoint& WgsCoordinates, const QPoint& MapCo
     return findDEMelevation(WgsCoordinates);
 
   //use the 'old' method
-  return _globalMapContents->getElevation(MapCoordinates);
+  return _globalMapContents->getElevation(MapCoordinates, 0);
 }
 
 int ElevationFinder::findDEMelevation(const QPoint& coordinates)

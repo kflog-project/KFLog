@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by André Somers
+**   Copyright (c):  2003 by AndrÃ© Somers
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -36,7 +36,8 @@ FlightRecorderPluginBase::transferStruct FlightRecorderPluginBase::transferData 
 };
 int FlightRecorderPluginBase::transferDataMax = 14;
 
-FlightRecorderPluginBase::FlightRecorderPluginBase() 
+FlightRecorderPluginBase::FlightRecorderPluginBase( QObject *parent ) :
+  QObject( parent )
 {
   _isConnected=false;
   _errorinfo="";
@@ -77,19 +78,22 @@ FlightRecorderPluginBase::FlightRecorderPluginBase()
 }
 
 
-FlightRecorderPluginBase::~FlightRecorderPluginBase(){
+FlightRecorderPluginBase::~FlightRecorderPluginBase()
+{
 }
 
 /**
- * Returns additional info about an error that occured (optional).
+ * Returns additional info about an error that occurred (optional).
  * _errorinfo is reset afterwards.
  */
-QString FlightRecorderPluginBase::lastError(){
+QString FlightRecorderPluginBase::lastError()
+{
   QString ret=_errorinfo;
   _errorinfo="";
   return ret;
 }
 
-void FlightRecorderPluginBase::setParent(QWidget* parent) {
+void FlightRecorderPluginBase::setParent(QWidget* parent)
+{
   _parent = parent;
 }

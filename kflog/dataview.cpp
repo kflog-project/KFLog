@@ -237,9 +237,11 @@ void DataView::setFlightData()
             else
                 htmlText += "<EM>" + tr("Flight contains no waypoints") + "</EM>";
             break;
+
           case BaseMapElement::Task:
             htmlText = __writeTaskInfo((FlightTask*)e);
             break;
+
           case BaseMapElement::FlightGroup:
             htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
                 <TR><TD>" + tr("Flight group") + ":</TD><TD><A HREF=EDITGROUP>" +
@@ -268,7 +270,11 @@ void DataView::setFlightData()
               htmlText += tr("Click on the group name to start editing");
             }
             break;
+
+          default:
+            break;
         }
+
       flightDataText->setText(htmlText);
     }
 }
@@ -286,10 +292,12 @@ void DataView::slotWPSelected(const QUrl &link)
   if (!e)
     return;
 
-  switch(e->getTypeID()) {
+  switch(e->getTypeID())
+  {
     case BaseMapElement::Flight:
       emit wpSelected(url.toInt());
       break;
+
     case BaseMapElement::Task:
       if (url == "EDITTASK") {
         QMessageBox::information(0, tr("Edit task"),
@@ -300,6 +308,7 @@ void DataView::slotWPSelected(const QUrl &link)
         emit wpSelected(url.toInt());
       }
       break;
+
     case BaseMapElement::FlightGroup:
       if (url == "EDITGROUP") {
         emit editFlightGroup();
@@ -308,7 +317,11 @@ void DataView::slotWPSelected(const QUrl &link)
         emit flightSelected((BaseFlightElement *)url.toUInt());
       }
       break;
+
+    default:
+      break;
   }
+
   setFlightData();
 }
 

@@ -9,14 +9,14 @@
  **   Copyright (c):  2002 by Harald Maier
  **
  **   This file is distributed under the terms of the General Public
- **   Licence. See the file COPYING for more information.
+ **   License. See the file COPYING for more information.
  **
  **   $Id$
  **
  ***********************************************************************/
 
-#ifndef BASEFLIGHTELEMENT_H
-#define BASEFLIGHTELEMENT_H
+#ifndef BASE_FLIGHT_ELEMENT_H
+#define BASE_FLIGHT_ELEMENT_H
 
 #include <QList>
 #include <QWidget>
@@ -31,11 +31,15 @@
 class BaseFlightElement : public BaseMapElement
 {
 public:
-  /** */
-  BaseFlightElement(const QString& name, unsigned int typeID, const QString& fName);
-  /** */
-  ~BaseFlightElement();
-  virtual QList<Waypoint*> getWPList() = 0 ;
+
+  BaseFlightElement( const QString& name,
+                     const BaseMapElement::objectType type,
+                     const QString& fName );
+
+  virtual ~BaseFlightElement();
+
+  virtual QList<Waypoint*> getWPList() = 0;
+
   QString getFileName() const { return sourceFileName; }
   /**
    * Searches the first point of the flight, which distance to the

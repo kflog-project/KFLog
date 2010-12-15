@@ -1,61 +1,78 @@
 /***********************************************************************
-**
-**   isohypse.cpp
-**
-**   This file is part of KFLog.
-**
-************************************************************************
-**
-**   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**
-**   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
-**
-**   $Id$
-**
-***********************************************************************/
+ **
+ **   isohypse.cpp
+ **
+ **   This file is part of KFLog4.
+ **
+ ************************************************************************
+ **
+ **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
+ **                   2008 by Axel Pauli, Josua Dietze
+ **                   2009-2010 by Axel Pauli, Peter Turczak
+ **
+ **   This file is distributed under the terms of the General Public
+ **   License. See the file COPYING for more information.
+ **
+ **   $Id$
+ **
+ ***********************************************************************/
+
+#include <QPainterPath>
+#include <QString>
+#include <QSize>
 
 #include "isohypse.h"
-
 #include "mapmatrix.h"
-//Added by qt3to4:
-#include <Q3PointArray>
 
-Isohypse::Isohypse(Q3PointArray pA, unsigned int elev, bool isV)
-: LineElement(0, BaseMapElement::Isohypse, pA, isV),
-  elevation(elev)
-{
-  regionStored=false;
-}
+extern MapMatrix* _globalMapMatrix;
+extern MapConfig* _globalMapConfig;
+
+Isohypse::Isohypse( QPolygon elevationCoordinates,
+                    const short elevation,
+                    const uchar  elevationIndex,
+                    const ushort secID,
+                    const char typeID ) :
+    LineElement( "Isoline", BaseMapElement::Isohypse, elevationCoordinates, false, secID ),
+    _elevation(elevation),
+    _elevationIndex(elevationIndex),
+    _typeID(typeID)
+{}
+
 
 Isohypse::~Isohypse()
+{}
+
+QPainterPath* Isohypse::drawRegion( QPainter* targetP, const QRect &viewRect,
+                                    bool really_draw, bool isolines )
 {
 
-}
+  if( !glMapMatrix->isVisible(bBox, getTypeID()) )
+    {
+     return static_cast<QPainterPath *> (0);
+    }
 
-QRegion* Isohypse::drawRegion(QPainter* targetP, QPainter* /*maskP*/)
-{
-  if(glMapMatrix->isVisible(bBox)) {
-      targetP->drawPolygon(glMapMatrix->map(projPointArray));
-      Q3PointArray tA = glMapMatrix->map(projPointArray);
-      return new QRegion(tA);
-  }
-  return 0;
-}
+  QPolygon mP = glMapMatrix->map(projPolygon);
 
-int Isohypse::getElevation() const { return elevation; }
+  if (really_draw)
+    {
+      if (mP.boundingRect().isNull())
+        {
+          // ignore null values and return also no region
+          return static_cast<QPainterPath *> (0);
+        }
 
+      targetP->setClipRegion(viewRect);
 
-/*!
-    \fn Isohypse::getRegion
- */
-QRegion* Isohypse::getRegion()
-{
-  //qDebug("getting rect");
-  //QRect br=projPointArray.boundingRect();
-  //for (int i=0; i<projPointArray.count();i++) qDebug("  %d, %d", projPointArray.point(i).x(), projPointArray.point(i).y());
-  //qDebug("bounding rect: %d, %d, %d, %d", br.left(), br.top(), br.right(), br.bottom());
+      targetP->drawPolygon(mP);
 
-  //AS: This may lead to a crash with large coordinates, or so it seems.
-  return new QRegion(projPointArray);
+      if (isolines)
+        {
+          targetP->drawPolyline(mP);
+        }
+    }
+
+  QPainterPath *path = new QPainterPath;
+  path->addPolygon(projPolygon);
+  path->closeSubpath();
+  return path;
 }

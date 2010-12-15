@@ -441,9 +441,9 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
     }
 }
 
-void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
+bool Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
-  if(!__isVisible()) return;
+  if(!__isVisible()) return false;
 
   flightPoint* pointA;
   flightPoint* pointB;
@@ -508,6 +508,8 @@ void Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
       curPointA = curPointB;
     }
+
+  return true;
 }
 
 

@@ -60,8 +60,9 @@ class FlightGroup : public BaseFlightElement
    * from BaseMapElement.
    * @param  targetP  The painter to draw the element into.
    * @param  maskP  The maskpainter for targetP
+   * \return always true
    */
-  void drawMapElement(QPainter* targetP, QPainter* maskP);
+  bool drawMapElement(QPainter* targetP, QPainter* maskP);
   /**
    * Prints the flight an the task for each fligth into the given painter. Reimplemented
    * from BaseMapElement.

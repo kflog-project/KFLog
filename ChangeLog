@@ -1,6 +1,11 @@
 $Id$
 
 2010-10-14 Axel Pauli <axel@kflog.org>
+  * Content of class WGSPoint taken over from Cumulus. Definitions of WGSPoint
+    In MapMatrix removed. Method degreeToNum moved from class MapContens to 
+    class WGSPoint.
+
+2010-10-14 Axel Pauli <axel@kflog.org>
 
   * Modified install targets in all sub qmake files. $INSTALL_ROOT defines
     the root install path now.

@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
+**                   2010 modified by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -18,25 +19,21 @@
 #ifndef RESSOURCE_H
 #define RESSOURCE_H
 
-#include <algorithm>
-
-#define ID_STATUS_MSG               1001
-
 /*
  * Definiert Macros zur Festlegung des Datei-Headers von KFLog-Karten
  *
  * Name der Ausgabedatei:
  *
- *   X_iiiii.kfl
+ *   X_iiii.kfl
  *
  *
  *   X:    Typ der enthaltenen Daten
  *
- *         "G" für 0-Meter-Linie ("Ground")
- *         "T" für restliche Höhenlinien ("Terrain")
- *         "M" für allgemeine Karteninformationen
+ *         "G" fÃ¼r 0-Meter-Linie ("Ground")
+ *         "T" fÃ¼r restliche HÃ¶henlinien ("Terrain")
+ *         "M" fÃ¼r allgemeine Karteninformationen
  *
- *   iiiii: Kennzahl der Kachel, Angabe vierstellig
+ *   iiii: Kennzahl der Kachel, Angabe vierstellig
  *         (Zahl liegt zwischen 0 und 8190)
  *
  *   Typkennung und Kachel-ID werden ebenfalls im Header der Datei angegeben.
@@ -47,9 +44,9 @@
  *   Byte     Typ       Inhalt         Bedeutung
  *  -----------------------------------------------------------------
  *   0        belong    0x404b464c     KFLog-mapfile       ("@KFL")
- *   >4       byte      0x47           grounddata          ("G")
- *                      0x54           terraindata         ("T")
- *                      0x4d           mapdata             ("M")
+ *   >4       byte      0x47           ground data         ("G")
+ *                      0x54           terrain data        ("T")
+ *                      0x4d           map data            ("M")
  *                      0x41           aeronautical data   ("A")
  *   >5       Q_UINT16  <>             Version des Dateiformates
  *   >7       Q_UINT16  <>             ID der Kachel
@@ -65,13 +62,9 @@
 #define TYPE_AERO       0x41
 #define FORMAT_VERSION  100
 
-/************************************************************************************
- *
- * Festlegung der Typ-Kennungen der Kartenelemente (ACHTUNG: Reihenfolge geändert!).
- *
- * Typ                 alt     neu
- * ---------------------------------
- */
+/******************************************************************************
+ * Definition of map element types
+ ******************************************************************************/
 
 #define NOT_SELECTED      0
 #define INT_AIRPORT       1
@@ -138,25 +131,24 @@
 #define FLIGHT_GROUP     63
 #define FAI_AREA_LOW     64
 #define FAI_AREA_HIGH    65
-#define SU_SECTOR        66 // used by cumulus for other special sectors
+#define GLIDER_SECTOR    66 // used by cumulus for other special sectors
 #define EMPTY_POINT      67 // used by cumulus for empty points
 #define PROHIBITED       68 // Prohibited airspace
-
-
+#define WAVE_WINDOW      69
 /*
- * In einigen ASCII-Dateien taucht der Typ 71 für Kanäle auf,
- * ausserdem gibt es einen Typ für Grenzen in Seen!
+ * In einigen ASCII-Dateien taucht der Typ 71 fÃ¼r KanÃ¤le auf,
+ * ausserdem gibt es einen Typ fÃ¼r Grenzen in Seen!
  *
  *===============================================================================
  *
  * Infos:
  *
- * Lufträume:  Ober-/Untergrenze(ntyp), Name, ID, temp
+ * LuftrÃ¤ume:  Ober-/Untergrenze(ntyp), Name, ID, temp
  *
- * Flugplätze: Position, Name, Kennung, [Bahninfos (Länge, Richtung, Belag)],
- *             Höhe, Frequenz, vdf
+ * FlugplÃ¤tze: Position, Name, Kennung, [Bahninfos (LÃ¤nge, Richtung, Belag)],
+ *             HÃ¶he, Frequenz, vdf
  *
- * Glidersite: zusätzlich Startart
+ * Glidersite: zusÃ¤tzlich Startart
  *
  */
 

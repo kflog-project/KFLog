@@ -108,17 +108,19 @@ void IGCPreview::previewUrl(const Q3Url &url)
                 ( ( s.mid(17,1) == "W" ) || ( s.mid(17,1) == "E" ) ) ))
             {
               // We have a waypoint
-              if(((QString)s.mid(1,7)).toInt() != 0 &&
-                      ((QString)s.mid(9,8)).toInt())
-                  if(isFirst)
-                    {
-                      waypointText = s.mid(18,20);
-                      isFirst = false;
-                    }
-                  else
-                    {
-                      waypointText += " - " + s.mid(18,20);
-                    }
+              // FIXME: Check, if parts in if statemant are correct here!!!
+              if( s.mid(1,7).toInt() != 0 && s.mid(9,8).toInt() != 0 )
+              {
+                if(isFirst)
+                  {
+                    waypointText = s.mid(18,20);
+                    isFirst = false;
+                  }
+                else
+                  {
+                    waypointText += " - " + s.mid(18,20);
+                  }
+              }
             }
         }
     }

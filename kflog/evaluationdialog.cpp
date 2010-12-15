@@ -52,14 +52,11 @@ EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[])
   combo_flight->setMinimumWidth(120);
 */
 
-
   // variable Textanzeige
   QSplitter* textSplitter = new QSplitter(Qt::Vertical, this, "splitter");
 
   // Diagrammfenster - Mitte
   evalFrame = new EvaluationFrame(textSplitter, this);
-
-  
 
   connect(this, SIGNAL(flightChanged()), evalFrame,
       SLOT(slotShowFlight()));
@@ -94,8 +91,8 @@ EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[])
   list.append(60);
   textSplitter->setSizes(list);
 */
-  
- /* No longer necessary with the KDockWidget  
+
+ /* No longer necessary with the KDockWidget
   extern QSettings _settings;
 
   int dlgWidth, dlgHeight;
@@ -106,7 +103,6 @@ EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[])
 
   */
 
-  
 //  connect(combo_flight, SIGNAL(activated(int)),
 //        SLOT(slotShowFlightData()));
 //  connect(close, SIGNAL(clicked()), SLOT(reject()));
@@ -148,8 +144,11 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
     return;
   }
 
-  switch(flight->getTypeID()) {
+  switch(flight->getTypeID())
+  {
+
   case BaseMapElement::Flight:
+
     p1 = flight->getPoint(index1);
     p2 = flight->getPoint(index2);
 
@@ -317,28 +316,32 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
           htmlText += (QString) "<TD align='right'>" + text + " m/s</TD>";
           htmlText += (QString) "</TR>";
           }
-        
+
         htmlText += (QString) "</TABLE>";
       }
 
-      
+
     emit(showCursor(p1.projP,p2.projP));
     break;
+
   case BaseMapElement::Task:
     emit textChanged(QString::null);
     htmlText = "<DIV ALIGN=CENTER>" + tr("Cannot evaluate task") +
       "</DIV>";
     break;
+
   case BaseMapElement::FlightGroup:
     emit textChanged(QString::null);
     htmlText = "<DIV ALIGN=CENTER>" + tr("Cannot (yet) evaluate a flight group") +
       "</DIV>";
     break;
+
+  default:
+    break;
   }
 
  textLabel->setText(htmlText);
 }
-
 
 
 void EvaluationDialog::resizeEvent(QResizeEvent* event)
@@ -355,7 +358,7 @@ void EvaluationDialog::updateListBox()
 {
   combo_flight->clear();
 
-  // Flüge eintragen
+  // Flï¿½ge eintragen
 /*
   for(unsigned int n = 0; n < flightList->count(); n++)
       combo_flight->insertItem(flightList->at(n)->getFileName());
@@ -385,7 +388,7 @@ void EvaluationDialog::slotShowFlightData()
   }
   else
     updateText(0, 0, false);
-    
+
   emit flightChanged();
 }
 /** No descriptions */

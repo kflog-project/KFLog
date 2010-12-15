@@ -25,7 +25,6 @@ Airport::Airport(QString n, QString i, QString abbr, unsigned int t,
     vdf(v),
     rwData(0)
 {
-
 }
 
 Airport::~Airport()
@@ -36,20 +35,20 @@ Airport::~Airport()
 
 QString Airport::getFrequency() const { return frequency; }
 
-runway* Airport::getRunway(int index) const 
-{ 
+runway* Airport::getRunway(int index) const
+{
   if (!rwData)
     return 0;
 
-  return rwData->at(index); 
+  return rwData->at(index);
 }
 
-unsigned int Airport::getRunwayNumber() const 
-{ 
+unsigned int Airport::getRunwayNumber() const
+{
   if (!rwData)
     return 0;
 
-  return rwData->count(); 
+  return rwData->count();
 }
 
 QString Airport::getInfoString() const
@@ -59,7 +58,7 @@ QString Airport::getInfoString() const
   //bool isType2=false; //Doesn't work yet, runway info is not read.
   //if (typeID==BaseMapElement::Airfield)
   //  isType2=(getRunway().surface==Grass);
-  
+
   // @AP: suppress an empty frequency
   QString tmp;
 
@@ -98,6 +97,7 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
       Qt::SquareCap, Qt::MiterJoin);
 
   QString iconName;
+
   switch(typeID)
     {
       case BaseMapElement::IntAirport:
@@ -232,11 +232,15 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
         printPainter->drawText(printPos.x() - 5, printPos.y() + 5, "H");
         isText = false;
         break;
+
+      default:
+        break;
     }
 
   if(isText)
-      printPainter->drawText(printPos.x() - 10,
-          printPos.y() + iconSize + 4, name);
+    {
+      printPainter->drawText(printPos.x() - 10, printPos.y() + iconSize + 4, name);
+    }
 }
 
 void Airport::addRunway(runway* r)

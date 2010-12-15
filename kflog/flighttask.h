@@ -23,8 +23,7 @@
 
 #include <QList>
 #include <QRect>
-//Added by qt3to4:
-#include <Q3PointArray>
+#include <QPolygon>
 
 struct faiRange {
   double minLength28;
@@ -96,7 +95,7 @@ class FlightTask : public BaseFlightElement
    * @param  targetP  The painter to draw the element into.
    * @param  maskP  The maskpainter for targetP
    */
-  void drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
+  bool drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
   /** */
   void printMapElement(QPainter* targetP, bool isText);
   void printMapElement(QPainter* targetP, bool isText, double dX, double dY);
@@ -158,7 +157,7 @@ class FlightTask : public BaseFlightElement
   /**
    * Calculates the sector.
    */
-  double __sectorangle(unsigned int loop, bool isDraw);
+  double __sectorangle(int loop, bool isDraw);
   /**
    * Proofes the type of the task and sets the status of the waypoints.
    */
@@ -175,12 +174,12 @@ class FlightTask : public BaseFlightElement
    * calculate sectors for valid FAI Areas
    */    
   void calcFAISector(double leg, double legBearing, double from, double to, double step, double dist,
-                     double toLat, double toLon, Q3PointArray *pA, bool upwards, bool isRightOfRoute);
+                     double toLat, double toLon, QPolygon *pA, bool upwards, bool isRightOfRoute);
   /**
    * calculate side sectors for valid FAI Areas
    */    
   void calcFAISectorSide(double leg, double legBearing, double from, double to, double step, double toLat,
-                         double toLon, bool less500, Q3PointArray *pA, bool upwards, bool isRightOfRoute);
+                         double toLon, bool less500, QPolygon *pA, bool upwards, bool isRightOfRoute);
   /**
    * true, if the task is the original task of a flight as read from
    * the igc-file.
@@ -200,11 +199,11 @@ class FlightTask : public BaseFlightElement
   double taskPoints;
   /** */
   unsigned int flightType;
-  /** Gesamte Länge*/
+  /** Gesamte LÃ¤nge*/
   double distance_total;
-  /** WertungsDistanz für DMST*/
+  /** WertungsDistanz fÃ¼r DMST*/
   double distance_wert;
-  /** Aufgaben Länge*/
+  /** Aufgaben LÃ¤nge*/
   double distance_task;
   int __planningType;
   QList<faiAreaSector*> FAISectList;
@@ -212,6 +211,7 @@ class FlightTask : public BaseFlightElement
   int __planningDirection;
   /* Route of flight */
   QList<flightPoint*> flightRoute;
+
 public slots: // Public slots
   /** re-projects the points along the route to make sure the route is drawn correctly if the projection changes. */
   void reProject();
