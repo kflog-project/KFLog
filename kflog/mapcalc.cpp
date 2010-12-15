@@ -477,3 +477,76 @@ double angleDiff(double ang1, double ang2) {
   return a;
 }
 
+/**
+ * Calculates a (crude) bounding box that contains the circle of radius @arg r
+ * around point @arg center. @arg r is given in kilometers.
+ */
+QRect areaBox(QPoint center, double r)
+{
+    const double pi_180 = M_PI / 108000000.0;
+    int delta_lat = (int) rint(250.0 * r/RADIUS_kfl);
+    int delta_lon = (int) rint(r*250.0 / (RADIUS_kfl *cos (pi_180 * center.x())));
+
+    //  qDebug("delta_lat=%d, delta_lon=%d, reach=%f, center=(%d, %d)",delta_lat, delta_lon,r,center.x(),center.y());
+    //  return QRect(center.x()-delta_lat, center.y()-delta_lon,
+    //                      center.x()+delta_lat, center.y()+delta_lon);
+    return QRect(center.x()-delta_lat, center.y()-delta_lon,
+                 2*delta_lat, 2*delta_lon);
+}
+
+/**
+ * Calculates the bounding box of the given tile number in KFLog coordinates.
+ * The returned rectangle used the x-axis as longitude and the y-axis as latitude.
+ */
+QRect getTileBox(const ushort tileNo)
+{
+  if( tileNo > (180*90) )
+    {
+      qWarning("Tile %d is out of range", tileNo);
+      return QRect();
+    }
+
+  // Positive result means N, negative result means S
+  int lat = 90 - ((tileNo / 180) * 2);
+
+  // Positive result means E, negative result means W
+  int lon = ((tileNo % 180) * 2) - 180;
+
+  // Tile bounding rectangle starting at upper left corner with:
+  // X: longitude until longitude + 2 degrees
+  // Y: latitude  until latitude - 2 degrees
+  QRect rect( lon*600000, lat*600000, 2*600000, -2*600000 );
+
+/*
+  qDebug("Tile=%d, Lat=%d, Lon=%d, X=%d, Y=%d, W=%d, H=%d",
+          tileNo, lat, lon, rect.x(), rect.y(),
+          (rect.x()+rect.width())/600000,
+          (rect.y()+rect.height())/600000 );
+*/
+
+ return rect;
+}
+
+/**
+ * Calculates the map tile number from the passed coordinate. The coordinate
+ * format is decimal degree. Positive numbers are N and E, negative numbers
+ * are W and S.
+ *
+ * @param lat Latitude in decimal degree. 90...-90
+ * @param lon Longitude in decimal degree. -180...180
+ * @return map tile number 0...16199
+ */
+int mapTileNumber( double lat, double lon )
+{
+  // check and correct input ranges
+  if( lat <= -90 ) lat = -88;
+  if( lon >= 180 ) lon = 178;
+
+  int latTile = (90 - (int) ceil(lat) + ((int) ceil(lat) % 2)) * 180 / 2;
+
+  int lonTile = ((int) ceil(lon) + ((int) ceil(lon) % 2) + 180) / 2;
+
+  int tile = lonTile + latTile;
+
+  return tile;
+}

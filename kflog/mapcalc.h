@@ -143,4 +143,27 @@ int angleDiff(int ang1, int ang2);
   */
 double angleDiff(double ang1, double ang2);
 
+/**
+ * Calculates a (crude) bounding box that contains the circle of radius @arg r
+ * around point @arg center. @arg r is given in kilometers.
+ */
+QRect areaBox(QPoint center, double r);
+
+/**
+ * Calculates the bounding box of the given tile number in KFLog coordinates.
+ * The returned rectangle used the x-axis as longitude and the y-axis as latitude.
+ */
+QRect getTileBox(const ushort tileNo);
+
+/**
+ * Calculates the map tile number from the passed coordinate. The coordinate
+ * format is decimal degree. Positive numbers are N and E, negative numbers
+ * are W and S.
+ *
+ * @param lat Latitude in decimal degree. 90...-90
+ * @param lon Longitude in decimal degree. -180...180
+ * @return map tile number 0...16199
+ */
+int mapTileNumber( double lat, double lon );
+
 #endif
