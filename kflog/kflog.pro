@@ -48,6 +48,7 @@ SOURCES = \
     igc3dviewstate.cpp \
     igcpreview.cpp \
     isohypse.cpp \
+    isolist.cpp \
     kflogconfig.cpp \
     kflogstartlogo.cpp \
     lineelement.cpp \
@@ -125,6 +126,7 @@ HEADERS = \
     igc3dview.h \
     igc3dviewstate.h \
     igcpreview.h \
+    isolist.h \
     isohypse.h \
     kflogconfig.h \
     kflogstartlogo.h \

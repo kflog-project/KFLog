@@ -59,7 +59,7 @@ RecorderDialog::RecorderDialog(QWidget *parent, const char */*name*/)
   tasks = new QList<FlightTask*>;
 
   foreach(element, *tList)
-    if (element->getTypeID() == BaseMapElement::Task)
+    if (element->getObjectType() == BaseMapElement::Task)
       tasks->append((FlightTask*)element);
 
   configLayout = new QGridLayout(this, 2, 3, 1, -1, "main layout of RecorderDialog");
@@ -144,7 +144,7 @@ void RecorderDialog::__addSettingsPage()
   selectPort->insertItem("ttyUSB0");   // classical device
   selectPort->insertItem("tts/USB0");  // devfs
   selectPort->insertItem("usb/tts/0"); // udev
-  // we never know if the device name will change again; let the user have a chance 
+  // we never know if the device name will change again; let the user have a chance
   selectPort->setEditable(true);
 
   cmdConnect = new QPushButton(tr("Connect recorder"), settingsPage);
@@ -834,7 +834,7 @@ void RecorderDialog::slotReadFlightList()
 
   qApp->processEvents();
   if (__fillDirList() == FR_ERROR) {
-    delete statusDlg;  
+    delete statusDlg;
     QApplication::restoreOverrideCursor();
     QString errorDetails = activeRecorder->lastError();
     if (!errorDetails.isEmpty()) {

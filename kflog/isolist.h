@@ -2,11 +2,11 @@
  **
  **   isolist.h
  **
- **   This file is part of Cumulus.
+ **   This file is part of KFLog4.
  **
  ************************************************************************
  **
- **   Copyright (c):  2008 by Axel Pauli
+ **   Copyright (c):  2008-2010 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -32,7 +32,9 @@
  * like this is created when the map is drawn and is used to detect the
  * elevation at a given position, for instance under the mouse cursor.
  *
- * \date 2008
+ * \date 2008-2010
+ *
+ * \version $Id$
  */
 class IsoListEntry
 {

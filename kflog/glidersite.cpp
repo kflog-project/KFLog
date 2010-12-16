@@ -79,7 +79,7 @@ QString GliderSite::getInfoString() const
 
 void GliderSite::printMapElement(QPainter* printPainter, bool isText)
 {
-  if(!__isVisible()) return;
+  if(!isVisible()) return;
 
   QPoint printPos(glMapMatrix->print(position));
 

@@ -49,7 +49,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
   QString idString, timeString;
   Waypoint *wp1, *wp2 = 0;
   int t1, t2, loop = 0;
-  
+
   htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
       <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
       tr("Task") + ":</B></TD></TR>";
@@ -58,7 +58,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
 
   foreach(wp1, wpList) {//int loop = 0; loop < wpList.count(); loop++) {
 //    *wp1 = wpList.value(loop);
-      
+
     if(wp1->fixTime != 0) {
       timeString = printTime(wp1->fixTime);
       t1 = wp1->fixTime;
@@ -121,7 +121,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
     wp2 = wp1;
     loop++;
   }
-  
+
   if (task->getTaskType() == FlightTask::OLC2003){
     txt.sprintf("%.2f", task->getOlcPoints());
     speed.sprintf("%.2f",task->getAverageSpeed());
@@ -169,7 +169,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
   }
   return htmlText;
 }
-  
+
 void DataView::slotShowTaskText(FlightTask* task)
 {
   QList<Waypoint*> taskPointList = task->getWPList();
@@ -213,7 +213,7 @@ void DataView::setFlightData()
 
   if(e)
     {
-      switch (e->getTypeID())
+      switch (e->getObjectType())
         {
           case BaseMapElement::Flight:
             h = ((Flight*)e)->getHeader();
@@ -292,7 +292,7 @@ void DataView::slotWPSelected(const QUrl &link)
   if (!e)
     return;
 
-  switch(e->getTypeID())
+  switch(e->getObjectType())
   {
     case BaseMapElement::Flight:
       emit wpSelected(url.toInt());

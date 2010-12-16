@@ -847,7 +847,7 @@ void MainWindow::slotModifyMenu()
 {
   if (_globalMapContents->getFlightList()->count() > 0)
   {
-      switch(_globalMapContents->getFlight()->getTypeID())
+      switch(_globalMapContents->getFlight()->getObjectType())
         {
           case BaseMapElement::Flight:
             fileClose->setEnabled(true);
@@ -1086,7 +1086,7 @@ void MainWindow::slotOptimizeFlight()
 {
   Flight *f = (Flight *)_globalMapContents->getFlight();
 
-  if(f && f->getTypeID() == BaseMapElement::Flight)
+  if(f && f->getObjectType() == BaseMapElement::Flight)
     {
       if(f->optimizeTask())
         {
@@ -1102,7 +1102,7 @@ void MainWindow::slotOptimizeFlightOLC()
 {
   Flight *f = (Flight *)_globalMapContents->getFlight();
 
-  if(f && f->getTypeID() == BaseMapElement::Flight){
+  if(f && f->getObjectType() == BaseMapElement::Flight){
       if(f->optimizeTaskOLC(map))
         {
           // Okay, update flightdata and redraw map
@@ -1280,7 +1280,7 @@ void MainWindow::slotFlightPrint()
 
   if(f)
     {
-      switch (f->getTypeID())
+      switch (f->getObjectType())
         {
           case BaseMapElement::Flight:
             FlightDataPrint::FlightDataPrint((Flight *)f);
@@ -1290,8 +1290,8 @@ void MainWindow::slotFlightPrint()
             break;
           default:
             QString tmp;
-            tmp.sprintf(tr("Not yet available for type: %d"), f->getTypeID());
-            QMessageBox::warning(0, tr("Type not available"), tmp, QMessageBox::Ok, 0);
+            tmp.sprintf(tr("Not yet available for type: %d"), f->getObjectType());
+            QMessageBox::warning(0, tr("Type not available"), tmp, QMessageBox::Ok);
         }
     }
   slotSetStatusMsg(tr("Ready."));

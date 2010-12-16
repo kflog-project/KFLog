@@ -17,24 +17,36 @@
 
 #include "singlepoint.h"
 
-SinglePoint::SinglePoint(const QString& n, const QString& gps, unsigned int t,
-      WGSPoint wgsP, QPoint pos, unsigned int elev, unsigned int lmt)
-  : BaseMapElement(n, t),
-    wgsPosition(wgsP), position(pos), gpsName(gps), curPos(pos), elevation(elev),
-    lm_typ(lmt)
+SinglePoint::SinglePoint( const QString& n,
+                          const QString& shortName,
+                          const BaseMapElement::objectType t,
+                          const WGSPoint& wgsP,
+                          const QPoint& pos,
+                          const unsigned int elev,
+                          const unsigned short secID,
+                          unsigned int lmType )
+  : BaseMapElement(n, t, secID),
+    wgsPosition(wgsP),
+    position(pos),
+    shortName(shortName),
+    curPos(pos),
+    elevation(elev),
+    lm_typ(lmType)
 {
-
 }
-
 
 SinglePoint::~SinglePoint()
 {
-
 }
 
-void SinglePoint::printMapElement(QPainter* printPainter, bool /*isText*/)
+void SinglePoint::printMapElement(QPainter* printPainter, bool isText )
 {
-  if(!__isVisible()) return;
+  Q_UNUSED( isText )
+
+  if( !isVisible() )
+    {
+      return;
+    }
 
   QPoint printPos(glMapMatrix->print(position));
 
@@ -44,7 +56,7 @@ void SinglePoint::printMapElement(QPainter* printPainter, bool /*isText*/)
       iconSize = 8;
 
   /*
-   * Hier sollte mal f�r eine bessere Qualit�t der Icons gesorgt werden.
+   * Hier sollte mal für eine bessere Qualität der Icons gesorgt werden.
    * Eventuell kann man die Icons ja hier zeichnen lassen ?!?
    */
   printPainter->setPen(QPen(QColor(0,50,50), 2));
@@ -52,20 +64,15 @@ void SinglePoint::printMapElement(QPainter* printPainter, bool /*isText*/)
   printPainter->drawEllipse(printPos.x() - 5, printPos.y() - 5, 10, 10);
   return;
 
-  printPainter->drawPixmap(printPos.x() - iconSize, printPos.x() - iconSize,
-      glConfig->getPixmap(typeID));
-}
-
-bool SinglePoint::__isVisible() const
-{
-  return glMapMatrix->isVisible(position);
+  printPainter->drawPixmap( printPos.x() - iconSize, printPos.x() - iconSize,
+                            glConfig->getPixmap(typeID) );
 }
 
 bool SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
 {
-  if(!__isVisible())
+  if(! isVisible() )
     {
-      curPos = QPoint(-50, -50);
+      curPos = QPoint(-5000, -5000);
       return false;
     }
 
@@ -128,15 +135,3 @@ bool SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
 
   return true;
 }
-
-QString SinglePoint::getWPName() const { return gpsName; }
-
-QPoint SinglePoint::getPosition() const { return position; }
-
-WGSPoint SinglePoint::getWGSPosition() const { return wgsPosition; }
-
-QPoint SinglePoint::getMapPosition() const  { return curPos;  }
-
-QString SinglePoint::getInfoString() const  {  return QString();  }
-
-unsigned int SinglePoint::getElevation() const { return elevation; }

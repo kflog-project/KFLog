@@ -6,7 +6,7 @@
  **
  ************************************************************************
  **
- **   Copyright (c):  2005 by André Somers, 2008 Axel Pauli
+ **   Copyright (c):  2005 by Andrï¿½ Somers, 2008 Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   Licence. See the file COPYING for more information.
@@ -342,7 +342,7 @@ void OpenAirParser::initializeBaseMapping()
   m_baseTypeMap.insert("Prohibited", BaseMapElement::Prohibited);
   m_baseTypeMap.insert("LowFlight", BaseMapElement::LowFlight);
   m_baseTypeMap.insert("Tmz", BaseMapElement::Tmz);
-  m_baseTypeMap.insert("SuSector", BaseMapElement::SuSector);
+  m_baseTypeMap.insert("SuSector", BaseMapElement::GliderSector);
 }
 
 void OpenAirParser::initializeStringMapping(const QString& mapFilePath)

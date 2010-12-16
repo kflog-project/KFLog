@@ -21,7 +21,10 @@
 #include <QString>
 #include <QSize>
 
+#include <QtCore>
+
 #include "isohypse.h"
+#include "mapcalc.h"
 #include "mapmatrix.h"
 
 extern MapMatrix* _globalMapMatrix;
@@ -38,7 +41,6 @@ Isohypse::Isohypse( QPolygon elevationCoordinates,
     _typeID(typeID)
 {}
 
-
 Isohypse::~Isohypse()
 {}
 
@@ -46,9 +48,9 @@ QPainterPath* Isohypse::drawRegion( QPainter* targetP, const QRect &viewRect,
                                     bool really_draw, bool isolines )
 {
 
-  if( !glMapMatrix->isVisible(bBox, getTypeID()) )
+  if( isVisible() == false )
     {
-     return static_cast<QPainterPath *> (0);
+      return static_cast<QPainterPath *> (0);
     }
 
   QPolygon mP = glMapMatrix->map(projPolygon);
@@ -65,7 +67,7 @@ QPainterPath* Isohypse::drawRegion( QPainter* targetP, const QRect &viewRect,
 
       targetP->drawPolygon(mP);
 
-      if (isolines)
+      if( isolines )
         {
           targetP->drawPolyline(mP);
         }
@@ -75,4 +77,11 @@ QPainterPath* Isohypse::drawRegion( QPainter* targetP, const QRect &viewRect,
   path->addPolygon(projPolygon);
   path->closeSubpath();
   return path;
+}
+
+bool Isohypse::isVisible() const
+{
+  // Check, if this isohypse tile has a map overlapping otherwise we can ignore
+  // it completely.
+  return getTileBox(getMapSegment()).intersects(_globalMapMatrix->getViewBorder());
 }

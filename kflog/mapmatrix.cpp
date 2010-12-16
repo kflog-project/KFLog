@@ -21,6 +21,7 @@
 //Added by qt3to4:
 #include <Q3PointArray>
 
+#include "basemapelement.h"
 #include "mapmatrix.h"
 
 // Projektions-Massstab
@@ -159,26 +160,6 @@ bool MapMatrix::isVisible(const QRect& itemBorder) const
            ( itemBorder.height() * ( MAX_SCALE / cScale ) < 30000 ) );
 }
 
-bool MapMatrix::isVisible( const QRect& itemBorder, int typeID) const
-{
-  // qDebug("MapMatrix::isVisible(): w=%d h=%d", itemBorder.width(), itemBorder.height() );
-  if( typeID == BaseMapElement::Highway ||
-      typeID == BaseMapElement::Road ||
-      typeID == BaseMapElement::Trail ||
-      typeID == BaseMapElement::Railway ||
-      typeID == BaseMapElement::Railway_D ||
-      typeID == BaseMapElement::Aerial_Cable )
-    {
-      return ( ( mapBorder.intersects(itemBorder) ) &&
-               (itemBorder.width() < 10000) && (itemBorder.height() < 10000) );
-    }
-
-  return ( ( mapBorder.intersects(itemBorder) ) &&
-           (itemBorder.width() < 10000) && (itemBorder.height() < 10000) &&
-           (( itemBorder.width()*8  > ( cScale  ) ) ||
-            ( itemBorder.height()*8 > ( cScale  ) )) );
-}
-
 int MapMatrix::getScaleRange()  const
 {
   if(cScale <= scaleBorders[Border1])
@@ -190,7 +171,6 @@ int MapMatrix::getScaleRange()  const
   else
     return Border3;
 }
-
 
 bool MapMatrix::isSwitchScale() const
 {
@@ -320,12 +300,6 @@ double MapMatrix::getScale(unsigned int type)
 
 void MapMatrix::centerToPoint(const QPoint& center)
 {
-  bool result = true;
-  QMatrix invertMatrix = worldMatrix.invert(&result);
-  if(!result)
-      // Houston, wir haben ein Problem !!!
-      qFatal("KFLog: Cannot invert worldmatrix!");
-
   QPoint projCenter = __mapToWgs(invertMatrix.map(center));
   mapCenterLat = projCenter.y();
   mapCenterLon = projCenter.x();
@@ -398,15 +372,13 @@ double MapMatrix::centerToRect(const QRect& center, const QSize& pS, bool addBor
 
 QPoint MapMatrix::mapToWgs(const QPoint& pos) const
 {
-  bool result = true;
-  QMatrix invertMatrix = worldMatrix.invert(&result);
-  if(!result)
-    // Houston, we've got a problem !!!
-    qFatal("KFLog: Cannot invert worldmatrix!");
-
-  return __mapToWgs(invertMatrix.map(pos));
+  return __mapToWgs( invertMatrix.map( pos ) );
 }
 
+QPoint MapMatrix::invertToMap(const QPoint& pos) const
+{
+  return invertMatrix.map( pos );
+}
 
 void MapMatrix::__moveMap(int dir)
 {
@@ -451,32 +423,34 @@ void MapMatrix::__moveMap(int dir)
 void MapMatrix::createMatrix(const QSize& newSize)
 {
   const QPoint tempPoint(wgsToMap(mapCenterLat, mapCenterLon));
-  worldMatrix.reset();
 
   /* Set rotating and scaling */
   double scale = MAX_SCALE / cScale;
   rotationArc = currentProjection->getRotationArc(tempPoint.x(), tempPoint.y());
 
-  worldMatrix.setMatrix(cos(rotationArc) * scale, sin(rotationArc) * scale,
-      -sin(rotationArc) * scale, cos(rotationArc) * scale, 0, 0);
+  double sinscaled = sin(rotationArc) * scale;
+  double cosscaled = cos(rotationArc) * scale;
+  worldMatrix = QTransform( cosscaled, sinscaled, -sinscaled, cosscaled, 0, 0 );
 
   /* Set the translation */
-  QMatrix translateMatrix(1, 0, 0, 1,
-      currentProjection->getTranslationX(newSize.width(),
-          worldMatrix.map(tempPoint).x()),
-      currentProjection->getTranslationY(newSize.height(),
-          worldMatrix.map(tempPoint).y()));
+  const QPoint map = worldMatrix.map(tempPoint);
 
-  worldMatrix = worldMatrix * translateMatrix;
+  QTransform translateMatrix( 1, 0, 0, 1,
+                              currentProjection->getTranslationX(newSize.width(),map.x()),
+                              currentProjection->getTranslationY(newSize.height(),map.y()));
+
+  worldMatrix *= translateMatrix;
 
   // Setting the viewBorder
   bool result = true;
-  QMatrix invertMatrix = worldMatrix.invert(&result);
-  if(!result)
-    // Houston, wir haben ein Problem !!!
-    qFatal("KFLog: Cannot invert worldmatrix!");
+  invertMatrix = worldMatrix.inverted( &result );
 
-  //
+  if( !result )
+    {
+      // Houston, wir haben ein Problem !!!
+      qFatal("KFLog: Cannot invert worldMatrix! File=%s, Line=%d", __FILE__, __LINE__);
+    }
+
   // Die Berechnung der Kartengrenze funktioniert so nur auf der
   // Nordhalbkugel. Auf der Südhalbkugel stimmen die Werte nur
   // näherungsweise.
@@ -491,16 +465,17 @@ void MapMatrix::createMatrix(const QSize& newSize)
   viewBorder.setLeft(tlCorner.x());
   viewBorder.setRight(trCorner.x());
   viewBorder.setBottom(std::min(blCorner.y(), brCorner.y()));
-  mapBorder = invertMatrix.map(QRect(0,0, newSize.width(), newSize.height()));
+  mapBorder = invertMatrix.mapRect( QRect(0,0, newSize.width(), newSize.height()) );
   mapViewSize = newSize;
 
   emit displayMatrixValues(getScaleRange(), isSwitchScale());
-//  emit matrixChanged();
 }
 
+#warning "QMatrix must be replaces by QTransform here"
 void MapMatrix::createPrintMatrix(double printScale, const QSize& pSize, int dX,
     int dY, bool rotate)
 {
+#if 0
   pScale = printScale;
 
   printCenterLat = mapCenterLat;
@@ -564,7 +539,7 @@ void MapMatrix::createPrintMatrix(double printScale, const QSize& pSize, int dX,
   printBorder.setRight(trCorner.x());
   printBorder.setBottom(std::min(blCorner.y(), brCorner.y()));
 
-//  return &printMatrix;
+#endif
 }
 
 void MapMatrix::slotCenterToHome()  { MATRIX_MOVE( MapMatrix::Home ); }

@@ -29,7 +29,7 @@
 #define BORDER_3 1000
 
 /*
- * Definierte Farbwerte bei (dazwischen wurde früher linear geändert):
+ * Definierte Farbwerte bei (dazwischen wurde frÃ¼her linear geÃ¤ndert):
  *
  *   <0 m :    96 / 128 / 248
  *    0 m :   174 / 208 / 129 *
@@ -43,7 +43,7 @@
  */
 
 // Default-Values for topography:
-#define COLOR_LEVEL_SUB QColor(96, 128, 248)
+#define COLOR_LEVEL_SUB QColor(230, 255, 255)
 #define COLOR_LEVEL_0 QColor(165, 214, 126)
 #define COLOR_LEVEL_10 QColor(185, 220, 131)
 #define COLOR_LEVEL_25 QColor(193, 225, 138)

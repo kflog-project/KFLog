@@ -94,7 +94,7 @@ public:
    */
   virtual bool isVisible() const
     {
-      return glMapMatrix->isVisible(bBox, getTypeID());
+      return glMapMatrix->isVisible(bBox);
     };
 
   /**

@@ -94,6 +94,15 @@ public:
       return _typeID;
     };
 
+  /**
+   * Check, if this isohypse tile has a map overlapping otherwise we can ignore
+   * it completely.
+   *
+   * \return "true", if the bounding-box of the iso tile intersects
+   *         with the drawing-area of the map.
+   */
+  virtual bool isVisible() const;
+
 private:
 
   /**

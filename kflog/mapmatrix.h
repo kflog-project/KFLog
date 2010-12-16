@@ -9,7 +9,7 @@
 **   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -20,7 +20,9 @@
 
 #include <algorithm>
 #include <QObject>
-#include <QMatrix>  // FIXME: QMatrix is  deprecated!
+#include <QTransform>
+#include <QPoint>
+#include <QRect>
 
 //Added by qt3to4:
 #include <Q3PointArray>
@@ -181,10 +183,6 @@ public:
    * @return "true", if the given rectangle intersects with the current map.
    */
   bool isVisible(const QRect& itemBorder) const;
-  /**
-   * @return "true", if the given rectangle intersects with the current map.
-   */
-  bool isVisible( const QRect& itemBorder, int typeID) const;
 
   /** */
   enum MoveDirection {NotSet = 0, North = 1, West = 2, East = 4,
@@ -207,6 +205,9 @@ public:
    * @param addBorder Adds a border of 6.5 km if true.
    */
   double centerToRect(const QRect&, const QSize& = QSize(0,0), bool addBorder = true);
+
+  /** */
+  QPoint invertToMap(const QPoint& pos) const;
 
   /** */
   QPoint mapToWgs(const QPoint& pos) const;
@@ -236,7 +237,7 @@ public:
   void writeMatrixOptions();
 
   /**
-   * @returns the current projection type
+   * @return the current projection type
    */
   ProjectionBase * getProjection() const
   {
@@ -305,14 +306,21 @@ private:
   QPoint __mapToWgs(int x, int y) const;
 
   /**
+   * Used map transformation matrix.
    */
-  QMatrix worldMatrix;
+  QTransform worldMatrix;
+
   /**
+   * Used map invert transformation matrix.
    */
-  QMatrix printMatrix;
+  QTransform invertMatrix;
+
   /**
-   *
+   * Used print transformation matrix.
    */
+
+  QTransform printMatrix;
+
   /**
    * The mapCenter is the position displayed in the center of the map.
    * It is used in two different ways:
@@ -357,6 +365,7 @@ private:
 
   /** */
   ProjectionBase* currentProjection;
+
   /** optimization to prevent recurring recalculation of this value */
   int _MaxScaleToCScaleRatio;
 };

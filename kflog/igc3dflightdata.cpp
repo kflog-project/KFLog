@@ -454,7 +454,7 @@ void Igc3DFlightData::load(Flight* flight)
 
     reset();
 
-    if (flight && flight->getTypeID() == BaseMapElement::Flight) {
+    if (flight && flight->getObjectType() == BaseMapElement::Flight) {
         for (i=0; i < ((int)flight->getRouteLength())-2; i++){
             flight->searchGetNextPoint(i, cP);
             hightlocal = cP.height;

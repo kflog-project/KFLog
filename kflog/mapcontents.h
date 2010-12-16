@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QPainter>
 #include <QPoint>
+#include <QRect>
 
 #include "downloadmanager.h"
 #include "flighttask.h"
@@ -70,18 +71,18 @@ class MapContents : public QObject
   /**
    * The index of Map element-Lists.
    */
-  enum MapContentsListID {NotSet = 0, AirportList, GliderfieldList,
-                          AddSitesList, OutLandingList, NavList, AirspaceList,
-                          ObstacleList, ReportList, CityList, VillageList,
-                          LandmarkList, HighwayList, HighwayEntryList,
-                          RoadList, RailList, StationList, HydroList,
-                          TopoList, IsohypseList,
-                          WaypointList, DigitList, FlightList};
+  enum MapContentsListID { NotSet = 0, AirportList, GliderfieldList,
+                           AddSitesList, OutLandingList, NavList, AirspaceList,
+                           ObstacleList, ReportList, CityList, VillageList,
+                           LandmarkList, HighwayList, HighwayEntryList,
+                           RoadList, RailList, StationList, HydroList,
+                           LakeList, TopoList, IsohypseList,
+                           WaypointList, DigitList, FlightList };
 
   /**
    * Types used by automatic download actions.
    */
-  enum AutoDownloadType {ADT_NotSet = 0, Automatic, Inhibited};
+  enum AutoDownloadType { ADT_NotSet = 0, Automatic, Inhibited };
 
   /**
    * Creates a new MapContents-object.
@@ -158,8 +159,9 @@ class MapContents : public QObject
    * Draws all isohypses into the given painter
    *
    * @param  targetP  The painter to draw the elements into
+   * @param  windowRect Internal geometry of the drawing window.
    */
-  void drawIsoList(QPainter* targetP);
+  void drawIsoList( QPainter* targetP, QRect windowRect );
 
   /**
    * Prints the whole content of the map into the given painter.
@@ -205,7 +207,7 @@ class MapContents : public QObject
   /** generate a task name, using the suggestion given. Prevents double task names */
   QString genTaskName(QString suggestion);
 
-  /** Returns list of IsoHypse Regions */
+  /** \return The list of IsoHypse Regions. */
   IsoList* getIsohypseRegions()
   {
     return &pathIsoLines;
@@ -347,13 +349,7 @@ class MapContents : public QObject
  private:
 
   /**
-   * Reads a binary map file containing airfields.
-   *
-   * @param  fileName  The path and name of the airfield-file.
-   */
-  bool __readAirfieldFile(const char* pathName);
-  /**
-   * Reads a new binary map file.
+   * Reads a binary map file.
    *
    * @param  fileSecID  The sectionID of the mapfile
    * @param  fileTypeID  The typeID of the mapfile ("G" for ground-data,
@@ -365,7 +361,7 @@ class MapContents : public QObject
   bool __readBinaryFile(const int fileSecID, const char fileTypeID);
 
   /**
-   * Reads a new binary terrain-map file.
+   * Reads a binary ground or terrain file.
    *
    * @param  fileSecID  The sectionID of the mapfile
    * @param  fileTypeID  The typeID of the mapfile ("G" for ground-data,
@@ -409,52 +405,63 @@ class MapContents : public QObject
    */
   QList<Airspace*> airspaceList;
 
+  //================ MAP ITEM LISTS =====================================
+
   /**
    * obstacleList contains all obstacles and -groups, as well
    * as the spots and passes.
    */
-  QList<SinglePoint*> obstacleList;
+  QList<SinglePoint> obstacleList;
 
   /**
    * reportList contains all reporting points.
    */
-  QList<SinglePoint*> reportList;
+  QList<SinglePoint> reportList;
 
   /**
-   * cityList contails all cities (areas).
+   * cityList contains all cities (areas).
    */
-  QList<LineElement*> cityList;
+  QList<LineElement> cityList;
 
   /**
    * villageList contains all villages, towns & cities (points).
    */
-  QList<SinglePoint*> villageList;
+  QList<SinglePoint> villageList;
 
   /**
    * landmarkList contains all landmarks.
    */
-  QList<SinglePoint*> landmarkList;
+  QList<SinglePoint> landmarkList;
 
   /**
-   * roadList contails all roads.
+   * highwayList contains all highways.
    */
-  QList<LineElement*> roadList;
+  QList<LineElement> highwayList;
+
+  /**
+   * roadList contains all roads.
+   */
+  QList<LineElement> roadList;
+
   /**
    * railList contains all railways and aerial railways.
    */
-  QList<LineElement*> railList;
+  QList<LineElement> railList;
+
   /**
-   * stationList contains all stations.
+   * hydroList contains all shore lines, rivers, lakes, ...
    */
-//  QList<SinglePoint*> stationList;
+  QList<LineElement> hydroList;
+
   /**
-   * hydroList contains all shorelines, rivers, lakes, ...
+   * lakeList contains all lakes, ...
    */
-  QList<LineElement*> hydroList;
+  QList<LineElement> lakeList;
+
   /**
    * topoList contains all topographical objects.
    */
-  QList<LineElement*> topoList;
+  QList<LineElement> topoList;
 
   /**
    * Isohypse map contains all isohypses above the ground of a tile in a list.
@@ -511,7 +518,8 @@ class MapContents : public QObject
    */
   static const short isoLevels[ISO_LINE_LEVELS];
 
-  /** Hash table with elevation in meters as key and related elevation
+  /**
+   * Hash table with elevation in meters as key and related elevation
    * index as value
    */
   QHash<short, uchar> isoHash;
@@ -524,9 +532,9 @@ class MapContents : public QObject
   /**
    * Try to download a missing ground/terrain file.
    *
-   * @param file The name of the file without any path prefixes.
-   * @param directory The destination directory.
-   *
+   * \param file The name of the file without any path prefixes.
+   * \param directory The destination directory.
+   * \return true on success otherwise false
    */
   bool __downloadMapFile( QString &file, QString &directory );
 

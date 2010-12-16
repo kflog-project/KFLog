@@ -582,7 +582,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
       }
     }
 
-  if(baseFlight && baseFlight->getTypeID() == BaseMapElement::Flight)
+  if(baseFlight && baseFlight->getObjectType() == BaseMapElement::Flight)
     {
       QList<Waypoint*> wpList = baseFlight->getWPList();
 
@@ -1015,7 +1015,7 @@ void Map::mousePressEvent(QMouseEvent* event)
                       QString name = hitElement->getName();
                       w->name = name.replace(blank, "").left(6).upper();
                       w->description = hitElement->getName();
-                      w->type = hitElement->getTypeID();
+                      w->type = hitElement->getObjectType();
                       w->origP = hitElement->getWGSPosition();
                       w->elevation = hitElement->getElevation();
                       w->icao = hitElement->getICAO();
@@ -1223,7 +1223,7 @@ void Map::__drawMap()
 
   pixIsoMap.fill(QColor(96,128,248));
 
-  _globalMapContents->drawIsoList( &isoMapP );
+  _globalMapContents->drawIsoList( &isoMapP, rect() );
 
   _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::TopoList);
 
@@ -1336,7 +1336,7 @@ void Map::__drawPlannedTask(bool solid)
     task->reProject();
   }
 
-  if(task && task->getTypeID() == BaseMapElement::Task)
+  if(task && task->getObjectType() == BaseMapElement::Task)
     {
       QList<Waypoint*> WPList = task->getWPList();
 
@@ -1675,7 +1675,7 @@ void Map::slotCenterToFlight()
     QRect r2;
     QList<Flight*> fl;
 
-    switch (f->getTypeID()) {
+    switch (f->getObjectType()) {
       case BaseMapElement::Flight:
         r = f->getFlightRect();
         break;
@@ -1719,7 +1719,7 @@ void Map::slotCenterToTask()
       QRect r2;
       QList<Flight*> fl;
 
-      switch (f->getTypeID())
+      switch (f->getObjectType())
         {
           case BaseMapElement::Flight:
             r = ((Flight *)f)->getTaskRect();
@@ -1773,7 +1773,7 @@ void Map::slotAnimateFlightStart()
             // save this one to speed up timeout code
       flightToAnimate = f;
 
-      switch(f->getTypeID())
+      switch(f->getObjectType())
         {
           case BaseMapElement::Flight:
             f->setAnimationIndex(0);
@@ -1800,7 +1800,7 @@ void Map::slotAnimateFlightStart()
         // flights will not be visible as nAnimationIndex is zero for all flights to animate.
         slotRedrawFlight();
 
-      switch(f->getTypeID())
+      switch(f->getObjectType())
         {
           case BaseMapElement::Flight:
             cP = f->getPoint(0);
@@ -1859,7 +1859,7 @@ void Map::slotAnimateFlightTimeout()
 
   if(f)
     {
-      switch(f->getTypeID())
+      switch(f->getObjectType())
         {
           case BaseMapElement::Flight:
             f->setAnimationNextIndex();
@@ -1946,7 +1946,7 @@ void Map::slotAnimateFlightStop()
 
   if(!f) return;
 
-  switch (f->getTypeID())
+  switch (f->getObjectType())
     {
       case BaseMapElement::Flight:
         flightList.append(f);
@@ -2158,7 +2158,7 @@ void Map::slotFlightEnd()
                    prePos.x() - 20, prePos.y() - 20, 40, 40);
 
           // just a workaround !!!!!!!!!!!!!
-          if(f->getTypeID() == BaseMapElement::Flight)
+          if(f->getObjectType() == BaseMapElement::Flight)
             {
               if((index = f->searchGetNextPoint(((Flight *)f)->getRouteLength()-1, cP)) != -1)
                 {
@@ -2182,7 +2182,7 @@ void Map::slotShowCurrentFlight()
 
   planning = 0;
 
-  if (f && f->getTypeID() == BaseMapElement::Task) {
+  if (f && f->getObjectType() == BaseMapElement::Task) {
     if (((FlightTask *)f)->getWPList().count() < 1) {
       slotActivatePlanning();
     }
@@ -2198,7 +2198,7 @@ void Map::slotShowCurrentFlight()
 
   if(f)
     {
-      switch(f->getTypeID())
+      switch(f->getObjectType())
         {
           case BaseMapElement::Flight:
             // fall through
@@ -2220,7 +2220,7 @@ void Map::slotAppendWaypoint2Task(Waypoint *p)
   extern MapMatrix *_globalMapMatrix;
 
   FlightTask *f = (FlightTask *)_globalMapContents->getFlight();
-  if(f && f->getTypeID() == BaseMapElement::Task && planning)
+  if(f && f->getObjectType() == BaseMapElement::Task && planning)
     {
       QList<Waypoint*> taskPointList = f->getWPList();
       p->projP = _globalMapMatrix->wgsToMap(p->origP);
@@ -2287,7 +2287,7 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
                   wp->elevation = hitElement->getElevation();
                   wp->projP = hitElement->getPosition();
                   wp->description = hitElement->getName();
-                  wp->type = hitElement->getTypeID();
+                  wp->type = hitElement->getObjectType();
                   wp->elevation = hitElement->getElevation();
                   wp->icao = hitElement->getICAO();
                   wp->frequency = hitElement->getFrequency().toDouble();
@@ -2385,7 +2385,7 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
   filterRadius = (c->radiusLat != 1  || c->radiusLong != 1);
   filterArea = (c->areaLat2 != 1 && c->areaLong2 != 1 && !filterRadius);
 
-  foreach(*w, c->wpList)
+  foreach(w, c->wpList)
   {
     if(!c->showAll) {
       switch(w->type) {
@@ -2551,7 +2551,7 @@ void Map::slotMpNewWaypoint(){
           QString name = hitElement->getName();
           w->name = name.replace(blank, "").left(6).upper();
           w->description = hitElement->getName();
-          w->type = hitElement->getTypeID();
+          w->type = hitElement->getObjectType();
           w->origP = hitElement->getWGSPosition();
           w->elevation = hitElement->getElevation();
           w->icao = hitElement->getICAO();

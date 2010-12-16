@@ -127,7 +127,7 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   controllayout->addRowSpacing(8,5);
   controllayout->addRowSpacing(10,5);
   controllayout->setRowStretch(12,3);
-  
+
 // Set default size of the window splitting
   typedef Q3ValueList<int> testList;
   testList controlList;
@@ -199,7 +199,7 @@ void EvaluationFrame::slotShowGraph()
   evalView->drawCurve(check_vario->isChecked(), check_speed->isChecked(),
     check_baro->isChecked(), smoothness_va, smoothness_v, smoothness_h, secWidth);
 
-  if (flight && flight->getTypeID() == BaseMapElement::Flight) {
+  if (flight && flight->getObjectType() == BaseMapElement::Flight) {
     int contentsX = (( centerTime - flight->getStartTime() ) / secWidth)
                + X_DISTANCE ;
     graphFrame->center(contentsX,0);
@@ -234,7 +234,7 @@ void EvaluationFrame::slotSpeedSmoothness(int s)
 void EvaluationFrame::slotScale(int g)
 {
   if(flight == NULL)  return;
-  
+
   // set scale factor
   secWidth = g;
 

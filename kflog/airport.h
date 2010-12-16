@@ -43,7 +43,7 @@ class Airport : public RadioPoint
      * @param  frequency  The frequency
      * @param  vdf  "true",
      */
-    Airport(QString name, QString icao, QString abbr, unsigned int typeID,
+    Airport(QString name, QString icao, QString abbr, BaseMapElement::objectType typeID,
         WGSPoint wgsPos, QPoint pos, unsigned int elevation,
         const char* frequency, bool vdf);
     /**

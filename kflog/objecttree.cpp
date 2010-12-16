@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by André Somers
+**   Copyright (c):  2003 by Andrï¿½ Somers
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -191,7 +191,7 @@ int ObjectTree::currentFlightElementType() {
   if (!currentFlightElement) {
     return -1;
   } else {
-    return currentFlightElement->getTypeID();
+    return currentFlightElement->getObjectType();
   }
 }
 
@@ -269,7 +269,7 @@ void ObjectTree::slotEditTask()
   FlightTask *ft;
 
   if (currentFlightElement != 0) {
-    if (currentFlightElement->getTypeID()==BaseMapElement::Task) {
+    if (currentFlightElement->getObjectType()==BaseMapElement::Task) {
       ft = (FlightTask*) currentFlightElement;
 
       //td.name->setText(ft->getFileName());

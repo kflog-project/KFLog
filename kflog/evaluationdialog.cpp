@@ -144,7 +144,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
     return;
   }
 
-  switch(flight->getTypeID())
+  switch(flight->getObjectType())
   {
 
   case BaseMapElement::Flight:
@@ -375,7 +375,7 @@ void EvaluationDialog::slotShowFlightData()
   flight = (Flight *)_globalMapContents->getFlight();
 
   if (flight) {
-    if (flight->getTypeID() == BaseMapElement::Flight) {
+    if (flight->getObjectType() == BaseMapElement::Flight) {
       setCaption(tr("Flightevaluation:") + flight->getPilot() + "  "
         + flight->getDate().toString());
     }
@@ -394,7 +394,7 @@ void EvaluationDialog::slotShowFlightData()
 /** No descriptions */
 Flight* EvaluationDialog::getFlight()
 {
-  if (flight && flight->getTypeID() == BaseMapElement::Flight) {
+  if (flight && flight->getObjectType() == BaseMapElement::Flight) {
     return flight;
   }
   else {

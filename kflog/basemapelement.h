@@ -116,15 +116,15 @@ public:
   /**
    * @return the name of the element.
    */
-  virtual const QString& getName() const
+  virtual const QString getName() const
   {
     return name;
   };
 
   /**
-   * @return the typeID of the element.
+   * @return the object type of the element.
    */
-  virtual objectType getTypeID() const
+  virtual objectType getObjectType() const
   {
     return typeID;
   };

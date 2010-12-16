@@ -19,7 +19,7 @@
 
 #include <QDir>
 
-Airport::Airport(QString n, QString i, QString abbr, unsigned int t,
+Airport::Airport(QString n, QString i, QString abbr, BaseMapElement::objectType t,
   WGSPoint wgsPos, QPoint pos, unsigned int e, const char* f, bool v)
   : RadioPoint(n, i, abbr, t, wgsPos, pos, f, e),
     vdf(v),
@@ -79,7 +79,7 @@ QString Airport::getInfoString() const
 
 void Airport::printMapElement(QPainter* printPainter, bool isText)
 {
-  if(!__isVisible()) return;
+  if(!isVisible()) return;
 
   QPoint printPos(glMapMatrix->print(position));
 

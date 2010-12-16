@@ -658,14 +658,15 @@ void Waypoints::slotImportWaypointFromMap()
 
         w = new Waypoint;
 
-        w->name = s->getName().replace(blank, QString::null).left(6).upper();
+        QString name = s->getName();
+        w->name = name.replace(blank, "").left(6).upper();
         loop = 0;
         while (currentWaypointCatalog->findWaypoint(w->name) && loop < 100000) {
           tmp.setNum(loop++);
           w->name = w->name.left(6 - tmp.length()) + tmp;
         }
         w->description = s->getName();
-        type = s->getTypeID();
+        type = s->getObjectType();
         w->type = type;
 
         w->origP = p;

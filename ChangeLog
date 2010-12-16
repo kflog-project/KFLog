@@ -1,6 +1,10 @@
 $Id$
 
-2010-10-14 Axel Pauli <axel@kflog.org>
+2010-10-15 Axel Pauli <axel@kflog.org>
+  * Q3 pointer lists for terrain and map elements replaced by Qt4 value
+    lists. Isoline management taken over from Cumulus.
+
+2010-10-15 Axel Pauli <axel@kflog.org>
   * Content of class WGSPoint taken over from Cumulus. Definitions of WGSPoint
     In MapMatrix removed. Method degreeToNum moved from class MapContens to 
     class WGSPoint.
