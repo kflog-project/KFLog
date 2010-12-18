@@ -23,15 +23,17 @@
 #include <QList>
 #include <QObject>
 #include <QPainter>
+#include <QPainterPath>
+#include <QPair>
 #include <QPoint>
 #include <QRect>
 
+#include "airspace.h"
 #include "downloadmanager.h"
 #include "flighttask.h"
 #include "isolist.h"
 
 class Airport;
-class Airspace;
 class Distance;
 class Flight;
 class FlightGroup;
@@ -123,6 +125,24 @@ class MapContents : public QObject
    * @param  index  the list-index of the airspace
    */
   Airspace* getAirspace(unsigned int index);
+
+  /**
+   * \return The airspace list.
+   */
+
+  SortableAirspaceList& getAirspaceList()
+  {
+    return airspaceList;
+  };
+
+  /**
+   * \return The airspace region list.
+   */
+
+  QList<QPair<QPainterPath, Airspace *> > &getAirspaceRegionList()
+    {
+      return airspaceRegionList;
+    };
 
   /**
    * @returns a pointer to the given glidersite
@@ -400,10 +420,17 @@ class MapContents : public QObject
   QList<RadioPoint*> navList;
 
   /**
-   * airspaceList contains all airspaces.
-
+   * airspaceList contains all airspaces. The sort function on this
+   * list will sort the airspaces from top to bottom. This list must be stay
+   * a pointer list because the cross reference to the airspace region.
    */
-  QList<Airspace*> airspaceList;
+  SortableAirspaceList airspaceList;
+
+  /**
+   * Contains the regions of all visible airspaces. The list is needed to
+   * find the airspace data when the user selects an airspace in the map.
+   */
+  QList<QPair<QPainterPath, Airspace*> > airspaceRegionList;
 
   //================ MAP ITEM LISTS =====================================
 

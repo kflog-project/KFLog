@@ -32,7 +32,7 @@ class GLView : public QGLWidget
 
 public:
 
-    GLView( QWidget* parent, const char* name );
+    GLView( QWidget* parent );
     ~GLView();
     virtual void addFlight(Flight* flight);
     virtual void addShadow(Flight* flight);

@@ -56,7 +56,7 @@ const char* getCaption()
 
 QWidget* getMainWidget()
 {
-  openGLWidget = new OpenGLWidget();
+  openGLWidget = new OpenGLWidget;
   openGLWidget->resize(640,480);
   openGLWidget->show();
   return openGLWidget;

@@ -18,7 +18,6 @@
 #ifndef MAP_MATRIX_H
 #define MAP_MATRIX_H
 
-#include <algorithm>
 #include <QObject>
 #include <QTransform>
 #include <QPoint>
@@ -363,7 +362,7 @@ private:
   /** */
   QSize matrixSize;
 
-  /** */
+  /** Current used map projection. */
   ProjectionBase* currentProjection;
 
   /** optimization to prevent recurring recalculation of this value */

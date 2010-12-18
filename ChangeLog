@@ -1,5 +1,11 @@
 $Id$
 
+2010-10-18 Axel Pauli <axel@kflog.org>
+  * OpenAir class taken over from Cumulus. Airspaces are drawn now at the map
+    but there is some redesign needed for the drawing management in general.
+    It works very inefficiently. Different fixes made for Qt4 to overcome
+    a lot of compiler complains. Airspaces are handled now in value list.
+
 2010-10-16 Axel Pauli <axel@kflog.org>
   * Q3 pointer lists for terrain and map elements replaced by Qt4 value
     lists. Isoline management taken over from Cumulus.

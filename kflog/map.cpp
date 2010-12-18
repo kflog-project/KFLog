@@ -9,7 +9,7 @@
 **   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -17,15 +17,8 @@
 
 #include <cmath>
 
-#include <QApplication>
-#include <QDesktopWidget>
-#include <q3dragobject.h>
-#include <QFileDialog>
-#include <QPainter>
-#include <QPaintEngine>
-#include <QRegExp>
-#include <QSettings>
-#include <q3whatsthis.h>
+#include <QtGui>
+#include <Qt3Support>
 
 #include "airspace.h"
 #include "flight.h"
@@ -43,7 +36,7 @@
 #include "whatsthat.h"
 
 
-// Festlegen der Gr��e der Pixmaps auf Desktop-Gr�sse
+// Festlegen der Grösse der Pixmaps auf Desktop-Grösse
 #define PIX_WIDTH  QApplication::desktop()->width()
 #define PIX_HEIGHT QApplication::desktop()->height()
 
@@ -55,17 +48,24 @@
 #define MAX_Y_TO_PAN QApplication::desktop()->height()-30
 #define MAP_INFO_DELAY 1000
 
+extern MapContents  *_globalMapContents;
+extern QSettings _settings;
 
-Map::Map(QWidget* parent)
-  : QFrame(parent),
-    prePos(-50, -50), preCur1(-50, -50), preCur2(-50, -50),
-    planning(-1), tempTask(""), isDrawing(FALSE), preSnapPoint(-999, -999)
+Map::Map( QWidget* parent ) :
+  QFrame(parent),
+  prePos(-50, -50),
+  preCur1(-50, -50),
+  preCur2(-50, -50),
+  planning(-1),
+  tempTask(""),
+  isDrawing(FALSE),
+  preSnapPoint(-999, -999)
 {
   QBitmap bitCursorMask;
   bitCursorMask.resize(40,40);
   bitCursorMask.fill(Qt::color0);
   pixCursor.resize(40,40);
-  pixCursor.fill(Qt::white);
+  pixCursor.fill(Qt::transparent);
 
   QPainter cursor(&pixCursor);
   cursor.setPen(QPen(QColor(255,0,255), 2));
@@ -94,25 +94,8 @@ Map::Map(QWidget* parent)
   pixCursorBuffer2.resize(32,32);
   pixCursorBuffer2.fill(Qt::white);
 
-  pixAero.resize( PIX_WIDTH, PIX_HEIGHT );
-  pixAirspace.resize( PIX_WIDTH, PIX_HEIGHT );
-  pixFlight.resize( PIX_WIDTH, PIX_HEIGHT );
-  pixPlan.resize( PIX_WIDTH, PIX_HEIGHT );
-  pixGrid.resize( PIX_WIDTH, PIX_HEIGHT );
-  pixUnderMap.resize( PIX_WIDTH, PIX_HEIGHT );
-  pixIsoMap.resize( PIX_WIDTH, PIX_HEIGHT );
-  pixWaypoints.resize( PIX_WIDTH, PIX_HEIGHT );
-  bitMapMask.resize( PIX_WIDTH, PIX_HEIGHT );
-  bitAirspaceMask.resize( PIX_WIDTH, PIX_HEIGHT );
-  bitPlanMask.resize( PIX_WIDTH, PIX_HEIGHT );
-  bitFlightMask.resize( PIX_WIDTH, PIX_HEIGHT );
-  bitWaypointsMask.resize( PIX_WIDTH, PIX_HEIGHT );
-
 //  pixAnimate.resize(32,32);
 //  pixAnimate.fill(white);
-
-  airspaceRegList = new Q3PtrList<QRegion>;
-  airspaceRegList->setAutoDelete(true);
 
   __setCursor();
   setMouseTracking(true);
@@ -124,19 +107,20 @@ Map::Map(QWidget* parent)
   prePlanPos.setX(-999);
   prePlanPos.setY(-999);
 
-  Q3WhatsThis::add(this, QObject::tr("<B>The map</B>"
-                             "<P>To move or scale the map, please use the buttons in the "
-                             "<B>Map-control</B>-area. Or center the map to the current "
-                             "cursor-positon by using the right mouse-button.</P>"
-                             "<P>To zoom in or out, use the slider or the two buttons on the "
-                             "toolbar. You can also zoom with \"&lt;Ctrl&gt;&lt;+&gt;\" or \"+\" (zoom in) "
-                             "and \"&lt;Ctrl&gt;&lt;-&gt;\" or \"-\"(zoom out).</P>"
-           "<P>The cursor keys and the keys on the NumPad can also pan the map, if"
-           "NumLock is switched on.</P>"
-                             "<P>With the menu-item \"Options\" -> \"Configure KFLog\" you can "
-                             "configure, which map elements should be displayed at which "
-                             "scale.</P>"));
-
+  setWhatsThis( QObject::tr(
+     "<html><B>The map</B>"
+     "<P>To move or scale the map, please use the buttons in the "
+     "<B>Map control area</B>. Or center the map to the current "
+     "cursor position by using the right mouse button.</P>"
+     "<P>To zoom in or out, use the slider or the two buttons on the "
+     "toolbar. You can also zoom with \"&lt;Ctrl&gt;&lt;+&gt;\" or \"+\" (zoom in) "
+     "and \"&lt;Ctrl&gt;&lt;-&gt;\" or \"-\"(zoom out).</P>"
+     "<P>The cursor keys and the keys on the NumPad can also pan the map, if "
+     "NumLock is switched on.</P>"
+     "<P>With the menu item <b>Options-&gt;Configure KFLog</b> you can "
+     "configure, which map elements should be displayed at which "
+     "scale.</P></html>"
+      ) );
 
   __createPopupMenu();
 
@@ -154,6 +138,7 @@ Map::Map(QWidget* parent)
 
 Map::~Map()
 {
+  qDebug() << "~Map()";
 }
 
 void Map::mouseMoveEvent(QMouseEvent* event)
@@ -164,6 +149,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
   Waypoint *w;
 
   QPoint vector = event->pos() - mapInfoTimerStartpoint;
+
   if(vector.manhattanLength() > 4)
   {
     mapInfoTimer->stop();
@@ -179,6 +165,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
   if(planning == 1 || planning == 3)
     {
       double delta(8.0);
+
       if(_globalMapMatrix->isSwitchScale()) delta = 16.0;
 
       // If we are near to the last temp-point of the task,
@@ -303,7 +290,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                       prePlanPos.setY(-999);
                     }
 
-                  qWarning("%s", (const char*)wp.name);
+                  qWarning() << "wp.name";
                 }
             }
 
@@ -397,14 +384,14 @@ void Map::mouseMoveEvent(QMouseEvent* event)
       else
         {
           emit showPoint(_globalMapMatrix->mapToWgs(event->pos()));
-          prePos.setX(-50);
-          prePos.setY(-50);
+          prePos.setX(-5000);
+          prePos.setY(-5000);
         }
 
     }
 
-    // FIXME: check, what coordinates have to be used!
-    __findElevation(current);
+    // Assume, that mouse position must be converted to map coordinates.
+    __findElevation( _globalMapMatrix->invertToMap(current) );
 
     if (dragZoomRect){
         QPainter zoomPainter;
@@ -547,12 +534,12 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
       double dX = abs (sitePos.x() - current.x());
       double dY = abs (sitePos.y() - current.y());
 
-      // Abstand entspricht der Icon-Gr��e.
+      // Abstand entspricht der Icon-Grösse.
       if ( ( dX < delta ) && ( dY < delta ) )
       {
         text += hitElement->getInfoString();
         // Text anzeigen
-        WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &mapToGlobal(current));
+        WhatsThat * box=new WhatsThat(this, text, this, "", timeout, mapToGlobal(current));
         box->show();
 
         isAirport = true;
@@ -575,7 +562,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
       {
         text += hitElement->getInfoString();
         // Text anzeigen
-        WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &mapToGlobal(current));
+        WhatsThat * box=new WhatsThat(this, text, this, "", timeout, mapToGlobal(current));
         box->show();
 
         isAirport = true;
@@ -654,7 +641,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
         {
           wpText += "</UL>";
           // Show text
-          WhatsThat * box=new WhatsThat(this, wpText, this, "", timeout, &mapToGlobal(current));
+          WhatsThat * box=new WhatsThat(this, wpText, this, "", timeout, mapToGlobal(current));
           box->show();
           isAirport = true;
         }
@@ -666,19 +653,23 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
   Waypoint* wp = findWaypoint (current);
   if (wp)
   {
-    WhatsThat * box=new WhatsThat(this, getInfoString(wp), this, "", timeout, &mapToGlobal(current));
+    WhatsThat * box=new WhatsThat(this, getInfoString(wp), this, "", timeout, mapToGlobal(current));
     box->show();
     return;
   }
 
   text += "<B>" + QObject::tr("Airspace-Structure") + ":</B><UL>";
 
-  for(unsigned int loop = 0; loop < airspaceRegList->count(); loop++)
+  QList<QPair<QPainterPath, Airspace *> >& airspaceRegionList =
+                                    _globalMapContents->getAirspaceRegionList();
+
+  for( int loop = 0; loop < airspaceRegionList.count(); loop++)
     {
-      if(airspaceRegList->at(loop)->contains(current))
+      QPair<QPainterPath, Airspace*> pair = airspaceRegionList.at(loop);
+
+      if( pair.first.contains(current) )
         {
-          text += "<LI>" + ((Airspace*)_globalMapContents->getElement(
-              MapContents::AirspaceList, loop))->getInfoString() + "</LI>";
+          text += "<LI>" + pair.second->getInfoString() + "</LI>";
           show = true;
         }
     }
@@ -687,7 +678,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
   if(show)
     {
       //  Show text
-      WhatsThat * box=new WhatsThat(this, text, this, "", timeout, &mapToGlobal(current));
+      WhatsThat * box=new WhatsThat(this, text, this, "", timeout, mapToGlobal(current));
       box->show();
     }
 }
@@ -1081,14 +1072,15 @@ void Map::mousePressEvent(QMouseEvent* event)
   }
 }
 
-void Map::paintEvent(QPaintEvent* event = 0)
+void Map::paintEvent( QPaintEvent* event )
 {
   QPainter painter(this);
-  if(event == 0)
-    painter.drawPixmap(pixBuffer.rect(), pixBuffer);
-  else
-    painter.drawPixmap(event->rect(), pixBuffer);
-//      bitBlt(this, event->rect().topLeft(), &pixBuffer, event->rect());
+
+  painter.drawPixmap( event->rect().left(),
+                      event->rect().top(),
+                      pixBuffer,
+                      0, 0, event->rect().width(),
+                      event->rect().height() );
 
   // Set cursor position back to its original position
   prePos.setX(-50);
@@ -1211,13 +1203,9 @@ void Map::__drawMap()
   qDebug() << "Map::__drawMap()";
 
   QPainter aeroP(&pixAero);
-  QPainter airSpaceP(&pixAirspace);
   QPainter uMapP(&pixUnderMap);
   QPainter isoMapP(&pixIsoMap);
   QPainter mapMaskP(&bitMapMask);
-  QPainter airspaceMaskP(&bitAirspaceMask);
-
-  airspaceRegList->clear();
 
   extern MapContents *_globalMapContents;
 
@@ -1225,30 +1213,25 @@ void Map::__drawMap()
 
   _globalMapContents->drawIsoList( &isoMapP, rect() );
 
-  _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::TopoList);
+  emit setStatusBarProgress(10);
 
-  emit setStatusBarProgress(5);
+  _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::TopoList);
 
   _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::CityList);
 
   _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::HydroList);
 
-  emit setStatusBarProgress(10);
+  emit setStatusBarProgress(15);
 
   _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::RoadList);
 
-  emit setStatusBarProgress(15);
-
   _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::HighwayList);
 
-  emit setStatusBarProgress(20);
   emit setStatusBarProgress(25);
 
   _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::RailList);
 
-  emit setStatusBarProgress(30);
   emit setStatusBarProgress(35);
-  emit setStatusBarProgress(40);
 
   _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::VillageList);
 
@@ -1270,15 +1253,7 @@ void Map::__drawMap()
 
   emit setStatusBarProgress(65);
 
-  Airspace* currentAirS;
-  for(int loop = 0; loop < _globalMapContents->getListLength(MapContents::AirspaceList); loop++) {
-      currentAirS = (Airspace*)_globalMapContents->getElement(
-          MapContents::AirspaceList, loop);
-        // We should only add airspaces to the list that really have been
-        // drawn. Searching will be faster.
-      airspaceRegList->append(currentAirS->drawRegion(&airSpaceP,
-            &airspaceMaskP));
-  }
+  __drawAirspaces();
 
   emit setStatusBarProgress(70);
 
@@ -1302,9 +1277,65 @@ void Map::__drawMap()
 
   // Closing the painter ...
   aeroP.end();
-  airSpaceP.end();
   uMapP.end();
-  airspaceMaskP.end();
+}
+
+
+void Map::__drawAirspaces()
+{
+  qDebug() << "Map::__drawAirspaces()";
+
+  QPainter cuAeroMapP;
+  cuAeroMapP.begin(&pixAirspace);
+
+  QTime t;
+  t.start();
+
+  QList<QPair<QPainterPath, Airspace *> >& airspaceRegionList =
+                                    _globalMapContents->getAirspaceRegionList();
+  airspaceRegionList.clear();
+
+  SortableAirspaceList& airspaceList = _globalMapContents->getAirspaceList();
+
+  // Decide, if airspaces are filled with a color or not
+  bool fillAirspace = _settings.value( "/Airspaces/Filling", true ).toBool();
+
+  // Get airspace opacity 0.0 is full transparency, default is 15%
+  qreal airspaceOpacity = _settings.value( "/Airspaces/Opacity", 15 ).toDouble();
+
+  if( fillAirspace == false )
+    {
+      airspaceOpacity = 100.0; // no transparency
+    }
+
+  for( int i = 0; i < airspaceList.size(); i++ )
+    {
+      Airspace& as = airspaceList[i];
+
+      // airspaces we don't draw, we don't warn for either (and vice versa)
+#warning "Draw only airspaces, desired by the user. Must be implemented?"
+#if 0
+      if( !settings->getAirspaceDrawingEnabled( as.getTypeID() ) )
+        {
+          continue;
+        }
+#endif
+
+      if( ! as.isDrawable() )
+        {
+          qDebug() << "Airspace" << as.getName() << "Not drawn";
+          // Not of interest, step away
+          continue;
+        }
+
+      QPair<QPainterPath, Airspace *> pair( as.createRegion(), &as );
+      airspaceRegionList.append( pair );
+
+      as.drawRegion( &cuAeroMapP, this->rect(), airspaceOpacity );
+    }
+
+  cuAeroMapP.end();
+  qDebug("Airspace, drawTime=%d ms", t.elapsed());
 }
 
 void Map::__drawFlight()
@@ -1367,16 +1398,14 @@ void Map::__drawPlannedTask(bool solid)
 
 void Map::resizeEvent(QResizeEvent* event)
 {
-  if(!event->size().isEmpty())
+  if( !event->size().isEmpty() )
     {
-
       extern MapMatrix *_globalMapMatrix;
-      _globalMapMatrix->createMatrix(event->size());
-      pixBuffer.resize(event->size());
-      pixBuffer.fill(Qt::white);
-
+      _globalMapMatrix->createMatrix( event->size() );
+      pixBuffer = QPixmap( event->size() );
       __redrawMap();
     }
+
   emit changed(event->size());
 }
 
@@ -1398,7 +1427,10 @@ void Map::dropEvent(QDropEvent* event)
 
 void Map::__redrawMap()
 {
+  static QSize lastSize;
+
   qDebug() << "Map::__redrawMap()";
+
   if(isDrawing)
     {
       return;
@@ -1406,23 +1438,39 @@ void Map::__redrawMap()
 
   isDrawing = true;
 
-  // Statusbar not set "geniously" so far...
+  if( lastSize.isValid() || lastSize != size() )
+    {
+      pixAero = QPixmap (size() );
+      pixAirspace = QPixmap (size() );
+      pixFlight = QPixmap (size() );
+      pixPlan = QPixmap (size() );
+      pixGrid = QPixmap (size() );
+      pixUnderMap = QPixmap (size() );
+      pixIsoMap = QPixmap (size() );
+      pixWaypoints = QPixmap (size() );
+      bitMapMask = QPixmap (size() );
+      bitAirspaceMask = QPixmap (size() );
+      bitPlanMask = QPixmap (size() );
+      bitFlightMask = QPixmap (size() );
+      bitWaypointsMask = QPixmap (size() );
+    }
+
+  // Status bar not set "geniously" so far...
   emit setStatusBarProgress(0);
 
-  pixPlan.fill(Qt::white);
+  pixPlan.fill(Qt::transparent);
 
-  pixAero.fill(Qt::white);
-  pixAirspace.fill(Qt::white);
-  pixGrid.fill(Qt::white);
-  pixUnderMap.fill(Qt::black);
-  pixIsoMap.fill(Qt::white);
-  pixFlight.fill(Qt::white);
-  pixWaypoints.fill(Qt::white);
+  pixAero.fill(Qt::transparent);
+  pixAirspace.fill(Qt::transparent);
+  pixGrid.fill(Qt::transparent);
+  pixUnderMap.fill(Qt::transparent);
+  pixIsoMap.fill(Qt::transparent);
+  pixFlight.fill(Qt::transparent);
+  pixWaypoints.fill(Qt::transparent);
 
   bitMapMask.fill(Qt::color0);
   bitFlightMask.fill(Qt::color0);
   bitPlanMask.fill(Qt::color0);
-  bitAirspaceMask.fill(Qt::color0);
   bitWaypointsMask.fill(Qt::color0);
 
   QPoint temp1(preCur1);
@@ -1431,7 +1479,6 @@ void Map::__redrawMap()
   preCur1.setX(-50);
   preCur2.setX(-50);
 
-  extern MapContents *_globalMapContents;
   _globalMapContents->proofeSection();
 
   __drawGrid();
@@ -1448,7 +1495,7 @@ void Map::__redrawMap()
 
   emit setStatusBarProgress(100);
 
-  slotDrawCursor(temp1,temp2);
+  slotDrawCursor(temp1, temp2);
 
   isDrawing = false;
 }
@@ -1563,14 +1610,16 @@ void Map::__showLayer()
 {
   pixUnderMap.setMask(bitMapMask);
   pixAero.setMask(QBitmap(pixAero));
-  pixAirspace.setMask(bitAirspaceMask);
+  //pixAirspace.setMask(bitAirspaceMask);
   pixFlight.setMask(bitFlightMask);
   pixPlan.setMask(bitPlanMask);
   pixWaypoints.setMask(bitWaypointsMask);
   pixGrid.setMask(QBitmap(pixGrid));
 
+  pixBuffer = pixIsoMap;
+
   QPainter buffer(&pixBuffer);
-  buffer.drawPixmap(pixIsoMap.rect(), pixIsoMap);
+
   buffer.drawPixmap(pixUnderMap.rect(), pixUnderMap);
   buffer.drawPixmap(pixAero.rect(), pixAero);
 
@@ -1581,7 +1630,7 @@ void Map::__showLayer()
   buffer.drawPixmap(pixWaypoints.rect(), pixWaypoints);
   buffer.drawPixmap(pixGrid.rect(), pixGrid);
 
-  repaint();
+  update();
 }
 
 void Map::slotDrawCursor(const QPoint& p1, const QPoint& p2)
@@ -1927,7 +1976,7 @@ void Map::slotAnimateFlightTimeout()
          }
     }
   // force paint event
-  paintEvent();
+  repaint();
 
         // if one of the flights still is active, bDone will be false
   if (bDone)
@@ -2469,7 +2518,7 @@ void Map::__setCursor()
   setCursor(crossCursor);
 }
 
-/** Creates the popupmenu for the map */
+/** Creates the popup menu for the map */
 void Map::__createPopupMenu(){
   extern MapMatrix *_globalMapMatrix;
 

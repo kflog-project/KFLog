@@ -742,7 +742,7 @@ QPen MapConfig::__getPen(unsigned int typeID, int sIndex)
           return *airDPenList.at(sIndex);
       case BaseMapElement::AirElow:
           return *airElPenList.at(sIndex);
-      case BaseMapElement::AirEhigh:
+      case BaseMapElement::AirE:
           return *airEhPenList.at(sIndex);
       case BaseMapElement::AirF:
           return *airFPenList.at(sIndex);
@@ -811,7 +811,7 @@ bool MapConfig::isBorder(unsigned int typeID)
           return airDBorder[scaleIndex];
       case BaseMapElement::AirElow:
           return airElBorder[scaleIndex];
-      case BaseMapElement::AirEhigh:
+      case BaseMapElement::AirE:
           return airEhBorder[scaleIndex];
       case BaseMapElement::AirF:
           return airFBorder[scaleIndex];
@@ -923,7 +923,7 @@ QBrush MapConfig::__getBrush(unsigned int typeID, int sIndex)
           return *airDBrushList.at(sIndex);
       case BaseMapElement::AirElow:
           return *airElBrushList.at(sIndex);
-      case BaseMapElement::AirEhigh:
+      case BaseMapElement::AirE:
           return *airEhBrushList.at(sIndex);
       case BaseMapElement::AirF:
           return *airFBrushList.at(sIndex);

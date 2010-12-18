@@ -2,41 +2,30 @@
 **
 **   openairparser.h
 **
-**   This file is part of KFlog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
-**   Copyright (c):  2005 by André Somers
+**   Copyright (c):  2005      by AndrÃ© Somers
+**                   2008-2010 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef _openairparser_h
-#define _openairparser_h
-
-#include <QBuffer>
-#include <q3cstring.h>
-#include <QDataStream>
-#include <QDateTime>
-#include <QMap>
-#include <QRect>
-#include <QString>
-
-#include "basemapelement.h"
-#include "projectionbase.h"
-
-class Airspace;
-class QString;
 /**
- * @short Parser for OpenAir SUA files
+ * \class OpenAirParser
+ *
+ * \author AndrÃ© Somers, Axel Pauli
+ *
+ * \brief Parser for OpenAir SUA files
  *
  * This class implements a parser for OpenAir SUA files, containing
  * descriptions of airspace structures. The read structures are added
- * to the allready present list of structures.
+ * to the already present list of structures.
  *
  * Since the build in airspace types do not exactly match the list of
  * airspaces found in "the wild", it is possible to use a special
@@ -44,113 +33,108 @@ class QString;
  * For a file named airspace.txt, the matching mapping file would be
  * named airspace_mappings.conf in be placed in the same directory.
  *
- * @author André Somers, Axel Pauli
- * @version $Id$
+ * \date 2005-2010
  */
+
+#ifndef _openairparser_h
+#define _openairparser_h
+
+#include <QString>
+#include <QList>
+#include <QMap>
+#include <QRect>
+#include <QDateTime>
+#include <QByteArray>
+#include <QBuffer>
+#include <QDataStream>
+#include <QPolygon>
+#include <QPoint>
+
+#include "basemapelement.h"
+
+class Airspace;
+class QString;
+
 class OpenAirParser
 {
 public:
 
-    /**
-     * Constructor
-     */
-    OpenAirParser();
+  /**
+   * Constructor
+   */
+  OpenAirParser();
 
-    /**
-     * Destructor
-     */
-    virtual ~OpenAirParser();
+  /**
+   * Destructor
+   */
+  virtual ~OpenAirParser();
 
-    /**
-     * Searchs on default places for openair files. That can be source
-     * files or compiled versions of them.
-     *
-     * @returns number of successfully loaded files
-     * @param list the list of Airspace objects the objects in this
-     *   file should be added to.
-     */
+  /**
+   * Searches on default places for OpenAir files. That can be source
+   * files or compiled versions of them.
+   *
+   * @return number of successfully loaded files
+   * @param list the list of Airspace objects the objects in this
+   *        file should be added to.
+   */
 
-    uint load(QList<Airspace*> &list);
+  uint load( QList<Airspace>& list );
 
-private:  //memberfunctions
+private:
 
-    /**
-     * Parses the file indicated and adds them to the indicated
-     * airspace list.
-     *
-     * @returns true on success, and false on failure
-     * @param path the path for the OpenAir file
-     * @param list the list of Airspace objects the objects in this
-     *   file should be added to.
-     */
-    bool parse(const QString& path, QList<Airspace*> &list);
+  /**
+   * Parses the file indicated and adds them to the indicated
+   * airspace list.
+   *
+   * @return true on success, and false on failure
+   * @param path the path for the OpenAir file
+   * @param list the list of Airspace objects, where the objects in this
+   *        file should be added to.
+   */
+  bool parse(const QString& path, QList<Airspace>& list);
 
+  void resetState();
+  void parseLine(QString&);
+  void newAirspace();
+  void newPA();
+  void finishAirspace();
+  void parseType(QString&);
+  void parseAltitude(QString&, BaseMapElement::elevationType&, int&);
+  bool parseCoordinate(QString&, int& lat, int& lon);
+  bool parseCoordinate(QString&, QPoint&);
+  bool parseCoordinatePart(QString&, int& lat, int& lon);
+  bool parseVariable(QString);
+  bool makeAngleArc(QString);
+  bool makeCoordinateArc(QString);
+  double bearing( QPoint& p1, QPoint& p2 );
+  void addCircle(const double& rLat, const double& rLon);
+  void addCircle(const double& radius);
+  void addArc(const double& rLat, const double& rLon,
+              double angle1, double angle2);
+  void initializeStringMapping(const QString& path);
+  void initializeBaseMapping();
 
-    void resetState();
-    void parseLine(QString&);
-    void newAirspace();
-    void newPA();
-    void finishAirspace();
-    void parseType(QString&);
-    void parseAltitude(QString&, BaseMapElement::elevationType&, int&);
-    bool parseCoordinate(QString&, int& lat, int& lon);
-    bool parseCoordinate(QString&, QPoint&);
-    bool parseCoordinatePart(QString&, int& lat, int& lon);
-    bool parseVariable(QString);
-    bool makeAngleArc(QString);
-    bool makeCoordinateArc(QString);
-    double bearing( QPoint& p1, QPoint& p2 );
-    void addCircle(const double& rLat, const double& rLon);
-    void addCircle(const double& radius);
-    void addArc(const double& rLat, const double& rLon,
-                double angle1, double angle2);
-    void initializeStringMapping(const QString& path);
-    void initializeBaseMapping();
+private:
 
-    /**
-     * Get the header data of a compiled file and put it in the class
-     * variables.
-     *
-     * @param path Full name with path of OpenAir binary file
-     * @returns true (success) or false (error occured)
-     */
-    bool setHeaderData( QString &path );
+  QList<Airspace> _airlist;
+  uint _lineNumber;
+  uint _objCounter; // counter for allocated objects
+  bool _isCurrentAirspace;
+  QString asName;
+  //QString asTypeLetter;
+  BaseMapElement::objectType asType;
+  QPolygon asPA;
+  int asUpper;
+  BaseMapElement::elevationType asUpperType;
+  int asLower;
+  BaseMapElement::elevationType asLowerType;
 
-private: //members
-    Q3PtrList<Airspace> _airlist;
-    uint _lineNumber;
-    uint _objCounter; // counter for allocated objects
-    bool _isCurrentAirspace;
-    QString asName;
-    //QString asTypeLetter;
-    BaseMapElement::objectType asType;
-    Q3PointArray asPA;
-    int asUpper;
-    BaseMapElement::elevationType asUpperType;
-    int asLower;
-    BaseMapElement::elevationType asLowerType;
+  QPoint _center;
+  double _awy_width;
+  int _direction; // 1 for clockwise, -1 for anti clockwise
 
-    QPoint _center;
-    double _awy_width;
-    int _direction; //1 for clockwise, -1 for anticlockwise
-
-    QMap<QString, BaseMapElement::objectType> m_baseTypeMap;
-    QMap<QString, QString> m_stringTypeMap;
-
-    // bounding box
-    QRect *_boundingBox;
-    // temporary data buffer
-    Q3CString *_bufData;
-    QBuffer *_buffer;
-    QDataStream *_outbuf;
-
-    // header data members of compiled file
-    unsigned int h_magic;
-    char *h_fileType;
-    unsigned short h_fileVersion;
-    QDateTime h_creationDateTime;
-    QRect h_boundingBox;
-    bool h_headerIsValid;
+  QMap<QString, BaseMapElement::objectType> m_baseTypeMap;
+  QMap<QString, QString> m_stringTypeMap;
 };
 
 #endif

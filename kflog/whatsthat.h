@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by André Somers / TrollTech
+**   Copyright (c):  2002 by Andrï¿½ Somers / TrollTech
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -25,14 +25,20 @@
 
 
 /**Rip-off from Qt's QWhatsThis system in order to be able to control the lifespan.
-  *@author André Somers
+  *@author Andrï¿½ Somers
   */
 
 class WhatsThat : public QWidget
 {
     Q_OBJECT
 public:
-    WhatsThat( QWidget* w, const QString& txt, QWidget* parent, const char* name, int timeout=5000, const QPoint * pos=0 );
+    WhatsThat( QWidget* w,
+               const QString& txt,
+               QWidget* parent,
+               const char* name,
+               int timeout=5000,
+               const QPoint pos = QPoint(-9999,-9999) );
+
     ~WhatsThat() ;
 
 public slots:
@@ -53,7 +59,7 @@ private:
     bool pressed;
     QWidget* widget;
     QTimer * autohideTimer;
-    QPoint * suggestedPos;
+    QPoint suggestedPos;
     
 private: // Private methods
   /** Tries to find itself a good position to display. */

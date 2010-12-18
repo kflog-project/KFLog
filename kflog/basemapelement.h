@@ -59,7 +59,7 @@ public:
     MilHeliport = MIL_HELIPORT, AmbHeliport = AMB_HELIPORT, Glidersite = GLIDERSITE, UltraLight = ULTRALIGHT,
     HangGlider = HANGGLIDER, Parachute = PARACHUTE, Balloon = BALLOON, Outlanding = OUTLANDING, Vor = VOR,
     VorDme = VORDME, VorTac = VORTAC, Ndb = NDB, CompPoint = COMPPOINT,
-    AirA = AIR_A, AirB = AIR_B, AirC = AIR_C, AirD = AIR_D, AirElow = AIR_E_LOW, AirEhigh = AIR_E_HIGH, WaveWindow = WAVE_WINDOW,
+    AirA = AIR_A, AirB = AIR_B, AirC = AIR_C, AirD = AIR_D, AirElow = AIR_E_LOW, AirE = AIR_E, WaveWindow = WAVE_WINDOW,
     AirF = AIR_F, ControlC = CONTROL_C, ControlD = CONTROL_D, Danger = DANGER,
     LowFlight = LOW_FLIGHT, Restricted = RESTRICTED, Prohibited = PROHIBITED, Tmz = TMZ, GliderSector = GLIDER_SECTOR, Obstacle = OBSTACLE,
     LightObstacle = LIGHT_OBSTACLE, ObstacleGroup = OBSTACLE_GROUP, LightObstacleGroup = LIGHT_OBSTACLE_GROUP,

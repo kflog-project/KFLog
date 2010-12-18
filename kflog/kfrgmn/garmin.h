@@ -16,8 +16,6 @@
 //#define _GARMIN_DBG             // use this flag if you want debug text output
 
 #define BAUDRATE B9600
-#define FALSE 0
-#define TRUE 1
 #define MAX_PACKET_SIZE 255
 #define DLE 0x10			// ASCII DLE char
 #define ETX 0x03			// ASCII ETX char

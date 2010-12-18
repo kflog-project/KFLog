@@ -6,10 +6,10 @@
  **
  ************************************************************************
  **
- **   Copyright (c):  2001 by Heiner Lamprecht, 2007 Axel Pauli
+ **   Copyright (c):  2001 by Heiner Lamprecht, 2007-2010 Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
- **   Licence. See the file COPYING for more information.
+ **   License. See the file COPYING for more information.
  **
  **   $Id$
  **
@@ -18,10 +18,10 @@
 #include <cmath>
 
 #include <QtGui>
+
 //Added by qt3to4:
 #include <Q3PointArray>
 
-#include "basemapelement.h"
 #include "mapmatrix.h"
 
 // Projektions-Massstab
@@ -38,7 +38,8 @@
  */
 #define RADIUS 6371000 // FAI Radius, this was the prevoius radius ->6370290
 #define NUM_TO_RAD(num) ( ( M_PI * (double)(num) ) / 108000000.0 )
-#define RAD_TO_NUM(rad) ( (int)( (rad) * 108000000.0 / M_PI ) )
+#define RAD_TO_NUM(rad) ( rad * 108000000.0 / M_PI )
+#define RAD_TO_NUM_INT(rad) ( (int)rint( (rad) * 108000000.0 / M_PI ))
 
 // the scale-borders
 #define VAL_BORDER_L                      10
@@ -206,23 +207,6 @@ QPoint MapMatrix::print(int lat, int lon, double dX, double dY) const
 {
   QPoint temp;
 
-//  if(dX == 0 &&  dY == 0)
-//    {
-//      temp = QPoint(
-//        ( __calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
-//            * RADIUS / pScale ) + dX,
-//        ( __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
-//             * RADIUS / pScale ) + dY );
-//    }
-//  else
-//    {
-//      temp = QPoint(
-//        ( __calc_X_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
-//            * RADIUS / ( pScale * 0.5 ) ) + dX,
-//        ( __calc_Y_Lambert( NUM_TO_RAD(lat), NUM_TO_RAD(lon - mapCenterLon) )
-//             * RADIUS / ( pScale * 0.5 ) ) + dY );
-//    }
-
   if(dX == 0 &&  dY == 0)
     {
       temp = QPoint(
@@ -251,28 +235,15 @@ QRect MapMatrix::getViewBorder() const  { return viewBorder; }
 
 QRect MapMatrix::getPrintBorder() const  { return printBorder; }
 
-QRect MapMatrix::getPrintBorder(double a1, double a2, double b1, double b2,
-        double c1, double c2, double d1, double d2) const
+QRect MapMatrix::getPrintBorder( double a1, double a2, double b1, double b2,
+                                 double c1, double c2, double d1, double d2) const
 {
   QRect temp;
 
-//  temp.setTop( __invert_Lambert_Lat(a2 * pScale / RADIUS,
-//      a1 * pScale / RADIUS) );
-//  temp.setBottom( __invert_Lambert_Lat(b2 * pScale / RADIUS,
-//      b1 * pScale / RADIUS) );
-//  temp.setRight( __invert_Lambert_Lon(c2 * pScale / RADIUS,
-//      c1 * pScale / RADIUS) + printCenterLon );
-//  temp.setLeft( __invert_Lambert_Lon(d2 * pScale / RADIUS,
-//      d1 * pScale / RADIUS) + printCenterLon );
-
-  temp.setTop(RAD_TO_NUM(currentProjection->invertLat(a2 * pScale / RADIUS,
-      a1 * pScale / RADIUS)));
-  temp.setBottom(RAD_TO_NUM(currentProjection->invertLat(b2 * pScale / RADIUS,
-      b1 * pScale / RADIUS)));
-  temp.setRight(RAD_TO_NUM(currentProjection->invertLon(c2 * pScale / RADIUS,
-      c1 * pScale / RADIUS)) + printCenterLon);
-  temp.setLeft(RAD_TO_NUM(currentProjection->invertLon(d2 * pScale / RADIUS,
-      d1 * pScale / RADIUS)) + printCenterLon);
+  temp.setTop( RAD_TO_NUM_INT(currentProjection->invertLat(a2 * pScale / RADIUS,  a1 * pScale / RADIUS)) );
+  temp.setBottom( RAD_TO_NUM_INT(currentProjection->invertLat(b2 * pScale / RADIUS, b1 * pScale / RADIUS)));
+  temp.setRight( RAD_TO_NUM_INT(currentProjection->invertLon(c2 * pScale / RADIUS, c1 * pScale / RADIUS)) + printCenterLon );
+  temp.setLeft( RAD_TO_NUM_INT(currentProjection->invertLon(d2 * pScale / RADIUS,  d1 * pScale / RADIUS)) + printCenterLon );
 
   return temp;
 }
@@ -334,12 +305,11 @@ double MapMatrix::centerToRect(const QRect& center, const QSize& pS, bool addBor
   // We add 6.5 km to ensure, that the sectors will be visible,
   // when the user centers to the task.
   double width, height;
+
   if(addBorder)
     {
-      width = sqrt(center.width() * center.width()) +
-          (6.5 * 1000.0 / cScale);
-      height = sqrt(center.height() * center.height()) +
-          (6.5 * 1000.0 / cScale);
+      width = sqrt(center.width() * center.width()) + (6.5 * 1000.0 / cScale);
+      height = sqrt(center.height() * center.height()) + (6.5 * 1000.0 / cScale);
     }
   else
     {
@@ -349,20 +319,24 @@ double MapMatrix::centerToRect(const QRect& center, const QSize& pS, bool addBor
 
   double xScaleDelta, yScaleDelta;
 
-  if(pS == QSize(0,0)) {
-    xScaleDelta = width / mapViewSize.width();
-    yScaleDelta = height / mapViewSize.height();
-  } else {
-    xScaleDelta = width / pS.width();
-    yScaleDelta = height / pS.height();
-  }
+  if( pS == QSize( 0, 0 ) )
+    {
+      xScaleDelta = width / mapViewSize.width();
+      yScaleDelta = height / mapViewSize.height();
+    }
+  else
+    {
+      xScaleDelta = width / pS.width();
+      yScaleDelta = height / pS.height();
+    }
 
-  double tempScale = std::max(cScale * std::max(xScaleDelta, yScaleDelta),
-                         MAX_SCALE);
+  double tempScale = qMax( cScale * qMax( xScaleDelta, yScaleDelta ), MAX_SCALE );
 
   // Only change if difference is too large:
-  if((tempScale / cScale) > 1.05 || (tempScale / cScale) < 0.95)
-    cScale = tempScale;
+  if( (tempScale / cScale) > 1.05 || (tempScale / cScale) < 0.95 )
+    {
+      cScale = tempScale;
+    }
 
   centerToPoint(QPoint(centerX, centerY));
 
@@ -412,17 +386,17 @@ void MapMatrix::__moveMap(int dir)
     mapCenterLon = viewBorder.right();
     break;
   case Home:
-    mapCenterLat = _settings.readNumEntry("/MapData/HomesiteLatitude", HOME_DEFAULT_LAT);
-    mapCenterLon = _settings.readNumEntry("/MapData/HomesiteLongitude", HOME_DEFAULT_LON);
+    mapCenterLat = _settings.value( "/MapData/HomesiteLatitude", HOME_DEFAULT_LAT ).toInt();
+    mapCenterLon = _settings.value( "/MapData/HomesiteLongitude", HOME_DEFAULT_LON ).toInt();
     }
 
   createMatrix(matrixSize);
   emit matrixChanged();
 }
 
-void MapMatrix::createMatrix(const QSize& newSize)
+void MapMatrix::createMatrix( const QSize& newSize )
 {
-  const QPoint tempPoint(wgsToMap(mapCenterLat, mapCenterLon));
+  const QPoint tempPoint( wgsToMap( mapCenterLat, mapCenterLon ) );
 
   /* Set rotating and scaling */
   double scale = MAX_SCALE / cScale;
@@ -461,72 +435,83 @@ void MapMatrix::createMatrix(const QSize& newSize)
   QPoint blCorner = __mapToWgs(invertMatrix.map(QPoint(0, newSize.height())));
   QPoint brCorner = __mapToWgs(invertMatrix.map(QPoint(newSize.width(),newSize.height())));
 
-  viewBorder.setTop(tCenter.y());
-  viewBorder.setLeft(tlCorner.x());
-  viewBorder.setRight(trCorner.x());
-  viewBorder.setBottom(std::min(blCorner.y(), brCorner.y()));
-  mapBorder = invertMatrix.mapRect( QRect(0,0, newSize.width(), newSize.height()) );
+  viewBorder.setTop( tCenter.y() );
+  viewBorder.setLeft( tlCorner.x() );
+  viewBorder.setRight( trCorner.x() );
+  viewBorder.setBottom( std::min( blCorner.y(), brCorner.y() ) );
+
+  mapBorder = invertMatrix.mapRect( QRect( 0, 0, newSize.width(), newSize.height() ) );
   mapViewSize = newSize;
 
-  emit displayMatrixValues(getScaleRange(), isSwitchScale());
+  emit displayMatrixValues( getScaleRange(), isSwitchScale() );
 }
 
-#warning "QMatrix must be replaces by QTransform here"
-void MapMatrix::createPrintMatrix(double printScale, const QSize& pSize, int dX,
-    int dY, bool rotate)
+
+void MapMatrix::createPrintMatrix( double printScale,
+                                   const QSize& pSize,
+                                   int dX,
+                                   int dY,
+                                   bool rotate )
 {
-#if 0
+
   pScale = printScale;
 
   printCenterLat = mapCenterLat;
   printCenterLon = mapCenterLon;
 
-  //
   // We must devide the scale by 2.0, because all printing is done
   // with a scaled matrix to get a better resolution in the printout.
-  //
-  if(pScale <= 500.0 / 72 * 25.4 / 2.0)          /* 1:500.000   */
+  if( pScale <= 500.0 / 72 * 25.4 / 2.0 )  /* 1:500.000   */
+    {
       emit printMatrixValues(0);
+    }
   else
+    {
       emit printMatrixValues(1);
+    }
 
-  const QPoint tempPoint(wgsToMap(printCenterLat, printCenterLon));
+  const QPoint tempPoint( wgsToMap( printCenterLat, printCenterLon ) );
+
   printMatrix.reset();
 
   double scale = MAX_SCALE / pScale;
+
   printArc = atan(tempPoint.x() * 1.0 / tempPoint.y() * 1.0);
 
-  printMatrix.setMatrix(cos(printArc) * scale, sin(printArc) * scale,
-      -sin(printArc) * scale, cos(printArc) * scale, 0, 0);
+  double sinscaled = sin(printArc) * scale;
+  double cosscaled = cos(printArc) * scale;
+  printMatrix = QTransform( cosscaled, sinscaled, -sinscaled, cosscaled, 0, 0 );
 
-  if(rotate)
+  if( rotate )
+    {
       printMatrix.rotate(90);
+    }
 
   /* Set the translation */
-  if(dX == 0 && dY == 0)
+  if( dX == 0 && dY == 0 )
     {
-      QMatrix translateMatrix(1, 0, 0, 1, pSize.width() / 2,
-        ( pSize.height() / 2 ) - printMatrix.map(tempPoint).y() );
-
-      printMatrix = printMatrix * translateMatrix;
-    }
-  else
-    {
-      QMatrix translateMatrix(1, 0, 0, 1, dX, dY );
-      printMatrix = printMatrix * translateMatrix;
+      dX = pSize.width() / 2;
+      dY = ( pSize.height() / 2 ) - printMatrix.map(tempPoint).y();
     }
 
-  /* Set the viewBorder */
+  QTransform translateMatrix( 1, 0, 0, 1, dX, dY );
+
+  printMatrix *= translateMatrix;
+
+  // Setting the viewBorder
   bool result = true;
-  QMatrix invertMatrix = printMatrix.invert(&result);
-  if(!result)
+  invertMatrix = printMatrix.inverted( &result );
+
+  if( !result )
+    {
       // Houston, wir haben ein Problem !!!
-      qFatal("KFLog: Cannot invert worldmatrix!");
+      qFatal("KFLog: Cannot invert printMatrix! File=%s, Line=%d", __FILE__, __LINE__);
+    }
 
   /*
    * Die Berechnung der Kartengrenze funktioniert so nur auf der
-   * Nordhalbkugel. Auf der S�dhalbkugel stimmen die Werte nur
-   * n�herungsweise.
+   * Nordhalbkugel. Auf der Südhalbkugel stimmen die Werte nur
+   * näherungsweise.
    */
   QPoint tCenter  = __mapToWgs(invertMatrix.map(QPoint(pSize.width() / 2, 0)));
   QPoint tlCorner = __mapToWgs(invertMatrix.map(QPoint(0, 0)));
@@ -534,12 +519,11 @@ void MapMatrix::createPrintMatrix(double printScale, const QSize& pSize, int dX,
   QPoint blCorner = __mapToWgs(invertMatrix.map(QPoint(0, pSize.height())));
   QPoint brCorner = __mapToWgs(invertMatrix.map(QPoint(pSize.width(), pSize.height())));
 
-  printBorder.setTop(tCenter.y());
-  printBorder.setLeft(tlCorner.x());
-  printBorder.setRight(trCorner.x());
-  printBorder.setBottom(std::min(blCorner.y(), brCorner.y()));
+  printBorder.setTop( tCenter.y() );
+  printBorder.setLeft( tlCorner.x() );
+  printBorder.setRight( trCorner.x() );
+  printBorder.setBottom( qMin( blCorner.y(), brCorner.y() ) );
 
-#endif
 }
 
 void MapMatrix::slotCenterToHome()  { MATRIX_MOVE( MapMatrix::Home ); }
@@ -562,24 +546,27 @@ void MapMatrix::slotMoveMapSE() { MATRIX_MOVE( MapMatrix::South | MapMatrix::Eas
 
 void MapMatrix::slotZoomIn()
 {
-  cScale = std::max( ( cScale / 1.25 ), MAX_SCALE);
+  cScale = qMax( ( cScale / 1.25 ), MAX_SCALE);
   createMatrix(matrixSize);
   emit matrixChanged();
 }
 
 void MapMatrix::slotZoomOut()
 {
-  cScale = std::min( ( cScale * 1.25 ), MIN_SCALE);
+  cScale = qMin( ( cScale * 1.25 ), MIN_SCALE);
   createMatrix(matrixSize);
   emit matrixChanged();
 }
 
 void MapMatrix::slotSetScale(double nScale)
 {
-  if (nScale <= 0)  return;
+  if( nScale <= 0 )
+    {
+      return;
+    }
 
   cScale = nScale;
-  createMatrix(matrixSize);
+  createMatrix( matrixSize );
   emit matrixChanged();
 }
 
@@ -589,26 +576,36 @@ void MapMatrix::slotInitMatrix()
 
   // The scale is set to 0 in the constructor. Here we read the scale and
   // the map center only the first time. Otherwise the values would change
-  // after configuring KFLog.
-  //                                                Fixed 2001-12-14
-  if(cScale <= 0) {
-    // @ee we want to center to the last position !
-    mapCenterLat = _settings.readNumEntry("/MapData/CenterLatitude", HOME_DEFAULT_LAT);
-    mapCenterLon = _settings.readNumEntry("/MapData/CenterLongitude", HOME_DEFAULT_LON);
-    cScale = _settings.readDoubleEntry("/MapData/MapScale", 200);
-  }
+  // after configuring KFLog. Fixed 2001-12-14
+  if( cScale <= 0 )
+    {
+      // @ee we want to center to the last position !
+      mapCenterLat = _settings.value( "/MapData/CenterLatitude",
+                                      HOME_DEFAULT_LAT ).toInt();
 
-  int newProjectionType = _settings.readNumEntry("/MapData/ProjectionType", ProjectionBase::Lambert);
+      mapCenterLon = _settings.value( "/MapData/CenterLongitude",
+                                      HOME_DEFAULT_LON ).toInt();
+
+      cScale = _settings.value( "/MapData/MapScale", 200.0 ).toDouble();
+    }
+
+  int newProjectionType = _settings.value( "/MapData/ProjectionType",
+                                           ProjectionBase::Lambert ).toInt();
 
   bool projChanged = newProjectionType != currentProjection->projectionType();
 
-  if (projChanged) {
-    delete currentProjection;
-    switch(newProjectionType) {
-    case ProjectionBase::Lambert:
-      currentProjection = new ProjectionLambert(_settings.readNumEntry("/LambertProjection/Parallel1", 32400000),
-                                                _settings.readNumEntry("/LambertProjection/Parallel2", 30000000),
-                                                _settings.readNumEntry("/LambertProjection/Origin", 0));
+  if( projChanged )
+    {
+      delete currentProjection;
+
+      switch( newProjectionType )
+        {
+        case ProjectionBase::Lambert:
+
+          currentProjection =
+              new ProjectionLambert( _settings.value( "/LambertProjection/Parallel1", 32400000 ).toInt(),
+                                     _settings.value( "/LambertProjection/Parallel2", 30000000 ).toInt(),
+                                     _settings.value( "/LambertProjection/Origin", 0 ).toInt() );
 
       qDebug() << "Map projection changed to Lambert";
       break;
@@ -616,40 +613,45 @@ void MapMatrix::slotInitMatrix()
     case ProjectionBase::Cylindric:
     default:
       // fallback is cylindrical
-      currentProjection = new ProjectionCylindric(_settings.readNumEntry("/CylindricalProjection/Parallel", 27000000));
+      currentProjection =
+          new ProjectionCylindric( _settings.value( "/CylindricalProjection/Parallel", 27000000).toInt() );
+
       qDebug () << "Map projection changed to Cylinder";
       break;
     }
   }
 
-  if(projChanged)
+  if( projChanged )
     {
       emit projectionChanged();
     }
 
-  scaleBorders[LowerLimit] = _settings.readNumEntry("/Scale/Lower Limit", VAL_BORDER_L);
-  scaleBorders[Border1] = _settings.readNumEntry("/Scale/Border1", VAL_BORDER_1);
-  scaleBorders[Border2] = _settings.readNumEntry("/Scale/Border2", VAL_BORDER_2);
-  scaleBorders[Border3] = _settings.readNumEntry("/Scale/Border3", VAL_BORDER_3);
-  scaleBorders[SwitchScale] = _settings.readNumEntry("/Scale/SwitchScale", VAL_BORDER_S);
-  scaleBorders[UpperLimit] = _settings.readNumEntry("/Scale/UpperLimit", VAL_BORDER_U);
+  scaleBorders[LowerLimit]  = _settings.value("/Scale/Lower Limit", VAL_BORDER_L).toInt();
+  scaleBorders[Border1]     = _settings.value("/Scale/Border1", VAL_BORDER_1).toInt();
+  scaleBorders[Border2]     = _settings.value("/Scale/Border2", VAL_BORDER_2).toInt();
+  scaleBorders[Border3]     = _settings.value("/Scale/Border3", VAL_BORDER_3).toInt();
+  scaleBorders[SwitchScale] = _settings.value("/Scale/SwitchScale", VAL_BORDER_S).toInt();
+  scaleBorders[UpperLimit]  = _settings.value("/Scale/UpperLimit", VAL_BORDER_U).toInt();
 
-  cScale = qMin(cScale, double(scaleBorders[UpperLimit]));
-  cScale = qMax(cScale, double(scaleBorders[LowerLimit]));
+  cScale = qMin( cScale, double( scaleBorders[UpperLimit] ) );
+  cScale = qMax( cScale, double( scaleBorders[LowerLimit] ) );
 
   bool initChanged = false;
 
-  if (currentProjection->projectionType() == ProjectionBase::Lambert) {
-    initChanged = ((ProjectionLambert*)currentProjection)->initProjection(
-              _settings.readNumEntry("/LambertProjection/Parallel1", 32400000),
-              _settings.readNumEntry("/LambertProjection/Parallel2", 30000000),
-              _settings.readNumEntry("/LambertProjection/Origin", 0));
-  } else if (currentProjection->projectionType() == ProjectionBase::Cylindric) {
-    initChanged = ((ProjectionCylindric*)currentProjection)->initProjection(
-              _settings.readNumEntry("/CylindricalProjection/Parallel", 27000000));
-  }
+  if (currentProjection->projectionType() == ProjectionBase::Lambert)
+    {
+      initChanged = ( dynamic_cast<ProjectionLambert *>  (currentProjection) )->initProjection(
+         _settings.value( "/LambertProjection/Parallel1", 32400000 ).toInt(),
+         _settings.value( "/LambertProjection/Parallel2", 30000000 ).toInt(),
+         _settings.value( "/LambertProjection/Origin", 0 ).toInt() );
+    }
+  else if (currentProjection->projectionType() == ProjectionBase::Cylindric)
+    {
+      initChanged = ( dynamic_cast<ProjectionCylindric*>  (currentProjection) )->initProjection(
+                      _settings.value( "/CylindricalProjection/Parallel", 27000000).toInt() );
+    }
 
-  if(projChanged || initChanged)
+  if( projChanged || initChanged )
     {
       emit projectionChanged();
     }

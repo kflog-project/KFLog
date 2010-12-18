@@ -42,19 +42,22 @@ class Map : public QFrame
 {
   Q_OBJECT
 
+private:
+
+  Q_DISABLE_COPY ( Map )
+
   public:
     /**
      * The constructor creates a new Map-object and
      * creates the icon used as a cursor in the map.
      */
-    Map(QWidget* parent=0);
+    Map( QWidget* parent=0 );
     /**
      * Destroys the Map-object.
      */
     ~Map();
-  /** Puts the waypoints of the active waypoint catalog to the map */
-  void __drawWaypoints();
-  /** No descriptions */
+
+    /** No descriptions */
   void slotSavePixmap(QUrl fUrl, int width, int height);
 
   public slots:
@@ -180,7 +183,6 @@ class Map : public QFrame
     void __createPopupMenu();
 
   private:
-  // defining the cursor for the map:
 
     /**
      * tries to find a waypoint at current position
@@ -202,6 +204,10 @@ class Map : public QFrame
      */
     void __drawMap();
     /**
+     * Draws all airspaces on the map.
+     */
+    void __drawAirspaces();
+    /**
      */
     void __drawFlight();
     /**
@@ -218,15 +224,15 @@ class Map : public QFrame
       */
     void __drawScale();
     /**
+     * Puts the waypoints of the active waypoint catalog to the map.
+     */
+    void __drawWaypoints();
+    /**
      * Sets the crosshair cursor
      */
     void __setCursor();
     /** */
 //    void __setMapBorder();
-    /**
-     * Pointer to the current KFLog-instance.
-     */
-//    KFLog* mainApp;
     /**
       * Display Infos about MapItems
       */
@@ -241,13 +247,13 @@ class Map : public QFrame
      *   Second look in map contents
      */
     bool __getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*> &taskPointList);
-  /** Tries to locate the elevation for the given point, and emits a signal elevation if found. */
-  void __findElevation(const QPoint& coord);
-  /** Selects the correct items to show from the menu and then shows it. */
-  void __showPopupMenu(QMouseEvent * Event);
+    /** Tries to locate the elevation for the given point, and emits a signal elevation if found. */
+    void __findElevation(const QPoint& coord);
+    /** Selects the correct items to show from the menu and then shows it. */
+    void __showPopupMenu(QMouseEvent * Event);
     /**
      * This pixmap is used to store the currently displayed map.
-     * This painter is about the same size as the map-widget, but is only
+     * This painter is about the same size as the map widget, but is only
      * used for internal buffering the map. Whenever the widget is about
      * to be drawn, this buffer is used to get the content.
      */
@@ -265,6 +271,10 @@ class Map : public QFrame
      * Contains the grid, needed as the basis.
      */
     QPixmap pixGrid;
+    /**
+     * Contains the topography
+     */
+    QPixmap pixIsoMap;
     /**
      * Contains the underlying map (contours, rivers, roads, cities, ...)
      */
@@ -285,10 +295,6 @@ class Map : public QFrame
      * Contains the airspace-structure.
      */
     QPixmap pixAirspace;
-    /**
-     * Contains the topography
-     */
-    QPixmap pixIsoMap;
     /**
      *
      */
@@ -313,11 +319,7 @@ class Map : public QFrame
     QPoint preCur1;
     QPoint preCur2;
     int preIndex;
-    /**
-     * Contains the regions of all visible airspaces. The list is needed to
-     * find the airspace-data when the users selects a airspace in the map.
-     */
-    Q3PtrList<QRegion>* airspaceRegList;
+
     /**
      * Animation timer
      */
@@ -328,7 +330,7 @@ class Map : public QFrame
     Flight* flightToAnimate;
     /**
      * contains planning task points
-     * enth�lt die Punkte!!!
+     * enthält die Punkte!!!
      */
  //   QPtrList<wayPoint> taskPointList;
     // 0 keine Planung 1 Planung 2 Planung Aufgabe Abgeschlossen
@@ -357,11 +359,11 @@ class Map : public QFrame
      */
     bool firstStart;
     /**
-     * Popupmenu under the right mousebutton
+     * Popup menu under the right mouse button
      */
     QMenu *mapPopup;
     /**
-     * ID's of menuitems
+     * ID's of menu items
      */
     int idMpEndPlanning;
     int idMpCenterMap;
@@ -374,10 +376,9 @@ class Map : public QFrame
         /** */
     bool isDrawing;
 
-  public: // Public attributes
-protected slots: // Protected slots
+protected slots:
     /**
-     * Called from the contextmenu to center the map.
+     * Called from the context menu to center the map.
      */
     void slotMpCenterMap();
     /**
@@ -409,15 +410,15 @@ protected slots: // Protected slots
      */
     void slotMapInfoTimeout();
 
-protected: // Protected attributes
+protected:
+
     /** Contains the position where the mouse was clicked to show the popupmenu */
     QPoint popupPos;
     //
     QPoint preSnapPoint;
     //
-    QTimer * mapInfoTimer;
+    QTimer *mapInfoTimer;
     QPoint mapInfoTimerStartpoint;
-
 };
 
 #endif

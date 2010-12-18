@@ -92,7 +92,7 @@
 #define AIR_C            23
 #define AIR_D            24
 #define AIR_E_LOW        25
-#define AIR_E_HIGH       26
+#define AIR_E            26
 #define AIR_F            27
 #define CONTROL_C        28
 #define CONTROL_D        29

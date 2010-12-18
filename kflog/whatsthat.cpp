@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by André Somers / TrollTech
+**   Copyright (c):  2002 by Andrï¿½ Somers / TrollTech
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -15,13 +15,9 @@
 **
 ***********************************************************************/
 
-#include <QApplication>
-#include <QCursor>
-#include <QDesktopWidget>
-#include <QMouseEvent>
-#include <QPainter>
+#include <QtGui>
+
 #include <q3stylesheet.h>
-#include <QToolTip>
 
 #include "whatsthat.h"
 
@@ -30,16 +26,21 @@ int shadowWidth = 6;   // also used as '5' and '6' and even '8' below
 const int vMargin = 8;
 const int hMargin = 12;
 
-WhatsThat::WhatsThat( QWidget* w, const QString& txt, QWidget* parent, const char* name, int timeout, const QPoint * pos)
-    : QWidget( parent, name, Qt::WType_Popup ), text( txt ), pressed( FALSE ), widget( w )
+WhatsThat::WhatsThat( QWidget* w,
+                      const QString& txt,
+                      QWidget* parent,
+                      const char* name,
+                      int timeout,
+                      const QPoint pos) :
+  QWidget( parent, Qt::Popup ),
+  text( txt ),
+  pressed( false ),
+  widget( w ),
+  suggestedPos(pos)
 {
-    suggestedPos=0;
-    if (pos) {
-      suggestedPos=new QPoint(*pos);
-    }  
     setBackgroundMode( Qt::NoBackground );
     setPalette( QToolTip::palette() );
-    setMouseTracking( TRUE );
+    setMouseTracking( true );
 
     if ( widget )
       connect( widget, SIGNAL( destroyed() ), this, SLOT( hide() ) );
@@ -75,14 +76,12 @@ WhatsThat::WhatsThat( QWidget* w, const QString& txt, QWidget* parent, const cha
 WhatsThat::~WhatsThat()
 {
   delete doc;
-  if (suggestedPos) delete suggestedPos;
 }
 
 void WhatsThat::hide()
 {
     QWidget::hide();
     delete this;
-
 }
 
 void WhatsThat::mousePressEvent( QMouseEvent* e )
@@ -175,8 +174,12 @@ void WhatsThat::position(){
     int sy = screen.y();
 
     QPoint ppos = QCursor::pos();
-    if (suggestedPos) ppos=*suggestedPos;
     
+    if( suggestedPos.x() != -9999 && suggestedPos.y() != -9999 )
+      {
+        ppos = suggestedPos;
+      }
+
     // first try locating the widget immediately above/below,
     // with nice alignment if possible.
     QPoint pos;

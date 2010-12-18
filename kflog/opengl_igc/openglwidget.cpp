@@ -15,17 +15,16 @@
 **
 ***********************************************************************/
 
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qmessagebox.h>
+#include <QtGui>
 //Added by qt3to4:
 #include <Q3HBoxLayout>
 #include "openglwidget.h"
 #include "glview.h"
 
-OpenGLWidget::OpenGLWidget(QWidget* parent, char *name)
-  :QWidget(parent,name){
-   glview=new GLView(this,"OpenGL Viewer");
+OpenGLWidget::OpenGLWidget( QWidget* parent ) : QWidget(parent)
+{
+   glview = new GLView( this );
+
    Q3HBoxLayout* flayout = new Q3HBoxLayout( this, 2, 2, "flayout");
 
    if (!glview->isValid())

@@ -42,8 +42,7 @@
   initializes some variables.
 */
 
-GLView::GLView( QWidget* parent, const char* name )
-    : QGLWidget( parent, name )
+GLView::GLView( QWidget* parent ) : QGLWidget( parent )
 {
     // These values should be stored KConfig
     xRot = -45.0;
@@ -268,7 +267,7 @@ GLuint GLView::makeBoxObject()
     glLineWidth( 2.0 );
 
     glBegin( GL_LINE_LOOP );    //  Begin new line segment (closed)
-    glVertex3f(  maxx,  maxy,  minz );   // define verteces as floating öoint values)
+    glVertex3f(  maxx,  maxy,  minz );   // define verteces as floating ï¿½oint values)
     glVertex3f(  maxx,  miny,  minz );
     glVertex3f(  minx,  miny,  minz );
     glVertex3f(  minx,  maxy,  minz );

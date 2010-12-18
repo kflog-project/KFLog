@@ -1014,6 +1014,9 @@ void MapContents::proofeSection(bool isPrint)
     {
       OpenAirParser oap;
       oap.load( airspaceList );
+
+      // finally, sort the airspaces
+      airspaceList.sort();
     }
 
   // Checking for Airfield, Gliderfield and Outlanding data
@@ -1074,7 +1077,7 @@ int MapContents::getListLength(int listIndex) const
 
 Airspace* MapContents::getAirspace(uint index)
 {
-  return airspaceList.value(index);
+  return &airspaceList[index];
 }
 
 
@@ -1103,7 +1106,7 @@ BaseMapElement* MapContents::getElement(int listIndex, uint index)
     case NavList:
       return navList.value(index);
     case AirspaceList:
-      return airspaceList.value(index);
+      return &airspaceList[index];
     case ObstacleList:
       return &obstacleList[index];
     case ReportList:
@@ -1165,12 +1168,14 @@ void MapContents::slotReloadMapData()
 {
   qDebug() << "MapContents::slotReloadMapData()";
 
+  airspaceList.clear();
+  airspaceRegionList.clear();
+
   airportList.clear();
   gliderfieldList.clear();
   addSitesList.clear();
   outLandingList.clear();
   navList.clear();
-  airspaceList.clear();
   obstacleList.clear();
   reportList.clear();
   cityList.clear();
@@ -1231,10 +1236,10 @@ void MapContents::printContents(QPainter* targetPainter, bool isText)
   for (int i = 0; i < topoList.size(); i++)
     topoList[i].printMapElement(targetPainter, isText);
 
-  foreach(elementPtr, navList)
-    elementPtr->printMapElement(targetPainter, isText);
+  for (int i = 0; i < airspaceList.size(); i++)
+    airspaceList[i].printMapElement(targetPainter, isText);
 
-  foreach(elementPtr, airspaceList)
+  foreach(elementPtr, navList)
     elementPtr->printMapElement(targetPainter, isText);
 
   foreach(elementPtr, airportList)
@@ -1285,8 +1290,8 @@ void MapContents::drawList( QPainter* targetPainter,
         break;
 
       case AirspaceList:
-        foreach(elementPtr, airspaceList)
-            elementPtr->drawMapElement(targetPainter, maskPainter);
+        for (int i = 0; i < airspaceList.size(); i++)
+          airspaceList[i].drawMapElement(targetPainter, maskPainter);
         break;
 
       case ObstacleList:
@@ -1683,6 +1688,7 @@ bool MapContents::loadTask(QFile& path)
           QDomNamedNodeMap nmTask =  nl.item(i).attributes();
 
           wpList.clear();
+
           for(int childIdx = 0; childIdx < childNodes.count(); childIdx++)
             {
               QDomNamedNodeMap nm =  childNodes.item(childIdx).attributes();

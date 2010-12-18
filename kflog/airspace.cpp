@@ -19,13 +19,11 @@
 
 #include "airspace.h"
 
-Airspace::Airspace(QString n, BaseMapElement::objectType t, QPolygon pG,
-                   int u, BaseMapElement::elevationType uType,
-                   int l, BaseMapElement::elevationType lType)
-  : LineElement(n, t, pG), lLimitType(lType), uLimitType(uType)
+Airspace::Airspace(QString name, BaseMapElement::objectType oType, QPolygon pP,
+                   int upper, BaseMapElement::elevationType uType,
+                   int lower, BaseMapElement::elevationType lType)
+  : LineElement(name, oType, pP), lLimitType(lType), uLimitType(uType)
 {
-  type = t;
-
   // All Airspaces are closed regions ...
   closed = true;
 
@@ -34,44 +32,45 @@ Airspace::Airspace(QString n, BaseMapElement::objectType t, QPolygon pG,
 
   switch( lLimitType )
   {
-  case GND:
-  case MSL:
-  case STD:
-    lLim = Distance::mFromFeet*l;
-    break;
-  case FL:
-    lLim = Distance::mFromFeet*100.0*l;
-    break;
-  case UNLTD:
-    lLim=99999.0;
-    break;
-  case NotSet:
-    lLim=0.0;
-    break;
-  default:
-    lLim=0.0;
+    case GND:
+    case MSL:
+    case STD:
+      lLim = Distance::mFromFeet*lower;
+      break;
+    case FL:
+      lLim = Distance::mFromFeet*100.0*lower;
+      break;
+    case UNLTD:
+      lLim=99999.0;
+      break;
+    case NotSet:
+      lLim=0.0;
+      break;
+    default:
+      lLim=0.0;
   };
 
   lLimit.setMeters( lLim );
   double uLim=0.0;
+
   switch( uLimitType )
   {
-  case GND:
-  case MSL:
-  case STD:
-    uLim = Distance::mFromFeet*u;
-    break;
-  case FL:
-    uLim = Distance::mFromFeet*100.0*u;
-    break;
-  case UNLTD:
-    lLim=99999.0;
-    break;
-  case NotSet:
-    lLim=0.0;
-    break;
-  default:
-    uLim=0.0;
+    case GND:
+    case MSL:
+    case STD:
+      uLim = Distance::mFromFeet*upper;
+      break;
+    case FL:
+      uLim = Distance::mFromFeet*100.0*upper;
+      break;
+    case UNLTD:
+      lLim=99999.0;
+      break;
+    case NotSet:
+      lLim=0.0;
+      break;
+    default:
+      uLim=0.0;
   };
 
   uLimit.setMeters( uLim );
@@ -87,36 +86,66 @@ Airspace::~Airspace()
 bool Airspace::isDrawable() const
 {
   return ( glConfig->isBorder(typeID) && isVisible() );
-};
+}
 
-QRegion* Airspace::drawRegion( QPainter* targetP, QPainter* maskP )
+void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect,
+                           qreal opacity )
 {
-  if( !glConfig->isBorder( typeID ) || !isVisible() )
+  // qDebug("Airspace::drawRegion(): TypeId=%d, opacity=%f, Name=%s",
+  //         typeID, opacity, getInfoString().toLatin1().data() );
+  if( ! isDrawable() )
     {
-      return (new QRegion());
+      return;
     }
 
   QPolygon mP = glMapMatrix->map( projPolygon );
 
-  if( mP.count() <= 1 )
+  QBrush drawB( glConfig->getDrawBrush(typeID) );
+
+  if( opacity < 100.0 )
     {
-      return (new QRegion());
+      // use solid filled air regions
+      drawB.setStyle( Qt::SolidPattern );
     }
 
-  QBrush drawB = glConfig->getDrawBrush( typeID );
-  QPen drawP   = glConfig->getDrawPen( typeID );
+  QPen drawP = glConfig->getDrawPen( typeID );
   drawP.setJoinStyle( Qt::RoundJoin );
 
-  maskP->setBrush( QBrush( Qt::color1, drawB.style() ) );
-  maskP->setPen( QPen( Qt::color1, drawP.width(), drawP.style(),
-      drawP.capStyle(), drawP.joinStyle() ) );
-  maskP->drawPolygon( mP );
+  targetP->setPen(drawP);
+  targetP->setBrush(drawB);
+  targetP->setClipRegion( viewRect );
 
-  targetP->setBrush( drawB );
-  targetP->setPen( drawP );
-  targetP->drawPolygon( mP );
+  if( opacity < 100.0 && opacity > 0.0 )
+    {
+      // Draw airspace filled with opacity factor
+      targetP->setOpacity( opacity/100.0 );
+      targetP->drawPolygon(mP);
+      targetP->setBrush(Qt::NoBrush);
+      targetP->setOpacity( 1.0 );
+    }
+  else if( opacity == 0.0 )
+    {
+      // draw only airspace borders without any filling inside
+      targetP->setBrush(Qt::NoBrush);
+      targetP->setOpacity( 1.0 );
+    }
 
-  return (new QRegion( mP ));
+  // Draw the outline of the airspace with the selected brush
+  targetP->drawPolygon(mP);
+}
+
+/**
+ * Return a pointer to the mapped airspace region data. The caller takes
+ * the ownership about the returned object.
+ */
+QPainterPath Airspace::createRegion()
+{
+  QPolygon mP = glMapMatrix->map(projPolygon);
+
+  QPainterPath path;
+  path.addPolygon(mP);
+  path.closeSubpath();
+  return path;
 }
 
 /**
@@ -136,7 +165,7 @@ QString Airspace::getTypeName (objectType type)
       return QObject::tr("AS-D");
     case BaseMapElement::AirElow:
       return QObject::tr("AS-E (low)");
-    case BaseMapElement::AirEhigh:
+    case BaseMapElement::AirE:
       return QObject::tr("AS-E");
     case BaseMapElement::WaveWindow:
       return QObject::tr("Wave Window");
@@ -159,7 +188,7 @@ QString Airspace::getTypeName (objectType type)
     case BaseMapElement::GliderSector:
       return QObject::tr("Glider Sector");
     default:
-      return "<B><EM>" + QObject::tr("unknown") + "</EM></B>";
+      return "<B><EM>" + QObject::tr("unknown AS") + "</EM></B>";
   }
 }
 

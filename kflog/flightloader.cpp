@@ -468,7 +468,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
         {
           //
           // We have a point.
-          // But we must proofe the linesyntax first.
+          // But we must proof the line syntax first.
           //
 /*          if(bRecord.match(s) == -1)
             {
@@ -500,10 +500,12 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
           sscanf(s.mid(3,11),  "%1c%2d %f", &latChar, &lat, &fLat);
           sscanf(s.mid(15,12),  "%1c%3d %f", &lonChar, &lon, &fLon);
           sscanf(s.mid(28,9), "%2d-%*3s-%2d", &day, &year);
+
           if ( year > 70 )
             year += 1900;
           else
             year += 2000;
+
           timeOfFlightDay = timeToDay(year, month, day, s.mid(31, 3).toLatin1().data());
           sscanf(s.mid(38, 8), "%2d:%2d:%2d", &hh, &mm, &ss);
           curTime = timeOfFlightDay + 3600 * hh + 60 * mm + ss;

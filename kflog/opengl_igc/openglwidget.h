@@ -29,7 +29,7 @@ class Flight;
 
 class OpenGLWidget : public QWidget  {
 public: 
-	OpenGLWidget(QWidget* parent=0, char *name="");
+	OpenGLWidget(QWidget* parent=0);
 	~OpenGLWidget();
   void addFlight(Flight* flight);
 

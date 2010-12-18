@@ -25,7 +25,7 @@
  *
  * This class is used for the several airspaces. The object can be
  * one of: AirC, AirD, ControlD, AirE, WaveWindow,
- * AirF, Restricted, Danger, LowFlight.
+ * AirF, Restricted, Danger, LowFlight ...
  *
  * Due to the cross pointer reference to the air region this class do not
  * allow copies and assignments of an existing instance.
@@ -34,15 +34,13 @@
  *
  */
 
-#ifndef AIRSPACE_H
-#define AIRSPACE_H
-
-#include <math.h>
+#ifndef AIR_SPACE_H
+#define AIR_SPACE_H
 
 #include <QDateTime>
 #include <QPolygon>
 #include <QPainter>
-#include <QRegion>
+#include <QPainterPath>
 #include <QRect>
 
 #include "altitude.h"
@@ -51,23 +49,20 @@
 class Airspace : public LineElement
 {
 
-private:
-
-/**
- * Don't allow copies and assignments.
- */
-Airspace(const Airspace& );
-Airspace& operator=(const Airspace& x);
-
 public:
 
   /**
-   * Creates a new Airspace-object. n is the name, t the typeID. length
-   * is the number of coordinates. upper and upperType give the upper limit
-   * of the airspace and the type of value (MSL, GND, FL); lower and
-   * lowerType give the value for the lower limit.
+   * Creates a new Airspace object.
+   *
+   * \param name The name of the airspace
+   * \param oType The object type identifier.
+   * \param The projected coordinates of the airspace as polygon.
+   * \param upper The upper altitude limit of the airspace
+   * \param upperType The upper altitude reference
+   * \param lower The lower altitude limit of the airspace
+   * \param lowerType The lower altitude reference
    */
-  Airspace( QString n, BaseMapElement::objectType t, QPolygon pP,
+  Airspace( QString n, BaseMapElement::objectType oType, QPolygon pP,
             int upper, BaseMapElement::elevationType upperType,
             int lower, BaseMapElement::elevationType lowerType);
 
@@ -77,26 +72,29 @@ public:
   ~Airspace();
 
   /**
-   * Draws the airspace into the given painter.
-   *
-   * @param targetP The painter to draw the element into.
-   *
-   * @param maskP The mask painter.
-   *
-   * \return A pointer to the drawn region or NULL.
-   */
-  QRegion* drawRegion( QPainter* targetP, QPainter* maskP );
-
-  /**
    * Tells the caller, if the airspace is drawable or not
    */
   bool isDrawable() const;
 
   /**
+   * Draws the airspace into the given painter.
+   * Return a pointer to the drawn region or 0.
+   *
+   * @param targetP The painter to draw the element into.
+   *
+   * @param viewRect The view bounding rectangle.
+   *
+   * @param opacity Sets the opacity of the painter to opacity. The
+   * value should be in the range 0.0 to 100.0, where 0.0 is fully
+   * transparent and 100.0 is fully opaque.
+   */
+  void drawRegion( QPainter* targetP, const QRect &viewRect, qreal opacity = 0.0 );
+
+  /**
    * Return a pointer to the mapped airspace region data. The caller takes
    * the ownership about the returned object.
    */
-  QPainterPath* createRegion();
+  QPainterPath createRegion();
 
   /**
    * Returns the upper limit of the airspace.
@@ -185,8 +183,6 @@ private:
    * @see #getUpperT
    */
   BaseMapElement::elevationType uLimitType;
-
-  BaseMapElement::objectType type;
 };
 
 /**
@@ -203,9 +199,9 @@ private:
 struct CompareAirspaces
 {
   // The operator sorts the airspaces in the expected order
-  bool operator()(const Airspace *as1, const Airspace* as2) const
+  bool operator()(const Airspace& as1, const Airspace& as2) const
   {
-    int a1C = as1->getUpperL(), a2C = as2->getUpperL();
+    int a1C = as1.getUpperL(), a2C = as2.getUpperL();
 
     if (a1C > a2C)
       {
@@ -218,8 +214,8 @@ struct CompareAirspaces
       }
 
     // equal
-    int a1F = as1->getLowerL();
-    int a2F = as2->getLowerL();
+    int a1F = as1.getLowerL();
+    int a2F = as2.getLowerL();
     return (a1F < a2F);
   };
 };
@@ -240,7 +236,7 @@ struct CompareAirspaces
  * \date 2002-2010
  */
 
-class SortableAirspaceList : public QList<Airspace*>
+class SortableAirspaceList : public QList<Airspace>
 {
 public:
 

@@ -59,6 +59,12 @@ MapMatrix *_globalMapMatrix =  static_cast<MapMatrix *> (0);
  */
 MapConfig *_globalMapConfig = static_cast<MapConfig *> (0);
 
+/**
+ * The map widget.
+ */
+Map *_globalMap = static_cast<Map *> (0);
+
+
 MainWindow::MainWindow() : Q3MainWindow(0, "KFLog main window")
 {
   qDebug() << "MainWindow()";
@@ -173,7 +179,6 @@ MainWindow::~MainWindow()
   delete legendDock;
   delete legend;
   delete mapViewDock;
-  delete map;
   delete mapControlDock;
   delete mapControl;
   delete objectTreeDock;
@@ -287,6 +292,7 @@ void MainWindow::initDockWindows()
 //  mapViewDock = new QDockWindow(QDockWindow::InDock, this, "Map QDockWindow");
   map = new Map(this);
   setCentralWidget(map);
+  _globalMap = map;
 //  mapViewDock->setWidget(map);
 //  moveDockWindow(mapViewDock, Qt::DockUnmanaged);
 
