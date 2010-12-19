@@ -508,7 +508,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
    * Glider airfields first, if there exist any
    */
   extern MapContents *_globalMapContents;
-  extern MapMatrix *_globalMapMatrix;
+  extern MapMatrix   *_globalMapMatrix;
 
   BaseFlightElement *baseFlight = _globalMapContents->getFlight();
 
@@ -519,7 +519,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
   double delta(16.0);
 
   int timeout=60000;
-  if (automatic) timeout=3500;
+  if (automatic) timeout=20000;
 
   QString text;
 
@@ -557,7 +557,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
       double dX = abs (sitePos.x() - current.x());
       double dY = abs (sitePos.y() - current.y());
 
-      // Abstand entspricht der Icon-Gr��e.
+      // Abstand entspricht der Icon-Grösse.
       if ( ( dX < delta ) && ( dY < delta ) )
       {
         text += hitElement->getInfoString();
@@ -1300,8 +1300,8 @@ void Map::__drawAirspaces()
   // Decide, if airspaces are filled with a color or not
   bool fillAirspace = _settings.value( "/Airspaces/Filling", true ).toBool();
 
-  // Get airspace opacity 0.0 is full transparency, default is 15%
-  qreal airspaceOpacity = _settings.value( "/Airspaces/Opacity", 15 ).toDouble();
+  // Get airspace opacity 0.0 is full transparency, default is 10%
+  qreal airspaceOpacity = _settings.value( "/Airspaces/Opacity", 10 ).toDouble();
 
   if( fillAirspace == false )
     {

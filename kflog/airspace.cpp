@@ -115,6 +115,11 @@ void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect,
   targetP->setBrush(drawB);
   targetP->setClipRegion( viewRect );
 
+  if( uLimitType == BaseMapElement::FL && uLimit.getFL() >= 200.0 )
+    {
+      opacity = 0.0;
+    }
+
   if( opacity < 100.0 && opacity > 0.0 )
     {
       // Draw airspace filled with opacity factor
