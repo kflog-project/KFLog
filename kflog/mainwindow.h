@@ -9,7 +9,7 @@
  **   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
  **
  **   This file is distributed under the terms of the General Public
- **   Licence. See the file COPYING for more information.
+ **   License. See the file COPYING for more information.
  **
  **   $Id$
  **
@@ -40,8 +40,7 @@
 #include <QAction>
 #include <QLabel>
 #include <q3mainwindow.h>
-#include <q3networkprotocol.h>
-#include <q3progressbar.h>
+#include <QProgressBar>
 #include <QUrl>
 
 #include "dataview.h"
@@ -387,7 +386,7 @@ private:
    *
    * @see slotSetProgress
    */
-  Q3ProgressBar* statusProgress;
+  QProgressBar* statusProgress;
   /**
    * The label to display a message in the statusbar.
    *
@@ -439,5 +438,5 @@ private:
    */
   QString taskDir;
 };
- 
+
 #endif // MAIN_WINDOW_H

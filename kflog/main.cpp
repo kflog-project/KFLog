@@ -216,5 +216,11 @@ int main(int argc, char **argv)
 
   QTimer::singleShot(700, _mainWindow, SLOT(slotStartComplete()));
 
-  return app.exec();
+  // start window manager event processing loop
+  int result = QApplication::exec();
+
+  // delete MainWindow
+  delete _mainWindow;
+
+  return result;
 }

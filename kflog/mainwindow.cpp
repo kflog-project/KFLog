@@ -9,7 +9,7 @@
 **   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -19,7 +19,6 @@
 #include <pwd.h>
 
 #include <QtGui>
-#include <q3whatsthis.h>
 
 #include "airport.h"
 #include "centertodialog.h"
@@ -35,6 +34,8 @@
 #include "recorderdialog.h"
 #include "taskdataprint.h"
 #include "translationlist.h"
+#include "wgspoint.h"
+
 #include "mainwindow.h"
 
 TranslationList surfaceTypes;
@@ -170,6 +171,7 @@ MainWindow::MainWindow() : Q3MainWindow(0, "KFLog main window")
 
 MainWindow::~MainWindow()
 {
+#if 0
   delete dataViewDock;
   delete dataView;
   delete evaluationWindowDock;
@@ -248,6 +250,7 @@ MainWindow::~MainWindow()
   delete statusLonL;
   delete statusProgress;
   delete toolBar;
+#endif
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)
@@ -336,7 +339,6 @@ void MainWindow::initDockWindows()
 void MainWindow::initMenuBar()
 {
   // File menu
-
   fileNewWaypoint = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/waypoint_16.png"), tr("New &Waypoint"), 0, this, "file_new_waypoint");
   connect(fileNewWaypoint, SIGNAL(activated()), waypoints, SLOT(slotNewWaypoint()));
   fileNewTask = new QAction(QPixmap(QDir::homePath() + "/.kflog/pics/task_16.png"), tr("New &Task"), Qt::CTRL+Qt::Key_N, this, "file_new_task");
@@ -596,25 +598,22 @@ void MainWindow::initMenuBar()
 
 void MainWindow::initStatusBar()
 {
-  /* Alternativ k�nnte der Balken auch nur w�hrend des Zeichnens erscheinen */
-  statusProgress = new Q3ProgressBar(statusBar(), "progressBar_status_bar");
+  /* Alternativ könnte der Balken auch nur während des Zeichnens erscheinen */
+  statusProgress = new QProgressBar( statusBar() );
   statusProgress->setFixedWidth(120);
   statusProgress->setFixedHeight( statusProgress->sizeHint().height() - 4 );
-  statusProgress->setFrameStyle( Q3Frame::NoFrame | Q3Frame::Plain );
-  statusProgress->setMargin( 0 );
-  statusProgress->setLineWidth(0);
   statusProgress->setBackgroundMode( Qt::PaletteBackground );
 
-  statusLabel = new QLabel(statusBar(), "text_label_status_bar");
+  statusLabel = new QLabel( statusBar() );
   statusLabel->setFixedHeight( statusLabel->sizeHint().height() );
-  statusLabel->setFrameStyle( Q3Frame::NoFrame | Q3Frame::Plain );
+  statusLabel->setFrameStyle( QFrame::NoFrame |QFrame::Plain );
   statusLabel->setMargin(0);
   statusLabel->setLineWidth(0);
 
   statusTimeL = new QLabel(statusBar(), "time_label_status_bar");
   statusTimeL->setFixedWidth( 80 );
   statusTimeL->setFixedHeight( statusLabel->sizeHint().height() );
-  statusTimeL->setFrameStyle( Q3Frame::NoFrame | Q3Frame::Plain );
+  statusTimeL->setFrameStyle(QFrame::NoFrame |QFrame::Plain );
   statusTimeL->setMargin(0);
   statusTimeL->setLineWidth(0);
   statusTimeL->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
@@ -622,7 +621,7 @@ void MainWindow::initStatusBar()
   statusAltitudeL = new QLabel(statusBar(), "altitude_label_status_bar");
   statusAltitudeL->setFixedWidth( 80 );
   statusAltitudeL->setFixedHeight( statusLabel->sizeHint().height() );
-  statusAltitudeL->setFrameStyle( Q3Frame::NoFrame | Q3Frame::Plain );
+  statusAltitudeL->setFrameStyle(QFrame::NoFrame |QFrame::Plain );
   statusAltitudeL->setMargin(0);
   statusAltitudeL->setLineWidth(0);
   statusAltitudeL->setAlignment( Qt::AlignRight | Qt::AlignVCenter );
@@ -630,7 +629,7 @@ void MainWindow::initStatusBar()
   statusVarioL = new QLabel(statusBar(), "vario_label_status_bar");
   statusVarioL->setFixedWidth( 80 );
   statusVarioL->setFixedHeight( statusLabel->sizeHint().height() );
-  statusVarioL->setFrameStyle( Q3Frame::NoFrame | Q3Frame::Plain );
+  statusVarioL->setFrameStyle(QFrame::NoFrame |QFrame::Plain );
   statusVarioL->setMargin(0);
   statusVarioL->setLineWidth(0);
   statusVarioL->setAlignment( Qt::AlignRight | Qt::AlignVCenter );
@@ -638,7 +637,7 @@ void MainWindow::initStatusBar()
   statusSpeedL = new QLabel(statusBar(), "speed_label_status_bar");
   statusSpeedL->setFixedWidth( 100 );
   statusSpeedL->setFixedHeight( statusLabel->sizeHint().height() );
-  statusSpeedL->setFrameStyle( Q3Frame::NoFrame | Q3Frame::Plain );
+  statusSpeedL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
   statusSpeedL->setMargin(0);
   statusSpeedL->setLineWidth(0);
   statusSpeedL->setAlignment( Qt::AlignRight | Qt::AlignVCenter );
@@ -646,7 +645,7 @@ void MainWindow::initStatusBar()
   statusLatL = new QLabel(statusBar(), "lat_label_status_bar");
   statusLatL->setFixedWidth( 110 );
   statusLatL->setFixedHeight( statusLabel->sizeHint().height() );
-  statusLatL->setFrameStyle( Q3Frame::NoFrame | Q3Frame::Plain );
+  statusLatL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
   statusLatL->setMargin(0);
   statusLatL->setLineWidth(0);
   statusLatL->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
@@ -654,7 +653,7 @@ void MainWindow::initStatusBar()
   statusLonL = new QLabel(statusBar(), "lon_label_status_bar");
   statusLonL->setFixedWidth( 110 );
   statusLonL->setFixedHeight( statusLabel->sizeHint().height() );
-  statusLonL->setFrameStyle( Q3Frame::NoFrame | Q3Frame::Plain );
+  statusLonL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
   statusLonL->setMargin(0);
   statusLonL->setLineWidth(0);
   statusLonL->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
@@ -1197,8 +1196,8 @@ void MainWindow::slotSetPointInfo(const QPoint& pos, const flightPoint& point)
   text.sprintf("%2.1f m/s  ", getVario(point));
   statusVarioL->setText(text);
 
-  statusLatL->setText(printPos(pos.y()));
-  statusLonL->setText(printPos(pos.x(), false));
+  statusLatL->setText(WGSPoint::printPos(pos.y()));
+  statusLonL->setText(WGSPoint::printPos(pos.x(), false));
 }
 
 void MainWindow::slotSetPointInfo(const QPoint& pos)
@@ -1209,13 +1208,13 @@ void MainWindow::slotSetPointInfo(const QPoint& pos)
   statusSpeedL->setText("");
   statusVarioL->setText("");
 
-  statusLatL->setText(printPos(pos.y()));
-  statusLonL->setText(printPos(pos.x(), false));
+  statusLatL->setText(WGSPoint::printPos(pos.y()));
+  statusLonL->setText(WGSPoint::printPos(pos.x(), false));
 }
 
 void MainWindow::slotSetProgress(int value)
 {
-  statusProgress->setProgress(value);
+  statusProgress->setValue(value);
 }
 
 void MainWindow::slotSetStatusMsg(const QString &text)
@@ -1413,8 +1412,9 @@ void MainWindow::slotToggleWaypointsDock()
 }
 
 /** Called to the What's This? mode. */
-void MainWindow::slotWhatsThis(){
-  Q3WhatsThis::enterWhatsThisMode();
+void MainWindow::slotWhatsThis()
+{
+  QWhatsThis::enterWhatsThisMode();
 }
 
 /** insert available flights into menu */

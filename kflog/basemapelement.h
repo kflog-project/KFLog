@@ -101,7 +101,16 @@ public:
    * @param  maskP    The maskpainter for targetP
    * @return true, if element was drawn otherwise false.
    */
-  virtual bool drawMapElement(QPainter* targetP, QPainter* maskP) = 0;
+  virtual bool drawMapElement(QPainter* targetP, QPainter* maskP);
+
+  /**
+   * virtual function for drawing the element into the given painter.
+   *
+   * The function must be implemented in the child-classes.
+   * @param  targetP  The painter to draw the element into.
+   * @return true, if element was drawn otherwise false.
+   */
+  virtual bool drawMapElement(QPainter* targetP);
 
   /**
    * Virtual function for printing the element.

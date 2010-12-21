@@ -991,9 +991,6 @@ QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
         iconName = "civmilair.xpm";
         break;
       case BaseMapElement::Airfield:
-/*        if(isWinch)                        // isWinch is here mis-used to provide a grass-runway icon
-            iconName = "aifield_g.xpm";
-        else           */
             iconName = "airfield_c.xpm";
         break;
       case BaseMapElement::ClosedAirfield:

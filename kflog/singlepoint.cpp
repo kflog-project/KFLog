@@ -9,11 +9,13 @@
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
+
+#include <QtGui>
 
 #include "singlepoint.h"
 
@@ -24,14 +26,14 @@ SinglePoint::SinglePoint( const QString& n,
                           const QPoint& pos,
                           const unsigned int elev,
                           const unsigned short secID,
-                          unsigned int lmType )
-  : BaseMapElement(n, t, secID),
-    wgsPosition(wgsP),
-    position(pos),
-    shortName(shortName),
-    curPos(pos),
-    elevation(elev),
-    lm_typ(lmType)
+                          unsigned int lmType ) :
+ BaseMapElement(n, t, secID),
+  wgsPosition(wgsP),
+  position(pos),
+  shortName(shortName),
+  curPos(pos),
+  elevation(elev),
+  lm_typ(lmType)
 {
 }
 
@@ -53,7 +55,9 @@ void SinglePoint::printMapElement(QPainter* printPainter, bool isText )
   int iconSize = 16;
 
   if(glMapMatrix->isSwitchScale())
+    {
       iconSize = 8;
+    }
 
   /*
    * Hier sollte mal für eine bessere Qualität der Icons gesorgt werden.
@@ -64,11 +68,12 @@ void SinglePoint::printMapElement(QPainter* printPainter, bool isText )
   printPainter->drawEllipse(printPos.x() - 5, printPos.y() - 5, 10, 10);
   return;
 
-  printPainter->drawPixmap( printPos.x() - iconSize, printPos.x() - iconSize,
+  printPainter->drawPixmap( printPos.x() - iconSize,
+                            printPos.x() - iconSize,
                             glConfig->getPixmap(typeID) );
 }
 
-bool SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
+bool SinglePoint::drawMapElement(QPainter* targetP)
 {
   if(! isVisible() )
     {
@@ -78,20 +83,16 @@ bool SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
 
   curPos = glMapMatrix->map(position);
 
-  targetP->setPen(QPen(QColor(0,255,255), 3));
-  int iconSize = 8;
+  targetP->setPen(QPen(Qt::black, 2));
 
-  if(typeID == BaseMapElement::Village)
-   {
-      targetP->setPen(QPen(QColor(0, 0, 0), 3));
-      maskP->setPen(QPen(Qt::color1, 2));
-      maskP->setBrush(Qt::NoBrush);
-      maskP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
-      targetP->setBrush(Qt::NoBrush);
-      targetP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
+  if( typeID == BaseMapElement::Village )
+    {
+      targetP->setBrush( Qt::NoBrush );
+      targetP->drawEllipse( curPos.x() - 5, curPos.y() - 5, 10, 10 );
       return true;
-   }
-  else if(typeID == BaseMapElement::Landmark)
+    }
+
+  if(typeID == BaseMapElement::Landmark)
    {
       switch(lm_typ)
       {
@@ -119,19 +120,17 @@ bool SinglePoint::drawMapElement(QPainter* targetP, QPainter* maskP)
           targetP->setPen(QPen(QColor(255, 255, 255), 3));
           break;
       }
-      maskP->setPen(QPen(Qt::color1, 2));
-      maskP->setBrush(Qt::NoBrush);
-      maskP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
+
       targetP->setBrush(Qt::NoBrush);
       targetP->drawEllipse(curPos.x() - 5, curPos.y() - 5, 10, 10);
       return true;
    }
 
-  if(glMapMatrix->isSwitchScale())
-      iconSize = 16;
+  QPixmap pixmap = glConfig->getPixmap(typeID);
 
-  targetP->drawPixmap(curPos.x() - iconSize, curPos.y() - iconSize,
-      glConfig->getPixmap(typeID));
+  targetP->drawPixmap( curPos.x() - pixmap.size().width() / 2,
+                       curPos.y() - pixmap.size().height() / 2,
+                       pixmap );
 
   return true;
 }

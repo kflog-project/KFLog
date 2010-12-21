@@ -21,7 +21,7 @@
 #include "basemapelement.h"
 
 MapMatrix* BaseMapElement::glMapMatrix = 0;
-MapConfig* BaseMapElement::glConfig = 0;
+MapConfig* BaseMapElement::glConfig    = 0;
 
 QHash<int, QString> BaseMapElement::objectTranslations;
 QStringList         BaseMapElement::sortedTranslations;
@@ -122,6 +122,19 @@ void BaseMapElement::loadTranslations()
     }
 
   sortedTranslations.sort();
+}
+
+bool BaseMapElement::drawMapElement(QPainter* targetP)
+{
+  Q_UNUSED( targetP )
+  return true;
+}
+
+bool BaseMapElement::drawMapElement(QPainter* targetP, QPainter* maskP)
+{
+  Q_UNUSED( targetP )
+  Q_UNUSED( maskP )
+  return true;
 }
 
 void BaseMapElement::printMapElement( QPainter* printP, bool isText)

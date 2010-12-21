@@ -35,11 +35,6 @@
 #include "waypointdialog.h"
 #include "whatsthat.h"
 
-
-// Festlegen der Grösse der Pixmaps auf Desktop-Grösse
-#define PIX_WIDTH  QApplication::desktop()->width()
-#define PIX_HEIGHT QApplication::desktop()->height()
-
 // These values control the borders at which to pan the map
 // NOTE: These values are only for testing, and need revision.
 #define MIN_X_TO_PAN 30
@@ -48,8 +43,11 @@
 #define MAX_Y_TO_PAN QApplication::desktop()->height()-30
 #define MAP_INFO_DELAY 1000
 
+/** External references */
+extern MapConfig    *_globalMapConfig;
 extern MapContents  *_globalMapContents;
-extern QSettings _settings;
+extern MapMatrix    *_globalMapMatrix;
+extern QSettings    _settings;
 
 Map::Map( QWidget* parent ) :
   QFrame(parent),
@@ -144,7 +142,6 @@ Map::~Map()
 void Map::mouseMoveEvent(QMouseEvent* event)
 {
   extern MapContents *_globalMapContents;
-  extern const MapMatrix *_globalMapMatrix;
   const QPoint current = event->pos();
   Waypoint *w;
 
@@ -450,7 +447,7 @@ QString getInfoString (Waypoint* wp)
 
   QString path = QDir::homePath() + "/.kflog/mapicons/";
 
-  QString text = "<TABLE BORDER=0><TR>";
+  QString text = "<HTML><TABLE BORDER=0><TR>";
 
   // we don't have a pixmap for landmarks ?!
   if (wp->type != BaseMapElement::Landmark && !_globalMapConfig->getPixmapName(wp->type).isEmpty())
@@ -475,7 +472,7 @@ QString getInfoString (Waypoint* wp)
   text += "<BR>" + printPos(wp->origP.lat());
   text += "<BR>" + printPos(wp->origP.lon(), false);
 
-  text += "</FONT></TD></TR></TABLE>";
+  text += "</FONT></TD></TR></TABLE></HTML>";
 
   return text;
 }
@@ -519,11 +516,15 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
   double delta(16.0);
 
   int timeout=60000;
-  if (automatic) timeout=20000;
+
+  if (automatic)
+    {
+      timeout=20000;
+    }
 
   QString text;
 
-  bool show = false, isAirport = false;
+  bool show = false;
 
   for(int loop = 0; loop < _globalMapContents->getListLength(MapContents::GliderfieldList); loop++)
     {
@@ -539,10 +540,9 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
       {
         text += hitElement->getInfoString();
         // Text anzeigen
-        WhatsThat * box=new WhatsThat(this, text, this, "", timeout, mapToGlobal(current));
-        box->show();
-
-        isAirport = true;
+        WhatsThat* box = new WhatsThat(this, text, timeout, mapToGlobal(current));
+        box->setVisible( true );
+        return;
       }
     }
 
@@ -562,10 +562,9 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
       {
         text += hitElement->getInfoString();
         // Text anzeigen
-        WhatsThat * box=new WhatsThat(this, text, this, "", timeout, mapToGlobal(current));
-        box->show();
-
-        isAirport = true;
+        WhatsThat* box = new WhatsThat(this, text, timeout, mapToGlobal(current));
+        box->setVisible( true );
+        return;
       }
     }
 
@@ -576,7 +575,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
       delta = 25;
       bool isWP = false;
       QString wpText;
-      wpText = "<B>Waypoint:</B><UL>";
+      wpText = "<HTML><B>Waypoint:</B><UL>";
 
       for(int loop = 0; loop < wpList.count(); loop++)
         {
@@ -639,26 +638,30 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 
       if(isWP)
         {
-          wpText += "</UL>";
+          wpText += "</UL></HTML>";
           // Show text
-          WhatsThat * box=new WhatsThat(this, wpText, this, "", timeout, mapToGlobal(current));
-          box->show();
-          isAirport = true;
+          WhatsThat* box = new WhatsThat(this, wpText, timeout, mapToGlobal(current));
+          box->setVisible( true );
+          return;
         }
     }
 
-  if (isAirport)  return;
-
   // let's show waypoints
   Waypoint* wp = findWaypoint (current);
-  if (wp)
+
+  if( wp )
   {
-    WhatsThat * box=new WhatsThat(this, getInfoString(wp), this, "", timeout, mapToGlobal(current));
-    box->show();
+    QString wpInfo = getInfoString(wp);
+
+    WhatsThat* box = new WhatsThat(this, wpInfo, timeout, mapToGlobal(current));
+    box->setVisible( true );
     return;
   }
 
-  text += "<B>" + QObject::tr("Airspace-Structure") + ":</B><UL>";
+  // At last serach for airspaces.
+  text += "<html><table border=1><tr><th align=left>" +
+          tr("Airspace&nbsp;Structure") +
+          "</th></tr>";
 
   QList<QPair<QPainterPath, Airspace *> >& airspaceRegionList =
                                     _globalMapContents->getAirspaceRegionList();
@@ -669,16 +672,17 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 
       if( pair.first.contains(current) )
         {
-          text += "<LI>" + pair.second->getInfoString() + "</LI>";
+          text += "<tr><td align=left>" + pair.second->getInfoString() + "</td></tr>";
           show = true;
         }
     }
-  text += "</UL>";
+
+  text += "</table></html>";
 
   if(show)
     {
-      //  Show text
-      WhatsThat * box=new WhatsThat(this, text, this, "", timeout, mapToGlobal(current));
+      // Show text
+      WhatsThat* box = new WhatsThat(this, text, timeout, mapToGlobal(current));
       box->show();
     }
 }
@@ -1089,11 +1093,13 @@ void Map::paintEvent( QPaintEvent* event )
 
 void Map::__drawGrid()
 {
-  extern const MapMatrix *_globalMapMatrix;
   const QRect mapBorder = _globalMapMatrix->getViewBorder();
 
-  QPainter gridP(&pixGrid);
+  QPainter gridP;
+
+  gridP.begin(&pixGrid);
   gridP.setBrush(Qt::NoBrush);
+  gridP.setClipping(true);
 
   // die Kanten des Bereichs
   const int lon1 = mapBorder.left() / 600000 - 1;
@@ -1106,96 +1112,104 @@ void Map::__drawGrid()
   int gridStep = 1;
   int lineWidth = 1;
 
-  switch(_globalMapMatrix->getScaleRange())
-          {
-            case 0:
-              step = 10;
-              break;
-            case 1:
-              step = 30;
-              break;
-            case 2:
-              gridStep = 2;
-              break;
-            default:
-              gridStep = 4;
-          }
+  switch( _globalMapMatrix->getScaleRange() )
+    {
+    case 0:
+      step = 10;
+      break;
+    case 1:
+      step = 30;
+      break;
+    case 2:
+      gridStep = 2;
+      break;
+    default:
+      gridStep = 4;
+    }
 
   QPoint cP, cP2;
 
   // First the latitudes:
-  for(int loop = 0; loop < (lat1 - lat2 + 1) ; loop += gridStep)
-          {
-            int size = (lon2 - lon1 + 1) * 10;
-            Q3PointArray pointArray(size);
+  for( int loop = 0; loop < (lat1 - lat2 + 1); loop += gridStep )
+    {
+      int size = (lon2 - lon1 + 1) * 10;
 
-            for(int lonloop = 0; lonloop < size; lonloop++)
-              {
-                cP = _globalMapMatrix->wgsToMap( ( lat2 + loop ) * 600000,
-              (int)( lon1 + ( lonloop * 0.1 ) ) * 600000);
-                pointArray.setPoint(lonloop, cP);
-              }
+      QPolygon pointArray( size );
 
-            // Draw the small lines between:
-            int number = (int) (60.0 / step);
-            for(int loop2 = 1; loop2 < number; loop2++)
-              {
-                Q3PointArray pointArraySmall(size);
+      for( int lonloop = 0; lonloop < size; lonloop++ )
+        {
+          cP = _globalMapMatrix->wgsToMap( (lat2 + loop) * 600000,
+                                           (int) rint((lon1 + (lonloop * 0.1)) * 600000) );
+          pointArray.setPoint( lonloop, cP );
+        }
 
-                for(int lonloop = 0; lonloop < size; lonloop++)
+      // Draw the small lines between:
+      int number = (int) (60.0 / step);
+
+      for( int loop2 = 1; loop2 < number; loop2++ )
+        {
+          QPolygon pointArraySmall( size );
+
+          for( int lonloop = 0; lonloop < size; lonloop++ )
             {
-              cP = _globalMapMatrix->wgsToMap(
-                  (int)( lat2 + loop + ( loop2 * ( step / 60.0 ) ) ) * 600000,
-                  (int)(lon1 + (lonloop * 0.1)) * 600000);
-              pointArraySmall.setPoint(lonloop, cP);
+              cP = _globalMapMatrix->wgsToMap( (int) rint((lat2 + loop + (loop2 * (step / 60.0))) * 600000),
+                                               (int) rint((lon1 + (lonloop * 0.1)) * 600000) );
+              pointArraySmall.setPoint( lonloop, cP );
             }
 
-          if(loop2 == (number / 2.0))
-                        {
-                          gridP.setPen(QPen(QColor(0,0,0), 1, Qt::DashLine));
-                          gridP.drawPolyline(_globalMapMatrix->map(pointArraySmall));
-                        }
-                else
-                        {
-                          gridP.setPen(QPen(QColor(0,0,0), 1, Qt::DotLine));
-                          gridP.drawPolyline(_globalMapMatrix->map(pointArraySmall));
-                        }
-              }
-            // Draw the main lines
-            gridP.setPen(QPen(QColor(0,0,0), 1));
-            gridP.drawPolyline(_globalMapMatrix->map(pointArray));
-          }
+          if( loop2 == (number / 2.0) )
+            {
+              gridP.setPen( QPen( QColor( 0, 0, 0 ), 1, Qt::DashLine ) );
+              gridP.drawPolyline( _globalMapMatrix->map( pointArraySmall ) );
+            }
+          else
+            {
+              gridP.setPen( QPen( QColor( 0, 0, 0 ), 1, Qt::DotLine ) );
+              gridP.drawPolyline( _globalMapMatrix->map( pointArraySmall ) );
+            }
+        }
+      // Draw the main lines
+      gridP.setPen( QPen( QColor( 0, 0, 0 ), 1 ) );
+      gridP.drawPolyline( _globalMapMatrix->map( pointArray ) );
+    }
 
   // Now the longitudes:
-  for(int loop = lon1; loop <= lon2; loop += gridStep)
-          {
-            cP = _globalMapMatrix->wgsToMap(lat1 * 600000, (loop * 600000));
-            cP2 = _globalMapMatrix->wgsToMap(lat2 * 600000, (loop * 600000));
+  for( int loop = lon1; loop <= lon2; loop += gridStep )
+    {
+      cP  = _globalMapMatrix->wgsToMap( lat1 * 600000, (loop * 600000) );
+      cP2 = _globalMapMatrix->wgsToMap( lat2 * 600000, (loop * 600000) );
 
-            // Draw the main longitudes:
-            gridP.setPen(QPen(QColor(0,0,0), 1));
-            gridP.drawLine(_globalMapMatrix->map(cP), _globalMapMatrix->map(cP2));
+      // Draw the main longitudes:
+      gridP.setPen( QPen( QColor( 0, 0, 0 ), 1 ) );
+      gridP.drawLine( _globalMapMatrix->map( cP ), _globalMapMatrix->map( cP2 ) );
 
-            // Draw the small lines between:
-            int number = (int) (60.0 / step);
+      // Draw the small lines between:
+      int number = (int) (60.0 / step);
 
-            for(int loop2 = 1; loop2 < number; loop2++)
-              {
-                cP = _globalMapMatrix->wgsToMap((lat1 * 600000),
-                                      (int)((loop + (loop2 * step / 60.0)) * 600000));
+      for( int loop2 = 1; loop2 < number; loop2++ )
+        {
+          cP = _globalMapMatrix->wgsToMap( (lat1 * 600000),
+                                           (int) rint((loop + (loop2 * step / 60.0)) * 600000) );
 
-                cP2 = _globalMapMatrix->wgsToMap((lat2 * 600000),
-                                              (int)((loop + (loop2 * step / 60.0)) * 600000));
+          cP2 = _globalMapMatrix->wgsToMap( (lat2 * 600000),
+                                            (int) rint((loop + (loop2 * step / 60.0)) * 600000) );
 
-                if(loop2 == (number / 2.0))
-              gridP.setPen(QPen(QColor(0,0,0), 1, Qt::DashLine));
-                else
-              gridP.setPen(QPen(QColor(0,0,0), lineWidth, Qt::DotLine));
+          if( loop2 == (number / 2.0) )
+            {
+              gridP.setPen( QPen( QColor( 0, 0, 0 ), 1, Qt::DashLine ) );
+            }
+          else
+            {
+              gridP.setPen( QPen( QColor( 0, 0, 0 ), lineWidth, Qt::DotLine ) );
+            }
 
-          gridP.drawLine(_globalMapMatrix->map(cP), _globalMapMatrix->map(cP2));
-              }
-          }
+          gridP.drawLine( _globalMapMatrix->map( cP ), _globalMapMatrix->map( cP2 ) );
+        }
+    }
+
   gridP.end();
+
+  __drawScale( pixGrid );
 }
 
 void Map::__drawMap()
@@ -1205,51 +1219,51 @@ void Map::__drawMap()
   QPainter aeroP(&pixAero);
   QPainter uMapP(&pixUnderMap);
   QPainter isoMapP(&pixIsoMap);
-  QPainter mapMaskP(&bitMapMask);
 
   extern MapContents *_globalMapContents;
 
-  pixIsoMap.fill(QColor(96,128,248));
+  // Take the color of the subterrain for filling
+  pixIsoMap.fill( _globalMapConfig->getIsoColor(0) );
 
   _globalMapContents->drawIsoList( &isoMapP, rect() );
 
   emit setStatusBarProgress(10);
 
-  _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::TopoList);
+  _globalMapContents->drawList(&uMapP, 0, MapContents::TopoList);
 
-  _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::CityList);
+  _globalMapContents->drawList(&uMapP, 0, MapContents::CityList);
 
-  _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::HydroList);
+  _globalMapContents->drawList(&uMapP, 0, MapContents::HydroList);
 
   emit setStatusBarProgress(15);
 
-  _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::RoadList);
+  _globalMapContents->drawList(&uMapP, 0, MapContents::RoadList);
 
-  _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::HighwayList);
+  _globalMapContents->drawList(&uMapP, 0, MapContents::HighwayList);
 
   emit setStatusBarProgress(25);
 
-  _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::RailList);
+  _globalMapContents->drawList(&uMapP, 0, MapContents::RailList);
 
   emit setStatusBarProgress(35);
 
-  _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::VillageList);
+  _globalMapContents->drawList(&uMapP, 0, MapContents::VillageList);
 
   emit setStatusBarProgress(45);
 
-  _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::LandmarkList);
+  _globalMapContents->drawList(&uMapP, 0, MapContents::LandmarkList);
 
   emit setStatusBarProgress(50);
 
-  _globalMapContents->drawList(&uMapP, &mapMaskP, MapContents::ObstacleList);
+  _globalMapContents->drawList(&uMapP, 0, MapContents::ObstacleList);
 
   emit setStatusBarProgress(55);
 
-  _globalMapContents->drawList(&aeroP, &mapMaskP, MapContents::ReportList);
+  _globalMapContents->drawList(&aeroP, 0, MapContents::ReportList);
 
   emit setStatusBarProgress(60);
 
-  _globalMapContents->drawList(&aeroP, &mapMaskP, MapContents::NavList);
+  _globalMapContents->drawList(&aeroP, 0, MapContents::NavList);
 
   emit setStatusBarProgress(65);
 
@@ -1259,25 +1273,23 @@ void Map::__drawMap()
 
   emit setStatusBarProgress(75);
 
-  _globalMapContents->drawList(&aeroP, &mapMaskP, MapContents::AirportList);
+  _globalMapContents->drawList(&aeroP, 0, MapContents::AirportList);
 
   emit setStatusBarProgress(80);
 
-  _globalMapContents->drawList(&aeroP, &mapMaskP, MapContents::AddSitesList);
+  _globalMapContents->drawList(&aeroP, 0, MapContents::AddSitesList);
 
   emit setStatusBarProgress(85);
 
-  _globalMapContents->drawList(&aeroP, &mapMaskP, MapContents::OutLandingList);
+  _globalMapContents->drawList(&aeroP, 0, MapContents::OutLandingList);
 
   emit setStatusBarProgress(90);
 
-  _globalMapContents->drawList(&aeroP, &mapMaskP, MapContents::GliderfieldList);
+  _globalMapContents->drawList(&aeroP, 0, MapContents::GliderfieldList);
 
   emit setStatusBarProgress(95);
 
-  // Closing the painter ...
-  aeroP.end();
-  uMapP.end();
+  __drawGrid();
 }
 
 
@@ -1323,7 +1335,6 @@ void Map::__drawAirspaces()
 
       if( ! as.isDrawable() )
         {
-          qDebug() << "Airspace" << as.getName() << "Not drawn";
           // Not of interest, step away
           continue;
         }
@@ -1400,9 +1411,9 @@ void Map::resizeEvent(QResizeEvent* event)
 {
   if( !event->size().isEmpty() )
     {
-      extern MapMatrix *_globalMapMatrix;
       _globalMapMatrix->createMatrix( event->size() );
       pixBuffer = QPixmap( event->size() );
+      pixBuffer.fill(Qt::transparent);
       __redrawMap();
     }
 
@@ -1431,15 +1442,16 @@ void Map::__redrawMap()
 
   qDebug() << "Map::__redrawMap()";
 
-  if(isDrawing)
+  if( isDrawing )
     {
       return;
     }
 
   isDrawing = true;
 
-  if( lastSize.isValid() || lastSize != size() )
+  if( ! lastSize.isValid() || lastSize != size() )
     {
+      lastSize = size();
       pixAero = QPixmap (size() );
       pixAirspace = QPixmap (size() );
       pixFlight = QPixmap (size() );
@@ -1448,8 +1460,7 @@ void Map::__redrawMap()
       pixUnderMap = QPixmap (size() );
       pixIsoMap = QPixmap (size() );
       pixWaypoints = QPixmap (size() );
-      bitMapMask = QPixmap (size() );
-      bitAirspaceMask = QPixmap (size() );
+
       bitPlanMask = QPixmap (size() );
       bitFlightMask = QPixmap (size() );
       bitWaypointsMask = QPixmap (size() );
@@ -1468,7 +1479,6 @@ void Map::__redrawMap()
   pixFlight.fill(Qt::transparent);
   pixWaypoints.fill(Qt::transparent);
 
-  bitMapMask.fill(Qt::color0);
   bitFlightMask.fill(Qt::color0);
   bitPlanMask.fill(Qt::color0);
   bitWaypointsMask.fill(Qt::color0);
@@ -1481,12 +1491,10 @@ void Map::__redrawMap()
 
   _globalMapContents->proofeSection();
 
-  __drawGrid();
   __drawMap();
-  __drawScale();
   __drawFlight();
   __drawWaypoints();
-//  __drawPlannedTask();
+  //__drawPlannedTask();
   // Linie zum aktuellen Punkt löschen
   prePlanPos.setX(-999);
   prePlanPos.setY(-999);
@@ -1608,13 +1616,10 @@ void Map::slotActivatePlanning()
 
 void Map::__showLayer()
 {
-  pixUnderMap.setMask(bitMapMask);
   pixAero.setMask(QBitmap(pixAero));
-  //pixAirspace.setMask(bitAirspaceMask);
   pixFlight.setMask(bitFlightMask);
   pixPlan.setMask(bitPlanMask);
   pixWaypoints.setMask(bitWaypointsMask);
-  pixGrid.setMask(QBitmap(pixGrid));
 
   pixBuffer = pixIsoMap;
 
@@ -1622,9 +1627,7 @@ void Map::__showLayer()
 
   buffer.drawPixmap(pixUnderMap.rect(), pixUnderMap);
   buffer.drawPixmap(pixAero.rect(), pixAero);
-
   buffer.drawPixmap(pixAirspace.rect(), pixAirspace);
-
   buffer.drawPixmap(pixFlight.rect(), pixFlight);
   buffer.drawPixmap(pixPlan.rect(), pixPlan);
   buffer.drawPixmap(pixWaypoints.rect(), pixWaypoints);
@@ -1637,8 +1640,6 @@ void Map::slotDrawCursor(const QPoint& p1, const QPoint& p2)
 {
 //FIXME: Qt gives the following runtime warning in this function:
 //QPainter::begin: Widget painting can only begin as a result of a paintEvent
-
-  extern const MapMatrix *_globalMapMatrix;
 
   QPoint pos1(_globalMapMatrix->map(p1)), pos2(_globalMapMatrix->map(p2));
 
@@ -2680,121 +2681,131 @@ void Map::slotMpShowMapInfo(){
   __displayMapInfo(popupPos, false);
 }
 
-void Map::leaveEvent ( QEvent * ){
+void
+Map::leaveEvent( QEvent * )
+{
   mapInfoTimer->stop();
-  mapInfoTimerStartpoint = QPoint(-999,-999);
+  mapInfoTimerStartpoint = QPoint( -999, -999 );
 }
 
-void Map::slotMapInfoTimeout() {
-  __displayMapInfo(mapInfoTimerStartpoint, true);
+void
+Map::slotMapInfoTimeout()
+{
+  __displayMapInfo( mapInfoTimerStartpoint, true );
 }
 
 /** Draws a scale indicator on the pixmap. */
-void Map::__drawScale(){
-  QPainter scaleP(&pixAirspace);
-  QPainter scalePMask(&bitAirspaceMask);
-
+void Map::__drawScale( QPixmap& scalePixmap )
+{
   QPen pen;
   QBrush brush(Qt::white);
 
-//  pen.setColor(QColor(10,10,10));
+  QPainter scaleP( &scalePixmap );
+
   pen.setColor(Qt::black);
   pen.setWidth(3);
   pen.setCapStyle(Qt::RoundCap);
   scaleP.setPen(pen);
+  QFont f = scaleP.font();
 
-  QPen mPen;
-  QBrush mBrush(Qt::color1);
-  mPen.setColor(Qt::color1);
-  mPen.setWidth(3);
-  mPen.setCapStyle(Qt::RoundCap);
-  scalePMask.setPen(mPen);
+  f.setPointSize(12);
+  scaleP.setFont(f);
 
-  extern MapMatrix *_globalMapMatrix;
   double scale = _globalMapMatrix->getScale(MapMatrix::CurrentScale);
-
-
+  Distance barLen;
 
   /** select appropriate length of bar. This needs to be done for each unit
-    * seperately, because else you'd get weird, broken barlengts.
-    * Note: not all possible units are taken into account (meters, feet),
-    * because we are not going to use these for horizontal distances (at least
-    * not externaly.) */
-  /**
-   * Because KFLog does not support different units yet, this code is commented out.
-
-  Distance barLen;
+   * separately, because else you'd get weird, broken bar length.
+   * Note: not all possible units are taken into account (meters, feet),
+   * because we are not going to use these for horizontal distances (at least
+   * not externally.) */
   int len=1;
-  switch (barLen.getUnit()) {
-  case Distance::kilometers:
-    len=50;
-    if (scale<475) len=25;
-    if (scale<240) len=10;
-    if (scale<100) len=5;
-    if (scale<50) len=3;
-    barLen.setKilometers(len);
-    break;
 
-  case Distance::miles:
-    len=30;
-    if (scale<475) len=12;
-    if (scale<200) len=6;
-    if (scale<95) len=4;
-    if (scale<60) len=2;
-    barLen.setMiles(len);
-    break;
+  switch (barLen.getUnit())
+    {
+    case Distance::kilometers:
+      len = 100;
+      if (scale<1000)
+        len=50;
+      if (scale<475)
+        len=25;
+      if (scale<240)
+        len=10;
+      if (scale<100)
+        len=5;
+      if (scale<50)
+        len=3;
+      if (scale<20)
+        len=1;
+      barLen.setKilometers(len);
+      break;
 
-  case Distance::nautmiles:
-    len=25;
-    if (scale<450) len=10;
-    if (scale<175) len=5;
-    if (scale<90) len=3;
-    if (scale<55) len=1;
-    barLen.setNautMiles(len);
-    break;
+    case Distance::miles:
+      len=60;
+      if (scale<1000)
+        len=30;
+      if (scale<475)
+        len=12;
+      if (scale<200)
+        len=6;
+      if (scale<95)
+        len=4;
+      if (scale<60)
+        len=2;
+      if (scale<30)
+        len=1;
+      barLen.setMiles(len);
+      break;
 
-  default: //should not happen, other units are not used for horizontal distances.
-    len=50;
-    if (scale<475) len=25;
-    if (scale<240) len=10;
-    if (scale<100) len=5;
-    if (scale<50) len=3;
-    barLen.setKilometers(len);
-    break;
+    case Distance::nautmiles:
+      len=50;
+      if (scale<1000)
+        len=25;
+      if (scale<450)
+        len=10;
+      if (scale<175)
+        len=5;
+      if (scale<90)
+        len=3;
+      if (scale<55)
+        len=1;
+      barLen.setNautMiles(len);
+      break;
 
-  };
-  */
-
-    int len=200;
-    if (scale<1300) len=100;
-    if (scale<800) len=50;
-    if (scale<475) len=25;
-    if (scale<240) len=10;
-    if (scale<100) len=5;
-    if (scale<50) len=3;
-
+    default: //should not happen, other units are not used for horizontal distances.
+      len = 100;
+      if (scale<1000)
+        len=50;
+      if (scale<475)
+        len=25;
+      if (scale<240)
+        len=10;
+      if (scale<100)
+        len=5;
+      if (scale<50)
+        len=3;
+      if (scale<20)
+        len=1;
+      barLen.setKilometers(len);
+      break;
+    };
 
   //determine how long the bar should be in pixels
-    int drawLength = (int)(len*1000/scale);
-    //int drawLength = (int)(barLen.getMeters()/scale);
-  //...and where to start drawing.
+  int drawLength = (int)rint(barLen.getMeters()/scale);
+  //...and where to start drawing. Now at the left lower side ...
+  scaleP.translate( QPoint( -this->width()+drawLength+10, 0) );
+
   int leftXPos=this->width()-drawLength-5;
+
   //Now, draw the bar
-  scaleP.drawLine(leftXPos,this->height()-5,this->width()-5,this->height()-5);       //main bar
-  pen.setWidth(2);
+  scaleP.drawLine(leftXPos, this->height()-5, this->width()-5, this->height()-5); //main bar
+  pen.setWidth(3);
   scaleP.setPen(pen);
-  scaleP.drawLine(leftXPos,this->height()-9,leftXPos,this->height()-1);              //left endbar
+  scaleP.drawLine(leftXPos, this->height()-9,leftXPos,this->height()-1);              //left endbar
   scaleP.drawLine(this->width()-5,this->height()-9,this->width()-5,this->height()-1);//right endbar
 
-  scalePMask.drawLine(leftXPos,this->height()-5,this->width()-5,this->height()-5);       //main bar
-  mPen.setWidth(2);
-  scalePMask.setPen(mPen);
-  scalePMask.drawLine(leftXPos,this->height()-9,leftXPos,this->height()-1);              //left endbar
-  scalePMask.drawLine(this->width()-5,this->height()-9,this->width()-5,this->height()-1);//right endbar
-
   //get the string to draw
-  QString scaleText=QObject::tr("%1 km").arg(len);
-  //QString scaleText=barLen.getText(true,0);
+  QString scaleText=barLen.getText(true,0);
   //get some metrics for this string
   QRect txtRect=scaleP.fontMetrics().boundingRect(scaleText);
   int leftTPos=this->width()+int((drawLength-txtRect.width())/2)-drawLength-5;
@@ -2802,20 +2813,13 @@ void Map::__drawScale(){
   //draw white box to draw text on
   scaleP.setBrush(brush);
   scaleP.setPen(Qt::NoPen);
-  //scaleP.drawRect(leftTPos,this->height()-txtRect.height()+2, txtRect.width(), txtRect.height()+4); //-2);
-  scaleP.drawRect(leftTPos-1,this->height()-txtRect.height()-4, txtRect.width()+4, txtRect.height()+4); //-2);
-
-  scalePMask.setBrush(mBrush);
-  scalePMask.setPen(Qt::NoPen);
-  //scalePMask.drawRect(leftTPos,this->height()-txtRect.height()+2, txtRect.width(), txtRect.height()+4); //-2);
-  scalePMask.drawRect(leftTPos-1,this->height()-txtRect.height()-4, txtRect.width()+4, txtRect.height()+4); //-2);
+  scaleP.drawRect( leftTPos, this->height()-txtRect.height()-8,
+                   txtRect.width()+4, txtRect.height() );
 
   //draw text itself
   scaleP.setPen(pen);
-  scaleP.drawText(leftTPos,this->height()-7+txtRect.height()/2,scaleText);
-  scaleP.end();
-
-  scalePMask.end();
+  // scaleP.drawText( leftTPos, this->height()-10+txtRect.height()/2, scaleText );
+  scaleP.drawText( leftTPos, this->height()-txtRect.height()-8,
+                   txtRect.width()+4, txtRect.height(), Qt::AlignCenter,
+                   scaleText );
 }
-
-

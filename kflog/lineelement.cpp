@@ -46,7 +46,7 @@ LineElement::~LineElement()
 {
 }
 
-bool LineElement::drawMapElement(QPainter* targetP, QPainter* maskP)
+bool LineElement::drawMapElement(QPainter* targetP)
 {
   // If the element-type should not be drawn in the actual scale, or if the
   // element is not visible, return.
@@ -55,29 +55,13 @@ bool LineElement::drawMapElement(QPainter* targetP, QPainter* maskP)
       return false;
     }
 
-  QPen drawP( glConfig->getDrawPen( typeID ) );
-
   QPolygon mP( glMapMatrix->map( projPolygon ) );
-
-  if( valley )
-    {
-      maskP->setPen( QPen( Qt::color0, drawP.width(), drawP.style() ) );
-      maskP->setBrush( QBrush( Qt::color0, Qt::SolidPattern ) );
-    }
-  else
-    {
-      maskP->setPen( QPen( Qt::color1, drawP.width(), drawP.style() ) );
-      maskP->setBrush( QBrush( Qt::color1, glConfig->getDrawBrush( typeID ).style() ) );
-    }
 
   if(typeID == BaseMapElement::City)
     {
       // We do not draw the outline of the city directly, because otherwise
       // we will get into trouble with cities lying at the edge of a
       // map-section. So we use a thicker draw a line into the mask-painter.
-      maskP->setPen( QPen( Qt::color1, drawP.width() * 2 ) );
-      maskP->drawPolygon( mP );
-
       QBrush drawB = glConfig->getDrawBrush( typeID );
       targetP->setPen( QPen( drawB.color(), 0, Qt::NoPen ) );
       targetP->setBrush( drawB );
@@ -85,49 +69,29 @@ bool LineElement::drawMapElement(QPainter* targetP, QPainter* maskP)
       return true;
     }
 
+  QPen drawP( glConfig->getDrawPen( typeID ) );
   targetP->setPen(drawP);
 
   if(closed)
     {
-      //
-      // Lakes do not have a brush, because they are devided into normal
+      // Lakes do not have a brush, because they are divided into normal
       // sections and we do not want to see section-borders in a lake ...
-      //
-      if(typeID == BaseMapElement::Lake)
-        {
-          targetP->setBrush(QBrush(drawP.color(), Qt::SolidPattern));
-        }
-      else
-        {
-          targetP->setBrush(glConfig->getDrawBrush(typeID));
-        }
-
-      // Forests do not have an outline.
-      if( typeID == BaseMapElement::Forest )
-        {
-          maskP->setPen( QPen( Qt::color1, 0, Qt::NoPen ) );
-          targetP->setPen( QPen( drawP.color(), 0, Qt::NoPen ) );
-        }
-
-      maskP->drawPolygon( mP );
+      targetP->setBrush(glConfig->getDrawBrush(typeID));
       targetP->drawPolygon( mP );
+      return true;
     }
-  else
+
+  targetP->drawPolyline(mP);
+
+  if(typeID == BaseMapElement::Highway && drawP.width() > 4)
     {
-      maskP->drawPolyline( mP );
-      targetP->drawPolyline( mP );
-      
-      if( typeID == Highway && drawP.width() > 4 )
-        {
-          // draw the white line in the middle
-          targetP->setPen( QPen( QColor( 255, 255, 255 ), 1 ) );
-          targetP->drawPolyline( mP );
-        }
+      // draw the white line in the middle
+      targetP->setPen(QPen(Qt::white, 1));
+      targetP->drawPolyline(mP);
     }
 
   return true;
 }
-
 
 void LineElement::printMapElement( QPainter* printPainter, bool isText )
 {

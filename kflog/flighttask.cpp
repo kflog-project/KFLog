@@ -532,7 +532,7 @@ bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   if (getPlanningType() == FAIArea && wpList.count() > 3) {
     for(int loop = 0; loop < FAISectList.count(); loop++) {
       sect = FAISectList.at(loop);
-      sect->pos->drawMapElement(targetPainter, maskPainter);
+      sect->pos->drawMapElement(targetPainter);
       label = sect->pos->getName();
       QPolygon pp = glMapMatrix->map(sect->pos->getPolygon());
 

@@ -9,7 +9,7 @@
 **   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -216,13 +216,13 @@ private:
      */
     void __drawPlannedTask(bool solid = true);
     /**
-     * Draws the grid tino the map.
+     * Draws the grid on the map.
      */
     void __drawGrid();
     /**
       * Draws a scale on the pixmap.
       */
-    void __drawScale();
+    void __drawScale(  QPixmap& scalePixmap );
     /**
      * Puts the waypoints of the active waypoint catalog to the map.
      */
@@ -303,10 +303,6 @@ private:
      * Pixmap to hold waypoints of active WaypointsCatalog
      */
     QPixmap pixWaypoints;
-    /** */
-    QBitmap bitMapMask;
-    /** */
-    QBitmap bitAirspaceMask;
     /** */
     QBitmap bitFlightMask;
     QBitmap bitPlanMask;

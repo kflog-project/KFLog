@@ -61,10 +61,9 @@ public:
    * \ref BaseMapElement.
    *
    * @param  targetP  The painter to draw the element into.
-   * @param  maskP    The mask painter for targetP
    * @return true, if element was drawn otherwise false.
    */
-  virtual bool drawMapElement(QPainter* targetP, QPainter* maskP);
+  virtual bool drawMapElement(QPainter* targetP);
 
   /**
    * Prints the element. Reimplemented from \ref BaseMapElement.

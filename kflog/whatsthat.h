@@ -6,65 +6,86 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by Andr� Somers / TrollTech
+**   Copyright (c):  2002 by André Somers
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef WHATSTHAT_H
-#define WHATSTHAT_H
+#ifndef WHATS_THAT_H
+#define WHATS_THAT_H
 
-#include <q3simplerichtext.h>
 #include <QString>
 #include <QTimer>
 #include <QWidget>
+#include <QTextDocument>
 
 
-/**Rip-off from Qt's QWhatsThis system in order to be able to control the lifespan.
-  *@author Andr� Somers
-  */
-
+/**
+ * \author André Somers, Axel Pauli
+ *
+ * \brief Popup window to display user information.
+ *
+ * This class is used to display user information e.g. about airspaces.
+ * It is realized as a frame less popup window and is closed by tipping on
+ * it or automatically after a certain time. It can display plain or html text.
+ * HTML text must be enclosed in HTML start and end tags.
+ *
+ * \date 2002-2010
+ *
+ * \version $Id$
+ */
 class WhatsThat : public QWidget
 {
-    Q_OBJECT
-public:
-    WhatsThat( QWidget* w,
-               const QString& txt,
-               QWidget* parent,
-               const char* name,
-               int timeout=5000,
-               const QPoint pos = QPoint(-9999,-9999) );
+  Q_OBJECT
 
-    ~WhatsThat() ;
+private:
+  /**
+   * That macro forbids the copy constructor and the assignment operator.
+   */
+  Q_DISABLE_COPY( WhatsThat )
+
+public:
+
+  WhatsThat( QWidget* parent,
+             QString& txt,
+             int timeout=10000,
+             const QPoint pos = QPoint(-9999,-9999) );
+
+  virtual ~WhatsThat();
 
 public slots:
-    void hide();
+
+  void hide();
 
 protected:
-    void mousePressEvent( QMouseEvent* );
-    void mouseReleaseEvent( QMouseEvent* );
-    void mouseMoveEvent( QMouseEvent* );
-    void keyPressEvent( QKeyEvent* );
-    void paintEvent( QPaintEvent* );
-    void leaveEvent( QEvent *);
-    
+
+  void mousePressEvent( QMouseEvent* );
+  void keyPressEvent( QKeyEvent* );
+  void paintEvent( QPaintEvent* );
+  void leaveEvent( QEvent *);
+
 private:
-    QString text;
-    Q3SimpleRichText* doc;
-    QString anchor;
-    bool pressed;
-    QWidget* widget;
-    QTimer * autohideTimer;
-    QPoint suggestedPos;
-    
-private: // Private methods
+
   /** Tries to find itself a good position to display. */
   void position();
-};
 
+private:
+
+  QWidget *parent;
+
+  // text to be displayed
+  QTextDocument *doc;
+  // width of document
+  int docW;
+  // height of document
+  int docH;
+
+  QTimer * autohideTimer;
+  QPoint suggestedPos;
+};
 
 #endif

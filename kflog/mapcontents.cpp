@@ -108,12 +108,12 @@ const short MapContents::isoLevels[] =
 
 MapContents::MapContents( QObject* object ) :
   QObject(object),
-  isFirstLoad(true)
+  currentFlight(0),
+  sectionArray( MAX_TILE_NUMBER, false ),
+  isFirstLoad(true),
+  downloadManger(0)
 {
   qDebug() << "MapContents()";
-
-  currentFlight  = 0;
-  downloadManger = 0;
 
   // Setup a hash used as reverse mapping from isoLine value to array index to
   // speed up loading of ground and terrain files.
@@ -126,9 +126,6 @@ MapContents::MapContents( QObject* object ) :
   _lastIsoLevel=-1;
   _isoLevelReset=true;
   _lastIsoEntry=0;
-
-  sectionArray.resize(MAX_TILE_NUMBER);
-  sectionArray.fill(false);
 
   // Create all needed map directories.
   createMapDirectories();
@@ -1166,7 +1163,7 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, uint index)
 
 void MapContents::slotReloadMapData()
 {
-  qDebug() << "MapContents::slotReloadMapData()";
+  qDebug() << "MapContents::slotReloadMapData(): Clears all Maps!";
 
   airspaceList.clear();
   airspaceRegionList.clear();
@@ -1291,62 +1288,62 @@ void MapContents::drawList( QPainter* targetPainter,
 
       case AirspaceList:
         for (int i = 0; i < airspaceList.size(); i++)
-          airspaceList[i].drawMapElement(targetPainter, maskPainter);
+          airspaceList[i].drawMapElement(targetPainter);
         break;
 
       case ObstacleList:
         for (int i = 0; i < obstacleList.size(); i++)
-          obstacleList[i].drawMapElement(targetPainter, maskPainter);
+          obstacleList[i].drawMapElement(targetPainter);
         break;
 
       case ReportList:
         for (int i = 0; i < reportList.size(); i++)
-          reportList[i].drawMapElement(targetPainter, maskPainter);
+          reportList[i].drawMapElement(targetPainter);
         break;
 
       case CityList:
         for (int i = 0; i < cityList.size(); i++)
-           cityList[i].drawMapElement(targetPainter, maskPainter);
+           cityList[i].drawMapElement(targetPainter);
         break;
 
       case VillageList:
         for (int i = 0; i < villageList.size(); i++)
-          villageList[i].drawMapElement(targetPainter, maskPainter);
+          villageList[i].drawMapElement(targetPainter);
         break;
 
       case LandmarkList:
         for (int i = 0; i < landmarkList.size(); i++)
-          landmarkList[i].drawMapElement(targetPainter, maskPainter);
+          landmarkList[i].drawMapElement(targetPainter);
         break;
 
       case HighwayList:
         for (int i = 0; i < highwayList.size(); i++)
-          highwayList[i].drawMapElement(targetPainter, maskPainter);
+          highwayList[i].drawMapElement(targetPainter);
         break;
 
       case RoadList:
         for (int i = 0; i < roadList.size(); i++)
-          roadList[i].drawMapElement(targetPainter, maskPainter);
+          roadList[i].drawMapElement(targetPainter);
         break;
 
       case RailList:
         for (int i = 0; i < railList.size(); i++)
-          railList[i].drawMapElement(targetPainter, maskPainter);
+          railList[i].drawMapElement(targetPainter);
         break;
 
       case HydroList:
         for (int i = 0; i < hydroList.size(); i++)
-          hydroList[i].drawMapElement(targetPainter, maskPainter);
+          hydroList[i].drawMapElement(targetPainter);
         break;
 
       case LakeList:
         for (int i = 0; i < lakeList.size(); i++)
-          lakeList[i].drawMapElement(targetPainter, maskPainter);
+          lakeList[i].drawMapElement(targetPainter);
         break;
 
       case TopoList:
         for (int i = 0; i < topoList.size(); i++)
-          topoList[i].drawMapElement(targetPainter, maskPainter);
+          topoList[i].drawMapElement(targetPainter);
         break;
 
       case FlightList:
