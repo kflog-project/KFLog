@@ -20,16 +20,8 @@
 
 #include <pwd.h>
 
-#include <QCursor>
-#include <QDir>
-#include <q3filedialog.h>
-#include <QLabel>
-#include <QLayout>
-#include <QMessageBox>
-#include <QPushButton>
-#include <QSettings>
-#include <QSizePolicy>
-#include <QRegExp>
+#include <QtGui>
+#include <Qt3Support>
 
 #include "airport.h"
 #include "glidersite.h"
@@ -38,6 +30,7 @@
 #include "mapcontents.h"
 #include "translationlist.h"
 #include "waypoints.h"
+#include "wgspoint.h"
 
 extern MapContents *_globalMapContents;
 extern MapMatrix   *_globalMapMatrix;
@@ -330,8 +323,8 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
     waypointDlg->description->setText(w->description);
     // translate id to index
     waypointDlg->setWaypointType(w->type);
-    waypointDlg->longitude->setText(printPos(w->origP.lon(), false));
-    waypointDlg->latitude->setText(printPos(w->origP.lat(), true));
+    waypointDlg->longitude->setText(WGSPoint::printPos(w->origP.lon(), false));
+    waypointDlg->latitude->setText(WGSPoint::printPos(w->origP.lat(), true));
     tmp.sprintf("%d", w->elevation);
     waypointDlg->elevation->setText(tmp);
     waypointDlg->icao->setText(w->icao);
@@ -493,8 +486,8 @@ void Waypoints::fillWaypoints()
     item->setText(colDesc, w->description);
     item->setText(colICAO, w->icao);
     item->setText(colType, w->type == -1 ? QString::null : waypointTypes.itemText(w->type));
-    item->setText(colLat, printPos(w->origP.lat(), true));
-    item->setText(colLong, printPos(w->origP.lon(), false));
+    item->setText(colLat, WGSPoint::printPos(w->origP.lat(), true));
+    item->setText(colLong, WGSPoint::printPos(w->origP.lon(), false));
     tmp.sprintf("%d", w->elevation);
     item->setText(colElev, tmp);
     w->frequency > 1 ? tmp.sprintf("%.3f", w->frequency) : tmp=QString::null;

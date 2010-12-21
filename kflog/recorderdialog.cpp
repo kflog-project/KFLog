@@ -9,7 +9,7 @@
 **   Copyright (c):  2002 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -20,24 +20,14 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <QApplication>
-#include <QDir>
-#include <q3filedialog.h>
-#include <q3groupbox.h>
-#include <QLayout>
-#include <q3listbox.h>
-#include <QMessageBox>
-#include <QSettings>
-#include <QStringList>
-#include <q3textstream.h>
-#include <QTime>
-#include <QTimer>
-#include <q3whatsthis.h>
+#include <QtGui>
+#include <Qt3Support>
 
 #include "airport.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "recorderdialog.h"
+#include "wgspoint.h"
 
 RecorderDialog::RecorderDialog(QWidget *parent, const char */*name*/)
   : QDialog(parent, "Flightrecorder-Dialog (RecorderDialog)"),
@@ -671,8 +661,8 @@ void RecorderDialog::__addWaypointPage()
     idS.sprintf("%.3d", loop++);
     item->setText(waypointColID, idS);
     item->setText(waypointColName, wp->name);
-    item->setText(waypointColLat, printPos(wp->origP.lat()));
-    item->setText(waypointColLon, printPos(wp->origP.lon(), false));
+    item->setText(waypointColLat, WGSPoint::printPos(wp->origP.lat()));
+    item->setText(waypointColLon, WGSPoint::printPos(wp->origP.lon(), false));
   }
 }
 
@@ -1114,8 +1104,8 @@ void RecorderDialog::slotSwitchTask(int idx)
       idS.sprintf("%2d", loop++);
       item->setText(declarationColID, idS);
       item->setText(declarationColName, wp->name);
-      item->setText(declarationColLat, printPos(wp->origP.lat()));
-      item->setText(declarationColLon, printPos(wp->origP.lon(), false));
+      item->setText(declarationColLat, WGSPoint::printPos(wp->origP.lat()));
+      item->setText(declarationColLon, WGSPoint::printPos(wp->origP.lon(), false));
     }
   }
 }

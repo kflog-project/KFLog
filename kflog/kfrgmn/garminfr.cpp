@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by Thomas Nielsen, André Somers
+**   Copyright (c):  2003 by Thomas Nielsen, Andrï¿½ Somers
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -33,7 +33,7 @@ GarminFR::GarminFR(){
   //Set Flightrecorders capabilities. Defaults are 0 and false.
 
   //CAN'T FIND THIS DATA IN THE ORIGINAL PLUGIN?! WHAT ARE THE CORRECT VALUES?
-  
+
   //_capabilities.maxNrTasks = 1000;             //maximum number of tasks, limited by memory of device
   //_capabilities.maxNrWaypoints = 1000;         //maximum number of waypoints, limited by memory of device
   //_capabilities.maxNrWaypointsPerTask = 1000;  //maximum number of waypoints per task, limited by memory of device
@@ -87,17 +87,15 @@ FlightRecorderPluginBase::TransferMode GarminFR::getTransferMode() const
 int GarminFR::getFlightDir(QList<FRDirEntry*>* dirList){
   dirList->clear();
 
-
-  qWarning(tr("opening port"));
+  qWarning("opening port");
   gmn.openComm(portName);
 
-  qWarning(tr("requesting tracklog"));
+  qWarning("requesting tracklog");
   gmn.getTrackLog();
 
   gmn.closeComm();
 
   return FR_OK;
-  
 }
 
 
@@ -143,7 +141,7 @@ int GarminFR::openRecorder(const QString& portName, int /*baud*/) {
 
   if (!gmn.openComm(this->portName))
     {
-      qWarning(tr("No logger found!"));
+      qWarning("No logger found!");
       return FR_ERROR;
     }
 
@@ -154,7 +152,7 @@ int GarminFR::openRecorder(const QString& portName, int /*baud*/) {
 
 
 /**
- * Closes the connection with the flightrecorder.
+ * Closes the connection with the flight recorder.
  */
 int GarminFR::closeRecorder(){
   _isConnected=false;
@@ -284,4 +282,4 @@ int openRecorder(char* pName)
 }
    */
 
-   
+

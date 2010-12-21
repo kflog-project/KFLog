@@ -19,6 +19,7 @@
 
 #include "flightdataprint.h"
 #include "mapcalc.h"
+#include "wgspoint.h"
 
 #define VERSION "3.0"
 
@@ -54,7 +55,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
   font.setPointSize( 9 );
   font.setWeight( QFont::Normal );
   font.setItalic( true );
-  
+
   painter.setFont( font );
   painter.drawText(50, 58, 495, 20, Qt::AlignTop | Qt::AlignRight,
       (QString)QObject::tr("File") + ": " + currentFlight->getFileName());
@@ -182,9 +183,9 @@ void FlightDataPrint::__printPositionData(QPainter* painter,
 {
   QString temp;
   painter->drawText(50, yPos, text);
-  painter->drawText(145, yPos, printPos(cPoint->origP.lat(), true));
+  painter->drawText(145, yPos, WGSPoint::printPos(cPoint->origP.lat(), true));
   painter->drawText(220, yPos, "/");
-  painter->drawText(230, yPos, printPos(cPoint->origP.lon(), false));
+  painter->drawText(230, yPos, WGSPoint::printPos(cPoint->origP.lon(), false));
 
   painter->drawText(300, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
             printTime(cPoint->time));
@@ -211,9 +212,9 @@ void FlightDataPrint::__printPositionData(QPainter *painter, Waypoint *cPoint, i
   QString temp;
   bool nospeed;
   painter->drawText(50, yPos, cPoint->name);
-  painter->drawText(145, yPos, printPos(cPoint->origP.lat(), true));
+  painter->drawText(145, yPos, WGSPoint::printPos(cPoint->origP.lat(), true));
   painter->drawText(220, yPos, "/");
-  painter->drawText(230, yPos, printPos(cPoint->origP.lon(), false));
+  painter->drawText(230, yPos, WGSPoint::printPos(cPoint->origP.lon(), false));
 
   if(cPoint->fixTime != 0){
       time=cPoint->fixTime;

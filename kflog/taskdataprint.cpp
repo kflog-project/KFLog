@@ -19,6 +19,7 @@
 
 #include "mapcalc.h"
 #include "taskdataprint.h"
+#include "wgspoint.h"
 
 #define VERSION "3.0"
 
@@ -64,9 +65,9 @@ TaskDataPrint::TaskDataPrint(FlightTask* task)
     {
       cPoint = task->getWPList().at(loop);
       painter.drawText(50, yPos, cPoint->name);
-      painter.drawText(125, yPos, printPos(cPoint->origP.lat(), true));
+      painter.drawText(125, yPos, WGSPoint::printPos(cPoint->origP.lat(), true));
       painter.drawText(190, yPos, "/");
-      painter.drawText(200, yPos, printPos(cPoint->origP.lon(), false));
+      painter.drawText(200, yPos, WGSPoint::printPos(cPoint->origP.lon(), false));
 
       yPos += 13;
     }

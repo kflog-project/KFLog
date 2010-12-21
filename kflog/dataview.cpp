@@ -24,6 +24,7 @@
 #include <flighttask.h>
 #include <mapcalc.h>
 #include <mapcontents.h>
+#include <wgspoint.h>
 
 DataView::DataView(QWidget* parent) : QFrame(parent)
 {
@@ -115,8 +116,8 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       wp1->name + "</A></TD>\
           <TD ALIGN=right>" + timeString + "</TD></TR>\
           <TR><TD WIDTH=15></TD>\
-          <TD>" + printPos(wp1->origP.lat()) + "</TD>\
-          <TD ALIGN=right>" + printPos(wp1->origP.lon(), false) +
+          <TD>" + WGSPoint::printPos(wp1->origP.lat()) + "</TD>\
+          <TD ALIGN=right>" + WGSPoint::printPos(wp1->origP.lon(), false) +
       "</TD></TR>";
     wp2 = wp1;
     loop++;

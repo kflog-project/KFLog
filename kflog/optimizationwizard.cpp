@@ -13,8 +13,9 @@
 #include <QToolTip>
 
 #include "optimizationwizard.h"
+#include "wgspoint.h"
 
-static const char* const image0_data[] = { 
+static const char* const image0_data[] = {
 "22 22 114 2",
 "Qt c None",
 ".# c #000000",
@@ -154,8 +155,8 @@ static const char* const image0_data[] = {
 "QtQtQt.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#Qt"};
 
 
-/* 
- *  Constructs a OptimizationWizard as a child of 'parent', with the 
+/*
+ *  Constructs a OptimizationWizard as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
  *
  *  The wizard will by default be modeless, unless you set 'modal' to
@@ -366,32 +367,32 @@ void OptimizationWizard::slotStartOptimization()
 //  text = tr("The task has been optimized for the OLC.\nThe best task found is:\n\n");
 //  text = text + "\tBOT:  "
 //      + printTime(route.at(idList[0])->time,true) + " : \t"
-//      + printPos(route.at(idList[0])->origP.lat()) + " / "
-//      + printPos(route.at(idList[0])->origP.lon(), false)
+//      + WGSPoint::printPos(route.at(idList[0])->origP.lat()) + " / "
+//      + WGSPoint::printPos(route.at(idList[0])->origP.lon(), false)
 //      + QString("\n\t1.TP:  ")
 //      + printTime(route.at(idList[1])->time,true) + " : \t"
-//      + printPos(route.at(idList[1])->origP.lat()) + " / "
-//      + printPos(route.at(idList[1])->origP.lon(), false)
+//      + WGSPoint::printPos(route.at(idList[1])->origP.lat()) + " / "
+//      + WGSPoint::printPos(route.at(idList[1])->origP.lon(), false)
 //      + QString(" (%1km)\n\t2.TP:  ").arg(dist(route.at(idList[0]),route.at(idList[1])),0,'f',2)
 //      + printTime(route.at(idList[2])->time,true) + " : \t"
-//      + printPos(route.at(idList[2])->origP.lat()) + " / "
-//      + printPos(route.at(idList[2])->origP.lon(), false)
+//      + WGSPoint::printPos(route.at(idList[2])->origP.lat()) + " / "
+//      + WGSPoint::printPos(route.at(idList[2])->origP.lon(), false)
 //      + QString(" (%1km)\n\t3.TP:  ").arg(dist(route.at(idList[1]),route.at(idList[2])),0,'f',2)
 //      + printTime(route.at(idList[3])->time,true) + " : \t"
-//      + printPos(route.at(idList[3])->origP.lat()) + " / "
-//      + printPos(route.at(idList[3])->origP.lon(), false)
+//      + WGSPoint::printPos(route.at(idList[3])->origP.lat()) + " / "
+//      + WGSPoint::printPos(route.at(idList[3])->origP.lon(), false)
 //      + QString(" (%1km)\n\t4.TP:  ").arg(dist(route.at(idList[2]),route.at(idList[3])),0,'f',2)
 //      + printTime(route.at(idList[4])->time,true) + " : \t"
-//      + printPos(route.at(idList[4])->origP.lat()) + " / "
-//      + printPos(route.at(idList[4])->origP.lon(), false)
+//      + WGSPoint::printPos(route.at(idList[4])->origP.lat()) + " / "
+//      + WGSPoint::printPos(route.at(idList[4])->origP.lon(), false)
 //      + QString(" (%1km)\n\t5.TP:  ").arg(dist(route.at(idList[3]),route.at(idList[4])),0,'f',2)
 //      + printTime(route.at(idList[5])->time,true) + " : \t"
-//      + printPos(route.at(idList[5])->origP.lat()) + " / "
-//      + printPos(route.at(idList[5])->origP.lon(), false)
+//      + WGSPoint::printPos(route.at(idList[5])->origP.lat()) + " / "
+//      + WGSPoint::printPos(route.at(idList[5])->origP.lon(), false)
 //      + QString(" (%1km)\n\tEOT:  ").arg(dist(route.at(idList[4]),route.at(idList[5])),0,'f',2)
 //      + printTime(route.at(idList[6])->time,true) + " : \t"
-//      + printPos(route.at(idList[6])->origP.lat()) + " / "
-//      + printPos(route.at(idList[6])->origP.lon(), false)
+//      + WGSPoint::printPos(route.at(idList[6])->origP.lat()) + " / "
+//      + WGSPoint::printPos(route.at(idList[6])->origP.lon(), false)
 //      + QString(" (%1km):  ").arg(dist(route.at(idList[5]),route.at(idList[6])),0,'f',2)
 //      + tr("\n\nDistance:\t") + distText + "\n" + tr("Points(raw):\t") + rawPointText + "\n\n"
 //      + tr("If you want to use this task and replace the old, press \"Finish\",\nelse press \"Cancel\"");
@@ -404,46 +405,46 @@ void OptimizationWizard::slotStartOptimization()
 
   text += "<tr><td>" + tr("Begin of Soaring") + "</td><td>"
       + printTime(route.at(idList[0])->time,true) + "</td><td>"
-      + printPos(route.at(idList[0])->origP.lat()) + "</td><td>"
-      + printPos(route.at(idList[0])->origP.lon(), false) + "</td><td></td></tr>";
+      + WGSPoint::printPos(route.at(idList[0])->origP.lat()) + "</td><td>"
+      + WGSPoint::printPos(route.at(idList[0])->origP.lon(), false) + "</td><td></td></tr>";
   text += "<tr><td>" + tr("Begin of Task") + "</td><td>"
       + printTime(route.at(idList[1])->time,true) + "</td><td>"
-      + printPos(route.at(idList[1])->origP.lat()) + "</td><td>"
-      + printPos(route.at(idList[1])->origP.lon(), false) + "</td><td></td></tr>";
+      + WGSPoint::printPos(route.at(idList[1])->origP.lat()) + "</td><td>"
+      + WGSPoint::printPos(route.at(idList[1])->origP.lon(), false) + "</td><td></td></tr>";
   text += "<tr><td>" + tr("1.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[2])->time,true) + "</td><td>"
-      + printPos(route.at(idList[2])->origP.lat()) + "</td><td>"
-      + printPos(route.at(idList[2])->origP.lon(), false) + "</td><td ALIGN=right>"
+      + WGSPoint::printPos(route.at(idList[2])->origP.lat()) + "</td><td>"
+      + WGSPoint::printPos(route.at(idList[2])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[1]),route.at(idList[2])),0,'f',2);
   text += "<tr><td>" + tr("2.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[3])->time,true) + "</td><td>"
-      + printPos(route.at(idList[3])->origP.lat()) + "</td><td>"
-      + printPos(route.at(idList[3])->origP.lon(), false) + "</td><td ALIGN=right>"
+      + WGSPoint::printPos(route.at(idList[3])->origP.lat()) + "</td><td>"
+      + WGSPoint::printPos(route.at(idList[3])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[2]),route.at(idList[3])),0,'f',2);
   text += "<tr><td>" + tr("3.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[4])->time,true) + "</td><td>"
-      + printPos(route.at(idList[4])->origP.lat()) + "</td><td>"
-      + printPos(route.at(idList[4])->origP.lon(), false) + "</td><td ALIGN=right>"
+      + WGSPoint::printPos(route.at(idList[4])->origP.lat()) + "</td><td>"
+      + WGSPoint::printPos(route.at(idList[4])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[3]),route.at(idList[4])),0,'f',2);
   text += "<tr><td>" + tr("4.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[5])->time,true) + "</td><td>"
-      + printPos(route.at(idList[5])->origP.lat()) + "</td><td>"
-      + printPos(route.at(idList[5])->origP.lon(), false) + "</td><td ALIGN=right>"
+      + WGSPoint::printPos(route.at(idList[5])->origP.lat()) + "</td><td>"
+      + WGSPoint::printPos(route.at(idList[5])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[4]),route.at(idList[5])),0,'f',2);
   text += "<tr><td>" +tr("5.Turnpoint") + "</td><td>"
       + printTime(route.at(idList[6])->time,true) + "</td><td>"
-      + printPos(route.at(idList[6])->origP.lat()) + "</td><td>"
-      + printPos(route.at(idList[6])->origP.lon(), false) + "</td><td ALIGN=right>"
+      + WGSPoint::printPos(route.at(idList[6])->origP.lat()) + "</td><td>"
+      + WGSPoint::printPos(route.at(idList[6])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[5]),route.at(idList[6])),0,'f',2);
   text += "<tr><td>" + tr("End of Task") + "</td><td>"
       + printTime(route.at(idList[7])->time,true) + "</td><td>"
-      + printPos(route.at(idList[7])->origP.lat()) + "</td><td>"
-      + printPos(route.at(idList[7])->origP.lon(), false) + "</td><td ALIGN=right>"
+      + WGSPoint::printPos(route.at(idList[7])->origP.lat()) + "</td><td>"
+      + WGSPoint::printPos(route.at(idList[7])->origP.lon(), false) + "</td><td ALIGN=right>"
       + QString("%1km</td></tr>").arg(dist(route.at(idList[6]),route.at(idList[7])),0,'f',2);
   text += "<tr><td>" + tr("End of Soaring") + "</td><td>"
       + printTime(route.at(idList[8])->time,true) + "</td><td>"
-      + printPos(route.at(idList[8])->origP.lat()) + "</td><td>"
-      + printPos(route.at(idList[8])->origP.lon(), false) + "</td><td></td></tr>";
+      + WGSPoint::printPos(route.at(idList[8])->origP.lat()) + "</td><td>"
+      + WGSPoint::printPos(route.at(idList[8])->origP.lon(), false) + "</td><td></td></tr>";
   text += "</tbody></table><th>";
 
   text += "<table align=\"center\">";

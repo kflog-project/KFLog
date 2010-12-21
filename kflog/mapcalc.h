@@ -15,8 +15,8 @@
 **
 ***********************************************************************/
 
-#ifndef MAPCALC_H
-#define MAPCALC_H
+#ifndef MAP_CALC_H
+#define MAP_CALC_H
 
 #include "wp.h"
 #include "waypoint.h"
@@ -62,12 +62,6 @@ double dist(Waypoint* wp, flightPoint* fp);
  * Calculates the distance between two given points (in km).
  */
 double dist( flightPoint* fp1, flightPoint* fp2);
-
-/**
- * Converts the given coordinate into a readable string.
- * ( xxx,xxxx�[N,S,E,W] )
- */
-QString printPos(int coord, bool isLat = true);
 
 /**
  * Converts the given time (in sec. from 1.1.1970 00:00:00) into a readable string.

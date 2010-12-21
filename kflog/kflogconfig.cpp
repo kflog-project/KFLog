@@ -40,6 +40,7 @@
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "mapdefaults.h"
+#include "wgspoint.h"
 
 extern QSettings _settings;
 
@@ -257,14 +258,14 @@ void KFLogConfig::slotSelectProjection(int index)
       case ProjectionBase::Lambert:
         secondParallel-> setEnabled(true);
         originLongitude-> setEnabled(true);
-        firstParallel-> setText(printPos(lambertV1, true));
-        secondParallel-> setText(printPos(lambertV2, true));
-        originLongitude-> setText(printPos(lambertOrigin, false));
+        firstParallel-> setText(WGSPoint::printPos(lambertV1, true));
+        secondParallel-> setText(WGSPoint::printPos(lambertV2, true));
+        originLongitude-> setText(WGSPoint::printPos(lambertOrigin, false));
         break;
       case ProjectionBase::Cylindric:
         secondParallel-> setEnabled(false);
         originLongitude-> setEnabled(false);
-        firstParallel-> setText(printPos(cylinPar, true));
+        firstParallel-> setText(WGSPoint::printPos(cylinPar, true));
         break;
     }
   currentProjType = index;
@@ -969,8 +970,8 @@ void KFLogConfig::__addIDTab()
 
 //  idLayout-> setRowStretch(17, 1);
 
-  homeLatE-> setText(printPos(_settings.readNumEntry("/MapData/Homesite Latitude", HOME_DEFAULT_LAT), true));
-  homeLonE-> setText(printPos(_settings.readNumEntry("/MapData/Homesite Longitude", HOME_DEFAULT_LON), false));
+  homeLatE-> setText(WGSPoint::printPos(_settings.readNumEntry("/MapData/Homesite Latitude", HOME_DEFAULT_LAT), true));
+  homeLonE-> setText(WGSPoint::printPos(_settings.readNumEntry("/MapData/Homesite Longitude", HOME_DEFAULT_LON), false));
   homeNameE-> setText(_settings.readEntry("/MapData/Homesite", ""));
 
   preNameE-> setText(_settings.readEntry("/PersonalData/PreName", ""));

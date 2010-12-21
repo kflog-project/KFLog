@@ -30,6 +30,7 @@
 #include "mapcalc.h"
 #include "mapmatrix.h"
 #include "optimizationwizard.h"
+#include "wgspoint.h"
 
 /* Number of tasks to be handled during optimization */
 #define NUM_TASKS 25
@@ -1169,12 +1170,12 @@ bool Flight::optimizeTask()
   distText.sprintf(" %.2f km  ", totalDist);
   text = QObject::tr("The task has been optimized. The best task found is:\n\n");
   text = text + "\t1:  "
-      + printPos(route.at(idList[0])->origP.lat()) + " / "
-      + printPos(route.at(idList[0])->origP.lon(), false) + "\n\t2:  "
-      + printPos(route.at(idList[1])->origP.lat()) + " / "
-      + printPos(route.at(idList[1])->origP.lon(), false) + "\n\t3:  "
-      + printPos(route.at(idList[2])->origP.lat()) + " / "
-      + printPos(route.at(idList[2])->origP.lon(), false) + "\n\n\t"
+      + WGSPoint::printPos(route.at(idList[0])->origP.lat()) + " / "
+      + WGSPoint::printPos(route.at(idList[0])->origP.lon(), false) + "\n\t2:  "
+      + WGSPoint::printPos(route.at(idList[1])->origP.lat()) + " / "
+      + WGSPoint::printPos(route.at(idList[1])->origP.lon(), false) + "\n\t3:  "
+      + WGSPoint::printPos(route.at(idList[2])->origP.lat()) + " / "
+      + WGSPoint::printPos(route.at(idList[2])->origP.lon(), false) + "\n\n\t"
       + QObject::tr("Distance:") + distText + QObject::tr("Points:") + pointText + "\n\n"
       + QObject::tr("Do You want to use this task and replace the old?");
 

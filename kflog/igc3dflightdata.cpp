@@ -9,7 +9,7 @@
 **   Copyright (c):  2002 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -29,8 +29,7 @@
 #include "igc3dflightdata.h"
 #include "igc3dviewstate.h"
 #include "mapcalc.h"
-
-//using namespace std;
+#include "wgspoint.h"
 
 class Igc3DViewState;
 
@@ -463,11 +462,11 @@ void Igc3DFlightData::load(Flight* flight)
             t = printTime(cP.time, false, true);
             sscanf ((const char *) t, "%02f:%02f:%02f", &hh, &mm, &ss);
 
-            r = printPos(cP.origP.lat(),true);
+            r = WGSPoint::printPos(cP.origP.lat(),true);
             //std::cout << r << endl;
             sscanf ((const char *) r, "%2f%c %2f%c %2f%c %c",
               &lat, &AV, &latmin, &AV, &latsec, &AV, &NS);
-            s = printPos(cP.origP.lon(),false);
+            s = WGSPoint::printPos(cP.origP.lon(),false);
             //std::cout << s << endl;
             sscanf ((const char *) s, "%3f%c %2f%c %2f%c %c",
               &lon, &AV, &lonmin, &AV, &lonsec, &AV, &EW);

@@ -101,6 +101,7 @@ public:
    * @param  maskP    The maskpainter for targetP
    * @return true, if element was drawn otherwise false.
    */
+  // FIXME: do remove this function if maskP is completely removed
   virtual bool drawMapElement(QPainter* targetP, QPainter* maskP);
 
   /**

@@ -33,6 +33,7 @@
 #include "translationlist.h"
 #include "waypoints.h"
 #include "waypointdialog.h"
+#include "wgspoint.h"
 #include "whatsthat.h"
 
 // These values control the borders at which to pan the map
@@ -469,8 +470,8 @@ QString getInfoString (Waypoint* wp)
   {
     text += QString ("<BR>%1").arg (wp->frequency, 3);
   }
-  text += "<BR>" + printPos(wp->origP.lat());
-  text += "<BR>" + printPos(wp->origP.lon(), false);
+  text += "<BR>" + WGSPoint::printPos(wp->origP.lat());
+  text += "<BR>" + WGSPoint::printPos(wp->origP.lon(), false);
 
   text += "</FONT></TD></TR></TABLE></HTML>";
 
@@ -631,8 +632,8 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
               wpText = wpText + "<LI><B>" + wpList.at(loop)->name +
                   "</B>  " +
                   "&nbsp;" + timeText + " / " + tmpText + "<BR>" +
-                  printPos(wpList.at(loop)->origP.lat()) + " / " +
-                  printPos(wpList.at(loop)->origP.lon(), false) + "</LI>";
+                  WGSPoint::printPos(wpList.at(loop)->origP.lat()) + " / " +
+                  WGSPoint::printPos(wpList.at(loop)->origP.lon(), false) + "</LI>";
             }
         }
 
@@ -812,8 +813,8 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
 
           // initialize dialg
           waypointDlg->setWaypointType(BaseMapElement::Landmark);
-          waypointDlg->longitude->setText(printPos(p.x(), false));
-          waypointDlg->latitude->setText(printPos(p.y(), true));
+          waypointDlg->longitude->setText(WGSPoint::printPos(p.x(), false));
+          waypointDlg->latitude->setText(WGSPoint::printPos(p.y(), true));
           waypointDlg->setSurface(-1);
 
           if (waypointDlg->exec() == QDialog::Accepted)
@@ -1038,8 +1039,8 @@ void Map::mousePressEvent(QMouseEvent* event)
 
                 // initialize dialog
                 //waypointDlg->setWaypointType(BaseMapElement::Landmark); now set by default.
-                waypointDlg->longitude->setText(printPos(p.x(), false));
-                waypointDlg->latitude->setText(printPos(p.y(), true));
+                waypointDlg->longitude->setText(WGSPoint::printPos(p.x(), false));
+                waypointDlg->latitude->setText(WGSPoint::printPos(p.y(), true));
                 waypointDlg->setSurface(-1);
 
                 waypointDlg->exec(); //we only need to exec the dialog. The dialog can take care of itself now :-)
@@ -2628,8 +2629,8 @@ void Map::slotMpNewWaypoint(){
 
       // initialize dialog
       //waypointDlg->setWaypointType(BaseMapElement::Landmark); now set by default.
-      waypointDlg->longitude->setText(printPos(p.x(), false));
-      waypointDlg->latitude->setText(printPos(p.y(), true));
+      waypointDlg->longitude->setText(WGSPoint::printPos(p.x(), false));
+      waypointDlg->latitude->setText(WGSPoint::printPos(p.y(), true));
       waypointDlg->setSurface(-1);
       waypointDlg->exec(); //we only need to exec the dialog. The dialog can take care of itself now :-)
 
