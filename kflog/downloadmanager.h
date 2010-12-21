@@ -119,6 +119,12 @@ class DownloadManager : public QObject
    * execute the download request.
    */
   static const ulong MinFsSpace;
+
+  /**
+   * A black list, containing all not downloadable URLs to avoid a download
+   * dead lock.
+   */
+  static QSet<QString> blackList;
 };
 
 #endif /* DOWNLOAD_MANAGER_H */

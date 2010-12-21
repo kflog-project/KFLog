@@ -5,6 +5,9 @@ $Id$
     Code of class partly replaced by the Cumulus code.
   * Pixmap drawing mechanism partly redesigned.
   * Function printPos moved from mapcalc to WGSPoint class.
+  * Map scale bar issues fixed.
+  * A black list has been added to the download manager to avoid download
+    dead locks.
 
 2010-10-18 Axel Pauli <axel@kflog.org>
   * OpenAir class taken over from Cumulus. Airspaces are drawn now at the map

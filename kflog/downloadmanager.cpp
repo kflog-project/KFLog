@@ -29,6 +29,8 @@
 
 const ulong DownloadManager::MinFsSpace = 25*1024*1024; // 25MB
 
+QSet<QString> DownloadManager::blackList;
+
 /**
  * Creates a download manager instance.
  */
@@ -55,7 +57,8 @@ bool DownloadManager::downloadRequest( QString &url, QString &destination )
 
   // Check input parameters. If url was already requested the download
   // is rejected.
-  if( url.isEmpty() || urlSet.contains(url) || destination.isEmpty() )
+  if( url.isEmpty() || urlSet.contains(url) || destination.isEmpty() ||
+      blackList.contains(url) )
     {
       mutex.unlock();
       return false;
@@ -110,14 +113,11 @@ void DownloadManager::slotFinished( QString &urlIn, QNetworkReply::NetworkError 
 {
   mutex.lock();
 
-  if( codeIn != QNetworkReply::NoError )
+  if( codeIn != QNetworkReply::NoError && codeIn != QNetworkReply::ContentNotFoundError )
     {
       // Error already reported by the HTTP client
       errors++;
-    }
 
-  if( codeIn != QNetworkReply::NoError && codeIn != QNetworkReply::ContentNotFoundError )
-    {
       // There was a fatal problem on the network. We do abort all further downloads
       // to avoid an error avalanche.
       qWarning( "DownloadManager(%d): Network problem occurred, canceling of all downloads!",
@@ -129,6 +129,18 @@ void DownloadManager::slotFinished( QString &urlIn, QNetworkReply::NetworkError 
       emit networkError();
       mutex.unlock();
       return;
+    }
+
+  if( codeIn != QNetworkReply::NoError )
+    {
+      // Error already reported by the HTTP client
+      errors++;
+
+      // Put URL in the black list to avoid a new download action.
+      blackList.insert( urlIn );
+
+      qWarning( "DownloadManager(%d): URL %s put into black list due to ERROR %d!",
+                __LINE__, urlIn.toAscii().data(), codeIn );
     }
 
   // Remove the last done request from the queue and from the url set.
