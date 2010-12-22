@@ -1,5 +1,12 @@
 $Id$
 
+2010-10-22 Axel Pauli <axel@kflog.org>
+  * Map redraw optimized after download of missing files. The already loaded
+    data are not more cleared and loaded again.
+  * Two new methods indroduced for loading of map icons and application
+    pixmaps. There is defined now only on one place the path to the icons
+    and pixmaps. Changing all old calls was a big stupid task.
+
 2010-10-21 Axel Pauli <axel@kflog.org>
   * Class WhatsThat caused core dumps after displaying airspace information.
     Code of class partly replaced by the Cumulus code.
