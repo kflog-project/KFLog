@@ -145,6 +145,7 @@ public:
    * @returns the icon-pixmap of the element.
    */
   QPixmap getPixmap(unsigned int typeID, bool isWinch, bool smallIcon);
+
   /**
    * @param  type  The typeID of the element.
    * @param  isWinch  Used only for glidersites to determine, if the
@@ -154,6 +155,24 @@ public:
    * @return the name of the pixmap of the element.
    */
   QString getPixmapName(unsigned int type, bool isWinch = true);
+
+  /**
+   * \return The directory path to the map icons storage location.
+   */
+  QString getIconPath();
+
+  /**
+   * @param pixmapName The pixmap to be loaded.
+   * @param smallIcon The kind of icon to be loaded.
+   * @return The requested pixmap.
+   */
+  QPixmap loadPixmap( const QString& pixmapName, bool smallIcon=false );
+
+  /**
+   * @param pixmapName Removes the pixmap from the global cache.
+   */
+  void removePixmap( const QString& pixmapName );
+
   /**
    * @return pen color for isolines
    */

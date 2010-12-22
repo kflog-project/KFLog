@@ -15,4 +15,4 @@ HEADERS =   openglwidget.h \
             opengl_igc.h \
             glview.h
 
-DESTDIR = ../../release
+DESTDIR = ../../release/bin

@@ -15,6 +15,27 @@
 **
 ***********************************************************************/
 
+/**
+ * \author Heiner Lamprecht, Axel Pauli
+ *
+ * \brief Main of KFLog
+ *
+ * This file contains the start procedure of the KFLog GUI. KFLog is a C++
+ * Application built with the QT/X11 SDK from Nokia. Qt is a cross-platform
+ * application and UI framework. See here for more information:
+ *
+ * http://qt.nokia.com
+ *
+ * KFLog is built with the release 4.7.x.
+ *
+ * \date 2001-2010
+ *
+ * \version $Id$
+ */
+
+#include <unistd.h>
+#include <libgen.h>
+
 #include <QtGui>
 
 #include "kflogconfig.h"
@@ -115,6 +136,25 @@ int main(int argc, char **argv)
 
   // Make sure the application uses utf8 encoding for translated widgets
   QTextCodec::setCodecForTr( QTextCodec::codecForName ("UTF-8") );
+
+  // Make install root of KFLog available for other modules via
+  // QSettings. The assumption is that KFLog is installed at
+  // <root>/bin/kflog. The <root> path will be passed to QSettings.
+  char *callPath = dirname(argv[0]);
+  char *startDir = getcwd(0,0);
+  chdir( callPath );
+  char *callDir = getcwd(0,0);
+  QString root = QString(dirname(callDir));
+  _settings.setValue( "/Path/InstallRoot", root );
+
+  // change back to start directory
+  chdir( startDir );
+  free( callDir );
+  free( startDir );
+
+  qDebug() << "KFLog Version:" << KFLOG_VERSION;
+  qDebug() << "KFLog Built Date:" << __DATE__;
+  qDebug() << "KFLog Install Root:" << root;
 
   _mainWindow = new MainWindow();
   _mainWindow->setVisible( true );

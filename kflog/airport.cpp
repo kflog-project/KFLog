@@ -53,11 +53,9 @@ unsigned int Airport::getRunwayNumber() const
 
 QString Airport::getInfoString() const
 {
+  extern MapConfig* _globalMapConfig;
+  QString path = _globalMapConfig->getIconPath();
   QString text;
-  QString path = QDir::homePath() + "/.kflog/mapicons/";
-  //bool isType2=false; //Doesn't work yet, runway info is not read.
-  //if (typeID==BaseMapElement::Airfield)
-  //  isType2=(getRunway().surface==Grass);
 
   // @AP: suppress an empty frequency
   QString tmp;
@@ -69,7 +67,7 @@ QString Airport::getInfoString() const
 
   text.sprintf("%d", elevation);
   text = "<TABLE BORDER=0><TR><TD>"
-      "<IMG SRC=" + path + glConfig->getPixmapName(typeID) + ">" +
+      "<IMG SRC=" + path + "/" + glConfig->getPixmapName(typeID) + ">" +
       "</TD><TD>" + name + " (" + icao + ")</TD></TR>" +
       "<TR><TD></TD><TD><FONT SIZE=-1>" + text + "m" +
       "<BR>" + tmp + "</FONT></TD></TR></TABLE>";

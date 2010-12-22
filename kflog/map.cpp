@@ -57,7 +57,8 @@ Map::Map( QWidget* parent ) :
   preCur2(-50, -50),
   planning(-1),
   tempTask(""),
-  isDrawing(FALSE),
+  isDrawing(false),
+  redrawRequest(false),
   preSnapPoint(-999, -999)
 {
   QBitmap bitCursorMask;
@@ -130,6 +131,13 @@ Map::Map( QWidget* parent ) :
 
   mapInfoTimer = new QTimer(this);
   connect (mapInfoTimer, SIGNAL(timeout()), this, SLOT(slotMapInfoTimeout()));
+
+  /** Create a timer for queuing draw events. */
+  redrawMapTimer = new QTimer(this);
+  redrawMapTimer->setSingleShot(true);
+
+  connect( redrawMapTimer, SIGNAL(timeout()),
+           this, SLOT(slotRedrawMap()));
 
   isZoomRect=false;
   dragZoomRect=false;
@@ -443,16 +451,15 @@ void Map::mouseMoveEvent(QMouseEvent* event)
   */
 QString getInfoString (Waypoint* wp)
 {
-  extern MapConfig *_globalMapConfig;
   extern TranslationList waypointTypes;
 
-  QString path = QDir::homePath() + "/.kflog/mapicons/";
+  QString path = _globalMapConfig->getIconPath();
 
   QString text = "<HTML><TABLE BORDER=0><TR>";
 
   // we don't have a pixmap for landmarks ?!
   if (wp->type != BaseMapElement::Landmark && !_globalMapConfig->getPixmapName(wp->type).isEmpty())
-    text += QString ("<TD><IMG SRC= %1%2></TD>").arg(path).arg(_globalMapConfig->getPixmapName(wp->type));
+    text += QString ("<TD><IMG SRC= %1/%2></TD>").arg(path).arg(_globalMapConfig->getPixmapName(wp->type));
   else
     text += "<TD></TD>";
 
@@ -931,9 +938,7 @@ void Map::mouseReleaseEvent(QMouseEvent* event)
           } else {
             _globalMapMatrix->centerToRect(QRect(beginDrag, QPoint(beginDrag.x() + (int)width, beginDrag.y() + (int)height)), QSize(0,0), false);
           }
-          _globalMapMatrix->createMatrix(this->size());
           __redrawMap();
-          emit changed(this->size());
         } else {
           //we are not going to zoom, but we still need to clean up our mess!
           QPainter zoomPainter;
@@ -977,8 +982,6 @@ void Map::mousePressEvent(QMouseEvent* event)
       {
         // Move Map
         _globalMapMatrix->centerToPoint(event->pos());
-        _globalMapMatrix->createMatrix(this->size());
-
         __redrawMap();
       }
 
@@ -1410,15 +1413,12 @@ void Map::__drawPlannedTask(bool solid)
 
 void Map::resizeEvent(QResizeEvent* event)
 {
-  if( !event->size().isEmpty() )
+  if( ! event->size().isEmpty() )
     {
-      _globalMapMatrix->createMatrix( event->size() );
       pixBuffer = QPixmap( event->size() );
       pixBuffer.fill(Qt::transparent);
       __redrawMap();
     }
-
-  emit changed(event->size());
 }
 
 void Map::dragEnterEvent(QDragEnterEvent* event)
@@ -1445,27 +1445,34 @@ void Map::__redrawMap()
 
   if( isDrawing )
     {
+      // Queue the redraw request
+      redrawRequest = true;
       return;
     }
 
   isDrawing = true;
+  redrawMapTimer->stop();
 
   if( ! lastSize.isValid() || lastSize != size() )
     {
       lastSize = size();
-      pixAero = QPixmap (size() );
-      pixAirspace = QPixmap (size() );
-      pixFlight = QPixmap (size() );
-      pixPlan = QPixmap (size() );
-      pixGrid = QPixmap (size() );
-      pixUnderMap = QPixmap (size() );
-      pixIsoMap = QPixmap (size() );
-      pixWaypoints = QPixmap (size() );
+      pixAero = QPixmap( size() );
+      pixAirspace = QPixmap( size() );
+      pixFlight = QPixmap( size() );
+      pixPlan = QPixmap( size() );
+      pixGrid = QPixmap( size() );
+      pixUnderMap = QPixmap( size() );
+      pixIsoMap = QPixmap( size() );
+      pixWaypoints = QPixmap( size() );
 
-      bitPlanMask = QPixmap (size() );
-      bitFlightMask = QPixmap (size() );
-      bitWaypointsMask = QPixmap (size() );
+      bitPlanMask = QPixmap( size() );
+      bitFlightMask = QPixmap( size() );
+      bitWaypointsMask = QPixmap( size() );
     }
+
+  extern MapMatrix *_globalMapMatrix;
+  _globalMapMatrix->createMatrix( size() );
+  emit changed( size() );
 
   // Status bar not set "geniously" so far...
   emit setStatusBarProgress(0);
@@ -1503,8 +1510,14 @@ void Map::__redrawMap()
   __showLayer();
 
   emit setStatusBarProgress(100);
-
   slotDrawCursor(temp1, temp2);
+
+  if( redrawRequest == true )
+    {
+      qDebug( "Map::__redrawMap(): queued redraw event found, schedule Redraw" );
+
+      redrawMapTimer->start(1000);
+    }
 
   isDrawing = false;
 }
@@ -1578,12 +1591,6 @@ void Map::slotRedrawFlight()
 void Map::slotRedrawMap()
 {
   qDebug() << "Map::slotRedrawMap()";
-
-  extern MapMatrix *_globalMapMatrix;
-  _globalMapMatrix->createMatrix(this->size());
-
-  emit changed(this->size());
-
   __redrawMap();
 }
 
@@ -1749,8 +1756,6 @@ void Map::slotCenterToFlight()
     // is it necessary here?
     if (!r.isNull()) {
       _globalMapMatrix->centerToRect(r);
-      _globalMapMatrix->createMatrix(this->size());
-
       __redrawMap();
     }
 
@@ -1797,11 +1802,7 @@ void Map::slotCenterToTask()
       if(!r.isNull())
         {
           _globalMapMatrix->centerToRect(r);
-          _globalMapMatrix->createMatrix(this->size());
-
           __redrawMap();
-
-          emit changed(this->size());
         }
     }
 }
@@ -2047,8 +2048,6 @@ void Map::slotFlightNext()
                           if ((prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
                                   (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
                                      _globalMapMatrix->centerToPoint(prePos);
-                         _globalMapMatrix->createMatrix(this->size());
-
                                  __redrawMap();
               }
               emit showFlightPoint(_globalMapMatrix->wgsToMap(cP.origP), cP);
@@ -2083,9 +2082,6 @@ void Map::slotFlightPrev()
                           if ((prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
                                   (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
                                      _globalMapMatrix->centerToPoint(prePos);
-                         _globalMapMatrix->createMatrix(this->size());
-
-                                 __redrawMap();
               }
               emit showFlightPoint(_globalMapMatrix->wgsToMap(cP.origP), cP);
               prePos = _globalMapMatrix->map(cP.projP);
@@ -2118,9 +2114,6 @@ void Map::slotFlightStepNext()
                           if ((prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
                                   (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
                                      _globalMapMatrix->centerToPoint(prePos);
-                         _globalMapMatrix->createMatrix(this->size());
-
-                                 __redrawMap();
               }
               emit showFlightPoint(_globalMapMatrix->wgsToMap(cP.origP), cP);
               prePos = _globalMapMatrix->map(cP.projP);
@@ -2154,8 +2147,6 @@ void Map::slotFlightStepPrev()
                           if ((prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
                                   (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
                                      _globalMapMatrix->centerToPoint(prePos);
-                         _globalMapMatrix->createMatrix(this->size());
-
                                  __redrawMap();
               }
               emit showFlightPoint(_globalMapMatrix->wgsToMap(cP.origP), cP);
@@ -2662,8 +2653,6 @@ void Map::slotMpCenterMap(){
   extern MapMatrix *_globalMapMatrix;
    // Move Map
   _globalMapMatrix->centerToPoint(popupPos);
-  _globalMapMatrix->createMatrix(this->size());
-
   __redrawMap();
 }
 

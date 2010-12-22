@@ -219,8 +219,8 @@ void MapContents::slotDownloadsFinished( int requests, int errors )
   downloadManger->deleteLater();
   downloadManger = static_cast<DownloadManager *> (0);
 
-  // initiate a new load
-  slotReloadMapData();
+  // initiate a new map load
+  emit contentsChanged();
 
   QString msg;
   msg = QString(tr("%1 download(s) with %2 error(s) done.")).arg(requests).arg(errors);
@@ -992,16 +992,21 @@ void MapContents::proofeSection(bool isPrint)
         {
           if( !sectionArray.testBit( row + ( col + ( row * 179 ) ) ) )
             {
-              // Kachel fehlt!
+              // Tile is missing!
               int secID = row + ( col + ( row * 179 ) );
 
               // Nun müssen die korrekten Dateien geladen werden ...
-              __readTerrainFile(secID, FILE_TYPE_GROUND);
-              __readTerrainFile(secID, FILE_TYPE_TERRAIN);
-              __readBinaryFile(secID, FILE_TYPE_MAP);
+              bool ok0 = __readTerrainFile(secID, FILE_TYPE_GROUND);
+              bool ok1 = __readTerrainFile(secID, FILE_TYPE_TERRAIN);
+              bool ok2 = __readBinaryFile(secID, FILE_TYPE_MAP);
               // Let's not plot all those circles on the map ...
               // __readBinaryFile(secID, FILE_TYPE_LM);
-              sectionArray.setBit( secID, true );
+
+#warning "Take over solution from Cumulus for section array management!"
+              if( ok0 && ok1 && ok2 )
+                {
+                  sectionArray.setBit( secID, true );
+                }
             }
         }
     }

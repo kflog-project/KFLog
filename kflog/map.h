@@ -15,13 +15,26 @@
 **
 ***********************************************************************/
 
+/**
+ * \class Map
+ *
+ * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
+ *
+ * \brief This class provides basic functions for displaying the map.
+ *
+ * This class provides basic functions for displaying the map.
+ *
+ * \date 1999-2010
+ *
+ * \version $Id$
+ */
+
 #ifndef MAP_H
 #define MAP_H
 
 #include <QBitmap>
 #include <QFrame>
 #include <QList>
-#include <q3pointarray.h>
 #include <QMenu>
 #include <QRegion>
 #include <QTimer>
@@ -30,12 +43,6 @@
 #include "flighttask.h"
 #include "waypointcatalog.h"
 
-/**
- * This class provides basic functions for displaying the map.
- *
- * @author Heiner Lamprecht, Florian Ehinger
- * @version $Id$
- */
 class Flight;
 
 class Map : public QFrame
@@ -371,6 +378,10 @@ private:
     int idMpZoomOut;
         /** */
     bool isDrawing;
+    bool redrawRequest;
+
+    /** Reference to the redraw timer */
+    QTimer *redrawMapTimer;
 
 protected slots:
     /**

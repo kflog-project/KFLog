@@ -13,7 +13,7 @@ logger.files = xsp.desktop README
                
 INSTALLS += logger
 
-DESTDIR = ../../release
+DESTDIR = ../../release/bin
 
 #The following line was inserted by qt3to4
 QT += xml  qt3support 

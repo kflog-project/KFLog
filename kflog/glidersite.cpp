@@ -56,8 +56,9 @@ bool GliderSite::isWinch() const { return winch; }
 
 QString GliderSite::getInfoString() const
 {
+  extern MapConfig* _globalMapConfig;
+  QString path = _globalMapConfig->getIconPath();
   QString text;
-  QString path = QDir::homePath() + "/.kflog/mapicons/";
 
   // @AP: suppress an empty frequency
   QString tmp;
@@ -69,7 +70,7 @@ QString GliderSite::getInfoString() const
 
   text.sprintf("%d", elevation);
   text = "<TABLE BORDER=0><TR><TD>"
-      "<IMG SRC=" + path + glConfig->getPixmapName(typeID, winch) + ">" +
+      "<IMG SRC=" + path + "/" + glConfig->getPixmapName(typeID, winch) + ">" +
       "</TD><TD>" + name + " (" + icao + ")</TD></TR>" +
       "<TR><TD></TD><TD><FONT SIZE=-1>" + text + "m" +
       "<BR>" + tmp + "</FONT></TD></TR></TABLE>";

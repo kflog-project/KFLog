@@ -180,9 +180,9 @@ FORMS = optimizationwizard.ui
 pics.path  = /pics
 pics.files = pics/*
 
-map-icons.extra = install -d $(INSTALL_ROOT)/map-icons/small
-map-icons.path  = /map-icons
-map-icons.files = map-icons
+mapicons.extra = install -d $(INSTALL_ROOT)/mapicons/small
+mapicons.path  = /mapicons
+mapicons.files = mapicons
 
 landscape.path  = /mapdata/landscape
 landscape.files = ../README-MAP
@@ -193,6 +193,6 @@ airfields.files = ../README-AIRFIELDS
 airspaces.path  = /mapdata/airspaces
 airspaces.files = ../README-AIRSPACE
 
-INSTALLS += pics map-icons landscape airfields airspaces
+INSTALLS += pics mapicons landscape airfields airspaces
 
-DESTDIR = ../release
+DESTDIR = ../release/bin

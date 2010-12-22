@@ -957,21 +957,60 @@ QBrush MapConfig::__getBrush(unsigned int typeID, int sIndex)
 QPixmap MapConfig::getPixmap(unsigned int typeID, bool isWinch)
 {
   QString iconName(getPixmapName(typeID, isWinch));
-
-  if(isSwitch)
-      return QPixmap(QDir::homePath() + "/.kflog/mapicons/" + iconName);
-
-  return QPixmap(QDir::homePath() + "/.kflog/mapicons/small/" + iconName);
+  return loadPixmap( iconName, ! isSwitch );
 }
 
 QPixmap MapConfig::getPixmap(unsigned int typeID, bool isWinch, bool smallIcon)
 {
   QString iconName(getPixmapName(typeID, isWinch));
+  return loadPixmap( iconName, smallIcon );
+}
 
-  if(smallIcon)
-      return QPixmap(QDir::homePath() + "/.kflog/mapicons/small/" + iconName);
+QString MapConfig::getIconPath()
+{
+  QString _installRoot = _settings.value( "/Path/InstallRoot", ".." ).toString();
 
-  return QPixmap(QDir::homePath() + "/.kflog/mapicons/" + iconName);
+  return QString( _installRoot + "/mapicons");
+}
+
+/* Loads a pixmap from the cache. If not contained there, insert it. */
+QPixmap MapConfig::loadPixmap( const QString& pixmapName, bool smallIcon )
+{
+  QString path = getIconPath();
+
+  QString emptyPath( path + "/mapicons/empty.xpm" );
+
+  if( smallIcon )
+    {
+      path += "/small";
+    }
+
+  path += "/" + pixmapName;
+
+  QPixmap pm;
+
+  if( !QPixmapCache::find( path, pm ) )
+    {
+      if( ! pm.load( path ) )
+        {
+          qWarning( "Could not load Pixmap file '%s'. Maybe it was not installed?",
+                    path.toLatin1().data() );
+        }
+
+      QPixmapCache::insert( path, pm );
+    }
+  else if( !QPixmapCache::find( emptyPath, pm ) )
+    {
+      if( ! pm.load( path ) )
+        {
+          qWarning( "Could not load fallback Pixmap file '%s'. Maybe it was not installed?",
+                    emptyPath.toLatin1().data() );
+        }
+
+      QPixmapCache::insert( path, pm );
+    }
+
+  return pm;
 }
 
 QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
@@ -1056,8 +1095,12 @@ QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
       case BaseMapElement::LightObstacleGroup:
         iconName = "obst_group_light.xpm";
         break;
+      case BaseMapElement::EmptyPoint:
+        iconName = "empty";
+        break;
+
       default:
-        iconName = "";
+        iconName = "empty";
         break;
     }
 
@@ -1065,14 +1108,16 @@ QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
 }
 
 /** Returns true if small icons are used, else returns false. */
-bool MapConfig::useSmallIcons(){
+bool MapConfig::useSmallIcons()
+{
   return !isSwitch;
 }
 
 /** Returns true if small icons are used, else returns false. */
-bool MapConfig::drawWpLabels(){
+bool MapConfig::drawWpLabels()
+{
   extern MapMatrix *_globalMapMatrix;
-  return (_globalMapMatrix->getScale(MapMatrix::CurrentScale)<=_drawWpLabelScale);
+  return (_globalMapMatrix->getScale( MapMatrix::CurrentScale ) <= _drawWpLabelScale);
 }
 
 Qt::PenStyle MapConfig::getIsoPenStyle(int height)

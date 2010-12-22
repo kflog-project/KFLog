@@ -9,7 +9,7 @@
 **   Copyright (c):  2001 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -499,6 +499,10 @@
 #define PRINT_RIVER_T_BRUSH_STYLE_1 Qt::SolidPattern
 #define PRINT_RIVER_T_BRUSH_STYLE_2 Qt::SolidPattern
 
+//------------------------ AIRSPACES ----------------------
+
+//FIXME: Airspace print definitions must be corrected too!!!
+
 // [Airspace A]
 #define AIRA_PEN_1 4
 #define AIRA_PEN_2 3
@@ -510,20 +514,20 @@
 #define AIRA_PEN_STYLE_3 Qt::SolidLine
 #define AIRA_PEN_STYLE_4 Qt::SolidLine
 
-#define AIRA_COLOR_1 QColor(0,123,0)
-#define AIRA_COLOR_2 QColor(0,120,0)
-#define AIRA_COLOR_3 QColor(0,120,0)
-#define AIRA_COLOR_4 QColor(0,120,0)
+#define AIRA_COLOR_1 QColor(0,0,128)
+#define AIRA_COLOR_2 QColor(0,0,128)
+#define AIRA_COLOR_3 QColor(0,0,128)
+#define AIRA_COLOR_4 QColor(0,0,128)
 
-#define AIRA_BRUSH_COLOR_1 QColor(0,120,0)
-#define AIRA_BRUSH_COLOR_2 QColor(0,120,0)
-#define AIRA_BRUSH_COLOR_3 QColor(0,120,0)
-#define AIRA_BRUSH_COLOR_4 QColor(0,120,0)
+#define AIRA_BRUSH_COLOR_1 QColor(138,169,235)
+#define AIRA_BRUSH_COLOR_2 QColor(138,169,235)
+#define AIRA_BRUSH_COLOR_3 QColor(138,169,235)
+#define AIRA_BRUSH_COLOR_4 QColor(138,169,235)
 
-#define AIRA_BRUSH_STYLE_1 Qt::BDiagPattern
-#define AIRA_BRUSH_STYLE_2 Qt::BDiagPattern
-#define AIRA_BRUSH_STYLE_3 Qt::BDiagPattern
-#define AIRA_BRUSH_STYLE_4 Qt::BDiagPattern
+#define AIRA_BRUSH_STYLE_1 Qt::Dense7Pattern
+#define AIRA_BRUSH_STYLE_2 Qt::Dense7Pattern
+#define AIRA_BRUSH_STYLE_3 Qt::Dense7Pattern
+#define AIRA_BRUSH_STYLE_4 Qt::Dense7Pattern
 
 #define PRINT_AIRA_PEN_1 4
 #define PRINT_AIRA_PEN_2 3
@@ -551,20 +555,20 @@
 #define AIRB_PEN_STYLE_3 Qt::SolidLine
 #define AIRB_PEN_STYLE_4 Qt::SolidLine
 
-#define AIRB_COLOR_1 QColor(0,123,0)
-#define AIRB_COLOR_2 QColor(0,120,0)
-#define AIRB_COLOR_3 QColor(0,120,0)
-#define AIRB_COLOR_4 QColor(0,120,0)
+#define AIRB_COLOR_1 QColor(0,0,128)
+#define AIRB_COLOR_2 QColor(0,0,128)
+#define AIRB_COLOR_3 QColor(0,0,128)
+#define AIRB_COLOR_4 QColor(0,0,128)
 
-#define AIRB_BRUSH_COLOR_1 QColor(0,120,0)
-#define AIRB_BRUSH_COLOR_2 QColor(0,120,0)
-#define AIRB_BRUSH_COLOR_3 QColor(0,120,0)
-#define AIRB_BRUSH_COLOR_4 QColor(0,120,0)
+#define AIRB_BRUSH_COLOR_1 QColor(138,169,235)
+#define AIRB_BRUSH_COLOR_2 QColor(138,169,235)
+#define AIRB_BRUSH_COLOR_3 QColor(138,169,235)
+#define AIRB_BRUSH_COLOR_4 QColor(138,169,235)
 
-#define AIRB_BRUSH_STYLE_1 Qt::FDiagPattern
-#define AIRB_BRUSH_STYLE_2 Qt::FDiagPattern
-#define AIRB_BRUSH_STYLE_3 Qt::FDiagPattern
-#define AIRB_BRUSH_STYLE_4 Qt::FDiagPattern
+#define AIRB_BRUSH_STYLE_1 Qt::Dense7Pattern
+#define AIRB_BRUSH_STYLE_2 Qt::Dense7Pattern
+#define AIRB_BRUSH_STYLE_3 Qt::Dense7Pattern
+#define AIRB_BRUSH_STYLE_4 Qt::Dense7Pattern
 
 #define PRINT_AIRB_PEN_1 4
 #define PRINT_AIRB_PEN_2 3
@@ -592,20 +596,20 @@
 #define AIRC_PEN_STYLE_3 Qt::SolidLine
 #define AIRC_PEN_STYLE_4 Qt::SolidLine
 
-#define AIRC_COLOR_1 QColor(0,123,0)
-#define AIRC_COLOR_2 QColor(0,120,0)
-#define AIRC_COLOR_3 QColor(0,120,0)
-#define AIRC_COLOR_4 QColor(0,120,0)
+#define AIRC_COLOR_1 QColor(0,0,128)
+#define AIRC_COLOR_2 QColor(0,0,128)
+#define AIRC_COLOR_3 QColor(0,0,128)
+#define AIRC_COLOR_4 QColor(0,0,128)
 
-#define AIRC_BRUSH_COLOR_1 QColor(0,120,0)
-#define AIRC_BRUSH_COLOR_2 QColor(0,120,0)
-#define AIRC_BRUSH_COLOR_3 QColor(0,120,0)
-#define AIRC_BRUSH_COLOR_4 QColor(0,120,0)
+#define AIRC_BRUSH_COLOR_1 QColor(138,169,235)
+#define AIRC_BRUSH_COLOR_2 QColor(138,169,235)
+#define AIRC_BRUSH_COLOR_3 QColor(138,169,235)
+#define AIRC_BRUSH_COLOR_4 QColor(138,169,235)
 
-#define AIRC_BRUSH_STYLE_1 Qt::CrossPattern
-#define AIRC_BRUSH_STYLE_2 Qt::CrossPattern
-#define AIRC_BRUSH_STYLE_3 Qt::CrossPattern
-#define AIRC_BRUSH_STYLE_4 Qt::CrossPattern
+#define AIRC_BRUSH_STYLE_1 Qt::Dense7Pattern
+#define AIRC_BRUSH_STYLE_2 Qt::Dense7Pattern
+#define AIRC_BRUSH_STYLE_3 Qt::Dense7Pattern
+#define AIRC_BRUSH_STYLE_4 Qt::Dense7Pattern
 
 #define PRINT_AIRC_PEN_1 4
 #define PRINT_AIRC_PEN_2 3
@@ -633,20 +637,20 @@
 #define AIRD_PEN_STYLE_3 Qt::SolidLine
 #define AIRD_PEN_STYLE_4 Qt::SolidLine
 
-#define AIRD_COLOR_1 QColor(0,120,0)
-#define AIRD_COLOR_2 QColor(0,120,0)
-#define AIRD_COLOR_3 QColor(0,120,0)
-#define AIRD_COLOR_4 QColor(0,120,0)
+#define AIRD_COLOR_1 QColor(0,0,128)
+#define AIRD_COLOR_2 QColor(0,0,128)
+#define AIRD_COLOR_3 QColor(0,0,128)
+#define AIRD_COLOR_4 QColor(0,0,128)
 
-#define AIRD_BRUSH_COLOR_1 QColor(0,120,0)
-#define AIRD_BRUSH_COLOR_2 QColor(0,120,0)
-#define AIRD_BRUSH_COLOR_3 QColor(0,120,0)
-#define AIRD_BRUSH_COLOR_4 QColor(0,120,0)
+#define AIRD_BRUSH_COLOR_1 QColor(138,169,235)
+#define AIRD_BRUSH_COLOR_2 QColor(138,169,235)
+#define AIRD_BRUSH_COLOR_3 QColor(138,169,235)
+#define AIRD_BRUSH_COLOR_4 QColor(138,169,235)
 
-#define AIRD_BRUSH_STYLE_1 Qt::NoBrush
-#define AIRD_BRUSH_STYLE_2 Qt::NoBrush
-#define AIRD_BRUSH_STYLE_3 Qt::NoBrush
-#define AIRD_BRUSH_STYLE_4 Qt::NoBrush
+#define AIRD_BRUSH_STYLE_1 Qt::Dense7Pattern
+#define AIRD_BRUSH_STYLE_2 Qt::Dense7Pattern
+#define AIRD_BRUSH_STYLE_3 Qt::Dense7Pattern
+#define AIRD_BRUSH_STYLE_4 Qt::Dense7Pattern
 
 #define PRINT_AIRD_PEN_1 4
 #define PRINT_AIRD_PEN_2 3
@@ -674,15 +678,15 @@
 #define AIREL_PEN_STYLE_3 Qt::SolidLine
 #define AIREL_PEN_STYLE_4 Qt::SolidLine
 
-#define AIREL_COLOR_1 QColor(129,158,220)
-#define AIREL_COLOR_2 QColor(129,158,220)
-#define AIREL_COLOR_3 QColor(129,158,220)
-#define AIREL_COLOR_4 QColor(129,158,220)
+#define AIREL_COLOR_1 QColor(0,0,128)
+#define AIREL_COLOR_2 QColor(0,0,128)
+#define AIREL_COLOR_3 QColor(0,0,128)
+#define AIREL_COLOR_4 QColor(0,0,128)
 
-#define AIREL_BRUSH_COLOR_1 QColor(129,158,220)
-#define AIREL_BRUSH_COLOR_2 QColor(129,158,220)
-#define AIREL_BRUSH_COLOR_3 QColor(129,158,220)
-#define AIREL_BRUSH_COLOR_4 QColor(129,158,220)
+#define AIREL_BRUSH_COLOR_1 QColor(203,217,246)
+#define AIREL_BRUSH_COLOR_2 QColor(203,217,246)
+#define AIREL_BRUSH_COLOR_3 QColor(203,217,246)
+#define AIREL_BRUSH_COLOR_4 QColor(203,217,246)
 
 #define AIREL_BRUSH_STYLE_1 Qt::NoBrush
 #define AIREL_BRUSH_STYLE_2 Qt::NoBrush
@@ -715,15 +719,15 @@
 #define AIREH_PEN_STYLE_3 Qt::SolidLine
 #define AIREH_PEN_STYLE_4 Qt::SolidLine
 
-#define AIREH_COLOR_1 QColor(244,63,66)
-#define AIREH_COLOR_2 QColor(244,63,66)
-#define AIREH_COLOR_3 QColor(244,63,66)
-#define AIREH_COLOR_4 QColor(244,63,66)
+#define AIREH_COLOR_1 QColor(0,0,128)
+#define AIREH_COLOR_2 QColor(0,0,128)
+#define AIREH_COLOR_3 QColor(0,0,128)
+#define AIREH_COLOR_4 QColor(0,0,128)
 
-#define AIREH_BRUSH_COLOR_1 QColor(244,63,66)
-#define AIREH_BRUSH_COLOR_2 QColor(244,63,66)
-#define AIREH_BRUSH_COLOR_3 QColor(244,63,66)
-#define AIREH_BRUSH_COLOR_4 QColor(244,63,66)
+#define AIREH_BRUSH_COLOR_1 QColor(203,217,246)
+#define AIREH_BRUSH_COLOR_2 QColor(203,217,246)
+#define AIREH_BRUSH_COLOR_3 QColor(203,217,246)
+#define AIREH_BRUSH_COLOR_4 QColor(203,217,246)
 
 #define AIREH_BRUSH_STYLE_1 Qt::NoBrush
 #define AIREH_BRUSH_STYLE_2 Qt::NoBrush
@@ -761,10 +765,10 @@
 #define AIRF_COLOR_3 QColor(0,0,128)
 #define AIRF_COLOR_4 QColor(0,0,128)
 
-#define AIRF_BRUSH_COLOR_1 QColor(0,0,128)
-#define AIRF_BRUSH_COLOR_2 QColor(0,0,128)
-#define AIRF_BRUSH_COLOR_3 QColor(0,0,128)
-#define AIRF_BRUSH_COLOR_4 QColor(0,0,128)
+#define AIRF_BRUSH_COLOR_1 QColor(203,217,246)
+#define AIRF_BRUSH_COLOR_2 QColor(203,217,246)
+#define AIRF_BRUSH_COLOR_3 QColor(203,217,246)
+#define AIRF_BRUSH_COLOR_4 QColor(203,217,246)
 
 #define AIRF_BRUSH_STYLE_1 Qt::Dense6Pattern
 #define AIRF_BRUSH_STYLE_2 Qt::Dense6Pattern
@@ -792,25 +796,25 @@
 #define CTRC_PEN_3 3
 #define CTRC_PEN_4 2
 
-#define CTRC_PEN_STYLE_1 Qt::SolidLine
-#define CTRC_PEN_STYLE_2 Qt::SolidLine
-#define CTRC_PEN_STYLE_3 Qt::SolidLine
-#define CTRC_PEN_STYLE_4 Qt::SolidLine
+#define CTRC_PEN_STYLE_1 Qt::DotLine
+#define CTRC_PEN_STYLE_2 Qt::DotLine
+#define CTRC_PEN_STYLE_3 Qt::DotLine
+#define CTRC_PEN_STYLE_4 Qt::DotLine
 
-#define CTRC_COLOR_1 QColor(180,18,20)
-#define CTRC_COLOR_2 QColor(180,18,20)
-#define CTRC_COLOR_3 QColor(180,18,20)
-#define CTRC_COLOR_4 QColor(180,18,20)
+#define CTRC_COLOR_1 QColor(0,0,128)
+#define CTRC_COLOR_2 QColor(0,0,128)
+#define CTRC_COLOR_3 QColor(0,0,128)
+#define CTRC_COLOR_4 QColor(0,0,128)
 
-#define CTRC_BRUSH_COLOR_1 QColor(180,18,20)
-#define CTRC_BRUSH_COLOR_2 QColor(180,18,20)
-#define CTRC_BRUSH_COLOR_3 QColor(180,18,20)
-#define CTRC_BRUSH_COLOR_4 QColor(180,18,20)
+#define CTRC_BRUSH_COLOR_1 QColor(255,160,162)
+#define CTRC_BRUSH_COLOR_2 QColor(255,160,162)
+#define CTRC_BRUSH_COLOR_3 QColor(255,160,162)
+#define CTRC_BRUSH_COLOR_4 QColor(255,160,162)
 
-#define CTRC_BRUSH_STYLE_1 Qt::HorPattern
-#define CTRC_BRUSH_STYLE_2 Qt::HorPattern
-#define CTRC_BRUSH_STYLE_3 Qt::HorPattern
-#define CTRC_BRUSH_STYLE_4 Qt::HorPattern
+#define CTRC_BRUSH_STYLE_1 Qt::Dense4Pattern
+#define CTRC_BRUSH_STYLE_2 Qt::Dense4Pattern
+#define CTRC_BRUSH_STYLE_3 Qt::Dense4Pattern
+#define CTRC_BRUSH_STYLE_4 Qt::Dense4Pattern
 
 #define PRINT_CTRC_PEN_1 4
 #define PRINT_CTRC_PEN_2 3
@@ -838,20 +842,20 @@
 #define CTRD_PEN_STYLE_3 Qt::SolidLine
 #define CTRD_PEN_STYLE_4 Qt::SolidLine
 
-#define CTRD_COLOR_1 QColor(180,18,20)
-#define CTRD_COLOR_2 QColor(180,18,20)
-#define CTRD_COLOR_3 QColor(180,18,20)
-#define CTRD_COLOR_4 QColor(180,18,20)
+#define CTRD_COLOR_1 QColor(0,0,128)
+#define CTRD_COLOR_2 QColor(0,0,128)
+#define CTRD_COLOR_3 QColor(0,0,128)
+#define CTRD_COLOR_4 QColor(0,0,128)
 
-#define CTRD_BRUSH_COLOR_1 QColor(180,18,20)
-#define CTRD_BRUSH_COLOR_2 QColor(180,18,20)
-#define CTRD_BRUSH_COLOR_3 QColor(180,18,20)
-#define CTRD_BRUSH_COLOR_4 QColor(180,18,20)
+#define CTRD_BRUSH_COLOR_1 QColor(255,160,162)
+#define CTRD_BRUSH_COLOR_2 QColor(255,160,162)
+#define CTRD_BRUSH_COLOR_3 QColor(255,160,162)
+#define CTRD_BRUSH_COLOR_4 QColor(255,160,162)
 
-#define CTRD_BRUSH_STYLE_1 Qt::Dense5Pattern
-#define CTRD_BRUSH_STYLE_2 Qt::Dense5Pattern
-#define CTRD_BRUSH_STYLE_3 Qt::Dense5Pattern
-#define CTRD_BRUSH_STYLE_4 Qt::Dense5Pattern
+#define CTRD_BRUSH_STYLE_1 Qt::Dense4Pattern
+#define CTRD_BRUSH_STYLE_2 Qt::Dense4Pattern
+#define CTRD_BRUSH_STYLE_3 Qt::Dense4Pattern
+#define CTRD_BRUSH_STYLE_4 Qt::Dense4Pattern
 
 #define PRINT_CTRD_PEN_1 4
 #define PRINT_CTRD_PEN_2 3
@@ -879,20 +883,20 @@
 #define LOWF_PEN_STYLE_3 Qt::SolidLine
 #define LOWF_PEN_STYLE_4 Qt::SolidLine
 
-#define LOWF_COLOR_1 QColor(0,120,0)
-#define LOWF_COLOR_2 QColor(0,120,0)
-#define LOWF_COLOR_3 QColor(0,120,0)
-#define LOWF_COLOR_4 QColor(0,120,0)
+#define LOWF_COLOR_1 QColor(180,0,0)
+#define LOWF_COLOR_2 QColor(180,0,0)
+#define LOWF_COLOR_3 QColor(180,0,0)
+#define LOWF_COLOR_4 QColor(180,0,0)
 
-#define LOWF_BRUSH_COLOR_1 QColor(0,120,0)
-#define LOWF_BRUSH_COLOR_2 QColor(0,120,0)
-#define LOWF_BRUSH_COLOR_3 QColor(0,120,0)
-#define LOWF_BRUSH_COLOR_4 QColor(0,120,0)
+#define LOWF_BRUSH_COLOR_1 QColor(180,0,0)
+#define LOWF_BRUSH_COLOR_2 QColor(180,0,0)
+#define LOWF_BRUSH_COLOR_3 QColor(180,0,0)
+#define LOWF_BRUSH_COLOR_4 QColor(180,0,0)
 
-#define LOWF_BRUSH_STYLE_1 Qt::NoBrush
-#define LOWF_BRUSH_STYLE_2 Qt::NoBrush
-#define LOWF_BRUSH_STYLE_3 Qt::NoBrush
-#define LOWF_BRUSH_STYLE_4 Qt::NoBrush
+#define LOWF_BRUSH_STYLE_1 Qt::Dense7Pattern
+#define LOWF_BRUSH_STYLE_2 Qt::Dense7Pattern
+#define LOWF_BRUSH_STYLE_3 Qt::Dense7Pattern
+#define LOWF_BRUSH_STYLE_4 Qt::Dense7Pattern
 
 #define PRINT_LOWF_PEN_1 4
 #define PRINT_LOWF_PEN_2 3
@@ -920,20 +924,20 @@
 #define DNG_PEN_STYLE_3 Qt::SolidLine
 #define DNG_PEN_STYLE_4 Qt::SolidLine
 
-#define DNG_COLOR_1 QColor(0,0,128)
-#define DNG_COLOR_2 QColor(0,0,128)
-#define DNG_COLOR_3 QColor(0,0,128)
-#define DNG_COLOR_4 QColor(0,0,128)
+#define DNG_COLOR_1 QColor(255,0,0)
+#define DNG_COLOR_2 QColor(255,0,0)
+#define DNG_COLOR_3 QColor(255,0,0)
+#define DNG_COLOR_4 QColor(255,0,0)
 
-#define DNG_BRUSH_COLOR_1 QColor(0,0,128)
-#define DNG_BRUSH_COLOR_2 QColor(0,0,128)
-#define DNG_BRUSH_COLOR_3 QColor(0,0,128)
-#define DNG_BRUSH_COLOR_4 QColor(0,0,128)
+#define DNG_BRUSH_COLOR_1 QColor(255,51,51)
+#define DNG_BRUSH_COLOR_2 QColor(255,51,51)
+#define DNG_BRUSH_COLOR_3 QColor(255,51,51)
+#define DNG_BRUSH_COLOR_4 QColor(255,51,51)
 
-#define DNG_BRUSH_STYLE_1 Qt::HorPattern
-#define DNG_BRUSH_STYLE_2 Qt::HorPattern
-#define DNG_BRUSH_STYLE_3 Qt::HorPattern
-#define DNG_BRUSH_STYLE_4 Qt::HorPattern
+#define DNG_BRUSH_STYLE_1 Qt::BDiagPattern
+#define DNG_BRUSH_STYLE_2 Qt::BDiagPattern
+#define DNG_BRUSH_STYLE_3 Qt::BDiagPattern
+#define DNG_BRUSH_STYLE_4 Qt::BDiagPattern
 
 #define PRINT_DNG_PEN_1 4
 #define PRINT_DNG_PEN_2 3
@@ -961,20 +965,20 @@
 #define RES_PEN_STYLE_3 Qt::SolidLine
 #define RES_PEN_STYLE_4 Qt::SolidLine
 
-#define RES_COLOR_1 QColor(0,0,128)
-#define RES_COLOR_2 QColor(0,0,128)
-#define RES_COLOR_3 QColor(0,0,128)
-#define RES_COLOR_4 QColor(0,0,128)
+#define RES_COLOR_1 QColor(255,0,0)
+#define RES_COLOR_2 QColor(255,0,0)
+#define RES_COLOR_3 QColor(255,0,0)
+#define RES_COLOR_4 QColor(255,0,0)
 
-#define RES_BRUSH_COLOR_1 QColor(0,0,128)
-#define RES_BRUSH_COLOR_2 QColor(0,0,128)
-#define RES_BRUSH_COLOR_3 QColor(0,0,128)
-#define RES_BRUSH_COLOR_4 QColor(0,0,128)
+#define RES_BRUSH_COLOR_1 QColor(255,51,51)
+#define RES_BRUSH_COLOR_2 QColor(255,51,51)
+#define RES_BRUSH_COLOR_3 QColor(255,51,51)
+#define RES_BRUSH_COLOR_4 QColor(255,51,51)
 
-#define RES_BRUSH_STYLE_1 Qt::VerPattern
-#define RES_BRUSH_STYLE_2 Qt::VerPattern
-#define RES_BRUSH_STYLE_3 Qt::VerPattern
-#define RES_BRUSH_STYLE_4 Qt::VerPattern
+#define RES_BRUSH_STYLE_1 Qt::BDiagPattern
+#define RES_BRUSH_STYLE_2 Qt::BDiagPattern
+#define RES_BRUSH_STYLE_3 Qt::BDiagPattern
+#define RES_BRUSH_STYLE_4 Qt::BDiagPattern
 
 #define PRINT_RES_PEN_1 4
 #define PRINT_RES_PEN_2 3
@@ -1002,20 +1006,20 @@
 #define TMZ_PEN_STYLE_3 Qt::SolidLine
 #define TMZ_PEN_STYLE_4 Qt::SolidLine
 
-#define TMZ_COLOR_1 QColor(0,120,0)
-#define TMZ_COLOR_2 QColor(0,120,0)
-#define TMZ_COLOR_3 QColor(0,120,0)
-#define TMZ_COLOR_4 QColor(0,120,0)
+#define TMZ_COLOR_1 QColor(0,0,128)
+#define TMZ_COLOR_2 QColor(0,0,128)
+#define TMZ_COLOR_3 QColor(0,0,128)
+#define TMZ_COLOR_4 QColor(0,0,128)
 
-#define TMZ_BRUSH_COLOR_1 QColor(0,120,0)
-#define TMZ_BRUSH_COLOR_2 QColor(0,120,0)
-#define TMZ_BRUSH_COLOR_3 QColor(0,120,0)
-#define TMZ_BRUSH_COLOR_4 QColor(0,120,0)
+#define TMZ_BRUSH_COLOR_1 QColor(138,169,235)
+#define TMZ_BRUSH_COLOR_2 QColor(138,169,235)
+#define TMZ_BRUSH_COLOR_3 QColor(138,169,235)
+#define TMZ_BRUSH_COLOR_4 QColor(138,169,235)
 
-#define TMZ_BRUSH_STYLE_1 Qt::NoBrush
-#define TMZ_BRUSH_STYLE_2 Qt::NoBrush
-#define TMZ_BRUSH_STYLE_3 Qt::NoBrush
-#define TMZ_BRUSH_STYLE_4 Qt::NoBrush
+#define TMZ_BRUSH_STYLE_1 Qt::Dense7Pattern
+#define TMZ_BRUSH_STYLE_2 Qt::Dense7Pattern
+#define TMZ_BRUSH_STYLE_3 Qt::Dense7Pattern
+#define TMZ_BRUSH_STYLE_4 Qt::Dense7Pattern
 
 #define PRINT_TMZ_PEN_1 4
 #define PRINT_TMZ_PEN_2 3

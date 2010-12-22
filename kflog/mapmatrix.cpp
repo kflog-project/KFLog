@@ -396,6 +396,8 @@ void MapMatrix::__moveMap(int dir)
 
 void MapMatrix::createMatrix( const QSize& newSize )
 {
+  qDebug() << "MapMatrix::createMatrix()";
+
   const QPoint tempPoint( wgsToMap( mapCenterLat, mapCenterLon ) );
 
   /* Set rotating and scaling */
