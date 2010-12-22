@@ -15,16 +15,13 @@
 **
 ***********************************************************************/
 
-#include "flightselectiondialog.h"
+#include <QtGui>
+#include <Qt3Support>
 
-#include <qdir.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qmessagebox.h>
-#include <qpushbutton.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
+#include "flightselectiondialog.h"
+#include "mainwindow.h"
+
+extern MainWindow *_mainWindow;
 
 FlightSelectionDialog::FlightSelectionDialog(QWidget *parent, const char *name )
  : QDialog(parent, name, true)
@@ -68,11 +65,11 @@ void FlightSelectionDialog::__initDialog()
 
   smallButtons->addStretch();
   b = new QPushButton(this);
-  b->setPixmap(QDir::homePath() + "/.kflog/pics/kde_up_16.png");
+  b->setIcon(_mainWindow->getPixmap("kde_up_16.png"));
   connect(b, SIGNAL(clicked()), SLOT(slotMoveUp()));
   smallButtons->addWidget(b);
   b = new QPushButton(this);
-  b->setPixmap(QDir::homePath() + "/.kflog/pics/kde_down_16.png");
+  b->setIcon(_mainWindow->getPixmap("kde_down_16.png"));
   connect(b, SIGNAL(clicked()), SLOT(slotMoveDown()));
   smallButtons->addWidget(b);
   smallButtons->addStretch();
@@ -84,19 +81,19 @@ void FlightSelectionDialog::__initDialog()
 
   middleLayout->addStretch();
   b = new QPushButton(this);
-  b->setPixmap(QDir::homePath() + "/.kflog/pics/kde_forward_16.png");
+  b->setIcon(_mainWindow->getPixmap("kde_forward_16.png"));
   connect(b, SIGNAL(clicked()), SLOT(slotAddOne()));
   middleLayout->addWidget(b);
   b = new QPushButton(this);
-  b->setPixmap(QDir::homePath() + "/.kflog/pics/kde_2rightarrow_16.png");
+  b->setIcon(_mainWindow->getPixmap("kde_2rightarrow_16.png"));
   connect(b, SIGNAL(clicked()), SLOT(slotAddAll()));
   middleLayout->addWidget(b);
   b = new QPushButton(this);
-  b->setPixmap(QDir::homePath() + "/.kflog/pics/kde_back_16.png");
+  b->setIcon(_mainWindow->getPixmap("kde_back_16.png"));
   connect(b, SIGNAL(clicked()), SLOT(slotRemoveOne()));
   middleLayout->addWidget(b);
   b = new QPushButton(this);
-  b->setPixmap(QDir::homePath() + "/.kflog/pics/kde_2leftarrow_16.png");
+  b->setIcon(_mainWindow->getPixmap("kde_2leftarrow_16.png"));
   connect(b, SIGNAL(clicked()), SLOT(slotRemoveAll()));
   middleLayout->addWidget(b);
   middleLayout->addStretch();

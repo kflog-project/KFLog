@@ -15,9 +15,12 @@
 **
 ***********************************************************************/
 
-#include "kflogstartlogo.h"
-
 #include <QtGui>
+
+#include "kflogstartlogo.h"
+#include "mainwindow.h"
+
+extern MainWindow *_mainWindow;
 
 KFLogStartLogo::KFLogStartLogo( QWidget *parent ) :
   QWidget( parent, Qt::FramelessWindowHint )
@@ -29,10 +32,11 @@ KFLogStartLogo::KFLogStartLogo( QWidget *parent ) :
   // Destroy widget automatically, if it gets the close call.
   setAttribute(Qt::WA_DeleteOnClose);
 
-  QPixmap pm(QDir::homePath() + "/.kflog/pics/splash.png");
+  QPixmap pm = _mainWindow->getPixmap("splash.png");
 
-  setBackgroundPixmap(pm);
-  setMask(QBitmap(QDir::homePath() + "/.kflog/pics/splash_mask.png"));
+  setBackgroundPixmap( pm );
+  //setMask(QBitmap(QDir::homePath() + "/.kflog/pics/splash_mask.png"));
+  setMask( _mainWindow->getPixmap("splash_mask.png") );
 
   QDesktopWidget *desktop = QApplication::desktop();
   QRect rect = desktop->screenGeometry();

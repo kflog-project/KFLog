@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by André Somers
+**   Copyright (c):  2003 by Andrï¿½ Somers
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -15,14 +15,15 @@
 **
 ***********************************************************************/
 
+#include <QtGui>
+#include <Qt3Support>
+
 #include "flightlistviewitem.h"
 #include "tasklistviewitem.h"
 #include "flight.h"
+#include "mainwindow.h"
 
-#include <qdir.h>
-#include <q3url.h>
-//Added by qt3to4:
-#include <QPixmap>
+extern MainWindow *_mainWindow;
 
 FlightListViewItem::FlightListViewItem(Q3ListViewItem * parent, Flight * flight):Q3ListViewItem(parent){
   this->flight=flight;
@@ -79,7 +80,7 @@ void FlightListViewItem::createChildren(){
   subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Total distance"),flight->getDistance(true));
   subItem->setSelectable(false);
   subItem=new TaskListViewItem((Q3ListViewItem*)this, &flight->getTask(true), subItem);
-  QPixmap taskPic = QPixmap(QDir::homePath() + "/.kflog/pics/task_16.png");
+  QPixmap taskPic = _mainWindow->getPixmap("task_16.png");
   subItem->setPixmap(0, taskPic);
   subItem->setSelectable(false);
   if (flight->isOptimized()){

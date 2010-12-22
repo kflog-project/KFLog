@@ -15,27 +15,20 @@
 **
 ***********************************************************************/
 
+#include <QtGui>
+#include <Qt3Support>
+
 #include "configdrawelement.h"
 #include "kflogconfig.h"
 #include "mapdefaults.h"
+#include "mainwindow.h"
 
-#include <qcolordialog.h>
-#include <qdir.h>
-#include <q3groupbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qsettings.h>
-//Added by qt3to4:
-#include <QPixmap>
-#include <Q3GridLayout>
-#include <Q3Frame>
-#include <Q3PtrList>
-
+extern MainWindow *_mainWindow;
 extern QSettings _settings;
 
-ConfigDrawElement::ConfigDrawElement(QWidget* parent)
-  : Q3Frame(parent, "configdrawelement"),
-    oldElement(-1)
+ConfigDrawElement::ConfigDrawElement(QWidget* parent) :
+  QFrame(parent),
+  oldElement(-1)
 {
   airABorder = new bool[4];
   airBBorder = new bool[4];
@@ -330,18 +323,16 @@ ConfigDrawElement::ConfigDrawElement(QWidget* parent)
   border3 = new QCheckBox(tr("threshold #3"), parent);
   border4 = new QCheckBox(tr("scale-limit"), parent);
 
-  QString picDir = QDir::homePath() + "/.kflog/pics/";
-
   border1Button = new QPushButton(parent);
-  border1Button-> setPixmap(picDir + "kde_down.png");
+  border1Button-> setPixmap(_mainWindow->getPixmap("kde_down.png"));
   border1Button-> setFixedWidth(30);
   border1Button-> setFixedHeight(30);
   border2Button = new QPushButton(parent);
-  border2Button-> setPixmap(picDir + "kde_down.png");
+  border2Button-> setPixmap(_mainWindow->getPixmap("kde_down.png"));
   border2Button-> setFixedWidth(30);
   border2Button-> setFixedHeight(30);
   border3Button = new QPushButton(parent);
-  border3Button-> setPixmap(picDir + "kde_down.png");
+  border3Button-> setPixmap(_mainWindow->getPixmap("kde_down.png"));
   border3Button-> setFixedWidth(30);
   border3Button-> setFixedHeight(30);
 
@@ -508,7 +499,7 @@ ConfigDrawElement::~ConfigDrawElement()
 
 void ConfigDrawElement::slotOk()
 {
-  // Die aktuell angezeigten Angaben müssen noch gespeichert werden ...
+  // Die aktuell angezeigten Angaben mï¿½ssen noch gespeichert werden ...
   slotSelectElement(oldElement);
 
   __writePen("Trail", &trailPenList, trailBorder);
@@ -1361,28 +1352,26 @@ void ConfigDrawElement::__defaultPenBrush(Q3PtrList<QPen> *penList, bool *b, Q3P
 // Qt::BrushStyle "NoBrush" is allowed ...
 void ConfigDrawElement::__fillStyle(QComboBox *pen, QComboBox *brush)
 {
-  QString picDir = QDir::homePath() + "/.kflog/pics/";
-
-  pen-> insertItem(QPixmap(picDir + "solid.png"), Qt::SolidLine - 1);
-  pen-> insertItem(QPixmap(picDir + "dashed.png"), Qt::DashLine - 1);
-  pen-> insertItem(QPixmap(picDir + "dotted.png"), Qt::DotLine - 1);
-  pen-> insertItem(QPixmap(picDir + "dashdot.png"), Qt::DashDotLine - 1);
-  pen-> insertItem(QPixmap(picDir + "dashdotdot.png"), Qt::DashDotDotLine - 1);
+  pen-> insertItem(_mainWindow->getPixmap("solid.png"), Qt::SolidLine - 1);
+  pen-> insertItem(_mainWindow->getPixmap("dashed.png"), Qt::DashLine - 1);
+  pen-> insertItem(_mainWindow->getPixmap("dotted.png"), Qt::DotLine - 1);
+  pen-> insertItem(_mainWindow->getPixmap("dashdot.png"), Qt::DashDotLine - 1);
+  pen-> insertItem(_mainWindow->getPixmap("dashdotdot.png"), Qt::DashDotDotLine - 1);
   brush-> insertItem("no", Qt::NoBrush);
-  brush-> insertItem(QPixmap(picDir + "brush0.png"), Qt::SolidPattern);
-  brush-> insertItem(QPixmap(picDir + "brush1.png"), Qt::Dense1Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush2.png"), Qt::Dense2Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush3.png"), Qt::Dense3Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush4.png"), Qt::Dense4Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush5.png"), Qt::Dense5Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush6.png"), Qt::Dense6Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush7.png"), Qt::Dense7Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush8.png"), Qt::HorPattern);
-  brush-> insertItem(QPixmap(picDir + "brush9.png"), Qt::VerPattern);
-  brush-> insertItem(QPixmap(picDir + "brush10.png"), Qt::CrossPattern);
-  brush-> insertItem(QPixmap(picDir + "brush11.png"), Qt::BDiagPattern);
-  brush-> insertItem(QPixmap(picDir + "brush12.png"), Qt::FDiagPattern);
-  brush-> insertItem(QPixmap(picDir + "brush13.png"), Qt::DiagCrossPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush0.png"), Qt::SolidPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush1.png"), Qt::Dense1Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush2.png"), Qt::Dense2Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush3.png"), Qt::Dense3Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush4.png"), Qt::Dense4Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush5.png"), Qt::Dense5Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush6.png"), Qt::Dense6Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush7.png"), Qt::Dense7Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush8.png"), Qt::HorPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush9.png"), Qt::VerPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush10.png"), Qt::CrossPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush11.png"), Qt::BDiagPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush12.png"), Qt::FDiagPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush13.png"), Qt::DiagCrossPattern);
 }
 
 void ConfigDrawElement::__readBorder(QString group, bool *b)

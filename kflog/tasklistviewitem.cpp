@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by André Somers
+**   Copyright (c):  2003 by Andrï¿½ Somers
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -15,12 +15,15 @@
 **
 ***********************************************************************/
 
+#include <QtGui>
+#include <Qt3Support>
+
 #include "tasklistviewitem.h"
 #include "flighttask.h"
 #include "waypoint.h"
+#include "mainwindow.h"
 
-#include <qdir.h>
-#include <q3url.h>
+extern MainWindow *_mainWindow;
 
 TaskListViewItem::TaskListViewItem(Q3ListViewItem * parent,
                                    FlightTask * task,
@@ -74,7 +77,7 @@ void TaskListViewItem::createChildren(){
     int wpCount=task->getWPList().count();
     Q3ListViewItem * wpSubItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Waypoints"),QObject::tr("%1 waypoints in task").arg(wpCount));
     wpSubItem->setSelectable(false);
-    wpSubItem->setPixmap(0, QDir::homePath() + "/.kflog/pics/waypoint_16.png");
+    wpSubItem->setPixmap(0, _mainWindow->getPixmap("waypoint_16.png"));
 
     for (int i=0;i<wpCount;i++) {
       wpName=QObject::tr("Turnpoint");
@@ -85,7 +88,7 @@ void TaskListViewItem::createChildren(){
 
       subItem=new Q3ListViewItem(wpSubItem,subItem,wpName,task->getWPList().at(i)->name);
       subItem->setSelectable(false);
-      subItem->setPixmap(0, QDir::homePath() + "/.kflog/pics/centerwaypoint_16.png");
+      subItem->setPixmap(0, _mainWindow->getPixmap("centerwaypoint_16.png"));
     }
   }
 }

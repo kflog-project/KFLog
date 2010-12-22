@@ -15,27 +15,20 @@
 **
 ***********************************************************************/
 
+#include <QtGui>
+#include <Qt3Support>
+
 #include "configprintelement.h"
 #include "kflogconfig.h"
 #include "mapdefaults.h"
+#include "mainwindow.h"
 
-#include <qcolordialog.h>
-#include <qdir.h>
-#include <q3groupbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qsettings.h>
-//Added by qt3to4:
-#include <QPixmap>
-#include <Q3GridLayout>
-#include <Q3Frame>
-#include <Q3PtrList>
-
+extern MainWindow *_mainWindow;
 extern QSettings _settings;
 
-ConfigPrintElement::ConfigPrintElement(QWidget* parent)
-  : Q3Frame(parent, "ConfigPrintelement"),
-    oldElement(-1)
+ConfigPrintElement::ConfigPrintElement(QWidget* parent) :
+  QFrame(parent),
+  oldElement(-1)
 {
   airABorder = new bool[2];
   airBBorder = new bool[2];
@@ -300,10 +293,8 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent)
   border1 = new QCheckBox(tr("1:500.000"), parent);
   border2 = new QCheckBox(tr("scale-limit"), parent);
 
-  QString picDir = QDir::homePath() + "/.kflog/pics/";
-
   border1Button = new QPushButton(parent);
-  border1Button-> setPixmap(picDir + "kde_down.png");
+  border1Button-> setPixmap(_mainWindow->getPixmap("kde_down.png"));
   border1Button-> setFixedWidth(30);
   border1Button-> setFixedHeight(30);
 
@@ -421,7 +412,7 @@ ConfigPrintElement::~ConfigPrintElement()
 
 void ConfigPrintElement::slotOk()
 {
-  // Die aktuell angezeigten Angaben müssen noch gespeichert werden ...
+  // Die aktuell angezeigten Angaben mÃ¼ssen noch gespeichert werden ...
   slotSelectElement(oldElement);
 
   __writePen("Road", &roadPenList, roadBorder);
@@ -1061,34 +1052,32 @@ void ConfigPrintElement::__defaultPenBrush(Q3PtrList<QPen> *penList, bool *b, Q3
 // Qt::BrushStyle "NoBrush" is allowed ...
 void ConfigPrintElement::__fillStyle(QComboBox *pen, QComboBox *brush)
 {
-  QString picDir = QDir::homePath() + "/.kflog/pics/";
-
-  pen-> insertItem(QPixmap(picDir + "solid.png"), Qt::SolidLine - 1);
-  pen-> insertItem(QPixmap(picDir + "dashed.png"), Qt::DashLine - 1);
-  pen-> insertItem(QPixmap(picDir + "dotted.png"), Qt::DotLine - 1);
-  pen-> insertItem(QPixmap(picDir + "dashdot.png"), Qt::DashDotLine - 1);
-  pen-> insertItem(QPixmap(picDir + "dashdotdot.png"), Qt::DashDotDotLine - 1);
+  pen-> insertItem(_mainWindow->getPixmap("solid.png"), Qt::SolidLine - 1);
+  pen-> insertItem(_mainWindow->getPixmap("dashed.png"), Qt::DashLine - 1);
+  pen-> insertItem(_mainWindow->getPixmap("dotted.png"), Qt::DotLine - 1);
+  pen-> insertItem(_mainWindow->getPixmap("dashdot.png"), Qt::DashDotLine - 1);
+  pen-> insertItem(_mainWindow->getPixmap("dashdotdot.png"), Qt::DashDotDotLine - 1);
   brush-> insertItem("no", Qt::NoBrush);
-  brush-> insertItem(QPixmap(picDir + "brush0.png"), Qt::SolidPattern);
-  brush-> insertItem(QPixmap(picDir + "brush1.png"), Qt::Dense1Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush2.png"), Qt::Dense2Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush3.png"), Qt::Dense3Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush4.png"), Qt::Dense4Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush5.png"), Qt::Dense5Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush6.png"), Qt::Dense6Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush7.png"), Qt::Dense7Pattern);
-  brush-> insertItem(QPixmap(picDir + "brush8.png"), Qt::HorPattern);
-  brush-> insertItem(QPixmap(picDir + "brush9.png"), Qt::VerPattern);
-  brush-> insertItem(QPixmap(picDir + "brush10.png"), Qt::CrossPattern);
-  brush-> insertItem(QPixmap(picDir + "brush11.png"), Qt::BDiagPattern);
-  brush-> insertItem(QPixmap(picDir + "brush12.png"), Qt::FDiagPattern);
-  brush-> insertItem(QPixmap(picDir + "brush13.png"), Qt::DiagCrossPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush0.png"), Qt::SolidPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush1.png"), Qt::Dense1Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush2.png"), Qt::Dense2Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush3.png"), Qt::Dense3Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush4.png"), Qt::Dense4Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush5.png"), Qt::Dense5Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush6.png"), Qt::Dense6Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush7.png"), Qt::Dense7Pattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush8.png"), Qt::HorPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush9.png"), Qt::VerPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush10.png"), Qt::CrossPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush11.png"), Qt::BDiagPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush12.png"), Qt::FDiagPattern);
+  brush-> insertItem(_mainWindow->getPixmap("brush13.png"), Qt::DiagCrossPattern);
 }
 
 void ConfigPrintElement::__readBorder(QString group, bool *b)
 {
-  b[0] = _settings.readBoolEntry("/Map/"+group+"/PrintBorder1", true);
-  b[1] = _settings.readBoolEntry("/Map/"+group+"/PrintBorder2", true);
+  b[0] = _settings.value("/Map/"+group+"/PrintBorder1", true).toBool();
+  b[1] = _settings.value("/Map/"+group+"/PrintBorder2", true).toBool();
 }
 
 void ConfigPrintElement::__readPen(QString group, Q3PtrList<QPen> *penList, bool *b,

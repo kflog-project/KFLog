@@ -15,18 +15,17 @@
 **
 ***********************************************************************/
 
-#include <QCheckBox>
-#include <QDir>
-#include <QComboBox>
-#include <QLayout>
-#include <QSlider>
-#include <QSpinBox>
+#include <QtGui>
+#include <Qt3Support>
 
 #include "evaluationdialog.h"
 #include "evaluationview.h"
 #include "flight.h"
 #include "mapcalc.h"
 #include "resource.h"
+#include "mainwindow.h"
+
+extern MainWindow *_mainWindow;
 
 // needs to be the same as in EvaluationFrame!!!
 #define X_DISTANCE 100
@@ -291,10 +290,10 @@ QPoint EvaluationView::__speedPoint(float durch[], int gn, int i)
 
   float gesamt = 0;
   /*
-   * Jetzt läuft die Schleife immer durch. Wenn i < gn ist, nur bis i, sonst bis gn.
-   * Das Ganze beruht auf der Annahme, dass die zur Berechnung nötigen Punkte am Anfang
-   * des Arrays stehen. Das klappt am Anfang der Kurve sehr gut, am Ende würde es unter
-   * Umständen zu Fehlern führen ...
+   * Jetzt lï¿½uft die Schleife immer durch. Wenn i < gn ist, nur bis i, sonst bis gn.
+   * Das Ganze beruht auf der Annahme, dass die zur Berechnung nï¿½tigen Punkte am Anfang
+   * des Arrays stehen. Das klappt am Anfang der Kurve sehr gut, am Ende wï¿½rde es unter
+   * Umstï¿½nden zu Fehlern fï¿½hren ...
    */
   for(int loop = 0; loop < std::min(gn, (i * 2 + 1)); loop++)
       gesamt += durch[loop];
@@ -631,10 +630,10 @@ void EvaluationView::__draw()
       // Correct time for overnight-flights:
       if(curTime < startTime)  {  curTime += 86400;  }
 
-      /* Der Array wird hier noch falsch gefüllt. Wenn über 3 Punkte geglättet wird, stimmt
-       * alles. Wenn jedoch z.B. über 5 Punkte geglättet wird, werden die Punkte
+      /* Der Array wird hier noch falsch gefï¿½llt. Wenn ï¿½ber 3 Punkte geglï¿½ttet wird, stimmt
+       * alles. Wenn jedoch z.B. ï¿½ber 5 Punkte geglï¿½ttet wird, werden die Punkte
        * ( -4, -3, -2, -1, 0, 1) genommen, statt (-2, -1, 0, 1, 2). Das ist vermutlich
-       * die Ursache dafür, dass die Kurve "wandert".
+       * die Ursache dafï¿½r, dass die Kurve "wandert".
        */
       if(loop < flight->getRouteLength() - smoothness_h && loop > smoothness_h) {
           baro_d[(loop - smoothness_h - 1) % gn_h] = flight->getPoint(loop + smoothness_h).height;
@@ -647,8 +646,8 @@ void EvaluationView::__draw()
       if(loop < flight->getRouteLength() - smoothness_va && loop > smoothness_va)
           vario_d[(loop - smoothness_va - 1) % gn_va] = getVario(flight->getPoint(loop + smoothness_va));
 
-      /* Wenn das Glätten wie bei __speedPoint() erfolgt, können gn_? und loop auch als
-       * unsigned übergeben werden ...
+      /* Wenn das Glï¿½tten wie bei __speedPoint() erfolgt, kï¿½nnen gn_? und loop auch als
+       * unsigned ï¿½bergeben werden ...
        */
       if(loop < flight->getRouteLength() - smoothness_h) {
           baroArray.setPoint(loop, __baroPoint(baro_d, gn_h, loop));
@@ -764,9 +763,9 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
   QPainter paint;
 
   //
-  //  Bislang werden die Cursor durch Rasteroperationen gelöscht.
+  //  Bislang werden die Cursor durch Rasteroperationen gelï¿½scht.
   //  Das klappt aber mit den Icons nicht, daher sollte ein
-  //  Puffer-Speicher eingeführt werden, der dann wieder zurückkopiert
+  //  Puffer-Speicher eingefï¿½hrt werden, der dann wieder zurï¿½ckkopiert
   //  wird.
   //
 
@@ -798,8 +797,8 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
           paint.setBrush(QBrush(QColor(200,0,0), Qt::SolidPattern));
         }
 
-      QPixmap pixCursor1 = QPixmap(QDir::homePath() + "/.kflog/pics/flag_green.png");
-      QPixmap pixCursor2 = QPixmap(QDir::homePath() + "/.kflog/pics/flag_red.png");
+      QPixmap pixCursor1 = _mainWindow->getPixmap("flag_green.png");
+      QPixmap pixCursor2 = _mainWindow->getPixmap("flag_red.png");
 
       // draw new line
       paint.drawLine(xpos, this->height() - Y_DISTANCE, xpos, Y_DISTANCE);

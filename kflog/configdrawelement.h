@@ -15,13 +15,13 @@
 **
 ***********************************************************************/
 
-#ifndef CONFIGDRAWELEMENT_H
-#define CONFIGDRAWELEMENT_H
+#ifndef CONFIG_DRAW_ELEMENT_H
+#define CONFIG_DRAW_ELEMENT_H
 
 #include <qcheckbox.h>
 #include <qcolor.h>
 #include <qcombobox.h>
-#include <q3frame.h>
+#include <QFrame>
 #include <qlcdnumber.h>
 #include <qlineedit.h>
 #include <q3ptrlist.h>
@@ -35,7 +35,7 @@
  * @author Heiner Lamprecht
  * @version $Id$
  */
-class ConfigDrawElement : public Q3Frame
+class ConfigDrawElement : public QFrame
 {
   Q_OBJECT
 

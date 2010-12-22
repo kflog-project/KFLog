@@ -919,7 +919,7 @@ QString MapContents::getMapRootDirectory()
 {
   extern QSettings _settings;
 
-  QString mapDefRootDir = QDir::homePath() + "/.kflog/mapdata";
+  QString mapDefRootDir = QDir::homePath() + "/KFLog/mapdata";
 
   // qDebug() << "MapContents: mapDefRootDir:" << mapDefRootDir;
 

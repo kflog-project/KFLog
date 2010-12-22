@@ -978,7 +978,7 @@ QPixmap MapConfig::loadPixmap( const QString& pixmapName, bool smallIcon )
 {
   QString path = getIconPath();
 
-  QString emptyPath( path + "/mapicons/empty.xpm" );
+  QString emptyPath( path + "/empty.xpm" );
 
   if( smallIcon )
     {

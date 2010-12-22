@@ -25,14 +25,8 @@
 #include <pwd.h>
 #include <unistd.h>
 
-#include <QColorDialog>
-#include <QDir>
-#include <q3filedialog.h>
-#include <q3groupbox.h>
-#include <QLabel>
-#include <QTabWidget>
-#include <QRadioButton>
-#include <QSettings>
+#include <QtGui>
+#include <Qt3Support>
 
 #include "configdrawelement.h"
 #include "configprintelement.h"
@@ -41,8 +35,10 @@
 #include "mapcontents.h"
 #include "mapdefaults.h"
 #include "wgspoint.h"
+#include "mainwindow.h"
 
-extern QSettings _settings;
+extern MainWindow *_mainWindow;
+extern QSettings  _settings;
 
 KFLogConfig::KFLogConfig(QWidget* parent)
   : QDialog(parent, "KFLog setup (KFLogConfig)"),
@@ -349,7 +345,7 @@ void KFLogConfig::slotDefaultPath()
 void KFLogConfig::__addMapTab()
 {
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Map-Elements"), "Map-Elements");
-  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/kflog_32.png");
+  item->setPixmap(0, _mainWindow->getPixmap("kflog_32.png"));
 
   mapPage = new Q3Frame(this, "Map Configuration");
   mapPage->hide();
@@ -441,7 +437,7 @@ void KFLogConfig::__addMapTab()
 void KFLogConfig::__addFlightTab()
 {
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Flight Display"), "Flight Display");
-  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/flightpath_32.png");
+  item->setPixmap(0, _mainWindow->getPixmap("flightpath_32.png"));
 
   flightPage = new Q3Frame(this, "Flight Display Configuration");
   flightPage->hide();
@@ -565,7 +561,7 @@ void KFLogConfig::slotDrawTypeSelect()
 void KFLogConfig::__addProjectionTab()
 {
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Map-Projection"), "Map-Projection");
-  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/projection_32.png");
+  item->setPixmap(0, _mainWindow->getPixmap("projection_32.png"));
 
   projPage = new Q3Frame(this, "Configuration of Map-Projection");
   projPage->hide();
@@ -646,7 +642,7 @@ void KFLogConfig::__addScaleTab()
   int b3 = _settings.readNumEntry("/Scale/Border3", BORDER_3);
 
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Map-Scales"), "Map-Scales");
-  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/kde_viewmag_32.png");
+  item->setPixmap(0, _mainWindow->getPixmap("kde_viewmag_32.png"));
 
   scalePage = new Q3Frame(this, "Map-Scale Configuration");
   scalePage->hide();
@@ -781,7 +777,7 @@ void KFLogConfig::__addPathTab()
   QString mapDir = _settings.readEntry("/Path/DefaultMapDirectory", QDir::homePath() + "/.kflog/mapdata/");
 
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Paths"), "Paths");
-  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/kde_fileopen_32.png");
+  item->setPixmap(0, _mainWindow->getPixmap("kde_fileopen_32.png"));
 
   pathPage = new Q3Frame(this, "Path Configuration");
   pathPage->hide();
@@ -797,7 +793,7 @@ void KFLogConfig::__addPathTab()
   igcPathE-> setText(flightDir);
 
   QPushButton* igcPathSearch = new QPushButton(pathPage);
-  igcPathSearch-> setPixmap(QDir::homePath() + "/.kflog/pics/kde_fileopen_16.png");
+  igcPathSearch-> setPixmap(_mainWindow->getPixmap("kde_fileopen_16.png"));
   igcPathSearch-> setMinimumWidth(igcPathSearch->sizeHint().width() + 5);
   igcPathSearch-> setMinimumHeight(igcPathSearch->sizeHint().height() + 5);
 
@@ -824,7 +820,7 @@ void KFLogConfig::__addPathTab()
   taskPathE-> setText(taskDir);
 
   QPushButton* taskPathSearch = new QPushButton(pathPage);
-  taskPathSearch-> setPixmap(QDir::homePath() + "/.kflog/pics/kde_fileopen_16.png");
+  taskPathSearch-> setPixmap(_mainWindow->getPixmap("kde_fileopen_16.png"));
   taskPathSearch-> setMinimumWidth(taskPathSearch->sizeHint().width() + 5);
   taskPathSearch-> setMinimumHeight(taskPathSearch->sizeHint().height() + 5);
 
@@ -847,7 +843,7 @@ void KFLogConfig::__addPathTab()
   waypointPathE-> setText(wayPointDir);
 
   QPushButton* waypointPathSearch = new QPushButton(pathPage);
-  waypointPathSearch-> setPixmap(QDir::homePath() + "/.kflog/pics/kde_fileopen_16.png");
+  waypointPathSearch-> setPixmap(_mainWindow->getPixmap("kde_fileopen_16.png"));
   waypointPathSearch-> setMinimumWidth(waypointPathSearch->sizeHint().width() + 5);
   waypointPathSearch-> setMinimumHeight(waypointPathSearch->sizeHint().height() + 5);
 
@@ -870,7 +866,7 @@ void KFLogConfig::__addPathTab()
   mapPathE-> setText(mapDir);
 
   QPushButton* mapPathSearch = new QPushButton(pathPage);
-  mapPathSearch-> setPixmap(QDir::homePath() + "/.kflog/pics/kde_fileopen_16.png");
+  mapPathSearch-> setPixmap(_mainWindow->getPixmap("kde_fileopen_16.png"));
   mapPathSearch-> setMinimumWidth(mapPathSearch->sizeHint().width() + 5);
   mapPathSearch-> setMinimumHeight(mapPathSearch->sizeHint().height() + 5);
 
@@ -902,7 +898,7 @@ void KFLogConfig::__addPathTab()
 void KFLogConfig::__addIDTab()
 {
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Identity"), "Identity");
-  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/kde_identity_32.png");
+  item->setPixmap(0, _mainWindow->getPixmap("kde_identity_32.png"));
 
   idPage = new Q3Frame(this, "Personal Information");
   configLayout->addMultiCellWidget(idPage, 0, 0, 1, 2);
@@ -1005,7 +1001,7 @@ int KFLogConfig::__getScaleValue(double scale)
 void KFLogConfig::__addAirfieldTab()
 {
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Airfields"), "Airfields");
-  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/airfield_32.png");
+  item->setPixmap(0, _mainWindow->getPixmap("airfield_32.png"));
 
   airfieldPage = new Q3Frame(this, "Airfield Configuration");
   airfieldPage->hide();
@@ -1060,7 +1056,7 @@ void KFLogConfig::__addWaypointTab()
   QString catalogName = _settings.readEntry("/Waypoints/DefaultCatalogName", "");
 
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Waypoints"), "Waypoints");
-  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/waypoint_32.png");
+  item->setPixmap(0, _mainWindow->getPixmap("waypoint_32.png"));
 
   waypointPage = new Q3Frame(this, "Catalog Configuration");
   waypointPage->hide();
@@ -1090,7 +1086,7 @@ void KFLogConfig::__addWaypointTab()
   catalogPathE-> setText(catalogName);
 
   catalogPathSearch = new QPushButton(group);
-  catalogPathSearch-> setPixmap(QDir::homePath() + "/.kflog/pics/kde_fileopen_16.png");
+  catalogPathSearch-> setPixmap(_mainWindow->getPixmap("kde_fileopen_16.png"));
   catalogPathSearch-> setMinimumWidth(catalogPathSearch->sizeHint().width() + 5);
   catalogPathSearch-> setMinimumHeight(catalogPathSearch->sizeHint().height() + 5);
   grid-> addWidget(catalogPathSearch, 3, 1);

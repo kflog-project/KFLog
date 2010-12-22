@@ -15,8 +15,8 @@
 **
 ***********************************************************************/
 
-#ifndef EVALUATIONVIEW_H
-#define EVALUATIONVIEW_H
+#ifndef EVALUATION_VIEW_H
+#define EVALUATION_VIEW_H
 
 #include <time.h>
 
@@ -125,7 +125,7 @@ class EvaluationView : public QWidget
   /** Draw y-axis */
   void __drawYAxis();
   
-  /** Behält den Inhalt der Zeichnung. */
+  /** Behï¿½lt den Inhalt der Zeichnung. */
   QPixmap* pixBuffer;
   QPixmap* pixBufferYAxis;
   QPixmap* pixBufferKurve;

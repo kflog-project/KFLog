@@ -21,7 +21,7 @@
 #include <qcheckbox.h>
 #include <qcolor.h>
 #include <qcombobox.h>
-#include <q3frame.h>
+#include <qframe.h>
 #include <qlcdnumber.h>
 #include <qlineedit.h>
 #include <q3ptrlist.h>
@@ -35,7 +35,7 @@
  * @author Heiner Lamprecht
  * @version $Id$
  */
-class ConfigPrintElement : public Q3Frame
+class ConfigPrintElement : public QFrame
 {
   Q_OBJECT
 

@@ -28,6 +28,9 @@
 #include "mapcontents.h"
 #include "recorderdialog.h"
 #include "wgspoint.h"
+#include "mainwindow.h"
+
+extern MainWindow *_mainWindow;
 
 RecorderDialog::RecorderDialog(QWidget *parent, const char */*name*/)
   : QDialog(parent, "Flightrecorder-Dialog (RecorderDialog)"),
@@ -105,7 +108,7 @@ void RecorderDialog::__addSettingsPage()
   int typeID(0), typeLoop(0);
 
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Recorder"), "Recorder");
-  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/kde_media-tape_48.png");
+  item->setPixmap(0, _mainWindow->getPixmap("kde_media-tape_48.png"));
 
   settingsPage = new Q3Frame(this, "Recorder Settings");
   settingsPage->hide();
@@ -390,7 +393,7 @@ void RecorderDialog::__setRecorderCapabilities()
 void RecorderDialog::__addFlightPage()
 {
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Flights"), "Flights");
-  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/igc_48.png");
+  item->setPixmap(0, _mainWindow->getPixmap("igc_48.png"));
 
   flightPage = new Q3Frame(this, "Flights");
   flightPage->hide();
@@ -449,7 +452,7 @@ void RecorderDialog::__addDeclarationPage()
   FlightTask *e;
 
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Declaration"), "Declaration");
-  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/declaration_48.png");
+  item->setPixmap(0, _mainWindow->getPixmap("declaration_48.png"));
 
   declarationPage = new Q3Frame(this, "Flight Declaration");
   declarationPage->hide();
@@ -550,7 +553,7 @@ void RecorderDialog::__addDeclarationPage()
 void RecorderDialog::__addTaskPage()
 {
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Tasks"), "Tasks");
-  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/task_48.png");
+  item->setPixmap(0, _mainWindow->getPixmap("task_48.png"));
 
   taskPage = new Q3Frame(this, "Tasks");
   taskPage->hide();
@@ -616,7 +619,7 @@ void RecorderDialog::__addWaypointPage()
   Q3ListViewItem *item;
 
   Q3ListViewItem *itemMenu = new Q3ListViewItem(setupTree, tr("Waypoints"), "Waypoints");
-  itemMenu->setPixmap(0, QDir::homePath() + "/.kflog/pics/waypoint_48.png");
+  itemMenu->setPixmap(0, _mainWindow->getPixmap("waypoint_48.png"));
 
   waypointPage = new Q3Frame(this, "Waypoints");
   waypointPage->hide();
@@ -1643,7 +1646,7 @@ void RecorderDialog::__addPilotPage()
 {
   return; // We don't need the page (yet).
 //  QListViewItem *item = new QListViewItem(setupTree, tr("Pilots"), "Pilots");
-//  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/kde_identity_48.png");
+//  item->setPixmap(0, _mainWindow->getPixmap("kde_identity_48.png"));
 
 //  pilotPage = new QFrame(this, "List of pilots");
 //  pilotPage->hide();
@@ -1654,7 +1657,7 @@ void RecorderDialog::__addPilotPage()
 void RecorderDialog::__addConfigPage()
 {
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Configuration"), "Configuration");
-  item->setPixmap(0, QDir::homePath() + "/.kflog/pics/kde_configure_48.png");
+  item->setPixmap(0, _mainWindow->getPixmap("kde_configure_48.png"));
 
   configPage = new Q3Frame(this, "Recorder configuration");
   configPage->hide();

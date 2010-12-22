@@ -40,6 +40,7 @@
 #include <QAction>
 #include <QLabel>
 #include <q3mainwindow.h>
+#include <QPixmap>
 #include <QProgressBar>
 #include <QUrl>
 
@@ -67,6 +68,11 @@ public:
   MainWindow();
 
   virtual ~MainWindow();
+
+  /**
+   * \return The requested pixmap.
+   */
+  QPixmap getPixmap( const QString& pixmapName );
 
   signals:
    /**

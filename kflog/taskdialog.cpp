@@ -14,18 +14,16 @@
  **   $Id$
  **
  ***********************************************************************/
-#include <q3buttongroup.h>
-#include <QDir>
-#include <QLabel>
-#include <QLayout>
-#include <QMessageBox>
-#include <QPushButton>
-#include <QSettings>
+#include <QtGui>
+#include <Qt3Support>
 
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "taskdialog.h"
 #include "translationlist.h"
+#include "mainwindow.h"
+
+extern MainWindow *_mainWindow;
 
 extern TranslationList taskTypes;
 
@@ -121,11 +119,11 @@ void TaskDialog::__initDialog()
 
   smallButtons->addStretch();
   b = new QPushButton(this);
-  b->setPixmap(QDir::homePath() + "/.kflog/pics/kde_up_16.png");
+  b->setIcon(_mainWindow->getPixmap("kde_up_16.png"));
   connect(b, SIGNAL(clicked()), SLOT(slotMoveUp()));
   smallButtons->addWidget(b);
   b = new QPushButton(this);
-  b->setPixmap(QDir::homePath() + "/.kflog/pics/kde_down_16.png");
+  b->setIcon(_mainWindow->getPixmap("kde_down_16.png"));
   connect(b, SIGNAL(clicked()), SLOT(slotMoveDown()));
   smallButtons->addWidget(b);
   smallButtons->addStretch();
@@ -136,15 +134,15 @@ void TaskDialog::__initDialog()
 
   middleLayout->addStretch();
   back = new QPushButton(this);
-  back->setPixmap(QDir::homePath() + "/.kflog/pics/kde_back_16.png");
+  back->setIcon(_mainWindow->getPixmap("kde_back_16.png"));
   connect(back, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
   middleLayout->addWidget(back);
   b = new QPushButton(this);
-  b->setPixmap(QDir::homePath() + "/.kflog/pics/kde_reload_16.png");
+  b->setIcon(_mainWindow->getPixmap("kde_reload_16.png"));
   connect(b, SIGNAL(clicked()), SLOT(slotReplaceWaypoint()));
   middleLayout->addWidget(b);
   forward = new QPushButton(this);
-  forward->setPixmap(QDir::homePath() + "/.kflog/pics/kde_forward_16.png");
+  forward->setIcon(_mainWindow->getPixmap("kde_forward_16.png"));
   connect(forward, SIGNAL(clicked()), SLOT(slotRemoveWaypoint()));
   middleLayout->addWidget(forward);
   middleLayout->addStretch();
@@ -299,7 +297,7 @@ void TaskDialog::fillWaypoints()
       txt.sprintf("%.2f km", wp->distance);
       item->setText(colDist, txt);
 
-      txt.sprintf("%03.0f°", getTrueCourse(wp->origP, wpPrev->origP));
+      txt.sprintf("%03.0fï¿½", getTrueCourse(wp->origP, wpPrev->origP));
       item->setText(colCourse, txt);
     }
     lastItem = item;

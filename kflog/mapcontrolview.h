@@ -22,7 +22,7 @@
 
 #include <qlcdnumber.h>
 #include <qslider.h>
-#include <q3frame.h>
+#include <QFrame>
 
 /**
  * Creates widgets for controling the mapview. The class will create
@@ -33,7 +33,7 @@
  * @author Heiner Lamprecht, Florian Ehinger
  * @version $Id$
  */
-class MapControlView : public Q3Frame
+class MapControlView : public QFrame
 {
   Q_OBJECT
 
