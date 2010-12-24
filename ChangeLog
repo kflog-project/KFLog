@@ -5,6 +5,7 @@ $Id$
   * Introduced a new method to get the default application data directory from
     one place in MainWindow class. That makes future changes easier.
   * Class KFLogLogo replaced by QSplashScreen.
+  * Map tile management in class MapContents taken over from Cumulus.
 
 2010-12-22 Axel Pauli <axel@kflog.org>
   * Map redraw optimized after download of missing files. The already loaded
