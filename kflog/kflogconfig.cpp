@@ -37,8 +37,9 @@
 #include "wgspoint.h"
 #include "mainwindow.h"
 
-extern MainWindow *_mainWindow;
-extern QSettings  _settings;
+extern MapContents  *_globalMapContents;
+extern MainWindow   *_mainWindow;
+extern QSettings    _settings;
 
 KFLogConfig::KFLogConfig(QWidget* parent)
   : QDialog(parent, "KFLog setup (KFLogConfig)"),
@@ -336,10 +337,10 @@ void KFLogConfig::slotDefaultScale()
 
 void KFLogConfig::slotDefaultPath()
 {
-  igcPathE-> setText(getpwuid(getuid())->pw_dir);
-  taskPathE-> setText(getpwuid(getuid())->pw_dir);
-  waypointPathE-> setText(getpwuid(getuid())->pw_dir);
-  mapPathE-> setText(QDir::homePath() + "/.kflog/mapdata/");
+  igcPathE-> setText( _mainWindow->getApplicationDataDirectory() );
+  taskPathE-> setText( _mainWindow->getApplicationDataDirectory() );
+  waypointPathE-> setText( _mainWindow->getApplicationDataDirectory() );
+  mapPathE-> setText( _globalMapContents->getMapRootDirectory() );
 }
 
 void KFLogConfig::__addMapTab()
@@ -771,10 +772,14 @@ void KFLogConfig::__addScaleTab()
 
 void KFLogConfig::__addPathTab()
 {
-  QString flightDir = _settings.readEntry("/Path/DefaultFlightDirectory", getpwuid(getuid())-> pw_dir);
-  QString taskDir = _settings.readEntry("/Path/DefaultTaskDirectory", getpwuid(getuid())-> pw_dir);
-  QString wayPointDir = _settings.readEntry("/Path/DefaultWaypointDirectory", getpwuid(getuid())-> pw_dir);
-  QString mapDir = _settings.readEntry("/Path/DefaultMapDirectory", QDir::homePath() + "/.kflog/mapdata/");
+  QString flightDir = _settings.value( "/Path/DefaultFlightDirectory",
+                                       _mainWindow->getApplicationDataDirectory() ).toString();
+  QString taskDir = _settings.value( "/Path/DefaultTaskDirectory",
+                                     _mainWindow->getApplicationDataDirectory() ).toString();
+  QString wayPointDir = _settings.value( "/Path/DefaultWaypointDirectory",
+                                         _mainWindow->getApplicationDataDirectory() ).toString();
+
+  QString mapDir = _globalMapContents->getMapRootDirectory();
 
   Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Paths"), "Paths");
   item->setPixmap(0, _mainWindow->getPixmap("kde_fileopen_32.png"));

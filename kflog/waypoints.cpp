@@ -202,8 +202,8 @@ void Waypoints::slotMove2Catalog(int id){
 void Waypoints::slotOpenWaypointCatalog()
 {
   extern QSettings _settings;
-  QString wayPointDir = _settings.readEntry("/Path/DefaultWaypointDirectory",
-                                          getpwuid(getuid())->pw_dir);
+  QString wayPointDir = _settings.value( "/Path/DefaultWaypointDirectory",
+                                         _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
   filter.append(tr("All supported waypoint formats")+" (*.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
@@ -539,8 +539,8 @@ void Waypoints::slotSaveWaypointCatalogAs()
 void Waypoints::slotImportWaypointCatalog()
 {
   extern QSettings _settings;
-  QString wayPointDir = _settings.readEntry("/Path/DefaultWaypointDirectory",
-                                          getpwuid(getuid())->pw_dir);
+  QString wayPointDir = _settings.value( "/Path/DefaultWaypointDirectory",
+                                         _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
   filter.append(tr("KFLog waypoints")+" (*.kflogwp *.KFLOGWP);;");
@@ -851,8 +851,9 @@ void Waypoints::getFilterData()
 /** No descriptions */
 void Waypoints::slotImportWaypointFromFile(){
   extern QSettings _settings;
-  QString wayPointDir = _settings.readEntry("/Path/DefaultWaypointDirectory",
-                                          getpwuid(getuid())->pw_dir);
+
+  QString wayPointDir = _settings.value( "/Path/DefaultWaypointDirectory",
+                                         _mainWindow->getApplicationDataDirectory() ).toString();
 
    // we should not include types we don't support (yet). Also, the strings should be translated.
   QString filter;

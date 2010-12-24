@@ -25,34 +25,19 @@
 #include "airport.h"
 #include "da4record.h"
 #include "kfrgcs/vlapi2.h"
+#include "mainwindow.h"
 #include "waypointcatalog.h"
 
-#include <QApplication>
-#include <QDataStream>
-#include <QDateTime>
-#include <QDir>
-#include <QDomDocument>
-#include <QDomElement>
-#include <QDomNamedNodeMap>
-#include <QDomNode>
-#include <QDomNodeList>
-#include <QFile>
-#include <q3filedialog.h>
-#include <QFileInfo>
-#include <QMessageBox>
-#include <q3progressdialog.h>
-#include <QRegExp>
-#include <QSettings>
-#include <QString>
-#include <QStringList>
-#include <q3textstream.h>
-
+#include <QtGui>
+#include <QtXml>
+#include <Qt3Support>
 
 #define KFLOG_FILE_MAGIC    0x404b464c
 #define FILE_TYPE_WAYPOINTS 0x50
 #define FILE_FORMAT_ID      100
 #define FILE_FORMAT_ID_2    101
 
+extern MainWindow *_mainWindow;
 
 WaypointCatalog::WaypointCatalog(const QString& name)
   : modified(false), onDisc(false)
@@ -60,7 +45,8 @@ WaypointCatalog::WaypointCatalog(const QString& name)
   static int catalogNr = 1;
 
   extern QSettings _settings;
-  QString wayPointDir = _settings.readEntry("/Path/DefaultWaypointDirectory", getpwuid(getuid())->pw_dir);
+  QString wayPointDir = _settings.value( "/Path/DefaultWaypointDirectory",
+                                         _mainWindow->getApplicationDataDirectory() ).toString();
   if (name == QString::null) {
     QString t;
     t.setNum(catalogNr++);

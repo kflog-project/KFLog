@@ -39,7 +39,6 @@
 #include <QtGui>
 
 #include "kflogconfig.h"
-#include "kflogstartlogo.h"
 #include "mainwindow.h"
 #include "target.h"
 
@@ -156,8 +155,27 @@ int main(int argc, char **argv)
   qDebug() << "KFLog Built Date:" << __DATE__;
   qDebug() << "KFLog Install Root:" << root;
 
-  _mainWindow = new MainWindow();
-  _mainWindow->setVisible( true );
+  bool showStartLogo = false;
+
+  if(_settings.readBoolEntry("/GeneralOptions/Logo", true))
+  {
+    showStartLogo = true;
+
+    QSplashScreen splash( root + "/pics/splash.png"  );
+    splash.setMask( QBitmap( root + "/pics/splash_mask.png" ));
+    splash.show();
+    QCoreApplication::processEvents();
+
+    _mainWindow = new MainWindow();
+    _mainWindow->setVisible( true );
+
+    splash.finish( _mainWindow );
+  }
+  else
+    {
+      _mainWindow = new MainWindow();
+      _mainWindow->setVisible( true );
+    }
 
   QString argument, fileOpenIGC, fileExportPNG, width = "640", height = "480";
   QString waypointsOptionArg;
@@ -253,8 +271,6 @@ int main(int argc, char **argv)
         }
 
     }
-
-  QTimer::singleShot(700, _mainWindow, SLOT(slotStartComplete()));
 
   // start window manager event processing loop
   int result = QApplication::exec();

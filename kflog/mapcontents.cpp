@@ -109,8 +109,7 @@ const short MapContents::isoLevels[] =
 MapContents::MapContents( QObject* object ) :
   QObject(object),
   currentFlight(0),
-  sectionArray( MAX_TILE_NUMBER, false ),
-  isFirstLoad(true),
+  askUser(true),
   downloadManger(0)
 {
   qDebug() << "MapContents()";
@@ -793,7 +792,7 @@ int MapContents::__askUserForDownload()
 
   int result = _settings.readNumEntry( "/Internet/AutomaticMapDownload", ADT_NotSet );
 
-  if( isFirstLoad == true && result == ADT_NotSet )
+  if( askUser == true && result == ADT_NotSet )
     {
       _settings.setValue("/Internet/AutomaticMapDownload", Inhibited);
 
@@ -811,7 +810,7 @@ int MapContents::__askUserForDownload()
 
             _settings.setValue("/Internet/AutomaticMapDownload", Automatic);
             result = Automatic;
-            isFirstLoad = false;
+            askUser = false;
 
             break;
 
@@ -819,14 +818,14 @@ int MapContents::__askUserForDownload()
 
             _settings.setValue( "/Internet/AutomaticMapDownload", Inhibited );
             result = Inhibited;
-            isFirstLoad = false;
+            askUser = false;
             break;
 
           case QMessageBox::Cancel:
 
             _settings.setValue( "/Internet/AutomaticMapDownload", ADT_NotSet );
             result = ADT_NotSet;
-            isFirstLoad = true;
+            askUser = false;
             break;
         }
     }
@@ -986,26 +985,73 @@ void MapContents::proofeSection(bool isPrint)
 
   emit loadingMessage(tr("Loading map data ..."));
 
+  char step, hasstep; // used as small integers
+  TilePartMap::Iterator it;
+
   for(int row = northCorner; row <= southCorner; row++)
     {
       for(int col = westCorner; col <= eastCorner; col++)
         {
-          if( !sectionArray.testBit( row + ( col + ( row * 179 ) ) ) )
+          int secID = row + (col + (row * 179));
+          // qDebug( "Needed BoxSecID=%d", secID );
+
+          if( secID >= 0 && secID <= MAX_TILE_NUMBER )
             {
-              // Tile is missing!
-              int secID = row + ( col + ( row * 179 ) );
-
-              // Nun müssen die korrekten Dateien geladen werden ...
-              bool ok0 = __readTerrainFile(secID, FILE_TYPE_GROUND);
-              bool ok1 = __readTerrainFile(secID, FILE_TYPE_TERRAIN);
-              bool ok2 = __readBinaryFile(secID, FILE_TYPE_MAP);
-              // Let's not plot all those circles on the map ...
-              // __readBinaryFile(secID, FILE_TYPE_LM);
-
-#warning "Take over solution from Cumulus for section array management!"
-              if( ok0 && ok1 && ok2 )
+              // a valid tile (2x2 degree area) must be in the range 0 ... 16200
+              if (! tileSectionSet.contains(secID))
                 {
-                  sectionArray.setBit( secID, true );
+                  // qDebug(" Tile %d is missing", secID );
+                  step = 0;
+                  // check to see if parts of this tile has already been loaded before
+                  it = tilePartMap.find(secID);
+
+                  if (it == tilePartMap.end())
+                    {
+                      //not found
+                      hasstep = 0;
+                    }
+                  else
+                    {
+                      hasstep = it.value();
+                    }
+
+                  //try loading the currently unloaded files
+                  if (!(hasstep & 1))
+                    {
+                      if (__readTerrainFile(secID, FILE_TYPE_GROUND))
+                        {
+                          step |= 1;
+                        }
+                    }
+
+                  if (!(hasstep & 2))
+                    {
+                      if (__readTerrainFile(secID, FILE_TYPE_TERRAIN))
+                        {
+                          step |= 2;
+                        }
+                    }
+
+                  if (!(hasstep & 4))
+                    {
+                      if (__readBinaryFile(secID, FILE_TYPE_MAP))
+                        {
+                          step |= 4;
+                        }
+                    }
+
+                  if (step == 7) //set the correct flags for this map tile
+                    {
+                      tileSectionSet.insert(secID);  // add section id to set
+                      tilePartMap.remove(secID); // make sure we don't leave it as partly loaded
+                    }
+                  else
+                    {
+                      if (step > 0)
+                        {
+                          tilePartMap.insert(secID, step);
+                        }
+                    }
                 }
             }
         }
@@ -1194,7 +1240,10 @@ void MapContents::slotReloadMapData()
   groundMap.clear();
   terrainMap.clear();
 
-  sectionArray.fill(false);
+  // map tiles are cleared
+  tileSectionSet.clear();
+  tilePartMap.clear();
+
   emit contentsChanged();
 }
 

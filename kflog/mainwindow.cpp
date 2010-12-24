@@ -70,21 +70,13 @@ MainWindow::MainWindow() : Q3MainWindow(0, "KFLog main window")
 {
   qDebug() << "MainWindow()";
 
+  createApplicationDataDirectory();
+
   _globalMapMatrix   = new MapMatrix(this);
   _globalMapConfig   = new MapConfig(this);
   _globalMapContents = new MapContents(this);
 
   BaseMapElement::initMapElement( _globalMapMatrix, _globalMapConfig );
-
-  showStartLogo=false;
-
-  if(_settings.readBoolEntry("/GeneralOptions/Logo", true))
-  {
-    showStartLogo = true;
-    startLogo = new KFLogStartLogo;
-    startLogo->setVisible( true );
-    startLogo->raise();
-  }
 
   connect( _globalMapConfig, SIGNAL(configChanged()),
            _globalMapMatrix, SLOT(slotInitMatrix()) );
@@ -94,12 +86,6 @@ MainWindow::MainWindow() : Q3MainWindow(0, "KFLog main window")
   initTaskTypes();
   initSurfaceTypes();
   initWaypointTypes();
-
-  if(showStartLogo && startLogo != 0)
-    {
-      startLogo->raise();
-    }
-
   initDockWindows();
   initMenuBar();
   initStatusBar();
@@ -137,7 +123,6 @@ MainWindow::MainWindow() : Q3MainWindow(0, "KFLog main window")
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), evaluationWindow, SLOT(slotShowFlightData()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), map, SLOT(slotShowCurrentFlight()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), objectTree, SLOT(slotSelectedFlightChanged()));
-  connect(_globalMapContents, SIGNAL(errorOnMapLoading()), this, SLOT(slotStartComplete()));
   connect(_globalMapContents, SIGNAL(newFlightAdded(Flight*)), objectTree, SLOT(slotNewFlightAdded(Flight*)));
   connect(_globalMapContents, SIGNAL(newFlightGroupAdded(FlightGroup*)), objectTree, SLOT(slotNewFlightGroupAdded(FlightGroup*)));
   connect(_globalMapContents, SIGNAL(newTaskAdded(FlightTask*)), objectTree, SLOT(slotNewTaskAdded(FlightTask*)));
@@ -273,6 +258,41 @@ QPixmap MainWindow::getPixmap( const QString& pixmapName )
     }
 
   return pm;
+}
+
+bool MainWindow::createApplicationDataDirectory()
+{
+  qDebug() << "MainWindow::createApplicationDataDirectory()";
+
+  QString path = getApplicationDataDirectory();
+
+  QDir dir( path );
+
+  if( ! dir.exists() )
+    {
+      dir.mkpath( path );
+
+      if( ! dir.exists() )
+        {
+          qWarning() << "MainWindow: Cannot create Application data directory:" << path;
+          return false;
+        }
+    }
+
+  if( ! dir.isReadable() )
+    {
+      qWarning() << "MainWindow: Application data directory:" << path << "not readable!";
+      return false;
+    }
+
+  return true;
+}
+
+QString MainWindow::getApplicationDataDirectory()
+{
+  QString path = _settings.value( "/Path/ApplicationDataDirectory",
+                                  QDir::homePath() + "/KFLog" ).toString();
+  return path;
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)
@@ -786,8 +806,10 @@ void MainWindow::readOptions()
     resize(size);
 
   // initialize the recent file list
-  flightDir = _settings.readEntry("/Path/DefaultFlightDirectory", getpwuid(getuid())->pw_dir);
-  taskDir = _settings.readEntry("/Path/DefaultWaypointDirectory", getpwuid(getuid())->pw_dir);
+  flightDir = _settings.value( "/Path/DefaultFlightDirectory",
+                               getApplicationDataDirectory() ).toString();
+  taskDir   = _settings.value( "/Path/DefaultWaypointDirectory",
+                               getApplicationDataDirectory() ).toString();
 
   mapControl->slotSetMinMaxValue(_settings.readNumEntry("/Scale/Lower Limit", 10),
                                  _settings.readNumEntry("/Scale/Upper Limit", 1500));
@@ -1322,16 +1344,6 @@ void MainWindow::slotFlightPrint()
         }
     }
   slotSetStatusMsg(tr("Ready."));
-}
-
-void MainWindow::slotStartComplete()
-{
-  if( showStartLogo && startLogo != static_cast<KFLogStartLogo *> (0) )
-    {
-      startLogo->close();
-      startLogo = static_cast<KFLogStartLogo *> (0);
-      showStartLogo = false;
-    }
 }
 
 void MainWindow::slotToggleDataView()

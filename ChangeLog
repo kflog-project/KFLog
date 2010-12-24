@@ -1,13 +1,21 @@
 $Id$
 
-2010-10-22 Axel Pauli <axel@kflog.org>
+2010-12-24
+  * Changed the application data default directory from ~/.kflog to ~/KFLog.
+  * Introduced a new method to get the default application data directory from
+    one place in MainWindow class. That makes future changes easier.
+  * Class KFLogLogo replaced by QSplashScreen.
+
+2010-12-22 Axel Pauli <axel@kflog.org>
   * Map redraw optimized after download of missing files. The already loaded
     data are not more cleared and loaded again.
   * Two new methods indroduced for loading of map icons and application
     pixmaps. There is defined now only on one place the path to the icons
     and pixmaps. Changing all old calls was a big stupid task.
+  * Colors and brushes of airspaces changed to be more in conformance with
+    ICAO guidelines. That is an open point for the printing functionality.
 
-2010-10-21 Axel Pauli <axel@kflog.org>
+2010-12-21 Axel Pauli <axel@kflog.org>
   * Class WhatsThat caused core dumps after displaying airspace information.
     Code of class partly replaced by the Cumulus code.
   * Pixmap drawing mechanism partly redesigned.
@@ -16,22 +24,22 @@ $Id$
   * A black list has been added to the download manager to avoid download
     dead locks.
 
-2010-10-18 Axel Pauli <axel@kflog.org>
+2010-12-18 Axel Pauli <axel@kflog.org>
   * OpenAir class taken over from Cumulus. Airspaces are drawn now at the map
     but there is some redesign needed for the drawing management in general.
     It works very inefficiently. Different fixes made for Qt4 to overcome
     a lot of compiler complains. Airspaces are handled now in value list.
 
-2010-10-16 Axel Pauli <axel@kflog.org>
+2010-12-16 Axel Pauli <axel@kflog.org>
   * Q3 pointer lists for terrain and map elements replaced by Qt4 value
     lists. Isoline management taken over from Cumulus.
 
-2010-10-15 Axel Pauli <axel@kflog.org>
+2010-12-15 Axel Pauli <axel@kflog.org>
   * Content of class WGSPoint taken over from Cumulus. Definitions of WGSPoint
     In MapMatrix removed. Method degreeToNum moved from class MapContens to 
     class WGSPoint.
 
-2010-10-14 Axel Pauli <axel@kflog.org>
+2010-12-14 Axel Pauli <axel@kflog.org>
 
   * Modified install targets in all sub qmake files. $INSTALL_ROOT defines
     the root install path now.
@@ -43,7 +51,7 @@ $Id$
   * Doxygen configuration files added to kflog subdirectory. Call
     doyxgen to generate the html help files.
   
-2010-10-11 Axel Pauli <axel@kflog.org>
+2010-12-11 Axel Pauli <axel@kflog.org>
 
   * Global QSettings object must be initialized according to the requirements
     of Qt. The configuration file is located at: $HOME/.config/KFLog as kflog.conf.

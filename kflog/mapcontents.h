@@ -22,11 +22,13 @@
 #include <QFile>
 #include <QList>
 #include <QObject>
+#include <QMap>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPair>
 #include <QPoint>
 #include <QRect>
+#include <QSet>
 
 #include "airspace.h"
 #include "downloadmanager.h"
@@ -512,18 +514,30 @@ class MapContents : public QObject
    * This list is reset every time the current WaypointCatalog is changed.
    */
   QList<Waypoint*> wpList;
+
   /**
-   * List of all map-section. Contains a "1" for all loaded section-files,
-   * otherwise "0".
+   * Set over map tiles. Contains the sectionId for all fully loaded
+   * section files otherwise nothing.
    */
-  QBitArray sectionArray;
+  QSet<int> tileSectionSet;
+
+  /**
+   * QMap of all partially loaded map tiles. Partially
+   * loaded tiles (each tile currently consists of a maximum of
+   * three files) can occur when KFLog if flies are missing. The proofeSection
+   * routine uses this QMap to determine if it really needs to load a specific
+   * file for that tile.
+   */
+  typedef QMap<int, char> TilePartMap;
+  TilePartMap tilePartMap;
+
   /** */
   QString mapDir;
   /**
    * Used to determine, if we must display message boxes on missing
    * map-directories.
    */
-  bool isFirstLoad;
+  bool askUser;
 
   /**
    * List of all drawn isohypses.

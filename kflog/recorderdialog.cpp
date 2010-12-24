@@ -889,7 +889,8 @@ void RecorderDialog::slotDownloadFlight()
 
   extern QSettings _settings;
   // If no DefaultFlightDirectory is configured, we must use $HOME instead of the root-directory
-  QString flightDir = _settings.readEntry("/Path/DefaultFlightDirectory", QDir::homePath());
+  QString flightDir = _settings.value( "/Path/DefaultFlightDirectory",
+                                       _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString fileName = flightDir + "/";
 

@@ -50,7 +50,6 @@ SOURCES = \
     isohypse.cpp \
     isolist.cpp \
     kflogconfig.cpp \
-    kflogstartlogo.cpp \
     lineelement.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -129,7 +128,6 @@ HEADERS = \
     isolist.h \
     isohypse.h \
     kflogconfig.h \
-    kflogstartlogo.h \
     lineelement.h \
     mainwindow.h \
     map.h \

@@ -47,7 +47,6 @@
 #include "dataview.h"
 #include "evaluationdialog.h"
 #include "helpwindow.h"
-#include "kflogstartlogo.h"
 #include "map.h"
 #include "mapcontrolview.h"
 #include "objecttree.h"
@@ -74,13 +73,26 @@ public:
    */
   QPixmap getPixmap( const QString& pixmapName );
 
+  /**
+   * Creates the application data directory, if it not exists.
+   *
+   * \return True on success otherwise false
+   */
+  bool createApplicationDataDirectory();
+
+  /**
+   * \return The application's data directory.
+   */
+  QString getApplicationDataDirectory();
+
   signals:
-   /**
-    * Emitted, when the user selects a new flightdatatype.
-    *
-    * @param  type  The id of the selected data-type
-    */
-   void flightDataTypeChanged(int type);
+
+  /**
+  * Emitted, when the user selects a new flightdatatype.
+  *
+  * @param  type  The id of the selected data-type
+  */
+  void flightDataTypeChanged(int type);
 
 public slots:
 
@@ -178,10 +190,6 @@ public slots:
   void slotCheckDockWidgetStatus();
   /** */
   void slotSavePixmap(QUrl url, int width, int height);
-  /**
-   * Hides the startup-window.
-   */
-  void slotStartComplete();
   /**
    * Shows or hides the dataview-widget.
    */
@@ -378,14 +386,7 @@ private:
   QAction* settingsStatusBar;
   QAction* settingsToolBar;
   QAction* settingsWaypoints;
-  /**
-   * True, when the startup-window should be displayed.
-   */
-  bool showStartLogo;
-  /**
-   * The startup-window.
-   */
-  KFLogStartLogo* startLogo;
+
   /**
    * The progressbar in the statusbar. Used during drawing the map to display
    * the percentage of what is already drawn.
