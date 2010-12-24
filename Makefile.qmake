@@ -1,0 +1,27 @@
+################################################################################
+# Makefile to build a KFLog release based on Qt4.7.x/X11
+#
+# Copyright (c): 2008-2010 by Axel Pauli (axel@kflog.org)
+# 
+# $Id$
+#
+# This file is distributed under the terms of the General Public License.
+# See the file COPYING for more information.
+#
+################################################################################
+
+# Version is determined from the header file target.h
+VERSION=$(shell cat kflog/target.h | grep KFLOG_VERSION | cut -d '"' -f 2)
+
+all:	qmake resetdate
+	make -f Makefile all
+
+.PHONY	:	resetdate
+resetdate:
+	rm -f kflog/main.o
+
+qmake:
+	qmake kflog.pro
+  
+install_test: all
+	make INSTALL_ROOT=release -f Makefile install
