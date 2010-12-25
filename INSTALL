@@ -11,8 +11,8 @@ The simplest way to compile this package is in Ubuntu 10.04 (Lucid Lynx):
 
   2. Type `make -f Makefile.qmake install_test' to install the programs and
      data files. The program can be found in the subdirectory release/bin.
-     The data files are stored in your home directory and can be accessed
-     by typing `cd ~/KFLog/'.
+     The personal data files are stored in your home directory and can be
+     accessed by typing `cd ~/KFLog/'.
 
   3. You can remove the program binaries and object files from the
      source code directory by typing `make -f Makefile.qmake clean'.
