@@ -18,6 +18,7 @@ usage:
 	@echo "  all          - build all KFLog parts"
 	@echo "  install_test - installs a test release under the directory release"
 	@echo "  clean        - cleans the build area"
+	@echo "  distclean    - cleans the build and release area"
 	
 all:	qmake resetdate
 	make -f Makefile all
@@ -31,7 +32,12 @@ qmake:
 	qmake kflog.pro
   
 install_test: all
-	make INSTALL_ROOT=release -f Makefile install
+	make INSTALL_ROOT=`pwd`/release -f Makefile install
 	
 clean:	qmake
+	make -f Makefile clean
+	
+distclean:	qmake
 	make -f Makefile distclean
+	rm -rf `pwd`/release
+	
