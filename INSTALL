@@ -1,16 +1,18 @@
-Basic Installation
-==================
+# $Id$
+
+=======================
+Basic Test Installation
+=======================
 
 The simplest way to compile this package is in Ubuntu 10.04 (Lucid Lynx):
 
   1. `cd' to the directory containing the package's source code and type
-     `qmake-qt3 -o Makefile kflog.pro'
+     `make -f Makefile.qmake all'
 
-  2. Type `make' to compile the package.
+  2. Type `make -f Makefile.qmake install_test' to install the programs and
+     data files. The program can be found in the subdirectory release/bin.
+     The data files are stored in your home directory and can be accessed
+     by typing `cd ~/KFLog/'.
 
-  3. Type `make install' to install the programs and data files. The program
-     can be found in the subdir release. The data files are stored in your
-     home directory and can be accessed by typing `cd ~/.kflog/'
-
-  4. You can remove the program binaries and object files from the
-     source code directory by typing `make clean'.
+  3. You can remove the program binaries and object files from the
+     source code directory by typing `make -f Makefile.qmake clean'.
