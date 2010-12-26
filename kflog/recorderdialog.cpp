@@ -32,11 +32,11 @@
 
 extern MainWindow *_mainWindow;
 
-RecorderDialog::RecorderDialog(QWidget *parent, const char */*name*/)
-  : QDialog(parent, "Flightrecorder-Dialog (RecorderDialog)"),
-    isOpen(false),
-    isConnected(false),
-    activeRecorder(NULL)
+RecorderDialog::RecorderDialog( QWidget *parent ) :
+  QDialog(parent),
+  isOpen(false),
+  isConnected(false),
+  activeRecorder(0)
 {
   extern MapContents *_globalMapContents;
   BaseFlightElement *element;

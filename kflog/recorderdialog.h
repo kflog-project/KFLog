@@ -15,23 +15,11 @@
 **
 ***********************************************************************/
 
-#ifndef RECORDERDIALOG_H
-#define RECORDERDIALOG_H
+#ifndef RECORDER_DIALOG_H
+#define RECORDER_DIALOG_H
 
-#include <q3buttongroup.h>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QDialog>
-#include <q3dict.h>
-#include <QLabel>
-#include <QLayout>
-#include <QLineEdit>
-#include <q3listview.h>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QSpinBox>
-#include <QStringList>
-#include <QWidget>
+#include <QtGui>
+#include <Qt3Support>
 
 #include "flightrecorderpluginbase.h"
 #include "flighttask.h"
@@ -41,20 +29,25 @@
 //#include "waypointlist.h
 
 /**
- * Provides a dialog-window for accessing the flightrecorder.
+ * Provides a dialog-window for accessing the flight recorder.
  *
  * @author Heiner Lamprecht
+ *
  * @version $Id$
  */
 class RecorderDialog : public QDialog
 {
   Q_OBJECT
 
+private:
+
+  Q_DISABLE_COPY ( RecorderDialog )
+
   public:
     /**
      * Constructor
      */
-    RecorderDialog(QWidget *parent, const char *name);
+    RecorderDialog(QWidget *parent);
     /**
      * Destructor
      */

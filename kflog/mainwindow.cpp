@@ -16,9 +16,9 @@
 ***********************************************************************/
 
 #include <dlfcn.h>
-#include <pwd.h>
 
 #include <QtGui>
+#include <Qt3Support>
 
 #include "airport.h"
 #include "centertodialog.h"
@@ -156,6 +156,7 @@ MainWindow::MainWindow() : Q3MainWindow(0, "KFLog main window")
 
 MainWindow::~MainWindow()
 {
+  // FIXME: Normally not needed, if all is setup correctly
 #if 0
   delete dataViewDock;
   delete dataView;
@@ -308,6 +309,11 @@ void MainWindow::initDockWindows()
 {
   qDebug() << "MainWindow::initDockWindows()";
 
+  // First create the central widget. That is the Map.
+  map = new Map(this);
+  setCentralWidget(map);
+  _globalMap = map;
+
   dataViewDock = new Q3DockWindow(Q3DockWindow::InDock, this, "DataView QDockWindow");
   dataViewDock->setResizeEnabled(true);
   dataView = new DataView(dataViewDock);
@@ -333,13 +339,6 @@ void MainWindow::initDockWindows()
   legendDock->setWidget(legend);
   moveDockWindow(legendDock, Qt::DockRight);
   legendDock->hide();
-
-//  mapViewDock = new QDockWindow(QDockWindow::InDock, this, "Map QDockWindow");
-  map = new Map(this);
-  setCentralWidget(map);
-  _globalMap = map;
-//  mapViewDock->setWidget(map);
-//  moveDockWindow(mapViewDock, Qt::DockUnmanaged);
 
   mapControlDock = new Q3DockWindow(Q3DockWindow::InDock, this, "MapControlView QDockWindow");
   mapControl = new MapControlView(mapControlDock);
@@ -830,6 +829,7 @@ void MainWindow::saveOptions()
   _settings.setValue("/GeneralOptions/ShowStatusbar", statusBar()->isShown());
 
   qDebug("saving options...");
+
   if (_settings.readNumEntry("/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed) ==
       KFLogConfig::LastUsed && waypoints->getCurrentCatalog() != NULL)
     {
@@ -995,13 +995,13 @@ void MainWindow::slotOpenFile()
   fd->setDir(flightDir);
 
   QString filter;
-  filter.append(tr("All flight type files")+" (*.igc *.flightgear *.trk *.gdn);;");
-  filter.append(tr("IGC")+" (*.igc);;");
-  filter.append(tr("Garmin")+" (*.trk *.gdn)");
+  filter.append(tr("All flight type files") +" (*.igc *.flightgear *.trk *.gdn)");
+  filter.append(tr("IGC") +" (*.igc)");
+  filter.append(tr("Garmin") +" (*.trk *.gdn)");
   fd->setFilters(filter);
 
   IGCPreview* preview = new IGCPreview(fd);
-  fd->setContentsPreviewEnabled( TRUE );
+  fd->setContentsPreviewEnabled( true );
   fd->setContentsPreview(preview, preview);
   fd->setPreviewMode( Q3FileDialog::Contents );
 
@@ -1060,30 +1060,49 @@ void MainWindow::slotOpenTask()
 {
   slotSetStatusMsg(tr("Opening file..."));
 
-  Q3FileDialog* fd = new Q3FileDialog(this);
+  QFileDialog* fd = new QFileDialog(this);
   fd->setCaption(tr("Open task"));
-  fd->setDir(taskDir);
+  fd->setDirectory(taskDir);
+  fd->setFileMode(QFileDialog::ExistingFile);
 
-  QString filter;
-  filter.append(tr("KFLog tasks")+"(*.kflogtsk *.KFLOGTSK)");
-  fd->setFilters(filter);
+  QStringList filters;
+  filters.append(tr("KFLog tasks") + "(*.kflogtsk *.KFLOGTSK)");
+  fd->setFilters(filters);
 
-  if(fd->exec()==QDialog::Accepted)
+  if(fd->exec() == QDialog::Accepted)
   {
-    QString fName = fd->selectedFile();
-    Q3Url fUrl = Q3Url(fName);
-    taskDir = fd->dirPath();
+    QStringList fNames = fd->selectedFiles();
 
-    if(!fUrl.isValid())
-      return;
+    if( fNames.size() == 0 )
+      {
+        return;
+      }
 
-    if(!fUrl.isLocalFile())
-      return;
+    QString fName = fNames[0];
+
+    QUrl fUrl = QUrl(fName);
+    taskDir = fd->directory().path();
+
+    if( !fUrl.isValid() )
+      {
+        return;
+      }
+
+    QString scheme = fUrl.scheme();
+
+#warning "Check, if that is right proted to Qt4"
+
+    if( scheme != "file" )
+      {
+        return;
+      }
 
     QFile file(fName);
 
     if (_globalMapContents->loadTask(file))
+      {
         slotSetCurrentFile(fName);
+      }
   }
 
   slotSetStatusMsg(tr("Ready."));
@@ -1124,7 +1143,7 @@ void MainWindow::slotOpenRecentFile()
 
 void MainWindow::slotOpenRecorderDialog()
 {
-  RecorderDialog* dlg = new RecorderDialog(this, "recorderDialog");
+  RecorderDialog* dlg = new RecorderDialog(this);
   connect(dlg, SIGNAL(addCatalog(WaypointCatalog *)), waypoints, SLOT(slotAddCatalog(WaypointCatalog *)));
   connect(dlg, SIGNAL(addTask(FlightTask *)), _globalMapContents, SLOT(slotAppendTask(FlightTask *)));
   dlg->exec();
@@ -1163,12 +1182,14 @@ void MainWindow::slotOptimizeFlightOLC()
 }
 
 /** Connects the dialogs addWaypoint signal to the waypoint object. */
-void MainWindow::slotRegisterWaypointDialog(QWidget * dialog){
+void MainWindow::slotRegisterWaypointDialog(QWidget * dialog)
+{
   connect(dialog, SIGNAL(addWaypoint(Waypoint *)), waypoints, SLOT(slotAddWaypoint(Waypoint *)));
 }
 
-void MainWindow::slotSavePixmap(QUrl url, int width, int height){
-  map->slotSavePixmap(url,width,height);
+void MainWindow::slotSavePixmap(QUrl url, int width, int height)
+{
+  map->slotSavePixmap(url, width, height);
 }
 
 void MainWindow::slotSelectFlightData(int id)
@@ -1205,6 +1226,7 @@ void MainWindow::slotSetCurrentFile(const QString &fileName)
   int index = 0;
 
   newFiles.append(fileName);
+
   for(QStringList::iterator it = files.begin(); (it != files.end() && index<=recentFilesMax); ++it)
   {
     if(*it!=fileName)
@@ -1352,6 +1374,7 @@ void MainWindow::slotToggleDataView()
     dataViewDock->hide();
   else
     dataViewDock->show();
+
   slotCheckDockWidgetStatus();
 }
 
@@ -1361,6 +1384,7 @@ void MainWindow::slotToggleEvaluationWindow()
     evaluationWindowDock->hide();
   else
     evaluationWindowDock->show();
+
   slotCheckDockWidgetStatus();
 }
 
@@ -1370,6 +1394,7 @@ void MainWindow::slotToggleHelpWindow()
     helpWindowDock->hide();
   else
     helpWindowDock->show();
+
   slotCheckDockWidgetStatus();
 }
 
@@ -1379,6 +1404,7 @@ void MainWindow::slotToggleLegendDock()
     legendDock->hide();
   else
     legendDock->show();
+
   slotCheckDockWidgetStatus();
 }
 
@@ -1398,6 +1424,7 @@ void MainWindow::slotToggleMapControl()
     mapControlDock->hide();
   else
     mapControlDock->show();
+
   slotCheckDockWidgetStatus();
 }
 
@@ -1407,6 +1434,7 @@ void MainWindow::slotToggleObjectTreeDock()
     objectTreeDock->hide();
   else
     objectTreeDock->show();
+
   slotCheckDockWidgetStatus();
 }
 
@@ -1420,6 +1448,7 @@ void MainWindow::slotToggleStatusBar()
     statusBar()->show();
 
   slotCheckDockWidgetStatus();
+
   slotSetStatusMsg(tr("Ready."));
 }
 
@@ -1442,6 +1471,7 @@ void MainWindow::slotToggleWaypointsDock()
     waypointsDock->hide();
   else
     waypointsDock->show();
+
   slotCheckDockWidgetStatus();
 }
 
