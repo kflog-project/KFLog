@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2005      by André Somers
-**                   2008-2010 by Axel Pauli
+**                   2008-2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -28,16 +28,18 @@
  * to the already present list of structures.
  *
  * Since the build in airspace types do not exactly match the list of
- * airspaces found in "the wild", it is possible to use a special
+ * airspaces found in "the world", it is possible to use a special
  * mapping file that modifies and/or extends the default mapping.
- * For a file named airspace.txt, the matching mapping file would be
- * named airspace_mappings.conf in be placed in the same directory.
+ * For a file named airspace.txt, the matching mapping file has to
+ * named airspace_mappings.conf and must be placed in the same directory.
  *
- * \date 2005-2010
+ * \date 2005-2011
+ *
+ * \version $Id$
  */
 
-#ifndef _openairparser_h
-#define _openairparser_h
+#ifndef _openair_parser_h
+#define _openair_parser_h
 
 #include <QString>
 #include <QList>

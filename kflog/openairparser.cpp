@@ -7,7 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2005      by André Somers
- **                   2009-2010 by Axel Pauli
+ **                   2009-2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -16,15 +16,12 @@
  **
  ***********************************************************************/
 
-// standard library includes
 #include <math.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-//Qt includes
 #include <QtCore>
 
-//project includes
 #include "resource.h"
 #include "airspace.h"
 #include "openairparser.h"
@@ -490,33 +487,31 @@ void OpenAirParser::parseType(QString& line)
 
 void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& type, int& alt)
 {
-  bool convertFromMeters=false;
-  bool altitudeIsFeet=false;
+  bool convertFromMeters = false;
+  bool altitudeIsFeet = false;
   QString input = line;
   QStringList elements;
-  int len=0, pos=0;
+  int len = 0, pos = 0;
   QString part;
   bool ok;
-  int num=0;
+  int num = 0;
 
   type = BaseMapElement::NotSet;
-  alt=0;
+  alt = 0;
   // qDebug("line %d: parsing altitude '%s'", _lineNumber, line.toLatin1().data());
   //fist, split the string in parsable elements
   //we start with the text parts
   QRegExp reg("[A-Za-z]+");
 
-  while (line.length()>0)
+  while (line.length() > 0)
     {
-      pos = reg.indexIn(line, pos+len);
+      pos = reg.indexIn(line, pos + len);
       len = reg.matchedLength();
-      if (pos<0)
+      if (pos < 0)
         {
           break;
         }
       elements.append(line.mid(pos, len));
-      //qDebug("element: '%s'", line.mid(pos, len).toLatin1().data());
-      //line=line.mid(len);
     }
 
   //now, get our number parts
@@ -535,47 +530,45 @@ void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& 
           break;
         }
       elements.append(line.mid(pos, len));
-      //qDebug("element: '%s'", line.mid(pos, len).toLatin1().data());
       line=line.mid(len);
     }
 
   // now, try parsing piece by piece
-  // print it out
-
   for ( QStringList::Iterator it = elements.begin(); it != elements.end(); ++it )
     {
       part = (*it).toUpper();
       BaseMapElement::elevationType newType = BaseMapElement::NotSet;
 
       // first, try to interpret as elevation type
-      if (part=="AMSL" || part=="MSL")
+      if ( part == "AMSL" || part == "MSL" || part == "ALT" )
         {
-          newType=BaseMapElement::MSL;
+          newType = BaseMapElement::MSL;
         }
-      else if (part=="GND" || part=="SFC" || part=="ASFC" || part=="AGL")
+      else if ( part == "GND" || part == "SFC" || part == "ASFC" ||
+                part == "AGL" || part == "GROUND" )
         {
-          newType=BaseMapElement::GND;
+          newType = BaseMapElement::GND;
         }
       else if (part.startsWith("UNL"))
         {
-          newType=BaseMapElement::UNLTD;
+          newType = BaseMapElement::UNLTD;
         }
-      else if (part=="FL")
+      else if (part == "FL")
         {
-          newType=BaseMapElement::FL;
+          newType = BaseMapElement::FL;
         }
-      else if (part=="STD")
+      else if (part == "STD")
         {
-          newType=BaseMapElement::STD;
+          newType = BaseMapElement::STD;
         }
 
-      if ( type == BaseMapElement::NotSet && newType != BaseMapElement::NotSet )
+      if (type == BaseMapElement::NotSet && newType != BaseMapElement::NotSet)
         {
           type = newType;
           continue;
         }
 
-      if ( type != BaseMapElement::NotSet && newType != BaseMapElement::NotSet )
+      if (type != BaseMapElement::NotSet && newType != BaseMapElement::NotSet)
         {
           // @AP: Here we stepped into a problem. We found a second
           // elevation type. That can be only a mistake in the data
@@ -586,16 +579,16 @@ void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& 
         }
 
       //see if it is a way of setting units to feet
-      if (part=="FT")
+      if (part == "FT")
         {
-          altitudeIsFeet=true;
+          altitudeIsFeet = true;
           continue;
         }
 
       //see if it is a way of setting units to meters
-      if (part=="M")
+      if (part == "M")
         {
-          convertFromMeters=true;
+          convertFromMeters = true;
           continue;
         }
 
