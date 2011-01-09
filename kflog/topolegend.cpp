@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by Andr� Somers
+**   Copyright (c):  2003 by André Somers
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -26,7 +26,7 @@
 #include <Q3Frame>
 #include <QLabel>
 
-TopoLegend::TopoLegend(QWidget *parent, const char *name ) : Q3ScrollView(parent,name)
+TopoLegend::TopoLegend(QWidget *parent) : Q3ScrollView(parent)
 {
   extern MapConfig *_globalMapConfig;
 
@@ -74,7 +74,8 @@ TopoLegend::TopoLegend(QWidget *parent, const char *name ) : Q3ScrollView(parent
   currentHighlight=-1;
 }
 
-TopoLegend::~TopoLegend(){
+TopoLegend::~TopoLegend()
+{
 }
 
 /** Makes sure the indicated level is visible. */

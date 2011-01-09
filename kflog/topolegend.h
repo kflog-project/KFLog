@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by André Somers
+**   Copyright (c):  2003 by AndrÃ© Somers
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -15,29 +15,33 @@
 **
 ***********************************************************************/
 
-#ifndef TOPOLEGEND_H
-#define TOPOLEGEND_H
+#ifndef TOPO_LEGEND_H
+#define TOPO_LEGEND_H
 
 #include <qwidget.h>
 #include <qlabel.h>
 #include <q3ptrlist.h>
 #include <q3scrollview.h>
 
-/**Generates a legend for the topography levels used on the map.
-  *@author André Somers
-  */
+/**
+ * Generates a legend for the topography levels used on the map.
+ * @author AndrÃ© Somers
+ */
 
-class TopoLegend : public Q3ScrollView  {
+class TopoLegend : public Q3ScrollView
+{
    Q_OBJECT
+
 public:
  /**
-  * Constructor. Normal QWidget parameters are used.
-  */
-	TopoLegend(QWidget *parent=0, const char *name=0);
- /**
-  * Destructor
-  */
-	~TopoLegend();
+   * Constructor. Normal QWidget parameters are used.
+   */
+  TopoLegend( QWidget *parent = 0 );
+
+  /**
+   * Destructor
+   */
+  ~TopoLegend();
 
 protected:
  /**

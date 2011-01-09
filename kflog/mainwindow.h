@@ -38,6 +38,7 @@
 #endif
 
 #include <QAction>
+#include <QActionGroup>
 #include <QLabel>
 #include <QMainWindow>
 #include <QPixmap>
@@ -144,6 +145,7 @@ public slots:
   void slotOptimizeFlight();
   /** Connects the dialogs addWaypoint signal to the waypoint object. */
   void slotRegisterWaypointDialog(QWidget * dialog);
+
   /**
    * Called, when the user selects a data-type from the menu. Emits
    * flightDataTypeChanged(int)
@@ -152,7 +154,7 @@ public slots:
    *
    * @see #flightDataTypeChanged(int)
    */
-  void slotSelectFlightData(int listItem);
+  void slotSelectFlightData( const int index );
   /**
    * Updates the recent file list.
    */
@@ -244,6 +246,11 @@ public slots:
    * insert available flights into menu
    */
   void slotWindowsMenuAboutToShow();
+
+  /**
+   * Called, if an action of the group is triggered.
+   */
+  void slotFlightDataTypeGroupAction( QAction *action );
 
 protected:
   /**
@@ -363,7 +370,6 @@ private:
   QAction* flightEvaluationWindowAction;
   QAction* flightOptimizationAction;
   QAction* flightOptimizationOLCAction;
-  Q3PopupMenu* flightDataType;
   QAction* flightIgc3DAction;
   QAction* flightIgcOpenGLAction;
   QAction* flightAnimateStartAction;
@@ -374,6 +380,14 @@ private:
   QAction* flightAnimate10PrevAction;
   QAction* flightAnimateHomeAction;
   QAction* flightAnimateEndAction;
+
+  QActionGroup* flightDataTypeGroupAction;
+  QAction *altitudeAction;
+  QAction *cyclingAction;
+  QAction *speedAction;
+  QAction *varioAction;
+  QAction *solidAction;
+
   /**
    * Action for the menu Window
    */

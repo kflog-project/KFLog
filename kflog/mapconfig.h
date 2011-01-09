@@ -187,7 +187,7 @@ public:
    *
    * @see #slotSetFlightDataType
    */
-  enum DrawFlightPoint {Altitude, Cycling, Speed, Vario, Solid};
+  enum DrawFlightPoint {Altitude=0, Cycling=1, Speed=2, Vario=3, Solid=4};
 
 public slots:
 

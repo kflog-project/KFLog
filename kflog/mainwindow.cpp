@@ -157,87 +157,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
 
 MainWindow::~MainWindow()
 {
-  // FIXME: Normally not needed, if all is setup correctly
-#if 0
-  delete dataViewDock;
-  delete dataView;
-  delete evaluationWindowDock;
-  delete evaluationWindow;
-  delete helpWindowDock;
-  delete helpWindow;
-  delete legendDock;
-  delete legend;
-  delete mapViewDock;
-  delete mapControlDock;
-  delete mapControl;
-  delete objectTreeDock;
-  delete objectTree;
-  delete waypointsDock;
-  delete waypoints;
-  delete fileNewWaypoint;
-  delete fileNewTask;
-  delete fileNewFlightGroup;
-  delete fileOpenFlight;
-  delete fileOpenTask;
-  delete fileClose;
-  delete fileSavePixmap;
-  delete filePrint;
-  delete filePrintFlight;
-  delete fileOpenRecorder;
-  delete fileQuit;
-  delete viewCenterTask;
-  delete viewCenterFlight;
-  delete viewCenterHomesite;
-  delete viewCenterTo;
-  delete viewZoomIn;
-  delete viewZoomOut;
-  delete viewZoom;
-  delete viewRedraw;
-  delete viewMoveNW;
-  delete viewMoveN;
-  delete viewMoveNE;
-  delete viewMoveW;
-  delete viewMoveE;
-  delete viewMoveSW;
-  delete viewMoveS;
-  delete viewMoveSE;
-  delete flightEvaluationWindowAction;
-  delete flightOptimization;
-  delete flightOptimizationOLCAction;
-  delete flightIgc3DAction;
-  delete flightIgcOpenGLAction;
-  delete flightAnimateStartAction;
-  delete flightAnimateStopAction;
-  delete flightAnimateNextAction;
-  delete flightAnimatePrevAction;
-  delete flightAnimate10NextAction;
-  delete flightAnimate10PrevAction;
-  delete flightAnimateHomeAction;
-  delete flightAnimateEndAction;
-  delete settingsEvaluationWindow;
-  delete settingsFlightData;
-  delete settingsHelpWindow;
-  delete settingsLegend;
-//  delete settingsMap;
-  delete settingsMapControl;
-  delete settingsObjectTree;
-  delete settingsStatusBar;
-  delete settingsToolBar;
-  delete settingsWaypoints;
-  delete fileOpenRecent;
-  delete flightDataType;
-  delete windowMenu;
-  delete settings;
-  delete statusLabel;
-  delete statusTimeL;
-  delete statusAltitudeL;
-  delete statusVarioL;
-  delete statusSpeedL;
-  delete statusLatL;
-  delete statusLonL;
-  delete statusProgress;
-  delete toolBar;
-#endif
+  qDebug() << "~MainWindow()";
 }
 
 QPixmap MainWindow::getPixmap( const QString& pixmapName )
@@ -339,7 +259,7 @@ void MainWindow::initDockWindows()
   helpWindowDock->setWidget(helpWindow);
   addDockWidget( Qt::AllDockWidgetAreas, helpWindowDock );
 
-  legendDock = new QDockWidget( tr("Profile"), this );
+  legendDock = new QDockWidget( tr("Terrain Profile"), this );
   legendDock->setFloating( false );
   legend = new TopoLegend(legendDock);
   legendDock->setWidget(legend);
@@ -389,7 +309,9 @@ void MainWindow::initDockWindows()
 
 void MainWindow::initMenuBar()
 {
-  // File menu
+  //----------------------------------------------------------------------------
+  // Flie menu actions
+  //----------------------------------------------------------------------------
   fileNewWaypoint = new QAction(getPixmap("waypoint_16.png"), tr("New &Waypoint"), 0, this, "file_new_waypoint");
   connect(fileNewWaypoint, SIGNAL(activated()), waypoints, SLOT(slotNewWaypoint()));
 
@@ -416,13 +338,16 @@ void MainWindow::initMenuBar()
   int size = std::min((int)datalist.size(), 5);
   QAction *recentFileActs[size];
 
-  for (int i = 0; i < size; ++i) {
-    recentFileActs[i] = new QAction(this);
-    recentFileActs[i]->setToolTip(datalist[i]); // FIXME: in Qt4 setData must be used
-    recentFileActs[i]->setText(tr("%1 %2").arg(i + 1).arg(QFileInfo(datalist[i]).fileName()));
-    connect(recentFileActs[i], SIGNAL(activated()), SLOT(slotOpenRecentFile()));
-    recentFileActs[i]->addTo(fileOpenRecent);
-  }
+  for (int i = 0; i < size; ++i)
+    {
+      recentFileActs[i] = new QAction(this);
+      recentFileActs[i]->setToolTip(datalist[i]); // FIXME: in Qt4 setData must be used
+      recentFileActs[i]->setText(tr("%1 %2").arg(i + 1).arg(QFileInfo(
+          datalist[i]).fileName()));
+      connect(recentFileActs[i], SIGNAL(activated()),
+          SLOT(slotOpenRecentFile()));
+      recentFileActs[i]->addTo(fileOpenRecent);
+    }
 
   fileClose = new QAction(getPixmap("kde_cancel_16.png"), tr("&Close Flight/Task"), Qt::CTRL+Qt::Key_W, this, "file_close");
   connect(fileClose, SIGNAL(activated()), _globalMapContents, SLOT(closeFlight()));
@@ -443,6 +368,10 @@ void MainWindow::initMenuBar()
   connect(fileQuit, SIGNAL(activated()), qApp, SLOT(closeAllWindows()));
   connect( qApp, SIGNAL( lastWindowClosed() ), qApp, SLOT( quit() ) );
 
+
+  //QMenu *fileM = menuBar()->addMenu( tr("&File") );
+  //fileM->addAction( flightEvaluationWindowAction );
+
   Q3PopupMenu * file = new Q3PopupMenu( this );
   menuBar()->insertItem( "&File", file );
   file->insertItem(getPixmap("kde_filenew_16.png"), "&New", fileNew);
@@ -460,40 +389,55 @@ void MainWindow::initMenuBar()
   file->insertSeparator();
   fileQuit->addTo( file );
 
-  // view menu
-
+  //----------------------------------------------------------------------------
+  // View menu actions
+  //----------------------------------------------------------------------------
   viewCenterTask = new QAction(getPixmap("centertask_16.png"), tr("Center to &Task"), Qt::Key_F6, this, "view_center_task");
   connect(viewCenterTask, SIGNAL(activated()), map, SLOT(slotCenterToTask()));
+
   viewCenterFlight = new QAction(getPixmap("centerflight_16.png"), tr("Center to &Flight"), Qt::Key_F7, this, "view_center_flight");
   connect(viewCenterFlight, SIGNAL(activated()), map, SLOT(slotCenterToFlight()));
+
   viewCenterHomesite = new QAction(getPixmap("kde_gohome_16.png"), tr("Center to &Homesite"), Qt::CTRL+Qt::Key_Home, this, "view_center_homeside");
   connect(viewCenterHomesite, SIGNAL(activated()), _globalMapMatrix, SLOT(slotCenterToHome()));
+
   viewCenterTo = new QAction(getPixmap("centerto_16.png"), tr("&Center to..."), Qt::Key_F8, this, "view_center_to");
   connect(viewCenterTo, SIGNAL(activated()), this, SLOT(slotCenterTo()));
 
   viewZoomIn = new QAction(getPixmap("kde_viewmag+_16.png"), tr("Zoom &In"), Qt::CTRL+Qt::Key_Plus, this, "view_zoom_in");
+
   connect(viewZoomIn, SIGNAL(activated()), _globalMapMatrix, SLOT(slotZoomIn()));
   viewZoomOut = new QAction(getPixmap("kde_viewmag-_16.png"), tr("Zoom &Out"), Qt::CTRL+Qt::Key_Minus, this, "view_zoom_out");
+
   connect(viewZoomOut, SIGNAL(activated()), _globalMapMatrix, SLOT(slotZoomOut()));
   viewZoom = new QAction(getPixmap("kde_viewmagfit_16.png"), tr("&Zoom..."), 0, this, "view_zoom");
+
   connect(viewZoom, SIGNAL(activated()), map, SLOT(slotZoomRect()));
   viewRedraw = new QAction(getPixmap("kde_reload_16.png"), tr("&Redraw"), Qt::Key_F5, this, "view_redraw");
+
   connect(viewRedraw, SIGNAL(activated()), map, SLOT(slotRedrawMap()));
 
   viewMoveNW = new QAction(getPixmap("movemap_nw_22.png"), tr("move map north-west"), Qt::Key_7, this, "view_move_nw");
   connect(viewMoveNW, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapNW()));
+
   viewMoveN = new QAction(getPixmap("movemap_n_22.png"), tr("move map north"), Qt::Key_8, this, "view_move_n");
   connect(viewMoveN, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapN()));
+
   viewMoveNE = new QAction(getPixmap("movemap_ne_22.png"), tr("move map north-east"), Qt::Key_9, this, "view_move_ne");
   connect(viewMoveNE, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapNE()));
+
   viewMoveW = new QAction(getPixmap("movemap_w_22.png"), tr("move map west"), Qt::Key_4, this, "view_move_w");
   connect(viewMoveW, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapW()));
+
   viewMoveE = new QAction(getPixmap("movemap_e_22.png"), tr("move map east"), Qt::Key_6, this, "view_move_e");
   connect(viewMoveE, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapE()));
+
   viewMoveSW = new QAction(getPixmap("movemap_sw_22.png"), tr("move map south-west"), Qt::Key_1, this, "view_move_sw");
   connect(viewMoveSW, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapSW()));
+
   viewMoveS = new QAction(getPixmap("movemap_s_22.png"), tr("move map south"), Qt::Key_2, this, "view_move_s");
   connect(viewMoveS, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapS()));
+
   viewMoveSE = new QAction(getPixmap("movemap_se_22.png"), tr("move map south-east"), Qt::Key_3, this, "view_move_se");
   connect(viewMoveSE, SIGNAL(activated()), _globalMapMatrix, SLOT(slotMoveMapSE()));
 
@@ -522,7 +466,7 @@ void MainWindow::initMenuBar()
   view->insertItem(getPixmap("kde_move_16.png"), "Move map", viewMove);
 
   //----------------------------------------------------------------------------
-  // flight menu actions
+  // Flight menu actions
   //----------------------------------------------------------------------------
   flightEvaluationWindowAction = new QAction( getPixmap("kde_history_16.png"),
                                               tr("Show &Evaluation Window"), this );
@@ -543,30 +487,48 @@ void MainWindow::initMenuBar()
   connect( flightOptimizationOLCAction, SIGNAL(triggered()),
            this, SLOT(slotOptimizeFlightOLC()) );
 
-  flightDataType = new Q3PopupMenu( this );
+  // flight data type actions
+  altitudeAction = new QAction( tr("Altitude"), this );
+  altitudeAction->setCheckable( true );
+  altitudeAction->setData( 0 );
 
-  QStringList dataList;
-  dataList.append(tr("Altitude"));
-  dataList.append(tr("Cycling"));
-  dataList.append(tr("Speed"));
-  dataList.append(tr("Vario"));
-  dataList.append(tr("Solid"));
+  cyclingAction = new QAction( tr("Cycling"), this );
+  cyclingAction->setCheckable( true );
+  cyclingAction->setData( 1 );
 
-  for (int i = 0; i < 5; ++i)
-    {
-      flightDataType->insertItem(dataList[i], i);
-    }
+  speedAction = new QAction( tr("Speed"), this );
+  speedAction->setCheckable( true );
+  speedAction->setData( 2 );
 
-  connect(flightDataType, SIGNAL(activated(int)), this, SLOT(slotSelectFlightData(int)));
-  flightDataType->setItemChecked(_settings.readNumEntry("/Flight/DrawType", MapConfig::Altitude), true);
+  varioAction = new QAction( tr("Vario"), this );
+  varioAction->setCheckable( true );
+  varioAction->setData( 3 );
+
+  solidAction = new QAction( tr("Solid"), this );
+  solidAction->setCheckable( true );
+  solidAction->setData( 4 );
+
+  flightDataTypeGroupAction = new QActionGroup( this );
+  flightDataTypeGroupAction->addAction( altitudeAction );
+  flightDataTypeGroupAction->addAction( cyclingAction );
+  flightDataTypeGroupAction->addAction( speedAction );
+  flightDataTypeGroupAction->addAction( varioAction );
+  flightDataTypeGroupAction->addAction( solidAction );
+
+  slotSelectFlightData( _settings.value( "/Flight/DrawType",
+                                         MapConfig::Altitude).toInt() );
+
+  connect( flightDataTypeGroupAction, SIGNAL(triggered(QAction *)),
+           this, SLOT(slotFlightDataTypeGroupAction(QAction *)) );
 
   flightIgc3DAction = new QAction( getPixmap("kde_vectorgfx_16.png"),
-                             tr("View flight in 3D"), this );
+                                   tr("View flight in 3D"), this );
   flightIgc3DAction->setShortcut( Qt::CTRL + Qt::Key_R );
   flightIgc3DAction->setEnabled(true);
   connect( flightIgc3DAction, SIGNAL(triggered()),
            this, SLOT(slotFlightViewIgc3D()) );
 
+  // FIXME: icons is missing
   flightIgcOpenGLAction = new QAction( /*SmallIcon("openglgfx"),*/
                                       tr("View flight in 3D (OpenGL)"), this );
   flightIgcOpenGLAction->setEnabled(true);
@@ -624,15 +586,20 @@ void MainWindow::initMenuBar()
   connect(flightAnimateEndAction, SIGNAL(triggered()), map, SLOT(slotFlightEnd()));
 
   //----------------------------------------------------------------------------
-  // flight menu setup
+  // Flight menu creation
   //----------------------------------------------------------------------------
-
   QMenu *fm = menuBar()->addMenu( tr("F&light") );
   fm->addAction( flightEvaluationWindowAction );
   fm->addAction( flightOptimizationAction );
   fm->addAction( flightOptimizationOLCAction );
-  //FIXME: insertItem is qt3 code!
-  fm->insertItem(getPixmap("kde_idea_16.png"), tr("Show Flight Data"), flightDataType);
+
+  QMenu *fdtMenu = fm->addMenu( getPixmap("kde_idea_16.png"), tr("Show Flight Data") );
+  fdtMenu->addAction( altitudeAction );
+  fdtMenu->addAction( cyclingAction );
+  fdtMenu->addAction( speedAction );
+  fdtMenu->addAction( varioAction );
+  fdtMenu->addAction( solidAction );
+
   fm->addAction( flightIgc3DAction );
   fm->addAction( flightIgcOpenGLAction );
   fm->addSeparator();
@@ -654,19 +621,19 @@ void MainWindow::initMenuBar()
 
   // settings menu
 
-  settingsEvaluationWindow = new QAction(getPixmap("kde_history_16.png"), tr("Show &EvaluationWindow"), Qt::CTRL+Qt::Key_E, this, "toggle_evaluation_window");
+  settingsEvaluationWindow = new QAction(getPixmap("kde_history_16.png"), tr("Show &Evaluation Window"), Qt::CTRL+Qt::Key_E, this, "toggle_evaluation_window");
   settingsEvaluationWindow->setToggleAction(true);
   connect(settingsEvaluationWindow, SIGNAL(activated()), this, SLOT(slotToggleEvaluationWindow()));
 
 
 
-  settingsFlightData = new QAction(getPixmap("kde_view_detailed_16.png"), tr("Show Flight&data"), Qt::CTRL+Qt::Key_E, this, "toggle_data_view");
+  settingsFlightData = new QAction(getPixmap("kde_view_detailed_16.png"), tr("Show Flight &Data"), Qt::CTRL+Qt::Key_E, this, "toggle_data_view");
   settingsFlightData->setToggleAction(true);
   connect(settingsFlightData, SIGNAL(activated()), this, SLOT(slotToggleDataView()));
-  settingsHelpWindow = new QAction(getPixmap("kde_info_16.png"), tr("Show HelpWindow"), Qt::CTRL+Qt::Key_H, this, "toggle_help_window");
+  settingsHelpWindow = new QAction(getPixmap("kde_info_16.png"), tr("Show Help Window"), Qt::CTRL+Qt::Key_H, this, "toggle_help_window");
   settingsHelpWindow->setToggleAction(true);
   connect(settingsHelpWindow, SIGNAL(activated()), this, SLOT(slotToggleHelpWindow()));
-  settingsObjectTree = new QAction(getPixmap("kde_view_tree_16.png"), tr("Show KFLog&Browser"), Qt::CTRL+Qt::Key_B, this, "view_tree");
+  settingsObjectTree = new QAction(getPixmap("kde_view_tree_16.png"), tr("Show KFLog &Browser"), Qt::CTRL+Qt::Key_B, this, "view_tree");
   settingsObjectTree->setToggleAction(true);
   connect(settingsObjectTree, SIGNAL(activated()), this, SLOT(slotToggleObjectTreeDock()));
   settingsLegend = new QAction(getPixmap("kde_blend_16.png"), tr("Show Legend"), Qt::CTRL+Qt::Key_L, this, "toggle_legend");
@@ -1290,30 +1257,70 @@ void MainWindow::slotSavePixmap(QUrl url, int width, int height)
   map->slotSavePixmap(url, width, height);
 }
 
-void MainWindow::slotSelectFlightData(int id)
+void MainWindow::slotFlightDataTypeGroupAction( QAction *action )
 {
-  switch(id)
+  // Get index from action
+  int index = action->data().toInt();
+
+  qDebug() << " MainWindow::slotFlightDataTypeGroupAction: ID=" << index;
+
+  // Select indexed action
+  slotSelectFlightData( index );
+}
+
+void MainWindow::slotSelectFlightData( const int index )
+{
+  qDebug() << "MainWindow::slotSelectFlightData: index=" << index;
+  switch( index )
     {
       case MapConfig::Altitude:    // Altitude
+        altitudeAction->setChecked( true );
+        cyclingAction->setChecked( false );
+        speedAction->setChecked( false );
+        varioAction->setChecked( false );
+        solidAction->setChecked( false );
         emit flightDataTypeChanged(MapConfig::Altitude);
         break;
       case MapConfig::Cycling:     // Cycling
-        emit flightDataTypeChanged(MapConfig::Cycling);
+        altitudeAction->setChecked( false );
+        cyclingAction->setChecked( true );
+        speedAction->setChecked( false );
+        varioAction->setChecked( false );
+        solidAction->setChecked( false );
+       emit flightDataTypeChanged(MapConfig::Cycling);
         break;
       case MapConfig::Speed:       // Speed
+        altitudeAction->setChecked( false );
+        cyclingAction->setChecked( false );
+        speedAction->setChecked( true );
+        varioAction->setChecked( false );
+        solidAction->setChecked( false );
         emit flightDataTypeChanged(MapConfig::Speed);
         break;
       case MapConfig::Vario:       // Vario
+        altitudeAction->setChecked( false );
+        cyclingAction->setChecked( false );
+        speedAction->setChecked( false );
+        varioAction->setChecked( true );
+        solidAction->setChecked( false );
         emit flightDataTypeChanged(MapConfig::Vario);
         break;
       case MapConfig::Solid:       // Solid color
+        altitudeAction->setChecked( false );
+        cyclingAction->setChecked( false );
+        speedAction->setChecked( false );
+        varioAction->setChecked( false );
+        solidAction->setChecked( true );
         emit flightDataTypeChanged(MapConfig::Solid);
         break;
+
+      default:
+        qWarning() << "MainWindow::slotSelectFlightData: Unknown identifier"
+                   << index;
+        break;
     }
+
   map->slotRedrawFlight();
-  for(int i=0; i<5; i++)
-    flightDataType->setItemChecked(i, false);
-  flightDataType->setItemChecked(id, true);
 }
 
 void MainWindow::slotSetCurrentFile(const QString &fileName)
