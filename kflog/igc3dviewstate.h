@@ -15,7 +15,7 @@
 **
 ***********************************************************************/
 
-#ifndef IGC_3D_VIE_WSTATE_H
+#ifndef IGC_3D_VIEW_WSTATE_H
 #define IGC_3D_VIEW_STATE_H
 
 #include "igc3dviewstate.h"
