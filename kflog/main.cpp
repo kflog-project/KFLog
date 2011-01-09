@@ -166,14 +166,14 @@ int main(int argc, char **argv)
     splash.show();
     QCoreApplication::processEvents();
 
-    _mainWindow = new MainWindow();
+    _mainWindow = new MainWindow;
     _mainWindow->setVisible( true );
 
     splash.finish( _mainWindow );
   }
   else
     {
-      _mainWindow = new MainWindow();
+      _mainWindow = new MainWindow;
       _mainWindow->setVisible( true );
     }
 

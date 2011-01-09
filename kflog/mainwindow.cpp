@@ -66,7 +66,8 @@ MapConfig *_globalMapConfig = static_cast<MapConfig *> (0);
 Map *_globalMap = static_cast<Map *> (0);
 
 
-MainWindow::MainWindow() : Q3MainWindow(0, "KFLog main window")
+MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
+  QMainWindow( parent, flags )
 {
   qDebug() << "MainWindow()";
 
@@ -200,19 +201,19 @@ MainWindow::~MainWindow()
   delete viewMoveSW;
   delete viewMoveS;
   delete viewMoveSE;
-  delete flightEvaluationWindow;
+  delete flightEvaluationWindowAction;
   delete flightOptimization;
-  delete flightOptimizationOLC;
-  delete flightIgc3D;
-  delete flightIgcOpenGL;
-  delete flightAnimateStart;
-  delete flightAnimateStop;
-  delete flightAnimateNext;
-  delete flightAnimatePrev;
-  delete flightAnimate10Next;
-  delete flightAnimate10Prev;
-  delete flightAnimateHome;
-  delete flightAnimateEnd;
+  delete flightOptimizationOLCAction;
+  delete flightIgc3DAction;
+  delete flightIgcOpenGLAction;
+  delete flightAnimateStartAction;
+  delete flightAnimateStopAction;
+  delete flightAnimateNextAction;
+  delete flightAnimatePrevAction;
+  delete flightAnimate10NextAction;
+  delete flightAnimate10PrevAction;
+  delete flightAnimateHomeAction;
+  delete flightAnimateEndAction;
   delete settingsEvaluationWindow;
   delete settingsFlightData;
   delete settingsHelpWindow;
@@ -314,67 +315,76 @@ void MainWindow::initDockWindows()
   setCentralWidget(map);
   _globalMap = map;
 
-  dataViewDock = new Q3DockWindow(Q3DockWindow::InDock, this, "DataView QDockWindow");
-  dataViewDock->setResizeEnabled(true);
+  dataViewDock = new QDockWidget( tr("Flight Data"), this );
+  dataViewDock->setFloating( false );
   dataView = new DataView(dataViewDock);
   dataViewDock->setWidget(dataView);
-  moveDockWindow(dataViewDock, Qt::DockRight);
-  setAppropriate(dataViewDock, true);
-  dataViewDock->hide();
+  addDockWidget( Qt::RightDockWidgetArea, dataViewDock );
+  dataViewDock->setVisible(false);
 
-  evaluationWindowDock = new Q3DockWindow(Q3DockWindow::InDock, this, "EvaluationDialog QDockWindow");
+  qDebug() << "DataView Begin";
+  evaluationWindowDock = new QDockWidget( tr("Evaluation"), this );
+  evaluationWindowDock->setVisible(false);
+  evaluationWindowDock->setFloating( true );
   evaluationWindow = new EvaluationDialog(evaluationWindowDock);
   evaluationWindowDock->setWidget(evaluationWindow);
-  moveDockWindow(evaluationWindowDock, Qt::DockTornOff);
-  evaluationWindowDock->hide();
+  addDockWidget( Qt::AllDockWidgetAreas, evaluationWindowDock );
 
-  helpWindowDock = new Q3DockWindow(Q3DockWindow::InDock, this, "HelpWindow QDockWindow");
+  qDebug() << "DataView End";
+
+  helpWindowDock = new QDockWidget( tr("Help"), this );
+  helpWindowDock->setVisible(false);
+  helpWindowDock->setFloating( true );
   helpWindow = new HelpWindow(helpWindowDock);
   helpWindowDock->setWidget(helpWindow);
-  moveDockWindow(helpWindowDock, Qt::DockTornOff);
-  helpWindowDock->hide();
+  addDockWidget( Qt::AllDockWidgetAreas, helpWindowDock );
 
-  legendDock = new Q3DockWindow(Q3DockWindow::InDock, this, "TopoLegend QDockWindow");
+  legendDock = new QDockWidget( tr("Profile"), this );
+  legendDock->setFloating( false );
   legend = new TopoLegend(legendDock);
   legendDock->setWidget(legend);
-  moveDockWindow(legendDock, Qt::DockRight);
-  legendDock->hide();
+  addDockWidget( Qt::RightDockWidgetArea, legendDock );
+  legendDock->setVisible(false);
 
-  mapControlDock = new Q3DockWindow(Q3DockWindow::InDock, this, "MapControlView QDockWindow");
+  mapControlDock = new QDockWidget( tr("Map Control"), this );
+  mapControlDock->setFloating( false );
   mapControl = new MapControlView(mapControlDock);
   mapControlDock->setWidget(mapControl);
-  moveDockWindow(mapControlDock, Qt::DockBottom);
-  mapControlDock->hide();
+  addDockWidget( Qt::BottomDockWidgetArea, mapControlDock );
+  mapControlDock->setVisible(false);
 
-  objectTreeDock = new Q3DockWindow(Q3DockWindow::InDock, this, "ObjectTree QDockWindow");
+  objectTreeDock = new QDockWidget( tr("Loaded Objects"), this );
+  objectTreeDock->setFloating( false );
   objectTree = new ObjectTree(objectTreeDock);
   objectTreeDock->setWidget(objectTree);
-  moveDockWindow(objectTreeDock, Qt::DockBottom);
-  objectTreeDock->hide();
+  addDockWidget( Qt::BottomDockWidgetArea, objectTreeDock );
+  objectTreeDock->setVisible(false);
 
-  waypointsDock = new Q3DockWindow(Q3DockWindow::InDock, this, "Waypoint QDockWindow");
+  waypointsDock = new QDockWidget( tr("Waypoints"), this );
+  waypointsDock->setFloating( false );
   waypoints = new Waypoints(waypointsDock);
   waypointsDock->setWidget(waypoints);
-  moveDockWindow(waypointsDock, Qt::DockBottom);
-  waypointsDock->hide();
+  addDockWidget( Qt::BottomDockWidgetArea, waypointsDock );
+  waypointsDock->setVisible(false);
 
 //  connect(dataViewDock, SIGNAL(iMBeingClosed()), SLOT(slotHideDataViewDock()));
-  connect(dataViewDock, SIGNAL(placeChanged(Q3DockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
-//  connect(evaluationWindowDock, SIGNAL(iMBeingClosed()), SLOT(slotHideEvaluationWindowDock()));
-  connect(evaluationWindowDock, SIGNAL(placeChanged(Q3DockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
-//  connect(helpWindowDock, SIGNAL(iMBeingClosed()), SLOT(slotHideHelpWindowDock()));
-  connect(helpWindowDock, SIGNAL(placeChanged(Q3DockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
-//  connect(legendDock, SIGNAL(iMBeingClosed()), SLOT(slotHideLegendDock()));
-  connect(legendDock, SIGNAL(placeChanged(Q3DockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
-//  connect(mapViewDock, SIGNAL(iMBeingClosed()), SLOT(slotHideMapViewDock()));
-//  connect(mapViewDock, SIGNAL(placeChanged(QDockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
-//  connect(mapControlDock, SIGNAL(iMBeingClosed()), SLOT(slotHideMapControlDock()));
-  connect(mapControlDock, SIGNAL(placeChanged(Q3DockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
-//  connect(objectTreeDock, SIGNAL(iMBeingClosed()), SLOT(slotHideObjectTreeDock()));
-  connect(objectTreeDock, SIGNAL(placeChanged(Q3DockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
-//  connect(waypointsDock, SIGNAL(iMBeingClosed()), SLOT(slotHideWaypointsDock()));
-  connect(waypointsDock, SIGNAL(placeChanged(Q3DockWindow::Place)), SLOT(slotCheckDockWidgetStatus()));
+  connect(dataViewDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), SLOT(slotCheckDockWidgetStatus()));
 
+  connect(evaluationWindowDock, SIGNAL(visibilityChanged(bool)), SLOT(slotEvaluationWindowVisibilityChanged(bool)));
+  connect(evaluationWindowDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), SLOT(slotCheckDockWidgetStatus()));
+
+//  connect(helpWindowDock, SIGNAL(iMBeingClosed()), SLOT(slotHideHelpWindowDock()));
+  connect(helpWindowDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), SLOT(slotCheckDockWidgetStatus()));
+//  connect(legendDock, SIGNAL(iMBeingClosed()), SLOT(slotHideLegendDock()));
+  connect(legendDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), SLOT(slotCheckDockWidgetStatus()));
+//  connect(mapViewDock, SIGNAL(iMBeingClosed()), SLOT(slotHideMapViewDock()));
+//  connect(mapViewDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), SLOT(slotCheckDockWidgetStatus()));
+//  connect(mapControlDock, SIGNAL(iMBeingClosed()), SLOT(slotHideMapControlDock()));
+  connect(mapControlDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), SLOT(slotCheckDockWidgetStatus()));
+//  connect(objectTreeDock, SIGNAL(iMBeingClosed()), SLOT(slotHideObjectTreeDock()));
+  connect(objectTreeDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), SLOT(slotCheckDockWidgetStatus()));
+//  connect(waypointsDock, SIGNAL(iMBeingClosed()), SLOT(slotHideWaypointsDock()));
+  connect(waypointsDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), SLOT(slotCheckDockWidgetStatus()));
 }
 
 void MainWindow::initMenuBar()
@@ -382,17 +392,21 @@ void MainWindow::initMenuBar()
   // File menu
   fileNewWaypoint = new QAction(getPixmap("waypoint_16.png"), tr("New &Waypoint"), 0, this, "file_new_waypoint");
   connect(fileNewWaypoint, SIGNAL(activated()), waypoints, SLOT(slotNewWaypoint()));
+
   fileNewTask = new QAction(getPixmap("task_16.png"), tr("New &Task"), Qt::CTRL+Qt::Key_N, this, "file_new_task");
   connect(fileNewTask, SIGNAL(activated()), _globalMapContents, SLOT(slotNewTask()));
+
   fileNewFlightGroup = new QAction(tr("New &Flight group"), 0, this, "file_new_flight_group");
   connect(fileNewFlightGroup, SIGNAL(activated()), _globalMapContents, SLOT(slotNewFlightGroup()));
   Q3PopupMenu * fileNew = new Q3PopupMenu( this );
+
   fileNewWaypoint->addTo( fileNew );
   fileNewTask->addTo( fileNew );
   fileNewFlightGroup->addTo( fileNew );
 
   fileOpenFlight = new QAction(getPixmap("kde_fileopen_16.png"), tr("&Open Flight"), Qt::CTRL+Qt::Key_O, this, "file_open_flight");
   connect(fileOpenFlight, SIGNAL(activated()), this, SLOT(slotOpenFile()));
+
   fileOpenTask = new QAction(getPixmap("kde_fileopen_16.png"), tr("Open &Task"), Qt::CTRL+Qt::Key_T, this, "file_open_task");
   connect(fileOpenTask, SIGNAL(activated()), this, SLOT(slotOpenTask()));
 
@@ -401,6 +415,7 @@ void MainWindow::initMenuBar()
   datalist = _settings.readListEntry("/GeneralOptions/RecentFiles");
   int size = std::min((int)datalist.size(), 5);
   QAction *recentFileActs[size];
+
   for (int i = 0; i < size; ++i) {
     recentFileActs[i] = new QAction(this);
     recentFileActs[i]->setToolTip(datalist[i]); // FIXME: in Qt4 setData must be used
@@ -414,8 +429,10 @@ void MainWindow::initMenuBar()
 
   fileSavePixmap = new QAction(getPixmap("kde_image_16.png"), tr("Export to PNG..."), 0, this, "file_export_pixmap");
   connect(fileSavePixmap, SIGNAL(activated()), map, SLOT(slotSavePixmap()));
+
   filePrint = new QAction(getPixmap("kde_fileprint_16.png"), tr("Print..."), Qt::CTRL+Qt::Key_P, this, "file_print");
   connect(filePrint, SIGNAL(activated()), this, SLOT(slotFilePrint()));
+
   filePrintFlight = new QAction(getPixmap("kde_fileprint_16.png"), tr("Print Flightdata"), 0, this, "file_print_flightdata");
   connect(filePrintFlight, SIGNAL(activated()), this, SLOT(slotFlightPrint()));
 
@@ -504,67 +521,129 @@ void MainWindow::initMenuBar()
   view->insertSeparator();
   view->insertItem(getPixmap("kde_move_16.png"), "Move map", viewMove);
 
-  // flight menu
+  //----------------------------------------------------------------------------
+  // flight menu actions
+  //----------------------------------------------------------------------------
+  flightEvaluationWindowAction = new QAction( getPixmap("kde_history_16.png"),
+                                              tr("Show &Evaluation Window"), this );
+  flightEvaluationWindowAction->setShortcut( Qt::CTRL + Qt::Key_E );
+  flightEvaluationWindowAction->setEnabled(true);
+  connect( flightEvaluationWindowAction, SIGNAL(triggered(bool)),
+           this, SLOT(slotToggleEvaluationWindow(bool)) );
 
-  flightEvaluationWindow = new QAction(getPixmap("kde_history_16.png"), tr("Show &EvaluationWindow"), Qt::CTRL+Qt::Key_E, this, "toggle_evaluation_window");
-  flightEvaluationWindow->setToggleAction(true);
-  connect(flightEvaluationWindow, SIGNAL(activated()), this, SLOT(slotToggleEvaluationWindow()));
-  flightOptimization = new QAction(getPixmap("kde_wizard_16.png"), tr("Optimize"), 0, this, "optimize_flight");
-  connect(flightOptimization, SIGNAL(activated()), this, SLOT(slotOptimizeFlight()));
-  flightOptimizationOLC = new QAction(getPixmap("kde_wizard_16.png"), tr("Optimize (OLC)"), 0, this, "optimize_flight_olc");
-  connect(flightOptimizationOLC, SIGNAL(activated()), this, SLOT(slotOptimizeFlightOLC()));
+  flightOptimizationAction = new QAction( getPixmap("kde_wizard_16.png"),
+                                          tr("Optimize"), this );
+  flightOptimizationAction->setEnabled(true);
+  connect( flightOptimizationAction, SIGNAL(triggered()),
+           this, SLOT(slotOptimizeFlight()) );
+
+  flightOptimizationOLCAction = new QAction( getPixmap("kde_wizard_16.png"),
+                                             tr("Optimize for OLC"), this );
+  flightOptimizationOLCAction->setEnabled(true);
+  connect( flightOptimizationOLCAction, SIGNAL(triggered()),
+           this, SLOT(slotOptimizeFlightOLC()) );
 
   flightDataType = new Q3PopupMenu( this );
+
   QStringList dataList;
   dataList.append(tr("Altitude"));
   dataList.append(tr("Cycling"));
   dataList.append(tr("Speed"));
   dataList.append(tr("Vario"));
   dataList.append(tr("Solid"));
+
   for (int i = 0; i < 5; ++i)
-    flightDataType->insertItem(dataList[i], i);
+    {
+      flightDataType->insertItem(dataList[i], i);
+    }
+
   connect(flightDataType, SIGNAL(activated(int)), this, SLOT(slotSelectFlightData(int)));
   flightDataType->setItemChecked(_settings.readNumEntry("/Flight/DrawType", MapConfig::Altitude), true);
 
-  flightIgc3D = new QAction(getPixmap("kde_vectorgfx_16.png"), tr("View flight in 3D"), Qt::CTRL+Qt::Key_R, this, "view_flight_3D");
-  connect(flightIgc3D, SIGNAL(activated()), this, SLOT(slotFlightViewIgc3D()));
-  flightIgcOpenGL = new QAction(/*SmallIcon("openglgfx"),*/ tr("View flight in 3D (OpenGL)"), 0, this, "view_flight_opengl");
-  connect(flightIgcOpenGL, SIGNAL(activated()), this, SLOT(slotFlightViewIgcOpenGL()));
+  flightIgc3DAction = new QAction( getPixmap("kde_vectorgfx_16.png"),
+                             tr("View flight in 3D"), this );
+  flightIgc3DAction->setShortcut( Qt::CTRL + Qt::Key_R );
+  flightIgc3DAction->setEnabled(true);
+  connect( flightIgc3DAction, SIGNAL(triggered()),
+           this, SLOT(slotFlightViewIgc3D()) );
 
-  flightAnimateStart = new QAction(getPixmap("kde_1rightarrow_16.png"), tr("&Start Flight Animation"), Qt::Key_F12, this, "start_animate");
-  connect(flightAnimateStart, SIGNAL(activated()), map, SLOT(slotAnimateFlightStart()));
-  flightAnimateStop = new QAction(getPixmap("kde_player_stop_16.png"), tr("Stop Flight &Animation"), Qt::Key_F11, this, "stop_animate");
-  connect(flightAnimateStop, SIGNAL(activated()), map, SLOT(slotAnimateFlightStop()));
-  flightAnimateNext = new QAction(getPixmap("kde_forward_16.png"), tr("Next Flight Point"), Qt::CTRL+Qt::Key_Up, this, "next_flight_point");
-  connect(flightAnimateNext, SIGNAL(activated()), map, SLOT(slotFlightNext()));
-  flightAnimatePrev = new QAction(getPixmap("kde_back_16.png"), tr("Prev Flight Point"), Qt::CTRL+Qt::Key_Down, this, "prev_flight_point");
-  connect(flightAnimatePrev, SIGNAL(activated()), map, SLOT(slotFlightPrev()));
-  flightAnimate10Next = new QAction(getPixmap("kde_2rightarrow_16.png"), tr("Step +10 Flight Points"), Qt::Key_PageUp, this, "next_step_flight_point");
-  connect(flightAnimate10Next, SIGNAL(activated()), map, SLOT(slotFlightStepNext()));
-  flightAnimate10Prev = new QAction(getPixmap("kde_2leftarrow_16.png"),  tr("Step -10 Flight Points"), Qt::Key_PageDown, this, "prev_step_flight_point");
-  connect(flightAnimate10Prev, SIGNAL(activated()), map, SLOT(slotFlightStepPrev()));
-  flightAnimateHome = new QAction(getPixmap("kde_start_16.png"), tr("First Flight Point"), Qt::Key_Home, this, "first_flight_point");
-  connect(flightAnimateHome, SIGNAL(activated()), map, SLOT(slotFlightHome()));
-  flightAnimateEnd = new QAction(getPixmap("kde_finish_16.png"), tr("Last Flight Point"), Qt::Key_End, this, "last_flight_point");
-  connect(flightAnimateEnd, SIGNAL(activated()), map, SLOT(slotFlightEnd()));
+  flightIgcOpenGLAction = new QAction( /*SmallIcon("openglgfx"),*/
+                                      tr("View flight in 3D (OpenGL)"), this );
+  flightIgcOpenGLAction->setEnabled(true);
+  connect( flightIgcOpenGLAction, SIGNAL(triggered()),
+           this, SLOT(slotFlightViewIgcOpenGL()) );
 
-  Q3PopupMenu * flight = new Q3PopupMenu( this );
-  menuBar()->insertItem( "F&light", flight );
-  flightEvaluationWindow->addTo(flight);
-  flightOptimization->addTo(flight);
-  flightOptimizationOLC->addTo(flight);
-  flight->insertItem(getPixmap("kde_idea_16.png"), tr("Show Flightdata"), flightDataType);
-  flightIgc3D->addTo(flight);
-  flightIgcOpenGL->addTo(flight);
-  flight->insertSeparator();
-  flightAnimateStart->addTo(flight);
-  flightAnimateStop->addTo(flight);
-  flightAnimateNext->addTo(flight);
-  flightAnimatePrev->addTo(flight);
-  flightAnimate10Next->addTo(flight);
-  flightAnimate10Prev->addTo(flight);
-  flightAnimateHome->addTo(flight);
-  flightAnimateEnd->addTo(flight);
+  flightAnimateStartAction = new QAction( getPixmap("kde_1rightarrow_16.png"),
+                                    tr("&Start Flight Animation"), this );
+  flightAnimateStartAction->setShortcut( Qt::Key_F12 );
+  flightAnimateStartAction->setEnabled(true);
+  connect( flightAnimateStartAction, SIGNAL(triggered()),
+           map, SLOT(slotAnimateFlightStart()));
+
+  flightAnimateStopAction = new QAction( getPixmap("kde_player_stop_16.png"),
+                                   tr("Stop Flight &Animation"), this );
+  flightAnimateStopAction->setShortcut( Qt::Key_F11 );
+  flightAnimateStopAction->setEnabled(true);
+  connect( flightAnimateStopAction, SIGNAL(triggered()),
+           map, SLOT(slotAnimateFlightStop()));
+
+  flightAnimateNextAction = new QAction( getPixmap("kde_forward_16.png"),
+                                   tr("Next Flight Point"), this );
+  flightAnimateNextAction->setShortcut( Qt::CTRL+Qt::Key_Up );
+  flightAnimateNextAction->setEnabled(true);
+  connect(flightAnimateNextAction, SIGNAL(triggered()), map, SLOT(slotFlightNext()));
+
+  flightAnimatePrevAction = new QAction( getPixmap("kde_back_16.png"),
+                      tr("Prev Flight Point"), this );
+  flightAnimatePrevAction->setShortcut( Qt::CTRL+Qt::Key_Down );
+  flightAnimatePrevAction->setEnabled(true);
+  connect(flightAnimatePrevAction, SIGNAL(triggered()), map, SLOT(slotFlightPrev()));
+
+  flightAnimate10NextAction = new QAction( getPixmap("kde_2rightarrow_16.png"),
+                                    tr("Step +10 Flight Points"), this );
+  flightAnimate10NextAction->setShortcut( Qt::Key_PageUp );
+  flightAnimate10NextAction->setEnabled(true);
+  connect(flightAnimate10NextAction, SIGNAL(triggered()), map, SLOT(slotFlightStepNext()));
+
+  flightAnimate10PrevAction = new QAction( getPixmap("kde_2leftarrow_16.png"),
+                                    tr("Step -10 Flight Points"), this);
+  flightAnimate10PrevAction->setShortcut( Qt::Key_PageDown );
+  flightAnimate10PrevAction->setEnabled(true);
+  connect(flightAnimate10PrevAction, SIGNAL(triggered()), map, SLOT(slotFlightStepPrev()));
+
+  flightAnimateHomeAction = new QAction( getPixmap("kde_start_16.png"),
+                                   tr("First Flight Point"), this );
+  flightAnimateHomeAction->setShortcut( Qt::Key_Home );
+  flightAnimateHomeAction->setEnabled(true);
+  connect(flightAnimateHomeAction, SIGNAL(triggered()), map, SLOT(slotFlightHome()));
+
+  flightAnimateEndAction = new QAction( getPixmap("kde_finish_16.png"),
+                                  tr("Last Flight Point"), this );
+  flightAnimateEndAction->setShortcut( Qt::Key_End );
+  flightAnimateEndAction->setEnabled(true);
+  connect(flightAnimateEndAction, SIGNAL(triggered()), map, SLOT(slotFlightEnd()));
+
+  //----------------------------------------------------------------------------
+  // flight menu setup
+  //----------------------------------------------------------------------------
+
+  QMenu *fm = menuBar()->addMenu( tr("F&light") );
+  fm->addAction( flightEvaluationWindowAction );
+  fm->addAction( flightOptimizationAction );
+  fm->addAction( flightOptimizationOLCAction );
+  //FIXME: insertItem is qt3 code!
+  fm->insertItem(getPixmap("kde_idea_16.png"), tr("Show Flight Data"), flightDataType);
+  fm->addAction( flightIgc3DAction );
+  fm->addAction( flightIgcOpenGLAction );
+  fm->addSeparator();
+  fm->addAction( flightAnimateStartAction );
+  fm->addAction( flightAnimateStopAction );
+  fm->addAction( flightAnimateNextAction );
+  fm->addAction( flightAnimatePrevAction );
+  fm->addAction( flightAnimate10NextAction );
+  fm->addAction( flightAnimate10PrevAction );
+  fm->addAction( flightAnimateHomeAction );
+  fm->addAction( flightAnimateEndAction );
 
   // window menu
 
@@ -578,6 +657,9 @@ void MainWindow::initMenuBar()
   settingsEvaluationWindow = new QAction(getPixmap("kde_history_16.png"), tr("Show &EvaluationWindow"), Qt::CTRL+Qt::Key_E, this, "toggle_evaluation_window");
   settingsEvaluationWindow->setToggleAction(true);
   connect(settingsEvaluationWindow, SIGNAL(activated()), this, SLOT(slotToggleEvaluationWindow()));
+
+
+
   settingsFlightData = new QAction(getPixmap("kde_view_detailed_16.png"), tr("Show Flight&data"), Qt::CTRL+Qt::Key_E, this, "toggle_data_view");
   settingsFlightData->setToggleAction(true);
   connect(settingsFlightData, SIGNAL(activated()), this, SLOT(slotToggleDataView()));
@@ -626,15 +708,19 @@ void MainWindow::initMenuBar()
 
   // help menu
 
-  Q3PopupMenu * help = new Q3PopupMenu( this );
-  menuBar()->insertItem( "&Help", help );
+  QMenu *help = menuBar()->addMenu( tr("&Help") );
+
+  help->addAction( getPixmap( "kde_contexthelp_16.png"),
+                              tr("What's This?"),
+                              this,
+                              SLOT(slotWhatsThis()), Qt::CTRL + Qt::Key_F1 );
+
   //FIXME: link to manual must be added
-  help->insertItem(getPixmap("kde_contexthelp_16.png"), tr("What's This?"), this, SLOT(slotWhatsThis()), Qt::CTRL+Qt::Key_F1);
   //FIXME: dialog to swith application language must be added
 //  help->insertItem(getPixmap("kde_idea_16.png"), tr("Tip of the day") );//, this, SLOT(slotTipOfDay()));
 //  help->insertItem(getPixmap("kflog_16.png"), tr("About KFLog") );//, this, SLOT(slotShowAbout()));
 
-  menuBar()->insertItem("Dock Windows", createDockWindowMenu());
+  // FIXME: menuBar()->insertItem("Dock Windows", createDockWindowMenu());
 }
 
 void MainWindow::initStatusBar()
@@ -684,7 +770,6 @@ void MainWindow::initStatusBar()
   statusSpeedL->setAlignment( Qt::AlignRight | Qt::AlignVCenter );
 
   statusLatL = new QLabel(statusBar(), "lat_label_status_bar");
-  statusLatL->setFixedWidth( 110 );
   statusLatL->setFixedHeight( statusLabel->sizeHint().height() );
   statusLatL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
   statusLatL->setMargin(0);
@@ -692,7 +777,6 @@ void MainWindow::initStatusBar()
   statusLatL->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
 
   statusLonL = new QLabel(statusBar(), "lon_label_status_bar");
-  statusLonL->setFixedWidth( 110 );
   statusLonL->setFixedHeight( statusLabel->sizeHint().height() );
   statusLonL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
   statusLonL->setMargin(0);
@@ -734,19 +818,20 @@ void MainWindow::initTaskTypes()
 
 void MainWindow::initToolBar()
 {
-  toolBar = new Q3ToolBar(this, "main toolbar");
-  fileOpenFlight->addTo(toolBar);
+  toolBar = addToolBar( tr("Toolbar") );
+
+  toolBar->addAction( fileOpenFlight );
   toolBar->addSeparator();
-  viewZoom->addTo(toolBar);
-  viewZoomIn->addTo(toolBar);
-  viewZoomOut->addTo(toolBar);
-  viewRedraw->addTo(toolBar);
+  toolBar->addAction( viewZoom );
+  toolBar->addAction( viewZoomIn );
+  toolBar->addAction( viewZoomOut );
+  toolBar->addAction( viewRedraw );
   toolBar->addSeparator();
-  viewCenterTask->addTo(toolBar);
-  viewCenterFlight->addTo(toolBar);
-  viewCenterHomesite->addTo(toolBar);
+  toolBar->addAction( viewCenterTask );
+  toolBar->addAction( viewCenterFlight );
+  toolBar->addAction( viewCenterHomesite );
   toolBar->addSeparator();
-  flightEvaluationWindow->addTo(toolBar);
+  toolBar->addAction( flightEvaluationWindowAction );
 }
 
 void MainWindow::initWaypointTypes()
@@ -790,11 +875,11 @@ void MainWindow::initWaypointTypes()
 void MainWindow::readOptions()
 {
   bool bViewToolbar = _settings.readBoolEntry("/GeneralOptions/ShowToolbar", true);
-  if(toolBar->isShown()!=bViewToolbar)
+  if(toolBar->isVisible()!=bViewToolbar)
     slotToggleToolBar();
 
   bool bViewStatusbar = _settings.readBoolEntry("/GeneralOptions/ShowStatusbar", true);
-  if(statusBar()->isShown()!=bViewStatusbar)
+  if(statusBar()->isVisible()!=bViewStatusbar)
     slotToggleStatusBar();
 
   // bar position settings
@@ -825,8 +910,8 @@ void MainWindow::saveOptions()
 {
   _settings.setValue("/GeneralOptions/GeometryWidth", size().width());
   _settings.setValue("/GeneralOptions/GeometryHeight", size().height());
-  _settings.setValue("/GeneralOptions/ShowToolbar", toolBar->isShown());
-  _settings.setValue("/GeneralOptions/ShowStatusbar", statusBar()->isShown());
+  _settings.setValue("/GeneralOptions/ShowToolbar", toolBar->isVisible());
+  _settings.setValue("/GeneralOptions/ShowStatusbar", statusBar()->isVisible());
 
   qDebug("saving options...");
 
@@ -850,14 +935,25 @@ void MainWindow::slotCenterTo()
 
   connect(center, SIGNAL(centerTo(int,int)), _globalMapMatrix, SLOT(slotCenterTo(int, int)));
 
-  center->show();
+  center->setVisible(true);
 }
 
 void MainWindow::slotFlightViewIgc3D()
 {
-  Igc3DDialog * igc3d = new Igc3DDialog(this);
+  flightIgc3DAction->setEnabled(false);
 
-  connect(_globalMapContents, SIGNAL(currentFlightChanged()), igc3d, SLOT(slotShowFlightData()));
+  Igc3DDialog *igc3d = new Igc3DDialog(this);
+
+  connect( _globalMapContents, SIGNAL(currentFlightChanged()),
+           igc3d, SLOT(slotShowFlightData()) );
+
+  connect( igc3d, SIGNAL(accepted()), this, SLOT(slotFlightViewIgc3DClosed()) );
+  connect( igc3d, SIGNAL(rejected()), this, SLOT(slotFlightViewIgc3DClosed()) );
+}
+
+void MainWindow::slotFlightViewIgc3DClosed()
+{
+  flightIgc3DAction->setEnabled(true);
 }
 
 void MainWindow::slotFlightViewIgcOpenGL()
@@ -870,7 +966,8 @@ void MainWindow::slotFlightViewIgcOpenGL()
       }
 
   char *error;
-  qWarning("KFLogApp::slotFlightViewIgcOpenGL()");
+
+  qDebug() << "KFLogApp::slotFlightViewIgcOpenGL()";
 
   void* libHandle = dlopen("libopengl_igc.so", RTLD_NOW);
   CHECK_ERROR_EXIT
@@ -904,18 +1001,18 @@ void MainWindow::slotModifyMenu()
             viewCenterTask->setEnabled(true);
             viewCenterFlight->setEnabled(true);
 //            flightEvaluation->setEnabled(true);
-            flightOptimization->setEnabled(true);
-            flightOptimizationOLC->setEnabled(true);
-            flightIgc3D->setEnabled(true);
-            flightIgcOpenGL->setEnabled(true);
-            flightAnimateStart->setEnabled(true);
-            flightAnimateStop->setEnabled(true);
-            flightAnimateNext->setEnabled(true);
-            flightAnimatePrev->setEnabled(true);
-            flightAnimate10Next->setEnabled(true);
-            flightAnimate10Prev->setEnabled(true);
-            flightAnimateHome->setEnabled(true);
-            flightAnimateEnd->setEnabled(true);
+            flightOptimizationAction->setEnabled(true);
+            flightOptimizationOLCAction->setEnabled(true);
+            flightIgc3DAction->setEnabled(true);
+            flightIgcOpenGLAction->setEnabled(true);
+            flightAnimateStartAction->setEnabled(true);
+            flightAnimateStopAction->setEnabled(true);
+            flightAnimateNextAction->setEnabled(true);
+            flightAnimatePrevAction->setEnabled(true);
+            flightAnimate10NextAction->setEnabled(true);
+            flightAnimate10PrevAction->setEnabled(true);
+            flightAnimateHomeAction->setEnabled(true);
+            flightAnimateEndAction->setEnabled(true);
             windowMenu->setEnabled(true);
             break;
 
@@ -925,18 +1022,18 @@ void MainWindow::slotModifyMenu()
             viewCenterTask->setEnabled(true);
             viewCenterFlight->setEnabled(false);
 //            flightEvaluation->setEnabled(false);
-            flightOptimization->setEnabled(false);
-            flightOptimizationOLC->setEnabled(false);
-            flightIgc3D->setEnabled(false);
-            flightIgcOpenGL->setEnabled(false);
-            flightAnimateStart->setEnabled(false);
-            flightAnimateStop->setEnabled(false);
-            flightAnimateNext->setEnabled(false);
-            flightAnimatePrev->setEnabled(false);
-            flightAnimate10Next->setEnabled(false);
-            flightAnimate10Prev->setEnabled(false);
-            flightAnimateHome->setEnabled(false);
-            flightAnimateEnd->setEnabled(false);
+            flightOptimizationAction->setEnabled(false);
+            flightOptimizationOLCAction->setEnabled(false);
+            flightIgc3DAction->setEnabled(false);
+            flightIgcOpenGLAction->setEnabled(false);
+            flightAnimateStartAction->setEnabled(false);
+            flightAnimateStopAction->setEnabled(false);
+            flightAnimateNextAction->setEnabled(false);
+            flightAnimatePrevAction->setEnabled(false);
+            flightAnimate10NextAction->setEnabled(false);
+            flightAnimate10PrevAction->setEnabled(false);
+            flightAnimateHomeAction->setEnabled(false);
+            flightAnimateEndAction->setEnabled(false);
             windowMenu->setEnabled(true);
             break;
 
@@ -946,18 +1043,18 @@ void MainWindow::slotModifyMenu()
             viewCenterTask->setEnabled(true);
             viewCenterFlight->setEnabled(true);
 //            flightEvaluation->setEnabled(true);
-            flightOptimization->setEnabled(true);
-            flightOptimizationOLC->setEnabled(true);
-            flightIgc3D->setEnabled(true);
-            flightIgcOpenGL->setEnabled(true);
-            flightAnimateStart->setEnabled(true);
-            flightAnimateStop->setEnabled(true);
-            flightAnimateNext->setEnabled(true);
-            flightAnimatePrev->setEnabled(true);
-            flightAnimate10Next->setEnabled(true);
-            flightAnimate10Prev->setEnabled(true);
-            flightAnimateHome->setEnabled(true);
-            flightAnimateEnd->setEnabled(true);
+            flightOptimizationAction->setEnabled(true);
+            flightOptimizationOLCAction->setEnabled(true);
+            flightIgc3DAction->setEnabled(true);
+            flightIgcOpenGLAction->setEnabled(true);
+            flightAnimateStartAction->setEnabled(true);
+            flightAnimateStopAction->setEnabled(true);
+            flightAnimateNextAction->setEnabled(true);
+            flightAnimatePrevAction->setEnabled(true);
+            flightAnimate10NextAction->setEnabled(true);
+            flightAnimate10PrevAction->setEnabled(true);
+            flightAnimateHomeAction->setEnabled(true);
+            flightAnimateEndAction->setEnabled(true);
             windowMenu->setEnabled(true);
             break;
 
@@ -972,18 +1069,18 @@ void MainWindow::slotModifyMenu()
       viewCenterTask->setEnabled(false);
       viewCenterFlight->setEnabled(false);
 //      flightEvaluation->setEnabled(false);
-      flightOptimization->setEnabled(false);
-      flightOptimizationOLC->setEnabled(false);
-      flightIgc3D->setEnabled(false);
-      flightIgcOpenGL->setEnabled(false);
-      flightAnimateStart->setEnabled(false);
-      flightAnimateStop->setEnabled(false);
-      flightAnimateNext->setEnabled(false);
-      flightAnimatePrev->setEnabled(false);
-      flightAnimate10Next->setEnabled(false);
-      flightAnimate10Prev->setEnabled(false);
-      flightAnimateHome->setEnabled(false);
-      flightAnimateEnd->setEnabled(false);
+      flightOptimizationAction->setEnabled(false);
+      flightOptimizationOLCAction->setEnabled(false);
+      flightIgc3DAction->setEnabled(false);
+      flightIgcOpenGLAction->setEnabled(false);
+      flightAnimateStartAction->setEnabled(false);
+      flightAnimateStopAction->setEnabled(false);
+      flightAnimateNextAction->setEnabled(false);
+      flightAnimatePrevAction->setEnabled(false);
+      flightAnimate10NextAction->setEnabled(false);
+      flightAnimate10PrevAction->setEnabled(false);
+      flightAnimateHomeAction->setEnabled(false);
+      flightAnimateEndAction->setEnabled(false);
       windowMenu->setEnabled(false);
   }
 }
@@ -1152,13 +1249,13 @@ void MainWindow::slotOpenRecorderDialog()
 
 void MainWindow::slotOptimizeFlight()
 {
-  Flight *f = (Flight *)_globalMapContents->getFlight();
+  Flight *flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
-  if(f && f->getObjectType() == BaseMapElement::Flight)
+  if( flight != 0 && flight->getObjectType() == BaseMapElement::Flight )
     {
-      if(f->optimizeTask())
+      if( flight->optimizeTask() )
         {
-          // Okay, update flightdata and redraw map
+          // Okay, update flight data and redraw the map
           dataView->setFlightData();
           map->slotRedrawFlight();
           objectTree->slotFlightChanged();
@@ -1168,17 +1265,18 @@ void MainWindow::slotOptimizeFlight()
 
 void MainWindow::slotOptimizeFlightOLC()
 {
-  Flight *f = (Flight *)_globalMapContents->getFlight();
+  Flight *flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
-  if(f && f->getObjectType() == BaseMapElement::Flight){
-      if(f->optimizeTaskOLC(map))
+  if( flight != 0 && flight->getObjectType() == BaseMapElement::Flight )
+    {
+      if( flight->optimizeTaskOLC(map) )
         {
-          // Okay, update flightdata and redraw map
+          // Okay, update flight data and redraw map
           dataView->setFlightData();
           map->slotRedrawFlight();
           objectTree->slotFlightChanged();
         }
-  }
+    }
 }
 
 /** Connects the dialogs addWaypoint signal to the waypoint object. */
@@ -1285,8 +1383,7 @@ void MainWindow::slotSetProgress(int value)
 
 void MainWindow::slotSetStatusMsg(const QString &text)
 {
-  statusBar()->clear();
-//  statusBar()->message(text);
+  statusBar()->clearMessage();
   statusLabel->setText(text);
 }
 
@@ -1298,20 +1395,17 @@ void MainWindow::slotSetWaypointCatalog(QString catalog)
 
 void MainWindow::slotCheckDockWidgetStatus()
 {
-  // Here is still a bug. The toggle status is invalid, when the widget is a non active
-  // TabWidget.
-  //          Florian
-  flightEvaluationWindow->setOn(evaluationWindowDock->isShown());
-  settingsEvaluationWindow->setOn(evaluationWindowDock->isShown());
-  settingsFlightData->setOn(dataViewDock->isShown());
-  settingsHelpWindow->setOn(helpWindowDock->isShown());
-  settingsObjectTree->setOn(objectTreeDock->isShown());
-  settingsLegend->setOn(legendDock->isShown());
-//  settingsMap->setOn(mapViewDock->isShown());
-  settingsMapControl->setOn(mapControlDock->isShown());
-  settingsStatusBar->setOn(statusBar()->isShown());
-  settingsToolBar->setOn(toolBar->isShown());
-  settingsWaypoints->setOn(waypointsDock->isShown());
+  flightEvaluationWindowAction->setDisabled(evaluationWindowDock->isVisible());
+  settingsEvaluationWindow->setDisabled(evaluationWindowDock->isVisible());
+  settingsFlightData->setDisabled(dataViewDock->isVisible());
+  settingsHelpWindow->setDisabled(helpWindowDock->isVisible());
+  settingsObjectTree->setDisabled(objectTreeDock->isVisible());
+  settingsLegend->setDisabled(legendDock->isVisible());
+//  settingsMap->setDisabled(mapViewDock->isVisible());
+  settingsMapControl->setDisabled(mapControlDock->isVisible());
+  settingsStatusBar->setDisabled(statusBar()->isVisible());
+  settingsToolBar->setDisabled(toolBar->isVisible());
+  settingsWaypoints->setDisabled(waypointsDock->isVisible());
 }
 
 void MainWindow::slotConfigureKFLog()
@@ -1371,29 +1465,31 @@ void MainWindow::slotFlightPrint()
 void MainWindow::slotToggleDataView()
 {
   if(dataViewDock->isVisible())
-    dataViewDock->hide();
+    dataViewDock->setVisible(false);
   else
-    dataViewDock->show();
+    dataViewDock->setVisible(true);
 
   slotCheckDockWidgetStatus();
 }
 
-void MainWindow::slotToggleEvaluationWindow()
+void MainWindow::slotToggleEvaluationWindow( bool flag )
 {
-  if(evaluationWindowDock->isVisible())
-    evaluationWindowDock->hide();
-  else
-    evaluationWindowDock->show();
-
+  evaluationWindowDock->setVisible( ! flag );
   slotCheckDockWidgetStatus();
+}
+
+void MainWindow::slotEvaluationWindowVisibilityChanged( bool flag )
+{
+  // Toggle access to menu action according to visibility of related widget.
+  flightEvaluationWindowAction->setEnabled( ! flag );
 }
 
 void MainWindow::slotToggleHelpWindow()
 {
   if(helpWindowDock->isVisible())
-    helpWindowDock->hide();
+    helpWindowDock->setVisible(false);
   else
-    helpWindowDock->show();
+    helpWindowDock->setVisible(true);
 
   slotCheckDockWidgetStatus();
 }
@@ -1401,9 +1497,9 @@ void MainWindow::slotToggleHelpWindow()
 void MainWindow::slotToggleLegendDock()
 {
   if(legendDock->isVisible())
-    legendDock->hide();
+    legendDock->setVisible(false);
   else
-    legendDock->show();
+    legendDock->setVisible(true);
 
   slotCheckDockWidgetStatus();
 }
@@ -1412,18 +1508,18 @@ void MainWindow::slotToggleLegendDock()
 //void KFLog::slotToggleMap()
 //{
 //  if(mapViewDock->isVisible())
-//    mapViewDock->hide();
+//    mapViewDock->setVisible(false);
 //  else
-//    mapViewDock->show();
+//    mapViewDock->setVisible(true);
 ////  slotCheckDockWidgetStatus();
 //}
 
 void MainWindow::slotToggleMapControl()
 {
   if(mapControlDock->isVisible())
-    mapControlDock->hide();
+    mapControlDock->setVisible(false);
   else
-    mapControlDock->show();
+    mapControlDock->setVisible(true);
 
   slotCheckDockWidgetStatus();
 }
@@ -1431,9 +1527,9 @@ void MainWindow::slotToggleMapControl()
 void MainWindow::slotToggleObjectTreeDock()
 {
   if(objectTreeDock->isVisible())
-    objectTreeDock->hide();
+    objectTreeDock->setVisible(false);
   else
-    objectTreeDock->show();
+    objectTreeDock->setVisible(true);
 
   slotCheckDockWidgetStatus();
 }
@@ -1442,10 +1538,10 @@ void MainWindow::slotToggleStatusBar()
 {
   slotSetStatusMsg(tr("Toggle the statusbar..."));
 
-  if(statusBar()->isShown())
-    statusBar()->hide();
+  if(statusBar()->isVisible())
+    statusBar()->setVisible(false);
   else
-    statusBar()->show();
+    statusBar()->setVisible(true);
 
   slotCheckDockWidgetStatus();
 
@@ -1456,10 +1552,14 @@ void MainWindow::slotToggleToolBar()
 {
   slotSetStatusMsg(tr("Toggling toolbar..."));
 
-  if(toolBar->isShown())
-      toolBar->hide();
+  if(toolBar->isVisible())
+    {
+      toolBar->setVisible(false);
+    }
   else
-      toolBar->show();
+    {
+      toolBar->setVisible(true);
+    }
 
   slotCheckDockWidgetStatus();
   slotSetStatusMsg(tr("Ready."));
@@ -1468,9 +1568,9 @@ void MainWindow::slotToggleToolBar()
 void MainWindow::slotToggleWaypointsDock()
 {
   if(waypointsDock->isVisible())
-    waypointsDock->hide();
+    waypointsDock->setVisible(false);
   else
-    waypointsDock->show();
+    waypointsDock->setVisible(true);
 
   slotCheckDockWidgetStatus();
 }

@@ -15,8 +15,8 @@
 **
 ***********************************************************************/
 
-#ifndef EVALUATIONDIALOG_H
-#define EVALUATIONDIALOG_H
+#ifndef EVALUATION_DIALOG_H
+#define EVALUATION_DIALOG_H
 
 #include <QComboBox>
 #include <QCheckBox>
@@ -41,7 +41,7 @@ class EvaluationDialog : public QWidget
 
  public:
   /** */
-  EvaluationDialog(QWidget *parent, const char name[]="");
+  EvaluationDialog( QWidget *parent );
   /** */
   ~EvaluationDialog();
   /**
@@ -60,6 +60,10 @@ class EvaluationDialog : public QWidget
   unsigned int getTaskStart(){return evalFrame->getTaskStart();}
   unsigned int getTaskEnd(){return evalFrame->getTaskEnd();}
 
+ protected:
+
+  virtual void hideEvent( QHideEvent * event );
+
  signals:
   /** */
   void showCursor(const QPoint& p1, const QPoint& p2);
@@ -70,10 +74,12 @@ class EvaluationDialog : public QWidget
   /** No descriptions */
   void showFlightPoint(const flightPoint* fp);
 
+  /** Window was hidden. */
+  void windowHidden();
+
  public slots:
   /** */
   void slotShowFlightData();
-  void hide();
   /** No descriptions */
   void slotShowFlightPoint(const QPoint&, const flightPoint&);
   /** No descriptions */

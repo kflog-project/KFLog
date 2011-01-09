@@ -15,29 +15,17 @@
 **
 ***********************************************************************/
 
-#ifndef IGC3DDIALOG_H
-#define IGC3DDIALOG_H
+#ifndef IGC_3D_DIALOG_H
+#define IGC_3D_DIALOG_H
 
 // Qt headers
-#include <qdialog.h>
-#include <qcombobox.h>
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <q3ptrlist.h>
-#include <q3scrollview.h>
-#include <qspinbox.h>
-#include <qslider.h>
-#include <q3textview.h>
-//Added by qt3to4:
+#include <QDialog>
 #include <QResizeEvent>
 
-// Appplication specific headers
 #include "flight.h"
 #include "igc3dview.h"
 
-class Flight;
 class Igc3DView;
-
 
 /**
  * @author Thomas Nielsen
@@ -55,17 +43,16 @@ class Igc3DDialog : public QDialog
   /** */
   ~Igc3DDialog();
 
- signals:
+  signals:
+
+  /** No descriptions */
+  void flightChanged();
 
  public slots:
   /**
    * shows the flight data
-	 */
+   */
   void slotShowFlightData();
-  /**
-   * Hide slot
-	 */
-  void hide();
 
  protected:
   /**
@@ -74,13 +61,9 @@ class Igc3DDialog : public QDialog
   virtual void resizeEvent(QResizeEvent* event);
 
  private:
-  /*
-   *
+  /**
    */
   Igc3DView* igc3dView;
-signals: // Signals
-  /** No descriptions */
-  void flightChanged();
 };
 
 #endif

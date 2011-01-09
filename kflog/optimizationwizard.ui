@@ -318,16 +318,6 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>ktextbrowser.h</header>
-  </customwidget>
-  <customwidget>
    <class>Q3GroupBox</class>
    <extends>QGroupBox</extends>
    <header>Qt3Support/Q3GroupBox</header>
@@ -344,6 +334,16 @@
    <extends>QDialog</extends>
    <header>q3wizard.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>ktextbrowser.h</header>
   </customwidget>
   <customwidget>
    <class>EvaluationDialog</class>

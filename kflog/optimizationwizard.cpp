@@ -175,7 +175,7 @@ OptimizationWizard::OptimizationWizard(QWidget* parent, Qt::WFlags fl)
 
     layout14 = new QVBoxLayout( 0, 0, 6, "layout14");
 
-    evaluation = new EvaluationDialog( page, "evaluation" );
+    evaluation = new EvaluationDialog( page );
     evaluation->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, evaluation->sizePolicy().hasHeightForWidth() ) );
     evaluation->setMinimumSize( QSize( 100, 100 ) );
     layout14->addWidget( evaluation );

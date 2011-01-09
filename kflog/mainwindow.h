@@ -39,7 +39,7 @@
 
 #include <QAction>
 #include <QLabel>
-#include <q3mainwindow.h>
+#include <QMainWindow>
 #include <QPixmap>
 #include <QProgressBar>
 #include <QUrl>
@@ -54,7 +54,7 @@
 #include "topolegend.h"
 #include "waypoints.h"
 
-class MainWindow : public Q3MainWindow
+class MainWindow : public QMainWindow
 {
   Q_OBJECT
 
@@ -64,7 +64,7 @@ class MainWindow : public Q3MainWindow
 
 public:
 
-  MainWindow();
+  MainWindow( QWidget * parent = 0, Qt::WindowFlags flags = 0 );
 
   virtual ~MainWindow();
 
@@ -114,6 +114,8 @@ public slots:
   void slotFlightPrint();
   /** */
   void slotFlightViewIgc3D();
+  /** Called, if window is closed by the user. */
+  void slotFlightViewIgc3DClosed();
   /** */
   void slotFlightViewIgcOpenGL();
   /** set menu items enabled/disabled */
@@ -197,7 +199,11 @@ public slots:
   /**
     * Shows or hides the Evaluation window
     */
-  void slotToggleEvaluationWindow();
+  void slotToggleEvaluationWindow( bool flag );
+  /**
+   * Called is the visibility of the Evaluation window was changed.
+   */
+  void slotEvaluationWindowVisibilityChanged( bool flag );
   /**
    * Shows or hides the Help Window.
    */
@@ -270,53 +276,53 @@ private:
    * Dockwidget to handle the dataview-widget.
    * The dataview-widget. Embedded in dataViewDock
    */
-  Q3DockWindow* dataViewDock;
+  QDockWidget* dataViewDock;
   DataView* dataView;
   /**
    * Dockwidget to handle the EvaluationWindow.
    * The evalutionWindow. Embedded in evaluationWindowDock
    */
-  Q3DockWindow* evaluationWindowDock;
+  QDockWidget* evaluationWindowDock;
   EvaluationDialog* evaluationWindow;
   /**
    * Dockwidget to handle the helpWindow.
    * The helpWindow. Embedded in helpWindowDock
    */
-  Q3DockWindow* helpWindowDock;
+  QDockWidget* helpWindowDock;
   HelpWindow* helpWindow;
   /**
    * Dockwidget to handle the legend-widget.
    *
    * @see TopoLegend
    */
-  Q3DockWindow* legendDock;
+  QDockWidget* legendDock;
   TopoLegend* legend;
   /**
    * Dockwidget to handle the map.
    * The map-widget.
    */
-  Q3DockWindow* mapViewDock;
+  QDockWidget* mapViewDock;
   Map* map;
   /**
    * Dockwidget to handle the mapcontrol.
    * The mapcontrol-widget. Embedded in mapControlDock
    */
-  Q3DockWindow* mapControlDock;
+  QDockWidget* mapControlDock;
   MapControlView* mapControl;
   /**
    * Dockwidget to handle the object view
    *
    * @see ObjectView
    */
-  Q3DockWindow* objectTreeDock;
+  QDockWidget* objectTreeDock;
   ObjectTree* objectTree;
   /**
    * Dockwidget to handle the waypoints-widget.
    * The waypoints-widget.
    */
-  Q3DockWindow* waypointsDock;
+  QDockWidget* waypointsDock;
   Waypoints* waypoints;
-  Q3ToolBar* toolBar;
+  QToolBar* toolBar;
   /**
    * Actions for the menu File
    */
@@ -354,20 +360,20 @@ private:
   /**
    * Actions for the menu Flight
    */
-  QAction* flightEvaluationWindow;
-  QAction* flightOptimization;
-  QAction* flightOptimizationOLC;
+  QAction* flightEvaluationWindowAction;
+  QAction* flightOptimizationAction;
+  QAction* flightOptimizationOLCAction;
   Q3PopupMenu* flightDataType;
-  QAction* flightIgc3D;
-  QAction* flightIgcOpenGL;
-  QAction* flightAnimateStart;
-  QAction* flightAnimateStop;
-  QAction* flightAnimateNext;
-  QAction* flightAnimatePrev;
-  QAction* flightAnimate10Next;
-  QAction* flightAnimate10Prev;
-  QAction* flightAnimateHome;
-  QAction* flightAnimateEnd;
+  QAction* flightIgc3DAction;
+  QAction* flightIgcOpenGLAction;
+  QAction* flightAnimateStartAction;
+  QAction* flightAnimateStopAction;
+  QAction* flightAnimateNextAction;
+  QAction* flightAnimatePrevAction;
+  QAction* flightAnimate10NextAction;
+  QAction* flightAnimate10PrevAction;
+  QAction* flightAnimateHomeAction;
+  QAction* flightAnimateEndAction;
   /**
    * Action for the menu Window
    */

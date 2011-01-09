@@ -8,6 +8,7 @@
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
 **                :  2008 by Constantijn Neeteson
+**                :  2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
@@ -16,15 +17,8 @@
 **
 ***********************************************************************/
 
-#include <QComboBox>
-#include <QLayout>
-#include <QList>
-#include <QPushButton>
-#include <QSettings>
-#include <QSpinBox>
-#include <QSplitter>
-#include <QStringList>
-#include <q3valuelist.h>
+#include <QtGui>
+#include <Qt3Support>
 
 #include "evaluationdialog.h"
 #include "evaluationframe.h"
@@ -33,11 +27,8 @@
 #include "mapcalc.h"
 #include "mapcontents.h"
 
-EvaluationDialog::EvaluationDialog(QWidget *parent, const char name[])
-  : QWidget(parent, name)
+EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
 {
-//  warning("EvaluationDialog::EvaluationDialog");
-
   setCaption(tr("Flightevaluation:"));
 
 //  if (staysOnTop)
@@ -126,6 +117,14 @@ EvaluationDialog::~EvaluationDialog()
 
   _settings.setValue("/Evaluation/DialogWidth", width());
   _settings.setValue("/Evaluation/DialogHeight", height());
+}
+
+void EvaluationDialog::hideEvent( QHideEvent* event )
+{
+  qDebug() << "EvaluationDialog::hideEvent";
+  Q_UNUSED(event)
+
+  emit windowHidden();
 }
 
 void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
@@ -400,12 +399,6 @@ Flight* EvaluationDialog::getFlight()
   else {
     return 0;
   }
-}
-
-void EvaluationDialog::hide()
-{
-qWarning("EvaluationDialog::hide()");
-//  this->EvaluationDialog::~EvaluationDialog();
 }
 
 /** No descriptions */

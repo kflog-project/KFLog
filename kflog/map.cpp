@@ -1822,6 +1822,7 @@ void Map::slotAnimateFlightStart()
   flightPoint cP;
 
   Flight *f = (Flight *)_globalMapContents->getFlight();
+
   if(f)
     {
             // save this one to speed up timeout code
