@@ -97,8 +97,6 @@ public:
 
 public slots:
 
-  /** Reimplemented from QWidget */
-  void closeEvent(QCloseEvent *e);
   /**
   * Display dialog to ask for coordinates and center map on that point.
   */
@@ -254,10 +252,16 @@ public slots:
 
 protected:
   /**
+   * Catch the close event from QWidget.
+   */
+  virtual void closeEvent( QCloseEvent *event );
+
+  /**
    * Writes the window-geometry, statusbar- and toolbar state and the
    * layout state of the doc kwidgets.
    */
   void saveOptions();
+
   /**
    * Reads the window-geometry, statusbar- and toolbar state and the
    * layout state of the dock widgets.

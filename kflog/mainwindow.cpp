@@ -217,13 +217,13 @@ QString MainWindow::getApplicationDataDirectory()
   return path;
 }
 
-void MainWindow::closeEvent(QCloseEvent *e)
+void MainWindow::closeEvent( QCloseEvent *event )
 {
   saveOptions();
   waypoints->saveChanges();
 
   _globalMapMatrix->writeMatrixOptions();
-  e->accept();
+  event->accept();
 }
 
 void MainWindow::initDockWindows()
@@ -875,20 +875,20 @@ void MainWindow::readOptions()
 
 void MainWindow::saveOptions()
 {
+  qDebug("saving options...");
+
   _settings.setValue("/GeneralOptions/GeometryWidth", size().width());
   _settings.setValue("/GeneralOptions/GeometryHeight", size().height());
   _settings.setValue("/GeneralOptions/ShowToolbar", toolBar->isVisible());
   _settings.setValue("/GeneralOptions/ShowStatusbar", statusBar()->isVisible());
 
-  qDebug("saving options...");
-
-  if (_settings.readNumEntry("/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed) ==
-      KFLogConfig::LastUsed && waypoints->getCurrentCatalog() != NULL)
+  if( _settings.value("/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed).toInt() ==
+      KFLogConfig::LastUsed && waypoints->getCurrentCatalog() != static_cast<WaypointCatalog *> (0) )
     {
       // Only write the path, if a waypoint-catalog is opened.
       // Otherwise KFLog crashes on a clean installation.
       //qDebug("saving catalog name");
-      _settings.setValue("/Waypoints/DefaultCatalogName", waypoints->getCurrentCatalog()->path);
+      _settings.setValue( "/Waypoints/DefaultCatalogName", waypoints->getCurrentCatalog()->path );
     }
 
 // FIXME: use QMainWindow::saveState in Qt4
@@ -898,10 +898,10 @@ void MainWindow::saveOptions()
 
 void MainWindow::slotCenterTo()
 {
-  CenterToDialog* center = new CenterToDialog(this, tr("center-to-dialog"));
+  CenterToDialog* center = new CenterToDialog( this );
 
-  connect(center, SIGNAL(centerTo(int,int)), _globalMapMatrix, SLOT(slotCenterTo(int, int)));
-
+  connect( center, SIGNAL(centerTo(int,int)), _globalMapMatrix,
+           SLOT(slotCenterTo(int, int)));
   center->setVisible(true);
 }
 
