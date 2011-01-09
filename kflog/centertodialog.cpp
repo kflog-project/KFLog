@@ -6,42 +6,40 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by Andree Somers
+**   Copyright (c):  2002 by Andree Somers, 2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
+#include <QtGui>
+
 #include "centertodialog.h"
 #include "mapcontents.h"
 
-#include <qapplication.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qwidget.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-
-CenterToDialog::CenterToDialog(QWidget *parent, const char *name )
-  : QDialog(parent, name)
+CenterToDialog::CenterToDialog( QWidget *parent ) : QDialog(parent)
 {
-  setCaption(tr("Center to ..."));
+  setObjectName( "CenterToDialog" );
+  setWindowTitle(tr("Center to ..."));
+  setAttribute( Qt::WA_DeleteOnClose );
 
-  Q3GridLayout* grid = new Q3GridLayout(this, 3, 3, 3);
+  QGridLayout* grid = new QGridLayout( this );
+  grid->setMargin( 3 );
 
-  grid->addWidget(new QLabel( tr("Latitude"), this, "captionLat"), 0, 0);
-  latE = new LatEdit(this, "latitude");
+  grid->addWidget(new QLabel( tr("Latitude"), this ), 0, 0);
+
+  latE = new LatEdit(this);
   latE->setMinimumWidth(150);
-  grid->addMultiCellWidget(latE, 0, 0, 1, 2);
+  grid->addWidget( latE, 0, 1, 1, 2 );
 
-  grid->addWidget(new QLabel( tr("Longitude"), this, "captionLong"), 1, 0);
-  longE = new LongEdit(this, "longitude");
+  grid->addWidget(new QLabel( tr("Longitude"), this ), 1, 0);
+
+  longE = new LongEdit(this);
   longE->setMinimumWidth(150);
-  grid->addMultiCellWidget(longE, 1, 1, 1, 2);
+  grid->addWidget( longE, 1, 1, 1, 2);
 
   QPushButton *okButton = new QPushButton( "&Ok", this );
   grid->addWidget(okButton, 2, 1);
@@ -58,13 +56,13 @@ CenterToDialog::CenterToDialog(QWidget *parent, const char *name )
 
 CenterToDialog::~CenterToDialog()
 {
-
 }
 
 void CenterToDialog::slotOk()
 {
-  hide();
-  qApp->processEvents();
-  emit centerTo(WGSPoint::degreeToNum(latE->text()), WGSPoint::degreeToNum(longE->text()));
+  setVisible( false );
+
+  emit centerTo( WGSPoint::degreeToNum(latE->text()),
+                 WGSPoint::degreeToNum(longE->text()));
   close();
 }

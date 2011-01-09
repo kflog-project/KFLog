@@ -6,66 +6,77 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by Andree Somers
+**   Copyright (c):  2002 by Andree Somers, 2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef CENTERTODIALOG_H
-#define CENTERTODIALOG_H
-
-#include <qdialog.h>
-
-#include "guicontrols/coordedit.h"
 /**
- * @short Dialog to enter the coordinates to center the map to
+ * \class CenterToDialog
+ *
+ * \short Dialog to enter the coordinates to center the map to
  *
  * This dialog is shown if the user wants to center the map on a specific
  * coordinate. The user can enter a latitude and a longitude, and after
  * pressing OK the map is asked to center on that coordinate.
  *
- * @author André Somers
- * @version $Id$
+ * \author AndrÃ© Somers, Axel Pauli
+ *
+ * \date 2002-2011
+ *
+ * \version $Id$
  */
+
+#ifndef CENTER_TO_DIALOG_H
+#define CENTER_TO_DIALOG_H
+
+#include <QDialog>
+
+#include "guicontrols/coordedit.h"
+
 class CenterToDialog : public QDialog
 {
   Q_OBJECT
 
-  public:
-    /**
-     * Constructor
-     */
-    CenterToDialog(QWidget* parent, const char* name);
-    /**
-     * Destructor
-     */
-    ~CenterToDialog();
+private:
 
-  signals:
-    /**
-     * Signal send when coordinate is selected
-     */
-    void centerTo(int lattitude, int longitude);
+  Q_DISABLE_COPY ( CenterToDialog )
 
-  private:
-    /**
-     * Entrybox for the latitude
-     */
-    LatEdit* latE;
-    /**
-     * Entrybox for the longitude
-     */
-    LongEdit* longE;
+public:
+  /**
+   * Constructor
+   */
+  CenterToDialog( QWidget* parent );
+  /**
+   * Destructor
+   */
+  virtual ~CenterToDialog();
 
-  private slots:
-    /**
-     * Received if the OK button is clicked
-     */
-    void slotOk();
+signals:
+  /**
+   * Signal send when coordinate is selected
+   */
+  void centerTo(int lattitude, int longitude);
+
+private:
+  /**
+   * Entry box for the latitude
+   */
+  LatEdit* latE;
+  /**
+   * Entry box for the longitude
+   */
+  LongEdit* longE;
+
+private slots:
+  /**
+   * Received if the OK button is clicked
+   */
+  void slotOk();
 };
 
 #endif
