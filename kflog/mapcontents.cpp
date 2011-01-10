@@ -116,15 +116,15 @@ MapContents::MapContents( QObject* object ) :
 
   // Setup a hash used as reverse mapping from isoLine value to array index to
   // speed up loading of ground and terrain files.
-  for ( int i = 0; i < ISO_LINE_LEVELS; i++ )
+  for( int i = 0; i < ISO_LINE_LEVELS; i++ )
     {
       isoHash.insert( isoLevels[i], i );
     }
 
-  _nextIsoLevel=10000;
-  _lastIsoLevel=-1;
-  _isoLevelReset=true;
-  _lastIsoEntry=0;
+  _nextIsoLevel = 10000;
+  _lastIsoLevel = -1;
+  _isoLevelReset = true;
+  _lastIsoEntry = 0;
 
   // Create all needed map directories.
   createMapDirectories();
@@ -1630,9 +1630,12 @@ void MapContents::slotNewFlightGroup()
     }
   delete fsd;
 }
+
 /** No descriptions */
-void MapContents::slotSetFlight(int id)
+void MapContents::slotSetFlight( QAction *action )
 {
+  int id = action->data().toInt();
+
   if (id >= 0 && id < flightList.count())
     {
       flightList.at(id);

@@ -228,7 +228,7 @@ void MainWindow::closeEvent( QCloseEvent *event )
 
 void MainWindow::initDockWindows()
 {
-  qDebug() << "MainWindow::initDockWindows()";
+  qDebug() << "MainWindow::initDockWindows() Begin";
 
   // First create the central widget. That is the Map.
   map = new Map(this);
@@ -305,89 +305,124 @@ void MainWindow::initDockWindows()
   connect(objectTreeDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), SLOT(slotCheckDockWidgetStatus()));
 //  connect(waypointsDock, SIGNAL(iMBeingClosed()), SLOT(slotHideWaypointsDock()));
   connect(waypointsDock, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), SLOT(slotCheckDockWidgetStatus()));
+
+  qDebug() << "MainWindow::initDockWindows() End";
 }
 
 void MainWindow::initMenuBar()
 {
+  qDebug() << "MainWindow::initMenuBar() Begin";
+
   //----------------------------------------------------------------------------
-  // Flie menu actions
+  // File menu actions
   //----------------------------------------------------------------------------
-  fileNewWaypoint = new QAction(getPixmap("waypoint_16.png"), tr("New &Waypoint"), 0, this, "file_new_waypoint");
-  connect(fileNewWaypoint, SIGNAL(activated()), waypoints, SLOT(slotNewWaypoint()));
+  fileNewWaypointAction = new QAction( getPixmap("waypoint_16.png"),
+                                       tr("New &Waypoint"), this );
+  fileNewWaypointAction->setEnabled(true);
+  connect( fileNewWaypointAction, SIGNAL(triggered()),
+           waypoints, SLOT(slotNewWaypoint()) );
 
-  fileNewTask = new QAction(getPixmap("task_16.png"), tr("New &Task"), Qt::CTRL+Qt::Key_N, this, "file_new_task");
-  connect(fileNewTask, SIGNAL(activated()), _globalMapContents, SLOT(slotNewTask()));
+  fileNewTaskAction = new QAction( getPixmap("task_16.png"), tr("New &Task"), this );
+  fileNewTaskAction->setShortcut( Qt::CTRL + Qt::Key_N );
+  fileNewTaskAction->setEnabled(true);
+  connect( fileNewTaskAction, SIGNAL(triggered()),
+           _globalMapContents, SLOT(slotNewTask()) );
 
-  fileNewFlightGroup = new QAction(tr("New &Flight group"), 0, this, "file_new_flight_group");
-  connect(fileNewFlightGroup, SIGNAL(activated()), _globalMapContents, SLOT(slotNewFlightGroup()));
-  Q3PopupMenu * fileNew = new Q3PopupMenu( this );
+  fileNewFlightGroupAction = new QAction( tr("New &Flight Group"), this );
+  fileNewFlightGroupAction->setEnabled(true);
+  connect( fileNewFlightGroupAction, SIGNAL(triggered()),
+           _globalMapContents, SLOT(slotNewFlightGroup()) );
 
-  fileNewWaypoint->addTo( fileNew );
-  fileNewTask->addTo( fileNew );
-  fileNewFlightGroup->addTo( fileNew );
+  fileOpenFlightAction = new QAction( getPixmap("kde_fileopen_16.png"),
+                                     tr("&Open Flight"), this );
+  fileOpenFlightAction->setShortcut( Qt::CTRL + Qt::Key_O );
+  fileOpenFlightAction->setEnabled(true);
+  connect( fileOpenFlightAction, SIGNAL(triggered()), this, SLOT(slotOpenFile()) );
 
-  fileOpenFlight = new QAction(getPixmap("kde_fileopen_16.png"), tr("&Open Flight"), Qt::CTRL+Qt::Key_O, this, "file_open_flight");
-  connect(fileOpenFlight, SIGNAL(activated()), this, SLOT(slotOpenFile()));
+  fileOpenTaskAction = new QAction( getPixmap("kde_fileopen_16.png"),
+                                    tr("Open &Task"), this );
+  fileOpenTaskAction->setShortcut( Qt::CTRL + Qt::Key_T );
+  fileOpenTaskAction->setEnabled(true);
+  connect( fileOpenTaskAction, SIGNAL(triggered()), this, SLOT(slotOpenTask()) );
 
-  fileOpenTask = new QAction(getPixmap("kde_fileopen_16.png"), tr("Open &Task"), Qt::CTRL+Qt::Key_T, this, "file_open_task");
-  connect(fileOpenTask, SIGNAL(activated()), this, SLOT(slotOpenTask()));
+  fileCloseAction = new QAction(getPixmap( "kde_cancel_16.png"),
+                                           tr("&Close Flight/Task"), this );
+  fileCloseAction->setShortcut( Qt::CTRL + Qt::Key_W );
+  fileCloseAction->setEnabled(true);
+  connect( fileCloseAction, SIGNAL(triggered()),
+           _globalMapContents, SLOT(closeFlight()) );
 
-  fileOpenRecent = new Q3PopupMenu( this );
-  QStringList datalist;
-  datalist = _settings.readListEntry("/GeneralOptions/RecentFiles");
-  int size = std::min((int)datalist.size(), 5);
-  QAction *recentFileActs[size];
+  fileSavePixmapAction = new QAction( getPixmap("kde_image_16.png"),
+                                      tr("Export to PNG..."), this );
+  fileSavePixmapAction->setEnabled(true);
+  connect( fileSavePixmapAction, SIGNAL(triggered()), map, SLOT(slotSavePixmap()) );
 
-  for (int i = 0; i < size; ++i)
+  filePrintAction = new QAction( getPixmap("kde_fileprint_16.png"),
+                                 tr("Print..."), this );
+  filePrintAction->setShortcut( Qt::CTRL + Qt::Key_P );
+  filePrintAction->setEnabled(true);
+  connect( filePrintAction, SIGNAL(triggered()), this, SLOT(slotFilePrint()) );
+
+  filePrintFlightAction = new QAction( getPixmap("kde_fileprint_16.png"),
+                                       tr("Print Flight Data"), this );
+  filePrintFlightAction->setEnabled(true);
+  connect( filePrintFlightAction, SIGNAL(triggered()), this, SLOT(slotFlightPrint()) );
+
+  fileOpenRecorderAction = new QAction( getPixmap("kde_connect_no_16.png"),
+                                        tr("Open Recorder"), this );
+  fileOpenRecorderAction->setEnabled(true);
+  connect( fileOpenRecorderAction, SIGNAL(triggered()),
+           this, SLOT(slotOpenRecorderDialog()) );
+
+  fileQuitAction = new QAction( getPixmap("kde_exit_16.png"),
+                                tr("&Quit"), this );
+  fileQuitAction->setShortcut( Qt::CTRL + Qt::Key_Q );
+  fileQuitAction->setEnabled(true);
+  connect(fileQuitAction, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()) );
+  connect( qApp, SIGNAL( lastWindowClosed() ), qApp, SLOT(quit()) );
+
+  //----------------------------------------------------------------------------
+  // File menu creation
+  //----------------------------------------------------------------------------
+  QMenu *fileMenu = menuBar()->addMenu( tr("&File") );
+  QMenu *fileNewMenu = fileMenu->addMenu( getPixmap("kde_filenew_16.png"), tr("&New") );
+  fileNewMenu->addAction( fileNewWaypointAction );
+  fileNewMenu->addAction( fileNewTaskAction );
+  fileNewMenu->addAction( fileNewFlightGroupAction );
+
+  fileMenu->addAction( fileOpenFlightAction );
+  fileMenu->addAction( fileOpenTaskAction );
+
+  // recent files submenu
+  fileOpenRecentMenu = fileMenu->addMenu( getPixmap( "kde_fileopen_16.png"),
+                                          tr("&Open recent files") );
+
+  QStringList datalist = _settings.value("/GeneralOptions/RecentFiles").toStringList();
+
+  int size = qMin( datalist.size(), 5 );
+
+  for( int i = 0; i < size; i++ )
     {
-      recentFileActs[i] = new QAction(this);
-      recentFileActs[i]->setToolTip(datalist[i]); // FIXME: in Qt4 setData must be used
-      recentFileActs[i]->setText(tr("%1 %2").arg(i + 1).arg(QFileInfo(
-          datalist[i]).fileName()));
-      connect(recentFileActs[i], SIGNAL(activated()),
-          SLOT(slotOpenRecentFile()));
-      recentFileActs[i]->addTo(fileOpenRecent);
+      QAction *action = new QAction( this );
+      action->setEnabled( true );
+      action->setToolTip( datalist[i] );
+      action->setText( QFileInfo( datalist[i]).fileName() );
+      fileOpenRecentMenu->addAction( action );
+
+      connect( action, SIGNAL(triggered(QAction *)),
+               this, SLOT(slotOpenRecentFile(QAction *)) );
     }
 
-  fileClose = new QAction(getPixmap("kde_cancel_16.png"), tr("&Close Flight/Task"), Qt::CTRL+Qt::Key_W, this, "file_close");
-  connect(fileClose, SIGNAL(activated()), _globalMapContents, SLOT(closeFlight()));
-
-  fileSavePixmap = new QAction(getPixmap("kde_image_16.png"), tr("Export to PNG..."), 0, this, "file_export_pixmap");
-  connect(fileSavePixmap, SIGNAL(activated()), map, SLOT(slotSavePixmap()));
-
-  filePrint = new QAction(getPixmap("kde_fileprint_16.png"), tr("Print..."), Qt::CTRL+Qt::Key_P, this, "file_print");
-  connect(filePrint, SIGNAL(activated()), this, SLOT(slotFilePrint()));
-
-  filePrintFlight = new QAction(getPixmap("kde_fileprint_16.png"), tr("Print Flightdata"), 0, this, "file_print_flightdata");
-  connect(filePrintFlight, SIGNAL(activated()), this, SLOT(slotFlightPrint()));
-
-  fileOpenRecorder = new QAction(getPixmap("kde_connect_no_16.png"), tr("Open Recorder"), 0, this, "file_open_recorder");
-  connect(fileOpenRecorder, SIGNAL(activated()), this, SLOT(slotOpenRecorderDialog()));
-
-  fileQuit = new QAction(getPixmap("kde_exit_16.png"), "&Quit", Qt::CTRL+Qt::Key_Q, this, "file_quit");
-  connect(fileQuit, SIGNAL(activated()), qApp, SLOT(closeAllWindows()));
-  connect( qApp, SIGNAL( lastWindowClosed() ), qApp, SLOT( quit() ) );
-
-
-  //QMenu *fileM = menuBar()->addMenu( tr("&File") );
-  //fileM->addAction( flightEvaluationWindowAction );
-
-  Q3PopupMenu * file = new Q3PopupMenu( this );
-  menuBar()->insertItem( "&File", file );
-  file->insertItem(getPixmap("kde_filenew_16.png"), "&New", fileNew);
-  fileOpenFlight->addTo( file );
-  fileOpenTask->addTo( file );
-  file->insertItem(getPixmap("kde_fileopen_16.png"), "&Open recent files", fileOpenRecent);
-  fileClose->addTo( file );
-  file->insertSeparator();
-  fileSavePixmap->addTo( file );
-  file->insertSeparator();
-  filePrint->addTo( file );
-  filePrintFlight->addTo( file );
-  file->insertSeparator();
-  fileOpenRecorder->addTo( file );
-  file->insertSeparator();
-  fileQuit->addTo( file );
+  fileMenu->addAction( fileCloseAction );
+  fileMenu->addSeparator();
+  fileMenu->addAction( fileSavePixmapAction );
+  fileMenu->addSeparator();
+  fileMenu->addAction( filePrintAction );
+  fileMenu->addAction( filePrintFlightAction );
+  fileMenu->addSeparator();
+  fileMenu->addAction( fileOpenRecorderAction );
+  fileMenu->addSeparator();
+  fileMenu->addAction( fileQuitAction );
 
   //----------------------------------------------------------------------------
   // View menu actions
@@ -515,8 +550,8 @@ void MainWindow::initMenuBar()
   flightDataTypeGroupAction->addAction( varioAction );
   flightDataTypeGroupAction->addAction( solidAction );
 
-  slotSelectFlightData( _settings.value( "/Flight/DrawType",
-                                         MapConfig::Altitude).toInt() );
+  selectFlightDataAction( _settings.value( "/Flight/DrawType",
+                                           MapConfig::Altitude).toInt() );
 
   connect( flightDataTypeGroupAction, SIGNAL(triggered(QAction *)),
            this, SLOT(slotFlightDataTypeGroupAction(QAction *)) );
@@ -528,9 +563,8 @@ void MainWindow::initMenuBar()
   connect( flightIgc3DAction, SIGNAL(triggered()),
            this, SLOT(slotFlightViewIgc3D()) );
 
-  // FIXME: icons is missing
-  flightIgcOpenGLAction = new QAction( /*SmallIcon("openglgfx"),*/
-                                      tr("View flight in 3D (OpenGL)"), this );
+  // FIXME: icons is missing /*SmallIcon("openglgfx"),*/
+  flightIgcOpenGLAction = new QAction( tr("View flight in 3D (OpenGL)"), this );
   flightIgcOpenGLAction->setEnabled(true);
   connect( flightIgcOpenGLAction, SIGNAL(triggered()),
            this, SLOT(slotFlightViewIgcOpenGL()) );
@@ -612,19 +646,18 @@ void MainWindow::initMenuBar()
   fm->addAction( flightAnimateHomeAction );
   fm->addAction( flightAnimateEndAction );
 
-  // window menu
-
-  windowMenu = new Q3PopupMenu( this );
-  menuBar()->insertItem( "&Window", windowMenu );
-  windowMenu->setCheckable(true);
-  connect(windowMenu, SIGNAL(aboutToShow()), this, SLOT(slotWindowsMenuAboutToShow()));
+  //----------------------------------------------------------------------------
+  // Window menu creation
+  //----------------------------------------------------------------------------
+  windowMenu = menuBar()->addMenu( tr("&Window") );
+  connect( windowMenu, SIGNAL(aboutToShow()),
+           this, SLOT(slotWindowsMenuAboutToShow()) );
 
   // settings menu
 
   settingsEvaluationWindow = new QAction(getPixmap("kde_history_16.png"), tr("Show &Evaluation Window"), Qt::CTRL+Qt::Key_E, this, "toggle_evaluation_window");
   settingsEvaluationWindow->setToggleAction(true);
   connect(settingsEvaluationWindow, SIGNAL(activated()), this, SLOT(slotToggleEvaluationWindow()));
-
 
 
   settingsFlightData = new QAction(getPixmap("kde_view_detailed_16.png"), tr("Show Flight &Data"), Qt::CTRL+Qt::Key_E, this, "toggle_data_view");
@@ -673,14 +706,18 @@ void MainWindow::initMenuBar()
 //  settings->insertItem(getPixmap("kde_configure_toolbars_16.png"), tr("Configure Toolbars...") );//, this, SLOT(slotConfigureToolbars()));
   settings->insertItem(getPixmap("kde_configure_16.png"), tr("KFLog &Setup..."), this, SLOT(slotConfigureKFLog()));
 
-  // help menu
-
+  //----------------------------------------------------------------------------
+  // Help menu creation
+  //----------------------------------------------------------------------------
   QMenu *help = menuBar()->addMenu( tr("&Help") );
 
-  help->addAction( getPixmap( "kde_contexthelp_16.png"),
-                              tr("What's This?"),
-                              this,
-                              SLOT(slotWhatsThis()), Qt::CTRL + Qt::Key_F1 );
+  help->addAction( getPixmap("kde_contexthelp_16.png"),
+                             tr("What's This?"),
+                             this,
+                             SLOT(slotWhatsThis()), Qt::CTRL + Qt::Key_F1 );
+
+  help->addAction( getPixmap("qt-logo-16x16.jpeg"), tr("About &Qt"),
+                   qApp, SLOT(aboutQt()), Qt::Key_Q );
 
   //FIXME: link to manual must be added
   //FIXME: dialog to swith application language must be added
@@ -688,6 +725,8 @@ void MainWindow::initMenuBar()
 //  help->insertItem(getPixmap("kflog_16.png"), tr("About KFLog") );//, this, SLOT(slotShowAbout()));
 
   // FIXME: menuBar()->insertItem("Dock Windows", createDockWindowMenu());
+
+  qDebug() << "MainWindow::initMenuBar() End";
 }
 
 void MainWindow::initStatusBar()
@@ -787,7 +826,7 @@ void MainWindow::initToolBar()
 {
   toolBar = addToolBar( tr("Toolbar") );
 
-  toolBar->addAction( fileOpenFlight );
+  toolBar->addAction( fileOpenFlightAction );
   toolBar->addSeparator();
   toolBar->addAction( viewZoom );
   toolBar->addAction( viewZoomIn );
@@ -963,8 +1002,8 @@ void MainWindow::slotModifyMenu()
       switch(_globalMapContents->getFlight()->getObjectType())
         {
           case BaseMapElement::Flight:
-            fileClose->setEnabled(true);
-            filePrintFlight->setEnabled(true);
+            fileCloseAction->setEnabled(true);
+            filePrintFlightAction->setEnabled(true);
             viewCenterTask->setEnabled(true);
             viewCenterFlight->setEnabled(true);
 //            flightEvaluation->setEnabled(true);
@@ -984,8 +1023,8 @@ void MainWindow::slotModifyMenu()
             break;
 
           case BaseMapElement::Task:
-            fileClose->setEnabled(true);
-            filePrintFlight->setEnabled(true);
+            fileCloseAction->setEnabled(true);
+            filePrintFlightAction->setEnabled(true);
             viewCenterTask->setEnabled(true);
             viewCenterFlight->setEnabled(false);
 //            flightEvaluation->setEnabled(false);
@@ -1005,8 +1044,8 @@ void MainWindow::slotModifyMenu()
             break;
 
           case BaseMapElement::FlightGroup:
-            fileClose->setEnabled(true);
-            filePrintFlight->setEnabled(true);
+            fileCloseAction->setEnabled(true);
+            filePrintFlightAction->setEnabled(true);
             viewCenterTask->setEnabled(true);
             viewCenterFlight->setEnabled(true);
 //            flightEvaluation->setEnabled(true);
@@ -1031,8 +1070,8 @@ void MainWindow::slotModifyMenu()
   }
   else
   {
-      fileClose->setEnabled(false);
-      filePrintFlight->setEnabled(false);
+      fileCloseAction->setEnabled(false);
+      filePrintFlightAction->setEnabled(false);
       viewCenterTask->setEnabled(false);
       viewCenterFlight->setEnabled(false);
 //      flightEvaluation->setEnabled(false);
@@ -1124,83 +1163,90 @@ void MainWindow::slotOpenTask()
 {
   slotSetStatusMsg(tr("Opening file..."));
 
-  QFileDialog* fd = new QFileDialog(this);
-  fd->setCaption(tr("Open task"));
-  fd->setDirectory(taskDir);
-  fd->setFileMode(QFileDialog::ExistingFile);
+  QFileDialog* fd = new QFileDialog( this );
+  fd->setWindowTitle( tr( "Open Task" ) );
+  fd->setDirectory( taskDir );
+  fd->setFileMode( QFileDialog::ExistingFile );
 
   QStringList filters;
-  filters.append(tr("KFLog tasks") + "(*.kflogtsk *.KFLOGTSK)");
-  fd->setFilters(filters);
+  filters.append( tr( "KFLog tasks" ) + "(*.kflogtsk *.KFLOGTSK)" );
+  fd->setFilters( filters );
 
-  if(fd->exec() == QDialog::Accepted)
-  {
-    QStringList fNames = fd->selectedFiles();
+  if( fd->exec() == QDialog::Accepted )
+    {
+      QStringList fNames = fd->selectedFiles();
 
-    if( fNames.size() == 0 )
-      {
-        return;
-      }
+      if( fNames.size() == 0 )
+        {
+          return;
+        }
 
-    QString fName = fNames[0];
+      QString fName = fNames[0];
 
-    QUrl fUrl = QUrl(fName);
-    taskDir = fd->directory().path();
+      QUrl fUrl = QUrl( fName );
+      taskDir = fd->directory().path();
 
-    if( !fUrl.isValid() )
-      {
-        return;
-      }
+      if( !fUrl.isValid() )
+        {
+          return;
+        }
 
-    QString scheme = fUrl.scheme();
+      QString scheme = fUrl.scheme();
 
 #warning "Check, if that is right proted to Qt4"
 
-    if( scheme != "file" )
-      {
-        return;
-      }
+      if( scheme != "file" )
+        {
+          return;
+        }
 
-    QFile file(fName);
+      QFile file( fName );
 
-    if (_globalMapContents->loadTask(file))
-      {
-        slotSetCurrentFile(fName);
-      }
-  }
+      if( _globalMapContents->loadTask( file ) )
+        {
+          slotSetCurrentFile( fName );
+        }
+    }
 
-  slotSetStatusMsg(tr("Ready."));
+  slotSetStatusMsg( tr( "Ready." ) );
 }
 
-void MainWindow::slotOpenRecentFile()
+void MainWindow::slotOpenRecentFile( QAction *action )
 {
-  QString fileName;
-  QAction *action = (QAction*)(sender());
-  if (action)
-    fileName = action->toolTip();
-  else
-    return;
+  if( !action )
+    {
+      return;
+    }
 
-  slotSetStatusMsg(tr("Opening file..."));
+  QString fileName = action->toolTip();
+
+  slotSetStatusMsg( tr( "Opening File..." ) );
 
   FlightLoader flightLoader;
-  Q3Url url (fileName);
-  if(url.isLocalFile())
-  {
-    QFile file (url.path());
-    if (url.fileName().right(9).lower()==".kflogtsk")
+
+  Q3Url url( fileName );
+
+  if( url.isLocalFile() )
     {
-      //this is probably a taskfile. Try to open it as a task
-      if (_globalMapContents->loadTask(file))
-        slotSetCurrentFile(url.path());
-    }
-    else
-    {
-      //try to open as flight
-      if(flightLoader.openFlight(file))
-        slotSetCurrentFile(url.path());
-    } // .kflogtsk
-  } //isLocalFile
+      QFile file( url.path() );
+
+      if( url.fileName().right( 9 ).lower() == ".kflogtsk" )
+        {
+          // this is probably a task file. Try to open it as a task
+          if( _globalMapContents->loadTask( file ) )
+            {
+              slotSetCurrentFile( url.path() );
+            }
+        }
+      else
+        {
+          //try to open as flight
+          if( flightLoader.openFlight( file ) )
+            {
+              slotSetCurrentFile( url.path() );
+            }
+        } // .kflogtsk
+    } //isLocalFile
 
   slotSetStatusMsg(tr("Ready."));
 }
@@ -1268,9 +1314,8 @@ void MainWindow::slotFlightDataTypeGroupAction( QAction *action )
   slotSelectFlightData( index );
 }
 
-void MainWindow::slotSelectFlightData( const int index )
+void MainWindow::selectFlightDataAction( const int index )
 {
-  qDebug() << "MainWindow::slotSelectFlightData: index=" << index;
   switch( index )
     {
       case MapConfig::Altitude:    // Altitude
@@ -1279,7 +1324,6 @@ void MainWindow::slotSelectFlightData( const int index )
         speedAction->setChecked( false );
         varioAction->setChecked( false );
         solidAction->setChecked( false );
-        emit flightDataTypeChanged(MapConfig::Altitude);
         break;
       case MapConfig::Cycling:     // Cycling
         altitudeAction->setChecked( false );
@@ -1287,7 +1331,6 @@ void MainWindow::slotSelectFlightData( const int index )
         speedAction->setChecked( false );
         varioAction->setChecked( false );
         solidAction->setChecked( false );
-       emit flightDataTypeChanged(MapConfig::Cycling);
         break;
       case MapConfig::Speed:       // Speed
         altitudeAction->setChecked( false );
@@ -1295,7 +1338,6 @@ void MainWindow::slotSelectFlightData( const int index )
         speedAction->setChecked( true );
         varioAction->setChecked( false );
         solidAction->setChecked( false );
-        emit flightDataTypeChanged(MapConfig::Speed);
         break;
       case MapConfig::Vario:       // Vario
         altitudeAction->setChecked( false );
@@ -1303,7 +1345,6 @@ void MainWindow::slotSelectFlightData( const int index )
         speedAction->setChecked( false );
         varioAction->setChecked( true );
         solidAction->setChecked( false );
-        emit flightDataTypeChanged(MapConfig::Vario);
         break;
       case MapConfig::Solid:       // Solid color
         altitudeAction->setChecked( false );
@@ -1311,6 +1352,36 @@ void MainWindow::slotSelectFlightData( const int index )
         speedAction->setChecked( false );
         varioAction->setChecked( false );
         solidAction->setChecked( true );
+        break;
+
+      default:
+        qWarning() << "MainWindow::selectFlightDataAction: Unknown identifier"
+                   << index;
+        break;
+    }
+}
+
+void MainWindow::slotSelectFlightData( const int index )
+{
+  qDebug() << "MainWindow::slotSelectFlightData: index=" << index;
+
+  selectFlightDataAction( index );
+
+  switch( index )
+    {
+      case MapConfig::Altitude:    // Altitude
+        emit flightDataTypeChanged(MapConfig::Altitude);
+        break;
+      case MapConfig::Cycling:     // Cycling
+       emit flightDataTypeChanged(MapConfig::Cycling);
+        break;
+      case MapConfig::Speed:       // Speed
+        emit flightDataTypeChanged(MapConfig::Speed);
+        break;
+      case MapConfig::Vario:       // Vario
+        emit flightDataTypeChanged(MapConfig::Vario);
+        break;
+      case MapConfig::Solid:       // Solid color
         emit flightDataTypeChanged(MapConfig::Solid);
         break;
 
@@ -1323,36 +1394,43 @@ void MainWindow::slotSelectFlightData( const int index )
   map->slotRedrawFlight();
 }
 
-void MainWindow::slotSetCurrentFile(const QString &fileName)
+void MainWindow::slotSetCurrentFile( const QString &fileName )
 {
-  QStringList files = _settings.readListEntry("/GeneralOptions/RecentFiles");
+  QStringList files = _settings.value("/GeneralOptions/RecentFiles").toStringList();
   QStringList newFiles;
-  int recentFilesMax = _settings.readNumEntry("/GeneralOptions/RecentFilesMax", 5);
+
+  int recentFilesMax = _settings.value("/GeneralOptions/RecentFilesMax", 5).toInt();
   int index = 0;
 
   newFiles.append(fileName);
 
-  for(QStringList::iterator it = files.begin(); (it != files.end() && index<=recentFilesMax); ++it)
+  for( int i = 0; i < files.size() && index <= recentFilesMax; i++ )
   {
-    if(*it!=fileName)
+    if( files[i] != fileName )
     {
-      newFiles.append(*it);
+      newFiles.append( files[i] );
       index++;
     }
   }
 
-  _settings.setValue("/GeneralOptions/RecentFiles", newFiles);
+  _settings.setValue( "/GeneralOptions/RecentFiles", newFiles );
 
-  int size = std::min((int)newFiles.size(), 5);
-  QAction *recentFileActs[size];
-  fileOpenRecent->clear();
-  for (int i = 0; i < size; ++i) {
-    recentFileActs[i] = new QAction(this);
-    recentFileActs[i]->setToolTip(newFiles[i]); // FIXME: in Qt4 setData must be used
-    recentFileActs[i]->setText(tr("%1 %2").arg(i + 1).arg(QFileInfo(newFiles[i]).fileName()));
-    connect(recentFileActs[i], SIGNAL(activated()), this, SLOT(slotOpenRecentFile()));
-    recentFileActs[i]->addTo(fileOpenRecent);
-  }
+  // rebuild recent file menu
+  fileOpenRecentMenu->clear();
+
+  int size = qMin( newFiles.size(), 5 );
+
+  for( int i = 0; i < size; i++ )
+    {
+      QAction *action = new QAction( this );
+      action->setEnabled( true );
+      action->setToolTip( newFiles[i] );
+      action->setText( QFileInfo( newFiles[i]).fileName() );
+      fileOpenRecentMenu->addAction( action );
+
+      connect( action, SIGNAL(triggered(QAction *)),
+               this, SLOT(slotOpenRecentFile(QAction *)) );
+    }
 }
 
 void MainWindow::slotSetPointInfo(const QPoint& pos, const flightPoint& point)
@@ -1588,24 +1666,23 @@ void MainWindow::slotWhatsThis()
   QWhatsThis::enterWhatsThisMode();
 }
 
-/** insert available flights into menu */
+/** Insert available flights into menu. */
 void MainWindow::slotWindowsMenuAboutToShow()
 {
-  QList<BaseFlightElement*> flights = *(_globalMapContents->getFlightList());
-//  Q3PtrListIterator<BaseFlightElement> it(flights);
-  BaseFlightElement *flight;
+  QList<BaseFlightElement *> *flights = _globalMapContents->getFlightList();
 
   windowMenu->clear();
 
-  int i = 0;
-  foreach(flight, flights)
-//  for (int i = 0 ; it.current(); ++it , i++)
+  for( int i = 0; flights->size(); i++ )
     {
-//      flight = it.current();
-      int id = windowMenu->insertItem(flight->getFileName(), _globalMapContents, SLOT(slotSetFlight(int)));
+      QAction *action = new QAction( this );
+      action->setText( flights->at(i)->getFileName() );
+      action->setEnabled( true );
+      action->setData( i );
+      action->setChecked( _globalMapContents->getFlightIndex() == i );
+      windowMenu->addAction( action );
 
-      windowMenu->setItemParameter(id, i);
-      windowMenu->setItemChecked(id, _globalMapContents->getFlightIndex() == i);
-      i++;
+      connect( action, SIGNAL(triggered(QAction *)),
+               _globalMapContents, SLOT(slotSetFlight(QAction *)) );
     }
 }

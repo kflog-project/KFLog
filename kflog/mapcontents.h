@@ -9,7 +9,7 @@
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -284,7 +284,7 @@ class MapContents : public QObject
    */
   void closeFlight();
   /** No descriptions */
-  void slotSetFlight(int id);
+  void slotSetFlight( QAction *action );
   /** No descriptions */
   void slotSetFlight(BaseFlightElement *);
   /** create a new, empty flight group */
@@ -301,7 +301,7 @@ class MapContents : public QObject
   void reProject();
 
   /**
-   * This slot is called to download the Welt2000 file from the internet.
+   * This slot is called to download the Welt2000 file from the Internet.
    */
   void slotDownloadWelt2000();
 

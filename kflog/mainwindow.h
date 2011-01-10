@@ -7,6 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
+ **                   2010-2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -25,7 +26,7 @@
  * This class provides the main window of KFLog. All needed GUI stuff
  * is initialized and handled here.
  *
- * \date 2001-2010
+ * \date 2001-2011
  *
  * \version $Id$
  */
@@ -86,10 +87,18 @@ public:
    */
   QString getApplicationDataDirectory();
 
-  signals:
+  /**
+   * Sets the selected flight data action to active and all other to
+   * inactive.
+   *
+   * \param index The index of the related action.
+   */
+  void selectFlightDataAction( const int index );
+
+signals:
 
   /**
-  * Emitted, when the user selects a new flightdatatype.
+  * Emitted, when the user selects a new flight data type.
   *
   * @param  type  The id of the selected data-type
   */
@@ -134,7 +143,7 @@ public slots:
   /**
    * Opens a selected recently opened flight.
    */
-  void slotOpenRecentFile();
+  void slotOpenRecentFile( QAction *action );
   /** */
   void slotOpenRecorderDialog();
   /** optimize flight for OLC declaration*/
@@ -241,7 +250,7 @@ public slots:
    */
   void slotWhatsThis();
   /**
-   * insert available flights into menu
+   * Insert available flights into the related menu.
    */
   void slotWindowsMenuAboutToShow();
 
@@ -334,21 +343,22 @@ private:
   QDockWidget* waypointsDock;
   Waypoints* waypoints;
   QToolBar* toolBar;
+
   /**
    * Actions for the menu File
    */
-  QAction* fileNewWaypoint;
-  QAction* fileNewTask;
-  QAction* fileNewFlightGroup;
-  QAction* fileOpenFlight;
-  QAction* fileOpenTask;
-  Q3PopupMenu* fileOpenRecent;
-  QAction* fileClose;
-  QAction* fileSavePixmap;
-  QAction* filePrint;
-  QAction* filePrintFlight;
-  QAction* fileOpenRecorder;
-  QAction* fileQuit;
+  QAction* fileNewWaypointAction;
+  QAction* fileNewTaskAction;
+  QAction* fileNewFlightGroupAction;
+  QAction* fileOpenFlightAction;
+  QAction* fileOpenTaskAction;
+  QMenu*   fileOpenRecentMenu;
+  QAction* fileCloseAction;
+  QAction* fileSavePixmapAction;
+  QAction* filePrintAction;
+  QAction* filePrintFlightAction;
+  QAction* fileOpenRecorderAction;
+  QAction* fileQuitAction;
   /**
    * Actions for the menu View
    */
@@ -395,7 +405,7 @@ private:
   /**
    * Action for the menu Window
    */
-  Q3PopupMenu* windowMenu;
+  QMenu* windowMenu;
   /**
    * Actions for the menu Settings
    */
