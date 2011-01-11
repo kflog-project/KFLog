@@ -230,7 +230,7 @@ void MainWindow::closeEvent( QCloseEvent *event )
 
 void MainWindow::createDockWindows()
 {
-  qDebug() << "MainWindow::initDockWindows();
+  qDebug() << "MainWindow::initDockWindows()";
 
   // First create the central widget. That is the Map.
   map = new Map(this);
