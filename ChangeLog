@@ -1,5 +1,11 @@
 $Id$
 
+2011-01-11 Axel Pauli <axel@kflog.org>
+  * All menubar items ported to Qt4. That was a very stupid work ;-)
+
+2011-01-07 Axel Pauli <axel@kflog.org>
+  * All toolbar items ported to Qt4.
+
 2010-12-24 Axel Pauli <axel@kflog.org>
   * Changed the application data default directory from ~/.kflog to ~/KFLog.
   * Introduced a new method to get the default application data directory from

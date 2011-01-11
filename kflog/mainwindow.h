@@ -34,14 +34,11 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <QAction>
 #include <QActionGroup>
 #include <QLabel>
 #include <QMainWindow>
+#include <QMenu>
 #include <QPixmap>
 #include <QProgressBar>
 #include <QUrl>
@@ -100,7 +97,7 @@ signals:
   /**
   * Emitted, when the user selects a new flight data type.
   *
-  * @param  type  The id of the selected data-type
+  * @param  type The index of the selected data-type
   */
   void flightDataTypeChanged(int type);
 
@@ -154,10 +151,10 @@ public slots:
   void slotRegisterWaypointDialog(QWidget * dialog);
 
   /**
-   * Called, when the user selects a data-type from the menu. Emits
+   * Called, when the user selects a data type from the menu. Emits
    * flightDataTypeChanged(int)
    *
-   * @param  menuItem  The id of the selected listitem.
+   * @param  index  The index of the selected list item.
    *
    * @see #flightDataTypeChanged(int)
    */
@@ -171,16 +168,16 @@ public slots:
    * altitude, speed, vario) about the selected flight point in the
    * status bar.
    *
-   * @param mouseP   The lat/lon position under the mouse cursor.
-   * @param flightP  Pointer to the flight point.
+   * @param mousePosition The lat/lon position under the mouse cursor.
+   * @param point The related flight point.
    */
-  void slotSetPointInfo(const QPoint& mousePosition,
-                         const flightPoint& point);
+  void slotSetPointInfo( const QPoint& mousePosition,
+                         const flightPoint& point );
   /**
    * Displays the position of the mouse cursor in the status bar and
-   * deletes the text of the other status bar-fields.
+   * deletes the text of the other statusbar fields.
    */
-  void slotSetPointInfo(const QPoint&);
+  void slotSetPointInfo(const QPoint& point);
   /**
    * Updates the progress bar in the status bar.
    *
@@ -190,7 +187,7 @@ public slots:
   /**
    * Displays a message in the status bar.
    *
-   * @param  text  The message to be displayed.
+   * @param text The message to be displayed.
    */
   void slotSetStatusMsg(const QString& text);
   /** */
@@ -201,50 +198,6 @@ public slots:
   void slotCheckDockWidgetStatus();
   /** */
   void slotSavePixmap(QUrl url, int width, int height);
-  /**
-   * Shows or hides the dataview-widget.
-   */
-  void slotToggleDataView();
-  /**
-    * Shows or hides the Evaluation window
-    */
-  void slotToggleEvaluationWindow( bool flag );
-  /**
-   * Called is the visibility of the Evaluation window was changed.
-   */
-  void slotEvaluationWindowVisibilityChanged( bool flag );
-  /**
-   * Shows or hides the Help Window.
-   */
-  void slotToggleHelpWindow();
-  /**
-   * Shows or hides the object-widget.
-   */
-  void slotToggleLegendDock();
-//  /**
-//   * Shows or hides the map-widget.
-//   */
-//  void slotToggleMap();
-  /**
-   * Shows or hides the mapcontrol-widget.
-   */
-  void slotToggleMapControl();
-  /**
-   * Shows or hides the legend-widget.
-   */
-  void slotToggleObjectTreeDock();
-  /**
-   * Shows or hides the toolbar.
-   */
-  void slotToggleToolBar();
-  /**
-   * Shows or hides the status bar.
-   */
-  void slotToggleStatusBar();
-  /**
-   * Shows or hides the waypoints-widget.
-   */
-  void slotToggleWaypointsDock();
   /**
    * Called to the What's This? mode.
    */
@@ -266,8 +219,8 @@ protected:
   virtual void closeEvent( QCloseEvent *event );
 
   /**
-   * Writes the window-geometry, statusbar- and toolbar state and the
-   * layout state of the doc kwidgets.
+   * Writes the window-geometry, statusbar and toolbar state and the
+   * layout state of the doc widgets.
    */
   void saveOptions();
 
@@ -279,24 +232,24 @@ protected:
 
 private:
   /** Initializes all QDockWindows */
-  void initDockWindows();
+  void createDockWindows();
   /** Initializes QMenuBar */
-  void initMenuBar();
+  void createMenuBar();
   /** Initializes the QStatusBar */
-  void initStatusBar();
+  void createStatusBar();
   /** Initializes surface types */
-  void initSurfaceTypes();
+  void createSurfaceTypes();
   /** Initializes task types*/
-  void initTaskTypes();
+  void createTaskTypes();
   /** Initializes toolbar*/
-  void initToolBar();
+  void createToolBar();
   /** Initializes waypoint types*/
-  void initWaypointTypes();
+  void createWaypointTypes();
   /**
-   * Dockwidget to handle the dataview-widget.
-   * The dataview-widget. Embedded in dataViewDock
+   * Dockwidget to handle the dataview widget.
+   * The dataview widget. Embedded in flightDataViewDock
    */
-  QDockWidget* dataViewDock;
+  QDockWidget* flightDataViewDock;
   DataView* dataView;
   /**
    * Dockwidget to handle the EvaluationWindow.
@@ -324,8 +277,8 @@ private:
   QDockWidget* mapViewDock;
   Map* map;
   /**
-   * Dockwidget to handle the mapcontrol.
-   * The mapcontrol-widget. Embedded in mapControlDock
+   * Dockwidget to handle the map control.
+   * The map control widget. Embedded in mapControlDock
    */
   QDockWidget* mapControlDock;
   MapControlView* mapControl;
@@ -337,8 +290,8 @@ private:
   QDockWidget* objectTreeDock;
   ObjectTree* objectTree;
   /**
-   * Dockwidget to handle the waypoints-widget.
-   * The waypoints-widget.
+   * Dockwidget to handle the waypoints widget.
+   * The waypoints widget.
    */
   QDockWidget* waypointsDock;
   Waypoints* waypoints;
@@ -362,22 +315,22 @@ private:
   /**
    * Actions for the menu View
    */
-  QAction* viewCenterTask;
-  QAction* viewCenterFlight;
-  QAction* viewCenterHomesite;
-  QAction* viewCenterTo;
-  QAction* viewZoomIn;
-  QAction* viewZoomOut;
-  QAction* viewZoom;
-  QAction* viewRedraw;
-  QAction* viewMoveNW;
-  QAction* viewMoveN;
-  QAction* viewMoveNE;
-  QAction* viewMoveW;
-  QAction* viewMoveE;
-  QAction* viewMoveSW;
-  QAction* viewMoveS;
-  QAction* viewMoveSE;
+  QAction* viewCenterTaskAction;
+  QAction* viewCenterFlightAction;
+  QAction* viewCenterHomesiteAction;
+  QAction* viewCenterToAction;
+  QAction* viewZoomInAction;
+  QAction* viewZoomOutAction;
+  QAction* viewZoomAction;
+  QAction* viewRedrawAction;
+  QAction* viewMoveNWAction;
+  QAction* viewMoveNAction;
+  QAction* viewMoveNEAction;
+  QAction* viewMoveWAction;
+  QAction* viewMoveEAction;
+  QAction* viewMoveSWAction;
+  QAction* viewMoveSAction;
+  QAction* viewMoveSEAction;
   /**
    * Actions for the menu Flight
    */
@@ -409,17 +362,16 @@ private:
   /**
    * Actions for the menu Settings
    */
-  Q3PopupMenu* settings;
-  QAction* settingsEvaluationWindow;
-  QAction* settingsFlightData;
-  QAction* settingsHelpWindow;
-  QAction* settingsLegend;
-//  QAction* settingsMap;
-  QAction* settingsMapControl;
-  QAction* settingsObjectTree;
-  QAction* settingsStatusBar;
-  QAction* settingsToolBar;
-  QAction* settingsWaypoints;
+  // QAction* settingsEvaluationWindow;
+  QAction* settingsFlightDataAction;
+  QAction* settingsHelpWindowAction;
+  QAction* settingsLegendAction;
+  QAction* settingsMapAction;
+  QAction* settingsMapControlAction;
+  QAction* settingsObjectTreeAction;
+  QAction* settingsStatusBarAction;
+  QAction* settingsToolBarAction;
+  QAction* settingsWaypointsAction;
 
   /**
    * The progressbar in the statusbar. Used during drawing the map to display
