@@ -558,10 +558,10 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 
   if(_globalMapMatrix->isSwitchScale()) delta = 8.0;
 
-  for(int loop = 0; loop < _globalMapContents->getListLength(MapContents::AirportList); loop++)
+  for(int loop = 0; loop < _globalMapContents->getListLength(MapContents::AirfieldList); loop++)
     {
       hitElement = (SinglePoint*)_globalMapContents->getElement(
-          MapContents::AirportList, loop);
+          MapContents::AirfieldList, loop);
       sitePos = hitElement->getMapPosition();
 
       double dX = abs (sitePos.x() - current.x());
@@ -996,7 +996,7 @@ void Map::mousePressEvent(QMouseEvent* event)
             bool found = false;
 
             // add WPList !!!
-            int searchList[] = {MapContents::GliderfieldList, MapContents::AirportList};
+            int searchList[] = {MapContents::GliderfieldList, MapContents::AirfieldList};
 
             for(int l = 0; l < 2; l++)
               {
@@ -1279,7 +1279,7 @@ void Map::__drawMap()
 
   emit setStatusBarProgress(75);
 
-  _globalMapContents->drawList(&aeroP, 0, MapContents::AirportList);
+  _globalMapContents->drawList(&aeroP, 0, MapContents::AirfieldList);
 
   emit setStatusBarProgress(80);
 
@@ -1287,11 +1287,11 @@ void Map::__drawMap()
 
   emit setStatusBarProgress(85);
 
-  _globalMapContents->drawList(&aeroP, 0, MapContents::OutLandingList);
+  _globalMapContents->drawList(&aeroP, 0, MapContents::GliderfieldList);
 
   emit setStatusBarProgress(90);
 
-  _globalMapContents->drawList(&aeroP, 0, MapContents::GliderfieldList);
+  _globalMapContents->drawList(&aeroP, 0, MapContents::OutLandingList);
 
   emit setStatusBarProgress(95);
 
@@ -2314,7 +2314,7 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
        */
       QVector<int> contentArray(2);
       contentArray[0] = MapContents::GliderfieldList;
-      contentArray[1] = MapContents::AirportList;
+      contentArray[1] = MapContents::AirfieldList;
 
       for(int n = 0; n < contentArray.count(); n++)
         {
@@ -2443,7 +2443,7 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
           continue;
         }
         break;
-      case BaseMapElement::Glidersite:
+      case BaseMapElement::Gliderfield:
         if (!c->showGliderSites) {
           continue;
         }
@@ -2580,7 +2580,7 @@ void Map::slotMpNewWaypoint(){
    bool found = false;
 
     // add WPList !!!
-    int searchList[] = {MapContents::GliderfieldList, MapContents::AirportList};
+    int searchList[] = {MapContents::GliderfieldList, MapContents::AirfieldList};
     for (int l = 0; l < 2; l++) {
       for(int loop = 0; loop < _globalMapContents->getListLength(searchList[l]); loop++) {
         hitElement = (RadioPoint*)_globalMapContents->getElement(searchList[l], loop);

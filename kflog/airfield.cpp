@@ -1,83 +1,182 @@
 /***********************************************************************
-**
-**   airport.cpp
-**
-**   This file is part of KFLog.
-**
-************************************************************************
-**
-**   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**
-**   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
-**
-**   $Id$
-**
-***********************************************************************/
+ **
+ **   airfield.cpp
+ **
+ **   This file is part of KFLog4.
+ **
+ ************************************************************************
+ **
+ **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
+ **                   2008-2011 by Axel Pauli
+ **
+ **   This file is distributed under the terms of the General Public
+ **   License. See the file COPYING for more information.
+ **
+ **   $Id$
+ **
+ ***********************************************************************/
 
-#include "airport.h"
+#include "airfield.h"
+#include "altitude.h"
+#include "map.h"
 
-#include <QDir>
-
-Airport::Airport(QString n, QString i, QString abbr, BaseMapElement::objectType t,
-  WGSPoint wgsPos, QPoint pos, unsigned int e, const char* f, bool v)
-  : RadioPoint(n, i, abbr, t, wgsPos, pos, f, e),
-    vdf(v),
-    rwData(0)
+Airfield::Airfield( const QString& name,
+                    const QString& icao,
+                    const QString& shortName,
+                    const BaseMapElement::objectType typeId,
+                    const WGSPoint& wgsPos,
+                    const QPoint& pos,
+                    const unsigned int elevation,
+                    const QString& frequency,
+                    const QString comment,
+                    bool winch,
+                    bool towing,
+                    bool landable )
+    : SinglePoint(name, shortName, typeId, wgsPos, pos, elevation),
+    icao(icao),
+    frequency(frequency),
+    comment(comment),
+    winch(winch),
+    towing(towing),
+    landable(landable)
 {
 }
 
-Airport::~Airport()
+Airfield::~Airfield()
 {
-  delete rwData;
-  rwData=0;
 }
 
-QString Airport::getFrequency() const { return frequency; }
-
-runway* Airport::getRunway(int index) const
-{
-  if (!rwData)
-    return 0;
-
-  return rwData->at(index);
-}
-
-unsigned int Airport::getRunwayNumber() const
-{
-  if (!rwData)
-    return 0;
-
-  return rwData->count();
-}
-
-QString Airport::getInfoString() const
+QString Airfield::getInfoString() const
 {
   extern MapConfig* _globalMapConfig;
+
   QString path = _globalMapConfig->getIconPath();
-  QString text;
+  QString text, elev;
 
-  // @AP: suppress an empty frequency
-  QString tmp;
+  elev = Altitude::getText( elevation, true, 0).replace(QRegExp("\\s"), "&nbsp;");
 
-  if( frequency.left(1) != "0" )
+  text = "<HTML><TABLE BORDER=0><TR><TD>"
+         "<IMG SRC=" + path + glConfig->getPixmapName(typeID) + "></TD>"
+         "<TD>" + name;
+
+  if( !icao.isEmpty() )
     {
-      tmp = frequency;
+      text += " (" + icao + ")";
     }
 
-  text.sprintf("%d", elevation);
-  text = "<TABLE BORDER=0><TR><TD>"
-      "<IMG SRC=" + path + "/" + glConfig->getPixmapName(typeID) + ">" +
-      "</TD><TD>" + name + " (" + icao + ")</TD></TR>" +
-      "<TR><TD></TD><TD><FONT SIZE=-1>" + text + "m" +
-      "<BR>" + tmp + "</FONT></TD></TR></TABLE>";
+  text += "<FONT SIZE=-1><BR><BR>" + elev;
+
+  if (!frequency.isEmpty())
+    {
+      text += "&nbsp;/&nbsp;" + frequency + "&nbsp;Mhz.";
+    }
+
+  text += "&nbsp;&nbsp;</FONT></TD></TR></TABLE></HTML>";
 
   return text;
 }
 
-void Airport::printMapElement(QPainter* printPainter, bool isText)
+const Runway* Airfield::getRunway( int index )
 {
-  if(!isVisible()) return;
+  if( rwData.size() == 0 )
+    {
+      return static_cast<Runway*> ( 0 );
+    }
+
+  return &rwData.at( index );
+}
+
+bool Airfield::drawMapElement( QPainter* targetP )
+{
+  if ( ! isVisible() )
+    {
+      curPos = QPoint(-5000, -5000);
+      return false;
+    }
+
+  extern MapConfig* _globalMapConfig;
+
+  //qDebug("Airfield::drawMapElement(): scale: %d %d",scale, _globalMapMatrix->getScaleRatio()  );
+  QColor col = Qt::black;
+
+  curPos = glMapMatrix->map(position);
+
+  // draw also the small dot's in reachability color
+  targetP->setPen(QPen(col, 2));
+
+  int iconSize = 32;
+  int xOffset  = 16;
+  int yOffset  = 16;
+  int cxOffset = 16;
+  int cyOffset = 16;
+
+  if( typeID == BaseMapElement::Outlanding )
+   {
+    // The lower end of the beacon shall directly point to the point at the map.
+    xOffset  = 16;
+    yOffset  = 32;
+    cxOffset = 16;
+    cyOffset = 16;
+  }
+
+  if( _globalMapConfig->useSmallIcons() )
+    {
+      iconSize = 16;
+      xOffset  = 8;
+      yOffset  = 8;
+      cxOffset = 8;
+      cyOffset = 8;
+
+      if( typeID == BaseMapElement::Outlanding )
+        {
+          // The lower end of the beacon shall directly point to the
+          // point at the map.
+          xOffset  = 8;
+          yOffset  = 16;
+          cxOffset = 8;
+          cyOffset = 8;
+        }
+    }
+
+  if ( ! glMapMatrix->isSwitchScale() )
+    {
+      targetP->drawEllipse(curPos.x()-8, curPos.y()-8, 16, 16 );
+    }
+  else
+    {
+      if ( glConfig->isRotatable( typeID ) )
+        {
+          QPixmap image( glConfig->getPixmapRotatable(typeID, winch) );
+
+          const Runway* runway = getRunway();
+          int rwShift = 90;
+
+          if( runway )
+            {
+              rwShift = runway->rwShift;
+            }
+
+          targetP->drawPixmap(curPos.x() - xOffset, curPos.y() - yOffset, image,
+                              rwShift*iconSize, 0, iconSize, iconSize);
+        }
+      else
+        {
+          QPixmap image( glConfig->getPixmap(typeID) );
+          targetP->drawPixmap(curPos.x() - xOffset, curPos.y() - yOffset, image  );
+        }
+    }
+
+  return true;
+}
+
+#warning "Airport::printMapElement not yet ready to use!"
+
+void Airfield::printMapElement(QPainter* printPainter, bool isText)
+{
+  if( !isVisible() )
+    {
+      return;
+    }
 
   QPoint printPos(glMapMatrix->print(position));
 
@@ -96,7 +195,7 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
 
   QString iconName;
 
-  switch(typeID)
+  switch( typeID )
     {
       case BaseMapElement::IntAirport:
       case BaseMapElement::Airport:
@@ -124,6 +223,7 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
         printPainter->drawEllipse(printPos.x() - iconSize/2,
             printPos.y() - iconSize/2, iconSize, iconSize);
         break;
+
       case MilAirport:
         printPainter->setPen(whiteP);
         printPainter->drawEllipse(printPos.x() - iconSize/2,
@@ -139,6 +239,7 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
         printPainter->drawEllipse(printPos.x() - iconSize/4,
             printPos.y() - iconSize/4, iconSize/2, iconSize/2);
         break;
+
       case CivMilAirport:
         printPainter->setPen(whiteP);
         printPainter->drawLine(printPos.x(), printPos.y() - iconSize + 4,
@@ -168,7 +269,8 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
         printPainter->drawEllipse(printPos.x() - iconSize/4,
             printPos.y() - iconSize/4, iconSize/2, iconSize/2);
         break;
-      case Airfield:
+
+      case BaseMapElement::Airfield:
         iconSize += 2;
         printPainter->setPen(whiteP);
         printPainter->drawEllipse(printPos.x() - iconSize/2,
@@ -182,10 +284,12 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
         printPainter->drawLine(printPos.x() - iconSize + 4, printPos.y(),
             printPos.x() + iconSize - 4, printPos.y());
         break;
+
       case ClosedAirfield:
         qWarning("ClosedAirfield");
         isText = false;
         break;
+
       case CivHeliport:
         printPainter->setPen(QPen(QColor(255,255,255), 5));
         printPainter->drawEllipse(printPos.x() - iconSize/2,
@@ -198,6 +302,7 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
         printPainter->drawText(printPos.x() - 5, printPos.y() + 5, "H");
         isText = false;
         break;
+
       case MilHeliport:
         iconSize += 2;
         printPainter->setPen(QPen(QColor(255,255,255), 5));
@@ -217,6 +322,7 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
         printPainter->drawText(printPos.x() - 3, printPos.y() + 3, "H");
         isText = false;
         break;
+
       case AmbHeliport:
         printPainter->setPen(QPen(QColor(255,255,255), 1));
         printPainter->setBrush(QBrush(QColor(255,255,255), Qt::SolidPattern));
@@ -231,24 +337,55 @@ void Airport::printMapElement(QPainter* printPainter, bool isText)
         isText = false;
         break;
 
+      case Gliderfield:
+        {
+          QPen whiteP = QPen(QColor(255,255,255), 7, Qt::SolidLine,
+              Qt::SquareCap, Qt::MiterJoin);
+          QPen blackP = QPen(QColor(0, 0, 0), 3, Qt::SolidLine,
+              Qt::SquareCap, Qt::MiterJoin);
+          QPolygon pointArray(5);
+
+          printPainter->setBrush(Qt::NoBrush);
+
+          printPainter->setPen(whiteP);
+          printPainter->drawEllipse(printPos.x() - (iconSize / 2),
+                printPos.y() - (iconSize / 2), iconSize, iconSize);
+
+          printPainter->setPen(blackP);
+          printPainter->drawEllipse(printPos.x() - (iconSize / 2),
+                printPos.y() - (iconSize / 2), iconSize, iconSize);
+
+          printPainter->setPen(whiteP);
+          pointArray.setPoint(0, printPos.x() - iconSize , printPos.y() + 2);
+          pointArray.setPoint(1, printPos.x() - (iconSize / 2),
+                            printPos.y() - (iconSize / 2) + 4);
+          pointArray.setPoint(2, printPos.x(), printPos.y() + 2);
+          pointArray.setPoint(3, printPos.x() + (iconSize / 2),
+                            printPos.y() - (iconSize / 2) + 4);
+          pointArray.setPoint(4, printPos.x() + iconSize , printPos.y() + 2);
+
+          printPainter->drawPolyline(pointArray);
+          printPainter->setPen(blackP);
+          printPainter->drawPolyline(pointArray);
+
+          if( isText )
+            {
+              printPainter->setFont(QFont("helvetica", 10, QFont::Bold));
+              printPainter->drawText(printPos.x() - 15,
+                  printPos.y() + iconSize + 4, name);
+              printPainter->drawText(printPos.x() - 15,
+                  printPos.y() + iconSize + 14, frequency);
+            }
+        }
+
+        break;
+
       default:
         break;
     }
 
-  if(isText)
+  if( isText && typeID != Gliderfield )
     {
       printPainter->drawText(printPos.x() - 10, printPos.y() + iconSize + 4, name);
     }
 }
-
-void Airport::addRunway(runway* r)
-{
-    if (r) {
-      if (!rwData) {
-        rwData=new Q3PtrList<runway>;
-        rwData->setAutoDelete(true);
-      }
-      rwData->append(r);
-    }
-}
-

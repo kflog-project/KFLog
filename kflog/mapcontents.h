@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
+**                   2010-2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -14,6 +15,22 @@
 **   $Id$
 **
 ***********************************************************************/
+
+/**
+ * \class MapContents
+ *
+ * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
+ *
+ * \brief Map content handler.
+ *
+ * This class provides functions for accessing the contents of the map.
+ * It takes control over loading all needed map-files.
+ * The class contains several QPtrLists holding the map elements.
+ *
+ * \date 2000-2011
+ *
+ * \version $Id$
+ */
 
 #ifndef MAP_CONTENTS_H
 #define MAP_CONTENTS_H
@@ -35,7 +52,7 @@
 #include "flighttask.h"
 #include "isolist.h"
 
-class Airport;
+class Airfield;
 class Distance;
 class Flight;
 class FlightGroup;
@@ -48,21 +65,7 @@ class SinglePoint;
 // number of isoline levels
 #define ISO_LINE_LEVELS 51
 
-/**
- * \class MapContents
- *
- * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
- *
- * \brief Map content handler.
- *
- * This class provides functions for accessing the contents of the map.
- * It takes control over loading all needed map-files.
- * The class contains several QPtrLists holding the map elements.
- *
- * \date 2000-2010
- *
- * \version $Id$
- */
+
 class MapContents : public QObject
 {
   Q_OBJECT
@@ -75,7 +78,7 @@ class MapContents : public QObject
   /**
    * The index of Map element-Lists.
    */
-  enum MapContentsListID { NotSet = 0, AirportList, GliderfieldList,
+  enum MapContentsListID { NotSet = 0, AirfieldList, GliderfieldList,
                            AddSitesList, OutLandingList, NavList, AirspaceList,
                            ObstacleList, ReportList, CityList, VillageList,
                            LandmarkList, HighwayList, HighwayEntryList,
@@ -147,18 +150,25 @@ class MapContents : public QObject
     };
 
   /**
-   * @returns a pointer to the given glidersite
+   * @return a pointer to the given airfield
    *
-   * @param  index  the list-index of the glidersite
+   * @param  index  the list index of the airfield
    */
-  GliderSite* getGlidersite(unsigned int index);
+  Airfield* getAirfield(unsigned int index);
 
   /**
-   * @return a pointer to the given airport
+   * @returns a pointer to the given gliderfield
    *
-   * @param  index  the list-index of the airport
+   * @param  index  the list-index of the gliderfield
    */
-  Airport* getAirport(unsigned int index);
+  Airfield* getGliderfield(unsigned int index);
+
+  /**
+   * @return a pointer to the given outlanding
+   *
+   * @param  index  the list-index of the outlanding
+   */
+  Airfield* getOutlanding(uint index);
 
   /**
    * @return a pointer to the SinglePoint of the given map element
@@ -395,31 +405,30 @@ class MapContents : public QObject
   bool __readTerrainFile(const int fileSecID, const int fileTypeID);
 
   /**
-   * airportList contains all airports.
+   * airfieldList contains airports, airfields, ultralight sites
    */
-  QList<Airport*> airportList;
+  QList<Airfield> airfieldList;
 
   /**
-   * gliderfieldList contains all glider-sites.
+   * gliderfieldList contains all glider sites.
    */
-  QList<GliderSite*> gliderfieldList;
+  QList<Airfield> gliderfieldList;
 
   /**
-   * addSitesList contains all, ultralight,
+   * outLandingList contains all outlanding fields.
+   */
+  QList<Airfield> outLandingList;
+
+  /**
+   * addSitesList contains all
    * hang-glider-sites, free-balloon-sites, parachute-jumping-sites.
-   * FIXME: Currently those sites are stored somewhere else?!?
    */
-  QList<SinglePoint*> addSitesList;
-
-  /**
-   * outLandingList contains all outlanding-fields.
-   */
-  QList<SinglePoint*> outLandingList;
+  QList<SinglePoint> addSitesList;
 
   /**
    * navList contains all radio navigation facilities.
    */
-  QList<RadioPoint*> navList;
+  QList<RadioPoint> navList;
 
   /**
    * airspaceList contains all airspaces. The sort function on this

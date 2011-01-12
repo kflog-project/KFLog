@@ -50,7 +50,7 @@
 // Cambridge waypoint attributes are using bit arrays
 #define CAI_TURNPOINT        1
 #define CAI_AIRFIELD         2
-#define CAI_MARKPOINT        4 
+#define CAI_MARKPOINT        4
 #define CAI_LANDINGPOINT     8
 #define CAI_STARTPOINT      16
 #define CAI_FINISHPOINT     32
@@ -487,19 +487,19 @@ int Cambridge::writeConfigData(FR_BasicData& basicdata, FR_ConfigData& configdat
   QString caipilot = "O," + basicdata.pilotName
                     + "," + "0"
                     + "," + "0"
-                    + "," + sinktone      
+                    + "," + sinktone
                     + "," + "1"  // totalenergyfg
                     + "," + "1"  // fgdiffalt
                     + "," + "0"
                     + "," + approachradius
-                    + "," + arrivalradius 
-                    + "," + sloginterval  
-                    + "," + floginterval  
-                    + "," + gaptime       
-                    + "," + minloggingspd 
-                    + "," + stfdeadband   
+                    + "," + arrivalradius
+                    + "," + sloginterval
+                    + "," + floginterval
+                    + "," + gaptime
+                    + "," + minloggingspd
+                    + "," + stfdeadband
                     + "," + "0"
-                    + "," + units         
+                    + "," + units
                     + "," + goalalt;
   qDebug("%s", (const char*)caipilot.toLatin1());
   sendCommand(caipilot);
@@ -776,7 +776,7 @@ int Cambridge::writeWaypoints(QList<Waypoint*> *waypoints)
       case BaseMapElement::MilAirport:
       case BaseMapElement::CivMilAirport:
       case BaseMapElement::Airfield:
-      case BaseMapElement::Glidersite:
+      case BaseMapElement::Gliderfield:
       case BaseMapElement::UltraLight:
         attribute = attribute|CAI_AIRFIELD;
     }

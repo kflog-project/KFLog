@@ -19,8 +19,8 @@
 **
 ***********************************************************************/
 
-#ifndef DA4RECORD_H
-#define DA4RECORD_H
+#ifndef DA4_RECORD_H
+#define DA4_RECORD_H
 
 
 /**used to support filser da4 format
@@ -28,7 +28,7 @@
   */
 
 #include "basemapelement.h"
-#include "airport.h"
+#include "runway.h"
 #include "waypoint.h"
 
 #define WAYPOINT_MAX  600
@@ -88,8 +88,8 @@ public:
   short int len () const;
   void setDir (short int dir);
   short int dir () const;
-  void setSurface (Airport::SurfaceType surface);
-  Airport::SurfaceType surface () const;
+  void setSurface (Runway::SurfaceType surface);
+  Runway::SurfaceType surface () const;
   void setTC ();
 
   Waypoint* newWaypoint () const;

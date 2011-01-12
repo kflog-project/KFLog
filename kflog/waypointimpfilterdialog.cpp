@@ -221,7 +221,7 @@ int WaypointImpFilterDialog::getCenterRef()
 
 void WaypointImpFilterDialog::polish()
 {
-  int searchList[] = {MapContents::GliderfieldList, MapContents::AirportList};
+  int searchList[] = {MapContents::GliderfieldList, MapContents::AirfieldList};
 
   QDialog::polish();
   for(int l = 0; l < 2; l++) {

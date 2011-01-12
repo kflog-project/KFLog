@@ -56,7 +56,7 @@ public:
     NotSelected = NOT_SELECTED,
     IntAirport = INT_AIRPORT, Airport = AIRPORT, MilAirport = MIL_AIRPORT, CivMilAirport = CIVMIL_AIRPORT,
     Airfield = AIRFIELD, ClosedAirfield = CLOSED_AIRFIELD, CivHeliport = CIV_HELIPORT,
-    MilHeliport = MIL_HELIPORT, AmbHeliport = AMB_HELIPORT, Glidersite = GLIDERSITE, UltraLight = ULTRALIGHT,
+    MilHeliport = MIL_HELIPORT, AmbHeliport = AMB_HELIPORT, Gliderfield = GLIDERFIELD, UltraLight = ULTRALIGHT,
     HangGlider = HANGGLIDER, Parachute = PARACHUTE, Balloon = BALLOON, Outlanding = OUTLANDING, Vor = VOR,
     VorDme = VORDME, VorTac = VORTAC, Ndb = NDB, CompPoint = COMPPOINT,
     AirA = AIR_A, AirB = AIR_B, AirC = AIR_C, AirD = AIR_D, AirElow = AIR_E_LOW, AirE = AIR_E, WaveWindow = WAVE_WINDOW,

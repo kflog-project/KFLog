@@ -23,11 +23,11 @@
 #include <QtGui>
 #include <Qt3Support>
 
-#include "airport.h"
-#include "glidersite.h"
+#include "airfield.h"
 #include "mapcalc.h"
 #include "mapconfig.h"
 #include "mapcontents.h"
+#include "runway.h"
 #include "translationlist.h"
 #include "waypoints.h"
 #include "wgspoint.h"
@@ -456,7 +456,7 @@ void Waypoints::fillWaypoints()
           continue;
         }
         break;
-      case BaseMapElement::Glidersite:
+      case BaseMapElement::Gliderfield:
         if (!currentWaypointCatalog->showGliderSites) {
           continue;
         }
@@ -510,7 +510,7 @@ void Waypoints::fillWaypoints()
     }
     item->setText(colLength, tmp);
 
-    item->setText(colSurface, w->surface == -1 ? QString::null : surfaceTypes.itemText(w->surface));
+    item->setText(colSurface, Runway::item2Text(w->surface) );
     item->setText(colComment, w->comment);
     item->setPixmap(colName, _globalMapConfig->getPixmap(w->type,false,true));
   }
@@ -592,8 +592,7 @@ void Waypoints::slotCloseWaypointCatalog()
 void Waypoints::slotImportWaypointFromMap()
 {
   SinglePoint *s;
-  Airport *a;
-  GliderSite *gs;
+  Airfield *a;
   Waypoint *w;
   QList<Waypoint*> wl = currentWaypointCatalog->wpList;
   int type, loop;
@@ -608,7 +607,7 @@ void Waypoints::slotImportWaypointFromMap()
     getFilterData();
 
     if (currentWaypointCatalog->showAll || currentWaypointCatalog->showAirports) {
-      searchLists.append(MapContents::AirportList);
+      searchLists.append(MapContents::AirfieldList);
     }
     if (currentWaypointCatalog->showAll || currentWaypointCatalog->showGliderSites) {
       searchLists.append(MapContents::GliderfieldList);
@@ -656,6 +655,7 @@ void Waypoints::slotImportWaypointFromMap()
         QString name = s->getName();
         w->name = name.replace(blank, "").left(6).upper();
         loop = 0;
+
         while (currentWaypointCatalog->findWaypoint(w->name) && loop < 100000) {
           tmp.setNum(loop++);
           w->name = w->name.left(6 - tmp.length()) + tmp;
@@ -674,33 +674,30 @@ void Waypoints::slotImportWaypointFromMap()
         case BaseMapElement::MilAirport:
         case BaseMapElement::CivMilAirport:
         case BaseMapElement::Airfield:
-        case BaseMapElement::Glidersite:
-          w->icao = ((RadioPoint *) s)->getICAO();
-          w->frequency = ((RadioPoint *) s)->getFrequency().toDouble();
+        case BaseMapElement::Gliderfield:
+
+#warning "Check convertion here"
+
+          w->icao = ((Airfield *) s)->getICAO();
+          w->frequency = ((Airfield *) s)->getFrequency().toDouble();
           w->isLandable = true;
-          a = dynamic_cast<Airport*>(s); //try casting to an airfield
-          if (a) {
-            if (a->getRunwayNumber()) {
-              runway* r = a->getRunway(0);
-              if (r) {
-                w->runway = r->direction;
-                w->length = r->length;
-                w->surface = r->surface;
-              }
-            }
-          } else { //try casting to an airfield did not work, try glider site
-            gs = dynamic_cast<GliderSite*>(s);
-            if (gs) {
-              if (gs->getRunwayNumber()) {
-                runway* r = gs->getRunway(0);
-                if (r) {
-                  w->runway = r->direction;
-                  w->length = r->length;
-                  w->surface = r->surface;
+          a = dynamic_cast<Airfield*>(s); //try casting to an airfield
+
+          if( a )
+            {
+              if( a->getRunwayNumber() )
+                {
+                  const Runway* r = a->getRunway( 0 );
+
+                  if( r )
+                    {
+                      w->runway = r->direction;
+                      w->length = r->length;
+                      w->surface = r->surface;
+                    }
                 }
-              }
-            }
           }
+
           break;
         default:
           w->isLandable = false;

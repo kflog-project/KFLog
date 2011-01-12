@@ -1013,7 +1013,17 @@ QPixmap MapConfig::loadPixmap( const QString& pixmapName, bool smallIcon )
   return pm;
 }
 
-QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
+QPixmap MapConfig::getPixmapRotatable(unsigned int typeID, bool isWinch)
+{
+  QString iconName(getPixmapName(typeID, isWinch, true));
+
+  // qDebug("PixmapNameRot: %d %s",typeID, iconName.latin1() );
+  return loadPixmap( iconName, isSwitch );
+}
+
+QString MapConfig::getPixmapName( unsigned int typeID,
+                                  bool isWinch,
+                                  bool rotatable)
 {
   QString iconName;
 
@@ -1021,79 +1031,97 @@ QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
     {
       case BaseMapElement::BaseMapElement::Airport:
       case BaseMapElement::BaseMapElement::IntAirport:
-        iconName = "airport.xpm";
+        iconName = "airport";
         break;
       case BaseMapElement::MilAirport:
-        iconName = "milairport.xpm";
+        iconName = "milairport";
         break;
       case BaseMapElement::CivMilAirport:
-        iconName = "civmilair.xpm";
+        iconName = "civmilair";
         break;
       case BaseMapElement::Airfield:
-            iconName = "airfield_c.xpm";
+            iconName = "airfield";
         break;
       case BaseMapElement::ClosedAirfield:
-        iconName = "closed.xpm";
+        iconName = "closed";
         break;
       case BaseMapElement::CivHeliport:
-        iconName = "civheliport.xpm";
+        iconName = "civheliport";
         break;
       case BaseMapElement::MilHeliport:
-        iconName = "milheliport.xpm";
+        iconName = "milheliport";
         break;
       case BaseMapElement::AmbHeliport:
-        iconName = "ambheliport.xpm";
+        iconName = "ambheliport";
         break;
-      case BaseMapElement::Glidersite:
+      case BaseMapElement::Gliderfield:
         if(isWinch)
-            iconName = "glider.xpm";     // winch, red icon
+            iconName = "glider_winch";
         else
-            iconName = "glider2.xpm";   // aerotow, black icon
+            iconName = "glider";
         break;
       case BaseMapElement::UltraLight:
-        iconName = "ul.xpm";
+        iconName = "ul";
         break;
       case BaseMapElement::HangGlider:
-        iconName = "paraglider.xpm";
+        iconName = "paraglider";
         break;
       case BaseMapElement::Parachute:
-        iconName = "jump.xpm";
+        iconName = "jump";
         break;
       case BaseMapElement::Balloon:
-        iconName = "balloon.xpm";
+        iconName = "balloon";
         break;
       case BaseMapElement::CompPoint:
-        iconName = "compoint.xpm";
+        iconName = "compoint";
         break;
       case BaseMapElement::Landmark:
-        iconName = "landmark.xpm";
+        iconName = "landmark";
         break;
       case BaseMapElement::Vor:
-        iconName = "vor.xpm";
+        iconName = "vor";
         break;
       case BaseMapElement::VorDme:
-        iconName = "vordme.xpm";
+        iconName = "vordme";
         break;
       case BaseMapElement::VorTac:
-        iconName = "vortac.xpm";
+        iconName = "vortac";
         break;
       case BaseMapElement::Ndb:
-        iconName = "ndb.xpm";
+        iconName = "ndb";
         break;
       case BaseMapElement::Outlanding:
-        iconName = "outlanding.xpm";
+        iconName = "outlanding";
         break;
       case BaseMapElement::Obstacle:
-        iconName = "obstacle.xpm";
+        iconName = "obstacle";
         break;
       case BaseMapElement::LightObstacle:
-        iconName = "obst_light.xpm";
+        iconName = "obst_light";
         break;
       case BaseMapElement::ObstacleGroup:
-        iconName = "obst_group.xpm";
+        iconName = "obst_group";
         break;
       case BaseMapElement::LightObstacleGroup:
-        iconName = "obst_group_light.xpm";
+        iconName = "obst_group_light";
+        break;
+      case BaseMapElement::Village:
+        iconName = "village";
+        break;
+      case BaseMapElement::Railway:
+        iconName = "railway";
+        break;
+      case BaseMapElement::AerialRailway:
+        iconName = "waypoint";
+        break;
+      case BaseMapElement::Turnpoint:
+        iconName = "waypoint";
+        break;
+      case BaseMapElement::Thermal:
+        iconName = "thermal";
+        break;
+      case BaseMapElement::City:
+        iconName = "waypoint";
         break;
       case BaseMapElement::EmptyPoint:
         iconName = "empty";
@@ -1104,8 +1132,34 @@ QString MapConfig::getPixmapName(unsigned int typeID, bool isWinch)
         break;
     }
 
+  if( rotatable )
+    {
+      iconName += "-18.png";  // airfield icons can be rotated 10 degree wise
+    }
+  else
+    {
+      iconName += ".xpm";
+    }
+
   return iconName;
 }
+
+
+
+bool MapConfig::isRotatable( unsigned int typeID ) const
+  {
+    switch (typeID)
+      {
+      case BaseMapElement::Airport:
+      case BaseMapElement::IntAirport:
+      case BaseMapElement::CivMilAirport:
+      case BaseMapElement::Airfield:
+      case BaseMapElement::Gliderfield:
+        return true;
+      default:
+        return false;
+      }
+  }
 
 /** Returns true if small icons are used, else returns false. */
 bool MapConfig::useSmallIcons()

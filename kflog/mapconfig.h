@@ -24,8 +24,9 @@
 #include <QPen>
 #include <QPixmap>
 
-/**These are the levels used.
- *For internal reasons, -1 and 10000 are added to the list.
+/**
+ * These are the levels used.
+ * For internal reasons, -1 and 10000 are added to the list.
  */
 const int topoLevels[] = {
   -1,0,10,25,50,75,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,
@@ -151,10 +152,29 @@ public:
    * @param  isWinch  Used only for glidersites to determine, if the
    *                  icon should indicate that only winch-launch is
    *                  available.
+   * @param rotatable The rotation flag.
    *
    * @return the name of the pixmap of the element.
    */
-  QString getPixmapName(unsigned int type, bool isWinch = true);
+  QString getPixmapName( unsigned int type, bool isWinch = true,
+                         bool rotatable=false );
+
+  /**
+   * @param  typeID   The type identifier of the element.
+   * @param  isWinch  Used only for glider sites to determine, if the
+   *                  icon should indicate that only winch launch is
+   *                  available.
+   *
+   * @returns the icon-pixmap of the element.
+   */
+  QPixmap getPixmapRotatable(unsigned int typeID, bool isWinch);
+
+  /**
+   * The possible data types, that could be drawn according their direction.
+   *
+   * \return True if map type is rotatable other otherwise false.
+   */
+  bool isRotatable( unsigned int typeID ) const;
 
   /**
    * \return The directory path to the map icons storage location.

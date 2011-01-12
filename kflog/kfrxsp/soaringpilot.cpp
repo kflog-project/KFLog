@@ -9,7 +9,7 @@
  **   Copyright (c):  2003 by Harald Maier
  **
  **   This file is distributed under the terms of the General Public
- **   Licence. See the file COPYING for more information.
+ **   License. See the file COPYING for more information.
  **
  **   $Id$
  **
@@ -31,10 +31,11 @@
 #include <qfile.h>
 #include <qsettings.h>
 #include <qstringlist.h>
-//Added by qt3to4:
+
+#include <QtCore>
 #include <Q3PtrList>
 
-#include "../airport.h"
+#include "../airfield.h"
 
 extern int breakTransfer;
 char c36[] = "0123456789abcdefghijklmnopqrstuvwxyz";
@@ -143,7 +144,7 @@ int SoaringPilot::readFile(QStringList &file)
       if (time(NULL) - t1 > 5) {
         _errorinfo = tr("No response from recorder within 5 seconds!");
         return FR_ERROR;
-      }      
+      }
     }
   }
   return FR_OK;
@@ -249,7 +250,7 @@ QString SoaringPilot::meterToFeet(int m)
  */
 QString SoaringPilot::getLibName() const
 {
-  return "libkfrxsp"; 
+  return "libkfrxsp";
 }
 
 /**
@@ -266,7 +267,7 @@ FlightRecorderPluginBase::TransferMode SoaringPilot::getTransferMode() const
 
 int SoaringPilot::getFlightDir(QList<FRDirEntry*> *dirList)
 {
-  /* André: I don't quite get this one. Shouldn't this return some FRDirEntries? */
+  /* Andrï¿½: I don't quite get this one. Shouldn't this return some FRDirEntries? */
   // SearingPilot is something "special". It doesn't provide a flight directory
   // You have to select the flight in SP, can be one or all !!!3
   time_t startTime_t;
@@ -356,7 +357,7 @@ int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QStrin
           }
           else {
             _fileName.sprintf("20%.2d-%.2d-%.2d-XSP-%s-%.2d.IGC",
-                             year, month, day, 
+                             year, month, day,
                              (const char *)_basicData.serialNumber.latin1(), *fc);
           }
         }
@@ -413,7 +414,7 @@ int SoaringPilot::openRecorder(const QString& portName, int baud)
 {
   speed_t speed;
 
-  /* eventuell als Mode zusätzlich O_NONBLOCK ??? */
+  /* eventuell als Mode zusï¿½tzlich O_NONBLOCK ??? */
   portID = open(portName, O_RDWR | O_NOCTTY);
 
   if(portID != -1) {
@@ -686,8 +687,8 @@ int SoaringPilot::readWaypoints(QList<Waypoint*> *waypoints)
         tmp = tokens[4];
         frWp->isLandable = (tmp.contains('A') > 0) || (tmp.contains('L') > 0);
         if (frWp->isLandable) {
-          frWp->surface = tmp.contains('A') > 0 ? Airport::Asphalt : Airport::Grass;
-          frWp->type = tmp.contains('A') > 0 ? BaseMapElement::Airfield : BaseMapElement::Glidersite;
+          frWp->surface = tmp.contains('A') > 0 ? Runway::Asphalt : Runway::Grass;
+          frWp->type = tmp.contains('A') > 0 ? BaseMapElement::Airfield : BaseMapElement::Gliderfield;
         }
 
         frWp->comment = tokens[6];
@@ -724,7 +725,7 @@ int SoaringPilot::writeWaypoints(QList<Waypoint*> *waypoints)
         case BaseMapElement::CivMilAirport:
           typ += "AL";
           break;
-        case BaseMapElement::Glidersite:
+        case BaseMapElement::Gliderfield:
           typ += "L";
           break;
       }

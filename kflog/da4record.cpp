@@ -180,14 +180,14 @@ short int DA4WPRecord::dir () const
   return _buffer->rwdir;
 }
 
-void DA4WPRecord::setSurface (Airport::SurfaceType surface)
+void DA4WPRecord::setSurface (Runway::SurfaceType surface)
 {
   switch (surface)
   {
-    case Airport::Grass:
+    case Runway::Grass:
       _buffer->rwtype = 'G';
       break;
-    case Airport::Concrete:
+    case Runway::Concrete:
       _buffer->rwtype = 'C';
       break;
     default:
@@ -195,15 +195,15 @@ void DA4WPRecord::setSurface (Airport::SurfaceType surface)
   }
 }
 
-Airport::SurfaceType DA4WPRecord::surface () const
+Runway::SurfaceType DA4WPRecord::surface () const
 {
   switch (_buffer->rwtype)
   {
-    case 'G': return Airport::Grass;
+    case 'G': return Runway::Grass;
           break;
-    case 'C': return Airport::Concrete;
+    case 'C': return Runway::Concrete;
           break;
-    default:  return Airport::Unknown;
+    default:  return Runway::Unknown;
   }
 }
 
@@ -245,7 +245,7 @@ void DA4WPRecord::setWaypoint (Waypoint* wp)
   setFreq(wp->frequency);
   setLen(wp->length);
   setDir(wp->runway);
-  setSurface((Airport::SurfaceType)wp->surface);
+  setSurface((Runway::SurfaceType)wp->surface);
   setTC();
 }
 

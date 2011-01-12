@@ -394,6 +394,14 @@ void MapMatrix::__moveMap(int dir)
   emit matrixChanged();
 }
 
+QPoint MapMatrix::getHomeCoord() const
+{
+  int homeLat = _settings.value( "/MapData/HomesiteLatitude", HOME_DEFAULT_LAT ).toInt();
+  int homeLon = _settings.value( "/MapData/HomesiteLongitude", HOME_DEFAULT_LON ).toInt();
+
+  return QPoint(homeLat, homeLon);
+}
+
 void MapMatrix::createMatrix( const QSize& newSize )
 {
   qDebug() << "MapMatrix::createMatrix()";

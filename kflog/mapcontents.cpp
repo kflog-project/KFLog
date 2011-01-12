@@ -9,6 +9,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
+ **                   2010-2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -21,7 +22,7 @@
 #include <QtGui>
 #include <QtXml>
 
-#include "airport.h"
+#include "airfield.h"
 #include "airspace.h"
 #include "basemapelement.h"
 #include "distance.h"
@@ -29,7 +30,6 @@
 #include "flight.h"
 #include "flightgroup.h"
 #include "flightselectiondialog.h"
-#include "glidersite.h"
 #include "isohypse.h"
 #include "lineelement.h"
 #include "mainwindow.h"
@@ -76,25 +76,6 @@
         in >> lon_temp; \
         all.setPoint( i, _globalMapMatrix->wgsToMap(lat_temp, lon_temp) ); \
       }
-
-#define READ_CONTACT_DATA in >> contactCount;                           \
-  for(unsigned int loop = 0; loop < contactCount; loop++) \
-    { \
-      in >> frequency; \
-      in >> contactType; \
-      in >> callSign; \
-    }
-
-#define READ_RUNWAY_DATA(site) in >> rwCount; \
-  for(unsigned int loop = 0; loop < rwCount; loop++) \
-    { \
-      in >> rwDirection; \
-      in >> rwLength; \
-      in >> rwMaterial; \
-      in >> rwOpen; \
-      runway* rw = new runway( rwLength, rwDirection, rwMaterial, rwOpen); \
-      site->addRunway(rw); \
-    }
 
 // List of elevation levels in meters (51 in total):
 const short MapContents::isoLevels[] =
@@ -275,11 +256,11 @@ void MapContents::slotDownloadWelt2000()
   connect( downloadManger, SIGNAL(welt2000Downloaded()),
            this, SLOT(slotReloadWelt2000Data()) );
 
-  QString welt2000FileName = _settings.value( "/MapData/Welt2000FileName", "WELT2000.TXT").toString();
-  QString welt2000Link     = _settings.value( "/MapData/Welt2000Link", "http://www.segelflug.de/vereine/welt2000/download").toString();
+  QString welt2000FileName = _settings.value( "/Welt2000/FileName", "WELT2000.TXT").toString();
+  QString welt2000Link     = _settings.value( "/Welt2000/Link", "http://www.segelflug.de/vereine/welt2000/download").toString();
 
-  _settings.setValue( "/MapData/Welt2000FileName", welt2000FileName );
-  _settings.setValue( "/MapData/Welt2000Link", welt2000Link );
+  _settings.setValue( "/Welt2000/FileName", welt2000FileName );
+  _settings.setValue( "/Welt2000/Link", welt2000Link );
 
   QString url  = welt2000Link + "/" + welt2000FileName;
   QString dest = getMapRootDirectory() + "/airfields/welt2000.txt";
@@ -296,16 +277,15 @@ void MapContents::slotDownloadWelt2000()
  */
 void MapContents::slotReloadWelt2000Data()
 {
-  //airportList.clear();
-  //gliderfieldList.clear();
-  qDeleteAll(airportList);
-  qDeleteAll(gliderfieldList);
+  airfieldList.clear();
+  gliderfieldList.clear();
+  outLandingList.clear();
 
   qDebug() << "MapContents: Reloading Welt2000 started";
 
   Welt2000 welt2000;
 
-  welt2000.load( airportList, gliderfieldList );
+  welt2000.load( airfieldList, gliderfieldList, outLandingList );
 
   qDebug() << "MapContents: Reloading Welt2000 finished";
 
@@ -1068,11 +1048,13 @@ void MapContents::proofeSection(bool isPrint)
     }
 
   // Checking for Airfield, Gliderfield and Outlanding data
-  if( airportList.isEmpty() && gliderfieldList.isEmpty() )
+#warning "Deadlock trap is open to handle here!"
+
+  if( airfieldList.isEmpty() && gliderfieldList.isEmpty() )
     {
       Welt2000 welt2000;
 
-      if( !welt2000.load( airportList, gliderfieldList ) )
+      if( !welt2000.load( airfieldList, gliderfieldList, outLandingList ) )
         {
           // Welt2000 load failed, try to download a new Welt2000 File
           // from the Internet web page.
@@ -1085,8 +1067,8 @@ int MapContents::getListLength(int listIndex) const
 {
   switch(listIndex)
     {
-      case AirportList:
-        return airportList.count();
+      case AirfieldList:
+        return airfieldList.count();
       case GliderfieldList:
         return gliderfieldList.count();
       case OutLandingList:
@@ -1129,30 +1111,34 @@ Airspace* MapContents::getAirspace(uint index)
 }
 
 
-Airport* MapContents::getAirport(uint index)
+Airfield* MapContents::getAirfield(uint index)
 {
-  return airportList.value(index);
+  return &airfieldList[index];
 }
 
 
-GliderSite* MapContents::getGlidersite(uint index)
+Airfield* MapContents::getGliderfield(uint index)
 {
-  return gliderfieldList.value(index);
+  return &gliderfieldList[index];
 }
 
+Airfield* MapContents::getOutlanding(uint index)
+{
+  return &outLandingList[index];
+}
 
 BaseMapElement* MapContents::getElement(int listIndex, uint index)
 {
   switch(listIndex)
   {
-    case AirportList:
-      return airportList.value(index);
+    case AirfieldList:
+      return &airfieldList[index];
     case GliderfieldList:
-      return gliderfieldList.value(index);
+      return &gliderfieldList[index];
     case OutLandingList:
-      return outLandingList.value(index);
+      return &outLandingList[index];
     case NavList:
-      return navList.value(index);
+      return &navList[index];
     case AirspaceList:
       return &airspaceList[index];
     case ObstacleList:
@@ -1189,14 +1175,14 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, uint index)
 {
   switch(listIndex)
   {
-  case AirportList:
-    return airportList.value(index);
+  case AirfieldList:
+    return &airfieldList[index];
   case GliderfieldList:
-    return gliderfieldList.value(index);
+    return &gliderfieldList[index];
   case OutLandingList:
-    return outLandingList.value(index);
+    return &outLandingList[index];
   case NavList:
-    return navList.value(index);
+    return &navList[index];
   case ObstacleList:
     return &obstacleList[index];
   case ReportList:
@@ -1219,7 +1205,7 @@ void MapContents::slotReloadMapData()
   airspaceList.clear();
   airspaceRegionList.clear();
 
-  airportList.clear();
+  airfieldList.clear();
   gliderfieldList.clear();
   addSitesList.clear();
   outLandingList.clear();
@@ -1290,17 +1276,17 @@ void MapContents::printContents(QPainter* targetPainter, bool isText)
   for (int i = 0; i < airspaceList.size(); i++)
     airspaceList[i].printMapElement(targetPainter, isText);
 
-  foreach(elementPtr, navList)
-    elementPtr->printMapElement(targetPainter, isText);
+  for (int i = 0; i < navList.size(); i++)
+    navList[i].printMapElement(targetPainter, isText);
 
-  foreach(elementPtr, airportList)
-    elementPtr->printMapElement(targetPainter, isText);
+  for (int i = 0; i < airfieldList.size(); i++)
+    airfieldList[i].printMapElement(targetPainter, isText);
 
-  foreach(elementPtr, gliderfieldList)
-    elementPtr->printMapElement(targetPainter, isText);
+  for (int i = 0; i < gliderfieldList.size(); i++)
+    gliderfieldList[i].printMapElement(targetPainter, isText);
 
-  foreach(elementPtr, outLandingList)
-    elementPtr->printMapElement(targetPainter, isText);
+  for (int i = 0; i < outLandingList.size(); i++)
+    outLandingList[i].printMapElement(targetPainter, isText);
 
   foreach(elementPtr, flightList)
     elementPtr->printMapElement(targetPainter, isText);
@@ -1311,33 +1297,31 @@ void MapContents::drawList( QPainter* targetPainter,
                             QPainter* maskPainter,
                             unsigned int listID )
 {
-  BaseMapElement *elementPtr;
-
   switch(listID)
     {
-      case AirportList:
-        foreach(elementPtr, airportList)
-            elementPtr->drawMapElement(targetPainter, maskPainter);
+      case AirfieldList:
+        for (int i = 0; i < airfieldList.size(); i++)
+          airfieldList[i].drawMapElement(targetPainter);
         break;
 
       case GliderfieldList:
-        foreach(elementPtr, gliderfieldList)
-            elementPtr->drawMapElement(targetPainter, maskPainter);
+        for (int i = 0; i < gliderfieldList.size(); i++)
+          gliderfieldList[i].drawMapElement(targetPainter);
         break;
 
       case AddSitesList:
-        foreach(elementPtr, addSitesList)
-            elementPtr->drawMapElement(targetPainter, maskPainter);
+        for (int i = 0; i < addSitesList.size(); i++)
+          addSitesList[i].drawMapElement(targetPainter);
         break;
 
       case OutLandingList:
-        foreach(elementPtr, outLandingList)
-            elementPtr->drawMapElement(targetPainter, maskPainter);
+        for (int i = 0; i < outLandingList.size(); i++)
+          outLandingList[i].drawMapElement(targetPainter);
         break;
 
       case NavList:
-        foreach(elementPtr, navList)
-            elementPtr->drawMapElement(targetPainter, maskPainter);
+        for (int i = 0; i < navList.size(); i++)
+          navList[i].drawMapElement(targetPainter);
         break;
 
       case AirspaceList:

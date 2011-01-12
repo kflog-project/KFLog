@@ -6,44 +6,34 @@
  **
  ************************************************************************
  **
- **   Copyright (c):  2006-2008 by Axel Pauli, axel@kflog.org
+ **   Copyright (c):  2006-2011 by Axel Pauli, axel@kflog.org
  **
  **   This file is distributed under the terms of the General Public
- **   Licence. See the file COPYING for more information.
+ **   License. See the file COPYING for more information.
  **
- **   $Id: welt2000.cpp 2697 2008-04-11 18:37:43Z axel $
+ **   $Id: welt2000.cpp 4274 2010-09-22 08:28:26Z axel $
  **
  ***********************************************************************/
 
-#include <math.h>
+#include <cmath>
 #include <unistd.h>
 
-#include <QBuffer>
-#include <QByteArray>
-#include <QDateTime>
-#include <q3dict.h>
-#include <QDir>
-#include <QFile>
-#include <QFileInfo>
-#include <QPoint>
-#include <QRegExp>
-#include <QSettings>
-#include <q3textstream.h>
+#include <QtCore>
 
-#include "airport.h"
+#include "airfield.h"
 #include "basemapelement.h"
-//#include "filetools.h"
-#include "glidersite.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "mapmatrix.h"
-#include "projectionbase.h"
 #include "resource.h"
 #include "runway.h"
 #include "wgspoint.h"
 #include "distance.h"
 
 #include "welt2000.h"
+
+// KFLog's configuration settings
+extern QSettings _settings;
 
 // All is prepared for additional calculation, storage and
 // reconstruction of a bounding box. Be free to switch on/off it via
@@ -52,21 +42,15 @@
 #undef BOUNDING_BOX
 // #define BOUNDING_BOX 1
 
-
-// type definition for compiled airfield files
-#define FILE_TYPE_AIRFIELD_C 0x62
-
 // version used for files created from welt2000 data
-#define FILE_VERSION_AIRFIELD_C 201
+#define FILE_VERSION_AIRFIELD_C 202
 
-extern MapContents  *_globalMapContents;
-extern MapMatrix    *_globalMapMatrix;
+extern MapContents*  _globalMapContents;
+extern MapMatrix*    _globalMapMatrix;
 
 Welt2000::Welt2000()
 {
-  h_projection = (ProjectionBase *) 0;
-
-  // prepare base mappings of cumulus
+  // prepare base mappings of KFLog
   c_baseTypeMap.insert( "IntAirport", BaseMapElement::IntAirport );
   c_baseTypeMap.insert( "Airport", BaseMapElement::Airport );
   c_baseTypeMap.insert( "MilAirport", BaseMapElement::MilAirport );
@@ -76,18 +60,13 @@ Welt2000::Welt2000()
   c_baseTypeMap.insert( "CivHeliport", BaseMapElement::CivHeliport );
   c_baseTypeMap.insert( "MilHeliport", BaseMapElement::MilHeliport );
   c_baseTypeMap.insert( "AmbHeliport", BaseMapElement::AmbHeliport );
-  c_baseTypeMap.insert( "Glidersite", BaseMapElement::Glidersite );
+  c_baseTypeMap.insert( "Glidersite", BaseMapElement::Gliderfield );
   c_baseTypeMap.insert( "UltraLight", BaseMapElement::UltraLight );
   c_baseTypeMap.insert( "HangGlider", BaseMapElement::HangGlider );
 }
 
-
 Welt2000::~Welt2000()
 {
-  if( h_projection )
-    {
-      delete h_projection;
-    }
 }
 
 /**
@@ -95,7 +74,9 @@ Welt2000::~Welt2000()
  * be the original ascii file or a compiled version of it. The results
  * are put in the passed lists
  */
-bool Welt2000::load(QList<Airport*> &airportList, QList<GliderSite*> &gliderSiteList)
+bool Welt2000::load( QList<Airfield>& airfieldList,
+                     QList<Airfield>& gliderfieldList,
+                     QList<Airfield>& outlandingList )
 {
   // Rename WELT2000.TXT -> welt2000.txt.
   QString wl = "welt2000.txt";
@@ -108,23 +89,18 @@ bool Welt2000::load(QList<Airport*> &airportList, QList<GliderSite*> &gliderSite
   QString pu = mapDir + sd + wu;
   rename( pu.toLatin1().data(), pl.toLatin1().data() );
 
-  QString w2PathTxt;
+  QString w2PathTxt = pl;
 
-  QFile test;
-  test.setName( mapDir + "/airfields/welt2000.txt" );
+  QFileInfo test( w2PathTxt );
 
-  if( test.exists() )
+  if( ! test.exists() )
     {
-      w2PathTxt = test.name();
-    }
-  else
-    {
-      qWarning( "W2000: No Welt2000 files could be found in the map directories" );
+      qWarning( "W2000: No Welt2000 file found in the map airfields directory" );
       return false;
     }
 
   // parse source file
-  return parse( w2PathTxt, airportList, gliderSiteList, true );
+  return parse( w2PathTxt, airfieldList, gliderfieldList, outlandingList );
 }
 
 
@@ -148,8 +124,8 @@ bool Welt2000::filter( QString& path )
       return false;
     }
 
-  Q3TextStream ins(&in);
-  Q3TextStream outs;
+  QTextStream ins(&in);
+  QTextStream outs;
 
   uint outLines = 0; // counter for written lines
 
@@ -175,13 +151,14 @@ bool Welt2000::filter( QString& path )
             }
 
           outs.setDevice( &out );
-          outs << header1.toLatin1().data() << QDateTime::currentDateTime().toString().toLatin1().data() << '\n'
+          outs << header1.toLatin1().data()
+               << QDateTime::currentDateTime().toString().toLatin1().data() << '\n'
                << header2.toLatin1().data() << '\n' << '\n';
           outLines += 2;
         }
 
       // remove white spaces and line end characters
-      line = line.stripWhiteSpace();
+      line = line.trimmed();
 
       // remove temporary commented out entries
       if( line.startsWith("$-") || line.startsWith("$+") ||
@@ -214,15 +191,6 @@ bool Welt2000::filter( QString& path )
           continue; // skip it, not of interest for us
         }
 
-      // Check, if we have an outlanding point. Under this we have to
-      // expect also ul fields. If no ul field is defined we will
-      // ignore the line.
-      if( kind == "2" && line.mid( 23, 4 ) != "*ULM" )
-        {
-          // ignore outlandings
-          continue;
-        }
-
       outs << line.toLatin1().data() << '\n';
       outLines++;
     }
@@ -244,7 +212,6 @@ bool Welt2000::filter( QString& path )
   return true;
 }
 
-
 /**
  * The passed file can contain country information, to be used during
  * parsing of welt2000.txt file. The entries country and home radius
@@ -253,8 +220,8 @@ bool Welt2000::filter( QString& path )
  * File syntax: [#$] These 2 signs starts a comment line, it ends with the newline
  *              FILTER countries=<country_1>,<country_2>,...<country_n>'\nl'
  *              FILTER countries=....
- *              MAP_ICAO <name>=[IntAirport|Airport|MilAirport|CivMilAirport|Airfield|ClosedAirfield|CivHeliport|MilHeliport|AmbHeliport|Glidersite|UltraLight|HangGlider]
- *              MAP_SHORT_NAME <name>=[IntAirport|Airport|MilAirport|CivMilAirport|Airfield|ClosedAirfield|CivHeliport|MilHeliport|AmbHeliport|Glidersite|UltraLight|HangGlider]
+ *              MAP_ICAO <name>=[IntAirport|Airport|MilAirport|CivMilAirport|Airfield|ClosedAirfield|CivHeliport|MilHeliport|AmbHeliport|Gliderfield|UltraLight|HangGlider]
+ *              MAP_SHORT_NAME <name>=[IntAirport|Airport|MilAirport|CivMilAirport|Airfield|ClosedAirfield|CivHeliport|MilHeliport|AmbHeliport|Gliderfield|UltraLight|HangGlider]
  *
  * You can define several filter lines, all will be processed.
  *
@@ -274,7 +241,7 @@ bool Welt2000::readConfigEntries( QString &path )
       return false;
     }
 
-  Q3TextStream ins(&in);
+  QTextStream ins(&in);
 
   while( ! ins.atEnd() )
     {
@@ -286,7 +253,7 @@ bool Welt2000::readConfigEntries( QString &path )
         }
 
       // remove white spaces and line end characters
-      line = line.stripWhiteSpace();
+      line = line.trimmed();
 
       // step over comment lines
       if( line.startsWith("#") || line.startsWith("$") )
@@ -296,20 +263,20 @@ bool Welt2000::readConfigEntries( QString &path )
 
       if( line.startsWith("FILTER") || line.startsWith("filter") )
         {
-          QStringList list = QStringList::split(QRegExp("[=,]"), line);
+          QStringList list = line.split(QRegExp("[=,]"), QString::SkipEmptyParts);
 
-          if( list.count() < 2 || list[0].contains("countries", false) == 0 )
+          if( list.count() < 2 || list[0].contains("countries", Qt::CaseInsensitive) == false )
             {
               // No country elements to find in list
               continue;
             }
 
           // remove first entry, it is the filter-country key
-          list.remove( list.begin() );
+          list.removeAt( 0 );
 
-          for(int i = 0; i < list.count(); i++)
+          for( int i = 0; i < list.count(); i++ )
             {
-              QString e = list[i].stripWhiteSpace().upper();
+              QString e = list[i].trimmed().toUpper();
 
               if( c_countryList.contains(e) )
                 continue;
@@ -323,7 +290,7 @@ bool Welt2000::readConfigEntries( QString &path )
 
       if( line.startsWith("MAP_") || line.startsWith("map_") )
         {
-          QStringList list = QStringList::split(QRegExp("[=]"), line);
+          QStringList list = line.split(QRegExp("[=]"), QString::SkipEmptyParts);
 
           if( list.count() < 2 )
             {
@@ -331,19 +298,19 @@ bool Welt2000::readConfigEntries( QString &path )
               continue;
             }
 
-          if( list[0].contains("MAP_ICAO", false) )
+          if( list[0].contains("MAP_ICAO",Qt::CaseInsensitive) )
             {
               list[0].remove( 0, 8 );
-              list[0] = list[0].stripWhiteSpace().upper(); // icao name of airfield
-              list[1] = list[1].stripWhiteSpace(); // new map type for airfield
+              list[0] = list[0].trimmed().toUpper(); // icao name of airfield
+              list[1] = list[1].trimmed(); // new map type for airfield
               c_icaoMap.insert( list[0], list[1] );
               // qDebug("W2000: c_icaoMap.insert(%s, %s)", list[0].toLatin1().data(), list[1].toLatin1().data());
             }
-          else if( list[0].contains("MAP_SHORT_NAME", false) )
+          else if( list[0].contains("MAP_SHORT_NAME",Qt::CaseInsensitive) )
             {
               list[0].remove( 0, 14 );
-              list[0] = list[0].stripWhiteSpace(); // short name of airfield
-              list[1] = list[1].stripWhiteSpace(); // new map type for airfield
+              list[0] = list[0].trimmed(); // short name of airfield
+              list[1] = list[1].trimmed(); // new map type for airfield
               c_shortMap.insert( list[0], list[1] );
               // qDebug("W2000: c_shortMap.insert(%s, %s)", list[0].toLatin1().data(), list[1].toLatin1().data());
             }
@@ -356,33 +323,34 @@ bool Welt2000::readConfigEntries( QString &path )
   return true;
 }
 
-
 /**
- * Parses the passed file in welt 2000 format and put the approriate
+ * Parses the passed file in Welt2000 format and put the appropriate
  * entries in the related lists.
- * 
+ *
  * arg1 path: Full name with path of welt2000 file
- * arg2 airportList: All airports have to be stored in this list
- * arg3 glidertList: All gilder fields have to be stored in this list
- * arg4 doCompile: create a binary file of the parser results,
- *                 if flag is set to true. Default is false.
- * returns true (success) or false (error occured)
+ * arg2 airfieldList: All airports have to be stored in this list
+ * arg3 gliderfieldList: All gilder fields have to be stored in this list
+ * arg4 outlandibgList: All outlanding fields have to be stored in this list, when
+ *                      the outlanding option is set in the user configuration
+ * returns true (success) or false (error occurred)
  */
-bool Welt2000::parse( QString &path,
-                      QList<Airport*> &airportList,
-                      QList<GliderSite*> &gliderSiteList,
-                      bool /*doCompile*/ )
+bool Welt2000::parse( QString& path,
+                      QList<Airfield>& airfieldList,
+                      QList<Airfield>& gliderfieldList,
+                      QList<Airfield>& outlandingList )
 {
   QTime t;
   t.start();
 
-  // Filter out the needed extract for us from the welt 2000
+#if 0
+  // Filter out the needed extract for us from the Welt2000
   // file. That will reduce the file size over the half.
   if( filter( path ) == false )
     {
-      // It seems, that no welt 2000 file has been passed
+      // It seems, that no Welt2000 file has been passed
       return false;
     }
+#endif
 
   QFile in(path);
 
@@ -392,36 +360,36 @@ bool Welt2000::parse( QString &path,
       return false;
     }
 
-  Q3TextStream ins(&in);
+  QTextStream ins(&in);
 
-  // look, if a config file is accessable. If yes read out its data.
+  // look, if a configuration file is accessible. If yes read out its data.
   QFileInfo fi( path );
-  QString confFile = fi.dirPath(TRUE) + "/welt2000.conf";
+  QString confFile = fi.path() + "/welt2000.conf";
 
   // It is expected that the filter file is located in the same
   // directory as the welt2000.txt file and carries the name
   // welt2000.conf
   readConfigEntries( confFile );
 
-  // Check, if in GeneralConfig other definitions exist. These will
-  // overwrite the definitions in the config file.
-
-  extern QSettings _settings;
-  QString cFilter = _settings.readEntry("/MapData/Welt2000CountryFilter", "");
+  // Check, if in KFLOg settings other definitions exist. These will
+  // overwrite the definitions in the configuration file.
+  QString cFilter = _settings.value( "/Welt2000/CountryFilter", "" ).toString();
 
   if( cFilter.length() > 0 )
     {
       // load new country filter definitions
       c_countryList.clear();
 
-      QStringList clist = QStringList::split( QRegExp("[, ]"), cFilter );
+      QStringList clist = cFilter.split( QRegExp("[, ]"), QString::SkipEmptyParts );
 
-      for(int i = 0; i < clist.count(); i++)
+      for( int i = 0; i < clist.count(); i++ )
         {
-          QString e = clist[i].stripWhiteSpace().upper();
-      
+          QString e = clist[i].trimmed().toUpper();
+
           if( c_countryList.contains(e) )
-            continue;
+            {
+              continue;
+            }
 
           c_countryList += e;
         }
@@ -429,8 +397,11 @@ bool Welt2000::parse( QString &path,
       c_countryList.sort();
     }
 
-  // get home radius from config data
-  int radius = _settings.readNumEntry("/MapData/Welt2000HomeRadius", 0);
+  // get outlanding load flag from configuration data
+  bool outlandings = _settings.value( "/Welt2000/LoadOutlandings", true ).toBool();
+
+  // get home radius from configuration data
+  int radius = _settings.value( "/Welt2000/HomeRadius", 0 ).toInt();
 
   if( radius == 0 )
     {
@@ -439,7 +410,7 @@ bool Welt2000::parse( QString &path,
     }
   else
     {
-      // we must look, what unit the user has choosen. This unit must
+      // we must look, what unit the user has chosen. This unit must
       // be considered during load of airfield data.
       c_homeRadius = getDistanceInKm( radius );
     }
@@ -447,39 +418,32 @@ bool Welt2000::parse( QString &path,
   qDebug( "W2000: File welt2000.conf contains %d country entries", c_countryList.count() );
   qDebug( "W2000: File welt2000 defines the home radius to %.1f Km", c_homeRadius );
 
-
-  // put all entries of contry list into a dictionary for faster
+  // put all entries of country list into a dictionary for faster
   // access
-  Q3Dict<char> countryDict( 101, FALSE );
+  QHash<QString, QString> countryDict;
 
-  for(int i = 0; i < c_countryList.count(); i++)
+  for( int i = 0; i < c_countryList.count(); i++ )
     {
       // populate country dictionary
       countryDict.insert( c_countryList[i], c_countryList[i] );
     }
-
-  // Prepare all for a binary storage of the parser results.
-  QString compileFile;
-  QFile   compFile;
-  QDataStream out;
-  QByteArray bufdata;
-  QBuffer buffer(&bufdata);
-  QDataStream outbuf;
 
 #ifdef BOUNDING_BOX
   QRect boundingBox;
 #endif
 
   uint lineNo = 0;
-  QString lastName = "";
-//  uint counter = 0;
-  uint lastCounter = 0;
+  QSet<QString> shortNameSet; // contains all short names already in use
+
+  // Contains the coordinates of the objects put in the lists. Used as filter
+  // to avoid multiple entries at the same point.
+  QSet<QString> pointFilter;
 
   // statistics counter
-  uint ul, gl, af;
-  ul = gl = af = 0;
+  uint ul, gl, af, ol;
+  ul = gl = af = ol = 0;
 
-  // Input file was taken from Michael Meiers welt 2000 data dase
+  // Input file was taken from Michael Meiers Welt2000 data dase
   //
   // 0         1         2         3         4         5         6
   // 0123456789012345678901234567890123456789012345678901234567890123
@@ -489,17 +453,32 @@ bool Welt2000::parse( QString &path,
   // ARGEN2 ARGENBUEHL EISE?*ULM G 40082612342 686N474128E0095744DEN
   // BASAL2 BAD SALZUNGEN UL*ULM G 65092712342 233N504900E0101305DEN
   // FUERS1 FUERSTENWALDE   #EDALG 80112912650  55N522323E0140539DEO3
+  // German international airport, ICAO starts with EDD
   // BERLT1 BERLIN  TEGEL   #EDDTA303082611870  37N523335E0131716DEO
   // BERSC1 BERLIN SCHOENFEL#EDDBC300072512002  49N522243E0133114DEO
-  // BERTE1 BERLIN TEMPELHOF#EDDIC208092711810  52N522825E0132406DEO
+  // German military airport, ICAO starts with ET
+  // HOLZD1 HOLZDORF MIL    #ETSHA242092712210  82N514605E0131003DEQ0
+  // UL Fields new coding variant
+  // SIEWI1 SIEWISCH UL    !# ULMG 51082612342  89N514115E0141231DEO0
+  // OUTLANDING EXAMPLES
+  // ESPIN2 ESPINASSES     !*FL10S 3509271     648N442738E0061305FRQ0
+  // BAERE2 BAERENTAL       *FELDS 2505231     906N475242E0080643DEO3
+  // BAIBR2 BAIERSBRON CLS  *WIESG 2317351     507N483217E0082354DEM5
+  // BAIYY2 BAIERSBRONN     *FL03S 2205231     574N483056E0082224DEO0
+  // DAMGA2 DAMGARTEN CLS   *   !C200072512150   5N541551E0122640DEE0
+  // PIEVE2 PIEVERSTORF 25M *AGR!A 3208261      27N534906E0110841DEX0
 
   while( ! in.atEnd() )
     {
-      bool ok;
-
+      bool ok, ok1;
       QString line, buf;
       line = in.readLine(128);
       lineNo++;
+
+      if( line.isEmpty() )
+        {
+          continue;
+        }
 
       // step over comment or invalid lines
       if( line.startsWith("#") || line.startsWith("$") ||
@@ -509,7 +488,7 @@ bool Welt2000::parse( QString &path,
         }
 
       // remove white spaces and line end characters
-      line = line.stripWhiteSpace();
+      line = line.trimmed();
 
       // replace markers against space
       line.replace( QRegExp("[!?]+"), " " );
@@ -523,22 +502,23 @@ bool Welt2000::parse( QString &path,
       // get short name for user mapping before changing line
       QString shortName = line.mid( 0, 6 );
 
-      // convert all to upper case
-      line = line.upper();
+      // convert all to toUpper case
+      line = line.toUpper();
 
       // Extract country sign. It is coded according to ISO 3166.
       QString country = line.mid( 60, 2 );
 
       if( ! countryDict.isEmpty() )
         {
-          if( countryDict[country] == 0  )
-            continue;
+          if( ! countryDict.contains(country) )
+            {
+              continue;
+            }
         }
 
       // look, what kind of line was read.
-      // COL5 = 1 Airfield
+      // COL5 = 1 Airfield or also UL site
       // COL5 = 2 Outlanding, contains also UL places
-
       QString kind = line.mid( 5, 1 );
 
       if( kind != "1" && kind != "2" )
@@ -549,6 +529,10 @@ bool Welt2000::parse( QString &path,
       bool ulField = false;
       bool glField = false;
       bool afField = false;
+      bool olField = false;
+
+      QString commentShort;
+      QString commentLong;
       QString icao;
 
       if( kind == "2" ) // can be an UL field
@@ -559,8 +543,23 @@ bool Welt2000::parse( QString &path,
             }
           else
             {
-              // step over other outlandings
-              continue;
+              // outlanding found
+              if( outlandings == false )
+                {
+                  // ignore outlandings
+                  continue;
+                }
+
+              olField = true;
+              commentShort = line.mid( 24, 4 );
+              commentShort.replace(QRegExp("[!?]+"), " " );
+              commentShort = commentShort.toUpper().trimmed();
+
+              if( commentShort.startsWith( "FL" ) )
+                {
+                  commentLong = QString( QObject::tr("Emergency Field No: ")) +
+                                commentShort.mid( 2, 2 );
+                }
             }
         }
       else if( line.mid( 23, 3 ) == "# S" )
@@ -568,10 +567,15 @@ bool Welt2000::parse( QString &path,
           // Glider field
           glField = true;
         }
+      else if( line.mid( 23, 5 ) == "# ULM" )
+        {
+          // newer coding for UL field
+          ulField = true;
+        }
       else
         {
           afField = true;
-          icao = line.mid( 24, 4 ).stripWhiteSpace().upper();
+          icao = line.mid( 24, 4 ).trimmed().toUpper();
 
           if( line.mid( 20, 4 ) == "GLD#" )
             {
@@ -587,7 +591,7 @@ bool Welt2000::parse( QString &path,
       afName.replace( QRegExp("[!?]+"), "" );
 
       // remove resp. replace white spaces against one space
-      afName = afName.simplifyWhiteSpace();
+      afName = afName.simplified();
 
       if( afName.length() == 0 )
         {
@@ -606,7 +610,11 @@ bool Welt2000::parse( QString &path,
         }
       else if( glField == true )
         {
-          afType = BaseMapElement::Glidersite;
+          afType = BaseMapElement::Gliderfield;
+        }
+      else if( olField == true )
+        {
+          afType = BaseMapElement::Outlanding;
         }
       else if( afField == true )
         {
@@ -631,7 +639,7 @@ bool Welt2000::parse( QString &path,
             }
         }
 
-      // make the user's wanted mapping for short name
+      // make the user's desired mapping for short name
       if( c_shortMap.contains(shortName) )
         {
           QString val = c_shortMap[shortName];
@@ -654,32 +662,44 @@ bool Welt2000::parse( QString &path,
         }
 
       // airfield name
-      afName = afName.lower();
+      afName = afName.toLower();
 
       QChar lastChar(' ');
 
       // convert airfield names to upper-lower
-      for(int i=0; i < afName.length(); i++)
+      for( int i=0; i < afName.length(); i++ )
         {
           if( lastChar == ' ' )
             {
-              afName.replace( i, 1, afName.mid(i,1).upper() );
+              afName.replace( i, 1, afName.mid(i,1).toUpper() );
             }
 
           lastChar = afName[i];
         }
 
-      // gps name, we use 8 characters without spaces
-      QString gpsName = afName.left(8);
+      // gps name, we use 9 characters without spaces
+      QString gpsName = afName;
+      gpsName.remove(QChar(' '));
+      gpsName = gpsName.left(9);
 
-      if( lastName == gpsName )
+      if( ! shortNameSet.contains( gpsName) )
         {
-          gpsName.replace( gpsName.length()-1, 1, QString::number(++lastCounter) );
+          shortNameSet.insert( gpsName );
         }
       else
         {
-          lastName = gpsName;
-          lastCounter = 0;
+          // Try to generate an unique short name. The assumption is that we never have
+          // more than 10 equal names.
+          for( int i=0; i <= 9; i++ )
+            {
+              gpsName.replace( gpsName.length()-1, 1, QString::number(i) );
+
+              if( ! shortNameSet.contains( gpsName) )
+                {
+                  shortNameSet.insert( gpsName );
+                  break;
+                }
+            }
         }
 
       if( ulField  )
@@ -696,7 +716,7 @@ bool Welt2000::parse( QString &path,
             }
         }
 
-      Q_INT32 lat, lon;
+      qint32 lat, lon;
       QString degree, min, sec;
       double d, m, s;
 
@@ -734,7 +754,7 @@ bool Welt2000::parse( QString &path,
 
       double latTmp = (d * 600000.) + (10000. * (m + s / 60. ));
 
-      lat = (Q_INT32) rint(latTmp);
+      lat = (qint32) rint(latTmp);
 
       if( line[45] == 'S' )
         {
@@ -775,7 +795,7 @@ bool Welt2000::parse( QString &path,
 
       double lonTmp = (d * 600000.) + (10000. * (m + s / 60. ));
 
-      lon = (Q_INT32) rint(lonTmp);
+      lon = (qint32) rint(lonTmp);
 
       if( line[52] == 'W' )
         {
@@ -789,15 +809,14 @@ bool Welt2000::parse( QString &path,
           // read point. Is the distance is over the user defined
           // value away we will ignore this point.
 
-          QPoint home( _settings.readNumEntry("/MapData/HomesiteLatitude"),
-                       _settings.readNumEntry("/MapData/HomesiteLongitude") );
+          QPoint home = _globalMapMatrix->getHomeCoord();
           QPoint af( lat, lon );
 
           double d = dist( &home, &af );
 
           if( d > c_homeRadius )
             {
-              // Distance is greater than defined radius in generalconfig
+              // Distance is greater than defined radius in GeneralConfig
               // qDebug("Ignoring Dist=%f, AF=%s", d, afName.toLatin1().data());
               continue;
             }
@@ -809,13 +828,30 @@ bool Welt2000::parse( QString &path,
 #endif
 
       WGSPoint wgsPos(lat, lon);
+
+      // We do check here, if the coordinates of the object are already known to
+      // filter out multiple entries. Only the first entry do pass the filter.
+      QString corrString = WGSPoint::coordinateString( wgsPos );
+
+      if( pointFilter.contains( corrString ) )
+        {
+          // An object with the same coordinates do already exist.
+          // We do ignore this one.
+          qWarning( "W2000, Line %d: %s (%s) skipping entry, coordinates already in use!",
+                    lineNo, afName.toLatin1().data(), country.toLatin1().data() );
+          continue;
+        }
+
+      // store coordinates in filter
+      pointFilter.insert( corrString );
+
       QPoint position = _globalMapMatrix->wgsToMap(wgsPos);
 
       // elevation
-      buf = line.mid(41,4 ).stripWhiteSpace();
+      buf = line.mid(41,4 ).trimmed();
 
       ok = false;
-      Q_INT16 elevation = 0;
+      qint16 elevation = 0;
 
       if( ! buf.isEmpty() )
         {
@@ -824,57 +860,87 @@ bool Welt2000::parse( QString &path,
 
       if( ! ok )
         {
-          //qWarning( "W2000, Line %d: %s (%s) missing or wrong elevation, set value to 0!",
-          //          lineNo, afName.toLatin1().data(), country.toLatin1().data() );
+          qWarning( "W2000, Line %d: %s (%s) missing or wrong elevation, set value to 0!",
+                    lineNo, afName.toLatin1().data(), country.toLatin1().data() );
           elevation = 0;
         }
 
       // frequency
-      QString frequency = line.mid(36,3) + "." +
-        line.mid(39,2).stripWhiteSpace();
+      QString frequency = line.mid(36,3) + "." + line.mid(39,2).trimmed();
 
       double f = frequency.toDouble(&ok);
 
-      if( !ok || f < 117.97 || f > 137.0 )
+      if( ( !ok || f < 117.97 || f > 137.0 ) )
         {
-          //qWarning( "W2000, Line %d: %s (%s) missing or wrong frequency, set value to 0!",
-          //          lineNo, afName.toLatin1().data(), country.toLatin1().data() );
-          frequency = "000.000";
-        }
+          if( olField == false )
+            {
+                  // Don't display warnings for outlandings
+              qWarning( "W2000, Line %d: %s (%s) missing or wrong frequency, set value to 0!",
+                        lineNo, afName.toLatin1().data(), country.toLatin1().data() );
+            }
 
-      // check, what has to be appended as last digit
-      if( line[40] == '2' || line[40] == '7' )
-        {
-          frequency += "5";
+          frequency = "000.000"; // reset frequency to unknown
         }
       else
         {
-          frequency += "0";
+          // check, what has to be appended as last digit
+          if( line[40] == '2' || line[40] == '7' )
+            {
+              frequency += "5";
+            }
+          else
+            {
+              frequency += "0";
+            }
         }
 
-      // runway direction as two digits, we consider only the first entry
-      buf = line.mid(32,2).stripWhiteSpace();
+      /* Runway description from Welt2000.txt file
+       *
+       * A: 08/26 MEANS THAT THERE IS ONLY ONE RUNWAYS 08 AND (26=08 + 18)
+       * B: 17/07 MEANS THAT THERE ARE TWO RUNWAYS,
+       *          BUT 17 IS THE MAIN RWY SURFACE LENGTH
+       * C: IF BOTH DIRECTIONS ARE IDENTICAL (04/04),
+       *    THIS DIRECTION IS STRONGLY RECOMMENDED
+       */
+
+      // runway direction have two digits, we consider both directions
+      buf = line.mid(32,2).trimmed();
 
       ok = false;
-      uint rwDir = 0;
+      ok1 = false;
+
+      ushort rwDir = 0;
+      ushort rwDir1 = 0;
 
       if( ! buf.isEmpty() )
         {
-          rwDir = buf.toUInt(&ok);
+          rwDir = buf.toUShort(&ok);
         }
 
-      if( ! ok )
+      // extract second direction
+      buf = line.mid(34,2).trimmed();
+
+      if( ! buf.isEmpty() )
         {
-          //qWarning( "W2000, Line %d: %s (%s) missing or wrong runway direction, set value to 0!",
-          //          lineNo, afName.toLatin1().data(), country.toLatin1().data() );
-          rwDir = 0;
+          rwDir1 = buf.toUShort(&ok1);
         }
+
+      if( ! ok || ! ok1 || rwDir < 1 || rwDir > 36 || rwDir1 < 1 || rwDir1 > 36 )
+        {
+          qWarning( "W2000, Line %d: %s (%s) missing or wrong runway direction, set value to 0!",
+                    lineNo, afName.toLatin1().data(), country.toLatin1().data() );
+          rwDir = rwDir1 = 0;
+        }
+
+      // Put both directions together in one variable, first direction in the
+      // upper part.
+      rwDir = rwDir*256 + rwDir1;
 
       // runway length in meters, must be multiplied by 10
-      buf = line.mid(29,3).stripWhiteSpace();
+      buf = line.mid(29,3).trimmed();
 
       ok = false;
-      uint rwLen = 0;
+      ushort rwLen = 0;
 
       if( ! buf.isEmpty() )
         {
@@ -883,8 +949,8 @@ bool Welt2000::parse( QString &path,
 
       if( ! ok )
         {
-          //qWarning( "W2000, Line %d: %s (%s) missing or wrong runway length, set value to 0!",
-          //          lineNo, afName.toLatin1().data(), country.toLatin1().data() );
+          qWarning( "W2000, Line %d: %s (%s) missing or wrong runway length, set value to 0!",
+                    lineNo, afName.toLatin1().data(), country.toLatin1().data() );
           rwLen = 0;
         }
       else
@@ -893,24 +959,28 @@ bool Welt2000::parse( QString &path,
         }
 
       // runway surface
-      uint rwSurface;
+      ushort rwSurface;
       QChar rwType = line[28];
 
       if( rwType == 'A' )
         {
-          rwSurface = Airport::Asphalt;
+          rwSurface = Runway::Asphalt;
         }
       else if( rwType == 'C' )
         {
-          rwSurface = Airport::Concrete;
+          rwSurface = Runway::Concrete;
         }
       else if( rwType == 'G' )
         {
-          rwSurface = Airport::Grass;
+          rwSurface = Runway::Grass;
+        }
+      else if( rwType == 'S' )
+        {
+          rwSurface = Runway::Sand;
         }
       else
         {
-          rwSurface = Airport::Unknown;
+          rwSurface = Runway::Unknown;
         }
 
       //---------------------------------------------------------------
@@ -919,122 +989,54 @@ bool Welt2000::parse( QString &path,
 
       // count output records separated by kind
       if( ulField )
-        ul++;
+        {
+          ul++;
+        }
       else if( glField )
-        gl++;
+        {
+          gl++;
+        }
+      else if( olField )
+        {
+          ol++;
+        }
       else
-        af++;
+        {
+          af++;
+        }
 
       // create an runway object
-      new runway( rwLen ,rwDir*10, rwSurface, 1 );
+      Runway rw( rwLen, rwDir, rwSurface, true );
 
-      if( afType != BaseMapElement::Glidersite )
+      Airfield af( afName, icao.trimmed(), gpsName, afType,
+                   wgsPos, position, elevation, frequency, commentLong );
+
+      af.addRunway( rw );
+
+      if( afType == BaseMapElement::Outlanding )
         {
-          // Add a non glider site to the list. That can be an
-          // airfield or an ultralight field
-          // FIXME: To be conform with cumulus we should add the runway information here!
-          Airport *ap = new Airport( afName, icao.stripWhiteSpace(), gpsName.upper(), afType,
-                                     wgsPos, position, elevation, frequency, false );
-
-          airportList.append( ap );
+          // Add an outlanding site to the list.
+          outlandingList.append( af );
+        }
+      else if( afType == BaseMapElement::Gliderfield )
+        {
+          // Add a glider site to the related list.
+          gliderfieldList.append( af );
         }
       else
         {
-          // Add a glider site to the list.
-          // FIXME: To be conform with cumulus we should add the runway information here!
-          GliderSite *gl = new GliderSite( afName, icao.stripWhiteSpace(), gpsName.upper(),
-                                           wgsPos, position, elevation, frequency, false );
-
-          gliderSiteList.append( gl );
+          // Add an airfield or an ultralight field to the list
+          airfieldList.append( af );
         }
-
     } // End of while( ! in.atEnd() )
 
   in.close();
 
-  qDebug( "W2000, Statistics from file %s: Parsing Time=%dms, Sum=%d, Airfields=%d, GL=%d, UL=%d",
-          basename(path.toLatin1().data()), t.elapsed(), af+gl+ul, af, gl, ul );
+  qDebug( "W2000, Statistics from file %s: Parsing Time=%dms, Sum=%d, Airfields=%d, GL=%d, UL=%d, OL=%d",
+          basename(path.toLatin1().data()), t.elapsed(), af+gl+ul+ol, af, gl, ul, ol );
 
   return true;
 }
-
-
-/**
- * Get the header data of a compiled file and put it in our class
- * variables.
- */
-bool Welt2000::setHeaderData( QString &path )
-{
-  h_headerIsValid = false; // save read result here too
-
-  h_magic = 0;
-  h_fileType = 0;
-  h_fileVersion = 0;
-  h_countryList.clear();
-  h_homeRadius = 0.0;
-  h_homeCoord.setX(0);
-  h_homeCoord.setY(0);
-
-  if( h_projection )
-    {
-      // delete an older projection object
-      delete  h_projection;
-      h_projection = 0;
-    }
-
-  QFile inFile(path);
-  if( !inFile.open(QIODevice::ReadOnly) )
-    {
-      qWarning("W2000: Cannot open airfield file %s!", path.toLatin1().data());
-      return false;
-    }
-
-  QDataStream in(&inFile);
-
-  in >> h_magic;
-
-  if( h_magic != KFLOG_FILE_MAGIC )
-    {
-      qWarning( "W2000: wrong magic key %x read! Aborting ...", h_magic );
-      inFile.close();
-      return false;
-    }
-
-  in >> h_fileType;
-
-  if( *h_fileType != FILE_TYPE_AIRFIELD_C )
-    {
-      qWarning( "W2000: wrong file type %x read! Aborting ...", h_fileType );
-      inFile.close();
-      return false;
-    }
-
-  in >> h_fileVersion;
-
-  if( h_fileVersion != FILE_VERSION_AIRFIELD_C )
-    {
-      qWarning( "W2000: wrong file version %x read! Aborting ...", h_fileVersion );
-      inFile.close();
-      return false;
-    }
-
-  in >> h_creationDateTime;
-  in >> h_countryList;
-  in >> h_homeRadius;
-  in >> h_homeCoord;
-
-#ifdef BOUNDING_BOX
-
-  in >> h_boundingBox;
-#endif
-
-  h_projection = LoadProjection(in);
-
-  inFile.close();
-  h_headerIsValid = true; // save read result here too
-  return true;
-}
-
 
 /**
  * Get the distance back in kilometers according to the set unit by
@@ -1045,7 +1047,7 @@ bool Welt2000::setHeaderData( QString &path )
  */
 double Welt2000::getDistanceInKm( const int distance )
 {
-  // we must look, what unit the user has choosen.
+  // we must look, what unit the user has chosen.
   Distance::distanceUnit distUnit = Distance::getUnit();
   Distance dist;
   double unit = 0.0;
@@ -1065,6 +1067,6 @@ double Welt2000::getDistanceInKm( const int distance )
       dist.setNautMiles( distance );
       unit = dist.getKilometers();
     }
-  
+
   return unit;
 }

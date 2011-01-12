@@ -15,7 +15,8 @@
 **
 ***********************************************************************/
 
-#include "airport.h"
+#include "basemapelement.h"
+#include "runway.h"
 #include "translationlist.h"
 #include "waypointdialog.h"
 #include "wgspoint.h"
@@ -27,7 +28,6 @@
 #include <Q3HBoxLayout>
 #include <Q3VBoxLayout>
 
-extern TranslationList surfaceTypes;
 extern TranslationList waypointTypes;
 
 WaypointDialog::WaypointDialog(QWidget *parent, const char *name)
@@ -42,10 +42,9 @@ WaypointDialog::WaypointDialog(QWidget *parent, const char *name)
     waypointType->insertItem(te->text);
   }
 
-  for (te = surfaceTypes.first(); te != 0; te = surfaceTypes.next()) {
-    surface->insertItem(te->text);
-  }
-  setSurface(Airport::NotSet);
+  surface->addItems( Runway::getSortedTranslationList() );
+
+  setSurface(Runway::Unknown);
   setWaypointType(BaseMapElement::Landmark);
 }
 
@@ -210,16 +209,10 @@ int WaypointDialog::getWaypointType()
   return type;
 }
 
-/** return interna type of surface */
+/** return internal type of surface */
 int WaypointDialog::getSurface()
 {
-  int s = surface->currentItem();
-
-  if (s != -1) {
-    s = surfaceTypes.at(s)->id;
-  }
-
-  return s;
+  return Runway::text2Item( surface->currentText() );
 }
 
 /** set waypoint type in combo box
@@ -236,10 +229,8 @@ void WaypointDialog::setWaypointType(int type)
 translate internal id to index */
 void WaypointDialog::setSurface(int s)
 {
-  if (s != -1) {
-    s = surfaceTypes.idxById(s);
-  }
-  surface->setCurrentItem(s);
+#warning "FIXME!"
+  //surface->setCurrentItem( Runway::item2Text(s) );
 }
 /** No descriptions */
 void WaypointDialog::enableApplyButton(bool enable)

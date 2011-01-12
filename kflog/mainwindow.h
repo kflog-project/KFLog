@@ -237,8 +237,6 @@ private:
   void createMenuBar();
   /** Initializes the QStatusBar */
   void createStatusBar();
-  /** Initializes surface types */
-  void createSurfaceTypes();
   /** Initializes task types*/
   void createTaskTypes();
   /** Initializes toolbar*/

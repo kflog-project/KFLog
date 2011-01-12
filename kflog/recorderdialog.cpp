@@ -23,7 +23,6 @@
 #include <QtGui>
 #include <Qt3Support>
 
-#include "airport.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "recorderdialog.h"

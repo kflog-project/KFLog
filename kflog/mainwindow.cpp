@@ -21,7 +21,7 @@
 #include <QtGui>
 #include <Qt3Support>
 
-#include "airport.h"
+#include "airfield.h"
 #include "centertodialog.h"
 #include "flightdataprint.h"
 #include "flightloader.h"
@@ -39,7 +39,6 @@
 
 #include "mainwindow.h"
 
-TranslationList surfaceTypes;
 TranslationList waypointTypes;
 TranslationList taskTypes;
 
@@ -89,7 +88,6 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   toolBar->setObjectName( "ToolBar");
 
   createTaskTypes();
-  createSurfaceTypes();
   createWaypointTypes();
   createDockWindows();
   createMenuBar();
@@ -893,17 +891,6 @@ void MainWindow::createStatusBar()
   statusBar()->addWidget( statusLonL, 0, false );
 }
 
-void MainWindow::createSurfaceTypes()
-{
-  surfaceTypes.setAutoDelete(true);
-
-  surfaceTypes.append(new TranslationElement(Airport::Unknown, tr("Unknown")));
-  surfaceTypes.append(new TranslationElement(Airport::Grass, tr("Grass")));
-  surfaceTypes.append(new TranslationElement(Airport::Asphalt, tr("Asphalt")));
-  surfaceTypes.append(new TranslationElement(Airport::Concrete, tr("Concrete")));
-
-  surfaceTypes.sort();
-}
 
 void MainWindow::createTaskTypes()
 {
@@ -949,7 +936,7 @@ void MainWindow::createWaypointTypes()
   waypointTypes.append(new TranslationElement(BaseMapElement::MilAirport, tr("Mil. Airport")));
   waypointTypes.append(new TranslationElement(BaseMapElement::CivMilAirport, tr("Civil/Mil. Airport")));
   waypointTypes.append(new TranslationElement(BaseMapElement::ClosedAirfield, tr("Closed Airfield")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Glidersite, tr("Glider site")));
+  waypointTypes.append(new TranslationElement(BaseMapElement::Gliderfield, tr("Glider site")));
   waypointTypes.append(new TranslationElement(BaseMapElement::HangGlider, tr("Hang glider")));
   waypointTypes.append(new TranslationElement(BaseMapElement::Highway, tr("Highway")));
   waypointTypes.append(new TranslationElement(BaseMapElement::Landmark, tr("Landmark")));

@@ -2,64 +2,111 @@
 **
 **   runway.h
 **
-**   This file is part of Cumulus
+**   This file is part of KFlog4
 **
 ************************************************************************
 **
-**   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2008 Axel Pauli
+**   Copyright (c): 2008-2011 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef RUNWAY_H
-#define RUNWAY_H
-
 /**
- * This class is used for defining a runway. It is used for all "small"
- * airports, not for the international airports, they use the struct
- * "intrunway", because they need two points per runway.
+ * \class Runway
  *
- * @author Heiner Lamprecht
+ * \author Axel Pauli
+ *
+ * \brief Runway data class.
+ *
+ * This class is used for defining a runway together with its surface and the
+ * translation types.
+ *
+ * \date 2008-2011
+ *
+ * $Id$
  *
  */
 
-class runway
+#ifndef RUNWAY_H
+#define RUNWAY_H
+
+#include <QString>
+#include <QHash>
+#include <QStringList>
+
+class Runway
 {
+
 public:
-    runway( unsigned int len, unsigned int dir, unsigned char surf, unsigned char open )
-    {
-        length = len;
-        direction = dir;
-        surface = (unsigned int)surf;
-        isOpen  = (bool)open;
-    };
-    
-    /**
-     * The length of the runway, given in meters.
-     */
-    unsigned int length;
 
-    /**
-     * The direction of the runway, given in steps of 10 degree.
-     */
-    unsigned int direction;
+  /**
+   * Used to define the surface of a runway.
+   */
+  enum SurfaceType {Unknown = 0, Grass = 1, Asphalt = 2, Concrete = 3, Sand = 4};
 
-    /**
-     * The surface of the runway.
-     *
-     * @see Airport#SurfaceType
-     */
-    unsigned int surface;
+  Runway( const unsigned short len,
+          const unsigned short dir,
+          const unsigned short surf,
+          const bool open,
+          unsigned short shift=90 );
 
-    /**
-     * Flag to indicate if the runway is open or closed.
-     */
-    bool isOpen;
+  virtual ~Runway() {};
+
+  /**
+   * Get translation string for surface type.
+   */
+  static QString item2Text( const int surfaceType, QString defaultValue=QString("") );
+
+  /**
+   * Get surface type for translation string.
+   */
+  static int text2Item( const QString& text );
+
+  /**
+   * Get sorted translations
+   */
+  static QStringList& getSortedTranslationList();
+
+  /**
+   * The length of the runway, given in meters.
+   */
+  unsigned short length;
+
+  /**
+   * The direction of the runway, given in steps of 1/10 degree (0-36).
+   * Two directions are stored in every byte. (dir1*256+dir2).
+   */
+  unsigned short direction;
+
+  /**
+   * The surface of the runway, one of SurfaceType, see above.
+   */
+  unsigned short surface;
+
+  /**
+   * Flag to indicate if the runway is open or closed.
+   */
+  bool isOpen;
+
+  /**
+   * Contains the shift of the runway during drawing.
+   */
+  unsigned short rwShift;
+
+  /**
+   * Static pointer to surface translations
+   */
+  static QHash<int, QString> surfaceTranslations;
+  static QStringList sortedTranslations;
+
+  /**
+   * Static method for loading of object translations
+   */
+  static void loadTranslations();
 };
 
 #endif

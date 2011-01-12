@@ -10,7 +10,7 @@
 **                   2010 modified by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -76,7 +76,7 @@
 #define CIV_HELIPORT      7
 #define MIL_HELIPORT      8
 #define AMB_HELIPORT      9
-#define GLIDERSITE       10
+#define GLIDERFIELD      10
 #define ULTRALIGHT       11
 #define HANGGLIDER       12
 #define PARACHUTE        13
@@ -148,7 +148,7 @@
  * Flugplätze: Position, Name, Kennung, [Bahninfos (Länge, Richtung, Belag)],
  *             Höhe, Frequenz, vdf
  *
- * Glidersite: zusätzlich Startart
+ * Gliderfield: zusätzlich Startart
  *
  */
 

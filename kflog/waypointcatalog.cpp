@@ -22,7 +22,7 @@
 #include <cmath>
 #include <pwd.h>
 
-#include "airport.h"
+#include "runway.h"
 #include "da4record.h"
 #include "kfrgcs/vlapi2.h"
 #include "mainwindow.h"
@@ -393,10 +393,10 @@ bool WaypointCatalog::importVolkslogger(const QString& filename){
 
         if (flag.digitValue() & VLAPI_DATA::WPT::WPTTYP_L) {
           if (flag.digitValue() & VLAPI_DATA::WPT::WPTTYP_H) {
-            w->surface = Airport::Asphalt;
+            w->surface = Runway::Asphalt;
           }
           else {
-            w->surface = Airport::Grass;
+            w->surface = Runway::Grass;
           }
 
           if (flag.digitValue() & VLAPI_DATA::WPT::WPTTYP_A) {
@@ -529,11 +529,11 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
           QChar surface = list[9].upper()[0];
           switch (surface.toAscii())
           {
-            case 'G': w->surface = Airport::Grass;
+            case 'G': w->surface = Runway::Grass;
                   break;
-            case 'C': w->surface = Airport::Concrete;
+            case 'C': w->surface = Runway::Concrete;
                   break;
-            default:  w->surface = Airport::Unknown;
+            default:  w->surface = Runway::Unknown;
           }
           w->comment = QObject::tr("Imported from %1").arg(catalog);
           w->importance = 1;
@@ -588,10 +588,10 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
       out << w->runway << ",";
       switch (w->surface)
       {
-        case Airport::Grass:
+        case Runway::Grass:
           out << "G,";
           break;
-        case Airport::Concrete:
+        case Runway::Concrete:
           out << "C,";
           break;
         default:
@@ -865,7 +865,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
           w->name = list[1].replace( QRegExp("\""), "" ); // short name of waypoint
 	  w->comment = list[2] + ": ";
           w->icao = "";
-	  w->surface = Airport::Unknown;
+	  w->surface = Runway::Unknown;
 
 	  // waypoint type
 	  uint wpType = list[6].toUInt(&ok);
@@ -886,7 +886,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
 	      break;
 	    case 2:
 	      w->type = BaseMapElement::Airfield;
-	      w->surface = Airport::Grass;
+	      w->surface = Runway::Grass;
 	      w->isLandable = true;
 	      w->importance = 1;
 	      break;
@@ -895,13 +895,13 @@ bool WaypointCatalog::readCup (const QString& catalog)
 	      w->importance = 1;
 	      break;
 	    case 4:
-	      w->type = BaseMapElement::Glidersite;
+	      w->type = BaseMapElement::Gliderfield;
 	      w->isLandable = true;
 	      w->importance = 1;
 	      break;
 	    case 5:
 	      w->type = BaseMapElement::Airfield;
-	      w->surface = Airport::Concrete;
+	      w->surface = Runway::Concrete;
 	      w->isLandable = true;
 	      w->importance = 1;
 	      break;

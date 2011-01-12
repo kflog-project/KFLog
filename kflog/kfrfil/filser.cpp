@@ -9,7 +9,7 @@
 **   Copyright (c):  2003 by Christian Fughe, Harald Maier, Eggert Ehmke
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -27,15 +27,11 @@
 #include <cmath>
 #include <string.h>
 
-#include <qdir.h>
-#include <qfile.h>
-#include <qregexp.h>
-#include <qstring.h>
-#include <qstringlist.h>
+#include <QtGui>
 //Added by qt3to4:
 #include <Q3PtrList>
 
-#include "../airport.h"
+#include "../airfield.h"
 #include "filser.h"
 
 #define MAX_LSTRING    63
@@ -119,14 +115,14 @@ unsigned char STX = 0x02, /* Command prefix like AT for modems        */
   // @AP: Set a manufacture key that also Posigraph SDI logger files can be
   // converted in the right manner. They use the keyword SDI.
   //
-  // 09.03.2005 Fughe: Today we know and support three manufactures: 
-  //                          
+  // 09.03.2005 Fughe: Today we know and support three manufactures:
+  //
   //                          FIL   Filser
   //                          SDI   Streamline Data Instruments
   //                          LXN   LX Navigation
 
   char manufactureShortKey = 'X';
-  char manufactureKey[] = "xxx";  // Let's start with an empty key. If 'xxx' 
+  char manufactureKey[] = "xxx";  // Let's start with an empty key. If 'xxx'
                                   // appears, then reading the 'A'-record
                                   // failed.
 
@@ -363,14 +359,14 @@ int Filser::getFlightDir(QList<FRDirEntry*>* dirList)
     }
 
     downloadFlight(0,0,tmpigc.name());
-  
+
     for (i=0; i<flightCount; i++) {
       dirList->at(i)->shortFileName.sprintf("%c%c%c%c%s%c.igc",
                                    c36[dirList->at(i)->firstTime.tm_year % 10],
                                    c36[dirList->at(i)->firstTime.tm_mon + 1],
                                    c36[dirList->at(i)->firstTime.tm_mday],
                                    manufactureShortKey,
-                                   wordtoserno((flightIndex.at(i)->record[91] << 8) 
+                                   wordtoserno((flightIndex.at(i)->record[91] << 8)
                                               + flightIndex.at(i)->record[92]),
                                    c36[flightIndex.at(i)->record[94]]); // 09.03.2005 Fughe: This is
                                                                         // the counter of the flight
@@ -686,16 +682,16 @@ int Filser::openRecorder(const QString& pName, int baud)
     _da4BufferValid = false;
 
     if(!AutoBaud()){
-      qWarning(tr("No baudrate found!"));
+      qWarning() << QObject::tr("No baudrate found!");
       _isConnected = false;
       return FR_ERROR;
     };
-    
+
     _keepalive->start (1000); // one second timer
     return FR_OK;
     }
   else {
-    qWarning(tr("No logger found!"));
+    qWarning() << QObject::tr("No logger found!");
     _isConnected = false;
     return FR_ERROR;
   }
@@ -1355,7 +1351,7 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
       // useable for the flight duration calculation. Download with
       // SeeYou showed the problem.
       //
-      // 09.03.2005 Fughe: The pressure altitude may have a dash, '-' for 
+      // 09.03.2005 Fughe: The pressure altitude may have a dash, '-' for
       //                   negative hights according the tech specs of IGC-files
       //                   from 31 December 2004.
 

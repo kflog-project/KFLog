@@ -163,8 +163,8 @@ void KFLogConfig::slotOk()
   _settings.setValue("/MapData/HomesiteLatitude", WGSPoint::degreeToNum(homeLatE-> text()));
   _settings.setValue("/MapData/HomesiteLongitude", WGSPoint::degreeToNum(homeLonE-> text()));
   _settings.setValue("/MapData/ProjectionType", projectionSelect->currentItem());
-  _settings.setValue("/MapData/Welt2000CountryFilter", filterE->text());
-  _settings.setValue("/MapData/Welt2000HomeRadius", homeRadiusE->text());
+  _settings.setValue("/Welt2000/CountryFilter", filterE->text());
+  _settings.setValue("/Welt2000/HomeRadius", homeRadiusE->text());
 
   if(needUpdateDrawType)
   {
@@ -1031,8 +1031,8 @@ void KFLogConfig::__addAirfieldTab()
   airfieldLayout->addWidget( homeRadiusE, 3, 3 );
   airfieldLayout->addWidget( new QLabel( "km", airfieldPage), 3, 4 );
 
-  filterE-> setText(_settings.readEntry("/MapData/Welt2000CountryFilter", ""));
-  homeRadiusE-> setValue(_settings.readNumEntry("/MapData/Welt2000HomeRadius", 0));
+  filterE-> setText(_settings.readEntry("/Welt2000/CountryFilter", ""));
+  homeRadiusE-> setValue(_settings.readNumEntry("/Welt2000/HomeRadius", 0));
 
   if (filterE->text() != "")
     homeRadiusE->setEnabled(false);

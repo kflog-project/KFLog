@@ -15,7 +15,7 @@
 **
 ***********************************************************************/
 
-#include "../airport.h"
+#include "../airfield.h"
 
 #include "volkslogger.h"
 #include "vlapi2.h"
@@ -27,7 +27,8 @@
 #include <signal.h>
 
 #include <ctype.h>
-//Added by qt3to4:
+
+#include <QtCore>
 #include <Q3PtrList>
 
 /**
@@ -200,7 +201,7 @@ int Volkslogger::openRecorder(const QString& pName, int baud)
   portName = (char *)pName.latin1();
 
   if((err = vl.open(1, 5, 0, baud)) != VLA_ERR_NOERR) {
-    qWarning(tr("No logger found!"));
+    qWarning() << QObject::tr("No logger found!");
     _isConnected = false;
   }
   else {
@@ -298,7 +299,7 @@ int Volkslogger::readTasks(QList<FlightTask*> *tasks)
       return FR_ERROR;
     }
   }
-  
+
   for (taskCnt = 0; taskCnt < vl.database.nroutes; taskCnt++) {
     r = &(vl.database.routes[taskCnt]);
     taskPoints.clear();
@@ -414,7 +415,7 @@ int Volkslogger::readWaypoints(QList<Waypoint*> *waypoints)
     frWp->origP.setPos((int)(wp->lat * 600000.0), (int)(wp->lon * 600000.0));
     frWp->isLandable = (wp->typ & VLAPI_DATA::WPT::WPTTYP_L) > 0;
     if (frWp->isLandable) {
-      frWp->surface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0 ? Airport::Asphalt : Airport::Grass;
+      frWp->surface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0 ? Runway::Asphalt : Runway::Grass;
     }
     frWp->type = (wp->typ & VLAPI_DATA::WPT::WPTTYP_A) > 0 ? BaseMapElement::Airfield : -1;
 
@@ -434,7 +435,7 @@ int Volkslogger::writeWaypoints(QList<Waypoint*> *waypoints)
       return FR_ERROR;
     }
   }
-  
+
   // delete old waypoints
   if(vl.database.wpts != 0) {
     delete[] vl.database.wpts;
@@ -456,8 +457,8 @@ int Volkslogger::writeWaypoints(QList<Waypoint*> *waypoints)
     wp->lon = frWp->origP.lon() / 600000.0;
     wp->typ =
       (frWp->isLandable ? VLAPI_DATA::WPT::WPTTYP_L : 0) |
-      (frWp->surface == Airport::Asphalt || frWp->surface == Airport::Concrete ? VLAPI_DATA::WPT::WPTTYP_H : 0) |
-      (frWp->type == BaseMapElement::Airfield || frWp->type == BaseMapElement::Glidersite ||
+      (frWp->surface == Runway::Asphalt || frWp->surface == Runway::Concrete ? VLAPI_DATA::WPT::WPTTYP_H : 0) |
+      (frWp->type == BaseMapElement::Airfield || frWp->type == BaseMapElement::Gliderfield ||
        frWp->type == BaseMapElement::Airport || frWp->type == BaseMapElement::IntAirport ||
        frWp->type == BaseMapElement::MilAirport || frWp->type == BaseMapElement::CivMilAirport ? VLAPI_DATA::WPT::WPTTYP_A : 0);
   }

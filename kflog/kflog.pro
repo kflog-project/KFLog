@@ -12,7 +12,7 @@ CONFIG += qt \
 TEMPLATE = app
 
 SOURCES = \
-    airport.cpp \
+    airfield.cpp \
     airspace.cpp \
     altitude.cpp \
     authdialog.cpp \
@@ -38,7 +38,6 @@ SOURCES = \
     flightrecorderpluginbase.cpp \
     flightselectiondialog.cpp \
     flighttask.cpp \
-    glidersite.cpp \
     helpwindow.cpp \
     httpclient.cpp \
     igc3ddialog.cpp \
@@ -69,6 +68,7 @@ SOURCES = \
     projectionlambert.cpp \
     radiopoint.cpp \
     recorderdialog.cpp \
+    runway.cpp \
     singlepoint.cpp \
     taskdataprint.cpp \
     taskdialog.cpp \
@@ -88,7 +88,7 @@ SOURCES = \
     guicontrols/kfloglistview.cpp
     
 HEADERS = \
-    airport.h \
+    airfield.h \
     airspace.h \
     altitude.h \
     authdialog.h \
@@ -116,7 +116,6 @@ HEADERS = \
     flighttask.h \
     frstructs.h \
     gliders.h \
-    glidersite.h \
     helpwindow.h \
     httpclient.h \
     igc3ddialog.h \
@@ -175,11 +174,11 @@ FORMS = optimizationwizard.ui
 # a slash, $(INSTALL_ROOT) followed by the current path is added as
 # prefix to it.
 
-pics.path  = /pics
-pics.files = pics/*
+pics.path  = /
+pics.files = pics
 
 mapicons.extra = install -d $(INSTALL_ROOT)/mapicons/small
-mapicons.path  = /mapicons
+mapicons.path  = /
 mapicons.files = mapicons
 
 landscape.path  = /mapdata/landscape

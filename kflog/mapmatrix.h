@@ -184,10 +184,14 @@ public:
   bool isVisible(const QRect& itemBorder) const;
 
   /** */
-  enum MoveDirection {NotSet = 0, North = 1, West = 2, East = 4,
-      South = 8, Home = 16};
+  enum MoveDirection { NotSet = 0,
+                       North = 1,
+                       West = 2,
+                       East = 4,
+                       South = 8,
+                       Home = 16};
   /**
-   * CurrentScale muss immer die gröte Zahl sein!
+   * CurrentScale muss immer die grösste Zahl sein!
    */
   enum ScaleType {LowerLimit = 0, Border1 = 1, Border2 = 2, Border3 = 3,
                   UpperLimit = 4, SwitchScale = 5, CurrentScale = 6};
@@ -225,6 +229,11 @@ public:
    * @return the lat/lon-position of the map-center.
    */
   QPoint getMapCenter(bool isPrint = false) const;
+
+  /**
+   * @returns the coordinates of the home site
+   */
+  QPoint getHomeCoord() const;
 
   /** */
   void centerToLatLon(const QPoint& center);
