@@ -1013,17 +1013,17 @@ QPixmap MapConfig::loadPixmap( const QString& pixmapName, bool smallIcon )
   return pm;
 }
 
-QPixmap MapConfig::getPixmapRotatable(unsigned int typeID, bool isWinch)
+QPixmap MapConfig::getPixmapRotatable(unsigned int typeID, bool hasWinch)
 {
-  QString iconName(getPixmapName(typeID, isWinch, true));
+  QString iconName(getPixmapName(typeID, hasWinch, true));
 
   // qDebug("PixmapNameRot: %d %s",typeID, iconName.latin1() );
-  return loadPixmap( iconName, isSwitch );
+  return loadPixmap( iconName, ! isSwitch );
 }
 
 QString MapConfig::getPixmapName( unsigned int typeID,
-                                  bool isWinch,
-                                  bool rotatable)
+                                  bool hasWinch,
+                                  bool rotatable )
 {
   QString iconName;
 
@@ -1040,7 +1040,7 @@ QString MapConfig::getPixmapName( unsigned int typeID,
         iconName = "civmilair";
         break;
       case BaseMapElement::Airfield:
-            iconName = "airfield";
+            iconName = rotatable ? "airfield" : "airfield_c";
         break;
       case BaseMapElement::ClosedAirfield:
         iconName = "closed";
@@ -1055,10 +1055,7 @@ QString MapConfig::getPixmapName( unsigned int typeID,
         iconName = "ambheliport";
         break;
       case BaseMapElement::Gliderfield:
-        if(isWinch)
-            iconName = "glider_winch";
-        else
-            iconName = "glider";
+        iconName = hasWinch ? "glider_winch" : "glider";
         break;
       case BaseMapElement::UltraLight:
         iconName = "ul";

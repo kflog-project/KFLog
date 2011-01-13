@@ -34,8 +34,9 @@
 #ifndef RUNWAY_H
 #define RUNWAY_H
 
-#include <QString>
 #include <QHash>
+#include <QPair>
+#include <QString>
 #include <QStringList>
 
 class Runway
@@ -49,10 +50,9 @@ public:
   enum SurfaceType {Unknown = 0, Grass = 1, Asphalt = 2, Concrete = 3, Sand = 4};
 
   Runway( const unsigned short len,
-          const unsigned short dir,
-          const unsigned short surf,
-          const bool open,
-          unsigned short shift=90 );
+          const QPair<ushort, ushort> dir,
+          const enum SurfaceType surf,
+          const bool open );
 
   virtual ~Runway() {};
 
@@ -77,15 +77,9 @@ public:
   unsigned short length;
 
   /**
-   * The direction of the runway, given in steps of 1/10 degree (0-36).
-   * Two directions are stored in every byte. (dir1*256+dir2).
-   */
-  unsigned short direction;
-
-  /**
    * The surface of the runway, one of SurfaceType, see above.
    */
-  unsigned short surface;
+  enum SurfaceType surface;
 
   /**
    * Flag to indicate if the runway is open or closed.
@@ -96,6 +90,28 @@ public:
    * Contains the shift of the runway during drawing.
    */
   unsigned short rwShift;
+
+  /**
+   * \return The runway directions as pair.
+   */
+  QPair<ushort, ushort> getRunwayDirection()
+    {
+      return direction;
+    }
+
+  /**
+   * Sets the runway directions.
+   *
+   * \param New Runway directions as pair.
+   */
+  void setRunwayDirections( const QPair<ushort, ushort>& rwDir );
+
+private:
+
+  /**
+   * The direction of the runway, given in steps of 1/10 degree (1-36).
+   */
+  QPair<ushort, ushort> direction;
 
   /**
    * Static pointer to surface translations

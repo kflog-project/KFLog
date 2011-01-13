@@ -435,7 +435,6 @@ void Waypoints::fillWaypoints()
   Waypoint *w;
   Q3ListViewItem *item;
   bool filterRadius, filterArea;
-  extern TranslationList surfaceTypes;
   extern TranslationList waypointTypes;
   extern MapConfig *_globalMapConfig;
 
@@ -687,13 +686,13 @@ void Waypoints::slotImportWaypointFromMap()
             {
               if( a->getRunwayNumber() )
                 {
-                  const Runway* r = a->getRunway( 0 );
+                  Runway* runway = a->getRunway( 0 );
 
-                  if( r )
+                  if( runway )
                     {
-                      w->runway = r->direction;
-                      w->length = r->length;
-                      w->surface = r->surface;
+                      w->runway = runway->getRunwayDirection().first;
+                      w->length = runway->length;
+                      w->surface = runway->surface;
                     }
                 }
           }

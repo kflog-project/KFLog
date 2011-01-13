@@ -1,5 +1,13 @@
 $Id$
 
+2011-01-13 Axel Pauli <axel@kflog.org>
+  * BUGFIX: Welt2000 has changed the identifier for gliderfields.
+    Parser modified to the new identifier.
+  * Airfields are drawn now with considering the landing direction.
+    Solution was taken over from Cumulus.
+  * All kind of air facilities are united in one class with the name
+    Airfield.
+
 2011-01-11 Axel Pauli <axel@kflog.org>
   * All menubar items ported to Qt4. That was a very stupid work ;-)
 

@@ -60,7 +60,7 @@ Welt2000::Welt2000()
   c_baseTypeMap.insert( "CivHeliport", BaseMapElement::CivHeliport );
   c_baseTypeMap.insert( "MilHeliport", BaseMapElement::MilHeliport );
   c_baseTypeMap.insert( "AmbHeliport", BaseMapElement::AmbHeliport );
-  c_baseTypeMap.insert( "Glidersite", BaseMapElement::Gliderfield );
+  c_baseTypeMap.insert( "Gliderfield", BaseMapElement::Gliderfield );
   c_baseTypeMap.insert( "UltraLight", BaseMapElement::UltraLight );
   c_baseTypeMap.insert( "HangGlider", BaseMapElement::HangGlider );
 }
@@ -405,8 +405,8 @@ bool Welt2000::parse( QString& path,
 
   if( radius == 0 )
     {
-      // default is 1000 kilometers
-      c_homeRadius = 1000.0;
+      // default is 500 kilometers
+      c_homeRadius = 500.0;
     }
   else
     {
@@ -416,7 +416,8 @@ bool Welt2000::parse( QString& path,
     }
 
   qDebug( "W2000: File welt2000.conf contains %d country entries", c_countryList.count() );
-  qDebug( "W2000: File welt2000 defines the home radius to %.1f Km", c_homeRadius );
+  qDebug() << "W2000: Read Outlandings=" << outlandings;
+  qDebug( "W2000: Home radius is set to %.1f Km", c_homeRadius );
 
   // put all entries of country list into a dictionary for faster
   // access
@@ -562,7 +563,7 @@ bool Welt2000::parse( QString& path,
                 }
             }
         }
-      else if( line.mid( 23, 3 ) == "# S" )
+      else if( line.mid( 23, 4 ) == "#GLD" )
         {
           // Glider field
           glField = true;
@@ -874,7 +875,7 @@ bool Welt2000::parse( QString& path,
         {
           if( olField == false )
             {
-                  // Don't display warnings for outlandings
+              // Don't display warnings for outlandings
               qWarning( "W2000, Line %d: %s (%s) missing or wrong frequency, set value to 0!",
                         lineNo, afName.toLatin1().data(), country.toLatin1().data() );
             }
@@ -909,12 +910,17 @@ bool Welt2000::parse( QString& path,
       ok = false;
       ok1 = false;
 
-      ushort rwDir = 0;
       ushort rwDir1 = 0;
+      ushort rwDir2 = 0;
+      ushort rwCount = 0;
+
+      QPair<ushort, ushort> rwDirections[2];
+      rwDirections[0] = QPair<ushort, ushort>( 0, 0);
+      rwDirections[1] = QPair<ushort, ushort>( 0, 0);
 
       if( ! buf.isEmpty() )
         {
-          rwDir = buf.toUShort(&ok);
+          rwDir1 = buf.toUShort(&ok);
         }
 
       // extract second direction
@@ -922,19 +928,33 @@ bool Welt2000::parse( QString& path,
 
       if( ! buf.isEmpty() )
         {
-          rwDir1 = buf.toUShort(&ok1);
+          rwDir2 = buf.toUShort(&ok1);
         }
 
-      if( ! ok || ! ok1 || rwDir < 1 || rwDir > 36 || rwDir1 < 1 || rwDir1 > 36 )
+      if( ! ok || ! ok1 || rwDir1 < 1 || rwDir1 > 36 || rwDir2 < 1 || rwDir2 > 36 )
         {
           qWarning( "W2000, Line %d: %s (%s) missing or wrong runway direction, set value to 0!",
                     lineNo, afName.toLatin1().data(), country.toLatin1().data() );
-          rwDir = rwDir1 = 0;
         }
-
-      // Put both directions together in one variable, first direction in the
-      // upper part.
-      rwDir = rwDir*256 + rwDir1;
+      else
+        {
+          if( rwDir1 == rwDir2 || abs( rwDir1 - rwDir2 ) == 18 )
+            {
+              // We have only one runway
+              rwDirections[0].first  = rwDir1;
+              rwDirections[0].second = rwDir2;
+              rwCount = 1;
+            }
+          else
+            {
+              // WE have two runways
+              rwDirections[0].first  = rwDir1;
+              rwDirections[0].second = ((rwDir1 > 18) ? rwDir1 - 18 : rwDir1 + 18 );
+              rwDirections[1].first  = rwDir2;
+              rwDirections[1].second = ((rwDir2 > 18) ? rwDir2 - 18 : rwDir2 + 18 );
+              rwCount = 2;
+            }
+        }
 
       // runway length in meters, must be multiplied by 10
       buf = line.mid(29,3).trimmed();
@@ -959,7 +979,7 @@ bool Welt2000::parse( QString& path,
         }
 
       // runway surface
-      ushort rwSurface;
+      enum Runway::SurfaceType rwSurface;
       QChar rwType = line[28];
 
       if( rwType == 'A' )
@@ -1005,13 +1025,15 @@ bool Welt2000::parse( QString& path,
           af++;
         }
 
-      // create an runway object
-      Runway rw( rwLen, rwDir, rwSurface, true );
-
       Airfield af( afName, icao.trimmed(), gpsName, afType,
                    wgsPos, position, elevation, frequency, commentLong );
 
-      af.addRunway( rw );
+      for( int i = 0; i < rwCount; i++ )
+        {
+          // create an runway object
+          Runway rw( rwLen, rwDirections[i], rwSurface, true );
+          af.addRunway( rw );
+        }
 
       if( afType == BaseMapElement::Outlanding )
         {

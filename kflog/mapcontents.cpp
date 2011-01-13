@@ -87,10 +87,13 @@ const short MapContents::isoLevels[] =
   7500, 7750, 8000, 8250, 8500, 8750
 };
 
+extern MainWindow *_mainWindow;
+
 MapContents::MapContents( QObject* object ) :
   QObject(object),
   currentFlight(0),
   askUser(true),
+  loadWelt2000(true),
   downloadManger(0)
 {
   qDebug() << "MapContents()";
@@ -176,6 +179,9 @@ bool MapContents::__downloadMapFile( QString &file, QString &directory )
 
       connect( downloadManger, SIGNAL(networkError()),
                this, SLOT(slotNetworkError()) );
+
+      connect( downloadManger, SIGNAL(status(const QString&)),
+               _mainWindow, SLOT(slotSetStatusMsg(const QString &)) );
     }
 
   QString srvUrl = _settings.value( "/MapData/MapServer",
@@ -193,8 +199,6 @@ bool MapContents::__downloadMapFile( QString &file, QString &directory )
 /** Called, if all downloads are finished. */
 void MapContents::slotDownloadsFinished( int requests, int errors )
 {
-  extern MainWindow *_mainWindow;
-
   // All has finished, free not more needed resources
   downloadManger->deleteLater();
   downloadManger = static_cast<DownloadManager *> (0);
@@ -213,8 +217,6 @@ void MapContents::slotDownloadsFinished( int requests, int errors )
 /** Called, if a network error occurred during the downloads. */
 void MapContents::slotNetworkError()
 {
-  extern MainWindow *_mainWindow;
-
   // A network error has occurred. We do stop all further downloads.
   downloadManger->deleteLater();
   downloadManger = static_cast<DownloadManager *> (0);
@@ -251,6 +253,9 @@ void MapContents::slotDownloadWelt2000()
 
       connect( downloadManger, SIGNAL(networkError()),
                this, SLOT(slotNetworkError()) );
+
+      connect( downloadManger, SIGNAL(status(const QString&)),
+               _mainWindow, SLOT(slotSetStatusMsg(const QString &)) );
     }
 
   connect( downloadManger, SIGNAL(welt2000Downloaded()),
@@ -277,17 +282,13 @@ void MapContents::slotDownloadWelt2000()
  */
 void MapContents::slotReloadWelt2000Data()
 {
+  qDebug() << "MapContents::slotReloadWelt2000Data()";
+
   airfieldList.clear();
   gliderfieldList.clear();
   outLandingList.clear();
 
-  qDebug() << "MapContents: Reloading Welt2000 started";
-
-  Welt2000 welt2000;
-
-  welt2000.load( airfieldList, gliderfieldList, outLandingList );
-
-  qDebug() << "MapContents: Reloading Welt2000 finished";
+  loadWelt2000 = true;
 
   emit contentsChanged();
 }
@@ -1048,10 +1049,10 @@ void MapContents::proofeSection(bool isPrint)
     }
 
   // Checking for Airfield, Gliderfield and Outlanding data
-#warning "Deadlock trap is open to handle here!"
-
-  if( airfieldList.isEmpty() && gliderfieldList.isEmpty() )
+  if( loadWelt2000 == true )
     {
+      loadWelt2000 = false;
+
       Welt2000 welt2000;
 
       if( !welt2000.load( airfieldList, gliderfieldList, outLandingList ) )

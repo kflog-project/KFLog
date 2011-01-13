@@ -100,6 +100,8 @@ public:
   /**
    *
    */
+#warning "Change runway variable from integer to a QPair<short unsigned int, short unsigned int>"
+
   int runway;
   /**
    *
@@ -118,7 +120,7 @@ public:
    */
   bool isLandable;
   /**
-    * contains an importance indidation for the waypoint
+    * contains an importance indication for the waypoint
     * 0=low
     * 1=normal
     * 2=high

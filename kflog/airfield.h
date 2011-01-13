@@ -107,7 +107,7 @@ class Airfield : public SinglePoint
    *
    * \return A runway object, containing the data of the runway.
    */
-  const Runway* getRunway( int index=0 );
+  Runway* getRunway( int index=0 );
 
   /**
    * @return The number of available runways.

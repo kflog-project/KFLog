@@ -149,15 +149,15 @@ public:
 
   /**
    * @param  type  The typeID of the element.
-   * @param  isWinch  Used only for glidersites to determine, if the
+   * @param  isWinch  Used only for gliderfields to determine, if the
    *                  icon should indicate that only winch-launch is
    *                  available.
    * @param rotatable The rotation flag.
    *
    * @return the name of the pixmap of the element.
    */
-  QString getPixmapName( unsigned int type, bool isWinch = true,
-                         bool rotatable=false );
+  QString getPixmapName( unsigned int type, bool isWinch = false,
+                         bool rotatable = false );
 
   /**
    * @param  typeID   The type identifier of the element.

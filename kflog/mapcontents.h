@@ -542,11 +542,17 @@ class MapContents : public QObject
 
   /** */
   QString mapDir;
+
   /**
    * Used to determine, if we must display message boxes on missing
    * map-directories.
    */
   bool askUser;
+
+  /**
+   * Flag to indicate, if Welt2000 load is neede.
+   */
+  bool loadWelt2000;
 
   /**
    * List of all drawn isohypses.

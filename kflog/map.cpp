@@ -20,6 +20,7 @@
 #include <QtGui>
 #include <Qt3Support>
 
+#include "airfield.h"
 #include "airspace.h"
 #include "flight.h"
 #include "flightgroup.h"
@@ -972,10 +973,9 @@ void Map::mousePressEvent(QMouseEvent* event)
 
     const QPoint current(event->pos());
 
-    RadioPoint *hitElement;
+    Airfield *hitElement;
     QString text;
 
-    QPoint sitePos;
     double dX, dY, delta(16.0);
 
     if(_globalMapMatrix->isSwitchScale()) delta = 8.0;
@@ -996,14 +996,16 @@ void Map::mousePressEvent(QMouseEvent* event)
             bool found = false;
 
             // add WPList !!!
-            int searchList[] = {MapContents::GliderfieldList, MapContents::AirfieldList};
+            int searchList[] = { MapContents::GliderfieldList,
+                                 MapContents::AirfieldList,
+                                 MapContents::OutLandingList };
 
-            for(int l = 0; l < 2; l++)
+            for(int l = 0; l < 3; l++)
               {
                for(int loop = 0; loop < _globalMapContents->getListLength(searchList[l]); loop++)
                  {
-                  hitElement = (RadioPoint*)_globalMapContents->getElement(searchList[l], loop);
-                  sitePos = hitElement->getMapPosition();
+                  hitElement = (Airfield *)_globalMapContents->getElement(searchList[l], loop);
+                  QPoint sitePos = hitElement->getMapPosition();
 
                   dX = abs(sitePos.x() - current.x());
                   dY = abs(sitePos.y() - current.y());

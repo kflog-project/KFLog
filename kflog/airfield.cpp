@@ -16,6 +16,8 @@
  **
  ***********************************************************************/
 
+#include <QtCore>
+
 #include "airfield.h"
 #include "altitude.h"
 #include "map.h"
@@ -56,8 +58,10 @@ QString Airfield::getInfoString() const
   elev = Altitude::getText( elevation, true, 0).replace(QRegExp("\\s"), "&nbsp;");
 
   text = "<HTML><TABLE BORDER=0><TR><TD>"
-         "<IMG SRC=" + path + glConfig->getPixmapName(typeID) + "></TD>"
+         "<IMG SRC=" + path + "/" + glConfig->getPixmapName(typeID, hasWinch(), false) + "></TD>"
          "<TD>" + name;
+
+  qDebug() << "AirfieldInfo:" << text;
 
   if( !icao.isEmpty() )
     {
@@ -76,14 +80,14 @@ QString Airfield::getInfoString() const
   return text;
 }
 
-const Runway* Airfield::getRunway( int index )
+Runway* Airfield::getRunway( int index )
 {
   if( rwData.size() == 0 )
     {
       return static_cast<Runway*> ( 0 );
     }
 
-  return &rwData.at( index );
+  return &rwData[index];
 }
 
 bool Airfield::drawMapElement( QPainter* targetP )
@@ -94,76 +98,49 @@ bool Airfield::drawMapElement( QPainter* targetP )
       return false;
     }
 
-  extern MapConfig* _globalMapConfig;
-
-  //qDebug("Airfield::drawMapElement(): scale: %d %d",scale, _globalMapMatrix->getScaleRatio()  );
-  QColor col = Qt::black;
-
   curPos = glMapMatrix->map(position);
 
-  // draw also the small dot's in reachability color
-  targetP->setPen(QPen(col, 2));
-
-  int iconSize = 32;
-  int xOffset  = 16;
-  int yOffset  = 16;
-  int cxOffset = 16;
-  int cyOffset = 16;
-
-  if( typeID == BaseMapElement::Outlanding )
-   {
-    // The lower end of the beacon shall directly point to the point at the map.
-    xOffset  = 16;
-    yOffset  = 32;
-    cxOffset = 16;
-    cyOffset = 16;
-  }
-
-  if( _globalMapConfig->useSmallIcons() )
+  if( glConfig->isRotatable( typeID ) )
     {
-      iconSize = 16;
-      xOffset  = 8;
-      yOffset  = 8;
-      cxOffset = 8;
-      cyOffset = 8;
+      QPixmap image( glConfig->getPixmapRotatable(typeID, winch) );
 
-      if( typeID == BaseMapElement::Outlanding )
+      const Runway* runway = getRunway();
+      int rwShift = 0;
+
+      if( runway )
         {
-          // The lower end of the beacon shall directly point to the
-          // point at the map.
-          xOffset  = 8;
-          yOffset  = 16;
-          cxOffset = 8;
-          cyOffset = 8;
-        }
-    }
-
-  if ( ! glMapMatrix->isSwitchScale() )
-    {
-      targetP->drawEllipse(curPos.x()-8, curPos.y()-8, 16, 16 );
-    }
-  else
-    {
-      if ( glConfig->isRotatable( typeID ) )
-        {
-          QPixmap image( glConfig->getPixmapRotatable(typeID, winch) );
-
-          const Runway* runway = getRunway();
-          int rwShift = 90;
-
-          if( runway )
-            {
-              rwShift = runway->rwShift;
-            }
-
-          targetP->drawPixmap(curPos.x() - xOffset, curPos.y() - yOffset, image,
-                              rwShift*iconSize, 0, iconSize, iconSize);
+          rwShift = runway->rwShift;
         }
       else
         {
-          QPixmap image( glConfig->getPixmap(typeID) );
-          targetP->drawPixmap(curPos.x() - xOffset, curPos.y() - yOffset, image  );
+          rwShift = 9; // Default is E-W direction, if no runway was defined
         }
+
+      // All icons are squares. Therefore we take the height also as width.
+      int ih = image.height();
+
+      targetP->drawPixmap( curPos.x() - ih/2, curPos.y() - ih/2,
+                           image,
+                           rwShift * ih, 0, ih, ih );
+    }
+  else
+    {
+      QPixmap image( glConfig->getPixmap(typeID) );
+
+      int ih = image.height();
+      int iw = image.width();
+
+      int xOffset  = iw/2;
+      int yOffset  = ih/2;
+
+      if ( typeID == BaseMapElement::Outlanding )
+        {
+          // The lower end of the beacon shall directly point to the
+          // point at the map.
+          yOffset = ih;
+        }
+
+      targetP->drawPixmap(curPos.x() - xOffset, curPos.y() - yOffset, image );
     }
 
   return true;
