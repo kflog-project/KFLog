@@ -89,7 +89,7 @@ void BaseMapElement::loadTranslations()
   objectTranslations.insert( BaseMapElement::MilAirport, QObject::tr( "Mil. Airport" ) );
   objectTranslations.insert( BaseMapElement::CivMilAirport, QObject::tr( "Civil/Mil. Airport" ) );
   objectTranslations.insert( BaseMapElement::ClosedAirfield, QObject::tr( "Closed Airfield" ) );
-  objectTranslations.insert( BaseMapElement::Gliderfield, QObject::tr( "Glider site" ) );
+  objectTranslations.insert( BaseMapElement::Gliderfield, QObject::tr( "Gliderfield" ) );
   objectTranslations.insert( BaseMapElement::HangGlider, QObject::tr( "Hang glider" ) );
   objectTranslations.insert( BaseMapElement::Landmark, QObject::tr( "Landmark" ) );
   objectTranslations.insert( BaseMapElement::MilHeliport, QObject::tr( "Mil. Heliport" ) );

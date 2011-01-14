@@ -143,7 +143,7 @@ public:
    * Used to return a info string about the element.
    * Should be reimplemented in subclasses.
    */
-  virtual QString getInfoString() const
+  virtual QString getInfoString()
     {
       return QString( "" );
     };

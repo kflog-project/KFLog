@@ -1,6 +1,11 @@
 $Id$
 
 2011-01-13 Axel Pauli <axel@kflog.org>
+  * Method Airfield::getInfoString() over worked. It displays now some
+    more information about the related item.
+  * Outlandings included in Map::__displayMapInfo() method.
+
+2011-01-13 Axel Pauli <axel@kflog.org>
   * BUGFIX: Welt2000 has changed the identifier for gliderfields.
     Parser modified to the new identifier.
   * Airfields are drawn now with considering the landing direction.

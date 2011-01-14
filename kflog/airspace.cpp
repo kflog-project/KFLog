@@ -197,7 +197,7 @@ QString Airspace::getTypeName (objectType type)
   }
 }
 
-QString Airspace::getInfoString() const
+QString Airspace::getInfoString()
 {
   QString text, tempL, tempU;
 

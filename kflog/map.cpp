@@ -520,7 +520,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 
   BaseFlightElement *baseFlight = _globalMapContents->getFlight();
 
-  SinglePoint *hitElement;
+  Airfield *hitElement;
 
   QPoint sitePos;
   // Radius for Mouse Snapping
@@ -539,8 +539,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 
   for(int loop = 0; loop < _globalMapContents->getListLength(MapContents::GliderfieldList); loop++)
     {
-      hitElement = (SinglePoint*)_globalMapContents->getElement(
-          MapContents::GliderfieldList, loop);
+      hitElement = (Airfield *) _globalMapContents->getElement(MapContents::GliderfieldList, loop);
       sitePos = hitElement->getMapPosition();
 
       double dX = abs (sitePos.x() - current.x());
@@ -557,12 +556,28 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
       }
     }
 
-  if(_globalMapMatrix->isSwitchScale()) delta = 8.0;
-
   for(int loop = 0; loop < _globalMapContents->getListLength(MapContents::AirfieldList); loop++)
     {
-      hitElement = (SinglePoint*)_globalMapContents->getElement(
-          MapContents::AirfieldList, loop);
+      hitElement = (Airfield *)_globalMapContents->getElement(MapContents::AirfieldList, loop);
+      sitePos = hitElement->getMapPosition();
+
+      double dX = abs (sitePos.x() - current.x());
+      double dY = abs (sitePos.y() - current.y());
+
+      // Abstand entspricht der Icon-Grösse.
+      if ( ( dX < delta ) && ( dY < delta ) )
+      {
+        text += hitElement->getInfoString();
+        // Text anzeigen
+        WhatsThat* box = new WhatsThat(this, text, timeout, mapToGlobal(current));
+        box->setVisible( true );
+        return;
+      }
+    }
+
+  for(int loop = 0; loop < _globalMapContents->getListLength(MapContents::OutLandingList); loop++)
+    {
+      hitElement = (Airfield *) _globalMapContents->getElement(MapContents::OutLandingList, loop);
       sitePos = hitElement->getMapPosition();
 
       double dX = abs (sitePos.x() - current.x());
@@ -956,6 +971,8 @@ void Map::mouseReleaseEvent(QMouseEvent* event)
 
 void Map::mousePressEvent(QMouseEvent* event)
 {
+  qDebug() << "Map::mousePressEvent";
+
   // First: delete the cursor, if visible:
   if(prePos.x() >= 0)
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
@@ -1013,12 +1030,13 @@ void Map::mousePressEvent(QMouseEvent* event)
                   // Abstand entspricht der Icon-Grösse.
                   if (dX < delta && dY < delta)
                     {
+                      qDebug() << "Found" << hitElement->getName();
                       Waypoint *w = new Waypoint;
 
                       QString name = hitElement->getName();
                       w->name = name.replace(blank, "").left(6).upper();
                       w->description = hitElement->getName();
-                      w->type = hitElement->getObjectType();
+                      w->type = hitElement->getObjectType();hitElement->getName();
                       w->origP = hitElement->getWGSPosition();
                       w->elevation = hitElement->getElevation();
                       w->icao = hitElement->getICAO();

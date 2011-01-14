@@ -112,7 +112,7 @@ class Airfield : public SinglePoint
   /**
    * @return The number of available runways.
    */
-  int getRunwayNumber() const
+  int getRunwayNumber()
   {
     return rwData.size();
   };
@@ -167,7 +167,7 @@ class Airfield : public SinglePoint
    * Reimplemented from SinglePoint (@ref SinglePoint#getInfoString).
    * @return the info string
    */
-  virtual QString getInfoString() const;
+  virtual QString getInfoString();
 
   /**
    * Draws the element into the given painter.

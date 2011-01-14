@@ -20,7 +20,6 @@
 
 #include "airfield.h"
 #include "altitude.h"
-#include "map.h"
 
 Airfield::Airfield( const QString& name,
                     const QString& icao,
@@ -33,14 +32,14 @@ Airfield::Airfield( const QString& name,
                     const QString comment,
                     bool winch,
                     bool towing,
-                    bool landable )
-    : SinglePoint(name, shortName, typeId, wgsPos, pos, elevation),
-    icao(icao),
-    frequency(frequency),
-    comment(comment),
-    winch(winch),
-    towing(towing),
-    landable(landable)
+                    bool landable ) :
+  SinglePoint(name, shortName, typeId, wgsPos, pos, elevation),
+  icao(icao),
+  frequency(frequency),
+  comment(comment),
+  winch(winch),
+  towing(towing),
+  landable(landable)
 {
 }
 
@@ -48,34 +47,85 @@ Airfield::~Airfield()
 {
 }
 
-QString Airfield::getInfoString() const
+QString Airfield::getInfoString()
 {
-  extern MapConfig* _globalMapConfig;
+  QString path = glConfig->getIconPath();
+  QString text;
 
-  QString path = _globalMapConfig->getIconPath();
-  QString text, elev;
-
-  elev = Altitude::getText( elevation, true, 0).replace(QRegExp("\\s"), "&nbsp;");
-
-  text = "<HTML><TABLE BORDER=0><TR><TD>"
-         "<IMG SRC=" + path + "/" + glConfig->getPixmapName(typeID, hasWinch(), false) + "></TD>"
-         "<TD>" + name;
-
-  qDebug() << "AirfieldInfo:" << text;
+  text = QString("<html><center><b>") +
+         "<IMG SRC=" + path + "/" +
+         glConfig->getPixmapName(typeID, hasWinch(), false) + "> " +
+         name;
 
   if( !icao.isEmpty() )
     {
       text += " (" + icao + ")";
     }
 
-  text += "<FONT SIZE=-1><BR><BR>" + elev;
+  text += ", " + BaseMapElement::item2Text( typeID, QObject::tr("(unknown object)") ) +
+           "</b></center>";
 
-  if (!frequency.isEmpty())
+  text += "<table cellpadding=5 width=100%>";
+
+  if( getRunwayNumber() > 0 )
     {
-      text += "&nbsp;/&nbsp;" + frequency + "&nbsp;Mhz.";
+      for( int i = 0; i < getRunwayNumber(); i++ )
+        {
+          text += QString("<tr><td>") + QObject::tr("Runway: ") + "</td><td>";
+
+          Runway *rw = getRunway(i);
+
+          text += QString("<b>%1/%2</b>").arg( rw->getRunwayDirection().first, 2, 10, QChar('0') )
+                                         .arg( rw->getRunwayDirection().second, 2, 10, QChar('0') );
+          text += " (" + Runway::item2Text( rw->surface ) + ")";
+          text += "</td><td>" + QObject::tr("Length:") + "</td><td><b>" +
+                  QString("%1 m").arg(rw->length) + "</b><td></tr>";
+        }
     }
 
-  text += "&nbsp;&nbsp;</FONT></TD></TR></TABLE></HTML>";
+  text += "<tr><td>" + QObject::tr("Frequency:") + "</td><td>";
+
+  if( ! frequency.isEmpty() && frequency != "000.000" )
+    {
+      text += "<b>" + frequency + " MHz" + "</b></td>";
+    }
+  else
+    {
+      text += "<b>" + QObject::tr("unknown") +"</b></td>";
+    }
+
+  // save current unit
+  Altitude::altitudeUnit currentUnit = Altitude::getUnit();
+
+  Altitude::setUnit(Altitude::meters);
+  QString meters = Altitude::getText( elevation, true, 0 );
+
+  Altitude::setUnit(Altitude::feet);
+  QString feet = Altitude::getText( elevation, true, 0 );
+
+  // restore save unit
+  Altitude::setUnit(currentUnit);
+
+  if( currentUnit == Altitude::meters )
+   {
+     text += "<td>" + QObject::tr("Elevation:") +
+             "</td><td><b>" + meters + " / " + feet +
+             "</b></td></tr>";
+   }
+  else
+   {
+     text += "<td>" + QObject::tr("Elevation:") +
+             "</td><td><b>" + feet + " / " + meters +
+             "</b></td></tr>";
+   }
+
+  if( ! comment.isEmpty() )
+    {
+      text += "<tr><td>" + QObject::tr("Comment:") + "</td><td colspan=\"3\">" +
+              comment + "</td></tr>";
+    }
+
+  text += "</table></html>";
 
   return text;
 }

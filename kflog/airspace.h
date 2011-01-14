@@ -137,7 +137,7 @@ public:
    * the type and the borders.
    * @return the infostring
    */
-  QString getInfoString() const;
+  QString getInfoString();
 
   /**
    * Returns a text representing the type of the airspace
