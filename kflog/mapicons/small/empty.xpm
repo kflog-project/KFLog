@@ -1,9 +1,0 @@
-/* XPM */
-static char *empty_small_xpm[] = {
-/* width height num_colors chars_per_pixel */
-"    16    1        1            1",
-/* colors */
-"  c None",
-/* pixels */
-"                "
-};
