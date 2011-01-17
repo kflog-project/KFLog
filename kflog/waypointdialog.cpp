@@ -179,14 +179,14 @@ void WaypointDialog::slotAddWaypoint()
   w->frequency = frequency->text().toDouble();
   text = runway->text();
   if (!text.isEmpty()) {
-    w->runway = text.toInt();
+    w->runway.first = text.toInt();
   }
 
   text = length->text();
   if (!text.isEmpty()) {
     w->length = text.toInt();
   }
-  w->surface = getSurface();
+  w->surface = (enum Runway::SurfaceType) getSurface();
   w->isLandable = isLandable->isChecked();
   w->comment = comment->text();
 

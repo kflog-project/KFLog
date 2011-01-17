@@ -346,7 +346,7 @@ void ObjectTree::slotSaveTask()
         child.setAttribute("Elevation", w->elevation);
         child.setAttribute("Frequency", w->frequency);
         child.setAttribute("Landable", w->isLandable);
-        child.setAttribute("Runway", w->runway);
+        child.setAttribute("Runway", w->runway.first);
         child.setAttribute("Length", w->length);
         child.setAttribute("Surface", w->surface);
         child.setAttribute("Comment", w->comment);
@@ -416,7 +416,7 @@ void ObjectTree::slotSaveAllTask()
         child.setAttribute("Elevation", w->elevation);
         child.setAttribute("Frequency", w->frequency);
         child.setAttribute("Landable", w->isLandable);
-        child.setAttribute("Runway", w->runway);
+        child.setAttribute("Runway", w->runway.first);
         child.setAttribute("Length", w->length);
         child.setAttribute("Surface", w->surface);
         child.setAttribute("Comment", w->comment);

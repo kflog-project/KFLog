@@ -332,8 +332,8 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
     waypointDlg->icao->setText(w->icao);
     tmp.sprintf("%.3f", w->frequency);
     waypointDlg->frequency->setText(tmp);
-    if (w->runway != -1) {
-      tmp.sprintf("%d", w->runway);
+    if (w->runway.first > 0 ) {
+      tmp.sprintf("%d", w->runway.first);
     }
     else {
       tmp = QString::null;
@@ -363,10 +363,10 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
         w->frequency = waypointDlg->frequency->text().toDouble();
         tmp = waypointDlg->runway->text();
         if (!tmp.isEmpty()) {
-          w->runway = tmp.toInt();
+          w->runway.first = tmp.toInt();
         }
         else {
-          w->runway = -1;
+          w->runway = QPair<ushort, ushort>(0, 0);
         }
         tmp = waypointDlg->length->text();
         if (!tmp.isEmpty()) {
@@ -375,7 +375,7 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
         else {
           w->length = -1;
         }
-        w->surface = waypointDlg->getSurface();
+        w->surface = (enum Runway::SurfaceType) waypointDlg->getSurface();
         w->comment = waypointDlg->comment->text();
         w->isLandable = waypointDlg->isLandable->isChecked();
 
@@ -494,8 +494,8 @@ void Waypoints::fillWaypoints()
     w->frequency > 1 ? tmp.sprintf("%.3f", w->frequency) : tmp=QString::null;
     item->setText(colFrequency, tmp);
     item->setText(colLandable, w->isLandable == true ? tr("Yes") : QString::null);
-    if (w->runway > -1) {
-      tmp.sprintf("%02d", w->runway);
+    if (w->runway.first > 0) {
+      tmp.sprintf("%02d", w->runway.first);
     }
     else {
       tmp = QString::null;
@@ -690,7 +690,7 @@ void Waypoints::slotImportWaypointFromMap()
 
                   if( runway )
                     {
-                      w->runway = runway->getRunwayDirection().first;
+                      w->runway = runway->getRunwayDirection();
                       w->length = runway->length;
                       w->surface = runway->surface;
                     }

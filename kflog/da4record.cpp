@@ -227,7 +227,9 @@ Waypoint* DA4WPRecord::newWaypoint () const
   wp->frequency = freq();
   wp->isLandable = false;
   wp->length = len(); // length ?!
-  wp->runway = dir(); // direction ?!
+#warning "Check if runway is set right!"
+  wp->runway.first = dir(); // direction ?!
+  wp->runway.second = wp->runway.first <= 18 ? wp->runway.first + 18 : wp->runway.first - 18;
   wp->surface = surface();
   wp->comment = QObject::tr("Imported from Filser");
   wp->importance = 3;
@@ -244,7 +246,8 @@ void DA4WPRecord::setWaypoint (Waypoint* wp)
   setElev ((short int)round(wp->elevation/0.3048));
   setFreq(wp->frequency);
   setLen(wp->length);
-  setDir(wp->runway);
+#warning "Check if runway is set right!"
+  setDir(wp->runway.first);
   setSurface((Runway::SurfaceType)wp->surface);
   setTC();
 }

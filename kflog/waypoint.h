@@ -9,7 +9,7 @@
 **   Copyright (c):  2003 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -20,23 +20,32 @@
 
 #include <time.h>
 
+#include <QPair>
+#include <QPoint>
 #include <QString>
 
+#include "runway.h"
 #include "wgspoint.h"
 
 /**
-  *@short Class to contain waypoints
+  * @short Class to contain waypoints
   *
   * This class is used to store a waypoint.
   *
-  *@author Heiner Lamprecht
-  *@version $Id$
+  * @author Heiner Lamprecht, Axel Pauli
+  *
+  * @date 2003-2011
+  *
+  * @version $Id$
   */
 
-class Waypoint {
-public: 
+class Waypoint
+{
+public:
+
   Waypoint(QString nam = QString::null, WGSPoint oP = WGSPoint(), int typ = -1, QString _icao = QString::null,
-    QString _comment = QString::null, int surf = -1, int runw = -1, int leng = -1, int elev = 0,
+    QString _comment = QString::null, enum Runway::SurfaceType surf=Runway::Unknown,
+    QPair<ushort, ushort> runw = QPair<ushort, ushort>(0, 0), int leng = -1, int elev = 0,
     double freq = 0.0, bool isLand = false, QPoint pP = QPoint(), time_t s1 = 0, time_t s2 = 0,
     unsigned int sFAI = 0, double ang = 0.0, double dist = 0.0, QString desc = QString::null, unsigned int import = 2, time_t GPSFixTime=0);
   Waypoint(Waypoint *p);
@@ -96,13 +105,11 @@ public:
   /**
    * internal surface id
    */
-  int surface;
+  enum Runway::SurfaceType surface;
   /**
    *
    */
-#warning "Change runway variable from integer to a QPair<short unsigned int, short unsigned int>"
-
-  int runway;
+  QPair<ushort, ushort> runway;
   /**
    *
    */
@@ -126,6 +133,7 @@ public:
     * 2=high
     */
   unsigned int importance;
+
   time_t fixTime;
 };
 

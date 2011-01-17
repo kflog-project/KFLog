@@ -1743,13 +1743,17 @@ bool MapContents::loadTask(QFile& path)
               w->elevation = nm.namedItem("Elevation").toAttr().value().toInt();
               w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
               w->isLandable = nm.namedItem("Landable").toAttr().value().toInt();
-              w->runway = nm.namedItem("Runway").toAttr().value().toInt();
+              w->runway.first = nm.namedItem("Runway").toAttr().value().toInt();
               w->length = nm.namedItem("Length").toAttr().value().toInt();
-              w->surface = nm.namedItem("Surface").toAttr().value().toInt();
+              w->surface = (enum Runway::SurfaceType) nm.namedItem("Surface").toAttr().value().toInt();
               w->comment = nm.namedItem("Comment").toAttr().value();
 
-              if (w->runway == 0 && w->length == 0)
-                  w->runway = w->length = -1;
+              if (w->runway.first == 0 && w->length == 0)
+                {
+                  w->runway.first = 0;
+                  w->runway.second = 0;
+                  w->length = -1;
+                }
 
               wpList.append(w);
             }

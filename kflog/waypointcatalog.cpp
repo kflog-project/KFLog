@@ -99,15 +99,17 @@ bool WaypointCatalog::read(const QString& catalog)
           w->elevation = nm.namedItem("Elevation").toAttr().value().toInt();
           w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
           w->isLandable = nm.namedItem("Landable").toAttr().value().toInt();
-          w->runway = nm.namedItem("Runway").toAttr().value().toInt();
+          w->runway.first = nm.namedItem("Runway").toAttr().value().toInt();
+          w->runway.second = w->runway.first <= 18 ? w->runway.first + 18 : w->runway.first - 18;
           w->length = nm.namedItem("Length").toAttr().value().toInt();
-          w->surface = nm.namedItem("Surface").toAttr().value().toInt();
+          w->surface = (enum Runway::SurfaceType)nm.namedItem("Surface").toAttr().value().toInt();
           w->comment = nm.namedItem("Comment").toAttr().value();
           w->importance = nm.namedItem("Importance").toAttr().value().toInt();
 
-          if (w->runway == 0 && w->length == 0) {
+          if (w->runway.first == 0 && w->runway.second == 0 && w->length == 0) {
             // old format, convert it to new
-            w->runway = w->length = -1;
+            w->runway = QPair<ushort, ushort>(0, 0);
+            w->length = -1;
             needConvert = true;
           }
           if (!insertWaypoint(w))
@@ -184,7 +186,7 @@ bool WaypointCatalog::write()
     child.setAttribute("Elevation", w->elevation);
     child.setAttribute("Frequency", w->frequency);
     child.setAttribute("Landable", w->isLandable);
-    child.setAttribute("Runway", w->runway);
+    child.setAttribute("Runway", w->runway.first);
     child.setAttribute("Length", w->length);
     child.setAttribute("Surface", w->surface);
     child.setAttribute("Comment", w->comment);
@@ -252,7 +254,7 @@ bool WaypointCatalog::writeBinary()
       wpElevation=w->elevation;
       wpFrequency=w->frequency;
       wpLandable=w->isLandable;
-      wpRunway=w->runway;
+      wpRunway=w->runway.first;
       wpLength=w->length;
       wpSurface=w->surface;
       wpComment=w->comment;
@@ -525,7 +527,7 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
           w->frequency = list[6].toDouble() / 1000.0;
           w->isLandable = false;
           w->length = list[7].toInt(); // length ?!
-          w->runway = list[8].toInt(); // direction ?!
+          w->runway.first = list[8].toInt(); // direction ?!
           QChar surface = list[9].upper()[0];
           switch (surface.toAscii())
           {
@@ -585,7 +587,7 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
       out << (int)(w->elevation/0.3048) << ",";
       out << (int)(w->frequency*1000) << ",";
       out << w->length << ",";
-      out << w->runway << ",";
+      out << w->runway.first << ",";
       switch (w->surface)
       {
         case Runway::Grass:
@@ -772,9 +774,9 @@ bool WaypointCatalog::readBinary(const QString &catalog)
           w->elevation = wpElevation;
           w->frequency = wpFrequency;
           w->isLandable = wpLandable;
-          w->runway =wpRunway;
+          w->runway.first =wpRunway;
           w->length = wpLength;
-          w->surface = wpSurface;
+          w->surface = (enum Runway::SurfaceType) wpSurface;
           w->comment = wpComment;
           w->importance = wpImportance;
           //qDebug("Waypoint read: %s (%s - %s) offset %d-%d",w->name.toLatin1().data(),w->description.toLatin1().data(),w->icao.toLatin1().data(), startoffset, f.at());
@@ -859,7 +861,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
 	    }
 	  else
 	    {
-	      w->description = ""; 
+	      w->description = "";
 	    }
 
           w->name = list[1].replace( QRegExp("\""), "" ); // short name of waypoint
@@ -1002,7 +1004,8 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
 	      if( ok )
 		{
-		  w->runway = rdir;
+		  w->runway.first = rdir;
+		  w->runway.second = w->runway.first <= 18 ? w->runway.first + 18 : w->runway.first - 18;
 		}
 	    }
 

@@ -507,7 +507,7 @@ Waypoint* Map::findWaypoint (const QPoint& current)
       return wp;
     }
   }
-  return NULL;
+  return 0;
 }
 
 void Map::__displayMapInfo(const QPoint& current, bool automatic)
@@ -978,11 +978,12 @@ void Map::mousePressEvent(QMouseEvent* event)
       bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
           prePos.x() - 20, prePos.y() - 20, 40, 40);
 
-  if (isZoomRect){ // Zooming
-    beginDrag = event->pos();
-    sizeDrag = QPoint(0,0);
-    dragZoomRect=true;
-  }
+  if( isZoomRect )
+    { // Zooming
+      beginDrag = event->pos();
+      sizeDrag = QPoint( 0, 0 );
+      dragZoomRect = true;
+    }
   else
   {
     extern MapContents *_globalMapContents;
@@ -1094,10 +1095,11 @@ void Map::mousePressEvent(QMouseEvent* event)
         emit taskPlanningEnd();
         return;
       }
-    else if(event->button() == Qt::RightButton)  {
-        popupPos=event->pos();
-        __showPopupMenu(event);
-    }
+    else if( event->button() == Qt::RightButton )
+        {
+          popupPos = event->pos();
+          __showPopupMenu( event );
+        }
 
   }
 }
@@ -1545,7 +1547,8 @@ void Map::__redrawMap()
 }
 
 /** Save Map to PNG-file with width,heigt. Use actual size if width=0 & height=0 */
-void Map::slotSavePixmap(QUrl fUrl, int width, int height){
+void Map::slotSavePixmap(QUrl fUrl, int width, int height)
+{
   extern MapContents *_globalMapContents;
   extern QSettings _settings;
   int w_orig,h_orig;
@@ -2114,6 +2117,7 @@ void Map::slotFlightPrev()
         }
     }
 }
+
 void Map::slotFlightStepNext()
 {
   extern MapMatrix *_globalMapMatrix;
@@ -2309,7 +2313,7 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
   extern MapContents *_globalMapContents;
   extern MapMatrix *_globalMapMatrix;
   bool found = false;
-  RadioPoint *hitElement;
+  Airfield *hitElement;
 
   for(int i = 0; i < taskPointList.count(); i++)
     {
@@ -2318,7 +2322,7 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
       dX = abs(sitePos.x() - current.x());
       dY = abs(sitePos.y() - current.y());
 
-      // Abstand entspricht der Icon-Gr��e.
+      // Abstand entspricht der Icon-Größe.
       if (dX < delta && dY < delta)
         {
           *wp = *tmpPoint;
@@ -2330,17 +2334,19 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
   if(!found)
     {
       /*
-       *  Muss f�r alle Punktdaten durchgef�hrt werden
+       *  Muss für alle Punktdaten durchgeführt werden
        */
-      QVector<int> contentArray(2);
+      QVector<int> contentArray(3);
       contentArray[0] = MapContents::GliderfieldList;
       contentArray[1] = MapContents::AirfieldList;
+      contentArray[3] = MapContents::OutLandingList;
+
 
       for(int n = 0; n < contentArray.count(); n++)
         {
           for(int loop = 0; loop < _globalMapContents->getListLength(contentArray.at(n)); loop++)
             {
-              hitElement = (RadioPoint*)_globalMapContents->getElement(contentArray.at(n), loop);
+              hitElement = (Airfield *)_globalMapContents->getElement(contentArray.at(n), loop);
               sitePos = hitElement->getMapPosition();
               dX = abs(sitePos.x() - current.x());
               dY = abs(sitePos.y() - current.y());
@@ -2356,11 +2362,20 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
                   wp->elevation = hitElement->getElevation();
                   wp->icao = hitElement->getICAO();
                   wp->frequency = hitElement->getFrequency().toDouble();
-                  wp->runway = -1;
+                  wp->runway.first = 0;
+                  wp->runway.second = 0;
                   wp->length = -1;
-                  wp->surface = 0;
-                  wp->comment = "";
-                  wp->isLandable = true;
+                  wp->surface = Runway::Unknown;
+
+                  if( hitElement->getRunwayNumber() )
+                    {
+                      wp->runway = hitElement->getRunway(0)->getRunwayDirection();
+                      wp->length = hitElement->getRunway(0)->length;
+                      wp->surface = hitElement->getRunway(0)->surface;
+                    }
+
+                  wp->comment = hitElement->getComment();
+                  wp->isLandable = hitElement->isLandable();
 
                   found = true;
                   break;
@@ -2368,10 +2383,13 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
             }
         }
     }
+
   return found;
 }
+
 /** Puts the waypoints of the active waypoint catalog to the map */
-void Map::__drawWaypoints(){
+void Map::__drawWaypoints()
+{
   extern MapContents *_globalMapContents;
   extern MapMatrix *_globalMapMatrix;
   extern MapConfig *_globalMapConfig;
@@ -2438,7 +2456,8 @@ void Map::__drawWaypoints(){
 }
 
 /** Slot signalled when user selects another waypointcatalog.  */
-void Map::slotWaypointCatalogChanged(WaypointCatalog* c){
+void Map::slotWaypointCatalogChanged(WaypointCatalog* c)
+{
   extern MapContents *_globalMapContents;
   Waypoint *w;
   bool filterRadius, filterArea;
@@ -2529,13 +2548,15 @@ void Map::__setCursor()
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
   };
+
   const QBitmap cross(32, 32, cross_bits, true);
   const QCursor crossCursor(cross, cross);
   setCursor(crossCursor);
 }
 
 /** Creates the popup menu for the map */
-void Map::__createPopupMenu(){
+void Map::__createPopupMenu()
+{
   extern MapMatrix *_globalMapMatrix;
 
   mapPopup=new Q3PopupMenu(this);
@@ -2562,7 +2583,8 @@ void Map::__createPopupMenu(){
 }
 
 /** Selects the correct items to show from the menu and then shows it. */
-void Map::__showPopupMenu(QMouseEvent * Event){
+void Map::__showPopupMenu(QMouseEvent * Event)
+{
   if (findWaypoint (Event->pos()))
   {
     mapPopup->setItemEnabled(idMpAddWaypoint, false);
@@ -2579,11 +2601,11 @@ void Map::__showPopupMenu(QMouseEvent * Event){
   mapPopup->setItemEnabled(idMpEndPlanning, (planning == 1 || planning == 3));
 
   mapPopup->exec(mapToGlobal(Event->pos()));
-
 }
 
 /** called from the MapPopupmenu to add a new waypoint. */
-void Map::slotMpNewWaypoint(){
+void Map::slotMpNewWaypoint()
+{
    extern MapContents *_globalMapContents;
    extern MapMatrix *_globalMapMatrix;
 
@@ -2601,6 +2623,7 @@ void Map::slotMpNewWaypoint(){
 
     // add WPList !!!
     int searchList[] = {MapContents::GliderfieldList, MapContents::AirfieldList};
+
     for (int l = 0; l < 2; l++) {
       for(int loop = 0; loop < _globalMapContents->getListLength(searchList[l]); loop++) {
         hitElement = (RadioPoint*)_globalMapContents->getElement(searchList[l], loop);
@@ -2609,7 +2632,7 @@ void Map::slotMpNewWaypoint(){
         dX = abs(sitePos.x() - current.x());
         dY = abs(sitePos.y() - current.y());
 
-        // Abstand entspricht der Icon-Gr��e.
+        // Abstand entspricht der Icon-Größe.
         if (dX < delta && dY < delta) {
           Waypoint *w = new Waypoint;
 
@@ -2653,33 +2676,38 @@ void Map::slotMpNewWaypoint(){
 }
 
 /** called from the MapPopupmenu to edit waypoint. */
-void Map::slotMpEditWaypoint(){
+void Map::slotMpEditWaypoint()
+{
+  Waypoint* wp = findWaypoint( popupPos );
 
-   Waypoint* wp = findWaypoint (popupPos);
-   if (wp)
-   {
-      emit waypointEdited (wp);
-   }
+  if( wp )
+    {
+      emit waypointEdited( wp );
+    }
 }
 
 /** called from the MapPopupmenu to edit waypoint. */
-void Map::slotMpDeleteWaypoint(){
-   Waypoint* wp = findWaypoint (popupPos);
-   if (wp)
-   {
-      emit waypointDeleted (wp);
-   }
+void Map::slotMpDeleteWaypoint()
+{
+  Waypoint* wp = findWaypoint( popupPos );
+
+  if( wp )
+    {
+      emit waypointDeleted( wp );
+    }
 }
 
-/** Called from the contextmenu to center the map. */
-void Map::slotMpCenterMap(){
+/** Called from the context menu to center the map. */
+void Map::slotMpCenterMap()
+{
   extern MapMatrix *_globalMapMatrix;
    // Move Map
   _globalMapMatrix->centerToPoint(popupPos);
   __redrawMap();
 }
 
-void Map::slotMpEndPlanning(){
+void Map::slotMpEndPlanning()
+{
   moveWPindex = -999;
 
   prePlanPos.setX(-999);
@@ -2689,20 +2717,19 @@ void Map::slotMpEndPlanning(){
   emit taskPlanningEnd();
 }
 
-void Map::slotMpShowMapInfo(){
+void Map::slotMpShowMapInfo()
+{
   leaveEvent(0);
   __displayMapInfo(popupPos, false);
 }
 
-void
-Map::leaveEvent( QEvent * )
+void Map::leaveEvent( QEvent * )
 {
   mapInfoTimer->stop();
   mapInfoTimerStartpoint = QPoint( -999, -999 );
 }
 
-void
-Map::slotMapInfoTimeout()
+void Map::slotMapInfoTimeout()
 {
   __displayMapInfo( mapInfoTimerStartpoint, true );
 }

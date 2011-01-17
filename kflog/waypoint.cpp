@@ -20,7 +20,8 @@
 #include "wp.h"
 
 Waypoint::Waypoint(QString nam, WGSPoint oP, int typ, QString _icao, QString _comment,
-  int surf, int runw, int leng, int elev, double freq, bool isLand, QPoint pP,
+  enum Runway::SurfaceType surf, QPair<ushort, ushort> runw, int leng, int elev,
+  double freq, bool isLand, QPoint pP,
   time_t s1, time_t s2, unsigned int sFAI,
   double ang, double dist, QString desc, unsigned int import, time_t GPSFixTime)
 {

@@ -976,9 +976,18 @@ QString MapConfig::getIconPath()
 /* Loads a pixmap from the cache. If not contained there, insert it. */
 QPixmap MapConfig::loadPixmap( const QString& pixmapName, bool smallIcon )
 {
-  QString path = getIconPath();
+  static bool firstCall = true;
+  static QPixmap smallEmptyPixmap( 16, 16 );
+  static QPixmap emptyPixmap( 32, 32 );
 
-  QString emptyPath( path + "/empty.xpm" );
+  if( firstCall )
+    {
+      firstCall = false;
+      smallEmptyPixmap.fill( Qt::transparent );
+      emptyPixmap.fill( Qt::transparent );
+    }
+
+  QString path = getIconPath();
 
   if( smallIcon )
     {
@@ -989,28 +998,27 @@ QPixmap MapConfig::loadPixmap( const QString& pixmapName, bool smallIcon )
 
   QPixmap pm;
 
-  if( !QPixmapCache::find( path, pm ) )
+  if( QPixmapCache::find( path, pm ) )
     {
-      if( ! pm.load( path ) )
-        {
-          qWarning( "Could not load Pixmap file '%s'. Maybe it was not installed?",
-                    path.toLatin1().data() );
-        }
-
-      QPixmapCache::insert( path, pm );
-    }
-  else if( !QPixmapCache::find( emptyPath, pm ) )
-    {
-      if( ! pm.load( path ) )
-        {
-          qWarning( "Could not load fallback Pixmap file '%s'. Maybe it was not installed?",
-                    emptyPath.toLatin1().data() );
-        }
-
-      QPixmapCache::insert( path, pm );
+      return pm;
     }
 
-  return pm;
+  if( pm.load( path ) )
+    {
+      QPixmapCache::insert( path, pm );
+      return pm;
+    }
+
+  qWarning( "Could not load Pixmap file '%s'. Maybe it was not installed?",
+             path.toLatin1().data() );
+
+  // Return an empty transparent pixmap as default
+  if( smallIcon )
+    {
+      return smallEmptyPixmap;
+    }
+
+  return emptyPixmap;
 }
 
 QPixmap MapConfig::getPixmapRotatable(unsigned int typeID, bool hasWinch)
@@ -1125,6 +1133,8 @@ QString MapConfig::getPixmapName( unsigned int typeID,
         break;
 
       default:
+        qWarning() << "MapConfig::getPixmapName: No pixmap mapping found for typeId"
+                   << typeID;
         iconName = "empty";
         break;
     }

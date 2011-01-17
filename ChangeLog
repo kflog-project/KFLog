@@ -1,5 +1,8 @@
 $Id$
 
+2011-01-17 Axel Pauli <axel@kflog.org>
+  * Bugfix in method MapConfig::loadPixmap(). 
+
 2011-01-13 Axel Pauli <axel@kflog.org>
   * Method Airfield::getInfoString() over worked. It displays now some
     more information about the related item.
