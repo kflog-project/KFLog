@@ -1,5 +1,11 @@
 $Id$
 
+2011-01-18 Axel Pauli <axel@kflog.org>
+  * Map menu ported to Qt4.
+  * Translation lists of different map objects moved from the MainWindow class
+    into the corresponding classes.
+  * Map object search methods in class Map extended to include the OutlangingList.
+
 2011-01-17 Axel Pauli <axel@kflog.org>
   * Bugfix in method MapConfig::loadPixmap(). 
 

@@ -39,7 +39,6 @@
 
 #include "mainwindow.h"
 
-TranslationList waypointTypes;
 TranslationList taskTypes;
 
 extern QSettings _settings;
@@ -88,7 +87,6 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   toolBar->setObjectName( "ToolBar");
 
   createTaskTypes();
-  createWaypointTypes();
   createDockWindows();
   createMenuBar();
   createStatusBar();
@@ -259,7 +257,7 @@ void MainWindow::createDockWindows()
   helpWindowDock->setWidget(helpWindow);
   addDockWidget( Qt::TopDockWidgetArea, helpWindowDock );
 
-  legendDock = new QDockWidget( tr("Terrain Profile"), this );
+  legendDock = new QDockWidget( tr("Elevation"), this );
   legendDock->setObjectName( "TerrainProfileWindow");
   legendDock->setFloating( false );
   legend = new TopoLegend(legendDock);
@@ -812,11 +810,9 @@ void MainWindow::createMenuBar()
                    qApp, SLOT(aboutQt()), Qt::Key_Q );
 
   //FIXME: link to manual must be added
-  //FIXME: dialog to swith application language must be added
+  //FIXME: dialog to switch application language must be added
 //  help->insertItem(getPixmap("kde_idea_16.png"), tr("Tip of the day") );//, this, SLOT(slotTipOfDay()));
 //  help->insertItem(getPixmap("kflog_16.png"), tr("About KFLog") );//, this, SLOT(slotShowAbout()));
-
-  // FIXME: menuBar()->insertItem("Dock Windows", createDockWindowMenu());
 
   qDebug() << "MainWindow::initMenuBar() End";
 }
@@ -917,44 +913,6 @@ void MainWindow::createToolBar()
   toolBar->addAction( viewCenterHomesiteAction );
   toolBar->addSeparator();
   toolBar->addAction( flightEvaluationWindowAction );
-}
-
-void MainWindow::createWaypointTypes()
-{
-  waypointTypes.setAutoDelete(true);
-
-  // don't know if we really need all of them
-  waypointTypes.append(new TranslationElement(BaseMapElement::NotSelected, tr("(not selected)")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::AerialRailway, tr("Aerial railway")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Airfield, tr("Airfield")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Airport, tr("Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::AmbHeliport, tr("Ambul. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Balloon, tr("Balloon")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::City, tr("City")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::CivHeliport, tr("Civil Heliport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::IntAirport, tr("Int. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::MilAirport, tr("Mil. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::CivMilAirport, tr("Civil/Mil. Airport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::ClosedAirfield, tr("Closed Airfield")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Gliderfield, tr("Glider site")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::HangGlider, tr("Hang glider")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Highway, tr("Highway")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Landmark, tr("Landmark")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::MilHeliport, tr("Mil. Heliport")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::UltraLight, tr("Ultralight")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Parachute, tr("Parachute")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Outlanding, tr("Outlanding")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Obstacle, tr("Obstacle")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::ObstacleGroup, tr("Obstacle group")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacleGroup, tr("Obstacle group (lighted)")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::LightObstacle, tr("Obstacle (lighted)")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Railway, tr("Railway")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Road, tr("Road")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Village, tr("Village,City")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Turnpoint, tr("Turnpoint")));
-  waypointTypes.append(new TranslationElement(BaseMapElement::Thermal, tr("Thermal")));
-
-  waypointTypes.sort();
 }
 
 void MainWindow::readOptions()

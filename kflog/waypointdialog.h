@@ -9,17 +9,14 @@
 **   Copyright (c):  2001 by Harald Maier
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef WAYPOINTDIALOG_H
-#define WAYPOINTDIALOG_H
-
-#include "guicontrols/coordedit.h"
-#include "waypoint.h"
+#ifndef WAYPOINT_DIALOG_H
+#define WAYPOINT_DIALOG_H
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
@@ -28,24 +25,39 @@
 #include <qpushbutton.h>
 #include <qwidget.h>
 
+#include "guicontrols/coordedit.h"
+#include "runway.h"
+#include "waypoint.h"
+
 /**
-  *@short Create and edit waypoints
+  * @short Create and edit a waypoint
   *
-  * Create and/or modify waypoints and their attributes.
+  * Create and/or modify a waypoint and its attributes.
   *
-  *@author Harald Maier
-  *@version  $Id$
+  * @author Harald Maier, Axel Pauli
+  *
+  * @date 2001-2011
+  *
+  * @version  $Id$
   */
 
-class WaypointDialog : public QDialog  {
+class WaypointDialog : public QDialog
+{
    Q_OBJECT
-public: 
-	WaypointDialog(QWidget *parent=0, const char *name=0);
+
+private:
+
+  Q_DISABLE_COPY ( WaypointDialog )
+
+public:
+
+	WaypointDialog( QWidget *parent=0 );
+
 	~WaypointDialog();
   /**
-   * return interna type of surface
+   * return internal type of surface
    */
-  int getSurface();
+  enum Runway::SurfaceType getSurface();
   /**
    * return internal type of waypoint
    */
@@ -53,16 +65,18 @@ public:
   /**
    * set surface type in combo box translate internal id to index
    */
-  void setSurface(int s);
+  void setSurface( enum Runway::SurfaceType st );
   /**
    * set waypoint type in combo box translate internal id to index
    */
   void setWaypointType(int type);
   /** No descriptions */
   void enableApplyButton(bool enable = true);
+
 private: // Private methods
   /** No descriptions */
   void __initDialog();
+
 public: // Public attributes
   /**  */
   QLineEdit *name;
@@ -86,15 +100,19 @@ public: // Public attributes
   LongEdit *longitude;
   /** */
   QCheckBox *isLandable;
+
 public slots: // Public slots
   /** clear all entries */
   void clear();
+
 signals: // Signals
   /** No descriptions */
   void addWaypoint(Waypoint *);
+
 private slots: // Private slots
   /** No descriptions */
   void slotAddWaypoint();
+
 private:
   /**  */
   QComboBox *waypointType;

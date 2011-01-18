@@ -9,17 +9,11 @@
 **   Copyright (c):  2001 by Harald Maier
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
-
-#include "basemapelement.h"
-#include "runway.h"
-#include "translationlist.h"
-#include "waypointdialog.h"
-#include "wgspoint.h"
 
 #include <QtGui>
 
@@ -28,24 +22,24 @@
 #include <Q3HBoxLayout>
 #include <Q3VBoxLayout>
 
-extern TranslationList waypointTypes;
+#include "basemapelement.h"
+#include "runway.h"
+#include "waypointdialog.h"
+#include "wgspoint.h"
 
-WaypointDialog::WaypointDialog(QWidget *parent, const char *name)
- : QDialog(parent, name, true)
+WaypointDialog::WaypointDialog( QWidget *parent ) : QDialog(parent)
 {
-  setCaption(tr("Waypoint definition"));
+  setWindowTitle( tr("Create new Waypoint") );
+  setWindowModality( Qt::WindowModal );
+  setAttribute(Qt::WA_DeleteOnClose);
+
   __initDialog();
 
-  TranslationElement *te;
-  // init comboboxes
-  for (te = waypointTypes.first(); te != 0; te = waypointTypes.next()) {
-    waypointType->insertItem(te->text);
-  }
+  waypointType->addItems( BaseMapElement::getSortedTranslationList() );
+  setWaypointType( BaseMapElement::Landmark );
 
   surface->addItems( Runway::getSortedTranslationList() );
-
-  setSurface(Runway::Unknown);
-  setWaypointType(BaseMapElement::Landmark);
+  setSurface( Runway::Unknown );
 }
 
 WaypointDialog::~WaypointDialog()
@@ -155,13 +149,14 @@ void WaypointDialog::clear()
   frequency->clear();
   runway->clear();
   length->clear();
-  surface->setCurrentItem(-1);
+  surface->setCurrentIndex( surface->findText(Runway::item2Text(Runway::Unknown)) );
   comment->clear();
   latitude->clear();
   longitude->clear();
   isLandable->setChecked(false);
   setWaypointType(BaseMapElement::Landmark);
 }
+
 /** No descriptions */
 void WaypointDialog::slotAddWaypoint()
 {
@@ -178,15 +173,20 @@ void WaypointDialog::slotAddWaypoint()
   w->icao = icao->text().upper();
   w->frequency = frequency->text().toDouble();
   text = runway->text();
-  if (!text.isEmpty()) {
-    w->runway.first = text.toInt();
-  }
+
+  if( !text.isEmpty() )
+    {
+      w->runway.first = text.toInt();
+    }
 
   text = length->text();
-  if (!text.isEmpty()) {
-    w->length = text.toInt();
-  }
-  w->surface = (enum Runway::SurfaceType) getSurface();
+
+  if( !text.isEmpty() )
+    {
+      w->length = text.toInt();
+    }
+
+  w->surface = getSurface();
   w->isLandable = isLandable->isChecked();
   w->comment = comment->text();
 
@@ -200,38 +200,29 @@ void WaypointDialog::slotAddWaypoint()
 /** return internal type of waypoint */
 int WaypointDialog::getWaypointType()
 {
-  int type = waypointType->currentItem();
-
-  if (type != -1) {
-    type = waypointTypes.at(type)->id;
-  }
-
-  return type;
+  return BaseMapElement::text2Item( waypointType->currentText() );
 }
 
 /** return internal type of surface */
-int WaypointDialog::getSurface()
+enum Runway::SurfaceType WaypointDialog::getSurface()
 {
-  return Runway::text2Item( surface->currentText() );
+  return (enum Runway::SurfaceType) Runway::text2Item( surface->currentText() );
 }
 
 /** set waypoint type in combo box
 translate internal id to index */
 void WaypointDialog::setWaypointType(int type)
 {
-  if (type != -1) {
-    type = waypointTypes.idxById(type);
-  }
-  waypointType->setCurrentItem(type);
+  waypointType->setCurrentIndex( waypointType->findText(BaseMapElement::item2Text(type)) );
 }
 
 /** set surface type in combo box
 translate internal id to index */
-void WaypointDialog::setSurface(int s)
+void WaypointDialog::setSurface( enum Runway::SurfaceType st )
 {
-#warning "FIXME!"
-  //surface->setCurrentItem( Runway::item2Text(s) );
+  surface->setCurrentIndex( surface->findText(Runway::item2Text(st)) );
 }
+
 /** No descriptions */
 void WaypointDialog::enableApplyButton(bool enable)
 {

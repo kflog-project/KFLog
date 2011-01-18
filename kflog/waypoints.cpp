@@ -28,7 +28,6 @@
 #include "mapconfig.h"
 #include "mapcontents.h"
 #include "runway.h"
-#include "translationlist.h"
 #include "waypoints.h"
 #include "wgspoint.h"
 #include "mainwindow.h"
@@ -435,7 +434,6 @@ void Waypoints::fillWaypoints()
   Waypoint *w;
   Q3ListViewItem *item;
   bool filterRadius, filterArea;
-  extern TranslationList waypointTypes;
   extern MapConfig *_globalMapConfig;
 
   waypoints->clear();
@@ -486,7 +484,7 @@ void Waypoints::fillWaypoints()
     item->setText(colName, w->name);
     item->setText(colDesc, w->description);
     item->setText(colICAO, w->icao);
-    item->setText(colType, w->type == -1 ? QString::null : waypointTypes.itemText(w->type));
+    item->setText(colType, BaseMapElement::item2Text(w->type, tr("unknown")));
     item->setText(colLat, WGSPoint::printPos(w->origP.lat(), true));
     item->setText(colLong, WGSPoint::printPos(w->origP.lon(), false));
     tmp.sprintf("%d", w->elevation);

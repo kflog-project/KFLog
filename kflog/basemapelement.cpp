@@ -78,6 +78,7 @@ int BaseMapElement::text2Item( const QString& text )
  */
 void BaseMapElement::loadTranslations()
 {
+  objectTranslations.insert( BaseMapElement::NotSelected, QObject::tr("(not selected)") );
   objectTranslations.insert( BaseMapElement::AerialRailway, QObject::tr( "Aerial railway" ) );
   objectTranslations.insert( BaseMapElement::Airfield, QObject::tr( "Airfield" ) );
   objectTranslations.insert( BaseMapElement::Airport, QObject::tr( "Airport" ) );

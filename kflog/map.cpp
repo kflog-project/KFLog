@@ -31,7 +31,6 @@
 #include "radiopoint.h"
 #include "resource.h"
 #include "singlepoint.h"
-#include "translationlist.h"
 #include "waypoints.h"
 #include "waypointdialog.h"
 #include "wgspoint.h"
@@ -54,7 +53,7 @@ extern MapMatrix    *_globalMapMatrix;
 extern QSettings    _settings;
 
 Map::Map( QWidget* parent ) :
-  QFrame(parent),
+  QWidget(parent),
   prePos(-50, -50),
   preCur1(-50, -50),
   preCur2(-50, -50),
@@ -454,8 +453,6 @@ void Map::mouseMoveEvent(QMouseEvent* event)
   */
 QString getInfoString (Waypoint* wp)
 {
-  extern TranslationList waypointTypes;
-
   QString path = _globalMapConfig->getIconPath();
 
   QString text = "<HTML><TABLE BORDER=0><TR>";
@@ -467,12 +464,18 @@ QString getInfoString (Waypoint* wp)
     text += "<TD></TD>";
 
   text += "<TD>" + QObject::tr("Waypoint:") + " " + wp->name;
+
   if (!wp->icao.isEmpty())
-    text += QString (" (%1)").arg(wp->icao);
+    {
+      text += QString (" (%1)").arg(wp->icao);
+    }
+
   text += "</TD></TR>";
 
   if (wp->type >= 0)
-    text += "<TR><TD></TD><TD>" + waypointTypes.itemById(wp->type)->text + "</TD></TR>";
+    text += "<TR><TD></TD><TD>" +
+            BaseMapElement::item2Text( wp->type, QObject::tr("unknown") ) +
+            "</TD></TR>";
 
   text += QString ("<TR><TD></TD><TD><FONT SIZE=-1> %1 m").arg(wp->elevation);
 
@@ -501,7 +504,7 @@ Waypoint* Map::findWaypoint (const QPoint& current)
     double dX = abs(sitePos.x() - current.x());
     double dY = abs(sitePos.y() - current.y());
 
-    // Abstand entspricht der Icon-Gr��e.
+    // Abstand entspricht der Icon-Grösse.
     if ( (dX < 8.0) && (dY < 8.0) )
     {
       return wp;
@@ -518,81 +521,51 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
   extern MapContents *_globalMapContents;
   extern MapMatrix   *_globalMapMatrix;
 
-  BaseFlightElement *baseFlight = _globalMapContents->getFlight();
-
-  Airfield *hitElement;
-
   QPoint sitePos;
   // Radius for Mouse Snapping
   double delta(16.0);
 
-  int timeout=60000;
+  int timeout = 60000;
 
-  if (automatic)
+  if( automatic )
     {
-      timeout=20000;
+      timeout = 20000;
     }
 
-  QString text;
+  QString text = "";
 
   bool show = false;
 
-  for(int loop = 0; loop < _globalMapContents->getListLength(MapContents::GliderfieldList); loop++)
+  int searchList[] = { MapContents::AirfieldList,
+                       MapContents::GliderfieldList,
+                       MapContents::OutLandingList };
+
+  // At first we look for single airfields, ... objects
+  for( int l = 0; l < 3; l++ )
     {
-      hitElement = (Airfield *) _globalMapContents->getElement(MapContents::GliderfieldList, loop);
-      sitePos = hitElement->getMapPosition();
+     for( int loop = 0; loop < _globalMapContents->getListLength( searchList[l] ); loop++ )
+       {
+          Airfield *hitElement =
+              static_cast<Airfield *> ( _globalMapContents->getElement( searchList[l], loop ) );
 
-      double dX = abs (sitePos.x() - current.x());
-      double dY = abs (sitePos.y() - current.y());
+          sitePos = hitElement->getMapPosition();
 
-      // Abstand entspricht der Icon-Grösse.
-      if ( ( dX < delta ) && ( dY < delta ) )
-      {
-        text += hitElement->getInfoString();
-        // Text anzeigen
-        WhatsThat* box = new WhatsThat(this, text, timeout, mapToGlobal(current));
-        box->setVisible( true );
-        return;
-      }
+          double dX = abs( sitePos.x() - current.x() );
+          double dY = abs( sitePos.y() - current.y() );
+
+          // Abstand entspricht der Icon-Grösse.
+          if( (dX < delta) && (dY < delta) )
+            {
+              text += hitElement->getInfoString();
+              // Text anzeigen
+              WhatsThat* box = new WhatsThat( this, text, timeout, mapToGlobal( current ) );
+              box->setVisible( true );
+              return;
+            }
+        }
     }
 
-  for(int loop = 0; loop < _globalMapContents->getListLength(MapContents::AirfieldList); loop++)
-    {
-      hitElement = (Airfield *)_globalMapContents->getElement(MapContents::AirfieldList, loop);
-      sitePos = hitElement->getMapPosition();
-
-      double dX = abs (sitePos.x() - current.x());
-      double dY = abs (sitePos.y() - current.y());
-
-      // Abstand entspricht der Icon-Grösse.
-      if ( ( dX < delta ) && ( dY < delta ) )
-      {
-        text += hitElement->getInfoString();
-        // Text anzeigen
-        WhatsThat* box = new WhatsThat(this, text, timeout, mapToGlobal(current));
-        box->setVisible( true );
-        return;
-      }
-    }
-
-  for(int loop = 0; loop < _globalMapContents->getListLength(MapContents::OutLandingList); loop++)
-    {
-      hitElement = (Airfield *) _globalMapContents->getElement(MapContents::OutLandingList, loop);
-      sitePos = hitElement->getMapPosition();
-
-      double dX = abs (sitePos.x() - current.x());
-      double dY = abs (sitePos.y() - current.y());
-
-      // Abstand entspricht der Icon-Grösse.
-      if ( ( dX < delta ) && ( dY < delta ) )
-      {
-        text += hitElement->getInfoString();
-        // Text anzeigen
-        WhatsThat* box = new WhatsThat(this, text, timeout, mapToGlobal(current));
-        box->setVisible( true );
-        return;
-      }
-    }
+  BaseFlightElement *baseFlight = _globalMapContents->getFlight();
 
   if(baseFlight && baseFlight->getObjectType() == BaseMapElement::Flight)
     {
@@ -833,14 +806,7 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
           // nothing found, try to create a free waypoint
           // only when shift is pressed!!!
 
-          WaypointDialog *waypointDlg = new WaypointDialog(this);
-          QPoint p = _globalMapMatrix->mapToWgs(current);
-
-          // initialize dialg
-          waypointDlg->setWaypointType(BaseMapElement::Landmark);
-          waypointDlg->longitude->setText(WGSPoint::printPos(p.x(), false));
-          waypointDlg->latitude->setText(WGSPoint::printPos(p.y(), true));
-          waypointDlg->setSurface(-1);
+          __openWaypointDialog( current );
 
           if (waypointDlg->exec() == QDialog::Accepted)
             {
@@ -1053,34 +1019,20 @@ void Map::mousePressEvent(QMouseEvent* event)
                    break;
             }
 
-            if(!found) {
-                qWarning("new waypoint");
-
-                WaypointDialog *waypointDlg = new WaypointDialog(this);
-                emit regWaypointDialog(waypointDlg); //register the dialog and connect it's signals.
-
-                waypointDlg->enableApplyButton(false);
-
-                QPoint p = _globalMapMatrix->mapToWgs(current);
-
-                // initialize dialog
-                //waypointDlg->setWaypointType(BaseMapElement::Landmark); now set by default.
-                waypointDlg->longitude->setText(WGSPoint::printPos(p.x(), false));
-                waypointDlg->latitude->setText(WGSPoint::printPos(p.y(), true));
-                waypointDlg->setSurface(-1);
-
-                waypointDlg->exec(); //we only need to exec the dialog. The dialog can take care of itself now :-)
-
-                delete waypointDlg;
-
+            if( !found )
+                {
+                  __openWaypointDialog( current );
+                }
             }
-          }  else {
-           // __displayMapInfo(current);
-          }
+          else
+            {
+              // __displayMapInfo(current);
+            }
 
-        if(planning)  {
-          __graphicalPlanning(current, event);
-        }
+        if( planning )
+            {
+              __graphicalPlanning( current, event );
+            }
     }
 
 
@@ -2559,123 +2511,147 @@ void Map::__createPopupMenu()
 {
   extern MapMatrix *_globalMapMatrix;
 
-  mapPopup=new Q3PopupMenu(this);
+  mapPopup = new QMenu(this);
 
-//  mapPopup->insertTitle(/*SmallIcon("task")*/ 0, QObject::tr("Map"), 0);
-  idMpAddWaypoint  = mapPopup->insertItem(_mainWindow->getPixmap("kde_filenew_16.png"), QObject::tr("&New waypoint"), this, SLOT(slotMpNewWaypoint()));
-  idMpEditWaypoint = mapPopup->insertItem(_mainWindow->getPixmap("kde_wizard_16.png"), QObject::tr("&Edit waypoint"), this, SLOT(slotMpEditWaypoint()));
-  idMpDeleteWaypoint = mapPopup->insertItem(_mainWindow->getPixmap("kde_editdelete_16.png"), QObject::tr("&Delete waypoint"), this, SLOT(slotMpDeleteWaypoint()));
+  mapPopup->setTitle( QObject::tr("Map Menu") );
 
-  mapPopup->insertSeparator();
+  miAddWaypointAction = mapPopup->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
+                                             QObject::tr("&New waypoint"),
+                                             this,
+                                             SLOT(slotMpNewWaypoint()) );
 
-  idMpEndPlanning  = mapPopup->insertItem(QObject::tr("&End taskplanning"), this, SLOT(slotMpEndPlanning()));
-  mapPopup->insertItem(_mainWindow->getPixmap("kde_info_16.png"), QObject::tr("&Show map info..."), this, SLOT(slotMpShowMapInfo()));
+  miEditWaypointAction = mapPopup->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
+                                              QObject::tr("&Edit waypoint"),
+                                              this,
+                                              SLOT(slotMpEditWaypoint()) );
 
-  mapPopup->insertSeparator();
+  miDeleteWaypointAction = mapPopup->addAction( _mainWindow->getPixmap("kde_editdelete_16.png"),
+                                                QObject::tr("&Delete waypoint"),
+                                                this,
+                                                SLOT(slotMpDeleteWaypoint()));
+  mapPopup->addSeparator();
 
-  idMpCenterMap  = mapPopup->insertItem(_mainWindow->getPixmap("centerto_22.png"), QObject::tr("&Center map"), this, SLOT(slotMpCenterMap()));
+  miEndPlanningAction = mapPopup->addAction( QObject::tr("&End taskplanning"),
+                                             this,
+                                             SLOT(slotMpEndPlanning()) );
 
-  idMpZoomIn = mapPopup->insertItem(_mainWindow->getPixmap("kde_viewmag+_16.png"), QObject::tr("Zoom &In"), _globalMapMatrix, SLOT(slotZoomIn()));
-  idMpZoomOut = mapPopup->insertItem(_mainWindow->getPixmap("kde_viewmag-_16.png"), QObject::tr("Zoom &Out"), _globalMapMatrix, SLOT(slotZoomOut()));
+  miShowMapInfoAction = mapPopup->addAction( _mainWindow->getPixmap("kde_info_16.png"),
+                                             QObject::tr("&Show map info..."),
+                                             this,
+                                             SLOT(slotMpShowMapInfo()) );
+  mapPopup->addSeparator();
+
+  miCenterMapAction = mapPopup->addAction( _mainWindow->getPixmap("centerto_22.png"),
+                                           QObject::tr("&Center map"),
+                                           this,
+                                           SLOT(slotMpCenterMap()) );
+
+  miZoomInAction = mapPopup->addAction( _mainWindow->getPixmap("kde_viewmag+_16.png"),
+                                        QObject::tr("Zoom &In"),
+                                        _globalMapMatrix,
+                                        SLOT(slotZoomIn()) );
+
+  miZoomOutAction = mapPopup->addAction( _mainWindow->getPixmap("kde_viewmag-_16.png"),
+                                         QObject::tr("Zoom &Out"),
+                                         _globalMapMatrix,
+                                         SLOT(slotZoomOut()) );
   /*
-  idMpAddTaskPoint
+  miAddTaskPointAction
  */
 }
 
-/** Selects the correct items to show from the menu and then shows it. */
+/** Enable/disable the correct items from the menu and then shows it. */
 void Map::__showPopupMenu(QMouseEvent * Event)
 {
-  if (findWaypoint (Event->pos()))
-  {
-    mapPopup->setItemEnabled(idMpAddWaypoint, false);
-    mapPopup->setItemEnabled(idMpEditWaypoint, true);
-    mapPopup->setItemEnabled(idMpDeleteWaypoint, true);
-  }
+  if( findWaypoint( Event->pos() ) )
+    {
+      miAddWaypointAction->setEnabled( false );
+      miEditWaypointAction->setEnabled( true );
+      miDeleteWaypointAction->setEnabled( true );
+    }
   else
-  {
-    mapPopup->setItemEnabled(idMpAddWaypoint, true);
-    mapPopup->setItemEnabled(idMpEditWaypoint, false);
-    mapPopup->setItemEnabled(idMpDeleteWaypoint, false);
-  }
-
-  mapPopup->setItemEnabled(idMpEndPlanning, (planning == 1 || planning == 3));
-
-  mapPopup->exec(mapToGlobal(Event->pos()));
-}
-
-/** called from the MapPopupmenu to add a new waypoint. */
-void Map::slotMpNewWaypoint()
-{
-   extern MapContents *_globalMapContents;
-   extern MapMatrix *_globalMapMatrix;
-
-   RadioPoint *hitElement;
-   QString text;
-
-   QPoint sitePos;
-   double dX, dY, delta(16.0);
-
-   const QPoint current(popupPos);
-
-   // select WayPoint
-   QRegExp blank("[ ]");
-   bool found = false;
-
-    // add WPList !!!
-    int searchList[] = {MapContents::GliderfieldList, MapContents::AirfieldList};
-
-    for (int l = 0; l < 2; l++) {
-      for(int loop = 0; loop < _globalMapContents->getListLength(searchList[l]); loop++) {
-        hitElement = (RadioPoint*)_globalMapContents->getElement(searchList[l], loop);
-        sitePos = hitElement->getMapPosition();
-
-        dX = abs(sitePos.x() - current.x());
-        dY = abs(sitePos.y() - current.y());
-
-        // Abstand entspricht der Icon-Größe.
-        if (dX < delta && dY < delta) {
-          Waypoint *w = new Waypoint;
-
-          QString name = hitElement->getName();
-          w->name = name.replace(blank, "").left(6).upper();
-          w->description = hitElement->getName();
-          w->type = hitElement->getObjectType();
-          w->origP = hitElement->getWGSPosition();
-          w->elevation = hitElement->getElevation();
-          w->icao = hitElement->getICAO();
-          w->frequency = hitElement->getFrequency().toDouble();
-          w->isLandable = true;
-
-          emit waypointSelected(w);
-          found = true;
-          break;
-        }
-      }
-      if (found)  break;
+    {
+      miAddWaypointAction->setEnabled( true );
+      miEditWaypointAction->setEnabled( false );
+      miDeleteWaypointAction->setEnabled( false );
     }
 
-    if (!found) {
-      //warning("new waypoint");
+  miEndPlanningAction->setEnabled( (planning == 1 || planning == 3) );
 
-      WaypointDialog *waypointDlg = new WaypointDialog(this);
-      emit regWaypointDialog(waypointDlg); //register the dialog and connect it's signals.
-
-      waypointDlg->enableApplyButton(false);
-
-      QPoint p = _globalMapMatrix->mapToWgs(current);
-
-      // initialize dialog
-      //waypointDlg->setWaypointType(BaseMapElement::Landmark); now set by default.
-      waypointDlg->longitude->setText(WGSPoint::printPos(p.x(), false));
-      waypointDlg->latitude->setText(WGSPoint::printPos(p.y(), true));
-      waypointDlg->setSurface(-1);
-      waypointDlg->exec(); //we only need to exec the dialog. The dialog can take care of itself now :-)
-
-      delete waypointDlg;
-   }
+  mapPopup->exec( mapToGlobal( Event->pos() ) );
 }
 
-/** called from the MapPopupmenu to edit waypoint. */
+/** called from the Map popup menu to add a new waypoint. */
+void Map::slotMpNewWaypoint()
+{
+  extern MapContents *_globalMapContents;
+
+  QString text;
+
+  QPoint sitePos;
+  double dX, dY, delta( 16.0 );
+
+  const QPoint current( popupPos );
+
+  // select WayPoint
+  QRegExp blank( "[ ]" );
+
+  // add WPList !!!
+  int searchList[] = { MapContents::AirfieldList,
+                       MapContents::GliderfieldList,
+                       MapContents::OutLandingList };
+
+  for( int l = 0; l < 3; l++ )
+    {
+      for( int loop = 0; loop < _globalMapContents->getListLength( searchList[l] ); loop++ )
+        {
+          Airfield *hitElement =
+              static_cast<Airfield *> ( _globalMapContents->getElement( searchList[l], loop ) );
+          sitePos = hitElement->getMapPosition();
+
+          dX = abs( sitePos.x() - current.x() );
+          dY = abs( sitePos.y() - current.y() );
+
+          // Abstand entspricht der Icon-Größe.
+          if( dX < delta && dY < delta )
+            {
+              Waypoint *w = new Waypoint;
+
+              QString name = hitElement->getName();
+              w->name = name.replace( blank, "" ).left( 6 ).upper();
+              w->description = hitElement->getName();
+              w->type = hitElement->getObjectType();
+              w->origP = hitElement->getWGSPosition();
+              w->elevation = hitElement->getElevation();
+              w->icao = hitElement->getICAO();
+              w->frequency = hitElement->getFrequency().toDouble();
+              w->runway.first = 0;
+              w->runway.second = 0;
+              w->length = -1;
+              w->surface = Runway::Unknown;
+
+              if( hitElement->getRunwayNumber() )
+                {
+                  w->runway = hitElement->getRunway( 0 )->getRunwayDirection();
+                  w->length = hitElement->getRunway( 0 )->length;
+                  w->surface = hitElement->getRunway( 0 )->surface;
+                }
+
+              w->comment = hitElement->getComment();
+              w->isLandable = hitElement->isLandable();
+
+              emit  waypointSelected( w );
+              return;
+            }
+        }
+    }
+
+  // create a new waypoint
+  __openWaypointDialog( current );
+}
+
+
+/** called from the Map Popup menu to edit waypoint. */
 void Map::slotMpEditWaypoint()
 {
   Waypoint* wp = findWaypoint( popupPos );
@@ -2686,7 +2662,7 @@ void Map::slotMpEditWaypoint()
     }
 }
 
-/** called from the MapPopupmenu to edit waypoint. */
+/** called from the Map Popup menu to delete waypoint. */
 void Map::slotMpDeleteWaypoint()
 {
   Waypoint* wp = findWaypoint( popupPos );
@@ -2732,6 +2708,22 @@ void Map::leaveEvent( QEvent * )
 void Map::slotMapInfoTimeout()
 {
   __displayMapInfo( mapInfoTimerStartpoint, true );
+}
+
+void Map::__openWaypointDialog( const QPoint &position )
+{
+  WaypointDialog *waypointDlg = new WaypointDialog( this );
+  waypointDlg->enableApplyButton( false );
+
+  // register the dialog and connect it's signals.
+  emit regWaypointDialog( waypointDlg );
+
+  QPoint p = _globalMapMatrix->mapToWgs( position );
+
+  // initialize dialog coordinates
+  waypointDlg->longitude->setText( WGSPoint::printPos( p.x(), false ) );
+  waypointDlg->latitude->setText( WGSPoint::printPos( p.y(), true ) );
+  waypointDlg->exec();
 }
 
 /** Draws a scale indicator on the pixmap. */

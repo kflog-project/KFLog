@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
+**                   2010-2011  by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -24,7 +25,7 @@
  *
  * This class provides basic functions for displaying the map.
  *
- * \date 1999-2010
+ * \date 1999-2011
  *
  * \version $Id$
  */
@@ -33,19 +34,19 @@
 #define MAP_H
 
 #include <QBitmap>
-#include <QFrame>
 #include <QList>
 #include <QMenu>
 #include <QRegion>
 #include <QTimer>
 #include <QUrl>
+#include <QWidget>
 
 #include "flighttask.h"
 #include "waypointcatalog.h"
 
 class Flight;
 
-class Map : public QFrame
+class Map : public QWidget
 {
   Q_OBJECT
 
@@ -190,6 +191,13 @@ private:
     void __createPopupMenu();
 
   private:
+
+    /**
+     * Opens a new waypoint dialog.
+     *
+     * \param position Latitude and longitude of current position.
+     */
+    void __openWaypointDialog( const QPoint &position );
 
     /**
      * tries to find a waypoint at current position
@@ -366,16 +374,17 @@ private:
      */
     QMenu *mapPopup;
     /**
-     * ID's of menu items
+     * Actions of menu items
      */
-    int idMpEndPlanning;
-    int idMpCenterMap;
-    int idMpAddWaypoint;
-    int idMpEditWaypoint;
-    int idMpDeleteWaypoint;
-    int idMpAddTaskPoint;
-    int idMpZoomIn;
-    int idMpZoomOut;
+    QAction *miEndPlanningAction;
+    QAction *miCenterMapAction;
+    QAction *miAddWaypointAction;
+    QAction *miEditWaypointAction;
+    QAction *miDeleteWaypointAction;
+    QAction *miAddTaskPointAction;
+    QAction *miShowMapInfoAction;
+    QAction *miZoomInAction;
+    QAction *miZoomOutAction;
         /** */
     bool isDrawing;
     bool redrawRequest;

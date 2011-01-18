@@ -241,8 +241,7 @@ private:
   void createTaskTypes();
   /** Initializes toolbar*/
   void createToolBar();
-  /** Initializes waypoint types*/
-  void createWaypointTypes();
+
   /**
    * Dockwidget to handle the dataview widget.
    * The dataview widget. Embedded in flightDataViewDock
