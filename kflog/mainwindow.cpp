@@ -21,6 +21,7 @@
 #include <QtGui>
 #include <Qt3Support>
 
+#include "aboutwidget.h"
 #include "airfield.h"
 #include "centertodialog.h"
 #include "dataview.h"
@@ -817,10 +818,13 @@ void MainWindow::createMenuBar()
   help->addAction( getPixmap("qt_logo_32x32.png"), tr("About &Qt"),
                    qApp, SLOT(aboutQt()), Qt::Key_Q );
 
+  help->insertItem( getPixmap("kflog_16.png"), tr("About KFLog"),
+                    this, SLOT(slotShowAbout()) );
+
+
   //FIXME: link to manual must be added
   //FIXME: dialog to switch application language must be added
-//  help->insertItem(getPixmap("kde_idea_16.png"), tr("Tip of the day") );//, this, SLOT(slotTipOfDay()));
-//  help->insertItem(getPixmap("kflog_16.png"), tr("About KFLog") );//, this, SLOT(slotShowAbout()));
+  //help->insertItem(getPixmap("kde_idea_16.png"), tr("Tip of the day") );//, this, SLOT(slotTipOfDay()));
 
   qDebug() << "MainWindow::initMenuBar() End";
 }
@@ -1618,4 +1622,59 @@ void MainWindow::slotWindowsMenuAboutToShow()
       connect( action, SIGNAL(triggered(QAction *)),
                _globalMapContents, SLOT(slotSetFlight(QAction *)) );
     }
+}
+
+void MainWindow::slotShowAbout()
+{
+  AboutWidget *aw = new AboutWidget( this );
+
+  aw->setWindowIcon( QIcon(getPixmap("kflog_16.png")) );
+  aw->setWindowTitle( tr( "About KFLog") );
+  aw->setHeaderIcon( getPixmap("kflog_16.png") );
+
+  QString header( tr("<html>KFLog %1, &copy; 2000-2011, The KFLog-Team</html>").arg( QCoreApplication::applicationVersion() ) );
+
+  aw->setHeaderText( header );
+
+  QString about( tr(
+          "<hml>"
+          "KFLog %1, compiled at %2 with QT %3<br><br>"
+          "Homepage: <a href=\"http://www.kflog.org/kflog/\">www.kflog.org/kflog/</a><br><br>"
+          "Report bugs to: <a href=\"mailto:kflog-user&#64;kflog.org\">kflog.user&#64;kflog.org</a><br><br>"
+          "Published under the <a href=\"http://www.gnu.org/licenses/licenses.html#GPL\">GPL</a>"
+          "</html>" ).arg( QCoreApplication::applicationVersion() )
+                     .arg( _settings.value( "/Main/CompileDate", "" ).toString() )
+                     .arg( QT_VERSION_STR ) );
+
+  aw->setAboutText( about );
+
+  QString team( tr(
+      "<hml>"
+      "<b>Current Maintainer</b>"
+      "<blockquote>"
+      "Hendrik Hoeth &lt;<a href=\"mailto:hoeth&#64;linta.de\">hoeth&#64;linta.de</a>&gt;"
+      "</blockquote>"
+      "<b>Developers, Maintainers</b>"
+      "<blockquote>"
+      "Axel Pauli (Portage to Qt4)<br>"
+      "Constantijn Neeteson (Maintenance, Core-developer)<br>"
+      "Florian Ehinger (Maintenance, Core-developer, Mapdata)<br>"
+      "Heiner Lamprecht (Maintenance, Core-developer)<br>"
+      "Andr&eacute; Somers (Developer, Waypoint-handling, Plugin architecture, ...)<br>"
+      "Christof Bodner (Developer, OLC Optimization)<br>"
+      "Eggert Ehmke (Developer)<br>"
+      "Harald Maier (Developer, Waypoint-Dialog, Task-handling)<br>"
+      "Thomas Nielsen (Developer, 3D-Dialog)<br>"
+      "Jan Kr&uuml;ger (Developer, 3D-Dialog)"
+      "</blockquote>"
+      "<b>Server Sponsor</b>"
+      "<blockquote>"
+      "Heiner Lamprecht &lt;<a href=\"mailto:heiner&#64;kflog.org\">heiner&#64;kflog.org</a>&gt;"
+      "</blockquote>"
+      "Thanks to all, who have made available this software!"
+      "<br></html>" ));
+
+  aw->setTeamText( team );
+  aw->resize( 600, 500 );
+  aw->setVisible( true );
 }

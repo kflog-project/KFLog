@@ -213,6 +213,11 @@ public slots:
    */
   void slotFlightDataTypeGroupAction( QAction *action );
 
+  /**
+   * Shows version and copyright.
+   */
+  void slotShowAbout();
+
 protected:
   /**
    * Catch the close event from QWidget.

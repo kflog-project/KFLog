@@ -6,7 +6,8 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2001 by Heiner Lamprecht
+**   Copyright (c):  2001      by Heiner Lamprecht
+**                   2010-2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -28,7 +29,7 @@
  *
  * KFLog is built with the release 4.7.x.
  *
- * \date 2001-2010
+ * \date 2001-2011
  *
  * \version $Id$
  */
@@ -81,45 +82,6 @@ QSettings _settings( QSettings::UserScope, "KFLog", "kflog" );
  */
 int main(int argc, char **argv)
 {
-  /*
-   * Using qstrdup here seems to be a workaround. Without, some of the
-   * strings are not shown when using i18n. Strange (and against the api),
-   * but this version works!
-   */
-//  KAboutData aboutData( "kflog", "KFLog",
-//      VERSION, qstrdup(QObject::tr("KFLog - The K-Flight-Logger")), KAboutData::License_GPL,
-//      "(c) 2001-2009, The KFLog-Team",
-//      qstrdup(QObject::tr("The maps used for KFLog are derived from the\n"
-//          "void-filled CGIAR SRTM data (http://srtm.csi.cgiar.org),\n"
-//          "the GTOPO30-data, and the Digital Chart of the World.\n"
-//          "If You have no mapfiles installed, please visit\n"
-//          "our homepage to download the area You need.")),
-//      "http://www.kflog.org", "kflog-devel@kflog.org");
-//
-//  aboutData.addAuthor("Hendrik Hoeth",
-//      qstrdup(QObject::tr("Maintenance, Developer, Mapdata")), "hoeth@linta.de");
-//  aboutData.addAuthor("Constantijn Neeteson",
-//      qstrdup(QObject::tr("Maintenance, Core-developer")), "kflog@neeteson.net");
-//  aboutData.addAuthor("Florian Ehinger",
-//      qstrdup(QObject::tr("Maintenance, Core-developer, Mapdata")), "florian@kflog.org");
-//  aboutData.addAuthor("Heiner Lamprecht",
-//      qstrdup(QObject::tr("Maintenance, Core-developer")), "heiner@kflog.org");
-//  aboutData.addAuthor("Andr\303\251 Somers",
-//      qstrdup(QObject::tr("Developer (Waypoint-handling, Plugin architecture, ...)")), "andre@kflog.org");
-//  aboutData.addAuthor("Christof Bodner",
-//      qstrdup(QObject::tr("Developer (OLC Optimization)")), "christof@kflog.org");
-//  aboutData.addAuthor("Eggert Ehmke",
-//      qstrdup(QObject::tr("Developer")), "eggert@kflog.org");
-//  aboutData.addAuthor("Harald Maier",
-//      qstrdup(QObject::tr("Developer (Waypoint-Dialog, Task-handling)")), "harry@kflog.org");
-//  aboutData.addAuthor("Thomas Nielsen",
-//      qstrdup(QObject::tr("Developer (3D-Dialog)")), "thomas@kflog.org");
-//  aboutData.addAuthor("Jan Krüger",
-//      qstrdup(QObject::tr("Developer (3D-Dialog)")), "jan@kflog.org");
-//
-//  aboutData.setTranslator(qstrdup(QObject::tr("_: NAME OF TRANSLATORS\nYour names")),
-//    qstrdup(QObject::tr("_: EMAIL OF TRANSLATORS\nYour emails")));
-
   QApplication app( argc, argv );
 
   QCoreApplication::setOrganizationName("KFLog");

@@ -4,6 +4,7 @@ $Id$
   * Class TopoLegend ported to Qt4 together with bug fixing. Works now as
     expected.
   * Class MapControlView ported to Qt4.
+  * About information added to main window. Maybe it is not complete.
 
 2011-01-18 Axel Pauli <axel@kflog.org>
   * Map menu ported to Qt4.
