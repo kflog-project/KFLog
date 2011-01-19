@@ -12,6 +12,7 @@ CONFIG += qt \
 TEMPLATE = app
 
 SOURCES = \
+    aboutwidget.cpp \
     airfield.cpp \
     airspace.cpp \
     altitude.cpp \
@@ -88,6 +89,7 @@ SOURCES = \
     guicontrols/kfloglistview.cpp
     
 HEADERS = \
+    aboutwidget.h \
     airfield.h \
     airspace.h \
     altitude.h \
