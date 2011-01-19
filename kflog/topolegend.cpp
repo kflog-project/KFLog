@@ -19,14 +19,13 @@
 
 #include "topolegend.h"
 #include "mapconfig.h"
-#include "resource.h"
 
-TopoLegend::TopoLegend(QWidget *parent) :
+extern MapConfig* _globalMapConfig;
+
+TopoLegend::TopoLegend( QWidget* parent ) :
   QWidget(parent),
-  currentHighlight(-1)
+  selectedItem(-1)
 {
-  extern MapConfig *_globalMapConfig;
-
   //These are the levels used, as defined in mapconfig.cpp.
   //For internal reasons, -1 and 10000 are added to the list.
   int levels[] = {
@@ -43,8 +42,23 @@ TopoLegend::TopoLegend(QWidget *parent) :
       isoHash.insert( levels[i], i );
     }
 
-  QWidget* widget = new QWidget;
+  /*
+   * AP: It was a longer fight to get running the widget in a scroll area. The
+   * trick is, to put the scroll area into an own layout and add this layout
+   * to the parent widget. The elevation bar itself must be put into an own,
+   * widget which is passed to the scroll area widget. That ensures that the
+   * scroll area fills out the parent widget. A good example was to find here:
+   *
+   * http://wiki.forum.nokia.com/index.php/Shows_the_use_of_QScrollArea
+   */
 
+  // Layout used by scroll area
+  QHBoxLayout *hbox = new QHBoxLayout(this);
+
+  // new widget as elevation display
+  QWidget* widget = new QWidget(this);
+
+  // layout used by elevation display
   QVBoxLayout* levelBox = new QVBoxLayout(widget);
   levelBox->setMargin(0);
   levelBox->setSpacing(0);
@@ -55,7 +69,6 @@ TopoLegend::TopoLegend(QWidget *parent) :
   setFont( labelFont );
 
   QFontMetrics fm = fontMetrics();
-  int minwidth = 0;
 
   for( int i = 50; i >= 0; --i )
     {
@@ -76,9 +89,7 @@ TopoLegend::TopoLegend(QWidget *parent) :
           label->setText( QString("%1 - %2 m").arg(levels[i]).arg(levels[i + 1]) );
         }
 
-      //label->setMinimumSize( fm.size( 0, label->text() ).width(), 0 );
-
-      minwidth = qMax( minwidth, fm.width(label->text()) );
+      label->setMinimumWidth( fm.width(label->text()) + 10 );
 
       label->setAutoFillBackground( true );
       label->setBackgroundRole( QPalette::Window );
@@ -93,32 +104,30 @@ TopoLegend::TopoLegend(QWidget *parent) :
       labelList.append( label );
     }
 
-  int wts = windowTitle().size();
-
-  if( wts > minwidth )
-    {
-      //setMaximumWidth( wts + 30 );
-    }
-  else
-    {
-      //setMaximumWidth( minwidth + 30 );
-    }
-
-  //widget->resize( size() );
+  // Set the size limits of the widget
+  setMinimumWidth( 180 );
+  setMaximumWidth( 200 );
+  setMinimumHeight( 180 );
 
   scrollArea = new QScrollArea(this);
+
+  // Pass elevation widget to scroll area
   scrollArea->setWidget( widget );
   scrollArea->setWidgetResizable( true );
   scrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-  scrollArea->setMinimumWidth( minwidth + 40 );
+
+  // Add scroll area to an own layout
+  hbox->addWidget( scrollArea );
+
+  // Pass scroll area layout to the parent widget.
+  setLayout( hbox );
 }
 
 TopoLegend::~TopoLegend()
 {
 }
 
-/** Makes sure the indicated level is visible. */
-void TopoLegend::highlightLevel( const int elevation )
+void TopoLegend::slotSelectElevation( int elevation )
 {
   if( ! isVisible() )
     {
@@ -127,7 +136,7 @@ void TopoLegend::highlightLevel( const int elevation )
 
   int index = isoHash.value( elevation );
 
-  if( index == currentHighlight )
+  if( index == selectedItem )
     {
       return;
     }
@@ -144,10 +153,20 @@ void TopoLegend::highlightLevel( const int elevation )
       label->setFrameStyle( QFrame::Panel | QFrame::Sunken );
     }
 
-  if( currentHighlight >= 0 && currentHighlight < 51 )
+  if( selectedItem >= 0 && selectedItem < 51 )
     {
-      labelList.at( 50 - currentHighlight )->setFrameStyle( QFrame::NoFrame );
+      labelList.at( 50 - selectedItem )->setFrameStyle( QFrame::NoFrame );
     }
 
-  currentHighlight = index;
+  selectedItem = index;
+}
+
+void TopoLegend::slotUpdateElevationColors()
+{
+  for( int i = 50; i >= 0 && i < labelList.size(); --i )
+    {
+      QLabel* label = labelList.at( i );
+
+      label->setPalette( QPalette(_globalMapConfig->getIsoColor(i)) );
+    }
 }

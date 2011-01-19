@@ -43,15 +43,16 @@
 #include <QProgressBar>
 #include <QUrl>
 
-#include "dataview.h"
-#include "evaluationdialog.h"
-#include "helpwindow.h"
-#include "map.h"
-#include "mapcontrolview.h"
-#include "objecttree.h"
-#include "translationlist.h"
-#include "topolegend.h"
-#include "waypoints.h"
+class DataView;
+class EvaluationDialog;
+class flightPoint;
+class HelpWindow;
+class Map;
+class MapControlView;
+class ObjectTree;
+class Waypoints;
+class TopoLegend;
+class TranslationList;
 
 class MainWindow : public QMainWindow
 {
@@ -292,6 +293,7 @@ private:
    */
   QDockWidget* waypointsDock;
   Waypoints* waypoints;
+
   QToolBar* toolBar;
 
   /**

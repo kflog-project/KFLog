@@ -21,7 +21,7 @@
  *
  * \short Elevation profile
  *
- * Generates a legend for the topography levels used on the map.
+ * Generates a legend for the elevation profile used on the map.
  *
  * \author André Somers, Axel Pauli
  *
@@ -56,14 +56,14 @@ public:
   /**
    * Destructor
    */
-  ~TopoLegend();
+  virtual ~TopoLegend();
 
 private:
 
   /**
-   * Index of the currently highlighted elevation label
+   * Index of the currently selected elevation item.
    */
-   int currentHighlight;
+   int selectedItem;
 
  /**
   * Contains a list of the labels that have been created
@@ -82,9 +82,16 @@ private:
 
 public slots:
   /**
-   * Makes sure the indicated level is visible.
+   * Makes sure the selected elevation level is visible.
+   *
+   * \param elevation Elevation in unit meter.
    */
-  void highlightLevel( const int elevation );
+  void slotSelectElevation( int elevation );
+
+  /**
+   * Makes an update of the colors of the elevation bar.
+   */
+  void slotUpdateElevationColors();
 
 };
 

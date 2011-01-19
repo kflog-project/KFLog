@@ -23,18 +23,26 @@
 
 #include "airfield.h"
 #include "centertodialog.h"
+#include "dataview.h"
+#include "evaluationdialog.h"
 #include "flightdataprint.h"
 #include "flightloader.h"
+#include "helpwindow.h"
 #include "igc3ddialog.h"
 #include "igcpreview.h"
 #include "kflogconfig.h"
+#include "map.h"
 #include "mapcontents.h"
 #include "mapconfig.h"
+#include "mapcontrolview.h"
 #include "mapmatrix.h"
 #include "mapprint.h"
+#include "objecttree.h"
 #include "recorderdialog.h"
 #include "taskdataprint.h"
+#include "topolegend.h"
 #include "translationlist.h"
+#include "waypoints.h"
 #include "wgspoint.h"
 
 #include "mainwindow.h"
@@ -104,7 +112,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(map, SIGNAL(waypointSelected(Waypoint *)), waypoints, SLOT(slotAddWaypoint(Waypoint *)));
   connect(map, SIGNAL(waypointDeleted(Waypoint *)), waypoints, SLOT(slotDeleteWaypoint(Waypoint *)));
   connect(map, SIGNAL(waypointEdited(Waypoint *)), waypoints, SLOT(slotEditWaypoint(Waypoint *)));
-  connect(map, SIGNAL(elevation(int)), legend, SLOT(highlightLevel(int)));
+  connect(map, SIGNAL(elevation(int)), legend, SLOT(slotSelectElevation(int)));
   connect(map, SIGNAL(regWaypointDialog(QWidget *)), this, SLOT(slotRegisterWaypointDialog(QWidget *)));
   connect(map, SIGNAL(openFile(const char *)), this, SLOT(slotOpenFile(const char *)));
   connect(map, SIGNAL(setStatusBarProgress(int)), this, SLOT(slotSetProgress(int)));

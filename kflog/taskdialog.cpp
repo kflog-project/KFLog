@@ -9,7 +9,7 @@
  **   Copyright (c):  2002 by Harald Maier
  **
  **   This file is distributed under the terms of the General Public
- **   Licence. See the file COPYING for more information.
+ **   License. See the file COPYING for more information.
  **
  **   $Id$
  **
@@ -30,7 +30,7 @@ extern TranslationList taskTypes;
 TaskDialog::TaskDialog(QWidget *parent, const char *name )
   : QDialog(parent, name, true)
 {
-  setCaption(tr("Task definition"));
+  setWindowTitle(tr("Task definition") );
   __initDialog();
   setMinimumWidth(500);
   setMinimumHeight(300);
@@ -323,13 +323,18 @@ unsigned int TaskDialog::getCurrentPosition()
 void TaskDialog::setSelected(unsigned int position)
 {
   Q3ListViewItemIterator item(route);
-  int i = 0;
-  while(item.current()) {
-    if(i == position)
-      route->setSelected(item.current(), true);
-    i++;
-    ++item;
-  }
+  uint i = 0;
+
+  while( item.current() )
+    {
+      if( i == position )
+        {
+          route->setSelected( item.current(), true );
+        }
+
+      i++;
+      ++item;
+    }
 }
 
 void TaskDialog::slotMoveUp()
@@ -348,16 +353,17 @@ void TaskDialog::slotMoveUp()
 
 void TaskDialog::slotMoveDown()
 {
-  unsigned int curPos = getCurrentPosition();
+  int curPos = getCurrentPosition();
   Waypoint *wp;
 
-  if (curPos < wpList.count() - 1) {
-    wp = wpList.takeAt(curPos);
-    wpList.insert(curPos + 1, wp);
-    pTask->setWaypointList(wpList);
-    fillWaypoints();
-    setSelected(curPos + 1);
-  }
+  if( curPos < wpList.count() - 1 )
+    {
+      wp = wpList.takeAt( curPos );
+      wpList.insert( curPos + 1, wp );
+      pTask->setWaypointList( wpList );
+      fillWaypoints();
+      setSelected( curPos + 1 );
+    }
 }
 
 void TaskDialog::slotReplaceWaypoint()

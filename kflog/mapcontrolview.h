@@ -7,59 +7,75 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
+/**
+ * \class MapControlView
+ *
+ * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
+ *
+ * \short Map control widget
+ *
+ * Creates widgets for controlling the map view. The class will create
+ * the compass-rose, consisting of nine buttons to move the map,
+ * two labels showing the dimension of the current map view and a slider
+ * to set the scale.
+ *
+ * \date 2000-2011
+ *
+ * \version $Id$
+ */
+
 #ifndef MAP_CONTROL_VIEW_H
 #define MAP_CONTROL_VIEW_H
 
-#include <qlabel.h>
+#include <QWidget>
+#include <QLabel>
+#include <QLCDNumber>
+#include <QSlider>
 
-#include <qlcdnumber.h>
-#include <qslider.h>
-#include <QFrame>
-
-/**
- * Creates widgets for controling the mapview. The class will create
- * the compass-rose, consisting of nine KButtons to move the map,
- * two labels showing the dimension of the current mapview and a slider
- * to set the scale.
- *
- * @author Heiner Lamprecht, Florian Ehinger
- * @version $Id$
- */
-class MapControlView : public QFrame
+class MapControlView : public QWidget
 {
   Q_OBJECT
+
+private:
+
+  Q_DISABLE_COPY ( MapControlView )
 
   public:
     /**
      * Creates all needed widgets.
      */
     MapControlView(QWidget *parent);
+
     /**
      * Destructor, does nothing special.
      */
-    ~MapControlView();
+    virtual ~MapControlView();
 
   public slots:
     /**
      * Displays the map-data (height and width of the map, scale).
      */
-    void slotShowMapData(QSize);
+    void slotShowMapData(QSize size);
+
     /**
      * Sets the scale, called when the slider is moved.
      */
     void slotSetScale();
+
     /**
      * Shows the scale in the lcd-label and sets the slider.
      */
     void slotShowScaleChange(int value);
+
     /** */
     void slotSetMinMaxValue(int min, int max);
 
@@ -70,6 +86,7 @@ class MapControlView : public QFrame
   private:
     /** */
     int __setScaleValue(int value);
+
     /** */
     int __getScaleValue(double value);
 

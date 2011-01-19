@@ -7,16 +7,16 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
 #include <QtGui>
-#include <Qt3Support>
 
 #include "mapcontrolview.h"
 #include "mapcalc.h"
@@ -27,10 +27,12 @@ extern MainWindow *_mainWindow;
 
 #define DELTA 4
 
-MapControlView::MapControlView(QWidget* parent) :
-  QFrame(parent)
+extern MapMatrix* _globalMapMatrix;
+
+MapControlView::MapControlView(QWidget* parent) : QWidget(parent)
 {
-  QFrame* navFrame = new Q3Frame(this);
+  QFrame* navFrame = new QFrame(this);
+
   QPushButton* nwB = new QPushButton(navFrame);
   nwB->setIcon(_mainWindow->getPixmap("movemap_nw_22.png"));
   nwB->setFixedHeight(nwB->sizeHint().height() + DELTA);
@@ -76,79 +78,75 @@ MapControlView::MapControlView(QWidget* parent) :
   seB->setFixedHeight(seB->sizeHint().height() + DELTA);
   seB->setFixedWidth(seB->sizeHint().width() + DELTA);
 
-  Q3GridLayout* navLayout = new Q3GridLayout(navFrame, 5, 5, 0, 2, "navLayout");
-  navLayout->addWidget(nwB,1,1);
-  navLayout->addWidget(nB,1,2);
-  navLayout->addWidget(neB,1,3);
-  navLayout->addWidget(wB,2,1);
-  navLayout->addWidget(cenB,2,2);
-  navLayout->addWidget(eB,2,3);
-  navLayout->addWidget(swB,3,1);
-  navLayout->addWidget(sB,3,2);
-  navLayout->addWidget(seB,3,3);
+  QGridLayout* navLayout = new QGridLayout( navFrame );
+  navLayout->setMargin( 0 );
+  navLayout->setSpacing( 2 );
 
-  navLayout->setColStretch(0,1);
-  navLayout->setColStretch(1,0);
-  navLayout->setColStretch(2,0);
-  navLayout->setColStretch(3,0);
-  navLayout->setColStretch(4,1);
+  navLayout->addWidget( nwB, 1, 1 );
+  navLayout->addWidget( nB, 1, 2 );
+  navLayout->addWidget( neB, 1, 3 );
+  navLayout->addWidget( wB, 2, 1 );
+  navLayout->addWidget( cenB, 2, 2 );
+  navLayout->addWidget( eB, 2, 3 );
+  navLayout->addWidget( swB, 3, 1 );
+  navLayout->addWidget( sB, 3, 2 );
+  navLayout->addWidget( seB, 3, 3 );
 
-  navLayout->setRowStretch(0,1);
-  navLayout->setRowStretch(1,0);
-  navLayout->setRowStretch(2,0);
-  navLayout->setRowStretch(3,0);
-  navLayout->setRowStretch(4,1);
-  navLayout->activate();
+  navLayout->setColumnStretch( 0, 1 );
+  navLayout->setColumnStretch( 1, 0 );
+  navLayout->setColumnStretch( 2, 0 );
+  navLayout->setColumnStretch( 3, 0 );
+  navLayout->setColumnStretch( 4, 1 );
 
-  QLabel* dimLabel = new QLabel(tr("Height / Width [km]:"), this, "Height/With QLabel");
+  navLayout->setRowStretch( 0, 1 );
+  navLayout->setRowStretch( 1, 0 );
+  navLayout->setRowStretch( 2, 0 );
+  navLayout->setRowStretch( 3, 0 );
+  navLayout->setRowStretch( 4, 1 );
+
+  QLabel* dimLabel = new QLabel( tr("Height/Width [km]:"), this );
+
   dimLabel->setMinimumHeight(dimLabel->sizeHint().height() + 5);
-  dimText = new QLabel("125 / 130", this, "Dimension text QLabel");
+  dimText = new QLabel("125/130", this);
+  dimText->setMargin( 5 );
   dimText->setAlignment( Qt::AlignCenter );
+  dimText->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+  dimText->setBackgroundRole( QPalette::Light );
+  dimText->setAutoFillBackground( true );
 
-  dimText->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
-  dimText->setBackgroundMode( Qt::PaletteLight );
-
-  QLabel* currentScaleLabel = new QLabel(tr("Scale:"), this, "Scale QLabel");
-  currentScaleLabel->setMinimumHeight(
-          currentScaleLabel->sizeHint().height() + 10);
+  QLabel* currentScaleLabel = new QLabel(tr("Scale:"), this);
+  currentScaleLabel->setMinimumHeight(currentScaleLabel->sizeHint().height() + 10);
   currentScaleValue = new QLCDNumber(5,this);
+  currentScaleValue->setBackgroundRole( QPalette::Light );
+  currentScaleValue->setAutoFillBackground( true );
 
-  QLabel* setScaleLabel = new QLabel(tr("Set scale:"), this, "Set scale QLabel");
+  QLabel* setScaleLabel = new QLabel(tr("Change Scale:"), this);
   setScaleLabel->setMinimumWidth( setScaleLabel->sizeHint().width());
 
   setScaleLabel->setMinimumHeight(setScaleLabel->sizeHint().height());
   currentScaleSlider = new QSlider(2,105,1,0, Qt::Horizontal,this);
-  currentScaleSlider->setMinimumHeight(
-          currentScaleSlider->sizeHint().height());
+  currentScaleSlider->setMinimumHeight(currentScaleSlider->sizeHint().height());
 
-  Q3GridLayout* controlLayout = new Q3GridLayout(this,6,4,5,5, "controlLayout");
+  QGridLayout* controlLayout = new QGridLayout( this );
+  controlLayout->setMargin( 5 );
+  controlLayout->setSpacing( 10 );
 
-//   controlLayout->addMultiCellWidget(mapControl,0,0,0,3);
-  controlLayout->addMultiCellWidget(navFrame,0,2,0,1);
-  controlLayout->addMultiCellWidget(dimLabel,0,0,2,3);
-  controlLayout->addMultiCellWidget(dimText,1,1,2,3);
-  controlLayout->addWidget(currentScaleLabel,2,2);
-  controlLayout->addWidget(currentScaleValue,2,3);
-  controlLayout->addWidget(setScaleLabel,3,0);
-  controlLayout->addMultiCellWidget(currentScaleSlider,3,3,1,3);
+  controlLayout->addWidget( navFrame, 0, 0, 3, 1 );
+  controlLayout->addWidget( dimLabel, 0, 1, 1, 2, Qt::AlignCenter );
+  controlLayout->addWidget( dimText,  1, 1, 1, 2 );
+  controlLayout->addWidget( currentScaleLabel, 2, 1 );
+  controlLayout->addWidget( currentScaleValue, 2, 2 );
+  controlLayout->addWidget( setScaleLabel, 3, 0 );
+  controlLayout->addWidget( currentScaleSlider, 3, 1, 1, 3 );
 
-  controlLayout->setColStretch(0,0);
-  controlLayout->setColStretch(1,0);
-  controlLayout->setColStretch(3,4);
-  controlLayout->setRowStretch(0,0);
-  controlLayout->setRowStretch(1,0);
-  controlLayout->setRowStretch(2,0);
-  controlLayout->setRowStretch(3,0);
-  controlLayout->setRowStretch(4,2);
+  controlLayout->setColumnStretch( 4, 10 );
+  controlLayout->setRowStretch( 4, 10 );
 
-  controlLayout->activate();
+  connect( currentScaleSlider, SIGNAL(valueChanged(int)),
+           SLOT(slotShowScaleChange(int)) );
+  connect( currentScaleSlider, SIGNAL(sliderReleased()),
+           SLOT(slotSetScale()) );
 
-  connect(currentScaleSlider, SIGNAL(valueChanged(int)),
-            SLOT(slotShowScaleChange(int)));
-  connect(currentScaleSlider, SIGNAL(sliderReleased()),
-            SLOT(slotSetScale()));
-
-  extern MapMatrix *_globalMapMatrix;
   connect(nwB, SIGNAL(clicked()), _globalMapMatrix, SLOT(slotMoveMapNW()));
   connect(nB, SIGNAL(clicked()), _globalMapMatrix, SLOT(slotMoveMapN()));
   connect(neB, SIGNAL(clicked()), _globalMapMatrix, SLOT(slotMoveMapNE()));
@@ -162,34 +160,32 @@ MapControlView::MapControlView(QWidget* parent) :
 
 MapControlView::~MapControlView()
 {
-
 }
 
 void MapControlView::slotShowMapData(QSize mapSize)
 {
-  extern MapMatrix *_globalMapMatrix;
   const double cScale = _globalMapMatrix->getScale();
 
   QString temp;
 
-  temp.sprintf("<TT>%.1f / %.1f</TT>",
-      mapSize.height() * cScale / 1000.0,
-      mapSize.width() * cScale / 1000.0);
-  dimText->setText(temp);
+  temp.sprintf( "<html><TT>%.1f/%.1f</TT></html>",
+                mapSize.height() * cScale / 1000.0,
+                mapSize.width() * cScale / 1000.0);
+  dimText->setText( temp );
 
-  currentScaleValue->display(cScale);
-  currentScaleSlider->setValue(__getScaleValue(cScale));
+  currentScaleValue->display( cScale );
+  currentScaleSlider->setValue( __getScaleValue( cScale ) );
 }
 
 void MapControlView::slotSetMinMaxValue(int min, int max)
 {
-  currentScaleSlider->setMinValue(__getScaleValue(min));
-  currentScaleSlider->setMaxValue(__getScaleValue(max));
+  currentScaleSlider->setMinValue( __getScaleValue( min ) );
+  currentScaleSlider->setMaxValue( __getScaleValue( max ) );
 }
 
 void MapControlView::slotSetScale()
 {
-  emit(scaleChanged(currentScaleValue->value()));
+  emit( scaleChanged(currentScaleValue->value()) );
 }
 
 int MapControlView::__setScaleValue(int value)
@@ -212,13 +208,15 @@ int MapControlView::__getScaleValue(double scale)
 
 void MapControlView::slotShowScaleChange(int value)
 {
-  extern MapMatrix *_globalMapMatrix;
-
   currentScaleValue->display(__setScaleValue(value));
 
   if(currentScaleValue->value() > _globalMapMatrix->getScale(MapMatrix::UpperLimit))
-      currentScaleSlider->setValue((int)_globalMapMatrix->getScale(MapMatrix::UpperLimit));
+    {
+      currentScaleSlider->setValue((int)rint(_globalMapMatrix->getScale(MapMatrix::UpperLimit)));
+    }
 
   if(currentScaleValue->value() < _globalMapMatrix->getScale(MapMatrix::LowerLimit))
-      currentScaleSlider->setValue((int)_globalMapMatrix->getScale(MapMatrix::LowerLimit));
+    {
+      currentScaleSlider->setValue((int)rint(_globalMapMatrix->getScale(MapMatrix::LowerLimit)));
+    }
 }
