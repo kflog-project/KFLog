@@ -490,7 +490,8 @@ bool WaypointCatalog::load(const QString& catalog){
 /** read a waypoint catalog from a filser txt file */
 bool WaypointCatalog::readFilserTXT (const QString& catalog)
 {
-  qDebug ("WaypointCatalog::readFilserTXT (%s)", catalog.toLatin1().data());
+  qDebug("WaypointCatalog::readFilserTXT (%s)", catalog.toLatin1().data());
+
   QFile f(catalog);
 
   if (f.exists())
@@ -499,13 +500,19 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
     {
       while (!f.atEnd())
       {
-        char *line;
-        qlonglong result = f.readLine (line, 256);
+        char line[256];
+
+        qint64 result = f.readLine (line, sizeof(line));
+
         if (result > 0)
         {
           QStringList list = QStringList::split (",", line, true);
+
           if (list[0] == "*") // comment/header line
-            continue;
+            {
+              continue;
+            }
+
           Waypoint *w = new Waypoint;
           w->name = list [1];
           w->description = "";
@@ -821,12 +828,13 @@ bool WaypointCatalog::readCup (const QString& catalog)
       while (!f.atEnd())
       {
         bool ok;
-        char *tempChar = new char;
-        Q_LONG result = f.readLine (tempChar, 256);
+        char buf[256];
+
+        qint64 result = file.readLine( buf, sizeof(buf) );
 
         if (result > 0)
         {
-          QString line(tempChar);
+          QString line(buf);
           line.replace( QRegExp("[\r\n]"), "" );
           QStringList list = QStringList::split (",", line, true);
 
@@ -864,9 +872,9 @@ bool WaypointCatalog::readCup (const QString& catalog)
 	      w->description = "";
 	    }
 
-          w->name = list[1].replace( QRegExp("\""), "" ); // short name of waypoint
+    w->name = list[1].replace( QRegExp("\""), "" ); // short name of waypoint
 	  w->comment = list[2] + ": ";
-          w->icao = "";
+    w->icao = "";
 	  w->surface = Runway::Unknown;
 
 	  // waypoint type
