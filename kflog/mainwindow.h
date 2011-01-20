@@ -6,7 +6,7 @@
  **
  ************************************************************************
  **
- **   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
+ **   Copyright (c):  2001      by Heiner Lamprecht, Florian Ehinger
  **                   2010-2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
@@ -58,7 +58,7 @@ class MainWindow : public QMainWindow
 {
   Q_OBJECT
 
-  private:
+private:
 
   Q_DISABLE_COPY ( MainWindow )
 
@@ -225,13 +225,13 @@ protected:
   virtual void closeEvent( QCloseEvent *event );
 
   /**
-   * Writes the window-geometry, statusbar and toolbar state and the
+   * Writes the window geometry, statusbar and toolbar state and the
    * layout state of the doc widgets.
    */
   void saveOptions();
 
   /**
-   * Reads the window-geometry, statusbar- and toolbar state and the
+   * Reads the window geometry, statusbar and toolbar state and the
    * layout state of the dock widgets.
    */
   void readOptions();
@@ -243,8 +243,6 @@ private:
   void createMenuBar();
   /** Initializes the QStatusBar */
   void createStatusBar();
-  /** Initializes task types*/
-  void createTaskTypes();
   /** Initializes toolbar*/
   void createToolBar();
 

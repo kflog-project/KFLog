@@ -9,18 +9,19 @@
  **   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
  **
  **   This file is distributed under the terms of the General Public
- **   Licence. See the file COPYING for more information.
+ **   License. See the file COPYING for more information.
  **
  **   $Id$
  **
  ***********************************************************************/
 
-#ifndef FLIGHTTASK_H
-#define FLIGHTTASK_H
+#ifndef FLIGHT_TASK_H
+#define FLIGHT_TASK_H
 
 #include "baseflightelement.h"
 #include "lineelement.h"
 
+#include <QHash>
 #include <QList>
 #include <QRect>
 #include <QPolygon>
@@ -149,6 +150,30 @@ class FlightTask : public BaseFlightElement
    * The directions FAIAreas
    */
   enum AreaDirection {leftOfRoute = 1, rightOfRoute = 2};
+
+  /**
+   * Get translation string for task type.
+   */
+  static QString ttItem2Text( const int item, QString defaultValue=QString("") );
+
+  /**
+   * Get task type for translation string.
+   */
+  static int ttText2Item( const QString& text );
+
+  /**
+   * Get sorted translations of task types
+   */
+  static QStringList& ttGetSortedTranslationList();
+
+ public slots:
+
+   /**
+    * Reprojects the points along the route to make sure the route is drawn
+    * correctly if the projection has been changed.
+    */
+   void reProject();
+
  private:
   /**
    * Checkes the type of the task.
@@ -212,9 +237,16 @@ class FlightTask : public BaseFlightElement
   /* Route of flight */
   QList<flightPoint*> flightRoute;
 
-public slots: // Public slots
-  /** re-projects the points along the route to make sure the route is drawn correctly if the projection changes. */
-  void reProject();
+  /**
+   * Static pointer to TaskType translations
+   */
+  static QHash<int, QString> taskTypeTranslations;
+  static QStringList sortedTaskTypeTranslations;
+
+  /**
+   * Static method for loading of object translations
+   */
+  static void loadTaskTypeTranslations();
 };
 
 #endif

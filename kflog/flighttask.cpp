@@ -37,25 +37,25 @@
 #define R1 (3000.0 / glMapMatrix->getScale())
 #define R2 (500.0 / glMapMatrix->getScale())
 
-FlightTask::FlightTask(const QString& fName)
-  : BaseFlightElement("task", BaseMapElement::Task, fName),
-    isOrig(false),
-    flightType(FlightTask::NotSet),
-    __planningType(Route),
-    __planningDirection(leftOfRoute)
-{
-  //warning("FlightTask(QString fName)");
+// declare static objects used for translations
+QHash<int, QString> FlightTask::taskTypeTranslations;
+QStringList FlightTask::sortedTaskTypeTranslations;
 
-//  FAISectList.setAutoDelete(true);
+FlightTask::FlightTask(const QString& fName) :
+  BaseFlightElement("task", BaseMapElement::Task, fName),
+  isOrig(false),
+  flightType(FlightTask::NotSet),
+  __planningType(Route),
+  __planningDirection(leftOfRoute)
+{
 }
 
 
-FlightTask::FlightTask(const QList<Waypoint*>& wpL, bool isO, const QString& fName)
-  : BaseFlightElement("task", BaseMapElement::Task, fName),
-    isOrig(isO),
-//    wpList(wpL),
-    __planningType(Route),
-    __planningDirection(leftOfRoute)
+FlightTask::FlightTask(const QList<Waypoint*>& wpL, bool isO, const QString& fName) :
+  BaseFlightElement("task", BaseMapElement::Task, fName),
+  isOrig(isO),
+  __planningType(Route),
+  __planningDirection(leftOfRoute)
 {
   //warning("FlightTask(QPtrList<wayPoint> wpL, bool isO, QString fName)");
   setWaypointList(wpL);
@@ -64,7 +64,6 @@ FlightTask::FlightTask(const QList<Waypoint*>& wpL, bool isO, const QString& fNa
 
 FlightTask::~FlightTask()
 {
-
 }
 
 void FlightTask::__checkType()
@@ -1628,8 +1627,7 @@ void FlightTask::setTaskName(const QString& fName)
 /** No descriptions */
 QString FlightTask::getPlanningTypeString()
 {
-  extern TranslationList taskTypes;
-  return taskTypes.itemById(__planningType)->text;
+  return ttItem2Text( __planningType );
 }
 
 /** re-projects the points along the route to make sure the route is drawn correctly if the projection changes. */
@@ -1643,4 +1641,57 @@ void FlightTask::reProject(){
   Waypoint *wp;
   foreach(wp, wpList)
       wp->projP = _globalMapMatrix->wgsToMap(wp->origP);
+}
+
+/**
+ * Get translation string for task type.
+ */
+QString FlightTask::ttItem2Text( const int item, QString defaultValue )
+{
+  if( taskTypeTranslations.isEmpty() )
+    {
+      loadTaskTypeTranslations();
+    }
+
+  return taskTypeTranslations.value( item, defaultValue );
+}
+
+/**
+ * Get task type for translation string.
+ */
+int FlightTask::ttText2Item( const QString& text )
+{
+  if( taskTypeTranslations.isEmpty() )
+    {
+      // Load object - translation data
+      loadTaskTypeTranslations();
+    }
+
+  return taskTypeTranslations.key( text );
+}
+
+void FlightTask::loadTaskTypeTranslations()
+{
+  // Load translation data to hash dictionary
+  taskTypeTranslations.insert( FlightTask::Route, QObject::tr("Traditional Route") );
+  taskTypeTranslations.insert( FlightTask::FAIArea, QObject::tr("FAI Area") );
+  // taskTypeTranslations.insert( FlightTask::AAT, QObject::tr("Area Assigned") );
+
+  // load sorted translation strings
+  sortedTaskTypeTranslations = QStringList( taskTypeTranslations.values() );
+  sortedTaskTypeTranslations.sort();
+}
+
+/**
+ * Get sorted translations
+ */
+QStringList& FlightTask::ttGetSortedTranslationList()
+{
+  if( taskTypeTranslations.isEmpty() )
+    {
+      // Load translation data
+      loadTaskTypeTranslations();
+    }
+
+  return sortedTaskTypeTranslations;
 }

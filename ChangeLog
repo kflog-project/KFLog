@@ -1,10 +1,21 @@
 $Id$
 
+2011-01-20 Axel Pauli <axel@kflog.org>
+  * Animation of tool bar and dock widgets switched off. It caused a lot of
+    resizing actions and blocked the whole GUI.
+  * Wrong call connections in class KFLogConfig fixed. Scale and waypoint
+    catalog configuration were not callable. Started with Qt4 porting of
+    class KFLogConfig. A lot of stuff is to modify here.
+  * Bugfix in class DownloadManager to prevent a download deadlock of wrong
+    map files.
+
 2011-01-19 Axel Pauli <axel@kflog.org>
   * Class TopoLegend ported to Qt4 together with bug fixing. Works now as
     expected.
   * Class MapControlView ported to Qt4.
-  * About information added to main window. Maybe it is not complete.
+  * AboutWidget class taken over from Cumulus. About information added to main
+    window as extra slot. The content was taken from main.cpp. Maybe the about
+    information is not complete. Should be check by the maintainers.
 
 2011-01-18 Axel Pauli <axel@kflog.org>
   * Map menu ported to Qt4.

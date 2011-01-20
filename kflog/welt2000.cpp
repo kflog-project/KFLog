@@ -103,7 +103,6 @@ bool Welt2000::load( QList<Airfield>& airfieldList,
   return parse( w2PathTxt, airfieldList, gliderfieldList, outlandingList );
 }
 
-
 /**
  * The passed file has to be a welt2000 file. All not relevant
  * entries, like turn points, will be filtered out. A new file is
@@ -380,7 +379,7 @@ bool Welt2000::parse( QString& path,
       // load new country filter definitions
       c_countryList.clear();
 
-      QStringList clist = cFilter.split( QRegExp("[, ]"), QString::SkipEmptyParts );
+      QStringList clist = cFilter.split( QRegExp("[,; ]"), QString::SkipEmptyParts );
 
       for( int i = 0; i < clist.count(); i++ )
         {
@@ -415,7 +414,9 @@ bool Welt2000::parse( QString& path,
       c_homeRadius = getDistanceInKm( radius );
     }
 
-  qDebug( "W2000: File welt2000.conf contains %d country entries", c_countryList.count() );
+  qDebug() << "W2000: Country Filter contains"
+           << c_countryList.count()
+           << "entries." << c_countryList;
   qDebug() << "W2000: Read Outlandings=" << outlandings;
   qDebug( "W2000: Home radius is set to %.1f Km", c_homeRadius );
 

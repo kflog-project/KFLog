@@ -7,21 +7,23 @@
 ************************************************************************
 **
 **   Copyright (c):  2010 by Constantijn Neeteson, Heiner Lamprecht, Florian Ehinger
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef KFLOGCONFIG_H
-#define KFLOGCONFIG_H
+#ifndef KFLOG_CONFIG_H
+#define KFLOG_CONFIG_H
 
 #include <q3buttongroup.h>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QDialog>
+#include <QFrame>
 #include <QLayout>
 #include <QLCDNumber>
 #include <QLineEdit>
@@ -30,32 +32,46 @@
 #include <QPushButton>
 #include <QSlider>
 #include <QSpinBox>
+#include <QTreeWidget>
 #include <QWidget>
 
 #include "guicontrols/coordedit.h"
 
 /**
- * This class provides the config-dialog for KFLog.
+ * \class KFLogConfig
  *
- * @author Heiner Lamprecht
+ * \short Configuration dialog widget
+ *
+ * This class provides the configuration dialog for KFLog.
+ *
+ * \author Heiner Lamprecht, Florian Ehinger, , Constantijn Neeteson, Axel Pauli
+ *
+ * \date 2000-2011
+ *
  * @version $Id$
  */
 class KFLogConfig : public QDialog
 {
   Q_OBJECT
 
+  private:
+
+  Q_DISABLE_COPY ( KFLogConfig )
+
   public:
+
+    KFLogConfig( QWidget* parent=0 );
+
+    virtual ~KFLogConfig();
+
     /** */
-    KFLogConfig(QWidget* parent);
-    /** */
-    ~KFLogConfig();
-    /** */
-    enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
+    enum ElementType { Road = 0, Highway, Railway, River, Canal, City,
         AirA, AirB, AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
         LowFlight, Restricted, Tmz, Forest, Trail, Railway_D, Aerial_Cable, River_T,
-        Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500};
+        Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500 };
 
-    enum DefaultWaypointCatalog {Empty = 0, LastUsed, Specific};
+    enum DefaultWaypointCatalog { Empty = 0, LastUsed, Specific };
+
   signals:
     /** */
     void scaleChanged(int min, int max);
@@ -64,11 +80,11 @@ class KFLogConfig : public QDialog
     /** */
     void newDrawType(int type);
 
-
   public slots:
     /** */
     void slotOk();
-    void slotPageChanged(Q3ListViewItem *currentItem);
+
+    void slotPageClicked( QTreeWidgetItem * item, int column );
     /** */
     void slotDefaultPath();
     /** */
@@ -105,10 +121,6 @@ class KFLogConfig : public QDialog
     void slotDefaultWaypoint();
     /** */
     void slotSearchDefaultWaypoint();
-    /** */
-    void slotFilterChanged(const QString&);
-    /** */
-    void slotHomeRadiusChanged();
     /**
     * slot needed to trigger an update of the menu Flight=>Show Flightdata
     */
@@ -125,6 +137,7 @@ class KFLogConfig : public QDialog
     void slotSelectFlightTypeSolidColor();
     /** */
     void slotSelectFlightTypeEngineNoiseColor();
+
   private:
     /** */
     void __addIDTab();
@@ -149,30 +162,33 @@ class KFLogConfig : public QDialog
 
     /** this is a temporary function and it is not needed in Qt 4 */
     QString __color2String(QColor);
+
     /** this is a temporary function and it is not needed in Qt 4 */
     QColor __string2Color(QString);
 
     QGridLayout *configLayout;
-    Q3ListView *setupTree;
-    Q3Frame *activePage;
+
+    QTreeWidget *setupTree;
+
+    QFrame *activePage;
     /** */
-    Q3Frame* idPage;
+    QFrame* idPage;
     /** */
-    Q3Frame* mapPage;
+    QFrame* mapPage;
     /** */
-    Q3Frame* flightPage;
+    QFrame* flightPage;
     /** */
-    Q3Frame* pathPage;
+    QFrame* pathPage;
     /** */
-    Q3Frame* topoPage;
+    QFrame* topoPage;
     /** */
-    Q3Frame* projPage;
+    QFrame* projPage;
     /** */
-    Q3Frame* scalePage;
+    QFrame* scalePage;
     /** */
-    Q3Frame* airfieldPage;
+    QFrame* airfieldPage;
     /** */
-    Q3Frame* waypointPage;
+    QFrame* waypointPage;
     /** */
     QLineEdit* igcPathE;
     QLineEdit* taskPathE;
@@ -185,10 +201,21 @@ class KFLogConfig : public QDialog
     QLineEdit* preNameE;
     QLineEdit* surNameE;
     QLineEdit* dateOfBirthE;
-    QLineEdit* filterE;
     QSpinBox* flightPathWidthE;
-    QSpinBox* homeRadiusE;
-    bool needUpdateWelt2000;
+
+    QLineEdit* filterWelt2000;
+    QSpinBox* homeRadiusWelt2000;
+
+    /**
+     * Initial value of home radius.
+     */
+    int homeRadiusWelt2000Value;
+
+    /**
+     * Initial value of country filter
+     */
+    QString filterWelt2000Text;
+
     bool needUpdateDrawType;
 
     QSlider* lLimit;
@@ -211,6 +238,7 @@ class KFLogConfig : public QDialog
     LatEdit* firstParallel;
     LatEdit* secondParallel;
     LongEdit* originLongitude;
+
     Q3ButtonGroup *waypointButtonGroup;
     QPushButton* catalogPathSearch;
     QPushButton* flightTypeLeftTurnColorButton;

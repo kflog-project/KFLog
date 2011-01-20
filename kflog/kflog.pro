@@ -69,6 +69,7 @@ SOURCES = \
     projectionlambert.cpp \
     radiopoint.cpp \
     recorderdialog.cpp \
+    rowdelegate.cpp \
     runway.cpp \
     singlepoint.cpp \
     taskdataprint.cpp \
@@ -148,6 +149,7 @@ HEADERS = \
     projectionlambert.h \
     radiopoint.h \
     recorderdialog.h \
+    rowdelegate.h \
     singlepoint.h \
     resource.h \
     runway.h \

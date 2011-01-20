@@ -262,30 +262,34 @@ void ObjectTree::addPopupMenu()
 
 void ObjectTree::slotEditTask()
 {
-  TaskDialog td(this, "taskdialog");
+  TaskDialog td( this );
   FlightTask *ft;
 
-  if (currentFlightElement != 0) {
-    if (currentFlightElement->getObjectType()==BaseMapElement::Task) {
-      ft = (FlightTask*) currentFlightElement;
+  if( currentFlightElement != 0 )
+    {
+      if( currentFlightElement->getObjectType() == BaseMapElement::Task )
+        {
+          ft = (FlightTask*) currentFlightElement;
 
-      //td.name->setText(ft->getFileName());
-      td.setTask(ft);
-      if (td.exec() == QDialog::Accepted) {
-        ft->setWaypointList(td.getTask()->getWPList());
-        ft->setPlanningType(td.getTask()->getPlanningType());
-        ft->setPlanningDirection(td.getTask()->getPlanningDirection());
-        //slotUpdateTask();
-        //flightSelected(ft);
-        selectedFlight(ft);
-        slotFlightChanged();
-      }
+          //td.name->setText(ft->getFileName());
+          td.setTask( ft );
+
+          if( td.exec() == QDialog::Accepted )
+            {
+              ft->setWaypointList( td.getTask()->getWPList() );
+              ft->setPlanningType( td.getTask()->getPlanningType() );
+              ft->setPlanningDirection( td.getTask()->getPlanningDirection() );
+              //slotUpdateTask();
+              //flightSelected(ft);
+              selectedFlight( ft );
+              slotFlightChanged();
+            }
+        }
     }
-  }
 }
 
 /*
- Used to close a flightelement in general, not only a task
+ Used to close a flight element in general, not only a task
 */
 void ObjectTree::slotDeleteTask()
 {

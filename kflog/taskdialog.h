@@ -9,24 +9,24 @@
 **   Copyright (c):  2002 by Harald Maier
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef TASKDIALOG_H
-#define TASKDIALOG_H
+#ifndef TASK_DIALOG_H
+#define TASK_DIALOG_H
 
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialog>
+#include <QErrorMessage>
 #include <q3dict.h>
 #include <QLabel>
 #include <QLineEdit>
 #include <q3listbox.h>
 #include <QRadioButton>
-#include <QWidget>
 
 #include "guicontrols/kfloglistview.h"
 #include "flighttask.h"
@@ -36,23 +36,36 @@
   *@author Harald Maier
   */
 
-class TaskDialog : public QDialog  {
+class TaskDialog : public QDialog
+{
    Q_OBJECT
-public: 
-   TaskDialog(QWidget *parent=0, const char *name=0);
-   ~TaskDialog();
+
+private:
+
+  Q_DISABLE_COPY ( TaskDialog )
+
+public:
+
+   TaskDialog( QWidget *parent=0 );
+
+   virtual ~TaskDialog();
+
    void setTask(FlightTask *orig);
+
    FlightTask *getTask() { return pTask; }
-private: // Private methods
+
+private:
+
   /** No descriptions */
   void __initDialog();
   void fillWaypoints();
-public: // Public attributes
-private slots: // Private slots
+
+private slots:
+
   /** No descriptions */
   void enableWaypointButtons();
   /** No descriptions */
-  void slotSetPlanningType(int);
+  void slotSetPlanningType( const QString & text );
   /** No descriptions */
   void slotSetPlanningDirection(int);
   void polish();
@@ -61,7 +74,8 @@ private slots: // Private slots
   void slotReplaceWaypoint();
   void slotAddWaypoint();
   void slotRemoveWaypoint();
-private: // Private attributes
+
+private:
   /**  */
   Q3ListBox *waypoints;
   Q3Dict<Waypoint> waypointDict;
@@ -78,6 +92,9 @@ private: // Private attributes
   KFLogListView *route;
   QPushButton *back;
   QPushButton *forward;
+
+  QErrorMessage* errorFai;
+  QErrorMessage* errorRoute;
 
   int colType;
   int colWaypoint;

@@ -42,13 +42,10 @@
 #include "recorderdialog.h"
 #include "taskdataprint.h"
 #include "topolegend.h"
-#include "translationlist.h"
 #include "waypoints.h"
 #include "wgspoint.h"
 
 #include "mainwindow.h"
-
-TranslationList taskTypes;
 
 extern QSettings _settings;
 
@@ -95,7 +92,6 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   toolBar = addToolBar( tr("Toolbar") );
   toolBar->setObjectName( "ToolBar");
 
-  createTaskTypes();
   createDockWindows();
   createMenuBar();
   createStatusBar();
@@ -236,6 +232,9 @@ void MainWindow::closeEvent( QCloseEvent *event )
 void MainWindow::createDockWindows()
 {
   qDebug() << "MainWindow::initDockWindows()";
+
+  // Reset animation of dock widget, it makes a lot of resizing.
+  setAnimated( false );
 
   // First create the central widget. That is the Map.
   map = new Map(this);
@@ -897,18 +896,6 @@ void MainWindow::createStatusBar()
   statusBar()->addWidget( statusProgress, 0,  false );
   statusBar()->addWidget( statusLatL, 0, false );
   statusBar()->addWidget( statusLonL, 0, false );
-}
-
-
-void MainWindow::createTaskTypes()
-{
-  taskTypes.setAutoDelete(true);
-
-  taskTypes.append(new TranslationElement(FlightTask::Route, tr("Traditional Route")));
-  taskTypes.append(new TranslationElement(FlightTask::FAIArea, tr("FAI Area")));
-  //taskTypes.append(new TranslationElement(FlightTask::AAT, tr("Area Assigned")));
-
-  taskTypes.sort();
 }
 
 void MainWindow::createToolBar()

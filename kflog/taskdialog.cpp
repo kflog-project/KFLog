@@ -14,6 +14,7 @@
  **   $Id$
  **
  ***********************************************************************/
+
 #include <QtGui>
 #include <Qt3Support>
 
@@ -27,10 +28,11 @@ extern MainWindow *_mainWindow;
 
 extern TranslationList taskTypes;
 
-TaskDialog::TaskDialog(QWidget *parent, const char *name )
-  : QDialog(parent, name, true)
+TaskDialog::TaskDialog( QWidget *parent ) :
+  QDialog(parent)
 {
   setWindowTitle(tr("Task definition") );
+  setModal( true );
   __initDialog();
   setMinimumWidth(500);
   setMinimumHeight(300);
@@ -46,6 +48,12 @@ void TaskDialog::__initDialog()
 {
   QLabel *l;
   QPushButton *b;
+
+  QErrorMessage* errorFai    = new QErrorMessage( this );
+  QErrorMessage* errorRoute  = new QErrorMessage( this );
+
+  errorFai->setWindowTitle(   tr("Task selection") );
+  errorRoute->setWindowTitle( tr("Task selection") );
 
   QVBoxLayout *topLayout = new QVBoxLayout(this, 10);
   QHBoxLayout *header = new QHBoxLayout(10);
@@ -73,15 +81,13 @@ void TaskDialog::__initDialog()
   header->addWidget(name);
 
   // Create a combo box for taskTypes
-  planningTypes = new QComboBox(false, this, "planningType");
-  connect(planningTypes, SIGNAL(activated(int)), SLOT(slotSetPlanningType(int)));
+  planningTypes = new QComboBox(this);
+  connect( planningTypes, SIGNAL(activated(const QString&)),
+           SLOT(slotSetPlanningType(const QString&)) );
   l = new QLabel(planningTypes, tr("Task T&ype") + ":", this);
 
-  TranslationElement *te;
   // init comboboxes
-  for (te = taskTypes.first(); te != 0; te = taskTypes.next()) {
-    planningTypes->insertItem(te->text);
-  }
+  planningTypes->addItems( FlightTask::ttGetSortedTranslationList() );
 
   // Create an non-exclusive button group
   Q3ButtonGroup *bgrp2 = new Q3ButtonGroup(1, Qt::Vertical, tr("Side of FAI area"), this);
@@ -192,45 +198,51 @@ void TaskDialog::polish()
   waypoints->sort();
 }
 
-void TaskDialog::slotSetPlanningType(int idx)
+void TaskDialog::slotSetPlanningType( const QString& text )
 {
-  unsigned int n, cnt;
-  int id;
+  int id = FlightTask::ttText2Item( text );
 
-  id = taskTypes.at(idx)->id;
-  switch (id) {
+  switch (id)
+  {
   case FlightTask::FAIArea:
-    QMessageBox::information (this, tr("Task selection"), tr("Task Type FAI Area:\n"
-      "You can define a task with either takeoff, start, end and landing or "
-      "takeoff, start, end, landing and one additional route point.\n"
-      "The FAI area calculation will be made with start and end point or start and route point, "
-      "depending wether the route point is defined or not\n"
-      "Deleting takeoff start, end and landing points is not possible, "
-      "but you can replace them with other waypoints.\n"
-      "New waypoints will be added after the selected one."),
-//      tr("Do not show this message again."),
-      tr("Ok"));
-    cnt = wpList.count();    
-    left->setEnabled(true);
-    right->setEnabled(true);
-    left->setChecked(pTask->getPlanningDirection() & FlightTask::leftOfRoute);
-    right->setChecked(pTask->getPlanningDirection() & FlightTask::rightOfRoute);
-    if (cnt > 5) {
-      // remove route points
-      for(n = cnt - 3; n > 2; n--) {
-        wpList.removeAt(n);
+    {
+      errorFai->showMessage( tr("Task Type FAI Area:\n"
+        "You can define a task with either takeoff, start, end and landing or "
+        "takeoff, start, end, landing and one additional route point.\n"
+        "The FAI area calculation will be made with start and end point or start and route point, "
+        "depending wether the route point is defined or not\n"
+        "Deleting takeoff start, end and landing points is not possible, "
+        "but you can replace them with other waypoints.\n"
+        "New waypoints will be added after the selected one." ) );
+
+      left->setEnabled(true);
+      right->setEnabled(true);
+      left->setChecked(pTask->getPlanningDirection() & FlightTask::leftOfRoute);
+      right->setChecked(pTask->getPlanningDirection() & FlightTask::rightOfRoute);
+
+      int cnt = wpList.count();
+
+      if( cnt > 5 )
+        {
+          // remove route points
+          for( int n = cnt - 3; n > 2; n-- )
+            {
+              wpList.removeAt( n );
+            }
+          pTask->setWaypointList( wpList );
+        }
       }
-      pTask->setWaypointList(wpList);
-    }        
+
     break;
+
   case FlightTask::Route:
-    QMessageBox::information (this, tr("Task selection"), tr("Task Type Traditional Route:\n"
+
+    errorRoute->showMessage(  tr("Task Type Traditional Route:\n"
       "You can define a task with takeoff, start, end, landing and route points. "
       "Deleting takeoff start, end and landing is not possible, "
       "but you can replace them with other waypoints.\n"
-      "New waypoints will be added after the selected one."),
-//      tr("Do not show this message again."),
-      tr("Ok"));
+      "New waypoints will be added after the selected one.") );
+
     left->setEnabled(false);
     right->setEnabled(false);
     left->setChecked(false);
@@ -297,7 +309,7 @@ void TaskDialog::fillWaypoints()
       txt.sprintf("%.2f km", wp->distance);
       item->setText(colDist, txt);
 
-      txt.sprintf("%03.0f�", getTrueCourse(wp->origP, wpPrev->origP));
+      txt.sprintf("%03.0f\260", getTrueCourse(wp->origP, wpPrev->origP));
       item->setText(colCourse, txt);
     }
     lastItem = item;
@@ -422,36 +434,41 @@ void TaskDialog::setTask(FlightTask *orig)
   extern QSettings _settings;
   extern MapMatrix *_globalMapMatrix;
 
-  if (pTask == 0) {
-    pTask = new FlightTask(orig->getFileName());
-  }
+  if( pTask == 0 )
+    {
+      pTask = new FlightTask( orig->getFileName() );
+    }
 
   // make a work copy of the task with at least 4 points
   wpList = orig->getWPList();
   Waypoint *wp;
-  if (wpList.count() < 4) {
-    for (unsigned int i = wpList.count(); i < 4; i++) {
-      wp = new Waypoint;
-      wp->origP.setLat(_settings.readNumEntry("/MapData/HomesiteLatitude"));
-      wp->origP.setLon(_settings.readNumEntry("/MapData/HomesiteLongitude"));
-      wp->projP = _globalMapMatrix->wgsToMap(wp->origP);
-      wp->name = _settings.readEntry("/MapData/Homesite").left(6).upper();
 
-      wpList.append(wp);
+  if (wpList.count() < 4)
+    {
+    for (unsigned int i = wpList.count(); i < 4; i++)
+      {
+        wp = new Waypoint;
+        wp->origP.setLat( _settings.value("/MapData/HomesiteLatitude").toInt() );
+        wp->origP.setLon( _settings.value("/MapData/HomesiteLongitude").toInt());
+        wp->projP = _globalMapMatrix->wgsToMap(wp->origP);
+        wp->name = _settings.value("/MapData/Homesite").toString().left(6).upper();
+
+        wpList.append(wp);
+      }
     }
-  }
   
   pTask->setWaypointList(wpList);
   pTask->setPlanningType(orig->getPlanningType());
   pTask->setPlanningDirection(orig->getPlanningDirection());
 
   name->setText(pTask->getFileName());
-  planningTypes->setCurrentItem(taskTypes.idxById(pTask->getPlanningType()));
+
+  planningTypes->setCurrentIndex( planningTypes->findText( FlightTask::ttItem2Text(pTask->getPlanningType())) );
 
   left->setChecked(pTask->getPlanningDirection() & FlightTask::leftOfRoute);
   right->setChecked(pTask->getPlanningDirection() & FlightTask::rightOfRoute);
 
-  slotSetPlanningType(taskTypes.idxById(pTask->getPlanningType()));
+  slotSetPlanningType( FlightTask::ttItem2Text(pTask->getPlanningType()) );
 }
 
 /** No descriptions */

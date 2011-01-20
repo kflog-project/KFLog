@@ -13,9 +13,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -36,28 +37,62 @@
 #include "mapdefaults.h"
 #include "wgspoint.h"
 #include "mainwindow.h"
+#include "rowdelegate.h"
 
 extern MapContents  *_globalMapContents;
 extern MainWindow   *_mainWindow;
 extern QSettings    _settings;
 
-KFLogConfig::KFLogConfig(QWidget* parent)
-  : QDialog(parent, "KFLog setup (KFLogConfig)"),
-    currentProjType(ProjectionBase::Unknown)
+KFLogConfig::KFLogConfig(QWidget* parent) :
+  QDialog( parent ),
+  needUpdateDrawType( false ),
+  currentProjType( ProjectionBase::Unknown )
 {
-  configLayout = new QGridLayout(this, 2, 3, 1, -1, "main layout of KFLogConfig");
+  setObjectName( "KFLogConfig" );
+  setWindowTitle( tr("KFLog Configuration") );
+  setModal( true );
+  setSizeGripEnabled( true );
 
-  setupTree = new Q3ListView(this, "setupTree");
-  setupTree->addColumn("Menu");
-  setupTree->hideColumn(1);
+  configLayout = new QGridLayout(this);
+
+  setupTree = new QTreeWidget( this );
+  setupTree->setRootIsDecorated( false );
+  setupTree->setItemsExpandable( false );
+  //setupTree->setUniformRowHeights( true );
+  setupTree->setSortingEnabled( true );
+  setupTree->setSelectionMode( QAbstractItemView::SingleSelection );
+  setupTree->setSelectionBehavior( QAbstractItemView::SelectRows );
+  setupTree->setColumnCount( 1 );
+  setupTree->setFocusPolicy( Qt::StrongFocus );
+  setupTree->setHeaderLabel( tr( "Menu" ) );
+
+  // Set additional space per row
+  RowDelegate* rowDelegate = new RowDelegate( setupTree, 10 );
+  setupTree->setItemDelegate( rowDelegate );
+
+  QTreeWidgetItem* headerItem = setupTree->headerItem();
+  headerItem->setTextAlignment( 0, Qt::AlignCenter );
 
   configLayout->addWidget(setupTree, 0, 0);
-  connect(setupTree, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(slotPageChanged(Q3ListViewItem *)));
+
+  connect( setupTree, SIGNAL(itemClicked( QTreeWidgetItem*, int )),
+           this, SLOT( slotPageClicked( QTreeWidgetItem*, int )) );
 
   QPushButton *saveButton = new QPushButton(tr("&Save"), this);
-  configLayout->addWidget(saveButton, 1, 1);
+  //configLayout->addWidget(saveButton, 1, 1);
   QPushButton *cancelButton = new QPushButton(tr("&Cancel"), this);
-  configLayout->addWidget(cancelButton, 1, 2);
+  //configLayout->addWidget(cancelButton, 1, 2);
+
+  QHBoxLayout* hbox = new QHBoxLayout;
+  hbox->addWidget( saveButton );
+  hbox->addStretch( 10 );
+  hbox->addWidget( cancelButton );
+
+  configLayout->addLayout( hbox, 1, 1, 1, 2 );
+  configLayout->setColStretch(2, 10);
+
+  connect( saveButton, SIGNAL(clicked()), SLOT(slotOk()) );
+  connect( cancelButton, SIGNAL(clicked()), SLOT(close()) );
 
   __addIDTab();
   __addPathTab();
@@ -68,110 +103,116 @@ KFLogConfig::KFLogConfig(QWidget* parent)
   __addAirfieldTab();
   __addWaypointTab();
 
-  setupTree->hideColumn(1);
-  this->setFixedWidth(637);
-  setupTree->setFixedWidth(137);
-  setupTree->setColumnWidth(137, 1);
-  setupTree->setResizeMode(Q3ListView::NoColumn);
-  activePage = idPage;
-  idPage->show();
-  activePage->setFixedWidth(500);
+  setupTree->sortByColumn ( 0, Qt::AscendingOrder );
+  setupTree->resizeColumnToContents(0);
+  //setupTree->setFixedWidth( 100 );
 
-  connect(saveButton, SIGNAL(clicked()), SLOT(slotOk()));
-  connect(cancelButton, SIGNAL(clicked()), SLOT(close()));
+  idPage->setVisible( true );
+  activePage = idPage;
+  // activePage->setFixedWidth(500);
 }
 
 KFLogConfig::~KFLogConfig()
 {
-
+  qDebug() << "~KFLogConfig()";
 }
 
-void KFLogConfig::slotPageChanged(Q3ListViewItem *currentItem)
+void KFLogConfig::slotPageClicked( QTreeWidgetItem * item, int column )
 {
-  if(currentItem->text(1)=="Airfields")
-  {
-    activePage->hide();
-    airfieldPage->show();
-    activePage = airfieldPage;
-  }
-  else if(currentItem->text(1)=="Flight Display")
-  {
-    activePage->hide();
-    flightPage->show();
-    activePage = flightPage;
-  }
-  else if(currentItem->text(1)=="Identity")
-  {
-    activePage->hide();
-    idPage->show();
-    activePage = idPage;
-  }
-  else if(currentItem->text(1)=="Map-Elements")
-  {
-    activePage->hide();
-    mapPage->show();
-    activePage = mapPage;
-  }
-  else if(currentItem->text(1)=="Paths")
-  {
-    activePage->hide();
-    pathPage->show();
-    activePage = pathPage;
-  }
-  else if(currentItem->text(1)=="Map-Projection")
-  {
-    activePage->hide();
-    projPage->show();
-    activePage = projPage;
-  }
-  else if(currentItem->text(1)=="Map-Scales")
-  {
-    activePage->hide();
-    waypointPage->show();
-    activePage = waypointPage;
-  }
-  else if(currentItem->text(1)=="Waypoints")
-  {
-    activePage->hide();
-    airfieldPage->show();
-    activePage = airfieldPage;
-  }
-  activePage->setFixedWidth(500);
-  setupTree->hideColumn(1);
+  QString itemText = item->data( 0, Qt::UserRole ).toString();
+
+  if( itemText == "Airfields" )
+    {
+      activePage->setVisible( false );
+      airfieldPage->setVisible( true );
+      activePage = airfieldPage;
+    }
+  else if( itemText == "Flight Display" )
+    {
+      activePage->setVisible( false );
+      flightPage->setVisible( true );
+      activePage = flightPage;
+    }
+  else if( itemText == "Identity" )
+    {
+      activePage->setVisible( false );
+      idPage->setVisible( true );
+      activePage = idPage;
+    }
+  else if( itemText == "Map Elements" )
+    {
+      activePage->setVisible( false );
+      mapPage->setVisible( true );
+      activePage = mapPage;
+    }
+  else if( itemText == "Paths" )
+    {
+      activePage->setVisible( false );
+      pathPage->setVisible( true );
+      activePage = pathPage;
+    }
+  else if( itemText == "Map Projection" )
+    {
+      activePage->setVisible( false );
+      projPage->setVisible( true );
+      activePage = projPage;
+    }
+  else if( itemText == "Map Scales" )
+    {
+      activePage->setVisible( false );
+      scalePage->setVisible( true );
+      activePage = scalePage;
+    }
+  else if( itemText == "Waypoints" )
+    {
+      activePage->setVisible( false );
+      waypointPage->setVisible( true );
+      activePage = waypointPage;
+    }
+  else
+    {
+      qWarning() << "KFLogConfig::slotPageClicked: Unknown item"
+                 << itemText
+                 << "received!";
+    }
+
+  //activePage->setFixedWidth( 500 );
 }
 
 void KFLogConfig::slotOk()
 {
-  slotSelectProjection(ProjectionBase::Unknown);
+  slotSelectProjection( ProjectionBase::Unknown );
 
-  _settings.setValue("/GeneralOptions/Version", "3.0");
+  _settings.setValue( "/GeneralOptions/Version", "4.0" );
 
-  _settings.setValue("/Path/DefaultFlightDirectory", igcPathE->text());
-  _settings.setValue("/Path/DefaultTaskDirectory", taskPathE->text());
-  _settings.setValue("/Path/DefaultWaypointDirectory", waypointPathE->text());
-  _settings.setValue("/Path/DefaultMapDirectory", mapPathE->text());
+  _settings.setValue( "/Path/DefaultFlightDirectory", igcPathE->text() );
+  _settings.setValue( "/Path/DefaultTaskDirectory", taskPathE->text() );
+  _settings.setValue( "/Path/DefaultWaypointDirectory", waypointPathE->text() );
+  _settings.setValue( "/Path/DefaultMapDirectory", mapPathE->text() );
 
-  _settings.setValue("/Scale/LowerLimit", lLimitN->value());
-  _settings.setValue("/Scale/UpperLimit", uLimitN->value());
-  _settings.setValue("/Scale/SwitchScale", switchScaleN->value());
-  _settings.setValue("/Scale/WaypointLabel", wpLabelN->value());
-  _settings.setValue("/Scale/Border1", reduce1N->value());
-  _settings.setValue("/Scale/Border2", reduce2N->value());
-  _settings.setValue("/Scale/Border3", reduce3N->value());
+  _settings.setValue( "/Scale/LowerLimit", lLimitN->value() );
+  _settings.setValue( "/Scale/UpperLimit", uLimitN->value() );
+  _settings.setValue( "/Scale/SwitchScale", switchScaleN->value() );
+  _settings.setValue( "/Scale/WaypointLabel", wpLabelN->value() );
+  _settings.setValue( "/Scale/Border1", reduce1N->value() );
+  _settings.setValue( "/Scale/Border2", reduce2N->value() );
+  _settings.setValue( "/Scale/Border3", reduce3N->value() );
 
-  _settings.setValue("/MapData/Homesite", homeNameE->text());
-  _settings.setValue("/MapData/HomesiteLatitude", WGSPoint::degreeToNum(homeLatE-> text()));
-  _settings.setValue("/MapData/HomesiteLongitude", WGSPoint::degreeToNum(homeLonE-> text()));
-  _settings.setValue("/MapData/ProjectionType", projectionSelect->currentItem());
-  _settings.setValue("/Welt2000/CountryFilter", filterE->text());
-  _settings.setValue("/Welt2000/HomeRadius", homeRadiusE->text());
+  _settings.setValue( "/MapData/Homesite", homeNameE->text() );
+  _settings.setValue( "/MapData/HomesiteLatitude", WGSPoint::degreeToNum( homeLatE-> text() ) );
+  _settings.setValue( "/MapData/HomesiteLongitude", WGSPoint::degreeToNum( homeLonE-> text() ) );
+  _settings.setValue( "/MapData/ProjectionType", projectionSelect->currentItem() );
 
-  if(needUpdateDrawType)
-  {
-    _settings.setValue("/Flight/DrawType", drawTypeSelect->currentItem());
-    //update menu Flight=>Show Flightdata
-    emit newDrawType(drawTypeSelect->currentItem());
-  }
+  _settings.setValue( "/Welt2000/CountryFilter", filterWelt2000->text() );
+  _settings.setValue( "/Welt2000/HomeRadius", homeRadiusWelt2000->value() );
+
+  if( needUpdateDrawType )
+    {
+      _settings.setValue( "/Flight/DrawType", drawTypeSelect->currentItem() );
+      //update menu Flight=>Show Flightdata
+      emit newDrawType( drawTypeSelect->currentItem() );
+    }
+
   _settings.setValue("/Flight/ColorLeftTurn", __color2String(flightTypeLeftTurnColor));
   _settings.setValue("/Flight/ColorRightTurn", __color2String(flightTypeRightTurnColor));
   _settings.setValue("/Flight/ColorMixedTurn", __color2String(flightTypeMixedTurnColor));
@@ -195,10 +236,13 @@ void KFLogConfig::slotOk()
 
   emit scaleChanged((int)lLimitN->value(), (int)uLimitN->value());
 
-  if (needUpdateWelt2000) {
-    extern MapContents  *_globalMapContents;
-    _globalMapContents->slotReloadMapData();
-  }
+  // Check, if Welt2000 must be updated
+  if( homeRadiusWelt2000Value !=  homeRadiusWelt2000->value() ||
+      filterWelt2000Text != filterWelt2000->text() )
+    {
+      extern MapContents *_globalMapContents;
+      _globalMapContents->slotReloadWelt2000Data();
+    }
 
   emit configOk();
   accept();
@@ -206,34 +250,54 @@ void KFLogConfig::slotOk()
 
 void KFLogConfig::slotSearchFlightPath()
 {
-  QString temp = Q3FileDialog::getExistingDirectory(igcPathE-> text(), this, 0,
-      tr("Select Default-Directory for the IGC-Files"));
+  QString dir = QFileDialog::getExistingDirectory( this,
+                 tr("Select a directory for the IGC-Files"),
+                 igcPathE->text(),
+                 QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks );
 
-  if(temp != 0)  igcPathE-> setText(temp);
+  if( ! dir.isEmpty() )
+    {
+      igcPathE->setText( dir );
+    }
 }
 
 void KFLogConfig::slotSearchMapPath()
 {
-  QString temp = Q3FileDialog::getExistingDirectory(mapPathE-> text(), this, 0,
-      tr("Select Directory for the Map-Files"));
+  QString dir = QFileDialog::getExistingDirectory( this,
+                 tr("Select a directory for the Map-Files"),
+                 mapPathE->text(),
+                 QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks );
 
-  if(temp != 0)  mapPathE-> setText(temp);
+  if( ! dir.isEmpty() )
+    {
+      mapPathE->setText( dir );
+    }
 }
 
 void KFLogConfig::slotSearchTaskPath()
 {
-  QString temp = Q3FileDialog::getExistingDirectory(taskPathE-> text(), this, 0,
-      tr("Select Default-Directory for the Task-Files"));
+  QString dir = QFileDialog::getExistingDirectory( this,
+                 tr("Select a directory for the Task-Files"),
+                 taskPathE->text(),
+                 QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks );
 
-  if(temp != 0)  taskPathE-> setText(temp);
+  if( ! dir.isEmpty() )
+    {
+      taskPathE->setText( dir );
+    }
 }
 
 void KFLogConfig::slotSearchWaypointPath()
 {
-  QString temp = Q3FileDialog::getExistingDirectory(waypointPathE-> text(), this, 0,
-      tr("Select Default-Directory for the Waypoint-Files"));
+  QString dir = QFileDialog::getExistingDirectory( this,
+                 tr("Select a directory for the Waypoint-Files"),
+                 waypointPathE->text(),
+                 QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks );
 
-  if(temp != 0)  waypointPathE-> setText(temp);
+  if( ! dir.isEmpty() )
+    {
+      waypointPathE->setText( dir );
+    }
 }
 
 void KFLogConfig::slotSelectProjection(int index)
@@ -241,30 +305,37 @@ void KFLogConfig::slotSelectProjection(int index)
   switch(currentProjType)
     {
       case ProjectionBase::Lambert:
-        lambertV1 = WGSPoint::degreeToNum(firstParallel-> text());
-        lambertV2 = WGSPoint::degreeToNum(secondParallel-> text());
-        lambertOrigin = WGSPoint::degreeToNum(originLongitude-> text());
+
+        lambertV1     = WGSPoint::degreeToNum(firstParallel->text());
+        lambertV2     = WGSPoint::degreeToNum(secondParallel->text());
+        lambertOrigin = WGSPoint::degreeToNum(originLongitude->text());
         break;
+
       case ProjectionBase::Cylindric:
-        cylinPar = WGSPoint::degreeToNum(firstParallel-> text());
+
+        cylinPar = WGSPoint::degreeToNum(firstParallel->text());
         break;
     }
 
   switch(index)
     {
       case ProjectionBase::Lambert:
-        secondParallel-> setEnabled(true);
-        originLongitude-> setEnabled(true);
-        firstParallel-> setText(WGSPoint::printPos(lambertV1, true));
-        secondParallel-> setText(WGSPoint::printPos(lambertV2, true));
-        originLongitude-> setText(WGSPoint::printPos(lambertOrigin, false));
+
+        secondParallel->setEnabled(true);
+        originLongitude->setEnabled(true);
+        firstParallel->setText(WGSPoint::printPos(lambertV1, true));
+        secondParallel->setText(WGSPoint::printPos(lambertV2, true));
+        originLongitude->setText(WGSPoint::printPos(lambertOrigin, false));
         break;
+
       case ProjectionBase::Cylindric:
-        secondParallel-> setEnabled(false);
-        originLongitude-> setEnabled(false);
-        firstParallel-> setText(WGSPoint::printPos(cylinPar, true));
+
+        secondParallel->setEnabled(false);
+        originLongitude->setEnabled(false);
+        firstParallel->setText(WGSPoint::printPos(cylinPar, true));
         break;
     }
+
   currentProjType = index;
 }
 
@@ -345,12 +416,16 @@ void KFLogConfig::slotDefaultPath()
 
 void KFLogConfig::__addMapTab()
 {
-  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Map-Elements"), "Map-Elements");
-  item->setPixmap(0, _mainWindow->getPixmap("kflog_32.png"));
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Map Elements") );
+  item->setData( 0, Qt::UserRole, "Map Elements" );
+  item->setIcon( 0, _mainWindow->getPixmap("kflog_32.png") );
+  setupTree->addTopLevelItem( item );
 
-  mapPage = new Q3Frame(this, "Map Configuration");
-  mapPage->hide();
-  configLayout->addMultiCellWidget(mapPage, 0, 0, 1, 2);
+  mapPage = new QFrame(this);
+  mapPage->setVisible( false );
+
+  configLayout->addWidget( mapPage, 0, 1, 1, 2 );
 
   Q3GroupBox* elementBox = new Q3GroupBox(mapPage, "elementBox");
   elementBox-> setTitle(tr("visible Map-Elements"));
@@ -393,10 +468,10 @@ void KFLogConfig::__addMapTab()
   defaultElements-> setMinimumHeight(defaultElements->sizeHint().height() + 2);
 
   QTabWidget* tabView = new QTabWidget(mapPage);
-  Q3Frame* screenFrame = new Q3Frame(tabView, "ConfigDrawFrame");
+  QFrame* screenFrame = new QFrame(tabView);
   ConfigDrawElement* drawConfig = new ConfigDrawElement(screenFrame);
 
-  Q3Frame* printFrame = new Q3Frame(tabView, "ConfigDrawFrame");
+  QFrame* printFrame = new QFrame(tabView);
   ConfigPrintElement* printConfig = new ConfigPrintElement(printFrame);
 
   tabView-> addTab(screenFrame, tr("Display"));
@@ -437,12 +512,16 @@ void KFLogConfig::__addMapTab()
 
 void KFLogConfig::__addFlightTab()
 {
-  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Flight Display"), "Flight Display");
-  item->setPixmap(0, _mainWindow->getPixmap("flightpath_32.png"));
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Flight Display") );
+  item->setData( 0, Qt::UserRole, "Flight Display" );
+  item->setIcon( 0, _mainWindow->getPixmap("flightpath_32.png") );
+  setupTree->addTopLevelItem( item );
 
-  flightPage = new Q3Frame(this, "Flight Display Configuration");
-  flightPage->hide();
-  configLayout->addMultiCellWidget(flightPage, 0, 0, 1, 2);
+  flightPage = new QFrame(this);
+  flightPage->setVisible( false );
+
+  configLayout->addWidget( flightPage, 0, 1, 1, 2 );
 
   QGridLayout* flightLayout = new QGridLayout(flightPage, 17, 40, 8, 1);
 
@@ -561,93 +640,105 @@ void KFLogConfig::slotDrawTypeSelect()
 
 void KFLogConfig::__addProjectionTab()
 {
-  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Map-Projection"), "Map-Projection");
-  item->setPixmap(0, _mainWindow->getPixmap("projection_32.png"));
+  qDebug() << "__addProjectionTab() begin";
 
-  projPage = new Q3Frame(this, "Configuration of Map-Projection");
-  projPage->hide();
-  configLayout->addMultiCellWidget(projPage, 0, 0, 1, 2);
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Map Projection") );
+  item->setData( 0, Qt::UserRole, "Map Projection" );
+  item->setIcon( 0, _mainWindow->getPixmap("projection_32.png") );
+  setupTree->addTopLevelItem( item );
 
-  Q3GroupBox* projType = new Q3GroupBox(projPage, "projectionSelectBox");
-  projType-> setTitle(tr("Type of Projection") + ":");
+  projPage = new QFrame(this);
+  projPage->setVisible( false );
 
-  projectionSelect = new QComboBox(projPage, "projectionSelect");
-  projectionSelect-> insertItem(tr("Conical orthomorphic (Lambert)"));
-  projectionSelect-> insertItem(tr("Cylindrical Equidistant (Plate Carre)"));
+  configLayout->addWidget( projPage, 0, 1, 1, 2 );
 
-  Q3GroupBox* projConf = new Q3GroupBox(projPage, "projectionSelectBox");
-  projConf-> setTitle(tr("Setup Projection") + ":");
+  //----------------------------------------------------------------------------
+  QGroupBox* projTypeGroup = new QGroupBox( tr("Type of Projection") + ":" );
 
-  firstParallel = new LatEdit(projPage, "firstParallel");
-  secondParallel = new LatEdit(projPage, "secondParallel");
-  originLongitude = new LongEdit(projPage, "originLongitude");
+  QGridLayout* projTypeLayout = new QGridLayout();
+  projTypeLayout->setSpacing(10);
 
-  QPushButton* defaultProj = new QPushButton(tr("Default"), projPage,
-      "defaultScale");
-  defaultProj-> setMaximumWidth(defaultProj->sizeHint().width() + 10);
-  defaultProj-> setMinimumHeight(defaultProj->sizeHint().height() + 2);
+  projectionSelect = new QComboBox( projPage );
+  projectionSelect->addItem( tr( "Conical orthomorphic (Lambert)" ) );
+  projectionSelect->addItem( tr( "Cylindrical Equidistant (Plate Carré)" ) );
+  connect( projectionSelect, SIGNAL(activated(int)), SLOT(slotSelectProjection(int)) );
 
-  QGridLayout* projLayout = new QGridLayout(projPage, 17, 7, 8, 1);
-  projLayout-> addMultiCellWidget(projType, 0, 2, 0, 6);
-  projLayout-> addMultiCellWidget(projectionSelect, 1, 1, 1, 5);
-  projLayout-> addMultiCellWidget(projConf, 4, 10, 0, 6);
-  projLayout-> addWidget(new QLabel(tr("1. Standard Parallel") + ":", projPage),
-      5, 1);
-  projLayout-> addWidget(firstParallel, 5, 3);
-  projLayout-> addWidget(new QLabel(tr("2. Standard Parallel") + ":", projPage),
-      7, 1);
-  projLayout-> addWidget(secondParallel, 7, 3);
-  projLayout-> addWidget(new QLabel(tr("Origin Longitude") + ":", projPage),
-      9, 1);
-  projLayout-> addWidget(originLongitude, 9, 3);
+  projTypeLayout->addWidget( projectionSelect, 0, 0 );
+  projTypeLayout->setColumnStretch( 1, 10);
 
-  projLayout-> addMultiCellWidget(defaultProj, 16, 16, 0, 1, Qt::AlignLeft);
+  projTypeGroup->setLayout( projTypeLayout );
 
-  projLayout-> addColSpacing(0, 10);
-  projLayout-> addColSpacing(2, 5);
-  projLayout-> addColSpacing(4, 10);
-  projLayout-> addColSpacing(6, 10);
+  //----------------------------------------------------------------------------
+  QGroupBox* projConfGroup = new QGroupBox( tr( "Setup Projection" ) + ":" );
 
-  projLayout-> setColStretch(3, 1);
+  QGridLayout* projConfLayout = new QGridLayout();
+  projConfLayout->setSpacing( 10 );
 
-  projLayout-> addRowSpacing(0, 25);
-  projLayout-> addRowSpacing(2, 5);
-  projLayout-> addRowSpacing(4, 25);
-  projLayout-> addRowSpacing(6, 5);
-  projLayout-> addRowSpacing(8, 5);
-  projLayout-> addRowSpacing(15, 10);
+  firstParallel   = new LatEdit( projPage );
+  secondParallel  = new LatEdit( projPage );
+  originLongitude = new LongEdit( projPage );
 
-  connect(defaultProj, SIGNAL(clicked()), SLOT(slotDefaultProjection()));
-  connect(projectionSelect, SIGNAL(activated(int)), SLOT(slotSelectProjection(int)));
+  projConfLayout->addWidget(new QLabel(tr("1. Standard Parallel") + ":", projPage), 0, 0);
+  projConfLayout->addWidget(firstParallel, 0, 1);
+  projConfLayout->addWidget(new QLabel(tr("2. Standard Parallel") + ":", projPage), 1, 0);
+  projConfLayout->addWidget(secondParallel, 1, 1);
+  projConfLayout->addWidget(new QLabel(tr("Origin Longitude") + ":", projPage),  2, 0);
+  projConfLayout->addWidget(originLongitude, 2, 1);
+  projConfLayout->setColumnMinimumWidth( 1, 100 );
+  projConfLayout->setColStretch( 2, 10 );
 
-  lambertV1 = _settings.readNumEntry("/LambertProjection/Parallel1", 32400000);
-  lambertV2 = _settings.readNumEntry("/LambertProjection/Parallel2", 30000000);
-  lambertOrigin = _settings.readNumEntry("/LambertProjection/Origin", 0);
+  projConfGroup->setLayout( projConfLayout );
 
-  cylinPar = _settings.readNumEntry("/CylindricalProjection/Parallel", 27000000);
+  //----------------------------------------------------------------------------
+  QPushButton* defaultProjButton = new QPushButton( tr( "Default" ), projPage );
+  //defaultProjButton->setMaximumWidth( defaultProjButton->sizeHint().width() + 10 );
+  //defaultProjButton->setMinimumHeight( defaultProjButton->sizeHint().height() + 2 );
+  connect( defaultProjButton, SIGNAL(clicked()), SLOT(slotDefaultProjection()) );
 
-  int projIndex = _settings.readNumEntry("/MapData/Projection Type", ProjectionBase::Lambert);
+  //----------------------------------------------------------------------------
+  QVBoxLayout* projPageLayout = new QVBoxLayout;
 
-  projectionSelect-> setCurrentItem(projIndex);
-  slotSelectProjection(projIndex);
+  projPageLayout->addWidget( projTypeGroup );
+  projPageLayout->addSpacing( 20 );
+  projPageLayout->addWidget( projConfGroup );
+  projPageLayout->addStretch( 10 );
+  projPageLayout->addWidget( defaultProjButton, 0, Qt::AlignLeft );
+
+  projPage->setLayout( projPageLayout );
+
+  lambertV1     = _settings.value("/LambertProjection/Parallel1", 32400000).toInt();
+  lambertV2     = _settings.value("/LambertProjection/Parallel2", 30000000).toInt();
+  lambertOrigin = _settings.value("/LambertProjection/Origin", 0).toInt();
+  cylinPar      = _settings.value("/CylindricalProjection/Parallel", 27000000).toInt();
+  int projIndex = _settings.value("/MapData/ProjectionType", ProjectionBase::Lambert).toInt();
+
+  projectionSelect->setCurrentItem( projIndex );
+  slotSelectProjection( projIndex );
+
+  qDebug() << "__addProjectionTab() end";
 }
 
 void KFLogConfig::__addScaleTab()
 {
-  int ll = _settings.readNumEntry("/Scale/LowerLimit", L_LIMIT);
-  int ul = _settings.readNumEntry("/Scale/UpperLimit", U_LIMIT);
-  int sw = _settings.readNumEntry("/Scale/SwitchScale", SWITCH_S);
-  int wl = _settings.readNumEntry("/Scale/WaypointLabel", WPLABEL);
-  int b1 = _settings.readNumEntry("/Scale/Border1", BORDER_1);
-  int b2 = _settings.readNumEntry("/Scale/Border2", BORDER_2);
-  int b3 = _settings.readNumEntry("/Scale/Border3", BORDER_3);
+  int ll = _settings.value("/Scale/LowerLimit", L_LIMIT).toInt();
+  int ul = _settings.value("/Scale/UpperLimit", U_LIMIT).toInt();
+  int sw = _settings.value("/Scale/SwitchScale", SWITCH_S).toInt();
+  int wl = _settings.value("/Scale/WaypointLabel", WPLABEL).toInt();
+  int b1 = _settings.value("/Scale/Border1", BORDER_1).toInt();
+  int b2 = _settings.value("/Scale/Border2", BORDER_2).toInt();
+  int b3 = _settings.value("/Scale/Border3", BORDER_3).toInt();
 
-  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Map-Scales"), "Map-Scales");
-  item->setPixmap(0, _mainWindow->getPixmap("kde_viewmag_32.png"));
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Map Scales") );
+  item->setData( 0, Qt::UserRole, "Map Scales" );
+  item->setIcon( 0, _mainWindow->getPixmap("kde_viewmag_32.png") );
+  setupTree->addTopLevelItem( item );
 
-  scalePage = new Q3Frame(this, "Map-Scale Configuration");
-  scalePage->hide();
-  configLayout->addMultiCellWidget(scalePage, 0, 0, 1, 2);
+  scalePage = new QFrame(this);
+  scalePage->setVisible( false );
+
+  configLayout->addWidget( scalePage, 0, 1, 1, 2 );
 
   Q3GroupBox* scaleLimits = new Q3GroupBox(scalePage, "scaleLimitBox");
   scaleLimits-> setTitle(tr("Scale-Range:"));
@@ -781,12 +872,16 @@ void KFLogConfig::__addPathTab()
 
   QString mapDir = _globalMapContents->getMapRootDirectory();
 
-  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Paths"), "Paths");
-  item->setPixmap(0, _mainWindow->getPixmap("kde_fileopen_32.png"));
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Paths") );
+  item->setData( 0, Qt::UserRole, "Paths" );
+  item->setIcon( 0, _mainWindow->getPixmap("kde_fileopen_32.png") );
+  setupTree->addTopLevelItem( item );
 
-  pathPage = new Q3Frame(this, "Path Configuration");
-  pathPage->hide();
-  configLayout->addMultiCellWidget(pathPage, 0, 0, 1, 2);
+  pathPage = new QFrame(this);
+  pathPage->setVisible( false );
+
+  configLayout->addWidget( pathPage, 0, 1, 1, 2 );
 
   QGridLayout* pathLayout = new QGridLayout(pathPage, 17, 5, 8, 1);
 
@@ -902,86 +997,82 @@ void KFLogConfig::__addPathTab()
 
 void KFLogConfig::__addIDTab()
 {
-  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Identity"), "Identity");
-  item->setPixmap(0, _mainWindow->getPixmap("kde_identity_32.png"));
+  qDebug() << "__addIDTab() begin";
 
-  idPage = new Q3Frame(this, "Personal Information");
-  configLayout->addMultiCellWidget(idPage, 0, 0, 1, 2);
-  idPage->hide();
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Identity") );
+  item->setData( 0, Qt::UserRole, "Identity" );
+  item->setIcon( 0, _mainWindow->getPixmap("kde_identity_32.png") );
+  setupTree->addTopLevelItem( item );
 
-  QGridLayout* idLayout = new QGridLayout(idPage, 18, 5, 8, 1);
+  idPage = new QFrame(this);
+  idPage->setVisible( false );
 
-  Q3GroupBox* pilotGroup = new Q3GroupBox(idPage, "pilotGroup");
-  pilotGroup-> setTitle(tr("Pilot") + ":");
+  configLayout->addWidget( idPage, 0, 1, 1, 2 );
 
-  preNameE = new QLineEdit(idPage, "preNameE");
-  surNameE = new QLineEdit(idPage, "surNameE");
-  dateOfBirthE = new QLineEdit(idPage, "dateOfBirthE");
+  //----------------------------------------------------------------------------
+  QGroupBox* pilotGroup = new QGroupBox( tr("Pilot") + ":" );
 
-  idLayout-> addMultiCellWidget(pilotGroup, 0, 7, 0, 4);
-  idLayout-> addWidget(new QLabel(tr("Prename"), idPage), 2, 1);
-  idLayout-> addWidget(preNameE, 2, 3);
-  idLayout-> addWidget(new QLabel(tr("Surname"), idPage), 4, 1);
-  idLayout-> addWidget(surNameE, 4, 3);
-  idLayout-> addWidget(new QLabel(tr("Birthday"), idPage), 6, 1);
-  idLayout-> addWidget(dateOfBirthE, 6, 3);
+  QGridLayout* pilotLayout = new QGridLayout();
+  pilotLayout->setSpacing(10);
 
-  Q3GroupBox* homeGroup = new Q3GroupBox(idPage, "homeGroup");
-  homeGroup-> setTitle(tr("Homesite") + ":");
+  preNameE     = new QLineEdit(idPage);
+  surNameE     = new QLineEdit(idPage);
+  dateOfBirthE = new QLineEdit(idPage);
+
+  pilotLayout->addWidget(new QLabel(tr("Prename"), idPage), 0, 0);
+  pilotLayout->addWidget(preNameE, 0, 1);
+
+  pilotLayout->addWidget(new QLabel(tr("Surname"), idPage), 1, 0);
+  pilotLayout->addWidget(surNameE, 1, 1);
+
+  pilotLayout->addWidget(new QLabel(tr("Birthday"), idPage), 2, 0);
+  pilotLayout->addWidget(dateOfBirthE, 2, 1);
+
+  pilotLayout->setColumnMinimumWidth( 1, 100 );
+
+  pilotGroup->setLayout( pilotLayout );
+
+  //----------------------------------------------------------------------------
+  QGroupBox* homeGroup = new QGroupBox( tr("Homesite") + ":" );
+
+  QGridLayout* homeLayout = new QGridLayout();
+  homeLayout->setSpacing(10);
 
   homeNameE = new QLineEdit(idPage, "homeNameE");
-  homeNameE-> setMinimumWidth(150);
   homeLatE = new LatEdit(idPage, "homeLatE");
-  homeLatE-> setMinimumWidth(150);
   homeLonE = new LongEdit(idPage, "homeLonE");
-  homeLonE-> setMinimumWidth(150);
 
-  idLayout-> addMultiCellWidget(homeGroup, 9, 16, 0, 4);
-  idLayout-> addWidget(new QLabel(tr("Homesite"), idPage), 11, 1);
-  idLayout-> addWidget(homeNameE, 11, 3);
-  idLayout-> addWidget(new QLabel(tr("Latitude"), idPage), 13, 1);
-  idLayout-> addWidget(homeLatE, 13, 3);
-  idLayout-> addWidget(new QLabel(tr("Longitude"), idPage), 15, 1);
-  idLayout-> addWidget(homeLonE, 15, 3);
+  homeLayout->addWidget(new QLabel(tr("Homesite"), idPage), 0, 0);
+  homeLayout->addWidget(homeNameE, 0, 1);
+  homeLayout->addWidget(new QLabel(tr("Latitude"), idPage), 1, 0);
+  homeLayout->addWidget(homeLatE, 1, 1);
+  homeLayout->addWidget(new QLabel(tr("Longitude"), idPage), 2, 0);
+  homeLayout->addWidget(homeLonE, 2, 1);
 
-  idLayout-> addColSpacing(0, 10);
-  idLayout-> addColSpacing(2, 10);
-  idLayout-> addColSpacing(4, 10);
+  homeLayout->setColumnMinimumWidth( 1, 100 );
 
-  idLayout-> addRowSpacing(0, 25);
-  idLayout-> addRowSpacing(1, 5);
-  idLayout-> addRowSpacing(3, 5);
-  idLayout-> addRowSpacing(5, 5);
-  idLayout-> addRowSpacing(7, 20);
+  homeGroup->setLayout( homeLayout );
 
-  idLayout-> addRowSpacing(8, 25);
+  //----------------------------------------------------------------------------
+  QVBoxLayout* idLayout = new QVBoxLayout;
 
-  idLayout-> addRowSpacing(9, 25);
-  idLayout-> addRowSpacing(10, 5);
-  idLayout-> addRowSpacing(11, 10);
-  idLayout-> addRowSpacing(12, 10);
-  idLayout-> addRowSpacing(13, 10);
-  idLayout-> addRowSpacing(14, 10);
-//  idLayout-> addRowSpacing(15, 10);
-  idLayout-> addRowSpacing(16, 20);
-  idLayout-> addRowSpacing(17, 20);
-  idLayout-> addRowSpacing(18, 25);
-  idLayout-> addRowSpacing(19, 10);
-  idLayout-> addRowSpacing(20, 10);
+  idLayout->addWidget( pilotGroup );
+  idLayout->addSpacing( 20 );
+  idLayout->addWidget( homeGroup );
+  idLayout->addStretch( 10 );
 
-//  idLayout-> setRowStretch(17, 1);
+  idPage->setLayout( idLayout );
 
-  homeLatE-> setText(WGSPoint::printPos(_settings.readNumEntry("/MapData/Homesite Latitude", HOME_DEFAULT_LAT), true));
-  homeLonE-> setText(WGSPoint::printPos(_settings.readNumEntry("/MapData/Homesite Longitude", HOME_DEFAULT_LON), false));
-  homeNameE-> setText(_settings.readEntry("/MapData/Homesite", ""));
+  homeLatE-> setText(WGSPoint::printPos(_settings.value("/MapData/Homesite Latitude", HOME_DEFAULT_LAT).toInt(), true));
+  homeLonE-> setText(WGSPoint::printPos(_settings.value("/MapData/Homesite Longitude", HOME_DEFAULT_LON).toInt(), false));
+  homeNameE-> setText(_settings.value("/MapData/Homesite", "").toString());
 
-  preNameE-> setText(_settings.readEntry("/PersonalData/PreName", ""));
-  surNameE-> setText(_settings.readEntry("/PersonalData/SurName", ""));
-  dateOfBirthE-> setText(_settings.readEntry("/PersonalData/Birthday", ""));
+  preNameE-> setText(_settings.value("/PersonalData/PreName", "").toString());
+  surNameE-> setText(_settings.value("/PersonalData/SurName", "").toString());
+  dateOfBirthE-> setText(_settings.value("/PersonalData/Birthday", "").toString());
 
-  // update airfield lists from Welt2000 if home site changes:
-  connect(homeLatE, SIGNAL(textChanged(const QString&)), SLOT(slotFilterChanged(const QString&)) );
-  connect(homeLonE, SIGNAL(textChanged(const QString&)), SLOT(slotFilterChanged(const QString&)) );
+  qDebug() << "__addIDTab() end";
 }
 
 int KFLogConfig::__setScaleValue(int value)
@@ -1005,67 +1096,81 @@ int KFLogConfig::__getScaleValue(double scale)
 /** Add a tab for airfield (Welt2000) configuration.*/
 void KFLogConfig::__addAirfieldTab()
 {
-  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Airfields"), "Airfields");
-  item->setPixmap(0, _mainWindow->getPixmap("airfield_32.png"));
+  qDebug() << "__addAirfieldTab() begin";
 
-  airfieldPage = new Q3Frame(this, "Airfield Configuration");
-  airfieldPage->hide();
-  configLayout->addMultiCellWidget(airfieldPage, 0, 0, 1, 2);
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Airfields") );
+  item->setData( 0, Qt::UserRole, "Airfields" );
+  item->setIcon( 0, _mainWindow->getPixmap("airfield_32.png") );
+  setupTree->addTopLevelItem( item );
 
-  QGridLayout* airfieldLayout = new QGridLayout(airfieldPage, 15, 6, 1, 1);
+  airfieldPage = new QFrame(this);
+  airfieldPage->setVisible( false );
 
-  Q3GroupBox* welt2000Group = new Q3GroupBox(airfieldPage, "welt2000Group");
-  welt2000Group-> setTitle(tr("Welt2000") + ":");
+  configLayout->addWidget( airfieldPage, 0, 1, 1, 2 );
 
-  filterE = new QLineEdit(airfieldPage, "filterE");
+  //----------------------------------------------------------------------------
+  QGroupBox* welt2000Group = new QGroupBox( tr("Welt2000") + ":" );
 
-  airfieldLayout->addMultiCellWidget(welt2000Group, 0, 4, 0, 6);
-  airfieldLayout->addWidget(new QLabel(tr("Country Filter"), airfieldPage), 1, 1);
-  airfieldLayout->addWidget(filterE, 1, 3);
+  QRegExp rx("[A-Za-z]{2}([ ,;][A-Za-z]{2})*");
+  QValidator *validator = new QRegExpValidator(rx, this);
 
-  airfieldLayout->addWidget(new QLabel(tr("Home Radius"), airfieldPage), 3, 1);
-  homeRadiusE = new QSpinBox(airfieldPage, "homeRadiusE");
-  homeRadiusE->setRange( 0, 10000 );
-  homeRadiusE->setLineStep( 10 );
-  homeRadiusE->setButtonSymbols(QSpinBox::PlusMinus);
-  airfieldLayout->addWidget( homeRadiusE, 3, 3 );
-  airfieldLayout->addWidget( new QLabel( "km", airfieldPage), 3, 4 );
+  filterWelt2000 = new QLineEdit(airfieldPage);
+  //filterWelt2000->setMinimumWidth( 100 );
+  filterWelt2000->setValidator( validator );
 
-  filterE-> setText(_settings.readEntry("/Welt2000/CountryFilter", ""));
-  homeRadiusE-> setValue(_settings.readNumEntry("/Welt2000/HomeRadius", 0));
+  QGridLayout* weltLayout = new QGridLayout();
+  weltLayout->setSpacing( 10 );
 
-  if (filterE->text() != "")
-    homeRadiusE->setEnabled(false);
-  needUpdateWelt2000 = false;
-  connect(filterE, SIGNAL(textChanged(const QString&)), SLOT(slotFilterChanged(const QString&)) );
-  connect(homeRadiusE, SIGNAL(valueChanged(int)), SLOT(slotHomeRadiusChanged()));
-}
+  weltLayout->addWidget( new QLabel( tr( "Country Filter" ), airfieldPage ), 0, 0 );
+  weltLayout->addWidget( filterWelt2000, 0, 1, 1, 2 );
 
-void KFLogConfig::slotFilterChanged(const QString& filter) {
-  needUpdateWelt2000 = true;
-  if (filter != "")
-    homeRadiusE->setEnabled(false);
-  else
-    homeRadiusE->setEnabled(true);
-}
+  weltLayout->addWidget( new QLabel( tr( "Home Radius" ), airfieldPage ), 1, 0 );
+  homeRadiusWelt2000 = new QSpinBox( airfieldPage );
+  homeRadiusWelt2000->setRange( 0, 10000 );
+  homeRadiusWelt2000->setLineStep( 10 );
+  homeRadiusWelt2000->setButtonSymbols( QSpinBox::PlusMinus );
+  homeRadiusWelt2000->setSuffix( " Km" );
+  homeRadiusWelt2000->setSpecialValueText(tr("Off"));
+  weltLayout->addWidget( homeRadiusWelt2000, 1, 1 );
+  weltLayout->setColStretch( 3, 10 );
 
-void KFLogConfig::slotHomeRadiusChanged() {
-  needUpdateWelt2000 = true;
+  welt2000Group->setLayout( weltLayout );
+
+  //----------------------------------------------------------------------------
+  QVBoxLayout* afLayout = new QVBoxLayout;
+
+  afLayout->addWidget( welt2000Group );
+  afLayout->addStretch( 10 );
+
+  airfieldPage->setLayout( afLayout );
+
+  homeRadiusWelt2000Value = _settings.value( "/Welt2000/HomeRadius", 500 ).toInt();
+  filterWelt2000Text      = _settings.value( "/Welt2000/CountryFilter", "" ).toString();
+
+  homeRadiusWelt2000->setValue( homeRadiusWelt2000Value );
+  filterWelt2000->setText( filterWelt2000Text );
+
+  qDebug() << "__addAirfieldTab() end";
 }
 
 /** Add a tab for waypoint catalog configuration at sartup
 Setting will be overwritten by commandline switch */
 void KFLogConfig::__addWaypointTab()
 {
-  int catalogType = _settings.readNumEntry("/Waypoints/DefaultWaypointCatalog", LastUsed);
-  QString catalogName = _settings.readEntry("/Waypoints/DefaultCatalogName", "");
+  int catalogType     = _settings.value("/Waypoints/DefaultWaypointCatalog", LastUsed).toInt();
+  QString catalogName = _settings.value("/Waypoints/DefaultCatalogName", "").toString();
 
-  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Waypoints"), "Waypoints");
-  item->setPixmap(0, _mainWindow->getPixmap("waypoint_32.png"));
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Waypoints") );
+  item->setData( 0, Qt::UserRole, "Waypoints" );
+  item->setIcon( 0, _mainWindow->getPixmap("waypoint_32.png") );
+  setupTree->addTopLevelItem( item );
 
-  waypointPage = new Q3Frame(this, "Catalog Configuration");
-  waypointPage->hide();
-  configLayout->addMultiCellWidget(waypointPage, 0, 0, 1, 2);
+  waypointPage = new QFrame(this);
+  waypointPage->setVisible( false );
+
+  configLayout->addWidget( waypointPage, 0, 1, 1, 2 );
 
   QVBoxLayout *top = new QVBoxLayout(waypointPage, 5);
 
@@ -1131,11 +1236,15 @@ void KFLogConfig::slotSelectDefaultCatalog(int item)
 
 void KFLogConfig::slotSearchDefaultWaypoint()
 {
-  QString temp = Q3FileDialog::getOpenFileName(catalogPathE-> text(), "*.kflogwp *.KFLOGWP|KFLog waypoints (*.kflogwp)",
-    this, 0, tr("Select default waypoint catalog"));
+  QString fileName = QFileDialog::getOpenFileName(
+                         this,
+                         tr("Select a waypoint catalog"),
+                         catalogPathE-> text(),
+                         tr("KFLog Catalogs (*.kflogwp *.KFLOGWP)"));
 
-    if(temp != 0) {
-      catalogPathE-> setText(temp);
+  if( ! fileName.isEmpty() )
+    {
+      catalogPathE->setText(fileName);
     }
 }
 
