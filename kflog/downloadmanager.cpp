@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c): 2010 Axel Pauli
+**   Copyright (c): 2010-2011 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -30,6 +30,7 @@
 const ulong DownloadManager::MinFsSpace = 25*1024*1024; // 25MB
 
 QSet<QString> DownloadManager::blackList;
+QSet<QString> DownloadManager::logList;
 
 /**
  * Creates a download manager instance.
@@ -60,6 +61,15 @@ bool DownloadManager::downloadRequest( QString &url, QString &destination )
   if( url.isEmpty() || urlSet.contains(url) || destination.isEmpty() ||
       blackList.contains(url) )
     {
+      mutex.unlock();
+      return false;
+    }
+
+  if( url.contains("http://www.kflog.org") && logList.contains(url) )
+    {
+      // That shall prevent the repeated download of wrong map files.
+      qWarning( "DownloadManager(%d): %s already downloaded. Request is rejected!",
+                __LINE__, url.toLatin1().data() );
       mutex.unlock();
       return false;
     }
@@ -141,6 +151,11 @@ void DownloadManager::slotFinished( QString &urlIn, QNetworkReply::NetworkError 
 
       qWarning( "DownloadManager(%d): URL %s put into black list due to ERROR %d!",
                 __LINE__, urlIn.toAscii().data(), codeIn );
+    }
+  else
+    {
+      // Store download url in log list.
+      logList.insert( urlIn );
     }
 
   // Remove the last done request from the queue and from the url set.

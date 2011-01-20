@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c): 2010 Axel Pauli
+**   Copyright (c): 2010-2011 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,7 +25,7 @@
  * This class handles the HTTP download requests in Cumulus. Downloads
  * of different map files can be requested.
  *
- * \date 2010
+ * \date 2010-2011
  */
 
 #ifndef DOWNLOAD_MANAGER_H
@@ -125,6 +125,14 @@ class DownloadManager : public QObject
    * dead lock.
    */
   static QSet<QString> blackList;
+
+  /**
+   * A log list, containing all downloaded URLs to avoid a download
+   * dead lock. Per session only one successful download is possible.
+   * There was observed the case, that a downloaded map file had not
+   * the right format and were downloaded again and again.
+   */
+  static QSet<QString> logList;
 };
 
 #endif /* DOWNLOAD_MANAGER_H */
