@@ -9,7 +9,7 @@
 **   Copyright (c):  2001 by Harald Maier
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -39,8 +39,9 @@
 
 extern MainWindow *_mainWindow;
 
-WaypointCatalog::WaypointCatalog(const QString& name)
-  : modified(false), onDisc(false)
+WaypointCatalog::WaypointCatalog(const QString& name) :
+  modified(false),
+  onDisc(false)
 {
   static int catalogNr = 1;
 
@@ -830,7 +831,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
         bool ok;
         char buf[256];
 
-        qint64 result = file.readLine( buf, sizeof(buf) );
+        qint64 result = f.readLine( buf, sizeof(buf) );
 
         if (result > 0)
         {
