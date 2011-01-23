@@ -45,7 +45,7 @@ public:
 
   Waypoint(QString nam = QString::null, WGSPoint oP = WGSPoint(), int typ = -1, QString _icao = QString::null,
     QString _comment = QString::null, enum Runway::SurfaceType surf=Runway::Unknown,
-    QPair<ushort, ushort> runw = QPair<ushort, ushort>(0, 0), int leng = -1, int elev = 0,
+    QPair<ushort, ushort> runw = (QPair<ushort, ushort>(0, 0)), int leng = -1, int elev = 0,
     double freq = 0.0, bool isLand = false, QPoint pP = QPoint(), time_t s1 = 0, time_t s2 = 0,
     unsigned int sFAI = 0, double ang = 0.0, double dist = 0.0, QString desc = QString::null, unsigned int import = 2, time_t GPSFixTime=0);
   Waypoint(Waypoint *p);
