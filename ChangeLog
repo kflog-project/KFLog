@@ -8,6 +8,7 @@ $Id$
     class KFLogConfig. A lot of stuff is to modify here.
   * Bugfix in class DownloadManager to prevent a download deadlock of wrong
     map files.
+  * Class RowDelegate taken over from Cumulus.
 
 2011-01-19 Axel Pauli <axel@kflog.org>
   * Class TopoLegend ported to Qt4 together with bug fixing. Works now as

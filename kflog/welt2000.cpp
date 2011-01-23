@@ -402,12 +402,13 @@ bool Welt2000::parse( QString& path,
   // get home radius from configuration data
   int radius = _settings.value( "/Welt2000/HomeRadius", 0 ).toInt();
 
-  if( radius == 0 )
+  if( c_countryList.size() == 0 && radius == 0 )
     {
-      // default is 500 kilometers
-      c_homeRadius = 500.0;
+      // Define a default radius of 500Km, if no country filter is defined.
+      radius = 500;
     }
-  else
+
+  if( radius > 0 )
     {
       // we must look, what unit the user has chosen. This unit must
       // be considered during load of airfield data.
@@ -804,12 +805,11 @@ bool Welt2000::parse( QString& path,
           lon = -lon;
         }
 
-      if( countryDict.isEmpty() )
+      if( c_homeRadius > 0 )
         {
-          // No countries are defined to be filtered out, we will
-          // compute the distance between the home position and the
-          // read point. Is the distance is over the user defined
-          // value away we will ignore this point.
+          // Compute the distance between the home position and the
+          // read point, if a radius is defined. Is the distance is greater
+          // than as the user defined value we skip this point.
 
           QPoint home = _globalMapMatrix->getHomeCoord();
           QPoint af( lat, lon );

@@ -16,10 +16,24 @@
 **
 ***********************************************************************/
 
+/**
+ * \class KFLogConfig
+ *
+ * \short Configuration dialog widget
+ *
+ * This class provides the configuration dialog for KFLog.
+ *
+ * \author Heiner Lamprecht, Florian Ehinger, Constantijn Neeteson, Axel Pauli
+ *
+ * \date 2000-2011
+ *
+ * @version $Id$
+ */
+
 #ifndef KFLOG_CONFIG_H
 #define KFLOG_CONFIG_H
 
-#include <q3buttongroup.h>
+#include <QButtonGroup>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QDialog>
@@ -27,8 +41,6 @@
 #include <QLayout>
 #include <QLCDNumber>
 #include <QLineEdit>
-#include <q3listview.h>
-#include <QPen>
 #include <QPushButton>
 #include <QSlider>
 #include <QSpinBox>
@@ -37,19 +49,6 @@
 
 #include "guicontrols/coordedit.h"
 
-/**
- * \class KFLogConfig
- *
- * \short Configuration dialog widget
- *
- * This class provides the configuration dialog for KFLog.
- *
- * \author Heiner Lamprecht, Florian Ehinger, , Constantijn Neeteson, Axel Pauli
- *
- * \date 2000-2011
- *
- * @version $Id$
- */
 class KFLogConfig : public QDialog
 {
   Q_OBJECT
@@ -122,7 +121,7 @@ class KFLogConfig : public QDialog
     /** */
     void slotSearchDefaultWaypoint();
     /**
-    * slot needed to trigger an update of the menu Flight=>Show Flightdata
+    * slot needed to trigger an update of the menu Flight=>Show Flight data
     */
     void slotDrawTypeSelect();
     /** */
@@ -239,7 +238,7 @@ class KFLogConfig : public QDialog
     LatEdit* secondParallel;
     LongEdit* originLongitude;
 
-    Q3ButtonGroup *waypointButtonGroup;
+    QButtonGroup *waypointButtonGroup;
     QPushButton* catalogPathSearch;
     QPushButton* flightTypeLeftTurnColorButton;
     QColor flightTypeLeftTurnColor;
