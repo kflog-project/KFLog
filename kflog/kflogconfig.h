@@ -121,25 +121,15 @@ class KFLogConfig : public QDialog
     /** */
     void slotSearchDefaultWaypoint();
     /**
-    * slot needed to trigger an update of the menu Flight=>Show Flight data
-    */
-    void slotDrawTypeSelect();
-    /** */
-    void slotSelectFlightTypeLeftTurnColor();
-    /** */
-    void slotSelectFlightTypeRightTurnColor();
-    /** */
-    void slotSelectFlightTypeMixedTurnColor();
-    /** */
-    void slotSelectFlightTypeStraightColor();
-    /** */
-    void slotSelectFlightTypeSolidColor();
-    /** */
-    void slotSelectFlightTypeEngineNoiseColor();
+     * Open a color dialog and let the user define a new color.
+     *
+     * \param buttonIdentifier Identifier of pressed button.
+     */
+    void slotSelectFlightTypeColor( int buttonIdentifier );
 
   private:
     /** */
-    void __addIDTab();
+    void __addPersonalTab();
     /** */
     void __addMapTab();
     /** */
@@ -171,7 +161,7 @@ class KFLogConfig : public QDialog
 
     QFrame *activePage;
     /** */
-    QFrame* idPage;
+    QFrame* personalPage;
     /** */
     QFrame* mapPage;
     /** */
@@ -200,10 +190,17 @@ class KFLogConfig : public QDialog
     QLineEdit* preNameE;
     QLineEdit* surNameE;
     QLineEdit* dateOfBirthE;
-    QSpinBox* flightPathWidthE;
+
+    QSpinBox* altitudePenWidth;
+    QSpinBox* cyclingPenWidth;
+    QSpinBox* speedPenWidth;
+    QSpinBox* varioPenWidth;
+    QSpinBox* solidPenWidth;
+    QSpinBox* enginePenWidth;
 
     QLineEdit* filterWelt2000;
     QSpinBox* homeRadiusWelt2000;
+    QCheckBox* readOlWelt2000;
 
     /**
      * Initial value of home radius.
@@ -215,7 +212,10 @@ class KFLogConfig : public QDialog
      */
     QString filterWelt2000Text;
 
-    bool needUpdateDrawType;
+    /**
+     * Initial value of outlanding checkbox.
+     */
+    bool readOlWelt2000Value;
 
     QSlider* lLimit;
     QSlider* uLimit;
@@ -232,7 +232,6 @@ class KFLogConfig : public QDialog
     QLCDNumber* reduce2N;
     QLCDNumber* reduce3N;
     QComboBox* elementSelect;
-    QComboBox* drawTypeSelect;
     QComboBox* projectionSelect;
     LatEdit* firstParallel;
     LatEdit* secondParallel;
@@ -240,6 +239,7 @@ class KFLogConfig : public QDialog
 
     QButtonGroup *waypointButtonGroup;
     QPushButton* catalogPathSearch;
+
     QPushButton* flightTypeLeftTurnColorButton;
     QColor flightTypeLeftTurnColor;
     QPushButton* flightTypeRightTurnColorButton;
@@ -252,6 +252,12 @@ class KFLogConfig : public QDialog
     QColor flightTypeSolidColor;
     QPushButton* flightTypeEngineNoiseColorButton;
     QColor flightTypeEngineNoiseColor;
+
+    /** Button array */
+    QPushButton* ftcButtonArray[6];
+
+    /** Color array of related buttons. */
+    QColor* ftcColorArray[6];
 
     int cylinPar;
     int lambertV1;

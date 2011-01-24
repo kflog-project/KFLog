@@ -1532,7 +1532,7 @@ void MainWindow::slotCheckDockWidgetStatus()
 
 void MainWindow::slotConfigureKFLog()
 {
-  KFLogConfig* confDlg = new KFLogConfig(this);
+  KFLogConfig* confDlg = new KFLogConfig( this );
 
   connect(confDlg, SIGNAL(scaleChanged(int, int)), mapControl, SLOT(slotSetMinMaxValue(int, int)));
 
@@ -1544,9 +1544,7 @@ void MainWindow::slotConfigureKFLog()
 
   connect(confDlg, SIGNAL(newDrawType(int)), this, SLOT(slotSelectFlightData(int)));
 
-  confDlg->exec();
-
-  delete confDlg;
+  confDlg->setVisible( true );
 }
 
 void MainWindow::slotFilePrint()

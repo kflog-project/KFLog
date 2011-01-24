@@ -566,80 +566,85 @@ QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*
   //
 
   extern QSettings _settings;
-  int width = _settings.readNumEntry("/Flight/flightPathWidth", 4);
-  int red = 0, green = 0, blue = 0;
+
+  int width = 4;
   float vario_range;
   QColor color;
 
-  switch(drawFType)
+  switch( drawFType )
     {
       case MapConfig::Vario:
-        if(abs(va_min)>va_max)
-          vario_range = 2*abs(va_min);
+
+        if( abs( va_min ) > va_max )
+          {
+            vario_range = 2 * abs( va_min );
+          }
         else
-          vario_range = 2*va_max;
+          {
+            vario_range = 2 * va_max;
+          }
+
         if(vario_range>10.0) //filter high vario values, probably due to a wrong GPS-fix
-          vario_range = 10.0;
-        color = getRainbowColor(0.5-(fP->dH/fP->dT)/vario_range);
+          {
+            vario_range = 10.0;
+          }
+
+        color = getRainbowColor( 0.5 - (fP->dH / fP->dT) / vario_range );
+        width = _settings.value( "/FlightPathLine/Vario", 4 ).toInt();
         break;
 
       case MapConfig::Speed:
         speed_max -= 15;
         color = getRainbowColor(1-(fP->dS/std::max(1, fP->dT)-15)/speed_max);
+        width = _settings.value("/FlightPathLine/Speed", 4).toInt();
         break;
 
       case MapConfig::Altitude:
         color = getRainbowColor((float)fP->height/altitude_max);
+        width = _settings.value("/FlightPathLine/Altitude", 4).toInt();
         break;
 
       case MapConfig::Cycling:
+
+        width = _settings.value("/FlightPathLine/Cycling", 4).toInt();
+
         switch(fP->f_state)
           {
             case Flight::LeftTurn:
-              red = 255;
-              green = 50;
-              blue = 0;
-              color = __string2Color(_settings.readEntry("/Flight/ColorLeftTurn", __color2String(QColor(red, green, blue))));
+              color = _settings.value( "/FlightColor/LeftTurn", QColor(255,50,0).name() ).value<QColor>();
               break;
+
             case Flight::RightTurn:
-              red = 50;
-              green = 255;
-              blue = 0;
-              color = __string2Color(_settings.readEntry("/Flight/ColorRightTurn", __color2String(QColor(red, green, blue))));
+              color = _settings.value( "/FlightColor/RightTurn", QColor(50,255,0).name() ).value<QColor>();
               break;
+
             case Flight::MixedTurn:
-              red = 200;
-              green = 0;
-              blue = 200;
-              color = __string2Color(_settings.readEntry("/Flight/ColorMixedTurn", __color2String(QColor(red, green, blue))));
+              color = _settings.value( "/FlightColor/MixedTurn", QColor(200,0,200).name() ).value<QColor>();
               break;
+
             case Flight::Straight:
             default:
-              red = 0;
-              green = 50;
-              blue = 255;
-              color = __string2Color(_settings.readEntry("/Flight/ColorStraight", __color2String(QColor(red, green, blue))));
+              color = _settings.value( "/FlightColor/Straight", QColor(0,50,255).name() ).value<QColor>();
               break;
           }
         break;
 
       case MapConfig::Solid:
       default:
-        red = 0;
-        green = 100;
-        blue = 200;
-        color = __string2Color(_settings.readEntry("/Flight/ColorSolid", __color2String(QColor(red, green, blue))));
+
+        width = _settings.value("/FlightPathLine/Solid", 4).toInt();
+        color = _settings.value( "/FlightColor/Solid", QColor(0,100,200).name() ).value<QColor>();
         break;
     }
 
-  // Simple aproach to see "engine was running"
-  if ( fP->engineNoise > 350 ) {
-    //  Put a white (or configured color) strip there in every case
-    red = 255;
-    green = 255;
-    blue = 255;
-    color = __string2Color(_settings.readEntry("/Flight/ColorEngineNoise", __color2String(QColor(red, green, blue))));
-  }
+  // Simple approach to see "engine was running"
+  if( fP->engineNoise > 350 )
+    {
+      width = _settings.value("/FlightPathLine/Engine", 4).toInt();
+      //  Put a white (or configured color) strip there in every case
+      color = _settings.value( "/FlightColor/EngineNoise",
+                               QColor( 255, 255, 255 ).name() ).value<QColor>();
+    }
 
 
   return QPen(color, width);

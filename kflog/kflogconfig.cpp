@@ -45,11 +45,11 @@ extern QSettings    _settings;
 
 KFLogConfig::KFLogConfig(QWidget* parent) :
   QDialog( parent ),
-  needUpdateDrawType( false ),
   currentProjType( ProjectionBase::Unknown )
 {
   setObjectName( "KFLogConfig" );
   setWindowTitle( tr("KFLog Configuration") );
+  setAttribute( Qt::WA_DeleteOnClose );
   setModal( true );
   setSizeGripEnabled( true );
 
@@ -93,7 +93,7 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
   connect( saveButton, SIGNAL(clicked()), SLOT(slotOk()) );
   connect( cancelButton, SIGNAL(clicked()), SLOT(close()) );
 
-  __addIDTab();
+  __addPersonalTab();
   __addPathTab();
   __addScaleTab();
   __addMapTab();
@@ -105,8 +105,8 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
   setupTree->sortByColumn ( 0, Qt::AscendingOrder );
   setupTree->resizeColumnToContents( 0 );
 
-  idPage->setVisible( true );
-  activePage = idPage;
+  personalPage->setVisible( true );
+  activePage = personalPage;
 
   qDebug() << "setupTreeSizeHint=" << setupTree->sizeHint();
   qDebug() << "setupTreeSize=" << setupTree->size();
@@ -142,8 +142,8 @@ void KFLogConfig::slotPageClicked( QTreeWidgetItem * item, int column )
   else if( itemText == "Identity" )
     {
       activePage->setVisible( false );
-      idPage->setVisible( true );
-      activePage = idPage;
+      personalPage->setVisible( true );
+      activePage = personalPage;
     }
   else if( itemText == "Map Elements" )
     {
@@ -207,45 +207,46 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/MapData/Homesite", homeNameE->text() );
   _settings.setValue( "/MapData/HomesiteLatitude", WGSPoint::degreeToNum( homeLatE->text() ) );
   _settings.setValue( "/MapData/HomesiteLongitude", WGSPoint::degreeToNum( homeLonE->text() ) );
-  _settings.setValue( "/MapData/ProjectionType", projectionSelect->currentItem() );
+  _settings.setValue( "/MapData/ProjectionType", projectionSelect->currentIndex() );
 
   _settings.setValue( "/Welt2000/CountryFilter", filterWelt2000->text() );
   _settings.setValue( "/Welt2000/HomeRadius", homeRadiusWelt2000->value() );
+  _settings.setValue( "/Welt2000/LoadOutlandings", readOlWelt2000->isChecked() );
 
-  if( needUpdateDrawType )
-    {
-      _settings.setValue( "/Flight/DrawType", drawTypeSelect->currentItem() );
-      //update menu Flight=>Show Flightdata
-      emit newDrawType( drawTypeSelect->currentItem() );
-    }
+  _settings.setValue( "/FlightColor/LeftTurn", flightTypeLeftTurnColor.name() );
+  _settings.setValue( "/FlightColor/RightTurn", flightTypeRightTurnColor.name() );
+  _settings.setValue( "/FlightColor/MixedTurn", flightTypeMixedTurnColor.name() );
+  _settings.setValue( "/FlightColor/Straight", flightTypeStraightColor.name() );
+  _settings.setValue( "/FlightColor/Solid", flightTypeSolidColor.name() );
+  _settings.setValue( "/FlightColor/EngineNoise", flightTypeEngineNoiseColor.name() );
 
-  _settings.setValue("/Flight/ColorLeftTurn", __color2String(flightTypeLeftTurnColor));
-  _settings.setValue("/Flight/ColorRightTurn", __color2String(flightTypeRightTurnColor));
-  _settings.setValue("/Flight/ColorMixedTurn", __color2String(flightTypeMixedTurnColor));
-  _settings.setValue("/Flight/ColorStraight", __color2String(flightTypeStraightColor));
-  _settings.setValue("/Flight/ColorSolid", __color2String(flightTypeSolidColor));
-  _settings.setValue("/Flight/ColorEngineNoise", __color2String(flightTypeEngineNoiseColor));
-  _settings.setValue("/Flight/flightPathWidth", flightPathWidthE->text());
+  _settings.setValue( "/FlightPathLine/Altitude", altitudePenWidth->value() );
+  _settings.setValue( "/FlightPathLine/Cycling", cyclingPenWidth->value() );
+  _settings.setValue( "/FlightPathLine/Speed", speedPenWidth->value() );
+  _settings.setValue( "/FlightPathLine/Vario", varioPenWidth->value() );
+  _settings.setValue( "/FlightPathLine/Solid", solidPenWidth->value() );
+  _settings.setValue( "/FlightPathLine/Engine", enginePenWidth->value() );
 
-  _settings.setValue("/LambertProjection/Parallel1", lambertV1);
-  _settings.setValue("/LambertProjection/Parallel2", lambertV2);
-  _settings.setValue("/LambertProjection/Origin", lambertOrigin);
+  _settings.setValue( "/LambertProjection/Parallel1", lambertV1 );
+  _settings.setValue( "/LambertProjection/Parallel2", lambertV2 );
+  _settings.setValue( "/LambertProjection/Origin", lambertOrigin );
 
-  _settings.setValue("/CylindricalProjection/Parallel", cylinPar);
+  _settings.setValue( "/CylindricalProjection/Parallel", cylinPar );
 
-  _settings.setValue("/PersonalData/PreName", preNameE->text());
-  _settings.setValue("/PersonalData/SurName", surNameE->text());
-  _settings.setValue("/PersonalData/Birthday", dateOfBirthE->text());
+  _settings.setValue( "/PersonalData/PreName", preNameE->text() );
+  _settings.setValue( "/PersonalData/SurName", surNameE->text() );
+  _settings.setValue( "/PersonalData/Birthday", dateOfBirthE->text() );
 
   _settings.setValue( "/Waypoints/DefaultWaypointCatalog",
                       waypointButtonGroup->id(waypointButtonGroup->checkedButton()) );
-  _settings.setValue("/Waypoints/DefaultCatalogName", catalogPathE->text());
+  _settings.setValue( "/Waypoints/DefaultCatalogName", catalogPathE->text() );
 
   emit scaleChanged((int)lLimitN->value(), (int)uLimitN->value());
 
   // Check, if Welt2000 must be updated
   if( homeRadiusWelt2000Value !=  homeRadiusWelt2000->value() ||
-      filterWelt2000Text != filterWelt2000->text() )
+      filterWelt2000Text != filterWelt2000->text() ||
+      readOlWelt2000Value != readOlWelt2000->isChecked () )
     {
       extern MapContents *_globalMapContents;
       _globalMapContents->slotReloadWelt2000Data();
@@ -307,25 +308,32 @@ void KFLogConfig::slotSearchWaypointPath()
     }
 }
 
-void KFLogConfig::slotSelectProjection(int index)
+void KFLogConfig::slotSelectProjection( int index )
 {
-  switch(currentProjType)
+  switch( currentProjType )
     {
+      case ProjectionBase::Cylindric:
+
+        cylinPar = WGSPoint::degreeToNum(firstParallel->text());
+        break;
+
       case ProjectionBase::Lambert:
 
         lambertV1     = WGSPoint::degreeToNum(firstParallel->text());
         lambertV2     = WGSPoint::degreeToNum(secondParallel->text());
         lambertOrigin = WGSPoint::degreeToNum(originLongitude->text());
         break;
-
-      case ProjectionBase::Cylindric:
-
-        cylinPar = WGSPoint::degreeToNum(firstParallel->text());
-        break;
     }
 
-  switch(index)
+  switch( index )
     {
+      case ProjectionBase::Cylindric:
+
+        secondParallel->setEnabled(false);
+        originLongitude->setEnabled(false);
+        firstParallel->setText(WGSPoint::printPos(cylinPar, true));
+        break;
+
       case ProjectionBase::Lambert:
 
         secondParallel->setEnabled(true);
@@ -334,51 +342,44 @@ void KFLogConfig::slotSelectProjection(int index)
         secondParallel->setText(WGSPoint::printPos(lambertV2, true));
         originLongitude->setText(WGSPoint::printPos(lambertOrigin, false));
         break;
-
-      case ProjectionBase::Cylindric:
-
-        secondParallel->setEnabled(false);
-        originLongitude->setEnabled(false);
-        firstParallel->setText(WGSPoint::printPos(cylinPar, true));
-        break;
     }
 
   currentProjType = index;
 }
 
-void KFLogConfig::slotShowLowerLimit(int value)
+void KFLogConfig::slotShowLowerLimit( int value )
 {
-  lLimitN->display(__setScaleValue(value));
+  lLimitN->display( __setScaleValue( value ) );
 }
 
-void KFLogConfig::slotShowUpperLimit(int value)
+void KFLogConfig::slotShowUpperLimit( int value )
 {
-  uLimitN->display(__setScaleValue(value));
+  uLimitN->display( __setScaleValue( value ) );
 }
 
-void KFLogConfig::slotShowSwitchScale(int value)
+void KFLogConfig::slotShowSwitchScale( int value )
 {
-  switchScaleN->display(__setScaleValue(value));
+  switchScaleN->display( __setScaleValue( value ) );
 }
 
-void KFLogConfig::slotShowWpLabel(int value)
+void KFLogConfig::slotShowWpLabel( int value )
 {
-  wpLabelN->display(__setScaleValue(value));
+  wpLabelN->display( __setScaleValue( value ) );
 }
 
-void KFLogConfig::slotShowReduceScaleA(int value)
+void KFLogConfig::slotShowReduceScaleA( int value )
 {
-  reduce1N->display(__setScaleValue(value));
+  reduce1N->display( __setScaleValue( value ) );
 }
 
-void KFLogConfig::slotShowReduceScaleB(int value)
+void KFLogConfig::slotShowReduceScaleB( int value )
 {
-  reduce2N->display(__setScaleValue(value));
+  reduce2N->display( __setScaleValue( value ) );
 }
 
-void KFLogConfig::slotShowReduceScaleC(int value)
+void KFLogConfig::slotShowReduceScaleC( int value )
 {
-  reduce3N->display(__setScaleValue(value));
+  reduce3N->display( __setScaleValue( value ) );
 }
 
 void KFLogConfig::slotDefaultProjection()
@@ -391,26 +392,26 @@ void KFLogConfig::slotDefaultProjection()
 
   currentProjType = ProjectionBase::Unknown;
 
-  projectionSelect->setCurrentItem(ProjectionBase::Lambert);
-  slotSelectProjection(ProjectionBase::Lambert);
+  projectionSelect->setCurrentIndex( ProjectionBase::Lambert );
+  slotSelectProjection( ProjectionBase::Lambert );
 }
 
 void KFLogConfig::slotDefaultScale()
 {
-  lLimit->setValue(__getScaleValue(L_LIMIT));
-  lLimitN->display(L_LIMIT);
-  uLimit->setValue(__getScaleValue(U_LIMIT));
-  uLimitN->display(U_LIMIT);
-  switchScale->setValue(__getScaleValue(SWITCH_S));
-  switchScaleN->display(SWITCH_S);
-  wpLabel->setValue(__getScaleValue(WPLABEL));
-  wpLabelN->display(WPLABEL);
-  reduce1->setValue(__getScaleValue(BORDER_1));
-  reduce1N->display(BORDER_1);
-  reduce2->setValue(__getScaleValue(BORDER_2));
-  reduce2N->display(BORDER_2);
-  reduce3->setValue(__getScaleValue(BORDER_3));
-  reduce3N->display(BORDER_3);
+  lLimit->setValue( __getScaleValue( L_LIMIT ) );
+  lLimitN->display( L_LIMIT );
+  uLimit->setValue( __getScaleValue( U_LIMIT ) );
+  uLimitN->display( U_LIMIT );
+  switchScale->setValue( __getScaleValue( SWITCH_S ) );
+  switchScaleN->display( SWITCH_S );
+  wpLabel->setValue( __getScaleValue( WPLABEL ) );
+  wpLabelN->display( WPLABEL );
+  reduce1->setValue( __getScaleValue( BORDER_1 ) );
+  reduce1N->display( BORDER_1 );
+  reduce2->setValue( __getScaleValue( BORDER_2 ) );
+  reduce2N->display( BORDER_2 );
+  reduce3->setValue( __getScaleValue( BORDER_3 ) );
+  reduce3N->display( BORDER_3 );
 }
 
 void KFLogConfig::slotDefaultPath()
@@ -532,119 +533,186 @@ void KFLogConfig::__addFlightTab()
 
   configLayout->addWidget( flightPage, 0, 1, 1, 2 );
 
-  QGridLayout* flightLayout = new QGridLayout(flightPage, 17, 40, 8, 1);
+  //----------------------------------------------------------------------------
+  QGroupBox* flightPathLineGroup = new QGroupBox( tr("Flight Path Line Width") );
+  flightPathLineGroup->setToolTip( tr("Set pen line width in pixel.") );
 
-  Q3GroupBox* flightPathLineGroup = new Q3GroupBox(flightPage, "flightDisplayGroup");
-  flightPathLineGroup->setTitle(tr("Flight Path Line") + ":");
-  flightLayout->addMultiCellWidget(flightPathLineGroup, 0, 4, 0, 39);
+  altitudePenWidth = new QSpinBox();
+  altitudePenWidth->setRange( 1, 9 );
+  altitudePenWidth->setSingleStep( 1 );
+  altitudePenWidth->setButtonSymbols( QSpinBox::PlusMinus );
+  altitudePenWidth->setValue( _settings.value("/FlightPathLine/Altitude", 4).toInt() );
 
+  cyclingPenWidth = new QSpinBox();
+  cyclingPenWidth->setRange( 1, 9 );
+  cyclingPenWidth->setSingleStep( 1 );
+  cyclingPenWidth->setButtonSymbols( QSpinBox::PlusMinus );
+  cyclingPenWidth->setValue( _settings.value("/FlightPathLine/Cycling", 4).toInt() );
 
-  drawTypeSelect = new QComboBox(flightPage, "drawTypeSelect");
-  drawTypeSelect->insertItem(tr("Altitude"), MapConfig::Altitude);
-  drawTypeSelect->insertItem(tr("Cycling"),  MapConfig::Cycling);
-  drawTypeSelect->insertItem(tr("Speed"),    MapConfig::Speed);
-  drawTypeSelect->insertItem(tr("Vario"),    MapConfig::Vario);
-  drawTypeSelect->insertItem(tr("Solid"),    MapConfig::Solid);
-  drawTypeSelect->setCurrentItem(_settings.readNumEntry("/Flight/DrawType"));
+  speedPenWidth = new QSpinBox();
+  speedPenWidth->setRange( 1, 9 );
+  speedPenWidth->setSingleStep( 1 );
+  speedPenWidth->setButtonSymbols( QSpinBox::PlusMinus );
+  speedPenWidth->setValue( _settings.value("/FlightPathLine/Speed", 4).toInt() );
 
-  flightLayout->addWidget(new QLabel(tr("type") + ":", flightPage), 1, 1);
-  flightLayout->addWidget(drawTypeSelect, 1, 10);
+  varioPenWidth = new QSpinBox();
+  varioPenWidth->setRange( 1, 9 );
+  varioPenWidth->setSingleStep( 1 );
+  varioPenWidth->setButtonSymbols( QSpinBox::PlusMinus );
+  varioPenWidth->setValue( _settings.value("/FlightPathLine/Vario", 4).toInt() );
 
+  solidPenWidth = new QSpinBox();
+  solidPenWidth->setRange( 1, 9 );
+  solidPenWidth->setSingleStep( 1 );
+  solidPenWidth->setButtonSymbols( QSpinBox::PlusMinus );
+  solidPenWidth->setValue( _settings.value("/FlightPathLine/Solid", 4).toInt() );
 
-  flightPathWidthE = new QSpinBox(flightPage, "flightPathWidthE");
-  flightPathWidthE->setRange( 0, 9 );
-  flightPathWidthE->setLineStep( 1 );
-  flightPathWidthE->setValue(_settings.readNumEntry("/Flight/flightPathWidth", 4));
+  enginePenWidth = new QSpinBox();
+  enginePenWidth->setRange( 1, 9 );
+  enginePenWidth->setSingleStep( 1 );
+  enginePenWidth->setButtonSymbols( QSpinBox::PlusMinus );
+  enginePenWidth->setValue( _settings.value("/FlightPathLine/Engine", 4).toInt() );
 
-  flightLayout->addWidget(new QLabel(tr("width") + ":", flightPage), 3, 1);
-  flightLayout->addWidget( flightPathWidthE, 3, 10);
+  QGridLayout* fplLayout = new QGridLayout();
+  fplLayout->setSpacing(10);
+  int row = 0;
 
+  fplLayout->addWidget( new QLabel( tr("Altitude") ), row , 0 );
+  fplLayout->addWidget( altitudePenWidth, row, 1 );
 
-  Q3GroupBox* flightPathColorGroup = new Q3GroupBox(flightPage, "flightDisplayGroup");
-  flightPathColorGroup->setTitle(tr("Flight Path Colors") + ":");
-  flightLayout->addMultiCellWidget(flightPathColorGroup, 5, 14, 0, 39);
+  fplLayout->addWidget( new QLabel( tr("Cycling") ), row , 2 );
+  fplLayout->addWidget( cyclingPenWidth, row, 3 );
+  row++;
 
-  flightLayout->addWidget(new QLabel(tr("left turn") + ":", flightPage), 6, 1);
-  flightTypeLeftTurnColor = __string2Color(_settings.readEntry("/Flight/ColorLeftTurn", "255;50;0"));
-  QPixmap *buttonPixmap = new QPixmap();
-  buttonPixmap->resize(82,14);
-  buttonPixmap->fill(flightTypeLeftTurnColor);
-  flightTypeLeftTurnColorButton = new QPushButton(flightPage);
-  flightTypeLeftTurnColorButton->setPixmap(*buttonPixmap);
+  fplLayout->addWidget( new QLabel( tr("Speed") ), row , 0 );
+  fplLayout->addWidget( speedPenWidth, row, 1 );
+
+  fplLayout->addWidget( new QLabel( tr("Vario") ), row , 2 );
+  fplLayout->addWidget( varioPenWidth, row, 3 );
+  row++;
+
+  fplLayout->addWidget( new QLabel( tr("Solid") ), row , 0 );
+  fplLayout->addWidget( solidPenWidth, row, 1 );
+
+  fplLayout->addWidget( new QLabel( tr("Engine") ), row , 2 );
+  fplLayout->addWidget( enginePenWidth, row, 3 );
+
+  fplLayout->setColumnStretch( 4, 10 );
+
+  flightPathLineGroup->setLayout( fplLayout );
+
+  //----------------------------------------------------------------------------
+  QGroupBox* flightPathColorGroup = new QGroupBox( tr("Flight Path Colors") );
+
+  QFormLayout* fpCLayout = new QFormLayout();
+  fpCLayout->setSpacing(10);
+
+  QPixmap buttonPixmap( 82, 14);
+
+  //-----
+  flightTypeLeftTurnColor = _settings.value( "/FlightColor/LeftTurn", QColor(255,50,0).name() ).value<QColor>();
+  buttonPixmap.fill(flightTypeLeftTurnColor);
+  flightTypeLeftTurnColorButton = new QPushButton();
+  flightTypeLeftTurnColorButton->setIcon( buttonPixmap );
+  flightTypeLeftTurnColorButton->setIconSize( buttonPixmap.size() );
   flightTypeLeftTurnColorButton->setFixedHeight(24);
   flightTypeLeftTurnColorButton->setFixedWidth(92);
-  flightLayout->addWidget( flightTypeLeftTurnColorButton, 6, 10);
-  connect(flightTypeLeftTurnColorButton, SIGNAL(clicked()), this, SLOT(slotSelectFlightTypeLeftTurnColor()));
 
-  flightLayout->addWidget(new QLabel(tr("right turn") + ":", flightPage), 7, 1);
-  flightTypeRightTurnColor = __string2Color(_settings.readEntry("/Flight/ColorRightTurn", "50;255;0"));
-  buttonPixmap = new QPixmap();
-  buttonPixmap->resize(82,14);
-  buttonPixmap->fill(flightTypeRightTurnColor);
-  flightTypeRightTurnColorButton = new QPushButton(flightPage);
-  flightTypeRightTurnColorButton->setPixmap(*buttonPixmap);
+  fpCLayout->addRow( tr("Left turn") + ":", flightTypeLeftTurnColorButton );
+
+  //-----
+  flightTypeRightTurnColor = _settings.value( "/FlightColor/RightTurn", QColor(50,255,0).name() ).value<QColor>();
+  buttonPixmap.fill(flightTypeRightTurnColor);
+  flightTypeRightTurnColorButton = new QPushButton();
+  flightTypeRightTurnColorButton->setIcon(buttonPixmap);
+  flightTypeRightTurnColorButton->setIconSize( buttonPixmap.size() );
   flightTypeRightTurnColorButton->setFixedHeight(24);
   flightTypeRightTurnColorButton->setFixedWidth(92);
-  flightLayout->addWidget( flightTypeRightTurnColorButton, 7, 10);
-  connect(flightTypeRightTurnColorButton, SIGNAL(clicked()), this, SLOT(slotSelectFlightTypeRightTurnColor()));
 
-  flightLayout->addWidget(new QLabel(tr("mixed turn") + ":", flightPage), 8, 1);
-  flightTypeMixedTurnColor = __string2Color(_settings.readEntry("/Flight/ColorMixedTurn", "200;0;200"));
-  buttonPixmap = new QPixmap();
-  buttonPixmap->resize(82,14);
-  buttonPixmap->fill(flightTypeMixedTurnColor);
-  flightTypeMixedTurnColorButton = new QPushButton(flightPage);
-  flightTypeMixedTurnColorButton->setPixmap(*buttonPixmap);
+  fpCLayout->addRow( tr("Right turn") + ":", flightTypeRightTurnColorButton );
+
+  //-----
+  flightTypeMixedTurnColor = _settings.value( "/FlightColor/MixedTurn", QColor(200,0,200).name() ).value<QColor>();
+  buttonPixmap.fill(flightTypeMixedTurnColor);
+  flightTypeMixedTurnColorButton = new QPushButton();
+  flightTypeMixedTurnColorButton->setIcon(buttonPixmap);
+  flightTypeMixedTurnColorButton->setIconSize( buttonPixmap.size() );
   flightTypeMixedTurnColorButton->setFixedHeight(24);
   flightTypeMixedTurnColorButton->setFixedWidth(92);
-  flightLayout->addWidget( flightTypeMixedTurnColorButton, 8, 10);
-  connect(flightTypeMixedTurnColorButton, SIGNAL(clicked()), this, SLOT(slotSelectFlightTypeMixedTurnColor()));
 
-  flightLayout->addWidget(new QLabel(tr("straight") + ":", flightPage), 9, 1);
-  flightTypeStraightColor = __string2Color(_settings.readEntry("/Flight/ColorStraight", "0;50;255"));
-  buttonPixmap = new QPixmap();
-  buttonPixmap->resize(82,14);
-  buttonPixmap->fill(flightTypeStraightColor);
-  flightTypeStraightColorButton = new QPushButton(flightPage);
-  flightTypeStraightColorButton->setPixmap(*buttonPixmap);
+  fpCLayout->addRow( tr("Mixed turn") + ":", flightTypeMixedTurnColorButton );
+
+  //-----
+  flightTypeStraightColor = _settings.value( "/FlightColor/Straight", QColor(0,50,255).name() ).value<QColor>();
+  buttonPixmap.fill(flightTypeStraightColor);
+  flightTypeStraightColorButton = new QPushButton();
+  flightTypeStraightColorButton->setIcon(buttonPixmap);
+  flightTypeStraightColorButton->setIconSize( buttonPixmap.size() );
   flightTypeStraightColorButton->setFixedHeight(24);
   flightTypeStraightColorButton->setFixedWidth(92);
-  flightLayout->addWidget( flightTypeStraightColorButton, 9, 10);
-  connect(flightTypeStraightColorButton, SIGNAL(clicked()), this, SLOT(slotSelectFlightTypeStraightColor()));
 
-  flightLayout->addWidget(new QLabel(tr("solid") + ":", flightPage), 11, 1);
-  flightTypeSolidColor = __string2Color(_settings.readEntry("/Flight/ColorSolid", "0;100;200"));
-  buttonPixmap = new QPixmap();
-  buttonPixmap->resize(82,14);
-  buttonPixmap->fill(flightTypeSolidColor);
-  flightTypeSolidColorButton = new QPushButton(flightPage);
-  flightTypeSolidColorButton->setPixmap(*buttonPixmap);
+  fpCLayout->addRow( tr("Straight") + ":", flightTypeStraightColorButton );
+  fpCLayout->addItem( new QSpacerItem( 20, 3) );
+
+  //-----
+  flightTypeSolidColor = _settings.value( "/FlightColor/Solid", QColor(0,100,200).name() ).value<QColor>();
+  buttonPixmap.fill(flightTypeSolidColor);
+  flightTypeSolidColorButton = new QPushButton();
+  flightTypeSolidColorButton->setIcon(buttonPixmap);
+  flightTypeSolidColorButton->setIconSize( buttonPixmap.size() );
   flightTypeSolidColorButton->setFixedHeight(24);
   flightTypeSolidColorButton->setFixedWidth(92);
-  flightLayout->addWidget( flightTypeSolidColorButton, 11, 10);
-  connect(flightTypeSolidColorButton, SIGNAL(clicked()), this, SLOT(slotSelectFlightTypeSolidColor()));
 
-  flightLayout->addWidget(new QLabel(tr("engine noise") + ":", flightPage), 13, 1);
-  flightTypeEngineNoiseColor = __string2Color(_settings.readEntry("/Flight/ColorEngineNoise", "255;255;255"));
-  buttonPixmap = new QPixmap();
-  buttonPixmap->resize(82,14);
-  buttonPixmap->fill(flightTypeEngineNoiseColor);
-  flightTypeEngineNoiseColorButton = new QPushButton(flightPage);
-  flightTypeEngineNoiseColorButton->setPixmap(*buttonPixmap);
-  flightTypeEngineNoiseColorButton->setFixedHeight(24);
-  flightTypeEngineNoiseColorButton->setFixedWidth(92);
-  flightLayout->addWidget( flightTypeEngineNoiseColorButton, 13, 10);
-  connect(flightTypeEngineNoiseColorButton, SIGNAL(clicked()), this, SLOT(slotSelectFlightTypeEngineNoiseColor()));
+  fpCLayout->addRow( tr("Solid") + ":", flightTypeSolidColorButton );
+  fpCLayout->addItem( new QSpacerItem( 20, 3) );
 
+  //-----
+  flightTypeEngineNoiseColor = _settings.value( "/FlightColor/EngineNoise", QColor(255,255,255).name() ).value<QColor>();
+  buttonPixmap.fill( flightTypeEngineNoiseColor );
+  flightTypeEngineNoiseColorButton = new QPushButton();
+  flightTypeEngineNoiseColorButton->setIcon( buttonPixmap );
+  flightTypeEngineNoiseColorButton->setIconSize( buttonPixmap.size() );
+  flightTypeEngineNoiseColorButton->setFixedHeight( 24 );
+  flightTypeEngineNoiseColorButton->setFixedWidth( 92 );
 
-  needUpdateDrawType = false;
-  connect(drawTypeSelect, SIGNAL(activated(int)), SLOT(slotDrawTypeSelect()));
+  fpCLayout->addRow( tr("Engine noise") + ":", flightTypeEngineNoiseColorButton );
 
-}
+  flightPathColorGroup->setLayout( fpCLayout );
 
-void KFLogConfig::slotDrawTypeSelect()
-{
-  needUpdateDrawType = true;
+  QButtonGroup* fpcButtonGroup = new QButtonGroup( flightPage );
+  fpcButtonGroup->addButton( flightTypeLeftTurnColorButton, 0 );
+  fpcButtonGroup->addButton( flightTypeRightTurnColorButton, 1 );
+  fpcButtonGroup->addButton( flightTypeMixedTurnColorButton, 2 );
+  fpcButtonGroup->addButton( flightTypeStraightColorButton, 3 );
+  fpcButtonGroup->addButton( flightTypeSolidColorButton, 4 );
+  fpcButtonGroup->addButton( flightTypeEngineNoiseColorButton, 5 );
+
+  connect( fpcButtonGroup, SIGNAL(buttonClicked (int)),
+           this, SLOT(slotSelectFlightTypeColor(int)) );
+
+  // initialize button array
+  ftcButtonArray[0] = flightTypeLeftTurnColorButton;
+  ftcButtonArray[1] = flightTypeRightTurnColorButton;
+  ftcButtonArray[2] = flightTypeMixedTurnColorButton;
+  ftcButtonArray[3] = flightTypeStraightColorButton;
+  ftcButtonArray[4] = flightTypeSolidColorButton;
+  ftcButtonArray[5] = flightTypeEngineNoiseColorButton;
+
+  // initialize related button color array
+  ftcColorArray[0] = &flightTypeLeftTurnColor;
+  ftcColorArray[1] = &flightTypeRightTurnColor;
+  ftcColorArray[2] = &flightTypeMixedTurnColor;
+  ftcColorArray[3] = &flightTypeStraightColor;
+  ftcColorArray[4] = &flightTypeSolidColor;
+  ftcColorArray[5] = &flightTypeEngineNoiseColor;
+
+  //----------------------------------------------------------------------------
+  QVBoxLayout* flightPagePageLayout = new QVBoxLayout;
+  flightPagePageLayout->addWidget( flightPathLineGroup );
+  flightPagePageLayout->addWidget( flightPathColorGroup );
+  flightPagePageLayout->addStretch( 10 );
+
+  flightPage->setLayout( flightPagePageLayout );
 }
 
 void KFLogConfig::__addProjectionTab()
@@ -662,7 +730,7 @@ void KFLogConfig::__addProjectionTab()
   configLayout->addWidget( projPage, 0, 1, 1, 2 );
 
   //----------------------------------------------------------------------------
-  QGroupBox* projTypeGroup = new QGroupBox( tr("Type of Projection") + ":" );
+  QGroupBox* projTypeGroup = new QGroupBox( tr("Type of Projection") );
 
   QGridLayout* projTypeLayout = new QGridLayout();
   projTypeLayout->setSpacing(10);
@@ -678,7 +746,7 @@ void KFLogConfig::__addProjectionTab()
   projTypeGroup->setLayout( projTypeLayout );
 
   //----------------------------------------------------------------------------
-  QGroupBox* projConfGroup = new QGroupBox( tr( "Setup Projection" ) + ":" );
+  QGroupBox* projConfGroup = new QGroupBox( tr( "Setup Projection" ) );
 
   QFormLayout* projConfLayout = new QFormLayout();
   projConfLayout->setSpacing( 10 );
@@ -722,151 +790,233 @@ void KFLogConfig::__addProjectionTab()
   cylinPar      = _settings.value("/CylindricalProjection/Parallel", 27000000).toInt();
   int projIndex = _settings.value("/MapData/ProjectionType", ProjectionBase::Lambert).toInt();
 
-  projectionSelect->setCurrentItem( projIndex );
+  projectionSelect->setCurrentIndex( projIndex );
   slotSelectProjection( projIndex );
 }
 
 void KFLogConfig::__addScaleTab()
 {
-  int ll = _settings.value("/Scale/LowerLimit", L_LIMIT).toInt();
-  int ul = _settings.value("/Scale/UpperLimit", U_LIMIT).toInt();
-  int sw = _settings.value("/Scale/SwitchScale", SWITCH_S).toInt();
-  int wl = _settings.value("/Scale/WaypointLabel", WPLABEL).toInt();
-  int b1 = _settings.value("/Scale/Border1", BORDER_1).toInt();
-  int b2 = _settings.value("/Scale/Border2", BORDER_2).toInt();
-  int b3 = _settings.value("/Scale/Border3", BORDER_3).toInt();
+  int ll = _settings.value( "/Scale/LowerLimit", L_LIMIT ).toInt();
+  int ul = _settings.value( "/Scale/UpperLimit", U_LIMIT ).toInt();
+  int sw = _settings.value( "/Scale/SwitchScale", SWITCH_S ).toInt();
+  int wl = _settings.value( "/Scale/WaypointLabel", WPLABEL ).toInt();
+  int b1 = _settings.value( "/Scale/Border1", BORDER_1 ).toInt();
+  int b2 = _settings.value( "/Scale/Border2", BORDER_2 ).toInt();
+  int b3 = _settings.value( "/Scale/Border3", BORDER_3 ).toInt();
 
   QTreeWidgetItem* item = new QTreeWidgetItem;
-  item->setText( 0, tr("Map Scales") );
+  item->setText( 0, tr( "Map Scales" ) );
   item->setData( 0, Qt::UserRole, "Map Scales" );
-  item->setIcon( 0, _mainWindow->getPixmap("kde_viewmag_32.png") );
+  item->setIcon( 0, _mainWindow->getPixmap( "kde_viewmag_32.png" ) );
   setupTree->addTopLevelItem( item );
 
-  scalePage = new QFrame(this);
+  scalePage = new QFrame( this );
   scalePage->setObjectName( "MapScalePage" );
   scalePage->setVisible( false );
 
   configLayout->addWidget( scalePage, 0, 1, 1, 2 );
 
-  Q3GroupBox* scaleLimits = new Q3GroupBox(scalePage, "scaleLimitBox");
-  scaleLimits->setTitle(tr("Scale-Range:"));
+  //----------------------------------------------------------------------------
+  QGroupBox* scaleRangeGroup = new QGroupBox( tr( "Scale Range" ) );
 
-  QLabel* lLimitText = new QLabel(tr("lower limit"), scalePage);
-  lLimit = new QSlider(2,105,1,0, Qt::Horizontal, scalePage);
-  lLimit->setMinimumHeight(lLimit->sizeHint().height() + 5);
-  lLimit->setMaximumHeight(lLimit->sizeHint().height() + 20);
-  lLimit->setMinimumWidth(200);
-  lLimitN = new QLCDNumber(5, scalePage);
-  lLimitN->setMinimumWidth(lLimitN->sizeHint().width() + 10);
-  lLimit->setValue(__getScaleValue(ll));
-  lLimitN->display(ll);
+  QLabel* lLimitText = new QLabel( tr( "Lower limit" ) + ":" );
 
-  QLabel* uLimitText = new QLabel(tr("upper limit"), scalePage);
-  uLimit = new QSlider(2,105,1,0, Qt::Horizontal, scalePage);
-  uLimit->setMinimumHeight(uLimit->sizeHint().height() + 5);
-  uLimit->setMaximumHeight(uLimit->sizeHint().height() + 20);
-  uLimitN = new QLCDNumber(5, scalePage);
-  uLimit->setValue(__getScaleValue(ul));
-  uLimitN->display(ul);
+  lLimit = new QSlider();
+  lLimit->setMinimum( 2 );
+  lLimit->setMaximum( 105 );
+  lLimit->setPageStep( 1 );
+  lLimit->setOrientation( Qt::Horizontal );
+  lLimit->setSingleStep( 1 );
+  lLimit->setMinimumHeight( lLimit->sizeHint().height() + 5 );
+  lLimit->setMaximumHeight( lLimit->sizeHint().height() + 20 );
+  lLimit->setMinimumWidth( 200 );
 
-  Q3GroupBox* borderBox = new Q3GroupBox(scalePage, "borderBox");
-  borderBox->setTitle("Scale-Thresholds:");
+  lLimitN = new QLCDNumber( 5 );
+  lLimitN->setMinimumWidth( lLimitN->sizeHint().width() + 10 );
+  lLimitN->setBackgroundRole( QPalette::Light );
+  lLimitN->setAutoFillBackground( true );
 
-  QLabel* switchText = new QLabel(tr("use small icons"), scalePage);
-  switchScale = new QSlider(2,105,1,0, Qt::Horizontal, scalePage);
-  switchScale->setMinimumHeight(switchScale->sizeHint().height() + 5);
-  switchScale->setMaximumHeight(switchScale->sizeHint().height() + 20);
-  switchScaleN = new QLCDNumber(5, scalePage);
-  switchScale->setValue(__getScaleValue(sw));
-  switchScaleN->display(sw);
+  lLimit->setValue( __getScaleValue( ll ) );
+  lLimitN->display( ll );
 
-  QLabel* wpLabelText = new QLabel(tr("draw waypoint labels"), scalePage);
-  wpLabel = new QSlider(2,105,1,0, Qt::Horizontal, scalePage);
-  wpLabel->setMinimumHeight(switchScale->sizeHint().height() + 5);
-  wpLabel->setMaximumHeight(switchScale->sizeHint().height() + 20);
-  wpLabelN = new QLCDNumber(5, scalePage);
-  wpLabel->setValue(__getScaleValue(wl));
-  wpLabelN->display(wl);
+  QLabel* uLimitText = new QLabel( tr( "Upper limit" ) + ":" );
 
-  QLabel* reduce1Text = new QLabel(tr("threshold #1"), scalePage);
-  reduce1 = new QSlider(2,105,1,0, Qt::Horizontal, scalePage);
-  reduce1->setMinimumHeight(reduce1->sizeHint().height() + 5);
-  reduce1->setMaximumHeight(reduce1->sizeHint().height() + 20);
-  reduce1N = new QLCDNumber(5, scalePage);
-  reduce1->setValue(__getScaleValue(b1));
-  reduce1N->display(b1);
+  uLimit = new QSlider();
+  uLimit->setMinimum( 2 );
+  uLimit->setMaximum( 105 );
+  uLimit->setPageStep( 1 );
+  uLimit->setOrientation( Qt::Horizontal );
+  uLimit->setSingleStep( 1 );
 
-  QLabel* reduce2Text = new QLabel(tr("threshold #2"), scalePage);
-  reduce2 = new QSlider(2,105,1,0, Qt::Horizontal, scalePage);
-  reduce2->setMinimumHeight(reduce2->sizeHint().height() + 5);
-  reduce2->setMaximumHeight(reduce2->sizeHint().height() + 20);
-  reduce2N = new QLCDNumber(5, scalePage);
-  reduce2->setValue(__getScaleValue(b2));
-  reduce2N->display(b2);
+  uLimitN = new QLCDNumber( 5 );
+  uLimitN->setMinimumWidth( uLimitN->sizeHint().width() + 10 );
+  uLimitN->setBackgroundRole( QPalette::Light );
+  uLimitN->setAutoFillBackground( true );
 
-  QLabel* reduce3Text = new QLabel(tr("threshold #3"), scalePage);
-  reduce3 = new QSlider(2,105,1,0, Qt::Horizontal, scalePage);
-  reduce3->setMinimumHeight(reduce3->sizeHint().height() + 5);
-  reduce3->setMaximumHeight(reduce3->sizeHint().height() + 20);
-  reduce3N = new QLCDNumber(5, scalePage);
-  reduce3->setValue(__getScaleValue(b3));
-  reduce3N->display(b3);
+  uLimit->setValue( __getScaleValue( ul ) );
+  uLimitN->display( ul );
 
-  QPushButton* defaultScale = new QPushButton(tr("Default"), scalePage,
-      "defaultScale");
-  defaultScale->setMaximumWidth(defaultScale->sizeHint().width() + 10);
-  defaultScale->setMinimumHeight(defaultScale->sizeHint().height() + 2);
+  QGridLayout* scaleRangeLayout = new QGridLayout();
+  scaleRangeLayout->setSpacing( 10 );
+  scaleRangeLayout->addWidget( lLimitText, 0, 0 );
+  scaleRangeLayout->addWidget( lLimit, 0, 1 );
+  scaleRangeLayout->addWidget( lLimitN, 0, 2 );
+  scaleRangeLayout->addWidget( uLimitText, 1, 0 );
+  scaleRangeLayout->addWidget( uLimit, 1, 1 );
+  scaleRangeLayout->addWidget( uLimitN, 1, 2 );
+  scaleRangeLayout->setColumnStretch( 1, 10 );
+  scaleRangeGroup->setLayout( scaleRangeLayout );
 
-  QGridLayout* scaleLayout = new QGridLayout(scalePage, 19, 7, 8, 1);
-  scaleLayout->addMultiCellWidget(scaleLimits, 0, 4, 0, 6);
-  scaleLayout->addWidget(lLimitText, 1, 1);
-  scaleLayout->addWidget(lLimit, 1, 3);
-  scaleLayout->addWidget(lLimitN, 1, 5);
-  scaleLayout->addWidget(uLimitText, 3, 1);
-  scaleLayout->addWidget(uLimit, 3, 3);
-  scaleLayout->addWidget(uLimitN, 3, 5);
+  //----------------------------------------------------------------------------
+  QGroupBox* scaleThresholdGroup = new QGroupBox( tr( "Scale Thresholds" ) );
 
-  scaleLayout->addMultiCellWidget(borderBox, 6, 16, 0, 6);
-  scaleLayout->addWidget(switchText, 7, 1);
-  scaleLayout->addWidget(switchScale, 7, 3);
-  scaleLayout->addWidget(switchScaleN, 7, 5);
-  scaleLayout->addWidget(wpLabelText, 9, 1);
-  scaleLayout->addWidget(wpLabel, 9, 3);
-  scaleLayout->addWidget(wpLabelN, 9, 5);
-  scaleLayout->addWidget(reduce1Text, 11, 1);
-  scaleLayout->addWidget(reduce1, 11, 3);
-  scaleLayout->addWidget(reduce1N, 11, 5);
-  scaleLayout->addWidget(reduce2Text, 13, 1);
-  scaleLayout->addWidget(reduce2, 13, 3);
-  scaleLayout->addWidget(reduce2N, 13, 5);
-  scaleLayout->addWidget(reduce3Text, 15, 1);
-  scaleLayout->addWidget(reduce3, 15, 3);
-  scaleLayout->addWidget(reduce3N, 15, 5);
+  QLabel* switchText = new QLabel( tr( "Use small icons" ) + ":" );
 
-  scaleLayout->addMultiCellWidget(defaultScale, 18, 18, 0, 1, Qt::AlignLeft);
+  switchScale = new QSlider();
+  switchScale->setMinimum( 2 );
+  switchScale->setMaximum( 105 );
+  switchScale->setPageStep( 1 );
+  switchScale->setOrientation( Qt::Horizontal );
+  switchScale->setSingleStep( 1 );
 
-  scaleLayout->addColSpacing(0, 10);
-  scaleLayout->addColSpacing(2, 5);
-  scaleLayout->addColSpacing(4, 10);
-  scaleLayout->addColSpacing(6, 10);
+  switchScaleN = new QLCDNumber( 5 );
+  switchScaleN->setMinimumWidth( switchScaleN->sizeHint().width() + 10 );
+  switchScaleN->setBackgroundRole( QPalette::Light );
+  switchScaleN->setAutoFillBackground( true );
 
-  scaleLayout->setColStretch(3, 1);
+  switchScale->setValue( __getScaleValue( sw ) );
+  switchScaleN->display( sw );
 
-  scaleLayout->addRowSpacing(0, 25);
-  scaleLayout->addRowSpacing(4, 5);
-  scaleLayout->addRowSpacing(5, 10);
-  scaleLayout->addRowSpacing(6, 25);
-  scaleLayout->addRowSpacing(16, 5);
-  scaleLayout->addRowSpacing(17, 10);
+  QLabel* wpLabelText = new QLabel( tr( "Draw waypoint labels" ) + ":" );
 
-  connect(defaultScale, SIGNAL(clicked()), SLOT(slotDefaultScale()));
-  connect(lLimit, SIGNAL(valueChanged(int)), SLOT(slotShowLowerLimit(int)));
-  connect(uLimit, SIGNAL(valueChanged(int)), SLOT(slotShowUpperLimit(int)));
-  connect(switchScale, SIGNAL(valueChanged(int)), SLOT(slotShowSwitchScale(int)));
-  connect(wpLabel, SIGNAL(valueChanged(int)), SLOT(slotShowWpLabel(int)));
-  connect(reduce1, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleA(int)));
-  connect(reduce2, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleB(int)));
-  connect(reduce3, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleC(int)));
+  wpLabel = new QSlider();
+  wpLabel->setMinimum( 2 );
+  wpLabel->setMaximum( 105 );
+  wpLabel->setPageStep( 1 );
+  wpLabel->setOrientation( Qt::Horizontal );
+  wpLabel->setSingleStep( 1 );
+  wpLabel->setMinimumHeight( wpLabel->sizeHint().height() + 5 );
+  wpLabel->setMaximumHeight( wpLabel->sizeHint().height() + 20 );
+
+  wpLabelN = new QLCDNumber( 5 );
+  wpLabelN->setMinimumWidth( wpLabelN->sizeHint().width() + 10 );
+  wpLabelN->setBackgroundRole( QPalette::Light );
+  wpLabelN->setAutoFillBackground( true );
+
+  wpLabel->setValue( __getScaleValue( wl ) );
+  wpLabelN->display( wl );
+
+  QLabel* reduce1Text = new QLabel( tr( "Threshold" ) + " #1:" );
+
+  reduce1 = new QSlider();
+  reduce1->setMinimum( 2 );
+  reduce1->setMaximum( 105 );
+  reduce1->setPageStep( 1 );
+  reduce1->setOrientation( Qt::Horizontal );
+  reduce1->setSingleStep( 1 );
+  reduce1->setMinimumHeight( reduce1->sizeHint().height() + 5 );
+  reduce1->setMaximumHeight( reduce1->sizeHint().height() + 20 );
+
+  reduce1N = new QLCDNumber( 5 );
+  reduce1N->setMinimumWidth( reduce1N->sizeHint().width() + 10 );
+  reduce1N->setBackgroundRole( QPalette::Light );
+  reduce1N->setAutoFillBackground( true );
+
+  reduce1->setValue( __getScaleValue( b1 ) );
+  reduce1N->display( b1 );
+
+  QLabel* reduce2Text = new QLabel( tr( "Threshold" ) + " #2:" );
+
+  reduce2 = new QSlider();
+  reduce2->setMinimum( 2 );
+  reduce2->setMaximum( 105 );
+  reduce2->setPageStep( 1 );
+  reduce2->setOrientation( Qt::Horizontal );
+  reduce2->setSingleStep( 1 );
+  reduce2->setMinimumHeight( reduce2->sizeHint().height() + 5 );
+  reduce2->setMaximumHeight( reduce2->sizeHint().height() + 20 );
+
+  reduce2N = new QLCDNumber( 5 );
+  reduce2N->setMinimumWidth( reduce2N->sizeHint().width() + 10 );
+  reduce2N->setBackgroundRole( QPalette::Light );
+  reduce2N->setAutoFillBackground( true );
+
+  reduce2->setValue( __getScaleValue( b2 ) );
+  reduce2N->display( b2 );
+
+  QLabel* reduce3Text = new QLabel( tr( "Threshold" ) + " #2:" );
+
+  reduce3 = new QSlider();
+  reduce3->setMinimum( 2 );
+  reduce3->setMaximum( 105 );
+  reduce3->setPageStep( 1 );
+  reduce3->setOrientation( Qt::Horizontal );
+  reduce3->setSingleStep( 1 );
+  reduce3->setMinimumHeight( reduce3->sizeHint().height() + 5 );
+  reduce3->setMaximumHeight( reduce3->sizeHint().height() + 20 );
+
+  reduce3N = new QLCDNumber( 5 );
+  reduce3N->setMinimumWidth( reduce3N->sizeHint().width() + 10 );
+  reduce3N->setBackgroundRole( QPalette::Light );
+  reduce3N->setAutoFillBackground( true );
+
+  reduce3->setValue( __getScaleValue( b3 ) );
+  reduce3N->display( b3 );
+
+  QGridLayout* scaleThresholdLayout = new QGridLayout();
+  scaleThresholdLayout->setSpacing( 10 );
+
+  int row = 0;
+  scaleThresholdLayout->addWidget( switchText, row, 0 );
+  scaleThresholdLayout->addWidget( switchScale, row, 1 );
+  scaleThresholdLayout->addWidget( switchScaleN, row, 2 );
+  row++;
+
+  scaleThresholdLayout->addWidget( wpLabelText, row, 0 );
+  scaleThresholdLayout->addWidget( wpLabel, row, 1 );
+  scaleThresholdLayout->addWidget( wpLabelN, row, 2 );
+  row++;
+
+  scaleThresholdLayout->addWidget( reduce1Text, row, 0 );
+  scaleThresholdLayout->addWidget( reduce1, row, 1 );
+  scaleThresholdLayout->addWidget( reduce1N, row, 2 );
+  row++;
+
+  scaleThresholdLayout->addWidget( reduce2Text, row, 0 );
+  scaleThresholdLayout->addWidget( reduce2, row, 1 );
+  scaleThresholdLayout->addWidget( reduce2N, row, 2 );
+  row++;
+
+  scaleThresholdLayout->addWidget( reduce3Text, row, 0 );
+  scaleThresholdLayout->addWidget( reduce3, row, 1 );
+  scaleThresholdLayout->addWidget( reduce3N, row, 2 );
+  row++;
+
+  scaleThresholdLayout->setColumnStretch( 1, 10 );
+  scaleThresholdGroup->setLayout( scaleThresholdLayout );
+
+  //----------------------------------------------------------------------------
+  QPushButton* defaultScale = new QPushButton( tr( "Default" ) );
+  defaultScale->setMaximumWidth( defaultScale->sizeHint().width() + 10 );
+  defaultScale->setMinimumHeight( defaultScale->sizeHint().height() + 2 );
+
+  //----------------------------------------------------------------------------
+  QVBoxLayout* scalePageLayout = new QVBoxLayout;
+  scalePageLayout->addWidget( scaleRangeGroup );
+  scalePageLayout->addWidget( scaleThresholdGroup );
+  scalePageLayout->addStretch( 10 );
+  scalePageLayout->addWidget( defaultScale, 0, Qt::AlignLeft );
+
+  scalePage->setLayout( scalePageLayout );
+
+  connect( defaultScale, SIGNAL(clicked()), SLOT(slotDefaultScale()) );
+  connect( lLimit, SIGNAL(valueChanged(int)), SLOT(slotShowLowerLimit(int)) );
+  connect( uLimit, SIGNAL(valueChanged(int)), SLOT(slotShowUpperLimit(int)) );
+  connect( switchScale, SIGNAL(valueChanged(int)), SLOT(slotShowSwitchScale(int)) );
+  connect( wpLabel, SIGNAL(valueChanged(int)), SLOT(slotShowWpLabel(int)) );
+  connect( reduce1, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleA(int)) );
+  connect( reduce2, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleB(int)) );
+  connect( reduce3, SIGNAL(valueChanged(int)), SLOT(slotShowReduceScaleC(int)) );
 }
 
 void KFLogConfig::__addPathTab()
@@ -895,7 +1045,7 @@ void KFLogConfig::__addPathTab()
   // minimal length of path input fields
   const int minPath = 350;
   //----------------------------------------------------------------------------
-  QGroupBox* igcGroup = new QGroupBox( tr("Flight Directory") + ":" );
+  QGroupBox* igcGroup = new QGroupBox( tr("Flight Directory") );
 
   igcPathE  = new QLineEdit();
   igcPathE->setMinimumWidth(minPath);
@@ -914,7 +1064,7 @@ void KFLogConfig::__addPathTab()
   igcGroup->setLayout( igcLayout );
 
   //----------------------------------------------------------------------------
-  QGroupBox* taskGroup = new QGroupBox( tr("Task Directory") + ":" );
+  QGroupBox* taskGroup = new QGroupBox( tr("Task Directory") );
 
   taskPathE = new QLineEdit();
   taskPathE->setMinimumWidth(minPath);
@@ -933,7 +1083,7 @@ void KFLogConfig::__addPathTab()
   taskGroup->setLayout( taskLayout );
 
   //----------------------------------------------------------------------------
-  QGroupBox* waypointGroup = new QGroupBox( tr("Waypoint Directory") + ":" );
+  QGroupBox* waypointGroup = new QGroupBox( tr("Waypoint Directory") );
 
   waypointPathE = new QLineEdit();
   waypointPathE->setMinimumWidth(minPath);
@@ -952,7 +1102,7 @@ void KFLogConfig::__addPathTab()
   waypointGroup->setLayout( waypointLayout );
 
   //----------------------------------------------------------------------------
-  QGroupBox* mapGroup = new QGroupBox( tr("Map Directory") + ":" );
+  QGroupBox* mapGroup = new QGroupBox( tr("Map Directory") );
 
   mapPathE = new QLineEdit();
   mapPathE->setMinimumWidth(minPath);
@@ -997,7 +1147,7 @@ void KFLogConfig::__addPathTab()
   connect(defaultPath, SIGNAL(clicked()), SLOT(slotDefaultPath()));
 }
 
-void KFLogConfig::__addIDTab()
+void KFLogConfig::__addPersonalTab()
 {
   QTreeWidgetItem* item = new QTreeWidgetItem;
   item->setText( 0, tr("Identity") );
@@ -1005,11 +1155,11 @@ void KFLogConfig::__addIDTab()
   item->setIcon( 0, _mainWindow->getPixmap("kde_identity_32.png") );
   setupTree->addTopLevelItem( item );
 
-  idPage = new QFrame(this);
-  idPage->setObjectName( "IdentityPage" );
-  idPage->setVisible( false );
+  personalPage = new QFrame(this);
+  personalPage->setObjectName( "IdentityPage" );
+  personalPage->setVisible( false );
 
-  configLayout->addWidget( idPage, 0, 1, 1, 2 );
+  configLayout->addWidget( personalPage, 0, 1, 1, 2 );
 
   //----------------------------------------------------------------------------
   const int minLen = 150;
@@ -1034,14 +1184,14 @@ void KFLogConfig::__addIDTab()
   pilotGroup->setLayout( pilotLayout );
 
   //----------------------------------------------------------------------------
-  QGroupBox* homeGroup = new QGroupBox( tr("Homesite") + ":" );
+  QGroupBox* homeGroup = new QGroupBox( tr("Homesite") );
 
   QFormLayout* homeLayout = new QFormLayout();
   homeLayout->setSpacing(10);
 
-  homeNameE = new QLineEdit(idPage, "homeNameE");
-  homeLatE  = new LatEdit(idPage, "homeLatE");
-  homeLonE  = new LongEdit(idPage, "homeLonE");
+  homeNameE = new QLineEdit(personalPage, "homeNameE");
+  homeLatE  = new LatEdit(personalPage, "homeLatE");
+  homeLonE  = new LongEdit(personalPage, "homeLonE");
 
   homeNameE->setMinimumWidth( minLen );
   homeLatE->setMinimumWidth( minLen );
@@ -1061,7 +1211,7 @@ void KFLogConfig::__addIDTab()
   idLayout->addWidget( homeGroup );
   idLayout->addStretch( 10 );
 
-  idPage->setLayout( idLayout );
+  personalPage->setLayout( idLayout );
 
   homeLatE->setText(WGSPoint::printPos(_settings.value("/MapData/Homesite Latitude", HOME_DEFAULT_LAT).toInt(), true));
   homeLonE->setText(WGSPoint::printPos(_settings.value("/MapData/Homesite Longitude", HOME_DEFAULT_LON).toInt(), false));
@@ -1106,7 +1256,7 @@ void KFLogConfig::__addAirfieldTab()
   configLayout->addWidget( airfieldPage, 0, 1, 1, 2 );
 
   //----------------------------------------------------------------------------
-  QGroupBox* welt2000Group = new QGroupBox( tr("Welt2000") + ":" );
+  QGroupBox* welt2000Group = new QGroupBox( tr("Welt2000") );
 
   // Check input with a validator. Country codes are consist of 2 letters and
   // are separated by space, comma or semicolon.
@@ -1116,21 +1266,29 @@ void KFLogConfig::__addAirfieldTab()
   filterWelt2000 = new QLineEdit();
   filterWelt2000->setMinimumWidth( 150 );
   filterWelt2000->setValidator( validator );
+  filterWelt2000->setToolTip( tr("Add countries to be read in as 2 letter code according to ISO 3166-1-alpha-2.") );
+
+  homeRadiusWelt2000 = new QSpinBox();
+  homeRadiusWelt2000->setRange( 0, 10000 );
+  homeRadiusWelt2000->setSingleStep( 10 );
+  homeRadiusWelt2000->setButtonSymbols( QSpinBox::PlusMinus );
+  homeRadiusWelt2000->setSuffix( " Km" );
+  homeRadiusWelt2000->setSpecialValueText(tr("Off"));
+  homeRadiusWelt2000->setToolTip( tr("Read in all objects within home site radius.") );
+
+  readOlWelt2000 = new QCheckBox( tr("Read Outlandings:") );
+  readOlWelt2000->setToolTip( tr("Activate checkbox, if outlandings should be read in.") );
 
   QFormLayout* weltLayout = new QFormLayout();
   weltLayout->setSpacing( 10 );
   weltLayout->addRow( tr( "Country Filter" ) + ":", filterWelt2000 );
-
-  homeRadiusWelt2000 = new QSpinBox();
-  homeRadiusWelt2000->setRange( 0, 10000 );
-  homeRadiusWelt2000->setLineStep( 10 );
-  homeRadiusWelt2000->setButtonSymbols( QSpinBox::PlusMinus );
-  homeRadiusWelt2000->setSuffix( " Km" );
-  homeRadiusWelt2000->setSpecialValueText(tr("Off"));
-
   weltLayout->addRow( tr( "Home Radius" )  + ":", homeRadiusWelt2000 );
 
-  welt2000Group->setLayout( weltLayout );
+  QVBoxLayout* weltGroupLayout = new QVBoxLayout;
+  weltGroupLayout->addLayout( weltLayout );
+  weltGroupLayout->addWidget( readOlWelt2000 );
+
+  welt2000Group->setLayout( weltGroupLayout );
 
   //----------------------------------------------------------------------------
   QVBoxLayout* afLayout = new QVBoxLayout;
@@ -1142,9 +1300,11 @@ void KFLogConfig::__addAirfieldTab()
 
   homeRadiusWelt2000Value = _settings.value( "/Welt2000/HomeRadius", 0 ).toInt();
   filterWelt2000Text      = _settings.value( "/Welt2000/CountryFilter", "" ).toString();
+  readOlWelt2000Value     = _settings.value( "/Welt2000/LoadOutlandings", true ).toBool();
 
   homeRadiusWelt2000->setValue( homeRadiusWelt2000Value );
   filterWelt2000->setText( filterWelt2000Text );
+  readOlWelt2000->setChecked( readOlWelt2000Value );
 }
 
 /** Add a tab for waypoint catalog configuration at sartup
@@ -1167,7 +1327,7 @@ void KFLogConfig::__addWaypointTab()
   configLayout->addWidget( waypointPage, 0, 1, 1, 2 );
 
   //----------------------------------------------------------------------------
-  QGroupBox* catGroup = new QGroupBox( tr("Default Catalog") + ":" );
+  QGroupBox* catGroup = new QGroupBox( tr("Default Catalog") );
 
   QVBoxLayout* catGroupLayout = new QVBoxLayout();
 
@@ -1257,52 +1417,26 @@ void KFLogConfig::slotSearchDefaultWaypoint()
     }
 }
 
-void KFLogConfig::slotSelectFlightTypeLeftTurnColor()
+void KFLogConfig::slotSelectFlightTypeColor( int buttonIdentifier )
 {
-  flightTypeLeftTurnColor = QColorDialog::getColor(flightTypeLeftTurnColor, this);
-  QPixmap buttonPixmap(82,14);
-  buttonPixmap.fill(flightTypeLeftTurnColor);
-  flightTypeLeftTurnColorButton->setIcon(buttonPixmap);
-}
+  qDebug() << "KFLogConfig::slotSelectFlightTypeColor: button=" << buttonIdentifier;
 
-void KFLogConfig::slotSelectFlightTypeRightTurnColor()
-{
-  flightTypeRightTurnColor = QColorDialog::getColor(flightTypeRightTurnColor, this);
-  QPixmap buttonPixmap(82,14);
-  buttonPixmap.fill(flightTypeRightTurnColor);
-  flightTypeRightTurnColorButton->setIcon(buttonPixmap);
-}
+  QPushButton* pressedButton;
+  QColor*      relatedColor;
 
-void KFLogConfig::slotSelectFlightTypeMixedTurnColor()
-{
-  flightTypeMixedTurnColor = QColorDialog::getColor(flightTypeMixedTurnColor, this);
-  QPixmap buttonPixmap(82,14);
-  buttonPixmap.fill(flightTypeMixedTurnColor);
-  flightTypeMixedTurnColorButton->setIcon(buttonPixmap);
-}
+  pressedButton = ftcButtonArray[buttonIdentifier];
+  relatedColor  = ftcColorArray[buttonIdentifier];
 
-void KFLogConfig::slotSelectFlightTypeStraightColor()
-{
-  flightTypeStraightColor = QColorDialog::getColor(flightTypeStraightColor, this);
-  QPixmap buttonPixmap(82,14);
-  buttonPixmap.fill(flightTypeStraightColor);
-  flightTypeStraightColorButton->setIcon(buttonPixmap);
-}
+  QColor newColor = QColorDialog::getColor( *relatedColor, this );
 
-void KFLogConfig::slotSelectFlightTypeSolidColor()
-{
-  flightTypeSolidColor = QColorDialog::getColor(flightTypeSolidColor, this);
-  QPixmap buttonPixmap(82,14);
-  buttonPixmap.fill(flightTypeSolidColor);
-  flightTypeSolidColorButton->setIcon(buttonPixmap);
-}
-
-void KFLogConfig::slotSelectFlightTypeEngineNoiseColor()
-{
-  flightTypeEngineNoiseColor = QColorDialog::getColor(flightTypeEngineNoiseColor, this);
-  QPixmap buttonPixmap(82,14);
-  buttonPixmap.fill(flightTypeEngineNoiseColor);
-  flightTypeEngineNoiseColorButton->setIcon(buttonPixmap);
+  if( newColor.isValid() )
+    {
+      *relatedColor = newColor;
+      QPixmap buttonPixmap( 82, 14 );
+      buttonPixmap.fill( newColor );
+      pressedButton->setIcon( buttonPixmap );
+      pressedButton->setIconSize( buttonPixmap.size() );
+    }
 }
 
 /** this is a temporary function and it is not needed in Qt 4 */
