@@ -22,12 +22,7 @@
 **
 ***********************************************************************/
 
-#include <cstdlib>
-#include <pwd.h>
-#include <unistd.h>
-
 #include <QtGui>
-#include <Qt3Support>
 
 #include "configdrawelement.h"
 #include "configprintelement.h"
@@ -58,7 +53,6 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
   setupTree = new QTreeWidget( this );
   setupTree->setRootIsDecorated( false );
   setupTree->setItemsExpandable( false );
-  //setupTree->setUniformRowHeights( true );
   setupTree->setSortingEnabled( true );
   setupTree->setSelectionMode( QAbstractItemView::SingleSelection );
   setupTree->setSelectionBehavior( QAbstractItemView::SelectRows );
@@ -204,9 +198,9 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/Scale/Border2", reduce2N->value() );
   _settings.setValue( "/Scale/Border3", reduce3N->value() );
 
-  _settings.setValue( "/MapData/Homesite", homeNameE->text() );
-  _settings.setValue( "/MapData/HomesiteLatitude", WGSPoint::degreeToNum( homeLatE->text() ) );
-  _settings.setValue( "/MapData/HomesiteLongitude", WGSPoint::degreeToNum( homeLonE->text() ) );
+  _settings.setValue( "/Homesite/Name", homeNameE->text() );
+  _settings.setValue( "/Homesite/Latitude", WGSPoint::degreeToNum( homeLatE->text() ) );
+  _settings.setValue( "/Homesite/Longitude", WGSPoint::degreeToNum( homeLonE->text() ) );
   _settings.setValue( "/MapData/ProjectionType", projectionSelect->currentIndex() );
 
   _settings.setValue( "/Welt2000/CountryFilter", filterWelt2000->text() );
@@ -422,6 +416,53 @@ void KFLogConfig::slotDefaultPath()
   mapPathE->setText( _globalMapContents->getMapRootDirectory() );
 }
 
+void KFLogConfig::slotDefaultFlightPathLines()
+{
+  altitudePenWidth->setValue( FlightPathLineWidth );
+  cyclingPenWidth->setValue( FlightPathLineWidth );
+  speedPenWidth->setValue( FlightPathLineWidth );
+  varioPenWidth->setValue( FlightPathLineWidth );
+  solidPenWidth->setValue( FlightPathLineWidth );
+  enginePenWidth->setValue( FlightPathLineWidth );
+}
+
+void KFLogConfig::slotDefaultFlightPathColors()
+{
+  for( int i=0; i < 6; i++ )
+    {
+      // Reset button color to default
+      QPixmap buttonPixmap( 82, 14 );
+      buttonPixmap.fill( ftcColorArrayDefault[i] );
+      (*ftcButtonArray[i])->setIcon( buttonPixmap );
+      (*ftcButtonArray[i])->setIconSize( buttonPixmap.size() );
+
+      *ftcColorArray[i] = ftcColorArrayDefault[i];
+    }
+}
+
+void KFLogConfig::slotSelectDrawElement( int index )
+{
+  int data = elementSelect->itemData( index ).toInt();
+
+  qDebug() << "KFLogConfig::slotSelectDrawElement: Index=" << index
+           << "Data=" << data;
+
+  if( data != KFLogConfig::Separator )
+    {
+      configDrawWidget->slotSelectElement( data );
+    }
+}
+
+void KFLogConfig::slotSelectPrintElement( int index )
+{
+  int data = elementSelect->itemData( index ).toInt();
+
+  if( data != KFLogConfig::Separator )
+    {
+      configPrintWidget->slotSelectElement( data );
+    }
+}
+
 void KFLogConfig::__addMapTab()
 {
   QTreeWidgetItem* item = new QTreeWidgetItem;
@@ -436,87 +477,98 @@ void KFLogConfig::__addMapTab()
 
   configLayout->addWidget( mapPage, 0, 1, 1, 2 );
 
-  Q3GroupBox* elementBox = new Q3GroupBox(mapPage, "elementBox");
-  elementBox->setTitle(tr("visible Map-Elements"));
+  //----------------------------------------------------------------------------
+  QGroupBox* elementGroupBox = new QGroupBox( tr("Visible Map Elements") );
 
-  elementSelect = new QComboBox(mapPage, "elementSelect");
+  elementSelect = new QComboBox;
 //  elementSelect->setMaximumWidth(300);
-  elementSelect->insertItem(tr("Road"), KFLogConfig::Road);
-  elementSelect->insertItem(tr("Highway"), KFLogConfig::Highway);
-  elementSelect->insertItem(tr("Railway"), KFLogConfig::Railway);
-  elementSelect->insertItem(tr("River / Lake"), KFLogConfig::River);
-  elementSelect->insertItem(tr("Canal"), KFLogConfig::Canal);
-  elementSelect->insertItem(tr("City"), KFLogConfig::City);
-  elementSelect->insertItem(tr("Airspace A"), KFLogConfig::AirA);
-  elementSelect->insertItem(tr("Airspace B"), KFLogConfig::AirB);
-  elementSelect->insertItem(tr("Airspace C"), KFLogConfig::AirC);
-  elementSelect->insertItem(tr("Airspace D"), KFLogConfig::AirD);
-  elementSelect->insertItem(tr("Airspace E (low)"), KFLogConfig::AirElow);
-  elementSelect->insertItem(tr("Airspace E (high)"), KFLogConfig::AirEhigh);
-  elementSelect->insertItem(tr("Airspace F"), KFLogConfig::AirF);
-  elementSelect->insertItem(tr("Control C"), KFLogConfig::ControlC);
-  elementSelect->insertItem(tr("Control D"), KFLogConfig::ControlD);
-  elementSelect->insertItem(tr("Danger"), KFLogConfig::Danger);
-  elementSelect->insertItem(tr("Low flight area"), KFLogConfig::LowFlight);
-  elementSelect->insertItem(tr("Restricted"), KFLogConfig::Restricted);
-  elementSelect->insertItem(tr("TMZ"), KFLogConfig::Tmz);
-  // Reihenfolge ???
-  elementSelect->insertItem(tr("Forest"), KFLogConfig::Forest);
-  elementSelect->insertItem(tr("Trail"), KFLogConfig::Trail);
-  elementSelect->insertItem(tr("double Railway"), KFLogConfig::Railway_D);
-  elementSelect->insertItem(tr("Aerial Cable"), KFLogConfig::Aerial_Cable);
-  elementSelect->insertItem(tr("temporarily River / Lake"), KFLogConfig::River_T);
-  elementSelect->insertItem(tr("Glacier"), KFLogConfig::Glacier);
-  elementSelect->insertItem(tr("Pack Ice"), KFLogConfig::PackIce);
-  elementSelect->insertItem(tr("FAI Area <500 km"), KFLogConfig::FAIAreaLow500);
-  elementSelect->insertItem(tr("FAI Area >500 km"), KFLogConfig::FAIAreaHigh500);
+  elementSelect->addItem( tr( "Airspace A" ), KFLogConfig::AirA );
+  elementSelect->addItem( tr( "Airspace B" ), KFLogConfig::AirB );
+  elementSelect->addItem( tr( "Airspace C" ), KFLogConfig::AirC );
+  elementSelect->addItem( tr( "Airspace D" ), KFLogConfig::AirD );
+  elementSelect->addItem( tr( "Airspace E (low)" ), KFLogConfig::AirElow );
+  elementSelect->addItem( tr( "Airspace E" ), KFLogConfig::AirE );
+  elementSelect->addItem( tr( "Airspace F" ), KFLogConfig::AirF );
+  elementSelect->addItem( tr( "Control C" ), KFLogConfig::ControlC );
+  elementSelect->addItem( tr( "Control D" ), KFLogConfig::ControlD );
+  elementSelect->addItem( tr( "Danger" ), KFLogConfig::Danger );
+  elementSelect->addItem( tr( "GliderSector" ), KFLogConfig::GliderSector );
+  elementSelect->addItem( tr( "Low Flight Area" ), KFLogConfig::LowFlight );
+  elementSelect->addItem( tr( "Prohibited" ), KFLogConfig::Prohibited );
+  elementSelect->addItem( tr( "Restricted" ), KFLogConfig::Restricted );
+  elementSelect->addItem( tr( "TMZ" ), KFLogConfig::Tmz );
+  elementSelect->addItem( tr( "WaveWindow" ), KFLogConfig::WaveWindow );
+  elementSelect->addItem( "-------------", KFLogConfig::Separator );
 
-  QPushButton* defaultElements = new QPushButton(tr("Default"), mapPage,
-      "defaultElements");
+  // sort order ?
+  elementSelect->addItem( tr( "Aerial Cable" ), KFLogConfig::Aerial_Cable );
+  elementSelect->addItem( tr( "Canal" ), KFLogConfig::Canal );
+  elementSelect->addItem( tr( "City" ), KFLogConfig::City );
+  elementSelect->addItem( tr( "Forest" ), KFLogConfig::Forest );
+  elementSelect->addItem( tr( "Highway" ), KFLogConfig::Highway );
+  elementSelect->addItem( tr( "Road" ), KFLogConfig::Road );
+  elementSelect->addItem( tr( "Railway" ), KFLogConfig::Railway );
+  elementSelect->addItem( tr( "Railway Double" ), KFLogConfig::Railway_D );
+  elementSelect->addItem( tr( "River / Lake" ), KFLogConfig::River );
+  elementSelect->addItem( tr( "Temporarily River / Lake" ), KFLogConfig::River_T );
+  elementSelect->addItem( tr( "Glacier" ), KFLogConfig::Glacier );
+  elementSelect->addItem( tr( "Pack Ice" ), KFLogConfig::PackIce );
+  elementSelect->addItem( "-------------", KFLogConfig::Separator );
+  elementSelect->addItem( tr( "FAI Area <500 km" ), KFLogConfig::FAIAreaLow500 );
+  elementSelect->addItem( tr( "FAI Area >500 km" ), KFLogConfig::FAIAreaHigh500 );
+  elementSelect->addItem( tr( "Trail" ), KFLogConfig::Trail );
+
+  configDrawWidget  = new ConfigDrawElement();
+  configPrintWidget = new ConfigPrintElement();
+
+  configDrawWidget->setObjectName( "configDrawWidget" );
+  configPrintWidget->setObjectName( "configPrintWidget" );
+
+  QTabWidget* tabView = new QTabWidget;
+  tabView->setObjectName( "tabView" );
+  tabView->addTab( configDrawWidget, tr("Display") );
+  tabView->addTab( configPrintWidget, tr("Print") );
+  tabView->setTabEnabled( 0, true );
+
+  QGridLayout* vbox = new QGridLayout;
+  vbox->setMargin( 10 );
+  vbox->addWidget( elementSelect, 0, 0 );
+
+  vbox->addWidget( tabView, 1, 0, 1, 2 );
+
+  vbox->setColumnStretch( 1, 10 );
+
+  elementGroupBox->setLayout( vbox );
+
+  QPushButton* defaultElements = new QPushButton( tr("Default") );
   defaultElements->setMaximumWidth(defaultElements->sizeHint().width() + 10);
   defaultElements->setMinimumHeight(defaultElements->sizeHint().height() + 2);
 
-  QTabWidget* tabView = new QTabWidget(mapPage);
-  QFrame* screenFrame = new QFrame(tabView);
-  ConfigDrawElement* drawConfig = new ConfigDrawElement(screenFrame);
+  QVBoxLayout* vboxAll = new QVBoxLayout();
+  vboxAll->addWidget( elementGroupBox );
+  vboxAll->addStretch( 10 );
+  vboxAll->addWidget( defaultElements, Qt::AlignLeft );
 
-  QFrame* printFrame = new QFrame(tabView);
-  ConfigPrintElement* printConfig = new ConfigPrintElement(printFrame);
+  mapPage->setLayout( vboxAll );
 
-  tabView->addTab(screenFrame, tr("Display"));
-  tabView->addTab(printFrame, tr("Print"));
+  connect( defaultElements, SIGNAL(clicked()),
+           configDrawWidget, SLOT(slotDefaultElements()) );
 
-  QGridLayout* elLayout = new QGridLayout(mapPage, 7, 5, 8, 1);
-  elLayout->addMultiCellWidget(elementBox, 0, 4, 0, 4);
-  elLayout->addMultiCellWidget(elementSelect, 1, 1, 1, 2, Qt::AlignLeft);
-  elLayout->addMultiCellWidget(tabView, 3, 3, 1, 3);
-  elLayout->addMultiCellWidget(defaultElements, 6, 6, 0, 1, Qt::AlignLeft);
+  connect( defaultElements, SIGNAL(clicked()),
+           configPrintWidget, SLOT(slotDefaultElements()));
 
-  elLayout->addRowSpacing(0, 20);
-  elLayout->addRowSpacing(2, 5);
-  elLayout->setRowStretch(3, 1);
-  elLayout->addRowSpacing(4, 5);
-  elLayout->addRowSpacing(5, 15);
+  connect( elementSelect, SIGNAL( currentIndexChanged(int)),
+           this, SLOT(slotSelectDrawElement(int)));
 
-  elLayout->addColSpacing(0, 10);
-  elLayout->setColStretch(0, 0);
-  elLayout->setColStretch(3, 1);
-  elLayout->addColSpacing(4, 10);
-  elLayout->setColStretch(4, 0);
+  connect( this, SIGNAL(configOk()), configDrawWidget, SLOT(slotOk()) );
 
-  connect(defaultElements, SIGNAL(clicked()), drawConfig,
-      SLOT(slotDefaultElements()));
-  connect(defaultElements, SIGNAL(clicked()), printConfig,
-      SLOT(slotDefaultElements()));
-  connect(elementSelect, SIGNAL(activated(int)), drawConfig,
-      SLOT(slotSelectElement(int)));
-  connect(this, SIGNAL(configOk()), drawConfig, SLOT(slotOk()));
-  connect(elementSelect, SIGNAL(activated(int)), printConfig,
-      SLOT(slotSelectElement(int)));
-  connect(this, SIGNAL(configOk()), printConfig, SLOT(slotOk()));
+  connect( elementSelect, SIGNAL( currentIndexChanged(int)),
+           this, SLOT(slotSelectPrintElement(int)));
 
-  drawConfig->slotSelectElement(0);
-  printConfig->slotSelectElement(0);
+  connect( this, SIGNAL(configOk()), configPrintWidget, SLOT(slotOk()) );
+
+  configDrawWidget->slotSelectElement( KFLogConfig::AirA );
+  configPrintWidget->slotSelectElement( KFLogConfig::AirA );
 }
 
 void KFLogConfig::__addFlightTab()
@@ -534,6 +586,39 @@ void KFLogConfig::__addFlightTab()
   configLayout->addWidget( flightPage, 0, 1, 1, 2 );
 
   //----------------------------------------------------------------------------
+  // initialize button array
+  ftcButtonArray[0] = &flightTypeLeftTurnColorButton;
+  ftcButtonArray[1] = &flightTypeRightTurnColorButton;
+  ftcButtonArray[2] = &flightTypeMixedTurnColorButton;
+  ftcButtonArray[3] = &flightTypeStraightColorButton;
+  ftcButtonArray[4] = &flightTypeSolidColorButton;
+  ftcButtonArray[5] = &flightTypeEngineNoiseColorButton;
+
+  // initialize related button default color array
+  ftcColorArrayDefault[0] = FlightTypeLeftTurnColor;
+  ftcColorArrayDefault[1] = FlightTypeRightTurnColor;
+  ftcColorArrayDefault[2] = FlightTypeMixedTurnColor;
+  ftcColorArrayDefault[3] = FlightTypeStraightColor;
+  ftcColorArrayDefault[4] = FlightTypeSolidColor;
+  ftcColorArrayDefault[5] = FlightTypeEngineNoiseColor;
+
+  // initialize related button color array
+  ftcColorArray[0] = &flightTypeLeftTurnColor;
+  ftcColorArray[1] = &flightTypeRightTurnColor;
+  ftcColorArray[2] = &flightTypeMixedTurnColor;
+  ftcColorArray[3] = &flightTypeStraightColor;
+  ftcColorArray[4] = &flightTypeSolidColor;
+  ftcColorArray[5] = &flightTypeEngineNoiseColor;
+
+  // Load colors
+  flightTypeLeftTurnColor    = _settings.value( "/FlightColor/LeftTurn", ftcColorArrayDefault[0].name() ).value<QColor>();
+  flightTypeRightTurnColor   = _settings.value( "/FlightColor/RightTurn", ftcColorArrayDefault[1].name() ).value<QColor>();
+  flightTypeMixedTurnColor   = _settings.value( "/FlightColor/MixedTurn", ftcColorArrayDefault[2].name() ).value<QColor>();
+  flightTypeStraightColor    = _settings.value( "/FlightColor/Straight", ftcColorArrayDefault[3].name() ).value<QColor>();
+  flightTypeSolidColor       = _settings.value( "/FlightColor/Solid", ftcColorArrayDefault[4].name() ).value<QColor>();
+  flightTypeEngineNoiseColor = _settings.value( "/FlightColor/EngineNoise", ftcColorArrayDefault[5].name() ).value<QColor>();
+
+  //----------------------------------------------------------------------------
   QGroupBox* flightPathLineGroup = new QGroupBox( tr("Flight Path Line Width") );
   flightPathLineGroup->setToolTip( tr("Set pen line width in pixel.") );
 
@@ -541,61 +626,74 @@ void KFLogConfig::__addFlightTab()
   altitudePenWidth->setRange( 1, 9 );
   altitudePenWidth->setSingleStep( 1 );
   altitudePenWidth->setButtonSymbols( QSpinBox::PlusMinus );
-  altitudePenWidth->setValue( _settings.value("/FlightPathLine/Altitude", 4).toInt() );
+  altitudePenWidth->setValue( _settings.value("/FlightPathLine/Altitude", FlightPathLineWidth).toInt() );
 
   cyclingPenWidth = new QSpinBox();
   cyclingPenWidth->setRange( 1, 9 );
   cyclingPenWidth->setSingleStep( 1 );
   cyclingPenWidth->setButtonSymbols( QSpinBox::PlusMinus );
-  cyclingPenWidth->setValue( _settings.value("/FlightPathLine/Cycling", 4).toInt() );
+  cyclingPenWidth->setValue( _settings.value("/FlightPathLine/Cycling", FlightPathLineWidth).toInt() );
 
   speedPenWidth = new QSpinBox();
   speedPenWidth->setRange( 1, 9 );
   speedPenWidth->setSingleStep( 1 );
   speedPenWidth->setButtonSymbols( QSpinBox::PlusMinus );
-  speedPenWidth->setValue( _settings.value("/FlightPathLine/Speed", 4).toInt() );
+  speedPenWidth->setValue( _settings.value("/FlightPathLine/Speed", FlightPathLineWidth).toInt() );
 
   varioPenWidth = new QSpinBox();
   varioPenWidth->setRange( 1, 9 );
   varioPenWidth->setSingleStep( 1 );
   varioPenWidth->setButtonSymbols( QSpinBox::PlusMinus );
-  varioPenWidth->setValue( _settings.value("/FlightPathLine/Vario", 4).toInt() );
+  varioPenWidth->setValue( _settings.value("/FlightPathLine/Vario", FlightPathLineWidth).toInt() );
 
   solidPenWidth = new QSpinBox();
   solidPenWidth->setRange( 1, 9 );
   solidPenWidth->setSingleStep( 1 );
   solidPenWidth->setButtonSymbols( QSpinBox::PlusMinus );
-  solidPenWidth->setValue( _settings.value("/FlightPathLine/Solid", 4).toInt() );
+  solidPenWidth->setValue( _settings.value("/FlightPathLine/Solid", FlightPathLineWidth).toInt() );
 
   enginePenWidth = new QSpinBox();
   enginePenWidth->setRange( 1, 9 );
   enginePenWidth->setSingleStep( 1 );
   enginePenWidth->setButtonSymbols( QSpinBox::PlusMinus );
-  enginePenWidth->setValue( _settings.value("/FlightPathLine/Engine", 4).toInt() );
+  enginePenWidth->setValue( _settings.value("/FlightPathLine/Engine", FlightPathLineWidth).toInt() );
+
+  QPushButton* defaultFpl = new QPushButton( tr( "Default" ) );
+  defaultFpl->setMaximumWidth( defaultFpl->sizeHint().width() + 10 );
+  defaultFpl->setMinimumHeight( defaultFpl->sizeHint().height() + 2 );
+
+  connect( defaultFpl, SIGNAL(clicked()), SLOT(slotDefaultFlightPathLines()) );
 
   QGridLayout* fplLayout = new QGridLayout();
   fplLayout->setSpacing(10);
   int row = 0;
 
-  fplLayout->addWidget( new QLabel( tr("Altitude") ), row , 0 );
+  fplLayout->addWidget( new QLabel( tr("Altitude") + ":" ), row , 0, Qt::AlignRight );
   fplLayout->addWidget( altitudePenWidth, row, 1 );
 
-  fplLayout->addWidget( new QLabel( tr("Cycling") ), row , 2 );
+  fplLayout->addWidget( new QLabel( tr("Cycling") + ":" ), row , 2, Qt::AlignRight );
   fplLayout->addWidget( cyclingPenWidth, row, 3 );
   row++;
 
-  fplLayout->addWidget( new QLabel( tr("Speed") ), row , 0 );
+  fplLayout->addWidget( new QLabel( tr("Speed") + ":" ), row , 0, Qt::AlignRight );
   fplLayout->addWidget( speedPenWidth, row, 1 );
 
-  fplLayout->addWidget( new QLabel( tr("Vario") ), row , 2 );
+  fplLayout->addWidget( new QLabel( tr("Vario") + ":" ), row , 2, Qt::AlignRight );
   fplLayout->addWidget( varioPenWidth, row, 3 );
   row++;
 
-  fplLayout->addWidget( new QLabel( tr("Solid") ), row , 0 );
+  fplLayout->addWidget( new QLabel( tr("Solid") + ":" ), row , 0, Qt::AlignRight );
   fplLayout->addWidget( solidPenWidth, row, 1 );
 
-  fplLayout->addWidget( new QLabel( tr("Engine") ), row , 2 );
+  fplLayout->addWidget( new QLabel( tr("Engine") + ":" ), row , 2, Qt::AlignRight );
   fplLayout->addWidget( enginePenWidth, row, 3 );
+  row++;
+
+  fplLayout->setRowMinimumHeight( row, 10 );
+  row++;
+
+  fplLayout->addWidget( defaultFpl, row, 0, Qt::AlignLeft );
+  row++;
 
   fplLayout->setColumnStretch( 4, 10 );
 
@@ -604,13 +702,13 @@ void KFLogConfig::__addFlightTab()
   //----------------------------------------------------------------------------
   QGroupBox* flightPathColorGroup = new QGroupBox( tr("Flight Path Colors") );
 
-  QFormLayout* fpCLayout = new QFormLayout();
+  QGridLayout *fpCLayout = new QGridLayout;
+
   fpCLayout->setSpacing(10);
 
   QPixmap buttonPixmap( 82, 14);
 
   //-----
-  flightTypeLeftTurnColor = _settings.value( "/FlightColor/LeftTurn", QColor(255,50,0).name() ).value<QColor>();
   buttonPixmap.fill(flightTypeLeftTurnColor);
   flightTypeLeftTurnColorButton = new QPushButton();
   flightTypeLeftTurnColorButton->setIcon( buttonPixmap );
@@ -618,10 +716,10 @@ void KFLogConfig::__addFlightTab()
   flightTypeLeftTurnColorButton->setFixedHeight(24);
   flightTypeLeftTurnColorButton->setFixedWidth(92);
 
-  fpCLayout->addRow( tr("Left turn") + ":", flightTypeLeftTurnColorButton );
+  fpCLayout->addWidget( new QLabel(tr("Left turn") + ":"), 0, 0, Qt::AlignRight );
+  fpCLayout->addWidget( flightTypeLeftTurnColorButton, 0, 1 );
 
   //-----
-  flightTypeRightTurnColor = _settings.value( "/FlightColor/RightTurn", QColor(50,255,0).name() ).value<QColor>();
   buttonPixmap.fill(flightTypeRightTurnColor);
   flightTypeRightTurnColorButton = new QPushButton();
   flightTypeRightTurnColorButton->setIcon(buttonPixmap);
@@ -629,10 +727,10 @@ void KFLogConfig::__addFlightTab()
   flightTypeRightTurnColorButton->setFixedHeight(24);
   flightTypeRightTurnColorButton->setFixedWidth(92);
 
-  fpCLayout->addRow( tr("Right turn") + ":", flightTypeRightTurnColorButton );
+  fpCLayout->addWidget( new QLabel(tr("Right turn") + ":"), 1, 0, Qt::AlignRight );
+  fpCLayout->addWidget( flightTypeRightTurnColorButton, 1, 1 );
 
   //-----
-  flightTypeMixedTurnColor = _settings.value( "/FlightColor/MixedTurn", QColor(200,0,200).name() ).value<QColor>();
   buttonPixmap.fill(flightTypeMixedTurnColor);
   flightTypeMixedTurnColorButton = new QPushButton();
   flightTypeMixedTurnColorButton->setIcon(buttonPixmap);
@@ -640,10 +738,10 @@ void KFLogConfig::__addFlightTab()
   flightTypeMixedTurnColorButton->setFixedHeight(24);
   flightTypeMixedTurnColorButton->setFixedWidth(92);
 
-  fpCLayout->addRow( tr("Mixed turn") + ":", flightTypeMixedTurnColorButton );
+  fpCLayout->addWidget( new QLabel(tr("Mixed turn") + ":"), 2, 0, Qt::AlignRight );
+  fpCLayout->addWidget( flightTypeMixedTurnColorButton, 2, 1 );
 
   //-----
-  flightTypeStraightColor = _settings.value( "/FlightColor/Straight", QColor(0,50,255).name() ).value<QColor>();
   buttonPixmap.fill(flightTypeStraightColor);
   flightTypeStraightColorButton = new QPushButton();
   flightTypeStraightColorButton->setIcon(buttonPixmap);
@@ -651,11 +749,10 @@ void KFLogConfig::__addFlightTab()
   flightTypeStraightColorButton->setFixedHeight(24);
   flightTypeStraightColorButton->setFixedWidth(92);
 
-  fpCLayout->addRow( tr("Straight") + ":", flightTypeStraightColorButton );
-  fpCLayout->addItem( new QSpacerItem( 20, 3) );
+  fpCLayout->addWidget( new QLabel(tr("Straight") + ":"), 0, 2, Qt::AlignRight );
+  fpCLayout->addWidget( flightTypeStraightColorButton, 0, 3 );
 
   //-----
-  flightTypeSolidColor = _settings.value( "/FlightColor/Solid", QColor(0,100,200).name() ).value<QColor>();
   buttonPixmap.fill(flightTypeSolidColor);
   flightTypeSolidColorButton = new QPushButton();
   flightTypeSolidColorButton->setIcon(buttonPixmap);
@@ -663,11 +760,10 @@ void KFLogConfig::__addFlightTab()
   flightTypeSolidColorButton->setFixedHeight(24);
   flightTypeSolidColorButton->setFixedWidth(92);
 
-  fpCLayout->addRow( tr("Solid") + ":", flightTypeSolidColorButton );
-  fpCLayout->addItem( new QSpacerItem( 20, 3) );
+  fpCLayout->addWidget( new QLabel(tr("Solid") + ":"), 1, 2, Qt::AlignRight );
+  fpCLayout->addWidget( flightTypeSolidColorButton, 1, 3 );
 
   //-----
-  flightTypeEngineNoiseColor = _settings.value( "/FlightColor/EngineNoise", QColor(255,255,255).name() ).value<QColor>();
   buttonPixmap.fill( flightTypeEngineNoiseColor );
   flightTypeEngineNoiseColorButton = new QPushButton();
   flightTypeEngineNoiseColorButton->setIcon( buttonPixmap );
@@ -675,7 +771,17 @@ void KFLogConfig::__addFlightTab()
   flightTypeEngineNoiseColorButton->setFixedHeight( 24 );
   flightTypeEngineNoiseColorButton->setFixedWidth( 92 );
 
-  fpCLayout->addRow( tr("Engine noise") + ":", flightTypeEngineNoiseColorButton );
+  fpCLayout->addWidget( new QLabel(tr("Engine noise") + ":"), 2, 2, Qt::AlignRight );
+  fpCLayout->addWidget( flightTypeEngineNoiseColorButton, 2, 3 );
+  fpCLayout->setRowMinimumHeight( 3, 10 );
+
+  QPushButton* defaultFpc = new QPushButton( tr( "Default" ) );
+  defaultFpc->setMaximumWidth( defaultFpc->sizeHint().width() + 10 );
+  defaultFpc->setMinimumHeight( defaultFpc->sizeHint().height() + 2 );
+
+  connect( defaultFpc, SIGNAL(clicked()), SLOT(slotDefaultFlightPathColors()) );
+
+  fpCLayout->addWidget( defaultFpc, 4, 0, Qt::AlignLeft );
 
   flightPathColorGroup->setLayout( fpCLayout );
 
@@ -689,22 +795,6 @@ void KFLogConfig::__addFlightTab()
 
   connect( fpcButtonGroup, SIGNAL(buttonClicked (int)),
            this, SLOT(slotSelectFlightTypeColor(int)) );
-
-  // initialize button array
-  ftcButtonArray[0] = flightTypeLeftTurnColorButton;
-  ftcButtonArray[1] = flightTypeRightTurnColorButton;
-  ftcButtonArray[2] = flightTypeMixedTurnColorButton;
-  ftcButtonArray[3] = flightTypeStraightColorButton;
-  ftcButtonArray[4] = flightTypeSolidColorButton;
-  ftcButtonArray[5] = flightTypeEngineNoiseColorButton;
-
-  // initialize related button color array
-  ftcColorArray[0] = &flightTypeLeftTurnColor;
-  ftcColorArray[1] = &flightTypeRightTurnColor;
-  ftcColorArray[2] = &flightTypeMixedTurnColor;
-  ftcColorArray[3] = &flightTypeStraightColor;
-  ftcColorArray[4] = &flightTypeSolidColor;
-  ftcColorArray[5] = &flightTypeEngineNoiseColor;
 
   //----------------------------------------------------------------------------
   QVBoxLayout* flightPagePageLayout = new QVBoxLayout;
@@ -1213,9 +1303,9 @@ void KFLogConfig::__addPersonalTab()
 
   personalPage->setLayout( idLayout );
 
-  homeLatE->setText(WGSPoint::printPos(_settings.value("/MapData/Homesite Latitude", HOME_DEFAULT_LAT).toInt(), true));
-  homeLonE->setText(WGSPoint::printPos(_settings.value("/MapData/Homesite Longitude", HOME_DEFAULT_LON).toInt(), false));
-  homeNameE->setText(_settings.value("/MapData/Homesite", "").toString());
+  homeLatE->setText(WGSPoint::printPos(_settings.value("/Homesite/Latitude", HOME_DEFAULT_LAT).toInt(), true));
+  homeLonE->setText(WGSPoint::printPos(_settings.value("/Homesite/Longitude", HOME_DEFAULT_LON).toInt(), false));
+  homeNameE->setText(_settings.value("/Homesite/Name", "").toString());
 
   preNameE->setText(_settings.value("/PersonalData/PreName", "").toString());
   surNameE->setText(_settings.value("/PersonalData/SurName", "").toString());
@@ -1419,12 +1509,10 @@ void KFLogConfig::slotSearchDefaultWaypoint()
 
 void KFLogConfig::slotSelectFlightTypeColor( int buttonIdentifier )
 {
-  qDebug() << "KFLogConfig::slotSelectFlightTypeColor: button=" << buttonIdentifier;
-
   QPushButton* pressedButton;
   QColor*      relatedColor;
 
-  pressedButton = ftcButtonArray[buttonIdentifier];
+  pressedButton = *ftcButtonArray[buttonIdentifier];
   relatedColor  = ftcColorArray[buttonIdentifier];
 
   QColor newColor = QColorDialog::getColor( *relatedColor, this );
@@ -1437,19 +1525,4 @@ void KFLogConfig::slotSelectFlightTypeColor( int buttonIdentifier )
       pressedButton->setIcon( buttonPixmap );
       pressedButton->setIconSize( buttonPixmap.size() );
     }
-}
-
-/** this is a temporary function and it is not needed in Qt 4 */
-QString KFLogConfig::__color2String(QColor color)
-{
-  QString colstr;
-  colstr.sprintf("%d;%d;%d", color.red(), color.green(), color.blue());
-  return colstr;
-}
-
-/** this is a temporary function and it is not needed in Qt 4 */
-QColor KFLogConfig::__string2Color(QString colstr)
-{
-  QColor color(colstr.section(";", 0, 0).toInt(), colstr.section(";", 1, 1).toInt(), colstr.section(";", 2, 2).toInt());
-  return color;
 }

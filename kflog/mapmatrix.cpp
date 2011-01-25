@@ -6,7 +6,8 @@
  **
  ************************************************************************
  **
- **   Copyright (c):  2001 by Heiner Lamprecht, 2007-2010 Axel Pauli
+ **   Copyright (c):  2001      by Heiner Lamprecht
+ **                   2010-2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -386,8 +387,8 @@ void MapMatrix::__moveMap(int dir)
     mapCenterLon = viewBorder.right();
     break;
   case Home:
-    mapCenterLat = _settings.value( "/MapData/HomesiteLatitude", HOME_DEFAULT_LAT ).toInt();
-    mapCenterLon = _settings.value( "/MapData/HomesiteLongitude", HOME_DEFAULT_LON ).toInt();
+    mapCenterLat = _settings.value( "/Homesite/Latitude", HOME_DEFAULT_LAT ).toInt();
+    mapCenterLon = _settings.value( "/Homesite/Longitude", HOME_DEFAULT_LON ).toInt();
     }
 
   createMatrix(matrixSize);
@@ -396,8 +397,8 @@ void MapMatrix::__moveMap(int dir)
 
 QPoint MapMatrix::getHomeCoord() const
 {
-  int homeLat = _settings.value( "/MapData/HomesiteLatitude", HOME_DEFAULT_LAT ).toInt();
-  int homeLon = _settings.value( "/MapData/HomesiteLongitude", HOME_DEFAULT_LON ).toInt();
+  int homeLat = _settings.value( "/Homesite/Latitude", HOME_DEFAULT_LAT ).toInt();
+  int homeLon = _settings.value( "/Homesite/Longitude", HOME_DEFAULT_LON ).toInt();
 
   return QPoint(homeLat, homeLon);
 }

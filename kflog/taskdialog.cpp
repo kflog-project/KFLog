@@ -448,10 +448,10 @@ void TaskDialog::setTask(FlightTask *orig)
     for (unsigned int i = wpList.count(); i < 4; i++)
       {
         wp = new Waypoint;
-        wp->origP.setLat( _settings.value("/MapData/HomesiteLatitude").toInt() );
-        wp->origP.setLon( _settings.value("/MapData/HomesiteLongitude").toInt());
+        wp->origP.setLat( _settings.value("/Homesite/Latitude").toInt() );
+        wp->origP.setLon( _settings.value("/Homesite/Longitude").toInt());
         wp->projP = _globalMapMatrix->wgsToMap(wp->origP);
-        wp->name = _settings.value("/MapData/Homesite").toString().left(6).upper();
+        wp->name = _settings.value("/Homesite/Name").toString().left(6).upper();
 
         wpList.append(wp);
       }

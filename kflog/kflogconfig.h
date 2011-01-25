@@ -49,6 +49,9 @@
 
 #include "guicontrols/coordedit.h"
 
+class ConfigDrawElement;
+class ConfigPrintElement;
+
 class KFLogConfig : public QDialog
 {
   Q_OBJECT
@@ -65,9 +68,10 @@ class KFLogConfig : public QDialog
 
     /** */
     enum ElementType { Road = 0, Highway, Railway, River, Canal, City,
-        AirA, AirB, AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
-        LowFlight, Restricted, Tmz, Forest, Trail, Railway_D, Aerial_Cable, River_T,
-        Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500 };
+        AirA, AirB, AirC, AirD, AirElow, AirE, AirF, ControlC, ControlD, Danger,
+        LowFlight, Restricted, Prohibited, Tmz, GliderSector, WaveWindow,
+        Forest, Trail, Railway_D, Aerial_Cable, River_T,
+        Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500, Separator };
 
     enum DefaultWaypointCatalog { Empty = 0, LastUsed, Specific };
 
@@ -127,6 +131,26 @@ class KFLogConfig : public QDialog
      */
     void slotSelectFlightTypeColor( int buttonIdentifier );
 
+    /**
+     * Reset all flight path line widths to their default values.
+     */
+    void slotDefaultFlightPathLines();
+
+    /**
+     * Resets all flight path colors to their default values.
+     */
+    void slotDefaultFlightPathColors();
+
+    /**
+     * Selects the indexed item in the ConfigDrawElement class.
+     */
+    void slotSelectDrawElement( int index );
+
+    /**
+     * Selects the indexed item in the ConfigPrintElement class.
+     */
+    void slotSelectPrintElement( int index );
+
   private:
     /** */
     void __addPersonalTab();
@@ -148,12 +172,6 @@ class KFLogConfig : public QDialog
     void __addAirfieldTab();
     /** */
     void __addWaypointTab();
-
-    /** this is a temporary function and it is not needed in Qt 4 */
-    QString __color2String(QColor);
-
-    /** this is a temporary function and it is not needed in Qt 4 */
-    QColor __string2Color(QString);
 
     QGridLayout *configLayout;
 
@@ -254,10 +272,16 @@ class KFLogConfig : public QDialog
     QColor flightTypeEngineNoiseColor;
 
     /** Button array */
-    QPushButton* ftcButtonArray[6];
+    QPushButton** ftcButtonArray[6];
 
     /** Color array of related buttons. */
     QColor* ftcColorArray[6];
+
+    /** Default color array of related buttons. */
+    QColor ftcColorArrayDefault[6];
+
+    ConfigDrawElement* configDrawWidget;
+    ConfigPrintElement* configPrintWidget;
 
     int cylinPar;
     int lambertV1;

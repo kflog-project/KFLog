@@ -777,9 +777,9 @@ void Waypoints::slotSetHome()
     Waypoint *w = currentWaypointCatalog->findWaypoint(item->text(colName));
 
     extern QSettings _settings;
-    _settings.setValue("/MapData/Homesite", w->name);
-    _settings.setValue("/MapData/HomesiteLatitude", w->origP.lat());
-    _settings.setValue("/MapData/HomesiteLongitude", w->origP.lon());
+    _settings.setValue("/Homesite/Name", w->name);
+    _settings.setValue("/Homesite/Latitude", w->origP.lat());
+    _settings.setValue("/Homesite/Longitude", w->origP.lon());
 
     // update airfield lists from Welt2000 if home site changes:
     extern MapContents  *_globalMapContents;
@@ -808,21 +808,21 @@ void Waypoints::getFilterData()
 
   switch (importFilterDlg->getCenterRef()) {
   case CENTER_POS:
-    currentWaypointCatalog->radiusLat = WGSPoint::degreeToNum(importFilterDlg->posLat->text());
+    currentWaypointCatalog->radiusLat  = WGSPoint::degreeToNum(importFilterDlg->posLat->text());
     currentWaypointCatalog->radiusLong = WGSPoint::degreeToNum(importFilterDlg->posLong->text());
     break;
   case CENTER_HOMESITE:
-    currentWaypointCatalog->radiusLat = _settings.readNumEntry("/MapData/HomesiteLatitude");
-    currentWaypointCatalog->radiusLong = _settings.readNumEntry("/MapData/HomesiteLongitude");
+    currentWaypointCatalog->radiusLat  = _settings.value("/Homesite/Latitude").toInt();
+    currentWaypointCatalog->radiusLong = _settings.value("/Homesite/Longitude").toInt();
     break;
   case CENTER_MAP:
     p = _globalMapMatrix->getMapCenter(false);
-    currentWaypointCatalog->radiusLat = p.lat();
+    currentWaypointCatalog->radiusLat  = p.lat();
     currentWaypointCatalog->radiusLong = p.lon();
     break;
   case CENTER_AIRPORT:
     p = importFilterDlg->getAirportRef();
-    currentWaypointCatalog->radiusLat = p.lat();
+    currentWaypointCatalog->radiusLat  = p.lat();
     currentWaypointCatalog->radiusLong = p.lon();
     break;
   }

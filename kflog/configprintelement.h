@@ -15,13 +15,12 @@
 **
 ***********************************************************************/
 
-#ifndef CONFIGPRINTELEMENT_H
-#define CONFIGPRINTELEMENT_H
+#ifndef CONFIG_PRINT_ELEMENT_H
+#define CONFIG_PRINT_ELEMENT_H
 
 #include <qcheckbox.h>
 #include <qcolor.h>
 #include <qcombobox.h>
-#include <qframe.h>
 #include <qlcdnumber.h>
 #include <qlineedit.h>
 #include <q3ptrlist.h>
@@ -29,24 +28,26 @@
 #include <qpushbutton.h>
 #include <qslider.h>
 #include <qspinbox.h>
+#include <QWidget>
 
 /**
  *
  * @author Heiner Lamprecht
  * @version $Id$
  */
-class ConfigPrintElement : public QFrame
+class ConfigPrintElement : public QWidget
 {
   Q_OBJECT
 
+  private:
+
+  Q_DISABLE_COPY ( ConfigPrintElement )
+
   public:
-    ConfigPrintElement(QWidget* parent);
-    ~ConfigPrintElement();
-    /** */
-//    enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
-//        AirA, AirB, AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
-//        LowFlight, Restricted, TMZ, Forest, Trail, Railway_D, Aerial_Cable, River_T,
-//        Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500};
+
+    ConfigPrintElement( QWidget* parent=0 );
+
+    virtual ~ConfigPrintElement();
 
   public slots:
     /** */

@@ -9,45 +9,52 @@
 **   Copyright (c):  2001 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
+/**
+ * \class ConfigDrawElement
+ *
+ * \author Heiner Lamprecht, Axel Pauli
+ *
+ * \short Configuration widget for map items.
+ *
+ * \date 2001-2011
+ *
+ * \version $Id$
+ */
+
 #ifndef CONFIG_DRAW_ELEMENT_H
 #define CONFIG_DRAW_ELEMENT_H
 
-#include <qcheckbox.h>
-#include <qcolor.h>
+#include <QCheckBox>
+#include <QColor>
 #include <qcombobox.h>
-#include <QFrame>
 #include <qlcdnumber.h>
-#include <qlineedit.h>
-#include <q3ptrlist.h>
-#include <qpen.h>
+#include <QLineEdit>
+#include <QList>
+#include <QPen>
 #include <qpushbutton.h>
 #include <qslider.h>
 #include <qspinbox.h>
+#include <QWidget>
 
-/**
- *
- * @author Heiner Lamprecht
- * @version $Id$
- */
-class ConfigDrawElement : public QFrame
+class ConfigDrawElement : public QWidget
 {
   Q_OBJECT
 
+  private:
+
+  Q_DISABLE_COPY ( ConfigDrawElement )
+
   public:
-    ConfigDrawElement(QWidget* parent);
-    ~ConfigDrawElement();
-    /** */
-//    enum ElementType {Road = 0, Highway, Railway, River, Canal, City,
-//        PPl_1, PPl_2, PPl_3, PPl_4, PPl_5,
-//        AirA, AirB, AirC, AirD, AirElow, AirEhigh, AirF, ControlC, ControlD, Danger,
-//        LowFlight, Restricted, TMZ, Forest, Trail, Railway_D, Aerial_Cable, River_T,
-//        Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500};
+
+    ConfigDrawElement( QWidget* parent=0 );
+
+    virtual ~ConfigDrawElement();
 
   public slots:
     /** */
@@ -72,6 +79,7 @@ class ConfigDrawElement : public QFrame
     void slotOk();
 
   private slots:
+
   void slotSelectBorder1Color();
   void slotSelectBorder2Color();
   void slotSelectBorder3Color();
@@ -82,29 +90,41 @@ class ConfigDrawElement : public QFrame
   void slotSelectBorder4BrushColor();
 
   private:
-    void __defaultPen(Q3PtrList<QPen> *penList, bool *b,
+
+    void __defaultPen(QList<QPen> &penList, bool *b,
         QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4,
         int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4);
-    void __defaultPenBrush(Q3PtrList<QPen> *penList, bool *b, Q3PtrList<QBrush> *brushList,
+
+    void __defaultPenBrush(QList<QPen> &penList, bool *b, QList<QBrush> &brushList,
         QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4,
         int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4,
         QColor defaultBrushColor1, QColor defaultBrushColor2, QColor defaultBrushColor3, QColor defaultBrushColor4,
         Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2, Qt::BrushStyle defaultBrushStyle3, Qt::BrushStyle defaultBrushStyle4);
+
     void __fillStyle(QComboBox *pen, QComboBox *brush);
-    void __readBorder(QString group, bool *b);
-    void __readPen(QString group, Q3PtrList<QPen> *penList,
+
+    void __readBorder(QString group, bool *array);
+
+    void __readPen(QString group, QList<QPen> &penList,
         QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4,
         int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4,
         Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4);
-    void __readBrush(QString group, Q3PtrList<QBrush> *brushList,
+
+    void __readBrush(QString group, QList<QBrush> &brushList,
         QColor defaultBrushColor1, QColor defaultBrushColor2, QColor defaultBrushColor3, QColor defaultBrushColor4,
         Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2, Qt::BrushStyle defaultBrushStyle3, Qt::BrushStyle defaultBrushStyle4);
-    void __saveBrush(Q3PtrList<QBrush> *brushList);
-    void __savePen(Q3PtrList<QPen> *penList, bool *b);
-    void __showBrush(Q3PtrList<QBrush> *brushList);
-    void __showPen(Q3PtrList<QPen> *a, bool *b);
-    void __writeBrush(QString group, Q3PtrList<QBrush> *brushList, Q3PtrList<QPen> *penList, bool *b);
-    void __writePen(QString group, Q3PtrList<QPen> *penList, bool *b);
+
+    void __saveBrush(QList<QBrush> &brushList);
+
+    void __savePen(QList<QPen> &penList, bool *b);
+
+    void __showBrush(QList<QBrush> &brushList);
+
+    void __showPen(QList<QPen> &a, bool *b);
+
+    void __writeBrush(QString group, QList<QBrush> &brushList, QList<QPen> &penList, bool *b);
+
+    void __writePen(QString group, QList<QPen> &penList, bool *b);
 
     QCheckBox* border1;
     QCheckBox* border2;
@@ -148,124 +168,101 @@ class ConfigDrawElement : public QFrame
     QComboBox* border3BrushStyle;
     QComboBox* border4BrushStyle;
 
-    Q3PtrList<QPen> airAPenList;
-    Q3PtrList<QBrush> airABrushList;
-    Q3PtrList<QPen> airBPenList;
-    Q3PtrList<QBrush> airBBrushList;
-    Q3PtrList<QPen> airCPenList;
-    Q3PtrList<QBrush> airCBrushList;
-    Q3PtrList<QPen> airDPenList;
-    Q3PtrList<QBrush> airDBrushList;
-    Q3PtrList<QPen> airElPenList;
-    Q3PtrList<QBrush> airElBrushList;
-    Q3PtrList<QPen> airEhPenList;
-    Q3PtrList<QBrush> airEhBrushList;
-    Q3PtrList<QPen> airFPenList;
-    Q3PtrList<QBrush> airFBrushList;
-    Q3PtrList<QPen> ctrCPenList;
-    Q3PtrList<QBrush> ctrCBrushList;
-    Q3PtrList<QPen> ctrDPenList;
-    Q3PtrList<QBrush> ctrDBrushList;
-    Q3PtrList<QPen> lowFPenList;
-    Q3PtrList<QBrush> lowFBrushList;
-    Q3PtrList<QPen> dangerPenList;
-    Q3PtrList<QBrush> dangerBrushList;
-    Q3PtrList<QPen> restrPenList;
-    Q3PtrList<QBrush> restrBrushList;
-    Q3PtrList<QPen> tmzPenList;
-    Q3PtrList<QBrush> tmzBrushList;
-/*
-    QPtrList<QPen> roadPenList;
-    QPtrList<QPen> railPenList;
-    QPtrList<QPen> riverPenList;
-    QPtrList<QPen> highwayPenList;
-    QPtrList<QPen> cityPenList;
-    QPtrList<QBrush> cityBrushList;
-    QPtrList<QPen> forestPenList;
-    QPtrList<QBrush> forestBrushList;
-*/
-    Q3PtrList<QPen> highwayPenList;
-    Q3PtrList<QPen> roadPenList;
-    Q3PtrList<QPen> trailPenList;
-    Q3PtrList<QPen> railPenList;
-    Q3PtrList<QPen> rail_dPenList;
-    Q3PtrList<QPen> aerialcablePenList;
-    Q3PtrList<QPen> riverPenList;
-    Q3PtrList<QPen> river_tPenList;
-    Q3PtrList<QBrush> river_tBrushList;
-    Q3PtrList<QPen> canalPenList;
-    Q3PtrList<QPen> cityPenList;
-    Q3PtrList<QBrush> cityBrushList;
-    Q3PtrList<QPen> ppl_1PenList;
-    Q3PtrList<QPen> ppl_2PenList;
-    Q3PtrList<QPen> ppl_3PenList;
-    Q3PtrList<QPen> ppl_4PenList;
-    Q3PtrList<QPen> ppl_5PenList;
+    QList<QPen> airAPenList;
+    QList<QBrush> airABrushList;
+    QList<QPen> airBPenList;
+    QList<QBrush> airBBrushList;
+    QList<QPen> airCPenList;
+    QList<QBrush> airCBrushList;
+    QList<QPen> airDPenList;
+    QList<QBrush> airDBrushList;
+    QList<QPen> airElPenList;
+    QList<QBrush> airElBrushList;
+    QList<QPen> airEhPenList;
+    QList<QBrush> airEhBrushList;
+    QList<QPen> airFPenList;
+    QList<QBrush> airFBrushList;
+    QList<QPen> ctrCPenList;
+    QList<QBrush> ctrCBrushList;
+    QList<QPen> ctrDPenList;
+    QList<QBrush> ctrDBrushList;
+    QList<QPen> lowFPenList;
+    QList<QBrush> lowFBrushList;
+    QList<QPen> dangerPenList;
+    QList<QBrush> dangerBrushList;
+    QList<QPen> restrPenList;
+    QList<QBrush> restrBrushList;
+    QList<QPen> tmzPenList;
+    QList<QBrush> tmzBrushList;
+    QList<QPen> highwayPenList;
+    QList<QPen> roadPenList;
+    QList<QPen> trailPenList;
+    QList<QPen> railPenList;
+    QList<QPen> rail_dPenList;
+    QList<QPen> aerialcablePenList;
+    QList<QPen> riverPenList;
+    QList<QPen> river_tPenList;
+    QList<QBrush> river_tBrushList;
+    QList<QPen> canalPenList;
+    QList<QPen> cityPenList;
+    QList<QBrush> cityBrushList;
+    QList<QPen> ppl_1PenList;
+    QList<QPen> ppl_2PenList;
+    QList<QPen> ppl_3PenList;
+    QList<QPen> ppl_4PenList;
+    QList<QPen> ppl_5PenList;
 
 
-    Q3PtrList<QPen> forestPenList;
-    Q3PtrList<QPen> glacierPenList;
-    Q3PtrList<QPen> packicePenList;
-    Q3PtrList<QBrush> forestBrushList;
-    Q3PtrList<QBrush> glacierBrushList;
-    Q3PtrList<QBrush> packiceBrushList;
+    QList<QPen> forestPenList;
+    QList<QPen> glacierPenList;
+    QList<QPen> packicePenList;
+    QList<QBrush> forestBrushList;
+    QList<QBrush> glacierBrushList;
+    QList<QBrush> packiceBrushList;
 
-    Q3PtrList<QPen> faiAreaLow500PenList;
-    Q3PtrList<QBrush> faiAreaLow500BrushList;
-    Q3PtrList<QPen> faiAreaHigh500PenList;
-    Q3PtrList<QBrush> faiAreaHigh500BrushList;
+    QList<QPen> faiAreaLow500PenList;
+    QList<QBrush> faiAreaLow500BrushList;
+    QList<QPen> faiAreaHigh500PenList;
+    QList<QBrush> faiAreaHigh500BrushList;
 
-    bool* airABorder;
-    bool* airBBorder;
-    bool* airCBorder;
-    bool* airDBorder;
-    bool* airElBorder;
-    bool* airEhBorder;
-    bool* airFBorder;
-    bool* ctrCBorder;
-    bool* ctrDBorder;
-    bool* dangerBorder;
-    bool* lowFBorder;
-    bool* restrBorder;
-    bool* tmzBorder;
-/*
-    bool* roadBorder;
-    bool* highwayBorder;
-    bool* railBorder;
-    bool* riverBorder;
-    bool* cityBorder;
-    bool* forestBorder;
-*/
-    bool* trailBorder;
-    bool* roadBorder;
-    bool* highwayBorder;
-    bool* railBorder;
-    bool* rail_dBorder;
-    bool* aerialcableBorder;
-    bool* riverBorder;
-    bool* river_tBorder;
-    bool* canalBorder;
-    bool* cityBorder;
-    bool* ppl_1Border;
-    bool* ppl_2Border;
-    bool* ppl_3Border;
-    bool* ppl_4Border;
-    bool* ppl_5Border;
+    bool airABorder[4];
+    bool airBBorder[4];
+    bool airCBorder[4];
+    bool airDBorder[4];
+    bool airElBorder[4];
+    bool airEhBorder[4];
+    bool airFBorder[4];
+    bool ctrCBorder[4];
+    bool ctrDBorder[4];
+    bool dangerBorder[4];
+    bool lowFBorder[4];
+    bool restrBorder[4];
+    bool tmzBorder[4];
+    bool trailBorder[4];
+    bool roadBorder[4];
+    bool highwayBorder[4];
+    bool railBorder[4];
+    bool rail_dBorder[4];
+    bool aerialcableBorder[4];
+    bool riverBorder[4];
+    bool river_tBorder[4];
+    bool canalBorder[4];
+    bool cityBorder[4];
+    bool ppl_1Border[4];
+    bool ppl_2Border[4];
+    bool ppl_3Border[4];
+    bool ppl_4Border[4];
+    bool ppl_5Border[4];
 
-    bool* forestBorder;
-    bool* glacierBorder;
-    bool* packiceBorder;
+    bool forestBorder[4];
+    bool glacierBorder[4];
+    bool packiceBorder[4];
 
-    bool* faiAreaLow500Border;
-    bool* faiAreaHigh500Border;
+    bool faiAreaLow500Border[4];
+    bool faiAreaHigh500Border[4];
 
     int oldElement;
     int currentElement;
-
-    /** this is a temporary function and it is not needed in Qt 4 */
-    QString __color2String(QColor);
-    /** this is a temporary function and it is not needed in Qt 4 */
-    QColor __string2Color(QString);
 };
 
 #endif

@@ -524,9 +524,9 @@ void MapConfig::slotReadConfig()
         FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4,
         PRINT_FAI_HIGH_500_BRUSH_STYLE_1, PRINT_FAI_HIGH_500_BRUSH_STYLE_2);
 
-    drawFType = _settings.readNumEntry("/Flight/DrawType", MapConfig::Speed);
+  drawFType = _settings.readNumEntry("/Flight/DrawType", MapConfig::Speed);
 
-    _drawWpLabelScale = _settings.readNumEntry("/Scale/WaypointLabel", WPLABEL);
+  _drawWpLabelScale = _settings.readNumEntry("/Scale/WaypointLabel", WPLABEL);
 
   emit configChanged();
 }
@@ -561,9 +561,9 @@ QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*
   //
   //   Farben als Legende ausgeben ???
   //
-  //   Farbwerte müssen noch eingestellt werden. Konfigurierbar???
   //   I would prefer colors adjusted for each flights histogram.
   //
+  // Colors are configurable in KFLogConfig.
 
   extern QSettings _settings;
 
@@ -590,41 +590,41 @@ QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*
           }
 
         color = getRainbowColor( 0.5 - (fP->dH / fP->dT) / vario_range );
-        width = _settings.value( "/FlightPathLine/Vario", 4 ).toInt();
+        width = _settings.value( "/FlightPathLine/Vario", FlightPathLineWidth ).toInt();
         break;
 
       case MapConfig::Speed:
         speed_max -= 15;
         color = getRainbowColor(1-(fP->dS/std::max(1, fP->dT)-15)/speed_max);
-        width = _settings.value("/FlightPathLine/Speed", 4).toInt();
+        width = _settings.value("/FlightPathLine/Speed", FlightPathLineWidth).toInt();
         break;
 
       case MapConfig::Altitude:
         color = getRainbowColor((float)fP->height/altitude_max);
-        width = _settings.value("/FlightPathLine/Altitude", 4).toInt();
+        width = _settings.value("/FlightPathLine/Altitude", FlightPathLineWidth).toInt();
         break;
 
       case MapConfig::Cycling:
 
-        width = _settings.value("/FlightPathLine/Cycling", 4).toInt();
+        width = _settings.value("/FlightPathLine/Cycling", FlightPathLineWidth).toInt();
 
         switch(fP->f_state)
           {
             case Flight::LeftTurn:
-              color = _settings.value( "/FlightColor/LeftTurn", QColor(255,50,0).name() ).value<QColor>();
+              color = _settings.value( "/FlightColor/LeftTurn", FlightTypeLeftTurnColor.name() ).value<QColor>();
               break;
 
             case Flight::RightTurn:
-              color = _settings.value( "/FlightColor/RightTurn", QColor(50,255,0).name() ).value<QColor>();
+              color = _settings.value( "/FlightColor/RightTurn", FlightTypeRightTurnColor.name() ).value<QColor>();
               break;
 
             case Flight::MixedTurn:
-              color = _settings.value( "/FlightColor/MixedTurn", QColor(200,0,200).name() ).value<QColor>();
+              color = _settings.value( "/FlightColor/MixedTurn", FlightTypeMixedTurnColor.name() ).value<QColor>();
               break;
 
             case Flight::Straight:
             default:
-              color = _settings.value( "/FlightColor/Straight", QColor(0,50,255).name() ).value<QColor>();
+              color = _settings.value( "/FlightColor/Straight", FlightTypeStraightColor.name() ).value<QColor>();
               break;
           }
         break;
@@ -632,18 +632,18 @@ QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*
       case MapConfig::Solid:
       default:
 
-        width = _settings.value("/FlightPathLine/Solid", 4).toInt();
-        color = _settings.value( "/FlightColor/Solid", QColor(0,100,200).name() ).value<QColor>();
+        width = _settings.value("/FlightPathLine/Solid", FlightPathLineWidth).toInt();
+        color = _settings.value( "/FlightColor/Solid", FlightTypeSolidColor.name() ).value<QColor>();
         break;
     }
 
   // Simple approach to see "engine was running"
   if( fP->engineNoise > 350 )
     {
-      width = _settings.value("/FlightPathLine/Engine", 4).toInt();
+      width = _settings.value("/FlightPathLine/Engine", FlightPathLineWidth).toInt();
       //  Put a white (or configured color) strip there in every case
       color = _settings.value( "/FlightColor/EngineNoise",
-                               QColor( 255, 255, 255 ).name() ).value<QColor>();
+                               FlightTypeEngineNoiseColor.name() ).value<QColor>();
     }
 
 

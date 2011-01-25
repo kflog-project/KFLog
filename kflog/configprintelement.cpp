@@ -26,8 +26,8 @@
 extern MainWindow *_mainWindow;
 extern QSettings _settings;
 
-ConfigPrintElement::ConfigPrintElement(QWidget* parent) :
-  QFrame(parent),
+ConfigPrintElement::ConfigPrintElement( QWidget* parent ) :
+  QWidget(parent),
   oldElement(-1)
 {
   airABorder = new bool[2];
@@ -290,35 +290,35 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent) :
         PRINT_FAI_HIGH_500_BRUSH_COLOR_1, PRINT_FAI_HIGH_500_BRUSH_COLOR_2,
         PRINT_FAI_HIGH_500_BRUSH_STYLE_1, PRINT_FAI_HIGH_500_BRUSH_STYLE_2);
 
-  border1 = new QCheckBox(tr("1:500.000"), parent);
-  border2 = new QCheckBox(tr("scale-limit"), parent);
+  border1 = new QCheckBox(tr("1:500.000"), this);
+  border2 = new QCheckBox(tr("scale-limit"), this);
 
-  border1Button = new QPushButton(parent);
+  border1Button = new QPushButton(this);
   border1Button-> setPixmap(_mainWindow->getPixmap("kde_down.png"));
   border1Button-> setFixedWidth(30);
   border1Button-> setFixedHeight(30);
 
-  Q3GridLayout* elLayout = new Q3GridLayout(parent, 10, 15, 5, 1);
-  elLayout-> addWidget(new QLabel(tr("draw up to"), parent), 1, 1);
-  elLayout-> addMultiCellWidget(new QLabel(tr("Pen"), parent), 1, 1, 3, 7);
-  elLayout-> addMultiCellWidget(new QLabel(tr("Brush"), parent), 1, 1, 9, 11);
+  Q3GridLayout* elLayout = new Q3GridLayout(this, 10, 15, 5, 1);
+  elLayout-> addWidget(new QLabel(tr("draw up to"), this), 1, 1);
+  elLayout-> addMultiCellWidget(new QLabel(tr("Pen"), this), 1, 1, 3, 7);
+  elLayout-> addMultiCellWidget(new QLabel(tr("Brush"), this), 1, 1, 9, 11);
   elLayout-> addWidget(border1, 3, 1);
   elLayout-> addWidget(border1Button, 3, 13);
   elLayout-> addWidget(border2, 5, 1);
 
-  border1ColorButton = new QPushButton(parent);
+  border1ColorButton = new QPushButton(this);
   border1ColorButton->setFixedHeight(24);
   border1ColorButton->setFixedWidth(55);
   connect(border1ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1Color()));
-  border1Pen = new QSpinBox(1, 9, 1, parent);
+  border1Pen = new QSpinBox(1, 9, 1, this);
   border1Pen-> setMinimumWidth(35);
-  border1PenStyle = new QComboBox(parent);
+  border1PenStyle = new QComboBox(this);
   border1PenStyle-> setMinimumWidth(35);
-  border1BrushColorButton = new QPushButton(parent);
+  border1BrushColorButton = new QPushButton(this);
   border1BrushColorButton->setFixedHeight(24);
   border1BrushColorButton->setFixedWidth(55);
   connect(border1BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1BrushColor()));
-  border1BrushStyle = new QComboBox(parent);
+  border1BrushStyle = new QComboBox(this);
   border1BrushStyle-> setMinimumWidth(35);
   __fillStyle(border1PenStyle, border1BrushStyle);
   elLayout->addWidget(border1ColorButton, 3, 3);
@@ -327,19 +327,19 @@ ConfigPrintElement::ConfigPrintElement(QWidget* parent) :
   elLayout->addWidget(border1BrushColorButton, 3, 9);
   elLayout->addWidget(border1BrushStyle, 3, 11);
 
-  border2ColorButton = new QPushButton(parent);
+  border2ColorButton = new QPushButton(this);
   border2ColorButton->setFixedHeight(24);
   border2ColorButton->setFixedWidth(55);
   connect(border2ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2Color()));
-  border2Pen = new QSpinBox(1, 9, 1, parent);
+  border2Pen = new QSpinBox(1, 9, 1, this);
   border2Pen-> setMinimumWidth(35);
-  border2PenStyle = new QComboBox(parent);
+  border2PenStyle = new QComboBox(this);
   border2PenStyle-> setMinimumWidth(35);
-  border2BrushColorButton = new QPushButton(parent);
+  border2BrushColorButton = new QPushButton(this);
   border2BrushColorButton->setFixedHeight(24);
   border2BrushColorButton->setFixedWidth(55);
   connect(border2BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2BrushColor()));
-  border2BrushStyle = new QComboBox(parent);
+  border2BrushStyle = new QComboBox(this);
   border2BrushStyle-> setMinimumWidth(35);
   __fillStyle(border2PenStyle, border2BrushStyle);
   elLayout-> addWidget(border2ColorButton, 5, 3);
@@ -730,7 +730,7 @@ void ConfigPrintElement::slotSelectElement(int elementID)
         __savePen(&airElPenList, airElBorder);
         __saveBrush(&airElBrushList);
         break;
-      case KFLogConfig::AirEhigh:
+      case KFLogConfig::AirE:
         __savePen(&airEhPenList, airEhBorder);
         __saveBrush(&airEhBrushList);
         break;
@@ -840,7 +840,7 @@ void ConfigPrintElement::slotSelectElement(int elementID)
         __showPen(&airElPenList, airElBorder);
         __showBrush(&airElBrushList);
         break;
-      case KFLogConfig::AirEhigh:
+      case KFLogConfig::AirE:
         __showPen(&airEhPenList, airEhBorder);
         __showBrush(&airEhBrushList);
         break;
@@ -921,7 +921,7 @@ void ConfigPrintElement::slotToggleFirst(bool toggle)
       case KFLogConfig::AirC:
       case KFLogConfig::AirD:
       case KFLogConfig::AirElow:
-      case KFLogConfig::AirEhigh:
+      case KFLogConfig::AirE:
       case KFLogConfig::AirF:
       case KFLogConfig::ControlC:
       case KFLogConfig::ControlD:
@@ -974,7 +974,7 @@ void ConfigPrintElement::slotToggleSecond(bool toggle)
       case KFLogConfig::AirC:
       case KFLogConfig::AirD:
       case KFLogConfig::AirElow:
-      case KFLogConfig::AirEhigh:
+      case KFLogConfig::AirE:
       case KFLogConfig::AirF:
       case KFLogConfig::ControlC:
       case KFLogConfig::ControlD:

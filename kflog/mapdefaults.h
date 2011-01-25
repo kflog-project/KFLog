@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -95,7 +96,19 @@
 #define COLOR_LEVEL_8500 QColor(145, 145, 255)
 #define COLOR_LEVEL_8750 QColor(142, 142, 255)
 
-// Default-Values for map-element:
+
+// Default value for flight path line width
+#define FlightPathLineWidth 4
+
+// Default values for flight type colors
+#define FlightTypeLeftTurnColor    QColor(255,50,0)
+#define FlightTypeRightTurnColor   QColor(50,255,0)
+#define FlightTypeMixedTurnColor   QColor(200,0,200)
+#define FlightTypeStraightColor    QColor(0,50,255)
+#define FlightTypeSolidColor       QColor(0,100,200)
+#define FlightTypeEngineNoiseColor QColor(255,255,255)
+
+// Default values for map element:
 //
 // [Trail]
 #define TRAIL_COLOR_1  QColor(255,100,100)
