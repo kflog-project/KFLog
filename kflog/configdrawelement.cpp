@@ -17,7 +17,6 @@
 ***********************************************************************/
 
 #include <QtGui>
-#include <Qt3Support>
 
 #include "configdrawelement.h"
 #include "kflogconfig.h"
@@ -117,109 +116,142 @@ ConfigDrawElement::ConfigDrawElement( QWidget* parent ) :
         PACK_ICE_BRUSH_STYLE_2, PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4);
   __readBorder("Pack Ice", packiceBorder);
 
-  __readPen("Airspace A", airAPenList, AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
+  __readPen(AS_A, airAPenList, AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
         AIRA_PEN_1, AIRA_PEN_2, AIRA_PEN_3, AIRA_PEN_4,
         AIRA_PEN_STYLE_1, AIRA_PEN_STYLE_2, AIRA_PEN_STYLE_3, AIRA_PEN_STYLE_4);
-  __readBrush("Airspace A", airABrushList, AIRA_BRUSH_COLOR_1, AIRA_BRUSH_COLOR_2,
+  __readBrush(AS_A, airABrushList, AIRA_BRUSH_COLOR_1, AIRA_BRUSH_COLOR_2,
         AIRA_BRUSH_COLOR_3, AIRA_BRUSH_COLOR_4, AIRA_BRUSH_STYLE_1,
         AIRA_BRUSH_STYLE_2, AIRA_BRUSH_STYLE_3, AIRA_BRUSH_STYLE_4);
-  __readBorder("Airspace A", airABorder);
+  __readBorder(AS_A, airABorder);
+  __readAsOpacity(AS_A, airAOpacityList);
 
-  __readPen("Airspace B", airBPenList, AIRB_COLOR_1, AIRB_COLOR_2, AIRB_COLOR_3, AIRB_COLOR_4,
+  __readPen(AS_B, airBPenList, AIRB_COLOR_1, AIRB_COLOR_2, AIRB_COLOR_3, AIRB_COLOR_4,
         AIRB_PEN_1, AIRB_PEN_2, AIRB_PEN_3, AIRB_PEN_4,
         AIRB_PEN_STYLE_1, AIRB_PEN_STYLE_2, AIRB_PEN_STYLE_3, AIRB_PEN_STYLE_4);
-  __readBrush("Airspace B", airBBrushList, AIRB_BRUSH_COLOR_1, AIRB_BRUSH_COLOR_2,
+  __readBrush(AS_B, airBBrushList, AIRB_BRUSH_COLOR_1, AIRB_BRUSH_COLOR_2,
         AIRB_BRUSH_COLOR_3, AIRB_BRUSH_COLOR_4, AIRB_BRUSH_STYLE_1,
         AIRB_BRUSH_STYLE_2, AIRB_BRUSH_STYLE_3, AIRB_BRUSH_STYLE_4);
-  __readBorder("Airspace B", airBBorder);
+  __readBorder(AS_B, airBBorder);
+  __readAsOpacity(AS_B, airBOpacityList);
 
-  __readPen("Airspace C", airCPenList, AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
+  __readPen(AS_C, airCPenList, AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
         AIRC_PEN_1, AIRC_PEN_2, AIRC_PEN_3, AIRC_PEN_4,
         AIRC_PEN_STYLE_1, AIRC_PEN_STYLE_2, AIRC_PEN_STYLE_3, AIRC_PEN_STYLE_4);
-  __readBrush("Airspace C", airCBrushList, AIRC_BRUSH_COLOR_1, AIRC_BRUSH_COLOR_2,
+  __readBrush(AS_C, airCBrushList, AIRC_BRUSH_COLOR_1, AIRC_BRUSH_COLOR_2,
         AIRC_BRUSH_COLOR_3, AIRC_BRUSH_COLOR_4, AIRC_BRUSH_STYLE_1,
         AIRC_BRUSH_STYLE_2, AIRC_BRUSH_STYLE_3, AIRC_BRUSH_STYLE_4);
-  __readBorder("Airspace C", airCBorder);
+  __readBorder(AS_C, airCBorder);
+  __readAsOpacity(AS_C, airCOpacityList);
 
-  __readPen("Airspace D", airDPenList, AIRD_COLOR_1, AIRD_COLOR_2, AIRD_COLOR_3, AIRD_COLOR_4,
+  __readPen(AS_D, airDPenList, AIRD_COLOR_1, AIRD_COLOR_2, AIRD_COLOR_3, AIRD_COLOR_4,
         AIRD_PEN_1, AIRD_PEN_2, AIRD_PEN_3, AIRD_PEN_4,
         AIRD_PEN_STYLE_1, AIRD_PEN_STYLE_2, AIRD_PEN_STYLE_3, AIRD_PEN_STYLE_4);
-  __readBrush("Airspace D", airDBrushList, AIRD_BRUSH_COLOR_1, AIRD_BRUSH_COLOR_2,
+  __readBrush(AS_D, airDBrushList, AIRD_BRUSH_COLOR_1, AIRD_BRUSH_COLOR_2,
         AIRD_BRUSH_COLOR_3, AIRD_BRUSH_COLOR_4, AIRD_BRUSH_STYLE_1,
         AIRD_BRUSH_STYLE_2, AIRD_BRUSH_STYLE_3, AIRD_BRUSH_STYLE_4);
-  __readBorder("Airspace D", airDBorder);
+  __readBorder(AS_D, airDBorder);
+  __readAsOpacity(AS_D, airDOpacityList);
 
-  __readPen("Airspace E low", airElPenList, AIREL_COLOR_1, AIREL_COLOR_2, AIREL_COLOR_3,
+  __readPen(AS_EL, airElPenList, AIREL_COLOR_1, AIREL_COLOR_2, AIREL_COLOR_3,
         AIREL_COLOR_4, AIREL_PEN_1, AIREL_PEN_2, AIREL_PEN_3, AIREL_PEN_4,
         AIREL_PEN_STYLE_1, AIREL_PEN_STYLE_2, AIREL_PEN_STYLE_3, AIREL_PEN_STYLE_4);
-  __readBrush("Airspace E low", airElBrushList, AIREL_BRUSH_COLOR_1, AIREL_BRUSH_COLOR_2,
+  __readBrush(AS_EL, airElBrushList, AIREL_BRUSH_COLOR_1, AIREL_BRUSH_COLOR_2,
         AIREL_BRUSH_COLOR_3, AIREL_BRUSH_COLOR_4, AIREL_BRUSH_STYLE_1,
         AIREL_BRUSH_STYLE_2, AIREL_BRUSH_STYLE_3, AIREL_BRUSH_STYLE_4);
-  __readBorder("Airspace E low", airElBorder);
+  __readBorder(AS_EL, airElBorder);
+  __readAsOpacity(AS_EL, airElOpacityList);
 
-  __readPen("Airspace E high", airEhPenList, AIREH_COLOR_1, AIREH_COLOR_2, AIREH_COLOR_3,
+  __readPen(AS_E, airEhPenList, AIREH_COLOR_1, AIREH_COLOR_2, AIREH_COLOR_3,
         AIREH_COLOR_4, AIREH_PEN_1, AIREH_PEN_2, AIREH_PEN_3, AIREH_PEN_4,
         AIREH_PEN_STYLE_1, AIREH_PEN_STYLE_2, AIREH_PEN_STYLE_3, AIREH_PEN_STYLE_4);
-  __readBrush("Airspace E high", airEhBrushList, AIREH_BRUSH_COLOR_1, AIREH_BRUSH_COLOR_2,
+
+  __readBrush(AS_E, airEhBrushList, AIREH_BRUSH_COLOR_1, AIREH_BRUSH_COLOR_2,
         AIREH_BRUSH_COLOR_3, AIREH_BRUSH_COLOR_4, AIREH_BRUSH_STYLE_1,
         AIREH_BRUSH_STYLE_2, AIREH_BRUSH_STYLE_3, AIREH_BRUSH_STYLE_4);
-  __readBorder("Airspace E high", airEhBorder);
+  __readBorder(AS_E, airEhBorder);
+  __readAsOpacity(AS_E, airEhOpacityList);
 
-  __readPen("Airspace F", airFPenList, AIRF_COLOR_1, AIRF_COLOR_2, AIRF_COLOR_3,
+  __readPen(AS_F, airFPenList, AIRF_COLOR_1, AIRF_COLOR_2, AIRF_COLOR_3,
         AIRF_COLOR_4, AIRF_PEN_1, AIRF_PEN_2, AIRF_PEN_3, AIRF_PEN_4,
         AIRF_PEN_STYLE_1, AIRF_PEN_STYLE_2, AIRF_PEN_STYLE_3, AIRF_PEN_STYLE_4);
-  __readBrush("Airspace F", airFBrushList, AIRF_BRUSH_COLOR_1, AIRF_BRUSH_COLOR_2,
+  __readBrush(AS_F, airFBrushList, AIRF_BRUSH_COLOR_1, AIRF_BRUSH_COLOR_2,
         AIRF_BRUSH_COLOR_3, AIRF_BRUSH_COLOR_4, AIRF_BRUSH_STYLE_1,
         AIRF_BRUSH_STYLE_2, AIRF_BRUSH_STYLE_3, AIRF_BRUSH_STYLE_4);
-  __readBorder("Airspace F", airFBorder);
+  __readBorder(AS_F, airFBorder);
+  __readAsOpacity(AS_F, airFOpacityList);
 
-  __readPen("Control C", ctrCPenList, CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
+  __readPen(AS_CTR_C, ctrCPenList, CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
         CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
         CTRC_PEN_STYLE_1, CTRC_PEN_STYLE_2, CTRC_PEN_STYLE_3, CTRC_PEN_STYLE_4);
-  __readBrush("Control C", ctrCBrushList, CTRC_BRUSH_COLOR_1, CTRC_BRUSH_COLOR_2,
+  __readBrush(AS_CTR_C, ctrCBrushList, CTRC_BRUSH_COLOR_1, CTRC_BRUSH_COLOR_2,
         CTRC_BRUSH_COLOR_3, CTRC_BRUSH_COLOR_4, CTRC_BRUSH_STYLE_1,
         CTRC_BRUSH_STYLE_2, CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4);
-  __readBorder("Control C", ctrCBorder);
+  __readBorder(AS_CTR_C, ctrCBorder);
+  __readAsOpacity(AS_CTR_C, ctrCOpacityList);
 
-  __readPen("Control D", ctrDPenList, CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
+  __readPen(AS_CTR_D, ctrDPenList, CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
         CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4,
         CTRD_PEN_STYLE_1, CTRD_PEN_STYLE_2, CTRD_PEN_STYLE_3, CTRD_PEN_STYLE_4);
-  __readBrush("Control D", ctrDBrushList, CTRD_BRUSH_COLOR_1, CTRD_BRUSH_COLOR_2,
+  __readBrush(AS_CTR_D, ctrDBrushList, CTRD_BRUSH_COLOR_1, CTRD_BRUSH_COLOR_2,
         CTRD_BRUSH_COLOR_3, CTRD_BRUSH_COLOR_4, CTRD_BRUSH_STYLE_1,
         CTRD_BRUSH_STYLE_2, CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4);
-  __readBorder("Control D", ctrDBorder);
+  __readBorder(AS_CTR_D, ctrDBorder);
+  __readAsOpacity(AS_CTR_D, ctrDOpacityList);
 
-  __readPen("Danger", dangerPenList, DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
+  __readPen(AS_DANGER, dangerPenList, DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
         DNG_PEN_1, DNG_PEN_2, DNG_PEN_3, DNG_PEN_4,
         DNG_PEN_STYLE_1, DNG_PEN_STYLE_2, DNG_PEN_STYLE_3, DNG_PEN_STYLE_4);
-  __readBrush("Danger", dangerBrushList, DNG_BRUSH_COLOR_1, DNG_BRUSH_COLOR_2,
+  __readBrush(AS_DANGER, dangerBrushList, DNG_BRUSH_COLOR_1, DNG_BRUSH_COLOR_2,
         DNG_BRUSH_COLOR_3, DNG_BRUSH_COLOR_4, DNG_BRUSH_STYLE_1,
         DNG_BRUSH_STYLE_2, DNG_BRUSH_STYLE_3, DNG_BRUSH_STYLE_4);
-  __readBorder("Danger", dangerBorder);
+  __readBorder(AS_DANGER, dangerBorder);
+  __readAsOpacity(AS_DANGER, dangerOpacityList);
 
-  __readPen("Low Flight", lowFPenList, LOWF_COLOR_1, LOWF_COLOR_2, LOWF_COLOR_3, LOWF_COLOR_4,
+  __readPen(AS_LF, lowFPenList, LOWF_COLOR_1, LOWF_COLOR_2, LOWF_COLOR_3, LOWF_COLOR_4,
         LOWF_PEN_1, LOWF_PEN_2, LOWF_PEN_3, LOWF_PEN_4,
         LOWF_PEN_STYLE_1, LOWF_PEN_STYLE_2, LOWF_PEN_STYLE_3, LOWF_PEN_STYLE_4);
-  __readBrush("Low Flight", lowFBrushList, LOWF_BRUSH_COLOR_1, LOWF_BRUSH_COLOR_2,
+  __readBrush(AS_LF, lowFBrushList, LOWF_BRUSH_COLOR_1, LOWF_BRUSH_COLOR_2,
         LOWF_BRUSH_COLOR_3, LOWF_BRUSH_COLOR_4, LOWF_BRUSH_STYLE_1,
         LOWF_BRUSH_STYLE_2, LOWF_BRUSH_STYLE_3, LOWF_BRUSH_STYLE_4);
-  __readBorder("Low Flight", lowFBorder);
+  __readBorder(AS_LF, lowFBorder);
+  __readAsOpacity(AS_LF, lowFOpacityList);
 
-  __readPen("Restricted Area", restrPenList, RES_COLOR_1, RES_COLOR_2, RES_COLOR_3, RES_COLOR_4,
+  __readPen(AS_RESTRICTED, restrPenList, RES_COLOR_1, RES_COLOR_2, RES_COLOR_3, RES_COLOR_4,
         RES_PEN_1, RES_PEN_2, RES_PEN_3, RES_PEN_4,
         RES_PEN_STYLE_1, RES_PEN_STYLE_2, RES_PEN_STYLE_3, RES_PEN_STYLE_4);
-  __readBrush("Restricted Area", restrBrushList, RES_BRUSH_COLOR_1, RES_BRUSH_COLOR_2,
+  __readBrush(AS_RESTRICTED, restrBrushList, RES_BRUSH_COLOR_1, RES_BRUSH_COLOR_2,
         RES_BRUSH_COLOR_3, RES_BRUSH_COLOR_4, RES_BRUSH_STYLE_1,
         RES_BRUSH_STYLE_2, RES_BRUSH_STYLE_3, RES_BRUSH_STYLE_4);
-  __readBorder("Restricted Area", restrBorder);
+  __readBorder(AS_RESTRICTED, restrBorder);
+  __readAsOpacity(AS_RESTRICTED, restrOpacityList);
 
-  __readPen("TMZ", tmzPenList, TMZ_COLOR_1, TMZ_COLOR_2, TMZ_COLOR_3, TMZ_COLOR_4,
+  __readPen(AS_TMZ, tmzPenList, TMZ_COLOR_1, TMZ_COLOR_2, TMZ_COLOR_3, TMZ_COLOR_4,
         TMZ_PEN_1, TMZ_PEN_2, TMZ_PEN_3, TMZ_PEN_4,
         TMZ_PEN_STYLE_1, TMZ_PEN_STYLE_2, TMZ_PEN_STYLE_3, TMZ_PEN_STYLE_4);
-  __readBrush("TMZ", tmzBrushList, TMZ_BRUSH_COLOR_1, TMZ_BRUSH_COLOR_2,
+  __readBrush(AS_TMZ, tmzBrushList, TMZ_BRUSH_COLOR_1, TMZ_BRUSH_COLOR_2,
         TMZ_BRUSH_COLOR_3, TMZ_BRUSH_COLOR_4, TMZ_BRUSH_STYLE_1,
         TMZ_BRUSH_STYLE_2, TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4);
-  __readBorder("TMZ", tmzBorder);
+  __readBorder(AS_TMZ, tmzBorder);
+  __readAsOpacity(AS_TMZ, tmzOpacityList);
+
+  __readPen(AS_GS, gsPenList, GLIDER_SECTOR_COLOR_1, GLIDER_SECTOR_COLOR_2, GLIDER_SECTOR_COLOR_3, GLIDER_SECTOR_COLOR_4,
+        GLIDER_SECTOR_PEN_1, GLIDER_SECTOR_PEN_2, GLIDER_SECTOR_PEN_3, GLIDER_SECTOR_PEN_4,
+        GLIDER_SECTOR_PEN_STYLE_1, GLIDER_SECTOR_PEN_STYLE_2, GLIDER_SECTOR_PEN_STYLE_3, GLIDER_SECTOR_PEN_STYLE_4);
+  __readBrush(AS_GS, gsBrushList, GLIDER_SECTOR_BRUSH_COLOR_1, GLIDER_SECTOR_BRUSH_COLOR_2,
+        GLIDER_SECTOR_BRUSH_COLOR_3, GLIDER_SECTOR_BRUSH_COLOR_4, GLIDER_SECTOR_BRUSH_STYLE_1,
+        GLIDER_SECTOR_BRUSH_STYLE_2, GLIDER_SECTOR_BRUSH_STYLE_3, GLIDER_SECTOR_BRUSH_STYLE_4);
+  __readBorder(AS_GS, gsBorder);
+  __readAsOpacity(AS_GS, gsOpacityList);
+
+  __readPen(AS_WW, wwPenList, WAVE_WINDOW_COLOR_1, WAVE_WINDOW_COLOR_2, WAVE_WINDOW_COLOR_3, WAVE_WINDOW_COLOR_4,
+        WAVE_WINDOW_PEN_1, WAVE_WINDOW_PEN_2, WAVE_WINDOW_PEN_3, WAVE_WINDOW_PEN_4,
+        WAVE_WINDOW_PEN_STYLE_1, WAVE_WINDOW_PEN_STYLE_2, WAVE_WINDOW_PEN_STYLE_3, WAVE_WINDOW_PEN_STYLE_4);
+  __readBrush(AS_WW, wwBrushList, WAVE_WINDOW_BRUSH_COLOR_1, WAVE_WINDOW_BRUSH_COLOR_2,
+        WAVE_WINDOW_BRUSH_COLOR_3, WAVE_WINDOW_BRUSH_COLOR_4, WAVE_WINDOW_BRUSH_STYLE_1,
+        WAVE_WINDOW_BRUSH_STYLE_2, WAVE_WINDOW_BRUSH_STYLE_3, WAVE_WINDOW_BRUSH_STYLE_4);
+  __readBorder(AS_WW, wwBorder);
+  __readAsOpacity(AS_WW, wwOpacityList);
+
 
   __readPen("FAIAreaLow500", faiAreaLow500PenList, FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
         FAI_LOW_500_PEN_1, FAI_LOW_500_PEN_2, FAI_LOW_500_PEN_3, FAI_LOW_500_PEN_4,
@@ -237,168 +269,228 @@ ConfigDrawElement::ConfigDrawElement( QWidget* parent ) :
         FAI_HIGH_500_BRUSH_STYLE_2, FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4);
   __readBorder("FAIAreaHigh500", faiAreaHigh500Border);
 
-  border1 = new QCheckBox(tr("Threshold #1"), this);
-  border2 = new QCheckBox(tr("Threshold #2"), this);
-  border3 = new QCheckBox(tr("Threshold #3"), this);
-  border4 = new QCheckBox(tr("Scale limit"), this);
+  __createBrushStyleIcons();
 
-  border1Button = new QPushButton(this);
-  border1Button->setPixmap(_mainWindow->getPixmap("kde_down.png"));
-  border1Button->setFixedWidth(30);
-  border1Button->setFixedHeight(30);
-
-  border2Button = new QPushButton(this);
-  border2Button->setPixmap(_mainWindow->getPixmap("kde_down.png"));
-  border2Button->setFixedWidth(30);
-  border2Button->setFixedHeight(30);
-
-  border3Button = new QPushButton(this);
-  border3Button->setPixmap(_mainWindow->getPixmap("kde_down.png"));
-  border3Button->setFixedWidth(30);
-  border3Button->setFixedHeight(30);
-
-  QGridLayout* elLayout = new QGridLayout( this );
-  elLayout->setMargin( 10 );
-  elLayout->setSpacing( 5 );
-
-  elLayout->addWidget( new QLabel(tr("Draw up to"), this), 0, 0 );
-  elLayout->addWidget( new QLabel(tr("Pen"), this), 0, 1, 1, 3 );
-  elLayout->addWidget( new QLabel(tr("Brush"), this), 0, 4, 1, 3 );
-
-  elLayout->addWidget(border1, 1, 0);
-  elLayout->addWidget(border1Button, 1, 6);
-  elLayout->addWidget(border2, 2, 0);
-  elLayout->addWidget(border2Button, 2, 6);
-  elLayout->addWidget(border3, 3, 0);
-  elLayout->addWidget(border3Button, 3, 6);
-  elLayout->addWidget(border4, 4, 0);
-
-  border1ColorButton = new QPushButton(this);
-  border1ColorButton->setFixedHeight(24);
-  border1ColorButton->setFixedWidth(55);
-  connect(border1ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1Color()));
-
-  border1Pen = new QSpinBox( 0, 9, 1, this );
-  border1Pen->setMinimumWidth( 35 );
-  border1Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
-
-  border1PenStyle = new QComboBox(this);
-  border1PenStyle->setMinimumWidth(60);
-  border1PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-
-  border1BrushColorButton = new QPushButton(this);
-  border1BrushColorButton->setFixedHeight(24);
-  border1BrushColorButton->setFixedWidth(55);
-  connect(border1BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1BrushColor()));
-
-  border1BrushStyle = new QComboBox(this);
-  border1BrushStyle->setMinimumWidth(60);
-  border1BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-  __fillStyle(border1PenStyle, border1BrushStyle);
-
-  elLayout->addWidget(border1ColorButton, 1, 1);
-  elLayout->addWidget(border1Pen, 1, 2);
-  elLayout->addWidget(border1PenStyle, 1, 3);
-  elLayout->addWidget(border1BrushColorButton, 1, 4);
-  elLayout->addWidget(border1BrushStyle, 1, 5);
-
-  border2ColorButton = new QPushButton(this);
-  border2ColorButton->setFixedHeight(24);
-  border2ColorButton->setFixedWidth(55);
-  connect(border2ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2Color()));
-
-  border2Pen = new QSpinBox(0, 9, 1, this);
-  border2Pen->setMinimumWidth(35);
-  border2Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
-
-  border2PenStyle = new QComboBox(this);
-  border2PenStyle->setMinimumWidth(35);
-  border2PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-
-  border2BrushColorButton = new QPushButton(this);
-  border2BrushColorButton->setFixedHeight(24);
-  border2BrushColorButton->setFixedWidth(55);
-  connect(border2BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2BrushColor()));
-
-  border2BrushStyle = new QComboBox(this);
-  border2BrushStyle->setMinimumWidth(35);
-  border2BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-  __fillStyle(border2PenStyle, border2BrushStyle);
-
-  elLayout->addWidget(border2ColorButton, 2, 1);
-  elLayout->addWidget(border2Pen, 2, 2);
-  elLayout->addWidget(border2PenStyle, 2, 3);
-  elLayout->addWidget(border2BrushColorButton, 2, 4);
-  elLayout->addWidget(border2BrushStyle, 2, 5);
-
-  border3ColorButton = new QPushButton(this);
-  border3ColorButton->setFixedHeight(24);
-  border3ColorButton->setFixedWidth(55);
-  connect(border3ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder3Color()));
-
-  border3Pen = new QSpinBox(0, 9, 1, this);
-  border3Pen->setMinimumWidth(35);
-  border3Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
-
-  border3PenStyle = new QComboBox(this);
-  border3PenStyle->setMinimumWidth(35);
-  border3PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-
-  border3BrushColorButton = new QPushButton(this);
-  border3BrushColorButton->setFixedHeight(24);
-  border3BrushColorButton->setFixedWidth(55);
-  connect(border3BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder3BrushColor()));
-
-  border3BrushStyle = new QComboBox(this);
-  border3BrushStyle->setMinimumWidth(35);
-  border3BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-  __fillStyle(border3PenStyle, border3BrushStyle);
-
-  elLayout->addWidget(border3ColorButton, 3, 1);
-  elLayout->addWidget(border3Pen, 3, 2);
-  elLayout->addWidget(border3PenStyle, 3, 3);
-  elLayout->addWidget(border3BrushColorButton, 3, 4);
-  elLayout->addWidget(border3BrushStyle, 3, 5);
-
-  border4ColorButton = new QPushButton(this);
-  border4ColorButton->setFixedHeight(24);
-  border4ColorButton->setFixedWidth(55);
-  connect(border4ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder4Color()));
-
-  border4Pen = new QSpinBox(0, 9, 1, this);
-  border4Pen->setMinimumWidth(35);
-  border4Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
-
-  border4PenStyle = new QComboBox(this);
-  border4PenStyle->setMinimumWidth(35);
-  border4PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-
-  border4BrushColorButton = new QPushButton(this);
-  border4BrushColorButton->setFixedHeight(24);
-  border4BrushColorButton->setFixedWidth(55);
-  connect(border4BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder4BrushColor()));
-
-  border4BrushStyle = new QComboBox(this);
-  border4BrushStyle->setMinimumWidth(35);
-  border4BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-  __fillStyle(border4PenStyle, border4BrushStyle);
-
-  elLayout->addWidget(border4ColorButton, 4, 1);
-  elLayout->addWidget(border4Pen, 4, 2);
-  elLayout->addWidget(border4PenStyle, 4, 3);
-  elLayout->addWidget(border4BrushColorButton, 4, 4);
-  elLayout->addWidget(border4BrushStyle, 4, 5);
-
-  elLayout->setColStretch( 7, 10 );
+  border1 = new QCheckBox( tr( "Threshold #1" ) );
+  border2 = new QCheckBox( tr( "Threshold #2" ) );
+  border3 = new QCheckBox( tr( "Threshold #3" ) );
+  border4 = new QCheckBox( tr( "Scale limit" ) );
 
   connect(border1, SIGNAL(toggled(bool)), SLOT(slotToggleFirst(bool)));
   connect(border2, SIGNAL(toggled(bool)), SLOT(slotToggleSecond(bool)));
   connect(border3, SIGNAL(toggled(bool)), SLOT(slotToggleThird(bool)));
   connect(border4, SIGNAL(toggled(bool)), SLOT(slotToggleForth(bool)));
 
+  QGridLayout* drawLayout = new QGridLayout;
+  drawLayout->setMargin( 10 );
+  drawLayout->setSpacing( 5 );
+
+  drawLayout->addWidget( border1, 0, 0 );
+  drawLayout->addWidget( border2, 1, 0 );
+  drawLayout->addWidget( border3, 2, 0 );
+  drawLayout->addWidget( border4, 3, 0 );
+  drawLayout->setColStretch( 1, 10 );
+
+  QGroupBox* drawGroup = new QGroupBox( tr( "Draw up to" ) );
+  drawGroup->setLayout( drawLayout );
+
+  //----------------------------------------------------------------------------
+  border1ColorButton = new QPushButton(this);
+  border1ColorButton->setFixedHeight(24);
+  border1ColorButton->setFixedWidth(55);
+  connect(border1ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1Color()));
+
+  border2ColorButton = new QPushButton(this);
+  border2ColorButton->setFixedHeight(24);
+  border2ColorButton->setFixedWidth(55);
+  connect(border2ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2Color()));
+
+  border3ColorButton = new QPushButton(this);
+  border3ColorButton->setFixedHeight(24);
+  border3ColorButton->setFixedWidth(55);
+  connect(border3ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder3Color()));
+
+  border4ColorButton = new QPushButton(this);
+  border4ColorButton->setFixedHeight(24);
+  border4ColorButton->setFixedWidth(55);
+  connect(border4ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder4Color()));
+
+  border1Pen = new QSpinBox();
+  border1Pen->setRange( 1, 9 );
+  border1Pen->setMinimumWidth( 35 );
+  border1Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+
+  border2Pen = new QSpinBox();
+  border2Pen->setRange( 1, 9 );
+  border2Pen->setMinimumWidth( 35 );
+  border2Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+
+  border3Pen = new QSpinBox();
+  border3Pen->setRange( 1, 9 );
+  border3Pen->setMinimumWidth( 35 );
+  border3Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+
+  border4Pen = new QSpinBox();
+  border3Pen->setRange( 1, 9 );
+  border4Pen->setMinimumWidth( 35 );
+  border4Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+
+  border1PenStyle = new QComboBox( this );
+  border1PenStyle->setMinimumWidth( 60 );
+  border1PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+
+  border2PenStyle = new QComboBox( this );
+  border2PenStyle->setMinimumWidth( 35 );
+  border2PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+
+  border3PenStyle = new QComboBox( this );
+  border3PenStyle->setMinimumWidth( 35 );
+  border3PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+
+  border4PenStyle = new QComboBox( this );
+  border4PenStyle->setMinimumWidth( 35 );
+  border4PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+
+  QGridLayout* penLayout = new QGridLayout;
+  penLayout->setMargin( 10 );
+  penLayout->setSpacing( 5 );
+
+  penLayout->addWidget(border1ColorButton, 0, 0);
+  penLayout->addWidget(border2ColorButton, 1, 0);
+  penLayout->addWidget(border3ColorButton, 2, 0);
+  penLayout->addWidget(border4ColorButton, 3, 0);
+  penLayout->addWidget(border1Pen, 0, 1);
+  penLayout->addWidget(border2Pen, 1, 1);
+  penLayout->addWidget(border3Pen, 2, 1);
+  penLayout->addWidget(border4Pen, 3, 1);
+  penLayout->addWidget(border1PenStyle, 0, 2);
+  penLayout->addWidget(border2PenStyle, 1, 2);
+  penLayout->addWidget(border3PenStyle, 2, 2);
+  penLayout->addWidget(border4PenStyle, 3, 2);
+  penLayout->setColStretch( 4, 10 );
+
+  QGroupBox* penGroup = new QGroupBox( tr("Pen") );
+  penGroup->setLayout( penLayout );
+
+  //----------------------------------------------------------------------------
+  border1BrushColorButton = new QPushButton(this);
+  border1BrushColorButton->setFixedHeight(24);
+  border1BrushColorButton->setFixedWidth(55);
+  connect(border1BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1BrushColor()));
+
+  border2BrushColorButton = new QPushButton(this);
+  border2BrushColorButton->setFixedHeight(24);
+  border2BrushColorButton->setFixedWidth(55);
+  connect(border2BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2BrushColor()));
+
+  border3BrushColorButton = new QPushButton(this);
+  border3BrushColorButton->setFixedHeight(24);
+  border3BrushColorButton->setFixedWidth(55);
+  connect(border3BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder3BrushColor()));
+
+  border4BrushColorButton = new QPushButton(this);
+  border4BrushColorButton->setFixedHeight(24);
+  border4BrushColorButton->setFixedWidth(55);
+  connect(border4BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder4BrushColor()));
+
+  border1BrushStyle = new QComboBox(this);
+  border1BrushStyle->setMinimumWidth(60);
+  border1BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+  __fillStyle(border1PenStyle, border1BrushStyle);
+
+  border2BrushStyle = new QComboBox(this);
+  border2BrushStyle->setMinimumWidth(35);
+  border2BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+
+  __fillStyle(border2PenStyle, border2BrushStyle);
+
+  border3BrushStyle = new QComboBox(this);
+  border3BrushStyle->setMinimumWidth(35);
+  border3BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+  __fillStyle(border3PenStyle, border3BrushStyle);
+
+  border4BrushStyle = new QComboBox(this);
+  border4BrushStyle->setMinimumWidth(35);
+  border4BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+  __fillStyle(border4PenStyle, border4BrushStyle);
+
+  QSpinBox** oSpinArray[4];
+  oSpinArray[0] = &opacity1;
+  oSpinArray[1] = &opacity2;
+  oSpinArray[2] = &opacity3;
+  oSpinArray[3] = &opacity4;
+
+  for( int i = 0; i < 4; i++ )
+    {
+      QSpinBox* sbox = new QSpinBox;
+      sbox->setRange( 0, 100 );
+      sbox->setSingleStep( 5 );
+      sbox->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+      sbox->setSuffix( " %" );
+      sbox->setEnabled( false );
+      sbox->setToolTip( tr("The opacity value should be in the range 0 to 100. "
+                           "0 is fully transparent and 100 is fully opaque.") );
+      *oSpinArray[i] = sbox;
+    }
+
+  QGridLayout* brushLayout = new QGridLayout;
+  brushLayout->setMargin( 10 );
+  brushLayout->setSpacing( 5 );
+  brushLayout->addWidget(border1BrushColorButton, 0, 0);
+  brushLayout->addWidget(border2BrushColorButton, 1, 0);
+  brushLayout->addWidget(border3BrushColorButton, 2, 0);
+  brushLayout->addWidget(border4BrushColorButton, 3, 0);
+  brushLayout->addWidget(border1BrushStyle, 0, 1);
+  brushLayout->addWidget(border2BrushStyle, 1, 1);
+  brushLayout->addWidget(border3BrushStyle, 2, 1);
+  brushLayout->addWidget(border4BrushStyle, 3, 1);
+  brushLayout->addWidget(opacity1, 0, 2);
+  brushLayout->addWidget(opacity2, 1, 2);
+  brushLayout->addWidget(opacity3, 2, 2);
+  brushLayout->addWidget(opacity4, 3, 2);
+  brushLayout->setColStretch( 2, 10 );
+
+  QGroupBox* brushGroup = new QGroupBox( tr("Brush") );
+  brushGroup->setLayout( brushLayout );
+
+  //----------------------------------------------------------------------------
+  border1Button = new QPushButton();
+  border1Button->setIcon(_mainWindow->getPixmap("kde_down.png"));
+  border1Button->setFixedWidth(30);
+  border1Button->setFixedHeight(30);
   connect(border1Button, SIGNAL(clicked()), SLOT(slotSetSecond()));
+
+  border2Button = new QPushButton();
+  border2Button->setIcon(_mainWindow->getPixmap("kde_down.png"));
+  border2Button->setFixedWidth(30);
+  border2Button->setFixedHeight(30);
   connect(border2Button, SIGNAL(clicked()), SLOT(slotSetThird()));
+
+  border3Button = new QPushButton();
+  border3Button->setIcon(_mainWindow->getPixmap("kde_down.png"));
+  border3Button->setFixedWidth(30);
+  border3Button->setFixedHeight(30);
   connect(border3Button, SIGNAL(clicked()), SLOT(slotSetForth()));
+
+  QGridLayout* copyLayout = new QGridLayout;
+  copyLayout->setMargin( 10 );
+  copyLayout->setSpacing( 5 );
+  copyLayout->addWidget( border1Button, 0, 0 );
+  copyLayout->addWidget( border2Button, 1, 0 );
+  copyLayout->addWidget( border3Button, 2, 0 );
+  copyLayout->setRowStretch( 4, 10 );
+
+  QGroupBox* copyGroup = new QGroupBox( tr("Copy") );
+  copyGroup->setLayout( copyLayout );
+
+  //----------------------------------------------------------------------------
+  QHBoxLayout* hbox = new QHBoxLayout;
+  hbox->addWidget( drawGroup );
+  hbox->addWidget( penGroup );
+  hbox->addWidget( brushGroup );
+  hbox->addWidget( copyGroup );
+  hbox->addStretch( 10 );
+  setLayout( hbox );
 }
 
 ConfigDrawElement::~ConfigDrawElement()
@@ -428,31 +520,35 @@ void ConfigDrawElement::slotOk()
 
   __writePen("City", cityPenList, cityBorder);
 
-  __writeBrush("Airspace A", airABrushList, airAPenList, airABorder);
+  __writeBrush(AS_A, airABrushList, airAPenList, airABorder);
 
-  __writeBrush("Airspace B", airBBrushList, airBPenList, airBBorder);
+  __writeBrush(AS_B, airBBrushList, airBPenList, airBBorder);
 
-  __writeBrush("Airspace C", airCBrushList, airCPenList, airCBorder);
+  __writeBrush(AS_C, airCBrushList, airCPenList, airCBorder);
 
-  __writeBrush("Airspace D", airDBrushList, airDPenList, airDBorder);
+  __writeBrush(AS_D, airDBrushList, airDPenList, airDBorder);
 
-  __writeBrush("Airspace E low", airElBrushList, airElPenList, airElBorder);
+  __writeBrush(AS_EL, airElBrushList, airElPenList, airElBorder);
 
-  __writeBrush("Airspace E high", airEhBrushList, airEhPenList, airEhBorder);
+  __writeBrush(AS_E, airEhBrushList, airEhPenList, airEhBorder);
 
-  __writeBrush("Airspace F", airFBrushList, airFPenList, airFBorder);
+  __writeBrush(AS_F, airFBrushList, airFPenList, airFBorder);
 
-  __writeBrush("Control C", ctrCBrushList, ctrCPenList, ctrCBorder);
+  __writeBrush(AS_CTR_C, ctrCBrushList, ctrCPenList, ctrCBorder);
 
-  __writeBrush("Control D", ctrDBrushList, ctrDPenList, ctrDBorder);
+  __writeBrush(AS_CTR_D, ctrDBrushList, ctrDPenList, ctrDBorder);
 
-  __writeBrush("Danger", dangerBrushList, dangerPenList, dangerBorder);
+  __writeBrush(AS_DANGER, dangerBrushList, dangerPenList, dangerBorder);
 
-  __writeBrush("Low Flight", lowFBrushList, lowFPenList, lowFBorder);
+  __writeBrush(AS_LF, lowFBrushList, lowFPenList, lowFBorder);
 
-  __writeBrush("Restricted Area", restrBrushList, restrPenList, restrBorder);
+  __writeBrush(AS_RESTRICTED, restrBrushList, restrPenList, restrBorder);
 
-  __writeBrush("TMZ", tmzBrushList, tmzPenList, tmzBorder);
+  __writeBrush(AS_TMZ, tmzBrushList, tmzPenList, tmzBorder);
+
+  __writeBrush(AS_GS, gsBrushList, gsPenList, gsBorder);
+
+  __writeBrush(AS_WW, wwBrushList, wwPenList, wwBorder);
 
   __writeBrush("Forest", forestBrushList, forestPenList, forestBorder);
 
@@ -465,6 +561,22 @@ void ConfigDrawElement::slotOk()
   __writeBrush("FAIAreaLow500", faiAreaLow500BrushList, faiAreaLow500PenList, faiAreaLow500Border);
 
   __writeBrush("FAIAreaHigh500", faiAreaHigh500BrushList, faiAreaHigh500PenList, faiAreaHigh500Border);
+
+  __writeAsOpacity( AS_A, airAOpacityList );
+  __writeAsOpacity( AS_B, airBOpacityList );
+  __writeAsOpacity( AS_C, airCOpacityList );
+  __writeAsOpacity( AS_D, airDOpacityList );
+  __writeAsOpacity( AS_EL, airElOpacityList );
+  __writeAsOpacity( AS_E, airEhOpacityList );
+  __writeAsOpacity( AS_F, airFOpacityList );
+  __writeAsOpacity( AS_CTR_C, ctrCOpacityList );
+  __writeAsOpacity( AS_CTR_D, ctrDOpacityList );
+  __writeAsOpacity( AS_LF, lowFOpacityList );
+  __writeAsOpacity( AS_DANGER, dangerOpacityList );
+  __writeAsOpacity( AS_RESTRICTED, restrOpacityList );
+  __writeAsOpacity( AS_TMZ, tmzOpacityList );
+  __writeAsOpacity( AS_GS, gsOpacityList );
+  __writeAsOpacity( AS_WW, wwOpacityList );
 }
 
 void ConfigDrawElement::slotDefaultElements()
@@ -540,7 +652,6 @@ void ConfigDrawElement::slotDefaultElements()
       PACK_ICE_BRUSH_COLOR_3, PACK_ICE_BRUSH_COLOR_4,
       PACK_ICE_BRUSH_STYLE_1, PACK_ICE_BRUSH_STYLE_2,
       PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4);
-
 
   __defaultPenBrush(airAPenList, airABorder, airABrushList,
       AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
@@ -638,6 +749,22 @@ void ConfigDrawElement::slotDefaultElements()
       TMZ_BRUSH_STYLE_1, TMZ_BRUSH_STYLE_2,
       TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4);
 
+  __defaultPenBrush(gsPenList, gsBorder, gsBrushList,
+      GLIDER_SECTOR_COLOR_1, GLIDER_SECTOR_COLOR_2, GLIDER_SECTOR_COLOR_3, GLIDER_SECTOR_COLOR_4,
+      GLIDER_SECTOR_PEN_1, GLIDER_SECTOR_PEN_2, GLIDER_SECTOR_PEN_3, GLIDER_SECTOR_PEN_4,
+      GLIDER_SECTOR_BRUSH_COLOR_1, GLIDER_SECTOR_BRUSH_COLOR_2,
+      GLIDER_SECTOR_BRUSH_COLOR_3, GLIDER_SECTOR_BRUSH_COLOR_4,
+      GLIDER_SECTOR_BRUSH_STYLE_1, GLIDER_SECTOR_BRUSH_STYLE_2,
+      GLIDER_SECTOR_BRUSH_STYLE_3, GLIDER_SECTOR_BRUSH_STYLE_4);
+
+  __defaultPenBrush(wwPenList, wwBorder, wwBrushList,
+      WAVE_WINDOW_COLOR_1, WAVE_WINDOW_COLOR_2, WAVE_WINDOW_COLOR_3, WAVE_WINDOW_COLOR_4,
+      WAVE_WINDOW_PEN_1, WAVE_WINDOW_PEN_2, WAVE_WINDOW_PEN_3, WAVE_WINDOW_PEN_4,
+      WAVE_WINDOW_BRUSH_COLOR_1, WAVE_WINDOW_BRUSH_COLOR_2,
+      WAVE_WINDOW_BRUSH_COLOR_3, WAVE_WINDOW_BRUSH_COLOR_4,
+      WAVE_WINDOW_BRUSH_STYLE_1, WAVE_WINDOW_BRUSH_STYLE_2,
+      WAVE_WINDOW_BRUSH_STYLE_3, WAVE_WINDOW_BRUSH_STYLE_4);
+
   __defaultPenBrush(faiAreaLow500PenList, faiAreaLow500Border, faiAreaLow500BrushList,
       FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
       FAI_LOW_500_PEN_1, FAI_LOW_500_PEN_2, FAI_LOW_500_PEN_3, FAI_LOW_500_PEN_4,
@@ -654,85 +781,222 @@ void ConfigDrawElement::slotDefaultElements()
       FAI_HIGH_500_BRUSH_STYLE_1, FAI_HIGH_500_BRUSH_STYLE_2,
       FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4);
 
+  __defaultAsOpacity( airAOpacityList );
+  __defaultAsOpacity( airBOpacityList );
+  __defaultAsOpacity( airCOpacityList );
+  __defaultAsOpacity( airDOpacityList );
+  __defaultAsOpacity( airElOpacityList );
+  __defaultAsOpacity( airEhOpacityList );
+  __defaultAsOpacity( airFOpacityList );
+  __defaultAsOpacity( ctrCOpacityList );
+  __defaultAsOpacity( ctrDOpacityList );
+  __defaultAsOpacity( lowFOpacityList );
+  __defaultAsOpacity( dangerOpacityList );
+  __defaultAsOpacity( restrOpacityList );
+  __defaultAsOpacity( tmzOpacityList );
+  __defaultAsOpacity( gsOpacityList );
+  __defaultAsOpacity( wwOpacityList );
+
   oldElement = -1;
-  slotSelectElement(currentElement);
+  slotSelectElement( currentElement );
 }
 
 void ConfigDrawElement::slotSelectBorder1Color()
 {
-  border1Color = QColorDialog::getColor(border1Color, this);
-  QPixmap *buttonPixmap = new QPixmap();
-  buttonPixmap->resize(45, 14);
-  buttonPixmap->fill(border1Color);
-  border1ColorButton->setPixmap(*buttonPixmap);
+  QColor newColor = QColorDialog::getColor( border1Color, this );
+
+  if( newColor.isValid() )
+    {
+      border1Color = newColor;
+      QPixmap buttonPixmap(45, 14);
+      buttonPixmap.fill( newColor );
+      border1ColorButton->setIcon( buttonPixmap );
+      border1ColorButton->setIconSize( buttonPixmap.size() );
+    }
 }
 
 void ConfigDrawElement::slotSelectBorder2Color()
 {
-  border2Color = QColorDialog::getColor(border2Color, this);
-  QPixmap *buttonPixmap = new QPixmap();
-  buttonPixmap->resize(45, 14);
-  buttonPixmap->fill(border2Color);
-  border2ColorButton->setPixmap(*buttonPixmap);
+  QColor newColor = QColorDialog::getColor( border2Color, this );
+
+  if( newColor.isValid() )
+    {
+      border2Color = newColor;
+      QPixmap buttonPixmap(45, 14);
+      buttonPixmap.fill( newColor );
+      border2ColorButton->setIcon( buttonPixmap );
+      border2ColorButton->setIconSize( buttonPixmap.size() );
+    }
 }
 
 void ConfigDrawElement::slotSelectBorder3Color()
 {
-  border3Color = QColorDialog::getColor(border3Color, this);
-  QPixmap *buttonPixmap = new QPixmap();
-  buttonPixmap->resize(45, 14);
-  buttonPixmap->fill(border3Color);
-  border3ColorButton->setPixmap(*buttonPixmap);
+  QColor newColor = QColorDialog::getColor( border3Color, this );
+
+  if( newColor.isValid() )
+    {
+      border3Color = newColor;
+      QPixmap buttonPixmap(45, 14);
+      buttonPixmap.fill( newColor );
+      border3ColorButton->setIcon( buttonPixmap );
+      border3ColorButton->setIconSize( buttonPixmap.size() );
+    }
 }
 
 void ConfigDrawElement::slotSelectBorder4Color()
 {
-  border4Color = QColorDialog::getColor(border4Color, this);
-  QPixmap *buttonPixmap = new QPixmap();
-  buttonPixmap->resize(45, 14);
-  buttonPixmap->fill(border4Color);
-  border4ColorButton->setPixmap(*buttonPixmap);
+  QColor newColor = QColorDialog::getColor( border4Color, this );
+
+  if( newColor.isValid() )
+    {
+      border4Color = newColor;
+      QPixmap buttonPixmap(45, 14);
+      buttonPixmap.fill( newColor );
+      border4ColorButton->setIcon( buttonPixmap );
+      border4ColorButton->setIconSize( buttonPixmap.size() );
+    }
 }
+
+void ConfigDrawElement::slotCheckOpacity1( int index )
+{
+  bool enable = border1BrushStyle->isEnabled();
+
+  opacity1->setEnabled( enable );
+
+  if( ! enable )
+    {
+      return;
+    }
+
+  enum Qt::BrushStyle pattern =
+      static_cast <enum Qt::BrushStyle> (border1BrushStyle->itemData( index ).toInt());
+
+  opacity1->setEnabled( pattern == Qt::NoBrush );
+}
+
+void ConfigDrawElement::slotCheckOpacity2( int index )
+{
+  bool enable = border2BrushStyle->isEnabled();
+
+  opacity2->setEnabled( enable );
+
+  if( ! enable )
+    {
+      return;
+    }
+
+  enum Qt::BrushStyle pattern =
+      static_cast <enum Qt::BrushStyle> (border2BrushStyle->itemData( index ).toInt());
+
+  opacity2->setEnabled( pattern == Qt::NoBrush );
+}
+
+void ConfigDrawElement::slotCheckOpacity3( int index )
+{
+  bool enable = border3BrushStyle->isEnabled();
+
+  opacity3->setEnabled( enable );
+
+  if( ! enable )
+    {
+      return;
+    }
+
+  enum Qt::BrushStyle pattern =
+      static_cast <enum Qt::BrushStyle> (border3BrushStyle->itemData( index ).toInt());
+
+  opacity3->setEnabled( pattern == Qt::NoBrush );
+}
+
+void ConfigDrawElement::slotCheckOpacity4( int index )
+{
+  bool enable = border4BrushStyle->isEnabled();
+
+  opacity4->setEnabled( enable );
+
+  if( ! enable )
+    {
+      return;
+    }
+
+  enum Qt::BrushStyle pattern =
+      static_cast <enum Qt::BrushStyle> (border4BrushStyle->itemData( index ).toInt());
+
+  opacity4->setEnabled( pattern == Qt::NoBrush );
+}
+
 
 void ConfigDrawElement::slotSelectBorder1BrushColor()
 {
-  border1BrushColor = QColorDialog::getColor(border1BrushColor, this);
-  QPixmap *buttonPixmap = new QPixmap();
-  buttonPixmap->resize(45, 14);
-  buttonPixmap->fill(border1BrushColor);
-  border1BrushColorButton->setPixmap(*buttonPixmap);
+  QColor newColor = QColorDialog::getColor( border1BrushColor, this );
+
+  if( newColor.isValid() )
+    {
+      border1BrushColor = newColor;
+      QPixmap buttonPixmap(45, 14);
+      buttonPixmap.fill( newColor );
+      border1BrushColorButton->setIcon( buttonPixmap );
+      border1BrushColorButton->setIconSize( buttonPixmap.size() );
+    }
 }
 
 void ConfigDrawElement::slotSelectBorder2BrushColor()
 {
-  border2BrushColor = QColorDialog::getColor(border2BrushColor, this);
-  QPixmap *buttonPixmap = new QPixmap();
-  buttonPixmap->resize(45, 14);
-  buttonPixmap->fill(border2BrushColor);
-  border2BrushColorButton->setPixmap(*buttonPixmap);
+  QColor newColor = QColorDialog::getColor( border2BrushColor, this );
+
+  if( newColor.isValid() )
+    {
+      border2BrushColor = newColor;
+      QPixmap buttonPixmap(45, 14);
+      buttonPixmap.fill( newColor );
+      border2BrushColorButton->setIcon( buttonPixmap );
+      border2BrushColorButton->setIconSize( buttonPixmap.size() );
+    }
 }
 
 void ConfigDrawElement::slotSelectBorder3BrushColor()
 {
-  border3BrushColor = QColorDialog::getColor(border3BrushColor, this);
-  QPixmap *buttonPixmap = new QPixmap();
-  buttonPixmap->resize(45, 14);
-  buttonPixmap->fill(border3BrushColor);
-  border3BrushColorButton->setPixmap(*buttonPixmap);
+  QColor newColor = QColorDialog::getColor( border3BrushColor, this );
+
+  if( newColor.isValid() )
+    {
+      border3BrushColor = newColor;
+      QPixmap buttonPixmap(45, 14);
+      buttonPixmap.fill( newColor );
+      border3BrushColorButton->setIcon( buttonPixmap );
+      border3BrushColorButton->setIconSize( buttonPixmap.size() );
+    }
 }
 
 void ConfigDrawElement::slotSelectBorder4BrushColor()
 {
-  border4BrushColor = QColorDialog::getColor(border4BrushColor, this);
-  QPixmap *buttonPixmap = new QPixmap();
-  buttonPixmap->resize(45, 14);
-  buttonPixmap->fill(border4BrushColor);
-  border4BrushColorButton->setPixmap(*buttonPixmap);
+  QColor newColor = QColorDialog::getColor( border4BrushColor, this );
+
+  if( newColor.isValid() )
+    {
+      border4BrushColor = newColor;
+      QPixmap buttonPixmap(45, 14);
+      buttonPixmap.fill( newColor );
+      border4BrushColorButton->setIcon( buttonPixmap );
+      border4BrushColorButton->setIconSize( buttonPixmap.size() );
+    }
 }
 
 void ConfigDrawElement::slotSelectElement(int elementID)
 {
   currentElement = elementID;
+
+  // Disconnect signals from brush style combo boxes.
+  border1BrushStyle->disconnect(SIGNAL(currentIndexChanged(int)));
+  border2BrushStyle->disconnect(SIGNAL(currentIndexChanged(int)));
+  border3BrushStyle->disconnect(SIGNAL(currentIndexChanged(int)));
+  border4BrushStyle->disconnect(SIGNAL(currentIndexChanged(int)));
+
+  // Reset access to opacity spin boxes. They are only usable for airspaces.
+  opacity1->setEnabled( false );
+  opacity2->setEnabled( false );
+  opacity3->setEnabled( false );
+  opacity4->setEnabled( false );
 
   switch(oldElement)
     {
@@ -760,7 +1024,6 @@ void ConfigDrawElement::slotSelectElement(int elementID)
       case KFLogConfig::Canal:
         __savePen(canalPenList, canalBorder);
         break;
-
       case KFLogConfig::River_T:
         __savePen(river_tPenList, river_tBorder);
         __saveBrush(river_tBrushList);
@@ -769,58 +1032,83 @@ void ConfigDrawElement::slotSelectElement(int elementID)
         __savePen(cityPenList, cityBorder);
         __saveBrush(cityBrushList);
         break;
+
       case KFLogConfig::AirA:
         __savePen(airAPenList, airABorder);
         __saveBrush(airABrushList);
+        __saveAsOpacity( airAOpacityList );
         break;
       case KFLogConfig::AirB:
         __savePen(airBPenList, airBBorder);
         __saveBrush(airBBrushList);
+        __saveAsOpacity( airBOpacityList );
         break;
       case KFLogConfig::AirC:
         __savePen(airCPenList, airCBorder);
         __saveBrush(airCBrushList);
+        __saveAsOpacity( airCOpacityList );
         break;
       case KFLogConfig::AirD:
         __savePen(airDPenList, airDBorder);
         __saveBrush(airDBrushList);
+        __saveAsOpacity( airDOpacityList );
         break;
       case KFLogConfig::AirElow:
         __savePen(airElPenList, airElBorder);
         __saveBrush(airElBrushList);
+        __saveAsOpacity( airElOpacityList );
         break;
       case KFLogConfig::AirE:
         __savePen(airEhPenList, airEhBorder);
         __saveBrush(airEhBrushList);
+        __saveAsOpacity( airEhOpacityList );
         break;
       case KFLogConfig::AirF:
         __savePen(airFPenList, airFBorder);
         __saveBrush(airFBrushList);
+        __saveAsOpacity( airFOpacityList );
         break;
       case KFLogConfig::ControlC:
         __savePen(ctrCPenList, ctrCBorder);
         __saveBrush(ctrCBrushList);
+        __saveAsOpacity( ctrCOpacityList );
         break;
       case KFLogConfig::ControlD:
         __savePen(ctrDPenList, ctrDBorder);
         __saveBrush(ctrDBrushList);
+        __saveAsOpacity( ctrDOpacityList );
         break;
       case KFLogConfig::Danger:
         __savePen(dangerPenList, dangerBorder);
         __saveBrush(dangerBrushList);
+        __saveAsOpacity( dangerOpacityList );
         break;
       case KFLogConfig::LowFlight:
         __savePen(lowFPenList, lowFBorder);
         __saveBrush(lowFBrushList);
+        __saveAsOpacity( lowFOpacityList );
         break;
       case KFLogConfig::Restricted:
         __savePen(restrPenList, restrBorder);
         __saveBrush(restrBrushList);
+        __saveAsOpacity( restrOpacityList );
         break;
       case KFLogConfig::Tmz:
         __savePen(tmzPenList, tmzBorder);
         __saveBrush(tmzBrushList);
+        __saveAsOpacity( tmzOpacityList );
         break;
+      case KFLogConfig::GliderSector:
+        __savePen(gsPenList, gsBorder);
+        __saveBrush(gsBrushList);
+        __saveAsOpacity( gsOpacityList );
+        break;
+      case KFLogConfig::WaveWindow:
+        __savePen(wwPenList, wwBorder);
+        __saveBrush(wwBrushList);
+        __saveAsOpacity( wwOpacityList );
+        break;
+
       case KFLogConfig::Forest:
         __savePen(forestPenList, forestBorder);
         __saveBrush(forestBrushList);
@@ -879,41 +1167,51 @@ void ConfigDrawElement::slotSelectElement(int elementID)
         __showPen(cityPenList, cityBorder);
         __showBrush(cityBrushList);
         break;
+
       case KFLogConfig::AirA:
         __showPen(airAPenList, airABorder);
         __showBrush(airABrushList);
+        __showAsOpacity(airAOpacityList);
         break;
       case KFLogConfig::AirB:
         __showPen(airBPenList, airBBorder);
         __showBrush(airBBrushList);
+        __showAsOpacity(airBOpacityList);
         break;
       case KFLogConfig::AirC:
         __showPen(airCPenList, airCBorder);
         __showBrush(airCBrushList);
+        __showAsOpacity(airCOpacityList);
         break;
       case KFLogConfig::AirD:
         __showPen(airDPenList, airDBorder);
         __showBrush(airDBrushList);
+        __showAsOpacity(airDOpacityList);
         break;
       case KFLogConfig::AirElow:
         __showPen(airElPenList, airElBorder);
         __showBrush(airElBrushList);
+        __showAsOpacity(airElOpacityList);
         break;
       case KFLogConfig::AirE:
         __showPen(airEhPenList, airEhBorder);
         __showBrush(airEhBrushList);
-        break;
+        __showAsOpacity(airEhOpacityList);
+         break;
       case KFLogConfig::AirF:
         __showPen(airFPenList, airFBorder);
         __showBrush(airFBrushList);
+        __showAsOpacity(airFOpacityList);
         break;
       case KFLogConfig::ControlC:
-        __showPen(ctrCPenList, ctrCBorder);
-        __showBrush(ctrCBrushList);
+         __showPen(ctrCPenList, ctrCBorder);
+         __showBrush(ctrCBrushList);
+         __showAsOpacity(ctrCOpacityList);
         break;
       case KFLogConfig::ControlD:
         __showPen(ctrDPenList, ctrDBorder);
         __showBrush(ctrDBrushList);
+        __showAsOpacity(ctrDOpacityList);
         break;
       case KFLogConfig::Danger:
         __showPen(dangerPenList, dangerBorder);
@@ -922,17 +1220,31 @@ void ConfigDrawElement::slotSelectElement(int elementID)
       case KFLogConfig::LowFlight:
         __showPen(lowFPenList, lowFBorder);
         __showBrush(lowFBrushList);
+        __showAsOpacity(lowFOpacityList);
         break;
       case KFLogConfig::Restricted:
         __showPen(restrPenList, restrBorder);
         __showBrush(restrBrushList);
+        __showAsOpacity(restrOpacityList);
         break;
       case KFLogConfig::Tmz:
         __showPen(tmzPenList, tmzBorder);
         __showBrush(tmzBrushList);
+        __showAsOpacity(tmzOpacityList);
         break;
+      case KFLogConfig::GliderSector:
+        __showPen(gsPenList, gsBorder);
+        __showBrush(gsBrushList);
+        __showAsOpacity(gsOpacityList);
+        break;
+      case KFLogConfig::WaveWindow:
+        __showPen(wwPenList, wwBorder);
+        __showBrush(wwBrushList);
+        __showAsOpacity(wwOpacityList);
+        break;
+
       case KFLogConfig::Forest:
-        //__showPen(forestPenList, forestBorder);
+        __showPen(forestPenList, forestBorder);
         __showBrush(forestBrushList);
         break;
       case KFLogConfig::Glacier:
@@ -995,10 +1307,13 @@ void ConfigDrawElement::slotToggleFirst(bool toggle)
         border1PenStyle->setEnabled(toggle);
         border1BrushColorButton->setEnabled(toggle);
         border1BrushStyle->setEnabled(toggle);
+        slotCheckOpacity1( border1BrushStyle->currentIndex() );
+        connect( border1BrushStyle, SIGNAL(currentIndexChanged(int)),
+                 this, SLOT(slotCheckOpacity1(int)) );
         break;
       case KFLogConfig::Forest:
-        border1ColorButton->setEnabled(false);
-        border1Pen->setEnabled(false);
+        //border1ColorButton->setEnabled(false);
+        //border1Pen->setEnabled(false);
         border1PenStyle->setEnabled(false);
         border1BrushColorButton->setEnabled(toggle);
         border1BrushStyle->setEnabled(toggle);
@@ -1050,10 +1365,13 @@ void ConfigDrawElement::slotToggleSecond(bool toggle)
         border2PenStyle->setEnabled(toggle);
         border2BrushColorButton->setEnabled(toggle);
         border2BrushStyle->setEnabled(toggle);
+        slotCheckOpacity2( border2BrushStyle->currentIndex() );
+        connect( border2BrushStyle, SIGNAL(currentIndexChanged(int)),
+                 this, SLOT(slotCheckOpacity2(int)) );
         break;
       case KFLogConfig::Forest:
-        border2ColorButton->setEnabled(false);
-        border2Pen->setEnabled(false);
+        //border2ColorButton->setEnabled(false);
+        //border2Pen->setEnabled(false);
         border2PenStyle->setEnabled(false);
         border2BrushColorButton->setEnabled(toggle);
         border2BrushStyle->setEnabled(toggle);
@@ -1105,10 +1423,13 @@ void ConfigDrawElement::slotToggleThird(bool toggle)
         border3PenStyle->setEnabled(toggle);
         border3BrushColorButton->setEnabled(toggle);
         border3BrushStyle->setEnabled(toggle);
+        slotCheckOpacity3( border3BrushStyle->currentIndex() );
+        connect( border3BrushStyle, SIGNAL(currentIndexChanged(int)),
+                 this, SLOT(slotCheckOpacity3(int)) );
         break;
       case KFLogConfig::Forest:
-        border3ColorButton->setEnabled(false);
-        border3Pen->setEnabled(false);
+        //border3ColorButton->setEnabled(false);
+        //border3Pen->setEnabled(false);
         border3PenStyle->setEnabled(false);
         border3BrushColorButton->setEnabled(toggle);
         border3BrushStyle->setEnabled(toggle);
@@ -1158,10 +1479,13 @@ void ConfigDrawElement::slotToggleForth(bool toggle)
         border4PenStyle->setEnabled(toggle);
         border4BrushColorButton->setEnabled(toggle);
         border4BrushStyle->setEnabled(toggle);
+        slotCheckOpacity4( border4BrushStyle->currentIndex() );
+        connect( border4BrushStyle, SIGNAL(currentIndexChanged(int)),
+                 this, SLOT(slotCheckOpacity4(int)) );
         break;
       case KFLogConfig::Forest:
-        border4ColorButton->setEnabled(false);
-        border4Pen->setEnabled(false);
+        //border4ColorButton->setEnabled(false);
+        //border4Pen->setEnabled(false);
         border4PenStyle->setEnabled(false);
         border4BrushColorButton->setEnabled(toggle);
         border4BrushStyle->setEnabled(toggle);
@@ -1175,50 +1499,62 @@ void ConfigDrawElement::slotToggleForth(bool toggle)
 
 void ConfigDrawElement::slotSetSecond()
 {
-  QPixmap *buttonPixmap = new QPixmap();
-  buttonPixmap->resize(45, 14);
+  QPixmap buttonPixmap(45, 14);
 
   border2Color = border1Color;
-  buttonPixmap->fill(border2Color);
-  border2ColorButton->setPixmap(*buttonPixmap);
+  buttonPixmap.fill(border2Color);
+  border2ColorButton->setIcon(buttonPixmap);
+  border2ColorButton->setIconSize(buttonPixmap.size());
   border2Pen->setValue(border1Pen->value());
-  border2PenStyle->setCurrentItem(border1PenStyle->currentItem());
+  border2PenStyle->setCurrentIndex(border1PenStyle->currentIndex());
   border2BrushColor = border1BrushColor;
-  buttonPixmap->fill(border2BrushColor);
-  border2BrushColorButton->setPixmap(*buttonPixmap);
-  border2BrushStyle->setCurrentItem(border1BrushStyle->currentItem());
+
+  buttonPixmap.fill(border2BrushColor);
+  border2BrushColorButton->setIcon(buttonPixmap);
+  border2BrushColorButton->setIconSize(buttonPixmap.size());
+  border2BrushStyle->setCurrentIndex(border1BrushStyle->currentIndex());
+
+  opacity2->setValue( opacity1->value() );
 }
 
 void ConfigDrawElement::slotSetThird()
 {
-  QPixmap *buttonPixmap = new QPixmap();
-  buttonPixmap->resize(45, 14);
+  QPixmap buttonPixmap(45, 14);
 
   border3Color = border2Color;
-  buttonPixmap->fill(border3Color);
-  border3ColorButton->setPixmap(*buttonPixmap);
+  buttonPixmap.fill(border3Color);
+  border3ColorButton->setIcon(buttonPixmap);
+  border3ColorButton->setIconSize(buttonPixmap.size());
   border3Pen->setValue(border2Pen->value());
-  border3PenStyle->setCurrentItem(border2PenStyle->currentItem());
+  border3PenStyle->setCurrentIndex(border2PenStyle->currentIndex());
+
   border3BrushColor = border2BrushColor;
-  buttonPixmap->fill(border3BrushColor);
-  border3BrushColorButton->setPixmap(*buttonPixmap);
-  border3BrushStyle->setCurrentItem(border2BrushStyle->currentItem());
+  buttonPixmap.fill(border3BrushColor);
+  border3BrushColorButton->setIcon(buttonPixmap);
+  border3BrushColorButton->setIconSize(buttonPixmap.size());
+  border3BrushStyle->setCurrentIndex(border2BrushStyle->currentIndex());
+
+  opacity3->setValue( opacity2->value() );
 }
 
 void ConfigDrawElement::slotSetForth()
 {
-  QPixmap *buttonPixmap = new QPixmap();
-  buttonPixmap->resize(45, 14);
+  QPixmap buttonPixmap(45, 14);
 
   border4Color = border3Color;
-  buttonPixmap->fill(border4Color);
-  border4ColorButton->setPixmap(*buttonPixmap);
+  buttonPixmap.fill(border4Color);
+  border4ColorButton->setIcon(buttonPixmap);
+  border4ColorButton->setIconSize(buttonPixmap.size());
   border4Pen->setValue(border3Pen->value());
-  border4PenStyle->setCurrentItem(border3PenStyle->currentItem());
+  border4PenStyle->setCurrentIndex(border3PenStyle->currentIndex());
   border4BrushColor = border3BrushColor;
-  buttonPixmap->fill(border4BrushColor);
-  border4BrushColorButton->setPixmap(*buttonPixmap);
-  border4BrushStyle->setCurrentItem(border3BrushStyle->currentItem());
+
+  buttonPixmap.fill(border4BrushColor);
+  border4BrushColorButton->setIcon(buttonPixmap);
+  border4BrushColorButton->setIconSize(buttonPixmap.size());
+  border4BrushStyle->setCurrentIndex(border3BrushStyle->currentIndex());
+
+  opacity4->setValue( opacity3->value() );
 }
 
 void ConfigDrawElement::__defaultPen( QList<QPen> &penList,
@@ -1232,14 +1568,14 @@ void ConfigDrawElement::__defaultPen( QList<QPen> &penList,
                                       int defaultPenSize3,
                                       int defaultPenSize4 )
 {
-  penList[0].setColor(defaultColor1);
-  penList[0].setWidth(defaultPenSize1);
-  penList[1].setColor(defaultColor2);
-  penList[1].setWidth(defaultPenSize2);
-  penList[2].setColor(defaultColor3);
-  penList[2].setWidth(defaultPenSize3);
-  penList[3].setColor(defaultColor4);
-  penList[3].setWidth(defaultPenSize4);
+  penList[0].setColor( defaultColor1 );
+  penList[0].setWidth( defaultPenSize1 );
+  penList[1].setColor( defaultColor2 );
+  penList[1].setWidth( defaultPenSize2 );
+  penList[2].setColor( defaultColor3 );
+  penList[2].setWidth( defaultPenSize3 );
+  penList[3].setColor( defaultColor4 );
+  penList[3].setWidth( defaultPenSize4 );
 
   b[0] = true;
   b[1] = true;
@@ -1270,19 +1606,16 @@ void ConfigDrawElement::__defaultPenBrush( QList<QPen> &penList,
   __defaultPen( penList, b, defaultColor1, defaultColor2, defaultColor3, defaultColor4,
                 defaultPenSize1, defaultPenSize2, defaultPenSize3, defaultPenSize4);
 
-  brushList[0].setColor(defaultBrushColor1);
-  brushList[0].setStyle(defaultBrushStyle1);
-  brushList[1].setColor(defaultBrushColor2);
-  brushList[1].setStyle(defaultBrushStyle2);
-  brushList[2].setColor(defaultBrushColor3);
-  brushList[2].setStyle(defaultBrushStyle3);
-  brushList[3].setColor(defaultBrushColor4);
-  brushList[3].setStyle(defaultBrushStyle4);
+  brushList[0].setColor( defaultBrushColor1 );
+  brushList[0].setStyle( defaultBrushStyle1 );
+  brushList[1].setColor( defaultBrushColor2 );
+  brushList[1].setStyle( defaultBrushStyle2 );
+  brushList[2].setColor( defaultBrushColor3 );
+  brushList[2].setStyle( defaultBrushStyle3 );
+  brushList[3].setColor( defaultBrushColor4 );
+  brushList[3].setStyle( defaultBrushStyle4 );
 }
 
-// Qt::PenStyle-Enum starts with NoPen = 0, therefor we reduce the
-// value by 1. We must use the same order as Qt::PenStyle.
-// Qt::BrushStyle "NoBrush" is allowed ...
 void ConfigDrawElement::__fillStyle( QComboBox *pen, QComboBox *brush )
 {
   QPixmap pixmap = _mainWindow->getPixmap("solid.png");
@@ -1294,32 +1627,62 @@ void ConfigDrawElement::__fillStyle( QComboBox *pen, QComboBox *brush )
   pen->addItem(_mainWindow->getPixmap("dashdot.png"), "", Qt::DashDotLine);
   pen->addItem(_mainWindow->getPixmap("dashdotdot.png"), "", Qt::DashDotDotLine);
 
-  pixmap = _mainWindow->getPixmap("brush0.png");
-  brush->setIconSize( pixmap.size() );
+  brush->setIconSize( brushStyleIcons[0].size() );
 
-  brush->addItem( tr("none"), Qt::NoBrush);
-  brush->addItem(_mainWindow->getPixmap("brush0.png"), "", Qt::SolidPattern);
-  brush->addItem(_mainWindow->getPixmap("brush1.png"), "", Qt::Dense1Pattern);
-  brush->addItem(_mainWindow->getPixmap("brush2.png"), "", Qt::Dense2Pattern);
-  brush->addItem(_mainWindow->getPixmap("brush3.png"), "", Qt::Dense3Pattern);
-  brush->addItem(_mainWindow->getPixmap("brush4.png"), "", Qt::Dense4Pattern);
-  brush->addItem(_mainWindow->getPixmap("brush5.png"), "", Qt::Dense5Pattern);
-  brush->addItem(_mainWindow->getPixmap("brush6.png"), "", Qt::Dense6Pattern);
-  brush->addItem(_mainWindow->getPixmap("brush7.png"), "", Qt::Dense7Pattern);
-  brush->addItem(_mainWindow->getPixmap("brush8.png"), "", Qt::HorPattern);
-  brush->addItem(_mainWindow->getPixmap("brush9.png"), "", Qt::VerPattern);
-  brush->addItem(_mainWindow->getPixmap("brush10.png"), "", Qt::CrossPattern);
-  brush->addItem(_mainWindow->getPixmap("brush11.png"), "", Qt::BDiagPattern);
-  brush->addItem(_mainWindow->getPixmap("brush12.png"), "", Qt::FDiagPattern);
-  brush->addItem(_mainWindow->getPixmap("brush13.png"), "", Qt::DiagCrossPattern);
+  for( int i = 0; i < 15; i++ )
+    {
+      brush->addItem( brushStyleIcons[i], "", brushStyles[i] );
+    }
 }
 
 void ConfigDrawElement::__readBorder( QString group, bool *array )
 {
-  array[0] = _settings.value("/Map/"+group+"/Border1", true).toBool();
-  array[1] = _settings.value("/Map/"+group+"/Border2", true).toBool();
-  array[2] = _settings.value("/Map/"+group+"/Border3", true).toBool();
-  array[3] = _settings.value("/Map/"+group+"/Border4", true).toBool();
+  array[0] = _settings.value( "/Map/" + group + "/Border1", true ).toBool();
+  array[1] = _settings.value( "/Map/" + group + "/Border2", true ).toBool();
+  array[2] = _settings.value( "/Map/" + group + "/Border3", true ).toBool();
+  array[3] = _settings.value( "/Map/" + group + "/Border4", true ).toBool();
+}
+
+void ConfigDrawElement::__readAsOpacity( QString group, QList<int> &opacityList )
+{
+  int o1 = _settings.value( "/Map/" + group + "/Opacity1", AS_OPACITY_1 ).toInt();
+  int o2 = _settings.value( "/Map/" + group + "/Opacity2", AS_OPACITY_2 ).toInt();
+  int o3 = _settings.value( "/Map/" + group + "/Opacity3", AS_OPACITY_3 ).toInt();
+  int o4 = _settings.value( "/Map/" + group + "/Opacity4", AS_OPACITY_4 ).toInt();
+
+  opacityList << o1 << o2 << o3 << o4;
+}
+
+void ConfigDrawElement::__writeAsOpacity( QString group, QList<int> &opacityList )
+{
+  _settings.setValue( "/Map/" + group + "/Opacity1", opacityList.at(0) );
+  _settings.setValue( "/Map/" + group + "/Opacity2", opacityList.at(1) );
+  _settings.setValue( "/Map/" + group + "/Opacity3", opacityList.at(2) );
+  _settings.setValue( "/Map/" + group + "/Opacity4", opacityList.at(3) );
+}
+
+void ConfigDrawElement::__saveAsOpacity( QList<int> &opacityList )
+{
+  opacityList.clear();
+
+  opacityList << opacity1->value()
+              << opacity2->value()
+              << opacity3->value()
+              << opacity4->value();
+}
+
+void ConfigDrawElement::__showAsOpacity( QList<int> &opacityList )
+{
+  opacity1->setValue( opacityList.at(0) );
+  opacity2->setValue( opacityList.at(1) );
+  opacity3->setValue( opacityList.at(2) );
+  opacity4->setValue( opacityList.at(3) );
+}
+
+void ConfigDrawElement::__defaultAsOpacity( QList<int> &opacityList )
+{
+  opacityList.clear();
+  opacityList << AS_OPACITY_1 << AS_OPACITY_2 << AS_OPACITY_3 << AS_OPACITY_4;
 }
 
 void ConfigDrawElement::__readPen( QString group,
@@ -1402,62 +1765,76 @@ void ConfigDrawElement::__readBrush( QString group,
 
 void ConfigDrawElement::__saveBrush(QList<QBrush> &brushList)
 {
+  int ix1 = border1BrushStyle->currentIndex();
+  int ix2 = border2BrushStyle->currentIndex();
+  int ix3 = border3BrushStyle->currentIndex();
+  int ix4 = border4BrushStyle->currentIndex();
+
   brushList[0].setColor(border1BrushColor);
-  brushList[0].setStyle((Qt::BrushStyle) border1BrushStyle->currentIndex());
+  brushList[0].setStyle((Qt::BrushStyle) border1BrushStyle->itemData(ix1).toInt());
   brushList[1].setColor(border2BrushColor);
-  brushList[1].setStyle((Qt::BrushStyle) border2BrushStyle->currentIndex());
+  brushList[1].setStyle((Qt::BrushStyle) border2BrushStyle->itemData(ix2).toInt());
   brushList[2].setColor(border3BrushColor);
-  brushList[2].setStyle((Qt::BrushStyle) border3BrushStyle->currentIndex());
+  brushList[2].setStyle((Qt::BrushStyle) border3BrushStyle->itemData(ix3).toInt());
   brushList[3].setColor(border4BrushColor);
-  brushList[3].setStyle((Qt::BrushStyle) border4BrushStyle->currentIndex());
+  brushList[3].setStyle((Qt::BrushStyle) border4BrushStyle->itemData(ix4).toInt());
 }
 
 void ConfigDrawElement::__savePen(QList<QPen> &penList, bool *b)
 {
+  int ix1 = border1PenStyle->currentIndex();
+  int ix2 = border2PenStyle->currentIndex();
+  int ix3 = border3PenStyle->currentIndex();
+  int ix4 = border4PenStyle->currentIndex();
+
   b[0] = border1->isChecked();
   penList[0].setColor(border1Color);
   penList[0].setWidth(border1Pen->value());
-  penList[0].setStyle((Qt::PenStyle) (border1PenStyle->currentIndex() + 1));
+  penList[0].setStyle((Qt::PenStyle) border1PenStyle->itemData(ix1).toInt());
 
   b[1] = border2->isChecked();
   penList[1].setColor(border2Color);
   penList[1].setWidth(border2Pen->value());
-  penList[1].setStyle((Qt::PenStyle) (border2PenStyle->currentIndex() + 1));
+  penList[1].setStyle((Qt::PenStyle) border2PenStyle->itemData(ix2).toInt());
 
   b[2] = border3->isChecked();
   penList[2].setColor(border3Color);
   penList[2].setWidth(border3Pen->value());
-  penList[2].setStyle((Qt::PenStyle) (border3PenStyle->currentIndex() + 1));
+  penList[2].setStyle((Qt::PenStyle) border3PenStyle->itemData(ix3).toInt());
 
   b[3] = border4->isChecked();
   penList[3].setColor(border4Color);
   penList[3].setWidth(border4Pen->value());
-  penList[3].setStyle((Qt::PenStyle) (border4PenStyle->currentIndex() + 1));
+  penList[3].setStyle((Qt::PenStyle) border4PenStyle->itemData(ix4).toInt());
 }
 
-void ConfigDrawElement::__showBrush(QList<QBrush> &brushList)
+void ConfigDrawElement::__showBrush( QList<QBrush> &brushList )
 {
   QPixmap buttonPixmap(45, 14);
 
   border1BrushColor = brushList[0].color();
   buttonPixmap.fill(border1BrushColor);
-  border1BrushColorButton->setPixmap(buttonPixmap);
-  border1BrushStyle->setCurrentItem(brushList[0].style());
+  border1BrushColorButton->setIcon(buttonPixmap);
+  border1BrushColorButton->setIconSize( buttonPixmap.size() );
+  border1BrushStyle->setCurrentIndex(border1BrushStyle->findData(brushList[0].style()));
 
   border2BrushColor = brushList[1].color();
   buttonPixmap.fill(border1BrushColor);
-  border2BrushColorButton->setPixmap(buttonPixmap);
-  border2BrushStyle->setCurrentItem(brushList[1].style());
+  border2BrushColorButton->setIcon(buttonPixmap);
+  border2BrushColorButton->setIconSize( buttonPixmap.size() );
+  border2BrushStyle->setCurrentIndex(border2BrushStyle->findData(brushList[1].style()));
 
   border3BrushColor = brushList[2].color();
   buttonPixmap.fill(border3BrushColor);
-  border3BrushColorButton->setPixmap(buttonPixmap);
-  border3BrushStyle->setCurrentItem(brushList[2].style());
+  border3BrushColorButton->setIcon(buttonPixmap);
+  border3BrushColorButton->setIconSize( buttonPixmap.size() );
+  border3BrushStyle->setCurrentIndex(border3BrushStyle->findData(brushList[2].style()));
 
   border4BrushColor = brushList[3].color();
   buttonPixmap.fill(border4BrushColor);
-  border4BrushColorButton->setPixmap(buttonPixmap);
-  border4BrushStyle->setCurrentItem(brushList[3].style());
+  border4BrushColorButton->setIcon(buttonPixmap);
+  border4BrushColorButton->setIconSize( buttonPixmap.size() );
+  border4BrushStyle->setCurrentIndex(border4BrushStyle->findData(brushList[3].style()));
 }
 
 void ConfigDrawElement::__showPen(QList<QPen> &penList, bool *b)
@@ -1467,30 +1844,34 @@ void ConfigDrawElement::__showPen(QList<QPen> &penList, bool *b)
   border1->setChecked(b[0]);
   border1Color = penList[0].color();
   buttonPixmap.fill(border1Color);
-  border1ColorButton->setPixmap(buttonPixmap);
+  border1ColorButton->setIcon(buttonPixmap);
+  border1ColorButton->setIconSize( buttonPixmap.size() );
   border1Pen->setValue(penList[0].width());
-  border1PenStyle->setCurrentItem(penList[0].style() - 1);
+  border1PenStyle->setCurrentIndex(border1PenStyle->findData(penList[0].style()));
 
   border2->setChecked(b[1]);
   border2Color = penList[1].color();
   buttonPixmap.fill(border2Color);
-  border2ColorButton->setPixmap(buttonPixmap);
+  border2ColorButton->setIcon(buttonPixmap);
+  border2ColorButton->setIconSize( buttonPixmap.size() );
   border2Pen->setValue(penList[1].width());
-  border2PenStyle->setCurrentItem(penList[1].style() - 1);
+  border2PenStyle->setCurrentIndex(border2PenStyle->findData(penList[1].style()));
 
   border3->setChecked(b[2]);
   border3Color = penList[2].color();
   buttonPixmap.fill(border3Color);
-  border3ColorButton->setPixmap(buttonPixmap);
+  border3ColorButton->setIcon(buttonPixmap);
+  border3ColorButton->setIconSize( buttonPixmap.size() );
   border3Pen->setValue(penList[2].width());
-  border3PenStyle->setCurrentItem(penList[2].style() - 1);
+  border3PenStyle->setCurrentIndex(border3PenStyle->findData(penList[2].style()));
 
   border4->setChecked(b[3]);
   border4Color = penList[3].color();
   buttonPixmap.fill(border4Color);
-  border4ColorButton->setPixmap(buttonPixmap);
+  border4ColorButton->setIcon(buttonPixmap);
+  border4ColorButton->setIconSize( buttonPixmap.size() );
   border4Pen->setValue(penList[3].width());
-  border4PenStyle->setCurrentItem(penList[3].style() - 1);
+  border4PenStyle->setCurrentIndex(border4PenStyle->findData(penList[3].style()));
 }
 
 void ConfigDrawElement::__writeBrush(QString group, QList<QBrush> &brushList, QList<QPen> &penList, bool *b)
@@ -1525,4 +1906,41 @@ void ConfigDrawElement::__writePen(QString group, QList<QPen> &penList, bool *b)
   _settings.setValue("/Map/" + group + "/Border2", ( b[1] && b[0] ) );
   _settings.setValue("/Map/" + group + "/Border3", ( b[2] && b[1] && b[0] ) );
   _settings.setValue("/Map/" + group + "/Border4", ( b[3] && b[2] && b[1] && b[0] ) );
+}
+
+void ConfigDrawElement::__createBrushStyleIcons()
+{
+  brushStyles[0] = Qt::NoBrush;
+  brushStyles[1] = Qt::SolidPattern;
+  brushStyles[2] = Qt::Dense1Pattern;
+  brushStyles[3] = Qt::Dense2Pattern;
+  brushStyles[4] = Qt::Dense3Pattern;
+  brushStyles[5] = Qt::Dense4Pattern;
+  brushStyles[6] = Qt::Dense5Pattern;
+  brushStyles[7] = Qt::Dense6Pattern;
+  brushStyles[8] = Qt::Dense7Pattern;
+  brushStyles[9] = Qt::HorPattern;
+  brushStyles[10] = Qt::VerPattern;
+  brushStyles[11] = Qt::CrossPattern;
+  brushStyles[12] = Qt::BDiagPattern;
+  brushStyles[13] = Qt::FDiagPattern;
+  brushStyles[14] = Qt::DiagCrossPattern;
+
+  const int iconSize = 22;
+  const int penWidth = 2;
+
+  for( int i = 0; i < 15; i++ )
+    {
+      brushStyleIcons[i] = QPixmap( iconSize, iconSize );
+      brushStyleIcons[i].fill( Qt::white );
+
+      QPainter painter( &brushStyleIcons[i] );
+
+      QPen pen( Qt::black );
+      pen.setWidth( penWidth );
+
+      painter.setPen( pen );
+      painter.setBrush( QBrush( Qt::black, brushStyles[i] ));
+      painter.drawRect( 2, 2, iconSize-4, iconSize-4 );
+    }
 }

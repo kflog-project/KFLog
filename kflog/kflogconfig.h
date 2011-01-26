@@ -83,6 +83,11 @@ class KFLogConfig : public QDialog
     /** */
     void newDrawType(int type);
 
+    /**
+     * Emitted to request a Welt2000 file download.
+     */
+    void downloadWelt2000();
+
   public slots:
     /** */
     void slotOk();
@@ -150,6 +155,11 @@ class KFLogConfig : public QDialog
      * Selects the indexed item in the ConfigPrintElement class.
      */
     void slotSelectPrintElement( int index );
+
+    /**
+     * Called if a Welt2000 file shall be downloaded.
+     */
+    void slotDownloadWelt2000();
 
   private:
     /** */

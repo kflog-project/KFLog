@@ -444,9 +444,6 @@ void KFLogConfig::slotSelectDrawElement( int index )
 {
   int data = elementSelect->itemData( index ).toInt();
 
-  qDebug() << "KFLogConfig::slotSelectDrawElement: Index=" << index
-           << "Data=" << data;
-
   if( data != KFLogConfig::Separator )
     {
       configDrawWidget->slotSelectElement( data );
@@ -1254,7 +1251,7 @@ void KFLogConfig::__addPersonalTab()
   //----------------------------------------------------------------------------
   const int minLen = 150;
 
-  QGroupBox* pilotGroup = new QGroupBox( tr("Pilot") + ":" );
+  QGroupBox* pilotGroup = new QGroupBox( tr("Pilot") );
 
   QFormLayout* pilotLayout = new QFormLayout();
   pilotLayout->setSpacing(10);
@@ -1369,6 +1366,12 @@ void KFLogConfig::__addAirfieldTab()
   readOlWelt2000 = new QCheckBox( tr("Read Outlandings:") );
   readOlWelt2000->setToolTip( tr("Activate checkbox, if outlandings should be read in.") );
 
+  QPushButton* downloadWelt2000 = new QPushButton( tr("Download") );
+  downloadWelt2000->setToolTip( tr("Press button to download the Welt2000 file.") );
+  downloadWelt2000->setMaximumWidth(downloadWelt2000->sizeHint().width() + 10);
+  downloadWelt2000->setMinimumHeight(downloadWelt2000->sizeHint().height() + 2);
+  connect( downloadWelt2000, SIGNAL(clicked()), this, SLOT(slotDownloadWelt2000()) );
+
   QFormLayout* weltLayout = new QFormLayout();
   weltLayout->setSpacing( 10 );
   weltLayout->addRow( tr( "Country Filter" ) + ":", filterWelt2000 );
@@ -1377,6 +1380,8 @@ void KFLogConfig::__addAirfieldTab()
   QVBoxLayout* weltGroupLayout = new QVBoxLayout;
   weltGroupLayout->addLayout( weltLayout );
   weltGroupLayout->addWidget( readOlWelt2000 );
+  weltGroupLayout->addSpacing( 10 );
+  weltGroupLayout->addWidget( downloadWelt2000, Qt::AlignLeft );
 
   welt2000Group->setLayout( weltGroupLayout );
 
@@ -1525,4 +1530,9 @@ void KFLogConfig::slotSelectFlightTypeColor( int buttonIdentifier )
       pressedButton->setIcon( buttonPixmap );
       pressedButton->setIconSize( buttonPixmap.size() );
     }
+}
+
+void KFLogConfig::slotDownloadWelt2000()
+{
+  emit downloadWelt2000();
 }

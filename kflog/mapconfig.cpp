@@ -7,9 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -17,7 +18,6 @@
 
 #include <QtGui>
 
-//Added by qt3to4:
 #include <Q3PtrList>
 
 #include "flight.h"
@@ -236,7 +236,6 @@ void MapConfig::slotReadConfig()
         AERIAL_CABLE_PEN_STYLE_1, AERIAL_CABLE_PEN_STYLE_2, AERIAL_CABLE_PEN_STYLE_3, AERIAL_CABLE_PEN_STYLE_4,
         PRINT_AERIAL_CABLE_PEN_STYLE_1, PRINT_AERIAL_CABLE_PEN_STYLE_2);
 
-
   __readPen("Highway", &highwayPenList, highwayBorder,
         HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
         PRINT_HIGH_COLOR_1, PRINT_HIGH_COLOR_2,
@@ -314,7 +313,7 @@ void MapConfig::slotReadConfig()
         RIVER_T_BRUSH_STYLE_3, RIVER_T_BRUSH_STYLE_4,
         PRINT_RIVER_T_BRUSH_STYLE_1, PRINT_RIVER_T_BRUSH_STYLE_2);
 
-  __readPenBrush("Airspace A", &airAPenList, airABorder, &airABrushList,
+  __readPenBrush(AS_A, &airAPenList, airABorder, &airABrushList,
         AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
         PRINT_AIRA_COLOR_1, PRINT_AIRA_COLOR_2,
         AIRA_PEN_1, AIRA_PEN_2, AIRA_PEN_3, AIRA_PEN_4,
@@ -328,7 +327,7 @@ void MapConfig::slotReadConfig()
         AIRA_BRUSH_STYLE_3, AIRA_BRUSH_STYLE_4,
         PRINT_AIRA_BRUSH_STYLE_1, PRINT_AIRA_BRUSH_STYLE_2);
 
-  __readPenBrush("Airspace B", &airBPenList, airBBorder, &airBBrushList,
+  __readPenBrush(AS_B, &airBPenList, airBBorder, &airBBrushList,
         AIRB_COLOR_1, AIRB_COLOR_2, AIRB_COLOR_3, AIRB_COLOR_4,
         PRINT_AIRB_COLOR_1, PRINT_AIRB_COLOR_2,
         AIRB_PEN_1, AIRB_PEN_2, AIRB_PEN_3, AIRB_PEN_4,
@@ -342,7 +341,7 @@ void MapConfig::slotReadConfig()
         AIRB_BRUSH_STYLE_3, AIRB_BRUSH_STYLE_4,
         PRINT_AIRB_BRUSH_STYLE_1, PRINT_AIRB_BRUSH_STYLE_2);
 
-  __readPenBrush("Airspace C", &airCPenList, airCBorder, &airCBrushList,
+  __readPenBrush(AS_C, &airCPenList, airCBorder, &airCBrushList,
         AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
         PRINT_AIRC_COLOR_1, PRINT_AIRC_COLOR_2,
         AIRC_PEN_1, AIRC_PEN_2, AIRC_PEN_3, AIRC_PEN_4,
@@ -356,7 +355,7 @@ void MapConfig::slotReadConfig()
         AIRC_BRUSH_STYLE_3, AIRC_BRUSH_STYLE_4,
         PRINT_AIRC_BRUSH_STYLE_1, PRINT_AIRC_BRUSH_STYLE_2);
 
-  __readPenBrush("Airspace D", &airDPenList, airDBorder, &airDBrushList,
+  __readPenBrush(AS_D, &airDPenList, airDBorder, &airDBrushList,
         AIRD_COLOR_1, AIRD_COLOR_2, AIRD_COLOR_3, AIRD_COLOR_4,
         PRINT_AIRD_COLOR_1, PRINT_AIRD_COLOR_2,
         AIRD_PEN_1, AIRD_PEN_2, AIRD_PEN_3, AIRD_PEN_4,
@@ -370,7 +369,7 @@ void MapConfig::slotReadConfig()
         AIRD_BRUSH_STYLE_3, AIRD_BRUSH_STYLE_4,
         PRINT_AIRD_BRUSH_STYLE_1, PRINT_AIRD_BRUSH_STYLE_2);
 
-  __readPenBrush("Airspace E low", &airElPenList, airElBorder, &airElBrushList,
+  __readPenBrush(AS_EL, &airElPenList, airElBorder, &airElBrushList,
         AIREL_COLOR_1, AIREL_COLOR_2, AIREL_COLOR_3, AIREL_COLOR_4,
         PRINT_AIREL_COLOR_1, PRINT_AIREL_COLOR_2,
         AIREL_PEN_1, AIREL_PEN_2, AIREL_PEN_3, AIREL_PEN_4,
@@ -384,7 +383,7 @@ void MapConfig::slotReadConfig()
         AIREL_BRUSH_STYLE_3, AIREL_BRUSH_STYLE_4,
         PRINT_AIREL_BRUSH_STYLE_1, PRINT_AIREL_BRUSH_STYLE_2);
 
-  __readPenBrush("Airspace E high", &airEhPenList, airEhBorder, &airEhBrushList,
+  __readPenBrush(AS_E, &airEhPenList, airEhBorder, &airEhBrushList,
         AIREH_COLOR_1, AIREH_COLOR_2, AIREH_COLOR_3, AIREH_COLOR_4,
         PRINT_AIREH_COLOR_1, PRINT_AIREH_COLOR_2,
         AIREH_PEN_1, AIREH_PEN_2, AIREH_PEN_3, AIREH_PEN_4,
@@ -398,7 +397,7 @@ void MapConfig::slotReadConfig()
         AIREH_BRUSH_STYLE_3, AIREH_BRUSH_STYLE_4,
         PRINT_AIREH_BRUSH_STYLE_1, PRINT_AIREH_BRUSH_STYLE_2);
 
-  __readPenBrush("Airspace F", &airFPenList, airFBorder, &airFBrushList,
+  __readPenBrush(AS_F, &airFPenList, airFBorder, &airFBrushList,
         AIRF_COLOR_1, AIRF_COLOR_2, AIRF_COLOR_3, AIRF_COLOR_4,
         PRINT_AIRF_COLOR_1, PRINT_AIRF_COLOR_2,
         AIRF_PEN_1, AIRF_PEN_2, AIRF_PEN_3, AIRF_PEN_4,
@@ -412,7 +411,7 @@ void MapConfig::slotReadConfig()
         AIRF_BRUSH_STYLE_3, AIRF_BRUSH_STYLE_4,
         PRINT_AIRF_BRUSH_STYLE_1, PRINT_AIRF_BRUSH_STYLE_2);
 
-  __readPenBrush("Control C", &ctrCPenList, ctrCBorder, &ctrCBrushList,
+  __readPenBrush(AS_CTR_C, &ctrCPenList, ctrCBorder, &ctrCBrushList,
         CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
         PRINT_CTRC_COLOR_1, PRINT_CTRC_COLOR_2,
         CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
@@ -426,7 +425,7 @@ void MapConfig::slotReadConfig()
         CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4,
         PRINT_CTRC_BRUSH_STYLE_1, PRINT_CTRC_BRUSH_STYLE_2);
 
-  __readPenBrush("Control D", &ctrDPenList, ctrDBorder, &ctrDBrushList,
+  __readPenBrush(AS_CTR_D, &ctrDPenList, ctrDBorder, &ctrDBrushList,
         CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
         PRINT_CTRD_COLOR_1, PRINT_CTRD_COLOR_2,
         CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4,
@@ -440,7 +439,7 @@ void MapConfig::slotReadConfig()
         CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4,
         PRINT_CTRD_BRUSH_STYLE_1, PRINT_CTRD_BRUSH_STYLE_2);
 
-  __readPenBrush("Danger", &dangerPenList, dangerBorder, &dangerBrushList,
+  __readPenBrush(AS_DANGER, &dangerPenList, dangerBorder, &dangerBrushList,
         DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
         PRINT_DNG_COLOR_1, PRINT_DNG_COLOR_2,
         DNG_PEN_1, DNG_PEN_2, DNG_PEN_3, DNG_PEN_4,
@@ -454,7 +453,7 @@ void MapConfig::slotReadConfig()
         DNG_BRUSH_STYLE_3, DNG_BRUSH_STYLE_4,
         PRINT_DNG_BRUSH_STYLE_1, PRINT_DNG_BRUSH_STYLE_2);
 
-  __readPenBrush("Low Flight", &lowFPenList, lowFBorder, &lowFBrushList,
+  __readPenBrush(AS_LF, &lowFPenList, lowFBorder, &lowFBrushList,
         LOWF_COLOR_1, LOWF_COLOR_2, LOWF_COLOR_3, LOWF_COLOR_4,
         PRINT_LOWF_COLOR_1, PRINT_LOWF_COLOR_2,
         LOWF_PEN_1, LOWF_PEN_2, LOWF_PEN_3, LOWF_PEN_4,
@@ -468,7 +467,7 @@ void MapConfig::slotReadConfig()
         LOWF_BRUSH_STYLE_3, LOWF_BRUSH_STYLE_4,
         PRINT_LOWF_BRUSH_STYLE_1, PRINT_LOWF_BRUSH_STYLE_2);
 
-  __readPenBrush("Restricted Area", &restrPenList, restrBorder, &restrBrushList,
+  __readPenBrush(AS_RESTRICTED, &restrPenList, restrBorder, &restrBrushList,
         RES_COLOR_1, RES_COLOR_2, RES_COLOR_3, RES_COLOR_4,
         PRINT_RES_COLOR_1, PRINT_RES_COLOR_2,
         RES_PEN_1, RES_PEN_2, RES_PEN_3, RES_PEN_4,
@@ -482,7 +481,7 @@ void MapConfig::slotReadConfig()
         RES_BRUSH_STYLE_3, RES_BRUSH_STYLE_4,
         PRINT_RES_BRUSH_STYLE_1, PRINT_RES_BRUSH_STYLE_2);
 
-  __readPenBrush("TMZ", &tmzPenList, tmzBorder, &tmzBrushList,
+  __readPenBrush(AS_TMZ, &tmzPenList, tmzBorder, &tmzBrushList,
         TMZ_COLOR_1, TMZ_COLOR_2, TMZ_COLOR_3, TMZ_COLOR_4,
         PRINT_TMZ_COLOR_1, PRINT_TMZ_COLOR_2,
         TMZ_PEN_1, TMZ_PEN_2, TMZ_PEN_3, TMZ_PEN_4,
@@ -756,6 +755,7 @@ QPen MapConfig::__getPen(unsigned int typeID, int sIndex)
       case BaseMapElement::ControlD:
           return *ctrDPenList.at(sIndex);
       case BaseMapElement::Danger:
+      case BaseMapElement::Prohibited:
           return *dangerPenList.at(sIndex);
       case BaseMapElement::LowFlight:
           return *lowFPenList.at(sIndex);
@@ -825,6 +825,7 @@ bool MapConfig::isBorder(unsigned int typeID)
       case BaseMapElement::ControlD:
           return ctrDBorder[scaleIndex];
       case BaseMapElement::Danger:
+      case BaseMapElement::Prohibited:
           return dangerBorder[scaleIndex];
       case BaseMapElement::LowFlight:
           return lowFBorder[scaleIndex];
@@ -866,7 +867,6 @@ bool MapConfig::isPrintBorder(unsigned int typeID)
           return aerialcableBorder[printScaleIndex];
       case BaseMapElement::Canal:
           return canalBorder[printScaleIndex];
-
 
       case BaseMapElement::River:
       case BaseMapElement::Lake:
@@ -937,6 +937,7 @@ QBrush MapConfig::__getBrush(unsigned int typeID, int sIndex)
       case BaseMapElement::ControlD:
           return *ctrDBrushList.at(sIndex);
       case BaseMapElement::Danger:
+      case BaseMapElement::Prohibited:
           return *dangerBrushList.at(sIndex);
       case BaseMapElement::LowFlight:
           return *lowFBrushList.at(sIndex);
@@ -1156,8 +1157,6 @@ QString MapConfig::getPixmapName( unsigned int typeID,
   return iconName;
 }
 
-
-
 bool MapConfig::isRotatable( unsigned int typeID ) const
   {
     switch (typeID)
@@ -1205,17 +1204,18 @@ Qt::PenStyle MapConfig::getIsoPenStyle(int height)
     else if (height%50==0)
       style=Qt::DashDotDotLine;
   }
+
   return style;
 }
 
 void MapConfig::__readBorder(QString group, bool *b)
 {
-  b[0] = _settings.readBoolEntry("/Map/"+group+"/Border1", true);
-  b[1] = _settings.readBoolEntry("/Map/"+group+"/Border2", true);
-  b[2] = _settings.readBoolEntry("/Map/"+group+"/Border3", true);
-  b[3] = _settings.readBoolEntry("/Map/"+group+"/Border4", true);
-  b[4] = _settings.readBoolEntry("/Map/"+group+"/PrintBorder1", true);
-  b[5] = _settings.readBoolEntry("/Map/"+group+"/PrintBorder2", true);
+  b[0] = _settings.readBoolEntry( "/Map/" + group + "/Border1", true );
+  b[1] = _settings.readBoolEntry( "/Map/" + group + "/Border2", true );
+  b[2] = _settings.readBoolEntry( "/Map/" + group + "/Border3", true );
+  b[3] = _settings.readBoolEntry( "/Map/" + group + "/Border4", true );
+  b[4] = _settings.readBoolEntry( "/Map/" + group + "/PrintBorder1", true );
+  b[5] = _settings.readBoolEntry( "/Map/" + group + "/PrintBorder2", true );
 }
 
 void MapConfig::__readPen(QString group, Q3PtrList<QPen> *penList, bool *b,

@@ -7,13 +7,30 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
+
+/**
+ * \class MapConfig
+ *
+ * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
+ *
+ * \brief Map configuration class.
+ *
+ * This class takes care of the configuration-data for displaying
+ * and printing map-elements. To avoid problems, there should be only
+ * one element per application.
+ *
+ * \date 2001-2011
+ *
+ * \version $Id$
+ */
 
 #ifndef MAP_CONFIG_H
 #define MAP_CONFIG_H
@@ -35,21 +52,6 @@ const int topoLevels[] = {
 
 class flightPoint;
 
-/**
- * \class MapConfig
- *
- * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
- *
- * \brief Map configuration class.
- *
- * This class takes care of the configuration-data for displaying
- * and printing map-elements. To avoid problems, there should be only
- * one element per application.
- *
- * \date 2001-2010
- *
- * \version $Id$
- */
 class MapConfig : public QObject
 {
   Q_OBJECT
@@ -207,7 +209,7 @@ public:
    *
    * @see #slotSetFlightDataType
    */
-  enum DrawFlightPoint {Altitude=0, Cycling=1, Speed=2, Vario=3, Solid=4};
+  enum DrawFlightPoint { Altitude=0, Cycling=1, Speed=2, Vario=3, Solid=4 };
 
 public slots:
 

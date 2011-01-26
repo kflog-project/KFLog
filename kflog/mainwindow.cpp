@@ -1544,6 +1544,9 @@ void MainWindow::slotConfigureKFLog()
 
   connect(confDlg, SIGNAL(newDrawType(int)), this, SLOT(slotSelectFlightData(int)));
 
+  connect( confDlg, SIGNAL(downloadWelt2000()),
+           _globalMapContents, SLOT(slotDownloadWelt2000()) );
+
   confDlg->setVisible( true );
 }
 
