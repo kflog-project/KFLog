@@ -1534,7 +1534,8 @@ void MainWindow::slotConfigureKFLog()
 {
   KFLogConfig* confDlg = new KFLogConfig( this );
 
-  connect(confDlg, SIGNAL(scaleChanged(int, int)), mapControl, SLOT(slotSetMinMaxValue(int, int)));
+  connect( confDlg, SIGNAL(scaleChanged(int, int)),
+           mapControl, SLOT(slotSetMinMaxValue(int, int)) );
 
   connect(confDlg, SIGNAL(configOk()), _globalMapConfig, SLOT(slotReadConfig()));
 

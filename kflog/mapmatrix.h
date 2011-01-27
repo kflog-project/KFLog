@@ -21,10 +21,8 @@
 #include <QObject>
 #include <QTransform>
 #include <QPoint>
+#include <QPolygon>
 #include <QRect>
-
-//Added by qt3to4:
-#include <Q3PointArray>
 
 #include "projectionlambert.h"
 #include "projectioncylindric.h"
@@ -97,13 +95,17 @@ public:
   QRect wgsToMap(const QRect& rect) const;
 
   /**
-   * Maps the given projected pointarray into the current map-matrix.
+   * Maps the given projected polygon into the current map-matrix.
    *
-   * @param  pArray  The pointarray to be mapped
+   * @param  pPolygon  The polygon to be mapped
    *
-   * @return the mapped pointarray
+   * @return the mapped polygon
    */
-  Q3PointArray map(const Q3PointArray& pArray) const;
+  QPolygon map(const QPolygon &pPolygon) const
+  {
+    return worldMatrix.map(pPolygon);
+  };
+
   /**
    * Maps the given projected point into the current map-matrix.
    *
@@ -140,7 +142,7 @@ public:
    *
    * @return the mapped pointarray
    */
-  Q3PointArray print(const Q3PointArray& pArray) const;
+  QPolygon print(const QPolygon& pArray) const;
   /**
    * @param  type  The type of scale to be returned.
    *

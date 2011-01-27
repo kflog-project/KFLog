@@ -18,8 +18,6 @@
 
 #include <QtGui>
 
-#include <Q3PtrList>
-
 #include "flight.h"
 #include "mapdefaults.h"
 
@@ -31,39 +29,12 @@ MapConfig::MapConfig( QObject* object ) :
   printScaleIndex(0),
   isSwitch(false)
 {
+  defaultOpacity[0] = AS_OPACITY_1;
+  defaultOpacity[1] = AS_OPACITY_2;
+  defaultOpacity[2] = AS_OPACITY_3;
+  defaultOpacity[3] = AS_OPACITY_4;
+
   qDebug() << "MapConfig()";
-
-  airABorder = new bool[6];
-  airBBorder = new bool[6];
-  airCBorder = new bool[6];
-  airDBorder = new bool[6];
-  airElBorder = new bool[6];
-  airEhBorder = new bool[6];
-  airFBorder = new bool[6];
-  ctrCBorder = new bool[6];
-  ctrDBorder = new bool[6];
-  dangerBorder = new bool[6];
-  lowFBorder = new bool[6];
-  restrBorder = new bool[6];
-  tmzBorder = new bool[6];
-
-  trailBorder = new bool[6];
-  roadBorder = new bool[6];
-  highwayBorder = new bool[6];
-  railBorder = new bool[6];
-  rail_dBorder = new bool[6];
-  aerialcableBorder = new bool[6];
-  riverBorder = new bool[6];
-  river_tBorder = new bool[6];
-  canalBorder = new bool[6];
-  cityBorder = new bool[6];
-
-  forestBorder = new bool[6];
-  glacierBorder = new bool[6];
-  packiceBorder = new bool[6];
-
-  faiAreaLow500Border = new bool[6];
-  faiAreaHigh500Border = new bool[6];
 }
 
 MapConfig::~MapConfig()
@@ -73,59 +44,9 @@ MapConfig::~MapConfig()
 
 void MapConfig::slotReadConfig()
 {
-  /* Unfortunately, a ~QList() doesn't work, so we must remove all
-   * item manualy ;-(
-   */
-  while(topographyColorList.remove());
+  qDebug() << "MapConfig::slotReadConfig()";
 
-  while(airAPenList.remove());
-  while(airABrushList.remove());
-  while(airBPenList.remove());
-  while(airBBrushList.remove());
-  while(airCPenList.remove());
-  while(airCBrushList.remove());
-  while(airDPenList.remove());
-  while(airDBrushList.remove());
-  while(airElPenList.remove());
-  while(airElBrushList.remove());
-  while(airEhPenList.remove());
-  while(airEhBrushList.remove());
-  while(airFPenList.remove());
-  while(airFBrushList.remove());
-  while(ctrCPenList.remove());
-  while(ctrCBrushList.remove());
-  while(ctrDPenList.remove());
-  while(ctrDBrushList.remove());
-  while(dangerPenList.remove());
-  while(dangerBrushList.remove());
-  while(lowFPenList.remove());
-  while(lowFBrushList.remove());
-  while(restrPenList.remove());
-  while(restrBrushList.remove());
-  while(tmzPenList.remove());
-  while(tmzBrushList.remove());
-
-  while(trailPenList.remove());
-  while(roadPenList.remove());
-  while(highwayPenList.remove());
-  while(riverPenList.remove());
-  while(river_tPenList.remove());
-  while(river_tBrushList.remove());
-  while(canalPenList.remove());
-  while(railPenList.remove());
-  while(rail_dPenList.remove());
-  while(cityPenList.remove());
-  while(cityBrushList.remove());
-  while(forestPenList.remove());
-  while(forestBrushList.remove());
-  while(glacierPenList.remove());
-  while(glacierBrushList.remove());
-  while(packicePenList.remove());
-  while(packiceBrushList.remove());
-  while(faiAreaLow500PenList.remove());
-  while(faiAreaLow500BrushList.remove());
-  while(faiAreaHigh500PenList.remove());
-  while(faiAreaHigh500BrushList.remove());
+  topographyColorList.clear();
 
   __readTopo("SubTerrain", COLOR_LEVEL_SUB);
   __readTopo("0M",    COLOR_LEVEL_0);
@@ -179,8 +100,7 @@ void MapConfig::slotReadConfig()
   __readTopo("8500M", COLOR_LEVEL_8500);
   __readTopo("8750M", COLOR_LEVEL_8750);
 
-
-  __readPen("Road", &roadPenList, roadBorder,
+  __readPen("Road", roadPenList, roadBorder,
         ROAD_COLOR_1, ROAD_COLOR_2, ROAD_COLOR_3, ROAD_COLOR_4,
         PRINT_ROAD_COLOR_1, PRINT_ROAD_COLOR_2,
         ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4,
@@ -188,7 +108,7 @@ void MapConfig::slotReadConfig()
         ROAD_PEN_STYLE_1, ROAD_PEN_STYLE_2, ROAD_PEN_STYLE_3, ROAD_PEN_STYLE_4,
         PRINT_ROAD_PEN_STYLE_1, PRINT_ROAD_PEN_STYLE_2);
 
-  __readPen("Trail", &trailPenList, trailBorder,
+  __readPen("Trail", trailPenList, trailBorder,
         TRAIL_COLOR_1, TRAIL_COLOR_2, TRAIL_COLOR_3, TRAIL_COLOR_4,
         PRINT_TRAIL_COLOR_1, PRINT_TRAIL_COLOR_2,
         TRAIL_PEN_1, TRAIL_PEN_2, TRAIL_PEN_3, TRAIL_PEN_4,
@@ -196,7 +116,7 @@ void MapConfig::slotReadConfig()
         TRAIL_PEN_STYLE_1, TRAIL_PEN_STYLE_2, TRAIL_PEN_STYLE_3, TRAIL_PEN_STYLE_4,
         PRINT_TRAIL_PEN_STYLE_1, PRINT_TRAIL_PEN_STYLE_2);
 
-  __readPen("River", &riverPenList, riverBorder,
+  __readPen("River", riverPenList, riverBorder,
         RIVER_COLOR_1, RIVER_COLOR_2, RIVER_COLOR_3, RIVER_COLOR_4,
         PRINT_RIVER_COLOR_1, PRINT_RIVER_COLOR_2,
         RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4,
@@ -204,7 +124,7 @@ void MapConfig::slotReadConfig()
         RIVER_PEN_STYLE_1, RIVER_PEN_STYLE_2, RIVER_PEN_STYLE_3, RIVER_PEN_STYLE_4,
         PRINT_RIVER_PEN_STYLE_1, PRINT_RIVER_PEN_STYLE_2);
 
-  __readPen("Canal", &canalPenList, canalBorder,
+  __readPen("Canal", canalPenList, canalBorder,
         CANAL_COLOR_1, CANAL_COLOR_2, CANAL_COLOR_3, CANAL_COLOR_4,
         PRINT_CANAL_COLOR_1, PRINT_CANAL_COLOR_2,
         CANAL_PEN_1, CANAL_PEN_2, CANAL_PEN_3, CANAL_PEN_4,
@@ -212,7 +132,7 @@ void MapConfig::slotReadConfig()
         CANAL_PEN_STYLE_1, CANAL_PEN_STYLE_2, CANAL_PEN_STYLE_3, CANAL_PEN_STYLE_4,
         PRINT_CANAL_PEN_STYLE_1, PRINT_CANAL_PEN_STYLE_2);
 
-  __readPen("Rail", &railPenList, railBorder,
+  __readPen("Rail", railPenList, railBorder,
         RAIL_COLOR_1, RAIL_COLOR_2, RAIL_COLOR_3, RAIL_COLOR_4,
         PRINT_RAIL_COLOR_1, PRINT_RAIL_COLOR_2,
         RAIL_PEN_1, RAIL_PEN_2, RAIL_PEN_3, RAIL_PEN_4,
@@ -220,7 +140,7 @@ void MapConfig::slotReadConfig()
         RAIL_PEN_STYLE_1, RAIL_PEN_STYLE_2, RAIL_PEN_STYLE_3, RAIL_PEN_STYLE_4,
         PRINT_RAIL_PEN_STYLE_1, PRINT_RAIL_PEN_STYLE_2);
 
-  __readPen("Rail_D", &rail_dPenList, rail_dBorder,
+  __readPen("Rail_D", rail_dPenList, rail_dBorder,
         RAIL_D_COLOR_1, RAIL_D_COLOR_2, RAIL_D_COLOR_3, RAIL_D_COLOR_4,
         PRINT_RAIL_D_COLOR_1, PRINT_RAIL_D_COLOR_2,
         RAIL_D_PEN_1, RAIL_D_PEN_2, RAIL_D_PEN_3, RAIL_D_PEN_4,
@@ -228,7 +148,7 @@ void MapConfig::slotReadConfig()
         RAIL_D_PEN_STYLE_1, RAIL_D_PEN_STYLE_2, RAIL_D_PEN_STYLE_3, RAIL_D_PEN_STYLE_4,
         PRINT_RAIL_D_PEN_STYLE_1, PRINT_RAIL_D_PEN_STYLE_2);
 
-  __readPen("Aerial_Cable", &aerialcablePenList, aerialcableBorder,
+  __readPen("Aerial_Cable", aerialcablePenList, aerialcableBorder,
         AERIAL_CABLE_COLOR_1, AERIAL_CABLE_COLOR_2, AERIAL_CABLE_COLOR_3, AERIAL_CABLE_COLOR_4,
         PRINT_AERIAL_CABLE_COLOR_1, PRINT_AERIAL_CABLE_COLOR_2,
         AERIAL_CABLE_PEN_1, AERIAL_CABLE_PEN_2, AERIAL_CABLE_PEN_3, AERIAL_CABLE_PEN_4,
@@ -236,7 +156,7 @@ void MapConfig::slotReadConfig()
         AERIAL_CABLE_PEN_STYLE_1, AERIAL_CABLE_PEN_STYLE_2, AERIAL_CABLE_PEN_STYLE_3, AERIAL_CABLE_PEN_STYLE_4,
         PRINT_AERIAL_CABLE_PEN_STYLE_1, PRINT_AERIAL_CABLE_PEN_STYLE_2);
 
-  __readPen("Highway", &highwayPenList, highwayBorder,
+  __readPen("Highway", highwayPenList, highwayBorder,
         HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
         PRINT_HIGH_COLOR_1, PRINT_HIGH_COLOR_2,
         HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4,
@@ -244,7 +164,7 @@ void MapConfig::slotReadConfig()
         HIGH_PEN_STYLE_1, HIGH_PEN_STYLE_2, HIGH_PEN_STYLE_3, HIGH_PEN_STYLE_4,
         PRINT_HIGH_PEN_STYLE_1, PRINT_HIGH_PEN_STYLE_2);
 
-  __readPenBrush("City", &cityPenList, cityBorder, &cityBrushList,
+  __readPenBrush("City", cityPenList, cityBorder, cityBrushList,
         CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3,
         CITY_COLOR_4, PRINT_CITY_COLOR_1, PRINT_CITY_COLOR_2,
         CITY_PEN_1, CITY_PEN_2, CITY_PEN_3, CITY_PEN_4,
@@ -257,7 +177,7 @@ void MapConfig::slotReadConfig()
         Qt::SolidPattern, Qt::SolidPattern, Qt::SolidPattern,
         Qt::SolidPattern, Qt::SolidPattern, Qt::SolidPattern);
 
-  __readPenBrush("Forest", &forestPenList, forestBorder, &forestBrushList,
+  __readPenBrush("Forest", forestPenList, forestBorder, forestBrushList,
         FRST_COLOR_1, FRST_COLOR_2, FRST_COLOR_3, FRST_COLOR_4,
         PRINT_FRST_COLOR_1, PRINT_FRST_COLOR_2,
         FRST_PEN_1, FRST_PEN_2, FRST_PEN_3, FRST_PEN_4,
@@ -271,7 +191,7 @@ void MapConfig::slotReadConfig()
         FRST_BRUSH_STYLE_3, FRST_BRUSH_STYLE_4,
         PRINT_FRST_BRUSH_STYLE_1, PRINT_FRST_BRUSH_STYLE_2);
 
-  __readPenBrush("Glacier", &glacierPenList, glacierBorder, &glacierBrushList,
+  __readPenBrush("Glacier", glacierPenList, glacierBorder, glacierBrushList,
         GLACIER_COLOR_1, GLACIER_COLOR_2, GLACIER_COLOR_3, GLACIER_COLOR_4,
         PRINT_GLACIER_COLOR_1, PRINT_GLACIER_COLOR_2,
         GLACIER_PEN_1, GLACIER_PEN_2, GLACIER_PEN_3, GLACIER_PEN_4,
@@ -285,7 +205,7 @@ void MapConfig::slotReadConfig()
         GLACIER_BRUSH_STYLE_3, GLACIER_BRUSH_STYLE_4,
         PRINT_GLACIER_BRUSH_STYLE_1, PRINT_GLACIER_BRUSH_STYLE_2);
 
-  __readPenBrush("PackIce", &packicePenList, packiceBorder, &packiceBrushList,
+  __readPenBrush("PackIce", packicePenList, packiceBorder, packiceBrushList,
         PACK_ICE_COLOR_1, PACK_ICE_COLOR_2, PACK_ICE_COLOR_3, PACK_ICE_COLOR_4,
         PRINT_PACK_ICE_COLOR_1, PRINT_PACK_ICE_COLOR_2,
         PACK_ICE_PEN_1, PACK_ICE_PEN_2, PACK_ICE_PEN_3, PACK_ICE_PEN_4,
@@ -299,7 +219,7 @@ void MapConfig::slotReadConfig()
         PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4,
         PRINT_PACK_ICE_BRUSH_STYLE_1, PRINT_PACK_ICE_BRUSH_STYLE_2);
 
-  __readPenBrush("River_T", &river_tPenList, river_tBorder, &river_tBrushList,
+  __readPenBrush("River_T", river_tPenList, river_tBorder, river_tBrushList,
         RIVER_T_COLOR_1, RIVER_T_COLOR_2, RIVER_T_COLOR_3, RIVER_T_COLOR_4,
         PRINT_RIVER_T_COLOR_1, PRINT_RIVER_T_COLOR_2,
         RIVER_T_PEN_1, RIVER_T_PEN_2, RIVER_T_PEN_3, RIVER_T_PEN_4,
@@ -313,7 +233,7 @@ void MapConfig::slotReadConfig()
         RIVER_T_BRUSH_STYLE_3, RIVER_T_BRUSH_STYLE_4,
         PRINT_RIVER_T_BRUSH_STYLE_1, PRINT_RIVER_T_BRUSH_STYLE_2);
 
-  __readPenBrush(AS_A, &airAPenList, airABorder, &airABrushList,
+  __readPenBrush(AS_A, airAPenList, airABorder, airABrushList,
         AIRA_COLOR_1, AIRA_COLOR_2, AIRA_COLOR_3, AIRA_COLOR_4,
         PRINT_AIRA_COLOR_1, PRINT_AIRA_COLOR_2,
         AIRA_PEN_1, AIRA_PEN_2, AIRA_PEN_3, AIRA_PEN_4,
@@ -326,8 +246,9 @@ void MapConfig::slotReadConfig()
         AIRA_BRUSH_STYLE_1, AIRA_BRUSH_STYLE_2,
         AIRA_BRUSH_STYLE_3, AIRA_BRUSH_STYLE_4,
         PRINT_AIRA_BRUSH_STYLE_1, PRINT_AIRA_BRUSH_STYLE_2);
+  __readAsOpacity(AS_A, airAOpacityList);
 
-  __readPenBrush(AS_B, &airBPenList, airBBorder, &airBBrushList,
+  __readPenBrush(AS_B, airBPenList, airBBorder, airBBrushList,
         AIRB_COLOR_1, AIRB_COLOR_2, AIRB_COLOR_3, AIRB_COLOR_4,
         PRINT_AIRB_COLOR_1, PRINT_AIRB_COLOR_2,
         AIRB_PEN_1, AIRB_PEN_2, AIRB_PEN_3, AIRB_PEN_4,
@@ -340,8 +261,9 @@ void MapConfig::slotReadConfig()
         AIRB_BRUSH_STYLE_1, AIRB_BRUSH_STYLE_2,
         AIRB_BRUSH_STYLE_3, AIRB_BRUSH_STYLE_4,
         PRINT_AIRB_BRUSH_STYLE_1, PRINT_AIRB_BRUSH_STYLE_2);
+  __readAsOpacity(AS_B, airBOpacityList);
 
-  __readPenBrush(AS_C, &airCPenList, airCBorder, &airCBrushList,
+  __readPenBrush(AS_C, airCPenList, airCBorder, airCBrushList,
         AIRC_COLOR_1, AIRC_COLOR_2, AIRC_COLOR_3, AIRC_COLOR_4,
         PRINT_AIRC_COLOR_1, PRINT_AIRC_COLOR_2,
         AIRC_PEN_1, AIRC_PEN_2, AIRC_PEN_3, AIRC_PEN_4,
@@ -354,8 +276,9 @@ void MapConfig::slotReadConfig()
         AIRC_BRUSH_STYLE_1, AIRC_BRUSH_STYLE_2,
         AIRC_BRUSH_STYLE_3, AIRC_BRUSH_STYLE_4,
         PRINT_AIRC_BRUSH_STYLE_1, PRINT_AIRC_BRUSH_STYLE_2);
+  __readAsOpacity(AS_C, airCOpacityList);
 
-  __readPenBrush(AS_D, &airDPenList, airDBorder, &airDBrushList,
+  __readPenBrush(AS_D, airDPenList, airDBorder, airDBrushList,
         AIRD_COLOR_1, AIRD_COLOR_2, AIRD_COLOR_3, AIRD_COLOR_4,
         PRINT_AIRD_COLOR_1, PRINT_AIRD_COLOR_2,
         AIRD_PEN_1, AIRD_PEN_2, AIRD_PEN_3, AIRD_PEN_4,
@@ -368,8 +291,9 @@ void MapConfig::slotReadConfig()
         AIRD_BRUSH_STYLE_1, AIRD_BRUSH_STYLE_2,
         AIRD_BRUSH_STYLE_3, AIRD_BRUSH_STYLE_4,
         PRINT_AIRD_BRUSH_STYLE_1, PRINT_AIRD_BRUSH_STYLE_2);
+  __readAsOpacity(AS_D, airDOpacityList);
 
-  __readPenBrush(AS_EL, &airElPenList, airElBorder, &airElBrushList,
+  __readPenBrush(AS_EL, airElPenList, airElBorder, airElBrushList,
         AIREL_COLOR_1, AIREL_COLOR_2, AIREL_COLOR_3, AIREL_COLOR_4,
         PRINT_AIREL_COLOR_1, PRINT_AIREL_COLOR_2,
         AIREL_PEN_1, AIREL_PEN_2, AIREL_PEN_3, AIREL_PEN_4,
@@ -382,8 +306,9 @@ void MapConfig::slotReadConfig()
         AIREL_BRUSH_STYLE_1, AIREL_BRUSH_STYLE_2,
         AIREL_BRUSH_STYLE_3, AIREL_BRUSH_STYLE_4,
         PRINT_AIREL_BRUSH_STYLE_1, PRINT_AIREL_BRUSH_STYLE_2);
+  __readAsOpacity(AS_EL, airElOpacityList);
 
-  __readPenBrush(AS_E, &airEhPenList, airEhBorder, &airEhBrushList,
+  __readPenBrush(AS_E, airEPenList, airEBorder, airEBrushList,
         AIREH_COLOR_1, AIREH_COLOR_2, AIREH_COLOR_3, AIREH_COLOR_4,
         PRINT_AIREH_COLOR_1, PRINT_AIREH_COLOR_2,
         AIREH_PEN_1, AIREH_PEN_2, AIREH_PEN_3, AIREH_PEN_4,
@@ -396,8 +321,9 @@ void MapConfig::slotReadConfig()
         AIREH_BRUSH_STYLE_1, AIREH_BRUSH_STYLE_2,
         AIREH_BRUSH_STYLE_3, AIREH_BRUSH_STYLE_4,
         PRINT_AIREH_BRUSH_STYLE_1, PRINT_AIREH_BRUSH_STYLE_2);
+  __readAsOpacity(AS_E, airEOpacityList);
 
-  __readPenBrush(AS_F, &airFPenList, airFBorder, &airFBrushList,
+  __readPenBrush(AS_F, airFPenList, airFBorder, airFBrushList,
         AIRF_COLOR_1, AIRF_COLOR_2, AIRF_COLOR_3, AIRF_COLOR_4,
         PRINT_AIRF_COLOR_1, PRINT_AIRF_COLOR_2,
         AIRF_PEN_1, AIRF_PEN_2, AIRF_PEN_3, AIRF_PEN_4,
@@ -410,8 +336,9 @@ void MapConfig::slotReadConfig()
         AIRF_BRUSH_STYLE_1, AIRF_BRUSH_STYLE_2,
         AIRF_BRUSH_STYLE_3, AIRF_BRUSH_STYLE_4,
         PRINT_AIRF_BRUSH_STYLE_1, PRINT_AIRF_BRUSH_STYLE_2);
+  __readAsOpacity(AS_F, airFOpacityList);
 
-  __readPenBrush(AS_CTR_C, &ctrCPenList, ctrCBorder, &ctrCBrushList,
+  __readPenBrush(AS_CTR_C, ctrCPenList, ctrCBorder, ctrCBrushList,
         CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
         PRINT_CTRC_COLOR_1, PRINT_CTRC_COLOR_2,
         CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
@@ -424,8 +351,9 @@ void MapConfig::slotReadConfig()
         CTRC_BRUSH_STYLE_1, CTRC_BRUSH_STYLE_2,
         CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4,
         PRINT_CTRC_BRUSH_STYLE_1, PRINT_CTRC_BRUSH_STYLE_2);
+  __readAsOpacity(AS_CTR_C, ctrCOpacityList);
 
-  __readPenBrush(AS_CTR_D, &ctrDPenList, ctrDBorder, &ctrDBrushList,
+  __readPenBrush(AS_CTR_D, ctrDPenList, ctrDBorder, ctrDBrushList,
         CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
         PRINT_CTRD_COLOR_1, PRINT_CTRD_COLOR_2,
         CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4,
@@ -438,8 +366,9 @@ void MapConfig::slotReadConfig()
         CTRD_BRUSH_STYLE_1, CTRD_BRUSH_STYLE_2,
         CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4,
         PRINT_CTRD_BRUSH_STYLE_1, PRINT_CTRD_BRUSH_STYLE_2);
+  __readAsOpacity(AS_CTR_D, ctrDOpacityList);
 
-  __readPenBrush(AS_DANGER, &dangerPenList, dangerBorder, &dangerBrushList,
+  __readPenBrush(AS_DANGER, dangerPenList, dangerBorder, dangerBrushList,
         DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
         PRINT_DNG_COLOR_1, PRINT_DNG_COLOR_2,
         DNG_PEN_1, DNG_PEN_2, DNG_PEN_3, DNG_PEN_4,
@@ -452,8 +381,9 @@ void MapConfig::slotReadConfig()
         DNG_BRUSH_STYLE_1, DNG_BRUSH_STYLE_2,
         DNG_BRUSH_STYLE_3, DNG_BRUSH_STYLE_4,
         PRINT_DNG_BRUSH_STYLE_1, PRINT_DNG_BRUSH_STYLE_2);
+  __readAsOpacity(AS_DANGER, dangerOpacityList);
 
-  __readPenBrush(AS_LF, &lowFPenList, lowFBorder, &lowFBrushList,
+  __readPenBrush(AS_LF, lowFPenList, lowFBorder, lowFBrushList,
         LOWF_COLOR_1, LOWF_COLOR_2, LOWF_COLOR_3, LOWF_COLOR_4,
         PRINT_LOWF_COLOR_1, PRINT_LOWF_COLOR_2,
         LOWF_PEN_1, LOWF_PEN_2, LOWF_PEN_3, LOWF_PEN_4,
@@ -466,8 +396,9 @@ void MapConfig::slotReadConfig()
         LOWF_BRUSH_STYLE_1, LOWF_BRUSH_STYLE_2,
         LOWF_BRUSH_STYLE_3, LOWF_BRUSH_STYLE_4,
         PRINT_LOWF_BRUSH_STYLE_1, PRINT_LOWF_BRUSH_STYLE_2);
+  __readAsOpacity(AS_LF, lowFOpacityList);
 
-  __readPenBrush(AS_RESTRICTED, &restrPenList, restrBorder, &restrBrushList,
+  __readPenBrush(AS_RESTRICTED, restrPenList, restrBorder, restrBrushList,
         RES_COLOR_1, RES_COLOR_2, RES_COLOR_3, RES_COLOR_4,
         PRINT_RES_COLOR_1, PRINT_RES_COLOR_2,
         RES_PEN_1, RES_PEN_2, RES_PEN_3, RES_PEN_4,
@@ -480,8 +411,9 @@ void MapConfig::slotReadConfig()
         RES_BRUSH_STYLE_1, RES_BRUSH_STYLE_2,
         RES_BRUSH_STYLE_3, RES_BRUSH_STYLE_4,
         PRINT_RES_BRUSH_STYLE_1, PRINT_RES_BRUSH_STYLE_2);
+  __readAsOpacity(AS_RESTRICTED, restrOpacityList);
 
-  __readPenBrush(AS_TMZ, &tmzPenList, tmzBorder, &tmzBrushList,
+  __readPenBrush(AS_TMZ, tmzPenList, tmzBorder, tmzBrushList,
         TMZ_COLOR_1, TMZ_COLOR_2, TMZ_COLOR_3, TMZ_COLOR_4,
         PRINT_TMZ_COLOR_1, PRINT_TMZ_COLOR_2,
         TMZ_PEN_1, TMZ_PEN_2, TMZ_PEN_3, TMZ_PEN_4,
@@ -494,43 +426,75 @@ void MapConfig::slotReadConfig()
         TMZ_BRUSH_STYLE_1, TMZ_BRUSH_STYLE_2,
         TMZ_BRUSH_STYLE_3, TMZ_BRUSH_STYLE_4,
         PRINT_TMZ_BRUSH_STYLE_1, PRINT_TMZ_BRUSH_STYLE_2);
+  __readAsOpacity(AS_TMZ, tmzOpacityList);
 
-    __readPenBrush("FAIAreaLow500", &faiAreaLow500PenList, faiAreaLow500Border, &faiAreaLow500BrushList,
-        FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
-        PRINT_FAI_LOW_500_COLOR_1, PRINT_FAI_LOW_500_COLOR_2,
-        FAI_LOW_500_PEN_1, FAI_LOW_500_PEN_2, FAI_LOW_500_PEN_3, FAI_LOW_500_PEN_4,
-        PRINT_FAI_LOW_500_PEN_1, PRINT_FAI_LOW_500_PEN_2,
-        FAI_LOW_500_PEN_STYLE_1, FAI_LOW_500_PEN_STYLE_2, FAI_LOW_500_PEN_STYLE_3, FAI_LOW_500_PEN_STYLE_4,
-        PRINT_FAI_LOW_500_PEN_STYLE_1, PRINT_FAI_LOW_500_PEN_STYLE_2,
-        FAI_LOW_500_BRUSH_COLOR_1, FAI_LOW_500_BRUSH_COLOR_2,
-        FAI_LOW_500_BRUSH_COLOR_3, FAI_LOW_500_BRUSH_COLOR_4,
-        PRINT_FAI_LOW_500_BRUSH_COLOR_1, PRINT_FAI_LOW_500_BRUSH_COLOR_2,
-        FAI_LOW_500_BRUSH_STYLE_1, FAI_LOW_500_BRUSH_STYLE_2,
-        FAI_LOW_500_BRUSH_STYLE_3, FAI_LOW_500_BRUSH_STYLE_4,
-        PRINT_FAI_LOW_500_BRUSH_STYLE_1, PRINT_FAI_LOW_500_BRUSH_STYLE_2);
+  __readPenBrush(AS_GS, gsPenList, gsBorder, gsBrushList,
+        GLIDER_SECTOR_COLOR_1, GLIDER_SECTOR_COLOR_2, GLIDER_SECTOR_COLOR_3, GLIDER_SECTOR_COLOR_4,
+        PRINT_GLIDER_SECTOR_COLOR_1, PRINT_GLIDER_SECTOR_COLOR_2,
+        GLIDER_SECTOR_PEN_1, GLIDER_SECTOR_PEN_2, GLIDER_SECTOR_PEN_3, GLIDER_SECTOR_PEN_4,
+        PRINT_GLIDER_SECTOR_PEN_1, PRINT_GLIDER_SECTOR_PEN_2,
+        GLIDER_SECTOR_PEN_STYLE_1, GLIDER_SECTOR_PEN_STYLE_2, GLIDER_SECTOR_PEN_STYLE_3, GLIDER_SECTOR_PEN_STYLE_4,
+        PRINT_GLIDER_SECTOR_PEN_STYLE_1, PRINT_GLIDER_SECTOR_PEN_STYLE_2,
+        GLIDER_SECTOR_BRUSH_COLOR_1, GLIDER_SECTOR_BRUSH_COLOR_2,
+        GLIDER_SECTOR_BRUSH_COLOR_3, GLIDER_SECTOR_BRUSH_COLOR_4,
+        PRINT_GLIDER_SECTOR_BRUSH_COLOR_1, PRINT_GLIDER_SECTOR_BRUSH_COLOR_2,
+        GLIDER_SECTOR_BRUSH_STYLE_1, GLIDER_SECTOR_BRUSH_STYLE_2,
+        GLIDER_SECTOR_BRUSH_STYLE_3, GLIDER_SECTOR_BRUSH_STYLE_4,
+        PRINT_GLIDER_SECTOR_BRUSH_STYLE_1, PRINT_GLIDER_SECTOR_BRUSH_STYLE_2);
+  __readAsOpacity(AS_GS, gsOpacityList);
 
-    __readPenBrush("FAIAreaHigh500", &faiAreaHigh500PenList, faiAreaHigh500Border, &faiAreaHigh500BrushList,
-        FAI_HIGH_500_COLOR_1, FAI_HIGH_500_COLOR_2, FAI_HIGH_500_COLOR_3, FAI_HIGH_500_COLOR_4,
-        PRINT_FAI_HIGH_500_COLOR_1, PRINT_FAI_HIGH_500_COLOR_2,
-        FAI_HIGH_500_PEN_1, FAI_HIGH_500_PEN_2, FAI_HIGH_500_PEN_3, FAI_HIGH_500_PEN_4,
-        PRINT_FAI_HIGH_500_PEN_1, PRINT_FAI_HIGH_500_PEN_2,
-        FAI_HIGH_500_PEN_STYLE_1, FAI_HIGH_500_PEN_STYLE_2, FAI_HIGH_500_PEN_STYLE_3, FAI_HIGH_500_PEN_STYLE_4,
-        PRINT_FAI_HIGH_500_PEN_STYLE_1, PRINT_FAI_HIGH_500_PEN_STYLE_2,
-        FAI_HIGH_500_BRUSH_COLOR_1, FAI_HIGH_500_BRUSH_COLOR_2,
-        FAI_HIGH_500_BRUSH_COLOR_3, FAI_HIGH_500_BRUSH_COLOR_4,
-        PRINT_FAI_HIGH_500_BRUSH_COLOR_1, PRINT_FAI_HIGH_500_BRUSH_COLOR_2,
-        FAI_HIGH_500_BRUSH_STYLE_1, FAI_HIGH_500_BRUSH_STYLE_2,
-        FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4,
-        PRINT_FAI_HIGH_500_BRUSH_STYLE_1, PRINT_FAI_HIGH_500_BRUSH_STYLE_2);
+  __readPenBrush(AS_WW, wwPenList, wwBorder, wwBrushList,
+        WAVE_WINDOW_COLOR_1, WAVE_WINDOW_COLOR_2, WAVE_WINDOW_COLOR_3, WAVE_WINDOW_COLOR_4,
+        PRINT_WAVE_WINDOW_COLOR_1, PRINT_WAVE_WINDOW_COLOR_2,
+        WAVE_WINDOW_PEN_1, WAVE_WINDOW_PEN_2, WAVE_WINDOW_PEN_3, WAVE_WINDOW_PEN_4,
+        PRINT_WAVE_WINDOW_PEN_1, PRINT_WAVE_WINDOW_PEN_2,
+        WAVE_WINDOW_PEN_STYLE_1, WAVE_WINDOW_PEN_STYLE_2, WAVE_WINDOW_PEN_STYLE_3, WAVE_WINDOW_PEN_STYLE_4,
+        PRINT_WAVE_WINDOW_PEN_STYLE_1, PRINT_WAVE_WINDOW_PEN_STYLE_2,
+        WAVE_WINDOW_BRUSH_COLOR_1, WAVE_WINDOW_BRUSH_COLOR_2,
+        WAVE_WINDOW_BRUSH_COLOR_3, WAVE_WINDOW_BRUSH_COLOR_4,
+        PRINT_WAVE_WINDOW_BRUSH_COLOR_1, PRINT_WAVE_WINDOW_BRUSH_COLOR_2,
+        WAVE_WINDOW_BRUSH_STYLE_1, WAVE_WINDOW_BRUSH_STYLE_2,
+        WAVE_WINDOW_BRUSH_STYLE_3, WAVE_WINDOW_BRUSH_STYLE_4,
+        PRINT_WAVE_WINDOW_BRUSH_STYLE_1, PRINT_WAVE_WINDOW_BRUSH_STYLE_2);
+  __readAsOpacity(AS_WW, wwOpacityList);
 
-  drawFType = _settings.readNumEntry("/Flight/DrawType", MapConfig::Speed);
 
-  _drawWpLabelScale = _settings.readNumEntry("/Scale/WaypointLabel", WPLABEL);
+  __readPenBrush("FAIAreaLow500", faiAreaLow500PenList, faiAreaLow500Border, faiAreaLow500BrushList,
+      FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
+      PRINT_FAI_LOW_500_COLOR_1, PRINT_FAI_LOW_500_COLOR_2,
+      FAI_LOW_500_PEN_1, FAI_LOW_500_PEN_2, FAI_LOW_500_PEN_3, FAI_LOW_500_PEN_4,
+      PRINT_FAI_LOW_500_PEN_1, PRINT_FAI_LOW_500_PEN_2,
+      FAI_LOW_500_PEN_STYLE_1, FAI_LOW_500_PEN_STYLE_2, FAI_LOW_500_PEN_STYLE_3, FAI_LOW_500_PEN_STYLE_4,
+      PRINT_FAI_LOW_500_PEN_STYLE_1, PRINT_FAI_LOW_500_PEN_STYLE_2,
+      FAI_LOW_500_BRUSH_COLOR_1, FAI_LOW_500_BRUSH_COLOR_2,
+      FAI_LOW_500_BRUSH_COLOR_3, FAI_LOW_500_BRUSH_COLOR_4,
+      PRINT_FAI_LOW_500_BRUSH_COLOR_1, PRINT_FAI_LOW_500_BRUSH_COLOR_2,
+      FAI_LOW_500_BRUSH_STYLE_1, FAI_LOW_500_BRUSH_STYLE_2,
+      FAI_LOW_500_BRUSH_STYLE_3, FAI_LOW_500_BRUSH_STYLE_4,
+      PRINT_FAI_LOW_500_BRUSH_STYLE_1, PRINT_FAI_LOW_500_BRUSH_STYLE_2);
+
+  __readPenBrush("FAIAreaHigh500", faiAreaHigh500PenList, faiAreaHigh500Border, faiAreaHigh500BrushList,
+      FAI_HIGH_500_COLOR_1, FAI_HIGH_500_COLOR_2, FAI_HIGH_500_COLOR_3, FAI_HIGH_500_COLOR_4,
+      PRINT_FAI_HIGH_500_COLOR_1, PRINT_FAI_HIGH_500_COLOR_2,
+      FAI_HIGH_500_PEN_1, FAI_HIGH_500_PEN_2, FAI_HIGH_500_PEN_3, FAI_HIGH_500_PEN_4,
+      PRINT_FAI_HIGH_500_PEN_1, PRINT_FAI_HIGH_500_PEN_2,
+      FAI_HIGH_500_PEN_STYLE_1, FAI_HIGH_500_PEN_STYLE_2, FAI_HIGH_500_PEN_STYLE_3, FAI_HIGH_500_PEN_STYLE_4,
+      PRINT_FAI_HIGH_500_PEN_STYLE_1, PRINT_FAI_HIGH_500_PEN_STYLE_2,
+      FAI_HIGH_500_BRUSH_COLOR_1, FAI_HIGH_500_BRUSH_COLOR_2,
+      FAI_HIGH_500_BRUSH_COLOR_3, FAI_HIGH_500_BRUSH_COLOR_4,
+      PRINT_FAI_HIGH_500_BRUSH_COLOR_1, PRINT_FAI_HIGH_500_BRUSH_COLOR_2,
+      FAI_HIGH_500_BRUSH_STYLE_1, FAI_HIGH_500_BRUSH_STYLE_2,
+      FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4,
+      PRINT_FAI_HIGH_500_BRUSH_STYLE_1, PRINT_FAI_HIGH_500_BRUSH_STYLE_2);
+
+  drawFType = _settings.value("/Flight/DrawType", MapConfig::Speed).toInt();
+
+  _drawWpLabelScale = _settings.value("/Scale/WaypointLabel", WPLABEL).toInt();
 
   emit configChanged();
 }
 
-void MapConfig::slotSetFlightDataType(int type)
+void MapConfig::slotSetFlightDataType( int type )
 {
   drawFType = type;
   _settings.setValue("/Flight/DrawType", type);
@@ -548,7 +512,7 @@ void MapConfig::slotSetPrintMatrixValues(int index)
   printScaleIndex = index + 4;
 }
 
-QPen MapConfig::getPrintPen(unsigned int typeID)
+QPen& MapConfig::getPrintPen(unsigned int typeID)
 {
   return __getPen(typeID, printScaleIndex);
 }
@@ -705,82 +669,136 @@ QColor MapConfig::getRainbowColor(float c)
   return QColor(red, green, blue);
 }
 
-QPen MapConfig::getDrawPen(unsigned int typeID)
+QPen& MapConfig::getDrawPen(unsigned int typeID)
 {
   return __getPen(typeID, scaleIndex);
 }
 
-QPen MapConfig::__getPen(unsigned int typeID, int sIndex)
+QPen& MapConfig::__getPen( unsigned int typeID, int sIndex )
 {
   switch(typeID)
     {
       case BaseMapElement::Trail:
-          return *trailPenList.at(sIndex);
+          return trailPenList[sIndex];
       case BaseMapElement::Road:
-          return *roadPenList.at(sIndex);
+          return roadPenList[sIndex];
       case BaseMapElement::Highway:
-          return *highwayPenList.at(sIndex);
+          return highwayPenList[sIndex];
       case BaseMapElement::Railway:
-          return *railPenList.at(sIndex);
+          return railPenList[sIndex];
       case BaseMapElement::Railway_D:
-          return *rail_dPenList.at(sIndex);
+          return rail_dPenList[sIndex];
       case BaseMapElement::Aerial_Cable:
-          return *aerialcablePenList.at(sIndex);
+          return aerialcablePenList[sIndex];
       case BaseMapElement::River:
       case BaseMapElement::Lake:
-          return *riverPenList.at(sIndex);
+          return riverPenList[sIndex];
       case BaseMapElement::River_T:
       case BaseMapElement::Lake_T:
-          return *river_tPenList.at(sIndex);
+          return river_tPenList[sIndex];
       case BaseMapElement::Canal:
-          return *canalPenList.at(sIndex);
+          return canalPenList[sIndex];
       case BaseMapElement::City:
-          return *cityPenList.at(sIndex);
+          return cityPenList[sIndex];
+
       case BaseMapElement::AirA:
-          return *airAPenList.at(sIndex);
+          return airAPenList[sIndex];
       case BaseMapElement::AirB:
-          return *airBPenList.at(sIndex);
+          return airBPenList[sIndex];
       case BaseMapElement::AirC:
-          return *airCPenList.at(sIndex);
+          return airCPenList[sIndex];
       case BaseMapElement::AirD:
-          return *airDPenList.at(sIndex);
+          return airDPenList[sIndex];
       case BaseMapElement::AirElow:
-          return *airElPenList.at(sIndex);
+          return airElPenList[sIndex];
       case BaseMapElement::AirE:
-          return *airEhPenList.at(sIndex);
+          return airEPenList[sIndex];
       case BaseMapElement::AirF:
-          return *airFPenList.at(sIndex);
+          return airFPenList[sIndex];
       case BaseMapElement::ControlC:
-          return *ctrCPenList.at(sIndex);
+          return ctrCPenList[sIndex];
       case BaseMapElement::ControlD:
-          return *ctrDPenList.at(sIndex);
+          return ctrDPenList[sIndex];
       case BaseMapElement::Danger:
       case BaseMapElement::Prohibited:
-          return *dangerPenList.at(sIndex);
+          return dangerPenList[sIndex];
       case BaseMapElement::LowFlight:
-          return *lowFPenList.at(sIndex);
+          return lowFPenList[sIndex];
       case BaseMapElement::Restricted:
-          return *restrPenList.at(sIndex);
+          return restrPenList[sIndex];
       case BaseMapElement::Tmz:
-          return *tmzPenList.at(sIndex);
+          return tmzPenList[sIndex];
+      case BaseMapElement::GliderSector:
+          return gsPenList[sIndex];
+      case BaseMapElement::WaveWindow:
+          return wwPenList[sIndex];
+
       case BaseMapElement::Forest:
-          return *forestPenList.at(sIndex);
+          return forestPenList[sIndex];
       case BaseMapElement::Glacier:
-          return *glacierPenList.at(sIndex);
+          return glacierPenList[sIndex];
       case BaseMapElement::PackIce:
-          return *packicePenList.at(sIndex);
+          return packicePenList[sIndex];
       case BaseMapElement::FAIAreaLow500:
-          return *faiAreaLow500PenList.at(sIndex);
+          return faiAreaLow500PenList[sIndex];
       case BaseMapElement::FAIAreaHigh500:
-          return *faiAreaHigh500PenList.at(sIndex);
+          return faiAreaHigh500PenList[sIndex];
+
       default:
-          return *roadPenList.at(sIndex);
+          qWarning() << "MapConfig::__getPen(): Cannot handle type identifier"
+                     << typeID;
+
+          return roadPenList[sIndex];
     }
 }
 
-bool MapConfig::isBorder(unsigned int typeID)
+int MapConfig::getAsOpacity( uint asType )
 {
-  switch(typeID)
+  switch( asType )
+    {
+      case BaseMapElement::AirA:
+          return airAOpacityList[scaleIndex];
+      case BaseMapElement::AirB:
+          return airBOpacityList[scaleIndex];
+      case BaseMapElement::AirC:
+          return airCOpacityList[scaleIndex];
+      case BaseMapElement::AirD:
+          return airDOpacityList[scaleIndex];
+      case BaseMapElement::AirElow:
+          return airElOpacityList[scaleIndex];
+      case BaseMapElement::AirE:
+          return airEOpacityList[scaleIndex];
+      case BaseMapElement::AirF:
+          return airFOpacityList[scaleIndex];
+      case BaseMapElement::ControlC:
+          return ctrCOpacityList[scaleIndex];
+      case BaseMapElement::ControlD:
+          return ctrDOpacityList[scaleIndex];
+      case BaseMapElement::Danger:
+      case BaseMapElement::Prohibited:
+          return dangerOpacityList[scaleIndex];
+      case BaseMapElement::LowFlight:
+          return lowFOpacityList[scaleIndex];
+      case BaseMapElement::Restricted:
+          return restrOpacityList[scaleIndex];
+      case BaseMapElement::Tmz:
+          return tmzOpacityList[scaleIndex];
+      case BaseMapElement::GliderSector:
+          return gsOpacityList[scaleIndex];
+      case BaseMapElement::WaveWindow:
+          return wwOpacityList[scaleIndex];
+
+      default:
+        qWarning() << "MapConfig::getAsOpacity(): unknow  Airspace Type"
+                   << asType;
+    }
+
+  return defaultOpacity[scaleIndex];
+}
+
+bool MapConfig::isBorder( unsigned int typeID )
+{
+  switch( typeID )
     {
       case BaseMapElement::Trail:
           return trailBorder[scaleIndex];
@@ -803,9 +821,9 @@ bool MapConfig::isBorder(unsigned int typeID)
       case BaseMapElement::River_T:
       case BaseMapElement::Lake_T:
           return river_tBorder[scaleIndex];
-
       case BaseMapElement::City:
           return cityBorder[scaleIndex];
+
       case BaseMapElement::AirA:
           return airABorder[scaleIndex];
       case BaseMapElement::AirB:
@@ -817,7 +835,7 @@ bool MapConfig::isBorder(unsigned int typeID)
       case BaseMapElement::AirElow:
           return airElBorder[scaleIndex];
       case BaseMapElement::AirE:
-          return airEhBorder[scaleIndex];
+          return airEBorder[scaleIndex];
       case BaseMapElement::AirF:
           return airFBorder[scaleIndex];
       case BaseMapElement::ControlC:
@@ -833,6 +851,11 @@ bool MapConfig::isBorder(unsigned int typeID)
           return restrBorder[scaleIndex];
       case BaseMapElement::Tmz:
           return tmzBorder[scaleIndex];
+      case BaseMapElement::GliderSector:
+          return gsBorder[scaleIndex];
+      case BaseMapElement::WaveWindow:
+          return wwBorder[scaleIndex];
+
       case BaseMapElement::Forest:
           return forestBorder[scaleIndex];
       case BaseMapElement::Glacier:
@@ -843,9 +866,12 @@ bool MapConfig::isBorder(unsigned int typeID)
           return faiAreaLow500Border[scaleIndex];
       case BaseMapElement::FAIAreaHigh500:
           return faiAreaHigh500Border[scaleIndex];
+
+      default:
+        qWarning() << "MapConfig::isBorder(): Cannot handle type identifier"
+                   << typeID;
     }
 
-  /* Should never happen ... */
   return true;
 }
 
@@ -888,76 +914,91 @@ bool MapConfig::isPrintBorder(unsigned int typeID)
       case BaseMapElement::FAIAreaHigh500:
           return faiAreaHigh500Border[printScaleIndex];
 
+      default:
+        qWarning() << "MapConfig::isPrintBorder(): Cannot handle type identifier"
+                   << typeID;
     }
   /* Should never happen ... */
   return true;
 }
 
-QColor MapConfig::getIsoColor(unsigned int heightIndex)
+QColor& MapConfig::getIsoColor(unsigned int heightIndex)
 {
-  return *topographyColorList.at(heightIndex);
+  return topographyColorList[heightIndex];
 }
 
-QBrush MapConfig::getPrintBrush(unsigned int typeID)
+QBrush& MapConfig::getPrintBrush(unsigned int typeID)
 {
   return __getBrush(typeID, printScaleIndex);
 }
 
-QBrush MapConfig::getDrawBrush(unsigned int typeID)
+QBrush& MapConfig::getDrawBrush(unsigned int typeID)
 {
   return __getBrush(typeID, scaleIndex);
 }
 
-QBrush MapConfig::__getBrush(unsigned int typeID, int sIndex)
+QBrush& MapConfig::__getBrush(unsigned int typeID, int index)
 {
+  static QBrush emptyBrush;
+
   switch(typeID)
     {
       case BaseMapElement::City:
-          return *cityBrushList.at(sIndex);
+          return cityBrushList[index];
       case BaseMapElement::Lake:
-          return QBrush(riverPenList.at(sIndex)->color(), Qt::SolidPattern);
+          return river_tBrushList[index];
       case BaseMapElement::Lake_T:
-          return *river_tBrushList.at(sIndex);
+          return river_tBrushList[index];
+
       case BaseMapElement::AirA:
-          return *airABrushList.at(sIndex);
+          return airABrushList[index];
       case BaseMapElement::AirB:
-          return *airBBrushList.at(sIndex);
+          return airBBrushList[index];
       case BaseMapElement::AirC:
-          return *airCBrushList.at(sIndex);
+          return airCBrushList[index];
       case BaseMapElement::AirD:
-          return *airDBrushList.at(sIndex);
+          return airDBrushList[index];
       case BaseMapElement::AirElow:
-          return *airElBrushList.at(sIndex);
+          return airElBrushList[index];
       case BaseMapElement::AirE:
-          return *airEhBrushList.at(sIndex);
+          return airEBrushList[index];
       case BaseMapElement::AirF:
-          return *airFBrushList.at(sIndex);
+          return airFBrushList[index];
       case BaseMapElement::ControlC:
-          return *ctrCBrushList.at(sIndex);
+          return ctrCBrushList[index];
       case BaseMapElement::ControlD:
-          return *ctrDBrushList.at(sIndex);
+          return ctrDBrushList[index];
       case BaseMapElement::Danger:
       case BaseMapElement::Prohibited:
-          return *dangerBrushList.at(sIndex);
+          return dangerBrushList[index];
       case BaseMapElement::LowFlight:
-          return *lowFBrushList.at(sIndex);
+          return lowFBrushList[index];
       case BaseMapElement::Restricted:
-          return *restrBrushList.at(sIndex);
+          return restrBrushList[index];
       case BaseMapElement::Tmz:
-          return *tmzBrushList.at(sIndex);
-      case BaseMapElement::Forest:
-          return *forestBrushList.at(sIndex);
-      case BaseMapElement::Glacier:
-          return *glacierBrushList.at(sIndex);
-      case BaseMapElement::PackIce:
-          return *packiceBrushList.at(sIndex);
-      case BaseMapElement::FAIAreaLow500:
-          return *faiAreaLow500BrushList.at(sIndex);
-      case BaseMapElement::FAIAreaHigh500:
-          return *faiAreaHigh500BrushList.at(sIndex);
+          return tmzBrushList[index];
+      case BaseMapElement::GliderSector:
+          return gsBrushList[index];
+      case BaseMapElement::WaveWindow:
+          return wwBrushList[index];
 
+      case BaseMapElement::Forest:
+          return forestBrushList[index];
+      case BaseMapElement::Glacier:
+          return glacierBrushList[index];
+      case BaseMapElement::PackIce:
+          return packiceBrushList[index];
+      case BaseMapElement::FAIAreaLow500:
+          return faiAreaLow500BrushList[index];
+      case BaseMapElement::FAIAreaHigh500:
+          return faiAreaHigh500BrushList[index];
+
+      default:
+        qWarning() << "MapConfig::__getBrush: Cannot handle type identifier"
+                   << typeID;
     }
-  return QBrush();
+
+  return emptyBrush;
 }
 
 QPixmap MapConfig::getPixmap(unsigned int typeID, bool isWinch)
@@ -1208,7 +1249,7 @@ Qt::PenStyle MapConfig::getIsoPenStyle(int height)
   return style;
 }
 
-void MapConfig::__readBorder(QString group, bool *b)
+void MapConfig::__readBorder( QString group, bool *b )
 {
   b[0] = _settings.readBoolEntry( "/Map/" + group + "/Border1", true );
   b[1] = _settings.readBoolEntry( "/Map/" + group + "/Border2", true );
@@ -1218,74 +1259,164 @@ void MapConfig::__readBorder(QString group, bool *b)
   b[5] = _settings.readBoolEntry( "/Map/" + group + "/PrintBorder2", true );
 }
 
-void MapConfig::__readPen(QString group, Q3PtrList<QPen> *penList, bool *b,
-    QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4, QColor defaultColor5, QColor defaultColor6,
-    int defaultPenSize1, int defaultPenSize2, int /*defaultPenSize3*/, int /*defaultPenSize4*/, int defaultPenSize5, int defaultPenSize6,
-    Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4, Qt::PenStyle defaultPenStyle5, Qt::PenStyle defaultPenStyle6)
+void MapConfig::__readPen( QString group,
+                            QList<QPen> &penList,
+                            bool *b,
+                            QColor defaultColor1,
+                            QColor defaultColor2,
+                            QColor defaultColor3,
+                            QColor defaultColor4,
+                            QColor defaultColor5,
+                            QColor defaultColor6,
+                            int defaultPenSize1,
+                            int defaultPenSize2,
+                            int defaultPenSize3,
+                            int defaultPenSize4,
+                            int defaultPenSize5,
+                            int defaultPenSize6,
+                            Qt::PenStyle defaultPenStyle1,
+                            Qt::PenStyle defaultPenStyle2,
+                            Qt::PenStyle defaultPenStyle3,
+                            Qt::PenStyle defaultPenStyle4,
+                            Qt::PenStyle defaultPenStyle5,
+                            Qt::PenStyle defaultPenStyle6 )
 {
-  __readBorder(group, b);
-  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/Color1", __color2String(defaultColor1))),
-        _settings.readNumEntry("/Map/"+group+"/PenSize1", defaultPenSize1),
-        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PenStyle1", defaultPenStyle1)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/Color2", __color2String(defaultColor2))),
-        _settings.readNumEntry("/Map/"+group+"/PenSize2", defaultPenSize2),
-        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PenStyle2", defaultPenStyle2)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/Color3", __color2String(defaultColor3))),
-        _settings.readNumEntry("/Map/"+group+"/PenSize3", defaultPenSize2),
-        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PenStyle3", defaultPenStyle3)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/Color4", __color2String(defaultColor4))),
-        _settings.readNumEntry("/Map/"+group+"/PenSize4", defaultPenSize2),
-        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PenStyle4", defaultPenStyle4)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/PrintColor1", __color2String(defaultColor5))),
-        _settings.readNumEntry("/Map/"+group+"/PrintPenSize1", defaultPenSize5),
-        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PrintPenStyle1", defaultPenStyle5)));
-  penList->append(new QPen(__string2Color(_settings.readEntry("/Map/"+group+"/PrintColor2", __color2String(defaultColor6))),
-        _settings.readNumEntry("/Map/"+group+"/PrintPenSize2", defaultPenSize6),
-        (Qt::PenStyle)_settings.readNumEntry("/Map/"+group+"/PrintPenStyle2", defaultPenStyle6)));
+  Q_UNUSED( defaultPenSize3 )
+  Q_UNUSED( defaultPenSize4 )
+  // Read border data
+  __readBorder( group, b );
+
+  QColor c1( _settings.value( "/Map/" + group + "/Color1", defaultColor1.name() ).value<QColor>() );
+  QColor c2( _settings.value( "/Map/" + group + "/Color2", defaultColor2.name() ).value<QColor>() );
+  QColor c3( _settings.value( "/Map/" + group + "/Color3", defaultColor3.name() ).value<QColor>() );
+  QColor c4( _settings.value( "/Map/" + group + "/Color4", defaultColor4.name() ).value<QColor>() );
+  QColor c5( _settings.value( "/Map/" + group + "/PrintColor1", defaultColor5.name() ).value<QColor>() );
+  QColor c6( _settings.value( "/Map/" + group + "/PrintColor2", defaultColor6.name() ).value<QColor>() );
+
+  int ps1 = _settings.value( "/Map/" + group + "/PenSize1", defaultPenSize1 ).toInt();
+  int ps2 = _settings.value( "/Map/" + group + "/PenSize2", defaultPenSize2 ).toInt();
+  int ps3 = _settings.value( "/Map/" + group + "/PenSize3", defaultPenSize2 ).toInt();
+  int ps4 = _settings.value( "/Map/" + group + "/PenSize4", defaultPenSize2 ).toInt();
+  int ps5 = _settings.value( "/Map/" + group + "/PrintPenSize1", defaultPenSize5 ).toInt();
+  int ps6 = _settings.value( "/Map/" + group + "/PrintPenSize2", defaultPenSize6 ).toInt();
+
+  Qt::PenStyle pst1 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle1", defaultPenStyle1).toInt());
+  Qt::PenStyle pst2 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle2", defaultPenStyle2).toInt());
+  Qt::PenStyle pst3 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle3", defaultPenStyle3).toInt());
+  Qt::PenStyle pst4 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle4", defaultPenStyle4).toInt());
+  Qt::PenStyle pst5 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PrintPenStyle1", defaultPenStyle5).toInt());
+  Qt::PenStyle pst6 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PrintPenStyle2", defaultPenStyle6).toInt());
+
+  QPen pen1(c1);
+  QPen pen2(c2);
+  QPen pen3(c3);
+  QPen pen4(c4);
+  QPen pen5(c5);
+  QPen pen6(c6);
+
+  pen1.setWidth( ps1 );
+  pen2.setWidth( ps2 );
+  pen3.setWidth( ps3 );
+  pen4.setWidth( ps4 );
+  pen5.setWidth( ps5 );
+  pen6.setWidth( ps6 );
+
+  pen1.setStyle( pst1 );
+  pen2.setStyle( pst2 );
+  pen3.setStyle( pst3 );
+  pen4.setStyle( pst4 );
+  pen5.setStyle( pst5 );
+  pen6.setStyle( pst6 );
+
+  // first remove all old entries.
+  penList.clear();
+  penList.append( pen1 );
+  penList.append( pen2 );
+  penList.append( pen3 );
+  penList.append( pen4 );
+  penList.append( pen5 );
+  penList.append( pen6 );
 }
 
-void MapConfig::__readPenBrush(QString group, Q3PtrList<QPen> *penList, bool *b, Q3PtrList<QBrush> *brushList,
-    QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4, QColor defaultColor5, QColor defaultColor6,
-    int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4, int defaultPenSize5, int defaultPenSize6,
-    Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4, Qt::PenStyle defaultPenStyle5, Qt::PenStyle defaultPenStyle6,
-    QColor defaultBrushColor1, QColor defaultBrushColor2, QColor defaultBrushColor3, QColor defaultBrushColor4, QColor defaultBrushColor5, QColor defaultBrushColor6,
-    Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2, Qt::BrushStyle defaultBrushStyle3, Qt::BrushStyle defaultBrushStyle4, Qt::BrushStyle defaultBrushStyle5, Qt::BrushStyle defaultBrushStyle6)
+void MapConfig::__readPenBrush( QString group,
+                                QList<QPen> &penList,
+                                bool *b,
+                                QList<QBrush> &brushList,
+                                QColor defaultColor1,
+                                QColor defaultColor2,
+                                QColor defaultColor3,
+                                QColor defaultColor4,
+                                QColor defaultColor5,
+                                QColor defaultColor6,
+                                int defaultPenSize1,
+                                int defaultPenSize2,
+                                int defaultPenSize3,
+                                int defaultPenSize4,
+                                int defaultPenSize5,
+                                int defaultPenSize6,
+                                Qt::PenStyle defaultPenStyle1,
+                                Qt::PenStyle defaultPenStyle2,
+                                Qt::PenStyle defaultPenStyle3,
+                                Qt::PenStyle defaultPenStyle4,
+                                Qt::PenStyle defaultPenStyle5,
+                                Qt::PenStyle defaultPenStyle6,
+                                QColor defaultBrushColor1,
+                                QColor defaultBrushColor2,
+                                QColor defaultBrushColor3,
+                                QColor defaultBrushColor4,
+                                QColor defaultBrushColor5,
+                                QColor defaultBrushColor6,
+                                Qt::BrushStyle defaultBrushStyle1,
+                                Qt::BrushStyle defaultBrushStyle2,
+                                Qt::BrushStyle defaultBrushStyle3,
+                                Qt::BrushStyle defaultBrushStyle4,
+                                Qt::BrushStyle defaultBrushStyle5,
+                                Qt::BrushStyle defaultBrushStyle6 )
 {
-  __readPen(group, penList, b,
-      defaultColor1, defaultColor2, defaultColor3, defaultColor4, defaultColor5, defaultColor6,
-      defaultPenSize1, defaultPenSize2, defaultPenSize3, defaultPenSize4, defaultPenSize5, defaultPenSize6,
-      defaultPenStyle1, defaultPenStyle2, defaultPenStyle3, defaultPenStyle4, defaultPenStyle5, defaultPenStyle6);
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/BrushColor1", __color2String(defaultBrushColor1))), \
-        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/BrushStyle1", defaultBrushStyle1))); \
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/BrushColor2", __color2String(defaultBrushColor2))), \
-        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/BrushStyle2", defaultBrushStyle2))); \
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/BrushColor3", __color2String(defaultBrushColor3))), \
-        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/BrushStyle3", defaultBrushStyle3))); \
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/BrushColor4", __color2String(defaultBrushColor4))), \
-        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/BrushStyle4", defaultBrushStyle4)));
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/PrintBrushColor1", __color2String(defaultBrushColor5))),
-        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/PrintBrushStyle1", defaultBrushStyle5)));
-  brushList->append(new QBrush(__string2Color(_settings.readEntry("/Map/"+group+"/PrintBrushColor2", __color2String(defaultBrushColor6))),
-        (Qt::BrushStyle)_settings.readNumEntry("/Map/"+group+"/PrintBrushStyle2", defaultBrushStyle6)));
+  __readPen( group, penList, b,
+             defaultColor1, defaultColor2, defaultColor3, defaultColor4, defaultColor5, defaultColor6,
+             defaultPenSize1, defaultPenSize2, defaultPenSize3, defaultPenSize4, defaultPenSize5, defaultPenSize6,
+             defaultPenStyle1, defaultPenStyle2, defaultPenStyle3, defaultPenStyle4, defaultPenStyle5, defaultPenStyle6 );
+
+  QColor c1( _settings.value( "/Map/" + group + "/BrushColor1", defaultBrushColor1.name() ).value<QColor>() );
+  QColor c2( _settings.value( "/Map/" + group + "/BrushColor2", defaultBrushColor2.name() ).value<QColor>() );
+  QColor c3( _settings.value( "/Map/" + group + "/BrushColor3", defaultBrushColor3.name() ).value<QColor>() );
+  QColor c4( _settings.value( "/Map/" + group + "/BrushColor4", defaultBrushColor4.name() ).value<QColor>() );
+  QColor c5( _settings.value( "/Map/" + group + "/PrintBrushColor1", defaultBrushColor5.name() ).value<QColor>() );
+  QColor c6( _settings.value( "/Map/" + group + "/PrintBrushColor2", defaultBrushColor6.name() ).value<QColor>() );
+
+  Qt::BrushStyle bs1 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle1", defaultBrushStyle1 ).toInt();
+  Qt::BrushStyle bs2 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle2", defaultBrushStyle2 ).toInt();
+  Qt::BrushStyle bs3 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle3", defaultBrushStyle3 ).toInt();
+  Qt::BrushStyle bs4 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle4", defaultBrushStyle4 ).toInt();
+  Qt::BrushStyle bs5 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/PrintBrushStyle1", defaultBrushStyle5 ).toInt();
+  Qt::BrushStyle bs6 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/PrintBrushStyle2", defaultBrushStyle6 ).toInt();
+
+  // first remove all old entries.
+  brushList.clear();
+  brushList.append( QBrush( c1, bs1 ) );
+  brushList.append( QBrush( c2, bs2 ) );
+  brushList.append( QBrush( c3, bs3 ) );
+  brushList.append( QBrush( c4, bs4 ) );
+  brushList.append( QBrush( c5, bs5 ) );
+  brushList.append( QBrush( c6, bs6 ) );
 }
 
-void MapConfig::__readTopo(QString entry, QColor color)
+void MapConfig::__readAsOpacity( QString group, QList<int> &opacityList )
 {
-  topographyColorList.append(new QColor(__string2Color(_settings.readEntry("/Map/Topography/" + entry, __color2String(color)))));
+  int o1 = _settings.value( "/Map/" + group + "/Opacity1", AS_OPACITY_1 ).toInt();
+  int o2 = _settings.value( "/Map/" + group + "/Opacity2", AS_OPACITY_2 ).toInt();
+  int o3 = _settings.value( "/Map/" + group + "/Opacity3", AS_OPACITY_3 ).toInt();
+  int o4 = _settings.value( "/Map/" + group + "/Opacity4", AS_OPACITY_4 ).toInt();
+
+  // first remove all old entries.
+  opacityList.clear();
+  opacityList << o1 << o2 << o3 << o4;
 }
 
-/** this is a temporary function and it is not needed in Qt 4 */
-QString MapConfig::__color2String(QColor color)
+void MapConfig::__readTopo( QString entry, QColor color )
 {
-  QString colstr;
-  colstr.sprintf("%d;%d;%d", color.red(), color.green(), color.blue());
-  return colstr;
-}
+  QColor c = _settings.value( "/ElevationColors/" + entry, color.name() ).value<QColor>();
 
-/** this is a temporary function and it is not needed in Qt 4 */
-QColor MapConfig::__string2Color(QString colstr)
-{
-  QColor color(colstr.section(";", 0, 0).toInt(), colstr.section(";", 1, 1).toInt(), colstr.section(";", 2, 2).toInt());
-  return color;
+  topographyColorList.append( c );
 }
-

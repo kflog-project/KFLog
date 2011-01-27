@@ -1289,29 +1289,9 @@ void Map::__drawAirspaces()
 
   SortableAirspaceList& airspaceList = _globalMapContents->getAirspaceList();
 
-  // Decide, if airspaces are filled with a color or not
-  bool fillAirspace = _settings.value( "/Airspaces/Filling", true ).toBool();
-
-  // Get airspace opacity 0.0 is full transparency, default is 10%
-  qreal airspaceOpacity = _settings.value( "/Airspaces/Opacity", 10 ).toDouble();
-
-  if( fillAirspace == false )
-    {
-      airspaceOpacity = 100.0; // no transparency
-    }
-
   for( int i = 0; i < airspaceList.size(); i++ )
     {
       Airspace& as = airspaceList[i];
-
-      // airspaces we don't draw, we don't warn for either (and vice versa)
-#warning "Draw only airspaces, desired by the user. Must be implemented?"
-#if 0
-      if( !settings->getAirspaceDrawingEnabled( as.getTypeID() ) )
-        {
-          continue;
-        }
-#endif
 
       if( ! as.isDrawable() )
         {
@@ -1322,7 +1302,7 @@ void Map::__drawAirspaces()
       QPair<QPainterPath, Airspace *> pair( as.createRegion(), &as );
       airspaceRegionList.append( pair );
 
-      as.drawRegion( &cuAeroMapP, this->rect(), airspaceOpacity );
+      as.drawRegion( &cuAeroMapP, this->rect() );
     }
 
   cuAeroMapP.end();

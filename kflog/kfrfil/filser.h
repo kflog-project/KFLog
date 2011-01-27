@@ -22,27 +22,13 @@
 #include <stdio.h>
 
 #include <QTimer>
-
-//#include <qglobal.h>
-//#if QT_VERSION < 0x030000
-//
-//#include <qlist.h>
-//#include "waypoint.h"
-//#include "frstructs.h"
-//#include "flighttask.h"
-//#include "flightrecorderpluginbase.h"
-//#include "da4record.h"
-//
-//#else
+#include <Q3PtrList>
 
 #include "../waypoint.h"
 #include "../frstructs.h"
 #include "../flighttask.h"
 #include "../flightrecorderpluginbase.h"
 #include "../da4record.h"
-
-//#endif
-
 
 /**
   *@author Christian Fughe, Harald Maier
@@ -52,7 +38,7 @@
                                 /* index. (96)                     */
 #define LX_MEM_RET 7            /* Number of bytes returned by     */
                                 /* wb(STX), wb(Q).                 */
-                              
+
 #define INFO_SIZE       118     /* Size of the s_hdrinfo struct */
 #define TASK_SIZE       230     /* Size of the s_hdrtask struct */
 #define BASIC_LENGTH    (1 + INFO_SIZE + TASK_SIZE)
@@ -68,7 +54,7 @@ class Filser : public FlightRecorderPluginBase
 {
   Q_OBJECT
 
-public: 
+public:
   Filser();
   virtual ~Filser();
   /**

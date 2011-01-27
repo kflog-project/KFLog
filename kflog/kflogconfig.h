@@ -76,10 +76,16 @@ class KFLogConfig : public QDialog
     enum DefaultWaypointCatalog { Empty = 0, LastUsed, Specific };
 
   signals:
+
     /** */
     void scaleChanged(int min, int max);
-    /** */
+
+    /** Emitted, if the ok button was pressed and all new data have been saved. */
     void configOk();
+
+    /** Emitted to subwidgets that their configuration should be saved. */
+    void saveConfig();
+
     /** */
     void newDrawType(int type);
 

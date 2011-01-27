@@ -428,7 +428,7 @@ int Volkslogger::writeWaypoints(QList<Waypoint*> *waypoints)
 {
   Waypoint *frWp;
   VLAPI_DATA::WPT *wp;
-  unsigned int wpCnt;
+  int wpCnt;
 
   if (!haveDatabase) {
     if (readDatabase() == FR_ERROR) {

@@ -84,8 +84,8 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
   configLayout->addLayout( hbox, 1, 1, 1, 2 );
   configLayout->setColStretch(2, 10);
 
-  connect( saveButton, SIGNAL(clicked()), SLOT(slotOk()) );
-  connect( cancelButton, SIGNAL(clicked()), SLOT(close()) );
+  connect( saveButton, SIGNAL(clicked()), this, SLOT(slotOk()) );
+  connect( cancelButton, SIGNAL(clicked()), this, SLOT(close()) );
 
   __addPersonalTab();
   __addPathTab();
@@ -181,6 +181,8 @@ void KFLogConfig::slotPageClicked( QTreeWidgetItem * item, int column )
 
 void KFLogConfig::slotOk()
 {
+  setVisible( false );
+
   slotSelectProjection( ProjectionBase::Unknown );
 
   _settings.setValue( "/GeneralOptions/Version", "4.0" );
@@ -235,6 +237,9 @@ void KFLogConfig::slotOk()
                       waypointButtonGroup->id(waypointButtonGroup->checkedButton()) );
   _settings.setValue( "/Waypoints/DefaultCatalogName", catalogPathE->text() );
 
+  // configuration subwidgets shall save their configuration
+  emit saveConfig();
+
   emit scaleChanged((int)lLimitN->value(), (int)uLimitN->value());
 
   // Check, if Welt2000 must be updated
@@ -245,6 +250,8 @@ void KFLogConfig::slotOk()
       extern MapContents *_globalMapContents;
       _globalMapContents->slotReloadWelt2000Data();
     }
+
+  qDebug() << "KFLogConfig::slotOk(): Emits Signal configOk";
 
   emit configOk();
   accept();
@@ -488,10 +495,9 @@ void KFLogConfig::__addMapTab()
   elementSelect->addItem( tr( "Airspace F" ), KFLogConfig::AirF );
   elementSelect->addItem( tr( "Control C" ), KFLogConfig::ControlC );
   elementSelect->addItem( tr( "Control D" ), KFLogConfig::ControlD );
-  elementSelect->addItem( tr( "Danger" ), KFLogConfig::Danger );
-  elementSelect->addItem( tr( "GliderSector" ), KFLogConfig::GliderSector );
+  elementSelect->addItem( tr( "Danger/Prohibited" ), KFLogConfig::Danger );
+  elementSelect->addItem( tr( "Glider Sector" ), KFLogConfig::GliderSector );
   elementSelect->addItem( tr( "Low Flight Area" ), KFLogConfig::LowFlight );
-  elementSelect->addItem( tr( "Prohibited" ), KFLogConfig::Prohibited );
   elementSelect->addItem( tr( "Restricted" ), KFLogConfig::Restricted );
   elementSelect->addItem( tr( "TMZ" ), KFLogConfig::Tmz );
   elementSelect->addItem( tr( "WaveWindow" ), KFLogConfig::WaveWindow );
@@ -557,12 +563,11 @@ void KFLogConfig::__addMapTab()
   connect( elementSelect, SIGNAL( currentIndexChanged(int)),
            this, SLOT(slotSelectDrawElement(int)));
 
-  connect( this, SIGNAL(configOk()), configDrawWidget, SLOT(slotOk()) );
-
   connect( elementSelect, SIGNAL( currentIndexChanged(int)),
            this, SLOT(slotSelectPrintElement(int)));
 
-  connect( this, SIGNAL(configOk()), configPrintWidget, SLOT(slotOk()) );
+  connect( this, SIGNAL(saveConfig()), configDrawWidget, SLOT(slotOk()) );
+  connect( this, SIGNAL(saveConfig()), configPrintWidget, SLOT(slotOk()) );
 
   configDrawWidget->slotSelectElement( KFLogConfig::AirA );
   configPrintWidget->slotSelectElement( KFLogConfig::AirA );
@@ -1031,7 +1036,7 @@ void KFLogConfig::__addScaleTab()
   reduce2->setValue( __getScaleValue( b2 ) );
   reduce2N->display( b2 );
 
-  QLabel* reduce3Text = new QLabel( tr( "Threshold" ) + " #2:" );
+  QLabel* reduce3Text = new QLabel( tr( "Threshold" ) + " #3:" );
 
   reduce3 = new QSlider();
   reduce3->setMinimum( 2 );

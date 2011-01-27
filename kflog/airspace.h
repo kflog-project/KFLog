@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
-**                   2009-2010 by Axel Pauli
+**                   2009-2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -30,7 +30,7 @@
  * Due to the cross pointer reference to the air region this class do not
  * allow copies and assignments of an existing instance.
  *
- * \date 2000-2010
+ * \date 2000-2011
  *
  */
 
@@ -69,7 +69,7 @@ public:
   /**
    * Destructor
    */
-  ~Airspace();
+  virtual ~Airspace();
 
   /**
    * Tells the caller, if the airspace is drawable or not
@@ -83,12 +83,8 @@ public:
    * @param targetP The painter to draw the element into.
    *
    * @param viewRect The view bounding rectangle.
-   *
-   * @param opacity Sets the opacity of the painter to opacity. The
-   * value should be in the range 0.0 to 100.0, where 0.0 is fully
-   * transparent and 100.0 is fully opaque.
    */
-  void drawRegion( QPainter* targetP, const QRect &viewRect, qreal opacity = 0.0 );
+  void drawRegion( QPainter* targetP, const QRect &viewRect );
 
   /**
    * Return a pointer to the mapped airspace region data. The caller takes

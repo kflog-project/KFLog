@@ -119,7 +119,7 @@ int main(int argc, char **argv)
 
   bool showStartLogo = false;
 
-  if(_settings.readBoolEntry("/GeneralOptions/Logo", true))
+  if( _settings.value( "/GeneralOptions/Logo", true ).toBool() )
   {
     showStartLogo = true;
 
@@ -197,14 +197,14 @@ int main(int argc, char **argv)
   else
     {
       // read the user configuration
-      int useCatalog = _settings.readNumEntry("/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed );
+      int useCatalog = _settings.value("/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed ).toInt();
 
       switch( useCatalog )
         {
         case KFLogConfig::LastUsed:
           // no break;
         case KFLogConfig::Specific:
-          waypointsOptionArg = _settings.readEntry( "/Waypoints/DefaultCatalogName", "" );
+          waypointsOptionArg = _settings.value( "/Waypoints/DefaultCatalogName", "" ).toString();
           _mainWindow->slotSetWaypointCatalog( waypointsOptionArg );
         }
     }
@@ -216,7 +216,7 @@ int main(int argc, char **argv)
           _settings.setValue( "/GeneralOptions/ShowWaypointWarnings", false );
         }
 
-      _mainWindow->slotOpenFile( (const char*) fileOpenIGC );
+      _mainWindow->slotOpenFile( fileOpenIGC.toLatin1().data() );
 
       if( exportPNG )
         {

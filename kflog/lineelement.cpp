@@ -72,11 +72,19 @@ bool LineElement::drawMapElement(QPainter* targetP)
   QPen drawP( glConfig->getDrawPen( typeID ) );
   targetP->setPen(drawP);
 
-  if(closed)
+  if( closed )
     {
       // Lakes do not have a brush, because they are divided into normal
       // sections and we do not want to see section-borders in a lake ...
-      targetP->setBrush(glConfig->getDrawBrush(typeID));
+      targetP->setBrush( glConfig->getDrawBrush( typeID ) );
+
+      if( typeID == BaseMapElement::Lake )
+        {
+          QBrush brush = targetP->brush();
+          brush.setStyle( Qt::SolidPattern );
+          targetP->setBrush( brush );
+        }
+
       targetP->drawPolygon( mP );
       return true;
     }

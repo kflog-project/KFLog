@@ -20,9 +20,6 @@
 
 #include <QtGui>
 
-//Added by qt3to4:
-#include <Q3PointArray>
-
 #include "mapmatrix.h"
 
 // Projektions-Massstab
@@ -179,11 +176,6 @@ bool MapMatrix::isSwitchScale() const
   return cScale <= scaleBorders[SwitchScale];
 }
 
-Q3PointArray MapMatrix::map(const Q3PointArray& origArray) const
-{
-  return worldMatrix.map(origArray);
-}
-
 QPoint MapMatrix::map(const QPoint& origPoint) const
 {
   return worldMatrix.map(origPoint);
@@ -194,7 +186,7 @@ double MapMatrix::map(double arc) const
   return (arc + rotationArc);
 }
 
-Q3PointArray MapMatrix::print(const Q3PointArray& pArray) const
+QPolygon MapMatrix::print(const QPolygon& pArray) const
 {
   return printMatrix.map(pArray);
 }

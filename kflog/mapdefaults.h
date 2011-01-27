@@ -21,13 +21,13 @@
 #define HOME_DEFAULT_LON 5364500
 
 // Scale-values
-#define L_LIMIT 10
-#define U_LIMIT 1500
-#define SWITCH_S 290
-#define WPLABEL 400
-#define BORDER_1 100
-#define BORDER_2 500
-#define BORDER_3 1000
+#define L_LIMIT   10
+#define U_LIMIT   1500
+#define SWITCH_S  300
+#define WPLABEL   400
+#define BORDER_1  200
+#define BORDER_2  500
+#define BORDER_3  1000
 
 /*
  * Definierte Farbwerte bei (dazwischen wurde früher linear geändert):
@@ -560,10 +560,10 @@
 #define AIRA_BRUSH_COLOR_3 QColor(138,169,235)
 #define AIRA_BRUSH_COLOR_4 QColor(138,169,235)
 
-#define AIRA_BRUSH_STYLE_1 Qt::NoBrush
-#define AIRA_BRUSH_STYLE_2 Qt::NoBrush
-#define AIRA_BRUSH_STYLE_3 Qt::NoBrush
-#define AIRA_BRUSH_STYLE_4 Qt::NoBrush
+#define AIRA_BRUSH_STYLE_1 Qt::SolidPattern
+#define AIRA_BRUSH_STYLE_2 Qt::SolidPattern
+#define AIRA_BRUSH_STYLE_3 Qt::SolidPattern
+#define AIRA_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_AIRA_PEN_1 4
 #define PRINT_AIRA_PEN_2 3
@@ -577,8 +577,8 @@
 #define PRINT_AIRA_BRUSH_COLOR_1 QColor(0,120,0)
 #define PRINT_AIRA_BRUSH_COLOR_2 QColor(0,120,0)
 
-#define PRINT_AIRA_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_AIRA_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_AIRA_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_AIRA_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Airspace B]
 #define AIRB_PEN_1 4
@@ -601,10 +601,10 @@
 #define AIRB_BRUSH_COLOR_3 QColor(138,169,235)
 #define AIRB_BRUSH_COLOR_4 QColor(138,169,235)
 
-#define AIRB_BRUSH_STYLE_1 Qt::NoBrush
-#define AIRB_BRUSH_STYLE_2 Qt::NoBrush
-#define AIRB_BRUSH_STYLE_3 Qt::NoBrush
-#define AIRB_BRUSH_STYLE_4 Qt::NoBrush
+#define AIRB_BRUSH_STYLE_1 Qt::SolidPattern
+#define AIRB_BRUSH_STYLE_2 Qt::SolidPattern
+#define AIRB_BRUSH_STYLE_3 Qt::SolidPattern
+#define AIRB_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_AIRB_PEN_1 4
 #define PRINT_AIRB_PEN_2 3
@@ -618,8 +618,8 @@
 #define PRINT_AIRB_BRUSH_COLOR_1 QColor(0,120,0)
 #define PRINT_AIRB_BRUSH_COLOR_2 QColor(0,120,0)
 
-#define PRINT_AIRB_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_AIRB_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_AIRB_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_AIRB_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Airspace C]
 #define AIRC_PEN_1 4
@@ -642,10 +642,10 @@
 #define AIRC_BRUSH_COLOR_3 QColor(138,169,235)
 #define AIRC_BRUSH_COLOR_4 QColor(138,169,235)
 
-#define AIRC_BRUSH_STYLE_1 Qt::NoBrush
-#define AIRC_BRUSH_STYLE_2 Qt::NoBrush
-#define AIRC_BRUSH_STYLE_3 Qt::NoBrush
-#define AIRC_BRUSH_STYLE_4 Qt::NoBrush
+#define AIRC_BRUSH_STYLE_1 Qt::SolidPattern
+#define AIRC_BRUSH_STYLE_2 Qt::SolidPattern
+#define AIRC_BRUSH_STYLE_3 Qt::SolidPattern
+#define AIRC_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_AIRC_PEN_1 4
 #define PRINT_AIRC_PEN_2 3
@@ -683,10 +683,10 @@
 #define AIRD_BRUSH_COLOR_3 QColor(138,169,235)
 #define AIRD_BRUSH_COLOR_4 QColor(138,169,235)
 
-#define AIRD_BRUSH_STYLE_1 Qt::NoBrush
-#define AIRD_BRUSH_STYLE_2 Qt::NoBrush
-#define AIRD_BRUSH_STYLE_3 Qt::NoBrush
-#define AIRD_BRUSH_STYLE_4 Qt::NoBrush
+#define AIRD_BRUSH_STYLE_1 Qt::SolidPattern
+#define AIRD_BRUSH_STYLE_2 Qt::SolidPattern
+#define AIRD_BRUSH_STYLE_3 Qt::SolidPattern
+#define AIRD_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_AIRD_PEN_1 4
 #define PRINT_AIRD_PEN_2 3
@@ -700,8 +700,8 @@
 #define PRINT_AIRD_BRUSH_COLOR_1 QColor(0,120,0)
 #define PRINT_AIRD_BRUSH_COLOR_2 QColor(0,120,0)
 
-#define PRINT_AIRD_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_AIRD_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_AIRD_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_AIRD_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Airspace E low]
 #define AIREL_PEN_1 4
@@ -724,10 +724,10 @@
 #define AIREL_BRUSH_COLOR_3 QColor(203,217,246)
 #define AIREL_BRUSH_COLOR_4 QColor(203,217,246)
 
-#define AIREL_BRUSH_STYLE_1 Qt::NoBrush
-#define AIREL_BRUSH_STYLE_2 Qt::NoBrush
-#define AIREL_BRUSH_STYLE_3 Qt::NoBrush
-#define AIREL_BRUSH_STYLE_4 Qt::NoBrush
+#define AIREL_BRUSH_STYLE_1 Qt::SolidPattern
+#define AIREL_BRUSH_STYLE_2 Qt::SolidPattern
+#define AIREL_BRUSH_STYLE_3 Qt::SolidPattern
+#define AIREL_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_AIREL_PEN_1 4
 #define PRINT_AIREL_PEN_2 3
@@ -741,8 +741,8 @@
 #define PRINT_AIREL_BRUSH_COLOR_1 QColor(129,158,220)
 #define PRINT_AIREL_BRUSH_COLOR_2 QColor(129,158,220)
 
-#define PRINT_AIREL_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_AIREL_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_AIREL_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_AIREL_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Airspace E high]
 #define AIREH_PEN_1 4
@@ -765,10 +765,10 @@
 #define AIREH_BRUSH_COLOR_3 QColor(203,217,246)
 #define AIREH_BRUSH_COLOR_4 QColor(203,217,246)
 
-#define AIREH_BRUSH_STYLE_1 Qt::NoBrush
-#define AIREH_BRUSH_STYLE_2 Qt::NoBrush
-#define AIREH_BRUSH_STYLE_3 Qt::NoBrush
-#define AIREH_BRUSH_STYLE_4 Qt::NoBrush
+#define AIREH_BRUSH_STYLE_1 Qt::SolidPattern
+#define AIREH_BRUSH_STYLE_2 Qt::SolidPattern
+#define AIREH_BRUSH_STYLE_3 Qt::SolidPattern
+#define AIREH_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_AIREH_PEN_1 4
 #define PRINT_AIREH_PEN_2 3
@@ -782,8 +782,8 @@
 #define PRINT_AIREH_BRUSH_COLOR_1 QColor(244,63,66)
 #define PRINT_AIREH_BRUSH_COLOR_2 QColor(244,63,66)
 
-#define PRINT_AIREH_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_AIREH_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_AIREH_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_AIREH_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Airspace F]
 #define AIRF_PEN_1 4
@@ -806,10 +806,10 @@
 #define AIRF_BRUSH_COLOR_3 QColor(203,217,246)
 #define AIRF_BRUSH_COLOR_4 QColor(203,217,246)
 
-#define AIRF_BRUSH_STYLE_1 Qt::NoBrush
-#define AIRF_BRUSH_STYLE_2 Qt::NoBrush
-#define AIRF_BRUSH_STYLE_3 Qt::NoBrush
-#define AIRF_BRUSH_STYLE_4 Qt::NoBrush
+#define AIRF_BRUSH_STYLE_1 Qt::SolidPattern
+#define AIRF_BRUSH_STYLE_2 Qt::SolidPattern
+#define AIRF_BRUSH_STYLE_3 Qt::SolidPattern
+#define AIRF_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_AIRF_PEN_1 4
 #define PRINT_AIRF_PEN_2 3
@@ -823,8 +823,8 @@
 #define PRINT_AIRF_BRUSH_COLOR_1 QColor(0,0,128)
 #define PRINT_AIRF_BRUSH_COLOR_2 QColor(0,0,128)
 
-#define PRINT_AIRF_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_AIRF_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_AIRF_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_AIRF_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Control C]
 #define CTRC_PEN_1 4
@@ -847,10 +847,10 @@
 #define CTRC_BRUSH_COLOR_3 QColor(255,160,162)
 #define CTRC_BRUSH_COLOR_4 QColor(255,160,162)
 
-#define CTRC_BRUSH_STYLE_1 Qt::NoBrush
-#define CTRC_BRUSH_STYLE_2 Qt::NoBrush
-#define CTRC_BRUSH_STYLE_3 Qt::NoBrush
-#define CTRC_BRUSH_STYLE_4 Qt::NoBrush
+#define CTRC_BRUSH_STYLE_1 Qt::SolidPattern
+#define CTRC_BRUSH_STYLE_2 Qt::SolidPattern
+#define CTRC_BRUSH_STYLE_3 Qt::SolidPattern
+#define CTRC_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_CTRC_PEN_1 4
 #define PRINT_CTRC_PEN_2 3
@@ -864,8 +864,8 @@
 #define PRINT_CTRC_BRUSH_COLOR_1 QColor(180,18,20)
 #define PRINT_CTRC_BRUSH_COLOR_2 QColor(180,18,20)
 
-#define PRINT_CTRC_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_CTRC_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_CTRC_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_CTRC_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Control D]
 #define CTRD_PEN_1 4
@@ -888,10 +888,10 @@
 #define CTRD_BRUSH_COLOR_3 QColor(255,160,162)
 #define CTRD_BRUSH_COLOR_4 QColor(255,160,162)
 
-#define CTRD_BRUSH_STYLE_1 Qt::NoBrush
-#define CTRD_BRUSH_STYLE_2 Qt::NoBrush
-#define CTRD_BRUSH_STYLE_3 Qt::NoBrush
-#define CTRD_BRUSH_STYLE_4 Qt::NoBrush
+#define CTRD_BRUSH_STYLE_1 Qt::SolidPattern
+#define CTRD_BRUSH_STYLE_2 Qt::SolidPattern
+#define CTRD_BRUSH_STYLE_3 Qt::SolidPattern
+#define CTRD_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_CTRD_PEN_1 4
 #define PRINT_CTRD_PEN_2 3
@@ -905,8 +905,8 @@
 #define PRINT_CTRD_BRUSH_COLOR_1 QColor(180,18,20)
 #define PRINT_CTRD_BRUSH_COLOR_2 QColor(180,18,20)
 
-#define PRINT_CTRD_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_CTRD_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_CTRD_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_CTRD_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Low flight area]
 #define LOWF_PEN_1 4
@@ -929,10 +929,10 @@
 #define LOWF_BRUSH_COLOR_3 QColor(180,0,0)
 #define LOWF_BRUSH_COLOR_4 QColor(180,0,0)
 
-#define LOWF_BRUSH_STYLE_1 Qt::NoBrush
-#define LOWF_BRUSH_STYLE_2 Qt::NoBrush
-#define LOWF_BRUSH_STYLE_3 Qt::NoBrush
-#define LOWF_BRUSH_STYLE_4 Qt::NoBrush
+#define LOWF_BRUSH_STYLE_1 Qt::SolidPattern
+#define LOWF_BRUSH_STYLE_2 Qt::SolidPattern
+#define LOWF_BRUSH_STYLE_3 Qt::SolidPattern
+#define LOWF_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_LOWF_PEN_1 4
 #define PRINT_LOWF_PEN_2 3
@@ -946,8 +946,8 @@
 #define PRINT_LOWF_BRUSH_COLOR_1 QColor(0,120,0)
 #define PRINT_LOWF_BRUSH_COLOR_2 QColor(0,120,0)
 
-#define PRINT_LOWF_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_LOWF_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_LOWF_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_LOWF_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Danger]
 #define DNG_PEN_1 4
@@ -970,10 +970,10 @@
 #define DNG_BRUSH_COLOR_3 QColor(255,51,51)
 #define DNG_BRUSH_COLOR_4 QColor(255,51,51)
 
-#define DNG_BRUSH_STYLE_1 Qt::NoBrush
-#define DNG_BRUSH_STYLE_2 Qt::NoBrush
-#define DNG_BRUSH_STYLE_3 Qt::NoBrush
-#define DNG_BRUSH_STYLE_4 Qt::NoBrush
+#define DNG_BRUSH_STYLE_1 Qt::SolidPattern
+#define DNG_BRUSH_STYLE_2 Qt::SolidPattern
+#define DNG_BRUSH_STYLE_3 Qt::SolidPattern
+#define DNG_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_DNG_PEN_1 4
 #define PRINT_DNG_PEN_2 3
@@ -987,8 +987,8 @@
 #define PRINT_DNG_BRUSH_COLOR_1 QColor(0,0,128)
 #define PRINT_DNG_BRUSH_COLOR_2 QColor(0,0,128)
 
-#define PRINT_DNG_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_DNG_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_DNG_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_DNG_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Restricted]
 #define RES_PEN_1 4
@@ -1011,10 +1011,10 @@
 #define RES_BRUSH_COLOR_3 QColor(255,51,51)
 #define RES_BRUSH_COLOR_4 QColor(255,51,51)
 
-#define RES_BRUSH_STYLE_1 Qt::NoBrush
-#define RES_BRUSH_STYLE_2 Qt::NoBrush
-#define RES_BRUSH_STYLE_3 Qt::NoBrush
-#define RES_BRUSH_STYLE_4 Qt::NoBrush
+#define RES_BRUSH_STYLE_1 Qt::SolidPattern
+#define RES_BRUSH_STYLE_2 Qt::SolidPattern
+#define RES_BRUSH_STYLE_3 Qt::SolidPattern
+#define RES_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_RES_PEN_1 4
 #define PRINT_RES_PEN_2 3
@@ -1028,8 +1028,8 @@
 #define PRINT_RES_BRUSH_COLOR_1 QColor(0,0,128)
 #define PRINT_RES_BRUSH_COLOR_2 QColor(0,0,128)
 
-#define PRINT_RES_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_RES_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_RES_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_RES_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Transponder Mandatory Zone]
 #define TMZ_PEN_1 4
@@ -1052,10 +1052,10 @@
 #define TMZ_BRUSH_COLOR_3 QColor(138,169,235)
 #define TMZ_BRUSH_COLOR_4 QColor(138,169,235)
 
-#define TMZ_BRUSH_STYLE_1 Qt::NoBrush
-#define TMZ_BRUSH_STYLE_2 Qt::NoBrush
-#define TMZ_BRUSH_STYLE_3 Qt::NoBrush
-#define TMZ_BRUSH_STYLE_4 Qt::NoBrush
+#define TMZ_BRUSH_STYLE_1 Qt::SolidPattern
+#define TMZ_BRUSH_STYLE_2 Qt::SolidPattern
+#define TMZ_BRUSH_STYLE_3 Qt::SolidPattern
+#define TMZ_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_TMZ_PEN_1 4
 #define PRINT_TMZ_PEN_2 3
@@ -1069,8 +1069,8 @@
 #define PRINT_TMZ_BRUSH_COLOR_1 QColor(0,120,0)
 #define PRINT_TMZ_BRUSH_COLOR_2 QColor(0,120,0)
 
-#define PRINT_TMZ_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_TMZ_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_TMZ_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_TMZ_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Glider Sector]
 #define GLIDER_SECTOR_PEN_1 4
@@ -1093,10 +1093,10 @@
 #define GLIDER_SECTOR_BRUSH_COLOR_3 QColor(255,100,0)
 #define GLIDER_SECTOR_BRUSH_COLOR_4 QColor(255,100,0)
 
-#define GLIDER_SECTOR_BRUSH_STYLE_1 Qt::NoBrush
-#define GLIDER_SECTOR_BRUSH_STYLE_2 Qt::NoBrush
-#define GLIDER_SECTOR_BRUSH_STYLE_3 Qt::NoBrush
-#define GLIDER_SECTOR_BRUSH_STYLE_4 Qt::NoBrush
+#define GLIDER_SECTOR_BRUSH_STYLE_1 Qt::SolidPattern
+#define GLIDER_SECTOR_BRUSH_STYLE_2 Qt::SolidPattern
+#define GLIDER_SECTOR_BRUSH_STYLE_3 Qt::SolidPattern
+#define GLIDER_SECTOR_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_GLIDER_SECTOR_PEN_1 4
 #define PRINT_GLIDER_SECTOR_PEN_2 3
@@ -1110,8 +1110,8 @@
 #define PRINT_GLIDER_SECTOR_BRUSH_COLOR_1 QColor(0,0,128)
 #define PRINT_GLIDER_SECTOR_BRUSH_COLOR_2 QColor(0,0,128)
 
-#define PRINT_GLIDER_SECTOR_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_GLIDER_SECTOR_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_GLIDER_SECTOR_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_GLIDER_SECTOR_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Wave Window]
 #define WAVE_WINDOW_PEN_1 4
@@ -1134,10 +1134,10 @@
 #define WAVE_WINDOW_BRUSH_COLOR_3 QColor(0,0,200)
 #define WAVE_WINDOW_BRUSH_COLOR_4 QColor(0,0,200)
 
-#define WAVE_WINDOW_BRUSH_STYLE_1 Qt::NoBrush
-#define WAVE_WINDOW_BRUSH_STYLE_2 Qt::NoBrush
-#define WAVE_WINDOW_BRUSH_STYLE_3 Qt::NoBrush
-#define WAVE_WINDOW_BRUSH_STYLE_4 Qt::NoBrush
+#define WAVE_WINDOW_BRUSH_STYLE_1 Qt::SolidPattern
+#define WAVE_WINDOW_BRUSH_STYLE_2 Qt::SolidPattern
+#define WAVE_WINDOW_BRUSH_STYLE_3 Qt::SolidPattern
+#define WAVE_WINDOW_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_WAVE_WINDOW_PEN_1 4
 #define PRINT_WAVE_WINDOW_PEN_2 3
@@ -1151,8 +1151,8 @@
 #define PRINT_WAVE_WINDOW_BRUSH_COLOR_1 QColor(0,0,128)
 #define PRINT_WAVE_WINDOW_BRUSH_COLOR_2 QColor(0,0,128)
 
-#define PRINT_WAVE_WINDOW_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_WAVE_WINDOW_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_WAVE_WINDOW_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_WAVE_WINDOW_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [FAI Area < 500]
 #define FAI_LOW_500_PEN_1 4
@@ -1175,10 +1175,10 @@
 #define FAI_LOW_500_BRUSH_COLOR_3 QColor(255,0,0)
 #define FAI_LOW_500_BRUSH_COLOR_4 QColor(255,0,0)
 
-#define FAI_LOW_500_BRUSH_STYLE_1 Qt::NoBrush
-#define FAI_LOW_500_BRUSH_STYLE_2 Qt::NoBrush
-#define FAI_LOW_500_BRUSH_STYLE_3 Qt::NoBrush
-#define FAI_LOW_500_BRUSH_STYLE_4 Qt::NoBrush
+#define FAI_LOW_500_BRUSH_STYLE_1 Qt::SolidPattern
+#define FAI_LOW_500_BRUSH_STYLE_2 Qt::SolidPattern
+#define FAI_LOW_500_BRUSH_STYLE_3 Qt::SolidPattern
+#define FAI_LOW_500_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_FAI_LOW_500_PEN_1 4
 #define PRINT_FAI_LOW_500_PEN_2 3
@@ -1192,8 +1192,8 @@
 #define PRINT_FAI_LOW_500_BRUSH_COLOR_1 QColor(255,0,0)
 #define PRINT_FAI_LOW_500_BRUSH_COLOR_2 QColor(255,0,0)
 
-#define PRINT_FAI_LOW_500_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_FAI_LOW_500_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_FAI_LOW_500_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_FAI_LOW_500_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [FAI Area >= 500]
 #define FAI_HIGH_500_PEN_1 4
@@ -1216,10 +1216,10 @@
 #define FAI_HIGH_500_BRUSH_COLOR_3 QColor(0,255,0)
 #define FAI_HIGH_500_BRUSH_COLOR_4 QColor(0,255,0)
 
-#define FAI_HIGH_500_BRUSH_STYLE_1 Qt::NoBrush
-#define FAI_HIGH_500_BRUSH_STYLE_2 Qt::NoBrush
-#define FAI_HIGH_500_BRUSH_STYLE_3 Qt::NoBrush
-#define FAI_HIGH_500_BRUSH_STYLE_4 Qt::NoBrush
+#define FAI_HIGH_500_BRUSH_STYLE_1 Qt::SolidPattern
+#define FAI_HIGH_500_BRUSH_STYLE_2 Qt::SolidPattern
+#define FAI_HIGH_500_BRUSH_STYLE_3 Qt::SolidPattern
+#define FAI_HIGH_500_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_FAI_HIGH_500_PEN_1 4
 #define PRINT_FAI_HIGH_500_PEN_2 3
@@ -1233,5 +1233,5 @@
 #define PRINT_FAI_HIGH_500_BRUSH_COLOR_1 QColor(0,255,0)
 #define PRINT_FAI_HIGH_500_BRUSH_COLOR_2 QColor(0,255,0)
 
-#define PRINT_FAI_HIGH_500_BRUSH_STYLE_1 Qt::NoBrush
-#define PRINT_FAI_HIGH_500_BRUSH_STYLE_2 Qt::NoBrush
+#define PRINT_FAI_HIGH_500_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_FAI_HIGH_500_BRUSH_STYLE_2 Qt::SolidPattern

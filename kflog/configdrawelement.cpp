@@ -289,7 +289,7 @@ ConfigDrawElement::ConfigDrawElement( QWidget* parent ) :
   drawLayout->addWidget( border2, 1, 0 );
   drawLayout->addWidget( border3, 2, 0 );
   drawLayout->addWidget( border4, 3, 0 );
-  drawLayout->setColStretch( 1, 10 );
+  drawLayout->setColumnStretch( 1, 10 );
 
   QGroupBox* drawGroup = new QGroupBox( tr( "Draw up to" ) );
   drawGroup->setLayout( drawLayout );
@@ -367,7 +367,7 @@ ConfigDrawElement::ConfigDrawElement( QWidget* parent ) :
   penLayout->addWidget(border2PenStyle, 1, 2);
   penLayout->addWidget(border3PenStyle, 2, 2);
   penLayout->addWidget(border4PenStyle, 3, 2);
-  penLayout->setColStretch( 4, 10 );
+  penLayout->setColumnStretch( 4, 10 );
 
   QGroupBox* penGroup = new QGroupBox( tr("Pen") );
   penGroup->setLayout( penLayout );
@@ -448,7 +448,7 @@ ConfigDrawElement::ConfigDrawElement( QWidget* parent ) :
   brushLayout->addWidget(opacity2, 1, 2);
   brushLayout->addWidget(opacity3, 2, 2);
   brushLayout->addWidget(opacity4, 3, 2);
-  brushLayout->setColStretch( 2, 10 );
+  brushLayout->setColumnStretch( 2, 10 );
 
   QGroupBox* brushGroup = new QGroupBox( tr("Brush") );
   brushGroup->setLayout( brushLayout );
@@ -871,7 +871,7 @@ void ConfigDrawElement::slotCheckOpacity1( int index )
   enum Qt::BrushStyle pattern =
       static_cast <enum Qt::BrushStyle> (border1BrushStyle->itemData( index ).toInt());
 
-  opacity1->setEnabled( pattern == Qt::NoBrush );
+  opacity1->setEnabled( pattern == Qt::SolidPattern );
 }
 
 void ConfigDrawElement::slotCheckOpacity2( int index )
@@ -888,7 +888,7 @@ void ConfigDrawElement::slotCheckOpacity2( int index )
   enum Qt::BrushStyle pattern =
       static_cast <enum Qt::BrushStyle> (border2BrushStyle->itemData( index ).toInt());
 
-  opacity2->setEnabled( pattern == Qt::NoBrush );
+  opacity2->setEnabled( pattern == Qt::SolidPattern );
 }
 
 void ConfigDrawElement::slotCheckOpacity3( int index )
@@ -905,7 +905,7 @@ void ConfigDrawElement::slotCheckOpacity3( int index )
   enum Qt::BrushStyle pattern =
       static_cast <enum Qt::BrushStyle> (border3BrushStyle->itemData( index ).toInt());
 
-  opacity3->setEnabled( pattern == Qt::NoBrush );
+  opacity3->setEnabled( pattern == Qt::SolidPattern );
 }
 
 void ConfigDrawElement::slotCheckOpacity4( int index )
@@ -922,7 +922,7 @@ void ConfigDrawElement::slotCheckOpacity4( int index )
   enum Qt::BrushStyle pattern =
       static_cast <enum Qt::BrushStyle> (border4BrushStyle->itemData( index ).toInt());
 
-  opacity4->setEnabled( pattern == Qt::NoBrush );
+  opacity4->setEnabled( pattern == Qt::SolidPattern );
 }
 
 
@@ -1299,6 +1299,10 @@ void ConfigDrawElement::slotToggleFirst(bool toggle)
       case KFLogConfig::Danger:
       case KFLogConfig::Restricted:
       case KFLogConfig::Tmz:
+      case KFLogConfig::GliderSector:
+      case KFLogConfig::WaveWindow:
+      case KFLogConfig::Prohibited:
+
       case KFLogConfig::Glacier:
       case KFLogConfig::PackIce:
       case KFLogConfig::River_T:
@@ -1324,20 +1328,24 @@ void ConfigDrawElement::slotToggleFirst(bool toggle)
         border1BrushStyle->setEnabled(false);
     }
 
-  if(!toggle)
-      slotToggleSecond(false);
+  if( !toggle )
+    {
+      slotToggleSecond( false );
+    }
   else
-      slotToggleSecond(border2->isChecked());
+    {
+      slotToggleSecond( border2->isChecked() );
+    }
 }
 
-void ConfigDrawElement::slotToggleSecond(bool toggle)
+void ConfigDrawElement::slotToggleSecond( bool toggle )
 {
-  border2Button->setEnabled(toggle);
-  border2Pen->setEnabled(toggle);
-  border2ColorButton->setEnabled(toggle);
-  border3->setEnabled(toggle);
+  border2Button->setEnabled( toggle );
+  border2Pen->setEnabled( toggle );
+  border2ColorButton->setEnabled( toggle );
+  border3->setEnabled( toggle );
 
-  switch(currentElement)
+  switch( currentElement )
     {
       case KFLogConfig::City:
         border2PenStyle->setEnabled(false);
@@ -1357,6 +1365,10 @@ void ConfigDrawElement::slotToggleSecond(bool toggle)
       case KFLogConfig::Danger:
       case KFLogConfig::Restricted:
       case KFLogConfig::Tmz:
+      case KFLogConfig::GliderSector:
+      case KFLogConfig::WaveWindow:
+      case KFLogConfig::Prohibited:
+
       case KFLogConfig::Glacier:
       case KFLogConfig::PackIce:
       case KFLogConfig::River_T:
@@ -1382,20 +1394,24 @@ void ConfigDrawElement::slotToggleSecond(bool toggle)
         border2BrushStyle->setEnabled(false);
     }
 
-  if(!toggle)
+  if( !toggle )
+    {
       slotToggleThird(false);
+    }
   else
+    {
       slotToggleThird(border3->isChecked());
+    }
 }
 
 void ConfigDrawElement::slotToggleThird(bool toggle)
 {
-  border3Button->setEnabled(toggle);
-  border3Pen->setEnabled(toggle);
-  border3ColorButton->setEnabled(toggle);
-  border4->setEnabled(toggle);
+  border3Button->setEnabled( toggle );
+  border3Pen->setEnabled( toggle );
+  border3ColorButton->setEnabled( toggle );
+  border4->setEnabled( toggle );
 
-  switch(currentElement)
+  switch( currentElement )
     {
       case KFLogConfig::City:
         border3PenStyle->setEnabled(false);
@@ -1415,6 +1431,10 @@ void ConfigDrawElement::slotToggleThird(bool toggle)
       case KFLogConfig::Danger:
       case KFLogConfig::Restricted:
       case KFLogConfig::Tmz:
+      case KFLogConfig::GliderSector:
+      case KFLogConfig::WaveWindow:
+      case KFLogConfig::Prohibited:
+
       case KFLogConfig::Glacier:
       case KFLogConfig::PackIce:
       case KFLogConfig::River_T:
@@ -1471,6 +1491,10 @@ void ConfigDrawElement::slotToggleForth(bool toggle)
       case KFLogConfig::Danger:
       case KFLogConfig::Restricted:
       case KFLogConfig::Tmz:
+      case KFLogConfig::GliderSector:
+      case KFLogConfig::WaveWindow:
+      case KFLogConfig::Prohibited:
+
       case KFLogConfig::Glacier:
       case KFLogConfig::PackIce:
       case KFLogConfig::River_T:

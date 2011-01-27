@@ -36,7 +36,7 @@
 #define MAP_CONFIG_H
 
 #include <QBrush>
-#include <q3ptrlist.h>
+#include <QList>
 #include <QObject>
 #include <QPen>
 #include <QPixmap>
@@ -61,6 +61,14 @@ private:
   Q_DISABLE_COPY ( MapConfig )
 
 public:
+
+  /**
+   * The possible data types, that could be drawn.
+   *
+   * @see #slotSetFlightDataType
+   */
+  enum DrawFlightPoint { Altitude=0, Cycling=1, Speed=2, Vario=3, Solid=4 };
+
   /**
    * Creates a new MapConfig object.
    */
@@ -88,7 +96,7 @@ public:
    *
    * @return the pen for drawing a map element.
    */
-  QPen getDrawPen(unsigned int typeID);
+  QPen& getDrawPen(unsigned int typeID);
   /**
    * @param  fP  The flight point, which is used to determine the color
    *             of the line.
@@ -109,25 +117,25 @@ public:
    *
    * @return the pen for printing a mapelement.
    */
-  QPen getPrintPen(unsigned int typeID);
+  QPen& getPrintPen(unsigned int typeID);
   /**
    * @param  type  The typeID of the element.
    *
    * @return the brush for drawing an area element.
    */
-  QBrush getDrawBrush(unsigned int typeID);
+  QBrush& getDrawBrush(unsigned int typeID);
   /**
    * @param  type  The typeID of the element.
    *
    * @return the brush for printing an area element.
    */
-  QBrush getPrintBrush(unsigned int typeID);
+  QBrush& getPrintBrush(unsigned int typeID);
   /**
    * @param  heighIndex  The index of the height of the isohypse.
    *
    * @return the color for a isohypse.
    */
-  QColor getIsoColor(unsigned int heightIndex);
+  QColor& getIsoColor(unsigned int heightIndex);
   /**
    * @param  type  The typeID of the element.
    * @param  isWinch  Used only for glidersites to determine, if the
@@ -204,12 +212,11 @@ public:
    * @return PenStyle of isoline
    */
   Qt::PenStyle getIsoPenStyle(int height);
+
   /**
-   * The possible datatypes, that could be drawn.
-   *
-   * @see #slotSetFlightDataType
+   * \return The opacity in the range 0...100% of the requested airspace.
    */
-  enum DrawFlightPoint { Altitude=0, Cycling=1, Speed=2, Vario=3, Solid=4 };
+  int getAsOpacity( uint asType );
 
 public slots:
 
@@ -262,7 +269,7 @@ private:
    *
    * @return the brush
    */
-  QBrush __getBrush(unsigned int typeID, int scaleIndex);
+  QBrush& __getBrush( unsigned int typeID, int scaleIndex );
   /**
    * Determines the pen to be used to draw or print a given element-type.
    *
@@ -271,103 +278,202 @@ private:
    *
    * @return the pen
    */
-  QPen __getPen(unsigned int typeID, int sIndex);
-  void __readBorder(QString group, bool *b);
-  void __readPen(QString group, Q3PtrList<QPen> *penList, bool *b,
-      QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4, QColor defaultColor5, QColor defaultColor6,
-      int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4, int defaultPenSize5, int defaultPenSize6,
-      Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4, Qt::PenStyle defaultPenStyle5, Qt::PenStyle defaultPenStyle6);
-  void __readPenBrush(QString group, Q3PtrList<QPen> *penList, bool *b, Q3PtrList<QBrush> *brushList,
-      QColor defaultColor1, QColor defaultColor2, QColor defaultColor3, QColor defaultColor4, QColor defaultColor5, QColor defaultColor6,
-      int defaultPenSize1, int defaultPenSize2, int defaultPenSize3, int defaultPenSize4, int defaultPenSize5, int defaultPenSize6,
-      Qt::PenStyle defaultPenStyle1, Qt::PenStyle defaultPenStyle2, Qt::PenStyle defaultPenStyle3, Qt::PenStyle defaultPenStyle4, Qt::PenStyle defaultPenStyle5, Qt::PenStyle defaultPenStyle6,
-      QColor defaultBrushColor1, QColor defaultBrushColor2, QColor defaultBrushColor3, QColor defaultBrushColor4, QColor defaultBrushColor5, QColor defaultBrushColor6,
-      Qt::BrushStyle defaultBrushStyle1, Qt::BrushStyle defaultBrushStyle2, Qt::BrushStyle defaultBrushStyle3, Qt::BrushStyle defaultBrushStyle4, Qt::BrushStyle defaultBrushStyle5, Qt::BrushStyle defaultBrushStyle6);
-  void __readTopo(QString entry, QColor color);
+  QPen& __getPen( unsigned int typeID, int sIndex );
 
-  Q3PtrList<QColor> topographyColorList;
-
-  Q3PtrList<QPen> airAPenList;
-  Q3PtrList<QBrush> airABrushList;
-  Q3PtrList<QPen> airBPenList;
-  Q3PtrList<QBrush> airBBrushList;
-  Q3PtrList<QPen> airCPenList;
-  Q3PtrList<QBrush> airCBrushList;
-  Q3PtrList<QPen> airDPenList;
-  Q3PtrList<QBrush> airDBrushList;
-  Q3PtrList<QPen> airElPenList;
-  Q3PtrList<QBrush> airElBrushList;
-  Q3PtrList<QPen> airEhPenList;
-  Q3PtrList<QBrush> airEhBrushList;
-  Q3PtrList<QPen> airFPenList;
-  Q3PtrList<QBrush> airFBrushList;
-  Q3PtrList<QPen> ctrCPenList;
-  Q3PtrList<QBrush> ctrCBrushList;
-  Q3PtrList<QPen> ctrDPenList;
-  Q3PtrList<QBrush> ctrDBrushList;
-  Q3PtrList<QPen> lowFPenList;
-  Q3PtrList<QBrush> lowFBrushList;
-  Q3PtrList<QPen> dangerPenList;
-  Q3PtrList<QBrush> dangerBrushList;
-  Q3PtrList<QPen> restrPenList;
-  Q3PtrList<QBrush> restrBrushList;
-  Q3PtrList<QPen> tmzPenList;
-  Q3PtrList<QBrush> tmzBrushList;
-
-  Q3PtrList<QPen> highwayPenList;
-  Q3PtrList<QPen> roadPenList;
-  Q3PtrList<QPen> trailPenList;
-  Q3PtrList<QPen> railPenList;
-  Q3PtrList<QPen> rail_dPenList;
-  Q3PtrList<QPen> aerialcablePenList;
-  Q3PtrList<QPen> riverPenList;
-  Q3PtrList<QPen> river_tPenList;
-  Q3PtrList<QBrush> river_tBrushList;
-  Q3PtrList<QPen> canalPenList;
-  Q3PtrList<QPen> cityPenList;
-  Q3PtrList<QBrush> cityBrushList;
-  Q3PtrList<QPen> forestPenList;
-  Q3PtrList<QPen> glacierPenList;
-  Q3PtrList<QPen> packicePenList;
-  Q3PtrList<QBrush> forestBrushList;
-  Q3PtrList<QBrush> glacierBrushList;
-  Q3PtrList<QBrush> packiceBrushList;
-  Q3PtrList<QPen> faiAreaLow500PenList;
-  Q3PtrList<QBrush> faiAreaLow500BrushList;
-  Q3PtrList<QPen> faiAreaHigh500PenList;
-  Q3PtrList<QBrush> faiAreaHigh500BrushList;
   /**
+   * Reads the draw and print borders from the configuration file.
    */
-  bool* airABorder;
-  bool* airBBorder;
-  bool* airCBorder;
-  bool* airDBorder;
-  bool* airElBorder;
-  bool* airEhBorder;
-  bool* airFBorder;
-  bool* ctrCBorder;
-  bool* ctrDBorder;
-  bool* dangerBorder;
-  bool* lowFBorder;
-  bool* restrBorder;
-  bool* tmzBorder;
+  void __readBorder( QString group, bool *b );
 
-  bool* trailBorder;
-  bool* roadBorder;
-  bool* highwayBorder;
-  bool* railBorder;
-  bool* rail_dBorder;
-  bool* aerialcableBorder;
-  bool* riverBorder;
-  bool* river_tBorder;
-  bool* canalBorder;
-  bool* cityBorder;
+  void __readPen( QString group,
+                  QList<QPen> &penList,
+                  bool *b,
+                  QColor defaultColor1,
+                  QColor defaultColor2,
+                  QColor defaultColor3,
+                  QColor defaultColor4,
+                  QColor defaultColor5,
+                  QColor defaultColor6,
+                  int defaultPenSize1,
+                  int defaultPenSize2,
+                  int defaultPenSize3,
+                  int defaultPenSize4,
+                  int defaultPenSize5,
+                  int defaultPenSize6,
+                  Qt::PenStyle defaultPenStyle1,
+                  Qt::PenStyle defaultPenStyle2,
+                  Qt::PenStyle defaultPenStyle3,
+                  Qt::PenStyle defaultPenStyle4,
+                  Qt::PenStyle defaultPenStyle5,
+                  Qt::PenStyle defaultPenStyle6 );
 
-  bool* forestBorder;
-  bool* glacierBorder;
-  bool* packiceBorder;
-  bool* faiAreaLow500Border;
-  bool* faiAreaHigh500Border;
+  void __readPenBrush(  QString group,
+                        QList<QPen> &penList,
+                        bool *b,
+                        QList<QBrush> &brushList,
+                        QColor defaultColor1,
+                        QColor defaultColor2,
+                        QColor defaultColor3,
+                        QColor defaultColor4,
+                        QColor defaultColor5,
+                        QColor defaultColor6,
+                        int defaultPenSize1,
+                        int defaultPenSize2,
+                        int defaultPenSize3,
+                        int defaultPenSize4,
+                        int defaultPenSize5,
+                        int defaultPenSize6,
+                        Qt::PenStyle defaultPenStyle1,
+                        Qt::PenStyle defaultPenStyle2,
+                        Qt::PenStyle defaultPenStyle3,
+                        Qt::PenStyle defaultPenStyle4,
+                        Qt::PenStyle defaultPenStyle5,
+                        Qt::PenStyle defaultPenStyle6,
+                        QColor defaultBrushColor1,
+                        QColor defaultBrushColor2,
+                        QColor defaultBrushColor3,
+                        QColor defaultBrushColor4,
+                        QColor defaultBrushColor5,
+                        QColor defaultBrushColor6,
+                        Qt::BrushStyle defaultBrushStyle1,
+                        Qt::BrushStyle defaultBrushStyle2,
+                        Qt::BrushStyle defaultBrushStyle3,
+                        Qt::BrushStyle defaultBrushStyle4,
+                        Qt::BrushStyle defaultBrushStyle5,
+                        Qt::BrushStyle defaultBrushStyle6 );
+
+  void __readTopo( QString entry, QColor color );
+
+  /**
+   * Reads the airspace opacity values, used for filling airspace structures.
+   */
+  void __readAsOpacity( QString group, QList<int> &opacityList );
+
+  QList<QColor> topographyColorList;
+
+  QList<QPen> airAPenList;
+  QList<QBrush> airABrushList;
+
+  QList<QPen> airBPenList;
+  QList<QBrush> airBBrushList;
+
+  QList<QPen> airCPenList;
+  QList<QBrush> airCBrushList;
+
+  QList<QPen> airDPenList;
+  QList<QBrush> airDBrushList;
+
+  QList<QPen> airElPenList;
+  QList<QBrush> airElBrushList;
+
+  QList<QPen> airEPenList;
+  QList<QBrush> airEBrushList;
+
+  QList<QPen> airFPenList;
+  QList<QBrush> airFBrushList;
+
+  QList<QPen> ctrCPenList;
+  QList<QBrush> ctrCBrushList;
+
+  QList<QPen> ctrDPenList;
+  QList<QBrush> ctrDBrushList;
+
+  QList<QPen> lowFPenList;
+  QList<QBrush> lowFBrushList;
+
+  QList<QPen> dangerPenList;
+  QList<QBrush> dangerBrushList;
+
+  QList<QPen> restrPenList;
+  QList<QBrush> restrBrushList;
+
+  QList<QPen> tmzPenList;
+  QList<QBrush> tmzBrushList;
+
+  QList<QPen> gsPenList;
+  QList<QBrush> gsBrushList;
+
+  QList<QPen> wwPenList;
+  QList<QBrush> wwBrushList;
+
+  QList<QPen> highwayPenList;
+  QList<QPen> roadPenList;
+  QList<QPen> trailPenList;
+  QList<QPen> railPenList;
+  QList<QPen> rail_dPenList;
+  QList<QPen> aerialcablePenList;
+  QList<QPen> riverPenList;
+  QList<QPen> river_tPenList;
+  QList<QBrush> river_tBrushList;
+  QList<QPen> canalPenList;
+  QList<QPen> cityPenList;
+  QList<QBrush> cityBrushList;
+  QList<QPen> forestPenList;
+  QList<QPen> glacierPenList;
+  QList<QPen> packicePenList;
+  QList<QBrush> forestBrushList;
+  QList<QBrush> glacierBrushList;
+  QList<QBrush> packiceBrushList;
+  QList<QPen> faiAreaLow500PenList;
+  QList<QBrush> faiAreaLow500BrushList;
+  QList<QPen> faiAreaHigh500PenList;
+  QList<QBrush> faiAreaHigh500BrushList;
+
+  QList<int> airAOpacityList;
+  QList<int> airBOpacityList;
+  QList<int> airCOpacityList;
+  QList<int> airDOpacityList;
+  QList<int> airElOpacityList;
+  QList<int> airEOpacityList;
+  QList<int> airFOpacityList;
+  QList<int> ctrCOpacityList;
+  QList<int> ctrDOpacityList;
+  QList<int> lowFOpacityList;
+  QList<int> dangerOpacityList;
+  QList<int> restrOpacityList;
+  QList<int> tmzOpacityList;
+  QList<int> gsOpacityList;
+  QList<int> wwOpacityList;
+
+  int defaultOpacity[4];
+
+  /**
+   * Draw and print boarders. Draw borders are stored at 0...3 and print
+   * boarders at 4...5.
+   */
+  bool airABorder[6];
+  bool airBBorder[6];
+  bool airCBorder[6];
+  bool airDBorder[6];
+  bool airElBorder[6];
+  bool airEBorder[6];
+  bool airFBorder[6];
+  bool ctrCBorder[6];
+  bool ctrDBorder[6];
+  bool dangerBorder[6];
+  bool lowFBorder[6];
+  bool restrBorder[6];
+  bool tmzBorder[6];
+  bool gsBorder[6];
+  bool wwBorder[6];
+
+  bool trailBorder[6];
+  bool roadBorder[6];
+  bool highwayBorder[6];
+  bool railBorder[6];
+  bool rail_dBorder[6];
+  bool aerialcableBorder[6];
+  bool riverBorder[6];
+  bool river_tBorder[6];
+  bool canalBorder[6];
+  bool cityBorder[6];
+  bool forestBorder[6];
+  bool glacierBorder[6];
+  bool packiceBorder[6];
+
+  bool faiAreaLow500Border[6];
+  bool faiAreaHigh500Border[6];
+
   /**
    * The current scale index for displaying the map. The index is set
    * from the mapmatrix-object each time, the map is zoomed.
@@ -395,12 +501,8 @@ private:
    * @see #slotSetFlightDataType
    */
   int drawFType;
-  int _drawWpLabelScale;
 
-  /** this is a temporary function and it is not needed in Qt 4 */
-  QString __color2String(QColor);
-  /** this is a temporary function and it is not needed in Qt 4 */
-  QColor __string2Color(QString);
+  int _drawWpLabelScale;
 };
 
 #endif

@@ -8,7 +8,7 @@
  **
  **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
  **   Modified:       2008      by Josua Dietze
- **                   2008-2010 by Axel Pauli
+ **                   2008-2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -21,8 +21,8 @@
 
 Airspace::Airspace(QString name, BaseMapElement::objectType oType, QPolygon pP,
                    int upper, BaseMapElement::elevationType uType,
-                   int lower, BaseMapElement::elevationType lType)
-  : LineElement(name, oType, pP), lLimitType(lType), uLimitType(uType)
+                   int lower, BaseMapElement::elevationType lType) :
+  LineElement(name, oType, pP), lLimitType(lType), uLimitType(uType)
 {
   // All Airspaces are closed regions ...
   closed = true;
@@ -48,7 +48,7 @@ Airspace::Airspace(QString name, BaseMapElement::objectType oType, QPolygon pP,
       break;
     default:
       lLim=0.0;
-  };
+  }
 
   lLimit.setMeters( lLim );
   double uLim=0.0;
@@ -71,7 +71,7 @@ Airspace::Airspace(QString name, BaseMapElement::objectType oType, QPolygon pP,
       break;
     default:
       uLim=0.0;
-  };
+  }
 
   uLimit.setMeters( uLim );
 }
@@ -88,8 +88,7 @@ bool Airspace::isDrawable() const
   return ( glConfig->isBorder(typeID) && isVisible() );
 }
 
-void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect,
-                           qreal opacity )
+void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect )
 {
   // qDebug("Airspace::drawRegion(): TypeId=%d, opacity=%f, Name=%s",
   //         typeID, opacity, getInfoString().toLatin1().data() );
@@ -102,12 +101,6 @@ void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect,
 
   QBrush drawB( glConfig->getDrawBrush(typeID) );
 
-  if( opacity < 100.0 )
-    {
-      // use solid filled air regions
-      drawB.setStyle( Qt::SolidPattern );
-    }
-
   QPen drawP = glConfig->getDrawPen( typeID );
   drawP.setJoinStyle( Qt::RoundJoin );
 
@@ -115,24 +108,34 @@ void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect,
   targetP->setBrush(drawB);
   targetP->setClipRegion( viewRect );
 
-  if( uLimitType == BaseMapElement::FL && uLimit.getFL() >= 200.0 )
+  // If brush SolidPattern is set, we draw transparent filled airspace areas.
+  if( drawB.style() == Qt::SolidPattern )
     {
-      opacity = 0.0;
-    }
+      /* Gets the opacity of the painter. The
+       * value should be in the range 0.0 to 100.0%, where 0.0 is fully
+       * transparent and 100.0 is fully opaque.
+       */
+      double opacity = (double) glConfig->getAsOpacity(typeID);
 
-  if( opacity < 100.0 && opacity > 0.0 )
-    {
-      // Draw airspace filled with opacity factor
-      targetP->setOpacity( opacity/100.0 );
-      targetP->drawPolygon(mP);
-      targetP->setBrush(Qt::NoBrush);
-      targetP->setOpacity( 1.0 );
-    }
-  else if( opacity == 0.0 )
-    {
-      // draw only airspace borders without any filling inside
-      targetP->setBrush(Qt::NoBrush);
-      targetP->setOpacity( 1.0 );
+      if( uLimitType == BaseMapElement::FL && uLimit.getFL() >= 200.0 )
+        {
+          opacity = 0.0;
+        }
+
+      if( opacity < 100.0 && opacity > 0.0 )
+        {
+          // Draw airspace filled with opacity factor
+          targetP->setOpacity( opacity/100.0 );
+          targetP->drawPolygon(mP);
+          targetP->setBrush(Qt::NoBrush);
+          targetP->setOpacity( 1.0 );
+        }
+      else if( opacity == 0.0 )
+        {
+          // draw only airspace borders without any filling inside
+          targetP->setBrush(Qt::NoBrush);
+          targetP->setOpacity( 1.0 );
+        }
     }
 
   // Draw the outline of the airspace with the selected brush
@@ -203,54 +206,56 @@ QString Airspace::getInfoString()
 
   QString type;
 
-  switch(lLimitType) {
-  case MSL:
-    tempL.sprintf("%s MSL", lLimit.getText(true,0).toLatin1().data());
-    break;
-  case GND:
-    if(lLimit.getMeters())
-      tempL.sprintf("%s GND", lLimit.getText(true,0).toLatin1().data());
-    else
-      tempL = "GND";
-    break;
-  case FL:
-    tempL.sprintf("FL %d (%s)", (int) rint(lLimit.getFeet()/100.), lLimit.getText(true,0).toLatin1().data());
-    break;
-  case STD:
-    tempL.sprintf("%s STD", lLimit.getText(true,0).toLatin1().data());
-    break;
-  case UNLTD:
-    tempL = QObject::tr("Unlimited");
-  default:
-    ;
+  switch(lLimitType)
+  {
+    case MSL:
+      tempL.sprintf("%s MSL", lLimit.getText(true,0).toLatin1().data());
+      break;
+    case GND:
+      if(lLimit.getMeters())
+        tempL.sprintf("%s GND", lLimit.getText(true,0).toLatin1().data());
+      else
+        tempL = "GND";
+      break;
+    case FL:
+      tempL.sprintf("FL %d (%s)", (int) rint(lLimit.getFeet()/100.), lLimit.getText(true,0).toLatin1().data());
+      break;
+    case STD:
+      tempL.sprintf("%s STD", lLimit.getText(true,0).toLatin1().data());
+      break;
+    case UNLTD:
+      tempL = QObject::tr("Unlimited");
+    default:
+      break;
   }
 
-  switch(uLimitType) {
-  case MSL:
-    if(uLimit.getMeters() >= 99999)
+  switch(uLimitType)
+  {
+    case MSL:
+      if(uLimit.getMeters() >= 99999)
+        tempU = QObject::tr("Unlimited");
+      else
+        tempU.sprintf("%s MSL", uLimit.getText(true,0).toLatin1().data());
+      break;
+    case GND:
+      tempU.sprintf("%s GND", uLimit.getText(true,0).toLatin1().data());
+      break;
+    case FL:
+      tempU.sprintf("FL %d (%s)", (int) rint(uLimit.getFeet()/100.), uLimit.getText(true,0).toLatin1().data());
+      break;
+    case STD:
+      tempU.sprintf("%s STD", uLimit.getText(true,0).toLatin1().data());
+      break;
+    case UNLTD:
       tempU = QObject::tr("Unlimited");
-    else
-      tempU.sprintf("%s MSL", uLimit.getText(true,0).toLatin1().data());
-    break;
-  case GND:
-    tempU.sprintf("%s GND", uLimit.getText(true,0).toLatin1().data());
-    break;
-  case FL:
-    tempU.sprintf("FL %d (%s)", (int) rint(uLimit.getFeet()/100.), uLimit.getText(true,0).toLatin1().data());
-    break;
-  case STD:
-    tempU.sprintf("%s STD", uLimit.getText(true,0).toLatin1().data());
-    break;
-  case UNLTD:
-    tempU = QObject::tr("Unlimited");
-  default:
-    ;
+    default:
+      break;
   }
 
   text = getTypeName(typeID);
 
   text += " " + name + "<BR>" +
-    "<FONT SIZE=-1>" + tempL + " / " + tempU + "</FONT>";
+          "<FONT SIZE=-1>" + tempL + " / " + tempU + "</FONT>";
 
   return text;
 }
@@ -259,12 +264,17 @@ bool Airspace::operator < (const Airspace& other) const
 {
   int a1C = getUpperL(), a2C = other.getUpperL();
 
-  if (a1C > a2C) {
-    return false;
-  } else if (a1C < a2C) {
-    return true;
-  } else { //equal
-    int a1F = getLowerL(), a2F = other.getLowerL();
-    return (a1F < a2F);
-  }
+  if( a1C > a2C )
+    {
+      return false;
+    }
+  else if( a1C < a2C )
+    {
+      return true;
+    }
+  else
+    { //equal
+      int a1F = getLowerL(), a2F = other.getLowerL();
+      return (a1F < a2F);
+    }
 }
