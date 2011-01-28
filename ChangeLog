@@ -3,10 +3,11 @@ $Id$
 2011-01-28 Axel Pauli <axel@kflog.org>
   * KFlogConfig class ported completely to Qt4. The classes ConfigDrawElement
     and ConfigPrintElement were united into one class with name ConfigMapElement.
-    All brush icons are created now in the new class. Removed all old brush icons.
     That makes all configuration handling and the maintenance easier. It was a
     hard work to port that all. The modified configuration handling needs some
     testing, if it works right.
+    All needed brush icons are created now in the new class. Removed all old brush
+    icons from the pics directory.
 
 2011-01-20 Axel Pauli <axel@kflog.org>
   * Animation of tool bar and dock widgets switched off. It caused a lot of
