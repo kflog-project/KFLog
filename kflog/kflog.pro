@@ -20,8 +20,7 @@ SOURCES = \
     baseflightelement.cpp \
     basemapelement.cpp \
     centertodialog.cpp \
-    configdrawelement.cpp \
-    configprintelement.cpp \
+    configmapelement.cpp \
     da4record.cpp \
     dataview.cpp \
     distance.cpp \
@@ -98,8 +97,7 @@ HEADERS = \
     baseflightelement.h \
     basemapelement.h \
     centertodialog.h \
-    configdrawelement.h \
-    configprintelement.h \
+    configmapelement.h \
     da4record.h \
     dataview.h \
     distance.h \

@@ -24,8 +24,7 @@
 
 #include <QtGui>
 
-#include "configdrawelement.h"
-#include "configprintelement.h"
+#include "configmapelement.h"
 #include "kflogconfig.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
@@ -112,7 +111,6 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
 
 KFLogConfig::~KFLogConfig()
 {
-  qDebug() << "~KFLogConfig()";
 }
 
 void KFLogConfig::slotPageClicked( QTreeWidgetItem * item, int column )
@@ -250,8 +248,6 @@ void KFLogConfig::slotOk()
       extern MapContents *_globalMapContents;
       _globalMapContents->slotReloadWelt2000Data();
     }
-
-  qDebug() << "KFLogConfig::slotOk(): Emits Signal configOk";
 
   emit configOk();
   accept();
@@ -521,8 +517,8 @@ void KFLogConfig::__addMapTab()
   elementSelect->addItem( tr( "FAI Area >500 km" ), KFLogConfig::FAIAreaHigh500 );
   elementSelect->addItem( tr( "Trail" ), KFLogConfig::Trail );
 
-  configDrawWidget  = new ConfigDrawElement();
-  configPrintWidget = new ConfigPrintElement();
+  configDrawWidget  = new ConfigMapElement( this, true );
+  configPrintWidget = new ConfigMapElement( this, false );
 
   configDrawWidget->setObjectName( "configDrawWidget" );
   configPrintWidget->setObjectName( "configPrintWidget" );

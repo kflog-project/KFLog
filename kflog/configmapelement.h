@@ -1,6 +1,6 @@
 /***********************************************************************
 **
-**   configdrawelement.h
+**   configmapelement.h
 **
 **   This file is part of KFLog4.
 **
@@ -17,21 +17,21 @@
 ***********************************************************************/
 
 /**
- * \class ConfigDrawElement
+ * \class ConfigMapElement
  *
  * \author Heiner Lamprecht, Axel Pauli
  *
- * \short Configuration widget for map items.
+ * \short Configuration widget for map and print items.
  *
- * Configuration widget for map items.
+ * Configuration widget for map and print items.
  *
  * \date 2001-2011
  *
  * \version $Id$
  */
 
-#ifndef CONFIG_DRAW_ELEMENT_H
-#define CONFIG_DRAW_ELEMENT_H
+#ifndef CONFIG_MAP_ELEMENT_H
+#define CONFIG_MAP_ELEMENT_H
 
 #include <QBrush>
 #include <QCheckBox>
@@ -41,22 +41,36 @@
 #include <QList>
 #include <QPen>
 #include <QPushButton>
+#include <QShowEvent>
 #include <QSpinBox>
 #include <QWidget>
 
-class ConfigDrawElement : public QWidget
+class ConfigMapElement : public QWidget
 {
   Q_OBJECT
 
   private:
 
-  Q_DISABLE_COPY ( ConfigDrawElement )
+  Q_DISABLE_COPY ( ConfigMapElement )
 
   public:
 
-  ConfigDrawElement( QWidget* parent=0 );
+  /**
+   * Class constructor.
+   *
+   * \param parent The parent widget pointer.
+   *
+   * \param configMap Determines for which configuration the widget is used.
+   *        We have to handle two different cases, map and print configuration.
+   *        If value is true, map configuration is executed.
+   */
+  ConfigMapElement( QWidget* parent=0, bool configMap=true );
 
-  virtual ~ConfigDrawElement();
+  virtual ~ConfigMapElement();
+
+  protected:
+
+  void showEvent( QShowEvent* event );
 
   public slots:
 
@@ -99,6 +113,29 @@ class ConfigDrawElement : public QWidget
   void slotCheckOpacity4( int index );
 
   private:
+
+  /**
+   * Reads in all configuration items for map items from the saved
+   * configuration.
+   */
+  void __readMapItems();
+
+  /**
+   * Reads in all configuration items for print items from the saved
+   * configuration.
+   */
+  void __readPrintItems();
+
+  /**
+   * Reads in all default configuration items for map items.
+   */
+  void __readDefaultMapItems();
+
+  /**
+   * Reads in all default configuration items for print items.
+   */
+  void __readDefaultPrintItems();
+
 
   void __defaultPen( QList<QPen> &penList,
                      bool *b,
@@ -184,6 +221,15 @@ class ConfigDrawElement : public QWidget
   void __showAsOpacity( QList<int> &opacityList );
 
   void __defaultAsOpacity( QList<int> &opacityList );
+
+  /**
+   * Determines for which configuration the widget is used. We have to
+   * handle two different cases, map and print configuration.
+   */
+  bool configureMap;
+
+  /** Defines the configuration item prefix. */
+  QString itemPrefix;
 
   QCheckBox* border1;
   QCheckBox* border2;

@@ -49,7 +49,7 @@
 
 #include "guicontrols/coordedit.h"
 
-class ConfigDrawElement;
+class ConfigMapElement;
 class ConfigPrintElement;
 
 class KFLogConfig : public QDialog
@@ -296,8 +296,8 @@ class KFLogConfig : public QDialog
     /** Default color array of related buttons. */
     QColor ftcColorArrayDefault[6];
 
-    ConfigDrawElement* configDrawWidget;
-    ConfigPrintElement* configPrintWidget;
+    ConfigMapElement* configDrawWidget;
+    ConfigMapElement* configPrintWidget;
 
     int cylinPar;
     int lambertV1;

@@ -1,6 +1,6 @@
 /***********************************************************************
 **
-**   configdrawelement.cpp
+**   configmapelement.cpp
 **
 **   This file is part of KFLog4.
 **
@@ -18,17 +18,306 @@
 
 #include <QtGui>
 
-#include "configdrawelement.h"
+#include "configmapelement.h"
 #include "kflogconfig.h"
 #include "mapdefaults.h"
 #include "mainwindow.h"
 
-extern MainWindow *_mainWindow;
-extern QSettings _settings;
+extern MainWindow* _mainWindow;
+extern QSettings   _settings;
 
-ConfigDrawElement::ConfigDrawElement( QWidget* parent ) :
+ConfigMapElement::ConfigMapElement( QWidget* parent, bool configMap ) :
   QWidget(parent),
+  configureMap(configMap),
   oldElement(-1)
+{
+  /*
+   * Note, this widget is used for two different configurations. The passed
+   * flag configMap determines, if the widget is used for map item configuration
+   * or print item configuration. In the print item configuration all border2
+   * and border3 widgets are not visible.
+   */
+  QString checkBox1Label;
+  QString checkBox2Label;
+
+  if( configureMap )
+    {
+      itemPrefix = "/";
+      checkBox1Label = tr( "Threshold #1" );
+      checkBox2Label = tr( "Threshold #2" );
+      __readMapItems();
+    }
+  else
+    {
+      itemPrefix = "/Print";
+      checkBox1Label = "1:500.000";
+      checkBox2Label = tr( "Scale limit" );
+      __readPrintItems();
+    }
+
+  __createBrushStyleIcons();
+
+  border1 = new QCheckBox( checkBox1Label );
+  border2 = new QCheckBox( checkBox2Label );
+  border3 = new QCheckBox( tr( "Threshold #3" ) );
+  border4 = new QCheckBox( tr( "Scale limit" ) );
+
+  connect(border1, SIGNAL(toggled(bool)), SLOT(slotToggleFirst(bool)));
+  connect(border2, SIGNAL(toggled(bool)), SLOT(slotToggleSecond(bool)));
+  connect(border3, SIGNAL(toggled(bool)), SLOT(slotToggleThird(bool)));
+  connect(border4, SIGNAL(toggled(bool)), SLOT(slotToggleForth(bool)));
+
+  QGridLayout* drawLayout = new QGridLayout;
+  drawLayout->setMargin( 10 );
+  drawLayout->setSpacing( 5 );
+
+  drawLayout->addWidget( border1, 0, 0 );
+  drawLayout->addWidget( border2, 1, 0 );
+  drawLayout->addWidget( border3, 2, 0 );
+  drawLayout->addWidget( border4, 3, 0 );
+  drawLayout->setColumnStretch( 1, 10 );
+
+  QGroupBox* drawGroup = new QGroupBox( tr( "Draw up to" ) );
+  drawGroup->setLayout( drawLayout );
+
+  //----------------------------------------------------------------------------
+  border1ColorButton = new QPushButton(this);
+  border1ColorButton->setFixedHeight(24);
+  border1ColorButton->setFixedWidth(55);
+  connect(border1ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1Color()));
+
+  border2ColorButton = new QPushButton(this);
+  border2ColorButton->setFixedHeight(24);
+  border2ColorButton->setFixedWidth(55);
+  connect(border2ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2Color()));
+
+  border3ColorButton = new QPushButton(this);
+  border3ColorButton->setFixedHeight(24);
+  border3ColorButton->setFixedWidth(55);
+  connect(border3ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder3Color()));
+
+  border4ColorButton = new QPushButton(this);
+  border4ColorButton->setFixedHeight(24);
+  border4ColorButton->setFixedWidth(55);
+  connect(border4ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder4Color()));
+
+  border1Pen = new QSpinBox();
+  border1Pen->setRange( 1, 9 );
+  border1Pen->setMinimumWidth( 35 );
+  border1Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+
+  border2Pen = new QSpinBox();
+  border2Pen->setRange( 1, 9 );
+  border2Pen->setMinimumWidth( 35 );
+  border2Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+
+  border3Pen = new QSpinBox();
+  border3Pen->setRange( 1, 9 );
+  border3Pen->setMinimumWidth( 35 );
+  border3Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+
+  border4Pen = new QSpinBox();
+  border3Pen->setRange( 1, 9 );
+  border4Pen->setMinimumWidth( 35 );
+  border4Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+
+  border1PenStyle = new QComboBox( this );
+  border1PenStyle->setMinimumWidth( 60 );
+  border1PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+
+  border2PenStyle = new QComboBox( this );
+  border2PenStyle->setMinimumWidth( 35 );
+  border2PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+
+  border3PenStyle = new QComboBox( this );
+  border3PenStyle->setMinimumWidth( 35 );
+  border3PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+
+  border4PenStyle = new QComboBox( this );
+  border4PenStyle->setMinimumWidth( 35 );
+  border4PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+
+  QGridLayout* penLayout = new QGridLayout;
+  penLayout->setMargin( 10 );
+  penLayout->setSpacing( 5 );
+
+  penLayout->addWidget(border1ColorButton, 0, 0);
+  penLayout->addWidget(border2ColorButton, 1, 0);
+  penLayout->addWidget(border3ColorButton, 2, 0);
+  penLayout->addWidget(border4ColorButton, 3, 0);
+  penLayout->addWidget(border1Pen, 0, 1);
+  penLayout->addWidget(border2Pen, 1, 1);
+  penLayout->addWidget(border3Pen, 2, 1);
+  penLayout->addWidget(border4Pen, 3, 1);
+  penLayout->addWidget(border1PenStyle, 0, 2);
+  penLayout->addWidget(border2PenStyle, 1, 2);
+  penLayout->addWidget(border3PenStyle, 2, 2);
+  penLayout->addWidget(border4PenStyle, 3, 2);
+  penLayout->setColumnStretch( 4, 10 );
+
+  QGroupBox* penGroup = new QGroupBox( tr("Pen") );
+  penGroup->setLayout( penLayout );
+
+  //----------------------------------------------------------------------------
+  border1BrushColorButton = new QPushButton(this);
+  border1BrushColorButton->setFixedHeight(24);
+  border1BrushColorButton->setFixedWidth(55);
+  connect(border1BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1BrushColor()));
+
+  border2BrushColorButton = new QPushButton(this);
+  border2BrushColorButton->setFixedHeight(24);
+  border2BrushColorButton->setFixedWidth(55);
+  connect(border2BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2BrushColor()));
+
+  border3BrushColorButton = new QPushButton(this);
+  border3BrushColorButton->setFixedHeight(24);
+  border3BrushColorButton->setFixedWidth(55);
+  connect(border3BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder3BrushColor()));
+
+  border4BrushColorButton = new QPushButton(this);
+  border4BrushColorButton->setFixedHeight(24);
+  border4BrushColorButton->setFixedWidth(55);
+  connect(border4BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder4BrushColor()));
+
+  border1BrushStyle = new QComboBox(this);
+  border1BrushStyle->setMinimumWidth(60);
+  border1BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+  __fillStyle(border1PenStyle, border1BrushStyle);
+
+  border2BrushStyle = new QComboBox(this);
+  border2BrushStyle->setMinimumWidth(35);
+  border2BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+
+  __fillStyle(border2PenStyle, border2BrushStyle);
+
+  border3BrushStyle = new QComboBox(this);
+  border3BrushStyle->setMinimumWidth(35);
+  border3BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+  __fillStyle(border3PenStyle, border3BrushStyle);
+
+  border4BrushStyle = new QComboBox(this);
+  border4BrushStyle->setMinimumWidth(35);
+  border4BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+  __fillStyle(border4PenStyle, border4BrushStyle);
+
+  QSpinBox** oSpinArray[4];
+  oSpinArray[0] = &opacity1;
+  oSpinArray[1] = &opacity2;
+  oSpinArray[2] = &opacity3;
+  oSpinArray[3] = &opacity4;
+
+  for( int i = 0; i < 4; i++ )
+    {
+      QSpinBox* sbox = new QSpinBox;
+      sbox->setRange( 0, 100 );
+      sbox->setSingleStep( 5 );
+      sbox->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+      sbox->setSuffix( " %" );
+      sbox->setEnabled( false );
+      sbox->setToolTip( tr("The opacity value should be in the range 0 to 100. "
+                           "0 is fully transparent and 100 is fully opaque.") );
+      *oSpinArray[i] = sbox;
+    }
+
+  QGridLayout* brushLayout = new QGridLayout;
+  brushLayout->setMargin( 10 );
+  brushLayout->setSpacing( 5 );
+  brushLayout->addWidget(border1BrushColorButton, 0, 0);
+  brushLayout->addWidget(border2BrushColorButton, 1, 0);
+  brushLayout->addWidget(border3BrushColorButton, 2, 0);
+  brushLayout->addWidget(border4BrushColorButton, 3, 0);
+  brushLayout->addWidget(border1BrushStyle, 0, 1);
+  brushLayout->addWidget(border2BrushStyle, 1, 1);
+  brushLayout->addWidget(border3BrushStyle, 2, 1);
+  brushLayout->addWidget(border4BrushStyle, 3, 1);
+  brushLayout->addWidget(opacity1, 0, 2);
+  brushLayout->addWidget(opacity2, 1, 2);
+  brushLayout->addWidget(opacity3, 2, 2);
+  brushLayout->addWidget(opacity4, 3, 2);
+  brushLayout->setColumnStretch( 2, 10 );
+
+  QGroupBox* brushGroup = new QGroupBox( tr("Brush") );
+  brushGroup->setLayout( brushLayout );
+
+  //----------------------------------------------------------------------------
+  border1Button = new QPushButton();
+  border1Button->setIcon(_mainWindow->getPixmap("kde_down.png"));
+  border1Button->setFixedWidth(30);
+  border1Button->setFixedHeight(30);
+  connect(border1Button, SIGNAL(clicked()), SLOT(slotSetSecond()));
+
+  border2Button = new QPushButton();
+  border2Button->setIcon(_mainWindow->getPixmap("kde_down.png"));
+  border2Button->setFixedWidth(30);
+  border2Button->setFixedHeight(30);
+  connect(border2Button, SIGNAL(clicked()), SLOT(slotSetThird()));
+
+  border3Button = new QPushButton();
+  border3Button->setIcon(_mainWindow->getPixmap("kde_down.png"));
+  border3Button->setFixedWidth(30);
+  border3Button->setFixedHeight(30);
+  connect(border3Button, SIGNAL(clicked()), SLOT(slotSetForth()));
+
+  QGridLayout* copyLayout = new QGridLayout;
+  copyLayout->setMargin( 10 );
+  copyLayout->setSpacing( 5 );
+  copyLayout->addWidget( border1Button, 0, 0 );
+  copyLayout->addWidget( border2Button, 1, 0 );
+  copyLayout->addWidget( border3Button, 2, 0 );
+  copyLayout->setRowStretch( 4, 10 );
+
+  QGroupBox* copyGroup = new QGroupBox( tr("Copy") );
+  copyGroup->setLayout( copyLayout );
+
+  //----------------------------------------------------------------------------
+  QHBoxLayout* hbox = new QHBoxLayout;
+  hbox->addWidget( drawGroup );
+  hbox->addWidget( penGroup );
+  hbox->addWidget( brushGroup );
+  hbox->addWidget( copyGroup );
+  hbox->addStretch( 10 );
+  setLayout( hbox );
+
+  if( configureMap == false )
+    {
+      // Disable all not needed widgets in print configuration mode.
+
+      // Draw up to group
+      border3->setVisible( false );
+      border4->setVisible( false );
+
+      // Pen group
+      border3ColorButton->setVisible( false );
+      border4ColorButton->setVisible( false );
+      border3Pen->setVisible( false );
+      border4Pen->setVisible( false );
+      border3PenStyle->setVisible( false );
+      border4PenStyle->setVisible( false );
+
+      // Brush group
+      border3BrushColorButton->setVisible( false );
+      border4BrushColorButton->setVisible( false );
+      border3BrushStyle->setVisible( false );
+      border4BrushStyle->setVisible( false );
+      opacity3->setVisible( false );
+      opacity4->setVisible( false );
+
+      // Copy group
+      border2Button->setVisible( false );
+      border3Button->setVisible( false );
+    }
+}
+
+ConfigMapElement::~ConfigMapElement()
+{
+}
+
+void ConfigMapElement::showEvent( QShowEvent* event )
+{
+  Q_UNUSED( event )
+}
+
+void ConfigMapElement::__readMapItems()
 {
   __readPen("Trail", trailPenList, TRAIL_COLOR_1, TRAIL_COLOR_2, TRAIL_COLOR_3, TRAIL_COLOR_4,
         TRAIL_PEN_1, TRAIL_PEN_2, TRAIL_PEN_3, TRAIL_PEN_4,
@@ -268,236 +557,250 @@ ConfigDrawElement::ConfigDrawElement( QWidget* parent ) :
         FAI_HIGH_500_BRUSH_COLOR_3, FAI_HIGH_500_BRUSH_COLOR_4, FAI_HIGH_500_BRUSH_STYLE_1,
         FAI_HIGH_500_BRUSH_STYLE_2, FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4);
   __readBorder("FAIAreaHigh500", faiAreaHigh500Border);
-
-  __createBrushStyleIcons();
-
-  border1 = new QCheckBox( tr( "Threshold #1" ) );
-  border2 = new QCheckBox( tr( "Threshold #2" ) );
-  border3 = new QCheckBox( tr( "Threshold #3" ) );
-  border4 = new QCheckBox( tr( "Scale limit" ) );
-
-  connect(border1, SIGNAL(toggled(bool)), SLOT(slotToggleFirst(bool)));
-  connect(border2, SIGNAL(toggled(bool)), SLOT(slotToggleSecond(bool)));
-  connect(border3, SIGNAL(toggled(bool)), SLOT(slotToggleThird(bool)));
-  connect(border4, SIGNAL(toggled(bool)), SLOT(slotToggleForth(bool)));
-
-  QGridLayout* drawLayout = new QGridLayout;
-  drawLayout->setMargin( 10 );
-  drawLayout->setSpacing( 5 );
-
-  drawLayout->addWidget( border1, 0, 0 );
-  drawLayout->addWidget( border2, 1, 0 );
-  drawLayout->addWidget( border3, 2, 0 );
-  drawLayout->addWidget( border4, 3, 0 );
-  drawLayout->setColumnStretch( 1, 10 );
-
-  QGroupBox* drawGroup = new QGroupBox( tr( "Draw up to" ) );
-  drawGroup->setLayout( drawLayout );
-
-  //----------------------------------------------------------------------------
-  border1ColorButton = new QPushButton(this);
-  border1ColorButton->setFixedHeight(24);
-  border1ColorButton->setFixedWidth(55);
-  connect(border1ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1Color()));
-
-  border2ColorButton = new QPushButton(this);
-  border2ColorButton->setFixedHeight(24);
-  border2ColorButton->setFixedWidth(55);
-  connect(border2ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2Color()));
-
-  border3ColorButton = new QPushButton(this);
-  border3ColorButton->setFixedHeight(24);
-  border3ColorButton->setFixedWidth(55);
-  connect(border3ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder3Color()));
-
-  border4ColorButton = new QPushButton(this);
-  border4ColorButton->setFixedHeight(24);
-  border4ColorButton->setFixedWidth(55);
-  connect(border4ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder4Color()));
-
-  border1Pen = new QSpinBox();
-  border1Pen->setRange( 1, 9 );
-  border1Pen->setMinimumWidth( 35 );
-  border1Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
-
-  border2Pen = new QSpinBox();
-  border2Pen->setRange( 1, 9 );
-  border2Pen->setMinimumWidth( 35 );
-  border2Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
-
-  border3Pen = new QSpinBox();
-  border3Pen->setRange( 1, 9 );
-  border3Pen->setMinimumWidth( 35 );
-  border3Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
-
-  border4Pen = new QSpinBox();
-  border3Pen->setRange( 1, 9 );
-  border4Pen->setMinimumWidth( 35 );
-  border4Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
-
-  border1PenStyle = new QComboBox( this );
-  border1PenStyle->setMinimumWidth( 60 );
-  border1PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-
-  border2PenStyle = new QComboBox( this );
-  border2PenStyle->setMinimumWidth( 35 );
-  border2PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-
-  border3PenStyle = new QComboBox( this );
-  border3PenStyle->setMinimumWidth( 35 );
-  border3PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-
-  border4PenStyle = new QComboBox( this );
-  border4PenStyle->setMinimumWidth( 35 );
-  border4PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-
-  QGridLayout* penLayout = new QGridLayout;
-  penLayout->setMargin( 10 );
-  penLayout->setSpacing( 5 );
-
-  penLayout->addWidget(border1ColorButton, 0, 0);
-  penLayout->addWidget(border2ColorButton, 1, 0);
-  penLayout->addWidget(border3ColorButton, 2, 0);
-  penLayout->addWidget(border4ColorButton, 3, 0);
-  penLayout->addWidget(border1Pen, 0, 1);
-  penLayout->addWidget(border2Pen, 1, 1);
-  penLayout->addWidget(border3Pen, 2, 1);
-  penLayout->addWidget(border4Pen, 3, 1);
-  penLayout->addWidget(border1PenStyle, 0, 2);
-  penLayout->addWidget(border2PenStyle, 1, 2);
-  penLayout->addWidget(border3PenStyle, 2, 2);
-  penLayout->addWidget(border4PenStyle, 3, 2);
-  penLayout->setColumnStretch( 4, 10 );
-
-  QGroupBox* penGroup = new QGroupBox( tr("Pen") );
-  penGroup->setLayout( penLayout );
-
-  //----------------------------------------------------------------------------
-  border1BrushColorButton = new QPushButton(this);
-  border1BrushColorButton->setFixedHeight(24);
-  border1BrushColorButton->setFixedWidth(55);
-  connect(border1BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1BrushColor()));
-
-  border2BrushColorButton = new QPushButton(this);
-  border2BrushColorButton->setFixedHeight(24);
-  border2BrushColorButton->setFixedWidth(55);
-  connect(border2BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2BrushColor()));
-
-  border3BrushColorButton = new QPushButton(this);
-  border3BrushColorButton->setFixedHeight(24);
-  border3BrushColorButton->setFixedWidth(55);
-  connect(border3BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder3BrushColor()));
-
-  border4BrushColorButton = new QPushButton(this);
-  border4BrushColorButton->setFixedHeight(24);
-  border4BrushColorButton->setFixedWidth(55);
-  connect(border4BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder4BrushColor()));
-
-  border1BrushStyle = new QComboBox(this);
-  border1BrushStyle->setMinimumWidth(60);
-  border1BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-  __fillStyle(border1PenStyle, border1BrushStyle);
-
-  border2BrushStyle = new QComboBox(this);
-  border2BrushStyle->setMinimumWidth(35);
-  border2BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-
-  __fillStyle(border2PenStyle, border2BrushStyle);
-
-  border3BrushStyle = new QComboBox(this);
-  border3BrushStyle->setMinimumWidth(35);
-  border3BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-  __fillStyle(border3PenStyle, border3BrushStyle);
-
-  border4BrushStyle = new QComboBox(this);
-  border4BrushStyle->setMinimumWidth(35);
-  border4BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-  __fillStyle(border4PenStyle, border4BrushStyle);
-
-  QSpinBox** oSpinArray[4];
-  oSpinArray[0] = &opacity1;
-  oSpinArray[1] = &opacity2;
-  oSpinArray[2] = &opacity3;
-  oSpinArray[3] = &opacity4;
-
-  for( int i = 0; i < 4; i++ )
-    {
-      QSpinBox* sbox = new QSpinBox;
-      sbox->setRange( 0, 100 );
-      sbox->setSingleStep( 5 );
-      sbox->setButtonSymbols( QAbstractSpinBox::PlusMinus );
-      sbox->setSuffix( " %" );
-      sbox->setEnabled( false );
-      sbox->setToolTip( tr("The opacity value should be in the range 0 to 100. "
-                           "0 is fully transparent and 100 is fully opaque.") );
-      *oSpinArray[i] = sbox;
-    }
-
-  QGridLayout* brushLayout = new QGridLayout;
-  brushLayout->setMargin( 10 );
-  brushLayout->setSpacing( 5 );
-  brushLayout->addWidget(border1BrushColorButton, 0, 0);
-  brushLayout->addWidget(border2BrushColorButton, 1, 0);
-  brushLayout->addWidget(border3BrushColorButton, 2, 0);
-  brushLayout->addWidget(border4BrushColorButton, 3, 0);
-  brushLayout->addWidget(border1BrushStyle, 0, 1);
-  brushLayout->addWidget(border2BrushStyle, 1, 1);
-  brushLayout->addWidget(border3BrushStyle, 2, 1);
-  brushLayout->addWidget(border4BrushStyle, 3, 1);
-  brushLayout->addWidget(opacity1, 0, 2);
-  brushLayout->addWidget(opacity2, 1, 2);
-  brushLayout->addWidget(opacity3, 2, 2);
-  brushLayout->addWidget(opacity4, 3, 2);
-  brushLayout->setColumnStretch( 2, 10 );
-
-  QGroupBox* brushGroup = new QGroupBox( tr("Brush") );
-  brushGroup->setLayout( brushLayout );
-
-  //----------------------------------------------------------------------------
-  border1Button = new QPushButton();
-  border1Button->setIcon(_mainWindow->getPixmap("kde_down.png"));
-  border1Button->setFixedWidth(30);
-  border1Button->setFixedHeight(30);
-  connect(border1Button, SIGNAL(clicked()), SLOT(slotSetSecond()));
-
-  border2Button = new QPushButton();
-  border2Button->setIcon(_mainWindow->getPixmap("kde_down.png"));
-  border2Button->setFixedWidth(30);
-  border2Button->setFixedHeight(30);
-  connect(border2Button, SIGNAL(clicked()), SLOT(slotSetThird()));
-
-  border3Button = new QPushButton();
-  border3Button->setIcon(_mainWindow->getPixmap("kde_down.png"));
-  border3Button->setFixedWidth(30);
-  border3Button->setFixedHeight(30);
-  connect(border3Button, SIGNAL(clicked()), SLOT(slotSetForth()));
-
-  QGridLayout* copyLayout = new QGridLayout;
-  copyLayout->setMargin( 10 );
-  copyLayout->setSpacing( 5 );
-  copyLayout->addWidget( border1Button, 0, 0 );
-  copyLayout->addWidget( border2Button, 1, 0 );
-  copyLayout->addWidget( border3Button, 2, 0 );
-  copyLayout->setRowStretch( 4, 10 );
-
-  QGroupBox* copyGroup = new QGroupBox( tr("Copy") );
-  copyGroup->setLayout( copyLayout );
-
-  //----------------------------------------------------------------------------
-  QHBoxLayout* hbox = new QHBoxLayout;
-  hbox->addWidget( drawGroup );
-  hbox->addWidget( penGroup );
-  hbox->addWidget( brushGroup );
-  hbox->addWidget( copyGroup );
-  hbox->addStretch( 10 );
-  setLayout( hbox );
 }
 
-ConfigDrawElement::~ConfigDrawElement()
+void ConfigMapElement::__readPrintItems()
 {
+  __readPen("Trail", trailPenList, PRINT_TRAIL_COLOR_1, PRINT_TRAIL_COLOR_2, PRINT_TRAIL_COLOR_2, PRINT_TRAIL_COLOR_2,
+        PRINT_TRAIL_PEN_1, PRINT_TRAIL_PEN_2, PRINT_TRAIL_PEN_2, PRINT_TRAIL_PEN_2,
+        PRINT_TRAIL_PEN_STYLE_1, PRINT_TRAIL_PEN_STYLE_2, PRINT_TRAIL_PEN_STYLE_2, PRINT_TRAIL_PEN_STYLE_2);
+  __readBorder("Trail", trailBorder);
+
+  __readPen("Road", roadPenList, PRINT_ROAD_COLOR_1, PRINT_ROAD_COLOR_2, PRINT_ROAD_COLOR_2, PRINT_ROAD_COLOR_2,
+        PRINT_ROAD_PEN_1, PRINT_ROAD_PEN_2, PRINT_ROAD_PEN_2, PRINT_ROAD_PEN_2,
+        PRINT_ROAD_PEN_STYLE_1, PRINT_ROAD_PEN_STYLE_2, PRINT_ROAD_PEN_STYLE_2, PRINT_ROAD_PEN_STYLE_2);
+  __readBorder("Road", roadBorder);
+
+  __readPen("River", riverPenList, PRINT_RIVER_COLOR_1, PRINT_RIVER_COLOR_2, PRINT_RIVER_COLOR_2,
+        PRINT_RIVER_COLOR_2, PRINT_RIVER_PEN_1, PRINT_RIVER_PEN_2, PRINT_RIVER_PEN_2, PRINT_RIVER_PEN_2,
+        PRINT_RIVER_PEN_STYLE_1, PRINT_RIVER_PEN_STYLE_2, PRINT_RIVER_PEN_STYLE_2, PRINT_RIVER_PEN_STYLE_2);
+  __readBorder("River", riverBorder);
+
+  __readPen("Canal", canalPenList, PRINT_CANAL_COLOR_1, PRINT_CANAL_COLOR_2, PRINT_CANAL_COLOR_2,
+        PRINT_CANAL_COLOR_2, PRINT_CANAL_PEN_1, PRINT_CANAL_PEN_2, PRINT_CANAL_PEN_2, PRINT_CANAL_PEN_2,
+        PRINT_CANAL_PEN_STYLE_1, PRINT_CANAL_PEN_STYLE_2, PRINT_CANAL_PEN_STYLE_2, PRINT_CANAL_PEN_STYLE_2);
+  __readBorder("Canal", canalBorder);
+
+  __readPen("Rail", railPenList, PRINT_RAIL_COLOR_1, PRINT_RAIL_COLOR_2, PRINT_RAIL_COLOR_2, PRINT_RAIL_COLOR_2,
+        PRINT_RAIL_PEN_1, PRINT_RAIL_PEN_2, PRINT_RAIL_PEN_2, PRINT_RAIL_PEN_2,
+        PRINT_RAIL_PEN_STYLE_1, PRINT_RAIL_PEN_STYLE_2, PRINT_RAIL_PEN_STYLE_2, PRINT_RAIL_PEN_STYLE_2);
+  __readBorder("Rail", railBorder);
+
+  __readPen("Rail_D", rail_dPenList, PRINT_RAIL_D_COLOR_1, PRINT_RAIL_D_COLOR_2, PRINT_RAIL_D_COLOR_2,
+        PRINT_RAIL_D_COLOR_2, PRINT_RAIL_D_PEN_1, PRINT_RAIL_D_PEN_2, PRINT_RAIL_D_PEN_2, PRINT_RAIL_D_PEN_2,
+        PRINT_RAIL_D_PEN_STYLE_1, PRINT_RAIL_D_PEN_STYLE_2, PRINT_RAIL_D_PEN_STYLE_2, PRINT_RAIL_D_PEN_STYLE_2);
+  __readBorder("Rail_D", rail_dBorder);
+
+  __readPen("Aerial Cable", aerialcablePenList, PRINT_AERIAL_CABLE_COLOR_1, PRINT_AERIAL_CABLE_COLOR_2,
+        PRINT_AERIAL_CABLE_COLOR_2, PRINT_AERIAL_CABLE_COLOR_2, PRINT_AERIAL_CABLE_PEN_1,
+        PRINT_AERIAL_CABLE_PEN_2, PRINT_AERIAL_CABLE_PEN_2, PRINT_AERIAL_CABLE_PEN_2,
+        PRINT_AERIAL_CABLE_PEN_STYLE_1, PRINT_AERIAL_CABLE_PEN_STYLE_2,
+        PRINT_AERIAL_CABLE_PEN_STYLE_2, PRINT_AERIAL_CABLE_PEN_STYLE_2);
+  __readBorder("Aerial Cable", aerialcableBorder);
+
+  __readPen("Highway", highwayPenList, PRINT_HIGH_COLOR_1, PRINT_HIGH_COLOR_2, PRINT_HIGH_COLOR_2, PRINT_HIGH_COLOR_2,
+        PRINT_HIGH_PEN_1, PRINT_HIGH_PEN_2, PRINT_HIGH_PEN_2, PRINT_HIGH_PEN_2,
+        PRINT_HIGH_PEN_STYLE_1, PRINT_HIGH_PEN_STYLE_2, PRINT_HIGH_PEN_STYLE_2, PRINT_HIGH_PEN_STYLE_2);
+  __readBorder("Highway", highwayBorder);
+
+  // PenStyle and BrushStyle are not used for cities ...
+  __readPen("City", cityPenList, PRINT_CITY_COLOR_1, PRINT_CITY_COLOR_2, PRINT_CITY_COLOR_2,
+        PRINT_CITY_COLOR_2, PRINT_CITY_PEN_1, PRINT_CITY_PEN_2, PRINT_CITY_PEN_2, PRINT_CITY_PEN_2,
+        Qt::SolidLine, Qt::SolidLine, Qt::SolidLine, Qt::SolidLine);
+  __readBrush("City", cityBrushList, PRINT_CITY_BRUSH_COLOR_1, PRINT_CITY_BRUSH_COLOR_2,
+      PRINT_CITY_BRUSH_COLOR_2, PRINT_CITY_BRUSH_COLOR_2, Qt::SolidPattern,
+      Qt::SolidPattern, Qt::SolidPattern, Qt::SolidPattern);
+  __readBorder("City", cityBorder);
+
+  __readPen("River_T", river_tPenList, PRINT_RIVER_T_COLOR_1, PRINT_RIVER_T_COLOR_2, PRINT_RIVER_T_COLOR_2,
+        PRINT_RIVER_T_COLOR_2, PRINT_RIVER_T_PEN_1, PRINT_RIVER_T_PEN_2, PRINT_RIVER_T_PEN_2, PRINT_RIVER_T_PEN_2,
+        PRINT_RIVER_T_PEN_STYLE_1, PRINT_RIVER_T_PEN_STYLE_2, PRINT_RIVER_T_PEN_STYLE_2, PRINT_RIVER_T_PEN_STYLE_2);
+  __readBrush("River_T", river_tBrushList, PRINT_RIVER_T_BRUSH_COLOR_1, PRINT_RIVER_T_BRUSH_COLOR_2,
+        PRINT_RIVER_T_BRUSH_COLOR_2, PRINT_RIVER_T_BRUSH_COLOR_2, PRINT_RIVER_T_BRUSH_STYLE_1,
+        PRINT_RIVER_T_BRUSH_STYLE_2, PRINT_RIVER_T_BRUSH_STYLE_2, PRINT_RIVER_T_BRUSH_STYLE_2);
+  __readBorder("River_T", river_tBorder);
+
+  __readPen("Forest", forestPenList, PRINT_FRST_COLOR_1, PRINT_FRST_COLOR_2, PRINT_FRST_COLOR_2,
+        PRINT_FRST_COLOR_2, PRINT_FRST_PEN_1, PRINT_FRST_PEN_2, PRINT_FRST_PEN_2, PRINT_FRST_PEN_2,
+        PRINT_FRST_PEN_STYLE_1, PRINT_FRST_PEN_STYLE_2, PRINT_FRST_PEN_STYLE_2,
+        PRINT_FRST_PEN_STYLE_2);
+  __readBrush("Forest", forestBrushList, PRINT_FRST_BRUSH_COLOR_1, PRINT_FRST_BRUSH_COLOR_2,
+        PRINT_FRST_BRUSH_COLOR_2, PRINT_FRST_BRUSH_COLOR_2, PRINT_FRST_BRUSH_STYLE_1,
+        PRINT_FRST_BRUSH_STYLE_2, PRINT_FRST_BRUSH_STYLE_2, PRINT_FRST_BRUSH_STYLE_2);
+  __readBorder("Forest", forestBorder);
+
+  __readPen("Glacier", glacierPenList, PRINT_GLACIER_COLOR_1, PRINT_GLACIER_COLOR_2, PRINT_GLACIER_COLOR_2,
+        PRINT_GLACIER_COLOR_2, PRINT_GLACIER_PEN_1, PRINT_GLACIER_PEN_2, PRINT_GLACIER_PEN_2, PRINT_GLACIER_PEN_2,
+        PRINT_GLACIER_PEN_STYLE_1, PRINT_GLACIER_PEN_STYLE_2, PRINT_GLACIER_PEN_STYLE_2,
+        PRINT_GLACIER_PEN_STYLE_2);
+  __readBrush("Glacier", glacierBrushList, PRINT_GLACIER_BRUSH_COLOR_1, PRINT_GLACIER_BRUSH_COLOR_2,
+        PRINT_GLACIER_BRUSH_COLOR_2, PRINT_GLACIER_BRUSH_COLOR_2, PRINT_GLACIER_BRUSH_STYLE_1,
+        PRINT_GLACIER_BRUSH_STYLE_2, PRINT_GLACIER_BRUSH_STYLE_2, PRINT_GLACIER_BRUSH_STYLE_2);
+  __readBorder("Glacier", glacierBorder);
+
+  __readPen("Pack Ice", packicePenList, PRINT_PACK_ICE_COLOR_1, PRINT_PACK_ICE_COLOR_2, PRINT_PACK_ICE_COLOR_2,
+        PRINT_PACK_ICE_COLOR_2, PRINT_PACK_ICE_PEN_1, PRINT_PACK_ICE_PEN_2, PRINT_PACK_ICE_PEN_2, PRINT_PACK_ICE_PEN_2,
+        PRINT_PACK_ICE_PEN_STYLE_1, PRINT_PACK_ICE_PEN_STYLE_2, PRINT_PACK_ICE_PEN_STYLE_2,
+        PRINT_PACK_ICE_PEN_STYLE_2);
+  __readBrush("Pack Ice", packiceBrushList, PRINT_PACK_ICE_BRUSH_COLOR_1, PRINT_PACK_ICE_BRUSH_COLOR_2,
+        PRINT_PACK_ICE_BRUSH_COLOR_2, PRINT_PACK_ICE_BRUSH_COLOR_2, PRINT_PACK_ICE_BRUSH_STYLE_1,
+        PRINT_PACK_ICE_BRUSH_STYLE_2, PRINT_PACK_ICE_BRUSH_STYLE_2, PRINT_PACK_ICE_BRUSH_STYLE_2);
+  __readBorder("Pack Ice", packiceBorder);
+
+  __readPen(AS_A, airAPenList, PRINT_AIRA_COLOR_1, PRINT_AIRA_COLOR_2, PRINT_AIRA_COLOR_2, PRINT_AIRA_COLOR_2,
+        PRINT_AIRA_PEN_1, PRINT_AIRA_PEN_2, PRINT_AIRA_PEN_2, PRINT_AIRA_PEN_2,
+        PRINT_AIRA_PEN_STYLE_1, PRINT_AIRA_PEN_STYLE_2, PRINT_AIRA_PEN_STYLE_2, PRINT_AIRA_PEN_STYLE_2);
+  __readBrush(AS_A, airABrushList, PRINT_AIRA_BRUSH_COLOR_1, PRINT_AIRA_BRUSH_COLOR_2,
+        PRINT_AIRA_BRUSH_COLOR_2, PRINT_AIRA_BRUSH_COLOR_2, PRINT_AIRA_BRUSH_STYLE_1,
+        PRINT_AIRA_BRUSH_STYLE_2, PRINT_AIRA_BRUSH_STYLE_2, PRINT_AIRA_BRUSH_STYLE_2);
+  __readBorder(AS_A, airABorder);
+  __readAsOpacity(AS_A, airAOpacityList);
+
+  __readPen(AS_B, airBPenList, PRINT_AIRB_COLOR_1, PRINT_AIRB_COLOR_2, PRINT_AIRB_COLOR_2, PRINT_AIRB_COLOR_2,
+        PRINT_AIRB_PEN_1, PRINT_AIRB_PEN_2, PRINT_AIRB_PEN_2, PRINT_AIRB_PEN_2,
+        PRINT_AIRB_PEN_STYLE_1, PRINT_AIRB_PEN_STYLE_2, PRINT_AIRB_PEN_STYLE_2, PRINT_AIRB_PEN_STYLE_2);
+  __readBrush(AS_B, airBBrushList, PRINT_AIRB_BRUSH_COLOR_1, PRINT_AIRB_BRUSH_COLOR_2,
+        PRINT_AIRB_BRUSH_COLOR_2, PRINT_AIRB_BRUSH_COLOR_2, PRINT_AIRB_BRUSH_STYLE_1,
+        PRINT_AIRB_BRUSH_STYLE_2, PRINT_AIRB_BRUSH_STYLE_2, PRINT_AIRB_BRUSH_STYLE_2);
+  __readBorder(AS_B, airBBorder);
+  __readAsOpacity(AS_B, airBOpacityList);
+
+  __readPen(AS_C, airCPenList, PRINT_AIRC_COLOR_1, PRINT_AIRC_COLOR_2, PRINT_AIRC_COLOR_2, PRINT_AIRC_COLOR_2,
+        PRINT_AIRC_PEN_1, PRINT_AIRC_PEN_2, PRINT_AIRC_PEN_2, PRINT_AIRC_PEN_2,
+        PRINT_AIRC_PEN_STYLE_1, PRINT_AIRC_PEN_STYLE_2, PRINT_AIRC_PEN_STYLE_2, PRINT_AIRC_PEN_STYLE_2);
+  __readBrush(AS_C, airCBrushList, PRINT_AIRC_BRUSH_COLOR_1, PRINT_AIRC_BRUSH_COLOR_2,
+        PRINT_AIRC_BRUSH_COLOR_2, PRINT_AIRC_BRUSH_COLOR_2, PRINT_AIRC_BRUSH_STYLE_1,
+        PRINT_AIRC_BRUSH_STYLE_2, PRINT_AIRC_BRUSH_STYLE_2, PRINT_AIRC_BRUSH_STYLE_2);
+  __readBorder(AS_C, airCBorder);
+  __readAsOpacity(AS_C, airCOpacityList);
+
+  __readPen(AS_D, airDPenList, PRINT_AIRD_COLOR_1, PRINT_AIRD_COLOR_2, PRINT_AIRD_COLOR_2, PRINT_AIRD_COLOR_2,
+        PRINT_AIRD_PEN_1, PRINT_AIRD_PEN_2, PRINT_AIRD_PEN_2, PRINT_AIRD_PEN_2,
+        PRINT_AIRD_PEN_STYLE_1, PRINT_AIRD_PEN_STYLE_2, PRINT_AIRD_PEN_STYLE_2, PRINT_AIRD_PEN_STYLE_2);
+  __readBrush(AS_D, airDBrushList, PRINT_AIRD_BRUSH_COLOR_1, PRINT_AIRD_BRUSH_COLOR_2,
+        PRINT_AIRD_BRUSH_COLOR_2, PRINT_AIRD_BRUSH_COLOR_2, PRINT_AIRD_BRUSH_STYLE_1,
+        PRINT_AIRD_BRUSH_STYLE_2, PRINT_AIRD_BRUSH_STYLE_2, PRINT_AIRD_BRUSH_STYLE_2);
+  __readBorder(AS_D, airDBorder);
+  __readAsOpacity(AS_D, airDOpacityList);
+
+  __readPen(AS_EL, airElPenList, PRINT_AIREL_COLOR_1, PRINT_AIREL_COLOR_2, PRINT_AIREL_COLOR_2,
+        PRINT_AIREL_COLOR_2, PRINT_AIREL_PEN_1, PRINT_AIREL_PEN_2, PRINT_AIREL_PEN_2, PRINT_AIREL_PEN_2,
+        PRINT_AIREL_PEN_STYLE_1, PRINT_AIREL_PEN_STYLE_2, PRINT_AIREL_PEN_STYLE_2, PRINT_AIREL_PEN_STYLE_2);
+  __readBrush(AS_EL, airElBrushList, PRINT_AIREL_BRUSH_COLOR_1, PRINT_AIREL_BRUSH_COLOR_2,
+        PRINT_AIREL_BRUSH_COLOR_2, PRINT_AIREL_BRUSH_COLOR_2, PRINT_AIREL_BRUSH_STYLE_1,
+        PRINT_AIREL_BRUSH_STYLE_2, PRINT_AIREL_BRUSH_STYLE_2, PRINT_AIREL_BRUSH_STYLE_2);
+  __readBorder(AS_EL, airElBorder);
+  __readAsOpacity(AS_EL, airElOpacityList);
+
+  __readPen(AS_E, airEhPenList, PRINT_AIREH_COLOR_1, PRINT_AIREH_COLOR_2, PRINT_AIREH_COLOR_2,
+        PRINT_AIREH_COLOR_2, PRINT_AIREH_PEN_1, PRINT_AIREH_PEN_2, PRINT_AIREH_PEN_2, PRINT_AIREH_PEN_2,
+        PRINT_AIREH_PEN_STYLE_1, PRINT_AIREH_PEN_STYLE_2, PRINT_AIREH_PEN_STYLE_2, PRINT_AIREH_PEN_STYLE_2);
+
+  __readBrush(AS_E, airEhBrushList, PRINT_AIREH_BRUSH_COLOR_1, PRINT_AIREH_BRUSH_COLOR_2,
+        PRINT_AIREH_BRUSH_COLOR_2, PRINT_AIREH_BRUSH_COLOR_2, PRINT_AIREH_BRUSH_STYLE_1,
+        PRINT_AIREH_BRUSH_STYLE_2, PRINT_AIREH_BRUSH_STYLE_2, PRINT_AIREH_BRUSH_STYLE_2);
+  __readBorder(AS_E, airEhBorder);
+  __readAsOpacity(AS_E, airEhOpacityList);
+
+  __readPen(AS_F, airFPenList, PRINT_AIRF_COLOR_1, PRINT_AIRF_COLOR_2, PRINT_AIRF_COLOR_2,
+        PRINT_AIRF_COLOR_2, PRINT_AIRF_PEN_1, PRINT_AIRF_PEN_2, PRINT_AIRF_PEN_2, PRINT_AIRF_PEN_2,
+        PRINT_AIRF_PEN_STYLE_1, PRINT_AIRF_PEN_STYLE_2, PRINT_AIRF_PEN_STYLE_2, PRINT_AIRF_PEN_STYLE_2);
+  __readBrush(AS_F, airFBrushList, PRINT_AIRF_BRUSH_COLOR_1, PRINT_AIRF_BRUSH_COLOR_2,
+        PRINT_AIRF_BRUSH_COLOR_2, PRINT_AIRF_BRUSH_COLOR_2, PRINT_AIRF_BRUSH_STYLE_1,
+        PRINT_AIRF_BRUSH_STYLE_2, PRINT_AIRF_BRUSH_STYLE_2, PRINT_AIRF_BRUSH_STYLE_2);
+  __readBorder(AS_F, airFBorder);
+  __readAsOpacity(AS_F, airFOpacityList);
+
+  __readPen(AS_CTR_C, ctrCPenList, PRINT_CTRC_COLOR_1, PRINT_CTRC_COLOR_2, PRINT_CTRC_COLOR_2, PRINT_CTRC_COLOR_2,
+        PRINT_CTRC_PEN_1, PRINT_CTRC_PEN_2, PRINT_CTRC_PEN_2, PRINT_CTRC_PEN_2,
+        PRINT_CTRC_PEN_STYLE_1, PRINT_CTRC_PEN_STYLE_2, PRINT_CTRC_PEN_STYLE_2, PRINT_CTRC_PEN_STYLE_2);
+  __readBrush(AS_CTR_C, ctrCBrushList, PRINT_CTRC_BRUSH_COLOR_1, PRINT_CTRC_BRUSH_COLOR_2,
+        PRINT_CTRC_BRUSH_COLOR_2, PRINT_CTRC_BRUSH_COLOR_2, PRINT_CTRC_BRUSH_STYLE_1,
+        PRINT_CTRC_BRUSH_STYLE_2, PRINT_CTRC_BRUSH_STYLE_2, PRINT_CTRC_BRUSH_STYLE_2);
+  __readBorder(AS_CTR_C, ctrCBorder);
+  __readAsOpacity(AS_CTR_C, ctrCOpacityList);
+
+  __readPen(AS_CTR_D, ctrDPenList, PRINT_CTRD_COLOR_1, PRINT_CTRD_COLOR_2, PRINT_CTRD_COLOR_2, PRINT_CTRD_COLOR_2,
+        PRINT_CTRD_PEN_1, PRINT_CTRD_PEN_2, PRINT_CTRD_PEN_2, PRINT_CTRD_PEN_2,
+        PRINT_CTRD_PEN_STYLE_1, PRINT_CTRD_PEN_STYLE_2, PRINT_CTRD_PEN_STYLE_2, PRINT_CTRD_PEN_STYLE_2);
+  __readBrush(AS_CTR_D, ctrDBrushList, PRINT_CTRD_BRUSH_COLOR_1, PRINT_CTRD_BRUSH_COLOR_2,
+        PRINT_CTRD_BRUSH_COLOR_2, PRINT_CTRD_BRUSH_COLOR_2, PRINT_CTRD_BRUSH_STYLE_1,
+        PRINT_CTRD_BRUSH_STYLE_2, PRINT_CTRD_BRUSH_STYLE_2, PRINT_CTRD_BRUSH_STYLE_2);
+  __readBorder(AS_CTR_D, ctrDBorder);
+  __readAsOpacity(AS_CTR_D, ctrDOpacityList);
+
+  __readPen(AS_DANGER, dangerPenList, PRINT_DNG_COLOR_1, PRINT_DNG_COLOR_2, PRINT_DNG_COLOR_2, PRINT_DNG_COLOR_2,
+        PRINT_DNG_PEN_1, PRINT_DNG_PEN_2, PRINT_DNG_PEN_2, PRINT_DNG_PEN_2,
+        PRINT_DNG_PEN_STYLE_1, PRINT_DNG_PEN_STYLE_2, PRINT_DNG_PEN_STYLE_2, PRINT_DNG_PEN_STYLE_2);
+  __readBrush(AS_DANGER, dangerBrushList, PRINT_DNG_BRUSH_COLOR_1, PRINT_DNG_BRUSH_COLOR_2,
+        PRINT_DNG_BRUSH_COLOR_2, PRINT_DNG_BRUSH_COLOR_2, PRINT_DNG_BRUSH_STYLE_1,
+        PRINT_DNG_BRUSH_STYLE_2, PRINT_DNG_BRUSH_STYLE_2, PRINT_DNG_BRUSH_STYLE_2);
+  __readBorder(AS_DANGER, dangerBorder);
+  __readAsOpacity(AS_DANGER, dangerOpacityList);
+
+  __readPen(AS_LF, lowFPenList, PRINT_LOWF_COLOR_1, PRINT_LOWF_COLOR_2, PRINT_LOWF_COLOR_2, PRINT_LOWF_COLOR_2,
+        PRINT_LOWF_PEN_1, PRINT_LOWF_PEN_2, PRINT_LOWF_PEN_2, PRINT_LOWF_PEN_2,
+        PRINT_LOWF_PEN_STYLE_1, PRINT_LOWF_PEN_STYLE_2, PRINT_LOWF_PEN_STYLE_2, PRINT_LOWF_PEN_STYLE_2);
+  __readBrush(AS_LF, lowFBrushList, PRINT_LOWF_BRUSH_COLOR_1, PRINT_LOWF_BRUSH_COLOR_2,
+        PRINT_LOWF_BRUSH_COLOR_2, PRINT_LOWF_BRUSH_COLOR_2, PRINT_LOWF_BRUSH_STYLE_1,
+        PRINT_LOWF_BRUSH_STYLE_2, PRINT_LOWF_BRUSH_STYLE_2, PRINT_LOWF_BRUSH_STYLE_2);
+  __readBorder(AS_LF, lowFBorder);
+  __readAsOpacity(AS_LF, lowFOpacityList);
+
+  __readPen(AS_RESTRICTED, restrPenList, PRINT_RES_COLOR_1, PRINT_RES_COLOR_2, PRINT_RES_COLOR_2, PRINT_RES_COLOR_2,
+        PRINT_RES_PEN_1, PRINT_RES_PEN_2, PRINT_RES_PEN_2, PRINT_RES_PEN_2,
+        PRINT_RES_PEN_STYLE_1, PRINT_RES_PEN_STYLE_2, PRINT_RES_PEN_STYLE_2, PRINT_RES_PEN_STYLE_2);
+  __readBrush(AS_RESTRICTED, restrBrushList, PRINT_RES_BRUSH_COLOR_1, PRINT_RES_BRUSH_COLOR_2,
+        PRINT_RES_BRUSH_COLOR_2, PRINT_RES_BRUSH_COLOR_2, PRINT_RES_BRUSH_STYLE_1,
+        PRINT_RES_BRUSH_STYLE_2, PRINT_RES_BRUSH_STYLE_2, PRINT_RES_BRUSH_STYLE_2);
+  __readBorder(AS_RESTRICTED, restrBorder);
+  __readAsOpacity(AS_RESTRICTED, restrOpacityList);
+
+  __readPen(AS_TMZ, tmzPenList, PRINT_TMZ_COLOR_1, PRINT_TMZ_COLOR_2, PRINT_TMZ_COLOR_2, PRINT_TMZ_COLOR_2,
+        PRINT_TMZ_PEN_1, PRINT_TMZ_PEN_2, PRINT_TMZ_PEN_2, PRINT_TMZ_PEN_2,
+        PRINT_TMZ_PEN_STYLE_1, PRINT_TMZ_PEN_STYLE_2, PRINT_TMZ_PEN_STYLE_2, PRINT_TMZ_PEN_STYLE_2);
+  __readBrush(AS_TMZ, tmzBrushList, PRINT_TMZ_BRUSH_COLOR_1, PRINT_TMZ_BRUSH_COLOR_2,
+        PRINT_TMZ_BRUSH_COLOR_2, PRINT_TMZ_BRUSH_COLOR_2, PRINT_TMZ_BRUSH_STYLE_1,
+        PRINT_TMZ_BRUSH_STYLE_2, PRINT_TMZ_BRUSH_STYLE_2, PRINT_TMZ_BRUSH_STYLE_2);
+  __readBorder(AS_TMZ, tmzBorder);
+  __readAsOpacity(AS_TMZ, tmzOpacityList);
+
+  __readPen(AS_GS, gsPenList, PRINT_GLIDER_SECTOR_COLOR_1, PRINT_GLIDER_SECTOR_COLOR_2, PRINT_GLIDER_SECTOR_COLOR_2, PRINT_GLIDER_SECTOR_COLOR_2,
+        PRINT_GLIDER_SECTOR_PEN_1, PRINT_GLIDER_SECTOR_PEN_2, PRINT_GLIDER_SECTOR_PEN_2, PRINT_GLIDER_SECTOR_PEN_2,
+        PRINT_GLIDER_SECTOR_PEN_STYLE_1, PRINT_GLIDER_SECTOR_PEN_STYLE_2, PRINT_GLIDER_SECTOR_PEN_STYLE_2, PRINT_GLIDER_SECTOR_PEN_STYLE_2);
+  __readBrush(AS_GS, gsBrushList, PRINT_GLIDER_SECTOR_BRUSH_COLOR_1, PRINT_GLIDER_SECTOR_BRUSH_COLOR_2,
+        PRINT_GLIDER_SECTOR_BRUSH_COLOR_2, PRINT_GLIDER_SECTOR_BRUSH_COLOR_2, PRINT_GLIDER_SECTOR_BRUSH_STYLE_1,
+        PRINT_GLIDER_SECTOR_BRUSH_STYLE_2, PRINT_GLIDER_SECTOR_BRUSH_STYLE_2, PRINT_GLIDER_SECTOR_BRUSH_STYLE_2);
+  __readBorder(AS_GS, gsBorder);
+  __readAsOpacity(AS_GS, gsOpacityList);
+
+  __readPen(AS_WW, wwPenList, PRINT_WAVE_WINDOW_COLOR_1, PRINT_WAVE_WINDOW_COLOR_2, PRINT_WAVE_WINDOW_COLOR_2, PRINT_WAVE_WINDOW_COLOR_2,
+        PRINT_WAVE_WINDOW_PEN_1, PRINT_WAVE_WINDOW_PEN_2, PRINT_WAVE_WINDOW_PEN_2, PRINT_WAVE_WINDOW_PEN_2,
+        PRINT_WAVE_WINDOW_PEN_STYLE_1, PRINT_WAVE_WINDOW_PEN_STYLE_2, PRINT_WAVE_WINDOW_PEN_STYLE_2, PRINT_WAVE_WINDOW_PEN_STYLE_2);
+  __readBrush(AS_WW, wwBrushList, PRINT_WAVE_WINDOW_BRUSH_COLOR_1, PRINT_WAVE_WINDOW_BRUSH_COLOR_2,
+        PRINT_WAVE_WINDOW_BRUSH_COLOR_2, PRINT_WAVE_WINDOW_BRUSH_COLOR_2, PRINT_WAVE_WINDOW_BRUSH_STYLE_1,
+        PRINT_WAVE_WINDOW_BRUSH_STYLE_2, PRINT_WAVE_WINDOW_BRUSH_STYLE_2, PRINT_WAVE_WINDOW_BRUSH_STYLE_2);
+  __readBorder(AS_WW, wwBorder);
+  __readAsOpacity(AS_WW, wwOpacityList);
+
+  __readPen("FAIAreaLow500", faiAreaLow500PenList, PRINT_FAI_LOW_500_COLOR_1, PRINT_FAI_LOW_500_COLOR_2, PRINT_FAI_LOW_500_COLOR_2, PRINT_FAI_LOW_500_COLOR_2,
+        PRINT_FAI_LOW_500_PEN_1, PRINT_FAI_LOW_500_PEN_2, PRINT_FAI_LOW_500_PEN_2, PRINT_FAI_LOW_500_PEN_2,
+        PRINT_FAI_LOW_500_PEN_STYLE_1, PRINT_FAI_LOW_500_PEN_STYLE_2, PRINT_FAI_LOW_500_PEN_STYLE_2, PRINT_FAI_LOW_500_PEN_STYLE_2);
+  __readBrush("FAIAreaLow500", faiAreaLow500BrushList, PRINT_FAI_LOW_500_BRUSH_COLOR_1, PRINT_FAI_LOW_500_BRUSH_COLOR_2,
+        PRINT_FAI_LOW_500_BRUSH_COLOR_2, PRINT_FAI_LOW_500_BRUSH_COLOR_2, PRINT_FAI_LOW_500_BRUSH_STYLE_1,
+        PRINT_FAI_LOW_500_BRUSH_STYLE_2, PRINT_FAI_LOW_500_BRUSH_STYLE_2, PRINT_FAI_LOW_500_BRUSH_STYLE_2);
+  __readBorder("FAIAreaLow500", faiAreaLow500Border);
+
+  __readPen("FAIAreaHigh500", faiAreaHigh500PenList, PRINT_FAI_HIGH_500_COLOR_1, PRINT_FAI_HIGH_500_COLOR_2, PRINT_FAI_HIGH_500_COLOR_2, PRINT_FAI_HIGH_500_COLOR_2,
+        PRINT_FAI_HIGH_500_PEN_1, PRINT_FAI_HIGH_500_PEN_2, PRINT_FAI_HIGH_500_PEN_2, PRINT_FAI_HIGH_500_PEN_2,
+        PRINT_FAI_HIGH_500_PEN_STYLE_1, PRINT_FAI_HIGH_500_PEN_STYLE_2, PRINT_FAI_HIGH_500_PEN_STYLE_2, PRINT_FAI_HIGH_500_PEN_STYLE_2);
+  __readBrush("FAIAreaHigh500", faiAreaHigh500BrushList, PRINT_FAI_HIGH_500_BRUSH_COLOR_1, PRINT_FAI_HIGH_500_BRUSH_COLOR_2,
+        PRINT_FAI_HIGH_500_BRUSH_COLOR_2, PRINT_FAI_HIGH_500_BRUSH_COLOR_2, PRINT_FAI_HIGH_500_BRUSH_STYLE_1,
+        PRINT_FAI_HIGH_500_BRUSH_STYLE_2, PRINT_FAI_HIGH_500_BRUSH_STYLE_2, PRINT_FAI_HIGH_500_BRUSH_STYLE_2);
+  __readBorder("FAIAreaHigh500", faiAreaHigh500Border);
 }
 
-void ConfigDrawElement::slotOk()
+void ConfigMapElement::slotOk()
 {
   // Die aktuell angezeigten Angaben müssen noch gespeichert werden ...
   slotSelectElement(oldElement);
@@ -579,7 +882,38 @@ void ConfigDrawElement::slotOk()
   __writeAsOpacity( AS_WW, wwOpacityList );
 }
 
-void ConfigDrawElement::slotDefaultElements()
+void ConfigMapElement::slotDefaultElements()
+{
+  if( configureMap )
+    {
+      __readDefaultMapItems();
+    }
+  else
+    {
+      __readDefaultPrintItems();
+    }
+
+  __defaultAsOpacity( airAOpacityList );
+  __defaultAsOpacity( airBOpacityList );
+  __defaultAsOpacity( airCOpacityList );
+  __defaultAsOpacity( airDOpacityList );
+  __defaultAsOpacity( airElOpacityList );
+  __defaultAsOpacity( airEhOpacityList );
+  __defaultAsOpacity( airFOpacityList );
+  __defaultAsOpacity( ctrCOpacityList );
+  __defaultAsOpacity( ctrDOpacityList );
+  __defaultAsOpacity( lowFOpacityList );
+  __defaultAsOpacity( dangerOpacityList );
+  __defaultAsOpacity( restrOpacityList );
+  __defaultAsOpacity( tmzOpacityList );
+  __defaultAsOpacity( gsOpacityList );
+  __defaultAsOpacity( wwOpacityList );
+
+  oldElement = -1;
+  slotSelectElement( currentElement );
+}
+
+void ConfigMapElement::__readDefaultMapItems()
 {
   __defaultPen( trailPenList, trailBorder, TRAIL_COLOR_1, TRAIL_COLOR_2,
       TRAIL_COLOR_3, TRAIL_COLOR_4,
@@ -780,28 +1114,212 @@ void ConfigDrawElement::slotDefaultElements()
       FAI_HIGH_500_BRUSH_COLOR_3, FAI_HIGH_500_BRUSH_COLOR_4,
       FAI_HIGH_500_BRUSH_STYLE_1, FAI_HIGH_500_BRUSH_STYLE_2,
       FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4);
-
-  __defaultAsOpacity( airAOpacityList );
-  __defaultAsOpacity( airBOpacityList );
-  __defaultAsOpacity( airCOpacityList );
-  __defaultAsOpacity( airDOpacityList );
-  __defaultAsOpacity( airElOpacityList );
-  __defaultAsOpacity( airEhOpacityList );
-  __defaultAsOpacity( airFOpacityList );
-  __defaultAsOpacity( ctrCOpacityList );
-  __defaultAsOpacity( ctrDOpacityList );
-  __defaultAsOpacity( lowFOpacityList );
-  __defaultAsOpacity( dangerOpacityList );
-  __defaultAsOpacity( restrOpacityList );
-  __defaultAsOpacity( tmzOpacityList );
-  __defaultAsOpacity( gsOpacityList );
-  __defaultAsOpacity( wwOpacityList );
-
-  oldElement = -1;
-  slotSelectElement( currentElement );
 }
 
-void ConfigDrawElement::slotSelectBorder1Color()
+void ConfigMapElement::__readDefaultPrintItems()
+{
+  __defaultPen( trailPenList, trailBorder, PRINT_TRAIL_COLOR_1, PRINT_TRAIL_COLOR_2,
+      PRINT_TRAIL_COLOR_2, PRINT_TRAIL_COLOR_2,
+      PRINT_TRAIL_PEN_1, PRINT_TRAIL_PEN_2, PRINT_TRAIL_PEN_2, PRINT_TRAIL_PEN_2 );
+
+  __defaultPen( roadPenList, roadBorder, PRINT_ROAD_COLOR_1, PRINT_ROAD_COLOR_2,
+      PRINT_ROAD_COLOR_2, PRINT_ROAD_COLOR_2,
+      PRINT_ROAD_PEN_1, PRINT_ROAD_PEN_2, PRINT_ROAD_PEN_2, PRINT_ROAD_PEN_2 );
+
+  __defaultPen( highwayPenList, highwayBorder, PRINT_HIGH_COLOR_1, PRINT_HIGH_COLOR_2,
+      PRINT_HIGH_COLOR_2, PRINT_HIGH_COLOR_2,
+      PRINT_HIGH_PEN_1, PRINT_HIGH_PEN_2, PRINT_HIGH_PEN_2, PRINT_HIGH_PEN_2 );
+
+  __defaultPen( riverPenList, riverBorder, PRINT_RIVER_COLOR_1, PRINT_RIVER_COLOR_2,
+      PRINT_RIVER_COLOR_2, PRINT_RIVER_COLOR_2,
+      PRINT_RIVER_PEN_1, PRINT_RIVER_PEN_2, PRINT_RIVER_PEN_2, PRINT_RIVER_PEN_2 );
+
+  __defaultPen( canalPenList, canalBorder, PRINT_CANAL_COLOR_1, PRINT_CANAL_COLOR_2,
+      PRINT_CANAL_COLOR_2, PRINT_CANAL_COLOR_2,
+      PRINT_CANAL_PEN_1, PRINT_CANAL_PEN_2, PRINT_CANAL_PEN_2, PRINT_CANAL_PEN_2 );
+
+  __defaultPen( railPenList, railBorder, PRINT_RAIL_COLOR_1, PRINT_RAIL_COLOR_2,
+      PRINT_RAIL_COLOR_2, PRINT_RAIL_COLOR_2,
+      PRINT_RAIL_PEN_1, PRINT_RAIL_PEN_2, PRINT_RAIL_PEN_2, PRINT_RAIL_PEN_2 );
+
+  __defaultPen( rail_dPenList, rail_dBorder, PRINT_RAIL_D_COLOR_1, PRINT_RAIL_D_COLOR_2,
+      PRINT_RAIL_D_COLOR_2, PRINT_RAIL_D_COLOR_2,
+      PRINT_RAIL_D_PEN_1, PRINT_RAIL_D_PEN_2, PRINT_RAIL_D_PEN_2, PRINT_RAIL_D_PEN_2 );
+
+  __defaultPen( aerialcablePenList, aerialcableBorder, PRINT_AERIAL_CABLE_COLOR_1, PRINT_AERIAL_CABLE_COLOR_2,
+      PRINT_AERIAL_CABLE_COLOR_2, PRINT_AERIAL_CABLE_COLOR_2,
+      PRINT_AERIAL_CABLE_PEN_1, PRINT_AERIAL_CABLE_PEN_2, PRINT_AERIAL_CABLE_PEN_2, PRINT_AERIAL_CABLE_PEN_2 );
+
+  __defaultPenBrush( river_tPenList, river_tBorder, river_tBrushList,
+      PRINT_RIVER_T_COLOR_1, PRINT_RIVER_T_COLOR_2, PRINT_RIVER_T_COLOR_2, PRINT_RIVER_T_COLOR_2,
+      PRINT_RIVER_T_PEN_1, PRINT_RIVER_T_PEN_2, PRINT_RIVER_T_PEN_2, PRINT_RIVER_T_PEN_2,
+      PRINT_RIVER_T_BRUSH_COLOR_1, PRINT_RIVER_T_BRUSH_COLOR_2,
+      PRINT_RIVER_T_BRUSH_COLOR_2, PRINT_RIVER_T_BRUSH_COLOR_2,
+      PRINT_RIVER_T_BRUSH_STYLE_1, PRINT_RIVER_T_BRUSH_STYLE_2,
+      PRINT_RIVER_T_BRUSH_STYLE_2, PRINT_RIVER_T_BRUSH_STYLE_2);
+
+  __defaultPenBrush( cityPenList, cityBorder, cityBrushList,
+      PRINT_CITY_COLOR_1, PRINT_CITY_COLOR_2, PRINT_CITY_COLOR_2, PRINT_CITY_COLOR_2,
+      PRINT_CITY_PEN_1, PRINT_CITY_PEN_2, PRINT_CITY_PEN_2, PRINT_CITY_PEN_2,
+      PRINT_CITY_BRUSH_COLOR_1, PRINT_CITY_BRUSH_COLOR_2,
+      PRINT_CITY_BRUSH_COLOR_2, PRINT_CITY_BRUSH_COLOR_2,
+      PRINT_CITY_BRUSH_STYLE_1, PRINT_CITY_BRUSH_STYLE_2,
+      PRINT_CITY_BRUSH_STYLE_2, PRINT_CITY_BRUSH_STYLE_2 );
+
+  __defaultPenBrush( forestPenList, forestBorder, forestBrushList,
+      PRINT_FRST_COLOR_1, PRINT_FRST_COLOR_2, PRINT_FRST_COLOR_2, PRINT_FRST_COLOR_2,
+      PRINT_FRST_PEN_1, PRINT_FRST_PEN_2, PRINT_FRST_PEN_2, PRINT_FRST_PEN_2,
+      PRINT_FRST_BRUSH_COLOR_1, PRINT_FRST_BRUSH_COLOR_2,
+      PRINT_FRST_BRUSH_COLOR_2, PRINT_FRST_BRUSH_COLOR_2,
+      PRINT_FRST_BRUSH_STYLE_1, PRINT_FRST_BRUSH_STYLE_2,
+      PRINT_FRST_BRUSH_STYLE_2, PRINT_FRST_BRUSH_STYLE_2 );
+
+  __defaultPenBrush( glacierPenList, glacierBorder, glacierBrushList,
+      PRINT_GLACIER_COLOR_1, PRINT_GLACIER_COLOR_2, PRINT_GLACIER_COLOR_2, PRINT_GLACIER_COLOR_2,
+      PRINT_GLACIER_PEN_1, PRINT_GLACIER_PEN_2, PRINT_GLACIER_PEN_2, PRINT_GLACIER_PEN_2,
+      PRINT_GLACIER_BRUSH_COLOR_1, PRINT_GLACIER_BRUSH_COLOR_2,
+      PRINT_GLACIER_BRUSH_COLOR_2, PRINT_GLACIER_BRUSH_COLOR_2,
+      PRINT_GLACIER_BRUSH_STYLE_1, PRINT_GLACIER_BRUSH_STYLE_2,
+      PRINT_GLACIER_BRUSH_STYLE_2, PRINT_GLACIER_BRUSH_STYLE_2 );
+
+  __defaultPenBrush(packicePenList, packiceBorder, packiceBrushList,
+      PRINT_PACK_ICE_COLOR_1, PRINT_PACK_ICE_COLOR_2, PRINT_PACK_ICE_COLOR_2, PRINT_PACK_ICE_COLOR_2,
+      PRINT_PACK_ICE_PEN_1, PRINT_PACK_ICE_PEN_2, PRINT_PACK_ICE_PEN_2, PRINT_PACK_ICE_PEN_2,
+      PRINT_PACK_ICE_BRUSH_COLOR_1, PRINT_PACK_ICE_BRUSH_COLOR_2,
+      PRINT_PACK_ICE_BRUSH_COLOR_2, PRINT_PACK_ICE_BRUSH_COLOR_2,
+      PRINT_PACK_ICE_BRUSH_STYLE_1, PRINT_PACK_ICE_BRUSH_STYLE_2,
+      PRINT_PACK_ICE_BRUSH_STYLE_2, PRINT_PACK_ICE_BRUSH_STYLE_2);
+
+  __defaultPenBrush(airAPenList, airABorder, airABrushList,
+      PRINT_AIRA_COLOR_1, PRINT_AIRA_COLOR_2, PRINT_AIRA_COLOR_2, PRINT_AIRA_COLOR_2,
+      PRINT_AIRA_PEN_1, PRINT_AIRA_PEN_2, PRINT_AIRA_PEN_2, PRINT_AIRA_PEN_2,
+      PRINT_AIRA_BRUSH_COLOR_1, PRINT_AIRA_BRUSH_COLOR_2,
+      PRINT_AIRA_BRUSH_COLOR_2, PRINT_AIRA_BRUSH_COLOR_2,
+      PRINT_AIRA_BRUSH_STYLE_1, PRINT_AIRA_BRUSH_STYLE_2,
+      PRINT_AIRA_BRUSH_STYLE_2, PRINT_AIRA_BRUSH_STYLE_2);
+
+  __defaultPenBrush(airBPenList, airBBorder, airBBrushList,
+      PRINT_AIRB_COLOR_1, PRINT_AIRB_COLOR_2, PRINT_AIRB_COLOR_2, PRINT_AIRB_COLOR_2,
+      PRINT_AIRB_PEN_1, PRINT_AIRB_PEN_2, PRINT_AIRB_PEN_2, PRINT_AIRB_PEN_2,
+      PRINT_AIRB_BRUSH_COLOR_1, PRINT_AIRB_BRUSH_COLOR_2,
+      PRINT_AIRB_BRUSH_COLOR_2, PRINT_AIRB_BRUSH_COLOR_2,
+      PRINT_AIRB_BRUSH_STYLE_1, PRINT_AIRB_BRUSH_STYLE_2,
+      PRINT_AIRB_BRUSH_STYLE_2, PRINT_AIRB_BRUSH_STYLE_2);
+
+  __defaultPenBrush(airCPenList, airCBorder, airCBrushList,
+      PRINT_AIRC_COLOR_1, PRINT_AIRC_COLOR_2, PRINT_AIRC_COLOR_2, PRINT_AIRC_COLOR_2,
+      PRINT_AIRC_PEN_1, PRINT_AIRC_PEN_2, PRINT_AIRC_PEN_2, PRINT_AIRC_PEN_2,
+      PRINT_AIRC_BRUSH_COLOR_1, PRINT_AIRC_BRUSH_COLOR_2,
+      PRINT_AIRC_BRUSH_COLOR_2, PRINT_AIRC_BRUSH_COLOR_2,
+      PRINT_AIRC_BRUSH_STYLE_1, PRINT_AIRC_BRUSH_STYLE_2,
+      PRINT_AIRC_BRUSH_STYLE_2, PRINT_AIRC_BRUSH_STYLE_2);
+
+  __defaultPenBrush(airDPenList, airDBorder, airDBrushList,
+      PRINT_AIRD_COLOR_1, PRINT_AIRD_COLOR_2, PRINT_AIRD_COLOR_2, PRINT_AIRD_COLOR_2,
+      PRINT_AIRD_PEN_1, PRINT_AIRD_PEN_2, PRINT_AIRD_PEN_2, PRINT_AIRD_PEN_2,
+      PRINT_AIRD_BRUSH_COLOR_1, PRINT_AIRD_BRUSH_COLOR_2,
+      PRINT_AIRD_BRUSH_COLOR_2, PRINT_AIRD_BRUSH_COLOR_2,
+      PRINT_AIRD_BRUSH_STYLE_1, PRINT_AIRD_BRUSH_STYLE_2,
+      PRINT_AIRD_BRUSH_STYLE_2, PRINT_AIRD_BRUSH_STYLE_2);
+
+  __defaultPenBrush(airElPenList, airElBorder, airElBrushList,
+      PRINT_AIREL_COLOR_1, PRINT_AIREL_COLOR_2, PRINT_AIREL_COLOR_2, PRINT_AIREL_COLOR_2,
+      PRINT_AIREL_PEN_1, PRINT_AIREL_PEN_2, PRINT_AIREL_PEN_2, PRINT_AIREL_PEN_2,
+      PRINT_AIREL_BRUSH_COLOR_1, PRINT_AIREL_BRUSH_COLOR_2,
+      PRINT_AIREL_BRUSH_COLOR_2, PRINT_AIREL_BRUSH_COLOR_2,
+      PRINT_AIREL_BRUSH_STYLE_1, PRINT_AIREL_BRUSH_STYLE_2,
+      PRINT_AIREL_BRUSH_STYLE_2, PRINT_AIREL_BRUSH_STYLE_2);
+
+  __defaultPenBrush(airEhPenList, airEhBorder, airEhBrushList,
+      PRINT_AIREH_COLOR_1, PRINT_AIREH_COLOR_2, PRINT_AIREH_COLOR_2, PRINT_AIREH_COLOR_2,
+      PRINT_AIREH_PEN_1, PRINT_AIREH_PEN_2, PRINT_AIREH_PEN_2, PRINT_AIREH_PEN_2,
+      PRINT_AIREH_BRUSH_COLOR_1, PRINT_AIREH_BRUSH_COLOR_2,
+      PRINT_AIREH_BRUSH_COLOR_2, PRINT_AIREH_BRUSH_COLOR_2,
+      PRINT_AIREH_BRUSH_STYLE_1, PRINT_AIREH_BRUSH_STYLE_2,
+      PRINT_AIREH_BRUSH_STYLE_2, PRINT_AIREH_BRUSH_STYLE_2);
+
+  __defaultPenBrush(ctrCPenList, ctrCBorder, ctrCBrushList,
+      PRINT_CTRC_COLOR_1, PRINT_CTRC_COLOR_2, PRINT_CTRC_COLOR_2, PRINT_CTRC_COLOR_2,
+      PRINT_CTRC_PEN_1, PRINT_CTRC_PEN_2, PRINT_CTRC_PEN_2, PRINT_CTRC_PEN_2,
+      PRINT_CTRC_BRUSH_COLOR_1, PRINT_CTRC_BRUSH_COLOR_2,
+      PRINT_CTRC_BRUSH_COLOR_2, PRINT_CTRC_BRUSH_COLOR_2,
+      PRINT_CTRC_BRUSH_STYLE_1, PRINT_CTRC_BRUSH_STYLE_2,
+      PRINT_CTRC_BRUSH_STYLE_2, PRINT_CTRC_BRUSH_STYLE_2);
+
+  __defaultPenBrush(ctrDPenList, ctrDBorder, ctrDBrushList,
+      PRINT_CTRD_COLOR_1, PRINT_CTRD_COLOR_2, PRINT_CTRD_COLOR_2, PRINT_CTRD_COLOR_2,
+      PRINT_CTRD_PEN_1, PRINT_CTRD_PEN_2, PRINT_CTRD_PEN_2, PRINT_CTRD_PEN_2,
+      PRINT_CTRD_BRUSH_COLOR_1, PRINT_CTRD_BRUSH_COLOR_2,
+      PRINT_CTRD_BRUSH_COLOR_2, PRINT_CTRD_BRUSH_COLOR_2,
+      PRINT_CTRD_BRUSH_STYLE_1, PRINT_CTRD_BRUSH_STYLE_2,
+      PRINT_CTRD_BRUSH_STYLE_2, PRINT_CTRD_BRUSH_STYLE_2);
+
+  __defaultPenBrush(dangerPenList, dangerBorder, dangerBrushList,
+      PRINT_DNG_COLOR_1, PRINT_DNG_COLOR_2, PRINT_DNG_COLOR_2, PRINT_DNG_COLOR_2,
+      PRINT_DNG_PEN_1, PRINT_DNG_PEN_2, PRINT_DNG_PEN_2, PRINT_DNG_PEN_2,
+      PRINT_DNG_BRUSH_COLOR_1, PRINT_DNG_BRUSH_COLOR_2,
+      PRINT_DNG_BRUSH_COLOR_2, PRINT_DNG_BRUSH_COLOR_2,
+      PRINT_DNG_BRUSH_STYLE_1, PRINT_DNG_BRUSH_STYLE_2,
+      PRINT_DNG_BRUSH_STYLE_2, PRINT_DNG_BRUSH_STYLE_2);
+
+  __defaultPenBrush(restrPenList, restrBorder, restrBrushList,
+      PRINT_RES_COLOR_1, PRINT_RES_COLOR_2, PRINT_RES_COLOR_2, PRINT_RES_COLOR_2,
+      PRINT_RES_PEN_1, PRINT_RES_PEN_2, PRINT_RES_PEN_2, PRINT_RES_PEN_2,
+      PRINT_RES_BRUSH_COLOR_1, PRINT_RES_BRUSH_COLOR_2,
+      PRINT_RES_BRUSH_COLOR_2, PRINT_RES_BRUSH_COLOR_2,
+      PRINT_RES_BRUSH_STYLE_1, PRINT_RES_BRUSH_STYLE_2,
+      PRINT_RES_BRUSH_STYLE_2, PRINT_RES_BRUSH_STYLE_2);
+
+  __defaultPenBrush(lowFPenList, lowFBorder, lowFBrushList,
+      PRINT_LOWF_COLOR_1, PRINT_LOWF_COLOR_2, PRINT_LOWF_COLOR_2, PRINT_LOWF_COLOR_2,
+      PRINT_LOWF_PEN_1, PRINT_LOWF_PEN_2, PRINT_LOWF_PEN_2, PRINT_LOWF_PEN_2,
+      PRINT_LOWF_BRUSH_COLOR_1, PRINT_LOWF_BRUSH_COLOR_2,
+      PRINT_LOWF_BRUSH_COLOR_2, PRINT_LOWF_BRUSH_COLOR_2,
+      PRINT_LOWF_BRUSH_STYLE_1, PRINT_LOWF_BRUSH_STYLE_2,
+      PRINT_LOWF_BRUSH_STYLE_2, PRINT_LOWF_BRUSH_STYLE_2);
+
+  __defaultPenBrush(tmzPenList, tmzBorder, tmzBrushList,
+      PRINT_TMZ_COLOR_1, PRINT_TMZ_COLOR_2, PRINT_TMZ_COLOR_2, PRINT_TMZ_COLOR_2,
+      PRINT_TMZ_PEN_1, PRINT_TMZ_PEN_2, PRINT_TMZ_PEN_2, PRINT_TMZ_PEN_2,
+      PRINT_TMZ_BRUSH_COLOR_1, PRINT_TMZ_BRUSH_COLOR_2,
+      PRINT_TMZ_BRUSH_COLOR_2, PRINT_TMZ_BRUSH_COLOR_2,
+      PRINT_TMZ_BRUSH_STYLE_1, PRINT_TMZ_BRUSH_STYLE_2,
+      PRINT_TMZ_BRUSH_STYLE_2, PRINT_TMZ_BRUSH_STYLE_2);
+
+  __defaultPenBrush(gsPenList, gsBorder, gsBrushList,
+      PRINT_GLIDER_SECTOR_COLOR_1, PRINT_GLIDER_SECTOR_COLOR_2, PRINT_GLIDER_SECTOR_COLOR_2, PRINT_GLIDER_SECTOR_COLOR_2,
+      PRINT_GLIDER_SECTOR_PEN_1, PRINT_GLIDER_SECTOR_PEN_2, PRINT_GLIDER_SECTOR_PEN_2, PRINT_GLIDER_SECTOR_PEN_2,
+      PRINT_GLIDER_SECTOR_BRUSH_COLOR_1, PRINT_GLIDER_SECTOR_BRUSH_COLOR_2,
+      PRINT_GLIDER_SECTOR_BRUSH_COLOR_2, PRINT_GLIDER_SECTOR_BRUSH_COLOR_2,
+      PRINT_GLIDER_SECTOR_BRUSH_STYLE_1, PRINT_GLIDER_SECTOR_BRUSH_STYLE_2,
+      PRINT_GLIDER_SECTOR_BRUSH_STYLE_2, PRINT_GLIDER_SECTOR_BRUSH_STYLE_2);
+
+  __defaultPenBrush(wwPenList, wwBorder, wwBrushList,
+      PRINT_WAVE_WINDOW_COLOR_1, PRINT_WAVE_WINDOW_COLOR_2, PRINT_WAVE_WINDOW_COLOR_2, PRINT_WAVE_WINDOW_COLOR_2,
+      PRINT_WAVE_WINDOW_PEN_1, PRINT_WAVE_WINDOW_PEN_2, PRINT_WAVE_WINDOW_PEN_2, PRINT_WAVE_WINDOW_PEN_2,
+      PRINT_WAVE_WINDOW_BRUSH_COLOR_1, PRINT_WAVE_WINDOW_BRUSH_COLOR_2,
+      PRINT_WAVE_WINDOW_BRUSH_COLOR_2, PRINT_WAVE_WINDOW_BRUSH_COLOR_2,
+      PRINT_WAVE_WINDOW_BRUSH_STYLE_1, PRINT_WAVE_WINDOW_BRUSH_STYLE_2,
+      PRINT_WAVE_WINDOW_BRUSH_STYLE_2, PRINT_WAVE_WINDOW_BRUSH_STYLE_2);
+
+  __defaultPenBrush(faiAreaLow500PenList, faiAreaLow500Border, faiAreaLow500BrushList,
+      PRINT_FAI_LOW_500_COLOR_1, PRINT_FAI_LOW_500_COLOR_2, PRINT_FAI_LOW_500_COLOR_2, PRINT_FAI_LOW_500_COLOR_2,
+      PRINT_FAI_LOW_500_PEN_1, PRINT_FAI_LOW_500_PEN_2, PRINT_FAI_LOW_500_PEN_2, PRINT_FAI_LOW_500_PEN_2,
+      PRINT_FAI_LOW_500_BRUSH_COLOR_1, PRINT_FAI_LOW_500_BRUSH_COLOR_2,
+      PRINT_FAI_LOW_500_BRUSH_COLOR_2, PRINT_FAI_LOW_500_BRUSH_COLOR_2,
+      PRINT_FAI_LOW_500_BRUSH_STYLE_1, PRINT_FAI_LOW_500_BRUSH_STYLE_2,
+      PRINT_FAI_LOW_500_BRUSH_STYLE_2, PRINT_FAI_LOW_500_BRUSH_STYLE_2);
+
+  __defaultPenBrush(faiAreaHigh500PenList, faiAreaHigh500Border, faiAreaHigh500BrushList,
+      PRINT_FAI_HIGH_500_COLOR_1, PRINT_FAI_HIGH_500_COLOR_2, PRINT_FAI_HIGH_500_COLOR_2, PRINT_FAI_HIGH_500_COLOR_2,
+      PRINT_FAI_HIGH_500_PEN_1, PRINT_FAI_HIGH_500_PEN_2, PRINT_FAI_HIGH_500_PEN_2, PRINT_FAI_HIGH_500_PEN_2,
+      PRINT_FAI_HIGH_500_BRUSH_COLOR_1, PRINT_FAI_HIGH_500_BRUSH_COLOR_2,
+      PRINT_FAI_HIGH_500_BRUSH_COLOR_2, PRINT_FAI_HIGH_500_BRUSH_COLOR_2,
+      PRINT_FAI_HIGH_500_BRUSH_STYLE_1, PRINT_FAI_HIGH_500_BRUSH_STYLE_2,
+      PRINT_FAI_HIGH_500_BRUSH_STYLE_2, PRINT_FAI_HIGH_500_BRUSH_STYLE_2);
+}
+
+void ConfigMapElement::slotSelectBorder1Color()
 {
   QColor newColor = QColorDialog::getColor( border1Color, this );
 
@@ -815,7 +1333,7 @@ void ConfigDrawElement::slotSelectBorder1Color()
     }
 }
 
-void ConfigDrawElement::slotSelectBorder2Color()
+void ConfigMapElement::slotSelectBorder2Color()
 {
   QColor newColor = QColorDialog::getColor( border2Color, this );
 
@@ -829,7 +1347,7 @@ void ConfigDrawElement::slotSelectBorder2Color()
     }
 }
 
-void ConfigDrawElement::slotSelectBorder3Color()
+void ConfigMapElement::slotSelectBorder3Color()
 {
   QColor newColor = QColorDialog::getColor( border3Color, this );
 
@@ -843,7 +1361,7 @@ void ConfigDrawElement::slotSelectBorder3Color()
     }
 }
 
-void ConfigDrawElement::slotSelectBorder4Color()
+void ConfigMapElement::slotSelectBorder4Color()
 {
   QColor newColor = QColorDialog::getColor( border4Color, this );
 
@@ -857,7 +1375,7 @@ void ConfigDrawElement::slotSelectBorder4Color()
     }
 }
 
-void ConfigDrawElement::slotCheckOpacity1( int index )
+void ConfigMapElement::slotCheckOpacity1( int index )
 {
   bool enable = border1BrushStyle->isEnabled();
 
@@ -874,7 +1392,7 @@ void ConfigDrawElement::slotCheckOpacity1( int index )
   opacity1->setEnabled( pattern == Qt::SolidPattern );
 }
 
-void ConfigDrawElement::slotCheckOpacity2( int index )
+void ConfigMapElement::slotCheckOpacity2( int index )
 {
   bool enable = border2BrushStyle->isEnabled();
 
@@ -891,7 +1409,7 @@ void ConfigDrawElement::slotCheckOpacity2( int index )
   opacity2->setEnabled( pattern == Qt::SolidPattern );
 }
 
-void ConfigDrawElement::slotCheckOpacity3( int index )
+void ConfigMapElement::slotCheckOpacity3( int index )
 {
   bool enable = border3BrushStyle->isEnabled();
 
@@ -908,7 +1426,7 @@ void ConfigDrawElement::slotCheckOpacity3( int index )
   opacity3->setEnabled( pattern == Qt::SolidPattern );
 }
 
-void ConfigDrawElement::slotCheckOpacity4( int index )
+void ConfigMapElement::slotCheckOpacity4( int index )
 {
   bool enable = border4BrushStyle->isEnabled();
 
@@ -926,7 +1444,7 @@ void ConfigDrawElement::slotCheckOpacity4( int index )
 }
 
 
-void ConfigDrawElement::slotSelectBorder1BrushColor()
+void ConfigMapElement::slotSelectBorder1BrushColor()
 {
   QColor newColor = QColorDialog::getColor( border1BrushColor, this );
 
@@ -940,7 +1458,7 @@ void ConfigDrawElement::slotSelectBorder1BrushColor()
     }
 }
 
-void ConfigDrawElement::slotSelectBorder2BrushColor()
+void ConfigMapElement::slotSelectBorder2BrushColor()
 {
   QColor newColor = QColorDialog::getColor( border2BrushColor, this );
 
@@ -954,7 +1472,7 @@ void ConfigDrawElement::slotSelectBorder2BrushColor()
     }
 }
 
-void ConfigDrawElement::slotSelectBorder3BrushColor()
+void ConfigMapElement::slotSelectBorder3BrushColor()
 {
   QColor newColor = QColorDialog::getColor( border3BrushColor, this );
 
@@ -968,7 +1486,7 @@ void ConfigDrawElement::slotSelectBorder3BrushColor()
     }
 }
 
-void ConfigDrawElement::slotSelectBorder4BrushColor()
+void ConfigMapElement::slotSelectBorder4BrushColor()
 {
   QColor newColor = QColorDialog::getColor( border4BrushColor, this );
 
@@ -982,7 +1500,7 @@ void ConfigDrawElement::slotSelectBorder4BrushColor()
     }
 }
 
-void ConfigDrawElement::slotSelectElement(int elementID)
+void ConfigMapElement::slotSelectElement(int elementID)
 {
   currentElement = elementID;
 
@@ -1272,7 +1790,7 @@ void ConfigDrawElement::slotSelectElement(int elementID)
   slotToggleFirst(border1->isChecked());
 }
 
-void ConfigDrawElement::slotToggleFirst(bool toggle)
+void ConfigMapElement::slotToggleFirst(bool toggle)
 {
   border1Button->setEnabled(toggle);
   border1Pen->setEnabled(toggle);
@@ -1328,7 +1846,7 @@ void ConfigDrawElement::slotToggleFirst(bool toggle)
         border1BrushStyle->setEnabled(false);
     }
 
-  if( !toggle )
+  if( ! toggle )
     {
       slotToggleSecond( false );
     }
@@ -1338,7 +1856,7 @@ void ConfigDrawElement::slotToggleFirst(bool toggle)
     }
 }
 
-void ConfigDrawElement::slotToggleSecond( bool toggle )
+void ConfigMapElement::slotToggleSecond( bool toggle )
 {
   border2Button->setEnabled( toggle );
   border2Pen->setEnabled( toggle );
@@ -1404,7 +1922,7 @@ void ConfigDrawElement::slotToggleSecond( bool toggle )
     }
 }
 
-void ConfigDrawElement::slotToggleThird(bool toggle)
+void ConfigMapElement::slotToggleThird(bool toggle)
 {
   border3Button->setEnabled( toggle );
   border3Pen->setEnabled( toggle );
@@ -1461,12 +1979,16 @@ void ConfigDrawElement::slotToggleThird(bool toggle)
     }
 
   if(!toggle)
+    {
       slotToggleForth(false);
+    }
   else
+    {
       slotToggleForth(border4->isChecked());
+    }
 }
 
-void ConfigDrawElement::slotToggleForth(bool toggle)
+void ConfigMapElement::slotToggleForth(bool toggle)
 {
   border4ColorButton->setEnabled(toggle);
   border4Pen->setEnabled(toggle);
@@ -1521,7 +2043,7 @@ void ConfigDrawElement::slotToggleForth(bool toggle)
     }
 }
 
-void ConfigDrawElement::slotSetSecond()
+void ConfigMapElement::slotSetSecond()
 {
   QPixmap buttonPixmap(45, 14);
 
@@ -1531,8 +2053,8 @@ void ConfigDrawElement::slotSetSecond()
   border2ColorButton->setIconSize(buttonPixmap.size());
   border2Pen->setValue(border1Pen->value());
   border2PenStyle->setCurrentIndex(border1PenStyle->currentIndex());
-  border2BrushColor = border1BrushColor;
 
+  border2BrushColor = border1BrushColor;
   buttonPixmap.fill(border2BrushColor);
   border2BrushColorButton->setIcon(buttonPixmap);
   border2BrushColorButton->setIconSize(buttonPixmap.size());
@@ -1541,7 +2063,7 @@ void ConfigDrawElement::slotSetSecond()
   opacity2->setValue( opacity1->value() );
 }
 
-void ConfigDrawElement::slotSetThird()
+void ConfigMapElement::slotSetThird()
 {
   QPixmap buttonPixmap(45, 14);
 
@@ -1561,7 +2083,7 @@ void ConfigDrawElement::slotSetThird()
   opacity3->setValue( opacity2->value() );
 }
 
-void ConfigDrawElement::slotSetForth()
+void ConfigMapElement::slotSetForth()
 {
   QPixmap buttonPixmap(45, 14);
 
@@ -1571,8 +2093,8 @@ void ConfigDrawElement::slotSetForth()
   border4ColorButton->setIconSize(buttonPixmap.size());
   border4Pen->setValue(border3Pen->value());
   border4PenStyle->setCurrentIndex(border3PenStyle->currentIndex());
-  border4BrushColor = border3BrushColor;
 
+  border4BrushColor = border3BrushColor;
   buttonPixmap.fill(border4BrushColor);
   border4BrushColorButton->setIcon(buttonPixmap);
   border4BrushColorButton->setIconSize(buttonPixmap.size());
@@ -1581,7 +2103,7 @@ void ConfigDrawElement::slotSetForth()
   opacity4->setValue( opacity3->value() );
 }
 
-void ConfigDrawElement::__defaultPen( QList<QPen> &penList,
+void ConfigMapElement::__defaultPen( QList<QPen> &penList,
                                       bool *b,
                                       QColor defaultColor1,
                                       QColor defaultColor2,
@@ -1607,7 +2129,7 @@ void ConfigDrawElement::__defaultPen( QList<QPen> &penList,
   b[3] = true;
 }
 
-void ConfigDrawElement::__defaultPenBrush( QList<QPen> &penList,
+void ConfigMapElement::__defaultPenBrush( QList<QPen> &penList,
                                            bool *b,
                                            QList<QBrush> &brushList,
                                            QColor defaultColor1,
@@ -1640,7 +2162,7 @@ void ConfigDrawElement::__defaultPenBrush( QList<QPen> &penList,
   brushList[3].setStyle( defaultBrushStyle4 );
 }
 
-void ConfigDrawElement::__fillStyle( QComboBox *pen, QComboBox *brush )
+void ConfigMapElement::__fillStyle( QComboBox *pen, QComboBox *brush )
 {
   QPixmap pixmap = _mainWindow->getPixmap("solid.png");
   pen->setIconSize( pixmap.size() );
@@ -1659,33 +2181,37 @@ void ConfigDrawElement::__fillStyle( QComboBox *pen, QComboBox *brush )
     }
 }
 
-void ConfigDrawElement::__readBorder( QString group, bool *array )
+void ConfigMapElement::__readBorder( QString group, bool *array )
 {
-  array[0] = _settings.value( "/Map/" + group + "/Border1", true ).toBool();
-  array[1] = _settings.value( "/Map/" + group + "/Border2", true ).toBool();
-  array[2] = _settings.value( "/Map/" + group + "/Border3", true ).toBool();
-  array[3] = _settings.value( "/Map/" + group + "/Border4", true ).toBool();
+  array[0] = _settings.value( "/Map/" + group + itemPrefix + "Border1", true ).toBool();
+  array[1] = _settings.value( "/Map/" + group + itemPrefix + "Border2", true ).toBool();
+  array[2] = _settings.value( "/Map/" + group + itemPrefix + "Border3", true ).toBool();
+  array[3] = _settings.value( "/Map/" + group + itemPrefix + "Border4", true ).toBool();
 }
 
-void ConfigDrawElement::__readAsOpacity( QString group, QList<int> &opacityList )
+void ConfigMapElement::__readAsOpacity( QString group, QList<int> &opacityList )
 {
-  int o1 = _settings.value( "/Map/" + group + "/Opacity1", AS_OPACITY_1 ).toInt();
-  int o2 = _settings.value( "/Map/" + group + "/Opacity2", AS_OPACITY_2 ).toInt();
-  int o3 = _settings.value( "/Map/" + group + "/Opacity3", AS_OPACITY_3 ).toInt();
-  int o4 = _settings.value( "/Map/" + group + "/Opacity4", AS_OPACITY_4 ).toInt();
+  int o1 = _settings.value( "/Map/" + group + itemPrefix + "Opacity1", AS_OPACITY_1 ).toInt();
+  int o2 = _settings.value( "/Map/" + group + itemPrefix + "Opacity2", AS_OPACITY_2 ).toInt();
+  int o3 = _settings.value( "/Map/" + group + itemPrefix + "Opacity3", AS_OPACITY_3 ).toInt();
+  int o4 = _settings.value( "/Map/" + group + itemPrefix + "Opacity4", AS_OPACITY_4 ).toInt();
 
   opacityList << o1 << o2 << o3 << o4;
 }
 
-void ConfigDrawElement::__writeAsOpacity( QString group, QList<int> &opacityList )
+void ConfigMapElement::__writeAsOpacity( QString group, QList<int> &opacityList )
 {
-  _settings.setValue( "/Map/" + group + "/Opacity1", opacityList.at(0) );
-  _settings.setValue( "/Map/" + group + "/Opacity2", opacityList.at(1) );
-  _settings.setValue( "/Map/" + group + "/Opacity3", opacityList.at(2) );
-  _settings.setValue( "/Map/" + group + "/Opacity4", opacityList.at(3) );
+  _settings.setValue( "/Map/" + group + itemPrefix + "Opacity1", opacityList.at(0) );
+  _settings.setValue( "/Map/" + group + itemPrefix + "Opacity2", opacityList.at(1) );
+
+  if( configureMap )
+    {
+      _settings.setValue( "/Map/" + group + itemPrefix + "Opacity3", opacityList.at(2) );
+      _settings.setValue( "/Map/" + group + itemPrefix + "Opacity4", opacityList.at(3) );
+    }
 }
 
-void ConfigDrawElement::__saveAsOpacity( QList<int> &opacityList )
+void ConfigMapElement::__saveAsOpacity( QList<int> &opacityList )
 {
   opacityList.clear();
 
@@ -1695,7 +2221,7 @@ void ConfigDrawElement::__saveAsOpacity( QList<int> &opacityList )
               << opacity4->value();
 }
 
-void ConfigDrawElement::__showAsOpacity( QList<int> &opacityList )
+void ConfigMapElement::__showAsOpacity( QList<int> &opacityList )
 {
   opacity1->setValue( opacityList.at(0) );
   opacity2->setValue( opacityList.at(1) );
@@ -1703,13 +2229,13 @@ void ConfigDrawElement::__showAsOpacity( QList<int> &opacityList )
   opacity4->setValue( opacityList.at(3) );
 }
 
-void ConfigDrawElement::__defaultAsOpacity( QList<int> &opacityList )
+void ConfigMapElement::__defaultAsOpacity( QList<int> &opacityList )
 {
   opacityList.clear();
   opacityList << AS_OPACITY_1 << AS_OPACITY_2 << AS_OPACITY_3 << AS_OPACITY_4;
 }
 
-void ConfigDrawElement::__readPen( QString group,
+void ConfigMapElement::__readPen( QString group,
                                    QList<QPen> &penList,
                                    QColor defaultColor1,
                                    QColor defaultColor2,
@@ -1717,27 +2243,30 @@ void ConfigDrawElement::__readPen( QString group,
                                    QColor defaultColor4,
                                    int defaultPenSize1,
                                    int defaultPenSize2,
-                                   int /*defaultPenSize3*/,
-                                   int /*defaultPenSize4*/,
+                                   int defaultPenSize3,
+                                   int defaultPenSize4,
                                    Qt::PenStyle defaultPenStyle1,
                                    Qt::PenStyle defaultPenStyle2,
                                    Qt::PenStyle defaultPenStyle3,
                                    Qt::PenStyle defaultPenStyle4 )
 {
-  QColor c1( _settings.value( "/Map/" + group + "/Color1", defaultColor1.name() ).value<QColor>() );
-  QColor c2( _settings.value( "/Map/" + group + "/Color2", defaultColor2.name() ).value<QColor>() );
-  QColor c3( _settings.value( "/Map/" + group + "/Color3", defaultColor3.name() ).value<QColor>() );
-  QColor c4( _settings.value( "/Map/" + group + "/Color4", defaultColor4.name() ).value<QColor>() );
+  Q_UNUSED( defaultPenSize3 )
+  Q_UNUSED( defaultPenSize4 )
 
-  int ps1 = _settings.value( "/Map/" + group + "/PenSize1", defaultPenSize1 ).toInt();
-  int ps2 = _settings.value( "/Map/" + group + "/PenSize2", defaultPenSize2 ).toInt();
-  int ps3 = _settings.value( "/Map/" + group + "/PenSize3", defaultPenSize2 ).toInt();
-  int ps4 = _settings.value( "/Map/" + group + "/PenSize4", defaultPenSize2 ).toInt();
+  QColor c1( _settings.value( "/Map/" + group + itemPrefix + "Color1", defaultColor1.name() ).value<QColor>() );
+  QColor c2( _settings.value( "/Map/" + group + itemPrefix + "Color2", defaultColor2.name() ).value<QColor>() );
+  QColor c3( _settings.value( "/Map/" + group + itemPrefix + "Color3", defaultColor3.name() ).value<QColor>() );
+  QColor c4( _settings.value( "/Map/" + group + itemPrefix + "Color4", defaultColor4.name() ).value<QColor>() );
 
-  Qt::PenStyle pst1 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle1", defaultPenStyle1).toInt());
-  Qt::PenStyle pst2 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle2", defaultPenStyle2).toInt());
-  Qt::PenStyle pst3 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle3", defaultPenStyle3).toInt());
-  Qt::PenStyle pst4 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle4", defaultPenStyle4).toInt());
+  int ps1 = _settings.value( "/Map/" + group + itemPrefix + "PenSize1", defaultPenSize1 ).toInt();
+  int ps2 = _settings.value( "/Map/" + group + itemPrefix + "PenSize2", defaultPenSize2 ).toInt();
+  int ps3 = _settings.value( "/Map/" + group + itemPrefix + "PenSize3", defaultPenSize2 ).toInt();
+  int ps4 = _settings.value( "/Map/" + group + itemPrefix + "PenSize4", defaultPenSize2 ).toInt();
+
+  Qt::PenStyle pst1 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + itemPrefix + "PenStyle1", defaultPenStyle1).toInt());
+  Qt::PenStyle pst2 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + itemPrefix + "PenStyle2", defaultPenStyle2).toInt());
+  Qt::PenStyle pst3 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + itemPrefix + "PenStyle3", defaultPenStyle3).toInt());
+  Qt::PenStyle pst4 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + itemPrefix + "PenStyle4", defaultPenStyle4).toInt());
 
   QPen pen1(c1);
   QPen pen2(c2);
@@ -1760,7 +2289,7 @@ void ConfigDrawElement::__readPen( QString group,
   penList.append( pen4 );
 }
 
-void ConfigDrawElement::__readBrush( QString group,
+void ConfigMapElement::__readBrush( QString group,
                                      QList<QBrush> &brushList,
                                      QColor defaultBrushColor1,
                                      QColor defaultBrushColor2,
@@ -1771,15 +2300,15 @@ void ConfigDrawElement::__readBrush( QString group,
                                      Qt::BrushStyle defaultBrushStyle3,
                                      Qt::BrushStyle defaultBrushStyle4 )
 {
-  QColor c1( _settings.value( "/Map/" + group + "/BrushColor1", defaultBrushColor1.name() ).value<QColor>() );
-  QColor c2( _settings.value( "/Map/" + group + "/BrushColor2", defaultBrushColor2.name() ).value<QColor>() );
-  QColor c3( _settings.value( "/Map/" + group + "/BrushColor3", defaultBrushColor3.name() ).value<QColor>() );
-  QColor c4( _settings.value( "/Map/" + group + "/BrushColor4", defaultBrushColor4.name() ).value<QColor>() );
+  QColor c1( _settings.value( "/Map/" + group + itemPrefix + "BrushColor1", defaultBrushColor1.name() ).value<QColor>() );
+  QColor c2( _settings.value( "/Map/" + group + itemPrefix + "BrushColor2", defaultBrushColor2.name() ).value<QColor>() );
+  QColor c3( _settings.value( "/Map/" + group + itemPrefix + "BrushColor3", defaultBrushColor3.name() ).value<QColor>() );
+  QColor c4( _settings.value( "/Map/" + group + itemPrefix + "BrushColor4", defaultBrushColor4.name() ).value<QColor>() );
 
-  Qt::BrushStyle bs1 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle1", defaultBrushStyle1 ).toInt();
-  Qt::BrushStyle bs2 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle2", defaultBrushStyle2 ).toInt();
-  Qt::BrushStyle bs3 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle3", defaultBrushStyle3 ).toInt();
-  Qt::BrushStyle bs4 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle4", defaultBrushStyle4 ).toInt();
+  Qt::BrushStyle bs1 = (Qt::BrushStyle) _settings.value( "/Map/" + group + itemPrefix + "BrushStyle1", defaultBrushStyle1 ).toInt();
+  Qt::BrushStyle bs2 = (Qt::BrushStyle) _settings.value( "/Map/" + group + itemPrefix + "BrushStyle2", defaultBrushStyle2 ).toInt();
+  Qt::BrushStyle bs3 = (Qt::BrushStyle) _settings.value( "/Map/" + group + itemPrefix + "BrushStyle3", defaultBrushStyle3 ).toInt();
+  Qt::BrushStyle bs4 = (Qt::BrushStyle) _settings.value( "/Map/" + group + itemPrefix + "BrushStyle4", defaultBrushStyle4 ).toInt();
 
   brushList.append( QBrush( c1, bs1 ) );
   brushList.append( QBrush( c2, bs2 ) );
@@ -1787,7 +2316,7 @@ void ConfigDrawElement::__readBrush( QString group,
   brushList.append( QBrush( c4, bs4 ) );
 }
 
-void ConfigDrawElement::__saveBrush(QList<QBrush> &brushList)
+void ConfigMapElement::__saveBrush(QList<QBrush> &brushList)
 {
   int ix1 = border1BrushStyle->currentIndex();
   int ix2 = border2BrushStyle->currentIndex();
@@ -1804,7 +2333,7 @@ void ConfigDrawElement::__saveBrush(QList<QBrush> &brushList)
   brushList[3].setStyle((Qt::BrushStyle) border4BrushStyle->itemData(ix4).toInt());
 }
 
-void ConfigDrawElement::__savePen(QList<QPen> &penList, bool *b)
+void ConfigMapElement::__savePen(QList<QPen> &penList, bool *b)
 {
   int ix1 = border1PenStyle->currentIndex();
   int ix2 = border2PenStyle->currentIndex();
@@ -1832,7 +2361,7 @@ void ConfigDrawElement::__savePen(QList<QPen> &penList, bool *b)
   penList[3].setStyle((Qt::PenStyle) border4PenStyle->itemData(ix4).toInt());
 }
 
-void ConfigDrawElement::__showBrush( QList<QBrush> &brushList )
+void ConfigMapElement::__showBrush( QList<QBrush> &brushList )
 {
   QPixmap buttonPixmap(45, 14);
 
@@ -1861,7 +2390,7 @@ void ConfigDrawElement::__showBrush( QList<QBrush> &brushList )
   border4BrushStyle->setCurrentIndex(border4BrushStyle->findData(brushList[3].style()));
 }
 
-void ConfigDrawElement::__showPen(QList<QPen> &penList, bool *b)
+void ConfigMapElement::__showPen(QList<QPen> &penList, bool *b)
 {
   QPixmap buttonPixmap(45, 14);
 
@@ -1898,41 +2427,49 @@ void ConfigDrawElement::__showPen(QList<QPen> &penList, bool *b)
   border4PenStyle->setCurrentIndex(border4PenStyle->findData(penList[3].style()));
 }
 
-void ConfigDrawElement::__writeBrush(QString group, QList<QBrush> &brushList, QList<QPen> &penList, bool *b)
+void ConfigMapElement::__writeBrush(QString group, QList<QBrush> &brushList, QList<QPen> &penList, bool *b)
 {
   __writePen(group, penList, b);
-  _settings.setValue("/Map/" + group + "/BrushColor1", brushList.at(0).color().name());
-  _settings.setValue("/Map/" + group + "/BrushColor2", brushList.at(1).color().name());
-  _settings.setValue("/Map/" + group + "/BrushColor3", brushList.at(2).color().name());
-  _settings.setValue("/Map/" + group + "/BrushColor4", brushList.at(3).color().name());
 
-  _settings.setValue("/Map/" + group + "/BrushStyle1", brushList.at(0).style());
-  _settings.setValue("/Map/" + group + "/BrushStyle2", brushList.at(1).style());
-  _settings.setValue("/Map/" + group + "/BrushStyle3", brushList.at(2).style());
-  _settings.setValue("/Map/" + group + "/BrushStyle4", brushList.at(3).style());
+  _settings.setValue("/Map/" + group + itemPrefix + "BrushColor1", brushList.at(0).color().name());
+  _settings.setValue("/Map/" + group + itemPrefix + "BrushColor2", brushList.at(1).color().name());
+  _settings.setValue("/Map/" + group + itemPrefix + "BrushStyle1", brushList.at(0).style());
+  _settings.setValue("/Map/" + group + itemPrefix + "BrushStyle2", brushList.at(1).style());
+
+  if( configureMap )
+    {
+      _settings.setValue("/Map/" + group + itemPrefix + "BrushColor3", brushList.at(2).color().name());
+      _settings.setValue("/Map/" + group + itemPrefix + "BrushColor4", brushList.at(3).color().name());
+      _settings.setValue("/Map/" + group + itemPrefix + "BrushStyle3", brushList.at(2).style());
+      _settings.setValue("/Map/" + group + itemPrefix + "BrushStyle4", brushList.at(3).style());
+    }
 }
 
-void ConfigDrawElement::__writePen(QString group, QList<QPen> &penList, bool *b)
+void ConfigMapElement::__writePen(QString group, QList<QPen> &penList, bool *b)
 {
-  _settings.setValue("/Map/" + group + "/Color1", penList.at(0).color().name());
-  _settings.setValue("/Map/" + group + "/Color2", penList.at(1).color().name());
-  _settings.setValue("/Map/" + group + "/Color3", penList.at(2).color().name());
-  _settings.setValue("/Map/" + group + "/Color4", penList.at(3).color().name());
-  _settings.setValue("/Map/" + group + "/PenSize1", (int) penList.at(0).width());
-  _settings.setValue("/Map/" + group + "/PenSize2", (int) penList.at(1).width());
-  _settings.setValue("/Map/" + group + "/PenSize3", (int) penList.at(2).width());
-  _settings.setValue("/Map/" + group + "/PenSize4", (int) penList.at(3).width());
-  _settings.setValue("/Map/" + group + "/PenStyle1", penList.at(0).style());
-  _settings.setValue("/Map/" + group + "/PenStyle2", penList.at(1).style());
-  _settings.setValue("/Map/" + group + "/PenStyle3", penList.at(2).style());
-  _settings.setValue("/Map/" + group + "/PenStyle4", penList.at(3).style());
-  _settings.setValue("/Map/" + group + "/Border1", b[0]);
-  _settings.setValue("/Map/" + group + "/Border2", ( b[1] && b[0] ) );
-  _settings.setValue("/Map/" + group + "/Border3", ( b[2] && b[1] && b[0] ) );
-  _settings.setValue("/Map/" + group + "/Border4", ( b[3] && b[2] && b[1] && b[0] ) );
+  _settings.setValue("/Map/" + group + itemPrefix + "Color1", penList.at(0).color().name());
+  _settings.setValue("/Map/" + group + itemPrefix + "Color2", penList.at(1).color().name());
+  _settings.setValue("/Map/" + group + itemPrefix + "PenSize1", (int) penList.at(0).width());
+  _settings.setValue("/Map/" + group + itemPrefix + "PenSize2", (int) penList.at(1).width());
+  _settings.setValue("/Map/" + group + itemPrefix + "PenStyle1", penList.at(0).style());
+  _settings.setValue("/Map/" + group + itemPrefix + "PenStyle2", penList.at(1).style());
+  _settings.setValue("/Map/" + group + itemPrefix + "Border1", b[0]);
+  _settings.setValue("/Map/" + group + itemPrefix + "Border2", ( b[1] && b[0] ) );
+
+  if( configureMap )
+    {
+      _settings.setValue("/Map/" + group + itemPrefix + "Color3", penList.at(2).color().name());
+      _settings.setValue("/Map/" + group + itemPrefix + "Color4", penList.at(3).color().name());
+      _settings.setValue("/Map/" + group + itemPrefix + "PenSize3", (int) penList.at(2).width());
+      _settings.setValue("/Map/" + group + itemPrefix + "PenSize4", (int) penList.at(3).width());
+      _settings.setValue("/Map/" + group + itemPrefix + "PenStyle3", penList.at(2).style());
+      _settings.setValue("/Map/" + group + itemPrefix + "PenStyle4", penList.at(3).style());
+      _settings.setValue("/Map/" + group + itemPrefix + "Border3", ( b[2] && b[1] && b[0] ) );
+      _settings.setValue("/Map/" + group + itemPrefix + "Border4", ( b[3] && b[2] && b[1] && b[0] ) );
+    }
 }
 
-void ConfigDrawElement::__createBrushStyleIcons()
+void ConfigMapElement::__createBrushStyleIcons()
 {
   brushStyles[0] = Qt::NoBrush;
   brushStyles[1] = Qt::SolidPattern;
