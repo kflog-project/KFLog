@@ -127,7 +127,7 @@ private:
     /** */
     void setStatusBarMsg(const QString&);
     /** */
-    void openFile(const char* surl);
+    void openFile(const QUrl& surl);
     /** */
     void showFlightPoint(const QPoint& pos, const flightPoint& point);
     /**

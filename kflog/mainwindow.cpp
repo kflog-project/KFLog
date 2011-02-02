@@ -121,7 +121,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(map, SIGNAL(waypointEdited(Waypoint *)), waypoints, SLOT(slotEditWaypoint(Waypoint *)));
   connect(map, SIGNAL(elevation(int)), legend, SLOT(slotSelectElevation(int)));
   connect(map, SIGNAL(regWaypointDialog(QWidget *)), this, SLOT(slotRegisterWaypointDialog(QWidget *)));
-  connect(map, SIGNAL(openFile(const char *)), this, SLOT(slotOpenFile(const char *)));
+  connect(map, SIGNAL(openFile(const QUrl&)), this, SLOT(slotOpenFile(const QUrl&)));
   connect(map, SIGNAL(setStatusBarProgress(int)), this, SLOT(slotSetProgress(int)));
   connect(map, SIGNAL(setStatusBarMsg(const QString&)), this, SLOT(slotSetStatusMsg(const QString&)));
 
@@ -159,7 +159,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(objectTree, SIGNAL(newFlightGroup()), _globalMapContents, SLOT(slotNewFlightGroup()));
   connect(objectTree, SIGNAL(editFlightGroup()), _globalMapContents, SLOT(slotEditFlightGroup()));
   connect(objectTree, SIGNAL(openFlight()), this, SLOT(slotOpenFile()));
-  connect(objectTree, SIGNAL(openFile(const char*)), this, SLOT(slotOpenFile(const char*)));
+  connect(objectTree, SIGNAL(openFile(const QUrl&)), this, SLOT(slotOpenFile(const QUrl&)));
   connect(objectTree, SIGNAL(optimizeFlight()), this, SLOT(slotOptimizeFlight()));
   connect(objectTree, SIGNAL(optimizeFlightOLC()), this, SLOT(slotOptimizeFlightOLC()));
 
@@ -1174,31 +1174,37 @@ void MainWindow::slotOpenFile()
   slotSetStatusMsg(tr("Ready."));
 }
 
-void MainWindow::slotOpenFile(const char* surl)
+void MainWindow::slotOpenFile( const QUrl& url )
 {
+  qDebug() << "MainWindow::slotOpenFile(): Url=" << url.toString();
+
   slotSetStatusMsg(tr("Opening file..."));
 
-  Q3Url url = Q3Url(surl);
-
-  if(url.isLocalFile())
-  {
-    QFile file (url.path());
-    if (url.fileName().right(9).lower()==".kflogtsk")
+  if( url.scheme() == "file" || url.isRelative() )
     {
-      //this is probably a taskfile. Try to open it as a task
-      if (_globalMapContents->loadTask(file))
-        slotSetCurrentFile(url.path());
+      QFile file( url.path() );
+
+      if( url.fileName().right( 9 ).toLower() == ".kflogtsk" )
+        {
+          // this is probably a taskfile. Try to open it as a task
+          if( _globalMapContents->loadTask( file ) )
+            {
+              slotSetCurrentFile( url.path() );
+            }
+        }
+      else
+        {
+          // try to open as flight
+          FlightLoader flightLoader;
+
+          if( flightLoader.openFlight( file ) )
+            {
+              slotSetCurrentFile( url.path() );
+            }
+        }
     }
-    else
-    {
-      //try to open as flight
-      FlightLoader flightLoader;
-      if(flightLoader.openFlight(file))
-        slotSetCurrentFile(url.path());
-    } // .kflogtsk
-  } //isLocalFile
 
-  slotSetStatusMsg(tr("Ready."));
+  slotSetStatusMsg( tr( "Ready." ) );
 }
 
 /**
@@ -1228,23 +1234,6 @@ void MainWindow::slotOpenTask()
 
       QString fName = fNames[0];
 
-      QUrl fUrl = QUrl( fName );
-      taskDir = fd->directory().path();
-
-      if( !fUrl.isValid() )
-        {
-          return;
-        }
-
-      QString scheme = fUrl.scheme();
-
-#warning "Check, if that is right proted to Qt4"
-
-      if( scheme != "file" )
-        {
-          return;
-        }
-
       QFile file( fName );
 
       if( _globalMapContents->loadTask( file ) )
@@ -1263,35 +1252,30 @@ void MainWindow::slotOpenRecentFile( QAction *action )
       return;
     }
 
-  QString fileName = action->toolTip();
-
   slotSetStatusMsg( tr( "Opening File..." ) );
 
   FlightLoader flightLoader;
 
-  Q3Url url( fileName );
+  QString fileName = action->toolTip();
 
-  if( url.isLocalFile() )
+  QFile file( fileName );
+
+  if( fileName.endsWith(".kflogtsk", Qt::CaseInsensitive) )
     {
-      QFile file( url.path() );
-
-      if( url.fileName().right( 9 ).lower() == ".kflogtsk" )
+      // this is probably a task file. Try to open it as a task
+      if( _globalMapContents->loadTask( file ) )
         {
-          // this is probably a task file. Try to open it as a task
-          if( _globalMapContents->loadTask( file ) )
-            {
-              slotSetCurrentFile( url.path() );
-            }
+          slotSetCurrentFile( fileName );
         }
-      else
+    }
+  else
+    {
+      //try to open as flight
+      if( flightLoader.openFlight( file ) )
         {
-          //try to open as flight
-          if( flightLoader.openFlight( file ) )
-            {
-              slotSetCurrentFile( url.path() );
-            }
-        } // .kflogtsk
-    } //isLocalFile
+          slotSetCurrentFile( fileName );
+        }
+    }
 
   slotSetStatusMsg(tr("Ready."));
 }

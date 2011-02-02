@@ -6,17 +6,17 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by André Somers
+**   Copyright (c):  2003 by AndrÃ© Somers
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef OBJECTTREE_H
-#define OBJECTTREE_H
+#ifndef OBJECT_TREE_H
+#define OBJECT_TREE_H
 
 #include <q3listview.h>
 #include <q3popupmenu.h>
@@ -28,7 +28,7 @@
 
 /**
   * @short KFLogBrowser - Displays all currently loaded objects.
-  * @author André Somers
+  * @author AndrÃ© Somers
   *
   * This object is used to give the user an overview of the objects he has
   * currently loaded. These objects include Flights, Tasks, Flightgroups and
@@ -160,7 +160,7 @@ signals: // Signals
   /**
    * Indicate that a file should be opened
    */
-  void openFile(const char*);
+  void openFile(const QUrl&);
   /**
    * Indicate that the current flight should be optimized
    */

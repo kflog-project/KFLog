@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Harald Maier
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -18,14 +19,7 @@
 #include "mapcontents.h"
 #include "waypointimpfilterdialog.h"
 
-#include <q3buttongroup.h>
-#include <QLabel>
-#include <QLayout>
-#include <q3listbox.h>
-#include <q3groupbox.h>
-#include <QPushButton>
-#include <QStringList>
-#include <QRadioButton>
+#include <QtGui>
 
 extern MapContents *_globalMapContents;
 extern MapMatrix   *_globalMapMatrix;
@@ -34,119 +28,168 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
  QDialog(parent),
  center(0)
 {
+  qDebug() << "WaypointImpFilterDialog::WaypointImpFilterDialog";
+
   setObjectName( "WaypointImpFilterDialog" );
-  setWindowTitle(tr("Filter waypoints"));
-  setAttribute( Qt::WA_DeleteOnClose );
+  setWindowTitle(tr("Waypoint Filter"));
+  //setAttribute( Qt::WA_DeleteOnClose );
   setModal( true );
 
-  QVBoxLayout *top = new QVBoxLayout(this, 5);
-  QHBoxLayout *buttons = new QHBoxLayout();
-  QHBoxLayout *hbox = new QHBoxLayout();
-  QVBoxLayout *vbox1 = new QVBoxLayout();
-  QVBoxLayout *vbox2 = new QVBoxLayout();
+  // create checkboxes
+  useAll       = new QCheckBox(tr("&Use all"));
+  airfields    = new QCheckBox(tr("&Airfields"));
+  gliderfields = new QCheckBox(tr("&Gliderfields"));
+  outlandings  = new QCheckBox(tr("Ou&tlandings"));
+  otherSites   = new QCheckBox(tr("&Other sites"));
+  obstacles    = new QCheckBox(tr("O&bstacles"));
+  landmarks    = new QCheckBox(tr("&Landmarks"));
+  stations     = new QCheckBox(tr("&Stations"));
 
-  // create non-exclusive buttongroup for type filter
-  Q3ButtonGroup *grp1 = new Q3ButtonGroup(1, Qt::Horizontal, tr("Type"), this);
-
-  grp1->setExclusive(false);
-
-  // insert checkboxes
-  useAll = new QCheckBox(tr("&Use all"), grp1);
   useAll->setChecked(true);
-  grp1->addSpace(0);
-  airports = new QCheckBox(tr("&Airports"), grp1);
-  gliderSites = new QCheckBox(tr("&Glider sites"), grp1);
-  otherSites = new QCheckBox(tr("&Other sites"), grp1);
-  outlanding = new QCheckBox(tr("Ou&tlanding fields"), grp1);
-  obstacle = new QCheckBox(tr("O&bstacles"), grp1);
-  landmark = new QCheckBox(tr("&Landmarks"), grp1);
-  station = new QCheckBox(tr("&Stations"), grp1);
+  connect(useAll, SIGNAL(clicked()), this, SLOT(slotChangeUseAll()));
 
-  // create group box for area filter
-  Q3GroupBox *grp2 = new Q3GroupBox(2, Qt::Horizontal, tr("Area"), this);
-  new QLabel(tr("From"), grp2);
-  grp2->addSpace(0);
-  new QLabel(tr("Lat"), grp2);
-  new QLabel(tr("Long"), grp2);
-  fromLat = new LatEdit(grp2);
-  fromLong = new LongEdit(grp2);
-  new QLabel(tr("To"), grp2);
-  grp2->addSpace(0);
-  new QLabel(tr("Lat"), grp2);
-  new QLabel(tr("Long"), grp2);
-  toLat = new LatEdit(grp2);
-  toLong = new LongEdit(grp2);
+  airfields->setChecked(false);
+  gliderfields->setChecked(false);
+  outlandings->setChecked(false);
+  otherSites->setChecked(false);
+  obstacles->setChecked(false);
+  landmarks->setChecked(false);
+  stations->setChecked(false);
 
-  // create group box for radius filter
-  Q3GroupBox *grp3 = new Q3GroupBox(tr("Radius"), this);
-  QVBoxLayout *vbox3 = new QVBoxLayout(grp3, 10);
+  QVBoxLayout *typeLayout = new QVBoxLayout;
+  typeLayout->setSpacing( 10 );
+  typeLayout->addWidget( useAll );
+  typeLayout->addSpacing( 10 );
+  typeLayout->addWidget( airfields );
+  typeLayout->addWidget( gliderfields );
+  typeLayout->addWidget( outlandings );
+  typeLayout->addWidget( otherSites );
+  typeLayout->addWidget( obstacles );
+  typeLayout->addWidget( landmarks );
+  typeLayout->addWidget( stations );
 
-  // create an invisible bouttengroup
-  Q3ButtonGroup *bg = new Q3ButtonGroup(this);
-  bg->hide();
-  connect(bg, SIGNAL(clicked(int)), SLOT(selectRadius(int)));
+  QGroupBox* typeGroup = new QGroupBox( tr("Type") );
+  typeGroup->setLayout( typeLayout );
 
-  QGridLayout *grid = new QGridLayout(4, 5);
-  QRadioButton *rb = new QRadioButton(tr("Position"), grp3);
-  rb->setChecked(true);
-  bg->insert(rb, CENTER_POS);
-  grid->addWidget(rb, 0, 0);
-  rb = new QRadioButton(tr("Homesite"), grp3);
-  bg->insert(rb, CENTER_HOMESITE);
-  grid->addWidget(rb, 1, 0);
-  rb = new QRadioButton(tr("Center of map"), grp3);
-  bg->insert(rb, CENTER_MAP);
-  grid->addWidget(rb, 2, 0);
-  rb = new QRadioButton(tr("Airfield"), grp3);
-  bg->insert(rb, CENTER_AIRPORT);
-  grid->addWidget(rb, 3, 0);
+  //---------------------------------------------------------------------------
+  fromLat  = new LatEdit;
+  fromLong = new LongEdit;
 
-  // create a grid layout for input fields
-  grid->addWidget(new QLabel(tr("Lat"), grp3), 0, 1);
-  posLat = new LatEdit(grp3);
-  grid->addWidget(posLat, 0, 2);
-  grid->addWidget(new QLabel(tr("Long"), grp3), 0, 3);
-  posLong = new LongEdit(grp3);
-  grid->addWidget(posLong, 0, 4);
-  refAirport = new QComboBox(false, grp3);
-  grid->addMultiCellWidget(refAirport, 3, 3, 1, 4);
+  QGridLayout* fromGrid = new QGridLayout;
+  fromGrid->setSpacing( 10 );
+  fromGrid->addWidget( new QLabel(tr("Lat:")), 0 , 0 );
+  fromGrid->addWidget( fromLat, 0, 1 );
+  fromGrid->setColumnMinimumWidth( 2, 10 );
+  fromGrid->addWidget( new QLabel(tr("Lon:")), 0 , 3 );
+  fromGrid->addWidget( fromLong, 0, 4 );
+  fromGrid->setColumnStretch( 5, 10 );
 
-  radius = new QComboBox(true, grp3);
-  QStringList l;
-  l << "10" << "50" << "100" << "300" << "500" << "1000";
-  radius->insertStringList(l);
+  QGroupBox* fromGroup = new QGroupBox( tr("Area From") );
+  fromGroup->setLayout( fromGrid );
 
-  vbox3->addSpacing(10);
-  vbox3->addLayout(grid);
-  vbox3->addWidget(new QLabel(tr("Radius (km)"), grp3));
-  vbox3->addWidget(radius);
+  //---------------------------------------------------------------------------
+  toLat  = new LatEdit;
+  toLong = new LongEdit;
 
-  vbox1->addWidget(grp1);
-  vbox1->addStretch();
+  QGridLayout* toGrid = new QGridLayout;
+  toGrid->setSpacing( 10 );
+  toGrid->addWidget( new QLabel(tr("Lat:")), 0 , 0 );
+  toGrid->addWidget( toLat, 0, 1 );
+  toGrid->setColumnMinimumWidth( 2, 10 );
+  toGrid->addWidget( new QLabel(tr("Lon:")), 0 , 3 );
+  toGrid->addWidget( toLong, 0, 4 );
+  toGrid->setColumnStretch( 5, 10 );
 
-  vbox2->addWidget(grp2);
-  vbox2->addWidget(grp3);
-  vbox2->addStretch();
+  QGroupBox* toGroup = new QGroupBox( tr("Area to") );
+  toGroup->setLayout( toGrid );
 
-  hbox->addLayout(vbox1);
-  hbox->addLayout(vbox2);
+  //---------------------------------------------------------------------------
+  QRadioButton *rb0 = new QRadioButton(tr("Position"));
+  QRadioButton *rb1 = new QRadioButton(tr("Homesite"));
+  QRadioButton *rb2 = new QRadioButton(tr("Center of Map"));
+  QRadioButton *rb3 = new QRadioButton(tr("Airfield"));
 
-  top->addLayout(hbox);
+  rb0->setChecked( true );
+  rb1->setChecked( false );
+  rb2->setChecked( false );
+  rb3->setChecked( false );
+
+  QButtonGroup* radiusButtonGroup = new QButtonGroup(this);
+  radiusButtonGroup->setExclusive(true);
+  radiusButtonGroup->addButton( rb0, CENTER_POS );
+  radiusButtonGroup->addButton( rb1, CENTER_HOMESITE );
+  radiusButtonGroup->addButton( rb2, CENTER_MAP );
+  radiusButtonGroup->addButton( rb3, CENTER_AIRFIELD );
+
+  connect( radiusButtonGroup, SIGNAL( buttonClicked(int)),
+           this, SLOT(selectRadius(int)));
+
+  posLat  = new LatEdit;
+  posLong = new LongEdit;
+  refAirport = new QComboBox;
+  radiusUnit = new QLabel;
+
+  radius = new QComboBox;
+  radius->setEditable( true );
+  radius->setValidator( new QIntValidator(1, 10000, this) );
+  QStringList itemList;
+  itemList << "10" << "50" << "100" << "300" << "500" << "1000" << "2000";
+  radius->addItems( itemList );
+  radius->setCurrentIndex( 4 );
+
+  QGridLayout *radiusGrid = new QGridLayout;
+  radiusGrid->setSpacing(10);
+  radiusGrid->addWidget( rb0, 0, 0 );
+  radiusGrid->addWidget( new QLabel(tr("Lat:")), 0, 1 );
+  radiusGrid->addWidget( posLat, 0, 2);
+  radiusGrid->addWidget( new QLabel(tr("Lon:")), 0, 3 );
+  radiusGrid->addWidget( posLong, 0, 4 );
+
+  radiusGrid->addWidget( rb1, 1, 0 );
+  radiusGrid->addWidget( rb2, 2, 0 );
+  radiusGrid->addWidget( rb3, 3, 0 );
+  radiusGrid->addWidget( refAirport, 3, 2 );
+
+  radiusGrid->addWidget( radiusUnit, 4, 0 );
+  radiusGrid->addWidget( radius, 4, 2 );
+  radiusGrid->setColumnStretch( 5, 10 );
+
+  QGroupBox* radiusGroup = new QGroupBox( tr("Radius") );
+  radiusGroup->setLayout( radiusGrid );
+
+  //---------------------------------------------------------------------------
+  QHBoxLayout *buttonBox = new QHBoxLayout;
 
   QPushButton *b = new QPushButton(tr("&Clear"), this);
   connect(b, SIGNAL(clicked()), this, SLOT(slotClear()));
-  buttons->addWidget(b);
-  buttons->addStretch();
+  buttonBox->addWidget(b);
+  buttonBox->addStretch( 10 );
+
   b = new QPushButton(tr("&Ok"), this);
   b->setDefault(true);
   connect(b, SIGNAL(clicked()), this, SLOT(accept()));
-  buttons->addWidget(b);
+  buttonBox->addWidget(b);
+
   b = new QPushButton(tr("&Cancel"), this);
   connect(b, SIGNAL(clicked()), this, SLOT(reject()));
-  buttons->addWidget(b);
+  buttonBox->addWidget(b);
 
-  top->addLayout(buttons);
-  connect(useAll, SIGNAL(clicked()), this, SLOT(slotChangeUseAll()));
+  //---------------------------------------------------------------------------
+  QVBoxLayout *ftrBox = new QVBoxLayout;
+  ftrBox->addWidget( fromGroup );
+  ftrBox->addWidget( toGroup );
+  ftrBox->addWidget( radiusGroup );
+
+  QHBoxLayout *hBox = new QHBoxLayout;
+  hBox->addWidget( typeGroup );
+  hBox->addLayout( ftrBox );
+
+  QVBoxLayout *top = new QVBoxLayout;
+  top->addLayout( hBox );
+  top->addLayout( buttonBox );
+
+  setLayout( top );
+
   slotChangeUseAll();
   selectRadius(CENTER_POS);
 }
@@ -156,29 +199,41 @@ WaypointImpFilterDialog::~WaypointImpFilterDialog()
   qDebug() << "~WaypointImpFilterDialog()";
 }
 
+void WaypointImpFilterDialog::showEvent( QShowEvent *event )
+{
+  Q_UNUSED( event )
+
+  // The unit can be changed in the meantime. Therefore we do update it here.
+  QString distUnit = Distance::getUnitText();
+  radiusUnit->setText( tr("Radius") + " (" + distUnit + "):" );
+
+  // Load airfield data into combo box.
+  loadAirfieldComboBox();
+}
+
 void WaypointImpFilterDialog::slotChangeUseAll()
 {
   bool show = !useAll->isChecked();
 
-  airports->setEnabled(show);
-  gliderSites->setEnabled(show);
+  airfields->setEnabled(show);
+  gliderfields->setEnabled(show);
   otherSites->setEnabled(show);
-  outlanding->setEnabled(show);
-  obstacle->setEnabled(show);
-  landmark->setEnabled(show);
-  station->setEnabled(show);
+  outlandings->setEnabled(show);
+  obstacles->setEnabled(show);
+  landmarks->setEnabled(show);
+  stations->setEnabled(show);
 }
 /** reset all dialog items to default values */
 void WaypointImpFilterDialog::slotClear()
 {
   useAll->setChecked(true);
-  airports->setChecked(false);
-  gliderSites->setChecked(false);
+  airfields->setChecked(false);
+  gliderfields->setChecked(false);
   otherSites->setChecked(false);
-  outlanding->setChecked(false);
-  obstacle->setChecked(false);
-  landmark->setChecked(false);
-  station->setChecked(false);
+  outlandings->setChecked(false);
+  obstacles->setChecked(false);
+  landmarks->setChecked(false);
+  stations->setChecked(false);
 
   slotChangeUseAll();
 
@@ -189,33 +244,35 @@ void WaypointImpFilterDialog::slotClear()
   posLat->setKFLogDegree(0);
   posLong->setKFLogDegree(0);
 
-  radius->setCurrentItem(0);
-
+  refAirport->setCurrentIndex(0);
+  radius->setCurrentIndex(4);
 }
+
 /** No descriptions */
 void WaypointImpFilterDialog::selectRadius(int n)
 {
   center = n;
 
-  switch (center) {
-  case CENTER_POS:
-    posLat->setEnabled(true);
-    posLong->setEnabled(true);
-    refAirport->setEnabled(false);
-    break;
-  case CENTER_HOMESITE:
-    // fall through
-  case CENTER_MAP:
-    posLat->setEnabled(false);
-    posLong->setEnabled(false);
-    refAirport->setEnabled(false);
-    break;
-  case CENTER_AIRPORT:
-    posLat->setEnabled(false);
-    posLong->setEnabled(false);
-    refAirport->setEnabled(true);
-    break;
-  }
+  switch (center)
+  {
+    case CENTER_POS:
+      posLat->setEnabled(true);
+      posLong->setEnabled(true);
+      refAirport->setEnabled(false);
+      break;
+    case CENTER_HOMESITE:
+      // fall through
+    case CENTER_MAP:
+      posLat->setEnabled(false);
+      posLong->setEnabled(false);
+      refAirport->setEnabled(false);
+      break;
+    case CENTER_AIRFIELD:
+      posLat->setEnabled(false);
+      posLong->setEnabled(false);
+      refAirport->setEnabled(true);
+      break;
+    }
 }
 /** No descriptions */
 int WaypointImpFilterDialog::getCenterRef()
@@ -223,26 +280,54 @@ int WaypointImpFilterDialog::getCenterRef()
   return center;
 }
 
-void WaypointImpFilterDialog::polish()
+void WaypointImpFilterDialog::loadAirfieldComboBox()
 {
-  int searchList[] = {MapContents::GliderfieldList, MapContents::AirfieldList};
+  int searchList[] = { MapContents::GliderfieldList, MapContents::AirfieldList };
 
-  QDialog::polish();
-  for(int l = 0; l < 2; l++) {
-    for(int loop = 0; loop < _globalMapContents->getListLength(searchList[l]);
-      loop++) {
-        SinglePoint *hitElement = (SinglePoint *)_globalMapContents->getElement(searchList[l], loop);
-        refAirport->insertItem(hitElement->getName());
-        airportDict.insert(hitElement->getName(), hitElement);
+  // memorize last selection
+  QString lastSelectedAirfield = refAirport->currentText();
+  int lastIndex = refAirport->currentIndex();
+
+  airportDict.clear();
+  refAirport->clear();
+
+  QStringList airfieldList;
+
+  for( int l = 0; l < 2; l++ )
+    {
+      for( int loop = 0; loop < _globalMapContents->getListLength(searchList[l]); loop++ )
+      {
+        SinglePoint *hitElement = (SinglePoint *) _globalMapContents->getElement(searchList[l], loop );
+        airfieldList.append( hitElement->getName() );
+        airportDict.insert( hitElement->getName(), hitElement );
       }
   }
-  refAirport->model()->sort(0);
+
+  airfieldList.sort();
+  refAirport->addItems( airfieldList );
+
+  if( lastIndex != -1 )
+    {
+      // Try to find the last selection.
+      refAirport->setCurrentIndex( refAirport->findText(lastSelectedAirfield) );
+    }
+  else
+    {
+      refAirport->setCurrentIndex( 0 );
+    }
 }
 
 WGSPoint WaypointImpFilterDialog::getAirportRef()
 {
   QString s = refAirport->currentText();
-  SinglePoint *sp = airportDict.find(s);
-  WGSPoint p = sp->getWGSPosition();
+
+  WGSPoint p;
+
+  if( airportDict.contains(s) )
+    {
+      SinglePoint *sp = airportDict.value(s);
+      p = sp->getWGSPosition();
+    }
+
   return p;
 }

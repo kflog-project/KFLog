@@ -1,5 +1,10 @@
 $Id$
 
+2011-02-02 Axel Pauli <axel@kflog.org>
+  * All bitBlt method calls replaced by Qt4 drawPixmap calls in class Map. That
+    improves the drawing performance too.
+  * Dialog WaypointImpFilterDialog ported to Qt4.
+
 2011-02-01 Axel Pauli <axel@kflog.org>
   * New configuration widget added which handles units for altitude,
     distances and positions.

@@ -58,8 +58,8 @@ WaypointCatalog::WaypointCatalog(const QString& name) :
   path = wayPointDir + "/" + catalogName + ".kflogwp";
 
   showAll = true;
-  showAirports = showGliderSites = showOtherSites = showObstacle = showLandmark = showOutlanding =
-  showStation = false;
+  showAirfields = showGliderfields = showOtherSites = showObstacles = showLandmarks = showOutlandings =
+  showStations = false;
 
   areaLat1 = areaLat2 = areaLong1 = areaLong2 = radiusLat = radiusLong = 1;
 }

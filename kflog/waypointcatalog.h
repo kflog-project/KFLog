@@ -9,7 +9,7 @@
 **   Copyright (c):  2001 by Harald Maier
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -22,9 +22,12 @@
   *@author Harald Maier
   */
 
-class WaypointCatalog {
-public: 
+class WaypointCatalog
+{
+public:
+
   WaypointCatalog(const QString& name = QString::null);
+
   ~WaypointCatalog();
   /** No descriptions */
   bool read(const QString &catalog);
@@ -60,13 +63,13 @@ public:
 
   /** filter for display/import */
   bool showAll;
-  bool showAirports;
-  bool showGliderSites;
+  bool showAirfields;
+  bool showGliderfields;
   bool showOtherSites;
-  bool showObstacle;
-  bool showLandmark;
-  bool showOutlanding;
-  bool showStation;
+  bool showObstacles;
+  bool showLandmarks;
+  bool showOutlandings;
+  bool showStations;
 
   int areaLat1;
   int areaLat2;
@@ -84,6 +87,7 @@ public: // Public attributes
   bool modified;
   /**  */
   QString catalogName;
+
 private: // Private attributes
   /**  */
   bool onDisc;

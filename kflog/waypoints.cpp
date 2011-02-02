@@ -3,6 +3,7 @@
                              -------------------
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier
+                               2011 by Axel Pauli
     email                : harry@kflog.org
 
     $Id$
@@ -18,8 +19,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <pwd.h>
-
 #include <QtGui>
 #include <Qt3Support>
 
@@ -32,35 +31,32 @@
 #include "wgspoint.h"
 #include "mainwindow.h"
 
-extern MainWindow *_mainWindow;
+extern MainWindow  *_mainWindow;
 extern MapContents *_globalMapContents;
 extern MapMatrix   *_globalMapMatrix;
 
-Waypoints::Waypoints(QWidget *parent, const char *name, const QString& /*catalog*/)
-  : QFrame(parent, name)
+Waypoints::Waypoints(QWidget *parent, const QString& catalog) :
+  QWidget(parent),
+  currentWaypointCatalog(0)
 {
-  currentWaypointCatalog = 0;
+  Q_UNUSED( catalog )
+
+  setObjectName( "Waypoints" );
+
   addWaypointWindow(this);
   addPopupMenu();
 
-  /*
-    if (catalog.isEmpty() == 0) {
-    slotNewWaypointCatalog();
-    }
-    else {
-    openCatalog(*catalog);
-    }
-  */
   waypointDlg = new WaypointDialog(this);
-  connect(waypointDlg, SIGNAL(addWaypoint(Waypoint *)), SLOT(slotAddWaypoint(Waypoint *)));
+
+  connect( waypointDlg, SIGNAL(addWaypoint(Waypoint *)),
+           this, SLOT(slotAddWaypoint(Waypoint *)) );
 
   importFilterDlg = new WaypointImpFilterDialog(this);
 }
 
 Waypoints::~Waypoints()
 {
-    while(!waypointCatalogs.isEmpty())
-        delete waypointCatalogs.takeFirst();
+  qDeleteAll( waypointCatalogs );
 }
 
 /** No descriptions */
@@ -279,14 +275,14 @@ bool Waypoints::saveChanges()
       if (w->modified)
         {
           QMessageBox saveBox(tr("Save changes?"),
-              tr("<qt>The waypoint file has been modified.<br>Save changes to<BR><B>%1</B></qt>").arg(w->path),
+              tr("<html>The waypoint file has been modified.<br>Save changes to<BR><B>%1</B></html>").arg(w->path),
               QMessageBox::Warning, QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
           saveBox.setButtonText(QMessageBox::Yes, tr("Save"));
           saveBox.setButtonText(QMessageBox::No, tr("Discard"));
           switch(saveBox.exec())
             {
             case QMessageBox::Yes:
-              // Hier zwischenzeitlich auf binärformat umgestellt ...
+              // Hier zwischenzeitlich auf binär format umgestellt ...
               if (!w->save()) //Binary())
                 return false;
               break;
@@ -360,13 +356,21 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
         w->elevation = waypointDlg->elevation->text().toInt();
         w->icao = waypointDlg->icao->text().upper();
         w->frequency = waypointDlg->frequency->text().toDouble();
+
         tmp = waypointDlg->runway->text();
+
         if (!tmp.isEmpty()) {
           w->runway.first = tmp.toInt();
+
+          int rw1 = w->runway.first;
+
+          w->runway.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18 );
+
         }
         else {
           w->runway = QPair<ushort, ushort>(0, 0);
         }
+
         tmp = waypointDlg->length->text();
         if (!tmp.isEmpty()) {
           w->length = tmp.toInt();
@@ -391,9 +395,11 @@ void Waypoints::slotDeleteWaypoint(Waypoint* wp)
   if (wp)
   {
     QMessageBox waypointBox(tr("Delete waypoint?"),
-                            tr("<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>").arg(wp->name),
+                            tr("<html>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</html>").arg(wp->name),
                             QMessageBox::Warning, QMessageBox::Ok, QMessageBox::Cancel, 0);
+
     waypointBox.setButtonText(QMessageBox::Ok, tr("&Delete"));
+
     if (waypointBox.exec()== QMessageBox::Ok)
     {
       currentWaypointCatalog->removeWaypoint(wp->name);
@@ -411,9 +417,10 @@ void Waypoints::slotDeleteWaypoint()
   if (item != 0) {
     QString tmp = item->text(colName);
     QMessageBox waypointBox(tr("Delete waypoint?"),
-                            tr("<qt>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</qt>").arg(tmp),
+                            tr("<html>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</html>").arg(tmp),
                             QMessageBox::Warning, QMessageBox::Ok, QMessageBox::Cancel, 0);
     waypointBox.setButtonText(QMessageBox::Ok, tr("&Delete"));
+
     if (waypointBox.exec() == QMessageBox::Ok)
     {
       currentWaypointCatalog->removeWaypoint(tmp);
@@ -421,7 +428,7 @@ void Waypoints::slotDeleteWaypoint()
       delete item;
 
       // eggert@kflog.org
-      // this must be done to make the deletion effective immediatly (map display)
+      // this must be done to make the deletion effective immediately (map display)
       fillWaypoints();
     }
   }
@@ -449,12 +456,12 @@ void Waypoints::fillWaypoints()
       case BaseMapElement::MilAirport:
       case BaseMapElement::CivMilAirport:
       case BaseMapElement::Airfield:
-        if (!currentWaypointCatalog->showAirports) {
+        if (!currentWaypointCatalog->showAirfields) {
           continue;
         }
         break;
       case BaseMapElement::Gliderfield:
-        if (!currentWaypointCatalog->showGliderSites) {
+        if (!currentWaypointCatalog->showGliderfields) {
           continue;
         }
         break;
@@ -559,7 +566,7 @@ void Waypoints::slotCloseWaypointCatalog()
 
   if(currentWaypointCatalog->modified) {
     switch(QMessageBox::warning(this, tr("Save"),
-           "<qt>" + tr("Save changes to<BR><B>%1</B>").arg(currentWaypointCatalog->path) + "</qt>",
+           "<html>" + tr("Save changes to<BR><B>%1</B>").arg(currentWaypointCatalog->path) + "</html>",
            QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel)) {
     case QMessageBox::Yes:
       if (!currentWaypointCatalog->save()) {
@@ -603,25 +610,25 @@ void Waypoints::slotImportWaypointFromMap()
   if (importFilterDlg->exec() == QDialog::Accepted) {
     getFilterData();
 
-    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showAirports) {
+    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showAirfields) {
       searchLists.append(MapContents::AirfieldList);
     }
-    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showGliderSites) {
+    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showGliderfields) {
       searchLists.append(MapContents::GliderfieldList);
     }
     if (currentWaypointCatalog->showAll || currentWaypointCatalog->showOtherSites) {
       searchLists.append(MapContents::AddSitesList);
     }
-    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showObstacle) {
+    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showObstacles) {
       searchLists.append(MapContents::ObstacleList);
     }
-    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showLandmark) {
+    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showLandmarks) {
       searchLists.append(MapContents::LandmarkList);
     }
-    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showOutlanding) {
+    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showOutlandings) {
       searchLists.append(MapContents::OutLandingList);
     }
-    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showStation) {
+    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showStations) {
       searchLists.append(MapContents::StationList);
     }
 
@@ -713,29 +720,33 @@ void Waypoints::slotImportWaypointFromMap()
 void Waypoints::slotFilterWaypoints()
 {
   // @AP: check, if a WaypointCatalog is available, otherwise a core
-  // dump will occure
+  // dump will occur.
+  if( !currentWaypointCatalog )
+    {
+      return; // no catalog loaded
+    }
 
-  if (!currentWaypointCatalog) {
-    return; // no catalog loaded
-  }
-
-  if (importFilterDlg->exec() == QDialog::Accepted) {
-    getFilterData();
-    fillWaypoints();
-  }
+  if( importFilterDlg->exec() == QDialog::Accepted )
+    {
+      getFilterData();
+      fillWaypoints();
+    }
 }
 
 /** add a new waypoint from outside */
 void Waypoints::slotAddWaypoint(Waypoint *w)
 {
-  if (!currentWaypointCatalog) { //let's make sure we have a waypointcatalog
-    WaypointCatalog * wpc=new WaypointCatalog(tr("unnamed"));
+  if (!currentWaypointCatalog) {
+    //let's make sure we have a waypoint catalog
+    WaypointCatalog* wpc = new WaypointCatalog(tr("unnamed"));
     slotAddCatalog(wpc);
   }
 
   int loop = 1;
+
   if (w->name.isEmpty()) {
     w->name.sprintf("WPT%03d", loop);
+
     while(currentWaypointCatalog->findWaypoint(w->name) && loop < 1000) {
       w->name.sprintf("WPT%03d", ++loop);
     }
@@ -793,38 +804,39 @@ void Waypoints::getFilterData()
   extern QSettings _settings;
 
   currentWaypointCatalog->showAll = importFilterDlg->useAll->isChecked();
-  currentWaypointCatalog->showAirports = importFilterDlg->airports->isChecked();
-  currentWaypointCatalog->showGliderSites = importFilterDlg->gliderSites->isChecked();
+  currentWaypointCatalog->showAirfields = importFilterDlg->airfields->isChecked();
+  currentWaypointCatalog->showGliderfields = importFilterDlg->gliderfields->isChecked();
   currentWaypointCatalog->showOtherSites = importFilterDlg->otherSites->isChecked();
-  currentWaypointCatalog->showObstacle = importFilterDlg->obstacle->isChecked();
-  currentWaypointCatalog->showLandmark = importFilterDlg->landmark->isChecked();
-  currentWaypointCatalog->showOutlanding = importFilterDlg->outlanding->isChecked();
-  currentWaypointCatalog->showStation = importFilterDlg->station->isChecked();
+  currentWaypointCatalog->showObstacles = importFilterDlg->obstacles->isChecked();
+  currentWaypointCatalog->showLandmarks = importFilterDlg->landmarks->isChecked();
+  currentWaypointCatalog->showOutlandings = importFilterDlg->outlandings->isChecked();
+  currentWaypointCatalog->showStations = importFilterDlg->stations->isChecked();
 
   currentWaypointCatalog->areaLat1 = importFilterDlg->fromLat->KFLogDegree();
   currentWaypointCatalog->areaLat2 = importFilterDlg->toLat->KFLogDegree();
   currentWaypointCatalog->areaLong1 = importFilterDlg->fromLong->KFLogDegree();
   currentWaypointCatalog->areaLong2 = importFilterDlg->toLong->KFLogDegree();
 
-  switch (importFilterDlg->getCenterRef()) {
-  case CENTER_POS:
-    currentWaypointCatalog->radiusLat  = importFilterDlg->posLat->KFLogDegree();
-    currentWaypointCatalog->radiusLong = importFilterDlg->posLong->KFLogDegree();
-    break;
-  case CENTER_HOMESITE:
-    currentWaypointCatalog->radiusLat  = _settings.value("/Homesite/Latitude").toInt();
-    currentWaypointCatalog->radiusLong = _settings.value("/Homesite/Longitude").toInt();
-    break;
-  case CENTER_MAP:
-    p = _globalMapMatrix->getMapCenter(false);
-    currentWaypointCatalog->radiusLat  = p.lat();
-    currentWaypointCatalog->radiusLong = p.lon();
-    break;
-  case CENTER_AIRPORT:
-    p = importFilterDlg->getAirportRef();
-    currentWaypointCatalog->radiusLat  = p.lat();
-    currentWaypointCatalog->radiusLong = p.lon();
-    break;
+  switch (importFilterDlg->getCenterRef())
+  {
+    case CENTER_POS:
+      currentWaypointCatalog->radiusLat  = importFilterDlg->posLat->KFLogDegree();
+      currentWaypointCatalog->radiusLong = importFilterDlg->posLong->KFLogDegree();
+      break;
+    case CENTER_HOMESITE:
+      currentWaypointCatalog->radiusLat  = _settings.value("/Homesite/Latitude").toInt();
+      currentWaypointCatalog->radiusLong = _settings.value("/Homesite/Longitude").toInt();
+      break;
+    case CENTER_MAP:
+      p = _globalMapMatrix->getMapCenter(false);
+      currentWaypointCatalog->radiusLat  = p.lat();
+      currentWaypointCatalog->radiusLong = p.lon();
+      break;
+    case CENTER_AIRFIELD:
+      p = importFilterDlg->getAirportRef();
+      currentWaypointCatalog->radiusLat  = p.lat();
+      currentWaypointCatalog->radiusLong = p.lon();
+      break;
   }
 
   currentWaypointCatalog->radiusSize = importFilterDlg->radius->currentText().toDouble();

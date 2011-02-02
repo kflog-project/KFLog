@@ -15,6 +15,18 @@
  *                                                                         *
  ***************************************************************************/
 
+/**
+ * \class Wayoints
+ *
+ * \author Harald Maier, Axel Pauli
+ *
+ * \short Waypoint widget for display an interface
+ *
+ * \date 2001-2011
+ *
+ * \version $Id$
+ */
+
 #ifndef WAYPOINTS_H
 #define WAYPOINTS_H
 
@@ -25,22 +37,22 @@
 #include "waypointimpfilterdialog.h"
 
 #include <QComboBox>
-#include <QFrame>
 #include <q3popupmenu.h>
 #include <QSplitter>
+#include <QWidget>
 
-
-/**
- *@short Waypoint-frame for display in interface
- *
- *@author Harald Maier
- *@version (unkown)
- */
-
-class Waypoints : public QFrame  {
+class Waypoints : public QWidget
+{
   Q_OBJECT
-    public:
-  Waypoints(QWidget *parent = 0, const char *name = 0, const QString& catalog = QString::null);
+
+private:
+
+  Q_DISABLE_COPY ( Waypoints )
+
+public:
+
+  Waypoints(QWidget *parent = 0, const QString& catalog = QString::null);
+
   ~Waypoints();
   /**
    * save changes in catalogs, return success
@@ -50,7 +62,9 @@ class Waypoints : public QFrame  {
    * @return the current waypoint catalog
    */
   WaypointCatalog *getCurrentCatalog();
- private: // Private methods
+
+private: // Private methods
+
   /**
    * No descriptions
    */
@@ -64,7 +78,9 @@ class Waypoints : public QFrame  {
    */
   void getFilterData();
   void openCatalog(QString &catalog);
+
  private: // Private attributes
+
   /** popup menu for waypoint's */
   Q3PopupMenu *wayPointPopup;
   Q3PopupMenu *catalogCopySubPopup;
@@ -73,6 +89,7 @@ class Waypoints : public QFrame  {
   /**  */
   QComboBox *catalogName;
   KFLogListView *waypoints;
+
   /** some menu items */
   int idWaypointCatalogSave;
   int idWaypointCatalogSaveAs;
@@ -91,7 +108,9 @@ class Waypoints : public QFrame  {
 
   /** all loaded catalogs */
   QList<WaypointCatalog*> waypointCatalogs;
+
   WaypointCatalog *currentWaypointCatalog;
+
   /**  */
   WaypointDialog *waypointDlg;
   WaypointImpFilterDialog *importFilterDlg;
@@ -111,7 +130,8 @@ class Waypoints : public QFrame  {
   int colSurface;
   int colComment;
 
-  private slots: // Private slots
+private slots:
+
   void slotDeleteWaypoint();
   void slotEditWaypoint();
   /** create a new catalog */
@@ -167,13 +187,14 @@ class Waypoints : public QFrame  {
    * No description
    */
    void slotSetWaypointCatalogName(QString catalog);
- signals: // Signals
+
+ signals:
   /**
    * Request to copy the referenced waypoint into the current task
    */
   void copyWaypoint2Task(Waypoint *);
   /**
-   * signal to emit when current waypointcatalog has changed.
+   * signal to emit when current waypoint catalog has changed.
    */
   void waypointCatalogChanged(WaypointCatalog *);
   /**

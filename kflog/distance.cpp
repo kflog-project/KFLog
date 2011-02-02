@@ -2,7 +2,9 @@
                           distance.cpp  -  description
                              -------------------
     begin                : Sat Jul 20 2002
-    copyright            : (C) 2002 by André Somers, 2007 Axel Pauli
+    copyright            : (C) 2002 by André Somers
+                               2007-2011 by Axel Pauli
+
     email                : andre@kflog.org
 
     $Id$
@@ -22,7 +24,7 @@
 
 #include "distance.h"
 
-//initializer for static membervariable
+//initializer for static member variable
 Distance::distanceUnit Distance::_distanceUnit=kilometers;
 
 const double Distance::mFromKm=1000.0;    // 1000.0 meters in 1 km.
@@ -136,6 +138,36 @@ double Distance::operator / (const Distance& op) const
   return _dist / op._dist;
 }
 
+/**
+ * @returns a string for the currently set distance unit.
+ */
+QString Distance::getUnitText()
+{
+  QString unit;
+
+  switch( _distanceUnit )
+    {
+    case meters:
+      unit = "m";
+      break;
+    case feet:
+      unit = "ft";
+      break;
+    case kilometers:
+      unit = "km";
+      break;
+    case miles:
+      unit = "SM";
+      break;
+    case nautmiles:
+      unit = "NM";
+      break;
+    default:
+      unit = "m";
+    }
+
+  return unit;
+}
 
 QString Distance::getText(bool withUnit, uint precision, uint chopOrder) const
 {
@@ -169,7 +201,7 @@ QString Distance::getText(bool withUnit, uint precision, uint chopOrder) const
   }
 
   QString prec;
-  //see if we need to lower the precission
+  //see if we need to lower the precision
   if (chopOrder>0) {
     while (precision>0 && pow(10,chopOrder)<=dist) {
       precision--;

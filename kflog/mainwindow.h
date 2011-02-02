@@ -133,7 +133,7 @@ public slots:
   /**
    * Opens the file given in url.
    */
-  void slotOpenFile(const char* surl);
+  void slotOpenFile(const QUrl& url);
   /**
    * Opens a task-file-open-dialog.
    */

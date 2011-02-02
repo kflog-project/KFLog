@@ -6,10 +6,10 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by Andr� Somers
+**   Copyright (c):  2003 by André Somers
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -448,18 +448,19 @@ void ObjectTree::slotSaveAllTask()
 
 void ObjectTree::dragEnterEvent(QDragEnterEvent* event)
 {
-  event->accept(Q3TextDrag::canDecode(event));
+  if( event->mimeData()->hasUrls() )
+    {
+      event->acceptProposedAction();
+    }
 }
 
 void ObjectTree::dropEvent(QDropEvent* event)
 {
-  QStringList dropList;
+  QList<QUrl> urlList = event->mimeData()->urls();
 
-  if(Q3UriDrag::decodeToUnicodeUris(event, dropList))
+  for( int i = 0; i < urlList.size(); i++ )
     {
-      for(QStringList::Iterator it = dropList.begin();
-              it != dropList.end(); it++)
-          emit openFile((*it).toLatin1().data());
+      emit openFile( urlList.at(i) );
     }
 }
 

@@ -7,9 +7,9 @@
                                2007-2011 by Axel Pauli
 
     email                : andre@kflog.org
- 
+
     $Id$
- 
+
 ***************************************************************************
 *                                                                         *
 *   This program is free software; you can redistribute it and/or modify  *
@@ -144,6 +144,11 @@ class Distance
   {
     return Distance(_dist * op);
   };
+
+  /**
+   * @returns a string for the currently set distance unit.
+   */
+  static QString getUnitText();
 
   /**
    * Represent a distance as a string.

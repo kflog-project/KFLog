@@ -216,7 +216,7 @@ int main(int argc, char **argv)
           _settings.setValue( "/GeneralOptions/ShowWaypointWarnings", false );
         }
 
-      _mainWindow->slotOpenFile( fileOpenIGC.toLatin1().data() );
+      _mainWindow->slotOpenFile( QUrl(fileOpenIGC) );
 
       if( exportPNG )
         {

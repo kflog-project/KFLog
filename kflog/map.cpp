@@ -18,7 +18,6 @@
 #include <cmath>
 
 #include <QtGui>
-#include <Qt3Support>
 
 #include "airfield.h"
 #include "airspace.h"
@@ -236,14 +235,14 @@ void Map::mouseMoveEvent(QMouseEvent* event)
               bool found = __getTaskWaypoint(current, &wp, taskPointList);
               if (!found) // check wp catalog
               found = __getTaskWaypoint(current, &wp, *wpList);
+
               if(found)
-//              if(__getTaskWaypoint(current, &wp, taskPointList))
                 {
                   isSnapping = true;
 
                   point = _globalMapMatrix->map(_globalMapMatrix->wgsToMap(wp.origP));
 
-                  // Eigentlich k�nnte man dann auf point verzichten?
+                  // Eigentlich könnte man dann auf point verzichten?
                   preSnapPoint = point;
                 }
               else
@@ -263,7 +262,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                     }
                   else
                     {
-                      //anh�ngen
+                      //anhängen
                       tempTaskPointList.append(new Waypoint);
                       w = tempTaskPointList.last();
                     }
@@ -293,7 +292,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                     }
                   else
                     {
-                      // au�erhalb der Karte
+                      // außerhalb der Karte
                       prePlanPos.setX(-999);
                       prePlanPos.setY(-999);
                     }
@@ -316,7 +315,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 //                      bitPlanMask.fill(Qt::color0);
 //                      pixPlan.fill(white);
 //                      __showLayer();
-                      // tempor�rer Weg
+                      // temporärer Weg
                       if(planning == 3)
                         {
                           //verschieben
@@ -329,7 +328,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
                         }
                       else
                         {
-                          //anh�ngen
+                          //anhängen
                           tempTaskPointList.append(new Waypoint);
                           tempTaskPointList.last()->name = "test";
                           QPoint tmp(_globalMapMatrix->mapToWgs(event->pos()));
@@ -348,7 +347,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
               }
             else
               {
-                // au�erhalb der Karte
+                // außerhalb der Karte
                 prePlanPos.setX(-999);
                 prePlanPos.setY(-999);
               }
@@ -367,8 +366,10 @@ void Map::mouseMoveEvent(QMouseEvent* event)
     {
       if(prePos.x() >= 0)
         {
-          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-             prePos.x() - 20, prePos.y() - 20, 40, 40);
+          QPainter p(this);
+          p.drawPixmap( prePos.x() - 20, prePos.y() - 20,
+                        pixBuffer,
+                        prePos.x() - 20, prePos.y() - 20, 40, 40);
         }
 
       BaseFlightElement *f = _globalMapContents->getFlight();
@@ -377,12 +378,15 @@ void Map::mouseMoveEvent(QMouseEvent* event)
         {
           flightPoint cP;
           int index;
+
           if ((index = f->searchPoint(event->pos(), cP)) != -1)
             {
               emit showFlightPoint(_globalMapMatrix->mapToWgs(event->pos()), cP);
               prePos = _globalMapMatrix->map(cP.projP);
               preIndex = index;
-              bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+
+              QPainter p(this);
+              p.drawPixmap( prePos.x() - 20, prePos.y() - 20, pixBuffer );
             }
           else
             {
@@ -436,14 +440,15 @@ void Map::mouseMoveEvent(QMouseEvent* event)
     }
 
     //warning("dragzoomrect: %d, event->state: %d (leftbutton=%d)", dragZoomRect, event->state(), LeftButton);
-    if ((!dragZoomRect) && (event->state() == Qt::LeftButton)){
-      //start dragZoom
-      setCursor(Qt::CrossCursor);
-      isZoomRect = true;
-      beginDrag = event->pos();
-      sizeDrag = QPoint(0,0);
-      dragZoomRect=true;
-    }
+    if( (!dragZoomRect) && (event->state() == Qt::LeftButton) )
+      {
+        //start dragZoom
+        setCursor( Qt::CrossCursor );
+        isZoomRect = true;
+        beginDrag = event->pos();
+        sizeDrag = QPoint( 0, 0 );
+        dragZoomRect = true;
+      }
 
 }
 
@@ -496,10 +501,9 @@ Waypoint* Map::findWaypoint (const QPoint& current)
   extern MapContents *_globalMapContents;
   extern MapMatrix *_globalMapMatrix;
   Waypoint *wp;
+
   foreach(wp, *_globalMapContents->getWaypointList())
-//  for (Q3PtrListIterator<Waypoint> it (*(_globalMapContents->getWaypointList())); it.current(); ++it)
   {
-//    Waypoint* wp = it.current();
     QPoint sitePos (_globalMapMatrix->map(_globalMapMatrix->wgsToMap(wp->origP)));
     double dX = abs(sitePos.x() - current.x());
     double dY = abs(sitePos.y() - current.y());
@@ -510,6 +514,7 @@ Waypoint* Map::findWaypoint (const QPoint& current)
       return wp;
     }
   }
+
   return 0;
 }
 
@@ -657,7 +662,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
     return;
   }
 
-  // At last serach for airspaces.
+  // At last search for airspaces.
   text += "<html><table border=1><tr><th align=left>" +
           tr("Airspace&nbsp;Structure") +
           "</th></tr>";
@@ -713,7 +718,6 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
         {
           if(wp.projP == taskPointList.at(n)->projP)
             {
-//              warning("lösche Punkt %d", n);
               taskPointList.removeAt(n);
             }
         }
@@ -737,8 +741,6 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
           if(planning == 1)
             {
               // neuen Punkt an Task Liste anhängen
-//              warning("hänge Punkt an");
-
               taskPointList.append(new Waypoint);
               w = taskPointList.last();
 
@@ -778,7 +780,6 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
           else if(planning == 3)
             {
               planning = 2;
-//              warning("insert - verschiebe Punkt?");
               taskPointList.insert(moveWPindex,new Waypoint);
               w = taskPointList.at(moveWPindex);
 
@@ -859,7 +860,6 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
   // Aufgabe zeichnen
   if(taskPointList.count() > 0)
     {
-//      warning("zeichen");
       pixPlan.fill(Qt::white);
       ((FlightTask *)baseFlight)->setWaypointList(taskPointList);
       __drawPlannedTask();
@@ -891,6 +891,7 @@ qWarning("key Release");
 void Map::mouseReleaseEvent(QMouseEvent* event)
 {
   extern MapMatrix *_globalMapMatrix;
+
   if (isZoomRect)
     {
       dragZoomRect=false;
@@ -940,12 +941,17 @@ void Map::mousePressEvent(QMouseEvent* event)
   qDebug() << "Map::mousePressEvent";
 
   // First: delete the cursor, if visible:
-  if(prePos.x() >= 0)
-      bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-          prePos.x() - 20, prePos.y() - 20, 40, 40);
+  if( prePos.x() >= 0 )
+    {
+      QPainter p( this );
+      p.drawPixmap( prePos.x() - 20, prePos.y() - 20,
+                    pixBuffer,
+                    prePos.x() - 20, prePos.y() - 20, 40, 40);
+    }
 
   if( isZoomRect )
-    { // Zooming
+    {
+      // Zooming
       beginDrag = event->pos();
       sizeDrag = QPoint( 0, 0 );
       dragZoomRect = true;
@@ -1324,8 +1330,6 @@ void Map::__drawFlight()
 
 void Map::__drawPlannedTask(bool solid)
 {
-//warning("Map::__drawPlannedTask()");
-//  extern const MapMatrix *_globalMapMatrix;
   extern MapContents *_globalMapContents;
 
   QPainter planP;
@@ -1377,19 +1381,25 @@ void Map::resizeEvent(QResizeEvent* event)
     }
 }
 
-void Map::dragEnterEvent(QDragEnterEvent* event)
+void Map::dragEnterEvent( QDragEnterEvent* event )
 {
-  event->accept(Q3TextDrag::canDecode(event));
+  qDebug() << "Map::dragEnterEvent()";
+
+  if( event->mimeData()->hasUrls() )
+    {
+      event->acceptProposedAction();
+    }
 }
 
-void Map::dropEvent(QDropEvent* event)
+void Map::dropEvent( QDropEvent* event )
 {
-  QStringList dropList;
+  qDebug() << "Map::dropEvent";
 
-  if(Q3UriDrag::decodeToUnicodeUris(event, dropList))
+  QList<QUrl> urlList = event->mimeData()->urls();
+
+  for( int i = 0; i < urlList.size(); i++ )
     {
-      for(QStringList::Iterator it = dropList.begin(); it != dropList.end(); it++)
-          emit openFile(*it);
+      emit openFile( urlList.at(i) );
     }
 }
 
@@ -1560,7 +1570,6 @@ void Map::slotActivatePlanning()
       pixPlan.fill(Qt::white);
       prePlanPos.setX(-999);
       prePlanPos.setY(-999);
-//warning("start");
       emit setStatusBarMsg(QObject::tr("To finish the planing, press <CTRL> and the right mouse button!"));
     }
   else
@@ -1570,11 +1579,6 @@ void Map::slotActivatePlanning()
       __showLayer();
       emit setStatusBarMsg("");
       emit taskPlanningEnd();
-//warning("ende");
-/*          pixPlan.fill(white);
-          prePlanPos.setX(-999);
-          prePlanPos.setY(-999);
-*/
     }
 }
 
@@ -1601,54 +1605,69 @@ void Map::__showLayer()
   update();
 }
 
-void Map::slotDrawCursor(const QPoint& p1, const QPoint& p2)
+void Map::slotDrawCursor( const QPoint& p1, const QPoint& p2 )
 {
-//FIXME: Qt gives the following runtime warning in this function:
-//QPainter::begin: Widget painting can only begin as a result of a paintEvent
+  QPoint pos1( _globalMapMatrix->map( p1 ) ),
+         pos2( _globalMapMatrix->map( p2 ) );
 
-  QPoint pos1(_globalMapMatrix->map(p1)), pos2(_globalMapMatrix->map(p2));
+  QPoint prePos1( _globalMapMatrix->map( preCur1 ) ), prePos2(
+                  _globalMapMatrix->map( preCur2 ) );
 
-  QPoint prePos1(_globalMapMatrix->map(preCur1)),
-         prePos2(_globalMapMatrix->map(preCur2));
-
-  if(preCur1.x() > -50)
+  if( preCur1.x() > -50 )
     {
-      bitBlt(&pixBuffer, prePos1.x() - 32, prePos1.y() - 32, &pixCursorBuffer1);
-      bitBlt(this, prePos1.x() - 32, prePos1.y() - 32, &pixCursorBuffer1);
+      QPainter p1( &pixBuffer );
+      p1.drawPixmap( prePos1.x() - 32, prePos1.y() - 32, pixCursorBuffer1 );
+
+      QPainter p2( this );
+      p2.drawPixmap( prePos1.x() - 32, prePos1.y() - 32, pixCursorBuffer1 );
     }
-  if(preCur2.x() > -50)
+
+  if( preCur2.x() > -50 )
     {
-      bitBlt(&pixBuffer, prePos2.x() - 0, prePos2.y() - 32, &pixCursorBuffer2);
-      bitBlt(this, prePos2.x() - 0, prePos2.y() - 32, &pixCursorBuffer2);
+      QPainter p1( &pixBuffer );
+      p1.drawPixmap( prePos2.x() - 0, prePos2.y() - 32, pixCursorBuffer2 );
+
+      QPainter p2( this );
+      p2.drawPixmap( prePos2.x() - 0, prePos2.y() - 32, pixCursorBuffer2 );
     }
-  //
+
   // copying the pixmaps can crash the x-server, if the coordinates
   // are out of range.
   //
   //                                                Fixed 2001-12-01
   //
-  if(pos1.x() > -50 && pos1.x() < width() + 50 &&
-          pos1.y() > -50 && pos1.y() < height() + 50)
-      bitBlt(&pixCursorBuffer1, 0, 0, &pixBuffer,
-          pos1.x() - 32, pos1.y() - 32, 32, 32);
-
-  if(pos2.x() > -50 && pos2.x() < width() + 50 &&
-          pos2.y() > -50 && pos2.y() < height() + 50)
-      bitBlt(&pixCursorBuffer2, 0, 0, &pixBuffer,
-          pos2.x() - 0, pos2.y() - 32, 32, 32);
-
-  if(pos1.x() > -50 && pos1.x() < width() + 50 &&
-          pos1.y() > -50 && pos1.y() < height() + 50)
+  if( pos1.x() > -50 && pos1.x() < width() + 50 &&
+      pos1.y() > -50 && pos1.y() < height() + 50 )
     {
-      bitBlt(this, pos1.x() - 32, pos1.y() - 32, &pixCursor1);
-      bitBlt(&pixBuffer, pos1.x() - 32, pos1.y() - 32, &pixCursor1);
+      QPainter p( &pixCursorBuffer1 );
+      p.drawPixmap( 0, 0, pixBuffer, pos1.x() - 32, pos1.y() - 32, 32, 32);
     }
 
-  if(pos2.x() > -50 && pos2.x() < width() + 50 &&
-          pos2.y() > -50 && pos2.y() < height() + 50)
+  if( pos2.x() > -50 && pos2.x() < width() + 50 &&
+      pos2.y() > -50 && pos2.y() < height() + 50 )
     {
-      bitBlt(this, pos2.x() - 0, pos2.y() - 32, &pixCursor2);
-      bitBlt(&pixBuffer, pos2.x() - 0, pos2.y() - 32, &pixCursor2);
+      QPainter p( &pixCursorBuffer2 );
+      p.drawPixmap( 0, 0, pixBuffer, pos2.x() - 0, pos2.y() - 32, 32, 32);
+    }
+
+  if( pos1.x() > -50 && pos1.x() < width() + 50 &&
+      pos1.y() > -50 && pos1.y() < height() + 50 )
+    {
+      QPainter p1( this );
+      p1.drawPixmap( pos1.x() - 32, pos1.y() - 32, pixCursor1 );
+
+      QPainter p2( &pixBuffer );
+      p2.drawPixmap( pos1.x() - 32, pos1.y() - 32, pixCursor1);
+    }
+
+  if( pos2.x() > -50 && pos2.x() < width() + 50 &&
+      pos2.y() > -50 && pos2.y() < height() + 50 )
+    {
+      QPainter p1( this );
+      p1.drawPixmap( pos2.x() - 0, pos2.y() - 32, pixCursor2 );
+
+      QPainter p2( &pixBuffer );
+      p2.drawPixmap( pos2.x() - 0, pos2.y() - 32, pixCursor2 );
     }
 
   preCur1 = p1;
@@ -1664,7 +1683,7 @@ void Map::slotZoomRect()
 void Map::slotCenterToWaypoint(const int id)
 {
   extern MapContents *_globalMapContents;
-  extern MapMatrix *_globalMapMatrix;
+  extern MapMatrix   *_globalMapMatrix;
 
   if(id >= _globalMapContents->getFlight()->getWPList().count())
     {
@@ -1723,8 +1742,8 @@ void Map::slotCenterToFlight()
 void Map::slotCenterToTask()
 {
   extern MapContents *_globalMapContents;
-  extern MapMatrix *_globalMapMatrix;
-  BaseFlightElement *f = _globalMapContents->getFlight();
+  extern MapMatrix   *_globalMapMatrix;
+  BaseFlightElement  *f = _globalMapContents->getFlight();
 
   if(f)
     {
@@ -1756,9 +1775,9 @@ void Map::slotCenterToTask()
         }
 
       // check if the Rectangle is zero
-      if(!r.isNull())
+      if( !r.isNull() )
         {
-          _globalMapMatrix->centerToRect(r);
+          _globalMapMatrix->centerToRect( r );
           __redrawMap();
         }
     }
@@ -1770,13 +1789,13 @@ void Map::slotCenterToTask()
  */
 void Map::slotAnimateFlightStart()
 {
-  extern MapMatrix *_globalMapMatrix;
+  extern MapMatrix   *_globalMapMatrix;
   extern MapContents *_globalMapContents;
   QPoint pos;
   QPixmap pix;
   flightPoint cP;
 
-  Flight *f = (Flight *)_globalMapContents->getFlight();
+  Flight *f = (Flight *) _globalMapContents->getFlight();
 
   if(f)
     {
@@ -1813,33 +1832,45 @@ void Map::slotAnimateFlightStart()
       switch(f->getObjectType())
         {
           case BaseMapElement::Flight:
-            cP = f->getPoint(0);
-            prePos = _globalMapMatrix->map(cP.projP);
-            pos = _globalMapMatrix->map(cP.projP);
-            pix = f->getLastAnimationPixmap();
-            pix.paintEngine()->drawPixmap(QRect(QPoint(0, 0), pixBuffer.size()), pixBuffer, QRect(pos.x(), pos.y()-32, 32, 32));
-//            bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
-            f->setLastAnimationPos(pos);
-            f->setLastAnimationPixmap(pix);
-            // put flag
-            bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2 );
+            {
+              cP = f->getPoint(0);
+              prePos = _globalMapMatrix->map(cP.projP);
+              pos = _globalMapMatrix->map(cP.projP);
+              pix = f->getLastAnimationPixmap();
+
+              QPainter p1( &pix );
+              p1.drawPixmap( 0, 0, pixBuffer, pos.x(), pos.y()-32, 32, 32 );
+
+              f->setLastAnimationPos(pos);
+              f->setLastAnimationPixmap(pix);
+
+              // put flag
+              QPainter p2( &pixBuffer );
+              p2.drawPixmap( pos.x(), pos.y()-32, pixCursor2 );
+            }
            break;
 
           case BaseMapElement::FlightGroup:
             // loop through all and set animation index to start
               {
                 QList<Flight*> flightList = ((FlightGroup *)f)->getFlightList();
+
                 for(int loop = 0; loop < flightList.count(); loop++)
                   {
                     cP = f->getPoint(0);
                     pos = _globalMapMatrix->map(cP.projP);
                     pix = f->getLastAnimationPixmap();
-                    pix.paintEngine()->drawPixmap(QRect(QPoint(0, 0), pixBuffer.size()), pixBuffer, QRect(pos.x(), pos.y()-32, 32, 32));
-    //                bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
+
+                    QPainter p1( &pix );
+                    p1.drawPixmap( 0, 0, pixBuffer, pos.x(), pos.y()-32, 32, 32 );
+
                     f->setLastAnimationPos(pos);
                     f->setLastAnimationPixmap(pix);
+
                     // put flag
-                    bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2 );
+                    QPainter p2( &pixBuffer );
+                    p2.drawPixmap( pos.x(), pos.y()-32, pixCursor2 );
+
                   }
               }
             break;
@@ -1862,7 +1893,7 @@ void Map::slotAnimateFlightTimeout()
 {
   extern MapMatrix *_globalMapMatrix;
   flightPoint cP; //, prevP;
-  Flight *f  = this->flightToAnimate; // = (Flight *)_globalMapContents->getFlight();
+  Flight *f  = this->flightToAnimate;
   bool bDone = true;
   QPoint lastpos, pos;
   QPixmap pix;
@@ -1872,61 +1903,88 @@ void Map::slotAnimateFlightTimeout()
       switch(f->getObjectType())
         {
           case BaseMapElement::Flight:
-            f->setAnimationNextIndex();
-            if (f->isAnimationActive())
-                      bDone = false;
-            //write info from current point on statusbar
-            cP = f->getPoint((f->getAnimationIndex()));
-            pos = _globalMapMatrix->map(cP.projP);
-            lastpos = f->getLastAnimationPos();
-            pix = f->getLastAnimationPixmap();
-            emit showFlightPoint(_globalMapMatrix->mapToWgs(pos), cP);
-            // erase prev indicator-flag
-            bitBlt(&pixBuffer, lastpos.x(), lastpos.y()-32, &pix);
+            {
+              f->setAnimationNextIndex();
 
-//            bitBlt(&pixBuffer, lastpos.x()-100, lastpos.y()-32, &pix);
-                  // redraw flight up to this point, blt the pixmap onto the already created pixmap
-            __drawFlight();
-            pixFlight.setMask(bitFlightMask);
-            bitBlt(&pixBuffer, 0, 0, &pixFlight);
-            //save for next timeout
-            pix.paintEngine()->drawPixmap(QRect(QPoint(0, 0), pixBuffer.size()), pixBuffer, QRect(pos.x(), pos.y()-32, 32, 32));
-            //bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
-            f->setLastAnimationPixmap(pix);
-            f->setLastAnimationPos(pos);
-            // add indicator-flag
-            bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2);
+              if( f->isAnimationActive() )
+              {
+                bDone = false;
+              }
+
+              //write info from current point on statusbar
+              cP = f->getPoint((f->getAnimationIndex()));
+              pos = _globalMapMatrix->map(cP.projP);
+              lastpos = f->getLastAnimationPos();
+              pix = f->getLastAnimationPixmap();
+              emit showFlightPoint(_globalMapMatrix->mapToWgs(pos), cP);
+
+              // erase prev indicator-flag
+              QPainter p1( &pixBuffer );
+              p1.drawPixmap( lastpos.x(), lastpos.y()-32, pix );
+
+              // redraw flight up to this point, blt the pixmap onto the already created pixmap
+              __drawFlight();
+              pixFlight.setMask(bitFlightMask);
+              QPainter p2( &pixBuffer );
+              p2.drawPixmap( 0, 0, pixFlight );
+
+              //save for next timeout
+              QPainter p3( &pix );
+              p3.drawPixmap( 0, 0, pixBuffer, pos.x(), pos.y()-32, 32, 32 );
+
+              f->setLastAnimationPixmap(pix);
+              f->setLastAnimationPos(pos);
+
+              // add indicator-flag
+              QPainter p4( &pixBuffer );
+              p4.drawPixmap( pos.x(), pos.y()-32,  pixCursor2 );
+            }
+
             break;
+
           case BaseMapElement::FlightGroup:
             // loop through all and set animation index to start
             {
-              QList<Flight*> flightList = ((FlightGroup*)flightToAnimate)->getFlightList();
+              QList<Flight*> flightList = ((FlightGroup *) flightToAnimate)->getFlightList();
 
               for(int loop = 0; loop < flightList.count(); loop++)
                 {
-                              f = flightList.at(loop);
+                  f = flightList.at(loop);
                   f->setAnimationNextIndex();
+
                   if (f->isAnimationActive())
-                                   bDone = false;
+                    {
+                      bDone = false;
+                    }
+
                   //write info from current point on statusbar
                   cP = f->getPoint((f->getAnimationIndex()));
                   pos = _globalMapMatrix->map(cP.projP);
                   lastpos = f->getLastAnimationPos();
                   pix = f->getLastAnimationPixmap();
                   emit showFlightPoint(_globalMapMatrix->mapToWgs(pos), cP);
+
                   // erase prev indicator-flag
-                  bitBlt(&pixBuffer, lastpos.x(), lastpos.y()-32, &pix);
-                        // redraw flight up to this point, blt the pixmap onto the already created pixmap
+                  QPainter p1( &pixBuffer );
+                  p1.drawPixmap( lastpos.x(), lastpos.y()-32, pix );
+
+                  // redraw flight up to this point, blt the pixmap onto the already created pixmap
                   __drawFlight();
                   pixFlight.setMask(bitFlightMask);
-                  bitBlt(&pixBuffer, 0, 0, &pixFlight);
+                  QPainter p2( &pixBuffer );
+                  p2.drawPixmap( 0, 0, pixFlight );
+
                   //save for next timeout
-                  pix.paintEngine()->drawPixmap(QRect(QPoint(0, 0), pixBuffer.size()), pixBuffer, QRect(pos.x(), pos.y()-32, 32, 32));
-  //                bitBlt(&pix, 0, 0, &pixBuffer, pos.x(), pos.y()-32, 32, 32, CopyROP);
+                  QPainter p3( &pix );
+                  p3.drawPixmap( 0, 0, pixBuffer, pos.x(), pos.y()-32, 32, 32 );
+
+
                   f->setLastAnimationPixmap(pix);
                   f->setLastAnimationPos(pos);
+
                   // add indicator-flag
-                  bitBlt(&pixBuffer, pos.x(), pos.y()-32, &pixCursor2);
+                  QPainter p4( &pixBuffer );
+                  p4.drawPixmap( pos.x(), pos.y()-32,  pixCursor2 );
                 }
 
               break;
@@ -1936,12 +1994,15 @@ void Map::slotAnimateFlightTimeout()
             break;
          }
     }
+
   // force paint event
   repaint();
 
-        // if one of the flights still is active, bDone will be false
-  if (bDone)
-    timerAnimate->stop();
+  // if one of the flights still is active, bDone will be false
+  if( bDone )
+    {
+      timerAnimate->stop();
+    }
 }
 
 /**
@@ -1950,7 +2011,7 @@ void Map::slotAnimateFlightTimeout()
  */
 void Map::slotAnimateFlightStop()
 {
-  extern MapContents *_globalMapContents;
+  extern MapContents  *_globalMapContents;
   Flight *f = (Flight *)_globalMapContents->getFlight();
   QList<Flight*> flightList;
 
@@ -1969,12 +2030,15 @@ void Map::slotAnimateFlightStop()
     }
 
   // stop animation on user request.
-  if(timerAnimate->isActive())
+  if( timerAnimate->isActive() )
     {
       timerAnimate->stop();
-            // loop through all and increment animation index
-            for(int loop = 0; loop < flightList.count(); loop++)
-          flightList.at(loop)->setAnimationActive(false);
+
+      // loop through all and increment animation index
+      for( int loop = 0; loop < flightList.count(); loop++ )
+        {
+          flightList.at( loop )->setAnimationActive( false );
+        }
 
       slotRedrawFlight();
     }
@@ -1985,7 +2049,7 @@ void Map::slotAnimateFlightStop()
  */
 void Map::slotFlightNext()
 {
-  extern MapMatrix *_globalMapMatrix;
+  extern MapMatrix   *_globalMapMatrix;
   extern MapContents *_globalMapContents;
   flightPoint cP;
   int index;
@@ -1994,24 +2058,33 @@ void Map::slotFlightNext()
 
   if(f)
     {
-      if(prePos.x() >= 0)   // only step if crosshair is shown in map.
+      if(prePos.x() >= 0)   // only step if cross hair is shown in map.
         {
-           bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-                   prePos.x() - 20, prePos.y() - 20, 40, 40);
+           QPainter p1( this );
+           p1.drawPixmap( prePos.x() - 20, prePos.y() - 20,
+                          pixBuffer,
+                          prePos.x() - 20, prePos.y() - 20, 40, 40 );
+
           // get the next point, preIndex now holds last point
-          if ((index = f->searchGetNextPoint(preIndex, cP)) != -1)
+          if( (index = f->searchGetNextPoint( preIndex, cP )) != -1 )
             {
-                          // if close to edge, recenter map to next point
-                          prePos = _globalMapMatrix->map(cP.projP);
-                          if ((prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
-                                  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
-                                     _globalMapMatrix->centerToPoint(prePos);
-                                 __redrawMap();
-              }
-              emit showFlightPoint(_globalMapMatrix->wgsToMap(cP.origP), cP);
-              prePos = _globalMapMatrix->map(cP.projP);
+              // if close to edge, recenter map to next point
+              prePos = _globalMapMatrix->map( cP.projP );
+
+              if( (prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
+                  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) )
+                {
+                  _globalMapMatrix->centerToPoint( prePos );
+                  __redrawMap();
+                }
+
+              emit
+              showFlightPoint( _globalMapMatrix->wgsToMap( cP.origP ), cP );
+              prePos = _globalMapMatrix->map( cP.projP );
               preIndex = index;
-              bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+
+              QPainter p1( this );
+              p1.drawPixmap( prePos.x() - 20, prePos.y() - 20, pixCursor );
             }
         }
     }
@@ -2019,7 +2092,7 @@ void Map::slotFlightNext()
 
 void Map::slotFlightPrev()
 {
-  extern MapMatrix *_globalMapMatrix;
+  extern MapMatrix   *_globalMapMatrix;
   extern MapContents *_globalMapContents;
   flightPoint cP;
   int index;
@@ -2028,23 +2101,31 @@ void Map::slotFlightPrev()
 
   if(f)
     {
-      if (prePos.x() >= 0)   // only step if crosshair is shown in map.
+      if (prePos.x() >= 0)   // only step if cross hair is shown in map.
         {
-          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-            prePos.x() - 20, prePos.y() - 20, 40, 40);
+          QPainter p1( this );
+          p1.drawPixmap( prePos.x() - 20, prePos.y() - 20,
+                         pixBuffer,
+                         prePos.x() - 20, prePos.y() - 20, 40, 40 );
+
           // get the next point, preIndex now holds last point
           if ((index = f->searchGetPrevPoint(preIndex, cP)) != -1)
             {
-                                // if close to edge, recenter map to next point
-                          prePos = _globalMapMatrix->map(cP.projP);
-                          if ((prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
-                                  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
-                                     _globalMapMatrix->centerToPoint(prePos);
-              }
+              // if close to edge, recenter map to next point
+              prePos = _globalMapMatrix->map( cP.projP );
+
+              if( (prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
+                  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) )
+                {
+                  _globalMapMatrix->centerToPoint( prePos );
+                }
+
               emit showFlightPoint(_globalMapMatrix->wgsToMap(cP.origP), cP);
               prePos = _globalMapMatrix->map(cP.projP);
               preIndex = index;
-              bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+
+              QPainter p1( this );
+              p1.drawPixmap( prePos.x() - 20, prePos.y() - 20, pixCursor );
             }
         }
     }
@@ -2052,7 +2133,7 @@ void Map::slotFlightPrev()
 
 void Map::slotFlightStepNext()
 {
-  extern MapMatrix *_globalMapMatrix;
+  extern MapMatrix   *_globalMapMatrix;
   extern MapContents *_globalMapContents;
   flightPoint cP;
   int index;
@@ -2061,23 +2142,31 @@ void Map::slotFlightStepNext()
 
   if(f)
     {
-      if (prePos.x() >= 0)   // only step if crosshair is shown in map.
+      if (prePos.x() >= 0)   // only step if cross hair is shown in map.
         {
-          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-                   prePos.x() - 20, prePos.y() - 20, 40, 40);
+          QPainter p1( this );
+          p1.drawPixmap( prePos.x() - 20, prePos.y() - 20,
+                         pixBuffer,
+                         prePos.x() - 20, prePos.y() - 20, 40, 40 );
+
           // get the next point, preIndex now holds last point
           if((index = f->searchStepNextPoint(preIndex, cP, 10)) != -1)
             {
-                          // if close to edge, recenter map to next point
-                          prePos = _globalMapMatrix->map(cP.projP);
-                          if ((prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
-                                  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
-                                     _globalMapMatrix->centerToPoint(prePos);
-              }
+               // if close to edge, recenter map to next point
+              prePos = _globalMapMatrix->map( cP.projP );
+
+              if( (prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
+                  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) )
+                {
+                  _globalMapMatrix->centerToPoint( prePos );
+                }
+
               emit showFlightPoint(_globalMapMatrix->wgsToMap(cP.origP), cP);
               prePos = _globalMapMatrix->map(cP.projP);
               preIndex = index;
-              bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+
+              QPainter p1( this );
+              p1.drawPixmap( prePos.x() - 20, prePos.y() - 20, pixCursor );
             }
         }
     }
@@ -2085,7 +2174,7 @@ void Map::slotFlightStepNext()
 
 void Map::slotFlightStepPrev()
 {
-  extern MapMatrix *_globalMapMatrix;
+  extern MapMatrix   *_globalMapMatrix;
   extern MapContents *_globalMapContents;
   flightPoint cP;
   int index;
@@ -2094,24 +2183,32 @@ void Map::slotFlightStepPrev()
 
   if(f)
     {
-      if (prePos.x() >= 0)   // only step if crosshair is shown in map.
+      if (prePos.x() >= 0)   // only step if cross hair is shown in map.
         {
-          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-                   prePos.x() - 20, prePos.y() - 20, 40, 40);
+          QPainter p1( this );
+          p1.drawPixmap( prePos.x() - 20, prePos.y() - 20,
+                         pixBuffer,
+                         prePos.x() - 20, prePos.y() - 20, 40, 40 );
+
           // get the next point, preIndex now holds last point
-          if ((index = f->searchStepPrevPoint(preIndex, cP,10)) != -1)
+          if( (index = f->searchStepPrevPoint( preIndex, cP, 10 )) != -1 )
             {
-                          // if close to edge, recenter map to next point
-                          prePos = _globalMapMatrix->map(cP.projP);
-                          if ((prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
-                                  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) ){
-                                     _globalMapMatrix->centerToPoint(prePos);
-                                 __redrawMap();
-              }
-              emit showFlightPoint(_globalMapMatrix->wgsToMap(cP.origP), cP);
-              prePos = _globalMapMatrix->map(cP.projP);
+              // if close to edge, recenter map to next point
+              prePos = _globalMapMatrix->map( cP.projP );
+
+              if( (prePos.x() < MIN_X_TO_PAN) || (prePos.x() > MAX_X_TO_PAN) ||
+                  (prePos.y() < MIN_Y_TO_PAN) || (prePos.y() > MAX_Y_TO_PAN) )
+                {
+                  _globalMapMatrix->centerToPoint( prePos );
+                  __redrawMap();
+                }
+
+              emit showFlightPoint( _globalMapMatrix->wgsToMap( cP.origP ), cP );
+              prePos = _globalMapMatrix->map( cP.projP );
               preIndex = index;
-              bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+
+              QPainter p1( this );
+              p1.drawPixmap( prePos.x() - 20, prePos.y() - 20, pixCursor );
             }
         }
     }
@@ -2119,7 +2216,7 @@ void Map::slotFlightStepPrev()
 
 void Map::slotFlightHome()
 {
-  extern MapMatrix *_globalMapMatrix;
+  extern MapMatrix   *_globalMapMatrix;
   extern MapContents *_globalMapContents;
   flightPoint cP;
   int index;
@@ -2128,16 +2225,21 @@ void Map::slotFlightHome()
 
   if(f)
     {
-      if (prePos.x() >= 0)   // only step if crosshair is shown in map.
+      if (prePos.x() >= 0)   // only step if cross hair is shown in map.
         {
-          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-                   prePos.x() - 20, prePos.y() - 20, 40, 40);
+          QPainter p1( this );
+          p1.drawPixmap( prePos.x() - 20, prePos.y() - 20,
+                         pixBuffer,
+                         prePos.x() - 20, prePos.y() - 20, 40, 40 );
+
           if ((index = f->searchGetNextPoint(0, cP)) != -1)
             {
               emit showFlightPoint(_globalMapMatrix->wgsToMap(cP.origP), cP);
               prePos = _globalMapMatrix->map(cP.projP);
               preIndex = index;
-              bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+
+              QPainter p1( this );
+              p1.drawPixmap( prePos.x() - 20, prePos.y() - 20, pixCursor );
             }
         }
     }
@@ -2145,7 +2247,7 @@ void Map::slotFlightHome()
 
 void Map::slotFlightEnd()
 {
-  extern MapMatrix *_globalMapMatrix;
+  extern MapMatrix   *_globalMapMatrix;
   extern MapContents *_globalMapContents;
   flightPoint cP;
   int index;
@@ -2153,10 +2255,12 @@ void Map::slotFlightEnd()
 
   if(f)
     {
-      if (prePos.x() >= 0)   // only step if crosshair is shown in map.
+      if (prePos.x() >= 0)   // only step if cross hair is shown in map.
         {
-          bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixBuffer,
-                   prePos.x() - 20, prePos.y() - 20, 40, 40);
+          QPainter p1( this );
+          p1.drawPixmap( prePos.x() - 20, prePos.y() - 20,
+                         pixBuffer,
+                         prePos.x() - 20, prePos.y() - 20, 40, 40 );
 
           // just a workaround !!!!!!!!!!!!!
           if(f->getObjectType() == BaseMapElement::Flight)
@@ -2166,7 +2270,9 @@ void Map::slotFlightEnd()
                   emit showFlightPoint(_globalMapMatrix->wgsToMap(cP.origP), cP);
                   prePos = _globalMapMatrix->map(cP.projP);
                   preIndex = index;
-                  bitBlt(this, prePos.x() - 20, prePos.y() - 20, &pixCursor);
+
+                  QPainter p1( this );
+                  p1.drawPixmap( prePos.x() - 20, prePos.y() - 20, pixCursor );
                 }
             }
         }
@@ -2178,19 +2284,23 @@ void Map::slotShowCurrentFlight()
 {
   extern MapContents *_globalMapContents;
   BaseFlightElement *f = _globalMapContents->getFlight();
+
   // just to make sure ...
   slotAnimateFlightStop();
 
   planning = 0;
 
-  if (f && f->getObjectType() == BaseMapElement::Task) {
-    if (((FlightTask *)f)->getWPList().count() < 1) {
-      slotActivatePlanning();
+  if( f && f->getObjectType() == BaseMapElement::Task )
+    {
+      if( ((FlightTask *) f)->getWPList().count() < 1 )
+        {
+          slotActivatePlanning();
+        }
+      else
+        {
+          planning = 2;
+        }
     }
-    else {
-      planning = 2;
-    }
-  }
 
   // Hier wird der Flug 2x neu gezeichnet, denn erst beim
   // ersten Zeichnen werden die Rahmen von Flug und Aufgabe
@@ -2410,12 +2520,12 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c)
       case BaseMapElement::MilAirport:
       case BaseMapElement::CivMilAirport:
       case BaseMapElement::Airfield:
-        if (!c->showAirports) {
+        if (!c->showAirfields) {
           continue;
         }
         break;
       case BaseMapElement::Gliderfield:
-        if (!c->showGliderSites) {
+        if (!c->showGliderfields) {
           continue;
         }
         break;
@@ -2703,7 +2813,8 @@ void Map::__openWaypointDialog( const QPoint &position )
   // initialize dialog coordinates
   waypointDlg->longitude->setKFLogDegree( p.x() );
   waypointDlg->latitude->setKFLogDegree( p.y() );
-  waypointDlg->setVisible( true );
+  waypointDlg->exec();
+  delete waypointDlg;
 }
 
 /** Draws a scale indicator on the pixmap. */

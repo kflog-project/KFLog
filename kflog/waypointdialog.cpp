@@ -27,7 +27,7 @@ WaypointDialog::WaypointDialog( QWidget *parent ) : QDialog(parent)
 {
   setWindowTitle( tr( "Create a new Waypoint" ) );
   setWindowModality( Qt::WindowModal );
-  setAttribute( Qt::WA_DeleteOnClose );
+  //setAttribute( Qt::WA_DeleteOnClose );
   setSizeGripEnabled( true );
 
   __initDialog();
@@ -48,6 +48,9 @@ WaypointDialog::~WaypointDialog()
 void WaypointDialog::__initDialog()
 {
   QLabel *l1, *l2;
+
+  QRegExp rxInt("[0-9]*");
+  QValidator *intRxValidator = new QRegExpValidator(rxInt, this);
 
   //---------------------------------------------------------------------------
   QGridLayout *layout = new QGridLayout;
@@ -86,6 +89,7 @@ void WaypointDialog::__initDialog()
   layout->addWidget(waypointType, row, 0);
 
   elevation = new QLineEdit;
+  elevation->setValidator( intRxValidator );
   layout->addWidget(elevation, row, 2);
   row++;
 
@@ -122,6 +126,10 @@ void WaypointDialog::__initDialog()
   layout->addWidget(icao, row, 0);
 
   frequency = new QLineEdit;
+
+  // Limit frequency range to VORs and speech bands.
+  QDoubleValidator* doubleValidator = new QDoubleValidator ( 108.0, 140.0, 3, this );
+  frequency->setValidator( doubleValidator );
   layout->addWidget(frequency, row, 2);
   row++;
 
@@ -137,9 +145,11 @@ void WaypointDialog::__initDialog()
   row++;
 
   runway = new QLineEdit;
+  runway->setValidator( new QIntValidator( 1, 36, this ) );
   layout->addWidget(runway, row, 0);
 
   length = new QLineEdit;
+  length->setValidator( intRxValidator );
   layout->addWidget(length, row, 2);
   row++;
 
@@ -241,6 +251,10 @@ void WaypointDialog::slotAddWaypoint()
   if( !text.isEmpty() )
     {
       w->runway.first = text.toInt();
+
+      int rw1 = w->runway.first;
+
+      w->runway.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18 );
     }
 
   text = length->text();
@@ -258,7 +272,6 @@ void WaypointDialog::slotAddWaypoint()
   // clear should not be called when apply was pressed ...
   // and when ok is pressed, the dialog is closed anyway.
   // clear();
-//}
 }
 
 /** return internal type of waypoint */

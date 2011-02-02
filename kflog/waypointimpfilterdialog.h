@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Harald Maier
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -15,26 +16,37 @@
 **
 ***********************************************************************/
 
+/**
+ * \class WaypointImpFilterDialog
+ *
+ * \author Harald Maier, Axel Pauli
+ *
+ * \brief Waypoint filter dialog
+ *
+ * This dialog is used to define waypoint filter parameters.
+ *
+ * \date 2002-2011
+ *
+ * \version $Id$
+ */
+
 #ifndef WAYPOINT_IMP_FILTER_DIALOG_H
 #define WAYPOINT_IMP_FILTER_DIALOG_H
 
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialog>
-#include <q3dict.h>
+#include <QHash>
+#include <QLabel>
 #include <QPoint>
 
 #include "singlepoint.h"
 #include "coordedit.h"
 
-/**filter import of waypoints from map
-  *@author Harald Maier
-  */
-
 #define CENTER_POS      0
 #define CENTER_HOMESITE 1
 #define CENTER_MAP      2
-#define CENTER_AIRPORT  3
+#define CENTER_AIRFIELD 3
 
 class WaypointImpFilterDialog : public QDialog
 {
@@ -55,13 +67,13 @@ public:
   WGSPoint getAirportRef();
 
   QCheckBox *useAll;
-  QCheckBox *airports;
-  QCheckBox *gliderSites;
+  QCheckBox *airfields;
+  QCheckBox *gliderfields;
   QCheckBox *otherSites;
-  QCheckBox *outlanding;
-  QCheckBox *obstacle;
-  QCheckBox *landmark;
-  QCheckBox *station;
+  QCheckBox *outlandings;
+  QCheckBox *obstacles;
+  QCheckBox *landmarks;
+  QCheckBox *stations;
 
   LatEdit *fromLat;
   LongEdit *fromLong;
@@ -72,6 +84,10 @@ public:
 
   QComboBox *radius;
 
+protected:
+
+  void showEvent( QShowEvent *event );
+
 protected slots:
 
   void slotChangeUseAll();
@@ -81,17 +97,22 @@ public slots:
   /** reset all dialog items to default values */
   void slotClear();
 
-private: // Private attributes
-  /**  */
-  int center;
-  Q3Dict<SinglePoint> airportDict;
-  QComboBox *refAirport;
-
 private slots:
 
   /** No descriptions */
   void selectRadius(int n);
-  void polish();
+
+private:
+
+  /**
+   * Loads the content into the airfield combo box.
+   */
+  void loadAirfieldComboBox();
+
+  int center;
+  QHash<QString, SinglePoint*> airportDict;
+  QComboBox *refAirport;
+  QLabel* radiusUnit;
 };
 
 #endif
