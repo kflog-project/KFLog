@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Harald Maier
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -15,35 +16,36 @@
 **
 ***********************************************************************/
 
+/**
+ * @class WaypointDialog
+ *
+ * @short Create and edit a waypoint
+ *
+ * Create and/or modify a waypoint and its attributes.
+ *
+ * @author Harald Maier, Axel Pauli
+ *
+ * @date 2001-2011
+ *
+ * @version  $Id$
+ */
+
 #ifndef WAYPOINT_DIALOG_H
 #define WAYPOINT_DIALOG_H
 
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qdialog.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qwidget.h>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDialog>
+#include <QLineEdit>
+#include <QPushButton>
 
-#include "guicontrols/coordedit.h"
+#include "coordedit.h"
 #include "runway.h"
 #include "waypoint.h"
 
-/**
-  * @short Create and edit a waypoint
-  *
-  * Create and/or modify a waypoint and its attributes.
-  *
-  * @author Harald Maier, Axel Pauli
-  *
-  * @date 2001-2011
-  *
-  * @version  $Id$
-  */
-
 class WaypointDialog : public QDialog
 {
-   Q_OBJECT
+  Q_OBJECT
 
 private:
 
@@ -70,14 +72,36 @@ public:
    * set waypoint type in combo box translate internal id to index
    */
   void setWaypointType(int type);
+
   /** No descriptions */
   void enableApplyButton(bool enable = true);
 
-private: // Private methods
+private:
+
   /** No descriptions */
   void __initDialog();
 
-public: // Public attributes
+public slots:
+
+  /** clear all entries */
+  void clear();
+
+signals:
+
+  /** No descriptions */
+  void addWaypoint(Waypoint *);
+
+private slots: // Private slots
+
+  /** No descriptions */
+  void slotAddWaypoint();
+
+public:
+
+  /**  */
+  LatEdit *latitude;
+  /**  */
+  LongEdit *longitude;
   /**  */
   QLineEdit *name;
   /**  */
@@ -94,30 +118,13 @@ public: // Public attributes
   QLineEdit *length;
   /**  */
   QLineEdit *comment;
-  /**  */
-  LatEdit *latitude;
-  /**  */
-  LongEdit *longitude;
   /** */
   QCheckBox *isLandable;
-
-public slots: // Public slots
-  /** clear all entries */
-  void clear();
-
-signals: // Signals
-  /** No descriptions */
-  void addWaypoint(Waypoint *);
-
-private slots: // Private slots
-  /** No descriptions */
-  void slotAddWaypoint();
-
-private:
   /**  */
   QComboBox *waypointType;
   /**  */
   QComboBox *surface;
+
   QPushButton *applyButton;
 };
 

@@ -9,7 +9,7 @@
 **   Copyright (c):  2007 by Hendrik Hoeth
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -27,10 +27,7 @@
 
 #include "cambridge.h"
 
-#include <QFile>
-#include <QRegExp>
-#include <QString>
-#include <QStringList>
+#include <QtCore>
 
 #define STX        0x03
 
@@ -311,7 +308,7 @@ int Cambridge::openRecorder(const QString& pName, int baud)
     return FR_OK;
     }
   else {
-    qWarning(tr("No logger found!"));
+    qWarning(QObject::tr("No logger found!"));
     _isConnected = false;
     return FR_ERROR;
   }
@@ -583,13 +580,14 @@ int Cambridge::getFlightDir(QList<FRDirEntry*>* dirList)
 
   // Now that we have a list of all flights we can give them
   // filenames:
-  for(size_t i=0; i<dirList->count(); i++) {
+  for(int i=0; i<dirList->count(); i++) {
     // Count flights that occurred on the same day
     int y = dirList->at(i)->firstTime.tm_year;
     int m = dirList->at(i)->firstTime.tm_mon;
     int d = dirList->at(i)->firstTime.tm_mday;
     int dayflightcounter = 1;
-    for(size_t j=i+1 ; j<dirList->count(); j++)
+
+    for(int j=i+1; j<dirList->count(); j++)
       if (y == dirList->at(j)->firstTime.tm_year &&
           m == dirList->at(j)->firstTime.tm_mon  &&
           d == dirList->at(j)->firstTime.tm_mday) dayflightcounter++;
@@ -665,7 +663,7 @@ int Cambridge::downloadFlight(int flightID, int /*secMode*/, const QString& file
   }
   else
   {
-    qWarning(tr("cannot open igc file ") + fileName);
+    qWarning(QObject::tr("cannot open igc file ") + fileName);
     return FR_ERROR;
   }
 }
@@ -944,7 +942,7 @@ int Cambridge::readReply(QString cmd, int mode, unsigned char *reply)
 
   // the prompt at the end of the reply is included in the checksum,
   // so we keep it now and delete it later.
-  for (size_t i=start ; i<XX+cmd.length() ; i++)
+  for (int i=start ; i<XX+cmd.length() ; i++)
     reply[i-start]=buf[i];
 
   int cmd_checksum = calcChecksum8((unsigned char *)(const char *)cmd, cmd.length());
@@ -967,7 +965,7 @@ int Cambridge::readReply(QString cmd, int mode, unsigned char *reply)
   // command mode:  "\r\n\ncmd>"
   // download mode: "\r\n\ndn>"
   // upload mode:   "\r\n\nup>"
-  for (size_t i=XX+cmd.length()-6 ; i<XX+cmd.length() ; i++)  // "-6" for the prompt
+  for (int i=XX+cmd.length()-6 ; i<XX+cmd.length() ; i++)  // "-6" for the prompt
     reply[i-start]=0x00;
 
   return XX-(start-1)-6;

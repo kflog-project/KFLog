@@ -94,6 +94,7 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
   __addProjectionTab();
   __addAirfieldTab();
   __addWaypointTab();
+  __addUnitTab();
 
   setupTree->sortByColumn ( 0, Qt::AscendingOrder );
   setupTree->resizeColumnToContents( 0 );
@@ -167,6 +168,12 @@ void KFLogConfig::slotPageClicked( QTreeWidgetItem * item, int column )
       waypointPage->setVisible( true );
       activePage = waypointPage;
     }
+  else if( itemText == "Units" )
+    {
+      activePage->setVisible( false );
+      unitPage->setVisible( true );
+      activePage = unitPage;
+    }
   else
     {
       qWarning() << "KFLogConfig::slotPageClicked: Unknown item"
@@ -199,8 +206,8 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/Scale/Border3", reduce3N->value() );
 
   _settings.setValue( "/Homesite/Name", homeNameE->text() );
-  _settings.setValue( "/Homesite/Latitude", WGSPoint::degreeToNum( homeLatE->text() ) );
-  _settings.setValue( "/Homesite/Longitude", WGSPoint::degreeToNum( homeLonE->text() ) );
+  _settings.setValue( "/Homesite/Latitude", homeLatE->KFLogDegree() );
+  _settings.setValue( "/Homesite/Longitude", homeLonE->KFLogDegree() );
   _settings.setValue( "/MapData/ProjectionType", projectionSelect->currentIndex() );
 
   _settings.setValue( "/Welt2000/CountryFilter", filterWelt2000->text() );
@@ -235,7 +242,21 @@ void KFLogConfig::slotOk()
                       waypointButtonGroup->id(waypointButtonGroup->checkedButton()) );
   _settings.setValue( "/Waypoints/DefaultCatalogName", catalogPathE->text() );
 
-  // configuration subwidgets shall save their configuration
+  // Save units
+  int altUnit  = unitAltitude->itemData( unitAltitude->currentIndex() ).toInt();
+  int distUnit = unitDistance->itemData( unitDistance->currentIndex() ).toInt();
+  int posUnit  = unitPosition->itemData( unitPosition->currentIndex() ).toInt();
+
+  _settings.setValue( "/Units/Altitude", altUnit );
+  _settings.setValue( "/Units/Distance", distUnit );
+  _settings.setValue( "/Units/Position", posUnit );
+
+  // Set units to be used in the related classes.
+  Altitude::setUnit( static_cast<enum Altitude::altitudeUnit>(altUnit) );
+  Distance::setUnit( static_cast<enum Distance::distanceUnit>(distUnit) );
+  WGSPoint::setFormat( static_cast<enum WGSPoint::Format>(posUnit) );
+
+  // Configuration subwidgets shall save their configuration.
   emit saveConfig();
 
   emit scaleChanged((int)lLimitN->value(), (int)uLimitN->value());
@@ -311,14 +332,14 @@ void KFLogConfig::slotSelectProjection( int index )
     {
       case ProjectionBase::Cylindric:
 
-        cylinPar = WGSPoint::degreeToNum(firstParallel->text());
+        cylinPar = firstParallel->KFLogDegree();
         break;
 
       case ProjectionBase::Lambert:
 
-        lambertV1     = WGSPoint::degreeToNum(firstParallel->text());
-        lambertV2     = WGSPoint::degreeToNum(secondParallel->text());
-        lambertOrigin = WGSPoint::degreeToNum(originLongitude->text());
+        lambertV1     = firstParallel->KFLogDegree();
+        lambertV2     = secondParallel->KFLogDegree();
+        lambertOrigin = originLongitude->KFLogDegree();
         break;
     }
 
@@ -328,16 +349,16 @@ void KFLogConfig::slotSelectProjection( int index )
 
         secondParallel->setEnabled(false);
         originLongitude->setEnabled(false);
-        firstParallel->setText(WGSPoint::printPos(cylinPar, true));
+        firstParallel->setKFLogDegree(cylinPar);
         break;
 
       case ProjectionBase::Lambert:
 
         secondParallel->setEnabled(true);
         originLongitude->setEnabled(true);
-        firstParallel->setText(WGSPoint::printPos(lambertV1, true));
-        secondParallel->setText(WGSPoint::printPos(lambertV2, true));
-        originLongitude->setText(WGSPoint::printPos(lambertOrigin, false));
+        firstParallel->setKFLogDegree(lambertV1);
+        secondParallel->setKFLogDegree(lambertV2);
+        originLongitude->setKFLogDegree(lambertOrigin);
         break;
     }
 
@@ -1277,9 +1298,9 @@ void KFLogConfig::__addPersonalTab()
   QFormLayout* homeLayout = new QFormLayout();
   homeLayout->setSpacing(10);
 
-  homeNameE = new QLineEdit(personalPage, "homeNameE");
-  homeLatE  = new LatEdit(personalPage, "homeLatE");
-  homeLonE  = new LongEdit(personalPage, "homeLonE");
+  homeNameE = new QLineEdit(personalPage);
+  homeLatE  = new LatEdit(personalPage);
+  homeLonE  = new LongEdit(personalPage);
 
   homeNameE->setMinimumWidth( minLen );
   homeLatE->setMinimumWidth( minLen );
@@ -1301,8 +1322,8 @@ void KFLogConfig::__addPersonalTab()
 
   personalPage->setLayout( idLayout );
 
-  homeLatE->setText(WGSPoint::printPos(_settings.value("/Homesite/Latitude", HOME_DEFAULT_LAT).toInt(), true));
-  homeLonE->setText(WGSPoint::printPos(_settings.value("/Homesite/Longitude", HOME_DEFAULT_LON).toInt(), false));
+  homeLatE->setKFLogDegree(_settings.value("/Homesite/Latitude", HOME_DEFAULT_LAT).toInt());
+  homeLonE->setKFLogDegree(_settings.value("/Homesite/Longitude", HOME_DEFAULT_LON).toInt());
   homeNameE->setText(_settings.value("/Homesite/Name", "").toString());
 
   preNameE->setText(_settings.value("/PersonalData/PreName", "").toString());
@@ -1478,6 +1499,69 @@ void KFLogConfig::__addWaypointTab()
   waypointPage->setLayout( waypointPageLayout );
 
   slotSelectDefaultCatalog( catalogType );
+}
+
+/** Add a tab for the unit configuration.*/
+void KFLogConfig::__addUnitTab()
+{
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Units") );
+  item->setData( 0, Qt::UserRole, "Units" );
+  item->setIcon( 0, _mainWindow->getPixmap("edit_unit_32x32.png") );
+  setupTree->addTopLevelItem( item );
+
+  unitPage = new QFrame(this);
+  unitPage->setObjectName( "UnitPage" );
+  unitPage->setVisible( false );
+
+  configLayout->addWidget( unitPage, 0, 1, 1, 2 );
+
+  //----------------------------------------------------------------------------
+  QGroupBox* unitGroup = new QGroupBox( tr("Units") );
+
+  unitAltitude = new QComboBox;
+  unitAltitude->setObjectName("UnitAltitude");
+  unitAltitude->setEditable(false);
+  unitAltitude->addItem(tr("meters"), Altitude::meters);
+  unitAltitude->addItem(tr("feet"),   Altitude::feet);
+
+  unitDistance = new QComboBox;
+  unitDistance->setObjectName("UnitDistance");
+  unitDistance->setEditable(false);
+  unitDistance->addItem(tr("kilometers"),     Distance::kilometers);
+  unitDistance->addItem(tr("statute miles"),  Distance::miles);
+  unitDistance->addItem(tr("nautical miles"), Distance::nautmiles);
+
+  unitPosition = new QComboBox;
+  unitPosition->setObjectName("UnitPosition");
+  unitPosition->setEditable(false);
+  unitPosition->addItem("ddd\260mm'ss\"",  WGSPoint::DMS);
+  unitPosition->addItem("ddd\260mm.mmm'",  WGSPoint::DDM);
+  unitPosition->addItem("ddd.ddddd\260",   WGSPoint::DDD);
+
+  QFormLayout* unitLayout = new QFormLayout();
+  unitLayout->setSpacing( 10 );
+  unitLayout->addRow( tr( "Altitude" ) + ":", unitAltitude );
+  unitLayout->addRow( tr( "Distance" ) + ":", unitDistance );
+  unitLayout->addRow( tr( "Position" ) + ":", unitPosition );
+
+  unitGroup->setLayout( unitLayout );
+
+  //----------------------------------------------------------------------------
+  QVBoxLayout* unitPageLayout = new QVBoxLayout;
+
+  unitPageLayout->addWidget( unitGroup );
+  unitPageLayout->addStretch( 10 );
+
+  unitPage->setLayout( unitPageLayout );
+
+  int altUnit  = _settings.value( "/Units/Altitude", Altitude::meters ).toInt();
+  int distUnit = _settings.value( "/Units/Distance", Distance::kilometers ).toInt();
+  int posUnit  = _settings.value( "/Units/Position", WGSPoint::DMS ).toInt();
+
+  unitAltitude->setCurrentIndex( unitAltitude->findData( altUnit ) );
+  unitDistance->setCurrentIndex( unitDistance->findData( distUnit ) );
+  unitPosition->setCurrentIndex( unitPosition->findData( posUnit ) );
 }
 
 void KFLogConfig::slotDefaultWaypoint()

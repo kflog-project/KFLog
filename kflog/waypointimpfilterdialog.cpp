@@ -9,7 +9,7 @@
 **   Copyright (c):  2002 by Harald Maier
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -30,17 +30,20 @@
 extern MapContents *_globalMapContents;
 extern MapMatrix   *_globalMapMatrix;
 
-WaypointImpFilterDialog::WaypointImpFilterDialog(QWidget *parent, const char *name)
- : QDialog(parent, name, true),
+WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
+ QDialog(parent),
  center(0)
 {
+  setObjectName( "WaypointImpFilterDialog" );
+  setWindowTitle(tr("Filter waypoints"));
+  setAttribute( Qt::WA_DeleteOnClose );
+  setModal( true );
+
   QVBoxLayout *top = new QVBoxLayout(this, 5);
   QHBoxLayout *buttons = new QHBoxLayout();
   QHBoxLayout *hbox = new QHBoxLayout();
   QVBoxLayout *vbox1 = new QVBoxLayout();
   QVBoxLayout *vbox2 = new QVBoxLayout();
-
-  setCaption(tr("Filter waypoints"));
 
   // create non-exclusive buttongroup for type filter
   Q3ButtonGroup *grp1 = new Q3ButtonGroup(1, Qt::Horizontal, tr("Type"), this);
@@ -150,6 +153,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog(QWidget *parent, const char *na
 
 WaypointImpFilterDialog::~WaypointImpFilterDialog()
 {
+  qDebug() << "~WaypointImpFilterDialog()";
 }
 
 void WaypointImpFilterDialog::slotChangeUseAll()
@@ -178,12 +182,12 @@ void WaypointImpFilterDialog::slotClear()
 
   slotChangeUseAll();
 
-  fromLat->clear();
-  fromLong->clear();
-  toLat->clear();
-  toLong->clear();
-  posLat->clear();
-  posLong->clear();
+  fromLat->setKFLogDegree(0);
+  fromLong->setKFLogDegree(0);
+  toLat->setKFLogDegree(0);
+  toLong->setKFLogDegree(0);
+  posLat->setKFLogDegree(0);
+  posLong->setKFLogDegree(0);
 
   radius->setCurrentItem(0);
 

@@ -324,8 +324,8 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
     waypointDlg->description->setText(w->description);
     // translate id to index
     waypointDlg->setWaypointType(w->type);
-    waypointDlg->longitude->setText(WGSPoint::printPos(w->origP.lon(), false));
-    waypointDlg->latitude->setText(WGSPoint::printPos(w->origP.lat(), true));
+    waypointDlg->longitude->setKFLogDegree(w->origP.lon());
+    waypointDlg->latitude->setKFLogDegree(w->origP.lat());
     tmp.sprintf("%d", w->elevation);
     waypointDlg->elevation->setText(tmp);
     waypointDlg->icao->setText(w->icao);
@@ -355,8 +355,8 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
         w->name = waypointDlg->name->text().left(6).upper();
         w->description = waypointDlg->description->text();
         w->type = waypointDlg->getWaypointType();
-        w->origP.setLat(WGSPoint::degreeToNum(waypointDlg->latitude->text()));
-        w->origP.setLon(WGSPoint::degreeToNum(waypointDlg->longitude->text()));
+        w->origP.setLat(waypointDlg->latitude->KFLogDegree());
+        w->origP.setLon(waypointDlg->longitude->KFLogDegree());
         w->elevation = waypointDlg->elevation->text().toInt();
         w->icao = waypointDlg->icao->text().upper();
         w->frequency = waypointDlg->frequency->text().toDouble();
@@ -801,15 +801,15 @@ void Waypoints::getFilterData()
   currentWaypointCatalog->showOutlanding = importFilterDlg->outlanding->isChecked();
   currentWaypointCatalog->showStation = importFilterDlg->station->isChecked();
 
-  currentWaypointCatalog->areaLat1 = WGSPoint::degreeToNum(importFilterDlg->fromLat->text());
-  currentWaypointCatalog->areaLat2 = WGSPoint::degreeToNum(importFilterDlg->toLat->text());
-  currentWaypointCatalog->areaLong1 = WGSPoint::degreeToNum(importFilterDlg->fromLong->text());
-  currentWaypointCatalog->areaLong2 = WGSPoint::degreeToNum(importFilterDlg->toLong->text());
+  currentWaypointCatalog->areaLat1 = importFilterDlg->fromLat->KFLogDegree();
+  currentWaypointCatalog->areaLat2 = importFilterDlg->toLat->KFLogDegree();
+  currentWaypointCatalog->areaLong1 = importFilterDlg->fromLong->KFLogDegree();
+  currentWaypointCatalog->areaLong2 = importFilterDlg->toLong->KFLogDegree();
 
   switch (importFilterDlg->getCenterRef()) {
   case CENTER_POS:
-    currentWaypointCatalog->radiusLat  = WGSPoint::degreeToNum(importFilterDlg->posLat->text());
-    currentWaypointCatalog->radiusLong = WGSPoint::degreeToNum(importFilterDlg->posLong->text());
+    currentWaypointCatalog->radiusLat  = importFilterDlg->posLat->KFLogDegree();
+    currentWaypointCatalog->radiusLong = importFilterDlg->posLong->KFLogDegree();
     break;
   case CENTER_HOMESITE:
     currentWaypointCatalog->radiusLat  = _settings.value("/Homesite/Latitude").toInt();

@@ -27,7 +27,9 @@
  * and "lon". Furthermore it controls the unit to be used for position
  * representation.
  *
- * \date 2001-2010
+ * \date 2001-2011
+ *
+ * \version $Id$
  */
 
 #ifndef WGS_Point_H

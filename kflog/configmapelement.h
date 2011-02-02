@@ -64,13 +64,9 @@ class ConfigMapElement : public QWidget
    *        We have to handle two different cases, map and print configuration.
    *        If value is true, map configuration is executed.
    */
-  ConfigMapElement( QWidget* parent=0, bool configMap=true );
+  ConfigMapElement( QWidget* parent, bool configMap=true );
 
   virtual ~ConfigMapElement();
-
-  protected:
-
-  void showEvent( QShowEvent* event );
 
   public slots:
 

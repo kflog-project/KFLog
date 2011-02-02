@@ -9,23 +9,23 @@
 **   Copyright (c):  2002 by Harald Maier
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef WAYPOINTIMPFILTERDIALOG_H
-#define WAYPOINTIMPFILTERDIALOG_H
-
-#include "singlepoint.h"
-#include "guicontrols/coordedit.h"
+#ifndef WAYPOINT_IMP_FILTER_DIALOG_H
+#define WAYPOINT_IMP_FILTER_DIALOG_H
 
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialog>
 #include <q3dict.h>
 #include <QPoint>
+
+#include "singlepoint.h"
+#include "coordedit.h"
 
 /**filter import of waypoints from map
   *@author Harald Maier
@@ -36,11 +36,20 @@
 #define CENTER_MAP      2
 #define CENTER_AIRPORT  3
 
-class WaypointImpFilterDialog : public QDialog  {
-   Q_OBJECT
+class WaypointImpFilterDialog : public QDialog
+{
+  Q_OBJECT
+
+private:
+
+  Q_DISABLE_COPY ( WaypointImpFilterDialog )
+
 public:
-	WaypointImpFilterDialog(QWidget *parent=0, const char *name=0);
-	~WaypointImpFilterDialog();
+
+	WaypointImpFilterDialog( QWidget *parent=0 );
+
+	virtual ~WaypointImpFilterDialog();
+
   /** No descriptions */
   int getCenterRef();
   WGSPoint getAirportRef();
@@ -64,9 +73,11 @@ public:
   QComboBox *radius;
 
 protected slots:
+
   void slotChangeUseAll();
 
 public slots:
+
   /** reset all dialog items to default values */
   void slotClear();
 
@@ -77,6 +88,7 @@ private: // Private attributes
   QComboBox *refAirport;
 
 private slots:
+
   /** No descriptions */
   void selectRadius(int n);
   void polish();

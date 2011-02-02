@@ -25,6 +25,7 @@
 #include "airfield.h"
 #include "centertodialog.h"
 #include "dataview.h"
+#include "distance.h"
 #include "evaluationdialog.h"
 #include "flightdataprint.h"
 #include "flightloader.h"
@@ -75,6 +76,15 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   QMainWindow( parent, flags )
 {
   qDebug() << "MainWindow()";
+
+  // Initialize units to be used. Use the stored values from the configuration.
+  int altUnit  = _settings.value( "/Units/Altitude", Altitude::meters ).toInt();
+  int distUnit = _settings.value( "/Units/Distance", Distance::kilometers ).toInt();
+  int posUnit  = _settings.value( "/Units/Position", WGSPoint::DMS ).toInt();
+
+  Altitude::setUnit( static_cast<enum Altitude::altitudeUnit>(altUnit) );
+  Distance::setUnit( static_cast<enum Distance::distanceUnit>(distUnit) );
+  WGSPoint::setFormat( static_cast<enum WGSPoint::Format>(posUnit) );
 
   createApplicationDataDirectory();
 
@@ -300,7 +310,7 @@ void MainWindow::createDockWindows()
 
 void MainWindow::createMenuBar()
 {
-  qDebug() << "MainWindow::initMenuBar() Begin";
+  qDebug() << "MainWindow::initMenuBar()";
 
   //----------------------------------------------------------------------------
   // File menu actions
@@ -824,8 +834,6 @@ void MainWindow::createMenuBar()
   //FIXME: link to manual must be added
   //FIXME: dialog to switch application language must be added
   //help->insertItem(getPixmap("kde_idea_16.png"), tr("Tip of the day") );//, this, SLOT(slotTipOfDay()));
-
-  qDebug() << "MainWindow::initMenuBar() End";
 }
 
 void MainWindow::createStatusBar()
@@ -1645,7 +1653,7 @@ void MainWindow::slotShowAbout()
       "</blockquote>"
       "<b>Developers, Maintainers</b>"
       "<blockquote>"
-      "Axel Pauli (Portage to Qt4)<br>"
+      "Axel Pauli (Developer, Portage to Qt4)<br>"
       "Constantijn Neeteson (Maintenance, Core-developer)<br>"
       "Florian Ehinger (Maintenance, Core-developer, Mapdata)<br>"
       "Heiner Lamprecht (Maintenance, Core-developer)<br>"

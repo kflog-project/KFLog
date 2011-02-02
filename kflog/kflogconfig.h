@@ -47,7 +47,7 @@
 #include <QTreeWidget>
 #include <QWidget>
 
-#include "guicontrols/coordedit.h"
+#include "coordedit.h"
 
 class ConfigMapElement;
 class ConfigPrintElement;
@@ -189,6 +189,9 @@ class KFLogConfig : public QDialog
     /** */
     void __addWaypointTab();
 
+    /** Adds a tab for unit configuration. */
+    void __addUnitTab();
+
     QGridLayout *configLayout;
 
     QTreeWidget *setupTree;
@@ -212,6 +215,9 @@ class KFLogConfig : public QDialog
     QFrame* airfieldPage;
     /** */
     QFrame* waypointPage;
+    /** */
+    QFrame* unitPage;
+
     /** */
     QLineEdit* igcPathE;
     QLineEdit* taskPathE;
@@ -296,7 +302,10 @@ class KFLogConfig : public QDialog
     /** Default color array of related buttons. */
     QColor ftcColorArrayDefault[6];
 
+    /** Widget to configure the map draw elements. */
     ConfigMapElement* configDrawWidget;
+
+    /** Widget to configure the map print elements. */
     ConfigMapElement* configPrintWidget;
 
     int cylinPar;
@@ -304,6 +313,15 @@ class KFLogConfig : public QDialog
     int lambertV2;
     int lambertOrigin;
     int currentProjType;
+
+    /** Combo box for distance unit configuration. */
+    QComboBox* unitDistance;
+
+    /** Combo box for position unit configuration. */
+    QComboBox* unitPosition;
+
+    /** Combo box for altitude unit configuration. */
+    QComboBox* unitAltitude;
 };
 
 #endif

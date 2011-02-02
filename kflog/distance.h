@@ -1,37 +1,45 @@
 /***************************************************************************
-                          distance.h  -  general distance representation
-                             -------------------
+                           distance.h
+
     begin                : Sat Jul 20 2002
-    copyright            : (C) 2002 by André Somers, 2007 Axel Pauli
+
+    copyright            : (C) 2002      by André Somers,
+                               2007-2011 by Axel Pauli
+
     email                : andre@kflog.org
  
     $Id$
  
+***************************************************************************
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 2 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
 ***************************************************************************/
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+/**
+ * \class Distance
+ *
+ * \author Heiner Lamprecht, André Somers, Axel Pauli
+ *
+ * \brief Class to handle distances in different units and formats.
+ *
+ * An object of this class represents a distance. It can express this
+ * distance in a number of different formats.
+ * It also features a couple of static methods to convert from the set
+ * unit to meters or to display a distance in the currently selected unit.
+ *
+ * \date 2002-2011
+ *
+ * \version $Id$
+ */
 
 #ifndef DISTANCE_H
 #define DISTANCE_H
 
 #include <QString>
-
-/** @short Abstract Distance
- *
- * An object of this class represents a distance. It can express this
- * distance in a number of major formats.
- * It also features a couple of static methods to convert from the set
- * unit to meters or to display a distance in the currently selected unit.
- *
- * @author Heiner Lamprecht
- */
 
 class Distance
 {
@@ -43,9 +51,8 @@ class Distance
   static const double mFromNMile;
   static const double mFromFeet;
 
-  enum distanceUnit{meters=0, feet=1, kilometers=2, miles=3, nautmiles=4};
+  enum distanceUnit{ meters=0, feet=1, kilometers=2, miles=3, nautmiles=4 };
 
- public:
   Distance();
 
   /**
@@ -221,16 +228,16 @@ class Distance
   };
 
   /**
-   * Gets if the distance is valid
+   * Gets if the distance is valid.
    */
-  inline bool isValid()
+  bool isValid()
   {
     return _isValid;
   };
 
- protected: // Protected attributes
+ protected:
   /**
-   * internal representation (in meters)
+   * Internal representation is always in meters.
    */
   double _dist;
 
@@ -240,6 +247,7 @@ class Distance
   bool _isValid;
 
  private:
+
   static distanceUnit _distanceUnit;
 };
 

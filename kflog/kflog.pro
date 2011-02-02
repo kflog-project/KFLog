@@ -21,6 +21,7 @@ SOURCES = \
     basemapelement.cpp \
     centertodialog.cpp \
     configmapelement.cpp \
+    coordedit.cpp \
     da4record.cpp \
     dataview.cpp \
     distance.cpp \
@@ -85,7 +86,6 @@ SOURCES = \
     welt2000.cpp \
     wgspoint.cpp \
     whatsthat.cpp \
-    guicontrols/coordedit.cpp \
     guicontrols/kfloglistview.cpp
     
 HEADERS = \
@@ -98,6 +98,7 @@ HEADERS = \
     basemapelement.h \
     centertodialog.h \
     configmapelement.h \
+    coordedit.h \
     da4record.h \
     dataview.h \
     distance.h \
@@ -166,7 +167,6 @@ HEADERS = \
     wgspoint.h \
     whatsthat.h \
     wp.h \
-    guicontrols/coordedit.h \
     guicontrols/kfloglistview.h
     
 FORMS = optimizationwizard.ui

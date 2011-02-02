@@ -2701,9 +2701,9 @@ void Map::__openWaypointDialog( const QPoint &position )
   QPoint p = _globalMapMatrix->mapToWgs( position );
 
   // initialize dialog coordinates
-  waypointDlg->longitude->setText( WGSPoint::printPos( p.x(), false ) );
-  waypointDlg->latitude->setText( WGSPoint::printPos( p.y(), true ) );
-  waypointDlg->exec();
+  waypointDlg->longitude->setKFLogDegree( p.x() );
+  waypointDlg->latitude->setKFLogDegree( p.y() );
+  waypointDlg->setVisible( true );
 }
 
 /** Draws a scale indicator on the pixmap. */

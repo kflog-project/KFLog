@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by Andree Somers, 2011 by Axel Pauli
+**   Copyright (c):  2002 by Andreé Somers, 2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -36,7 +36,7 @@
 
 #include <QDialog>
 
-#include "guicontrols/coordedit.h"
+#include "coordedit.h"
 
 class CenterToDialog : public QDialog
 {

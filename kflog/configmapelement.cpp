@@ -84,57 +84,69 @@ ConfigMapElement::ConfigMapElement( QWidget* parent, bool configMap ) :
   border1ColorButton = new QPushButton(this);
   border1ColorButton->setFixedHeight(24);
   border1ColorButton->setFixedWidth(55);
+  border1ColorButton->setToolTip( tr("Select your desired pen color.") );
   connect(border1ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1Color()));
 
   border2ColorButton = new QPushButton(this);
   border2ColorButton->setFixedHeight(24);
   border2ColorButton->setFixedWidth(55);
+  border2ColorButton->setToolTip( tr("Select your desired pen color.") );
   connect(border2ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2Color()));
 
   border3ColorButton = new QPushButton(this);
   border3ColorButton->setFixedHeight(24);
   border3ColorButton->setFixedWidth(55);
+  border3ColorButton->setToolTip( tr("Select your desired pen color.") );
   connect(border3ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder3Color()));
 
   border4ColorButton = new QPushButton(this);
   border4ColorButton->setFixedHeight(24);
   border4ColorButton->setFixedWidth(55);
+  border4ColorButton->setToolTip( tr("Select your desired pen color.") );
   connect(border4ColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder4Color()));
 
   border1Pen = new QSpinBox();
   border1Pen->setRange( 1, 9 );
   border1Pen->setMinimumWidth( 35 );
   border1Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+  border1Pen->setToolTip( tr("Select your desired pen width.") );
 
   border2Pen = new QSpinBox();
   border2Pen->setRange( 1, 9 );
   border2Pen->setMinimumWidth( 35 );
   border2Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+  border2Pen->setToolTip( tr("Select your desired pen width.") );
 
   border3Pen = new QSpinBox();
   border3Pen->setRange( 1, 9 );
   border3Pen->setMinimumWidth( 35 );
   border3Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+  border3Pen->setToolTip( tr("Select your desired pen width.") );
 
   border4Pen = new QSpinBox();
   border3Pen->setRange( 1, 9 );
   border4Pen->setMinimumWidth( 35 );
   border4Pen->setButtonSymbols( QAbstractSpinBox::PlusMinus );
+  border4Pen->setToolTip( tr("Select your desired pen width.") );
 
   border1PenStyle = new QComboBox( this );
   border1PenStyle->setMinimumWidth( 60 );
+  border1PenStyle->setToolTip( tr("Select your desired pen style.") );
   border1PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
 
   border2PenStyle = new QComboBox( this );
   border2PenStyle->setMinimumWidth( 35 );
+  border2PenStyle->setToolTip( tr("Select your desired pen style.") );
   border2PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
 
   border3PenStyle = new QComboBox( this );
   border3PenStyle->setMinimumWidth( 35 );
+  border3PenStyle->setToolTip( tr("Select your desired pen style.") );
   border3PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
 
   border4PenStyle = new QComboBox( this );
   border4PenStyle->setMinimumWidth( 35 );
+  border4PenStyle->setToolTip( tr("Select your desired pen style.") );
   border4PenStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
 
   QGridLayout* penLayout = new QGridLayout;
@@ -162,42 +174,49 @@ ConfigMapElement::ConfigMapElement( QWidget* parent, bool configMap ) :
   border1BrushColorButton = new QPushButton(this);
   border1BrushColorButton->setFixedHeight(24);
   border1BrushColorButton->setFixedWidth(55);
+  border1BrushColorButton->setToolTip( tr("Select your desired brush color.") );
   connect(border1BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder1BrushColor()));
 
   border2BrushColorButton = new QPushButton(this);
   border2BrushColorButton->setFixedHeight(24);
   border2BrushColorButton->setFixedWidth(55);
+  border2BrushColorButton->setToolTip( tr("Select your desired brush color.") );
   connect(border2BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder2BrushColor()));
 
   border3BrushColorButton = new QPushButton(this);
   border3BrushColorButton->setFixedHeight(24);
   border3BrushColorButton->setFixedWidth(55);
+  border3BrushColorButton->setToolTip( tr("Select your desired brush color.") );
   connect(border3BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder3BrushColor()));
 
   border4BrushColorButton = new QPushButton(this);
   border4BrushColorButton->setFixedHeight(24);
   border4BrushColorButton->setFixedWidth(55);
+  border4BrushColorButton->setToolTip( tr("Select your desired brush color.") );
   connect(border4BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder4BrushColor()));
 
   border1BrushStyle = new QComboBox(this);
   border1BrushStyle->setMinimumWidth(60);
   border1BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+  border1BrushStyle->setToolTip( tr("Select solid pattern brush to enable airspace structure filling.") );
   __fillStyle(border1PenStyle, border1BrushStyle);
 
   border2BrushStyle = new QComboBox(this);
   border2BrushStyle->setMinimumWidth(35);
   border2BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-
+  border2BrushStyle->setToolTip( tr("Select solid pattern brush to enable airspace structure filling.") );
   __fillStyle(border2PenStyle, border2BrushStyle);
 
   border3BrushStyle = new QComboBox(this);
   border3BrushStyle->setMinimumWidth(35);
   border3BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+  border3BrushStyle->setToolTip( tr("Select solid pattern brush to enable airspace structure filling.") );
   __fillStyle(border3PenStyle, border3BrushStyle);
 
   border4BrushStyle = new QComboBox(this);
   border4BrushStyle->setMinimumWidth(35);
   border4BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
+  border4BrushStyle->setToolTip( tr("Select solid pattern brush to enable airspace structure filling.") );
   __fillStyle(border4PenStyle, border4BrushStyle);
 
   QSpinBox** oSpinArray[4];
@@ -267,6 +286,7 @@ ConfigMapElement::ConfigMapElement( QWidget* parent, bool configMap ) :
   copyLayout->setRowStretch( 4, 10 );
 
   QGroupBox* copyGroup = new QGroupBox( tr("Copy") );
+  copyGroup->setToolTip( tr("Press this button to copy all content of this line into the line below.") );
   copyGroup->setLayout( copyLayout );
 
   //----------------------------------------------------------------------------
@@ -310,11 +330,6 @@ ConfigMapElement::ConfigMapElement( QWidget* parent, bool configMap ) :
 
 ConfigMapElement::~ConfigMapElement()
 {
-}
-
-void ConfigMapElement::showEvent( QShowEvent* event )
-{
-  Q_UNUSED( event )
 }
 
 void ConfigMapElement::__readMapItems()

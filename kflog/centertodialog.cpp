@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by Andree Somers, 2011 by Axel Pauli
+**   Copyright (c):  2002 by Andreé Somers, 2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -50,7 +50,7 @@ CenterToDialog::CenterToDialog( QWidget *parent ) : QDialog(parent)
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
   connect(latE, SIGNAL(returnPressed()), this, SLOT(slotOk()));
   connect(longE, SIGNAL(returnPressed()), this, SLOT(slotOk()));
-  
+
   latE->setFocus();
 }
 
@@ -61,8 +61,6 @@ CenterToDialog::~CenterToDialog()
 void CenterToDialog::slotOk()
 {
   setVisible( false );
-
-  emit centerTo( WGSPoint::degreeToNum(latE->text()),
-                 WGSPoint::degreeToNum(longE->text()));
+  emit centerTo( latE->KFLogDegree(), longE->KFLogDegree() );
   close();
 }

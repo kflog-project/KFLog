@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Harald Maier
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -17,11 +18,6 @@
 
 #include <QtGui>
 
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
-
 #include "basemapelement.h"
 #include "runway.h"
 #include "waypointdialog.h"
@@ -29,9 +25,10 @@
 
 WaypointDialog::WaypointDialog( QWidget *parent ) : QDialog(parent)
 {
-  setWindowTitle( tr("Create new Waypoint") );
+  setWindowTitle( tr( "Create a new Waypoint" ) );
   setWindowModality( Qt::WindowModal );
-  setAttribute(Qt::WA_DeleteOnClose);
+  setAttribute( Qt::WA_DeleteOnClose );
+  setSizeGripEnabled( true );
 
   __initDialog();
 
@@ -44,99 +41,166 @@ WaypointDialog::WaypointDialog( QWidget *parent ) : QDialog(parent)
 
 WaypointDialog::~WaypointDialog()
 {
+  qDebug() << "~WaypointDialog()";
 }
 
 /** No descriptions */
 void WaypointDialog::__initDialog()
 {
-  QLabel *l;
-  QPushButton *b;
+  QLabel *l1, *l2;
 
-  Q3VBoxLayout *topLayout = new Q3VBoxLayout(this, 10);
-  Q3GridLayout *layout = new Q3GridLayout(11, 3, 5);
-  Q3HBoxLayout *buttons = new Q3HBoxLayout(10);
+  //---------------------------------------------------------------------------
+  QGridLayout *layout = new QGridLayout;
+  layout->setSpacing( 7 );
 
-  buttons->addStretch();
+  int row = 0;
 
-  applyButton = new QPushButton(tr("&Apply"), this);
-  connect(applyButton, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
-  buttons->addWidget(applyButton);
-  b = new QPushButton(tr("&Ok"), this);
-  b->setDefault(true);
-  connect(b, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
-  connect(b, SIGNAL(clicked()), SLOT(accept()));
-  buttons->addWidget(b);
-  b = new QPushButton(tr("&Cancel"), this);
-  connect(b, SIGNAL(clicked()), SLOT(reject()));
-  buttons->addWidget(b);
+  l1 = new QLabel( QString( "%1:" ).arg( tr( "&Name" ) ));
+  layout->addWidget( l1, row, 0 );
 
-  name = new QLineEdit(this);
+  l2 = new QLabel( QString( "%1:" ).arg( tr( "&Description" ) ));
+  layout->addWidget( l2, row, 2 );
+  row++;
+
+  name = new QLineEdit;
   name->setFocus();
-  layout->addWidget(name, 1, 0);
-  l = new QLabel(name, QString("%1:").arg(tr("&Name")), this);
-  layout->addWidget(l, 0, 0);
+  layout->addWidget(name, row, 0);
 
-  description = new QLineEdit(this);
-  layout->addWidget(description, 1, 1);
-  l = new QLabel(description, QString("%1:").arg(tr("&Description")), this);
-  layout->addWidget(l, 0, 1);
+  description = new QLineEdit;
+  layout->addWidget(description, row, 2);
+  row++;
 
-  waypointType = new QComboBox(false, this);
+  l1->setBuddy( name );
+  l2->setBuddy( description );
+
+  //---
+  l1 = new QLabel( QString( "%1:" ).arg( tr( "&Type" ) ));
+  layout->addWidget( l1, row, 0 );
+
+  l2 = new QLabel(tr("%1 (m):").arg(tr("&Elevation")));
+  layout->addWidget(l2, row, 2);
+  row++;
+
+  waypointType = new QComboBox;
   waypointType->setAutoCompletion(true);
-  layout->addWidget(waypointType, 1, 2);
-  l = new QLabel(waypointType, QString("%1:").arg(tr("&Type")), this);
-  layout->addWidget(l, 0, 2);
+  layout->addWidget(waypointType, row, 0);
 
-  latitude = new LatEdit(this);
-  layout->addWidget(latitude, 3, 0);
-  l = new QLabel(latitude, QString("%1:").arg(tr("&Latitude")), this);
-  layout->addWidget(l, 2, 0);
+  elevation = new QLineEdit;
+  layout->addWidget(elevation, row, 2);
+  row++;
 
-  longitude = new LongEdit(this);
-  layout->addWidget(longitude, 3, 1);
-  l = new QLabel(longitude, QString("%1:").arg(tr("L&ongitude")), this);
-  layout->addWidget(l, 2, 1);
+  l1->setBuddy( waypointType );
+  l2->setBuddy( elevation );
 
-  elevation = new QLineEdit(this);
-  layout->addWidget(elevation, 3, 2);
-  l = new QLabel(elevation, tr("%1 (m):").arg(tr("&Elevation")), this);
-  layout->addWidget(l, 2, 2);
+  //----
+  l1 = new QLabel(QString("%1:").arg(tr("&Latitude")));
+  layout->addWidget(l1, row, 0);
 
-  icao = new QLineEdit(this);
-  layout->addWidget(icao, 5, 0);
-  l = new QLabel(icao, tr("&ICAO:"), this);
-  layout->addWidget(l, 4, 0);
+  l2 = new QLabel(QString("%1:").arg(tr("L&ongitude")));
+  layout->addWidget(l2, row, 2);
+  row++;
 
-  frequency = new QLineEdit(this);
-  layout->addWidget(frequency, 5, 1);
-  l = new QLabel(frequency, QString("%1:").arg(tr("&Frequency")), this);
-  layout->addWidget(l, 4, 1);
+  latitude = new LatEdit;
+  layout->addWidget(latitude, row, 0);
 
-  isLandable = new QCheckBox(tr("L&andable"), this);
-  layout->addWidget(isLandable, 5, 2);
+  longitude = new LongEdit;
+  layout->addWidget(longitude, row, 2);
+  row++;
 
-  runway = new QLineEdit(this);
-  layout->addWidget(runway, 7, 0);
-  l = new QLabel(runway, QString("%1:").arg(tr("&Runway")), this);
-  layout->addWidget(l, 6, 0);
+  l1->setBuddy( latitude );
+  l2->setBuddy( longitude );
 
-  length = new QLineEdit(this);
-  layout->addWidget(length, 7, 1);
-  l = new QLabel(length, tr("%1 (m):").arg(tr("Len&gth")), this);
-  layout->addWidget(l, 6, 1);
+  //----
+  l1 = new QLabel(tr("&ICAO:"));
+  layout->addWidget(l1, row, 0);
 
-  surface = new QComboBox(false, this);
-  layout->addWidget(surface, 7, 2);
-  l = new QLabel(surface, QString("%1:").arg(tr("&Surface")), this);
-  layout->addWidget(l, 6, 2);
+  l2 = new QLabel(QString("%1:").arg(tr("&Frequency")));
+  layout->addWidget(l2, row, 2);
+  row++;
 
-  comment = new QLineEdit(this);
-  layout->addMultiCellWidget(comment, 9, 9, 0, 2);
-  l = new QLabel(comment, QString("%1:").arg(tr("&Comment")), this);
-  layout->addWidget(l, 8, 0);
+  icao = new QLineEdit;
+  layout->addWidget(icao, row, 0);
 
+  frequency = new QLineEdit;
+  layout->addWidget(frequency, row, 2);
+  row++;
+
+  l1->setBuddy( icao );
+  l2->setBuddy( frequency );
+
+  //---
+  l1 = new QLabel(QString("%1:").arg(tr("&Runway")));
+  layout->addWidget(l1, row, 0);
+
+  l2 = new QLabel(tr("%1 (m):").arg(tr("Len&gth")));
+  layout->addWidget(l2, row, 2);
+  row++;
+
+  runway = new QLineEdit;
+  layout->addWidget(runway, row, 0);
+
+  length = new QLineEdit;
+  layout->addWidget(length, row, 2);
+  row++;
+
+  l1->setBuddy( runway );
+  l2->setBuddy( length );
+
+  //---
+  l1 = new QLabel(QString("%1:").arg(tr("&Surface")));
+  layout->addWidget(l1, row, 0);
+  row++;
+
+  surface = new QComboBox;
+  layout->addWidget(surface, row, 0);
+
+  isLandable = new QCheckBox(tr("L&andable"));
+  layout->addWidget(isLandable, row, 2);
+  row++;
+
+  l1->setBuddy( surface );
+
+  //---
+  l1 = new QLabel(QString("%1:").arg(tr("&Comment")));
+  layout->addWidget(l1, row, 0);
+  row++;
+
+  comment = new QLineEdit;
+  layout->addWidget(comment, row, 0, 1, 3);
+  row++;
+
+  l1->setBuddy( comment );
+
+  layout->setColumnMinimumWidth( 1, 20 );
+
+  //---------------------------------------------------------------------------
+  QHBoxLayout *buttonsLayout = new QHBoxLayout;
+  buttonsLayout->setSpacing( 10 );
+  buttonsLayout->addStretch( 10 );
+
+  applyButton = new QPushButton(tr("&Apply"));
+  connect(applyButton, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
+  buttonsLayout->addWidget(applyButton);
+
+  QPushButton *pb = new QPushButton(tr("&Ok"));
+  pb->setDefault(true);
+  connect(pb, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
+  connect(pb, SIGNAL(clicked()), SLOT(accept()));
+  buttonsLayout->addWidget(pb);
+
+  pb = new QPushButton(tr("&Cancel"), this);
+  connect(pb, SIGNAL(clicked()), SLOT(reject()));
+  buttonsLayout->addWidget(pb);
+
+  //---------------------------------------------------------------------------
+  QVBoxLayout *topLayout = new QVBoxLayout;
+  topLayout->setSpacing( 10 );
   topLayout->addLayout(layout);
-  topLayout->addLayout(buttons);
+  topLayout->addLayout(buttonsLayout);
+
+  setLayout( topLayout );
+
+  resize( minimumSizeHint().width() + 10, minimumSizeHint().height() + 10 );
 }
 
 /** clear all entries */
@@ -151,8 +215,8 @@ void WaypointDialog::clear()
   length->clear();
   surface->setCurrentIndex( surface->findText(Runway::item2Text(Runway::Unknown)) );
   comment->clear();
-  latitude->clear();
-  longitude->clear();
+  latitude->setKFLogDegree(0);
+  longitude->setKFLogDegree(0);
   isLandable->setChecked(false);
   setWaypointType(BaseMapElement::Landmark);
 }
@@ -164,13 +228,13 @@ void WaypointDialog::slotAddWaypoint()
 
   // insert a new waypoint to current catalog
   Waypoint *w = new Waypoint;
-  w->name = name->text().upper();
+  w->name = name->text().toUpper();
   w->description = description->text();
   w->type = getWaypointType();
-  w->origP.setLat(WGSPoint::degreeToNum(latitude->text()));
-  w->origP.setLon(WGSPoint::degreeToNum(longitude->text()));
+  w->origP.setLat(latitude->KFLogDegree());
+  w->origP.setLon(longitude->KFLogDegree());
   w->elevation = elevation->text().toInt();
-  w->icao = icao->text().upper();
+  w->icao = icao->text().toUpper();
   w->frequency = frequency->text().toDouble();
   text = runway->text();
 
