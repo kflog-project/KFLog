@@ -6,7 +6,7 @@ Basic Test Installation
 
 Preconditions for compiling KFlog4 under Ubuntu 10.10:
 
-  1. It should be installed the following Qt packages:
+  1. It should be installed the following Qt 4.7.x packages:
   
   qt4-dev-tools, qt4-qmake, libqt4-dev, libqt4-network, libqt4-qt3support,
   libqt4-xml, libqtcore4, libqtgui4
