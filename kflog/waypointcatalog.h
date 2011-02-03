@@ -15,12 +15,28 @@
 **
 ***********************************************************************/
 
-#ifndef WAYPOINTCATALOG_H
-#define WAYPOINTCATALOG_H
-
 /**
-  *@author Harald Maier
-  */
+ * \class WaypointCatalog
+ *
+ * \author Harald Maier, Axel Pauli
+ *
+ * \brief Class for waypoint catalog management.
+ *
+ * Class for waypoint catalog management. Different file formats can be read
+ * and written by this class.
+ *
+ * \date 2001-2011
+ *
+ * \version $Id$
+ */
+
+#ifndef WAYPOINT_CATALOG_H
+#define WAYPOINT_CATALOG_H
+
+#include <QList>
+
+class QString;
+class Waypoint;
 
 class WaypointCatalog
 {
@@ -48,20 +64,25 @@ public:
   /** No descriptions */
   bool writeBinary();
   /** No descriptions */
-  bool importVolkslogger(const QString & filename);
+  bool importVolkslogger(const QString& filename);
   /** Checks if the file exists on disk, and if not asks the user for it.
     * It then calls either write() or writeBinary(),
     * depending on the selected format.
     */
   bool save(bool alwaysAskName=false);
+
   /** This function calls either read or readBinary depending on the filename of the catalog. */
-  bool load(const QString & catalog);
+  bool load(const QString& catalog);
+
   /** insert a new waypoint into the list and check if waypoint already exist */
   bool insertWaypoint(Waypoint *newWaypoint);
-  Waypoint *findWaypoint(QString name);
-  bool removeWaypoint(QString name);
 
-  /** filter for display/import */
+  /** Find a waypoint by using its name as search key. */
+  Waypoint *findWaypoint(const QString& name);
+
+  bool removeWaypoint(const QString& name);
+
+  /** filter values for display/import */
   bool showAll;
   bool showAirfields;
   bool showGliderfields;
@@ -79,13 +100,20 @@ public:
   int radiusLong;
 
   double radiusSize;
+  int centerRef;
+  QString airfieldRef;
 
-public: // Public attributes
-  /**  */
+public:
+
+  /**  Waypoint list belonging to catalog. */
   QList<Waypoint*> wpList;
+
+  /** Full path name of waypoint file. */
   QString path;
+
   bool modified;
-  /**  */
+
+  /**  File name without suffix. */
   QString catalogName;
 
 private: // Private attributes

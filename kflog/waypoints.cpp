@@ -4,6 +4,7 @@
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier
                                2011 by Axel Pauli
+
     email                : harry@kflog.org
 
     $Id$
@@ -20,7 +21,6 @@
  ***************************************************************************/
 
 #include <QtGui>
-#include <Qt3Support>
 
 #include "airfield.h"
 #include "mapcalc.h"
@@ -44,7 +44,7 @@ Waypoints::Waypoints(QWidget *parent, const QString& catalog) :
   setObjectName( "Waypoints" );
 
   addWaypointWindow(this);
-  addPopupMenu();
+  createMenu();
 
   waypointDlg = new WaypointDialog(this);
 
@@ -58,8 +58,6 @@ Waypoints::~Waypoints()
 {
   qDeleteAll( waypointCatalogs );
 }
-
-/** No descriptions */
 
 void Waypoints::addWaypointWindow(QWidget *parent)
 {
@@ -89,7 +87,7 @@ void Waypoints::addWaypointWindow(QWidget *parent)
   waypoints->loadConfig();
 
   connect(waypoints, SIGNAL(rightButtonPressed(Q3ListViewItem *, const QPoint &, int)),
-          SLOT(showWaypointPopup(Q3ListViewItem *, const QPoint &, int)));
+          SLOT(showWaypointMenu(Q3ListViewItem *, const QPoint &, int)));
   connect(waypoints, SIGNAL(doubleClicked(Q3ListViewItem *)),
           SLOT(slotEditWaypoint()));
 
@@ -125,72 +123,132 @@ void Waypoints::addWaypointWindow(QWidget *parent)
   layout->addWidget(waypoints);
 }
 
-/** No descriptions */
-void Waypoints::addPopupMenu()
+/** Create menus. */
+void Waypoints::createMenu()
 {
-  wayPointPopup = new Q3PopupMenu(waypoints);
-  catalogCopySubPopup = new Q3PopupMenu(waypoints);
-  catalogMoveSubPopup = new Q3PopupMenu(waypoints);
+  wayPointMenu = new QMenu(waypoints);
+
+  wayPointMenu->setTitle( tr("Waypoints"));
+
+  wayPointMenu->addAction( _mainWindow->getPixmap("waypoint_16.png"),
+                                             QObject::tr("&New catalog"),
+                                             this,
+                                             SLOT(slotNewWaypointCatalog()) );
+
+  wayPointMenu->addAction( _mainWindow->getPixmap("kde_fileopen_16.png"),
+                                             QObject::tr("&Open catalog"),
+                                             this,
+                                             SLOT(slotOpenWaypointCatalog()) );
 
 
-//  wayPointPopup->insertTitle(SmallIcon("waypoint"), "Waypoint's", 0);
-  wayPointPopup->insertItem(_mainWindow->getPixmap("waypoint_16.png"), tr("&New catalog"), this, SLOT(slotNewWaypointCatalog()));
-  wayPointPopup->insertItem(_mainWindow->getPixmap("kde_fileopen_16.png"), tr("&Open catalog"), this, SLOT(slotOpenWaypointCatalog()));
-  idWaypointCatalogImport = wayPointPopup->insertItem(tr("&Import catalog"), this, SLOT(slotImportWaypointCatalog()));
-  idWaypointImportFromMap = wayPointPopup->insertItem(tr("Import from &map"), this, SLOT(slotImportWaypointFromMap()));
-  idWaypointImportFromFile = wayPointPopup->insertItem(tr("Import from &file"), this, SLOT(slotImportWaypointFromFile()));
-  idWaypointCatalogSave = wayPointPopup->insertItem(_mainWindow->getPixmap("kde_filesave_16.png"), tr("&Save catalog"), this, SLOT(slotSaveWaypointCatalog()));
-  idWaypointCatalogSaveAs = wayPointPopup->insertItem(_mainWindow->getPixmap("kde_filesaveas_16.png"), tr("&Save catalog as..."), this, SLOT(slotSaveWaypointCatalogAs()));
-  idWaypointCatalogClose = wayPointPopup->insertItem(_mainWindow->getPixmap("kde_fileclose_16.png"), tr("&Close catalog"), this, SLOT(slotCloseWaypointCatalog()));
-  wayPointPopup->insertSeparator();
-  idWaypointNew = wayPointPopup->insertItem(_mainWindow->getPixmap("kde_filenew_16.png"), tr("New &waypoint"), this, SLOT(slotNewWaypoint()));
-  idWaypointEdit = wayPointPopup->insertItem(_mainWindow->getPixmap("kde_wizard_16.png"), tr("&Edit waypoint"), this, SLOT(slotEditWaypoint()));
-  idWaypointDelete = wayPointPopup->insertItem(_mainWindow->getPixmap("kde_editdelete_16.png"), tr("&Delete waypoint"), this, SLOT(slotDeleteWaypoint()));
-  idWaypointCopy2Catalog = wayPointPopup->insertItem(_mainWindow->getPixmap("kde_editcopy_16.png"), tr("Copy to &catalog"), catalogCopySubPopup);
-  idWaypointMove2Catalog = wayPointPopup->insertItem(_mainWindow->getPixmap("kde_move_16.png"), tr("Move to &catalog"), catalogMoveSubPopup);
+  ActionWaypointCatalogImport = wayPointMenu->addAction( tr("&Import catalog"),
+                                                         this,
+                                                         SLOT(slotImportWaypointCatalog()) );
 
-  wayPointPopup->insertSeparator();
-  idWaypointCopy2Task = wayPointPopup->insertItem(_mainWindow->getPixmap("kde_editcopy_16.png"), tr("Copy to &task"), this, SLOT(slotCopyWaypoint2Task()));
-  idWaypointCenterMap = wayPointPopup->insertItem(_mainWindow->getPixmap("centerwaypoint_16.png"), tr("Center map on waypoint"), this, SLOT(slotCenterMap()));
-  idWaypointSetHome = wayPointPopup->insertItem(_mainWindow->getPixmap("kde_gohome_16.png"), tr("Set Homesite"), this, SLOT(slotSetHome()));
+  ActionWaypointImportFromMap = wayPointMenu->addAction( tr("Import from &map"),
+                                                         this,
+                                                         SLOT(slotImportWaypointFromMap()) );
 
-  connect(catalogCopySubPopup, SIGNAL(activated(int)), this, SLOT(slotCopy2Catalog(int)));
-  connect(catalogMoveSubPopup, SIGNAL(activated(int)), this, SLOT(slotMove2Catalog(int)));
+  ActionWaypointImportFromFile = wayPointMenu->addAction( tr("Import from &file"),
+                                                          this,
+                                                          SLOT(slotImportWaypointFromFile()) );
+
+  ActionWaypointCatalogSave = wayPointMenu->addAction( _mainWindow->getPixmap("kde_filesave_16.png"),
+                                                       tr("&Save catalog"),
+                                                       this,
+                                                       SLOT(slotSaveWaypointCatalog()) );
+
+  ActionWaypointCatalogSaveAs = wayPointMenu->addAction( _mainWindow->getPixmap("kde_filesaveas_16.png"),
+                                                         tr("&Save catalog as..."),
+                                                         this,
+                                                         SLOT(slotSaveWaypointCatalogAs()) );
+
+  ActionWaypointCatalogClose = wayPointMenu->addAction( _mainWindow->getPixmap("kde_fileclose_16.png"),
+                                                        tr("&Close catalog"),
+                                                        this,
+                                                        SLOT(slotCloseWaypointCatalog()) );
+  wayPointMenu->addSeparator();
+
+  ActionWaypointNew = wayPointMenu->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
+                                               tr("New &waypoint"),
+                                               this,
+                                               SLOT(slotNewWaypoint()) );
+
+  ActionWaypointEdit = wayPointMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
+                                                tr("&Edit waypoint"),
+                                                this,
+                                                SLOT(slotEditWaypoint()) );
+
+  ActionWaypointDelete = wayPointMenu->addAction( _mainWindow->getPixmap("kde_editdelete_16.png"),
+                                                  tr("&Delete waypoint"),
+                                                  this,
+                                                  SLOT(slotDeleteWaypoint()) );
+
+  catalogCopySubMenu = wayPointMenu->addMenu( _mainWindow->getPixmap("kde_editcopy_16.png"),
+                                              tr("Copy to &catalog" ) );
+
+  catalogMoveSubMenu = wayPointMenu->addMenu( _mainWindow->getPixmap("kde_move_16.png"),
+                                              tr("Move to &catalog") );
+  wayPointMenu->addSeparator();
+
+  ActionWaypointCopy2Task = wayPointMenu->addAction( _mainWindow->getPixmap("kde_editcopy_16.png"),
+                                                     tr("Copy to &task"),
+                                                     this,
+                                                     SLOT(slotCopyWaypoint2Task()) );
+
+  ActionWaypointCenterMap = wayPointMenu->addAction( _mainWindow->getPixmap("centerwaypoint_16.png"),
+                                                     tr("Center map on waypoint"),
+                                                     this,
+                                                     SLOT(slotCenterMap()) );
+
+  ActionWaypointSetHome = wayPointMenu->addAction( _mainWindow->getPixmap("kde_gohome_16.png"),
+                                                   tr("Set Homesite"),
+                                                   this,
+                                                   SLOT(slotSetHome()) );
+
+  connect( catalogCopySubMenu, SIGNAL(triggered(QAction *)), this, SLOT(slotCopy2Catalog(QAction *)) );
+  connect( catalogMoveSubMenu, SIGNAL(triggered(QAction *)), this, SLOT(slotMove2Catalog(QAction *)) );
 }
 
 /**
  * Copies the current waypoint to the selected catalog
  */
-void Waypoints::slotCopy2Catalog(int id){
+void Waypoints::slotCopy2Catalog( QAction* action )
+{
+  int id = action->data().toInt();
+
   Q3ListViewItem *item = waypoints->currentItem();
   Waypoint *wpt;
 
-  if(item != 0) {
-    QString tmp = item->text(colName);
-    wpt=currentWaypointCatalog->findWaypoint(tmp);
-    waypointCatalogs.at(id)->wpList.append(new Waypoint(wpt));
-    waypointCatalogs.at(id)->modified=true;
-  }
-
+  if( item != 0 )
+    {
+      QString tmp = item->text( colName );
+      wpt = currentWaypointCatalog->findWaypoint( tmp );
+      waypointCatalogs.at( id )->wpList.append( new Waypoint( wpt ) );
+      waypointCatalogs.at( id )->modified = true;
+    }
 }
 
 /**
  * Moves the current waypoint to the selected catalog
  */
-void Waypoints::slotMove2Catalog(int id){
+void Waypoints::slotMove2Catalog( QAction* action )
+{
+  int id = action->data().toInt();
+
   Q3ListViewItem *item = waypoints->currentItem();
   Waypoint * wpt;
 
-  if(item != 0) {
-    QString tmp = item->text(colName);
-    wpt=currentWaypointCatalog->findWaypoint(tmp);
-    waypointCatalogs.at(id)->wpList.append(new Waypoint(wpt));
-    currentWaypointCatalog->removeWaypoint(tmp);
-    currentWaypointCatalog->modified = true;
-    waypointCatalogs.value(id)->modified = true;
-    delete item;
-  }
-
+  if( item != 0 )
+    {
+      QString tmp = item->text( colName );
+      wpt = currentWaypointCatalog->findWaypoint( tmp );
+      waypointCatalogs.at( id )->wpList.append( new Waypoint( wpt ) );
+      currentWaypointCatalog->removeWaypoint( tmp );
+      currentWaypointCatalog->modified = true;
+      waypointCatalogs.value( id )->modified = true;
+      delete item;
+    }
 }
 
 /** open a catalog and set it active */
@@ -201,50 +259,63 @@ void Waypoints::slotOpenWaypointCatalog()
                                          _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
-  filter.append(tr("All supported waypoint formats")+" (*.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
-  filter.append(tr("KFLog waypoints")+" (*.kflogwp *.KFLOGWP);;");
-  filter.append(tr("Cumulus and KFLogEmbedded waypoints")+" (*.kwp *.KWP);;");
-  filter.append(tr("Filser txt waypoints")+" (*.txt *.TXT);;");
-  filter.append(tr("Filser da4 waypoints")+" (*.da4 *.DA4);;");
-  filter.append(tr("SeeYou cup waypoints")+" (*.cup *.CUP)");
-  QString fName = Q3FileDialog::getOpenFileName(wayPointDir, filter, this, tr("Open waypoint catalog"));
+  filter.append(tr("All supported waypoint formats") + " (*.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
+  filter.append(tr("KFLog waypoints") + " (*.kflogwp *.KFLOGWP);;");
+  filter.append(tr("Cumulus waypoints") + " (*.kwp *.KWP);;");
+  filter.append(tr("Filser txt waypoints") + " (*.txt *.TXT);;");
+  filter.append(tr("Filser da4 waypoints") + " (*.da4 *.DA4);;");
+  filter.append(tr("SeeYou cup waypoints") + " (*.cup *.CUP)");
 
-  openCatalog(fName);
+  QString fName = QFileDialog::getOpenFileName( this,
+                                                tr("Open waypoint catalog"),
+                                                wayPointDir,
+                                                filter );
+
+  if( ! fName.isEmpty() )
+    {
+      openCatalog( fName );
+    }
 }
 
-void Waypoints::showWaypointPopup(Q3ListViewItem *it, const QPoint &, int)
+void Waypoints::showWaypointMenu(Q3ListViewItem *it, const QPoint &, int)
 {
-  //enable and disable the correct menuitems
-  wayPointPopup->setItemEnabled(idWaypointCatalogSave, waypointCatalogs.count() && currentWaypointCatalog->modified);
-  wayPointPopup->setItemEnabled(idWaypointCatalogSaveAs, waypointCatalogs.count() > 0);
-  wayPointPopup->setItemEnabled(idWaypointCatalogClose, waypointCatalogs.count() > 1);
-  wayPointPopup->setItemEnabled(idWaypointCatalogImport, waypointCatalogs.count());
-  wayPointPopup->setItemEnabled(idWaypointImportFromMap,waypointCatalogs.count());
+  //enable and disable the correct menu items
+  ActionWaypointCatalogSave->setEnabled(waypointCatalogs.count() && currentWaypointCatalog->modified);
+  ActionWaypointCatalogSaveAs->setEnabled(waypointCatalogs.count() > 0);
+  ActionWaypointCatalogClose->setEnabled(waypointCatalogs.count() > 1);
+  ActionWaypointCatalogImport->setEnabled(waypointCatalogs.count());
+  ActionWaypointImportFromMap->setEnabled(waypointCatalogs.count());
 
-  wayPointPopup->setItemEnabled(idWaypointNew,waypointCatalogs.count());
-  wayPointPopup->setItemEnabled(idWaypointEdit, it != 0);
-  wayPointPopup->setItemEnabled(idWaypointDelete, it != 0);
-  wayPointPopup->setItemEnabled(idWaypointCopy2Task, it != 0);
-  wayPointPopup->setItemEnabled(idWaypointCenterMap, it != 0);
-  wayPointPopup->setItemEnabled(idWaypointSetHome, it != 0);
+  ActionWaypointNew->setEnabled(waypointCatalogs.count());
+  ActionWaypointEdit->setEnabled(it != 0);
+  ActionWaypointDelete->setEnabled(it != 0);
+  ActionWaypointCopy2Task->setEnabled(it != 0);
+  ActionWaypointCenterMap->setEnabled(it != 0);
+  ActionWaypointSetHome->setEnabled(it != 0);
 
-  wayPointPopup->setItemEnabled(idWaypointCopy2Catalog, waypointCatalogs.count() > 1 && it != 0);
-  wayPointPopup->setItemEnabled(idWaypointMove2Catalog, waypointCatalogs.count() > 1 && it != 0);
+  // fill the submenus for the move & copy to catalog
+  catalogCopySubMenu->clear();
+  catalogMoveSubMenu->clear();
 
-  //fill the submenus for the move & copy to catalog
-  catalogCopySubPopup->clear();
-  catalogMoveSubPopup->clear();
-  //store current catalog index
-  int curCat=waypointCatalogs.indexOf(currentWaypointCatalog);
-  for (int i=0;i<waypointCatalogs.count();i++) {
-    if (curCat!=i) { //only insert if this catalog is NOT the current catalog...
-      catalogCopySubPopup->insertItem(waypointCatalogs.at(i)->path,i);
-      catalogMoveSubPopup->insertItem(waypointCatalogs.at(i)->path,i);
+  // get current catalog index
+  int curCat = waypointCatalogs.indexOf( currentWaypointCatalog );
+
+  for( int i = 0; i < waypointCatalogs.count(); i++ )
+    {
+      if( curCat != i )
+        {
+          // only insert if this catalog is NOT the current catalog...
+          QAction* action = catalogCopySubMenu->addAction( waypointCatalogs.at( i )->path );
+          action->setData( i );
+
+          action = catalogMoveSubMenu->addAction( waypointCatalogs.at( i )->path );
+          action->setData( i );
+        }
     }
-  }
-  //make sure we go back to the original catalog...
+
+  // make sure we go back to the original catalog...
   waypointCatalogs.at(curCat);
-  wayPointPopup->exec(QCursor::pos());
+  wayPointMenu->exec( QCursor::pos() );
 }
 
 void Waypoints::slotNewWaypoint()
@@ -315,7 +386,8 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
   {
     QString tmp;
 
-    // initialize dialg
+    // initialize dialog
+    waypointDlg->setWindowTitle( tr( "Edit Waypoint" ) );
     waypointDlg->name->setText(w->name);
     waypointDlg->description->setText(w->description);
     // translate id to index
@@ -327,19 +399,27 @@ void Waypoints::slotEditWaypoint(Waypoint* w)
     waypointDlg->icao->setText(w->icao);
     tmp.sprintf("%.3f", w->frequency);
     waypointDlg->frequency->setText(tmp);
-    if (w->runway.first > 0 ) {
-      tmp.sprintf("%d", w->runway.first);
-    }
-    else {
-      tmp = QString::null;
-    }
-    waypointDlg->runway->setText(tmp);
-    if (w->length != -1) {
-      tmp.sprintf("%d", w->length);
-    }
-    else {
-      tmp = QString::null;
-    }
+
+    if( w->runway.first > 0 )
+        {
+          tmp.sprintf( "%02d", w->runway.first );
+        }
+      else
+        {
+          tmp = "";
+        }
+
+      waypointDlg->runway->setText( tmp );
+
+      if( w->length != -1 )
+        {
+          tmp.sprintf( "%d", w->length );
+        }
+      else
+        {
+          tmp = "";
+        }
+
     waypointDlg->length->setText(tmp);
     // translate to id
     waypointDlg->setSurface(w->surface);
@@ -437,6 +517,8 @@ void Waypoints::slotDeleteWaypoint()
 /** No descriptions */
 void Waypoints::fillWaypoints()
 {
+  qDebug() << "Waypoints::fillWaypoints()";
+
   QString tmp;
   Waypoint *w;
   Q3ListViewItem *item;
@@ -445,48 +527,97 @@ void Waypoints::fillWaypoints()
 
   waypoints->clear();
 
-  filterRadius = (currentWaypointCatalog->radiusLat != 1  || currentWaypointCatalog->radiusLong != 1);
-  filterArea = (currentWaypointCatalog->areaLat2 != 1 && currentWaypointCatalog->areaLong2 != 1 && !filterRadius);
+  filterRadius = (currentWaypointCatalog->radiusLat != 0  || currentWaypointCatalog->radiusLong != 0);
+  filterArea   = (currentWaypointCatalog->areaLat2 != 0 && currentWaypointCatalog->areaLong2 != 0 && !filterRadius);
 
-  foreach(w, currentWaypointCatalog->wpList) {
-    if (!currentWaypointCatalog->showAll) {
-      switch(w->type) {
-      case BaseMapElement::IntAirport:
-      case BaseMapElement::Airport:
-      case BaseMapElement::MilAirport:
-      case BaseMapElement::CivMilAirport:
-      case BaseMapElement::Airfield:
-        if (!currentWaypointCatalog->showAirfields) {
-          continue;
-        }
-        break;
-      case BaseMapElement::Gliderfield:
-        if (!currentWaypointCatalog->showGliderfields) {
-          continue;
-        }
-        break;
-      case BaseMapElement::UltraLight:
-      case BaseMapElement::HangGlider:
-      case BaseMapElement::Parachute:
-      case BaseMapElement::Balloon:
-        if (!currentWaypointCatalog->showOtherSites) {
-          continue;
-        }
-        break;
+  foreach(w, currentWaypointCatalog->wpList)
+      {
+        if( !currentWaypointCatalog->showAll )
+          {
+            switch( w->type )
+              {
+              case BaseMapElement::IntAirport:
+              case BaseMapElement::Airport:
+              case BaseMapElement::MilAirport:
+              case BaseMapElement::CivMilAirport:
+              case BaseMapElement::Airfield:
+
+                if( !currentWaypointCatalog->showAirfields )
+                  {
+                    continue;
+                  }
+                break;
+
+              case BaseMapElement::Gliderfield:
+
+                if( !currentWaypointCatalog->showGliderfields )
+                  {
+                    continue;
+                  }
+                break;
+
+              case BaseMapElement::UltraLight:
+              case BaseMapElement::HangGlider:
+              case BaseMapElement::Parachute:
+              case BaseMapElement::Balloon:
+
+                if( !currentWaypointCatalog->showOtherSites )
+                  {
+                    continue;
+                  }
+                break;
+
+              case BaseMapElement::Outlanding:
+
+                if( !currentWaypointCatalog->showOutlandings )
+                  {
+                    continue;
+                  }
+                break;
+
+              case BaseMapElement::Obstacle:
+
+                if( !currentWaypointCatalog->showObstacles )
+                  {
+                    continue;
+                  }
+                break;
+
+              case BaseMapElement::Landmark:
+
+                if( !currentWaypointCatalog->showLandmarks )
+                  {
+                    continue;
+                  }
+                break;
+              }
+          }
+
+    if (filterArea)
+      {
+        if (w->origP.lat() < currentWaypointCatalog->areaLat1 || w->origP.lat() > currentWaypointCatalog->areaLat2 ||
+            w->origP.lon() < currentWaypointCatalog->areaLong1 || w->origP.lon() > currentWaypointCatalog->areaLong2)
+          {
+            continue;
+          }
       }
+    else if (filterRadius)
+      {
+        // We have to consider the user chosen distance unit.
+        double catalogDist = Distance::convertToMeters( currentWaypointCatalog->radiusSize ) / 1000.;
+
+        // This distance is calculated im kilometers.
+        double radiusDist = dist( currentWaypointCatalog->radiusLat,
+                                  currentWaypointCatalog->radiusLong,
+                                  w->origP.lat(),
+                                  w->origP.lon() );
+
+        if ( radiusDist > catalogDist )
+          {
+            continue;
+          }
     }
 
-    if (filterArea) {
-      if (w->origP.lat() < currentWaypointCatalog->areaLat1 || w->origP.lat() > currentWaypointCatalog->areaLat2 ||
-          w->origP.lon() < currentWaypointCatalog->areaLong1 || w->origP.lon() > currentWaypointCatalog->areaLong2) {
-        continue;
-      }
-    }
-    else if (filterRadius) {
-      if (dist(currentWaypointCatalog->radiusLat, currentWaypointCatalog->radiusLong, w->origP.lat(), w->origP.lon()) > currentWaypointCatalog->radiusSize) {
-        continue;
-      }
-    }
     item = new Q3ListViewItem(waypoints);
     item->setText(colName, w->name);
     item->setText(colDesc, w->description);
@@ -518,6 +649,7 @@ void Waypoints::fillWaypoints()
     item->setText(colComment, w->comment);
     item->setPixmap(colName, _globalMapConfig->getPixmap(w->type,false,true));
   }
+
   emit waypointCatalogChanged(currentWaypointCatalog);
 }
 
@@ -547,16 +679,20 @@ void Waypoints::slotImportWaypointCatalog()
                                          _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
-  filter.append(tr("KFLog waypoints")+" (*.kflogwp *.KFLOGWP);;");
-  filter.append(tr("All files")+" (*.*)");
-  QString fName = Q3FileDialog::getOpenFileName(wayPointDir, filter, this, tr("Import waypoint catalog"));
+  filter.append(tr("KFLog waypoints") + " (*.kflogwp *.KFLOGWP);;");
+  filter.append(tr("All files") + " (*.*)");
 
-  if(!fName.isEmpty()) {
-    // read from disk
-    currentWaypointCatalog->read(fName);
-    currentWaypointCatalog->modified = true;
-    fillWaypoints();
-  }
+  QString fName = QFileDialog::getOpenFileName( this,
+                                                tr("Import waypoint catalog"),
+                                                wayPointDir,
+                                                filter );
+  if( ! fName.isEmpty() )
+    {
+      // read from disk
+      currentWaypointCatalog->read(fName);
+      currentWaypointCatalog->modified = true;
+      fillWaypoints();
+    }
 }
 
 void Waypoints::slotCloseWaypointCatalog()
@@ -603,56 +739,86 @@ void Waypoints::slotImportWaypointFromMap()
   WGSPoint p;
   QString tmp;
   QRegExp blank("[ ]");
-  Q3ValueList<int> searchLists;
-  Q3ValueList<int>::Iterator searchListsIt;
+  QList<int> searchList;
+
   bool filterRadius, filterArea;
 
-  if (importFilterDlg->exec() == QDialog::Accepted) {
-    getFilterData();
+  if (importFilterDlg->exec() == QDialog::Accepted)
+    {
+      getFilterData();
 
-    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showAirfields) {
-      searchLists.append(MapContents::AirfieldList);
-    }
-    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showGliderfields) {
-      searchLists.append(MapContents::GliderfieldList);
-    }
-    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showOtherSites) {
-      searchLists.append(MapContents::AddSitesList);
-    }
-    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showObstacles) {
-      searchLists.append(MapContents::ObstacleList);
-    }
-    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showLandmarks) {
-      searchLists.append(MapContents::LandmarkList);
-    }
-    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showOutlandings) {
-      searchLists.append(MapContents::OutLandingList);
-    }
-    if (currentWaypointCatalog->showAll || currentWaypointCatalog->showStations) {
-      searchLists.append(MapContents::StationList);
-    }
+      if( currentWaypointCatalog->showAll || currentWaypointCatalog->showAirfields )
+        {
+          searchList.append( MapContents::AirfieldList );
+        }
 
-    filterRadius = (currentWaypointCatalog->radiusLat != 1  || currentWaypointCatalog->radiusLong != 1);
-    filterArea = (currentWaypointCatalog->areaLat2 != 1 && currentWaypointCatalog->areaLong2 != 1 && !filterRadius);
+      if( currentWaypointCatalog->showAll || currentWaypointCatalog->showGliderfields )
+        {
+          searchList.append( MapContents::GliderfieldList );
+        }
 
-    for (searchListsIt =searchLists.begin(); searchListsIt != searchLists.end(); ++searchListsIt) {
-      for (int i = 0; i < _globalMapContents->getListLength(*searchListsIt); i++) {
+      if( currentWaypointCatalog->showAll || currentWaypointCatalog->showOtherSites )
+        {
+          searchList.append( MapContents::AddSitesList );
+        }
 
-        s = (SinglePoint *)_globalMapContents->getElement(*searchListsIt, i);
+      if( currentWaypointCatalog->showAll || currentWaypointCatalog->showObstacles )
+        {
+          searchList.append( MapContents::ObstacleList );
+        }
+
+      if( currentWaypointCatalog->showAll || currentWaypointCatalog->showLandmarks )
+        {
+          searchList.append( MapContents::LandmarkList );
+        }
+
+      if( currentWaypointCatalog->showAll || currentWaypointCatalog->showOutlandings )
+        {
+          searchList.append( MapContents::OutLandingList );
+        }
+
+      if( currentWaypointCatalog->showAll || currentWaypointCatalog->showStations )
+        {
+          searchList.append( MapContents::StationList );
+        }
+
+      filterRadius = (currentWaypointCatalog->radiusLat != 0  || currentWaypointCatalog->radiusLong != 0);
+
+      filterArea = (currentWaypointCatalog->areaLat2 != 0 && currentWaypointCatalog->areaLong2 != 0 && !filterRadius);
+
+    for( int k = 0; k < searchList.size(); k++ )
+      {
+      for (int i = 0; i < _globalMapContents->getListLength(searchList.at(k) ); i++)
+        {
+
+        s = (SinglePoint *)_globalMapContents->getElement(searchList.at(k), i);
         p = s->getWGSPosition();
 
         // check area
-        if (filterArea) {
+        if (filterArea)
+          {
           if (p.lon() < currentWaypointCatalog->areaLong1 || p.lon() > currentWaypointCatalog->areaLong2 ||
-              p.lat() < currentWaypointCatalog->areaLat1 || p.lat() > currentWaypointCatalog->areaLat2) {
-            continue;
+              p.lat() < currentWaypointCatalog->areaLat1 || p.lat() > currentWaypointCatalog->areaLat2)
+            {
+             continue;
+            }
           }
-        }
-        else if (filterRadius) {
-          if (dist(currentWaypointCatalog->radiusLat, currentWaypointCatalog->radiusLong, p.lat(), p.lon()) > currentWaypointCatalog->radiusSize) {
-            continue;
+        else if (filterRadius)
+          {
+            // We have to consider the user chosen distance unit.
+            double catalogDist = Distance::convertToMeters( currentWaypointCatalog->radiusSize ) / 1000.;
+
+            // This distance is calculated im kilometers.
+            double radiusDist = dist( currentWaypointCatalog->radiusLat,
+                                      currentWaypointCatalog->radiusLong,
+                                      p.lat(),
+                                      p.lon());
+
+            if ( radiusDist > catalogDist )
+              {
+                continue;
+              }
           }
-        }
 
         w = new Waypoint;
 
@@ -679,8 +845,6 @@ void Waypoints::slotImportWaypointFromMap()
         case BaseMapElement::CivMilAirport:
         case BaseMapElement::Airfield:
         case BaseMapElement::Gliderfield:
-
-#warning "Check convertion here"
 
           w->icao = ((Airfield *) s)->getICAO();
           w->frequency = ((Airfield *) s)->getFrequency().toDouble();
@@ -817,11 +981,11 @@ void Waypoints::getFilterData()
   currentWaypointCatalog->areaLong1 = importFilterDlg->fromLong->KFLogDegree();
   currentWaypointCatalog->areaLong2 = importFilterDlg->toLong->KFLogDegree();
 
-  switch (importFilterDlg->getCenterRef())
+  switch ( importFilterDlg->getCenterRef() )
   {
     case CENTER_POS:
-      currentWaypointCatalog->radiusLat  = importFilterDlg->posLat->KFLogDegree();
-      currentWaypointCatalog->radiusLong = importFilterDlg->posLong->KFLogDegree();
+      currentWaypointCatalog->radiusLat  = importFilterDlg->radiusLat->KFLogDegree();
+      currentWaypointCatalog->radiusLong = importFilterDlg->radiusLong->KFLogDegree();
       break;
     case CENTER_HOMESITE:
       currentWaypointCatalog->radiusLat  = _settings.value("/Homesite/Latitude").toInt();
@@ -833,9 +997,9 @@ void Waypoints::getFilterData()
       currentWaypointCatalog->radiusLong = p.lon();
       break;
     case CENTER_AIRFIELD:
-      p = importFilterDlg->getAirportRef();
-      currentWaypointCatalog->radiusLat  = p.lat();
-      currentWaypointCatalog->radiusLong = p.lon();
+      currentWaypointCatalog->airfieldRef = importFilterDlg->airfieldRefTxt;
+      currentWaypointCatalog->radiusLat   = importFilterDlg->getAirfieldRef().lat();
+      currentWaypointCatalog->radiusLong  = importFilterDlg->getAirfieldRef().lon();
       break;
   }
 
@@ -854,8 +1018,46 @@ void Waypoints::getFilterData()
     currentWaypointCatalog->areaLong2 = tmp;
   }
 }
+
+void Waypoints::setFilterData()
+{
+  importFilterDlg->useAll->setChecked(currentWaypointCatalog->showAll);
+  importFilterDlg->airfields->setChecked(currentWaypointCatalog->showAirfields);
+  importFilterDlg->gliderfields->setChecked(currentWaypointCatalog->showGliderfields);
+  importFilterDlg->otherSites->setChecked(currentWaypointCatalog->showOtherSites);
+  importFilterDlg->obstacles->setChecked(currentWaypointCatalog->showObstacles);
+  importFilterDlg->landmarks->setChecked(currentWaypointCatalog->showLandmarks);
+  importFilterDlg->outlandings->setChecked(currentWaypointCatalog->showOutlandings);
+  importFilterDlg->stations->setChecked(currentWaypointCatalog->showStations);
+
+  importFilterDlg->fromLat->setKFLogDegree(currentWaypointCatalog->areaLat1);
+  importFilterDlg->toLat->setKFLogDegree(currentWaypointCatalog->areaLat2);
+  importFilterDlg->fromLong->setKFLogDegree(currentWaypointCatalog->areaLong1);
+  importFilterDlg->toLong->setKFLogDegree(currentWaypointCatalog->areaLong2);
+
+  importFilterDlg->radiusLat->setKFLogDegree(currentWaypointCatalog->radiusLat);
+  importFilterDlg->radiusLong->setKFLogDegree(currentWaypointCatalog->radiusLong);
+  importFilterDlg->selectRadius( currentWaypointCatalog->centerRef );
+
+  QString radTxt = QString::number(currentWaypointCatalog->radiusSize);
+
+  int idx = importFilterDlg->radius->findText( radTxt );
+
+  if( idx != -1 )
+    {
+      importFilterDlg->radius->setCurrentIndex( idx );
+    }
+  else
+    {
+      importFilterDlg->radius->setCurrentIndex( 0 );
+    }
+
+  importFilterDlg->airfieldRefTxt = currentWaypointCatalog->airfieldRef;
+}
+
 /** No descriptions */
-void Waypoints::slotImportWaypointFromFile(){
+void Waypoints::slotImportWaypointFromFile()
+{
   extern QSettings _settings;
 
   QString wayPointDir = _settings.value( "/Path/DefaultWaypointDirectory",
@@ -863,52 +1065,64 @@ void Waypoints::slotImportWaypointFromFile(){
 
    // we should not include types we don't support (yet). Also, the strings should be translated.
   QString filter;
-  filter.append(tr("Volkslogger format")+" (*.dbt *.DBT)");//;;");
-//  filter.append(tr("Garmin format")+" (*.gdn *.GDN);;");
-//  filter.append(tr("All files")+" (*.*)");
-  QString fName = Q3FileDialog::getOpenFileName(wayPointDir, filter, this, tr("Import waypoints from file"));
+  filter.append( tr("Volkslogger format") + " (*.dbt *.DBT)" );
 
-  if(!fName.isEmpty()) {
+  QString fName = QFileDialog::getOpenFileName( this,
+                                                tr("Import waypoints from file"),
+                                                wayPointDir,
+                                                filter );
+  if( !fName.isEmpty() )
+    {
+      // read from disk
+      currentWaypointCatalog->modified = true;
 
-    // read from disk
-    currentWaypointCatalog->modified = true;
-    if (fName.right(4).lower() == ".dbt"){
-            currentWaypointCatalog->importVolkslogger(fName);
-      //    } else if (fName.right(4).lower() == "*.gdn"){
-      //    currentWaypointCatalog->importGarmin(fName);
-    } else {
-      currentWaypointCatalog->modified = false;
+      if( fName.right( 4 ).toLower() == ".dbt" )
+        {
+          currentWaypointCatalog->importVolkslogger( fName );
+        }
+      else
+        {
+          currentWaypointCatalog->modified = false;
+        }
+
+      fillWaypoints();
     }
-    fillWaypoints();
-  }
 }
 
-void Waypoints::openCatalog(QString &catalog)
+void Waypoints::openCatalog( QString &catalog )
 {
-  if(!catalog.isEmpty()) {
-    int newItem = catalogName->count();
-    WaypointCatalog *w = new WaypointCatalog("");
-    QFile f(catalog);
+  if( !catalog.isEmpty() )
+    {
+      int newItem = catalogName->count();
 
-    if (f.exists()) {
-      // read from disk
-      if (!w->load(catalog)) {
-        delete w;
-      }
-      else {
-        waypointCatalogs.append(w);
-        currentWaypointCatalog = w;
-        catalogName->insertItem(w->path);
+      WaypointCatalog *wc = new WaypointCatalog( "" );
+      QFile f( catalog );
 
-        catalogName->setCurrentItem(newItem);
-        qDebug(".....");
-        slotSwitchWaypointCatalog(newItem);
-      }
+      if( f.exists() )
+        {
+          // read from disk
+          if( ! wc->load( catalog ) )
+            {
+              delete wc;
+            }
+          else
+            {
+              waypointCatalogs.append( wc );
+              currentWaypointCatalog = wc;
+              catalogName->addItem( wc->path );
+
+              catalogName->setCurrentIndex( newItem );
+              qDebug() << "New Waypoint Catalog" << wc->path
+                       << "added with" << wc->wpList.size() << "items";
+
+              slotSwitchWaypointCatalog( newItem );
+            }
+        }
+      else
+        {
+          delete wc;
+        }
     }
-    else {
-      delete w;
-    }
-  }
 }
 
 /* slot to set name of catalog and open it without a file selection dialog */

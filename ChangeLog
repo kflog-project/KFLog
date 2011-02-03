@@ -1,5 +1,12 @@
 $Id$
 
+2011-02-03 Axel Pauli <axel@kflog.org>
+  * Bugfix in class WaypointCatalog. In method insertWaypoint was never done
+    an insert of a new waypoint. The insert statement was placed inside the
+    existing path. It cost me two hours to find out that, uff ;-).
+    Class WaypointCatalog is fully ported to Qt4 now.
+  * All menu items in class Waypoints ported to Qt4.
+
 2011-02-02 Axel Pauli <axel@kflog.org>
   * All bitBlt method calls replaced by Qt4 drawPixmap calls in class Map. That
     improves the drawing performance too.

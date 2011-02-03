@@ -104,14 +104,14 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   toGroup->setLayout( toGrid );
 
   //---------------------------------------------------------------------------
-  QRadioButton *rb0 = new QRadioButton(tr("Position"));
-  QRadioButton *rb1 = new QRadioButton(tr("Homesite"));
-  QRadioButton *rb2 = new QRadioButton(tr("Center of Map"));
-  QRadioButton *rb3 = new QRadioButton(tr("Airfield"));
+  rb0 = new QRadioButton(tr("Position"));
+  rb1 = new QRadioButton(tr("Homesite"));
+  rb2 = new QRadioButton(tr("Center of Map"));
+  rb3 = new QRadioButton(tr("Airfield"));
 
-  rb0->setChecked( true );
+  rb0->setChecked( false );
   rb1->setChecked( false );
-  rb2->setChecked( false );
+  rb2->setChecked( true );
   rb3->setChecked( false );
 
   QButtonGroup* radiusButtonGroup = new QButtonGroup(this);
@@ -124,10 +124,13 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   connect( radiusButtonGroup, SIGNAL( buttonClicked(int)),
            this, SLOT(selectRadius(int)));
 
-  posLat  = new LatEdit;
-  posLong = new LongEdit;
-  refAirport = new QComboBox;
+  radiusLat  = new LatEdit;
+  radiusLong = new LongEdit;
+  refAirfieldBox = new QComboBox;
   radiusUnit = new QLabel;
+
+  connect( refAirfieldBox, SIGNAL(currentIndexChanged(const QString&)),
+           this, SLOT(slotAirfieldRefChanged(const QString&)) );
 
   radius = new QComboBox;
   radius->setEditable( true );
@@ -141,14 +144,14 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   radiusGrid->setSpacing(10);
   radiusGrid->addWidget( rb0, 0, 0 );
   radiusGrid->addWidget( new QLabel(tr("Lat:")), 0, 1 );
-  radiusGrid->addWidget( posLat, 0, 2);
+  radiusGrid->addWidget( radiusLat, 0, 2);
   radiusGrid->addWidget( new QLabel(tr("Lon:")), 0, 3 );
-  radiusGrid->addWidget( posLong, 0, 4 );
+  radiusGrid->addWidget( radiusLong, 0, 4 );
 
   radiusGrid->addWidget( rb1, 1, 0 );
   radiusGrid->addWidget( rb2, 2, 0 );
   radiusGrid->addWidget( rb3, 3, 0 );
-  radiusGrid->addWidget( refAirport, 3, 2 );
+  radiusGrid->addWidget( refAirfieldBox, 3, 2 );
 
   radiusGrid->addWidget( radiusUnit, 4, 0 );
   radiusGrid->addWidget( radius, 4, 2 );
@@ -191,12 +194,12 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   setLayout( top );
 
   slotChangeUseAll();
-  selectRadius(CENTER_POS);
+  selectRadius(CENTER_HOMESITE);
 }
 
 WaypointImpFilterDialog::~WaypointImpFilterDialog()
 {
-  qDebug() << "~WaypointImpFilterDialog()";
+  //qDebug() << "~WaypointImpFilterDialog()";
 }
 
 void WaypointImpFilterDialog::showEvent( QShowEvent *event )
@@ -207,7 +210,7 @@ void WaypointImpFilterDialog::showEvent( QShowEvent *event )
   QString distUnit = Distance::getUnitText();
   radiusUnit->setText( tr("Radius") + " (" + distUnit + "):" );
 
-  // Load airfield data into combo box.
+  // Load airfield data into combo box. Can be changed in the meantime.
   loadAirfieldComboBox();
 }
 
@@ -226,26 +229,29 @@ void WaypointImpFilterDialog::slotChangeUseAll()
 /** reset all dialog items to default values */
 void WaypointImpFilterDialog::slotClear()
 {
-  useAll->setChecked(true);
-  airfields->setChecked(false);
-  gliderfields->setChecked(false);
-  otherSites->setChecked(false);
-  outlandings->setChecked(false);
-  obstacles->setChecked(false);
-  landmarks->setChecked(false);
-  stations->setChecked(false);
+  useAll->setChecked( true );
+  airfields->setChecked( false );
+  gliderfields->setChecked( false );
+  otherSites->setChecked( false );
+  outlandings->setChecked( false );
+  obstacles->setChecked( false );
+  landmarks->setChecked( false );
+  stations->setChecked( false );
 
   slotChangeUseAll();
 
-  fromLat->setKFLogDegree(0);
-  fromLong->setKFLogDegree(0);
-  toLat->setKFLogDegree(0);
-  toLong->setKFLogDegree(0);
-  posLat->setKFLogDegree(0);
-  posLong->setKFLogDegree(0);
+  fromLat->setKFLogDegree( 0 );
+  fromLong->setKFLogDegree( 0 );
+  toLat->setKFLogDegree( 0 );
+  toLong->setKFLogDegree( 0 );
+  radiusLat->setKFLogDegree( 0 );
+  radiusLong->setKFLogDegree( 0 );
 
-  refAirport->setCurrentIndex(0);
-  radius->setCurrentIndex(4);
+  rb2->setChecked( true );
+  refAirfieldBox->setCurrentIndex( 0 );
+  radius->setCurrentIndex( 4 );
+
+  selectRadius(CENTER_HOMESITE);
 }
 
 /** No descriptions */
@@ -256,21 +262,21 @@ void WaypointImpFilterDialog::selectRadius(int n)
   switch (center)
   {
     case CENTER_POS:
-      posLat->setEnabled(true);
-      posLong->setEnabled(true);
-      refAirport->setEnabled(false);
+      radiusLat->setEnabled(true);
+      radiusLong->setEnabled(true);
+      refAirfieldBox->setEnabled(false);
       break;
     case CENTER_HOMESITE:
       // fall through
     case CENTER_MAP:
-      posLat->setEnabled(false);
-      posLong->setEnabled(false);
-      refAirport->setEnabled(false);
+      radiusLat->setEnabled(false);
+      radiusLong->setEnabled(false);
+      refAirfieldBox->setEnabled(false);
       break;
     case CENTER_AIRFIELD:
-      posLat->setEnabled(false);
-      posLong->setEnabled(false);
-      refAirport->setEnabled(true);
+      radiusLat->setEnabled(false);
+      radiusLong->setEnabled(false);
+      refAirfieldBox->setEnabled(true);
       break;
     }
 }
@@ -284,12 +290,8 @@ void WaypointImpFilterDialog::loadAirfieldComboBox()
 {
   int searchList[] = { MapContents::GliderfieldList, MapContents::AirfieldList };
 
-  // memorize last selection
-  QString lastSelectedAirfield = refAirport->currentText();
-  int lastIndex = refAirport->currentIndex();
-
-  airportDict.clear();
-  refAirport->clear();
+  airfieldDict.clear();
+  refAirfieldBox->clear();
 
   QStringList airfieldList;
 
@@ -299,35 +301,43 @@ void WaypointImpFilterDialog::loadAirfieldComboBox()
       {
         SinglePoint *hitElement = (SinglePoint *) _globalMapContents->getElement(searchList[l], loop );
         airfieldList.append( hitElement->getName() );
-        airportDict.insert( hitElement->getName(), hitElement );
+        airfieldDict.insert( hitElement->getName(), hitElement );
       }
   }
 
   airfieldList.sort();
-  refAirport->addItems( airfieldList );
+  refAirfieldBox->addItems( airfieldList );
 
-  if( lastIndex != -1 )
+  // try to find the last selection in the new content.
+  int newIndex = refAirfieldBox->findText( airfieldRefTxt );
+
+  if( newIndex != -1 )
     {
       // Try to find the last selection.
-      refAirport->setCurrentIndex( refAirport->findText(lastSelectedAirfield) );
+      refAirfieldBox->setCurrentIndex( newIndex );
     }
   else
     {
-      refAirport->setCurrentIndex( 0 );
+      refAirfieldBox->setCurrentIndex( 0 );
     }
 }
 
-WGSPoint WaypointImpFilterDialog::getAirportRef()
+WGSPoint WaypointImpFilterDialog::getAirfieldRef()
 {
-  QString s = refAirport->currentText();
+  QString s = refAirfieldBox->currentText();
 
   WGSPoint p;
 
-  if( airportDict.contains(s) )
+  if( airfieldDict.contains(s) )
     {
-      SinglePoint *sp = airportDict.value(s);
+      SinglePoint *sp = airfieldDict.value(s);
       p = sp->getWGSPosition();
     }
 
   return p;
+}
+
+void WaypointImpFilterDialog::slotAirfieldRefChanged( const QString& text )
+{
+  airfieldRefTxt = text;
 }

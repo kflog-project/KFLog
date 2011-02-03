@@ -39,6 +39,7 @@
 #include <QHash>
 #include <QLabel>
 #include <QPoint>
+#include <QRadioButton>
 
 #include "singlepoint.h"
 #include "coordedit.h"
@@ -64,7 +65,7 @@ public:
 
   /** No descriptions */
   int getCenterRef();
-  WGSPoint getAirportRef();
+  WGSPoint getAirfieldRef();
 
   QCheckBox *useAll;
   QCheckBox *airfields;
@@ -75,14 +76,21 @@ public:
   QCheckBox *landmarks;
   QCheckBox *stations;
 
+  QRadioButton *rb0;
+  QRadioButton *rb1;
+  QRadioButton *rb2;
+  QRadioButton *rb3;
+
   LatEdit *fromLat;
   LongEdit *fromLong;
   LatEdit *toLat;
   LongEdit *toLong;
-  LatEdit *posLat;
-  LongEdit *posLong;
+  LatEdit *radiusLat;
+  LongEdit *radiusLong;
 
   QComboBox *radius;
+
+  QString airfieldRefTxt;
 
 protected:
 
@@ -97,10 +105,13 @@ public slots:
   /** reset all dialog items to default values */
   void slotClear();
 
-private slots:
-
   /** No descriptions */
   void selectRadius(int n);
+
+private slots:
+
+  /** Called, if a new airfield reference is selected. */
+  void slotAirfieldRefChanged( const QString& text );
 
 private:
 
@@ -110,8 +121,8 @@ private:
   void loadAirfieldComboBox();
 
   int center;
-  QHash<QString, SinglePoint*> airportDict;
-  QComboBox *refAirport;
+  QHash<QString, SinglePoint*> airfieldDict;
+  QComboBox *refAirfieldBox;
   QLabel* radiusUnit;
 };
 

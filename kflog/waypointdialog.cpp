@@ -25,7 +25,6 @@
 
 WaypointDialog::WaypointDialog( QWidget *parent ) : QDialog(parent)
 {
-  setWindowTitle( tr( "Create a new Waypoint" ) );
   setWindowModality( Qt::WindowModal );
   //setAttribute( Qt::WA_DeleteOnClose );
   setSizeGripEnabled( true );

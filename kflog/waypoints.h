@@ -3,6 +3,8 @@
                              -------------------
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier
+                               2011 by Axel Pauli
+
     email                : harry@kflog.org
 ***************************************************************************/
 
@@ -16,7 +18,7 @@
  ***************************************************************************/
 
 /**
- * \class Wayoints
+ * \class Waypoints
  *
  * \author Harald Maier, Axel Pauli
  *
@@ -36,8 +38,9 @@
 #include "waypointdialog.h"
 #include "waypointimpfilterdialog.h"
 
+#include <QAction>
 #include <QComboBox>
-#include <q3popupmenu.h>
+#include <QMenu>
 #include <QSplitter>
 #include <QWidget>
 
@@ -69,52 +72,61 @@ private: // Private methods
    * No descriptions
    */
   void addWaypointWindow(QWidget *parent);
-  /** No descriptions */
-  void addPopupMenu();
+
+  /** Create menus. */
+  void createMenu();
+
   /** No descriptions */
   void fillWaypoints();
   /**
    * read filter and store in catalog
    */
   void getFilterData();
+
+  /**
+   * set filter data to values from catalog
+   */
+  void setFilterData();
+
   void openCatalog(QString &catalog);
 
  private: // Private attributes
 
-  /** popup menu for waypoint's */
-  Q3PopupMenu *wayPointPopup;
-  Q3PopupMenu *catalogCopySubPopup;
-  Q3PopupMenu *catalogMoveSubPopup;
-  
+  /** menu for waypoint's */
+  QMenu *wayPointMenu;
+  QMenu *catalogCopySubMenu;
+  QMenu *catalogMoveSubMenu;
+
   /**  */
   QComboBox *catalogName;
   KFLogListView *waypoints;
 
-  /** some menu items */
-  int idWaypointCatalogSave;
-  int idWaypointCatalogSaveAs;
-  int idWaypointCatalogImport;
-  int idWaypointCatalogClose;
-  int idWaypointImportFromMap;
-  int idWaypointImportFromFile;
-  int idWaypointNew;
-  int idWaypointEdit;
-  int idWaypointDelete;
-  int idWaypointCopy2Task;
-  int idWaypointCenterMap;
-  int idWaypointSetHome;
-  int idWaypointCopy2Catalog;
-  int idWaypointMove2Catalog;
+  /** actions of menu items */
+  QAction *ActionWaypointCatalogSave;
+  QAction *ActionWaypointCatalogSaveAs;
+  QAction *ActionWaypointCatalogImport;
+  QAction *ActionWaypointCatalogClose;
+  QAction *ActionWaypointImportFromMap;
+  QAction *ActionWaypointImportFromFile;
+  QAction *ActionWaypointNew;
+  QAction *ActionWaypointEdit;
+  QAction *ActionWaypointDelete;
+  QAction *ActionWaypointCopy2Task;
+  QAction *ActionWaypointCenterMap;
+  QAction *ActionWaypointSetHome;
 
   /** all loaded catalogs */
   QList<WaypointCatalog*> waypointCatalogs;
 
+  /** The current used waypoint catalog. */
   WaypointCatalog *currentWaypointCatalog;
 
-  /**  */
+  /** Wayoint dialog. */
   WaypointDialog *waypointDlg;
+
+  /** Waypoint import filter dialog */
   WaypointImpFilterDialog *importFilterDlg;
-  
+
   /** column index for waypoints */
   int colName;
   int colDesc;
@@ -143,7 +155,7 @@ private slots:
   void slotCloseWaypointCatalog();
   void slotImportWaypointCatalog();
   void slotSwitchWaypointCatalog(int idx);
-  void showWaypointPopup(Q3ListViewItem *, const QPoint &, int);
+  void showWaypointMenu(Q3ListViewItem *, const QPoint &, int);
   void slotImportWaypointFromMap();
   void slotCopyWaypoint2Task();
   void slotCenterMap();
@@ -151,11 +163,11 @@ private slots:
  /**
   * Moves the current waypoint to the selected catalog
   */
-  void slotMove2Catalog(int);
+  void slotMove2Catalog( QAction* action );
  /**
   * Copies the current waypoint to the selected catalog
   */
-  void slotCopy2Catalog(int);
+  void slotCopy2Catalog( QAction* action );
 
   public slots: // Public slots
   /**

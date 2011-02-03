@@ -2811,6 +2811,7 @@ void Map::__openWaypointDialog( const QPoint &position )
   QPoint p = _globalMapMatrix->mapToWgs( position );
 
   // initialize dialog coordinates
+  waypointDlg->setWindowTitle( tr( "Create a new Waypoint" ) );
   waypointDlg->longitude->setKFLogDegree( p.x() );
   waypointDlg->latitude->setKFLogDegree( p.y() );
   waypointDlg->exec();
