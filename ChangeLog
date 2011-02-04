@@ -1,5 +1,13 @@
 $Id$
 
+2011-02-04 Axel Pauli <axel@kflog.org>
+  * Bugfix in class Waypoints. If no catalog is defined and the mouse button
+    is pressed in the waypoint list, a core dump occurred. Fixed that in
+    method showWaypointMenu.
+  * Bugfix in WaypointImpFilterDialog. If the dialog was modified by the user
+    and left via the cancel button, the content was not more in line with the
+    catalog settings. I fixed that.
+  
 2011-02-03 Axel Pauli <axel@kflog.org>
   * Bugfix in class WaypointCatalog. In method insertWaypoint was never done
     an insert of a new waypoint. The insert statement was placed inside the

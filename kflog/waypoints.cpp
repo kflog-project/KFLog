@@ -43,7 +43,7 @@ Waypoints::Waypoints(QWidget *parent, const QString& catalog) :
 
   setObjectName( "Waypoints" );
 
-  addWaypointWindow(this);
+  createWaypointWindow();
   createMenu();
 
   waypointDlg = new WaypointDialog(this);
@@ -59,9 +59,9 @@ Waypoints::~Waypoints()
   qDeleteAll( waypointCatalogs );
 }
 
-void Waypoints::addWaypointWindow(QWidget *parent)
+void Waypoints::createWaypointWindow()
 {
-  waypoints =  new KFLogListView("Waypoints", parent, "waypoints");
+  waypoints =  new KFLogListView("Waypoints", this, "waypoints");
   waypoints->setShowSortIndicator(true);
   waypoints->setAllColumnsShowFocus(true);
 
@@ -92,35 +92,40 @@ void Waypoints::addWaypointWindow(QWidget *parent)
           SLOT(slotEditWaypoint()));
 
   // header
-  QHBoxLayout *header = new QHBoxLayout(5);
-  QLabel *l = new QLabel(QString("%1:").arg(tr("Waypoints")), parent);
-  l->setMaximumWidth(l->sizeHint().width() + 5);
+  QHBoxLayout *header = new QHBoxLayout;
+  header->setSpacing(10);
 
-  catalogName = new QComboBox(false, parent);
-  connect(catalogName, SIGNAL(activated(int)), SLOT(slotSwitchWaypointCatalog(int)));
+  QLabel *label = new QLabel(QString("%1:").arg(tr("Waypoints")));
+  label->setMaximumWidth(label->sizeHint().width() + 5);
 
-  QPushButton *fileOpen = new QPushButton(parent);
+  catalogBox = new QComboBox;
+  connect(catalogBox, SIGNAL(activated(int)), SLOT(slotSwitchWaypointCatalog(int)));
+
+  QPushButton *fileOpen = new QPushButton;
   fileOpen->setIcon(_mainWindow->getPixmap("kde_fileopen_16.png"));
   QSizePolicy sp = fileOpen->sizePolicy();
   sp.setHorData(QSizePolicy::Fixed);
   fileOpen->setSizePolicy(sp);
   connect(fileOpen, SIGNAL(clicked()), SLOT(slotOpenWaypointCatalog()));
 
-  QPushButton *filter = new QPushButton(tr("Filter"), parent);
+  QPushButton *filter = new QPushButton(tr("Filter"));
   sp = filter->sizePolicy();
   sp.setHorData(QSizePolicy::Fixed);
   filter->setSizePolicy(sp);
   connect(filter, SIGNAL(clicked()), SLOT(slotFilterWaypoints()));
 
-  header->addWidget(l);
-  header->addWidget(catalogName);
+  header->addWidget(label);
+  header->addWidget(catalogBox);
   header->addWidget(fileOpen);
   header->addWidget(filter);
 
-  QVBoxLayout *layout = new QVBoxLayout(parent, 5, 5);
+  QVBoxLayout *layout = new QVBoxLayout;
 
+  layout->setSpacing( 5 );
   layout->addLayout(header);
   layout->addWidget(waypoints);
+
+  setLayout( layout );
 }
 
 /** Create menus. */
@@ -297,24 +302,25 @@ void Waypoints::showWaypointMenu(Q3ListViewItem *it, const QPoint &, int)
   catalogCopySubMenu->clear();
   catalogMoveSubMenu->clear();
 
-  // get current catalog index
-  int curCat = waypointCatalogs.indexOf( currentWaypointCatalog );
-
-  for( int i = 0; i < waypointCatalogs.count(); i++ )
+  if( waypointCatalogs.count() > 1 )
     {
-      if( curCat != i )
-        {
-          // only insert if this catalog is NOT the current catalog...
-          QAction* action = catalogCopySubMenu->addAction( waypointCatalogs.at( i )->path );
-          action->setData( i );
+      // get current catalog index
+      int curCat = waypointCatalogs.indexOf( currentWaypointCatalog );
 
-          action = catalogMoveSubMenu->addAction( waypointCatalogs.at( i )->path );
-          action->setData( i );
+      for( int i = 0; i < waypointCatalogs.count(); i++ )
+        {
+          if( curCat != i )
+            {
+              // only insert if this catalog is NOT the current catalog...
+              QAction* action = catalogCopySubMenu->addAction( waypointCatalogs.at(i)->path );
+              action->setData( i );
+
+              action = catalogMoveSubMenu->addAction( waypointCatalogs.at(i)->path );
+              action->setData( i );
+            }
         }
     }
 
-  // make sure we go back to the original catalog...
-  waypointCatalogs.at(curCat);
   wayPointMenu->exec( QCursor::pos() );
 }
 
@@ -327,13 +333,13 @@ void Waypoints::slotNewWaypoint()
 /** create a new catalog */
 void Waypoints::slotNewWaypointCatalog()
 {
-  int newItem = catalogName->count();
+  int newItem = catalogBox->count();
   WaypointCatalog *w = new WaypointCatalog;
 
   waypointCatalogs.append(w);
-  catalogName->insertItem(w->path);
+  catalogBox->insertItem(w->path);
 
-  catalogName->setCurrentItem(newItem);
+  catalogBox->setCurrentItem(newItem);
   slotSwitchWaypointCatalog(newItem);
 }
 
@@ -527,8 +533,11 @@ void Waypoints::fillWaypoints()
 
   waypoints->clear();
 
-  filterRadius = (currentWaypointCatalog->radiusLat != 0  || currentWaypointCatalog->radiusLong != 0);
-  filterArea   = (currentWaypointCatalog->areaLat2 != 0 && currentWaypointCatalog->areaLong2 != 0 && !filterRadius);
+  filterRadius = ( currentWaypointCatalog->getCenterPoint().lat() != 0  ||
+                   currentWaypointCatalog->getCenterPoint().lon() != 0);
+
+  filterArea   = ( currentWaypointCatalog->areaLat2 != 0 &&
+                   currentWaypointCatalog->areaLong2 != 0 && !filterRadius);
 
   foreach(w, currentWaypointCatalog->wpList)
       {
@@ -606,9 +615,9 @@ void Waypoints::fillWaypoints()
         // We have to consider the user chosen distance unit.
         double catalogDist = Distance::convertToMeters( currentWaypointCatalog->radiusSize ) / 1000.;
 
-        // This distance is calculated im kilometers.
-        double radiusDist = dist( currentWaypointCatalog->radiusLat,
-                                  currentWaypointCatalog->radiusLong,
+        // This distance is calculated in kilometers.
+        double radiusDist = dist( currentWaypointCatalog->getCenterPoint().lat(),
+                                  currentWaypointCatalog->getCenterPoint().lon(),
                                   w->origP.lat(),
                                   w->origP.lon() );
 
@@ -663,13 +672,13 @@ void Waypoints::slotSwitchWaypointCatalog(int idx)
 void Waypoints::slotSaveWaypointCatalog()
 {
   if(currentWaypointCatalog->save())
-    catalogName->changeItem(currentWaypointCatalog->path, catalogName->currentItem());
+    catalogBox->changeItem(currentWaypointCatalog->path, catalogBox->currentItem());
 }
 
 void Waypoints::slotSaveWaypointCatalogAs()
 {
   if(currentWaypointCatalog->save(true))
-    catalogName->changeItem(currentWaypointCatalog->path, catalogName->currentItem());
+    catalogBox->changeItem(currentWaypointCatalog->path, catalogBox->currentItem());
 }
 
 void Waypoints::slotImportWaypointCatalog()
@@ -717,15 +726,15 @@ void Waypoints::slotCloseWaypointCatalog()
   waypointCatalogs.removeOne(currentWaypointCatalog);
   delete currentWaypointCatalog;
 
-  catalogName->removeItem(idx);
+  catalogBox->removeItem(idx);
 
   // activate new catalog
-  cnt = catalogName->count();
+  cnt = catalogBox->count();
   if (idx >= cnt) {
     idx = cnt -1;
   }
 
-  catalogName->setCurrentItem(idx);
+  catalogBox->setCurrentItem(idx);
   slotSwitchWaypointCatalog(idx);
 }
 
@@ -782,9 +791,11 @@ void Waypoints::slotImportWaypointFromMap()
           searchList.append( MapContents::StationList );
         }
 
-      filterRadius = (currentWaypointCatalog->radiusLat != 0  || currentWaypointCatalog->radiusLong != 0);
+      filterRadius = ( currentWaypointCatalog->getCenterPoint().lat() != 0  ||
+                       currentWaypointCatalog->getCenterPoint().lon() != 0);
 
-      filterArea = (currentWaypointCatalog->areaLat2 != 0 && currentWaypointCatalog->areaLong2 != 0 && !filterRadius);
+      filterArea = ( currentWaypointCatalog->areaLat2 != 0 &&
+                     currentWaypointCatalog->areaLong2 != 0 && !filterRadius );
 
     for( int k = 0; k < searchList.size(); k++ )
       {
@@ -809,8 +820,8 @@ void Waypoints::slotImportWaypointFromMap()
             double catalogDist = Distance::convertToMeters( currentWaypointCatalog->radiusSize ) / 1000.;
 
             // This distance is calculated im kilometers.
-            double radiusDist = dist( currentWaypointCatalog->radiusLat,
-                                      currentWaypointCatalog->radiusLong,
+            double radiusDist = dist( currentWaypointCatalog->getCenterPoint().lat(),
+                                      currentWaypointCatalog->getCenterPoint().lon(),
                                       p.lat(),
                                       p.lon());
 
@@ -981,28 +992,35 @@ void Waypoints::getFilterData()
   currentWaypointCatalog->areaLong1 = importFilterDlg->fromLong->KFLogDegree();
   currentWaypointCatalog->areaLong2 = importFilterDlg->toLong->KFLogDegree();
 
+  int lat, lon;
+
   switch ( importFilterDlg->getCenterRef() )
   {
+
     case CENTER_POS:
-      currentWaypointCatalog->radiusLat  = importFilterDlg->radiusLat->KFLogDegree();
-      currentWaypointCatalog->radiusLong = importFilterDlg->radiusLong->KFLogDegree();
+      lat = importFilterDlg->centerLat->KFLogDegree();
+      lon = importFilterDlg->centerLong->KFLogDegree();
       break;
+
     case CENTER_HOMESITE:
-      currentWaypointCatalog->radiusLat  = _settings.value("/Homesite/Latitude").toInt();
-      currentWaypointCatalog->radiusLong = _settings.value("/Homesite/Longitude").toInt();
+      lat = _settings.value("/Homesite/Latitude").toInt();
+      lon = _settings.value("/Homesite/Longitude").toInt();
       break;
+
     case CENTER_MAP:
       p = _globalMapMatrix->getMapCenter(false);
-      currentWaypointCatalog->radiusLat  = p.lat();
-      currentWaypointCatalog->radiusLong = p.lon();
+      lat = p.lat();
+      lon = p.lon();
       break;
+
     case CENTER_AIRFIELD:
       currentWaypointCatalog->airfieldRef = importFilterDlg->airfieldRefTxt;
-      currentWaypointCatalog->radiusLat   = importFilterDlg->getAirfieldRef().lat();
-      currentWaypointCatalog->radiusLong  = importFilterDlg->getAirfieldRef().lon();
+      lat = importFilterDlg->getAirfieldRef().lat();
+      lon = importFilterDlg->getAirfieldRef().lon();
       break;
   }
 
+  currentWaypointCatalog->setCenterPoint( QPoint(lat, lon) );
   currentWaypointCatalog->radiusSize = importFilterDlg->radius->currentText().toDouble();
 
   // normalize coordinates
@@ -1035,8 +1053,8 @@ void Waypoints::setFilterData()
   importFilterDlg->fromLong->setKFLogDegree(currentWaypointCatalog->areaLong1);
   importFilterDlg->toLong->setKFLogDegree(currentWaypointCatalog->areaLong2);
 
-  importFilterDlg->radiusLat->setKFLogDegree(currentWaypointCatalog->radiusLat);
-  importFilterDlg->radiusLong->setKFLogDegree(currentWaypointCatalog->radiusLong);
+  importFilterDlg->centerLat->setKFLogDegree(currentWaypointCatalog->getCenterPoint().lat());
+  importFilterDlg->centerLong->setKFLogDegree(currentWaypointCatalog->getCenterPoint().lon());
   importFilterDlg->selectRadius( currentWaypointCatalog->centerRef );
 
   QString radTxt = QString::number(currentWaypointCatalog->radiusSize);
@@ -1093,7 +1111,7 @@ void Waypoints::openCatalog( QString &catalog )
 {
   if( !catalog.isEmpty() )
     {
-      int newItem = catalogName->count();
+      int newItem = catalogBox->count();
 
       WaypointCatalog *wc = new WaypointCatalog( "" );
       QFile f( catalog );
@@ -1109,9 +1127,9 @@ void Waypoints::openCatalog( QString &catalog )
             {
               waypointCatalogs.append( wc );
               currentWaypointCatalog = wc;
-              catalogName->addItem( wc->path );
+              catalogBox->addItem( wc->path );
 
-              catalogName->setCurrentIndex( newItem );
+              catalogBox->setCurrentIndex( newItem );
               qDebug() << "New Waypoint Catalog" << wc->path
                        << "added with" << wc->wpList.size() << "items";
 
@@ -1144,11 +1162,11 @@ WaypointCatalog *Waypoints::getCurrentCatalog()
 
 void Waypoints::slotAddCatalog(WaypointCatalog *w)
 {
-  int newItem = catalogName->count();
+  int newItem = catalogBox->count();
 
   waypointCatalogs.append(w);
-  catalogName->insertItem(w->path);
+  catalogBox->insertItem(w->path);
 
-  catalogName->setCurrentItem(newItem);
+  catalogBox->setCurrentItem(newItem);
   slotSwitchWaypointCatalog(newItem);
 }

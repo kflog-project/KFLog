@@ -26,10 +26,8 @@ extern MapMatrix   *_globalMapMatrix;
 
 WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
  QDialog(parent),
- center(0)
+ centerRef(CENTER_HOMESITE)
 {
-  qDebug() << "WaypointImpFilterDialog::WaypointImpFilterDialog";
-
   setObjectName( "WaypointImpFilterDialog" );
   setWindowTitle(tr("Waypoint Filter"));
   //setAttribute( Qt::WA_DeleteOnClose );
@@ -45,16 +43,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   landmarks    = new QCheckBox(tr("&Landmarks"));
   stations     = new QCheckBox(tr("&Stations"));
 
-  useAll->setChecked(true);
   connect(useAll, SIGNAL(clicked()), this, SLOT(slotChangeUseAll()));
-
-  airfields->setChecked(false);
-  gliderfields->setChecked(false);
-  outlandings->setChecked(false);
-  otherSites->setChecked(false);
-  obstacles->setChecked(false);
-  landmarks->setChecked(false);
-  stations->setChecked(false);
 
   QVBoxLayout *typeLayout = new QVBoxLayout;
   typeLayout->setSpacing( 10 );
@@ -109,11 +98,6 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   rb2 = new QRadioButton(tr("Center of Map"));
   rb3 = new QRadioButton(tr("Airfield"));
 
-  rb0->setChecked( false );
-  rb1->setChecked( false );
-  rb2->setChecked( true );
-  rb3->setChecked( false );
-
   QButtonGroup* radiusButtonGroup = new QButtonGroup(this);
   radiusButtonGroup->setExclusive(true);
   radiusButtonGroup->addButton( rb0, CENTER_POS );
@@ -124,12 +108,12 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   connect( radiusButtonGroup, SIGNAL( buttonClicked(int)),
            this, SLOT(selectRadius(int)));
 
-  radiusLat  = new LatEdit;
-  radiusLong = new LongEdit;
-  refAirfieldBox = new QComboBox;
+  centerLat  = new LatEdit;
+  centerLong = new LongEdit;
+  airfieldRefBox = new QComboBox;
   radiusUnit = new QLabel;
 
-  connect( refAirfieldBox, SIGNAL(currentIndexChanged(const QString&)),
+  connect( airfieldRefBox, SIGNAL(currentIndexChanged(const QString&)),
            this, SLOT(slotAirfieldRefChanged(const QString&)) );
 
   radius = new QComboBox;
@@ -144,14 +128,14 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   radiusGrid->setSpacing(10);
   radiusGrid->addWidget( rb0, 0, 0 );
   radiusGrid->addWidget( new QLabel(tr("Lat:")), 0, 1 );
-  radiusGrid->addWidget( radiusLat, 0, 2);
+  radiusGrid->addWidget( centerLat, 0, 2);
   radiusGrid->addWidget( new QLabel(tr("Lon:")), 0, 3 );
-  radiusGrid->addWidget( radiusLong, 0, 4 );
+  radiusGrid->addWidget( centerLong, 0, 4 );
 
   radiusGrid->addWidget( rb1, 1, 0 );
   radiusGrid->addWidget( rb2, 2, 0 );
   radiusGrid->addWidget( rb3, 3, 0 );
-  radiusGrid->addWidget( refAirfieldBox, 3, 2 );
+  radiusGrid->addWidget( airfieldRefBox, 3, 2 );
 
   radiusGrid->addWidget( radiusUnit, 4, 0 );
   radiusGrid->addWidget( radius, 4, 2 );
@@ -174,7 +158,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   buttonBox->addWidget(b);
 
   b = new QPushButton(tr("&Cancel"), this);
-  connect(b, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(b, SIGNAL(clicked()), this, SLOT(slotCancel()));
   buttonBox->addWidget(b);
 
   //---------------------------------------------------------------------------
@@ -193,6 +177,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
 
   setLayout( top );
 
+  slotClear();
   slotChangeUseAll();
   selectRadius(CENTER_HOMESITE);
 }
@@ -212,6 +197,18 @@ void WaypointImpFilterDialog::showEvent( QShowEvent *event )
 
   // Load airfield data into combo box. Can be changed in the meantime.
   loadAirfieldComboBox();
+
+  // Save all values for restore in reject case.
+  saveValues();
+}
+
+void WaypointImpFilterDialog::slotCancel()
+{
+  // The user has pressed the cancel button. All dialog values are restored
+  // because the user could have modified them before canceling.
+  restoreValues();
+
+  QDialog::reject();
 }
 
 void WaypointImpFilterDialog::slotChangeUseAll()
@@ -226,6 +223,7 @@ void WaypointImpFilterDialog::slotChangeUseAll()
   landmarks->setEnabled(show);
   stations->setEnabled(show);
 }
+
 /** reset all dialog items to default values */
 void WaypointImpFilterDialog::slotClear()
 {
@@ -244,11 +242,15 @@ void WaypointImpFilterDialog::slotClear()
   fromLong->setKFLogDegree( 0 );
   toLat->setKFLogDegree( 0 );
   toLong->setKFLogDegree( 0 );
-  radiusLat->setKFLogDegree( 0 );
-  radiusLong->setKFLogDegree( 0 );
+  centerLat->setKFLogDegree( 0 );
+  centerLong->setKFLogDegree( 0 );
 
-  rb2->setChecked( true );
-  refAirfieldBox->setCurrentIndex( 0 );
+  rb0->setChecked( false );
+  rb1->setChecked( true );
+  rb2->setChecked( false );
+  rb3->setChecked( false );
+
+  airfieldRefBox->setCurrentIndex( 0 );
   radius->setCurrentIndex( 4 );
 
   selectRadius(CENTER_HOMESITE);
@@ -257,33 +259,33 @@ void WaypointImpFilterDialog::slotClear()
 /** No descriptions */
 void WaypointImpFilterDialog::selectRadius(int n)
 {
-  center = n;
+  centerRef = n;
 
-  switch (center)
+  switch (centerRef)
   {
     case CENTER_POS:
-      radiusLat->setEnabled(true);
-      radiusLong->setEnabled(true);
-      refAirfieldBox->setEnabled(false);
+      centerLat->setEnabled(true);
+      centerLong->setEnabled(true);
+      airfieldRefBox->setEnabled(false);
       break;
     case CENTER_HOMESITE:
       // fall through
     case CENTER_MAP:
-      radiusLat->setEnabled(false);
-      radiusLong->setEnabled(false);
-      refAirfieldBox->setEnabled(false);
+      centerLat->setEnabled(false);
+      centerLong->setEnabled(false);
+      airfieldRefBox->setEnabled(false);
       break;
     case CENTER_AIRFIELD:
-      radiusLat->setEnabled(false);
-      radiusLong->setEnabled(false);
-      refAirfieldBox->setEnabled(true);
+      centerLat->setEnabled(false);
+      centerLong->setEnabled(false);
+      airfieldRefBox->setEnabled(true);
       break;
     }
 }
 /** No descriptions */
-int WaypointImpFilterDialog::getCenterRef()
+int WaypointImpFilterDialog::getCenterRef() const
 {
-  return center;
+  return centerRef;
 }
 
 void WaypointImpFilterDialog::loadAirfieldComboBox()
@@ -291,7 +293,7 @@ void WaypointImpFilterDialog::loadAirfieldComboBox()
   int searchList[] = { MapContents::GliderfieldList, MapContents::AirfieldList };
 
   airfieldDict.clear();
-  refAirfieldBox->clear();
+  airfieldRefBox->clear();
 
   QStringList airfieldList;
 
@@ -306,25 +308,25 @@ void WaypointImpFilterDialog::loadAirfieldComboBox()
   }
 
   airfieldList.sort();
-  refAirfieldBox->addItems( airfieldList );
+  airfieldRefBox->addItems( airfieldList );
 
   // try to find the last selection in the new content.
-  int newIndex = refAirfieldBox->findText( airfieldRefTxt );
+  int newIndex = airfieldRefBox->findText( airfieldRefTxt );
 
   if( newIndex != -1 )
     {
       // Try to find the last selection.
-      refAirfieldBox->setCurrentIndex( newIndex );
+      airfieldRefBox->setCurrentIndex( newIndex );
     }
   else
     {
-      refAirfieldBox->setCurrentIndex( 0 );
+      airfieldRefBox->setCurrentIndex( 0 );
     }
 }
 
 WGSPoint WaypointImpFilterDialog::getAirfieldRef()
 {
-  QString s = refAirfieldBox->currentText();
+  QString s = airfieldRefBox->currentText();
 
   WGSPoint p;
 
@@ -340,4 +342,64 @@ WGSPoint WaypointImpFilterDialog::getAirfieldRef()
 void WaypointImpFilterDialog::slotAirfieldRefChanged( const QString& text )
 {
   airfieldRefTxt = text;
+}
+
+void WaypointImpFilterDialog::saveValues()
+{
+  save.useAll = useAll->isChecked();
+  save.airfields = airfields->isChecked();
+  save.gliderfields = gliderfields->isChecked();
+  save.otherSites = otherSites->isChecked();
+  save.outlandings = outlandings->isChecked();
+  save.obstacles = obstacles->isChecked();
+  save.landmarks = landmarks->isChecked();
+  save.stations = stations->isChecked();
+
+  save.rb0 = rb0->isChecked();
+  save.rb1 = rb1->isChecked();
+  save.rb2 = rb2->isChecked();
+  save.rb3 = rb3->isChecked();
+
+  save.fromLat = fromLat->KFLogDegree();
+  save.fromLong = fromLong->KFLogDegree();
+  save.toLat = toLat->KFLogDegree();
+  save.toLong = toLong->KFLogDegree();
+  save.centerLat = centerLat->KFLogDegree();
+  save.centerLong = centerLong->KFLogDegree();
+  save.centerRef = centerRef;
+
+  save.radiusIdx = radius->currentIndex();
+  save.airfieldRefIdx = airfieldRefBox->currentIndex();
+}
+
+/** restore all dialog items to the saved values */
+void WaypointImpFilterDialog::restoreValues()
+{
+  useAll->setChecked( save.useAll );
+  airfields->setChecked( save.airfields );
+  gliderfields->setChecked( save.gliderfields );
+  otherSites->setChecked( save.otherSites );
+  outlandings->setChecked( save.outlandings );
+  obstacles->setChecked( save.obstacles );
+  landmarks->setChecked( save.landmarks );
+  stations->setChecked( save.stations );
+
+  slotChangeUseAll();
+
+  fromLat->setKFLogDegree( save.fromLat );
+  fromLong->setKFLogDegree( save.fromLong );
+  toLat->setKFLogDegree( save.toLat );
+  toLong->setKFLogDegree( save.toLong );
+  centerLat->setKFLogDegree( save.centerLat );
+  centerLong->setKFLogDegree( save.centerLong );
+
+  rb0->setChecked( save.rb0 );
+  rb1->setChecked( save.rb1 );
+  rb2->setChecked( save.rb2 );
+  rb3->setChecked( save.rb3 );
+
+  airfieldRefBox->setCurrentIndex( save.airfieldRefIdx );
+  radius->setCurrentIndex( save.radiusIdx );
+
+  selectRadius(save.centerRef);
 }

@@ -2497,7 +2497,7 @@ void Map::__drawWaypoints()
   wpMaskPainter.end();
 }
 
-/** Slot signalled when user selects another waypointcatalog.  */
+/** Slot signaled when user selects another waypoint catalog.  */
 void Map::slotWaypointCatalogChanged(WaypointCatalog* c)
 {
   extern MapContents *_globalMapContents;
@@ -2508,52 +2508,102 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c)
   wpList = _globalMapContents->getWaypointList();
   wpList->clear();
 
-  filterRadius = (c->radiusLat != 1  || c->radiusLong != 1);
-  filterArea = (c->areaLat2 != 1 && c->areaLong2 != 1 && !filterRadius);
+  filterRadius = (c->getCenterPoint().lat() != 0 || c->getCenterPoint().lon() != 0);
+
+  filterArea = (c->areaLat2 != 0 && c->areaLong2 != 0 && !filterRadius);
 
   foreach(w, c->wpList)
   {
-    if(!c->showAll) {
-      switch(w->type) {
-      case BaseMapElement::IntAirport:
-      case BaseMapElement::Airport:
-      case BaseMapElement::MilAirport:
-      case BaseMapElement::CivMilAirport:
-      case BaseMapElement::Airfield:
-        if (!c->showAirfields) {
-          continue;
-        }
-        break;
-      case BaseMapElement::Gliderfield:
-        if (!c->showGliderfields) {
-          continue;
-        }
-        break;
-      case BaseMapElement::UltraLight:
-      case BaseMapElement::HangGlider:
-      case BaseMapElement::Parachute:
-      case BaseMapElement::Balloon:
-        if (!c->showOtherSites) {
-          continue;
-        }
-        break;
-      }
-    }
+        if( !c->showAll )
+          {
+            switch( w->type )
+              {
+              case BaseMapElement::IntAirport:
+              case BaseMapElement::Airport:
+              case BaseMapElement::MilAirport:
+              case BaseMapElement::CivMilAirport:
+              case BaseMapElement::Airfield:
 
-     if (filterArea) {
-       if (w->origP.lat() < c->areaLat1 || w->origP.lat() > c->areaLat2 ||
-           w->origP.lon() < c->areaLong1 || w->origP.lon() > c->areaLong2) {
-           continue;
-       }
-     }
-     else if (filterRadius) {
-       if (dist(c->radiusLat, c->radiusLong, w->origP.lat(), w->origP.lon()) > c->radiusSize) {
-         continue;
-       }
-     }
-   // add the waypoint to the list
-   wpList->append(new Waypoint(w));
-  }
+                if( !c->showAirfields )
+                  {
+                    continue;
+                  }
+                break;
+
+              case BaseMapElement::Gliderfield:
+
+                if( !c->showGliderfields )
+                  {
+                    continue;
+                  }
+                break;
+
+              case BaseMapElement::UltraLight:
+              case BaseMapElement::HangGlider:
+              case BaseMapElement::Parachute:
+              case BaseMapElement::Balloon:
+
+                if( !c->showOtherSites )
+                  {
+                    continue;
+                  }
+                break;
+
+              case BaseMapElement::Outlanding:
+
+                if( !c->showOutlandings )
+                  {
+                    continue;
+                  }
+                break;
+
+              case BaseMapElement::Obstacle:
+
+                if( !c->showObstacles )
+                  {
+                    continue;
+                  }
+                break;
+
+              case BaseMapElement::Landmark:
+
+                if( !c->showLandmarks )
+                  {
+                    continue;
+                  }
+                break;
+              }
+          }
+
+        if( filterArea )
+          {
+            if( w->origP.lat() < c->areaLat1 || w->origP.lat() > c->areaLat2 ||
+                w->origP.lon() < c->areaLong1 || w->origP.lon()
+                > c->areaLong2 )
+              {
+                continue;
+              }
+          }
+        else if( filterRadius )
+          {
+            // We have to consider the user chosen distance unit.
+            double catalogDist = Distance::convertToMeters( c->radiusSize ) / 1000.;
+
+            // This distance is calculated in kilometers.
+            double radiusDist = dist( c->getCenterPoint().lat(),
+                                      c->getCenterPoint().lon(),
+                                      w->origP.lat(),
+                                      w->origP.lon() );
+
+            if ( radiusDist > catalogDist )
+              {
+                continue;
+              }
+          }
+
+        // add the waypoint to the list
+        wpList->append( new Waypoint( w ) );
+      }
   // force a update
   emit changed(this->size());
 

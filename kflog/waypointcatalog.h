@@ -37,6 +37,7 @@
 
 class QString;
 class Waypoint;
+class WGSPoint;
 
 class WaypointCatalog
 {
@@ -82,6 +83,18 @@ public:
 
   bool removeWaypoint(const QString& name);
 
+  /**
+   * \return The center point of the radius.
+   */
+  WGSPoint getCenterPoint();
+
+  /**
+   * Sets the radius center point.
+   *
+   * \param center New center point to be set.
+   */
+  void setCenterPoint( const WGSPoint& center );
+
   /** filter values for display/import */
   bool showAll;
   bool showAirfields;
@@ -96,10 +109,10 @@ public:
   int areaLat2;
   int areaLong1;
   int areaLong2;
-  int radiusLat;
-  int radiusLong;
 
   double radiusSize;
+
+  /** Kind of center reference. */
   int centerRef;
   QString airfieldRef;
 
@@ -117,6 +130,10 @@ public:
   QString catalogName;
 
 private: // Private attributes
+
+  /** Coordinates of center point. */
+  WGSPoint centerPoint;
+
   /**  */
   bool onDisc;
 };

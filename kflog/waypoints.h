@@ -71,7 +71,7 @@ private: // Private methods
   /**
    * No descriptions
    */
-  void addWaypointWindow(QWidget *parent);
+  void createWaypointWindow();
 
   /** Create menus. */
   void createMenu();
@@ -98,7 +98,7 @@ private: // Private methods
   QMenu *catalogMoveSubMenu;
 
   /**  */
-  QComboBox *catalogName;
+  QComboBox *catalogBox;
   KFLogListView *waypoints;
 
   /** actions of menu items */

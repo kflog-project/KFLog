@@ -64,7 +64,8 @@ public:
 	virtual ~WaypointImpFilterDialog();
 
   /** No descriptions */
-  int getCenterRef();
+  int getCenterRef() const;
+
   WGSPoint getAirfieldRef();
 
   QCheckBox *useAll;
@@ -85,8 +86,8 @@ public:
   LongEdit *fromLong;
   LatEdit *toLat;
   LongEdit *toLong;
-  LatEdit *radiusLat;
-  LongEdit *radiusLong;
+  LatEdit *centerLat;
+  LongEdit *centerLong;
 
   QComboBox *radius;
 
@@ -113,6 +114,9 @@ private slots:
   /** Called, if a new airfield reference is selected. */
   void slotAirfieldRefChanged( const QString& text );
 
+  /** Called, if the cancel button is pressed. */
+  void slotCancel();
+
 private:
 
   /**
@@ -120,10 +124,49 @@ private:
    */
   void loadAirfieldComboBox();
 
-  int center;
+  /**
+   * Saves all current values for a later restore.
+   */
+  void saveValues();
+
+  /**
+   * Restores all save values.
+   */
+  void restoreValues();
+
+  int centerRef;
   QHash<QString, SinglePoint*> airfieldDict;
-  QComboBox *refAirfieldBox;
+  QComboBox *airfieldRefBox;
   QLabel* radiusUnit;
+
+  /** Structure to save the initial values of the dialog. */
+  struct
+    {
+      bool useAll;
+      bool airfields;
+      bool gliderfields;
+      bool otherSites;
+      bool outlandings;
+      bool obstacles;
+      bool landmarks;
+      bool stations;
+
+      bool rb0;
+      bool rb1;
+      bool rb2;
+      bool rb3;
+
+      int fromLat;
+      int fromLong;
+      int toLat;
+      int toLong;
+      int centerLat;
+      int centerLong;
+      int centerRef;
+
+      int radiusIdx;
+      int airfieldRefIdx;
+    } save;
 };
 
 #endif

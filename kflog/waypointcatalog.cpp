@@ -25,6 +25,7 @@
 #include "da4record.h"
 #include "kfrgcs/vlapi2.h"
 #include "mainwindow.h"
+#include "mapdefaults.h"
 #include "waypointcatalog.h"
 
 #define KFLOG_FILE_MAGIC    0x404b464c
@@ -32,7 +33,14 @@
 #define FILE_FORMAT_ID      100
 #define FILE_FORMAT_ID_2    101
 
+// Center point definition, also used by waypoint import filter.
+#define CENTER_POS      0
+#define CENTER_HOMESITE 1
+#define CENTER_MAP      2
+#define CENTER_AIRFIELD 3
+
 extern MainWindow *_mainWindow;
+extern QSettings  _settings;
 
 WaypointCatalog::WaypointCatalog(const QString& name) :
   modified(false),
@@ -65,13 +73,13 @@ WaypointCatalog::WaypointCatalog(const QString& name) :
   showOutlandings = false;
   showStations = false;
 
-  areaLat1 = areaLat2 = areaLong1 = areaLong2 = radiusLat = radiusLong = 0;
+  areaLat1 = areaLat2 = areaLong1 = areaLong2 = 0;
 
   // Default is 500 Km
   radiusSize = 500;
 
   // Center homesite
-  centerRef = 1;
+  centerRef = CENTER_HOMESITE;
 
   // Reset airfield name reference.
   airfieldRef = "";
@@ -80,6 +88,25 @@ WaypointCatalog::WaypointCatalog(const QString& name) :
 WaypointCatalog::~WaypointCatalog()
 {
   qDeleteAll( wpList );
+}
+
+WGSPoint WaypointCatalog::getCenterPoint()
+{
+  // Check the kind of center point. If it set to homesite, we should
+  // update it because the user could change it in the meantime.
+  if( centerRef == CENTER_HOMESITE )
+    {
+      int hLat = _settings.value("/Homesite/Latitude", HOME_DEFAULT_LAT).toInt();
+      int hLon = _settings.value("/Homesite/Longitude", HOME_DEFAULT_LON).toInt();
+      centerPoint = QPoint( hLat, hLon);
+    }
+
+  return centerPoint;
+}
+
+void WaypointCatalog::setCenterPoint( const WGSPoint& center )
+{
+  centerPoint = center;
 }
 
 /** read a catalog from file */
