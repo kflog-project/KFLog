@@ -32,7 +32,7 @@
 #ifndef WAYPOINTS_H
 #define WAYPOINTS_H
 
-#include "guicontrols/kfloglistview.h"
+#include "kflogtreewidget.h"
 #include "waypoint.h"
 #include "waypointcatalog.h"
 #include "waypointdialog.h"
@@ -99,7 +99,7 @@ private: // Private methods
 
   /**  */
   QComboBox *catalogBox;
-  KFLogListView *waypoints;
+  KFLogTreeWidget *waypointTree;
 
   /** actions of menu items */
   QAction *ActionWaypointCatalogSave;
@@ -155,7 +155,7 @@ private slots:
   void slotCloseWaypointCatalog();
   void slotImportWaypointCatalog();
   void slotSwitchWaypointCatalog(int idx);
-  void showWaypointMenu(Q3ListViewItem *, const QPoint &, int);
+  void showWaypointMenu(QTreeWidgetItem* item, const QPoint& position);
   void slotImportWaypointFromMap();
   void slotCopyWaypoint2Task();
   void slotCenterMap();
@@ -179,9 +179,12 @@ private slots:
    */
   void slotDeleteWaypoint(Waypoint*);
   /**
-   * filter waypoints to display
+   * A waypoint should be edited.
    */
   void slotEditWaypoint(Waypoint*);
+  /**
+   * filter waypoints to display
+   */
   void slotFilterWaypoints();
   /**
    * add a new waypoint

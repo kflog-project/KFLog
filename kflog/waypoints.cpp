@@ -61,35 +61,73 @@ Waypoints::~Waypoints()
 
 void Waypoints::createWaypointWindow()
 {
-  waypoints =  new KFLogListView("Waypoints", this, "waypoints");
-  waypoints->setShowSortIndicator(true);
-  waypoints->setAllColumnsShowFocus(true);
+  waypointTree = new KFLogTreeWidget( "Waypoints", this );
+  waypointTree->setSortingEnabled( true );
+  waypointTree->setAllColumnsShowFocus( true );
+  waypointTree->setFocusPolicy( Qt::StrongFocus );
+  waypointTree->setRootIsDecorated( false );
+  waypointTree->setItemsExpandable( false );
+  //waypointTree->setSelectionMode( QAbstractItemView::SingleSelection );
+  waypointTree->setSelectionBehavior( QAbstractItemView::SelectRows );
 
-  colName = waypoints->addColumn(tr("Name"));
-  colDesc = waypoints->addColumn(tr("Description"));
-  colICAO = waypoints->addColumn(tr("ICAO"));
-  colType = waypoints->addColumn(tr("Type"));
-  colLat = waypoints->addColumn(tr("Latitude"));
-  colLong = waypoints->addColumn(tr("Longitude"));
-  colElev = waypoints->addColumn(tr("Elevation (m)"));
-  colFrequency = waypoints->addColumn(tr("Frequency"));
-  colLandable = waypoints->addColumn(tr("Landable"));
-  colRunway = waypoints->addColumn(tr("Runway"));
-  colLength = waypoints->addColumn(tr("Length (m)"));
-  colSurface = waypoints->addColumn(tr("Surface"));
-  colComment = waypoints->addColumn(tr("Comment"));
+  waypointTree->setColumnCount( 13 );
 
-  waypoints->setColumnAlignment(colElev, Qt::AlignRight);
-  waypoints->setColumnAlignment(colFrequency, Qt::AlignRight);
-  waypoints->setColumnAlignment(colRunway, Qt::AlignRight);
-  waypoints->setColumnAlignment(colLength, Qt::AlignRight);
+  QStringList headerLabels;
 
-  waypoints->loadConfig();
+  headerLabels  << tr("Name")
+                << tr("Description")
+                << tr("ICAO")
+                << tr("Type")
+                << tr("Latitude")
+                << tr("Longitude")
+                << tr("Elevation (m)")
+                << tr("Frequency")
+                << tr("Landable")
+                << tr("Runway")
+                << tr("Length (m)")
+                << tr("Surface")
+                << tr("Comment");
 
-  connect(waypoints, SIGNAL(rightButtonPressed(Q3ListViewItem *, const QPoint &, int)),
-          SLOT(showWaypointMenu(Q3ListViewItem *, const QPoint &, int)));
-  connect(waypoints, SIGNAL(doubleClicked(Q3ListViewItem *)),
-          SLOT(slotEditWaypoint()));
+  waypointTree->setHeaderLabels( headerLabels );
+
+  QTreeWidgetItem* headerItem = waypointTree->headerItem();
+  headerItem->setTextAlignment( 0, Qt::AlignCenter );
+  headerItem->setTextAlignment( 1, Qt::AlignCenter );
+  headerItem->setTextAlignment( 2, Qt::AlignCenter );
+  headerItem->setTextAlignment( 3, Qt::AlignCenter );
+  headerItem->setTextAlignment( 4, Qt::AlignCenter );
+  headerItem->setTextAlignment( 5, Qt::AlignCenter );
+  headerItem->setTextAlignment( 6, Qt::AlignCenter );
+  headerItem->setTextAlignment( 7, Qt::AlignCenter );
+  headerItem->setTextAlignment( 8, Qt::AlignCenter );
+  headerItem->setTextAlignment( 9, Qt::AlignCenter );
+  headerItem->setTextAlignment( 10, Qt::AlignCenter );
+  headerItem->setTextAlignment( 11, Qt::AlignCenter );
+  headerItem->setTextAlignment( 12, Qt::AlignCenter );
+
+  colName = 0;
+  colDesc = 1;
+  colICAO = 2;
+  colType = 3;
+  colLat = 4;
+  colLong = 5;
+  colElev = 6;
+  colFrequency = 7;
+  colLandable = 8;
+  colRunway = 9;
+  colLength = 10;
+  colSurface = 11;
+  colComment = 12;
+
+  // Try to load a stored configuration.
+  waypointTree->loadConfig();
+
+  connect( waypointTree,
+          SIGNAL(rightButtonPressed(QTreeWidgetItem*, const QPoint&)),
+          SLOT(showWaypointMenu(QTreeWidgetItem*, const QPoint&)) );
+
+  connect( waypointTree, SIGNAL(doubleClicked(QTreeWidgetItem*, int)),
+           SLOT(slotEditWaypoint()) );
 
   // header
   QHBoxLayout *header = new QHBoxLayout;
@@ -123,7 +161,7 @@ void Waypoints::createWaypointWindow()
 
   layout->setSpacing( 5 );
   layout->addLayout(header);
-  layout->addWidget(waypoints);
+  layout->addWidget(waypointTree);
 
   setLayout( layout );
 }
@@ -131,7 +169,7 @@ void Waypoints::createWaypointWindow()
 /** Create menus. */
 void Waypoints::createMenu()
 {
-  wayPointMenu = new QMenu(waypoints);
+  wayPointMenu = new QMenu(waypointTree);
 
   wayPointMenu->setTitle( tr("Waypoints"));
 
@@ -222,7 +260,7 @@ void Waypoints::slotCopy2Catalog( QAction* action )
 {
   int id = action->data().toInt();
 
-  Q3ListViewItem *item = waypoints->currentItem();
+  QTreeWidgetItem *item = waypointTree->currentItem();
   Waypoint *wpt;
 
   if( item != 0 )
@@ -241,7 +279,7 @@ void Waypoints::slotMove2Catalog( QAction* action )
 {
   int id = action->data().toInt();
 
-  Q3ListViewItem *item = waypoints->currentItem();
+  QTreeWidgetItem *item = waypointTree->currentItem();
   Waypoint * wpt;
 
   if( item != 0 )
@@ -282,8 +320,10 @@ void Waypoints::slotOpenWaypointCatalog()
     }
 }
 
-void Waypoints::showWaypointMenu(Q3ListViewItem *it, const QPoint &, int)
+void Waypoints::showWaypointMenu( QTreeWidgetItem* item, const QPoint& position )
 {
+  Q_UNUSED( position )
+
   //enable and disable the correct menu items
   ActionWaypointCatalogSave->setEnabled(waypointCatalogs.count() && currentWaypointCatalog->modified);
   ActionWaypointCatalogSaveAs->setEnabled(waypointCatalogs.count() > 0);
@@ -292,11 +332,11 @@ void Waypoints::showWaypointMenu(Q3ListViewItem *it, const QPoint &, int)
   ActionWaypointImportFromMap->setEnabled(waypointCatalogs.count());
 
   ActionWaypointNew->setEnabled(waypointCatalogs.count());
-  ActionWaypointEdit->setEnabled(it != 0);
-  ActionWaypointDelete->setEnabled(it != 0);
-  ActionWaypointCopy2Task->setEnabled(it != 0);
-  ActionWaypointCenterMap->setEnabled(it != 0);
-  ActionWaypointSetHome->setEnabled(it != 0);
+  ActionWaypointEdit->setEnabled(item != 0);
+  ActionWaypointDelete->setEnabled(item != 0);
+  ActionWaypointCopy2Task->setEnabled(item != 0);
+  ActionWaypointCenterMap->setEnabled(item != 0);
+  ActionWaypointSetHome->setEnabled(item != 0);
 
   // fill the submenus for the move & copy to catalog
   catalogCopySubMenu->clear();
@@ -375,14 +415,15 @@ bool Waypoints::saveChanges()
 /** No descriptions */
 void Waypoints::slotEditWaypoint()
 {
-  Q3ListViewItem *item = waypoints->currentItem();
+  QTreeWidgetItem *item = waypointTree->currentItem();
   QString oldName;
 
-  if (item != 0) {
-    oldName = item->text(colName);
-    Waypoint *w = currentWaypointCatalog->findWaypoint(oldName);
-    slotEditWaypoint (w);
-  }
+  if( item != 0 )
+    {
+      oldName = item->text( colName );
+      Waypoint *w = currentWaypointCatalog->findWaypoint( oldName );
+      slotEditWaypoint( w );
+    }
 }
 
 /** No descriptions */
@@ -498,26 +539,40 @@ void Waypoints::slotDeleteWaypoint(Waypoint* wp)
 /** No descriptions */
 void Waypoints::slotDeleteWaypoint()
 {
-  Q3ListViewItem *item = waypoints->currentItem();
+  qDebug() << "Waypoints::slotDeleteWaypoint()";
 
-  if (item != 0) {
-    QString tmp = item->text(colName);
-    QMessageBox waypointBox(tr("Delete waypoint?"),
-                            tr("<html>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</html>").arg(tmp),
-                            QMessageBox::Warning, QMessageBox::Ok, QMessageBox::Cancel, 0);
-    waypointBox.setButtonText(QMessageBox::Ok, tr("&Delete"));
+  QTreeWidgetItem* item = waypointTree->currentItem();
 
-    if (waypointBox.exec() == QMessageBox::Ok)
+  if( item == 0 )
     {
-      currentWaypointCatalog->removeWaypoint(tmp);
-      currentWaypointCatalog->modified = true;
-      delete item;
-
-      // eggert@kflog.org
-      // this must be done to make the deletion effective immediately (map display)
-      fillWaypoints();
+      return;
     }
-  }
+
+  QTreeWidgetItem *item = waypointTree->takeTopLevelItem( curIndex );
+
+  if( item != 0 )
+    {
+      QString tmp = item->text( colName );
+
+      QMessageBox waypointBox =
+      QMessageBox::warning ( this,
+                             tr( "Delete waypoint?" ),
+                             tr( "<html>Waypoint <b>%1</b> will be deleted.<br>Are you sure?</html>" ).arg( tmp ),
+                             QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel );
+
+      if( waypointBox.exec() == QMessageBox::Ok )
+        {
+          currentWaypointCatalog->removeWaypoint( tmp );
+          currentWaypointCatalog->modified = true;
+
+          delete item;
+
+          // eggert@kflog.org
+          // this must be done to make the deletion effective immediately (map display)
+          // Das sollte nicht so nötig sein!!!
+          fillWaypoints();
+        }
+    }
 }
 
 /** No descriptions */
@@ -527,11 +582,11 @@ void Waypoints::fillWaypoints()
 
   QString tmp;
   Waypoint *w;
-  Q3ListViewItem *item;
+
   bool filterRadius, filterArea;
   extern MapConfig *_globalMapConfig;
 
-  waypoints->clear();
+  waypointTree->clear();
 
   filterRadius = ( currentWaypointCatalog->getCenterPoint().lat() != 0  ||
                    currentWaypointCatalog->getCenterPoint().lon() != 0);
@@ -539,7 +594,7 @@ void Waypoints::fillWaypoints()
   filterArea   = ( currentWaypointCatalog->areaLat2 != 0 &&
                    currentWaypointCatalog->areaLong2 != 0 && !filterRadius);
 
-  foreach(w, currentWaypointCatalog->wpList)
+  foreach( w, currentWaypointCatalog->wpList )
       {
         if( !currentWaypointCatalog->showAll )
           {
@@ -627,36 +682,48 @@ void Waypoints::fillWaypoints()
           }
     }
 
-    item = new Q3ListViewItem(waypoints);
+    QTreeWidgetItem *item = new QTreeWidgetItem( waypointTree );
+    item->setData( 0, Qt::UserRole, qVariantFromValue(w) );
     item->setText(colName, w->name);
     item->setText(colDesc, w->description);
     item->setText(colICAO, w->icao);
     item->setText(colType, BaseMapElement::item2Text(w->type, tr("unknown")));
-    item->setText(colLat, WGSPoint::printPos(w->origP.lat(), true));
+    item->setText(colLat,  WGSPoint::printPos(w->origP.lat(), true));
     item->setText(colLong, WGSPoint::printPos(w->origP.lon(), false));
-    tmp.sprintf("%d", w->elevation);
-    item->setText(colElev, tmp);
-    w->frequency > 1 ? tmp.sprintf("%.3f", w->frequency) : tmp=QString::null;
+    item->setText(colElev, QString::number(w->elevation) );
+
+    w->frequency > 1 ? tmp.sprintf("%.3f", w->frequency) : "";
     item->setText(colFrequency, tmp);
-    item->setText(colLandable, w->isLandable == true ? tr("Yes") : QString::null);
-    if (w->runway.first > 0) {
-      tmp.sprintf("%02d", w->runway.first);
-    }
-    else {
-      tmp = QString::null;
-    }
+
+    item->setText(colLandable, w->isLandable == true ? tr("Yes") : "");
+
+    if( w->runway.first > 0 )
+      {
+        tmp.sprintf( "%02d", w->runway.first );
+      }
+    else
+      {
+        tmp = "";
+      }
+
     item->setText(colRunway, tmp);
-    if (w->length > -1) {
-      tmp.sprintf("%02d", w->length);
-    }
-    else {
-      tmp = QString::null;
-    }
+
+    if( w->length > 0 )
+      {
+        tmp.sprintf( "%02d", w->length );
+      }
+    else
+      {
+        tmp = "";
+      }
+
     item->setText(colLength, tmp);
 
     item->setText(colSurface, Runway::item2Text(w->surface) );
     item->setText(colComment, w->comment);
-    item->setPixmap(colName, _globalMapConfig->getPixmap(w->type,false,true));
+    item->setIcon(colName, _globalMapConfig->getPixmap(w->type, false, true) );
+
+    waypointTree->addTopLevelItem( item );
   }
 
   emit waypointCatalogChanged(currentWaypointCatalog);
@@ -934,18 +1001,20 @@ void Waypoints::slotAddWaypoint(Waypoint *w)
 
 void Waypoints::slotCopyWaypoint2Task()
 {
-  Q3ListViewItem *item = waypoints->currentItem();
+  QTreeWidgetItem *item = waypointTree->currentItem();
 
-  if (item != 0) {
-    Waypoint *w = currentWaypointCatalog->findWaypoint(item->text(colName));
+  if( item != 0 )
+    {
+      Waypoint *w =
+          currentWaypointCatalog->findWaypoint( item->text( colName ) );
 
-    emit copyWaypoint2Task(w);
-  }
+      emit copyWaypoint2Task( w );
+    }
 }
 
 void Waypoints::slotCenterMap()
 {
-  Q3ListViewItem *item = waypoints->currentItem();
+  QTreeWidgetItem *item = waypointTree->currentItem();
 
   if (item != 0)
     {
@@ -957,19 +1026,20 @@ void Waypoints::slotCenterMap()
 
 void Waypoints::slotSetHome()
 {
-  Q3ListViewItem *item = waypoints->currentItem();
+  QTreeWidgetItem *item = waypointTree->currentItem();
 
-  if (item != 0) {
-    Waypoint *w = currentWaypointCatalog->findWaypoint(item->text(colName));
+  if( item != 0 )
+    {
+      Waypoint *w = currentWaypointCatalog->findWaypoint( item->text( colName ) );
 
-    extern QSettings _settings;
-    _settings.setValue("/Homesite/Name", w->name);
-    _settings.setValue("/Homesite/Latitude", w->origP.lat());
-    _settings.setValue("/Homesite/Longitude", w->origP.lon());
+      extern QSettings _settings;
+      _settings.setValue("/Homesite/Name", w->name);
+      _settings.setValue("/Homesite/Latitude", w->origP.lat());
+      _settings.setValue("/Homesite/Longitude", w->origP.lon());
 
-    // update airfield lists from Welt2000 if home site changes:
-    extern MapContents  *_globalMapContents;
-    _globalMapContents->slotReloadMapData();
+      // update airfield lists from Welt2000 if home site changes:
+      extern MapContents  *_globalMapContents;
+      _globalMapContents->slotReloadMapData();
   }
 }
 
