@@ -48,8 +48,9 @@ class KFLogTreeWidget : public QTreeWidget
 public:
 
   /**
-   * \param name Name of the widget to be used for configuration storing and
-   *             retrieving. Must be unique in the application scope.
+   * \param name Name is used for configuration storing and retrieving.
+   *             Must be unique in the application scope otherwise configuration
+   *             data is overwritten and not more usable.
    *
    * \param parent Pointer to the parent widget.
    */
@@ -67,12 +68,28 @@ public:
    */
   void addRowSpacing( const int pixels );
 
+  /**
+   * Resizes all columns in the tree to their content.
+   */
+  void resizeColumns2Content();
+
 protected:
 
-  void mousePressEvent( QMouseEvent * event );
+  /**
+   * Handles right mouse clicks.
+   */
+  void mousePressEvent( QMouseEvent* event );
 
 signals:
 
+  /**
+   * Emitted, when the right mouse button was pressed.
+   *
+   * \param item The item laying under the mouse pointer or NULL, if
+   *             no item is touched.
+   *
+   * \param position The current mouse position.
+   */
   void rightButtonPressed( QTreeWidgetItem *item, const QPoint &position );
 
 private:

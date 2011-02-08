@@ -40,7 +40,6 @@ WaypointDialog::WaypointDialog( QWidget *parent ) : QDialog(parent)
 
 WaypointDialog::~WaypointDialog()
 {
-  qDebug() << "~WaypointDialog()";
 }
 
 /** No descriptions */

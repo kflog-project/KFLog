@@ -1432,7 +1432,7 @@ void KFLogConfig::__addWaypointTab()
   QString catalogName = _settings.value("/Waypoints/DefaultCatalogName", "").toString();
 
   QTreeWidgetItem* item = new QTreeWidgetItem;
-  item->setText( 0, tr("Waypoints") );
+  item->setText( 0, tr("Waypoint Catalog") );
   item->setData( 0, Qt::UserRole, "Waypoints" );
   item->setIcon( 0, _mainWindow->getPixmap("waypoint_32.png") );
   setupTree->addTopLevelItem( item );
@@ -1588,12 +1588,12 @@ void KFLogConfig::slotSearchDefaultWaypoint()
   QString fileName = QFileDialog::getOpenFileName(
                          this,
                          tr("Select a waypoint catalog"),
-                         catalogPathE->text(),
+                         waypointPathE->text(),
                          tr("KFLog Catalogs (*.kflogwp *.KFLOGWP)"));
 
-  if( ! fileName.isEmpty() )
+  if( ! fileName.isEmpty() && fileName.endsWith(".kflogwp", Qt::CaseInsensitive) )
     {
-      catalogPathE->setText(fileName);
+      catalogPathE->setText( fileName );
     }
 }
 

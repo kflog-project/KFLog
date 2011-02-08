@@ -50,7 +50,7 @@ class HelpWindow;
 class Map;
 class MapControlView;
 class ObjectTree;
-class Waypoints;
+class WaypointTreeView;
 class TopoLegend;
 class TranslationList;
 
@@ -291,11 +291,11 @@ private:
   QDockWidget* objectTreeDock;
   ObjectTree* objectTree;
   /**
-   * Dockwidget to handle the waypoints widget.
-   * The waypoints widget.
+   * Dockwidget to handle the waypoint tree view widget.
+   * The waypoint tree view widget.
    */
   QDockWidget* waypointsDock;
-  Waypoints* waypoints;
+  WaypointTreeView* waypointTreeView;
 
   QToolBar* toolBar;
 

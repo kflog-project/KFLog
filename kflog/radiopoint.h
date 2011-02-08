@@ -6,8 +6,8 @@
  **
  ************************************************************************
  **
- **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
- **                   2008-2010 by Axel Pauli
+ **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
+ **                   2008-2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -52,7 +52,7 @@ struct radioContact
  *
  * \see BaseMapElement#objectType
  *
- * \date 2000-2010
+ * \date 2000-2011
  *
  * \version $Id$
  */
@@ -71,6 +71,7 @@ class RadioPoint : public SinglePoint
    * @param  pos    The projected position.
    * @param  frequency  The frequency.
    * @param  elevation The elevation.
+   * @param  comment An additional comment related to the radio point
    */
   RadioPoint( const QString& name,
               const QString& icao,
@@ -79,7 +80,8 @@ class RadioPoint : public SinglePoint
               const WGSPoint& wgsPos,
               const QPoint& pos,
               const QString& frequency,
-              int elevation = 0);
+              int elevation = 0,
+              const QString& comment = QString::null );
 
   /**
    * Destructor

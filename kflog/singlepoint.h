@@ -7,9 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -21,18 +22,25 @@
 #include "basemapelement.h"
 
 /**
+ * \class SinglePoint
+ *
+ * \brief Map element used for small objects.
+ *
  * Map element used for small objects. The object can be one of:
  * UltraLight, HangGlider, Parachute, Balloon, Village
  * or Landmark. Consists only of a name and a position.
  *
- * @see BaseMapElement#objectType
- * @see Airport
- * @see GliderSite
- * @see RadioPoint
+ * \see BaseMapElement#objectType
+ * \see Airfield
+ * \see RadioPoint
  *
- * @author Heiner Lamprecht, Florian Ehinger
- * @version $Id$
+ * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
+ *
+ * \date 2000-2011
+ *
+ * \version $Id$
  */
+
 class SinglePoint : public BaseMapElement
 {
   public:
@@ -45,6 +53,7 @@ class SinglePoint : public BaseMapElement
    * @param  pos  The projected position
    * @param  wgsPos  The original WGS-position
    * @param  elevation The elevation of the point when available
+   * @param  comment An additional comment related to the single point
    * @param  secID  The map section ID
    * @param  lmTyp Additional field (eg. for the population index for cities or the lm_typ)
    */
@@ -54,8 +63,9 @@ class SinglePoint : public BaseMapElement
                const WGSPoint& wgsPos,
                const QPoint& pos,
                const unsigned int elevation = 0,
+               const QString& comment = QString::null,
                const unsigned short secID=0,
-               unsigned int lmType = 0);
+               unsigned int lmType = 0 );
   /**
    * Destructor
    */
@@ -126,6 +136,14 @@ class SinglePoint : public BaseMapElement
     };
 
   /**
+   * @return the comment text of the single point
+   */
+  const QString& getComment()
+    {
+      return comment;
+    };
+
+  /**
    * Reimplemented from BaseMapElement.
    *
    * Proofs, if the object is in the drawing-area of the map.
@@ -140,6 +158,7 @@ class SinglePoint : public BaseMapElement
 protected:
 
   /**
+   * Position coordinates as WGS84.
    */
   WGSPoint wgsPosition;
   /**
@@ -162,6 +181,10 @@ protected:
    * Additional field
    */
   unsigned int lm_typ;
+  /**
+   * Comment related to the single point.
+   */
+  QString comment;
 };
 
 #endif

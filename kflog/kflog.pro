@@ -83,7 +83,7 @@ SOURCES = \
     waypointcatalog.cpp \
     waypointdialog.cpp \
     waypointimpfilterdialog.cpp \
-    waypoints.cpp \
+    waypointtreeview.cpp \
     welt2000.cpp \
     wgspoint.cpp \
     whatsthat.cpp \
@@ -164,7 +164,7 @@ HEADERS = \
     waypointcatalog.h \
     waypointdialog.h \
     waypointimpfilterdialog.h \
-    waypoints.h \
+    waypointtreeview.h \
     welt2000.h \
     wgspoint.h \
     whatsthat.h \

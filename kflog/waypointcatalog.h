@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Harald Maier
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -34,6 +35,7 @@
 #define WAYPOINT_CATALOG_H
 
 #include <QList>
+#include <QSet>
 
 class QString;
 class Waypoint;
@@ -78,8 +80,16 @@ public:
   /** insert a new waypoint into the list and check if waypoint already exist */
   bool insertWaypoint(Waypoint *newWaypoint);
 
-  /** Find a waypoint by using its name as search key. */
-  Waypoint *findWaypoint(const QString& name);
+  /**
+   * Find a waypoint by using its name as search key.
+   *
+   * \param name Name of the waypoint
+   *
+   * \param index List index of found waypoint or -1 if not existing
+   *
+   * \return Pointer to found waypoint or NULL
+   */
+  Waypoint *findWaypoint(const QString& name, int &index );
 
   bool removeWaypoint(const QString& name);
 
@@ -136,6 +146,9 @@ private: // Private attributes
 
   /**  */
   bool onDisc;
+
+  /** Set of existing catalog pathes. */
+  static QSet<QString> catalogSet;
 };
 
 #endif

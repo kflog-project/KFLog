@@ -17,6 +17,7 @@
 ***********************************************************************/
 
 #include <cmath>
+#include <unistd.h>
 
 #include <QtGui>
 #include <QtXml>
@@ -42,27 +43,52 @@
 extern MainWindow *_mainWindow;
 extern QSettings  _settings;
 
+QSet<QString> WaypointCatalog::catalogSet;
+
 WaypointCatalog::WaypointCatalog(const QString& name) :
   modified(false),
   onDisc(false)
 {
   static int catalogNr = 1;
 
-  extern QSettings _settings;
   QString wayPointDir = _settings.value( "/Path/DefaultWaypointDirectory",
                                          _mainWindow->getApplicationDataDirectory() ).toString();
-  if( name == QString::null )
+  if( name.isEmpty() )
     {
-      QString t;
-      t.setNum( catalogNr++ );
-      catalogName = QObject::tr( "unnamed" ) + t;
+      // Create an unique catalog name.
+      for( int i = 0; i < 1000; i++ )
+        {
+          catalogName = QObject::tr("unnamed") + QString::number(catalogNr);
+          catalogNr++;
+
+          path = wayPointDir + "/" + catalogName + ".kflogwp";
+
+          // Check, if file does not exist. Otherwise take a new filename.
+          if( QFile::exists(path) == false && catalogSet.contains(path) == false )
+            {
+              break;
+            }
+        }
     }
   else
     {
       catalogName = name;
+
+      QFileInfo fi(catalogName);
+
+      if( fi.fileName() == catalogName )
+        {
+          path = wayPointDir + "/" + catalogName;
+        }
+      else
+        {
+          path = catalogName;
+        }
     }
 
-  path = wayPointDir + "/" + catalogName + ".kflogwp";
+  catalogSet.insert( path );
+
+  qDebug() << "New WaypointCatalog" << path << "created";
 
   showAll = true;
   showAirfields = false;
@@ -88,6 +114,7 @@ WaypointCatalog::WaypointCatalog(const QString& name) :
 WaypointCatalog::~WaypointCatalog()
 {
   qDeleteAll( wpList );
+  catalogSet.remove( path );
 }
 
 WGSPoint WaypointCatalog::getCenterPoint()
@@ -203,6 +230,11 @@ bool WaypointCatalog::write()
   QString fName = path;
 
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+
+  root.setAttribute("Creator", getlogin());
+  root.setAttribute("Time", QTime::currentTime().toString("HH:mm:mm"));
+  root.setAttribute("Date", QDate::currentDate().toString(Qt::ISODate));
+  root.setAttribute("Version", "1.0");
 
   doc.appendChild(root);
 
@@ -1154,7 +1186,9 @@ bool WaypointCatalog::insertWaypoint(Waypoint *newWaypoint)
 
   bool ins = true;
 
-  Waypoint *existingWaypoint = findWaypoint( newWaypoint->name );
+  int index;
+
+  Waypoint *existingWaypoint = findWaypoint( newWaypoint->name, index );
 
   if( existingWaypoint != 0 )
     {
@@ -1189,7 +1223,7 @@ bool WaypointCatalog::insertWaypoint(Waypoint *newWaypoint)
             break;
 
           case QMessageBox::Ok:      //overwrite, old version
-            wpList.removeOne(existingWaypoint);
+            delete wpList.takeAt(index);
             wpList.append(newWaypoint);
             break;
         }
@@ -1203,27 +1237,29 @@ bool WaypointCatalog::insertWaypoint(Waypoint *newWaypoint)
   return ins;
 }
 
-Waypoint *WaypointCatalog::findWaypoint( const QString& name )
+Waypoint *WaypointCatalog::findWaypoint( const QString& name, int &index )
 {
-  foreach( Waypoint *waypoint, wpList )
+  for( int i=0; i < wpList.size(); i++ )
     {
-      if( waypoint->name == name )
+      if( wpList.at(i)->name == name )
           {
-            return waypoint;
+            index = i;
+            return wpList.at(i);
           }
     }
 
-  return 0;
+  index = -1;
+
+  return static_cast<Waypoint *> (0);
 }
 
 bool WaypointCatalog::removeWaypoint( const QString& name )
 {
-  foreach( Waypoint *waypoint, wpList )
+  for( int i = 0; i < wpList.size(); i++ )
       {
-        if( waypoint->name == name )
+        if( wpList.at(i)->name == name )
           {
-            wpList.removeOne( waypoint );
-            delete waypoint;
+            delete wpList.takeAt(i);
             return true;
           }
       }

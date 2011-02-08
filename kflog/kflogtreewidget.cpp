@@ -28,6 +28,8 @@ KFLogTreeWidget::KFLogTreeWidget( const char *name, QWidget *parent ) :
   rowDelegate( 0 )
 {
   setObjectName( "KFLogTreeWidget" );
+
+  header()->setResizeMode( QHeaderView::Interactive );
 }
 
 KFLogTreeWidget::~KFLogTreeWidget()
@@ -55,7 +57,7 @@ void KFLogTreeWidget::saveConfig()
 
   QByteArray array = headerView->saveState();
 
-  QString path = "/KFLogTreeWidget/" + confName;
+  QString path = "/KFLogTreeWidget/" + confName + "-Header";
 
   _settings.setValue( path, array );
 }
@@ -75,7 +77,7 @@ void KFLogTreeWidget::loadConfig()
       return;
     }
 
-  QString path = "/KFLogTreeWidget/" + confName;
+  QString path = "/KFLogTreeWidget/" + confName + "-Header";
 
   bool ok = headerView->restoreState( _settings.value( path ).toByteArray() );
 
@@ -105,9 +107,15 @@ void KFLogTreeWidget::mousePressEvent( QMouseEvent* event )
       return;
     }
 
-  qDebug() << "KFLogTreeWidget::mousePressEvent() Pos=" << event->pos();
-
   QTreeWidgetItem *item = itemAt( event->pos() );
 
   emit rightButtonPressed( item, event->pos() );
+}
+
+void KFLogTreeWidget::resizeColumns2Content()
+{
+  for( int i = 0 ; i < columnCount(); i++ )
+    {
+      resizeColumnToContents( i );
+    }
 }

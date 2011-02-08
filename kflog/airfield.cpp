@@ -33,10 +33,9 @@ Airfield::Airfield( const QString& name,
                     bool winch,
                     bool towing,
                     bool landable ) :
-  SinglePoint(name, shortName, typeId, wgsPos, pos, elevation),
+  SinglePoint(name, shortName, typeId, wgsPos, pos, elevation, comment),
   icao(icao),
   frequency(frequency),
-  comment(comment),
   winch(winch),
   towing(towing),
   landable(landable)

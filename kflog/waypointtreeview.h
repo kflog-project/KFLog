@@ -18,19 +18,21 @@
  ***************************************************************************/
 
 /**
- * \class Waypoints
+ * \class WaypointTreeView
  *
  * \author Harald Maier, Axel Pauli
  *
- * \short Waypoint widget for display an interface
+ * \short Waypoint tree widget for display of waypoints and their management.
+ *
+ * Waypoint tree widget for display of waypoints and their management.
  *
  * \date 2001-2011
  *
  * \version $Id$
  */
 
-#ifndef WAYPOINTS_H
-#define WAYPOINTS_H
+#ifndef WAYPOINT_TREE_VIEW_H
+#define WAYPOINT_TREE_VIEW_H
 
 #include "kflogtreewidget.h"
 #include "waypoint.h"
@@ -41,22 +43,21 @@
 #include <QAction>
 #include <QComboBox>
 #include <QMenu>
-#include <QSplitter>
 #include <QWidget>
 
-class Waypoints : public QWidget
+class WaypointTreeView : public QWidget
 {
   Q_OBJECT
 
 private:
 
-  Q_DISABLE_COPY ( Waypoints )
+  Q_DISABLE_COPY ( WaypointTreeView )
 
 public:
 
-  Waypoints(QWidget *parent = 0, const QString& catalog = QString::null);
+  WaypointTreeView(QWidget *parent = 0, const QString& catalog = QString::null);
 
-  ~Waypoints();
+  ~WaypointTreeView();
   /**
    * save changes in catalogs, return success
    */
@@ -127,7 +128,7 @@ private: // Private methods
   /** Waypoint import filter dialog */
   WaypointImpFilterDialog *importFilterDlg;
 
-  /** column index for waypoints */
+  /** column indexes for waypoints */
   int colName;
   int colDesc;
   int colICAO;
@@ -142,10 +143,16 @@ private: // Private methods
   int colSurface;
   int colComment;
 
-private slots:
+ private slots:
 
-  void slotDeleteWaypoint();
+ /**
+  * Removes all selected waypoints from the tree view and from the current
+  * catalog.
+  */
+  void slotDeleteWaypoints();
+
   void slotEditWaypoint();
+
   /** create a new catalog */
   void slotNewWaypointCatalog();
   /** open a catalog and set it active */
@@ -155,7 +162,9 @@ private slots:
   void slotCloseWaypointCatalog();
   void slotImportWaypointCatalog();
   void slotSwitchWaypointCatalog(int idx);
-  void showWaypointMenu(QTreeWidgetItem* item, const QPoint& position);
+
+  /** Called if right mouse button was pressed. */
+  void slotShowWaypointMenu(QTreeWidgetItem* item, const QPoint& position);
   void slotImportWaypointFromMap();
   void slotCopyWaypoint2Task();
   void slotCenterMap();
@@ -169,7 +178,7 @@ private slots:
   */
   void slotCopy2Catalog( QAction* action );
 
-  public slots: // Public slots
+ public slots:
   /**
    * A waypoint has been added to the catalog
    */
@@ -204,6 +213,7 @@ private slots:
    void slotSetWaypointCatalogName(QString catalog);
 
  signals:
+
   /**
    * Request to copy the referenced waypoint into the current task
    */

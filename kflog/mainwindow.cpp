@@ -43,8 +43,8 @@
 #include "recorderdialog.h"
 #include "taskdataprint.h"
 #include "topolegend.h"
-#include "waypoints.h"
 #include "wgspoint.h"
+#include "waypointtreeview.h"
 
 #include "mainwindow.h"
 
@@ -116,9 +116,9 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(map, SIGNAL(showPoint(const QPoint&)), evaluationWindow, SLOT(slotRemoveFlightPoint()));
   connect(map, SIGNAL(showFlightPoint(const QPoint&, const flightPoint&)), evaluationWindow, SLOT(slotShowFlightPoint(const QPoint&, const flightPoint&)));
   connect(map, SIGNAL(changed(QSize)), mapControl, SLOT(slotShowMapData(QSize)));
-  connect(map, SIGNAL(waypointSelected(Waypoint *)), waypoints, SLOT(slotAddWaypoint(Waypoint *)));
-  connect(map, SIGNAL(waypointDeleted(Waypoint *)), waypoints, SLOT(slotDeleteWaypoint(Waypoint *)));
-  connect(map, SIGNAL(waypointEdited(Waypoint *)), waypoints, SLOT(slotEditWaypoint(Waypoint *)));
+  connect(map, SIGNAL(waypointSelected(Waypoint *)), waypointTreeView, SLOT(slotAddWaypoint(Waypoint *)));
+  connect(map, SIGNAL(waypointDeleted(Waypoint *)), waypointTreeView, SLOT(slotDeleteWaypoint(Waypoint *)));
+  connect(map, SIGNAL(waypointEdited(Waypoint *)), waypointTreeView, SLOT(slotEditWaypoint(Waypoint *)));
   connect(map, SIGNAL(elevation(int)), legend, SLOT(slotSelectElevation(int)));
   connect(map, SIGNAL(regWaypointDialog(QWidget *)), this, SLOT(slotRegisterWaypointDialog(QWidget *)));
   connect(map, SIGNAL(openFile(const QUrl&)), this, SLOT(slotOpenFile(const QUrl&)));
@@ -148,9 +148,9 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(_globalMapMatrix, SIGNAL(printMatrixValues(int)), _globalMapConfig, SLOT(slotSetPrintMatrixValues(int)));
   connect(_globalMapMatrix, SIGNAL(projectionChanged()), _globalMapContents, SLOT(slotReloadMapData()));
 
-  connect(waypoints, SIGNAL(copyWaypoint2Task(Waypoint *)), map, SLOT(slotAppendWaypoint2Task(Waypoint *)));
-  connect(waypoints, SIGNAL(waypointCatalogChanged( WaypointCatalog * )), map, SLOT(slotWaypointCatalogChanged( WaypointCatalog * )));
-  connect(waypoints, SIGNAL(centerMap(int, int)), _globalMapMatrix, SLOT(slotCenterTo(int, int)));
+  connect(waypointTreeView, SIGNAL(copyWaypoint2Task(Waypoint *)), map, SLOT(slotAppendWaypoint2Task(Waypoint *)));
+  connect(waypointTreeView, SIGNAL(waypointCatalogChanged( WaypointCatalog * )), map, SLOT(slotWaypointCatalogChanged( WaypointCatalog * )));
+  connect(waypointTreeView, SIGNAL(centerMap(int, int)), _globalMapMatrix, SLOT(slotCenterTo(int, int)));
 
   connect(objectTree, SIGNAL(selectedFlight(BaseFlightElement *)), _globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
   connect(objectTree, SIGNAL(newTask()), _globalMapContents, SLOT(slotNewTask()));
@@ -233,7 +233,7 @@ QString MainWindow::getApplicationDataDirectory()
 void MainWindow::closeEvent( QCloseEvent *event )
 {
   saveOptions();
-  waypoints->saveChanges();
+  waypointTreeView->saveChanges();
 
   _globalMapMatrix->writeMatrixOptions();
   event->accept();
@@ -302,8 +302,8 @@ void MainWindow::createDockWindows()
   waypointsDock = new QDockWidget( tr("Waypoints"), this );
   waypointsDock->setObjectName( "WaypointsWindow");
   waypointsDock->setFloating( false );
-  waypoints = new Waypoints(waypointsDock);
-  waypointsDock->setWidget(waypoints);
+  waypointTreeView = new WaypointTreeView(waypointsDock);
+  waypointsDock->setWidget(waypointTreeView);
   addDockWidget( Qt::BottomDockWidgetArea, waypointsDock );
   waypointsDock->setVisible(false);
 }
@@ -319,7 +319,7 @@ void MainWindow::createMenuBar()
                                        tr("New &Waypoint"), this );
   fileNewWaypointAction->setEnabled(true);
   connect( fileNewWaypointAction, SIGNAL(triggered()),
-           waypoints, SLOT(slotNewWaypoint()) );
+           waypointTreeView, SLOT(slotNewWaypoint()) );
 
   fileNewTaskAction = new QAction( getPixmap("task_16.png"), tr("New &Task"), this );
   fileNewTaskAction->setShortcut( Qt::CTRL + Qt::Key_N );
@@ -970,12 +970,13 @@ void MainWindow::saveOptions()
   _settings.setValue( "/MainWindow/ShowStatusbar", statusBar()->isVisible() );
 
   if( _settings.value("/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed).toInt() ==
-      KFLogConfig::LastUsed && waypoints->getCurrentCatalog() != static_cast<WaypointCatalog *> (0) )
+      KFLogConfig::LastUsed && waypointTreeView->getCurrentCatalog() != static_cast<WaypointCatalog *> (0) )
     {
       // Only write the path, if a waypoint-catalog is opened.
       // Otherwise KFLog crashes on a clean installation.
       //qDebug("saving catalog name");
-      _settings.setValue( "/Waypoints/DefaultCatalogName", waypoints->getCurrentCatalog()->path );
+      _settings.setValue( "/Waypoints/DefaultCatalogName",
+                          waypointTreeView->getCurrentCatalog()->path );
     }
 }
 
@@ -1283,7 +1284,7 @@ void MainWindow::slotOpenRecentFile( QAction *action )
 void MainWindow::slotOpenRecorderDialog()
 {
   RecorderDialog* dlg = new RecorderDialog(this);
-  connect(dlg, SIGNAL(addCatalog(WaypointCatalog *)), waypoints, SLOT(slotAddCatalog(WaypointCatalog *)));
+  connect(dlg, SIGNAL(addCatalog(WaypointCatalog *)), waypointTreeView, SLOT(slotAddCatalog(WaypointCatalog *)));
   connect(dlg, SIGNAL(addTask(FlightTask *)), _globalMapContents, SLOT(slotAppendTask(FlightTask *)));
   dlg->exec();
   delete dlg;
@@ -1324,7 +1325,7 @@ void MainWindow::slotOptimizeFlightOLC()
 /** Connects the dialogs addWaypoint signal to the waypoint object. */
 void MainWindow::slotRegisterWaypointDialog(QWidget * dialog)
 {
-  connect( dialog, SIGNAL(addWaypoint(Waypoint *)), waypoints,
+  connect( dialog, SIGNAL(addWaypoint(Waypoint *)), waypointTreeView,
            SLOT(slotAddWaypoint(Waypoint *)));
 }
 
@@ -1505,7 +1506,7 @@ void MainWindow::slotSetStatusMsg(const QString &text)
 /* Slot to set filename for WaypointCatalog */
 void MainWindow::slotSetWaypointCatalog(QString catalog)
 {
-  waypoints->slotSetWaypointCatalogName(catalog);
+  waypointTreeView->slotSetWaypointCatalogName(catalog);
 }
 
 void MainWindow::slotCheckDockWidgetStatus()

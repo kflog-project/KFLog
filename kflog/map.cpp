@@ -30,9 +30,9 @@
 #include "radiopoint.h"
 #include "resource.h"
 #include "singlepoint.h"
-#include "waypoints.h"
 #include "waypointdialog.h"
 #include "wgspoint.h"
+#include "waypointtreeview.h"
 #include "whatsthat.h"
 #include "mainwindow.h"
 

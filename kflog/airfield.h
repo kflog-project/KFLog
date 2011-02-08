@@ -152,14 +152,6 @@ class Airfield : public SinglePoint
     };
 
   /**
-   * @return the comment text of the airfield
-   */
-  QString getComment() const
-    {
-      return comment;
-    };
-
-  /**
    * Return a short html-info-string about the airport, containing the
    * name, the alias, the elevation and the frequency as well as a small
    * icon of the airport type.
@@ -196,11 +188,6 @@ class Airfield : public SinglePoint
     * The frequency
     */
    QString frequency;
-
-   /**
-    * Comment related to the airfield.
-    */
-   QString comment;
 
   /**
    * Contains the available runways.

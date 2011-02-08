@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,6 +26,7 @@ SinglePoint::SinglePoint( const QString& n,
                           const WGSPoint& wgsP,
                           const QPoint& pos,
                           const unsigned int elev,
+                          const QString& comment,
                           const unsigned short secID,
                           unsigned int lmType ) :
  BaseMapElement(n, t, secID),
@@ -33,7 +35,8 @@ SinglePoint::SinglePoint( const QString& n,
   shortName(shortName),
   curPos(pos),
   elevation(elev),
-  lm_typ(lmType)
+  lm_typ(lmType),
+  comment(comment)
 {
 }
 
