@@ -76,6 +76,9 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   QMainWindow( parent, flags )
 {
   qDebug() << "MainWindow()";
+  qDebug() << "GlobalStrut=" << QApplication::globalStrut();
+
+  QApplication::setStyle( "plastique" );
 
   // Initialize units to be used. Use the stored values from the configuration.
   int altUnit  = _settings.value( "/Units/Altitude", Altitude::meters ).toInt();

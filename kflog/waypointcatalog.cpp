@@ -76,8 +76,16 @@ WaypointCatalog::WaypointCatalog(const QString& name) :
 
       QFileInfo fi(catalogName);
 
+      if( fi.suffix().isEmpty() )
+        {
+          // Add the default suffix to the filename, if no one exists.
+          catalogName += ".kflogwp";
+          fi.setFile( catalogName );
+        }
+
       if( fi.fileName() == catalogName )
         {
+          // Add the waypoint directory to the pure catalog name
           path = wayPointDir + "/" + catalogName;
         }
       else
@@ -88,7 +96,7 @@ WaypointCatalog::WaypointCatalog(const QString& name) :
 
   catalogSet.insert( path );
 
-  qDebug() << "New WaypointCatalog" << path << "created";
+  qDebug() << "WaypointCatalog(): New WaypointCatalog" << path << "created";
 
   showAll = true;
   showAirfields = false;
@@ -226,7 +234,7 @@ bool WaypointCatalog::write()
   QDomElement root = doc.createElement("KFLogWaypoint");
   QDomElement child;
   Waypoint *w;
-  QFile f;
+  QFile file;
   QString fName = path;
 
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
@@ -267,23 +275,28 @@ bool WaypointCatalog::write()
       root.appendChild(child);
     }
 
-  f.setFileName(fName);
+  file.setFileName(fName);
 
-  if (f.open(QIODevice::WriteOnly)) {
-    QString txt = doc.toString();
-    f.write(txt.toAscii().data(), txt.length());
-    f.close();
-    path = fName;
-    modified = false;
-    onDisc = true;
-  }
-  else {
-    QMessageBox::critical( _mainWindow,
-                           QObject::tr("Error occurred!"),
-                           QString ("<html><B>%1</B><BR>").arg(fName) +
-                           QObject::tr("permission denied!") +
-                           "</html>", QMessageBox::Ok );
-  }
+  if( file.open( QIODevice::WriteOnly ) )
+    {
+      const int IndentSize = 4;
+
+      QTextStream out( &file );
+      doc.save( out, IndentSize );
+      file.close();
+
+      path = fName;
+      modified = false;
+      onDisc = true;
+    }
+  else
+    {
+      QMessageBox::critical( _mainWindow,
+                             QObject::tr("Error occurred!"),
+                             QString ("<html><B>%1</B><BR>").arg(fName) +
+                             QObject::tr("permission denied!") +
+                             "</html>", QMessageBox::Ok );
+   }
 
   QApplication::restoreOverrideCursor();
   return ok;
@@ -314,53 +327,65 @@ bool WaypointCatalog::writeBinary()
 
   f.setFileName(fName);
 
-  if (f.open(QIODevice::WriteOnly)) {
-    QDataStream out(& f);
+  if (f.open(QIODevice::WriteOnly))
+    {
+      QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
-    //write fileheader
-    out << quint32(KFLOG_FILE_MAGIC);
-    out << qint8(FILE_TYPE_WAYPOINTS);
-    out << quint16(FILE_FORMAT_ID_2); //use the new format with importance field.
+      QDataStream out(& f);
 
-    foreach(w, wpList) {
-      wpName=w->name;
-      wpDescription=w->description;
-      wpICAO=w->icao;
-      wpType=w->type;
-      wpLatitude=w->origP.lat();
-      wpLongitude=w->origP.lon();
-      wpElevation=w->elevation;
-      wpFrequency=w->frequency;
-      wpLandable=w->isLandable;
-      wpRunway=w->runway.first;
-      wpLength=w->length;
-      wpSurface=w->surface;
-      wpComment=w->comment;
-      wpImportance=w->importance;
+      //write file header
+      out << quint32(KFLOG_FILE_MAGIC);
+      out << qint8(FILE_TYPE_WAYPOINTS);
+      out << quint16(FILE_FORMAT_ID_2); //use the new format with importance field.
 
-      out << wpName;
-      out << wpDescription;
-      out << wpICAO;
-      out << wpType;
-      out << wpLatitude;
-      out << wpLongitude;
-      out << wpElevation;
-      out << wpFrequency;
-      out << wpLandable;
-      out << wpRunway;
-      out << wpLength;
-      out << wpSurface;
-      out << wpComment;
-      out << wpImportance;
-    }
+      foreach(w, wpList)
+        {
+          wpName=w->name;
+          wpDescription=w->description;
+          wpICAO=w->icao;
+          wpType=w->type;
+          wpLatitude=w->origP.lat();
+          wpLongitude=w->origP.lon();
+          wpElevation=w->elevation;
+          wpFrequency=w->frequency;
+          wpLandable=w->isLandable;
+          wpRunway=w->runway.first;
+          wpLength=w->length;
+          wpSurface=w->surface;
+          wpComment=w->comment;
+          wpImportance=w->importance;
+
+          out << wpName;
+          out << wpDescription;
+          out << wpICAO;
+          out << wpType;
+          out << wpLatitude;
+          out << wpLongitude;
+          out << wpElevation;
+          out << wpFrequency;
+          out << wpLandable;
+          out << wpRunway;
+          out << wpLength;
+          out << wpSurface;
+          out << wpComment;
+          out << wpImportance;
+        }
+
     f.close();
     path = fName;
     modified = false;
     onDisc = true;
+
+    QApplication::restoreOverrideCursor();
   }
-  else {
-    QMessageBox::critical(_mainWindow, QObject::tr("Error occurred!"), QString ("<html><B>%1</B><BR>").arg(fName) + QObject::tr("permission denied!") + "</html>", QMessageBox::Ok );
-  }
+  else
+    {
+      QMessageBox::critical( _mainWindow,
+                              QObject::tr("Error occurred!"),
+                              QString ("<html><B>%1</B><BR>").arg(fName) +
+                              QObject::tr("permission denied!") + "</html>",
+                              QMessageBox::Ok );
+    }
   return ok;
 }
 
@@ -534,7 +559,7 @@ bool WaypointCatalog::save(bool alwaysAskName)
       alwaysAskName = true;
   }
 
-  if (!onDisc || alwaysAskName)
+  if( !onDisc || alwaysAskName )
     {
        QString filter;
        filter.append(QObject::tr("KFLog waypoints") + " (*.kflogwp *.KFLOGWP);;");
@@ -547,21 +572,21 @@ bool WaypointCatalog::save(bool alwaysAskName)
                                              path,
                                              filter );
 
-    if(!fName.isEmpty())
+    if( fName.isEmpty() )
       {
-      if ((fName.right(8) != ".kflogwp") &&
-          (fName.right(4) != ".kwp") &&
-          (fName.right(4) != ".da4") &&
-          (fName.right(4) != ".txt"))
-      {
-        fName += ".kflogwp";
+        return false;
       }
+
+    if( (fName.right( 8 ) != ".kflogwp") &&
+        (fName.right( 4 ) != ".kwp") &&
+        (fName.right( 4 ) != ".da4") &&
+        (fName.right( 4 ) != ".txt") )
+        {
+          fName += ".kflogwp";
+        }
+
       path = fName;
     }
-    else {
-      return false;
-    }
-  }
 
   if (fName.right(8) == ".kflogwp")
     return write();
@@ -573,7 +598,10 @@ bool WaypointCatalog::save(bool alwaysAskName)
     return writeBinary();
 }
 
-/** This function calls either read or readBinary depending on the filename of the catalog. */
+/**
+ * This function calls either read or readBinary depending on the filename
+ * of the catalog.
+ */
 bool WaypointCatalog::load(const QString& catalog)
 {
   if (catalog.right(8).toLower() == ".kflogwp")

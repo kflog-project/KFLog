@@ -25,7 +25,9 @@ extern QSettings _settings;
 KFLogTreeWidget::KFLogTreeWidget( const char *name, QWidget *parent ) :
   QTreeWidget( parent ),
   confName( name ),
-  rowDelegate( 0 )
+  rowDelegate( 0 ),
+  showColMenu( 0 ),
+  menuActionGroup( 0 )
 {
   setObjectName( "KFLogTreeWidget" );
 
@@ -101,15 +103,22 @@ void KFLogTreeWidget::addRowSpacing( const int pixels )
 
 void KFLogTreeWidget::mousePressEvent( QMouseEvent* event )
 {
-  if( event->button() != Qt::RightButton )
+  if( event->button() == Qt::RightButton )
     {
-      QTreeWidget::mousePressEvent( event );
+      QTreeWidgetItem *item = itemAt( event->pos() );
+      emit rightButtonPressed( item, event->pos() );
       return;
     }
 
-  QTreeWidgetItem *item = itemAt( event->pos() );
+  if( event->button() == Qt::MidButton )
+    {
+      // Create a menu for switch on/off of tree view columns.
+      createShowColMenu();
+      showColMenu->exec( QCursor::pos() );
+      return;
+    }
 
-  emit rightButtonPressed( item, event->pos() );
+  QTreeWidget::mousePressEvent( event );
 }
 
 void KFLogTreeWidget::resizeColumns2Content()
@@ -118,4 +127,82 @@ void KFLogTreeWidget::resizeColumns2Content()
     {
       resizeColumnToContents( i );
     }
+}
+
+/** Creates the show column menu. */
+void KFLogTreeWidget::createShowColMenu()
+{
+  if( header()->count() == 0 || showColMenu != 0 )
+    {
+      return;
+    }
+
+  showColMenu = new QMenu(this);
+  showColMenu->setTitle( tr("Toggle columns") );
+  showColMenu->setToolTip(tr("Toggle visibility of table columns"));
+
+  menuActionGroup = new QActionGroup(this);
+  menuActionGroup->setExclusive( false );
+
+  QAction *action = new QAction( tr("Show all columns"), this );
+  action->setData( -1 );
+
+  menuActionGroup->addAction( action );
+  showColMenu->addAction( action );
+  showColMenu->addSeparator();
+
+  QTreeWidgetItem* hi = headerItem();
+
+  for( int i = 0; i < header()->count(); i++ )
+    {
+      QAction *action = new QAction( hi->text(i), this );
+      action->setCheckable( true );
+      action->setChecked( isColumnHidden(i) == false );
+      action->setData( i );
+
+      menuActionGroup->addAction( action );
+      showColMenu->addAction( action );
+    }
+
+  connect( menuActionGroup, SIGNAL(triggered(QAction *)),
+           SLOT(slotMenuActionTriggered( QAction *)) );
+}
+
+/**
+ * Called, if a menu action is toggled.
+ */
+void KFLogTreeWidget::slotMenuActionTriggered( QAction* action )
+{
+  int columnIdx = action->data().toInt();
+
+  if( columnIdx == -1 )
+    {
+      // All columns should be switched on.
+      QList<QAction *> actions = menuActionGroup->actions ();
+
+      for( int i = 0; i < actions.size(); i++ )
+        {
+          columnIdx = actions.at(i)->data().toInt();
+
+          if( columnIdx == -1 )
+            {
+              continue;
+            }
+
+          setColumnHidden( columnIdx, false );
+          actions.at(i)->setChecked( true );
+        }
+
+      resizeColumns2Content();
+      return;
+    }
+
+  setColumnHidden( columnIdx, ( action->isChecked() == false ) );
+  resizeColumns2Content();
+}
+
+void KFLogTreeWidget::slotShowColMenu()
+{
+  createShowColMenu();
+  showColMenu->exec(  QCursor::pos() );
 }

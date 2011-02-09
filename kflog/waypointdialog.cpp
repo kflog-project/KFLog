@@ -23,7 +23,9 @@
 #include "waypointdialog.h"
 #include "wgspoint.h"
 
-WaypointDialog::WaypointDialog( QWidget *parent ) : QDialog(parent)
+WaypointDialog::WaypointDialog( QWidget *parent ) :
+  QDialog(parent),
+  edit(false)
 {
   setWindowModality( Qt::WindowModal );
   //setAttribute( Qt::WA_DeleteOnClose );
@@ -227,11 +229,18 @@ void WaypointDialog::clear()
   longitude->setKFLogDegree(0);
   isLandable->setChecked(false);
   setWaypointType(BaseMapElement::Landmark);
+  edit = false;
 }
 
 /** No descriptions */
 void WaypointDialog::slotAddWaypoint()
 {
+  if( edit )
+    {
+      // Waypoint was only edited.
+      return;
+    }
+
   QString text;
 
   // insert a new waypoint to current catalog

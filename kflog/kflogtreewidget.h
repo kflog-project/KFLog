@@ -21,7 +21,8 @@
  * \brief Small extension of the QTreeWidget class.
  *
  * This class is an extension of the QTreeWidget class. It saves and restores
- * a modified headline by the user.
+ * a modified headline by the user. Furthermore it provides a menu if middle
+ * mouse button is pressed, to switch on/off columns of the tree view.
  *
  * \date 2011
  *
@@ -34,6 +35,9 @@
 
 #include <QTreeWidget>
 
+class QAction;
+class QActionGroup;
+class QMenu;
 class QString;
 class RowDelegate;
 
@@ -76,9 +80,23 @@ public:
 protected:
 
   /**
-   * Handles right mouse clicks.
+   * Handles mouse clicks.
    */
   void mousePressEvent( QMouseEvent* event );
+
+public slots:
+
+  /**
+   * Call to popup the column show menu.
+   */
+  void slotShowColMenu();
+
+private slots:
+
+  /**
+   * Called, if an menu action is toggled.
+   */
+  void slotMenuActionTriggered( QAction* action );
 
 signals:
 
@@ -94,6 +112,9 @@ signals:
 
 private:
 
+  /** Creates the show column menu. */
+  void createShowColMenu();
+
   /** store the configuration in the app's configuration */
   void saveConfig();
 
@@ -103,6 +124,12 @@ private:
   QString confName;
 
   RowDelegate* rowDelegate;
+
+  /** Menu to switch on/off single tree columns. */
+  QMenu* showColMenu;
+
+  /** Group about all checkable actions. */
+  QActionGroup* menuActionGroup;
 };
 
 #endif

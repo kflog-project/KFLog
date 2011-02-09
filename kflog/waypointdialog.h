@@ -126,6 +126,9 @@ public:
   QComboBox *surface;
 
   QPushButton *applyButton;
+
+  /** Flag to indicate if an existing waypoint is edited. */
+  bool edit;
 };
 
 #endif

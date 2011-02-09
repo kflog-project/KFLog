@@ -1,5 +1,17 @@
 $Id$
 
+2011-02-09 Axel Pauli <axel@kflog.org>
+  * Class KFLogListView was replaced by the new class KFLogTreeWidget. This
+    class saves too the column headers and provides a menu by pressing middle
+    mouse button for visibility toggling of columns of the tree view.
+  * Waypoint catalog management was a bit confusion me. I hope that I could fix
+    all detected problems by me.
+  * An edited waypoint was inserted again in the current waypoint catalog. I
+    blocked that now.
+  * Class Waypoints was remaned to WaypointTreeView to get a better
+    understandness what is managed here. Different issues fixed in that class.
+    The waypoint management should be now ported to Qt4. All import functions
+    must be tested deeper, if the work correctly.
 2011-02-04 Axel Pauli <axel@kflog.org>
   * Bugfix in class Waypoints. If no catalog is defined and the mouse button
     is pressed in the waypoint list, a core dump occurred. Fixed that in
