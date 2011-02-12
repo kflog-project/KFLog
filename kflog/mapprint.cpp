@@ -9,28 +9,20 @@
 **   Copyright (c):  2002 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
+
+#include <QtGui>
+#include <Qt3Support>
 
 #include "mapprint.h"
 
 #include "flight.h"
 #include "mapcontents.h"
 #include "mapmatrix.h"
-
-#include <q3groupbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpainter.h>
-#include <qprinter.h>
-#include <qpushbutton.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3PointArray>
-#include <Q3PtrList>
 
 #define VERSION "3.0"
 
@@ -764,6 +756,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
         }
     }
 }
+
 /** Prints the waypointlist to the supplied QPainter */
 void MapPrint::__drawWaypoints(const double /*selectedScale*/, QPainter* wpP, const QSize /*pS*/,
                                const QRect /*mapBorder*/, const int /*mapCenterLon*/, const double dX,
@@ -772,24 +765,19 @@ void MapPrint::__drawWaypoints(const double /*selectedScale*/, QPainter* wpP, co
   extern const MapMatrix *_globalMapMatrix;
   extern MapContents     *_globalMapContents;
 
-  QList<Waypoint*> *wpList;
-  Waypoint *wp;
-  int i,n;
-  QPoint p;
-
   wpP->setBrush(Qt::NoBrush);
   wpP->setPen(QPen(QColor(0,0,0), 1, Qt::SolidLine));
 
- wpList = _globalMapContents->getWaypointList() ;
+  QList<Waypoint*> &wpList = _globalMapContents->getWaypointList() ;
 
-  n = wpList->count();
-  for (i=0; i < n; i++){
-     wp = wpList->at(i);
-     p = _globalMapMatrix->print(wp->origP.lat(), wp->origP.lon(), dX, dY);
-         // draw marker and name
-     wpP->drawRect(p.x() - 4,p.y() - 4, 8, 8);
-     wpP->drawText(p.x()+6, p.y(), wp->name, -1);
-  }
+  for( int i = 0; i < wpList.count(); i++ )
+    {
+      Waypoint *wp = wpList.at( i );
+      QPoint p = _globalMapMatrix->print( wp->origP.lat(), wp->origP.lon(), dX, dY );
+      // draw marker and name
+      wpP->drawRect( p.x() - 4, p.y() - 4, 8, 8 );
+      wpP->drawText( p.x() + 6, p.y(), wp->name, -1 );
+    }
 }
 
 /** Prints the task, if defined, to the supplied QPainter */

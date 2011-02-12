@@ -126,6 +126,8 @@ bool OpenAirParser::parse(const QString& path, QList<Airspace>& list)
   initializeStringMapping( path );
 
   QTextStream in(&source);
+  in.setCodec( "ISO 8859-15" );
+
   //start parsing
   QString line=in.readLine();
   _lineNumber++;

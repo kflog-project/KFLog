@@ -181,11 +181,13 @@ void TaskDialog::polish()
 
   // load current waypoint list from mapcontents
   extern MapContents *_globalMapContents;
-  QList<Waypoint*> *wpList = _globalMapContents->getWaypointList();
+
+  QList<Waypoint*> &wpList = _globalMapContents->getWaypointList();
   Waypoint *wp;
   waypoints->clear();
+
   QString t;
-  foreach(wp, *wpList) {
+  foreach(wp, wpList) {
     if (!wp->description.isEmpty()) {
       t = wp->description;
     }

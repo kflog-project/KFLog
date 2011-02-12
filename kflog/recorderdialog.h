@@ -197,9 +197,9 @@ private:
     /** */
     QList<FRDirEntry*> dirList;
     QList<FlightTask*> *tasks;
-    QList<Waypoint*> *waypoints;
+    QList<Waypoint*> waypoints;
     /**
-     * Contains a list of librarynames wich can be accessed using the displayed name from the dropdown as a key
+     * Contains a list of library names which can be accessed using the displayed name from the dropdown as a key
      */
     Q3Dict<QString> libNameList;
     /** */

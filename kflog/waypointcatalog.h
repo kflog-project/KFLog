@@ -105,6 +105,21 @@ public:
    */
   void setCenterPoint( const WGSPoint& center );
 
+private:
+
+  /**
+   * Splits a cup file line into its single elements.
+   *
+   * \param line Line to be split.
+   *
+   * \param ok True if split was ok otherwise false
+   *
+   * \return A list with the splt elements.
+   */
+  QList<QString> splitCupLine( QString& line, bool &ok );
+
+public:
+
   /** filter values for display/import */
   bool showAll;
   bool showAirfields;
@@ -125,8 +140,6 @@ public:
   /** Kind of center reference. */
   int centerRef;
   QString airfieldRef;
-
-public:
 
   /**  Waypoint list belonging to catalog. */
   QList<Waypoint*> wpList;

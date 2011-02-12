@@ -91,16 +91,24 @@ private: // Private methods
 
   void openCatalog(QString &catalog);
 
+  /** Update label about the number of waypoint items. */
+  void updateWpListItems();
+
  private: // Private attributes
 
-  /** menu for waypoint's */
+  /** Combobox with waypoint catalogs */
+  QComboBox *catalogBox;
+
+  /** Number of list items. */
+  QLabel *listItems;
+
+  /** Waypoint tree view widget */
+  KFLogTreeWidget *waypointTree;
+
+  /** menus for waypoint management */
   QMenu *wayPointMenu;
   QMenu *catalogCopySubMenu;
   QMenu *catalogMoveSubMenu;
-
-  /**  */
-  QComboBox *catalogBox;
-  KFLogTreeWidget *waypointTree;
 
   /** actions of menu items */
   QAction *ActionWaypointCatalogSave;
@@ -116,7 +124,7 @@ private: // Private methods
   QAction *ActionWaypointCenterMap;
   QAction *ActionWaypointSetHome;
 
-  /** all loaded catalogs */
+  /** All loaded catalogs */
   QList<WaypointCatalog*> waypointCatalogs;
 
   /** The current used waypoint catalog. */
@@ -128,7 +136,7 @@ private: // Private methods
   /** Waypoint import filter dialog */
   WaypointImpFilterDialog *importFilterDlg;
 
-  /** column indexes for waypoints */
+  /** Column indexes of waypoint tree view */
   int colName;
   int colDesc;
   int colICAO;
@@ -151,6 +159,7 @@ private: // Private methods
   */
   void slotDeleteWaypoints();
 
+  /** Called if a waypoint should be edited. */
   void slotEditWaypoint();
 
   /** create a new catalog */
@@ -163,8 +172,9 @@ private: // Private methods
   void slotImportWaypointCatalog();
   void slotSwitchWaypointCatalog(int idx);
 
-  /** Called if right mouse button was pressed. */
+  /** Called by tree view if right mouse button was pressed. */
   void slotShowWaypointMenu(QTreeWidgetItem* item, const QPoint& position);
+
   void slotImportWaypointFromMap();
   void slotCopyWaypoint2Task();
   void slotCenterMap();
@@ -204,26 +214,26 @@ private: // Private methods
    */
   void slotAddCatalog(WaypointCatalog *w);
   /**
-   * No description
+   * Imports waypoints from a file.
    */
   void slotImportWaypointFromFile();
   /**
-   * No description
+   * Called when a new waypoint catalog was selected.
    */
-   void slotSetWaypointCatalogName(QString catalog);
+   void slotSetWaypointCatalogName(QString& catalog);
 
  signals:
 
   /**
-   * Request to copy the referenced waypoint into the current task
+   * Request to copy the referenced waypoint into the current task.
    */
   void copyWaypoint2Task(Waypoint *);
   /**
-   * signal to emit when current waypoint catalog has changed.
+   * Signal is emitted when current waypoint catalog has been changed.
    */
   void waypointCatalogChanged(WaypointCatalog *);
   /**
-   * Request to center the map on the given coordinates
+   * Request to center the map on the given coordinates.
    */
   void centerMap(int, int);
 };

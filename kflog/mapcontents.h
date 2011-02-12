@@ -206,11 +206,11 @@ class MapContents : public QObject
   void printContents(QPainter* targetP, bool isText);
 
   /**
-   * @returns the waypoint list
+   * @returns the waypoint list.
    */
-  QList<Waypoint*>* getWaypointList()
+  QList<Waypoint*>& getWaypointList()
   {
-    return &wpList;
+    return wpList;
   };
 
   /**

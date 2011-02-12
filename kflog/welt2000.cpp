@@ -360,6 +360,7 @@ bool Welt2000::parse( QString& path,
     }
 
   QTextStream ins(&in);
+  ins.setCodec( "ISO 8859-15" );
 
   // look, if a configuration file is accessible. If yes read out its data.
   QFileInfo fi( path );

@@ -9,7 +9,7 @@
 **   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -29,7 +29,7 @@
 #include "mapmatrix.h"
 
 /**
- * This class contains one flightpoint.
+ * This class contains one flight point.
  */
 class flightPoint
 {
@@ -75,13 +75,13 @@ public:
 
   /** The time difference to the previous Point
   *
-  *   dT may change, even if the intervall, in wich the
-  *   logger gets the position, is allways the same. If the
-  *   intervall is f.e. 10 sec, dtime may change to 11 or 9 sec.
+  *   dT may change, even if the interval, in which the
+  *   logger gets the position, is always the same. If the
+  *   interval is f.e. 10 sec, dtime may change to 11 or 9 sec.
   *
-  *   In some files the time of the current and prevoius point
+  *   In some files the time of the current and previous point
   *   are the same. In this case we set dT = 1 to avoid
-  *   a floating-point-exeption ...
+  *   a floating-point-exception ...
   *   set by flight.cpp */
   int dT;
 

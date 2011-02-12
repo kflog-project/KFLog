@@ -21,7 +21,7 @@
  * \brief Small extension of the QTreeWidget class.
  *
  * This class is an extension of the QTreeWidget class. It saves and restores
- * a modified headline by the user. Furthermore it provides a menu if middle
+ * a modified headline by the user. Furthermore it provides a menu if the middle
  * mouse button is pressed, to switch on/off columns of the tree view.
  *
  * \date 2011
@@ -62,7 +62,7 @@ public:
 
 	virtual ~KFLogTreeWidget();
 
-  /** load the configuration from the app's configuration */
+  /** Loads the configuration header data from the app's configuration. */
   void loadConfig();
 
   /**
@@ -73,28 +73,30 @@ public:
   void addRowSpacing( const int pixels );
 
   /**
-   * Resizes all columns in the tree to their content.
+   * Resizes all columns in the tree view to their content.
    */
   void resizeColumns2Content();
 
 protected:
 
   /**
-   * Handles mouse clicks.
+   * Handles mouse button presses.
    */
   void mousePressEvent( QMouseEvent* event );
 
 public slots:
 
   /**
-   * Call to popup the column show menu.
+   * Called to popup the column show menu.
    */
   void slotShowColMenu();
 
 private slots:
 
   /**
-   * Called, if an menu action is toggled.
+   * Called, if a menu action is toggled.
+   *
+   * \param action The action which was triggered by the user interaction.
    */
   void slotMenuActionTriggered( QAction* action );
 
@@ -115,7 +117,7 @@ private:
   /** Creates the show column menu. */
   void createShowColMenu();
 
-  /** store the configuration in the app's configuration */
+  /** Stores the configuration header data in the app's configuration. */
   void saveConfig();
 
 private:
@@ -123,12 +125,13 @@ private:
   /** Name to be used for configuration storing and retrieving. */
   QString confName;
 
+  /** Row delegate object to add additional row spacing. */
   RowDelegate* rowDelegate;
 
   /** Menu to switch on/off single tree columns. */
   QMenu* showColMenu;
 
-  /** Group about all checkable actions. */
+  /** Group about all menu actions. */
   QActionGroup* menuActionGroup;
 };
 

@@ -278,7 +278,7 @@ void MainWindow::createDockWindows()
   helpWindowDock->setWidget(helpWindow);
   addDockWidget( Qt::TopDockWidgetArea, helpWindowDock );
 
-  legendDock = new QDockWidget( tr("Elevation"), this );
+  legendDock = new QDockWidget( tr("Terrain Profile"), this );
   legendDock->setObjectName( "TerrainProfileWindow");
   legendDock->setFloating( false );
   legend = new TopoLegend(legendDock);

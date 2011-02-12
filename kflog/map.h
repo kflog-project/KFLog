@@ -311,7 +311,7 @@ private:
      */
     QPixmap pixAirspace;
     /**
-     *
+     * Contains the used cursor.
      */
     QPixmap pixCursor;
     /**
@@ -321,8 +321,7 @@ private:
     /** */
     QBitmap bitFlightMask;
     QBitmap bitPlanMask;
-    /** */
-    QBitmap bitWaypointsMask;
+
     /** */
     QPoint prePos;
     QPoint prePlanPos;

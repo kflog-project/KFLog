@@ -6,7 +6,8 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
+**   Copyright (c):  1999-2000 by Heiner Lamprecht, Florian Ehinger
+**                   2010-2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -187,7 +188,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
       QList<Waypoint*> taskPointList = f->getWPList();
       QList<Waypoint*> tempTaskPointList = f->getWPList();
-      QList<Waypoint*> *wpList = _globalMapContents->getWaypointList();
+      QList<Waypoint*> &wpList = _globalMapContents->getWaypointList();
 
       // 3: Task beendet verschieben eines Punktes
 
@@ -234,7 +235,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
               Waypoint wp;
               bool found = __getTaskWaypoint(current, &wp, taskPointList);
               if (!found) // check wp catalog
-              found = __getTaskWaypoint(current, &wp, *wpList);
+              found = __getTaskWaypoint(current, &wp, wpList);
 
               if(found)
                 {
@@ -502,7 +503,7 @@ Waypoint* Map::findWaypoint (const QPoint& current)
   extern MapMatrix *_globalMapMatrix;
   Waypoint *wp;
 
-  foreach(wp, *_globalMapContents->getWaypointList())
+  foreach( wp, _globalMapContents->getWaypointList() )
   {
     QPoint sitePos (_globalMapMatrix->map(_globalMapMatrix->wgsToMap(wp->origP)));
     double dX = abs(sitePos.x() - current.x());
@@ -700,7 +701,7 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
 
   QList<Waypoint*> taskPointList = baseFlight->getWPList();
   QList<Waypoint*> tempTaskPointList = baseFlight->getWPList();
-  QList<Waypoint*> * wpList = _globalMapContents->getWaypointList();
+  QList<Waypoint*> & wpList = _globalMapContents->getWaypointList();
   Waypoint wp, *w;
   QString text;
   bool found;
@@ -709,7 +710,7 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
   found  = __getTaskWaypoint(current, &wp, taskPointList);
 
   if (!found)         // try the wpcatalog
-        found = __getTaskWaypoint(current, &wp, *wpList);
+        found = __getTaskWaypoint(current, &wp, wpList);
 
   if(!taskPointList.isEmpty() && event->state() == Qt::ControlModifier)
     {
@@ -979,7 +980,7 @@ void Map::mousePressEvent(QMouseEvent* event)
 
     else if(event->button() == Qt::LeftButton)
       {
-        if(event->state() == Qt::ShiftModifier)
+        if(event->modifiers() == Qt::ShiftModifier)
           {
             // select WayPoint
             QRegExp blank("[ ]");
@@ -1433,7 +1434,6 @@ void Map::__redrawMap()
 
       bitPlanMask = QPixmap( size() );
       bitFlightMask = QPixmap( size() );
-      bitWaypointsMask = QPixmap( size() );
     }
 
   extern MapMatrix *_globalMapMatrix;
@@ -1455,7 +1455,6 @@ void Map::__redrawMap()
 
   bitFlightMask.fill(Qt::color0);
   bitPlanMask.fill(Qt::color0);
-  bitWaypointsMask.fill(Qt::color0);
 
   QPoint temp1(preCur1);
   QPoint temp2(preCur2);
@@ -1585,10 +1584,8 @@ void Map::slotActivatePlanning()
 
 void Map::__showLayer()
 {
-  pixAero.setMask(QBitmap(pixAero));
   pixFlight.setMask(bitFlightMask);
   pixPlan.setMask(bitPlanMask);
-  pixWaypoints.setMask(bitWaypointsMask);
 
   pixBuffer = pixIsoMap;
 
@@ -2433,68 +2430,100 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
 void Map::__drawWaypoints()
 {
   extern MapContents *_globalMapContents;
-  extern MapMatrix *_globalMapMatrix;
-  extern MapConfig *_globalMapConfig;
+  extern MapMatrix   *_globalMapMatrix;
+  extern MapConfig   *_globalMapConfig;
 
-  QList<Waypoint*> *wpList;
-  QPoint p;
+  // get map screen size
+  int w = size().width();
+  int h = size().height();
 
-  wpList = _globalMapContents->getWaypointList();
+  QRect testRect(-10, -10, w + 20, h + 20);
+  QString labelText;
 
-  QPainter wpPainter(&pixWaypoints);
-  QPainter wpMaskPainter(&bitWaypointsMask);
+  QList<Waypoint*> &wpList = _globalMapContents->getWaypointList();
 
-  wpPainter.setBrush(Qt::NoBrush);
-  wpPainter.setPen(QPen(QColor(0,0,0), 2, Qt::SolidLine));
+  QPainter painter(&pixWaypoints);
+  QFont font = painter.font();
+  font.setPointSize( 10 );
+  painter.setFont( font );
+  painter.setBrush(Qt::NoBrush);
+  painter.setPen(QPen(Qt::black, 2, Qt::SolidLine));
 
-  // now do complete list
-  Waypoint *wp;
-  foreach(wp, *wpList) {
-    // make sure projection is ok, and map to screen
+  // step through the list
+  for( int i = 0; i < wpList.size(); i++ )
+  {
+    Waypoint *wp = wpList.at(i);
+
+    // make sure projection is ok
     wp->projP = _globalMapMatrix->wgsToMap(wp->origP.lat(), wp->origP.lon());
-    p = _globalMapMatrix->map(wp->projP);
+
+    // map the projected point to the screen
+    QPoint mp = _globalMapMatrix->map(wp->projP);
+
+    // Check, if point lays in the visible screen area
+    if( ! testRect.contains(mp) )
+      {
+        // qDebug("Not in Rec wp=%s", wp.name.toLatin1().data());
+        continue;
+      }
 
     // draw marker
-    wpPainter.setBrush(Qt::NoBrush);
-    wpPainter.setPen(QPen(QColor(0,0,0), 2, Qt::SolidLine));
-    wpPainter.drawRect(p.x() - 4,p.y() - 4, 8, 8);
-    wpMaskPainter.drawRect(p.x() - 4,p.y() - 4, 8, 8);
+    painter.drawRect( mp.x() - 4, mp.y() - 4, 8, 8 );
 
-     // draw name of wp
-     if(_globalMapConfig->drawWpLabels()) {
-        int xOffset;
-        int yOffset;
-        QRect textbox;
-        textbox=wpPainter.fontMetrics().boundingRect(wp->name);
-        if (wp->origP.lon()<_globalMapMatrix->getMapCenter(false).y()) {
-          //the wp is on the left side of the map, so draw the textlabel on the right side
-          xOffset=14;
-          yOffset=-2;
-          if (_globalMapConfig->useSmallIcons()){
-            xOffset=6;
-            yOffset=0;
-          }
-        } else {
-          //the wp is on the right side of the map, so draw the textlabel on the left side
-          xOffset=-textbox.width()-14;
-          yOffset=-2;
-          if (_globalMapConfig->useSmallIcons()){
-            xOffset=-textbox.width()-6;
-            yOffset=0;
-          }
-         }
+    // draw name of wp
+    if( _globalMapConfig->drawWpLabels() )
+      {
+        // save the current painter, must be restored at the end!!!
+        painter.save();
 
-        wpPainter.setPen(QPen(Qt::black, 3, Qt::SolidLine));
-        wpPainter.fillRect(p.x()+xOffset-1,p.y()+yOffset,textbox.width()+2,-textbox.height()-2,Qt::white);
-        wpPainter.drawText(p.x()+xOffset, p.y()+yOffset, wp->name, -1);
-        wpMaskPainter.drawText(p.x()+xOffset, p.y()+yOffset, wp->name, -1);
-        wpMaskPainter.fillRect(p.x()+xOffset-1,p.y()+yOffset,textbox.width()+2,-textbox.height()-2,wpMaskPainter.pen().color());
+        QString labelText = wp->name;
+
+        // calculate text bounding box
+        QRect dRec( 0, 0, 400, 400 );
+        QRect textBox;
+
+        textBox = painter.fontMetrics().boundingRect( dRec, Qt::AlignCenter, labelText );
+
+        // add a little bit more space in the width
+        textBox.setRect( 0, 0, textBox.width() + 8, textBox.height() );
+
+        int xOffset = 0;
+        int yOffset = 0;
+
+        int xShift = 18;
+
+        if( _globalMapConfig->useSmallIcons() )
+          {
+            xShift = 9;
+          }
+
+        if( wp->origP.lon() < _globalMapMatrix->getMapCenter(false).y() )
+          {
+            // The point is on the left side of the map,
+            // so draw the text label on the right side.
+            xOffset = xShift;
+            yOffset = -textBox.height() / 2;
+          }
+        else
+          {
+            // The point is on the right side of the map,
+            // so draw the text label on the left side.
+            xOffset = -textBox.width() - xShift;
+            yOffset = -textBox.height() / 2;
+          }
+
+        // move the textbox at the right position on the display
+        textBox.setRect( mp.x() + xOffset,
+                         mp.y() + yOffset,
+                         textBox.width(), textBox.height() );
+
+        painter.setBrush( Qt::white );
+        painter.setPen(QPen(Qt::black, 2, Qt::SolidLine));
+        painter.drawRect( textBox );
+        painter.drawText( textBox, Qt::AlignCenter, labelText );
+        painter.restore();
      }
    }
-
-  // clean up
-  wpPainter.end();
-  wpMaskPainter.end();
 }
 
 /** Slot signaled when user selects another waypoint catalog.  */
@@ -2503,10 +2532,11 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c)
   extern MapContents *_globalMapContents;
   Waypoint *w;
   bool filterRadius, filterArea;
-  QList<Waypoint*> *wpList;
 
-  wpList = _globalMapContents->getWaypointList();
-  wpList->clear();
+  QList<Waypoint*> &wpList = _globalMapContents->getWaypointList();
+
+  qDeleteAll( wpList );
+  wpList.clear();
 
   filterRadius = (c->getCenterPoint().lat() != 0 || c->getCenterPoint().lon() != 0);
 
@@ -2602,9 +2632,10 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c)
           }
 
         // add the waypoint to the list
-        wpList->append( new Waypoint( w ) );
+        wpList.append( new Waypoint( w ) );
       }
-  // force a update
+
+  // force an update
   emit changed(this->size());
 
   __redrawMap();
@@ -2618,8 +2649,6 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c)
  */
 void Map::__findElevation( const QPoint& coordMap )
 {
-  extern MapContents *_globalMapContents;
-
   int height = _globalMapContents->getElevation( coordMap, 0 );
 
   emit elevation(height);
@@ -2780,7 +2809,7 @@ void Map::slotMpNewWaypoint()
               w->comment = hitElement->getComment();
               w->isLandable = hitElement->isLandable();
 
-              emit  waypointSelected( w );
+              emit waypointSelected( w );
               return;
             }
         }
@@ -2864,6 +2893,19 @@ void Map::__openWaypointDialog( const QPoint &position )
   waypointDlg->setWindowTitle( tr( "Create a new Waypoint" ) );
   waypointDlg->longitude->setKFLogDegree( p.x() );
   waypointDlg->latitude->setKFLogDegree( p.y() );
+
+  QPoint mapPos = _globalMapMatrix->invertToMap( position );
+
+  Distance errorDist;
+
+  int height = _globalMapContents->getElevation( mapPos, &errorDist );
+
+  if( height != -1 )
+    {
+      // Elevation plus error distance is used.
+      waypointDlg->elevation->setText( QString::number(height) );
+    }
+
   waypointDlg->exec();
   delete waypointDlg;
 }

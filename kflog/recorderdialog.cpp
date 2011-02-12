@@ -29,7 +29,8 @@
 #include "wgspoint.h"
 #include "mainwindow.h"
 
-extern MainWindow *_mainWindow;
+extern MainWindow  *_mainWindow;
+extern MapContents *_globalMapContents;
 
 RecorderDialog::RecorderDialog( QWidget *parent ) :
   QDialog(parent),
@@ -37,15 +38,11 @@ RecorderDialog::RecorderDialog( QWidget *parent ) :
   isConnected(false),
   activeRecorder(0)
 {
-  extern MapContents *_globalMapContents;
   BaseFlightElement *element;
-  Waypoint *waypoint;
-  QList<Waypoint*> *tmp;
-  tmp = _globalMapContents->getWaypointList();
-  waypoints = new QList<Waypoint*>;
-  foreach(waypoint, *tmp)
-    waypoints->append(waypoint);
-  qSort(waypoints->begin(), waypoints->end());
+
+  waypoints = _globalMapContents->getWaypointList();
+
+  qSort(waypoints.begin(), waypoints.end());
 
   QList<BaseFlightElement*> *tList = _globalMapContents->getFlightList();
   tasks = new QList<FlightTask*>;
@@ -98,7 +95,7 @@ RecorderDialog::~RecorderDialog()
   _settings.setValue("/RecorderDialog/URL",  selectURL->text());
 
   slotCloseRecorder();
-  delete waypoints;
+  qDeleteAll( waypoints);
   delete tasks;
 }
 
@@ -658,7 +655,7 @@ void RecorderDialog::__addWaypointPage()
   top->addWidget(waypointList);
   top->addLayout(buttons);
 
-  foreach(wp, *waypoints) {
+  foreach(wp, waypoints) {
     item = new Q3ListViewItem(waypointList);
     idS.sprintf("%.3d", loop++);
     item->setText(waypointColID, idS);
@@ -1368,7 +1365,7 @@ void RecorderDialog::slotWriteWaypoints()
                        tr("Cannot obtain maximum number of waypoints from lib."), QMessageBox::Ok, 0);
   }
   else {
-    foreach(wp, *waypoints) {
+    foreach(wp, waypoints) {
       if (frWaypoints.count() > maxNrWaypoints) {
         e.sprintf(tr("Maximum number of %d waypoints reached!\n"
                        "Further waypoints will be ignored."), maxNrWaypoints);

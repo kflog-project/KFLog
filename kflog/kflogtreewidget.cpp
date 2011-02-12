@@ -20,6 +20,7 @@
 #include "kflogtreewidget.h"
 #include "rowdelegate.h"
 
+// Application settings object
 extern QSettings _settings;
 
 KFLogTreeWidget::KFLogTreeWidget( const char *name, QWidget *parent ) :
@@ -42,7 +43,6 @@ KFLogTreeWidget::~KFLogTreeWidget()
     }
 }
 
-/** store the configuration in the app's configuration */
 void KFLogTreeWidget::saveConfig()
 {
   if( confName.isEmpty() )
@@ -64,7 +64,6 @@ void KFLogTreeWidget::saveConfig()
   _settings.setValue( path, array );
 }
 
-/** load the configuration from the app's configuration */
 void KFLogTreeWidget::loadConfig()
 {
   if( confName.isEmpty() )
@@ -105,6 +104,7 @@ void KFLogTreeWidget::mousePressEvent( QMouseEvent* event )
 {
   if( event->button() == Qt::RightButton )
     {
+      // Emit a signal, when the right button was pressed.
       QTreeWidgetItem *item = itemAt( event->pos() );
       emit rightButtonPressed( item, event->pos() );
       return;
@@ -118,6 +118,7 @@ void KFLogTreeWidget::mousePressEvent( QMouseEvent* event )
       return;
     }
 
+  // Call base class mouse event handler.
   QTreeWidget::mousePressEvent( event );
 }
 
@@ -129,7 +130,6 @@ void KFLogTreeWidget::resizeColumns2Content()
     }
 }
 
-/** Creates the show column menu. */
 void KFLogTreeWidget::createShowColMenu()
 {
   if( header()->count() == 0 || showColMenu != 0 )
@@ -197,6 +197,7 @@ void KFLogTreeWidget::slotMenuActionTriggered( QAction* action )
       return;
     }
 
+  // Only one column has to handle.
   setColumnHidden( columnIdx, ( action->isChecked() == false ) );
   resizeColumns2Content();
 }

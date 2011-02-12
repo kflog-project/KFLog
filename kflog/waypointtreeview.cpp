@@ -44,6 +44,8 @@ WaypointTreeView::WaypointTreeView(QWidget *parent, const QString& catalog) :
   Q_UNUSED( catalog )
 
   setObjectName( "WaypointTreeView" );
+  setToolTip( tr("<html>Press right mouse button to open the waypoint menu.<br><br>"
+                 "Press middle mouse button to open the table columns menu.</html>") );
 
   createWaypointWindow();
   createMenu();
@@ -142,8 +144,11 @@ void WaypointTreeView::createWaypointWindow()
   catalogBox = new QComboBox;
   connect(catalogBox, SIGNAL(activated(int)), SLOT(slotSwitchWaypointCatalog(int)));
 
+  listItems = new QLabel( tr("Items: 0") );
+
   QPushButton *fileOpen = new QPushButton;
   fileOpen->setIcon(_mainWindow->getPixmap("kde_fileopen_16.png"));
+  fileOpen->setToolTip( tr("Open a waypoint catalog.") );
   QSizePolicy sp = fileOpen->sizePolicy();
   sp.setHorData(QSizePolicy::Fixed);
   fileOpen->setSizePolicy(sp);
@@ -156,7 +161,8 @@ void WaypointTreeView::createWaypointWindow()
   connect(filter, SIGNAL(clicked()), SLOT(slotFilterWaypoints()));
 
   header->addWidget(label);
-  header->addWidget(catalogBox);
+  header->addWidget(catalogBox, 10);
+  header->addWidget(listItems);
   header->addWidget(fileOpen);
   header->addWidget(filter);
 
@@ -272,7 +278,7 @@ void WaypointTreeView::slotCopy2Catalog( QAction* action )
 
   for( int i = 0; i < items.size(); i++ )
     {
-      qDebug() << "CopyItem:" << items.at(i)->text( colName );
+      // qDebug() << "CopyItem:" << items.at(i)->text( colName );
 
       int idx;
       QString wpName = items.at(i)->text( colName );
@@ -299,7 +305,7 @@ void WaypointTreeView::slotMove2Catalog( QAction* action )
 
   for( int i = 0; i < items.size(); i++ )
     {
-      qDebug() << "MoveItem:" << items.at(i)->text( colName );
+      // qDebug() << "MoveItem:" << items.at(i)->text( colName );
 
       int idx;
       QString wpName = items.at(i)->text( colName );
@@ -317,6 +323,7 @@ void WaypointTreeView::slotMove2Catalog( QAction* action )
   waypointTree->resizeColumns2Content();
   currentWaypointCatalog->modified = true;
   waypointCatalogs.value( id )->modified = true;
+  updateWpListItems();
   emit waypointCatalogChanged(currentWaypointCatalog);
 }
 
@@ -607,8 +614,6 @@ void WaypointTreeView::slotDeleteWaypoint(Waypoint* wp)
 /** This slot is called by the waypoint tree menu. */
 void WaypointTreeView::slotDeleteWaypoints()
 {
-  qDebug() << "Waypoints::slotDeleteWaypoint()";
-
   QList<QTreeWidgetItem *> items = waypointTree->selectedItems();
 
   if( items.size() == 0 )
@@ -629,7 +634,7 @@ void WaypointTreeView::slotDeleteWaypoints()
 
   for( int i = 0; i < items.size(); i++ )
     {
-      qDebug() << "RemoveItem:" << items.at(i)->text( colName );
+      // qDebug() << "RemoveItem:" << items.at(i)->text( colName );
 
       currentWaypointCatalog->removeWaypoint( items.at(i)->text( colName ) );
       delete waypointTree->takeTopLevelItem( waypointTree->indexOfTopLevelItem(items.at(i)) );
@@ -637,6 +642,7 @@ void WaypointTreeView::slotDeleteWaypoints()
 
   waypointTree->resizeColumns2Content();
   currentWaypointCatalog->modified = true;
+  updateWpListItems();
   emit waypointCatalogChanged(currentWaypointCatalog);
 }
 
@@ -802,6 +808,7 @@ void WaypointTreeView::fillWaypoints()
 
   waypointTree->resizeColumns2Content();
   waypointTree->sortByColumn(colName, Qt::AscendingOrder);
+  updateWpListItems();
 
   emit waypointCatalogChanged(currentWaypointCatalog);
 }
@@ -885,6 +892,7 @@ void WaypointTreeView::slotCloseWaypointCatalog()
     }
 
   catalogBox->setCurrentItem(idx);
+  updateWpListItems();
   slotSwitchWaypointCatalog(idx);
 }
 
@@ -1267,8 +1275,6 @@ void WaypointTreeView::slotImportWaypointFromFile()
 
 void WaypointTreeView::openCatalog( QString &catalog )
 {
-  qDebug() << "WaypointTreeView::openCatalog: Cat=" << catalog;
-
   if( ! catalog.isEmpty() )
     {
       int newItem = catalogBox->count();
@@ -1296,7 +1302,7 @@ void WaypointTreeView::openCatalog( QString &catalog )
 }
 
 /* slot to set name of catalog and open it without a file selection dialog */
-void WaypointTreeView::slotSetWaypointCatalogName( QString catalog )
+void WaypointTreeView::slotSetWaypointCatalogName( QString& catalog )
 {
   if( !catalog.isEmpty() )
     {
@@ -1323,4 +1329,16 @@ void WaypointTreeView::slotAddCatalog(WaypointCatalog *w)
 
   catalogBox->setCurrentItem(newItem);
   slotSwitchWaypointCatalog(newItem);
+}
+
+void WaypointTreeView::updateWpListItems()
+{
+  int items = 0;
+
+  if( currentWaypointCatalog != 0 )
+    {
+      items = currentWaypointCatalog->wpList.size();
+    }
+
+  listItems->setText( tr("Items: ") + QString::number( items ) );
 }
