@@ -38,7 +38,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
 
   QString temp;
 
-  flightPoint cPoint;
+  FlightPoint cPoint;
 
   QPainter painter(&printer);
 
@@ -178,7 +178,7 @@ FlightDataPrint::~FlightDataPrint()
 }
 
 void FlightDataPrint::__printPositionData(QPainter* painter,
-        flightPoint* cPoint, int yPos, const char* text,
+        FlightPoint* cPoint, int yPos, const char* text,
         bool printVario, bool printSpeed)
 {
   QString temp;

@@ -1,5 +1,9 @@
 $Id$
 
+2011-02-13 Axel Pauli <axel@kflog.org>
+  * File wp.h renamed to flightpoint.h. It contains a class FlightPoint and
+    nothing with waypoint. Class Map fully ported to Qt4.
+  
 2011-02-12 Axel Pauli <axel@kflog.org>
   * Bugfix in class Waypoint Catalog. The waypoint name check message box
     did not allow an abort. I fixed that. Cup file read routine did not work

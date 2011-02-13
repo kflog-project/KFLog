@@ -50,7 +50,7 @@ const int topoLevels[] = {
   1250,1500,1750,2000,2250,2500,2750,3000,3250,3500,3750,4000,4250,4500,4750,
   5000,5250,5500,5750,6000,6250,6500,6750,7000,7250,7500,7750,8000,8250,8500,8750,10000};
 
-class flightPoint;
+class FlightPoint;
 
 class MapConfig : public QObject
 {
@@ -106,7 +106,7 @@ public:
    * @param  speed_max    [m/s] maximum velocity during the whole flight
    * @return the pen for drawing a line between two flight points of a flight.
    */
-  QPen getDrawPen(flightPoint* fP, float va_min=-10, float va_max=10, int altitude_max = 5000, float speed_max=80);
+  QPen getDrawPen(FlightPoint* fP, float va_min=-10, float va_max=10, int altitude_max = 5000, float speed_max=80);
   /**
    * @param  c  A value between 0.0 and 1.0
    * @return Color from dark red(0.0)->red->yellow->green->cyan->blue->dark blue(1.0)

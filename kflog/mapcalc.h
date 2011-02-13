@@ -9,7 +9,7 @@
 **   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -18,9 +18,13 @@
 #ifndef MAP_CALC_H
 #define MAP_CALC_H
 
-#include "wp.h"
-#include "waypoint.h"
 #include <time.h>
+
+#include <QRect>
+#include <QString>
+
+#include "flightpoint.h"
+#include "waypoint.h"
 
 #define PI2 M_PI*2
 
@@ -56,12 +60,12 @@ double dist(Waypoint* wp1, Waypoint* wp2);
 /**
  * Calculates the distance between two given points (in km).
  */
-double dist(Waypoint* wp, flightPoint* fp);
+double dist(Waypoint* wp, FlightPoint* fp);
 
 /**
  * Calculates the distance between two given points (in km).
  */
-double dist( flightPoint* fp1, flightPoint* fp2);
+double dist( FlightPoint* fp1, FlightPoint* fp2);
 
 /**
  * Converts the given time (in sec. from 1.1.1970 00:00:00) into a readable string.
@@ -78,17 +82,17 @@ time_t timeToDay(const int year, const int month, const int day, const char *mon
 /**
  * Calculates the vario of a given point
  */
-float getVario(flightPoint p);
+float getVario(FlightPoint p);
 
 /**
  * Calculates the speed of a given point
  */
-float getSpeed(flightPoint p);
+float getSpeed(FlightPoint p);
 
 /**
  * Calculates the bearing to the previous point
  */
-float getBearing(flightPoint p1, flightPoint p2);
+float getBearing(FlightPoint p1, FlightPoint p2);
 
 /**
  * Converts a x/y position into a polar-coordinate.

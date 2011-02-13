@@ -150,18 +150,18 @@ void WaypointTreeView::createWaypointWindow()
   fileOpen->setIcon(_mainWindow->getPixmap("kde_fileopen_16.png"));
   fileOpen->setToolTip( tr("Open a waypoint catalog.") );
   QSizePolicy sp = fileOpen->sizePolicy();
-  sp.setHorData(QSizePolicy::Fixed);
+  sp.setHorizontalPolicy(QSizePolicy::Fixed);
   fileOpen->setSizePolicy(sp);
   connect(fileOpen, SIGNAL(clicked()), SLOT(slotOpenWaypointCatalog()));
 
   QPushButton *filter = new QPushButton(tr("Filter"));
   sp = filter->sizePolicy();
-  sp.setHorData(QSizePolicy::Fixed);
+  sp.setHorizontalPolicy(QSizePolicy::Fixed);
   filter->setSizePolicy(sp);
   connect(filter, SIGNAL(clicked()), SLOT(slotFilterWaypoints()));
 
   header->addWidget(label);
-  header->addWidget(catalogBox, 10);
+  header->addWidget(catalogBox);
   header->addWidget(listItems);
   header->addWidget(fileOpen);
   header->addWidget(filter);
@@ -429,9 +429,9 @@ void WaypointTreeView::slotNewWaypointCatalog()
   WaypointCatalog *w = new WaypointCatalog;
 
   waypointCatalogs.append(w);
-  catalogBox->insertItem(w->path);
+  catalogBox->addItem(w->path);
 
-  catalogBox->setCurrentItem(newItem);
+  catalogBox->setCurrentIndex(newItem);
   slotSwitchWaypointCatalog(newItem);
 }
 
@@ -535,13 +535,13 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
       {
         if( !waypointDlg->name->text().isEmpty() )
           {
-            w->name = waypointDlg->name->text().left( 6 ).upper();
+            w->name = waypointDlg->name->text().left( 6 ).toUpper();
             w->description = waypointDlg->description->text();
             w->type = waypointDlg->getWaypointType();
             w->origP.setLat( waypointDlg->latitude->KFLogDegree() );
             w->origP.setLon( waypointDlg->longitude->KFLogDegree() );
             w->elevation = waypointDlg->elevation->text().toInt();
-            w->icao = waypointDlg->icao->text().upper();
+            w->icao = waypointDlg->icao->text().toUpper();
             w->frequency = waypointDlg->frequency->text().toDouble();
 
             tmp = waypointDlg->runway->text();
@@ -823,13 +823,19 @@ void WaypointTreeView::slotSwitchWaypointCatalog(int idx)
 void WaypointTreeView::slotSaveWaypointCatalog()
 {
   if(currentWaypointCatalog->save())
-    catalogBox->changeItem(currentWaypointCatalog->path, catalogBox->currentItem());
+    {
+      catalogBox->setItemText( catalogBox->currentIndex(),
+                               currentWaypointCatalog->path );
+    }
 }
 
 void WaypointTreeView::slotSaveWaypointCatalogAs()
 {
   if(currentWaypointCatalog->save(true))
-    catalogBox->changeItem(currentWaypointCatalog->path, catalogBox->currentItem());
+    {
+      catalogBox->setItemText( catalogBox->currentIndex(),
+                               currentWaypointCatalog->path );
+    }
 }
 
 void WaypointTreeView::slotImportWaypointCatalog()
@@ -891,7 +897,7 @@ void WaypointTreeView::slotCloseWaypointCatalog()
       idx = cnt - 1;
     }
 
-  catalogBox->setCurrentItem(idx);
+  catalogBox->setCurrentIndex(idx);
   updateWpListItems();
   slotSwitchWaypointCatalog(idx);
 }
@@ -992,7 +998,7 @@ void WaypointTreeView::slotImportWaypointFromMap()
         w = new Waypoint;
 
         QString name = s->getName();
-        w->name = name.replace(blank, "").left(6).upper();
+        w->name = name.replace(blank, "").left(6).toUpper();
         loop = 0;
         int idx;
 
@@ -1325,9 +1331,9 @@ void WaypointTreeView::slotAddCatalog(WaypointCatalog *w)
   int newItem = catalogBox->count();
 
   waypointCatalogs.append(w);
-  catalogBox->insertItem(w->path);
+  catalogBox->addItem(w->path);
 
-  catalogBox->setCurrentItem(newItem);
+  catalogBox->setCurrentIndex(newItem);
   slotSwitchWaypointCatalog(newItem);
 }
 

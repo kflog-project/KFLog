@@ -50,24 +50,24 @@ public:
    *                      with the flightpoint found.
    * @return the index of the flightpoint or -1 if no point is found.
    */
-  virtual int searchPoint(const QPoint& cPoint, flightPoint& searchPoint);
+  virtual int searchPoint(const QPoint& cPoint, FlightPoint& searchPoint);
   /**
    * Get the previous FlightPoint before number 'index'
    */
-  virtual int searchGetPrevPoint(int index, flightPoint& searchPoint);
+  virtual int searchGetPrevPoint(int index, FlightPoint& searchPoint);
   /**
    * Get the next FlightPoint after number 'index'
    */
-  virtual int searchGetNextPoint(int index, flightPoint& searchPoint);
+  virtual int searchGetNextPoint(int index, FlightPoint& searchPoint);
   /**
    * Get the contents of the next FlightPoint 'step' indexes after number 'index'
    */
-  virtual int searchStepNextPoint(int index, flightPoint & fP, int step);
+  virtual int searchStepNextPoint(int index, FlightPoint & fP, int step);
   /**
    * Get the contents of the previous FlightPoint 'step' indexes before
    * number 'index'
    */
-  virtual int searchStepPrevPoint(int index,  flightPoint & fP, int step);
+  virtual int searchStepPrevPoint(int index,  FlightPoint & fP, int step);
   /**
    * Virtual function for printing the element.
    *

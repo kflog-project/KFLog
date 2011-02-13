@@ -101,7 +101,7 @@ class FlightTask : public BaseFlightElement
   void printMapElement(QPainter* targetP, bool isText);
   void printMapElement(QPainter* targetP, bool isText, double dX, double dY);
   /** */
-  void checkWaypoints(QList<flightPoint*> route, const QString& gliderType);
+  void checkWaypoints(QList<FlightPoint*> route, const QString& gliderType);
   /** */
   double getOlcPoints();
   /** */
@@ -235,7 +235,7 @@ class FlightTask : public BaseFlightElement
   /* direction of area planning */
   int __planningDirection;
   /* Route of flight */
-  QList<flightPoint*> flightRoute;
+  QList<FlightPoint*> flightRoute;
 
   /**
    * Static pointer to TaskType translations

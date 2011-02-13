@@ -111,13 +111,13 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   createToolBar();
   readOptions();
 
-  connect(map, SIGNAL(showFlightPoint(const QPoint&, const flightPoint&)), this, SLOT(slotSetPointInfo(const QPoint&, const flightPoint&)));
+  connect(map, SIGNAL(showFlightPoint(const QPoint&, const FlightPoint&)), this, SLOT(slotSetPointInfo(const QPoint&, const FlightPoint&)));
   connect(map, SIGNAL(taskPlanningEnd()), helpWindow, SLOT(slotClearView()) );
   connect(map, SIGNAL(showTaskText(FlightTask*)), dataView, SLOT(slotShowTaskText(FlightTask*)));
   connect(map, SIGNAL(taskPlanningEnd()), dataView, SLOT(setFlightData()));
   connect(map, SIGNAL(showPoint(const QPoint&)), this, SLOT(slotSetPointInfo(const QPoint&)));
   connect(map, SIGNAL(showPoint(const QPoint&)), evaluationWindow, SLOT(slotRemoveFlightPoint()));
-  connect(map, SIGNAL(showFlightPoint(const QPoint&, const flightPoint&)), evaluationWindow, SLOT(slotShowFlightPoint(const QPoint&, const flightPoint&)));
+  connect(map, SIGNAL(showFlightPoint(const QPoint&, const FlightPoint&)), evaluationWindow, SLOT(slotShowFlightPoint(const QPoint&, const FlightPoint&)));
   connect(map, SIGNAL(changed(QSize)), mapControl, SLOT(slotShowMapData(QSize)));
   connect(map, SIGNAL(waypointSelected(Waypoint *)), waypointTreeView, SLOT(slotAddWaypoint(Waypoint *)));
   connect(map, SIGNAL(waypointDeleted(Waypoint *)), waypointTreeView, SLOT(slotDeleteWaypoint(Waypoint *)));
@@ -1467,7 +1467,7 @@ void MainWindow::slotSetCurrentFile( const QString &fileName )
     }
 }
 
-void MainWindow::slotSetPointInfo(const QPoint& pos, const flightPoint& point)
+void MainWindow::slotSetPointInfo(const QPoint& pos, const FlightPoint& point)
 {
   statusBar()->clear();
   statusTimeL->setText(printTime(point.time, true));

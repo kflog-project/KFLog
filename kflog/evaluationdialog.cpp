@@ -134,8 +134,8 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
 
   QString htmlText;
   QString text;
-  flightPoint p1;
-  flightPoint p2;
+  FlightPoint p1;
+  FlightPoint p2;
 
   if ( !flight )
   {
@@ -402,7 +402,7 @@ Flight* EvaluationDialog::getFlight()
 }
 
 /** No descriptions */
-void EvaluationDialog::slotShowFlightPoint(const QPoint&, const flightPoint& fp){
+void EvaluationDialog::slotShowFlightPoint(const QPoint&, const FlightPoint& fp){
   emit(showFlightPoint(&fp));
 }
 

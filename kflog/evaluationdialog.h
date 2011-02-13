@@ -9,7 +9,7 @@
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -26,8 +26,8 @@
 #include <QSlider>
 #include <QTextEdit>
 
-#include "wp.h"
 #include "evaluationframe.h"
+#include "flightpoint.h"
 
 class Flight;
 
@@ -72,7 +72,7 @@ class EvaluationDialog : public QWidget
   /** */
   void textChanged(QString);
   /** No descriptions */
-  void showFlightPoint(const flightPoint* fp);
+  void showFlightPoint(const FlightPoint* fp);
 
   /** Window was hidden. */
   void windowHidden();
@@ -81,7 +81,7 @@ class EvaluationDialog : public QWidget
   /** */
   void slotShowFlightData();
   /** No descriptions */
-  void slotShowFlightPoint(const QPoint&, const flightPoint&);
+  void slotShowFlightPoint(const QPoint&, const FlightPoint&);
   /** No descriptions */
   void slotRemoveFlightPoint();
 

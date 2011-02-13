@@ -58,7 +58,7 @@ EvaluationView::EvaluationView(Q3ScrollView* parent, EvaluationDialog* dialog)
   setBackgroundColor(QColor(Qt::white));
 
   preparePointer();
-  connect(evalDialog, SIGNAL(showFlightPoint(const flightPoint*)), this, SLOT(slotShowPointer(const flightPoint*)));
+  connect(evalDialog, SIGNAL(showFlightPoint(const FlightPoint*)), this, SLOT(slotShowPointer(const FlightPoint*)));
 
 
 }
@@ -824,7 +824,7 @@ void EvaluationView::resizeEvent(QResizeEvent* event)
 
 
 /** Draws a pointer to indicate the current position */
-void EvaluationView::drawPointer(const flightPoint * p){
+void EvaluationView::drawPointer(const FlightPoint * p){
   int time=p->time-startTime;
 
   //first, remove the current pointer (if it is shown)
@@ -911,10 +911,10 @@ bool EvaluationView::isShowingPointer() {
 }
 
 /* Shows a pointer under the time axis to indicate the position
- * of flightPoint fp in the graph. If fp=0, then the flightpoint
+ * of FlightPoint fp in the graph. If fp=0, then the flightpoint
  * is removed.
  */
-void EvaluationView::slotShowPointer(const flightPoint * fp){
+void EvaluationView::slotShowPointer(const FlightPoint * fp){
   if (!fp) {
     removePointer(true);
   } else {

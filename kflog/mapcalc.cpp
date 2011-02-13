@@ -102,13 +102,13 @@ double dist(Waypoint* wp1, Waypoint* wp2)
                  wp2->origP.lat(), wp2->origP.lon() ) );
 }
 
-double dist(Waypoint* wp, flightPoint* fp)
+double dist(Waypoint* wp, FlightPoint* fp)
 {
   return ( dist( wp->origP.lat(), wp->origP.lon(),
                  fp->origP.lat(), fp->origP.lon() ) );
 }
 
-double dist(flightPoint* fp1,  flightPoint* fp2)
+double dist(FlightPoint* fp1,  FlightPoint* fp2)
 {
   return ( dist( fp1->origP.lat(), fp1->origP.lon(),
                  fp2->origP.lat(), fp2->origP.lon() ) );
@@ -233,16 +233,16 @@ time_t timeToDay(const int year, const int month, const int day, const char *mon
   return ret;
 }
 
-float getSpeed(flightPoint p) { return (float)p.dS / (float)p.dT * 3.6; }
+float getSpeed(FlightPoint p) { return (float)p.dS / (float)p.dT * 3.6; }
 
-float getVario(flightPoint p) { return (float)p.dH / (float)p.dT; }
+float getVario(FlightPoint p) { return (float)p.dH / (float)p.dT; }
 
 /**
    Calculate the bearing from point p1 to point p2 from WGS84
    coordinates to avoid distortions caused by projection to the map.
    source: openairparser.cpp
 */
-float getBearing(flightPoint p1, flightPoint p2)
+float getBearing(FlightPoint p1, FlightPoint p2)
 {
   // Arcus computing constant for kflog corordinates. PI is devided by
   // 180 degrees multiplied with 600.000 because one degree in kflog

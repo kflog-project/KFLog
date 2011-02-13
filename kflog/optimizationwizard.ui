@@ -18,8 +18,8 @@
    <attribute name="title">
     <string>Task start and end times</string>
    </attribute>
-   <layout class="QVBoxLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
      <layout class="QVBoxLayout">
       <item>
        <widget class="EvaluationDialog" name="evaluation" native="true">
@@ -367,6 +367,7 @@
   <include location="local">kprogress.h</include>
   <include location="local">kpushbutton.h</include>
   <include location="local">kpushbutton.h</include>
+  <include location="local">flightpoint.h</include>
  </includes>
  <resources/>
  <connections>

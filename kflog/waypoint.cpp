@@ -9,15 +9,15 @@
 **   Copyright (c):  2003 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
 #include "flight.h"
+#include "flightpoint.h"
 #include "waypoint.h"
-#include "wp.h"
 
 Waypoint::Waypoint(QString nam, WGSPoint oP, int typ, QString _icao, QString _comment,
   enum Runway::SurfaceType surf, QPair<ushort, ushort> runw, int leng, int elev,
@@ -68,7 +68,7 @@ bool Waypoint::operator<(Waypoint &wp)
 
 /////////////////////////////////////////////////////
 // Implementation of a Logger Fix
-flightPoint::flightPoint(void)
+FlightPoint::FlightPoint(void)
 {
   //  QPoint projP; // ??
   height = 0;

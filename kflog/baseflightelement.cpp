@@ -29,15 +29,15 @@ BaseFlightElement::BaseFlightElement( const QString& name,
 BaseFlightElement::~BaseFlightElement(){
 }
 
-int BaseFlightElement::searchPoint(const QPoint&, flightPoint&)  {  return -1;  }
+int BaseFlightElement::searchPoint(const QPoint&, FlightPoint&)  {  return -1;  }
 
-int BaseFlightElement::searchGetPrevPoint(int, flightPoint&)  {  return -1;  }
+int BaseFlightElement::searchGetPrevPoint(int, FlightPoint&)  {  return -1;  }
 
-int BaseFlightElement::searchGetNextPoint(int, flightPoint&)  {  return -1;  }
+int BaseFlightElement::searchGetNextPoint(int, FlightPoint&)  {  return -1;  }
 
-int BaseFlightElement::searchStepNextPoint(int, flightPoint&, int) {  return -1;  }
+int BaseFlightElement::searchStepNextPoint(int, FlightPoint&, int) {  return -1;  }
 
-int BaseFlightElement::searchStepPrevPoint(int,  flightPoint&, int) {  return -1;  }
+int BaseFlightElement::searchStepPrevPoint(int,  FlightPoint&, int) {  return -1;  }
 
 /*
 void BaseFlightElement::printMapElement(QPainter* printP, bool isT)

@@ -41,7 +41,7 @@ double Optimization::weight(unsigned int k){
   }
 }
 
-Optimization::Optimization(unsigned int /*firstPoint*/, unsigned int /*lastPoint*/, QList<flightPoint*> ptr_route, QProgressBar *progressBar){
+Optimization::Optimization(unsigned int /*firstPoint*/, unsigned int /*lastPoint*/, QList<FlightPoint*> ptr_route, QProgressBar *progressBar){
   original_route = ptr_route;
   setTimes(0,original_route.count());
   optimized=false;
@@ -108,7 +108,7 @@ void Optimization::run(){
   double c;                // temp variables
   unsigned int index;
   double wLeg;
-  flightPoint **rp;
+  FlightPoint **rp;
   
   n=route.count()+1;
   qWarning("Number of points to optimize: %d", n);
@@ -121,7 +121,7 @@ void Optimization::run(){
   // allocate memory
   L=(double *) malloc((n+1)*(LEGS+1)*sizeof(double));
   w=(unsigned int *) malloc((n+1)*(LEGS+1)*sizeof(unsigned int));
-  rp = (flightPoint **) malloc(route.count() * sizeof(flightPoint *));
+  rp = (FlightPoint **) malloc(route.count() * sizeof(FlightPoint *));
   
   Q_CHECK_PTR(L);
   Q_CHECK_PTR(w);

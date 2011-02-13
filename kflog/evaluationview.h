@@ -24,9 +24,8 @@
 #include <q3scrollview.h>
 #include <QWidget>
 
-#include "wp.h"
-
 class Flight;
+class FlightPoint;
 class EvaluationDialog;
 
 
@@ -91,7 +90,7 @@ class EvaluationView : public QWidget
   /**
    * Draws a pointer to indicate the current position
    */
-  void drawPointer(const flightPoint * p);
+  void drawPointer(const FlightPoint * p);
   /**
    * Removes the pointer
    */
@@ -166,10 +165,10 @@ class EvaluationView : public QWidget
 //  QPixmap pixCursor2;
 public slots: // Public slots
   /* Shows a pointer under the time axis to indicate the
-   * position of flightPoint fp in the graph. If fp=0,
+   * position of FlightPoint fp in the graph. If fp=0,
    * then the flightpoint is removed.
    */
-  void slotShowPointer(const flightPoint * fp=0);
+  void slotShowPointer(const FlightPoint * fp=0);
 
   
 };

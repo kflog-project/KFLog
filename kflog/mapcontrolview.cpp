@@ -124,7 +124,11 @@ MapControlView::MapControlView(QWidget* parent) : QWidget(parent)
   setScaleLabel->setMinimumWidth( setScaleLabel->sizeHint().width());
 
   setScaleLabel->setMinimumHeight(setScaleLabel->sizeHint().height());
-  currentScaleSlider = new QSlider(2,105,1,0, Qt::Horizontal,this);
+  currentScaleSlider = new QSlider( Qt::Horizontal,this );
+  currentScaleSlider->setMinimum(2);
+  currentScaleSlider->setMaximum(2);
+  currentScaleSlider->setPageStep(1);
+  currentScaleSlider->setValue(0);
   currentScaleSlider->setMinimumHeight(currentScaleSlider->sizeHint().height());
 
   QGridLayout* controlLayout = new QGridLayout( this );
@@ -179,8 +183,8 @@ void MapControlView::slotShowMapData(QSize mapSize)
 
 void MapControlView::slotSetMinMaxValue(int min, int max)
 {
-  currentScaleSlider->setMinValue( __getScaleValue( min ) );
-  currentScaleSlider->setMaxValue( __getScaleValue( max ) );
+  currentScaleSlider->setMinimum( __getScaleValue( min ) );
+  currentScaleSlider->setMaximum( __getScaleValue( max ) );
 }
 
 void MapControlView::slotSetScale()

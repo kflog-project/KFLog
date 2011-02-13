@@ -114,6 +114,7 @@ HEADERS = \
     flightgrouplistviewitem.h \
     flightlistviewitem.h \
     flightloader.h \
+    flightpoint.h \
     flightrecorderpluginbase.h \
     flightselectiondialog.h \
     flighttask.h \
@@ -168,7 +169,6 @@ HEADERS = \
     welt2000.h \
     wgspoint.h \
     whatsthat.h \
-    wp.h \
     guicontrols/kfloglistview.h
     
 FORMS = optimizationwizard.ui

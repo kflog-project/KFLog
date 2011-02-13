@@ -81,7 +81,7 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
   hbox->addWidget( cancelButton );
 
   configLayout->addLayout( hbox, 1, 1, 1, 2 );
-  configLayout->setColStretch(2, 10);
+  configLayout->setColumnStretch(2, 10);
 
   connect( saveButton, SIGNAL(clicked()), this, SLOT(slotOk()) );
   connect( cancelButton, SIGNAL(clicked()), this, SLOT(close()) );
@@ -102,10 +102,7 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
   personalPage->setVisible( true );
   activePage = personalPage;
 
-  qDebug() << "setupTreeSizeHint=" << setupTree->sizeHint();
-  qDebug() << "setupTreeSize=" << setupTree->size();
-
-  setupTree->setFixedWidth( 160 );
+  setupTree->setFixedWidth( 170 );
 
   // activePage->setFixedWidth(500);
 }
@@ -1161,7 +1158,7 @@ void KFLogConfig::__addPathTab()
   igcPathE->setText(flightDir);
 
   QPushButton* igcPathSearch = new QPushButton();
-  igcPathSearch->setPixmap(_mainWindow->getPixmap("kde_fileopen_16.png"));
+  igcPathSearch->setIcon(_mainWindow->getPixmap("kde_fileopen_16.png"));
   igcPathSearch->setMinimumWidth(igcPathSearch->sizeHint().width() + 5);
   igcPathSearch->setMinimumHeight(igcPathSearch->sizeHint().height() + 5);
 
@@ -1169,7 +1166,7 @@ void KFLogConfig::__addPathTab()
   igcLayout->setSpacing( 10 );
   igcLayout->addWidget( igcPathE, 0, 0 );
   igcLayout->addWidget( igcPathSearch, 0, 1 );
-  igcLayout->setColStretch( 0, 10 );
+  igcLayout->setColumnStretch( 0, 10 );
   igcGroup->setLayout( igcLayout );
 
   //----------------------------------------------------------------------------
@@ -1180,7 +1177,7 @@ void KFLogConfig::__addPathTab()
   taskPathE->setText(taskDir);
 
   QPushButton* taskPathSearch = new QPushButton();
-  taskPathSearch->setPixmap(_mainWindow->getPixmap("kde_fileopen_16.png"));
+  taskPathSearch->setIcon(_mainWindow->getPixmap("kde_fileopen_16.png"));
   taskPathSearch->setMinimumWidth(taskPathSearch->sizeHint().width() + 5);
   taskPathSearch->setMinimumHeight(taskPathSearch->sizeHint().height() + 5);
 
@@ -1188,7 +1185,7 @@ void KFLogConfig::__addPathTab()
   taskLayout->setSpacing( 10 );
   taskLayout->addWidget( taskPathE, 0, 0 );
   taskLayout->addWidget( taskPathSearch, 0, 1 );
-  taskLayout->setColStretch( 0, 10 );
+  taskLayout->setColumnStretch( 0, 10 );
   taskGroup->setLayout( taskLayout );
 
   //----------------------------------------------------------------------------
@@ -1199,7 +1196,7 @@ void KFLogConfig::__addPathTab()
   waypointPathE->setText(wayPointDir);
 
   QPushButton* waypointPathSearch = new QPushButton();
-  waypointPathSearch->setPixmap(_mainWindow->getPixmap("kde_fileopen_16.png"));
+  waypointPathSearch->setIcon(_mainWindow->getPixmap("kde_fileopen_16.png"));
   waypointPathSearch->setMinimumWidth(waypointPathSearch->sizeHint().width() + 5);
   waypointPathSearch->setMinimumHeight(waypointPathSearch->sizeHint().height() + 5);
 
@@ -1207,7 +1204,7 @@ void KFLogConfig::__addPathTab()
   waypointLayout->setSpacing( 10 );
   waypointLayout->addWidget( waypointPathE, 0, 0 );
   waypointLayout->addWidget( waypointPathSearch, 0, 1 );
-  waypointLayout->setColStretch( 0, 10 );
+  waypointLayout->setColumnStretch( 0, 10 );
   waypointGroup->setLayout( waypointLayout );
 
   //----------------------------------------------------------------------------
@@ -1218,7 +1215,7 @@ void KFLogConfig::__addPathTab()
   mapPathE->setText(mapDir);
 
   QPushButton* mapPathSearch = new QPushButton();
-  mapPathSearch->setPixmap(_mainWindow->getPixmap("kde_fileopen_16.png"));
+  mapPathSearch->setIcon(_mainWindow->getPixmap("kde_fileopen_16.png"));
   mapPathSearch->setMinimumWidth(mapPathSearch->sizeHint().width() + 5);
   mapPathSearch->setMinimumHeight(mapPathSearch->sizeHint().height() + 5);
 
@@ -1226,7 +1223,7 @@ void KFLogConfig::__addPathTab()
   mapLayout->setSpacing( 10 );
   mapLayout->addWidget( mapPathE, 0, 0 );
   mapLayout->addWidget( mapPathSearch, 0, 1 );
-  mapLayout->setColStretch( 0, 10 );
+  mapLayout->setColumnStretch( 0, 10 );
   mapGroup->setLayout( mapLayout );
 
   //----------------------------------------------------------------------------
@@ -1468,7 +1465,7 @@ void KFLogConfig::__addWaypointTab()
   catalogPathE->setText( catalogName );
 
   catalogPathSearch = new QPushButton();
-  catalogPathSearch->setPixmap( _mainWindow->getPixmap( "kde_fileopen_16.png" ) );
+  catalogPathSearch->setIcon( _mainWindow->getPixmap( "kde_fileopen_16.png" ) );
   catalogPathSearch->setMinimumWidth( catalogPathSearch->sizeHint().width() + 5 );
   catalogPathSearch->setMinimumHeight( catalogPathSearch->sizeHint().height() + 5 );
 
@@ -1479,7 +1476,7 @@ void KFLogConfig::__addWaypointTab()
   catPathLayout->setSpacing( 10 );
   catPathLayout->addWidget( catalogPathE, 0, 0 );
   catPathLayout->addWidget( catalogPathSearch, 0, 1 );
-  catPathLayout->setColStretch( 0, 10 );
+  catPathLayout->setColumnStretch( 0, 10 );
 
   catGroupLayout->addLayout( catPathLayout );
   catGroup->setLayout( catGroupLayout );

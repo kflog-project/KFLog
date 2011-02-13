@@ -476,8 +476,8 @@ void OptimizationWizard::slotSetTimes()
     return;
   unsigned int start=evaluation->getTaskStart();
   unsigned int stop=evaluation->getTaskEnd();
-  flightPoint startPoint=flight->getPoint(start);
-  flightPoint endPoint=flight->getPoint(stop);
+  FlightPoint startPoint=flight->getPoint(start);
+  FlightPoint endPoint=flight->getPoint(stop);
   lblStartTime->setText(QString("%1").arg(printTime(startPoint.time,true)));
   lblStopTime->setText(QString("%1").arg(printTime(endPoint.time,true)));
   lblDiffTime->setText(QString("%1").arg(printTime(endPoint.time-startPoint.time,true)));

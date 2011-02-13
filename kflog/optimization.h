@@ -9,7 +9,7 @@
 **   Copyright (c):  2003 by Christof Bodner
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -18,11 +18,10 @@
 #ifndef OPTIMIZATION_H
 #define OPTIMIZATION_H
 
-//#include <qthread.h>
 #include <QProgressBar>
 
 #include "mapcalc.h"
-#include "wp.h"
+#include "flightpoint.h"
 
 /**
   * This class optimizes a task according to the OLC 2003 rules
@@ -45,7 +44,7 @@ public:
   * @param route List of flightpoints that together consitute the route this flight used.
   * @param progressBar optional reference to a progressbar to indicate optimisation progress.
   */
-  Optimization(unsigned int firstPoint, unsigned int lastPoint, QList<flightPoint*> route, QProgressBar *progressBar=0);
+  Optimization(unsigned int firstPoint, unsigned int lastPoint, QList<FlightPoint*> route, QProgressBar *progressBar=0);
  /**
   * Destructor
   */ 
@@ -73,8 +72,8 @@ public slots:
   void enableRun();
 private:
   double weight(unsigned int k); // different weight for the legs
-  QList<flightPoint*> original_route;
-  QList<flightPoint*> route;
+  QList<FlightPoint*> original_route;
+  QList<FlightPoint*> route;
   double distance,points;
   unsigned int pointList[LEGS+1];   // solution points
   unsigned int start;    // first

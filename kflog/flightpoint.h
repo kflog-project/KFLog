@@ -1,12 +1,13 @@
 /***********************************************************************
 **
-**   wp.h
+**   flightpoint.h
 **
 **   This file is part of KFLog4.
 **
 ************************************************************************
 **
-**   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
+**   Copyright (c):  1999-2000 by Heiner Lamprecht, Florian Ehinger
+**                   2011      by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -15,27 +16,36 @@
 **
 ***********************************************************************/
 
-#ifndef WP_STRUCT
-#define WP_STRUCT
+/**
+ * \class FlightPoint
+ *
+ * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
+ *
+ * \brief Flight point management
+ *
+ * This class defines all attributes of one flight point.
+ *
+ * \date 1999-2011
+ *
+ * \version $Id$
+ */
+
+#ifndef FLIGHT_POINT
+#define FLIGHT_POINT
 
 #include <time.h>
-#include <qpoint.h>
-#include <qstring.h>
-#include <q3ptrcollection.h>
-#include <q3valuevector.h>
-#include <q3ptrlist.h>
-//Added by qt3to4:
-#include <Q3ValueList>
-#include "mapmatrix.h"
 
-/**
- * This class contains one flight point.
- */
-class flightPoint
+#include <QPoint>
+#include <QString>
+
+#include "wgspoint.h"
+
+class FlightPoint
 {
+
 public:
   // simple Constructor
-  flightPoint(void);
+  FlightPoint();
 
   /** The original position of the point. Given in the internal format.
   *   set by flightloader.cpp */
@@ -100,18 +110,6 @@ public:
   /** Straight = 0, LeftTurn = 1, RightTurn = 2, MixedTurn = 3
   *   set by flight.cpp */
   unsigned int f_state;
-
 };
-
-// A flightPoint vector for fast iteration
-typedef Q3ValueVector<flightPoint>  FixVector_TP;
-typedef FixVector_TP::iterator         FixVectorIterator_TP;
-
-// A flightPoint list for fast element exchange
-typedef Q3ValueList<flightPoint>  FixList_TP;
-typedef FixList_TP::iterator         FixListIterator_TP;
-typedef Q3PtrList<flightPoint>       FixPtrList_TP;
-typedef Q3PtrListIterator<flightPoint>      FixPtrListIterator_TP;
-
 
 #endif

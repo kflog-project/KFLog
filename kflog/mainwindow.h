@@ -45,7 +45,7 @@
 
 class DataView;
 class EvaluationDialog;
-class flightPoint;
+class FlightPoint;
 class HelpWindow;
 class Map;
 class MapControlView;
@@ -173,7 +173,7 @@ public slots:
    * @param point The related flight point.
    */
   void slotSetPointInfo( const QPoint& mousePosition,
-                         const flightPoint& point );
+                         const FlightPoint& point );
   /**
    * Displays the position of the mouse cursor in the status bar and
    * deletes the text of the other statusbar fields.

@@ -63,7 +63,7 @@ public slots:
 
 protected:
     Flight* flight;
-    QList<flightPoint*> route;
+    QList<FlightPoint*> route;
     Optimization* optimization;
 
     QVBoxLayout* pageLayout;

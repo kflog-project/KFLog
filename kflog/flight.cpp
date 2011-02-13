@@ -68,7 +68,7 @@
       wpL.last()->angle = -100; \
       wpL.last()->fixTime = route.at( a )->time;
 
-Flight::Flight(const QString& fName, const QString& recID, const QList<flightPoint*>& r, const QString& pName,
+Flight::Flight(const QString& fName, const QString& recID, const QList<FlightPoint*>& r, const QString& pName,
    const QString& gType, const QString& gID, int cClass, const QList<Waypoint*>& wpL, const QDate& d)
   : BaseFlightElement("flight", BaseMapElement::Flight, fName),
     recorderID(recID),
@@ -149,8 +149,8 @@ void Flight::__setOptimizeRange(unsigned int start[], unsigned int stop[],
   stop[2] = std::min((int)(start[2] + ( 2 * step )), route.count() - 1);
 }
 
-double Flight::__calculateOptimizePoints(flightPoint* fp1,
-    flightPoint* fp2, flightPoint* fp3)
+double Flight::__calculateOptimizePoints(FlightPoint* fp1,
+    FlightPoint* fp2, FlightPoint* fp3)
 {
   double dist1 = dist(fp1, fp2);
   double dist2 = dist(fp2, fp3);
@@ -327,7 +327,7 @@ unsigned int Flight::__calculateBestTask(unsigned int start[],
 {
   unsigned int numSteps = 0;
   double temp = 0;
-  flightPoint *pointA, *pointB, *pointC;
+  FlightPoint *pointA, *pointB, *pointC;
 
   for(int loopA = start[0]; loopA <= std::min((int)stop[0], route.count() - 1); loopA += step)
     {
@@ -390,9 +390,9 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
 {
   qWarning("print Flight");
 
-  flightPoint* pointA;
-  flightPoint* pointB;
-  flightPoint* pointC;
+  FlightPoint* pointA;
+  FlightPoint* pointB;
+  FlightPoint* pointC;
   QPoint curPointA, curPointB;
 
   if(optimized)
@@ -446,9 +446,9 @@ bool Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
   if(!__isVisible()) return false;
 
-  flightPoint* pointA;
-  flightPoint* pointB;
-  flightPoint* pointC;
+  FlightPoint* pointA;
+  FlightPoint* pointB;
+  FlightPoint* pointC;
   QPoint curPointA, curPointB;
   unsigned int nStop;
 
@@ -524,7 +524,7 @@ QString Flight::getTaskTypeString(bool isOrig) const
       return optimizedTask.getTaskTypeString();
 }
 
-flightPoint Flight::getPointByTime(time_t time)
+FlightPoint Flight::getPointByTime(time_t time)
 {
   return getPoint(getPointIndexByTime(time));
 }
@@ -570,11 +570,11 @@ int Flight::getPointIndexByTime(time_t time)
   return ep;
 }
 
-QList<flightPoint*> Flight::getRoute() const{
+QList<FlightPoint*> Flight::getRoute() const{
   return route;
 }
 
-flightPoint Flight::getPoint(int n)
+FlightPoint Flight::getPoint(int n)
 {
   if(n >= 0 && n < (int)route.count())  return *route.at(n);
 
@@ -585,7 +585,7 @@ flightPoint Flight::getPoint(int n)
       case VA_MAX: return *route.at(va_max);
       case VA_MIN: return *route.at(va_min);
       default:
-        flightPoint ret;
+        FlightPoint ret;
         ret.gpsHeight = 0;
         ret.height = 0;
         return ret;
@@ -894,7 +894,7 @@ unsigned int Flight::getRouteLength() const { return route.count(); }
 
 bool Flight::isOptimized() const { return optimized; }
 
-int Flight::searchPoint(const QPoint& cPoint, flightPoint& searchPoint)
+int Flight::searchPoint(const QPoint& cPoint, FlightPoint& searchPoint)
 {
   unsigned int delta = 1;
   int index = -1;
@@ -944,7 +944,7 @@ void Flight::__checkMaxMin()
   va_min = 0;
   float tmp, refv = .0, refh = .0, refva1 = .0 , refva2 = 500.;
 
-  flightPoint *fp;
+  FlightPoint *fp;
   unsigned int loop = 0;
   foreach(fp, route) {
       // Fetch extreme values
@@ -1208,7 +1208,7 @@ bool Flight::optimizeTask()
 
 
 /** Get the next FlightPoint after number 'index' */
-int Flight::searchGetNextPoint(int index, flightPoint& searchPoint)
+int Flight::searchGetNextPoint(int index, FlightPoint& searchPoint)
 {
   // only move to next if not at last point
   if ((index < (int)route.count() - 1) && (index >= 0))
@@ -1220,7 +1220,7 @@ int Flight::searchGetNextPoint(int index, flightPoint& searchPoint)
 }
 
 /** Get the previous FlightPoint before number 'index' */
-int Flight::searchGetPrevPoint(int index, flightPoint& searchPoint)
+int Flight::searchGetPrevPoint(int index, FlightPoint& searchPoint)
 {
         // only move to next is not first point
   if ((index > 1) && (index <= (int)route.count() - 1))
@@ -1233,7 +1233,7 @@ int Flight::searchGetPrevPoint(int index, flightPoint& searchPoint)
 /**
  * Get the contents of the previous FlightPoint 'step' indexes before number 'index'
  */
-int Flight::searchStepNextPoint(int index, flightPoint & fP, int step)
+int Flight::searchStepNextPoint(int index, FlightPoint & fP, int step)
 {
   if (index + step < (int)getRouteLength() - 1)
       index += step;
@@ -1246,7 +1246,7 @@ int Flight::searchStepNextPoint(int index, flightPoint & fP, int step)
 /**
  * Get the contents of the previous FlightPoint 'step' indexes before number 'index'
  */
-int Flight::searchStepPrevPoint(int index,  flightPoint & fP, int step)
+int Flight::searchStepPrevPoint(int index,  FlightPoint & fP, int step)
 {
   if (index - step > 0)
       index -= step;
@@ -1310,7 +1310,7 @@ void Flight::setLastAnimationPixmap(QPixmap pix)  {  pixAnimate = pix;  }
 void Flight::reProject(){
   extern MapMatrix *_globalMapMatrix;
 
-  flightPoint *fp;
+  FlightPoint *fp;
   foreach(fp, route)
       fp->projP = _globalMapMatrix->wgsToMap(fp->origP);
 

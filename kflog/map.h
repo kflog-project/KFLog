@@ -129,7 +129,7 @@ private:
     /** */
     void openFile(const QUrl& surl);
     /** */
-    void showFlightPoint(const QPoint& pos, const flightPoint& point);
+    void showFlightPoint(const QPoint& pos, const FlightPoint& point);
     /**
      *
      */

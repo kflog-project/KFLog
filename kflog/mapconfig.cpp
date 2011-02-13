@@ -517,7 +517,7 @@ QPen& MapConfig::getPrintPen(unsigned int typeID)
   return __getPen(typeID, printScaleIndex);
 }
 
-QPen MapConfig::getDrawPen(flightPoint* fP, float va_min/*=-10*/, float va_max/*=10*/, int altitude_max/*= 5000*/, float speed_max/*=80*/)
+QPen MapConfig::getDrawPen(FlightPoint* fP, float va_min/*=-10*/, float va_max/*=10*/, int altitude_max/*= 5000*/, float speed_max/*=80*/)
 {
   //
   // Dynamische Farben im Flug:

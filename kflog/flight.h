@@ -63,7 +63,7 @@ class Flight : public BaseFlightElement
 	   * @param  date  The date of the flight
 	   */
     Flight(const QString& fileName, const QString& recID,
-            const QList<flightPoint*>& route, const QString& pName, const QString& gType,
+            const QList<FlightPoint*>& route, const QString& pName, const QString& gType,
         const QString& gID, int cClass, const QList<Waypoint*>& wpL, const QDate& date);
 	  /**
 	   * Destroys the flight-object.
@@ -135,7 +135,7 @@ class Flight : public BaseFlightElement
    /**
     * @return the route
     */
-    QList<flightPoint*> getRoute() const;
+    QList<FlightPoint*> getRoute() const;
     /**
      * @return the number of logged points.
      */
@@ -174,7 +174,7 @@ class Flight : public BaseFlightElement
      * to the given time.
      * @return the point
      */
-    flightPoint getPointByTime(time_t time);
+    FlightPoint getPointByTime(time_t time);
     /**
      * Searches the point of the flight, which time is the nearest
      * to the given time.
@@ -194,7 +194,7 @@ class Flight : public BaseFlightElement
     /**
      * @return the point with the index "n"
      */
-    flightPoint getPoint(int n);
+    FlightPoint getPoint(int n);
     /**
 	   * @return the list of optimized waypoints if task is optimized else then orig waypoints
      */
@@ -226,23 +226,23 @@ class Flight : public BaseFlightElement
      *                      with the flightpoint found.
      * @return the index of the flightpoint or -1 if no point is found.
      */
-    int searchPoint(const QPoint& cPoint, flightPoint& searchPoint);
+    int searchPoint(const QPoint& cPoint, FlightPoint& searchPoint);
     /**
 		 * Get the previous FlightPoint before number 'index'
 		 */
-    int searchGetPrevPoint(int index, flightPoint& searchPoint);
+    int searchGetPrevPoint(int index, FlightPoint& searchPoint);
     /**
 		 * Get the next FlightPoint after number 'index'
 		 */
-    int searchGetNextPoint(int index, flightPoint& searchPoint);
+    int searchGetNextPoint(int index, FlightPoint& searchPoint);
   	/**
   	 * Get the contents of the next FlightPoint 'step' indexes after number 'index'
   	 */
-  	int searchStepNextPoint(int index, flightPoint & fP, int step);
+  	int searchStepNextPoint(int index, FlightPoint & fP, int step);
   	/**
   	 * Get the contents of the previous FlightPoint 'step' indexes before number 'index'
   	 */
-  	int searchStepPrevPoint(int index,  flightPoint & fP, int step);
+  	int searchStepPrevPoint(int index,  FlightPoint & fP, int step);
     /**
      * @return "true" if the flight has been optimized.
      */
@@ -322,8 +322,8 @@ class Flight : public BaseFlightElement
     void __setOptimizeRange(unsigned int start[], unsigned int stop[],
         unsigned int idList[], unsigned int id, unsigned int step);
     /** */
-    double __calculateOptimizePoints(flightPoint* fp1,
-        flightPoint* fp2, flightPoint* fp3);
+    double __calculateOptimizePoints(FlightPoint* fp1,
+        FlightPoint* fp2, FlightPoint* fp3);
 	  /** */
   	void __checkMaxMin();
   	/** */
@@ -342,14 +342,14 @@ class Flight : public BaseFlightElement
     QDate date;
     int competitionClass;
 
-    flightPoint* drawRoute;
+    FlightPoint* drawRoute;
     unsigned int drawLength;
     unsigned int v_max;
     unsigned int h_max;
     unsigned int va_min;
     unsigned int va_max;
 
-    QList<flightPoint*> route;
+    QList<FlightPoint*> route;
 
     QRect bBoxFlight;
     time_t startTime;

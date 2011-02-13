@@ -775,7 +775,7 @@ double FlightTask::getOlcPoints()
   return  olcPoints;
 }
 
-void FlightTask::checkWaypoints(QList<flightPoint*> route, const QString& gliderType)
+void FlightTask::checkWaypoints(QList<FlightPoint*> route, const QString& gliderType)
 {
   /*
    *   �berpr�ft, ob die Sektoren der Wendepunkte erreicht wurden
@@ -1634,7 +1634,7 @@ QString FlightTask::getPlanningTypeString()
 void FlightTask::reProject(){
   extern MapMatrix *_globalMapMatrix;
 
-  flightPoint *fp;
+  FlightPoint *fp;
   foreach(fp, flightRoute)
       fp->projP = _globalMapMatrix->wgsToMap(fp->origP);
 

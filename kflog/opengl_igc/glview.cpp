@@ -89,7 +89,7 @@ void GLView::addShadow(Flight* flight)
       qglColor( Qt::gray );                      // Shorthand for glColor3f or glIndex
       glLineWidth( 2.0 );
 
-      flightPoint fPoint;
+      FlightPoint fPoint;
       int actx, acty, actz;
       fPoint=flight->getPoint(0);
       actx=fPoint.projP.x();
@@ -135,7 +135,7 @@ void GLView::addFlight(Flight* flight)
       glLineWidth( 2.0 );
 
 
-      flightPoint fPoint;
+      FlightPoint fPoint;
       int actx, acty, actz;
       fPoint=flight->getPoint(0);
       actx=fPoint.projP.x();

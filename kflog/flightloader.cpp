@@ -10,18 +10,13 @@
 **   Copyright (c):  2008 by Constantijn Neeteson
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **
 ***********************************************************************/
 
-#include <QDateTime>
-#include <QMessageBox>
-#include <q3progressdialog.h>
-#include <QRegExp>
-#include <QSettings>
-#include <QString>
-#include <q3textstream.h>
+#include <QtGui>
+#include <Qt3Support>
 
 #include "elevationfinder.h"
 #include "flight.h"
@@ -35,19 +30,19 @@ bool FlightLoader::openFlight(QFile& flightFile)
   if(!fInfo.exists())
     {
       QMessageBox::warning(0, QObject::tr("File does not exist"),
-          "<qt>" + QObject::tr("The selected file<BR><B>%1</B><BR>does not exist!").arg(flightFile.name()) + "</qt>", QMessageBox::Ok, 0);
+          "<html>" + QObject::tr("The selected file<BR><B>%1</B><BR>does not exist!").arg(flightFile.name()) + "</html>", QMessageBox::Ok, 0);
       return false;
     }
   if(!fInfo.size())
     {
       QMessageBox::warning(0, QObject::tr("File is empty"),
-          "<qt>" + QObject::tr("The selected file<BR><B>%1</B><BR>is empty!").arg(flightFile.name()) + "</qt>", QMessageBox::Ok, 0);
+          "<html>" + QObject::tr("The selected file<BR><B>%1</B><BR>is empty!").arg(flightFile.name()) + "</html>", QMessageBox::Ok, 0);
       return false;
     }
   if(!flightFile.open(QIODevice::ReadOnly))
     {
       QMessageBox::warning(0, QObject::tr("No permission to file"),
-          "<qt>" + QObject::tr("You don't have permission to access file<BR><B>%1</B>").arg(flightFile.name() + "</qt>"), QMessageBox::Ok, 0);
+          "<html>" + QObject::tr("You don't have permission to access file<BR><B>%1</B>").arg(flightFile.name() + "</html>"), QMessageBox::Ok, 0);
       return false;
     }
   //
@@ -64,7 +59,7 @@ bool FlightLoader::openFlight(QFile& flightFile)
   else
   {
       QMessageBox::warning(0, QObject::tr("Unknown file extension"),
-          "<qt>" + QObject::tr("Couldn't open the file, because it has an unknown file extension") + "</qt>", QMessageBox::Ok, 0);
+          "<html>" + QObject::tr("Couldn't open the file, because it has an unknown file extension") + "</html>", QMessageBox::Ok, 0);
       return false;
   }
 }
@@ -78,7 +73,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
   importProgress.setCaption(QObject::tr("Loading flight..."));
   importProgress.setLabelText(
-      "<qt>" + QObject::tr("Please wait while loading file<BR><B>%1</B>").arg(igcFile.name()) + "</qt>");
+      "<html>" + QObject::tr("Please wait while loading file<BR><B>%1</B>").arg(igcFile.name()) + "</html>");
   importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
   importProgress.setTotalSteps(200);
   importProgress.show();
@@ -100,8 +95,8 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   time_t curTime = 0, preTime = 0, timeOfFlightDay = 0;
   int cClass = Flight::NotSet;
 
-  flightPoint newPoint;
-  QList<flightPoint*> flightRoute;
+  FlightPoint newPoint;
+  QList<FlightPoint*> flightRoute;
   QList<Waypoint*> wpList;
   Waypoint* newWP;
   Waypoint* preWP;
@@ -268,8 +263,8 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
               QString lineNr;
               lineNr.sprintf("%d", lineCount);
               QMessageBox::warning(0, QObject::tr("Syntax-error in IGC-file"),
-                  "<qt>" + QObject::tr("Syntax-error while loading igc-file"
-                      "<BR><B>%1</B><BR>Aborting!").arg(igcFile.name()) + "</qt>", QMessageBox::Ok, 0);
+                  "<html>" + QObject::tr("Syntax-error while loading igc-file"
+                      "<BR><B>%1</B><BR>Aborting!").arg(igcFile.name()) + "</html>", QMessageBox::Ok, 0);
               qWarning("KFLog: Error in reading line %d in igc-file %s",
                   lineCount, (const char*)igcFile.name());
               return false;
@@ -325,7 +320,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
               newPoint.time = curTime;
             }
 
-          flightRoute.append(new flightPoint);
+          flightRoute.append(new FlightPoint);
           *(flightRoute.last()) = newPoint;
 
           preTime = curTime;
@@ -394,7 +389,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   if(!flightRoute.count())
     {
       QMessageBox::warning(0, QObject::tr("File contains no flight"),
-          "<qt>" + QObject::tr("The selected file<BR><B>%1</B><BR>contains no flight!").arg(igcFile.name()) + "</qt>", QMessageBox::Ok, 0);
+          "<html>" + QObject::tr("The selected file<BR><B>%1</B><BR>contains no flight!").arg(igcFile.name()) + "</html>", QMessageBox::Ok, 0);
       return false;
     }
 
@@ -410,7 +405,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
 
   importProgress.setCaption(QObject::tr("Loading flight..."));
   importProgress.setLabelText(
-      "<qt>" + QObject::tr("Please wait while loading file<BR><B>%1</B>").arg(gardownFile.name()) + "</qt>");
+      "<html>" + QObject::tr("Please wait while loading file<BR><B>%1</B>").arg(gardownFile.name()) + "</html>");
   importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
   importProgress.setTotalSteps(200);
   importProgress.show();
@@ -431,8 +426,8 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
   time_t curTime = 0, timeOfFlightDay = 0;
   int cClass;
 
-  flightPoint newPoint;
-  QList<flightPoint*> flightRoute;
+  FlightPoint newPoint;
+  QList<FlightPoint*> flightRoute;
   QList<Waypoint*> wpList;
 
   //
@@ -535,7 +530,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
           newPoint.height = height;
           newPoint.gpsHeight = height;
 
-          flightRoute.append(new flightPoint);
+          flightRoute.append(new FlightPoint);
           *(flightRoute.last()) = newPoint;
         }
       else
@@ -551,7 +546,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo){
   if(!flightRoute.count())
     {
       QMessageBox::warning(0, QObject::tr("File contains no flight"),
-          "<qt>" + QObject::tr("The selected file<BR><B>%1</B><BR>contains no flight!").arg(gardownFile.name()) + "</qt>", QMessageBox::Ok, 0);
+          "<html>" + QObject::tr("The selected file<BR><B>%1</B><BR>contains no flight!").arg(gardownFile.name()) + "</html>", QMessageBox::Ok, 0);
       return false;
     }
 
