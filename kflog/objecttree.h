@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by André Somers
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -27,27 +28,44 @@
 #include "flighttask.h"
 
 /**
-  * @short KFLogBrowser - Displays all currently loaded objects.
-  * @author André Somers
+  * \class ObjectTree
+  *
+  * \author André Somers, Axel Pauli
+  *
+  * \brief KFLogBrowser - Displays all currently loaded objects.
   *
   * This object is used to give the user an overview of the objects he has
   * currently loaded. These objects include Flights, Tasks, Flightgroups and
   * possibly more in the future. The loaded objects are represented in a
   * treeview, giving easy access to each object to the user.
+  *
+  * \date 2003-2011
+  *
+  * \version $Id$
   */
 
-class ObjectTree : public Q3ListView  {
-   Q_OBJECT
+class ObjectTree : public Q3ListView
+{
+  Q_OBJECT
+
+private:
+
+  Q_DISABLE_COPY ( ObjectTree )
+
 public:
+
   /**
    * Constructor. Uses the default @ref QWidget arguments
    */
-  ObjectTree(QWidget *parent=0, const char *name=0);
+  ObjectTree( QWidget *parent=0 );
+
   /**
    * Destructor
    */
-  ~ObjectTree();
+  virtual ~ObjectTree();
+
   void dragEnterEvent(QDragEnterEvent* event);
+
   void dropEvent(QDropEvent* event);
 
 private:

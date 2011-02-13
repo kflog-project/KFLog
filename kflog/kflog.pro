@@ -77,8 +77,6 @@ SOURCES = \
     taskdialog.cpp \
     tasklistviewitem.cpp \
     topolegend.cpp \
-    translationelement.cpp \
-    translationlist.cpp \
     waypoint.cpp \
     waypointcatalog.cpp \
     waypointdialog.cpp \
@@ -159,8 +157,6 @@ HEADERS = \
     taskdialog.h \
     tasklistviewitem.h \
     topolegend.h \
-    translationelement.h \
-    translationlist.h \
     waypoint.h \
     waypointcatalog.h \
     waypointdialog.h \

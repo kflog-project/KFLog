@@ -308,7 +308,7 @@ int Cambridge::openRecorder(const QString& pName, int baud)
     return FR_OK;
     }
   else {
-    qWarning(QObject::tr("No logger found!"));
+    qWarning("No logger found!");
     _isConnected = false;
     return FR_ERROR;
   }
@@ -523,12 +523,14 @@ int Cambridge::getFlightDir(QList<FRDirEntry*>* dirList)
   // for new blocks until we got the last flight.
   int done = 0;
   int offset = 0;
+
   while (!done)
   {
     QString foo;
     foo.setNum(196+offset);
     foo.prepend("b ");
     replysize=0;
+
     while (replysize<=0) {
       replysize = readReply(foo, UPL_MODE, reply);
       if (replysize==TIMEOUT_ERROR) return FR_ERROR;
@@ -540,6 +542,7 @@ int Cambridge::getFlightDir(QList<FRDirEntry*>* dirList)
 
     int maxflights = Nflights-8*offset;
     if (maxflights>8) maxflights=8;
+
     for (int i=0 ; i<maxflights ; i++)
     {
       FRDirEntry* entry = new FRDirEntry;
@@ -606,9 +609,12 @@ int Cambridge::getFlightDir(QList<FRDirEntry*>* dirList)
                                  "cam",
                                  (const char*)_basicData.serialNumber,
                                  c36[dayflightcounter]);
-    qWarning("%s   %s", (const char*)dirList->at(i)->longFileName.toLatin1(),
-                        (const char*)dirList->at(i)->shortFileName.toLatin1());
+
+    qDebug("%s   %s", dirList->at(i)->longFileName.toLatin1().data(),
+                      dirList->at(i)->shortFileName.toLatin1().data());
   }
+
+  return FR_OK;
 }
 
 int Cambridge::downloadFlight(int flightID, int /*secMode*/, const QString& fileName)
@@ -663,7 +669,7 @@ int Cambridge::downloadFlight(int flightID, int /*secMode*/, const QString& file
   }
   else
   {
-    qWarning(QObject::tr("cannot open igc file ") + fileName);
+    qWarning() << "Cannot open igc file" << fileName;
     return FR_ERROR;
   }
 }
@@ -866,7 +872,7 @@ int Cambridge::sendCommand(QString cmd)
 {
   // flush the buffer and send the command
   tcflush(portID, TCIOFLUSH);
-  write(portID, (const char *)cmd, cmd.length());
+  ssize_t bytes = write(portID, cmd.toAscii().data(), cmd.length());
   wb('\r');
   return FR_OK;
 }

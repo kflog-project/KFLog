@@ -17,7 +17,6 @@
 
 #include "flighttask.h"
 #include "mapcalc.h"
-#include "translationlist.h"
 
 #include <cmath>
 

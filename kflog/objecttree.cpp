@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by André Somers
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -31,10 +32,14 @@
 
 extern MainWindow *_mainWindow;
 
-ObjectTree::ObjectTree(QWidget *parent, const char *name ) : Q3ListView(parent,name) {
-  addPopupMenu();
+ObjectTree::ObjectTree( QWidget *parent ) :
+  Q3ListView( parent ),
+  currentFlightElement(0)
+{
+  setObjectName( "ObjectTree" );
   setAcceptDrops(true);
 
+  addPopupMenu();
   /*
    * setup listview
    */
@@ -60,36 +65,39 @@ ObjectTree::ObjectTree(QWidget *parent, const char *name ) : Q3ListView(parent,n
 
   connect(this, SIGNAL(selectionChanged(Q3ListViewItem*)),SLOT(slotSelected(Q3ListViewItem*)));
   connect(this, SIGNAL(rightButtonPressed(Q3ListViewItem *, const QPoint &, int)), SLOT(showTaskPopup(Q3ListViewItem *, const QPoint &, int)));
-
-  currentFlightElement=0;
 }
 
-ObjectTree::~ObjectTree(){
+ObjectTree::~ObjectTree()
+{
 }
 
 /**
  * Called if a new flight has been added.
  */
-void ObjectTree::slotNewFlightAdded(Flight * flight){
+void ObjectTree::slotNewFlightAdded(Flight * flight)
+{
   new FlightListViewItem(FlightRoot,flight);
 }
 
 /**
  * Called if a new flightgroup has been created or loaded.
  */
-void ObjectTree::slotNewFlightGroupAdded(FlightGroup * flightGroup){
+void ObjectTree::slotNewFlightGroupAdded(FlightGroup * flightGroup)
+{
   new FlightGroupListViewItem(FlightRoot,flightGroup);
 }
 
 /**
  * Called if a new task has been created or loaded.
  */
-void ObjectTree::slotNewTaskAdded(FlightTask * task){
+void ObjectTree::slotNewTaskAdded(FlightTask * task)
+{
   new TaskListViewItem(TaskRoot,task);
 }
 
 /** Called if the selection has changed. */
-void ObjectTree::slotSelected(Q3ListViewItem * itm){
+void ObjectTree::slotSelected(Q3ListViewItem * itm)
+{
   extern MapContents *_globalMapContents;
 
   if (!itm) return;
@@ -115,7 +123,8 @@ void ObjectTree::slotSelected(Q3ListViewItem * itm){
 }
 
 /** This slot is called if the currently selected flight has changed. */
-void ObjectTree::slotSelectedFlightChanged(){
+void ObjectTree::slotSelectedFlightChanged()
+{
   extern MapContents *_globalMapContents;
   Q3ListViewItem * itm=findFlightElement(_globalMapContents->getFlight());
 
@@ -129,7 +138,8 @@ void ObjectTree::slotSelectedFlightChanged(){
 }
 
 /** Signaled if the current flight was somehow changed.  */
-void ObjectTree::slotFlightChanged(){
+void ObjectTree::slotFlightChanged()
+{
   extern MapContents *_globalMapContents;
   Q3ListViewItem * itm=findFlightElement(_globalMapContents->getFlight());
 
@@ -155,7 +165,8 @@ void ObjectTree::slotFlightChanged(){
  * given as an argument.
  * @returns a pointer to the QListViewItem if found, 0 otherwise.
  */
-Q3ListViewItem * ObjectTree::findFlightElement(BaseFlightElement * bfe){
+Q3ListViewItem * ObjectTree::findFlightElement(BaseFlightElement * bfe)
+{
   Q3ListViewItem * itm=0;
 
   if (FlightRoot->childCount()!=0) {
@@ -184,7 +195,8 @@ Q3ListViewItem * ObjectTree::findFlightElement(BaseFlightElement * bfe){
 /*
   Returns -1 if no element has been selected, and the rtti() of the selected element otherwise.
 */
-int ObjectTree::currentFlightElementType() {
+int ObjectTree::currentFlightElementType()
+{
   if (!currentFlightElement) {
     return -1;
   } else {
@@ -192,7 +204,8 @@ int ObjectTree::currentFlightElementType() {
   }
 }
 
-void ObjectTree::slotCloseFlight(BaseFlightElement* bfe) {
+void ObjectTree::slotCloseFlight(BaseFlightElement* bfe)
+{
   Q3ListViewItem * itm=findFlightElement(bfe);
   if (bfe==currentFlightElement) currentFlightElement=0;
   delete itm;
@@ -320,11 +333,16 @@ void ObjectTree::slotSaveTask()
     return;
   }
 
-  fName = Q3FileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, 0, tr("Save task"));
-  if(!fName.isEmpty()) {
-    if (fName.right(9) != ".kflogtsk") {
-      fName += ".kflogtsk";
-    }
+  fName = QFileDialog::getSaveFileName ( this,
+                                         tr("Save task"),
+                                         path,
+                                         tr("KFLOG tasks (*.kflogtsk *.KFLOGTSK)" ) );
+  if (!fName.isEmpty())
+    {
+      if (fName.right(9).toLower() != ".kflogtsk")
+        {
+          fName += ".kflogtsk";
+        }
 
     QApplication::setOverrideCursor( Qt::waitCursor );
 
@@ -337,7 +355,9 @@ void ObjectTree::slotSaveTask()
       root.appendChild(t);
 
       wpList = ft->getWPList();
-      for(int i = 0; i < wpList.count(); i++) {
+
+      for(int i = 0; i < wpList.count(); i++)
+      {
         w = wpList.at(i);
 
         child = doc.createElement("Waypoint");
@@ -366,7 +386,9 @@ void ObjectTree::slotSaveTask()
       path = fName;
     }
     else {
-      QMessageBox::warning(0, tr("No permission"), "<qt>" + tr("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", QMessageBox::Ok, 0);
+      QMessageBox::warning( this, tr("No permission"),
+                            "<html>" + tr("<B>%1</B><BR>permission denied!").arg(fName) + "</html>",
+                            QMessageBox::Ok );
     }
 
     QApplication::restoreOverrideCursor();
@@ -387,11 +409,16 @@ void ObjectTree::slotSaveAllTask()
   Q3ListViewItem *item;
   QList<Waypoint*> wpList;
 
-  fName = Q3FileDialog::getSaveFileName(path, "*.kflogtsk *.KFLOGTSK|KFLog tasks (*.kflogtsk)", 0, 0, tr("Save task"));
-  if(!fName.isEmpty()) {
-    if (fName.right(9) != ".kflogtsk") {
-      fName += ".kflogtsk";
-    }
+  fName = QFileDialog::getSaveFileName ( this,
+                                         tr("Save task"),
+                                         path,
+                                         tr("KFLOG tasks (*.kflogtsk *.KFLOGTSK)" ) );
+  if (!fName.isEmpty())
+    {
+      if (fName.right(9).toLower() != ".kflogtsk")
+        {
+          fName += ".kflogtsk";
+        }
 
     QApplication::setOverrideCursor( Qt::waitCursor );
     doc.appendChild(root);
@@ -407,7 +434,9 @@ void ObjectTree::slotSaveAllTask()
       root.appendChild(t);
 
       wpList = ft->getWPList();
-      for(int i = 0; i < wpList.count(); i++) {
+
+      for(int i = 0; i < wpList.count(); i++)
+      {
         w = wpList.at(i);
 
         child = doc.createElement("Waypoint");
@@ -431,6 +460,7 @@ void ObjectTree::slotSaveAllTask()
     }
 
     f.setName(fName);
+
     if (f.open(QIODevice::WriteOnly)) {
       QString txt = doc.toString();
       f.writeBlock(txt, txt.length());
@@ -438,7 +468,9 @@ void ObjectTree::slotSaveAllTask()
       path = fName;
     }
     else {
-      QMessageBox::warning(0, tr("Permission denied"), "<qt>" + tr("<B>%1</B><BR>permission denied!").arg(fName) + "</qt>", QMessageBox::Ok, 0);
+      QMessageBox::warning( this,
+                            tr("Permission denied"), "<html>" + tr("<B>%1</B><BR>permission denied!").arg(fName) + "</html>",
+                            QMessageBox::Ok );
     }
 
     QApplication::restoreOverrideCursor();

@@ -9,14 +9,14 @@
  **   Copyright (c):  2002 by Harald Maier
  **
  **   This file is distributed under the terms of the General Public
- **   Licence. See the file COPYING for more information.
+ **   License. See the file COPYING for more information.
  **
  **   $Id$
  **
  ***********************************************************************/
 
-#ifndef FLIGHTGROUP_H
-#define FLIGHTGROUP_H
+#ifndef FLIGHT_GROUP_H
+#define FLIGHT_GROUP_H
 
 #include "baseflightelement.h"
 #include "flight.h"
@@ -84,7 +84,9 @@ class FlightGroup : public BaseFlightElement
    * re-project the flights in this flightgroup. Reimplemented from BaseFlightElement.
    */
   void reProject();
+
  private:
+
   QList<Flight::Flight*> flightList;
 };
 

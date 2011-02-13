@@ -1,5 +1,5 @@
 /***************************************************************************
-                          waypoints.cpp  -  description
+                          waypointtreeview.cpp
                              -------------------
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier

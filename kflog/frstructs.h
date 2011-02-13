@@ -9,11 +9,12 @@
 **   Copyright (c):  2002 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
+
 #ifndef FRSTRUCTS_H
 #define FRSTRUCTS_H
 
@@ -75,31 +76,5 @@ struct FRTaskDeclaration
   QString compID;
   QString compClass;
 };
-/*
-struct FRTaskPoint
-{
-  QString name;
-  int latPos;
-  int lonPos;
-  int type;
-  int elevation; // in m
-};
-
-struct FRWaypoint
-{
-  struct FRTaskPoint point;
-  int isLandable;
-  int isHardSurface;
-  int isAirport;
-  int isCheckpoint;
-  QString comment;
-};
-
-struct FRTask
-{
-  QString name;
-  QList <FRTaskPoint> wayPoints;
-};
-*/
 
 #endif

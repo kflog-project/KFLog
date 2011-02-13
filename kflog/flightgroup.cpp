@@ -9,7 +9,7 @@
  **   Copyright (c):  2002 by Harald Maier
  **
  **   This file is distributed under the terms of the General Public
- **   Licence. See the file COPYING for more information.
+ **   License. See the file COPYING for more information.
  **
  **   $Id$
  **

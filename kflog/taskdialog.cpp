@@ -21,7 +21,6 @@
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "taskdialog.h"
-#include "translationlist.h"
 #include "mainwindow.h"
 
 extern MainWindow *_mainWindow;
