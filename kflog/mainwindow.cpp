@@ -1046,8 +1046,12 @@ void MainWindow::slotFlightViewIgcOpenGL()
 /** set menu items enabled/disabled */
 void MainWindow::slotModifyMenu()
 {
-  if (_globalMapContents->getFlightList()->count() > 0)
+  if( _globalMapContents->getFlightList()->count() > 0 &&
+      _globalMapContents->getFlight() != 0 )
   {
+      // FIXME @AP: The flight list number is incremeted when a new task is
+      // created but the current flight maybe NULL!!! I got a core dump here.
+      // Added check above to if clause.
       switch(_globalMapContents->getFlight()->getObjectType())
         {
           case BaseMapElement::Flight:
