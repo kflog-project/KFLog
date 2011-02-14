@@ -6,17 +6,17 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by Andr� Somers
+**   Copyright (c):  2003 by André Somers
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
 #include <QtGui>
-#include <Qt3Support>
 
 #include "flightlistviewitem.h"
 #include "tasklistviewitem.h"
@@ -25,27 +25,29 @@
 
 extern MainWindow *_mainWindow;
 
-FlightListViewItem::FlightListViewItem(Q3ListViewItem * parent, Flight * flight):Q3ListViewItem(parent){
-  this->flight=flight;
-
+FlightListViewItem::FlightListViewItem( QTreeWidgetItem* parent, Flight* flight) :
+  QTreeWidgetItem(parent),
+  flight(flight)
+{
   createChildren();
-  
 }
 
-FlightListViewItem::~FlightListViewItem(){
+FlightListViewItem::~FlightListViewItem()
+{
 }
 
 /**
  * Called to make the item update itself, for example because the flight was optimized.
  */
-void FlightListViewItem::update(){
-  /* This funtion updates the flightnode after something has changed. It would be better
+void FlightListViewItem::update()
+{
+  /* This function updates the flight node after something has changed. It would be better
      to check what was changed, and react accordingly. This is pretty complex though, and
-     even just resetting the text for each childnode is more work than just deleting them
+     even just resetting the text for each child node is more work than just deleting them
      and then re-creating them. f*/
-     
-  
-  //first, delete all childnodes
+
+
+  //first, delete all child nodes
   Q3ListViewItem * itm = firstChild();
   while (itm!=0) {
     delete itm;
@@ -57,35 +59,47 @@ void FlightListViewItem::update(){
 
 }
 
-/** Creates the childnodes for this flightnode. */
-void FlightListViewItem::createChildren(){
-  Q3Url url(flight->getFileName());
+/** Creates the child nodes for this flight node. */
+void FlightListViewItem::createChildren()
+{
+  setText( 0, QFileInfo(flight->getFileName()).fileName() );
+  setText( 1, flight->getDate().toString(Qt::LocalDate) + ": " + flight->getPilot() );
 
-  setText(0, url.fileName());
-  setText(1, flight->getDate().toString(Qt::LocalDate) + ": " + flight->getPilot());
-  //setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup, KIcon::SizeSmall));
+  QTreeWidgetItem* subItem = new QTreeWidgetItem( this, QObject::tr("Pilot"),
+                                                  flight->getPilot() );
+  subItem->setFlags( Qt::ItemIsEnabled );
 
-  Q3ListViewItem * subItem=new Q3ListViewItem((Q3ListViewItem*)this,QObject::tr("Pilot"),flight->getPilot());
-  subItem->setSelectable(false);
-  subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Date"), flight->getDate().toString(Qt::LocalDate));
-  subItem->setSelectable(false);
-  subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Glider"),flight->getType() + ", " + flight->getID());
-  subItem->setSelectable(false);
-  subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Points"),flight->getPoints(true));
-  subItem->setSelectable(false);
-  if (flight->isOptimized()){
-    subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Points (optimized)"),flight->getPoints(false));
-    subItem->setSelectable(false);
-  }
-  subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Total distance"),flight->getDistance(true));
-  subItem->setSelectable(false);
-  subItem=new TaskListViewItem((Q3ListViewItem*)this, &flight->getTask(true), subItem);
-  QPixmap taskPic = _mainWindow->getPixmap("task_16.png");
-  subItem->setPixmap(0, taskPic);
-  subItem->setSelectable(false);
-  if (flight->isOptimized()){
-    subItem=new TaskListViewItem((Q3ListViewItem*)this, &flight->getTask(false), subItem);
-    subItem->setPixmap(0, taskPic);
-    subItem->setSelectable(false);
-  }
+  subItem = new QTreeWidgetItem( this, QObject::tr("Date"),
+                                 flight->getDate().toString(Qt::LocalDate) );
+  subItem->setFlags( Qt::ItemIsEnabled );
+
+  subItem = new QTreeWidgetItem( this, QObject::tr("Glider"),
+                                 flight->getType() + ", " + flight->getID());
+  subItem->setFlags( Qt::ItemIsEnabled );
+
+  subItem =new QTreeWidgetItem( this, QObject::tr("Points"),
+                                flight->getPoints(true));
+  subItem->setFlags( Qt::ItemIsEnabled );
+
+  if( flight->isOptimized() )
+    {
+      subItem = new QTreeWidgetItem( this, QObject::tr("Points (optimized)"),
+                                     flight->getPoints(false) );
+      subItem->setFlags( Qt::ItemIsEnabled );
+    }
+
+  subItem = new QTreeWidgetItem( this, QObject::tr("Total distance"),
+                                 flight->getDistance(true) );
+  subItem->setFlags( Qt::ItemIsEnabled );
+
+  subItem = new TaskListViewItem( this, &flight->getTask(true) );
+  subItem->setIcon(0, _mainWindow->getPixmap("task_16.png") );
+  subItem->setFlags( Qt::ItemIsEnabled );
+
+  if( flight->isOptimized() )
+    {
+      subItem = new TaskListViewItem( this, &flight->getTask(false) );
+      subItem->setIcon(0, _mainWindow->getPixmap("task_16.png") );
+      subItem->setFlags( Qt::ItemIsEnabled );
+   }
 }

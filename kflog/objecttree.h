@@ -16,17 +16,6 @@
 **
 ***********************************************************************/
 
-#ifndef OBJECT_TREE_H
-#define OBJECT_TREE_H
-
-#include <q3listview.h>
-#include <q3popupmenu.h>
-#include <QWidget>
-
-#include "flight.h"
-#include "flightgroup.h"
-#include "flighttask.h"
-
 /**
   * \class ObjectTree
   *
@@ -35,16 +24,29 @@
   * \brief KFLogBrowser - Displays all currently loaded objects.
   *
   * This object is used to give the user an overview of the objects he has
-  * currently loaded. These objects include Flights, Tasks, Flightgroups and
+  * currently loaded. These objects include Flights, Tasks, Flight groups and
   * possibly more in the future. The loaded objects are represented in a
-  * treeview, giving easy access to each object to the user.
+  * tree view, giving easy access to each object to the user.
   *
   * \date 2003-2011
   *
   * \version $Id$
   */
 
-class ObjectTree : public Q3ListView
+#ifndef OBJECT_TREE_H
+#define OBJECT_TREE_H
+
+#include "flight.h"
+#include "flightgroup.h"
+#include "flighttask.h"
+#include "kflogtreewidget.h"
+
+class QAction;
+class QMenu;
+class QWidget;
+class QTreeWidgetItem;
+
+class ObjectTree : public KFLogTreeWidget
 {
   Q_OBJECT
 
@@ -69,6 +71,7 @@ public:
   void dropEvent(QDropEvent* event);
 
 private:
+
   /**
    * Contains the ID of the Name column
    */
@@ -79,45 +82,47 @@ private:
   int colDesc;
 
   /**
-   * Contains a reference to the rootnode for flights
+   * Contains a reference to the root node for flights
    */
-  Q3ListViewItem * FlightRoot;
+  QTreeWidgetItem* FlightRoot;
   /**
-   * Contains a reference to the rootnode for flightgroups
+   * Contains a reference to the root node for flight groups
    */
   //QListViewItem * FlightGroupRoot;
   /**
-   * Contains a reference to the rootnode for tasks
+   * Contains a reference to the root node for tasks
    */
-  Q3ListViewItem * TaskRoot;
+  QTreeWidgetItem* TaskRoot;
 
-  Q3PopupMenu *taskPopup;
+  QMenu *taskMenu;
   /**
-   * References for task-related items in the popupmenu
+   * References for task-related items in the popup menu
    */
-  int idTaskEdit;
-  int idTaskDelete;
-  int idTaskSave;
-  int idTaskSaveAll;
+  QAction* actionTaskEdit;
+  QAction* actionTaskDelete;
+  QAction* actionTaskSave;
+  QAction* actionTaskSaveAll;
   /**
-   * References for flight-related items in the popupmenu
+   * References for flight-related items in the popup menu
    */
-  int idFlightGroupEdit;
-  int idFlightClose;
-  int idFlightOptimize;
-  int idFlightOptimizeOLC;
+  QAction* actionFlightGroupEdit;
+  QAction* actionFlightClose;
+  QAction* actionFlightOptimize;
+  QAction* actionFlightOptimizeOLC;
 
   BaseFlightElement* currentFlightElement;
-  int currentFlightElementType();
   QString path;
-   
-public slots: // Public slots
+
+  int currentFlightElementType();
+
+public slots:
+
   /**
    * Called when a new flight has been added.
    */
   void slotNewFlightAdded(Flight *);
   /**
-   * Called when a new flightgroup has been added.
+   * Called when a new flight group has been added.
    */
   void slotNewFlightGroupAdded(FlightGroup *);
   /**
@@ -128,25 +133,33 @@ public slots: // Public slots
    * This slot is called if the currently selected flight has changed.
    */
   void slotSelectedFlightChanged();
-  /** Signaled if the current flight was somehow changed.  */
+  /**
+   * Signaled if the current flight was somehow changed.
+   */
   void slotFlightChanged();
-  /** Signaled if a flightelement is going to be closed. Used to remove the item from the list. */
+  /**
+   * Signaled if a flight element is going to be closed. Used to
+   * remove the item from the list.
+   */
   void slotCloseFlight(BaseFlightElement*);
 
-private slots: // Private slots
+private slots:
+
   /** No descriptions */
   void slotEditTask();
   void slotDeleteTask();
   void slotSaveTask();
   void slotSaveAllTask();
-  //void slotSelectTask(QListViewItem *item);
-  void showTaskPopup(Q3ListViewItem *it, const QPoint &, int);
-  /**
-   * Called if the selection has changed.
-   */
-  void slotSelected(Q3ListViewItem *);
 
-signals: // Signals
+  //void slotSelectTask(QListViewItem *item);
+
+  void slotShowTaskMenu( QTreeWidgetItem *item, const QPoint &position );
+  /**
+   * Called if the selection has been changed.
+   */
+  void slotSelectionChanged( QTreeWidgetItem * item, int column );
+
+signals:
   /**
    * Send out whenever the user selects a flight, task, or flightgroup
    */
@@ -160,7 +173,7 @@ signals: // Signals
    */
   void openTask();
   /**
-   * indicate that a baseflightelement should be closed
+   * indicate that a base flight element should be closed
    */
   void closeTask();
   /**
@@ -190,14 +203,16 @@ signals: // Signals
 
 protected: // Protected methods
   /**
-   * Searches the objecttree for the node representing the baseflightelement
+   * Searches the object tree for the node representing the base flight element
    * given as an argument.
    * @returns a pointer to the QListViewItem if found, 0 otherwise.
    */
   Q3ListViewItem * findFlightElement(BaseFlightElement * bfe);
+
   /** No descriptions */
   void addTaskWindow(QWidget *parent);
-  void addPopupMenu();
+
+  void createMenu();
 };
 
 #endif
