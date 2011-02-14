@@ -126,6 +126,9 @@ bool Welt2000::filter( QString& path )
   QTextStream ins(&in);
   QTextStream outs;
 
+  ins.setCodec( "ISO 8859-15" );
+  outs.setCodec( "ISO 8859-15" );
+
   uint outLines = 0; // counter for written lines
 
   while( ! ins.atEnd() )

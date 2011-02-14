@@ -20,7 +20,8 @@ usage:
 	@echo "  clean        - cleans the build area"
 	@echo "  distclean    - cleans the build and release area"
 	
-all:	qmake resetdate
+all:	resetdate
+	qmake kflog.pro
 	make -f Makefile all
 
 .PHONY :	resetdate
@@ -36,7 +37,8 @@ install_test: all
 	
 clean:	qmake
 	make -f Makefile clean
-	
+
+# This clean is necessary to call, if a qmake project file has been modified!	
 distclean:	qmake
 	make -f Makefile distclean
 	rm -rf `pwd`/release
