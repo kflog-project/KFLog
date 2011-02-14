@@ -752,7 +752,7 @@ void WaypointTreeView::fillWaypoints()
           }
     }
 
-    QTreeWidgetItem *item = new QTreeWidgetItem( waypointTree );
+    QTreeWidgetItem *item = new QTreeWidgetItem;
 
     item->setText(colName, w->name);
     item->setText(colDesc, w->description);
