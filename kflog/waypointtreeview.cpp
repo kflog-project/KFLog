@@ -320,7 +320,7 @@ void WaypointTreeView::slotMove2Catalog( QAction* action )
       delete waypointTree->takeTopLevelItem( waypointTree->indexOfTopLevelItem(items.at(i)) );
     }
 
-  waypointTree->resizeColumns2Content();
+  waypointTree->slotResizeColumns2Content();
   currentWaypointCatalog->modified = true;
   waypointCatalogs.value( id )->modified = true;
   updateWpListItems();
@@ -640,7 +640,7 @@ void WaypointTreeView::slotDeleteWaypoints()
       delete waypointTree->takeTopLevelItem( waypointTree->indexOfTopLevelItem(items.at(i)) );
     }
 
-  waypointTree->resizeColumns2Content();
+  waypointTree->slotResizeColumns2Content();
   currentWaypointCatalog->modified = true;
   updateWpListItems();
   emit waypointCatalogChanged(currentWaypointCatalog);
@@ -806,7 +806,7 @@ void WaypointTreeView::fillWaypoints()
     waypointTree->addTopLevelItem( item );
   }
 
-  waypointTree->resizeColumns2Content();
+  waypointTree->slotResizeColumns2Content();
   waypointTree->sortByColumn(colName, Qt::AscendingOrder);
   updateWpListItems();
 

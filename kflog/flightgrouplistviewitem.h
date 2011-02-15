@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2008 by Constantijn Neeteson
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -15,51 +16,59 @@
 **
 ***********************************************************************/
 
-#ifndef FLIGHTGROUPLISTVIEWITEM_H
-#define FLIGHTGROUPLISTVIEWITEM_H
+/**
+  * \class FlightGroupListViewItem
+  *
+  * \author Constantijn Neeteson, Axel Pauli
+  *
+  * \brief List view item that contains a flight group
+  *
+  * This class represents a flight group in the object tree. It manages it's own
+  * children, all you need to do is invoke it with the
+  * @ref FlightGroupListViewItem(QTreeWidgetItem* parent, Flight* flight) constructor.
+  *
+  * \date 2003-2011
+  *
+  * \version $Id$
+  */
 
-#include <q3listview.h>
-#define FLIGHTGROUPLISTVIEWITEM_TYPEID 10002
+#ifndef FLIGHT_GROUP_LIST_VIEW_ITEM_H
+#define FLIGHT_GROUP_LIST_VIEW_ITEM_H
+
+#include <QTreeWidgetItem>
+
+#define FLIGHT_GROUP_LIST_VIEW_ITEM_TYPEID 10002
+
 class FlightGroup;
 class Flight;
 
-/**
-  * @short Listview item that contains a flightGroup
-  * @author Constantijn Neeteson
-  *
-  * This class represents a flight in the objecttree. It manages it's own
-  * childeren, all you need to do is invoke it with the
-  * @ref FlightGroupListViewItem(QListViewItem * parent, FlightGroup * flightGroup) constructor.
-  */
-
-class FlightGroupListViewItem : public Q3ListViewItem  {
-public:
+class FlightGroupListViewItem : public QTreeWidgetItem
+{
+ public:
   /**
    * Constructor.
-   * @param parent Reference to parent @ref QListViewItem
+   * @param parent Reference to parent @ref QTreeWidgetItem
    * @param flight Reference to @ref FlightGroup object to display
    */
-  FlightGroupListViewItem(Q3ListViewItem * parent, FlightGroup * flightGroup);
+  FlightGroupListViewItem(QTreeWidgetItem* parent, FlightGroup* flightGroup);
   /**
    * Destructor
    */
-  ~FlightGroupListViewItem();
+  virtual ~FlightGroupListViewItem();
   /**
-   * Contains reference to the @ref FlightGroup this @ref QListViewItem is representing
+   * Contains reference to the @ref FlightGroup this @ref QTreeWidgetItem
+   * is representing.
    */
-  FlightGroup * flightGroup;
+  FlightGroup* flightGroup;
   /**
-   * Called to make the item update itself, for example because the flight was optimized.
+   * Called to make the item update itself, for example because the flight
+   * group was optimized.
    */
   void update();
-  /**
-   * @returns an identifier with the value FLIGHTGROUPLISTVIEWITEM_TYPEID for runtime typechecking
-   */
-  inline virtual int rtti() const{return FLIGHTGROUPLISTVIEWITEM_TYPEID;};
 
-protected: // Protected methods
+protected:
   /**
-   * Creates the childnodes for this flightnode.
+   * Creates the child nodes for this flight group node.
    */
   void createChildren();
 };

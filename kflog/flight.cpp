@@ -14,7 +14,7 @@
 **                :  2008, 2009 Improvements by Constantijn Neeteson
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -101,8 +101,8 @@ Flight::Flight(const QString& fName, const QString& recID, const QList<FlightPoi
   __flightState();
 
   // size and clear animation pixbuffer
-  pixAnimate.resize(32,32);
-  pixAnimate.fill(Qt::white);
+  pixAnimate = QPixmap(32,32);
+  pixAnimate.fill(Qt::transparent);
 
   // Die Liste könnte doch eigentlich permanent gespeichert werden ...
   header.append(pilotName);
@@ -119,7 +119,8 @@ Flight::Flight(const QString& fName, const QString& recID, const QList<FlightPoi
 
 Flight::~Flight()
 {
-
+  qDebug() << "~Flight()";
+  qDeleteAll( route );
 }
 
 void Flight::__moveOptimizePoint(unsigned int idList[], double taskValue[],
@@ -140,13 +141,13 @@ void Flight::__setOptimizeRange(unsigned int start[], unsigned int stop[],
    * Die benutzten Abschnitte müssen komplett innerhalb des Fluges liegen.
    * Daher werden sie hier ggf. verschoben.
    */
-  start[0] = std::max(idList[id], step) - step;
+  start[0] = qMax(idList[id], step) - step;
   start[1] = idList[id + 1] - step;
-  start[2] = std::min((int)(idList[id + 2] + step), route.count()) - ( 2 * step );
+  start[2] = qMin((int)(idList[id + 2] + step), route.count()) - ( 2 * step );
 
   stop[0] = start[0] + ( 2 * step );
   stop[1] = start[1] + ( 2 * step );
-  stop[2] = std::min((int)(start[2] + ( 2 * step )), route.count() - 1);
+  stop[2] = qMin((int)(start[2] + ( 2 * step )), route.count() - 1);
 }
 
 double Flight::__calculateOptimizePoints(FlightPoint* fp1,
@@ -268,7 +269,7 @@ void Flight::__calculateBasicInformation()
     else if(n==(points-1))
     {
       route.at(n)->dH = route.at(n)->height - route.at(n-1)->height;
-      route.at(n)->dT = std::max( (route.at(n)->time - route.at(n-1)->time), time_t(1));
+      route.at(n)->dT = qMax( (route.at(n)->time - route.at(n-1)->time), time_t(1));
       route.at(n)->dS = (int)(dist(route.at(n)->origP.lat(), route.at(n)->origP.lon(), route.at(n-1)->origP.lat(), route.at(n-1)->origP.lon()) * 1000.0);
 
       route.at(n)->bearing  = getBearing(*route.at(n-1), *route.at(n));
@@ -278,7 +279,7 @@ void Flight::__calculateBasicInformation()
     else
     {
       route.at(n)->dH = route.at(n)->height - route.at(n-1)->height;
-      route.at(n)->dT = std::max( (route.at(n)->time - route.at(n-1)->time), time_t(1));
+      route.at(n)->dT = qMax( (route.at(n)->time - route.at(n-1)->time), time_t(1));
       route.at(n)->dS = (int)(dist(route.at(n)->origP.lat(), route.at(n)->origP.lon(), route.at(n-1)->origP.lat(), route.at(n-1)->origP.lon()) * 1000.0);
 
       prevBearing = getBearing(*route.at(n-1), *route.at(n));
@@ -329,19 +330,19 @@ unsigned int Flight::__calculateBestTask(unsigned int start[],
   double temp = 0;
   FlightPoint *pointA, *pointB, *pointC;
 
-  for(int loopA = start[0]; loopA <= std::min((int)stop[0], route.count() - 1); loopA += step)
+  for(int loopA = start[0]; loopA <= qMin((int)stop[0], route.count() - 1); loopA += step)
     {
       pointA = route.at(loopA);
 
       if(isTotal) start[1] = loopA + step;
 
-      for(int loopB = start[1]; loopB <= std::min((int)stop[1], route.count() - 1); loopB += step)
+      for(int loopB = start[1]; loopB <= qMin((int)stop[1], route.count() - 1); loopB += step)
         {
           pointB = route.at(loopB);
 
           if(isTotal) start[2] = loopB + step;
 
-          for(int loopC = start[2]; loopC <= std::min((int)stop[2], route.count() - 1); loopC += step)
+          for(int loopC = start[2]; loopC <= qMin((int)stop[2], route.count() - 1); loopC += step)
             {
               pointC = route.at(loopC);
               temp = __calculateOptimizePoints(pointA, pointB, pointC);
@@ -427,10 +428,10 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
 
       curPointB = glMapMatrix->print(pointB->projP);
 
-      bBoxFlight.setLeft(std::min(curPointB.x(), bBoxFlight.left()));
-      bBoxFlight.setTop(std::max(curPointB.y(), bBoxFlight.top()));
-      bBoxFlight.setRight(std::max(curPointB.x(), bBoxFlight.right()));
-      bBoxFlight.setBottom(std::min(curPointB.y(), bBoxFlight.bottom()));
+      bBoxFlight.setLeft(qMin(curPointB.x(), bBoxFlight.left()));
+      bBoxFlight.setTop(qMax(curPointB.y(), bBoxFlight.top()));
+      bBoxFlight.setRight(qMax(curPointB.x(), bBoxFlight.right()));
+      bBoxFlight.setBottom(qMin(curPointB.y(), bBoxFlight.bottom()));
 
       QPen drawP = glConfig->getDrawPen(pointB, vario_min, vario_max, altitude_max, speed_max);
       drawP.setCapStyle(Qt::SquareCap);
@@ -444,7 +445,12 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
 
 bool Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
-  if(!__isVisible()) return false;
+  qDebug() << "Flight::drawMapElement";
+
+  if(!__isVisible())
+    {
+      return false;
+    }
 
   FlightPoint* pointA;
   FlightPoint* pointB;
@@ -460,7 +466,11 @@ bool Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   // Flugweg
 
   unsigned int delta = 1;
-  if(!glMapMatrix->isSwitchScale())  delta = 8;
+
+  if(!glMapMatrix->isSwitchScale())
+    {
+      delta = 8;
+    }
 
   curPointA = glMapMatrix->map(route.at(0)->projP);
   bBoxFlight.setLeft(curPointA.x());
@@ -482,6 +492,7 @@ bool Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
     {
       pointA = route.at(n - delta);
       pointB = route.at(n);
+
       if(n + delta < nStop)
           pointC = route.at(n + delta);
       else
@@ -489,32 +500,28 @@ bool Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
       curPointB = glMapMatrix->map(pointB->projP);
 
-      bBoxFlight.setLeft(std::min(curPointB.x(), bBoxFlight.left()));
-      bBoxFlight.setTop(std::max(curPointB.y(), bBoxFlight.top()));
-      bBoxFlight.setRight(std::max(curPointB.x(), bBoxFlight.right()));
-      bBoxFlight.setBottom(std::min(curPointB.y(), bBoxFlight.bottom()));
+      bBoxFlight.setLeft(qMin(curPointB.x(), bBoxFlight.left()));
+      bBoxFlight.setTop(qMax(curPointB.y(), bBoxFlight.top()));
+      bBoxFlight.setRight(qMax(curPointB.x(), bBoxFlight.right()));
+      bBoxFlight.setBottom(qMin(curPointB.y(), bBoxFlight.bottom()));
 
       QPen drawP = glConfig->getDrawPen(pointB, vario_min, vario_max, altitude_max, speed_max);
       drawP.setCapStyle(Qt::SquareCap);
       targetPainter->setPen(drawP);
-
-      maskPainter->setPen(QPen(Qt::color1, drawP.width(),
-          Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
-
       targetPainter->drawLine(curPointA, curPointB);
-      maskPainter->drawLine(curPointA, curPointB);
 
       /* tries to find the elevation of the surface under the point */
       // send a signal with the curPointA, and the index of the point [ n * delta - (delta - 1) ] */
-
       curPointA = curPointB;
     }
 
   return true;
 }
 
-
-QString Flight::getID() const { return gliderID; }
+QString Flight::getID() const
+{
+  return gliderID;
+}
 
 QString Flight::getTaskTypeString(bool isOrig) const
 {
@@ -601,7 +608,7 @@ QStringList Flight::getFlightValues(unsigned int start, unsigned int end)
   float s_height_pos = 0, s_height_neg = 0;
 
   //  noch abchecken, dass end <= fluglänge
-  end = std::min(route.count() - 1, (int)end);
+  end = qMin(route.count() - 1, (int)end);
 
   for(unsigned int n = start; n < end; n++)
     {
@@ -790,7 +797,7 @@ QList<statePoint*> Flight::getFlightStates(unsigned int start, unsigned int end)
   QList<statePoint*> state_list;
   statePoint state_info;
 
-  end = std::min(route.count() - 1, (int)end);
+  end = qMin(route.count() - 1, (int)end);
 
   for(unsigned int n = start; n < end; n++)
   {
@@ -850,12 +857,12 @@ QString Flight::getDistance(bool isOrig)
       return optimizedTask.getTotalDistanceString();
 }
 
-FlightTask Flight::getTask(bool isOrig) const
+FlightTask* Flight::getTask(bool isOrig)
 {
   if(isOrig || !optimized)
-      return origTask;
+      return &origTask;
   else
-      return optimizedTask;
+      return &optimizedTask;
 }
 
 QString Flight::getTaskDistance(bool isOrig)
@@ -1124,7 +1131,7 @@ bool Flight::optimizeTask()
   for(unsigned int loop = 0; loop < NUM_TASKS_POINTS; loop++)
       idTempList[loop] = idList[loop];
 
-  unsigned int stepB = std::max((int)step / 6, 4);
+  unsigned int stepB = qMax((int)step / 6, 4);
 
   for(unsigned int loop = 0; loop < NUM_TASKS; loop++)
     {

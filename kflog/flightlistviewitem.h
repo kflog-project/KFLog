@@ -16,6 +16,22 @@
 **
 ***********************************************************************/
 
+/**
+  * \class FlightListViewItem
+  *
+  * \author André Somers, Axel Pauli
+  *
+  * \brief List view item that contains a flight
+  *
+  * This class represents a flight in the object tree. It manages it's own
+  * children, all you need to do is invoke it with the
+  * @ref FlightListViewItem(QTreeWidgetItem* parent, Flight* flight) constructor.
+  *
+  * \date 2003-2011
+  *
+  * \version $Id$
+  */
+
 #ifndef FLIGHT_LIST_VIEW_ITEM_H
 #define FLIGHT_LIST_VIEW_ITEM_H
 
@@ -25,30 +41,21 @@
 
 class Flight;
 
-/**
-  * @short Listview item that contains a flight
-  * @author André Somers
-  *
-  * This class represents a flight in the object tree. It manages it's own
-  * children, all you need to do is invoke it with the
-  * @ref QFlightListViewItem(QListViewItem * parent, Flight * flight) constructor.
-  */
-
 class FlightListViewItem : public QTreeWidgetItem
 {
  public:
   /**
    * Constructor.
-   * @param parent Reference to parent @ref QListViewItem
+   * @param parent Reference to parent @ref QTreeWidgetItem
    * @param flight Reference to @ref Flight object to display
    */
   FlightListViewItem( QTreeWidgetItem* parent, Flight* flight);
   /**
    * Destructor
    */
-  ~FlightListViewItem();
+  virtual ~FlightListViewItem();
   /**
-   * Contains reference to the @ref Flight this @ref QListViewItem
+   * Contains reference to the @ref Flight this @ref QTreeWidgetItem
    * is representing
    */
   Flight* flight;
@@ -57,16 +64,8 @@ class FlightListViewItem : public QTreeWidgetItem
    * was optimized.
    */
   void update();
-  /**
-   * @returns an identifier with the value FLIGHT_LIST_VIEW_ITEM_TYPEID for
-   * runtime type checking
-   */
-  inline virtual int rtti() const
-    {
-      return FLIGHT_LIST_VIEW_ITEM_TYPEID;
-    };
 
- protected: // Protected methods
+ protected:
   /**
    * Creates the child nodes for this flight node.
    */

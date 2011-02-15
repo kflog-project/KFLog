@@ -345,6 +345,8 @@ bool FlightTask::isFAI(double d_wp, double d1, double d2, double d3)
 
 bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 {
+  qDebug() << "FlightTask::drawMapElement";
+
   double w1;
   struct faiAreaSector *sect;
   QPoint tempP;

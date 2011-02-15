@@ -205,8 +205,8 @@ time_t timeToDay(const int year, const int month, const int day, const char *mon
 
   bt.tm_sec = 0; /* Seconds.        [0-60] (1 leap second) */
   bt.tm_min = 0; /* Minutes.        [0-59] */
-  bt.tm_hour = 0; /* Hours.        [0-23] */
-  bt.tm_mday = day; /* Day.                [1-31] */
+  bt.tm_hour = 0; /* Hours.         [0-23] */
+  bt.tm_mday = day; /* Day.         [1-31] */
   if ( monabb )
   {
     mymonth = 1; // default to Jan

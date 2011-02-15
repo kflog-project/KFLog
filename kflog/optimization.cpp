@@ -87,7 +87,7 @@ void Optimization::setTimes(unsigned int start_int, unsigned int stop_int){
   }
   qWarning("Items in list:%d", original_route.count());
   // construct route
-  for ( unsigned int i=start_int; i<=stop_int; i++)
+  for ( unsigned int i=start_int; i < stop_int; i++)
     route.append(original_route.at(i));
   qWarning("Number of points for optimization:%d", route.count());
 }
@@ -109,7 +109,7 @@ void Optimization::run(){
   unsigned int index;
   double wLeg;
   FlightPoint **rp;
-  
+
   n=route.count()+1;
   qWarning("Number of points to optimize: %d", n);
   if(progress){
@@ -117,12 +117,12 @@ void Optimization::run(){
     progress->setRange(0, 7*n);
     progress->setValue(0);
   }
-  
+
   // allocate memory
   L=(double *) malloc((n+1)*(LEGS+1)*sizeof(double));
   w=(unsigned int *) malloc((n+1)*(LEGS+1)*sizeof(unsigned int));
   rp = (FlightPoint **) malloc(route.count() * sizeof(FlightPoint *));
-  
+
   Q_CHECK_PTR(L);
   Q_CHECK_PTR(w);
   Q_CHECK_PTR(rp);
@@ -130,15 +130,15 @@ void Optimization::run(){
   for(int i=0;i<=n-1;i++){
     L[i+0*n]=0;
   }
-  
+
   for(int i = 0; i < route.count(); i++){
     rp[i] = route.at(i);
   }
-  
+
   for(int k=1;k<=LEGS;k++){
     ii = (k-1)*n;
     wLeg = weight(k);
-    
+
     for(int i=0;i<n-1;i++){
       qApp->processEvents();
       if (stopit){
@@ -154,7 +154,7 @@ void Optimization::run(){
       if(progress) {
         progress->setValue(index);
       }
-      
+
       L[index]=0;
       c=0;
       for(int j=0;j<i;j++){

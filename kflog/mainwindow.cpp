@@ -19,7 +19,6 @@
 #include <dlfcn.h>
 
 #include <QtGui>
-#include <Qt3Support>
 
 #include "aboutwidget.h"
 #include "airfield.h"
@@ -76,8 +75,8 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   QMainWindow( parent, flags )
 {
   qDebug() << "MainWindow()";
-  qDebug() << "GlobalStrut=" << QApplication::globalStrut();
 
+  setObjectName( "MainWindow" );
   QApplication::setStyle( "plastique" );
 
   // Initialize units to be used. Use the stored values from the configuration.
@@ -410,10 +409,10 @@ void MainWindow::createMenuBar()
       action->setToolTip( datalist[i] );
       action->setText( QFileInfo( datalist[i]).fileName() );
       fileOpenRecentMenu->addAction( action );
-
-      connect( action, SIGNAL(triggered(QAction *)),
-               this, SLOT(slotOpenRecentFile(QAction *)) );
     }
+
+  connect( fileOpenRecentMenu, SIGNAL(triggered(QAction *)),
+           this, SLOT(slotOpenRecentFile(QAction *)) );
 
   fileMenu->addAction( fileCloseAction );
   fileMenu->addSeparator();
@@ -1146,40 +1145,51 @@ void MainWindow::slotModifyMenu()
 
 void MainWindow::slotOpenFile()
 {
-  Q3FileDialog* fd = new Q3FileDialog(this);
-  fd->setCaption(tr("Open flight"));
-  fd->setDir(flightDir);
+  /*
+   * Please note remark from Qt: The QFileDialog class in Qt 4 has been totally
+   * rewritten. It provides most of the functionality of the old QFileDialog
+   * class, but with a different API. Some functionality, such as the ability
+   * to preview files, is expected to be added in a later Qt 4 release.
+   *
+   * Therefore we fall back to the provided features of the Qt4 FileDialog
+   * without a preview.
+   */
+  slotSetStatusMsg(tr("Opening file..."));
 
-  QString filter;
-  filter.append(tr("All flight type files") +" (*.igc *.flightgear *.trk *.gdn)");
-  filter.append(tr("IGC") +" (*.igc)");
-  filter.append(tr("Garmin") +" (*.trk *.gdn)");
-  fd->setFilters(filter);
+  QFileDialog* fd = new QFileDialog( this );
+  fd->setWindowTitle( tr( "Open Flight" ) );
+  fd->setDirectory( flightDir );
+  fd->setFileMode( QFileDialog::ExistingFile );
 
-  IGCPreview* preview = new IGCPreview(fd);
-  fd->setContentsPreviewEnabled( true );
-  fd->setContentsPreview(preview, preview);
-  fd->setPreviewMode( Q3FileDialog::Contents );
+  QStringList filter;
+  filter.append(tr("All types") + " (*.igc *.flightgear *.trk *.gdn)");
+  filter.append(tr("IGC") + " (*.igc)");
+  filter.append(tr("Garmin") + " (*.trk *.gdn)");
 
-  if(fd->exec()==QDialog::Accepted)
-  {
-    QString fName = fd->selectedFile();
-    Q3Url fUrl = Q3Url(fName);
-    flightDir = fd->dirPath();
+  fd->setFilters( filter );
 
-    if(!fUrl.isValid())
-      return;
+  if( fd->exec() == QDialog::Accepted )
+    {
+      QStringList fNames = fd->selectedFiles();
 
-    if(fUrl.protocol()!="file")
-      return;
+      if( fNames.size() == 0 )
+        {
+          return;
+        }
 
-    FlightLoader flightLoader;
-    QFile file (fName);
-    if(flightLoader.openFlight(file))
-      slotSetCurrentFile(fName);
-  }
+      QFile file( fNames[0] );
 
-  slotSetStatusMsg(tr("Ready."));
+      flightDir = fd->directory().canonicalPath();
+
+      FlightLoader flightLoader;
+
+      if( flightLoader.openFlight(file) )
+        {
+          slotSetCurrentFile( fNames[0] );
+        }
+    }
+
+  slotSetStatusMsg( tr( "Ready." ) );
 }
 
 void MainWindow::slotOpenFile( const QUrl& url )
@@ -1465,9 +1475,6 @@ void MainWindow::slotSetCurrentFile( const QString &fileName )
       action->setToolTip( newFiles[i] );
       action->setText( QFileInfo( newFiles[i]).fileName() );
       fileOpenRecentMenu->addAction( action );
-
-      connect( action, SIGNAL(triggered(QAction *)),
-               this, SLOT(slotOpenRecentFile(QAction *)) );
     }
 }
 

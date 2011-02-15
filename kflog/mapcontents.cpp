@@ -94,7 +94,8 @@ MapContents::MapContents( QObject* object ) :
   currentFlight(0),
   askUser(true),
   loadWelt2000(true),
-  downloadManger(0)
+  downloadManger(0),
+  currentFlightListIndex(-1)
 {
   qDebug() << "MapContents()";
 
@@ -130,28 +131,41 @@ void MapContents::closeFlight()
   /*
    * close current flight
    */
-  if(currentFlight != 0)
+  if( currentFlight != 0 )
     {
-      emit closingFlight(currentFlight);
-      for (int i = 0; i < flightList.count(); i++)
-        {
-          FlightGroup *fg = (FlightGroup *) flightList.at(i);
-          if(fg->getObjectType() == BaseMapElement::FlightGroup)
-              fg->removeFlight(currentFlight);
+      emit closingFlight( currentFlight );
 
+      for( int i = 0; i < flightList.count(); i++ )
+        {
+          FlightGroup *fg = (FlightGroup *) flightList.at( i );
+
+          if( fg->getObjectType() == BaseMapElement::FlightGroup )
+            {
+              fg->removeFlight( currentFlight );
+            }
         }
 
-      int i = flightList.indexOf(currentFlight);
-      if(i != -1)
-        delete flightList.takeAt(i);
+      int i = flightList.indexOf( currentFlight );
 
-      currentFlight = flightList.last();
-      currentFlightListIndex = flightList.indexOf(currentFlight);
+      if( i != -1 )
+        {
+          delete flightList.takeAt( i );
+        }
+
+      if( flightList.size() != 0 )
+        {
+          currentFlight = flightList.last();
+          currentFlightListIndex = flightList.indexOf( currentFlight );
+        }
+      else
+        {
+          currentFlight = 0;
+          currentFlightListIndex = -1;
+        }
 
       emit currentFlightChanged();
     }
 }
-
 
 /**
  * Try to download a missing ground/terrain/map file.

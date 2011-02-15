@@ -9,7 +9,7 @@
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -59,8 +59,6 @@ EvaluationView::EvaluationView(Q3ScrollView* parent, EvaluationDialog* dialog)
 
   preparePointer();
   connect(evalDialog, SIGNAL(showFlightPoint(const FlightPoint*)), this, SLOT(slotShowPointer(const FlightPoint*)));
-
-
 }
 
 /*
@@ -112,6 +110,7 @@ void EvaluationView::paintEvent(QPaintEvent*)
     {
       bitBlt(pixBuffer, scrollFrame->contentsX(),0, pixBufferYAxis);
     }
+
   bitBlt(this, 0, 0, pixBuffer);
 }
 
@@ -202,7 +201,7 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
 
     __draw();
 
-    paintEvent(0);
+    update();
   }
 }
 
@@ -567,7 +566,7 @@ void EvaluationView::drawCurve(bool arg_vario, bool arg_speed,
 
     __draw();
 
-    paintEvent(0);
+    update();
   }
   else {
     pixBufferKurve->fill(Qt::white);
@@ -854,7 +853,7 @@ void EvaluationView::drawPointer(const FlightPoint * p){
   }
   scrollFrame->ensureVisible(left,top);
 
-  if (cx==scrollFrame->contentsX()) paintEvent(0); // if there was no scroll, we need to manually trigger a paintevent.
+  if (cx==scrollFrame->contentsX()) update();; // if there was no scroll, we need to manually trigger a paintevent.
 }
 
 /** Removes a drawn pointer */
@@ -866,7 +865,7 @@ void EvaluationView::removePointer(bool forceRedraw) {
   buffer.drawPixmap(QRect(lastPointerPosition, pixPointerBuffer->size()), *pixPointerBuffer, pixPointerBuffer->rect());
 //  bitBlt(pixBufferKurve, lastPointerPosition, pixPointerBuffer, pixPointerBuffer->rect(), Qt::CopyROP);
   lastPointerPosition=QPoint(-100,-100);   // set to invalid point
-  if (forceRedraw) paintEvent(0);          // force a redraw if asked to (we only need to do that if we are not going to draw a new pointer)
+  if (forceRedraw) update();;          // force a redraw if asked to (we only need to do that if we are not going to draw a new pointer)
 }
 
 /** Prepares the needed buffers for the pointer */

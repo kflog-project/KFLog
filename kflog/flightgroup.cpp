@@ -42,10 +42,12 @@ QList<Waypoint*> FlightGroup::getWPList()
 bool FlightGroup::drawMapElement(QPainter* targetP, QPainter* maskP)
 {
   Flight::Flight *f;
-  for(int i = 0; i < flightList.count(); i++) {
-    f = flightList.at(i);
-    f->drawMapElement(targetP, maskP);
-  }
+
+  for( int i = 0; i < flightList.count(); i++ )
+    {
+      f = flightList.at( i );
+      f->drawMapElement( targetP, maskP );
+    }
 
   return true;
 }
@@ -53,11 +55,14 @@ bool FlightGroup::drawMapElement(QPainter* targetP, QPainter* maskP)
 void FlightGroup::printMapElement(QPainter* targetP, bool isText)
 {
   Flight::Flight *f;
-  for(int i = 0; i < flightList.count(); i++) {
-    f = flightList.at(i);
-    f->printMapElement(targetP, isText);
-  }
+
+  for( int i = 0; i < flightList.count(); i++ )
+    {
+      f = flightList.at( i );
+      f->printMapElement( targetP, isText );
+    }
 }
+
 /** No descriptions */
 QList<Flight::Flight*> FlightGroup::getFlightList()
 {

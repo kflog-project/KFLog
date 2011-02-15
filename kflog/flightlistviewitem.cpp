@@ -26,7 +26,7 @@
 extern MainWindow *_mainWindow;
 
 FlightListViewItem::FlightListViewItem( QTreeWidgetItem* parent, Flight* flight) :
-  QTreeWidgetItem(parent),
+  QTreeWidgetItem( parent, FLIGHT_LIST_VIEW_ITEM_TYPEID ),
   flight(flight)
 {
   createChildren();
@@ -37,7 +37,8 @@ FlightListViewItem::~FlightListViewItem()
 }
 
 /**
- * Called to make the item update itself, for example because the flight was optimized.
+ * Called to make the item update itself, for example because the flight was
+ * optimized.
  */
 void FlightListViewItem::update()
 {
@@ -46,17 +47,15 @@ void FlightListViewItem::update()
      even just resetting the text for each child node is more work than just deleting them
      and then re-creating them. f*/
 
+  // first, delete all child nodes
+  if( childCount() )
+    {
+      QList<QTreeWidgetItem *> children = takeChildren();
+      qDeleteAll(children);
+    }
 
-  //first, delete all child nodes
-  Q3ListViewItem * itm = firstChild();
-  while (itm!=0) {
-    delete itm;
-    itm=firstChild();
-  }
-
-  //now, recreate them
+  // now, recreate them
   createChildren();
-
 }
 
 /** Creates the child nodes for this flight node. */
@@ -65,40 +64,52 @@ void FlightListViewItem::createChildren()
   setText( 0, QFileInfo(flight->getFileName()).fileName() );
   setText( 1, flight->getDate().toString(Qt::LocalDate) + ": " + flight->getPilot() );
 
-  QTreeWidgetItem* subItem = new QTreeWidgetItem( this, QObject::tr("Pilot"),
-                                                  flight->getPilot() );
+  QStringList sl = (QStringList() << QObject::tr("Pilot") << flight->getPilot() );
+  QTreeWidgetItem* subItem = new QTreeWidgetItem( sl );
   subItem->setFlags( Qt::ItemIsEnabled );
+  addChild( subItem );
 
-  subItem = new QTreeWidgetItem( this, QObject::tr("Date"),
-                                 flight->getDate().toString(Qt::LocalDate) );
+  sl = (QStringList() << QObject::tr("Date")
+                      << flight->getDate().toString(Qt::LocalDate) );
+  subItem = new QTreeWidgetItem( sl );
   subItem->setFlags( Qt::ItemIsEnabled );
+  addChild( subItem );
 
-  subItem = new QTreeWidgetItem( this, QObject::tr("Glider"),
-                                 flight->getType() + ", " + flight->getID());
+  sl = (QStringList() << QObject::tr("Glider")
+                      << flight->getType() + ", " + flight->getID() );
+  subItem = new QTreeWidgetItem( sl );
   subItem->setFlags( Qt::ItemIsEnabled );
+  addChild( subItem );
 
-  subItem =new QTreeWidgetItem( this, QObject::tr("Points"),
-                                flight->getPoints(true));
+  sl = (QStringList() << QObject::tr("Points")
+                      << flight->getPoints(true) );
+  subItem =new QTreeWidgetItem( sl );
   subItem->setFlags( Qt::ItemIsEnabled );
+  addChild( subItem );
 
   if( flight->isOptimized() )
     {
-      subItem = new QTreeWidgetItem( this, QObject::tr("Points (optimized)"),
-                                     flight->getPoints(false) );
+      sl = (QStringList() << QObject::tr("Points (optimized)")
+                          << flight->getPoints(false) );
+
+      subItem = new QTreeWidgetItem( sl );
       subItem->setFlags( Qt::ItemIsEnabled );
+      addChild( subItem );
     }
 
-  subItem = new QTreeWidgetItem( this, QObject::tr("Total distance"),
-                                 flight->getDistance(true) );
+  sl = (QStringList() << QObject::tr("Total distance")
+                      << flight->getDistance(true) );
+  subItem = new QTreeWidgetItem( sl );
   subItem->setFlags( Qt::ItemIsEnabled );
+  addChild( subItem );
 
-  subItem = new TaskListViewItem( this, &flight->getTask(true) );
+  subItem = new TaskListViewItem( this, flight->getTask(true), subItem );
   subItem->setIcon(0, _mainWindow->getPixmap("task_16.png") );
   subItem->setFlags( Qt::ItemIsEnabled );
 
   if( flight->isOptimized() )
     {
-      subItem = new TaskListViewItem( this, &flight->getTask(false) );
+      subItem = new TaskListViewItem( this, flight->getTask(false), subItem );
       subItem->setIcon(0, _mainWindow->getPixmap("task_16.png") );
       subItem->setFlags( Qt::ItemIsEnabled );
    }

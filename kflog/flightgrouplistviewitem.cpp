@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2008 by Constantijn Neeteson
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -20,52 +21,51 @@
 #include "flight.h"
 #include "flightgroup.h"
 
-FlightGroupListViewItem::FlightGroupListViewItem(Q3ListViewItem * parent, FlightGroup * flightGroup):Q3ListViewItem(parent){
-  this->flightGroup=flightGroup;
-
+FlightGroupListViewItem::FlightGroupListViewItem( QTreeWidgetItem* parent,
+                                                  FlightGroup* flightGroup ) :
+  QTreeWidgetItem( parent, FLIGHT_GROUP_LIST_VIEW_ITEM_TYPEID ),
+  flightGroup(flightGroup)
+{
   createChildren();
-
 }
 
-FlightGroupListViewItem::~FlightGroupListViewItem(){
+FlightGroupListViewItem::~FlightGroupListViewItem()
+{
 }
 
 /**
- * Called to make the item update itself, for example because the flight was optimized.
+ * Called to make the item update itself, for example because the flight was
+ * optimized.
  */
-void FlightGroupListViewItem::update(){
-  /* This funtion updates the flightnode after something has changed. It would be better
+void FlightGroupListViewItem::update()
+{
+  /* This function updates the flight node after something has changed. It would be better
      to check what was changed, and react accordingly. This is pretty complex though, and
-     even just resetting the text for each childnode is more work than just deleting them
+     even just resetting the text for each child node is more work than just deleting them
      and then re-creating them. f*/
 
+  // first, delete all child nodes
+  if( childCount() )
+    {
+      QList<QTreeWidgetItem *> children = takeChildren();
+      qDeleteAll(children);
+    }
 
-  //first, delete all childnodes
-  Q3ListViewItem * itm = firstChild();
-  while (itm!=0) {
-    delete itm;
-    itm=firstChild();
-  }
-
-  //now, recreate them
+  // now, recreate them
   createChildren();
-
 }
 
-/** Creates the childnodes for this flightnode. */
-void FlightGroupListViewItem::createChildren(){
-  QString tmp;
-
+/** Creates the child nodes for this flight group node. */
+void FlightGroupListViewItem::createChildren()
+{
   QList<Flight::Flight*> flights = flightGroup->getFlightList();
 
-  setText(0,flightGroup->getFileName());
-  setText(1,tmp.sprintf("%d ", flights.count())+QObject::tr("flights"));
-  //setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup, KIcon::SizeSmall));
+  setText( 0,flightGroup->getFileName() );
+  setText( 1, QString::number(flights.count()) + QObject::tr("flights") );
 
-  Q3ListViewItem * subItem;
-  for(int i=0;i<flights.count();i++)
-  {
-    subItem = new FlightListViewItem((Q3ListViewItem*)this,flights.at(i));
-    subItem->setSelectable(false);
-  }
+  for( int i = 0; i < flights.count(); i++ )
+    {
+      QTreeWidgetItem* subItem = new FlightListViewItem( this, flights.at( i ) );
+      subItem->setFlags( Qt::ItemIsEnabled );
+    }
 }

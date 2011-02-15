@@ -6,57 +6,68 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by André Somers
+**   Copyright (c):  2003 by AndrÃ© Somers
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
+/**
+  * \class TaskListViewItem
+  *
+  * \author AndrÃ© Somers, Axel Pauli
+  *
+  * \brief List view item that contains a task.
+  *
+  * This class represents a task in the object tree. It manages it's own
+  * children, all you need to do is invoke it with the
+  * @ref TaskListViewItem(QTreeWidgetItem* parent, Flight* flight) constructor.
+  *
+  * \date 2003-2011
+  *
+  * \version $Id$
+  */
 
-#ifndef TASKLISTVIEWITEM_H
-#define TASKLISTVIEWITEM_H
+#ifndef TASK_LIST_VIEW_ITEM_H
+#define TASK_LIST_VIEW_ITEM_H
 
-#include <q3listview.h>
-#define TASKLISTVIEWITEM_TYPEID 10003
+#include <QTreeWidgetItem>
+
+#define TASK_LIST_VIEW_ITEM_TYPEID 10003
 
 class FlightTask;
 
-/**Represents a Task in a listview.
-  *@author André Somers
-  */
-
-class TaskListViewItem : public Q3ListViewItem  {
-public: 
+class TaskListViewItem : public QTreeWidgetItem
+{
+ public:
   /**
    * Constructor.
    * @param parent Reference to parent @ref QListViewItem
    * @param task Reference to @ref FlightTask object to display
-   * @param insertAfter Reference to @ref QListViewItem after which this item should
+   * @param insertAfter Reference to @ref QTreeWidgetItem after which this item should
    *                    be inserted
    */
-  TaskListViewItem(Q3ListViewItem * parent, FlightTask * task, Q3ListViewItem* insertAfter=0);
+  TaskListViewItem(QTreeWidgetItem* parent, FlightTask* task, QTreeWidgetItem* insertAfter=0);
   /**
    * Destructor
    */
-  ~TaskListViewItem();
+  virtual ~TaskListViewItem();
   /**
-   * Contains reference to the @ref FlightTask this @ref QListViewItem is representing
+   * Contains reference to the @ref FlightTask this @ref QTreeWidgetItem is representing
    */
-  FlightTask * task;
-  /**
-   * @returns an identifier with the value TASKLISTVIEWITEM_TYPEID for runtime typechecking
-   */
-  inline virtual int rtti() const{return TASKLISTVIEWITEM_TYPEID;};
+  FlightTask* task;
+
   /**
    * Called to make the item update itself.
    */
   void update();
 
-protected: // Protected methods
+protected:
   /**
-   * Creates the childnodes for this flightnode.
+   * Creates the child nodes for this flight node.
    */
   void createChildren();
 };

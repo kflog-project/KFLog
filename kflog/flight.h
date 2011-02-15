@@ -97,7 +97,7 @@ class Flight : public BaseFlightElement
 	   */
     QString getDistance(bool isOrig = false);
     /** */
-    FlightTask getTask(bool isOrig = false) const;
+    FlightTask* getTask(bool isOrig = false);
 	  /**
 	   * @param  isOrig  "true", if the original-task should be used.
 	   *                 The default is "false". If the flight has not been

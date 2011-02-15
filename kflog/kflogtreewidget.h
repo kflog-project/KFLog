@@ -72,11 +72,6 @@ public:
    */
   void addRowSpacing( const int pixels );
 
-  /**
-   * Resizes all columns in the tree view to their content.
-   */
-  void resizeColumns2Content();
-
 protected:
 
   /**
@@ -90,6 +85,11 @@ public slots:
    * Called to popup the column show menu.
    */
   void slotShowColMenu();
+
+  /**
+   * Resizes all columns in the tree view to their content.
+   */
+  void slotResizeColumns2Content();
 
 private slots:
 

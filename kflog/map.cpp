@@ -1322,19 +1322,20 @@ void Map::__drawAirspaces()
 
 void Map::__drawFlight()
 {
+  qDebug() << "Map::__drawFlight()";
+
   QPainter flightP(&pixFlight);
   QPainter flightMaskP(&bitFlightMask);
 
   extern MapContents *_globalMapContents;
 
   _globalMapContents->drawList(&flightP, &flightMaskP, MapContents::FlightList);
-
-  flightP.end();
-  flightMaskP.end();
 }
 
 void Map::__drawPlannedTask(bool solid)
 {
+  qDebug() << "Map::__drawPlannedTask";
+
   extern MapContents *_globalMapContents;
 
   QPainter planP;
@@ -1552,7 +1553,9 @@ void Map::slotSavePixmap()
 
 void Map::slotRedrawFlight()
 {
-  pixFlight.fill(Qt::white);
+  qDebug() << "Map::slotRedrawFlight()";
+
+  pixFlight.fill(Qt::transparent);
   bitFlightMask.fill(Qt::color0);
   __drawFlight();
   __showLayer();
@@ -2332,6 +2335,7 @@ void Map::slotAppendWaypoint2Task(Waypoint *p)
   extern MapMatrix *_globalMapMatrix;
 
   FlightTask *f = (FlightTask *)_globalMapContents->getFlight();
+
   if(f && f->getObjectType() == BaseMapElement::Task && planning)
     {
       QList<Waypoint*> taskPointList = f->getWPList();

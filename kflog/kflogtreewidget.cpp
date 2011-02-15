@@ -122,7 +122,7 @@ void KFLogTreeWidget::mousePressEvent( QMouseEvent* event )
   QTreeWidget::mousePressEvent( event );
 }
 
-void KFLogTreeWidget::resizeColumns2Content()
+void KFLogTreeWidget::slotResizeColumns2Content()
 {
   for( int i = 0 ; i < columnCount(); i++ )
     {
@@ -193,13 +193,13 @@ void KFLogTreeWidget::slotMenuActionTriggered( QAction* action )
           actions.at(i)->setChecked( true );
         }
 
-      resizeColumns2Content();
+      slotResizeColumns2Content();
       return;
     }
 
   // Only one column has to handle.
   setColumnHidden( columnIdx, ( action->isChecked() == false ) );
-  resizeColumns2Content();
+  slotResizeColumns2Content();
 }
 
 void KFLogTreeWidget::slotShowColMenu()

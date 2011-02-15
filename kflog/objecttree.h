@@ -88,7 +88,7 @@ private:
   /**
    * Contains a reference to the root node for flight groups
    */
-  //QListViewItem * FlightGroupRoot;
+  //QTreeWidgetItem* FlightGroupRoot;
   /**
    * Contains a reference to the root node for tasks
    */
@@ -161,7 +161,7 @@ private slots:
 
 signals:
   /**
-   * Send out whenever the user selects a flight, task, or flightgroup
+   * Send out whenever the user selects a flight, task, or flight group
    */
   void selectedFlight(BaseFlightElement *);
   /**
@@ -201,17 +201,20 @@ signals:
    */
   void optimizeFlightOLC();
 
-protected: // Protected methods
+protected:
+
   /**
    * Searches the object tree for the node representing the base flight element
    * given as an argument.
-   * @returns a pointer to the QListViewItem if found, 0 otherwise.
+   *
+   * @returns a pointer to the QTreeWidgetItem if found, otherwise 0.
    */
-  Q3ListViewItem * findFlightElement(BaseFlightElement * bfe);
+  QTreeWidgetItem* findFlightElement( BaseFlightElement* bfe );
 
   /** No descriptions */
   void addTaskWindow(QWidget *parent);
 
+  /** Creates the popup menu provided by this widget. */
   void createMenu();
 };
 

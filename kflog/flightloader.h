@@ -3,19 +3,21 @@
 **   flightloader.h
 **
 **   This file is part of KFLog4.
-**   This class reads the flight files into the memory.
+**
+**   This class reads a flight file into the memory.
 **
 ************************************************************************
 **
 **   Copyright (c):  2008 by Constantijn Neeteson
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifndef FLIGHTLOADER_H
-#define FLIGHTLOADER_H
+#ifndef FLIGHT_LOADER_H
+#define FLIGHT_LOADER_H
 
 #include <QFile>
 #include <QFileInfo>
@@ -48,13 +50,12 @@ class FlightLoader
   private:
 
   // Short structure to handle the optional entries in an igc file
-  class bOption {
+  class bOption
+  {
     public:
       int begin, length;
       char mnemonic[4];
   };
-
-
 };
 
 #endif

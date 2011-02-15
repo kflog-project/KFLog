@@ -1,5 +1,15 @@
 $Id$
 
+2011-02-15 Axel Pauli <axel@kflog.org>
+  * Class FlightLoader fully ported to Qt4. The code of that class is a
+    mixture of QSting methods and trival c functions. :-((
+  * Class ObjectTree together with its list view items ported to Qt4.
+    If the last opened flight was closed, a core dump occurred. It was caused
+    by MapContents::closeFlight(), where a zero check was missing. I fixed
+    that.
+  * Bugfix in Optimization::setTimes method. Index out of range found, caused
+    a core dump. I fixed that.
+
 2011-02-13 Axel Pauli <axel@kflog.org>
   * File wp.h renamed to flightpoint.h. It contains a class FlightPoint and
     nothing with waypoint. Class Map fully ported to Qt4.

@@ -6,17 +6,17 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by Andr� Somers
+**   Copyright (c):  2003 by André Somers
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
 #include <QtGui>
-#include <Qt3Support>
 
 #include "tasklistviewitem.h"
 #include "flighttask.h"
@@ -25,10 +25,12 @@
 
 extern MainWindow *_mainWindow;
 
-TaskListViewItem::TaskListViewItem(Q3ListViewItem * parent,
-                                   FlightTask * task,
-                                   Q3ListViewItem* insertAfter):Q3ListViewItem(parent, insertAfter){
-  this->task=task;
+TaskListViewItem::TaskListViewItem( QTreeWidgetItem* parent,
+                                    FlightTask* task,
+                                    QTreeWidgetItem* insertAfter ) :
+  QTreeWidgetItem( parent, insertAfter, TASK_LIST_VIEW_ITEM_TYPEID ),
+  task(task)
+{
   createChildren();
 }
 
@@ -36,59 +38,89 @@ TaskListViewItem::~TaskListViewItem(){
 }
 
 /**
- * Called to make the item update itself, for example because the flight was optimized.
+ * Called to make the item update itself, for example because the flight was
+ * optimized.
  */
-void TaskListViewItem::update(){
-  /* This funtion updates the flightnode after something has changed. It would be better
+void TaskListViewItem::update()
+{
+  /* This function updates the task node after something has changed. It would be better
      to check what was changed, and react accordingly. This is pretty complex though, and
-     even just resetting the text for each childnode is more work than just deleting them
+     even just resetting the text for each child node is more work than just deleting them
      and then re-creating them. f*/
 
+  // first, delete all child nodes
+  if( childCount() )
+    {
+      QList<QTreeWidgetItem *> children = takeChildren();
+      qDeleteAll(children);
+    }
 
-  //first, delete all childnodes
-  Q3ListViewItem * itm = firstChild();
-  while (itm!=0) {
-    delete itm;
-    itm=firstChild();
-  }
-
-  //now, recreate them
+  // now, recreate them
   createChildren();
-
 }
 
 /** This function populates the node with data from the task */
-void TaskListViewItem::createChildren(){
-  Q3Url url(task->getFileName());
+void TaskListViewItem::createChildren()
+{
   QString wpName;
   
-  setText(0,url.fileName());
-  setText(1,task->getPlanningTypeString());
-  //setPixmap(0, KGlobal::instance()->iconLoader()->loadIcon("igc", KIcon::NoGroup, KIcon::SizeSmall));
+  setText( 0, QFileInfo(task->getFileName()).fileName() );
+  setText( 1, task->getPlanningTypeString());
 
-  Q3ListViewItem * subItem=new Q3ListViewItem((Q3ListViewItem*)this,QObject::tr("Type"),task->getPlanningTypeString());
-  subItem->setSelectable(false);
-  subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Distance"),task->getTaskDistanceString());
-  subItem->setSelectable(false);
-  subItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Points"),task->getPointsString());
-  subItem->setSelectable(false);
+  QStringList sl = (QStringList() << QObject::tr("Type")
+                                  << task->getPlanningTypeString() );
 
-  if (!task->getWPList().isEmpty()) {
-    int wpCount=task->getWPList().count();
-    Q3ListViewItem * wpSubItem=new Q3ListViewItem((Q3ListViewItem*)this,subItem,QObject::tr("Waypoints"),QObject::tr("%1 waypoints in task").arg(wpCount));
-    wpSubItem->setSelectable(false);
-    wpSubItem->setPixmap(0, _mainWindow->getPixmap("waypoint_16.png"));
+  QTreeWidgetItem* subItem = new QTreeWidgetItem( this, sl );
+  subItem->setFlags( Qt::ItemIsEnabled );
 
-    for (int i=0;i<wpCount;i++) {
-      wpName=QObject::tr("Turnpoint");
-      if (i==0) wpName=QObject::tr("Takeoff");
-      if (i==1) wpName=QObject::tr("Start");
-      if (i==wpCount-2) wpName=QObject::tr("Finish");
-      if (i==wpCount-1) wpName=QObject::tr("Landing");
+  sl = (QStringList() << QObject::tr("Distance") << task->getTaskDistanceString() );
+  subItem = new QTreeWidgetItem( this, sl );
+  subItem->setFlags( Qt::ItemIsEnabled );
 
-      subItem=new Q3ListViewItem(wpSubItem,subItem,wpName,task->getWPList().at(i)->name);
-      subItem->setSelectable(false);
-      subItem->setPixmap(0, _mainWindow->getPixmap("centerwaypoint_16.png"));
+  sl = (QStringList() << QObject::tr("Points") << task->getPointsString() );
+  subItem = new QTreeWidgetItem( this, sl );
+  subItem->setFlags( Qt::ItemIsEnabled );
+
+  if( task->getWPList().isEmpty() )
+    {
+      return;
     }
-  }
+
+  int wpCount = task->getWPList().count();
+
+  sl = (QStringList() << QObject::tr("Waypoints")
+                      << QObject::tr("%1 waypoints in task").arg(wpCount) );
+  QTreeWidgetItem* wpSubItem = new QTreeWidgetItem( this, sl );
+  wpSubItem->setFlags( Qt::ItemIsEnabled );
+  wpSubItem->setIcon( 0, _mainWindow->getPixmap("waypoint_16.png") );
+
+  for( int i = 0; i < wpCount; i++ )
+    {
+      wpName = QObject::tr( "Turnpoint" );
+
+      if( i == 0 )
+        {
+          wpName = QObject::tr( "Takeoff" );
+        }
+
+      if( i == 1 )
+        {
+          wpName = QObject::tr( "Start" );
+        }
+
+      if( i == wpCount - 2 )
+        {
+          wpName = QObject::tr( "Finish" );
+        }
+
+      if( i == wpCount - 1 )
+        {
+          wpName = QObject::tr( "Landing" );
+        }
+
+      sl = (QStringList() << wpName << task->getWPList().at( i )->name );
+      subItem = new QTreeWidgetItem( wpSubItem, sl );
+      subItem->setFlags( Qt::ItemIsEnabled );
+      subItem->setIcon( 0, _mainWindow->getPixmap( "centerwaypoint_16.png" ) );
+    }
 }

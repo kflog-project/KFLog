@@ -207,7 +207,7 @@ void DataView::setFlightData()
   QString idString;
   QList<Flight*> fl;
   QStringList h;
-  FlightTask fTask("");
+  FlightTask* fTask;
   QFileInfo fi;
 
   slotClearView();
@@ -218,7 +218,7 @@ void DataView::setFlightData()
         {
           case BaseMapElement::Flight:
             h = ((Flight*)e)->getHeader();
-            fTask = ((Flight*)e)->getTask();
+            fTask = ((Flight*) e)->getTask();
 
             //
             // For some strange reason, the widget adds a large vertical space
@@ -233,8 +233,8 @@ void DataView::setFlightData()
                 " / " + h.at(1) + "</TD></TR>" +
                 "</TABLE><BR>";
 
-            if(fTask.getWPList().count())
-                htmlText += __writeTaskInfo(&fTask);
+            if(fTask->getWPList().count())
+                htmlText += __writeTaskInfo(fTask);
             else
                 htmlText += "<EM>" + tr("Flight contains no waypoints") + "</EM>";
             break;
