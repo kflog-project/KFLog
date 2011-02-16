@@ -39,14 +39,14 @@ QList<Waypoint*> FlightGroup::getWPList()
   return tmp;
 }
 
-bool FlightGroup::drawMapElement(QPainter* targetP, QPainter* maskP)
+bool FlightGroup::drawMapElement( QPainter* targetP )
 {
   Flight::Flight *f;
 
   for( int i = 0; i < flightList.count(); i++ )
     {
       f = flightList.at( i );
-      f->drawMapElement( targetP, maskP );
+      f->drawMapElement( targetP );
     }
 
   return true;
@@ -72,9 +72,10 @@ QList<Flight::Flight*> FlightGroup::getFlightList()
 /** remove flight from current group */
 void FlightGroup::removeFlight(BaseFlightElement *f)
 {
-  if (flightList.contains((Flight::Flight *)f)) {
-    flightList.removeOne((Flight::Flight *)f);
-  }
+  if( flightList.contains( (Flight::Flight *) f ) )
+    {
+      flightList.removeOne( (Flight::Flight *) f );
+    }
 }
 
 /** No descriptions */
@@ -84,9 +85,13 @@ void FlightGroup::setFlightList(QList <Flight::Flight*> fl)
 }
 
 /** re-project the flights in this flightgroup. Reimplemented from BaseFlightElement. */
-void FlightGroup::reProject() {
+void FlightGroup::reProject()
+{
   Flight::Flight *flight;
+
   foreach(flight, flightList)
+    {
       flight->reProject();
+    }
 }
 

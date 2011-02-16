@@ -9,44 +9,36 @@
 **   Copyright (c):  2002 by the KFLog-Team
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
+#include <QtGui>
+
 #include "igc3dview.h"
-
-// Qt headers
-#include <qmessagebox.h>
-//Added by qt3to4:
-#include <QPixmap>
-#include <QResizeEvent>
-#include <QMouseEvent>
-#include <QKeyEvent>
-#include <QPaintEvent>
-
-// Application headers
 #include "mapcontents.h"
-
 
 #define X_ABSTAND 100
 #define Y_ABSTAND 30
 
 #define DISPLAY_HELP_MESSAGE QMessageBox::information( this, tr("Help for 3D view"), \
                                       tr("Basic key functions:\n\n" \
-                                                                                                "Left/Right :\t rotate \n"  \
-                                                                                                "Up/Down : \t tilt \n"        \
-                                                                                                "+/- : \t zoom \n"               \
-                                                                                                "S : \t \t toggle shadow \n" \
-                                                                                                "B : \t \t toggle back \n"       \
-                                                                                                "F : \t \t toggle front \n"),     \
+                                         "Left/Right :\t rotate \n"  \
+                                         "Up/Down : \t tilt \n"        \
+                                         "+/- : \t zoom \n"               \
+                                         "S : \t \t toggle shadow \n" \
+                                         "B : \t \t toggle back \n"       \
+                                         "F : \t \t toggle front \n"),     \
                                       tr("&Ok"));
 
 
 
 class Igc3DViewState;
 class Igc3DPolyhedron;
+
+extern MapContents *_globalMapContents;
 
 Igc3DView::Igc3DView(Igc3DDialog* dialog)
  : QWidget(dialog, "Igc3DView", 0),
@@ -340,9 +332,15 @@ void Igc3DView::slotShowFlight()
   */
 
   // load the igc3dflightdata list from the original list
-  extern MapContents *_globalMapContents;
-  flight->load((Flight*)_globalMapContents->getFlight());
+  // Note, that this function does not only delivers Flight objects!!!
+  Flight *cf = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
+  if( cf == static_cast<Flight *> (0) )
+    {
+      return;
+    }
+
+  flight->load(cf);
   flight->koord2dist();
 
   change_zfactor(state->zfactor);

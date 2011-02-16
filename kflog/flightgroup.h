@@ -24,7 +24,15 @@
 #include <QList>
 
 /**
- *@author Harald Maier
+ * \class FlightGroup
+ *
+ * \author Harald Maier
+ *
+ * \brief Class for flight goup management.
+ *
+ * \date 2002
+ *
+ * \version $Id$
  */
 
 class FlightGroup : public BaseFlightElement
@@ -33,16 +41,16 @@ class FlightGroup : public BaseFlightElement
   /**
    * Constructor
    *
-   * Creates a flightgroup with name @ref fName
-   * @param fName name of new flightgroup
+   * Creates a flight group with name @ref fName
+   * @param fName name of new flight group
    * @returns new @ref FlightGroup object.
    */
   FlightGroup(const QString& fName);
   /**
    * Constructor
    *
-   * Creates a flightgroup with name @ref fName containing the flights in list @ref fList.
-   * @param fName name of new flightgroup
+   * Creates a flight group with name @ref fName containing the flights in list @ref fList.
+   * @param fName name of new flight group
    * @param fList @ref QPtrList of flights to be included in the FlightGroup.
    * @returns new @ref FlightGroup object.
    */
@@ -56,15 +64,16 @@ class FlightGroup : public BaseFlightElement
    */
   QList<Waypoint*> getWPList();
   /**
-   * Draws the flight an the task for each fligth into the given painter. Reimplemented
+   * Draws the flight and the task for each flight into the given painter. Reimplemented
    * from BaseMapElement.
-   * @param  targetP  The painter to draw the element into.
-   * @param  maskP  The maskpainter for targetP
+   *
+   * \param  targetP  The painter to draw the element into.
+   *
    * \return always true
    */
-  bool drawMapElement(QPainter* targetP, QPainter* maskP);
+  bool drawMapElement( QPainter* targetP );
   /**
-   * Prints the flight an the task for each fligth into the given painter. Reimplemented
+   * Prints the flight an the task for each flight into the given painter. Reimplemented
    * from BaseMapElement.
    * @param  targetP  The painter to draw the element into.
    * @param  isText Print text? 
@@ -81,7 +90,7 @@ class FlightGroup : public BaseFlightElement
   /** No descriptions */
   void setFlightList(QList <Flight::Flight*> fl);
   /**
-   * re-project the flights in this flightgroup. Reimplemented from BaseFlightElement.
+   * re-project the flights in this flight group. Reimplemented from BaseFlightElement.
    */
   void reProject();
 

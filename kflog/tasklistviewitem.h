@@ -45,12 +45,10 @@ class TaskListViewItem : public QTreeWidgetItem
  public:
   /**
    * Constructor.
-   * @param parent Reference to parent @ref QListViewItem
+   * @param parent Reference to parent @ref QTreeWidgetItem
    * @param task Reference to @ref FlightTask object to display
-   * @param insertAfter Reference to @ref QTreeWidgetItem after which this item should
-   *                    be inserted
    */
-  TaskListViewItem(QTreeWidgetItem* parent, FlightTask* task, QTreeWidgetItem* insertAfter=0);
+  TaskListViewItem( QTreeWidgetItem* parent, FlightTask* task );
   /**
    * Destructor
    */

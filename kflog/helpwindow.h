@@ -7,51 +7,68 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Florian Ehinger
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
+**  $Id$
 **
 ***********************************************************************/
 
-#ifndef HELPWINDOW_H
-#define HELPWINDOW_H
+/**
+ * \class HelpWindow
+ *
+ * \author Florian Ehinger, Axel Pauli
+ *
+ * \brief This class provides a widget usable as help browser.
+ *
+ * Creates a help browser widget as single window and displays
+ * the help text into it.
+ *
+ * \date 2008-2010
+ */
 
-#include <q3frame.h>
-#include <q3textbrowser.h>
 
-/**Generates a HelpWindow.
-  *@author Florian Ehinger
-  */
+#ifndef HELP_WINDOW_H
+#define HELP_WINDOW_H
 
+#include <QWidget>
 
+class QString;
+class QTextBrowser;
 
-class HelpWindow : public Q3Frame
+class HelpWindow : public QWidget
 {
-   Q_OBJECT
+  Q_OBJECT
+
+private:
+
+  Q_DISABLE_COPY ( HelpWindow )
+
+ public:
    
-   public: 
-    HelpWindow(QWidget *parent);
-    ~HelpWindow();
+  HelpWindow( QWidget *parent=0 );
 
-  protected:
+  virtual ~HelpWindow();
+
+ public slots:
+
+  /**
+    * Shows the help text.
+    */
+  void slotShowHelpText( QString& text );
+
+  /**
+    * Clears the contents of the HelpWindow.
+    */
+  void slotClearView();
   
-  public slots:
-    /**
-      * Show the helptext
-    	*/
-    void slotShowHelpText(QString text);
-    /**
-      * Clears the contents of the HelpWindow
-      */
-    void slotClearView();
-    
-  private:
-    /**
-     * The textwidget
-     */
-    Q3TextBrowser* helpText;
-
+ private:
+  /**
+   * The text browser
+   */
+  QTextBrowser* browser;
 };
 
 #endif

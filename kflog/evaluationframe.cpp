@@ -34,6 +34,8 @@
 
 #define X_DISTANCE 100
 
+extern MapContents *_globalMapContents;
+
 EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   : Q3Frame(parent),
   flight(0)
@@ -188,22 +190,27 @@ EvaluationFrame::~EvaluationFrame()
 
 void EvaluationFrame::slotShowFlight()
 {
-  extern MapContents *_globalMapContents;
-  flight = (Flight *)_globalMapContents->getFlight();
+  flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
   slotShowGraph();
 }
 
 void EvaluationFrame::slotShowGraph()
 {
   // draw the curves
-  evalView->drawCurve(check_vario->isChecked(), check_speed->isChecked(),
-    check_baro->isChecked(), smoothness_va, smoothness_v, smoothness_h, secWidth);
+  evalView->drawCurve( check_vario->isChecked(),
+                       check_speed->isChecked(),
+                       check_baro->isChecked(),
+                       smoothness_va,
+                       smoothness_v,
+                       smoothness_h,
+                       secWidth );
 
-  if (flight && flight->getObjectType() == BaseMapElement::Flight) {
-    int contentsX = (( centerTime - flight->getStartTime() ) / secWidth)
-               + X_DISTANCE ;
-    graphFrame->center(contentsX,0);
-  }
+  if( flight && flight->getObjectType() == BaseMapElement::Flight )
+    {
+      int contentsX = ((centerTime - flight->getStartTime()) / secWidth)
+                        + X_DISTANCE;
+      graphFrame->center( contentsX, 0 );
+    }
 }
 
 

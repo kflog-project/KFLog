@@ -7,44 +7,43 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Florian Ehinger
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
+**   $Id$
 **
 ***********************************************************************/
 
+#include <QtGui>
+
 #include "helpwindow.h"
 
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3Frame>
-
-HelpWindow::HelpWindow(QWidget* parent)
-: Q3Frame(parent, "helpText")
+HelpWindow::HelpWindow( QWidget* parent ) : QWidget( parent )
 {
+  setObjectName( "HelpWindow" );
+  setWindowTitle( tr("KFLog Help") );
 
-  helpText = new Q3TextBrowser(this, "helpBrowser");
+  browser = new QTextBrowser(this);
+  browser->setOpenLinks( true );
+  browser->setOpenExternalLinks( true );
 
-  Q3HBoxLayout* layout = new Q3HBoxLayout(this, 5);
-  layout->addWidget(helpText);
-
-  
+  QHBoxLayout* hbox = new QHBoxLayout(this);
+  hbox->addWidget( browser );
 }
 
-HelpWindow::~HelpWindow(){
+HelpWindow::~HelpWindow()
+{
 }
 
-
-void HelpWindow::slotShowHelpText(QString text)
+void HelpWindow::slotShowHelpText(QString& text)
 {
-  helpText->setText(text);
+  browser->setHtml( text );
+  //setVisible( true );
 }
 
 void HelpWindow::slotClearView()
 {
-  QString text = "";
-  helpText->setText(text);
+  browser->clear();
 }
-

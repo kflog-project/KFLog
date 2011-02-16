@@ -8,9 +8,10 @@
 **
 **   Copyright (c):  2001 Heiner Lamprecht, Florian Ehinger, Jan Max Walter Krueger
 **                :  2008 Constantijn Neeteson
+**                :  2011 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -62,9 +63,15 @@ class Flight : public BaseFlightElement
 	   * @param  wpL  The list of waypoints of the task
 	   * @param  date  The date of the flight
 	   */
-    Flight(const QString& fileName, const QString& recID,
-            const QList<FlightPoint*>& route, const QString& pName, const QString& gType,
-        const QString& gID, int cClass, const QList<Waypoint*>& wpL, const QDate& date);
+    Flight( const QString& fileName,
+            const QString& recID,
+            const QList<FlightPoint*>& route,
+            const QString& pName,
+            const QString& gType,
+            const QString& gID,
+            int cClass,
+            const QList<Waypoint*>& wpL,
+            const QDate& date );
 	  /**
 	   * Destroys the flight-object.
 	   */
@@ -113,7 +120,7 @@ class Flight : public BaseFlightElement
      */
     QString getPoints(bool isOrig = false);
 	  /**
-	   * @return the starttime.
+	   * @return the start time.
 	   */
   	time_t getStartTime() const;
 	  /**
@@ -145,7 +152,7 @@ class Flight : public BaseFlightElement
      */
     QString getLandSite() const;
     /**
-     * Creates a stringlist, that contains several info about the part
+     * Creates a string list, that contains several info about the part
      * between the two given points.
      * @return the info-string
      * @param  start  the index of the first point of the section. If the
@@ -157,7 +164,7 @@ class Flight : public BaseFlightElement
     QStringList getFlightValues(unsigned int start = 0, unsigned int end = 0);
     /**
      * Creates a list with info about every state.
-     * @return the info-statelist
+     * @return the info-state list
      * @param  start  the index of the first point of the section. If the
      *                index is 0, the first point of the flight will be
      *                used.
@@ -184,11 +191,12 @@ class Flight : public BaseFlightElement
     /**
      * Draws the flight an the task into the given painter. Reimplemented
      * from BaseMapElement.
-     * @param  targetP  The painter to draw the element into.
-     * @param  maskP  The maskpainter for targetP
+     *
+     * \param  targetP  The painter to draw the element into.
+     *
      * \return always true
      */
-    virtual bool  drawMapElement(QPainter* targetP, QPainter* maskP);
+    virtual bool  drawMapElement( QPainter* targetP );
     /** */
     virtual void printMapElement(QPainter* printP, bool isText);
     /**
@@ -196,7 +204,8 @@ class Flight : public BaseFlightElement
      */
     FlightPoint getPoint(int n);
     /**
-	   * @return the list of optimized waypoints if task is optimized else then orig waypoints
+	   * @return The list of optimized waypoints if task is optimized
+	   *         otherwise the original waypoints
      */
     virtual QList<Waypoint*> getWPList();
     /**
@@ -219,12 +228,12 @@ class Flight : public BaseFlightElement
     bool optimizeTaskOLC(Map* map);
     /**
      * Searches the first point of the flight, which distance to the
-     * mousecursor is less than 30 pixel. If no point is found, -1 is
+     * mouse cursor is less than 30 pixel. If no point is found, -1 is
      * returned.
-     * @param  cPoint  The map-position of the mousecursor.
-     * @param  searchPoint  A pointer to a flightpoint. Will be filled
-     *                      with the flightpoint found.
-     * @return the index of the flightpoint or -1 if no point is found.
+     * @param  cPoint  The map-position of the mouse cursor.
+     * @param  searchPoint  A pointer to a flight point. Will be filled
+     *                      with the flight point found.
+     * @return the index of the flight point or -1 if no point is found.
      */
     int searchPoint(const QPoint& cPoint, FlightPoint& searchPoint);
     /**
@@ -288,12 +297,6 @@ class Flight : public BaseFlightElement
     /** Re-calculates all projections for this flight. */
     void reProject();
     /**
-     * The flight-types.
-     */
-//    enum FlightType {ZielS = 1, ZielR = 2, FAI = 3, Dreieck = 4, FAI_S = 5,
-//                   Dreieck_S = 6, Abgebrochen = 7, Unknown = 8, FAI_2 = 9,
-//                   FAI_S2 = 10, FAI_3 = 11, FAI_S3 = 12, Vieleck = 13};
-    /**
      * Return values for the Min/Max Points
      */
     enum MaxPoints {V_MAX = -1, H_MAX = -2, VA_MAX=-3, VA_MIN = -4};
@@ -302,7 +305,7 @@ class Flight : public BaseFlightElement
      */
     enum FlightState {Straight = 0, LeftTurn = 1, RightTurn = 2, MixedTurn = 3};
     /**
-     * "Unknown" is used, when there is an unrecognized competitionclass in
+     * "Unknown" is used, when there is an unrecognized competition class in
      * the igc-file. If there is no class given, "NotSet" is used.
      */
     enum CompetitionClass {Unknown = -1, NotSet = 0,  PW5 = 1, Club = 2,
@@ -361,7 +364,6 @@ class Flight : public BaseFlightElement
 
     FlightTask origTask;
     FlightTask optimizedTask;
-//    Optimization *optim;
     bool optimized;
 
     /**

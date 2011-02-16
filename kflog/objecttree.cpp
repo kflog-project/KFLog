@@ -99,8 +99,9 @@ ObjectTree::~ObjectTree()
  */
 void ObjectTree::slotNewFlightAdded( Flight* flight )
 {
-  FlightListViewItem *item = new FlightListViewItem( FlightRoot, flight );
-  setCurrentItem( item );
+  qDebug() << "ObjectTree::slotNewFlightAdded";
+
+  new FlightListViewItem( FlightRoot, flight );
   slotResizeColumns2Content();
 }
 
@@ -109,8 +110,7 @@ void ObjectTree::slotNewFlightAdded( Flight* flight )
  */
 void ObjectTree::slotNewFlightGroupAdded( FlightGroup* flightGroup )
 {
-  FlightGroupListViewItem* item = new FlightGroupListViewItem( FlightRoot, flightGroup );
-  setCurrentItem( item );
+  new FlightGroupListViewItem( FlightRoot, flightGroup );
   slotResizeColumns2Content();
 }
 
@@ -119,20 +119,28 @@ void ObjectTree::slotNewFlightGroupAdded( FlightGroup* flightGroup )
  */
 void ObjectTree::slotNewTaskAdded( FlightTask* task )
 {
-  TaskListViewItem* item = new TaskListViewItem( TaskRoot, task );
-  setCurrentItem( item );
+  qDebug() << "ObjectTree::slotNewTaskAdded() Task=" << task;
+
+  new TaskListViewItem( TaskRoot, task );
   slotResizeColumns2Content();
+
+  qDebug() << "ObjectTree::slotNewTaskAdded() finished";
 }
 
 /** Called if the selection has changed. */
 void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
 {
+  qDebug() << "ObjectTree::slotSelectionChanged: item=" << item
+           << "Col=" << column;
+
   Q_UNUSED( column )
 
   if( item == static_cast<QTreeWidgetItem *>(0) )
     {
       return;
     }
+
+  qDebug() << "ItemType=" << item->type();
 
   BaseFlightElement* bfe = static_cast<BaseFlightElement *>(0);
 
@@ -162,6 +170,8 @@ void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
 /** This slot is called if the currently selected flight has changed. */
 void ObjectTree::slotSelectedFlightChanged()
 {
+  qDebug() << "ObjectTree::slotSelectedFlightChanged()";
+
   BaseFlightElement* bfe = _globalMapContents->getFlight();
 
   if( ! bfe )
@@ -173,10 +183,8 @@ void ObjectTree::slotSelectedFlightChanged()
 
   if( item )
     {
-      if( ! item->isSelected() )
-        {
-          item->setSelected( true );
-        }
+      // That includes a selection.
+      setCurrentItem( item );
 
       slotFlightChanged();
       scrollToItem( item );
@@ -187,6 +195,8 @@ void ObjectTree::slotSelectedFlightChanged()
 /** Signaled if the current flight was somehow changed.  */
 void ObjectTree::slotFlightChanged()
 {
+  qDebug() << "ObjectTree::slotFlightChanged()";
+
   QTreeWidgetItem* item = findFlightElement( _globalMapContents->getFlight() );
 
   if (item)
@@ -210,6 +220,8 @@ void ObjectTree::slotFlightChanged()
           default:
             qWarning("ObjectTree::slotFlightChanged(): List view item of unknown type!");
         }
+
+      slotResizeColumns2Content();
     }
 }
 
@@ -363,15 +375,13 @@ void ObjectTree::createMenu()
 void ObjectTree::slotEditTask()
 {
   TaskDialog td( this );
-  FlightTask *ft;
 
   if( currentFlightElement != 0 )
     {
       if( currentFlightElement->getObjectType() == BaseMapElement::Task )
         {
-          ft = (FlightTask*) currentFlightElement;
+          FlightTask *ft = dynamic_cast<FlightTask *> (currentFlightElement);
 
-          //td.name->setText(ft->getFileName());
           td.setTask( ft );
 
           if( td.exec() == QDialog::Accepted )

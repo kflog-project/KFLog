@@ -144,7 +144,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(_globalMapContents, SIGNAL(newFlightAdded(Flight*)), objectTree, SLOT(slotNewFlightAdded(Flight*)));
   connect(_globalMapContents, SIGNAL(newFlightGroupAdded(FlightGroup*)), objectTree, SLOT(slotNewFlightGroupAdded(FlightGroup*)));
   connect(_globalMapContents, SIGNAL(newTaskAdded(FlightTask*)), objectTree, SLOT(slotNewTaskAdded(FlightTask*)));
-  connect(_globalMapContents, SIGNAL(taskHelp(QString)), helpWindow, SLOT(slotShowHelpText(QString)) );
+  connect(_globalMapContents, SIGNAL(taskHelp(QString&)), helpWindow, SLOT(slotShowHelpText(QString&)) );
   connect(_globalMapMatrix, SIGNAL(displayMatrixValues(int, bool)), _globalMapConfig, SLOT(slotSetMatrixValues(int, bool)));
   connect(_globalMapMatrix, SIGNAL(matrixChanged()), map, SLOT(slotRedrawMap()));
   connect(_globalMapMatrix, SIGNAL(printMatrixValues(int)), _globalMapConfig, SLOT(slotSetPrintMatrixValues(int)));
@@ -1012,6 +1012,15 @@ void MainWindow::slotFlightViewIgc3DClosed()
 
 void MainWindow::slotFlightViewIgcOpenGL()
 {
+  // Note, that this function does not only delivers Flight objects!!!
+  Flight *flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
+
+  if( flight == static_cast<Flight *> (0) )
+    {
+      qDebug() << "MainWindow::slotFlightViewIgcOpenGL(), no flight is selected!";
+      return;
+    }
+
   #define CHECK_ERROR_EXIT  error = (char *)dlerror(); \
     if(error != NULL) \
       { \
@@ -1048,7 +1057,7 @@ void MainWindow::slotModifyMenu()
   if( _globalMapContents->getFlightList()->count() > 0 &&
       _globalMapContents->getFlight() != 0 )
   {
-      // FIXME @AP: The flight list number is incremeted when a new task is
+      // FIXME @AP: The flight list number is incremented when a new task is
       // created but the current flight maybe NULL!!! I got a core dump here.
       // Added check above to if clause.
       switch(_globalMapContents->getFlight()->getObjectType())

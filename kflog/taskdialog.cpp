@@ -48,8 +48,8 @@ void TaskDialog::__initDialog()
   QLabel *l;
   QPushButton *b;
 
-  QErrorMessage* errorFai    = new QErrorMessage( this );
-  QErrorMessage* errorRoute  = new QErrorMessage( this );
+  errorFai    = new QErrorMessage( this );
+  errorRoute  = new QErrorMessage( this );
 
   errorFai->setWindowTitle(   tr("Task selection") );
   errorRoute->setWindowTitle( tr("Task selection") );
@@ -112,7 +112,7 @@ void TaskDialog::__initDialog()
   route->setSorting(-1);
   route->setAllColumnsShowFocus(true);
   connect(route, SIGNAL(currentChanged(Q3ListViewItem *)), SLOT(enableWaypointButtons()));
-  
+
   colType = route->addColumn(tr("Type"));
   colWaypoint = route->addColumn(tr("Waypoint"));
   colDist = route->addColumn(tr("Distance"));
@@ -401,7 +401,7 @@ void TaskDialog::slotAddWaypoint()
 {
   QString selText = waypoints->currentText();
   unsigned int pos = getCurrentPosition();
-  
+
   if (!selText.isEmpty()) {
     Waypoint *wp = new Waypoint;
     *wp = *waypointDict[selText];
@@ -446,18 +446,18 @@ void TaskDialog::setTask(FlightTask *orig)
 
   if (wpList.count() < 4)
     {
-    for (unsigned int i = wpList.count(); i < 4; i++)
-      {
-        wp = new Waypoint;
-        wp->origP.setLat( _settings.value("/Homesite/Latitude").toInt() );
-        wp->origP.setLon( _settings.value("/Homesite/Longitude").toInt());
-        wp->projP = _globalMapMatrix->wgsToMap(wp->origP);
-        wp->name = _settings.value("/Homesite/Name").toString().left(6).upper();
+      for (unsigned int i = wpList.count(); i < 4; i++)
+        {
+          wp = new Waypoint;
+          wp->origP.setLat( _settings.value("/Homesite/Latitude").toInt() );
+          wp->origP.setLon( _settings.value("/Homesite/Longitude").toInt());
+          wp->projP = _globalMapMatrix->wgsToMap(wp->origP);
+          wp->name = _settings.value("/Homesite/Name").toString().left(6).upper();
 
-        wpList.append(wp);
-      }
+          wpList.append(wp);
+        }
     }
-  
+
   pTask->setWaypointList(wpList);
   pTask->setPlanningType(orig->getPlanningType());
   pTask->setPlanningDirection(orig->getPlanningDirection());

@@ -103,13 +103,14 @@ void FlightListViewItem::createChildren()
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
-  subItem = new TaskListViewItem( this, flight->getTask(true), subItem );
+  subItem = new TaskListViewItem( this, flight->getTask(true) );
   subItem->setIcon(0, _mainWindow->getPixmap("task_16.png") );
   subItem->setFlags( Qt::ItemIsEnabled );
 
+
   if( flight->isOptimized() )
     {
-      subItem = new TaskListViewItem( this, flight->getTask(false), subItem );
+      subItem = new TaskListViewItem( this, flight->getTask(false) );
       subItem->setIcon(0, _mainWindow->getPixmap("task_16.png") );
       subItem->setFlags( Qt::ItemIsEnabled );
    }

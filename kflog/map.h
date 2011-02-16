@@ -319,7 +319,6 @@ private:
      */
     QPixmap pixWaypoints;
     /** */
-    QBitmap bitFlightMask;
     QBitmap bitPlanMask;
 
     /** */

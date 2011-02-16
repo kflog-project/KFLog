@@ -676,6 +676,7 @@ void EvaluationView::__draw()
 
   pixBufferKurve->fill(Qt::white);
   QPainter paint(pixBufferKurve);
+
   if(baro)
     { // draw elevation
       paint.setBrush(QColor(35, 120, 20));

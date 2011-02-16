@@ -15,6 +15,8 @@
 #include "optimizationwizard.h"
 #include "wgspoint.h"
 
+extern MapContents *_globalMapContents;
+
 static const char* const image0_data[] = {
 "22 22 114 2",
 "Qt c None",
@@ -324,14 +326,18 @@ void OptimizationWizard::languageChange()
 
 void OptimizationWizard::init()
 {
-   extern MapContents *_globalMapContents;
-//  next two lines are a hack to fix initial evaluation widget size bug
+  flight = dynamic_cast<Flight *> (_globalMapContents->getFlight() );
+
+  if( flight == static_cast<Flight *> (0) )
+    {
+      return;
+    }
+
+  // next two lines are a hack to fix initial evaluation widget size bug
   showMaximized();
   showNormal();
-
   resize(640,520);
 
-  flight=(Flight*)_globalMapContents->getFlight();
   route=flight->getRoute();
   optimization = new Optimization(0, route.count(), route,progress);
   slotSetTimes();

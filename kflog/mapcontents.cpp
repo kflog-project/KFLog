@@ -124,10 +124,14 @@ MapContents::MapContents( QObject* object ) :
 MapContents::~MapContents()
 {
   qDebug() << "~MapContents()";
+
+  qDeleteAll(flightList);
+  qDeleteAll(wpList);
 }
 
 void MapContents::closeFlight()
 {
+  qDebug() << "MapContents::closeFlight()";
   /*
    * close current flight
    */
@@ -149,13 +153,14 @@ void MapContents::closeFlight()
 
       if( i != -1 )
         {
+          qDebug() << "MapContents::closeFlight: rm FlightIdx=" << i;
           delete flightList.takeAt( i );
         }
 
       if( flightList.size() != 0 )
         {
           currentFlight = flightList.last();
-          currentFlightListIndex = flightList.indexOf( currentFlight );
+          currentFlightListIndex = flightList.size() - 1;
         }
       else
         {
@@ -769,11 +774,18 @@ QList<BaseFlightElement*> *MapContents::getFlightList()
 
 void MapContents::appendFlight(Flight* flight)
 {
+  qDebug() << "MapContents::appendFlight: ListCount=" << flightList.size()
+           << "FIdx=" << currentFlightListIndex;
+
   flightList.append(flight);
   currentFlight = flight;
-  currentFlightListIndex = flightList.indexOf(flightList.last());
+  currentFlightListIndex = flightList.size() - 1;
 
-  emit newFlightAdded((Flight*)flightList.last());
+  qDebug() << "newFIdx=" << currentFlightListIndex
+           << "newListCount=" << flightList.size();
+
+  // Signal to object tree about new flight to slotNewFlightAdded
+  emit newFlightAdded( flight );
 
   emit currentFlightChanged();
 }
@@ -785,7 +797,7 @@ int MapContents::__askUserForDownload()
   extern MainWindow *_mainWindow;
   extern QSettings  _settings;
 
-  int result = _settings.readNumEntry( "/Internet/AutomaticMapDownload", ADT_NotSet );
+  int result = _settings.value( "/Internet/AutomaticMapDownload", ADT_NotSet ).toInt();;
 
   if( askUser == true && result == ADT_NotSet )
     {
@@ -1309,7 +1321,6 @@ void MapContents::printContents(QPainter* targetPainter, bool isText)
 
 
 void MapContents::drawList( QPainter* targetPainter,
-                            QPainter* maskPainter,
                             unsigned int listID )
 {
   switch(listID)
@@ -1401,9 +1412,9 @@ void MapContents::drawList( QPainter* targetPainter,
 
       case FlightList:
         // In some cases, getFlightIndex returns a non-valid index :-(
-        if (flightList.count() > 0 && getFlightIndex() >= 0 &&
-              getFlightIndex() < (int)flightList.count())
-            flightList.at(getFlightIndex())->drawMapElement(targetPainter, maskPainter);
+        if (flightList.size() > 0 && getFlightIndex() >= 0 &&
+              getFlightIndex() < flightList.size() )
+            flightList.at(getFlightIndex())->drawMapElement(targetPainter);
         break;
 
       default:
@@ -1562,14 +1573,19 @@ bool MapContents::compareProjections(ProjectionBase* p1, ProjectionBase* p2)
 /** create a new, empty task */
 void MapContents::slotNewTask()
 {
-  FlightTask *f = new FlightTask(genTaskName());
-  flightList.append(f);
-  currentFlightListIndex = flightList.indexOf(flightList.last());
-  emit newTaskAdded(f);
+  qDebug() << "MapContents::slotNewTask()";
+
+  FlightTask *ft = new FlightTask(genTaskName());
+  flightList.append(ft);
+  currentFlightListIndex = flightList.size() - 1;
+  currentFlight = ft;
+
+  // Calls ObjectTree::slotNewTaskAdded()
+  emit newTaskAdded(ft);
 
   QString helpText = "";
 
-  helpText = tr(
+  helpText = tr(  "<html>"
                   "You can select waypoints with the left mouse button."
                   "You can also select free waypoints by clicking anywhere in the map."
                   "<br><br>"
@@ -1579,23 +1595,32 @@ void MapContents::slotNewTask()
                   "<br>"
                   "To finish the task, press &lt;CTRL&gt; and click the right mouse button.<br>"
                   "It's possible to move and delete taskpoints from the finished task."
-                  );
+                  "</html>"
+                );
 
+  qDebug() << "OpenHelpWindow";
+
+  // opens help window.
   emit taskHelp(helpText);
+  qDebug() << "OpenHelpWindow Exit";
 
   emit currentFlightChanged();
 //  emit activatePlanning();
 }
 
-void MapContents::slotAppendTask(FlightTask *f)
+void MapContents::slotAppendTask(FlightTask *ft)
 {
-  flightList.append(f);
-  emit newTaskAdded(f);
+  qDebug() << "MapContents::slotAppendTask FT=" << ft;
+
+  flightList.append(ft);
+  emit newTaskAdded(ft);
 }
 
 /** create a new, empty flight group */
 void MapContents::slotNewFlightGroup()
 {
+  qDebug() << "MapContents::slotNewFlightGroup()";
+
   static int gCount = 1;
   QList <Flight*> fl;
   BaseFlightElement *f;
@@ -1606,8 +1631,10 @@ void MapContents::slotNewFlightGroup()
   for(int i = 0; i < flightList.count(); i++)
     {
       f = flightList.value(i);
+
       if (f->getObjectType() == BaseMapElement::Flight)
         {
+          qDebug() << "AddingFile to FSD";
           fsd->availableFlights.append(f);
         }
     }
@@ -1622,33 +1649,43 @@ void MapContents::slotNewFlightGroup()
       tmp.sprintf("GROUP%03d", gCount++);
 
       FlightGroup * flightGroup = new FlightGroup(fl, tmp);
+
       flightList.append(flightGroup);
-      currentFlightListIndex = flightList.indexOf(flightList.last());
+      currentFlightListIndex = flightList.size() - 1;
+      currentFlight = flightGroup;
+
       emit newFlightGroupAdded(flightGroup);
       emit currentFlightChanged();
     }
+
   delete fsd;
 }
 
-/** No descriptions */
 void MapContents::slotSetFlight( QAction *action )
 {
   int id = action->data().toInt();
 
   if (id >= 0 && id < flightList.count())
     {
-      flightList.at(id);
+      currentFlight = flightList.at(id);
       currentFlightListIndex = id;
       emit currentFlightChanged();
     }
 }
 
-void MapContents::slotSetFlight(BaseFlightElement *f)
+void MapContents::slotSetFlight(BaseFlightElement *bfe)
 {
-  if (flightList.count(f)>0)
+  qDebug() << "MapContents::slotSetFlight: bfe=" << bfe
+           << "flightList.size=" << flightList.size()
+           << "currentFlightListIndex=" << currentFlightListIndex;
+
+  if( flightList.contains( bfe ) )
     {
-//      flightList.findRef(f);
-      currentFlightListIndex = flightList.indexOf(f);
+      currentFlightListIndex = flightList.indexOf( bfe );
+      currentFlight = flightList.at(currentFlightListIndex);
+
+      qDebug() << "newFlightListIndex=" << currentFlightListIndex;
+
       emit currentFlightChanged();
     }
 }
@@ -1656,6 +1693,8 @@ void MapContents::slotSetFlight(BaseFlightElement *f)
 /** No descriptions */
 void MapContents::slotEditFlightGroup()
 {
+  qDebug() << "MapContents::slotEditFlightGroup()";
+
   QList<Flight*> fl;
   BaseFlightElement *f;
   BaseFlightElement *fg;
@@ -1666,9 +1705,11 @@ void MapContents::slotEditFlightGroup()
   if (fg->getObjectType() == BaseMapElement::FlightGroup)
     {
       fl = ((FlightGroup *)fg)->getFlightList();
+
       for (int i = 0; i < flightList.count(); i++)
         {
           f = flightList.at(i);
+
           if (f->getObjectType() == BaseMapElement::Flight)
             {
               if (fl.count((Flight *)f)>0)
@@ -1685,10 +1726,12 @@ void MapContents::slotEditFlightGroup()
       if (fsd->exec() == QDialog::Accepted)
         {
           fl.clear();
+
           for ( uint i = 0; i < fsd->selectedFlights.count(); i++)
             {
               fl.append((Flight *)fsd->selectedFlights.at(i));
             }
+
           ((FlightGroup *)fg)->setFlightList(fl);
         }
     }
@@ -1775,15 +1818,21 @@ bool MapContents::loadTask(QFile& path)
           f = new FlightTask(wpList, false, genTaskName());
           f->setPlanningType(nmTask.namedItem("PlanningType").toAttr().value().toInt());
           f->setPlanningDirection(nmTask.namedItem("PlanningDirection").toAttr().value().toInt());
+
           // remember first task in file
           if (firstTask == 0)
+            {
               firstTask = f;
+            }
+
           flightList.append(f);
           emit newTaskAdded(f);
         }
 
       if (firstTask)
-          slotSetFlight(firstTask);
+        {
+          slotSetFlight( firstTask );
+        }
 
       return true;
     }

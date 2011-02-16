@@ -94,9 +94,8 @@ class FlightTask : public BaseFlightElement
    * Draws the flight an the task into the given painter. Reimplemented
    * from BaseMapElement.
    * @param  targetP  The painter to draw the element into.
-   * @param  maskP  The maskpainter for targetP
    */
-  bool drawMapElement(QPainter* targetPainter, QPainter* maskPainter);
+  bool drawMapElement( QPainter* targetPainter );
   /** */
   void printMapElement(QPainter* targetP, bool isText);
   void printMapElement(QPainter* targetP, bool isText, double dX, double dY);

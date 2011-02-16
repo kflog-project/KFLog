@@ -27,6 +27,8 @@
 #include "mapcalc.h"
 #include "mapcontents.h"
 
+extern MapContents *_globalMapContents;
+
 EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
 {
   setCaption(tr("Flightevaluation:"));
@@ -49,10 +51,11 @@ EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
   // Diagrammfenster - Mitte
   evalFrame = new EvaluationFrame(textSplitter, this);
 
-  connect(this, SIGNAL(flightChanged()), evalFrame,
-      SLOT(slotShowFlight()));
-  connect(this, SIGNAL(textChanged(QString)), evalFrame,
-      SLOT(slotUpdateCursorText(QString)));
+  connect( this, SIGNAL(flightChanged()),
+           evalFrame, SLOT(slotShowFlight()));
+
+  connect( this, SIGNAL(textChanged(QString)),
+           evalFrame, SLOT(slotUpdateCursorText(QString)));
 
   // Textanzeige
   textLabel = new QTextEdit(textSplitter);
@@ -369,36 +372,42 @@ void EvaluationDialog::updateListBox()
 
 void EvaluationDialog::slotShowFlightData()
 {
-//  warning("EvaluationDialog::slotShowFlightData");
-  extern MapContents *_globalMapContents;
-  flight = (Flight *)_globalMapContents->getFlight();
+  flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
-  if (flight) {
-    if (flight->getObjectType() == BaseMapElement::Flight) {
-      setCaption(tr("Flightevaluation:") + flight->getPilot() + "  "
-        + flight->getDate().toString());
-    }
-    else {
-      setCaption(tr("Flightevaluation:"));
-    }
+  if( flight != static_cast<Flight *> (0) )
+    {
+      if( flight->getObjectType() == BaseMapElement::Flight )
+        {
+          setCaption( tr( "Flight Evaluation:" ) + flight->getPilot() + "  "
+              + flight->getDate().toString() );
+        }
+      else
+        {
+          setCaption( tr( "Flight Evaluation:" ) );
+        }
 
-    // GRUNDWERTE setzen
-    updateText(0, flight->getRouteLength() - 1, true);
-  }
+      // GRUNDWERTE setzen
+      updateText( 0, flight->getRouteLength() - 1, true );
+
+      emit flightChanged();
+    }
   else
-    updateText(0, 0, false);
-
-  emit flightChanged();
+    {
+      updateText( 0, 0, false );
+    }
 }
+
 /** No descriptions */
 Flight* EvaluationDialog::getFlight()
 {
-  if (flight && flight->getObjectType() == BaseMapElement::Flight) {
-    return flight;
-  }
-  else {
-    return 0;
-  }
+  if( flight && flight->getObjectType() == BaseMapElement::Flight )
+    {
+      return flight;
+    }
+  else
+    {
+      return 0;
+    }
 }
 
 /** No descriptions */

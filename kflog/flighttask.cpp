@@ -9,22 +9,18 @@
  **   Copyright (c):  2001 by Heiner Lamprecht
  **
  **   This file is distributed under the terms of the General Public
- **   Licence. See the file COPYING for more information.
+ **   License. See the file COPYING for more information.
  **
  **   $Id$
  **
  ***********************************************************************/
 
-#include "flighttask.h"
-#include "mapcalc.h"
-
 #include <cmath>
 
 #include <QtGui>
 
-#include <q3valuevector.h>
-//Added by qt3to4:
-#include <Q3PointArray>
+#include "flighttask.h"
+#include "mapcalc.h"
 
 #define PRE_ID loop - 1
 #define CUR_ID loop
@@ -102,7 +98,7 @@ void FlightTask::__checkType()
           flightType = FlightTask::NotSet;
           break;
         case 1:
-          // Zielr�ckkehr
+          // Zielrückkehr
           flightType = FlightTask::ZielR;
           break;
         case 2:
@@ -116,11 +112,11 @@ void FlightTask::__checkType()
           break;
         case 3:
           // Start auf Schenkel oder Vieleck
-          // Vieleck Ja/Nein kann endg�ltig erst bei der Analyse des Fluges
+          // Vieleck Ja/Nein kann endgültig erst bei der Analyse des Fluges
           // bestimmt werden!
           //
           // Erste Abfrage je nachdem ob Vieleck oder Dreieck mehr Punkte geben
-          // w�rde
+          // würde
           distance_task_d = distance_task - wpList.at(2)->distance
             - wpList.at(5)->distance + dist(wpList.at(2), wpList.at(4));
 
@@ -147,7 +143,7 @@ void FlightTask::__checkType()
             }
           break;
         case 5:
-          // 2x Dreieck nur als FAI g�ltig
+          // 2x Dreieck nur als FAI gültig
           flightType = Unknown;
           if( (distance_task / 2 <= 100) && (wpList.at(1) == wpList.at(4)) &&
               (wpList.at(2) == wpList.at(5)) &&
@@ -266,8 +262,8 @@ double FlightTask::__sectorangle(int loop, bool isDraw)
       break;
     }
 
-  // Nur n�tig bei der �berpr�fung der Wegpunkte,
-  // w�rde beim Zeichnen zu Fehlern f�hren
+  // Nur nötig bei der Überprüfung der Wegpunkte,
+  // würde beim Zeichnen zu Fehlern führen
   if(!isDraw) sectorAngle += M_PI;
 
   if(sectorAngle > (2 * M_PI)) sectorAngle = sectorAngle - (2 * M_PI);
@@ -343,9 +339,15 @@ bool FlightTask::isFAI(double d_wp, double d1, double d2, double d3)
   return false;
 }
 
-bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
+bool FlightTask::drawMapElement( QPainter* targetPainter )
 {
-  qDebug() << "FlightTask::drawMapElement";
+  qDebug() << "FlightTask::drawMapElement Ein";
+
+  if( wpList.count() == 0 )
+    {
+      qDebug() << "FlightTask::drawMapElement() wpCount=0";
+      return false;
+    }
 
   double w1;
   struct faiAreaSector *sect;
@@ -354,8 +356,7 @@ bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   QString label;
 
   // Strecke und Sektoren zeichnen
-  //  if(flightType != NotSet)
-  if(flightType != 99999)
+  if(flightType != NotSet)
     {
       for(int loop = 0; loop < wpList.count(); loop++)
         {
@@ -375,10 +376,10 @@ bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
 
           if(loop)
             {
-              bBoxTask.setLeft(std::min(tempP.x(), bBoxTask.left()));
-              bBoxTask.setTop(std::max(tempP.y(), bBoxTask.top()));
-              bBoxTask.setRight(std::max(tempP.x(), bBoxTask.right()));
-              bBoxTask.setBottom(std::min(tempP.y(), bBoxTask.bottom()));
+              bBoxTask.setLeft(qMin(tempP.x(), bBoxTask.left()));
+              bBoxTask.setTop(qMax(tempP.y(), bBoxTask.top()));
+              bBoxTask.setRight(qMax(tempP.x(), bBoxTask.right()));
+              bBoxTask.setBottom(qMin(tempP.y(), bBoxTask.bottom()));
             }
           else
             {
@@ -404,12 +405,6 @@ bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
               targetPainter->drawEllipse((int)(gx + 2), (int)(gy + 2),
                                          (int)((2 * R2) - 4), (int)((2 * R2) - 4));
 
-              maskPainter->setPen(QPen(Qt::color1, 2));
-              maskPainter->setBrush(QBrush(Qt::color1));
-              maskPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 1440), 2880);
-              maskPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
-              maskPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
-
               if(loop)
                 {
                   if((flightType == FAI_S || flightType == Dreieck_S) && loop == 2)
@@ -417,13 +412,9 @@ bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                   else
                     targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
 
-                  maskPainter->setPen(QPen(Qt::color1, 3));
                   targetPainter->drawLine(
                                           glMapMatrix->map(wpList.at(loop - 1)->projP),
                                           glMapMatrix->map(wpList.at(loop)->projP));
-                  maskPainter->drawLine(
-                                        glMapMatrix->map(wpList.at(loop - 1)->projP),
-                                        glMapMatrix->map(wpList.at(loop)->projP));
                 }
               break;
 
@@ -434,25 +425,14 @@ bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
               targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
               targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
 
-              maskPainter->setPen(QPen(Qt::color1, 2));
-              maskPainter->setBrush(QBrush(Qt::color1, Qt::BDiagPattern));
-              maskPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
-              maskPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
-
               // Linie von Startpunkt zum Aufgaben Beginn
               //
               if(loop)
                 {
                   targetPainter->setPen(QPen(QColor(255, 0, 0), 4));
-                  maskPainter->setPen(QPen(Qt::color1, 2));
-                  targetPainter->drawLine(
-                                          glMapMatrix->map(wpList.at(loop - 1)->projP),
-                                          glMapMatrix->map(wpList.at(loop)->projP));
-                  maskPainter->drawLine(
-                                        glMapMatrix->map(wpList.at(loop - 1)->projP),
-                                        glMapMatrix->map(wpList.at(loop)->projP));
-                  //                   warning("zeichne Linie zum AufgabenBeginn loop: %d",loop);
-                  //                   cout << "von " << wpList.at(loop - 1)->name << " nach: " << wpList.at(loop)->name << endl;
+
+                  targetPainter->drawLine( glMapMatrix->map(wpList.at(loop - 1)->projP),
+                                           glMapMatrix->map(wpList.at(loop)->projP));
                 }
               break;
 
@@ -460,9 +440,6 @@ bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
               targetPainter->setPen(QPen(QColor(50, 50, 50), 2));
               targetPainter->setBrush(QBrush(QColor(0, 0, 255),
                                              Qt::FDiagPattern));
-              maskPainter->setPen(QPen(Qt::color1, 2));
-              maskPainter->setBrush(QBrush(Qt::color1,
-                                           Qt::FDiagPattern));
 
               targetPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
               targetPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
@@ -471,20 +448,14 @@ bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
               targetPainter->drawLine(glMapMatrix->map(wpList.at(loop-1)->projP),
                                       glMapMatrix->map(wpList.at(loop)->projP));
 
-              maskPainter->drawEllipse((int)gx, (int)gy, (int)(2 * R2), (int)(2 * R2));
-              maskPainter->drawPie((int)qx, (int)qy, (int)(2 * R1), (int)(2 * R1), (int)(w1 - 720), 1440);
-
               // Strecke
               if(flightType == FAI_S || flightType == Dreieck_S)
                 targetPainter->setPen(QPen(QColor(50, 50, 50), 3));
               else
                 targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
 
-              maskPainter->setPen(QPen(Qt::color1, 3));
               targetPainter->drawLine(glMapMatrix->map(wpList.at(loop - 1)->projP),
                                       glMapMatrix->map(wpList.at(loop)->projP));
-              maskPainter->drawLine(glMapMatrix->map(wpList.at(loop - 1)->projP),
-                                    glMapMatrix->map(wpList.at(loop)->projP));
               break;
 
             default:
@@ -498,20 +469,13 @@ bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
                   else
                     targetPainter->setPen(QPen(QColor(0, 0, 255), 2));
 
-                  maskPainter->setPen(QPen(Qt::color1, 2));
-                  targetPainter->drawLine(
-                                          glMapMatrix->map(wpList.at(loop - 1)->projP),
-                                          glMapMatrix->map(wpList.at(loop)->projP));
-                  maskPainter->drawLine(
-                                        glMapMatrix->map(wpList.at(loop - 1)->projP),
-                                        glMapMatrix->map(wpList.at(loop)->projP));
+                  targetPainter->drawLine( glMapMatrix->map(wpList.at(loop - 1)->projP),
+                                           glMapMatrix->map(wpList.at(loop)->projP) );
                 }
 
               // Linie Um Start Lande Punkt
               targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
               targetPainter->setBrush(Qt::NoBrush);
-              maskPainter->setPen(QPen(Qt::color1, 2));
-              maskPainter->setBrush(Qt::NoBrush);
               break;
             }
         }
@@ -521,11 +485,8 @@ bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   if(flightType == FAI_S || flightType == Dreieck_S)
     {
       targetPainter->setPen(QPen(QColor(150, 0, 200), 3));
-      maskPainter->setPen(QPen(Qt::color1, 3));
       targetPainter->drawLine(glMapMatrix->map(wpList.at(2)->projP),
                               glMapMatrix->map(wpList.at(wpList.count() - 3)->projP));
-      maskPainter->drawLine(glMapMatrix->map(wpList.at(2)->projP),
-                            glMapMatrix->map(wpList.at(wpList.count() - 3)->projP));
     }
 
   // Area based planning
@@ -542,29 +503,26 @@ bool FlightTask::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
         targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
         targetPainter->setBrush(QBrush(QColor(0, 255, 128)));
         targetPainter->setBackgroundMode(Qt::OpaqueMode);
-        maskPainter->setBackgroundMode(Qt::OpaqueMode);
-//         maskPainter->setPen(QPen(QColor(0, 255, 128), 2));
-//         maskPainter->setBrush(QBrush(Qt::color1));
         targetPainter->drawText(tempP, label);
-        maskPainter->drawText(tempP, label);
         targetPainter->setBackgroundMode(Qt::TransparentMode);
-        maskPainter->setBackgroundMode(Qt::TransparentMode);
       }
       else {
         r = pp.boundingRect();
         tempP = r.topLeft();
-        bBoxTask.setLeft(std::min(tempP.x(), bBoxTask.left()));
-        bBoxTask.setTop(std::max(tempP.y(), bBoxTask.top()));
-        bBoxTask.setRight(std::max(tempP.x(), bBoxTask.right()));
-        bBoxTask.setBottom(std::min(tempP.y(), bBoxTask.bottom()));
+        bBoxTask.setLeft(qMin(tempP.x(), bBoxTask.left()));
+        bBoxTask.setTop(qMax(tempP.y(), bBoxTask.top()));
+        bBoxTask.setRight(qMax(tempP.x(), bBoxTask.right()));
+        bBoxTask.setBottom(qMin(tempP.y(), bBoxTask.bottom()));
         tempP = r.bottomRight();
-        bBoxTask.setLeft(std::min(tempP.x(), bBoxTask.left()));
-        bBoxTask.setTop(std::max(tempP.y(), bBoxTask.top()));
-        bBoxTask.setRight(std::max(tempP.x(), bBoxTask.right()));
-        bBoxTask.setBottom(std::min(tempP.y(), bBoxTask.bottom()));
+        bBoxTask.setLeft(qMin(tempP.x(), bBoxTask.left()));
+        bBoxTask.setTop(qMax(tempP.y(), bBoxTask.top()));
+        bBoxTask.setRight(qMax(tempP.x(), bBoxTask.right()));
+        bBoxTask.setBottom(qMin(tempP.y(), bBoxTask.bottom()));
       }
     }
   }
+
+  qDebug() << "FlightTask::drawMapElement Aus";
 
   return true;
 }
@@ -575,7 +533,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool /*isText*/)
   struct faiAreaSector *sect;
   QPoint tempP;
   QString label;
-  Q3PointArray pA;
+  QPolygon pA;
 
   // Strecke und Sektoren zeichnen
   if(flightType != FlightTask::NotSet)
@@ -1398,9 +1356,9 @@ void FlightTask::calcFAIArea()
   double minDist;
   double trueCourse;
   double tmpDist;
-  Q3PointArray pointArray;
+  QPolygon pointArray;
   struct faiAreaSector *areaSector;
-  Q3ValueVector<bool> sides;
+  QVector<bool> sides;
   bool isRightOfRoute;
 
   if (wpList.count() > 2) {
@@ -1420,7 +1378,7 @@ void FlightTask::calcFAIArea()
     qWarning("%03.0f", polar(wp2->origP.lat() - wp1->origP.lat(), wp2->origP.lon() - wp1->origP.lon()) * 180.0 / M_PI);
     FAISectList.clear();
 
-    // determne with sides to calculate
+    // determine with sides to calculate
     if (getPlanningDirection() & leftOfRoute) {
       sides.push_back(false);
     }
@@ -1444,10 +1402,10 @@ void FlightTask::calcFAIArea()
         // second side downwards
         calcFAISectorSide(leg, trueCourse, faiR.maxLength28, minDist, 1, lat2, lon2, true, &pointArray, false, isRightOfRoute);
 
-        if (!pointArray.isNull()) {
+        if (!pointArray.isEmpty()) {
           areaSector = new faiAreaSector;
           areaSector->dist = minDist;
-          areaSector->pos = new LineElement("FAILow500Area", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, true);
+          areaSector->pos = new LineElement("FAILow500Area", BaseMapElement::FAIAreaLow500, pointArray, false, true);
           FAISectList.append(areaSector);
         }
 
@@ -1456,10 +1414,10 @@ void FlightTask::calcFAIArea()
         while (tmpDist < faiR.maxLength28) {
           pointArray.resize(0);
           calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, tmpDist, lat2, lon2, &pointArray, true, isRightOfRoute);
-          if (!pointArray.isNull()) {
+          if (!pointArray.isEmpty()) {
             areaSector = new faiAreaSector;
             areaSector->dist = tmpDist;
-            areaSector->pos = new LineElement("FAILow500Sector", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, false);
+            areaSector->pos = new LineElement("FAILow500Sector", BaseMapElement::FAIAreaLow500, pointArray, false, false);
             FAISectList.append(areaSector);
           }
 
@@ -1470,10 +1428,10 @@ void FlightTask::calcFAIArea()
         if (faiR.minLength28 < faiR.maxLength28) {
           pointArray.resize(0);
           calcFAISector(leg, trueCourse, 28.0, 44.0, 0.02, tmpDist, lat2, lon2, &pointArray, true, isRightOfRoute);
-          if (!pointArray.isNull()) {
+          if (!pointArray.isEmpty()) {
             areaSector = new faiAreaSector;
             areaSector->dist = tmpDist;
-            areaSector->pos = new LineElement("FAILow500Sector", BaseMapElement::FAIAreaLow500, pointArray.copy(), false, false);
+            areaSector->pos = new LineElement("FAILow500Sector", BaseMapElement::FAIAreaLow500, pointArray, false, false);
             FAISectList.append(areaSector);
           }
         }
@@ -1490,10 +1448,10 @@ void FlightTask::calcFAIArea()
         // second side downwards
         calcFAISectorSide(leg, trueCourse, faiR.maxLength25, faiR.minLength25, 1, lat2, lon2, false, &pointArray, false, isRightOfRoute);
 
-        if (!pointArray.isNull()) {
+        if (!pointArray.isEmpty()) {
           areaSector = new faiAreaSector;
           areaSector->dist = faiR.minLength25;
-          areaSector->pos = new LineElement("FAIHigh500Area", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, true);
+          areaSector->pos = new LineElement("FAIHigh500Area", BaseMapElement::FAIAreaHigh500, pointArray, false, true);
           FAISectList.append(areaSector);
         }
 
@@ -1501,10 +1459,10 @@ void FlightTask::calcFAIArea()
         while (tmpDist < faiR.maxLength25) {
           pointArray.resize(0);
           calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, tmpDist, lat2, lon2, &pointArray, true, isRightOfRoute);
-          if (!pointArray.isNull()) {
+          if (!pointArray.isEmpty()) {
             areaSector = new faiAreaSector;
             areaSector->dist = tmpDist;
-            areaSector->pos = new LineElement("FAIHigh500Sector", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, false);
+            areaSector->pos = new LineElement("FAIHigh500Sector", BaseMapElement::FAIAreaHigh500, pointArray, false, false);
             FAISectList.append(areaSector);
           }
           tmpDist += (50.0 - fmod(tmpDist, 50.0));
@@ -1514,10 +1472,10 @@ void FlightTask::calcFAIArea()
         if (faiR.minLength25 < faiR.maxLength25) {
           pointArray.resize(0);
           calcFAISector(leg, trueCourse, 25.0, 45.0, 0.02, tmpDist, lat2, lon2, &pointArray, true, isRightOfRoute);
-          if (!pointArray.isNull()) {
+          if (!pointArray.isEmpty()) {
             areaSector = new faiAreaSector;
             areaSector->dist = tmpDist;
-            areaSector->pos = new LineElement("FAIHigh500Sector", BaseMapElement::FAIAreaHigh500, pointArray.copy(), false, false);
+            areaSector->pos = new LineElement("FAIHigh500Sector", BaseMapElement::FAIAreaHigh500, pointArray, false, false);
             FAISectList.append(areaSector);
           }
         }

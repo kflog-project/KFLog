@@ -38,7 +38,7 @@
 
 class TaskDialog : public QDialog
 {
-   Q_OBJECT
+  Q_OBJECT
 
 private:
 

@@ -26,9 +26,8 @@
 extern MainWindow *_mainWindow;
 
 TaskListViewItem::TaskListViewItem( QTreeWidgetItem* parent,
-                                    FlightTask* task,
-                                    QTreeWidgetItem* insertAfter ) :
-  QTreeWidgetItem( parent, insertAfter, TASK_LIST_VIEW_ITEM_TYPEID ),
+                                    FlightTask* task ) :
+  QTreeWidgetItem( parent, TASK_LIST_VIEW_ITEM_TYPEID ),
   task(task)
 {
   createChildren();

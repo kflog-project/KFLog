@@ -13,6 +13,8 @@
 **
 **                :  2008, 2009 Improvements by Constantijn Neeteson
 **
+**                :  2011 Portage to Qt4 by Axel pauli
+**
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
@@ -68,8 +70,15 @@
       wpL.last()->angle = -100; \
       wpL.last()->fixTime = route.at( a )->time;
 
-Flight::Flight(const QString& fName, const QString& recID, const QList<FlightPoint*>& r, const QString& pName,
-   const QString& gType, const QString& gID, int cClass, const QList<Waypoint*>& wpL, const QDate& d)
+Flight::Flight( const QString& fName,
+                const QString& recID,
+                const QList<FlightPoint*>& r,
+                const QString& pName,
+                const QString& gType,
+                const QString& gID,
+                int cClass,
+                const QList<Waypoint*>& wpL,
+                const QDate& d )
   : BaseFlightElement("flight", BaseMapElement::Flight, fName),
     recorderID(recID),
     pilotName(pName),
@@ -86,8 +95,6 @@ Flight::Flight(const QString& fName, const QString& recID, const QList<FlightPoi
     landTime(route.last()->time),
     startIndex(0),
     landIndex(route.count()-1),
-//    origTask(FlightTask(wpL, true, QString::null)),
-//    optimizedTask(FlightTask(QString::null)),
     origTask(FlightTask(wpL, true, QObject::tr("Original task"))),
     optimizedTask(FlightTask(QObject::tr("Optimized task"))),
     optimized(false),
@@ -218,7 +225,8 @@ void Flight::__flightState()
           // Punkte zwischen s_point und e_point setzen
           for(int n = s_point; n <=  e_point; n++)
             {
-              // if 80% of the turns are to the right, then the thermal flight will be to the right
+              // if 80% of the turns are to the right, then the thermal flight
+              // will be to the right
               if(circles>circles_abs*0.8)
                 route.at(n)->f_state = Flight::RightTurn;
               else if(circles<-circles_abs*0.8)
@@ -443,9 +451,9 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
     }
 }
 
-bool Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
+bool Flight::drawMapElement( QPainter* targetPainter )
 {
-  qDebug() << "Flight::drawMapElement";
+  qDebug() << "Flight::drawMapElement() Ein";
 
   if(!__isVisible())
     {
@@ -458,13 +466,17 @@ bool Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
   QPoint curPointA, curPointB;
   unsigned int nStop;
 
+  // First draw task.
   if(optimized)
-      optimizedTask.drawMapElement(targetPainter, maskPainter);
+    {
+      optimizedTask.drawMapElement( targetPainter );
+    }
   else
-      origTask.drawMapElement(targetPainter, maskPainter);
+    {
+      origTask.drawMapElement( targetPainter );
+    }
 
-  // Flugweg
-
+  // Draw flight way
   unsigned int delta = 1;
 
   if(!glMapMatrix->isSwitchScale())
@@ -515,6 +527,7 @@ bool Flight::drawMapElement(QPainter* targetPainter, QPainter* maskPainter)
       curPointA = curPointB;
     }
 
+  qDebug() << "Flight::drawMapElement() Aus";
   return true;
 }
 

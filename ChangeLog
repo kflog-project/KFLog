@@ -1,5 +1,22 @@
 $Id$
 
+2011-02-16 Axel Pauli <axel@kflog.org>
+  * Class HelpWindow fully ported to Qt4.
+  * Masked painter removed from drawing of flights and tasks. But there remains
+    complains by QPainter about wrong usage. I could not yet find out the real
+    cause of that.
+  * There is a design bug in the handling of flights and tasks. If a new flight
+    or task was selected, the flight list index was updated but the current
+    flight pointer never. That caused some funny side effects, not sure, if
+    I could fix all. Another problem was the casting of the current flight
+    variable to the derived class. The current flight was defined as
+    BaseFlightElement and can contain three different derived classes. To find
+    out, which class is contained, it must be used the dynamic cast operator.
+    It delivers NULL, when the cast is wrong. But in most of the cases a
+    static cast was used, which delivered always a pointer to something.
+    If the wrong object was casted, a core dump was the result at the
+    next access to that object.
+  
 2011-02-15 Axel Pauli <axel@kflog.org>
   * Class FlightLoader fully ported to Qt4. The code of that class is a
     mixture of QSting methods and trival c functions. :-((

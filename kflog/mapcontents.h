@@ -182,10 +182,9 @@ class MapContents : public QObject
    * Draws all elements of a list into the painter.
    *
    * @param  targetP  The painter to draw the elements into
-   * @param  maskP  The maskpainter of targetP
    * @param  listID  The index of the list to be drawn
    */
-  void drawList(QPainter* targetPainter, QPainter* maskPainter, unsigned int listID);
+  void drawList(QPainter* targetPainter, unsigned int listID);
 
   /**
    * Draws all isohypses into the given painter
@@ -346,7 +345,7 @@ class MapContents : public QObject
   /**
    * signal emitted when new task has been created
    */
-  void taskHelp(QString);
+  void taskHelp(QString& text);
   /**
    * Emitted, when no map files are found, or the when the map-directories
    * do not exists.
@@ -511,7 +510,7 @@ class MapContents : public QObject
   QMap<int, QList<Isohypse> > groundMap;
 
   /**
-   * Contains list of all loaded Flight and FlightTask objects, wich are
+   * Contains list of all loaded Flight and FlightTask objects, which are
    * both subclasses of BaseFlightElement.
    */
   QList<BaseFlightElement*> flightList;

@@ -108,7 +108,7 @@ Map::Map( QWidget* parent ) :
   setAcceptDrops(true);
 
   // For Planning
-  pixPlan.fill(Qt::white);
+  pixPlan.fill(Qt::transparent);
   prePlanPos.setX(-999);
   prePlanPos.setY(-999);
 
@@ -156,7 +156,6 @@ Map::~Map()
 
 void Map::mouseMoveEvent(QMouseEvent* event)
 {
-  extern MapContents *_globalMapContents;
   const QPoint current = event->pos();
   Waypoint *w;
 
@@ -503,8 +502,6 @@ QString getInfoString (Waypoint* wp)
 
 Waypoint* Map::findWaypoint (const QPoint& current)
 {
-  extern MapContents *_globalMapContents;
-  extern MapMatrix *_globalMapMatrix;
   Waypoint *wp;
 
   foreach( wp, _globalMapContents->getWaypointList() )
@@ -528,9 +525,6 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
   /*
    * Glider airfields first, if there exist any
    */
-  extern MapContents *_globalMapContents;
-  extern MapMatrix   *_globalMapMatrix;
-
   QPoint sitePos;
   // Radius for Mouse Snapping
   double delta(16.0);
@@ -698,8 +692,6 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 
 void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
 {
-  extern MapContents *_globalMapContents;
-
   BaseFlightElement *baseFlight = _globalMapContents->getFlight();
   if(baseFlight == NULL)  return;
 
@@ -865,7 +857,7 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
   // Aufgabe zeichnen
   if(taskPointList.count() > 0)
     {
-      pixPlan.fill(Qt::white);
+      pixPlan.fill(Qt::transparent);
       ((FlightTask *)baseFlight)->setWaypointList(taskPointList);
       __drawPlannedTask();
       __showLayer();
@@ -895,8 +887,6 @@ qWarning("key Release");
 
 void Map::mouseReleaseEvent(QMouseEvent* event)
 {
-  extern MapMatrix *_globalMapMatrix;
-
   if (isZoomRect)
     {
       dragZoomRect=false;
@@ -963,9 +953,6 @@ void Map::mousePressEvent(QMouseEvent* event)
     }
   else
   {
-    extern MapContents *_globalMapContents;
-    extern MapMatrix *_globalMapMatrix;
-
     const QPoint current(event->pos());
 
     Airfield *hitElement;
@@ -1211,8 +1198,6 @@ void Map::__drawMap()
   QPainter uMapP(&pixUnderMap);
   QPainter isoMapP(&pixIsoMap);
 
-  extern MapContents *_globalMapContents;
-
   // Take the color of the subterrain for filling
   pixIsoMap.fill( _globalMapConfig->getIsoColor(0) );
 
@@ -1220,41 +1205,41 @@ void Map::__drawMap()
 
   emit setStatusBarProgress(10);
 
-  _globalMapContents->drawList(&uMapP, 0, MapContents::TopoList);
+  _globalMapContents->drawList(&uMapP, MapContents::TopoList);
 
-  _globalMapContents->drawList(&uMapP, 0, MapContents::CityList);
+  _globalMapContents->drawList(&uMapP, MapContents::CityList);
 
-  _globalMapContents->drawList(&uMapP, 0, MapContents::HydroList);
+  _globalMapContents->drawList(&uMapP, MapContents::HydroList);
 
   emit setStatusBarProgress(15);
 
-  _globalMapContents->drawList(&uMapP, 0, MapContents::RoadList);
+  _globalMapContents->drawList(&uMapP, MapContents::RoadList);
 
-  _globalMapContents->drawList(&uMapP, 0, MapContents::HighwayList);
+  _globalMapContents->drawList(&uMapP, MapContents::HighwayList);
 
   emit setStatusBarProgress(25);
 
-  _globalMapContents->drawList(&uMapP, 0, MapContents::RailList);
+  _globalMapContents->drawList(&uMapP, MapContents::RailList);
 
   emit setStatusBarProgress(35);
 
-  _globalMapContents->drawList(&uMapP, 0, MapContents::VillageList);
+  _globalMapContents->drawList(&uMapP, MapContents::VillageList);
 
   emit setStatusBarProgress(45);
 
-  _globalMapContents->drawList(&uMapP, 0, MapContents::LandmarkList);
+  _globalMapContents->drawList(&uMapP, MapContents::LandmarkList);
 
   emit setStatusBarProgress(50);
 
-  _globalMapContents->drawList(&uMapP, 0, MapContents::ObstacleList);
+  _globalMapContents->drawList(&uMapP, MapContents::ObstacleList);
 
   emit setStatusBarProgress(55);
 
-  _globalMapContents->drawList(&aeroP, 0, MapContents::ReportList);
+  _globalMapContents->drawList(&aeroP, MapContents::ReportList);
 
   emit setStatusBarProgress(60);
 
-  _globalMapContents->drawList(&aeroP, 0, MapContents::NavList);
+  _globalMapContents->drawList(&aeroP, MapContents::NavList);
 
   emit setStatusBarProgress(65);
 
@@ -1264,19 +1249,19 @@ void Map::__drawMap()
 
   emit setStatusBarProgress(75);
 
-  _globalMapContents->drawList(&aeroP, 0, MapContents::AirfieldList);
+  _globalMapContents->drawList(&aeroP, MapContents::AirfieldList);
 
   emit setStatusBarProgress(80);
 
-  _globalMapContents->drawList(&aeroP, 0, MapContents::AddSitesList);
+  _globalMapContents->drawList(&aeroP, MapContents::AddSitesList);
 
   emit setStatusBarProgress(85);
 
-  _globalMapContents->drawList(&aeroP, 0, MapContents::GliderfieldList);
+  _globalMapContents->drawList(&aeroP, MapContents::GliderfieldList);
 
   emit setStatusBarProgress(90);
 
-  _globalMapContents->drawList(&aeroP, 0, MapContents::OutLandingList);
+  _globalMapContents->drawList(&aeroP, MapContents::OutLandingList);
 
   emit setStatusBarProgress(95);
 
@@ -1317,7 +1302,7 @@ void Map::__drawAirspaces()
     }
 
   cuAeroMapP.end();
-  qDebug("Airspace, drawTime=%d ms", t.elapsed());
+  // qDebug("Airspace, drawTime=%d ms", t.elapsed());
 }
 
 void Map::__drawFlight()
@@ -1325,44 +1310,46 @@ void Map::__drawFlight()
   qDebug() << "Map::__drawFlight()";
 
   QPainter flightP(&pixFlight);
-  QPainter flightMaskP(&bitFlightMask);
 
-  extern MapContents *_globalMapContents;
-
-  _globalMapContents->drawList(&flightP, &flightMaskP, MapContents::FlightList);
+  _globalMapContents->drawList( &flightP, MapContents::FlightList );
 }
 
 void Map::__drawPlannedTask(bool solid)
 {
   qDebug() << "Map::__drawPlannedTask";
 
-  extern MapContents *_globalMapContents;
-
   QPainter planP;
   FlightTask* task;
 
-  if(solid)
-      task = (FlightTask*)_globalMapContents->getFlight();
-  else {
-    task = &tempTask;
-    task->reProject();
-  }
+  if( solid )
+    {
+      task = (FlightTask*) _globalMapContents->getFlight();
+    }
+  else
+    {
+      task = &tempTask;
+      task->reProject();
+    }
 
   if(task && task->getObjectType() == BaseMapElement::Task)
     {
       QList<Waypoint*> WPList = task->getWPList();
 
       // Strecke zeichnen
-      if(solid)
+      if( solid )
+        {
           planP.begin(&pixPlan);
+        }
       else
+        {
+          // FIXME Warum wird hier auf der map direkt gezeichnet?
+          // Das sollte aus meiner Sicht nicht so sein, da es das ganze
+          // Zeichenkonzept verletzt.
           planP.begin(this);
+        }
 
-      QPainter planPMask(&bitPlanMask);
-      bitPlanMask.fill(Qt::color0);
-      bitFlightMask.fill(Qt::color0);
-      pixPlan.fill(Qt::white);
-      pixFlight.fill(Qt::white);
+      pixPlan.fill(Qt::transparent);
+      pixFlight.fill(Qt::transparent);
 
       QPen drawP(QColor(170,0,0), 5);
       drawP.setJoinStyle(Qt::MiterJoin);
@@ -1370,9 +1357,8 @@ void Map::__drawPlannedTask(bool solid)
       planP.setPen(drawP);
 
       // Aufgabe mit Sektoren
-      task->drawMapElement(&planP,&planPMask);
+      task->drawMapElement(&planP);
       emit showTaskText(task);
-      planPMask.end();
       planP.end();
     }
 }
@@ -1436,19 +1422,13 @@ void Map::__redrawMap()
       pixUnderMap = QPixmap( size() );
       pixIsoMap = QPixmap( size() );
       pixWaypoints = QPixmap( size() );
-
-      bitPlanMask = QPixmap( size() );
-      bitFlightMask = QPixmap( size() );
     }
 
-  extern MapMatrix *_globalMapMatrix;
   _globalMapMatrix->createMatrix( size() );
   emit changed( size() );
 
   // Status bar not set "geniously" so far...
   emit setStatusBarProgress(0);
-
-  pixPlan.fill(Qt::transparent);
 
   pixAero.fill(Qt::transparent);
   pixAirspace.fill(Qt::transparent);
@@ -1456,10 +1436,8 @@ void Map::__redrawMap()
   pixUnderMap.fill(Qt::transparent);
   pixIsoMap.fill(Qt::transparent);
   pixFlight.fill(Qt::transparent);
+  pixPlan.fill(Qt::transparent);
   pixWaypoints.fill(Qt::transparent);
-
-  bitFlightMask.fill(Qt::color0);
-  bitPlanMask.fill(Qt::color0);
 
   QPoint temp1(preCur1);
   QPoint temp2(preCur2);
@@ -1495,8 +1473,6 @@ void Map::__redrawMap()
 /** Save Map to PNG-file with width,heigt. Use actual size if width=0 & height=0 */
 void Map::slotSavePixmap(QUrl fUrl, int width, int height)
 {
-  extern MapContents *_globalMapContents;
-  extern QSettings _settings;
   int w_orig,h_orig;
 
   if(fUrl.isValid())  return;
@@ -1519,7 +1495,11 @@ void Map::slotSavePixmap(QUrl fUrl, int width, int height)
 
   if (_settings.value("/CommentSettings/ShowComment").toBool())
   {
-    Flight* flight = (Flight*)_globalMapContents->getFlight();
+
+#warning Flight can be NULL!!!
+
+    Flight* flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
+
     QPainter bufferP(&pixBuffer);
     bufferP.setPen( Qt::white );
     QFont font;
@@ -1556,7 +1536,6 @@ void Map::slotRedrawFlight()
   qDebug() << "Map::slotRedrawFlight()";
 
   pixFlight.fill(Qt::transparent);
-  bitFlightMask.fill(Qt::color0);
   __drawFlight();
   __showLayer();
 }
@@ -1573,7 +1552,7 @@ void Map::slotActivatePlanning()
     {
       planning = 1;
 
-      pixPlan.fill(Qt::white);
+      pixPlan.fill(Qt::transparent);
       prePlanPos.setX(-999);
       prePlanPos.setY(-999);
       emit setStatusBarMsg(QObject::tr("To finish the planing, press <CTRL> and the right mouse button!"));
@@ -1591,9 +1570,6 @@ void Map::slotActivatePlanning()
 
 void Map::__showLayer()
 {
-  pixFlight.setMask(bitFlightMask);
-  pixPlan.setMask(bitPlanMask);
-
   pixBuffer = pixIsoMap;
 
   QPainter buffer(&pixBuffer);
@@ -1686,9 +1662,6 @@ void Map::slotZoomRect()
 
 void Map::slotCenterToWaypoint(const int id)
 {
-  extern MapContents *_globalMapContents;
-  extern MapMatrix   *_globalMapMatrix;
-
   if(id >= _globalMapContents->getFlight()->getWPList().count())
     {
       qWarning("KFLog: Map::slotCenterToWaypoint: wrong Waypoint-ID");
@@ -1704,10 +1677,8 @@ void Map::slotCenterToWaypoint(const int id)
 
 void Map::slotCenterToFlight()
 {
-  extern MapContents *_globalMapContents;
-  extern MapMatrix *_globalMapMatrix;
+  Flight *f = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
-  Flight *f = (Flight *)_globalMapContents->getFlight();
   if (f) {
     QRect r;
     QRect r2;
@@ -1745,8 +1716,6 @@ void Map::slotCenterToFlight()
 
 void Map::slotCenterToTask()
 {
-  extern MapContents *_globalMapContents;
-  extern MapMatrix   *_globalMapMatrix;
   BaseFlightElement  *f = _globalMapContents->getFlight();
 
   if(f)
@@ -1793,13 +1762,11 @@ void Map::slotCenterToTask()
  */
 void Map::slotAnimateFlightStart()
 {
-  extern MapMatrix   *_globalMapMatrix;
-  extern MapContents *_globalMapContents;
   QPoint pos;
   QPixmap pix;
   FlightPoint cP;
 
-  Flight *f = (Flight *) _globalMapContents->getFlight();
+  Flight *f = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
   if(f)
     {
@@ -1895,7 +1862,8 @@ void Map::slotAnimateFlightStart()
  */
 void Map::slotAnimateFlightTimeout()
 {
-  extern MapMatrix *_globalMapMatrix;
+  qDebug() << "Map::slotAnimateFlightTimeout()";
+
   FlightPoint cP; //, prevP;
   Flight *f  = this->flightToAnimate;
   bool bDone = true;
@@ -1928,7 +1896,6 @@ void Map::slotAnimateFlightTimeout()
 
               // redraw flight up to this point, blt the pixmap onto the already created pixmap
               __drawFlight();
-              pixFlight.setMask(bitFlightMask);
               QPainter p2( &pixBuffer );
               p2.drawPixmap( 0, 0, pixFlight );
 
@@ -1974,7 +1941,6 @@ void Map::slotAnimateFlightTimeout()
 
                   // redraw flight up to this point, blt the pixmap onto the already created pixmap
                   __drawFlight();
-                  pixFlight.setMask(bitFlightMask);
                   QPainter p2( &pixBuffer );
                   p2.drawPixmap( 0, 0, pixFlight );
 
@@ -2015,11 +1981,14 @@ void Map::slotAnimateFlightTimeout()
  */
 void Map::slotAnimateFlightStop()
 {
-  extern MapContents  *_globalMapContents;
-  Flight *f = (Flight *)_globalMapContents->getFlight();
+  Flight *f = dynamic_cast<Flight *> (_globalMapContents->getFlight());
+
   QList<Flight*> flightList;
 
-  if(!f) return;
+  if( !f )
+    {
+      return;
+    }
 
   switch (f->getObjectType())
     {
@@ -2053,8 +2022,6 @@ void Map::slotAnimateFlightStop()
  */
 void Map::slotFlightNext()
 {
-  extern MapMatrix   *_globalMapMatrix;
-  extern MapContents *_globalMapContents;
   FlightPoint cP;
   int index;
 
@@ -2096,8 +2063,6 @@ void Map::slotFlightNext()
 
 void Map::slotFlightPrev()
 {
-  extern MapMatrix   *_globalMapMatrix;
-  extern MapContents *_globalMapContents;
   FlightPoint cP;
   int index;
 
@@ -2137,8 +2102,6 @@ void Map::slotFlightPrev()
 
 void Map::slotFlightStepNext()
 {
-  extern MapMatrix   *_globalMapMatrix;
-  extern MapContents *_globalMapContents;
   FlightPoint cP;
   int index;
 
@@ -2178,8 +2141,6 @@ void Map::slotFlightStepNext()
 
 void Map::slotFlightStepPrev()
 {
-  extern MapMatrix   *_globalMapMatrix;
-  extern MapContents *_globalMapContents;
   FlightPoint cP;
   int index;
 
@@ -2220,8 +2181,6 @@ void Map::slotFlightStepPrev()
 
 void Map::slotFlightHome()
 {
-  extern MapMatrix   *_globalMapMatrix;
-  extern MapContents *_globalMapContents;
   FlightPoint cP;
   int index;
 
@@ -2251,8 +2210,6 @@ void Map::slotFlightHome()
 
 void Map::slotFlightEnd()
 {
-  extern MapMatrix   *_globalMapMatrix;
-  extern MapContents *_globalMapContents;
   FlightPoint cP;
   int index;
   BaseFlightElement *f = _globalMapContents->getFlight();
@@ -2286,7 +2243,6 @@ void Map::slotFlightEnd()
 /** No descriptions */
 void Map::slotShowCurrentFlight()
 {
-  extern MapContents *_globalMapContents;
   BaseFlightElement *f = _globalMapContents->getFlight();
 
   // just to make sure ...
@@ -2331,17 +2287,14 @@ void Map::slotShowCurrentFlight()
 /** append a waypoint to the current task */
 void Map::slotAppendWaypoint2Task(Waypoint *p)
 {
-  extern MapContents *_globalMapContents;
-  extern MapMatrix *_globalMapMatrix;
+  FlightTask *ft = dynamic_cast<FlightTask *> (_globalMapContents->getFlight());
 
-  FlightTask *f = (FlightTask *)_globalMapContents->getFlight();
-
-  if(f && f->getObjectType() == BaseMapElement::Task && planning)
+  if(ft && ft->getObjectType() == BaseMapElement::Task && planning)
     {
-      QList<Waypoint*> taskPointList = f->getWPList();
+      QList<Waypoint*> taskPointList = ft->getWPList();
       p->projP = _globalMapMatrix->wgsToMap(p->origP);
       taskPointList.append(p);
-      f->setWaypointList(taskPointList);
+      ft->setWaypointList(taskPointList);
       __drawPlannedTask(true);
       __showLayer();
     }
@@ -2357,8 +2310,6 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
   double dX, dY;
   // Radius for Mouse Snapping
   double delta(16.0);
-  extern MapContents *_globalMapContents;
-  extern MapMatrix *_globalMapMatrix;
   bool found = false;
   Airfield *hitElement;
 
@@ -2437,10 +2388,6 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
 /** Puts the waypoints of the active waypoint catalog to the map */
 void Map::__drawWaypoints()
 {
-  extern MapContents *_globalMapContents;
-  extern MapMatrix   *_globalMapMatrix;
-  extern MapConfig   *_globalMapConfig;
-
   // get map screen size
   int w = size().width();
   int h = size().height();
@@ -2537,7 +2484,6 @@ void Map::__drawWaypoints()
 /** Slot signaled when user selects another waypoint catalog.  */
 void Map::slotWaypointCatalogChanged(WaypointCatalog* c)
 {
-  extern MapContents *_globalMapContents;
   Waypoint *w;
   bool filterRadius, filterArea;
 
@@ -2687,8 +2633,6 @@ void Map::__setCursor()
 /** Creates the popup menu for the map */
 void Map::__createPopupMenu()
 {
-  extern MapMatrix *_globalMapMatrix;
-
   mapPopup = new QMenu(this);
 
   mapPopup->setTitle( QObject::tr("Map Menu") );
@@ -2762,8 +2706,6 @@ void Map::__showPopupMenu(QMouseEvent * Event)
 /** called from the Map popup menu to add a new waypoint. */
 void Map::slotMpNewWaypoint()
 {
-  extern MapContents *_globalMapContents;
-
   QString text;
 
   QPoint sitePos;
@@ -2854,7 +2796,6 @@ void Map::slotMpDeleteWaypoint()
 /** Called from the context menu to center the map. */
 void Map::slotMpCenterMap()
 {
-  extern MapMatrix *_globalMapMatrix;
    // Move Map
   _globalMapMatrix->centerToPoint(popupPos);
   __redrawMap();
