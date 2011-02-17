@@ -124,7 +124,6 @@ EvaluationDialog::~EvaluationDialog()
 
 void EvaluationDialog::hideEvent( QHideEvent* event )
 {
-  qDebug() << "EvaluationDialog::hideEvent";
   Q_UNUSED(event)
 
   emit windowHidden();
@@ -323,7 +322,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
       }
 
 
-    emit(showCursor(p1.projP,p2.projP));
+    emit showCursor(p1.projP,p2.projP);
     break;
 
   case BaseMapElement::Task:
@@ -360,7 +359,7 @@ void EvaluationDialog::updateListBox()
 {
   combo_flight->clear();
 
-  // Fl�ge eintragen
+  // Flüge eintragen
 /*
   for(unsigned int n = 0; n < flightList->count(); n++)
       combo_flight->insertItem(flightList->at(n)->getFileName());
@@ -411,11 +410,13 @@ Flight* EvaluationDialog::getFlight()
 }
 
 /** No descriptions */
-void EvaluationDialog::slotShowFlightPoint(const QPoint&, const FlightPoint& fp){
+void EvaluationDialog::slotShowFlightPoint(const QPoint&, const FlightPoint& fp)
+{
   emit(showFlightPoint(&fp));
 }
 
 /** No descriptions */
-void EvaluationDialog::slotRemoveFlightPoint(){
+void EvaluationDialog::slotRemoveFlightPoint()
+{
   emit(showFlightPoint(0));
 }

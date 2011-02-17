@@ -785,9 +785,15 @@ void MapContents::appendFlight(Flight* flight)
            << "newListCount=" << flightList.size();
 
   // Signal to object tree about new flight to slotNewFlightAdded
+  qDebug() << "EMIT newFlightAdded Rein";
   emit newFlightAdded( flight );
+  qDebug() << "EMIT newFlightAdded Raus";
 
+  qDebug() << "EMIT currentFlightChanged Rein";
   emit currentFlightChanged();
+  qDebug() << "EMIT currentFlightChanged Raus";
+
+  qDebug() << "MapContents::appendFlight() Ende";
 }
 
 int MapContents::__askUserForDownload()

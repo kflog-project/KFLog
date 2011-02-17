@@ -9,28 +9,20 @@
 **   Copyright (c):  2001 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
+
+#include <QtGui>
+#include <Qt3Support>
 
 #include "evaluationframe.h"
 #include "evaluationdialog.h"
 #include "flight.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
-
-
-#include <qlayout.h>
-#include <qsettings.h>
-#include <qsplitter.h>
-//Added by qt3to4:
-#include <QResizeEvent>
-#include <Q3GridLayout>
-#include <Q3Frame>
-#include <Q3ValueList>
-#include <QLabel>
 
 #define X_DISTANCE 100
 
@@ -191,7 +183,11 @@ EvaluationFrame::~EvaluationFrame()
 void EvaluationFrame::slotShowFlight()
 {
   flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
-  slotShowGraph();
+
+  if( flight )
+    {
+      slotShowGraph();
+    }
 }
 
 void EvaluationFrame::slotShowGraph()

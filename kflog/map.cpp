@@ -1307,11 +1307,13 @@ void Map::__drawAirspaces()
 
 void Map::__drawFlight()
 {
-  qDebug() << "Map::__drawFlight()";
+  qDebug() << "Map::__drawFlight() Ein";
 
   QPainter flightP(&pixFlight);
 
   _globalMapContents->drawList( &flightP, MapContents::FlightList );
+
+  qDebug() << "Map::__drawFlight() Aus";
 }
 
 void Map::__drawPlannedTask(bool solid)
@@ -1323,7 +1325,7 @@ void Map::__drawPlannedTask(bool solid)
 
   if( solid )
     {
-      task = (FlightTask*) _globalMapContents->getFlight();
+      task = dynamic_cast<FlightTask *> (_globalMapContents->getFlight());
     }
   else
     {
@@ -1338,6 +1340,7 @@ void Map::__drawPlannedTask(bool solid)
       // Strecke zeichnen
       if( solid )
         {
+          pixPlan.fill(Qt::transparent);
           planP.begin(&pixPlan);
         }
       else
@@ -1347,9 +1350,6 @@ void Map::__drawPlannedTask(bool solid)
           // Zeichenkonzept verletzt.
           planP.begin(this);
         }
-
-      pixPlan.fill(Qt::transparent);
-      pixFlight.fill(Qt::transparent);
 
       QPen drawP(QColor(170,0,0), 5);
       drawP.setJoinStyle(Qt::MiterJoin);
@@ -1507,19 +1507,22 @@ void Map::slotSavePixmap(QUrl fUrl, int width, int height)
     int bw=pixBuffer.width()-10;
     QString text=QObject::tr("%1 with %2 (%3) on %4").arg(flight->getPilot()).arg(flight->getType()).arg(flight->getID()).arg(flight->getDate().toString());
     bufferP.setFont(font);
-          bufferP.drawText(10,by+15,bw,25,Qt::AlignLeft,QObject::tr("created by KFLog (www.kflog.org)"));
+    bufferP.drawText(10,by+15,bw,25,Qt::AlignLeft,QObject::tr("created by KFLog (www.kflog.org)"));
     font.setBold(true);
     font.setPointSize( 18 );
     bufferP.setFont(font);
-          bufferP.drawText(10,by,bw,25,Qt::AlignLeft,text);
+    bufferP.drawText(10,by,bw,25,Qt::AlignLeft,text);
   }
 
-        QImage image = QImage(pixBuffer.toImage());
-        image.save(fName,"PNG");
-        if (width && height){
-          resize(w_orig,h_orig);
-          slotCenterToFlight();
-  }
+  QImage image = QImage( pixBuffer.toImage() );
+
+  image.save( fName, "PNG" );
+
+  if( width && height )
+    {
+      resize( w_orig, h_orig );
+      slotCenterToFlight();
+    }
 }
 
 void Map::slotSavePixmap()
@@ -1533,11 +1536,13 @@ void Map::slotSavePixmap()
 
 void Map::slotRedrawFlight()
 {
-  qDebug() << "Map::slotRedrawFlight()";
+  qDebug() << "Map::slotRedrawFlight() EIN";
 
   pixFlight.fill(Qt::transparent);
   __drawFlight();
   __showLayer();
+
+  qDebug() << "Map::slotRedrawFlight() Aus";
 }
 
 void Map::slotRedrawMap()
@@ -1570,6 +1575,8 @@ void Map::slotActivatePlanning()
 
 void Map::__showLayer()
 {
+  qDebug() << "Map::__showLayer() Ein";
+
   pixBuffer = pixIsoMap;
 
   QPainter buffer(&pixBuffer);
@@ -1583,15 +1590,19 @@ void Map::__showLayer()
   buffer.drawPixmap(pixGrid.rect(), pixGrid);
 
   update();
+
+  qDebug() << "Map::__showLayer() Aus";
 }
 
 void Map::slotDrawCursor( const QPoint& p1, const QPoint& p2 )
 {
-  QPoint pos1( _globalMapMatrix->map( p1 ) ),
-         pos2( _globalMapMatrix->map( p2 ) );
+  qDebug() << "Map::slotDrawCursor Rein";
 
-  QPoint prePos1( _globalMapMatrix->map( preCur1 ) ), prePos2(
-                  _globalMapMatrix->map( preCur2 ) );
+  QPoint pos1( _globalMapMatrix->map( p1 ) );
+  QPoint pos2( _globalMapMatrix->map( p2 ) );
+
+  QPoint prePos1( _globalMapMatrix->map( preCur1 ) );
+  QPoint prePos2( _globalMapMatrix->map( preCur2 ) );
 
   if( preCur1.x() > -50 )
     {
@@ -1652,6 +1663,8 @@ void Map::slotDrawCursor( const QPoint& p1, const QPoint& p2 )
 
   preCur1 = p1;
   preCur2 = p2;
+
+  qDebug() << "Map::slotDrawCursor Raus";
 }
 
 void Map::slotZoomRect()
@@ -1977,44 +1990,52 @@ void Map::slotAnimateFlightTimeout()
 
 /**
  * Animation slot.
- * Called to start the animation timer.
+ * Called to stop the animation timer.
  */
 void Map::slotAnimateFlightStop()
 {
-  Flight *f = dynamic_cast<Flight *> (_globalMapContents->getFlight());
-
-  QList<Flight*> flightList;
-
-  if( !f )
+  if( ! timerAnimate->isActive() )
     {
       return;
     }
 
-  switch (f->getObjectType())
+  // stop animation on user request.
+  timerAnimate->stop();
+
+  BaseFlightElement* bfe = _globalMapContents->getFlight();
+
+  if( ! bfe )
+    {
+      return;
+    }
+
+  QList<Flight *> flightList;
+
+  switch( bfe->getObjectType() )
     {
       case BaseMapElement::Flight:
-        flightList.append(f);
+
+        flightList.append( dynamic_cast<Flight *>(bfe) );
         break;
+
       case BaseMapElement::FlightGroup:
-        flightList = ((FlightGroup *)f)->getFlightList();
-        break;
+        {
+          FlightGroup* fg = dynamic_cast<FlightGroup *>(bfe);
+          flightList = fg->getFlightList();
+          break;
+        }
+
       default:
         return;
     }
 
-  // stop animation on user request.
-  if( timerAnimate->isActive() )
+  // Loop through the flight list and reset animation flag.
+  for( int loop = 0; loop < flightList.size(); loop++ )
     {
-      timerAnimate->stop();
-
-      // loop through all and increment animation index
-      for( int loop = 0; loop < flightList.count(); loop++ )
-        {
-          flightList.at( loop )->setAnimationActive( false );
-        }
-
-      slotRedrawFlight();
+      flightList.at(loop)->setAnimationActive(false);
     }
+
+  slotRedrawFlight();
 }
 
 /**
@@ -2243,6 +2264,8 @@ void Map::slotFlightEnd()
 /** No descriptions */
 void Map::slotShowCurrentFlight()
 {
+  qDebug() << "Map::slotShowCurrentFlight() EIN";
+
   BaseFlightElement *f = _globalMapContents->getFlight();
 
   // just to make sure ...
@@ -2252,7 +2275,7 @@ void Map::slotShowCurrentFlight()
 
   if( f && f->getObjectType() == BaseMapElement::Task )
     {
-      if( ((FlightTask *) f)->getWPList().count() < 1 )
+      if( ( dynamic_cast<FlightTask *>(f))->getWPList().count() < 1 )
         {
           slotActivatePlanning();
         }
@@ -2283,7 +2306,10 @@ void Map::slotShowCurrentFlight()
             break;
         }
     }
+
+  qDebug() << "Map::slotShowCurrentFlight() AUS";
 }
+
 /** append a waypoint to the current task */
 void Map::slotAppendWaypoint2Task(Waypoint *p)
 {

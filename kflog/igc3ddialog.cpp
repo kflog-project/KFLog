@@ -70,9 +70,5 @@ void Igc3DDialog::resizeEvent(QResizeEvent* event)
 
 void Igc3DDialog::slotShowFlightData()
 {
-//  warning("Igc3DDialog::slotShowFlightData");
-//  this->setCaption(tr("FlightIgc3D:") + flightList->at(n)->getPilot()
-//                    + "  " + flightList->at(n)->getDate().toString());
-
   emit flightChanged();
 }

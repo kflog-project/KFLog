@@ -9,7 +9,7 @@
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -20,6 +20,7 @@
 
 #include <time.h>
 
+#include <QBitmap>
 #include <QPixmap>
 #include <q3scrollview.h>
 #include <QWidget>
@@ -27,7 +28,6 @@
 class Flight;
 class FlightPoint;
 class EvaluationDialog;
-
 
 /**
   * @author Heiner Lamprecht, Florian Ehinger
@@ -75,6 +75,7 @@ class EvaluationView : public QWidget
   virtual void mouseReleaseEvent(QMouseEvent* event);
 
  private:
+
   void __drawCsystem(QPainter* painter);
   /** */
   QPoint __baroPoint(int baro_d[], int gn, int i);
@@ -107,30 +108,28 @@ class EvaluationView : public QWidget
     * Contains a reference to a buffer that contains the pointer
     * for the current position, so we only need to draw it once
     */
-  QPixmap* pixPointer;
+  QPixmap pixPointer;
    /**
     * Contains a reference to the mask for @ref pixPointer
     */
-  QBitmap* bitPointerMask;
+  QBitmap bitPointerMask;
    /**
     * Contains a reference to a buffer that contains the contents
     * of the graph under the position where the pointer was drawn
     */
-  QPixmap* pixPointerBuffer;
-  
+  QPixmap pixPointerBuffer;
+
   void __paintCursor(int xpos, int calt, int move, int cursor);
   /** Draw graphs */
   void __draw();
   /** Draw y-axis */
   void __drawYAxis();
-  
-  /** Beh�lt den Inhalt der Zeichnung. */
-  QPixmap* pixBuffer;
-  QPixmap* pixBufferYAxis;
-  QPixmap* pixBufferKurve;
-  /* Wieso meckert der Compiler, wenn hier nur "QPixmap" statt eines
-   * Pointers steht ?????
-   */
+
+  /** Behält den Inhalt der Zeichnung. */
+  QPixmap pixBuffer;
+  QPixmap pixBufferYAxis;
+  QPixmap pixBufferKurve;
+
   time_t startTime;
   time_t landTime;
   time_t curTime;
@@ -161,16 +160,13 @@ class EvaluationView : public QWidget
 
   Flight* flight;
 
-//  QPixmap pixCursor1;
-//  QPixmap pixCursor2;
-public slots: // Public slots
+public slots:
+
   /* Shows a pointer under the time axis to indicate the
    * position of FlightPoint fp in the graph. If fp=0,
    * then the flightpoint is removed.
    */
   void slotShowPointer(const FlightPoint * fp=0);
-
-  
 };
 
 #endif

@@ -9,16 +9,15 @@
 **   Copyright (c):  2001 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#include "dataview.h"
-
 #include <QtGui>
 
+#include "dataview.h"
 #include <flight.h>
 #include <flightgroup.h>
 #include <flighttask.h>
@@ -26,8 +25,12 @@
 #include <mapcontents.h>
 #include <wgspoint.h>
 
+extern MapContents *_globalMapContents;
+
 DataView::DataView(QWidget* parent) : QFrame(parent)
 {
+  setObjectName("DataView");
+
   flightDataText = new QTextBrowser(this);
   flightDataText->setObjectName( "FlightDataBrowser" );
 
@@ -40,7 +43,6 @@ DataView::DataView(QWidget* parent) : QFrame(parent)
 
 DataView::~DataView()
 {
-
 }
 
 QString DataView::__writeTaskInfo(FlightTask* task)
@@ -201,7 +203,6 @@ void DataView::slotShowTaskText(FlightTask* task)
 
 void DataView::setFlightData()
 {
-  extern MapContents *_globalMapContents;
   BaseFlightElement* e = _globalMapContents->getFlight();
   QString htmlText;
   QString idString;

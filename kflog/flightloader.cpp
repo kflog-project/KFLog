@@ -196,7 +196,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
         {
           // We have an manufacturer identifier
           recorderID = _settings.value("/ManufactorerID/"+s.mid(1,3).toUpper(),
-                                       QObject::tr("unknown manufactorer")).toString();
+                                       QObject::tr("unknown manufacturer")).toString();
           recorderID = recorderID + " (" + s.mid(4,3) + ")";
         }
       else if(s.mid(0,1) == "H" && isHeader)
