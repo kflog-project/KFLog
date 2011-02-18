@@ -147,8 +147,11 @@ private slots:
 
   /** No descriptions */
   void slotEditTask();
-  void slotDeleteTask();
+
+  void slotDeleteFlightElement();
+
   void slotSaveTask();
+
   void slotSaveAllTask();
 
   //void slotSelectTask(QListViewItem *item);
@@ -175,7 +178,7 @@ signals:
   /**
    * indicate that a base flight element should be closed
    */
-  void closeTask();
+  void closeFlightElement();
   /**
    * indicate that a new flight group should be created
    */

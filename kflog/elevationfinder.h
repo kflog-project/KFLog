@@ -4,13 +4,13 @@
 // Description: 
 //
 //
-// Author: André Somers <andre@kflog.org>, (C) 2004
+// Author: Andrï¿½ Somers <andre@kflog.org>, (C) 2004
 //
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef ELEVATIONFINDER_H
-#define ELEVATIONFINDER_H
+#ifndef ELEVATION_FINDER_H
+#define ELEVATION_FINDER_H
 
 #include <qobject.h>
 #include <qpoint.h>
@@ -26,13 +26,15 @@
  * 2. Using the internal isohypses
  * The preferred method is number 1, as it is much faster and more detailed
  * in comparison to the latter. 
- * @author André Somers
+ * @author Andrï¿½ Somers
  */
 class ElevationFinder : public QObject
 {
-Q_OBJECT
-public:
-    ElevationFinder(QObject *parent = 0, const char *name = 0);
+ Q_OBJECT
+
+ public:
+
+    ElevationFinder(QObject *parent = 0);
 
     ~ElevationFinder();
     /**

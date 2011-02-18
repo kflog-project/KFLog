@@ -1,5 +1,11 @@
 $Id$
 
+2011-02-18 Axel Pauli <axel@kflog.org>
+  * Tried to fix the flight cursor handling in class Map. Cursors were drawn
+    at the widget's engine outside of the paint event. That caused warnings.
+    Animated cursor handling has the same problem, must be fixed in the feature
+    too.
+
 2011-02-16 Axel Pauli <axel@kflog.org>
   * Class HelpWindow fully ported to Qt4.
   * Masked painter removed from drawing of flights and tasks. But there remains

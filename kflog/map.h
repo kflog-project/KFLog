@@ -79,6 +79,8 @@ private:
     void slotCenterToWaypoint(const int id);
     /** */
     void slotDrawCursor(const QPoint& p1, const QPoint& p2);
+    /** Clears the flight cursors. */
+    void slotClearCursor();
     /** */
     void slotRedrawFlight();
     /**
@@ -273,12 +275,7 @@ private:
      * to be drawn, this buffer is used to get the content.
      */
     QPixmap pixBuffer;
-    /**
-     * Contains the Map under the CursorA to erase the cursor later
-     *
-     */
-    QPixmap pixCursorBuffer1;
-    QPixmap pixCursorBuffer2;
+
     QPixmap pixCursor1;
     QPixmap pixCursor2;
     QPixmap pixAnimate;
@@ -315,18 +312,27 @@ private:
      */
     QPixmap pixCursor;
     /**
+     * Contains the flight evaluation and optimization cursors.
+     */
+    QPixmap pixFlightCursors;
+    /**
+     * Flag to signal, that flight cursors shall be redrawn.
+     */
+    bool drawFlightCursors;
+    /**
      * Pixmap to hold waypoints of active WaypointsCatalog
      */
     QPixmap pixWaypoints;
     /** */
     QBitmap bitPlanMask;
 
-    /** */
+    /** Previous cursor positions. */
+    QPoint lastCur1Pos;
+    QPoint lastCur2Pos;
+
     QPoint prePos;
     QPoint prePlanPos;
     QPoint preAnimationPos;
-    QPoint preCur1;
-    QPoint preCur2;
     int preIndex;
 
     /**

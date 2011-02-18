@@ -129,15 +129,16 @@ MapContents::~MapContents()
   qDeleteAll(wpList);
 }
 
-void MapContents::closeFlight()
+void MapContents::slotCloseFlight()
 {
-  qDebug() << "MapContents::closeFlight()";
+  qDebug() << "MapContents::slotCloseFlight()";
   /*
    * close current flight
    */
   if( currentFlight != 0 )
     {
       emit closingFlight( currentFlight );
+      emit clearFlightCursor();
 
       for( int i = 0; i < flightList.count(); i++ )
         {

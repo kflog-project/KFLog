@@ -291,7 +291,7 @@ class MapContents : public QObject
   /**
    * Close current flight
    */
-  void closeFlight();
+  void slotCloseFlight();
   /** No descriptions */
   void slotSetFlight( QAction *action );
   /** No descriptions */
@@ -376,6 +376,11 @@ class MapContents : public QObject
    * Emitted if a flight (task/group) is about to be closed
    */
   void closingFlight(BaseFlightElement*);
+
+  /**
+   * Emitted to the map, if the current flight is closed.
+   */
+  void clearFlightCursor();
 
  private:
 

@@ -110,11 +110,6 @@ EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
 
 EvaluationDialog::~EvaluationDialog()
 {
-
-//  warning(" EvaluationDialog::~EvaluationDialog()");
-  // delete Cursor
-  emit(showCursor(QPoint(-100,-100), QPoint(-100,-100)));
-
   // Save settings
   extern QSettings _settings;
 

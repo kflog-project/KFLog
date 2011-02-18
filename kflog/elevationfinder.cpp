@@ -19,11 +19,16 @@
 
 ElevationFinder * ElevationFinder::_instance = 0;
 
-ElevationFinder::ElevationFinder(QObject *parent, const char *name)
- : QObject(parent, name)
+ElevationFinder::ElevationFinder(QObject *parent) :
+ QObject(parent),
+ useOGIE(false)
 {
-  if ( tryOpenGLIGCexplorer() )
-    useOGIE = true;
+  setObjectName("ElevationFinder");
+
+  if (tryOpenGLIGCexplorer())
+    {
+      useOGIE = true;
+    }
 
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(timeout()));
@@ -44,7 +49,7 @@ ElevationFinder::~ElevationFinder()
 ElevationFinder * ElevationFinder::instance()
 {
   if (! _instance )
-    _instance = new ElevationFinder(qApp, "elevationFinder");
+    _instance = new ElevationFinder(qApp);
   return _instance;
 }
 

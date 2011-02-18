@@ -141,6 +141,8 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), evaluationWindow, SLOT(slotShowFlightData()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), map, SLOT(slotShowCurrentFlight()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), objectTree, SLOT(slotSelectedFlightChanged()));
+  connect(_globalMapContents, SIGNAL(clearFlightCursor()), map, SLOT(slotClearCursor()));
+
   connect(_globalMapContents, SIGNAL(newFlightAdded(Flight*)), objectTree, SLOT(slotNewFlightAdded(Flight*)));
   connect(_globalMapContents, SIGNAL(newFlightGroupAdded(FlightGroup*)), objectTree, SLOT(slotNewFlightGroupAdded(FlightGroup*)));
   connect(_globalMapContents, SIGNAL(newTaskAdded(FlightTask*)), objectTree, SLOT(slotNewTaskAdded(FlightTask*)));
@@ -157,7 +159,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(objectTree, SIGNAL(selectedFlight(BaseFlightElement *)), _globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
   connect(objectTree, SIGNAL(newTask()), _globalMapContents, SLOT(slotNewTask()));
   connect(objectTree, SIGNAL(openTask()), this, SLOT(slotOpenTask()));
-  connect(objectTree, SIGNAL(closeTask()), _globalMapContents, SLOT(closeFlight()));
+  connect(objectTree, SIGNAL(closeFlightElement()), _globalMapContents, SLOT(slotCloseFlight()));
   connect(objectTree, SIGNAL(newFlightGroup()), _globalMapContents, SLOT(slotNewFlightGroup()));
   connect(objectTree, SIGNAL(editFlightGroup()), _globalMapContents, SLOT(slotEditFlightGroup()));
   connect(objectTree, SIGNAL(openFlight()), this, SLOT(slotOpenFile()));
@@ -351,7 +353,7 @@ void MainWindow::createMenuBar()
   fileCloseAction->setShortcut( Qt::CTRL + Qt::Key_W );
   fileCloseAction->setEnabled(true);
   connect( fileCloseAction, SIGNAL(triggered()),
-           _globalMapContents, SLOT(closeFlight()) );
+           _globalMapContents, SLOT(slotCloseFlight()) );
 
   fileSavePixmapAction = new QAction( getPixmap("kde_image_16.png"),
                                       tr("Export to PNG..."), this );

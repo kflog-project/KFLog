@@ -39,6 +39,8 @@ QStringList FlightTask::sortedTaskTypeTranslations;
 FlightTask::FlightTask(const QString& fName) :
   BaseFlightElement("task", BaseMapElement::Task, fName),
   isOrig(false),
+  olcPoints(0),
+  taskPoints(0),
   flightType(FlightTask::NotSet),
   __planningType(Route),
   __planningDirection(leftOfRoute)
@@ -49,6 +51,8 @@ FlightTask::FlightTask(const QString& fName) :
 FlightTask::FlightTask(const QList<Waypoint*>& wpL, bool isO, const QString& fName) :
   BaseFlightElement("task", BaseMapElement::Task, fName),
   isOrig(isO),
+  olcPoints(0),
+  taskPoints(0),
   __planningType(Route),
   __planningDirection(leftOfRoute)
 {

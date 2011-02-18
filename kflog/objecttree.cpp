@@ -330,14 +330,14 @@ void ObjectTree::createMenu()
                                               SIGNAL(optimizeFlight()) );
 
   actionFlightOptimizeOLC = taskMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
-                                                 tr("O&ptimize flight (OLC)"),
+                                                 tr("O&ptimize flight for OLC"),
                                                  this,
                                                  SIGNAL(optimizeFlightOLC()) );
 
   actionFlightClose = taskMenu->addAction( _mainWindow->getPixmap("kde_fileclose_16.png"),
-                                           tr("&Close flight (group)"),
+                                           tr("&Close flight or flight group"),
                                            this,
-                                           SLOT(slotDeleteTask()) );
+                                           SLOT(slotDeleteFlightElement()) );
   taskMenu->addSeparator();
 
   taskMenu->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
@@ -358,7 +358,7 @@ void ObjectTree::createMenu()
   actionTaskDelete = taskMenu->addAction( _mainWindow->getPixmap("kde_fileclose_16.png"),
                                           tr("&Close task"),
                                           this,
-                                          SLOT(slotDeleteTask()) );
+                                          SLOT(slotDeleteFlightElement()) );
   taskMenu->addSeparator();
 
   actionTaskSave = taskMenu->addAction( _mainWindow->getPixmap("kde_filesave_16.png"),
@@ -399,13 +399,13 @@ void ObjectTree::slotEditTask()
 /*
  Used to close a flight element in general, not only a task
 */
-void ObjectTree::slotDeleteTask()
+void ObjectTree::slotDeleteFlightElement()
 {
   if( currentFlightElementType() == BaseMapElement::Task ||
       currentFlightElementType() == BaseMapElement::Flight ||
       currentFlightElementType() == BaseMapElement::FlightGroup)
     {
-      emit closeTask();
+      emit closeFlightElement();
     }
 }
 

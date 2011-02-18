@@ -54,21 +54,21 @@ extern QSettings    _settings;
 
 Map::Map( QWidget* parent ) :
   QWidget(parent),
+  drawFlightCursors(false),
+  lastCur1Pos(-100,-100),
+  lastCur2Pos(-100,-100),
   prePos(-50, -50),
-  preCur1(-50, -50),
-  preCur2(-50, -50),
   planning(-1),
   tempTask(""),
   isDrawing(false),
   redrawRequest(false),
   preSnapPoint(-999, -999)
 {
-  QBitmap bitCursorMask(40,40);
-  bitCursorMask.fill(Qt::color0);
   pixCursor = QPixmap(40,40);
   pixCursor.fill(Qt::transparent);
 
-  QPainter cursor(&pixCursor);
+  QPainter cursor;
+  cursor.begin(&pixCursor);
   cursor.setPen(QPen(QColor(255,0,255), 2));
   cursor.drawLine(0,0,40,40);
   cursor.drawLine(0,40,40,0);
@@ -76,24 +76,8 @@ Map::Map( QWidget* parent ) :
   cursor.drawEllipse(10, 10, 20, 20);
   cursor.end();
 
-  cursor.begin(&bitCursorMask);
-  cursor.setPen(QPen(Qt::color1, 2));
-  cursor.drawLine(0,0,40,40);
-  cursor.drawLine(0,40,40,0);
-  cursor.setPen(QPen(Qt::color1, 3));
-  cursor.drawEllipse(10, 10, 20, 20);
-  cursor.end();
-
-  pixCursor.setMask(bitCursorMask);
-
   pixCursor1 = _mainWindow->getPixmap("flag_green.png");
   pixCursor2 = _mainWindow->getPixmap("flag_red.png");
-
-  pixCursorBuffer1 = QPixmap(32,32);
-  pixCursorBuffer1.fill(Qt::white);
-
-  pixCursorBuffer2 = QPixmap(32,32);
-  pixCursorBuffer2.fill(Qt::white);
 
 //  pixAnimate.resize(32,32);
 //  pixAnimate.fill(white);
@@ -938,10 +922,10 @@ void Map::mousePressEvent(QMouseEvent* event)
   // First: delete the cursor, if visible:
   if( prePos.x() >= 0 )
     {
-      QPainter p( this );
-      p.drawPixmap( prePos.x() - 20, prePos.y() - 20,
-                    pixBuffer,
-                    prePos.x() - 20, prePos.y() - 20, 40, 40);
+      qDebug() << "Map::mousePressEvent: prePos=" << prePos
+               << "Reset Flight Cursores";
+      drawFlightCursors = false;
+      repaint();
     }
 
   if( isZoomRect )
@@ -1054,6 +1038,10 @@ void Map::mousePressEvent(QMouseEvent* event)
   }
 }
 
+/**
+ * Please note! Qt4 allows only to draw at the widget's paint engine inside
+ * a paint event. Otherwise you will get displayed warnings.
+ */
 void Map::paintEvent( QPaintEvent* event )
 {
   QPainter painter(this);
@@ -1064,9 +1052,17 @@ void Map::paintEvent( QPaintEvent* event )
                       0, 0, event->rect().width(),
                       event->rect().height() );
 
-  // Set cursor position back to its original position
-  prePos.setX(-50);
-  prePos.setY(-50);
+  // Redraw the flight cursors on request.
+  if( drawFlightCursors == true )
+    {
+      qDebug() << "Map::paintEvent() Draw FlightCursors";
+
+      painter.drawPixmap( event->rect().left(),
+                          event->rect().top(),
+                          pixFlightCursors,
+                          0, 0, event->rect().width(),
+                          event->rect().height() );
+    }
 }
 
 void Map::__drawGrid()
@@ -1422,6 +1418,7 @@ void Map::__redrawMap()
       pixUnderMap = QPixmap( size() );
       pixIsoMap = QPixmap( size() );
       pixWaypoints = QPixmap( size() );
+      pixFlightCursors = QPixmap( size() );
     }
 
   _globalMapMatrix->createMatrix( size() );
@@ -1439,12 +1436,6 @@ void Map::__redrawMap()
   pixPlan.fill(Qt::transparent);
   pixWaypoints.fill(Qt::transparent);
 
-  QPoint temp1(preCur1);
-  QPoint temp2(preCur2);
-
-  preCur1.setX(-50);
-  preCur2.setX(-50);
-
   _globalMapContents->proofeSection();
 
   __drawMap();
@@ -1458,7 +1449,6 @@ void Map::__redrawMap()
   __showLayer();
 
   emit setStatusBarProgress(100);
-  slotDrawCursor(temp1, temp2);
 
   if( redrawRequest == true )
     {
@@ -1589,6 +1579,7 @@ void Map::__showLayer()
   buffer.drawPixmap(pixWaypoints.rect(), pixWaypoints);
   buffer.drawPixmap(pixGrid.rect(), pixGrid);
 
+  slotDrawCursor( lastCur1Pos, lastCur2Pos );
   update();
 
   qDebug() << "Map::__showLayer() Aus";
@@ -1596,75 +1587,54 @@ void Map::__showLayer()
 
 void Map::slotDrawCursor( const QPoint& p1, const QPoint& p2 )
 {
-  qDebug() << "Map::slotDrawCursor Rein";
+  if( p1 == QPoint(-100,-100) && p2 == QPoint(-100,-100) )
+    {
+      // Cursor is not set, ignore request.
+      pixFlightCursors.fill( Qt::transparent );
+      drawFlightCursors = false;
+      return;
+    }
+
+  lastCur1Pos = p1;
+  lastCur2Pos = p2;
 
   QPoint pos1( _globalMapMatrix->map( p1 ) );
   QPoint pos2( _globalMapMatrix->map( p2 ) );
 
-  QPoint prePos1( _globalMapMatrix->map( preCur1 ) );
-  QPoint prePos2( _globalMapMatrix->map( preCur2 ) );
-
-  if( preCur1.x() > -50 )
+  if( pixFlightCursors.isNull() )
     {
-      QPainter p1( &pixBuffer );
-      p1.drawPixmap( prePos1.x() - 32, prePos1.y() - 32, pixCursorBuffer1 );
-
-      QPainter p2( this );
-      p2.drawPixmap( prePos1.x() - 32, prePos1.y() - 32, pixCursorBuffer1 );
+      pixFlightCursors = QPixmap( size() );
     }
 
-  if( preCur2.x() > -50 )
-    {
-      QPainter p1( &pixBuffer );
-      p1.drawPixmap( prePos2.x() - 0, prePos2.y() - 32, pixCursorBuffer2 );
+  pixFlightCursors.fill( Qt::transparent );
 
-      QPainter p2( this );
-      p2.drawPixmap( prePos2.x() - 0, prePos2.y() - 32, pixCursorBuffer2 );
-    }
+  QPainter painter;
 
-  // copying the pixmaps can crash the x-server, if the coordinates
-  // are out of range.
-  //
-  //                                                Fixed 2001-12-01
-  //
+  painter.begin( &pixFlightCursors );
+
   if( pos1.x() > -50 && pos1.x() < width() + 50 &&
       pos1.y() > -50 && pos1.y() < height() + 50 )
     {
-      QPainter p( &pixCursorBuffer1 );
-      p.drawPixmap( 0, 0, pixBuffer, pos1.x() - 32, pos1.y() - 32, 32, 32);
+      painter.drawPixmap( pos1.x() - 32, pos1.y() - 32, pixCursor1 );
     }
 
   if( pos2.x() > -50 && pos2.x() < width() + 50 &&
       pos2.y() > -50 && pos2.y() < height() + 50 )
     {
-      QPainter p( &pixCursorBuffer2 );
-      p.drawPixmap( 0, 0, pixBuffer, pos2.x() - 0, pos2.y() - 32, 32, 32);
+      painter.drawPixmap( pos2.x() - 0, pos2.y() - 32, pixCursor2 );
     }
 
-  if( pos1.x() > -50 && pos1.x() < width() + 50 &&
-      pos1.y() > -50 && pos1.y() < height() + 50 )
-    {
-      QPainter p1( this );
-      p1.drawPixmap( pos1.x() - 32, pos1.y() - 32, pixCursor1 );
+  painter.end();
 
-      QPainter p2( &pixBuffer );
-      p2.drawPixmap( pos1.x() - 32, pos1.y() - 32, pixCursor1);
-    }
+  drawFlightCursors = true;
+  update();
+}
 
-  if( pos2.x() > -50 && pos2.x() < width() + 50 &&
-      pos2.y() > -50 && pos2.y() < height() + 50 )
-    {
-      QPainter p1( this );
-      p1.drawPixmap( pos2.x() - 0, pos2.y() - 32, pixCursor2 );
-
-      QPainter p2( &pixBuffer );
-      p2.drawPixmap( pos2.x() - 0, pos2.y() - 32, pixCursor2 );
-    }
-
-  preCur1 = p1;
-  preCur2 = p2;
-
-  qDebug() << "Map::slotDrawCursor Raus";
+void Map::slotClearCursor()
+{
+  lastCur1Pos = QPoint(-100,-100);
+  lastCur2Pos = QPoint(-100,-100);
+  drawFlightCursors = false;
 }
 
 void Map::slotZoomRect()
