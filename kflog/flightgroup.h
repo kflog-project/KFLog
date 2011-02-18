@@ -7,6 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2002 by Harald Maier
+ **                   2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -22,15 +23,17 @@
 #include "flight.h"
 
 #include <QList>
+#include <QString>
+#include <QPainter>
 
 /**
  * \class FlightGroup
  *
- * \author Harald Maier
+ * \author Harald Maier, Axel Pauli
  *
- * \brief Class for flight goup management.
+ * \brief Class for flight group management.
  *
- * \date 2002
+ * \date 2002-2011
  *
  * \version $Id$
  */
@@ -54,15 +57,21 @@ class FlightGroup : public BaseFlightElement
    * @param fList @ref QPtrList of flights to be included in the FlightGroup.
    * @returns new @ref FlightGroup object.
    */
-  FlightGroup(const QList <Flight::Flight*>& fList, const QString& fName);
+  FlightGroup(const QList<Flight::Flight *>& fList, const QString& fName);
   /**
    * Destructor
    */
   ~FlightGroup();
+
   /**
    * @returns an empty waypoint list
    */
-  QList<Waypoint*> getWPList();
+  QList<Waypoint*> getWPList()
+    {
+      QList<Waypoint *> list;
+      return list;
+    };
+
   /**
    * Draws the flight and the task for each flight into the given painter. Reimplemented
    * from BaseMapElement.
@@ -82,13 +91,21 @@ class FlightGroup : public BaseFlightElement
   /**
    * @returns the list of flights contained in the group
    */
-  QList<Flight::Flight*> getFlightList();
+  QList<Flight::Flight *>& getFlightList()
+    {
+      return flightList;
+    };
   /**
    * Removed the indicated object from the group.
    */
   void removeFlight(BaseFlightElement *f);
-  /** No descriptions */
-  void setFlightList(QList <Flight::Flight*> fl);
+
+  /** Sets the flight list. */
+  void setFlightList(QList<Flight::Flight *>& fl)
+  {
+    flightList = fl;
+  };
+
   /**
    * re-project the flights in this flight group. Reimplemented from BaseFlightElement.
    */
@@ -96,7 +113,7 @@ class FlightGroup : public BaseFlightElement
 
  private:
 
-  QList<Flight::Flight*> flightList;
+  QList<Flight::Flight *> flightList;
 };
 
 #endif

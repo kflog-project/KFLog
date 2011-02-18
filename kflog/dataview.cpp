@@ -27,14 +27,15 @@
 
 extern MapContents *_globalMapContents;
 
-DataView::DataView(QWidget* parent) : QFrame(parent)
+DataView::DataView(QWidget* parent) : QWidget(parent)
 {
   setObjectName("DataView");
 
   flightDataText = new QTextBrowser(this);
   flightDataText->setObjectName( "FlightDataBrowser" );
 
-  QHBoxLayout* flightLayout = new QHBoxLayout(this, 5);
+  QHBoxLayout* flightLayout = new QHBoxLayout(this);
+  flightLayout->setMargin(5);
   flightLayout->addWidget(flightDataText);
 
   connect( flightDataText, SIGNAL(anchorClicked(const QUrl &)),
@@ -53,7 +54,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
   Waypoint *wp1, *wp2 = 0;
   int t1, t2, loop = 0;
 
-  htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+  htmlText = "<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=0>\
       <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
       tr("Task") + ":</B></TD></TR>";
 
@@ -63,19 +64,19 @@ QString DataView::__writeTaskInfo(FlightTask* task)
 //    *wp1 = wpList.value(loop);
 
     if(wp1->fixTime != 0) {
-      timeString = printTime(wp1->fixTime);
+      timeString = printTime(wp1->fixTime, true);
       t1 = wp1->fixTime;
     }
     else if(wp1->sector1 != 0) {
-      timeString = printTime(wp1->sector1);
+      timeString = printTime(wp1->sector1, true);
       t1 = wp1->sector1;
     }
     else if(wp1->sector2 != 0) {
-      timeString = printTime(wp1->sector2);
+      timeString = printTime(wp1->sector2, true);
       t1 = wp1->sector2;
     }
     else if(wp1->sectorFAI != 0) {
-      timeString = printTime(wp1->sectorFAI);
+      timeString = printTime(wp1->sectorFAI, true);
       t1 = wp1->sectorFAI;
     }
     else {
@@ -104,7 +105,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       tmp.sprintf("t1 : %d, t2 : %d", t1, t2);
       //warning(tmp);
 
-      tmp.sprintf("%.2f km / %03.0f° / %.1f km/h",
+      tmp.sprintf("%.2f km / %03.0f\260 / %.1f km/h",
                   wp1->distance,
                   getTrueCourse(wp1->origP, wp2->origP),
                   (t1 != 0 && t2 != 0) ? wp1->distance / (t1 - t2) * 3600.0 : 0.0);
@@ -114,13 +115,13 @@ QString DataView::__writeTaskInfo(FlightTask* task)
 
     idString.sprintf("%d", loop);
 
-    htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" +
-      wp1->name + "</A></TD>\
-          <TD ALIGN=right>" + timeString + "</TD></TR>\
-          <TR><TD WIDTH=15></TD>\
-          <TD>" + WGSPoint::printPos(wp1->origP.lat()) + "</TD>\
-          <TD ALIGN=right>" + WGSPoint::printPos(wp1->origP.lon(), false) +
-      "</TD></TR>";
+    QString wpLat = WGSPoint::printPos(wp1->origP.lat()).replace(QRegExp(" "), "&nbsp;");
+    QString wpLon = WGSPoint::printPos(wp1->origP.lon()).replace(QRegExp(" "), "&nbsp;");
+
+    htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" + wp1->name +
+          "</A></TD><TD ALIGN=right>" + timeString + "</TD></TR>" +
+          "<TR><TD NOWRAP COLSPAN=2>&nbsp;" + wpLat + "&nbsp;</TD>" +
+          "<TD ALIGN=right>&nbsp;" + wpLon + "&nbsp;</TD></TR>";
     wp2 = wp1;
     loop++;
   }
@@ -170,6 +171,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
         task->getFAIDistanceString() + "</TD></TR></TABLE>";
     }
   }
+
   return htmlText;
 }
 
@@ -179,12 +181,11 @@ void DataView::slotShowTaskText(FlightTask* task)
   QString htmlText = "";
   QString tmp;
 
-  htmlText = "<B>" + tr("Task-Type: ") + "</B>" +
+  htmlText = "<HTML><B>" + tr("Task-Type: ") + "</B>" +
       task->getTaskTypeString() + "<BR>";
 
   if(task->getWPList().count() > 0)  htmlText += __writeTaskInfo(task);
 
-  // Frage
   if(taskPointList.count() == 0)
     {
       htmlText += "Bitte wählen Sie den <b>Startort</b> der Aufgabe in der Karte<br>";
@@ -198,7 +199,9 @@ void DataView::slotShowTaskText(FlightTask* task)
       htmlText += "<b>" + tr("Next waypoint") + "?</b>";
     }
 
-  flightDataText->setText(htmlText);
+  htmlText += "</HTML>\n";
+
+  flightDataText->setHtml(htmlText);
 }
 
 void DataView::setFlightData()
@@ -277,7 +280,8 @@ void DataView::setFlightData()
             break;
         }
 
-      flightDataText->setText(htmlText);
+      flightDataText->setHtml(htmlText);
+      flightDataText->document()->adjustSize();
     }
 }
 
@@ -294,42 +298,50 @@ void DataView::slotWPSelected(const QUrl &link)
   if (!e)
     return;
 
-  switch(e->getObjectType())
-  {
-    case BaseMapElement::Flight:
-      emit wpSelected(url.toInt());
-      break;
+  switch (e->getObjectType())
+    {
+      case BaseMapElement::Flight:
 
-    case BaseMapElement::Task:
-      if (url == "EDITTASK") {
-        QMessageBox::information(0, tr("Edit task"),
-            tr("This will bring up the task editing dialog"),
-            QMessageBox::Ok);
-      }
-      else {
         emit wpSelected(url.toInt());
-      }
-      break;
+        break;
 
-    case BaseMapElement::FlightGroup:
-      if (url == "EDITGROUP") {
-        emit editFlightGroup();
-      }
-      else {
-        emit flightSelected((BaseFlightElement *)url.toUInt());
-      }
-      break;
+      case BaseMapElement::Task:
 
-    default:
-      break;
-  }
+        if (url == "EDITTASK")
+          {
+            QMessageBox::information(0, tr("Edit task"), tr(
+                "This will bring up the task editing dialog"), QMessageBox::Ok);
+          }
+        else
+          {
+            emit wpSelected(url.toInt());
+          }
+
+        break;
+
+      case BaseMapElement::FlightGroup:
+
+        if (url == "EDITGROUP")
+          {
+            emit editFlightGroup();
+          }
+        else
+          {
+            emit flightSelected((BaseFlightElement *) url.toUInt());
+          }
+
+        break;
+
+      default:
+
+        break;
+    }
 
   setFlightData();
 }
 
 void DataView::slotClearView()
 {
-  QString htmlText = "";
-  flightDataText->setText(htmlText);
+  flightDataText->clear();
 }
 

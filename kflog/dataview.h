@@ -7,18 +7,19 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef DATAVIEW_H
-#define DATAVIEW_H
+#ifndef DATA_VIEW_H
+#define DATA_VIEW_H
 
-#include <QFrame>
+#include <QWidget>
 #include <QTextBrowser>
 #include <QUrl>
 
@@ -35,11 +36,11 @@ class FlightTask;
  *
  * Provides a widget for displaying the flight data.
  *
- * \date 2001-2010
+ * \date 2001-2011
  *
  * \version $Id$
  */
-class DataView : public QFrame
+class DataView : public QWidget
 {
   Q_OBJECT
 
@@ -69,7 +70,7 @@ class DataView : public QFrame
 
   public slots:
     /**
-     * Writes the task and some headerinfo about the flight into the widget.
+     * Writes the task and some header info about the flight into the widget.
      */
     void setFlightData();
     /**

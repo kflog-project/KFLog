@@ -5,6 +5,7 @@ $Id$
     at the widget's engine outside of the paint event. That caused warnings.
     Animated cursor handling has the same problem, must be fixed in the feature
     too.
+  * Different bugs in data view format layout fixed.
 
 2011-02-16 Axel Pauli <axel@kflog.org>
   * Class HelpWindow fully ported to Qt4.

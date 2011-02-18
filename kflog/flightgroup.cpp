@@ -7,6 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2002 by Harald Maier
+ **                   2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -15,28 +16,24 @@
  **
  ***********************************************************************/
 
+#include <QtGui>
+
 #include "flightgroup.h"
 #include "mapcalc.h"
 
-FlightGroup::FlightGroup(const QString& fName)
-  : BaseFlightElement("flight group", BaseMapElement::FlightGroup, fName)
+FlightGroup::FlightGroup(const QString& fName) :
+  BaseFlightElement("flight group", BaseMapElement::FlightGroup, fName)
 {
 }
 
-FlightGroup::FlightGroup(const QList <Flight::Flight*>& fList, const QString& fName)
-  : BaseFlightElement("flight group", BaseMapElement::FlightGroup, fName),
-    flightList(fList)
+FlightGroup::FlightGroup(const QList<Flight::Flight *>& fList, const QString& fName) :
+  BaseFlightElement("flight group", BaseMapElement::FlightGroup, fName),
+  flightList(fList)
 {
 }
 
 FlightGroup::~FlightGroup()
 {
-}
-
-QList<Waypoint*> FlightGroup::getWPList()
-{
-  QList<Waypoint*> tmp;
-  return tmp;
 }
 
 bool FlightGroup::drawMapElement( QPainter* targetP )
@@ -63,28 +60,22 @@ void FlightGroup::printMapElement(QPainter* targetP, bool isText)
     }
 }
 
-/** No descriptions */
-QList<Flight::Flight*> FlightGroup::getFlightList()
-{
-  return flightList;
-}
-
 /** remove flight from current group */
 void FlightGroup::removeFlight(BaseFlightElement *f)
 {
-  if( flightList.contains( (Flight::Flight *) f ) )
+  Flight::Flight *flight = dynamic_cast<Flight::Flight *> (f);
+
+  if( ! flight )
     {
-      flightList.removeOne( (Flight::Flight *) f );
+      return;
+    }
+
+  if( flightList.contains( flight ) )
+    {
+      flightList.removeOne( flight );
     }
 }
 
-/** No descriptions */
-void FlightGroup::setFlightList(QList <Flight::Flight*> fl)
-{
-  flightList = fl;
-}
-
-/** re-project the flights in this flightgroup. Reimplemented from BaseFlightElement. */
 void FlightGroup::reProject()
 {
   Flight::Flight *flight;
@@ -94,4 +85,3 @@ void FlightGroup::reProject()
       flight->reProject();
     }
 }
-
