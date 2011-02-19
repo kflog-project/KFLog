@@ -134,8 +134,8 @@ void FlightSelectionDialog::slotAccept()
        if( QMessageBox::Yes == QMessageBox::warning( this,
                                   tr("No flights selected"),
                                   "<html>" +
-                                  tr("No flights are selected, so a flight group "
-                                     "cannot be created or modified! "
+                                  tr("No flights are selected, so a flight<br>"
+                                     "group cannot be created or modified!<br><br>"
                                      "Exit dialog?") +
                                   "</html>",
                                   QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes ) )
