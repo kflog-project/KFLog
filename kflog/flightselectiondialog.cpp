@@ -7,30 +7,30 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Harald Maier
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
 #include <QtGui>
-#include <Qt3Support>
 
 #include "flightselectiondialog.h"
 #include "mainwindow.h"
 
 extern MainWindow *_mainWindow;
 
-FlightSelectionDialog::FlightSelectionDialog(QWidget *parent, const char *name )
- : QDialog(parent, name, true)
+FlightSelectionDialog::FlightSelectionDialog(QWidget *parent) :
+  QDialog(parent)
 {
-  setCaption(tr("Flight selection"));
-  __initDialog();
+  setObjectName("FlightSelectionDialog");
+  setWindowTitle( tr("Flight Selection") );
+  setModal(true);
 
-  availableFlights.setAutoDelete(false);
-  selectedFlights.setAutoDelete(false);
+  __initDialog();
 
   setMinimumWidth(400);
   setMinimumHeight(300);
@@ -38,22 +38,34 @@ FlightSelectionDialog::FlightSelectionDialog(QWidget *parent, const char *name )
 
 FlightSelectionDialog::~FlightSelectionDialog()
 {
+  //qDeleteAll(availableFlights);
+  //qDeleteAll(selectedFlights);
 }
+
 /** No descriptions */
 void FlightSelectionDialog::__initDialog()
 {
   QLabel *l;
   QPushButton *b;
 
-  Q3VBoxLayout *topLayout = new Q3VBoxLayout(this, 10);
-  Q3VBoxLayout *leftLayout = new Q3VBoxLayout(5);
-  Q3VBoxLayout *middleLayout = new Q3VBoxLayout(5);
-  Q3VBoxLayout *rightLayout = new Q3VBoxLayout(5);
-  Q3HBoxLayout *topGroup = new Q3HBoxLayout(10);
-  Q3HBoxLayout *buttons = new Q3HBoxLayout(10);
-  Q3HBoxLayout *smallButtons = new Q3HBoxLayout(5);
+  QVBoxLayout *topLayout = new QVBoxLayout(this);
+  topLayout->setMargin(10);
 
-  buttons->addStretch();
+  QVBoxLayout *leftLayout = new QVBoxLayout;
+  leftLayout->setSpacing(5);
+  QVBoxLayout *middleLayout = new QVBoxLayout;
+  middleLayout->setSpacing(5);
+  QVBoxLayout *rightLayout = new QVBoxLayout;
+  rightLayout->setSpacing(5);
+
+  QHBoxLayout *topGroup = new QHBoxLayout;
+  topGroup->setSpacing(10);
+  QHBoxLayout *buttons = new QHBoxLayout;
+  buttons->setSpacing(10);
+  QHBoxLayout *smallButtons = new QHBoxLayout;
+  smallButtons->setSpacing(5);
+
+  buttons->addStretch(5);
 
   b = new QPushButton(tr("&Ok"), this);
   b->setDefault(true);
@@ -74,8 +86,9 @@ void FlightSelectionDialog::__initDialog()
   smallButtons->addWidget(b);
   smallButtons->addStretch();
 
-  aFlights = new Q3ListBox(this, "availableFlights");
-  l = new QLabel(aFlights, tr("&available Flights"), this);
+  aFlights = new QListWidget;
+  l = new QLabel(tr("&available Flights"));
+  l->setBuddy(aFlights);
   leftLayout->addWidget(l);
   leftLayout->addWidget(aFlights);
 
@@ -90,16 +103,17 @@ void FlightSelectionDialog::__initDialog()
   middleLayout->addWidget(b);
   b = new QPushButton(this);
   b->setIcon(_mainWindow->getPixmap("kde_back_16.png"));
-  connect(b, SIGNAL(clicked()), SLOT(slotRemoveOne()));
+  connect(b, SIGNAL(clicked()), SLOT(slotMoveOne()));
   middleLayout->addWidget(b);
   b = new QPushButton(this);
   b->setIcon(_mainWindow->getPixmap("kde_2leftarrow_16.png"));
-  connect(b, SIGNAL(clicked()), SLOT(slotRemoveAll()));
+  connect(b, SIGNAL(clicked()), SLOT(slotMoveAll()));
   middleLayout->addWidget(b);
   middleLayout->addStretch();
 
-  sFlights = new Q3ListBox(this, "selectedFlights");
-  l = new QLabel(sFlights, tr("&selected Flights"), this);
+  sFlights = new QListWidget;
+  l = new QLabel(tr("&selected Flights"));
+  l->setBuddy(sFlights);
   rightLayout->addWidget(l);
   rightLayout->addWidget(sFlights);
   rightLayout->addLayout(smallButtons);
@@ -109,70 +123,79 @@ void FlightSelectionDialog::__initDialog()
   topGroup->addLayout(rightLayout);
   topLayout->addLayout(topGroup);
   topLayout->addLayout(buttons);
-
 }
 
-/** No descriptions */
 void FlightSelectionDialog::slotAccept()
 {
-  if(selectedFlights.count()>0)
-    accept();
+  if( selectedFlights.count() > 0 )
+    {
+      accept();
+    }
   else
-    if(QMessageBox::Yes == QMessageBox::warning(0, tr("No flights selected"), "<qt>" + tr("No flights are selected, so no flight group can be made. Do you want to close this screen?") + "</qt>", QMessageBox::Yes, QMessageBox::No))
-      reject();
+    {
+       if( QMessageBox::Yes == QMessageBox::warning( this,
+                                  tr("No flights selected"),
+                                  "<html>" +
+                                  tr("No flights are selected, so a flight group "
+                                     "cannot be created or modified! "
+                                     "Exit dialog?") +
+                                  "</html>",
+                                  QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes ) )
+        reject();
+    }
 }
 
 /** No descriptions */
 void FlightSelectionDialog::slotAddOne()
 {
-  unsigned int i = aFlights->currentItem();
+  QListWidgetItem *item = aFlights->currentItem();
+  int row = aFlights->currentRow();
 
-  if ((int)i != -1) {
-    sFlights->insertItem(aFlights->text(i));
-    aFlights->removeItem(i);
-    selectedFlights.append(availableFlights.take(i));
-  }
+  if( item )
+    {
+      QListWidgetItem * it = aFlights->takeItem( row );
+      sFlights->addItem(it);
+      selectedFlights.append(availableFlights.takeAt(row));
+    }
 }
 
 /** No descriptions */
 void FlightSelectionDialog::slotAddAll()
 {
-  unsigned int i;
-  BaseFlightElement *f;
-
-  for (i = 0; i < availableFlights.count(); i++) {
-    f = availableFlights.at(i);
-    selectedFlights.append(f);
-    sFlights->insertItem(f->getFileName(), i);
-  }
+  for( int i = 0; i < availableFlights.count(); i++ )
+    {
+      BaseFlightElement *bfe = availableFlights.at(i);
+      selectedFlights.append(bfe);
+      sFlights->addItem( new QListWidgetItem( bfe->getFileName() ) );
+    }
 
   aFlights->clear();
   availableFlights.clear();
 }
 
 /** No descriptions */
-void FlightSelectionDialog::slotRemoveOne()
+void FlightSelectionDialog::slotMoveOne()
 {
-  unsigned int i = sFlights->currentItem();
+  QListWidgetItem *item = sFlights->currentItem();
+  int row = sFlights->currentRow();
 
-  if ((int)i != -1) {
-    aFlights->insertItem(sFlights->text(i));
-    sFlights->removeItem(i);
-    availableFlights.append(selectedFlights.take(i));
-  }
+  if( item )
+    {
+      QListWidgetItem * it = sFlights->takeItem( row );
+      aFlights->addItem(it);
+      availableFlights.append(selectedFlights.takeAt(row));
+    }
 }
 
 /** No descriptions */
-void FlightSelectionDialog::slotRemoveAll()
+void FlightSelectionDialog::slotMoveAll()
 {
-  unsigned int i;
-  BaseFlightElement *f;
-
-  for (i = 0; i < selectedFlights.count(); i++) {
-    f = selectedFlights.at(i);
-    availableFlights.append(f);
-    aFlights->insertItem(f->getFileName(), i);
-  }
+  for( int i = 0; i < selectedFlights.count(); i++)
+    {
+      BaseFlightElement *bfe = selectedFlights.at(i);
+      availableFlights.append(bfe);
+      aFlights->addItem( new QListWidgetItem( bfe->getFileName() ) );
+    }
 
   sFlights->clear();
   selectedFlights.clear();
@@ -181,50 +204,56 @@ void FlightSelectionDialog::slotRemoveAll()
 /** No descriptions */
 void FlightSelectionDialog::slotMoveUp()
 {
-  int i = sFlights->currentItem();
-  int newItem;
+  QListWidgetItem *item = sFlights->currentItem();
+  int row = sFlights->currentRow();
 
-  if (i != -1) {
-    QString s = sFlights->text(i);
-    sFlights->removeItem(i);
-    newItem = std::max(0, i - 1);
-    sFlights->insertItem(s, newItem);
-    sFlights->setCurrentItem(newItem);
-    BaseFlightElement *e = selectedFlights.take(i);
-    selectedFlights.insert(newItem, e);
-  }
+  if( item && row != 0 )
+    {
+      QListWidgetItem *it = sFlights->takeItem( row );
+      sFlights->insertItem( row - 1, it );
+      sFlights->setCurrentItem(it);
+
+      BaseFlightElement *bfe = selectedFlights.takeAt(row);
+      selectedFlights.insert(row - 1, bfe);
+    }
 }
 
 /** No descriptions */
 void FlightSelectionDialog::slotMoveDown()
 {
-  int i = sFlights->currentItem();
-  int newItem;
+  QListWidgetItem *item = sFlights->currentItem();
+  int row = sFlights->currentRow();
 
-  if (i != -1) {
-    QString s = sFlights->text(i);
-    sFlights->removeItem(i);
-    newItem = std::min(sFlights->count(), (unsigned int)i + 1);
-    sFlights->insertItem(s, newItem);
-    sFlights->setCurrentItem(newItem);
-    BaseFlightElement *e = selectedFlights.take(i);
-    selectedFlights.insert(newItem, e);
-  }
+  if( item && row < (sFlights->count() - 1) )
+    {
+      QListWidgetItem *it = sFlights->takeItem( row );
+      sFlights->insertItem( row + 1, it );
+      sFlights->setCurrentItem(it);
+
+      BaseFlightElement *bfe = selectedFlights.takeAt(row);
+      selectedFlights.insert(row + 1, bfe);
+    }
 }
 
-void FlightSelectionDialog::polish()
+/** Loads the data of the list boxes before every show. */
+void FlightSelectionDialog::showEvent( QShowEvent *event )
 {
-  QDialog::polish();
-  unsigned int i;
-  BaseFlightElement *f;
+  Q_UNUSED( event )
 
-  for (i = 0; i < availableFlights.count(); i++) {
-    f = availableFlights.at(i);
-    aFlights->insertItem(f->getFileName(), i);
-  }
+  BaseFlightElement *bfe;
 
-  for (i = 0; i < selectedFlights.count(); i++) {
-    f = selectedFlights.at(i);
-    sFlights->insertItem(f->getFileName(), i);
-  }
+  aFlights->clear();
+  sFlights->clear();
+
+  for (int i = 0; i < availableFlights.count(); i++)
+    {
+      bfe = availableFlights.at(i);
+      aFlights->addItem( new QListWidgetItem( bfe->getFileName() ) );
+    }
+
+  for (int i = 0; i < selectedFlights.count(); i++)
+    {
+      bfe = selectedFlights.at(i);
+      sFlights->addItem(new QListWidgetItem( bfe->getFileName() ) );
+    }
 }

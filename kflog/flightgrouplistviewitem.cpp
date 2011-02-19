@@ -61,7 +61,7 @@ void FlightGroupListViewItem::createChildren()
   QList<Flight::Flight*> flights = flightGroup->getFlightList();
 
   setText( 0,flightGroup->getFileName() );
-  setText( 1, QString::number(flights.count()) + QObject::tr("flights") );
+  setText( 1, QString::number(flights.count()) + " " + QObject::tr("Flights") );
 
   for( int i = 0; i < flights.count(); i++ )
     {

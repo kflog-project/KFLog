@@ -1633,7 +1633,7 @@ void MapContents::slotNewFlightGroup()
   BaseFlightElement *f;
   QString tmp;
 
-  FlightSelectionDialog *fsd = new FlightSelectionDialog(0, "flight selection dialog");
+  FlightSelectionDialog *fsd = new FlightSelectionDialog( _mainWindow );
 
   for(int i = 0; i < flightList.count(); i++)
     {
@@ -1648,14 +1648,14 @@ void MapContents::slotNewFlightGroup()
 
   if (fsd->exec() == QDialog::Accepted)
     {
-      for( uint i = 0; i < fsd->selectedFlights.count(); i++ )
+      for( int i = 0; i < fsd->selectedFlights.count(); i++ )
         {
-          fl.append((Flight *)fsd->selectedFlights.at(i));
+          fl.append( dynamic_cast<Flight *>(fsd->selectedFlights.at(i)) );
         }
 
-      tmp.sprintf("GROUP%03d", gCount++);
+      tmp = QString("GROUP%1").arg( gCount++, 3, 10, QChar('0') );
 
-      FlightGroup * flightGroup = new FlightGroup(fl, tmp);
+      FlightGroup* flightGroup = new FlightGroup(fl, tmp);
 
       flightList.append(flightGroup);
       currentFlightListIndex = flightList.size() - 1;
@@ -1706,7 +1706,8 @@ void MapContents::slotEditFlightGroup()
   BaseFlightElement *f;
   BaseFlightElement *fg;
 
-  FlightSelectionDialog *fsd = new FlightSelectionDialog(0, "flight selection dialog");
+  FlightSelectionDialog *fsd = new FlightSelectionDialog( _mainWindow );
+
   fg = getFlight();
 
   if (fg->getObjectType() == BaseMapElement::FlightGroup)
@@ -1719,7 +1720,7 @@ void MapContents::slotEditFlightGroup()
 
           if (f->getObjectType() == BaseMapElement::Flight)
             {
-              if (fl.count((Flight *)f)>0)
+              if (fl.count(dynamic_cast<Flight *>(f)) > 0 )
                 {
                   fsd->selectedFlights.append(f);
                 }
@@ -1734,9 +1735,9 @@ void MapContents::slotEditFlightGroup()
         {
           fl.clear();
 
-          for ( uint i = 0; i < fsd->selectedFlights.count(); i++)
+          for ( int i = 0; i < fsd->selectedFlights.count(); i++)
             {
-              fl.append((Flight *)fsd->selectedFlights.at(i));
+              fl.append( dynamic_cast<Flight *>(fsd->selectedFlights.at(i)) );
             }
 
           ((FlightGroup *)fg)->setFlightList(fl);
@@ -1744,6 +1745,7 @@ void MapContents::slotEditFlightGroup()
     }
 
   emit currentFlightChanged();
+
   delete fsd;
 }
 

@@ -94,7 +94,7 @@ private:
    */
   QTreeWidgetItem* TaskRoot;
 
-  QMenu *taskMenu;
+  QMenu *objectTreeMenu;
   /**
    * References for task-related items in the popup menu
    */
@@ -105,6 +105,7 @@ private:
   /**
    * References for flight-related items in the popup menu
    */
+  QAction* actionFlightGroupNew;
   QAction* actionFlightGroupEdit;
   QAction* actionFlightClose;
   QAction* actionFlightOptimize;
@@ -156,7 +157,7 @@ private slots:
 
   //void slotSelectTask(QListViewItem *item);
 
-  void slotShowTaskMenu( QTreeWidgetItem *item, const QPoint &position );
+  void slotShowObjectTreeMenu( QTreeWidgetItem *item, const QPoint &position );
   /**
    * Called if the selection has been changed.
    */

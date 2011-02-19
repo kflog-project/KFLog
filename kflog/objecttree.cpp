@@ -83,7 +83,7 @@ ObjectTree::ObjectTree( QWidget *parent ) :
            SLOT(slotSelectionChanged(QTreeWidgetItem *, int)) );
 
   connect( this, SIGNAL(rightButtonPressed( QTreeWidgetItem *, const QPoint&)),
-           SLOT(slotShowTaskMenu( QTreeWidgetItem*, const QPoint&)) );
+           SLOT(slotShowObjectTreeMenu( QTreeWidgetItem*, const QPoint&)) );
 
   connect( this, SIGNAL(itemExpanded(QTreeWidgetItem *)),
            SLOT(slotResizeColumns2Content()) );
@@ -283,7 +283,7 @@ void ObjectTree::slotCloseFlight( BaseFlightElement* bfe )
   delete item;
 }
 
-void ObjectTree::slotShowTaskMenu(QTreeWidgetItem *item, const QPoint &position )
+void ObjectTree::slotShowObjectTreeMenu(QTreeWidgetItem *item, const QPoint &position )
 {
   Q_UNUSED( item )
   Q_UNUSED( position )
@@ -295,78 +295,79 @@ void ObjectTree::slotShowTaskMenu(QTreeWidgetItem *item, const QPoint &position 
   actionTaskSaveAll->setEnabled(TaskRoot->childCount() && currentFlightElementType() == BaseMapElement::Task);
 
   // flight items
+  actionFlightGroupNew->setEnabled(FlightRoot->childCount());
   actionFlightGroupEdit->setEnabled(FlightRoot->childCount() && currentFlightElementType() == BaseMapElement::FlightGroup);
   actionFlightClose->setEnabled(FlightRoot->childCount() && (currentFlightElementType() == BaseMapElement::Flight ||
                                 currentFlightElementType() == BaseMapElement::FlightGroup));
   actionFlightOptimize->setEnabled(FlightRoot->childCount() && currentFlightElementType() == BaseMapElement::Flight);
   actionFlightOptimizeOLC->setEnabled(FlightRoot->childCount() && currentFlightElementType() == BaseMapElement::Flight);
 
-  taskMenu->exec( QCursor::pos() );
+  objectTreeMenu->exec( QCursor::pos() );
 }
 
 void ObjectTree::createMenu()
 {
-  taskMenu = new QMenu(this);
-  taskMenu->setTitle( tr("Flights") );
+  objectTreeMenu = new QMenu(this);
+  objectTreeMenu->setTitle( tr("Flights") );
 
-  taskMenu->addAction( _mainWindow->getPixmap("kde_fileopen_16.png"),
+  objectTreeMenu->addAction( _mainWindow->getPixmap("kde_fileopen_16.png"),
                        tr("&Open flight"),
                        this,
                        SIGNAL(openFlight()) );
 
-  taskMenu->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
-                      tr("New flight &group"),
-                      this,
-                      SIGNAL(newFlightGroup()) );
+  actionFlightGroupNew = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
+                                                    tr("New flight &group"),
+                                                    this,
+                                                    SIGNAL(newFlightGroup()) );
 
-  actionFlightGroupEdit = taskMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
+  actionFlightGroupEdit = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
                                                tr("Edit flight group"),
                                                this,
                                                SIGNAL(editFlightGroup()) );
 
-  actionFlightOptimize = taskMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
+  actionFlightOptimize = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
                                               tr("O&ptimize flight"),
                                               this,
                                               SIGNAL(optimizeFlight()) );
 
-  actionFlightOptimizeOLC = taskMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
+  actionFlightOptimizeOLC = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
                                                  tr("O&ptimize flight for OLC"),
                                                  this,
                                                  SIGNAL(optimizeFlightOLC()) );
 
-  actionFlightClose = taskMenu->addAction( _mainWindow->getPixmap("kde_fileclose_16.png"),
+  actionFlightClose = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_fileclose_16.png"),
                                            tr("&Close flight or flight group"),
                                            this,
                                            SLOT(slotDeleteFlightElement()) );
-  taskMenu->addSeparator();
+  objectTreeMenu->addSeparator();
 
-  taskMenu->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
+  objectTreeMenu->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
                        tr("&New task"),
                        this,
                        SIGNAL(newTask()) );
 
-  taskMenu->addAction( _mainWindow->getPixmap("kde_fileopen_16.png"),
+  objectTreeMenu->addAction( _mainWindow->getPixmap("kde_fileopen_16.png"),
                        tr("Open &task"),
                        this,
                        SIGNAL(openTask()) );
 
-  actionTaskEdit = taskMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
+  actionTaskEdit = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
                                         tr("&Edit task"),
                                         this,
                                         SLOT(slotEditTask()) );
 
-  actionTaskDelete = taskMenu->addAction( _mainWindow->getPixmap("kde_fileclose_16.png"),
+  actionTaskDelete = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_fileclose_16.png"),
                                           tr("&Close task"),
                                           this,
                                           SLOT(slotDeleteFlightElement()) );
-  taskMenu->addSeparator();
+  objectTreeMenu->addSeparator();
 
-  actionTaskSave = taskMenu->addAction( _mainWindow->getPixmap("kde_filesave_16.png"),
+  actionTaskSave = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_filesave_16.png"),
                                         tr("&Save this task"),
                                         this,
                                         SLOT(slotSaveTask()) );
 
-  actionTaskSaveAll = taskMenu->addAction( _mainWindow->getPixmap("kde_save_all_16.png"),
+  actionTaskSaveAll = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_save_all_16.png"),
                                            tr("Save &all task's"),
                                            this,
                                            SLOT(slotSaveAllTask()) );

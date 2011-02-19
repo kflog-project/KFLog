@@ -204,7 +204,7 @@ void DataView::slotShowTaskText(FlightTask* task)
   flightDataText->setHtml(htmlText);
 }
 
-void DataView::setFlightData()
+void DataView::slotSetFlightData()
 {
   BaseFlightElement* e = _globalMapContents->getFlight();
   QString htmlText;
@@ -337,7 +337,7 @@ void DataView::slotWPSelected(const QUrl &link)
         break;
     }
 
-  setFlightData();
+  slotSetFlightData();
 }
 
 void DataView::slotClearView()

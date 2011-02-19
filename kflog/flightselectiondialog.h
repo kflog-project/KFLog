@@ -7,47 +7,75 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Harald Maier
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef FLIGHTSELECTIONDIALOG_H
-#define FLIGHTSELECTIONDIALOG_H
+/**
+ * \class FlightSelectionDialog
+ *
+ * \author Harald Maier, Axel Pauli
+ *
+ * \brief Dialog for grouping of flights
+  *
+  * Dialog for grouping of flights
+  *
+  * \date 2002-2011
+  *
+  * \version $Id$
+  */
+
+#ifndef FLIGHT_SELECTION_DIALOG_H
+#define FLIGHT_SELECTION_DIALOG_H
+
+#include <QDialog>
+#include <QList>
+#include <QListWidget>
+#include <QShowEvent>
 
 #include "baseflightelement.h"
 
-#include <qdialog.h>
-#include <q3listbox.h>
-#include <qwidget.h>
-//Added by qt3to4:
-#include <Q3PtrList>
-
-/**Dialog for selecting flights
-  *@author Harald Maier
-  */
-
-class FlightSelectionDialog : public QDialog  {
+class FlightSelectionDialog : public QDialog
+{
    Q_OBJECT
-public: // Public attributes
-  /**  */
-  Q3PtrList<BaseFlightElement> availableFlights;
-  /**  */
-  Q3PtrList<BaseFlightElement> selectedFlights;
-  FlightSelectionDialog(QWidget *parent=0, const char *name=0);
-  ~FlightSelectionDialog();
-private: // Private methods
-  /** No descriptions */
+
+private:
+
+  Q_DISABLE_COPY ( FlightSelectionDialog )
+
+public:
+
+  FlightSelectionDialog(QWidget *parent=0);
+
+  virtual ~FlightSelectionDialog();
+
+  /**  List with available flights. */
+  QList<BaseFlightElement *> availableFlights;
+
+  /** List containing selected flights. */
+  QList<BaseFlightElement *> selectedFlights;
+
+protected:
+
+  void showEvent( QShowEvent *event );
+
+private:
+
+  /** Setups the dialog. */
   void __initDialog();
-private: // Private attributes
-  /**  */
-  Q3ListBox *aFlights;
-  /**  */
-  Q3ListBox *sFlights;
-private slots: // Private slots
+
+private:
+
+  QListWidget *aFlights;
+  QListWidget *sFlights;
+
+private slots:
+
   /** No descriptions */
   void slotAccept();
   /** No descriptions */
@@ -55,14 +83,13 @@ private slots: // Private slots
   /** No descriptions */
   void slotAddAll();
   /** No descriptions */
-  void slotRemoveOne();
+  void slotMoveOne();
   /** No descriptions */
-  void slotRemoveAll();
+  void slotMoveAll();
   /** No descriptions */
   void slotMoveUp();
   /** No descriptions */
   void slotMoveDown();
-  void polish();
 };
 
 #endif

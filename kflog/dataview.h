@@ -72,7 +72,7 @@ class DataView : public QWidget
     /**
      * Writes the task and some header info about the flight into the widget.
      */
-    void setFlightData();
+    void slotSetFlightData();
     /**
      * Called when the user clicks on one of the waypoint links.
      */

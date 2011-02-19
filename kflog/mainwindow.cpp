@@ -113,7 +113,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(map, SIGNAL(showFlightPoint(const QPoint&, const FlightPoint&)), this, SLOT(slotSetPointInfo(const QPoint&, const FlightPoint&)));
   connect(map, SIGNAL(taskPlanningEnd()), helpWindow, SLOT(slotClearView()) );
   connect(map, SIGNAL(showTaskText(FlightTask*)), dataView, SLOT(slotShowTaskText(FlightTask*)));
-  connect(map, SIGNAL(taskPlanningEnd()), dataView, SLOT(setFlightData()));
+  connect(map, SIGNAL(taskPlanningEnd()), dataView, SLOT(slotSetFlightData()));
   connect(map, SIGNAL(showPoint(const QPoint&)), this, SLOT(slotSetPointInfo(const QPoint&)));
   connect(map, SIGNAL(showPoint(const QPoint&)), evaluationWindow, SLOT(slotRemoveFlightPoint()));
   connect(map, SIGNAL(showFlightPoint(const QPoint&, const FlightPoint&)), evaluationWindow, SLOT(slotShowFlightPoint(const QPoint&, const FlightPoint&)));
@@ -137,7 +137,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(_globalMapContents, SIGNAL(closingFlight(BaseFlightElement*)), objectTree, SLOT(slotCloseFlight(BaseFlightElement*)));
   connect(_globalMapContents, SIGNAL(contentsChanged()),map, SLOT(slotRedrawMap()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), this, SLOT(slotModifyMenu()));
-  connect(_globalMapContents, SIGNAL(currentFlightChanged()), dataView, SLOT(setFlightData()));
+  connect(_globalMapContents, SIGNAL(currentFlightChanged()), dataView, SLOT(slotSetFlightData()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), evaluationWindow, SLOT(slotShowFlightData()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), map, SLOT(slotShowCurrentFlight()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), objectTree, SLOT(slotSelectedFlightChanged()));
@@ -1327,7 +1327,7 @@ void MainWindow::slotOptimizeFlight()
       if( flight->optimizeTask() )
         {
           // Okay, update flight data and redraw the map
-          dataView->setFlightData();
+          dataView->slotSetFlightData();
           map->slotRedrawFlight();
           objectTree->slotFlightChanged();
         }
@@ -1343,7 +1343,7 @@ void MainWindow::slotOptimizeFlightOLC()
       if( flight->optimizeTaskOLC(map) )
         {
           // Okay, update flight data and redraw map
-          dataView->setFlightData();
+          dataView->slotSetFlightData();
           map->slotRedrawFlight();
           objectTree->slotFlightChanged();
         }

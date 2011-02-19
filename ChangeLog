@@ -1,5 +1,9 @@
 $Id$
 
+2011-02-19 Axel Pauli <axel@kflog.org>
+  * FlightSelectionDialog did never show loaded flights. I fixed that and ported
+    the dialog fully to Ot4.
+    
 2011-02-18 Axel Pauli <axel@kflog.org>
   * Tried to fix the flight cursor handling in class Map. Cursors were drawn
     at the widget's engine outside of the paint event. That caused warnings.
