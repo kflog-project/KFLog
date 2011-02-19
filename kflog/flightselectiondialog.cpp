@@ -38,8 +38,6 @@ FlightSelectionDialog::FlightSelectionDialog(QWidget *parent) :
 
 FlightSelectionDialog::~FlightSelectionDialog()
 {
-  //qDeleteAll(availableFlights);
-  //qDeleteAll(selectedFlights);
 }
 
 /** No descriptions */

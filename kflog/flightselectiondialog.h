@@ -71,7 +71,10 @@ private:
 
 private:
 
+  /** List containing all flights available for a flight group. */
   QListWidget *aFlights;
+
+  /** List containing all flights belonging to flight group. */
   QListWidget *sFlights;
 
 private slots:
