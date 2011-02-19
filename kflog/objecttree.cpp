@@ -220,6 +220,18 @@ void ObjectTree::slotFlightChanged()
           // list view item we are dealing with.
           case FLIGHT_LIST_VIEW_ITEM_TYPEID:
             ((FlightListViewItem*)item)->update();
+
+            // A flight can be contained in a fliht group. So all flight groups
+            // need an update too.
+            for( int i = 0; i < FlightGroupRoot->childCount(); i++ )
+              {
+                QTreeWidgetItem* item = FlightGroupRoot->child( i );
+
+                if( item->type() == FLIGHT_GROUP_LIST_VIEW_ITEM_TYPEID )
+                  {
+                    static_cast<FlightGroupListViewItem *>(item)->update();
+                  }
+              }
             break;
 
           case FLIGHT_GROUP_LIST_VIEW_ITEM_TYPEID:
@@ -335,9 +347,32 @@ void ObjectTree::slotShowObjectTreeMenu(QTreeWidgetItem *item, const QPoint &pos
   // flight items
   actionFlightGroupNew->setEnabled(FlightRoot->childCount());
   actionFlightGroupEdit->setEnabled(FlightRoot->childCount() && currentFlightElementType() == BaseMapElement::FlightGroup);
-  actionFlightClose->setEnabled( (FlightRoot->childCount() || FlightGroupRoot->childCount() ) &&
-                                 (currentFlightElementType() == BaseMapElement::Flight ||
-                                  currentFlightElementType() == BaseMapElement::FlightGroup) );
+
+  QTreeWidgetItem* curentItem = currentItem();
+
+  if( item )
+    {
+      // We allow the close of an item only, when the right child item is selected.
+      if( curentItem->parent() == FlightRoot )
+        {
+          actionFlightClose->setEnabled( true );
+          actionFlightClose->setText( tr("Close flight") );
+        }
+      else if( curentItem->parent() == FlightGroupRoot )
+        {
+          actionFlightClose->setEnabled( true );
+          actionFlightClose->setText( tr("Close flight group") );
+        }
+      else
+        {
+          actionFlightClose->setEnabled( false );
+        }
+    }
+  else
+    {
+      actionFlightClose->setEnabled( false );
+    }
+
   actionFlightOptimize->setEnabled(FlightRoot->childCount() && currentFlightElementType() == BaseMapElement::Flight);
   actionFlightOptimizeOLC->setEnabled(FlightRoot->childCount() && currentFlightElementType() == BaseMapElement::Flight);
 
