@@ -3,6 +3,8 @@ $Id$
 2011-02-19 Axel Pauli <axel@kflog.org>
   * FlightSelectionDialog did never show loaded flights. I fixed that and ported
     the dialog fully to Ot4.
+  * The close of a single flight in the object tree view has never considered
+    an update of all flight groups. I fixed that.
     
 2011-02-18 Axel Pauli <axel@kflog.org>
   * Tried to fix the flight cursor handling in class Map. Cursors were drawn

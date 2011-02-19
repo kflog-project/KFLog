@@ -131,30 +131,32 @@ MapContents::~MapContents()
 
 void MapContents::slotCloseFlight()
 {
-  qDebug() << "MapContents::slotCloseFlight()";
   /*
-   * close current flight
+   * Closes the current flight.
    */
   if( currentFlight != 0 )
     {
-      emit closingFlight( currentFlight );
       emit clearFlightCursor();
 
       for( int i = 0; i < flightList.count(); i++ )
         {
-          FlightGroup *fg = (FlightGroup *) flightList.at( i );
+          // Remove current flight from all flight groups.
+          FlightGroup *fg = dynamic_cast<FlightGroup *> (flightList.at( i ));
 
-          if( fg->getObjectType() == BaseMapElement::FlightGroup )
+          if( fg )
             {
               fg->removeFlight( currentFlight );
             }
         }
 
+      // Signals object tree, that a flight element has been modified.
+      // Object tree has to update all flight groups too.
+      emit closingFlight( currentFlight );
+
       int i = flightList.indexOf( currentFlight );
 
       if( i != -1 )
         {
-          qDebug() << "MapContents::closeFlight: rm FlightIdx=" << i;
           delete flightList.takeAt( i );
         }
 
@@ -1626,8 +1628,6 @@ void MapContents::slotAppendTask(FlightTask *ft)
 /** create a new, empty flight group */
 void MapContents::slotNewFlightGroup()
 {
-  qDebug() << "MapContents::slotNewFlightGroup()";
-
   static int gCount = 1;
   QList <Flight*> fl;
   BaseFlightElement *f;
@@ -1641,7 +1641,6 @@ void MapContents::slotNewFlightGroup()
 
       if (f->getObjectType() == BaseMapElement::Flight)
         {
-          qDebug() << "AddingFile to FSD";
           fsd->availableFlights.append(f);
         }
     }
@@ -1653,7 +1652,7 @@ void MapContents::slotNewFlightGroup()
           fl.append( dynamic_cast<Flight *>(fsd->selectedFlights.at(i)) );
         }
 
-      tmp = QString("GROUP%1").arg( gCount++, 3, 10, QChar('0') );
+      tmp = QString(tr("Group-%1")).arg( gCount++, 3, 10, QChar('0') );
 
       FlightGroup* flightGroup = new FlightGroup(fl, tmp);
 
@@ -1700,51 +1699,48 @@ void MapContents::slotSetFlight(BaseFlightElement *bfe)
 /** No descriptions */
 void MapContents::slotEditFlightGroup()
 {
-  qDebug() << "MapContents::slotEditFlightGroup()";
+  FlightGroup *fg = dynamic_cast<FlightGroup *>(getFlight());
 
-  QList<Flight*> fl;
-  BaseFlightElement *f;
-  BaseFlightElement *fg;
+  if( fg == static_cast<FlightGroup *>(0) )
+    {
+      // Current flight is not a flight group.
+      return;
+    }
 
   FlightSelectionDialog *fsd = new FlightSelectionDialog( _mainWindow );
 
-  fg = getFlight();
+  QList<Flight*> fl = fg->getFlightList();
 
-  if (fg->getObjectType() == BaseMapElement::FlightGroup)
+  for (int i = 0; i < flightList.size(); i++)
     {
-      fl = ((FlightGroup *)fg)->getFlightList();
+      BaseFlightElement *f = flightList.at(i);
 
-      for (int i = 0; i < flightList.count(); i++)
+      if (f->getObjectType() == BaseMapElement::Flight)
         {
-          f = flightList.at(i);
-
-          if (f->getObjectType() == BaseMapElement::Flight)
+          if (fl.contains(dynamic_cast<Flight *>(f)) )
             {
-              if (fl.count(dynamic_cast<Flight *>(f)) > 0 )
-                {
-                  fsd->selectedFlights.append(f);
-                }
-              else
-                {
-                  fsd->availableFlights.append(f);
-                }
+              fsd->selectedFlights.append(f);
             }
-        }
-
-      if (fsd->exec() == QDialog::Accepted)
-        {
-          fl.clear();
-
-          for ( int i = 0; i < fsd->selectedFlights.count(); i++)
+          else
             {
-              fl.append( dynamic_cast<Flight *>(fsd->selectedFlights.at(i)) );
+              fsd->availableFlights.append(f);
             }
-
-          ((FlightGroup *)fg)->setFlightList(fl);
         }
     }
 
-  emit currentFlightChanged();
+  if (fsd->exec() == QDialog::Accepted)
+    {
+      fl.clear();
+
+      for ( int i = 0; i < fsd->selectedFlights.size(); i++)
+        {
+          fl.append( dynamic_cast<Flight *>(fsd->selectedFlights.at(i)) );
+        }
+
+      fg->setFlightList(fl);
+
+      emit currentFlightChanged();
+    }
 
   delete fsd;
 }

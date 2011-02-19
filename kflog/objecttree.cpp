@@ -281,6 +281,21 @@ void ObjectTree::slotCloseFlight( BaseFlightElement* bfe )
     }
 
   delete item;
+
+  // If a flight was deleted, all flight groups must be updated too because
+  // the flight could be contained in one or all of them.
+  if( bfe->getObjectType() == BaseMapElement::Flight )
+    {
+      for( int i = 0; i < FlightRoot->childCount(); i++ )
+        {
+          QTreeWidgetItem* item = FlightRoot->child( i );
+
+          if( item->type() == FLIGHT_GROUP_LIST_VIEW_ITEM_TYPEID )
+            {
+               static_cast<FlightGroupListViewItem *>(item)->update();
+            }
+        }
+    }
 }
 
 void ObjectTree::slotShowObjectTreeMenu(QTreeWidgetItem *item, const QPoint &position )
@@ -338,7 +353,7 @@ void ObjectTree::createMenu()
   actionFlightClose = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_fileclose_16.png"),
                                            tr("&Close flight or flight group"),
                                            this,
-                                           SLOT(slotDeleteFlightElement()) );
+                                           SLOT(slotCloseFlightElement()) );
   objectTreeMenu->addSeparator();
 
   objectTreeMenu->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
@@ -359,7 +374,7 @@ void ObjectTree::createMenu()
   actionTaskDelete = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_fileclose_16.png"),
                                           tr("&Close task"),
                                           this,
-                                          SLOT(slotDeleteFlightElement()) );
+                                          SLOT(slotCloseFlightElement()) );
   objectTreeMenu->addSeparator();
 
   actionTaskSave = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_filesave_16.png"),
@@ -400,7 +415,7 @@ void ObjectTree::slotEditTask()
 /*
  Used to close a flight element in general, not only a task
 */
-void ObjectTree::slotDeleteFlightElement()
+void ObjectTree::slotCloseFlightElement()
 {
   if( currentFlightElementType() == BaseMapElement::Task ||
       currentFlightElementType() == BaseMapElement::Flight ||

@@ -149,7 +149,7 @@ private slots:
   /** No descriptions */
   void slotEditTask();
 
-  void slotDeleteFlightElement();
+  void slotCloseFlightElement();
 
   void slotSaveTask();
 
