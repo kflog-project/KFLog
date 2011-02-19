@@ -156,7 +156,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(waypointTreeView, SIGNAL(waypointCatalogChanged( WaypointCatalog * )), map, SLOT(slotWaypointCatalogChanged( WaypointCatalog * )));
   connect(waypointTreeView, SIGNAL(centerMap(int, int)), _globalMapMatrix, SLOT(slotCenterTo(int, int)));
 
-  connect(objectTree, SIGNAL(selectedFlight(BaseFlightElement *)), _globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
+  connect(objectTree, SIGNAL(newFlightSelected(BaseFlightElement *)), _globalMapContents, SLOT(slotSetFlight(BaseFlightElement *)));
   connect(objectTree, SIGNAL(newTask()), _globalMapContents, SLOT(slotNewTask()));
   connect(objectTree, SIGNAL(openTask()), this, SLOT(slotOpenTask()));
   connect(objectTree, SIGNAL(closeFlightElement()), _globalMapContents, SLOT(slotCloseFlight()));

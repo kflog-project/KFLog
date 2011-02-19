@@ -21,7 +21,7 @@
   *
   * \author André Somers, Axel Pauli
   *
-  * \brief KFLogBrowser - Displays all currently loaded objects.
+  * \brief Object browser - Displays all currently loaded objects.
   *
   * This object is used to give the user an overview of the objects he has
   * currently loaded. These objects include Flights, Tasks, Flight groups and
@@ -88,7 +88,7 @@ private:
   /**
    * Contains a reference to the root node for flight groups
    */
-  //QTreeWidgetItem* FlightGroupRoot;
+  QTreeWidgetItem* FlightGroupRoot;
   /**
    * Contains a reference to the root node for tasks
    */
@@ -161,13 +161,13 @@ private slots:
   /**
    * Called if the selection has been changed.
    */
-  void slotSelectionChanged( QTreeWidgetItem * item, int column );
+  void slotSelectionChanged( QTreeWidgetItem *item, int column );
 
 signals:
   /**
    * Send out whenever the user selects a flight, task, or flight group
    */
-  void selectedFlight(BaseFlightElement *);
+  void newFlightSelected(BaseFlightElement *);
   /**
    * indicate that a new task should be created
    */

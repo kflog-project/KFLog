@@ -70,11 +70,20 @@ ObjectTree::ObjectTree( QWidget *parent ) :
   loadConfig();
 
   FlightRoot = new QTreeWidgetItem(this);
+  FlightRoot->setToolTip( 0, tr("All your read flights are to find under this node.") );
   FlightRoot->setText(0,tr("Flights"));
   FlightRoot->setFlags( Qt::ItemIsEnabled );
   FlightRoot->setIcon(0, _mainWindow->getPixmap("igc_16.png"));
 
+  FlightGroupRoot = new QTreeWidgetItem(this);
+  FlightGroupRoot->setToolTip( 0, tr("Grouped single flights are to find under this node.") );
+  FlightGroupRoot->setText(0,tr("Groups"));
+  FlightGroupRoot->setFlags( Qt::ItemIsEnabled );
+  FlightGroupRoot->setIcon(0, _mainWindow->getPixmap("igc_16.png"));
+
+
   TaskRoot = new QTreeWidgetItem(this);
+  TaskRoot->setToolTip( 0, tr("All yours tasks are to find under this node.") );
   TaskRoot->setText(0,tr("Tasks"));
   TaskRoot->setFlags( Qt::ItemIsEnabled );
   TaskRoot->setIcon(0, _mainWindow->getPixmap("task_16.png"));
@@ -102,6 +111,7 @@ void ObjectTree::slotNewFlightAdded( Flight* flight )
   qDebug() << "ObjectTree::slotNewFlightAdded";
 
   new FlightListViewItem( FlightRoot, flight );
+  FlightRoot->sortChildren( 0, Qt::AscendingOrder );
   slotResizeColumns2Content();
 }
 
@@ -110,7 +120,8 @@ void ObjectTree::slotNewFlightAdded( Flight* flight )
  */
 void ObjectTree::slotNewFlightGroupAdded( FlightGroup* flightGroup )
 {
-  new FlightGroupListViewItem( FlightRoot, flightGroup );
+  new FlightGroupListViewItem( FlightGroupRoot, flightGroup );
+  FlightGroupRoot->sortChildren( 0, Qt::AscendingOrder );
   slotResizeColumns2Content();
 }
 
@@ -122,12 +133,13 @@ void ObjectTree::slotNewTaskAdded( FlightTask* task )
   qDebug() << "ObjectTree::slotNewTaskAdded() Task=" << task;
 
   new TaskListViewItem( TaskRoot, task );
+  TaskRoot->sortChildren( 0, Qt::AscendingOrder );
   slotResizeColumns2Content();
 
   qDebug() << "ObjectTree::slotNewTaskAdded() finished";
 }
 
-/** Called if the selection has changed. */
+/** Called if the user has changed the selection. */
 void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
 {
   qDebug() << "ObjectTree::slotSelectionChanged: item=" << item
@@ -137,6 +149,7 @@ void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
 
   if( item == static_cast<QTreeWidgetItem *>(0) )
     {
+      // No item has been passed, ignore call.
       return;
     }
 
@@ -163,7 +176,7 @@ void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
 
   if( bfe && bfe != _globalMapContents->getFlight() )
     {
-      emit selectedFlight( bfe );
+      emit newFlightSelected( bfe );
     }
 }
 
@@ -242,6 +255,16 @@ QTreeWidgetItem* ObjectTree::findFlightElement( BaseFlightElement* bfe )
         }
     }
 
+  for( int i = 0; i < FlightGroupRoot->childCount(); i++ )
+    {
+      QTreeWidgetItem* childItem = FlightGroupRoot->child( i );
+
+      if( ((FlightListViewItem*) childItem)->flight == bfe )
+        {
+          return childItem;
+        }
+    }
+
   for( int i = 0; i < TaskRoot->childCount(); i++ )
     {
       QTreeWidgetItem* childItem = TaskRoot->child( i );
@@ -286,9 +309,9 @@ void ObjectTree::slotCloseFlight( BaseFlightElement* bfe )
   // the flight could be contained in one or all of them.
   if( bfe->getObjectType() == BaseMapElement::Flight )
     {
-      for( int i = 0; i < FlightRoot->childCount(); i++ )
+      for( int i = 0; i < FlightGroupRoot->childCount(); i++ )
         {
-          QTreeWidgetItem* item = FlightRoot->child( i );
+          QTreeWidgetItem* item = FlightGroupRoot->child( i );
 
           if( item->type() == FLIGHT_GROUP_LIST_VIEW_ITEM_TYPEID )
             {
@@ -312,8 +335,9 @@ void ObjectTree::slotShowObjectTreeMenu(QTreeWidgetItem *item, const QPoint &pos
   // flight items
   actionFlightGroupNew->setEnabled(FlightRoot->childCount());
   actionFlightGroupEdit->setEnabled(FlightRoot->childCount() && currentFlightElementType() == BaseMapElement::FlightGroup);
-  actionFlightClose->setEnabled(FlightRoot->childCount() && (currentFlightElementType() == BaseMapElement::Flight ||
-                                currentFlightElementType() == BaseMapElement::FlightGroup));
+  actionFlightClose->setEnabled( (FlightRoot->childCount() || FlightGroupRoot->childCount() ) &&
+                                 (currentFlightElementType() == BaseMapElement::Flight ||
+                                  currentFlightElementType() == BaseMapElement::FlightGroup) );
   actionFlightOptimize->setEnabled(FlightRoot->childCount() && currentFlightElementType() == BaseMapElement::Flight);
   actionFlightOptimizeOLC->setEnabled(FlightRoot->childCount() && currentFlightElementType() == BaseMapElement::Flight);
 
@@ -405,7 +429,7 @@ void ObjectTree::slotEditTask()
               ft->setWaypointList( td.getTask()->getWPList() );
               ft->setPlanningType( td.getTask()->getPlanningType() );
               ft->setPlanningDirection( td.getTask()->getPlanningDirection() );
-              selectedFlight( ft );
+              newFlightSelected( ft );
               slotFlightChanged();
             }
         }

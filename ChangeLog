@@ -5,6 +5,8 @@ $Id$
     the dialog fully to Ot4.
   * The close of a single flight in the object tree view has never considered
     an update of all flight groups. I fixed that.
+  * Object menu tree expanded by a flight group item. Furthermore all child
+    items are sorted by using column 0 only to get an better overview about all.
     
 2011-02-18 Axel Pauli <axel@kflog.org>
   * Tried to fix the flight cursor handling in class Map. Cursors were drawn
