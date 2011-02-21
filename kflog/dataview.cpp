@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -60,8 +61,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
 
   QList<Waypoint*> wpList = task->getWPList();
 
-  foreach(wp1, wpList) {//int loop = 0; loop < wpList.count(); loop++) {
-//    *wp1 = wpList.value(loop);
+  foreach(wp1, wpList) {
 
     if(wp1->fixTime != 0) {
       timeString = printTime(wp1->fixTime, true);
@@ -85,7 +85,6 @@ QString DataView::__writeTaskInfo(FlightTask* task)
     }
 
     if(wp2!=0) {
-//      *wp2 = wpList.value(loop - 1);
       if(wp2->fixTime != 0) {
         t2 = wp2->fixTime;
       }
@@ -103,7 +102,6 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       }
 
       tmp.sprintf("t1 : %d, t2 : %d", t1, t2);
-      //warning(tmp);
 
       tmp.sprintf("%.2f km / %03.0f\260 / %.1f km/h",
                   wp1->distance,
@@ -188,7 +186,7 @@ void DataView::slotShowTaskText(FlightTask* task)
 
   if(taskPointList.count() == 0)
     {
-      htmlText += "Bitte wählen Sie den <b>Startort</b> der Aufgabe in der Karte<br>";
+      htmlText += tr("Please select the <b>start point</b> of the task at the map!") + "<br>";
     }
   else if(taskPointList.count() == 1)
     {

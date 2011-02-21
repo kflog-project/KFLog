@@ -9,11 +9,12 @@
 **   Copyright (c):  2003 by Eggert Ehmke
 **
 **   Parts are derived from LoggerFil
+**
 **   Copyright (C) 2003 Christian Fughe
 **                                                                     
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -23,9 +24,11 @@
 #define DA4_RECORD_H
 
 
-/**used to support filser da4 format
-  *@author Eggert Ehmke
-  */
+/**
+ * used to support filser da4 format
+ *
+ * @author Eggert Ehmke
+ */
 
 #include "basemapelement.h"
 #include "runway.h"
@@ -37,7 +40,8 @@
 #define MAXTSKNAME     37
 
 // need to be packed to ensure size 31
-struct DA4WPStruct {
+struct DA4WPStruct
+{
   char prg;
   char name[9];
   float latitude;
@@ -66,7 +70,8 @@ struct DA4Buffer
   DA4TaskStruct tasks [TASK_MAX];
 } __attribute__ ((packed));
 
-class DA4WPRecord {
+class DA4WPRecord
+{
 public: 
 	DA4WPRecord(DA4WPStruct* buffer);
 	~DA4WPRecord();
@@ -99,7 +104,8 @@ private:
   DA4WPStruct* _buffer;
 };
 
-class DA4TaskRecord {
+class DA4TaskRecord
+{
 public:
 	DA4TaskRecord(DA4TaskStruct* buffer);
 	~DA4TaskRecord();

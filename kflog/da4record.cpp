@@ -7,34 +7,34 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Eggert Ehmke
+**                   2011 by Axel Pauli
 **
 **   Parts are derived from LoggerFil
 **   Copyright (C) 2003 Christian Fughe
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
 #include <cmath>
+
+#include <QtCore>
 
 #include "da4record.h"
 
-Q_UINT16 U16Swap (Q_UINT16 u16)
+quint16 U16Swap (quint16 u16)
 {
   union
   {
-    Q_UINT16 u16;
-    Q_UINT8 bytes [2];
+    quint16 u16;
+    quint8 bytes [2];
   } u;
+
   u.u16 = u16;
-  Q_UINT8 tmp = u.bytes[0];
+  quint8 tmp = u.bytes[0];
   u.bytes[0] = u.bytes[1];
   u.bytes[1] = tmp;
   return u.u16;
@@ -104,7 +104,9 @@ BaseMapElement::objectType DA4WPRecord::type () const
 
 void DA4WPRecord::setName (const QString& name)
 {
-  qstrncpy (_buffer->name, name.upper().leftJustify (8, ' ', true), 9);
+  qstrncpy ( _buffer->name,
+             name.toUpper().leftJustified(8, QChar(' '), true).toAscii().data(),
+             9 );
 }
 
 QString DA4WPRecord::name () const
@@ -154,7 +156,7 @@ float DA4WPRecord::freq () const
 
 void DA4WPRecord::setLen (short int len)
 {
-  Q_UINT16 ulen;
+  quint16 ulen;
   if (len == -1)
     ulen = 0;
   else
