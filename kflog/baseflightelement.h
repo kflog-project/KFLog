@@ -19,13 +19,15 @@
 #define BASE_FLIGHT_ELEMENT_H
 
 #include <QList>
-#include <QWidget>
+#include <QString>
+#include <QPainter>
 
 #include "basemapelement.h"
 #include "waypoint.h"
 
 /**
  * @author Harald Maier
+ *
  * @version $Id$
  */
 class BaseFlightElement : public BaseMapElement
@@ -40,15 +42,19 @@ public:
 
   virtual QList<Waypoint*> getWPList() = 0;
 
-  QString getFileName() const { return sourceFileName; }
+  QString& getFileName()
+    {
+      return sourceFileName;
+    };
+
   /**
    * Searches the first point of the flight, which distance to the
    * mousecursor is less than 30 pixel. If no point is found, -1 is
    * returned.
-   * @param  cPoint  The map-position of the mousecursor.
-   * @param  searchPoint  A pointer to a flightpoint. Will be filled
-   *                      with the flightpoint found.
-   * @return the index of the flightpoint or -1 if no point is found.
+   * @param  cPoint  The map-position of the mouse cursor.
+   * @param  searchPoint  A pointer to a flight point. Will be filled
+   *                      with the flight point found.
+   * @return the index of the flight point or -1 if no point is found.
    */
   virtual int searchPoint(const QPoint& cPoint, FlightPoint& searchPoint);
   /**
@@ -74,7 +80,7 @@ public:
    * The function must be implemented in the child-classes.
    * @param  printP  The painter to draw the element into.
    *
-   * @param  isText  Shows, if the text of some mapelements should
+   * @param  isText  Shows, if the text of some map elements should
    *                 be printed.
    */
   virtual void printMapElement(QPainter* printP, bool isText) = 0;
