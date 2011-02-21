@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -33,6 +34,7 @@ class Flight;
 
 /**
  * @author Heiner Lamprecht, Florian Ehinger
+ *
  * @version $Id$
  */
 class EvaluationDialog : public QWidget
@@ -50,11 +52,8 @@ class EvaluationDialog : public QWidget
    */
   void updateListBox();
 
-  /**
-   *
-   */
   void updateText(int index1, int index2, bool updateAll = false);
-  /** No descriptions */
+
   Flight* getFlight();
 
   unsigned int getTaskStart(){return evalFrame->getTaskStart();}
@@ -78,7 +77,7 @@ class EvaluationDialog : public QWidget
   void windowHidden();
 
  public slots:
-  /** */
+
   void slotShowFlightData();
   /** No descriptions */
   void slotShowFlightPoint(const QPoint&, const FlightPoint&);
@@ -86,15 +85,14 @@ class EvaluationDialog : public QWidget
   void slotRemoveFlightPoint();
 
  protected:
+
   /**
    * Redefinition of the resizeEvent.
    */
   virtual void resizeEvent(QResizeEvent* event);
 
  private:
-  /*
-   * Was ist mit diesen labels ???
-   */
+
   QTextEdit* textLabel;
   QComboBox* combo_flight;
   Flight* flight;

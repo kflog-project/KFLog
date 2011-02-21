@@ -263,7 +263,7 @@ void MainWindow::createDockWindows()
   addDockWidget( Qt::RightDockWidgetArea, flightDataViewDock );
   flightDataViewDock->setVisible(false);
 
-  evaluationWindowDock = new QDockWidget( tr("Evaluation"), this );
+  evaluationWindowDock = new QDockWidget( tr("Flight Evaluation"), this );
   evaluationWindowDock->setObjectName( "EvaluationWindow");
   evaluationWindowDock->setVisible(false);
   evaluationWindowDock->setFloating( true );

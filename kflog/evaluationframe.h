@@ -7,48 +7,55 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef EVALUATIONFRAME_H
-#define EVALUATIONFRAME_H
+#ifndef EVALUATION_FRAME_H
+#define EVALUATION_FRAME_H
+
+#include <QCheckBox>
+#include <q3scrollview.h>
+#include <QSlider>
+#include <QSpinBox>
+#include <q3textview.h>
+#include <QResizeEvent>
+#include <QWidget>
 
 #include "evaluationview.h"
-
-#include <qcheckbox.h>
-#include <q3frame.h>
-#include <q3scrollview.h>
-#include <qslider.h>
-#include <qspinbox.h>
-#include <q3textview.h>
-//Added by qt3to4:
-#include <QResizeEvent>
 
 class EvaluationDialog;
 
 /**
- * @author Heiner Lamprecht
+ * \author Heiner Lamprecht, Axel Pauli
+ *
+ * \date 2001-2011
+ *
+ * \version $Id$
  */
-class EvaluationFrame : public Q3Frame
+class EvaluationFrame : public QWidget
 {
   Q_OBJECT
+
+  private:
+
+   Q_DISABLE_COPY ( EvaluationFrame )
 
   public:
     /** */
     EvaluationFrame(QWidget* parent, EvaluationDialog* dlg);
     /** */
-    ~EvaluationFrame();
+    virtual ~EvaluationFrame();
     /** */
     /** */
     unsigned int getTaskStart();
     /** */
     unsigned int getTaskEnd();
-//    void updateCursorText(QString text);
 
   public slots:
     /** */
@@ -95,7 +102,6 @@ class EvaluationFrame : public Q3Frame
     time_t centerTime;
 
     Flight* flight;
-
 };
 
 #endif

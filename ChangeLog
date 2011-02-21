@@ -1,5 +1,10 @@
 $Id$
 
+2011-02-21 Axel Pauli <axel@kflog.org>
+  * Thanks to valgrind, found a bug in ElevationFinder class. Class member
+    useOGIE was not initialized. That cause a funny report by Qt, filename
+    missing, during load of a flight.
+
 2011-02-19 Axel Pauli <axel@kflog.org>
   * FlightSelectionDialog did never show loaded flights. I fixed that and ported
     the dialog fully to Ot4.

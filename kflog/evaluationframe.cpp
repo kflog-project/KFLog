@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -27,12 +28,12 @@
 #define X_DISTANCE 100
 
 extern MapContents *_globalMapContents;
+extern QSettings _settings;
 
-EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
-  : Q3Frame(parent),
+EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg) :
+  QWidget(parent),
   flight(0)
 {
-//warning("EvaluationFrame::EvaluationFrame");
   // variable control
   QSplitter* controlSplitter = new QSplitter(Qt::Horizontal, this);
 
@@ -53,7 +54,7 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
   cursorLabel->setHScrollBarMode(Q3ScrollView::AlwaysOff);
 
   // Control elements
-  Q3Frame* control = new Q3Frame(controlSplitter);
+  QWidget* control = new QWidget(controlSplitter);
   control->setMinimumWidth(1);
 
   QLabel* scale_label = new QLabel(tr("Time scale:"),control);
@@ -131,21 +132,18 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
 
 //  controlSplitter->setResizeMode(graphFrame,QSplitter::FollowSizeHint);
 
-
-  // load settings from config file
-  extern QSettings _settings;
-
-  secWidth = _settings.readNumEntry("/Evaluation/ScaleTime",10);
+  // load the settings from the configuration file
+  secWidth = _settings.value("/Evaluation/ScaleTime", 10).toInt();
   spinScale->setValue(secWidth);
-  smoothness_va = _settings.readNumEntry("/Evaluation/VarioSmoothness",0);
+  smoothness_va = _settings.value("/Evaluation/VarioSmoothness", 0).toInt();
   sliderVario->setValue(smoothness_va);
-  smoothness_v = _settings.readNumEntry("/Evaluation/SpeedSmoothness",0);
+  smoothness_v = _settings.value("/Evaluation/SpeedSmoothness", 0).toInt();
   sliderSpeed->setValue(smoothness_v);
-  smoothness_h = _settings.readNumEntry("/Evaluation/AltitudeSmoothness",0);
+  smoothness_h = _settings.value("/Evaluation/AltitudeSmoothness", 0).toInt();
   sliderBaro->setValue(smoothness_h);
-  check_vario->setChecked(_settings.readBoolEntry("/Evaluation/Vario",true));
-  check_speed->setChecked(_settings.readBoolEntry("/Evaluation/Speed",true));
-  check_baro->setChecked(_settings.readBoolEntry("/Evaluation/Altitude",true));
+  check_vario->setChecked(_settings.value("/Evaluation/Vario",true).toBool());
+  check_speed->setChecked(_settings.value("/Evaluation/Speed",true).toBool());
+  check_baro->setChecked(_settings.value("/Evaluation/Altitude",true).toBool());
 
   this->connect(check_vario, SIGNAL(clicked()),
         SLOT(slotShowGraph()));
@@ -167,10 +165,7 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg)
 
 EvaluationFrame::~EvaluationFrame()
 {
-// warning("EvaluationFrame::~EvaluationFrame()");
   // Save settings
-  extern QSettings _settings;
-
   _settings.setValue("/Evaluation/ScaleTime", secWidth);
   _settings.setValue("/Evaluation/VarioSmoothness", smoothness_va);
   _settings.setValue("/Evaluation/AltitudeSmoothness", smoothness_h);
@@ -242,6 +237,7 @@ void EvaluationFrame::slotScale(int g)
   secWidth = g;
 
   int contentsX = graphFrame->contentsX() + ( graphFrame->width() / 2 );
+
   centerTime = flight->getPointByTime((contentsX - X_DISTANCE) *
                           secWidthOld + flight->getStartTime()).time;
 
@@ -257,16 +253,16 @@ void EvaluationFrame::slotUpdateCursorText(QString text)
 
 void EvaluationFrame::resizeEvent(QResizeEvent* event)
 {
-//  warning("EvaluationFrame::resizeEvent");
-
+  QWidget::resizeEvent( event );
   slotShowGraph();
-  Q3Frame::resizeEvent(event);
 }
 
-unsigned int EvaluationFrame::getTaskStart(){
+unsigned int EvaluationFrame::getTaskStart()
+{
   return flight->getPointIndexByTime(evalView->cursor1);
 }
 
-unsigned int EvaluationFrame::getTaskEnd(){
+unsigned int EvaluationFrame::getTaskEnd()
+{
   return flight->getPointIndexByTime(evalView->cursor2);
 }

@@ -11,7 +11,7 @@
 **                :  2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -31,7 +31,7 @@ extern MapContents *_globalMapContents;
 
 EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
 {
-  setCaption(tr("Flightevaluation:"));
+  setWindowTitle( tr("Flight Evaluation:") );
 
 //  if (staysOnTop)
 //    setWFlags(getWFlags() | WStyle_StaysOnTop);
@@ -46,7 +46,7 @@ EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
 */
 
   // variable Textanzeige
-  QSplitter* textSplitter = new QSplitter(Qt::Vertical, this, "splitter");
+  QSplitter* textSplitter = new QSplitter( Qt::Vertical, this );
 
   // Diagrammfenster - Mitte
   evalFrame = new EvaluationFrame(textSplitter, this);
