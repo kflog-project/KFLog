@@ -31,6 +31,7 @@ extern QSettings _settings;
 
 EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg) :
   QWidget(parent),
+  centerTime(0),
   flight(0)
 {
   // variable control
@@ -244,7 +245,7 @@ void EvaluationFrame::slotScale(int g)
   // set scale factor
   secWidth = g;
 
-  int x = graphFrame->viewport()->rect().topLeft().x();
+  int x = graphFrame->horizontalScrollBar()->value();
 
   int contentsX = x + ( graphFrame->width() / 2 );
 

@@ -85,7 +85,7 @@ void EvaluationView::paintEvent(QPaintEvent*)
 
   if(!((vario && speed) || (vario && baro) || (baro && speed)))
     {
-      int x = scrollFrame->horizontalScrollBar()->value();
+      // int x = scrollFrame->horizontalScrollBar()->value();
 
       // There is a problem with the paint update atm. The screen refresh
       // did not work properly.
