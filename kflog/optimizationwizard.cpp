@@ -7,10 +7,8 @@
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
 
-#include <QColor>
-#include <QImage>
-#include <QPushButton>
-#include <QToolTip>
+#include <QtGui>
+#include <Qt3Support>
 
 #include "optimizationwizard.h"
 #include "wgspoint.h"

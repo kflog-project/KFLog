@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -22,7 +23,7 @@
 
 #include <QBitmap>
 #include <QPixmap>
-#include <q3scrollview.h>
+#include <QScrollArea>
 #include <QWidget>
 
 class Flight;
@@ -30,29 +31,39 @@ class FlightPoint;
 class EvaluationDialog;
 
 /**
-  * @author Heiner Lamprecht, Florian Ehinger
-  * @version $Id$
-  */
+ * \class EvaluationView
+ *
+ * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
+ *
+ * \brief Draws the flight evaluation.
+ *
+ * \date 2000-2011
+ *
+ * \version $Id$
+ */
 class EvaluationView : public QWidget
 {
   Q_OBJECT
 
- public:
-  /** */
-  EvaluationView(Q3ScrollView* parent, EvaluationDialog* dialog);
-  /** */
-  ~EvaluationView();
-  /** */
-  void drawCurve(bool vario, bool speed, bool baro,
-           unsigned int smoothness_va, unsigned int smoothness_v,
-           unsigned int smoothness_h, unsigned int secWidth);
+private:
 
-  /** */
+ Q_DISABLE_COPY( EvaluationView )
+
+ public:
+
+  EvaluationView(QScrollArea* parent, EvaluationDialog* dialog);
+
+  virtual ~EvaluationView();
+
+  void drawCurve( bool vario, bool speed, bool baro,
+                  unsigned int smoothness_va, unsigned int smoothness_v,
+                  unsigned int smoothness_h, unsigned int secWidth );
+
   enum CursorStatus { Reached = 8, NotReached = 16};
 
   virtual QSize sizeHint();
 
-  // Cursor Positionen
+  // Cursor Positions
   time_t cursor1;
   time_t cursor2;
   time_t cursor_alt;
@@ -110,12 +121,8 @@ class EvaluationView : public QWidget
     */
   QPixmap pixPointer;
    /**
-    * Contains a reference to the mask for @ref pixPointer
-    */
-  QBitmap bitPointerMask;
-   /**
     * Contains a reference to a buffer that contains the contents
-    * of the graph under the position where the pointer was drawn
+    * of the graph under the position where the pointer was drawn.
     */
   QPixmap pixPointerBuffer;
 
@@ -125,7 +132,7 @@ class EvaluationView : public QWidget
   /** Draw y-axis */
   void __drawYAxis();
 
-  /** Behält den Inhalt der Zeichnung. */
+  /** Stores the picture content. */
   QPixmap pixBuffer;
   QPixmap pixBufferYAxis;
   QPixmap pixBufferKurve;
@@ -151,8 +158,7 @@ class EvaluationView : public QWidget
   bool vario;
   bool speed;
 
-  Q3ScrollView* scrollFrame;
-
+  QScrollArea* scrollFrame;
   EvaluationDialog* evalDialog;
 
   int mouseB;
@@ -160,11 +166,14 @@ class EvaluationView : public QWidget
 
   Flight* flight;
 
+  /** Set, if valid curve data are available. */
+  bool curveDataValid;
+
 public slots:
 
   /* Shows a pointer under the time axis to indicate the
    * position of FlightPoint fp in the graph. If fp=0,
-   * then the flightpoint is removed.
+   * then the flight point is removed.
    */
   void slotShowPointer(const FlightPoint * fp=0);
 };

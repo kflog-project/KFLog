@@ -18,38 +18,26 @@
 ***********************************************************************/
 
 #include <QtGui>
-#include <Qt3Support>
 
 #include "evaluationdialog.h"
 #include "evaluationframe.h"
 #include "evaluationview.h"
 #include "flight.h"
-#include "mapcalc.h"
+#include "mainwindow.h"
 #include "mapcontents.h"
 
-extern MapContents *_globalMapContents;
+extern MapContents* _globalMapContents;
+extern QSettings    _settings;
 
 EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
 {
   setWindowTitle( tr("Flight Evaluation:") );
 
-//  if (staysOnTop)
-//    setWFlags(getWFlags() | WStyle_StaysOnTop);
-
-  // Auswahl - Kopfzeile
-/*  QFrame* oben = new QFrame(this, "frame_oben");
-  QLabel* o1 = new QLabel(tr("Flight:"), oben);
-  o1->setAlignment(AlignRight);
-  combo_flight = new QComboBox(oben, "combo_oben");
-  o1->setMinimumHeight(o1->sizeHint().height() + 10);
-  combo_flight->setMinimumWidth(120);
-*/
-
-  // variable Textanzeige
+  // movable text display
   QSplitter* textSplitter = new QSplitter( Qt::Vertical, this );
 
-  // Diagrammfenster - Mitte
-  evalFrame = new EvaluationFrame(textSplitter, this);
+  // upper diagram widget
+  evalFrame = new EvaluationFrame( textSplitter, this );
 
   connect( this, SIGNAL(flightChanged()),
            evalFrame, SLOT(slotShowFlight()));
@@ -57,26 +45,14 @@ EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
   connect( this, SIGNAL(textChanged(QString)),
            evalFrame, SLOT(slotUpdateCursorText(QString)));
 
-  // Textanzeige
-  textLabel = new QTextEdit(textSplitter);
-  textLabel->setReadOnly(true);
-  textLabel->setMinimumHeight(1);
+  // lower text display
+  textDisplay = new QTextBrowser( textSplitter );
+  textDisplay->setMinimumHeight( 5 );
 
-//  QPushButton* close = new QPushButton(tr("Close"),this);
-//  close->setMinimumHeight(close->sizeHint().height() + 5);
-//  close->setMaximumWidth(close->sizeHint().width() + 5);
-
-  QVBoxLayout* gesamtlayout = new QVBoxLayout(this,5,1);
-/*  QHBoxLayout* obenlayout = new QHBoxLayout(oben);
-
-  obenlayout->addWidget(o1);
-  obenlayout->addWidget(combo_flight);
-
-  gesamtlayout->addWidget(oben);
-*/
-  gesamtlayout->addWidget(textSplitter);
-
-//  updateListBox();
+  QVBoxLayout* layout = new QVBoxLayout( this );
+  layout->setMargin( 5 );
+  layout->setSpacing( 1 );
+  layout->addWidget(textSplitter);
 
   // Setting default-values for the splitter
 /*  typedef QValueList<int> testList;
@@ -86,35 +62,17 @@ EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
   textSplitter->setSizes(list);
 */
 
- /* No longer necessary with the KDockWidget
-  extern QSettings _settings;
-
-  int dlgWidth, dlgHeight;
-  dlgWidth = _settings.readNumEntry("/Evaluation/DialogWidth", 800);
-  dlgHeight = _settings.readNumEntry("/Evaluation/DialogHeight", 600);
-
-  resize(dlgWidth, dlgHeight);
-
-  */
-
-//  connect(combo_flight, SIGNAL(activated(int)),
-//        SLOT(slotShowFlightData()));
-//  connect(close, SIGNAL(clicked()), SLOT(reject()));
-
-
-// Changes because of the KDockWidget
-//  show();
-//  slotShowFlightData(); // <-- will be executed when loading a flight
+  if( _settings.value("/EvaluationDialog/FirstOpen", true).toBool() )
+    {
+      // On first call we need a reasonable size of the widget. All other
+      // is later on handled by the dock widget.
+      _settings.setValue( "/EvaluationDialog/FirstOpen", false );
+      resize(800, 600);
+    }
 }
-
 
 EvaluationDialog::~EvaluationDialog()
 {
-  // Save settings
-  extern QSettings _settings;
-
-  _settings.setValue("/Evaluation/DialogWidth", width());
-  _settings.setValue("/Evaluation/DialogHeight", height());
 }
 
 void EvaluationDialog::hideEvent( QHideEvent* event )
@@ -134,7 +92,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
   FlightPoint p1;
   FlightPoint p2;
 
-  if ( !flight )
+  if ( ! flight )
   {
     emit textChanged(htmlText);
     return;
@@ -322,47 +280,29 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
 
   case BaseMapElement::Task:
     emit textChanged(QString::null);
-    htmlText = "<DIV ALIGN=CENTER>" + tr("Cannot evaluate task") +
-      "</DIV>";
+    htmlText = "<DIV ALIGN=CENTER>" + tr("Cannot evaluate task") + "</DIV>";
     break;
 
   case BaseMapElement::FlightGroup:
     emit textChanged(QString::null);
-    htmlText = "<DIV ALIGN=CENTER>" + tr("Cannot (yet) evaluate a flight group") +
-      "</DIV>";
+    htmlText = "<DIV ALIGN=CENTER>" + tr("Cannot (yet) evaluate a flight group") + "</DIV>";
     break;
 
   default:
     break;
   }
 
- textLabel->setText(htmlText);
+ textDisplay->setHtml(htmlText);
 }
 
 
 void EvaluationDialog::resizeEvent(QResizeEvent* event)
 {
- // warning("EvaluationDialog::resizeEvent");
-
   QWidget::resizeEvent(event);
 
   slotShowFlightData();
 }
 
-
-void EvaluationDialog::updateListBox()
-{
-  combo_flight->clear();
-
-  // Flüge eintragen
-/*
-  for(unsigned int n = 0; n < flightList->count(); n++)
-      combo_flight->insertItem(flightList->at(n)->getFileName());
-
-  if(flightList->count())
-      slotShowFlightData(combo_flight->currentItem());
-*/
-}
 
 void EvaluationDialog::slotShowFlightData()
 {
@@ -372,15 +312,16 @@ void EvaluationDialog::slotShowFlightData()
     {
       if( flight->getObjectType() == BaseMapElement::Flight )
         {
-          setCaption( tr( "Flight Evaluation:" ) + flight->getPilot() + "  "
-              + flight->getDate().toString() );
+          setWindowTitle( tr( "Flight Evaluation:" ) +
+                          flight->getPilot() + "  " +
+                          flight->getDate().toString() );
         }
       else
         {
           setCaption( tr( "Flight Evaluation:" ) );
         }
 
-      // GRUNDWERTE setzen
+      // set defaults
       updateText( 0, flight->getRouteLength() - 1, true );
 
       emit flightChanged();

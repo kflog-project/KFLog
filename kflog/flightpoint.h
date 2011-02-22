@@ -44,8 +44,20 @@ class FlightPoint
 {
 
 public:
-  // simple Constructor
-  FlightPoint();
+
+  FlightPoint() :
+    height(0),
+    gpsHeight(0),
+    engineNoise(-1),
+    surfaceHeight(-1),
+    time(0),
+    dH(0),
+    dT(0),
+    dS(0),
+    bearing(0.),
+    dBearing(0.),
+    f_state(0)
+  {};
 
   /** The original position of the point. Given in the internal format.
   *   set by flightloader.cpp */
@@ -66,9 +78,6 @@ public:
   /** Optional: Engine Noise Level
   *   set by flightloader.cpp */
   int engineNoise;
-
-  // Optional: Fix Accuracy
-  //float fixAccuracy
 
   /** The elevation of the surface of the earth beyond this point.
   *   will be filled when drawn on map

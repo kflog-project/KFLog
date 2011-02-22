@@ -20,10 +20,10 @@
 #define EVALUATION_FRAME_H
 
 #include <QCheckBox>
-#include <q3scrollview.h>
+#include <QScrollArea>
 #include <QSlider>
 #include <QSpinBox>
-#include <q3textview.h>
+#include <QTextBrowser>
 #include <QResizeEvent>
 #include <QWidget>
 
@@ -32,6 +32,8 @@
 class EvaluationDialog;
 
 /**
+ * \class EvaluationFrame
+ *
  * \author Heiner Lamprecht, Axel Pauli
  *
  * \date 2001-2011
@@ -44,7 +46,7 @@ class EvaluationFrame : public QWidget
 
   private:
 
-   Q_DISABLE_COPY ( EvaluationFrame )
+   Q_DISABLE_COPY( EvaluationFrame )
 
   public:
     /** */
@@ -74,14 +76,15 @@ class EvaluationFrame : public QWidget
     void slotUpdateCursorText(QString text);
 
   protected:
+
     virtual void resizeEvent(QResizeEvent* event);
 
   private:
 
-    Q3ScrollView* graphFrame;
+    QScrollArea* graphFrame;
     EvaluationView* evalView;
 
-    Q3TextView* cursorLabel;
+    QTextBrowser* cursorLabel;
 
     QCheckBox* check_vario;
     QCheckBox* check_baro;

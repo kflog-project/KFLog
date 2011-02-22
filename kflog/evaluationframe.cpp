@@ -17,7 +17,6 @@
 ***********************************************************************/
 
 #include <QtGui>
-#include <Qt3Support>
 
 #include "evaluationframe.h"
 #include "evaluationdialog.h"
@@ -38,119 +37,129 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg) :
   QSplitter* controlSplitter = new QSplitter(Qt::Horizontal, this);
 
   // View
-  graphFrame = new Q3ScrollView(controlSplitter);
-  graphFrame->setResizePolicy(Q3ScrollView::AutoOne);
-  graphFrame->setHScrollBarMode(Q3ScrollView::AlwaysOn);
-  graphFrame->setVScrollBarMode(Q3ScrollView::AlwaysOff);
-  graphFrame->setFrameStyle(Q3Frame::Panel | Q3Frame::Sunken);
-  graphFrame->setBackgroundMode(Qt::PaletteLight);
+  graphFrame = new QScrollArea(controlSplitter);
+  graphFrame->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+  graphFrame->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  graphFrame->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  graphFrame->setBackgroundRole( QPalette::Light );
+  graphFrame->setAutoFillBackground( true );
 
-  evalView = new EvaluationView(graphFrame, dlg);
-  graphFrame->addChild(evalView);
+  evalView = new EvaluationView( graphFrame, dlg );
+  graphFrame->setWidget( evalView );
 
-  cursorLabel = new Q3TextView(this);
+  cursorLabel = new QTextBrowser(this);
   cursorLabel->setFixedHeight(35);
-  cursorLabel->setVScrollBarMode(Q3ScrollView::AlwaysOff);
-  cursorLabel->setHScrollBarMode(Q3ScrollView::AlwaysOff);
+  //cursorLabel->setVScrollBarMode(Q3ScrollView::AlwaysOff);
+  //cursorLabel->setHScrollBarMode(Q3ScrollView::AlwaysOff);
 
-  // Control elements
-  QWidget* control = new QWidget(controlSplitter);
-  control->setMinimumWidth(1);
+  // Create Control layout
+  QGridLayout* controlLayout = new QGridLayout;
+  controlLayout->setMargin( 5 );
+  controlLayout->setSpacing( 5 );
 
-  QLabel* scale_label = new QLabel(tr("Time scale:"),control);
-  scale_label->setAlignment(Qt::AlignHCenter);
-  spinScale = new QSpinBox(1,60,1,control);
+  QLabel* scale_label = new QLabel( tr("Time Scale") );
+  scale_label->setAlignment(Qt::AlignCenter);
+  controlLayout->addWidget( scale_label, 0, 1, 1, 3 );
 
-  QLabel* label_glaettung = new QLabel(tr("Smoothness:"),control);
-  label_glaettung->setAlignment(Qt::AlignHCenter);
+  spinScale = new QSpinBox;
+  spinScale->setRange( 1, 60 );
+  spinScale->setSingleStep( 1 );
+  spinScale->setButtonSymbols( QSpinBox::PlusMinus );
+  spinScale->setSuffix( "s" );
+  spinScale->setToolTip(tr("Time distance between two drawing points in seconds."));
+  controlLayout->addWidget( spinScale, 1, 1, 1, 3 );
 
-  sliderVario = new QSlider(0,10,1,0,Qt::Vertical,control);
-  sliderBaro  = new QSlider(0,10,1,0,Qt::Vertical,control);
-  sliderSpeed = new QSlider(0,10,1,0,Qt::Vertical,control);
-  sliderVario->sizeHint().setHeight(20);
+  QLabel* label_glaettung = new QLabel( tr("Smoothness") );
+  label_glaettung->setAlignment(Qt::AlignCenter);
+  controlLayout->addWidget( label_glaettung, 2, 1, 1, 3 );
+
+  sliderBaro  = new QSlider(Qt::Vertical);
+  sliderBaro->setRange(0, 10);
+  sliderBaro->setValue(1);
   sliderBaro->sizeHint().setHeight(20);
+  sliderBaro->setToolTip(tr("Changes the altitude smoothness."));
+  controlLayout->addWidget( sliderBaro, 3, 1 );
+
+  sliderVario = new QSlider(Qt::Vertical);
+  sliderVario->setRange(0, 10);
+  sliderVario->setValue(1);
+  sliderVario->sizeHint().setHeight(20);
+  sliderVario->setToolTip(tr("Changes the variometer smoothness."));
+  controlLayout->addWidget( sliderVario, 3, 2 );
+
+  sliderSpeed = new QSlider(Qt::Vertical);
+  sliderSpeed->setRange(0, 10);
+  sliderSpeed->setValue(1);
   sliderSpeed->sizeHint().setHeight(20);
+  sliderSpeed->setToolTip(tr("Changes the speed smoothness."));
+  controlLayout->addWidget( sliderSpeed, 3, 3 );
 
-  check_vario = new QCheckBox(control);
-  check_baro = new QCheckBox(control);
-  check_speed = new QCheckBox(control);
+  check_baro  = new QCheckBox;
+  check_baro->setToolTip(tr("Switches on/off altitude drawing."));
+  controlLayout->addWidget( check_baro, 4, 1 );
 
-  //control->setMaximumWidth(scale_label->sizeHint().width() + 10);
+  check_vario = new QCheckBox;
+  check_vario->setToolTip(tr("Switches on/off variometer drawing."));
+  controlLayout->addWidget( check_vario, 4, 2 );
 
-  QLabel* label_vario = new QLabel(tr("V"),control);
-  QLabel* label_baro  = new QLabel(tr("H"),control);
-  QLabel* label_speed = new QLabel(tr("S"),control);
-  label_vario->setAlignment(Qt::AlignHCenter);
-  label_baro->setAlignment(Qt::AlignHCenter);
-  label_speed->setAlignment(Qt::AlignHCenter);
+  check_speed = new QCheckBox;
+  check_speed->setToolTip(tr("Switches on/off speed drawing."));
+  controlLayout->addWidget( check_speed, 4, 3 );
 
-  Q3GridLayout* centerlayout = new Q3GridLayout( this, 3, 1 );
+  QLabel* label_baro  = new QLabel(tr("A"));
+  controlLayout->addWidget( label_baro, 5, 1 );
 
-  Q3GridLayout* controllayout = new Q3GridLayout( control, 12, 6, 5, 1 );
+  QLabel* label_vario = new QLabel(tr("V"));
+  controlLayout->addWidget( label_vario, 5, 2 );
 
-  centerlayout->addWidget(controlSplitter, 0, 0);
-  centerlayout->addWidget(cursorLabel, 2, 0);
+  QLabel* label_speed = new QLabel(tr("S"));
+  controlLayout->addWidget( label_speed, 5, 3 );
 
-  centerlayout->setRowStretch( 0, 1 );
-  centerlayout->setRowStretch( 1, 0 );
-  centerlayout->addRowSpacing( 1, 5 );
-  centerlayout->setRowStretch( 2, 0 );
+  controlLayout->setColumnStretch( 0, 5 );
+  controlLayout->setColumnStretch( 4, 5 );
+  controlLayout->setRowStretch( 6, 5 );
+  controlLayout->setRowMinimumHeight( 3, 40 );
 
-  controllayout->addMultiCellWidget(scale_label,1,1,0,6);
-  controllayout->addMultiCellWidget(spinScale,3,3,2,5);
-  controllayout->addMultiCellWidget(label_glaettung,5,5,0,6);
-  controllayout->addWidget(sliderBaro,7,1);
-  controllayout->addWidget(sliderVario,7,3);
-  controllayout->addWidget(sliderSpeed,7,5);
-  controllayout->addWidget(check_baro,9,1);
-  controllayout->addWidget(check_vario,9,3);
-  controllayout->addWidget(check_speed,9,5);
-  controllayout->addWidget(label_baro,11,1);
-  controllayout->addWidget(label_vario,11,3);
-  controllayout->addWidget(label_speed,11,5);
+  // Create a widget, which gets assigned the layout.
+  QWidget *cw = new QWidget( this );
+  cw->setLayout( controlLayout );
 
-  controllayout->addColSpacing(1,sliderBaro->sizeHint().width() + 4);
-  controllayout->addColSpacing(3,sliderVario->sizeHint().width() + 4);
-  controllayout->addColSpacing(5,sliderSpeed->sizeHint().width() + 4);
-  controllayout->setColStretch(0,2);
-  controllayout->setColStretch(2,1);
-  controllayout->setColStretch(4,1);
-  controllayout->setColStretch(6,2);
-  controllayout->addRowSpacing(2,5);
-  controllayout->addRowSpacing(4,10);
-  controllayout->addRowSpacing(6,5);
-  controllayout->addRowSpacing(8,5);
-  controllayout->addRowSpacing(10,5);
-  controllayout->setRowStretch(12,3);
+  // Add widget to the splitter
+  controlSplitter->addWidget( cw );
+ //-----------------------------------------------------------------------------
 
-// Set default size of the window splitting
-  typedef Q3ValueList<int> testList;
-  testList controlList;
+  QVBoxLayout* vbox = new QVBoxLayout( this );
+  vbox->setMargin( 0 );
+
+  vbox->addWidget(controlSplitter);
+  vbox->addWidget(cursorLabel);
+
+  // Set default size of the window splitting
+  QList<int> controlList;
   controlList.append(400);
   controlList.append(scale_label->sizeHint().width() + 10);
   controlSplitter->setSizes(controlList);
 
-//  controlSplitter->setResizeMode(graphFrame,QSplitter::FollowSizeHint);
-
   // load the settings from the configuration file
   secWidth = _settings.value("/Evaluation/ScaleTime", 10).toInt();
   spinScale->setValue(secWidth);
+
   smoothness_va = _settings.value("/Evaluation/VarioSmoothness", 0).toInt();
   sliderVario->setValue(smoothness_va);
+
   smoothness_v = _settings.value("/Evaluation/SpeedSmoothness", 0).toInt();
   sliderSpeed->setValue(smoothness_v);
+
   smoothness_h = _settings.value("/Evaluation/AltitudeSmoothness", 0).toInt();
   sliderBaro->setValue(smoothness_h);
+
   check_vario->setChecked(_settings.value("/Evaluation/Vario",true).toBool());
   check_speed->setChecked(_settings.value("/Evaluation/Speed",true).toBool());
   check_baro->setChecked(_settings.value("/Evaluation/Altitude",true).toBool());
 
-  this->connect(check_vario, SIGNAL(clicked()),
-        SLOT(slotShowGraph()));
-  this->connect(check_baro, SIGNAL(clicked()),
-        SLOT(slotShowGraph()));
-  this->connect(check_speed, SIGNAL(clicked()),
-        SLOT(slotShowGraph()));
+  this->connect(check_vario, SIGNAL(clicked()), SLOT(slotShowGraph()));
+  this->connect(check_baro, SIGNAL(clicked()), SLOT(slotShowGraph()));
+  this->connect(check_speed, SIGNAL(clicked()), SLOT(slotShowGraph()));
 
   this->connect(sliderVario, SIGNAL(valueChanged(int)),
         SLOT(slotVarioSmoothness(int)));
@@ -165,7 +174,7 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg) :
 
 EvaluationFrame::~EvaluationFrame()
 {
-  // Save settings
+  // Save settings to the configuration file
   _settings.setValue("/Evaluation/ScaleTime", secWidth);
   _settings.setValue("/Evaluation/VarioSmoothness", smoothness_va);
   _settings.setValue("/Evaluation/AltitudeSmoothness", smoothness_h);
@@ -198,9 +207,8 @@ void EvaluationFrame::slotShowGraph()
 
   if( flight && flight->getObjectType() == BaseMapElement::Flight )
     {
-      int contentsX = ((centerTime - flight->getStartTime()) / secWidth)
-                        + X_DISTANCE;
-      graphFrame->center( contentsX, 0 );
+      int contentsX = ((centerTime - flight->getStartTime()) / secWidth) + X_DISTANCE;
+      graphFrame->ensureVisible( contentsX, 0 );
     }
 }
 
@@ -236,7 +244,9 @@ void EvaluationFrame::slotScale(int g)
   // set scale factor
   secWidth = g;
 
-  int contentsX = graphFrame->contentsX() + ( graphFrame->width() / 2 );
+  int x = graphFrame->viewport()->rect().topLeft().x();
+
+  int contentsX = x + ( graphFrame->width() / 2 );
 
   centerTime = flight->getPointByTime((contentsX - X_DISTANCE) *
                           secWidthOld + flight->getStartTime()).time;

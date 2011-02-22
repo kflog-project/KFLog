@@ -16,7 +16,6 @@
 ***********************************************************************/
 
 #include "flight.h"
-#include "flightpoint.h"
 #include "waypoint.h"
 
 Waypoint::Waypoint(QString nam, WGSPoint oP, int typ, QString _icao, QString _comment,
@@ -64,21 +63,4 @@ Waypoint::Waypoint(Waypoint &p)
 bool Waypoint::operator<(Waypoint &wp)
 {
     return name<wp.name;
-}
-
-/////////////////////////////////////////////////////
-// Implementation of a Logger Fix
-FlightPoint::FlightPoint(void)
-{
-  //  QPoint projP; // ??
-  height = 0;
-  gpsHeight = 0;
-  engineNoise  = -1; // indicates not measured
-  surfaceHeight = -1; // indicates unknown
-  time  = 0;
-  dH = 0;
-  dT = 0;
-  dS = 0;
-  bearing = .0;
-  f_state = Flight::Straight;
 }

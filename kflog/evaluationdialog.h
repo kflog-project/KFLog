@@ -19,13 +19,10 @@
 #ifndef EVALUATION_DIALOG_H
 #define EVALUATION_DIALOG_H
 
-#include <QComboBox>
-#include <QCheckBox>
-#include <QLabel>
-#include <q3scrollview.h>
-#include <QSpinBox>
-#include <QSlider>
-#include <QTextEdit>
+#include <QPoint>
+#include <QString>
+#include <QTextBrowser>
+#include <QWidget>
 
 #include "evaluationframe.h"
 #include "flightpoint.h"
@@ -33,31 +30,35 @@
 class Flight;
 
 /**
- * @author Heiner Lamprecht, Florian Ehinger
+ * \class EvaluationDialog
  *
- * @version $Id$
+ * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
+ *
+ * \date 2000-2011
+ *
+ * \version $Id$
  */
 class EvaluationDialog : public QWidget
 {
   Q_OBJECT
 
+private:
+
+ Q_DISABLE_COPY ( EvaluationDialog )
+
  public:
-  /** */
+
   EvaluationDialog( QWidget *parent );
-  /** */
-  ~EvaluationDialog();
-  /**
-   * Called, whenever a flight is loaded or closed, so that the listbox
-   * contains all loaded flight.
-   */
-  void updateListBox();
+
+  virtual ~EvaluationDialog();
 
   void updateText(int index1, int index2, bool updateAll = false);
 
   Flight* getFlight();
 
-  unsigned int getTaskStart(){return evalFrame->getTaskStart();}
-  unsigned int getTaskEnd(){return evalFrame->getTaskEnd();}
+  unsigned int getTaskStart(){return evalFrame->getTaskStart();};
+
+  unsigned int getTaskEnd(){return evalFrame->getTaskEnd();};
 
  protected:
 
@@ -69,7 +70,7 @@ class EvaluationDialog : public QWidget
   /** */
   void flightChanged();
   /** */
-  void textChanged(QString);
+  void textChanged(QString text);
   /** No descriptions */
   void showFlightPoint(const FlightPoint* fp);
 
@@ -86,15 +87,11 @@ class EvaluationDialog : public QWidget
 
  protected:
 
-  /**
-   * Redefinition of the resizeEvent.
-   */
   virtual void resizeEvent(QResizeEvent* event);
 
  private:
 
-  QTextEdit* textLabel;
-  QComboBox* combo_flight;
+  QTextBrowser* textDisplay;
   Flight* flight;
   EvaluationFrame* evalFrame;
 };
