@@ -75,11 +75,7 @@ void EvaluationView::paintEvent(QPaintEvent*)
   qDebug() << "EvaluationView::paintEvent(): HSBV="
            << scrollFrame->horizontalScrollBar()->value();
 
-  pixBuffer = QPixmap( pixBufferKurve.size() );
-  pixBuffer.fill(Qt::white);
-
-  QPainter painter;
-  painter.begin(&pixBuffer);
+  QPainter painter(this);
 
   painter.drawPixmap( 0, 0, pixBufferKurve);
 
@@ -91,13 +87,6 @@ void EvaluationView::paintEvent(QPaintEvent*)
       // did not work properly.
       painter.drawPixmap( 0, 0, pixBufferYAxis);
     }
-
-  painter.end();
-
-  // That draws at the widget
-  painter.begin(this);
-  painter.drawPixmap( 0, 0, pixBuffer);
-  painter.end();
 }
 
 void EvaluationView::mousePressEvent(QMouseEvent* event)
@@ -713,21 +702,21 @@ void EvaluationView::__draw()
       else if(wP.at(n)->sectorFAI != 0)
           timeText = printTime(wP.at(n)->sectorFAI);
       paint.setFont(QFont("helvetica",7));
-      paint.drawText(xpos - 40, Y_DISTANCE - 10 - 5, 80, 10,
-                          Qt::AlignCenter,timeText);
+      paint.drawText(xpos - 40, Y_DISTANCE - 10 - 5, 80, 10, Qt::AlignCenter,timeText);
     }
-
 
   if(vario)
     {
       paint.setPen(QPen(QColor(255,100,100), 1));
       paint.drawPolyline(varioArray);
     }
+
   if(speed)
     {
       paint.setPen(QPen(QColor(0,0,0), 1));
       paint.drawPolyline(speedArray);
     }
+
   if(baro)
     {
       paint.setPen(QPen(QColor(100, 100, 255), 1));
@@ -772,9 +761,9 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
       else
           paint.setPen(QPen(QColor(200,0,0), 1));
 
-      paint.setCompositionMode(QPainter::CompositionMode_Xor);
-      paint.drawLine(calt,this->height() - Y_DISTANCE, calt,Y_DISTANCE);
-      paint.drawLine(xpos,this->height() - Y_DISTANCE, xpos,Y_DISTANCE);
+      paint.setCompositionMode( QPainter::CompositionMode_Xor );
+      paint.drawLine( calt, this->height() - Y_DISTANCE, calt, Y_DISTANCE );
+      paint.drawLine( xpos, this->height() - Y_DISTANCE, xpos, Y_DISTANCE );
       paint.end();
     }
    else
@@ -800,9 +789,9 @@ void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
 
       // draw flags
       if(cursor == 1)
-          paint.drawPixmap(xpos - 32, Y_DISTANCE - 30,pixCursor1);
+          paint.drawPixmap(xpos - 32, Y_DISTANCE - 30, pixCursor1);
       else
-          paint.drawPixmap(xpos, Y_DISTANCE - 30,pixCursor2);
+          paint.drawPixmap(xpos, Y_DISTANCE - 30, pixCursor2);
 
       paint.end();
     }
