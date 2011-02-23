@@ -7,6 +7,7 @@ $Id$
     to redesign all drawing stuff that it fulfills the Qt4 requirements.
     One issue remains. If a flight is loaded and not all maps are available
     during load, the elevation profile of the diagram is incomplete.
+    The format of the displayed flight text data needs some rework.
 
 2011-02-21 Axel Pauli <axel@kflog.org>
   * Thanks to valgrind, found a bug in ElevationFinder class. Class member

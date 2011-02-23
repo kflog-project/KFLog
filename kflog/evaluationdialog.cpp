@@ -275,11 +275,11 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
           }
           //text.sprintf("%i", state_list.at(n)->f_state);
           htmlText += (QString) "<TR><TD align='left'>" + text + "</TD>";
-          text.sprintf("%s", (const char*)printTime(state_list.at(n)->start_time, true));
+          text.sprintf("%s", printTime(state_list.at(n)->start_time, true).toAscii().data());
           htmlText += (QString) "<TD align='right'>" + text + "</TD>";
-          text.sprintf("%s", (const char*)printTime(state_list.at(n)->end_time, true));
+          text.sprintf("%s", printTime(state_list.at(n)->end_time, true).toAscii().data());
           htmlText += (QString) "<TD align='right'>" + text + "</TD>";
-          text.sprintf("%s", (const char*)printTime(state_list.at(n)->duration, true, true, true));
+          text.sprintf("%s", printTime(state_list.at(n)->duration, true, true, true).toAscii().data());
           htmlText += (QString) "<TD align='right'>" + text + "</TD>";
           text.sprintf("%i", state_list.at(n)->dH_pos);
           htmlText += (QString) "<TD align='right'>" + text + " m</TD>";
