@@ -51,11 +51,15 @@ class ElevationFinder : public QObject
 
   Q_DISABLE_COPY ( ElevationFinder )
 
+  /**
+   * This class is a singleton, therefore the constructor is made private.
+   * Use method \ref instance to get a class instance.
+   */
   ElevationFinder(QObject *parent = 0);
 
  public:
 
-  ~ElevationFinder();
+  virtual ~ElevationFinder();
   /**
    * Find an elevation.
    * @returns Elevation in meters or -1 if no valid result was found.

@@ -39,10 +39,9 @@ ElevationFinder::ElevationFinder(QObject *parent) :
     }
 
   timer = new QTimer(this);
-  timer-> setSingleShot( true );
+  timer->setSingleShot( true );
   connect(timer, SIGNAL(timeout()), this, SLOT(timeout()));
 }
-
 
 ElevationFinder::~ElevationFinder()
 {
@@ -51,7 +50,7 @@ ElevationFinder::~ElevationFinder()
 
 ElevationFinder* ElevationFinder::instance()
 {
-  static ElevationFinder instance(qApp);
+  static ElevationFinder instance(0);
 
   return &instance;
 }
