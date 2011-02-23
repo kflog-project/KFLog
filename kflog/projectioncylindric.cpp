@@ -6,10 +6,11 @@
  **
  ************************************************************************
  **
- **   Copyright (c):  2002 by Heiner Lamprecht, 2007 Axel Pauli
+ **   Copyright (c):  2002 by Heiner Lamprecht
+ **                   2007-2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
- **   Licence. See the file COPYING for more information.
+ **   License. See the file COPYING for more information.
  **
  **   $Id$
  **
@@ -44,7 +45,7 @@ bool ProjectionCylindric::initProjection(int v1_new)
   bool changed(false);
 
   if(v1_new > 54000000 || v1_new < -54000000) {
-    // this is >90° or <-90°: take default of 45°;
+    // this is >90ï¿½ or <-90ï¿½: take default of 45ï¿½;
     // better check in input dlg and not here???
     changed = ( v1 != NUM_TO_RAD(27000000) );
     v1 = NUM_TO_RAD(27000000);
@@ -60,23 +61,20 @@ bool ProjectionCylindric::initProjection(int v1_new)
   return changed;
 }
 
-
 /**
  * Saves the parameters specific to this projection to a stream
  */
 void ProjectionCylindric::saveParameters(QDataStream & s)
 {
-  s << Q_INT32(i_v1);
+  s << qint32(i_v1);
 }
-
 
 /**
  * Loads the parameters specific to this projection from a stream
  */
 void ProjectionCylindric::loadParameters(QDataStream & s)
 {
-  Q_INT32 i=0;
+  qint32 i=0;
   s >> i;
   initProjection(i);
 }
-

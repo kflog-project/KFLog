@@ -6,10 +6,11 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by Heiner Lamprecht, 2007 Axel Pauli
+**   Copyright (c):  2002 by Heiner Lamprecht
+**                   2007-2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -22,23 +23,20 @@
 ProjectionBase::ProjectionBase()
 {}
 
-
 ProjectionBase::~ProjectionBase()
 {}
 
-
 void SaveProjection(QDataStream & s, ProjectionBase * p)
 {
-  s << Q_INT8( p->projectionType() );
+  s << qint8( p->projectionType() );
   p->saveParameters(s);
 }
-
 
 ProjectionBase * LoadProjection(QDataStream & s)
 {
   ProjectionBase * result;
   result=0;
-  Q_INT8 i=-1;;
+  qint8 i=-1;;
   s >> i;
   switch (ProjectionBase::ProjectionType(i)) {
   case ProjectionBase::Lambert:
@@ -51,5 +49,6 @@ ProjectionBase * LoadProjection(QDataStream & s)
     qWarning("Unknown projection type!");
     break;
   }
+
   return result;
 }

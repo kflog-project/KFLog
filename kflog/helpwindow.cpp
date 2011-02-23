@@ -19,6 +19,9 @@
 #include <QtGui>
 
 #include "helpwindow.h"
+#include "mainwindow.h"
+
+extern QSettings _settings;
 
 HelpWindow::HelpWindow( QWidget* parent ) : QWidget( parent )
 {
@@ -31,6 +34,14 @@ HelpWindow::HelpWindow( QWidget* parent ) : QWidget( parent )
 
   QHBoxLayout* hbox = new QHBoxLayout(this);
   hbox->addWidget( browser );
+
+  if( _settings.value("/HelpWindow/FirstOpen", true).toBool() )
+    {
+      // On first call we need a reasonable size of the widget. All other
+      // is later on handled by the dock widget.
+      _settings.setValue( "/HelpWindow/FirstOpen", false );
+      resize(600, 300);
+    }
 }
 
 HelpWindow::~HelpWindow()

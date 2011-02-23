@@ -1535,7 +1535,7 @@ void MapContents::addDir (QStringList& list, const QString& _path, const QString
         found = true;
     }
     if (!found)
-      list += path.absFilePath (*it);
+      list += path.absoluteFilePath (*it);
   }
   //  qDebug ("entries: %s", list.join(";").toLatin1().data());
 }
@@ -1757,19 +1757,19 @@ bool MapContents::loadTask(QFile& path)
 
   if(!fInfo.exists())
     {
-      QMessageBox::warning( _mainWindow, tr("File does not exist"), "<html>" + tr("The selected file<BR><B>%1</B><BR>does not exist!").arg(path.name()) + "</html>", QMessageBox::Ok );
+      QMessageBox::warning( _mainWindow, tr("File does not exist"), "<html>" + tr("The selected file<BR><B>%1</B><BR>does not exist!").arg(path.fileName()) + "</html>", QMessageBox::Ok );
       return false;
     }
 
   if(!fInfo.size())
     {
-      QMessageBox::warning( _mainWindow, tr("File is empty"), "<html>" + tr("The selected file<BR><B>%1</B><BR>is empty!").arg(path.name()) + "</html>", QMessageBox::Ok );
+      QMessageBox::warning( _mainWindow, tr("File is empty"), "<html>" + tr("The selected file<BR><B>%1</B><BR>is empty!").arg(path.fileName()) + "</html>", QMessageBox::Ok );
       return false;
     }
 
   if(!path.open(QIODevice::ReadOnly))
     {
-      QMessageBox::warning( _mainWindow, tr("No permission"), "<html>" + tr("You don't have permission to access file<BR><B>%1</B>").arg(path.name()) + "</html>", QMessageBox::Ok );
+      QMessageBox::warning( _mainWindow, tr("No permission"), "<html>" + tr("You don't have permission to access file<BR><B>%1</B>").arg(path.fileName()) + "</html>", QMessageBox::Ok );
       return false;
     }
 
@@ -1796,9 +1796,9 @@ bool MapContents::loadTask(QFile& path)
 
               Waypoint *w = new Waypoint;
 
-              w->name = nm.namedItem("Name").toAttr().value().left(6).upper();
+              w->name = nm.namedItem("Name").toAttr().value().left(6).toUpper();
               w->description = nm.namedItem("Description").toAttr().value();
-              w->icao = nm.namedItem("ICAO").toAttr().value().upper();
+              w->icao = nm.namedItem("ICAO").toAttr().value().toUpper();
               w->origP.setLat(nm.namedItem("Latitude").toAttr().value().toInt());
               w->origP.setLon(nm.namedItem("Longitude").toAttr().value().toInt());
               w->projP = _globalMapMatrix->wgsToMap(w->origP);

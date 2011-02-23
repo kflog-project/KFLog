@@ -7,9 +7,10 @@
  ************************************************************************
  **
  **   Copyright (c):  2002 by Heiner Lamprecht
+ **                   2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
- **   Licence. See the file COPYING for more information.
+ **   License. See the file COPYING for more information.
  **
  **   $Id$
  **
@@ -19,7 +20,6 @@
 #include "projectionlambert.h"
 
 #define NUM_TO_RAD(num) ( (M_PI / 108000000.0) * (double)(num) )
-
 
 ProjectionLambert::ProjectionLambert(int v1_new, int v2_new, int orig_new)
 {
@@ -40,13 +40,12 @@ ProjectionLambert::ProjectionLambert(QDataStream & s)
   i_v1 = 0;
   i_v2 = 0;
   i_origin = 0;
-    
+
   loadParameters(s);
 }
 
 ProjectionLambert::~ProjectionLambert()
 {}
-
 
 bool ProjectionLambert::initProjection(int v1_new, int v2_new, int orig_new)
 {
@@ -98,7 +97,6 @@ bool ProjectionLambert::initProjection(int v1_new, int v2_new, int orig_new)
   return changed;
 }
 
-
 double ProjectionLambert::projectX(const double& latitude, const double& longitude)
 {
   if (last_lat!=latitude) {
@@ -113,7 +111,6 @@ double ProjectionLambert::projectX(const double& latitude, const double& longitu
   return ( project_XY_arg_lat )
     * sin( project_XY_arg_lon );
 }
-
 
 double ProjectionLambert::projectY(const double& latitude, const double& longitude)
 {
@@ -130,7 +127,6 @@ double ProjectionLambert::projectY(const double& latitude, const double& longitu
     * cos( project_XY_arg_lon );
 }
 
-
 double ProjectionLambert::invertLat(const double& x, const double& y) const
 {
   //    double lat =
@@ -143,7 +139,6 @@ double ProjectionLambert::invertLat(const double& x, const double& y) const
   return -asin(var2 + var3*(x*x + y*y));
 }
 
-
 double ProjectionLambert::invertLon(const double& x, const double& y) const
 {
   double lon = 2.0 * atan( x / y ) / ( sinv1 + sinv2 );
@@ -151,12 +146,10 @@ double ProjectionLambert::invertLon(const double& x, const double& y) const
   return lon + origin;
 }
 
-
 double ProjectionLambert::getRotationArc(const int x, const int y) const
 {
   return atan(x * 1.0 / y * 1.0);
 }
-
 
 int ProjectionLambert::getTranslationX(const int width, const int ) const
 {
@@ -169,30 +162,27 @@ int ProjectionLambert::getTranslationY(const int height, const int y) const
   return (height / 2) - y;
 }
 
-
 /**
  * Saves the parameters specific to this projection to a stream
  */
 void ProjectionLambert::saveParameters(QDataStream & s)
 {
-  s << Q_INT32(i_v1);
-  s << Q_INT32(i_v2);
-  s << Q_INT32(i_origin);
+  s << qint32(i_v1);
+  s << qint32(i_v2);
+  s << qint32(i_origin);
 }
-
 
 /**
  * Loads the parameters specific to this projection from a stream
  */
 void ProjectionLambert::loadParameters(QDataStream & s)
 {
-  Q_INT32 i1=0;
-  Q_INT32 i2=0;
-  Q_INT32 i3=0;
+  qint32 i1=0;
+  qint32 i2=0;
+  qint32 i3=0;
   s >> i1;
   s >> i2;
   s >> i3;
 
   initProjection(i1, i2, i3);
 }
-

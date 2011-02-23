@@ -1251,12 +1251,12 @@ Qt::PenStyle MapConfig::getIsoPenStyle(int height)
 
 void MapConfig::__readBorder( QString group, bool *b )
 {
-  b[0] = _settings.readBoolEntry( "/Map/" + group + "/Border1", true );
-  b[1] = _settings.readBoolEntry( "/Map/" + group + "/Border2", true );
-  b[2] = _settings.readBoolEntry( "/Map/" + group + "/Border3", true );
-  b[3] = _settings.readBoolEntry( "/Map/" + group + "/Border4", true );
-  b[4] = _settings.readBoolEntry( "/Map/" + group + "/PrintBorder1", true );
-  b[5] = _settings.readBoolEntry( "/Map/" + group + "/PrintBorder2", true );
+  b[0] = _settings.value( "/Map/" + group + "/Border1", true ).toBool();
+  b[1] = _settings.value( "/Map/" + group + "/Border2", true ).toBool();
+  b[2] = _settings.value( "/Map/" + group + "/Border3", true ).toBool();
+  b[3] = _settings.value( "/Map/" + group + "/Border4", true ).toBool();
+  b[4] = _settings.value( "/Map/" + group + "/PrintBorder1", true ).toBool();
+  b[5] = _settings.value( "/Map/" + group + "/PrintBorder2", true ).toBool();
 }
 
 void MapConfig::__readPen( QString group,

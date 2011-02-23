@@ -13,7 +13,7 @@
 **
 **                :  2008, 2009 Improvements by Constantijn Neeteson
 **
-**                :  2011 Portage to Qt4 by Axel pauli
+**                :  2011 Portage to Qt4 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -669,35 +669,32 @@ QStringList Flight::getFlightValues(unsigned int start, unsigned int end)
     //index: 0 right turn time
     text.sprintf("<small>%.1f%%</small> %s",
                  (float) kurbel_r / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0,
-                 (const char*)printTime(kurbel_r, true, true, true) );
+                 printTime(kurbel_r, true, true, true).toAscii().data());
     result.append(text);
     //index: 1 left turn time
     text.sprintf("<small>%.1f%%</small> %s",
                  (float) kurbel_l / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0,
-                 (const char*)printTime(kurbel_l, true, true, true) );
+                 printTime(kurbel_l, true, true, true).toAscii().data());
     result.append(text);
     //index: 2 mixed turn time
     text.sprintf("<small>%.1f%%</small> %s",
                  (float) kurbel_v / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0,
-                 (const char*)printTime(kurbel_v, true, true, true) );
+                 printTime(kurbel_v, true, true, true).toAscii().data());
     result.append(text);
     //index: 3 total turn time
     text.sprintf("<small>%.1f%%</small> %s",
                  (float)(kurbel_r + kurbel_l + kurbel_v) / (float)( route.at(end)->time - route.at(start)->time ) * 100.0,
-                 (const char*)printTime((kurbel_r + kurbel_l + kurbel_v), true, true, true) );
+                 printTime((kurbel_r + kurbel_l + kurbel_v), true, true, true).toAscii().data());
     result.append(text);
 
     //index: 4 right turn vario
-    text.sprintf("%.2f m/s",(k_height_pos_r + k_height_neg_r) /
-             (kurbel_r));
+    text.sprintf("%.2f m/s",(k_height_pos_r + k_height_neg_r) / (kurbel_r));
     result.append(text);
     //index: 5 left turn vario
-    text.sprintf("%.2f m/s",(k_height_pos_l + k_height_neg_l) /
-             (kurbel_l));
+    text.sprintf("%.2f m/s",(k_height_pos_l + k_height_neg_l) / (kurbel_l));
     result.append(text);
     //index: 6 mixed turn vario
-    text.sprintf("%.2f m/s",(k_height_pos_v + k_height_neg_v) /
-             (kurbel_v));
+    text.sprintf("%.2f m/s",(k_height_pos_v + k_height_neg_v) / (kurbel_v));
     result.append(text);
     //index: 7 total turn vario
     text.sprintf("%.2f m/s",
@@ -769,14 +766,14 @@ QStringList Flight::getFlightValues(unsigned int start, unsigned int end)
         (float)( route.at(end)->time - route.at(start)->time -
             ( kurbel_r + kurbel_l + kurbel_v ) ) /
                 (float)( route.at(end)->time - route.at(start)->time ) * 100.0,
-        (const char*)printTime( (int)( route.at(end)->time - route.at(start)->time -
-            ( kurbel_r + kurbel_l + kurbel_v ) ) , true, true, true) );
+                printTime( (int)( route.at(end)->time - route.at(start)->time -
+            ( kurbel_r + kurbel_l + kurbel_v ) ) , true, true, true).toAscii().data());
     result.append(text);
 
     //Total
     //index: 27 total time
     text.sprintf("%s",
-        (const char*)printTime((int)(route.at(end)->time - route.at(start)->time), true, true, true));
+        printTime((int)(route.at(end)->time - route.at(start)->time), true, true, true).toAscii().data());
     result.append(text);
     //index: 28 total dH
     text.sprintf("%.0f m",s_height_pos   + k_height_pos_r
