@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -41,7 +42,7 @@ EvaluationView::EvaluationView(QScrollArea* parent, EvaluationDialog* dialog) :
   scrollFrame(parent),
   evalDialog(dialog),
   flight(0),
-  curveDataValid(false)
+  flightPointPointer(0)
 {
   setObjectName( "EvaluationView" );
   setMouseTracking(true);
@@ -49,9 +50,6 @@ EvaluationView::EvaluationView(QScrollArea* parent, EvaluationDialog* dialog) :
   QPalette p = palette();
   p.setColor(backgroundRole(), Qt::white);
   setPalette(p);
-
-  pixBufferYAxis  = QPixmap(1,1);
-  pixBufferKurve  = QPixmap(1,1);
 
   mouseB = Qt::NoButton | NotReached;
 
@@ -70,27 +68,47 @@ QSize EvaluationView::sizeHint()
   return scrollFrame->viewport()->size();
 }
 
-void EvaluationView::paintEvent(QPaintEvent*)
+void EvaluationView::paintEvent( QPaintEvent* )
 {
-  qDebug() << "EvaluationView::paintEvent(): HSBV="
-           << scrollFrame->horizontalScrollBar()->value();
-
   QPainter painter(this);
 
-  painter.drawPixmap( 0, 0, pixBufferKurve);
+  if( ! pixBufferKurve.isNull() )
+    {
+      painter.drawPixmap( 0, 0, pixBufferKurve );
+    }
 
-  if(!((vario && speed) || (vario && baro) || (baro && speed)))
+  if( (!((vario && speed) || (vario && baro) || (baro && speed))) &&
+      pixBufferYAxis.isNull() == false )
     {
       // int x = scrollFrame->horizontalScrollBar()->value();
 
       // There is a problem with the paint update atm. The screen refresh
       // did not work properly.
-      painter.drawPixmap( 0, 0, pixBufferYAxis);
+      painter.drawPixmap( 0, 0, pixBufferYAxis );
+    }
+
+  if( ! pixBufferMouse.isNull() )
+    {
+      // Draws a vertical bar in the flight diagram at the new mouse position.
+      painter.drawPixmap( 0, 0, pixBufferMouse );
+    }
+
+  // Draws a flight pointer on request.
+  if( flight && flightPointPointer && ! pixPointer.isNull() )
+    {
+      int time = flightPointPointer->time - startTime;
+
+      lastPointerPosition.setX( X_DISTANCE + (time / secWidth) - 6 );
+      lastPointerPosition.setY( scrollFrame->viewport()->height() - Y_DISTANCE + 4 );
+
+      painter.drawPixmap( lastPointerPosition.x(), lastPointerPosition.y(), pixPointer );
     }
 }
 
 void EvaluationView::mousePressEvent(QMouseEvent* event)
 {
+  // qDebug() << "EvaluationView::mousePressEvent()";
+
   int x1 = ( cursor1 - startTime ) / secWidth + X_DISTANCE ;
   int x2 = ( cursor2 - startTime ) / secWidth + X_DISTANCE ;
 
@@ -115,17 +133,19 @@ void EvaluationView::mousePressEvent(QMouseEvent* event)
 
 void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
 {
+  // qDebug() << "EvaluationView::mouseReleaseEvent()";
 
   time_t time_alt;
   int cursor = -1;
 
-  if (flight) {
-    if(mouseB == (Qt::MidButton | Reached) ||
-       mouseB == (Qt::MidButton | NotReached))
-      {
-        time_alt = cursor1;
-        cursor = 1;
-      }
+  if (flight)
+    {
+      if(mouseB == (Qt::MiddleButton | Reached) ||
+         mouseB == (Qt::MiddleButton | NotReached))
+        {
+          time_alt = cursor1;
+          cursor = 1;
+        }
     else if(mouseB == (Qt::RightButton | Reached) ||
             mouseB == (Qt::RightButton | NotReached))
       {
@@ -147,23 +167,31 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
       }
 
     mouseB = Qt::NoButton | NotReached;
+
     this->setCursor(Qt::ArrowCursor);
 
     if(cursor == 1)
       {
-        cursor1 =  flight->getPointByTime(
-                    (time_t)(( event->pos().x() - X_DISTANCE ) * secWidth + startTime)).time;
-        if(cursor1 > cursor2) cursor1 = cursor2;
+        cursor1 = flight->getPointByTime( (time_t)(( event->pos().x() - X_DISTANCE ) * secWidth + startTime)).time;
+
+        if(cursor1 > cursor2)
+          {
+            cursor1 = cursor2;
+          }
       }
     else if(cursor == 2)
       {
-        cursor2 =  flight->getPointByTime(
-                     (time_t)(( event->pos().x() - X_DISTANCE ) * secWidth + startTime)).time;
+        cursor2 =  flight->getPointByTime( (time_t)(( event->pos().x() - X_DISTANCE ) * secWidth + startTime)).time;
 
-        if(cursor1 > cursor2) cursor2 = cursor1;
+        if(cursor1 > cursor2)
+          {
+            cursor2 = cursor1;
+          }
       }
-    else return;
-
+    else
+      {
+        return;
+      }
 
     flight->setTaskByTimes(cursor1,cursor2);
 
@@ -172,69 +200,87 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
 
     __draw();
 
-    update();
+    // Reset mouse cursors, if the new end position is reached.
+    pixBufferMouse = QPixmap();
+    repaint();
   }
 }
 
 void EvaluationView::mouseMoveEvent(QMouseEvent* event)
 {
+  // qDebug() << "EvaluationView::mouseMoveEvent()";
+
+  if( ! flight )
+    {
+      return;
+    }
+
   int x1 = (( cursor1 - startTime ) / secWidth) + X_DISTANCE ;
   int x2 = (( cursor2 - startTime ) / secWidth) + X_DISTANCE ;
 
-  if (flight) {
-    if(mouseB == (Qt::NoButton | NotReached))
-      {
-        if(event->pos().x() < x1 + 5 && event->pos().x() > x1 - 5)
-            this->setCursor(Qt::PointingHandCursor);
-        else if(event->pos().x() < x2 + 5 && event->pos().x() > x2 - 5)
-            this->setCursor(Qt::PointingHandCursor);
-        else
-          {
-            this->setCursor(Qt::ArrowCursor);
-            return;
-          }
-      }
-    else if(mouseB != (Qt::LeftButton | NotReached) &&
-            mouseB != (Qt::NoButton | Reached))
-      {
-        time_t cursor = flight->getPointByTime(
-                          (time_t)((event->pos().x() - X_DISTANCE ) * secWidth + startTime)).time;
+  if(mouseB == (Qt::NoButton | NotReached))
+    {
+      if(event->pos().x() < x1 + 5 && event->pos().x() > x1 - 5)
+          this->setCursor(Qt::PointingHandCursor);
+      else if(event->pos().x() < x2 + 5 && event->pos().x() > x2 - 5)
+          this->setCursor(Qt::PointingHandCursor);
+      else
+        {
+          this->setCursor(Qt::ArrowCursor);
+          return;
+        }
+    }
+  else if(mouseB != (Qt::LeftButton | NotReached) &&
+          mouseB != (Qt::NoButton | Reached))
+    {
+      time_t cursor = flight->getPointByTime( (time_t)((event->pos().x() - X_DISTANCE ) * secWidth + startTime)).time;
 
-        time_t cursor_1 = cursor1;
-        time_t cursor_2 = cursor2;
+      time_t cursor_1 = cursor1;
+      time_t cursor_2 = cursor2;
 
-        if(mouseB == (Qt::MidButton | Reached) ||
-              mouseB == (Qt::MidButton | NotReached))
-            cursor_1 = cursor;
-        else if(mouseB == (Qt::RightButton | Reached) ||
+      int movedCursor = 1;
+
+      if(mouseB == (Qt::MiddleButton | Reached) ||
+         mouseB == (Qt::MiddleButton | NotReached))
+        {
+          cursor_1 = cursor;
+        }
+      else if(mouseB == (Qt::RightButton | Reached) ||
               mouseB == (Qt::RightButton | NotReached))
-            cursor_2 = cursor;
-        else if(mouseB == (Qt::LeftButton | Reached))
-          {
-            if(leftB == 1)
-                cursor_1 = cursor;
-            else
-                cursor_2 = cursor;
-          }
+        {
+          cursor_2 = cursor;
+          movedCursor = 0;
+        }
+      else if(mouseB == (Qt::LeftButton | Reached))
+        {
+          if(leftB == 1)
+            {
+              cursor_1 = cursor;
+            }
+          else
+            {
+              cursor_2 = cursor;
+              movedCursor = 0;
+            }
+        }
 
-        // don't move cursor1 behind cursor2
-        if(cursor_1 > cursor_2)
-          {
-            return;
-          }
+      // don't move cursor1 behind cursor2
+      if(cursor_1 > cursor_2)
+        {
+          return;
+        }
 
-        __paintCursor( ( cursor  - startTime ) / secWidth + X_DISTANCE,
-                       (int)( cursor_alt - startTime ) / secWidth + X_DISTANCE, 1, 0 );
+      // Draw the mouse cursor at the new position.
+      __paintCursor( ( cursor  - startTime ) / secWidth + X_DISTANCE, 1, movedCursor );
+      repaint();
 
-        cursor_alt = flight->getPointByTime((time_t)((event->pos().x() - X_DISTANCE ) *
-                            secWidth + startTime)).time;
+      cursor_alt = flight->getPointByTime((time_t)((event->pos().x() - X_DISTANCE ) *
+                          secWidth + startTime)).time;
 
-        evalDialog->updateText(flight->getPointIndexByTime(cursor_1),
-                               flight->getPointIndexByTime(cursor_2));
-      }
-  }
+      evalDialog->updateText(flight->getPointIndexByTime(cursor_1),
+                             flight->getPointIndexByTime(cursor_2));
+    }
 }
-
 
 QPoint EvaluationView::__baroPoint(int durch[], int gn, int i)
 {
@@ -255,8 +301,8 @@ QPoint EvaluationView::__baroPoint(int durch[], int gn, int i)
 
 QPoint EvaluationView::__speedPoint(float durch[], int gn, int i)
 {
-  int x = ( curTime - startTime ) / secWidth + X_DISTANCE ;
   //  = Abstand am Anfang der Kurve
+  int x = ( curTime - startTime ) / secWidth + X_DISTANCE ;
 
   float gesamt = 0;
   /*
@@ -266,7 +312,9 @@ QPoint EvaluationView::__speedPoint(float durch[], int gn, int i)
    * Umständen zu Fehlern führen ...
    */
   for(int loop = 0; loop < qMin(gn, (i * 2 + 1)); loop++)
+    {
       gesamt += durch[loop];
+    }
 
   int y = this->height() - (int)( ( gesamt / qMin(gn, (i *  2 + 1)) ) / scale_v ) - Y_DISTANCE;
 
@@ -279,8 +327,11 @@ QPoint EvaluationView::__varioPoint(float durch[], int gn, int i)
   // PRE_GRAPH_DISTANCE = Abstand am Anfang der Kurve
 
   float gesamt = 0;
+
   for(int loop = 0; loop < qMin(gn, (i * 2 + 1)); loop++)
+    {
       gesamt += durch[loop];
+    }
 
   int y = (this->height() / 2) - (int)( ( gesamt / qMin(gn, (i * 2 + 1)) ) / scale_va );
 
@@ -289,18 +340,15 @@ QPoint EvaluationView::__varioPoint(float durch[], int gn, int i)
 
 void EvaluationView::__drawCsystem(QPainter* painter)
 {
-  /*
-   * Die Schleife unten kann nicht terminieren, wenn scale_h negativ ist!
-   */
-
   pixBufferYAxis.fill(Qt::white);
 
-  QPainter painterText(&pixBufferYAxis);
-
-  if(scale_h < 0.0)
+  if( scale_h < 0.0 )
     {
+      // Die Schleife unten kann nicht terminieren, wenn scale_h negativ ist!
       return;
     }
+
+  QPainter painterText(&pixBufferYAxis);
 
   QString text;
 
@@ -493,7 +541,7 @@ void EvaluationView::drawCurve( bool arg_vario,
 {
   Flight* newFlight = evalDialog->getFlight();
 
-  qDebug() << "EvaluationView::drawCurve(): Flight=" << newFlight;
+  // qDebug() << "EvaluationView::drawCurve(): Flight=" << newFlight;
 
   if( flight != newFlight )
     {
@@ -513,8 +561,6 @@ void EvaluationView::drawCurve( bool arg_vario,
 
   if( flight )
     {
-      curveDataValid = true;
-
       cursor1 = qMax( startTime, cursor1 );
       cursor2 = qMax( startTime, cursor2 );
       cursor1 = qMin( landTime, cursor1 );
@@ -525,13 +571,17 @@ void EvaluationView::drawCurve( bool arg_vario,
       int width = (landTime - startTime) / secWidth + (COORD_DISTANCE * 2) + 20;
 
       int maxWidth = qMax( width, scrollFrame->viewport()->width() );
+
+      // Resize the draw widget to the needed size.
       resize( maxWidth, scrollFrame->viewport()->height() );
 
-      qDebug() << "TimeWidth=" << width << "WS=" << QWidget::size()
-               << "SWS=" << scrollFrame->viewport()->size();
-
+      // Resize pixmaps to the needed size.
       pixBufferKurve = QPixmap( width, scrollFrame->viewport()->height());
       pixBufferYAxis = QPixmap(COORD_DISTANCE + 1, scrollFrame->viewport()->height());
+
+      // Clear pixmaps.
+      pixBufferKurve.fill( Qt::white );
+      pixBufferYAxis.fill( Qt::white );
 
       vario = arg_vario;
       speed = arg_speed;
@@ -541,12 +591,15 @@ void EvaluationView::drawCurve( bool arg_vario,
       smoothness_h  = arg_smoothness_h;
 
       __draw();
-      update();
     }
   else
     {
+      // Clear pixmaps, if no flight is assigned.
       pixBufferKurve.fill( Qt::white );
+      pixBufferYAxis.fill( Qt::white );
     }
+
+  repaint();
 }
 
 void EvaluationView::__draw()
@@ -554,8 +607,10 @@ void EvaluationView::__draw()
   // vertical scale factor
   scale_v = getSpeed(flight->getPoint(Flight::V_MAX)) /
           ((double)(this->height() - 2*Y_DISTANCE));
+
   scale_h = flight->getPoint(Flight::H_MAX).height /
           ((double)(this->height() - 2*Y_DISTANCE));
+
   scale_va = qMax((double)getVario(flight->getPoint(Flight::VA_MAX)),
               ( -1.0 * (double)getVario(flight->getPoint(Flight::VA_MIN))) ) /
           ((double)(this->height() - 2*Y_DISTANCE) / 2.0);
@@ -607,10 +662,10 @@ void EvaluationView::__draw()
           curTime += 86400;
         }
 
-      /* Das Array wird hier noch falsch gefüllt. Wenn über 3 Punkte gegl�ttet wird, stimmt
-       * alles. Wenn jedoch z.B. �ber 5 Punkte gegl�ttet wird, werden die Punkte
+      /* Das Array wird hier noch falsch gefüllt. Wenn über 3 Punkte geglättet wird, stimmt
+       * alles. Wenn jedoch z.B. über 5 Punkte geglättet wird, werden die Punkte
        * ( -4, -3, -2, -1, 0, 1) genommen, statt (-2, -1, 0, 1, 2). Das ist vermutlich
-       * die Ursache daf�r, dass die Kurve "wandert".
+       * die Ursache dafür, dass die Kurve "wandert".
        */
       if(loop < flight->getRouteLength() - smoothness_h && loop > smoothness_h) {
           baro_d[(loop - smoothness_h - 1) % gn_h] = flight->getPoint(loop + smoothness_h).height;
@@ -653,13 +708,13 @@ void EvaluationView::__draw()
     }
 
   pixBufferKurve.fill(Qt::white);
-  QPainter paint;
-  paint.begin(&pixBufferKurve);
+  QPainter painter;
+  painter.begin(&pixBufferKurve);
 
   if(baro)
     { // draw elevation
-      paint.setBrush(QColor(35, 120, 20));
-      paint.setPen(QPen(QColor(35, 120, 20), 1));
+      painter.setBrush(QColor(35, 120, 20));
+      painter.setPen(QPen(QColor(35, 120, 20), 1));
       // add two points so we can draw a filled area
 
       elevArray.setPoint(flight->getRouteLength(),
@@ -671,10 +726,10 @@ void EvaluationView::__draw()
         QPoint(
       X_DISTANCE,
       scrollFrame->viewport()->height() - Y_DISTANCE ) );
-      paint.drawPolygon(elevArray);
+      painter.drawPolygon(elevArray);
     }
 
-  __drawCsystem(&paint);
+  __drawCsystem(&painter);
 
   int xpos = 0;
 
@@ -688,45 +743,44 @@ void EvaluationView::__draw()
     {
       xpos = (wP.at(n)->sector1 - startTime ) / secWidth + X_DISTANCE;
 
-      paint.setPen(QPen(QColor(100,100,100), 3));
-      paint.drawLine(xpos, this->height() - Y_DISTANCE, xpos, Y_DISTANCE + 5);
-      paint.setPen(QPen(QColor(0,0,0), 3));
-      paint.setFont(QFont("helvetica",8));
-      paint.drawText (xpos - 40, Y_DISTANCE - 20 - 5,80,10, Qt::AlignCenter,
-             wP.at(n)->name);
-//      paint.drawText(xpos - 25, Y_DISTANCE - 5, wP->at(n).name);
+      painter.setPen(QPen(QColor(100,100,100), 3));
+      painter.drawLine(xpos, this->height() - Y_DISTANCE, xpos, Y_DISTANCE + 5);
+      painter.setPen(QPen(QColor(0,0,0), 3));
+      painter.setFont(QFont("helvetica",8));
+      painter.drawText (xpos - 40, Y_DISTANCE - 20 - 5,80,10, Qt::AlignCenter, wP.at(n)->name);
+
       if(wP.at(n)->sector1 != 0)
           timeText = printTime(wP.at(n)->sector1);
       else if(wP.at(n)->sector2 != 0)
           timeText = printTime(wP.at(n)->sector2);
       else if(wP.at(n)->sectorFAI != 0)
           timeText = printTime(wP.at(n)->sectorFAI);
-      paint.setFont(QFont("helvetica",7));
-      paint.drawText(xpos - 40, Y_DISTANCE - 10 - 5, 80, 10, Qt::AlignCenter,timeText);
+      painter.setFont(QFont("helvetica",7));
+      painter.drawText(xpos - 40, Y_DISTANCE - 10 - 5, 80, 10, Qt::AlignCenter,timeText);
     }
 
   if(vario)
     {
-      paint.setPen(QPen(QColor(255,100,100), 1));
-      paint.drawPolyline(varioArray);
+      painter.setPen(QPen(QColor(255,100,100), 1));
+      painter.drawPolyline(varioArray);
     }
 
   if(speed)
     {
-      paint.setPen(QPen(QColor(0,0,0), 1));
-      paint.drawPolyline(speedArray);
+      painter.setPen(QPen(QColor(0,0,0), 1));
+      painter.drawPolyline(speedArray);
     }
 
   if(baro)
     {
-      paint.setPen(QPen(QColor(100, 100, 255), 1));
-      paint.drawPolyline(baroArray);
+      painter.setPen(QPen(QColor(100, 100, 255), 1));
+      painter.drawPolyline(baroArray);
     }
 
-  paint.end();
+  painter.end();
 
-   __paintCursor(( cursor1 - startTime ) / secWidth + X_DISTANCE, -2000, 0, 1);
-   __paintCursor(( cursor2 - startTime ) / secWidth + X_DISTANCE, -2000, 0, 2);
+  __paintCursor(( cursor1 - startTime ) / secWidth + X_DISTANCE, 0, 1);
+  __paintCursor(( cursor2 - startTime ) / secWidth + X_DISTANCE, 0, 2);
 
   delete [] baro_d;
   delete [] baro_d_last;
@@ -736,117 +790,101 @@ void EvaluationView::__draw()
   delete [] vario_d_last;
 }
 
-void EvaluationView::__paintCursor(int xpos, int calt, int move, int cursor)
+void EvaluationView::__paintCursor(int xpos, int move, int cursor)
 {
   // Screen coordinates !!!
-  QPainter paint;
+  QPainter painter;
 
-  //
-  //  Bislang werden die Cursor durch Rasteroperationen gelöscht.
-  //  Das klappt aber mit den Icons nicht, daher sollte ein
-  //  Puffer-Speicher eingeführt werden, der dann wieder zurückkopiert
-  //  wird.
-  //
-
-  if(move == 1)
+  if( move == 1 )
     {
-#warning "Painting on this is only in a paintEvent allowed!"
+      // This part is called by the mouse move event to replace the current cursor.
+      if( pixBufferKurve.isNull() )
+        {
+          return;
+        }
 
-      qDebug() << "EvaluationView::__paintCursor(): Grrr we draw at the widget";
+      if( pixBufferMouse.size() != pixBufferKurve.size() )
+        {
+          pixBufferMouse = QPixmap( pixBufferKurve.size() );
+        }
 
-      paint.begin(this);
+      // Reset pixmap content
+      pixBufferMouse.fill( Qt::transparent );
 
-      if(cursor == 1)
-          paint.setPen(QPen(QColor(0,200,0), 1));
-      else
-          paint.setPen(QPen(QColor(200,0,0), 1));
-
-      paint.setCompositionMode( QPainter::CompositionMode_Xor );
-      paint.drawLine( calt, this->height() - Y_DISTANCE, calt, Y_DISTANCE );
-      paint.drawLine( xpos, this->height() - Y_DISTANCE, xpos, Y_DISTANCE );
-      paint.end();
-    }
-   else
-    {
-      paint.begin(&pixBufferKurve);
+      painter.begin( &pixBufferMouse );
 
       if(cursor == 1)
         {
-          paint.setPen(QPen(QColor(0,200,0), 1));
-          paint.setBrush(QBrush(QColor(0,200,0), Qt::SolidPattern));
+          painter.setPen(QPen(QColor(0,200,0), 1)); // green color
         }
       else
         {
-          paint.setPen(QPen(QColor(200,0,0), 1));
-          paint.setBrush(QBrush(QColor(200,0,0), Qt::SolidPattern));
+          painter.setPen(QPen(QColor(200,0,0), 1)); // red color
+        }
+
+      painter.drawLine( xpos, this->height() - Y_DISTANCE, xpos, Y_DISTANCE );
+      painter.end();
+    }
+   else
+    {
+      painter.begin( &pixBufferKurve );
+
+      if(cursor == 1)
+        {
+          painter.setPen(QPen(QColor(0,200,0), 1));
+          painter.setBrush(QBrush(QColor(0,200,0), Qt::SolidPattern));
+        }
+      else
+        {
+          painter.setPen(QPen(QColor(200,0,0), 1));
+          painter.setBrush(QBrush(QColor(200,0,0), Qt::SolidPattern));
         }
 
       QPixmap pixCursor1 = _mainWindow->getPixmap("flag_green.png");
       QPixmap pixCursor2 = _mainWindow->getPixmap("flag_red.png");
 
       // draw new line
-      paint.drawLine(xpos, this->height() - Y_DISTANCE, xpos, Y_DISTANCE);
+      painter.drawLine(xpos, this->height() - Y_DISTANCE, xpos, Y_DISTANCE);
 
       // draw flags
       if(cursor == 1)
-          paint.drawPixmap(xpos - 32, Y_DISTANCE - 30, pixCursor1);
+        {
+          painter.drawPixmap(xpos - 32, Y_DISTANCE - 30, pixCursor1);
+        }
       else
-          paint.drawPixmap(xpos, Y_DISTANCE - 30, pixCursor2);
+        {
+          painter.drawPixmap(xpos, Y_DISTANCE - 30, pixCursor2);
+        }
 
-      paint.end();
+      painter.end();
     }
 }
 
 void EvaluationView::resizeEvent(QResizeEvent* event)
 {
-  qDebug() << "EvaluationView::resizeEvent()" << event->size();
-
-  lastPointerPosition=QPoint(-100,-100); // don't bitBlt the old buffer back,
-                                         // as the screen has been redrawn and
-                                         // the old coordinates are likely not
-                                         // valid anymore
-
-#if 0
-  if( flight && curveDataValid )
-    {
-      // If scrollbar appears, a redraw of curve is necessary.
-      drawCurve( vario, speed, baro,
-                 smoothness_va, smoothness_v, smoothness_h, secWidth );
-    }
-#endif
-
+  QWidget::resize( event->size() );
 }
 
-/** Draws a pointer to indicate the current position */
-void EvaluationView::drawPointer(const FlightPoint * p)
+/**
+ * Makes a drawn flight pointer visible.
+ */
+void EvaluationView::makeFlightPointerVisible()
 {
-  int time=p->time-startTime;
+  int left = lastPointerPosition.x();
+  int top  = lastPointerPosition.y();
 
-  //first, remove the current pointer (if it is shown)
-  removePointer(false); //no need to force a redraw just yet, we will do that later anyway.
+  if( ! flightPointPointer || left < 0 || top < 0 )
+    {
+      return;
+    }
 
-  int left=X_DISTANCE + (time/secWidth) - 6;
-  int top=scrollFrame->viewport()->height() - Y_DISTANCE + 4;
-
-  lastPointerPosition=QPoint(left, top);
-
-  //copy area where pointer is to be painted to a buffer
-  QPainter buffer(&pixPointerBuffer);
-
-  buffer.drawPixmap(QRect(QPoint(0,0), pixPointerBuffer.size()),
-                    pixBufferKurve, QRect(lastPointerPosition, pixPointerBuffer.size()));
-
-  buffer.drawPixmap(QRect(lastPointerPosition, pixPointer.size()),
-                    pixPointer, pixPointer.rect());
-
-  //save the current scroll position
-  // int cx = scrollFrame->viewport()->rect().topLeft().x();
+  // get the current scroll position
   int cx = scrollFrame->horizontalScrollBar()->value();
 
   if(!((vario && speed) || (vario && baro) || (baro && speed)))
     {
-      // the Y axis is being drawn, so we need to take this into account then
-      // ensuring visibility of our pointer
+      // The Y axis is being drawn, so we need to take this into account then
+      // ensuring visibility of our pointer.
       if( cx + pixBufferYAxis.width() + 50 > left )
         {
           scrollFrame->ensureVisible( left, top, pixBufferYAxis.width() + 50, 0 );
@@ -856,43 +894,17 @@ void EvaluationView::drawPointer(const FlightPoint * p)
           scrollFrame->ensureVisible( left, top );
         }
     }
-
-  scrollFrame->ensureVisible(left,top);
-
-  if( cx == scrollFrame->horizontalScrollBar()->value() )
+  else
     {
-      // if there was no scroll, we need to manually trigger a paint event.
-      update();
+      scrollFrame->ensureVisible( left, top );
     }
 }
 
-/** Removes a drawn pointer */
-void EvaluationView::removePointer(bool forceRedraw)
-{
-  if ( !isShowingPointer() )
-    {
-      return;   // if we are not showing the pointer, why should we try to remove it?
-    }
-
-  //copy the buffer from under the pointer back tot he graph-buffer
-  QPainter buffer(&pixPointerBuffer);
-  buffer.drawPixmap(QRect(lastPointerPosition, pixPointerBuffer.size()),
-                          pixPointerBuffer, pixPointerBuffer.rect());
-  lastPointerPosition = QPoint(-100,-100);   // set to invalid point
-
-  if (forceRedraw)
-    {
-      update(); // force a redraw if asked to (we only need to do that if we are not going to draw a new pointer)
-    }
-}
-
-/** Prepares the needed buffers for the pointer */
+/** Prepares the flight point pointer. */
 void EvaluationView::preparePointer()
 {
-  // create pixmaps
-  pixPointer       = QPixmap(12,9);
-  pixPointerBuffer = QPixmap(12,9);
-
+  // create pointer pixmap
+  pixPointer = QPixmap(12,9);
   pixPointer.fill( Qt::transparent );
 
   // draw the pointer in the buffer
@@ -904,30 +916,30 @@ void EvaluationView::preparePointer()
   QPainter painter(&pixPointer);
 
   painter.setPen(QPen(QColor(255,128,0),1));
-  painter.setBrush(QBrush(QColor(255,128,0)));
+  painter.setBrush(QBrush(QColor(255,128,0))); // orange
   painter.drawPolygon(pa);
 
-  lastPointerPosition = QPoint(-100,-100);
-}
-
-/** Indicates if the pointer is being shown or not */
-bool EvaluationView::isShowingPointer()
-{
-  return (lastPointerPosition.x() > 0) && (lastPointerPosition.y()>0)  ;
+  lastPointerPosition = QPoint(-1000, -1000);
 }
 
 /* Shows a pointer under the time axis to indicate the position
  * of FlightPoint fp in the graph. If fp=0, then the flight point
  * is removed.
  */
-void EvaluationView::slotShowPointer(const FlightPoint * fp)
+void EvaluationView::slotShowPointer(const FlightPoint* fp)
 {
-  if( !fp )
+  flightPointPointer = fp;
+
+  if( flight )
     {
-      removePointer( true );
+      // Draw only, if a flight is defined.
+      repaint();
+      makeFlightPointerVisible();
     }
-  else
+
+  if( ! fp )
     {
-      drawPointer( fp );
+      // Clear the last flight point pointer position.
+      lastPointerPosition = QPoint(-1000, -1000);
     }
 }

@@ -47,9 +47,9 @@ class EvaluationView : public QWidget
 
 private:
 
- Q_DISABLE_COPY( EvaluationView )
+  Q_DISABLE_COPY( EvaluationView )
 
- public:
+public:
 
   EvaluationView(QScrollArea* parent, EvaluationDialog* dialog);
 
@@ -68,24 +68,27 @@ private:
   time_t cursor2;
   time_t cursor_alt;
 
- protected:
-  /**
-    * Redefinition of the paintEvent.
-    */
+protected:
+
   virtual void paintEvent(QPaintEvent* event);
-  /**
-    * Redefinition of the resizeEvent.
-    */
- virtual void resizeEvent(QResizeEvent* event);
-  /**
-    */
+
+  virtual void resizeEvent(QResizeEvent* event);
+
   virtual void mousePressEvent(QMouseEvent* event);
 
   virtual void mouseMoveEvent(QMouseEvent* event);
 
   virtual void mouseReleaseEvent(QMouseEvent* event);
 
- private:
+public slots:
+
+  /* Shows a pointer under the time axis to indicate the
+   * position of FlightPoint fp in the graph. If fp=0,
+   * then the flight point is removed.
+   */
+  void slotShowPointer(const FlightPoint* fp=0);
+
+private:
 
   void __drawCsystem(QPainter* painter);
   /** */
@@ -96,21 +99,16 @@ private:
   QPoint __speedPoint(float speed_d[], int gn, int i);
 
   /**
-   * Prepares the buffers for the pointer.
+   * Prepares the flight pointer.
    */
   void preparePointer();
   /**
-   * Draws a pointer to indicate the current position
+   * Makes a drawn flight pointer visible.
    */
-  void drawPointer(const FlightPoint * p);
-  /**
-   * Removes the pointer
-   */
-  void removePointer(bool);
-  /**
-   * Returns whether currently a pointer is being displayed
-   */
-  bool isShowingPointer();
+  void makeFlightPointerVisible();
+
+private:
+
   /**
    * Coordinates of last pointer position
    */
@@ -120,21 +118,20 @@ private:
     * for the current position, so we only need to draw it once
     */
   QPixmap pixPointer;
-   /**
-    * Contains a reference to a buffer that contains the contents
-    * of the graph under the position where the pointer was drawn.
-    */
-  QPixmap pixPointerBuffer;
 
-  void __paintCursor(int xpos, int calt, int move, int cursor);
+  void __paintCursor(int xpos, int move, int cursor);
   /** Draw graphs */
   void __draw();
   /** Draw y-axis */
   void __drawYAxis();
 
-  /** Stores the picture content. */
-  QPixmap pixBuffer;
+  /** Stores the mouse move cursors. */
+  QPixmap pixBufferMouse;
+
+  /** Contains the Y-Axis. */
   QPixmap pixBufferYAxis;
+
+  /** Contains the altitude, speed, variometer curves.*/
   QPixmap pixBufferKurve;
 
   time_t startTime;
@@ -164,18 +161,11 @@ private:
   int mouseB;
   int leftB;
 
+  /** Flight data which are displayed. */
   Flight* flight;
 
-  /** Set, if valid curve data are available. */
-  bool curveDataValid;
-
-public slots:
-
-  /* Shows a pointer under the time axis to indicate the
-   * position of FlightPoint fp in the graph. If fp=0,
-   * then the flight point is removed.
-   */
-  void slotShowPointer(const FlightPoint * fp=0);
+  /** Flight point at which a pointer is set. When Null, no pointer is set. */
+  const FlightPoint* flightPointPointer;
 };
 
 #endif

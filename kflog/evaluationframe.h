@@ -20,6 +20,7 @@
 #define EVALUATION_FRAME_H
 
 #include <QCheckBox>
+#include <QLabel>
 #include <QScrollArea>
 #include <QSlider>
 #include <QSpinBox>
@@ -69,7 +70,7 @@ class EvaluationFrame : public QWidget
     /** */
     void slotScale(int secWidth);
     /** */
-    void slotShowFlight();
+    void slotShowFlight( Flight* newFlight );
     /** */
     void slotShowGraph();
     /** */
@@ -84,7 +85,7 @@ class EvaluationFrame : public QWidget
     QScrollArea* graphFrame;
     EvaluationView* evalView;
 
-    QTextBrowser* cursorLabel;
+    QLabel* cursorLabel;
 
     QCheckBox* check_vario;
     QCheckBox* check_baro;

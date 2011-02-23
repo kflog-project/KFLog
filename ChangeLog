@@ -1,5 +1,13 @@
 $Id$
 
+2011-02-23 Axel Pauli <axel@kflog.org>
+  * ElevationFinder class should not declare a parent in its constructor.
+    That prevents complains by Glib during shutdown.
+  * Flight elevation stuff ported to Qt4. It was a hard piece of work
+    to redesign all drawing stuff that it fulfills the Qt4 requirements.
+    One issue remains. If a flight is loaded and not all maps are available
+    during load, the elevation profile of the diagram is incomplete.
+
 2011-02-21 Axel Pauli <axel@kflog.org>
   * Thanks to valgrind, found a bug in ElevationFinder class. Class member
     useOGIE was not initialized. That cause a funny report by Qt, filename

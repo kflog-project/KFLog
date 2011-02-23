@@ -41,17 +41,18 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg) :
   graphFrame = new QScrollArea(controlSplitter);
   graphFrame->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
   graphFrame->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  graphFrame->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  graphFrame->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
   graphFrame->setBackgroundRole( QPalette::Light );
   graphFrame->setAutoFillBackground( true );
 
   evalView = new EvaluationView( graphFrame, dlg );
   graphFrame->setWidget( evalView );
 
-  cursorLabel = new QTextBrowser(this);
+  cursorLabel = new QLabel(this);
   cursorLabel->setFixedHeight(35);
-  //cursorLabel->setVScrollBarMode(Q3ScrollView::AlwaysOff);
-  //cursorLabel->setHScrollBarMode(Q3ScrollView::AlwaysOff);
+  cursorLabel->setBackgroundRole( QPalette::Light );
+  cursorLabel->setAutoFillBackground( true );
+  cursorLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
 
   // Create Control layout
   QGridLayout* controlLayout = new QGridLayout;
@@ -174,6 +175,8 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg) :
 
 EvaluationFrame::~EvaluationFrame()
 {
+  qDebug() << "~EvaluationFrame()";
+
   // Save settings to the configuration file
   _settings.setValue("/Evaluation/ScaleTime", secWidth);
   _settings.setValue("/Evaluation/VarioSmoothness", smoothness_va);
@@ -184,14 +187,10 @@ EvaluationFrame::~EvaluationFrame()
   _settings.setValue("/Evaluation/Speed", check_speed->isChecked());
 }
 
-void EvaluationFrame::slotShowFlight()
+void EvaluationFrame::slotShowFlight( Flight* newFlight )
 {
-  flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
-
-  if( flight )
-    {
-      slotShowGraph();
-    }
+  flight = newFlight;
+  slotShowGraph();
 }
 
 void EvaluationFrame::slotShowGraph()
@@ -211,7 +210,6 @@ void EvaluationFrame::slotShowGraph()
       graphFrame->ensureVisible( contentsX, 0 );
     }
 }
-
 
 void EvaluationFrame::slotVarioSmoothness(int s)
 {

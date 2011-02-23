@@ -68,7 +68,7 @@ private:
   /** */
   void showCursor(const QPoint& p1, const QPoint& p2);
   /** */
-  void flightChanged();
+  void flightChanged( Flight* newFlight );
   /** */
   void textChanged(QString text);
   /** No descriptions */

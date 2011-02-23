@@ -39,8 +39,8 @@ EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
   // upper diagram widget
   evalFrame = new EvaluationFrame( textSplitter, this );
 
-  connect( this, SIGNAL(flightChanged()),
-           evalFrame, SLOT(slotShowFlight()));
+  connect( this, SIGNAL(flightChanged(Flight *)),
+           evalFrame, SLOT(slotShowFlight(Flight *)));
 
   connect( this, SIGNAL(textChanged(QString)),
            evalFrame, SLOT(slotUpdateCursorText(QString)));
@@ -73,6 +73,7 @@ EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
 
 EvaluationDialog::~EvaluationDialog()
 {
+  qDebug() << "~EvaluationDialog()";
 }
 
 void EvaluationDialog::hideEvent( QHideEvent* event )
@@ -84,16 +85,15 @@ void EvaluationDialog::hideEvent( QHideEvent* event )
 
 void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
 {
-
-// warning("EvaluationDialog::updateText(%d, %d, %d)",index1,index2,updateAll);
-
-  QString htmlText;
+  QString htmlText = "";
   QString text;
   FlightPoint p1;
   FlightPoint p2;
 
   if ( ! flight )
   {
+    // Clear last displayed text
+    textDisplay->clear();
     emit textChanged(htmlText);
     return;
   }
@@ -109,24 +109,62 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
     htmlText = (QString)"<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>"+
               "<TR><TD WIDTH=100 ALIGN=center><FONT COLOR=#00bb00><B>" +
               printTime(p1.time, true) + "</B></TD><TD WIDTH=70 ALIGN=right>";
+
     text.sprintf("%5d m", p1.height);
     htmlText += text + "</TD><TD WIDTH=80 ALIGN=right>";
-    text.sprintf("%.1f m/s", getVario(p1));
+
+    if( isnan(getVario(p1)) )
+      {
+        text = "- m/s";
+      }
+    else
+      {
+        text.sprintf("%.1f m/s", getVario(p1));
+      }
+
     htmlText += text + "</TD><TD WIDTH=100 ALIGN=right>";
-    text.sprintf("%.1f km/h", getSpeed(p1));
+
+    if( isnan(getSpeed(p1)) )
+      {
+        text = "- km/h";
+      }
+    else
+      {
+        text.sprintf("%.1f km/h", getSpeed(p1));
+      }
+
     htmlText += text + "</TD>";
 
     htmlText += (QString) "<TD WIDTH=100 ALIGN=center><FONT COLOR=#bb0000><B>" +
               printTime(p2.time, true) + "</B></TD><TD WIDTH=70 ALIGN=right>";
     text.sprintf("%5d m", p2.height);
     htmlText += text + "</TD><TD WIDTH=80 ALIGN=right>";
-    text.sprintf("%.1f m/s", getVario(p2));
+
+    if( isnan(getVario(p1)) )
+      {
+        text = "- m/s";
+      }
+    else
+      {
+        text.sprintf("%.1f m/s", getVario(p2));
+      }
+
     htmlText += text + "</TD><TD WIDTH=100 ALIGN=right>";
-    text.sprintf("%.1f km/h", getSpeed(p2));
+
+    if( isnan(getSpeed(p2)) )
+      {
+        text = "- km/h";
+      }
+    else
+      {
+        text.sprintf("%.1f km/h", getSpeed(p2));
+      }
+
     htmlText += text + "</TD></TR>";
 
     emit textChanged(htmlText);
-    htmlText = QString::null;
+
+    htmlText = "";
 
     if(updateAll)
       {
@@ -303,36 +341,37 @@ void EvaluationDialog::resizeEvent(QResizeEvent* event)
   slotShowFlightData();
 }
 
-
 void EvaluationDialog::slotShowFlightData()
 {
   flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
+  QWidget* parent = parentWidget();
+
   if( flight != static_cast<Flight *> (0) )
     {
-      if( flight->getObjectType() == BaseMapElement::Flight )
+      if( flight->getObjectType() == BaseMapElement::Flight && parent )
         {
-          setWindowTitle( tr( "Flight Evaluation:" ) +
-                          flight->getPilot() + "  " +
-                          flight->getDate().toString() );
+          parent->setWindowTitle( tr( "Flight Evaluation:" ) + " " +
+                                  flight->getPilot() + "  " +
+                                  flight->getDate().toString() );
         }
       else
         {
-          setCaption( tr( "Flight Evaluation:" ) );
+          parent->setWindowTitle( tr( "Flight Evaluation:" ) );
         }
 
       // set defaults
       updateText( 0, flight->getRouteLength() - 1, true );
-
-      emit flightChanged();
     }
   else
     {
+      parent->setWindowTitle( tr( "Flight Evaluation:" ) );
       updateText( 0, 0, false );
     }
+
+  emit flightChanged( flight );
 }
 
-/** No descriptions */
 Flight* EvaluationDialog::getFlight()
 {
   if( flight && flight->getObjectType() == BaseMapElement::Flight )
