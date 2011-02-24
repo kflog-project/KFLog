@@ -9,7 +9,7 @@
 **   Copyright (c):  2003 Christof Bodner
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -153,10 +153,10 @@ struct olc_glider gliderList[]=
     {"GENESIS","Genesis",108},
     {"GLASFLUGEL304C","Glasflugel 304C",106},
     {"GLASFLUGEL304CZ174M","Glasflugel 304CZ/17,4m",112},
-    {"GLASFLGEL304","Glasflügel 304",110},
-    {"GLASFLGEL30417","Glasflügel 304/17",112},
-    {"GLASFLGEL604","Glasflügel 604",118},
-    {"GLASFLGEL60424M","Glasflügel 604/24m",120},
+    {"GLASFLGEL304","GlasflÃ¼gel 304",110},
+    {"GLASFLGEL30417","GlasflÃ¼gel 304/17",112},
+    {"GLASFLGEL604","GlasflÃ¼gel 604",118},
+    {"GLASFLGEL60424M","GlasflÃ¼gel 604/24m",120},
     {"GREIFII","Greif II",86},
     {"GRUNAUBABY","Grunau Baby",54},
     {"H101SALTO","H 101 Salto",88},
@@ -232,9 +232,9 @@ struct olc_glider gliderList[]=
     {"MOSQUITO17M","Mosquito 17m",110},
     {"MUCHA","Mucha",80},
     {"MUCHASTANDARDSZD22","Mucha Standard SZD 22",82},
-    {"M22B","Mü 22b",98},
-    {"M26","Mü 26",104},
-    {"M27","Mü 27",110},
+    {"M22B","MÃ¼ 22b",98},
+    {"M26","MÃ¼ 26",104},
+    {"M27","MÃ¼ 27",110},
     {"NIMBUS2B","Nimbus 2 b",116},
     {"NIMBUS2C","Nimbus 2 c",116},
     {"NIMBUS3229M","Nimbus 3/22,9m",122},
@@ -252,11 +252,11 @@ struct olc_glider gliderList[]=
     {"NIMBUS4T","Nimbus 4T",128},
     {"PANJOV12","Panjo V1/2",98},
     {"PEGASE","Pegase",104},
-    {"PHBUSA","Phöbus A",94},
-    {"PHBUSB","Phöbus B",96},
-    {"PHBUSB3","Phöbus B 3",100},
-    {"PHBUSC","Phöbus C",100},
-    {"PHNIX","Phönix",92},
+    {"PHBUSA","PhÃ¶bus A",94},
+    {"PHBUSB","PhÃ¶bus B",96},
+    {"PHBUSB3","PhÃ¶bus B 3",100},
+    {"PHBUSC","PhÃ¶bus C",100},
+    {"PHNIX","PhÃ¶nix",92},
     {"PIK16VASAMA","PIK 16 Vasama",88},
     {"PIK20B","PIK 20 B",102},
     {"PIK20D","PIK 20 D",106},
@@ -264,8 +264,8 @@ struct olc_glider gliderList[]=
     {"PILATUSB4MITEZ","Pilatus B4 w. RG",88},
     {"PILATUSB4OHNEEZ","Pilatus B4 w/o RG",86},
     {"PW5","PW 5",86},
-    {"RHNBUSSARD","Rhönbussard",60},
-    {"RHNLERCHE","Rhönlerche",54},
+    {"RHNBUSSARD","RhÃ¶nbussard",60},
+    {"RHNLERCHE","RhÃ¶nlerche",54},
     {"SAGITTA","Sagitta",82},
     {"SALTO155M","Salto 15,5m",96},
     {"SB10","SB 10",120},
