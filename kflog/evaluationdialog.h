@@ -62,7 +62,9 @@ private:
 
  protected:
 
-  virtual void hideEvent( QHideEvent * event );
+  virtual void hideEvent( QHideEvent* event );
+
+  virtual void showEvent( QShowEvent* event );
 
  signals:
   /** */
@@ -76,6 +78,9 @@ private:
 
   /** Window was hidden. */
   void windowHidden();
+
+  /** Emits the help text of the wigdet. */
+  void evaluationHelp( QString& help );
 
  public slots:
 

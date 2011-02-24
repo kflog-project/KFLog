@@ -1592,8 +1592,7 @@ void MapContents::slotNewTask()
   // Calls ObjectTree::slotNewTaskAdded()
   emit newTaskAdded(ft);
 
-  QString helpText = "";
-
+  QString
   helpText = tr(  "<html>"
                   "You can select waypoints with the left mouse button."
                   "You can also select free waypoints by clicking anywhere in the map."
@@ -1607,11 +1606,8 @@ void MapContents::slotNewTask()
                   "</html>"
                 );
 
-  qDebug() << "OpenHelpWindow";
-
   // opens help window.
   emit taskHelp(helpText);
-  qDebug() << "OpenHelpWindow Exit";
 
   emit currentFlightChanged();
 //  emit activatePlanning();

@@ -1,5 +1,12 @@
 $Id$
 
+2011-02-24 Axel Pauli <axel@kflog.org>
+  * Bugfix in flight statistic text in ElevationDialog class. Found two
+    HTML format errors, which caused a wrong and not more readable
+    display. Did some tweaking of the HTML formatting. Added a help
+    text, which is displayed in the help browser during show event
+    of ElevationDialog class.
+
 2011-02-23 Axel Pauli <axel@kflog.org>
   * ElevationFinder class should not declare a parent in its constructor.
     That prevents complains by Glib during shutdown.

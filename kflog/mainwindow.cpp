@@ -167,7 +167,10 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(objectTree, SIGNAL(optimizeFlight()), this, SLOT(slotOptimizeFlight()));
   connect(objectTree, SIGNAL(optimizeFlightOLC()), this, SLOT(slotOptimizeFlightOLC()));
 
-  connect(evaluationWindow, SIGNAL(showCursor(const QPoint&, const QPoint&)), map, SLOT(slotDrawCursor(const QPoint&, const QPoint&)));
+  connect( evaluationWindow, SIGNAL(showCursor(const QPoint&, const QPoint&)),
+           map, SLOT(slotDrawCursor(const QPoint&, const QPoint&)) );
+  connect( evaluationWindow, SIGNAL(evaluationHelp(QString&)),
+           helpWindow, SLOT(slotShowHelpText(QString&)) );
 
   connect(this, SIGNAL(flightDataTypeChanged(int)), _globalMapConfig, SLOT(slotSetFlightDataType(int)));
 }

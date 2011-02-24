@@ -61,8 +61,6 @@ public:
 
   enum CursorStatus { Reached = 8, NotReached = 16};
 
-  virtual QSize sizeHint();
-
   // Cursor Positions
   time_t cursor1;
   time_t cursor2;
@@ -119,9 +117,20 @@ private:
     */
   QPixmap pixPointer;
 
-  void __paintCursor(int xpos, int move, int cursor);
+  /**
+   * Draws two different kind of cursors at the diagram.
+   *
+   * \param xpos The X-coordinate of the new cursor position.
+   * \param move If true a move cursor (vertical bar) is drawn
+   *             otherwise a flag cursor is drawn.
+   * \param cursor Defines which cursor shall be drawn. There are two
+   *               cursors (1 and 2) selectable.
+   */
+  void __drawCursor(const int xpos, const bool move, const int cursor);
+
   /** Draw graphs */
   void __draw();
+
   /** Draw y-axis */
   void __drawYAxis();
 

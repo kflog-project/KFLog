@@ -50,6 +50,8 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg) :
 
   cursorLabel = new QLabel(this);
   cursorLabel->setFixedHeight(35);
+  cursorLabel->setMinimumWidth(200);
+
   cursorLabel->setBackgroundRole( QPalette::Light );
   cursorLabel->setAutoFillBackground( true );
   cursorLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
@@ -78,21 +80,21 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg) :
   sliderBaro  = new QSlider(Qt::Vertical);
   sliderBaro->setRange(0, 10);
   sliderBaro->setValue(1);
-  sliderBaro->sizeHint().setHeight(20);
+  sliderBaro->setMinimumHeight(50);
   sliderBaro->setToolTip(tr("Changes the altitude smoothness."));
   controlLayout->addWidget( sliderBaro, 3, 1 );
 
   sliderVario = new QSlider(Qt::Vertical);
   sliderVario->setRange(0, 10);
   sliderVario->setValue(1);
-  sliderVario->sizeHint().setHeight(20);
+  sliderVario->setMinimumHeight(50);
   sliderVario->setToolTip(tr("Changes the variometer smoothness."));
   controlLayout->addWidget( sliderVario, 3, 2 );
 
   sliderSpeed = new QSlider(Qt::Vertical);
   sliderSpeed->setRange(0, 10);
   sliderSpeed->setValue(1);
-  sliderSpeed->sizeHint().setHeight(20);
+  sliderSpeed->setMinimumHeight(50);
   sliderSpeed->setToolTip(tr("Changes the speed smoothness."));
   controlLayout->addWidget( sliderSpeed, 3, 3 );
 

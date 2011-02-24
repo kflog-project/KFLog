@@ -26,9 +26,10 @@
  * Creates a help browser widget as single window and displays
  * the help text into it.
  *
- * \date 2008-2010
+ * \date 2008-2011
+ *
+ * \version $Id$
  */
-
 
 #ifndef HELP_WINDOW_H
 #define HELP_WINDOW_H
@@ -47,7 +48,7 @@ private:
   Q_DISABLE_COPY ( HelpWindow )
 
  public:
-   
+
   HelpWindow( QWidget *parent=0 );
 
   virtual ~HelpWindow();
@@ -63,7 +64,7 @@ private:
     * Clears the contents of the HelpWindow.
     */
   void slotClearView();
-  
+
  private:
   /**
    * The text browser

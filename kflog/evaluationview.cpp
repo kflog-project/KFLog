@@ -46,6 +46,7 @@ EvaluationView::EvaluationView(QScrollArea* parent, EvaluationDialog* dialog) :
 {
   setObjectName( "EvaluationView" );
   setMouseTracking(true);
+  setMinimumSize( 300, 150 );
 
   QPalette p = palette();
   p.setColor(backgroundRole(), Qt::white);
@@ -63,13 +64,10 @@ EvaluationView::~EvaluationView()
 {
 }
 
-QSize EvaluationView::sizeHint()
-{
-  return scrollFrame->viewport()->size();
-}
-
 void EvaluationView::paintEvent( QPaintEvent* )
 {
+  // qDebug() << "EvaluationView::paintEvent() Rein";
+
   QPainter painter(this);
 
   if( ! pixBufferKurve.isNull() )
@@ -103,6 +101,8 @@ void EvaluationView::paintEvent( QPaintEvent* )
 
       painter.drawPixmap( lastPointerPosition.x(), lastPointerPosition.y(), pixPointer );
     }
+
+  // qDebug() << "EvaluationView::paintEvent() Raus";
 }
 
 void EvaluationView::mousePressEvent(QMouseEvent* event)
@@ -221,12 +221,16 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
   if(mouseB == (Qt::NoButton | NotReached))
     {
       if(event->pos().x() < x1 + 5 && event->pos().x() > x1 - 5)
-          this->setCursor(Qt::PointingHandCursor);
+        {
+          setCursor(Qt::SizeHorCursor);
+        }
       else if(event->pos().x() < x2 + 5 && event->pos().x() > x2 - 5)
-          this->setCursor(Qt::PointingHandCursor);
+        {
+          setCursor(Qt::SizeHorCursor);
+        }
       else
         {
-          this->setCursor(Qt::ArrowCursor);
+          setCursor(Qt::ArrowCursor);
           return;
         }
     }
@@ -271,7 +275,7 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
         }
 
       // Draw the mouse cursor at the new position.
-      __paintCursor( ( cursor  - startTime ) / secWidth + X_DISTANCE, 1, movedCursor );
+      __drawCursor( ( cursor  - startTime ) / secWidth + X_DISTANCE, true, movedCursor );
       repaint();
 
       cursor_alt = flight->getPointByTime((time_t)((event->pos().x() - X_DISTANCE ) *
@@ -293,8 +297,7 @@ QPoint EvaluationView::__baroPoint(int durch[], int gn, int i)
       gesamt += durch[loop];
     }
 
-  int y = this->height() - (int)( ( gesamt / qMin(gn, (i * 2 + 1)) ) / scale_h )
-                                                  - Y_DISTANCE;
+  int y = height() - (int)( ( gesamt / qMin(gn, (i * 2 + 1)) ) / scale_h ) - Y_DISTANCE;
 
   return QPoint(x, y);
 }
@@ -539,6 +542,15 @@ void EvaluationView::drawCurve( bool arg_vario,
                                 unsigned int arg_smoothness_h,
                                 unsigned int secW )
 {
+  if( scrollFrame->viewport()->height() == 0 )
+    {
+      // Can become zero if the splitter is moved up to the upper
+      // end in the EvaluationDialog.
+      pixBufferKurve = QPixmap();
+      pixBufferYAxis = QPixmap();
+      return;
+    }
+
   Flight* newFlight = evalDialog->getFlight();
 
   // qDebug() << "EvaluationView::drawCurve(): Flight=" << newFlight;
@@ -576,8 +588,8 @@ void EvaluationView::drawCurve( bool arg_vario,
       resize( maxWidth, scrollFrame->viewport()->height() );
 
       // Resize pixmaps to the needed size.
-      pixBufferKurve = QPixmap( width, scrollFrame->viewport()->height());
-      pixBufferYAxis = QPixmap(COORD_DISTANCE + 1, scrollFrame->viewport()->height());
+      pixBufferKurve = QPixmap( width, scrollFrame->viewport()->height() );
+      pixBufferYAxis = QPixmap( COORD_DISTANCE + 1, scrollFrame->viewport()->height() );
 
       // Clear pixmaps.
       pixBufferKurve.fill( Qt::white );
@@ -779,8 +791,8 @@ void EvaluationView::__draw()
 
   painter.end();
 
-  __paintCursor(( cursor1 - startTime ) / secWidth + X_DISTANCE, 0, 1);
-  __paintCursor(( cursor2 - startTime ) / secWidth + X_DISTANCE, 0, 2);
+  __drawCursor(( cursor1 - startTime ) / secWidth + X_DISTANCE, false, 1);
+  __drawCursor(( cursor2 - startTime ) / secWidth + X_DISTANCE, false, 2);
 
   delete [] baro_d;
   delete [] baro_d_last;
@@ -790,12 +802,14 @@ void EvaluationView::__draw()
   delete [] vario_d_last;
 }
 
-void EvaluationView::__paintCursor(int xpos, int move, int cursor)
+void EvaluationView::__drawCursor( const int xpos,
+                                   const bool move,
+                                   const int cursor )
 {
   // Screen coordinates !!!
   QPainter painter;
 
-  if( move == 1 )
+  if( move )
     {
       // This part is called by the mouse move event to replace the current cursor.
       if( pixBufferKurve.isNull() )
@@ -862,6 +876,7 @@ void EvaluationView::__paintCursor(int xpos, int move, int cursor)
 
 void EvaluationView::resizeEvent(QResizeEvent* event)
 {
+  // qDebug() << "EvaluationView::resizeEvent():" << event->size();
   QWidget::resize( event->size() );
 }
 

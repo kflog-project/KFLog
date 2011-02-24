@@ -667,24 +667,24 @@ QStringList Flight::getFlightValues(unsigned int start, unsigned int end)
 
     // Kreisflug / Circling
     //index: 0 right turn time
-    text.sprintf("<small>%.1f%%</small> %s",
-                 (float) kurbel_r / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0,
-                 printTime(kurbel_r, true, true, true).toAscii().data());
+    text.sprintf("%s <small>(%.1f%%)</small>",
+                 printTime(kurbel_r, true, true, true).toAscii().data(),
+                 (float) kurbel_r / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
     result.append(text);
     //index: 1 left turn time
-    text.sprintf("<small>%.1f%%</small> %s",
-                 (float) kurbel_l / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0,
-                 printTime(kurbel_l, true, true, true).toAscii().data());
+    text.sprintf("%s <small>(%.1f%%)</small>",
+                 printTime(kurbel_l, true, true, true).toAscii().data(),
+                 (float) kurbel_l / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
     result.append(text);
     //index: 2 mixed turn time
-    text.sprintf("<small>%.1f%%</small> %s",
-                 (float) kurbel_v / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0,
-                 printTime(kurbel_v, true, true, true).toAscii().data());
+    text.sprintf("%s <small>(%.1f%%)</small>",
+                 printTime(kurbel_v, true, true, true).toAscii().data(),
+                 (float) kurbel_v / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
     result.append(text);
     //index: 3 total turn time
-    text.sprintf("<small>%.1f%%</small> %s",
-                 (float)(kurbel_r + kurbel_l + kurbel_v) / (float)( route.at(end)->time - route.at(start)->time ) * 100.0,
-                 printTime((kurbel_r + kurbel_l + kurbel_v), true, true, true).toAscii().data());
+    text.sprintf("%s <small>(%.1f%%)</small>",
+                 printTime((kurbel_r + kurbel_l + kurbel_v), true, true, true).toAscii().data(),
+                 (float)(kurbel_r + kurbel_l + kurbel_v) / (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
     result.append(text);
 
     //index: 4 right turn vario
@@ -762,12 +762,9 @@ QStringList Flight::getFlightValues(unsigned int start, unsigned int end)
     text.sprintf("%.0f km",distance / 1000);
     result.append(text);
     //index: 26 straight time
-    text.sprintf("<small>%.1f%%</small> %s",
-        (float)( route.at(end)->time - route.at(start)->time -
-            ( kurbel_r + kurbel_l + kurbel_v ) ) /
-                (float)( route.at(end)->time - route.at(start)->time ) * 100.0,
-                printTime( (int)( route.at(end)->time - route.at(start)->time -
-            ( kurbel_r + kurbel_l + kurbel_v ) ) , true, true, true).toAscii().data());
+    text.sprintf("%s <small>(%.1f%%)</small>",
+                 printTime( (int)( route.at(end)->time - route.at(start)->time - ( kurbel_r + kurbel_l + kurbel_v ) ) , true, true, true).toAscii().data(),
+                 (float)( route.at(end)->time - route.at(start)->time - ( kurbel_r + kurbel_l + kurbel_v ) ) / (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
     result.append(text);
 
     //Total
