@@ -25,16 +25,18 @@
 #define X_ABSTAND 100
 #define Y_ABSTAND 30
 
-#define DISPLAY_HELP_MESSAGE QMessageBox::information( this, tr("Help for 3D view"), \
-                                      tr("Basic key functions:\n\n" \
-                                         "Left/Right :\t rotate \n"  \
-                                         "Up/Down : \t tilt \n"        \
-                                         "+/- : \t zoom \n"               \
-                                         "S : \t \t toggle shadow \n" \
-                                         "B : \t \t toggle back \n"       \
-                                         "F : \t \t toggle front \n"),     \
-                                      tr("&Ok"));
+static const QString HelpMessageTitle( QObject::tr("Help for IGC 3D view" ) );
 
+static const QString HelpMessageText( "<PRE>" +
+                                      QObject::tr(
+                                         "Basic key functions:\n\n"
+                                         "Left/Right: rotate\n"
+                                         "Up/Down:    tilt\n"
+                                         "+/-:        zoom\n"
+                                         "S:          toggle shadow\n"
+                                         "B:          toggle back\n"
+                                         "F:          toggle front\n") +
+                                      "</PRE>" );
 
 class Igc3DViewState;
 class Igc3DPolyhedron;
@@ -49,19 +51,20 @@ Igc3DView::Igc3DView( Igc3DDialog* dialog ) :
   setFocusPolicy(Qt::StrongFocus);
 
   QPalette p = palette();
-  p.setColor(backgroundRole(), Qt::white);
+  p.setColor( QPalette::Window, Qt::white );
   setPalette(p);
+  setAutoFillBackground( true );
 
   isFlight = false;
 
   // create members
-  this->state = new Igc3DViewState();
-  this->flightbox = new Igc3DPolyhedron(state);
-  this->flight = new Igc3DFlightData(state);
+  state     = new Igc3DViewState();
+  flightbox = new Igc3DPolyhedron(state);
+  flight    = new Igc3DFlightData(state);
 
   // set size
-  state->height = this->height();
-  state->width = this->width();
+  state->height    = height();
+  state->width     = width();
   state->timerflag = 0;
 
   slotShowFlight();
@@ -74,46 +77,48 @@ Igc3DView::~Igc3DView()
   delete flight;
 }
 
-void Igc3DView::resizeEvent( QResizeEvent * event )
+void Igc3DView::showHelp()
 {
-  QSize qs;
-
-  qs = event->size();
-  state->height = qs.height();
-  state->width = qs.width();
+  QMessageBox::information( this, HelpMessageTitle, HelpMessageText );
 }
 
+QString Igc3DView::getHelp()
+{
+  QString help = QString("<HTML><DIV align=\"center\">") +
+                 HelpMessageTitle +
+                 "</DIV>" +
+                 HelpMessageText +
+                 "</HTML>";
+  return help;
+}
+
+void Igc3DView::resizeEvent( QResizeEvent* event )
+{
+  qDebug() << "Igc3DView::resizeEvent" << event->size();
+
+  QSize qs = event->size();
+  state->height = qs.height();
+  state->width  = qs.width();
+}
 
 QSize Igc3DView::sizeHint()
 {
-  QSize qs;
-  qs = QWidget::sizeHint();
+  qDebug() << "Igc3DView::sizeHint()" << QWidget::sizeHint();
 
+  QSize qs = QWidget::sizeHint();
   state->height = qs.height();
   state->width = qs.width();
 
   return qs;
 }
 
-void Igc3DView::paintEvent(QPaintEvent*)
+void Igc3DView::paintEvent( QPaintEvent *event )
 {
-  /**
-   * call the drawing function for the view
-   */
-  __draw();
-}
+  qDebug() << "Igc3DView::paintEvent Rein" << event->rect()
+           << "state->height" << state->height
+           << "state->width" << state->width;
 
-/** No descriptions */
-void Igc3DView::__draw()
-{
-  qDebug() << "Igc3DView::__draw() Ein";
-
-  QPainter painterPix;
-
-  QPixmap pm( (int) state->width, (int) state->height );
-  pm.fill(); // clears the pixmap (white)
-
-  painterPix.begin( &pm );
+  QPainter painter( this );
 
   flightbox->calculate();
 
@@ -132,7 +137,7 @@ void Igc3DView::__draw()
 
   if( state->polyhedron_back )
     {
-      flightbox->draw_back(&painterPix);
+      flightbox->draw_back(&painter);
     }
 
   if( flight->flight_opened_flag )
@@ -141,46 +146,40 @@ void Igc3DView::__draw()
         {
           if( state->flight_trace )
             {
-              flight->draw_flight(&painterPix);
-              flight->draw_marker(&painterPix);
+              flight->draw_flight(&painter);
+              flight->draw_marker(&painter);
             }
           if( state->flight_shadow )
             {
-              flight->draw_shadow(&painterPix);
+              flight->draw_shadow(&painter);
             }
         }
       else
         {
           if( state->flight_shadow )
             {
-              flight->draw_shadow(&painterPix);
+              flight->draw_shadow(&painter);
             }
           if( state->flight_trace )
             {
-              flight->draw_flight(&painterPix);
-              flight->draw_marker(&painterPix);
+              flight->draw_flight(&painter);
+              flight->draw_marker(&painter);
             }
         }
     }
 
   if( state->polyhedron_front )
     {
-      flightbox->draw_front(&painterPix);
+      flightbox->draw_front(&painter);
     }
 
-  painterPix.end();
-
-  // Draws the pixmap at this widget.
-  QPainter painter( this );
-  painter.drawPixmap( 0, 0, pm );
-
-  qDebug() << "Igc3DView::__draw() Aus";
+  qDebug() << "Igc3DView::paintEvent Raus";
 }
 
 /** No descriptions */
 void Igc3DView::slotRedraw()
 {
-  this->__draw();
+  update();
 }
 
 void Igc3DView::keyPressEvent ( QKeyEvent * k )
@@ -229,32 +228,25 @@ void Igc3DView::keyPressEvent ( QKeyEvent * k )
               change_mag(n);
               break;
       case Qt::Key_F1:
-              DISPLAY_HELP_MESSAGE
+              showHelp();
               break;
   }
 
-  __draw();
+  repaint();
 }
 
 void Igc3DView::reset()
 {
   change_centering( 0 );
   state->reset();
-
-  //timerID = startTimer( state->ms_timer );
-}
-
-Igc3DViewState* Igc3DView::getState()
-{
-  return this->state;
 }
 
 Igc3DViewState* Igc3DView::setState(Igc3DViewState* vs)
 {
   Igc3DViewState* rs = new Igc3DViewState();
-  rs = this->state;
+  rs = state;
 
-  this->state = vs;
+  state = vs;
   return rs;
 }
 
@@ -291,7 +283,6 @@ void Igc3DView::change_zfactor(int i)
   if( flight->flight_opened_flag )
     {
       flight->change_zfactor();
-      //state->deltay = state->deltayoffset - Dial2->value();
       flightbox->adjust_size();
     }
 
@@ -299,11 +290,10 @@ void Igc3DView::change_zfactor(int i)
     {
       flight->centre_data_to_marker();
       flight->calculate_min_max();
-      //state->deltay = state->deltayoffset - Dial2->value();
       flightbox->adjust_size();
     }
 
-  __draw();
+  repaint();
 }
 
 void Igc3DView::change_fps(int i)
@@ -320,7 +310,7 @@ void Igc3DView::change_fps(int i)
 void Igc3DView::change_rotation_factor(int i)
 {
   state->rotate_fract = i;
-  __draw();
+  repaint();
 }
 
 void Igc3DView::change_centering(int i)
@@ -332,7 +322,6 @@ void Igc3DView::change_centering(int i)
       flight->calculate_min_max();
       flight->flatten_data();
       flight->calculate_min_max();
-      //                state->deltay = state->deltayoffset - Dial2->value();
       flightbox->adjust_size();
 
     }
@@ -340,11 +329,10 @@ void Igc3DView::change_centering(int i)
     {
       flight->centre_data_to_marker();
       flight->calculate_min_max();
-      //                state->deltay = state->deltayoffset - Dial2->value();
       flightbox->adjust_size();
     }
 
-  __draw();
+  repaint();
 }
 
 void Igc3DView::set_flight_marker(int i)
@@ -355,13 +343,12 @@ void Igc3DView::set_flight_marker(int i)
     {
       flight->centre_data_to_marker();
       flight->calculate_min_max();
-      //                state->deltay = state->deltayoffset - Dial2->value();
       flightbox->adjust_size();
     }
 
   if( state->timerflag == 0 )
     {
-      __draw();
+      repaint();
     }
 }
 
@@ -386,14 +373,15 @@ void Igc3DView::slotShowFlight()
 
   change_zfactor(state->zfactor);
 
-  //flight->add_shadow();
   state->deltay = state->deltay + state->deltayoffset;
   state->flight_trace = 1;
   state->flight_shadow = 1;
-  this->reset();
+  reset();
 }
 
-void Igc3DView::mousePressEvent(QMouseEvent* /*event*/)
+void Igc3DView::mousePressEvent(QMouseEvent* event)
 {
-  DISPLAY_HELP_MESSAGE
+  Q_UNUSED( event )
+
+  showHelp();
 }

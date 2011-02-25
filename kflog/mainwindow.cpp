@@ -1008,6 +1008,10 @@ void MainWindow::slotFlightViewIgc3D()
 
   connect( igc3d, SIGNAL(accepted()), this, SLOT(slotFlightViewIgc3DClosed()) );
   connect( igc3d, SIGNAL(rejected()), this, SLOT(slotFlightViewIgc3DClosed()) );
+  connect( igc3d, SIGNAL(igc3dHelp(QString&)),
+           helpWindow, SLOT(slotShowHelpText(QString&)) );
+
+  igc3d->setVisible( true );
 }
 
 void MainWindow::slotFlightViewIgc3DClosed()

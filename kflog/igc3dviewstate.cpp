@@ -9,13 +9,14 @@
 **   Copyright (c):  2002 by Heiner Lamprecht
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#include <math.h>
+#include <cmath>
+
 #include "igc3dviewstate.h"
 
 /**
@@ -61,21 +62,16 @@ void Igc3DViewState::reset()
   alpha = 300;
   beta = 90;
   gamma = 290;
-  //deltax = 0;
   deltay = -200;
-  //deltayoffset = 0;
-  //deltaz = 0;
 
   (fabs(maxx) > fabs(minx)) ? tmpx = maxx : tmpx = minx;
   (fabs(maxy) > fabs(miny)) ? tmpy = maxy : tmpy = miny;
   (fabs(maxz) > fabs(minz)) ? tmpz = maxz : tmpz = minz;
 
-  //deltayoffset = - sqrt(maxx * maxx + maxy * maxy + maxz * maxz) - 0.001;
   deltayoffset = - sqrt(tmpx * tmpx + tmpy * tmpy + tmpz * tmpz) - 0.1;
   deltay = deltay + deltayoffset;
 
   mag = 25;
-  //dist = 50;
   flag = 0;
   zfactor = 33;
   rotate_fract = 10.0;

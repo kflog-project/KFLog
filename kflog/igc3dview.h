@@ -7,20 +7,20 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by the KFLog-Team
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef IGC3DVIEW_H
-#define IGC3DVIEW_H
+#ifndef IGC_3D_VIEW_H
+#define IGC_3D_VIEW_H
 
 // Qt headers
-#include <qwidget.h>
-//Added by qt3to4:
+#include <QWidget>
 #include <QPaintEvent>
 #include <QResizeEvent>
 #include <QMouseEvent>
@@ -38,63 +38,68 @@ class Igc3DViewState;
 class Igc3DPolyhedron;
 class Igc3DFlightData;
 
-
 /**
-  * @author Thomas Nielsen
-  * @version $Id$
+  * \author Thomas Nielsen, Axel Pauli
   *
   * Based on Igc3D by Jan Max Krueger <Jan.Krueger@uni-konstanz.de>
   *
+  * \date 2002-2011
+  *
+  * \version $Id$
   */
 class Igc3DView : public QWidget
 {
   Q_OBJECT
 
+ private:
+
+  Q_DISABLE_COPY ( Igc3DView )
+
  public:
-  /** */
+
   Igc3DView(Igc3DDialog* dialog);
-  /** */
+
   ~Igc3DView();
-  /** */
+
   QSize sizeHint();
-  /** */
-  Igc3DViewState* getState(void);	
-  /** */
+
+  Igc3DViewState* getState()
+    {
+      return state;
+    };
+
   Igc3DViewState* setState(Igc3DViewState* vs);	
-  /** */
-	void keyPressEvent ( QKeyEvent * k );
-	/** */
-	void reset();
+
+  void reset();
   /**
-	 * Various movement functions
-	 */
-	void change_mag(int i);
-	void change_dist(int i);
-	void change_alpha(int i);
-	void change_beta(int i);
-	void change_gamma(int i);
-	void change_zfactor(int i);
-	void change_fps(int i);
-	void change_rotation_factor(int i);
-	void change_centering(int i);
-	void set_flight_marker(int i);
+   * Various movement functions
+   */
+  void change_mag(int i);
+  void change_dist(int i);
+  void change_alpha(int i);
+  void change_beta(int i);
+  void change_gamma(int i);
+  void change_zfactor(int i);
+  void change_fps(int i);
+  void change_rotation_factor(int i);
+  void change_centering(int i);
+  void set_flight_marker(int i);
+
+  QString getHelp();
+
+private:
+
+  void showHelp();
 
  protected:
-  /**
-   * Redefinition of the paintEvent.
-   */
-  virtual void paintEvent(QPaintEvent* event);
 
-	/**
-	 * Redefinition of the resize event
-	 */
-	virtual void resizeEvent(QResizeEvent * event );
+  virtual void keyPressEvent( QKeyEvent * k );
 
+  virtual void paintEvent( QPaintEvent* event );
 
-  /**
-	 * No descriptions
-	 */
-  void __draw(void);
+  virtual void resizeEvent( QResizeEvent * event );
+
+  virtual void mousePressEvent( QMouseEvent* event );
 
  private:
   /**
@@ -105,20 +110,21 @@ class Igc3DView : public QWidget
    * Flight data to display
    */
   Igc3DFlightData* flight;
-	/**
-	 * Flight data?
-	 */
+  /**
+   * Flight data?
+   */
   bool isFlight;
-	/**
-	 * 3D view state
-	 */
-	Igc3DViewState* state;
-	/**
-	 * 3D box for flight
-	 */
-	Igc3DPolyhedron* flightbox;
-  void mousePressEvent(QMouseEvent* event);
+  /**
+   * 3D view state
+   */
+  Igc3DViewState* state;
+  /**
+   * 3D box for flight
+   */
+  Igc3DPolyhedron* flightbox;
+
   int timerID;
+
 public slots: // Public slots
   /** No descriptions */
   void slotRedraw();

@@ -146,7 +146,7 @@ class Flight : public BaseFlightElement
     /**
      * @return the number of logged points.
      */
-    unsigned int getRouteLength() const;
+    int getRouteLength() const { return route.size(); }
     /**
      * @return the site, where the glider has landed.
      */

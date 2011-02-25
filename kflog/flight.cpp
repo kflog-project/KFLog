@@ -904,8 +904,6 @@ QString Flight::getType() const { return gliderType; }
 
 QDate Flight::getDate() const { return date; }
 
-unsigned int Flight::getRouteLength() const { return route.count(); }
-
 bool Flight::isOptimized() const { return optimized; }
 
 int Flight::searchPoint(const QPoint& cPoint, FlightPoint& searchPoint)
@@ -1275,8 +1273,10 @@ QStringList Flight::getHeader()  {  return header;  }
 /** Sets the nAnimationIndex member to 'n' */
 void Flight::setAnimationIndex(int n)
 {
-  if ((n >= 0) && (getRouteLength() > (unsigned int)n))
-            nAnimationIndex = n;
+  if( n >= 0 && getRouteLength() > n )
+    {
+      nAnimationIndex = n;
+    }
 }
 
 /** Sets task begin and end time */
@@ -1290,12 +1290,14 @@ void Flight::setTaskByTimes(int timeBegin,int timeEnd)
 /** Increments the nAnimationIndex member */
 void Flight::setAnimationNextIndex(void)
 {
-        if (getRouteLength() > (unsigned int)nAnimationIndex+1)
-            nAnimationIndex++;
+  if( getRouteLength() > nAnimationIndex + 1 )
+    {
+      nAnimationIndex++;
+    }
   else
     {
-                  nAnimationIndex = (int)getRouteLength()-1;
-      bAnimationActive = false;        //stop the animation of this flight
+      nAnimationIndex = (int) getRouteLength() - 1;
+      bAnimationActive = false; //stop the animation of this flight
     }
 }
 
