@@ -994,56 +994,61 @@ QList<Waypoint*> Flight::getWPList()
     return optimizedTask.getWPList();
 }
 
-QList<Waypoint*> Flight::getOriginalWPList() {  return origTask.getWPList();  }
-
-bool Flight::optimizeTaskOLC(Map* map)
+QList<Waypoint*> Flight::getOriginalWPList()
 {
-  OptimizationWizard* wizard = new OptimizationWizard();
+  return origTask.getWPList();
+}
+
+bool Flight::optimizeTaskOLC( Map* map )
+{
+  OptimizationWizard* wizard = new OptimizationWizard( map );
   wizard->setMapContents(map);
   int wizard_ret = wizard->exec();
-  if (wizard_ret==QDialog::Rejected) {
-    delete wizard;
-    return false;
-  }
+
+  if( wizard_ret == QDialog::Rejected )
+    {
+      return false;
+    }
 
   unsigned int idList[LEGS+3];
   double points;
   double distance = wizard->optimizationResult(idList,&points);
 
-  if (distance<0.0) // optimization was canceled
-    return false;
+  if( distance < 0.0 ) // optimization was canceled
+    {
+      return false;
+    }
 
-      QList<Waypoint*> wpL;
+  QList<Waypoint*> wpL;
 
-      APPEND_WAYPOINT_OLC2003(startIndex, 0, QObject::tr("Take-Off"))
-      APPEND_WAYPOINT_OLC2003(idList[0], dist(route.at(idList[0]), route.at(0)),
-          QObject::tr("Begin of Soaring"))
-      APPEND_WAYPOINT_OLC2003(idList[1], dist(route.at(idList[1]), route.at(1)),
-          QObject::tr("Begin of Task"))
-      APPEND_WAYPOINT_OLC2003(idList[2], dist(route.at(idList[2]),
-          route.at(idList[1])), QObject::tr("Optimize 1"))
-      APPEND_WAYPOINT_OLC2003(idList[3], dist(route.at(idList[3]),
-          route.at(idList[2])), QObject::tr("Optimize 2"))
-      APPEND_WAYPOINT_OLC2003(idList[4], dist(route.at(idList[4]),
-          route.at(idList[3])), QObject::tr("Optimize 3"))
-      APPEND_WAYPOINT_OLC2003(idList[5], dist(route.at(idList[5]),
-          route.at(idList[4])), QObject::tr("Optimize 4"))
-      APPEND_WAYPOINT_OLC2003(idList[6], dist(route.at(idList[6]),
-          route.at(idList[5])), QObject::tr("Optimize 5"))
-      APPEND_WAYPOINT_OLC2003(idList[7], dist(route.at(idList[7]),
-          route.at(idList[6])), QObject::tr("End of Task"))
-      APPEND_WAYPOINT_OLC2003(idList[8], dist(route.at(idList[8]),
-          route.at(idList[7])), QObject::tr("End of Soaring"))
-      APPEND_WAYPOINT_OLC2003(landIndex, dist(route.last(),
-          route.at(idList[8])), QObject::tr("Landing"))
+  APPEND_WAYPOINT_OLC2003(startIndex, 0, QObject::tr("Take-Off"))
+  APPEND_WAYPOINT_OLC2003(idList[0], dist(route.at(idList[0]), route.at(0)),
+      QObject::tr("Begin of Soaring"))
+  APPEND_WAYPOINT_OLC2003(idList[1], dist(route.at(idList[1]), route.at(1)),
+      QObject::tr("Begin of Task"))
+  APPEND_WAYPOINT_OLC2003(idList[2], dist(route.at(idList[2]),
+      route.at(idList[1])), QObject::tr("Optimize 1"))
+  APPEND_WAYPOINT_OLC2003(idList[3], dist(route.at(idList[3]),
+      route.at(idList[2])), QObject::tr("Optimize 2"))
+  APPEND_WAYPOINT_OLC2003(idList[4], dist(route.at(idList[4]),
+      route.at(idList[3])), QObject::tr("Optimize 3"))
+  APPEND_WAYPOINT_OLC2003(idList[5], dist(route.at(idList[5]),
+      route.at(idList[4])), QObject::tr("Optimize 4"))
+  APPEND_WAYPOINT_OLC2003(idList[6], dist(route.at(idList[6]),
+      route.at(idList[5])), QObject::tr("Optimize 5"))
+  APPEND_WAYPOINT_OLC2003(idList[7], dist(route.at(idList[7]),
+      route.at(idList[6])), QObject::tr("End of Task"))
+  APPEND_WAYPOINT_OLC2003(idList[8], dist(route.at(idList[8]),
+      route.at(idList[7])), QObject::tr("End of Soaring"))
+  APPEND_WAYPOINT_OLC2003(landIndex, dist(route.last(),
+      route.at(idList[8])), QObject::tr("Landing"))
 
-      optimizedTask.setWaypointList(wpL);
-      optimizedTask.checkWaypoints(route, gliderType);
-      optimizedTask.setOptimizedTask(points,distance);
-      optimized = true;
+  optimizedTask.setWaypointList(wpL);
+  optimizedTask.checkWaypoints(route, gliderType);
+  optimizedTask.setOptimizedTask(points,distance);
+  optimized = true;
 
-      delete wizard;
-      return true;
+  return true;
 }
 
 /*

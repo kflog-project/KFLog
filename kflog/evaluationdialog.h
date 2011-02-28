@@ -48,7 +48,7 @@ private:
 
  public:
 
-  EvaluationDialog( QWidget *parent );
+  EvaluationDialog( QWidget *parent = 0);
 
   virtual ~EvaluationDialog();
 

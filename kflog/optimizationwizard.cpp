@@ -1,10 +1,18 @@
-/****************************************************************************
-** Form implementation generated from reading ui file 'optimizationwizard.ui'
+/***********************************************************************
 **
-** Created: Sam Mär 8 12:18:54 2003
-**      by: The User Interface Compiler ($Id$)
+**   optimizationwizard.cpp
 **
-** WARNING! All changes made in this file will be lost!
+**   This file is part of KFLog4.
+**
+************************************************************************
+**
+** Created: Sam Mär 8 12:18:37 2003
+**
+**   This file is distributed under the terms of the General Public
+**   License. See the file COPYING for more information.
+**
+**   $Id$
+**
 ****************************************************************************/
 
 #include <QtGui>
@@ -162,134 +170,153 @@ static const char* const image0_data[] = {
  *  The wizard will by default be modeless, unless you set 'modal' to
  *  TRUE to construct a modal wizard.
  */
-OptimizationWizard::OptimizationWizard(QWidget* parent, Qt::WFlags fl)
-    : QWizard(parent, fl)
-,
-      image0( (const char **) image0_data )
+OptimizationWizard::OptimizationWizard( QWidget* parent ) :
+  QWizard( parent ),
+  image0( (const char **) image0_data )
 {
-    setName("Optimization for OLC");
+  setObjectName("OptimizationWizard");
+  setAttribute( Qt::WA_DeleteOnClose );
+  setSizeGripEnabled( true );
 
-    page = new QWizardPage(this);
-    page->setTitle(tr("Task start and end times"));
-    pageLayout = new QVBoxLayout( page, 11, 6, "pageLayout");
+  page = new QWizardPage(this);
+  page->setTitle(tr("Task start and end times"));
+  pageLayout = new QVBoxLayout( page );
+  pageLayout->setMargin(10);
+  pageLayout->setSpacing(5);
 
-    layout14 = new QVBoxLayout( 0, 0, 6, "layout14");
+  // layout14 = new QVBoxLayout( 0, 0, 6 );
 
-    evaluation = new EvaluationDialog( page );
-    evaluation->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, evaluation->sizePolicy().hasHeightForWidth() ) );
-    evaluation->setMinimumSize( QSize( 100, 100 ) );
-    layout14->addWidget( evaluation );
+  evaluation = new EvaluationDialog;
+  pageLayout->addWidget( evaluation );
 
-    layout12 = new QHBoxLayout( 0, 0, 6, "layout12");
+  //evaluation->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, evaluation->sizePolicy().hasHeightForWidth() ) );
+  //evaluation->setMinimumSize( QSize( 100, 100 ) );
+  //layout14->addWidget( evaluation );
 
-    groupBox1 = new QGroupBox( page, "groupBox1" );
-    groupBox1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, groupBox1->sizePolicy().hasHeightForWidth() ) );
+  // layout12 = new QHBoxLayout( 0, 0, 6, "layout12");
 
-    QWidget* privateLayoutWidget = new QWidget( groupBox1, "layout3" );
-    privateLayoutWidget->setGeometry( QRect( 10, 20, 290, 80 ) );
-    layout3 = new QGridLayout( privateLayoutWidget, 1, 1, 11, 6, "layout3");
+  groupBox1 = new QGroupBox( page );
+  //groupBox1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, groupBox1->sizePolicy().hasHeightForWidth() ) );
 
-    lblStartHeight = new QLabel( privateLayoutWidget, "lblStartHeight" );
-    lblStartHeight->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
+  //QWidget* privateLayoutWidget = new QWidget( groupBox1, "layout3" );
+  //privateLayoutWidget->setGeometry( QRect( 10, 20, 290, 80 ) );
 
-    layout3->addWidget( lblStartHeight, 0, 2 );
+  //layout3 = new QGridLayout( privateLayoutWidget, 1, 1, 11, 6, "layout3");
+  layout3 = new QGridLayout;
 
-    lblStopTime = new QLabel( privateLayoutWidget, "lblStopTime" );
-    lblStopTime->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
+  lblStartHeight = new QLabel;
+  lblStartHeight->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
 
-    layout3->addWidget( lblStopTime, 1, 1 );
+  layout3->addWidget( lblStartHeight, 0, 2 );
 
-    lblDiffHeight = new QLabel( privateLayoutWidget, "lblDiffHeight" );
-    lblDiffHeight->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
+  lblStopTime = new QLabel;
+  lblStopTime->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
 
-    layout3->addWidget( lblDiffHeight, 2, 2 );
+  layout3->addWidget( lblStopTime, 1, 1 );
 
-    textLabel1_3_2_2 = new QLabel( privateLayoutWidget, "textLabel1_3_2_2" );
+  lblDiffHeight = new QLabel;
+  lblDiffHeight->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
 
-    layout3->addWidget( textLabel1_3_2_2, 2, 0 );
+  layout3->addWidget( lblDiffHeight, 2, 2 );
 
-    lblStartTime = new QLabel( privateLayoutWidget, "lblStartTime" );
-    lblStartTime->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
+  textLabel1_3_2_2 = new QLabel;
 
-    layout3->addWidget( lblStartTime, 0, 1 );
+  layout3->addWidget( textLabel1_3_2_2, 2, 0 );
 
-    textLabel1_4_2 = new QLabel( privateLayoutWidget, "textLabel1_4_2" );
+  lblStartTime = new QLabel;
+  lblStartTime->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
 
-    layout3->addWidget( textLabel1_4_2, 0, 0 );
+  layout3->addWidget( lblStartTime, 0, 1 );
 
-    textLabel1_2_2_2 = new QLabel( privateLayoutWidget, "textLabel1_2_2_2" );
+  textLabel1_4_2 = new QLabel;
 
-    layout3->addWidget( textLabel1_2_2_2, 1, 0 );
+  layout3->addWidget( textLabel1_4_2, 0, 0 );
 
-    lblStopHeight = new QLabel( privateLayoutWidget, "lblStopHeight" );
-    lblStopHeight->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
+  textLabel1_2_2_2 = new QLabel;
 
-    layout3->addWidget( lblStopHeight, 1, 2 );
+  layout3->addWidget( textLabel1_2_2_2, 1, 0 );
 
-    lblDiffTime = new QLabel( privateLayoutWidget, "lblDiffTime" );
-    lblDiffTime->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
+  lblStopHeight = new QLabel;
+  lblStopHeight->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
 
-    layout3->addWidget( lblDiffTime, 2, 1 );
-    layout12->addWidget( groupBox1 );
+  layout3->addWidget( lblStopHeight, 1, 2 );
 
-    kPushButton2 = new QPushButton( page, "kPushButton2" );
-    kPushButton2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, kPushButton2->sizePolicy().hasHeightForWidth() ) );
-    layout12->addWidget( kPushButton2 );
-    layout14->addLayout( layout12 );
-    pageLayout->addLayout( layout14 );
-    addPage(page);
+  lblDiffTime = new QLabel;
+  lblDiffTime->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
 
-    page_2 = new QWizardPage(this);
-    page_2->setTitle(tr("Optimization"));
-    pageLayout_2 = new QVBoxLayout( page_2, 11, 6, "pageLayout_2");
+  layout3->addWidget( lblDiffTime, 2, 1 );
 
-    layout13 = new QVBoxLayout( 0, 0, 6, "layout13");
+  // layout12->addWidget( groupBox1 );
 
-    kTextBrowser1 = new QTextBrowser( page_2, "kTextBrowser1" );
-    layout13->addWidget( kTextBrowser1 );
+  groupBox1->setLayout(layout3);
 
-    layout12_2 = new QHBoxLayout( 0, 0, 6, "layout12_2");
-    QSpacerItem* spacer = new QSpacerItem( 21, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    layout12_2->addItem( spacer );
+  QHBoxLayout *hbox = new QHBoxLayout;
 
-    frame3 = new QFrame( page_2, "frame3" );
-    frame3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, frame3->sizePolicy().hasHeightForWidth() ) );
-    frame3->setFrameShape( Q3Frame::StyledPanel );
-    frame3->setFrameShadow( Q3Frame::Plain );
-    frame3Layout = new QVBoxLayout( frame3, 11, 6, "frame3Layout");
+  hbox->addWidget(groupBox1);
 
-    layout5 = new QVBoxLayout( 0, 0, 6, "layout5");
+  kPushButton2 = new QPushButton;
 
-    progress = new QProgressBar(frame3);
-    progress->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, progress->sizePolicy().hasHeightForWidth() ) );
-    layout5->addWidget( progress );
+  hbox->addWidget(kPushButton2);
 
-    layout2 = new QHBoxLayout( 0, 0, 6, "layout2");
+  //kPushButton2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, kPushButton2->sizePolicy().hasHeightForWidth() ) );
+  //layout12->addWidget( kPushButton2 );
+  //layout14->addLayout( layout12 );
 
-    btnStart = new QPushButton( frame3, "btnStart" );
-    btnStart->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, btnStart->sizePolicy().hasHeightForWidth() ) );
-    layout2->addWidget( btnStart );
+  pageLayout->addLayout( hbox );
+  addPage(page);
 
-    btnStop = new QPushButton( frame3, "btnStop" );
-    btnStop->setEnabled( FALSE );
-    btnStop->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, btnStop->sizePolicy().hasHeightForWidth() ) );
-    layout2->addWidget( btnStop );
-    layout5->addLayout( layout2 );
-    frame3Layout->addLayout( layout5 );
-    layout12_2->addWidget( frame3 );
-    QSpacerItem* spacer_2 = new QSpacerItem( 51, 21, QSizePolicy::Expanding, QSizePolicy::Minimum );
-    layout12_2->addItem( spacer_2 );
-    layout13->addLayout( layout12_2 );
-    pageLayout_2->addLayout( layout13 );
-    addPage(page_2);
-    languageChange();
-    resize( QSize(446, 329).expandedTo(minimumSizeHint()) );
+  page_2 = new QWizardPage(this);
+  page_2->setTitle(tr("Optimization"));
+  pageLayout_2 = new QVBoxLayout( page_2, 11, 6, "pageLayout_2");
 
-    // signals and slots connections
-    connect( kPushButton2, SIGNAL( pressed() ), this, SLOT( slotSetTimes() ) );
-    connect( btnStop, SIGNAL( pressed() ), this, SLOT( slotStopOptimization() ) );
-    connect( btnStart, SIGNAL( pressed() ), this, SLOT( slotStartOptimization() ) );
-    init();
+  layout13 = new QVBoxLayout( 0, 0, 6, "layout13");
+
+  kTextBrowser1 = new QTextBrowser( page_2, "kTextBrowser1" );
+  layout13->addWidget( kTextBrowser1 );
+
+  layout12_2 = new QHBoxLayout( 0, 0, 6, "layout12_2");
+  QSpacerItem* spacer = new QSpacerItem( 21, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+  layout12_2->addItem( spacer );
+
+  frame3 = new QFrame( page_2, "frame3" );
+  frame3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, frame3->sizePolicy().hasHeightForWidth() ) );
+  frame3->setFrameShape( Q3Frame::StyledPanel );
+  frame3->setFrameShadow( Q3Frame::Plain );
+  frame3Layout = new QVBoxLayout( frame3, 11, 6, "frame3Layout");
+
+  layout5 = new QVBoxLayout( 0, 0, 6, "layout5");
+
+  progress = new QProgressBar(frame3);
+  progress->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, progress->sizePolicy().hasHeightForWidth() ) );
+  layout5->addWidget( progress );
+
+  layout2 = new QHBoxLayout( 0, 0, 6, "layout2");
+
+  btnStart = new QPushButton( frame3, "btnStart" );
+  btnStart->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, btnStart->sizePolicy().hasHeightForWidth() ) );
+  layout2->addWidget( btnStart );
+
+  btnStop = new QPushButton( frame3, "btnStop" );
+  btnStop->setEnabled( FALSE );
+  btnStop->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)0, 0, 0, btnStop->sizePolicy().hasHeightForWidth() ) );
+  layout2->addWidget( btnStop );
+  layout5->addLayout( layout2 );
+  frame3Layout->addLayout( layout5 );
+  layout12_2->addWidget( frame3 );
+  QSpacerItem* spacer_2 = new QSpacerItem( 51, 21, QSizePolicy::Expanding, QSizePolicy::Minimum );
+  layout12_2->addItem( spacer_2 );
+  layout13->addLayout( layout12_2 );
+  pageLayout_2->addLayout( layout13 );
+  addPage(page_2);
+  languageChange();
+
+  //resize( QSize(446, 329).expandedTo(minimumSizeHint()) );
+
+  // signals and slots connections
+  connect( kPushButton2, SIGNAL( pressed() ), this, SLOT( slotSetTimes() ) );
+  connect( btnStop, SIGNAL( pressed() ), this, SLOT( slotStopOptimization() ) );
+  connect( btnStart, SIGNAL( pressed() ), this, SLOT( slotStartOptimization() ) );
+  init();
 }
 
 /*
@@ -297,7 +324,7 @@ OptimizationWizard::OptimizationWizard(QWidget* parent, Qt::WFlags fl)
  */
 OptimizationWizard::~OptimizationWizard()
 {
-    // no need to delete child widgets, Qt does it all for us
+  qDebug() << "~OptimizationWizard()";
 }
 
 /*
@@ -306,20 +333,20 @@ OptimizationWizard::~OptimizationWizard()
  */
 void OptimizationWizard::languageChange()
 {
-    setCaption( tr( "OLC Optimization" ) );
-    groupBox1->setTitle( tr( "Task Start/End Point" ) );
-    lblStartHeight->setText( tr( "1999m" ) );
-    lblStopTime->setText( tr( "11:11:11" ) );
-    lblDiffHeight->setText( tr( "1999m" ) );
-    textLabel1_3_2_2->setText( "<p align=\"right\">" + tr( "Difference" ) + ":</p>" );
-    lblStartTime->setText( tr( "11:11:11" ) );
-    textLabel1_4_2->setText( "<p align=\"right\">" + tr( "Start of Task" ) + ":</p>" );
-    textLabel1_2_2_2->setText( "<p align=\"right\">" + tr( "End of Task" ) + ":</p>" );
-    lblStopHeight->setText( tr( "1999m" ) );
-    lblDiffTime->setText( tr( "11:11:11" ) );
-    kPushButton2->setText( tr( "Set Times" ) );
-    btnStart->setText( tr( "Start Optimization" ) );
-    btnStop->setText( tr( "Stop Optimization" ) );
+  setWindowTitle( tr( "OLC Optimization" ) );
+  groupBox1->setTitle( tr( "Task Start/End Point" ) );
+  lblStartHeight->setText( tr( "1999m" ) );
+  lblStopTime->setText( tr( "11:11:11" ) );
+  lblDiffHeight->setText( tr( "1999m" ) );
+  textLabel1_3_2_2->setText( "<p align=\"right\">" + tr( "Difference" ) + ":</p>" );
+  lblStartTime->setText( tr( "11:11:11" ) );
+  textLabel1_4_2->setText( "<p align=\"right\">" + tr( "Start of Task" ) + ":</p>" );
+  textLabel1_2_2_2->setText( "<p align=\"right\">" + tr( "End of Task" ) + ":</p>" );
+  lblStopHeight->setText( tr( "1999m" ) );
+  lblDiffTime->setText( tr( "11:11:11" ) );
+  kPushButton2->setText( tr( "Set Times" ) );
+  btnStart->setText( tr( "Start Optimization" ) );
+  btnStop->setText( tr( "Stop Optimization" ) );
 }
 
 void OptimizationWizard::init()
@@ -477,7 +504,10 @@ void OptimizationWizard::slotStopOptimization()
 void OptimizationWizard::slotSetTimes()
 {
   if (!evaluation)
+    {
     return;
+    }
+
   unsigned int start=evaluation->getTaskStart();
   unsigned int stop=evaluation->getTaskEnd();
   FlightPoint startPoint=flight->getPoint(start);
@@ -488,23 +518,28 @@ void OptimizationWizard::slotSetTimes()
   lblStartHeight->setText(QString("%1m").arg(startPoint.height));
   lblStopHeight->setText(QString("%1m").arg(endPoint.height));
   lblDiffHeight->setText(QString("%1m").arg(endPoint.height-startPoint.height));
+
   if (endPoint.height-startPoint.height<-1000)
-    lblDiffHeight->setPaletteForegroundColor(QColor(255,0,0));
+    {
+      lblDiffHeight->setPaletteForegroundColor(QColor(255,0,0));
+    }
   else
-    lblDiffHeight->setPaletteForegroundColor(QColor(0,128,0));
+    {
+      lblDiffHeight->setPaletteForegroundColor(QColor(0,128,0));
+    }
+
   optimization->setTimes(start,stop);
 }
 
 void OptimizationWizard::setMapContents( Map* _map )
 {
-    extern MapContents *_globalMapContents;
-    connect(_globalMapContents, SIGNAL(currentFlightChanged()), evaluation,
-        SLOT(slotShowFlightData()));
-    connect(evaluation, SIGNAL(showCursor(QPoint, QPoint)), _map,
-        SLOT(slotDrawCursor(QPoint, QPoint)));
+  connect(_globalMapContents, SIGNAL(currentFlightChanged()), evaluation,
+      SLOT(slotShowFlightData()));
+  connect(evaluation, SIGNAL(showCursor(QPoint, QPoint)), _map,
+      SLOT(slotDrawCursor(QPoint, QPoint)));
 }
 
 double OptimizationWizard::optimizationResult( unsigned int* pointList, double * points )
 {
-    return optimization->optimizationResult( pointList,points );
+  return optimization->optimizationResult( pointList,points );
 }

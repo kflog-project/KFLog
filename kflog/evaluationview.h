@@ -156,9 +156,9 @@ private:
   float scale_h;
   float scale_va;
 
-  unsigned int smoothness_va;
-  unsigned int smoothness_v;
-  unsigned int smoothness_h;
+  int smoothness_va;
+  int smoothness_v;
+  int smoothness_h;
 
   bool baro;
   bool vario;

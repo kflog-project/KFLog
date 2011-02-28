@@ -46,11 +46,12 @@ EvaluationView::EvaluationView(QScrollArea* parent, EvaluationDialog* dialog) :
 {
   setObjectName( "EvaluationView" );
   setMouseTracking(true);
-  setMinimumSize( 300, 150 );
+  setMinimumSize( 600, 200 );
 
   QPalette p = palette();
   p.setColor(backgroundRole(), Qt::white);
   setPalette(p);
+  setAutoFillBackground( true );
 
   mouseB = Qt::NoButton | NotReached;
 
@@ -664,7 +665,7 @@ void EvaluationView::__draw()
   QPolygon varioArray(flight->getRouteLength());
   QPolygon speedArray(flight->getRouteLength());
 
-  for(unsigned int loop = 0; loop < flight->getRouteLength(); loop++)
+  for(int loop = 0; loop < flight->getRouteLength(); loop++)
     {
       curTime = flight->getPoint(loop).time;
 
