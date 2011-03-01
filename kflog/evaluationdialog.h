@@ -56,9 +56,15 @@ private:
 
   Flight* getFlight();
 
-  unsigned int getTaskStart(){return evalFrame->getTaskStart();};
+  unsigned int getTaskStart()
+    {
+      return evalFrame->getTaskStart();
+    };
 
-  unsigned int getTaskEnd(){return evalFrame->getTaskEnd();};
+  unsigned int getTaskEnd()
+    {
+      return evalFrame->getTaskEnd();
+    };
 
  protected:
 

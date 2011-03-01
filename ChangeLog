@@ -1,5 +1,14 @@
 $Id$
 
+2011-03-01 Axel Pauli <axel@kflog.org>
+  * Class IgcPreview removed. Not more usable under Qt4 because the
+    support was removed in Qt4.
+  * Form ui_optimizationwizard removed. Was never used in the current
+    binary but always built.
+  * Class OLC OptimizationWizard ported to Ot4. The source code was a total
+    chaos in my eyes. Could fix two core dumps but the whole thing needs
+    some more tweaking. Will continue the work the next days.
+
 2011-02-25 Axel Pauli <axel@kflog.org>
   * IGC 3D view widgets ported to Qt4. The size of the 3D flight should be
     better adapted to the real size of the widget at the first call.

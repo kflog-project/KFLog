@@ -20,8 +20,6 @@
 
 #include <QGroupBox>
 #include <QLabel>
-#include <QLayout>
-#include <QPixmap>
 #include <QProgressBar>
 #include <QTextBrowser>
 #include <QVariant>
@@ -47,8 +45,7 @@ public:
   virtual ~OptimizationWizard();
 
   QWizardPage *page;
-  EvaluationDialog* evaluation;
-  QGroupBox* groupBox1;
+  EvaluationDialog* evaluationDialog;
   QLabel* lblStartHeight;
   QLabel* lblStopTime;
   QLabel* lblDiffHeight;
@@ -58,10 +55,9 @@ public:
   QLabel* textLabel1_2_2_2;
   QLabel* lblStopHeight;
   QLabel* lblDiffTime;
-  QPushButton* kPushButton2;
+  QPushButton* timeButton;
   QWizardPage* page_2;
-  QTextBrowser* kTextBrowser1;
-  QFrame* frame3;
+  QTextBrowser* olcResultBrowser;
   QProgressBar* progress;
   QPushButton* btnStart;
   QPushButton* btnStop;
@@ -82,24 +78,9 @@ protected:
   QList<FlightPoint*> route;
   Optimization* optimization;
 
-  QVBoxLayout* pageLayout;
-  QVBoxLayout* layout14;
-  QHBoxLayout* layout12;
-  QGridLayout* layout3;
-  QVBoxLayout* pageLayout_2;
-  QVBoxLayout* layout13;
-  QHBoxLayout* layout12_2;
-  QVBoxLayout* frame3Layout;
-  QVBoxLayout* layout5;
-  QHBoxLayout* layout2;
-
 protected slots:
 
   virtual void languageChange();
-
-private:
-
-  QPixmap image0;
 
 };
 

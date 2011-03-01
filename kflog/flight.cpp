@@ -590,13 +590,17 @@ int Flight::getPointIndexByTime(time_t time)
   return ep;
 }
 
-QList<FlightPoint*> Flight::getRoute() const{
+QList<FlightPoint*> Flight::getRoute() const
+{
   return route;
 }
 
 FlightPoint Flight::getPoint(int n)
 {
-  if(n >= 0 && n < (int)route.count())  return *route.at(n);
+  if( n >= 0 && n < route.count() )
+    {
+      return *route.at( n );
+    }
 
   switch(n)
     {
@@ -1007,15 +1011,17 @@ bool Flight::optimizeTaskOLC( Map* map )
 
   if( wizard_ret == QDialog::Rejected )
     {
+      delete wizard;
       return false;
     }
 
   unsigned int idList[LEGS+3];
   double points;
-  double distance = wizard->optimizationResult(idList,&points);
+  double distance = wizard->optimizationResult( idList, &points );
 
   if( distance < 0.0 ) // optimization was canceled
     {
+      delete wizard;
       return false;
     }
 
@@ -1048,6 +1054,7 @@ bool Flight::optimizeTaskOLC( Map* map )
   optimizedTask.setOptimizedTask(points,distance);
   optimized = true;
 
+  delete wizard;
   return true;
 }
 

@@ -239,7 +239,10 @@ void EvaluationFrame::slotSpeedSmoothness(int s)
 
 void EvaluationFrame::slotScale(int g)
 {
-  if(flight == NULL)  return;
+  if( flight == 0 )
+    {
+      return;
+    }
 
   // set scale factor
   secWidth = g;
@@ -269,10 +272,22 @@ void EvaluationFrame::resizeEvent(QResizeEvent* event)
 
 unsigned int EvaluationFrame::getTaskStart()
 {
+  if( ! flight )
+    {
+      // AP: Maybe not always right but prevents a core dump.
+      return 0;
+    }
+
   return flight->getPointIndexByTime(evalView->cursor1);
 }
 
 unsigned int EvaluationFrame::getTaskEnd()
 {
+  if( ! flight )
+    {
+      // AP: Maybe not always right but prevents a core dump.
+      return 0;
+    }
+
   return flight->getPointIndexByTime(evalView->cursor2);
 }

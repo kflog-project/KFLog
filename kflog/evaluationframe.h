@@ -60,6 +60,14 @@ class EvaluationFrame : public QWidget
     /** */
     unsigned int getTaskEnd();
 
+    /**
+     * \return The current set flight or NULL, if no flight was set.
+     */
+    Flight* getFlight() const
+      {
+        return flight;
+      };
+
   public slots:
     /** */
     void slotVarioSmoothness(int s);

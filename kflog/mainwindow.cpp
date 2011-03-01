@@ -30,7 +30,6 @@
 #include "flightloader.h"
 #include "helpwindow.h"
 #include "igc3ddialog.h"
-#include "igcpreview.h"
 #include "kflogconfig.h"
 #include "map.h"
 #include "mapcontents.h"

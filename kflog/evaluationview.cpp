@@ -48,6 +48,11 @@ EvaluationView::EvaluationView(QScrollArea* parent, EvaluationDialog* dialog) :
   setMouseTracking(true);
   setMinimumSize( 600, 200 );
 
+  if( parent )
+    {
+      parent->setMinimumSize( 600, 200 );
+    }
+
   QPalette p = palette();
   p.setColor(backgroundRole(), Qt::white);
   setPalette(p);

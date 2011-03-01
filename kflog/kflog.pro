@@ -46,7 +46,6 @@ SOURCES = \
     igc3dpolyhedron.cpp \
     igc3dview.cpp \
     igc3dviewstate.cpp \
-    igcpreview.cpp \
     isohypse.cpp \
     isolist.cpp \
     kflogconfig.cpp \
@@ -125,7 +124,6 @@ HEADERS = \
     igc3dpolyhedron.h \
     igc3dview.h \
     igc3dviewstate.h \
-    igcpreview.h \
     isolist.h \
     isohypse.h \
     kflogconfig.h \
@@ -167,8 +165,6 @@ HEADERS = \
     whatsthat.h \
     guicontrols/kfloglistview.h
     
-FORMS = optimizationwizard.ui
-
 # Note! qmake do prefix the .path variable with $(INSTALL_ROOT)
 # in the generated makefile. If the .path variable starts not with
 # a slash, $(INSTALL_ROOT) followed by the current path is added as
