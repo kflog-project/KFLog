@@ -289,6 +289,8 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
 
 QPoint EvaluationView::__baroPoint(int durch[], int gn, int i)
 {
+  int height = scrollFrame->viewport()->height();
+
   int x = ( curTime - startTime ) / secWidth + X_DISTANCE ;
 
   int gesamt = 0;
@@ -298,13 +300,15 @@ QPoint EvaluationView::__baroPoint(int durch[], int gn, int i)
       gesamt += durch[loop];
     }
 
-  int y = height() - (int)( ( gesamt / qMin(gn, (i * 2 + 1)) ) / scale_h ) - Y_DISTANCE;
+  int y = height - (int)( ( gesamt / qMin(gn, (i * 2 + 1)) ) / scale_h ) - Y_DISTANCE;
 
   return QPoint(x, y);
 }
 
 QPoint EvaluationView::__speedPoint(float durch[], int gn, int i)
 {
+  int height = scrollFrame->viewport()->height();
+
   //  = Abstand am Anfang der Kurve
   int x = ( curTime - startTime ) / secWidth + X_DISTANCE ;
 
@@ -320,13 +324,15 @@ QPoint EvaluationView::__speedPoint(float durch[], int gn, int i)
       gesamt += durch[loop];
     }
 
-  int y = this->height() - (int)( ( gesamt / qMin(gn, (i *  2 + 1)) ) / scale_v ) - Y_DISTANCE;
+  int y = height - (int)( ( gesamt / qMin(gn, (i *  2 + 1)) ) / scale_v ) - Y_DISTANCE;
 
   return QPoint(x, y);
 }
 
 QPoint EvaluationView::__varioPoint(float durch[], int gn, int i)
 {
+  int height = scrollFrame->viewport()->height();
+
   int x = ( curTime - startTime ) / secWidth + X_DISTANCE ;
   // PRE_GRAPH_DISTANCE = Abstand am Anfang der Kurve
 
@@ -337,7 +343,7 @@ QPoint EvaluationView::__varioPoint(float durch[], int gn, int i)
       gesamt += durch[loop];
     }
 
-  int y = (this->height() / 2) - (int)( ( gesamt / qMin(gn, (i * 2 + 1)) ) / scale_va );
+  int y = (height / 2) - (int)( ( gesamt / qMin(gn, (i * 2 + 1)) ) / scale_va );
 
   return QPoint(x, y);
 }
@@ -617,16 +623,16 @@ void EvaluationView::drawCurve( bool arg_vario,
 
 void EvaluationView::__draw()
 {
-  // vertical scale factor
-  scale_v = getSpeed(flight->getPoint(Flight::V_MAX)) /
-          ((double)(this->height() - 2*Y_DISTANCE));
+  int height = scrollFrame->viewport()->height();
 
-  scale_h = flight->getPoint(Flight::H_MAX).height /
-          ((double)(this->height() - 2*Y_DISTANCE));
+  // vertical scale factor
+  scale_v = getSpeed(flight->getPoint(Flight::V_MAX)) / ((double)(height - 2*Y_DISTANCE));
+
+  scale_h = flight->getPoint(Flight::H_MAX).height / ((double)(height - 2*Y_DISTANCE));
 
   scale_va = qMax((double)getVario(flight->getPoint(Flight::VA_MAX)),
               ( -1.0 * (double)getVario(flight->getPoint(Flight::VA_MIN))) ) /
-          ((double)(this->height() - 2*Y_DISTANCE) / 2.0);
+          ((double)(height - 2*Y_DISTANCE) / 2.0);
 
   unsigned int gn_v  = smoothness_v * 2 + 1;
   unsigned int gn_va = smoothness_va * 2 + 1;
@@ -703,42 +709,42 @@ void EvaluationView::__draw()
           elevArray.setPoint(loop, __baroPoint(elev_d_last, gn_h,
                         flight->getRouteLength() - loop - 1));
       }
+
       if(loop < flight->getRouteLength() - smoothness_va)
-          varioArray.setPoint(loop,
-              __varioPoint(vario_d, gn_va, loop));
+          varioArray.setPoint( loop,
+                               __varioPoint(vario_d, gn_va, loop));
       else
-          varioArray.setPoint(loop,
-              __varioPoint(vario_d_last, gn_va,
-                        flight->getRouteLength() - loop - 1));
+          varioArray.setPoint( loop,
+                               __varioPoint(vario_d_last, gn_va,
+                               flight->getRouteLength() - loop - 1));
 
       if(loop < flight->getRouteLength() - smoothness_v)
-          speedArray.setPoint(loop,
-              __speedPoint(speed_d, gn_v, loop));
+          speedArray.setPoint( loop,
+                               __speedPoint(speed_d, gn_v, loop));
       else
-          speedArray.setPoint(loop,
-              __speedPoint(speed_d_last, gn_v,
-                        flight->getRouteLength() - loop - 1));
+          speedArray.setPoint( loop,
+                               __speedPoint(speed_d_last, gn_v,
+                               flight->getRouteLength() - loop - 1));
     }
 
   pixBufferKurve.fill(Qt::white);
   QPainter painter;
   painter.begin(&pixBufferKurve);
 
-  if(baro)
+  if( baro )
     { // draw elevation
       painter.setBrush(QColor(35, 120, 20));
       painter.setPen(QPen(QColor(35, 120, 20), 1));
       // add two points so we can draw a filled area
 
-      elevArray.setPoint(flight->getRouteLength(),
-        QPoint(
-      elevArray[flight->getRouteLength()-1].x(),
-      scrollFrame->viewport()->height() - Y_DISTANCE ) );
+      elevArray.setPoint( flight->getRouteLength(),
+                          QPoint( elevArray[flight->getRouteLength()-1].x(),
+                          height - Y_DISTANCE ) );
 
-      elevArray.setPoint( flight->getRouteLength()+1,
-        QPoint(
-      X_DISTANCE,
-      scrollFrame->viewport()->height() - Y_DISTANCE ) );
+      elevArray.setPoint( flight->getRouteLength() + 1,
+                           QPoint( X_DISTANCE,
+                           height - Y_DISTANCE ) );
+
       painter.drawPolygon(elevArray);
     }
 
@@ -757,7 +763,7 @@ void EvaluationView::__draw()
       xpos = (wP.at(n)->sector1 - startTime ) / secWidth + X_DISTANCE;
 
       painter.setPen(QPen(QColor(100,100,100), 3));
-      painter.drawLine(xpos, this->height() - Y_DISTANCE, xpos, Y_DISTANCE + 5);
+      painter.drawLine(xpos, height - Y_DISTANCE, xpos, Y_DISTANCE + 5);
       painter.setPen(QPen(QColor(0,0,0), 3));
       painter.setFont(QFont("helvetica",8));
       painter.drawText (xpos - 40, Y_DISTANCE - 20 - 5,80,10, Qt::AlignCenter, wP.at(n)->name);
@@ -768,6 +774,7 @@ void EvaluationView::__draw()
           timeText = printTime(wP.at(n)->sector2);
       else if(wP.at(n)->sectorFAI != 0)
           timeText = printTime(wP.at(n)->sectorFAI);
+
       painter.setFont(QFont("helvetica",7));
       painter.drawText(xpos - 40, Y_DISTANCE - 10 - 5, 80, 10, Qt::AlignCenter,timeText);
     }
@@ -807,6 +814,8 @@ void EvaluationView::__drawCursor( const int xpos,
                                    const bool move,
                                    const int cursor )
 {
+  int height = scrollFrame->viewport()->height();
+
   // Screen coordinates !!!
   QPainter painter;
 
@@ -837,7 +846,7 @@ void EvaluationView::__drawCursor( const int xpos,
           painter.setPen(QPen(QColor(200,0,0), 1)); // red color
         }
 
-      painter.drawLine( xpos, this->height() - Y_DISTANCE, xpos, Y_DISTANCE );
+      painter.drawLine( xpos, height - Y_DISTANCE, xpos, Y_DISTANCE );
       painter.end();
     }
    else
@@ -859,7 +868,7 @@ void EvaluationView::__drawCursor( const int xpos,
       QPixmap pixCursor2 = _mainWindow->getPixmap("flag_red.png");
 
       // draw new line
-      painter.drawLine(xpos, this->height() - Y_DISTANCE, xpos, Y_DISTANCE);
+      painter.drawLine(xpos, height - Y_DISTANCE, xpos, Y_DISTANCE);
 
       // draw flags
       if(cursor == 1)
