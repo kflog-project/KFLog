@@ -363,5 +363,5 @@ void OptimizationWizard::setMapContents( Map* _map )
 double OptimizationWizard::optimizationResult( unsigned int* pointList,
                                                double * points )
 {
-  return optimization->optimizationResult( pointList,points );
+  return optimization->optimizationResult( pointList, points );
 }

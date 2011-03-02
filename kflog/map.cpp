@@ -57,7 +57,7 @@ Map::Map( QWidget* parent ) :
   drawFlightCursors(false),
   lastCur1Pos(-100,-100),
   lastCur2Pos(-100,-100),
-  prePos(-50, -50),
+  prePos(-5000, -5000),
   planning(-1),
   tempTask(""),
   isDrawing(false),
@@ -126,11 +126,10 @@ Map::Map( QWidget* parent ) :
   redrawMapTimer = new QTimer(this);
   redrawMapTimer->setSingleShot(true);
 
-  connect( redrawMapTimer, SIGNAL(timeout()),
-           this, SLOT(slotRedrawMap()));
+  connect( redrawMapTimer, SIGNAL(timeout()), this, SLOT(slotRedrawMap()));
 
-  isZoomRect=false;
-  dragZoomRect=false;
+  isZoomActive=false;
+  isDragZoomActive=false;
 }
 
 Map::~Map()
@@ -145,36 +144,45 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
   QPoint vector = event->pos() - mapInfoTimerStartpoint;
 
-  if(vector.manhattanLength() > 4)
-  {
-    mapInfoTimer->stop();
-    // don't start the timer when in planning mode
-    if ((planning != 1) &&
-        (planning != 3))
+  if( vector.manhattanLength() > 4 )
     {
-      mapInfoTimer->start(MAP_INFO_DELAY);
-      mapInfoTimerStartpoint = event->pos();
-    }
-  }
+      mapInfoTimer->stop();
 
-  if(planning == 1 || planning == 3)
+      // don't start the timer when in planning or zoom mode
+      if( (planning != 1 && planning != 3) || isZoomActive == false )
+        {
+          mapInfoTimer->start( MAP_INFO_DELAY );
+          mapInfoTimerStartpoint = event->pos();
+        }
+    }
+
+  if( planning == 1 || planning == 3 )
     {
       double delta(8.0);
 
-      if(_globalMapMatrix->isSwitchScale()) delta = 16.0;
+      if( _globalMapMatrix->isSwitchScale() )
+        {
+          delta = 16.0;
+        }
 
       // If we are near to the last temp-point of the task,
       // and SHIFT is not pressed, we can exit ...
       if( (abs(current.x() - preSnapPoint.x()) <= delta) &&
           (abs(current.y() - preSnapPoint.y()) <= delta) &&
-          event->modifiers() != Qt::ShiftModifier )  return;
+          event->modifiers() != Qt::ShiftModifier )
+        {
+          return;
+        }
 
-      BaseFlightElement *f = _globalMapContents->getFlight();
+      BaseFlightElement *bfe = _globalMapContents->getFlight();
 
-      if(!f)  return;
+      if(! bfe)
+        {
+          return;
+        }
 
-      QList<Waypoint*> taskPointList = f->getWPList();
-      QList<Waypoint*> tempTaskPointList = f->getWPList();
+      QList<Waypoint*> taskPointList = bfe->getWPList();
+      QList<Waypoint*> tempTaskPointList = bfe->getWPList();
       QList<Waypoint*> &wpList = _globalMapContents->getWaypointList();
 
       // 3: Task beendet verschieben eines Punktes
@@ -350,94 +358,102 @@ void Map::mouseMoveEvent(QMouseEvent* event)
     //////////////
   }
 
-  if (!timerAnimate->isActive())
+  if( ! timerAnimate->isActive() )
     {
-      if(prePos.x() >= 0)
-        {
-          QPainter p(this);
-          p.drawPixmap( prePos.x() - 20, prePos.y() - 20,
-                        pixBuffer,
-                        prePos.x() - 20, prePos.y() - 20, 40, 40);
-        }
+      BaseFlightElement *bfe = _globalMapContents->getFlight();
 
-      BaseFlightElement *f = _globalMapContents->getFlight();
-
-      if(f)
+      if( bfe )
         {
-          FlightPoint cP;
+          FlightPoint fP;
           int index;
 
-          if ((index = f->searchPoint(event->pos(), cP)) != -1)
+          if( (index = bfe->searchPoint( event->pos(), fP )) != -1 )
             {
-              emit showFlightPoint(_globalMapMatrix->mapToWgs(event->pos()), cP);
-              prePos = _globalMapMatrix->map(cP.projP);
-              preIndex = index;
+              emit showFlightPoint( _globalMapMatrix->mapToWgs( event->pos() ), fP );
 
-              QPainter p(this);
-              p.drawPixmap( prePos.x() - 20, prePos.y() - 20, pixBuffer );
+              prePos = _globalMapMatrix->map( fP.projP );
+              preIndex = index;
             }
           else
             {
-              emit showPoint(_globalMapMatrix->mapToWgs(event->pos()));
+              emit showPoint( _globalMapMatrix->mapToWgs( event->pos() ) );
             }
         }
       else
         {
-          emit showPoint(_globalMapMatrix->mapToWgs(event->pos()));
-          prePos.setX(-5000);
-          prePos.setY(-5000);
+          emit showPoint( _globalMapMatrix->mapToWgs( event->pos() ) );
+          prePos.setX( -5000 );
+          prePos.setY( -5000 );
+        }
+    }
+
+  // Assume, that mouse position must be converted to map coordinates.
+  __findElevation( _globalMapMatrix->invertToMap(current) );
+
+  if( isDragZoomActive )
+    {
+      // We don't want to popup any info, when mouse is moved for zoom
+      mapInfoTimer->stop();
+
+      if( pixZoomRect.isNull() || pixZoomRect.size() != size() )
+        {
+          pixZoomRect = QPixmap( size() );
         }
 
+      pixZoomRect.fill( Qt::transparent );
+
+      QPainter zoomPainter;
+      zoomPainter.begin( &pixZoomRect );
+
+      double width = event->pos().x() - beginDrag.x();
+      double height = event->pos().y() - beginDrag.y();
+      const double widthRatio = fabs( width / this->width() );
+      const double heightRatio = fabs( height / this->height() );
+
+      if( widthRatio > heightRatio )
+        {
+          height = this->height() * widthRatio;
+
+          if( event->pos().y() < beginDrag.y() )
+            {
+              // make sure we keep the right sign
+              height *= -1;
+            }
+        }
+      else
+        {
+          width = this->width() * heightRatio;
+
+          if( event->pos().x() < beginDrag.x() )
+            {
+              // make sure we keep the right sign
+              width *= -1;
+            }
+        }
+
+      zoomPainter.setPen(QPen(QColor(100, 100, 100), 2, Qt::DashLine));
+      // Draw the new one:
+      zoomPainter.drawRect( beginDrag.x(), beginDrag.y(), (int)width, (int)height);
+      zoomPainter.end();
+
+      repaint();
+
+      sizeDrag.setWidth((int)width);
+      sizeDrag.setHeight((int)height);
+  }
+
+  if( ! isDragZoomActive && event->buttons() == Qt::LeftButton )
+    {
+      // We don't want to popup any info, when mouse is moved for zoom
+      mapInfoTimer->stop();
+
+      // start dragZoom
+      setCursor( Qt::CrossCursor );
+      isZoomActive = true;
+      beginDrag = event->pos();
+      sizeDrag = QSize( 0, 0 );
+      isDragZoomActive = true;
     }
-
-    // Assume, that mouse position must be converted to map coordinates.
-    __findElevation( _globalMapMatrix->invertToMap(current) );
-
-    if (dragZoomRect){
-        QPainter zoomPainter;
-        zoomPainter.begin(this);
-        zoomPainter.setCompositionMode(QPainter::CompositionMode_Xor);
-
-        double width = event->pos().x() - beginDrag.x();
-        double height = event->pos().y() - beginDrag.y();
-        const double widthRatio = fabs(width / this->width());
-        const double heightRatio = fabs(height / this->height());
-
-        if(widthRatio > heightRatio)
-          {
-            height = this->height() * widthRatio;
-            if(event->pos().y() < beginDrag.y()) {  height *= -1;  }  //make sure we keep the right sign
-          }
-        else
-          {
-            width = this->width() * heightRatio;
-            if(event->pos().x() < beginDrag.x()) {  width *= -1;  }   //make sure we keep the right sign
-          }
-
-
-        zoomPainter.setPen(QPen(QColor(255, 255, 255), 1, Qt::DashLine));
-        // Delete the old rectangle:
-        zoomPainter.drawRect( beginDrag.x(), beginDrag.y(), sizeDrag.x(), sizeDrag.y());
-        // Draw the new one:
-        zoomPainter.drawRect( beginDrag.x(), beginDrag.y(), (int)width, (int)height);
-        zoomPainter.end();
-
-        //This is odd. Why use a QPoint when a QSize would be more appropriate?
-        sizeDrag.setX((int)width);
-        sizeDrag.setY((int)height);
-    }
-
-    //warning("dragzoomrect: %d, event->state: %d (leftbutton=%d)", dragZoomRect, event->modifiers(), LeftButton);
-    if( (!dragZoomRect) && (event->modifiers() == Qt::LeftButton) )
-      {
-        //start dragZoom
-        setCursor( Qt::CrossCursor );
-        isZoomRect = true;
-        beginDrag = event->pos();
-        sizeDrag = QPoint( 0, 0 );
-        dragZoomRect = true;
-      }
-
 }
 
 /**
@@ -860,7 +876,7 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
 
 void Map::keyReleaseEvent(QKeyEvent* event)
 {
-qWarning("key Release");
+  qWarning("key Release");
 
   if(event->modifiers() == Qt::ShiftModifier)
     {
@@ -869,89 +885,98 @@ qWarning("key Release");
     }
 }
 
-void Map::mouseReleaseEvent(QMouseEvent* event)
+void Map::mouseReleaseEvent( QMouseEvent* event )
 {
-  if (isZoomRect)
+  if( isZoomActive )
     {
-      dragZoomRect=false;
-      isZoomRect=false;
+      isDragZoomActive = false;
+      isZoomActive = false;
+      pixZoomRect = QPixmap();
       __setCursor();
 
-      if(abs(beginDrag.x()-event->pos().x())>10 && // don't zoom if rect is too small
-            abs(beginDrag.y()-event->pos().y())>10 && event->button()==Qt::LeftButton) // or other than left button was pressed
+      if( abs(beginDrag.x()-event->pos().x()) > 10 && // don't zoom if rect is too small
+          abs(beginDrag.y()-event->pos().y()) > 10 &&
+          event->button() == Qt::LeftButton) // or other than left button was pressed
         {
           double width = event->pos().x() - beginDrag.x();
           double height = event->pos().y() - beginDrag.y();
           const double widthRatio = fabs(width / this->width());
           const double heightRatio = fabs(height / this->height());
 
-          if(widthRatio > heightRatio)
+          if( widthRatio > heightRatio )
             {
               height = this->height() * widthRatio;
-              if(event->pos().y() < beginDrag.y()) {  height *= -1;  }
+
+              if( event->pos().y() < beginDrag.y() )
+                {
+                  height *= -1;
+                }
             }
           else
             {
               width = this->width() * heightRatio;
-              if(event->pos().x() < beginDrag.x()) {  width *= -1;  }
+
+              if( event->pos().x() < beginDrag.x() )
+                {
+                  width *= -1;
+                }
             }
 
 
-          if (width<0 && height<0) {  //work around for problem where mapmatrix calculates the wrong scale if both width and height are < 0
-            _globalMapMatrix->centerToRect(QRect(QPoint(beginDrag.x() + (int)width, beginDrag.y() + (int)height), beginDrag), QSize(0,0), false);
-          } else {
-            _globalMapMatrix->centerToRect(QRect(beginDrag, QPoint(beginDrag.x() + (int)width, beginDrag.y() + (int)height)), QSize(0,0), false);
-          }
+          if( width < 0 && height < 0 )
+            {  // work around for problem where mapmatrix calculates the wrong
+               // scale if both width and height are < 0
+              _globalMapMatrix->centerToRect(QRect(QPoint(beginDrag.x() + (int)width, beginDrag.y() + (int)height), beginDrag), QSize(0,0), false);
+            }
+          else
+            {
+              _globalMapMatrix->centerToRect(QRect(beginDrag, QPoint(beginDrag.x() + (int)width, beginDrag.y() + (int)height)), QSize(0,0), false);
+            }
+
           __redrawMap();
-        } else {
-          //we are not going to zoom, but we still need to clean up our mess!
-          QPainter zoomPainter;
-          zoomPainter.begin(this);
-          zoomPainter.setCompositionMode(QPainter::CompositionMode_Xor);
-          zoomPainter.setPen(QPen(QColor(255, 255, 255), 1, Qt::DashLine));
-          // Delete the old rectangle:
-          zoomPainter.drawRect( beginDrag.x(), beginDrag.y(), sizeDrag.x(), sizeDrag.y());
+        }
+      else
+        {
+          // we are not going to zoom, but we still need to clean up our mess!
+          update();
         }
     }
 }
 
 void Map::mousePressEvent(QMouseEvent* event)
 {
-  qDebug() << "Map::mousePressEvent";
-
   // First: delete the cursor, if visible:
   if( prePos.x() >= 0 )
     {
-      qDebug() << "Map::mousePressEvent: prePos=" << prePos
-               << "Reset Flight Cursores";
       drawFlightCursors = false;
       repaint();
     }
 
-  if( isZoomRect )
+  if( isZoomActive )
     {
-      // Zooming
+      // User has pressed key zero
       beginDrag = event->pos();
-      sizeDrag = QPoint( 0, 0 );
-      dragZoomRect = true;
+      sizeDrag = QSize( 0, 0 );
+      isDragZoomActive = true;
     }
   else
-  {
-    const QPoint current(event->pos());
+    {
+      const QPoint current( event->pos() );
 
-    Airfield *hitElement;
-    QString text;
+      Airfield *hitElement;
+      QString text;
 
-    double dX, dY, delta(16.0);
+      double dX, dY, delta( 16.0 );
 
-    if(_globalMapMatrix->isSwitchScale()) delta = 8.0;
+      if( _globalMapMatrix->isSwitchScale() )
+        delta = 8.0;
 
-    if(event->button() == Qt::MidButton)
-      {
-        // Move Map
-        _globalMapMatrix->centerToPoint(event->pos());
-        __redrawMap();
-      }
+      if( event->button() == Qt::MidButton )
+        {
+          // Move Map
+          _globalMapMatrix->centerToPoint( event->pos() );
+          __redrawMap();
+        }
 
     else if(event->button() == Qt::LeftButton)
       {
@@ -1055,14 +1080,21 @@ void Map::paintEvent( QPaintEvent* event )
   // Redraw the flight cursors on request.
   if( drawFlightCursors == true )
     {
-      qDebug() << "Map::paintEvent() Draw FlightCursors";
-
       painter.drawPixmap( event->rect().left(),
                           event->rect().top(),
                           pixFlightCursors,
                           0, 0, event->rect().width(),
                           event->rect().height() );
     }
+
+  if( ! pixZoomRect.isNull() && isDragZoomActive == true )
+    {
+      // Draws the zooming rectangle
+      painter.drawPixmap( event->rect().left(),
+                          event->rect().top(),
+                          pixZoomRect );
+    }
+
 }
 
 void Map::__drawGrid()
@@ -1640,7 +1672,7 @@ void Map::slotClearCursor()
 void Map::slotZoomRect()
 {
   setCursor(Qt::CrossCursor);
-  isZoomRect=true;
+  isZoomActive = true;
 }
 
 void Map::slotCenterToWaypoint(const int id)
@@ -1660,41 +1692,49 @@ void Map::slotCenterToWaypoint(const int id)
 
 void Map::slotCenterToFlight()
 {
-  Flight *f = dynamic_cast<Flight *> (_globalMapContents->getFlight());
+  Flight *bfe = dynamic_cast<Flight *> ( _globalMapContents->getFlight() );
 
-  if (f) {
-    QRect r;
-    QRect r2;
-    QList<Flight*> fl;
+  if( bfe )
+    {
+      QRect r;
+      QRect r2;
+      QList<Flight*> fl;
 
-    switch (f->getObjectType()) {
-      case BaseMapElement::Flight:
-        r = f->getFlightRect();
-        break;
-      case BaseMapElement::FlightGroup:
-        fl = ((FlightGroup *)f)->getFlightList();
-        r = fl.at(0)->getFlightRect();
-        for(int i = 1; i < fl.count(); i++) {
-          r2 = fl.at(i)->getFlightRect();
-          r.setLeft(qMin(r.left(), r2.left()));
-          r.setTop(qMin(r.top(), r2.top()));
-          r.setRight(qMax(r.right(), r2.right()));
-          r.setBottom(qMax(r.bottom(), r2.bottom()));
+      switch( bfe->getObjectType() )
+        {
+          case BaseMapElement::Flight:
+            r = bfe->getFlightRect();
+            break;
+
+          case BaseMapElement::FlightGroup:
+            fl = ((FlightGroup *) bfe)->getFlightList();
+            r = fl.at( 0 )->getFlightRect();
+
+            for( int i = 1; i < fl.count(); i++ )
+              {
+                r2 = fl.at( i )->getFlightRect();
+                r.setLeft( qMin( r.left(), r2.left() ) );
+                r.setTop( qMin( r.top(), r2.top() ) );
+                r.setRight( qMax( r.right(), r2.right() ) );
+                r.setBottom( qMax( r.bottom(), r2.bottom() ) );
+              }
+
+            break;
+
+          default:
+            return;
         }
-        break;
-      default:
-        return;
-    }
 
-    // check if the Rectangle is zero
-    // is it necessary here?
-    if (!r.isNull()) {
-      _globalMapMatrix->centerToRect(r);
-      __redrawMap();
-    }
+      // check if the Rectangle is zero
+      // is it necessary here?
+      if( !r.isNull() )
+        {
+          _globalMapMatrix->centerToRect( r );
+          __redrawMap();
+        }
 
-  emit changed(this->size());
-  }
+      emit changed( this->size() );
+    }
 }
 
 void Map::slotCenterToTask()
@@ -2620,9 +2660,10 @@ void Map::__setCursor()
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
   };
 
-  const QBitmap cross = QBitmap::fromData ( QSize(32,32), cross_bits );
+  static const QBitmap cross = QBitmap::fromData( QSize(32,32), cross_bits );
 
-  const QCursor crossCursor(cross, cross);
+  static const QCursor crossCursor(cross, cross);
+
   setCursor(crossCursor);
 }
 

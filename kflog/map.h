@@ -37,6 +37,7 @@
 #include <QList>
 #include <QMenu>
 #include <QRegion>
+#include <QSize>
 #include <QTimer>
 #include <QUrl>
 #include <QWidget>
@@ -320,6 +321,10 @@ private:
      */
     bool drawFlightCursors;
     /**
+     * Pixmap containing the Zoom rectangle.
+     */
+    QPixmap pixZoomRect;
+    /**
      * Pixmap to hold waypoints of active WaypointsCatalog
      */
     QPixmap pixWaypoints;
@@ -359,14 +364,15 @@ private:
     bool isSnapping;
     // temp task (snapping)
     FlightTask tempTask;
-    // for the rectangular zoom: indicates that dragZoom mode is initiated, but the drag itself has not nessecairaly started
-    bool isZoomRect;
+    // for the rectangular zoom: indicates that dragZoom mode is initiated but
+    // the drag itself has not been started
+    bool isZoomActive;
     // indicates that the drag for the dragZoom has started
-    bool dragZoomRect;
+    bool isDragZoomActive;
     // contains the point where the dragZoom was started
     QPoint beginDrag;
     // contains the size of the drag. Don't know why it's not a QSize object...
-    QPoint sizeDrag;
+    QSize sizeDrag;
 
     /**
      * Added for a Workaround: There are not two messages

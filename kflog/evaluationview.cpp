@@ -199,7 +199,7 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
         return;
       }
 
-    flight->setTaskByTimes(cursor1,cursor2);
+    flight->setTaskByTimes(cursor1, cursor2);
 
     evalDialog->updateText(flight->getPointIndexByTime(cursor1),
                            flight->getPointIndexByTime(cursor2), true);
@@ -610,6 +610,7 @@ void EvaluationView::drawCurve( bool arg_vario,
       vario = arg_vario;
       speed = arg_speed;
       baro  = arg_baro;
+
       smoothness_va = arg_smoothness_va;
       smoothness_v  = arg_smoothness_v;
       smoothness_h  = arg_smoothness_h;
@@ -628,6 +629,8 @@ void EvaluationView::drawCurve( bool arg_vario,
 
 void EvaluationView::__draw()
 {
+  qDebug() << "EvaluationView::__draw()";
+
   int height = scrollFrame->viewport()->height();
 
   // vertical scale factor
@@ -637,7 +640,7 @@ void EvaluationView::__draw()
 
   scale_va = qMax((double)getVario(flight->getPoint(Flight::VA_MAX)),
               ( -1.0 * (double)getVario(flight->getPoint(Flight::VA_MIN))) ) /
-          ((double)(height - 2*Y_DISTANCE) / 2.0);
+              ((double)(height - 2*Y_DISTANCE) / 2.0);
 
   unsigned int gn_v  = smoothness_v * 2 + 1;
   unsigned int gn_va = smoothness_va * 2 + 1;
@@ -733,6 +736,7 @@ void EvaluationView::__draw()
     }
 
   pixBufferKurve.fill(Qt::white);
+
   QPainter painter;
   painter.begin(&pixBufferKurve);
 
@@ -763,25 +767,32 @@ void EvaluationView::__draw()
 
   wP = flight->getWPList();
 
-  for(int n = 1; n + 1 < wP.count(); n++)
+  for( int n = 1; n + 1 < wP.count(); n++ )
     {
       xpos = (wP.at(n)->sector1 - startTime ) / secWidth + X_DISTANCE;
 
-      painter.setPen(QPen(QColor(100,100,100), 3));
+      painter.setPen(QPen(QColor(100,100,100), 1)); // color dark gray
       painter.drawLine(xpos, height - Y_DISTANCE, xpos, Y_DISTANCE + 5);
-      painter.setPen(QPen(QColor(0,0,0), 3));
+      painter.setPen(QPen(QColor(0,0,0), 2));
       painter.setFont(QFont("helvetica",8));
-      painter.drawText (xpos - 40, Y_DISTANCE - 20 - 5,80,10, Qt::AlignCenter, wP.at(n)->name);
+      painter.drawText( xpos - 40, Y_DISTANCE - 20 - 5, 80, 10, Qt::AlignCenter,
+                        wP.at(n)->name);
 
       if(wP.at(n)->sector1 != 0)
-          timeText = printTime(wP.at(n)->sector1);
+        {
+          timeText = printTime(wP.at(n)->sector1, true, true);
+        }
       else if(wP.at(n)->sector2 != 0)
-          timeText = printTime(wP.at(n)->sector2);
+        {
+          timeText = printTime(wP.at(n)->sector2, true, true);
+        }
       else if(wP.at(n)->sectorFAI != 0)
-          timeText = printTime(wP.at(n)->sectorFAI);
+        {
+          timeText = printTime(wP.at(n)->sectorFAI, true, true);
+        }
 
-      painter.setFont(QFont("helvetica",7));
-      painter.drawText(xpos - 40, Y_DISTANCE - 10 - 5, 80, 10, Qt::AlignCenter,timeText);
+      painter.setFont( QFont( "helvetica", 7 ) );
+      painter.drawText(xpos - 40, Y_DISTANCE - 10 - 5, 80, 10, Qt::AlignCenter, timeText);
     }
 
   if(vario)

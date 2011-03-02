@@ -397,6 +397,8 @@ void EvaluationDialog::resizeEvent(QResizeEvent* event)
 
 void EvaluationDialog::slotShowFlightData()
 {
+  qDebug() << "EvaluationDialog::slotShowFlightData()";
+
   flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
   QWidget* parent = parentWidget();

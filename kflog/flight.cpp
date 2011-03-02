@@ -992,10 +992,14 @@ void Flight::__checkMaxMin()
 
 QList<Waypoint*> Flight::getWPList()
 {
-  if(!optimized)
-    return origTask.getWPList();
+  if( !optimized )
+    {
+      return origTask.getWPList();
+    }
   else
-    return optimizedTask.getWPList();
+    {
+      return optimizedTask.getWPList();
+    }
 }
 
 QList<Waypoint*> Flight::getOriginalWPList()
@@ -1007,6 +1011,7 @@ bool Flight::optimizeTaskOLC( Map* map )
 {
   OptimizationWizard* wizard = new OptimizationWizard( map );
   wizard->setMapContents(map);
+
   int wizard_ret = wizard->exec();
 
   if( wizard_ret == QDialog::Rejected )
@@ -1029,23 +1034,23 @@ bool Flight::optimizeTaskOLC( Map* map )
 
   APPEND_WAYPOINT_OLC2003(startIndex, 0, QObject::tr("Take-Off"))
   APPEND_WAYPOINT_OLC2003(idList[0], dist(route.at(idList[0]), route.at(0)),
-      QObject::tr("Begin of Soaring"))
+      QObject::tr("Soaring Begin"))
   APPEND_WAYPOINT_OLC2003(idList[1], dist(route.at(idList[1]), route.at(1)),
-      QObject::tr("Begin of Task"))
+      QObject::tr("Task Begin"))
   APPEND_WAYPOINT_OLC2003(idList[2], dist(route.at(idList[2]),
-      route.at(idList[1])), QObject::tr("Optimize 1"))
+      route.at(idList[1])), QObject::tr("OLC 1"))
   APPEND_WAYPOINT_OLC2003(idList[3], dist(route.at(idList[3]),
-      route.at(idList[2])), QObject::tr("Optimize 2"))
+      route.at(idList[2])), QObject::tr("OLC 2"))
   APPEND_WAYPOINT_OLC2003(idList[4], dist(route.at(idList[4]),
-      route.at(idList[3])), QObject::tr("Optimize 3"))
+      route.at(idList[3])), QObject::tr("OLC 3"))
   APPEND_WAYPOINT_OLC2003(idList[5], dist(route.at(idList[5]),
-      route.at(idList[4])), QObject::tr("Optimize 4"))
+      route.at(idList[4])), QObject::tr("OLC 4"))
   APPEND_WAYPOINT_OLC2003(idList[6], dist(route.at(idList[6]),
-      route.at(idList[5])), QObject::tr("Optimize 5"))
+      route.at(idList[5])), QObject::tr("OLC 5"))
   APPEND_WAYPOINT_OLC2003(idList[7], dist(route.at(idList[7]),
-      route.at(idList[6])), QObject::tr("End of Task"))
+      route.at(idList[6])), QObject::tr("Task End"))
   APPEND_WAYPOINT_OLC2003(idList[8], dist(route.at(idList[8]),
-      route.at(idList[7])), QObject::tr("End of Soaring"))
+      route.at(idList[7])), QObject::tr("Soaring End"))
   APPEND_WAYPOINT_OLC2003(landIndex, dist(route.last(),
       route.at(idList[8])), QObject::tr("Landing"))
 

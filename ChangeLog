@@ -1,5 +1,15 @@
 $Id$
 
+2011-03-02 Axel Pauli <axel@kflog.org>
+  * Error fixed in menu point available flights. Caused a core dump.
+  * An optimized flight was never redrawn in the EvaluationDialog class.
+    Missing call added in MainWindow. Labels of optimized flights can overwrite
+    each other if the lay to near together in EvaluationDialog. 
+  * Zooming rectangle was never drawn at the map. That is fixed now. It was a
+    longer fight to get it running.
+  * Some QPainter complains fixed in class Map. But there are remain some
+    more issues in animation of flights.
+
 2011-03-01 Axel Pauli <axel@kflog.org>
   * Class IgcPreview removed. Not more usable under Qt4 because the
     support was removed in Qt4.
