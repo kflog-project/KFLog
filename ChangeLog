@@ -264,7 +264,7 @@ $Id$
   * Removed the prefix /KFLog from all setting items. That results in a better
     group structure in the stored file. Before all was saved under the single
     group KFLog.
-  * Replaced all Qt3 QString latin1() method calls by Qt4 toLatin1(),data()
+  * Replaced all Qt3 QString latin1() method calls by Qt4 toLatin1().data()
     methods calls.
   * Added some core attribute settings in main.cpp.
   * Introduced a target.h file which contains the current build version.
