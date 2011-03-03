@@ -54,18 +54,10 @@ EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
   layout->setSpacing( 1 );
   layout->addWidget(textSplitter);
 
-  // Setting default-values for the splitter
-/*  typedef QValueList<int> testList;
-  testList list;
-  list.append(100);
-  list.append(60);
-  textSplitter->setSizes(list);
-*/
-
   if( _settings.value("/EvaluationDialog/FirstOpen", true).toBool() )
     {
       // On first call we need a reasonable size of the widget. All other
-      // is later on handled by the dock widget.
+      // is handled later on by the dock widget.
       _settings.setValue( "/EvaluationDialog/FirstOpen", false );
       resize(800, 600);
     }
@@ -397,8 +389,6 @@ void EvaluationDialog::resizeEvent(QResizeEvent* event)
 
 void EvaluationDialog::slotShowFlightData()
 {
-  qDebug() << "EvaluationDialog::slotShowFlightData()";
-
   flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
   QWidget* parent = parentWidget();

@@ -649,8 +649,6 @@ void WaypointTreeView::slotDeleteWaypoints()
 /** No descriptions */
 void WaypointTreeView::fillWaypoints()
 {
-  qDebug() << "Waypoints::fillWaypoints()";
-
   QString tmp;
   Waypoint *w;
 

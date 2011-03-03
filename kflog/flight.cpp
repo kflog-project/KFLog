@@ -453,8 +453,6 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
 
 bool Flight::drawMapElement( QPainter* targetPainter )
 {
-  qDebug() << "Flight::drawMapElement() Ein";
-
   if(!__isVisible())
     {
       return false;
@@ -527,7 +525,6 @@ bool Flight::drawMapElement( QPainter* targetPainter )
       curPointA = curPointB;
     }
 
-  qDebug() << "Flight::drawMapElement() Aus";
   return true;
 }
 

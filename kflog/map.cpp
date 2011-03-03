@@ -1004,7 +1004,7 @@ void Map::mousePressEvent(QMouseEvent* event)
                   // Abstand entspricht der Icon-Grösse.
                   if (dX < delta && dY < delta)
                     {
-                      qDebug() << "Found" << hitElement->getName();
+                      // qDebug() << "Found" << hitElement->getName();
                       Waypoint *w = new Waypoint;
 
                       QString name = hitElement->getName();
@@ -1299,8 +1299,6 @@ void Map::__drawMap()
 
 void Map::__drawAirspaces()
 {
-  qDebug() << "Map::__drawAirspaces()";
-
   QPainter cuAeroMapP;
   cuAeroMapP.begin(&pixAirspace);
 
@@ -1335,13 +1333,13 @@ void Map::__drawAirspaces()
 
 void Map::__drawFlight()
 {
-  qDebug() << "Map::__drawFlight() Ein";
+  //qDebug() << "Map::__drawFlight() Ein";
 
   QPainter flightP(&pixFlight);
 
   _globalMapContents->drawList( &flightP, MapContents::FlightList );
 
-  qDebug() << "Map::__drawFlight() Aus";
+  //qDebug() << "Map::__drawFlight() Aus";
 }
 
 void Map::__drawPlannedTask(bool solid)
@@ -1558,13 +1556,9 @@ void Map::slotSavePixmap()
 
 void Map::slotRedrawFlight()
 {
-  qDebug() << "Map::slotRedrawFlight() EIN";
-
   pixFlight.fill(Qt::transparent);
   __drawFlight();
   __showLayer();
-
-  qDebug() << "Map::slotRedrawFlight() Aus";
 }
 
 void Map::slotRedrawMap()
@@ -1597,7 +1591,7 @@ void Map::slotActivatePlanning()
 
 void Map::__showLayer()
 {
-  qDebug() << "Map::__showLayer() Ein";
+  //qDebug() << "Map::__showLayer() Ein";
 
   pixBuffer = pixIsoMap;
 
@@ -1614,7 +1608,7 @@ void Map::__showLayer()
   slotDrawCursor( lastCur1Pos, lastCur2Pos );
   update();
 
-  qDebug() << "Map::__showLayer() Aus";
+  //qDebug() << "Map::__showLayer() Aus";
 }
 
 void Map::slotDrawCursor( const QPoint& p1, const QPoint& p2 )
@@ -2274,18 +2268,16 @@ void Map::slotFlightEnd()
 /** No descriptions */
 void Map::slotShowCurrentFlight()
 {
-  qDebug() << "Map::slotShowCurrentFlight() EIN";
-
-  BaseFlightElement *f = _globalMapContents->getFlight();
+  BaseFlightElement *bfe = _globalMapContents->getFlight();
 
   // just to make sure ...
   slotAnimateFlightStop();
 
   planning = 0;
 
-  if( f && f->getObjectType() == BaseMapElement::Task )
+  if( bfe && bfe->getObjectType() == BaseMapElement::Task )
     {
-      if( ( dynamic_cast<FlightTask *>(f))->getWPList().count() < 1 )
+      if( ( dynamic_cast<FlightTask *>(bfe))->getWPList().count() < 1 )
         {
           slotActivatePlanning();
         }
@@ -2300,24 +2292,23 @@ void Map::slotShowCurrentFlight()
   // bestimmt.
   slotRedrawFlight();
 
-  if(f)
+  if( bfe )
     {
-      switch(f->getObjectType())
+      switch( bfe->getObjectType() )
         {
           case BaseMapElement::Flight:
-            // fall through
           case BaseMapElement::FlightGroup:
             slotCenterToFlight();
             break;
+
           case BaseMapElement::Task:
             slotCenterToTask();
             break;
+
           default:
             break;
         }
     }
-
-  qDebug() << "Map::slotShowCurrentFlight() AUS";
 }
 
 /** append a waypoint to the current task */

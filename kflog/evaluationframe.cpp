@@ -177,8 +177,6 @@ EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg) :
 
 EvaluationFrame::~EvaluationFrame()
 {
-  qDebug() << "~EvaluationFrame()";
-
   // Save settings to the configuration file
   _settings.setValue("/Evaluation/ScaleTime", secWidth);
   _settings.setValue("/Evaluation/VarioSmoothness", smoothness_va);

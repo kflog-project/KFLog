@@ -345,7 +345,7 @@ bool FlightTask::isFAI(double d_wp, double d1, double d2, double d3)
 
 bool FlightTask::drawMapElement( QPainter* targetPainter )
 {
-  qDebug() << "FlightTask::drawMapElement Ein";
+  // qDebug() << "FlightTask::drawMapElement Ein";
 
   if( wpList.count() == 0 )
     {
@@ -526,7 +526,7 @@ bool FlightTask::drawMapElement( QPainter* targetPainter )
     }
   }
 
-  qDebug() << "FlightTask::drawMapElement Aus";
+  // qDebug() << "FlightTask::drawMapElement Aus";
 
   return true;
 }

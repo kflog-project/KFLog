@@ -7,9 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by André Somers
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -40,8 +41,8 @@
  *
  * \brief Base class for all flight recorder plugins
  *
- * This class funtions as a base class for all flight recorder plugins. The
- * derived classes must re-implement all member funtions. Because
+ * This class functions as a base class for all flight recorder plugins. The
+ * derived classes must re-implement all member methods. Because
  * different flight recorders have different capabilities, the capabilities
  * of a derived class must be set in the constructor using a
  * \ref FR_Capabilities structure. Also, you need use
@@ -50,7 +51,7 @@
  * </pre>
  * as implementation of the not supported member functions.
  *
- * \date 2003-2010
+ * \date 2003-2011
  *
  * \version $Id$
  */
@@ -257,7 +258,7 @@ public:
   /**
    * Sets a pointer to the parent widget (recorder dialog).
    */
-  void setParent(QWidget * _parent);
+  void setParent(QWidget* _parent);
 
 protected:
   /**
@@ -277,7 +278,7 @@ protected:
   FR_BasicData _basicData;
 
   /**
-   * The flight recorders config data.
+   * The flight recorders configuration data.
    */
   FR_ConfigData _configData;
 

@@ -1,5 +1,8 @@
 $Id$
 
+2011-03-03 Axel Pauli <axel@kflog.org>
+  * Different not more needed debug messages removed.
+
 2011-03-02 Axel Pauli <axel@kflog.org>
   * Error fixed in menu point available flights. Caused a core dump.
   * An optimized flight was never redrawn in the EvaluationDialog class.

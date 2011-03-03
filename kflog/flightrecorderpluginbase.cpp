@@ -7,9 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by André Somers
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -34,15 +35,14 @@ FlightRecorderPluginBase::transferStruct FlightRecorderPluginBase::transferData 
     {bps57600,  57600,  B57600},
     {bps115200,115200, B115200}
 };
+
 int FlightRecorderPluginBase::transferDataMax = 14;
 
 FlightRecorderPluginBase::FlightRecorderPluginBase( QObject *parent ) :
-  QObject( parent )
+  QObject( parent ),
+  _isConnected(false),
+  _errorinfo("")
 {
-  _isConnected=false;
-  _errorinfo="";
-  _parent=0;
-
   //initialize capabilities to none. This class is never instanciated, so this could be skipped
   _capabilities.maxNrTasks = 0;             //maximum number of tasks
   _capabilities.maxNrWaypoints = 0;         //maximum number of waypoints
@@ -88,12 +88,12 @@ FlightRecorderPluginBase::~FlightRecorderPluginBase()
  */
 QString FlightRecorderPluginBase::lastError()
 {
-  QString ret=_errorinfo;
-  _errorinfo="";
-  return ret;
+  QString error = _errorinfo;
+  _errorinfo = "";
+  return error;
 }
 
-void FlightRecorderPluginBase::setParent(QWidget* parent)
+void FlightRecorderPluginBase::setParent( QWidget* parent )
 {
   _parent = parent;
 }

@@ -50,6 +50,7 @@ EvaluationView::EvaluationView(QScrollArea* parent, EvaluationDialog* dialog) :
 
   if( parent )
     {
+      // I do that to give the scroll area a predefined size.
       parent->setMinimumSize( 600, 200 );
     }
 
@@ -72,8 +73,6 @@ EvaluationView::~EvaluationView()
 
 void EvaluationView::paintEvent( QPaintEvent* )
 {
-  // qDebug() << "EvaluationView::paintEvent() Rein";
-
   QPainter painter(this);
 
   if( ! pixBufferKurve.isNull() )
@@ -107,14 +106,10 @@ void EvaluationView::paintEvent( QPaintEvent* )
 
       painter.drawPixmap( lastPointerPosition.x(), lastPointerPosition.y(), pixPointer );
     }
-
-  // qDebug() << "EvaluationView::paintEvent() Raus";
 }
 
 void EvaluationView::mousePressEvent(QMouseEvent* event)
 {
-  // qDebug() << "EvaluationView::mousePressEvent()";
-
   int x1 = ( cursor1 - startTime ) / secWidth + X_DISTANCE ;
   int x2 = ( cursor2 - startTime ) / secWidth + X_DISTANCE ;
 
@@ -629,8 +624,6 @@ void EvaluationView::drawCurve( bool arg_vario,
 
 void EvaluationView::__draw()
 {
-  qDebug() << "EvaluationView::__draw()";
-
   int height = scrollFrame->viewport()->height();
 
   // vertical scale factor
@@ -767,6 +760,12 @@ void EvaluationView::__draw()
 
   wP = flight->getWPList();
 
+#warning "Drawing of turnpoints needs some tweaking!"
+
+  /* It should be checked the distance to the previous drawing point to avoid
+   * an overwriting of text and time labels if they lay to near.
+   */
+
   for( int n = 1; n + 1 < wP.count(); n++ )
     {
       xpos = (wP.at(n)->sector1 - startTime ) / secWidth + X_DISTANCE;
@@ -902,7 +901,6 @@ void EvaluationView::__drawCursor( const int xpos,
 
 void EvaluationView::resizeEvent(QResizeEvent* event)
 {
-  // qDebug() << "EvaluationView::resizeEvent():" << event->size();
   QWidget::resize( event->size() );
 }
 
