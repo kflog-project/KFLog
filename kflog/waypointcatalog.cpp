@@ -1216,13 +1216,13 @@ bool WaypointCatalog::readCup (const QString& catalog)
             }
         }
 
-      if( list[7].trimmed().length() ) // runway direction
+      if( list[7].trimmed().length() ) // runway direction 010...360
         {
           uint rdir = list[7].toInt(&ok);
 
           if( ok )
             {
-              w->runway.first = rdir;
+              w->runway.first = rdir/10;
               w->runway.second = w->runway.first <= 18 ? w->runway.first + 18 : w->runway.first - 18;
             }
         }
