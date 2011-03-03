@@ -1290,6 +1290,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
       names.insert( w->name );
     }
 
+  file.close();
   QApplication::restoreOverrideCursor();
 
   onDisc = true;
