@@ -684,10 +684,10 @@ bool Welt2000::parse( QString& path,
           lastChar = afName[i];
         }
 
-      // gps name, we use 9 characters without spaces
+      // gps name, we use 8 characters without spaces
       QString gpsName = afName;
       gpsName.remove(QChar(' '));
-      gpsName = gpsName.left(9);
+      gpsName = gpsName.left(8);
 
       if( ! shortNameSet.contains( gpsName) )
         {

@@ -1,5 +1,11 @@
 $Id$
 
+2011-03-10 Axel Pauli <axel@kflog.org>
+  * Names of waypoints limited to 8 characters and to upper cases.
+  * Runway headings limited to range 10...36. 0 stands for unknown heading.
+  * Waypoint dialog adapted to the new requirements.
+  * Waypoint catalog's read/write methods adapted to the new needs.
+
 2011-03-03 Axel Pauli <axel@kflog.org>
   * Different not more needed debug messages removed.
 

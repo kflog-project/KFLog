@@ -67,6 +67,11 @@ void WaypointDialog::__initDialog()
 
   name = new QLineEdit;
   name->setFocus();
+  name->setMaxLength(8); // limit name to 8 characters
+
+  connect( name, SIGNAL(textEdited( const QString& )),
+           this, SLOT(slotTextEdited( const QString& )) );
+
   layout->addWidget(name, row, 0);
 
   description = new QLineEdit;
@@ -144,9 +149,22 @@ void WaypointDialog::__initDialog()
   layout->addWidget(l2, row, 2);
   row++;
 
-  runway = new QLineEdit;
-  runway->setValidator( new QIntValidator( 1, 36, this ) );
-  layout->addWidget(runway, row, 0);
+  runway = new QComboBox;
+
+  // init combo box with headings
+  runway->addItem( "--" );
+
+  for( int i = 1; i <= 36; i++ )
+    {
+      QString item;
+      item = QString("%1").arg(i, 2, 10, QLatin1Char('0'));
+
+      runway->addItem( item );
+    }
+
+  runway->setCurrentIndex(0);
+
+  layout->addWidget( runway, row, 0 );
 
   length = new QLineEdit;
   length->setValidator( intRxValidator );
@@ -221,7 +239,7 @@ void WaypointDialog::clear()
   elevation->clear();
   icao->clear();
   frequency->clear();
-  runway->clear();
+  runway->setCurrentIndex(0);
   length->clear();
   surface->setCurrentIndex( surface->findText(Runway::item2Text(Runway::Unknown)) );
   comment->clear();
@@ -245,7 +263,7 @@ void WaypointDialog::slotAddWaypoint()
 
   // insert a new waypoint to current catalog
   Waypoint *w = new Waypoint;
-  w->name = name->text().toUpper();
+  w->name = name->text().left(8).toUpper();
   w->description = description->text();
   w->type = getWaypointType();
   w->origP.setLat(latitude->KFLogDegree());
@@ -253,12 +271,10 @@ void WaypointDialog::slotAddWaypoint()
   w->elevation = elevation->text().toInt();
   w->icao = icao->text().toUpper();
   w->frequency = frequency->text().toDouble();
-  text = runway->text();
+  w->runway.first = runway->currentIndex();
 
-  if( !text.isEmpty() )
+  if( runway->currentIndex() > 0 )
     {
-      w->runway.first = text.toInt();
-
       int rw1 = w->runway.first;
 
       w->runway.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18 );
@@ -279,6 +295,15 @@ void WaypointDialog::slotAddWaypoint()
   // clear should not be called when apply was pressed ...
   // and when ok is pressed, the dialog is closed anyway.
   // clear();
+}
+
+/**
+ * Called to make all text to upper cases.
+ */
+void WaypointDialog::slotTextEdited( const QString& text )
+{
+  // Change edited text to upper cases
+  name->setText( text.toUpper() );
 }
 
 /** return internal type of waypoint */

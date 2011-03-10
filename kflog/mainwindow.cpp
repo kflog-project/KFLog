@@ -1657,6 +1657,7 @@ void MainWindow::slotShowAbout()
           "<hml>"
           "KFLog %1, compiled at %2 with QT %3<br><br>"
           "Homepage: <a href=\"http://www.kflog.org/kflog/\">www.kflog.org/kflog/</a><br><br>"
+          "Software Repository: <a href=\"https://svn.kflog.org/svn/repos/kflog2/qt4\">https://svn.kflog.org/svn/repos/kflog2/qt4</a><br><br>"
           "Report bugs to: <a href=\"mailto:kflog-user&#64;kflog.org\">kflog.user&#64;kflog.org</a><br><br>"
           "Published under the <a href=\"http://www.gnu.org/licenses/licenses.html#GPL\">GPL</a>"
           "</html>" ).arg( QCoreApplication::applicationVersion() )

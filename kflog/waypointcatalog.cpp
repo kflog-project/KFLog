@@ -33,6 +33,7 @@
 #define FILE_TYPE_WAYPOINTS 0x50
 #define FILE_FORMAT_ID      100
 #define FILE_FORMAT_ID_2    101
+#define FILE_FORMAT_ID_3    103 // waypoint list size added
 
 // Center point definition, also used by waypoint import filter.
 #define CENTER_POS      0
@@ -185,7 +186,7 @@ bool WaypointCatalog::read(const QString& catalog)
           QDomNamedNodeMap nm =  nl.item(i).attributes();
           Waypoint *w = new Waypoint;
 
-          w->name = nm.namedItem("Name").toAttr().value().left(6).toUpper();
+          w->name = nm.namedItem("Name").toAttr().value().left(8).toUpper();
           w->description = nm.namedItem("Description").toAttr().value();
           w->icao = nm.namedItem("ICAO").toAttr().value().toUpper();
           w->type = nm.namedItem("Type").toAttr().value().toInt();
@@ -195,7 +196,17 @@ bool WaypointCatalog::read(const QString& catalog)
           w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
           w->isLandable = nm.namedItem("Landable").toAttr().value().toInt();
           w->runway.first = nm.namedItem("Runway").toAttr().value().toInt();
-          w->runway.second = w->runway.first <= 18 ? w->runway.first + 18 : w->runway.first - 18;
+
+          if( w->runway.first > 0 )
+            {
+              w->runway.second = w->runway.first <= 18 ? w->runway.first + 18 : w->runway.first - 18;
+            }
+          else
+            {
+              // No runways defined
+              w->runway.second = 0;
+            }
+
           w->length = nm.namedItem("Length").toAttr().value().toInt();
           w->surface = (enum Runway::SurfaceType)nm.namedItem("Surface").toAttr().value().toInt();
           w->comment = nm.namedItem("Comment").toAttr().value();
@@ -239,10 +250,12 @@ bool WaypointCatalog::write()
 
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
-  root.setAttribute("Creator", getlogin());
-  root.setAttribute("Time", QTime::currentTime().toString("HH:mm:mm"));
-  root.setAttribute("Date", QDate::currentDate().toString(Qt::ISODate));
-  root.setAttribute("Version", "1.0");
+  root.setAttribute( "Application", "KFLog" );
+  root.setAttribute( "Creator", getlogin() );
+  root.setAttribute( "Time", QTime::currentTime().toString( "HH:mm:mm" ) );
+  root.setAttribute( "Date", QDate::currentDate().toString( Qt::ISODate ) );
+  root.setAttribute( "Version", "1.0" );
+  root.setAttribute( "Entries", wpList.size() );
 
   doc.appendChild(root);
 
@@ -257,7 +270,7 @@ bool WaypointCatalog::write()
 
     child = doc.createElement("Waypoint");
 
-    child.setAttribute("Name", w->name);
+    child.setAttribute("Name", w->name.left(8).toUpper());
     child.setAttribute("Description", w->description);
     child.setAttribute("ICAO", w->icao);
     child.setAttribute("Type", w->type);
@@ -332,44 +345,46 @@ bool WaypointCatalog::writeBinary()
       QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
       QDataStream out(& f);
+      out.setVersion( QDataStream::Qt_4_7 );
 
       //write file header
-      out << quint32(KFLOG_FILE_MAGIC);
-      out << qint8(FILE_TYPE_WAYPOINTS);
-      out << quint16(FILE_FORMAT_ID_2); //use the new format with importance field.
+      out << quint32( KFLOG_FILE_MAGIC );
+      out << qint8( FILE_TYPE_WAYPOINTS );
+      out << quint16( FILE_FORMAT_ID_3 );
+      out << qint32( wpList.size() );
 
       foreach(w, wpList)
-      {
-        wpName=w->name;
-        wpDescription=w->description;
-        wpICAO=w->icao;
-        wpType=w->type;
-        wpLatitude=w->origP.lat();
-        wpLongitude=w->origP.lon();
-        wpElevation=w->elevation;
-        wpFrequency=w->frequency;
-        wpLandable=w->isLandable;
-        wpRunway=w->runway.first;
-        wpLength=w->length;
-        wpSurface=w->surface;
-        wpComment=w->comment;
-        wpImportance=w->importance;
+        {
+          wpName = w->name.left(8).toUpper();
+          wpDescription = w->description;
+          wpICAO = w->icao;
+          wpType = w->type;
+          wpLatitude = w->origP.lat();
+          wpLongitude = w->origP.lon();
+          wpElevation = w->elevation;
+          wpFrequency = w->frequency;
+          wpLandable = w->isLandable;
+          wpRunway = (w->runway.first * 256) + w->runway.second;
+          wpLength = w->length;
+          wpSurface = w->surface;
+          wpComment = w->comment;
+          wpImportance = w->importance;
 
-        out << wpName;
-        out << wpDescription;
-        out << wpICAO;
-        out << wpType;
-        out << wpLatitude;
-        out << wpLongitude;
-        out << wpElevation;
-        out << wpFrequency;
-        out << wpLandable;
-        out << wpRunway;
-        out << wpLength;
-        out << wpSurface;
-        out << wpComment;
-        out << wpImportance;
-      }
+          out << wpName;
+          out << wpDescription;
+          out << wpICAO;
+          out << wpType;
+          out << wpLatitude;
+          out << wpLongitude;
+          out << wpElevation;
+          out << wpFrequency;
+          out << wpLandable;
+          out << wpRunway;
+          out << wpLength;
+          out << wpSurface;
+          out << wpComment;
+          out << wpImportance;
+        }
 
       f.close();
       path = fName;
@@ -864,6 +879,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
   quint32 fileMagic;
   qint8 fileType;
   quint16 fileFormat;
+  qint32 wpListSize;
 
 
   QFile f(catalog);
@@ -880,10 +896,10 @@ bool WaypointCatalog::readBinary(const QString &catalog)
     {
 
       QDataStream in(&f);
-      in.setVersion(2);
 
       //check if the file has the correct format
       in >> fileMagic;
+
       if (fileMagic != KFLOG_FILE_MAGIC)
         {
           qDebug("Waypoint file not recognized as KFLog file type.");
@@ -891,6 +907,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
         }
 
       in >> fileType;
+
       if (fileType != FILE_TYPE_WAYPOINTS)
         {
           qDebug("Waypoint file is a KFLog file, but not for waypoints.");
@@ -898,72 +915,82 @@ bool WaypointCatalog::readBinary(const QString &catalog)
         }
 
       in >> fileFormat;
-      if (fileFormat != FILE_FORMAT_ID && fileFormat != FILE_FORMAT_ID_2)
+
+      if( fileFormat < FILE_FORMAT_ID_2 )
         {
-          qDebug("Waypoint file does not have the correct format. It returned %d, where %d was expected.", fileFormat, FILE_FORMAT_ID);
+          qWarning() << "Wrong waypoint file format! Read format Id"
+                     << fileFormat
+                     << ". Expecting" << FILE_FORMAT_ID_3 << ".";
+
           return false;
         }
-      //from here on, we assume that the file has the correct format.
-      if (fileFormat==FILE_FORMAT_ID_2)
 
-        while( !in.atEnd() )
-          {
-            // read values from file
-            //startoffset=f.at();
-            in >> wpName;
-            in >> wpDescription;
-            in >> wpICAO;
-            in >> wpType;
-            in >> wpLatitude;
-            in >> wpLongitude;
-            in >> wpElevation;
-            in >> wpFrequency;
-            in >> wpLandable;
-            in >> wpRunway;
-            in >> wpLength;
-            in >> wpSurface;
-            in >> wpComment;
-            if (fileFormat>=FILE_FORMAT_ID_2)
-              {
-                in >> wpImportance;
-              }
-            else
-              {
-                wpImportance=1; //normal importance
-              };
+      // from here on, we assume that the file has the correct format.
+      if( fileFormat == FILE_FORMAT_ID_2 )
+        {
+          in.setVersion( QDataStream::Qt_2_0 );
+        }
+      else
+        {
+          in.setVersion( QDataStream::Qt_4_7 );
+          in >> wpListSize;
+        }
 
-            //create new waypoint object and set the correct properties
-            Waypoint *w = new Waypoint;
+      while( !in.atEnd() )
+        {
+          // read values from file
+          in >> wpName;
+          in >> wpDescription;
+          in >> wpICAO;
+          in >> wpType;
+          in >> wpLatitude;
+          in >> wpLongitude;
+          in >> wpElevation;
+          in >> wpFrequency;
+          in >> wpLandable;
+          in >> wpRunway;
+          in >> wpLength;
+          in >> wpSurface;
+          in >> wpComment;
+          in >> wpImportance;
 
-            w->name = wpName;
-            w->description = wpDescription;
-            w->icao = wpICAO;
-            w->type = wpType;
-            w->origP.setLat(wpLatitude);
-            w->origP.setLon(wpLongitude);
-            w->elevation = wpElevation;
-            w->frequency = wpFrequency;
-            w->isLandable = wpLandable;
-            w->runway.first =wpRunway;
-            w->length = wpLength;
-            w->surface = (enum Runway::SurfaceType) wpSurface;
-            w->comment = wpComment;
-            w->importance = wpImportance;
-            //qDebug("Waypoint read: %s (%s - %s) offset %d-%d",w->name.toLatin1().data(),w->description.toLatin1().data(),w->icao.toLatin1().data(), startoffset, f.at());
-            if (!insertWaypoint(w))
-              {
-                qDebug("odd... error reading waypoints");
-                delete w;
-                break;
-              }
-          }
+          //create new waypoint object and set the correct properties
+          Waypoint *w = new Waypoint;
+
+          w->name = wpName.left(8).toUpper();
+          w->description = wpDescription;
+          w->icao = wpICAO;
+          w->type = wpType;
+          w->origP.setLat(wpLatitude);
+          w->origP.setLon(wpLongitude);
+          w->elevation = wpElevation;
+          w->frequency = wpFrequency;
+          w->isLandable = wpLandable;
+          w->runway.first = wpRunway/256;
+          w->runway.second = wpRunway & 256;
+          w->length = wpLength;
+          w->surface = (enum Runway::SurfaceType) wpSurface;
+          w->comment = wpComment;
+          w->importance = wpImportance;
+          //qDebug("Waypoint read: %s (%s - %s) offset %d-%d",w->name.toLatin1().data(),w->description.toLatin1().data(),w->icao.toLatin1().data(), startoffset, f.at());
+
+          if (!insertWaypoint(w))
+            {
+              qDebug("odd... error reading waypoints");
+              delete w;
+              break;
+            }
+        }
 
       onDisc = true;
       path = catalog;
-
       ok = true;
-      if (fileFormat<FILE_FORMAT_ID_2) //write file back in newer format
-        writeBinary();
+
+      if( fileFormat < FILE_FORMAT_ID_3 )
+        {
+          // write file back in newer format
+          writeBinary();
+        }
     }
   else
     {
@@ -1072,7 +1099,8 @@ bool WaypointCatalog::readCup (const QString& catalog)
           w->description = "";
         }
 
-      w->name = list[1].replace( QRegExp("\""), "" ); // short name of waypoint
+      // short name of a waypoint has only 8 characters and upper cases
+      w->name = list[1].replace( QRegExp("\""), "" ).left(8).toUpper();
       w->comment = list[2] + ": ";
       w->icao = "";
       w->surface = Runway::Unknown;

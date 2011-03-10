@@ -504,25 +504,16 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
     tmp.sprintf("%.3f", w->frequency);
     waypointDlg->frequency->setText(tmp);
 
-    if( w->runway.first > 0 )
-        {
-          tmp.sprintf( "%02d", w->runway.first );
-        }
-      else
-        {
-          tmp = "";
-        }
+    waypointDlg->runway->setCurrentIndex( w->runway.first );
 
-      waypointDlg->runway->setText( tmp );
-
-      if( w->length > 0 )
-        {
-          tmp.sprintf( "%d", w->length );
-        }
-      else
-        {
-          tmp = "";
-        }
+    if( w->length > 0 )
+      {
+        tmp.sprintf( "%d", w->length );
+      }
+    else
+      {
+        tmp = "";
+      }
 
     waypointDlg->length->setText(tmp);
     // translate to id
@@ -543,13 +534,10 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
             w->elevation = waypointDlg->elevation->text().toInt();
             w->icao = waypointDlg->icao->text().toUpper();
             w->frequency = waypointDlg->frequency->text().toDouble();
+            w->runway.first = waypointDlg->runway->currentIndex();
 
-            tmp = waypointDlg->runway->text();
-
-            if( !tmp.isEmpty() )
+            if( w->runway.first > 0 )
               {
-                w->runway.first = tmp.toInt();
-
                 int rw1 = w->runway.first;
 
                 w->runway.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18);

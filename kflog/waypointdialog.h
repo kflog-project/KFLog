@@ -86,6 +86,11 @@ public slots:
   /** clear all entries */
   void clear();
 
+  /**
+   * Called to make all text to upper cases.
+   */
+  void slotTextEdited( const QString& text );
+
 signals:
 
   /** No descriptions */
@@ -113,7 +118,7 @@ public:
   /**  */
   QLineEdit *frequency;
   /**  */
-  QLineEdit *runway;
+  QComboBox *runway;
   /**  */
   QLineEdit *length;
   /**  */
