@@ -490,8 +490,9 @@ QString getInfoString (Waypoint* wp)
 
   if (wp->frequency > 0.0)
   {
-    text += QString ("<BR>%1").arg (wp->frequency, 3);
+    text += QString ("<BR>%1").arg(wp->frequency, 0, 'f', 3);
   }
+
   text += "<BR>" + WGSPoint::printPos(wp->origP.lat());
   text += "<BR>" + WGSPoint::printPos(wp->origP.lon(), false);
 
