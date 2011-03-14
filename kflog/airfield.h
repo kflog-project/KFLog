@@ -61,6 +61,7 @@ class Airfield : public SinglePoint
    * @param  pos  The position
    * @param  elevation  The elevation
    * @param  frequency  The frequency
+   * @param  country The country of the airfield as two letter code
    * @param  comment An additional comment related to the airfield
    * @param  winch  "true", if winch launch is available
    * @param  towing "true", if aero towing is available
@@ -72,8 +73,9 @@ class Airfield : public SinglePoint
             const BaseMapElement::objectType typeId,
             const WGSPoint& wgsPos,
             const QPoint& pos,
-            const uint elevation,
-            const QString& frequency,
+            const float elevation,
+            const float frequency,
+            const QString& country = "",
             const QString comment = "",
             bool winch = false,
             bool towing = false,
@@ -85,9 +87,17 @@ class Airfield : public SinglePoint
   virtual ~Airfield();
 
   /**
-   * @return the frequency of the airport.
+   * @return the frequency of the airfield as String.
    */
-  QString getFrequency() const
+  QString frequencyAsString() const
+    {
+      return (frequency > 0) ? QString("%1").arg(frequency, 0, 'f', 3) : QString("");
+    };
+
+  /**
+   * @return the frequency of the airfield as float value.
+   */
+  float getFrequency() const
     {
       return frequency;
     };
@@ -187,7 +197,7 @@ class Airfield : public SinglePoint
    /**
     * The frequency
     */
-   QString frequency;
+   float frequency;
 
   /**
    * Contains the available runways.

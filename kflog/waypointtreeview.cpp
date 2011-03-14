@@ -498,7 +498,7 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
     waypointDlg->setWaypointType(w->type);
     waypointDlg->longitude->setKFLogDegree(w->origP.lon());
     waypointDlg->latitude->setKFLogDegree(w->origP.lat());
-    tmp.sprintf("%d", w->elevation);
+    tmp.sprintf("%.0f", w->elevation);
     waypointDlg->elevation->setText(tmp);
     waypointDlg->icao->setText(w->icao);
     tmp.sprintf("%.3f", w->frequency);
@@ -508,7 +508,7 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
 
     if( w->length > 0 )
       {
-        tmp.sprintf( "%d", w->length );
+        tmp.sprintf( "%.0f", w->length );
       }
     else
       {
@@ -767,7 +767,7 @@ void WaypointTreeView::fillWaypoints()
 
     if( w->length > 0 )
       {
-        tmp.sprintf( "%02d m", w->length );
+        tmp.sprintf( "%.0f m", w->length );
       }
     else
       {
@@ -1010,7 +1010,7 @@ void WaypointTreeView::slotImportWaypointFromMap()
         case BaseMapElement::Gliderfield:
 
           w->icao = ((Airfield *) s)->getICAO();
-          w->frequency = ((Airfield *) s)->getFrequency().toDouble();
+          w->frequency = ((Airfield *) s)->getFrequency();
           w->isLandable = true;
           a = dynamic_cast<Airfield*>(s); //try casting to an airfield
 

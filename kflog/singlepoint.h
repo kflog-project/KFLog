@@ -54,6 +54,7 @@ class SinglePoint : public BaseMapElement
    * @param  wgsPos  The original WGS-position
    * @param  elevation The elevation of the point when available
    * @param  comment An additional comment related to the single point
+   * @param  country The country where the point is located.
    * @param  secID  The map section ID
    * @param  lmTyp Additional field (eg. for the population index for cities or the lm_typ)
    */
@@ -62,9 +63,10 @@ class SinglePoint : public BaseMapElement
                const BaseMapElement::objectType typeID,
                const WGSPoint& wgsPos,
                const QPoint& pos,
-               const unsigned int elevation = 0,
+               const float elevation = 0.0,
                const QString& comment = QString::null,
-               const unsigned short secID=0,
+               const QString& country = QString::null,
+               const unsigned short secID = 0,
                unsigned int lmType = 0 );
   /**
    * Destructor
@@ -130,7 +132,7 @@ class SinglePoint : public BaseMapElement
   /**
    * @return the elevation of the element.
    */
-  virtual unsigned int getElevation() const
+  virtual float getElevation() const
     {
       return elevation;
     };
@@ -141,6 +143,22 @@ class SinglePoint : public BaseMapElement
   const QString& getComment()
     {
       return comment;
+    };
+
+  /**
+   * @return the country of the single point
+   */
+  const QString& getCountry()
+    {
+      return country;
+    };
+
+  /**
+   * @param newValue tTe country of the single point
+   */
+  void setCountry( QString& newValue )
+    {
+      country = newValue;;
     };
 
   /**
@@ -176,7 +194,7 @@ protected:
   /**
    * The elevation.
    */
-  unsigned int elevation;
+  float elevation;
   /**
    * Additional field
    */
@@ -185,6 +203,10 @@ protected:
    * Comment related to the single point.
    */
   QString comment;
+  /**
+   * Country as two letter code.
+   */
+  QString country;
 };
 
 #endif

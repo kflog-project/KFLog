@@ -148,10 +148,9 @@ void WaypointCatalog::setCenterPoint( const WGSPoint& center )
 /** read a catalog from file */
 bool WaypointCatalog::read(const QString& catalog)
 {
-  bool ok = false;
-  QFile f(catalog);
+  QFile file(catalog);
 
-  if( !f.exists() )
+  if( ! file.exists() )
     {
       QMessageBox::critical( _mainWindow,
                              QObject::tr("Error occurred!"),
@@ -162,7 +161,7 @@ bool WaypointCatalog::read(const QString& catalog)
       return false;
     }
 
-  if( !f.open( QIODevice::ReadOnly ) )
+  if( ! file.open( QIODevice::ReadOnly ) )
     {
       QMessageBox::critical( _mainWindow,
                              QObject::tr("Error occurred!"),
@@ -174,8 +173,22 @@ bool WaypointCatalog::read(const QString& catalog)
 
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
+  QString errorMsg;
+  int errorLine;
+  int errorColumn;
   QDomDocument doc;
-  doc.setContent(&f);
+
+  bool ok = doc.setContent( &file, false, &errorMsg, &errorLine, &errorColumn );
+
+  if( ! ok )
+    {
+      qWarning() << "WaypointCatalog::readXml(): XML parse error in File=" << catalog
+                 << "Error=" << errorMsg
+                 << "Line=" << errorLine
+                 << "Column=" << errorColumn;
+
+      return false;
+    }
 
   if (doc.doctype().name() == "KFLogWaypoint")
     {
@@ -212,6 +225,11 @@ bool WaypointCatalog::read(const QString& catalog)
           w->comment = nm.namedItem("Comment").toAttr().value();
           w->importance = nm.namedItem("Importance").toAttr().value().toInt();
 
+          if( nm.contains("Country") )
+            {
+              w->country = nm.namedItem("Country").toAttr().value();
+            }
+
           if( !insertWaypoint( w ) )
             {
               break;
@@ -231,7 +249,7 @@ bool WaypointCatalog::read(const QString& catalog)
                              QMessageBox::Ok );
     }
 
-  f.close();
+  file.close();
   QApplication::restoreOverrideCursor();
 
   return ok;
@@ -284,13 +302,14 @@ bool WaypointCatalog::write()
     child.setAttribute("Surface", w->surface);
     child.setAttribute("Comment", w->comment);
     child.setAttribute("Importance", w->importance);
+    child.setAttribute( "Country", w->country );
 
     root.appendChild(child);
   }
 
   file.setFileName(fName);
 
-  if( file.open( QIODevice::WriteOnly ) )
+  if( file.open( QIODevice::WriteOnly | QIODevice::Text ) )
     {
       const int IndentSize = 4;
 
@@ -325,11 +344,11 @@ bool WaypointCatalog::writeBinary()
   qint8 wpType;
   qint32 wpLatitude;
   qint32 wpLongitude;
-  qint16 wpElevation;
-  double wpFrequency;
+  float wpElevation;
+  float wpFrequency;
   qint8 wpLandable;
   qint16 wpRunway;
-  qint16 wpLength;
+  float wpLength;
   qint8 wpSurface;
   QString wpComment="";
   quint8 wpImportance;
@@ -384,6 +403,7 @@ bool WaypointCatalog::writeBinary()
           out << wpSurface;
           out << wpComment;
           out << wpImportance;
+          out << w->country;
         }
 
       f.close();
@@ -874,13 +894,18 @@ bool WaypointCatalog::readBinary(const QString &catalog)
   qint16 wpLength;
   qint8 wpSurface;
   QString wpComment="";
+  QString wpCountry="";
   quint8 wpImportance;
 
   quint32 fileMagic;
   qint8 fileType;
   quint16 fileFormat;
-  qint32 wpListSize;
+  qint32 wpListSize = 0;
 
+  // new variables from format version 3
+  float wpFrequency3;
+  float wpElevation3;
+  float wpLength3;
 
   QFile f(catalog);
 
@@ -945,14 +970,38 @@ bool WaypointCatalog::readBinary(const QString &catalog)
           in >> wpType;
           in >> wpLatitude;
           in >> wpLongitude;
-          in >> wpElevation;
-          in >> wpFrequency;
+
+          if( fileFormat < FILE_FORMAT_ID_3 )
+            {
+              in >> wpElevation;
+              in >> wpFrequency;
+            }
+          else
+            {
+              in >> wpElevation3;
+              in >> wpFrequency3;
+            }
+
           in >> wpLandable;
           in >> wpRunway;
-          in >> wpLength;
+
+          if( fileFormat < FILE_FORMAT_ID_3 )
+            {
+              in >> wpLength;
+            }
+          else
+            {
+              in >> wpLength3;
+            }
+
           in >> wpSurface;
           in >> wpComment;
           in >> wpImportance;
+
+          if( fileFormat >= FILE_FORMAT_ID_3 )
+            {
+              in >> wpCountry;
+            }
 
           //create new waypoint object and set the correct properties
           Waypoint *w = new Waypoint;
@@ -963,15 +1012,27 @@ bool WaypointCatalog::readBinary(const QString &catalog)
           w->type = wpType;
           w->origP.setLat(wpLatitude);
           w->origP.setLon(wpLongitude);
-          w->elevation = wpElevation;
-          w->frequency = wpFrequency;
           w->isLandable = wpLandable;
           w->runway.first = wpRunway/256;
           w->runway.second = wpRunway & 256;
-          w->length = wpLength;
           w->surface = (enum Runway::SurfaceType) wpSurface;
           w->comment = wpComment;
           w->importance = wpImportance;
+          w->country = wpCountry;
+
+          if( fileFormat < FILE_FORMAT_ID_3 )
+            {
+              w->elevation = wpElevation;
+              w->frequency = wpFrequency;
+              w->length = wpLength;
+            }
+          else
+            {
+              w->elevation = wpElevation3;
+              w->frequency = wpFrequency3;
+              w->length = wpLength3;
+            }
+
           //qDebug("Waypoint read: %s (%s - %s) offset %d-%d",w->name.toLatin1().data(),w->description.toLatin1().data(),w->icao.toLatin1().data(), startoffset, f.at());
 
           if (!insertWaypoint(w))
@@ -1214,7 +1275,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
       if( list[5].length() > 1 ) // elevation in meter or feet
         {
-          double tmpElev = (int) rint((list[5].left(list[5].length()-1)).toDouble(&ok));
+          float tmpElev = (list[5].left(list[5].length()-1)).toDouble(&ok);
 
           if( ! ok )
             {
@@ -1226,21 +1287,25 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
           if( list[5].right( 1 ).toLower() == "f" )
             {
-              w->elevation = (int) rint( tmpElev * 0.3048 );
+              w->elevation = tmpElev * 0.3048;
             }
           else
             {
-              w->elevation = (int) rint( tmpElev );
+              w->elevation = tmpElev;
             }
         }
 
       if( list[9].trimmed().length() ) // airport frequency
         {
-          double frequency = list[9].replace( QRegExp("\""), "" ).toDouble(&ok);
+          float frequency = list[9].replace( QRegExp("\""), "" ).toFloat(&ok);
 
           if( ok )
             {
               w->frequency = frequency;
+            }
+          else
+            {
+              w->frequency = 0.0;
             }
         }
 
@@ -1267,7 +1332,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
           if( uStart != -1 )
             {
               unit = list[8].mid( uStart ).toLower();
-              double length = list[8].left( list[8].length()-unit.length() ).toDouble(&ok);
+              float length = list[8].left( list[8].length()-unit.length() ).toFloat(&ok);
 
               if( ok )
                 {
@@ -1280,7 +1345,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
                       length *= 1609.34;
                     }
 
-                  w->length = (int) rint( length );
+                  w->length = length;
                 }
             }
         }
@@ -1337,7 +1402,7 @@ bool WaypointCatalog::insertWaypoint(Waypoint *newWaypoint)
     {
       qDebug() << "FoundWP" << existingWaypoint->name;
 
-      if(existingWaypoint->name != newWaypoint->name ||
+      if( existingWaypoint->name != newWaypoint->name ||
           existingWaypoint->angle != newWaypoint->angle ||
           existingWaypoint->comment != newWaypoint->comment ||
           existingWaypoint->description != newWaypoint->description ||
@@ -1352,7 +1417,8 @@ bool WaypointCatalog::insertWaypoint(Waypoint *newWaypoint)
           existingWaypoint->origP != newWaypoint->origP ||
           existingWaypoint->runway != newWaypoint->runway ||
           existingWaypoint->type != newWaypoint->type ||
-          existingWaypoint->surface != newWaypoint->surface )
+          existingWaypoint->surface != newWaypoint->surface ||
+          existingWaypoint->country != newWaypoint->country )
         {
           switch( QMessageBox::warning( _mainWindow,
                                         QObject::tr("Waypoint exists"),

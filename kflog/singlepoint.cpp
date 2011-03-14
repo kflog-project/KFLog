@@ -20,23 +20,25 @@
 
 #include "singlepoint.h"
 
-SinglePoint::SinglePoint( const QString& n,
+SinglePoint::SinglePoint( const QString& name,
                           const QString& shortName,
-                          const BaseMapElement::objectType t,
+                          const BaseMapElement::objectType typ,
                           const WGSPoint& wgsP,
                           const QPoint& pos,
-                          const unsigned int elev,
+                          const float elev,
                           const QString& comment,
+                          const QString& country,
                           const unsigned short secID,
                           unsigned int lmType ) :
- BaseMapElement(n, t, secID),
+ BaseMapElement(name, typ, secID),
   wgsPosition(wgsP),
   position(pos),
   shortName(shortName),
   curPos(pos),
   elevation(elev),
   lm_typ(lmType),
-  comment(comment)
+  comment(comment),
+  country(country)
 {
 }
 

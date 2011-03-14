@@ -1014,7 +1014,8 @@ void Map::mousePressEvent(QMouseEvent* event)
                       w->origP = hitElement->getWGSPosition();
                       w->elevation = hitElement->getElevation();
                       w->icao = hitElement->getICAO();
-                      w->frequency = hitElement->getFrequency().toDouble();
+                      w->frequency = hitElement->getFrequency();
+                      w->country = hitElement->getCountry();
                       w->isLandable = true;
 
                       emit waypointSelected(w);
@@ -2386,7 +2387,8 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
                   wp->type = hitElement->getObjectType();
                   wp->elevation = hitElement->getElevation();
                   wp->icao = hitElement->getICAO();
-                  wp->frequency = hitElement->getFrequency().toDouble();
+                  wp->frequency = hitElement->getFrequency();
+                  wp->country = hitElement->getCountry();
                   wp->runway.first = 0;
                   wp->runway.second = 0;
                   wp->length = -1;
@@ -2772,7 +2774,8 @@ void Map::slotMpNewWaypoint()
               w->origP = hitElement->getWGSPosition();
               w->elevation = hitElement->getElevation();
               w->icao = hitElement->getICAO();
-              w->frequency = hitElement->getFrequency().toDouble();
+              w->frequency = hitElement->getFrequency();
+              w->country = hitElement->getCountry();
               w->runway.first = 0;
               w->runway.second = 0;
               w->length = -1;

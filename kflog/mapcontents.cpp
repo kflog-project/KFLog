@@ -717,9 +717,14 @@ bool MapContents::__readBinaryFile( const int  fileSecID,
 
           single = _globalMapMatrix->wgsToMap(lat_temp, lon_temp);
 
-          villageList.append( SinglePoint(name, "", typeIn,
+          villageList.append( SinglePoint(name, "",
+                                          typeIn,
                                           WGSPoint(lat_temp, lon_temp),
-                                          single, 0, "", fileSecID));
+                                          single,
+                                          0.0,
+                                          "",
+                                          "",
+                                          fileSecID ));
           // qDebug("added village '%s'", name.toLatin1().data());
           break;
 
@@ -731,9 +736,15 @@ bool MapContents::__readBinaryFile( const int  fileSecID,
 
           single = _globalMapMatrix->wgsToMap(lat_temp, lon_temp);
 
-          obstacleList.append( SinglePoint("Spot", "", typeIn,
-                                           WGSPoint(lat_temp, lon_temp),
-                                           single, 0, "", fileSecID));
+          obstacleList.append( SinglePoint( "Spot",
+                                            "",
+                                            typeIn,
+                                            WGSPoint(lat_temp, lon_temp),
+                                           single,
+                                           0.0,
+                                           "",
+                                           "",
+                                           fileSecID));
           break;
 
         case BaseMapElement::Landmark:
@@ -745,9 +756,15 @@ bool MapContents::__readBinaryFile( const int  fileSecID,
 
           single = _globalMapMatrix->wgsToMap(lat_temp, lon_temp);
 
-          landmarkList.append( SinglePoint(name, "", typeIn,
-                                           WGSPoint(lat_temp, lon_temp),
-                                           single, 0, "", fileSecID));
+          landmarkList.append( SinglePoint( name,
+                                            "",
+                                            typeIn,
+                                            WGSPoint(lat_temp, lon_temp),
+                                            single,
+                                            0.0,
+                                            "",
+                                            "",
+                                            fileSecID ));
           // qDebug("added landmark '%s'", name.toLatin1().data());
           break;
 

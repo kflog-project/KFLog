@@ -27,13 +27,14 @@ Airfield::Airfield( const QString& name,
                     const BaseMapElement::objectType typeId,
                     const WGSPoint& wgsPos,
                     const QPoint& pos,
-                    const unsigned int elevation,
-                    const QString& frequency,
+                    const float elevation,
+                    const float frequency,
+                    const QString& country,
                     const QString comment,
                     bool winch,
                     bool towing,
                     bool landable ) :
-  SinglePoint(name, shortName, typeId, wgsPos, pos, elevation, comment),
+  SinglePoint(name, shortName, typeId, wgsPos, pos, elevation, comment, country),
   icao(icao),
   frequency(frequency),
   winch(winch),
@@ -50,6 +51,7 @@ QString Airfield::getInfoString()
 {
   QString path = glConfig->getIconPath();
   QString text;
+  QString text1;
 
   text = QString("<html><center><b>") +
          "<IMG SRC=" + path + "/" +
@@ -58,8 +60,28 @@ QString Airfield::getInfoString()
 
   if( !icao.isEmpty() )
     {
-      text += " (" + icao + ")";
+      text1 = " (" + icao;
     }
+
+  if( !country.isEmpty() )
+    {
+      if( text1.isEmpty() )
+        {
+          text1 = " (";
+        }
+      else
+        {
+          text1 += ", ";
+        }
+
+      text1 += country + ")";
+    }
+  else
+    {
+      text1 += ")";
+    }
+
+  text += text1;
 
   text += ", " + BaseMapElement::item2Text( typeID, QObject::tr("(unknown object)") ) +
            "</b></center>";
@@ -84,9 +106,9 @@ QString Airfield::getInfoString()
 
   text += "<tr><td>" + QObject::tr("Frequency:") + "</td><td>";
 
-  if( ! frequency.isEmpty() && frequency != "000.000" )
+  if( frequency > 0.0 )
     {
-      text += "<b>" + frequency + " MHz" + "</b></td>";
+      text += "<b>" + frequencyAsString() + " " + QObject::tr("MHz") + "</b></td>";
     }
   else
     {
@@ -400,7 +422,7 @@ void Airfield::printMapElement(QPainter* printPainter, bool isText)
               printPainter->drawText(printPos.x() - 15,
                   printPos.y() + iconSize + 4, name);
               printPainter->drawText(printPos.x() - 15,
-                  printPos.y() + iconSize + 14, frequency);
+                  printPos.y() + iconSize + 14, frequencyAsString());
             }
         }
 

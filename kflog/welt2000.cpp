@@ -513,7 +513,7 @@ bool Welt2000::parse( QString& path,
       line = line.toUpper();
 
       // Extract country sign. It is coded according to ISO 3166.
-      QString country = line.mid( 60, 2 );
+      QString country = line.mid( 60, 2 ).toUpper();
 
       if( ! countryDict.isEmpty() )
         {
@@ -876,7 +876,9 @@ bool Welt2000::parse( QString& path,
 
       double f = frequency.toDouble(&ok);
 
-      if( ( !ok || f < 117.97 || f > 137.0 ) )
+      float fFrequency = frequency.toFloat(&ok);
+
+      if( ( !ok || fFrequency < 108 || fFrequency > 137.0 ) )
         {
           if( olField == false )
             {
@@ -885,18 +887,15 @@ bool Welt2000::parse( QString& path,
                         lineNo, afName.toLatin1().data(), country.toLatin1().data() );
             }
 
-          frequency = "000.000"; // reset frequency to unknown
+          fFrequency = 0.0; // reset frequency to unknown
         }
       else
         {
           // check, what has to be appended as last digit
+          // check, what has to be appended as last digit
           if( line[40] == '2' || line[40] == '7' )
             {
-              frequency += "5";
-            }
-          else
-            {
-              frequency += "0";
+              fFrequency += 0.005;
             }
         }
 
@@ -1031,7 +1030,7 @@ bool Welt2000::parse( QString& path,
         }
 
       Airfield af( afName, icao.trimmed(), gpsName, afType,
-                   wgsPos, position, elevation, frequency, commentLong );
+                   wgsPos, position, elevation, fFrequency, country, commentLong );
 
       for( int i = 0; i < rwCount; i++ )
         {
