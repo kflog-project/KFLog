@@ -83,7 +83,7 @@ QString Airfield::getInfoString()
 
   text += text1;
 
-  text += ", " + BaseMapElement::item2Text( typeID, QObject::tr("(unknown object)") ) +
+  text += " " + BaseMapElement::item2Text( typeID, QObject::tr("(unknown object)") ) +
            "</b></center>";
 
   text += "<table cellpadding=5 width=100%>";

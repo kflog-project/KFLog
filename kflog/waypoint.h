@@ -52,7 +52,7 @@ public:
             QString _country = QString::null,
             enum Runway::SurfaceType surf=Runway::Unknown,
             QPair<ushort, ushort> runw = (QPair<ushort, ushort>(0, 0)),
-            float leng = -1.0,
+            float leng = 0.0,
             float elev = 0.0,
             float freq = 0.0,
             bool isLand = false,

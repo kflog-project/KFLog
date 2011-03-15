@@ -86,10 +86,17 @@ public slots:
   /** clear all entries */
   void clear();
 
+private slots:
+
   /**
    * Called to make all text to upper cases.
    */
-  void slotTextEdited( const QString& text );
+  void slotTextEditedName( const QString& text );
+
+  /**
+   * Called to make all text to upper cases.
+   */
+  void slotTextEditedCountry( const QString& text );
 
 signals:
 
@@ -111,6 +118,8 @@ public:
   QLineEdit *name;
   /**  */
   QLineEdit *description;
+  /**  */
+  QLineEdit *country;
   /**  */
   QLineEdit *elevation;
   /**  */

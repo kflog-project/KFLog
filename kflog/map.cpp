@@ -2769,7 +2769,7 @@ void Map::slotMpNewWaypoint()
               Waypoint *w = new Waypoint;
 
               QString name = hitElement->getName();
-              w->name = name.replace( blank, "" ).left( 6 ).toUpper();
+              w->name = name.replace( blank, "" ).left( 8 ).toUpper();
               w->description = hitElement->getName();
               w->type = hitElement->getObjectType();
               w->origP = hitElement->getWGSPosition();
@@ -2779,7 +2779,7 @@ void Map::slotMpNewWaypoint()
               w->country = hitElement->getCountry();
               w->runway.first = 0;
               w->runway.second = 0;
-              w->length = -1;
+              w->length = 0;
               w->surface = Runway::Unknown;
 
               if( hitElement->getRunwayNumber() )

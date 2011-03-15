@@ -139,6 +139,7 @@ private: // Private methods
 
   /** Column indexes of waypoint tree view */
   int colName;
+  int colCountry;
   int colDesc;
   int colICAO;
   int colType;

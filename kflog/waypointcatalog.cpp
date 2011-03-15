@@ -1162,7 +1162,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
       // short name of a waypoint has only 8 characters and upper cases
       w->name = list[1].replace( QRegExp("\""), "" ).left(8).toUpper();
-      w->comment = list[2] + ": ";
+      w->country = list[2].left(2).toUpper();
       w->icao = "";
       w->surface = Runway::Unknown;
 

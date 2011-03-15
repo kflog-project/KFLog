@@ -28,7 +28,6 @@ WaypointDialog::WaypointDialog( QWidget *parent ) :
   edit(false)
 {
   setWindowModality( Qt::WindowModal );
-  //setAttribute( Qt::WA_DeleteOnClose );
   setSizeGripEnabled( true );
 
   __initDialog();
@@ -47,22 +46,25 @@ WaypointDialog::~WaypointDialog()
 /** No descriptions */
 void WaypointDialog::__initDialog()
 {
-  QLabel *l1, *l2;
+  QLabel *l1, *l2, *l3;
 
   QRegExp rxInt("[0-9]*");
   QValidator *intRxValidator = new QRegExpValidator(rxInt, this);
 
   //---------------------------------------------------------------------------
   QGridLayout *layout = new QGridLayout;
-  layout->setSpacing( 7 );
+  layout->setSpacing( 10 );
 
   int row = 0;
 
   l1 = new QLabel( QString( "%1:" ).arg( tr( "&Name" ) ));
   layout->addWidget( l1, row, 0 );
 
-  l2 = new QLabel( QString( "%1:" ).arg( tr( "&Description" ) ));
-  layout->addWidget( l2, row, 2 );
+  l2 = new QLabel( QString( "%1:" ).arg( tr( "&Country" ) ));
+  layout->addWidget( l2, row, 1 );
+
+  l3 = new QLabel( QString( "%1:" ).arg( tr( "&Description" ) ));
+  layout->addWidget( l3, row, 2, 1, 2 );
   row++;
 
   name = new QLineEdit;
@@ -70,83 +72,106 @@ void WaypointDialog::__initDialog()
   name->setMaxLength(8); // limit name to 8 characters
 
   connect( name, SIGNAL(textEdited( const QString& )),
-           this, SLOT(slotTextEdited( const QString& )) );
+           this, SLOT(slotTextEditedName( const QString& )) );
 
   layout->addWidget(name, row, 0);
 
+  country = new QLineEdit;
+  country->setMaxLength(2); // limit country to 2 characters
+
+  QRegExp rx("[A-Za-z]{2}");
+  country->setValidator( new QRegExpValidator(rx, this) );
+
+  connect( country, SIGNAL(textEdited( const QString& )),
+           this, SLOT(slotTextEditedCountry( const QString& )) );
+
+  layout->addWidget(country, row, 1);
+
   description = new QLineEdit;
-  layout->addWidget(description, row, 2);
+  layout->addWidget(description, row, 2, 1, 2);
   row++;
 
   l1->setBuddy( name );
-  l2->setBuddy( description );
-
-  //---
-  l1 = new QLabel( QString( "%1:" ).arg( tr( "&Type" ) ));
-  layout->addWidget( l1, row, 0 );
-
-  l2 = new QLabel(tr("%1 (m):").arg(tr("&Elevation")));
-  layout->addWidget(l2, row, 2);
-  row++;
-
-  waypointType = new QComboBox;
-  waypointType->setAutoCompletion(true);
-  layout->addWidget(waypointType, row, 0);
-
-  elevation = new QLineEdit;
-  elevation->setValidator( intRxValidator );
-  layout->addWidget(elevation, row, 2);
-  row++;
-
-  l1->setBuddy( waypointType );
-  l2->setBuddy( elevation );
+  l2->setBuddy( country );
+  l3->setBuddy( description );
 
   //----
   l1 = new QLabel(QString("%1:").arg(tr("&Latitude")));
-  layout->addWidget(l1, row, 0);
+  layout->addWidget(l1, row, 0, 1, 2);
 
   l2 = new QLabel(QString("%1:").arg(tr("L&ongitude")));
-  layout->addWidget(l2, row, 2);
+  layout->addWidget(l2, row, 2, 1, 2);
   row++;
 
   latitude = new LatEdit;
-  layout->addWidget(latitude, row, 0);
+  layout->addWidget(latitude, row, 0, 1, 2);
 
   longitude = new LongEdit;
-  layout->addWidget(longitude, row, 2);
+  layout->addWidget(longitude, row, 2, 1, 2);
   row++;
 
   l1->setBuddy( latitude );
   l2->setBuddy( longitude );
 
+  //---
+  l1 = new QLabel( QString( "%1:" ).arg( tr( "&Type" ) ));
+  layout->addWidget( l1, row, 0, 1, 2 );
+
+  l2 = new QLabel(tr("%1 (m):").arg(tr("&Elevation")));
+  layout->addWidget(l2, row, 2, 1, 2);
+  row++;
+
+  waypointType = new QComboBox;
+  waypointType->setAutoCompletion(true);
+  layout->addWidget(waypointType, row, 0, 1, 2);
+
+  elevation = new QLineEdit;
+  elevation->setValidator( intRxValidator );
+  elevation->setText( "0" );
+  layout->addWidget(elevation, row, 2, 1, 1);
+  row++;
+
+  l1->setBuddy( waypointType );
+  l2->setBuddy( elevation );
+
+  //---
+  layout->addRowSpacing( row, 20 );
+  row++;
+
   //----
   l1 = new QLabel(tr("&ICAO:"));
-  layout->addWidget(l1, row, 0);
+  layout->addWidget(l1, row, 0, 1, 2);
 
   l2 = new QLabel(QString("%1:").arg(tr("&Frequency")));
-  layout->addWidget(l2, row, 2);
+  layout->addWidget(l2, row, 2, 1, 2);
   row++;
 
   icao = new QLineEdit;
   layout->addWidget(icao, row, 0);
 
   frequency = new QLineEdit;
-
-  // Limit frequency range to VORs and speech bands.
-  QDoubleValidator* doubleValidator = new QDoubleValidator ( 108.0, 140.0, 3, this );
-  frequency->setValidator( doubleValidator );
-  layout->addWidget(frequency, row, 2);
+  frequency->setMaxLength(7); // limit name to 7 characters
+  frequency->setInputMask("999.999");
+  frequency->setText("000.000");
+  layout->addWidget(frequency, row, 2, 1, 1);
   row++;
 
   l1->setBuddy( icao );
   l2->setBuddy( frequency );
 
   //---
-  l1 = new QLabel(QString("%1:").arg(tr("&Runway")));
-  layout->addWidget(l1, row, 0);
+  layout->addRowSpacing( row, 20 );
+  row++;
 
-  l2 = new QLabel(tr("%1 (m):").arg(tr("Len&gth")));
-  layout->addWidget(l2, row, 2);
+  //---
+  l1 = new QLabel(QString("%1:").arg(tr("&Runway")));
+  layout->addWidget(l1, row, 0 );
+
+  l2 = new QLabel(QString("%1:").arg(tr("&Surface")));
+  layout->addWidget(l2, row, 1);
+
+  l3 = new QLabel(tr("%1 (m):").arg(tr("Len&gth")));
+  layout->addWidget(l3, row, 2);
   row++;
 
   runway = new QComboBox;
@@ -163,43 +188,34 @@ void WaypointDialog::__initDialog()
     }
 
   runway->setCurrentIndex(0);
-
   layout->addWidget( runway, row, 0 );
+
+  surface = new QComboBox;
+  layout->addWidget(surface, row, 1);
 
   length = new QLineEdit;
   length->setValidator( intRxValidator );
+  length->setText( "0" );
   layout->addWidget(length, row, 2);
-  row++;
 
   l1->setBuddy( runway );
-  l2->setBuddy( length );
-
-  //---
-  l1 = new QLabel(QString("%1:").arg(tr("&Surface")));
-  layout->addWidget(l1, row, 0);
-  row++;
-
-  surface = new QComboBox;
-  layout->addWidget(surface, row, 0);
+  l2->setBuddy( surface );
+  l3->setBuddy( length );
 
   isLandable = new QCheckBox(tr("L&andable"));
-  layout->addWidget(isLandable, row, 2);
+  layout->addWidget(isLandable, row, 3);
   row++;
-
-  l1->setBuddy( surface );
 
   //---
   l1 = new QLabel(QString("%1:").arg(tr("&Comment")));
-  layout->addWidget(l1, row, 0);
+  layout->addWidget(l1, row, 0, 1, 2);
   row++;
 
   comment = new QLineEdit;
-  layout->addWidget(comment, row, 0, 1, 3);
+  layout->addWidget(comment, row, 0, 1, 4);
   row++;
 
   l1->setBuddy( comment );
-
-  layout->setColumnMinimumWidth( 1, 20 );
 
   //---------------------------------------------------------------------------
   QHBoxLayout *buttonsLayout = new QHBoxLayout;
@@ -236,11 +252,12 @@ void WaypointDialog::clear()
 {
   name->clear();
   description->clear();
-  elevation->clear();
+  country->clear();
+  elevation->setText(0);
   icao->clear();
-  frequency->clear();
+  frequency->setText("000.000");
   runway->setCurrentIndex(0);
-  length->clear();
+  length->setText("0");
   surface->setCurrentIndex( surface->findText(Runway::item2Text(Runway::Unknown)) );
   comment->clear();
   latitude->setKFLogDegree(0);
@@ -265,12 +282,13 @@ void WaypointDialog::slotAddWaypoint()
   Waypoint *w = new Waypoint;
   w->name = name->text().left(8).toUpper();
   w->description = description->text();
+  w->country = country->text().toUpper();
   w->type = getWaypointType();
   w->origP.setLat(latitude->KFLogDegree());
   w->origP.setLon(longitude->KFLogDegree());
-  w->elevation = elevation->text().toInt();
+  w->elevation = elevation->text().toFloat();
   w->icao = icao->text().toUpper();
-  w->frequency = frequency->text().toDouble();
+  w->frequency = frequency->text().toFloat();
   w->runway.first = runway->currentIndex();
 
   if( runway->currentIndex() > 0 )
@@ -284,7 +302,11 @@ void WaypointDialog::slotAddWaypoint()
 
   if( !text.isEmpty() )
     {
-      w->length = text.toInt();
+      w->length = text.toFloat();
+    }
+  else
+    {
+      w->length = 0.0;
     }
 
   w->surface = getSurface();
@@ -300,10 +322,16 @@ void WaypointDialog::slotAddWaypoint()
 /**
  * Called to make all text to upper cases.
  */
-void WaypointDialog::slotTextEdited( const QString& text )
+void WaypointDialog::slotTextEditedName( const QString& text )
 {
   // Change edited text to upper cases
   name->setText( text.toUpper() );
+}
+
+void WaypointDialog::slotTextEditedCountry( const QString& text )
+{
+  // Change edited text to upper cases
+  country->setText( text.toUpper() );
 }
 
 /** return internal type of waypoint */

@@ -75,12 +75,13 @@ void WaypointTreeView::createWaypointWindow()
   waypointTree->setSelectionBehavior( QAbstractItemView::SelectRows );
   waypointTree->setAlternatingRowColors( true );
   waypointTree->addRowSpacing( 5 );
-  waypointTree->setColumnCount( 13 );
+  waypointTree->setColumnCount( 14 );
 
   QStringList headerLabels;
 
   headerLabels  << tr("Name")
                 << tr("Description")
+                << tr("Country")
                 << tr("ICAO")
                 << tr("Type")
                 << tr("Latitude")
@@ -109,20 +110,22 @@ void WaypointTreeView::createWaypointWindow()
   headerItem->setTextAlignment( 10, Qt::AlignCenter );
   headerItem->setTextAlignment( 11, Qt::AlignCenter );
   headerItem->setTextAlignment( 12, Qt::AlignCenter );
+  headerItem->setTextAlignment( 13, Qt::AlignCenter );
 
   colName = 0;
   colDesc = 1;
-  colICAO = 2;
-  colType = 3;
-  colLat = 4;
-  colLong = 5;
-  colElev = 6;
-  colFrequency = 7;
-  colLandable = 8;
-  colRunway = 9;
-  colLength = 10;
-  colSurface = 11;
-  colComment = 12;
+  colCountry = 2;
+  colICAO = 3;
+  colType = 4;
+  colLat = 5;
+  colLong = 6;
+  colElev = 7;
+  colFrequency = 8;
+  colLandable = 9;
+  colRunway = 10;
+  colLength = 11;
+  colSurface = 12;
+  colComment = 13;
 
   // Try to load a stored header configuration.
   waypointTree->loadConfig();
@@ -486,36 +489,34 @@ void WaypointTreeView::slotEditWaypoint()
 /** No descriptions */
 void WaypointTreeView::slotEditWaypoint(Waypoint* w)
 {
-  if (w)
+  if( w )
   {
     QString tmp;
 
     // initialize dialog
     waypointDlg->setWindowTitle( tr( "Edit Waypoint" ) );
     waypointDlg->name->setText(w->name);
+    waypointDlg->country->setText(w->country);
     waypointDlg->description->setText(w->description);
     // translate id to index
     waypointDlg->setWaypointType(w->type);
     waypointDlg->longitude->setKFLogDegree(w->origP.lon());
     waypointDlg->latitude->setKFLogDegree(w->origP.lat());
-    tmp.sprintf("%.0f", w->elevation);
-    waypointDlg->elevation->setText(tmp);
+    waypointDlg->elevation->setText(QString("%1").arg(w->elevation, 0, 'f', 0) );
     waypointDlg->icao->setText(w->icao);
-    tmp.sprintf("%.3f", w->frequency);
-    waypointDlg->frequency->setText(tmp);
 
+    tmp = QString("%1").arg(w->frequency, 3, 'f', 3, QChar('0'));
+
+    while( tmp.size() < 7 )
+      {
+        // add leading zeros
+        tmp.insert(0, "0");
+      }
+
+    waypointDlg->frequency->setText( tmp );
     waypointDlg->runway->setCurrentIndex( w->runway.first );
+    waypointDlg->length->setText(QString("%1").arg(w->length, 0, 'f', 0) );
 
-    if( w->length > 0 )
-      {
-        tmp.sprintf( "%.0f", w->length );
-      }
-    else
-      {
-        tmp = "";
-      }
-
-    waypointDlg->length->setText(tmp);
     // translate to id
     waypointDlg->setSurface(w->surface);
     waypointDlg->comment->setText(w->comment);
@@ -526,14 +527,15 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
       {
         if( !waypointDlg->name->text().isEmpty() )
           {
-            w->name = waypointDlg->name->text().left( 6 ).toUpper();
+            w->name = waypointDlg->name->text().toUpper();
+            w->country = waypointDlg->country->text().toUpper();
             w->description = waypointDlg->description->text();
             w->type = waypointDlg->getWaypointType();
             w->origP.setLat( waypointDlg->latitude->KFLogDegree() );
             w->origP.setLon( waypointDlg->longitude->KFLogDegree() );
             w->elevation = waypointDlg->elevation->text().toInt();
             w->icao = waypointDlg->icao->text().toUpper();
-            w->frequency = waypointDlg->frequency->text().toDouble();
+            w->frequency = waypointDlg->frequency->text().toFloat();
             w->runway.first = waypointDlg->runway->currentIndex();
 
             if( w->runway.first > 0 )
@@ -551,11 +553,11 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
 
             if( !tmp.isEmpty() )
               {
-                w->length = tmp.toInt();
+                w->length = tmp.toFloat();
               }
             else
               {
-                w->length = 0;
+                w->length = 0.0;
               }
 
             w->surface = (enum Runway::SurfaceType) waypointDlg->getSurface();
@@ -742,6 +744,7 @@ void WaypointTreeView::fillWaypoints()
 
     item->setText(colName, w->name);
     item->setText(colDesc, w->description);
+    item->setText(colCountry, w->country);
     item->setText(colICAO, w->icao);
     item->setText(colType, BaseMapElement::item2Text(w->type, tr("unknown")));
     item->setText(colLat,  WGSPoint::printPos(w->origP.lat(), true));
@@ -781,6 +784,7 @@ void WaypointTreeView::fillWaypoints()
     item->setIcon(colName, _globalMapConfig->getPixmap(w->type, false, true) );
 
     // Set alignments of text labels
+    item->setTextAlignment(colCountry, Qt::AlignCenter);
     item->setTextAlignment(colElev, Qt::AlignRight|Qt::AlignVCenter);
     item->setTextAlignment(colFrequency, Qt::AlignRight|Qt::AlignVCenter);
     item->setTextAlignment(colRunway, Qt::AlignCenter);
@@ -830,8 +834,8 @@ void WaypointTreeView::slotImportWaypointCatalog()
                                          _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
-  filter.append(tr("KFLog waypoints") + " (*.kflogwp *.KFLOGWP);;");
-  filter.append(tr("All files") + " (*.*)");
+  filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
+  filter.append(tr("All") + " (*.*)");
 
   QString fName = QFileDialog::getOpenFileName( this,
                                                 tr("Import waypoint catalog"),
@@ -984,17 +988,18 @@ void WaypointTreeView::slotImportWaypointFromMap()
         w = new Waypoint;
 
         QString name = s->getName();
-        w->name = name.replace(blank, "").left(6).toUpper();
+        w->name = name.replace(blank, "").left(8).toUpper();
         loop = 0;
         int idx;
 
         while(currentWaypointCatalog->findWaypoint(w->name, idx) && loop < 100000)
           {
             tmp.setNum(loop++);
-            w->name = w->name.left(6 - tmp.length()) + tmp;
+            w->name = w->name.left(w->name.size() - tmp.length()) + tmp;
           }
 
         w->description = s->getName();
+        w->country = s->getCountry();
         w->type = s->getObjectType();
         w->origP = s->getWGSPosition();
         w->elevation = s->getElevation();

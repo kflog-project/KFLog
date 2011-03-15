@@ -1,5 +1,12 @@
 $Id$
 
+2011-03-15 Axel Pauli <axel@kflog.org>
+  * Country handling added to waypoints and airfields. Changed some types
+    of variables.
+  *  Binary waypoint file format adapted to latest Cumulus version.
+  *  XML waypoint file format extended by some new items. Cumulus supports
+     too the XML waypoint file format now.
+
 2011-03-10 Axel Pauli <axel@kflog.org>
   * Names of waypoints limited to 8 characters and to upper cases.
   * Runway headings limited to range 10...36. 0 stands for unknown heading.
