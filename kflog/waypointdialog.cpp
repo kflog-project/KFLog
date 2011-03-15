@@ -77,6 +77,7 @@ void WaypointDialog::__initDialog()
   layout->addWidget(name, row, 0);
 
   country = new QLineEdit;
+  country->setToolTip(tr("Add countries as two letter code according to ISO 3166-1-alpha-2"));
   country->setMaxLength(2); // limit country to 2 characters
 
   QRegExp rx("[A-Za-z]{2}");
