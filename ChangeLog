@@ -1,5 +1,9 @@
 $Id$
 
+2011-03-16 Axel Pauli <axel@kflog.org>
+  * Qt Version check added to global makefile and qmake project file.
+    That shall prevent the build with wrong Qt versions.
+
 2011-03-15 Axel Pauli <axel@kflog.org>
   * Country handling added to waypoints and airfields. Changed some types
     of variables.
