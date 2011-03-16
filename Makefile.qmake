@@ -1,7 +1,7 @@
 ################################################################################
 # Makefile to build a KFLog release based on Qt4.7.x/X11
 #
-# Copyright (c): 2010 by Axel Pauli (axel@kflog.org)
+# Copyright (c): 2010-2011 by Axel Pauli (axel@kflog.org)
 # 
 # $Id$
 #
@@ -13,7 +13,14 @@
 # Version is determined from the header file target.h
 VERSION=$(shell cat kflog/target.h | grep KFLOG_VERSION | cut -d '"' -f 2)
 
+QTVERSION=$(shell $(QMAKE) -query QT_VERSION)
+
 usage:
+	@echo ""
+	@echo "KFLog build environment for Linux/X11 and Qt4.7"
+	@echo ""
+	@echo "Installed Qt version $(QTVERSION)"
+	@echo ""
 	@echo "Call \"make -f Makfile.qmake ...\" with one of the listed targets"
 	@echo "  all          - build all KFLog parts"
 	@echo "  install_test - installs a test release under the directory release"
@@ -21,7 +28,7 @@ usage:
 	@echo "  distclean    - cleans the build and release area"
 	
 all:	resetdate
-	qmake kflog.pro
+	qmake -Wall -nocache kflog.pro
 	make -f Makefile all
 
 .PHONY :	resetdate
@@ -30,7 +37,7 @@ resetdate:
 
 .PHONY : qmake
 qmake:
-	qmake kflog.pro
+	qmake -Wall -nocache kflog.pro
   
 install_test: all
 	make INSTALL_ROOT=`pwd`/release -f Makefile install
@@ -38,8 +45,7 @@ install_test: all
 clean:	qmake
 	make -f Makefile clean
 
-# This clean is necessary to call, if a qmake project file has been modified!	
+# distclean is necessary to call, if a qmake project file has been modified!	
 distclean:	qmake
 	make -f Makefile distclean
 	rm -rf `pwd`/release
-	
