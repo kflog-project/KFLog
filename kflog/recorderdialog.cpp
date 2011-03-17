@@ -277,6 +277,8 @@ void RecorderDialog::__addSettingsPage()
       selectType->insertItem(pluginName);
       libNameList.insert(pluginName, new QString(currentLibName));
       typeLoop++;
+      if (name=="")
+        name = pluginName;
     }
     pluginName = "";
     currentLibName = "";
