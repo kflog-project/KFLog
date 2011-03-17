@@ -1627,7 +1627,7 @@ void MainWindow::slotWindowsMenuAboutToShow()
 
   windowMenu->clear();
 
-  for( int i = 0; flights->size(); i++ )
+  for( int i = 0; i<flights->size(); i++ )
     {
       QAction *action = new QAction( this );
       action->setText( flights->at(i)->getFileName() );
