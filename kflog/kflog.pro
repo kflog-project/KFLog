@@ -1,6 +1,8 @@
 # KFLog4 qmake project file
 # $Id$
 
+QMAKE_LFLAGS += -rdynamic
+
 QT += qt3support \
       network \
       xml
