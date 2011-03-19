@@ -2366,7 +2366,7 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
       QVector<int> contentArray(3);
       contentArray[0] = MapContents::GliderfieldList;
       contentArray[1] = MapContents::AirfieldList;
-      contentArray[3] = MapContents::OutLandingList;
+      contentArray[2] = MapContents::OutLandingList;
 
 
       for(int n = 0; n < contentArray.count(); n++)
