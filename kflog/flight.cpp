@@ -265,15 +265,7 @@ void Flight::__calculateBasicInformation()
 
   for(unsigned int n = 0; n < points; n++)
   {
-    if (points==1) {
-      route.at(n)->dH = 0;
-      route.at(n)->dT = 1;
-      route.at(n)->dS = 0;
-
-      route.at(n)->bearing  = 0;
-      route.at(n)->dBearing = 0;
-    }
-    else if(n==0)
+    if(n==0)
     {
       route.at(n)->dH = 0;
       route.at(n)->dT = qMax( (route.at(n+1)->time - route.at(n)->time), time_t(1));

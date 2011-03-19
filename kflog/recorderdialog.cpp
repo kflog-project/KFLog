@@ -908,19 +908,16 @@ void RecorderDialog::slotDownloadFlight()
     fileName += dirList.at(flightID)->shortFileName.upper();
   }
   qWarning("flightdir: %s, filename: %s", flightDir.toLatin1().data(), fileName.toLatin1().data());
-//  KFileDialog* dlg = new KFileDialog(flightDir, "*.igc *.IGC ", this,
-//         tr("Select IGC File"), true);
-  Q3FileDialog* dlg = new Q3FileDialog(flightDir, tr("*.igc *.IGC|IGC files"), this, "Select IGC File");
-  dlg->setSelection(fileName);
-  dlg->setMode(Q3FileDialog::AnyFile);
-  dlg->setCaption(tr("Select IGC file to save to"));
-  dlg->show();
 
-  Q3Url fUrl = dlg->url();
+  QString filter;
+  filter.append(tr("IGC") + " (*.igc)");
 
-  if(fUrl.isLocalFile())
-    fileName = fUrl.path();
-  else
+  fileName = QFileDialog::getSaveFileName( this,
+                                           tr( "Select IGC file to save to" ),
+                                           fileName,
+                                           filter );
+
+  if ( fileName.isEmpty() )
     return;
 
   QMessageBox* statusDlg = new QMessageBox ( tr("downloading flight"), tr("downloading flight"),
