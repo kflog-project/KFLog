@@ -268,7 +268,7 @@ void Flight::__calculateBasicInformation()
     if(n==0)
     {
       route.at(n)->dH = 0;
-      route.at(n)->dT = 0;
+      route.at(n)->dT = qMax( (route.at(n+1)->time - route.at(n)->time), time_t(1));
       route.at(n)->dS = 0;
 
       route.at(n)->bearing  = getBearing(*route.at(n), *route.at(n+1));
