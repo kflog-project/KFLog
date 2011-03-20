@@ -864,11 +864,11 @@ void RecorderDialog::slotReadFlightList()
     item->setText(colPilot, dirListItem->pilotName);
     item->setText(colGlider, dirListItem->gliderID);
     QTime time(dirListItem->firstTime.tm_hour, dirListItem->firstTime.tm_min, dirListItem->firstTime.tm_sec);
-    item->setText(colFirstPoint, time.toString(Qt::LocalDate));
+    item->setText(colFirstPoint, time.toString("hh:mm"));
     time = QTime(dirListItem->lastTime.tm_hour, dirListItem->lastTime.tm_min, dirListItem->lastTime.tm_sec);
-    item->setText(colLastPoint, time.toString(Qt::LocalDate));
+    item->setText(colLastPoint, time.toString("hh:mm"));
     time = QTime().addSecs (dirListItem->duration);
-    item->setText(colDuration, time.toString(Qt::LocalDate));
+    item->setText(colDuration, time.toString("hh:mm"));
   }
   QApplication::restoreOverrideCursor();
 
