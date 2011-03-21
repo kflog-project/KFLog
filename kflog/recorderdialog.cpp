@@ -95,7 +95,6 @@ RecorderDialog::~RecorderDialog()
   _settings.setValue("/RecorderDialog/URL",  selectURL->text());
 
   slotCloseRecorder();
-  qDeleteAll( waypoints);
   delete tasks;
 }
 
@@ -750,9 +749,6 @@ void RecorderDialog::slotCloseRecorder()
         activeRecorder->closeRecorder();
     }
     qDebug("Going to close recorder object...");
-    //delete activeRecorder;  // -> seems to cause a segfault? But won't leaving it cause a memoryleak?!
-    // it seems to be important to do a make install after the recorder libraries have been changed.
-    // I could not detect a segfault. Works fine now. Eggert
     activeRecorder = NULL;
     qDebug("Done.");
   }
