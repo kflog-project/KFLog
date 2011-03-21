@@ -201,7 +201,7 @@ private:
     /**
      * Contains a list of library names which can be accessed using the displayed name from the dropdown as a key
      */
-    Q3Dict<QString> libNameList;
+    QMap<QString, QString> libNameList;
     /** */
     int colID;
     int colDate;

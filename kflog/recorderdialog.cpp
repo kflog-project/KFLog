@@ -233,8 +233,8 @@ void RecorderDialog::__addSettingsPage()
   sLayout->addRowSpacing(14, 10);
 
   QStringList configRec;
-  QDir *path = new QDir(QDir::homePath() + "/.kflog/logger/");
-  configRec = path->entryList("*.desktop");
+  QDir path = QDir(QDir::homePath() + "/.kflog/logger/");
+  configRec = path.entryList("*.desktop");
 
   if(configRec.count() == 0) {
     QMessageBox::critical(this,
@@ -275,7 +275,7 @@ void RecorderDialog::__addSettingsPage()
     if(pluginName!="" && currentLibName!="")
     {
       selectType->insertItem(pluginName);
-      libNameList.insert(pluginName, new QString(currentLibName));
+      libNameList.insert(pluginName, currentLibName);
       typeLoop++;
       if (name=="")
         name = pluginName;
@@ -674,7 +674,7 @@ void RecorderDialog::slotConnectRecorder()
   portName = "/dev/" + selectPort->currentText();
   //QStringList::Iterator it = libNameList.at(selectType->currentItem());
   //QString name = (*it).toLatin1().data();
-  QString name=*libNameList[selectType->currentText()];
+  QString name= libNameList[selectType->currentText()];
   int speed = _selectSpeed->currentText().toInt();
 
   if(!__openLib(name)) {
@@ -750,7 +750,7 @@ void RecorderDialog::slotCloseRecorder()
         activeRecorder->closeRecorder();
     }
     qDebug("Going to close recorder object...");
-    delete activeRecorder;  // -> seems to cause a segfault? But won't leaving it cause a memoryleak?!
+    //delete activeRecorder;  // -> seems to cause a segfault? But won't leaving it cause a memoryleak?!
     // it seems to be important to do a make install after the recorder libraries have been changed.
     // I could not detect a segfault. Works fine now. Eggert
     activeRecorder = NULL;
@@ -1608,7 +1608,7 @@ void RecorderDialog::slotRecorderTypeChanged(const QString&) // name)
 {
   if(selectType->currentText().isEmpty())  return;
 
-  QString name = *(libNameList[selectType->currentText()]);
+  QString name = libNameList[selectType->currentText()];
 
   if(isOpen && libName != name) {
     // closing old lib
