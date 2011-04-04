@@ -1160,6 +1160,12 @@ bool WaypointCatalog::readCup (const QString& catalog)
           w->description = "";
         }
 
+      if( list[1].isEmpty() )
+        {
+          // If no code is set, we assign the long name as code to have a workaround.
+          list[1] = list[0];
+        }
+
       // short name of a waypoint has only 8 characters and upper cases
       w->name = list[1].replace( QRegExp("\""), "" ).left(8).toUpper();
       w->country = list[2].left(2).toUpper();
@@ -1193,6 +1199,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
           break;
         case 3:
           w->type = BaseMapElement::Outlanding;
+          wp.isLandable = true;
           w->importance = 1;
           break;
         case 4:

@@ -1,5 +1,9 @@
 $Id$
 
+2011-04-04 Axel Pauli <axel@kflog.org>
+  * Bugfix in waypoint catalog class. An outlanding in the readCup method
+    was never set as landable. I fixed that.
+
 2011-03-18 Hendrik Hoeth <hoeth@linta.de>
   * Fixed some bugs that caused KFLog to crash
   * Communication with loggers works again
