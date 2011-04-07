@@ -674,9 +674,28 @@ int Cambridge::downloadFlight(int flightID, int /*secMode*/, const QString& file
   }
 }
 
-int Cambridge::writeDeclaration(FRTaskDeclaration */*taskDecl*/, QList<Waypoint*> */*taskPoints*/)
+int Cambridge::writeDeclaration(FRTaskDeclaration* /*taskDecl*/, QList<Waypoint*> *taskPoints)
 {
-  return FR_NOTSUPPORTED;
+  // go into command mode, then write the task points
+  wb(STX);
+  wait_ms(100);
+  sendCommand("download");
+  wait_ms(100);
+
+  for (int i=0; i<taskPoints->count(); i++) {
+    QString name = taskPoints->at(i)->description.left(12);
+    QString lat = lat2cai(taskPoints->at(i)->origP.x());
+    QString lon = lon2cai(taskPoints->at(i)->origP.y());
+    QString elv = QString().sprintf("%d", taskPoints->at(i)->elevation);
+    QString  id = QString().sprintf("%d", i+128);
+    QString caiwp = "D," + id + "," + lat + "," + lon + "," + name + "," + elv;
+    qDebug("%s", (const char*)caiwp.toLatin1());
+    sendCommand(caiwp);
+    wait_ms(50);
+  }
+  sendCommand("c,255");
+  wait_ms(100);
+  return FR_OK;
 }
 
 int Cambridge::readDatabase()
