@@ -1,5 +1,9 @@
 $Id$
 
+2011-04-07 Hendrik Hoeth <hoeth@linta.de>
+
+  * Support for task declaration in Cambridge 302 vario/logger.
+
 2011-04-04 Axel Pauli <axel@kflog.org>
   * Bugfix in waypoint catalog class. An outlanding in the readCup method
     was never set as landable. I fixed that.
