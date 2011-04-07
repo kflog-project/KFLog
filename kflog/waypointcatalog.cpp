@@ -1199,7 +1199,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
           break;
         case 3:
           w->type = BaseMapElement::Outlanding;
-          wp.isLandable = true;
+          w->isLandable = true;
           w->importance = 1;
           break;
         case 4:
