@@ -682,18 +682,18 @@ int Cambridge::writeDeclaration(FRTaskDeclaration* /*taskDecl*/, QList<Waypoint*
   sendCommand("download");
   wait_ms(100);
 
-  for (int i=0; i<taskPoints->count(); i++) {
+  for (int i=0; i<taskPoints->count()-1; i++) {     // "-1" because landing==last point
     QString name = taskPoints->at(i)->description.left(12);
     QString lat = lat2cai(taskPoints->at(i)->origP.x());
     QString lon = lon2cai(taskPoints->at(i)->origP.y());
-    QString elv = QString().sprintf("%d", taskPoints->at(i)->elevation);
+    QString elv = QString().sprintf("%d", int(taskPoints->at(i)->elevation));
     QString  id = QString().sprintf("%d", i+128);
     QString caiwp = "D," + id + "," + lat + "," + lon + "," + name + "," + elv;
     qDebug("%s", (const char*)caiwp.toLatin1());
     sendCommand(caiwp);
     wait_ms(50);
   }
-  sendCommand("c,255");
+  sendCommand("D,255");
   wait_ms(100);
   return FR_OK;
 }
@@ -790,7 +790,7 @@ int Cambridge::writeWaypoints(QList<Waypoint*> *waypoints)
     QString name = waypoints->at(i)->description.left(12);
     QString lat = lat2cai(waypoints->at(i)->origP.x());
     QString lon = lon2cai(waypoints->at(i)->origP.y());
-    QString elv = QString().sprintf("%d", waypoints->at(i)->elevation);
+    QString elv = QString().sprintf("%d", int(waypoints->at(i)->elevation));
     QString  id = QString().sprintf("%d", i+1);
     int attribute = CAI_TURNPOINT;
     switch (waypoints->at(i)->type) {
