@@ -348,7 +348,7 @@ void ObjectTree::slotShowObjectTreeMenu(QTreeWidgetItem *item, const QPoint &pos
   actionFlightGroupNew->setEnabled(FlightRoot->childCount());
   actionFlightGroupEdit->setEnabled(FlightRoot->childCount() && currentFlightElementType() == BaseMapElement::FlightGroup);
 
-  QTreeWidgetItem* curentItem = currentItem();
+  QTreeWidgetItem* curentItem = item;
 
   if( item )
     {
