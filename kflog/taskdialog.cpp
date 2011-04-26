@@ -166,6 +166,7 @@ void TaskDialog::__initDialog()
   topLayout->addLayout(topGroup);
   //topLayout->addWidget(new KSeparator(this));
   topLayout->addLayout(buttons);
+  polish();
 }
 
 /** No descriptions */
