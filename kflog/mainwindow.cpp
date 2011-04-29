@@ -19,6 +19,7 @@
 #include <dlfcn.h>
 
 #include <QtGui>
+#include <QSortFilterProxyModel>
 
 #include "aboutwidget.h"
 #include "airfield.h"
@@ -1182,8 +1183,12 @@ void MainWindow::slotOpenFile()
   filter.append(tr("All types") + " (*.igc *.flightgear *.trk *.gdn)");
   filter.append(tr("IGC") + " (*.igc)");
   filter.append(tr("Garmin") + " (*.trk *.gdn)");
-
   fd->setFilters( filter );
+
+  // We need this to sort the file names alphabetically
+  QSortFilterProxyModel *sorter = new QSortFilterProxyModel();
+  sorter->setDynamicSortFilter(true);
+  fd->setProxyModel(sorter);
 
   if( fd->exec() == QDialog::Accepted )
     {
@@ -1257,6 +1262,11 @@ void MainWindow::slotOpenTask()
   QStringList filters;
   filters.append( tr( "KFLog tasks" ) + "(*.kflogtsk *.KFLOGTSK)" );
   fd->setFilters( filters );
+
+  // We need this to sort the file names alphabetically
+  QSortFilterProxyModel *sorter = new QSortFilterProxyModel();
+  sorter->setDynamicSortFilter(true);
+  fd->setProxyModel(sorter);
 
   if( fd->exec() == QDialog::Accepted )
     {
