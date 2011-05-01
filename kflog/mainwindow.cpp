@@ -1594,7 +1594,7 @@ void MainWindow::slotFilePrint()
   slotSetStatusMsg(tr("Printing..."));
 
   // viewCenterFlightAction is enabled, when a flight is loaded ...
-  MapPrint::MapPrint(viewCenterFlightAction->isEnabled());
+  MapPrint(viewCenterFlightAction->isEnabled());
 
   slotSetStatusMsg(tr("Ready."));
 }
@@ -1610,10 +1610,10 @@ void MainWindow::slotFlightPrint()
       switch (f->getObjectType())
         {
           case BaseMapElement::Flight:
-            FlightDataPrint::FlightDataPrint((Flight *)f);
+            FlightDataPrint((Flight *)f);
             break;
           case BaseMapElement::Task:
-            TaskDataPrint::TaskDataPrint((FlightTask*)f);
+            TaskDataPrint((FlightTask*)f);
             break;
           default:
             QString tmp;

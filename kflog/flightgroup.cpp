@@ -26,7 +26,7 @@ FlightGroup::FlightGroup(const QString& fName) :
 {
 }
 
-FlightGroup::FlightGroup(const QList<Flight::Flight *>& fList, const QString& fName) :
+FlightGroup::FlightGroup(const QList<class Flight *>& fList, const QString& fName) :
   BaseFlightElement("flight group", BaseMapElement::FlightGroup, fName),
   flightList(fList)
 {
@@ -38,7 +38,7 @@ FlightGroup::~FlightGroup()
 
 bool FlightGroup::drawMapElement( QPainter* targetP )
 {
-  Flight::Flight *f;
+  class Flight *f;
 
   for( int i = 0; i < flightList.count(); i++ )
     {
@@ -51,7 +51,7 @@ bool FlightGroup::drawMapElement( QPainter* targetP )
 
 void FlightGroup::printMapElement(QPainter* targetP, bool isText)
 {
-  Flight::Flight *f;
+  class Flight *f;
 
   for( int i = 0; i < flightList.count(); i++ )
     {
@@ -63,7 +63,7 @@ void FlightGroup::printMapElement(QPainter* targetP, bool isText)
 /** remove flight from current group */
 void FlightGroup::removeFlight(BaseFlightElement *f)
 {
-  Flight::Flight *flight = dynamic_cast<Flight::Flight *> (f);
+  class Flight *flight = dynamic_cast<class Flight *> (f);
 
   if( ! flight )
     {
@@ -78,7 +78,7 @@ void FlightGroup::removeFlight(BaseFlightElement *f)
 
 void FlightGroup::reProject()
 {
-  Flight::Flight *flight;
+  class Flight *flight;
 
   foreach(flight, flightList)
     {

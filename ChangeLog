@@ -1,22 +1,32 @@
 $Id$
 
+2011-05-01 Axel Pauli <axel@kflog.org>
+
+  * XUbuntu 11.04 uses gcc version 4.5.2 (Ubuntu/Linaro 4.5.2-8ubuntu4). That
+    caused some compiler complains which I fixed. I hope that older compiler
+    versions can handle the made modifications.
+
 2011-04-07 Hendrik Hoeth <hoeth@linta.de>
 
   * Support for task declaration in Cambridge 302 vario/logger.
 
 2011-04-04 Axel Pauli <axel@kflog.org>
+
   * Bugfix in waypoint catalog class. An outlanding in the readCup method
     was never set as landable. I fixed that.
 
 2011-03-18 Hendrik Hoeth <hoeth@linta.de>
+
   * Fixed some bugs that caused KFLog to crash
   * Communication with loggers works again
 
 2011-03-16 Axel Pauli <axel@kflog.org>
+
   * Qt Version check added to global makefile and qmake project file.
     That shall prevent the build with wrong Qt versions.
 
 2011-03-15 Axel Pauli <axel@kflog.org>
+
   * Country handling added to waypoints and airfields. Changed some types
     of variables.
   * Binary waypoint file format adapted to latest Cumulus version.
@@ -24,15 +34,18 @@ $Id$
     too the XML waypoint file format now.
 
 2011-03-10 Axel Pauli <axel@kflog.org>
+
   * Names of waypoints limited to 8 characters and to upper cases.
   * Runway headings limited to range 10...36. 0 stands for unknown heading.
   * Waypoint dialog adapted to the new requirements.
   * Waypoint catalog's read/write methods adapted to the new needs.
 
 2011-03-03 Axel Pauli <axel@kflog.org>
+
   * Different not more needed debug messages removed.
 
 2011-03-02 Axel Pauli <axel@kflog.org>
+
   * Error fixed in menu point available flights. Caused a core dump.
   * An optimized flight was never redrawn in the EvaluationDialog class.
     Missing call added in MainWindow. Labels of optimized flights can overwrite
@@ -43,6 +56,7 @@ $Id$
     more issues in animation of flights.
 
 2011-03-01 Axel Pauli <axel@kflog.org>
+
   * Class IgcPreview removed. Not more usable under Qt4 because the
     support was removed in Qt4.
   * Form ui_optimizationwizard removed. Was never used in the current
@@ -52,12 +66,14 @@ $Id$
     some more tweaking. Will continue the work the next days.
 
 2011-02-25 Axel Pauli <axel@kflog.org>
+
   * IGC 3D view widgets ported to Qt4. The size of the 3D flight should be
     better adapted to the real size of the widget at the first call.
     The help text of the IGC 3D view is forwarded to the help browser
     during the show event.
     
 2011-02-24 Axel Pauli <axel@kflog.org>
+
   * Bugfix in flight statistic text in ElevationDialog class. Found two
     HTML format errors, which caused a wrong and not more readable
     display. Did some tweaking of the HTML formatting. Added a help
@@ -65,6 +81,7 @@ $Id$
     of ElevationDialog class.
 
 2011-02-23 Axel Pauli <axel@kflog.org>
+
   * ElevationFinder class should not declare a parent in its constructor.
     That prevents complains by Glib during shutdown.
   * Flight elevation stuff ported to Qt4. It was a hard piece of work
@@ -74,11 +91,13 @@ $Id$
     The format of the displayed flight text data needs some rework.
 
 2011-02-21 Axel Pauli <axel@kflog.org>
+
   * Thanks to valgrind, found a bug in ElevationFinder class. Class member
     useOGIE was not initialized. That cause a funny report by Qt, filename
     missing, during load of a flight.
 
 2011-02-19 Axel Pauli <axel@kflog.org>
+
   * FlightSelectionDialog did never show loaded flights. I fixed that and ported
     the dialog fully to Ot4.
   * The close of a single flight in the object tree view has never considered
@@ -87,6 +106,7 @@ $Id$
     items are sorted by using column 0 only to get an better overview about all.
     
 2011-02-18 Axel Pauli <axel@kflog.org>
+
   * Tried to fix the flight cursor handling in class Map. Cursors were drawn
     at the widget's engine outside of the paint event. That caused warnings.
     Animated cursor handling has the same problem, must be fixed in the feature
@@ -94,6 +114,7 @@ $Id$
   * Different bugs in data view format layout fixed.
 
 2011-02-16 Axel Pauli <axel@kflog.org>
+
   * Class HelpWindow fully ported to Qt4.
   * Masked painter removed from drawing of flights and tasks. But there remains
     complains by QPainter about wrong usage. I could not yet find out the real
@@ -111,6 +132,7 @@ $Id$
     next access to that object.
   
 2011-02-15 Axel Pauli <axel@kflog.org>
+
   * Class FlightLoader fully ported to Qt4. The code of that class is a
     mixture of QSting methods and trival c functions. :-((
   * Class ObjectTree together with its list view items ported to Qt4.
@@ -121,22 +143,26 @@ $Id$
     a core dump. I fixed that.
 
 2011-02-13 Axel Pauli <axel@kflog.org>
+
   * File wp.h renamed to flightpoint.h. It contains a class FlightPoint and
     nothing with waypoint. Class Map fully ported to Qt4.
   
 2011-02-12 Axel Pauli <axel@kflog.org>
+
   * Bugfix in class Waypoint Catalog. The waypoint name check message box
     did not allow an abort. I fixed that. Cup file read routine did not work
     properly. Strings could be enclosed in quotes and contain the comma
     separator. In such a case the separator must be ignored. I fixed that too.
 
 2011-02-10 Axel Pauli <axel@kflog.org>
+
   * Drawing of waypoint labels at the map reworked.
   * If a new waypoint is created at the map the elevation from the position
     is taken over into the waypoint dialog now.
   * Missing map icons for landmark added.
 
 2011-02-09 Axel Pauli <axel@kflog.org>
+
   * Class KFLogListView was replaced by the new class KFLogTreeWidget. This
     class saves too the tree view header and provides a menu by pressing middle
     mouse button for visibility toggling of columns of the tree view.
@@ -150,7 +176,9 @@ $Id$
     at once.
   * The waypoint management should be ported now to Qt4. All import functions
     must be tested deeper, if they work correctly.
+    
 2011-02-04 Axel Pauli <axel@kflog.org>
+
   * Bugfix in class Waypoints. If no catalog is defined and the mouse button
     is pressed in the waypoint list, a core dump occurred. Fixed that in
     method showWaypointMenu.
@@ -159,6 +187,7 @@ $Id$
     catalog settings. I fixed that.
   
 2011-02-03 Axel Pauli <axel@kflog.org>
+
   * Bugfix in class WaypointCatalog. In method insertWaypoint was never done
     an insert of a new waypoint. The insert statement was placed inside the
     existing path. It cost me two hours to find out that, uff ;-).
@@ -166,11 +195,13 @@ $Id$
   * All menu items in class Waypoints ported to Qt4.
 
 2011-02-02 Axel Pauli <axel@kflog.org>
+
   * All bitBlt method calls replaced by Qt4 drawPixmap calls in class Map. That
     improves the drawing performance too.
   * Dialog WaypointImpFilterDialog ported to Qt4.
 
 2011-02-01 Axel Pauli <axel@kflog.org>
+
   * New configuration widget added which handles units for altitude,
     distances and positions.
   * Class content of class CoordEdit taken over from Cumulus. This class
@@ -178,9 +209,11 @@ $Id$
   * WaypointDialog class ported to Qt4.
 
 2011-01-28 Axel Pauli <axel@kflog.org>
+
   * Airspace default print colors modified.
 
 2011-01-28 Axel Pauli <axel@kflog.org>
+
   * KFlogConfig class ported completely to Qt4. The classes ConfigDrawElement
     and ConfigPrintElement were united into one class with name ConfigMapElement.
     That makes all configuration handling and the maintenance easier. It was a
@@ -190,6 +223,7 @@ $Id$
     icons from the pics directory.
 
 2011-01-20 Axel Pauli <axel@kflog.org>
+
   * Animation of tool bar and dock widgets switched off. It caused a lot of
     resizing actions and blocked the whole GUI.
   * Wrong call connections in class KFLogConfig fixed. Scale and waypoint
@@ -200,6 +234,7 @@ $Id$
   * Class RowDelegate taken over from Cumulus.
 
 2011-01-19 Axel Pauli <axel@kflog.org>
+
   * Class TopoLegend ported to Qt4 together with bug fixing. Works now as
     expected.
   * Class MapControlView ported to Qt4.
@@ -208,20 +243,24 @@ $Id$
     information is not complete. Should be check by the maintainers.
 
 2011-01-18 Axel Pauli <axel@kflog.org>
+
   * Map menu ported to Qt4.
   * Translation lists of different map objects moved from the MainWindow class
     into the corresponding classes.
   * Map object search methods in class Map extended to include the OutlangingList.
 
 2011-01-17 Axel Pauli <axel@kflog.org>
+
   * Bugfix in method MapConfig::loadPixmap(). 
 
 2011-01-13 Axel Pauli <axel@kflog.org>
+
   * Method Airfield::getInfoString() over worked. It displays now some
     more information about the related item.
   * Outlandings included in Map::__displayMapInfo() method.
 
 2011-01-13 Axel Pauli <axel@kflog.org>
+
   * BUGFIX: Welt2000 has changed the identifier for gliderfields.
     Parser modified to the new identifier.
   * Airfields are drawn now with considering the landing direction.
@@ -230,12 +269,15 @@ $Id$
     Airfield.
 
 2011-01-11 Axel Pauli <axel@kflog.org>
+
   * All menubar items ported to Qt4. That was a very stupid work ;-)
 
 2011-01-07 Axel Pauli <axel@kflog.org>
+
   * All toolbar items ported to Qt4.
 
 2010-12-24 Axel Pauli <axel@kflog.org>
+
   * Changed the application data default directory from ~/.kflog to ~/KFLog.
   * Introduced a new method to get the default application data directory from
     one place in MainWindow class. That makes future changes easier.
@@ -245,6 +287,7 @@ $Id$
     target with all needed data items.
 
 2010-12-22 Axel Pauli <axel@kflog.org>
+
   * Map redraw optimized after download of missing files. The already loaded
     data are not more cleared and loaded again.
   * Two new methods indroduced for loading of map icons and application
@@ -254,6 +297,7 @@ $Id$
     ICAO guidelines. That is an open point for the printing functionality.
 
 2010-12-21 Axel Pauli <axel@kflog.org>
+
   * Class WhatsThat caused core dumps after displaying airspace information.
     Code of class partly replaced by the Cumulus code.
   * Pixmap drawing mechanism partly redesigned.
@@ -263,16 +307,19 @@ $Id$
     dead locks.
 
 2010-12-18 Axel Pauli <axel@kflog.org>
+
   * OpenAir class taken over from Cumulus. Airspaces are drawn now at the map
     but there is some redesign needed for the drawing management in general.
     It works very inefficiently. Different fixes made for Qt4 to overcome
     a lot of compiler complains. Airspaces are handled now in value list.
 
 2010-12-16 Axel Pauli <axel@kflog.org>
+
   * Q3 pointer lists for terrain and map elements replaced by Qt4 value
     lists. Isoline management taken over from Cumulus.
 
 2010-12-15 Axel Pauli <axel@kflog.org>
+
   * Content of class WGSPoint taken over from Cumulus. Definitions of WGSPoint
     In MapMatrix removed. Method degreeToNum moved from class MapContens to 
     class WGSPoint.

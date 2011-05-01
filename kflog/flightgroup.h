@@ -57,7 +57,7 @@ class FlightGroup : public BaseFlightElement
    * @param fList @ref QPtrList of flights to be included in the FlightGroup.
    * @returns new @ref FlightGroup object.
    */
-  FlightGroup(const QList<Flight::Flight *>& fList, const QString& fName);
+  FlightGroup(const QList<class Flight *>& fList, const QString& fName);
   /**
    * Destructor
    */
@@ -91,7 +91,7 @@ class FlightGroup : public BaseFlightElement
   /**
    * @returns the list of flights contained in the group
    */
-  QList<Flight::Flight *>& getFlightList()
+  QList<class Flight *>& getFlightList()
     {
       return flightList;
     };
@@ -101,7 +101,7 @@ class FlightGroup : public BaseFlightElement
   void removeFlight(BaseFlightElement *f);
 
   /** Sets the flight list. */
-  void setFlightList(QList<Flight::Flight *>& fl)
+  void setFlightList(QList<class Flight *>& fl)
   {
     flightList = fl;
   };
@@ -113,7 +113,7 @@ class FlightGroup : public BaseFlightElement
 
  private:
 
-  QList<Flight::Flight *> flightList;
+  QList<class Flight *> flightList;
 };
 
 #endif

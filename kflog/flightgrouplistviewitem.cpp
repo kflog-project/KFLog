@@ -58,7 +58,7 @@ void FlightGroupListViewItem::update()
 /** Creates the child nodes for this flight group node. */
 void FlightGroupListViewItem::createChildren()
 {
-  QList<Flight::Flight*> flights = flightGroup->getFlightList();
+  QList<class Flight*> flights = flightGroup->getFlightList();
 
   setText( 0,flightGroup->getFileName() );
   setText( 1, QString::number(flights.count()) + " " + QObject::tr("Flights") );
