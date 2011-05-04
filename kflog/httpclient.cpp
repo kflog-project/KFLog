@@ -115,6 +115,11 @@ bool HttpClient::downloadFile( QString &urlIn, QString &destinationIn )
       // Check the user's environment, if a proxy is defined there.
       char* proxyFromEnv = getenv("http_proxy");
 
+      if( proxyFromEnv == 0 )
+        {
+          proxyFromEnv = getenv("HTTP_PROXY");
+        }
+
       if( proxyFromEnv )
         {
           QString qProxy( proxyFromEnv );

@@ -13,7 +13,7 @@
 # Version is determined from the header file target.h
 VERSION=$(shell cat kflog/target.h | grep KFLOG_VERSION | cut -d '"' -f 2)
 
-QTVERSION=$(shell $(QMAKE) -query QT_VERSION)
+QTVERSION=$(shell qmake -query QT_VERSION)
 
 usage:
 	@echo ""
