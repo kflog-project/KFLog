@@ -1156,6 +1156,7 @@ void WaypointTreeView::getFilterData()
   currentWaypointCatalog->areaLat2 = importFilterDlg->toLat->KFLogDegree();
   currentWaypointCatalog->areaLong1 = importFilterDlg->fromLong->KFLogDegree();
   currentWaypointCatalog->areaLong2 = importFilterDlg->toLong->KFLogDegree();
+  currentWaypointCatalog->centerRef = importFilterDlg->getCenterRef();
 
   int lat, lon;
 

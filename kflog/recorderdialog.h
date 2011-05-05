@@ -7,9 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -26,14 +27,19 @@
 #include "frstructs.h"
 #include "guicontrols/kfloglistview.h"
 #include "waypointcatalog.h"
-//#include "waypointlist.h
 
 /**
- * Provides a dialog-window for accessing the flight recorder.
+ * \class RecorderDialog
  *
- * @author Heiner Lamprecht
+ * \brief Flight recorder dialog
  *
- * @version $Id$
+ * Provides a dialog window for working with the flight recorder.
+ *
+ * \author Heiner Lamprecht, Axel Pauli
+ *
+ * \date 2002-2011
+ *
+ * \version $Id$
  */
 class RecorderDialog : public QDialog
 {
@@ -60,7 +66,7 @@ private:
     void slotConnectRecorder();
     void slotPageChanged(Q3ListViewItem *currentItem);
     /**
-     * Read the flightlist from the recorder
+     * Read the flight list from the recorder
      */
     void slotReadFlightList();
     /**
@@ -84,7 +90,7 @@ private:
      */
     void slotCloseRecorder();
     /**
-     * Reads the data on things like pilotnames from the flightrecorder
+     * Reads the data on things like pilot names from the flight recorder
      */
     void slotReadDatabase();
     /**
@@ -92,11 +98,11 @@ private:
      */
     void slotWriteConfig();
     /**
-     * Reads the waypointlist from the recorder
+     * Reads the waypoint list from the recorder
      */
     void slotReadWaypoints();
     /**
-     * Writes the waypointlist to the recorder
+     * Writes the waypoint list to the recorder
      */
     void slotWriteWaypoints();
     /**
@@ -106,6 +112,18 @@ private:
      */
     void slotNewSpeed(int);
     
+  public:
+
+    /**
+     * \return Path to the directory, where are the known loggers defined.
+     */
+    QString getLoggerPath();
+
+    /**
+     * \return Path to the directory, where are the plugin libraries are located.
+     */
+    QString getLibraryPath();
+
   private:
     /** */
     int __fillDirList();
@@ -195,11 +213,12 @@ private:
     /** */
     bool isOpen;
     /** */
-    QList<FRDirEntry*> dirList;
-    QList<FlightTask*> *tasks;
-    QList<Waypoint*> waypoints;
+    QList<FRDirEntry *> dirList;
+    QList<FlightTask *> tasks;
+    QList<Waypoint *> waypoints;
     /**
-     * Contains a list of library names which can be accessed using the displayed name from the dropdown as a key
+     * Contains a list of library names which can be accessed using the
+     * displayed name from the drop down as a key.
      */
     QMap<QString, QString> libNameList;
     /** */

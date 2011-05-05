@@ -1,5 +1,14 @@
 $Id$
 
+2011-05-05 Axel Pauli <axel@kflog.org>
+
+  * Bugfix in waypoint import from map. If map center was selected as center
+    point it was never taken because the center reference value was never
+    set in the waypoint catalog.
+  * Bugfix in recorder dialog. The plugin definitions and libraries were
+    searched at wrong places and never found. I adapted all to the current
+    used release structure.
+
 2011-05-01 Axel Pauli <axel@kflog.org>
 
   * XUbuntu 11.04 uses gcc version 4.5.2 (Ubuntu/Linaro 4.5.2-8ubuntu4). That

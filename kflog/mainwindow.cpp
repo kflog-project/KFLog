@@ -1328,12 +1328,14 @@ void MainWindow::slotOpenRecentFile( QAction *action )
 void MainWindow::slotOpenRecorderDialog()
 {
   RecorderDialog* dlg = new RecorderDialog(this);
+
   connect( dlg, SIGNAL(addCatalog(WaypointCatalog *)),
            waypointTreeView, SLOT(slotAddCatalog(WaypointCatalog *)) );
-  connect( dlg, SIGNAL(addTask(FlightTask *)), _globalMapContents,
-           SLOT(slotAppendTask(FlightTask *)) );
+
+  connect( dlg, SIGNAL(addTask(FlightTask *)),
+           _globalMapContents, SLOT(slotAppendTask(FlightTask *)) );
+
   dlg->exec();
-  delete dlg;
 }
 
 void MainWindow::slotOptimizeFlight()
