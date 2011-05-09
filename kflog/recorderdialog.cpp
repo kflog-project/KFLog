@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -27,6 +28,7 @@
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "recorderdialog.h"
+#include "rowdelegate.h"
 #include "wgspoint.h"
 #include "mainwindow.h"
 
@@ -64,35 +66,55 @@ RecorderDialog::RecorderDialog( QWidget *parent ) :
 
   configLayout = new QGridLayout(this);
 
-  setupTree = new Q3ListView(this);
-  setupTree->addColumn("Menu");
-  setupTree->hideColumn(1);
+  setupTree = new QTreeWidget(this);
+  setupTree->setRootIsDecorated( false );
+  setupTree->setItemsExpandable( false );
+  setupTree->setSortingEnabled( true );
+  setupTree->setSelectionMode( QAbstractItemView::SingleSelection );
+  setupTree->setSelectionBehavior( QAbstractItemView::SelectRows );
+  setupTree->setColumnCount( 1 );
+  setupTree->setFocusPolicy( Qt::StrongFocus );
+  setupTree->setHeaderLabel( tr( "Menu" ) );
 
-  configLayout->addWidget(setupTree, 0, 0);
-  connect( setupTree, SIGNAL(currentChanged(Q3ListViewItem *)),
-           this, SLOT(slotPageChanged(Q3ListViewItem *)) );
+  // Set additional space per row
+  RowDelegate* rowDelegate = new RowDelegate( setupTree, 10 );
+  setupTree->setItemDelegate( rowDelegate );
+
+  QTreeWidgetItem* headerItem = setupTree->headerItem();
+  headerItem->setTextAlignment( 0, Qt::AlignCenter );
+
+  configLayout->addWidget( setupTree, 0, 0 );
+
+  connect( setupTree, SIGNAL(itemClicked( QTreeWidgetItem*, int )),
+           this, SLOT( slotPageClicked( QTreeWidgetItem*, int )) );
 
   QPushButton *closeButton = new QPushButton(tr("&Close"), this);
   connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
-  configLayout->addWidget(closeButton, 1, 2);
 
-  __addSettingsPage();
+  QHBoxLayout* cbBox = new QHBoxLayout;
+  cbBox->setSpacing( 0 );
+  cbBox->addStretch( 10 );
+  cbBox->addWidget( closeButton );
+
+  configLayout->addLayout(cbBox, 1, 2);
+
+  __addRecorderPage();
   __addFlightPage();
   __addDeclarationPage();
   __addTaskPage();
   __addWaypointPage();
-  __addPilotPage();
   __addConfigPage();
 
-  setupTree->hideColumn(1);
-  setFixedWidth(830);
-  setMinimumHeight(350);
-  setupTree->setFixedWidth(145);
-  setupTree->setColumnWidth(145, 1);
-  setupTree->setResizeMode(Q3ListView::NoColumn);
-  settingsPage->show();
-  activePage = settingsPage;
-  activePage->setFixedWidth(685);
+  setupTree->sortByColumn ( 0, Qt::AscendingOrder );
+  setupTree->resizeColumnToContents( 0 );
+  setupTree->setFixedWidth( 170 );
+
+  activePage = recorderPage;
+  recorderPage->setVisible( true );
+
+  // activePage->setFixedWidth(685);
+  // setFixedWidth(830);
+  // setMinimumHeight(350);
 
   slotEnablePages();
 }
@@ -101,7 +123,7 @@ RecorderDialog::~RecorderDialog()
 {
   _settings.setValue( "/RecorderDialog/Name", selectType->currentText() );
   _settings.setValue( "/RecorderDialog/Port", selectPort->currentItem() );
-  _settings.setValue( "/RecorderDialog/Baud", _selectSpeed->currentItem() );
+  _settings.setValue( "/RecorderDialog/Baud", selectSpeed->currentItem() );
   _settings.setValue( "/RecorderDialog/URL", selectURL->text() );
 
   slotCloseRecorder();
@@ -121,154 +143,161 @@ QString RecorderDialog::getLibraryPath()
   return QString( _installRoot + "/bin" );
 }
 
-void RecorderDialog::__addSettingsPage()
+void RecorderDialog::__addRecorderPage()
 {
   int typeID(0), typeLoop(0);
 
-  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Recorder"), "Recorder");
-  item->setPixmap(0, _mainWindow->getPixmap("kde_media-tape_48.png"));
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Recorder") );
+  item->setData( 0, Qt::UserRole, "Recorder" );
+  item->setIcon( 0, _mainWindow->getPixmap("kde_media-tape_48.png") );
+  setupTree->addTopLevelItem( item );
+  setupTree->setCurrentItem( item );
 
-  settingsPage = new Q3Frame(this, "Recorder Settings");
-  settingsPage->hide();
-  configLayout->addMultiCellWidget(settingsPage, 0, 0, 1, 2);
+  recorderPage = new QFrame(this);
+  recorderPage->setObjectName( "RecorderPage" );
+  recorderPage->setVisible( false );
 
-  QGridLayout* sLayout = new QGridLayout(settingsPage, 15, 8, 10, 1);
+  configLayout->addWidget( recorderPage, 0, 1, 1, 2 );
 
-  Q3GroupBox* sGroup = new Q3GroupBox(settingsPage, "homeGroup");
-  sGroup->setTitle(tr("Settings") + ":");
+  //----------------------------------------------------------------------------
 
-  selectType = new QComboBox(settingsPage, "type-selection");
-  connect(selectType, SIGNAL(activated(const QString &)), this, SLOT(slotRecorderTypeChanged(const QString &)));
+  QGroupBox* sGroup = new QGroupBox( tr("Settings") );
 
-  selectPort = new QComboBox(settingsPage, "port-selection");
-  selectPortLabel = new QLabel(tr("Port"), settingsPage);
-  _selectSpeed = new QComboBox(settingsPage, "baud-selection");
-  selectSpeedLabel = new QLabel(tr("Transfer speed"), settingsPage);
-  selectURL = new QLineEdit(settingsPage, "URL-selection");
-  selectURLLabel = new QLabel(tr("URL"), settingsPage);
+  selectType = new QComboBox;
 
-  selectPort->insertItem("ttyS0");
-  selectPort->insertItem("ttyS1");
-  selectPort->insertItem("ttyS2");
-  selectPort->insertItem("ttyS3");
+  connect( selectType, SIGNAL(activated(const QString &)), this,
+           SLOT(slotRecorderTypeChanged(const QString &)) );
+
+  selectPortLabel = new QLabel(tr("Port:"));
+
+  selectPort = new QComboBox;
+  selectPort->addItem("ttyS0");
+  selectPort->addItem("ttyS1");
+  selectPort->addItem("ttyS2");
+  selectPort->addItem("ttyS3");
   // the following devices are used for usb adapters
-  selectPort->insertItem("ttyUSB0");   // classical device
-  selectPort->insertItem("tts/USB0");  // devfs
-  selectPort->insertItem("usb/tts/0"); // udev
+  selectPort->addItem("ttyUSB0");   // classical device
+  selectPort->addItem("tts/USB0");  // devfs
+  selectPort->addItem("usb/tts/0"); // udev
   // we never know if the device name will change again; let the user have a chance
   selectPort->setEditable(true);
 
-  cmdConnect = new QPushButton(tr("Connect recorder"), settingsPage);
+  selectSpeedLabel = new QLabel(tr("Transfer speed:"));
+  selectSpeed = new QComboBox;
+
+  selectURLLabel = new QLabel(tr("URL:"));
+  selectURL = new QLineEdit;
+
+  cmdConnect = new QPushButton(tr("Connect to recorder"));
   cmdConnect->setMaximumWidth(cmdConnect->sizeHint().width() + 5);
 
-  Q3GroupBox* infoGroup = new Q3GroupBox(settingsPage, "infoGroup");
-  infoGroup->setTitle(tr("Info") + ":");
+  QGridLayout* sGridLayout = new QGridLayout;
+  sGridLayout->setSpacing(10);
 
-  lblApiID = new QLabel(tr("API-Version"), settingsPage);
-  apiID = new QLabel(settingsPage);
-  apiID->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
-  apiID->setBackgroundMode( Qt::PaletteLight );
+  sGridLayout->addWidget( new QLabel( tr("Type:")), 0, 0 );
+  sGridLayout->addWidget( selectType, 0, 1 );
+  sGridLayout->addWidget( selectPortLabel, 1, 0 );
+  sGridLayout->addWidget( selectPort, 1, 1 );
+  sGridLayout->addWidget( selectSpeedLabel, 2, 0 );
+  sGridLayout->addWidget( selectSpeed, 2, 1 );
+  sGridLayout->addWidget( selectURLLabel, 2, 0 );
+  sGridLayout->addWidget( selectURL, 2, 1 );
+  sGridLayout->addWidget( cmdConnect, 3, 0, 1, 4, Qt::AlignRight );
+
+  sGroup->setLayout( sGridLayout );
+
+  //----------------------------------------------------------------------------
+
+  QGroupBox* iGroup = new QGroupBox( tr("Info") );
+
+  lblApiID = new QLabel(tr("API-Version:"));
+  apiID = new QLabel;
+  apiID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+  apiID->setBackgroundRole( QPalette::Light );
+  apiID->setAutoFillBackground( true );
   apiID->setEnabled(false);
 
-  lblSerID = new QLabel(tr("Serial-Nr."), settingsPage);
-  serID = new QLabel(tr("no recorder connected"), settingsPage);
-  serID->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
-  serID->setBackgroundMode( Qt::PaletteLight );
+  lblSerID = new QLabel(tr("Serial-No.:"));
+  serID = new QLabel(tr("No recorder connected"));
+  serID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+  serID->setBackgroundRole( QPalette::Light );
+  serID->setAutoFillBackground( true );
   serID->setEnabled(false);
 
-  lblRecType = new QLabel(tr("Recorder Type"), settingsPage);
-  recType = new QLabel (settingsPage);
-  recType->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
-  recType->setBackgroundMode( Qt::PaletteLight );
+  lblRecType = new QLabel(tr("Recorder Type:"));
+  recType = new QLabel;
+  recType->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+  recType->setBackgroundRole( QPalette::Light );
+  recType->setAutoFillBackground( true );
   recType->setEnabled(false);
 
-  lblPltName = new QLabel(tr("Pilot Name"), settingsPage);
-  pltName = new QLineEdit (settingsPage, "pltName");
+  lblPltName = new QLabel(tr("Pilot Name"));
+  pltName = new QLineEdit;
   pltName->setEnabled(false);
 
-  lblGldType = new QLabel(tr("Glider Type"), settingsPage);
-  gldType = new QLineEdit (settingsPage, "gldType");
+  lblGldType = new QLabel(tr("Glider Type:"));
+  gldType = new QLineEdit;
   gldType->setEnabled(false);
 
-  lblGldID = new QLabel(tr("Glider ID"), settingsPage);
-  gldID = new QLineEdit (settingsPage, "gldID");
+  lblGldID = new QLabel(tr("Glider Sign:"));
+  gldID = new QLineEdit;
   gldID->setEnabled(false);
 
-  cmdUploadBasicConfig = new QPushButton(tr("write config to recorder"), settingsPage);
+  cmdUploadBasicConfig = new QPushButton(tr("Write data to recorder"));
+  cmdUploadBasicConfig->setMaximumWidth(cmdUploadBasicConfig->sizeHint().width() + 5);
+
   // disable this button until we read the information from the flight recorder:
   cmdUploadBasicConfig->setEnabled(false);
-  connect(cmdUploadBasicConfig, SIGNAL(clicked()), SLOT(slotWriteConfig()));
+  connect( cmdUploadBasicConfig, SIGNAL(clicked()), SLOT(slotWriteConfig()) );
 
-  compID = new QLabel (settingsPage);
-  compID->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
-  compID->setBackgroundMode( Qt::PaletteLight );
+  compID = new QLineEdit;
   compID->setEnabled(false);
 
-  sLayout->addMultiCellWidget(sGroup, 0, 6, 0, 7);
-  sLayout->addWidget(new QLabel(tr("Type"), settingsPage), 1, 1, Qt::AlignRight);
-  sLayout->addMultiCellWidget(selectType, 1, 1, 2, 6);
-  sLayout->addWidget(selectPortLabel, 3, 1, Qt::AlignRight);
-  sLayout->addMultiCellWidget(selectPort, 3, 3, 2, 3);
-  sLayout->addWidget(selectSpeedLabel, 3, 4, Qt::AlignRight);
-  sLayout->addMultiCellWidget(_selectSpeed, 3, 3, 5, 6);
-  sLayout->addWidget(selectURLLabel, 3, 1, Qt::AlignRight);
-  sLayout->addMultiCellWidget(selectURL, 3, 3, 2, 6);
+  QGridLayout* iGridLayout = new QGridLayout;
+  iGridLayout->setSpacing(10);
+  iGridLayout->addWidget( lblApiID, 0, 0 );
+  iGridLayout->addWidget( apiID, 0, 1 );
+  iGridLayout->addWidget( lblPltName, 0, 2 );
+  iGridLayout->addWidget( pltName, 0, 3 );
+  iGridLayout->addWidget( lblSerID, 1, 0 );
+  iGridLayout->addWidget( serID, 1, 1 );
+  iGridLayout->addWidget( lblGldType, 1, 2 );
+  iGridLayout->addWidget( gldType, 1, 3 );
+  iGridLayout->addWidget( lblRecType, 2, 0 );
+  iGridLayout->addWidget( recType, 2, 1 );
+  iGridLayout->addWidget( lblGldID, 2, 2 );
+  iGridLayout->addWidget( gldID, 2, 3 );
+  iGridLayout->addWidget( new QLabel(tr("Competition Id:")), 3, 0 );
+  iGridLayout->addWidget( compID, 3, 1 );
+  iGridLayout->addWidget( cmdUploadBasicConfig, 4, 0, 1, 4, Qt::AlignRight );
+
+  iGroup->setLayout( iGridLayout );
+
+  QVBoxLayout* recorderLayout = new QVBoxLayout;
+  recorderLayout->addWidget( sGroup );
+  recorderLayout->addSpacing( 20 );
+  recorderLayout->addWidget( iGroup );
+  recorderLayout->addStretch( 10 );
+
+  recorderPage->setLayout( recorderLayout );
+
   __setRecorderConnectionType(FlightRecorderPluginBase::none);
 
-  sLayout->addWidget(cmdConnect, 5, 6, Qt::AlignRight);
-
-  sLayout->addMultiCellWidget(infoGroup, 8, 14, 0, 7);
-  sLayout->addWidget(lblApiID, 9, 1, Qt::AlignRight);
-  sLayout->addMultiCellWidget(apiID, 9, 9, 2, 3);
-  sLayout->addWidget(lblSerID, 11, 1, Qt::AlignRight);
-  sLayout->addMultiCellWidget(serID, 11, 11, 2, 3);
-  sLayout->addWidget(lblRecType, 13, 1, Qt::AlignRight);
-  sLayout->addMultiCellWidget(recType, 13, 13, 2, 3);
-
-  sLayout->addWidget(lblPltName, 9, 4, Qt::AlignRight);
-  sLayout->addMultiCellWidget(pltName, 9, 9, 5, 6);
-  sLayout->addWidget(lblGldType, 11, 4, Qt::AlignRight);
-  sLayout->addMultiCellWidget(gldType, 11, 11, 5, 6);
-  sLayout->addWidget(lblGldID, 13, 4, Qt::AlignRight);
-  sLayout->addMultiCellWidget(gldID, 13, 13, 5, 5);
-  sLayout->addMultiCellWidget(compID, 13, 13, 6, 6);
-
-  sLayout->addWidget(cmdUploadBasicConfig, 15, 5, Qt::AlignJustify);
-
-  sLayout->setColStretch(0, 1);
-  sLayout->setColStretch(7, 1);
-  for (int i = 1; i < 7; i++) {
-    sLayout->setColStretch(i, 10);
-  }
-
-  sLayout->addRowSpacing(0, 20);
-  sLayout->addRowSpacing(2, 5);
-  sLayout->addRowSpacing(4, 5);
-  sLayout->addRowSpacing(6, 10);
-
-  sLayout->addRowSpacing(7, 5);
-  sLayout->addRowSpacing(9, 0);
-
-  sLayout->addRowSpacing(8, 20);
-  sLayout->addRowSpacing(10, 5);
-  sLayout->addRowSpacing(12, 5);
-  sLayout->addRowSpacing(14, 10);
-
-  QStringList configRec;
   QDir path = QDir( getLoggerPath() );
-  configRec = path.entryList( "*.desktop" );
+  QStringList configRec = path.entryList( "*.desktop" );
 
   if( configRec.count() == 0 )
     {
       QMessageBox::critical(this,
-                         tr("No recorders installed."),
+                         tr("No recorders installed!"),
                          tr("There are no recorder-libraries installed."), QMessageBox::Ok, 0);
     }
 
   libNameList.clear();
 
   selectPort->setCurrentItem( _settings.value("/RecorderDialog/Port", 0).toInt() );
-  _selectSpeed->setCurrentItem( _settings.value("/RecorderDialog/Baud", 0).toInt() );
+  selectSpeed->setCurrentItem( _settings.value("/RecorderDialog/Baud", 0).toInt() );
   QString name( _settings.value("/RecorderDialog/Name", "").toString() );
 
   selectURL->setText(_settings.value("/RecorderDialog/URL", "").toString() );
@@ -321,7 +350,7 @@ void RecorderDialog::__addSettingsPage()
         }
     }
 
-  //sort if this style uses a listbox for the combobox
+  // sort if this style uses a listbox for the combobox
   if(selectType->model())
     {
       selectType->model()->sort(0);
@@ -333,108 +362,148 @@ void RecorderDialog::__addSettingsPage()
   connect(cmdConnect, SIGNAL(clicked()), SLOT(slotConnectRecorder()));
 }
 
-void RecorderDialog::__setRecorderConnectionType(FlightRecorderPluginBase::TransferMode mode){
+void RecorderDialog::__setRecorderConnectionType(FlightRecorderPluginBase::TransferMode mode)
+{
   selectPort->hide();
   selectPortLabel->hide();
-  _selectSpeed->hide();
+  selectSpeed->hide();
   selectSpeedLabel->hide();
   selectURL->hide();
   selectURLLabel->hide();
   cmdConnect->setEnabled(false);
 
-  switch(mode){
-    case FlightRecorderPluginBase::serial:
-      selectPort->show();
-      selectPortLabel->show();
-      _selectSpeed->show();
-      selectSpeedLabel->show();
-      cmdConnect->setEnabled(true);
-      break;
-    case FlightRecorderPluginBase::URL:
-      selectURL->show();
-      selectURLLabel->show();
-      cmdConnect->setEnabled(true);
-      break;
-    default:
-      break; //nothing to be done.
-  }
+  switch(mode)
+    {
+      case FlightRecorderPluginBase::serial:
+        selectPort->show();
+        selectPortLabel->show();
+        selectSpeed->show();
+        selectSpeedLabel->show();
+        cmdConnect->setEnabled(true);
+        break;
+      case FlightRecorderPluginBase::URL:
+        selectURL->show();
+        selectURLLabel->show();
+        cmdConnect->setEnabled(true);
+        break;
+      default:
+        break; //nothing to be done.
+    }
 }
 
 void RecorderDialog::__setRecorderCapabilities()
 {
   FlightRecorderPluginBase::FR_Capabilities cap = activeRecorder->capabilities();
-  if (cap.supDspSerialNumber) {
-    serID->show();
-    lblSerID->show();
-  } else {
-    serID->hide();
-    lblSerID->hide();
-  }
-  if (cap.supDspRecorderType) {
-    recType->show();
-    lblRecType->show();
-  } else {
-    recType->hide();
-    lblRecType->hide();
-  }
-  if (cap.supDspPilotName) {
-    pltName->show();
-    lblPltName->show();
-  } else {
-    pltName->hide();
-    lblPltName->hide();
-  }
-  if (cap.supDspGliderType) {
-    gldType->show();
-    lblGldType->show();
-  } else {
-    gldType->hide();
-    lblGldType->hide();
-  }
-  if (cap.supDspGliderID) {
-    gldID->show();
-    lblGldID->show();
-  } else {
-    gldID->hide();
-    lblGldID->hide();
-  }
-  if (cap.supDspCompetitionID) {
-    compID->show();
-  } else {
-    compID->hide();
-  }
 
-  if (cap.supEditGliderID     ||
-      cap.supEditGliderType   ||
-      cap.supEditPilotName) {
-    cmdUploadBasicConfig->show();
-  } else {
-    cmdUploadBasicConfig->hide();
-  }
-  if (cap.supAutoSpeed)
-    selectSpeedLabel->setText(tr("Transfer speed:\n(automatic)"));
+  if( cap.supDspSerialNumber )
+    {
+      serID->show();
+      lblSerID->show();
+    }
   else
-    selectSpeedLabel->setText(tr("Transfer speed:"));
-  _selectSpeed->setEnabled (!cap.supAutoSpeed);
+    {
+      serID->hide();
+      lblSerID->hide();
+    }
+  if( cap.supDspRecorderType )
+    {
+      recType->show();
+      lblRecType->show();
+    }
+  else
+    {
+      recType->hide();
+      lblRecType->hide();
+    }
+  if( cap.supDspPilotName )
+    {
+      pltName->show();
+      lblPltName->show();
+    }
+  else
+    {
+      pltName->hide();
+      lblPltName->hide();
+    }
+  if( cap.supDspGliderType )
+    {
+      gldType->show();
+      lblGldType->show();
+    }
+  else
+    {
+      gldType->hide();
+      lblGldType->hide();
+    }
+  if( cap.supDspGliderID )
+    {
+      gldID->show();
+      lblGldID->show();
+    }
+  else
+    {
+      gldID->hide();
+      lblGldID->hide();
+    }
+  if( cap.supDspCompetitionID )
+    {
+      compID->show();
+    }
+  else
+    {
+      compID->hide();
+    }
 
-  _selectSpeed->clear();
+  if( cap.supEditGliderID     ||
+      cap.supEditGliderType   ||
+      cap.supEditPilotName)
+    {
+      cmdUploadBasicConfig->show();
+    }
+  else
+    {
+      cmdUploadBasicConfig->hide();
+    }
+
+  if( cap.supAutoSpeed )
+    {
+      selectSpeedLabel->setText( tr( "Transfer speed:\n(automatic)" ) );
+    }
+  else
+    {
+      selectSpeedLabel->setText( tr( "Transfer speed:" ) );
+    }
+
+  selectSpeed->setEnabled( !cap.supAutoSpeed );
+
+  selectSpeed->clear();
+
   // insert highest speed first
   for (int i = FlightRecorderPluginBase::transferDataMax-1; i >= 0; i--)
-  {
-    if ((FlightRecorderPluginBase::transferData[i]._bps & cap.transferSpeeds) ||
-        (cap.transferSpeeds == FlightRecorderPluginBase::bps00000))
-      _selectSpeed->insertItem(QString("%1").arg(FlightRecorderPluginBase::transferData[i]._speed));
-  }
+    {
+      if ((FlightRecorderPluginBase::transferData[i]._bps & cap.transferSpeeds) ||
+          (cap.transferSpeeds == FlightRecorderPluginBase::bps00000))
+        {
+          selectSpeed->insertItem(QString("%1").arg(FlightRecorderPluginBase::transferData[i]._speed));
+        }
+    }
 }
 
 void RecorderDialog::__addFlightPage()
 {
-  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Flights"), "Flights");
-  item->setPixmap(0, _mainWindow->getPixmap("igc_48.png"));
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Flights") );
+  item->setData( 0, Qt::UserRole, "Flights" );
+  item->setIcon( 0, _mainWindow->getPixmap("igc_48.png") );
+  setupTree->addTopLevelItem( item );
 
-  flightPage = new Q3Frame(this, "Flights");
-  flightPage->hide();
-  configLayout->addMultiCellWidget(flightPage, 0, 0, 1, 2);
+  flightPage = new QFrame(this);
+  flightPage->setObjectName( "FlightPage" );
+  flightPage->setVisible( false );
+
+  configLayout->addWidget( flightPage, 0, 1, 1, 2 );
+
+  //----------------------------------------------------------------------------
 
   QGridLayout* fLayout = new QGridLayout(flightPage, 13, 5, 10, 1);
 
@@ -486,14 +555,21 @@ void RecorderDialog::__addFlightPage()
 
 void RecorderDialog::__addDeclarationPage()
 {
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Declaration") );
+  item->setData( 0, Qt::UserRole, "Declaration" );
+  item->setIcon( 0, _mainWindow->getPixmap("declaration_48.png") );
+  setupTree->addTopLevelItem( item );
+
+  declarationPage = new QFrame(this);
+  declarationPage->setObjectName( "DeclarationPage" );
+  declarationPage->setVisible( false );
+
+  configLayout->addWidget( declarationPage, 0, 1, 1, 2 );
+
+  //----------------------------------------------------------------------------
+
   FlightTask *e;
-
-  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Declaration"), "Declaration");
-  item->setPixmap(0, _mainWindow->getPixmap("declaration_48.png"));
-
-  declarationPage = new Q3Frame(this, "Flight Declaration");
-  declarationPage->hide();
-  configLayout->addMultiCellWidget(declarationPage, 0, 0, 1, 2);
 
   QVBoxLayout *top = new QVBoxLayout(declarationPage, 5);
   QGridLayout* tLayout = new QGridLayout(13, 5, 1);
@@ -587,12 +663,19 @@ void RecorderDialog::__addDeclarationPage()
 
 void RecorderDialog::__addTaskPage()
 {
-  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Tasks"), "Tasks");
-  item->setPixmap(0, _mainWindow->getPixmap("task_48.png"));
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Tasks") );
+  item->setData( 0, Qt::UserRole, "Tasks" );
+  item->setIcon( 0, _mainWindow->getPixmap("task_48.png") );
+  setupTree->addTopLevelItem( item );
 
-  taskPage = new Q3Frame(this, "Tasks");
-  taskPage->hide();
-  configLayout->addMultiCellWidget(taskPage, 0, 0, 1, 2);
+  taskPage = new QFrame(this);
+  taskPage->setObjectName( "TaskPage" );
+  taskPage->setVisible( false );
+
+  configLayout->addWidget( taskPage, 0, 1, 1, 2 );
+
+  //----------------------------------------------------------------------------
 
   QVBoxLayout *top = new QVBoxLayout(taskPage, 5);
   QHBoxLayout *buttons = new QHBoxLayout(10);
@@ -650,21 +733,22 @@ void RecorderDialog::fillTaskList()
 
 void RecorderDialog::__addWaypointPage()
 {
-  Waypoint *wp;
-  int loop = 1;
-  QString idS;
-  Q3ListViewItem *item;
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Waypoints") );
+  item->setData( 0, Qt::UserRole, "Waypoints" );
+  item->setIcon( 0, _mainWindow->getPixmap("waypoint_48.png") );
+  setupTree->addTopLevelItem( item );
 
-  Q3ListViewItem *itemMenu = new Q3ListViewItem(setupTree, tr("Waypoints"), "Waypoints");
-  itemMenu->setPixmap(0, _mainWindow->getPixmap("waypoint_48.png"));
+  waypointPage = new QFrame(this);
+  waypointPage->setObjectName( "WaypointsPage" );
+  waypointPage->setVisible( false );
 
-  waypointPage = new Q3Frame(this, "Waypoints");
-  waypointPage->hide();
-  configLayout->addMultiCellWidget(waypointPage, 0, 0, 1, 2);
+  configLayout->addWidget( waypointPage, 0, 1, 1, 2 );
+
+  //----------------------------------------------------------------------------
 
   QVBoxLayout *top = new QVBoxLayout(waypointPage, 5);
   QHBoxLayout *buttons = new QHBoxLayout(10);
-//  QPushButton *b;
 
   waypointList = new KFLogListView("RecorderDialog/recorderWaypointList", waypointPage,
                                    "waypointList");
@@ -696,8 +780,13 @@ void RecorderDialog::__addWaypointPage()
   top->addWidget(waypointList);
   top->addLayout(buttons);
 
-  foreach(wp, waypoints) {
-    item = new Q3ListViewItem(waypointList);
+  Waypoint *wp;
+  int loop = 1;
+  QString idS;
+
+  foreach(wp, waypoints)
+  {
+    Q3ListViewItem *item = new Q3ListViewItem(waypointList);
     idS.sprintf("%.3d", loop++);
     item->setText(waypointColID, idS);
     item->setText(waypointColName, wp->name);
@@ -717,7 +806,7 @@ void RecorderDialog::slotConnectRecorder()
 
   QString name= libNameList[selectType->currentText()];
 
-  int speed = _selectSpeed->currentText().toInt();
+  int speed = selectSpeed->currentText().toInt();
 
   if( !__openLib( name ) )
     {
@@ -782,68 +871,76 @@ void RecorderDialog::slotConnectRecorder()
   }
 }
 
-
 void RecorderDialog::slotCloseRecorder()
 {
-  if(activeRecorder) {
-    qDebug("A recorder is active. Checking connection.");
-    if (activeRecorder->isConnected()) {
-      qDebug("Recorder is connected. Closing...");
-      if (activeRecorder)
-        activeRecorder->closeRecorder();
+  if( activeRecorder )
+    {
+      qDebug( "A recorder is active. Checking connection." );
+
+      if( activeRecorder->isConnected() )
+        {
+          qDebug( "Recorder is connected. Closing..." );
+
+          if( activeRecorder )
+            {
+              activeRecorder->closeRecorder();
+            }
+        }
+
+      qDebug( "Going to close recorder object..." );
+      activeRecorder = 0;
+      qDebug( "Done." );
     }
-    qDebug("Going to close recorder object...");
-    activeRecorder = NULL;
-    qDebug("Done.");
-  }
 }
 
-void RecorderDialog::slotPageChanged(Q3ListViewItem *currentItem)
+void RecorderDialog::slotPageClicked( QTreeWidgetItem * item, int column )
 {
-  if(currentItem->text(1)=="Configuration")
-  {
-    activePage->hide();
-    configPage->show();
-    activePage = configPage;
-  }
-  else if(currentItem->text(1)=="Declaration")
-  {
-    activePage->hide();
-    declarationPage->show();
-    activePage = declarationPage;
-  }
-  else if(currentItem->text(1)=="Flights")
-  {
-    activePage->hide();
-    flightPage->show();
-    activePage = flightPage;
-  }
-//  else if(currentItem->text(1)=="Pilots")
-//  {
-//    activePage->hide();
-//    pilotPage->show();
-//    activePage = pilotPage;
-//  }
-  else if(currentItem->text(1)=="Recorder")
-  {
-    activePage->hide();
-    settingsPage->show();
-    activePage = settingsPage;
-  }
-  else if(currentItem->text(1)=="Tasks")
-  {
-    activePage->hide();
-    taskPage->show();
-    activePage = taskPage;
-  }
-  else if(currentItem->text(1)=="Waypoints")
-  {
-    activePage->hide();
-    waypointPage->show();
-    activePage = waypointPage;
-  }
-  activePage->setFixedWidth(685);
-  setupTree->hideColumn(1);
+  Q_UNUSED( column );
+
+  QString itemText = item->data( 0, Qt::UserRole ).toString();
+
+  qDebug() << "RecorderDialog::slotPageClicked(): Page=" << itemText;
+
+  activePage->setVisible( false );
+
+  if( itemText == "Configuration" )
+    {
+      configPage->setVisible( true );
+      activePage = configPage;
+    }
+  else if( itemText == "Declaration" )
+    {
+      declarationPage->setVisible( true );
+      activePage = declarationPage;
+    }
+  else if( itemText == "Flights" )
+    {
+      flightPage->setVisible( true );
+      activePage = flightPage;
+    }
+  else if( itemText == "Recorder" )
+    {
+      recorderPage->setVisible( true );
+      activePage = recorderPage;
+    }
+  else if( itemText == "Tasks" )
+    {
+      taskPage->setVisible( true );
+      activePage = taskPage;
+    }
+  else if( itemText == "Waypoints" )
+    {
+      waypointPage->setVisible( true );
+      activePage = waypointPage;
+    }
+  else
+    {
+      activePage->setVisible( true );
+
+      qWarning() << "RecorderDialog::slotPageClicked: Unknown item"
+                 << itemText
+                 << "received!";
+    }
 }
 
 void RecorderDialog::slotReadFlightList()
@@ -1603,7 +1700,7 @@ void RecorderDialog::slotWriteConfig()
       QMessageBox::warning(this,
                          tr("Recorder Connection"),
                          tr("Sorry, could not write configuration to recorder.\n"
-                              "Please check connections and settings."), QMessageBox::Ok, 0);       //Using the Sorry box is a bit friendlier than Error...
+                             "Please check connections and settings."), QMessageBox::Ok, 0);       //Using the Sorry box is a bit friendlier than Error...
     }
   }
 }
@@ -1614,7 +1711,6 @@ void RecorderDialog::slotDisablePages()
   waypointPage->setEnabled(false);
   taskPage->setEnabled(false);
   declarationPage->setEnabled(false);
-  //pilotPage->setEnabled(false);
   configPage->setEnabled(false);
 }
 
@@ -1622,54 +1718,62 @@ void RecorderDialog::slotDisablePages()
 void RecorderDialog::slotEnablePages()
 {
   //first, disable all pages
-  flightPage->setEnabled(false);
-  waypointPage->setEnabled(false);
-  taskPage->setEnabled(false);
-  declarationPage->setEnabled(false);
-  //pilotPage->setEnabled(false);
   configPage->setEnabled(false);
+  declarationPage->setEnabled(false);
+  flightPage->setEnabled(false);
+  taskPage->setEnabled(false);
+  waypointPage->setEnabled(false);
 
-  //Then, if there is an active recorder, and that recorder is connected,
+  // If there is an active recorder and that recorder is connected,
   //  selectively re-activate them.
-  if (!activeRecorder) return;
+  if( !activeRecorder )
+    {
+      return;
+    }
+
   FlightRecorderPluginBase::FR_Capabilities cap=activeRecorder->capabilities();
-  if (isConnected) {
-    //flightpage
-    if (cap.supDlFlight) {
-      flightPage->setEnabled(true);
-      useFastDownload->setEnabled (cap.supSignedFlight);
-    }
 
-    //waypointpage
-    if (cap.supDlWaypoint || cap.supUlWaypoint ) {
-      waypointPage->setEnabled(true);
-      cmdUploadWaypoints->setEnabled (cap.supUlWaypoint);
-      cmdDownloadWaypoints->setEnabled (cap.supDlWaypoint);
-    }
+  if( isConnected )
+    {
+      //flight page
+      if( cap.supDlFlight )
+        {
+          flightPage->setEnabled( true );
+          useFastDownload->setEnabled( cap.supSignedFlight );
+        }
 
-    //taskpage
-    if (cap.supDlTask || cap.supUlTask ) {
-      taskPage->setEnabled(true);
-      cmdUploadTasks->setEnabled (cap.supUlTask);
-      cmdDownloadTasks->setEnabled (cap.supDlTask);
-    }
+      //waypoint page
+      if( cap.supDlWaypoint || cap.supUlWaypoint )
+        {
+          waypointPage->setEnabled( true );
+          cmdUploadWaypoints->setEnabled( cap.supUlWaypoint );
+          cmdDownloadWaypoints->setEnabled( cap.supDlWaypoint );
+        }
 
-    //declarationpage
-    if (cap.supUlDeclaration) {
-      declarationPage->setEnabled(true);
-    }
+      //task page
+      if( cap.supDlTask || cap.supUlTask )
+        {
+          taskPage->setEnabled( true );
+          cmdUploadTasks->setEnabled( cap.supUlTask );
+          cmdDownloadTasks->setEnabled( cap.supDlTask );
+        }
 
-    //pilotpage  -  not available yet
+      //declaration page
+      if( cap.supUlDeclaration )
+        {
+          declarationPage->setEnabled( true );
+        }
 
-    //configpage
+    //config page
     if (cap.supEditGliderPolar  ||
         cap.supEditUnits        ||
         cap.supEditGoalAlt      ||
         cap.supEditArvRadius    ||
         cap.supEditAudio        ||
-        cap.supEditLogInterval) {
-      configPage->setEnabled(true);
-    }
+        cap.supEditLogInterval)
+      {
+        configPage->setEnabled(true);
+      }
   }
 
 }
@@ -1677,26 +1781,31 @@ void RecorderDialog::slotEnablePages()
 /** No descriptions */
 void RecorderDialog::slotRecorderTypeChanged(const QString&) // name)
 {
-  if(selectType->currentText().isEmpty())  return;
+  if( selectType->currentText().isEmpty() )
+    {
+      return;
+    }
 
   QString name = libNameList[selectType->currentText()];
 
-  if(isOpen && libName != name) {
-    // closing old lib
-    dlclose(libHandle);
-    slotCloseRecorder();
-    isConnected = isOpen = false;
-    slotEnablePages();
+  if( isOpen && libName != name )
+    {
+      // closing old lib
+      dlclose( libHandle );
+      slotCloseRecorder();
+      isConnected = isOpen = false;
+      slotEnablePages();
+    }
 
-  }
-  if(!__openLib(name)) {
-    qWarning("%s", (const char*)tr("Could not open lib!"));
-    __setRecorderConnectionType(FlightRecorderPluginBase::none);
-    return;
-  }
-  __setRecorderConnectionType(activeRecorder->getTransferMode());
+  if( !__openLib( name ) )
+    {
+      qWarning( "%s", (const char*) tr( "Could not open lib!" ) );
+      __setRecorderConnectionType( FlightRecorderPluginBase::none );
+      return;
+    }
+
+  __setRecorderConnectionType( activeRecorder->getTransferMode() );
   __setRecorderCapabilities();
-
 }
 
 /**
@@ -1705,30 +1814,25 @@ void RecorderDialog::slotRecorderTypeChanged(const QString&) // name)
   */
 void RecorderDialog::slotNewSpeed (int speed)
 {
-  _selectSpeed->setCurrentText(QString("%1").arg(speed));
-}
-
-/** No descriptions */
-void RecorderDialog::__addPilotPage()
-{
-  return; // We don't need the page (yet).
-//  QListViewItem *item = new QListViewItem(setupTree, tr("Pilots"), "Pilots");
-//  item->setPixmap(0, _mainWindow->getPixmap("kde_identity_48.png"));
-
-//  pilotPage = new QFrame(this, "List of pilots");
-//  pilotPage->hide();
-//  configLayout->addMultiCellWidget(pilotPage, 0, 0, 1, 2);
+  selectSpeed->setCurrentText(QString("%1").arg(speed));
 }
 
 /** No descriptions */
 void RecorderDialog::__addConfigPage()
 {
-  Q3ListViewItem *item = new Q3ListViewItem(setupTree, tr("Configuration"), "Configuration");
-  item->setPixmap(0, _mainWindow->getPixmap("kde_configure_48.png"));
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Configuration") );
+  item->setData( 0, Qt::UserRole, "Configuration" );
+  item->setIcon( 0, _mainWindow->getPixmap("kde_configure_48.png") );
+  setupTree->addTopLevelItem( item );
 
-  configPage = new Q3Frame(this, "Recorder configuration");
-  configPage->hide();
-  configLayout->addMultiCellWidget(configPage, 0, 0, 1, 2);
+  configPage = new QFrame(this);
+  configPage->setObjectName( "ConfigurationPage" );
+  configPage->setVisible( false );
+
+  configLayout->addWidget( configPage, 0, 1, 1, 2 );
+
+  //----------------------------------------------------------------------------
 
   QGridLayout* configLayout = new QGridLayout(configPage, 16, 8, 10, 1);
 

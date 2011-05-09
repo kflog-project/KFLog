@@ -60,11 +60,15 @@ private:
     ~RecorderDialog();
 
   public slots:
+
     /**
      * Connects the currently selected recorder using the information entered (bautrate, port, URL, etc.)
      */
     void slotConnectRecorder();
-    void slotPageChanged(Q3ListViewItem *currentItem);
+    /**
+     * Called, if the menu tree is clicked.
+     */
+    void slotPageClicked( QTreeWidgetItem * item, int column );
     /**
      * Read the flight list from the recorder
      */
@@ -111,7 +115,7 @@ private:
     /**
      */
     void slotNewSpeed(int);
-    
+
   public:
 
     /**
@@ -134,7 +138,7 @@ private:
     /**
      * Creates and add the Settings page (the first page) to the dialog
      */
-    void __addSettingsPage();
+    void __addRecorderPage();
     void __setRecorderConnectionType(FlightRecorderPluginBase::TransferMode);
     void __setRecorderCapabilities();
     /** */
@@ -149,35 +153,34 @@ private:
     void fillTaskList();
     /** No descriptions */
     void __addConfigPage();
-    /** No descriptions */
-    void __addPilotPage();
+
     QGridLayout *configLayout;
-    Q3ListView *setupTree;
-    Q3Frame *activePage;
+
+    QTreeWidget *setupTree;
+
+    QFrame *activePage;
     /** */
-    Q3Frame* flightPage;
+    QFrame* flightPage;
     /** */
-    Q3Frame* settingsPage;
+    QFrame* recorderPage;
     /** */
-    Q3Frame* waypointPage;
+    QFrame* waypointPage;
     /** */
-    Q3Frame* taskPage;
+    QFrame* taskPage;
     /** */
-    Q3Frame* declarationPage;
+    QFrame* declarationPage;
     /** */
-    Q3Frame* pilotPage;
-    /** */
-    Q3Frame* configPage;
+    QFrame* configPage;
     /** */
     QComboBox* selectType;
     QComboBox* selectPort;
     QLabel* selectPortLabel;
-    QComboBox* _selectSpeed;
+    QComboBox* selectSpeed;
     QLabel* selectSpeedLabel;
     QLineEdit* selectURL;
     QLabel* selectURLLabel;
     QPushButton* cmdConnect;
-    
+
     /** */
     QLabel* serID;
     QLabel* lblSerID;
@@ -191,7 +194,7 @@ private:
     QLabel* lblGldType;
     QLineEdit* gldID;
     QLabel* lblGldID;
-    QLabel* compID;
+    QLineEdit* compID;
     /** */
     KFLogListView* flightList;
     /** */
@@ -221,6 +224,7 @@ private:
      * displayed name from the drop down as a key.
      */
     QMap<QString, QString> libNameList;
+
     /** */
     int colID;
     int colDate;
@@ -248,6 +252,7 @@ private:
 
     FlightRecorderPluginBase::FR_BasicData basicdata;
     FlightRecorderPluginBase::FR_ConfigData configdata;
+
     QLineEdit* pilotName;
     QLineEdit* copilotName;
     QLineEdit* gliderID;
@@ -258,7 +263,7 @@ private:
 
     QPushButton* cmdDownloadWaypoints;
     QPushButton* cmdUploadWaypoints;
-    
+
     QPushButton* cmdDownloadTasks;
     QPushButton* cmdUploadTasks;
 
@@ -291,14 +296,16 @@ private:
   /**  */
   bool isConnected;
   FlightRecorderPluginBase * activeRecorder;
-  
-  private slots:
-    void slotSwitchTask(int idx);
+
+ private slots:
+
+  void slotSwitchTask(int idx);
   /** Enable/Disable pages when not connected to a recorder */
   void slotEnablePages();
   /** No descriptions */
   void slotRecorderTypeChanged(const QString &name);
-signals: // Signals
+
+ signals: // Signals
   /** No descriptions */
   void addCatalog(WaypointCatalog *w);
   void addTask(FlightTask *t);

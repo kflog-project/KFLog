@@ -1260,6 +1260,7 @@ void KFLogConfig::__addPersonalTab()
   item->setData( 0, Qt::UserRole, "Identity" );
   item->setIcon( 0, _mainWindow->getPixmap("kde_identity_32.png") );
   setupTree->addTopLevelItem( item );
+  setupTree->setCurrentItem( item );
 
   personalPage = new QFrame(this);
   personalPage->setObjectName( "IdentityPage" );
