@@ -13,7 +13,7 @@ HEADERS =   flightrecorder.h \
             garminfr.h
 
 logger.path  = /logger
-logger.files = gmn.desktop README
+logger.files = gmn.desktop README.gmn
                
 INSTALLS += logger
 

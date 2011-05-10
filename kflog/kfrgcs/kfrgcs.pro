@@ -25,7 +25,7 @@ HEADERS =   bbconv.h \
             volkslogger.h
 
 logger.path  = /logger
-logger.files = gcs.desktop README
+logger.files = gcs.desktop README.gcs
 
 INSTALLS += logger
 

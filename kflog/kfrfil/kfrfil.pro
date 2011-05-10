@@ -9,7 +9,7 @@ SOURCES =   filser.cpp \
 HEADERS =   filser.h               
                
 logger.path  = /logger
-logger.files = fil.desktop spg.desktop README
+logger.files = fil.desktop spg.desktop README.fil
                
 INSTALLS += logger
 

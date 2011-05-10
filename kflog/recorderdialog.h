@@ -26,6 +26,7 @@
 #include "flighttask.h"
 #include "frstructs.h"
 #include "guicontrols/kfloglistview.h"
+#include "kflogtreewidget.h"
 #include "waypointcatalog.h"
 
 /**
@@ -149,10 +150,13 @@ private:
     void __addTaskPage();
     /** */
     void __addWaypointPage();
-    /** */
-    void fillTaskList();
     /** No descriptions */
     void __addConfigPage();
+
+    /** */
+    void fillTaskList();
+
+    void fillWaypointList( QList<Waypoint *>& wpList );
 
     QGridLayout *configLayout;
 
@@ -195,14 +199,20 @@ private:
     QLineEdit* gldID;
     QLabel* lblGldID;
     QLineEdit* compID;
+    QLabel* lblCompID;
+
+    QLabel* lblWpList;
+
     /** */
     KFLogListView* flightList;
     /** */
     KFLogListView* declarationList;
     /** */
     KFLogListView* taskList;
-    /** */
-    KFLogListView* waypointList;
+
+    /** Waypoint list */
+    KFLogTreeWidget *waypointList;
+
     /** */
     QCheckBox* useFastDownload;
     /** */
@@ -245,7 +255,7 @@ private:
     int taskColTask;
     int taskColTotal;
     /** */
-    int waypointColID;
+    int waypointColNo;
     int waypointColName;
     int waypointColLat;
     int waypointColLon;

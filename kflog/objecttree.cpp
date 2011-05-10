@@ -100,7 +100,6 @@ ObjectTree::ObjectTree( QWidget *parent ) :
 
 ObjectTree::~ObjectTree()
 {
-  qDebug() << "~ObjectTree()";
 }
 
 /**

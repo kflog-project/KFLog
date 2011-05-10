@@ -9,7 +9,7 @@ SOURCES =   cambridge.cpp \
 HEADERS =   cambridge.h
                
 logger.path  = /logger
-logger.files = cai.desktop README
+logger.files = cai.desktop README.cai
 
 INSTALLS += logger
 

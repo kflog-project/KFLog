@@ -33,6 +33,7 @@
 #include "mainwindow.h"
 
 extern MainWindow  *_mainWindow;
+extern MapConfig   *_globalMapConfig;
 extern MapContents *_globalMapContents;
 extern QSettings    _settings;
 
@@ -145,7 +146,7 @@ QString RecorderDialog::getLibraryPath()
 
 void RecorderDialog::__addRecorderPage()
 {
-  int typeID(0), typeLoop(0);
+  int typeLoop(0);
 
   QTreeWidgetItem* item = new QTreeWidgetItem;
   item->setText( 0, tr("Recorder") );
@@ -208,7 +209,6 @@ void RecorderDialog::__addRecorderPage()
   sGroup->setLayout( sGridLayout );
 
   //----------------------------------------------------------------------------
-
   QGroupBox* iGroup = new QGroupBox( tr("Info") );
 
   lblApiID = new QLabel(tr("API-Version:"));
@@ -232,7 +232,7 @@ void RecorderDialog::__addRecorderPage()
   recType->setAutoFillBackground( true );
   recType->setEnabled(false);
 
-  lblPltName = new QLabel(tr("Pilot Name"));
+  lblPltName = new QLabel(tr("Pilot Name:"));
   pltName = new QLineEdit;
   pltName->setEnabled(false);
 
@@ -244,15 +244,16 @@ void RecorderDialog::__addRecorderPage()
   gldID = new QLineEdit;
   gldID->setEnabled(false);
 
+  lblCompID = new QLabel(tr("Competition Id:"));
+  compID = new QLineEdit;
+  compID->setEnabled(false);
+
   cmdUploadBasicConfig = new QPushButton(tr("Write data to recorder"));
   cmdUploadBasicConfig->setMaximumWidth(cmdUploadBasicConfig->sizeHint().width() + 5);
 
   // disable this button until we read the information from the flight recorder:
   cmdUploadBasicConfig->setEnabled(false);
   connect( cmdUploadBasicConfig, SIGNAL(clicked()), SLOT(slotWriteConfig()) );
-
-  compID = new QLineEdit;
-  compID->setEnabled(false);
 
   QGridLayout* iGridLayout = new QGridLayout;
   iGridLayout->setSpacing(10);
@@ -268,9 +269,11 @@ void RecorderDialog::__addRecorderPage()
   iGridLayout->addWidget( recType, 2, 1 );
   iGridLayout->addWidget( lblGldID, 2, 2 );
   iGridLayout->addWidget( gldID, 2, 3 );
-  iGridLayout->addWidget( new QLabel(tr("Competition Id:")), 3, 0 );
-  iGridLayout->addWidget( compID, 3, 1 );
+  iGridLayout->addWidget( lblCompID, 3, 2 );
+  iGridLayout->addWidget( compID, 3, 3 );
   iGridLayout->addWidget( cmdUploadBasicConfig, 4, 0, 1, 4, Qt::AlignRight );
+  iGridLayout->setColStretch( 1, 5 );
+  iGridLayout->setColStretch( 3, 5 );
 
   iGroup->setLayout( iGridLayout );
 
@@ -289,15 +292,17 @@ void RecorderDialog::__addRecorderPage()
 
   if( configRec.count() == 0 )
     {
-      QMessageBox::critical(this,
-                         tr("No recorders installed!"),
-                         tr("There are no recorder-libraries installed."), QMessageBox::Ok, 0);
+      QMessageBox::critical( this,
+                             tr("No recorders installed!"),
+                             tr("There are no recorder-libraries installed."),
+                             QMessageBox::Ok);
     }
 
   libNameList.clear();
 
-  selectPort->setCurrentItem( _settings.value("/RecorderDialog/Port", 0).toInt() );
-  selectSpeed->setCurrentItem( _settings.value("/RecorderDialog/Baud", 0).toInt() );
+  selectPort->setCurrentIndex( _settings.value("/RecorderDialog/Port", 0).toInt() );
+  selectSpeed->setCurrentIndex( _settings.value("/RecorderDialog/Baud", 0).toInt() );
+
   QString name( _settings.value("/RecorderDialog/Name", "").toString() );
 
   selectURL->setText(_settings.value("/RecorderDialog/URL", "").toString() );
@@ -351,13 +356,14 @@ void RecorderDialog::__addRecorderPage()
     }
 
   // sort if this style uses a listbox for the combobox
-  if(selectType->model())
+  if( selectType->model() )
     {
-      selectType->model()->sort(0);
+      selectType->model()->sort( 0 );
     }
 
-  selectType->setCurrentText(name);
-  slotRecorderTypeChanged(selectType->text(typeID));
+  selectType->setCurrentIndex( selectType->findText(name) );
+
+  slotRecorderTypeChanged( selectType->currentText() );
 
   connect(cmdConnect, SIGNAL(clicked()), SLOT(slotConnectRecorder()));
 }
@@ -395,96 +401,51 @@ void RecorderDialog::__setRecorderCapabilities()
 {
   FlightRecorderPluginBase::FR_Capabilities cap = activeRecorder->capabilities();
 
-  if( cap.supDspSerialNumber )
-    {
-      serID->show();
-      lblSerID->show();
-    }
-  else
-    {
-      serID->hide();
-      lblSerID->hide();
-    }
-  if( cap.supDspRecorderType )
-    {
-      recType->show();
-      lblRecType->show();
-    }
-  else
-    {
-      recType->hide();
-      lblRecType->hide();
-    }
-  if( cap.supDspPilotName )
-    {
-      pltName->show();
-      lblPltName->show();
-    }
-  else
-    {
-      pltName->hide();
-      lblPltName->hide();
-    }
-  if( cap.supDspGliderType )
-    {
-      gldType->show();
-      lblGldType->show();
-    }
-  else
-    {
-      gldType->hide();
-      lblGldType->hide();
-    }
-  if( cap.supDspGliderID )
-    {
-      gldID->show();
-      lblGldID->show();
-    }
-  else
-    {
-      gldID->hide();
-      lblGldID->hide();
-    }
-  if( cap.supDspCompetitionID )
-    {
-      compID->show();
-    }
-  else
-    {
-      compID->hide();
-    }
+  serID->setVisible(cap.supDspSerialNumber);
+  lblSerID->setVisible(cap.supDspSerialNumber);
 
-  if( cap.supEditGliderID     ||
-      cap.supEditGliderType   ||
-      cap.supEditPilotName)
-    {
-      cmdUploadBasicConfig->show();
-    }
-  else
-    {
-      cmdUploadBasicConfig->hide();
-    }
+  recType->setVisible(cap.supDspRecorderType);
+  lblRecType->setVisible(cap.supDspRecorderType);
+
+  pltName->setVisible(cap.supDspPilotName);
+  lblPltName->setVisible(cap.supDspPilotName);
+
+  gldType->setVisible(cap.supDspGliderType);
+  lblGldType->setVisible(cap.supDspGliderType);
+
+  gldID->setVisible(cap.supDspGliderID);
+  lblGldID->setVisible(cap.supDspGliderID);
+
+  compID->setVisible(cap.supDspGliderID);
+  lblCompID->setVisible(cap.supDspGliderID);
+
+  bool edit = cap.supEditGliderID | cap.supEditGliderType | cap.supEditPilotName;
+
+  pltName->setEnabled( edit );
+  gldType->setEnabled( edit );
+  gldID->setEnabled( edit );
+  compID->setEnabled( edit );
+  cmdUploadBasicConfig->setEnabled( edit );
+  cmdUploadBasicConfig->setVisible( edit );
+
+  selectSpeed->clear();
+  selectSpeed->setEnabled( true );
 
   if( cap.supAutoSpeed )
     {
-      selectSpeedLabel->setText( tr( "Transfer speed:\n(automatic)" ) );
-    }
-  else
-    {
-      selectSpeedLabel->setText( tr( "Transfer speed:" ) );
+      selectSpeed->addItem( tr("Auto") );
+      selectSpeed->setCurrentIndex( selectSpeed->count() - 1 );
     }
 
-  selectSpeed->setEnabled( !cap.supAutoSpeed );
-
-  selectSpeed->clear();
-
-  // insert highest speed first
-  for (int i = FlightRecorderPluginBase::transferDataMax-1; i >= 0; i--)
     {
-      if ((FlightRecorderPluginBase::transferData[i]._bps & cap.transferSpeeds) ||
-          (cap.transferSpeeds == FlightRecorderPluginBase::bps00000))
+      // insert highest speed first
+      for (int i = FlightRecorderPluginBase::transferDataMax-1; i >= 0; i--)
         {
-          selectSpeed->insertItem(QString("%1").arg(FlightRecorderPluginBase::transferData[i]._speed));
+          if ((FlightRecorderPluginBase::transferData[i]._bps & cap.transferSpeeds) ||
+              (cap.transferSpeeds == FlightRecorderPluginBase::bps00000))
+            {
+              selectSpeed->addItem(QString("%1").arg(FlightRecorderPluginBase::transferData[i]._speed));
+            }
         }
     }
 }
@@ -747,57 +708,98 @@ void RecorderDialog::__addWaypointPage()
 
   //----------------------------------------------------------------------------
 
-  QVBoxLayout *top = new QVBoxLayout(waypointPage, 5);
-  QHBoxLayout *buttons = new QHBoxLayout(10);
+  waypointList = new KFLogTreeWidget( "RecorderDialog-WaypointList", this );
 
-  waypointList = new KFLogListView("RecorderDialog/recorderWaypointList", waypointPage,
-                                   "waypointList");
+  waypointList->setSortingEnabled( true );
+  waypointList->setAllColumnsShowFocus( true );
+  waypointList->setFocusPolicy( Qt::StrongFocus );
+  waypointList->setRootIsDecorated( false );
+  waypointList->setItemsExpandable( false );
+  waypointList->setSelectionMode( QAbstractItemView::NoSelection );
+  waypointList->setAlternatingRowColors( true );
+  waypointList->addRowSpacing( 5 );
+  waypointList->setColumnCount( 4 );
 
-  waypointColID = waypointList->addColumn(tr("Nr"), 50);
-  waypointColName = waypointList->addColumn(tr("Name"), 120);
-  waypointColLat = waypointList->addColumn(tr("Latitude"), 140);
-  waypointColLon = waypointList->addColumn(tr("Longitude"), 140);
+  QStringList headerLabels;
 
-  waypointList->setAllColumnsShowFocus(true);
-  waypointList->setSorting(waypointColID, true);
-  waypointList->setSelectionMode(Q3ListView::NoSelection);
+  headerLabels  << tr("No.")
+                << tr("Name")
+                << tr("Latitude")
+                << tr("Longitude");
 
-  waypointList->setColumnAlignment(waypointColID, Qt::AlignRight);
-  waypointList->setColumnAlignment(waypointColLat, Qt::AlignRight);
-  waypointList->setColumnAlignment(waypointColLon, Qt::AlignRight);
+  waypointList->setHeaderLabels( headerLabels );
+
+  QTreeWidgetItem* headerItem = waypointList->headerItem();
+  headerItem->setTextAlignment( 0, Qt::AlignCenter );
+  headerItem->setTextAlignment( 1, Qt::AlignCenter );
+  headerItem->setTextAlignment( 2, Qt::AlignCenter );
+  headerItem->setTextAlignment( 3, Qt::AlignCenter );
+
+  waypointColNo   = 0;
+  waypointColName = 1;
+  waypointColLat  = 2;
+  waypointColLon  = 3;
 
   waypointList->loadConfig();
 
-  buttons->addStretch();
-  cmdUploadWaypoints = new QPushButton(tr("write waypoints to recorder"), waypointPage);
+  cmdUploadWaypoints = new QPushButton(tr("Write waypoints to recorder"));
   connect(cmdUploadWaypoints, SIGNAL(clicked()), SLOT(slotWriteWaypoints()));
-  buttons->addWidget(cmdUploadWaypoints);
 
-  cmdDownloadWaypoints = new QPushButton(tr("read waypoints from recorder"), waypointPage);
+  cmdDownloadWaypoints = new QPushButton(tr("Read waypoints from recorder"));
   connect(cmdDownloadWaypoints, SIGNAL(clicked()), SLOT(slotReadWaypoints()));
-  buttons->addWidget(cmdDownloadWaypoints);
 
-  top->addWidget(waypointList);
-  top->addLayout(buttons);
+  lblWpList = new QLabel;
 
-  Waypoint *wp;
-  int loop = 1;
-  QString idS;
+  QVBoxLayout *wpPageLayout = new QVBoxLayout;
+  wpPageLayout->setSpacing(10);
+  wpPageLayout->addWidget( waypointList );
 
-  foreach(wp, waypoints)
-  {
-    Q3ListViewItem *item = new Q3ListViewItem(waypointList);
-    idS.sprintf("%.3d", loop++);
-    item->setText(waypointColID, idS);
-    item->setText(waypointColName, wp->name);
-    item->setText(waypointColLat, WGSPoint::printPos(wp->origP.lat()));
-    item->setText(waypointColLon, WGSPoint::printPos(wp->origP.lon(), false));
-  }
+  QHBoxLayout *buttonBox = new QHBoxLayout;
+  buttonBox->setSpacing( 10 );
+  buttonBox->addWidget(cmdUploadWaypoints);
+  buttonBox->addStretch( 10 );
+  buttonBox->addWidget( lblWpList );
+  buttonBox->addStretch( 10 );
+  buttonBox->addWidget(cmdDownloadWaypoints);
+
+  wpPageLayout->addLayout( buttonBox );
+  waypointPage->setLayout( wpPageLayout );
+
+  fillWaypointList( waypoints );
+}
+
+void RecorderDialog::fillWaypointList( QList<Waypoint *>& wpList )
+{
+  waypointList->clear();
+
+  for( int i = 0; i < wpList.size(); i++ )
+    {
+      Waypoint *wp = wpList.at(i);
+
+      QTreeWidgetItem *item = new QTreeWidgetItem;
+
+      item->setIcon(waypointColName, _globalMapConfig->getPixmap(wp->type, false, true) );
+
+      item->setText(waypointColNo, QString("%1").arg( i + 1, 4, 10, QLatin1Char( '0' )));
+      item->setText(waypointColName, wp->name);
+      item->setText(waypointColLat, WGSPoint::printPos(wp->origP.lat(), true));
+      item->setText(waypointColLon, WGSPoint::printPos(wp->origP.lon(), false));
+
+      item->setTextAlignment( waypointColNo, Qt::AlignCenter );
+      item->setTextAlignment( waypointColName, Qt::AlignLeft );
+      item->setTextAlignment( waypointColLat, Qt::AlignCenter );
+      item->setTextAlignment( waypointColLon, Qt::AlignCenter );
+
+      waypointList->insertTopLevelItem( i, item );
+    }
+
+  waypointList->slotResizeColumns2Content();
+  // waypointList->sortByColumn(waypointColName, Qt::AscendingOrder);
 }
 
 void RecorderDialog::slotConnectRecorder()
 {
-  if (!activeRecorder)
+  if( !activeRecorder )
     {
       return;
     }
@@ -808,67 +810,78 @@ void RecorderDialog::slotConnectRecorder()
 
   int speed = selectSpeed->currentText().toInt();
 
-  if( !__openLib( name ) )
+  if( ! __openLib( name ) )
     {
-      qWarning( "%s", (const char*) tr( "Could not open lib!" ) );
       return;
     }
 
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
-  //check if we have valid parameters, is so, try to connect!
-  switch (activeRecorder->getTransferMode()) {
-  case FlightRecorderPluginBase::serial:
-    if(portName.isEmpty()) {
-      qWarning("%s", (const char*)tr("No port given!"));
-      isConnected=false;
+  //check if we have valid parameters, is that true, try to connect!
+  switch (activeRecorder->getTransferMode() )
+  {
+
+    case FlightRecorderPluginBase::serial:
+
+      if( portName.isEmpty() )
+          {
+            qWarning() << "slotConnectRecorder(): Missing port!";
+            isConnected = false;
+            break;
+          }
+
+      isConnected=(activeRecorder->openRecorder(portName.toLatin1().data(),speed)>=FR_OK);
       break;
-    }
-    isConnected=(activeRecorder->openRecorder(portName.toLatin1().data(),speed)>=FR_OK);
-    break;
+
   case FlightRecorderPluginBase::URL:
-  {
-    selectURL->setText(selectURL->text().stripWhiteSpace());
-    QString URL = selectURL->text();
-    if (URL.isEmpty()) {
-      qWarning("%s", (const char*)tr("No URL entered!"));
-      QApplication::restoreOverrideCursor();
-      isConnected=false;
+    {
+      selectURL->setText( selectURL->text().trimmed() );
+
+      QString URL = selectURL->text();
+
+      if( URL.isEmpty() )
+          {
+            qWarning() <<  "slotConnectRecorder(): Missing URL!";
+            isConnected = false;
+            break;
+          };
+
+      isConnected=(activeRecorder->openRecorder(URL)>=FR_OK);
       break;
-    };
-    isConnected=(activeRecorder->openRecorder(URL)>=FR_OK);
-    break;
-  }
-  default:
-    QApplication::restoreOverrideCursor();
-    isConnected=false;
-    return; //If it's not one of the above, we don't know the connection method, so how can we connect?!
-  }
-
-  if (isConnected)
-  {
-    connect (activeRecorder, SIGNAL(newSpeed(int)),this,SLOT(slotNewSpeed(int)));
-    slotEnablePages();
-    slotReadDatabase();
-    QApplication::restoreOverrideCursor();
-  }
-  else
-  {
-    QApplication::restoreOverrideCursor();
-    QString errorDetails=activeRecorder->lastError();
-
-    if (!errorDetails.isEmpty()) {
-      QMessageBox::warning(this,
-                         tr("Recorder Connection"),
-                         tr("Sorry, could not connect to recorder.\n"
-                            "Please check connections and settings.") + errorDetails, QMessageBox::Ok, 0); //Using the Sorry box is a bit friendlier than Error...
-    } else {
-      QMessageBox::warning(this,
-                         tr("Recorder Connection"),
-                         tr("Sorry, could not connect to recorder.\n"
-                            "Please check connections and settings."), QMessageBox::Ok, 0); //Using the Sorry box is a bit friendlier than Error...
     }
+
+  default:
+
+    isConnected=false;
+    return;
   }
+
+  if( isConnected )
+    {
+      connect (activeRecorder, SIGNAL(newSpeed(int)),this,SLOT(slotNewSpeed(int)));
+      slotEnablePages();
+      slotReadDatabase();
+      QApplication::restoreOverrideCursor();
+    }
+  else
+    {
+      QApplication::restoreOverrideCursor();
+
+      QString errorDetails = activeRecorder->lastError();
+
+      QString errorText = tr( "Sorry, could not connect to recorder.\n"
+                              "Please check connections and settings.\n");
+
+      if( ! errorDetails.isEmpty() )
+        {
+          errorText += errorDetails;
+        }
+
+      QMessageBox::warning( this,
+                            tr("Recorder Connection"),
+                            errorText,
+                            QMessageBox::Ok );
+    }
 }
 
 void RecorderDialog::slotCloseRecorder()
@@ -1232,7 +1245,7 @@ bool RecorderDialog::__openLib( const QString& libN )
 
   if( !getRecorder )
     {
-      qWarning( "getRecorder funtion not defined in library!" );
+      qWarning( "getRecorder function not defined in library!" );
       return false;
     }
 
@@ -1439,60 +1452,83 @@ void RecorderDialog::slotWriteTasks()
 
 void RecorderDialog::slotReadWaypoints()
 {
-  int ret;
-  int cnt=0;
-  QString e;
   QList<Waypoint*> frWaypoints;
-  Waypoint *wp;
   QString errorDetails;
 
-  if (!activeRecorder) return;
-  if (!activeRecorder->capabilities().supDlWaypoint) {
-    QMessageBox::warning(this,
-                       tr("Waypoint download"),
-                       tr("Function not implemented"), QMessageBox::Ok, 0);
-    return;
-  }
+  if( !activeRecorder )
+    {
+      return;
+    }
 
-  QMessageBox* statusDlg = new QMessageBox (tr("Reading waypoints"), tr("Reading Waypoints"),
-      QMessageBox::Information, Qt::NoButton, Qt::NoButton,
-      Qt::NoButton, this, "statusDialog", true);
-  statusDlg->show();
+  if( !activeRecorder->capabilities().supDlWaypoint )
+    {
+      QMessageBox::warning( this,
+                            tr("Waypoint download"),
+                            tr("Function not implemented"),
+                            QMessageBox::Ok );
+      return;
+    }
 
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+
+
+  QMessageBox* statusDlg = new QMessageBox( QMessageBox::Information,
+                                            tr("Reading waypoints"),
+                                            tr("Reading Waypoints from recorder"),
+                                            QMessageBox::NoButton,
+                                            this );
+  statusDlg->show();
   qApp->processEvents();
 
-  ret = activeRecorder->readWaypoints(&frWaypoints);
-  if (ret<FR_OK) {
-    QApplication::restoreOverrideCursor();
-
-    if ((errorDetails=activeRecorder->lastError())!="") {
-      QMessageBox::critical(this,
-          tr("Library Error"),
-          tr("Cannot read waypoints from recorder") + errorDetails, QMessageBox::Ok, 0);
-    } else {
-      QMessageBox::critical(this,
-                         tr("Library Error"),
-                         tr("Cannot read waypoints from recorder"), QMessageBox::Ok, 0);
-    }
-
-  } else {
-    WaypointCatalog *w = new WaypointCatalog(selectType->currentText() + "_" + serID->text());
-    w->modified = true;
-    foreach(wp, frWaypoints) {
-      w->insertWaypoint(wp);
-      cnt++;
-    }
-
-    QApplication::restoreOverrideCursor();
-    emit addCatalog(w);
-    QMessageBox::information(this,
-        tr("Waypoint download"),
-        tr("%1 waypoints have been downloaded from the recorder.").arg(cnt), QMessageBox::Ok, 0);
-
-  }
+  int ret = activeRecorder->readWaypoints(&frWaypoints);
 
   delete statusDlg;
+  qApp->processEvents();
+
+
+  if( ret < FR_OK )
+    {
+      QApplication::restoreOverrideCursor();
+
+      if( (errorDetails = activeRecorder->lastError()) != "" )
+        {
+          QMessageBox::critical( this,
+                                 tr( "Library Error" ),
+                                 tr( "Cannot read waypoints from recorder" ) + errorDetails,
+                                 QMessageBox::Ok );
+          return;
+        }
+
+      QMessageBox::critical( this,
+                             tr( "Library Error" ),
+                             tr( "Cannot read waypoints from recorder" ),
+                             QMessageBox::Ok );
+    }
+  else
+    {
+      WaypointCatalog *wpCat = new WaypointCatalog( selectType->currentText() + "_" + serID->text() );
+      wpCat->modified = true;
+
+      for( int i = 0; i < frWaypoints.size(); i++ )
+        {
+          wpCat->insertWaypoint( frWaypoints.at( i ) );
+        }
+
+
+    emit addCatalog(wpCat);
+
+    fillWaypointList( frWaypoints );
+
+    lblWpList->setText( tr("Recorder Waypoints") );
+
+    QApplication::restoreOverrideCursor();
+
+    QMessageBox::information( this,
+                              tr("Waypoints reading finished"),
+                              tr("%1 waypoints have been read from the recorder.").arg(frWaypoints.size()),
+                              QMessageBox::Ok );
+
+    }
 }
 
 void RecorderDialog::slotWriteWaypoints()
@@ -1500,6 +1536,7 @@ void RecorderDialog::slotWriteWaypoints()
   QMessageBox* statusDlg = new QMessageBox ( tr("send waypoints"), tr("send waypoints"),
       QMessageBox::Information, Qt::NoButton, Qt::NoButton,
       Qt::NoButton, this, "statusDialog", true);
+
   statusDlg->show();
 
   int maxNrWaypoints;
@@ -1515,7 +1552,10 @@ void RecorderDialog::slotWriteWaypoints()
       tr("Continue"), tr("Cancel")) == 1)
     return;
 
-  if (!activeRecorder) return;
+  if( !activeRecorder )
+    {
+      return;
+    }
 
   if (!activeRecorder->capabilities().supUlWaypoint) {
     QMessageBox::warning(this,
@@ -1578,6 +1618,7 @@ void RecorderDialog::slotReadDatabase()
   FlightRecorderPluginBase::FR_Capabilities cap = activeRecorder->capabilities();
 
   int ret = activeRecorder->getBasicData(basicdata);
+
   if (ret == FR_OK)
   {
     if (cap.supDspSerialNumber)
@@ -1608,6 +1649,7 @@ void RecorderDialog::slotReadDatabase()
                               "Please check connections and settings."));       //Using the Sorry box is a bit friendlier than Error...
     }
   }
+
   if (cap.supEditGliderID     ||
       cap.supEditGliderType   ||
       cap.supEditGliderPolar  ||
@@ -1616,33 +1658,35 @@ void RecorderDialog::slotReadDatabase()
       cap.supEditGoalAlt      ||
       cap.supEditArvRadius    ||
       cap.supEditAudio        ||
-      cap.supEditLogInterval) {
-    int ret = activeRecorder->getConfigData(configdata);
-    if (ret == FR_OK)
+      cap.supEditLogInterval)
     {
-      // now that we read the information from the logger, we can enable the write button:
-      cmdUploadConfig->setEnabled(true);
-      LD->setValue(configdata.LD);
-      speedLD->setValue(configdata.speedLD);
-      speedV2->setValue(configdata.speedV2);
-      dryweight->setValue(configdata.dryweight);
-      maxwater->setValue(configdata.maxwater);
-      sinktone->setChecked(configdata.sinktone);
-      approachradius->setValue(configdata.approachradius);
-      arrivalradius->setValue(configdata.arrivalradius);
-      goalalt->setValue(configdata.goalalt);
-      sloginterval->setValue(configdata.sloginterval);
-      floginterval->setValue(configdata.floginterval);
-      gaptime->setValue(configdata.gaptime);
-      minloggingspd->setValue(configdata.minloggingspd);
-      stfdeadband->setValue(configdata.stfdeadband);
-      unitVarioButtonGroup->setButton(configdata.units & FlightRecorderPluginBase::FR_Unit_Vario_kts);
-      unitAltButtonGroup->setButton(configdata.units & FlightRecorderPluginBase::FR_Unit_Alt_ft);
-      unitTempButtonGroup->setButton(configdata.units & FlightRecorderPluginBase::FR_Unit_Temp_F);
-      unitQNHButtonGroup->setButton(configdata.units & FlightRecorderPluginBase::FR_Unit_Baro_inHg);
-      unitDistButtonGroup->setButton(configdata.units & (FlightRecorderPluginBase::FR_Unit_Dist_nm|FlightRecorderPluginBase::FR_Unit_Dist_sm));
-      unitSpeedButtonGroup->setButton(configdata.units & (FlightRecorderPluginBase::FR_Unit_Spd_kts|FlightRecorderPluginBase::FR_Unit_Spd_mph));
-    }
+      int ret = activeRecorder->getConfigData(configdata);
+
+      if (ret == FR_OK)
+      {
+        // now that we read the information from the logger, we can enable the write button:
+        cmdUploadConfig->setEnabled(true);
+        LD->setValue(configdata.LD);
+        speedLD->setValue(configdata.speedLD);
+        speedV2->setValue(configdata.speedV2);
+        dryweight->setValue(configdata.dryweight);
+        maxwater->setValue(configdata.maxwater);
+        sinktone->setChecked(configdata.sinktone);
+        approachradius->setValue(configdata.approachradius);
+        arrivalradius->setValue(configdata.arrivalradius);
+        goalalt->setValue(configdata.goalalt);
+        sloginterval->setValue(configdata.sloginterval);
+        floginterval->setValue(configdata.floginterval);
+        gaptime->setValue(configdata.gaptime);
+        minloggingspd->setValue(configdata.minloggingspd);
+        stfdeadband->setValue(configdata.stfdeadband);
+        unitVarioButtonGroup->setButton(configdata.units & FlightRecorderPluginBase::FR_Unit_Vario_kts);
+        unitAltButtonGroup->setButton(configdata.units & FlightRecorderPluginBase::FR_Unit_Alt_ft);
+        unitTempButtonGroup->setButton(configdata.units & FlightRecorderPluginBase::FR_Unit_Temp_F);
+        unitQNHButtonGroup->setButton(configdata.units & FlightRecorderPluginBase::FR_Unit_Baro_inHg);
+        unitDistButtonGroup->setButton(configdata.units & (FlightRecorderPluginBase::FR_Unit_Dist_nm|FlightRecorderPluginBase::FR_Unit_Dist_sm));
+        unitSpeedButtonGroup->setButton(configdata.units & (FlightRecorderPluginBase::FR_Unit_Spd_kts|FlightRecorderPluginBase::FR_Unit_Spd_mph));
+      }
   }
   if (cap.supEditGliderID     ||
       cap.supEditGliderType   ||
@@ -1657,7 +1701,10 @@ void RecorderDialog::slotReadDatabase()
 
 void RecorderDialog::slotWriteConfig()
 {
-  if (!activeRecorder) return;
+  if( !activeRecorder )
+    {
+      return;
+    }
 
   basicdata.pilotName = pltName->text();
   basicdata.gliderType = gldType->text();
@@ -1687,20 +1734,23 @@ void RecorderDialog::slotWriteConfig()
                      unitQNHButtonGroup->selectedId()   |
                      unitTempButtonGroup->selectedId()  |
                      unitDistButtonGroup->selectedId();
+
   int ret = activeRecorder->writeConfigData(basicdata, configdata);
-  if (ret != FR_OK)
+
+  if( ret != FR_OK )
   {
     QString errorDetails=activeRecorder->lastError();
+
     if (!errorDetails.isEmpty()) {
       QMessageBox::warning(this,
           tr("Recorder Connection"),
           tr("Sorry, could not write configuration to recorder.\n"
-               "Please check connections and settings.") + errorDetails, QMessageBox::Ok, 0);       //Using the Sorry box is a bit friendlier than Error...
+             "Please check connections and settings.") + errorDetails, QMessageBox::Ok);
     } else {
       QMessageBox::warning(this,
                          tr("Recorder Connection"),
                          tr("Sorry, could not write configuration to recorder.\n"
-                             "Please check connections and settings."), QMessageBox::Ok, 0);       //Using the Sorry box is a bit friendlier than Error...
+                             "Please check connections and settings."), QMessageBox::Ok);
     }
   }
 }
@@ -1778,28 +1828,27 @@ void RecorderDialog::slotEnablePages()
 
 }
 
-/** No descriptions */
-void RecorderDialog::slotRecorderTypeChanged(const QString&) // name)
+/** Opens the new recorder plugin library, if necessary. */
+void RecorderDialog::slotRecorderTypeChanged(const QString& newRecorderName )
 {
-  if( selectType->currentText().isEmpty() )
+  if( newRecorderName.isEmpty() )
     {
       return;
     }
 
-  QString name = libNameList[selectType->currentText()];
+  QString newLibName = libNameList[newRecorderName];
 
-  if( isOpen && libName != name )
+  if( isOpen && libName != newLibName )
     {
-      // closing old lib
+      // closing old library
       dlclose( libHandle );
       slotCloseRecorder();
       isConnected = isOpen = false;
       slotEnablePages();
     }
 
-  if( !__openLib( name ) )
+  if( ! __openLib( newLibName ) )
     {
-      qWarning( "%s", (const char*) tr( "Could not open lib!" ) );
       __setRecorderConnectionType( FlightRecorderPluginBase::none );
       return;
     }
