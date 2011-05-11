@@ -59,6 +59,9 @@ it has a low resolution and accuracy, and it's also quite outdated. We
 should only use it where nothing better is available. VMAP0 can be
 downloaded in shape format from http://gis-lab.info/qa/vmap0-eng.html[]. 
 
+Natural Earth Data might be an alternative, but it's fairly low resolution
+data (even for their 10M data sets) http://www.naturalearthdata.com/[].
+
 Inland water
 ^^^^^^^^^^^^
 
