@@ -46,279 +46,298 @@ class RecorderDialog : public QDialog
 {
   Q_OBJECT
 
-private:
+ private:
 
   Q_DISABLE_COPY ( RecorderDialog )
 
-  public:
-    /**
-     * Constructor
-     */
-    RecorderDialog(QWidget *parent);
-    /**
-     * Destructor
-     */
-    ~RecorderDialog();
+ public:
 
-  public slots:
+  /**
+   * Constructor
+   */
+  RecorderDialog(QWidget *parent);
+  /**
+   * Destructor
+   */
+  ~RecorderDialog();
 
-    /**
-     * Connects the currently selected recorder using the information entered (bautrate, port, URL, etc.)
-     */
-    void slotConnectRecorder();
-    /**
-     * Called, if the menu tree is clicked.
-     */
-    void slotPageClicked( QTreeWidgetItem * item, int column );
-    /**
-     * Read the flight list from the recorder
-     */
-    void slotReadFlightList();
-    /**
-     * Downloads the currently selected flight from the recorder. You need to call slotReadFlightList before calling this slot.
-     */
-    void slotDownloadFlight();
-    /**
-     * Sends a declaration to the recorder
-     */
-    void slotWriteDeclaration();
-    /**
-     * Reads the tasks from the recorder
-     */
-    void slotReadTasks();
-    /**
-     * Writes the tasks to the recorder
-     */
-    void slotWriteTasks();
-    /**
-     * Close the connection with the recorder
-     */
-    void slotCloseRecorder();
-    /**
-     * Reads the data on things like pilot names from the flight recorder
-     */
-    void slotReadDatabase();
-    /**
-     * Writes the data on things like glider polar and variometer settings
-     */
-    void slotWriteConfig();
-    /**
-     * Reads the waypoint list from the recorder
-     */
-    void slotReadWaypoints();
-    /**
-     * Writes the waypoint list to the recorder
-     */
-    void slotWriteWaypoints();
-    /**
-     */
-    void slotDisablePages();
-    /**
-     */
-    void slotNewSpeed(int);
+ public slots:
 
-  public:
-
-    /**
-     * \return Path to the directory, where are the known loggers defined.
-     */
-    QString getLoggerPath();
-
-    /**
-     * \return Path to the directory, where are the plugin libraries are located.
-     */
-    QString getLibraryPath();
-
-  private:
-    /** */
-    int __fillDirList();
-    /**
-     * Opens the library with the indicated name
-     */
-    bool __openLib(const QString& libN);
-    /**
-     * Creates and add the Settings page (the first page) to the dialog
-     */
-    void __addRecorderPage();
-    void __setRecorderConnectionType(FlightRecorderPluginBase::TransferMode);
-    void __setRecorderCapabilities();
-    /** */
-    void __addFlightPage();
-    /** */
-    void __addDeclarationPage();
-    /** */
-    void __addTaskPage();
-    /** */
-    void __addWaypointPage();
-    /** No descriptions */
-    void __addConfigPage();
-
-    /** */
-    void fillTaskList();
-
-    void fillWaypointList( QList<Waypoint *>& wpList );
-
-    QGridLayout *configLayout;
-
-    QTreeWidget *setupTree;
-
-    QFrame *activePage;
-    /** */
-    QFrame* flightPage;
-    /** */
-    QFrame* recorderPage;
-    /** */
-    QFrame* waypointPage;
-    /** */
-    QFrame* taskPage;
-    /** */
-    QFrame* declarationPage;
-    /** */
-    QFrame* configPage;
-    /** */
-    QComboBox* selectType;
-    QComboBox* selectPort;
-    QLabel* selectPortLabel;
-    QComboBox* selectSpeed;
-    QLabel* selectSpeedLabel;
-    QLineEdit* selectURL;
-    QLabel* selectURLLabel;
-    QPushButton* cmdConnect;
-
-    /** */
-    QLabel* serID;
-    QLabel* lblSerID;
-    QLabel* apiID;
-    QLabel* lblApiID;
-    QLabel* recType;
-    QLabel* lblRecType;
-    QLineEdit* pltName;
-    QLabel* lblPltName;
-    QLineEdit* gldType;
-    QLabel* lblGldType;
-    QLineEdit* gldID;
-    QLabel* lblGldID;
-    QLineEdit* compID;
-    QLabel* lblCompID;
-
-    QLabel* lblWpList;
-
-    /** */
-    KFLogListView* flightList;
-    /** */
-    KFLogListView* declarationList;
-    /** */
-    KFLogListView* taskList;
-
-    /** Waypoint list */
-    KFLogTreeWidget *waypointList;
-
-    /** */
-    QCheckBox* useFastDownload;
-    /** */
-    QCheckBox* useLongNames;
-    /** */
-    void* libHandle;
-    /** */
-    QString libName;
-    /** */
-    QString portName;
-    /** */
-    bool isOpen;
-    /** */
-    QList<FRDirEntry *> dirList;
-    QList<FlightTask *> tasks;
-    QList<Waypoint *> waypoints;
-    /**
-     * Contains a list of library names which can be accessed using the
-     * displayed name from the drop down as a key.
-     */
-    QMap<QString, QString> libNameList;
-
-    /** */
-    int colID;
-    int colDate;
-    int colPilot;
-    int colGlider;
-    int colFirstPoint;
-    int colLastPoint;
-    int colDuration;
-    /** */
-    int declarationColID;
-    int declarationColName;
-    int declarationColLat;
-    int declarationColLon;
-    /** */
-    int taskColID;
-    int taskColName;
-    int taskColDesc;
-    int taskColTask;
-    int taskColTotal;
-    /** */
-    int waypointColNo;
-    int waypointColName;
-    int waypointColLat;
-    int waypointColLon;
-
-    FlightRecorderPluginBase::FR_BasicData basicdata;
-    FlightRecorderPluginBase::FR_ConfigData configdata;
-
-    QLineEdit* pilotName;
-    QLineEdit* copilotName;
-    QLineEdit* gliderID;
-    QComboBox* gliderType;
-    QLineEdit* compClass;
-    QLineEdit* editCompID;
-    QComboBox* taskSelection;
-
-    QPushButton* cmdDownloadWaypoints;
-    QPushButton* cmdUploadWaypoints;
-
-    QPushButton* cmdDownloadTasks;
-    QPushButton* cmdUploadTasks;
-
-    QPushButton* cmdUploadBasicConfig;
-    QPushButton* cmdUploadConfig;
-
-    Q3ButtonGroup* unitAltButtonGroup;
-    Q3ButtonGroup* unitVarioButtonGroup;
-    Q3ButtonGroup* unitSpeedButtonGroup;
-    Q3ButtonGroup* unitQNHButtonGroup;
-    Q3ButtonGroup* unitTempButtonGroup;
-    Q3ButtonGroup* unitDistButtonGroup;
-
-    QCheckBox* sinktone;
-
-    QSpinBox* LD;
-    QSpinBox* speedLD;
-    QSpinBox* speedV2;
-    QSpinBox* dryweight;
-    QSpinBox* maxwater;
-
-    QSpinBox* approachradius;
-    QSpinBox* arrivalradius;
-    QSpinBox* goalalt;
-    QSpinBox* sloginterval;
-    QSpinBox* floginterval;
-    QSpinBox* gaptime;
-    QSpinBox* minloggingspd;
-    QSpinBox* stfdeadband;
-  /**  */
-  bool isConnected;
-  FlightRecorderPluginBase * activeRecorder;
+  /**
+   * Connects the currently selected recorder using the information entered (bautrate, port, URL, etc.)
+   */
+  void slotConnectRecorder();
+  /**
+   * Called, if the menu tree is clicked.
+   */
+  void slotPageClicked( QTreeWidgetItem * item, int column );
+  /**
+   * Read the flight list from the recorder
+   */
+  void slotReadFlightList();
+  /**
+   * Downloads the currently selected flight from the recorder. You need to call slotReadFlightList before calling this slot.
+   */
+  void slotDownloadFlight();
+  /**
+   * Sends a declaration to the recorder
+   */
+  void slotWriteDeclaration();
+  /**
+   * Reads the tasks from the recorder
+   */
+  void slotReadTasks();
+  /**
+   * Writes the tasks to the recorder
+   */
+  void slotWriteTasks();
+  /**
+   * Close the connection with the recorder
+   */
+  void slotCloseRecorder();
+  /**
+   * Reads the data on things like pilot names from the flight recorder
+   */
+  void slotReadDatabase();
+  /**
+   * Writes the data on things like glider polar and variometer settings
+   */
+  void slotWriteConfig();
+  /**
+   * Reads the waypoint list from the recorder
+   */
+  void slotReadWaypoints();
+  /**
+   * Writes the waypoint list to the recorder
+   */
+  void slotWriteWaypoints();
+  /**
+   */
+  void slotDisablePages();
+  /**
+   */
+  void slotNewSpeed(int);
 
  private slots:
 
   void slotSwitchTask(int idx);
+
   /** Enable/Disable pages when not connected to a recorder */
   void slotEnablePages();
+
   /** No descriptions */
   void slotRecorderTypeChanged(const QString &name);
 
- signals: // Signals
-  /** No descriptions */
+ signals:
+
   void addCatalog(WaypointCatalog *w);
+
   void addTask(FlightTask *t);
+
+ public:
+
+  /**
+   * \return Path to the directory, where are the known loggers defined.
+   */
+  QString getLoggerPath();
+
+  /**
+   * \return Path to the directory, where are the plugin libraries are located.
+   */
+  QString getLibraryPath();
+
+ private:
+
+  /** */
+  int __fillDirList();
+  /**
+   * Opens the library with the indicated name
+   */
+  bool __openLib(const QString& libN);
+  /**
+   * Creates and add the Settings page (the first page) to the dialog
+   */
+  void __addRecorderPage();
+  void __setRecorderConnectionType(FlightRecorderPluginBase::TransferMode);
+  void __setRecorderCapabilities();
+  /** */
+  void __addFlightPage();
+  /** */
+  void __addDeclarationPage();
+  /** */
+  void __addTaskPage();
+  /** */
+  void __addWaypointPage();
+  /** No descriptions */
+  void __addConfigPage();
+
+  void fillTaskList( QList<FlightTask *>& ftList );
+
+  void fillWaypointList( QList<Waypoint *>& wpList );
+
+  QGridLayout *configLayout;
+
+  QTreeWidget *setupTree;
+
+  QWidget *activePage;
+  /** */
+  QWidget* flightPage;
+  /** */
+  QWidget* recorderPage;
+  /** */
+  QWidget* waypointPage;
+  /** */
+  QWidget* taskPage;
+  /** */
+  QWidget* declarationPage;
+  /** */
+  QWidget* configPage;
+
+  QLabel* statusBar;
+
+  /** */
+  QComboBox* selectType;
+  QComboBox* selectPort;
+  QLabel* selectPortLabel;
+  QComboBox* selectSpeed;
+  QLabel* selectSpeedLabel;
+  QLineEdit* selectURL;
+  QLabel* selectURLLabel;
+  QPushButton* cmdConnect;
+
+  /** */
+  QLabel* serID;
+  QLabel* lblSerID;
+  QLabel* apiID;
+  QLabel* lblApiID;
+  QLabel* recType;
+  QLabel* lblRecType;
+  QLineEdit* pltName;
+  QLabel* lblPltName;
+  QLineEdit* gldType;
+  QLabel* lblGldType;
+  QLineEdit* gldID;
+  QLabel* lblGldID;
+  QLineEdit* compID;
+  QLabel* lblCompID;
+
+  QLabel* lblTaskList;
+  QLabel* lblWpList;
+
+  /** Flight list for the flight page. */
+  KFLogTreeWidget* flightList;
+
+  /** Task declaration list */
+  KFLogTreeWidget* declarationList;
+
+  /** Task list for the tasks page */
+  KFLogTreeWidget* taskList;
+
+  /** Waypoint list for the waypoints page */
+  KFLogTreeWidget *waypointList;
+
+  /** */
+  QCheckBox* useFastDownload;
+  /** */
+  QCheckBox* useLongNames;
+  /** */
+  void* libHandle;
+  /** */
+  QString libName;
+  /** */
+  QString portName;
+  /** */
+  bool isOpen;
+  /** */
+  QList<FRDirEntry *> dirList;
+  QList<FlightTask *> tasks;
+  QList<Waypoint *> waypoints;
+  /**
+   * Contains a list of library names which can be accessed using the
+   * displayed name from the drop down as a key.
+   */
+  QMap<QString, QString> libNameList;
+
+  /** Column variables of flight page */
+  int colNo;
+  int colDate;
+  int colPilot;
+  int colGlider;
+  int colFirstPoint;
+  int colLastPoint;
+  int colDuration;
+  int colDummy;
+
+  /** Column variables of declaration page */
+  int declarationColNo;
+  int declarationColName;
+  int declarationColLat;
+  int declarationColLon;
+  int declarationColDummy;
+
+  /** Column variables of task page */
+  int taskColNo;
+  int taskColName;
+  int taskColDesc;
+  int taskColTask;
+  int taskColTotal;
+  int taskColDummy;
+
+  /** Column variables of waypoint page */
+  int waypointColNo;
+  int waypointColName;
+  int waypointColLat;
+  int waypointColLon;
+  int waypointColDummy;
+
+  FlightRecorderPluginBase::FR_BasicData basicdata;
+  FlightRecorderPluginBase::FR_ConfigData configdata;
+
+  QLineEdit* pilotName;
+  QLineEdit* copilotName;
+  QLineEdit* gliderID;
+  QComboBox* gliderType;
+  QLineEdit* compClass;
+  QLineEdit* editCompID;
+  QComboBox* taskSelection;
+
+  QPushButton* cmdDownloadWaypoints;
+  QPushButton* cmdUploadWaypoints;
+
+  QPushButton* cmdDownloadTasks;
+  QPushButton* cmdUploadTasks;
+
+  QPushButton* cmdUploadBasicConfig;
+  QPushButton* cmdUploadConfig;
+
+  Q3ButtonGroup* unitAltButtonGroup;
+  Q3ButtonGroup* unitVarioButtonGroup;
+  Q3ButtonGroup* unitSpeedButtonGroup;
+  Q3ButtonGroup* unitQNHButtonGroup;
+  Q3ButtonGroup* unitTempButtonGroup;
+  Q3ButtonGroup* unitDistButtonGroup;
+
+  QCheckBox* sinktone;
+
+  QSpinBox* LD;
+  QSpinBox* speedLD;
+  QSpinBox* speedV2;
+  QSpinBox* dryweight;
+  QSpinBox* maxwater;
+
+  QSpinBox* approachradius;
+  QSpinBox* arrivalradius;
+  QSpinBox* goalalt;
+  QSpinBox* sloginterval;
+  QSpinBox* floginterval;
+  QSpinBox* gaptime;
+  QSpinBox* minloggingspd;
+  QSpinBox* stfdeadband;
+
+  /**  */
+  bool isConnected;
+
+  FlightRecorderPluginBase * activeRecorder;
 };
 
 #endif

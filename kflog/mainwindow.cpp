@@ -295,7 +295,7 @@ void MainWindow::createDockWindows()
   mapControlDock->setFloating( false );
   mapControl = new MapControlView(mapControlDock);
   mapControlDock->setWidget(mapControl);
-  addDockWidget( Qt::BottomDockWidgetArea, mapControlDock );
+  addDockWidget( Qt::RightDockWidgetArea, mapControlDock );
   mapControlDock->setVisible(false);
 
   objectTreeDock = new QDockWidget( tr("Loaded Objects"), this );
@@ -303,7 +303,7 @@ void MainWindow::createDockWindows()
   objectTreeDock->setFloating( false );
   objectTree = new ObjectTree(objectTreeDock);
   objectTreeDock->setWidget(objectTree);
-  addDockWidget( Qt::BottomDockWidgetArea, objectTreeDock );
+  addDockWidget( Qt::LeftDockWidgetArea, objectTreeDock );
   objectTreeDock->setVisible(false);
 
   waypointsDock = new QDockWidget( tr("Waypoints"), this );
