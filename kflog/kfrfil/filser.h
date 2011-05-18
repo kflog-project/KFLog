@@ -6,10 +6,11 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by Christian Fughe, Harald Maier, Eggert Ehmke
+**   Copyright (c): 2003 by Christian Fughe, Harald Maier, Eggert Ehmke
+**                  2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -22,7 +23,7 @@
 #include <stdio.h>
 
 #include <QTimer>
-#include <Q3PtrList>
+#include <QList>
 
 #include "../waypoint.h"
 #include "../frstructs.h"
@@ -46,8 +47,9 @@
 #define EXTENDED_LENGTH BASIC_LENGTH + 9
                                 /* 9 characters class name      */
 
-struct flightTable {
-  unsigned char record[FLIGHT_INDEX_WIDTH];
+struct flightTable
+{
+    unsigned char record[FLIGHT_INDEX_WIDTH];
 };
 
 class Filser : public FlightRecorderPluginBase
@@ -55,20 +57,22 @@ class Filser : public FlightRecorderPluginBase
   Q_OBJECT
 
 public:
+
   Filser();
+
   virtual ~Filser();
   /**
-   * Returns the name of the lib.
+   * Returns the name of the library.
    */
   virtual QString getLibName() const {  return "libkfrfil";  };
   /**
-   * Returns the transfermode this plugin supports.
+   * Returns the transfer mode this plugin supports.
    */
   virtual TransferMode getTransferMode() const;
   /**
    * Returns a list of recorded flights in this device.
    */
-  virtual int getFlightDir(QList<FRDirEntry*>*);
+  virtual int getFlightDir(QList<FRDirEntry*> *);
   /**
    *
    */
@@ -78,11 +82,11 @@ public:
     */
   virtual int getBasicData(FR_BasicData&);
   /*
-   * get recorder config data
+   * get recorder configuration data
    */
   virtual int getConfigData(FR_ConfigData&);
   /**
-   * write recorder basic and config data
+   * write recorder basic and configuration data
    */
   virtual int writeConfigData(FR_BasicData&, FR_ConfigData&);
   /**
@@ -94,7 +98,7 @@ public:
    */
   virtual int openRecorder(const QString& URL);
   /**
-   * Closes the connection with the flightrecorder.
+   * Closes the connection with the flight recorder.
    */
   virtual int closeRecorder();
   /**
@@ -128,8 +132,9 @@ public slots:
   void slotTimeout();
 
 private:
+
   /**
-   * try to find a filser device
+   * try to find a Filser device
    */
   bool check4Device();
   /**
@@ -158,7 +163,9 @@ private:
   bool convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last);
   unsigned char *readData(unsigned char *buf_p, int count);
   unsigned char *writeData(unsigned char *buf_p, int count);
-  Q3PtrList <flightTable> flightIndex;
+
+  QList <flightTable *> flightIndex;
+
   char *wordtoserno(unsigned int Binaer);
   // true if the da4buffer is identical to the logger content
   bool _da4BufferValid;

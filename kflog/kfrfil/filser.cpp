@@ -34,7 +34,7 @@
 
 #define MAX_LSTRING    63
 
-/*loger defines*/
+/*logger defines*/
 #define NODATA         0
 #define LSTRING        1 /* to 63 string*/
 #define END           64        /* 40 */
@@ -154,18 +154,17 @@ void debugHex (const void* buf, unsigned int size)
 
 /**
  * Needed to reset the serial port in any case of unexpected exiting
- * of the programm. Called via signal-handler of the runtime-environment.
+ * of the program. Called via signal-handler of the runtime-environment.
  */
 void releaseTTY(int /* signal*/)
 {
   tcsetattr(portID, TCSANOW, &oldTermEnv);
-  //exit(-1);
 }
 
 
 Filser::Filser()
 {
-  //Set Flightrecorders capabilities. Defaults are 0 and false.
+  //Set flight recorders capabilities. Defaults are 0 and false.
   _capabilities.maxNrTasks = TASK_MAX;             //maximum number of tasks
   _capabilities.maxNrWaypoints = WAYPOINT_MAX;     //maximum number of waypoints
   _capabilities.maxNrWaypointsPerTask = MAXTSKPNT; //maximum number of waypoints per task
@@ -195,8 +194,9 @@ Filser::Filser()
 
   portID = -1;
   _da4BufferValid = false;
-  _keepalive = new QTimer(this);
-  connect (_keepalive, SIGNAL(timeout()), this, SLOT(slotTimeout()));
+
+  _keepalive = new QTimer( this );
+  connect( _keepalive, SIGNAL(timeout()), this, SLOT(slotTimeout()) );
 }
 
 Filser::~Filser()
@@ -214,12 +214,14 @@ void Filser::slotTimeout()
                               // following wb(SYN). And remove the
                               // position data, that might have been
                               // arrived.
-  wb(SYN);
-  tcdrain (portID);
+  wb( SYN );
+  tcdrain( portID );
   int ret = rb();
-  if (ret != ACK) {
-    qDebug ("Filser::keepalive failed: ret = %x", ret);
-  }
+
+  if( ret != ACK )
+    {
+      qDebug( "Filser::keepalive failed: ret = %x", ret );
+    }
 }
 
 /**
@@ -233,6 +235,7 @@ FlightRecorderPluginBase::TransferMode Filser::getTransferMode() const
 int Filser::getFlightDir(QList<FRDirEntry*>* dirList)
 {
   qDebug ("Filser::getFlightDir");
+
   int flightCount = 0;
   unsigned char indexByte = 1;
   int rc;
@@ -243,9 +246,10 @@ int Filser::getFlightDir(QList<FRDirEntry*>* dirList)
   qDeleteAll( *dirList );
   dirList->clear();
 
-  if (!readMemSetting()) {
-    return FR_ERROR;
-  }
+  if( !readMemSetting() )
+    {
+      return FR_ERROR;
+    }
 
   _errorinfo = "";
 
