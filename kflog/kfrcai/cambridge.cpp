@@ -21,7 +21,7 @@
  *    - I don't use error checking yet, but so far I simply ignore those bytes
  */
 
-#include <QtCore>
+#include <QtGui>
 
 #include <fcntl.h>
 #include <math.h>
@@ -135,7 +135,7 @@ int extractInteger(unsigned char* buf, int start, int count)
   return foo;
 }
 
-Cambridge::Cambridge( QObject *parent ) : QObject( parent )
+Cambridge::Cambridge( QObject *parent ) : FlightRecorderPluginBase( parent )
 {
   _capabilities.transferSpeeds = bps01200 |  //supported transfer speeds
                                  bps02400 |
@@ -900,7 +900,7 @@ int Cambridge::sendCommand(QString cmd)
 {
   // flush the buffer and send the command
   tcflush(portID, TCIOFLUSH);
-  write(portID, cmd.toAscii().data(), cmd.length());
+  ssize_t ret = write(portID, cmd.toAscii().data(), cmd.length());
   wb('\r');
   return FR_OK;
 }
