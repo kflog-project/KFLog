@@ -18,6 +18,8 @@
 /**
  * \class KFLogTreeWidget
  *
+ * \author Axel Pauli
+ *
  * \brief Small extension of the QTreeWidget class.
  *
  * This class is an extension of the QTreeWidget class. It saves and restores

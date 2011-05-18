@@ -35,7 +35,7 @@
 #define FR_OK 1              // OK, no problem.
 
 /**
- * \class flight recorderPluginBase
+ * \class FlightRecorderPluginBase
  *
  * \author André Somers, Axel Pauli
  *
@@ -58,8 +58,7 @@
 
 class FlightRecorderPluginBase : public QObject
 {
-
-Q_OBJECT
+  Q_OBJECT
 
 public:
 

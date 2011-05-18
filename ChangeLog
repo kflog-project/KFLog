@@ -1,5 +1,13 @@
 $Id$
 
+2011-05-18 Axel Pauli <axel@kflog.org>
+
+  * RecorderDialog widget fully ported to Qt4. It was a hard pice of work :-((
+    It must be tested the whole provided functionality. I have no logger devices
+    to do that.
+    
+  * Recorder plugin Filser fully proted to Qt4.
+
 2011-05-05 Axel Pauli <axel@kflog.org>
 
   * Bugfix in waypoint import from map. If map center was selected as center

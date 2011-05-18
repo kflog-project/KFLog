@@ -20,12 +20,10 @@
 #define RECORDER_DIALOG_H
 
 #include <QtGui>
-#include <Qt3Support>
 
 #include "flightrecorderpluginbase.h"
 #include "flighttask.h"
 #include "frstructs.h"
-#include "guicontrols/kfloglistview.h"
 #include "kflogtreewidget.h"
 #include "waypointcatalog.h"
 
@@ -150,26 +148,44 @@ class RecorderDialog : public QDialog
 
   /** */
   int __fillDirList();
+
   /**
    * Opens the library with the indicated name
    */
   bool __openLib(const QString& libN);
-  /**
-   * Creates and add the Settings page (the first page) to the dialog
-   */
-  void __addRecorderPage();
+
   void __setRecorderConnectionType(FlightRecorderPluginBase::TransferMode);
   void __setRecorderCapabilities();
-  /** */
-  void __addFlightPage();
-  /** */
-  void __addDeclarationPage();
-  /** */
-  void __addTaskPage();
-  /** */
-  void __addWaypointPage();
-  /** No descriptions */
-  void __addConfigPage();
+
+  /**
+   * Creates and adds the Recorder page to the dialog
+   */
+  void __createRecorderPage();
+
+  /**
+   * Creates and adds the Flight page to the dialog
+   */
+  void __createFlightPage();
+
+  /**
+   * Creates and adds the Declaration page to the dialog
+   */
+  void __createDeclarationPage();
+
+  /**
+   * Creates and adds the Tasks page to the dialog
+   */
+  void __createTaskPage();
+
+  /**
+   * Creates and adds the Waypoints page to the dialog
+   */
+  void __createWaypointPage();
+
+  /**
+   * Creates and adds the Configuration page to the dialog
+   */
+  void __createConfigurationPage();
 
   void fillTaskList( QList<FlightTask *>& ftList );
 
@@ -179,18 +195,13 @@ class RecorderDialog : public QDialog
 
   QTreeWidget *setupTree;
 
+  /** Page widgets */
   QWidget *activePage;
-  /** */
   QWidget* flightPage;
-  /** */
   QWidget* recorderPage;
-  /** */
   QWidget* waypointPage;
-  /** */
   QWidget* taskPage;
-  /** */
   QWidget* declarationPage;
-  /** */
   QWidget* configPage;
 
   QLabel* statusBar;
@@ -240,7 +251,8 @@ class RecorderDialog : public QDialog
   QCheckBox* useFastDownload;
   /** */
   QCheckBox* useLongNames;
-  /** */
+
+  /** Handle to the bound library plugin. */
   void* libHandle;
   /** */
   QString libName;
@@ -252,6 +264,7 @@ class RecorderDialog : public QDialog
   QList<FRDirEntry *> dirList;
   QList<FlightTask *> tasks;
   QList<Waypoint *> waypoints;
+
   /**
    * Contains a list of library names which can be accessed using the
    * displayed name from the drop down as a key.
@@ -310,12 +323,15 @@ class RecorderDialog : public QDialog
   QPushButton* cmdUploadBasicConfig;
   QPushButton* cmdUploadConfig;
 
-  Q3ButtonGroup* unitAltButtonGroup;
-  Q3ButtonGroup* unitVarioButtonGroup;
-  Q3ButtonGroup* unitSpeedButtonGroup;
-  Q3ButtonGroup* unitQNHButtonGroup;
-  Q3ButtonGroup* unitTempButtonGroup;
-  Q3ButtonGroup* unitDistButtonGroup;
+  /**
+   * Used by declaration page
+   */
+  QButtonGroup* unitAltButtonGroup;
+  QButtonGroup* unitVarioButtonGroup;
+  QButtonGroup* unitSpeedButtonGroup;
+  QButtonGroup* unitQNHButtonGroup;
+  QButtonGroup* unitTempButtonGroup;
+  QButtonGroup* unitDistButtonGroup;
 
   QCheckBox* sinktone;
 
@@ -337,7 +353,7 @@ class RecorderDialog : public QDialog
   /**  */
   bool isConnected;
 
-  FlightRecorderPluginBase * activeRecorder;
+  FlightRecorderPluginBase* activeRecorder;
 };
 
 #endif

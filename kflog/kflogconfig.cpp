@@ -104,11 +104,12 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
 
   setupTree->setFixedWidth( 170 );
 
-  // activePage->setFixedWidth(500);
+  restoreGeometry( _settings.value("/KFLogConfig/Geometry").toByteArray() );
 }
 
 KFLogConfig::~KFLogConfig()
 {
+  _settings.setValue( "/KFLogConfig/Geometry", saveGeometry() );
 }
 
 void KFLogConfig::slotPageClicked( QTreeWidgetItem * item, int column )

@@ -16,6 +16,8 @@
 **
 ***********************************************************************/
 
+#include <QtCore>
+
 #include "flightrecorderpluginbase.h"
 
 FlightRecorderPluginBase::transferStruct FlightRecorderPluginBase::transferData [] =
@@ -80,6 +82,7 @@ FlightRecorderPluginBase::FlightRecorderPluginBase( QObject *parent ) :
 
 FlightRecorderPluginBase::~FlightRecorderPluginBase()
 {
+  qDebug() << "~FlightRecorderPluginBase()";
 }
 
 /**
