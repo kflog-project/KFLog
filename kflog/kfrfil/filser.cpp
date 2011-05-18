@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Christian Fughe, Harald Maier, Eggert Ehmke
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -28,10 +29,7 @@
 #include <string.h>
 
 #include <QtGui>
-//Added by qt3to4:
-#include <Q3PtrList>
 
-#include "../airfield.h"
 #include "filser.h"
 
 #define MAX_LSTRING    63
@@ -77,7 +75,7 @@
  * The device-name of the port.
  */
 const char* portName = '\0';
-int portID;
+int portID = -1;
 const char* c36 = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 extern int breakTransfer;
@@ -150,7 +148,7 @@ void debugHex (const void* buf, unsigned int size)
       else
         line += ' ';
     }
-    qDebug("%s", (const char*)line.toLatin1());
+    qDebug("%s", line.toLatin1().data());
   }
 }
 
@@ -196,14 +194,15 @@ Filser::Filser()
   //End set capabilities.
 
   portID = -1;
-  flightIndex.setAutoDelete(true);
   _da4BufferValid = false;
-  _keepalive = new QTimer (this, "keepalive");
+  _keepalive = new QTimer(this);
   connect (_keepalive, SIGNAL(timeout()), this, SLOT(slotTimeout()));
 }
 
 Filser::~Filser()
 {
+  closeRecorder();
+  qDeleteAll( flightIndex );
 }
 
 /**
@@ -241,6 +240,7 @@ int Filser::getFlightDir(QList<FRDirEntry*>* dirList)
   unsigned char buf[BUFSIZE + 1];
   int i;
 
+  qDeleteAll( *dirList );
   dirList->clear();
 
   if (!readMemSetting()) {
@@ -348,17 +348,18 @@ int Filser::getFlightDir(QList<FRDirEntry*>* dirList)
   //                   purpose, the time consuming retrieval can be
   //                   removed.
   else {
-    // FIXME: Use QTemporaryFile in Qt4
-    QDir::setCurrent(QDir::homeDirPath() + "/.kflog");
-    QFile tmpigc;
-    tmpigc.setName("tmpigc");
 
-    if (tmpigc.status()!=0) {                  //check to see if a temporary file could be created.
-      _errorinfo=tr("Could not create temporary file. Please check your writepermissions.");
+    QString tmpFile = QDir::homePath() + "/.tmpigc";
+
+    int ret = downloadFlight( 0, 0, tmpFile );
+
+    if ( ret == FR_ERROR) {
+       //check to see if a temporary file could be created.
+      _errorinfo=tr("Could not create temporary file. Please check your write permissions.");
+      remove( tmpFile.toAscii().data() );
       return FR_ERROR;
     }
 
-    downloadFlight(0,0,tmpigc.name());
 
     for (i=0; i<flightCount; i++) {
       dirList->at(i)->shortFileName.sprintf("%c%c%c%c%s%c.igc",
@@ -383,11 +384,11 @@ int Filser::getFlightDir(QList<FRDirEntry*>* dirList)
                                                                   // the counter of the flight
                                                                   // of the day (IGC tech specs).
                                                                   // Please, keep it this way.
-      qWarning("%s   %s", (const char*)dirList->at(i)->longFileName.toLatin1(),
-                          (const char*)dirList->at(i)->shortFileName.toLatin1());
+      qWarning("%s   %s", dirList->at(i)->longFileName.toLatin1().data(),
+                          dirList->at(i)->shortFileName.toLatin1().data());
     }
-    QDir::setCurrent(QDir::homeDirPath() + "/.kflog");
-    tmpigc.remove("tmpigc");
+
+    remove( tmpFile.toAscii().data() );
   }
 
   _keepalive->blockSignals(false);
@@ -486,11 +487,13 @@ int Filser::getBasicData(FR_BasicData& data)
   */
   else
   {
-    QStringList list = QStringList::split (QRegExp("[\n\r]"), (char*)buf);
+    QString data( (const char *) buf );
+    QStringList list = data.split( QRegExp("[\n\r]") );
+
     for (QStringList::Iterator it = list.begin(); it != list.end(); ++it)
     {
       // Example: Version LX20 V5.11
-      if ((*it).left(7).upper() == "VERSION")
+      if ((*it).left(7).toUpper() == "VERSION")
         _basicData.recorderType = (*it).mid(8);
       // Example: SN12969,HW3.0
       else if ((*it).left(2) == "SN")
@@ -584,13 +587,14 @@ int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileNam
   _errorinfo = "";
 
   struct flightTable *ft = flightIndex.at(flightID);
+
   if (!check4Device() || !defMem(ft) ||
       !getMemSection(memSection, sizeof(memSection)) ||
       !getLoggerData(memSection, sizeof(memSection))) {
     rc = FR_ERROR;
   }
   else {
-    if ((f = fopen(fileName, "w")) != NULL) {
+    if ((f = fopen(fileName.toLatin1().data(), "w")) != NULL) {
       if (convFil2Igc(f, memContents, memContents + contentSize)) {
         rc = FR_OK;
       }
@@ -613,9 +617,10 @@ int Filser::downloadFlight(int flightID, int /*secMode*/, const QString& fileNam
 
 int Filser::openRecorder(const QString& pName, int baud)
 {
-  portName = (char *)pName.latin1();
+  portName = (char *)pName.toLatin1().data();
 
   portID = open(portName, O_RDWR | O_NOCTTY);
+
   if(portID != -1) {
     //
     // Before we change any port-settings, we must establish a
@@ -1822,17 +1827,20 @@ char *Filser::wordtoserno(unsigned int Binaer)
 
 int Filser::closeRecorder()
 {
-  if (portID != -1) {
-    _keepalive->stop();
-    tcsetattr(portID, TCSANOW, &oldTermEnv);
-    close(portID);
-    _isConnected = false;
-    _da4BufferValid = false;
-    return FR_OK;
-  }
-  else {
-    return FR_ERROR;
-  }
+  if( portID != -1 )
+    {
+      _keepalive->stop();
+      tcsetattr( portID, TCSANOW, &oldTermEnv );
+      close( portID );
+      portID = -1;
+      _isConnected = false;
+      _da4BufferValid = false;
+      return FR_OK;
+    }
+  else
+    {
+      return FR_ERROR;
+    }
 }
 
 /** NOT IMLEMENTED
@@ -1852,7 +1860,7 @@ int Filser::readDatabase()
 /**
   * read the tasks from the lx recorder
   * read the da4 buffer and select tasks
-  * tasks are contructed from waypoints in the same buffer !
+  * tasks are constructed from waypoints in the same buffer !
   */
 int Filser::readTasks(QList<FlightTask*> * tasks)
 {
@@ -1917,11 +1925,11 @@ int Filser::findWaypoint (Waypoint* wp)
     DA4WPRecord wprecord (&_da4Buffer.waypoints[RecordNumber]);
     QString str1 = wprecord.name();
     QString str2 = wp->name;
-    if (str1.stripWhiteSpace().upper() == str2.stripWhiteSpace().upper())
+    if (str1.trimmed().toUpper() == str2.trimmed().toUpper())
     {
       // make sure the waypoint contains the data we want
       wprecord.setWaypoint(wp);
-      qDebug ("waypoint %s found at %d", wp->name.latin1(), RecordNumber);
+      qDebug ("waypoint %s found at %d", wp->name.toLatin1().data(), RecordNumber);
       return RecordNumber;
     }
     else if ((wprecord.type() == BaseMapElement::NotSelected) && (freeRecord == -1))
@@ -1932,7 +1940,7 @@ int Filser::findWaypoint (Waypoint* wp)
   {
     DA4WPRecord wprecord (&_da4Buffer.waypoints[freeRecord]);
     wprecord.setWaypoint(wp);
-    qDebug ("waypoint %s not found. created at %d", wp->name.latin1(), freeRecord);
+    qDebug ("waypoint %s not found. created at %d", wp->name.toLatin1().data(), freeRecord);
     return freeRecord;
   }
   qDebug ("waypoint not found");
@@ -2021,7 +2029,7 @@ int Filser::readDA4Buffer()
   if (rb () != calcCrcBuf (&_da4Buffer, sizeof (DA4Buffer)))
   {
     _errorinfo = tr("Filser::readWaypoints(): Bad CRC");
-    qDebug ("%s", (const char*)_errorinfo.toLatin1());
+    qDebug ("%s", _errorinfo.toLatin1().data());
     return FR_ERROR;
   }
   _da4BufferValid = true;
@@ -2052,7 +2060,7 @@ int Filser::readWaypoints(QList<Waypoint*>* wpList)
 
     if (record.type() != BaseMapElement::NotSelected)
     {
-      if (record.name().stripWhiteSpace().isEmpty())
+      if (record.name().trimmed().isEmpty())
         continue;
       Waypoint *w = record.newWaypoint();
       wpList->append(w);
@@ -2102,13 +2110,13 @@ int Filser::writeDA4Buffer()
   else if (result == NAK)
   {
     _errorinfo = tr("Filser::writeDA4Buffer: Bad CRC");
-    qDebug ("%s", (const char*)_errorinfo.toLatin1());
+    qDebug ("%s", _errorinfo.toLatin1().data());
     return FR_ERROR;
   }
   else
   {
     _errorinfo = tr ("Filser::writeDA4Buffer: transfer failed");
-    qDebug ("%s", (const char*)_errorinfo.toLatin1());
+    qDebug ("%s", _errorinfo.toLatin1().data());
     return FR_ERROR;
   }
 }
