@@ -22,6 +22,7 @@
 #include <termios.h>
 #include <stdio.h>
 
+#include <QObject>
 #include <QTimer>
 #include <QList>
 
@@ -58,7 +59,7 @@ class Filser : public FlightRecorderPluginBase
 
 public:
 
-  Filser();
+  Filser( QObject *parent = 0 );
 
   virtual ~Filser();
   /**

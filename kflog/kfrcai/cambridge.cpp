@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2007 by Hendrik Hoeth
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -20,14 +21,14 @@
  *    - I don't use error checking yet, but so far I simply ignore those bytes
  */
 
+#include <QtCore>
+
 #include <fcntl.h>
 #include <math.h>
 #include <signal.h>
 #include <unistd.h>
 
 #include "cambridge.h"
-
-#include <QtCore>
 
 #define STX        0x03
 
@@ -134,7 +135,7 @@ int extractInteger(unsigned char* buf, int start, int count)
   return foo;
 }
 
-Cambridge::Cambridge()
+Cambridge::Cambridge( QObject *parent ) : QObject( parent )
 {
   _capabilities.transferSpeeds = bps01200 |  //supported transfer speeds
                                  bps02400 |
@@ -172,6 +173,7 @@ Cambridge::Cambridge()
 
 Cambridge::~Cambridge()
 {
+  closeRecorder();
 }
 
 FlightRecorderPluginBase::TransferMode Cambridge::getTransferMode() const
@@ -186,9 +188,10 @@ QString Cambridge::getLibName() const
 
 int Cambridge::openRecorder(const QString& pName, int baud)
 {
-  portName = (char *)pName.latin1();
+  portName = pName.toLatin1().data();
 
   portID = open(portName, O_RDWR | O_NOCTTY);
+
   if(portID != -1) {
     //
     // Before we change any port-settings, we must establish a
@@ -340,6 +343,7 @@ int Cambridge::closeRecorder()
 
     tcsetattr(portID, TCSANOW, &oldTermEnv);
     close(portID);
+    portID = -1;
     _isConnected = false;
     return FR_OK;
   }
@@ -442,9 +446,9 @@ int Cambridge::getConfigData(FR_ConfigData& data)
 
 int Cambridge::writeConfigData(FR_BasicData& basicdata, FR_ConfigData& configdata)
 {
-  basicdata.pilotName = basicdata.pilotName.leftJustify(24, ' ', true);
-  basicdata.gliderType = basicdata.gliderType.leftJustify(12, ' ', true);
-  basicdata.gliderID = basicdata.gliderID.leftJustify(12, ' ', true);
+  basicdata.pilotName = basicdata.pilotName.leftJustified(24, ' ', true);
+  basicdata.gliderType = basicdata.gliderType.leftJustified(12, ' ', true);
+  basicdata.gliderID = basicdata.gliderID.leftJustified(12, ' ', true);
   configdata.minloggingspd /= 0.1852; // convert to 10ths of knots
   configdata.stfdeadband /= 0.36;  // convert to 10ths of m/s
   configdata.goalalt *= 10;    // convert to 10ths of meters
@@ -510,7 +514,11 @@ int Cambridge::getFlightDir(QList<FRDirEntry*>* dirList)
   int replysize = 0;
 
   // clear current flight list -- we don't want duplicates
-  if (dirList->count()>0) dirList->clear();
+  if( dirList->count() > 0 )
+    {
+      qDeleteAll( *dirList );
+      dirList->clear();
+    }
 
   // go into command mode, then switch to upload mode
   wb(STX);
@@ -600,14 +608,14 @@ int Cambridge::getFlightDir(QList<FRDirEntry*>* dirList)
                                  c36[dirList->at(i)->firstTime.tm_mon + 1],
                                  c36[dirList->at(i)->firstTime.tm_mday],
                                  'c',
-                                 (const char*)_basicData.serialNumber,
+                                 _basicData.serialNumber.toAscii().data(),
                                  c36[dayflightcounter]);
     dirList->at(i)->longFileName.sprintf("%d-%.2d-%.2d-%s-%s-%.2d.igc",
                                  dirList->at(i)->firstTime.tm_year + 1900,
                                  dirList->at(i)->firstTime.tm_mon + 1,
                                  dirList->at(i)->firstTime.tm_mday,
                                  "cam",
-                                 (const char*)_basicData.serialNumber,
+                                 _basicData.serialNumber.toAscii().data(),
                                  c36[dayflightcounter]);
 
     qDebug("%s   %s", dirList->at(i)->longFileName.toLatin1().data(),
@@ -661,9 +669,10 @@ int Cambridge::downloadFlight(int flightID, int /*secMode*/, const QString& file
 
   // write file
   QFile f(fileName);
+
   if (f.open(QIODevice::WriteOnly))
   {
-    f.writeBlock((const char *)igcdata, igcdata.length());
+    f.write(igcdata.toAscii().data(), igcdata.length());
     f.close();
     return FR_OK;
   }
@@ -746,8 +755,8 @@ int Cambridge::readWaypoints(QList<Waypoint*> *waypoints)
     int elv = extractInteger(reply,  8,  2);
 //    int  id = extractInteger(reply, 10,  2);
     int att = extractInteger(reply, 12,  2);
-    QString name   = extractString(reply, 14, 12).stripWhiteSpace();
-    QString remark = extractString(reply, 26, 12).stripWhiteSpace();
+    QString name   = extractString(reply, 14, 12).trimmed();
+    QString remark = extractString(reply, 26, 12).trimmed();
     // debugHex (reply,64);
     // qDebug ("lat = %d", lat);
     // qDebug ("lon = %d", lon);
@@ -891,7 +900,7 @@ int Cambridge::sendCommand(QString cmd)
 {
   // flush the buffer and send the command
   tcflush(portID, TCIOFLUSH);
-  ssize_t bytes = write(portID, cmd.toAscii().data(), cmd.length());
+  write(portID, cmd.toAscii().data(), cmd.length());
   wb('\r');
   return FR_OK;
 }
@@ -970,7 +979,7 @@ int Cambridge::readReply(QString cmd, int mode, unsigned char *reply)
   for (int i=start ; i<XX+cmd.length() ; i++)
     reply[i-start]=buf[i];
 
-  int cmd_checksum = calcChecksum8((unsigned char *)(const char *)cmd, cmd.length());
+  int cmd_checksum = calcChecksum8((unsigned char *) cmd.toAscii().data(), cmd.length());
   int reply_checksum = 0;
   if (mode==UPS_MODE || mode==DN_MODE)
     reply_checksum = calcChecksum8(reply, XX);

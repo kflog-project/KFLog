@@ -161,8 +161,7 @@ void releaseTTY(int /* signal*/)
   tcsetattr(portID, TCSANOW, &oldTermEnv);
 }
 
-
-Filser::Filser()
+Filser::Filser( QObject *parent ) : QObject( parent )
 {
   //Set flight recorders capabilities. Defaults are 0 and false.
   _capabilities.maxNrTasks = TASK_MAX;             //maximum number of tasks

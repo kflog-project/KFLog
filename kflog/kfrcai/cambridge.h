@@ -7,9 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2007 by Hendrik Hoeth
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -18,15 +19,23 @@
 #ifndef CAMBRIDGE_H
 #define CAMBRIDGE_H
 
+#include <QObject>
+#include <QList>
+#include <QString>
+
 #include "../frstructs.h"
 #include "../flighttask.h"
 #include "../flightrecorderpluginbase.h"
 
 class Cambridge : public FlightRecorderPluginBase
 {
-public: 
-  Cambridge();
-  ~Cambridge();
+  Q_OBJECT
+
+ public:
+
+  Cambridge( QObject *parent = 0 );
+
+  virtual ~Cambridge();
   /*
    * Returns the name of the lib.
    */
@@ -91,7 +100,9 @@ public:
    * Write waypoints to recorder
    */
   virtual int writeWaypoints(QList<Waypoint*> *waypoints);
+
 private:
+
   bool haveDatabase;
 
   /*
