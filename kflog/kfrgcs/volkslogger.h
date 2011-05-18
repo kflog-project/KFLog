@@ -7,9 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Harald Maier
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
@@ -17,6 +18,8 @@
 
 #ifndef VOLKSLOGGER_H
 #define VOLKSLOGGER_H
+
+#include <QObject>
 
 #include "../frstructs.h"
 #include "../flighttask.h"
@@ -28,15 +31,17 @@
 
 class Volkslogger : public FlightRecorderPluginBase
 {
-public: 
-  Volkslogger();
-  ~Volkslogger();
+ public:
+
+  Volkslogger( QObject *parent = 0 );
+
+  virtual ~Volkslogger();
   /**
    * Returns the name of the lib.
    */
   virtual QString getLibName() const;
   /**
-   * Returns the transfermode this plugin supports.
+   * Returns the transfer mode this plugin supports.
    */
   virtual TransferMode getTransferMode() const;
   /**
@@ -68,7 +73,7 @@ public:
    */
   virtual int openRecorder(const QString& URL);
   /**
-   * Closes the connection with the flightrecorder.
+   * Closes the connection with the flight recorder.
    */
   virtual int closeRecorder();
   /**
@@ -95,7 +100,9 @@ public:
    * Write waypoints to recorder
    */
   virtual int writeWaypoints(QList<Waypoint*> *waypoints);
+
 private:
+
   bool haveDatabase;
 };
 

@@ -7,15 +7,16 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Harald Maier
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#include "../airfield.h"
+#include <QtGui>
 
 #include "volkslogger.h"
 #include "vlapi2.h"
@@ -28,14 +29,11 @@
 
 #include <ctype.h>
 
-#include <QtCore>
-#include <Q3PtrList>
-
 /**
  * The device-name of the port.
  */
 char* portName = '\0';
-int portID;
+int portID = -1;
 
 extern int breakTransfer;
 
@@ -51,8 +49,7 @@ struct termios newTermEnv;
 
 VLAPI vl;
 
-
-Volkslogger::Volkslogger()
+Volkslogger::Volkslogger( QObject *parent ) : FlightRecorderPluginBase( parent )
 {
   //Set Flightrecorders capabilities. Defaults are 0 and false.
   _capabilities.maxNrTasks = 25;             //maximum number of tasks
@@ -82,10 +79,11 @@ Volkslogger::Volkslogger()
 
 Volkslogger::~Volkslogger()
 {
+  closeRecorder();
 }
 
 /**
- * Returns the transfermode this plugin supports.
+ * Returns the transfer mode this plugin supports.
  */
 FlightRecorderPluginBase::TransferMode Volkslogger::getTransferMode() const
 {
@@ -165,7 +163,7 @@ int Volkslogger::getFlightDir(QList<FRDirEntry*>* dirList)
 */
 int Volkslogger::downloadFlight(int flightID, int secMode, const QString& fileName)
 {
-  return (vl.read_igcfile((char *)fileName.latin1(), flightID, secMode) == VLA_ERR_NOERR ? FR_OK : FR_ERROR);
+  return (vl.read_igcfile( fileName.toLatin1().data(), flightID, secMode) == VLA_ERR_NOERR ? FR_OK : FR_ERROR);
 }
 
 
@@ -198,7 +196,7 @@ int Volkslogger::writeConfigData(FR_BasicData& /*basicdata*/, FR_ConfigData& /*c
 int Volkslogger::openRecorder(const QString& pName, int baud)
 {
   int err;
-  portName = (char *)pName.latin1();
+  portName = pName.toLatin1().data();
 
   if((err = vl.open(1, 5, 0, baud)) != VLA_ERR_NOERR) {
     qWarning() << QObject::tr("No logger found!");
@@ -228,36 +226,37 @@ int Volkslogger::writeDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint*> 
       return FR_ERROR;
     }
   }
-  // Filling the strings with whitespaces
-  QString pilotA(taskDecl->pilotA.leftJustify(32, ' ', true));
-  QString pilotB(taskDecl->pilotB.leftJustify(32, ' ', true));
-  sprintf(vl.declaration.flightinfo.pilot, "%s%s", (const char*)pilotA,
-          (const char*)pilotB);
+  // Filling the strings with white spaces
+  QString pilotA(taskDecl->pilotA.leftJustified(32, ' ', true));
+  QString pilotB(taskDecl->pilotB.leftJustified(32, ' ', true));
+  sprintf( vl.declaration.flightinfo.pilot, "%s%s",
+           pilotA.toLatin1().data(),
+           pilotB.toLatin1().data() );
 
   strcpy(vl.declaration.flightinfo.gliderid,
-         taskDecl->gliderID.leftJustify(7, ' ', true));
+         taskDecl->gliderID.leftJustified(7, ' ', true).toLatin1().data());
   strcpy(vl.declaration.flightinfo.glidertype,
-         taskDecl->gliderType.leftJustify(12, ' ', true));
+         taskDecl->gliderType.leftJustified(12, ' ', true).toLatin1().data());
   strcpy(vl.declaration.flightinfo.competitionid,
-         taskDecl->compID.leftJustify(3, ' ', true));
+         taskDecl->compID.leftJustified(3, ' ', true).toLatin1().data());
   strcpy(vl.declaration.flightinfo.competitionclass,
-         taskDecl->compClass.leftJustify(12, ' ', true));
+         taskDecl->compClass.leftJustified(12, ' ', true).toLatin1().data());
 
   // TakeOff (same ans landing ...)
   tp = taskPoints->at(0);
-  strcpy(vl.declaration.flightinfo.homepoint.name, tp->name.left(6));
+  strcpy(vl.declaration.flightinfo.homepoint.name, tp->name.left(6).toLatin1().data());
   vl.declaration.flightinfo.homepoint.lon = tp->origP.lon() / 600000.0;
   vl.declaration.flightinfo.homepoint.lat = tp->origP.lat() / 600000.0;
 
   // Begin of Task
   tp = taskPoints->at(1);
-  strcpy(vl.declaration.task.startpoint.name, tp->name.left(6));
+  strcpy(vl.declaration.task.startpoint.name, tp->name.left(6).toLatin1().data());
   vl.declaration.task.startpoint.lat = tp->origP.lat() / 600000.0;
   vl.declaration.task.startpoint.lon = tp->origP.lon() / 600000.0;
 
   for(loop = 2; loop < std::min(int(taskPoints->count()) - 2, 12); loop++) {
     tp = taskPoints->at(loop);
-    strcpy(vl.declaration.task.turnpoints[loop - 2].name, tp->name.left(6));
+    strcpy(vl.declaration.task.turnpoints[loop - 2].name, tp->name.left(6).toLatin1().data());
     vl.declaration.task.turnpoints[loop - 2].lat = tp->origP.lat() / 600000.0;
     vl.declaration.task.turnpoints[loop - 2].lon = tp->origP.lon() / 600000.0;
   }
@@ -266,7 +265,7 @@ int Volkslogger::writeDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint*> 
 
   // End of Task
   tp = taskPoints->at(taskPoints->count() - 2);
-  strcpy(vl.declaration.task.finishpoint.name, tp->name.left(6));
+  strcpy(vl.declaration.task.finishpoint.name, tp->name.left(6).toLatin1().data());
   vl.declaration.task.finishpoint.lat = tp->origP.lat() / 600000.0;
   vl.declaration.task.finishpoint.lon = tp->origP.lon() / 600000.0;
 
@@ -366,7 +365,7 @@ int Volkslogger::writeTasks(QList<FlightTask*> *tasks)
     }
 
     r = vl.database.routes + taskCnt++;
-    strcpy(r->name, task->getFileName().leftJustify(14, ' ', true));
+    strcpy(r->name, task->getFileName().leftJustified(14, ' ', true).toLatin1().data());
     wpCnt = 0;
     taskPoints = task->getWPList();
     foreach(tp, taskPoints) {
@@ -379,13 +378,13 @@ int Volkslogger::writeTasks(QList<FlightTask*> *tasks)
         continue;
       }
       wp = r->wpt + wpCnt++;
-      strcpy(wp->name, tp->name.leftJustify(6, ' ', true));
+      strcpy(wp->name, tp->name.leftJustified(6, ' ', true).toLatin1().data());
       wp->lat = tp->origP.lat() / 600000.0;
       wp->lon = tp->origP.lon() / 600000.0;
       wp->typ = 0;
     }
 
-    // fill remaining turnpoints with '0xff'
+    // fill remaining turn points with '0xff'
     while (wpCnt < _capabilities.maxNrWaypointsPerTask) {
       memset(r->wpt + wpCnt++, 0xff, sizeof(VLAPI_DATA::WPT));
     }
@@ -410,7 +409,7 @@ int Volkslogger::readWaypoints(QList<Waypoint*> *waypoints)
     wp = &(vl.database.wpts[n]);
     frWp = new Waypoint;
     frWp->name = wp->name;
-    frWp->name = frWp->name.stripWhiteSpace();
+    frWp->name = frWp->name.trimmed();
 
     frWp->origP.setPos((int)(wp->lat * 600000.0), (int)(wp->lon * 600000.0));
     frWp->isLandable = (wp->typ & VLAPI_DATA::WPT::WPTTYP_L) > 0;
@@ -452,7 +451,7 @@ int Volkslogger::writeWaypoints(QList<Waypoint*> *waypoints)
       break;
     }
     wp = &(vl.database.wpts[wpCnt++]);
-    strcpy(wp->name, frWp->name.leftJustify(6, ' ', true));
+    strcpy(wp->name, frWp->name.leftJustified(6, ' ', true).toLatin1().data());
     wp->lat = frWp->origP.lat() / 600000.0;
     wp->lon = frWp->origP.lon() / 600000.0;
     wp->typ =

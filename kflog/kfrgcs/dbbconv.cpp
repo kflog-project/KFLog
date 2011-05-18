@@ -15,7 +15,7 @@
 **
 ***********************************************************************/
 
-// Low-Level Funktionen für DBB Behandlung (Schreiben)
+// Low-Level Funktionen fï¿½r DBB Behandlung (Schreiben)
 
 #include "dbbconv.h"
 #include <string.h>
@@ -102,10 +102,10 @@ void DBB::add_fdf(int feldkennung,int feldlaenge, void *quelle) {
 // and return it's position in the memory array
 //
 int16 DBB::fdf_findfield(byte id) {
- int16 i;
+
  int16 ii;
   ii = -1;
-  for(i=0; i<sizeof(fdf);) {
+  for(unsigned int i=0; i<sizeof(fdf);) {
     if (fdf[i+1] == id) {
       // Feld gefunden
       ii = i;
