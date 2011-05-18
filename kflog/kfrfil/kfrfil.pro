@@ -14,6 +14,3 @@ logger.files = fil.desktop spg.desktop README.fil
 INSTALLS += logger
 
 DESTDIR = ../../release/bin
-
-#The following line was inserted by qt3to4
-QT += xml  qt3support 
