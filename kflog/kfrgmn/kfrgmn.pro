@@ -13,11 +13,10 @@ HEADERS =   flightrecorder.h \
             garminfr.h
 
 logger.path  = /logger
-logger.files = gmn.desktop README.gmn
+
+# do not copy the desktop file because this plugin ist not ready for use.
+# logger.files = gmn.desktop README.gmn
                
 INSTALLS += logger
 
 DESTDIR = ../../release/bin
-
-#The following line was inserted by qt3to4
-QT += xml  qt3support 

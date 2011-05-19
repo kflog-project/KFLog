@@ -32,7 +32,8 @@ extern "C"
 ** begin of logger-specific implementation
 **
 *************************************************************************/
-FlightRecorderPluginBase * getRecorder() {
+FlightRecorderPluginBase * getRecorder()
+{
   return new GarminFR();
 }
 

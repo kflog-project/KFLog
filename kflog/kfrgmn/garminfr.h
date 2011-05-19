@@ -6,47 +6,55 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by Thomas Nielsen, André Somers
+**   Copyright (c):  2003 by Thomas Nielsen, AndrÃ© Somers
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef GARMINFR_H
-#define GARMINFR_H
+#ifndef GARMIN_FR_H
+#define GARMIN_FR_H
+
+#include <QObject>
 
 #include "../flightrecorderpluginbase.h"
+
 #include "garmin.h"
 
 /**
- * @author André Somers
+ * @class GarminFR
+ *
+ * @author AndrÃ© Somers, Axel Pauli
+ *
  * @short Encapsulation of old Garmin code into new plugin system
  *
  * This class is a rework of the original Garmin plugin to the new
- * plugin architecture introduced by André Somers. It can be further
+ * plugin architecture introduced by AndrÃ© Somers. It can be further
  * optimized by merging the @ref GarminGPS class with this GarminFR class.
  */
 
-class GarminFR : public FlightRecorderPluginBase  {
-public: 
+class GarminFR : public FlightRecorderPluginBase
+{
+ public:
   /**
    * Constructor
    */
-  GarminFR();
+  GarminFR( QObject *parent = 0 );
   /**
    * Destructor
    */
-  ~GarminFR();
+  virtual ~GarminFR();
 
   /**
-   * Returns the name of the lib.
+   * Returns the name of the library.
    */
   virtual QString getLibName() const;
   /**
-   * Returns the transfermode this plugin supports.
+   * Returns the transfer mode this plugin supports.
    * @returns FlightRecorderPluginBase::URL
    */
   virtual TransferMode getTransferMode() const;
@@ -63,11 +71,11 @@ public:
    */
   virtual int getBasicData(FR_BasicData&);
   /*
-   * get recorder config data
+   * get recorder configuration data
    */
   virtual int getConfigData(FR_ConfigData&);
   /**
-   * write recorder basic and config data
+   * write recorder basic and configuration data
    */
   virtual int writeConfigData(FR_BasicData&, FR_ConfigData&);
   /**
@@ -79,7 +87,7 @@ public:
    */
   virtual int openRecorder(const QString& URL);
   /**
-   * Closes the connection with the flightrecorder.
+   * Closes the connection with the flight recorder.
    */
   virtual int closeRecorder();
   /**
@@ -128,8 +136,6 @@ protected:
    * is used to change the port-settings
    */
   struct termios newTermEnv;
-
-
 };
 
 #endif

@@ -258,8 +258,7 @@ class RecorderDialog : public QDialog
   QString libName;
   /** */
   QString portName;
-  /** */
-  bool isOpen;
+
   /** */
   QList<FRDirEntry *> dirList;
   QList<FlightTask *> tasks;
@@ -350,9 +349,9 @@ class RecorderDialog : public QDialog
   QSpinBox* minloggingspd;
   QSpinBox* stfdeadband;
 
-  /**  */
-  bool isConnected;
-
+  /**
+   * Reference to the connected flight recorder plugin.
+   */
   FlightRecorderPluginBase* activeRecorder;
 };
 

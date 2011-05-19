@@ -9,11 +9,10 @@ SOURCES =   soaringpilot.cpp \
 HEADERS =   soaringpilot.h
 
 logger.path  = /logger
-logger.files = xsp.desktop README
+
+# do not copy the desktop file because this plugin ist not ready for use.
+# logger.files = xsp.desktop README
                
 INSTALLS += logger
 
 DESTDIR = ../../release/bin
-
-#The following line was inserted by qt3to4
-QT += xml  qt3support 

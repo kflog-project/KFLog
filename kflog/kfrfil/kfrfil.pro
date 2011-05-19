@@ -6,8 +6,8 @@ TEMPLATE = lib
 SOURCES =   filser.cpp \
             flightrecorder.cpp
 
-HEADERS =   filser.h               
-               
+HEADERS =   filser.h
+                           
 logger.path  = /logger
 logger.files = fil.desktop spg.desktop README.fil
                

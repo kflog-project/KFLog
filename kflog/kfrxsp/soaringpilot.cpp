@@ -7,6 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2003 by Harald Maier
+ **                   2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -27,40 +28,39 @@
 #include <time.h>
 #include <unistd.h>
 
-#include <q3dict.h>
-#include <qfile.h>
-#include <qsettings.h>
-#include <qstringlist.h>
-
 #include <QtCore>
-#include <Q3PtrList>
 
 #include "../airfield.h"
+#include "../mainwindow.h"
+
+extern QSettings   _settings;
+extern MainWindow *_mainWindow;
 
 extern int breakTransfer;
-char c36[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-int portID = -1;
+static char c36[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+static int portID = -1;
 /**
  * holds the port-settings at start of the application
  */
-struct termios oldTermEnv;
+static struct termios oldTermEnv;
 /**
  * is used to change the port-settings
  */
-struct termios newTermEnv;
+static struct termios newTermEnv;
 
 /**
  * Needed to reset the serial port in any case of unexpected exiting
- * of the programm. Called via signal-handler of the runtime-environment.
+ * of the program. Called via signal-handler of the runtime-environment.
  */
-void releaseTTY(int /*signal*/)
+static void releaseTTY(int /*signal*/)
 {
-  tcsetattr(portID, TCSANOW, &oldTermEnv);
-  exit(-1);
+  tcsetattr( portID, TCSANOW, &oldTermEnv );
+  exit( -1 );
 }
 
-SoaringPilot::SoaringPilot()
+SoaringPilot::SoaringPilot( QObject *parent ) : FlightRecorderPluginBase( parent )
 {
   //Set Flightrecorders capabilities. Defaults are 0 and false.
   _capabilities.maxNrTasks = (unsigned int) -1;             //maximum number of tasks
@@ -89,23 +89,22 @@ SoaringPilot::SoaringPilot()
 
 SoaringPilot::~SoaringPilot()
 {
+  closeRecorder();
 }
 
 /** write a file like structure to the device */
-int SoaringPilot::writeFile(QStringList &file)
+int SoaringPilot::writeFile( QStringList &file )
 {
-  QStringList::Iterator line;
-  const char *p;
+  for( int i = 0; i < file.size(); i++ )
+    {
+      QString line = file.at(i) + "\r\n";
 
-  for (line = file.begin(); line != file.end(); ++line) {
-    *line += "\r\n";
-    p = *line;
-    for (int len = 0; len < (*line).length(); len++) {
-      if (write(portID, p + len, sizeof(char)) != 1) {
-        return FR_ERROR;
-      }
+      if( write( portID, line.toAscii().data(), line.size() ) != 1 )
+        {
+          return FR_ERROR;
+        }
     }
-  }
+
   return FR_OK;
 }
 
@@ -118,35 +117,47 @@ int SoaringPilot::readFile(QStringList &file)
   int start = 0;
   _errorinfo = "";
 
-  t1 = time(NULL);
-  while (!breakTransfer) {
-    if (read(portID, &inbyte, sizeof(inbyte))) {
-      start = 1;
-      t1 = time(NULL);
-      switch(inbyte) {
-      case '\n':
-        file.append(s);
-        s = "";
-        break;
-      case '\r':
-        continue;
-      default:
-        s.append(inbyte);
-      }
+  t1 = time( 0 );
+
+  while( !breakTransfer )
+    {
+      if( read( portID, &inbyte, sizeof(inbyte) ) )
+        {
+          start = 1;
+          t1 = time( 0 );
+
+          switch( inbyte )
+            {
+              case '\n':
+                file.append( s );
+                s = "";
+                break;
+
+              case '\r':
+                continue;
+
+              default:
+                s.append( inbyte );
+            }
+        }
+      else if( start )
+        {
+          if( time( 0 ) - t1 > 2 )
+            {
+              break;
+            }
+        }
+      else
+        {
+          // waiting 5 secs. for response
+          if( time( 0 ) - t1 > 5 )
+            {
+              _errorinfo = tr( "No response from recorder within 5 seconds!" );
+              return FR_ERROR;
+            }
+        }
     }
-    else if (start) {
-      if (time(NULL) - t1 > 2) {
-        break;
-      }
-    }
-    else {
-      // waiting 5 secs. for response
-      if (time(NULL) - t1 > 5) {
-        _errorinfo = tr("No response from recorder within 5 seconds!");
-        return FR_ERROR;
-      }
-    }
-  }
+
   return FR_OK;
 }
 
@@ -160,9 +171,10 @@ int SoaringPilot::coordToDegree(QString &s)
   int res = 0;
   QString negChar("swSW");
 
-  s.stripWhiteSpace();
+  s.trimmed();
 
-  QStringList tmp = QStringList::split(":", s.left(s.length() - 1));
+  QStringList tmp = s.left(s.length() - 1).split(":");
+
   if (tmp.size() == 2) {
     deg = tmp[0].toDouble();
     min = tmp[1].toDouble();
@@ -224,7 +236,7 @@ QString SoaringPilot::degreeToDegMinSec(int d, bool isLat)
 int SoaringPilot::feetToMeter(QString &s)
 {
   int meter = 0;
-  s.stripWhiteSpace();
+  s.trimmed();
   if (s.right(1) == "F") {
     QString tmp;
     tmp.sprintf("%.0f", (s.left(s.length() - 1).toDouble() * 0.3048));
@@ -254,7 +266,7 @@ QString SoaringPilot::getLibName() const
 }
 
 /**
- * Returns the transfermode this plugin supports.
+ * Returns the transfe rmode this plugin supports.
  */
 FlightRecorderPluginBase::TransferMode SoaringPilot::getTransferMode() const
 {
@@ -267,13 +279,15 @@ FlightRecorderPluginBase::TransferMode SoaringPilot::getTransferMode() const
 
 int SoaringPilot::getFlightDir(QList<FRDirEntry*> *dirList)
 {
-  /* Andr�: I don't quite get this one. Shouldn't this return some FRDirEntries? */
-  // SearingPilot is something "special". It doesn't provide a flight directory
+  /* André: I don't quite get this one. Shouldn't this return some FRDirEntries? */
+  // SoaringPilot is something "special". It doesn't provide a flight directory
   // You have to select the flight in SP, can be one or all !!!3
   time_t startTime_t;
   struct tm startTime;
 
+  qDeleteAll( *dirList );
   dirList->clear();
+
   FRDirEntry* entry = new FRDirEntry;
 
   startTime_t = 0;
@@ -293,46 +307,47 @@ int SoaringPilot::getFlightDir(QList<FRDirEntry*> *dirList)
 }
 
 /**
- *
+ * This method does something other as normally expected by a FlightRecorder
+ * Plugin. The special handling must be adapted by the calling method.
  */
 int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QString& fileName)
 {
   QStringList file;
-  QStringList::iterator line;
   QString A;
   QString tmp;
   QString dir;
   QString key;
-  Q3Dict<int> flightCount;
-  int *fc;
+  QHash<QString, int> flightCount;
+  int fc;
   int ret;
   QFile f;
   int day, month, year;
   QString _fileName = fileName;
 
-  flightCount.setAutoDelete(true);
+  // If no DefaultFlightDirectory is configured, we must use $HOME instead of the root-directory
+  dir = _settings.value( "/Path/DefaultFlightDirectory",
+                         _mainWindow->getApplicationDataDirectory() ).toString();
 
-  extern QSettings _settings;
-  dir = _settings.readEntry("/KFLog/Path/DefaultFlightDirectory") + "/";
+  dir += "/";
 
-  bool shortName = (_fileName.upper().find("SHORT.IGC") != -1);
+  bool shortName = fileName.toUpper().contains("SHORT.IGC");
 
   // IGC File structure
-  ret = readFile(file);
+  ret = readFile( file );
+
   if (ret == FR_OK) {
-    for (line = file.begin(); line != file.end(); ++line) {
-      tmp = *line;
-      if (tmp.left(1) == "A") {
+    for ( int i = 0; i < file.size(); i++ ) {
+      tmp = file.at(i);
+
+      if (tmp.startsWith("A")) {
         // new flight
         if (f.isOpen()) {
           f.close();
         }
 
-        A = *line;
-        ++line;
-        tmp = *line;
+        A = tmp;
 
-        if (tmp.left(5) == "HFDTE") {
+        if (tmp.startsWith("HFDTE")) {
           if (tmp.length() >= 11) {
             day = tmp.mid(5, 2).toInt();
             month = tmp.mid(7, 2).toInt();
@@ -343,40 +358,44 @@ int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QStrin
           }
 
           key.sprintf("%02d%02d%02d", day, month, year);
-          if ((fc = flightCount.find(key)) != 0) {
-            (*fc)++;
+
+          if ( flightCount.contains(key) ) {
+            fc = flightCount.value(key);
+            fc++;
+            flightCount.insert( key, fc );
           }
           else {
-            fc = new int(1);
-            flightCount.insert(key, fc);
+            flightCount.insert( key, 1 );
           }
 
           if (shortName) {
             _fileName.sprintf("%d%c%cX%s%c.IGC", year, c36[month], c36[day],
-                             (const char *)_basicData.serialNumber.latin1(), c36[*fc]);
+                             _basicData.serialNumber.toLatin1().data(), c36[fc]);
           }
           else {
             _fileName.sprintf("20%.2d-%.2d-%.2d-XSP-%s-%.2d.IGC",
                              year, month, day,
-                             (const char *)_basicData.serialNumber.latin1(), *fc);
+                             _basicData.serialNumber.toLatin1().data(), fc);
           }
         }
         else {
-          _errorinfo = tr("invalid file structure\n\nHFTDE record expexted");
+          _errorinfo = tr("invalid file structure\n\nHFTDE record expected");
           ret = FR_ERROR;
           break;
         }
 
-        f.setName(dir + _fileName);
+        f.setFileName(dir + _fileName);
+
         if (!f.open(QIODevice::WriteOnly)) {
           _errorinfo = tr("IO error while saving file ") + _fileName;
           ret = FR_ERROR;
           break;
         }
-        f.writeBlock(A + "\n", A.length() + 1);
+
+        f.write( A.toAscii().data(), A.length() );
       }
       // write data to file
-      f.writeBlock(tmp + "\n", tmp.length() + 1);
+      f.write(tmp.toAscii().data(), tmp.length() );
     }
   }
   return ret;
@@ -414,15 +433,15 @@ int SoaringPilot::openRecorder(const QString& portName, int baud)
 {
   speed_t speed;
 
-  /* eventuell als Mode zus�tzlich O_NONBLOCK ??? */
-  portID = open(portName, O_RDWR | O_NOCTTY);
+  /* eventuell als Mode zusätzlich O_NONBLOCK ??? */
+  portID = open(portName.toAscii().data(), O_RDWR | O_NOCTTY);
 
   if(portID != -1) {
     //
     // Before we change any port-settings, we must establish a
     // signal-handler, which is used to restore the port-settings
-    // after terminating the programm.
-    //    Because a SIGKILL-signal removes the programm immediately,
+    // after terminating the program.
+    //    Because a SIGKILL-signal removes the program immediately,
     // the status of the port will be undefined.
     //
     struct sigaction sact;
@@ -508,19 +527,22 @@ int SoaringPilot::openRecorder(const QString& portName, int baud)
 }
 
 /**
- * Closes the connection with the flightrecorder.
+ * Closes the connection with the flight recorder.
  */
-int SoaringPilot::closeRecorder() {
-  if (portID != -1) {
-    tcsetattr(portID, TCSANOW, &oldTermEnv);
-    close(portID);
-    _isConnected=false;
-    return FR_OK;
-  }
-
-  else {
-    return FR_ERROR;
-  }
+int SoaringPilot::closeRecorder()
+{
+  if( portID != -1 )
+    {
+      tcsetattr( portID, TCSANOW, &oldTermEnv );
+      close( portID );
+      portID = -1;
+      _isConnected = false;
+      return FR_OK;
+    }
+  else
+    {
+      return FR_ERROR;
+    }
 }
 
 /**
@@ -555,7 +577,8 @@ int SoaringPilot::readTasks(QList<FlightTask*> *tasks)
   ret = readFile(file);
   if (ret == FR_OK) {
     for (line = file.begin(); line != file.end(); ++line) {
-      tokens = QStringList::split(",", *line, true);
+        QString s = *line;
+        tokens = s.split(",");
 
       if (tokens.size() >= 3 && tokens[0] == "TS") {
         wpList.clear();
@@ -566,7 +589,8 @@ int SoaringPilot::readTasks(QList<FlightTask*> *tasks)
         landing = (tokens.size() >= 4 && tokens[3].contains("L"));
 
         while (++line != file.end()) {
-          tokens = QStringList::split(",", *line, true);
+          QString s = *line;
+          tokens = s.split(",");
           if (tokens.size() >= 5 && tokens[0] == "TW") {
             wp = new Waypoint;
             wp->name = tokens[4];
@@ -642,14 +666,14 @@ int SoaringPilot::writeTasks(QList<FlightTask*> *tasks)
     else {
       typ = "";
     }
-    tmp.sprintf("TS,%s,%d,%s\r\n", task->getFileName().latin1(), nrPoints, typ.latin1());
+    tmp.sprintf("TS,%s,%d,%s\r\n", task->getFileName().toLatin1().data(), nrPoints, typ.toLatin1().data());
     file.append(tmp);
     foreach(wp, wpList) {
       tmp.sprintf("TW,%s,%s,%s,%s\r\n",
-                  degreeToDegMinSec(wp->origP.lat(), true).latin1(),
-                  degreeToDegMinSec(wp->origP.lon(), false).latin1(),
-                  meterToFeet(wp->elevation).latin1(),
-                  wp->name.latin1());
+                  degreeToDegMinSec(wp->origP.lat(), true).toLatin1().data(),
+                  degreeToDegMinSec(wp->origP.lon(), false).toLatin1().data(),
+                  meterToFeet(wp->elevation).toLatin1().data(),
+                  wp->name.toLatin1().data());
       file.append(tmp);
     }
     file.append("TE\r\n");
@@ -664,7 +688,6 @@ int SoaringPilot::writeTasks(QList<FlightTask*> *tasks)
 int SoaringPilot::readWaypoints(QList<Waypoint*> *waypoints)
 {
   QStringList file;
-  QStringList::iterator line;
   QStringList tokens;
   QString tmp;
   int ret;
@@ -676,11 +699,14 @@ int SoaringPilot::readWaypoints(QList<Waypoint*> *waypoints)
   //** -------------------------------------------------------------
   //1,48:00.000N,009:00.000E,590F,ATLSFMH,KFLOG,Remark,000000000000000000
   ret = readFile(file);
+
   if (ret == FR_OK) {
-    for (line = file.begin(); line != file.end(); ++line) {
-      tokens = QStringList::split(",", *line, true);
+    for ( int i = 0; i < file.size(); i++ ) {
+
+        tokens = file.at(i).split(",");
+
       if (tokens.size() >= 6) {
-        frWp = new Waypoint(tokens[5].stripWhiteSpace());
+        frWp = new Waypoint(tokens[5].trimmed());
         frWp->origP.setPos(coordToDegree(tokens[1]), coordToDegree(tokens[2]));
         frWp->elevation = feetToMeter(tokens[3]);
 
@@ -732,12 +758,12 @@ int SoaringPilot::writeWaypoints(QList<Waypoint*> *waypoints)
     }
     tmp.sprintf("%d,%s,%s,%s,%s,%s,%s\r\n",
                 line++,
-                degreeToDegMin(frWp->origP.lat(), true).latin1(),
-                degreeToDegMin(frWp->origP.lon(), false).latin1(),
-                meterToFeet(frWp->elevation).latin1(),
-                typ.latin1(),
-                frWp->name.latin1(),
-                frWp->comment.latin1());
+                degreeToDegMin(frWp->origP.lat(), true).toLatin1().data(),
+                degreeToDegMin(frWp->origP.lon(), false).toLatin1().data(),
+                meterToFeet(frWp->elevation).toLatin1().data(),
+                typ.toLatin1().data(),
+                frWp->name.toLatin1().data(),
+                frWp->comment.toLatin1().data());
     file.append(tmp);
   }
   return writeFile(file);

@@ -7,17 +7,19 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Harald Maier
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef SOARINGPILOT_H
-#define SOARINGPILOT_H
+#ifndef SOARING_PILOT_H
+#define SOARING_PILOT_H
 
+#include <QObject>
 #include <QString>
 
 #include "../frstructs.h"
@@ -29,18 +31,20 @@
   *@author Harald Maier
   */
 
-class SoaringPilot:public FlightRecorderPluginBase
+class SoaringPilot : public FlightRecorderPluginBase
 {
-public: 
-  SoaringPilot();
+ public:
+
+  SoaringPilot( QObject *parent = 0 );
+
   ~SoaringPilot();
 
   /**
-   * Returns the name of the lib.
+   * Returns the name of the library.
    */
   virtual QString getLibName() const;
   /**
-   * Returns the transfermode this plugin supports.
+   * Returns the transfer mode this plugin supports.
    */
   virtual TransferMode getTransferMode() const;
   /**
@@ -72,7 +76,7 @@ public:
    */
   virtual int openRecorder(const QString& URL);
   /**
-   * Closes the connection with the flightrecorder.
+   * Closes the connection with the flight recorder.
    */
   virtual int closeRecorder();
   /**
@@ -100,7 +104,8 @@ public:
    */
   virtual int writeWaypoints(QList<Waypoint*> *waypoints);
 
-private: // Private methods
+private:
+
   /** write a file like structure to the device */
   int writeFile(QStringList &file);
   /** read a file like structure from the device */

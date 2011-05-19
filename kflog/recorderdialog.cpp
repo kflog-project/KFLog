@@ -39,8 +39,6 @@ extern QSettings    _settings;
 RecorderDialog::RecorderDialog( QWidget *parent ) :
   QDialog(parent),
   libHandle(0),
-  isOpen(false),
-  isConnected(false),
   activeRecorder(0)
 {
   setObjectName( "RecorderDialog" );
@@ -941,7 +939,7 @@ void RecorderDialog::slotConnectRecorder()
   QCoreApplication::flush();
 
   // check if we have valid parameters, is that true, try to connect!
-  switch (activeRecorder->getTransferMode() )
+  switch( activeRecorder->getTransferMode() )
   {
 
     case FlightRecorderPluginBase::serial:
@@ -949,11 +947,10 @@ void RecorderDialog::slotConnectRecorder()
       if( portName.isEmpty() )
           {
             qWarning() << "slotConnectRecorder(): Missing port!";
-            isConnected = false;
             break;
           }
 
-      isConnected = (activeRecorder->openRecorder( portName.toLatin1().data(), speed ) >= FR_OK);
+      activeRecorder->openRecorder( portName.toLatin1().data(), speed );
       break;
 
   case FlightRecorderPluginBase::URL:
@@ -965,23 +962,21 @@ void RecorderDialog::slotConnectRecorder()
       if( URL.isEmpty() )
           {
             qWarning() <<  "slotConnectRecorder(): Missing URL!";
-            isConnected = false;
             break;
           };
 
-      isConnected=(activeRecorder->openRecorder(URL)>=FR_OK);
+      activeRecorder->openRecorder( URL );
       break;
     }
 
   default:
 
-    isConnected=false;
     QApplication::restoreOverrideCursor();
     statusBar->setText( "" );
     return;
   }
 
-  if( isConnected )
+  if( activeRecorder->isConnected() )
     {
       connect(activeRecorder, SIGNAL(newSpeed(int)),this,SLOT(slotNewSpeed(int)));
       slotEnablePages();
@@ -1027,10 +1022,7 @@ void RecorderDialog::slotCloseRecorder()
         {
           qDebug( "Recorder is connected. Closing..." );
 
-          if( activeRecorder )
-            {
-              activeRecorder->closeRecorder();
-            }
+          activeRecorder->closeRecorder();
         }
 
       qDebug( "Going to delete recorder object..." );
@@ -1115,9 +1107,9 @@ void RecorderDialog::slotReadFlightList()
   QCoreApplication::processEvents();
   QCoreApplication::flush();
 
-  int ret = activeRecorder->getFlightDir( &dirList );
-
   flightList->clear();
+
+  int ret = __fillDirList();
 
   int error = 0;
 
@@ -1456,7 +1448,6 @@ bool RecorderDialog::__openLib( const QString& libN )
 
   apiID->setText(activeRecorder->getLibName());
 
-  isOpen = true;
   libName = libN;
 
   return true;
@@ -2207,7 +2198,7 @@ void RecorderDialog::slotEnablePages()
 
   FlightRecorderPluginBase::FR_Capabilities cap=activeRecorder->capabilities();
 
-  if( isConnected )
+  if( activeRecorder->isConnected() )
     {
       // flight page
       if( cap.supDlFlight )
@@ -2264,7 +2255,6 @@ void RecorderDialog::slotRecorderTypeChanged(const QString& newRecorderName )
   if( libHandle && libName != newLibName )
     {
       slotCloseRecorder();
-      isConnected = isOpen = false;
 
       // closing old library handle
       dlclose( libHandle );

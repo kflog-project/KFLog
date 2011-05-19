@@ -96,7 +96,7 @@ QString FlightRecorderPluginBase::lastError()
   return error;
 }
 
-void FlightRecorderPluginBase::setParent( QWidget* parent )
+void FlightRecorderPluginBase::setParent( QObject* parent )
 {
   _parent = parent;
 }

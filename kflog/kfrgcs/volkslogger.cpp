@@ -16,7 +16,7 @@
 **
 ***********************************************************************/
 
-#include <QtGui>
+#include <QtCore>
 
 #include "volkslogger.h"
 #include "vlapi2.h"
@@ -51,7 +51,7 @@ VLAPI vl;
 
 Volkslogger::Volkslogger( QObject *parent ) : FlightRecorderPluginBase( parent )
 {
-  //Set Flightrecorders capabilities. Defaults are 0 and false.
+  //Set Flight recorders capabilities. Defaults are 0 and false.
   _capabilities.maxNrTasks = 25;             //maximum number of tasks
   _capabilities.maxNrWaypoints = 500;         //maximum number of waypoints
   _capabilities.maxNrWaypointsPerTask = 10; //maximum number of waypoints per task
@@ -94,7 +94,9 @@ QString Volkslogger::getLibName() const {  return "libkfrgcs";  }
 
 int Volkslogger::getFlightDir(QList<FRDirEntry*>* dirList)
 {
+  qDeleteAll( *dirList );
   dirList->clear();
+
   int err;
 
   if((err = vl.read_directory()) == VLA_ERR_NOERR) {

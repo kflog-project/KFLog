@@ -334,7 +334,7 @@ void VLA_SYS::progress_reset()
   if(noninteractive)  return;
 }
 
-void VLA_SYS::progress_set(VLS_TXT_ID txtid)
+void VLA_SYS::progress_set( VLS_TXT_ID /* txtid */ )
 {
   if(noninteractive)  return;
 }

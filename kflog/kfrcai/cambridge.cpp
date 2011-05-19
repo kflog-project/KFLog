@@ -21,7 +21,7 @@
  *    - I don't use error checking yet, but so far I simply ignore those bytes
  */
 
-#include <QtGui>
+#include <QtCore>
 
 #include <fcntl.h>
 #include <math.h>
@@ -902,6 +902,12 @@ int Cambridge::sendCommand(QString cmd)
   tcflush(portID, TCIOFLUSH);
   ssize_t ret = write(portID, cmd.toAscii().data(), cmd.length());
   wb('\r');
+
+  if( ret == -1 )
+    {
+      return FR_ERROR;
+    }
+
   return FR_OK;
 }
 

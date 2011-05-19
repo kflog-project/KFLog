@@ -30,9 +30,9 @@
 #include "waypoint.h"
 
 // Standard flight recorder return values
-#define FR_ERROR -1          // Error
+#define FR_ERROR        -1   // Error
 #define FR_NOTSUPPORTED -2   // Function not supported
-#define FR_OK 1              // OK, no problem.
+#define FR_OK            1   // OK, no problem.
 
 /**
  * \class FlightRecorderPluginBase
@@ -239,14 +239,17 @@ public:
    */
   virtual int writeWaypoints(QList<Waypoint*> *waypoints)=0;
   /**
-   * Returns whether the flight recorder is connected.
+   * Returns whether the flight recorder is connected or not.
    */
-  inline bool isConnected(){return _isConnected;};
+  bool isConnected()
+  {
+    return _isConnected;
+  };
 
   /**
    * Returns the flight recorders capabilities.
    */
-  inline FR_Capabilities capabilities(){return _capabilities;};
+  FR_Capabilities capabilities(){return _capabilities;};
 
   /**
    * Returns additional info about an error that occurred (optional).
@@ -255,9 +258,9 @@ public:
   QString lastError();
 
   /**
-   * Sets a pointer to the parent widget (recorder dialog).
+   * Sets a pointer to the parent widget object (recorder dialog).
    */
-  void setParent(QWidget* _parent);
+  void setParent(QObject* _parent);
 
 protected:
   /**
@@ -290,7 +293,7 @@ protected:
    * Contains a reference to the parent widget. This is needed to make KDE's KIO mechanism
    * work properly.
    */
-  QWidget* _parent;
+  QObject* _parent;
 
 signals:
 
@@ -306,7 +309,7 @@ signals:
   void progress(bool finished, int progress, int total);
 
   /**
-   * May be emited when the actual transfer speed has changed
+   * May be emitted when the actual transfer speed has changed
    */
   void newSpeed (int speed);
 };

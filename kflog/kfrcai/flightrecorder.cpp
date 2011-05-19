@@ -24,12 +24,12 @@ extern "C"
   FlightRecorderPluginBase * getRecorder();
 }
 
-
 /*************************************************************************
 **
 ** begin of logger-specific implementation
 **
 *************************************************************************/
-FlightRecorderPluginBase * getRecorder() {
-  return new Cambridge ();
+FlightRecorderPluginBase * getRecorder()
+{
+  return new Cambridge();
 }

@@ -107,29 +107,30 @@ public:
    */
   virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
   /**
-   * Read waypoint and flight declaration form from recorder into mem
+   * Reads waypoint and flight declaration form from recorder into memory.
    */
   virtual int readDatabase();
   /**
-   * Read tasks from recorder
+   * Reads tasks from recorder
    */
   virtual int readTasks(QList<FlightTask*> *tasks);
   /**
-   * Write tasks to recorder
+   * Writes tasks to recorder
    */
   virtual int writeTasks(QList<FlightTask*> *tasks);
   /**
-   * Read waypoints from recorder
+   * Reads waypoints from recorder
    */
   virtual int readWaypoints(QList<Waypoint*> *waypoints);
   /**
-   * Write waypoints to recorder
+   * Writes waypoints to recorder
    */
   virtual int writeWaypoints(QList<Waypoint*> *waypoints);
 
   static unsigned char calcCrcBuf(const void* buf, unsigned int count);
 
-public slots:
+private slots:
+
   void slotTimeout();
 
 private:

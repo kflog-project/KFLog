@@ -293,7 +293,7 @@ char * GarminGPS::getModel(void)
 
   m = this->getModelNumber(p,n);
   this->m_model = m; 
-  sprintf(model, (char*)GarminProductID[m]);
+  sprintf(model, "%s", GarminProductID[m]);
   printf("::getModel(): Model = Garmin %s\n", model);
  
   d = (double)this->getSoftwareVersion(p,n);

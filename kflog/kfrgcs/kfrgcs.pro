@@ -13,7 +13,7 @@ SOURCES =   volkslogger.cpp \
             flightrecorder.cpp \
             dbbconv.cpp
 
-HEADERS =   bbconv.h \
+HEADERS =   dbbconv.h \
             grecord.h \
             utils.h \
             vla_support.h \
