@@ -22,6 +22,7 @@
 Waypoint::Waypoint( QString nam,
                     WGSPoint oP,
                     int typ,
+                    int _tpType,
                     QString _icao,
                     QString _comment,
                     QString _country,
@@ -49,6 +50,7 @@ Waypoint::Waypoint( QString nam,
   sectorFAI = sFAI;
   angle = ang;
   type = typ;
+  tpType = _tpType;
   distance = dist;
   description = desc;
   icao = _icao;

@@ -220,6 +220,7 @@ Waypoint* DA4WPRecord::newWaypoint () const
   Waypoint* wp = new Waypoint;
 
   wp->type = type();
+  wp->tpType = 0;
   wp->name = name();
   wp->description = "";
   wp->icao = "";

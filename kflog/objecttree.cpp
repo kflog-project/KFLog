@@ -448,24 +448,26 @@ void ObjectTree::createMenu()
 
 void ObjectTree::slotEditTask()
 {
-  TaskDialog td( this );
-
   if( currentFlightElement != 0 )
     {
       if( currentFlightElement->getObjectType() == BaseMapElement::Task )
         {
           FlightTask *ft = dynamic_cast<FlightTask *> (currentFlightElement);
 
-          td.setTask( ft );
+          TaskDialog* td = new TaskDialog( this );
 
-          if( td.exec() == QDialog::Accepted )
+          td->setTask( ft );
+
+          if( td->exec() == QDialog::Accepted )
             {
-              ft->setWaypointList( td.getTask()->getWPList() );
-              ft->setPlanningType( td.getTask()->getPlanningType() );
-              ft->setPlanningDirection( td.getTask()->getPlanningDirection() );
+              ft->setWaypointList( td->getTask()->getWPList() );
+              ft->setPlanningType( td->getTask()->getPlanningType() );
+              ft->setPlanningDirection( td->getTask()->getPlanningDirection() );
               newFlightSelected( ft );
               slotFlightChanged();
             }
+
+          delete td;
         }
     }
 }
@@ -500,10 +502,10 @@ void ObjectTree::slotSaveTask()
       return;
     }
 
-  fName = QFileDialog::getSaveFileName ( this,
-                                         tr("Save task"),
-                                         path,
-                                         tr("KFLOG tasks (*.kflogtsk *.KFLOGTSK)" ) );
+  fName = QFileDialog::getSaveFileName( this,
+                                        tr("Save task"),
+                                        _mainWindow->getApplicationTaskDirectory(),
+                                        tr("KFLOG tasks (*.kflogtsk *.KFLOGTSK)" ) );
 
   if ( fName.isEmpty() )
     {
@@ -580,8 +582,8 @@ void ObjectTree::slotSaveAllTask()
   QList<Waypoint*> wpList;
 
   fName = QFileDialog::getSaveFileName ( this,
-                                         tr("Save task"),
-                                         path,
+                                         tr("Save all tasks"),
+                                         _mainWindow->getApplicationTaskDirectory(),
                                          tr("KFLOG tasks (*.kflogtsk *.KFLOGTSK)" ) );
   if( fName.isEmpty() )
     {

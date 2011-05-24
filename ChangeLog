@@ -1,5 +1,24 @@
 $Id$
 
+2011-05-24 Axel Pauli <axel@kflog.org>
+
+  * The type of a waypoint is missused by a flight task to overwrite it with a
+    task point type. Added a new variable tpType to the Waypoint class to solve
+    this conflict.
+    
+   * TaskDialog fully ported to Qt4. But there were some unusual things
+     programmed. The software should not do unexpected things by the user.
+     The necessary checks, if the FAI requirements are fulfilled are done now,
+     if the ok button is pressed. At the moment is not clear for me how the
+     task management is supported by the map and the mouse.
+
+2011-05-19 Axel Pauli <axel@kflog.org>
+
+  * Flight recorder plugins fully ported to Qt4. It seems that the Garmin
+    and SoaringPilot plugins do not fulfill the KFLog plugin requirements.
+    Therefore I disabled the copying of the related desktop files into the
+    release area. The plugins must be tested, if they work right.
+
 2011-05-18 Axel Pauli <axel@kflog.org>
 
   * RecorderDialog widget fully ported to Qt4. It was a hard pice of work :-((

@@ -31,7 +31,7 @@ extern QSettings    _settings;
 
 EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
 {
-  setWindowTitle( tr("Flight Evaluation:") );
+  setWindowTitle( tr("Flight Evaluation") );
 
   // movable text display
   QSplitter* textSplitter = new QSplitter( Qt::Vertical, this );
@@ -403,7 +403,7 @@ void EvaluationDialog::slotShowFlightData()
         }
       else
         {
-          parent->setWindowTitle( tr( "Flight Evaluation:" ) );
+          parent->setWindowTitle( tr( "Flight Evaluation" ) );
         }
 
       // set defaults
@@ -411,7 +411,7 @@ void EvaluationDialog::slotShowFlightData()
     }
   else
     {
-      parent->setWindowTitle( tr( "Flight Evaluation:" ) );
+      parent->setWindowTitle( tr( "Flight Evaluation" ) );
       updateText( 0, 0, false );
     }
 

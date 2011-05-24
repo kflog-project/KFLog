@@ -44,12 +44,13 @@ class Waypoint
 {
 public:
 
-  Waypoint( QString nam = QString::null,
+  Waypoint( QString nam = "",
             WGSPoint oP = WGSPoint(),
             int typ = -1,
-            QString _icao = QString::null,
-            QString _comment = QString::null,
-            QString _country = QString::null,
+            int tpType = 0,
+            QString _icao = "",
+            QString _comment = "",
+            QString _country = "",
             enum Runway::SurfaceType surf=Runway::Unknown,
             QPair<ushort, ushort> runw = (QPair<ushort, ushort>(0, 0)),
             float leng = 0.0,
@@ -62,7 +63,7 @@ public:
             unsigned int sFAI = 0,
             double ang = 0.0,
             double dist = 0.0,
-            QString desc = QString::null,
+            QString desc = "",
             unsigned short import = 2,
             time_t GPSFixTime=0 );
 
@@ -102,6 +103,10 @@ public:
    * The type of the waypoint
    */
   int type;
+  /**
+   * The type as taskpoint
+   */
+  int tpType;
   /**
    * The distance to the previous waypoint
    */

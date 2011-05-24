@@ -7,6 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2001 by Heiner Lamprecht
+ **                   2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -58,17 +59,20 @@ FlightTask::FlightTask(const QList<Waypoint*>& wpL, bool isO, const QString& fNa
 {
   //warning("FlightTask(QPtrList<wayPoint> wpL, bool isO, QString fName)");
   setWaypointList(wpL);
-//  FAISectList.setAutoDelete(true);
 }
 
 FlightTask::~FlightTask()
 {
+  qDebug() << "~FlightTask()";
+
+  // Hope that nobody holds a shallow copy of this list.
+  qDeleteAll( wpList );
 }
 
 void FlightTask::__checkType()
 {
   /**
-   * Prooves the type of the task.
+   * Proves the type of the task.
    **/
   distance_task = 0;
   distance_total = 0;
@@ -224,7 +228,7 @@ double FlightTask::__sectorangle(int loop, bool isDraw)
   // In some cases during planning, this method is called with wrong
   // loop-values. Therefore we must check the id before calculating
   // the direction
-  switch(wpList.at(loop)->type)
+  switch(wpList.at(loop)->tpType)
     {
     case Begin:
       // directions to the next point
@@ -284,28 +288,30 @@ void FlightTask::__setWaypointType()
    */
   int cnt = wpList.count();
 
-  if (cnt > 0) {
-    wpList.at(0)->type = FlightTask::FreeP;
-  }
+  if( cnt > 0 )
+    {
+      wpList.at( 0 )->tpType = FlightTask::FreeP;
+    }
 
   // Distances
   for(int n = 1; n  < cnt; n++)
     {
       wpList.at(n)->distance = dist(wpList.at(n-1),wpList.at(n));
-      wpList.at(n)->type = FlightTask::FreeP;
+      wpList.at(n)->tpType = FlightTask::FreeP;
     }
 
   // Kein Wendepunkt definiert
   if (cnt < 4)  return;
 
-  wpList.at(0)->type = FlightTask::TakeOff;
-  wpList.at(1)->type = FlightTask::Begin;
-  wpList.at(cnt - 2)->type = FlightTask::End;
-  wpList.at(cnt - 1)->type = FlightTask::Landing;
+  wpList.at(0)->tpType = FlightTask::TakeOff;
+  wpList.at(1)->tpType = FlightTask::Begin;
+  wpList.at(cnt - 2)->tpType = FlightTask::End;
+  wpList.at(cnt - 1)->tpType = FlightTask::Landing;
 
-  for(int n = 2; n + 2 < cnt; n++) {
-    wpList.at(n)->type = FlightTask::RouteP;
-  }
+  for( int n = 2; n + 2 < cnt; n++ )
+    {
+      wpList.at( n )->tpType = FlightTask::RouteP;
+    }
 }
 
 int FlightTask::getTaskType() const  {  return flightType;  }
@@ -393,7 +399,7 @@ bool FlightTask::drawMapElement( QPainter* targetPainter )
               bBoxTask.setBottom(tempP.y());
             }
 
-          switch(wpList.at(loop)->type)
+          switch(wpList.at(loop)->tpType)
             {
             case FlightTask::RouteP:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 2));
@@ -558,7 +564,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool /*isText*/)
           double gx = -R2 + tempP.x();
           double gy = -R2 + tempP.y();
 
-          switch(wpList.at(loop)->type)
+          switch(wpList.at(loop)->tpType)
             {
             case FlightTask::RouteP:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 1));
@@ -1185,7 +1191,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool /*isText*/, doubl
           double gx = -R2 + tempP.x();
           double gy = -R2 + tempP.y();
 
-          switch(wpList.at(loop)->type)
+          switch(wpList.at(loop)->tpType)
             {
             case FlightTask::RouteP:
               targetPainter->setPen(QPen(QColor(50, 50, 50), 1));

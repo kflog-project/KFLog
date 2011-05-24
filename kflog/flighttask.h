@@ -7,6 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
+ **                   2011 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -26,14 +27,16 @@
 #include <QRect>
 #include <QPolygon>
 
-struct faiRange {
+struct faiRange
+{
   double minLength28;
   double maxLength28;
   double minLength25;
   double maxLength25;
 };
 
-struct faiAreaSector {
+struct faiAreaSector
+{
   /* total distance with route and this sector */
   double dist;
   /* pos on map */
@@ -41,10 +44,17 @@ struct faiAreaSector {
 };
 
 /**
- * Contains the data of a task.
+ * \class FlightTask
  *
- * @author Heiner Lamprecht
- * @version $Id$
+ * \brief Contains and manages the data of a task.
+ *
+ * Contains and manages the data of a task.
+ *
+ * \author Heiner Lamprecht
+ *
+ * \version $Id$
+ *
+ * \date 2001-2011
  */
 class FlightTask : public BaseFlightElement
 {
@@ -80,7 +90,7 @@ class FlightTask : public BaseFlightElement
    */
   static bool isFAI(double d_wp, double d1, double d2, double d3);
   /**
-   * Returns the waypointlist.
+   * Returns the waypoint list.
    */
   QList<Waypoint*> getWPList() { return wpList; };
   /**
@@ -131,10 +141,10 @@ class FlightTask : public BaseFlightElement
   /** No descriptions */
   QString getPlanningTypeString();
   /**
-   * The waypoint-types.
+   * The taskpoint-types.
    */
-  enum WaypointType {NotSet = 0, TakeOff = 1, Begin = 2, RouteP = 4,
-                     End = 8, FreeP = 16, Landing = 32};
+  enum TaskPointType {NotSet = 0, TakeOff = 1, Begin = 2, RouteP = 4,
+                      End = 8, FreeP = 16, Landing = 32};
   /**
    * The flight-types.
    */
@@ -192,16 +202,16 @@ class FlightTask : public BaseFlightElement
   void __setDMSTPoints();
   /**
    * calculate an area for all FAI triangle depending on 2 points
-   */    
+   */
   void calcFAIArea();
   /**
    * calculate sectors for valid FAI Areas
-   */    
+   */
   void calcFAISector(double leg, double legBearing, double from, double to, double step, double dist,
                      double toLat, double toLon, QPolygon *pA, bool upwards, bool isRightOfRoute);
   /**
    * calculate side sectors for valid FAI Areas
-   */    
+   */
   void calcFAISectorSide(double leg, double legBearing, double from, double to, double step, double toLat,
                          double toLon, bool less500, QPolygon *pA, bool upwards, bool isRightOfRoute);
   /**

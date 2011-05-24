@@ -237,6 +237,20 @@ QString MainWindow::getApplicationDataDirectory()
   return path;
 }
 
+QString MainWindow::getApplicationTaskDirectory()
+{
+  taskDir = _settings.value( "/Path/DefaultTaskDirectory",
+                             getApplicationDataDirectory() ).toString();
+  return taskDir;
+}
+
+QString MainWindow::getApplicationFlightDirectory()
+{
+  flightDir = _settings.value( "/Path/DefaultFlightDirectory",
+                               getApplicationDataDirectory() ).toString();
+  return flightDir;
+}
+
 void MainWindow::closeEvent( QCloseEvent *event )
 {
   saveOptions();
@@ -958,7 +972,7 @@ void MainWindow::readOptions()
   flightDir = _settings.value( "/Path/DefaultFlightDirectory",
                                getApplicationDataDirectory() ).toString();
 
-  taskDir   = _settings.value( "/Path/DefaultWaypointDirectory",
+  taskDir   = _settings.value( "/Path/DefaultTaskDirectory",
                                getApplicationDataDirectory() ).toString();
 
   mapControl->slotSetMinMaxValue( _settings.readNumEntry( "/Scale/Lower Limit", 10 ),
@@ -1176,7 +1190,7 @@ void MainWindow::slotOpenFile()
 
   QFileDialog* fd = new QFileDialog( this );
   fd->setWindowTitle( tr( "Open Flight" ) );
-  fd->setDirectory( flightDir );
+  fd->setDirectory( getApplicationFlightDirectory() );
   fd->setFileMode( QFileDialog::ExistingFile );
 
   QStringList filter;
@@ -1256,7 +1270,7 @@ void MainWindow::slotOpenTask()
 
   QFileDialog* fd = new QFileDialog( this );
   fd->setWindowTitle( tr( "Open Task" ) );
-  fd->setDirectory( taskDir );
+  fd->setDirectory( getApplicationTaskDirectory() );
   fd->setFileMode( QFileDialog::ExistingFile );
 
   QStringList filters;

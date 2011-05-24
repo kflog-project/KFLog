@@ -86,6 +86,16 @@ public:
   QString getApplicationDataDirectory();
 
   /**
+   * \return The application's task directory.
+   */
+  QString getApplicationTaskDirectory();
+
+  /**
+   * \return The application's flight directory.
+   */
+  QString getApplicationFlightDirectory();
+
+  /**
    * Sets the selected flight data action to active and all other to
    * inactive.
    *
