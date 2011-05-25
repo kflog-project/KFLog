@@ -732,6 +732,8 @@ void TaskDialog::slotAccept()
         }
     }
 
+  pTask->setTaskName( name->text() );
+
   if( wpList.size() < 4 )
     {
       QMessageBox::warning( this,
