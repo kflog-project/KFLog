@@ -461,6 +461,7 @@ void ObjectTree::slotEditTask()
 
           if( td->exec() == QDialog::Accepted )
             {
+              ft->setTaskName( td->getTask()->getFileName() );
               ft->setWaypointList( td->getTask()->getWPList() );
               ft->setPlanningType( td->getTask()->getPlanningType() );
               ft->setPlanningDirection( td->getTask()->getPlanningDirection() );
