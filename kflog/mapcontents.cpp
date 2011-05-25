@@ -131,6 +131,8 @@ MapContents::~MapContents()
 
 void MapContents::slotCloseFlight()
 {
+  qDebug() << "MapContents::slotCloseFlight()";
+
   /*
    * Closes the current flight.
    */
@@ -1618,7 +1620,7 @@ void MapContents::slotNewTask()
                   "it will be deleted.<br>"
                   "You can compute the task up to your current mouse position by pressing &lt;SHIFT&gt;."
                   "<br>"
-                  "To finish the task, press &lt;CTRL&gt; and click the right mouse button.<br>"
+                  "To finish the task, press &lt;CTRL&gt; together with the right mouse button.<br>"
                   "It's possible to move and delete taskpoints from the finished task."
                   "</html>"
                 );
@@ -1833,7 +1835,14 @@ bool MapContents::loadTask(QFile& path)
               wpList.append(w);
             }
 
-          f = new FlightTask(wpList, false, genTaskName());
+          QString taskName = nmTask.namedItem("Name").toAttr().value();
+
+          if( taskName.isEmpty() || taskNameInUse(taskName) )
+            {
+              taskName = genTaskName();
+            }
+
+          f = new FlightTask(wpList, false, taskName);
           f->setPlanningType(nmTask.namedItem("PlanningType").toAttr().value().toInt());
           f->setPlanningDirection(nmTask.namedItem("PlanningDirection").toAttr().value().toInt());
 
@@ -1875,19 +1884,44 @@ QString MapContents::genTaskName()
 QString MapContents::genTaskName(QString suggestion)
 {
   BaseFlightElement* bfe;
-  FlightTask* ft=0;
-  foreach(bfe, flightList) {
-    ft=dynamic_cast<FlightTask*>(bfe);
-    if (ft) {
-      if (ft->getName() == suggestion) {
-        //name is allready in use
-        return QString("%1 (%2)").arg(suggestion).arg(genTaskName());
-      }
+
+  foreach(bfe, flightList)
+    {
+      FlightTask* ft = dynamic_cast<FlightTask*> ( bfe );
+
+      if( ft )
+        {
+          if( ft->getName() == suggestion )
+            {
+              // Name is already in use. Generate an unique one.
+              return genTaskName( genTaskName() );
+            }
+        }
     }
-  }
+
   return suggestion;
 }
 
+bool MapContents::taskNameInUse( QString name )
+{
+  BaseFlightElement* bfe;
+
+  foreach(bfe, flightList)
+    {
+      FlightTask* ft = dynamic_cast<FlightTask*> ( bfe );
+
+      if( ft )
+        {
+          if( ft->getName() == name )
+            {
+              // Name is already in use. Generate an unique one.
+              return true;
+            }
+        }
+    }
+
+  return false;
+}
 
 /** Re-projects any flights and tasks that may be loaded. */
 void MapContents::reProject()

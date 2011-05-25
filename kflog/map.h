@@ -66,10 +66,18 @@ private:
      */
     ~Map();
 
-    /** No descriptions */
-  void slotSavePixmap(QUrl fUrl, int width, int height);
+    /**
+     * Returns the current task planning state.
+     */
+    int getPlanningState()
+    {
+      return planning;
+    };
 
   public slots:
+
+    /**  */
+   void slotSavePixmap(QUrl fUrl, int width, int height);
     /** */
     void slotRedrawMap();
     /** */
@@ -153,6 +161,8 @@ private:
     void elevation(int);
     /** Send to kflogApp to make KFLogApp connect the dialogs signals to the waypoint object. */
     void regWaypointDialog(QWidget *);
+    /** Emitted, if the fligh task has been modified. */
+    void flightTaskModified();
 
   protected:
     /**
@@ -232,7 +242,7 @@ private:
      * Draws the Task which is currently planned
      *
      */
-    void __drawPlannedTask(bool solid = true);
+    void __drawPlannedTask(bool solid=true);
     /**
      * Draws the grid on the map.
      */

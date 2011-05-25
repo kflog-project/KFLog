@@ -126,6 +126,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(map, SIGNAL(openFile(const QUrl&)), this, SLOT(slotOpenFile(const QUrl&)));
   connect(map, SIGNAL(setStatusBarProgress(int)), this, SLOT(slotSetProgress(int)));
   connect(map, SIGNAL(setStatusBarMsg(const QString&)), this, SLOT(slotSetStatusMsg(const QString&)));
+  connect(map, SIGNAL(flightTaskModified()), objectTree, SLOT(slotFlightChanged()));
 
   connect(mapControl, SIGNAL(scaleChanged(double)), _globalMapMatrix, SLOT(slotSetScale(double)));
 

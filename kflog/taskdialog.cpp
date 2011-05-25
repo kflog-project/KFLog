@@ -65,15 +65,14 @@ void TaskDialog::createDialog()
   QVBoxLayout *topLayout = new QVBoxLayout( this );
   topLayout->setSpacing( 10 );
 
-  QHBoxLayout *header = new QHBoxLayout; //(10);
-  QHBoxLayout *type = new QHBoxLayout; //(10);
+  QHBoxLayout *header = new QHBoxLayout;
+  QHBoxLayout *type = new QHBoxLayout;
   QHBoxLayout *buttons = new QHBoxLayout;
-  // buttons->setSpacing( 10 );
-  QVBoxLayout *leftLayout = new QVBoxLayout; //(5);
-  QVBoxLayout *middleLayout = new QVBoxLayout; //(5);
-  QVBoxLayout *rightLayout = new QVBoxLayout; //(5);
-  QHBoxLayout *topGroup = new QHBoxLayout; //(10);
-  QHBoxLayout *smallButtons = new QHBoxLayout; //(5);
+  QVBoxLayout *leftLayout = new QVBoxLayout;
+  QVBoxLayout *middleLayout = new QVBoxLayout;
+  QVBoxLayout *rightLayout = new QVBoxLayout;
+  QHBoxLayout *topGroup = new QHBoxLayout;
+  QHBoxLayout *smallButtons = new QHBoxLayout;
 
   buttons->addStretch();
   b = new QPushButton(tr("&Ok"), this);
@@ -87,7 +86,7 @@ void TaskDialog::createDialog()
   //----------------------------------------------------------------------------
   // Row 1
   name = new QLineEdit;
-  name->setReadOnly(true);
+  name->setReadOnly(false);
   l = new QLabel(name, tr("&Name") + ":");
   header->addWidget(l);
   header->addWidget(name);
@@ -158,7 +157,7 @@ void TaskDialog::createDialog()
   QStringList headerLabels;
 
   headerLabels  << tr("Type")
-                << tr("Waypoint")
+                << tr("Taskpoint")
                 << tr("Length")
                 << tr("Course")
                 << tr("");
@@ -229,7 +228,7 @@ void TaskDialog::createDialog()
   middleLayout->addStretch(1);
 
   waypoints = new KFLogTreeWidget("TaskDialog-Waypoints");
-  waypoints->setSortingEnabled( false );
+  waypoints->setSortingEnabled( true );
   waypoints->setAllColumnsShowFocus( true );
   waypoints->setFocusPolicy( Qt::StrongFocus );
   waypoints->setRootIsDecorated( false );
@@ -314,7 +313,7 @@ void TaskDialog::loadListWaypoints()
       waypoints->insertTopLevelItem( i, item );
     }
 
-  waypoints->sortByColumn(0);
+  waypoints->sortItems(0, Qt::AscendingOrder);
   waypoints->slotResizeColumns2Content();
 }
 
@@ -326,39 +325,37 @@ void TaskDialog::slotSetPlanningType( const QString& text )
   {
   case FlightTask::FAIArea:
     {
-      errorFai->showMessage( tr("<htlm>Task Type FAI Area:<br><br>"
-        "You can define a FAI task with either Takeoff, Start, End and Landing or "
-        "Takeoff, Start, End, Landing and one additional Route point.<br>"
-        "The FAI area calculation will be made with Start and End point or Start and Route point, "
-        "depending weather the Route point is defined or not.<br><br>"
-        "New waypoints are inserted after the selected one.</html>" ) );
+      QString msg = tr("<b>Task Type FAI Area:</b><br><br>"
+          "You can define a FAI task with either Takeoff, Start, End and Landing or "
+          "Takeoff, Start, End, Landing and <b>one</b> additional Route point.<br>"
+          "The points <i>Takeoff</i>, <i>Start</i>, <i>End</i> and <i>Landing</i>"
+          "are <b>mandatory!</b><br><br>"
+          "The FAI area calculation will be made with Start and End point or Start "
+          "and Route point, depending weather the Route point is defined or not.<br><br>"
+          "New waypoints are inserted after the selected one." );
+
+      if( wpList.size() > 5 )
+        {
+          msg += tr( "<br><br><b>Your FAI task contains too much route points!"
+                      "<br>Please remove all not necessary route points.</b>" );
+        }
+
+      errorFai->showMessage( "<html>" + msg + "</html>" );
 
       left->setEnabled(true);
       right->setEnabled(true);
       left->setChecked(pTask->getPlanningDirection() & FlightTask::leftOfRoute);
       right->setChecked(pTask->getPlanningDirection() & FlightTask::rightOfRoute);
-
-      int cnt = wpList.count();
-
-      if( cnt > 5 )
-        {
-          // remove route points
-          for( int n = cnt - 3; n > 2; n-- )
-            {
-              wpList.removeAt( n );
-            }
-
-          pTask->setWaypointList( wpList );
-        }
-      }
+    }
 
     break;
 
   case FlightTask::Route:
 
-    errorRoute->showMessage(  tr("<html>Task Type Traditional Route:<br><br>"
+    errorRoute->showMessage(  tr("<html><b>Task Type Traditional Route:</b><br><br>"
       "You can define a task with Takeoff, Start, End, Landing and Route points. "
-      "The points Takeoff, Start, End and Landing are mandatory!<br>"
+      "The points <i>Takeoff</i>, <i>Start</i>, <i>End</i> and <i>Landing</i>"
+      "are <b>mandatory!</b> "
       "Additional route points can be added.<br><br>"
       "New waypoints are inserted after the selected one.</html>") );
 
@@ -565,6 +562,9 @@ void TaskDialog::slotAddWaypoint()
   // Retrieve waypoint data from current item.
   Waypoint *wp = VPtr<Waypoint>::asPtr(item->data(0, Qt::UserRole));
 
+  // Set projected coordinates
+  wp->projP = _globalMapMatrix->wgsToMap(wp->origP);
+
   // Make a deep copy of waypoint data.
   Waypoint *newWp = new Waypoint( wp );
 
@@ -645,6 +645,9 @@ void TaskDialog::setTask(FlightTask *orig)
 
   name->setText(pTask->getFileName());
 
+  // Save initial name of task
+  startName = name->text();
+
   planningTypes->setCurrentIndex( planningTypes->findText( FlightTask::ttItem2Text(pTask->getPlanningType())) );
 
   left->setChecked(pTask->getPlanningDirection() & FlightTask::leftOfRoute);
@@ -709,46 +712,43 @@ void TaskDialog::enableCommandButtons()
           downCmd->setEnabled( false );
         }
     }
-
-#if 0
-  switch( pTask->getPlanningType() )
-    {
-    case FlightTask::Route:
-      // disable add button for start, landing, end
-      // enable for takeoff, we can append to it
-      addCmd->setEnabled( pos > 0 && pos < cnt - 2 );
-
-      // disable remove button for start, takeoff, landing, end
-      removeCmd->setEnabled( pos > 1 && pos < cnt - 2 );
-      break;
-    case FlightTask::FAIArea:
-      removeCmd->setEnabled( cnt > 4 && pos == 2 );
-      addCmd->setEnabled( pos > 0 && pos < cnt - 2 && cnt == 4 );
-      break;
-    }
-#endif
-
 }
 
 void TaskDialog::slotAccept()
 {
   // Here we check the task constrains.
+  if( startName != name->text() )
+    {
+      // User has changed the task name. We must check, if the new name
+      // is already in use.
+      if( _globalMapContents->taskNameInUse( name->text()) )
+        {
+          QMessageBox::warning( this,
+                                 tr("Task name in use"),
+                                 tr("<htlm>The chosen task name is already in use!<br><br>"
+                                    "Please use another one.</html>"),
+                                 QMessageBox::Ok );
+          return;
+        }
+    }
+
   if( wpList.size() < 4 )
     {
-      QMessageBox::critical( this,
+      QMessageBox::warning( this,
                              tr("Task is incomplete"),
-                             tr("A task needs at least four waypoints!\n"
-                                "Please add the missing points."),
+                             tr("<htlm>A task consist of at least four waypoints!<br><br>"
+                                "Please add the missing points.</html>"),
                              QMessageBox::Ok );
       return;
     }
 
   if( wpList.size() > 5 && pTask->getPlanningType() == FlightTask::FAIArea )
     {
-      QMessageBox::critical( this,
+      QMessageBox::warning( this,
                              tr("FAI area task violation"),
-                             tr("A FAI area task can have one additional route point only!\n"
-                                "Please remove all not needed other points."),
+                             tr("<htlm>A FAI area task can have one additional "
+                                 "route point only!<br><br>"
+                                 "Please remove all not needed other points.</html>"),
                              QMessageBox::Ok );
       return;
     }

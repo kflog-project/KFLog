@@ -108,6 +108,7 @@ private:
 
   FlightTask *pTask;
 
+  QString    startName;
   QLineEdit *name;
   QLabel    *taskType;
 

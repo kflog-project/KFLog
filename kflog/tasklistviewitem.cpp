@@ -31,6 +31,7 @@ TaskListViewItem::TaskListViewItem( QTreeWidgetItem* parent,
   task(task)
 {
   createChildren();
+  setExpanded( true );
 }
 
 TaskListViewItem::~TaskListViewItem(){
@@ -62,7 +63,7 @@ void TaskListViewItem::update()
 void TaskListViewItem::createChildren()
 {
   QString wpName;
-  
+
   setText( 0, QFileInfo(task->getFileName()).fileName() );
   setText( 1, task->getPlanningTypeString());
 
@@ -92,29 +93,32 @@ void TaskListViewItem::createChildren()
   QTreeWidgetItem* wpSubItem = new QTreeWidgetItem( this, sl );
   wpSubItem->setFlags( Qt::ItemIsEnabled );
   wpSubItem->setIcon( 0, _mainWindow->getPixmap("waypoint_16.png") );
+  wpSubItem->setExpanded( true );
 
   for( int i = 0; i < wpCount; i++ )
     {
-      wpName = QObject::tr( "Turnpoint" );
-
       if( i == 0 )
         {
           wpName = QObject::tr( "Takeoff" );
         }
 
-      if( i == 1 )
+      else if( i == 1 )
         {
           wpName = QObject::tr( "Start" );
         }
 
-      if( i == wpCount - 2 )
+      else if( i == wpCount - 2 )
         {
           wpName = QObject::tr( "Finish" );
         }
 
-      if( i == wpCount - 1 )
+      else if( i == wpCount - 1 )
         {
           wpName = QObject::tr( "Landing" );
+        }
+      else
+        {
+          wpName = QObject::tr( "Turnpoint" );
         }
 
       sl = (QStringList() << wpName << task->getWPList().at( i )->name );

@@ -237,6 +237,8 @@ class MapContents : public QObject
   QString genTaskName();
   /** generate a task name, using the suggestion given. Prevents double task names */
   QString genTaskName(QString suggestion);
+  /** Checks if a task name is already in use or not. */
+  bool taskNameInUse( QString name );
 
   /** \return The list of IsoHypse Regions. */
   IsoList* getIsohypseRegions()

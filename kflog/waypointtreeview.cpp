@@ -23,6 +23,7 @@
 #include <QtGui>
 
 #include "airfield.h"
+#include "map.h"
 #include "mapcalc.h"
 #include "mapconfig.h"
 #include "mapcontents.h"
@@ -32,6 +33,7 @@
 #include "mainwindow.h"
 
 extern MainWindow  *_mainWindow;
+extern Map         *_globalMap;
 extern MapConfig   *_globalMapConfig;
 extern MapContents *_globalMapContents;
 extern MapMatrix   *_globalMapMatrix;
@@ -71,7 +73,7 @@ void WaypointTreeView::createWaypointWindow()
   waypointTree->setFocusPolicy( Qt::StrongFocus );
   waypointTree->setRootIsDecorated( false );
   waypointTree->setItemsExpandable( false );
-  waypointTree->setSelectionMode( QAbstractItemView::MultiSelection );
+  waypointTree->setSelectionMode( QAbstractItemView::ExtendedSelection );
   waypointTree->setSelectionBehavior( QAbstractItemView::SelectRows );
   waypointTree->setAlternatingRowColors( true );
   waypointTree->addRowSpacing( 5 );
@@ -367,8 +369,8 @@ void WaypointTreeView::slotShowWaypointMenu( QTreeWidgetItem* item, const QPoint
 
   ActionWaypointNew->setEnabled( waypointCatalogs.count() );
   ActionWaypointEdit->setEnabled( item != 0 );
-  ActionWaypointCopy2Task->setEnabled( item != 0 );
   ActionWaypointCenterMap->setEnabled( item != 0 );
+  ActionWaypointCopy2Task->setEnabled( item != 0 && _globalMap->getPlanningState() == 1 );
   ActionWaypointSetHome->setEnabled( item != 0 );
 
   if( item )
@@ -382,10 +384,14 @@ void WaypointTreeView::slotShowWaypointMenu( QTreeWidgetItem* item, const QPoint
 
       QString text = tr("Set Homesite") + " -> " + home;
       ActionWaypointSetHome->setText( text );
+
+      text = tr("Copy to &task") + " (" + home + ")";
+      ActionWaypointCopy2Task->setText( text );
     }
   else
     {
       ActionWaypointSetHome->setText( tr("Set Homesite") );
+      ActionWaypointCopy2Task->setText( tr("Copy to &task") );
     }
 
   ActionWaypointDelete->setEnabled( waypointTree->selectedItems().size() );
@@ -1132,6 +1138,7 @@ void WaypointTreeView::slotSetHome()
       _settings.setValue("/Homesite/Name", w->name);
       _settings.setValue("/Homesite/Latitude", w->origP.lat());
       _settings.setValue("/Homesite/Longitude", w->origP.lon());
+      _settings.setValue("/Homesite/Country", w->country);
 
       // update airfield lists from Welt2000 if home site changes:
       _globalMapContents->slotReloadWelt2000Data();

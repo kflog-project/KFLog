@@ -73,7 +73,7 @@ class FlightTask : public BaseFlightElement
   FlightTask(const QList<Waypoint*>& wpList, bool isOrig, const QString& fName);
   /**
    */
-  ~FlightTask();
+  virtual ~FlightTask();
   /**
    * Returns true, if a triangle represented by the four length,
    * is a valid FAI-triangle.

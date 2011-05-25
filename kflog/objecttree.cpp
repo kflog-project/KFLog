@@ -100,6 +100,7 @@ ObjectTree::ObjectTree( QWidget *parent ) :
 
 ObjectTree::~ObjectTree()
 {
+  qDebug() << "~ObjectTree()";
 }
 
 /**
@@ -220,7 +221,7 @@ void ObjectTree::slotFlightChanged()
           case FLIGHT_LIST_VIEW_ITEM_TYPEID:
             ((FlightListViewItem*)item)->update();
 
-            // A flight can be contained in a fliht group. So all flight groups
+            // A flight can be contained in a flight group. So all flight groups
             // need an update too.
             for( int i = 0; i < FlightGroupRoot->childCount(); i++ )
               {
@@ -524,6 +525,7 @@ void ObjectTree::slotSaveTask()
   doc.appendChild(root);
 
   QDomElement t = doc.createElement("Task");
+  t.setAttribute("Name", ft->getFileName());
   t.setAttribute("Type", ft->getTaskTypeString());
   t.setAttribute("PlanningType", ft->getPlanningType());
   t.setAttribute("PlanningDirection", ft->getPlanningDirection());
@@ -607,6 +609,7 @@ void ObjectTree::slotSaveAllTask()
       ft = (dynamic_cast<TaskListViewItem *>(childItem))->task;
 
       QDomElement t = doc.createElement("Task");
+      t.setAttribute("Name", ft->getFileName());
       t.setAttribute("Type", ft->getTaskTypeString());
       t.setAttribute("PlanningType", ft->getPlanningType());
       t.setAttribute("PlanningDirection", ft->getPlanningDirection());
