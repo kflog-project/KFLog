@@ -101,6 +101,8 @@ class MapContents : public QObject
    */
   ~MapContents();
 
+  static MapContents* instance();
+
   /**
    * @return the current length of the given list.
    *

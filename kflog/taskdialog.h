@@ -106,7 +106,11 @@ private:
   /** Waypoint list of task. */
   QList<Waypoint*> wpList;
 
+  /* Flight task to be modified. */
   FlightTask *pTask;
+
+  /* Fall back task, if no task is setup. */
+  FlightTask _task;
 
   QString    startName;
   QLineEdit *name;

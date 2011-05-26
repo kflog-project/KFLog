@@ -82,5 +82,18 @@ Waypoint::Waypoint(Waypoint &p)
 
 bool Waypoint::operator<(Waypoint &wp)
 {
-    return name<wp.name;
+    return name < wp.name;
+}
+
+bool Waypoint::operator==( const Waypoint& second ) const
+{
+  if( name == second.name &&
+      type == second.type &&
+      description == second.description &&
+      origP == second.origP )
+    {
+      return true;
+    }
+
+  return false;
 }

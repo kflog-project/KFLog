@@ -41,8 +41,9 @@ int BaseFlightElement::searchStepNextPoint(int, FlightPoint&, int) {  return -1;
 
 int BaseFlightElement::searchStepPrevPoint(int,  FlightPoint&, int) {  return -1;  }
 
-
+#if 0
 void BaseFlightElement::reProject()
 {
   qWarning("BaseFlightElement::reProject()");
 }
+#endif

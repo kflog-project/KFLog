@@ -1,5 +1,23 @@
 $Id$
 
+2011-05-26 Axel Pauli <axel@kflog.org>
+
+  * A task name is stored and retrieved now from the XML file content.
+  * Guicontrol directory removed. Class KFLogListView not more in use because
+    it was not portable to Qt4. It was replaced by the new class KFLogTreeWidget.
+  * Editor field home country added to personal configuration page.
+  * Tried to get running the graphical flight planning. Old code was very
+    complex, confusing and user unfriendly. I used a new approch. If a flight
+    task is created, graphical planning is switched on. You see that on the
+    string in the lower left corner of the status bar. There is displayed
+    "Task planning on". If you click at the map by pressing the left mouse
+    button, a menu is popup with the supported task actions. You can add,
+    remove and create waypoints. But there are some constrains. Waypoints
+    are only appended to the end of the task list. You can not change the order
+    of waypoints and the waypoint move is also not supported. For modifying the
+    flight task you should use the task editor. Important is to finish an opened
+    graphical flight planning action. That is also supported by the task menu.
+    
 2011-05-24 Axel Pauli <axel@kflog.org>
 
   * The type of a waypoint is missused by a flight task to overwrite it with a

@@ -46,6 +46,7 @@
 #include "waypointcatalog.h"
 
 class Flight;
+class WaypointDialog;
 
 class Map : public QWidget
 {
@@ -198,19 +199,22 @@ private:
      * Redifinition of the dropEvent.
      */
     virtual void dropEvent(QDropEvent* event);
-    /**
-     * Creates the popupmenu for the map
-     */
-    void __createPopupMenu();
 
   private:
 
     /**
-     * Opens a new waypoint dialog.
+     * Creates the popup menu for the map.
+     */
+    void __createPopupMenu();
+
+    /**
+     * Creates a new waypoint dialog and returns the prepared object.
      *
      * \param position Latitude and longitude of current position.
+     *
+     * \return A pointer to the created widget.
      */
-    void __openWaypointDialog( const QPoint &position );
+    WaypointDialog* __openWaypointDialog( const QPoint &position );
 
     /**
      * tries to find a waypoint at current position

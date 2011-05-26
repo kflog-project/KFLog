@@ -874,8 +874,6 @@ bool Welt2000::parse( QString& path,
       // frequency
       QString frequency = line.mid(36,3) + "." + line.mid(39,2).trimmed();
 
-      double f = frequency.toDouble(&ok);
-
       float fFrequency = frequency.toFloat(&ok);
 
       if( ( !ok || fFrequency < 108 || fFrequency > 137.0 ) )

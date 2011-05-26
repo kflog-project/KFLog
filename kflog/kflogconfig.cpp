@@ -204,6 +204,7 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/Scale/Border3", reduce3N->value() );
 
   _settings.setValue( "/Homesite/Name", homeNameE->text() );
+  _settings.setValue( "/Homesite/Country", homeCountryE->text().toUpper() );
   _settings.setValue( "/Homesite/Latitude", homeLatE->KFLogDegree() );
   _settings.setValue( "/Homesite/Longitude", homeLonE->KFLogDegree() );
   _settings.setValue( "/MapData/ProjectionType", projectionSelect->currentIndex() );
@@ -270,6 +271,12 @@ void KFLogConfig::slotOk()
 
   emit configOk();
   accept();
+}
+
+void KFLogConfig::slotTextEditedCountry( const QString& text )
+{
+  // Change edited text to upper cases
+  homeCountryE->setText( text.toUpper() );
 }
 
 void KFLogConfig::slotSearchFlightPath()
@@ -1297,15 +1304,26 @@ void KFLogConfig::__addPersonalTab()
   QFormLayout* homeLayout = new QFormLayout();
   homeLayout->setSpacing(10);
 
+  homeCountryE = new QLineEdit(personalPage);
+  homeCountryE->setMaxLength(2);
+  QRegExp rx("[A-Za-z]{2}");
+  homeCountryE->setValidator( new QRegExpValidator(rx, this) );
+  homeCountryE->setToolTip(tr("Add country as two letter code according to ISO 3166-1-alpha-2"));
+
+  connect( homeCountryE, SIGNAL(textEdited( const QString& )),
+           this, SLOT(slotTextEditedCountry( const QString& )) );
+
   homeNameE = new QLineEdit(personalPage);
   homeLatE  = new LatEdit(personalPage);
   homeLonE  = new LongEdit(personalPage);
 
+  homeCountryE->setMinimumWidth( minLen );
   homeNameE->setMinimumWidth( minLen );
   homeLatE->setMinimumWidth( minLen );
   homeLonE->setMinimumWidth( minLen );
 
   homeLayout->addRow( tr("Homesite") + ":", homeNameE );
+  homeLayout->addRow( tr("Country") + ":", homeCountryE );
   homeLayout->addRow( tr("Latitude") + ":", homeLatE );
   homeLayout->addRow( tr("Longitude") + ":", homeLonE );
 
@@ -1321,9 +1339,11 @@ void KFLogConfig::__addPersonalTab()
 
   personalPage->setLayout( idLayout );
 
+  homeNameE->setText(_settings.value("/Homesite/Name", "").toString());
+  homeCountryE->setText(_settings.value("/Homesite/Country", "").toString());
+
   homeLatE->setKFLogDegree(_settings.value("/Homesite/Latitude", HOME_DEFAULT_LAT).toInt());
   homeLonE->setKFLogDegree(_settings.value("/Homesite/Longitude", HOME_DEFAULT_LON).toInt());
-  homeNameE->setText(_settings.value("/Homesite/Name", "").toString());
 
   preNameE->setText(_settings.value("/PersonalData/PreName", "").toString());
   surNameE->setText(_settings.value("/PersonalData/SurName", "").toString());

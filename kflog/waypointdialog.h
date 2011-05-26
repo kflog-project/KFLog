@@ -98,6 +98,9 @@ private slots:
    */
   void slotTextEditedCountry( const QString& text );
 
+  /** Called if the ok button is pressed. */
+  void slotAccept();
+
 signals:
 
   /** No descriptions */
@@ -116,6 +119,8 @@ public:
   LongEdit *longitude;
   /**  */
   QLineEdit *name;
+  /** */
+  QString startName;
   /**  */
   QLineEdit *description;
   /**  */

@@ -32,7 +32,8 @@ extern TranslationList taskTypes;
 
 TaskDialog::TaskDialog( QWidget *parent ) :
   QDialog(parent),
-  pTask(0)
+  pTask(0),
+  _task(QString("task"))
 {
   setWindowTitle(tr("Task Editor") );
   setModal( true );
@@ -610,42 +611,27 @@ void TaskDialog::slotRemoveWaypoint()
     }
 }
 
-void TaskDialog::setTask(FlightTask *orig)
+void TaskDialog::setTask(FlightTask *task)
 {
-  if( pTask == 0 )
+  if( task == static_cast<FlightTask *>(0) )
     {
-      pTask = new FlightTask( orig->getFileName() );
+      // As fall back an internal empty task object is setup
+      _task = FlightTask( MapContents::instance()->genTaskName() );
+      pTask = &_task;
+
+      qWarning() << "TaskDialog::setTask(): Null object passed as task!";
+    }
+  else
+    {
+      pTask = task;
     }
 
-  // make a work copy of the task with at least 4 points
-  wpList = orig->getWPList();
+  // get waypoint list of task
+  wpList = pTask->getWPList();
 
-#if 0
-  Waypoint *wp;
+  name->setText( pTask->getFileName() );
 
-  if( wpList.count() < 4 )
-    {
-      for( int i = wpList.count(); i < 4; i++ )
-        {
-          wp = new Waypoint;
-          wp->origP.setLat( _settings.value( "/Homesite/Latitude" ).toInt() );
-          wp->origP.setLon( _settings.value( "/Homesite/Longitude" ).toInt() );
-          wp->projP = _globalMapMatrix->wgsToMap( wp->origP );
-          wp->name  = _settings.value( "/Homesite/Name" ).toString().left( 8 ).upper();
-
-          wpList.append( wp );
-        }
-    }
-
-  pTask->setWaypointList(wpList);
-#endif
-
-  pTask->setPlanningType(orig->getPlanningType());
-  pTask->setPlanningDirection(orig->getPlanningDirection());
-
-  name->setText(pTask->getFileName());
-
-  // Save initial name of task
+  // Save initial name of task. Is checked during accept for change.
   startName = name->text();
 
   planningTypes->setCurrentIndex( planningTypes->findText( FlightTask::ttItem2Text(pTask->getPlanningType())) );
@@ -725,8 +711,8 @@ void TaskDialog::slotAccept()
         {
           QMessageBox::warning( this,
                                  tr("Task name in use"),
-                                 tr("<htlm>The chosen task name is already in use!<br><br>"
-                                    "Please use another one.</html>"),
+                                 tr("<html>The chosen task name is already in use!<br><br>"
+                                    "Please enter another one.</html>"),
                                  QMessageBox::Ok );
           return;
         }

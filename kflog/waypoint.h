@@ -68,9 +68,15 @@ public:
             time_t GPSFixTime=0 );
 
   Waypoint(Waypoint *p);
+
   Waypoint(Waypoint &p);
-  ~Waypoint();
+
+  virtual ~Waypoint();
+
   bool operator<(Waypoint &wp);
+
+  bool operator==( const Waypoint& second ) const;
+
   /**
    * The name of the waypoint.
    */

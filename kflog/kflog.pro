@@ -85,8 +85,7 @@ SOURCES = \
     waypointtreeview.cpp \
     welt2000.cpp \
     wgspoint.cpp \
-    whatsthat.cpp \
-    guicontrols/kfloglistview.cpp
+    whatsthat.cpp
     
 HEADERS = \
     aboutwidget.h \
@@ -164,8 +163,7 @@ HEADERS = \
     waypointtreeview.h \
     welt2000.h \
     wgspoint.h \
-    whatsthat.h \
-    guicontrols/kfloglistview.h
+    whatsthat.h
     
 # Note! qmake do prefix the .path variable with $(INSTALL_ROOT)
 # in the generated makefile. If the .path variable starts not with

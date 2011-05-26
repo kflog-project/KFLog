@@ -140,7 +140,6 @@ Map::~Map()
 void Map::mouseMoveEvent(QMouseEvent* event)
 {
   const QPoint current = event->pos();
-  Waypoint *w;
 
   QPoint vector = event->pos() - mapInfoTimerStartpoint;
 
@@ -149,12 +148,14 @@ void Map::mouseMoveEvent(QMouseEvent* event)
       mapInfoTimer->stop();
 
       // don't start the timer when in planning or zoom mode
-      if( (planning != 1 && planning != 3) || isZoomActive == false )
+      if( planning != 1 && planning != 3 && isZoomActive == false )
         {
           mapInfoTimer->start( MAP_INFO_DELAY );
           mapInfoTimerStartpoint = event->pos();
         }
     }
+
+#if 0
 
   if( planning == 1 || planning == 3 )
     {
@@ -352,6 +353,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
     //
     //////////////
   }
+
+#endif
 
   if( ! timerAnimate->isActive() )
     {
@@ -705,147 +708,163 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
   QList<Waypoint*> tempTaskPointList = ft->getWPList();
   QList<Waypoint*> & wpList = _globalMapContents->getWaypointList();
 
+  // Save initial size of task point list.
+  int tplStartSize = taskPointList.size();
+
   Waypoint wp;
   QString text;
 
-  // is the point already in the flight task?
+  // Is the point already in the flight task?
   bool found = __getTaskWaypoint(current, &wp, taskPointList);
 
   if( !found )
     {
-      // try the waypoint catalog
+      // Try the waypoint catalog to find it.
       found = __getTaskWaypoint( current, &wp, wpList );
     }
 
-  if( !taskPointList.isEmpty() && event->modifiers() == Qt::ControlModifier )
+  qDebug() << "Map::__graphicalPlanning() found=" << found;
+
+  // Open task action menu for further processing. That seems for me the best
+  // way to be user friendly.
+  QAction* action;
+  QMenu menu(this);
+
+  menu.setTitle( QObject::tr("Task Menu") );
+
+  if( ! found )
     {
-      // gleicher Punkt --> löschen
-      for( int n = taskPointList.count() - 1; n > 0; n-- )
-        {
-          if( wp.projP == taskPointList.at( n )->projP )
-            {
-              delete taskPointList.takeAt( n );
-            }
-        }
-     }
+      action = menu.addAction( tr("Task Menu") );
+      action->setData( -1 );
 
-  if(event->button() == Qt::RightButton && event->modifiers() == Qt::ControlModifier)
+      menu.addSeparator();
+
+      action = menu.addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
+                               tr("Create waypoint here") );
+      action->setData( 4 );
+
+      menu.addSeparator();
+
+      action = menu.addAction( tr("End task planning") );
+      action->setData( 5 );
+    }
+  else
     {
-      moveWPindex = -999;
+      action = menu.addAction( tr("Task Menu") );
+      action->setData( -1 );
 
-      prePlanPos.setX(-999);
-      prePlanPos.setY(-999);
-      planning = 2;
+      menu.addSeparator();
 
-      emit taskPlanningEnd();
-      emit flightTaskModified();
+      action = menu.addAction( wp.description.isEmpty() ? wp.name : wp.description );
+      action->setData( -1 );
+
+      menu.addSeparator();
+
+      action = menu.addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
+                                tr("Add waypoint 1x") );
+      action->setData( 0 );
+
+      action = menu.addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
+                                tr("Add waypoint 2x") );
+      action->setData( 1 );
+
+      action = menu.addAction( _mainWindow->getPixmap("kde_editdelete_16.png"),
+                                tr("Delete waypoint 1x") );
+      action->setData( 2 );
+      action->setEnabled( taskPointList.count() > 0 );
+
+      action = menu.addAction( _mainWindow->getPixmap("kde_editdelete_16.png"),
+                                tr("Delete all waypoints") );
+      action->setData( 3 );
+      action->setEnabled( taskPointList.count() > 0 );
+
+      menu.addSeparator();
+      action = menu.addAction( tr("End task planning") );
+      action->setData( 5 );
+    }
+
+  // Popup the menu at mouse position.
+  action = menu.exec( mapToGlobal( event->pos() ) );
+
+  if( ! action )
+    {
       return;
     }
 
-  if( found )
+  switch( action->data().toInt() )
     {
-      if(planning == 1)
+      case 0:
+        // add waypoint 1x
+        taskPointList.append( new Waypoint( &wp ));
+        break;
+
+      case 1:
+
+        // add waypoint 2x
+        taskPointList.append( new Waypoint( &wp ));
+        taskPointList.append( new Waypoint( &wp ));
+        break;
+
+      case 2:
+        // remove first found waypoint
+        for( int i = 0; i < taskPointList.count(); i++ )
+          {
+            if( wp == *taskPointList.at( i ) )
+              {
+                delete taskPointList.takeAt( i );
+                break;
+              }
+          }
+
+        break;
+
+      case 3:
+        // remove all waypoints. start from the end of the list to get all
+        // of them.
+        for( int i = taskPointList.count() - 1; i >= 0; i-- )
+          {
+            if( wp == *taskPointList.at( i ) )
+              {
+                delete taskPointList.takeAt( i );
+              }
+          }
+
+        break;
+
+      case 4:
         {
-          // neuen Punkt an Task Liste anhängen
-          taskPointList.append(new Waypoint(wp));
+          // Create a new waypoint at the current map position.
+          WaypointDialog* waypointDlg = __openWaypointDialog( current );
+          int result = waypointDlg->exec();
+
+          delete waypointDlg;
+
+          if( result == QDialog::Accepted )
+            {
+              // That is the trick, the last waypoint must be the new one.
+              Waypoint* newWp = wpList.last();
+              taskPointList.append( new Waypoint( newWp ));
+            }
+
+          break;
         }
-      else if(planning == 2)
-        {
-          // Punkt wird verschoben
-          for(int n = 0; n < taskPointList.count(); n++)
-            {
-              if (wp.projP == taskPointList.at(n)->projP)
-                {
-                  qDebug("verschiebe Punkt %d", n);
-                  taskPointList.removeAt(n);
-                  ft->setWaypointList(taskPointList);
-                  planning = 3;
-                  moveWPindex = n;
-                  prePlanPos.setX(-999);
-                  prePlanPos.setY(-999);
-                  break;
-                }
-            }
-        }
-      else if(planning == 3)
-        {
-          planning = 2;
-          taskPointList.insert(moveWPindex, new Waypoint(wp));
-        } //planning == 3
-    } // found
 
-/*
-  else if(planning != 2 && event->modifiers() == QEvent::ShiftButton)
-    {
-      warning("No WP found !!!");
-      // nothing found, try to create a free waypoint
-      // only when shift is pressed!!!
+      case 5:
+        // End of task planning
+        planning = 2;
+        emit taskPlanningEnd();
+        emit setStatusBarMsg( "" );
 
-      __openWaypointDialog( current );
-
-      if (waypointDlg->exec() == QDialog::Accepted)
-        {
-          if (waypointDlg->name->text().isEmpty())
-            {
-               // Perhaps we should add this feature to the Waypoint Dialog
-               w->name = QObject::tr("New WAYPOINT");
-            }
-          else
-            {
-               w->name = waypointDlg->name->text().left(6).upper();
-            }
-
-          if(planning == 3)
-            {
-              // insert a moved point
-              taskPointList.insert(moveWPindex,new wayPoint);
-              w = taskPointList.at(moveWPindex);
-              planning = 2;
-            }
-          else
-            {
-              // append a new point
-              taskPointList.append(new wayPoint);
-              w = taskPointList.last();
-            }
-
-          w->description = waypointDlg->description->text();
-          w->type = waypointDlg->getWaypointType();
-          w->origP.setLat(WGSPoint::degreeToNum(waypointDlg->latitude->text()));
-          w->origP.setLon(WGSPoint::degreeToNum(waypointDlg->longitude->text()));
-          w->projP = _globalMapMatrix->wgsToMap(w->origP.lat(), w->origP.lon());
-          w->elevation = waypointDlg->elevation->text().toInt();
-          w->icao = waypointDlg->icao->text().upper();
-          w->frequency = waypointDlg->frequency->text().toDouble();
-          w->runway = waypointDlg->runway->text().toInt();
-          w->length = waypointDlg->length->text().toInt();
-          w->surface = waypointDlg->getSurface();
-          w->comment = waypointDlg->comment->text();
-          w->isLandable = waypointDlg->isLandable->isChecked();
-          w->sector1 = 0;
-          w->sector2 = 0;
-          w->sectorFAI = 0;
-        }
-      delete waypointDlg;
+      default:
+        // Should never happen
+        return;
     }
-      */
 
-  // Aufgabe zeichnen
-  if(taskPointList.count() > 0)
+  if( tplStartSize != taskPointList.size() )
     {
       ft->setWaypointList(taskPointList);
       __drawPlannedTask();
       __showLayer();
-    }
-
-  if( planning == 2 )
-    {
-      moveWPindex = -999;
-
-      prePlanPos.setX( -999 );
-      prePlanPos.setY( -999 );
-
-      emit taskPlanningEnd();
     }
 
   emit flightTaskModified();
@@ -857,7 +876,7 @@ void Map::keyReleaseEvent(QKeyEvent* event)
 
   if(event->modifiers() == Qt::ShiftModifier)
     {
-      qWarning("key Release");
+      qDebug() << "Map::keyReleaseEvent()";
       __showLayer();
     }
 }
@@ -937,109 +956,101 @@ void Map::mousePressEvent(QMouseEvent* event)
       beginDrag = event->pos();
       sizeDrag = QSize( 0, 0 );
       isDragZoomActive = true;
+      return;
     }
-  else
+
+  const QPoint current( event->pos() );
+
+  Airfield *hitElement;
+  QString text;
+
+  double dX, dY, delta( 16.0 );
+
+  if( _globalMapMatrix->isSwitchScale() )
     {
-      const QPoint current( event->pos() );
-
-      Airfield *hitElement;
-      QString text;
-
-      double dX, dY, delta( 16.0 );
-
-      if( _globalMapMatrix->isSwitchScale() )
-        delta = 8.0;
-
-      if( event->button() == Qt::MidButton )
-        {
-          // Move Map
-          _globalMapMatrix->centerToPoint( event->pos() );
-          __redrawMap();
-        }
-
-    else if(event->button() == Qt::LeftButton)
-      {
-        if(event->modifiers() == Qt::ShiftModifier)
-          {
-            // select WayPoint
-            QRegExp blank("[ ]");
-            bool found = false;
-
-            // add WPList !!!
-            int searchList[] = { MapContents::GliderfieldList,
-                                 MapContents::AirfieldList,
-                                 MapContents::OutLandingList };
-
-            for(int l = 0; l < 3; l++)
-              {
-               for(int loop = 0; loop < _globalMapContents->getListLength(searchList[l]); loop++)
-                 {
-                  hitElement = (Airfield *)_globalMapContents->getElement(searchList[l], loop);
-                  QPoint sitePos = hitElement->getMapPosition();
-
-                  dX = abs(sitePos.x() - current.x());
-                  dY = abs(sitePos.y() - current.y());
-
-                  // Abstand entspricht der Icon-Grösse.
-                  if (dX < delta && dY < delta)
-                    {
-                      // qDebug() << "Found" << hitElement->getName();
-                      Waypoint *w = new Waypoint;
-
-                      QString name = hitElement->getName();
-                      w->name = name.replace(blank, "").left(6).toUpper();
-                      w->description = hitElement->getName();
-                      w->type = hitElement->getObjectType();hitElement->getName();
-                      w->origP = hitElement->getWGSPosition();
-                      w->elevation = hitElement->getElevation();
-                      w->icao = hitElement->getICAO();
-                      w->frequency = hitElement->getFrequency();
-                      w->country = hitElement->getCountry();
-                      w->isLandable = true;
-
-                      emit waypointSelected(w);
-                      found = true;
-                      break;
-                  }
-               }
-               if(found)
-                   break;
-            }
-
-            if( !found )
-                {
-                  __openWaypointDialog( current );
-                }
-            }
-          else
-            {
-              // __displayMapInfo(current);
-            }
-
-        if( planning )
-            {
-              __graphicalPlanning( current, event );
-            }
+      delta = 8.0;
     }
 
+  if( event->button() == Qt::MidButton )
+    {
+      // Center Map
+      _globalMapMatrix->centerToPoint( event->pos() );
+      __redrawMap();
+      return;
+    }
 
-    else if(event->button() == Qt::RightButton && event->modifiers() == Qt::ControlModifier)
-      {
-        moveWPindex = -999;
-
-        prePlanPos.setX(-999);
-        prePlanPos.setY(-999);
-        planning = 2;
-
-        emit taskPlanningEnd();
-        return;
-      }
-    else if( event->button() == Qt::RightButton )
+  if(event->button() == Qt::LeftButton)
+    {
+      // Check if task planning is active. In this case allow only
+      // planning actions.
+      if( planning == 1 )
         {
-          popupPos = event->pos();
-          __showPopupMenu( event );
+          __graphicalPlanning( current, event );
+          return;
         }
+
+      if(event->modifiers() == Qt::ShiftModifier)
+        {
+          // select WayPoint
+          bool found = false;
+
+          // add WPList !!!
+          int searchList[] = { MapContents::GliderfieldList,
+                               MapContents::AirfieldList,
+                               MapContents::OutLandingList };
+
+          for(int l = 0; l < 3; l++)
+            {
+             for(int loop = 0; loop < _globalMapContents->getListLength(searchList[l]); loop++)
+               {
+                hitElement = (Airfield *)_globalMapContents->getElement(searchList[l], loop);
+                QPoint sitePos = hitElement->getMapPosition();
+
+                dX = abs(sitePos.x() - current.x());
+                dY = abs(sitePos.y() - current.y());
+
+                // Abstand entspricht der Icon-Grösse.
+                if (dX < delta && dY < delta)
+                  {
+                    // qDebug() << "Found" << hitElement->getName();
+                    Waypoint *w = new Waypoint;
+
+                    QString name = hitElement->getName();
+                    w->name = name.left(8).toUpper();
+                    w->description = hitElement->getName();
+                    w->type = hitElement->getObjectType();hitElement->getName();
+                    w->origP = hitElement->getWGSPosition();
+                    w->elevation = hitElement->getElevation();
+                    w->icao = hitElement->getICAO();
+                    w->frequency = hitElement->getFrequency();
+                    w->country = hitElement->getCountry();
+                    w->isLandable = true;
+
+                    emit waypointSelected(w);
+                    found = true;
+                    break;
+                }
+             }
+
+             if(found)
+               {
+                 break;
+               }
+          }
+
+          if( !found )
+              {
+                WaypointDialog* waypointDlg = __openWaypointDialog( current );
+                waypointDlg->exec();
+                delete waypointDlg;
+              }
+          }
   }
+  else if( event->button() == Qt::RightButton )
+    {
+      popupPos = event->pos();
+      __showPopupMenu( event );
+    }
 }
 
 /**
@@ -1314,6 +1325,7 @@ void Map::__drawFlight()
 {
   qDebug() << "Map::__drawFlight() Ein";
 
+  pixFlight.fill(Qt::transparent);
   QPainter flightP(&pixFlight);
 
   _globalMapContents->drawList( &flightP, MapContents::FlightList );
@@ -1528,7 +1540,6 @@ void Map::slotSavePixmap()
 
 void Map::slotRedrawFlight()
 {
-  pixFlight.fill(Qt::transparent);
   __drawFlight();
   __showLayer();
 }
@@ -1545,6 +1556,7 @@ void Map::slotActivatePlanning()
 
   if( planning != 1 )
     {
+      mapInfoTimer->stop();
       planning = 1;
       prePlanPos.setX( -999 );
       prePlanPos.setY( -999 );
@@ -2242,6 +2254,8 @@ void Map::slotShowCurrentFlight()
 {
   BaseFlightElement *bfe = _globalMapContents->getFlight();
 
+  qDebug() << "Map::slotShowCurrentFlight(): bfe=" << bfe;
+
   // just to make sure ...
   slotAnimateFlightStop();
 
@@ -2249,19 +2263,20 @@ void Map::slotShowCurrentFlight()
 
   if( bfe && bfe->getObjectType() == BaseMapElement::Task )
     {
-      if( ( dynamic_cast<FlightTask *>(bfe))->getWPList().count() == 0 )
+      qDebug() << "Map::slotShowCurrentFlight(): bfe is task, wps="
+               << bfe->getWPList().count();
+
+      if( bfe->getWPList().count() == 0 )
         {
           slotActivatePlanning();
         }
       else
         {
           planning = 2;
+          emit setStatusBarMsg( "" );
         }
     }
 
-  // Hier wird der Flug 2x neu gezeichnet, denn erst beim
-  // ersten Zeichnen werden die Rahmen von Flug und Aufgabe
-  // bestimmt.
   slotRedrawFlight();
 
   if( bfe )
@@ -2702,11 +2717,11 @@ void Map::__createPopupMenu()
 }
 
 /** Enable/disable the correct items from the menu and then shows it. */
-void Map::__showPopupMenu(QMouseEvent * Event)
+void Map::__showPopupMenu(QMouseEvent* event)
 {
   qDebug() << "Map::__showPopupMenu(): planning=" << planning;
 
-  if( findWaypoint( Event->pos() ) )
+  if( findWaypoint( event->pos() ) )
     {
       miAddWaypointAction->setEnabled( false );
       miEditWaypointAction->setEnabled( true );
@@ -2721,7 +2736,7 @@ void Map::__showPopupMenu(QMouseEvent * Event)
 
   miEndPlanningAction->setEnabled( (planning == 1 || planning == 3) );
 
-  mapPopup->exec( mapToGlobal( Event->pos() ) );
+  mapPopup->exec( mapToGlobal( event->pos() ) );
 }
 
 /** called from the Map popup menu to add a new waypoint. */
@@ -2789,7 +2804,9 @@ void Map::slotMpNewWaypoint()
     }
 
   // create a new waypoint
-  __openWaypointDialog( current );
+  WaypointDialog* waypointDlg = __openWaypointDialog( current );
+  waypointDlg->exec();
+  delete waypointDlg;
 }
 
 
@@ -2853,7 +2870,7 @@ void Map::slotMapInfoTimeout()
   __displayMapInfo( mapInfoTimerStartpoint, true );
 }
 
-void Map::__openWaypointDialog( const QPoint &position )
+WaypointDialog* Map::__openWaypointDialog( const QPoint &position )
 {
   WaypointDialog *waypointDlg = new WaypointDialog( this );
   waypointDlg->enableApplyButton( false );
@@ -2880,8 +2897,7 @@ void Map::__openWaypointDialog( const QPoint &position )
       waypointDlg->elevation->setText( QString::number(height) );
     }
 
-  waypointDlg->exec();
-  delete waypointDlg;
+  return waypointDlg;
 }
 
 /** Draws a scale indicator on the pixmap. */

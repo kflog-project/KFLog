@@ -29,7 +29,6 @@
 #include "mainwindow.h"
 
 extern MainWindow  *_mainWindow;
-extern MapContents *_globalMapContents;
 
 ObjectTree::ObjectTree( QWidget *parent ) :
   KFLogTreeWidget( "ObjectTree", parent ),
@@ -174,7 +173,7 @@ void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
         bfe = static_cast<BaseFlightElement *>(0);
     }
 
-  if( bfe && bfe != _globalMapContents->getFlight() )
+  if( bfe && bfe != MapContents::instance()->getFlight() )
     {
       emit newFlightSelected( bfe );
     }
@@ -185,7 +184,7 @@ void ObjectTree::slotSelectedFlightChanged()
 {
   qDebug() << "ObjectTree::slotSelectedFlightChanged()";
 
-  BaseFlightElement* bfe = _globalMapContents->getFlight();
+  BaseFlightElement* bfe = MapContents::instance()->getFlight();
 
   if( ! bfe )
     {
@@ -201,7 +200,7 @@ void ObjectTree::slotSelectedFlightChanged()
 
       slotFlightChanged();
       scrollToItem( item );
-      currentFlightElement = _globalMapContents->getFlight();
+      currentFlightElement = MapContents::instance()->getFlight();
     }
 }
 
@@ -210,7 +209,7 @@ void ObjectTree::slotFlightChanged()
 {
   qDebug() << "ObjectTree::slotFlightChanged()";
 
-  QTreeWidgetItem* item = findFlightElement( _globalMapContents->getFlight() );
+  QTreeWidgetItem* item = findFlightElement( MapContents::instance()->getFlight() );
 
   if (item)
     {
@@ -461,12 +460,7 @@ void ObjectTree::slotEditTask()
 
           if( td->exec() == QDialog::Accepted )
             {
-              ft->setTaskName( td->getTask()->getFileName() );
-              ft->setWaypointList( td->getTask()->getWPList() );
-              ft->setPlanningType( td->getTask()->getPlanningType() );
-              ft->setPlanningDirection( td->getTask()->getPlanningDirection() );
-              newFlightSelected( ft );
-              slotFlightChanged();
+              emit newFlightSelected( ft );
             }
 
           delete td;
@@ -506,7 +500,7 @@ void ObjectTree::slotSaveTask()
 
   fName = QFileDialog::getSaveFileName( this,
                                         tr("Save task"),
-                                        _mainWindow->getApplicationTaskDirectory(),
+                                        _mainWindow->getApplicationTaskDirectory() + "/" + ft->getFileName(),
                                         tr("KFLOG tasks (*.kflogtsk *.KFLOGTSK)" ) );
 
   if ( fName.isEmpty() )

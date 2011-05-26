@@ -129,6 +129,13 @@ MapContents::~MapContents()
   qDeleteAll(wpList);
 }
 
+extern MapContents* _globalMapContents;
+
+MapContents* MapContents::instance()
+{
+  return _globalMapContents;
+}
+
 void MapContents::slotCloseFlight()
 {
   qDebug() << "MapContents::slotCloseFlight()";
@@ -1629,7 +1636,6 @@ void MapContents::slotNewTask()
   emit taskHelp(helpText);
 
   emit currentFlightChanged();
-//  emit activatePlanning();
 }
 
 void MapContents::slotAppendTask(FlightTask *ft)
@@ -1847,7 +1853,7 @@ bool MapContents::loadTask(QFile& path)
           f->setPlanningDirection(nmTask.namedItem("PlanningDirection").toAttr().value().toInt());
 
           // remember first task in file
-          if (firstTask == 0)
+          if( firstTask == 0 )
             {
               firstTask = f;
             }
@@ -1856,7 +1862,7 @@ bool MapContents::loadTask(QFile& path)
           emit newTaskAdded(f);
         }
 
-      if (firstTask)
+      if( firstTask )
         {
           slotSetFlight( firstTask );
         }
@@ -1865,9 +1871,10 @@ bool MapContents::loadTask(QFile& path)
     }
   else
     {
-      QMessageBox::warning(_mainWindow,
-                           tr("Error occurred!"),
-                           tr("wrong doctype ") + doc.doctype().name(), QMessageBox::Ok);
+      QMessageBox::warning( _mainWindow,
+                            tr("Load task failed!"),
+                            tr("Wrong XML task document type ") + doc.doctype().name(),
+                            QMessageBox::Ok );
       return false;
     }
 }
@@ -1891,7 +1898,7 @@ QString MapContents::genTaskName(QString suggestion)
 
       if( ft )
         {
-          if( ft->getName() == suggestion )
+          if( ft->getFileName() == suggestion )
             {
               // Name is already in use. Generate an unique one.
               return genTaskName( genTaskName() );
@@ -1912,7 +1919,7 @@ bool MapContents::taskNameInUse( QString name )
 
       if( ft )
         {
-          if( ft->getName() == name )
+          if( ft->getFileName() == name )
             {
               // Name is already in use. Generate an unique one.
               return true;
@@ -1927,6 +1934,7 @@ bool MapContents::taskNameInUse( QString name )
 void MapContents::reProject()
 {
   BaseFlightElement *flight;
+
   foreach(flight, flightList)
       flight->reProject();
 }

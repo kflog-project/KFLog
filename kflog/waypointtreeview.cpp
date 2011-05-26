@@ -1081,16 +1081,21 @@ void WaypointTreeView::slotAddWaypoint(Waypoint *w)
       slotAddCatalog( wpc );
     }
 
+  int idx;
   int loop = 1;
 
-  if( w->name.isEmpty() )
+  if( w->name.isEmpty() || currentWaypointCatalog->findWaypoint( w->name, idx ) )
     {
-      int idx;
-      w->name.sprintf( "WPT%03d", loop );
+      w->name.sprintf( "WPT_%04d", loop );
 
-      while( currentWaypointCatalog->findWaypoint( w->name, idx ) && loop < 1000 )
+      while( currentWaypointCatalog->findWaypoint( w->name, idx ) && loop < 10000 )
         {
-          w->name.sprintf( "WPT%03d", ++loop );
+          w->name.sprintf( "WPT%04d", ++loop );
+        }
+
+      if( w->description.isEmpty() )
+        {
+          w->description = w->name;
         }
     }
 

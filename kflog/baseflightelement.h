@@ -42,14 +42,19 @@ public:
 
   virtual QList<Waypoint*> getWPList() = 0;
 
-  QString& getFileName()
+  virtual QString& getFileName()
     {
       return sourceFileName;
     };
 
+  virtual void setFileName( QString fn )
+    {
+      sourceFileName = fn;
+    };
+
   /**
    * Searches the first point of the flight, which distance to the
-   * mousecursor is less than 30 pixel. If no point is found, -1 is
+   * mouse cursor is less than 30 pixel. If no point is found, -1 is
    * returned.
    * @param  cPoint  The map-position of the mouse cursor.
    * @param  searchPoint  A pointer to a flight point. Will be filled
@@ -87,7 +92,7 @@ public:
   /**
    * Virtual function to trigger re-projecting of the coordinates of the object.
    */
-  virtual void reProject();
+  virtual void reProject() = 0;
 
 protected:
   /** */

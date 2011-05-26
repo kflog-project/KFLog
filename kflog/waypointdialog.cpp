@@ -23,6 +23,8 @@
 #include "waypointdialog.h"
 #include "wgspoint.h"
 
+extern QSettings _settings;
+
 WaypointDialog::WaypointDialog( QWidget *parent ) :
   QDialog(parent),
   edit(false)
@@ -77,11 +79,12 @@ void WaypointDialog::__initDialog()
   layout->addWidget(name, row, 0);
 
   country = new QLineEdit;
-  country->setToolTip(tr("Add countries as two letter code according to ISO 3166-1-alpha-2"));
+  country->setToolTip(tr("Add country as two letter code according to ISO 3166-1-alpha-2"));
   country->setMaxLength(2); // limit country to 2 characters
 
   QRegExp rx("[A-Za-z]{2}");
   country->setValidator( new QRegExpValidator(rx, this) );
+  country->setText( _settings.value("/Homesite/Country", "").toString() );
 
   connect( country, SIGNAL(textEdited( const QString& )),
            this, SLOT(slotTextEditedCountry( const QString& )) );
@@ -224,13 +227,12 @@ void WaypointDialog::__initDialog()
   buttonsLayout->addStretch( 10 );
 
   applyButton = new QPushButton(tr("&Apply"));
-  connect(applyButton, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
+  connect(applyButton, SIGNAL(clicked()), SLOT(slotAccept()));
   buttonsLayout->addWidget(applyButton);
 
   QPushButton *pb = new QPushButton(tr("&Ok"));
   pb->setDefault(true);
-  connect(pb, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
-  connect(pb, SIGNAL(clicked()), SLOT(accept()));
+  connect(pb, SIGNAL(clicked()), SLOT(slotAccept()));
   buttonsLayout->addWidget(pb);
 
   pb = new QPushButton(tr("&Cancel"), this);
@@ -252,6 +254,7 @@ void WaypointDialog::__initDialog()
 void WaypointDialog::clear()
 {
   name->clear();
+  startName.clear();
   description->clear();
   country->clear();
   elevation->setText(0);
@@ -279,7 +282,7 @@ void WaypointDialog::slotAddWaypoint()
 
   QString text;
 
-  // insert a new waypoint to current catalog
+  // insert a new waypoint to the current catalog
   Waypoint *w = new Waypoint;
   w->name = name->text().left(8).toUpper();
   w->description = description->text();
@@ -365,4 +368,56 @@ void WaypointDialog::setSurface( enum Runway::SurfaceType st )
 void WaypointDialog::enableApplyButton(bool enable)
 {
   applyButton->setEnabled(enable);
+}
+
+void WaypointDialog::slotAccept()
+{
+  // Here we check the waypoint constrains.
+  if( name->text().trimmed().isEmpty() )
+    {
+      // User has no name entered. We reject the accept.
+      QMessageBox::warning( this,
+                             tr("Name is missing"),
+                             tr("<html>Missing waypoint name!<br><br>"
+                                "Please enter a name.</html>"),
+                             QMessageBox::Ok );
+      return;
+    }
+
+  if( description->text().trimmed().isEmpty() )
+    {
+      // User has no name entered. We reject the accept.
+      QMessageBox::warning( this,
+                             tr("Description is missing"),
+                             tr("<html>Missing waypoint description!<br><br>"
+                                "Please enter a description.</html>"),
+                             QMessageBox::Ok );
+      return;
+    }
+
+  if( country->text().trimmed().isEmpty() )
+    {
+      // User has no name entered. We reject the accept.
+      QMessageBox::warning( this,
+                             tr("Country is missing"),
+                             tr("<html>Missing waypoint country!<br><br>"
+                                "Please enter a country.</html>"),
+                             QMessageBox::Ok );
+      return;
+    }
+
+  if( country->text().trimmed().size() != 2 )
+    {
+      // User has no name entered. We reject the accept.
+      QMessageBox::warning( this,
+                             tr("Country is wrong"),
+                             tr("<html>Waypoint country has to consist of two letters!<br><br>"
+                                "Please correct the entry.</html>"),
+                             QMessageBox::Ok );
+      return;
+    }
+
+  slotAddWaypoint();
+
+  accept();
 }

@@ -56,272 +56,281 @@ class KFLogConfig : public QDialog
 {
   Q_OBJECT
 
-  private:
+ private:
 
   Q_DISABLE_COPY ( KFLogConfig )
 
-  public:
+ public:
 
-    KFLogConfig( QWidget* parent=0 );
+  KFLogConfig( QWidget* parent=0 );
 
-    virtual ~KFLogConfig();
+  virtual ~KFLogConfig();
 
-    /** */
-    enum ElementType { Road = 0, Highway, Railway, River, Canal, City,
-        AirA, AirB, AirC, AirD, AirElow, AirE, AirF, ControlC, ControlD, Danger,
-        LowFlight, Restricted, Prohibited, Tmz, GliderSector, WaveWindow,
-        Forest, Trail, Railway_D, Aerial_Cable, River_T,
-        Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500, Separator };
+  /** */
+  enum ElementType { Road = 0, Highway, Railway, River, Canal, City,
+      AirA, AirB, AirC, AirD, AirElow, AirE, AirF, ControlC, ControlD, Danger,
+      LowFlight, Restricted, Prohibited, Tmz, GliderSector, WaveWindow,
+      Forest, Trail, Railway_D, Aerial_Cable, River_T,
+      Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500, Separator };
 
-    enum DefaultWaypointCatalog { Empty = 0, LastUsed, Specific };
+  enum DefaultWaypointCatalog { Empty = 0, LastUsed, Specific };
 
-  signals:
+ signals:
 
-    /** */
-    void scaleChanged(int min, int max);
+  /** */
+  void scaleChanged(int min, int max);
 
-    /** Emitted, if the ok button was pressed and all new data have been saved. */
-    void configOk();
+  /** Emitted, if the ok button was pressed and all new data have been saved. */
+  void configOk();
 
-    /** Emitted to subwidgets that their configuration should be saved. */
-    void saveConfig();
+  /** Emitted to subwidgets that their configuration should be saved. */
+  void saveConfig();
 
-    /** */
-    void newDrawType(int type);
+  /** */
+  void newDrawType(int type);
 
-    /**
-     * Emitted to request a Welt2000 file download.
-     */
-    void downloadWelt2000();
+  /**
+   * Emitted to request a Welt2000 file download.
+   */
+  void downloadWelt2000();
 
-  public slots:
-    /** */
-    void slotOk();
+ public slots:
+  /** */
+  void slotOk();
 
-    void slotPageClicked( QTreeWidgetItem * item, int column );
-    /** */
-    void slotDefaultPath();
-    /** */
-    void slotDefaultProjection();
-    /** */
-    void slotDefaultScale();
-    /** */
-    void slotSearchFlightPath();
-    /** */
-    void slotSearchMapPath();
-    /** */
-    void slotSearchTaskPath();
-    /** */
-    void slotSearchWaypointPath();
-    /** */
-    void slotSelectProjection(int);
-    /** */
-    void slotShowLowerLimit(int value);
-    /** */
-    void slotShowUpperLimit(int value);
-    /** */
-    void slotShowSwitchScale(int value);
-    /** */
-    void slotShowWpLabel(int value);
-    /** */
-    void slotShowReduceScaleA(int value);
-    /** */
-    void slotShowReduceScaleB(int value);
-    /** */
-    void slotShowReduceScaleC(int value);
-    /** */
-    void slotSelectDefaultCatalog(int item);
-    /** */
-    void slotDefaultWaypoint();
-    /** */
-    void slotSearchDefaultWaypoint();
-    /**
-     * Open a color dialog and let the user define a new color.
-     *
-     * \param buttonIdentifier Identifier of pressed button.
-     */
-    void slotSelectFlightTypeColor( int buttonIdentifier );
+  void slotPageClicked( QTreeWidgetItem * item, int column );
+  /** */
+  void slotDefaultPath();
+  /** */
+  void slotDefaultProjection();
+  /** */
+  void slotDefaultScale();
+  /** */
+  void slotSearchFlightPath();
+  /** */
+  void slotSearchMapPath();
+  /** */
+  void slotSearchTaskPath();
+  /** */
+  void slotSearchWaypointPath();
+  /** */
+  void slotSelectProjection(int);
+  /** */
+  void slotShowLowerLimit(int value);
+  /** */
+  void slotShowUpperLimit(int value);
+  /** */
+  void slotShowSwitchScale(int value);
+  /** */
+  void slotShowWpLabel(int value);
+  /** */
+  void slotShowReduceScaleA(int value);
+  /** */
+  void slotShowReduceScaleB(int value);
+  /** */
+  void slotShowReduceScaleC(int value);
+  /** */
+  void slotSelectDefaultCatalog(int item);
+  /** */
+  void slotDefaultWaypoint();
+  /** */
+  void slotSearchDefaultWaypoint();
+  /**
+   * Open a color dialog and let the user define a new color.
+   *
+   * \param buttonIdentifier Identifier of pressed button.
+   */
+  void slotSelectFlightTypeColor( int buttonIdentifier );
 
-    /**
-     * Reset all flight path line widths to their default values.
-     */
-    void slotDefaultFlightPathLines();
+  /**
+   * Reset all flight path line widths to their default values.
+   */
+  void slotDefaultFlightPathLines();
 
-    /**
-     * Resets all flight path colors to their default values.
-     */
-    void slotDefaultFlightPathColors();
+  /**
+   * Resets all flight path colors to their default values.
+   */
+  void slotDefaultFlightPathColors();
 
-    /**
-     * Selects the indexed item in the ConfigDrawElement class.
-     */
-    void slotSelectDrawElement( int index );
+  /**
+   * Selects the indexed item in the ConfigDrawElement class.
+   */
+  void slotSelectDrawElement( int index );
 
-    /**
-     * Selects the indexed item in the ConfigPrintElement class.
-     */
-    void slotSelectPrintElement( int index );
+  /**
+   * Selects the indexed item in the ConfigPrintElement class.
+   */
+  void slotSelectPrintElement( int index );
 
-    /**
-     * Called if a Welt2000 file shall be downloaded.
-     */
-    void slotDownloadWelt2000();
+  /**
+   * Called if a Welt2000 file shall be downloaded.
+   */
+  void slotDownloadWelt2000();
 
-  private:
-    /** */
-    void __addPersonalTab();
-    /** */
-    void __addMapTab();
-    /** */
-    void __addFlightTab();
-    /** */
-    void __addPathTab();
-    /** */
-    void __addProjectionTab();
-    /** */
-    void __addScaleTab();
-    /** */
-    int __setScaleValue(int value);
-    /** */
-    int __getScaleValue(double value);
-    /** */
-    void __addAirfieldTab();
-    /** */
-    void __addWaypointTab();
+ private slots:
 
-    /** Adds a tab for unit configuration. */
-    void __addUnitTab();
+ /**
+  * Called to make all text to upper cases.
+  */
+ void slotTextEditedCountry( const QString& text );
 
-    QGridLayout *configLayout;
+ private:
 
-    QTreeWidget *setupTree;
+ /** */
+  void __addPersonalTab();
+  /** */
+  void __addMapTab();
+  /** */
+  void __addFlightTab();
+  /** */
+  void __addPathTab();
+  /** */
+  void __addProjectionTab();
+  /** */
+  void __addScaleTab();
+  /** */
+  int __setScaleValue(int value);
+  /** */
+  int __getScaleValue(double value);
+  /** */
+  void __addAirfieldTab();
+  /** */
+  void __addWaypointTab();
 
-    QFrame *activePage;
-    /** */
-    QFrame* personalPage;
-    /** */
-    QFrame* mapPage;
-    /** */
-    QFrame* flightPage;
-    /** */
-    QFrame* pathPage;
-    /** */
-    QFrame* topoPage;
-    /** */
-    QFrame* projPage;
-    /** */
-    QFrame* scalePage;
-    /** */
-    QFrame* airfieldPage;
-    /** */
-    QFrame* waypointPage;
-    /** */
-    QFrame* unitPage;
+  /** Adds a tab for unit configuration. */
+  void __addUnitTab();
 
-    /** */
-    QLineEdit* igcPathE;
-    QLineEdit* taskPathE;
-    QLineEdit* waypointPathE;
-    QLineEdit* mapPathE;
-    QLineEdit* catalogPathE;
-    LatEdit* homeLatE;
-    LongEdit* homeLonE;
-    QLineEdit* homeNameE;
-    QLineEdit* preNameE;
-    QLineEdit* surNameE;
-    QLineEdit* dateOfBirthE;
+  QGridLayout *configLayout;
 
-    QSpinBox* altitudePenWidth;
-    QSpinBox* cyclingPenWidth;
-    QSpinBox* speedPenWidth;
-    QSpinBox* varioPenWidth;
-    QSpinBox* solidPenWidth;
-    QSpinBox* enginePenWidth;
+  QTreeWidget *setupTree;
 
-    QLineEdit* filterWelt2000;
-    QSpinBox* homeRadiusWelt2000;
-    QCheckBox* readOlWelt2000;
+  QFrame *activePage;
+  /** */
+  QFrame* personalPage;
+  /** */
+  QFrame* mapPage;
+  /** */
+  QFrame* flightPage;
+  /** */
+  QFrame* pathPage;
+  /** */
+  QFrame* topoPage;
+  /** */
+  QFrame* projPage;
+  /** */
+  QFrame* scalePage;
+  /** */
+  QFrame* airfieldPage;
+  /** */
+  QFrame* waypointPage;
+  /** */
+  QFrame* unitPage;
 
-    /**
-     * Initial value of home radius.
-     */
-    int homeRadiusWelt2000Value;
+  /** */
+  QLineEdit* igcPathE;
+  QLineEdit* taskPathE;
+  QLineEdit* waypointPathE;
+  QLineEdit* mapPathE;
+  QLineEdit* catalogPathE;
+  LatEdit* homeLatE;
+  LongEdit* homeLonE;
+  QLineEdit* homeCountryE;
+  QLineEdit* homeNameE;
+  QLineEdit* preNameE;
+  QLineEdit* surNameE;
+  QLineEdit* dateOfBirthE;
 
-    /**
-     * Initial value of country filter
-     */
-    QString filterWelt2000Text;
+  QSpinBox* altitudePenWidth;
+  QSpinBox* cyclingPenWidth;
+  QSpinBox* speedPenWidth;
+  QSpinBox* varioPenWidth;
+  QSpinBox* solidPenWidth;
+  QSpinBox* enginePenWidth;
 
-    /**
-     * Initial value of outlanding checkbox.
-     */
-    bool readOlWelt2000Value;
+  QLineEdit* filterWelt2000;
+  QSpinBox* homeRadiusWelt2000;
+  QCheckBox* readOlWelt2000;
 
-    QSlider* lLimit;
-    QSlider* uLimit;
-    QSlider* switchScale;
-    QSlider* wpLabel;
-    QSlider* reduce1;
-    QSlider* reduce2;
-    QSlider* reduce3;
-    QLCDNumber* lLimitN;
-    QLCDNumber* uLimitN;
-    QLCDNumber* switchScaleN;
-    QLCDNumber* wpLabelN;
-    QLCDNumber* reduce1N;
-    QLCDNumber* reduce2N;
-    QLCDNumber* reduce3N;
-    QComboBox* elementSelect;
-    QComboBox* projectionSelect;
-    LatEdit* firstParallel;
-    LatEdit* secondParallel;
-    LongEdit* originLongitude;
+  /**
+   * Initial value of home radius.
+   */
+  int homeRadiusWelt2000Value;
 
-    QButtonGroup *waypointButtonGroup;
-    QPushButton* catalogPathSearch;
+  /**
+   * Initial value of country filter
+   */
+  QString filterWelt2000Text;
 
-    QPushButton* flightTypeLeftTurnColorButton;
-    QColor flightTypeLeftTurnColor;
-    QPushButton* flightTypeRightTurnColorButton;
-    QColor flightTypeRightTurnColor;
-    QPushButton* flightTypeMixedTurnColorButton;
-    QColor flightTypeMixedTurnColor;
-    QPushButton* flightTypeStraightColorButton;
-    QColor flightTypeStraightColor;
-    QPushButton* flightTypeSolidColorButton;
-    QColor flightTypeSolidColor;
-    QPushButton* flightTypeEngineNoiseColorButton;
-    QColor flightTypeEngineNoiseColor;
+  /**
+   * Initial value of outlanding checkbox.
+   */
+  bool readOlWelt2000Value;
 
-    /** Button array */
-    QPushButton** ftcButtonArray[6];
+  QSlider* lLimit;
+  QSlider* uLimit;
+  QSlider* switchScale;
+  QSlider* wpLabel;
+  QSlider* reduce1;
+  QSlider* reduce2;
+  QSlider* reduce3;
+  QLCDNumber* lLimitN;
+  QLCDNumber* uLimitN;
+  QLCDNumber* switchScaleN;
+  QLCDNumber* wpLabelN;
+  QLCDNumber* reduce1N;
+  QLCDNumber* reduce2N;
+  QLCDNumber* reduce3N;
+  QComboBox* elementSelect;
+  QComboBox* projectionSelect;
+  LatEdit* firstParallel;
+  LatEdit* secondParallel;
+  LongEdit* originLongitude;
 
-    /** Color array of related buttons. */
-    QColor* ftcColorArray[6];
+  QButtonGroup *waypointButtonGroup;
+  QPushButton* catalogPathSearch;
 
-    /** Default color array of related buttons. */
-    QColor ftcColorArrayDefault[6];
+  QPushButton* flightTypeLeftTurnColorButton;
+  QColor flightTypeLeftTurnColor;
+  QPushButton* flightTypeRightTurnColorButton;
+  QColor flightTypeRightTurnColor;
+  QPushButton* flightTypeMixedTurnColorButton;
+  QColor flightTypeMixedTurnColor;
+  QPushButton* flightTypeStraightColorButton;
+  QColor flightTypeStraightColor;
+  QPushButton* flightTypeSolidColorButton;
+  QColor flightTypeSolidColor;
+  QPushButton* flightTypeEngineNoiseColorButton;
+  QColor flightTypeEngineNoiseColor;
 
-    /** Widget to configure the map draw elements. */
-    ConfigMapElement* configDrawWidget;
+  /** Button array */
+  QPushButton** ftcButtonArray[6];
 
-    /** Widget to configure the map print elements. */
-    ConfigMapElement* configPrintWidget;
+  /** Color array of related buttons. */
+  QColor* ftcColorArray[6];
 
-    int cylinPar;
-    int lambertV1;
-    int lambertV2;
-    int lambertOrigin;
-    int currentProjType;
+  /** Default color array of related buttons. */
+  QColor ftcColorArrayDefault[6];
 
-    /** Combo box for distance unit configuration. */
-    QComboBox* unitDistance;
+  /** Widget to configure the map draw elements. */
+  ConfigMapElement* configDrawWidget;
 
-    /** Combo box for position unit configuration. */
-    QComboBox* unitPosition;
+  /** Widget to configure the map print elements. */
+  ConfigMapElement* configPrintWidget;
 
-    /** Combo box for altitude unit configuration. */
-    QComboBox* unitAltitude;
+  int cylinPar;
+  int lambertV1;
+  int lambertV2;
+  int lambertOrigin;
+  int currentProjType;
+
+  /** Combo box for distance unit configuration. */
+  QComboBox* unitDistance;
+
+  /** Combo box for position unit configuration. */
+  QComboBox* unitPosition;
+
+  /** Combo box for altitude unit configuration. */
+  QComboBox* unitAltitude;
 };
 
 #endif
