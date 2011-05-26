@@ -1620,15 +1620,16 @@ void MapContents::slotNewTask()
 
   QString
   helpText = tr(  "<html>"
-                  "You can select waypoints with the left mouse button."
-                  "You can also select free waypoints by clicking anywhere in the map."
+                  "<b>Task Management</b><br><br>"
+                  "If a new task is created the graphical task planning is activated automatically. "
+                  "Press the left mouse button on a point at the map and you get display a popup menu "
+                  "with the possible actions. You can add, delete and create free new waypoints. "
+                  "Selected waypoints are always appended at the end of the current task. If you need "
+                  "more flexibility, you should open the task in the task editor. With the editor you "
+                  "have more possibilities to modify the task."
                   "<br><br>"
-                  "When you press &lt;CTRL&gt; and click with the left mouse button on a taskpoint, "
-                  "it will be deleted.<br>"
-                  "You can compute the task up to your current mouse position by pressing &lt;SHIFT&gt;."
-                  "<br>"
-                  "To finish the task, press &lt;CTRL&gt; together with the right mouse button.<br>"
-                  "It's possible to move and delete taskpoints from the finished task."
+                  "To finish the task planning use the menu point <i>End task planning</i>. "
+                  "It is important to do that otherwise the task is not closed."
                   "</html>"
                 );
 

@@ -456,7 +456,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
 /**
   * just a helper function
-  * to keep the Waypoint class lightweight
+  * to keep the Waypoint class light weight
   */
 QString getInfoString (Waypoint* wp)
 {
@@ -691,8 +691,6 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 
 void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
 {
-  qDebug() << "Map::__graphicalPlanning";
-
   BaseFlightElement *bfe = _globalMapContents->getFlight();
 
   // bfe can contain different classes. We take only into account a
@@ -722,8 +720,6 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
       // Try the waypoint catalog to find it.
       found = __getTaskWaypoint( current, &wp, wpList );
     }
-
-  qDebug() << "Map::__graphicalPlanning() found=" << found;
 
   // Open task action menu for further processing. That seems for me the best
   // way to be user friendly.
@@ -872,7 +868,7 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
 
 void Map::keyReleaseEvent(QKeyEvent* event)
 {
-  qWarning("key Release");
+  qDebug() << " Map::keyReleaseEvent";
 
   if(event->modifiers() == Qt::ShiftModifier)
     {
@@ -2254,8 +2250,6 @@ void Map::slotShowCurrentFlight()
 {
   BaseFlightElement *bfe = _globalMapContents->getFlight();
 
-  qDebug() << "Map::slotShowCurrentFlight(): bfe=" << bfe;
-
   // just to make sure ...
   slotAnimateFlightStop();
 
@@ -2263,9 +2257,6 @@ void Map::slotShowCurrentFlight()
 
   if( bfe && bfe->getObjectType() == BaseMapElement::Task )
     {
-      qDebug() << "Map::slotShowCurrentFlight(): bfe is task, wps="
-               << bfe->getWPList().count();
-
       if( bfe->getWPList().count() == 0 )
         {
           slotActivatePlanning();
@@ -2301,11 +2292,8 @@ void Map::slotShowCurrentFlight()
 /** append a waypoint to the current task */
 void Map::slotAppendWaypoint2Task( Waypoint *p )
 {
-  qDebug() << "Map::slotAppendWaypoint2Task() Rein: Planning=" << planning;
-
   if( planning != 1 )
     {
-      qDebug() << "Planning inactive!";
       return;
     }
 
@@ -2328,8 +2316,6 @@ void Map::slotAppendWaypoint2Task( Waypoint *p )
       // We have to send an update trigger to the object tree.
       emit flightTaskModified();
     }
-
-  qDebug() << "Map::slotAppendWaypoint2Task() Raus: Planning=" << planning;
 }
 
 /** search for a waypoint
@@ -2671,6 +2657,11 @@ void Map::__createPopupMenu()
 
   mapPopup->setTitle( QObject::tr("Map Menu") );
 
+  QAction* action = mapPopup->addAction( tr("Map Menu") );
+  action->setData( -1 );
+
+  mapPopup->addSeparator();
+
   miAddWaypointAction = mapPopup->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
                                              QObject::tr("&New waypoint"),
                                              this,
@@ -2686,10 +2677,6 @@ void Map::__createPopupMenu()
                                                 this,
                                                 SLOT(slotMpDeleteWaypoint()));
   mapPopup->addSeparator();
-
-  miEndPlanningAction = mapPopup->addAction( QObject::tr("&End taskplanning"),
-                                             this,
-                                             SLOT(slotMpEndPlanning()) );
 
   miShowMapInfoAction = mapPopup->addAction( _mainWindow->getPixmap("kde_info_16.png"),
                                              QObject::tr("&Show map info..."),
@@ -2716,11 +2703,9 @@ void Map::__createPopupMenu()
  */
 }
 
-/** Enable/disable the correct items from the menu and then shows it. */
+/** Enable/disable the correct items for the map menu and then shows it. */
 void Map::__showPopupMenu(QMouseEvent* event)
 {
-  qDebug() << "Map::__showPopupMenu(): planning=" << planning;
-
   if( findWaypoint( event->pos() ) )
     {
       miAddWaypointAction->setEnabled( false );
@@ -2733,8 +2718,6 @@ void Map::__showPopupMenu(QMouseEvent* event)
       miEditWaypointAction->setEnabled( false );
       miDeleteWaypointAction->setEnabled( false );
     }
-
-  miEndPlanningAction->setEnabled( (planning == 1 || planning == 3) );
 
   mapPopup->exec( mapToGlobal( event->pos() ) );
 }
@@ -2838,19 +2821,6 @@ void Map::slotMpCenterMap()
    // Move Map
   _globalMapMatrix->centerToPoint(popupPos);
   __redrawMap();
-}
-
-/** Called from map menu if end planning is selected. */
-void Map::slotMpEndPlanning()
-{
-  moveWPindex = -999;
-
-  prePlanPos.setX(-999);
-  prePlanPos.setY(-999);
-  planning = 2;
-
-  emit setStatusBarMsg( "" );
-  emit taskPlanningEnd();
 }
 
 void Map::slotMpShowMapInfo()

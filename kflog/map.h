@@ -400,7 +400,6 @@ private:
     /**
      * Actions of menu items
      */
-    QAction *miEndPlanningAction;
     QAction *miCenterMapAction;
     QAction *miAddWaypointAction;
     QAction *miEditWaypointAction;
@@ -433,10 +432,6 @@ protected slots:
      * called from the MapPopupmenu to delete a waypoint.
      */
     void slotMpDeleteWaypoint();
-    /**
-     * called from the MapPopupmenu to end the planning.
-     */
-    void slotMpEndPlanning();
     /**
      * called from the MapPopupmenu to show info on the current location.
      */
