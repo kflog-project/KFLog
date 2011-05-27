@@ -139,7 +139,7 @@ void WaypointDialog::__initDialog()
   l2->setBuddy( elevation );
 
   //---
-  layout->addRowSpacing( row, 20 );
+  layout->setRowMinimumHeight( row, 20 );
   row++;
 
   //----
@@ -164,7 +164,7 @@ void WaypointDialog::__initDialog()
   l2->setBuddy( frequency );
 
   //---
-  layout->addRowSpacing( row, 20 );
+  layout->setRowMinimumHeight( row, 20 );
   row++;
 
   //---

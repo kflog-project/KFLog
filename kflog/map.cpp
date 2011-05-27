@@ -96,7 +96,7 @@ Map::Map( QWidget* parent ) :
   prePlanPos.setX(-999);
   prePlanPos.setY(-999);
 
-  setWhatsThis( QObject::tr(
+  setWhatsThis( tr(
      "<html><B>The map</B>"
      "<P>To move or scale the map, please use the buttons in the "
      "<B>Map control area</B>. Or center the map to the current "
@@ -108,7 +108,21 @@ Map::Map( QWidget* parent ) :
      "NumLock is switched on.</P>"
      "<P>With the menu item <b>Options-&gt;Configure KFLog</b> you can "
      "configure, which map elements should be displayed at which "
-     "scale.</P></html>"
+     "scale.</P>"
+     "<b>Supported mouse actions at the map:</b>"
+     "<ul>"
+     "<li>Moving the mouse pointer at a map item will display the item data after a short delay."
+     "<li>Pressing the right mouse button opens the map menu."
+     "<li>Pressing the middle mouse button centers the map to the mouse point."
+     "<li>Pressing the left mouse button opens the task menu, if graphical task planning is activated."
+     "<li>Pressing the shift key and the left mouse button shows the data of a "
+     "map item, if it lays under the mouse pointer. Otherwise the waypoint dialog "
+     "is opened to create a new waypoint."
+     "<li>Pressing key 0 shows a cross at the map. Press the left mouse button "
+     "and hold it down during drag. A frame is drawn at the map. Release the mouse "
+     "button to zoom the map into the frame."
+     "</ul>"
+     "</html>"
       ) );
 
   __createPopupMenu();
@@ -157,6 +171,8 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
 #if 0
 
+  // @AP: This code of graphical task planning is currently not used.
+  // Too much effort for me to get it running.
   if( planning == 1 || planning == 3 )
     {
       qDebug() << "mouseMoveEvent: planning=" << planning;
@@ -702,6 +718,8 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
       return;
     }
 
+  emit setStatusBarMsg( tr( "Task planning on" ) );
+
   QList<Waypoint*> taskPointList = ft->getWPList();
   QList<Waypoint*> tempTaskPointList = ft->getWPList();
   QList<Waypoint*> & wpList = _globalMapContents->getWaypointList();
@@ -849,7 +867,7 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
         // End of task planning
         planning = 2;
         emit taskPlanningEnd();
-        emit setStatusBarMsg( "" );
+        emit setStatusBarMsg( tr( "Ready." ) );
 
       default:
         // Should never happen
@@ -1556,7 +1574,7 @@ void Map::slotActivatePlanning()
       planning = 1;
       prePlanPos.setX( -999 );
       prePlanPos.setY( -999 );
-      emit setStatusBarMsg( QObject::tr( "Task planning on" ) );
+      emit setStatusBarMsg( tr( "Task planning on" ) );
     }
   else
     {

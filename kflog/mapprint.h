@@ -7,57 +7,71 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef MAPPRINT_H
-#define MAPPRINT_H
+#ifndef MAP_PRINT_H
+#define MAP_PRINT_H
 
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qdialog.h>
-#include <qlineedit.h>
-#include <qmap.h>
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qpainter.h>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDialog>
+#include <QLineEdit>
+#include <QString>
+#include <QStringList>
+#include <QPainter>
 
 /**
- * This class provides a dialog-page in a kprinterdialog. The page is
- * used to set the scale for printing the map as well as the page-header.
+ * \class MapPrintDialogPage
  *
- * @author Heiner Lamprecht
- * @version $Id$
+ * \author Heiner Lamprecht, Axel Pauli
+ *
+ * \brief Printer configuration dialog.
+ *
+ * This class provides a dialog page. The page is
+ * used to set the scale for printing the map as well as the page header.
+ *
+ *
+ * \date 2002-2011
+ *
+ * \version $Id$
  */
 class MapPrintDialogPage : public QDialog
 {
-  public:
-    /** */
-    MapPrintDialogPage(QStringList sList, QWidget *parent=0,
-        const char *name=0, bool printFlight = false);
-    /** */
-    ~MapPrintDialogPage();
-    /** */
-    void getOptions(QString *printScale, bool *printTitle, bool *printText, bool *printLegend);
+ public:
 
-  private:
-    /** */
-    QComboBox* scaleSelect;
-    /** */
-    QCheckBox* printLegend;
-    /** */
-    QCheckBox* printText;
-    /** */
-    QCheckBox* printTitle;
-    /** */
-    QLineEdit* titleInput;
-    /** */
-    QStringList scaleList;
+  MapPrintDialogPage( QStringList sList,
+                      QWidget *parent=0,
+                      bool printFlight = false );
+
+  ~MapPrintDialogPage();
+
+  /** */
+  void getOptions( QString& printScale,
+                   bool& printTitle,
+                   bool& printText,
+                   bool& printLegend );
+
+ private:
+
+  /** */
+  QComboBox* scaleSelectBox;
+  /** */
+  QCheckBox* printLegend;
+  /** */
+  QCheckBox* printText;
+  /** */
+  QCheckBox* printTitle;
+  /** */
+  QLineEdit* titleInput;
+  /** */
+  QStringList scaleList;
 };
 
 /**

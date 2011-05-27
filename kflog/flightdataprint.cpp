@@ -7,30 +7,36 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#include <QPrinter>
+#include <QtGui>
 
 #include "flightdataprint.h"
 #include "mapcalc.h"
 #include "wgspoint.h"
 
-#define VERSION "3.0"
+#define VERSION "4.0.0"
 
 FlightDataPrint::FlightDataPrint(Flight* currentFlight)
 {
   QPrinter printer(QPrinter::PrinterResolution);
 
-  if(!printer.setup())  return;
+  QPrintDialog dialog( &printer );
+
+  if( dialog.exec() != QDialog::Accepted )
+    {
+      return;
+    }
 
   printer.setDocName("kflog-map.ps");
-  printer.setCreator((QString)"KFLog " + VERSION);
+  printer.setCreator( QString("KFLog ") + VERSION );
 
   lasttime=0;
 
@@ -76,7 +82,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
   font.setPointSize( 12 );
   font.setWeight( QFont::Bold );
   painter.setFont( font );
-  painter.drawText(50, 170, QObject::tr("Flighttrack") + ":");
+  painter.drawText(50, 170, QObject::tr("Flight track") + ":");
 
   font.setWeight( QFont::Normal );
   font.setPointSize( 9 );
@@ -86,24 +92,30 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
       printTime(currentFlight->getLandTime() - currentFlight->getStartTime()));
 
   cPoint = currentFlight->getPoint(currentFlight->getStartIndex());
+
   __printPositionData(&painter, &cPoint, 210, QObject::tr("Takeoff") + ":");
 
   cPoint = currentFlight->getPoint(currentFlight->getLandIndex());
+
   __printPositionData(&painter, &cPoint, 223, QObject::tr("Landing") + ":");
 
   cPoint = currentFlight->getPoint(Flight::H_MAX);
+
   __printPositionData(&painter, &cPoint, 248, QObject::tr("max. Altitude") + ":",
       true, true);
 
   cPoint = currentFlight->getPoint(Flight::VA_MAX);
+
   __printPositionData(&painter, &cPoint, 261, QObject::tr("max. Vario") + ":",
       true, true);
 
   cPoint = currentFlight->getPoint(Flight::VA_MIN);
+
   __printPositionData(&painter, &cPoint, 274, QObject::tr("min. Vario") + ":",
       true, true);
 
   cPoint = currentFlight->getPoint(Flight::V_MAX);
+
   __printPositionData(&painter, &cPoint, 287, QObject::tr("max. Speed") + ":",
       true, true);
 
@@ -121,9 +133,9 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
 
   painter.drawText(50, 355, QObject::tr("Typ") + ":");
   temp = QObject::tr("%1  Track: %2  Points: %3").arg(
-            (const char*)currentFlight->getTaskTypeString(true)).arg(
-            (const char*)currentFlight->getDistance(true)).arg(
-            (const char*)currentFlight->getPoints(true));
+            currentFlight->getTaskTypeString(true)).arg(
+            currentFlight->getDistance(true)).arg(
+            currentFlight->getPoints(true));
   painter.drawText(125, 355, temp);
 
   QList<Waypoint*> wpList = currentFlight->getOriginalWPList(); // use original task
@@ -154,10 +166,11 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
       yPos += 15;
 
       painter.drawText(50, yPos, QObject::tr("Typ") + ":");
+
       temp = QObject::tr("%1  Track: %2  Points: %3").arg(
-            (const char*)currentFlight->getTaskTypeString()).arg(
-            (const char*)currentFlight->getDistance()).arg(
-            (const char*)currentFlight->getPoints());
+            currentFlight->getTaskTypeString()).arg(
+            currentFlight->getDistance()).arg(
+            currentFlight->getPoints());
       painter.drawText(125, yPos, temp);
       yPos += 20;
 
@@ -174,14 +187,17 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
 
 FlightDataPrint::~FlightDataPrint()
 {
-
 }
 
-void FlightDataPrint::__printPositionData(QPainter* painter,
-        FlightPoint* cPoint, int yPos, const char* text,
-        bool printVario, bool printSpeed)
+void FlightDataPrint::__printPositionData( QPainter* painter,
+                                           FlightPoint* cPoint,
+                                           int yPos,
+                                           QString text,
+                                           bool printVario,
+                                           bool printSpeed )
 {
   QString temp;
+
   painter->drawText(50, yPos, text);
   painter->drawText(145, yPos, WGSPoint::printPos(cPoint->origP.lat(), true));
   painter->drawText(220, yPos, "/");

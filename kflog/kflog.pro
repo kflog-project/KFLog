@@ -3,8 +3,7 @@
 
 QMAKE_LFLAGS += -rdynamic
 
-QT += qt3support \
-      network \
+QT += network \
       xml
 
 CONFIG += qt \

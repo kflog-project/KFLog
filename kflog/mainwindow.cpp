@@ -849,8 +849,8 @@ void MainWindow::createMenuBar()
   help->addAction( getPixmap("qt_logo_32x32.png"), tr("About &Qt"),
                    qApp, SLOT(aboutQt()), Qt::Key_Q );
 
-  help->insertItem( getPixmap("kflog_16.png"), tr("About KFLog"),
-                    this, SLOT(slotShowAbout()) );
+  help->addAction( getPixmap("kflog_16.png"), tr("About KFLog"),
+                   this, SLOT(slotShowAbout()) );
 
 
   //FIXME: link to manual must be added
@@ -864,15 +864,15 @@ void MainWindow::createStatusBar()
   statusProgress = new QProgressBar( statusBar() );
   statusProgress->setFixedWidth(120);
   statusProgress->setFixedHeight( statusProgress->sizeHint().height() - 4 );
-  statusProgress->setBackgroundMode( Qt::PaletteBackground );
 
   statusLabel = new QLabel( statusBar() );
   statusLabel->setFixedHeight( statusLabel->sizeHint().height() );
   statusLabel->setFrameStyle( QFrame::NoFrame |QFrame::Plain );
   statusLabel->setMargin(0);
   statusLabel->setLineWidth(0);
+  statusLabel->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
 
-  statusTimeL = new QLabel(statusBar(), "time_label_status_bar");
+  statusTimeL = new QLabel(statusBar());
   statusTimeL->setFixedWidth( 80 );
   statusTimeL->setFixedHeight( statusLabel->sizeHint().height() );
   statusTimeL->setFrameStyle(QFrame::NoFrame |QFrame::Plain );
@@ -880,7 +880,7 @@ void MainWindow::createStatusBar()
   statusTimeL->setLineWidth(0);
   statusTimeL->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
 
-  statusAltitudeL = new QLabel(statusBar(), "altitude_label_status_bar");
+  statusAltitudeL = new QLabel(statusBar());
   statusAltitudeL->setFixedWidth( 80 );
   statusAltitudeL->setFixedHeight( statusLabel->sizeHint().height() );
   statusAltitudeL->setFrameStyle(QFrame::NoFrame |QFrame::Plain );
@@ -888,7 +888,7 @@ void MainWindow::createStatusBar()
   statusAltitudeL->setLineWidth(0);
   statusAltitudeL->setAlignment( Qt::AlignRight | Qt::AlignVCenter );
 
-  statusVarioL = new QLabel(statusBar(), "vario_label_status_bar");
+  statusVarioL = new QLabel(statusBar());
   statusVarioL->setFixedWidth( 80 );
   statusVarioL->setFixedHeight( statusLabel->sizeHint().height() );
   statusVarioL->setFrameStyle(QFrame::NoFrame |QFrame::Plain );
@@ -896,7 +896,7 @@ void MainWindow::createStatusBar()
   statusVarioL->setLineWidth(0);
   statusVarioL->setAlignment( Qt::AlignRight | Qt::AlignVCenter );
 
-  statusSpeedL = new QLabel(statusBar(), "speed_label_status_bar");
+  statusSpeedL = new QLabel(statusBar());
   statusSpeedL->setFixedWidth( 100 );
   statusSpeedL->setFixedHeight( statusLabel->sizeHint().height() );
   statusSpeedL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
@@ -904,28 +904,28 @@ void MainWindow::createStatusBar()
   statusSpeedL->setLineWidth(0);
   statusSpeedL->setAlignment( Qt::AlignRight | Qt::AlignVCenter );
 
-  statusLatL = new QLabel(statusBar(), "lat_label_status_bar");
+  statusLatL = new QLabel(statusBar());
   statusLatL->setFixedHeight( statusLabel->sizeHint().height() );
   statusLatL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
   statusLatL->setMargin(0);
   statusLatL->setLineWidth(0);
   statusLatL->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
 
-  statusLonL = new QLabel(statusBar(), "lon_label_status_bar");
+  statusLonL = new QLabel(statusBar());
   statusLonL->setFixedHeight( statusLabel->sizeHint().height() );
   statusLonL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
   statusLonL->setMargin(0);
   statusLonL->setLineWidth(0);
   statusLonL->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
 
-  statusBar()->addWidget( statusLabel, 1, false );
-  statusBar()->addWidget( statusTimeL, 0, false );
-  statusBar()->addWidget( statusAltitudeL, 0, false );
-  statusBar()->addWidget( statusSpeedL, 0, false );
-  statusBar()->addWidget( statusVarioL, 0, false );
-  statusBar()->addWidget( statusProgress, 0,  false );
-  statusBar()->addWidget( statusLatL, 0, false );
-  statusBar()->addWidget( statusLonL, 0, false );
+  statusBar()->addWidget( statusLabel, 1 );
+  statusBar()->addWidget( statusTimeL, 0 );
+  statusBar()->addWidget( statusAltitudeL, 0 );
+  statusBar()->addWidget( statusSpeedL, 0 );
+  statusBar()->addWidget( statusVarioL, 0 );
+  statusBar()->addWidget( statusProgress, 0 );
+  statusBar()->addWidget( statusLatL, 0 );
+  statusBar()->addWidget( statusLonL, 0 );
 }
 
 void MainWindow::createToolBar()
@@ -976,8 +976,8 @@ void MainWindow::readOptions()
   taskDir   = _settings.value( "/Path/DefaultTaskDirectory",
                                getApplicationDataDirectory() ).toString();
 
-  mapControl->slotSetMinMaxValue( _settings.readNumEntry( "/Scale/Lower Limit", 10 ),
-                                  _settings.readNumEntry( "/Scale/Upper Limit", 1500 ) );
+  mapControl->slotSetMinMaxValue( _settings.value( "/Scale/Lower Limit", 10 ).toInt(),
+                                  _settings.value( "/Scale/Upper Limit", 1500 ).toInt() );
 }
 
 void MainWindow::saveOptions()
@@ -1239,7 +1239,7 @@ void MainWindow::slotOpenFile( const QUrl& url )
     {
       QFile file( url.path() );
 
-      if( url.fileName().right( 9 ).toLower() == ".kflogtsk" )
+      if( url.path().right( 9 ).toLower() == ".kflogtsk" )
         {
           // this is probably a taskfile. Try to open it as a task
           if( _globalMapContents->loadTask( file ) )
@@ -1528,7 +1528,7 @@ void MainWindow::slotSetCurrentFile( const QString &fileName )
 
 void MainWindow::slotSetPointInfo(const QPoint& pos, const FlightPoint& point)
 {
-  statusBar()->clear();
+  statusBar()->clearMessage();
   statusTimeL->setText(printTime(point.time, true));
   QString text;
   text.sprintf("%4d m  ", point.height);
@@ -1544,7 +1544,7 @@ void MainWindow::slotSetPointInfo(const QPoint& pos, const FlightPoint& point)
 
 void MainWindow::slotSetPointInfo(const QPoint& pos)
 {
-  statusBar()->clear();
+  statusBar()->clearMessage();
   statusTimeL->setText("");
   statusAltitudeL->setText("");
   statusSpeedL->setText("");
@@ -1633,11 +1633,11 @@ void MainWindow::slotFlightPrint()
             TaskDataPrint((FlightTask*)f);
             break;
           default:
-            QString tmp;
-            tmp.sprintf(tr("Not yet available for type: %d"), f->getObjectType());
+            QString tmp(tr("Not yet available for type: %1").arg(f->getObjectType()));
             QMessageBox::warning(0, tr("Type not available"), tmp, QMessageBox::Ok);
         }
     }
+
   slotSetStatusMsg(tr("Ready."));
 }
 

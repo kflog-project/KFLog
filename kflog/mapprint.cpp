@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -16,7 +17,6 @@
 ***********************************************************************/
 
 #include <QtGui>
-#include <Qt3Support>
 
 #include "mapprint.h"
 
@@ -24,7 +24,7 @@
 #include "mapcontents.h"
 #include "mapmatrix.h"
 
-#define VERSION "3.0"
+#define VERSION "4.0.0"
 
 #define TOP_LEFT_X   ( ( 0 + leftMargin ) * 2 )
 #define TOP_LEFT_Y   ( ( 0 + topMargin ) * 2 )
@@ -46,86 +46,102 @@
   height = (int)(( p_h / 25.4 ) * 72.0);
 
 
-MapPrintDialogPage::MapPrintDialogPage(QStringList sList, QWidget *parent,
-    const char *name, bool printFlight)
-  : QDialog(parent,name),
-    scaleList(sList)
+MapPrintDialogPage::MapPrintDialogPage( QStringList sList,
+                                        QWidget *parent,
+                                        bool printFlight ) :
+  QDialog(parent),
+  scaleList(sList)
 {
-  setCaption(QObject::tr("Map"));
+  setWindowTitle(tr("Print Map Content"));
   setModal(true);
 
-  Q3GroupBox *scaleBox = new Q3GroupBox(QObject::tr("Map print"), this);
+  scaleSelectBox = new QComboBox;
+  scaleSelectBox->addItems(scaleList);
 
-  scaleSelect = new QComboBox(this);
-  scaleSelect->insertStringList(scaleList);
+  printTitle = new QCheckBox(tr("Print Page Title"), this);
+  printTitle->setChecked(false);
 
-  printTitle = new QCheckBox(QObject::tr("Print Pagetitle"), this);
-  titleInput = new QLineEdit(this);
+  titleInput = new QLineEdit;
+  titleInput->setEnabled(false);
 
-  connect(printTitle, SIGNAL(toggled(bool)), titleInput, SLOT(setEnabled(bool)));
+  connect( printTitle, SIGNAL(toggled(bool)),
+           titleInput, SLOT(setEnabled(bool)));
 
-  printLegend = new QCheckBox(QObject::tr("Print Legend"), this);
-  printText = new QCheckBox(QObject::tr("Print Text"), this);
+  printLegend = new QCheckBox( tr("Print Legend") );
+  printText = new QCheckBox( tr("Print Text") );
   printText->setChecked(true);
 
-  if(printFlight)
+  if( printFlight )
     {
-      // Hier m�ssen noch Infos �ber den Flug hin!!!
-      titleInput->setText(QObject::tr("Flight Track") + ":");
+      // Hier müssen noch Infos über den Flug hin!!!
+      titleInput->setText( tr( "Flight Track" ) + ":" );
     }
 
-  Q3GridLayout* pageLayout = new Q3GridLayout(this, 6, 7);
-  pageLayout->addMultiCellWidget(scaleBox, 0, 7, 0, 4);
-  pageLayout->addWidget(new QLabel(QObject::tr("Map scale") + ":", this), 1, 1);
-  pageLayout->addWidget(scaleSelect, 1, 3);
-  pageLayout->addWidget(printTitle, 3, 1);
-  pageLayout->addWidget(titleInput, 3, 3);
-  pageLayout->addWidget(printLegend, 5, 1);
-  pageLayout->addWidget(printText, 5, 3);
+  QGridLayout* groupLayout = new QGridLayout;
 
-  pageLayout->setColSpacing(0, 10);
-  pageLayout->setColSpacing(2, 5);
-  pageLayout->setColStretch(3, 1);
-  pageLayout->setColSpacing(4, 10);
+  groupLayout->addWidget( new QLabel( tr( "Map Scale" ) + ":" ), 0, 0 );
+  groupLayout->addWidget( scaleSelectBox, 0, 1 );
+  groupLayout->addWidget( printTitle, 1, 0 );
+  groupLayout->addWidget( titleInput, 1, 1 );
+  groupLayout->addWidget( printLegend, 2, 0 );
+  groupLayout->addWidget( printText, 2, 1 );
 
-  pageLayout->setRowSpacing(0, 25);
-  pageLayout->setRowSpacing(2, 15);
-  pageLayout->setRowSpacing(4, 15);
-  pageLayout->setRowSpacing(5, 3);
-  pageLayout->setRowStretch(7, 2);
-  pageLayout->setRowSpacing(7, 10);
+  QGroupBox *printBox = new QGroupBox(tr("Map Print"));
+  printBox->setLayout( groupLayout );
 
   QPushButton *okButton = new QPushButton("&Ok", this);
-  pageLayout->addWidget(okButton, 6, 1);
   connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
+
   QPushButton *cancelButton = new QPushButton("&Cancel", this);
-  pageLayout->addWidget(cancelButton, 6, 3);
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+
+  QHBoxLayout* hbBox = new QHBoxLayout;
+  hbBox->addWidget( okButton );
+  hbBox->addStretch( 5 );
+  hbBox->addWidget( cancelButton );
+
+  QVBoxLayout* pageLayout = new QVBoxLayout( this );
+  pageLayout->setSpacing( 10 );
+  pageLayout->addWidget( printBox );
+  pageLayout->addLayout( hbBox );
 
   // Unused widgets disabled:
 
-  printTitle->setEnabled(false);
-  titleInput->setEnabled(false);
-  printLegend->setEnabled(false);
+  //titleInput->setEnabled(false);
+  //printLegend->setEnabled(false);
 }
 
 MapPrintDialogPage::~MapPrintDialogPage()
 {
-
+  qDebug() << "~MapPrintDialogPage()";
 }
 
-void MapPrintDialogPage::getOptions(QString *printScale, bool *bPrintTitle, bool *bPrintText, bool *bPrintLegend)
+void MapPrintDialogPage::getOptions( QString& printScale,
+                                     bool& bPrintTitle,
+                                     bool& bPrintText,
+                                     bool& bPrintLegend )
 {
-  *printScale = scaleSelect->currentText();
-  if(printTitle->isEnabled())
-    *bPrintTitle = printTitle->isChecked();
+  printScale = scaleSelectBox->currentText();
+
+  if( printTitle->isEnabled() )
+    {
+      bPrintTitle = printTitle->isChecked();
+    }
   else
-    *bPrintTitle = false;
-  *bPrintText = printText->isChecked();
-  if(printLegend->isEnabled())
-    *bPrintLegend = printLegend->isChecked();
+    {
+      bPrintTitle = false;
+    }
+
+  bPrintText = printText->isChecked();
+
+  if( printLegend->isEnabled() )
+    {
+      bPrintLegend = printLegend->isChecked();
+    }
   else
-    *bPrintLegend = false;
+    {
+      bPrintLegend = false;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -151,14 +167,21 @@ MapPrint::MapPrint(bool flightLoaded)
       scaleList.append(QObject::tr("Center to Task"));
     }
 
-  dialogPage = new MapPrintDialogPage(scaleList, 0, "MapPrintDialogPage", false);
-  if(dialogPage->exec()==QDialog::Rejected)
-    return;
+  dialogPage = new MapPrintDialogPage( scaleList, 0, false );
 
-  QPrinter printer(QPrinter::PrinterResolution);
+  if( dialogPage->exec() == QDialog::Rejected )
+    {
+      return;
+    }
 
-  if(!printer.setup(0))
-    return;
+  QPrinter printer( QPrinter::PrinterResolution );
+
+  QPrintDialog dialog( &printer );
+
+  if( dialog.exec() != QDialog::Accepted )
+    {
+      return;
+    }
 
   scaleRange = new double[6];
   scaleRange[0] = 1000.0 / 72 * 25.4;          /* 1:1.000.000 */
@@ -172,13 +195,14 @@ MapPrint::MapPrint(bool flightLoaded)
   bool printTitle;
   bool printText;
   bool printLegend;
-  dialogPage->getOptions(&printScale, &printTitle, &printText, &printLegend);
+
+  dialogPage->getOptions( printScale, printTitle, printText, printLegend);
 
   printer.setDocName("kflog-map.ps");
-  printer.setCreator((QString)"KFLog " + VERSION);
+  printer.setCreator( QString("KFLog ") + VERSION );
 
   // We have to set the real page size. KPrinter knows the
-  // pageformat, but reports a wrong pagesize ...
+  // page format, but reports a wrong page size ...
   int width = 0, height = 0;
 
   switch (printer.pageSize())
@@ -305,14 +329,14 @@ MapPrint::MapPrint(bool flightLoaded)
   double selectedScale;
   QPoint mapCenter;
 
-  if(scaleList.findIndex(printScale) == 6)
+  if(scaleList.indexOf(printScale) == 6)
       selectedScale = _globalMapMatrix->centerToRect(
           ((Flight *)_globalMapContents->getFlight())->getFlightRect(), pS - QSize(100,163));
-  else if(scaleList.findIndex(printScale) == 7)
+  else if(scaleList.indexOf(printScale) == 7)
       selectedScale = _globalMapMatrix->centerToRect(
           ((Flight *)_globalMapContents->getFlight())->getTaskRect(), pS - QSize(100,163));
   else
-      selectedScale = scaleRange[scaleList.findIndex(printScale)];
+      selectedScale = scaleRange[scaleList.indexOf(printScale)];
 
   _globalMapMatrix->createPrintMatrix(selectedScale, pS);
   mapCenter = _globalMapMatrix->getMapCenter();
@@ -361,7 +385,7 @@ MapPrint::MapPrint(bool flightLoaded)
       pS.height() - topMargin - bottomMargin - 63);
 
   // Workaround. It moves the map slightly upwards ...
-  if(scaleList.findIndex(printScale) == 6 || scaleList.findIndex(printScale) == 7)
+  if(scaleList.indexOf(printScale) == 6 || scaleList.indexOf(printScale) == 7)
       dY -= 32;
 
   _globalMapMatrix->createPrintMatrix(selectedScale, pS * 2, (int)dX, (int)dY);
@@ -375,7 +399,7 @@ MapPrint::MapPrint(bool flightLoaded)
   bool show5 = false;
   unsigned int stop10, stop1 = 10, stop_small10 = 0, stop_small1 = 10;
 
-  switch(scaleList.findIndex(printScale))
+  switch(scaleList.indexOf(printScale))
     {
       case 0:
         scaleText = "1:1.000.000";
@@ -564,7 +588,6 @@ MapPrint::MapPrint(bool flightLoaded)
 
 MapPrint::~MapPrint()
 {
-
 }
 
 void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
@@ -577,6 +600,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
   gridP->setBrush(Qt::NoBrush);
 
   QString text;
+
   if(mapCenterLon > 0)
     {
       const int lon1 = mapBorder.left() / 600000 - 1;
@@ -585,7 +609,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
       const int lat2 = mapBorder.bottom() / 600000 - 1;
 
       /* Abstand zwischen zwei Linien in Minuten
-       * Wenn __drawGrid() aufgerufen wird, ist der Ma�stab bereits
+       * Wenn __drawGrid() aufgerufen wird, ist der Massstab bereits
        * skaliert worden.
        */
       int step = 1;
@@ -596,7 +620,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
 
       QPoint cP, cP2, cP3, cP4;
 
-      /* Zun�chst die L�ngengrade: */
+      /* Zunächst die Längengrade: */
       for(int loop = lon1; loop <= lon2; loop++)
         {
           cP = _globalMapMatrix->print(mapBorder.top(), (loop * 600000),
@@ -659,9 +683,9 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
             }
         }
 
-      /* Damit keine L�ngengrade in den Rand ragen, wird links und rechts je
-       * ein wei�er Strich gezogen. Damit wird eventuell auch der Text des
-       * �stlichsten L�ngengrades �berdeckt.
+      /* Damit keine Längengrade in den Rand ragen, wird links und rechts je
+       * ein weisser Strich gezogen. Damit wird eventuell auch der Text des
+       * östlichsten Längengrades überdeckt.
        */
       gridP->setPen(QPen(QColor(255, 255, 255)));
       gridP->setBrush(QBrush(QColor(255, 255, 255), Qt::SolidPattern));
@@ -672,13 +696,14 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
           dX, dY);
       cP3 = _globalMapMatrix->print(mapBorder.bottom(), mapBorder.right(),
           dX, dY);
-      /* Hier k�nnte es noch passieren, dass die Breitengrade in den Rand
+      /* Hier könnte es noch passieren, dass die Breitengrade in den Rand
        * hineinragen ...
        */
       for(int loop = 0; loop < (lat1 - lat2 + 1) ; loop++)
         {
           int size = (lon2 - lon1 + 1) * 10;
-          Q3PointArray pointArray(size);
+
+          QPolygon pointArray(size);
 
           for(int lonloop = 0; lonloop < size; lonloop++)
             {
@@ -711,7 +736,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
           int number = (int) (60.0 / step);
           for(int loop2 = 1; loop2 < number; loop2++)
             {
-              Q3PointArray pointArraySmall(size);
+              QPolygon pointArraySmall(size);
 
               for(int lonloop = 0; lonloop < size; lonloop++)
                 {
@@ -761,7 +786,8 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
 void MapPrint::__drawWaypoints(const double /*selectedScale*/, QPainter* wpP, const QSize /*pS*/,
                                const QRect /*mapBorder*/, const int /*mapCenterLon*/, const double dX,
                                const double dY, const double /*gridLeft*/, const double /*gridRight*/,
-                               const double /*gridTop*/, const double /*gridBot*/) {
+                               const double /*gridTop*/, const double /*gridBot*/)
+{
   extern const MapMatrix *_globalMapMatrix;
   extern MapContents     *_globalMapContents;
 
@@ -776,7 +802,7 @@ void MapPrint::__drawWaypoints(const double /*selectedScale*/, QPainter* wpP, co
       QPoint p = _globalMapMatrix->print( wp->origP.lat(), wp->origP.lon(), dX, dY );
       // draw marker and name
       wpP->drawRect( p.x() - 4, p.y() - 4, 8, 8 );
-      wpP->drawText( p.x() + 6, p.y(), wp->name, -1 );
+      wpP->drawText( p.x() + 6, p.y(), wp->name );
     }
 }
 

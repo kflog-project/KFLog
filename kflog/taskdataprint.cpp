@@ -7,30 +7,36 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#include <QPrinter>
+#include <QtGui>
 
 #include "mapcalc.h"
 #include "taskdataprint.h"
 #include "wgspoint.h"
 
-#define VERSION "3.0"
+#define VERSION "4.0.0"
 
 TaskDataPrint::TaskDataPrint(FlightTask* task)
 {
   QPrinter printer;
 
-  if(!printer.setup())  return;
+  QPrintDialog dialog( &printer );
+
+  if( dialog.exec() != QDialog::Accepted )
+    {
+      return;
+    }
 
   printer.setDocName("kflog-map.ps");
-  printer.setCreator((QString)"KFLog " + VERSION);
+  printer.setCreator(QString("KFLog ") + VERSION);
 
   printer.setFullPage(true);
 
@@ -40,16 +46,16 @@ TaskDataPrint::TaskDataPrint(FlightTask* task)
   QPainter painter(&printer);
 
   painter.setFont(QFont("helvetica", 18, QFont::Bold));
-  painter.drawText(50, 50, QObject::tr("Flightplanning") + ":");
+  painter.drawText(50, 50, QObject::tr("Flight planning") + ":");
   painter.setPen(QPen(QColor(0, 0, 0), 2));
   painter.drawLine(50, 56, 545, 56);
 
   painter.setFont(QFont("helvetica", 10));
-  painter.drawText(50, 100, QObject::tr("Task-Type") + ":");
+  painter.drawText(50, 100, QObject::tr("Task Type") + ":");
   painter.drawText(125, 100, task->getTaskTypeString());
-  painter.drawText(50, 115, QObject::tr("total Distance") + ":");
+  painter.drawText(50, 115, QObject::tr("Total Distance") + ":");
   painter.drawText(125, 115, task->getTotalDistanceString());
-  painter.drawText(50, 130, QObject::tr("Task-Distance") + ":");
+  painter.drawText(50, 130, QObject::tr("Task Distance") + ":");
   painter.drawText(125, 130, task->getTaskDistanceString());
 
   painter.setPen(QPen(QColor(0,0,0), 1));
@@ -61,6 +67,7 @@ TaskDataPrint::TaskDataPrint(FlightTask* task)
   painter.setFont(QFont("helvetica", 10));
 
   int yPos = 210;
+
   for(int loop = 0; loop < task->getWPList().count(); loop++)
     {
       cPoint = task->getWPList().at(loop);
@@ -75,5 +82,4 @@ TaskDataPrint::TaskDataPrint(FlightTask* task)
 
 TaskDataPrint::~TaskDataPrint()
 {
-
 }

@@ -23,7 +23,6 @@
 #include <QComboBox>
 #include <QDialog>
 #include <QErrorMessage>
-#include <q3dict.h>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>

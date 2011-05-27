@@ -703,9 +703,9 @@ int FlightTask::getPlannedPoints()
 {
   extern QSettings _settings;
 
-  double pointFAI = _settings.readDoubleEntry("/FlightPoints/FAIPoint", 2.0);
-  double pointNormal = _settings.readDoubleEntry("/FlightPoints/NormalPoint", 1.75);
-  double pointZielS = _settings.readDoubleEntry("/FlightPoints/ZielSPoint", 1.5);
+  double pointFAI    = _settings.value("/FlightPoints/FAIPoint", 2.0).toDouble();
+  double pointNormal = _settings.value("/FlightPoints/NormalPoint", 1.75).toDouble();
+  double pointZielS  = _settings.value("/FlightPoints/ZielSPoint", 1.5).toDouble();
 
   /*
    * Aufgabe vollst�ndig erf�llt
@@ -762,14 +762,14 @@ void FlightTask::checkWaypoints(QList<FlightPoint*> route, const QString& glider
 
   extern QSettings _settings;
 
-  bool showWarnings = _settings.readBoolEntry("/GeneralOptions/ShowWaypointWarnings",true);
+  bool showWarnings = _settings.value("/GeneralOptions/ShowWaypointWarnings",true).toBool();
 
-  double pointFAI = _settings.readDoubleEntry("/FlightPoints/FAIPoint", 2.0);
-  double pointNormal = _settings.readDoubleEntry("/FlightPoints/NormalPoint", 1.75);
-  double pointCancel = _settings.readDoubleEntry("/FlightPoints/CancelPoint", 1.0);
-  double pointZielS = _settings.readDoubleEntry("/FlightPoints/ZielSPoint", 1.5);
-  double malusValue = _settings.readDoubleEntry("/FlightPoints/MalusValue", 15.0);
-  double sectorMalus = _settings.readDoubleEntry("/FlightPoints/SectorMalus", -0.1);
+  double pointFAI = _settings.value("/FlightPoints/FAIPoint", 2.0).toDouble();
+  double pointNormal = _settings.value("/FlightPoints/NormalPoint", 1.75).toDouble();
+  double pointCancel = _settings.value("/FlightPoints/CancelPoint", 1.0).toDouble();
+  double pointZielS = _settings.value("/FlightPoints/ZielSPoint", 1.5).toDouble();
+  double malusValue = _settings.value("/FlightPoints/MalusValue", 15.0).toDouble();
+  double sectorMalus = _settings.value("/FlightPoints/SectorMalus", -0.1).toDouble();
 
   if(! gliderType.isEmpty() )
     {
@@ -1351,10 +1351,10 @@ struct faiRange FlightTask::getFAIDistance(double leg)
 {
   struct faiRange r;
 
-  r.minLength28 = QMIN(leg + leg / 44.0 * 56.0, 500.0); // maximal 500
-  r.maxLength28 = QMIN(leg + leg / 28.0 * 72.0, 500.0); // maximal 500
-  r.minLength25 = QMAX(leg + leg / 45.0 * 55.0, 500.0); // minimal 500
-  r.maxLength25 = QMAX(4.0 * leg, 500.0);               // minimal 500
+  r.minLength28 = qMin(leg + leg / 44.0 * 56.0, 500.0); // maximal 500
+  r.maxLength28 = qMin(leg + leg / 28.0 * 72.0, 500.0); // maximal 500
+  r.minLength25 = qMax(leg + leg / 45.0 * 55.0, 500.0); // minimal 500
+  r.maxLength25 = qMax(4.0 * leg, 500.0);               // minimal 500
 
   return r;
 }
@@ -1432,7 +1432,7 @@ void FlightTask::calcFAIArea()
           }
 
           tmpDist += (50.0 - fmod(tmpDist, 50.0));
-          tmpDist = QMIN(tmpDist, faiR.maxLength28);
+          tmpDist = qMin(tmpDist, faiR.maxLength28);
         }
         // last sector for < 500 km FAI
         if (faiR.minLength28 < faiR.maxLength28) {
@@ -1476,7 +1476,7 @@ void FlightTask::calcFAIArea()
             FAISectList.append(areaSector);
           }
           tmpDist += (50.0 - fmod(tmpDist, 50.0));
-          tmpDist = QMIN(tmpDist, faiR.maxLength25);
+          tmpDist = qMin(tmpDist, faiR.maxLength25);
         }
         // last sector for > 500 km FAI
         if (faiR.minLength25 < faiR.maxLength25) {

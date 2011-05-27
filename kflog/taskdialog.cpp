@@ -88,7 +88,7 @@ void TaskDialog::createDialog()
   // Row 1
   name = new QLineEdit;
   name->setReadOnly(false);
-  l = new QLabel(name, tr("&Name") + ":");
+  l = new QLabel(tr("&Name") + ":");
   header->addWidget(l);
   header->addWidget(name);
 

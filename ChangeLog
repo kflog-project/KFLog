@@ -1,5 +1,13 @@
 $Id$
 
+2011-05-27 Axel Pauli <axel@kflog.org>
+  
+  * Dialog of class MapPrint ported to Qt4.
+  * Whole Qt3 support removed from qmake project files. After a half year of hard
+    work KFLog compiles now with Qt4 without using Qt3Support library. But
+    not all parts do running under Qt4. Print management and flight animation
+    need further work to get them running.
+
 2011-05-26 Axel Pauli <axel@kflog.org>
 
   * A task name is stored and retrieved now from the XML file content.

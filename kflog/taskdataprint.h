@@ -7,35 +7,32 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Heiner Lamprecht
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
-#ifndef TASKDATAPRINT_H
-#define TASKDATAPRINT_H
+#ifndef TASK_DATA_PRINT_H
+#define TASK_DATA_PRINT_H
 
 #include "flighttask.h"
 
 /**
- * @author Heiner Lamprecht
+ * @author Heiner Lamprecht, Axel Pauli
+ *
  * @version $Id$
  */
 class TaskDataPrint
 {
   public:
-    /** */
-    TaskDataPrint(FlightTask* task);
-    /** */
-    ~TaskDataPrint();
 
-//  private:
-//  /** */
-//  void __printPositionData(QPainter* painter, struct wayPoint* cPoint,
-//          int yPos);
+  TaskDataPrint(FlightTask* task);
+
+  virtual ~TaskDataPrint();
 };
 
 #endif

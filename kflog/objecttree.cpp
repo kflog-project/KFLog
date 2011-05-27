@@ -513,7 +513,7 @@ void ObjectTree::slotSaveTask()
       fName += ".kflogtsk";
     }
 
-  QApplication::setOverrideCursor( Qt::waitCursor );
+  QApplication::setOverrideCursor( Qt::WaitCursor );
 
   QDomDocument doc("KFLogTask");
   QDomElement root = doc.createElement("KFLogTask");
@@ -592,7 +592,7 @@ void ObjectTree::slotSaveAllTask()
       fName += ".kflogtsk";
     }
 
-  QApplication::setOverrideCursor( Qt::waitCursor );
+  QApplication::setOverrideCursor( Qt::WaitCursor  );
 
   QDomDocument doc("KFLogTask");
   QDomElement root = doc.createElement("KFLogTask");
@@ -649,7 +649,9 @@ void ObjectTree::slotSaveAllTask()
   else
     {
       QMessageBox::warning( this,
-                            tr("Permission denied"), "<html>" + tr("<B>%1</B><BR>permission denied!").arg(fName) + "</html>",
+                            tr("Permission denied"), "<html>" +
+                            tr("<B>%1</B><BR>permission denied!").arg(fName) +
+                            "</html>",
                             QMessageBox::Ok );
     }
 
