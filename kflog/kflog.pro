@@ -1,4 +1,5 @@
 # KFLog4 qmake project file
+#
 # $Id$
 
 QMAKE_LFLAGS += -rdynamic
@@ -60,7 +61,6 @@ SOURCES = \
     mapcontents.cpp \
     mapcontrolview.cpp \
     mapmatrix.cpp \
-    mapprint.cpp \
     objecttree.cpp \
     openairparser.cpp \
     optimization.cpp \
@@ -137,7 +137,6 @@ HEADERS = \
     mapcontrolview.h \
     mapdefaults.h \
     mapmatrix.h \
-    mapprint.h \
     objecttree.h \
     openairparser.h \
     optimization.h \

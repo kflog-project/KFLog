@@ -26,7 +26,7 @@
 
 FlightDataPrint::FlightDataPrint(Flight* currentFlight)
 {
-  QPrinter printer(QPrinter::PrinterResolution);
+  QPrinter printer(QPrinter::ScreenResolution);
 
   QPrintDialog dialog( &printer );
 

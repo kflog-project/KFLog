@@ -75,34 +75,42 @@ class MapPrintDialogPage : public QDialog
 };
 
 /**
- * @author Heiner Lamprecht
- * @version $Id$
+ * \class MapPrint
+ *
+ * \author Heiner Lamprecht, Axel Pauli
+ *
+ * \brief Class to print the map content.
+ *
+ * \date 2002-2011
+ *
+ * \version $Id$
  */
 class MapPrint
 {
-  public:
-    /** */
-    MapPrint(bool flightLoaded);
-    /** */
-    ~MapPrint();
+ public:
 
-  private:
-    /** */
-    MapPrintDialogPage* dialogPage;
-    /** */
-    double* scaleRange;
-    /** */
-    void __drawGrid(const double scale, QPainter* gridP, const QSize pS,
-        const QRect mapBorder, const int mapCenterLon,
-        const double dX, const double dY,
-        const double gridLeft, const double gridRight,
-        const double gridTop, const double gridBot);
-    /** Prints the waypointlist to the supplied QPainter */
-    void __drawWaypoints(const double selectedScale, QPainter* wpP, const QSize pS,
-		const QRect mapBorder, const int mapCenterLon,
-		const double dX, const double dY,
-		const double gridLeft, const double gridRight,
-		const double gridTop, const double gridBot);
+  MapPrint(bool flightLoaded);
+
+  virtual ~MapPrint();
+
+ private:
+
+  MapPrintDialogPage* dialogPage;
+
+  double* scaleRange;
+
+  void __drawGrid(const double scale, QPainter* gridP, const QSize pS,
+      const QRect mapBorder, const int mapCenterLon,
+      const double dX, const double dY,
+      const double gridLeft, const double gridRight,
+      const double gridTop, const double gridBot);
+  /** Prints the waypointlist to the supplied QPainter */
+  void __drawWaypoints(const double selectedScale, QPainter* wpP, const QSize pS,
+  const QRect mapBorder, const int mapCenterLon,
+  const double dX, const double dY,
+  const double gridLeft, const double gridRight,
+  const double gridTop, const double gridBot);
+
     /** Prints the task, if defined, to the supplied QPainter */
 /*    void __drawTask(const double selectedScale, QPainter* taskP, const QSize pS,
 		const QRect mapBorder, const int mapCenterLon,

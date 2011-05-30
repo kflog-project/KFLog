@@ -18,6 +18,7 @@
 
 #include <QtGui>
 
+#include "mainwindow.h"
 #include "mapprint.h"
 
 #include "flight.h"
@@ -174,7 +175,7 @@ MapPrint::MapPrint(bool flightLoaded)
       return;
     }
 
-  QPrinter printer( QPrinter::PrinterResolution );
+  QPrinter printer( QPrinter::HighResolution );
 
   QPrintDialog dialog( &printer );
 
@@ -198,14 +199,38 @@ MapPrint::MapPrint(bool flightLoaded)
 
   dialogPage->getOptions( printScale, printTitle, printText, printLegend);
 
-  printer.setDocName("kflog-map.ps");
+  printer.setDocName("kflog-map");
   printer.setCreator( QString("KFLog ") + VERSION );
+  printer.setOutputFileName( MainWindow::instance()->getApplicationDataDirectory() +
+                             "/kflog-map.pdf" );
+
+  QPainter painter;
+
+  painter.begin(&printer);
+
+  extern Map *_globalMap;
+
+  QWidget *myWidget = _globalMap;
+
+  double xscale = printer.pageRect().width()/double(myWidget->width());
+  double yscale = printer.pageRect().height()/double(myWidget->height());
+  double scale  = qMin(xscale, yscale);
+
+  painter.translate(printer.paperRect().x() + printer.pageRect().width()/2,
+                    printer.paperRect().y() + printer.pageRect().height()/2);
+  painter.scale(scale, scale);
+
+  painter.translate(-myWidget->width()/2, -myWidget->height()/2);
+
+  myWidget->render(&painter);
+
+#if 0
 
   // We have to set the real page size. KPrinter knows the
   // page format, but reports a wrong page size ...
   int width = 0, height = 0;
 
-  switch (printer.pageSize())
+  switch( printer.paperSize() )
     {
       case QPrinter::A0: // (841 x 1189 mm)
         CALC_FORMAT(841, 1189)
@@ -311,7 +336,11 @@ MapPrint::MapPrint(bool flightLoaded)
   else
        pS = QSize(height, width);
 
-  printer.setFullPage(true);
+  QRect pageRect = printer.pageRect();
+
+  qDebug() << "PageRect=" << pageRect << "PageSize=" << pS;
+
+  //printer.setFullPage(true);
 
   // Okay, now lets start creating the printout ...
   extern MapMatrix   *_globalMapMatrix;
@@ -584,6 +613,8 @@ MapPrint::MapPrint(bool flightLoaded)
   // restoring the MapMatrix-values:
   _globalMapMatrix->centerToLatLon(cMapCenter);
   _globalMapMatrix->slotSetScale(cMapScale);
+
+#endif
 }
 
 MapPrint::~MapPrint()

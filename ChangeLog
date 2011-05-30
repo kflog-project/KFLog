@@ -1,5 +1,11 @@
 $Id$
 
+2011-05-30 Axel Pauli <axel@kflog.org>
+
+  * Class MapPrint replaced by direct printing of the map content. It was the
+    easiest method to get a good print picture. The old code did not work as
+    expected and it was to much effort for me to get running it.
+
 2011-05-27 Axel Pauli <axel@kflog.org>
   
   * Dialog of class MapPrint ported to Qt4.

@@ -47,7 +47,13 @@
 
 #include "mainwindow.h"
 
+
 extern QSettings _settings;
+
+/**
+ * external reference, set by main to this class.
+ */
+extern MainWindow *_mainWindow;
 
 /**
  * Contains all map elements and takes control over drawing or printing
@@ -70,6 +76,7 @@ MapConfig *_globalMapConfig = static_cast<MapConfig *> (0);
  */
 Map *_globalMap = static_cast<Map *> (0);
 
+#define PRINT_VERSION "4.0.0"
 
 MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   QMainWindow( parent, flags )
@@ -179,6 +186,11 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
 MainWindow::~MainWindow()
 {
   qDebug() << "~MainWindow()";
+}
+
+MainWindow* MainWindow::instance()
+{
+  return _mainWindow;
 }
 
 QPixmap MainWindow::getPixmap( const QString& pixmapName )
@@ -1608,12 +1620,41 @@ void MainWindow::slotConfigureKFLog()
 
 void MainWindow::slotFilePrint()
 {
-  slotSetStatusMsg(tr("Printing..."));
+  slotSetStatusMsg( tr( "Printing map ..." ) );
 
-  // viewCenterFlightAction is enabled, when a flight is loaded ...
-  MapPrint(viewCenterFlightAction->isEnabled());
+  QPrinter printer( QPrinter::HighResolution );
 
-  slotSetStatusMsg(tr("Ready."));
+  printer.setDocName( "kflog-map" );
+  printer.setCreator( QString( "KFLog " ) + PRINT_VERSION );
+  printer.setOutputFileName( getApplicationDataDirectory() + "/kflog-map.pdf" );
+
+  QPrintDialog dialog( &printer, this );
+
+  if( dialog.exec() != QDialog::Accepted )
+    {
+      slotSetStatusMsg( tr( "" ) );
+      return;
+    }
+
+  QPainter painter( &printer );
+
+  // We print the current content of the map into a file.
+  QWidget *myWidget = _globalMap;
+
+  double xscale = printer.pageRect().width() / double( myWidget->width() );
+  double yscale = printer.pageRect().height() / double( myWidget->height() );
+  double scale = qMin( xscale, yscale );
+
+  painter.translate( printer.paperRect().x() + printer.pageRect().width() / 2,
+                     printer.paperRect().y() + printer.pageRect().height() / 2 );
+
+  painter.scale( scale, scale );
+
+  painter.translate( -myWidget->width() / 2, -myWidget->height() / 2 );
+
+  myWidget->render( &painter );
+
+  slotSetStatusMsg( tr( "Ready." ) );
 }
 
 void MainWindow::slotFlightPrint()

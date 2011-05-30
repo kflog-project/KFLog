@@ -69,6 +69,11 @@ public:
   virtual ~MainWindow();
 
   /**
+   * \return The single instance of this class.
+   */
+  static MainWindow* instance();
+
+  /**
    * \return The requested pixmap.
    */
   QPixmap getPixmap( const QString& pixmapName );
@@ -123,7 +128,7 @@ public slots:
    */
   void slotConfigureKFLog();
   /**
-   * Opens the printing-dialog to print the map.
+   * Opens the printing dialog to print the map into a file.
    */
   void slotFilePrint();
   /** */
