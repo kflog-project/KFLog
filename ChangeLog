@@ -1,5 +1,12 @@
 $Id$
 
+2011-05-31 Axel Pauli <axel@kflog.org>
+
+  * Bugfix in class MapMatrix. Variable matrixSize was used but never
+    initialized. Modified code to use only variable mapViewSize.
+    
+  * Added degree labels to map grid.
+
 2011-05-30 Axel Pauli <axel@kflog.org>
 
   * Class MapPrint replaced by direct printing of the map content. It was the
@@ -9,6 +16,7 @@ $Id$
 2011-05-27 Axel Pauli <axel@kflog.org>
   
   * Dialog of class MapPrint ported to Qt4.
+  
   * Whole Qt3 support removed from qmake project files. After a half year of hard
     work KFLog compiles now with Qt4 without using Qt3Support library. But
     not all parts do running under Qt4. Print management and flight animation
@@ -17,9 +25,12 @@ $Id$
 2011-05-26 Axel Pauli <axel@kflog.org>
 
   * A task name is stored and retrieved now from the XML file content.
+  
   * Guicontrol directory removed. Class KFLogListView not more in use because
     it was not portable to Qt4. It was replaced by the new class KFLogTreeWidget.
+    
   * Editor field home country added to personal configuration page.
+  
   * Tried to get running the graphical flight planning. Old code was very
     complex, confusing and user unfriendly. I used a new approch. If a flight
     task is created, graphical planning is switched on. You see that on the

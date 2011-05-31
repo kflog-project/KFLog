@@ -151,9 +151,17 @@ public:
   double getScale(unsigned int type = MapMatrix::CurrentScale);
 
   /**
-   * @return the lat/lon-border of the current map.
+   * @return the WGS lat/lon borders of the current map.
    */
   QRect getViewBorder() const;
+
+  /**
+   * @return the projected lat/lon borders of the current map.
+   */
+  const QRect& getMapBorder() const
+  {
+    return mapBorder;
+  }
   /**
    * @return the lat/lon-border of the current print-map.
    */
@@ -353,10 +361,14 @@ private:
 
 
   /**
-   * Contains the geographical border of the map (lat/lon).
+   * Contains the geographical borders of the map (lat/lon) as WGS coordinates in KFLog format.
    */
   QRect viewBorder;
   QRect printBorder;
+
+  /**
+   * Contains the geographical borders of the map (lat/lon) as projected coordinates.
+   */
   QRect mapBorder;
   /** */
   QSize mapViewSize;
@@ -370,8 +382,6 @@ private:
   double printArc;
   /** */
   int scaleBorders[6];
-  /** */
-  QSize matrixSize;
 
   /** Current used map projection. */
   ProjectionBase* currentProjection;

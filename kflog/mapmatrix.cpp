@@ -383,7 +383,7 @@ void MapMatrix::__moveMap(int dir)
     mapCenterLon = _settings.value( "/Homesite/Longitude", HOME_DEFAULT_LON ).toInt();
     }
 
-  createMatrix(matrixSize);
+  createMatrix(mapViewSize);
   emit matrixChanged();
 }
 
@@ -397,7 +397,7 @@ QPoint MapMatrix::getHomeCoord() const
 
 void MapMatrix::createMatrix( const QSize& newSize )
 {
-  qDebug() << "MapMatrix::createMatrix()";
+  mapViewSize = newSize;
 
   const QPoint tempPoint( wgsToMap( mapCenterLat, mapCenterLon ) );
 
@@ -441,10 +441,9 @@ void MapMatrix::createMatrix( const QSize& newSize )
   viewBorder.setTop( tCenter.y() );
   viewBorder.setLeft( tlCorner.x() );
   viewBorder.setRight( trCorner.x() );
-  viewBorder.setBottom( std::min( blCorner.y(), brCorner.y() ) );
+  viewBorder.setBottom( qMin( blCorner.y(), brCorner.y() ) );
 
   mapBorder = invertMatrix.mapRect( QRect( 0, 0, newSize.width(), newSize.height() ) );
-  mapViewSize = newSize;
 
   emit displayMatrixValues( getScaleRange(), isSwitchScale() );
 }
@@ -550,14 +549,14 @@ void MapMatrix::slotMoveMapSE() { MATRIX_MOVE( MapMatrix::South | MapMatrix::Eas
 void MapMatrix::slotZoomIn()
 {
   cScale = qMax( ( cScale / 1.25 ), MAX_SCALE);
-  createMatrix(matrixSize);
+  createMatrix(mapViewSize);
   emit matrixChanged();
 }
 
 void MapMatrix::slotZoomOut()
 {
   cScale = qMin( ( cScale * 1.25 ), MIN_SCALE);
-  createMatrix(matrixSize);
+  createMatrix(mapViewSize);
   emit matrixChanged();
 }
 
@@ -569,14 +568,12 @@ void MapMatrix::slotSetScale(double nScale)
     }
 
   cScale = nScale;
-  createMatrix( matrixSize );
+  createMatrix( mapViewSize );
   emit matrixChanged();
 }
 
 void MapMatrix::slotInitMatrix()
 {
-  qDebug() << "MapMatrix::slotInitMatrix()";
-
   // The scale is set to 0 in the constructor. Here we read the scale and
   // the map center only the first time. Otherwise the values would change
   // after configuring KFLog. Fixed 2001-12-14

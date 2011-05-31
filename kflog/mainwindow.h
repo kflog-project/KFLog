@@ -128,11 +128,11 @@ public slots:
    */
   void slotConfigureKFLog();
   /**
-   * Opens the printing dialog to print the map into a file.
+   * Opens the printing dialog to print the map.
    */
-  void slotFilePrint();
+  void slotPrintMap();
   /** */
-  void slotFlightPrint();
+  void slotPrintFlight();
   /** */
   void slotFlightViewIgc3D();
   /** Called, if window is closed by the user. */

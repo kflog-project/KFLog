@@ -37,10 +37,10 @@
 #include "mapconfig.h"
 #include "mapcontrolview.h"
 #include "mapmatrix.h"
-#include "mapprint.h"
 #include "objecttree.h"
 #include "recorderdialog.h"
 #include "taskdataprint.h"
+#include "target.h"
 #include "topolegend.h"
 #include "wgspoint.h"
 #include "waypointtreeview.h"
@@ -76,7 +76,6 @@ MapConfig *_globalMapConfig = static_cast<MapConfig *> (0);
  */
 Map *_globalMap = static_cast<Map *> (0);
 
-#define PRINT_VERSION "4.0.0"
 
 MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   QMainWindow( parent, flags )
@@ -394,12 +393,12 @@ void MainWindow::createMenuBar()
                                  tr("Print..."), this );
   filePrintAction->setShortcut( Qt::CTRL + Qt::Key_P );
   filePrintAction->setEnabled(true);
-  connect( filePrintAction, SIGNAL(triggered()), this, SLOT(slotFilePrint()) );
+  connect( filePrintAction, SIGNAL(triggered()), this, SLOT(slotPrintMap()) );
 
   filePrintFlightAction = new QAction( getPixmap("kde_fileprint_16.png"),
                                        tr("Print Flight Data"), this );
   filePrintFlightAction->setEnabled(true);
-  connect( filePrintFlightAction, SIGNAL(triggered()), this, SLOT(slotFlightPrint()) );
+  connect( filePrintFlightAction, SIGNAL(triggered()), this, SLOT(slotPrintFlight()) );
 
   fileOpenRecorderAction = new QAction( getPixmap("kde_connect_no_16.png"),
                                         tr("Open Recorder"), this );
@@ -1618,17 +1617,24 @@ void MainWindow::slotConfigureKFLog()
   confDlg->setVisible( true );
 }
 
-void MainWindow::slotFilePrint()
+void MainWindow::slotPrintMap()
 {
   slotSetStatusMsg( tr( "Printing map ..." ) );
 
   QPrinter printer( QPrinter::HighResolution );
 
   printer.setDocName( "kflog-map" );
-  printer.setCreator( QString( "KFLog " ) + PRINT_VERSION );
+  printer.setCreator( QString( "KFLog " ) + KFLOG_VERSION );
   printer.setOutputFileName( getApplicationDataDirectory() + "/kflog-map.pdf" );
 
   QPrintDialog dialog( &printer, this );
+
+  dialog.setWindowTitle( tr("Print Map") );
+  dialog.setSizeGripEnabled ( true );
+  dialog.setOptions( QAbstractPrintDialog::PrintToFile |
+                     QAbstractPrintDialog::PrintSelection |
+                     QAbstractPrintDialog::PrintPageRange |
+                     QAbstractPrintDialog::PrintShowPageSize );
 
   if( dialog.exec() != QDialog::Accepted )
     {
@@ -1639,10 +1645,10 @@ void MainWindow::slotFilePrint()
   QPainter painter( &printer );
 
   // We print the current content of the map into a file.
-  QWidget *myWidget = _globalMap;
+  QWidget *map = _globalMap;
 
-  double xscale = printer.pageRect().width() / double( myWidget->width() );
-  double yscale = printer.pageRect().height() / double( myWidget->height() );
+  double xscale = printer.pageRect().width() / double( map->width() );
+  double yscale = printer.pageRect().height() / double( map->height() );
   double scale = qMin( xscale, yscale );
 
   painter.translate( printer.paperRect().x() + printer.pageRect().width() / 2,
@@ -1650,17 +1656,15 @@ void MainWindow::slotFilePrint()
 
   painter.scale( scale, scale );
 
-  painter.translate( -myWidget->width() / 2, -myWidget->height() / 2 );
+  painter.translate( -map->width() / 2, -map->height() / 2 );
 
-  myWidget->render( &painter );
+  map->render( &painter );
 
   slotSetStatusMsg( tr( "Ready." ) );
 }
 
-void MainWindow::slotFlightPrint()
+void MainWindow::slotPrintFlight()
 {
-  slotSetStatusMsg(tr("Printing..."));
-
   BaseFlightElement *f = _globalMapContents->getFlight();
 
   if(f)
@@ -1668,9 +1672,11 @@ void MainWindow::slotFlightPrint()
       switch (f->getObjectType())
         {
           case BaseMapElement::Flight:
+            slotSetStatusMsg(tr("Printing flight ..."));
             FlightDataPrint((Flight *)f);
             break;
           case BaseMapElement::Task:
+            slotSetStatusMsg(tr("Printing task ..."));
             TaskDataPrint((FlightTask*)f);
             break;
           default:

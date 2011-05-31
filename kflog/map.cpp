@@ -1107,11 +1107,11 @@ void Map::__drawGrid()
 
   QPainter gridP;
 
-  gridP.begin(&pixGrid);
-  gridP.setBrush(Qt::NoBrush);
-  gridP.setClipping(true);
+  gridP.begin( &pixGrid );
+  gridP.setBrush( Qt::NoBrush );
+  gridP.setClipping( true );
 
-  // die Kanten des Bereichs
+  // WGS coordinates of the map in degree
   const int lon1 = mapBorder.left() / 600000 - 1;
   const int lon2 = mapBorder.right() / 600000 + 1;
   const int lat1 = mapBorder.top() / 600000 + 1;
@@ -1137,20 +1137,48 @@ void Map::__drawGrid()
       gridStep = 4;
     }
 
-  QPoint cP, cP2;
-
   // First the latitudes:
   for( int loop = 0; loop < (lat1 - lat2 + 1); loop += gridStep )
     {
       int size = (lon2 - lon1 + 1) * 10;
 
-      QPolygon pointArray( size );
+      QPolygon pointArray;
 
       for( int lonloop = 0; lonloop < size; lonloop++ )
         {
-          cP = _globalMapMatrix->wgsToMap( (lat2 + loop) * 600000,
-                                           (int) rint((lon1 + (lonloop * 0.1)) * 600000) );
-          pointArray.setPoint( lonloop, cP );
+          QPoint p0 = _globalMapMatrix->wgsToMap( (lat2 + loop) * 600000,
+                                                  (int) rint((lon1 + (lonloop * 0.1)) * 600000) );
+
+          if( _globalMapMatrix->isVisible(p0) )
+            {
+              pointArray.append( _globalMapMatrix->map(p0) );
+            }
+        }
+
+      if( pointArray.size() >= 2 )
+        {
+          QPoint p = pointArray.first();
+          p.setX(0);
+          pointArray.insert( 0, p );
+
+          p = pointArray.last();
+          p.setX( width() );
+          pointArray.append( p );
+
+          // Draw the main lines
+          gridP.setPen( QPen( QColor( Qt::black ), 1 ) );
+          gridP.drawPolyline( pointArray );
+
+          gridP.setFont(QFont("Helvetica", 8, QFont::Bold));
+
+          int lat = lat2 + loop;
+
+          QString text = QString("%1%2%3")
+                         .arg( lat >= 0 ? "N" : "S" )
+                         .arg( lat >= 0 ? lat : -lat )
+                         .arg(QChar(Qt::Key_degree));
+
+          gridP.drawText( 5, pointArray.first().y() - 5, text );
         }
 
       // Draw the small lines between:
@@ -1158,62 +1186,96 @@ void Map::__drawGrid()
 
       for( int loop2 = 1; loop2 < number; loop2++ )
         {
-          QPolygon pointArraySmall( size );
+          QPolygon pointArraySmall;
 
           for( int lonloop = 0; lonloop < size; lonloop++ )
             {
-              cP = _globalMapMatrix->wgsToMap( (int) rint((lat2 + loop + (loop2 * (step / 60.0))) * 600000),
-                                               (int) rint((lon1 + (lonloop * 0.1)) * 600000) );
-              pointArraySmall.setPoint( lonloop, cP );
+              QPoint p1 = _globalMapMatrix->wgsToMap( (int) rint((lat2 + loop + (loop2 * (step / 60.0))) * 600000),
+                                                      (int) rint((lon1 + (lonloop * 0.1)) * 600000) );
+
+              if( _globalMapMatrix->isVisible(p1) )
+                {
+                  pointArraySmall.append( _globalMapMatrix->map(p1) );
+                }
             }
 
-          if( loop2 == (number / 2.0) )
+          if( pointArraySmall.size() >= 2 )
             {
-              gridP.setPen( QPen( QColor( 0, 0, 0 ), 1, Qt::DashLine ) );
-              gridP.drawPolyline( _globalMapMatrix->map( pointArraySmall ) );
-            }
-          else
-            {
-              gridP.setPen( QPen( QColor( 0, 0, 0 ), 1, Qt::DotLine ) );
-              gridP.drawPolyline( _globalMapMatrix->map( pointArraySmall ) );
-            }
+              QPoint p = pointArraySmall.first();
+              p.setX(0);
+              pointArraySmall.insert( 0, p );
+
+              p = pointArraySmall.last();
+              p.setX( width() );
+              pointArraySmall.append( p );
+
+
+              if( loop2 == (number / 2.0) )
+                {
+                  gridP.setPen( QPen( QColor( Qt::black ), 1, Qt::DashLine ) );
+                  gridP.drawPolyline( pointArraySmall );
+
+                  gridP.setFont(QFont("Helvetica", 8, QFont::Normal));
+
+                  int lat = lat2 + loop;
+
+                  QString text = QString("%1%2.5%3")
+                                 .arg( lat >= 0 ? "N" : "S" )
+                                 .arg( lat >= 0 ? lat : -lat )
+                                 .arg(QChar(Qt::Key_degree));
+
+                  gridP.drawText( 5, pointArraySmall.first().y() - 5, text );
+                }
+              else
+                {
+                  gridP.setPen( QPen( QColor( Qt::black ), 1, Qt::DotLine ) );
+                  gridP.drawPolyline( pointArraySmall );
+                }
+              }
         }
-      // Draw the main lines
-      gridP.setPen( QPen( QColor( 0, 0, 0 ), 1 ) );
-      gridP.drawPolyline( _globalMapMatrix->map( pointArray ) );
     }
 
   // Now the longitudes:
   for( int loop = lon1; loop <= lon2; loop += gridStep )
     {
-      cP  = _globalMapMatrix->wgsToMap( lat1 * 600000, (loop * 600000) );
-      cP2 = _globalMapMatrix->wgsToMap( lat2 * 600000, (loop * 600000) );
+      QPoint cP1 = _globalMapMatrix->wgsToMap( mapBorder.top(), (loop * 600000) );
+      QPoint cP2 = _globalMapMatrix->wgsToMap( mapBorder.bottom(), (loop * 600000) );
+
+      QPoint m1 = _globalMapMatrix->map( cP1 );
+      QPoint m2 = _globalMapMatrix->map( cP2 );
 
       // Draw the main longitudes:
-      gridP.setPen( QPen( QColor( 0, 0, 0 ), 1 ) );
-      gridP.drawLine( _globalMapMatrix->map( cP ), _globalMapMatrix->map( cP2 ) );
+      gridP.setPen( QPen( QColor( Qt::black ), 1 ) );
+      gridP.drawLine( m1, m2 );
+
+      QString text = QString("%1%2%3")
+                     .arg( loop >= 0 ? "E" : "W" )
+                     .arg( loop >= 0 ? loop : -loop )
+                     .arg(QChar(Qt::Key_degree));
+
+      gridP.drawText( m1.x() + 5, 15, text );
 
       // Draw the small lines between:
       int number = (int) (60.0 / step);
 
       for( int loop2 = 1; loop2 < number; loop2++ )
         {
-          cP = _globalMapMatrix->wgsToMap( (lat1 * 600000),
+          cP1 = _globalMapMatrix->wgsToMap( mapBorder.top(),
                                            (int) rint((loop + (loop2 * step / 60.0)) * 600000) );
 
-          cP2 = _globalMapMatrix->wgsToMap( (lat2 * 600000),
+          cP2 = _globalMapMatrix->wgsToMap( mapBorder.bottom(),
                                             (int) rint((loop + (loop2 * step / 60.0)) * 600000) );
 
           if( loop2 == (number / 2.0) )
             {
-              gridP.setPen( QPen( QColor( 0, 0, 0 ), 1, Qt::DashLine ) );
+              gridP.setPen( QPen( QColor( Qt::black ), 1, Qt::DashLine ) );
             }
           else
             {
-              gridP.setPen( QPen( QColor( 0, 0, 0 ), lineWidth, Qt::DotLine ) );
+              gridP.setPen( QPen( QColor( Qt::black ), lineWidth, Qt::DotLine ) );
             }
 
-          gridP.drawLine( _globalMapMatrix->map( cP ), _globalMapMatrix->map( cP2 ) );
+          gridP.drawLine( _globalMapMatrix->map( cP1 ), _globalMapMatrix->map( cP2 ) );
         }
     }
 

@@ -19,41 +19,47 @@
 #include <QtGui>
 
 #include "flightdataprint.h"
+#include "mainwindow.h"
 #include "mapcalc.h"
+#include "target.h"
 #include "wgspoint.h"
-
-#define VERSION "4.0.0"
 
 FlightDataPrint::FlightDataPrint(Flight* currentFlight)
 {
-  QPrinter printer(QPrinter::ScreenResolution);
+  QPrinter printer( QPrinter::HighResolution );
 
-  QPrintDialog dialog( &printer );
+  printer.setDocName( "kflog-flight" );
+  printer.setCreator( QString( "KFLog " ) + KFLOG_VERSION );
+  printer.setOutputFileName( MainWindow::instance()->getApplicationDataDirectory() +
+                             "/kflog-flight.pdf" );
+
+  QPrintDialog dialog( &printer, MainWindow::instance() );
+
+  dialog.setWindowTitle( QObject::tr("Print Flight") );
+  dialog.setSizeGripEnabled ( true );
+  dialog.setOptions( QAbstractPrintDialog::PrintToFile |
+                     QAbstractPrintDialog::PrintSelection |
+                     QAbstractPrintDialog::PrintPageRange |
+                     QAbstractPrintDialog::PrintShowPageSize );
 
   if( dialog.exec() != QDialog::Accepted )
     {
       return;
     }
 
-  printer.setDocName("kflog-map.ps");
-  printer.setCreator( QString("KFLog ") + VERSION );
+  QPainter painter( &printer );
 
   lasttime=0;
 
-  printer.setFullPage(true);
-
   QString temp;
-
   FlightPoint cPoint;
-
-  QPainter painter(&printer);
 
   QFont font;
   font.setPointSize(18);
   font.setWeight(QFont::Bold);
 
   painter.setFont( font );
-  painter.drawText(50, 50, QObject::tr("Flightanalysis") + ":");
+  painter.drawText(50, 50, QObject::tr("Flight Analysis") + ":");
   painter.setPen(QPen(QColor(0, 0, 0), 2));
   painter.drawLine(50, 56, 545, 56);
 //  painter.setFont(QFont("helvetica", 10, QFont::Normal, true));
@@ -64,7 +70,7 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
 
   painter.setFont( font );
   painter.drawText(50, 58, 495, 20, Qt::AlignTop | Qt::AlignRight,
-      (QString)QObject::tr("File") + ": " + currentFlight->getFileName());
+      QString(QObject::tr("File")) + ": " + currentFlight->getFileName());
 
   font.setItalic( false );
   painter.setFont( font );
@@ -180,9 +186,6 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
           yPos += 13;
         }
     }
-
-  painter.end();
-
 }
 
 FlightDataPrint::~FlightDataPrint()
@@ -281,5 +284,6 @@ void FlightDataPrint::__printPositionData(QPainter *painter, Waypoint *cPoint, i
         }
       }
     }
+
   lasttime=time;
 }
