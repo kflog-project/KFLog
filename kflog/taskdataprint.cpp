@@ -19,6 +19,8 @@
 #include <QtGui>
 
 #include "mapcalc.h"
+#include "mainwindow.h"
+#include "target.h"
 #include "taskdataprint.h"
 #include "wgspoint.h"
 
@@ -26,58 +28,80 @@
 
 TaskDataPrint::TaskDataPrint(FlightTask* task)
 {
-  QPrinter printer;
+  QPrinter printer( QPrinter::ScreenResolution );
 
-  QPrintDialog dialog( &printer );
+  printer.setDocName( "kflog-task" );
+  printer.setCreator( QString( "KFLog " ) + KFLOG_VERSION );
+  printer.setOutputFileName( MainWindow::instance()->getApplicationDataDirectory() +
+                             "/kflog-task.pdf" );
+
+  QPrintDialog dialog( &printer, MainWindow::instance() );
+
+  dialog.setWindowTitle( QObject::tr("Print Task") );
+  dialog.setSizeGripEnabled ( true );
+  dialog.setOptions( QAbstractPrintDialog::PrintToFile |
+                     QAbstractPrintDialog::PrintSelection |
+                     QAbstractPrintDialog::PrintPageRange |
+                     QAbstractPrintDialog::PrintShowPageSize );
 
   if( dialog.exec() != QDialog::Accepted )
     {
       return;
     }
 
-  printer.setDocName("kflog-map.ps");
-  printer.setCreator(QString("KFLog ") + VERSION);
+  QPainter painter;
+  painter.begin( &printer );
 
-  printer.setFullPage(true);
+  QFont font;
+  font.setPixelSize( 8 );
+  font.setStyle( QFont::StyleItalic );
+  font.setStyleHint( QFont::SansSerif );
 
-  QString temp;
-  Waypoint *cPoint;
+  painter.setFont( font );
 
-  QPainter painter(&printer);
+  QString msg = QString("%1created by KFLog %2 (www.kflog.org)")
+                        .arg( QChar(Qt::Key_copyright) )
+                        .arg( KFLOG_VERSION );
+
+  painter.drawText( 25, 12, msg );
 
   painter.setFont(QFont("helvetica", 18, QFont::Bold));
   painter.drawText(50, 50, QObject::tr("Flight planning") + ":");
-  painter.setPen(QPen(QColor(0, 0, 0), 2));
+  painter.setPen(QPen(Qt::black, 2));
   painter.drawLine(50, 56, 545, 56);
 
   painter.setFont(QFont("helvetica", 10));
-  painter.drawText(50, 100, QObject::tr("Task Type") + ":");
-  painter.drawText(125, 100, task->getTaskTypeString());
-  painter.drawText(50, 115, QObject::tr("Total Distance") + ":");
-  painter.drawText(125, 115, task->getTotalDistanceString());
-  painter.drawText(50, 130, QObject::tr("Task Distance") + ":");
-  painter.drawText(125, 130, task->getTaskDistanceString());
+  painter.drawText( 50, 100, QObject::tr("Task Type") + ": " +
+                             task->getTaskTypeString() );
 
-  painter.setPen(QPen(QColor(0,0,0), 1));
-  painter.drawLine(50, 175, 545, 175);
+  painter.drawText( 50, 115, QObject::tr("Total Distance") + ": " +
+                             task->getTotalDistanceString() );
 
-  painter.setFont(QFont("helvetica", 12, QFont::Bold));
-  painter.drawText(50, 170, QObject::tr("Task") + ":");
+  painter.drawText( 50, 130, QObject::tr("Task Distance") + ": " +
+                             task->getTaskDistanceString() );
 
-  painter.setFont(QFont("helvetica", 10));
+  painter.setPen( QPen( Qt::black, 2 ) );
+  painter.drawLine( 50, 175, 545, 175 );
+
+  painter.setFont( QFont( "helvetica", 12, QFont::Bold ) );
+  painter.drawText( 50, 170, QObject::tr( "Task" ) + ":" );
+
+  painter.setFont( QFont( "helvetica", 10 ) );
 
   int yPos = 210;
 
-  for(int loop = 0; loop < task->getWPList().count(); loop++)
+  for( int loop = 0; loop < task->getWPList().count(); loop++ )
     {
-      cPoint = task->getWPList().at(loop);
-      painter.drawText(50, yPos, cPoint->name);
-      painter.drawText(125, yPos, WGSPoint::printPos(cPoint->origP.lat(), true));
-      painter.drawText(190, yPos, "/");
-      painter.drawText(200, yPos, WGSPoint::printPos(cPoint->origP.lon(), false));
+      Waypoint *cPoint = task->getWPList().at( loop );
+      painter.drawText( 50, yPos, cPoint->name );
 
-      yPos += 13;
+      painter.drawText( 125, yPos, WGSPoint::printPos(cPoint->origP.lat(), true) +
+                                   " / " +
+                                   WGSPoint::printPos(cPoint->origP.lon(), false) );
+      yPos += 15;
     }
+
+  painter.end();
 }
 
 TaskDataPrint::~TaskDataPrint()

@@ -212,8 +212,12 @@ public slots:
    * Checks the status of all dock-widgets and updates the menu.
    */
   void slotCheckDockWidgetStatus();
-  /** */
-  void slotSavePixmap(QUrl url, int width, int height);
+
+  /** Called to save the map into an image file. */
+  void slotSaveMap2Image();
+
+  /** Called to save the map into an image file. */
+  void slotSavePixmap(QUrl url, int width=0, int height=0 );
   /**
    * Called to the What's This? mode.
    */
@@ -327,6 +331,7 @@ private:
   QAction* fileSavePixmapAction;
   QAction* filePrintAction;
   QAction* filePrintFlightAction;
+  QAction* filePrintTaskAction;
   QAction* fileOpenRecorderAction;
   QAction* fileQuitAction;
   /**

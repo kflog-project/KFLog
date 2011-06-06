@@ -260,7 +260,7 @@
 #define PRINT_AERIAL_CABLE_PEN_STYLE_1 Qt::DashLine
 #define PRINT_AERIAL_CABLE_PEN_STYLE_2 Qt::DashLine
 
-// [River]
+// [River and Lake]
 #define RIVER_COLOR_1 QColor(70,70,195)
 #define RIVER_COLOR_2 QColor(70,70,195)
 #define RIVER_COLOR_3 QColor(70,70,195)
@@ -284,6 +284,31 @@
 
 #define PRINT_RIVER_PEN_STYLE_1 Qt::SolidLine
 #define PRINT_RIVER_PEN_STYLE_2 Qt::SolidLine
+
+#define RIVER_BRUSH_COLOR_1 QColor(70,70,195)
+#define RIVER_BRUSH_COLOR_2 QColor(70,70,195)
+#define RIVER_BRUSH_COLOR_3 QColor(70,70,195)
+#define RIVER_BRUSH_COLOR_4 QColor(70,70,195)
+
+#define RIVER_BRUSH_STYLE_1 Qt::SolidPattern
+#define RIVER_BRUSH_STYLE_2 Qt::SolidPattern
+#define RIVER_BRUSH_STYLE_3 Qt::SolidPattern
+#define RIVER_BRUSH_STYLE_4 Qt::SolidPattern
+
+#define PRINT_RIVER_COLOR_1 QColor(70,70,195)
+#define PRINT_RIVER_COLOR_2 QColor(70,70,195)
+
+#define PRINT_RIVER_PEN_1 2
+#define PRINT_RIVER_PEN_2 2
+
+#define PRINT_RIVER_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_RIVER_PEN_STYLE_2 Qt::SolidLine
+
+#define PRINT_RIVER_BRUSH_COLOR_1 QColor(70,70,195)
+#define PRINT_RIVER_BRUSH_COLOR_2 QColor(70,70,195)
+
+#define PRINT_RIVER_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_RIVER_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Canal]
 #define CANAL_COLOR_1 QColor(70,195,70)
@@ -471,7 +496,7 @@
 #define PRINT_PACK_ICE_BRUSH_STYLE_1 Qt::CrossPattern
 #define PRINT_PACK_ICE_BRUSH_STYLE_2 Qt::CrossPattern
 
-// [RIVER_t]
+// [RIVER_t and Lake_t]
 #define RIVER_T_COLOR_1 QColor(255,250,100)
 #define RIVER_T_COLOR_2 QColor(255,250,100)
 #define RIVER_T_COLOR_3 QColor(255,250,100)

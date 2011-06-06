@@ -1,9 +1,25 @@
 $Id$
 
+2011-06-06 Axel Pauli <axel@kflog.org>
+
+  * Bugfix: FlightDataPrint had a corrupted output format. I fixed that.
+  
+  * Bugfix: TaskDataPrint had a corrupted output format. I fixed that.
+  
+  * Bugfix: It seems to be necessary to add the library option -ldl to the
+    qmake project file. A link error was reported to me on 64 bit systems.
+
+2011-06-01 Axel Pauli <axel@kflog.org>
+
+  * Bugfix: Lakes were never drawn at the map. There brush color was also
+    not configurable. Both issues fixed.
+    
+  * Bugfix: Saving the map into an image did not work.
+
 2011-05-31 Axel Pauli <axel@kflog.org>
 
   * Bugfix in class MapMatrix. Variable matrixSize was used but never
-    initialized. Modified code to use only variable mapViewSize.
+    initialized. Modified code in that way to use only variable mapViewSize.
     
   * Added degree labels to map grid.
 

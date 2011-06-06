@@ -180,6 +180,8 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
            helpWindow, SLOT(slotShowHelpText(QString&)) );
 
   connect(this, SIGNAL(flightDataTypeChanged(int)), _globalMapConfig, SLOT(slotSetFlightDataType(int)));
+
+  slotModifyMenu();
 }
 
 MainWindow::~MainWindow()
@@ -385,12 +387,12 @@ void MainWindow::createMenuBar()
            _globalMapContents, SLOT(slotCloseFlight()) );
 
   fileSavePixmapAction = new QAction( getPixmap("kde_image_16.png"),
-                                      tr("Export to PNG..."), this );
+                                      tr("Save map to PNG..."), this );
   fileSavePixmapAction->setEnabled(true);
-  connect( fileSavePixmapAction, SIGNAL(triggered()), map, SLOT(slotSavePixmap()) );
+  connect( fileSavePixmapAction, SIGNAL(triggered()), this, SLOT(slotSaveMap2Image()) );
 
   filePrintAction = new QAction( getPixmap("kde_fileprint_16.png"),
-                                 tr("Print..."), this );
+                                 tr("Print Map"), this );
   filePrintAction->setShortcut( Qt::CTRL + Qt::Key_P );
   filePrintAction->setEnabled(true);
   connect( filePrintAction, SIGNAL(triggered()), this, SLOT(slotPrintMap()) );
@@ -399,6 +401,11 @@ void MainWindow::createMenuBar()
                                        tr("Print Flight Data"), this );
   filePrintFlightAction->setEnabled(true);
   connect( filePrintFlightAction, SIGNAL(triggered()), this, SLOT(slotPrintFlight()) );
+
+  filePrintTaskAction = new QAction( getPixmap("kde_fileprint_16.png"),
+                                     tr("Print Task Data"), this );
+  filePrintTaskAction->setEnabled(true);
+  connect( filePrintTaskAction, SIGNAL(triggered()), this, SLOT(slotPrintFlight()) );
 
   fileOpenRecorderAction = new QAction( getPixmap("kde_connect_no_16.png"),
                                         tr("Open Recorder"), this );
@@ -451,6 +458,7 @@ void MainWindow::createMenuBar()
   fileMenu->addSeparator();
   fileMenu->addAction( filePrintAction );
   fileMenu->addAction( filePrintFlightAction );
+  fileMenu->addAction( filePrintTaskAction );
   fileMenu->addSeparator();
   fileMenu->addAction( fileOpenRecorderAction );
   fileMenu->addSeparator();
@@ -1091,7 +1099,7 @@ void MainWindow::slotModifyMenu()
 {
   if( _globalMapContents->getFlightList()->count() > 0 &&
       _globalMapContents->getFlight() != 0 )
-  {
+    {
       // FIXME @AP: The flight list number is incremented when a new task is
       // created but the current flight maybe NULL!!! I got a core dump here.
       // Added check above to if clause.
@@ -1100,6 +1108,7 @@ void MainWindow::slotModifyMenu()
           case BaseMapElement::Flight:
             fileCloseAction->setEnabled(true);
             filePrintFlightAction->setEnabled(true);
+            filePrintTaskAction->setEnabled(false);
             viewCenterTaskAction->setEnabled(true);
             viewCenterFlightAction->setEnabled(true);
 //            flightEvaluation->setEnabled(true);
@@ -1115,12 +1124,12 @@ void MainWindow::slotModifyMenu()
             flightAnimate10PrevAction->setEnabled(true);
             flightAnimateHomeAction->setEnabled(true);
             flightAnimateEndAction->setEnabled(true);
-            windowMenu->setEnabled(true);
             break;
 
           case BaseMapElement::Task:
             fileCloseAction->setEnabled(true);
-            filePrintFlightAction->setEnabled(true);
+            filePrintFlightAction->setEnabled(false);
+            filePrintTaskAction->setEnabled(true);
             viewCenterTaskAction->setEnabled(true);
             viewCenterFlightAction->setEnabled(false);
 //            flightEvaluation->setEnabled(false);
@@ -1136,12 +1145,12 @@ void MainWindow::slotModifyMenu()
             flightAnimate10PrevAction->setEnabled(false);
             flightAnimateHomeAction->setEnabled(false);
             flightAnimateEndAction->setEnabled(false);
-            windowMenu->setEnabled(true);
             break;
 
           case BaseMapElement::FlightGroup:
             fileCloseAction->setEnabled(true);
             filePrintFlightAction->setEnabled(true);
+            filePrintTaskAction->setEnabled(false);
             viewCenterTaskAction->setEnabled(true);
             viewCenterFlightAction->setEnabled(true);
 //            flightEvaluation->setEnabled(true);
@@ -1157,34 +1166,34 @@ void MainWindow::slotModifyMenu()
             flightAnimate10PrevAction->setEnabled(true);
             flightAnimateHomeAction->setEnabled(true);
             flightAnimateEndAction->setEnabled(true);
-            windowMenu->setEnabled(true);
             break;
 
           default:
             break;
         }
-  }
+    }
   else
-  {
-      fileCloseAction->setEnabled(false);
-      filePrintFlightAction->setEnabled(false);
-      viewCenterTaskAction->setEnabled(false);
-      viewCenterFlightAction->setEnabled(false);
-//      flightEvaluation->setEnabled(false);
-      flightOptimizationAction->setEnabled(false);
-      flightOptimizationOLCAction->setEnabled(false);
-      flightIgc3DAction->setEnabled(false);
-      flightIgcOpenGLAction->setEnabled(false);
-      flightAnimateStartAction->setEnabled(false);
-      flightAnimateStopAction->setEnabled(false);
-      flightAnimateNextAction->setEnabled(false);
-      flightAnimatePrevAction->setEnabled(false);
-      flightAnimate10NextAction->setEnabled(false);
-      flightAnimate10PrevAction->setEnabled(false);
-      flightAnimateHomeAction->setEnabled(false);
-      flightAnimateEndAction->setEnabled(false);
-      windowMenu->setEnabled(false);
-  }
+    {
+      fileCloseAction->setEnabled( false );
+      filePrintFlightAction->setEnabled( false );
+      filePrintTaskAction->setEnabled( false );
+
+      viewCenterTaskAction->setEnabled( false );
+      viewCenterFlightAction->setEnabled( false );
+      // flightEvaluation->setEnabled(false);
+      flightOptimizationAction->setEnabled( false );
+      flightOptimizationOLCAction->setEnabled( false );
+      flightIgc3DAction->setEnabled( false );
+      flightIgcOpenGLAction->setEnabled( false );
+      flightAnimateStartAction->setEnabled( false );
+      flightAnimateStopAction->setEnabled( false );
+      flightAnimateNextAction->setEnabled( false );
+      flightAnimatePrevAction->setEnabled( false );
+      flightAnimate10NextAction->setEnabled( false );
+      flightAnimate10PrevAction->setEnabled( false );
+      flightAnimateHomeAction->setEnabled( false );
+      flightAnimateEndAction->setEnabled( false );
+    }
 }
 
 void MainWindow::slotOpenFile()
@@ -1405,8 +1414,30 @@ void MainWindow::slotRegisterWaypointDialog(QWidget * dialog)
            SLOT(slotAddWaypoint(Waypoint *)));
 }
 
+void MainWindow::slotSaveMap2Image()
+{
+  slotSavePixmap( QUrl() );
+}
+
 void MainWindow::slotSavePixmap(QUrl url, int width, int height)
 {
+  QString fileName;
+
+  if( url.isEmpty() || ! url.isValid() )
+    {
+      fileName = QFileDialog::getSaveFileName( this,
+                                               tr("Save map as image"),
+                                               getApplicationDataDirectory() + "/kflog_map.png",
+                                               tr("Image (*.png)") );
+    }
+  if( fileName.isEmpty() )
+    {
+      return;
+    }
+
+  url.setPath( fileName );
+  url.setScheme( "file" );
+
   map->slotSavePixmap(url, width, height);
 }
 

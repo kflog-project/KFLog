@@ -704,7 +704,6 @@ bool MapContents::__readBinaryFile( const int  fileSecID,
           READ_POINT_LIST
 
           lakeList.append( LineElement(name, typeIn, all, sort, fileSecID) );
-          // qDebug("appended lake, name='%s', pointCount=%d", name.toLatin1().data(), all.count());
           break;
 
         case BaseMapElement::Forest:

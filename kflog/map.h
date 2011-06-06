@@ -65,7 +65,7 @@ private:
     /**
      * Destroys the Map-object.
      */
-    ~Map();
+    virtual ~Map();
 
     /**
      * Returns the current task planning state.
@@ -118,7 +118,6 @@ private:
     void slotFlightHome();
     void slotFlightEnd();
 
-    void slotSavePixmap();
     void slotActivatePlanning();
     /** No descriptions */
     void slotShowCurrentFlight();

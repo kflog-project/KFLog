@@ -403,6 +403,7 @@ private:
   QList<QPen> rail_dPenList;
   QList<QPen> aerialcablePenList;
   QList<QPen> riverPenList;
+  QList<QBrush> riverBrushList;
   QList<QPen> river_tPenList;
   QList<QBrush> river_tBrushList;
   QList<QPen> canalPenList;

@@ -22,9 +22,15 @@
 #include "flighttask.h"
 
 /**
- * @author Heiner Lamprecht, Axel Pauli
+ * \author Heiner Lamprecht, Axel Pauli
  *
- * @version $Id$
+ * \brief Prints out the current task data.
+ *
+ * Prints out the current task data.
+ *
+ * \data 2002-2011
+ *
+ * \version $Id$
  */
 class TaskDataPrint
 {

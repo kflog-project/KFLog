@@ -116,14 +116,6 @@ void MapConfig::slotReadConfig()
         TRAIL_PEN_STYLE_1, TRAIL_PEN_STYLE_2, TRAIL_PEN_STYLE_3, TRAIL_PEN_STYLE_4,
         PRINT_TRAIL_PEN_STYLE_1, PRINT_TRAIL_PEN_STYLE_2);
 
-  __readPen("River", riverPenList, riverBorder,
-        RIVER_COLOR_1, RIVER_COLOR_2, RIVER_COLOR_3, RIVER_COLOR_4,
-        PRINT_RIVER_COLOR_1, PRINT_RIVER_COLOR_2,
-        RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4,
-        PRINT_RIVER_PEN_1, PRINT_RIVER_PEN_2,
-        RIVER_PEN_STYLE_1, RIVER_PEN_STYLE_2, RIVER_PEN_STYLE_3, RIVER_PEN_STYLE_4,
-        PRINT_RIVER_PEN_STYLE_1, PRINT_RIVER_PEN_STYLE_2);
-
   __readPen("Canal", canalPenList, canalBorder,
         CANAL_COLOR_1, CANAL_COLOR_2, CANAL_COLOR_3, CANAL_COLOR_4,
         PRINT_CANAL_COLOR_1, PRINT_CANAL_COLOR_2,
@@ -219,6 +211,20 @@ void MapConfig::slotReadConfig()
         PACK_ICE_BRUSH_STYLE_3, PACK_ICE_BRUSH_STYLE_4,
         PRINT_PACK_ICE_BRUSH_STYLE_1, PRINT_PACK_ICE_BRUSH_STYLE_2);
 
+  __readPenBrush("River", riverPenList, riverBorder, riverBrushList,
+        RIVER_COLOR_1, RIVER_COLOR_2, RIVER_COLOR_3, RIVER_COLOR_4,
+        PRINT_RIVER_COLOR_1, PRINT_RIVER_COLOR_2,
+        RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4,
+        PRINT_RIVER_PEN_1, PRINT_RIVER_PEN_2,
+        RIVER_PEN_STYLE_1, RIVER_PEN_STYLE_2, RIVER_PEN_STYLE_3, RIVER_PEN_STYLE_4,
+        PRINT_RIVER_PEN_STYLE_1, PRINT_RIVER_PEN_STYLE_2,
+        RIVER_BRUSH_COLOR_1, RIVER_BRUSH_COLOR_2,
+        RIVER_BRUSH_COLOR_3, RIVER_BRUSH_COLOR_4,
+        PRINT_RIVER_BRUSH_COLOR_1, PRINT_RIVER_BRUSH_COLOR_2,
+        RIVER_BRUSH_STYLE_1, RIVER_BRUSH_STYLE_2,
+        RIVER_BRUSH_STYLE_3, RIVER_BRUSH_STYLE_4,
+        PRINT_RIVER_BRUSH_STYLE_1, PRINT_RIVER_BRUSH_STYLE_2);
+
   __readPenBrush("River_T", river_tPenList, river_tBorder, river_tBrushList,
         RIVER_T_COLOR_1, RIVER_T_COLOR_2, RIVER_T_COLOR_3, RIVER_T_COLOR_4,
         PRINT_RIVER_T_COLOR_1, PRINT_RIVER_T_COLOR_2,
@@ -226,6 +232,7 @@ void MapConfig::slotReadConfig()
         PRINT_RIVER_T_PEN_1, PRINT_RIVER_T_PEN_2,
         RIVER_T_PEN_STYLE_1, RIVER_T_PEN_STYLE_2, RIVER_T_PEN_STYLE_3, RIVER_T_PEN_STYLE_4,
         PRINT_RIVER_T_PEN_STYLE_1, PRINT_RIVER_T_PEN_STYLE_2,
+
         RIVER_T_BRUSH_COLOR_1, RIVER_T_BRUSH_COLOR_2,
         RIVER_T_BRUSH_COLOR_3, RIVER_T_BRUSH_COLOR_4,
         PRINT_RIVER_T_BRUSH_COLOR_1, PRINT_RIVER_T_BRUSH_COLOR_2,
@@ -946,7 +953,7 @@ QBrush& MapConfig::__getBrush(unsigned int typeID, int index)
       case BaseMapElement::City:
           return cityBrushList[index];
       case BaseMapElement::Lake:
-          return river_tBrushList[index];
+          return riverBrushList[index];
       case BaseMapElement::Lake_T:
           return river_tBrushList[index];
 

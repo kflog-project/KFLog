@@ -347,6 +347,9 @@ void ConfigMapElement::__readMapItems()
   __readPen("River", riverPenList, RIVER_COLOR_1, RIVER_COLOR_2, RIVER_COLOR_3,
         RIVER_COLOR_4, RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4,
         RIVER_PEN_STYLE_1, RIVER_PEN_STYLE_2, RIVER_PEN_STYLE_3, RIVER_PEN_STYLE_4);
+  __readBrush("River", riverBrushList, RIVER_BRUSH_COLOR_1, RIVER_BRUSH_COLOR_2,
+        RIVER_BRUSH_COLOR_3, RIVER_BRUSH_COLOR_4, RIVER_BRUSH_STYLE_1,
+        RIVER_BRUSH_STYLE_2, RIVER_BRUSH_STYLE_3, RIVER_BRUSH_STYLE_4);
   __readBorder("River", riverBorder);
 
   __readPen("Canal", canalPenList, CANAL_COLOR_1, CANAL_COLOR_2, CANAL_COLOR_3,
@@ -589,6 +592,9 @@ void ConfigMapElement::__readPrintItems()
   __readPen("River", riverPenList, PRINT_RIVER_COLOR_1, PRINT_RIVER_COLOR_2, PRINT_RIVER_COLOR_2,
         PRINT_RIVER_COLOR_2, PRINT_RIVER_PEN_1, PRINT_RIVER_PEN_2, PRINT_RIVER_PEN_2, PRINT_RIVER_PEN_2,
         PRINT_RIVER_PEN_STYLE_1, PRINT_RIVER_PEN_STYLE_2, PRINT_RIVER_PEN_STYLE_2, PRINT_RIVER_PEN_STYLE_2);
+  __readBrush("River", riverBrushList, PRINT_RIVER_BRUSH_COLOR_1, PRINT_RIVER_BRUSH_COLOR_2,
+        PRINT_RIVER_BRUSH_COLOR_2, PRINT_RIVER_BRUSH_COLOR_2, PRINT_RIVER_BRUSH_STYLE_1,
+        PRINT_RIVER_BRUSH_STYLE_2, PRINT_RIVER_BRUSH_STYLE_2, PRINT_RIVER_BRUSH_STYLE_2);
   __readBorder("River", riverBorder);
 
   __readPen("Canal", canalPenList, PRINT_CANAL_COLOR_1, PRINT_CANAL_COLOR_2, PRINT_CANAL_COLOR_2,
@@ -832,8 +838,6 @@ void ConfigMapElement::slotOk()
 
   __writePen("Aerial Cable", aerialcablePenList, aerialcableBorder);
 
-  __writePen("River", riverPenList, riverBorder);
-
   __writePen("Canal", canalPenList, canalBorder);
 
   __writePen("City", cityPenList, cityBorder);
@@ -869,6 +873,8 @@ void ConfigMapElement::slotOk()
   __writeBrush(AS_WW, wwBrushList, wwPenList, wwBorder);
 
   __writeBrush("Forest", forestBrushList, forestPenList, forestBorder);
+
+  __writeBrush("River", riverBrushList, riverPenList, riverBorder);
 
   __writeBrush("River_T", river_tBrushList, river_tPenList, river_tBorder);
 
@@ -942,10 +948,6 @@ void ConfigMapElement::__readDefaultMapItems()
       HIGH_COLOR_3, HIGH_COLOR_4,
       HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4 );
 
-  __defaultPen( riverPenList, riverBorder, RIVER_COLOR_1, RIVER_COLOR_2,
-      RIVER_COLOR_3, RIVER_COLOR_4,
-      RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4 );
-
   __defaultPen( canalPenList, canalBorder, CANAL_COLOR_1, CANAL_COLOR_2,
       CANAL_COLOR_3, CANAL_COLOR_4,
       CANAL_PEN_1, CANAL_PEN_2, CANAL_PEN_3, CANAL_PEN_4 );
@@ -961,6 +963,14 @@ void ConfigMapElement::__readDefaultMapItems()
   __defaultPen( aerialcablePenList, aerialcableBorder, AERIAL_CABLE_COLOR_1, AERIAL_CABLE_COLOR_2,
       AERIAL_CABLE_COLOR_3, AERIAL_CABLE_COLOR_4,
       AERIAL_CABLE_PEN_1, AERIAL_CABLE_PEN_2, AERIAL_CABLE_PEN_3, AERIAL_CABLE_PEN_4 );
+
+  __defaultPenBrush( riverPenList, riverBorder, riverBrushList,
+      RIVER_COLOR_1, RIVER_COLOR_2, RIVER_COLOR_3, RIVER_COLOR_4,
+      RIVER_PEN_1, RIVER_PEN_2, RIVER_PEN_3, RIVER_PEN_4,
+      RIVER_BRUSH_COLOR_1, RIVER_BRUSH_COLOR_2,
+      RIVER_BRUSH_COLOR_3, RIVER_BRUSH_COLOR_4,
+      RIVER_BRUSH_STYLE_1, RIVER_BRUSH_STYLE_2,
+      RIVER_BRUSH_STYLE_3, RIVER_BRUSH_STYLE_4);
 
   __defaultPenBrush( river_tPenList, river_tBorder, river_tBrushList,
       RIVER_T_COLOR_1, RIVER_T_COLOR_2, RIVER_T_COLOR_3, RIVER_T_COLOR_4,
@@ -1569,6 +1579,7 @@ void ConfigMapElement::slotSelectElement(int elementID)
         break;
       case KFLogConfig::River:
         __savePen(riverPenList, riverBorder);
+        __saveBrush(riverBrushList);
         break;
       case KFLogConfig::Canal:
         __savePen(canalPenList, canalBorder);
@@ -1704,6 +1715,7 @@ void ConfigMapElement::slotSelectElement(int elementID)
         break;
       case KFLogConfig::River:
         __showPen(riverPenList, riverBorder);
+        __showBrush(riverBrushList);
         break;
       case KFLogConfig::Canal:
         __showPen(canalPenList, canalBorder);
@@ -1854,6 +1866,7 @@ void ConfigMapElement::slotToggleFirst(bool toggle)
 
       case KFLogConfig::Glacier:
       case KFLogConfig::PackIce:
+      case KFLogConfig::River:
       case KFLogConfig::River_T:
       case KFLogConfig::FAIAreaLow500:
       case KFLogConfig::FAIAreaHigh500:
@@ -1920,6 +1933,7 @@ void ConfigMapElement::slotToggleSecond( bool toggle )
 
       case KFLogConfig::Glacier:
       case KFLogConfig::PackIce:
+      case KFLogConfig::River:
       case KFLogConfig::River_T:
       case KFLogConfig::FAIAreaLow500:
       case KFLogConfig::FAIAreaHigh500:
@@ -1986,6 +2000,7 @@ void ConfigMapElement::slotToggleThird(bool toggle)
 
       case KFLogConfig::Glacier:
       case KFLogConfig::PackIce:
+      case KFLogConfig::River:
       case KFLogConfig::River_T:
       case KFLogConfig::FAIAreaLow500:
       case KFLogConfig::FAIAreaHigh500:
@@ -2050,6 +2065,7 @@ void ConfigMapElement::slotToggleForth(bool toggle)
 
       case KFLogConfig::Glacier:
       case KFLogConfig::PackIce:
+      case KFLogConfig::River:
       case KFLogConfig::River_T:
       case KFLogConfig::FAIAreaLow500:
       case KFLogConfig::FAIAreaHigh500:

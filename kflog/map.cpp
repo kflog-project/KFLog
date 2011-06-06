@@ -36,6 +36,7 @@
 #include "waypointtreeview.h"
 #include "whatsthat.h"
 #include "mainwindow.h"
+#include "target.h"
 
 // These values control the borders at which to pan the map
 // NOTE: These values are only for testing, and need revision.
@@ -1138,7 +1139,7 @@ void Map::__drawGrid()
     }
 
   // First the latitudes:
-  for( int loop = 0; loop < (lat1 - lat2 + 1); loop += gridStep )
+  for( int loop = lat2; loop <= lat1; loop += gridStep )
     {
       int size = (lon2 - lon1 + 1) * 10;
 
@@ -1146,7 +1147,7 @@ void Map::__drawGrid()
 
       for( int lonloop = 0; lonloop < size; lonloop++ )
         {
-          QPoint p0 = _globalMapMatrix->wgsToMap( (lat2 + loop) * 600000,
+          QPoint p0 = _globalMapMatrix->wgsToMap( loop * 600000,
                                                   (int) rint((lon1 + (lonloop * 0.1)) * 600000) );
 
           if( _globalMapMatrix->isVisible(p0) )
@@ -1169,9 +1170,9 @@ void Map::__drawGrid()
           gridP.setPen( QPen( QColor( Qt::black ), 1 ) );
           gridP.drawPolyline( pointArray );
 
-          gridP.setFont(QFont("Helvetica", 8, QFont::Bold));
+          gridP.setFont(QFont("Helvetica", 8, QFont::Normal));
 
-          int lat = lat2 + loop;
+          int lat = loop;
 
           QString text = QString("%1%2%3")
                          .arg( lat >= 0 ? "N" : "S" )
@@ -1190,7 +1191,7 @@ void Map::__drawGrid()
 
           for( int lonloop = 0; lonloop < size; lonloop++ )
             {
-              QPoint p1 = _globalMapMatrix->wgsToMap( (int) rint((lat2 + loop + (loop2 * (step / 60.0))) * 600000),
+              QPoint p1 = _globalMapMatrix->wgsToMap( (int) rint((loop + (loop2 * (step / 60.0))) * 600000),
                                                       (int) rint((lon1 + (lonloop * 0.1)) * 600000) );
 
               if( _globalMapMatrix->isVisible(p1) )
@@ -1217,7 +1218,7 @@ void Map::__drawGrid()
 
                   gridP.setFont(QFont("Helvetica", 8, QFont::Normal));
 
-                  int lat = lat2 + loop;
+                  int lat = loop;
 
                   QString text = QString("%1%2.5%3")
                                  .arg( lat >= 0 ? "N" : "S" )
@@ -1304,6 +1305,8 @@ void Map::__drawMap()
   _globalMapContents->drawList(&uMapP, MapContents::CityList);
 
   _globalMapContents->drawList(&uMapP, MapContents::HydroList);
+
+  _globalMapContents->drawList(&uMapP, MapContents::LakeList);
 
   emit setStatusBarProgress(15);
 
@@ -1550,68 +1553,76 @@ void Map::__redrawMap()
   isDrawing = false;
 }
 
-/** Save Map to PNG-file with width,heigt. Use actual size if width=0 & height=0 */
+/** Save Map to PNG-file with width, height. Use actual size if width=0 & height=0 */
 void Map::slotSavePixmap(QUrl fUrl, int width, int height)
 {
-  int w_orig,h_orig;
+  int w_orig, h_orig;
 
-  if(fUrl.isValid())  return;
+  w_orig = h_orig = 0;
 
-  QString fName;
-  if(fUrl.scheme()=="file")
-      fName = fUrl.path();
-  else
+  if( !fUrl.isValid() || fUrl.scheme() != "file" )
+    {
       return;
+    }
 
-  if (width && height)
-  {
-    w_orig=pixBuffer.width();
-    h_orig=pixBuffer.height();
-    resize(width,height);
-    slotCenterToFlight();
-  }
-  else
-      return;
+  QString fName = fUrl.path();
 
-  if (_settings.value("/CommentSettings/ShowComment").toBool())
-  {
+  if( width && height )
+    {
+      w_orig = pixBuffer.width();
+      h_orig = pixBuffer.height();
+      resize( width, height );
+    }
 
-#warning Flight can be NULL!!!
+  slotCenterToFlight();
 
-    Flight* flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
+  // ensures that all is up to date
+  repaint();
 
-    QPainter bufferP(&pixBuffer);
-    bufferP.setPen( Qt::white );
-    QFont font;
-    int by=pixBuffer.height()-35;
-    int bw=pixBuffer.width()-10;
-    QString text=QObject::tr("%1 with %2 (%3) on %4").arg(flight->getPilot()).arg(flight->getType()).arg(flight->getID()).arg(flight->getDate().toString());
-    bufferP.setFont(font);
-    bufferP.drawText(10,by+15,bw,25,Qt::AlignLeft,QObject::tr("created by KFLog (www.kflog.org)"));
-    font.setBold(true);
-    font.setPointSize( 18 );
-    bufferP.setFont(font);
-    bufferP.drawText(10,by,bw,25,Qt::AlignLeft,text);
-  }
+  Flight* flight = dynamic_cast<Flight *> ( _globalMapContents->getFlight() );
 
-  QImage image = QImage( pixBuffer.toImage() );
+  // Take over map content into new pixmap to avoid modifications at the map.
+  QPixmap pixmap(pixBuffer);
 
-  image.save( fName, "PNG" );
+  QPainter bufferP( &pixmap );
+  bufferP.setPen( Qt::magenta );
+
+  QFont font;
+  font.setBold( true );
+  font.setPointSize( 10 );
+  font.setStyle( QFont::StyleItalic );
+  font.setStyleHint( QFont::SansSerif );
+  bufferP.setFont( font );
+
+  QString msg = QString("%1created by KFLog %2 (www.kflog.org)")
+      .arg( QChar(Qt::Key_copyright) )
+      .arg( KFLOG_VERSION );
+
+  bufferP.drawText( 10, 30, msg );
+
+  if( flight != 0 )
+    {
+      QFontMetrics fm( font );
+      int strWidth = fm.width( msg );
+
+      QString text = tr( "%1 with %2 (%3) on %4" )
+                    .arg( flight->getPilot() )
+                    .arg( flight->getType() )
+                    .arg( flight->getID() )
+                    .arg( flight->getDate().toString() );
+
+      bufferP.drawText( 10 + strWidth + 20, 30, text );
+    }
+
+  QImage image = QImage( pixmap.toImage() );
+
+  image.save( fName, "png" );
 
   if( width && height )
     {
       resize( w_orig, h_orig );
       slotCenterToFlight();
     }
-}
-
-void Map::slotSavePixmap()
-{
-  QFileDialog* dlg = new QFileDialog(this, QObject::tr("Select PNG-File"));
-  dlg->setFilters(QStringList("*.png *.PNG"));
-  dlg->setModal(true);
-  dlg->exec();
-  slotSavePixmap(QUrl::fromLocalFile(dlg->directory().canonicalPath()), 0, 0);
 }
 
 void Map::slotRedrawFlight()

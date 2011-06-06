@@ -93,7 +93,7 @@ int main(int argc, char **argv)
   _settings.setValue( "/Main/CompileDate", __DATE__ );
 
   // Reset the locale that is used for number formatting to "C" locale.
-  setlocale(LC_NUMERIC, "C");
+  setenv( "LC_NUMERIC", "C", 1 );
 
   // Make sure the application uses utf8 encoding for translated widgets
   QTextCodec::setCodecForTr( QTextCodec::codecForName ("UTF-8") );
@@ -117,22 +117,18 @@ int main(int argc, char **argv)
   qDebug() << "KFLog Built Date:" << __DATE__;
   qDebug() << "KFLog Install Root:" << root;
 
-  bool showStartLogo = false;
-
   if( _settings.value( "/GeneralOptions/Logo", true ).toBool() )
-  {
-    showStartLogo = true;
+    {
+      QSplashScreen splash( root + "/pics/splash.png" );
+      splash.setMask( QBitmap( root + "/pics/splash_mask.png" ) );
+      splash.show();
+      QCoreApplication::processEvents();
 
-    QSplashScreen splash( root + "/pics/splash.png"  );
-    splash.setMask( QBitmap( root + "/pics/splash_mask.png" ));
-    splash.show();
-    QCoreApplication::processEvents();
+      _mainWindow = new MainWindow;
+      _mainWindow->setVisible( true );
 
-    _mainWindow = new MainWindow;
-    _mainWindow->setVisible( true );
-
-    splash.finish( _mainWindow );
-  }
+      splash.finish( _mainWindow );
+    }
   else
     {
       _mainWindow = new MainWindow;
@@ -160,7 +156,7 @@ int main(int argc, char **argv)
       else if( argument == "--export-png" || argument == "-e" )
         {
           exportPNG = true;
-          fileExportPNG = QString( "file:out.png" );
+          fileExportPNG = QString( "file:kflog_map.png" );
         }
       else if( argument == "--height" || argument == "-h" )
         {
@@ -221,14 +217,14 @@ int main(int argc, char **argv)
       if( exportPNG )
         {
           _settings.setValue( "/CommentSettings/ShowComment", comment );
-          qWarning() << "Writing PNG...";
+          qDebug() << "Writing PNG...";
           QUrl url( fileExportPNG );
           _mainWindow->slotSavePixmap( url, width.toInt(), height.toInt() );
         }
 
       if( batch )
         {
-          qWarning() << "Exiting.";
+          qDebug() << "Exiting.";
           return 0;
         }
 

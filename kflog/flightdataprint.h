@@ -29,6 +29,10 @@
  *
  * \author Heiner Lamprecht, Axel Pauli
  *
+ * \brief Prints out the data of the current flight.
+ *
+ * Prints out the data of the current flight.
+ *
  * \date 2002-2011
  *
  * \version $Id$
@@ -39,14 +43,14 @@ class FlightDataPrint
 
   FlightDataPrint( Flight* currentFlight );
 
-  ~FlightDataPrint();
+  virtual ~FlightDataPrint();
 
  private:
-  /** */
+
   void __printPositionData( QPainter* painter, FlightPoint* cPoint,
                             int yPos, QString text, bool printVario = false,
                             bool printSpeed = false);
-  /** */
+
   void __printPositionData(QPainter *painter, Waypoint *cPoint, int yPos);
 
   unsigned int time;

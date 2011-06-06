@@ -13,6 +13,8 @@ CONFIG += qt \
     
 TEMPLATE = app
 
+LIBS += -ldl
+
 SOURCES = \
     aboutwidget.cpp \
     airfield.cpp \
