@@ -1,7 +1,7 @@
 # KFLog4 qmake project file
 # $Id$
 
-QT += xml opengl qt3support network
+QT += network opengl
 
 TEMPLATE = lib
 
@@ -12,7 +12,6 @@ SOURCES =   glview.cpp \
             openglwidget.cpp
 
 HEADERS =   openglwidget.h \
-            opengl_igc.h \
             glview.h
 
 DESTDIR = ../../release/bin

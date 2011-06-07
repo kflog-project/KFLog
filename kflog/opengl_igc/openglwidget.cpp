@@ -2,49 +2,63 @@
 **
 **   openglwidget.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
 **   Copyright (c):  2003 by Christof Bodner
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
+**   License. See the file COPYING for more information.
 **
 **   $Id$
 **
 ***********************************************************************/
 
 #include <QtGui>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
+
 #include "openglwidget.h"
 #include "glview.h"
 
 OpenGLWidget::OpenGLWidget( QWidget* parent ) : QWidget(parent)
 {
-   glview = new GLView( this );
+  setWindowFlags( Qt::Window );
+  setWindowModality( Qt::WindowModal );
+  setAttribute(Qt::WA_DeleteOnClose);
 
-   Q3HBoxLayout* flayout = new Q3HBoxLayout( this, 2, 2, "flayout");
+  glview = new GLView( this );
 
-   if (!glview->isValid())
-   {
-     QString text=tr("No OpenGL extension for display found! Check your configuration!");
-     QMessageBox::critical(this, tr("Error"), "<qt>" + text +"</qt>", QMessageBox::Ok, 0, 0 );
-     QLabel* label= new QLabel(text,this);
-     label->setAlignment( Qt::AlignHCenter|Qt::AlignVCenter );
-     flayout->addWidget(label,1);
-   }
-   else
-   {
-     flayout->addWidget( glview, 1 );
-   }
+  QHBoxLayout* flayout = new QHBoxLayout( this );
+
+  if( !glview->isValid() )
+    {
+       QString text(tr("<html>No OpenGL extension for display found!<br><br>"
+                       "Please check your configuration!</html>"));
+
+       QMessageBox::critical( this,
+                              tr("Error"),
+                              text,
+                              QMessageBox::Ok );
+
+       QLabel* label= new QLabel(text);
+       label->setAlignment( Qt::AlignHCenter|Qt::AlignVCenter );
+       flayout->addWidget( label );
+    }
+  else
+    {
+      flayout->addWidget( glview );
+    }
 }
 
-OpenGLWidget::~OpenGLWidget(){
+OpenGLWidget::~OpenGLWidget()
+{
 }
 
-void OpenGLWidget::addFlight(Flight* flight){
-  if (glview->isValid())
-    glview->addFlight(flight);
+void OpenGLWidget::addFlight(Flight* flight)
+{
+  if( glview->isValid() && flight )
+    {
+      glview->addFlight( flight );
+    }
 }
