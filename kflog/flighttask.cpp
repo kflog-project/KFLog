@@ -81,11 +81,9 @@ void FlightTask::__checkType()
   if (wpList.count() > 0) {
     for(int loop = 1; loop <= wpList.count() - 1; loop++)
       {
-        //warning("distance: %f",wpList.at(loop)->distance);
         distance_total += wpList.at(loop)->distance;
       }
   }
-  //warning("Total Distance: %f",distance_total);
 
   if(wpList.count() < 4)
     {
@@ -94,8 +92,7 @@ void FlightTask::__checkType()
     }
 
 
-  distance_task = distance_total - wpList.at(1)->distance
-    - wpList.at(wpList.count() - 1)->distance;
+  distance_task = distance_total - wpList.at(1)->distance - wpList.at(wpList.count() - 1)->distance;
 
   if(dist(wpList.at(1),wpList.at(wpList.count() - 2)) < 1.0)
     {
@@ -351,11 +348,8 @@ bool FlightTask::isFAI(double d_wp, double d1, double d2, double d3)
 
 bool FlightTask::drawMapElement( QPainter* targetPainter )
 {
-  // qDebug() << "FlightTask::drawMapElement Ein";
-
   if( wpList.count() == 0 )
     {
-      qDebug() << "FlightTask::drawMapElement() wpCount=0";
       return false;
     }
 
@@ -531,8 +525,6 @@ bool FlightTask::drawMapElement( QPainter* targetPainter )
       }
     }
   }
-
-  // qDebug() << "FlightTask::drawMapElement Aus";
 
   return true;
 }
