@@ -94,7 +94,7 @@ QString Igc3DView::getHelp()
 
 void Igc3DView::resizeEvent( QResizeEvent* event )
 {
-  qDebug() << "Igc3DView::resizeEvent" << event->size();
+  // qDebug() << "Igc3DView::resizeEvent" << event->size();
 
   QSize qs = event->size();
   state->height = qs.height();
@@ -103,7 +103,7 @@ void Igc3DView::resizeEvent( QResizeEvent* event )
 
 QSize Igc3DView::sizeHint()
 {
-  qDebug() << "Igc3DView::sizeHint()" << QWidget::sizeHint();
+  // qDebug() << "Igc3DView::sizeHint()" << QWidget::sizeHint();
 
   QSize qs = QWidget::sizeHint();
   state->height = qs.height();
@@ -114,9 +114,7 @@ QSize Igc3DView::sizeHint()
 
 void Igc3DView::paintEvent( QPaintEvent *event )
 {
-  qDebug() << "Igc3DView::paintEvent Rein" << event->rect()
-           << "state->height" << state->height
-           << "state->width" << state->width;
+  Q_UNUSED( event )
 
   QPainter painter( this );
 
