@@ -25,8 +25,7 @@
 #include <cmath>
 #include <cstdlib>
 
-#include <QMessageBox>
-#include <QPixmap>
+#include <QtGui>
 
 #include "flight.h"
 #include "mapcalc.h"
@@ -107,11 +106,10 @@ Flight::Flight( const QString& fName,
   __checkMaxMin();
   __flightState();
 
-  // size and clear animation pixbuffer
+  // setup an animation pixbuffer
   pixAnimate = QPixmap(32,32);
   pixAnimate.fill(Qt::transparent);
 
-  // Die Liste könnte doch eigentlich permanent gespeichert werden ...
   header.append(pilotName);
   header.append(gliderID);
   header.append(gliderType);
@@ -130,10 +128,14 @@ Flight::~Flight()
   qDeleteAll( route );
 }
 
-void Flight::__moveOptimizePoint(unsigned int idList[], double taskValue[],
-    unsigned int id)
+void Flight::__moveOptimizePoint( unsigned int idList[],
+                                  double taskValue[],
+                                  unsigned int id )
 {
-  if(id > MAX_TASK_ID - 1) return;
+  if(id > MAX_TASK_ID - 1)
+    {
+      return;
+    }
 
   taskValue[id + 1] = taskValue[id];
   idList[3 * id + 3] = idList[3 * id];
@@ -141,8 +143,11 @@ void Flight::__moveOptimizePoint(unsigned int idList[], double taskValue[],
   idList[3 * id + 5] = idList[3 * id + 2];
 }
 
-void Flight::__setOptimizeRange(unsigned int start[], unsigned int stop[],
-    unsigned int idList[], unsigned int id, unsigned int step)
+void Flight::__setOptimizeRange( unsigned int start[],
+                                 unsigned int stop[],
+                                 unsigned int idList[],
+                                 unsigned int id,
+                                 unsigned int step )
 {
   /*
    * Die benutzten Abschnitte müssen komplett innerhalb des Fluges liegen.
@@ -157,8 +162,9 @@ void Flight::__setOptimizeRange(unsigned int start[], unsigned int stop[],
   stop[2] = qMin((int)(start[2] + ( 2 * step )), route.count() - 1);
 }
 
-double Flight::__calculateOptimizePoints(FlightPoint* fp1,
-    FlightPoint* fp2, FlightPoint* fp3)
+double Flight::__calculateOptimizePoints( FlightPoint* fp1,
+                                          FlightPoint* fp2,
+                                          FlightPoint* fp3 )
 {
   double dist1 = dist(fp1, fp2);
   double dist2 = dist(fp2, fp3);
@@ -188,6 +194,7 @@ void Flight::__flightState()
       delta_T = 0;
       bearing = 0;
       m = n;
+
       while(delta_T<10)
       {
         delta_T += route.at(m)->dT;
@@ -196,7 +203,9 @@ void Flight::__flightState()
         if(m==route.count())
           break;
       }
-      // if the change in bearing is more than 65 deg in the next 10 sec., the glider will be in a thermal
+
+      // if the change in bearing is more than 65 deg in the next 10 sec.,
+      // the glider will be in a thermal
       if(fabs(bearing *180*10/(M_PI*delta_T)) > 65)
       {
           proceed = 0;
@@ -259,7 +268,11 @@ void Flight::__flightState()
 
 void Flight::__calculateBasicInformation()
 {
-  /**BUG: wrong bearings are given in flights with a high log-interval and with windy conditions. This results in incorrect turning directions of thermals*/
+  /**
+   * BUG: wrong bearings are given in flights with a high log-interval and
+   * with windy conditions. This results in incorrect turning directions
+   * of thermals.
+   */
   float        prevBearing = 0, nextBearing = 0 , diffBearing = 0, prevDiffBearing = 0;
   unsigned int points = route.count();
 
@@ -320,8 +333,10 @@ void Flight::__calculateBasicInformation()
   }
 }
 
-float Flight::__diffAngle(float firstAngle, float secondAngle) {
+float Flight::__diffAngle(float firstAngle, float secondAngle)
+{
   float diffAngle = secondAngle-firstAngle;
+
   //make the absolute value of bearing smaller than 180 degree
   if(diffAngle > M_PI)
     diffAngle-= 2.0*M_PI;
@@ -330,9 +345,12 @@ float Flight::__diffAngle(float firstAngle, float secondAngle) {
   return diffAngle;
 }
 
-unsigned int Flight::__calculateBestTask(unsigned int start[],
-    unsigned int stop[], unsigned int step, unsigned int idList[],
-    double taskValue[], bool isTotal)
+unsigned int Flight::__calculateBestTask( unsigned int start[],
+                                          unsigned int stop[],
+                                          unsigned int step,
+                                          unsigned int idList[],
+                                          double taskValue[],
+                                          bool isTotal )
 {
   unsigned int numSteps = 0;
   double temp = 0;
@@ -392,12 +410,11 @@ unsigned int Flight::__calculateBestTask(unsigned int start[],
 bool Flight::__isVisible() const
 {
   return true;
-//  return glMapMatrix->isVisible(bBox);
 }
 
 void Flight::printMapElement(QPainter* targetPainter, bool isText)
 {
-  qWarning("print Flight");
+  // qDebug() << "Flight::printMapElement()";
 
   FlightPoint* pointA;
   FlightPoint* pointB;
@@ -453,7 +470,7 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
 
 bool Flight::drawMapElement( QPainter* targetPainter )
 {
-  if(!__isVisible())
+  if( !__isVisible() )
     {
       return false;
     }
@@ -533,12 +550,14 @@ QString Flight::getID() const
   return gliderID;
 }
 
-QString Flight::getTaskTypeString(bool isOrig) const
+QString Flight::getTaskTypeString( bool isOrig ) const
 {
   if(isOrig || !optimized)
+    {
       return origTask.getTaskTypeString();
-  else
-      return optimizedTask.getTaskTypeString();
+    }
+
+  return optimizedTask.getTaskTypeString();
 }
 
 FlightPoint Flight::getPointByTime(time_t time)
@@ -555,6 +574,7 @@ int Flight::getPointIndexByTime(time_t time)
   sp = (time - route.at(0)->time) / diff;
   if ( sp < 0 )
     sp = 0;
+
   if ( sp > ((int)route.count())-1 )
     sp = route.count()-1;
 
@@ -663,134 +683,134 @@ QStringList Flight::getFlightValues(unsigned int start, unsigned int end)
          }
     }
 
-    QStringList result;
-    QString text;
+  QStringList result;
+  QString text;
 
-    // Kreisflug / Circling
-    //index: 0 right turn time
-    text.sprintf("%s <small>(%.1f%%)</small>",
-                 printTime(kurbel_r, true, true, true).toAscii().data(),
-                 (float) kurbel_r / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
-    result.append(text);
-    //index: 1 left turn time
-    text.sprintf("%s <small>(%.1f%%)</small>",
-                 printTime(kurbel_l, true, true, true).toAscii().data(),
-                 (float) kurbel_l / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
-    result.append(text);
-    //index: 2 mixed turn time
-    text.sprintf("%s <small>(%.1f%%)</small>",
-                 printTime(kurbel_v, true, true, true).toAscii().data(),
-                 (float) kurbel_v / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
-    result.append(text);
-    //index: 3 total turn time
-    text.sprintf("%s <small>(%.1f%%)</small>",
-                 printTime((kurbel_r + kurbel_l + kurbel_v), true, true, true).toAscii().data(),
-                 (float)(kurbel_r + kurbel_l + kurbel_v) / (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
-    result.append(text);
+  // Kreisflug / Circling
+  //index: 0 right turn time
+  text.sprintf("%s <small>(%.1f%%)</small>",
+               printTime(kurbel_r, true, true, true).toAscii().data(),
+               (float) kurbel_r / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
+  result.append(text);
+  //index: 1 left turn time
+  text.sprintf("%s <small>(%.1f%%)</small>",
+               printTime(kurbel_l, true, true, true).toAscii().data(),
+               (float) kurbel_l / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
+  result.append(text);
+  //index: 2 mixed turn time
+  text.sprintf("%s <small>(%.1f%%)</small>",
+               printTime(kurbel_v, true, true, true).toAscii().data(),
+               (float) kurbel_v / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
+  result.append(text);
+  //index: 3 total turn time
+  text.sprintf("%s <small>(%.1f%%)</small>",
+               printTime((kurbel_r + kurbel_l + kurbel_v), true, true, true).toAscii().data(),
+               (float)(kurbel_r + kurbel_l + kurbel_v) / (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
+  result.append(text);
 
-    //index: 4 right turn vario
-    text.sprintf("%.2f m/s",(k_height_pos_r + k_height_neg_r) / (kurbel_r));
-    result.append(text);
-    //index: 5 left turn vario
-    text.sprintf("%.2f m/s",(k_height_pos_l + k_height_neg_l) / (kurbel_l));
-    result.append(text);
-    //index: 6 mixed turn vario
-    text.sprintf("%.2f m/s",(k_height_pos_v + k_height_neg_v) / (kurbel_v));
-    result.append(text);
-    //index: 7 total turn vario
-    text.sprintf("%.2f m/s",
-             (k_height_pos_r + k_height_pos_l + k_height_pos_v +
-              k_height_neg_r + k_height_neg_l + k_height_neg_v) /
-             (kurbel_r + kurbel_l + kurbel_v));
-    result.append(text);
+  //index: 4 right turn vario
+  text.sprintf("%.2f m/s",(k_height_pos_r + k_height_neg_r) / (kurbel_r));
+  result.append(text);
+  //index: 5 left turn vario
+  text.sprintf("%.2f m/s",(k_height_pos_l + k_height_neg_l) / (kurbel_l));
+  result.append(text);
+  //index: 6 mixed turn vario
+  text.sprintf("%.2f m/s",(k_height_pos_v + k_height_neg_v) / (kurbel_v));
+  result.append(text);
+  //index: 7 total turn vario
+  text.sprintf("%.2f m/s",
+           (k_height_pos_r + k_height_pos_l + k_height_pos_v +
+            k_height_neg_r + k_height_neg_l + k_height_neg_v) /
+           (kurbel_r + kurbel_l + kurbel_v));
+  result.append(text);
 
-    //index: 8 right turn dH
-    text.sprintf("%.0f m",k_height_pos_r);
-    result.append(text);
-    //index: 9 left turn dH
-    text.sprintf("%.0f m",k_height_pos_l);
-    result.append(text);
-    //index: 10 mixed turn dH
-    text.sprintf("%.0f m",k_height_pos_v);
-    result.append(text);
-    //index: 11 total turn dH
-    text.sprintf("%.0f m",k_height_pos_r + k_height_pos_l + k_height_pos_v);
-    result.append(text);
-    //index: 12 right turn -dH
-    text.sprintf("%.0f m",k_height_neg_r);
-    result.append(text);
-    //index: 13 left turn -dH
-    text.sprintf("%.0f m",k_height_neg_l);
-    result.append(text);
-    //index: 14 mixed turn -dH
-    text.sprintf("%.0f m",k_height_neg_v);
-    result.append(text);
-    //index: 15 total turn -dH
-    text.sprintf("%.0f m",k_height_neg_r + k_height_neg_l + k_height_neg_v);
-    result.append(text);
-    //index: 16 right turn dH netto
-    text.sprintf("%.0f m",k_height_pos_r + k_height_neg_r);
-    result.append(text);
-    //index: 17 left turn dH netto
-    text.sprintf("%.0f m",k_height_pos_l + k_height_neg_l);
-    result.append(text);
-    //index: 18 mixed turn dH netto
-    text.sprintf("%.0f m",k_height_pos_v + k_height_neg_v);
-    result.append(text);
-    //index: 19 total turn dH netto
-    text.sprintf("%.0f m",k_height_pos_r + k_height_pos_l + k_height_pos_v  +  k_height_neg_r + k_height_neg_l + k_height_neg_v);
-    result.append(text);
+  //index: 8 right turn dH
+  text.sprintf("%.0f m",k_height_pos_r);
+  result.append(text);
+  //index: 9 left turn dH
+  text.sprintf("%.0f m",k_height_pos_l);
+  result.append(text);
+  //index: 10 mixed turn dH
+  text.sprintf("%.0f m",k_height_pos_v);
+  result.append(text);
+  //index: 11 total turn dH
+  text.sprintf("%.0f m",k_height_pos_r + k_height_pos_l + k_height_pos_v);
+  result.append(text);
+  //index: 12 right turn -dH
+  text.sprintf("%.0f m",k_height_neg_r);
+  result.append(text);
+  //index: 13 left turn -dH
+  text.sprintf("%.0f m",k_height_neg_l);
+  result.append(text);
+  //index: 14 mixed turn -dH
+  text.sprintf("%.0f m",k_height_neg_v);
+  result.append(text);
+  //index: 15 total turn -dH
+  text.sprintf("%.0f m",k_height_neg_r + k_height_neg_l + k_height_neg_v);
+  result.append(text);
+  //index: 16 right turn dH netto
+  text.sprintf("%.0f m",k_height_pos_r + k_height_neg_r);
+  result.append(text);
+  //index: 17 left turn dH netto
+  text.sprintf("%.0f m",k_height_pos_l + k_height_neg_l);
+  result.append(text);
+  //index: 18 mixed turn dH netto
+  text.sprintf("%.0f m",k_height_pos_v + k_height_neg_v);
+  result.append(text);
+  //index: 19 total turn dH netto
+  text.sprintf("%.0f m",k_height_pos_r + k_height_pos_l + k_height_pos_v  +  k_height_neg_r + k_height_neg_l + k_height_neg_v);
+  result.append(text);
 
-    // Strecke / Straight
-    //index: 20 straight L/D
-    text.sprintf("%.0f",distance / (s_height_pos + s_height_neg) *-1);
-    result.append(text);
-    //index: 21 straight speed
-    text.sprintf("%.1f km/h",distance /
-          ((float)(route.at(end)->time - route.at(start)->time -
-          (kurbel_r + kurbel_l + kurbel_v))) * 3.6);
-    result.append(text);
-    //index: 22 straight dH
-    text.sprintf("%.0f m",s_height_pos);
-    result.append(text);
-    //index: 23 straight -dH
-    text.sprintf("%.0f m",s_height_neg);
-    result.append(text);
-    //index: 24 straight dH netto
-    text.sprintf("%.0f m",s_height_pos + s_height_neg);
-    result.append(text);
-    //index: 25 straight total distance
-    text.sprintf("%.0f km",distance / 1000);
-    result.append(text);
-    //index: 26 straight time
-    text.sprintf("%s <small>(%.1f%%)</small>",
-                 printTime( (int)( route.at(end)->time - route.at(start)->time - ( kurbel_r + kurbel_l + kurbel_v ) ) , true, true, true).toAscii().data(),
-                 (float)( route.at(end)->time - route.at(start)->time - ( kurbel_r + kurbel_l + kurbel_v ) ) / (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
-    result.append(text);
+  // Strecke / Straight
+  //index: 20 straight L/D
+  text.sprintf("%.0f",distance / (s_height_pos + s_height_neg) *-1);
+  result.append(text);
+  //index: 21 straight speed
+  text.sprintf("%.1f km/h",distance /
+        ((float)(route.at(end)->time - route.at(start)->time -
+        (kurbel_r + kurbel_l + kurbel_v))) * 3.6);
+  result.append(text);
+  //index: 22 straight dH
+  text.sprintf("%.0f m",s_height_pos);
+  result.append(text);
+  //index: 23 straight -dH
+  text.sprintf("%.0f m",s_height_neg);
+  result.append(text);
+  //index: 24 straight dH netto
+  text.sprintf("%.0f m",s_height_pos + s_height_neg);
+  result.append(text);
+  //index: 25 straight total distance
+  text.sprintf("%.0f km",distance / 1000);
+  result.append(text);
+  //index: 26 straight time
+  text.sprintf("%s <small>(%.1f%%)</small>",
+               printTime( (int)( route.at(end)->time - route.at(start)->time - ( kurbel_r + kurbel_l + kurbel_v ) ) , true, true, true).toAscii().data(),
+               (float)( route.at(end)->time - route.at(start)->time - ( kurbel_r + kurbel_l + kurbel_v ) ) / (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
+  result.append(text);
 
-    //Total
-    //index: 27 total time
-    text.sprintf("%s",
-        printTime((int)(route.at(end)->time - route.at(start)->time), true, true, true).toAscii().data());
-    result.append(text);
-    //index: 28 total dH
-    text.sprintf("%.0f m",s_height_pos   + k_height_pos_r
-                        + k_height_pos_l + k_height_pos_v);
-    result.append(text);
-    //index: 29 total -dH
-    text.sprintf("%.0f m",s_height_neg   + k_height_neg_r
-                        + k_height_neg_l + k_height_neg_v);
-    result.append(text);
+  //Total
+  //index: 27 total time
+  text.sprintf("%s",
+      printTime((int)(route.at(end)->time - route.at(start)->time), true, true, true).toAscii().data());
+  result.append(text);
+  //index: 28 total dH
+  text.sprintf("%.0f m",s_height_pos   + k_height_pos_r
+                      + k_height_pos_l + k_height_pos_v);
+  result.append(text);
+  //index: 29 total -dH
+  text.sprintf("%.0f m",s_height_neg   + k_height_neg_r
+                      + k_height_neg_l + k_height_neg_v);
+  result.append(text);
 
-    // Rückgabe:
-    // kurbelanteil r - l - v - g
-    // mittleres Steigen r - l - v - g
-    // Höhengewinn r - l - v - g
-    // Höhenverlust r - l - v - g
-    // Gleitzahl - mittlere Geschw. - Höhengewinn - höhenverlust
-    // Distanz - StreckenZeit - Gesamtzeit - Ges. Höhengewinn - Ges Höhenverlust
+  // Rückgabe:
+  // kurbelanteil r - l - v - g
+  // mittleres Steigen r - l - v - g
+  // Höhengewinn r - l - v - g
+  // Höhenverlust r - l - v - g
+  // Gleitzahl - mittlere Geschw. - Höhengewinn - höhenverlust
+  // Distanz - StreckenZeit - Gesamtzeit - Ges. Höhengewinn - Ges Höhenverlust
 
-    return result;
+  return result;
 }
 
 QList<statePoint*> Flight::getFlightStates(unsigned int start, unsigned int end)
@@ -1072,6 +1092,7 @@ bool Flight::optimizeTask()
   unsigned int numStepsA = 0, numStepsB = 0, minA = 0, minB = 0;
 
   double length = 0;
+
   for(unsigned int curStep = 1; curStep < 100; curStep++)
     {
       /*
@@ -1079,7 +1100,10 @@ bool Flight::optimizeTask()
        * first optimization-run. If this number is smaller than 3, we
        * cannot create a triangle.
        */
-      if((route.count() / curStep) < 3) break;
+      if((route.count() / curStep) < 3)
+        {
+          break;
+        }
 
       curNumSteps = 1;
       numStepsA = 1;
@@ -1119,16 +1143,18 @@ bool Flight::optimizeTask()
         }
     }
 
-  unsigned int numSteps = 0, totalSteps = 0, secondSteps = 0,
-      start[3], stop[3];
+  unsigned int numSteps = 0, totalSteps = 0, secondSteps = 0, start[3], stop[3];
   /*
    * in taskValues stehen jetzt die Längen der längsten Flüge.
    * in idList die Indizes der drei Punkte dieser Flüge.
    */
   unsigned int idList[NUM_TASKS_POINTS], idTempList[NUM_TASKS_POINTS];
   double taskValue[NUM_TASKS];
-  for(unsigned int loop = 0; loop < NUM_TASKS; loop++)
+
+  for( unsigned int loop = 0; loop < NUM_TASKS; loop++ )
+    {
       taskValue[loop] = 0;
+    }
 
   start[0] = 0;
   start[1] = step - 1;
@@ -1137,8 +1163,10 @@ bool Flight::optimizeTask()
   stop[1] = route.count() - step;
   stop[2] = route.count();
 
-  for(unsigned int loop = 0; loop < NUM_TASKS; loop++)
+  for( unsigned int loop = 0; loop < NUM_TASKS; loop++ )
+    {
       taskValue[loop] = 0;
+    }
 
   // steps muss noch besser berechnet werden!!!
   step = step * 3;
@@ -1147,8 +1175,10 @@ bool Flight::optimizeTask()
   totalSteps = numSteps;
 
   // Sichern der ID's der Favoriten
-  for(unsigned int loop = 0; loop < NUM_TASKS_POINTS; loop++)
+  for( unsigned int loop = 0; loop < NUM_TASKS_POINTS; loop++ )
+    {
       idTempList[loop] = idList[loop];
+    }
 
   unsigned int stepB = qMax((int)step / 6, 4);
 
@@ -1188,6 +1218,7 @@ bool Flight::optimizeTask()
    * hier die Berechnung der Punkte vereinfachen!
    */
   QString text, distText, pointText;
+
   if(FlightTask::isFAI(totalDist, dist1, dist2, dist3))
       pointText.sprintf(" %d (FAI)", (int)(totalDist * 2.0 * 0.85));
   else
@@ -1237,22 +1268,27 @@ bool Flight::optimizeTask()
 int Flight::searchGetNextPoint(int index, FlightPoint& searchPoint)
 {
   // only move to next if not at last point
-  if ((index < (int)route.count() - 1) && (index >= 0))
-                  index += 1;
+  if( (index < (int) route.count() - 1) && (index >= 0) )
+    {
+      index += 1;
+    }
 
-        // now update searchPoint struct
-  searchPoint = *route.at(index);
+  // now update searchPoint struct
+  searchPoint = *route.at( index );
   return index;
 }
 
 /** Get the previous FlightPoint before number 'index' */
 int Flight::searchGetPrevPoint(int index, FlightPoint& searchPoint)
 {
-        // only move to next is not first point
-  if ((index > 1) && (index <= (int)route.count() - 1))
-                  index -= 1;
-         // now update searchPoint struct
-  searchPoint = *route.at(index);
+  // only move to next is not first point
+  if( (index > 1) && (index <= (int) route.count() - 1) )
+    {
+      index -= 1;
+    }
+
+  // now update searchPoint struct
+  searchPoint = *route.at( index );
   return index;
 }
 
@@ -1261,12 +1297,16 @@ int Flight::searchGetPrevPoint(int index, FlightPoint& searchPoint)
  */
 int Flight::searchStepNextPoint(int index, FlightPoint & fP, int step)
 {
-  if (index + step < (int)getRouteLength() - 1)
+  if( index + step < (int) getRouteLength() - 1 )
+    {
       index += step;
+    }
   else
-            index = getRouteLength() - 1;
+    {
+      index = getRouteLength() - 1;
+    }
 
-  return searchGetNextPoint(index, fP);
+  return searchGetNextPoint( index, fP );
 }
 
 /**
@@ -1274,15 +1314,22 @@ int Flight::searchStepNextPoint(int index, FlightPoint & fP, int step)
  */
 int Flight::searchStepPrevPoint(int index,  FlightPoint & fP, int step)
 {
-  if (index - step > 0)
+  if( index - step > 0 )
+    {
       index -= step;
+    }
   else
-            index = 1;
+    {
+      index = 1;
+    }
 
-  return searchGetPrevPoint(index, fP);
+  return searchGetPrevPoint( index, fP );
 }
 
-QStringList Flight::getHeader()  {  return header;  }
+QStringList Flight::getHeader()
+{
+  return header;
+}
 
 /** Sets the nAnimationIndex member to 'n' */
 void Flight::setAnimationIndex(int n)
@@ -1337,14 +1384,15 @@ QPixmap Flight::getLastAnimationPixmap(void)  {  return pixAnimate;  }
 void Flight::setLastAnimationPixmap(QPixmap pix)  {  pixAnimate = pix;  }
 
 /** Re-calculates all projections for this flight. */
-void Flight::reProject(){
+void Flight::reProject()
+{
   extern MapMatrix *_globalMapMatrix;
 
   FlightPoint *fp;
+
   foreach(fp, route)
       fp->projP = _globalMapMatrix->wgsToMap(fp->origP);
 
   origTask.reProject();
   optimizedTask.reProject();
-
 }

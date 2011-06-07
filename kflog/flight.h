@@ -47,12 +47,23 @@ struct statePoint
   int dH_neg;
 };
 
-/*
- * Contains the logged flight-data.
+/**
+ * \class Flight
+ *
+ * \author Heiner Lamprecht, Florian Ehinger, Jan Max Walter Krueger, Constantijn Neeteson, Axel Pauli
+ *
+ * \brief Contains the logged flight data.
+ *
+ * Contains the logged flight data.
+ *
+ * \date 2001-2011
+ *
+ * \version $Id$
  */
 class Flight : public BaseFlightElement
 {
   public:
+
 	  /**
 	   * Creates a new flight-object.
 	   * @param  fileName  The name of the igc-file
@@ -75,7 +86,7 @@ class Flight : public BaseFlightElement
 	  /**
 	   * Destroys the flight-object.
 	   */
-  	~Flight();
+  	virtual ~Flight();
 	  /**
 	   * @return the name of the pilot.
 	   */
@@ -314,6 +325,7 @@ class Flight : public BaseFlightElement
         ParaOpen = 11, ParaSport = 12, ParaTandem = 13};
 
   private:
+
     /** */
     unsigned int __calculateBestTask(unsigned int start[], unsigned int stop[],
         unsigned int step, unsigned int idList[],
