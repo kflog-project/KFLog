@@ -59,6 +59,7 @@ Map::Map( QWidget* parent ) :
   lastCur1Pos(-100,-100),
   lastCur2Pos(-100,-100),
   prePos(-5000, -5000),
+  animationPaused(false),
   planning(0),
   tempTask(""),
   isDrawing(false),
@@ -79,9 +80,6 @@ Map::Map( QWidget* parent ) :
 
   pixCursor1 = _mainWindow->getPixmap("flag_green.png");
   pixCursor2 = _mainWindow->getPixmap("flag_red.png");
-
-//  pixAnimate.resize(32,32);
-//  pixAnimate.fill(white);
 
   __setCursor();
   setMouseTracking(true);
@@ -130,12 +128,11 @@ Map::Map( QWidget* parent ) :
 
   // create the animation timer
   timerAnimate = new QTimer( this );
-  connect( timerAnimate, SIGNAL(timeout()), this,
-           SLOT(slotAnimateFlightTimeout()) );
+  connect( timerAnimate, SIGNAL(timeout()), SLOT(slotAnimateFlightTimeout()) );
 
   mapInfoTimer = new QTimer(this);
   mapInfoTimer->setSingleShot( true );
-  connect (mapInfoTimer, SIGNAL(timeout()), this, SLOT(slotMapInfoTimeout()));
+  connect (mapInfoTimer, SIGNAL(timeout()), SLOT(slotMapInfoTimeout()));
 
   /** Create a timer for queuing draw events. */
   redrawMapTimer = new QTimer(this);
@@ -994,7 +991,7 @@ void Map::mousePressEvent(QMouseEvent* event)
       return;
     }
 
-  if(event->button() == Qt::LeftButton)
+  if( event->button() == Qt::LeftButton )
     {
       // Check if task planning is active. In this case allow only
       // planning actions.
@@ -1004,7 +1001,7 @@ void Map::mousePressEvent(QMouseEvent* event)
           return;
         }
 
-      if(event->modifiers() == Qt::ShiftModifier)
+      if( event->modifiers() == Qt::ShiftModifier )
         {
           // select WayPoint
           bool found = false;
@@ -1402,14 +1399,10 @@ void Map::__drawAirspaces()
 
 void Map::__drawFlight()
 {
-  qDebug() << "Map::__drawFlight() Ein";
-
   pixFlight.fill(Qt::transparent);
   QPainter flightP(&pixFlight);
 
   _globalMapContents->drawList( &flightP, MapContents::FlightList );
-
-  qDebug() << "Map::__drawFlight() Aus";
 }
 
 void Map::__drawPlannedTask( bool solid )
@@ -1845,237 +1838,105 @@ void Map::slotCenterToTask()
 }
 
 /**
- * Animation slot.
  * Called to start the animation timer.
  */
 void Map::slotAnimateFlightStart()
 {
-  QPoint pos;
-  QPixmap pix;
-  FlightPoint cP;
+  qDebug() << "Map::slotAnimateFlightStart()";
 
-  Flight *f = dynamic_cast<Flight *> (_globalMapContents->getFlight());
+  BaseFlightElement* bfe = _globalMapContents->getFlight();
 
-  if(f)
-    {
-            // save this one to speed up timeout code
-      flightToAnimate = f;
-
-      switch(f->getObjectType())
-        {
-          case BaseMapElement::Flight:
-            f->setAnimationIndex(0);
-            f->setAnimationActive(true);
-            break;
-
-          case BaseMapElement::FlightGroup:
-            // loop through all and set animation index to start
-            {
-              QList<Flight*> flightList = ((FlightGroup *)f)->getFlightList();
-              foreach(f, flightList)
-                {
-                  f->setAnimationIndex(0);
-                  f->setAnimationActive(true);
-                }
-
-              break;
-            }
-
-          default:
-            break;
-        }
-        // force redraw
-        // flights will not be visible as nAnimationIndex is zero for all flights to animate.
-        slotRedrawFlight();
-
-      switch(f->getObjectType())
-        {
-          case BaseMapElement::Flight:
-            {
-              cP = f->getPoint(0);
-              prePos = _globalMapMatrix->map(cP.projP);
-              pos = _globalMapMatrix->map(cP.projP);
-              pix = f->getLastAnimationPixmap();
-
-              QPainter p1( &pix );
-              p1.drawPixmap( 0, 0, pixBuffer, pos.x(), pos.y()-32, 32, 32 );
-
-              f->setLastAnimationPos(pos);
-              f->setLastAnimationPixmap(pix);
-
-              // put flag
-              QPainter p2( &pixBuffer );
-              p2.drawPixmap( pos.x(), pos.y()-32, pixCursor2 );
-            }
-           break;
-
-          case BaseMapElement::FlightGroup:
-            // loop through all and set animation index to start
-              {
-                QList<Flight*> flightList = ((FlightGroup *)f)->getFlightList();
-
-                for(int loop = 0; loop < flightList.count(); loop++)
-                  {
-                    cP = f->getPoint(0);
-                    pos = _globalMapMatrix->map(cP.projP);
-                    pix = f->getLastAnimationPixmap();
-
-                    QPainter p1( &pix );
-                    p1.drawPixmap( 0, 0, pixBuffer, pos.x(), pos.y()-32, 32, 32 );
-
-                    f->setLastAnimationPos(pos);
-                    f->setLastAnimationPixmap(pix);
-
-                    // put flag
-                    QPainter p2( &pixBuffer );
-                    p2.drawPixmap( pos.x(), pos.y()-32, pixCursor2 );
-
-                  }
-              }
-            break;
-
-          default:
-
-            break;
-           }
-
-      // 50ms multi-shot timer
-      timerAnimate->start( 50 );
-    }
-}
-
-/**
- * Animation slot.
- * Called for every timeout of the animation timer.
- */
-void Map::slotAnimateFlightTimeout()
-{
-  qDebug() << "Map::slotAnimateFlightTimeout()";
-
-  FlightPoint cP; //, prevP;
-  Flight *f  = this->flightToAnimate;
-  bool bDone = true;
-  QPoint lastpos, pos;
-  QPixmap pix;
-
-  if(f)
-    {
-      switch(f->getObjectType())
-        {
-          case BaseMapElement::Flight:
-            {
-              f->setAnimationNextIndex();
-
-              if( f->isAnimationActive() )
-              {
-                bDone = false;
-              }
-
-              //write info from current point on statusbar
-              cP = f->getPoint((f->getAnimationIndex()));
-              pos = _globalMapMatrix->map(cP.projP);
-              lastpos = f->getLastAnimationPos();
-              pix = f->getLastAnimationPixmap();
-              emit showFlightPoint(_globalMapMatrix->mapToWgs(pos), cP);
-
-              // erase prev indicator-flag
-              QPainter p1( &pixBuffer );
-              p1.drawPixmap( lastpos.x(), lastpos.y()-32, pix );
-
-              // redraw flight up to this point, blt the pixmap onto the already created pixmap
-              __drawFlight();
-              QPainter p2( &pixBuffer );
-              p2.drawPixmap( 0, 0, pixFlight );
-
-              //save for next timeout
-              QPainter p3( &pix );
-              p3.drawPixmap( 0, 0, pixBuffer, pos.x(), pos.y()-32, 32, 32 );
-
-              f->setLastAnimationPixmap(pix);
-              f->setLastAnimationPos(pos);
-
-              // add indicator-flag
-              QPainter p4( &pixBuffer );
-              p4.drawPixmap( pos.x(), pos.y()-32,  pixCursor2 );
-            }
-
-            break;
-
-          case BaseMapElement::FlightGroup:
-            // loop through all and set animation index to start
-            {
-              QList<Flight*> flightList = ((FlightGroup *) flightToAnimate)->getFlightList();
-
-              for(int loop = 0; loop < flightList.count(); loop++)
-                {
-                  f = flightList.at(loop);
-                  f->setAnimationNextIndex();
-
-                  if (f->isAnimationActive())
-                    {
-                      bDone = false;
-                    }
-
-                  //write info from current point on statusbar
-                  cP = f->getPoint((f->getAnimationIndex()));
-                  pos = _globalMapMatrix->map(cP.projP);
-                  lastpos = f->getLastAnimationPos();
-                  pix = f->getLastAnimationPixmap();
-                  emit showFlightPoint(_globalMapMatrix->mapToWgs(pos), cP);
-
-                  // erase prev indicator-flag
-                  QPainter p1( &pixBuffer );
-                  p1.drawPixmap( lastpos.x(), lastpos.y()-32, pix );
-
-                  // redraw flight up to this point, blt the pixmap onto the already created pixmap
-                  __drawFlight();
-                  QPainter p2( &pixBuffer );
-                  p2.drawPixmap( 0, 0, pixFlight );
-
-                  //save for next timeout
-                  QPainter p3( &pix );
-                  p3.drawPixmap( 0, 0, pixBuffer, pos.x(), pos.y()-32, 32, 32 );
-
-
-                  f->setLastAnimationPixmap(pix);
-                  f->setLastAnimationPos(pos);
-
-                  // add indicator-flag
-                  QPainter p4( &pixBuffer );
-                  p4.drawPixmap( pos.x(), pos.y()-32,  pixCursor2 );
-                }
-
-              break;
-            }
-
-          default:
-            break;
-         }
-    }
-
-  // force paint event
-  repaint();
-
-  // if one of the flights still is active, bDone will be false
-  if( bDone )
-    {
-      timerAnimate->stop();
-    }
-}
-
-/**
- * Animation slot.
- * Called to stop the animation timer.
- */
-void Map::slotAnimateFlightStop()
-{
-  if( ! timerAnimate->isActive() )
+  if( ! bfe )
     {
       return;
     }
 
-  // stop animation on user request.
+  QList<Flight *> flightList;
+
+  switch( bfe->getObjectType() )
+    {
+      case BaseMapElement::Flight:
+
+        flightList.append( dynamic_cast<Flight *>(bfe) );
+        break;
+
+      case BaseMapElement::FlightGroup:
+        {
+          FlightGroup* fg = dynamic_cast<FlightGroup *>(bfe);
+          flightList = fg->getFlightList();
+          break;
+        }
+
+      default:
+        return;
+    }
+
+  if( animationPaused )
+    {
+      // Animation was paused, continue animation.
+      animationPaused = false;
+      timerAnimate->start( 50 );
+      return;
+    }
+
+  // Loop through the flight list and reset animation flag.
+  for( int i = 0; i < flightList.size(); i++ )
+    {
+      Flight *flight = flightList.at(i);
+
+      flight->setAnimationIndex(0);
+      flight->setAnimationActive(true);
+    }
+
+  // flights will not be visible as nAnimationIndex is zero for all flights to animate.
+  slotRedrawFlight();
+
+  for( int i = 0; i < flightList.size(); i++ )
+    {
+      Flight *flight = flightList.at(i);
+
+      FlightPoint cP = flight->getPoint(0);
+      QPoint prePos  = _globalMapMatrix->map(cP.projP);
+      QPoint pos     = prePos;
+      QPixmap pix    = flight->getLastAnimationPixmap();
+
+      QPainter p1( &pix );
+      p1.drawPixmap( 0, 0, pixBuffer, pos.x(), pos.y()-32, 32, 32 );
+
+      flight->setLastAnimationPos(pos);
+      flight->setLastAnimationPixmap(pix);
+
+      // draw the flag at the map
+      QPainter p2( &pixBuffer );
+      p2.drawPixmap( pos.x(), pos.y() - 32, pixCursor2 );
+    }
+
+  // force immediate redraw of the map.
+  repaint();
+
+  // start 50ms timer
+  timerAnimate->start( 50 );
+}
+
+/**
+ * Called to pause the animation timer.
+ */
+void Map::slotAnimateFlightPause()
+{
+  qDebug() << "Map::slotAnimateFlightPause()";
+
+  animationPaused = true;
   timerAnimate->stop();
+}
+
+/**
+ * Called for every timeout of the animation timer.
+ */
+void Map::slotAnimateFlightTimeout()
+{
+  // qDebug() << "Map::slotAnimateFlightTimeout()";
+
+  bool bDone = true;
 
   BaseFlightElement* bfe = _globalMapContents->getFlight();
 
@@ -2105,9 +1966,111 @@ void Map::slotAnimateFlightStop()
     }
 
   // Loop through the flight list and reset animation flag.
-  for( int loop = 0; loop < flightList.size(); loop++ )
+  for( int i = 0; i < flightList.size(); i++ )
     {
-      flightList.at(loop)->setAnimationActive(false);
+      Flight *flight = flightList.at(i);
+
+      flight->setAnimationNextIndex();
+
+      if( flight->isAnimationActive() )
+        {
+          bDone = false;
+        }
+
+      // write info from current point on statusbar
+      FlightPoint cP = flight->getPoint( (flight->getAnimationIndex()) );
+      QPoint pos = _globalMapMatrix->map( cP.projP );
+      QPoint lastpos = flight->getLastAnimationPos();
+      QPixmap pix = flight->getLastAnimationPixmap();
+      emit showFlightPoint( _globalMapMatrix->mapToWgs( pos ), cP );
+
+      // erase previous indicator flag
+      QPainter p1;
+      p1.begin( &pixBuffer );
+      p1.drawPixmap( lastpos.x(), lastpos.y() - 32, pix );
+
+      // redraw flight up to this point at the map
+      __drawFlight();
+
+      // draw flight at the map.
+      p1.drawPixmap( 0, 0, pixFlight );
+
+      // save map part for next timeout
+      QPainter p2;
+      p2.begin( &pix );
+      p2.drawPixmap( 0, 0, pixBuffer, pos.x(), pos.y() - 32, 32, 32 );
+      p2.end();
+
+      flight->setLastAnimationPixmap(pix);
+      flight->setLastAnimationPos(pos);
+
+      // draw indicator flag at the map
+      p1.drawPixmap( pos.x(), pos.y()-32,  pixCursor2 );
+      p1.end();
+    }
+
+  if( bDone )
+    {
+      // if one of the flights still is active, bDone will be false
+      timerAnimate->stop();
+    }
+  else
+    {
+      // force a paint event of the map
+      repaint();
+    }
+}
+
+/**
+ * Called to stop the animation timer.
+ */
+void Map::slotAnimateFlightStop()
+{
+  qDebug() << "Map::slotAnimateFlightStop()";
+
+  // stop animation timer on user request.
+  timerAnimate->stop();
+
+  if( animationPaused == false )
+    {
+      return;
+    }
+
+  // Reset animation pause flag
+  animationPaused = false;
+
+  BaseFlightElement* bfe = _globalMapContents->getFlight();
+
+  if( ! bfe )
+    {
+      return;
+    }
+
+  QList<Flight *> flightList;
+
+  switch( bfe->getObjectType() )
+    {
+      case BaseMapElement::Flight:
+
+        flightList.append( dynamic_cast<Flight *>(bfe) );
+        break;
+
+      case BaseMapElement::FlightGroup:
+        {
+          FlightGroup* fg = dynamic_cast<FlightGroup *>(bfe);
+          flightList = fg->getFlightList();
+          break;
+        }
+
+      default:
+        return;
+    }
+
+  // Loop through the flight list and reset animation flag.
+  for( int i = 0; i < flightList.size(); i++ )
+    {
+      flightList.at(i)->setAnimationIndex(0);
+      flightList.at(i)->setAnimationActive(false);
     }
 
   slotRedrawFlight();
@@ -2145,8 +2108,7 @@ void Map::slotFlightNext()
                   __redrawMap();
                 }
 
-              emit
-              showFlightPoint( _globalMapMatrix->wgsToMap( cP.origP ), cP );
+              emit showFlightPoint( _globalMapMatrix->wgsToMap( cP.origP ), cP );
               prePos = _globalMapMatrix->map( cP.projP );
               preIndex = index;
 

@@ -362,6 +362,7 @@ private:
   QAction* flightIgc3DAction;
   QAction* flightIgcOpenGLAction;
   QAction* flightAnimateStartAction;
+  QAction* flightAnimatePauseAction;
   QAction* flightAnimateStopAction;
   QAction* flightAnimateNextAction;
   QAction* flightAnimatePrevAction;

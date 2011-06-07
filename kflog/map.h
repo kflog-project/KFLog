@@ -95,17 +95,20 @@ private:
     void slotRedrawFlight();
     /**
      * Animation slot.
-     * Called for every timeout of the animation timer. Advances the crosshair one single step.
+     * Called for every timeout of the animation timer. Advances the cross-hair
+     * one single step.
      */
     void slotAnimateFlightTimeout();
     /**
-     * Animation slot.
-     * Called to start the animation timer
+     * Animation slot. Called to start the animation timer.
      */
     void slotAnimateFlightStart();
     /**
-     * Animation slot.
-     * Called to stop the animation timer
+     * Animation slot. Called to pause the animation timer.
+     */
+    void slotAnimateFlightPause();
+    /**
+     * Animation slot. Called to stop the animation timer.
      */
     void slotAnimateFlightStop();
     /**
@@ -229,7 +232,7 @@ private:
      */
     void __showLayer();
     /**
-     * Draws the map. The type of mapobjects to be drawn is controlled
+     * Draws the map. The type of map objects to be drawn is controlled
      * via slotConfigureMap.
      * @see #slotConfigureMap
      */
@@ -259,12 +262,10 @@ private:
      */
     void __drawWaypoints();
     /**
-     * Sets the crosshair cursor
+     * Sets the cross hair cursor
      */
     void __setCursor();
-    /** */
-//    void __setMapBorder();
-    /**
+     /**
       * Display Infos about MapItems
       */
     void __displayMapInfo(const QPoint& current, bool automatic=true);
@@ -292,7 +293,6 @@ private:
 
     QPixmap pixCursor1;
     QPixmap pixCursor2;
-    QPixmap pixAnimate;
     /**
      * Contains the grid, needed as the basis.
      */
@@ -357,17 +357,14 @@ private:
      * Animation timer
      */
     QTimer* timerAnimate;
-    /**
-     * FlightList to animate
-     */
-    Flight* flightToAnimate;
+    /** Flag to indicate an animation pause. */
+    bool animationPaused;
     /**
      * contains planning task points
      * enthält die Punkte!!!
      */
- //   QPtrList<wayPoint> taskPointList;
     // 0 keine Planung 1 Planung 2 Planung Aufgabe Abgeschlossen
-//    enum planning {NoPlanning = 0, Planning = 1, TaskFinished = 2};
+    // enum planning {NoPlanning = 0, Planning = 1, TaskFinished = 2};
     int planning;
     // Index des WP welcher verschoben wird bei planning == 3
     int moveWPindex;

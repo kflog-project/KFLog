@@ -1,5 +1,13 @@
 $Id$
 
+2011-06-07 Axel Pauli <axel@kflog.org>
+
+  * Bugfix: Forgot to port to Qt4 the opengl_igc part. Fixed now.
+  
+  * Bugfix: Normal flight animation start, pause and stop is working now without
+    QPainter complains. The other animate actions are not yet useable. Will be
+    the next work to get it running.
+
 2011-06-06 Axel Pauli <axel@kflog.org>
 
   * Bugfix: FlightDataPrint had a corrupted output format. I fixed that.

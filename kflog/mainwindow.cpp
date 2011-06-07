@@ -682,9 +682,16 @@ void MainWindow::createMenuBar()
   connect( flightAnimateStartAction, SIGNAL(triggered()),
            map, SLOT(slotAnimateFlightStart()));
 
+  flightAnimatePauseAction = new QAction( getPixmap("kde_player_pause_16.png"),
+                                    tr("&Pause Flight Animation"), this );
+  flightAnimatePauseAction->setShortcut( Qt::Key_F11 );
+  flightAnimatePauseAction->setEnabled(true);
+  connect( flightAnimatePauseAction, SIGNAL(triggered()),
+           map, SLOT(slotAnimateFlightPause()));
+
   flightAnimateStopAction = new QAction( getPixmap("kde_player_stop_16.png"),
                                    tr("Stop Flight &Animation"), this );
-  flightAnimateStopAction->setShortcut( Qt::Key_F11 );
+  flightAnimateStopAction->setShortcut( Qt::Key_F10 );
   flightAnimateStopAction->setEnabled(true);
   connect( flightAnimateStopAction, SIGNAL(triggered()),
            map, SLOT(slotAnimateFlightStop()));
@@ -744,6 +751,7 @@ void MainWindow::createMenuBar()
   fm->addAction( flightIgcOpenGLAction );
   fm->addSeparator();
   fm->addAction( flightAnimateStartAction );
+  fm->addAction( flightAnimatePauseAction );
   fm->addAction( flightAnimateStopAction );
   fm->addAction( flightAnimateNextAction );
   fm->addAction( flightAnimatePrevAction );
@@ -879,7 +887,6 @@ void MainWindow::createMenuBar()
 
 void MainWindow::createStatusBar()
 {
-  /* Alternativ könnte der Balken auch nur während des Zeichnens erscheinen */
   statusProgress = new QProgressBar( statusBar() );
   statusProgress->setFixedWidth(120);
   statusProgress->setFixedHeight( statusProgress->sizeHint().height() - 4 );
@@ -1064,34 +1071,58 @@ void MainWindow::slotFlightViewIgcOpenGL()
       return;
     }
 
-  #define CHECK_ERROR_EXIT  error = (char *)dlerror(); \
-    if(error != NULL) \
-      { \
-        qWarning("%s", error); \
-        return; \
-      }
+  QString root = _settings.value( "/Path/InstallRoot", ".." ).toString();
 
-  char *error;
+  QString libPath = root + "/bin/libopengl_igc.so";
 
-  qDebug() << "KFLogApp::slotFlightViewIgcOpenGL()";
+  void* libHandle = dlopen( libPath.toAscii().data(), RTLD_NOW );
 
-  void* libHandle = dlopen("libopengl_igc.so", RTLD_NOW);
-  CHECK_ERROR_EXIT
-  char* (*getCaption)();
-  getCaption = (char* (*) ()) dlsym(libHandle, "getCaption");
-  CHECK_ERROR_EXIT
-  qWarning("%s", (*getCaption)());
+  char *error = (char *) dlerror();
 
-  QWidget* (*run)();
-  run = (QWidget* (*) ()) dlsym(libHandle, "getMainWidget");
-  CHECK_ERROR_EXIT
-  //QWidget* glWidget = (QWidget*)(*run)();
+  if( libHandle == 0 )
+    {
+      QString errMsg;
+
+      if( error != 0 )
+        {
+          qWarning() << "MainWindow::slotFlightViewIgcOpenGL() Error:" << error;
+
+          errMsg = QString(error);
+        }
+
+      QMessageBox::critical( this,
+                             tr("Plugin is missing!"),
+                             tr("Cannot open plugin library:") +
+                             "\n\n" + libPath + "\n\n" + errMsg,
+                             QMessageBox::Ok );
+
+      return;
+    }
+
+
+  QWidget* (*getMainWidget)(QWidget *);
+
+  getMainWidget = (QWidget* (*) (QWidget *)) dlsym(libHandle, "getMainWidget");
+
+  if( !getMainWidget( this ) )
+    {
+      qWarning( "getMainWidget function not defined in library!" );
+      return;
+    }
 
   void (*addFlight)(Flight*);
-  addFlight = (void (*) (Flight*)) dlsym(libHandle, "addFlight");
-  CHECK_ERROR_EXIT
 
-  (void)(*addFlight)((Flight*)_globalMapContents->getFlight());
+  addFlight = (void (*) (Flight*)) dlsym(libHandle, "addFlight");
+
+  if( !addFlight )
+    {
+      qWarning( "addFlight function not defined in library!" );
+      return;
+    }
+
+  (void)(*addFlight)( flight );
+
+  // FIXME: Memory leak from libHandle is to fix here!
 }
 
 /** set menu items enabled/disabled */
@@ -1100,7 +1131,7 @@ void MainWindow::slotModifyMenu()
   if( _globalMapContents->getFlightList()->count() > 0 &&
       _globalMapContents->getFlight() != 0 )
     {
-      // FIXME @AP: The flight list number is incremented when a new task is
+      // Note AP: The flight list number is incremented when a new task is
       // created but the current flight maybe NULL!!! I got a core dump here.
       // Added check above to if clause.
       switch(_globalMapContents->getFlight()->getObjectType())
@@ -1117,6 +1148,7 @@ void MainWindow::slotModifyMenu()
             flightIgc3DAction->setEnabled(true);
             flightIgcOpenGLAction->setEnabled(true);
             flightAnimateStartAction->setEnabled(true);
+            flightAnimatePauseAction->setEnabled(true);
             flightAnimateStopAction->setEnabled(true);
             flightAnimateNextAction->setEnabled(true);
             flightAnimatePrevAction->setEnabled(true);
@@ -1138,6 +1170,7 @@ void MainWindow::slotModifyMenu()
             flightIgc3DAction->setEnabled(false);
             flightIgcOpenGLAction->setEnabled(false);
             flightAnimateStartAction->setEnabled(false);
+            flightAnimatePauseAction->setEnabled(true);
             flightAnimateStopAction->setEnabled(false);
             flightAnimateNextAction->setEnabled(false);
             flightAnimatePrevAction->setEnabled(false);
@@ -1159,6 +1192,7 @@ void MainWindow::slotModifyMenu()
             flightIgc3DAction->setEnabled(true);
             flightIgcOpenGLAction->setEnabled(true);
             flightAnimateStartAction->setEnabled(true);
+            flightAnimatePauseAction->setEnabled(true);
             flightAnimateStopAction->setEnabled(true);
             flightAnimateNextAction->setEnabled(true);
             flightAnimatePrevAction->setEnabled(true);
@@ -1186,6 +1220,7 @@ void MainWindow::slotModifyMenu()
       flightIgc3DAction->setEnabled( false );
       flightIgcOpenGLAction->setEnabled( false );
       flightAnimateStartAction->setEnabled( false );
+      flightAnimatePauseAction->setEnabled( false );
       flightAnimateStopAction->setEnabled( false );
       flightAnimateNextAction->setEnabled( false );
       flightAnimatePrevAction->setEnabled( false );
@@ -1446,7 +1481,7 @@ void MainWindow::slotFlightDataTypeGroupAction( QAction *action )
   // Get index from action
   int index = action->data().toInt();
 
-  qDebug() << " MainWindow::slotFlightDataTypeGroupAction: ID=" << index;
+  // qDebug() << " MainWindow::slotFlightDataTypeGroupAction: ID=" << index;
 
   // Select indexed action
   slotSelectFlightData( index );
@@ -1501,7 +1536,7 @@ void MainWindow::selectFlightDataAction( const int index )
 
 void MainWindow::slotSelectFlightData( const int index )
 {
-  qDebug() << "MainWindow::slotSelectFlightData: index=" << index;
+  // qDebug() << "MainWindow::slotSelectFlightData: index=" << index;
 
   selectFlightDataAction( index );
 
