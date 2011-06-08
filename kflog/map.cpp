@@ -2028,13 +2028,13 @@ void Map::slotAnimateFlightStop()
 {
   qDebug() << "Map::slotAnimateFlightStop()";
 
-  // stop animation timer on user request.
-  timerAnimate->stop();
-
-  if( animationPaused == false )
+  if( ! timerAnimate->isActive() && animationPaused == false )
     {
       return;
     }
+
+  // stop animation timer on user request.
+  timerAnimate->stop();
 
   // Reset animation pause flag
   animationPaused = false;
