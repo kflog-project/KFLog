@@ -753,11 +753,12 @@ void MainWindow::createMenuBar()
   fm->addAction( flightAnimateStartAction );
   fm->addAction( flightAnimatePauseAction );
   fm->addAction( flightAnimateStopAction );
+  fm->addSeparator();
+  fm->addAction( flightAnimateHomeAction );
   fm->addAction( flightAnimateNextAction );
   fm->addAction( flightAnimatePrevAction );
   fm->addAction( flightAnimate10NextAction );
   fm->addAction( flightAnimate10PrevAction );
-  fm->addAction( flightAnimateHomeAction );
   fm->addAction( flightAnimateEndAction );
 
   //----------------------------------------------------------------------------

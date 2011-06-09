@@ -1,11 +1,19 @@
 $Id$
 
+2011-06-09 Axel Pauli <axel@kflog.org>
+
+  * Bugfix: Methods Map::slotCenterToTask() and Map::slotCenterToFlight() did
+    not work right for flight groups.
+    
+  * Bugfix: If a flight group was selected, the data of a flight point were never
+    displayed during mouse touch. Missing handling implemented.
+
 2011-06-07 Axel Pauli <axel@kflog.org>
 
   * Bugfix: Forgot to port to Qt4 the opengl_igc part. Fixed now.
   
   * Bugfix: Normal flight animation start, pause and stop is working now without
-    QPainter complains. The other animate actions are not yet useable. Will be
+    QPainter complains. The other animate actions are not yet usable. Will be
     the next work to get it running.
 
 2011-06-06 Axel Pauli <axel@kflog.org>

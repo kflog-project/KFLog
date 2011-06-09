@@ -301,8 +301,8 @@ double MapMatrix::centerToRect(const QRect& center, const QSize& pS, bool addBor
 
   if(addBorder)
     {
-      width = sqrt(center.width() * center.width()) + (6.5 * 1000.0 / cScale);
-      height = sqrt(center.height() * center.height()) + (6.5 * 1000.0 / cScale);
+      width = sqrt(center.width() * center.width()) + (10.0 * 1000.0 / cScale);
+      height = sqrt(center.height() * center.height()) + (10.0 * 1000.0 / cScale);
     }
   else
     {

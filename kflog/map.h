@@ -75,6 +75,11 @@ private:
       return planning;
     };
 
+    /**
+     * \return List with all current active flights.
+     */
+    QList<Flight *> getFlightList();
+
   public slots:
 
     /**  */
@@ -291,6 +296,11 @@ private:
      */
     QPixmap pixBuffer;
 
+    /**
+     * Contains the flight step cursor.
+     */
+    QPixmap pixFlighStepCursor;
+
     QPixmap pixCursor1;
     QPixmap pixCursor2;
     /**
@@ -349,6 +359,7 @@ private:
     QPoint lastCur2Pos;
 
     QPoint prePos;
+    QPoint preStepPos;
     QPoint prePlanPos;
     QPoint preAnimationPos;
     int preIndex;
