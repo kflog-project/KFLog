@@ -59,7 +59,8 @@ Map::Map( QWidget* parent ) :
   lastCur1Pos(-100,-100),
   lastCur2Pos(-100,-100),
   prePos(-5000, -5000),
-  preStepPos(-5000, -5000),
+  preStepIndex(-1),
+  drawFlightStepCursor(false),
   animationPaused(false),
   planning(0),
   tempTask(""),
@@ -81,6 +82,7 @@ Map::Map( QWidget* parent ) :
 
   pixCursor1 = _mainWindow->getPixmap("flag_green.png");
   pixCursor2 = _mainWindow->getPixmap("flag_red.png");
+  pixGliders = _mainWindow->getPixmap("gliders.png");
 
   __setCursor();
   setMouseTracking(true);
@@ -147,7 +149,7 @@ Map::Map( QWidget* parent ) :
 
 Map::~Map()
 {
-  qDebug() << "~Map()";
+  // qDebug() << "~Map()";
 }
 
 /**
@@ -421,10 +423,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
               if( (index = flightList.at(i)->searchPoint( event->pos(), fP )) != -1 )
                 {
-                  emit showFlightPoint( _globalMapMatrix->mapToWgs( event->pos() ), fP );
-
-                  prePos = _globalMapMatrix->map( fP.projP );
-                  preIndex = index;
+                  emit showFlightPoint( fP.origP, fP );
                   match = true;
 
                   // Note the first matched flight is the winner in a group!
@@ -435,8 +434,6 @@ void Map::mouseMoveEvent(QMouseEvent* event)
           if( ! match )
             {
               emit showPoint( _globalMapMatrix->mapToWgs( event->pos() ) );
-              prePos.setX( -5000 );
-              prePos.setY( -5000 );
             }
         }
     }
@@ -926,8 +923,6 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
 
 void Map::keyReleaseEvent(QKeyEvent* event)
 {
-  qDebug() << " Map::keyReleaseEvent";
-
   if(event->modifiers() == Qt::ShiftModifier)
     {
       qDebug() << "Map::keyReleaseEvent()";
@@ -995,15 +990,6 @@ void Map::mouseReleaseEvent( QMouseEvent* event )
 
 void Map::mousePressEvent(QMouseEvent* event)
 {
-  qDebug() << "Map::mousePressEvent()";
-
-  // First: delete the cursor, if visible:
-  if( prePos.x() >= 0 )
-    {
-      drawFlightCursors = false;
-      repaint();
-    }
-
   if( isZoomActive )
     {
       // User has pressed key zero
@@ -1131,15 +1117,11 @@ void Map::paintEvent( QPaintEvent* event )
                           event->rect().height() );
     }
 
-  if( ! pixFlighStepCursor.isNull() )
+  // Draw the flight step cursor at the map on request.
+  if( drawFlightStepCursor == true )
     {
-      painter.drawPixmap( event->rect().left(),
-                          event->rect().top(),
-                          pixFlighStepCursor,
-                          0, 0, event->rect().width(),
-                          event->rect().height() );
-
-      pixFlighStepCursor = QPixmap();
+      painter.drawPixmap( preStepPos.x() - 20, preStepPos.y() - 20, pixCursor );
+      drawFlightStepCursor = false;
     }
 
   if( ! pixZoomRect.isNull() && isDragZoomActive == true )
@@ -1336,7 +1318,7 @@ void Map::__drawGrid()
 
 void Map::__drawMap()
 {
-  qDebug() << "Map::__drawMap()";
+  // qDebug() << "Map::__drawMap()";
 
   QPainter aeroP(&pixAero);
   QPainter uMapP(&pixUnderMap);
@@ -1459,8 +1441,6 @@ void Map::__drawFlight()
 
 void Map::__drawPlannedTask( bool solid )
 {
-  qDebug() << "Map::__drawPlannedTask Ein";
-
   FlightTask* task;
 
   if( solid )
@@ -1493,8 +1473,6 @@ void Map::__drawPlannedTask( bool solid )
       emit showTaskText(task);
       planP.end();
     }
-
-  qDebug() << "Map::__drawPlannedTask Aus";
 }
 
 void Map::resizeEvent(QResizeEvent* event)
@@ -1509,8 +1487,6 @@ void Map::resizeEvent(QResizeEvent* event)
 
 void Map::dragEnterEvent( QDragEnterEvent* event )
 {
-  qDebug() << "Map::dragEnterEvent()";
-
   if( event->mimeData()->hasUrls() )
     {
       event->acceptProposedAction();
@@ -1519,8 +1495,6 @@ void Map::dragEnterEvent( QDragEnterEvent* event )
 
 void Map::dropEvent( QDropEvent* event )
 {
-  qDebug() << "Map::dropEvent";
-
   QList<QUrl> urlList = event->mimeData()->urls();
 
   for( int i = 0; i < urlList.size(); i++ )
@@ -1684,8 +1658,6 @@ void Map::slotRedrawMap()
 
 void Map::slotActivatePlanning()
 {
-  qDebug() << "Map::slotActivatePlanning(): Rein Planning=" << planning;
-
   if( planning != 1 )
     {
       mapInfoTimer->stop();
@@ -1702,13 +1674,10 @@ void Map::slotActivatePlanning()
       emit setStatusBarMsg( "" );
       emit taskPlanningEnd();
     }
-
-  qDebug() << "Map::slotActivatePlanning(): Raus Planning=" << planning;
 }
 
 void Map::__showLayer()
 {
-  //qDebug() << "Map::__showLayer() Ein";
   pixBuffer = pixIsoMap;
 
   QPainter buffer(&pixBuffer);
@@ -1723,8 +1692,6 @@ void Map::__showLayer()
 
   slotDrawCursor( lastCur1Pos, lastCur2Pos );
   update();
-
-  //qDebug() << "Map::__showLayer() Aus";
 }
 
 void Map::slotDrawCursor( const QPoint& p1, const QPoint& p2 )
@@ -1904,8 +1871,6 @@ void Map::slotCenterToTask()
  */
 void Map::slotAnimateFlightStart()
 {
-  qDebug() << "Map::slotAnimateFlightStart()";
-
   QList<Flight *> flightList = getFlightList();
 
   if( flightList.size() == 0 )
@@ -1936,24 +1901,27 @@ void Map::slotAnimateFlightStart()
   for( int i = 0; i < flightList.size(); i++ )
     {
       Flight *flight = flightList.at(i);
-
       FlightPoint cP = flight->getPoint(0);
       QPoint prePos  = _globalMapMatrix->map(cP.projP);
       QPoint pos     = prePos;
-      QPixmap pix    = flight->getLastAnimationPixmap();
 
-      QPainter p1( &pix );
-      p1.drawPixmap( 0, 0, pixBuffer, pos.x(), pos.y()-32, 32, 32 );
+      // Save map part, which will be overwritten by glider symbol.
+      QPixmap pix = pixBuffer.copy( pos.x() - 20, pos.y() - 20, 40, 40 );
 
       flight->setLastAnimationPos(pos);
       flight->setLastAnimationPixmap(pix);
 
-      // draw the flag at the map
-      QPainter p2( &pixBuffer );
-      p2.drawPixmap( pos.x(), pos.y() - 32, pixCursor2 );
+      int bearing = (int) rint(cP.bearing * 180.0 / M_PI);
+
+      // We only rotate in steps of 15 degrees.
+      int rot = (( bearing + 7 ) / 15 ) % 24;
+
+      // Draw the right glider symbol at the map.
+      QPainter p( &pixBuffer );
+      p.drawPixmap( pos.x() - 20, pos.y() - 20, pixGliders, rot*40, 0, 40, 40 );
     }
 
-  // force immediate redraw of the map.
+  // Force an immediate redraw of the map to see the animation.
   repaint();
 
   // start 50ms timer
@@ -1965,8 +1933,6 @@ void Map::slotAnimateFlightStart()
  */
 void Map::slotAnimateFlightPause()
 {
-  qDebug() << "Map::slotAnimateFlightPause()";
-
   animationPaused = true;
   timerAnimate->stop();
 }
@@ -1976,8 +1942,6 @@ void Map::slotAnimateFlightPause()
  */
 void Map::slotAnimateFlightTimeout()
 {
-  // qDebug() << "Map::slotAnimateFlightTimeout()";
-
   bool bDone = true;
 
   QList<Flight *> flightList = getFlightList();
@@ -2001,36 +1965,37 @@ void Map::slotAnimateFlightTimeout()
           bDone = false;
         }
 
-      // write info from current point on statusbar
+      // Write info from current point on statusbar. The last flight in the list
+      // is always the winner.
       FlightPoint cP = flight->getPoint( (flight->getAnimationIndex()) );
       QPoint pos = _globalMapMatrix->map( cP.projP );
       QPoint lastpos = flight->getLastAnimationPos();
-      QPixmap pix = flight->getLastAnimationPixmap();
-      emit showFlightPoint( _globalMapMatrix->mapToWgs( pos ), cP );
+      QPixmap& pix = flight->getLastAnimationPixmap();
+      emit showFlightPoint( cP.origP, cP );
 
-      // erase previous indicator flag
-      QPainter p1;
-      p1.begin( &pixBuffer );
-      p1.drawPixmap( lastpos.x(), lastpos.y() - 32, pix );
+      // Erase previous glider symbol
+      QPainter p;
+      p.begin( &pixBuffer );
+      p.drawPixmap( lastpos.x() - 20, lastpos.y() - 20, pix );
 
-      // redraw flight up to this point at the map
+      // Draw flight up to this point in pixFlight.
       __drawFlight();
 
       // draw flight at the map.
-      p1.drawPixmap( 0, 0, pixFlight );
+      p.drawPixmap( 0, 0, pixFlight );
 
       // save map part for next timeout
-      QPainter p2;
-      p2.begin( &pix );
-      p2.drawPixmap( 0, 0, pixBuffer, pos.x(), pos.y() - 32, 32, 32 );
-      p2.end();
-
-      flight->setLastAnimationPixmap(pix);
+      pix = pixBuffer.copy( pos.x() - 20, pos.y() - 20, 40, 40 );
       flight->setLastAnimationPos(pos);
 
-      // draw indicator flag at the map
-      p1.drawPixmap( pos.x(), pos.y()-32,  pixCursor2 );
-      p1.end();
+      int bearing = (int) rint(cP.bearing * 180.0 / M_PI);
+
+      // We only rotate in steps of 15 degrees.
+      int rot = (( bearing + 7 ) / 15 ) % 24;
+
+      // draw the right glider symbol at the map
+      p.drawPixmap( pos.x() - 20, pos.y() - 20, pixGliders, rot*40, 0, 40, 40 );
+      p.end();
     }
 
   if( bDone )
@@ -2050,8 +2015,6 @@ void Map::slotAnimateFlightTimeout()
  */
 void Map::slotAnimateFlightStop()
 {
-  qDebug() << "Map::slotAnimateFlightStop()";
-
   if( ! timerAnimate->isActive() && animationPaused == false )
     {
       return;
@@ -2093,7 +2056,7 @@ void Map::slotFlightNext()
 
   Flight* flight = dynamic_cast<Flight *> ( _globalMapContents->getFlight() );
 
-  if( ! flight || preStepPos.x() < 0 )
+  if( ! flight || preStepIndex == -1 )
     {
       // The action is only supported for single flight.
       return;
@@ -2102,11 +2065,11 @@ void Map::slotFlightNext()
   FlightPoint cP;
   int index;
 
-  // get the next point, preIndex now holds last point
-  if( (index = flight->searchGetNextPoint( preIndex, cP )) != -1 )
+  // get the next point, preStepIndex now holds last point
+  if( (index = flight->searchGetNextPoint( preStepIndex, cP )) != -1 )
     {
       preStepPos = _globalMapMatrix->map( cP.projP );
-      preIndex = index;
+      preStepIndex = index;
 
       if( preStepPos.x() < MIN_X_TO_PAN || preStepPos.x() > MAX_X_TO_PAN ||
           preStepPos.y() < MIN_Y_TO_PAN || preStepPos.y() > MAX_Y_TO_PAN )
@@ -2115,14 +2078,8 @@ void Map::slotFlightNext()
           preStepPos = _globalMapMatrix->map( cP.projP );
         }
 
-      emit showFlightPoint( preStepPos, cP );
-
-      pixFlighStepCursor = QPixmap( size() );
-      pixFlighStepCursor.fill( Qt::transparent );
-      QPainter painter;
-      painter.begin( &pixFlighStepCursor );
-      painter.drawPixmap( preStepPos.x() - 20, preStepPos.y() - 20, pixCursor );
-      painter.end();
+      emit showFlightPoint( cP.origP, cP );
+      drawFlightStepCursor = true;
       repaint();
     }
 }
@@ -2137,7 +2094,7 @@ void Map::slotFlightPrev()
 
   Flight* flight = dynamic_cast<Flight *> ( _globalMapContents->getFlight() );
 
-  if( ! flight || preStepPos.x() < 0 )
+  if( ! flight || preStepIndex == -1 )
     {
       // The action is only supported for single flight.
       return;
@@ -2146,11 +2103,11 @@ void Map::slotFlightPrev()
   FlightPoint cP;
   int index;
 
-  // get the next point, preIndex now holds last point
-  if( (index = flight->searchGetPrevPoint(preIndex, cP)) != -1 )
+  // get the next point, preStepIndex now holds last point
+  if( (index = flight->searchGetPrevPoint(preStepIndex, cP)) != -1 )
     {
       preStepPos = _globalMapMatrix->map( cP.projP );
-      preIndex = index;
+      preStepIndex = index;
 
       if( preStepPos.x() < MIN_X_TO_PAN || preStepPos.x() > MAX_X_TO_PAN ||
           preStepPos.y() < MIN_Y_TO_PAN || preStepPos.y() > MAX_Y_TO_PAN )
@@ -2159,14 +2116,8 @@ void Map::slotFlightPrev()
           preStepPos = _globalMapMatrix->map( cP.projP );
         }
 
-      emit showFlightPoint( preStepPos, cP );
-
-      pixFlighStepCursor = QPixmap( size() );
-      pixFlighStepCursor.fill( Qt::transparent );
-      QPainter painter;
-      painter.begin( &pixFlighStepCursor );
-      painter.drawPixmap( preStepPos.x() - 20, preStepPos.y() - 20, pixCursor );
-      painter.end();
+      emit showFlightPoint( cP.origP, cP );
+      drawFlightStepCursor = true;
       repaint();
     }
 }
@@ -2181,7 +2132,7 @@ void Map::slotFlightStepNext()
 
   Flight* flight = dynamic_cast<Flight *> ( _globalMapContents->getFlight() );
 
-  if( ! flight || preStepPos.x() < 0 )
+  if( ! flight || preStepIndex == -1 )
     {
       // The action is only supported for single flight.
       return;
@@ -2190,11 +2141,11 @@ void Map::slotFlightStepNext()
   FlightPoint cP;
   int index;
 
-  // get the next point, preIndex now holds last point
-  if( (index = flight->searchStepNextPoint(preIndex, cP, 10)) != -1 )
+  // get the next point, preStepIndex now holds last point
+  if( (index = flight->searchStepNextPoint(preStepIndex, cP, 10)) != -1 )
     {
       preStepPos = _globalMapMatrix->map( cP.projP );
-      preIndex = index;
+      preStepIndex = index;
 
       if( preStepPos.x() < MIN_X_TO_PAN || preStepPos.x() > MAX_X_TO_PAN ||
           preStepPos.y() < MIN_Y_TO_PAN || preStepPos.y() > MAX_Y_TO_PAN )
@@ -2203,14 +2154,8 @@ void Map::slotFlightStepNext()
           preStepPos = _globalMapMatrix->map( cP.projP );
         }
 
-      emit showFlightPoint( preStepPos, cP );
-
-      pixFlighStepCursor = QPixmap( size() );
-      pixFlighStepCursor.fill( Qt::transparent );
-      QPainter painter;
-      painter.begin( &pixFlighStepCursor );
-      painter.drawPixmap( preStepPos.x() - 20, preStepPos.y() - 20, pixCursor );
-      painter.end();
+      emit showFlightPoint( cP.origP, cP );
+      drawFlightStepCursor = true;
       repaint();
     }
 }
@@ -2225,7 +2170,7 @@ void Map::slotFlightStepPrev()
 
   Flight* flight = dynamic_cast<Flight *> ( _globalMapContents->getFlight() );
 
-  if( ! flight || preStepPos.x() < 0 )
+  if( ! flight || preStepIndex == -1 )
     {
       // The action is only supported for single flight.
       return;
@@ -2234,11 +2179,11 @@ void Map::slotFlightStepPrev()
   FlightPoint cP;
   int index;
 
-  // get the next point, preIndex now holds last point
-  if( (index = flight->searchStepPrevPoint( preIndex, cP, 10 )) != -1 )
+  // get the next point, preStepIndex now holds last point
+  if( (index = flight->searchStepPrevPoint( preStepIndex, cP, 10 )) != -1 )
     {
       preStepPos = _globalMapMatrix->map( cP.projP );
-      preIndex = index;
+      preStepIndex = index;
 
       if( preStepPos.x() < MIN_X_TO_PAN || preStepPos.x() > MAX_X_TO_PAN ||
           preStepPos.y() < MIN_Y_TO_PAN || preStepPos.y() > MAX_Y_TO_PAN )
@@ -2247,14 +2192,8 @@ void Map::slotFlightStepPrev()
           preStepPos = _globalMapMatrix->map( cP.projP );
         }
 
-      emit showFlightPoint( preStepPos, cP );
-
-      pixFlighStepCursor = QPixmap( size() );
-      pixFlighStepCursor.fill( Qt::transparent );
-      QPainter painter;
-      painter.begin( &pixFlighStepCursor );
-      painter.drawPixmap( preStepPos.x() - 20, preStepPos.y() - 20, pixCursor );
-      painter.end();
+      emit showFlightPoint( cP.origP, cP );
+      drawFlightStepCursor = true;
       repaint();
     }
 }
@@ -2280,16 +2219,10 @@ void Map::slotFlightHome()
 
   if( (index = flight->searchGetNextPoint( 0, cP )) != -1 )
     {
-      emit showFlightPoint( _globalMapMatrix->wgsToMap( cP.origP ), cP );
+      emit showFlightPoint( cP.origP, cP );
       preStepPos = _globalMapMatrix->map( cP.projP );
-      preIndex = index;
-
-      pixFlighStepCursor = QPixmap( size() );
-      pixFlighStepCursor.fill( Qt::transparent );
-      QPainter painter;
-      painter.begin( &pixFlighStepCursor );
-      painter.drawPixmap( preStepPos.x() - 20, preStepPos.y() - 20, pixCursor );
-      painter.end();
+      preStepIndex = index;
+      drawFlightStepCursor = true;
       repaint();
     }
 }
@@ -2315,16 +2248,10 @@ void Map::slotFlightEnd()
 
   if( (index = flight->searchGetNextPoint(flight->getRouteLength() - 1, cP )) != -1 )
     {
-      emit showFlightPoint( _globalMapMatrix->wgsToMap( cP.origP ), cP );
+      emit showFlightPoint( cP.origP, cP );
       preStepPos = _globalMapMatrix->map( cP.projP );
-      preIndex = index;
-
-      pixFlighStepCursor = QPixmap( size() );
-      pixFlighStepCursor.fill( Qt::transparent );
-      QPainter painter;
-      painter.begin( &pixFlighStepCursor );
-      painter.drawPixmap( preStepPos.x() - 20, preStepPos.y() - 20, pixCursor );
-      painter.end();
+      preStepIndex = index;
+      drawFlightStepCursor = true;
       repaint();
     }
 }
@@ -2332,8 +2259,9 @@ void Map::slotFlightEnd()
 /** No descriptions */
 void Map::slotShowCurrentFlight()
 {
-  // Reset last step position
-  preStepPos = QPoint(-5000, -5000);
+  // Reset pre-step items.
+  preStepIndex = -1;
+  drawFlightStepCursor = false;
 
   BaseFlightElement *bfe = _globalMapContents->getFlight();
 

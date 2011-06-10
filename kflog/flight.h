@@ -295,10 +295,19 @@ class Flight : public BaseFlightElement
     bool isAnimationActive(void);
     /** No descriptions */
     int getAnimationIndex();
+
     /** No descriptions */
-    void setLastAnimationPixmap(QPixmap pix);
+    void setLastAnimationPixmap(QPixmap& newPixmap)
+    {
+      pixAnimate = newPixmap;
+    };
+
     /** No descriptions */
-    QPixmap getLastAnimationPixmap(void);
+    QPixmap& getLastAnimationPixmap()
+    {
+      return pixAnimate;
+    };
+
     /** No descriptions */
     QPoint getLastAnimationPos(void);
     /** No descriptions */

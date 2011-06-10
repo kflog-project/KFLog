@@ -106,10 +106,6 @@ Flight::Flight( const QString& fName,
   __checkMaxMin();
   __flightState();
 
-  // setup an animation pixbuffer
-  pixAnimate = QPixmap(32,32);
-  pixAnimate.fill(Qt::transparent);
-
   header.append(pilotName);
   header.append(gliderID);
   header.append(gliderType);
@@ -1376,12 +1372,6 @@ void Flight::setLastAnimationPos(QPoint pos)  {  preAnimationPos = pos;  }
 
 /** No descriptions */
 QPoint Flight::getLastAnimationPos(void)  {  return preAnimationPos;  }
-
-/** No descriptions */
-QPixmap Flight::getLastAnimationPixmap(void)  {  return pixAnimate;  }
-
-/** No descriptions */
-void Flight::setLastAnimationPixmap(QPixmap pix)  {  pixAnimate = pix;  }
 
 /** Re-calculates all projections for this flight. */
 void Flight::reProject()

@@ -1068,7 +1068,6 @@ void MainWindow::slotFlightViewIgcOpenGL()
 
   if( flight == static_cast<Flight *> (0) )
     {
-      qDebug() << "MainWindow::slotFlightViewIgcOpenGL(), no flight is selected!";
       return;
     }
 
@@ -1287,8 +1286,6 @@ void MainWindow::slotOpenFile()
 
 void MainWindow::slotOpenFile( const QUrl& url )
 {
-  qDebug() << "MainWindow::slotOpenFile(): Url=" << url.toString();
-
   slotSetStatusMsg(tr("Opening file..."));
 
   if( url.scheme() == "file" || url.isRelative() )
@@ -1482,8 +1479,6 @@ void MainWindow::slotFlightDataTypeGroupAction( QAction *action )
   // Get index from action
   int index = action->data().toInt();
 
-  // qDebug() << " MainWindow::slotFlightDataTypeGroupAction: ID=" << index;
-
   // Select indexed action
   slotSelectFlightData( index );
 }
@@ -1537,8 +1532,6 @@ void MainWindow::selectFlightDataAction( const int index )
 
 void MainWindow::slotSelectFlightData( const int index )
 {
-  // qDebug() << "MainWindow::slotSelectFlightData: index=" << index;
-
   selectFlightDataAction( index );
 
   switch( index )

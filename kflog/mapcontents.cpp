@@ -138,7 +138,7 @@ MapContents* MapContents::instance()
 
 void MapContents::slotCloseFlight()
 {
-  qDebug() << "MapContents::slotCloseFlight()";
+  // qDebug() << "MapContents::slotCloseFlight()";
 
   /*
    * Closes the current flight.
@@ -265,7 +265,7 @@ void MapContents::slotNetworkError()
  */
 void MapContents::slotDownloadWelt2000()
 {
-  qDebug() << "MapContents::slotDownloadWelt2000()";
+  // qDebug() << "MapContents::slotDownloadWelt2000()";
 
   extern QSettings _settings;
 
@@ -301,9 +301,6 @@ void MapContents::slotDownloadWelt2000()
   QString url  = welt2000Link + "/" + welt2000FileName;
   QString dest = getMapRootDirectory() + "/airfields/welt2000.txt";
 
-  qDebug() << "URL=" << url;
-  qDebug() << "Dest=" << dest;
-
   downloadManger->downloadRequest( url, dest );
 }
 
@@ -313,7 +310,7 @@ void MapContents::slotDownloadWelt2000()
  */
 void MapContents::slotReloadWelt2000Data()
 {
-  qDebug() << "MapContents::slotReloadWelt2000Data()";
+  // qDebug() << "MapContents::slotReloadWelt2000Data()";
 
   airfieldList.clear();
   gliderfieldList.clear();
@@ -802,32 +799,17 @@ QList<BaseFlightElement*> *MapContents::getFlightList()
 
 void MapContents::appendFlight(Flight* flight)
 {
-  qDebug() << "MapContents::appendFlight: ListCount=" << flightList.size()
-           << "FIdx=" << currentFlightListIndex;
-
   flightList.append(flight);
   currentFlight = flight;
   currentFlightListIndex = flightList.size() - 1;
 
-  qDebug() << "newFIdx=" << currentFlightListIndex
-           << "newListCount=" << flightList.size();
-
   // Signal to object tree about new flight to slotNewFlightAdded
-  qDebug() << "EMIT newFlightAdded Rein";
   emit newFlightAdded( flight );
-  qDebug() << "EMIT newFlightAdded Raus";
-
-  qDebug() << "EMIT currentFlightChanged Rein";
   emit currentFlightChanged();
-  qDebug() << "EMIT currentFlightChanged Raus";
-
-  qDebug() << "MapContents::appendFlight() Ende";
 }
 
 int MapContents::__askUserForDownload()
 {
-  qDebug() << "MapContents::__askUserForDownload()";
-
   extern MainWindow *_mainWindow;
   extern QSettings  _settings;
 
@@ -961,8 +943,6 @@ QString MapContents::getMapRootDirectory()
 
   QString mapDefRootDir = QDir::homePath() + "/KFLog/mapdata";
 
-  // qDebug() << "MapContents: mapDefRootDir:" << mapDefRootDir;
-
   QString mapRootDir = _settings.value( "/Path/DefaultMapDirectory", "" ).toString();
 
   if( mapRootDir.isEmpty() )
@@ -979,8 +959,6 @@ QString MapContents::getMapRootDirectory()
 
 void MapContents::proofeSection(bool isPrint)
 {
-  qDebug() << "MapContents::proofeSection() isPrint=" << isPrint;
-
   extern MainWindow *_mainWindow;
   extern MapMatrix  *_globalMapMatrix;
   extern QSettings  _settings;
@@ -1261,7 +1239,7 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, uint index)
 
 void MapContents::slotReloadMapData()
 {
-  qDebug() << "MapContents::slotReloadMapData(): Clears all Maps!";
+  // qDebug() << "MapContents::slotReloadMapData(): Clears all Maps!";
 
   airspaceList.clear();
   airspaceRegionList.clear();
@@ -1542,12 +1520,12 @@ void MapContents::drawIsoList( QPainter* targetP, QRect windowRect )
 
 void MapContents::addDir (QStringList& list, const QString& _path, const QString& filter)
 {
-  //  qDebug ("addDir (%s, %s)", _path.toLatin1().data(), filter.toLatin1().data());
   QDir path (_path, filter);
 
-  //JD was a bit annoyed by many notifications about nonexisting dirs
   if ( ! path.exists() )
-    return;
+    {
+      return;
+    }
 
   QStringList entries (path.entryList());
 
@@ -1559,10 +1537,10 @@ void MapContents::addDir (QStringList& list, const QString& _path, const QString
       if (path2.fileName() == *it)
         found = true;
     }
+
     if (!found)
       list += path.absoluteFilePath (*it);
   }
-  //  qDebug ("entries: %s", list.join(";").toLatin1().data());
 }
 
 /**
@@ -1607,7 +1585,7 @@ bool MapContents::compareProjections(ProjectionBase* p1, ProjectionBase* p2)
 /** create a new, empty task */
 void MapContents::slotNewTask()
 {
-  qDebug() << "MapContents::slotNewTask()";
+  // qDebug() << "MapContents::slotNewTask()";
 
   FlightTask *ft = new FlightTask(genTaskName());
   flightList.append(ft);
@@ -1642,7 +1620,7 @@ void MapContents::slotNewTask()
 
 void MapContents::slotAppendTask(FlightTask *ft)
 {
-  qDebug() << "MapContents::slotAppendTask FT=" << ft;
+  // qDebug() << "MapContents::slotAppendTask FT=" << ft;
 
   flightList.append(ft);
   emit newTaskAdded(ft);
@@ -1704,17 +1682,10 @@ void MapContents::slotSetFlight( QAction *action )
 
 void MapContents::slotSetFlight(BaseFlightElement *bfe)
 {
-  qDebug() << "MapContents::slotSetFlight: bfe=" << bfe
-           << "flightList.size=" << flightList.size()
-           << "currentFlightListIndex=" << currentFlightListIndex;
-
   if( flightList.contains( bfe ) )
     {
       currentFlightListIndex = flightList.indexOf( bfe );
       currentFlight = flightList.at(currentFlightListIndex);
-
-      qDebug() << "newFlightListIndex=" << currentFlightListIndex;
-
       emit currentFlightChanged();
     }
 }
@@ -1956,9 +1927,6 @@ int MapContents::getElevation( const QPoint& coordMap, Distance* errorDist )
 
   IsoList* list = getIsohypseRegions();
 
-  // qDebug("list->count() %d", list->count() );
-  //qDebug("==searching for elevation==");
-  //qDebug("_lastIsoLevel %d, _nextIsoLevel %d",_lastIsoLevel, _nextIsoLevel);
   if (_isoLevelReset)
     {
       qDebug("findElevation: Busy rebuilding the isomap. Returning last known result...");

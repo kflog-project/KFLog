@@ -159,17 +159,17 @@ private:
     void showPoint(const QPoint& pos);
     /** */
     void pointClicked(const QPoint&);
-    /** is emited when shift + left button click on the map */
+    /** is emitted when shift + left button click on the map */
     void waypointSelected(Waypoint *);
-    /** is emited when a waypoint should be deleted */
+    /** is emitted when a waypoint should be deleted */
     void waypointDeleted(Waypoint *);
-    /** is emited when a waypoint should be edited */
+    /** is emitted when a waypoint should be edited */
     void waypointEdited(Waypoint *);
     /** Emitted when the mouse hits a new elevation. The argument is the level. */
     void elevation(int);
     /** Send to kflogApp to make KFLogApp connect the dialogs signals to the waypoint object. */
     void regWaypointDialog(QWidget *);
-    /** Emitted, if the fligh task has been modified. */
+    /** Emitted, if the flight task has been modified. */
     void flightTaskModified();
 
   protected:
@@ -183,7 +183,7 @@ private:
      */
     virtual void mouseReleaseEvent(QMouseEvent* event);
     /**
-     * Displays the coordinates of the mousepointer in the status-bar.
+     * Displays the coordinates of the mouse pointer in the status-bar.
      */
     virtual void mouseMoveEvent(QMouseEvent* event);
     /**
@@ -199,11 +199,11 @@ private:
      */
     virtual void resizeEvent(QResizeEvent* event);
     /**
-     * Redifinition of the dragEnterEvent.
+     * Redefinition of the dragEnterEvent.
      */
     virtual void dragEnterEvent(QDragEnterEvent* event);
     /**
-     * Redifinition of the dropEvent.
+     * Redefinition of the dropEvent.
      */
     virtual void dropEvent(QDropEvent* event);
 
@@ -296,11 +296,6 @@ private:
      */
     QPixmap pixBuffer;
 
-    /**
-     * Contains the flight step cursor.
-     */
-    QPixmap pixFlighStepCursor;
-
     QPixmap pixCursor1;
     QPixmap pixCursor2;
     /**
@@ -351,18 +346,27 @@ private:
      * Pixmap to hold waypoints of active WaypointsCatalog
      */
     QPixmap pixWaypoints;
-    /** */
-    QBitmap bitPlanMask;
+    /**
+     * Pixmap with rotating glider symbols, used for flight animation.
+     */
+    QPixmap pixGliders;
 
     /** Previous cursor positions. */
     QPoint lastCur1Pos;
     QPoint lastCur2Pos;
 
     QPoint prePos;
-    QPoint preStepPos;
     QPoint prePlanPos;
     QPoint preAnimationPos;
-    int preIndex;
+
+    /** Map coordinates of previous flight step point. */
+    QPoint preStepPos;
+
+    /** Flight index of previous step action. */
+    int preStepIndex;
+
+    /** Flag to handle flight step cursor drawing. */
+    bool drawFlightStepCursor;
 
     /**
      * Animation timer

@@ -202,7 +202,8 @@ LatEdit::LatEdit(QWidget *parent, const int base) : CoordEdit(parent)
   else if ( WGSPoint::getFormat() == WGSPoint::DDM )
     {
       degreeBox->setInputMask( "99" );
-      degreeBox->setValidator( new QIntValidator ( 0, 90, this ) );
+      eValidator = new QRegExpValidator( QRegExp( "([0-8][0-9])|(90)" ), this );
+      degreeBox->setValidator( eValidator );
 
       minuteBox->setInputMask( "99.999" );
       eValidator = new QRegExpValidator( QRegExp( "[0-5][0-9]\\.[0-9]{3}" ), this );
@@ -211,13 +212,16 @@ LatEdit::LatEdit(QWidget *parent, const int base) : CoordEdit(parent)
   else if ( WGSPoint::getFormat() == WGSPoint::DMS )
     {
       degreeBox->setInputMask( "99");
-      degreeBox->setValidator( new QIntValidator ( 0, 90, this ) );
+      eValidator = new QRegExpValidator( QRegExp( "([0-8][0-9])|(90)" ), this );
+      degreeBox->setValidator( eValidator );
 
       minuteBox->setInputMask( "99");
-      minuteBox->setValidator( new QIntValidator ( 0, 59, this ) );
+      eValidator = new QRegExpValidator( QRegExp( "[0-5][0-9]" ), this );
+      minuteBox->setValidator( eValidator );
 
       secondBox->setInputMask( "99");
-      secondBox->setValidator( new QIntValidator ( 0, 59, this ) );
+      eValidator = new QRegExpValidator( QRegExp( "[0-5][0-9]" ), this );
+      secondBox->setValidator( eValidator );
     }
 
   directionBox->addItem( QString(" N") );
@@ -256,7 +260,8 @@ LongEdit::LongEdit(QWidget *parent, const int base) : CoordEdit(parent)
   else if ( WGSPoint::getFormat() == WGSPoint::DDM )
     {
       degreeBox->setInputMask( "999" );
-      degreeBox->setValidator( new QIntValidator ( 0, 180, this ) );
+      eValidator = new QRegExpValidator( QRegExp( "([0-1][0-7][0-9])|(180)" ), this );
+      degreeBox->setValidator( eValidator );
 
       minuteBox->setInputMask( "99.999" );
       eValidator = new QRegExpValidator( QRegExp( "[0-5][0-9]\\.[0-9]{3}" ), this );
@@ -265,13 +270,16 @@ LongEdit::LongEdit(QWidget *parent, const int base) : CoordEdit(parent)
   else if ( WGSPoint::getFormat() == WGSPoint::DMS )
     {
       degreeBox->setInputMask( "999");
-      degreeBox->setValidator( new QIntValidator ( 0, 180, this ) );
+      eValidator = new QRegExpValidator( QRegExp( "([0-1][0-7][0-9])|(180)" ), this );
+      degreeBox->setValidator( eValidator );
 
       minuteBox->setInputMask( "99");
-      minuteBox->setValidator( new QIntValidator ( 0, 59, this ) );
+      eValidator = new QRegExpValidator( QRegExp( "[0-5][0-9]" ), this );
+      minuteBox->setValidator( eValidator );
 
       secondBox->setInputMask( "99");
-      secondBox->setValidator( new QIntValidator ( 0, 59, this ) );
+      eValidator = new QRegExpValidator( QRegExp( "[0-5][0-9]" ), this );
+      secondBox->setValidator( eValidator );
     }
 
   directionBox->addItem( QString(" E") );
@@ -327,21 +335,22 @@ int CoordEdit::KFLogDegree()
     }
 
   QString input = "";
+  QChar degreeChar(Qt::Key_degree);
 
   if ( WGSPoint::getFormat() == WGSPoint::DMS )
     {
-      input = degreeBox->text() + "\260 " +
+      input = degreeBox->text() + degreeChar + " " +
               minuteBox->text() + "' " +
               secondBox->text() + "\"";
     }
   else if ( WGSPoint::getFormat() == WGSPoint::DDM )
     {
-      input = degreeBox->text() + "\260 " +
+      input = degreeBox->text() + degreeChar + " " +
               minuteBox->text() + "'";
     }
   else if ( WGSPoint::getFormat() == WGSPoint::DDD )
     {
-      input = degreeBox->text() + "\260";
+      input = degreeBox->text() + degreeChar;
     }
 
   input += " " + directionBox->currentText().trimmed();

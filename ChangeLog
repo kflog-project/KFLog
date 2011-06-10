@@ -1,5 +1,14 @@
 $Id$
 
+2011-06-10 Axel Pauli <axel@kflog.org>
+
+  * Moving flag in flight animation replaced by a rotating glider symbol.
+    That is the better solution. Thanks to Cumulus, from where I could copy it.
+    
+  * Bugfix: Integer validators in coordinate input boxes makes trouble on
+    some values. Leading zeros were removed. I replaced them by
+    QRegExpValidators.
+
 2011-06-09 Axel Pauli <axel@kflog.org>
 
   * Bugfix: Methods Map::slotCenterToTask() and Map::slotCenterToFlight() did
