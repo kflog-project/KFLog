@@ -1,5 +1,10 @@
 $Id$
 
+2011-06-14 Axel Pauli <axel@kflog.org>
+
+  * BUGFIX: Seeyou waypoint read in method did assign sometimes wrong map
+    element types. 
+
 2011-06-10 Axel Pauli <axel@kflog.org>
 
   * Moving flag in flight animation replaced by a rotating glider symbol.

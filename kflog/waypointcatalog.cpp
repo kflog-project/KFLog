@@ -1220,7 +1220,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
           w->type = BaseMapElement::Landmark;
           break;
         default:
-          w->type = BaseMapElement::NotSelected;
+          w->type = BaseMapElement::Landmark;
           break;
         }
 
