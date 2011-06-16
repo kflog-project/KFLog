@@ -48,7 +48,6 @@ FlightTask::FlightTask(const QString& fName) :
 {
 }
 
-
 FlightTask::FlightTask(const QList<Waypoint*>& wpL, bool isO, const QString& fName) :
   BaseFlightElement("task", BaseMapElement::Task, fName),
   isOrig(isO),
@@ -63,8 +62,6 @@ FlightTask::FlightTask(const QList<Waypoint*>& wpL, bool isO, const QString& fNa
 
 FlightTask::~FlightTask()
 {
-  qDebug() << "~FlightTask()";
-
   // Hope that nobody holds a shallow copy of this list.
   qDeleteAll( wpList );
 }
@@ -85,12 +82,11 @@ void FlightTask::__checkType()
       }
   }
 
-  if(wpList.count() < 4)
+  if( wpList.count() < 4 )
     {
       flightType = FlightTask::NotSet;
       return;
     }
-
 
   distance_task = distance_total - wpList.at(1)->distance - wpList.at(wpList.count() - 1)->distance;
 

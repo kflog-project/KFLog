@@ -266,9 +266,9 @@ public slots:
   /** */
   void slotInitMatrix();
   /** */
-  void slotZoomIn();
+  void slotZoomIn( double factor=1.0 );
   /** */
-  void slotZoomOut();
+  void slotZoomOut( double factor=1.0 );
   /** */
   void slotCenterToHome();
   /** */

@@ -64,6 +64,9 @@ Map::Map( QWidget* parent ) :
   animationPaused(false),
   planning(0),
   tempTask(""),
+  startDragZoom(false),
+  isDragZoomActive(false),
+  isMapMoveActive(false),
   isDrawing(false),
   redrawRequest(false),
   preSnapPoint(-999, -999)
@@ -100,29 +103,30 @@ Map::Map( QWidget* parent ) :
 
   setWhatsThis( tr(
      "<html><B>The map</B>"
-     "<P>To move or scale the map, please use the buttons in the "
-     "<B>Map control area</B>. Or center the map to the current "
-     "cursor position by using the right mouse button.</P>"
+     "<P>To move or scale the map, you can use the buttons in the "
+     "<B>Map control area</B>.</P>"
      "<P>To zoom in or out, use the slider or the two buttons on the "
      "toolbar. You can also zoom with \"&lt;Ctrl&gt;&lt;+&gt;\" or \"+\" (zoom in) "
      "and \"&lt;Ctrl&gt;&lt;-&gt;\" or \"-\"(zoom out).</P>"
      "<P>The cursor keys and the keys on the NumPad can also pan the map, if "
      "NumLock is switched on.</P>"
      "<P>With the menu item <b>Options-&gt;Configure KFLog</b> you can "
-     "configure, which map elements should be displayed at which "
-     "scale.</P>"
+     "configure, which map elements should be displayed at which scale.</P>"
      "<b>Supported mouse actions at the map:</b>"
      "<ul>"
-     "<li>Moving the mouse pointer at a map item will display the item data after a short delay."
-     "<li>Pressing the right mouse button opens the map menu."
+     "<li>Moving the mouse pointer at a map item will display the item data after a short delay, "
+     "if the <i>Show map data touched by Mouse</i> option is enabled."
+     "<li>Pressing the right mouse button opens the map menu with different possible actions."
      "<li>Pressing the middle mouse button centers the map to the mouse point."
      "<li>Pressing the left mouse button opens the task menu, if graphical task planning is activated."
-     "<li>Pressing the shift key and the left mouse button shows the data of a "
-     "map item, if it lays under the mouse pointer. Otherwise the waypoint dialog "
-     "is opened to create a new waypoint."
-     "<li>Pressing key 0 shows a cross at the map. Press the left mouse button "
-     "and hold it down during drag. A frame is drawn at the map. Release the mouse "
+     " Otherwise you can move the map so long the left mouse button is pressed during move."
+     "<li>Pressing the shift key and the left mouse button over a map item"
+     " creates a new waypoint by using the item data. If no item is touched by the mouse"
+     " the waypoint dialog is opened and the user can enter the waypoint data."
+     "<li>Pressing the control key and the left mouse button "
+     "and hold both down during drag will draw a frame at the map. Release the mouse "
      "button to zoom the map into the frame."
+     "<li>Turning the mouse wheel will zoom into or out the map."
      "</ul>"
      "</html>"
       ) );
@@ -140,16 +144,16 @@ Map::Map( QWidget* parent ) :
   /** Create a timer for queuing draw events. */
   redrawMapTimer = new QTimer(this);
   redrawMapTimer->setSingleShot(true);
-
   connect( redrawMapTimer, SIGNAL(timeout()), this, SLOT(slotRedrawMap()));
 
-  isZoomActive=false;
-  isDragZoomActive=false;
+  /** Create a timer for map move redraw control. */
+  timerMapMove = new QTimer(this);
+  timerMapMove->setSingleShot(true);
+  connect( timerMapMove, SIGNAL(timeout()), this, SLOT(slotMapMoveTimeout()));
 }
 
 Map::~Map()
 {
-  // qDebug() << "~Map()";
 }
 
 /**
@@ -187,21 +191,33 @@ QList<Flight *> Map::getFlightList()
   return fl;
 }
 
-void Map::mouseMoveEvent(QMouseEvent* event)
+void Map::mouseMoveEvent( QMouseEvent* event )
 {
+  if( isMapMoveActive )
+    {
+      // Activate supervision timer for map redrawing
+      timerMapMove->start(500);
+      event->accept();
+      return;
+    }
+
   const QPoint current = event->pos();
 
   QPoint vector = event->pos() - mapInfoTimerStartpoint;
 
   if( vector.manhattanLength() > 4 )
     {
-      mapInfoTimer->stop();
-
-      // don't start the timer when in planning or zoom mode
-      if( planning != 1 && planning != 3 && isZoomActive == false )
+      // don't start the timer when in planning or drag zoom mode or the user has
+      // switched off the info display via the menu option.
+      if( planning != 1 && planning != 3 && startDragZoom == false &&
+          _settings.value( "/MapData/ViewDataUnderMouseCursor", false ).toBool() == true )
         {
           mapInfoTimer->start( MAP_INFO_DELAY );
           mapInfoTimerStartpoint = event->pos();
+        }
+      else
+        {
+          mapInfoTimer->stop();
         }
     }
 
@@ -408,6 +424,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
 
 #endif
 
+  // Show flight data, if the mouse is in the near of a flight.
   if( ! timerAnimate->isActive() )
     {
       QList<Flight *> flightList = getFlightList();
@@ -493,18 +510,7 @@ void Map::mouseMoveEvent(QMouseEvent* event)
       sizeDrag.setHeight((int)height);
   }
 
-  if( ! isDragZoomActive && event->buttons() == Qt::LeftButton )
-    {
-      // We don't want to popup any info, when mouse is moved for zoom
-      mapInfoTimer->stop();
-
-      // start dragZoom
-      setCursor( Qt::CrossCursor );
-      isZoomActive = true;
-      beginDrag = event->pos();
-      sizeDrag = QSize( 0, 0 );
-      isDragZoomActive = true;
-    }
+  event->accept();
 }
 
 /**
@@ -921,23 +927,30 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
   emit flightTaskModified();
 }
 
-void Map::keyReleaseEvent(QKeyEvent* event)
+void Map::keyReleaseEvent( QKeyEvent* event )
 {
-  if(event->modifiers() == Qt::ShiftModifier)
+  qDebug() << "Map::keyReleaseEvent()";
+
+  if( event->modifiers() == Qt::ShiftModifier )
     {
       qDebug() << "Map::keyReleaseEvent()";
       __showLayer();
+    }
+  else
+    {
+      QWidget::keyPressEvent( event );
     }
 }
 
 void Map::mouseReleaseEvent( QMouseEvent* event )
 {
-  if( isZoomActive )
+  if( isDragZoomActive )
     {
+      emit setStatusBarMsg( tr( "Ready." ) );
+      QApplication::restoreOverrideCursor();
+      startDragZoom = false;
       isDragZoomActive = false;
-      isZoomActive = false;
       pixZoomRect = QPixmap();
-      __setCursor();
 
       if( abs(beginDrag.x()-event->pos().x()) > 10 && // don't zoom if rect is too small
           abs(beginDrag.y()-event->pos().y()) > 10 &&
@@ -986,16 +999,44 @@ void Map::mouseReleaseEvent( QMouseEvent* event )
           update();
         }
     }
+  else if( isMapMoveActive )
+    {
+      // Map move by mouse is active and finished. We compute the new map center point.
+      timerMapMove->stop();
+      emit setStatusBarMsg( tr( "Ready." ) );
+      QApplication::restoreOverrideCursor();
+      isMapMoveActive = false;
+
+      QPoint dist = beginMapMove - event->pos();
+
+      if( dist.manhattanLength() > 10 )
+        {
+          QPoint center( width()/2, height()/2 );
+
+          center += dist;
+
+          // Center Map to new center point
+          _globalMapMatrix->centerToPoint( center );
+          __redrawMap();
+        }
+    }
+
+  event->accept();
 }
 
 void Map::mousePressEvent(QMouseEvent* event)
 {
-  if( isZoomActive )
+  // Stop map info timer
+  mapInfoTimer->stop();
+
+  if( startDragZoom )
     {
-      // User has pressed key zero
+      // User has pressed key zero before. No other actions are possible now.
+      emit setStatusBarMsg( tr( "Drag zooming on" ) );
+      isDragZoomActive = true;
       beginDrag = event->pos();
       sizeDrag = QSize( 0, 0 );
-      isDragZoomActive = true;
+      event->accept();
       return;
     }
 
@@ -1016,25 +1057,49 @@ void Map::mousePressEvent(QMouseEvent* event)
       // Center Map
       _globalMapMatrix->centerToPoint( event->pos() );
       __redrawMap();
+      event->accept();
       return;
     }
 
   if( event->button() == Qt::LeftButton )
     {
-      // Check if task planning is active. In this case allow only
-      // planning actions.
+      // Check if task planning is active. In this case allow only planning actions.
       if( planning == 1 )
         {
           __graphicalPlanning( current, event );
+          event->accept();
+          return;
+        }
+
+      if( event->modifiers() == Qt::ControlModifier )
+        {
+          // User wants to make a drag zoom action.
+          emit setStatusBarMsg( tr( "Drag zooming on" ) );
+          startDragZoom = true;
+          isDragZoomActive = true;
+          beginDrag = event->pos();
+          sizeDrag = QSize( 0, 0 );
+          QApplication::setOverrideCursor(QCursor(Qt::CrossCursor));
+          event->accept();
+          return;
+        }
+
+      if( event->modifiers() == Qt::NoModifier )
+        {
+          // User wants to make a map move. Save the start position.
+          emit setStatusBarMsg( tr( "Map move on" ) );
+          isMapMoveActive = true;
+          beginMapMove = event->pos();
+          QApplication::setOverrideCursor(QCursor(Qt::SizeAllCursor));
+          event->accept();
           return;
         }
 
       if( event->modifiers() == Qt::ShiftModifier )
         {
-          // select WayPoint
           bool found = false;
 
-          // add WPList !!!
+          // Adds the map item to the Waypoint list, when found.
           int searchList[] = { MapContents::GliderfieldList,
                                MapContents::AirfieldList,
                                MapContents::OutLandingList };
@@ -1066,31 +1131,37 @@ void Map::mousePressEvent(QMouseEvent* event)
                     w->country = hitElement->getCountry();
                     w->isLandable = true;
 
+                    // That adds the found item to the current waypoint list.
                     emit waypointSelected(w);
                     found = true;
                     break;
-                }
-             }
-
-             if(found)
-               {
-                 break;
+                  }
                }
+
+             if( found )
+                {
+                  break;
+                }
           }
 
           if( !found )
               {
+                // No map item found, we open the waypoint editor, that the user
+                // can create a new waypoint at the current position.
                 WaypointDialog* waypointDlg = __openWaypointDialog( current );
                 waypointDlg->exec();
                 delete waypointDlg;
               }
           }
-  }
+    }
   else if( event->button() == Qt::RightButton )
     {
+      // We display the map popup menu that the user can select an certain action.
       popupPos = event->pos();
       __showPopupMenu( event );
     }
+
+  event->accept();
 }
 
 /**
@@ -1507,7 +1578,7 @@ void Map::__redrawMap()
 {
   static QSize lastSize;
 
-  qDebug() << "Map::__redrawMap()";
+  // qDebug() << "Map::__redrawMap()";
 
   if( isDrawing )
     {
@@ -1652,7 +1723,7 @@ void Map::slotRedrawFlight()
 
 void Map::slotRedrawMap()
 {
-  qDebug() << "Map::slotRedrawMap()";
+  // qDebug() << "Map::slotRedrawMap()";
   __redrawMap();
 }
 
@@ -1748,8 +1819,36 @@ void Map::slotClearCursor()
 
 void Map::slotZoomRect()
 {
-  setCursor(Qt::CrossCursor);
-  isZoomActive = true;
+  QApplication::setOverrideCursor(QCursor(Qt::CrossCursor));
+
+  // That is needed by the mouse event handlers to recognize that a drag action
+  // has to be started or handled respectively.
+  startDragZoom = true;
+
+  emit setStatusBarMsg( tr( "Drag zooming activated" ) );
+}
+
+void Map::slotMapMoveTimeout()
+{
+  // User has paused with mouse moving. We do redraw the map in the meantime.
+  if( isMapMoveActive )
+    {
+      QPoint curPos = QWidget::mapFromGlobal( QCursor::pos() );
+
+      QPoint dist = beginMapMove - curPos;
+
+      if( dist.manhattanLength() > 20 )
+        {
+          beginMapMove = curPos;
+          QPoint center( width()/2, height()/2 );
+
+          center += dist;
+
+          // Center Map to new center point
+          _globalMapMatrix->centerToPoint( center );
+          __redrawMap();
+        }
+    }
 }
 
 void Map::slotCenterToWaypoint(const int id)
@@ -2677,6 +2776,12 @@ void Map::__createPopupMenu()
 
   mapPopup->addSeparator();
 
+  miShowMapInfoAction = mapPopup->addAction( _mainWindow->getPixmap("kde_info_16.png"),
+                                             QObject::tr("&Show item info..."),
+                                             this,
+                                             SLOT(slotMpShowMapInfo()) );
+  mapPopup->addSeparator();
+
   miAddWaypointAction = mapPopup->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
                                              QObject::tr("&New waypoint"),
                                              this,
@@ -2691,12 +2796,6 @@ void Map::__createPopupMenu()
                                                 QObject::tr("&Delete waypoint"),
                                                 this,
                                                 SLOT(slotMpDeleteWaypoint()));
-  mapPopup->addSeparator();
-
-  miShowMapInfoAction = mapPopup->addAction( _mainWindow->getPixmap("kde_info_16.png"),
-                                             QObject::tr("&Show map info..."),
-                                             this,
-                                             SLOT(slotMpShowMapInfo()) );
   mapPopup->addSeparator();
 
   miCenterMapAction = mapPopup->addAction( _mainWindow->getPixmap("centerto_22.png"),
@@ -2840,19 +2939,46 @@ void Map::slotMpCenterMap()
 
 void Map::slotMpShowMapInfo()
 {
-  leaveEvent(0);
+  mapInfoTimer->stop();
   __displayMapInfo(popupPos, false);
 }
 
-void Map::leaveEvent( QEvent * )
+void Map::leaveEvent( QEvent *event )
 {
   mapInfoTimer->stop();
   mapInfoTimerStartpoint = QPoint( -999, -999 );
+  event->accept();
+}
+
+void Map::wheelEvent(QWheelEvent *event)
+{
+  int numDegrees = event->delta() / 8;
+  int numSteps = numDegrees / 15;
+
+  if( abs(numSteps) > 10 || numSteps == 0 )
+    {
+      event->ignore();
+      return;
+    }
+
+  if( numSteps > 0 )
+    {
+      _globalMapMatrix->slotZoomIn( numSteps );
+    }
+  else
+    {
+      _globalMapMatrix->slotZoomOut( -numSteps );
+    }
+
+  event->accept();
 }
 
 void Map::slotMapInfoTimeout()
 {
-  __displayMapInfo( mapInfoTimerStartpoint, true );
+  if( _settings.value( "/MapData/ViewDataUnderMouseCursor", false ).toBool() == true )
+    {
+      __displayMapInfo( mapInfoTimerStartpoint, true );
+    }
 }
 
 WaypointDialog* Map::__openWaypointDialog( const QPoint &position )

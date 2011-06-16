@@ -80,8 +80,6 @@ Map *_globalMap = static_cast<Map *> (0);
 MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   QMainWindow( parent, flags )
 {
-  qDebug() << "MainWindow()";
-
   setObjectName( "MainWindow" );
   QApplication::setStyle( "plastique" );
 
@@ -186,7 +184,6 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
 
 MainWindow::~MainWindow()
 {
-  qDebug() << "~MainWindow()";
 }
 
 MainWindow* MainWindow::instance()
@@ -510,7 +507,7 @@ void MainWindow::createMenuBar()
           _globalMapMatrix, SLOT(slotZoomOut()) );
 
   viewZoomAction = new QAction( getPixmap("kde_viewmagfit_16.png"),
-                   tr("&Zoom..."), this );
+                   tr("&Zoom into mouse rectangle"), this );
   viewZoomAction->setShortcut( Qt::Key_0 );
   viewZoomAction->setEnabled( true );
   connect( viewZoomAction, SIGNAL(triggered()), map, SLOT(slotZoomRect()) );
@@ -577,6 +574,16 @@ void MainWindow::createMenuBar()
   connect( viewMoveSEAction, SIGNAL(triggered()),
            _globalMapMatrix, SLOT(slotMoveMapSE()) );
 
+  viewMapDataUnderMouseCursor = new QAction( tr("Show map data touched by Mouse"),
+                                             this );
+
+  viewMapDataUnderMouseCursor->setEnabled( true );
+  viewMapDataUnderMouseCursor->setCheckable( true );
+
+  viewMapDataUnderMouseCursor->setChecked( _settings.value( "/MapData/ViewDataUnderMouseCursor", false ).toBool() );
+  connect( viewMapDataUnderMouseCursor, SIGNAL(triggered(bool)),
+           this, SLOT(slotViewMapDataUnderMouseCursor(bool)) );
+
   //----------------------------------------------------------------------------
   // View menu creation
   //----------------------------------------------------------------------------
@@ -590,6 +597,8 @@ void MainWindow::createMenuBar()
   vm->addAction( viewZoomOutAction );
   vm->addAction( viewZoomAction );
   vm->addAction( viewRedrawAction );
+  vm->addSeparator();
+  vm->addAction( viewMapDataUnderMouseCursor );
   vm->addSeparator();
 
   // Move map submenu
@@ -1773,6 +1782,15 @@ void MainWindow::slotWindowsMenuAboutToShow()
       connect( windowMenu, SIGNAL(triggered(QAction *)),
                _globalMapContents, SLOT(slotSetFlight(QAction *)) );
     }
+}
+
+/**
+ * Toggles the view map data action on/off.
+ */
+void MainWindow::slotViewMapDataUnderMouseCursor( bool checked )
+{
+  viewMapDataUnderMouseCursor->setChecked( checked );
+  _settings.setValue( "/MapData/ViewDataUnderMouseCursor", checked );
 }
 
 void MainWindow::slotShowAbout()

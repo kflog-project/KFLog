@@ -1,5 +1,19 @@
 $Id$
 
+2011-06-16 Axel Pauli <axel@kflog.org>
+
+  * New check menu option added under view. A user can define, if he wants to
+    to get displayed automatically the content of map items or not, which are
+    touched by the mouse pointer.
+    
+  * Pressing control key and the left mouse button starts the drag zoom
+    action now. Same can be initiated by pressing key zero before.
+    
+  * Pressing the left mouse button during mouse move will move the map in mouse
+    direction. If the move pause is longer as 1s a redraw of the map is done.
+    
+  * Turning mouse wheel will zoom in/out map now.
+  
 2011-06-14 Axel Pauli <axel@kflog.org>
 
   * BUGFIX: Seeyou waypoint read in method did assign sometimes wrong map

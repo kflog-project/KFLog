@@ -213,6 +213,11 @@ public slots:
    */
   void slotCheckDockWidgetStatus();
 
+  /**
+   * Toggles the view map data action on/off.
+   */
+  void slotViewMapDataUnderMouseCursor( bool checked );
+
   /** Called to save the map into an image file. */
   void slotSaveMap2Image();
 
@@ -353,6 +358,7 @@ private:
   QAction* viewMoveSWAction;
   QAction* viewMoveSAction;
   QAction* viewMoveSEAction;
+  QAction* viewMapDataUnderMouseCursor;
   /**
    * Actions for the menu Flight
    */

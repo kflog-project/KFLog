@@ -33,13 +33,10 @@ MapConfig::MapConfig( QObject* object ) :
   defaultOpacity[1] = AS_OPACITY_2;
   defaultOpacity[2] = AS_OPACITY_3;
   defaultOpacity[3] = AS_OPACITY_4;
-
-  qDebug() << "MapConfig()";
 }
 
 MapConfig::~MapConfig()
 {
-  qDebug() << "~MapConfig()";
 }
 
 void MapConfig::slotReadConfig()

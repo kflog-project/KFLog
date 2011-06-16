@@ -168,7 +168,6 @@ OptimizationWizard::OptimizationWizard( QWidget* parent ) :
  */
 OptimizationWizard::~OptimizationWizard()
 {
-  qDebug() << "~OptimizationWizard()";
 }
 
 /*

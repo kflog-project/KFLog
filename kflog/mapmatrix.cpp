@@ -68,8 +68,6 @@ MapMatrix::MapMatrix( QObject* object ) :
   rotationArc(0),
   printArc(0)
 {
-  qDebug() << "MapMatrix()";
-
   viewBorder.setTop(29126344);
   viewBorder.setBottom(29124144);
   viewBorder.setLeft(5349456);
@@ -97,7 +95,6 @@ MapMatrix::MapMatrix( QObject* object ) :
 
 MapMatrix::~MapMatrix()
 {
-  qDebug() << "~MapMatrix()";
 }
 
 void MapMatrix::writeMatrixOptions()
@@ -546,21 +543,31 @@ void MapMatrix::slotMoveMapS()  { MATRIX_MOVE( MapMatrix::South ); }
 
 void MapMatrix::slotMoveMapSE() { MATRIX_MOVE( MapMatrix::South | MapMatrix::East ); }
 
-void MapMatrix::slotZoomIn()
+void MapMatrix::slotZoomIn( double factor )
 {
-  cScale = qMax( ( cScale / 1.25 ), MAX_SCALE);
-  createMatrix(mapViewSize);
+  if( cScale <= MAX_SCALE )
+    {
+      return;
+    }
+
+  cScale = qMax( (cScale / (1.25 * factor)), MAX_SCALE );
+  createMatrix( mapViewSize );
   emit matrixChanged();
 }
 
-void MapMatrix::slotZoomOut()
+void MapMatrix::slotZoomOut( double factor )
 {
-  cScale = qMin( ( cScale * 1.25 ), MIN_SCALE);
-  createMatrix(mapViewSize);
+  if( cScale >= MIN_SCALE )
+    {
+      return;
+    }
+
+  cScale = qMin( (cScale * 1.25 * factor), MIN_SCALE );
+  createMatrix( mapViewSize );
   emit matrixChanged();
 }
 
-void MapMatrix::slotSetScale(double nScale)
+void MapMatrix::slotSetScale( double nScale )
 {
   if( nScale <= 0 )
     {

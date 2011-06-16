@@ -40,6 +40,7 @@
 #include <QSize>
 #include <QTimer>
 #include <QUrl>
+#include <QWheelEvent>
 #include <QWidget>
 
 #include "flighttask.h"
@@ -138,7 +139,39 @@ private:
     */
     void slotZoomRect();
 
+  private slots:
+
+    /**
+     * Called from the context menu to center the map.
+     */
+    void slotMpCenterMap();
+    /**
+     * called from the MapPopupmenu to add a new waypoint.
+     */
+    void slotMpNewWaypoint();
+    /**
+     * called from the MapPopupmenu to edit waypoint.
+     */
+    void slotMpEditWaypoint();
+    /**
+     * called from the MapPopupmenu to delete a waypoint.
+     */
+    void slotMpDeleteWaypoint();
+    /**
+     * called from the MapPopupmenu to show info on the current location.
+     */
+    void slotMpShowMapInfo();
+    /**
+     * Called on timeout of the MapInfoTimer. Triggers display of the mapinfo box.
+     */
+    void slotMapInfoTimeout();
+    /**
+     * Called on timeout of the MapMoveTimer. Triggers a display of the map.
+     */
+    void slotMapMoveTimeout();
+
   signals:
+
     /** */
     void changed(QSize);
     /** */
@@ -149,9 +182,7 @@ private:
     void openFile(const QUrl& surl);
     /** */
     void showFlightPoint(const QPoint& pos, const FlightPoint& point);
-    /**
-     *
-     */
+    /** */
     void showTaskText(FlightTask* task);
     /** */
     void taskPlanningEnd();
@@ -187,6 +218,10 @@ private:
      */
     virtual void mouseMoveEvent(QMouseEvent* event);
     /**
+     * Used for zoom action.
+     */
+    virtual void wheelEvent(QWheelEvent *event);
+    /**
      * redraw the current map if state == ShiftButton
      */
     virtual void keyReleaseEvent(QKeyEvent* event);
@@ -206,6 +241,10 @@ private:
      * Redefinition of the dropEvent.
      */
     virtual void dropEvent(QDropEvent* event);
+    /**
+     * Called if the mouse leaves the map.
+     */
+    virtual void leaveEvent( QEvent* event );
 
   private:
 
@@ -389,15 +428,21 @@ private:
     bool isSnapping;
     // temp task (snapping)
     FlightTask tempTask;
-    // for the rectangular zoom: indicates that dragZoom mode is initiated but
-    // the drag itself has not been started
-    bool isZoomActive;
+    // Indicates that drag zoom was started by a button or by a command key.
+    // That is checked in mouse press and mouse move event to handle zoom action.
+    bool startDragZoom;
     // indicates that the drag for the dragZoom has started
     bool isDragZoomActive;
     // contains the point where the dragZoom was started
     QPoint beginDrag;
-    // contains the size of the drag. Don't know why it's not a QSize object...
+    // contains the size of the drag.
     QSize sizeDrag;
+    // indicates that the map move action has started
+    bool isMapMoveActive;
+    // contains the point where the map move was started
+    QPoint beginMapMove;
+    // Timer to control map moving.
+    QTimer* timerMapMove;
 
     /**
      * Added for a Workaround: There are not two messages
@@ -426,39 +471,7 @@ private:
     /** Reference to the redraw timer */
     QTimer *redrawMapTimer;
 
-protected slots:
-    /**
-     * Called from the context menu to center the map.
-     */
-    void slotMpCenterMap();
-    /**
-     * called from the MapPopupmenu to add a new waypoint.
-     */
-    void slotMpNewWaypoint();
-    /**
-     * called from the MapPopupmenu to edit waypoint.
-     */
-    void slotMpEditWaypoint();
-    /**
-     * called from the MapPopupmenu to delete a waypoint.
-     */
-    void slotMpDeleteWaypoint();
-    /**
-     * called from the MapPopupmenu to show info on the current location.
-     */
-    void slotMpShowMapInfo();
-    /**
-     * Called if the mouse leaves the map.
-     */
-    virtual void leaveEvent ( QEvent * );
-    /**
-     * Called on timeout of the MapInfoTimer. Triggers display of the mapinfo box.
-     */
-    void slotMapInfoTimeout();
-
-protected:
-
-    /** Contains the position where the mouse was clicked to show the popupmenu */
+    /** Contains the position where the mouse was clicked to show the popup menu */
     QPoint popupPos;
     //
     QPoint preSnapPoint;

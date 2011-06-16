@@ -1185,9 +1185,6 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
       switch( wpType )
         {
-        case 0:
-          w->type = BaseMapElement::NotSelected;
-          break;
         case 1:
           w->type = BaseMapElement::Landmark;
           break;

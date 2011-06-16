@@ -97,8 +97,6 @@ MapContents::MapContents( QObject* object ) :
   downloadManger(0),
   currentFlightListIndex(-1)
 {
-  qDebug() << "MapContents()";
-
   // Setup a hash used as reverse mapping from isoLine value to array index to
   // speed up loading of ground and terrain files.
   for( int i = 0; i < ISO_LINE_LEVELS; i++ )
@@ -123,8 +121,6 @@ MapContents::MapContents( QObject* object ) :
 
 MapContents::~MapContents()
 {
-  qDebug() << "~MapContents()";
-
   qDeleteAll(flightList);
   qDeleteAll(wpList);
 }
@@ -1504,7 +1500,7 @@ void MapContents::drawIsoList( QPainter* targetP, QRect windowRect )
   pathIsoLines.sort();
   _isoLevelReset = false;
 
-  qDebug( "IsoList, drawTime=%dms", t.elapsed() );
+  // qDebug( "IsoList, drawTime=%dms", t.elapsed() );
 
 #if 0
   QString isos;
