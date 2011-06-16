@@ -417,7 +417,7 @@ int Filser::getBasicData(FR_BasicData& data)
 
   int rc = FR_OK;
   unsigned char *bufP;
-  unsigned char *bufP_o;
+  unsigned char *bufP_o = 0;
   unsigned char buf[BUFSIZE + 1];
   int buffersize = BUFSIZE;
   int min_data   = 0x80;
@@ -460,12 +460,17 @@ int Filser::getBasicData(FR_BasicData& data)
                                // recorders like the LX7000 from Markus start
                                // sending NMEA data. Keep it to the default value.
   // tcsetattr(portID, TCSANOW, &newTermEnv);
-  while ((buffersize + buf - bufP) > 0) {
-    bufP = readData(bufP, (buffersize + buf - bufP));
-    if (bufP == bufP_o) // No more data
-      break;
-    bufP_o = bufP;
-  }
+  while( (buffersize + buf - bufP) > 0 )
+    {
+      bufP = readData( bufP, (buffersize + buf - bufP) );
+
+      if( bufP == bufP_o ) // No more data
+        {
+          break;
+        }
+
+      bufP_o = bufP;
+    }
   // newTermEnv.c_cc[VTIME] = 1; // reset the wait time to 0.1 sec.
                                  // 13.03.2005 Fughe: Keep it default.
   // tcsetattr(portID, TCSANOW, &newTermEnv);
