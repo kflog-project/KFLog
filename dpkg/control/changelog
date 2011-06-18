@@ -1,0 +1,5 @@
+kflog (__VERSION__) unstable; urgency=low
+
+  * First pure Qt4 Release after portage. Not stable in all parts.
+
+ -- Axel Pauli <kflog.cumulus@googlemail.com>  Sat, 18 Jun 2011 20:09:04 +0200
