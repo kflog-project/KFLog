@@ -13,7 +13,22 @@
 # Version is determined from the header file target.h
 VERSION=$(shell cat kflog/target.h | grep KFLOG_VERSION | cut -d '"' -f 2)
 
+KFLOG_REL=kflog-$(VERSION)
+
+# Debian package build directories
+KFLOG_DEB_ROOT=dpkg
+KFLOG_DEB=$(KFLOG_DEB_ROOT)/$(KFLOG_REL)
+
 QTVERSION=$(shell qmake -query QT_VERSION)
+
+# Reset language environment because the date can be formatted according
+# to local rules. That does not like dpkg-buildpackage.
+LANG=
+
+DATE=`date +'%a, %d %b %Y %H:%M:%S %z'`
+
+# adapt install path to your needs if necessary
+INSTALL_ROOT = /opt/kflog
 
 usage:
 	@echo ""
@@ -49,3 +64,53 @@ clean:	qmake
 distclean:	qmake
 	make -f Makefile distclean
 	rm -rf `pwd`/release
+	
+##################################################
+# call dpkg target to build a debian KFLog package
+##################################################
+
+.PHONY : dpkg dpkg_make
+
+dpkg:
+	@echo "===== Building package for KFLog $(VERSION) ====="
+	@$(MAKE) -f Makefile.qmake VERSION=$(VERSION) dpkg_make
+
+# This target will build the debian packge. It is called via another makefile
+# due to the VERSION macro. The special letters apostroph and quotation mark
+# cause problems in ohter shell commands, if they not expanded before.
+
+dpkg_make:
+	rm -fr $(KFLOG_DEB_ROOT)/*$(VERSION)*
+	mkdir -p $(KFLOG_DEB)/kflog
+	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/kflog $(KFLOG_DEB)/kflog
+	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/Makefile.qmake $(KFLOG_DEB)/Makefile.qmake
+	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/kflog.pro $(KFLOG_DEB)/kflog.pro
+	cd $(KFLOG_DEB); \
+	export DEBEMAIL='hoeth@linta.de'; \
+	export DEBFULLNAME='Hendrik Hoeth'; \
+	echo '\n' | dh_make --packagename $(KFLOG_REL) -c GPL -s --native -r old
+	cd $(KFLOG_DEB)/dpkg/control; \
+	cp control rules prerm postinst../../../debian/; \
+	sed -e "s/__VERSION__/$(VERSION)/g" -e "s/__DATE__/$(DATE)/g" copyright > ../../../debian/copyright; \
+	sed -e "s/__VERSION__/$(VERSION)/g" -e "s/__DATE__/$(DATE)/g" changelog > ../../../debian/changelog
+	cd $(KFLOG_DEB); \
+	dpkg-buildpackage -rfakeroot -b
+
+# copies all files of cumulus into the debian package area
+.PHONY : dpkg_install
+
+dpkg_install:
+	@echo '===== Installing KFLog $(VERSION) under $(DESTDIR)$(INSTALL_ROOT) ====='
+	install -d $(DESTDIR)/$(INSTALL_ROOT)/bin
+	install -d $(DESTDIR)/$(INSTALL_ROOT)/logger
+	install -d $(DESTDIR)/$(INSTALL_ROOT)/mapicons
+	install -d $(DESTDIR)/$(INSTALL_ROOT)/pics
+	install --mode=755 release/bin/kflog $(DESTDIR)/$(INSTALL_ROOT)/bin
+	install --mode=755 release/bin/libkfrcai.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
+  install --mode=755 release/bin/libkfrfil.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
+  install --mode=755 release/bin/libkfrgcs.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
+  install --mode=755 release/bin/libkfrgmn.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
+  install --mode=755 release/bin/libkfrxsp.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
+  install --mode=755 release/bin/libopengl_igc.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
+	install --mode=644 mapicons/* $(DESTDIR)/$(INSTALL_ROOT)/mapicons
+	install --mode=644 pics/* $(DESTDIR)/$(INSTALL_ROOT)/pics
