@@ -1,0 +1,25 @@
+# $Id$
+Source: kflog
+Section: other
+Priority: optional
+Maintainer: Hendrik Hoeth <hoeth@linta.de>
+Build-Depends: debhelper (>= 7.0.50~)
+Standards-Version: 3.9.1
+Homepage: http://www.kflog.org/
+#Vcs-Git: git://git.debian.org/collab-maint/kflog-4.0.0.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/kflog-4.0.0.git;a=summary
+
+Package: kflog
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Flight planner and logger for glider pilots
+ KFLog gives you a powerful tool to plan your flight tasks and analyze your
+ flights afterwards. It is the only flight analyzer program available for Linux
+ to be recognized by the FAI IGC.
+ .
+ KFLog projects the flights on a digital vector map, that contains not only
+ airfields and airspaces, but a complete elevation map, roads, cities, rivers,
+ and lots of other interesting objects.
+ .
+ For more information about KFLog please take a look at its home page at
+ http://www.kflog.org/
