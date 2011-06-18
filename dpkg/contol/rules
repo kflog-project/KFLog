@@ -1,5 +1,8 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
+#
+# $Id$
+#
 # Sample debian/rules that uses debhelper.
 # This file was originally written by Joey Hess and Craig Small.
 # As a special exception, when this file is copied by dh-make into a
