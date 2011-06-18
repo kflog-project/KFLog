@@ -81,8 +81,9 @@ dpkg:
 
 dpkg_make:
 	rm -fr $(KFLOG_DEB_ROOT)/*$(VERSION)*
-	mkdir -p $(KFLOG_DEB)/kflog
+	mkdir -p $(KFLOG_DEB)/kflog $(KFLOG_DEB)/dpkg
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/kflog $(KFLOG_DEB)/kflog
+	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/dpkg $(KFLOG_DEB)/dpkg
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/Makefile.qmake $(KFLOG_DEB)/Makefile.qmake
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/kflog.pro $(KFLOG_DEB)/kflog.pro
 	cd $(KFLOG_DEB); \
