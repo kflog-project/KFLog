@@ -108,10 +108,10 @@ dpkg_install:
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/pics
 	install --mode=755 release/bin/kflog $(DESTDIR)/$(INSTALL_ROOT)/bin
 	install --mode=755 release/bin/libkfrcai.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
-  install --mode=755 release/bin/libkfrfil.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
-  install --mode=755 release/bin/libkfrgcs.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
-  install --mode=755 release/bin/libkfrgmn.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
-  install --mode=755 release/bin/libkfrxsp.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
-  install --mode=755 release/bin/libopengl_igc.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
+	install --mode=755 release/bin/libkfrfil.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
+	install --mode=755 release/bin/libkfrgcs.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
+	install --mode=755 release/bin/libkfrgmn.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
+	install --mode=755 release/bin/libkfrxsp.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
+	install --mode=755 release/bin/libopengl_igc.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
 	install --mode=644 mapicons/* $(DESTDIR)/$(INSTALL_ROOT)/mapicons
 	install --mode=644 pics/* $(DESTDIR)/$(INSTALL_ROOT)/pics
