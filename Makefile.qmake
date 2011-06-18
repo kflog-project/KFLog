@@ -91,9 +91,9 @@ dpkg_make:
 	export DEBFULLNAME='Hendrik Hoeth'; \
 	echo '\n' | dh_make --packagename $(KFLOG_REL) -c GPL -s --native -r old
 	cd $(KFLOG_DEB)/dpkg/control; \
-	cp control rules prerm postinst ../../../debian/; \
-	sed -e "s/__VERSION__/$(VERSION)/g" -e "s/__DATE__/$(DATE)/g" copyright > ../../../debian/copyright; \
-	sed -e "s/__VERSION__/$(VERSION)/g" -e "s/__DATE__/$(DATE)/g" changelog > ../../../debian/changelog
+	cp control rules prerm postinst ../../debian/; \
+	sed -e "s/__VERSION__/$(VERSION)/g" -e "s/__DATE__/$(DATE)/g" copyright > ../../debian/copyright; \
+	sed -e "s/__VERSION__/$(VERSION)/g" -e "s/__DATE__/$(DATE)/g" changelog > ../../debian/changelog
 	cd $(KFLOG_DEB); \
 	dpkg-buildpackage -rfakeroot -b
 
