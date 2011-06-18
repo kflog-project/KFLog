@@ -120,7 +120,6 @@ Flight::Flight( const QString& fName,
 
 Flight::~Flight()
 {
-  qDebug() << "~Flight()";
   qDeleteAll( route );
 }
 

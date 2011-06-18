@@ -106,7 +106,7 @@ ObjectTree::~ObjectTree()
  */
 void ObjectTree::slotNewFlightAdded( Flight* flight )
 {
-  qDebug() << "ObjectTree::slotNewFlightAdded";
+  // qDebug() << "ObjectTree::slotNewFlightAdded";
 
   new FlightListViewItem( FlightRoot, flight );
   FlightRoot->sortChildren( 0, Qt::AscendingOrder );
@@ -128,21 +128,16 @@ void ObjectTree::slotNewFlightGroupAdded( FlightGroup* flightGroup )
  */
 void ObjectTree::slotNewTaskAdded( FlightTask* task )
 {
-  qDebug() << "ObjectTree::slotNewTaskAdded() Task=" << task;
+  // qDebug() << "ObjectTree::slotNewTaskAdded() Task=" << task;
 
   new TaskListViewItem( TaskRoot, task );
   TaskRoot->sortChildren( 0, Qt::AscendingOrder );
   slotResizeColumns2Content();
-
-  qDebug() << "ObjectTree::slotNewTaskAdded() finished";
 }
 
 /** Called if the user has changed the selection. */
 void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
 {
-  qDebug() << "ObjectTree::slotSelectionChanged: item=" << item
-           << "Col=" << column;
-
   Q_UNUSED( column )
 
   if( item == static_cast<QTreeWidgetItem *>(0) )
@@ -150,8 +145,6 @@ void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
       // No item has been passed, ignore call.
       return;
     }
-
-  qDebug() << "ItemType=" << item->type();
 
   BaseFlightElement* bfe = static_cast<BaseFlightElement *>(0);
 
@@ -181,7 +174,7 @@ void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
 /** This slot is called if the currently selected flight has changed. */
 void ObjectTree::slotSelectedFlightChanged()
 {
-  qDebug() << "ObjectTree::slotSelectedFlightChanged()";
+  // qDebug() << "ObjectTree::slotSelectedFlightChanged()";
 
   BaseFlightElement* bfe = MapContents::instance()->getFlight();
 
@@ -206,7 +199,7 @@ void ObjectTree::slotSelectedFlightChanged()
 /** Signaled if the current flight was somehow changed.  */
 void ObjectTree::slotFlightChanged()
 {
-  qDebug() << "ObjectTree::slotFlightChanged()";
+  // qDebug() << "ObjectTree::slotFlightChanged()";
 
   QTreeWidgetItem* item = findFlightElement( MapContents::instance()->getFlight() );
 
