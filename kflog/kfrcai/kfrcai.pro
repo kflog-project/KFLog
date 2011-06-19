@@ -13,4 +13,4 @@ logger.files = cai.desktop README.cai
 
 INSTALLS += logger
 
-DESTDIR = ../../release/bin
+DESTDIR = ../../release/lib

@@ -147,7 +147,7 @@ QString RecorderDialog::getLibraryPath()
 {
   QString _installRoot = _settings.value( "/Path/InstallRoot", ".." ).toString();
 
-  return QString( _installRoot + "/bin" );
+  return QString( _installRoot + "/lib" );
 }
 
 void RecorderDialog::__createRecorderPage()

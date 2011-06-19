@@ -103,15 +103,16 @@ dpkg_make:
 dpkg_install:
 	@echo '===== Installing KFLog $(VERSION) under $(DESTDIR)$(INSTALL_ROOT) ====='
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/bin
+	install -d $(DESTDIR)/$(INSTALL_ROOT)/lib
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/logger
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/mapicons
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/pics
 	install --mode=755 release/bin/kflog $(DESTDIR)/$(INSTALL_ROOT)/bin
-	install --mode=755 release/bin/libkfrcai.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
-	install --mode=755 release/bin/libkfrfil.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
-	install --mode=755 release/bin/libkfrgcs.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
-	install --mode=755 release/bin/libkfrgmn.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
-	install --mode=755 release/bin/libkfrxsp.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
-	install --mode=755 release/bin/libopengl_igc.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/bin
+	install --mode=755 release/bin/libkfrcai.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
+	install --mode=755 release/bin/libkfrfil.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
+	install --mode=755 release/bin/libkfrgcs.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
+	install --mode=755 release/bin/libkfrgmn.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
+	install --mode=755 release/bin/libkfrxsp.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
+	install --mode=755 release/bin/libopengl_igc.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
 	$(MAKE) INSTALL_ROOT=$(DESTDIR)/$(INSTALL_ROOT) -f Makefile install
 	

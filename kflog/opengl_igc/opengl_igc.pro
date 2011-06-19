@@ -14,4 +14,4 @@ SOURCES =   glview.cpp \
 HEADERS =   openglwidget.h \
             glview.h
 
-DESTDIR = ../../release/bin
+DESTDIR = ../../release/lib

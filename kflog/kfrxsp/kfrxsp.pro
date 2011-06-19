@@ -15,4 +15,4 @@ logger.path  = /logger
                
 INSTALLS += logger
 
-DESTDIR = ../../release/bin
+DESTDIR = ../../release/lib

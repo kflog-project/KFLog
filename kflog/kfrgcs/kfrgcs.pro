@@ -29,4 +29,4 @@ logger.files = gcs.desktop README.gcs
 
 INSTALLS += logger
 
-DESTDIR = ../../release/bin
+DESTDIR = ../../release/lib

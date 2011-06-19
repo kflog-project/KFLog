@@ -1082,7 +1082,7 @@ void MainWindow::slotFlightViewIgcOpenGL()
 
   QString root = _settings.value( "/Path/InstallRoot", ".." ).toString();
 
-  QString libPath = root + "/bin/libopengl_igc.so";
+  QString libPath = root + "/lib/libopengl_igc.so";
 
   void* libHandle = dlopen( libPath.toAscii().data(), RTLD_NOW );
 
