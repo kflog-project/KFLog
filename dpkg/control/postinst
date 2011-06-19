@@ -23,6 +23,8 @@ set -e
 
 case "$1" in
     configure)
+    # make libraries accessable
+    chmod -R 755 /opt/kflog/lib
     # don't update ldconfig cache - only create necessary links for the libraries
     /sbin/ldconfig -n /opt/kflog/lib
     ;;
