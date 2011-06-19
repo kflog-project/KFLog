@@ -24,7 +24,7 @@ set -e
 case "$1" in
     configure)
     # don't update ldconfig cache - only create necessary links for the libraries
-    /sbin/ldconfig -n /opt/kflog/bin
+    /sbin/ldconfig -n /opt/kflog/lib
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

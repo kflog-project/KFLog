@@ -23,7 +23,7 @@ set -e
 case "$1" in
     upgrade)
     #remove installed libraries when upgrade is called
-    test -d /opt/kflog/bin && rm -rf /opt/kflog/bin/*.so.*
+    test -d /opt/kflog/lib && rm -rf /opt/kflog/lib
     exit 0
     ;;
 
