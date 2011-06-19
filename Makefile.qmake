@@ -108,11 +108,6 @@ dpkg_install:
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/mapicons
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/pics
 	install --mode=755 release/bin/kflog $(DESTDIR)/$(INSTALL_ROOT)/bin
-	install --mode=755 release/lib/libkfrcai.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
-	install --mode=755 release/lib/libkfrfil.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
-	install --mode=755 release/lib/libkfrgcs.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
-	install --mode=755 release/lib/libkfrgmn.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
-	install --mode=755 release/lib/libkfrxsp.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
-	install --mode=755 release/lib/libopengl_igc.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
+	cp -d release/lib/* $(DESTDIR)/$(INSTALL_ROOT)/lib
 	$(MAKE) INSTALL_ROOT=$(DESTDIR)/$(INSTALL_ROOT) -f Makefile install
 	
