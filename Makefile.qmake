@@ -114,5 +114,6 @@ dpkg_install:
 	install --mode=755 release/lib/libkfrgmn.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
 	install --mode=755 release/lib/libkfrxsp.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
 	install --mode=755 release/lib/libopengl_igc.so.1.0.0 $(DESTDIR)/$(INSTALL_ROOT)/lib
+	chmod 755 $(DESTDIR)/$(INSTALL_ROOT)/lib/*
 	$(MAKE) INSTALL_ROOT=$(DESTDIR)/$(INSTALL_ROOT) -f Makefile install
 	
