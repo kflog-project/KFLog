@@ -82,7 +82,6 @@ FlightRecorderPluginBase::FlightRecorderPluginBase( QObject *parent ) :
 
 FlightRecorderPluginBase::~FlightRecorderPluginBase()
 {
-  qDebug() << "~FlightRecorderPluginBase()";
 }
 
 /**

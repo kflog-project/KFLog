@@ -170,8 +170,6 @@ void Igc3DView::paintEvent( QPaintEvent *event )
     {
       flightbox->draw_front(&painter);
     }
-
-  qDebug() << "Igc3DView::paintEvent Raus";
 }
 
 /** No descriptions */

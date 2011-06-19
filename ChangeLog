@@ -1,5 +1,17 @@
 $Id$
 
+2011-06-19 Axel Pauli <axel@kflog.org>
+
+  * BUGFIX: Window menu item should only be enabled, if flights are loaded.
+    Furthermore it was wrong conected, so that multiple times a flight was
+    activated.
+    
+  * Plugins are no longer stored in bin directory. Created a new lib directory
+    for them.
+
+  * Added some stuff for a debian package build to automate that process and
+    make a delivery easier.
+    
 2011-06-16 Axel Pauli <axel@kflog.org>
 
   * New check menu option added under view. A user can define, if he wants to

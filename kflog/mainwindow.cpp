@@ -776,6 +776,10 @@ void MainWindow::createMenuBar()
   windowMenu = menuBar()->addMenu( tr("&Window") );
   connect( windowMenu, SIGNAL(aboutToShow()),
            this, SLOT(slotWindowsMenuAboutToShow()) );
+  connect( windowMenu, SIGNAL(triggered(QAction *)),
+           _globalMapContents, SLOT(slotSetFlight(QAction *)) );
+
+  windowMenu->setEnabled(false);
 
   //----------------------------------------------------------------------------
   // Settings menu creation
@@ -1143,6 +1147,8 @@ void MainWindow::slotModifyMenu()
       // Note AP: The flight list number is incremented when a new task is
       // created but the current flight maybe NULL!!! I got a core dump here.
       // Added check above to if clause.
+      windowMenu->setEnabled(true);
+
       switch(_globalMapContents->getFlight()->getObjectType())
         {
           case BaseMapElement::Flight:
@@ -1237,6 +1243,7 @@ void MainWindow::slotModifyMenu()
       flightAnimate10PrevAction->setEnabled( false );
       flightAnimateHomeAction->setEnabled( false );
       flightAnimateEndAction->setEnabled( false );
+      windowMenu->setEnabled(false);
     }
 }
 
@@ -1770,7 +1777,7 @@ void MainWindow::slotWindowsMenuAboutToShow()
 
   windowMenu->clear();
 
-  for( int i = 0; i<flights->size(); i++ )
+  for( int i = 0; i < flights->size(); i++ )
     {
       QAction *action = new QAction( this );
       action->setText( flights->at(i)->getFileName() );
@@ -1778,9 +1785,6 @@ void MainWindow::slotWindowsMenuAboutToShow()
       action->setData( i );
       action->setChecked( _globalMapContents->getFlightIndex() == i );
       windowMenu->addAction( action );
-
-      connect( windowMenu, SIGNAL(triggered(QAction *)),
-               _globalMapContents, SLOT(slotSetFlight(QAction *)) );
     }
 }
 
