@@ -41,6 +41,7 @@ usage:
 	@echo "  install_test - installs a test release under the directory release"
 	@echo "  clean        - cleans the build area"
 	@echo "  distclean    - cleans the build and release area"
+	@echo "  dpkg         - builds a Debian package under the directory dpkg"
 	
 all:	resetdate
 	qmake -Wall -nocache kflog.pro
@@ -69,23 +70,26 @@ distclean:	qmake
 # call dpkg target to build a debian KFLog package
 ##################################################
 
-.PHONY : dpkg dpkg_make
+.PHONY : dpkg dpkg_prepare dpkg_make dpkg_build
 
 dpkg:
-	@echo "===== Building package for KFLog $(VERSION) ====="
-	@$(MAKE) -f Makefile.qmake VERSION=$(VERSION) dpkg_make
+	@echo "===== Building a Debian package for KFLog $(VERSION) ====="
+	@$(MAKE) -f Makefile.qmake VERSION=$(VERSION) dpkg_prepare dpkg_make
 
-# This target will build the debian packge. It is called via another makefile
-# due to the VERSION macro. The special letters apostroph and quotation mark
-# cause problems in ohter shell commands, if they not expanded before.
-
-dpkg_make:
+# This target prepares the Debian build. A fresh copy of KFLog is cheched out
+# from subversion. Therefore you need subversion access!
+dpkg_prepare:
 	rm -fr $(KFLOG_DEB_ROOT)/*$(VERSION)*
 	mkdir -p $(KFLOG_DEB)/kflog $(KFLOG_DEB)/dpkg
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/kflog $(KFLOG_DEB)/kflog
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/dpkg $(KFLOG_DEB)/dpkg
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/Makefile.qmake $(KFLOG_DEB)/Makefile.qmake
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/kflog.pro $(KFLOG_DEB)/kflog.pro
+
+# This target creates the debian package files. It is called via another makefile
+# due to the VERSION macro. The special letters apostroph and quotation mark
+# cause problems in other shell commands, if they not expanded before.
+dpkg_make:
 	cd $(KFLOG_DEB); \
 	export DEBEMAIL='hoeth@linta.de'; \
 	export DEBFULLNAME='Hendrik Hoeth'; \
@@ -94,14 +98,18 @@ dpkg_make:
 	cp control rules prerm postinst ../../debian/; \
 	sed -e "s/__VERSION__/$(VERSION)/g" -e "s/__DATE__/$(DATE)/g" copyright > ../../debian/copyright; \
 	sed -e "s/__VERSION__/$(VERSION)/g" -e "s/__DATE__/$(DATE)/g" changelog > ../../debian/changelog
+	
+# This target builds the debian package, if all is prepared before.
+dpkg_build:
 	cd $(KFLOG_DEB); \
 	dpkg-buildpackage -rfakeroot -b
 
-# copies all files of cumulus into the debian package area
+# Copies all files of KFLog into the debian package area. It is called by the
+# Debian rule file.
 .PHONY : dpkg_install
 
 dpkg_install:
-	@echo '===== Installing KFLog $(VERSION) under $(DESTDIR)$(INSTALL_ROOT) ====='
+	@echo '===== Installing KFLog $(VERSION) under $(DESTDIR)/$(INSTALL_ROOT)'
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/bin
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/lib
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/logger
