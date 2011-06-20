@@ -119,3 +119,12 @@ dpkg_install:
 	cp -d release/lib/* $(DESTDIR)/$(INSTALL_ROOT)/lib
 	$(MAKE) INSTALL_ROOT=$(DESTDIR)/$(INSTALL_ROOT) -f Makefile install
 	
+# copies change log and debian package to kflog web page
+.PHONY : copy2web
+
+copy2web:
+	scp -C ChangeLog web31_axel@kflog.org:/srv/www/web31/web/fileadmin/user_upload/kflog_downloads/src/ChangeLog_$(VERSION)_`date '+%F'`
+	scp -C dpkg/kflog_$(VERSION)_i386.changes \
+	       dpkg/kflog_$(VERSION)_i386.deb \
+	       web31_axel@kflog.org:/srv/www/web31/web/fileadmin/user_upload/kflog_downloads/src/
+	       
