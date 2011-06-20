@@ -74,7 +74,7 @@ distclean:	qmake
 
 dpkg:
 	@echo "===== Building a Debian package for KFLog $(VERSION) ====="
-	@$(MAKE) -f Makefile.qmake VERSION=$(VERSION) dpkg_prepare dpkg_make
+	@$(MAKE) -f Makefile.qmake VERSION=$(VERSION) dpkg_prepare dpkg_make dpkg_build
 
 # This target prepares the Debian build. A fresh copy of KFLog is cheched out
 # from subversion. Therefore you need subversion access!
