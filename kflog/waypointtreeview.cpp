@@ -339,9 +339,10 @@ void WaypointTreeView::slotOpenWaypointCatalog()
                                          _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
-  filter.append(tr("All supported waypoint formats") + " (*.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
+  filter.append(tr("Waypoint formats") + " (welt2000.txt WELT2000.TXT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
   filter.append(tr("KFLog waypoints") + " (*.kflogwp *.KFLOGWP);;");
   filter.append(tr("Cumulus waypoints") + " (*.kwp *.KWP);;");
+  filter.append(tr("Welt2000 waypoints") + " (welt2000.txt WELT2000.TXT);;");
   filter.append(tr("Filser txt waypoints") + " (*.txt *.TXT);;");
   filter.append(tr("Filser da4 waypoints") + " (*.da4 *.DA4);;");
   filter.append(tr("SeeYou cup waypoints") + " (*.cup *.CUP)");
@@ -765,27 +766,21 @@ void WaypointTreeView::fillWaypoints()
 
     if( w->runway.first > 0 )
       {
-        tmp.sprintf( "%02d", w->runway.first );
+        tmp.sprintf( "%02d/%02d", w->runway.first, w->runway.second );
+        item->setText(colRunway, tmp);
       }
-    else
-      {
-        tmp = "";
-      }
-
-    item->setText(colRunway, tmp);
 
     if( w->length > 0 )
       {
         tmp.sprintf( "%.0f m", w->length );
+        item->setText(colLength, tmp);
       }
-    else
+
+    if( w->runway.first > 0 )
       {
-        tmp = "";
+        item->setText( colSurface, Runway::item2Text( w->surface ) );
       }
 
-    item->setText(colLength, tmp);
-
-    item->setText(colSurface, Runway::item2Text(w->surface) );
     item->setText(colComment, w->comment);
     item->setIcon(colName, _globalMapConfig->getPixmap(w->type, false, true) );
 

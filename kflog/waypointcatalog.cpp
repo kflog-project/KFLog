@@ -421,6 +421,7 @@ bool WaypointCatalog::writeBinary()
                              QObject::tr("permission denied!") + "</html>",
                              QMessageBox::Ok );
     }
+
   return ok;
 }
 
@@ -543,8 +544,6 @@ bool WaypointCatalog::importVolkslogger(const QString& filename)
             }
 
           w->name = s[1].trimmed();
-          //w->description = "<unknown>";
-          //w->icao = "<unknown>";
 
           if (flag.digitValue() & VLAPI_DATA::WPT::WPTTYP_L)
             {
@@ -652,12 +651,14 @@ bool WaypointCatalog::load(const QString& catalog)
 {
   if (catalog.right(8).toLower() == ".kflogwp")
     return read(catalog);
+  else if (catalog.right(12).toLower() == "welt2000.txt")
+    return readWelt2000(catalog);
   else if (catalog.right(4).toLower() == ".txt")
-    return readFilserTXT (catalog);
+    return readFilserTXT(catalog);
   else if (catalog.right(4).toLower() == ".da4")
-    return readFilserDA4 (catalog);
+    return readFilserDA4(catalog);
   else if (catalog.right(4).toLower() == ".cup")
-    return readCup (catalog);
+    return readCup(catalog);
   else
     return readBinary(catalog);
 }
@@ -1395,6 +1396,556 @@ bool WaypointCatalog::readCup (const QString& catalog)
   return true;
 }
 
+/** creates a waypoint catalog from a Welt2000 file. */
+bool WaypointCatalog::readWelt2000(const QString& catalog)
+{
+  qDebug() << "WaypointCatalog::readWelt2000" << catalog;
+
+  QFile file(catalog);
+
+  if(!file.exists())
+    {
+      QMessageBox::critical( _mainWindow,
+                             QObject::tr("Error occurred!"),
+                             "<html>" + QObject::tr("The selected file<BR><B>%1</B><BR>does not exist!").arg(catalog) + "</html>",
+                             QMessageBox::Ok );
+      return false;
+    }
+
+  if(file.size() == 0)
+    {
+      QMessageBox::warning( _mainWindow,
+                            QObject::tr("Error occurred!"),
+                            "<html>" + QObject::tr("The selected file<BR><B>%1</B><BR>is empty!").arg(catalog) + "</html>",
+                            QMessageBox::Ok );
+      return false;
+    }
+
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+      return false;
+    }
+
+  bool ok;
+
+  QString lastInput = _settings.value( "/Waypoints/Welt2000Filter", "").toString();
+
+  QString cFilter = QInputDialog::getText( _mainWindow,
+                                           QObject::tr("Enter countries to be read"),
+                                           QObject::tr("Two letter Country codes:"),
+                                           QLineEdit::Normal,
+                                           lastInput,
+                                           &ok );
+  if( ! ok || cFilter.isEmpty() )
+    {
+      return false;
+    }
+
+  QStringList clist = cFilter.split( QRegExp("[,; ]"), QString::SkipEmptyParts );
+
+  QStringList countryList;
+
+  for( int i = 0; i < clist.count(); i++ )
+    {
+      QString e = clist[i].trimmed().toUpper();
+
+      if( e.length() != 2 || countryList.contains( e ) )
+        {
+          continue;
+        }
+
+      countryList += e;
+    }
+
+  countryList.sort();
+
+   if( countryList.size() == 0 )
+    {
+       QMessageBox::warning( _mainWindow,
+                             QObject::tr("Error occurred!"),
+                             "<html>" + QObject::tr("Your country entries were wrong! "
+                             "Two letter codes are only allowed. Use spaces to separate "
+                             "them from each other.") + "</html>",
+                             QMessageBox::Ok );
+       return false;
+    }
+
+  // Save the last user filter input
+  _settings.setValue( "/Waypoints/Welt2000Filter", cFilter );
+
+  // put all entries of country list into a dictionary for faster access
+  QSet<QString> countryDict;
+
+  for( int i = 0; i < countryList.count(); i++ )
+    {
+      // populate country dictionary
+      countryDict.insert( countryList[i] );
+    }
+
+  QTextStream in(&file);
+  in.setCodec( "ISO 8859-15" );
+
+  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+
+  uint lineNo = 0;
+
+  while( ! in.atEnd() )
+    {
+      bool ok, ok1;
+      QString line, buf;
+      line = in.readLine(128);
+      lineNo++;
+
+      if( line.isEmpty() )
+        {
+          continue;
+        }
+
+      // step over comment or invalid lines
+      if( line.startsWith("#") || line.startsWith("$") ||
+          line.startsWith("\t") || line.startsWith(" ") )
+        {
+          continue;
+        }
+
+      // remove white spaces and line end characters
+      line = line.trimmed();
+
+      // replace markers against space
+      line.replace( QRegExp("[!?]+"), " " );
+
+      if( line.length() < 62 )
+        {
+          // country sign not included
+          continue;
+        }
+
+      // Extract country sign. It is coded according to ISO 3166.
+      QString country = line.mid( 60, 2 ).toUpper();
+
+      if( ! countryDict.isEmpty() )
+        {
+          if( ! countryDict.contains(country) )
+            {
+              continue;
+            }
+        }
+
+      Waypoint *wp = new Waypoint;
+
+      wp->isLandable = false;
+      wp->importance = 0;
+      wp->country = country;
+      wp->name = line.mid( 0, 6 ).trimmed().toUpper();
+
+      // convert all to toUpper case
+      line = line.toUpper();
+
+      // look, what kind of line was read.
+      // COL5 = 1 Airfield or also UL site
+      // COL5 = 2 Outlanding, contains also UL places
+      QString kind = line.mid( 5, 1 );
+
+      bool ulField = false;
+      bool glField = false;
+      bool afField = false;
+      bool olField = false;
+
+      QString commentShort;
+      QString commentLong;
+
+      if( kind == "2" ) // can be an UL field or an outlanding
+        {
+          if( line.mid( 23, 4 ) == "*ULM" )
+            {
+              ulField = true;
+            }
+          else
+            {
+              olField = true;
+              commentShort = line.mid( 24, 4 );
+              commentShort.replace(QRegExp("[!?]+"), " " );
+              commentShort = commentShort.toUpper().trimmed();
+
+              if( commentShort.startsWith( "FL" ) )
+                {
+                  commentLong = QString( QObject::tr("Emergency Field No: ")) +
+                                commentShort.mid( 2, 2 );
+                  wp->comment = commentLong;
+                }
+            }
+        }
+      else if( line.mid( 23, 4 ) == "#GLD" )
+        {
+          // Glider field
+          glField = true;
+        }
+      else if( line.mid( 23, 5 ) == "# ULM" )
+        {
+          // newer coding for UL field
+          ulField = true;
+        }
+      else if( kind == "1" )
+        {
+          afField = true;
+          wp->icao = line.mid( 24, 4 ).trimmed().toUpper();
+
+          if( line.mid( 20, 4 ) == "GLD#" )
+            {
+              // other possibility for a glider field with ICAO code
+              glField = true;
+            }
+        }
+
+      // waypoint name long
+      QString wpName = line.mid( 7, 16 );
+
+      // remove special mark signs
+      wpName.replace( QRegExp("[!?]+"), "" );
+
+      // remove resp. replace white spaces against one space
+      wpName = wpName.simplified();
+
+      if( wpName.length() == 0 )
+        {
+          continue;
+        }
+
+      // waypoint type, landmark is the default.
+      BaseMapElement::objectType afType = BaseMapElement::Landmark;
+
+      // determine waypoint type so good as possible
+      if( ulField == true )
+        {
+          afType = BaseMapElement::UltraLight;
+        }
+      else if( glField == true )
+        {
+          afType = BaseMapElement::Gliderfield;
+        }
+      else if( olField == true )
+        {
+          afType = BaseMapElement::Outlanding;
+        }
+      else if( afField == true )
+        {
+          if( wp->icao.startsWith("ET") )
+            {
+              // German military airport
+              afType = BaseMapElement::MilAirport;
+            }
+          else if( wpName.contains(QRegExp(" MIL$")) )
+            {
+              // should be an military airport but not 100% sure
+              afType = BaseMapElement::MilAirport;
+            }
+          else if( wp->icao.startsWith("EDD") )
+            {
+              // German international airport
+              afType = BaseMapElement::IntAirport;
+            }
+          else
+            {
+              afType = BaseMapElement::Airfield;
+            }
+        }
+
+      if( afType != BaseMapElement::Landmark )
+        {
+          // That is an airfield or an outlanding
+          wpName = wpName.toLower();
+
+          QChar lastChar(' ');
+
+          // convert airfield names to upper-lower
+          for( int i=0; i < wpName.length(); i++ )
+            {
+              if( lastChar == ' ' )
+                {
+                  wpName.replace( i, 1, wpName.mid(i,1).toUpper() );
+                }
+
+              lastChar = wpName[i];
+            }
+
+          if( ulField  )
+            {
+              if( wpName.right(3) == " Ul" )
+                {
+                  // Convert lower l of Ul to upper case
+                  wpName.replace( wpName.length()-1, 1, "L" );
+                }
+            }
+        }
+      else
+        {
+          // That is a real waypoint. Its name is longer.
+          wpName = line.mid( 7, 34 );
+
+          // remove special mark signs
+          wpName.replace( QRegExp("[!?]+"), "" );
+
+          // remove resp. replace white spaces against one space
+          wpName = wpName.simplified();
+        }
+
+      wp->description = wpName;
+      wp->type = afType;
+
+      qint32 lat, lon;
+      QString degree, min, sec;
+      double d, m, s;
+
+      // convert latitude
+      degree = line.mid(46,2);
+      min    = line.mid(48,2);
+      sec    = line.mid(50,2);
+
+      d = degree.toDouble(&ok);
+
+      if( ! ok )
+        {
+          qWarning( "W2000, Line %d: %s (%s) wrong latitude degree value, ignoring entry!",
+                    lineNo, wpName.toLatin1().data(), country.toLatin1().data() );
+          continue;
+        }
+
+      m = min.toDouble(&ok);
+
+      if( ! ok )
+        {
+          qWarning( "W2000, Line %d: %s (%s) wrong latitude minute value, ignoring entry!",
+                    lineNo, wpName.toLatin1().data(), country.toLatin1().data() );
+          continue;
+        }
+
+      s = sec.toDouble(&ok);
+
+      if( ! ok )
+        {
+          qWarning( "W2000, Line %d: %s (%s) wrong latitude second value, ignoring entry!",
+                    lineNo, wpName.toLatin1().data(), country.toLatin1().data() );
+          continue;
+        }
+
+      double latTmp = (d * 600000.) + (10000. * (m + s / 60. ));
+
+      lat = (qint32) rint(latTmp);
+
+      if( line[45] == 'S' )
+        {
+          lat = -lat;
+        }
+
+      // convert longitude
+      degree = line.mid(53,3);
+      min    = line.mid(56,2);
+      sec    = line.mid(58,2);
+
+      d = degree.toDouble(&ok);
+
+      if( ! ok )
+        {
+          qWarning( "W2000, Line %d: %s (%s) wrong longitude degree value, ignoring entry!",
+                    lineNo, wpName.toLatin1().data(), country.toLatin1().data() );
+          continue;
+        }
+
+      m = min.toDouble(&ok);
+
+      if( ! ok )
+        {
+          qWarning( "W2000, Line %d: %s (%s) wrong longitude minute value, ignoring entry!",
+                    lineNo, wpName.toLatin1().data(), country.toLatin1().data() );
+          continue;
+        }
+
+      s = sec.toDouble(&ok);
+
+      if( ! ok )
+        {
+          qWarning( "W2000, Line %d: %s (%s) wrong longitude second value, ignoring entry!",
+                    lineNo, wpName.toLatin1().data(), country.toLatin1().data() );
+          continue;
+        }
+
+      double lonTmp = (d * 600000.) + (10000. * (m + s / 60. ));
+
+      lon = (qint32) rint(lonTmp);
+
+      if( line[52] == 'W' )
+        {
+          lon = -lon;
+        }
+
+      wp->origP = WGSPoint(lat, lon);
+
+      // elevation
+      buf = line.mid(41,4 ).trimmed();
+
+      ok = false;
+      qint16 elevation = 0;
+
+      if( ! buf.isEmpty() )
+        {
+          elevation = buf.toInt(&ok);
+        }
+
+      if( ! ok )
+        {
+          qWarning( "W2000, Line %d: %s (%s) missing or wrong elevation, set value to 0!",
+                    lineNo, wpName.toLatin1().data(), country.toLatin1().data() );
+          elevation = 0;
+        }
+
+      wp->elevation = elevation;
+
+      if( afType != BaseMapElement::Landmark )
+        {
+          // frequency
+          QString frequency = line.mid(36,3) + "." + line.mid(39,2).trimmed();
+
+          float fFrequency = frequency.toFloat(&ok);
+
+          if( ( !ok || fFrequency < 108 || fFrequency > 137.0 ) )
+            {
+              fFrequency = 0.0; // reset frequency to unknown
+            }
+          else
+            {
+              // check, what has to be appended as last digit
+              // check, what has to be appended as last digit
+              if( line[40] == '2' || line[40] == '7' )
+                {
+                  fFrequency += 0.005;
+                }
+            }
+
+          wp->frequency = fFrequency;
+
+          /* Runway description from Welt2000.txt file
+           *
+           * A: 08/26 MEANS THAT THERE IS ONLY ONE RUNWAYS 08 AND (26=08 + 18)
+           * B: 17/07 MEANS THAT THERE ARE TWO RUNWAYS,
+           *          BUT 17 IS THE MAIN RWY SURFACE LENGTH
+           * C: IF BOTH DIRECTIONS ARE IDENTICAL (04/04),
+           *    THIS DIRECTION IS STRONGLY RECOMMENDED
+           */
+
+          // runway direction have two digits, we consider both directions
+          buf = line.mid(32,2).trimmed();
+
+          ok = false;
+          ok1 = false;
+
+          ushort rwDir1 = 0;
+          ushort rwDir2 = 0;
+          ushort rwCount = 0;
+
+          QPair<ushort, ushort> rwDirections[2];
+          rwDirections[0] = QPair<ushort, ushort>( 0, 0);
+          rwDirections[1] = QPair<ushort, ushort>( 0, 0);
+
+          if( ! buf.isEmpty() )
+            {
+              rwDir1 = buf.toUShort(&ok);
+            }
+
+          // extract second direction
+          buf = line.mid(34,2).trimmed();
+
+          if( ! buf.isEmpty() )
+            {
+              rwDir2 = buf.toUShort(&ok1);
+            }
+
+          if( ! ok || ! ok1 || rwDir1 < 1 || rwDir1 > 36 || rwDir2 < 1 || rwDir2 > 36 )
+            {
+            }
+          else
+            {
+              if( rwDir1 == rwDir2 || abs( rwDir1 - rwDir2 ) == 18 )
+                {
+                  // We have only one runway
+                  rwDirections[0].first  = rwDir1;
+                  rwDirections[0].second = rwDir2;
+                  rwCount = 1;
+                }
+              else
+                {
+                  // WE have two runways
+                  rwDirections[0].first  = rwDir1;
+                  rwDirections[0].second = ((rwDir1 > 18) ? rwDir1 - 18 : rwDir1 + 18 );
+                  rwDirections[1].first  = rwDir2;
+                  rwDirections[1].second = ((rwDir2 > 18) ? rwDir2 - 18 : rwDir2 + 18 );
+                  rwCount = 2;
+                }
+            }
+
+          wp->runway = rwDirections[0];
+
+          // runway length in meters, must be multiplied by 10
+          buf = line.mid(29,3).trimmed();
+
+          ok = false;
+          ushort rwLen = 0;
+
+          if( ! buf.isEmpty() )
+            {
+              rwLen = buf.toUInt(&ok);
+            }
+
+          if( ! ok )
+            {
+              rwLen = 0;
+            }
+          else
+            {
+              rwLen *= 10;
+            }
+
+          wp->length = rwLen;
+
+          // runway surface
+          QChar rwType = line[28];
+
+          if( rwType == 'A' )
+            {
+              wp->surface = Runway::Asphalt;
+            }
+          else if( rwType == 'C' )
+            {
+              wp->surface = Runway::Concrete;
+            }
+          else if( rwType == 'G' )
+            {
+              wp->surface = Runway::Grass;
+            }
+          else if( rwType == 'S' )
+            {
+              wp->surface = Runway::Sand;
+            }
+          else
+            {
+              wp->surface = Runway::Unknown;
+            }
+        }
+
+      if( !insertWaypoint(wp) )
+        {
+          qWarning("Welt2000 Read (%d): Error inserting waypoint in catalog", lineNo);
+          break;
+        }
+    } // End of while( ! in.atEnd() )
+
+  file.close();
+  QApplication::restoreOverrideCursor();
+
+  onDisc = true;
+  path = catalog;
+  return true;
+}
+
 bool WaypointCatalog::insertWaypoint(Waypoint *newWaypoint)
 {
   bool result = true;
@@ -1404,7 +1955,7 @@ bool WaypointCatalog::insertWaypoint(Waypoint *newWaypoint)
 
   if( existingWaypoint != 0 )
     {
-      qDebug() << "FoundWP" << existingWaypoint->name;
+      // qDebug() << "FoundWP" << existingWaypoint->name;
 
       if( existingWaypoint->name != newWaypoint->name ||
           existingWaypoint->angle != newWaypoint->angle ||

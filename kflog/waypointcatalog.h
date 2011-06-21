@@ -45,9 +45,9 @@ class WaypointCatalog
 {
 public:
 
-  WaypointCatalog(const QString& name = QString::null);
+  WaypointCatalog(const QString& name="");
 
-  ~WaypointCatalog();
+  virtual ~WaypointCatalog();
   /** No descriptions */
   bool read(const QString &catalog);
   /** No descriptions */
@@ -62,6 +62,8 @@ public:
   bool writeFilserDA4 (const QString& catalog);
   /** read SeeYou cup file, only waypoint part */
   bool readCup (const QString& catalog);
+  /** creates a waypoint catalog from a Welt2000 file. */
+  bool readWelt2000(const QString& catalog);
   /** No descriptions */
   bool write();
   /** No descriptions */

@@ -1,5 +1,18 @@
 $Id$
 
+2011-06-21 Axel Pauli <axel@kflog.org>
+
+  * New method added to the WaypointCatalog class, which can read in waypoint
+    data from a Welt2000 file. The amount of waypoints must be limited by
+    country identifiers because the whole file contains over 57282 entries.
+    
+  * WaypointTreeView extended to read a Welt2000 file. Runways are listed with
+    both directions now.
+
+2011-06-19 Axel Pauli <axel@kflog.org>
+
+  * KFLog 4.0.0 released.
+
 2011-06-19 Axel Pauli <axel@kflog.org>
 
   * BUGFIX: Window menu item should only be enabled, if flights are loaded.
