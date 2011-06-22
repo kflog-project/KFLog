@@ -110,7 +110,7 @@ Map::Map( QWidget* parent ) :
      "and \"&lt;Ctrl&gt;&lt;-&gt;\" or \"-\"(zoom out).</P>"
      "<P>The cursor keys and the keys on the NumPad can also pan the map, if "
      "NumLock is switched on.</P>"
-     "<P>With the menu item <b>Options-&gt;Configure KFLog</b> you can "
+     "<P>With the menu item <b>Settings-&gt;KFLog Setup-&gt;Map Elements</b> you can "
      "configure, which map elements should be displayed at which scale.</P>"
      "<b>Supported mouse actions at the map:</b>"
      "<ul>"
