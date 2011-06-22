@@ -664,9 +664,9 @@ bool WaypointCatalog::load(const QString& catalog)
 }
 
 /** read a waypoint catalog from a filser txt file */
-bool WaypointCatalog::readFilserTXT (const QString& catalog)
+bool WaypointCatalog::readFilserTXT(const QString& catalog)
 {
-  qDebug("WaypointCatalog::readFilserTXT (%s)", catalog.toLatin1().data());
+  qDebug() << "WaypointCatalog::readFilserTXT: " << catalog;
 
   QFile f(catalog);
 
@@ -684,8 +684,14 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
                 {
                   QStringList list = QString(line).split (",");
 
-                  if (list[0] == "*") // comment/header line
+                  if(list.size() == 0 || list[0] == "*") // comment/header line
                     {
+                      continue;
+                    }
+
+                  if( list.size() < 9 )
+                    {
+                      // That will prevent a crash, if a wrong file is read!
                       continue;
                     }
 
@@ -693,7 +699,7 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
                   w->name = list [1];
                   w->description = "";
                   w->icao = "";
-//        why don't we have type "turnpoint" ?
+
                   if (list[2].toUpper() == "TP")
                     w->type = BaseMapElement::Landmark;
                   else if (list[2].toUpper() == "APT")
@@ -733,6 +739,8 @@ bool WaypointCatalog::readFilserTXT (const QString& catalog)
                     }
                 }
             }
+
+          f.close();
           onDisc = true;
           path = catalog;
           return true;
@@ -750,12 +758,15 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
 
   if (f.open(QIODevice::WriteOnly))
     {
+      QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+
       QTextStream out (&f);
-      out << "*,TpName,Type,Latitiude,Longitude,Altitude,Frequency,RWY,RWYdir,RWYtype,TCA,TC" << endl;
+      out << "*,TpName,Type,Latitude,Longitude,Altitude,Frequency,RWY,RWYdir,RWYtype,TCA,TC" << endl;
 
       foreach(Waypoint* w, wpList)
       {
         out << "," << w->name << ",";
+
         switch (w->type)
           {
           case BaseMapElement::Landmark:
@@ -770,12 +781,14 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
           default:
             out << "MARKER,";
           }
+
         out << w->origP.lat()/600000.0 << ",";
         out << w->origP.lon()/600000.0 << ",";
         out << (int)(w->elevation/0.3048) << ",";
         out << (int)(w->frequency*1000) << ",";
         out << w->length << ",";
         out << w->runway.first << ",";
+
         switch (w->surface)
           {
           case Runway::Grass:
@@ -787,10 +800,15 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
           default:
             out << "U,";
           }
+
         out << "3,I,,," << endl;
       }
+
+      f.close();
+      QApplication::restoreOverrideCursor();
       return true;
     }
+
   return false;
 }
 
@@ -805,9 +823,12 @@ bool WaypointCatalog::readFilserDA4 (const QString& catalog)
     {
       if (f.open(QIODevice::ReadOnly))
         {
+          QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+
           QDataStream in(&f);
           DA4Buffer buffer;
           in.readRawData ((char*)&buffer, sizeof (DA4Buffer));
+
           for (int RecordNumber = 0; RecordNumber < WAYPOINT_MAX; RecordNumber++)
             {
               DA4WPRecord record (&buffer.waypoints[RecordNumber]);
@@ -825,11 +846,15 @@ bool WaypointCatalog::readFilserDA4 (const QString& catalog)
                     }
                 }
             }
+
+          f.close();
           onDisc = true;
           path = catalog;
+          QApplication::restoreOverrideCursor();
           return true;
         }
     }
+
   return false;
 }
 
@@ -842,9 +867,12 @@ bool WaypointCatalog::writeFilserDA4 (const QString& catalog)
 
   if (f.open(QIODevice::WriteOnly))
     {
+      QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+
       QDataStream out (&f);
       DA4Buffer buffer;
       int RecordNumber = 0;
+
       foreach(Waypoint* w, wpList)
       {
         DA4WPRecord record (&buffer.waypoints[RecordNumber++]);
@@ -860,6 +888,7 @@ bool WaypointCatalog::writeFilserDA4 (const QString& catalog)
 
       // write empty tasks
       RecordNumber = 0;
+
       while (RecordNumber < TASK_MAX)
         {
           DA4TaskRecord record (&buffer.tasks[RecordNumber++]);
@@ -870,10 +899,17 @@ bool WaypointCatalog::writeFilserDA4 (const QString& catalog)
 
       // fill buffer with empty task names
       char buf [MAXTSKNAME] = "                                    ";
+
       for (RecordNumber = 0; RecordNumber < TASK_MAX; RecordNumber++)
-        out.writeRawData (buf, MAXTSKNAME);
+        {
+          out.writeRawData (buf, MAXTSKNAME);
+        }
+
+      f.close();
+      QApplication::restoreOverrideCursor();
       return true;
     }
+
   return false;
 }
 
@@ -950,6 +986,8 @@ bool WaypointCatalog::readBinary(const QString &catalog)
 
           return false;
         }
+
+      QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
       // from here on, we assume that the file has the correct format.
       if( fileFormat == FILE_FORMAT_ID_2 )
@@ -1053,6 +1091,9 @@ bool WaypointCatalog::readBinary(const QString &catalog)
           // write file back in newer format
           writeBinary();
         }
+
+      f.close();
+      QApplication::restoreOverrideCursor();
     }
   else
     {

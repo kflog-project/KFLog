@@ -1,12 +1,14 @@
-# KDE Config File  
 [Desktop Entry]
+Version=1.0
 Type=Application
-Exec=kflog -caption "%c" %i %m  
-Icon=kflog.png
-MiniIcon=kflog.png
-DocPath=kflog/index.html
-Comment=
-Comment[de]=
-Terminal=0
 Name=KFLog
-Name[de]=KFLog
+Comment=Flight planner and logger for glider pilots
+Comment[de]=Flugplanungs- und Auswerteprogramm für Segelflieger
+Exec=/opt/kflog/bin/kflog
+Icon=/opt/kflog/pics/pilot_48.png
+Path=
+Terminal=false
+StartupNotify=false
+GenericName=Flight planner and logger
+GenericName[de]=Flugplanungs- und Auswerteprogramm
+Categories=Qt4;Utility;Navigation

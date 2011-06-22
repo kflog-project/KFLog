@@ -1,5 +1,12 @@
 $Id$
 
+2011-06-22 Axel Pauli <axel@kflog.org>
+
+  * Some more checks added to class WaypointCatalog to prevent core dumps
+    during read of wrong file content.
+    
+  * kflog.desktop file updated and integrated into the package build.
+
 2011-06-21 Axel Pauli <axel@kflog.org>
 
   * New method added to the WaypointCatalog class, which can read in waypoint
