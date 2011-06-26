@@ -141,8 +141,8 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
 
   if (flight)
     {
-      if(mouseB == (Qt::MiddleButton | Reached) ||
-         mouseB == (Qt::MiddleButton | NotReached))
+      if(mouseB == (Qt::MidButton | Reached) ||
+         mouseB == (Qt::MidButton | NotReached))
         {
           time_alt = cursor1;
           cursor = 1;
@@ -245,8 +245,8 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
 
       int movedCursor = 1;
 
-      if(mouseB == (Qt::MiddleButton | Reached) ||
-         mouseB == (Qt::MiddleButton | NotReached))
+      if(mouseB == (Qt::MidButton | Reached) ||
+         mouseB == (Qt::MidButton | NotReached))
         {
           cursor_1 = cursor;
         }

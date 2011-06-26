@@ -364,7 +364,7 @@ bool WaypointCatalog::writeBinary()
       QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
       QDataStream out(& f);
-      out.setVersion( QDataStream::Qt_4_7 );
+      out.setVersion( QDataStream::Qt_4_6 );
 
       //write file header
       out << quint32( KFLOG_FILE_MAGIC );
@@ -996,7 +996,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
         }
       else
         {
-          in.setVersion( QDataStream::Qt_4_7 );
+          in.setVersion( QDataStream::Qt_4_6 );
           in >> wpListSize;
         }
 

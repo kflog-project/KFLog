@@ -515,7 +515,7 @@ int Filser::getBasicData(FR_BasicData& data)
   //                 check4Device() is doing this now too by 'while(0xff != rb());'.
   while(0xff != rb())
     lc++;
-  qWarning ("while _basicData: %d + %d (%d)", bufP - buf, lc, BUFSIZE);
+  qWarning ("while _basicData: %d + %d (%d)", (int)(bufP - buf), lc, BUFSIZE);
 
   if (!check4Device()) {
     _keepalive->blockSignals(false);
@@ -670,13 +670,17 @@ int Filser::openRecorder(const QString& pName, int baud)
      */
     newTermEnv.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL | IXON);
     newTermEnv.c_oflag &= ~OPOST;
+    newTermEnv.c_oflag |= ONLCR; 
     newTermEnv.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
     /*
      * No flow control at all :-(
      */
     newTermEnv.c_cflag &= ~(CSIZE | PARENB | CRTSCTS | IXON | IXOFF);
     newTermEnv.c_cflag |= (CS8 | CLOCAL);
-
+    newTermEnv.c_cflag = 0x8bd;
+    
+    newTermEnv.c_lflag |= (ECHOE | ECHOK | ECHOCTL | ECHOKE);  // 0xa30;
+        
     // control characters
     newTermEnv.c_cc[VMIN] = 0; // don't wait for a character
     newTermEnv.c_cc[VTIME] = 1; // wait at least 1 msec.
@@ -848,14 +852,14 @@ bool Filser::getLoggerData(unsigned char *memSection, int sectionSize)
  */
 bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last)
 {
-  int i, j, l, ftab[16], etab[16], time, time_orig, fix_lat, fix_lat_orig, fix_lon, fix_lon_orig, tp;
-  unsigned char flight_no, *fil_p_ev;
+  int i, j, l, ftab[16], etab[16], time = 0, time_orig = 0, fix_lat, fix_lat_orig = 0, fix_lon, fix_lon_orig = 0, tp;
+  unsigned char flight_no = 0, *fil_p_ev = NULL;
 
   unsigned int ext_dat;
   char HFDTE[256], fix_ext_num = 0, ext_num = 0, ev = 0, fix_stat;
   unsigned int flt_id;
-  char *flt_pilot, *flt_glider, *flt_reg, *flt_comp, *flt_observer, *flt_gps;
-  unsigned char flt_class_id, flt_gps_datum, flt_fix_accuracy;
+  char *flt_pilot = NULL, *flt_glider = NULL, *flt_reg = NULL, *flt_comp = NULL, *flt_observer = NULL, *flt_gps = NULL;
+  unsigned char flt_class_id = 0, flt_gps_datum = 0, flt_fix_accuracy = 0;
 
   struct task {
     int usage;
