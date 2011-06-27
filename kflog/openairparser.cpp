@@ -31,6 +31,7 @@
 
 extern MapContents*  _globalMapContents;
 extern MapMatrix*    _globalMapMatrix;
+extern QSettings     _settings;
 
 OpenAirParser::OpenAirParser()
 {
@@ -87,8 +88,32 @@ uint OpenAirParser::load( QList<Airspace>& list )
         }
     }
 
-  // source files follows compiled files
   preselect.sort();
+
+  // Check, which files shall be loaded.
+  QStringList files = _settings.value( "/Airspace/FileList", QStringList(QString("All"))).toStringList();
+
+  if( files.isEmpty() )
+    {
+      // No files shall be loaded
+      qWarning() << "OpenAirParser: No Open Air files defined for loading!";
+      return loadCounter;
+    }
+
+  if( files.first() != "All" )
+    {
+      // Check for desired files to be loaded. All other items are removed from
+      // the files list.
+      for( int i = preselect.size() - 1; i >= 0; i-- )
+        {
+          QString file = QFileInfo(preselect.at(i)).completeBaseName() + ".txt";
+
+          if( files.contains( file ) == false )
+            {
+              preselect.removeAt(i);
+            }
+        }
+    }
 
   while( !preselect.isEmpty() )
     {

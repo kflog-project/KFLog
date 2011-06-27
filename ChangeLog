@@ -1,5 +1,15 @@
 $Id$
 
+2011-06-27 Axel Pauli <axel@kflog.org>
+
+  * Airspace file management added to kflog settings.
+
+2011-06-26 Eggert Ehmke <eggert@kflog.org>
+
+  * Compiler warnings fixed about uninitialized variables in filser.cpp.
+  
+  * Added some fixes for the pl2303 RS232-USB adapter in filser.cpp.
+
 2011-06-22 Axel Pauli <axel@kflog.org>
 
   * Some more checks added to class WaypointCatalog to prevent core dumps

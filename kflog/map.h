@@ -88,6 +88,8 @@ private:
     /** */
     void slotRedrawMap();
     /** */
+    void slotScheduleRedrawMap();
+    /** */
     void slotCenterToFlight();
     /** */
     void slotCenterToTask();

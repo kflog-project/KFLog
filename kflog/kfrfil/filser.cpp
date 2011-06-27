@@ -664,10 +664,11 @@ int Filser::openRecorder(const QString& pName, int baud)
 
     // storing the port-settings to restore them ...
     oldTermEnv = newTermEnv;
-
+    
     /*
      * Do some common settup
      */
+    newTermEnv.c_iflag = IGNPAR;
     newTermEnv.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL | IXON);
     newTermEnv.c_oflag &= ~OPOST;
     newTermEnv.c_oflag |= ONLCR; 
@@ -675,12 +676,9 @@ int Filser::openRecorder(const QString& pName, int baud)
     /*
      * No flow control at all :-(
      */
-    newTermEnv.c_cflag &= ~(CSIZE | PARENB | CRTSCTS | IXON | IXOFF);
-    newTermEnv.c_cflag |= (CS8 | CLOCAL);
-    newTermEnv.c_cflag = 0x8bd;
+    newTermEnv.c_cflag &= ~(CSIZE | PARENB | CSTOPB | CRTSCTS | IXON | IXOFF);
+    newTermEnv.c_cflag |= (CS8 | CLOCAL | CREAD);
     
-    newTermEnv.c_lflag |= (ECHOE | ECHOK | ECHOCTL | ECHOKE);  // 0xa30;
-        
     // control characters
     newTermEnv.c_cc[VMIN] = 0; // don't wait for a character
     newTermEnv.c_cc[VTIME] = 1; // wait at least 1 msec.
@@ -702,6 +700,8 @@ int Filser::openRecorder(const QString& pName, int baud)
     cfsetospeed(&newTermEnv, _speed);
     cfsetispeed(&newTermEnv, _speed);
 
+    // flush the device
+    tcflush (portID, TCIOFLUSH);
     // Activating the port-settings
     tcsetattr(portID, TCSANOW, &newTermEnv);
 

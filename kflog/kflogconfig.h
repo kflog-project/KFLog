@@ -37,7 +37,6 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QDialog>
-#include <QFrame>
 #include <QLayout>
 #include <QLCDNumber>
 #include <QLineEdit>
@@ -45,6 +44,7 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <QTreeWidget>
+#include <QTableWidget>
 #include <QWidget>
 
 #include "coordedit.h"
@@ -93,6 +93,15 @@ class KFLogConfig : public QDialog
    * Emitted to request a Welt2000 file download.
    */
   void downloadWelt2000();
+
+  /**
+   * Emitted to request a Welt2000 file reload after a configuration change.
+   */
+  void reloadWelt2000Data();
+  /**
+   * Emitted to request a reload of all airspace file.
+   */
+  void airspaceFileListChanged();
 
  public slots:
   /** */
@@ -174,6 +183,12 @@ class KFLogConfig : public QDialog
   */
  void slotTextEditedCountry( const QString& text );
 
+ /**
+ * Called to toggle the check box of the clicked table cell in the airspace
+ * file table.
+ */
+ void slotToggleAsCheckBox( int, int );
+
  private:
 
  /** */
@@ -195,36 +210,46 @@ class KFLogConfig : public QDialog
   /** */
   void __addAirfieldTab();
   /** */
+  void __addAirspaceTab();
+  /** */
   void __addWaypointTab();
 
   /** Adds a tab for unit configuration. */
   void __addUnitTab();
 
+  /**
+   * Loads the content of the current airspace file directory into the
+   * file table.
+   */
+  void __loadAirspaceFilesIntoTable();
+
   QGridLayout *configLayout;
 
   QTreeWidget *setupTree;
 
-  QFrame *activePage;
+  QWidget *activePage;
   /** */
-  QFrame* personalPage;
+  QWidget* personalPage;
   /** */
-  QFrame* mapPage;
+  QWidget* mapPage;
   /** */
-  QFrame* flightPage;
+  QWidget* flightPage;
   /** */
-  QFrame* pathPage;
+  QWidget* pathPage;
   /** */
-  QFrame* topoPage;
+  QWidget* topoPage;
   /** */
-  QFrame* projPage;
+  QWidget* projPage;
   /** */
-  QFrame* scalePage;
+  QWidget* scalePage;
   /** */
-  QFrame* airfieldPage;
+  QWidget* airfieldPage;
   /** */
-  QFrame* waypointPage;
+  QWidget* airspacePage;
   /** */
-  QFrame* unitPage;
+  QWidget* waypointPage;
+  /** */
+  QWidget* unitPage;
 
   /** */
   QLineEdit* igcPathE;
@@ -331,6 +356,9 @@ class KFLogConfig : public QDialog
 
   /** Combo box for altitude unit configuration. */
   QComboBox* unitAltitude;
+
+  /** Table for airspace files to be loaded. */
+  QTableWidget* asFileTable;
 };
 
 #endif

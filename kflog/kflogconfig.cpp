@@ -93,6 +93,7 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
   __addFlightTab();
   __addProjectionTab();
   __addAirfieldTab();
+  __addAirspaceTab();
   __addWaypointTab();
   __addUnitTab();
 
@@ -112,7 +113,7 @@ KFLogConfig::~KFLogConfig()
   _settings.setValue( "/KFLogConfig/Geometry", saveGeometry() );
 }
 
-void KFLogConfig::slotPageClicked( QTreeWidgetItem * item, int column )
+void KFLogConfig::slotPageClicked( QTreeWidgetItem* item, int column )
 {
   Q_UNUSED( column );
 
@@ -123,6 +124,15 @@ void KFLogConfig::slotPageClicked( QTreeWidgetItem * item, int column )
       activePage->setVisible( false );
       airfieldPage->setVisible( true );
       activePage = airfieldPage;
+    }
+  else if( itemText == "Airspaces" )
+    {
+      // Because the airspace directory can be changed in the meantime, we
+      // reload this page beore showing.
+      __loadAirspaceFilesIntoTable();
+      activePage->setVisible( false );
+      airspacePage->setVisible( true );
+      activePage = airspacePage;
     }
   else if( itemText == "Flight Display" )
     {
@@ -255,6 +265,54 @@ void KFLogConfig::slotOk()
   Distance::setUnit( static_cast<enum Distance::distanceUnit>(distUnit) );
   WGSPoint::setFormat( static_cast<enum WGSPoint::Format>(posUnit) );
 
+  // Save Airspace files to be loaded
+  QStringList files;
+
+  if( asFileTable->item( 0, 0 )->checkState() == Qt::Checked )
+    {
+      // All files are selected.
+      files << "All";
+    }
+  else
+    {
+      // Store only checked file items.
+      for( int i = 1; i < asFileTable->rowCount(); i++ )
+        {
+          QTableWidgetItem* item = asFileTable->item( i, 0 );
+
+          if( item->checkState() == Qt::Checked )
+            {
+              files << item->text();
+            }
+        }
+    }
+
+  QStringList oldFiles = _settings.value( "/Airspace/FileList", QStringList(QString("All"))).toStringList();
+
+  // save the new file list
+  _settings.setValue( "/Airspace/FileList", files );
+
+  // Check, if file list has been modified
+  if( oldFiles.size() != files.size() )
+    {
+      // List size is different, emit signal.
+      emit airspaceFileListChanged();
+    }
+  else
+    {
+      // The list size is equal, we have to check every single list element.
+      // Note that the lists are always sorted.
+      for( int i = 0; i < files.size(); i++ )
+        {
+          if( files.at(i) != oldFiles.at(i) )
+            {
+              // File names are different, emit signal.
+              emit airspaceFileListChanged();
+              break;
+            }
+        }
+    }
+
   // Configuration subwidgets shall save their configuration.
   emit saveConfig();
 
@@ -265,8 +323,7 @@ void KFLogConfig::slotOk()
       filterWelt2000Text != filterWelt2000->text() ||
       readOlWelt2000Value != readOlWelt2000->isChecked () )
     {
-      extern MapContents *_globalMapContents;
-      _globalMapContents->slotReloadWelt2000Data();
+      emit reloadWelt2000Data();
     }
 
   emit configOk();
@@ -497,7 +554,7 @@ void KFLogConfig::__addMapTab()
   item->setIcon( 0, _mainWindow->getPixmap("kflog_32.png") );
   setupTree->addTopLevelItem( item );
 
-  mapPage = new QFrame(this);
+  mapPage = new QWidget(this);
   mapPage->setObjectName( "MapPage" );
   mapPage->setVisible( false );
 
@@ -603,7 +660,7 @@ void KFLogConfig::__addFlightTab()
   item->setIcon( 0, _mainWindow->getPixmap("flightpath_32.png") );
   setupTree->addTopLevelItem( item );
 
-  flightPage = new QFrame(this);
+  flightPage = new QWidget(this);
   flightPage->setObjectName( "FlightPage" );
   flightPage->setVisible( false );
 
@@ -837,7 +894,7 @@ void KFLogConfig::__addProjectionTab()
   item->setIcon( 0, _mainWindow->getPixmap("projection_32.png") );
   setupTree->addTopLevelItem( item );
 
-  projPage = new QFrame(this);
+  projPage = new QWidget(this);
   projPage->setObjectName( "MapProjectionPage" );
   projPage->setVisible( false );
 
@@ -924,7 +981,7 @@ void KFLogConfig::__addScaleTab()
   item->setIcon( 0, _mainWindow->getPixmap( "kde_viewmag_32.png" ) );
   setupTree->addTopLevelItem( item );
 
-  scalePage = new QFrame( this );
+  scalePage = new QWidget( this );
   scalePage->setObjectName( "MapScalePage" );
   scalePage->setVisible( false );
 
@@ -1150,7 +1207,7 @@ void KFLogConfig::__addPathTab()
   item->setIcon( 0, _mainWindow->getPixmap("kde_fileopen_32.png") );
   setupTree->addTopLevelItem( item );
 
-  pathPage = new QFrame(this);
+  pathPage = new QWidget(this);
   pathPage->setObjectName( "PathPage" );
   pathPage->setVisible( false );
 
@@ -1270,7 +1327,7 @@ void KFLogConfig::__addPersonalTab()
   setupTree->addTopLevelItem( item );
   setupTree->setCurrentItem( item );
 
-  personalPage = new QFrame(this);
+  personalPage = new QWidget(this);
   personalPage->setObjectName( "IdentityPage" );
   personalPage->setVisible( false );
 
@@ -1377,7 +1434,7 @@ void KFLogConfig::__addAirfieldTab()
   item->setIcon( 0, _mainWindow->getPixmap("airfield_32.png") );
   setupTree->addTopLevelItem( item );
 
-  airfieldPage = new QFrame(this);
+  airfieldPage = new QWidget(this);
   airfieldPage->setObjectName( "AirfieldPage" );
   airfieldPage->setVisible( false );
 
@@ -1443,6 +1500,40 @@ void KFLogConfig::__addAirfieldTab()
   readOlWelt2000->setChecked( readOlWelt2000Value );
 }
 
+
+/** Add a tab for airspace file management.*/
+void KFLogConfig::__addAirspaceTab()
+{
+  QTreeWidgetItem* item = new QTreeWidgetItem;
+  item->setText( 0, tr("Airspace Management") );
+  item->setData( 0, Qt::UserRole, "Airspaces" );
+  item->setIcon( 0, _mainWindow->getPixmap("kde_move_16.png") );
+  setupTree->addTopLevelItem( item );
+
+  airspacePage = new QWidget(this);
+  airspacePage->setObjectName( "AirspacePage" );
+  airspacePage->setVisible( false );
+
+  configLayout->addWidget( airspacePage, 0, 1, 1, 2 );
+
+  //----------------------------------------------------------------------------
+  QVBoxLayout *topLayout = new QVBoxLayout;
+
+  asFileTable = new QTableWidget( 0, 1, this );
+  asFileTable->setToolTip( tr("Use check boxes to activate or deactivate airspace file loading.") );
+  asFileTable->setSelectionBehavior( QAbstractItemView::SelectRows );
+  asFileTable->setShowGrid( true );
+
+  connect( asFileTable, SIGNAL(cellClicked ( int, int )),
+           SLOT(slotToggleAsCheckBox( int, int )) );
+
+  QHeaderView* hHeader = asFileTable->horizontalHeader();
+  hHeader->setStretchLastSection( true );
+
+  topLayout->addWidget( asFileTable );
+  airspacePage->setLayout( topLayout );
+}
+
 /** Add a tab for waypoint catalog configuration at sartup
 Setting will be overwritten by commandline switch */
 void KFLogConfig::__addWaypointTab()
@@ -1456,7 +1547,7 @@ void KFLogConfig::__addWaypointTab()
   item->setIcon( 0, _mainWindow->getPixmap("waypoint_32.png") );
   setupTree->addTopLevelItem( item );
 
-  waypointPage = new QFrame(this);
+  waypointPage = new QWidget(this);
   waypointPage->setObjectName( "WaypointPage" );
   waypointPage->setVisible( false );
 
@@ -1529,7 +1620,7 @@ void KFLogConfig::__addUnitTab()
   item->setIcon( 0, _mainWindow->getPixmap("edit_unit_32x32.png") );
   setupTree->addTopLevelItem( item );
 
-  unitPage = new QFrame(this);
+  unitPage = new QWidget(this);
   unitPage->setObjectName( "UnitPage" );
   unitPage->setVisible( false );
 
@@ -1639,4 +1730,126 @@ void KFLogConfig::slotSelectFlightTypeColor( int buttonIdentifier )
 void KFLogConfig::slotDownloadWelt2000()
 {
   emit downloadWelt2000();
+}
+
+/**
+ * Called to toggle the check box of the clicked table cell in the airspace
+ * file table.
+ */
+void KFLogConfig::slotToggleAsCheckBox( int row, int column )
+{
+  QTableWidgetItem* item = asFileTable->item( row, column );
+
+  if( row > 0 && asFileTable->item( 0, 0 )->checkState() == Qt::Checked )
+    {
+      // All is checked, do not changed other items
+      return;
+    }
+
+  item->setCheckState( item->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked );
+
+  if( row == 0 && column == 0 )
+    {
+      // First entry was clicked. Change related check items.
+      if( item->checkState() == Qt::Checked )
+        {
+          // All other items are checked too
+          for( int i = asFileTable->rowCount() - 1; i > 0; i-- )
+            {
+              asFileTable->item( i, 0 )->setCheckState( Qt::Checked );
+            }
+        }
+    }
+}
+
+/**
+ * Loads the content of the current airspace file directory into the
+ * file table.
+ */
+void KFLogConfig::__loadAirspaceFilesIntoTable()
+{
+  asFileTable->clear();
+
+  QString mapDir = _globalMapContents->getMapRootDirectory() + "/airspaces";
+
+  QTableWidgetItem *hrItem = new QTableWidgetItem( tr("Airspace Files in ") + mapDir );
+  asFileTable->setHorizontalHeaderItem( 0, hrItem );
+
+  QDir dir( mapDir );
+  QStringList filters; filters << "*.txt" << "*.TXT";
+  dir.setNameFilters(filters);
+  dir.setFilter( QDir::Files|QDir::Readable);
+  dir.setSorting( QDir::Name );
+
+  QStringList preselect = dir.entryList();
+
+  int row = 0;
+  asFileTable->setRowCount( row + 1 );
+
+  QTableWidgetItem* item = new QTableWidgetItem( tr("Select all"), 0 );
+  item->setFlags( Qt::ItemIsEnabled );
+  item->setCheckState( Qt::Unchecked );
+  asFileTable->setItem( row, 0, item );
+  row++;
+
+  for( int i = 0; i < preselect.size(); i++ )
+    {
+      if( preselect.at(i).endsWith( ".TXT" ) )
+        {
+          // Upper case file names are converted to lower case and renamed.
+          QFileInfo fInfo = preselect.at(i);
+          QString path    = fInfo.absolutePath();
+          QString fn      = fInfo.fileName().toLower();
+          QString newFn   = path + "/" + fn;
+          QFile::rename( preselect.at(i), newFn );
+          preselect[i] = newFn;
+        }
+
+      asFileTable->setRowCount( row + 1 );
+
+      QString file = QFileInfo( preselect.at(i) ).fileName();
+      item = new QTableWidgetItem( file, row );
+      item->setFlags( Qt::ItemIsEnabled );
+      item->setCheckState( Qt::Unchecked );
+      asFileTable->setItem( row, 0, item );
+      row++;
+    }
+
+  QStringList files = _settings.value( "/Airspace/FileList", QStringList(QString("All"))).toStringList();
+
+  if( files.isEmpty() )
+    {
+      return;
+    }
+
+  if( files.at(0) == "All" )
+    {
+      // Set all items to checked, if All is contained in the list at the first
+      // position.
+      for( int i = 0; i < asFileTable->rowCount(); i++ )
+        {
+          asFileTable->item( i, 0 )->setCheckState( Qt::Checked );
+        }
+    }
+  else
+    {
+      // Set the All item to unchecked.
+      asFileTable->item( 0, 0 )->setCheckState( Qt::Unchecked );
+
+      for( int i = 1; i < asFileTable->rowCount(); i++ )
+        {
+          QTableWidgetItem* item = asFileTable->item( i, 0 );
+
+          if( files.contains( item->text()) )
+            {
+              asFileTable->item( i, 0 )->setCheckState( Qt::Checked );
+            }
+          else
+            {
+              asFileTable->item( i, 0 )->setCheckState( Qt::Unchecked );
+            }
+        }
+    }
+
+  asFileTable->resizeColumnsToContents();
 }

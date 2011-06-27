@@ -324,6 +324,11 @@ class MapContents : public QObject
    */
   void slotReloadWelt2000Data();
 
+  /**
+   * Reload airspace data. Can be called after a configuration change.
+   */
+  void slotReloadAirspaceData();
+
   private slots:
 
   /** Called, if all downloads are finished. */
@@ -558,9 +563,14 @@ class MapContents : public QObject
   bool askUser;
 
   /**
-   * Flag to indicate, if Welt2000 load is neede.
+   * Flag to indicate, if Welt2000 load is needed.
    */
   bool loadWelt2000;
+
+  /**
+   * Flag to indicate, if airspace load is needed.
+   */
+  bool loadAirspaces;
 
   /**
    * List of all drawn isohypses.

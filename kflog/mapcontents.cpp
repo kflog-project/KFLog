@@ -94,6 +94,7 @@ MapContents::MapContents( QObject* object ) :
   currentFlight(0),
   askUser(true),
   loadWelt2000(true),
+  loadAirspaces(true),
   downloadManger(0),
   currentFlightListIndex(-1)
 {
@@ -306,14 +307,23 @@ void MapContents::slotDownloadWelt2000()
  */
 void MapContents::slotReloadWelt2000Data()
 {
-  // qDebug() << "MapContents::slotReloadWelt2000Data()";
-
   airfieldList.clear();
   gliderfieldList.clear();
   outLandingList.clear();
 
   loadWelt2000 = true;
+  emit contentsChanged();
+}
 
+/**
+ * Reload airspace data. Can be called after a configuration change.
+ */
+void MapContents::slotReloadAirspaceData()
+{
+  airspaceList.clear();
+  airspaceRegionList.clear();
+
+  loadAirspaces = true;
   emit contentsChanged();
 }
 
@@ -952,7 +962,6 @@ QString MapContents::getMapRootDirectory()
   return mapRootDir;
 }
 
-
 void MapContents::proofeSection(bool isPrint)
 {
   extern MainWindow *_mainWindow;
@@ -1073,8 +1082,10 @@ void MapContents::proofeSection(bool isPrint)
     }
 
   // Checking for Airspaces
-  if( airspaceList.isEmpty() )
+  if( loadAirspaces == true || airspaceList.isEmpty() )
     {
+      loadAirspaces = false;
+
       OpenAirParser oap;
       oap.load( airspaceList );
 

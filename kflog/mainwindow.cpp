@@ -140,7 +140,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
 
   connect(_globalMapContents, SIGNAL(activatePlanning()), map,SLOT(slotActivatePlanning()));
   connect(_globalMapContents, SIGNAL(closingFlight(BaseFlightElement*)), objectTree, SLOT(slotCloseFlight(BaseFlightElement*)));
-  connect(_globalMapContents, SIGNAL(contentsChanged()),map, SLOT(slotRedrawMap()));
+  connect(_globalMapContents, SIGNAL(contentsChanged()),map, SLOT(slotScheduleRedrawMap()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), this, SLOT(slotModifyMenu()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), dataView, SLOT(slotSetFlightData()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), evaluationWindow, SLOT(slotShowFlightData()));
@@ -153,7 +153,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(_globalMapContents, SIGNAL(newTaskAdded(FlightTask*)), objectTree, SLOT(slotNewTaskAdded(FlightTask*)));
   connect(_globalMapContents, SIGNAL(taskHelp(QString&)), helpWindow, SLOT(slotShowHelpText(QString&)) );
   connect(_globalMapMatrix, SIGNAL(displayMatrixValues(int, bool)), _globalMapConfig, SLOT(slotSetMatrixValues(int, bool)));
-  connect(_globalMapMatrix, SIGNAL(matrixChanged()), map, SLOT(slotRedrawMap()));
+  connect(_globalMapMatrix, SIGNAL(matrixChanged()), map, SLOT(slotScheduleRedrawMap()));
   connect(_globalMapMatrix, SIGNAL(printMatrixValues(int)), _globalMapConfig, SLOT(slotSetPrintMatrixValues(int)));
   connect(_globalMapMatrix, SIGNAL(projectionChanged()), _globalMapContents, SLOT(slotReloadMapData()));
 
@@ -827,7 +827,8 @@ void MainWindow::createMenuBar()
   connect(settingsMapAction, SIGNAL(triggered()), this, SLOT(slotToggleMap()) );
 #endif
 
-  settingsMapControlAction = new QAction( tr("Show Map& Control"), this );
+  settingsMapControlAction = new QAction( getPixmap("kde_move_16.png"),
+                                          tr("Show Map& Control"), this );
   connect( settingsMapControlAction, SIGNAL(triggered()),
            mapControlDock, SLOT(show()) );
   connect( mapControlDock, SIGNAL(visibilityChanged(bool)),
@@ -1689,6 +1690,12 @@ void MainWindow::slotConfigureKFLog()
 
   connect( confDlg, SIGNAL(downloadWelt2000()),
            _globalMapContents, SLOT(slotDownloadWelt2000()) );
+
+  connect( confDlg, SIGNAL(reloadWelt2000Data()),
+           _globalMapContents, SLOT(slotReloadWelt2000Data()) );
+
+  connect( confDlg, SIGNAL(airspaceFileListChanged()),
+          _globalMapContents, SLOT(slotReloadAirspaceData()) );
 
   confDlg->setVisible( true );
 }

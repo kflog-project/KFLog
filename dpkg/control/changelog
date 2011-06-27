@@ -1,5 +1,17 @@
 kflog (__VERSION__) unstable; urgency=low
 
+  * USB problems fixed
+  
+  * New method added to the WaypointCatalog class, which can read in waypoint
+    data from a Welt2000 file. The amount of waypoints must be limited by
+    country identifiers because the whole file contains over 57282 entries.
+    
+  * Airspace file management added to kflog settings.
+  
+  * Different minor bug fixes.
+
+ -- Axel Pauli <kflog.cumulus@googlemail.com>  Mon, 27 Jun 2011 21:58:32 +0200
+
   * First pure Qt4 Release after portage. Not stable in all parts.
 
  -- Axel Pauli <kflog.cumulus@googlemail.com>  Sat, 19 Jun 2011 09:09:04 +0200

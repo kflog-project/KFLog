@@ -1637,7 +1637,7 @@ void Map::__redrawMap()
     {
       qDebug( "Map::__redrawMap(): queued redraw event found, schedule Redraw" );
 
-      redrawMapTimer->start(1000);
+      redrawMapTimer->start(500);
     }
 
   isDrawing = false;
@@ -1725,6 +1725,11 @@ void Map::slotRedrawMap()
 {
   // qDebug() << "Map::slotRedrawMap()";
   __redrawMap();
+}
+
+void Map::slotScheduleRedrawMap()
+{
+  redrawMapTimer->start(500);
 }
 
 void Map::slotActivatePlanning()

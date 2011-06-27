@@ -41,8 +41,6 @@ MapConfig::~MapConfig()
 
 void MapConfig::slotReadConfig()
 {
-  qDebug() << "MapConfig::slotReadConfig()";
-
   topographyColorList.clear();
 
   __readTopo("SubTerrain", COLOR_LEVEL_SUB);
