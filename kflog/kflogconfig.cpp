@@ -265,50 +265,56 @@ void KFLogConfig::slotOk()
   Distance::setUnit( static_cast<enum Distance::distanceUnit>(distUnit) );
   WGSPoint::setFormat( static_cast<enum WGSPoint::Format>(posUnit) );
 
-  // Save Airspace files to be loaded
-  QStringList files;
+  QTableWidgetItem* asItem = asFileTable->item( 0, 0 );
 
-  if( asFileTable->item( 0, 0 )->checkState() == Qt::Checked )
+  if( asItem != 0 )
     {
-      // All files are selected.
-      files << "All";
-    }
-  else
-    {
-      // Store only checked file items.
-      for( int i = 1; i < asFileTable->rowCount(); i++ )
+      // Save Airspace files to be loaded, if airspace tabulator was opened
+      // by the user.
+      QStringList files;
+
+      if( asItem->checkState() == Qt::Checked )
         {
-          QTableWidgetItem* item = asFileTable->item( i, 0 );
-
-          if( item->checkState() == Qt::Checked )
+          // All files are selected.
+          files << "All";
+        }
+      else
+        {
+          // Store only checked file items.
+          for( int i = 1; i < asFileTable->rowCount(); i++ )
             {
-              files << item->text();
+              QTableWidgetItem* item = asFileTable->item( i, 0 );
+
+              if( item->checkState() == Qt::Checked )
+                {
+                  files << item->text();
+                }
             }
         }
-    }
 
-  QStringList oldFiles = _settings.value( "/Airspace/FileList", QStringList(QString("All"))).toStringList();
+      QStringList oldFiles = _settings.value( "/Airspace/FileList", QStringList(QString("All"))).toStringList();
 
-  // save the new file list
-  _settings.setValue( "/Airspace/FileList", files );
+      // save the new file list
+      _settings.setValue( "/Airspace/FileList", files );
 
-  // Check, if file list has been modified
-  if( oldFiles.size() != files.size() )
-    {
-      // List size is different, emit signal.
-      emit airspaceFileListChanged();
-    }
-  else
-    {
-      // The list size is equal, we have to check every single list element.
-      // Note that the lists are always sorted.
-      for( int i = 0; i < files.size(); i++ )
+      // Check, if file list has been modified
+      if( oldFiles.size() != files.size() )
         {
-          if( files.at(i) != oldFiles.at(i) )
+          // List size is different, emit signal.
+          emit airspaceFileListChanged();
+        }
+      else
+        {
+          // The list size is equal, we have to check every single list element.
+          // Note that the lists are always sorted.
+          for( int i = 0; i < files.size(); i++ )
             {
-              // File names are different, emit signal.
-              emit airspaceFileListChanged();
-              break;
+              if( files.at(i) != oldFiles.at(i) )
+                {
+                  // File names are different, emit signal.
+                  emit airspaceFileListChanged();
+                  break;
+                }
             }
         }
     }
