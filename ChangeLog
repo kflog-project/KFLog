@@ -2,8 +2,10 @@ $Id$
 
 2011-06-28 Axel Pauli <axel@kflog.org>
 
+  * KFLog 4.1.1 released.
+
   * Core dump fixed, occurred during save of kflog settings.
-  
+    
 2011-06-27 Axel Pauli <axel@kflog.org>
 
   * KFLog 4.1.0 released.
