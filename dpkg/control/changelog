@@ -1,4 +1,10 @@
-kflog (__VERSION__) unstable; urgency=low
+kflog (4.1.1) unstable; urgency=low
+
+  * Core dump fixed, occurred during save of kflog settings.
+  
+ -- Axel Pauli <kflog.cumulus@googlemail.com>  Tue, 28 Jun 2011 23:22:30 +0200
+  
+kflog (4.1.0) unstable; urgency=low
 
   * USB problems fixed
   * New method added to the WaypointCatalog class, which can read in waypoint
@@ -8,6 +14,8 @@ kflog (__VERSION__) unstable; urgency=low
   * Different minor bug fixes.
 
  -- Axel Pauli <kflog.cumulus@googlemail.com>  Mon, 27 Jun 2011 21:58:32 +0200
+
+kflog (4.0.0) unstable; urgency=low
 
   * First pure Qt4 Release after portage. Not stable in all parts.
 
