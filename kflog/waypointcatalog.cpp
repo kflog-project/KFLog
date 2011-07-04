@@ -1358,11 +1358,11 @@ bool WaypointCatalog::readCup (const QString& catalog)
 
           if( unit == "m" )
             {
-              wp.elevation = tmpElev;
+              w->elevation = tmpElev;
             }
           else if( unit == "ft" )
             {
-              wp.elevation = tmpElev * 0.3048;
+              w->elevation = tmpElev * 0.3048;
             }
           else
             {
