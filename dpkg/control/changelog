@@ -1,3 +1,16 @@
+kflog (4.1.2) unstable; urgency=low
+
+  * BUGFIX: Method writeFilserDA4 file crashes with a core dump, if waypoint
+    number is greater than 600. Fixed now.
+    
+  * BUGFIX: Waypoint import failed for Seeyou cup data file, if elevation unit
+    was given in feet. Fixed now.
+    
+  * BUGFIX: Problems fixed in coordinate editor. There was no longitude degree
+    input possible for values between 80-99 degrees.
+  
+ -- Axel Pauli <kflog.cumulus@googlemail.com>  Mon, 04 Jul 2011 19:20:50 +0200
+
 kflog (4.1.1) unstable; urgency=low
 
   * Core dump fixed, occurred during save of kflog settings.
