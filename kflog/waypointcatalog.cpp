@@ -861,7 +861,18 @@ bool WaypointCatalog::readFilserDA4 (const QString& catalog)
 /** write a waypoint catalog into a filser da4 file */
 bool WaypointCatalog::writeFilserDA4 (const QString& catalog)
 {
-  qDebug ("WaypointCatalog::writeFilserDA4 (%s)", catalog.toLatin1().data());
+  qDebug() << "WaypointCatalog::writeFilserDA4:" << catalog << "with"
+           << wpList.size() << "item(s)";
+
+  if( wpList.size() > WAYPOINT_MAX )
+    {
+      QMessageBox::critical( _mainWindow,
+                             QObject::tr("To much waypoints!"),
+                             QObject::tr("A DA4 waypoint file can only contain up to 600 waypoints. ") +
+                             QString(QObject::tr("Your file contains %1.")).arg(wpList.size()),
+                             QMessageBox::Ok );
+      return false;
+    }
 
   QFile f(catalog);
 
@@ -1319,25 +1330,45 @@ bool WaypointCatalog::readCup (const QString& catalog)
       w->origP.setLat((int) rint(latTmp));
       w->origP.setLon((int) rint(lonTmp));
 
-      if( list[5].length() > 1 ) // elevation in meter or feet
+      // two units are possible:
+      // o meter: m
+      // o feet:  ft
+      if( list[5].length() ) // elevation in meter or feet
         {
-          float tmpElev = (list[5].left(list[5].length()-1)).toDouble(&ok);
+          QString unit;
+          int uStart = list[5].indexOf( QRegExp("[mf]") );
 
-          if( ! ok )
+          if( uStart == -1 )
             {
-              qWarning("CUP Read (%d): Error reading elevation '%s'.", lineNo,
-                       list[5].left(list[5].length()-1).toLatin1().data());
-              delete w;
+              qWarning("CUP Read (%d): Error reading elevation unit '%s'.", lineNo,
+                       list[5].toLatin1().data());
               continue;
             }
 
-          if( list[5].right( 1 ).toLower() == "f" )
+          unit = list[5].mid( uStart ).toLower();
+
+          float tmpElev = (list[5].left(list[5].length() - unit.length())).toFloat(&ok);
+
+          if( ! ok )
             {
-              w->elevation = tmpElev * 0.3048;
+              qWarning("CUP Read (%d): Error reading elevation value '%s'.", lineNo,
+                       list[5].left(list[5].length() - unit.length()).toLatin1().data());
+              continue;
+            }
+
+          if( unit == "m" )
+            {
+              wp.elevation = tmpElev;
+            }
+          else if( unit == "ft" )
+            {
+              wp.elevation = tmpElev * 0.3048;
             }
           else
             {
-              w->elevation = tmpElev;
+              qWarning("CUP Read (%d): Unknown elevation value '%s'.", lineNo,
+                       unit.toLatin1().data());
+              continue;
             }
         }
 

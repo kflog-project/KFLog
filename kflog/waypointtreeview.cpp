@@ -804,7 +804,6 @@ void WaypointTreeView::fillWaypoints()
   emit waypointCatalogChanged(currentWaypointCatalog);
 }
 
-/** No descriptions */
 void WaypointTreeView::slotSwitchWaypointCatalog(int idx)
 {
   currentWaypointCatalog = waypointCatalogs.value(idx);

@@ -328,9 +328,9 @@ int WGSPoint::degreeToNum(QString inDegree)
   QString degreeString( degreeChar );
   QString input = inDegree;
 
-  QRegExp degreeDMS("^[0-1]?[0-9][0-9]" + degreeString + "[ ]*[0-5][0-9]'[ ]*[0-5][0-9]\"");
-  QRegExp degreeDDM("^[0-1]?[0-9][0-9]" + degreeString + "[ ]*[0-5][0-9].[0-9][0-9][0-9]'");
-  QRegExp degreeDDD("^[0-1]?[0-9][0-9].[0-9][0-9][0-9][0-9][0-9]" + degreeString);
+  QRegExp degreeDMS("^[0-1]?[0-9]?[0-9]" + degreeString + "\\s[0-5]?[0-9]'[ ]*[0-5]?[0-9]\"\\s[neswNESW]$");
+  QRegExp degreeDDM("^[0-1]?[0-9]?[0-9]" + degreeString + "\\s[0-5]?[0-9].[0-9][0-9]?[0-9]?'\\s[neswNESW]$");
+  QRegExp degreeDDD("^[0-1]?[0-9]?[0-9].[0-9][0-9]?[0-9]?[0-9]?[0-9]?" + degreeString + "\\s[neswNESW]$");
   QRegExp number("^-?[0-9]+$");
 
   if (number.indexIn(inDegree) != -1)
