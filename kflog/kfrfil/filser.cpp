@@ -21,6 +21,7 @@
 #endif
 
 #include <fcntl.h>
+#include <sys/ioctl.h>
 #include <signal.h>
 #include <unistd.h>
 #include <cstdlib>
@@ -1874,6 +1875,11 @@ int Filser::closeRecorder()
 /** NOT IMLEMENTED
     ============================================*/
 
+
+int Filser::exportDeclaration(FRTaskDeclaration* , QList<Waypoint*>* )
+{
+  return FR_NOTSUPPORTED;
+}
 
 int Filser::writeDeclaration(FRTaskDeclaration* , QList<Waypoint*>* )
 {

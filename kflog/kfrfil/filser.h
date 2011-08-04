@@ -107,6 +107,10 @@ public:
    */
   virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
   /**
+   * Export flight declaration to filer
+   */
+  virtual int exportDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
+  /**
    * Reads waypoint and flight declaration form from recorder into memory.
    */
   virtual int readDatabase();
