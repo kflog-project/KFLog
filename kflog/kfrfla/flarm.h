@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QTimer>
 #include <QList>
+#include <QTextStream>
 
 #include "../waypoint.h"
 #include "../frstructs.h"
@@ -161,11 +162,7 @@ private:
   /**
    * Calculate the check sum on a buffer of bytes
    */
-  //bool readMemSetting();
-  //bool defMem(struct flightTable *ft);
-  //bool getMemSection(unsigned char *memSection, int size);
-  //bool getLoggerData(unsigned char *memSection, int sectionSize);
-  //bool convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last);
+  int sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<Waypoint*>* wpList, bool isFile);
   unsigned char *readData(unsigned char *buf_p, int count);
   unsigned char *writeData(unsigned char *buf_p, int count);
   QString lat2flarm (int);
@@ -174,8 +171,6 @@ private:
   QList <flightTable *> flightIndex;
 
   char *wordtoserno(unsigned int Binaer);
-  // true if the da4buffer is identical to the logger content
-  // bool _da4BufferValid;
   QTimer* _keepalive;
   speed_t _speed;
 };
