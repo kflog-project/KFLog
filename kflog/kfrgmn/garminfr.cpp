@@ -209,6 +209,15 @@ int GarminFR::writeDeclaration( FRTaskDeclaration * /*taskDecl*/,
   return FR_NOTSUPPORTED;
 }
 
+ /**
+ * Export flight declaration to file
+ */
+int GarminFR::exportDeclaration( FRTaskDeclaration * /*taskDecl*/,
+                                QList<Waypoint*> * /*taskPoints*/ )
+{
+  return FR_NOTSUPPORTED;
+}
+
 /*************************************************************************
 **
 ** begin of logger-specific implementation
