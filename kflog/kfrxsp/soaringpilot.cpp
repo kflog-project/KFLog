@@ -788,6 +788,14 @@ int SoaringPilot::writeDeclaration(FRTaskDeclaration * /*taskDecl*/, QList<Waypo
   return FR_NOTSUPPORTED;
 }
 
+ /**
+ * Export flight declaration to file
+ */
+int SoaringPilot::exportDeclaration(FRTaskDeclaration * /*taskDecl*/, QList<Waypoint*> * /*taskPoints*/)
+{
+  return FR_NOTSUPPORTED;
+}
+
 /**
  * Read waypoint and flight declaration form from recorder into mem
  */
