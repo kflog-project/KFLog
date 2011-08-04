@@ -2,12 +2,11 @@
 **
 **   flarm.h
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
-**   Copyright (c): 2003 by Christian Fughe, Harald Maier, Eggert Ehmke
-**                  2011 by Axel Pauli
+**   Copyright (c): 2011 by Eggert Ehmke
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.

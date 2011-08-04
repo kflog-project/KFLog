@@ -2,12 +2,11 @@
 **
 **   flarm.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
-**   Copyright (c):  2003 by Christian Fughe, Harald Maier, Eggert Ehmke
-**                   2011 by Axel Pauli
+**   Copyright (c):  2011 by Eggert Ehmke
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -204,6 +203,8 @@ FlightRecorderPluginBase::TransferMode Flarm::getTransferMode() const
 
 int Flarm::getFlightDir( QList<FRDirEntry *>* dirList )
 {
+  Q_UNUSED(dirList)
+
   qDebug ("Flarm::getFlightDir");
 
   return FR_NOTSUPPORTED;
@@ -216,6 +217,8 @@ int Flarm::getFlightDir( QList<FRDirEntry *>* dirList )
   */
 int Flarm::getBasicData(FR_BasicData& data)
 {
+  Q_UNUSED(data)
+
   // TODO: adapt to FLARM
   qDebug ("Flarm::getBasicData");
 
@@ -232,7 +235,7 @@ int Flarm::writeConfigData(FR_BasicData& /*basicdata*/, FR_ConfigData& /*configd
   return FR_NOTSUPPORTED;
 }
 
-int Flarm::downloadFlight(int flightID, int /*secMode*/, const QString& fileName)
+int Flarm::downloadFlight(int /*flightID*/, int /*secMode*/, const QString& /*fileName*/)
 {
   qDebug ("Flarm::downloadFlight");
 
@@ -770,7 +773,7 @@ int Flarm::readDatabase()
   * read the da4 buffer and select tasks
   * tasks are constructed from waypoints in the same buffer !
   */
-int Flarm::readTasks(QList<FlightTask*> * tasks)
+int Flarm::readTasks(QList<FlightTask*> * /*tasks*/)
 {
   qDebug ("Flarm::readTasks");
   return FR_NOTSUPPORTED;
@@ -783,7 +786,7 @@ int Flarm::readTasks(QList<FlightTask*> * tasks)
   * they are constructed on the fly
   * write the buffer back to recorder
   */
-int Flarm::writeTasks(QList<FlightTask*>* tasks)
+int Flarm::writeTasks(QList<FlightTask*>* /*tasks*/)
 {
   qDebug ("Flarm::writeTasks");
 
@@ -794,7 +797,7 @@ int Flarm::writeTasks(QList<FlightTask*>* tasks)
   * read the waypoints from the lx recorder
   * read the da4 buffer and select waypoints
   */
-int Flarm::readWaypoints(QList<Waypoint*>* wpList)
+int Flarm::readWaypoints(QList<Waypoint*>* /*wpList*/)
 {
   qDebug ("Flarm::readWaypoints");
 
@@ -807,7 +810,7 @@ int Flarm::readWaypoints(QList<Waypoint*>* wpList)
   * write waypoints
   * write the buffer back to recorder
   */
-int Flarm::writeWaypoints(QList<Waypoint*>* wpList)
+int Flarm::writeWaypoints(QList<Waypoint*>* /*wpList*/)
 {
   qDebug( "Flarm::writeWaypoints" );
 
