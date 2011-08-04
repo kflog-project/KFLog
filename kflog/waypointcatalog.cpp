@@ -182,11 +182,19 @@ bool WaypointCatalog::read(const QString& catalog)
 
   if( ! ok )
     {
-      qWarning() << "WaypointCatalog::readXml(): XML parse error in File=" << catalog
+      QApplication::restoreOverrideCursor();
+
+      qWarning() << "WaypointCatalog::readXml(): XML parse error in File="
+    		     << catalog
                  << "Error=" << errorMsg
                  << "Line=" << errorLine
                  << "Column=" << errorColumn;
 
+      QMessageBox::critical( _mainWindow,
+                             QObject::tr("Error in %1").arg(QFileInfo(catalog).fileName()),
+                             QString("<html>XML Error at line %1 column %2:<br><br>%3</html>").arg(errorLine).arg(errorColumn).arg(errorMsg),
+                             QMessageBox::Ok );
+      file.close();
       return false;
     }
 
@@ -202,13 +210,24 @@ bool WaypointCatalog::read(const QString& catalog)
           w->name = nm.namedItem("Name").toAttr().value().left(8).toUpper();
           w->description = nm.namedItem("Description").toAttr().value();
           w->icao = nm.namedItem("ICAO").toAttr().value().toUpper();
+
+          if( w->icao == "-1" )
+            {
+              w->icao = "";
+            }
+
           w->type = nm.namedItem("Type").toAttr().value().toInt();
           w->origP.setLat(nm.namedItem("Latitude").toAttr().value().toInt());
           w->origP.setLon(nm.namedItem("Longitude").toAttr().value().toInt());
           w->elevation = nm.namedItem("Elevation").toAttr().value().toInt();
           w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
           w->isLandable = nm.namedItem("Landable").toAttr().value().toInt();
-          w->runway.first = nm.namedItem("Runway").toAttr().value().toInt();
+          w->runway.first = nm.namedItem("Runway").toAttr().value().toUShort();
+
+          if( w->runway.first > 36 )
+            {
+              w->runway.first = 0;
+            }
 
           if( w->runway.first > 0 )
             {
