@@ -1,5 +1,10 @@
 $Id$
 
+2011-08-04 Axel Pauli <axel@kflog.org>
+
+  * An error message box is opened to the user, if a KFLog XML waypoint file
+    could not be parsed successfully during read in.
+
 2011-07-04 Axel Pauli <axel@kflog.org>
 
   * BUGFIX: Method writeFilserDA4 file crashes with a core dump, if waypoint
