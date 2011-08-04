@@ -59,6 +59,7 @@ FlightRecorderPluginBase::FlightRecorderPluginBase( QObject *parent ) :
   _capabilities.supSignedFlight = false;    //supports downloading in of signed flights?
   _capabilities.supDlTask = false;          //supports downloading of tasks?
   _capabilities.supUlTask = false;          //supports uploading of tasks?
+  _capabilities.supExportDeclaration = false;//supports export of declaration?
   _capabilities.supUlDeclaration = false;   //supports uploading of declarations?
   _capabilities.supDspPilotName = false;    //supports display of pilot name
   _capabilities.supDspRecorderType = false; //supports display of recorder type
