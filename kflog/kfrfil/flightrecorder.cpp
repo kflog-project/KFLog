@@ -2,7 +2,7 @@
 **
 **   flightrecorder.cpp
 **
-**   This file is part of libkfrfil.
+**   This file is part of libkfrfla.
 **
 ************************************************************************
 **
@@ -14,7 +14,7 @@
 **   $Id$
 **
 ***********************************************************************/
-#include "filser.h"
+#include "flarm.h"
 
 int breakTransfer = 0;
 
@@ -31,5 +31,5 @@ extern "C"
 *************************************************************************/
 FlightRecorderPluginBase* getRecorder()
 {
-  return new Filser();
+  return new Flarm();
 }
