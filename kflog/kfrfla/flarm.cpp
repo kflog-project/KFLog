@@ -678,7 +678,7 @@ int Flarm::writeDeclaration(FRTaskDeclaration* , QList<Waypoint*>* )
   * export flight declaration to flarmcfg.txt file
   * @Author: eggert.ehmke@berlin.de
   */
-int Flarm::exportDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wplist)
+int Flarm::exportDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList)
 {
     //TODO: reuse for upload
     qDebug ("Flarm::exportDeclaration");
@@ -694,16 +694,22 @@ int Flarm::exportDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wplist)
       return FR_ERROR;
     }
     
+    QTextStream stream(&file);
+
+    int result = sendStreamData (stream, decl, wpList, true);
+    file.close();
+    return result;
+}
+
+int Flarm::sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<Waypoint*>* wpList, bool isFile) {
+
     QDateTime now = QDateTime::currentDateTime();
     QString timestamp = now.toString ();
 
-    QTextStream stream(&file);
-
-    stream << "// FLARM configuration file has been created by KFlog" << ENDL;
-    stream << "// " << timestamp << ENDL;
-    // TODO: date
-    // (c)2008-2011 powered by www.Segelflug-Software.de
-    // am: 01.08.2011 um 14:24:21
+    if (isFile) {
+      stream << "// FLARM configuration file has been created by KFlog" << ENDL;
+      stream << "// " << timestamp << ENDL;
+    }
 
     stream << "// aktivated competition mode" << ENDL;
     stream << "$PFLAC,S,CFLAGS,2" << ENDL;
@@ -714,7 +720,6 @@ int Flarm::exportDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wplist)
     stream << "// aircraft type;  1 = glider" << ENDL;
     stream << "$PFLAC,S,ACFT,1" << ENDL << ENDL;
 
-    // qDebug ("pilotA: %s", decl->pilotA.toLatin1().constData());
     stream << "// Pilot name" << ENDL;
     stream << "$PFLAC,S,PILOT," << decl->pilotA << ENDL << ENDL;
 
@@ -744,7 +749,7 @@ int Flarm::exportDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wplist)
     int wpCnt = 0;
     Waypoint *wp; 
 
-    foreach(wp, *wplist)
+    foreach(wp, *wpList)
     {
         // should never happen
         if (wpCnt >= (int)_capabilities.maxNrWaypointsPerTask)
@@ -758,7 +763,6 @@ int Flarm::exportDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wplist)
         // qDebug ("wp: %s", wp->name.toLatin1().constData());
         stream << "$PFLAC,S,ADDWP," <<  lat2flarm(wp->origP.lat()) << ","  <<  lon2flarm(wp->origP.lon()) << "," << wp->name.toLatin1().constData() << ENDL;
     }
-    file.close();  
 
     return FR_OK;
 }
