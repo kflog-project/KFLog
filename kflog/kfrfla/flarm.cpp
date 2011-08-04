@@ -453,7 +453,7 @@ bool Flarm::AutoBaud()
       // waiting 10 secs. for response
 //      qDebug ("ret = %x", ret);
       if (time(NULL) - t1 > 10) {
-        _errorinfo = tr("No response from recorder within 10 seconds!\nDid you press WRITE/RTE?");
+        _errorinfo = tr("No response from recorder within 10 seconds!\n");
         rc = false;
         break;
       }
@@ -558,7 +558,7 @@ bool Flarm::check4Device()
       // waiting 10 secs. for response
 //      qDebug ("ret = %x", ret);
       if (time(NULL) - t1 > 10) {
-        _errorinfo = tr("No response from recorder within 10 seconds!\nDid you press WRITE/RTE?");
+        _errorinfo = tr("No response from recorder within 10 seconds!\n");
         rc = false;
         break;
       }
