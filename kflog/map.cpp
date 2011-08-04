@@ -2630,6 +2630,13 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c)
   qDeleteAll( wpList );
   wpList.clear();
 
+  if( c == 0 )
+    {
+      emit changed(this->size());
+      __redrawMap();
+      return;
+    }
+
   filterRadius = (c->getCenterPoint().lat() != 0 || c->getCenterPoint().lon() != 0);
 
   filterArea = (c->areaLat2 != 0 && c->areaLong2 != 0 && !filterRadius);

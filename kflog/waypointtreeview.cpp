@@ -1,6 +1,10 @@
 /***************************************************************************
-                          waypointtreeview.cpp
-                             -------------------
+**                     waypointtreeview.cpp
+**
+**   This file is part of KFLog4.
+**
+****************************************************************************
+
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier
                                2011 by Axel Pauli
@@ -364,7 +368,7 @@ void WaypointTreeView::slotShowWaypointMenu( QTreeWidgetItem* item, const QPoint
   //enable and disable the correct menu items
   ActionWaypointCatalogSave->setEnabled(waypointCatalogs.count() && currentWaypointCatalog->modified);
   ActionWaypointCatalogSaveAs->setEnabled(waypointCatalogs.count() > 0);
-  ActionWaypointCatalogClose->setEnabled( waypointCatalogs.count() > 1 );
+  ActionWaypointCatalogClose->setEnabled( waypointCatalogs.count() > 0 );
   ActionWaypointCatalogImport->setEnabled( waypointCatalogs.count() );
   ActionWaypointImportFromMap->setEnabled( waypointCatalogs.count() );
 
@@ -877,6 +881,8 @@ void WaypointTreeView::slotCloseWaypointCatalog()
   waypointCatalogs.removeOne(currentWaypointCatalog);
   delete currentWaypointCatalog;
 
+  currentWaypointCatalog = 0;
+
   catalogBox->removeItem(idx);
 
   // activate new catalog
@@ -885,6 +891,18 @@ void WaypointTreeView::slotCloseWaypointCatalog()
   if( idx >= cnt )
     {
       idx = cnt - 1;
+    }
+
+  if( idx < 0 )
+    {
+      // last catalog has been removed
+      updateWpListItems();
+
+      // Clear waypoint tree
+      waypointTree->clear();
+
+      emit waypointCatalogChanged(0);
+      return;
     }
 
   catalogBox->setCurrentIndex(idx);
