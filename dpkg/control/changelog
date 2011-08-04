@@ -1,3 +1,10 @@
+kflog (4.1.3) unstable; urgency=low
+
+  * An error message box is opened to the user, if a KFLog XML waypoint file
+    could not be parsed successfully durin read in.
+
+ -- Axel Pauli <kflog.cumulus@googlemail.com>  Thu, 04 Aug 2011 19:24:57 +0200
+
 kflog (4.1.2) unstable; urgency=low
 
   * BUGFIX: Method writeFilserDA4 file crashes with a core dump, if waypoint
