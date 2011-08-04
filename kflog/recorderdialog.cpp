@@ -101,12 +101,24 @@ RecorderDialog::RecorderDialog( QWidget *parent ) :
 
   configLayout->addLayout( gridBox, 1, 0, 1, 2 );
 
-  __createRecorderPage();
-  __createFlightPage();
-  __createDeclarationPage();
-  __createTaskPage();
-  __createWaypointPage();
+  waypointColNo    = 0;
+  waypointColName  = 1;
+  waypointColLat   = 2;
+  waypointColLon   = 3;
+  waypointColDummy = 4;
+
+  declarationColNo    = 0;
+  declarationColName  = 1;
+  declarationColLat   = 2;
+  declarationColLon   = 3;
+  declarationColDummy = 4;
+
   __createConfigurationPage();
+  __createDeclarationPage();
+  __createFlightPage();
+  __createWaypointPage();
+  __createTaskPage();
+  __createRecorderPage();
 
   setupTree->sortByColumn ( 0, Qt::AscendingOrder );
   setupTree->resizeColumnToContents( 0 );
@@ -247,7 +259,7 @@ void RecorderDialog::__createRecorderPage()
   gldType = new QLineEdit;
   gldType->setEnabled(false);
 
-  lblGldID = new QLabel(tr("Glider Sign:"));
+  lblGldID = new QLabel(tr("Glider Id:"));
   gldID = new QLineEdit;
   gldID->setEnabled(false);
 
@@ -409,6 +421,8 @@ void RecorderDialog::__setRecorderConnectionType(FlightRecorderPluginBase::Trans
 
 void RecorderDialog::__setRecorderCapabilities()
 {
+  if (!activeRecorder)
+    return;
   FlightRecorderPluginBase::FR_Capabilities cap = activeRecorder->capabilities();
 
   serID->setVisible(cap.supDspSerialNumber);
@@ -562,6 +576,7 @@ void RecorderDialog::__createFlightPage()
 
 void RecorderDialog::__createDeclarationPage()
 {
+  qDebug ("__createDeclarationPage");
   QTreeWidgetItem* item = new QTreeWidgetItem;
   item->setText( 0, tr("Declaration") );
   item->setData( 0, Qt::UserRole, "Declaration" );
@@ -605,12 +620,6 @@ void RecorderDialog::__createDeclarationPage()
   headerItem->setTextAlignment( 3, Qt::AlignCenter );
   headerItem->setTextAlignment( 4, Qt::AlignCenter );
 
-  declarationColNo    = 0;
-  declarationColName  = 1;
-  declarationColLat   = 2;
-  declarationColLon   = 3;
-  declarationColDummy = 4;
-
   declarationList->loadConfig();
 
   taskSelection = new QComboBox;
@@ -634,21 +643,24 @@ void RecorderDialog::__createDeclarationPage()
   QFormLayout *formLayout = new QFormLayout;
   formLayout->addRow( tr("Pilot:"), pilotName );
   formLayout->addRow( tr("Glider Id:"), gliderID );
-  formLayout->addRow( tr("Comp-Id:"), editCompID );
+  formLayout->addRow( tr("Competition Id:"), editCompID );
   gliderGLayout->addLayout( formLayout, 0, 0 );
 
   formLayout = new QFormLayout;
   formLayout->addRow( tr("Copilot:"), copilotName );
   formLayout->addRow( tr("Glider Type:"), gliderType );
-  formLayout->addRow( tr("Comp-Class:"), compClass );
+  formLayout->addRow( tr("Competition Class:"), compClass );
   gliderGLayout->addLayout( formLayout, 0, 1 );
 
-  QPushButton* writeButton = new QPushButton( tr("Write declaration to recorder") );
-  writeButton->setMaximumWidth(writeButton->sizeHint().width() + 15);
+  cmdUlDeclaration = new QPushButton( tr("Write declaration to recorder") );
+  cmdUlDeclaration->setMaximumWidth(cmdUlDeclaration->sizeHint().width() + 15);
+
+  cmdExportDeclaration = new QPushButton(tr("Export declaration to file"));
 
   QHBoxLayout *buttonBox = new QHBoxLayout;
   buttonBox->setSpacing( 0 );
-  buttonBox->addWidget(writeButton);
+  buttonBox->addWidget(cmdUlDeclaration);
+  buttonBox->addWidget(cmdExportDeclaration);
   buttonBox->addStretch( 10 );
 
   QVBoxLayout *decPageLayout = new QVBoxLayout;
@@ -685,11 +697,13 @@ void RecorderDialog::__createDeclarationPage()
       qWarning( "No tasks planned ..." );
 
       // Isn't it possible to write an declaration without a task?
-      writeButton->setEnabled( false );
+      cmdUlDeclaration->setEnabled( false );
+      cmdExportDeclaration->setEnabled( false );
     }
 
   connect(taskSelection, SIGNAL(activated(int)), SLOT(slotSwitchTask(int)));
-  connect(writeButton, SIGNAL(clicked()), SLOT(slotWriteDeclaration()));
+  connect(cmdUlDeclaration, SIGNAL(clicked()), SLOT(slotWriteDeclaration()));
+  connect(cmdExportDeclaration, SIGNAL(clicked()), SLOT(slotExportDeclaration()));
 }
 
 void RecorderDialog::__createTaskPage()
@@ -846,12 +860,6 @@ void RecorderDialog::__createWaypointPage()
   headerItem->setTextAlignment( 1, Qt::AlignCenter );
   headerItem->setTextAlignment( 2, Qt::AlignCenter );
   headerItem->setTextAlignment( 3, Qt::AlignCenter );
-
-  waypointColNo    = 0;
-  waypointColName  = 1;
-  waypointColLat   = 2;
-  waypointColLon   = 3;
-  waypointColDummy = 4;
 
   waypointList->loadConfig();
 
@@ -1361,6 +1369,123 @@ void RecorderDialog::slotWriteDeclaration()
   qDebug() << "   ... ready with" << ret;
 }
 
+void RecorderDialog::slotExportDeclaration()
+{
+  qDebug ("RecorderDialog::slotExportDeclaration");
+  if( !activeRecorder || taskSelection->currentIndex() < 0 )
+    {
+      return;
+    }
+
+  if( !activeRecorder->capabilities().supExportDeclaration ) {
+      QMessageBox::warning( this,
+                            tr( "Declaration export" ),
+                            tr( "Function not implemented" ),
+                            QMessageBox::Ok );
+      return;
+  }
+
+  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+  statusBar->setText( tr("Exporting flight declaration to file") );
+  QCoreApplication::processEvents();
+  QCoreApplication::flush();
+
+  if (pilotName->text().isEmpty()) {
+      QMessageBox::warning( this,
+                            tr( "Required" ),
+                            tr( "Pilot name" ),
+                            QMessageBox::Ok );
+      return;
+  }
+
+  if (gliderID->text().isEmpty()) {
+      QMessageBox::warning( this,
+                            tr( "Required" ),
+                            tr( "Glider Id" ),
+                            QMessageBox::Ok );
+      return;
+  }
+
+  if (gliderType->currentText().isEmpty()) {
+      QMessageBox::warning( this,
+                            tr( "Required" ),
+                            tr( "Glider Type" ),
+                            QMessageBox::Ok );
+      return;
+  }
+
+  if (editCompID->text().isEmpty()) {
+      QMessageBox::warning( this,
+                            tr( "Required" ),
+                            tr( "Competition ID" ),
+                            QMessageBox::Ok );
+      return;
+  }
+
+  if (compClass->text().isEmpty()) {
+      QMessageBox::warning( this,
+                            tr( "Required" ),
+                            tr( "Competition Class" ),
+                            QMessageBox::Ok );
+      return;
+  }
+
+  FRTaskDeclaration taskDecl;
+  taskDecl.pilotA = pilotName->text();
+  taskDecl.pilotB = copilotName->text();
+  taskDecl.gliderID = gliderID->text();
+  taskDecl.gliderType = gliderType->currentText();
+  taskDecl.compID = editCompID->text();
+  taskDecl.compClass = compClass->text();
+
+  QList<Waypoint*> wpList = tasks.at( taskSelection->currentIndex() )->getWPList();
+
+  qDebug() << "Exporting declaration to file...";
+
+  int ret = activeRecorder->exportDeclaration( &taskDecl, &wpList );
+
+  QApplication::restoreOverrideCursor();
+
+  if( ret == FR_NOTSUPPORTED )
+    {
+      QMessageBox::warning( this,
+                            tr( "Declaration upload" ),
+                            tr( "Function not implemented" ),
+                            QMessageBox::Ok );
+
+      statusBar->setText("");
+      return;
+    }
+
+  if( ret < FR_OK )
+    {
+      QString errorDetails = activeRecorder->lastError();
+
+      QString errorText = tr( "Cannot write declaration to recorder." );
+
+      if( ! errorDetails.isEmpty() )
+        {
+          errorText += "\n" + errorDetails;
+        }
+
+      QMessageBox::critical( this,
+                             tr( "Library Error" ),
+                             errorText,
+                             QMessageBox::Ok );
+    }
+  else
+    {
+      QMessageBox::information( this,
+                                tr( "Declaration export" ),
+                                tr( "The declaration was exported to file." ),
+                                QMessageBox::Ok );
+    }
+
+  statusBar->setText("");
+
+  qDebug() << "   ... ready with" << ret;
+}
+
 int RecorderDialog::__fillDirList()
 {
   qDeleteAll( dirList );
@@ -1480,6 +1605,7 @@ void RecorderDialog::slotSwitchTask( int idx )
       item->setText(declarationColLon, WGSPoint::printPos(wp->origP.lon(), false));
       item->setText(declarationColDummy, "");
 
+      qDebug ("waypointColNo: %d", waypointColNo);
       item->setTextAlignment( waypointColNo, Qt::AlignRight|Qt::AlignVCenter );
       item->setTextAlignment( waypointColName, Qt::AlignLeft|Qt::AlignVCenter );
       item->setTextAlignment( waypointColLat, Qt::AlignCenter );
@@ -2182,12 +2308,17 @@ void RecorderDialog::slotDisablePages()
 /** Enable/Disable pages when (not) connected to a recorder */
 void RecorderDialog::slotEnablePages()
 {
+  qDebug ("slotEnablePages");
   //first, disable all pages
   configPage->setEnabled(false);
   declarationPage->setEnabled(false);
   flightPage->setEnabled(false);
   taskPage->setEnabled(false);
   waypointPage->setEnabled(false);
+  cmdUploadTasks->setEnabled(false);
+  cmdDownloadTasks->setEnabled(false);
+  cmdUlDeclaration->setEnabled(false);
+  cmdExportDeclaration->setEnabled(false);
 
   // If there is an active recorder and that recorder is connected,
   // selectively re-activate them.
@@ -2208,25 +2339,24 @@ void RecorderDialog::slotEnablePages()
         }
 
       // waypoint page
-      if( cap.supDlWaypoint || cap.supUlWaypoint )
-        {
+      if( cap.supDlWaypoint || cap.supUlWaypoint ) {
           waypointPage->setEnabled( true );
           cmdUploadWaypoints->setEnabled( cap.supUlWaypoint );
           cmdDownloadWaypoints->setEnabled( cap.supDlWaypoint );
-        }
+      }
 
       // task page
-      if( cap.supDlTask || cap.supUlTask )
-        {
+      if( cap.supDlTask || cap.supUlTask ) {
           taskPage->setEnabled( true );
           cmdUploadTasks->setEnabled( cap.supUlTask );
           cmdDownloadTasks->setEnabled( cap.supDlTask );
-        }
+      }
 
       // declaration page
       if( cap.supUlDeclaration )
         {
           declarationPage->setEnabled( true );
+          cmdUlDeclaration->setEnabled (true);
         }
 
     // configuration page
@@ -2240,11 +2370,18 @@ void RecorderDialog::slotEnablePages()
         configPage->setEnabled(true);
       }
   }
+  // enable export even if recorder is not connected. export writes to local file
+  if( cap.supExportDeclaration )
+  {
+    declarationPage->setEnabled( true );
+    cmdExportDeclaration->setEnabled( true );
+  }
 }
 
 /** Opens the new recorder plugin library, if necessary. */
 void RecorderDialog::slotRecorderTypeChanged(const QString& newRecorderName )
 {
+  qDebug ("slotRecorderTypeChanged");
   if( newRecorderName.isEmpty() )
     {
       return;
@@ -2253,24 +2390,24 @@ void RecorderDialog::slotRecorderTypeChanged(const QString& newRecorderName )
   QString newLibName = libNameList[newRecorderName];
 
   if( libHandle && libName != newLibName )
-    {
+  {
       slotCloseRecorder();
 
       // closing old library handle
       dlclose( libHandle );
       libHandle = 0;
-
-      slotEnablePages();
-    }
+  }
 
   if( ! __openLib( newLibName ) )
-    {
+  {
       __setRecorderConnectionType( FlightRecorderPluginBase::none );
       return;
-    }
+  }
 
   __setRecorderConnectionType( activeRecorder->getTransferMode() );
   __setRecorderCapabilities();
+
+  slotEnablePages();
 }
 
 /**

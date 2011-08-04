@@ -90,6 +90,10 @@ class RecorderDialog : public QDialog
    */
   void slotWriteTasks();
   /**
+   * Exports the declaration to the file
+   */
+  void slotExportDeclaration();
+  /**
    * Close the connection with the recorder
    */
   void slotCloseRecorder();
@@ -318,6 +322,9 @@ class RecorderDialog : public QDialog
 
   QPushButton* cmdDownloadTasks;
   QPushButton* cmdUploadTasks;
+  
+  QPushButton* cmdUlDeclaration;
+  QPushButton* cmdExportDeclaration;
 
   QPushButton* cmdUploadBasicConfig;
   QPushButton* cmdUploadConfig;
