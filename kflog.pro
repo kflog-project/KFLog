@@ -12,6 +12,7 @@ TEMPLATE = subdirs
 SUBDIRS =   kflog \
             kflog/kfrcai \
             kflog/kfrfil \
+            kflog/kfrfla \
             kflog/kfrgcs \
             kflog/kfrgmn \
             kflog/kfrxsp \
