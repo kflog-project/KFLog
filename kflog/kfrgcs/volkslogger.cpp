@@ -218,6 +218,11 @@ int Volkslogger::closeRecorder()
   return FR_OK;
 }
 
+int Volkslogger::exportDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint*> *taskPoints)
+{
+  return FR_NOTSUPPORTED;
+}
+
 int Volkslogger::writeDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint*> *taskPoints)
 {
   Waypoint *tp;

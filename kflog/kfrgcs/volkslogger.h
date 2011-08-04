@@ -80,6 +80,10 @@ class Volkslogger : public FlightRecorderPluginBase
    * Write flight declaration to recorder
    */
   virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
+ /**
+   * Export flight declaration to file
+   */
+  virtual int exportDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
   /**
    * Read waypoint and flight declaration form from recorder into mem
    */
