@@ -1074,7 +1074,7 @@ QPixmap MapConfig::getPixmapRotatable(unsigned int typeID, bool hasWinch)
 {
   QString iconName(getPixmapName(typeID, hasWinch, true));
 
-  // qDebug("PixmapNameRot: %d %s",typeID, iconName.latin1() );
+  // qDebug("PixmapNameRotable: %d %s",typeID, iconName.toLatin1().constData() );
   return loadPixmap( iconName, ! isSwitch );
 }
 
