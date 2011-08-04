@@ -108,6 +108,7 @@ public:
     bool supSignedFlight;    //supports downloading in of signed flights?
     bool supDlTask;          //supports downloading of tasks?
     bool supUlTask;          //supports uploading of tasks?
+    bool supExportDeclaration;//supports export of declaration?
     bool supUlDeclaration;   //supports uploading of declarations?
     bool supDspPilotName;    //supports display of pilot name
     bool supDspRecorderType; //supports display of logger type
@@ -222,6 +223,10 @@ public:
    * Write flight declaration to recorder
    */
   virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints)=0;
+  /**
+   * Export flight declaration to file
+   */
+  virtual int exportDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints)=0;
   /**
    * Read tasks from recorder
    */
