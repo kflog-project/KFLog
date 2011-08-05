@@ -33,7 +33,9 @@
 #include "../da4record.h"
 
 /**
-  *@author Christian Fughe, Harald Maier
+  *@author Christian Fughe, Harald Maier, Eggert Ehmke
+  * parts of this file are based on the kfrfil plugin for LX devices
+  * adapted for Flarm devices
   */
 
 #define FLIGHT_INDEX_WIDTH 0x60 /* Bytes per record of the flight  */

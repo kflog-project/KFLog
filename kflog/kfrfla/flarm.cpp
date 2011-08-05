@@ -36,40 +36,6 @@
 #define MAX_LSTRING    63
 
 /*logger defines*/
-#define NODATA         0
-#define LSTRING        1 /* to 63 string*/
-#define END           64        /* 40 */
-
-#define SHVERSION    127        /* 7f */
-#define START        128        /* 80 */
-#define ORIGIN       160        /* a0 */
-
-#define POSITION_OK        191  /* bf */
-#define POSITION_BAD       195  /* c3 */
-#define REQ_BASIC_DATA     0xc4
-#define REQ_FLIGHT_DATA    0xc9
-
-
-#define SECURITY_NEW       239        /* ef */ /* 28.5.2004 Fughe: Upgrading to G3 security records */
-#define SECURITY           240        /* f0 */
-#define COMPETITION_CLASS  241        /* f1 */
-#define SAT_CON            242        /* f2 */
-#define DIFFERENTIAL       243        /* f3 */
-#define EVENT              244        /* f4 */
-#define SECURITY_OLD       245        /* f5 */
-#define SER_NR             246        /* f6 */
-#define TASK               247        /* f7 */
-#define UNITS              248        /* f8 */
-#define FIXEXT             249        /* f9 */
-#define EXTEND             250        /* fa */
-#define DATUM              251        /* fb */
-#define FLIGHT_INFO        253        /* fc */
-#define EXTEND_INFO        254        /* fd */
-#define FIXEXT_INFO        255        /* fe */
-
-#define LOW_SECURITY        0x0d
-#define MED_SECURITY        0x0e
-#define HIGH_SECURITY       0x0f
 
 // for the flarmcfg file we need DOS line feeds
 #define ENDL "\r\n"
