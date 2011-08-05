@@ -240,21 +240,21 @@ int Flarm::openRecorder(const QString& pName, int baud)
 
     // storing the port-settings to restore them ...
     oldTermEnv = newTermEnv;
-    
+
     /*
      * Do some common settup
      */
     newTermEnv.c_iflag = IGNPAR;
     newTermEnv.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL | IXON);
     newTermEnv.c_oflag &= ~OPOST;
-    newTermEnv.c_oflag |= ONLCR; 
+    newTermEnv.c_oflag |= ONLCR;
     newTermEnv.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
     /*
      * No flow control at all :-(
      */
     newTermEnv.c_cflag &= ~(CSIZE | PARENB | CSTOPB | CRTSCTS | IXON | IXOFF);
     newTermEnv.c_cflag |= (CS8 | CLOCAL | CREAD);
-    
+
     // control characters
     newTermEnv.c_cc[VMIN] = 0; // don't wait for a character
     newTermEnv.c_cc[VTIME] = 1; // wait at least 1 msec.
@@ -308,10 +308,10 @@ int Flarm::openRecorder(const QString& pName, int baud)
   * representing the exclusive OR of all characters between, but not
   * including, the "$" and "*".  A checksum is required on some sentences.
   */
-ushort Flarm::calcCheckSum (int pos, const QString& sentence)  
+ushort Flarm::calcCheckSum (int pos, const QString& sentence)
 {
   ushort sum = 0;
-  
+
   for( int i=1; i < pos; i++ ) {
     ushort c = (sentence[i]).toAscii();
 
@@ -327,9 +327,9 @@ ushort Flarm::calcCheckSum (int pos, const QString& sentence)
   return sum;
 }
 
-/** 
+/**
   * This method copied from Cumulus
-  * This method checks if the checksum in the sentence matches the sentence. It retuns true if it matches, and false otherwise. 
+  * This method checks if the checksum in the sentence matches the sentence. It retuns true if it matches, and false otherwise.
   */
 bool Flarm::checkCheckSum(int pos, const QString& sentence)
 {
@@ -616,12 +616,12 @@ QString Flarm::lat2flarm(int lat)
   WGSPoint::calcPos (lat, deg, min, sec);
   // in Flarm spec this is defined as 1/1000 minutes.
   int dec = (sec / 60.0) * 1000;
-  
+
   QString result = QString().sprintf("%02d%02d%03d", deg, min, dec);
   result += hemisphere;
   return result;
 }
-               
+
 /**
   * create lon string as defined by flarm docu
   * @Author: eggert.ehmke@berlin.de
@@ -653,7 +653,7 @@ int Flarm::exportDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList)
     //TODO: reuse for upload
     qDebug ("Flarm::exportDeclaration");
 
-    QString fileName = QFileDialog::getSaveFileName(NULL, tr("Save File"),
+    QString fileName = QFileDialog::getSaveFileName(0, tr("Save File"),
                             QDir::homePath() + QDir::separator() + "flarmcfg.txt",
                             tr("FlarmCfg (flarmcfg.txt)"), 0);
 
@@ -663,7 +663,7 @@ int Flarm::exportDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList)
       qDebug()<<"Error opening the file";
       return FR_ERROR;
     }
-    
+
     QTextStream stream(&file);
 
     int result = sendStreamData (stream, decl, wpList, true);
@@ -734,7 +734,7 @@ int Flarm::sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<W
     sendStreamData (stream, "$PFLAC,S,NEWTASK,new task", isFile);
 
     int wpCnt = 0;
-    Waypoint *wp; 
+    Waypoint *wp;
 
     foreach(wp, *wpList)
     {
