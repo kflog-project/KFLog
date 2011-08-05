@@ -334,37 +334,41 @@ int Flarm::openRecorder(const QString& pName, int baud)
   }
 }
 
+
 /**
- * Calculate the check sum
- */
-
-// use unsigned char instead of char ! On arm architecture, char is unsigned, on desktop it is signed !!!
-unsigned char Flarm::calcCrc(unsigned char d, unsigned char crc)
+  * this method copied from Cumulus
+  * NMEA-0183 Standard
+  * The optional checksum field consists of a "*" and two hex digits
+  * representing the exclusive OR of all characters between, but not
+  * including, the "$" and "*".  A checksum is required on some sentences.
+  */
+ushort Flarm::calcCheckSum (int pos, const QString& sentence)  
 {
-  unsigned char tmp;
-  static const unsigned char crcpoly = 0x69; /* Static value for the calculation of the checksum. */
+  ushort sum = 0;
+  
+  for( int i=1; i < pos; i++ ) {
+    ushort c = (sentence[i]).toAscii();
 
-  for(int count = 8; --count >= 0; d <<= 1) {
-    tmp = crc ^ d;
-    crc <<= 1;
-    if(tmp & 0x80) {
-      crc ^= crcpoly;
-    }
+    if( c == '$' ) // Start sign will not be considered
+      continue;
+
+    if( c == '*' ) // End of sentence reached
+      break;
+
+    sum ^= c;
   }
-  return crc;
+
+  return sum;
 }
 
-/**
- * Calculate the check sum on a buffer of bytes
- */
-unsigned char Flarm::calcCrcBuf(const void *buf, unsigned int count)
+/** 
+  * This method copied from Cumulus
+  * This method checks if the checksum in the sentence matches the sentence. It retuns true if it matches, and false otherwise. 
+  */
+bool Flarm::checkCheckSum(int pos, const QString& sentence)
 {
-  unsigned int i;
-  unsigned char crc = 0xff;
-  for(i = 0; i < count; i++) {
-    crc = calcCrc(((unsigned char*)buf)[i], crc);
-  }
-  return crc;
+  ushort check = (ushort) sentence.right(2).toUShort(0, 16);
+  return (check == calcCheckSum (pos, sentence));
 }
 
 /*
@@ -701,50 +705,67 @@ int Flarm::exportDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList)
     return result;
 }
 
+void Flarm::sendStreamComment (QTextStream& stream, const QString& comment, bool isFile) {
+  if (isFile)
+    stream << "// " << comment << ENDL;
+}
+
+void Flarm::sendStreamData (QTextStream& stream, const QString& sentence, bool isFile) {
+  if (isFile)
+    stream << sentence << ENDL;
+  else {
+    ushort cs = calcCheckSum (sentence.length(), sentence);
+    // qDebug () << "cs: " << cs << endl;
+    QString str = sentence + "*";
+    QString ccr = QString ("%1").arg (cs, 2, 16, QChar('0'));
+    stream << str << ccr << ENDL;
+  }
+}
+
 int Flarm::sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<Waypoint*>* wpList, bool isFile) {
 
     QDateTime now = QDateTime::currentDateTime();
     QString timestamp = now.toString ();
 
-    if (isFile) {
-      stream << "// FLARM configuration file has been created by KFlog" << ENDL;
-      stream << "// " << timestamp << ENDL;
-    }
+    sendStreamComment (stream, "FLARM configuration file has been created by KFlog", isFile);
+    sendStreamComment (stream, timestamp, isFile);
 
-    stream << "// aktivated competition mode" << ENDL;
-    stream << "$PFLAC,S,CFLAGS,2" << ENDL;
+    sendStreamComment (stream, "activated competition mode", isFile);
+    sendStreamData (stream, "$PFLAC,S,CFLAGS,2", isFile);
 
-    stream << "// deaktivated Stealth mode" << ENDL;
-    stream << "$PFLAC,S,PRIV,0" << ENDL << ENDL;
+    sendStreamComment (stream, "deaktivated Stealth mode", isFile);
+    sendStreamData (stream, "$PFLAC,S,PRIV,0", isFile);
 
-    stream << "// aircraft type;  1 = glider" << ENDL;
-    stream << "$PFLAC,S,ACFT,1" << ENDL << ENDL;
+    sendStreamComment (stream, "aircraft type;  1 = glider", isFile);
+    sendStreamData (stream, "$PFLAC,S,ACFT,1", isFile);
 
-    stream << "// Pilot name" << ENDL;
-    stream << "$PFLAC,S,PILOT," << decl->pilotA << ENDL << ENDL;
+    sendStreamComment (stream, "Pilot name", isFile);
+    sendStreamData (stream, "$PFLAC,S,PILOT," + decl->pilotA, isFile);
 
     if (!decl->pilotB.isEmpty()) {
-      stream << "// Copilot name" << ENDL;
-      stream << "$PFLAC,S,COPIL," << decl->pilotB << ENDL << ENDL;
+      sendStreamComment (stream, "Copilot name", isFile);
+      sendStreamData (stream, "$PFLAC,S,COPIL," + decl->pilotB, isFile);
     }
 
-    stream << "// Glider type" << ENDL;
-    stream << "$PFLAC,S,GLIDERTYPE," << decl->gliderType << ENDL << ENDL;
+    sendStreamComment (stream, "Glider type", isFile);
+    sendStreamData (stream, "$PFLAC,S,GLIDERTYPE," + decl->gliderType, isFile);
 
-    stream << "// Aircraft registration" << ENDL;
-    stream << "$PFLAC,S,GLIDERID," << decl->gliderID << ENDL << ENDL;
+    sendStreamComment (stream, "Aircraft registration", isFile);
+    sendStreamData (stream, "$PFLAC,S,GLIDERID," + decl->gliderID, isFile);
 
-    stream << "// Competition ID" << ENDL;
-    stream << "$PFLAC,S,COMPID," << decl->compID << ENDL << ENDL;
+    sendStreamComment (stream, "Competition ID", isFile);
+    sendStreamData (stream, "$PFLAC,S,COMPID," + decl->compID, isFile);
 
-    stream << "// Competition Class" << ENDL;
-    stream << "$PFLAC,S,COMPCLASS," << decl->compClass << ENDL << ENDL;
+    sendStreamComment (stream, "Competition Class", isFile);
+    sendStreamData (stream, "$PFLAC,S,COMPCLASS," + decl->compClass, isFile);
 
-    stream << "// Logger interval" << ENDL;
-    stream << "$PFLAC,S,LOGINT,4" << ENDL << ENDL;
+    //TODO: make configurable?
+    sendStreamComment (stream, "Logger interval", isFile);
+    sendStreamData (stream, "$PFLAC,S,LOGINT,4", isFile);
 
-    stream << "// Task declaration" << ENDL;
-    stream << "$PFLAC,S,NEWTASK,new task" << ENDL;
+    //TODO: use task name?
+    sendStreamComment (stream, "Task declaration", isFile);
+    sendStreamData (stream, "$PFLAC,S,NEWTASK,new task", isFile);
 
     int wpCnt = 0;
     Waypoint *wp; 
@@ -756,12 +777,12 @@ int Flarm::sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<W
             break;
 
         // ignore take off and landing
-        if (wp->type == FlightTask::TakeOff || wp->type == FlightTask::Landing)
-            continue;
+        //if (wp->type == FlightTask::TakeOff || wp->type == FlightTask::Landing)
+        //    continue;
 
         //int index = findWaypoint (wp);
         // qDebug ("wp: %s", wp->name.toLatin1().constData());
-        stream << "$PFLAC,S,ADDWP," <<  lat2flarm(wp->origP.lat()) << ","  <<  lon2flarm(wp->origP.lon()) << "," << wp->name.toLatin1().constData() << ENDL;
+        sendStreamData (stream, "$PFLAC,S,ADDWP," + lat2flarm(wp->origP.lat()) + "," + lon2flarm(wp->origP.lon()) + "," + wp->name, isFile);
     }
 
     return FR_OK;

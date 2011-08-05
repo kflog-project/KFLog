@@ -155,13 +155,10 @@ private:
    * read byte
    */
   unsigned char rb();
-  /**
-   * Calculate the check sum
-   */
-  static unsigned char calcCrc(unsigned char d, unsigned char crc);
-  /**
-   * Calculate the check sum on a buffer of bytes
-   */
+  ushort calcCheckSum (int pos, const QString& sentence);
+  bool checkCheckSum (int pos, const QString& sentence);
+  void sendStreamComment (QTextStream& stream, const QString& comment, bool isFile);
+  void sendStreamData (QTextStream& stream, const QString& sentence, bool isFile);
   int sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<Waypoint*>* wpList, bool isFile);
   unsigned char *readData(unsigned char *buf_p, int count);
   unsigned char *writeData(unsigned char *buf_p, int count);
