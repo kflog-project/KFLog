@@ -16,6 +16,12 @@
 **
 ***********************************************************************/
 
+#ifdef QT4_6
+#define M_BUTTON Qt::MidButton
+#else
+#define M_BUTTON Qt::MiddleButton
+#endif
+
 #include <QtGui>
 
 #include "evaluationdialog.h"
@@ -135,34 +141,28 @@ void EvaluationView::mousePressEvent(QMouseEvent* event)
 void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
 {
   // qDebug() << "EvaluationView::mouseReleaseEvent()";
-
-  time_t time_alt;
   int cursor = -1;
 
   if (flight)
     {
-      if(mouseB == (Qt::MiddleButton | Reached) ||
-         mouseB == (Qt::MiddleButton | NotReached))
+      if(mouseB == (M_BUTTON | Reached) ||
+         mouseB == (M_BUTTON | NotReached))
         {
-          time_alt = cursor1;
           cursor = 1;
         }
     else if(mouseB == (Qt::RightButton | Reached) ||
             mouseB == (Qt::RightButton | NotReached))
       {
-        time_alt = cursor2;
         cursor = 2;
       }
     else if(mouseB == (Qt::LeftButton | Reached))
       {
         if(leftB == 1)
           {
-            time_alt =  cursor1;
             cursor = 1;
           }
         else
           {
-            time_alt = cursor2;
             cursor = 2;
           }
       }
@@ -245,8 +245,8 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
 
       int movedCursor = 1;
 
-      if(mouseB == (Qt::MiddleButton | Reached) ||
-         mouseB == (Qt::MiddleButton | NotReached))
+      if(mouseB == (M_BUTTON | Reached) ||
+         mouseB == (M_BUTTON | NotReached))
         {
           cursor_1 = cursor;
         }
