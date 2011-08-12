@@ -982,6 +982,8 @@ bool WaypointCatalog::readBinary(const QString &catalog)
                              QObject::tr("Error occurred!"),
                              QObject::tr("<html><B>Catalog %1</B><BR>not found!</html>").arg(catalog),
                              QMessageBox::Ok );
+
+      return false;
     }
 
   if (f.open(QIODevice::ReadOnly))
@@ -1132,9 +1134,11 @@ bool WaypointCatalog::readBinary(const QString &catalog)
                              QString("<html><B>%1</B><BR>").arg(catalog) +
                              "permission denied!" +
                              "</html>", QMessageBox::Ok );
+
+      ok = false;
     }
 
-  return true;
+  return ok;
 }
 
 /** read a waypoint catalog from a SeeYou cup file, only waypoint part */
@@ -1931,7 +1935,6 @@ bool WaypointCatalog::readWelt2000(const QString& catalog)
 
           ushort rwDir1 = 0;
           ushort rwDir2 = 0;
-          ushort rwCount = 0;
 
           QPair<ushort, ushort> rwDirections[2];
           rwDirections[0] = QPair<ushort, ushort>( 0, 0);
@@ -1960,7 +1963,6 @@ bool WaypointCatalog::readWelt2000(const QString& catalog)
                   // We have only one runway
                   rwDirections[0].first  = rwDir1;
                   rwDirections[0].second = rwDir2;
-                  rwCount = 1;
                 }
               else
                 {
@@ -1969,7 +1971,6 @@ bool WaypointCatalog::readWelt2000(const QString& catalog)
                   rwDirections[0].second = ((rwDir1 > 18) ? rwDir1 - 18 : rwDir1 + 18 );
                   rwDirections[1].first  = rwDir2;
                   rwDirections[1].second = ((rwDir2 > 18) ? rwDir2 - 18 : rwDir2 + 18 );
-                  rwCount = 2;
                 }
             }
 
