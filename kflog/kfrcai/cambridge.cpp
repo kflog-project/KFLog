@@ -685,6 +685,8 @@ int Cambridge::downloadFlight(int flightID, int /*secMode*/, const QString& file
 
 int Cambridge::exportDeclaration(FRTaskDeclaration* /*taskDecl*/, QList<Waypoint*> *taskPoints)
 {
+  Q_UNUSED( taskPoints )
+
   return FR_NOTSUPPORTED;
 }
 
