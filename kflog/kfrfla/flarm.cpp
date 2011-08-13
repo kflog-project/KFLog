@@ -119,6 +119,10 @@ Flarm::Flarm( QObject *parent ) : FlightRecorderPluginBase( parent )
   _capabilities.supDspSerialNumber = true;
   _capabilities.supDspRecorderType = false;
   _capabilities.supDspPilotName = true;
+  _capabilities.supDspCoPilotName = true;
+  _capabilities.supDspGliderType = true;
+  _capabilities.supEditPilotName = true;
+  _capabilities.supEditCoPilotName = true;
   _capabilities.supDspGliderType = true;
   _capabilities.supDspGliderID = true;
   _capabilities.supDspCompetitionID = true;
@@ -152,10 +156,9 @@ int Flarm::getFlightDir( QList<FRDirEntry *>* dirList )
   return FR_NOTSUPPORTED;
 }
 
-QString Flarm::getFlarmResult (QFile& file, const QString& cmd, const QString& key) {
-  ushort cs = calcCheckSum (cmd.length(), cmd);
-  // qDebug () << "cs: " << cs << endl;
+QString Flarm::getFlarmData (QFile& file, const QString& cmd, const QString& key) {
   QString str = cmd + ",R," + key + "*";
+  ushort cs = calcCheckSum (str.length(), str);
   QString ccs = QString ("%1").arg (cs, 2, 16, QChar('0'));
   QString sentence = str + ccs + ENDL;
   qDebug () << sentence << endl;
@@ -196,6 +199,47 @@ QString Flarm::getFlarmResult (QFile& file, const QString& cmd, const QString& k
   }
 }
 
+bool Flarm::putFlarmData (QFile& file, const QString& cmd, const QString& key, const QString& data) {
+  QString str = cmd + ",S," + key + "," + data + "*";
+  ushort cs = calcCheckSum (str.length(), str);
+  QString ccs = QString ("%1").arg (cs, 2, 16, QChar('0'));
+  QString sentence = str + ccs + ENDL;
+  qDebug () << sentence << endl;
+  file.write (sentence.toLatin1().constData(), sentence.length());
+  file.flush();
+
+  QString bytes = file.readLine();
+  //sometimes some other sentences come inbetween
+  time_t t1 = time(NULL);
+  while (!bytes.startsWith (cmd + ",A,")) {
+    if (time(NULL) - t1 > 10) {
+      qDebug () << "No response from recorder within 10 seconds!" << endl;
+      return false;
+    }
+    qDebug () << "ignored bytes: " << bytes << endl;
+    bytes = file.readLine();
+  }
+  qDebug () << "putFlarmData: " << bytes << endl;
+
+  QStringList list = bytes.split("*");
+  QString answer = list[0];
+  QString checksum = list[1];
+  bool ok;
+  cs = checksum.toInt (&ok, 16);
+  if (!ok) {
+    qDebug () << "checksum not readable: " << checksum << endl;
+    return "";
+  }
+  // qDebug () << "checksum valid" << endl;
+  if (cs == calcCheckSum (answer.length(), answer)) {
+    return true;
+  }
+  else {
+    qDebug () << "bad Checksum: " << bytes << "; " << checksum << endl;
+    return false;
+  }
+}
+
 /**
   * This function retrieves the basic recorder data from the flarm device
   * currently supported are: serial number, devive type, pilot name, glider type, glider id, competition id.
@@ -205,15 +249,20 @@ int Flarm::getBasicData(FR_BasicData& data)
 {
   // TODO: adapt to FLARM
   qDebug ("Flarm::getBasicData");
+  
+  if (!check4Device()) {
+    return FR_ERROR;
+  }
 
   QFile file;
   file.open (portID, QIODevice::ReadWrite);
   
-  data.pilotName     = getFlarmResult (file, "$PFLAC","PILOT");
-  data.gliderType    = getFlarmResult (file, "$PFLAC","GLIDERTYPE");
-  data.gliderID      = getFlarmResult (file, "$PFLAC","GLIDERID");
-  data.competitionID = getFlarmResult (file, "$PFLAC","COMPID");
-  data.serialNumber  = getFlarmResult (file, "$PFLAC","ID");
+  data.pilotName     = getFlarmData (file, "$PFLAC","PILOT");
+  data.copilotName   = getFlarmData (file, "$PFLAC","COPIL");
+  data.gliderType    = getFlarmData (file, "$PFLAC","GLIDERTYPE");
+  data.gliderID      = getFlarmData (file, "$PFLAC","GLIDERID");
+  data.competitionID = getFlarmData (file, "$PFLAC","COMPID");
+  data.serialNumber  = getFlarmData (file, "$PFLAC","ID");
 
   return FR_OK;
 }
@@ -223,9 +272,29 @@ int Flarm::getConfigData(FR_ConfigData& /*data*/)
   return FR_NOTSUPPORTED;
 }
 
-int Flarm::writeConfigData(FR_BasicData& /*basicdata*/, FR_ConfigData& /*configdata*/)
+int Flarm::writeConfigData(FR_BasicData& data, FR_ConfigData& /*configdata*/)
 {
-  return FR_NOTSUPPORTED;
+  qDebug ("Flarm::writeConfigData");
+  
+  if (!check4Device()) {
+    return FR_ERROR;
+  }
+  
+  QFile file;
+  file.open (portID, QIODevice::ReadWrite);
+
+  if (!putFlarmData (file, "$PFLAC", "PILOT", data.pilotName))
+    return FR_ERROR;
+  if (!putFlarmData (file, "$PFLAC", "COPIL", data.copilotName))
+    return FR_ERROR;
+  if (!putFlarmData (file, "$PFLAC", "GLIDERTYPE", data.gliderType))
+    return FR_ERROR;
+  if (!putFlarmData (file, "$PFLAC", "GLIDERID", data.gliderID))
+    return FR_ERROR;
+  if (!putFlarmData (file, "$PFLAC", "COMPID", data.competitionID))
+    return FR_ERROR;
+
+  return FR_OK;
 }
 
 int Flarm::downloadFlight(int /*flightID*/, int /*secMode*/, const QString& /*fileName*/)
@@ -462,7 +531,7 @@ bool Flarm::check4Device()
 
   time_t t1 = time(NULL);
   while (true) {
-    QString result = getFlarmResult (file, "$PFLAC","ID");
+    QString result = getFlarmData (file, "$PFLAC","ID");
     if (result.isEmpty()) {
       _errorinfo = tr("No response from flarm device!\n");
       return false;

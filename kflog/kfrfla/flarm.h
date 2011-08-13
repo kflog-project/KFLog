@@ -145,7 +145,8 @@ private:
   void sendStreamComment (QTextStream& stream, const QString& comment, bool isFile);
   void sendStreamData (QTextStream& stream, const QString& sentence, bool isFile);
   int sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<Waypoint*>* wpList, bool isFile);
-  QString getFlarmResult(QFile&, const QString&, const QString&);
+  QString getFlarmData(QFile&, const QString&, const QString&);
+  bool putFlarmData(QFile&, const QString&, const QString&, const QString&);
   QString lat2flarm (int);
   QString lon2flarm (int);
 
