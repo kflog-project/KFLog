@@ -103,35 +103,36 @@ Flarm::Flarm( QObject *parent ) : FlightRecorderPluginBase( parent )
   _capabilities.maxNrWaypoints = WAYPOINT_MAX;       //maximum number of waypoints
   _capabilities.maxNrWaypointsPerTask = MAXTSKPNT;   //maximum number of waypoints per task
   _capabilities.maxNrPilots = 1;                     //maximum number of pilots
-  _capabilities.transferSpeeds = bps02400 |          //supported transfer speeds
-                                 bps04800 |
+  _capabilities.transferSpeeds = bps04800 |          //supported transfer speeds
                                  bps09600 |
                                  bps19200 |
-                                 bps38400;
+                                 bps38400 |
+                                 bps57600;
 
   _capabilities.supDlWaypoint = false;       //supports downloading of waypoints?
   _capabilities.supUlWaypoint = false;       //supports uploading of waypoints?
   _capabilities.supDlFlight = false;         //supports downloading of flights?
   _capabilities.supUlFlight = false;         //supports uploading of flights?
   _capabilities.supSignedFlight = false;     //supports downloading in of signed flights?
-  _capabilities.supDlTask = false;           //supports downloading of tasks?
-  _capabilities.supUlTask = false;           //supports uploading of tasks?
+  _capabilities.supDlTask = false;           //supports downloading of tasks? no
+  _capabilities.supUlTask = true;            //supports uploading of tasks?
   _capabilities.supExportDeclaration = true; //supports export of declaration?
   _capabilities.supUlDeclaration = false;    //supports uploading of declarations?
-  _capabilities.supDspSerialNumber = false;
+  _capabilities.supDspSerialNumber = true;
   _capabilities.supDspRecorderType = false;
   _capabilities.supDspPilotName = true;
   _capabilities.supDspGliderType = true;
   _capabilities.supDspGliderID = true;
-  _capabilities.supDspCompetitionID = false;
-  _capabilities.supAutoSpeed = false;       //supports automatic transfer speed detection
+  _capabilities.supDspCompetitionID = true;
+  _capabilities.supAutoSpeed = true;       //supports automatic transfer speed detection
   //End set capabilities.
 
   portID = -1;
   //_da4BufferValid = false;
 
-  _keepalive = new QTimer( this );
-  connect( _keepalive, SIGNAL(timeout()), this, SLOT(slotTimeout()) );
+  // do we need keepalive for Flarm???
+  //_keepalive = new QTimer( this );
+  //connect( _keepalive, SIGNAL(timeout()), this, SLOT(slotTimeout()) );
 }
 
 Flarm::~Flarm()
@@ -176,6 +177,30 @@ int Flarm::getFlightDir( QList<FRDirEntry *>* dirList )
   return FR_NOTSUPPORTED;
 }
 
+QString Flarm::getFlarmResult (QFile& file, const QString& cmd, const QString& key) {
+  ushort cs = calcCheckSum (cmd.length(), cmd);
+  // qDebug () << "cs: " << cs << endl;
+  QString str = cmd + ",R," + key + "*";
+  QString ccs = QString ("%1").arg (cs, 2, 16, QChar('0'));
+  QString sentence = str + ccs + ENDL;
+  qDebug () << sentence << endl;
+  file.write (sentence.toLatin1().constData(), sentence.length());
+  file.flush();
+    
+  QString bytes = file.readLine();
+  //sometimes some other sentences come inbetween
+  while (!bytes.startsWith (cmd + ",A,")) {
+    bytes = file.readLine();
+    qDebug () << "bad bytes: " << bytes << endl;
+  }
+  qDebug () << "bytes: " << bytes << endl;
+
+  QStringList list = bytes.split("*");
+  QString answer = list[0];
+  list = answer.split(",");
+  return list[3];
+}
+
 /**
   * This function retrieves the basic recorder data from the flarm device
   * currently supported are: serial number, devive type, pilot name, glider type, glider id, competition id.
@@ -183,12 +208,19 @@ int Flarm::getFlightDir( QList<FRDirEntry *>* dirList )
   */
 int Flarm::getBasicData(FR_BasicData& data)
 {
-  Q_UNUSED(data)
-
   // TODO: adapt to FLARM
   qDebug ("Flarm::getBasicData");
 
-  return FR_NOTSUPPORTED;
+  QFile file;
+  file.open (portID, QIODevice::ReadWrite);
+  
+  data.pilotName     = getFlarmResult (file, "$PFLAC","PILOT");
+  data.gliderType    = getFlarmResult (file, "$PFLAC","GLIDERTYPE");
+  data.gliderID      = getFlarmResult (file, "$PFLAC","GLIDERID");
+  data.competitionID = getFlarmResult (file, "$PFLAC","COMPID");
+  data.serialNumber  = getFlarmResult (file, "$PFLAC","ID");
+
+  return FR_OK;
 }
 
 int Flarm::getConfigData(FR_ConfigData& /*data*/)
@@ -259,19 +291,14 @@ int Flarm::openRecorder(const QString& pName, int baud)
     newTermEnv.c_cc[VMIN] = 0; // don't wait for a character
     newTermEnv.c_cc[VTIME] = 1; // wait at least 1 msec.
 
-//    if(baud >= 115200) speed = B115200;
-//    else if(baud >= 57600) speed = B57600;
-//    else
-//
-//  ( - Christian - )
-//  2400 - 38400 bps
-//  These are the only speeds known by Flarm devices, right?
-//  Does anybody have different experiences?
-    if(baud >= 38400) _speed = B38400;
+//  4800 - 57600 bps
+//  These are the only speeds known by Flarm devices
+//  Taken from Data port Specification
+    if (baud >= 57600)     _speed = B57600;
+    else if(baud >= 38400) _speed = B38400;
     else if(baud >= 19200) _speed = B19200;
     else if(baud >=  9600) _speed = B9600;
-    else if(baud >=  4800) _speed = B4800;
-    else                   _speed = B2400;
+    else                   _speed = B4800;
 
     cfsetospeed(&newTermEnv, _speed);
     cfsetispeed(&newTermEnv, _speed);
@@ -290,7 +317,7 @@ int Flarm::openRecorder(const QString& pName, int baud)
       return FR_ERROR;
     };
 
-    _keepalive->start (1000); // one second timer
+    //_keepalive->start (1000); // one second timer
     return FR_OK;
     }
   else {
@@ -337,44 +364,6 @@ bool Flarm::checkCheckSum(int pos, const QString& sentence)
   return (check == calcCheckSum (pos, sentence));
 }
 
-/*
- * Read the memory setup from the lx device.
- *
- * The lx devices do have a memory setup described with three bytes.
- * In the future this function might be necessary to disconnect from lx
- * devices with more memory. The CRC check will tell.
- */
-unsigned char *Flarm::readData(unsigned char *bufP, int count)
-{
-  int rc;
-  switch (rc = read(portID, bufP, count)) {
-  case -1:
-    qWarning("read_data(): ERROR");
-    break;
-  default:
-    // qDebug ("readData: %x(%x)", rc, count);
-    bufP += rc;
-    break;
-  }
-  return bufP;
-}
-
-unsigned char *Flarm::writeData(unsigned char *bufP, int count)
-{
-  int rc;
-  switch (rc = write(portID, bufP, count))
-  {
-  case -1:
-    qWarning("write_data(): ERROR");
-    break;
-  default:
-    // qDebug ("writeData: %x(%x)", rc, count);
-    bufP += rc;
-    break;
-  }
-  return bufP;
-}
-
 /**
  * Check presence of FLARM-device and make CONNECT
  *
@@ -386,7 +375,7 @@ bool Flarm::AutoBaud()
 {
   //TODO: adapt to FLARM
   speed_t autospeed;
-  int     autobaud = 38400;
+  int     autobaud = 57600;
   bool rc = false;
   time_t t1;
   _errorinfo = "";
@@ -405,17 +394,13 @@ bool Flarm::AutoBaud()
                                 // following wb(SYN). And remove the
                                 // position data, that might have been
                                 // arrived.
-    wb(SYN);
-    tcdrain (portID);
+    QFile file;
+    file.open (portID, QIODevice::ReadOnly);
+    
+    QString bytes = file.readLine();
+    qDebug () << "bytes: " << bytes << endl;
 
-    while(0xff != rb())       // 12.03.2005 Fughe: Make the stream really
-      lc++;                   //                   empty!
-    qWarning ("while _AB: %d", lc);
-    wb(SYN);
-    tcdrain (portID);
-
-    int ret = rb();
-    if (ret == ACK) {
+    if (bytes.startsWith ("$PFLAU")) {
       rc = true;
       break;
     }
@@ -436,11 +421,11 @@ bool Flarm::AutoBaud()
     //
     // this way we do autobauding each time this function is called.
     // Shouldn't we do it in OpenRecorder?
-    if     (autobaud >= 38400) { autobaud = 19200; autospeed = B38400; }
+    if     (autobaud >= 57600) { autobaud = 38400; autospeed = B57600; }
+    else if(autobaud >= 38400) { autobaud = 19200; autospeed = B38400; }
     else if(autobaud >= 19200) { autobaud =  9600; autospeed = B19200; }
     else if(autobaud >=  9600) { autobaud =  4800; autospeed = B9600; }
-    else if(autobaud >=  4800) { autobaud =  2400; autospeed = B4800; }
-    else                       { autobaud = 38400; autospeed = B2400; }
+    else                       { autobaud = 57600; autospeed = B4800; }
 
     cfsetospeed(&newTermEnv, autospeed);
     cfsetispeed(&newTermEnv, autospeed);
@@ -449,10 +434,6 @@ bool Flarm::AutoBaud()
       _speed = autospeed;
       switch (_speed)
       {
-        case B2400:
-          emit newSpeed (2400);
-          qDebug ("autospeed: %d", 2400);
-          break;
         case B4800:
           emit newSpeed (4800);
           qDebug ("autospeed: %d", 4800);
@@ -468,6 +449,10 @@ bool Flarm::AutoBaud()
         case B38400:
           emit newSpeed (38400);
           qDebug ("autospeed: %d", 38400);
+          break;
+        case B57600:
+          emit newSpeed (57600);
+          qDebug ("autospeed: %d", 57600);
           break;
         default:
           qDebug ("autospeed: illegal value");
@@ -589,7 +574,7 @@ int Flarm::closeRecorder()
 {
   if( portID != -1 )
     {
-      _keepalive->stop();
+      //_keepalive->stop();
       tcsetattr( portID, TCSANOW, &oldTermEnv );
       close( portID );
       portID = -1;
@@ -653,7 +638,7 @@ int Flarm::exportDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList)
     //TODO: reuse for upload
     qDebug ("Flarm::exportDeclaration");
 
-    QString fileName = QFileDialog::getSaveFileName(0, tr("Save File"),
+    QString fileName = QFileDialog::getSaveFileName(NULL, tr("Save File"),
                             QDir::homePath() + QDir::separator() + "flarmcfg.txt",
                             tr("FlarmCfg (flarmcfg.txt)"), 0);
 
@@ -760,22 +745,17 @@ int Flarm::readDatabase()
 }
 
 /**
-  * read the tasks from the lx recorder
-  * read the da4 buffer and select tasks
-  * tasks are constructed from waypoints in the same buffer !
+  * read the tasks from the Flarm device
   */
 int Flarm::readTasks(QList<FlightTask*> * /*tasks*/)
 {
   qDebug ("Flarm::readTasks");
+
   return FR_NOTSUPPORTED;
 }
 
 /**
-  * write the tasks to the flarm recorder
-  * read the da4 buffer
-  * write tasks; if the proper waypoints are not in the buffer,
-  * they are constructed on the fly
-  * write the buffer back to recorder
+  * write the tasks to the flarm device
   */
 int Flarm::writeTasks(QList<FlightTask*>* /*tasks*/)
 {
@@ -785,8 +765,7 @@ int Flarm::writeTasks(QList<FlightTask*>* /*tasks*/)
 }
 
 /**
-  * read the waypoints from the lx recorder
-  * read the da4 buffer and select waypoints
+  * read the waypoints from the flarm device
   */
 int Flarm::readWaypoints(QList<Waypoint*>* /*wpList*/)
 {
