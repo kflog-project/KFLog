@@ -23,6 +23,7 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QFile>
 #include <QList>
 #include <QTextStream>
 
@@ -162,8 +163,7 @@ private:
   void sendStreamComment (QTextStream& stream, const QString& comment, bool isFile);
   void sendStreamData (QTextStream& stream, const QString& sentence, bool isFile);
   int sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<Waypoint*>* wpList, bool isFile);
-  unsigned char *readData(unsigned char *buf_p, int count);
-  unsigned char *writeData(unsigned char *buf_p, int count);
+  QString getFlarmResult(QFile&, const QString&, const QString&);
   QString lat2flarm (int);
   QString lon2flarm (int);
 
