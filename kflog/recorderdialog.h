@@ -228,7 +228,9 @@ class RecorderDialog : public QDialog
   QLabel* recType;
   QLabel* lblRecType;
   QLineEdit* pltName;
+  QLineEdit* coPltName;
   QLabel* lblPltName;
+  QLabel* lblCoPltName;
   QLineEdit* gldType;
   QLabel* lblGldType;
   QLineEdit* gldID;
