@@ -41,15 +41,9 @@
 
 #define FLIGHT_INDEX_WIDTH 0x60 /* Bytes per record of the flight  */
                                 /* index. (96)                     */
-#define LX_MEM_RET 7            /* Number of bytes returned by     */
-                                /* wb(STX), wb(Q).                 */
 
 #define INFO_SIZE       118     /* Size of the s_hdrinfo struct */
 #define TASK_SIZE       230     /* Size of the s_hdrtask struct */
-#define BASIC_LENGTH    (1 + INFO_SIZE + TASK_SIZE)
-                                /* 1 undocumented byte ahead    */
-#define EXTENDED_LENGTH BASIC_LENGTH + 9
-                                /* 9 characters class name      */
 
 struct flightTable
 {
@@ -136,10 +130,6 @@ public:
 
   static unsigned char calcCrcBuf(const void* buf, unsigned int count);
 
-private slots:
-
-  void slotTimeout();
-
 private:
 
   /**
@@ -150,14 +140,6 @@ private:
    * try to sync the transfer rate with connected recorder
    */
   bool AutoBaud();
-  /**
-   * write byte
-   */
-  int wb(unsigned char c);
-  /**
-   * read byte
-   */
-  unsigned char rb();
   ushort calcCheckSum (int pos, const QString& sentence);
   bool checkCheckSum (int pos, const QString& sentence);
   void sendStreamComment (QTextStream& stream, const QString& comment, bool isFile);
@@ -170,7 +152,6 @@ private:
   QList <flightTable *> flightIndex;
 
   char *wordtoserno(unsigned int Binaer);
-  QTimer* _keepalive;
   speed_t _speed;
 };
 

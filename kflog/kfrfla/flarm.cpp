@@ -47,8 +47,6 @@ const char* portName = '\0';
 int portID = -1;
 const char* c36 = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-extern int breakTransfer;
-
 /**
  * holds the port-settings at start of the application
  */
@@ -128,36 +126,13 @@ Flarm::Flarm( QObject *parent ) : FlightRecorderPluginBase( parent )
   //End set capabilities.
 
   portID = -1;
-  //_da4BufferValid = false;
 
-  // do we need keepalive for Flarm???
-  //_keepalive = new QTimer( this );
-  //connect( _keepalive, SIGNAL(timeout()), this, SLOT(slotTimeout()) );
 }
 
 Flarm::~Flarm()
 {
   closeRecorder();
   qDeleteAll( flightIndex );
-}
-
-/**
-  * this function will be called each second to keep the connection to FLARM device alive
-  */
-void Flarm::slotTimeout()
-{
-  tcflush(portID, TCIOFLUSH); // Make sure the next ACK comes from the
-                              // following wb(SYN). And remove the
-                              // position data, that might have been
-                              // arrived.
-  wb( SYN );
-  tcdrain( portID );
-  int ret = rb();
-
-  if( ret != ACK )
-    {
-      qDebug( "Flarm::keepalive failed: ret = %x", ret );
-    }
 }
 
 /**
@@ -189,16 +164,36 @@ QString Flarm::getFlarmResult (QFile& file, const QString& cmd, const QString& k
     
   QString bytes = file.readLine();
   //sometimes some other sentences come inbetween
+  time_t t1 = time(NULL);
   while (!bytes.startsWith (cmd + ",A,")) {
+    if (time(NULL) - t1 > 10) {
+      qDebug () << "No response from recorder within 10 seconds!" << endl;
+      return "";
+    }
+    qDebug () << "ignored bytes: " << bytes << endl;
     bytes = file.readLine();
-    qDebug () << "bad bytes: " << bytes << endl;
   }
-  qDebug () << "bytes: " << bytes << endl;
+  // qDebug () << "bytes: " << bytes;
 
   QStringList list = bytes.split("*");
   QString answer = list[0];
-  list = answer.split(",");
-  return list[3];
+  QString checksum = list[1];
+  bool ok;
+  cs = checksum.toInt (&ok, 16);
+  if (!ok) {
+    qDebug () << "checksum not readable: " << checksum << endl;
+    return "";
+  }
+  // qDebug () << "checksum valid" << endl;
+  if (cs == calcCheckSum (answer.length(), answer)) {
+    // qDebug () << "checksum ok" << endl;
+    list = answer.split(",");
+    return list[3];
+  }
+  else {
+    qDebug () << "bad Checksum: " << bytes << "; " << checksum << endl;
+    return "";
+  }
 }
 
 /**
@@ -367,9 +362,6 @@ bool Flarm::checkCheckSum(int pos, const QString& sentence)
 /**
  * Check presence of FLARM-device and make CONNECT
  *
- * Necessary wakeup before a command
- * if the FLARM-device is in TIMEOUT countdown
- * mode waiting for CONNECT.
  */
 bool Flarm::AutoBaud()
 {
@@ -379,17 +371,9 @@ bool Flarm::AutoBaud()
   bool rc = false;
   time_t t1;
   _errorinfo = "";
-  int lc = 0 ;
-
-  // ( - Christian - )
-  // Give the recorder the time of 1 sec to answer.
-  //
-  // It is not the delay, it is the position of tcflush, that is good
-  // medicine for my FLARM not to whistle. Tcflush belongs after while() and
-  // before wb(SYN).
 
   t1 = time(NULL);
-  while (!breakTransfer) {
+  while (true) {
     tcflush(portID, TCIOFLUSH); // Make sure the next ACK comes from the
                                 // following wb(SYN). And remove the
                                 // position data, that might have been
@@ -398,15 +382,15 @@ bool Flarm::AutoBaud()
     file.open (portID, QIODevice::ReadOnly);
     
     QString bytes = file.readLine();
-    qDebug () << "bytes: " << bytes << endl;
+    qDebug () << "bytes: " << bytes;
 
-    if (bytes.startsWith ("$PFLAU")) {
+    if (bytes.contains (QRegExp("^\\$PFLAU|^\\$GPGGA|^\\$PGRMZ|^\\$GPRMC"))) {
       rc = true;
       break;
     }
     else {
       // waiting 10 secs. for response
-//      qDebug ("ret = %x", ret);
+      // qDebug ("ret = %x", ret);
       if (time(NULL) - t1 > 10) {
         _errorinfo = tr("No response from recorder within 10 seconds!\n");
         rc = false;
@@ -468,118 +452,40 @@ bool Flarm::AutoBaud()
 /**
  * Check presence of Flarm-device and make CONNECT
  *
- * Necessary wakeup before a command
- * if the FLARM-device is in TIMEOUT countdown
- * mode waiting for CONNECT.
  */
 bool Flarm::check4Device()
 {
-  //TODO: adapt to FLARM
-  //speed_t autospeed;
-  //int     autobaud = 38400;
-  bool rc = false;
-  time_t t1;
   _errorinfo = "";
-  int lc = 0 ;
+  
+  QFile file;
+  file.open (portID, QIODevice::ReadWrite);
 
-  // ( - Christian - )
-  // Give the recorder the time of 1 sec to answer.
-  //
-  // It is not the delay, it is the position of tcflush, that is good
-  // medicine for my FLARM not to whistle. Tcflush belongs after while() and
-  // before wb(SYN).
-
-  t1 = time(NULL);
-  while (!breakTransfer) {
-    tcflush(portID, TCIOFLUSH); // Make sure the next ACK comes from the
-                                // following wb(SYN). And remove the
-                                // position data, that might have been
-                                // arrived.
-    wb(SYN);
-    tcdrain (portID);
-
-    while(0xff != rb())         // 12.03.2005 Fughe: Make the stream really
-      lc++;                     //                   empty!
-    qWarning ("while c4d: %d", lc);
-    wb(SYN);
-    tcdrain (portID);
-
-    int ret = rb();
-    if (ret == ACK) {
-      rc = true;
+  time_t t1 = time(NULL);
+  while (true) {
+    QString result = getFlarmResult (file, "$PFLAC","ID");
+    if (result.isEmpty()) {
+      _errorinfo = tr("No response from flarm device!\n");
+      return false;
+    }
+    else
       break;
-    }
-    else {
-      // waiting 10 secs. for response
-//      qDebug ("ret = %x", ret);
-      if (time(NULL) - t1 > 10) {
-        _errorinfo = tr("No response from recorder within 10 seconds!\n");
-        rc = false;
-        break;
-      }
+    // waiting 10 secs. for response
+    if (time(NULL) - t1 > 10) {
+      _errorinfo = tr("No response from flarm device within 10 seconds!\n");
+      return false;
     }
   }
-
-  return rc;
-}
-
-/*
- * write byte
- */
-int Flarm::wb(unsigned char c)
-{
-  // qDebug ("wb (%x)", c);
-  if( write( portID, &c, 1 ) != 1 )
-    {
-      return -1;
-    }
-  return 1;
-}
-
-/*
- * read byte
- */
-// use unsigned char instead of char!
-// On the arm architecture, char is unsigned!
-// On desktop, it is signed !!!
-unsigned char Flarm::rb()
-{
-  unsigned char buf;
-
-  if( read( portID, &buf, 1 ) != 1 )
-    {
-      return 0xff;
-    }
-
-  return buf;
-}
-
-char *Flarm::wordtoserno(unsigned int Binaer)
-{
-  static char Seriennummer[4];
-  // limitation
-  if (Binaer > 46655L) {
-    Binaer = 46655L;
-  }
-
-  Seriennummer[0]=c36[Binaer / 36 / 36];
-  Seriennummer[1]=c36[Binaer / 36 % 36];
-  Seriennummer[2]=c36[Binaer % 36];
-  Seriennummer[3] = '\0';
-
-  return Seriennummer;
+  return true;
 }
 
 int Flarm::closeRecorder()
 {
   if( portID != -1 )
     {
-      //_keepalive->stop();
       tcsetattr( portID, TCSANOW, &oldTermEnv );
       close( portID );
       portID = -1;
       _isConnected = false;
-      //_da4BufferValid = false;
       return FR_OK;
     }
   else
