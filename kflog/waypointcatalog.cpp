@@ -753,6 +753,7 @@ bool WaypointCatalog::readFilserTXT(const QString& catalog)
                       break;
                     default:
                       w->surface = Runway::Unknown;
+                      break;
                     }
                   w->comment = QObject::tr("Imported from %1").arg(catalog);
                   w->importance = 1;
@@ -805,6 +806,7 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
             break;
           default:
             out << "MARKER,";
+            break;
           }
 
         out << w->origP.lat()/600000.0 << ",";
@@ -824,6 +826,7 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
             break;
           default:
             out << "U,";
+            break;
           }
 
         out << "3,I,,," << endl;
@@ -2210,4 +2213,6 @@ QList<QString> WaypointCatalog::splitCupLine( QString& line, bool &ok )
 
       pos = start = idx + 1;
     }
+
+  return list;
 }

@@ -1693,6 +1693,7 @@ bool Filser::AutoBaud()
           break;
         default:
           qDebug ("autospeed: illegal value");
+          break;
       }
     }
 

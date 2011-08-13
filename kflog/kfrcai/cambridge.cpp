@@ -818,6 +818,7 @@ int Cambridge::writeWaypoints(QList<Waypoint*> *waypoints)
       case BaseMapElement::Gliderfield:
       case BaseMapElement::UltraLight:
         attribute = attribute|CAI_AIRFIELD;
+        break;
     }
     QString att = QString().sprintf("%d", attribute);
     QString caiwp = "C,," + lat + "," + lon + "," + elv + "," + id + "," + att + "," + name + "," + name;
