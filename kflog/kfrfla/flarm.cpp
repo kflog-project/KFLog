@@ -167,9 +167,9 @@ QString Flarm::getFlarmData (QFile& file, const QString& cmd, const QString& key
     
   QString bytes = file.readLine();
   //sometimes some other sentences come inbetween
-  time_t t1 = time(NULL);
+  QTime t1 = QTime::currentTime ();
   while (!bytes.startsWith (cmd + ",A,")) {
-    if (time(NULL) - t1 > 10) {
+    if (t1.secsTo (QTime::currentTime ()) > 10) {
       qDebug () << "No response from recorder within 10 seconds!" << endl;
       return "";
     }
@@ -210,10 +210,11 @@ bool Flarm::putFlarmData (QFile& file, const QString& cmd, const QString& key, c
 
   QString bytes = file.readLine();
   //sometimes some other sentences come inbetween
-  time_t t1 = time(NULL);
+  QTime t1 = QTime::currentTime();
   while (!bytes.startsWith (cmd + ",A,")) {
-    if (time(NULL) - t1 > 10) {
-      qDebug () << "No response from recorder within 10 seconds!" << endl;
+    if (t1.secsTo (QTime::currentTime()) > 10) {
+      // qDebug () << "No response from recorder within 10 seconds!" << endl;
+      _errorinfo = tr("No response from recorder within 10 seconds!\n");
       return false;
     }
     qDebug () << "ignored bytes: " << bytes << endl;
@@ -242,7 +243,7 @@ bool Flarm::putFlarmData (QFile& file, const QString& cmd, const QString& key, c
 
 /**
   * This function retrieves the basic recorder data from the flarm device
-  * currently supported are: serial number, devive type, pilot name, glider type, glider id, competition id.
+  * currently supported are: devive id, pilot name, copilot name, glider type, glider id, competition id.
   * Written by Eggert Ehmke <eggert.ehmke@berlin.de>, <eggert@kflog.org>
   */
 int Flarm::getBasicData(FR_BasicData& data)
@@ -272,6 +273,11 @@ int Flarm::getConfigData(FR_ConfigData& /*data*/)
   return FR_NOTSUPPORTED;
 }
 
+/**
+  * This function sends the basic recorder data to the flarm device
+  * currently supported are: pilot name, copilot name, glider type, glider id, competition id.
+  * Written by Eggert Ehmke <eggert.ehmke@berlin.de>, <eggert@kflog.org>
+  */
 int Flarm::writeConfigData(FR_BasicData& data, FR_ConfigData& /*configdata*/)
 {
   qDebug ("Flarm::writeConfigData");
@@ -434,14 +440,11 @@ bool Flarm::checkCheckSum(int pos, const QString& sentence)
  */
 bool Flarm::AutoBaud()
 {
-  //TODO: adapt to FLARM
   speed_t autospeed;
   int     autobaud = 57600;
-  bool rc = false;
-  time_t t1;
   _errorinfo = "";
 
-  t1 = time(NULL);
+  QTime t1 = QTime::currentTime();
   while (true) {
     tcflush(portID, TCIOFLUSH); // Make sure the next ACK comes from the
                                 // following wb(SYN). And remove the
@@ -454,16 +457,14 @@ bool Flarm::AutoBaud()
     qDebug () << "bytes: " << bytes;
 
     if (bytes.contains (QRegExp("^\\$PFLAU|^\\$GPGGA|^\\$PGRMZ|^\\$GPRMC"))) {
-      rc = true;
       break;
     }
     else {
       // waiting 10 secs. for response
       // qDebug ("ret = %x", ret);
-      if (time(NULL) - t1 > 10) {
+      if (t1.secsTo (QTime::currentTime()) > 10) {
         _errorinfo = tr("No response from recorder within 10 seconds!\n");
-        rc = false;
-        break;
+        return false;
       }
     }
 
@@ -515,7 +516,7 @@ bool Flarm::AutoBaud()
     tcsetattr(portID, TCSANOW, &newTermEnv);
 
   }
-  return rc;
+  return true;
 }
 
 /**
@@ -529,7 +530,7 @@ bool Flarm::check4Device()
   QFile file;
   file.open (portID, QIODevice::ReadWrite);
 
-  time_t t1 = time(NULL);
+  QTime t1 = QTime::currentTime();
   while (true) {
     QString result = getFlarmData (file, "$PFLAC","ID");
     if (result.isEmpty()) {
@@ -539,7 +540,7 @@ bool Flarm::check4Device()
     else
       break;
     // waiting 10 secs. for response
-    if (time(NULL) - t1 > 10) {
+    if (t1.secsTo (QTime::currentTime()) > 10) {
       _errorinfo = tr("No response from flarm device within 10 seconds!\n");
       return false;
     }
