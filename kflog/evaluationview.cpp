@@ -16,7 +16,7 @@
 **
 ***********************************************************************/
 
-#ifdef QT4_6
+#ifdef QT_4.6
 #define M_BUTTON Qt::MidButton
 #else
 #define M_BUTTON Qt::MiddleButton

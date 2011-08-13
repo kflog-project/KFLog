@@ -379,14 +379,12 @@ void Igc3DFlightData::koord2dist(void)
 
 void Igc3DFlightData::load(Flight* flight)
 {
-  int linenum = 0;
   int fixlines = 0;
   QString r, s, t;
 
   float hh, mm, ss, lat, latmin, latsec, lon, lonmin, lonsec, hightlocal, gpshightlocal;
   char NS, AV, EW; //flags for North/South, A=Valid/V=navwarning, East/West
 
-  linenum = 0;
   FlightPoint cP;
 
   reset();

@@ -410,12 +410,6 @@ bool Flight::__isVisible() const
 void Flight::printMapElement(QPainter* targetPainter, bool isText)
 {
   // qDebug() << "Flight::printMapElement()";
-
-  FlightPoint* pointA;
-  FlightPoint* pointB;
-  FlightPoint* pointC;
-  QPoint curPointA, curPointB;
-
   if(optimized)
       optimizedTask.printMapElement(targetPainter, isText);
   else
@@ -426,7 +420,7 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
   int delta = 1;
   if(!glMapMatrix->isSwitchScale())  delta = 8;
 
-  curPointA = glMapMatrix->print(route.at(0)->projP);
+  QPoint curPointA = glMapMatrix->print(route.at(0)->projP);
   bBoxFlight.setLeft(curPointA.x());
   bBoxFlight.setTop(curPointA.y());
   bBoxFlight.setRight(curPointA.x());
@@ -439,14 +433,9 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
 
   for(int n = delta; n < route.count(); n = n + delta)
     {
-      pointA = route.at(n - delta);
-      pointB = route.at(n);
-      if(n + delta < route.count())
-          pointC = route.at(n + delta);
-      else
-          pointC = route.last();
+      FlightPoint* pointB = route.at(n);
 
-      curPointB = glMapMatrix->print(pointB->projP);
+      QPoint curPointB = glMapMatrix->print(pointB->projP);
 
       bBoxFlight.setLeft(qMin(curPointB.x(), bBoxFlight.left()));
       bBoxFlight.setTop(qMax(curPointB.y(), bBoxFlight.top()));
@@ -470,11 +459,7 @@ bool Flight::drawMapElement( QPainter* targetPainter )
       return false;
     }
 
-  FlightPoint* pointA;
-  FlightPoint* pointB;
-  FlightPoint* pointC;
-  QPoint curPointA, curPointB;
-  unsigned int nStop;
+  unsigned int nStop = 0;
 
   // First draw task.
   if(optimized)
@@ -494,7 +479,7 @@ bool Flight::drawMapElement( QPainter* targetPainter )
       delta = 8;
     }
 
-  curPointA = glMapMatrix->map(route.at(0)->projP);
+  QPoint curPointA = glMapMatrix->map(route.at(0)->projP);
   bBoxFlight.setLeft(curPointA.x());
   bBoxFlight.setTop(curPointA.y());
   bBoxFlight.setRight(curPointA.x());
@@ -512,15 +497,9 @@ bool Flight::drawMapElement( QPainter* targetPainter )
 
   for(unsigned int n = delta; n < nStop; n = n + delta)
     {
-      pointA = route.at(n - delta);
-      pointB = route.at(n);
+      FlightPoint* pointB = route.at(n);
 
-      if(n + delta < nStop)
-          pointC = route.at(n + delta);
-      else
-          pointC = route.at(nStop);
-
-      curPointB = glMapMatrix->map(pointB->projP);
+      QPoint curPointB = glMapMatrix->map(pointB->projP);
 
       bBoxFlight.setLeft(qMin(curPointB.x(), bBoxFlight.left()));
       bBoxFlight.setTop(qMax(curPointB.y(), bBoxFlight.top()));
@@ -675,6 +654,7 @@ QStringList Flight::getFlightValues(unsigned int start, unsigned int end)
                 s_height_pos += (float)route.at(n)->dH;
             else
                 s_height_neg += (float)route.at(n)->dH;
+           break;
          }
     }
 
@@ -1084,9 +1064,7 @@ bool Flight::optimizeTask()
   if( route.count() < 10)  return false;
 
   unsigned int curNumSteps = 0, temp, step = 0, minNumSteps = 400000000;
-  unsigned int numStepsA = 0, numStepsB = 0, minA = 0, minB = 0;
-
-  double length = 0;
+  unsigned int numStepsA = 0;
 
   for(unsigned int curStep = 1; curStep < 100; curStep++)
     {
@@ -1102,7 +1080,6 @@ bool Flight::optimizeTask()
 
       curNumSteps = 1;
       numStepsA = 1;
-      numStepsB = 1;
       temp = 1;
 
       /*
@@ -1125,16 +1102,11 @@ bool Flight::optimizeTask()
           curNumSteps += temp + loop;
           temp += loop;
         }
-      numStepsB = curNumSteps - numStepsA;
 
       if(minNumSteps > curNumSteps)
         {
           minNumSteps = curNumSteps;
           step = curStep;
-
-          minA = numStepsA;
-          minB = numStepsB;
-          length = ( curStep - 1 ) * 6;
         }
     }
 

@@ -288,8 +288,6 @@ void DataView::slotWPSelected(const QUrl &link)
   extern MapContents *_globalMapContents;
   BaseFlightElement* e = _globalMapContents->getFlight();
 
-#warning "Check, if URL context is right ported here!"
-
   QString url = link.toString();
 
   // this seems to happen sometimes, prevent crash
