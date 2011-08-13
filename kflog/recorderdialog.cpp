@@ -214,15 +214,17 @@ void RecorderDialog::__createRecorderPage()
   QGridLayout* sGridLayout = new QGridLayout;
   sGridLayout->setSpacing(10);
 
-  sGridLayout->addWidget( new QLabel( tr("Type:")), 0, 0 );
-  sGridLayout->addWidget( selectType, 0, 1 );
-  sGridLayout->addWidget( selectPortLabel, 1, 0 );
-  sGridLayout->addWidget( selectPort, 1, 1 );
-  sGridLayout->addWidget( selectSpeedLabel, 2, 0 );
-  sGridLayout->addWidget( selectSpeed, 2, 1 );
-  sGridLayout->addWidget( selectURLLabel, 2, 0 );
-  sGridLayout->addWidget( selectURL, 2, 1 );
-  sGridLayout->setRowMinimumHeight( 3, 5 );
+  int row = 0;
+  int col = 0;
+  sGridLayout->addWidget( new QLabel( tr("Type:")), row, col );
+  sGridLayout->addWidget( selectType,               row, ++col );
+  sGridLayout->addWidget( selectPortLabel,          ++row, col=0 );
+  sGridLayout->addWidget( selectPort,               row, ++col );
+  sGridLayout->addWidget( selectURLLabel,           ++row, col=0 );
+  sGridLayout->addWidget( selectURL,                row, ++col );
+  sGridLayout->addWidget( selectSpeedLabel,         ++row, col=0 );
+  sGridLayout->addWidget( selectSpeed,              row, ++col );
+  sGridLayout->setRowMinimumHeight(                 3, 5 );
   sGridLayout->addWidget( cmdConnect, 4, 0, 1, 4, Qt::AlignLeft );
 
   sGroup->setLayout( sGridLayout );
@@ -255,6 +257,10 @@ void RecorderDialog::__createRecorderPage()
   pltName = new QLineEdit;
   pltName->setEnabled(false);
 
+  lblCoPltName = new QLabel(tr("Copilot Name:"));
+  coPltName = new QLineEdit;
+  coPltName->setEnabled(false);
+
   lblGldType = new QLabel(tr("Glider Type:"));
   gldType = new QLineEdit;
   gldType->setEnabled(false);
@@ -276,24 +282,26 @@ void RecorderDialog::__createRecorderPage()
 
   QGridLayout* iGridLayout = new QGridLayout;
   iGridLayout->setSpacing(10);
-  iGridLayout->addWidget( lblApiID, 0, 0 );
-  iGridLayout->addWidget( apiID, 0, 1 );
-  iGridLayout->addWidget( lblPltName, 0, 2 );
-  iGridLayout->addWidget( pltName, 0, 3 );
-  iGridLayout->addWidget( lblSerID, 1, 0 );
-  iGridLayout->addWidget( serID, 1, 1 );
-  iGridLayout->addWidget( lblGldType, 1, 2 );
-  iGridLayout->addWidget( gldType, 1, 3 );
-  iGridLayout->addWidget( lblRecType, 2, 0 );
-  iGridLayout->addWidget( recType, 2, 1 );
-  iGridLayout->addWidget( lblGldID, 2, 2 );
-  iGridLayout->addWidget( gldID, 2, 3 );
-  iGridLayout->addWidget( lblCompID, 3, 2 );
-  iGridLayout->addWidget( compID, 3, 3 );
-  iGridLayout->setRowMinimumHeight( 4, 5 );
+  iGridLayout->addWidget( lblApiID,     row=0, col=0 );
+  iGridLayout->addWidget( apiID,        row, ++col );
+  iGridLayout->addWidget( lblPltName,   row, ++col );
+  iGridLayout->addWidget( pltName,      row, ++col );
+  iGridLayout->addWidget( lblSerID,     ++row, col=0 );
+  iGridLayout->addWidget( serID,        row, ++col );
+  iGridLayout->addWidget( lblCoPltName, row, ++col );
+  iGridLayout->addWidget( coPltName,    row, ++col );
+  iGridLayout->addWidget( lblRecType,   ++row, col=0 );
+  iGridLayout->addWidget( recType,      row, ++col );
+  iGridLayout->addWidget( lblGldID,     row, ++col );
+  iGridLayout->addWidget( gldID,        row, ++col );
+  iGridLayout->addWidget( lblGldType,   ++row, col=2 );
+  iGridLayout->addWidget( gldType,      row, ++col );
+  iGridLayout->addWidget( lblCompID,    ++row, col=2 );
+  iGridLayout->addWidget( compID,       row, ++col );
+  iGridLayout->setRowMinimumHeight(     row, ++col );
   iGridLayout->addWidget( cmdUploadBasicConfig, 5, 0, 1, 4, Qt::AlignLeft );
-  iGridLayout->setColumnStretch( 1, 5 );
-  iGridLayout->setColumnStretch( 3, 5 );
+  iGridLayout->setColumnStretch(      1, 5 );
+  iGridLayout->setColumnStretch(      3, 5 );
 
   iGroup->setLayout( iGridLayout );
 
@@ -434,6 +442,9 @@ void RecorderDialog::__setRecorderCapabilities()
   pltName->setVisible(cap.supDspPilotName);
   lblPltName->setVisible(cap.supDspPilotName);
 
+  coPltName->setVisible(cap.supDspCoPilotName);
+  lblCoPltName->setVisible(cap.supDspCoPilotName);
+
   gldType->setVisible(cap.supDspGliderType);
   lblGldType->setVisible(cap.supDspGliderType);
 
@@ -443,9 +454,10 @@ void RecorderDialog::__setRecorderCapabilities()
   compID->setVisible(cap.supDspGliderID);
   lblCompID->setVisible(cap.supDspGliderID);
 
-  bool edit = cap.supEditGliderID | cap.supEditGliderType | cap.supEditPilotName;
+  bool edit = cap.supEditGliderID | cap.supEditGliderType | cap.supEditPilotName | cap.supEditCoPilotName;
 
   pltName->setEnabled( edit );
+  coPltName->setEnabled( edit );
   gldType->setEnabled( edit );
   gldID->setEnabled( edit );
   compID->setEnabled( edit );
@@ -647,7 +659,8 @@ void RecorderDialog::__createDeclarationPage()
   gliderGLayout->addLayout( formLayout, 0, 0 );
 
   formLayout = new QFormLayout;
-  formLayout->addRow( tr("Copilot:"), copilotName );
+  if (!activeRecorder || activeRecorder->capabilities().supDspCoPilotName)
+    formLayout->addRow( tr("Copilot:"), copilotName );
   formLayout->addRow( tr("Glider Type:"), gliderType );
   formLayout->addRow( tr("Competition Class:"), compClass );
   gliderGLayout->addLayout( formLayout, 0, 1 );
@@ -1521,6 +1534,7 @@ bool RecorderDialog::__openLib( const QString& libN )
   serID->setText("");
   recType->setText("");
   pltName->setText("");
+  coPltName->setText("");
   gldType->setText("");
   gldID->setText("");
   compID->setText("");
@@ -2057,6 +2071,8 @@ void RecorderDialog::slotReadDatabase()
         recType->setText(basicdata.recorderType);
       if (cap.supDspPilotName)
         pltName->setText(basicdata.pilotName.trimmed());
+      if (cap.supDspCoPilotName)
+        coPltName->setText(basicdata.copilotName.trimmed());
       if (cap.supDspGliderType)
         gldType->setText(basicdata.gliderType.trimmed());
       if (cap.supDspGliderID)
@@ -2193,10 +2209,12 @@ void RecorderDialog::slotReadDatabase()
 
   if (cap.supEditGliderID     ||
       cap.supEditGliderType   ||
-      cap.supEditPilotName)
+      cap.supEditPilotName    ||
+      cap.supEditCoPilotName)
     {
       cmdUploadBasicConfig->setEnabled(true);
       pltName->setEnabled(true);
+      coPltName->setEnabled(true);
       gldType->setEnabled(true);
       gldID->setEnabled(true);
     }
@@ -2213,6 +2231,7 @@ void RecorderDialog::slotWriteConfig()
     }
 
   basicdata.pilotName = pltName->text();
+  basicdata.copilotName = coPltName->text();
   basicdata.gliderType = gldType->text();
   basicdata.gliderID = gldID->text();
   basicdata.competitionID = compID->text();
