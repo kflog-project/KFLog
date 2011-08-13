@@ -1,6 +1,8 @@
+###############################################################################
 # KFLog4 qmake project file
 #
 # $Id$
+###############################################################################
 
 QMAKE_LFLAGS += -rdynamic
 
@@ -10,6 +12,11 @@ QT += network \
 CONFIG += qt \
     warn_on \
     debug
+    
+# additional define for Qt4.6
+contains(QT_VERSION, ^4\\.[6]\\..*) {
+    DEFINES += QT_4.6
+}
     
 TEMPLATE = app
 
