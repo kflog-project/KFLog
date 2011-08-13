@@ -111,6 +111,7 @@ public:
     bool supExportDeclaration;//supports export of declaration?
     bool supUlDeclaration;   //supports uploading of declarations?
     bool supDspPilotName;    //supports display of pilot name
+    bool supDspCoPilotName;  //supports display of pilot name
     bool supDspRecorderType; //supports display of logger type
     bool supDspSerialNumber; //supports display of serial number
     bool supDspGliderID;     //supports display of glider ID
@@ -119,6 +120,7 @@ public:
     bool supAutoSpeed;       //supports automatic transfer speed detection
 
     bool supEditPilotName;   //supports changing the pilot name
+    bool supEditCoPilotName; //supports changing the copilot name
     bool supEditGliderID;    //supports changing the glider ID
     bool supEditGliderType;  //supports changing the glider type
     bool supEditGliderPolar; //supports editing the glider polar
@@ -134,6 +136,7 @@ public:
     QString serialNumber;
     QString recorderType;
     QString pilotName;
+    QString copilotName;
     QString gliderType;
     QString gliderID;
     QString competitionID;

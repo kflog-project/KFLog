@@ -62,6 +62,7 @@ FlightRecorderPluginBase::FlightRecorderPluginBase( QObject *parent ) :
   _capabilities.supExportDeclaration = false;//supports export of declaration?
   _capabilities.supUlDeclaration = false;   //supports uploading of declarations?
   _capabilities.supDspPilotName = false;    //supports display of pilot name
+  _capabilities.supDspCoPilotName = false;  //supports display of copilot name
   _capabilities.supDspRecorderType = false; //supports display of recorder type
   _capabilities.supDspSerialNumber = false; //supports display of serial number
   _capabilities.supDspGliderID = false;     //supports display of glider ID
@@ -74,6 +75,7 @@ FlightRecorderPluginBase::FlightRecorderPluginBase( QObject *parent ) :
   _capabilities.supEditGliderPolar = false; //supports editing the glider polar
   _capabilities.supEditUnits = false;       //supports changing units (speed, altitude, distance, ...)
   _capabilities.supEditPilotName = false;   //supports changing the pilot name
+  _capabilities.supEditCoPilotName = false; //supports changing the copilot name
   _capabilities.supEditGoalAlt = false;     //supports changing arrival altitude
   _capabilities.supEditArvRadius = false;   //supports changing arrival radius
   _capabilities.supEditAudio = false;       //supports changing vario audio settings
