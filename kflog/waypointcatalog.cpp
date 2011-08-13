@@ -16,6 +16,12 @@
 **
 ***********************************************************************/
 
+#ifdef QT_4.6
+#define DATA_STREAM QDataStream::Qt_4_6
+#else
+#define DATA_STREAM QDataStream::Qt_4_7
+#endif
+
 #include <cmath>
 #include <unistd.h>
 
@@ -383,7 +389,7 @@ bool WaypointCatalog::writeBinary()
       QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
       QDataStream out(& f);
-      out.setVersion( QDataStream::Qt_4_7 );
+      out.setVersion( DATA_STREAM );
 
       //write file header
       out << quint32( KFLOG_FILE_MAGIC );
@@ -1028,7 +1034,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
         }
       else
         {
-          in.setVersion( QDataStream::Qt_4_7 );
+          in.setVersion( DATA_STREAM );
           in >> wpListSize;
         }
 
