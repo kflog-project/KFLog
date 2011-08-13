@@ -1064,7 +1064,6 @@ bool Flight::optimizeTask()
   if( route.count() < 10)  return false;
 
   unsigned int curNumSteps = 0, temp, step = 0, minNumSteps = 400000000;
-  unsigned int numStepsA = 0;
 
   for(unsigned int curStep = 1; curStep < 100; curStep++)
     {
@@ -1079,7 +1078,6 @@ bool Flight::optimizeTask()
         }
 
       curNumSteps = 1;
-      numStepsA = 1;
       temp = 1;
 
       /*
@@ -1091,7 +1089,6 @@ bool Flight::optimizeTask()
           temp += loop;
         }
 
-      numStepsA = curNumSteps;
       temp = 1;
 
       /*
