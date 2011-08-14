@@ -30,6 +30,11 @@ DATE=`date +'%a, %d %b %Y %H:%M:%S %z'`
 # adapt install path to your needs if necessary
 INSTALL_ROOT = /opt/kflog
 
+# dh_make tool version 0.58 requires option '-r old' to get working right
+ifeq "$(shell dh_make -v | grep -c 'version 0\.58')" "1"
+	DH_MAKE_OPT="-r old"
+endif
+
 usage:
 	@echo ""
 	@echo "KFLog build environment for Linux/X11 and Qt4.7"
@@ -84,7 +89,7 @@ dpkg_prepare:
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/kflog $(KFLOG_DEB)/kflog
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/dpkg $(KFLOG_DEB)/dpkg
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/Makefile.qmake $(KFLOG_DEB)/Makefile.qmake
-	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/kflog.pro $(KFLOG_DEB)/kflog.pro
+	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/tr-r oldunk/kflog.pro $(KFLOG_DEB)/kflog.pro
 
 # This target creates the debian package files. It is called via another makefile
 # due to the VERSION macro. The special letters apostroph and quotation mark
@@ -93,7 +98,7 @@ dpkg_make:
 	cd $(KFLOG_DEB); \
 	export DEBEMAIL='hoeth@linta.de'; \
 	export DEBFULLNAME='Hendrik Hoeth'; \
-	echo '\n' | dh_make --packagename $(KFLOG_REL) -c GPL -s --native -r old
+	echo '\n' | dh_make --packagename $(KFLOG_REL) -c GPL -s --native $(DH_MAKE_OPT)
 	cd $(KFLOG_DEB)/dpkg/control; \
 	cp control rules prerm postinst ../../debian/; \
 	sed -e "s/__VERSION__/$(VERSION)/g" -e "s/__DATE__/$(DATE)/g" copyright > ../../debian/copyright; \
