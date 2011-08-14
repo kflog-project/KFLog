@@ -59,7 +59,8 @@ resetdate:
 .PHONY : qmake
 qmake:
 	qmake -Wall -nocache kflog.pro
-  dpkg_prepare
+	dpkg_prepare
+  
 install_test: all
 	make INSTALL_ROOT=`pwd`/release -f Makefile install
 	
