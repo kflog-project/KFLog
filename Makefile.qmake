@@ -90,7 +90,7 @@ dpkg_prepare:
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/kflog $(KFLOG_DEB)/kflog
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/dpkg $(KFLOG_DEB)/dpkg
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/Makefile.qmake $(KFLOG_DEB)/Makefile.qmake
-	svn export --quiet --focce https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/kflog.pro $(KFLOG_DEB)/kflog.pro
+	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/kflog.pro $(KFLOG_DEB)/kflog.pro
 
 # This target creates the debian package files. It is called via another makefile
 # due to the VERSION macro. The special letters apostroph and quotation mark
