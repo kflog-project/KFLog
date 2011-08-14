@@ -32,7 +32,7 @@ INSTALL_ROOT = /opt/kflog
 
 # dh_make tool version 0.58 requires option '-r old' to get working right
 ifeq "$(shell dh_make -v | grep -c 'version 0\.58')" "1"
-	DH_MAKE_OPT="-r old"
+	DH_MAKE_OPT=-r old
 endif
 
 usage:
@@ -59,7 +59,7 @@ resetdate:
 .PHONY : qmake
 qmake:
 	qmake -Wall -nocache kflog.pro
-  
+  dpkg_prepare
 install_test: all
 	make INSTALL_ROOT=`pwd`/release -f Makefile install
 	
@@ -83,7 +83,7 @@ dpkg:
 
 # This target prepares the Debian build. A fresh copy of KFLog is cheched out
 # from subversion. Therefore you need subversion access!
-dpkg_prepare:
+dpkg_prepare:dpkg_prepare
 	rm -fr $(KFLOG_DEB_ROOT)/*$(VERSION)*
 	mkdir -p $(KFLOG_DEB)/kflog $(KFLOG_DEB)/dpkg
 	svn export --quiet --force https://svn.kflog.org/svn/repos/kflog2/qt4/trunk/kflog $(KFLOG_DEB)/kflog
