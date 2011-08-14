@@ -82,7 +82,7 @@ dpkg:
 	@echo "===== Building a Debian package for KFLog $(VERSION) ====="
 	@$(MAKE) -f Makefile.qmake VERSION=$(VERSION) dpkg_prepare dpkg_make dpkg_build
 
-# This target prepares the Debian build. A fresh copydpkg_prepare of KFLog is cheched out
+# This target prepares the Debian build. A fresh copy of KFLog is cheched out
 # from subversion. Therefore you need subversion access!
 dpkg_prepare:
 	rm -fr $(KFLOG_DEB_ROOT)/*$(VERSION)*
