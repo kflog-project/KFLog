@@ -142,11 +142,11 @@ private:
   bool AutoBaud();
   ushort calcCheckSum (int pos, const QString& sentence);
   bool checkCheckSum (int pos, const QString& sentence);
-  void sendStreamComment (QTextStream& stream, const QString& comment, bool isFile);
-  void sendStreamData (QTextStream& stream, const QString& sentence, bool isFile);
-  int sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<Waypoint*>* wpList, bool isFile);
+  void sendStreamComment (QTextStream& stream, const QString& comment);
+  void sendStreamData (QTextStream& stream, const QString& sentence);
+  int sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<Waypoint*>* wpList);
   QString getFlarmData(QFile&, const QString&, const QString&);
-  bool putFlarmData(QFile&, const QString&, const QString&, const QString&);
+  bool putFlarmData(QFile&, const QString& cmd, const QString& key, const QString& data1, const QString& data2=NULL, const QString& data3=NULL);
   QString lat2flarm (int);
   QString lon2flarm (int);
 
