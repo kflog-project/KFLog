@@ -117,7 +117,7 @@ Flarm::Flarm( QObject *parent ) : FlightRecorderPluginBase( parent )
   _capabilities.supExportDeclaration = true; //supports export of declaration?
   _capabilities.supUlDeclaration = true;     //supports uploading of declarations?
   _capabilities.supDspSerialNumber = true;
-  _capabilities.supDspRecorderType = false;
+  _capabilities.supDspRecorderType = true;
   _capabilities.supDspPilotName = true;
   _capabilities.supDspCoPilotName = true;
   _capabilities.supDspGliderType = true;
@@ -156,12 +156,36 @@ int Flarm::getFlightDir( QList<FRDirEntry *>* dirList )
   return FR_NOTSUPPORTED;
 }
 
+/**
+  * Warning: this method must be adapted to future Flarm versions.
+  * The Flarm documentation does not recommend to parse this information.
+  * However, this is the only means to read serial # and device type
+  */
+QString Flarm::getFlarmDebug (QFile& file) {
+  QString str = "$PFLAS,R*";
+  ushort cs = calcCheckSum (str.length(), str);
+  QString ccs = QString ("%1").arg (cs, 2, 16, QChar('0'));
+  QString sentence = str + ccs + ENDL;
+  qDebug () << "getFlarmDebug cmd: " << sentence << endl;
+  file.write (sentence.toLatin1().constData(), sentence.length());
+  file.flush();
+    
+  for (int i=0; i<10;i++){
+    QString bytes = file.readLine();
+    qDebug () << "debug: " << bytes;
+    if (bytes.contains ("Build"))
+      return bytes;
+  }
+  return "";
+}
+
+
 QString Flarm::getFlarmData (QFile& file, const QString& cmd, const QString& key) {
   QString str = cmd + ",R," + key + "*";
   ushort cs = calcCheckSum (str.length(), str);
   QString ccs = QString ("%1").arg (cs, 2, 16, QChar('0'));
   QString sentence = str + ccs + ENDL;
-  qDebug () << sentence << endl;
+  qDebug () << "getFlarmData cmd: " << sentence << endl;
   file.write (sentence.toLatin1().constData(), sentence.length());
   file.flush();
     
@@ -176,7 +200,7 @@ QString Flarm::getFlarmData (QFile& file, const QString& cmd, const QString& key
     qDebug () << "ignored bytes: " << bytes << endl;
     bytes = file.readLine();
   }
-  // qDebug () << "bytes: " << bytes;
+  qDebug () << "answer: " << bytes;
 
   QStringList list = bytes.split("*");
   QString answer = list[0];
@@ -200,7 +224,9 @@ QString Flarm::getFlarmData (QFile& file, const QString& cmd, const QString& key
 }
 
 bool Flarm::putFlarmData (QFile& file, const QString& cmd, const QString& key, const QString& data1, const QString& data2, const QString& data3) {
-  QString str = cmd + ",S," + key + "," + data1;
+  QString str = cmd + ",S," + key;
+  if (data1 != NULL)
+    str += "," + data1;
   if (data2 != NULL)
     str += "," + data2; 
   if (data3 != NULL)
@@ -268,7 +294,11 @@ int Flarm::getBasicData(FR_BasicData& data)
   data.gliderType    = getFlarmData (file, "$PFLAC","GLIDERTYPE");
   data.gliderID      = getFlarmData (file, "$PFLAC","GLIDERID");
   data.competitionID = getFlarmData (file, "$PFLAC","COMPID");
-  data.serialNumber  = getFlarmData (file, "$PFLAC","ID");
+//  data.serialNumber  = getFlarmData (file, "$PFLAC","ID");
+  
+  QStringList debug  = getFlarmDebug (file).split (",");
+  data.recorderType  = debug[0];
+  data.serialNumber  = debug[1];
 
   return FR_OK;
 }
@@ -532,22 +562,19 @@ bool Flarm::check4Device()
   QFile file;
   file.open (portID, QIODevice::ReadWrite);
 
-  QTime t1 = QTime::currentTime();
-  while (true) {
-    QString result = getFlarmData (file, "$PFLAC","ID");
-    if (result.isEmpty()) {
-      _errorinfo = tr("No response from flarm device!\n");
-      return false;
-    }
-    else
-      break;
-    // waiting 10 secs. for response
-    if (t1.secsTo (QTime::currentTime()) > 10) {
-      _errorinfo = tr("No response from flarm device within 10 seconds!\n");
-      return false;
-    }
+    
+  QString result = getFlarmData (file, "$PFLAE","");
+  if (result.isEmpty()) {
+    _errorinfo = tr("No response from flarm device!\n");
+    return false;
   }
-  return true;
+  if (result.compare ("0") == 0)
+    return true;
+  else {
+    _errorinfo = tr("device failure");
+    qDebug () << "device failure: " << result << endl;
+    return false;
+  }
 }
 
 int Flarm::closeRecorder()
@@ -611,8 +638,8 @@ int Flarm::writeDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList)
     QFile file;
     file.open (portID, QIODevice::ReadWrite);
 
-    // activated competition mode
-    if (!putFlarmData (file, "$PFLAC", "CFLAGS", "2"))
+    // deactivated competition mode
+    if (!putFlarmData (file, "$PFLAC", "CFLAGS", "0"))
       return FR_ERROR;
 
     // deaktivated Stealth mode"
@@ -716,8 +743,8 @@ int Flarm::sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<W
     sendStreamComment (stream, "FLARM configuration file has been created by KFlog");
     sendStreamComment (stream, timestamp);
 
-    sendStreamComment (stream, "activated competition mode");
-    sendStreamData (stream, "$PFLAC,S,CFLAGS,2");
+    sendStreamComment (stream, "deactivated competition mode");
+    sendStreamData (stream, "$PFLAC,S,CFLAGS,0");
 
     sendStreamComment (stream, "deaktivated Stealth mode");
     sendStreamData (stream, "$PFLAC,S,PRIV,0");
