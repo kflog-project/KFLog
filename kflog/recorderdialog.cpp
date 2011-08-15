@@ -239,6 +239,13 @@ void RecorderDialog::__createRecorderPage()
   apiID->setAutoFillBackground( true );
   apiID->setEnabled(false);
 
+  lblDvcID = new QLabel(tr("Device ID:"));
+  dvcID = new QLabel;
+  dvcID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+  dvcID->setBackgroundRole( QPalette::Light );
+  dvcID->setAutoFillBackground( true );
+  dvcID->setEnabled(false);
+
   lblSerID = new QLabel(tr("Serial-No.:"));
   serID = new QLabel(tr("No recorder connected"));
   serID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
@@ -286,16 +293,22 @@ void RecorderDialog::__createRecorderPage()
   iGridLayout->addWidget( apiID,        row, ++col );
   iGridLayout->addWidget( lblPltName,   row, ++col );
   iGridLayout->addWidget( pltName,      row, ++col );
+
   iGridLayout->addWidget( lblSerID,     ++row, col=0 );
   iGridLayout->addWidget( serID,        row, ++col );
   iGridLayout->addWidget( lblCoPltName, row, ++col );
   iGridLayout->addWidget( coPltName,    row, ++col );
+
   iGridLayout->addWidget( lblRecType,   ++row, col=0 );
   iGridLayout->addWidget( recType,      row, ++col );
   iGridLayout->addWidget( lblGldID,     row, ++col );
   iGridLayout->addWidget( gldID,        row, ++col );
-  iGridLayout->addWidget( lblGldType,   ++row, col=2 );
+  
+  iGridLayout->addWidget( lblDvcID,     ++row, col=0);
+  iGridLayout->addWidget( dvcID,        row, ++col );
+  iGridLayout->addWidget( lblGldType,   row, ++col );
   iGridLayout->addWidget( gldType,      row, ++col );
+
   iGridLayout->addWidget( lblCompID,    ++row, col=2 );
   iGridLayout->addWidget( compID,       row, ++col );
   iGridLayout->setRowMinimumHeight(     row, ++col );
@@ -435,6 +448,9 @@ void RecorderDialog::__setRecorderCapabilities()
 
   serID->setVisible(cap.supDspSerialNumber);
   lblSerID->setVisible(cap.supDspSerialNumber);
+
+  dvcID->setVisible(cap.supDspDvcID);
+  lblDvcID->setVisible(cap.supDspDvcID);
 
   recType->setVisible(cap.supDspRecorderType);
   lblRecType->setVisible(cap.supDspRecorderType);
@@ -1531,6 +1547,7 @@ bool RecorderDialog::__openLib( const QString& libN )
 
   libName = "";
   apiID->setText("");
+  dvcID->setText("");
   serID->setText("");
   recType->setText("");
   pltName->setText("");
@@ -2067,6 +2084,8 @@ void RecorderDialog::slotReadDatabase()
     {
       if (cap.supDspSerialNumber)
         serID->setText(basicdata.serialNumber);
+      if (cap.supDspDvcID)
+        dvcID->setText(basicdata.dvcID);
       if (cap.supDspRecorderType)
         recType->setText(basicdata.recorderType);
       if (cap.supDspPilotName)

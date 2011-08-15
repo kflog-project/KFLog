@@ -223,6 +223,8 @@ class RecorderDialog : public QDialog
   /** */
   QLabel* serID;
   QLabel* lblSerID;
+  QLabel* dvcID;
+  QLabel* lblDvcID;
   QLabel* apiID;
   QLabel* lblApiID;
   QLabel* recType;
