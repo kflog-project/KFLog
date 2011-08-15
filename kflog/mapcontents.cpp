@@ -491,7 +491,7 @@ bool MapContents::__readTerrainFile( const int fileSecID,
       if( isoline.size() < 3)
         {
           // ignore to small isolines
-          qWarning( "Isoline Tile=%d, elevation=%dm has to less points!",
+          qWarning( "Isoline Tile=%d, elevation=%dm has too less points!",
                      loadSecID, elevation );
           continue;
         }
