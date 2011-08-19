@@ -1,5 +1,9 @@
 $Id$
 
+2011-08-19 Axel Pauli <axel@kflog.org>
+
+  * KFLog 4.2.0 released.
+
 2011-08-04 Eggert Ehmke <eggert.ehmke@berlin.de>
 
   * Added support for FLARM flarmcfg.txt file
