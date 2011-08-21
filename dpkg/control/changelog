@@ -2,6 +2,8 @@ kflog (4.2.0) unstable; urgency=low
 
   * Added support for FLARM flarmcfg.txt file by Eggert Ehmke
 
+  * Added support to upload declarations to FLARM device via serial port
+
   * An error message box is opened to the user, if a KFLog XML waypoint file
     could not be parsed successfully durin read in.
 
