@@ -8,6 +8,8 @@ $Id$
 
   * Added support for FLARM flarmcfg.txt file
 
+  * Added support to upload declaration to FLARM device via serial port
+
 2011-08-04 Axel Pauli <axel@kflog.org>
 
   * An error message box is opened to the user, if a KFLog XML waypoint file
