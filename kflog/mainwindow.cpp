@@ -1036,10 +1036,14 @@ void MainWindow::saveOptions()
       KFLogConfig::LastUsed && waypointTreeView->getCurrentCatalog() != static_cast<WaypointCatalog *> (0) )
     {
       // Only write the path, if a waypoint-catalog is opened.
-      // Otherwise KFLog crashes on a clean installation.
-      //qDebug("saving catalog name");
       _settings.setValue( "/Waypoints/DefaultCatalogName",
                           waypointTreeView->getCurrentCatalog()->path );
+    }
+  else
+    {
+      // Reset the path, if no catalog is opened. Otherwise the next startup
+      // tries to open the last used catalog.
+      _settings.setValue( "/Waypoints/DefaultCatalogName", "" );
     }
 }
 
