@@ -152,7 +152,7 @@ void WaypointCatalog::setCenterPoint( const WGSPoint& center )
 }
 
 /** read a catalog from file */
-bool WaypointCatalog::read(const QString& catalog)
+bool WaypointCatalog::readXml(const QString& catalog)
 {
   QFile file(catalog);
 
@@ -191,7 +191,7 @@ bool WaypointCatalog::read(const QString& catalog)
       QApplication::restoreOverrideCursor();
 
       qWarning() << "WaypointCatalog::readXml(): XML parse error in File="
-    		     << catalog
+    		 << catalog
                  << "Error=" << errorMsg
                  << "Line=" << errorLine
                  << "Column=" << errorColumn;
@@ -281,7 +281,7 @@ bool WaypointCatalog::read(const QString& catalog)
 }
 
 /** No descriptions */
-bool WaypointCatalog::write()
+bool WaypointCatalog::writeXml()
 {
   bool ok = true;
   QDomDocument doc("KFLogWaypoint");
@@ -659,7 +659,7 @@ bool WaypointCatalog::save(bool alwaysAskName)
     }
 
   if (fName.right(8) == ".kflogwp")
-    return write();
+    return writeXml();
   else if (fName.right(4) == ".txt")
     return writeFilserTXT (fName);
   else if (fName.right(4) == ".da4")
@@ -675,7 +675,7 @@ bool WaypointCatalog::save(bool alwaysAskName)
 bool WaypointCatalog::load(const QString& catalog)
 {
   if (catalog.right(8).toLower() == ".kflogwp")
-    return read(catalog);
+    return readXml(catalog);
   else if (catalog.right(12).toLower() == "welt2000.txt")
     return readWelt2000(catalog);
   else if (catalog.right(4).toLower() == ".txt")
@@ -684,6 +684,8 @@ bool WaypointCatalog::load(const QString& catalog)
     return readFilserDA4(catalog);
   else if (catalog.right(4).toLower() == ".cup")
     return readCup(catalog);
+  else if (catalog.right(4).toLower() == ".dat")
+    return readDat(catalog);
   else
     return readBinary(catalog);
 }
@@ -1374,6 +1376,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
             {
               qWarning("CUP Read (%d): Error reading elevation unit '%s'.", lineNo,
                        list[5].toLatin1().data());
+              delete w;
               continue;
             }
 
@@ -1385,6 +1388,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
             {
               qWarning("CUP Read (%d): Error reading elevation value '%s'.", lineNo,
                        list[5].left(list[5].length() - unit.length()).toLatin1().data());
+              delete w;
               continue;
             }
 
@@ -1400,6 +1404,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
             {
               qWarning("CUP Read (%d): Unknown elevation value '%s'.", lineNo,
                        unit.toLatin1().data());
+              delete w;
               continue;
             }
         }
@@ -1463,7 +1468,6 @@ bool WaypointCatalog::readCup (const QString& catalog)
         {
           w->comment += list[10].replace( QRegExp("\""), "" );
         }
-
 
       // We do check, if the waypoint name is already in use because cup
       // short names are not always unique.
@@ -2215,4 +2219,346 @@ QList<QString> WaypointCatalog::splitCupLine( QString& line, bool &ok )
     }
 
   return list;
+}
+
+/** Reads a Cambridge Aero Instruments turnpoint file. */
+bool WaypointCatalog::readDat(const QString &catalog)
+{
+  // Found a file format description here:
+  // http://www.gregorie.org/gliding/pna/cai_format.html
+
+  qDebug() << "WaypointCatalog::readDatFile" << catalog;
+
+  QFile file(catalog);
+
+  if(!file.exists())
+    {
+      QMessageBox::critical( _mainWindow,
+                             QObject::tr("Error occurred!"),
+                             "<html>" + QObject::tr("The selected file<BR><B>%1</B><BR>does not exist!").arg(catalog) + "</html>",
+                             QMessageBox::Ok );
+      return false;
+    }
+
+  if(file.size() == 0)
+    {
+      QMessageBox::warning( _mainWindow,
+                            QObject::tr("Error occurred!"),
+                            "<html>" + QObject::tr("The selected file<BR><B>%1</B><BR>is empty!").arg(catalog) + "</html>",
+                            QMessageBox::Ok );
+      return false;
+    }
+
+  if (! file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+      QMessageBox::warning( _mainWindow,
+                            QObject::tr("Error occurred!"),
+                            "<html>" + QObject::tr("The selected file<BR><B>%1</B><BR>is not readable!").arg(catalog) + "</html>",
+                            QMessageBox::Ok );
+
+      return false;
+    }
+
+  QSet<QString> names;
+
+  for( int i = 0; i < wpList.size(); i++ )
+    {
+      // Store all used names of the waypoint list in a set.
+      names.insert( wpList.at(i)->name );
+    }
+
+  int lineNo = 0;
+
+  QTextStream in(&file);
+  in.setCodec( "ISO 8859-15" );
+
+  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+
+  while (!in.atEnd())
+    {
+      QString line = in.readLine().trimmed();
+
+      lineNo++;
+
+      if( line.size() == 0 || line.startsWith("*") )
+        {
+          // Filter out empty and comment lines
+          continue;
+        }
+
+      bool ok;
+      QStringList list = line.split( "," );
+
+      /*
+      Example turnpoint
+      0 ,1         ,2          ,3   ,4,5           ,6
+      31,57:04.213N,002:47.239W,450F,T,AB1 AboynBrg,RdBroverRDee
+      */
+
+      // Lines defining a turnpoint contain 7 fields, separated by commas.
+      // The final field is terminated by the newline. Field 7 is optional.
+      if( list.size() < 6 )
+        {
+          qWarning() << "Line" << lineNo
+                     << "is ignored, contains too less elements!";
+          continue;
+        }
+
+      Waypoint *w = new Waypoint;
+      w->importance = 0; // low
+      w->country = _settings.value( "/Homesite/Country", "" ).toString();
+      w->comment = QObject::tr("WP No: ") + list[0];
+
+      if( list[1].size() < 9 )
+        {
+          qWarning("DAT Read (%d): Format error latitude", lineNo);
+          continue;
+        }
+
+      // latitude as 57:04.213N|S or 52:08:39N|S
+      double degree = list[1].left(2).toDouble(&ok);
+
+      if( ! ok )
+        {
+          qWarning("DAT Read (%d): Format error latitude degree", lineNo);
+          delete w;
+          continue;
+        }
+
+      double minutes = 0.0;
+      double seconds = 0.0;
+
+      if( list[1][5] == QChar('.') )
+        {
+          minutes = list[3].mid(3, 6).toDouble(&ok);
+        }
+      else if( list[1][5] == QChar(':') )
+        {
+          minutes = list[1].mid(3, 2).toDouble(&ok);
+
+          if( ok )
+            {
+              seconds = list[1].mid(6, 2).toDouble(&ok);
+            }
+        }
+
+      if( ! ok )
+        {
+          qWarning("DAT Read (%d): Format error latitude minutes/seconds", lineNo);
+          delete w;
+          continue;
+        }
+
+      double latTmp = (degree * 600000.) + (10000. * (minutes + seconds / 60. ));
+
+      if( list[1].right(1).toUpper() == "S" )
+        {
+          latTmp = -latTmp;
+        }
+
+      // longitude as 002:47.239E|W or 012:40:06E|W
+      if( list[2].size() < 10 )
+        {
+          qWarning("DAT Read (%d): Format error longitude", lineNo);
+          continue;
+        }
+
+      degree = list[2].left(3).toDouble(&ok);
+
+      if( ! ok )
+        {
+          qWarning("DAT Read (%d): Format error longitude degree", lineNo);
+          delete w;
+          continue;
+        }
+
+      minutes = 0.0;
+      seconds = 0.0;
+
+      if( list[2][6] == QChar('.') )
+        {
+          minutes = list[2].mid(4, 6).toDouble(&ok);
+        }
+      else if( list[2][6] == QChar(':') )
+        {
+          minutes = list[2].mid(4, 2).toDouble(&ok);
+
+          if( ok )
+            {
+              seconds = list[2].mid(7, 2).toDouble(&ok);
+            }
+        }
+
+      if( ! ok )
+        {
+          qWarning("DAT Read (%d): Format error longitude minutes/seconds", lineNo);
+          delete w;
+          continue;
+        }
+
+      double lonTmp = (degree * 600000.) + (10000. * (minutes + seconds / 60. ));
+
+
+      if( list[2].right(1).toUpper() == "W" )
+        {
+          lonTmp = -lonTmp;
+        }
+
+      w->origP.setLat((int) rint(latTmp));
+      w->origP.setLon((int) rint(lonTmp));
+
+      // Height AMSL 9{1,5}[FM] 9=height, F=feet, M=metres.
+      // two units are possible:
+      // o meter: m
+      // o feet:  ft
+      if( list[3].size() ) // elevation in meter or feet
+        {
+          QString unit = list[3].right(1).toUpper();
+
+          if( unit != "F" && unit != "M" )
+            {
+              qWarning("DAT Read (%d): Error reading elevation unit '%s'.",
+                       lineNo, list[3].toLatin1().data());
+              delete w;
+              continue;
+            }
+
+          float tmpElev = list[3].left(list[3].size() - 1).toFloat(&ok);
+
+          if( ! ok )
+            {
+              qWarning("DAT Read (%d): Error reading elevation value '%s'.",
+                        lineNo,
+                        list[3].left(list[3].size() - 1).toLatin1().data());
+              delete w;
+              continue;
+            }
+
+          if( unit == "M" )
+            {
+              w->elevation = tmpElev;
+            }
+          else if( unit == "F" )
+            {
+              w->elevation = tmpElev * 0.3048;
+            }
+        }
+
+      /*
+      Turnpoint attributes
+
+      Cambridge documentation defines the following:
+      Code    Meaning
+      A       Airfield (not necessarily landable). All turnpoints marked 'A' in the UK are landable.
+      L       Landable Point. Not necessarily an airfield.
+      S       Start Point
+      F       Finish Point
+      H       Home Point
+      M       Markpoint
+      R       Restricted Point
+      T       Turnpoint
+      W       Waypoint
+      */
+
+      if( list[4].isEmpty() )
+        {
+          qWarning("DAT Read (%d): Missing turnpoint attributes", lineNo );
+          delete w;
+          continue;
+        }
+
+      if( ! w->comment.isEmpty() )
+        {
+          w->comment.append(", ");
+        }
+
+      w->comment.append( "TP attributes: ").append(list[4]);
+
+      // That is the default
+      w->type = BaseMapElement::Landmark;
+
+      list[4] = list[4].toUpper();
+
+      if( list[4].contains("T") )
+        {
+          w->type = BaseMapElement::Turnpoint;
+        }
+
+      if( list[4].contains("A") )
+        {
+          w->type = BaseMapElement::Airfield;
+        }
+
+      if( list[4].contains("L") )
+        {
+          w->isLandable = true;
+        }
+
+      if( list[5].isEmpty() )
+        {
+          qWarning("DAT Read (%d): Missing turnpoint name", lineNo );
+          delete w;
+          continue;
+        }
+
+      // Short name of a waypoint has only 8 characters and upper cases in KFLog.
+      // That is handled in another way by Cambridge.
+      w->name = list[5].left(8).toUpper().trimmed();
+      w->description = list[5].trimmed();
+
+      if( list.size() >= 7 )
+        {
+          QString comment = list[6].trimmed();
+
+          if( ! comment.isEmpty() )
+            {
+              // A description is optional by Cambridge.
+              if( ! w->comment.isEmpty() )
+                {
+                  w->comment.append(", ");
+                }
+
+              w->comment += comment;
+            }
+        }
+
+      // We do check, if the waypoint name is already in use because DAT
+      // short names are not always unique.
+      if( names.contains( w->name ) )
+        {
+          for( int i = 0; i < 100; i++ )
+            {
+              // Hope that not more as 100 same names will be exist.
+              QString number = QString::number(i);
+               w->name = w->name.left(w->name.size() - number.size()) + number;
+
+              if( names.contains( w->name ) == false )
+                {
+                  break;
+                }
+            }
+        }
+
+      if( !insertWaypoint(w) )
+        {
+          qWarning("DAT Read (%d): Error inserting waypoint in catalog", lineNo);
+          break;
+        }
+
+      // Store used waypoint name in set.
+      names.insert( w->name );
+    }
+
+  file.close();
+  QApplication::restoreOverrideCursor();
+
+  onDisc = true;
+  path = catalog;
+  return true;
+}
+
+/** Writes a Cambridge Aero Instruments turnpoint file. */
+bool WaypointCatalog::writeDat(const QString& catalog)
+{
+  return true;
 }

@@ -343,13 +343,14 @@ void WaypointTreeView::slotOpenWaypointCatalog()
                                          _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
-  filter.append(tr("Waypoint formats") + " (welt2000.txt WELT2000.TXT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
+  filter.append(tr("Waypoint formats") + " (welt2000.txt WELT2000.TXT *.dat *.DAT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
   filter.append(tr("KFLog waypoints") + " (*.kflogwp *.KFLOGWP);;");
   filter.append(tr("Cumulus waypoints") + " (*.kwp *.KWP);;");
-  filter.append(tr("Welt2000 waypoints") + " (welt2000.txt WELT2000.TXT);;");
+  filter.append(tr("Cambridge waypoints") + " (*.dat *.DAT);;");
   filter.append(tr("Filser txt waypoints") + " (*.txt *.TXT);;");
   filter.append(tr("Filser da4 waypoints") + " (*.da4 *.DA4);;");
-  filter.append(tr("SeeYou cup waypoints") + " (*.cup *.CUP)");
+  filter.append(tr("SeeYou waypoints") + " (*.cup *.CUP);;");
+  filter.append(tr("Welt2000 waypoints") + " (welt2000.txt WELT2000.TXT)");
 
   QString fName = QFileDialog::getOpenFileName( this,
                                                 tr("Open waypoint catalog"),
@@ -848,7 +849,7 @@ void WaypointTreeView::slotImportWaypointCatalog()
   if( ! fName.isEmpty() )
     {
       // read from disk
-      currentWaypointCatalog->read(fName);
+      currentWaypointCatalog->readXml(fName);
       currentWaypointCatalog->modified = true;
       fillWaypoints();
     }

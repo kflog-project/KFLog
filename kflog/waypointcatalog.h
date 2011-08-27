@@ -48,9 +48,9 @@ public:
   WaypointCatalog(const QString& name="");
 
   virtual ~WaypointCatalog();
-  /** No descriptions */
-  bool read(const QString &catalog);
-  /** No descriptions */
+  /** Reads a KFLog waypoint file in XML format. */
+  bool readXml(const QString &catalog);
+  /** Reads a KFLog waypoint file in binary format. */
   bool readBinary(const QString &catalog);
   /** No descriptions */
   bool readFilserTXT (const QString& catalog);
@@ -58,16 +58,22 @@ public:
   bool writeFilserTXT (const QString& catalog);
   /** No descriptions */
   bool readFilserDA4 (const QString& catalog);
-  /** No descriptions */
-  bool writeFilserDA4 (const QString& catalog);
-  /** read SeeYou cup file, only waypoint part */
+  /** Reads a SeeYou cup file, only waypoint part */
   bool readCup (const QString& catalog);
   /** creates a waypoint catalog from a Welt2000 file. */
   bool readWelt2000(const QString& catalog);
-  /** No descriptions */
-  bool write();
-  /** No descriptions */
+  /** Reads a Cambridge Aero Instruments turnpoint file. */
+  bool readDat(const QString &catalog);
+
+  /** Writes a KFLog waypoint file in XML format. */
+  bool writeXml();
+  /** Writes a KFLog waypoint file in binary format. */
   bool writeBinary();
+  /** No descriptions */
+  bool writeFilserDA4 (const QString& catalog);
+  /** Writes a Cambridge Aero Instruments turnpoint file. */
+  bool writeDat(const QString& catalog);
+
   /** No descriptions */
   bool importVolkslogger(const QString& filename);
   /** Checks if the file exists on disk, and if not asks the user for it.
