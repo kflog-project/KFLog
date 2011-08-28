@@ -77,7 +77,7 @@ class Distance
   /**
    * Destructor
    */
-  ~Distance();
+  virtual ~Distance();
 
   /**
    * Set the distance in meters

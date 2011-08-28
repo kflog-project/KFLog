@@ -2,8 +2,8 @@
                           altitude.h  -  general altitude representation
                              -------------------
     begin                : Sat Jul 20 2002
-    copyright            : (C) 2002 by André Somers
-                               2010 by Axel Pauli
+    copyright            : (C) 2002      by André Somers
+                               2010-2011 by Axel Pauli
 
     email                : axel@kflog.org
 
@@ -38,7 +38,7 @@
  *
  * This class handles different altitude units and arithmetics.
  *
- * \date 2002-2010
+ * \date 2002-2011
  */
 
 class Altitude : public Distance
@@ -79,7 +79,7 @@ public:
     /**
      * destuctor
      */
-    ~Altitude();
+    virtual ~Altitude();
 
     /**
      * Sets the unit for altitudes. This unit is used to return the correct string
