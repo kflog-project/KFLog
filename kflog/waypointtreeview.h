@@ -129,9 +129,6 @@ private: // Private methods
   /** The current used waypoint catalog. */
   WaypointCatalog *currentWaypointCatalog;
 
-  /** Wayoint dialog. */
-  WaypointDialog *waypointDlg;
-
   /** Waypoint import filter dialog */
   WaypointImpFilterDialog *importFilterDlg;
 

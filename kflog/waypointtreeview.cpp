@@ -56,11 +56,6 @@ WaypointTreeView::WaypointTreeView(QWidget *parent, const QString& catalog) :
   createWaypointWindow();
   createMenu();
 
-  waypointDlg = new WaypointDialog(this);
-
-  connect( waypointDlg, SIGNAL(addWaypoint(Waypoint *)),
-           this, SLOT(slotAddWaypoint(Waypoint *)) );
-
   importFilterDlg = new WaypointImpFilterDialog(this);
 }
 
@@ -433,8 +428,14 @@ void WaypointTreeView::slotShowWaypointMenu( QTreeWidgetItem* item, const QPoint
 
 void WaypointTreeView::slotNewWaypoint()
 {
-  waypointDlg->clear();
+  WaypointDialog* waypointDlg = new WaypointDialog(this);
+
+  connect( waypointDlg, SIGNAL(addWaypoint(Waypoint *)),
+           this, SLOT(slotAddWaypoint(Waypoint *)) );
+
   waypointDlg->exec();
+
+  delete waypointDlg;
 }
 
 /** create a new catalog */
@@ -501,86 +502,95 @@ void WaypointTreeView::slotEditWaypoint()
 /** No descriptions */
 void WaypointTreeView::slotEditWaypoint(Waypoint* w)
 {
-  if( w )
-  {
-    QString tmp;
+  if( w == 0 )
+    {
+      return;
+    }
 
-    // initialize dialog
-    waypointDlg->setWindowTitle( tr( "Edit Waypoint" ) );
-    waypointDlg->name->setText(w->name);
-    waypointDlg->country->setText(w->country);
-    waypointDlg->description->setText(w->description);
-    // translate id to index
-    waypointDlg->setWaypointType(w->type);
-    waypointDlg->longitude->setKFLogDegree(w->origP.lon());
-    waypointDlg->latitude->setKFLogDegree(w->origP.lat());
-    waypointDlg->setElevation(w->elevation);
-    waypointDlg->icao->setText(w->icao);
+  WaypointDialog* waypointDlg = new WaypointDialog(this);
 
-    tmp = QString("%1").arg(w->frequency, 3, 'f', 3, QChar('0'));
+  connect( waypointDlg, SIGNAL(addWaypoint(Waypoint *)),
+           this, SLOT(slotAddWaypoint(Waypoint *)) );
 
-    while( tmp.size() < 7 )
-      {
-        // add leading zeros
-        tmp.insert(0, "0");
-      }
+  QString tmp;
 
-    waypointDlg->frequency->setText( tmp );
-    waypointDlg->runway->setCurrentIndex( w->runway.first );
-    waypointDlg->length->setText(QString("%1").arg(w->length, 0, 'f', 0) );
+  // initialize dialog
+  waypointDlg->setWindowTitle( tr( "Edit Waypoint" ) );
+  waypointDlg->name->setText(w->name);
+  waypointDlg->country->setText(w->country);
+  waypointDlg->description->setText(w->description);
+  // translate id to index
+  waypointDlg->setWaypointType(w->type);
+  waypointDlg->longitude->setKFLogDegree(w->origP.lon());
+  waypointDlg->latitude->setKFLogDegree(w->origP.lat());
+  waypointDlg->setElevation(w->elevation);
+  waypointDlg->icao->setText(w->icao);
 
-    // translate to id
-    waypointDlg->setSurface(w->surface);
-    waypointDlg->comment->setText(w->comment);
-    waypointDlg->isLandable->setChecked(w->isLandable);
-    waypointDlg->edit = true;
+  tmp = QString("%1").arg(w->frequency, 3, 'f', 3, QChar('0'));
 
-    if( waypointDlg->exec() == QDialog::Accepted )
-      {
-        if( !waypointDlg->name->text().isEmpty() )
-          {
-            w->name = waypointDlg->name->text().toUpper();
-            w->country = waypointDlg->country->text().toUpper();
-            w->description = waypointDlg->description->text();
-            w->type = waypointDlg->getWaypointType();
-            w->origP.setLat( waypointDlg->latitude->KFLogDegree() );
-            w->origP.setLon( waypointDlg->longitude->KFLogDegree() );
-            w->elevation = waypointDlg->getElevation();
-            w->icao = waypointDlg->icao->text().toUpper();
-            w->frequency = waypointDlg->frequency->text().toFloat();
-            w->runway.first = waypointDlg->runway->currentIndex();
+  while( tmp.size() < 7 )
+    {
+      // add leading zeros
+      tmp.insert(0, "0");
+    }
 
-            if( w->runway.first > 0 )
-              {
-                int rw1 = w->runway.first;
+  waypointDlg->frequency->setText( tmp );
+  waypointDlg->runway->setCurrentIndex( w->runway.first );
+  waypointDlg->length->setText(QString("%1").arg(w->length, 0, 'f', 0) );
 
-                w->runway.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18);
-              }
-            else
-              {
-                w->runway = QPair<ushort, ushort> ( 0, 0 );
-              }
+  // translate to id
+  waypointDlg->setSurface(w->surface);
+  waypointDlg->comment->setText(w->comment);
+  waypointDlg->isLandable->setChecked(w->isLandable);
+  waypointDlg->edit = true;
 
-            tmp = waypointDlg->length->text();
+  if( waypointDlg->exec() == QDialog::Accepted )
+    {
+      if( !waypointDlg->name->text().isEmpty() )
+        {
+          w->name = waypointDlg->name->text().toUpper();
+          w->country = waypointDlg->country->text().toUpper();
+          w->description = waypointDlg->description->text();
+          w->type = waypointDlg->getWaypointType();
+          w->origP.setLat( waypointDlg->latitude->KFLogDegree() );
+          w->origP.setLon( waypointDlg->longitude->KFLogDegree() );
+          w->elevation = waypointDlg->getElevation();
+          w->icao = waypointDlg->icao->text().toUpper();
+          w->frequency = waypointDlg->frequency->text().toFloat();
+          w->runway.first = waypointDlg->runway->currentIndex();
 
-            if( !tmp.isEmpty() )
-              {
-                w->length = tmp.toFloat();
-              }
-            else
-              {
-                w->length = 0.0;
-              }
+          if( w->runway.first > 0 )
+            {
+              int rw1 = w->runway.first;
 
-            w->surface = (enum Runway::SurfaceType) waypointDlg->getSurface();
-            w->comment = waypointDlg->comment->text();
-            w->isLandable = waypointDlg->isLandable->isChecked();
+              w->runway.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18);
+            }
+          else
+            {
+              w->runway = QPair<ushort, ushort> ( 0, 0 );
+            }
 
-            currentWaypointCatalog->modified = true;
-            slotFillWaypoints();
-          }
-      }
-  }
+          tmp = waypointDlg->length->text();
+
+          if( !tmp.isEmpty() )
+            {
+              w->length = tmp.toFloat();
+            }
+          else
+            {
+              w->length = 0.0;
+            }
+
+          w->surface = (enum Runway::SurfaceType) waypointDlg->getSurface();
+          w->comment = waypointDlg->comment->text();
+          w->isLandable = waypointDlg->isLandable->isChecked();
+
+          currentWaypointCatalog->modified = true;
+          slotFillWaypoints();
+        }
+    }
+
+  delete waypointDlg;
 }
 
 /** This slot is called from the Map class. */
