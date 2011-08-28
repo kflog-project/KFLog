@@ -3017,7 +3017,7 @@ WaypointDialog* Map::__openWaypointDialog( const QPoint &position )
   if( height != -1 )
     {
       // Elevation plus error distance is used.
-      waypointDlg->elevation->setText( QString::number(height) );
+      waypointDlg->setElevation( height );
     }
 
   return waypointDlg;

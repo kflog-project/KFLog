@@ -36,6 +36,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialog>
+#include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 
@@ -53,9 +54,10 @@ private:
 
 public:
 
-	WaypointDialog( QWidget *parent=0 );
+  WaypointDialog( QWidget *parent=0 );
 
-	~WaypointDialog();
+  virtual ~WaypointDialog();
+
   /**
    * return internal type of surface
    */
@@ -126,8 +128,6 @@ public:
   /**  */
   QLineEdit *country;
   /**  */
-  QLineEdit *elevation;
-  /**  */
   QLineEdit *icao;
   /**  */
   QLineEdit *frequency;
@@ -148,6 +148,26 @@ public:
 
   /** Flag to indicate if an existing waypoint is edited. */
   bool edit;
+
+  /**
+   * Sets the elevation according to the user's selection.
+   */
+  void setElevation( float newValue );
+
+  /**
+   * Returns the elevation always as meters.
+   */
+  float getElevation();
+
+private:
+
+  void setElevationLabelText();
+
+  /**  */
+  QLineEdit *elevation;
+
+  QLabel *elevationLabel;
+
 };
 
 #endif

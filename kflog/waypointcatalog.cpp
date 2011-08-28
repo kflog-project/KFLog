@@ -2290,9 +2290,12 @@ bool WaypointCatalog::readDat(const QString &catalog)
       QStringList list = line.split( "," );
 
       /*
-      Example turnpoint
+      Example turnpoints, two possible coordinate formats seems to be in use.
       0 ,1         ,2          ,3   ,4,5           ,6
       31,57:04.213N,002:47.239W,450F,T,AB1 AboynBrg,RdBroverRDee
+
+      0,1        ,2         ,3  ,4  ,5           ,6
+      1,52:08:39N,012:40:06E,66M,HAS,SP1 LUESSE  ,EDOJ
       */
 
       // Lines defining a turnpoint contain 7 fields, separated by commas.
@@ -2330,7 +2333,7 @@ bool WaypointCatalog::readDat(const QString &catalog)
 
       if( list[1][5] == QChar('.') )
         {
-          minutes = list[3].mid(3, 6).toDouble(&ok);
+          minutes = list[1].mid(3, 6).toDouble(&ok);
         }
       else if( list[1][5] == QChar(':') )
         {
@@ -2440,6 +2443,7 @@ bool WaypointCatalog::readDat(const QString &catalog)
             }
           else if( unit == "F" )
             {
+              // Convert feet to meters
               w->elevation = tmpElev * 0.3048;
             }
         }

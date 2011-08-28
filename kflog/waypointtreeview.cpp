@@ -514,7 +514,7 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
     waypointDlg->setWaypointType(w->type);
     waypointDlg->longitude->setKFLogDegree(w->origP.lon());
     waypointDlg->latitude->setKFLogDegree(w->origP.lat());
-    waypointDlg->elevation->setText(QString("%1").arg(w->elevation, 0, 'f', 0) );
+    waypointDlg->setElevation(w->elevation);
     waypointDlg->icao->setText(w->icao);
 
     tmp = QString("%1").arg(w->frequency, 3, 'f', 3, QChar('0'));
@@ -545,7 +545,7 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
             w->type = waypointDlg->getWaypointType();
             w->origP.setLat( waypointDlg->latitude->KFLogDegree() );
             w->origP.setLon( waypointDlg->longitude->KFLogDegree() );
-            w->elevation = waypointDlg->elevation->text().toInt();
+            w->elevation = waypointDlg->getElevation();
             w->icao = waypointDlg->icao->text().toUpper();
             w->frequency = waypointDlg->frequency->text().toFloat();
             w->runway.first = waypointDlg->runway->currentIndex();
@@ -577,7 +577,7 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
             w->isLandable = waypointDlg->isLandable->isChecked();
 
             currentWaypointCatalog->modified = true;
-            fillWaypoints();
+            slotFillWaypoints();
           }
       }
   }
@@ -649,7 +649,7 @@ void WaypointTreeView::slotDeleteWaypoints()
 }
 
 /** No descriptions */
-void WaypointTreeView::fillWaypoints()
+void WaypointTreeView::slotFillWaypoints()
 {
   QString tmp;
   Waypoint *w;
@@ -663,6 +663,8 @@ void WaypointTreeView::fillWaypoints()
 
   filterArea   = ( currentWaypointCatalog->areaLat2 != 0 &&
                    currentWaypointCatalog->areaLong2 != 0 && !filterRadius);
+
+  Altitude::altitudeUnit altUnit = Altitude::getUnit();
 
   foreach( w, currentWaypointCatalog->wpList )
     {
@@ -761,7 +763,18 @@ void WaypointTreeView::fillWaypoints()
     item->setText(colType, BaseMapElement::item2Text(w->type, tr("unknown")));
     item->setText(colLat,  WGSPoint::printPos(w->origP.lat(), true));
     item->setText(colLong, WGSPoint::printPos(w->origP.lon(), false));
-    item->setText(colElev, QString::number(w->elevation) + " m");
+
+    if( altUnit == Altitude::feet )
+      {
+        item->setText(colElev,
+            QString::number( Altitude(w->elevation).getFeet(), 'f', 0) + " " + Altitude::getUnitText());
+      }
+    else
+      {
+        // The default is always meters
+        item->setText(colElev,
+            QString::number(w->elevation, 'f', 0) + " " + Altitude::getUnitText());
+      }
 
     w->frequency > 0 ? tmp.sprintf("%.3f", w->frequency) : tmp = "";
 
@@ -812,7 +825,7 @@ void WaypointTreeView::fillWaypoints()
 void WaypointTreeView::slotSwitchWaypointCatalog(int idx)
 {
   currentWaypointCatalog = waypointCatalogs.value(idx);
-  fillWaypoints();
+  slotFillWaypoints();
 }
 
 void WaypointTreeView::slotSaveWaypointCatalog()
@@ -851,7 +864,7 @@ void WaypointTreeView::slotImportWaypointCatalog()
       // read from disk
       currentWaypointCatalog->readXml(fName);
       currentWaypointCatalog->modified = true;
-      fillWaypoints();
+      slotFillWaypoints();
     }
 }
 
@@ -1063,7 +1076,7 @@ void WaypointTreeView::slotImportWaypointFromMap()
     }
 
     currentWaypointCatalog->modified = true;
-    fillWaypoints();
+    slotFillWaypoints();
   }
 }
 
@@ -1080,7 +1093,7 @@ void WaypointTreeView::slotFilterWaypoints()
   if( importFilterDlg->exec() == QDialog::Accepted )
     {
       getFilterData();
-      fillWaypoints();
+      slotFillWaypoints();
     }
 }
 
@@ -1114,7 +1127,7 @@ void WaypointTreeView::slotAddWaypoint(Waypoint *w)
 
   currentWaypointCatalog->wpList.append( w );
   currentWaypointCatalog->modified = true;
-  fillWaypoints();
+  slotFillWaypoints();
 }
 
 void WaypointTreeView::slotCopyWaypoint2Task()
@@ -1160,7 +1173,7 @@ void WaypointTreeView::slotSetHome()
 
       // update airfield lists from Welt2000 if home site changes:
       _globalMapContents->slotReloadWelt2000Data();
-      fillWaypoints();
+      slotFillWaypoints();
   }
 }
 
@@ -1292,7 +1305,7 @@ void WaypointTreeView::slotImportWaypointFromFile()
           currentWaypointCatalog->modified = false;
         }
 
-      fillWaypoints();
+      slotFillWaypoints();
     }
 }
 

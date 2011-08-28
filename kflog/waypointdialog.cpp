@@ -18,6 +18,7 @@
 
 #include <QtGui>
 
+#include "altitude.h"
 #include "basemapelement.h"
 #include "runway.h"
 #include "waypointdialog.h"
@@ -121,8 +122,9 @@ void WaypointDialog::__initDialog()
   l1 = new QLabel( QString( "%1:" ).arg( tr( "&Type" ) ));
   layout->addWidget( l1, row, 0, 1, 2 );
 
-  l2 = new QLabel(tr("%1 (m):").arg(tr("&Elevation")));
-  layout->addWidget(l2, row, 2, 1, 2);
+  elevationLabel = new QLabel;
+  setElevationLabelText();
+  layout->addWidget(elevationLabel, row, 2, 1, 2);
   row++;
 
   waypointType = new QComboBox;
@@ -136,7 +138,7 @@ void WaypointDialog::__initDialog()
   row++;
 
   l1->setBuddy( waypointType );
-  l2->setBuddy( elevation );
+  elevationLabel->setBuddy( elevation );
 
   //---
   layout->setRowMinimumHeight( row, 20 );
@@ -258,6 +260,7 @@ void WaypointDialog::clear()
   description->clear();
   country->clear();
   elevation->setText(0);
+  setElevationLabelText();
   icao->clear();
   frequency->setText("000.000");
   runway->setCurrentIndex(0);
@@ -269,6 +272,49 @@ void WaypointDialog::clear()
   isLandable->setChecked(false);
   setWaypointType(BaseMapElement::Landmark);
   edit = false;
+}
+
+void WaypointDialog::setElevationLabelText()
+{
+  QString altUnit = Altitude::getUnitText();
+  elevationLabel->setText( QString( "%1 " ).arg(tr("&Elevation")) + altUnit + ":" );
+
+  qDebug() << "Label" << (QString( "%1 " ).arg(tr("&Elevation")) + altUnit + ":" );
+}
+
+/**
+ * Sets the elevation according to the user's selection.
+ */
+void WaypointDialog::setElevation( float newValue )
+{
+  QString altText;
+
+  if( Altitude::getUnit() == Altitude::feet)
+    {
+      altText = QString::number( Altitude(newValue).getFeet(), 'f', 0 );
+    }
+  else
+    {
+      altText = QString::number( newValue, 'f', 0 );
+    }
+
+  elevation->setText( altText );
+  setElevationLabelText();
+}
+
+/**
+ * Returns the elevation always as meters.
+ */
+float WaypointDialog::getElevation()
+{
+  if( Altitude::getUnit() == Altitude::feet)
+    {
+      // elevation user unit is feet.
+      return Altitude::convertToMeters(elevation->text().toInt());
+    }
+
+  // Elevation user unit is meters
+  return elevation->text().toInt();
 }
 
 /** No descriptions */
@@ -290,7 +336,14 @@ void WaypointDialog::slotAddWaypoint()
   w->type = getWaypointType();
   w->origP.setLat(latitude->KFLogDegree());
   w->origP.setLon(longitude->KFLogDegree());
-  w->elevation = elevation->text().toFloat();
+
+  float newElevation = elevation->text().toFloat();
+
+  if( Altitude::getUnit() == Altitude::feet )
+    {
+      w->elevation = Altitude::convertToMeters(newElevation);
+    }
+
   w->icao = icao->text().toUpper();
   w->frequency = frequency->text().toFloat();
   w->runway.first = runway->currentIndex();

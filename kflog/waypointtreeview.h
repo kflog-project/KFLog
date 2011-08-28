@@ -78,8 +78,6 @@ private: // Private methods
   /** Create menus. */
   void createMenu();
 
-  /** No descriptions */
-  void fillWaypoints();
   /**
    * read filter and store in catalog
    */
@@ -223,6 +221,10 @@ private: // Private methods
    * Called when a new waypoint catalog was selected.
    */
    void slotSetWaypointCatalogName(QString& catalog);
+   /**
+    * Called to fill the waypoint list.
+    */
+   void slotFillWaypoints();
 
  signals:
 
