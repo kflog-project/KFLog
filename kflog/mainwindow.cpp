@@ -1690,6 +1690,8 @@ void MainWindow::slotConfigureKFLog()
 
   connect(confDlg, SIGNAL(configOk()), map, SLOT(slotRedrawMap()));
 
+  connect(confDlg, SIGNAL(configOk()), waypointTreeView, SLOT(slotFillWaypoints()));
+
   connect(confDlg, SIGNAL(newDrawType(int)), this, SLOT(slotSelectFlightData(int)));
 
   connect( confDlg, SIGNAL(downloadWelt2000()),
