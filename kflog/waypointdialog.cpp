@@ -277,13 +277,11 @@ void WaypointDialog::clear()
 void WaypointDialog::setElevationLabelText()
 {
   QString altUnit = Altitude::getUnitText();
-  elevationLabel->setText( QString( "%1 " ).arg(tr("&Elevation")) + altUnit + ":" );
-
-  qDebug() << "Label" << (QString( "%1 " ).arg(tr("&Elevation")) + altUnit + ":" );
+  elevationLabel->setText( QString( "%1 (" ).arg(tr("&Elevation")) + altUnit + "):" );
 }
 
 /**
- * Sets the elevation according to the user's selection.
+ * Sets the elevation according to the user's unit selection.
  */
 void WaypointDialog::setElevation( float newValue )
 {
