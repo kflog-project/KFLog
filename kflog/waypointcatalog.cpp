@@ -28,11 +28,13 @@
 #include <QtGui>
 #include <QtXml>
 
+#include "altitude.h"
 #include "runway.h"
 #include "da4record.h"
 #include "kfrgcs/vlapi2.h"
 #include "mainwindow.h"
 #include "mapdefaults.h"
+#include "target.h"
 #include "waypointcatalog.h"
 
 #define KFLOG_FILE_MAGIC    0x404b464c
@@ -635,7 +637,8 @@ bool WaypointCatalog::save(bool alwaysAskName)
       filter.append(QObject::tr("KFLog waypoints") + " (*.kflogwp *.KFLOGWP);;");
       filter.append(QObject::tr("Cumulus waypoints") + " (*.kwp *.KWP);;");
       filter.append(QObject::tr("Filser txt waypoints") + " (*.txt *.TXT);;");
-      filter.append(QObject::tr("Filser da4 waypoints") + " (*.da4 *.DA4)");
+      filter.append(QObject::tr("Filser da4 waypoints") + " (*.da4 *.DA4);;");
+      filter.append(QObject::tr("Cambrigde waypoints") + " (*.dat *.DAT)");
 
       fName = QFileDialog::getSaveFileName( _mainWindow,
                                             QObject::tr("Save waypoint catalog"),
@@ -650,6 +653,7 @@ bool WaypointCatalog::save(bool alwaysAskName)
       if( (fName.right( 8 ) != ".kflogwp") &&
           (fName.right( 4 ) != ".kwp") &&
           (fName.right( 4 ) != ".da4") &&
+          (fName.right( 4 ) != ".dat") &&
           (fName.right( 4 ) != ".txt") )
         {
           fName += ".kflogwp";
@@ -664,6 +668,8 @@ bool WaypointCatalog::save(bool alwaysAskName)
     return writeFilserTXT (fName);
   else if (fName.right(4) == ".da4")
     return writeFilserDA4 (fName);
+  else if (fName.right(4) == ".dat")
+    return writeDat (fName);
   else
     return writeBinary();
 }
@@ -2310,7 +2316,6 @@ bool WaypointCatalog::readDat(const QString &catalog)
       Waypoint *w = new Waypoint;
       w->importance = 0; // low
       w->country = _settings.value( "/Homesite/Country", "" ).toString();
-      w->comment = QObject::tr("WP No: ") + list[0];
 
       if( list[1].size() < 9 )
         {
@@ -2471,13 +2476,6 @@ bool WaypointCatalog::readDat(const QString &catalog)
           continue;
         }
 
-      if( ! w->comment.isEmpty() )
-        {
-          w->comment.append(", ");
-        }
-
-      w->comment.append( "TP attributes: ").append(list[4]);
-
       // That is the default
       w->type = BaseMapElement::Landmark;
 
@@ -2517,14 +2515,17 @@ bool WaypointCatalog::readDat(const QString &catalog)
           if( ! comment.isEmpty() )
             {
               // A description is optional by Cambridge.
-              if( ! w->comment.isEmpty() )
-                {
-                  w->comment.append(", ");
-                }
-
               w->comment += comment;
             }
         }
+
+      if( ! w->comment.isEmpty() )
+        {
+          w->comment.append("; ");
+        }
+
+      w->comment.append( "TP attributes: ").append(list[4]);
+      w->comment.append( "; WP-No: ").append(list[0]);
 
       // We do check, if the waypoint name is already in use because DAT
       // short names are not always unique.
@@ -2564,5 +2565,120 @@ bool WaypointCatalog::readDat(const QString &catalog)
 /** Writes a Cambridge Aero Instruments turnpoint file. */
 bool WaypointCatalog::writeDat(const QString& catalog)
 {
+  qDebug ("WaypointCatalog::writeDat (%s)", catalog.toLatin1().data());
+
+  QFile file(catalog);
+
+  if( ! file.open(QIODevice::WriteOnly | QIODevice::Text ) )
+    {
+      QMessageBox::critical( _mainWindow,
+                             QObject::tr("Error occurred!"),
+                             QString ("<html><B>%1</B><BR>").arg(file.fileName()) +
+                             QObject::tr("permission denied!") +
+                             "</html>", QMessageBox::Ok );
+      return false;
+
+    }
+
+  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+
+  QTextStream out (&file);
+  out.setCodec( "ISO 8859-15" );
+
+  out << "*"
+      << endl
+      << "* File written by KFLog "
+      << KFLOG_VERSION
+      << " at "
+      << QDate::currentDate().toString( Qt::ISODate )
+      << " "
+      << QTime::currentTime().toString( "HH:mm:mm" )
+      << ", Creator is "
+      << getlogin()
+      << endl
+      << "*"
+      << endl;
+
+  for( int i = 0; i < wpList.size(); i++ )
+  {
+    int degree;
+    double minutes;
+
+    WGSPoint::calcPos( wpList[i]->origP.lat(), degree, minutes );
+
+    out << i+1 << ","
+        << QString("%1").arg( abs(degree), 2, 10, QChar('0') )
+        << ":";
+
+    QString min = QString("%1").arg( fabs(minutes), 0, 'f', 3, QChar('0') );
+
+    if( fabs(minutes) < 10.0 )
+      {
+        // add missing leading zero
+        min.insert(0, "0");
+      }
+
+    out << min
+        << ( (degree >= 0) ? "N" : "S" )
+        << ",";
+
+    WGSPoint::calcPos( wpList[i]->origP.lon(), degree, minutes );
+
+    out << QString("%1").arg( abs(degree), 3, 10, QChar('0') )
+        << ":";
+
+    min = QString("%1").arg( fabs(minutes), 0, 'f', 3, QChar('0') );
+
+    if( fabs(minutes) < 10.0 )
+      {
+        // add missing leading zero
+        min.insert(0, "0");
+      }
+
+    out << min
+        << ( (degree >= 0) ? "E" : "W" )
+        << ",";
+
+    float elevation = wpList[i]->elevation;
+
+    if( Altitude::getUnit() == Altitude::feet )
+      {
+        elevation = Altitude(elevation).getFeet();
+        out << QString("%1").arg(elevation, 0, 'f', 0) << "F,";
+      }
+    else
+      {
+        out << QString("%1").arg(elevation, 0, 'f', 0) << "M,";
+      }
+
+    if( wpList[i]->isLandable )
+      {
+        out << "L";
+      }
+
+    if(  wpList[i]->type == BaseMapElement::Airfield )
+      {
+        out << "A";
+      }
+    else if( wpList[i]->type == BaseMapElement::Turnpoint )
+      {
+        out << "T";
+      }
+    else
+      {
+        // All other is handled as waypoint here because KFLog has no waypoint
+        // attributes.
+        out << "W";
+      }
+
+    out << ","
+        << wpList[i]->description.left(12)
+        << ","
+        << wpList[i]->comment.left(wpList[i]->comment.indexOf(QChar(';'))).replace( QChar(','), QChar('/'))
+        << endl;
+  }
+
+  file.close();
+  QApplication::restoreOverrideCursor();
   return true;
 }
