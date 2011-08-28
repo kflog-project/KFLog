@@ -1,5 +1,12 @@
 $Id$
 
+2011-08-28 Axel Pauli <axel@kflog.org>
+
+  * Import/Export routine added to handle Winpilot and CAI waypoint files
+    with extension .dat.
+    
+  * The user's selected Altitude (m/ft) is considered now in waypoint handling.
+
 2011-08-19 Axel Pauli <axel@kflog.org>
 
   * KFLog 4.2.0 released.

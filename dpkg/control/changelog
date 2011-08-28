@@ -1,3 +1,12 @@
+kflog (4.3.0) unstable; urgency=low
+
+  * Import/Export routine added to handle Winpilot and CAI waypoint files
+    with extension .dat.
+    
+  * The user's selected Altitude (m/ft) is considered now in waypoint handling.
+
+ -- Axel Pauli <kflog.cumulus@googlemail.com>  Sun, 28 Aug 2011 19:24:02 +0200
+
 kflog (4.2.0) unstable; urgency=low
 
   * Added support for FLARM flarmcfg.txt file by Eggert Ehmke
