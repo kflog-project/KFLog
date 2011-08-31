@@ -1403,7 +1403,11 @@ void RecorderDialog::slotExportDeclaration()
   qDebug ("RecorderDialog::slotExportDeclaration");
   if( !activeRecorder || taskSelection->currentIndex() < 0 )
     {
-      return;
+       QMessageBox::warning( this,
+                            tr( "Declaration export" ),
+                            tr( "No Task selected" ),
+                            QMessageBox::Ok );
+       return;
     }
 
   if( !activeRecorder->capabilities().supExportDeclaration ) {
@@ -1413,11 +1417,6 @@ void RecorderDialog::slotExportDeclaration()
                             QMessageBox::Ok );
       return;
   }
-
-  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
-  statusBar->setText( tr("Exporting flight declaration to file") );
-  QCoreApplication::processEvents();
-  QCoreApplication::flush();
 
   if (pilotName->text().isEmpty()) {
       QMessageBox::warning( this,
@@ -1458,6 +1457,11 @@ void RecorderDialog::slotExportDeclaration()
                             QMessageBox::Ok );
       return;
   }
+
+  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+  statusBar->setText( tr("Exporting flight declaration to file") );
+  QCoreApplication::processEvents();
+  QCoreApplication::flush();
 
   FRTaskDeclaration taskDecl;
   taskDecl.pilotA = pilotName->text();
@@ -1502,7 +1506,7 @@ void RecorderDialog::slotExportDeclaration()
                              errorText,
                              QMessageBox::Ok );
     }
-  else
+    else
     {
       QMessageBox::information( this,
                                 tr( "Declaration export" ),
