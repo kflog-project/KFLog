@@ -33,8 +33,6 @@
 
 #include "flarm.h"
 
-#define MAX_LSTRING    63
-
 /*logger defines*/
 
 // for the flarmcfg file we need DOS line feeds
@@ -45,7 +43,6 @@
  */
 const char* portName = '\0';
 int portID = -1;
-const char* c36 = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 /**
  * holds the port-settings at start of the application
@@ -60,28 +57,28 @@ struct termios newTermEnv;
 /*
  * Command bytes for communication with the lx device
  */
-unsigned char STX = 0x02, /* Command prefix like AT for modems        */
-  ACK = 0x06,      /* Response OK, if the crc check is ok             */
-  NAK = 0x15,      /* Response not OK, if the crc check is not ok     */
-  SYN = 0x16,      /* Request for CONNECT                             */
-  K = 'K' | 0x80,  /* get_extra_data()   - trailing fix sized block   */
-  L = 'L' | 0x80,  /* get_mem_sections() - the flight data is         */
-                   /*                      retrieved in blocks        */
-  M = 'M' | 0x80,  /* getFlightDir()-      table of flights           */
-  N = 'N' | 0x80,  /* def_mem()          - memory range of one flight */
-  Q = 'Q' | 0x80,  /* read_mem_setting()                              */
-  R = 'R',         /* readWaypoints()                                 */
-  W = 'W',         /* writeWaypoints()                                */
-  f = 'f' | 0x80;  /* get_logger_data()  - first block                */
-                   /* f++ get_logger_data()  - next block             */
+//unsigned char STX = 0x02, /* Command prefix like AT for modems        */
+//  ACK = 0x06,      /* Response OK, if the crc check is ok             */
+//  NAK = 0x15,      /* Response not OK, if the crc check is not ok     */
+//  SYN = 0x16,      /* Request for CONNECT                             */
+//  K = 'K' | 0x80,  /* get_extra_data()   - trailing fix sized block   */
+//  L = 'L' | 0x80,  /* get_mem_sections() - the flight data is         */
+//                   /*                      retrieved in blocks        */
+//  M = 'M' | 0x80,  /* getFlightDir()-      table of flights           */
+//  N = 'N' | 0x80,  /* def_mem()          - memory range of one flight */
+//  Q = 'Q' | 0x80,  /* read_mem_setting()                              */
+//  R = 'R',         /* readWaypoints()                                 */
+//  W = 'W',         /* writeWaypoints()                                */
+//  f = 'f' | 0x80;  /* get_logger_data()  - first block                */
+//                   /* f++ get_logger_data()  - next block             */
 
-  char manufactureShortKey = 'X';
-  char manufactureKey[] = "xxx";  // Let's start with an empty key. If 'xxx'
+//  char manufactureShortKey = 'X';
+//  char manufactureKey[] = "xxx";  // Let's start with an empty key. If 'xxx'
                                   // appears, then reading the 'A'-record
                                   // failed.
 
-  unsigned char *memContents; /* buffer to hold igc contents */
-  int contentSize;            /* length of igc file buffer   */
+//  unsigned char *memContents; /* buffer to hold igc contents */
+//  int contentSize;            /* length of igc file buffer   */
 
 
 /**
@@ -217,8 +214,7 @@ QString Flarm::getFlarmData (QFile& file, const QString& cmd, const QString& key
     // qDebug () << "checksum ok" << endl;
     list = answer.split(",");
     return list[3];
-  }
-  else {
+  } else {
     qDebug () << "bad Checksum: " << bytes << "; " << checksum << endl;
     return "";
   }
@@ -266,8 +262,7 @@ bool Flarm::putFlarmData (QFile& file, const QString& cmd, const QString& key, c
   // qDebug () << "checksum valid" << endl;
   if (cs == calcCheckSum (answer.length(), answer)) {
     return true;
-  }
-  else {
+  } else {
     qDebug () << "bad Checksum: " << bytes << "; " << checksum << endl;
     return false;
   }
@@ -280,7 +275,6 @@ bool Flarm::putFlarmData (QFile& file, const QString& cmd, const QString& key, c
   */
 int Flarm::getBasicData(FR_BasicData& data)
 {
-  // TODO: adapt to FLARM
   qDebug ("Flarm::getBasicData");
   
   if (!check4Device()) {
@@ -425,8 +419,7 @@ int Flarm::openRecorder(const QString& pName, int baud)
     };
 
     return FR_OK;
-    }
-  else {
+  } else {
     qWarning() << QObject::tr("No logger found!");
     _isConnected = false;
     return FR_ERROR;
@@ -565,7 +558,7 @@ bool Flarm::check4Device()
   QFile file;
   file.open (portID, QIODevice::ReadWrite);
 
-    
+  // self test
   QString result = getFlarmData (file, "$PFLAE","");
   if (result.isEmpty()) {
     _errorinfo = tr("No response from flarm device!\n");
