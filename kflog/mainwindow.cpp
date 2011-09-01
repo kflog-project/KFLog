@@ -999,6 +999,7 @@ void MainWindow::readOptions()
 
   restoreState( _settings.value( "/MainWindow/State" ).toByteArray() );
 
+  setMinimumSize( QSize(900, 700) );
   bool ok = restoreGeometry( _settings.value( "/MainWindow/Geometry" ).toByteArray() );
 
   if( ! ok )
@@ -1007,7 +1008,7 @@ void MainWindow::readOptions()
       QSize size( _settings.value( "/MainWindow/DefaultWidth",  950 ).toInt(),
                   _settings.value( "/MainWindow/DefaultHeight", 700 ).toInt() );
 
-       resize( size );
+      setMinimumSize( size );
     }
 
   // initialize the recent file list
