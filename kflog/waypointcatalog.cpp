@@ -2451,6 +2451,13 @@ bool WaypointCatalog::readDat(const QString &catalog)
               // Convert feet to meters
               w->elevation = tmpElev * 0.3048;
             }
+          else
+            {
+              qWarning("DAT Read (%d): Unknown elevation value '%s'.", lineNo,
+                       unit.toLatin1().data());
+              delete w;
+              continue;
+            }
         }
 
       /*
