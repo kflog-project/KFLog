@@ -1,5 +1,9 @@
 $Id$
 
+2011-09-07 Eggert Ehmke <eggert@kflog.org>
+
+  * BUGFIX: added task name to declaration export and write
+
 2011-08-31 Eggert Ehmke <eggert@kflog.org>
 
   * BUGFIX: Wait cursor was not restored when declaration entries were missing. Fixed
