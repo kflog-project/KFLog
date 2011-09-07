@@ -1877,12 +1877,12 @@ int Filser::closeRecorder()
     ============================================*/
 
 
-int Filser::exportDeclaration(FRTaskDeclaration* , QList<Waypoint*>* )
+int Filser::exportDeclaration(FRTaskDeclaration* , QList<Waypoint*>*, const QString& )
 {
   return FR_NOTSUPPORTED;
 }
 
-int Filser::writeDeclaration(FRTaskDeclaration* , QList<Waypoint*>* )
+int Filser::writeDeclaration(FRTaskDeclaration* , QList<Waypoint*>*, const QString& )
 {
   return FR_NOTSUPPORTED;
 }
