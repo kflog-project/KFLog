@@ -204,7 +204,8 @@ int GarminFR::openRecorder(const QString& /*URL*/)
  * Write flight declaration to recorder
  */
 int GarminFR::writeDeclaration( FRTaskDeclaration * /*taskDecl*/,
-                                QList<Waypoint*> * /*taskPoints*/ )
+                                QList<Waypoint*> * /*taskPoints*/,
+                                const QString& /*name*/ )
 {
   return FR_NOTSUPPORTED;
 }
@@ -213,7 +214,8 @@ int GarminFR::writeDeclaration( FRTaskDeclaration * /*taskDecl*/,
  * Export flight declaration to file
  */
 int GarminFR::exportDeclaration( FRTaskDeclaration * /*taskDecl*/,
-                                QList<Waypoint*> * /*taskPoints*/ )
+                                QList<Waypoint*> * /*taskPoints*/,
+                                const QString& /*name*/ )
 {
   return FR_NOTSUPPORTED;
 }

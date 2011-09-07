@@ -93,11 +93,11 @@ class GarminFR : public FlightRecorderPluginBase
   /**
    * Write flight declaration to recorder. (Not implemented.)
    */
-  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
+  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints, const QString&);
   /**
    * Export flight declaration to file. (Not implemented.)
    */
-  virtual int exportDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
+  virtual int exportDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints, const QString&);
   /**
    * Read tasks from recorder. (Not implemented.)
    */
