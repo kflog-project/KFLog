@@ -1351,10 +1351,11 @@ void RecorderDialog::slotWriteDeclaration()
   taskDecl.compClass = compClass->text();
 
   QList<Waypoint*> wpList = tasks.at( taskSelection->currentIndex() )->getWPList();
+  QString name = tasks.at( taskSelection->currentIndex ())->getFileName ();
 
-  qDebug() << "Writing task to logger...";
+  qDebug() << "Writing task "<< name << " to logger...";
 
-  int ret = activeRecorder->writeDeclaration( &taskDecl, &wpList );
+  int ret = activeRecorder->writeDeclaration( &taskDecl, &wpList, name );
 
   QApplication::restoreOverrideCursor();
 
@@ -1471,11 +1472,13 @@ void RecorderDialog::slotExportDeclaration()
   taskDecl.compID = editCompID->text();
   taskDecl.compClass = compClass->text();
 
-  QList<Waypoint*> wpList = tasks.at( taskSelection->currentIndex() )->getWPList();
+  QList<Waypoint*> wpList = tasks.at( taskSelection->currentIndex ())->getWPList();
+  
+  QString name = tasks.at( taskSelection->currentIndex ())->getFileName ();
 
-  qDebug() << "Exporting declaration to file...";
+  qDebug() << "Exporting declaration " << name << " to file...";
 
-  int ret = activeRecorder->exportDeclaration( &taskDecl, &wpList );
+  int ret = activeRecorder->exportDeclaration( &taskDecl, &wpList, name );
 
   QApplication::restoreOverrideCursor();
 
