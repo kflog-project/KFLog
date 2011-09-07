@@ -79,11 +79,11 @@ class Cambridge : public FlightRecorderPluginBase
   /*
    * Write flight declaration to recorder
    */
-  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
+  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints, const QString& name);
   /*
    * Export flight declaration to file
    */
-  virtual int exportDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
+  virtual int exportDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints, const QString& name);
   /*
    * Read waypoint and flight declaration form from recorder into mem
    */

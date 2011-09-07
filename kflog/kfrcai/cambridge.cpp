@@ -683,15 +683,19 @@ int Cambridge::downloadFlight(int flightID, int /*secMode*/, const QString& file
   }
 }
 
-int Cambridge::exportDeclaration(FRTaskDeclaration* /*taskDecl*/, QList<Waypoint*> *taskPoints)
+int Cambridge::exportDeclaration(FRTaskDeclaration* /*taskDecl*/, QList<Waypoint*> *taskPoints, const QString& name)
 {
   Q_UNUSED( taskPoints )
+  Q_UNUSED( name )
 
   return FR_NOTSUPPORTED;
 }
 
-int Cambridge::writeDeclaration(FRTaskDeclaration* /*taskDecl*/, QList<Waypoint*> *taskPoints)
+int Cambridge::writeDeclaration(FRTaskDeclaration* /*taskDecl*/, QList<Waypoint*> *taskPoints, const QString& name)
 {
+  //TODO can task name be used??
+  Q_UNUSED( name )
+
   // go into command mode, then write the task points
   wb(STX);
   wait_ms(100);
