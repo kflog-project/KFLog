@@ -227,11 +227,11 @@ public:
   /**
    * Write flight declaration to recorder
    */
-  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints)=0;
+  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints, const QString& name)=0;
   /**
    * Export flight declaration to file
    */
-  virtual int exportDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints)=0;
+  virtual int exportDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints, const QString& name)=0;
   /**
    * Read tasks from recorder
    */
