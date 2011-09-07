@@ -625,7 +625,7 @@ QString Flarm::lon2flarm(int lon)
   return result;
 }
 
-int Flarm::writeDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList)
+int Flarm::writeDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList, const QString& name)
 {
     qDebug() << "Flarm::writeDeclaration" << endl;
     if (!check4Device())
@@ -675,9 +675,8 @@ int Flarm::writeDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList)
     if (!putFlarmData (file, "$PFLAC", "LOGINT", "4"))
       return FR_ERROR;
 
-    //TODO: use task name?
     // Task declaration
-    if (!putFlarmData (file, "$PFLAC","NEWTASK", "new task"))
+    if (!putFlarmData (file, "$PFLAC","NEWTASK", name))
       return FR_ERROR;
 
     int wpCnt = 0;
@@ -701,7 +700,7 @@ int Flarm::writeDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList)
   * export flight declaration to flarmcfg.txt file
   * @Author: eggert.ehmke@berlin.de
   */
-int Flarm::exportDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList)
+int Flarm::exportDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList, const QString& name)
 {
     qDebug ("Flarm::exportDeclaration");
 
@@ -718,7 +717,7 @@ int Flarm::exportDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList)
 
     QTextStream stream(&file);
 
-    int result = sendStreamData (stream, decl, wpList);
+    int result = sendStreamData (stream, decl, wpList, name);
     file.close();
     return result;
 }
@@ -731,7 +730,7 @@ void Flarm::sendStreamData (QTextStream& stream, const QString& sentence) {
   stream << sentence << ENDL;
 }
 
-int Flarm::sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<Waypoint*>* wpList) {
+int Flarm::sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<Waypoint*>* wpList, const QString& name) {
 
     QDateTime now = QDateTime::currentDateTime();
     QString timestamp = now.toString ();
@@ -772,7 +771,7 @@ int Flarm::sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<W
 
     //TODO: use task name?
     sendStreamComment (stream, "Task declaration");
-    sendStreamData (stream, "$PFLAC,S,NEWTASK,new task");
+    sendStreamData (stream, "$PFLAC,S,NEWTASK," + name);
 
     int wpCnt = 0;
     Waypoint *wp;

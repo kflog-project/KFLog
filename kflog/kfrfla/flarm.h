@@ -102,11 +102,11 @@ public:
   /**
    * Write flight declaration to recorder
    */
-  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
+  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints, const QString& name);
   /**
    * Export flight declaration to file
    */
-  virtual int exportDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
+  virtual int exportDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints, const QString& name);
   /**
    * Reads waypoint and flight declaration form from recorder into memory.
    */
@@ -144,7 +144,7 @@ private:
   bool checkCheckSum (int pos, const QString& sentence);
   void sendStreamComment (QTextStream& stream, const QString& comment);
   void sendStreamData (QTextStream& stream, const QString& sentence);
-  int sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<Waypoint*>* wpList);
+  int sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<Waypoint*>* wpList, const QString& name);
   QString getFlarmDebug(QFile&);
   QString getFlarmData(QFile&, const QString&, const QString&);
   bool putFlarmData(QFile&, const QString& cmd, const QString& key, const QString& data1=NULL, const QString& data2=NULL, const QString& data3=NULL);
