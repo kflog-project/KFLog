@@ -82,11 +82,11 @@ class SoaringPilot : public FlightRecorderPluginBase
   /**
    * Write flight declaration to recorder
    */
-  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
+  virtual int writeDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints, const QString&);
   /**
    * Export flight declaration to file
    */
-  virtual int exportDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints);
+  virtual int exportDeclaration(FRTaskDeclaration *taskDecl, QList<Waypoint*> *taskPoints, const QString&);
   /**
    * Read waypoint and flight declaration form from recorder into mem
    */

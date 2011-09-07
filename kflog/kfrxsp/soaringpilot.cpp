@@ -783,7 +783,7 @@ int SoaringPilot::openRecorder(const QString& /*URL*/)
  /**
  * Write flight declaration to recorder
  */
-int SoaringPilot::writeDeclaration(FRTaskDeclaration * /*taskDecl*/, QList<Waypoint*> * /*taskPoints*/)
+int SoaringPilot::writeDeclaration(FRTaskDeclaration * /*taskDecl*/, QList<Waypoint*> * /*taskPoints*/, const QString& /*name*/)
 {
   return FR_NOTSUPPORTED;
 }
@@ -791,7 +791,7 @@ int SoaringPilot::writeDeclaration(FRTaskDeclaration * /*taskDecl*/, QList<Waypo
  /**
  * Export flight declaration to file
  */
-int SoaringPilot::exportDeclaration(FRTaskDeclaration * /*taskDecl*/, QList<Waypoint*> * /*taskPoints*/)
+int SoaringPilot::exportDeclaration(FRTaskDeclaration * /*taskDecl*/, QList<Waypoint*> * /*taskPoints*/, const QString& /*name*/)
 {
   return FR_NOTSUPPORTED;
 }
