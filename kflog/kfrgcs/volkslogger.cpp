@@ -218,12 +218,12 @@ int Volkslogger::closeRecorder()
   return FR_OK;
 }
 
-int Volkslogger::exportDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint*> *taskPoints)
+int Volkslogger::exportDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint*> *taskPoints, const QString&)
 {
   return FR_NOTSUPPORTED;
 }
 
-int Volkslogger::writeDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint*> *taskPoints)
+int Volkslogger::writeDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint*> *taskPoints, const QString&)
 {
   Waypoint *tp;
   int loop;
