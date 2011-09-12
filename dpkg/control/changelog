@@ -1,3 +1,13 @@
+kflog (4.3.1) unstable; urgency=low
+
+  * Wrong map latitude labels on southern hemisphere fixed.
+  
+  * BUGFIX: added task name to declaration export and write
+  
+  * BUGFIX: Wait cursor was not restored when declaration entries were missing.
+
+ -- Axel Pauli <kflog.cumulus@googlemail.com>  Mon, 12 Sep 2011 17:51:42 +0200
+
 kflog (4.3.0) unstable; urgency=low
 
   * Import/Export routine added to handle Winpilot and CAI waypoint files
