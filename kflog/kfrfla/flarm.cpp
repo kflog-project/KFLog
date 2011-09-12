@@ -54,33 +54,6 @@ struct termios oldTermEnv;
  */
 struct termios newTermEnv;
 
-/*
- * Command bytes for communication with the lx device
- */
-//unsigned char STX = 0x02, /* Command prefix like AT for modems        */
-//  ACK = 0x06,      /* Response OK, if the crc check is ok             */
-//  NAK = 0x15,      /* Response not OK, if the crc check is not ok     */
-//  SYN = 0x16,      /* Request for CONNECT                             */
-//  K = 'K' | 0x80,  /* get_extra_data()   - trailing fix sized block   */
-//  L = 'L' | 0x80,  /* get_mem_sections() - the flight data is         */
-//                   /*                      retrieved in blocks        */
-//  M = 'M' | 0x80,  /* getFlightDir()-      table of flights           */
-//  N = 'N' | 0x80,  /* def_mem()          - memory range of one flight */
-//  Q = 'Q' | 0x80,  /* read_mem_setting()                              */
-//  R = 'R',         /* readWaypoints()                                 */
-//  W = 'W',         /* writeWaypoints()                                */
-//  f = 'f' | 0x80;  /* get_logger_data()  - first block                */
-//                   /* f++ get_logger_data()  - next block             */
-
-//  char manufactureShortKey = 'X';
-//  char manufactureKey[] = "xxx";  // Let's start with an empty key. If 'xxx'
-                                  // appears, then reading the 'A'-record
-                                  // failed.
-
-//  unsigned char *memContents; /* buffer to hold igc contents */
-//  int contentSize;            /* length of igc file buffer   */
-
-
 /**
  * Needed to reset the serial port in any case of unexpected exiting
  * of the program. Called via signal-handler of the runtime-environment.
