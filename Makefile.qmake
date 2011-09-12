@@ -134,4 +134,4 @@ copy2web:
 	scp -C dpkg/kflog_$(VERSION)_i386.changes \
 	       web31_axel@kflog.org:/srv/www/web31/web/fileadmin/user_upload/kflog_downloads/src/kflog_$(VERSION)_Ubuntu11.04_i386.changes
 	scp -C dpkg/kflog_$(VERSION)_i386.deb \
-               web31_axel@kflog.org:/srv/www/web31/web/fileadmin/user_upload/kflog_downloads/src/dpkg/kflog_$(VERSION)_Ubuntu11.04_i386.deb
+               web31_axel@kflog.org:/srv/www/web31/web/fileadmin/user_upload/kflog_downloads/src/kflog_$(VERSION)_Ubuntu11.04_i386.deb
