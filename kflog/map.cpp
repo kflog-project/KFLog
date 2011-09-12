@@ -1312,7 +1312,6 @@ void Map::__drawGrid()
               p.setX( width() );
               pointArraySmall.append( p );
 
-
               if( loop2 == (number / 2.0) )
                 {
                   gridP.setPen( QPen( QColor( Qt::black ), 1, Qt::DashLine ) );
@@ -1324,7 +1323,7 @@ void Map::__drawGrid()
 
                   QString text = QString("%1%2.5%3")
                                  .arg( lat >= 0 ? "N" : "S" )
-                                 .arg( lat >= 0 ? lat : -lat )
+                                 .arg( lat >= 0 ? lat : -lat - 1)
                                  .arg(QChar(Qt::Key_degree));
 
                   gridP.drawText( 5, pointArraySmall.first().y() - 5, text );
