@@ -999,14 +999,14 @@ void MainWindow::readOptions()
 
   restoreState( _settings.value( "/MainWindow/State" ).toByteArray() );
 
-  setMinimumSize( QSize(900, 700) );
+  setMinimumSize( QSize(900, 500) );
   bool ok = restoreGeometry( _settings.value( "/MainWindow/Geometry" ).toByteArray() );
 
   if( ! ok )
     {
       // use default window size
       QSize size( _settings.value( "/MainWindow/DefaultWidth",  950 ).toInt(),
-                  _settings.value( "/MainWindow/DefaultHeight", 700 ).toInt() );
+                  _settings.value( "/MainWindow/DefaultHeight", 500 ).toInt() );
 
       setMinimumSize( size );
     }
@@ -1027,7 +1027,7 @@ void MainWindow::saveOptions()
   qDebug() << "saving options...";
 
   _settings.setValue( "/MainWindow/DefaultWidth",  950 );
-  _settings.setValue( "/MainWindow/DefaultHeight", 700 );
+  _settings.setValue( "/MainWindow/DefaultHeight", 500 );
   _settings.setValue( "/MainWindow/Geometry", saveGeometry() );
   _settings.setValue( "/MainWindow/State", saveState() );
   _settings.setValue( "/MainWindow/ShowToolbar", toolBar->isVisible() );
