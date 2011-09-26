@@ -103,8 +103,6 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
   personalPage->setVisible( true );
   activePage = personalPage;
 
-  setupTree->setFixedWidth( 170 );
-
   restoreGeometry( _settings.value("/KFLogConfig/Geometry").toByteArray() );
 }
 

@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Harald Maier
+**                   2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -40,10 +41,3 @@ int BaseFlightElement::searchGetNextPoint(int, FlightPoint&)  {  return -1;  }
 int BaseFlightElement::searchStepNextPoint(int, FlightPoint&, int) {  return -1;  }
 
 int BaseFlightElement::searchStepPrevPoint(int,  FlightPoint&, int) {  return -1;  }
-
-#if 0
-void BaseFlightElement::reProject()
-{
-  qWarning("BaseFlightElement::reProject()");
-}
-#endif

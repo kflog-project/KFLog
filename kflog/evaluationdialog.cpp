@@ -359,7 +359,6 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
         htmlText += "</TABLE>";
       }
 
-
     emit showCursor(p1.projP,p2.projP);
     break;
 
@@ -398,7 +397,8 @@ void EvaluationDialog::slotShowFlightData()
       if( flight->getObjectType() == BaseMapElement::Flight && parent )
         {
           parent->setWindowTitle( tr( "Flight Evaluation:" ) + " " +
-                                  flight->getPilot() + "  " +
+                                  QFileInfo(flight->getFileName()).baseName() + ", " +
+                                  flight->getPilot() + ", " +
                                   flight->getDate().toString() );
         }
       else
