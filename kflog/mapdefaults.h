@@ -20,14 +20,21 @@
 #define HOME_DEFAULT_LAT 29125200
 #define HOME_DEFAULT_LON 5364500
 
-// Scale-values
-#define L_LIMIT   10
-#define U_LIMIT   1500
-#define SWITCH_S  300
+/**
+ * The earth's radius used for calculation, given in Meters
+ * NOTE: We use the earth as a sphere, not as a spheroid!
+ */
+#define RADIUS 6371000 // FAI Radius, this was the previous radius ->6370290
+
+// Map scale-values
+#define BORDER_L 5
+#define BORDER_U 1500
+#define BORDER_1 200
+#define BORDER_2 500
+#define BORDER_3 1000
+#define BORDER_S 250
+
 #define WPLABEL   400
-#define BORDER_1  200
-#define BORDER_2  500
-#define BORDER_3  1000
 
 /*
  * Definierte Farbwerte bei (dazwischen wurde früher linear geändert):

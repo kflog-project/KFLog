@@ -21,35 +21,19 @@
 #include <QtGui>
 
 #include "mapmatrix.h"
+#include "mapdefaults.h"
 
 // Projektions-Massstab
 // 10 Meter Höhe pro Pixel ist die stärkste Vergröerung.
 // Bei dieser Vergröerung erfolgt die eigentliche Projektion
-#define MAX_SCALE 10.0
-#define MIN_SCALE 500000.0
+#define MAX_SCALE double(BORDER_L)
+#define MIN_SCALE double(BORDER_U)
 
 #define MATRIX_MOVE(a) __moveMap(a);
 
-/**
- * The earth's radius used for calculation, given in Meters
- * NOTE: We use the earth as a sphere, not as a spheroid!
- */
-#define RADIUS 6371000 // FAI Radius, this was the prevoius radius ->6370290
 #define NUM_TO_RAD(num) ( ( M_PI * (double)(num) ) / 108000000.0 )
 #define RAD_TO_NUM(rad) ( rad * 108000000.0 / M_PI )
 #define RAD_TO_NUM_INT(rad) ( (int)rint( (rad) * 108000000.0 / M_PI ))
-
-// the scale-borders
-#define VAL_BORDER_L                      10
-#define VAL_BORDER_U                    1500
-#define VAL_BORDER_1                     100
-#define VAL_BORDER_2                     500
-#define VAL_BORDER_3                    1000
-#define VAL_BORDER_S                     250
-
-// default Start-Position (Poltringen)
-#define HOME_DEFAULT_LAT 29125200
-#define HOME_DEFAULT_LON 5364500
 
 /*************************************************************************
 **
@@ -92,7 +76,6 @@ MapMatrix::MapMatrix( QObject* object ) :
     }
 }
 
-
 MapMatrix::~MapMatrix()
 {
 }
@@ -104,12 +87,10 @@ void MapMatrix::writeMatrixOptions()
   _settings.setValue("/MapData/MapScale", cScale);
 }
 
-
 QPoint MapMatrix::wgsToMap(const QPoint& origPoint) const
 {
   return wgsToMap(origPoint.x(), origPoint.y());
 }
-
 
 QPoint MapMatrix::wgsToMap(int lat, int lon) const
 {
@@ -119,18 +100,15 @@ QPoint MapMatrix::wgsToMap(int lat, int lon) const
                       RADIUS / MAX_SCALE));
 }
 
-
 QRect MapMatrix::wgsToMap(const QRect& rect) const
 {
   return QRect(wgsToMap(rect.topLeft()), wgsToMap(rect.bottomRight()));
 }
 
-
 QPoint MapMatrix::__mapToWgs(const QPoint& origPoint) const
 {
   return __mapToWgs(origPoint.x(), origPoint.y());
 }
-
 
 QPoint MapMatrix::__mapToWgs(int x, int y) const
 {
@@ -156,7 +134,7 @@ bool MapMatrix::isVisible(const QRect& itemBorder) const
            ( itemBorder.height() * ( MAX_SCALE / cScale ) < 30000 ) );
 }
 
-int MapMatrix::getScaleRange()  const
+int MapMatrix::getScaleRange() const
 {
   if(cScale <= scaleBorders[Border1])
     return LowerLimit;
@@ -246,7 +224,7 @@ QPoint MapMatrix::getMapCenter(bool isPrint) const
       return QPoint(mapCenterLat, mapCenterLon);
 }
 
-double MapMatrix::getScale(unsigned int type)
+double MapMatrix::getScale(enum ScaleType type)
 {
   if(type == MapMatrix::CurrentScale)
     return cScale;
@@ -633,12 +611,12 @@ void MapMatrix::slotInitMatrix()
       emit projectionChanged();
     }
 
-  scaleBorders[LowerLimit]  = _settings.value("/Scale/Lower Limit", VAL_BORDER_L).toInt();
-  scaleBorders[Border1]     = _settings.value("/Scale/Border1", VAL_BORDER_1).toInt();
-  scaleBorders[Border2]     = _settings.value("/Scale/Border2", VAL_BORDER_2).toInt();
-  scaleBorders[Border3]     = _settings.value("/Scale/Border3", VAL_BORDER_3).toInt();
-  scaleBorders[SwitchScale] = _settings.value("/Scale/SwitchScale", VAL_BORDER_S).toInt();
-  scaleBorders[UpperLimit]  = _settings.value("/Scale/UpperLimit", VAL_BORDER_U).toInt();
+  scaleBorders[LowerLimit]  = _settings.value("/Scale/LowerLimit", BORDER_L).toInt();
+  scaleBorders[Border1]     = _settings.value("/Scale/Border1", BORDER_1).toInt();
+  scaleBorders[Border2]     = _settings.value("/Scale/Border2", BORDER_2).toInt();
+  scaleBorders[Border3]     = _settings.value("/Scale/Border3", BORDER_3).toInt();
+  scaleBorders[SwitchScale] = _settings.value("/Scale/SwitchScale", BORDER_S).toInt();
+  scaleBorders[UpperLimit]  = _settings.value("/Scale/UpperLimit", BORDER_U).toInt();
 
   cScale = qMin( cScale, double( scaleBorders[UpperLimit] ) );
   cScale = qMax( cScale, double( scaleBorders[LowerLimit] ) );

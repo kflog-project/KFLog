@@ -125,7 +125,7 @@ MapControlView::MapControlView(QWidget* parent) : QWidget(parent)
 
   setScaleLabel->setMinimumHeight(setScaleLabel->sizeHint().height());
   currentScaleSlider = new QSlider( Qt::Horizontal,this );
-  currentScaleSlider->setMinimum(2);
+  currentScaleSlider->setMinimum(1);
   currentScaleSlider->setMaximum(2);
   currentScaleSlider->setPageStep(1);
   currentScaleSlider->setValue(0);

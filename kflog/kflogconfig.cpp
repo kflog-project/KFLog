@@ -484,12 +484,12 @@ void KFLogConfig::slotDefaultProjection()
 
 void KFLogConfig::slotDefaultScale()
 {
-  lLimit->setValue( __getScaleValue( L_LIMIT ) );
-  lLimitN->display( L_LIMIT );
-  uLimit->setValue( __getScaleValue( U_LIMIT ) );
-  uLimitN->display( U_LIMIT );
-  switchScale->setValue( __getScaleValue( SWITCH_S ) );
-  switchScaleN->display( SWITCH_S );
+  lLimit->setValue( __getScaleValue( BORDER_L ) );
+  lLimitN->display( BORDER_L );
+  uLimit->setValue( __getScaleValue( BORDER_U ) );
+  uLimitN->display( BORDER_U );
+  switchScale->setValue( __getScaleValue( BORDER_S ) );
+  switchScaleN->display( BORDER_S );
   wpLabel->setValue( __getScaleValue( WPLABEL ) );
   wpLabelN->display( WPLABEL );
   reduce1->setValue( __getScaleValue( BORDER_1 ) );
@@ -973,9 +973,9 @@ void KFLogConfig::__addProjectionTab()
 
 void KFLogConfig::__addScaleTab()
 {
-  int ll = _settings.value( "/Scale/LowerLimit", L_LIMIT ).toInt();
-  int ul = _settings.value( "/Scale/UpperLimit", U_LIMIT ).toInt();
-  int sw = _settings.value( "/Scale/SwitchScale", SWITCH_S ).toInt();
+  int ll = _settings.value( "/Scale/LowerLimit", BORDER_L ).toInt();
+  int ul = _settings.value( "/Scale/UpperLimit", BORDER_U ).toInt();
+  int sw = _settings.value( "/Scale/SwitchScale", BORDER_S ).toInt();
   int wl = _settings.value( "/Scale/WaypointLabel", WPLABEL ).toInt();
   int b1 = _settings.value( "/Scale/Border1", BORDER_1 ).toInt();
   int b2 = _settings.value( "/Scale/Border2", BORDER_2 ).toInt();
@@ -999,7 +999,7 @@ void KFLogConfig::__addScaleTab()
   QLabel* lLimitText = new QLabel( tr( "Lower limit" ) + ":" );
 
   lLimit = new QSlider();
-  lLimit->setMinimum( 2 );
+  lLimit->setMinimum( 1 );
   lLimit->setMaximum( 105 );
   lLimit->setPageStep( 1 );
   lLimit->setOrientation( Qt::Horizontal );

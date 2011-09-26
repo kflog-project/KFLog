@@ -63,6 +63,19 @@ public:
    */
   virtual ~MapMatrix();
 
+  /** Direction of map moving. */
+  enum MoveDirection { NotSet = 0,
+                       North = 1,
+                       West = 2,
+                       East = 4,
+                       South = 8,
+                       Home = 16 };
+  /**
+   * CurrentScale muss immer die grösste Zahl sein!
+   */
+  enum ScaleType { LowerLimit = 0, Border1 = 1, Border2 = 2, Border3 = 3,
+                   UpperLimit = 4, SwitchScale = 5, CurrentScale = 6 };
+
   /**
    * Converts the given geographic-data into the current map-projection.
    *
@@ -143,12 +156,13 @@ public:
    * @return the mapped pointarray
    */
   QPolygon print(const QPolygon& pArray) const;
+
   /**
    * @param  type  The type of scale to be returned.
    *
    * @return the selected scale
    */
-  double getScale(unsigned int type = MapMatrix::CurrentScale);
+  double getScale(enum ScaleType type = MapMatrix::CurrentScale);
 
   /**
    * @return the WGS lat/lon borders of the current map.
@@ -193,18 +207,6 @@ public:
    */
   bool isVisible(const QRect& itemBorder) const;
 
-  /** */
-  enum MoveDirection { NotSet = 0,
-                       North = 1,
-                       West = 2,
-                       East = 4,
-                       South = 8,
-                       Home = 16};
-  /**
-   * CurrentScale muss immer die grösste Zahl sein!
-   */
-  enum ScaleType {LowerLimit = 0, Border1 = 1, Border2 = 2, Border3 = 3,
-                  UpperLimit = 4, SwitchScale = 5, CurrentScale = 6};
   /**
    * Centers the map to the given point.
    */

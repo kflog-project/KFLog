@@ -36,6 +36,7 @@
 #include "mapcontents.h"
 #include "mapconfig.h"
 #include "mapcontrolview.h"
+#include "mapdefaults.h"
 #include "mapmatrix.h"
 #include "objecttree.h"
 #include "recorderdialog.h"
@@ -80,6 +81,10 @@ Map *_globalMap = static_cast<Map *> (0);
 MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   QMainWindow( parent, flags )
 {
+#warning "This must be done once to get defined a new limit value."
+#warning "Remove that after the next delivery!"
+  _settings.setValue( "/Scale/LowerLimit", BORDER_L );
+
   setObjectName( "MainWindow" );
   QApplication::setStyle( "plastique" );
 
@@ -1005,10 +1010,13 @@ void MainWindow::readOptions()
   if( ! ok )
     {
       // use default window size
-      QSize size( _settings.value( "/MainWindow/DefaultWidth",  950 ).toInt(),
+      QSize size( _settings.value( "/MainWindow/DefaultWidth",  900 ).toInt(),
                   _settings.value( "/MainWindow/DefaultHeight", 500 ).toInt() );
 
       setMinimumSize( size );
+
+      _settings.setValue( "/MainWindow/DefaultWidth",  900 );
+      _settings.setValue( "/MainWindow/DefaultHeight", 500 );
     }
 
   // initialize the recent file list
@@ -1018,16 +1026,14 @@ void MainWindow::readOptions()
   taskDir   = _settings.value( "/Path/DefaultTaskDirectory",
                                getApplicationDataDirectory() ).toString();
 
-  mapControl->slotSetMinMaxValue( _settings.value( "/Scale/Lower Limit", 10 ).toInt(),
-                                  _settings.value( "/Scale/Upper Limit", 1500 ).toInt() );
+  mapControl->slotSetMinMaxValue( _settings.value( "/Scale/LowerLimit", BORDER_L ).toInt(),
+                                  _settings.value( "/Scale/UpperLimit", BORDER_U ).toInt() );
 }
 
 void MainWindow::saveOptions()
 {
   qDebug() << "saving options...";
 
-  _settings.setValue( "/MainWindow/DefaultWidth",  950 );
-  _settings.setValue( "/MainWindow/DefaultHeight", 500 );
   _settings.setValue( "/MainWindow/Geometry", saveGeometry() );
   _settings.setValue( "/MainWindow/State", saveState() );
   _settings.setValue( "/MainWindow/ShowToolbar", toolBar->isVisible() );
