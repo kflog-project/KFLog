@@ -26,12 +26,12 @@
  * representation.
  */
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <cmath>
 #include <QRegExp>
 
 #include "wgspoint.h"
-#include "mapcalc.h"
+#include "mapdefaults.h"
 
 // set static format variable to default (degrees, minutes, seconds)
 WGSPoint::Format WGSPoint::_format = WGSPoint::DMS;

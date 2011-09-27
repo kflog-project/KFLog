@@ -15,13 +15,16 @@
 **
 ***********************************************************************/
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <cmath>
+
 #include "mapcalc.h"
+#include "mapdefaults.h"
 
 #include "mapmatrix.h"
 #include "resource.h"
 
+#define PI2 M_PI*2
 
 static const char *timeFormat[6] = {"%2d:%2d", "%2d:%2d:%2d", "%02d:%02d", "%02d:%02d:%02d", "%2d:%02d", "%2d:%02d:%02d"};
 

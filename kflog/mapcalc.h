@@ -18,25 +18,14 @@
 #ifndef MAP_CALC_H
 #define MAP_CALC_H
 
-#include <time.h>
+#include <ctime>
 
 #include <QRect>
 #include <QString>
 
 #include "flightpoint.h"
 #include "waypoint.h"
-
-#define PI2 M_PI*2
-
-/**
- * The earth's radius used for calculation, given in Meters
- * NOTE: We use the earth as a sphere, not as a spheroid!
- */
-#define RADIUS 6371000 // FAI Radius, this was the prevoius radius ->6370290
-#define RADIUS_kfl (RADIUS / (360.0 * 600000.0))
-
-// Define nautical mile in meters according to earth radius of KFL
-#define MILE_kfl  (PI2 * RADIUS / (360.0 * 60.0))
+#include "wgspoint.h"
 
 /**
  * Calculates the distance between two given points according to great circle in km.

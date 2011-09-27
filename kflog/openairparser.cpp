@@ -16,18 +16,19 @@
  **
  ***********************************************************************/
 
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 #include <unistd.h>
 
 #include <QtCore>
 
-#include "resource.h"
 #include "airspace.h"
 #include "openairparser.h"
 #include "mapcalc.h"
-#include "mapmatrix.h"
 #include "mapcontents.h"
+#include "mapdefaults.h"
+#include "mapmatrix.h"
+#include "resource.h"
 
 extern MapContents*  _globalMapContents;
 extern MapMatrix*    _globalMapMatrix;

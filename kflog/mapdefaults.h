@@ -16,6 +16,8 @@
 **
 ***********************************************************************/
 
+#include <cmath>
+
 // Default-Home (Poltringen)
 #define HOME_DEFAULT_LAT 29125200
 #define HOME_DEFAULT_LON 5364500
@@ -25,6 +27,11 @@
  * NOTE: We use the earth as a sphere, not as a spheroid!
  */
 #define RADIUS 6371000 // FAI Radius, this was the previous radius ->6370290
+
+#define RADIUS_kfl (RADIUS / (360.0 * 600000.0))
+
+// Define nautical mile in meters according to earth radius of KFL
+#define MILE_kfl  (2.0 * M_PI * RADIUS / (360.0 * 60.0))
 
 // Map scale-values
 #define BORDER_L 5
