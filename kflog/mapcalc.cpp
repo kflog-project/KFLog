@@ -15,8 +15,8 @@
 **
 ***********************************************************************/
 
-#include <cstdlib>
 #include <cmath>
+#include <cstdlib>
 
 #include "mapcalc.h"
 #include "mapdefaults.h"
@@ -137,13 +137,9 @@ QString printPos(int coord, bool isLat)
   sec = (sec * 60) / 10000;
 
   min = (int)sqrt(min * min);
-  //if(min < 10)  posMin.sprintf(" 0%d'", min);
-  //else
   posMin.sprintf(" %02d'", min);
 
   sec = (int)sqrt(sec * sec);
-  //if(sec < 10)  posSec.sprintf(" 0%d\"", sec);
-  //else
   posSec.sprintf(" %02d\"", sec);
 
   if(isLat)
