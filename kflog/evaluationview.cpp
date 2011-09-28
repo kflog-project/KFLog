@@ -305,47 +305,56 @@ QPoint EvaluationView::__baroPoint(int durch[], int gn, int i)
   return QPoint(x, y);
 }
 
-QPoint EvaluationView::__speedPoint(float durch[], int gn, int i)
+void EvaluationView::_addBaroPoint( QPolygonF& vector, int baro_d[], int gn, int i)
 {
-  int height = scrollFrame->viewport()->height();
-
-  //  = Abstand am Anfang der Kurve
   int x = ( curTime - startTime ) / secWidth + X_DISTANCE ;
 
-  float gesamt = 0;
-  /*
-   * Jetzt läuft die Schleife immer durch. Wenn i < gn ist, nur bis i, sonst bis gn.
-   * Das Ganze beruht auf der Annahme, dass die zur Berechnung nötigen Punkte am Anfang
-   * des Arrays stehen. Das klappt am Anfang der Kurve sehr gut, am Ende würde es unter
-   * Umständen zu Fehlern führen ...
-   */
+  float gesamt = 0.0;
+
   for(int loop = 0; loop < qMin(gn, (i * 2 + 1)); loop++)
     {
-      gesamt += durch[loop];
+      gesamt += baro_d[loop];
     }
 
-  int y = height - (int)( ( gesamt / qMin(gn, (i *  2 + 1)) ) / scale_v ) - Y_DISTANCE;
+  qreal y = gesamt / qMin(gn, (i * 2 + 1));
 
-  return QPoint(x, y);
+  // Note the y value is not yet scaled.
+  vector.append( QPointF(x, y) );
 }
 
-QPoint EvaluationView::__varioPoint(float durch[], int gn, int i)
+void EvaluationView::_addSpeedPoint( QPolygonF& vector, float speed_d[], int gn, int i)
 {
-  int height = scrollFrame->viewport()->height();
-
   int x = ( curTime - startTime ) / secWidth + X_DISTANCE ;
-  // PRE_GRAPH_DISTANCE = Abstand am Anfang der Kurve
 
-  float gesamt = 0;
+  float gesamt = 0.0;
 
   for(int loop = 0; loop < qMin(gn, (i * 2 + 1)); loop++)
     {
-      gesamt += durch[loop];
+      gesamt += speed_d[loop];
     }
 
-  int y = (height / 2) - (int)( ( gesamt / qMin(gn, (i * 2 + 1)) ) / scale_va );
+  qreal y = gesamt / qMin(gn, (i *  2 + 1));
 
-  return QPoint(x, y);
+  // Note the y value is not yet scaled.
+  vector.append( QPointF(x, y) );
+}
+
+
+void EvaluationView::_addVarioPoint( QPolygonF& vector, float vario_d[], int gn, int i )
+{
+  int x = ( curTime - startTime ) / secWidth + X_DISTANCE ;
+
+  float gesamt = 0.0;
+
+  for(int loop = 0; loop < qMin(gn, (i * 2 + 1)); loop++)
+    {
+      gesamt += vario_d[loop];
+    }
+
+  qreal y = ( gesamt / qMin(gn, (i * 2 + 1)) );
+
+  // Note the y value is not yet scaled.
+  vector.append( QPointF(x, y) );
 }
 
 void EvaluationView::__drawCsystem(QPainter* painter)
@@ -578,7 +587,11 @@ void EvaluationView::drawCurve( bool arg_vario,
         }
     }
 
-  if( flight )
+  if( flight &&
+      flight->getRouteLength() > (int) arg_smoothness_va &&
+      flight->getRouteLength() > (int) arg_smoothness_v &&
+      flight->getRouteLength() > (int) arg_smoothness_h
+      )
     {
       cursor1 = qMax( startTime, cursor1 );
       cursor2 = qMax( startTime, cursor2 );
@@ -626,7 +639,7 @@ void EvaluationView::__draw()
 {
   int height = scrollFrame->viewport()->height();
 
-  // vertical scale factor
+  // Vertical scale factors. Are only true, if no smoothness is used.
   scale_v = getSpeed(flight->getPoint(Flight::V_MAX)) / ((double)(height - 2*Y_DISTANCE));
 
   scale_h = flight->getPoint(Flight::H_MAX).height / ((double)(height - 2*Y_DISTANCE));
@@ -639,38 +652,44 @@ void EvaluationView::__draw()
   unsigned int gn_va = smoothness_va * 2 + 1;
   unsigned int gn_h  = smoothness_h * 2 + 1;
 
-  int*   baro_d       = new int[gn_h];
-  int*   baro_d_last  = new int[gn_h];
-  int*   elev_d       = new int[gn_h];
-  int*   elev_d_last  = new int[gn_h];
-  float* speed_d      = new float[gn_v];
-  float* speed_d_last = new float[gn_v];
-  float* vario_d      = new float[gn_va];
-  float* vario_d_last = new float[gn_va];
+  int    baro_d[gn_h];
+  int    baro_d_last[gn_h];
+  int    elev_d[gn_h];
+  int    elev_d_last[gn_h];
+  float speed_d[gn_v];
+  float speed_d_last[gn_v];
+  float vario_d[gn_va];
+  float vario_d_last[gn_va];
 
-  for(unsigned int loop = 0; loop < gn_h; loop++)
+  for(unsigned int loop = 0; baro && loop < gn_h; loop++)
     {
-      baro_d[loop] = flight->getPoint(loop).height;
+      baro_d[loop]      = flight->getPoint(loop).height;
       baro_d_last[loop] = flight->getPoint(flight->getRouteLength() - loop - 1).height;
-      elev_d[loop] = flight->getPoint(loop).surfaceHeight;
+      elev_d[loop]      = flight->getPoint(loop).surfaceHeight;
       elev_d_last[loop] = flight->getPoint(flight->getRouteLength() - loop - 1).surfaceHeight;
     }
-  for(unsigned int loop = 0; loop < gn_v; loop++)
+
+  for(unsigned int loop = 0; speed && loop < gn_v; loop++)
     {
-      speed_d[loop] = getSpeed(flight->getPoint(loop));
+      speed_d[loop]      = getSpeed(flight->getPoint(loop));
       speed_d_last[loop] = getSpeed(flight->getPoint(flight->getRouteLength() - loop - 1));
     }
-  for(unsigned int loop = 0; loop < gn_va; loop++)
+
+  for(unsigned int loop = 0; vario && loop < gn_va; loop++)
     {
-      vario_d[loop] = getVario(flight->getPoint(loop));
-      vario_d_last[loop] =
-          getVario(flight->getPoint(flight->getRouteLength() - loop - 1));
+      vario_d[loop]      = getVario(flight->getPoint(loop));
+      vario_d_last[loop] = getVario(flight->getPoint(flight->getRouteLength() - loop - 1));
     }
 
-  QPolygon baroArray(flight->getRouteLength());
-  QPolygon elevArray(flight->getRouteLength()+2);
-  QPolygon varioArray(flight->getRouteLength());
-  QPolygon speedArray(flight->getRouteLength());
+  QPolygonF baroArray(flight->getRouteLength());
+  QPolygon  elevArray(flight->getRouteLength()+2);
+  QPolygonF varioArray(flight->getRouteLength());
+  QPolygonF speedArray(flight->getRouteLength());
+
+  qreal maxBaro  = 0.0;
+  qreal minVario = 0.0;
+  qreal maxVario = 0.0;
+  qreal maxSpeed = 0.0;
 
   for(int loop = 0; loop < flight->getRouteLength(); loop++)
     {
@@ -682,50 +701,114 @@ void EvaluationView::__draw()
           curTime += 86400;
         }
 
-      /* Das Array wird hier noch falsch gefüllt. Wenn über 3 Punkte geglättet wird, stimmt
-       * alles. Wenn jedoch z.B. über 5 Punkte geglättet wird, werden die Punkte
-       * ( -4, -3, -2, -1, 0, 1) genommen, statt (-2, -1, 0, 1, 2). Das ist vermutlich
-       * die Ursache dafür, dass die Kurve "wandert".
-       */
-      if(loop < flight->getRouteLength() - smoothness_h && loop > smoothness_h) {
-          baro_d[(loop - smoothness_h - 1) % gn_h] = flight->getPoint(loop + smoothness_h).height;
-          elev_d[(loop - smoothness_h - 1) % gn_h] = flight->getPoint(loop + smoothness_h).surfaceHeight;
-      }
+      if( baro )
+        {
+          /* Das Array wird hier noch falsch gefüllt. Wenn über 3 Punkte geglättet wird, stimmt
+           * alles. Wenn jedoch z.B. über 5 Punkte geglättet wird, werden die Punkte
+           * ( -4, -3, -2, -1, 0, 1) genommen, statt (-2, -1, 0, 1, 2). Das ist vermutlich
+           * die Ursache dafür, dass die Kurve "wandert".
+           */
+          if(loop < flight->getRouteLength() - smoothness_h && loop > smoothness_h)
+            {
+              baro_d[(loop - smoothness_h - 1) % gn_h] = flight->getPoint(loop + smoothness_h).height;
+              elev_d[(loop - smoothness_h - 1) % gn_h] = flight->getPoint(loop + smoothness_h).surfaceHeight;
+            }
 
-      if(loop < flight->getRouteLength() - smoothness_v && loop > smoothness_v)
-          speed_d[(loop - smoothness_v - 1) % gn_v] = getSpeed(flight->getPoint(loop + smoothness_v));
+          if(loop < flight->getRouteLength() - smoothness_h)
+            {
+              _addBaroPoint( baroArray, baro_d, gn_h, loop );
 
-      if(loop < flight->getRouteLength() - smoothness_va && loop > smoothness_va)
-          vario_d[(loop - smoothness_va - 1) % gn_va] = getVario(flight->getPoint(loop + smoothness_va));
+              elevArray.setPoint(loop, __baroPoint(elev_d, gn_h, loop));
+            }
+          else
+            {
+              _addBaroPoint( baroArray, baro_d_last, gn_h,
+                             flight->getRouteLength() - loop - 1);
 
-      /* Wenn das Glätten wie bei __speedPoint() erfolgt, können gn_? und loop auch als
-       * unsigned übergeben werden ...
-       */
-      if(loop < flight->getRouteLength() - smoothness_h) {
-          baroArray.setPoint(loop, __baroPoint(baro_d, gn_h, loop));
-          elevArray.setPoint(loop, __baroPoint(elev_d, gn_h, loop));
-      } else {
-          baroArray.setPoint(loop, __baroPoint(baro_d_last, gn_h,
-                        flight->getRouteLength() - loop - 1));
-          elevArray.setPoint(loop, __baroPoint(elev_d_last, gn_h,
-                        flight->getRouteLength() - loop - 1));
-      }
+              elevArray.setPoint( loop, __baroPoint(elev_d_last, gn_h,
+                                  flight->getRouteLength() - loop - 1) );
+            }
 
-      if(loop < flight->getRouteLength() - smoothness_va)
-          varioArray.setPoint( loop,
-                               __varioPoint(vario_d, gn_va, loop));
-      else
-          varioArray.setPoint( loop,
-                               __varioPoint(vario_d_last, gn_va,
-                               flight->getRouteLength() - loop - 1));
+          // Search the new baro maximum
+          qreal by = baroArray.last().y();
 
-      if(loop < flight->getRouteLength() - smoothness_v)
-          speedArray.setPoint( loop,
-                               __speedPoint(speed_d, gn_v, loop));
-      else
-          speedArray.setPoint( loop,
-                               __speedPoint(speed_d_last, gn_v,
-                               flight->getRouteLength() - loop - 1));
+          if( by > maxBaro )
+            {
+              maxBaro = by;
+            }
+        }
+
+      if( vario )
+        {
+          if( loop < flight->getRouteLength() - smoothness_va && loop > smoothness_va)
+            {
+              vario_d[(loop - smoothness_va - 1) % gn_va] = getVario(flight->getPoint(loop + smoothness_va));
+            }
+
+          if( loop < flight->getRouteLength() - smoothness_va )
+            {
+              _addVarioPoint(varioArray, vario_d, gn_va, loop);
+            }
+          else
+            {
+              _addVarioPoint(varioArray, vario_d_last, gn_va, flight->getRouteLength() - loop - 1);
+            }
+
+          // Search the new variometer maximum/minimum
+          qreal vy = varioArray.last().y();
+
+          if( vy > 0.0 && vy > maxVario )
+            {
+              maxVario = vy;
+            }
+          else if( vy < 0.0 && vy < minVario )
+            {
+              minVario = vy;
+            }
+        }
+
+      if( speed )
+        {
+          if(loop < flight->getRouteLength() - smoothness_v && loop > smoothness_v)
+            {
+              speed_d[(loop - smoothness_v - 1) % gn_v] = getSpeed(flight->getPoint(loop + smoothness_v));
+            }
+
+          if(loop < flight->getRouteLength() - smoothness_v)
+            {
+              _addSpeedPoint( speedArray, speed_d, gn_v, loop);
+            }
+          else
+            {
+              _addSpeedPoint( speedArray, speed_d_last, gn_v, flight->getRouteLength() - loop - 1);
+            }
+
+          // Search the new speed maximum
+          qreal sy = speedArray.last().y();
+
+          if( sy > maxSpeed )
+            {
+              maxSpeed = sy;
+            }
+        }
+    }
+
+  if( baro )
+    {
+      scale_h = maxBaro / ((double)(height - 2 * Y_DISTANCE));
+    }
+
+  if( vario )
+    {
+      // Recalculate current variometer scale
+      scale_va = qMax(maxVario, ( -1.0 * minVario) ) /
+                  ((double)(height - 2 * Y_DISTANCE) / 2.0);
+    }
+
+  if( speed )
+    {
+      // Recalculate current speed scale
+      scale_v = maxSpeed / ((double) (height - 2 * Y_DISTANCE));
     }
 
   pixBufferKurve.fill(Qt::white);
@@ -755,10 +838,9 @@ void EvaluationView::__draw()
   int xpos = 0;
 
   // turnpoints
-  QList<Waypoint*>  wP;
-  QString timeText = 0;
+  QList<Waypoint *>  wP = flight->getWPList();
 
-  wP = flight->getWPList();
+  QString timeText;
 
 #warning "Drawing of turnpoints needs some tweaking!"
 
@@ -796,18 +878,48 @@ void EvaluationView::__draw()
 
   if(vario)
     {
+      // All y values must be scaled to the found minimum/maximum value
+      for( int i = 0; i < varioArray.size(); i++ )
+        {
+          qreal y = varioArray.at(i).y();
+
+          y = (height / 2) - (y / scale_va);
+
+          varioArray.replace( i, QPointF(varioArray.at(i).x(), y) );
+        }
+
       painter.setPen(QPen(QColor(255,100,100), 1));
       painter.drawPolyline(varioArray);
     }
 
   if(speed)
     {
+      // All y values must be scaled to the found minimum/maximum value
+      for( int i = 0; i < speedArray.size(); i++ )
+        {
+          qreal y = speedArray.at(i).y();
+
+          y = height - ( y / scale_v ) - Y_DISTANCE;
+
+          speedArray.replace( i, QPointF(speedArray.at(i).x(), y) );
+        }
+
       painter.setPen(QPen(QColor(0,0,0), 1));
       painter.drawPolyline(speedArray);
     }
 
   if(baro)
     {
+      // All y values must be scaled to the found maximum value
+      for( int i = 0; i < baroArray.size(); i++ )
+        {
+          qreal y = baroArray.at(i).y();
+
+          y = height - ( y / scale_h ) - Y_DISTANCE;
+
+          baroArray.replace( i, QPointF(baroArray.at(i).x(), y) );
+        }
+
       painter.setPen(QPen(QColor(100, 100, 255), 1));
       painter.drawPolyline(baroArray);
     }
@@ -816,13 +928,6 @@ void EvaluationView::__draw()
 
   __drawCursor(( cursor1 - startTime ) / secWidth + X_DISTANCE, false, 1);
   __drawCursor(( cursor2 - startTime ) / secWidth + X_DISTANCE, false, 2);
-
-  delete [] baro_d;
-  delete [] baro_d_last;
-  delete [] speed_d;
-  delete [] speed_d_last;
-  delete [] vario_d;
-  delete [] vario_d_last;
 }
 
 void EvaluationView::__drawCursor( const int xpos,

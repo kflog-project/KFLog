@@ -396,7 +396,7 @@ void EvaluationDialog::slotShowFlightData()
     {
       if( flight->getObjectType() == BaseMapElement::Flight && parent )
         {
-          parent->setWindowTitle( tr( "Flight Evaluation:" ) + " [" +
+          parent->setWindowTitle( tr( "Flight Evaluation" ) + ": [" +
                                   QFileInfo(flight->getFileName()).fileName() + "] " +
                                   flight->getPilot() + ", " +
                                   flight->getDate().toString() );

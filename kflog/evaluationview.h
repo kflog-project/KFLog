@@ -19,10 +19,11 @@
 #ifndef EVALUATION_VIEW_H
 #define EVALUATION_VIEW_H
 
-#include <time.h>
+#include <ctime>
 
 #include <QBitmap>
 #include <QPixmap>
+#include <QPolygonF>
 #include <QScrollArea>
 #include <QWidget>
 
@@ -88,13 +89,20 @@ public slots:
 
 private:
 
+  /** Draws the coordinate system axis. */
   void __drawCsystem(QPainter* painter);
-  /** */
-  QPoint __baroPoint(int baro_d[], int gn, int i);
-  /** */
-  QPoint __varioPoint(float vario_d[], int gn, int i);
-  /** */
-  QPoint __speedPoint(float speed_d[], int gn, int i);
+
+  /** Calculates the elevation point for the drawing polygon. */
+  QPoint __baroPoint(int durch[], int gn, int i);
+
+  /** Calculates the altitude point for the drawing polygon. */
+  void _addBaroPoint( QPolygonF& vector, int baro_d[], int gn, int i);
+
+  /** Calculates the variometer point for the drawing polygon. */
+  void _addVarioPoint( QPolygonF& vector, float vario_d[], int gn, int i );
+
+  /** Calculates the speed point for the drawing polygon. */
+  void _addSpeedPoint( QPolygonF& vector, float speed_d[], int gn, int i);
 
   /**
    * Prepares the flight pointer.
@@ -104,18 +112,6 @@ private:
    * Makes a drawn flight pointer visible.
    */
   void makeFlightPointerVisible();
-
-private:
-
-  /**
-   * Coordinates of last pointer position
-   */
-  QPoint lastPointerPosition;
-   /**
-    * Contains a reference to a buffer that contains the pointer
-    * for the current position, so we only need to draw it once
-    */
-  QPixmap pixPointer;
 
   /**
    * Draws two different kind of cursors at the diagram.
@@ -133,6 +129,16 @@ private:
 
   /** Draw y-axis */
   void __drawYAxis();
+
+/**
+   * Coordinates of last pointer position
+   */
+  QPoint lastPointerPosition;
+   /**
+    * Contains a reference to a buffer that contains the pointer
+    * for the current position, so we only need to draw it once
+    */
+  QPixmap pixPointer;
 
   /** Stores the mouse move cursors. */
   QPixmap pixBufferMouse;

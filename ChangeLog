@@ -1,5 +1,10 @@
 $Id$
 
+2011-09-28 Axel Pauli <axel@kflog.org>
+
+  * Drawing scale of evaluation data dynamically adapted to used smooth
+    values. That ensures that all available place is used for the drawing.
+    
 2011-09-27 Axel Pauli <axel@kflog.org>
 
  * Minimum scale for zooming in changed from 10 to 5.
