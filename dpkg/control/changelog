@@ -1,3 +1,24 @@
+kflog (4.4.0) unstable; urgency=low
+
+  * Two new spin boxes added to evaluation view for scaling of speed and
+    variometer display by hand or automatically.
+
+  * Drawing scale of evaluation data dynamically adapted to used smooth
+    values. That ensures that all available place is used for the drawing.
+
+  * Minimum scale for zooming in changed from 10 to 5.
+  
+  * Bugfix: Spelling bug fixed in configuration items /Scale/LowerLimit and
+    /Scale/UpperLimit.
+  
+  * Bugfix: Maximum scale value for zoom out via mouse wheel was to large.
+    That caused senseless map loading of the whole world.
+    
+  * IGC file name added to window title of evaluation view and to flight data
+    window content.
+
+ -- Axel Pauli <kflog.cumulus@googlemail.com>  Wed, 28 Sep 2011 19:37:06 +0200
+ 
 kflog (4.3.1) unstable; urgency=low
 
   * Wrong map latitude labels on southern hemisphere fixed.
