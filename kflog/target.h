@@ -26,6 +26,6 @@
 #ifndef target_h
 #define target_h
 
-#define KFLOG_VERSION "4.3.2"
+#define KFLOG_VERSION "4.4.0"
 
 #endif
