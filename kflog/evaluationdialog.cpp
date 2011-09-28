@@ -54,17 +54,19 @@ EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
   layout->setSpacing( 1 );
   layout->addWidget(textSplitter);
 
-  if( _settings.value("/EvaluationDialog/FirstOpen", true).toBool() )
+  setMinimumSize( QSize(600, 200) );
+
+  bool ok = restoreGeometry( _settings.value( "/EvaluationDialog/Geometry" ).toByteArray() );
+
+  if( ! ok )
     {
-      // On first call we need a reasonable size of the widget. All other
-      // is handled later on by the dock widget.
-      _settings.setValue( "/EvaluationDialog/FirstOpen", false );
       resize(800, 600);
     }
 }
 
 EvaluationDialog::~EvaluationDialog()
 {
+  _settings.setValue( "/EvaluationDialog/Geometry", saveGeometry() );
 }
 
 void EvaluationDialog::hideEvent( QHideEvent* event )

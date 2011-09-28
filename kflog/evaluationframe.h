@@ -68,7 +68,7 @@ class EvaluationFrame : public QWidget
         return flight;
       };
 
-  public slots:
+  private slots:
     /** */
     void slotVarioSmoothness(int s);
     /** */
@@ -76,7 +76,11 @@ class EvaluationFrame : public QWidget
     /** */
     void slotSpeedSmoothness(int s);
     /** */
-    void slotScale(int secWidth);
+    void slotScaleTime(int newScale);
+    /** */
+    void slotScaleSpeed(int newScale);
+    /** */
+    void slotScaleVario(int newScale);
     /** */
     void slotShowFlight( Flight* newFlight );
     /** */
@@ -102,14 +106,24 @@ class EvaluationFrame : public QWidget
     QSlider* sliderVario;
     QSlider* sliderBaro;
     QSlider* sliderSpeed;
-    QSpinBox* spinScale;
+
+    QSpinBox* spinTime;
+    QSpinBox* spinVario;
+    QSpinBox* spinSpeed;
 
     int smoothness_va;
     int smoothness_v;
     int smoothness_h;
 
-    int secWidth;
-    int secWidthOld;
+    /** time scale values. */
+    int timeScale;
+    int timeScaleOld;
+
+    /** variometer scale values. */
+    int varioScale;
+
+    /** speed scale values. */
+    int speedScale;
 
     time_t centerTime;
 

@@ -56,9 +56,15 @@ public:
 
   virtual ~EvaluationView();
 
-  void drawCurve( bool vario, bool speed, bool baro,
-                  unsigned int smoothness_va, unsigned int smoothness_v,
-                  unsigned int smoothness_h, unsigned int secWidth );
+  void drawCurve( bool vario,
+                  bool speed,
+                  bool baro,
+                  unsigned int smoothness_va,
+                  unsigned int smoothness_v,
+                  unsigned int smoothness_h,
+                  unsigned int secWidth,
+                  unsigned int speedScale,
+                  unsigned int varioScale);
 
   enum CursorStatus { Reached = 8, NotReached = 16};
 
@@ -158,9 +164,15 @@ private:
     */
   unsigned int secWidth;
 
-  float scale_v;
-  float scale_h;
-  float scale_va;
+  /** Maximum speed value, used for diagram drawing. */
+  unsigned int speedScale;
+
+  /** Maximum variometer value, used for diagram drawing. */
+  unsigned int varioScale;
+
+  double scale_v;
+  double scale_h;
+  double scale_va;
 
   int smoothness_va;
   int smoothness_v;

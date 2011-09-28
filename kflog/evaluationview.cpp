@@ -45,6 +45,8 @@ EvaluationView::EvaluationView(QScrollArea* parent, EvaluationDialog* dialog) :
   cursor_alt(0),
   startTime(0),
   secWidth(5),
+  speedScale(0),
+  varioScale(0),
   scrollFrame(parent),
   evalDialog(dialog),
   flight(0),
@@ -52,13 +54,7 @@ EvaluationView::EvaluationView(QScrollArea* parent, EvaluationDialog* dialog) :
 {
   setObjectName( "EvaluationView" );
   setMouseTracking(true);
-  setMinimumSize( 600, 200 );
-
-  if( parent )
-    {
-      // I do that to give the scroll area a predefined size.
-      parent->setMinimumSize( 600, 200 );
-    }
+  //setMinimumSize( 600, 200 );
 
   QPalette p = palette();
   p.setColor(backgroundRole(), Qt::white);
@@ -556,7 +552,9 @@ void EvaluationView::drawCurve( bool arg_vario,
                                 unsigned int arg_smoothness_va,
                                 unsigned int arg_smoothness_v,
                                 unsigned int arg_smoothness_h,
-                                unsigned int secW )
+                                unsigned int secW,
+                                unsigned int speedScale,
+                                unsigned int varioScale )
 {
   if( scrollFrame->viewport()->height() == 0 )
     {
@@ -568,8 +566,6 @@ void EvaluationView::drawCurve( bool arg_vario,
     }
 
   Flight* newFlight = evalDialog->getFlight();
-
-  // qDebug() << "EvaluationView::drawCurve(): Flight=" << newFlight;
 
   if( flight != newFlight )
     {
@@ -599,6 +595,8 @@ void EvaluationView::drawCurve( bool arg_vario,
       cursor2 = qMin( landTime, cursor2 );
 
       secWidth = secW;
+      this->speedScale = speedScale;
+      this->varioScale = varioScale;
 
       int width = (landTime - startTime) / secWidth + (COORD_DISTANCE * 2) + 20;
 
@@ -640,13 +638,19 @@ void EvaluationView::__draw()
   int height = scrollFrame->viewport()->height();
 
   // Vertical scale factors. Are only true, if no smoothness is used.
-  scale_v = getSpeed(flight->getPoint(Flight::V_MAX)) / ((double)(height - 2*Y_DISTANCE));
-
   scale_h = flight->getPoint(Flight::H_MAX).height / ((double)(height - 2*Y_DISTANCE));
 
-  scale_va = qMax((double)getVario(flight->getPoint(Flight::VA_MAX)),
-              ( -1.0 * (double)getVario(flight->getPoint(Flight::VA_MIN))) ) /
-              ((double)(height - 2*Y_DISTANCE) / 2.0);
+  if( speedScale )
+    {
+      // User has defined a fixed speed maximum.
+      scale_v = double(speedScale) / ((double)(height - 2*Y_DISTANCE));
+    }
+
+  if( varioScale )
+    {
+      // User has defined a fixed variometer maximum/minimum.
+      scale_va = double(varioScale) / ((double)(height - 2*Y_DISTANCE) / 2.0);
+    }
 
   unsigned int gn_v  = smoothness_v * 2 + 1;
   unsigned int gn_va = smoothness_va * 2 + 1;
@@ -798,14 +802,14 @@ void EvaluationView::__draw()
       scale_h = maxBaro / ((double)(height - 2 * Y_DISTANCE));
     }
 
-  if( vario )
+  if( vario && varioScale == 0 )
     {
       // Recalculate current variometer scale
       scale_va = qMax(maxVario, ( -1.0 * minVario) ) /
                   ((double)(height - 2 * Y_DISTANCE) / 2.0);
     }
 
-  if( speed )
+  if( speed && speedScale == 0 )
     {
       // Recalculate current speed scale
       scale_v = maxSpeed / ((double) (height - 2 * Y_DISTANCE));

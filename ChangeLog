@@ -1,5 +1,10 @@
 $Id$
 
+2011-09-29 Axel Pauli <axel@kflog.org>
+
+  * Two new spin boxes added to evaluation view for scaling of speed and
+    variometer display by hand or automatically.
+
 2011-09-28 Axel Pauli <axel@kflog.org>
 
   * Drawing scale of evaluation data dynamically adapted to used smooth
