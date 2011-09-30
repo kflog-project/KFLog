@@ -1637,8 +1637,8 @@ void MainWindow::slotSetPointInfo(const QPoint& pos, const FlightPoint& point)
   text.sprintf("%2.1f m/s  ", getVario(point));
   statusVarioL->setText(text);
 
-  statusLatL->setText(WGSPoint::printPos(pos.y()));
-  statusLonL->setText(WGSPoint::printPos(pos.x(), false));
+  statusLatL->setText(WGSPoint::printPos(pos.x()));
+  statusLonL->setText(WGSPoint::printPos(pos.y(), false));
 }
 
 void MainWindow::slotSetPointInfo(const QPoint& pos)

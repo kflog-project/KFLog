@@ -1,5 +1,16 @@
 $Id$
 
+2011-09-30 Axel Pauli <axel@kflog.org>
+
+  * Bugfix: If you touch a drawn flight line with the mouse the data of the
+    touched flight point is displayed in the lower statusbar of the main window.
+    The displayed coordinates were wrong. The latitude and longitude were
+    skewed.
+
+2011-09-29 Axel Pauli <axel@kflog.org>
+
+  * KFLog 4.4.0 released.
+
 2011-09-29 Axel Pauli <axel@kflog.org>
 
   * Two new spin boxes added to evaluation view for scaling of speed and
@@ -12,16 +23,16 @@ $Id$
     
 2011-09-27 Axel Pauli <axel@kflog.org>
 
- * Minimum scale for zooming in changed from 10 to 5.
- 
- * Bugfix: Spelling bug fixed in configuration items /Scale/LowerLimit and
-   /Scale/UpperLimit.
- 
- * Bugfix: Maximum scale value for zoom out via mouse wheel was to large.
-   That caused senseless map loading of the whole world.
-   
- * IGC file name added to window title of evaluation view and to flight data
-   window content.
+  * Minimum scale for zooming in changed from 10 to 5.
+  
+  * Bugfix: Spelling bug fixed in configuration items /Scale/LowerLimit and
+    /Scale/UpperLimit.
+  
+  * Bugfix: Maximum scale value for zoom out via mouse wheel was to large.
+    That caused senseless map loading of the whole world.
+    
+  * IGC file name added to window title of evaluation view and to flight data
+    window content.
    
 2011-09-13 Axel Pauli <axel@kflog.org>
 

@@ -33,7 +33,7 @@
 #ifndef FLIGHT_POINT
 #define FLIGHT_POINT
 
-#include <time.h>
+#include <ctime>
 
 #include <QPoint>
 #include <QString>
