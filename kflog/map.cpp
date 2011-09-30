@@ -1776,8 +1776,6 @@ void Map::__showFlightData( const QPoint& mapPos )
 
   if( flightList.size() > 0 )
     {
-      qDebug() << "flightList.size()" << flightList.size();
-
       for( int i = 0; i < flightList.size(); i++ )
         {
           FlightPoint fP;
