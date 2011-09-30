@@ -1769,6 +1769,30 @@ void Map::__showLayer()
   update();
 }
 
+void Map::__showFlightData( const QPoint& mapPos )
+{
+  // Show flight data, if position is in the near of a flight.
+  QList<Flight *> flightList = getFlightList();
+
+  if( flightList.size() > 0 )
+    {
+      qDebug() << "flightList.size()" << flightList.size();
+
+      for( int i = 0; i < flightList.size(); i++ )
+        {
+          FlightPoint fP;
+
+          if( flightList.at(i)->searchPoint( mapPos, fP ) != -1 )
+            {
+              emit showFlightPoint( fP.origP, fP );
+
+              // Note the first matched flight is the winner in a group!
+              break;
+            }
+        }
+    }
+}
+
 void Map::slotDrawCursor( const QPoint& p1, const QPoint& p2 )
 {
   if( p1 == QPoint(-100,-100) && p2 == QPoint(-100,-100) )
@@ -1779,11 +1803,20 @@ void Map::slotDrawCursor( const QPoint& p1, const QPoint& p2 )
       return;
     }
 
-  lastCur1Pos = p1;
-  lastCur2Pos = p2;
-
   QPoint pos1( _globalMapMatrix->map( p1 ) );
   QPoint pos2( _globalMapMatrix->map( p2 ) );
+
+  if( p1 != lastCur1Pos )
+    {
+      __showFlightData( pos1 );
+    }
+  else if( p2 != lastCur1Pos )
+    {
+      __showFlightData( pos2 );
+    }
+
+  lastCur1Pos = p1;
+  lastCur2Pos = p2;
 
   if( pixFlightCursors.isNull() )
     {

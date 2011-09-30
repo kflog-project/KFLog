@@ -6,6 +6,11 @@ $Id$
     touched flight point is displayed in the lower statusbar of the main window.
     The displayed coordinates were wrong. The latitude and longitude were
     skewed.
+    
+  * If the begin or end cursor is moved in the evaluation window, the related
+    flight point is now displayed with all its data in the main window
+    statusbar. I want to get the coordinates for a certain position in the
+    barogram of the evaluation window. 
 
 2011-09-29 Axel Pauli <axel@kflog.org>
 

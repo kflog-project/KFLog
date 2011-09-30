@@ -277,6 +277,14 @@ private:
      * Copies the pixmaps into pixBuffer and calls a paintEvent().
      */
     void __showLayer();
+
+    /**
+     *  Show flight data, if position is in the near of a flight.
+     *
+     *  \param mapPos map position to be used for search.
+     */
+    void __showFlightData( const QPoint& mapPos );
+
     /**
      * Draws the map. The type of map objects to be drawn is controlled
      * via slotConfigureMap.
