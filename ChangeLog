@@ -1,5 +1,10 @@
 $Id$
 
+2011-10-02 Axel Pauli <axel@kflog.org>
+
+  * Bugfix: The coordinates of the map cursor were only displayed in the main
+    statusbar, if a flight was loaded. That annoyed me. I fixed that.
+
 2011-09-30 Axel Pauli <axel@kflog.org>
 
   * Bugfix: If you touch a drawn flight line with the mouse the data of the

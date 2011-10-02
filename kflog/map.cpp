@@ -429,10 +429,10 @@ void Map::mouseMoveEvent( QMouseEvent* event )
     {
       QList<Flight *> flightList = getFlightList();
 
+      bool match = false;
+
       if( flightList.size() > 0 )
         {
-          bool match = false;
-
           for( int i = 0; i < flightList.size(); i++ )
             {
               FlightPoint fP;
@@ -447,11 +447,11 @@ void Map::mouseMoveEvent( QMouseEvent* event )
                   break;
                 }
             }
+        }
 
-          if( ! match )
-            {
-              emit showPoint( _globalMapMatrix->mapToWgs( event->pos() ) );
-            }
+      if( ! match )
+        {
+          emit showPoint( _globalMapMatrix->mapToWgs( event->pos() ) );
         }
     }
 
