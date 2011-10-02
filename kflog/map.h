@@ -488,6 +488,9 @@ private:
     //
     QTimer *mapInfoTimer;
     QPoint mapInfoTimerStartpoint;
+
+    /** List of drawn cities. */
+    QList<BaseMapElement *> m_drawnCityList;
 };
 
 #endif

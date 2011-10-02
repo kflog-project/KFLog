@@ -101,6 +101,23 @@ bool LineElement::drawMapElement(QPainter* targetP)
   return true;
 }
 
+QString LineElement::getInfoString()
+{
+  QString text = "<html>";
+
+  if(typeID == BaseMapElement::City)
+    {
+      text += "<b>" + QObject::tr("City") + ":</b> " +
+              getName() + "</html>";
+
+      return text;
+    }
+
+  text += getName() + "</html>";
+
+  return text;
+}
+
 void LineElement::printMapElement( QPainter* printPainter, bool isText )
 {
   Q_UNUSED( isText )

@@ -104,6 +104,11 @@ public:
       return projPolygon;
     }
 
+  /**
+   * \return A HTML formated string containing the element name.
+   */
+  virtual QString getInfoString();
+
 protected:
   /**
    * Contains the projected positions of the line element.

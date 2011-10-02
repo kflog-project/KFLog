@@ -1340,7 +1340,8 @@ void MapContents::printContents(QPainter* targetPainter, bool isText)
 
 
 void MapContents::drawList( QPainter* targetPainter,
-                            unsigned int listID )
+                            unsigned int listID,
+                            QList<BaseMapElement *>& drawnElements )
 {
   switch(listID)
     {
@@ -1386,7 +1387,12 @@ void MapContents::drawList( QPainter* targetPainter,
 
       case CityList:
         for (int i = 0; i < cityList.size(); i++)
-           cityList[i].drawMapElement(targetPainter);
+          {
+           if( cityList[i].drawMapElement(targetPainter) )
+             {
+               drawnElements.append( &cityList[i] );
+             }
+          }
         break;
 
       case VillageList:

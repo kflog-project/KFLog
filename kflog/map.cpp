@@ -719,6 +719,26 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
     return;
   }
 
+  // let's show city names
+  if( m_drawnCityList.size() > 0 )
+    {
+      for( int i = 0; i <  m_drawnCityList.size(); i++ )
+        {
+          LineElement *city = static_cast<LineElement *> ( m_drawnCityList[i] );
+
+          // The mouse position must be converted to map coordinates.
+          const QPoint mapPos = _globalMapMatrix->invertToMap(current);
+
+          if( city->getPolygon().containsPoint( mapPos, Qt::OddEvenFill ) )
+            {
+              text = city->getInfoString();
+              WhatsThat* box = new WhatsThat( this, text, timeout, mapToGlobal( current ) );
+              box->setVisible( true );
+              return;
+            }
+        }
+    }
+
   // At last search for airspaces.
   text += "<html><table border=1><tr><th align=left>" +
           tr("Airspace&nbsp;Structure") +
@@ -1394,6 +1414,9 @@ void Map::__drawMap()
   QPainter uMapP(&pixUnderMap);
   QPainter isoMapP(&pixIsoMap);
 
+  m_drawnCityList.clear();
+  QList<BaseMapElement *> drawnElements;
+
   // Take the color of the subterrain for filling
   pixIsoMap.fill( _globalMapConfig->getIsoColor(0) );
 
@@ -1401,43 +1424,43 @@ void Map::__drawMap()
 
   emit setStatusBarProgress(10);
 
-  _globalMapContents->drawList(&uMapP, MapContents::TopoList);
+  _globalMapContents->drawList(&uMapP, MapContents::TopoList, drawnElements);
 
-  _globalMapContents->drawList(&uMapP, MapContents::CityList);
+  _globalMapContents->drawList(&uMapP, MapContents::CityList, m_drawnCityList);
 
-  _globalMapContents->drawList(&uMapP, MapContents::HydroList);
+  _globalMapContents->drawList(&uMapP, MapContents::HydroList, drawnElements);
 
-  _globalMapContents->drawList(&uMapP, MapContents::LakeList);
+  _globalMapContents->drawList(&uMapP, MapContents::LakeList, drawnElements);
 
   emit setStatusBarProgress(15);
 
-  _globalMapContents->drawList(&uMapP, MapContents::RoadList);
+  _globalMapContents->drawList(&uMapP, MapContents::RoadList, drawnElements);
 
-  _globalMapContents->drawList(&uMapP, MapContents::HighwayList);
+  _globalMapContents->drawList(&uMapP, MapContents::HighwayList, drawnElements);
 
   emit setStatusBarProgress(25);
 
-  _globalMapContents->drawList(&uMapP, MapContents::RailList);
+  _globalMapContents->drawList(&uMapP, MapContents::RailList, drawnElements);
 
   emit setStatusBarProgress(35);
 
-  _globalMapContents->drawList(&uMapP, MapContents::VillageList);
+  _globalMapContents->drawList(&uMapP, MapContents::VillageList, drawnElements);
 
   emit setStatusBarProgress(45);
 
-  _globalMapContents->drawList(&uMapP, MapContents::LandmarkList);
+  _globalMapContents->drawList(&uMapP, MapContents::LandmarkList, drawnElements);
 
   emit setStatusBarProgress(50);
 
-  _globalMapContents->drawList(&uMapP, MapContents::ObstacleList);
+  _globalMapContents->drawList(&uMapP, MapContents::ObstacleList, drawnElements);
 
   emit setStatusBarProgress(55);
 
-  _globalMapContents->drawList(&aeroP, MapContents::ReportList);
+  _globalMapContents->drawList(&aeroP, MapContents::ReportList, drawnElements);
 
   emit setStatusBarProgress(60);
 
-  _globalMapContents->drawList(&aeroP, MapContents::NavList);
+  _globalMapContents->drawList(&aeroP, MapContents::NavList, drawnElements);
 
   emit setStatusBarProgress(65);
 
@@ -1447,19 +1470,19 @@ void Map::__drawMap()
 
   emit setStatusBarProgress(75);
 
-  _globalMapContents->drawList(&aeroP, MapContents::AirfieldList);
+  _globalMapContents->drawList(&aeroP, MapContents::AirfieldList, drawnElements);
 
   emit setStatusBarProgress(80);
 
-  _globalMapContents->drawList(&aeroP, MapContents::AddSitesList);
+  _globalMapContents->drawList(&aeroP, MapContents::AddSitesList, drawnElements);
 
   emit setStatusBarProgress(85);
 
-  _globalMapContents->drawList(&aeroP, MapContents::GliderfieldList);
+  _globalMapContents->drawList(&aeroP, MapContents::GliderfieldList, drawnElements);
 
   emit setStatusBarProgress(90);
 
-  _globalMapContents->drawList(&aeroP, MapContents::OutLandingList);
+  _globalMapContents->drawList(&aeroP, MapContents::OutLandingList, drawnElements);
 
   emit setStatusBarProgress(95);
 
@@ -1505,8 +1528,9 @@ void Map::__drawFlight()
 {
   pixFlight.fill(Qt::transparent);
   QPainter flightP(&pixFlight);
+  QList<BaseMapElement *> drawnElements;
 
-  _globalMapContents->drawList( &flightP, MapContents::FlightList );
+  _globalMapContents->drawList( &flightP, MapContents::FlightList, drawnElements );
 }
 
 void Map::__drawPlannedTask( bool solid )
