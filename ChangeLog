@@ -3,7 +3,7 @@ $Id$
 2011-10-02 Axel Pauli <axel@kflog.org>
 
   * Bugfix: The coordinates of the map cursor were only displayed in the main
-    statusbar, if a flight was loaded. That annoyed me. I fixed that.
+    window's statusbar, if a flight was loaded. That annoyed me. I fixed that.
 
 2011-09-30 Axel Pauli <axel@kflog.org>
 
@@ -13,7 +13,7 @@ $Id$
     skewed.
     
   * If the begin or end cursor is moved in the evaluation window, the related
-    flight point is now displayed with all its data in the main window
+    flight point is now displayed with all its data in the main window's
     statusbar. I want to get the coordinates for a certain position in the
     barogram of the evaluation window. 
 
