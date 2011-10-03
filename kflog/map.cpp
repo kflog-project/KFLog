@@ -594,9 +594,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
       timeout = 20000;
     }
 
-  QString text = "";
-
-  bool show = false;
+  QString text;
 
   int searchList[] = { MapContents::AirfieldList,
                        MapContents::GliderfieldList,
@@ -739,13 +737,27 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
         }
     }
 
-  // At last search for airspaces.
-  text += "<html><table border=1><tr><th align=left>" +
-          tr("Airspace&nbsp;Structure") +
-          "</th></tr>";
+  // At last look for airspace to be displayed.
+  __displayAirspaceInfo(current, automatic);
+}
 
-  QList<QPair<QPainterPath, Airspace *> >& airspaceRegionList =
-                                    _globalMapContents->getAirspaceRegionList();
+void Map::__displayAirspaceInfo(const QPoint& current, bool automatic)
+{
+  int timeout = 60000;
+
+  if( automatic )
+    {
+      timeout = 20000;
+    }
+
+  // At last search for airspaces.
+  QString text = QString("<html><table border=1><tr><th align=left>") +
+                 tr("Airspace&nbsp;Structure") +
+                 "</th></tr>";
+
+  QList<QPair<QPainterPath, Airspace *> >& airspaceRegionList = _globalMapContents->getAirspaceRegionList();
+
+  bool show = false;
 
   for( int loop = 0; loop < airspaceRegionList.count(); loop++)
     {
@@ -1461,6 +1473,13 @@ void Map::__drawMap()
   emit setStatusBarProgress(60);
 
   _globalMapContents->drawList(&aeroP, MapContents::NavList, drawnElements);
+
+  uMapP.end();
+
+  if( _globalMapMatrix->getScale( MapMatrix::CurrentScale ) <= 100.0 )
+    {
+      __drawCityLabels( pixUnderMap );
+    }
 
   emit setStatusBarProgress(65);
 
@@ -2577,7 +2596,7 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
   return found;
 }
 
-/** Puts the waypoints of the active waypoint catalog to the map */
+/** Draws the waypoints of the active waypoint catalog to the map */
 void Map::__drawWaypoints()
 {
   // get map screen size
@@ -2671,6 +2690,46 @@ void Map::__drawWaypoints()
         painter.restore();
      }
    }
+}
+
+void Map::__drawCityLabels( QPixmap& pixmap )
+{
+  if( m_drawnCityList.size() == 0 )
+    {
+      return;
+    }
+
+  QString labelText;
+
+  QPainter painter(&pixmap);
+  QFont font = painter.font();
+  font.setPointSize( 6 );
+  painter.setFont( font );
+  painter.setBrush(Qt::NoBrush);
+  painter.setPen(QPen(Qt::black, 2, Qt::SolidLine));
+
+  QSet<QString> set;
+
+  for( int i = 0; i < m_drawnCityList.size(); i++ )
+    {
+      LineElement* city = static_cast<LineElement *> (m_drawnCityList.at(i));
+
+      // A city can consist of several segments at a border edge but we want to
+      // draw the name only once.
+      if( ! set.contains( city->getName() ) )
+        {
+          // map polygon to the screen
+          QPolygon mP( _globalMapMatrix->map( city->getPolygon() ) );
+
+          QRect bRect = mP.boundingRect();
+
+          painter.drawText( bRect.x() + bRect.width() / 2,
+                            bRect.y() + bRect.height() / 2 + 3,
+                            city->getName() );
+
+          set.insert( city->getName() );
+        }
+    }
 }
 
 /** Slot signaled when user selects another waypoint catalog.  */
@@ -2843,9 +2902,14 @@ void Map::__createPopupMenu()
   mapPopup->addSeparator();
 
   miShowMapInfoAction = mapPopup->addAction( _mainWindow->getPixmap("kde_info_16.png"),
-                                             QObject::tr("&Show item info..."),
+                                             QObject::tr("&Show item info"),
                                              this,
-                                             SLOT(slotMpShowMapInfo()) );
+                                             SLOT(slotMpShowMapItemInfo()) );
+
+  miShowMapAirspaceInfoAction = mapPopup->addAction( _mainWindow->getPixmap("kde_info_16.png"),
+                                                     QObject::tr("&Show airspace info"),
+                                                     this,
+                                                     SLOT(slotMpShowAirspaceInfo()) );
   mapPopup->addSeparator();
 
   miAddWaypointAction = mapPopup->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
@@ -3003,10 +3067,16 @@ void Map::slotMpCenterMap()
   __redrawMap();
 }
 
-void Map::slotMpShowMapInfo()
+void Map::slotMpShowMapItemInfo()
 {
   mapInfoTimer->stop();
   __displayMapInfo(popupPos, false);
+}
+
+void Map::slotMpShowAirspaceInfo()
+{
+  mapInfoTimer->stop();
+  __displayAirspaceInfo(popupPos, false);
 }
 
 void Map::leaveEvent( QEvent *event )

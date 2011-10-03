@@ -1,5 +1,13 @@
 $Id$
 
+2011-10-03 Axel Pauli <axel@kflog.org>
+
+  * New menu item added to map menu for asking of airspaces.
+  
+  * City labels are drawn now at the map till scale level less than 100. I saw
+    at a first look that not all city labels are the right ones. The issue
+    lays in the map data.
+
 2011-10-02 Axel Pauli <axel@kflog.org>
 
   * Bugfix: The coordinates of the map cursor were only displayed in the main

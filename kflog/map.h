@@ -160,9 +160,13 @@ private:
      */
     void slotMpDeleteWaypoint();
     /**
-     * called from the MapPopupmenu to show info on the current location.
+     * Called from the MapPopupmenu to show item info on the current location.
      */
-    void slotMpShowMapInfo();
+    void slotMpShowMapItemInfo();
+    /**
+     * Called from the MapPopupmenu to show item info on the current location.
+     */
+    void slotMpShowAirspaceInfo();
     /**
      * Called on timeout of the MapInfoTimer. Triggers display of the mapinfo box.
      */
@@ -312,17 +316,25 @@ private:
       */
     void __drawScale(  QPixmap& scalePixmap );
     /**
-     * Puts the waypoints of the active waypoint catalog to the map.
+     * Draws the waypoints of the active waypoint catalog to the map.
      */
     void __drawWaypoints();
+    /**
+     * Draws the city labels on the passed pixmap.
+     */
+    void __drawCityLabels( QPixmap& pixmap );
     /**
      * Sets the cross hair cursor
      */
     void __setCursor();
      /**
-      * Display Infos about MapItems
+      * Display Info about a Map item.
       */
     void __displayMapInfo(const QPoint& current, bool automatic=true);
+    /**
+     * Display Infos about Map airspaces.
+     */
+   void __displayAirspaceInfo(const QPoint& current, bool automatic=true);
     /**
       * graphical planning
       */
@@ -472,6 +484,7 @@ private:
     QAction *miDeleteWaypointAction;
     QAction *miAddTaskPointAction;
     QAction *miShowMapInfoAction;
+    QAction *miShowMapAirspaceInfoAction;
     QAction *miZoomInAction;
     QAction *miZoomOutAction;
         /** */
