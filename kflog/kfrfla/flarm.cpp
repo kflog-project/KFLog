@@ -11,6 +11,14 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
+**   This module implements the Flarm data port protocol as specified
+**   in the document 
+**   	DATA PORT SPECIFICATIONS Software version 5.00 (Mar 01, 2011)
+**   or newer. This document is issued by
+**   	2011 FLARM Technology GmbH
+**	Baar-Switzerland
+**   http://www.flarm.com/support/manual/FLARM_DataportManual_v5.00E.pdf
+**
 **   $Id: flarm.cpp 1236 2011-06-27 20:05:37Z axel $
 **
 ***********************************************************************/
