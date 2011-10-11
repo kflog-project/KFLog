@@ -11,7 +11,7 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id: flightrecorder.cpp 1256 2011-08-04 13:53:07Z eggert $
+**   $Id$
 **
 ***********************************************************************/
 #include "flarm.h"

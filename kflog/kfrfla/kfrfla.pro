@@ -1,5 +1,5 @@
 # KFLog4 qmake project file
-# $Id: kfrfla.pro 1214 2011-06-19 06:56:21Z axel $
+# $Id$
 
 TEMPLATE = lib
 

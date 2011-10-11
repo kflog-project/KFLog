@@ -19,7 +19,7 @@
 **	Baar-Switzerland
 **   http://www.flarm.com/support/manual/FLARM_DataportManual_v5.00E.pdf
 **
-**   $Id: flarm.cpp 1236 2011-06-27 20:05:37Z axel $
+**   $Id$
 **
 ***********************************************************************/
 
