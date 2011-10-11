@@ -1,3 +1,26 @@
+kflog (4.5.0) unstable; urgency=low
+
+  * New menu item added to map menu for asking of airspaces.
+  
+  * City labels are drawn now at the map till scale level less than 100. I saw
+    at a first look that not all city labels are the right ones. The issue
+    lays in the map data.
+
+  * Bugfix: The coordinates of the map cursor were only displayed in the main
+    window's statusbar, if a flight was loaded. That annoyed me. I fixed that.
+
+  * Bugfix: If you touch a drawn flight line with the mouse, the data of the
+    touched flight point is displayed in the lower statusbar of the main window.
+    But the displayed coordinates were wrong. The latitude and longitude values
+    were skewed.
+    
+  * If the begin or end cursor is moved in the evaluation window, the related
+    flight point is now displayed with all its data in the main window's
+    statusbar. I want to get the coordinates for a certain position in the
+    barogram of the evaluation window but without my patch it was not possible.
+
+ -- Axel Pauli <kflog.cumulus@googlemail.com>  Tue, 11 Oct 2011 13:37:31 +0200
+
 kflog (4.4.0) unstable; urgency=low
 
   * Two new spin boxes added to evaluation view for scaling of speed and
