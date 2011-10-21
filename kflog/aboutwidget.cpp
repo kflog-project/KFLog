@@ -35,8 +35,8 @@ AboutWidget::AboutWidget( QWidget *parent ) :
   about->setOpenExternalLinks( true );
 
   team   = new QTextBrowser( this );
-  about->setOpenLinks( true );
-  about->setOpenExternalLinks( true );
+  team->setOpenLinks( true );
+  team->setOpenExternalLinks( true );
 
   QTabWidget *tabWidget = new QTabWidget( this );
   tabWidget->addTab( about, tr("About") );
