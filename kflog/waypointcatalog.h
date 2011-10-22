@@ -73,6 +73,8 @@ public:
   bool writeFilserDA4 (const QString& catalog);
   /** Writes a Cambridge Aero Instruments turnpoint file. */
   bool writeDat(const QString& catalog);
+  /** Writes a SeeYou cup file, only waypoint part */
+  bool writeCup(const QString& catalog);
 
   /** No descriptions */
   bool importVolkslogger(const QString& filename);

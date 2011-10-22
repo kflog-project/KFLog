@@ -1,5 +1,9 @@
 $Id$
 
+2011-10-22 Axel Pauli <axel@kflog.org>
+
+  * Export routine added to write SeeYou waypoint files with extension .cup.
+
 2011-10-11 Axel Pauli <axel@kflog.org>
 
   * KFLog 4.5.0 released.

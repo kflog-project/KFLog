@@ -614,31 +614,15 @@ bool WaypointCatalog::save(bool alwaysAskName)
 {
   QString fName = path;
 
-  // check for unsupported file types - currently cup
-  if (fName.right(4).toLower() == ".cup")
-    {
-      enum QMessageBox::StandardButton button;
-
-      button = QMessageBox::warning( _mainWindow,
-                                     QObject::tr("Save changes?"),
-                                     QObject::tr("<html>Saving in the current file format is not supported.<br>Save in another format? <BR><B>%1</B></html>").arg(fName),
-                                     QMessageBox::Yes|QMessageBox::No,
-                                     QMessageBox::Yes );
-
-      if (button == QMessageBox::Yes)
-        {
-          alwaysAskName = true;
-        }
-    }
-
   if( !onDisc || alwaysAskName )
     {
       QString filter;
-      filter.append(QObject::tr("KFLog waypoints") + " (*.kflogwp *.KFLOGWP);;");
-      filter.append(QObject::tr("Cumulus waypoints") + " (*.kwp *.KWP);;");
-      filter.append(QObject::tr("Filser txt waypoints") + " (*.txt *.TXT);;");
-      filter.append(QObject::tr("Filser da4 waypoints") + " (*.da4 *.DA4);;");
-      filter.append(QObject::tr("Cambrigde waypoints") + " (*.dat *.DAT)");
+      filter.append(QObject::tr("KFLog waypoints") + " (*.kflogwp);;");
+      filter.append(QObject::tr("Cumulus waypoints") + " (*.kwp);;");
+      filter.append(QObject::tr("Filser txt waypoints") + " (*.txt);;");
+      filter.append(QObject::tr("Filser da4 waypoints") + " (*.da4);;");
+      filter.append(QObject::tr("Cambrigde waypoints") + " (*.dat);;");
+      filter.append(QObject::tr("SeeYou waypoints") + " (*.cup)");
 
       fName = QFileDialog::getSaveFileName( _mainWindow,
                                             QObject::tr("Save waypoint catalog"),
@@ -654,6 +638,7 @@ bool WaypointCatalog::save(bool alwaysAskName)
           (fName.right( 4 ) != ".kwp") &&
           (fName.right( 4 ) != ".da4") &&
           (fName.right( 4 ) != ".dat") &&
+          (fName.right( 4 ) != ".cup") &&
           (fName.right( 4 ) != ".txt") )
         {
           fName += ".kflogwp";
@@ -665,11 +650,13 @@ bool WaypointCatalog::save(bool alwaysAskName)
   if (fName.right(8) == ".kflogwp")
     return writeXml();
   else if (fName.right(4) == ".txt")
-    return writeFilserTXT (fName);
+    return writeFilserTXT(fName);
   else if (fName.right(4) == ".da4")
-    return writeFilserDA4 (fName);
+    return writeFilserDA4(fName);
   else if (fName.right(4) == ".dat")
-    return writeDat (fName);
+    return writeDat(fName);
+  else if (fName.right(4) == ".cup")
+    return writeCup(fName);
   else
     return writeBinary();
 }
@@ -2684,6 +2671,176 @@ bool WaypointCatalog::writeDat(const QString& catalog)
         << wpList[i]->comment.left(wpList[i]->comment.indexOf(QChar(';'))).replace( QChar(','), QChar('/'))
         << endl;
   }
+
+  file.close();
+  QApplication::restoreOverrideCursor();
+  return true;
+}
+
+/** Writes a SeeYou cup file, only waypoint part */
+bool WaypointCatalog::writeCup(const QString& catalog)
+{
+  qDebug() << "WaypointCatalog::writeCup:" << catalog;
+
+  QFile file(catalog);
+
+  if( ! file.open(QIODevice::WriteOnly | QIODevice::Text ) )
+    {
+      QMessageBox::critical( _mainWindow,
+                             QObject::tr("Error occurred!"),
+                             QString ("<html><B>%1</B><BR>").arg(file.fileName()) +
+                             QObject::tr("permission denied!") +
+                             "</html>", QMessageBox::Ok );
+      return false;
+
+    }
+
+  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+
+  QTextStream out (&file);
+  out.setCodec( "ISO 8859-15" );
+
+  // A cup line consists of the following elements:
+  //
+  // Name,Code,Country,Latitude,Longitude,Elevation,Style,Direction,Length,Frequency,Description
+  //
+  // See here for more info: http://download.naviter.com/docs/cup_format.pdf
+  //
+  // "Aachen Merzbruc",AACHE,DE,5049.383N,00611.183E,189.0m,5,80,530.0m,"122.875",
+
+  // That's the first line in a cup waypoint file
+  out << "name,code,country,lat,lon,elev,style,rwdir,rwlen,freq,desc"
+      << endl;
+
+  for( int i = 0; i < wpList.size(); i++ )
+    {
+      out << "\"" << wpList[i]->description << "\","
+          << "\"" << wpList[i]->name << "\","
+          << wpList[i]->country << ",";
+
+      int degree;
+      double minutes;
+
+      WGSPoint::calcPos( wpList[i]->origP.lat(), degree, minutes );
+
+      out << QString("%1").arg( abs(degree), 2, 10, QChar('0') );
+
+      QString min = QString("%1").arg( fabs(minutes), 0, 'f', 3, QChar('0') );
+
+      if( fabs(minutes) < 10.0 )
+        {
+          // add missing leading zero
+          min.insert(0, "0");
+        }
+
+      out << min
+          << ( (degree >= 0) ? "N" : "S" )
+          << ",";
+
+      WGSPoint::calcPos( wpList[i]->origP.lon(), degree, minutes );
+
+      out << QString("%1").arg( abs(degree), 3, 10, QChar('0') );
+
+      min = QString("%1").arg( fabs(minutes), 0, 'f', 3, QChar('0') );
+
+      if( fabs(minutes) < 10.0 )
+        {
+          // add missing leading zero
+          min.insert(0, "0");
+        }
+
+      out << min
+          << ( (degree >= 0) ? "E" : "W" )
+          << ",";
+
+      float elevation = wpList[i]->elevation;
+
+      if( Altitude::getUnit() == Altitude::feet )
+        {
+          elevation = Altitude(elevation).getFeet();
+          out << QString("%1").arg(elevation, 0, 'f', 1) << "ft,";
+        }
+      else
+        {
+          out << QString("%1").arg(elevation, 0, 'f', 1) << "m,";
+        }
+
+      uint wpType = BaseMapElement::Landmark;
+
+      switch( wpList[i]->type )
+        {
+        case BaseMapElement::Landmark:
+          wpType = 1;
+          break;
+
+        case BaseMapElement::Airfield:
+          {
+            if( wpList[i]->surface == Runway::Concrete )
+              {
+                wpType = 5;
+                break;
+              }
+
+            if( wpList[i]->surface == Runway::Grass )
+              {
+                wpType = 2;
+                break;
+              }
+
+            // default assumption is airfield grass
+            wpType = 2;
+            break;
+          }
+
+        case BaseMapElement::Outlanding:
+          wpType = 3;
+          break;
+
+        case BaseMapElement::Gliderfield:
+          wpType = 4;
+         break;
+
+        default:
+          wpType = 1;
+          break;
+        }
+
+      out << wpType << ",";
+
+      if( wpList[i]->runway.first > 0 )
+        {
+          out << (wpList[i]->runway.first * 10);
+        }
+
+      out << ",";
+
+      if( wpList[i]->length > 0 )
+        {
+          out << QString("%1m").arg( wpList[i]->length, 1 );
+        }
+
+      out << ",";
+
+      if( wpList[i]->frequency > 0.0 )
+        {
+          out << "\""
+              << QString("%1").arg( wpList[i]->frequency, 0, 'f', 3, QChar('0') )
+              << "\"";
+        }
+
+      out << ",";
+
+      if( ! wpList[i]->comment.isEmpty() )
+        {
+          out << "\""
+              << wpList[i]->comment
+              << "\"";
+        }
+
+      out << endl;
+    }
+
+  out << "-----Related Tasks-----" << endl;
 
   file.close();
   QApplication::restoreOverrideCursor();
