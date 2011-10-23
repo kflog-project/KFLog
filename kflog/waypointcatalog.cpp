@@ -1290,11 +1290,11 @@ bool WaypointCatalog::readCup (const QString& catalog)
           w->isLandable = true;
           w->importance = 1;
           break;
-        case 6:
-          w->type = BaseMapElement::Landmark;
+        case 9:
+          w->type = BaseMapElement::Ndb;
           break;
-        case 7:
-          w->type = BaseMapElement::Landmark;
+        case 10:
+          w->type = BaseMapElement::Vor;
           break;
         default:
           w->type = BaseMapElement::Landmark;
@@ -2773,7 +2773,12 @@ bool WaypointCatalog::writeCup(const QString& catalog)
           wpType = 1;
           break;
 
+        case BaseMapElement::UltraLight:
         case BaseMapElement::Airfield:
+        case BaseMapElement::Airport:
+        case BaseMapElement::IntAirport:
+        case BaseMapElement::MilAirport:
+        case BaseMapElement::CivMilAirport:
           {
             if( wpList[i]->surface == Runway::Concrete )
               {
@@ -2798,6 +2803,16 @@ bool WaypointCatalog::writeCup(const QString& catalog)
 
         case BaseMapElement::Gliderfield:
           wpType = 4;
+         break;
+
+        case BaseMapElement::Vor:
+        case BaseMapElement::VorDme:
+        case BaseMapElement::VorTac:
+          wpType = 9;
+         break;
+
+        case BaseMapElement::Ndb:
+          wpType = 10;
          break;
 
         default:
