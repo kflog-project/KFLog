@@ -382,7 +382,7 @@ void OpenAirParser::finishAirspace()
   _airlist.append(as);
   _objCounter++;
   _isCurrentAirspace = false;
-  // qDebug("finalized airspace %s. %d points in airspace", asName.toLatin1().data(), cnt);
+  //qDebug("finalized airspace %s. %d points in airspace", asName.toLatin1().data(), asPA.count());
 }
 
 
