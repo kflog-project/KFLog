@@ -2507,6 +2507,7 @@ bool WaypointCatalog::readDat(const QString &catalog)
             }
         }
 
+#if 0
       if( ! w->comment.isEmpty() )
         {
           w->comment.append("; ");
@@ -2514,6 +2515,7 @@ bool WaypointCatalog::readDat(const QString &catalog)
 
       w->comment.append( "TP attributes: ").append(list[4]);
       w->comment.append( "; WP-No: ").append(list[0]);
+#endif
 
       // We do check, if the waypoint name is already in use because DAT
       // short names are not always unique.
