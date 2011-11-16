@@ -1427,8 +1427,11 @@ bool WaypointCatalog::readCup (const QString& catalog)
           // o meter: m
           // o nautical mile: nm
           // o statute mile: ml
+          // o feet: ft, @AP: Note that is not conform to the SeeYou specification
+          //                  but I saw it in an south African file.
+
           QString unit;
-          int uStart = list[8].indexOf( QRegExp("[lmn]") );
+          int uStart = list[8].indexOf( QRegExp("[fmn]") );
 
           if( uStart != -1 )
             {
@@ -1444,6 +1447,10 @@ bool WaypointCatalog::readCup (const QString& catalog)
                   else if( unit == "ml" ) // statute miles
                     {
                       length *= 1609.34;
+                    }
+                  else if( unit == "ft" ) // feet
+                    {
+                      length *= 0.3048;
                     }
 
                   w->length = length;
