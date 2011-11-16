@@ -91,7 +91,7 @@ bool LineElement::drawMapElement(QPainter* targetP)
 
   targetP->drawPolyline(mP);
 
-  if(typeID == BaseMapElement::Highway && drawP.width() > 4)
+  if(typeID == BaseMapElement::Motorway && drawP.width() > 4)
     {
       // draw the white line in the middle
       targetP->setPen(QPen(Qt::white, 1));

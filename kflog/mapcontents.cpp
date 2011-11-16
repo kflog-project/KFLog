@@ -655,7 +655,7 @@ bool MapContents::__readBinaryFile( const int  fileSecID,
 
       switch (typeIn)
         {
-        case BaseMapElement::Highway:
+        case BaseMapElement::Motorway:
           READ_POINT_LIST
 
           highwayList.append( LineElement("", typeIn, all, false, fileSecID) );

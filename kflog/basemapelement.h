@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
-**                   2008-2010 by Axel Pauli
+**                   2008-2011 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -29,7 +29,7 @@
  * the class provides two enumerations for the element-type and the type of
  * elevation-values.
  *
- * \date 2000-2010
+ * \date 2000-2011
  */
 
 #ifndef BASE_MAP_ELEMENT_H
@@ -64,7 +64,7 @@ public:
     LowFlight = LOW_FLIGHT, Restricted = RESTRICTED, Prohibited = PROHIBITED, Tmz = TMZ, GliderSector = GLIDER_SECTOR, Obstacle = OBSTACLE,
     LightObstacle = LIGHT_OBSTACLE, ObstacleGroup = OBSTACLE_GROUP, LightObstacleGroup = LIGHT_OBSTACLE_GROUP,
     Spot = SPOT, Isohypse = ISOHYPSE, Glacier = GLACIER, PackIce = PACK_ICE, Border = BORDER, City = CITY,
-    Village = VILLAGE, Landmark = LANDMARK, Highway = HIGHWAY, Road = ROAD, Railway = RAILWAY,
+    Village = VILLAGE, Landmark = LANDMARK, Motorway = MOTORWAY, Road = ROAD, Railway = RAILWAY,
     AerialRailway = AERIAL_CABLE, Lake = LAKE, River = RIVER, Canal = CANAL, Flight = FLIGHT, Task = FLIGHT_TASK,
     Trail = TRAIL, Railway_D = RAILWAY_D, Aerial_Cable = AERIAL_CABLE, River_T = RIVER_T, Lake_T = LAKE_T,
     Forest = FOREST, Turnpoint = TURNPOINT, Thermal = THERMAL,
