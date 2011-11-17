@@ -5,6 +5,8 @@ $Id$
   * Waypoint import routine for cup files enhanced, that also can be handled
     runway length values using unit feet. That is not conform to the SeeYou
     specification but I saw that in a south African waypoint file.
+    
+  * Map item Highway renamed to Motorway according to OSM usage.
 
 2011-10-22 Axel Pauli <axel@kflog.org>
 

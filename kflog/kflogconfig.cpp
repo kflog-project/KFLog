@@ -591,7 +591,7 @@ void KFLogConfig::__addMapTab()
   elementSelect->addItem( tr( "Canal" ), KFLogConfig::Canal );
   elementSelect->addItem( tr( "City" ), KFLogConfig::City );
   elementSelect->addItem( tr( "Forest" ), KFLogConfig::Forest );
-  elementSelect->addItem( tr( "Highway" ), KFLogConfig::Highway );
+  elementSelect->addItem( tr( "Motorway" ), KFLogConfig::Motorway );
   elementSelect->addItem( tr( "Road" ), KFLogConfig::Road );
   elementSelect->addItem( tr( "Railway" ), KFLogConfig::Railway );
   elementSelect->addItem( tr( "Railway Double" ), KFLogConfig::Railway_D );

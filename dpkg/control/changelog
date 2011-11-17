@@ -1,3 +1,15 @@
+kflog (4.6.0) unstable; urgency=low
+
+ -- Axel Pauli <kflog.cumulus@googlemail.com>  Thu, 17 Nov 2011 15:07:56 +0100
+
+  * Waypoint import routine for cup files enhanced, that also can be handled
+    runway length values using unit feet. That is not conform to the SeeYou
+    specification but I saw that in a south African SeeYou waypoint file.
+    
+  * Map item Highway renamed to Motorway according to OSM usage.
+
+  * Export routine added to write SeeYou waypoint files with extension .cup.
+
 kflog (4.5.0) unstable; urgency=low
 
   * New menu item added to map menu for asking of airspaces.

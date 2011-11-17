@@ -67,7 +67,7 @@ class KFLogConfig : public QDialog
   virtual ~KFLogConfig();
 
   /** */
-  enum ElementType { Road = 0, Highway, Railway, River, Canal, City,
+  enum ElementType { Road = 0, Motorway, Railway, River, Canal, City,
       AirA, AirB, AirC, AirD, AirElow, AirE, AirF, ControlC, ControlD, Danger,
       LowFlight, Restricted, Prohibited, Tmz, GliderSector, WaveWindow,
       Forest, Trail, Railway_D, Aerial_Cable, River_T,

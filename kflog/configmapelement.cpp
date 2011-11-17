@@ -374,10 +374,10 @@ void ConfigMapElement::__readMapItems()
         AERIAL_CABLE_PEN_STYLE_3, AERIAL_CABLE_PEN_STYLE_4);
   __readBorder("Aerial Cable", aerialcableBorder);
 
-  __readPen("Highway", highwayPenList, HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
+  __readPen("Highway", motorwayPenList, HIGH_COLOR_1, HIGH_COLOR_2, HIGH_COLOR_3, HIGH_COLOR_4,
         HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4,
         HIGH_PEN_STYLE_1, HIGH_PEN_STYLE_2, HIGH_PEN_STYLE_3, HIGH_PEN_STYLE_4);
-  __readBorder("Highway", highwayBorder);
+  __readBorder("Highway", motorwayBorder);
 
   // PenStyle and BrushStyle are not used for cities ...
   __readPen("City", cityPenList, CITY_COLOR_1, CITY_COLOR_2, CITY_COLOR_3,
@@ -619,10 +619,10 @@ void ConfigMapElement::__readPrintItems()
         PRINT_AERIAL_CABLE_PEN_STYLE_2, PRINT_AERIAL_CABLE_PEN_STYLE_2);
   __readBorder("Aerial Cable", aerialcableBorder);
 
-  __readPen("Highway", highwayPenList, PRINT_HIGH_COLOR_1, PRINT_HIGH_COLOR_2, PRINT_HIGH_COLOR_2, PRINT_HIGH_COLOR_2,
+  __readPen("Highway", motorwayPenList, PRINT_HIGH_COLOR_1, PRINT_HIGH_COLOR_2, PRINT_HIGH_COLOR_2, PRINT_HIGH_COLOR_2,
         PRINT_HIGH_PEN_1, PRINT_HIGH_PEN_2, PRINT_HIGH_PEN_2, PRINT_HIGH_PEN_2,
         PRINT_HIGH_PEN_STYLE_1, PRINT_HIGH_PEN_STYLE_2, PRINT_HIGH_PEN_STYLE_2, PRINT_HIGH_PEN_STYLE_2);
-  __readBorder("Highway", highwayBorder);
+  __readBorder("Highway", motorwayBorder);
 
   // PenStyle and BrushStyle are not used for cities ...
   __readPen("City", cityPenList, PRINT_CITY_COLOR_1, PRINT_CITY_COLOR_2, PRINT_CITY_COLOR_2,
@@ -830,7 +830,7 @@ void ConfigMapElement::slotOk()
 
   __writePen("Road", roadPenList, roadBorder);
 
-  __writePen("Highway", highwayPenList, highwayBorder);
+  __writePen("Highway", motorwayPenList, motorwayBorder);
 
   __writePen("Rail", railPenList, railBorder);
 
@@ -944,7 +944,7 @@ void ConfigMapElement::__readDefaultMapItems()
       ROAD_COLOR_3, ROAD_COLOR_4,
       ROAD_PEN_1, ROAD_PEN_2, ROAD_PEN_3, ROAD_PEN_4 );
 
-  __defaultPen( highwayPenList, highwayBorder, HIGH_COLOR_1, HIGH_COLOR_2,
+  __defaultPen( motorwayPenList, motorwayBorder, HIGH_COLOR_1, HIGH_COLOR_2,
       HIGH_COLOR_3, HIGH_COLOR_4,
       HIGH_PEN_1, HIGH_PEN_2, HIGH_PEN_3, HIGH_PEN_4 );
 
@@ -1159,7 +1159,7 @@ void ConfigMapElement::__readDefaultPrintItems()
       PRINT_ROAD_COLOR_2, PRINT_ROAD_COLOR_2,
       PRINT_ROAD_PEN_1, PRINT_ROAD_PEN_2, PRINT_ROAD_PEN_2, PRINT_ROAD_PEN_2 );
 
-  __defaultPen( highwayPenList, highwayBorder, PRINT_HIGH_COLOR_1, PRINT_HIGH_COLOR_2,
+  __defaultPen( motorwayPenList, motorwayBorder, PRINT_HIGH_COLOR_1, PRINT_HIGH_COLOR_2,
       PRINT_HIGH_COLOR_2, PRINT_HIGH_COLOR_2,
       PRINT_HIGH_PEN_1, PRINT_HIGH_PEN_2, PRINT_HIGH_PEN_2, PRINT_HIGH_PEN_2 );
 
@@ -1565,8 +1565,8 @@ void ConfigMapElement::slotSelectElement(int elementID)
       case KFLogConfig::Road:
         __savePen(roadPenList, roadBorder);
         break;
-      case KFLogConfig::Highway:
-        __savePen(highwayPenList, highwayBorder);
+      case KFLogConfig::Motorway:
+        __savePen(motorwayPenList, motorwayBorder);
         break;
       case KFLogConfig::Railway:
         __savePen(railPenList, railBorder);
@@ -1701,8 +1701,8 @@ void ConfigMapElement::slotSelectElement(int elementID)
       case KFLogConfig::Road:
         __showPen(roadPenList, roadBorder);
         break;
-      case KFLogConfig::Highway:
-        __showPen(highwayPenList, highwayBorder);
+      case KFLogConfig::Motorway:
+        __showPen(motorwayPenList, motorwayBorder);
         break;
       case KFLogConfig::Railway:
         __showPen(railPenList, railBorder);

@@ -334,7 +334,7 @@ class ConfigMapElement : public QWidget
   QList<QBrush> wwBrushList;
   QList<int> wwOpacityList;
 
-  QList<QPen> highwayPenList;
+  QList<QPen> motorwayPenList;
   QList<QPen> roadPenList;
   QList<QPen> trailPenList;
   QList<QPen> railPenList;
@@ -384,7 +384,7 @@ class ConfigMapElement : public QWidget
 
   bool trailBorder[4];
   bool roadBorder[4];
-  bool highwayBorder[4];
+  bool motorwayBorder[4];
   bool railBorder[4];
   bool rail_dBorder[4];
   bool aerialcableBorder[4];
