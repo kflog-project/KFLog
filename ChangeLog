@@ -1,5 +1,9 @@
 $Id$
 
+2011-11-21 Axel Pauli <axel@kflog.org>
+
+* KFLog 4.6.0 released.
+
 2011-11-16 Axel Pauli <axel@kflog.org>
 
   * Waypoint import routine for cup files enhanced, that also can be handled
