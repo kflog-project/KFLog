@@ -1,8 +1,13 @@
 $Id$
 
+2011-11-22 Axel Pauli <axel@kflog.org>
+
+  * Map and GUI icons added as resources to the KFLog binary. The Qt Resource
+    system is used for that purpose.
+
 2011-11-21 Axel Pauli <axel@kflog.org>
 
-* KFLog 4.6.0 released.
+  * KFLog 4.6.0 released.
 
 2011-11-16 Axel Pauli <axel@kflog.org>
 

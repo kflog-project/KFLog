@@ -22,6 +22,9 @@ TEMPLATE = app
 
 LIBS += -ldl
 
+# Map and GUI icons are handled by the Qt resource system
+RESOURCES = kflog.qrc
+
 SOURCES = \
     aboutwidget.cpp \
     airfield.cpp \
@@ -177,13 +180,6 @@ HEADERS = \
 # a slash, $(INSTALL_ROOT) followed by the current path is added as
 # prefix to it.
 
-pics.path  = /
-pics.files = pics
-
-mapicons.extra = install -d $(INSTALL_ROOT)/mapicons/small
-mapicons.path  = /
-mapicons.files = mapicons
-
 landscape.path  = /mapdata/landscape
 landscape.files = ../README-MAP
 
@@ -193,6 +189,6 @@ airfields.files = ../README-AIRFIELDS
 airspaces.path  = /mapdata/airspaces
 airspaces.files = ../README-AIRSPACE
 
-INSTALLS += pics mapicons landscape airfields airspaces
+INSTALLS += landscape airfields airspaces
 
 DESTDIR = ../release/bin

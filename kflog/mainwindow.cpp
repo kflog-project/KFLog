@@ -81,10 +81,6 @@ Map *_globalMap = static_cast<Map *> (0);
 MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   QMainWindow( parent, flags )
 {
-#warning "This must be done once to get defined a new limit value."
-#warning "Remove that after the next delivery!"
-  _settings.setValue( "/Scale/LowerLimit", BORDER_L );
-
   setObjectName( "MainWindow" );
   QApplication::setStyle( "plastique" );
 
@@ -198,9 +194,7 @@ MainWindow* MainWindow::instance()
 
 QPixmap MainWindow::getPixmap( const QString& pixmapName )
 {
-  QString path = _settings.value( "/Path/InstallRoot", ".." ).toString();
-
-  path += "/pics/" + pixmapName;
+  QString path = ":/pics/" + pixmapName;
 
   QPixmap pm;
 

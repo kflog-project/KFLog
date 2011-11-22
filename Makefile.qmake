@@ -118,8 +118,6 @@ dpkg_install:
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/bin
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/lib
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/logger
-	install -d $(DESTDIR)/$(INSTALL_ROOT)/mapicons
-	install -d $(DESTDIR)/$(INSTALL_ROOT)/pics
 	install -d $(DESTDIR)/usr/share/applications
 	install --mode=644 kflog/kflog.desktop $(DESTDIR)/usr/share/applications
 	install --mode=755 release/bin/kflog $(DESTDIR)/$(INSTALL_ROOT)/bin

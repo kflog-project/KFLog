@@ -560,7 +560,7 @@ QPen MapConfig::getDrawPen(FlightPoint* fP, float va_min/*=-10*/, float va_max/*
 
       case MapConfig::Speed:
         speed_max -= 15;
-        color = getRainbowColor(1-(fP->dS/std::max(1, fP->dT)-15)/speed_max);
+        color = getRainbowColor(1-(fP->dS/qMax(1, fP->dT)-15)/speed_max);
         width = _settings.value("/FlightPathLine/Speed", FlightPathLineWidth).toInt();
         break;
 
@@ -793,6 +793,7 @@ int MapConfig::getAsOpacity( uint asType )
       default:
         qWarning() << "MapConfig::getAsOpacity(): unknow  Airspace Type"
                    << asType;
+        break;
     }
 
   return defaultOpacity[scaleIndex];
@@ -872,6 +873,7 @@ bool MapConfig::isBorder( unsigned int typeID )
       default:
         qWarning() << "MapConfig::isBorder(): Cannot handle type identifier"
                    << typeID;
+        break;
     }
 
   return true;
@@ -919,6 +921,7 @@ bool MapConfig::isPrintBorder(unsigned int typeID)
       default:
         qWarning() << "MapConfig::isPrintBorder(): Cannot handle type identifier"
                    << typeID;
+        break;
     }
   /* Should never happen ... */
   return true;
@@ -998,6 +1001,7 @@ QBrush& MapConfig::__getBrush(unsigned int typeID, int index)
       default:
         qWarning() << "MapConfig::__getBrush: Cannot handle type identifier"
                    << typeID;
+        break;
     }
 
   return emptyBrush;
@@ -1017,9 +1021,7 @@ QPixmap MapConfig::getPixmap(unsigned int typeID, bool isWinch, bool smallIcon)
 
 QString MapConfig::getIconPath()
 {
-  QString _installRoot = _settings.value( "/Path/InstallRoot", ".." ).toString();
-
-  return QString( _installRoot + "/mapicons");
+  return QString( ":/mapicons" );
 }
 
 /* Loads a pixmap from the cache. If not contained there, insert it. */

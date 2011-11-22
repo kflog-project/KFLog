@@ -119,8 +119,8 @@ int main(int argc, char **argv)
 
   if( _settings.value( "/GeneralOptions/Logo", true ).toBool() )
     {
-      QSplashScreen splash( root + "/pics/splash.png" );
-      splash.setMask( QBitmap( root + "/pics/splash_mask.png" ) );
+      QSplashScreen splash( QPixmap( ":/pics/splash.png" ) );
+      splash.setMask( QBitmap( ":/pics/splash_mask.png" ) );
       splash.show();
       QCoreApplication::processEvents();
 
