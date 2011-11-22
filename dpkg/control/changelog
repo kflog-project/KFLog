@@ -1,3 +1,10 @@
+kflog (4.6.1) unstable; urgency=low
+
+  * Map and GUI icons added as resources to the KFLog binary. The Qt Resource
+    system is used for that purpose.
+    
+ -- Axel Pauli <kflog.cumulus@googlemail.com>  Thu, 22 Nov 2011 10:07:56 +0100
+ 
 kflog (4.6.0) unstable; urgency=low
 
   * Waypoint import routine for cup files enhanced, that also can be handled
