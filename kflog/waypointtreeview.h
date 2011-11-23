@@ -115,7 +115,6 @@ private: // Private methods
   QAction *ActionWaypointCatalogImport;
   QAction *ActionWaypointCatalogClose;
   QAction *ActionWaypointImportFromMap;
-  QAction *ActionWaypointImportFromFile;
   QAction *ActionWaypointNew;
   QAction *ActionWaypointEdit;
   QAction *ActionWaypointDelete;
@@ -210,10 +209,6 @@ private: // Private methods
    * add a new waypoint from outside
    */
   void slotAddCatalog(WaypointCatalog *w);
-  /**
-   * Imports waypoints from a file.
-   */
-  void slotImportWaypointFromFile();
   /**
    * Called when a new waypoint catalog was selected.
    */

@@ -453,7 +453,7 @@ bool WaypointCatalog::writeBinary()
 }
 
 /** No descriptions */
-bool WaypointCatalog::importVolkslogger(const QString& filename)
+bool WaypointCatalog::readVolkslogger(const QString& filename)
 {
   QFileInfo fInfo(filename);
   QFile f(filename);
@@ -673,6 +673,8 @@ bool WaypointCatalog::load(const QString& catalog)
     return readCup(catalog);
   else if (catalog.right(4).toLower() == ".dat")
     return readDat(catalog);
+  else if (catalog.right(4).toLower() == ".dbt")
+    return readVolkslogger(catalog);
   else
     return readBinary(catalog);
 }

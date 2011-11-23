@@ -197,17 +197,13 @@ void WaypointTreeView::createMenu()
                                              SLOT(slotOpenWaypointCatalog()) );
 
 
-  ActionWaypointCatalogImport = wayPointMenu->addAction( tr("&Import catalog"),
+  ActionWaypointCatalogImport = wayPointMenu->addAction( tr("&Import from catalog"),
                                                          this,
                                                          SLOT(slotImportWaypointCatalog()) );
 
   ActionWaypointImportFromMap = wayPointMenu->addAction( tr("Import from &map"),
                                                          this,
                                                          SLOT(slotImportWaypointFromMap()) );
-
-  ActionWaypointImportFromFile = wayPointMenu->addAction( tr("Import from &file"),
-                                                          this,
-                                                          SLOT(slotImportWaypointFromFile()) );
 
   ActionWaypointCatalogSave = wayPointMenu->addAction( _mainWindow->getPixmap("kde_filesave_16.png"),
                                                        tr("&Save catalog"),
@@ -338,14 +334,15 @@ void WaypointTreeView::slotOpenWaypointCatalog()
                                          _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
-  filter.append(tr("Waypoint formats") + " (welt2000.txt WELT2000.TXT *.dat *.DAT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
-  filter.append(tr("KFLog waypoints") + " (*.kflogwp *.KFLOGWP);;");
-  filter.append(tr("Cumulus waypoints") + " (*.kwp *.KWP);;");
-  filter.append(tr("Cambridge waypoints") + " (*.dat *.DAT);;");
-  filter.append(tr("Filser txt waypoints") + " (*.txt *.TXT);;");
-  filter.append(tr("Filser da4 waypoints") + " (*.da4 *.DA4);;");
-  filter.append(tr("SeeYou waypoints") + " (*.cup *.CUP);;");
-  filter.append(tr("Welt2000 waypoints") + " (welt2000.txt WELT2000.TXT)");
+  filter.append(tr("All formats") + " (welt2000.txt WELT2000.TXT *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
+  filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
+  filter.append(tr("Cumulus") + " (*.kwp *.KWP);;");
+  filter.append(tr("Cambridge") + " (*.dat *.DAT);;");
+  filter.append(tr("Filser txt") + " (*.txt *.TXT);;");
+  filter.append(tr("Filser da4") + " (*.da4 *.DA4);;");
+  filter.append(tr("SeeYou") + " (*.cup *.CUP);;");
+  filter.append(tr("Volkslogger") + " (*.dbt *.DBT);;" );
+  filter.append(tr("Welt2000") + " (welt2000.txt WELT2000.TXT)");
 
   QString fName = QFileDialog::getOpenFileName( this,
                                                 tr("Open waypoint catalog"),
@@ -862,18 +859,25 @@ void WaypointTreeView::slotImportWaypointCatalog()
                                          _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
+  filter.append(tr("All formats") + " (welt2000.txt WELT2000.TXT *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
   filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
-  filter.append(tr("All") + " (*.*)");
+  filter.append(tr("Cumulus") + " (*.kwp *.KWP);;");
+  filter.append(tr("Cambridge") + " (*.dat *.DAT);;");
+  filter.append(tr("Filser txt") + " (*.txt *.TXT);;");
+  filter.append(tr("Filser da4") + " (*.da4 *.DA4);;");
+  filter.append(tr("SeeYou") + " (*.cup *.CUP);;");
+  filter.append(tr("Volkslogger") + " (*.dbt *.DBT);;" );
+  filter.append(tr("Welt2000") + " (welt2000.txt WELT2000.TXT)");
 
   QString fName = QFileDialog::getOpenFileName( this,
-                                                tr("Import waypoint catalog"),
+                                                tr("Import waypoints from catalog"),
                                                 wayPointDir,
                                                 filter );
   if( ! fName.isEmpty() )
     {
       // read from disk
-      currentWaypointCatalog->readXml(fName);
-      currentWaypointCatalog->modified = true;
+      bool ok = currentWaypointCatalog->load(fName);
+      currentWaypointCatalog->modified = ok;
       slotFillWaypoints();
     }
 }
@@ -1079,6 +1083,7 @@ void WaypointTreeView::slotImportWaypointFromMap()
           break;
         default:
           w->isLandable = false;
+          break;
         }
 
         currentWaypointCatalog->wpList.append(w);
@@ -1285,38 +1290,6 @@ void WaypointTreeView::setFilterData()
     }
 
   importFilterDlg->airfieldRefTxt = currentWaypointCatalog->airfieldRef;
-}
-
-/** No descriptions */
-void WaypointTreeView::slotImportWaypointFromFile()
-{
-  QString wayPointDir = _settings.value( "/Path/DefaultWaypointDirectory",
-                                         _mainWindow->getApplicationDataDirectory() ).toString();
-
-   // we should not include types we don't support (yet). Also, the strings should be translated.
-  QString filter;
-  filter.append( tr("Volkslogger format") + " (*.dbt *.DBT)" );
-
-  QString fName = QFileDialog::getOpenFileName( this,
-                                                tr("Import waypoints from file"),
-                                                wayPointDir,
-                                                filter );
-  if( !fName.isEmpty() )
-    {
-      // read from disk
-      currentWaypointCatalog->modified = true;
-
-      if( fName.right( 4 ).toLower() == ".dbt" )
-        {
-          currentWaypointCatalog->importVolkslogger( fName );
-        }
-      else
-        {
-          currentWaypointCatalog->modified = false;
-        }
-
-      slotFillWaypoints();
-    }
 }
 
 void WaypointTreeView::openCatalog( QString &catalog )

@@ -64,6 +64,8 @@ public:
   bool readWelt2000(const QString& catalog);
   /** Reads a Cambridge Aero Instruments turnpoint file. */
   bool readDat(const QString &catalog);
+  /** Reads a Volkslogger waypoint file. */
+  bool readVolkslogger(const QString& filename);
 
   /** Writes a KFLog waypoint file in XML format. */
   bool writeXml();
@@ -76,8 +78,6 @@ public:
   /** Writes a SeeYou cup file, only waypoint part */
   bool writeCup(const QString& catalog);
 
-  /** No descriptions */
-  bool importVolkslogger(const QString& filename);
   /** Checks if the file exists on disk, and if not asks the user for it.
     * It then calls either write() or writeBinary(),
     * depending on the selected format.

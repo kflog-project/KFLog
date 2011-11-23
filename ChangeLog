@@ -1,5 +1,13 @@
 $Id$
 
+2011-11-23 Axel Pauli <axel@kflog.org>
+
+  * Modifications in waypoint tree view widget. A catalog import was only
+    possible in KFLog format. I changed that to all supported waypoint formats.
+    The menu item "Import from File" has been removed. The contained Volkslogger
+    menu entry has been added to the "Open Catalog" and to the "Import Catalog"
+    menu items. I hope that gives the user more fexibility in catalog handling.
+  
 2011-11-22 Axel Pauli <axel@kflog.org>
 
   * Map and GUI icons added as resources to the KFLog binary. The Qt Resource
