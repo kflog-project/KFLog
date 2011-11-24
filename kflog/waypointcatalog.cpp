@@ -617,13 +617,14 @@ bool WaypointCatalog::save(bool alwaysAskName)
   if( !onDisc || alwaysAskName )
     {
       QString filter;
-      filter.append(QObject::tr("KFLog waypoints") + " (*.kflogwp *.KFLOGWP);;");
-      filter.append(QObject::tr("Cumulus waypoints") + " (*.kwp *.KWP);;");
-      filter.append(QObject::tr("Filser txt waypoints") + " (*.txt *.TXT);;");
-      filter.append(QObject::tr("Filser da4 waypoints") + " (*.da4 *.DA4);;");
-      filter.append(QObject::tr("Cambrigde waypoints") + " (*.dat *.DAT);;");
-      filter.append(QObject::tr("SeeYou waypoints") + " (*.cup *.CUP);;");
-      filter.append(QObject::tr("All") + " (*.*)");
+      filter.append(QObject::tr("All formats") + " (*.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
+      filter.append(QObject::tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
+      filter.append(QObject::tr("Cumulus") + " (*.kwp *.KWP);;");
+      filter.append(QObject::tr("Cambrigde") + " (*.dat *.DAT);;");
+      filter.append(QObject::tr("Filser txt") + " (*.txt *.TXT);;");
+      filter.append(QObject::tr("Filser da4") + " (*.da4 *.DA4);;");
+      filter.append(QObject::tr("SeeYou") + " (*.cup *.CUP);;");
+      filter.append(QObject::tr("Any file") + " (*.*)");
 
       fName = QFileDialog::getSaveFileName( _mainWindow,
                                             QObject::tr("Save waypoint catalog"),
