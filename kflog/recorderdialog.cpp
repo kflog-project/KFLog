@@ -199,6 +199,8 @@ void RecorderDialog::__createRecorderPage()
   selectPort->addItem("ttyUSB0");   // classical device
   selectPort->addItem("tts/USB0");  // devfs
   selectPort->addItem("usb/tts/0"); // udev
+  // bluetooth
+  selectPort->addItem("rfcomm0"); // 
   // we never know if the device name will change again; let the user have a chance
   selectPort->setEditable(true);
 
@@ -990,7 +992,7 @@ void RecorderDialog::slotConnectRecorder()
       activeRecorder->openRecorder( portName.toLatin1().data(), speed );
       break;
 
-  case FlightRecorderPluginBase::URL:
+    case FlightRecorderPluginBase::URL:
     {
       selectURL->setText( selectURL->text().trimmed() );
 
@@ -2779,3 +2781,4 @@ void RecorderDialog::__createConfigurationPage()
 
   configPage->setLayout( pageLayout );
 }
+

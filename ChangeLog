@@ -1,5 +1,10 @@
 $Id$
 
+2011-12-22 Eggert Ehmke <eggert@kflog.org>
+
+  * Added rfcomm0 to the list of selectable devices in the recorder dialog.
+    This is the standard bluetooth device on most Linux systems.
+
 2011-11-23 Axel Pauli <axel@kflog.org>
 
   * Modifications in waypoint tree view widget. A catalog import was only
