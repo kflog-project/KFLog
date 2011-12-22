@@ -9,8 +9,8 @@ contains(QT_VERSION, ^4\\.[6]\\..*) {
   MY_QT_REL=4_6
 }
 
-# version check for Qt 4.7
-contains(QT_VERSION, ^4\\.[7]\\..*) {
+# version check for Qt 4.7 and 4.8
+contains(QT_VERSION, ^4\\.[78]\\..*) {
   MY_QT_REL=4_7
 }
 
