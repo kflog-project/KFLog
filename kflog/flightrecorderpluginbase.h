@@ -19,7 +19,9 @@
 #ifndef FLIGHT_RECORDER_PLUGIN_BASE_H
 #define FLIGHT_RECORDER_PLUGIN_BASE_H
 
+#ifndef _WIN32
 #include <termios.h>
+#endif
 
 #include <QObject>
 #include <QList>
@@ -55,7 +57,9 @@
  *
  * \version $Id$
  */
-
+#ifdef _WIN32
+typedef unsigned int speed_t;
+#endif // ifdef (_WIN32)
 class FlightRecorderPluginBase : public QObject
 {
   Q_OBJECT

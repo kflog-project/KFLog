@@ -177,7 +177,12 @@ QString printTime(time_t time, bool isZero, bool isSecond)
   QString tmpbuf;
   struct tm lt;
 
+#ifndef _WIN32
   gmtime_r (&time, &lt);
+#else
+    struct tm * blubb = gmtime (&time);
+    memcpy(&lt,blubb,sizeof(struct tm));
+#endif
 
   return tmpbuf.sprintf(timeFormat[isSecond + 2*isZero], lt.tm_hour, lt.tm_min, lt.tm_sec);
 
@@ -223,11 +228,17 @@ time_t timeToDay(const int year, const int month, const int day, const char *mon
   bt.tm_yday = 0;    // Day of year [0-365]
   // The following members of the struct seems to be also set by the mktime routine
   bt.tm_isdst = 0;  // DST [-1/0/1] -1: no info, 0 : no daylight save time, 1 daylight save time
+#ifndef _WIN32
   bt.tm_gmtoff = 0; // Seconds east of UTC
   bt.tm_zone = NULL; // Timezone abbreviation.
+#endif
 
   // get UTC time
+#ifndef _WIN32
   time_t ret = timegm(&bt);
+#else
+  time_t ret = mktime(&bt);
+#endif
 
   return ret;
 }

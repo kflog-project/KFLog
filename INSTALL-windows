@@ -1,0 +1,30 @@
+# $Id: INSTALL-windows 1405 2012-05-24 21:14:55Z matthias $
+
+=========================
+A Basic Test Installation
+=========================
+
+Preconditions for self compiling KFlog4 under Ubuntu 11.10:
+
+  1. Install QT SDK 4.8.0 (select mingw 32bit as compiler)
+
+The simplest way to compile this package in Windows 7 is:
+
+  1. 'cd' into the directory containing the package's source code and double click KFlog4Windows.pro
+
+  2. Select the build configuration to be built, e.g. MinGW - QT 4.8.0 for Desktop - MinGW (Qt SDK) Release
+
+  3. Hit compile and wait until you're done :)
+     
+You can checkout the latest sources by using subversion. Use the following
+command to do that:
+
+  svn co https://svn.kflog.org/svn/repos/kflog2/qt4/trunk
+
+Please report found bugs on our KFLog mailing list. Under the link
+
+http://www.kflog.org/kflog
+
+you can find for more information about KFLog.
+
+Have fun with KFlog ...

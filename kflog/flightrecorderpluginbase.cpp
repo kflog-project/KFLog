@@ -22,6 +22,7 @@
 
 FlightRecorderPluginBase::transferStruct FlightRecorderPluginBase::transferData [] =
 {
+#ifndef _WIN32
     {bps00075,     75,     B75},
     {bps00150,    150,    B150},
     {pbs00200,    200,    B200},
@@ -36,6 +37,7 @@ FlightRecorderPluginBase::transferStruct FlightRecorderPluginBase::transferData 
     {bps38400,  38400,  B38400},
     {bps57600,  57600,  B57600},
     {bps115200,115200, B115200}
+#endif
 };
 
 int FlightRecorderPluginBase::transferDataMax = 14;

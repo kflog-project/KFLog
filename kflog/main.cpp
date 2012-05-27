@@ -92,8 +92,10 @@ int main(int argc, char **argv)
   // Set the compile date of the application.
   _settings.setValue( "/Main/CompileDate", __DATE__ );
 
+#ifndef _WIN32
   // Reset the locale that is used for number formatting to "C" locale.
   setenv( "LC_NUMERIC", "C", 1 );
+#endif
 
   // Make sure the application uses utf8 encoding for translated widgets
   QTextCodec::setCodecForTr( QTextCodec::codecForName ("UTF-8") );

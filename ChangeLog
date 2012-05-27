@@ -1,5 +1,9 @@
 $Id$
 
+2012-05-24 Matthias Degenkolb <matthias.degenkolb@googlemail.com>
+  * Added port to Windows (compile with QT Creator)
+  * added terrain altitude in status bar
+
 2011-12-22 Eggert Ehmke <eggert@kflog.org>
 
   * Added rfcomm0 to the list of selectable devices in the recorder dialog.

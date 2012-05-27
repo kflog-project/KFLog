@@ -22,6 +22,11 @@
 #define DATA_STREAM QDataStream::Qt_4_7
 #endif
 
+#ifdef _WIN32
+#include <windows.h>
+#include <Lmcons.h>
+#endif
+
 #include <cmath>
 #include <unistd.h>
 
@@ -31,7 +36,9 @@
 #include "altitude.h"
 #include "runway.h"
 #include "da4record.h"
+#ifndef _WIN32
 #include "kfrgcs/vlapi2.h"
+#endif
 #include "mainwindow.h"
 #include "mapdefaults.h"
 #include "target.h"
@@ -53,6 +60,42 @@ extern MainWindow *_mainWindow;
 extern QSettings  _settings;
 
 QSet<QString> WaypointCatalog::catalogSet;
+
+#ifdef _WIN32
+class UserNameCache
+{
+private:
+    QString m_UserName;
+public:
+    UserNameCache()
+    {
+        DWORD BuffSize = UNLEN + 1;
+        char* pUserName = new char[BuffSize];
+        if (!GetUserNameA(pUserName,&BuffSize))
+        {
+            strcpy(pUserName,"<Unknown user>");
+        }
+        m_UserName.fromAscii(pUserName,BuffSize);
+        delete pUserName;
+    }
+    char* getUserName()
+    {
+        return m_UserName.toAscii().data();
+    }
+};
+
+#endif
+
+char * getLogin()
+{
+#ifndef _WIN32
+    return getlogin();
+#else
+    static UserNameCache LoginCache;
+    return LoginCache.getUserName();
+#endif
+}
+
 
 WaypointCatalog::WaypointCatalog(const QString& name) :
   modified(false),
@@ -296,7 +339,7 @@ bool WaypointCatalog::writeXml()
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
   root.setAttribute( "Application", "KFLog" );
-  root.setAttribute( "Creator", getlogin() );
+  root.setAttribute( "Creator", getLogin() );
   root.setAttribute( "Time", QTime::currentTime().toString( "HH:mm:mm" ) );
   root.setAttribute( "Date", QDate::currentDate().toString( Qt::ISODate ) );
   root.setAttribute( "Version", "1.0" );
@@ -455,6 +498,7 @@ bool WaypointCatalog::writeBinary()
 /** No descriptions */
 bool WaypointCatalog::readVolkslogger(const QString& filename)
 {
+#ifndef _WIN32
   QFileInfo fInfo(filename);
   QFile f(filename);
 
@@ -602,7 +646,7 @@ bool WaypointCatalog::readVolkslogger(const QString& filename)
 
   // close the import dialog, clean up and add the FlightRoute we just created
   importProgress.close();
-
+#endif
   return true;
 }
 
@@ -2585,7 +2629,7 @@ bool WaypointCatalog::writeDat(const QString& catalog)
   QTextStream out (&file);
   out.setCodec( "ISO 8859-15" );
 
-  char *user = getlogin();
+  char *user = getLogin();
 
   out << "*"
       << endl
@@ -2598,7 +2642,7 @@ bool WaypointCatalog::writeDat(const QString& catalog)
 
   if( user )
     {
-      out << ", Creator is "  << getlogin();
+      out << ", Creator is "  << getLogin();
     }
 
    out << endl

@@ -15,8 +15,11 @@
 **   $Id$
 **
 ***********************************************************************/
-
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <dlfcn.h>
+#endif
 
 #include <QtGui>
 #include <QSortFilterProxyModel>
@@ -132,6 +135,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(map, SIGNAL(setStatusBarProgress(int)), this, SLOT(slotSetProgress(int)));
   connect(map, SIGNAL(setStatusBarMsg(const QString&)), this, SLOT(slotSetStatusMsg(const QString&)));
   connect(map, SIGNAL(flightTaskModified()), objectTree, SLOT(slotFlightChanged()));
+  connect(map, SIGNAL(elevation(int)), this, SLOT(slotElevation(int)));
 
   connect(mapControl, SIGNAL(scaleChanged(double)), _globalMapMatrix, SLOT(slotSetScale(double)));
 
@@ -958,6 +962,13 @@ void MainWindow::createStatusBar()
   statusLonL->setLineWidth(0);
   statusLonL->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
 
+  statusTerrainElevation = new QLabel(statusBar());
+  statusTerrainElevation->setFixedHeight( statusLabel->sizeHint().height() );
+  statusTerrainElevation->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
+  statusTerrainElevation->setMargin(0);
+  statusTerrainElevation->setLineWidth(0);
+  statusTerrainElevation->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
+
   statusBar()->addWidget( statusLabel, 1 );
   statusBar()->addWidget( statusTimeL, 0 );
   statusBar()->addWidget( statusAltitudeL, 0 );
@@ -966,6 +977,7 @@ void MainWindow::createStatusBar()
   statusBar()->addWidget( statusProgress, 0 );
   statusBar()->addWidget( statusLatL, 0 );
   statusBar()->addWidget( statusLonL, 0 );
+  statusBar()->addWidget( statusTerrainElevation, 0 );
 }
 
 void MainWindow::createToolBar()
@@ -1082,6 +1094,7 @@ void MainWindow::slotFlightViewIgc3DClosed()
 
 void MainWindow::slotFlightViewIgcOpenGL()
 {
+#ifndef _WIN32
   // Note, that this function does not only delivers Flight objects!!!
   Flight *flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
@@ -1142,6 +1155,9 @@ void MainWindow::slotFlightViewIgcOpenGL()
   (void)(*addFlight)( flight );
 
   // FIXME: Memory leak from libHandle is to fix here!
+#else
+    ::MessageBox(NULL,L"MainWindow::slotFlightViewIgcOpenGL",L"MainWindow::slotFlightViewIgcOpenGL",MB_ICONINFORMATION|MB_OK);
+#endif
 }
 
 /** set menu items enabled/disabled */
@@ -1310,9 +1326,22 @@ void MainWindow::slotOpenFile( const QUrl& url )
 {
   slotSetStatusMsg(tr("Opening file..."));
 
+  QString path;
+#ifdef _WIN32
+  // HACK 2DO
+  // For some reason QUrl behaves stupidly when opening a local path like C:\<path\<file>
+  // C is the scheme (instead of "file") and the path is just \<path>\<file>
+  // workaround: take URL 1:1 and just check for validity
+  path=url.toString(QUrl::None);
+
+  if (url.isValid())
+#else
+  path=url.path();
+
   if( url.scheme() == "file" || url.isRelative() )
+#endif
     {
-      QFile file( url.path() );
+      QFile file( path );
 
       if( url.path().right( 9 ).toLower() == ".kflogtsk" )
         {
@@ -1624,7 +1653,7 @@ void MainWindow::slotSetPointInfo(const QPoint& pos, const FlightPoint& point)
   statusBar()->clearMessage();
   statusTimeL->setText(printTime(point.time, true));
   QString text;
-  text.sprintf("%4d m  ", point.height);
+  text.sprintf("%4d m MSL ", point.height);
   statusAltitudeL->setText(text);
   text.sprintf("%3.1f km/h  ", getSpeed(point));
   statusSpeedL->setText(text);
@@ -1865,4 +1894,11 @@ void MainWindow::slotShowAbout()
   aw->setTeamText( team );
   aw->resize( 600, 500 );
   aw->setVisible( true );
+}
+
+void MainWindow::slotElevation(int height)
+{
+    QString text;
+    text.sprintf(" %4d m MSL",height);
+    statusTerrainElevation->setText(text);
 }

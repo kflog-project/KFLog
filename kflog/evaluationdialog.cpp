@@ -26,6 +26,10 @@
 #include "mainwindow.h"
 #include "mapcontents.h"
 
+#if defined(_WIN32) && !defined(isnan)
+#define isnan(x) ((x) != (x))
+#endif
+
 extern MapContents* _globalMapContents;
 extern QSettings    _settings;
 

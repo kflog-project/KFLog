@@ -32,6 +32,10 @@
 
 #include "welt2000.h"
 
+#ifdef _WIN32
+#define basename(y) (y)
+#endif
+
 // KFLog's configuration settings
 extern QSettings _settings;
 

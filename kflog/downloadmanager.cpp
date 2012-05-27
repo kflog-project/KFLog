@@ -20,7 +20,11 @@
  * in their incoming order one after another, not in parallel.
  */
 
+#ifndef _WIN32
 #include <sys/statvfs.h>
+#else
+#include <windows.h>
+#endif
 
 #include <QtCore>
 #include <QtNetwork>
@@ -215,8 +219,11 @@ void DownloadManager::slotFinished( QString &urlIn, QNetworkReply::NetworkError 
       slotFinished( url, QNetworkReply::OperationCanceledError );
       return;
     }
-
+#ifndef _WIN32
   sleep(1); // make a short break
+#else
+  Sleep(1); // make a short break
+#endif
 
   // Start the next download.
   if( client->downloadFile( url, destination ) == false )
@@ -246,6 +253,7 @@ void DownloadManager::slotFinished( QString &urlIn, QNetworkReply::NetworkError 
  */
 ulong DownloadManager::getFreeUserSpace( QString& path )
 {
+#ifndef _WIN32
   struct statvfs buf;
   int res;
 
@@ -269,4 +277,18 @@ ulong DownloadManager::getFreeUserSpace( QString& path )
 
   // free size available to non-superuser in bytes
   return buf.f_bavail * buf.f_bsize;
+#else
+    ULARGE_INTEGER FreeSpace;
+    FreeSpace.QuadPart =0L;
+
+    if (!GetDiskFreeSpaceExW(path.toStdWString().data(),&FreeSpace,NULL,NULL))
+    {
+        qWarning( "DownloadManager(%d): Free space check failed for %s!",
+                  __LINE__, path.toLatin1().data() );
+
+        perror("GetFreeUserSpace");
+        return 0;
+    }
+    return FreeSpace.QuadPart;
+#endif
 }

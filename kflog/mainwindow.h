@@ -242,6 +242,11 @@ public slots:
    */
   void slotShowAbout();
 
+  /**
+    * Receive Map elevation data
+    */
+  void slotElevation(int height);
+
 protected:
   /**
    * Catch the close event from QWidget.
@@ -451,6 +456,12 @@ private:
    * @see slotShowPointInfo
    */
   QLabel* statusLonL;
+  /**
+    * The Label to display terrain elevation.
+    *
+    * @see slotShowPointInfo
+    */
+  QLabel* statusTerrainElevation;
   /**
    * The flight-directory.
    */

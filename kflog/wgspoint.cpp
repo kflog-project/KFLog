@@ -33,6 +33,10 @@
 #include "wgspoint.h"
 #include "mapdefaults.h"
 
+#ifndef M_PIl
+#define M_PIl M_PI
+#endif
+
 // set static format variable to default (degrees, minutes, seconds)
 WGSPoint::Format WGSPoint::_format = WGSPoint::DMS;
 

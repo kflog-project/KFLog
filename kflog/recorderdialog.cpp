@@ -16,7 +16,10 @@
 **
 ***********************************************************************/
 
+#ifndef _WIN32
 #include <dlfcn.h>
+#endif
+
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -1546,6 +1549,7 @@ int RecorderDialog::__fillDirList()
 
 bool RecorderDialog::__openLib( const QString& libN )
 {
+#ifndef _WIN32
   qDebug() << "RecorderDialog::__openLib: " << libN;
 
   if( libName == libN )
@@ -1616,6 +1620,9 @@ bool RecorderDialog::__openLib( const QString& libN )
   libName = libN;
 
   return true;
+#else
+    return false;
+#endif
 }
 
 void RecorderDialog::slotSwitchTask( int idx )
@@ -2428,6 +2435,7 @@ void RecorderDialog::slotEnablePages()
 /** Opens the new recorder plugin library, if necessary. */
 void RecorderDialog::slotRecorderTypeChanged(const QString& newRecorderName )
 {
+#ifndef _WIN32
   qDebug ("slotRecorderTypeChanged");
   if( newRecorderName.isEmpty() )
     {
@@ -2455,6 +2463,7 @@ void RecorderDialog::slotRecorderTypeChanged(const QString& newRecorderName )
   __setRecorderCapabilities();
 
   slotEnablePages();
+#endif
 }
 
 /**
