@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Harald Maier
-**                   2011 by Axel Pauli
+**                   2011-2012 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -1336,6 +1336,10 @@ bool WaypointCatalog::readCup (const QString& catalog)
           break;
         case 10:
           w->type = BaseMapElement::Vor;
+          break;
+	case 11:
+          // Mapped to thermal hotspot defined by http://glidinghotspots.eu/
+          w->type = BaseMapElement::Thermal;
           break;
         default:
           w->type = BaseMapElement::Landmark;
