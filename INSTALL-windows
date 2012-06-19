@@ -1,10 +1,10 @@
 # $Id: INSTALL-windows 1405 2012-05-24 21:14:55Z matthias $
 
-=========================
-A Basic Test Installation
-=========================
+====================================
+A Basic Test Installation on Windows
+====================================
 
-Preconditions for self compiling KFlog4 under Ubuntu 11.10:
+Preconditions for self compiling KFlog4 under Windows 7:
 
   1. Install QT SDK 4.8.0 (select mingw 32bit as compiler)
 
