@@ -1,9 +1,18 @@
 kflog (4.6.1) unstable; urgency=low
 
+  * Added rfcomm0 to the list of selectable devices in the recorder dialog.
+    This is the standard bluetooth device on most Linux systems.
+
+  * Modifications in waypoint tree view widget. A catalog import was only
+    possible in KFLog format. I changed that to all supported waypoint formats.
+    The menu item "Import from File" has been removed. The contained Volkslogger
+    menu entry has been added to the "Open Catalog" and to the "Import Catalog"
+    menu items. I hope that gives the user more fexibility in the catalog handling.
+
   * Map and GUI icons added as resources to the KFLog binary. The Qt Resource
     system is used for that purpose.
     
- -- Axel Pauli <kflog.cumulus@googlemail.com>  Thu, 22 Nov 2011 10:07:56 +0100
+ -- Axel Pauli <kflog.cumulus@googlemail.com>  Tue, 19 Jun 2012 09:09:12 +0200
  
 kflog (4.6.0) unstable; urgency=low
 
