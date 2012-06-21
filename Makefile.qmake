@@ -119,7 +119,7 @@ dpkg_build:
 dpkg_install:
 	@echo '===== Installing KFLog $(VERSION) under $(DESTDIR)/$(INSTALL_ROOT)'
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/bin
-	install -d $(DESTDIR)/$(INSTALL_ROOT)/icons
+	install -d $(DESTDIR)/$(INSTALL_ROOT)/lib
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/logger
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/pics
 	install -d $(DESTDIR)/usr/share/applications
