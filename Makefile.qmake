@@ -40,7 +40,7 @@ endif
 
 usage:
 	@echo ""
-	@echo "KFLog build environment for Linux/X11 and Qt4.7"
+	@echo "KFLog build environment for Linux/X11 and Qt$(QTVERSION)"
 	@echo ""
 	@echo "Installed Qt version $(QTVERSION)"
 	@echo ""
@@ -119,9 +119,11 @@ dpkg_build:
 dpkg_install:
 	@echo '===== Installing KFLog $(VERSION) under $(DESTDIR)/$(INSTALL_ROOT)'
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/bin
-	install -d $(DESTDIR)/$(INSTALL_ROOT)/lib
+	install -d $(DESTDIR)/$(INSTALL_ROOT)/icons
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/logger
+	install -d $(DESTDIR)/$(INSTALL_ROOT)/pics
 	install -d $(DESTDIR)/usr/share/applications
+	install --mode=644 kflog/pics/pilot_48.png $(DESTDIR)/$(INSTALL_ROOT)/pics
 	install --mode=644 kflog/kflog.desktop $(DESTDIR)/usr/share/applications
 	install --mode=755 release/bin/kflog $(DESTDIR)/$(INSTALL_ROOT)/bin
 	cp -d release/lib/* $(DESTDIR)/$(INSTALL_ROOT)/lib
