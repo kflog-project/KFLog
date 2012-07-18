@@ -251,6 +251,13 @@ void RecorderDialog::__createRecorderPage()
   dvcID->setAutoFillBackground( true );
   dvcID->setEnabled(false);
 
+  lblSwVersion = new QLabel(tr("Software Version:"));
+  swVersion = new QLabel;
+  swVersion->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+  swVersion->setBackgroundRole( QPalette::Light );
+  swVersion->setAutoFillBackground( true );
+  swVersion->setEnabled(false);
+
   lblSerID = new QLabel(tr("Serial-No.:"));
   serID = new QLabel(tr("No recorder connected"));
   serID->setFrameStyle( QFrame::Panel | QFrame::Sunken );
@@ -314,8 +321,11 @@ void RecorderDialog::__createRecorderPage()
   iGridLayout->addWidget( lblGldType,   row, ++col );
   iGridLayout->addWidget( gldType,      row, ++col );
 
-  iGridLayout->addWidget( lblCompID,    ++row, col=2 );
+  iGridLayout->addWidget( lblSwVersion, ++row, col=0);
+  iGridLayout->addWidget( swVersion,    row, ++col );
+  iGridLayout->addWidget( lblCompID,    row, ++col );
   iGridLayout->addWidget( compID,       row, ++col );
+
   iGridLayout->setRowMinimumHeight(     row, ++col );
   iGridLayout->addWidget( cmdUploadBasicConfig, 5, 0, 1, 4, Qt::AlignLeft );
   iGridLayout->setColumnStretch(      1, 5 );
@@ -456,6 +466,9 @@ void RecorderDialog::__setRecorderCapabilities()
 
   dvcID->setVisible(cap.supDspDvcID);
   lblDvcID->setVisible(cap.supDspDvcID);
+
+  swVersion->setVisible(cap.supDspSwVersion);
+  lblSwVersion->setVisible(cap.supDspSwVersion);
 
   recType->setVisible(cap.supDspRecorderType);
   lblRecType->setVisible(cap.supDspRecorderType);
@@ -1561,6 +1574,7 @@ bool RecorderDialog::__openLib( const QString& libN )
   libName = "";
   apiID->setText("");
   dvcID->setText("");
+  swVersion->setText("");
   serID->setText("");
   recType->setText("");
   pltName->setText("");
@@ -2102,6 +2116,8 @@ void RecorderDialog::slotReadDatabase()
         serID->setText(basicdata.serialNumber);
       if (cap.supDspDvcID)
         dvcID->setText(basicdata.dvcID);
+      if (cap.supDspSwVersion)
+        swVersion->setText(basicdata.swVersion);
       if (cap.supDspRecorderType)
         recType->setText(basicdata.recorderType);
       if (cap.supDspPilotName)
