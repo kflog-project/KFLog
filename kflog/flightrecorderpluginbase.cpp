@@ -68,6 +68,7 @@ FlightRecorderPluginBase::FlightRecorderPluginBase( QObject *parent ) :
   _capabilities.supDspRecorderType = false; //supports display of recorder type
   _capabilities.supDspSerialNumber = false; //supports display of serial number
   _capabilities.supDspDvcID = false;        //supports display of device ID
+  _capabilities.supDspSwVersion = false;    //supports display of software version
   _capabilities.supDspGliderID = false;     //supports display of glider ID
   _capabilities.supDspGliderType = false;   //supports display of glider type
   _capabilities.supDspCompetitionID = false;//supports display of competition ID
