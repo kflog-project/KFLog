@@ -119,6 +119,7 @@ public:
     bool supDspRecorderType; //supports display of logger type
     bool supDspSerialNumber; //supports display of serial number
     bool supDspDvcID;        //supports display of device ID
+    bool supDspSwVersion;    //supports display of software version
     bool supDspGliderID;     //supports display of glider ID
     bool supDspGliderType;   //supports display of glider type
     bool supDspCompetitionID;//supports display of competition ID
@@ -141,6 +142,7 @@ public:
     QString serialNumber;
     QString recorderType;
     QString dvcID;
+    QString swVersion;
     QString pilotName;
     QString copilotName;
     QString gliderType;
