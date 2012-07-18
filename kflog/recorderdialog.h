@@ -225,6 +225,8 @@ class RecorderDialog : public QDialog
   QLabel* lblSerID;
   QLabel* dvcID;
   QLabel* lblDvcID;
+  QLabel* swVersion;
+  QLabel* lblSwVersion;
   QLabel* apiID;
   QLabel* lblApiID;
   QLabel* recType;
