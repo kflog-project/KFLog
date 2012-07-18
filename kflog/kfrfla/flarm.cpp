@@ -97,6 +97,7 @@ Flarm::Flarm( QObject *parent ) : FlightRecorderPluginBase( parent )
   _capabilities.supDspSerialNumber = true;
   _capabilities.supDspRecorderType = true;
   _capabilities.supDspDvcID = true;
+  _capabilities.supDspSwVersion = true;
   _capabilities.supDspPilotName = true;
   _capabilities.supDspCoPilotName = true;
   _capabilities.supDspGliderType = true;
@@ -270,8 +271,10 @@ int Flarm::getBasicData(FR_BasicData& data)
   data.gliderType    = getFlarmData (file, "$PFLAC","GLIDERTYPE");
   data.gliderID      = getFlarmData (file, "$PFLAC","GLIDERID");
   data.competitionID = getFlarmData (file, "$PFLAC","COMPID");
-//  this delivers always 0xFFFFFF; we get device id from debug info
-//  data.devID  = getFlarmData (file, "$PFLAC","ID");
+  // this delivers always 0xFFFFFF; we get device id from debug info
+  // data.devID  = getFlarmData (file, "$PFLAC","ID");
+  data.swVersion     = getFlarmData (file, "$PFLAV","");
+  qDebug () << "Version: " << data.swVersion << endl;
   
   QStringList debug  = getFlarmDebug (file).split (",");
   data.recorderType  = debug[0];
