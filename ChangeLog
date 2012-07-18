@@ -1,5 +1,9 @@
 $Id$
 
+2012-07-18 Eggert Ehmke <eggert@kflog.org>
+  
+  * Added functions to display software (firmware) version of flarm devices.
+
 2012-06-20 Axel Pauli <axel@kflog.org>
 
   * KFLog 4.6.1 released.
