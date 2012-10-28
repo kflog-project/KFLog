@@ -2,10 +2,12 @@ $Id$
 
 2012-10-28 Axel Pauli <axel@kflog.org>
 
+  * KFLog 4.6.2 released.
+
   * Additional checks added in OpenAir parser to prevent that wrong defined
     coordinates are taken over. That caused sometimes a crash.
     
-  * Free disk space method fixed, it delivered from results.
+  * Free disk space method fixed, it delivered wrong results.
     
   * Build with Ubuntu 12.10 and Qt4.8.3
 
@@ -18,7 +20,9 @@ $Id$
   * KFLog 4.6.1 released.
 
 2012-05-24 Matthias Degenkolb <matthias.degenkolb@googlemail.com>
+
   * Added port to Windows (compile with QT Creator)
+  
   * added terrain altitude in status bar
 
 2011-12-22 Eggert Ehmke <eggert@kflog.org>
