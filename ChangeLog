@@ -1,5 +1,12 @@
 $Id$
 
+2012-10-28 Axel Pauli <axel@kflog.org>
+
+  * Additional checks added in OpenAir parser to prevent that wrong defined
+    coordinates are taken over. That caused sometimes a crash.
+    
+  * Build with Ubuntu 12.10 and Qt4.8.3
+
 2012-07-18 Eggert Ehmke <eggert@kflog.org>
   
   * Added functions to display software (firmware) version of flarm devices.

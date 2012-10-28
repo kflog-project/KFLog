@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2005      by André Somers
-**                   2008-2011 by Axel Pauli
+**                   2008-2012 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -33,7 +33,7 @@
  * For a file named airspace.txt, the matching mapping file has to
  * named airspace_mappings.conf and must be placed in the same directory.
  *
- * \date 2005-2011
+ * \date 2005-2012
  *
  * \version $Id$
  */
