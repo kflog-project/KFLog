@@ -5,12 +5,12 @@ Source: <https://svn.kflog.org/svn/repos/kflog2/qt4>
 
 Files: *
 Copyright: 2011 Hendrik Hoeth <hoeth@linta.de>
-           2011 Axel Pauli <kflog.cumulus@googlemail.com>
+           2011 Axel Pauli <kflog.cumulus@gmail.com>
 License: GPL-3.0+
 
 Files: debian/*
 Copyright: 2011 Hendrik Hoeth <hoeth@linta.de>
-           Axel Pauli <kflog.cumulus@googlemail.com>
+           Axel Pauli <kflog.cumulus@gmail.com>
 License: GPL-3.0+
 
 License: GPL-3.0+

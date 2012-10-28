@@ -5,6 +5,8 @@ $Id$
   * Additional checks added in OpenAir parser to prevent that wrong defined
     coordinates are taken over. That caused sometimes a crash.
     
+  * Free disk space method fixed, it delivered from results.
+    
   * Build with Ubuntu 12.10 and Qt4.8.3
 
 2012-07-18 Eggert Ehmke <eggert@kflog.org>

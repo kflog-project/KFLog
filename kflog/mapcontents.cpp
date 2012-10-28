@@ -9,7 +9,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
- **                   2010-2011 by Axel Pauli
+ **                   2010-2012 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -17,6 +17,7 @@
  **
  ***********************************************************************/
 
+#include <unistd.h>
 #include <cmath>
 
 #include <QtGui>

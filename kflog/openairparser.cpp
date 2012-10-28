@@ -30,9 +30,8 @@
 #include "mapmatrix.h"
 #include "resource.h"
 
-extern MapContents*  _globalMapContents;
-extern MapMatrix*    _globalMapMatrix;
-extern QSettings     _settings;
+extern MapContents* _globalMapContents;
+extern QSettings    _settings;
 
 OpenAirParser::OpenAirParser()
 {

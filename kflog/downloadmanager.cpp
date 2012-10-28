@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c): 2010-2011 Axel Pauli
+**   Copyright (c): 2010-2012 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -21,7 +21,9 @@
  */
 
 #ifndef _WIN32
-#include <sys/statvfs.h>
+#include <cstdio>
+#include <unistd.h>
+#include <sys/vfs.h>
 #else
 #include <windows.h>
 #endif
@@ -31,7 +33,7 @@
 
 #include "downloadmanager.h"
 
-const ulong DownloadManager::MinFsSpace = 25*1024*1024; // 25MB
+const double DownloadManager::MinFsSpace = 25.0; // 25MB
 
 QSet<QString> DownloadManager::blackList;
 QSet<QString> DownloadManager::logList;
@@ -219,6 +221,7 @@ void DownloadManager::slotFinished( QString &urlIn, QNetworkReply::NetworkError 
       slotFinished( url, QNetworkReply::OperationCanceledError );
       return;
     }
+
 #ifndef _WIN32
   sleep(1); // make a short break
 #else
@@ -247,17 +250,18 @@ void DownloadManager::slotFinished( QString &urlIn, QNetworkReply::NetworkError 
   return;
 }
 
+#ifndef _WIN32
+
 /**
  * Returns the free size of the file system in bytes for non root users.
  * The passed path must be exist otherwise the call will fail!
  */
-ulong DownloadManager::getFreeUserSpace( QString& path )
+double DownloadManager::getFreeUserSpace( QString& path )
 {
-#ifndef _WIN32
-  struct statvfs buf;
+  struct statfs buf;
   int res;
 
-  res = statvfs( path.toLatin1().data(), &buf );
+  res = statfs( path.toLatin1().data(), &buf );
 
   if( res )
     {
@@ -265,30 +269,42 @@ ulong DownloadManager::getFreeUserSpace( QString& path )
                 __LINE__, path.toLatin1().data() );
 
       perror("GetFreeUserSpace");
-      return 0;
+      return 0.0;
     }
 
 #if 0
-  qDebug() << "DM: FSBlockSize=" << buf.f_bsize
-           << "FSSizeInBlocks=" << buf.f_blocks
-           << "FreeAvail=" << buf.f_bfree
-           << "FreeAvailNonRoot=" << buf.f_bavail*buf.f_bsize/(1024*1024) << "MB";
+    qDebug() << "Path=" << path
+             << "FSBlockSize=" << buf.f_bsize
+             << "FSSizeInBlocks=" << buf.f_blocks
+             << "FreeAvail=" << buf.f_bfree
+             << "FreeAvailNonRoot=" << buf.f_bavail
+             << "FreeAvailNonRoot=" << ( double (buf.f_bavail) * double (buf.f_bsize) / double(1024 * 1024) )
+             << "MB";
 #endif
 
-  // free size available to non-superuser in bytes
-  return buf.f_bavail * buf.f_bsize;
-#else
-    ULARGE_INTEGER FreeSpace;
-    FreeSpace.QuadPart =0L;
-
-    if (!GetDiskFreeSpaceExW(path.toStdWString().data(),&FreeSpace,NULL,NULL))
-    {
-        qWarning( "DownloadManager(%d): Free space check failed for %s!",
-                  __LINE__, path.toLatin1().data() );
-
-        perror("GetFreeUserSpace");
-        return 0;
-    }
-    return FreeSpace.QuadPart;
-#endif
+    // free size available to non-superuser in megabytes
+    return ( double (buf.f_bavail) * double (buf.f_bsize) / double(1024 * 1024) );
 }
+
+#endif
+
+#ifdef _WIN32
+
+double DownloadManager::getFreeUserSpace( QString& path )
+{
+  ULARGE_INTEGER FreeSpace;
+  FreeSpace.QuadPart =0L;
+
+  if (!GetDiskFreeSpaceExW(path.toStdWString().data(),&FreeSpace,NULL,NULL))
+  {
+      qWarning( "DownloadManager(%d): Free space check failed for %s!",
+                __LINE__, path.toLatin1().data() );
+
+      perror("GetFreeUserSpace");
+      return 0;
+  }
+
+  return double(FreeSpace.QuadPart) / double(1024 * 1024);
+}
+
+#endif
