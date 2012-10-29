@@ -11,7 +11,7 @@ Preconditions for self compiling KFlog4 under Ubuntu 12.04:
   qt4-dev-tools, qt4-qmake, libqt4-dev, libqt4-network, libqt4-xml,
   libqtcore4, libqtgui4
 
-The simplest way to compile this package in Ubuntu 12.04 is:
+The simplest way to compile this package in Ubuntu 12.10 is:
 
   1. 'cd' into the directory containing the package's source code and type
      'make -f Makefile.qmake all'
