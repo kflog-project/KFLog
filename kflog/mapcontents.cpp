@@ -1101,10 +1101,11 @@ void MapContents::proofeSection(bool isPrint)
 
       Welt2000 welt2000;
 
-      if( !welt2000.load( airfieldList, gliderfieldList, outLandingList ) )
+      if( welt2000.check4update() == true ||
+          welt2000.load( airfieldList, gliderfieldList, outLandingList ) == false )
         {
-          // Welt2000 load failed, try to download a new Welt2000 File
-          // from the Internet web page.
+          // Welt2000 update available or load failed, try to download a new
+          // Welt2000 File from the Internet web page.
           slotDownloadWelt2000();
         }
     }

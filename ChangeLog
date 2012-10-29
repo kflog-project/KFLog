@@ -1,6 +1,6 @@
 $Id$
 
-2012-10-28 Axel Pauli <axel@kflog.org>
+2012-10-29 Axel Pauli <axel@kflog.org>
 
   * KFLog 4.6.2 released.
 
@@ -8,6 +8,8 @@ $Id$
     coordinates are taken over. That caused sometimes a crash.
     
   * Free disk space method fixed, it delivered wrong results.
+  
+  * Welt2000 update check added.
     
   * Build with Ubuntu 12.10 and Qt4.8.3
 

@@ -6,7 +6,7 @@
  **
  ************************************************************************
  **
- **   Copyright (c):  2006-2011 by Axel Pauli, axel@kflog.org
+ **   Copyright (c):  2006-2012 by Axel Pauli, axel@kflog.org
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -71,6 +71,93 @@ Welt2000::Welt2000()
 
 Welt2000::~Welt2000()
 {
+}
+
+bool Welt2000::check4update()
+{
+  // Update check string for Welt2000, must be adapted after every Welt2000 update!
+  const char* w2000CheckString = "$ UPDATED AT: 12.SEP.2012";
+
+  // Line number in welt2000 file, on which the w2000CheckString is expected.
+  // Note! Line counting starts with 1.
+  const int ckeckLineNo = 17;
+
+  QString wl = "welt2000.txt";
+  QString wu = "WELT2000.TXT";
+  QString sd = "/airfields/";
+
+  QString mapDir = _globalMapContents->getMapRootDirectory();
+
+  QString pl = mapDir + sd + wl;
+  QString pu = mapDir + sd + wu;
+
+  // Search for Welt2000 source file.
+  QString path2File = pl;
+
+  QFileInfo test( pl );
+
+  if( ! test.exists() )
+    {
+      test.setFile( pu );
+
+      if( ! test.exists() )
+        {
+          // No welt2000 exists and we return false in this case because we cannot
+          // check the update state.
+          return false;
+        }
+
+      path2File = pu;
+    }
+
+  QFile in(path2File);
+
+  if( ! in.open(QIODevice::ReadOnly) )
+    {
+      return false;
+    }
+
+  QTextStream ins(&in);
+  ins.setCodec( "ISO 8859-15" );
+
+  bool ret = false;
+  int lineNo = 0;
+
+  while( ! ins.atEnd() )
+    {
+      QString line;
+      line = ins.readLine(128);
+      lineNo++;
+
+      // The constant ckeckLineNo addresses a line which contains the
+      // expected string to be compared.
+      if( lineNo < ckeckLineNo )
+        {
+          continue;
+        }
+
+      if( line.startsWith(w2000CheckString) == false )
+        {
+          // The expected data is not to find in the line of the read file.
+          // We assume, that this is an older Welt2000 file. This assumption
+          // is not right, if the user has installed a newer file as we expect.
+          qDebug() << "W2000: Update is available!";
+          ret = true;
+        }
+
+      break;
+    }
+
+  in.close();
+
+  if( lineNo < ckeckLineNo )
+    {
+      // The file seems to be empty or has too less lines. We trigger a reload
+      // in this case.
+      ret = true;
+    }
+
+  return ret;
 }
 
 /**

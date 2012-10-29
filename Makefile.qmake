@@ -14,7 +14,7 @@
 VERSION=$(shell cat kflog/target.h | grep KFLOG_VERSION | cut -d '"' -f 2)
 
 # current Ubuntu release, used in package name
-UBUNTU_REL=12.04
+UBUNTU_REL=12.10
 
 KFLOG_REL=kflog-$(VERSION)
 
