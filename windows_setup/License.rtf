@@ -1,0 +1,1803 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang1031{\fonttbl{\f0\fnil\fcharset0 Calibri;}{\f1\fnil\fcharset2 Symbol;}}
+{\colortbl ;\red0\green0\blue255;}
+{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\sl240\slmult1\lang7\f0\fs22 Welcome to KFlog For Windows Setup.\par
+\par
+This setup consists of the following components:\par
+\pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\sl240\slmult1 KFlog 4.6.2 ({\field{\*\fldinst{HYPERLINK "http://kflog.org/"}}{\fldrslt{\ul\cf1 http://kflog.org/}}}\f0\fs22 )\par
+{\pntext\f1\'B7\tab}parts of QT 4.8.1 ({\field{\*\fldinst{HYPERLINK "http://qt-project.org/"}}{\fldrslt{\ul\cf1 http://qt-project.org/}}}\f0\fs22 )\par
+{\pntext\f1\'B7\tab}parts of MinGW 4.4.0  ({\field{\*\fldinst{HYPERLINK "www.mingw.org/"}}{\fldrslt{\ul\cf1 www.mingw.org/}}}\f0\fs22 )\par
+{\pntext\f1\'B7\tab}NSIS 2.46 setup ({\field{\*\fldinst{HYPERLINK "http://nsis.sourceforge.net"}}{\fldrslt{\ul\cf1 http://nsis.sourceforge.net}}}\f0\fs22 )\par
+\pard\sl240\slmult1\par
+\par
+\par
+\ul Authors of KFlog:\par
+\ulnone Implementation:\par
+  Axel Pauli (Qt4 full portage) <axel@kflog.org>\par
+  Hendrik Hoeth <hoeth@linta.de>\par
+  Constantijn Neeteson <kflog@neeteson.net>\par
+  Heiner Lamprecht <heiner@kflog.org>\par
+  Florian Ehinger <florian@kflog.org>\par
+  Harald Maier <harry@kflog.org>\par
+  Thomas Nielsen <thomas.nielsen@telelogic.com>\par
+  Jan Kr\'fcger <jkrueger@vortex.physik.uni-konstanz.de>\par
+  Andr\'e9 Somers <andre@kflog.org>\par
+  Eggert Ehmke <eggert.ehmke@berlin.de>\par
+  Matthias Degenkolb <matthias.degenkolb@googlemail.com>\par
+\par
+Translations:\par
+  Norwegian: Thomas Nielsen <thomas.nielsen@telelogic.com>\par
+  Swedish: G ran K llqvist <kjellqvist@nordkalak.se>\par
+  French: Helmut J. Rohs <helmut.rohs@t-online.de>\par
+  German: Florian Ehinger <florian@kflog.org>\par
+  Italian: Andrea Gnesutta <gnes@mbox.zero.it> \par
+  Dutch: Andr\'e9 Somers <andre@kflog.org>\par
+\par
+Additional work:\par
+  The Volkslogger-backend (libkfrgcs) is based on the work of\par
+  Garrecht Ingenieurgesellschaft ({\field{\*\fldinst{HYPERLINK "http://www.volkslogger.de/"}}{\fldrslt{\ul\cf1 http://www.volkslogger.de/}}}\f0\fs22 ).\par
+  Thanks for supporting KFLog!\par
+\par
+\ul Changelog of KFlog:\ulnone\par
+2012-10-29 Axel Pauli <axel@kflog.org>\par
+\par
+  * KFLog 4.6.2 released.\par
+  * Additional checks added in OpenAir parser to prevent that wrong defined\par
+    coordinates are taken over. That caused sometimes a crash.\par
+   \par
+  * Free disk space method fixed, it delivered wrong results.\par
+  \par
+  * Welt2000 update check added.\par
+    \par
+  * Build with Ubuntu 12.10 and Qt4.8.3\par
+\par
+2012-07-18 Eggert Ehmke <eggert@kflog.org>\par
+  \par
+  * Added functions to display software (firmware) version of flarm devices.\par
+\par
+2012-06-20 Axel Pauli <axel@kflog.org>\par
+\par
+  * KFLog 4.6.1 released.\par
+\par
+2012-05-24 Matthias Degenkolb <matthias.degenkolb@googlemail.com>\par
+\par
+  * Added port to Windows (compile with QT Creator)\par
+  \par
+  * added terrain altitude in status bar\par
+\par
+2011-12-22 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * Added rfcomm0 to the list of selectable devices in the recorder dialog.\par
+    This is the standard bluetooth device on most Linux systems.\par
+\par
+2011-11-23 Axel Pauli <axel@kflog.org>\par
+\par
+  * Modifications in waypoint tree view widget. A catalog import was only\par
+    possible in KFLog format. I changed that to all supported waypoint formats.\par
+    The menu item "Import from File" has been removed. The contained Volkslogger\par
+    menu entry has been added to the "Open Catalog" and to the "Import Catalog"\par
+    menu items. I hope that gives the user more fexibility in catalog handling.\par
+  \par
+2011-11-22 Axel Pauli <axel@kflog.org>\par
+\par
+  * Map and GUI icons added as resources to the KFLog binary. The Qt Resource\par
+    system is used for that purpose.\par
+\par
+2011-11-21 Axel Pauli <axel@kflog.org>\par
+\par
+  * KFLog 4.6.0 released.\par
+\par
+2011-11-16 Axel Pauli <axel@kflog.org>\par
+\par
+  * Waypoint import routine for cup files enhanced, that also can be handled\par
+    runway length values using unit feet. That is not conform to the SeeYou\par
+    specification but I saw that in a south African waypoint file.\par
+    \par
+  * Map item Highway renamed to Motorway according to OSM usage.\par
+\par
+2011-10-22 Axel Pauli <axel@kflog.org>\par
+\par
+  * Export routine added to write SeeYou waypoint files with extension .cup.\par
+\par
+2011-10-11 Axel Pauli <axel@kflog.org>\par
+\par
+  * KFLog 4.5.0 released.\par
+\par
+2011-10-03 Axel Pauli <axel@kflog.org>\par
+\par
+  * New menu item added to map menu for asking of airspaces.\par
+  \par
+  * City labels are drawn now at the map till scale level less than 100. I saw\par
+    at a first look that not all city labels are the right ones. The issue\par
+    lays in the map data.\par
+\par
+2011-10-02 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix: The coordinates of the map cursor were only displayed in the main\par
+    window's statusbar, if a flight was loaded. That annoyed me. I fixed that.\par
+\par
+2011-09-30 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix: If you touch a drawn flight line with the mouse the data of the\par
+    touched flight point is displayed in the lower statusbar of the main window.\par
+    The displayed coordinates were wrong. The latitude and longitude were\par
+    skewed.\par
+    \par
+  * If the begin or end cursor is moved in the evaluation window, the related\par
+    flight point is now displayed with all its data in the main window's\par
+    statusbar. I want to get the coordinates for a certain position in the\par
+    barogram of the evaluation window. \par
+\par
+2011-09-29 Axel Pauli <axel@kflog.org>\par
+\par
+  * KFLog 4.4.0 released.\par
+\par
+2011-09-29 Axel Pauli <axel@kflog.org>\par
+\par
+  * Two new spin boxes added to evaluation view for scaling of speed and\par
+    variometer display by hand or automatically.\par
+\par
+2011-09-28 Axel Pauli <axel@kflog.org>\par
+\par
+  * Drawing scale of evaluation data dynamically adapted to used smooth\par
+    values. That ensures that all available place is used for the drawing.\par
+    \par
+2011-09-27 Axel Pauli <axel@kflog.org>\par
+\par
+  * Minimum scale for zooming in changed from 10 to 5.\par
+  \par
+  * Bugfix: Spelling bug fixed in configuration items /Scale/LowerLimit and\par
+    /Scale/UpperLimit.\par
+  \par
+  * Bugfix: Maximum scale value for zoom out via mouse wheel was to large.\par
+    That caused senseless map loading of the whole world.\par
+    \par
+  * IGC file name added to window title of evaluation view and to flight data\par
+    window content.\par
+   \par
+2011-09-13 Axel Pauli <axel@kflog.org>\par
+\par
+  * KFLog 4.3.1 released.\par
+\par
+2011-09-12 Axel Pauli <axel@kflog.org>\par
+\par
+  * Wrong map latitude labels on southern hemisphere fixed.\par
+\par
+2011-09-07 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * BUGFIX: added task name to declaration export and write\par
+\par
+2011-08-31 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * BUGFIX: Wait cursor was not restored when declaration entries were missing. Fixed\par
+\par
+2011-08-28 Axel Pauli <axel@kflog.org>\par
+\par
+  * KFLog 4.3.0 released.\par
+\par
+2011-08-28 Axel Pauli <axel@kflog.org>\par
+\par
+  * Import/Export routine added to handle Winpilot and CAI waypoint files\par
+    with extension .dat.\par
+    \par
+  * The user's selected Altitude (m/ft) is considered now in waypoint handling.\par
+\par
+2011-08-19 Axel Pauli <axel@kflog.org>\par
+\par
+  * KFLog 4.2.0 released.\par
+\par
+2011-08-04 Eggert Ehmke <eggert.ehmke@berlin.de>\par
+\par
+  * Added support for FLARM flarmcfg.txt file\par
+\par
+  * Added support to upload declaration to FLARM device via serial port\par
+\par
+2011-08-04 Axel Pauli <axel@kflog.org>\par
+\par
+  * An error message box is opened to the user, if a KFLog XML waypoint file\par
+    could not be parsed successfully during read in.\par
+\par
+2011-07-04 Axel Pauli <axel@kflog.org>\par
+\par
+  * BUGFIX: Method writeFilserDA4 file crashes with a core dump, if waypoint\par
+    number is greater than 600. Fixed now.\par
+    \par
+  * BUGFIX: Waypoint import failed for Seeyou cup data file, if elevation unit\par
+    was given in feet. Fixed now.\par
+    \par
+  * BUGFIX: Problems fixed in coordinate editor. There was no longitude degree\par
+    input possible for values between 80-99 degrees.\par
+\par
+2011-06-28 Axel Pauli <axel@kflog.org>\par
+\par
+  * KFLog 4.1.1 released.\par
+\par
+  * Core dump fixed, occurred during save of kflog settings.\par
+    \par
+2011-06-27 Axel Pauli <axel@kflog.org>\par
+\par
+  * KFLog 4.1.0 released.\par
+\par
+2011-06-27 Axel Pauli <axel@kflog.org>\par
+\par
+  * Airspace file management added to kflog settings.\par
+\par
+2011-06-26 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * Compiler warnings fixed about uninitialized variables in filser.cpp.\par
+  \par
+  * Added some fixes for the pl2303 RS232-USB adapter in filser.cpp.\par
+\par
+2011-06-22 Axel Pauli <axel@kflog.org>\par
+\par
+  * Some more checks added to class WaypointCatalog to prevent core dumps\par
+    during read of wrong file content.\par
+    \par
+  * kflog.desktop file updated and integrated into the package build.\par
+\par
+2011-06-21 Axel Pauli <axel@kflog.org>\par
+\par
+  * New method added to the WaypointCatalog class, which can read in waypoint\par
+    data from a Welt2000 file. The amount of waypoints must be limited by\par
+    country identifiers because the whole file contains over 57282 entries.\par
+    \par
+  * WaypointTreeView extended to read a Welt2000 file. Runways are listed with\par
+    both directions now.\par
+\par
+2011-06-19 Axel Pauli <axel@kflog.org>\par
+\par
+  * KFLog 4.0.0 released.\par
+\par
+2011-06-19 Axel Pauli <axel@kflog.org>\par
+\par
+  * BUGFIX: Window menu item should only be enabled, if flights are loaded.\par
+    Furthermore it was wrong conected, so that multiple times a flight was\par
+    activated.\par
+    \par
+  * Plugins are no longer stored in bin directory. Created a new lib directory\par
+    for them.\par
+\par
+  * Added some stuff for a debian package build to automate that process and\par
+    make a delivery easier.\par
+    \par
+2011-06-16 Axel Pauli <axel@kflog.org>\par
+\par
+  * New check menu option added under view. A user can define, if he wants to\par
+    to get displayed automatically the content of map items or not, which are\par
+    touched by the mouse pointer.\par
+    \par
+  * Pressing control key and the left mouse button starts the drag zoom\par
+    action now. Same can be initiated by pressing key zero before.\par
+    \par
+  * Pressing the left mouse button during mouse move will move the map in mouse\par
+    direction. If the move pause is longer as 1s a redraw of the map is done.\par
+    \par
+  * Turning mouse wheel will zoom in/out map now.\par
+  \par
+2011-06-14 Axel Pauli <axel@kflog.org>\par
+\par
+  * BUGFIX: Seeyou waypoint read in method did assign sometimes wrong map\par
+    element types. \par
+\par
+2011-06-10 Axel Pauli <axel@kflog.org>\par
+\par
+  * Moving flag in flight animation replaced by a rotating glider symbol.\par
+    That is the better solution. Thanks to Cumulus, from where I could copy it.\par
+    \par
+  * Bugfix: Integer validators in coordinate input boxes makes trouble on\par
+    some values. Leading zeros were removed. I replaced them by\par
+    QRegExpValidators.\par
+\par
+2011-06-09 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix: Methods Map::slotCenterToTask() and Map::slotCenterToFlight() did\par
+    not work right for flight groups.\par
+    \par
+  * Bugfix: If a flight group was selected, the data of a flight point were never\par
+    displayed during mouse touch. Missing handling implemented.\par
+\par
+2011-06-07 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix: Forgot to port to Qt4 the opengl_igc part. Fixed now.\par
+  \par
+  * Bugfix: Normal flight animation start, pause and stop is working now without\par
+    QPainter complains. The other animate actions are not yet usable. Will be\par
+    the next work to get it running.\par
+\par
+2011-06-06 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix: FlightDataPrint had a corrupted output format. I fixed that.\par
+  \par
+  * Bugfix: TaskDataPrint had a corrupted output format. I fixed that.\par
+  \par
+  * Bugfix: It seems to be necessary to add the library option -ldl to the\par
+    qmake project file. A link error was reported to me on 64 bit systems.\par
+\par
+2011-06-01 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix: Lakes were never drawn at the map. There brush color was also\par
+    not configurable. Both issues fixed.\par
+    \par
+  * Bugfix: Saving the map into an image did not work.\par
+\par
+2011-05-31 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix in class MapMatrix. Variable matrixSize was used but never\par
+    initialized. Modified code in that way to use only variable mapViewSize.\par
+    \par
+  * Added degree labels to map grid.\par
+\par
+2011-05-30 Axel Pauli <axel@kflog.org>\par
+\par
+  * Class MapPrint replaced by direct printing of the map content. It was the\par
+    easiest method to get a good print picture. The old code did not work as\par
+    expected and it was to much effort for me to get running it.\par
+\par
+2011-05-27 Axel Pauli <axel@kflog.org>\par
+  \par
+  * Dialog of class MapPrint ported to Qt4.\par
+  \par
+  * Whole Qt3 support removed from qmake project files. After a half year of hard\par
+    work KFLog compiles now with Qt4 without using Qt3Support library. But\par
+    not all parts do running under Qt4. Print management and flight animation\par
+    need further work to get them running.\par
+\par
+2011-05-26 Axel Pauli <axel@kflog.org>\par
+\par
+  * A task name is stored and retrieved now from the XML file content.\par
+  \par
+  * Guicontrol directory removed. Class KFLogListView not more in use because\par
+    it was not portable to Qt4. It was replaced by the new class KFLogTreeWidget.\par
+    \par
+  * Editor field home country added to personal configuration page.\par
+  \par
+  * Tried to get running the graphical flight planning. Old code was very\par
+    complex, confusing and user unfriendly. I used a new approch. If a flight\par
+    task is created, graphical planning is switched on. You see that on the\par
+    string in the lower left corner of the status bar. There is displayed\par
+    "Task planning on". If you click at the map by pressing the left mouse\par
+    button, a menu is popup with the supported task actions. You can add,\par
+    remove and create waypoints. But there are some constrains. Waypoints\par
+    are only appended to the end of the task list. You can not change the order\par
+    of waypoints and the waypoint move is also not supported. For modifying the\par
+    flight task you should use the task editor. Important is to finish an opened\par
+    graphical flight planning action. That is also supported by the task menu.\par
+    \par
+2011-05-24 Axel Pauli <axel@kflog.org>\par
+\par
+  * The type of a waypoint is missused by a flight task to overwrite it with a\par
+    task point type. Added a new variable tpType to the Waypoint class to solve\par
+    this conflict.\par
+    \par
+   * TaskDialog fully ported to Qt4. But there were some unusual things\par
+     programmed. The software should not do unexpected things by the user.\par
+     The necessary checks, if the FAI requirements are fulfilled are done now,\par
+     if the ok button is pressed. At the moment is not clear for me how the\par
+     task management is supported by the map and the mouse.\par
+\par
+2011-05-19 Axel Pauli <axel@kflog.org>\par
+\par
+  * Flight recorder plugins fully ported to Qt4. It seems that the Garmin\par
+    and SoaringPilot plugins do not fulfill the KFLog plugin requirements.\par
+    Therefore I disabled the copying of the related desktop files into the\par
+    release area. The plugins must be tested, if they work right.\par
+\par
+2011-05-18 Axel Pauli <axel@kflog.org>\par
+\par
+  * RecorderDialog widget fully ported to Qt4. It was a hard pice of work :-((\par
+    It must be tested the whole provided functionality. I have no logger devices\par
+    to do that.\par
+    \par
+  * Recorder plugin Filser fully proted to Qt4.\par
+  * Recorder plugin Cambrigde fully proted to Qt4.\par
+  * Recorder plugin Volkslogger fully proted to Qt4.\par
+\par
+2011-05-05 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix in waypoint import from map. If map center was selected as center\par
+    point it was never taken because the center reference value was never\par
+    set in the waypoint catalog.\par
+  * Bugfix in recorder dialog. The plugin definitions and libraries were\par
+    searched at wrong places and never found. I adapted all to the current\par
+    used release structure.\par
+\par
+2011-05-01 Axel Pauli <axel@kflog.org>\par
+\par
+  * XUbuntu 11.04 uses gcc version 4.5.2 (Ubuntu/Linaro 4.5.2-8ubuntu4). That\par
+    caused some compiler complains which I fixed. I hope that older compiler\par
+    versions can handle the made modifications.\par
+\par
+2011-04-07 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Support for task declaration in Cambridge 302 vario/logger.\par
+\par
+2011-04-04 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix in waypoint catalog class. An outlanding in the readCup method\par
+    was never set as landable. I fixed that.\par
+\par
+2011-03-18 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Fixed some bugs that caused KFLog to crash\par
+  * Communication with loggers works again\par
+\par
+2011-03-16 Axel Pauli <axel@kflog.org>\par
+\par
+  * Qt Version check added to global makefile and qmake project file.\par
+    That shall prevent the build with wrong Qt versions.\par
+\par
+2011-03-15 Axel Pauli <axel@kflog.org>\par
+\par
+  * Country handling added to waypoints and airfields. Changed some types\par
+    of variables.\par
+  * Binary waypoint file format adapted to latest Cumulus version.\par
+  * XML waypoint file format extended by some new items. Cumulus supports\par
+    too the XML waypoint file format now.\par
+\par
+2011-03-10 Axel Pauli <axel@kflog.org>\par
+\par
+  * Names of waypoints limited to 8 characters and to upper cases.\par
+  * Runway headings limited to range 10...36. 0 stands for unknown heading.\par
+  * Waypoint dialog adapted to the new requirements.\par
+  * Waypoint catalog's read/write methods adapted to the new needs.\par
+\par
+2011-03-03 Axel Pauli <axel@kflog.org>\par
+\par
+  * Different not more needed debug messages removed.\par
+\par
+2011-03-02 Axel Pauli <axel@kflog.org>\par
+\par
+  * Error fixed in menu point available flights. Caused a core dump.\par
+  * An optimized flight was never redrawn in the EvaluationDialog class.\par
+    Missing call added in MainWindow. Labels of optimized flights can overwrite\par
+    each other if the lay to near together in EvaluationDialog. \par
+  * Zooming rectangle was never drawn at the map. That is fixed now. It was a\par
+    longer fight to get it running.\par
+  * Some QPainter complains fixed in class Map. But there are remain some\par
+    more issues in animation of flights.\par
+\par
+2011-03-01 Axel Pauli <axel@kflog.org>\par
+\par
+  * Class IgcPreview removed. Not more usable under Qt4 because the\par
+    support was removed in Qt4.\par
+  * Form ui_optimizationwizard removed. Was never used in the current\par
+    binary but always built.\par
+  * Class OLC OptimizationWizard ported to Ot4. The source code was a total\par
+    chaos in my eyes. Could fix two core dumps but the whole thing needs\par
+    some more tweaking. Will continue the work the next days.\par
+\par
+2011-02-25 Axel Pauli <axel@kflog.org>\par
+\par
+  * IGC 3D view widgets ported to Qt4. The size of the 3D flight should be\par
+    better adapted to the real size of the widget at the first call.\par
+    The help text of the IGC 3D view is forwarded to the help browser\par
+    during the show event.\par
+    \par
+2011-02-24 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix in flight statistic text in ElevationDialog class. Found two\par
+    HTML format errors, which caused a wrong and not more readable\par
+    display. Did some tweaking of the HTML formatting. Added a help\par
+    text, which is displayed in the help browser during show event\par
+    of ElevationDialog class.\par
+\par
+2011-02-23 Axel Pauli <axel@kflog.org>\par
+\par
+  * ElevationFinder class should not declare a parent in its constructor.\par
+    That prevents complains by Glib during shutdown.\par
+  * Flight elevation stuff ported to Qt4. It was a hard piece of work\par
+    to redesign all drawing stuff that it fulfills the Qt4 requirements.\par
+    One issue remains. If a flight is loaded and not all maps are available\par
+    during load, the elevation profile of the diagram is incomplete.\par
+    The format of the displayed flight text data needs some rework.\par
+\par
+2011-02-21 Axel Pauli <axel@kflog.org>\par
+\par
+  * Thanks to valgrind, found a bug in ElevationFinder class. Class member\par
+    useOGIE was not initialized. That cause a funny report by Qt, filename\par
+    missing, during load of a flight.\par
+\par
+2011-02-19 Axel Pauli <axel@kflog.org>\par
+\par
+  * FlightSelectionDialog did never show loaded flights. I fixed that and ported\par
+    the dialog fully to Ot4.\par
+  * The close of a single flight in the object tree view has never considered\par
+    an update of all flight groups. I fixed that.\par
+  * Object menu tree expanded by a flight group item. Furthermore all child\par
+    items are sorted by using column 0 only to get an better overview about all.\par
+    \par
+2011-02-18 Axel Pauli <axel@kflog.org>\par
+\par
+  * Tried to fix the flight cursor handling in class Map. Cursors were drawn\par
+    at the widget's engine outside of the paint event. That caused warnings.\par
+    Animated cursor handling has the same problem, must be fixed in the feature\par
+    too.\par
+  * Different bugs in data view format layout fixed.\par
+\par
+2011-02-16 Axel Pauli <axel@kflog.org>\par
+\par
+  * Class HelpWindow fully ported to Qt4.\par
+  * Masked painter removed from drawing of flights and tasks. But there remains\par
+    complains by QPainter about wrong usage. I could not yet find out the real\par
+    cause of that.\par
+  * There is a design bug in the handling of flights and tasks. If a new flight\par
+    or task was selected, the flight list index was updated but the current\par
+    flight pointer never. That caused some funny side effects, not sure, if\par
+    I could fix all. Another problem was the casting of the current flight\par
+    variable to the derived class. The current flight was defined as\par
+    BaseFlightElement and can contain three different derived classes. To find\par
+    out, which class is contained, it must be used the dynamic cast operator.\par
+    It delivers NULL, when the cast is wrong. But in most of the cases a\par
+    static cast was used, which delivered always a pointer to something.\par
+    If the wrong object was casted, a core dump was the result at the\par
+    next access to that object.\par
+  \par
+2011-02-15 Axel Pauli <axel@kflog.org>\par
+\par
+  * Class FlightLoader fully ported to Qt4. The code of that class is a\par
+    mixture of QSting methods and trival c functions. :-((\par
+  * Class ObjectTree together with its list view items ported to Qt4.\par
+    If the last opened flight was closed, a core dump occurred. It was caused\par
+    by MapContents::closeFlight(), where a zero check was missing. I fixed\par
+    that.\par
+  * Bugfix in Optimization::setTimes method. Index out of range found, caused\par
+    a core dump. I fixed that.\par
+\par
+2011-02-13 Axel Pauli <axel@kflog.org>\par
+\par
+  * File wp.h renamed to flightpoint.h. It contains a class FlightPoint and\par
+    nothing with waypoint. Class Map fully ported to Qt4.\par
+  \par
+2011-02-12 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix in class Waypoint Catalog. The waypoint name check message box\par
+    did not allow an abort. I fixed that. Cup file read routine did not work\par
+    properly. Strings could be enclosed in quotes and contain the comma\par
+    separator. In such a case the separator must be ignored. I fixed that too.\par
+\par
+2011-02-10 Axel Pauli <axel@kflog.org>\par
+\par
+  * Drawing of waypoint labels at the map reworked.\par
+  * If a new waypoint is created at the map the elevation from the position\par
+    is taken over into the waypoint dialog now.\par
+  * Missing map icons for landmark added.\par
+\par
+2011-02-09 Axel Pauli <axel@kflog.org>\par
+\par
+  * Class KFLogListView was replaced by the new class KFLogTreeWidget. This\par
+    class saves too the tree view header and provides a menu by pressing middle\par
+    mouse button for visibility toggling of columns of the tree view.\par
+  * Waypoint catalog management was a bit confusion me. I hope that I could fix\par
+    all detected problems by me.\par
+  * An edited waypoint was inserted again in the current waypoint catalog. I\par
+    blocked that now.\par
+  * Class Waypoints was renamed to WaypointTreeView to get a better\par
+    understanding what is managed here. Different issues fixed in that class.\par
+    Delete, copy and move waypoint actions can handle now several waypoints\par
+    at once.\par
+  * The waypoint management should be ported now to Qt4. All import functions\par
+    must be tested deeper, if they work correctly.\par
+    \par
+2011-02-04 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix in class Waypoints. If no catalog is defined and the mouse button\par
+    is pressed in the waypoint list, a core dump occurred. Fixed that in\par
+    method showWaypointMenu.\par
+  * Bugfix in WaypointImpFilterDialog. If the dialog was modified by the user\par
+    and left via the cancel button, the content was not more in line with the\par
+    catalog settings. I fixed that.\par
+  \par
+2011-02-03 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix in class WaypointCatalog. In method insertWaypoint was never done\par
+    an insert of a new waypoint. The insert statement was placed inside the\par
+    existing path. It cost me two hours to find out that, uff ;-).\par
+    Class WaypointCatalog is fully ported to Qt4 now.\par
+  * All menu items in class Waypoints ported to Qt4.\par
+\par
+2011-02-02 Axel Pauli <axel@kflog.org>\par
+\par
+  * All bitBlt method calls replaced by Qt4 drawPixmap calls in class Map. That\par
+    improves the drawing performance too.\par
+  * Dialog WaypointImpFilterDialog ported to Qt4.\par
+\par
+2011-02-01 Axel Pauli <axel@kflog.org>\par
+\par
+  * New configuration widget added which handles units for altitude,\par
+    distances and positions.\par
+  * Class content of class CoordEdit taken over from Cumulus. This class\par
+    can handle 3 different position formats.\par
+  * WaypointDialog class ported to Qt4.\par
+\par
+2011-01-28 Axel Pauli <axel@kflog.org>\par
+\par
+  * Airspace default print colors modified.\par
+\par
+2011-01-28 Axel Pauli <axel@kflog.org>\par
+\par
+  * KFlogConfig class ported completely to Qt4. The classes ConfigDrawElement\par
+    and ConfigPrintElement were united into one class with name ConfigMapElement.\par
+    That makes all configuration handling and the maintenance easier. It was a\par
+    hard work to port that all. The modified configuration handling needs some\par
+    testing, if it works right.\par
+    All needed brush icons are created now in the new class. Removed all old brush\par
+    icons from the pics directory.\par
+\par
+2011-01-20 Axel Pauli <axel@kflog.org>\par
+\par
+  * Animation of tool bar and dock widgets switched off. It caused a lot of\par
+    resizing actions and blocked the whole GUI.\par
+  * Wrong call connections in class KFLogConfig fixed. Scale and waypoint\par
+    catalog configuration were not callable. Started with Qt4 porting of\par
+    class KFLogConfig. A lot of stuff is to modify here.\par
+  * Bugfix in class DownloadManager to prevent a download deadlock of wrong\par
+    map files.\par
+  * Class RowDelegate taken over from Cumulus.\par
+\par
+2011-01-19 Axel Pauli <axel@kflog.org>\par
+\par
+  * Class TopoLegend ported to Qt4 together with bug fixing. Works now as\par
+    expected.\par
+  * Class MapControlView ported to Qt4.\par
+  * AboutWidget class taken over from Cumulus. About information added to main\par
+    window as extra slot. The content was taken from main.cpp. Maybe the about\par
+    information is not complete. Should be check by the maintainers.\par
+\par
+2011-01-18 Axel Pauli <axel@kflog.org>\par
+\par
+  * Map menu ported to Qt4.\par
+  * Translation lists of different map objects moved from the MainWindow class\par
+    into the corresponding classes.\par
+  * Map object search methods in class Map extended to include the OutlangingList.\par
+\par
+2011-01-17 Axel Pauli <axel@kflog.org>\par
+\par
+  * Bugfix in method MapConfig::loadPixmap(). \par
+\par
+2011-01-13 Axel Pauli <axel@kflog.org>\par
+\par
+  * Method Airfield::getInfoString() over worked. It displays now some\par
+    more information about the related item.\par
+  * Outlandings included in Map::__displayMapInfo() method.\par
+\par
+2011-01-13 Axel Pauli <axel@kflog.org>\par
+\par
+  * BUGFIX: Welt2000 has changed the identifier for gliderfields.\par
+    Parser modified to the new identifier.\par
+  * Airfields are drawn now with considering the landing direction.\par
+    Solution was taken over from Cumulus.\par
+  * All kind of air facilities are united in one class with the name\par
+    Airfield.\par
+\par
+2011-01-11 Axel Pauli <axel@kflog.org>\par
+\par
+  * All menubar items ported to Qt4. That was a very stupid work ;-)\par
+\par
+2011-01-07 Axel Pauli <axel@kflog.org>\par
+\par
+  * All toolbar items ported to Qt4.\par
+\par
+2010-12-24 Axel Pauli <axel@kflog.org>\par
+\par
+  * Changed the application data default directory from ~/.kflog to ~/KFLog.\par
+  * Introduced a new method to get the default application data directory from\par
+    one place in MainWindow class. That makes future changes easier.\par
+  * Class KFLogLogo replaced by QSplashScreen.\par
+  * Map tile management in class MapContents taken over from Cumulus.\par
+  * New makefile with name Makefile.qmake introduced to build a kflog test\par
+    target with all needed data items.\par
+\par
+2010-12-22 Axel Pauli <axel@kflog.org>\par
+\par
+  * Map redraw optimized after download of missing files. The already loaded\par
+    data are not more cleared and loaded again.\par
+  * Two new methods indroduced for loading of map icons and application\par
+    pixmaps. There is defined now only on one place the path to the icons\par
+    and pixmaps. Changing all old calls was a big stupid task.\par
+  * Colors and brushes of airspaces changed to be more in conformance with\par
+    ICAO guidelines. That is an open point for the printing functionality.\par
+\par
+2010-12-21 Axel Pauli <axel@kflog.org>\par
+\par
+  * Class WhatsThat caused core dumps after displaying airspace information.\par
+    Code of class partly replaced by the Cumulus code.\par
+  * Pixmap drawing mechanism partly redesigned.\par
+  * Function printPos moved from mapcalc to WGSPoint class.\par
+  * Map scale bar issues fixed.\par
+  * A black list has been added to the download manager to avoid download\par
+    dead locks.\par
+\par
+2010-12-18 Axel Pauli <axel@kflog.org>\par
+\par
+  * OpenAir class taken over from Cumulus. Airspaces are drawn now at the map\par
+    but there is some redesign needed for the drawing management in general.\par
+    It works very inefficiently. Different fixes made for Qt4 to overcome\par
+    a lot of compiler complains. Airspaces are handled now in value list.\par
+\par
+2010-12-16 Axel Pauli <axel@kflog.org>\par
+\par
+  * Q3 pointer lists for terrain and map elements replaced by Qt4 value\par
+    lists. Isoline management taken over from Cumulus.\par
+\par
+2010-12-15 Axel Pauli <axel@kflog.org>\par
+\par
+  * Content of class WGSPoint taken over from Cumulus. Definitions of WGSPoint\par
+    In MapMatrix removed. Method degreeToNum moved from class MapContens to \par
+    class WGSPoint.\par
+\par
+2010-12-14 Axel Pauli <axel@kflog.org>\par
+\par
+  * Modified install targets in all sub qmake files. $INSTALL_ROOT defines\par
+    the root install path now.\par
+  * Automatic map and Welt2000 file download added. The required classes were\par
+    taken over from Cumulus. Thanks to it ;-)\par
+  * Bugfix in MapContent class. Isoline drawing works again. Welt2000 parser\par
+    unfortunately not yet.\par
+  * Different Qt4 portage actions done.\par
+  * Doxygen configuration files added to kflog subdirectory. Call\par
+    doyxgen to generate the html help files.\par
+  \par
+2010-12-11 Axel Pauli <axel@kflog.org>\par
+\par
+  * Global QSettings object must be initialized according to the requirements\par
+    of Qt. The configuration file is located at: $HOME/.config/KFLog as kflog.conf.\par
+  * Removed the prefix /KFLog from all setting items. That results in a better\par
+    group structure in the stored file. Before all was saved under the single\par
+    group KFLog.\par
+  * Replaced all Qt3 QString latin1() method calls by Qt4 toLatin1().data()\par
+    methods calls.\par
+  * Added some core attribute settings in main.cpp.\par
+  * Introduced a target.h file which contains the current build version.\par
+  * Class KFLog derived from Q3MainWindow renamed to MainWindow to make more\par
+    clear the start point and main center of KFLog.\par
+  * Modified install targets in kflog.pro qmake file. The install root destination\par
+    must be defined now by passing the variable $INSTALL_ROOT during the make call.\par
+\par
+2010-10-05 Constantijn Neeteson <kflog@neeteson.net>\par
+\par
+  * changed build automation to qmake. See INSTALL for installation instructions.\par
+\par
+2010-10-05 Constantijn Neeteson <kflog@neeteson.net>\par
+\par
+  * automatic map download disabled, waiting for Qt4 classes (see downloadlist.cpp\par
+    and mapcontents.cpp)\par
+  * the layout of the Recorder and KFLogConfig dialog has been changed\par
+  * dockwidgets are now standard turned off in the mainwindow, because the layout is\par
+    ugly. Hopefully it is solvable in Qt4. In the meantim they can be made visible\par
+    by selecting them in the Settings menu.\par
+  * The positions of the dockwidgets and toolbar are not stored when KFLog quits.\par
+  * KAbout has been removed. The contents is still available in main.cpp.\par
+    Qt doesn't have an about class, so this has to be written by ourselfs.\par
+  * In some messageboxes there was a checkbox to disable the same message in the\par
+    future. Also, some messageboxes of recorderdialog contained a small screen with\par
+    detailed information about an error. QMessageBox doesn't support this and\par
+    therefore it has been removed.\par
+  * The shortcuts and toolbar cannot be edited anymore, because Qt lacks the\par
+    widgets that KDE had.\par
+  * all files are now stored in %HOME%/.kflog/, it is not possible in Qt to find a\par
+    dir like /usr/share/apps/kflog. I did not change this in the makefiles, because\par
+    the automake configuration doesn't work properly anymore on my pc. I suggest\par
+    that we change to qmake for build automation.\par
+\par
+2009-10-08 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Eliminated more KDE dependencies\par
+  * Removed OLC declaration code -- that's much easier via their website now.\par
+  * General directory cleanup\par
+\par
+2009-07-19 Constantijn Neeteson <kflog@neeteson.net>\par
+\par
+  * Converted several KDE calls to their QT counterparts\par
+\par
+2009-07-14 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Acknowledge CGIAR as source of our terrain mapdata\par
+  * Update version number to 2.2.0 -- this is a release!\par
+\par
+2009-07-14 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * New URL for mapfiles. The new file format will be the default now.\par
+\par
+2009-07-12 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Use same terrain colors as in Cumulus\par
+\par
+2009-07-11 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Bugfix in mapmatrix.cpp: We never actually used the map projection\par
+    settings for the standard parallels which the user defined, because\par
+    we looked for the values in the wrong config file section and ended\par
+    up using the defaults instead.\par
+  * Basic support for the new terrain file format. We don't get\par
+    depressions right, because we use the wrong plotting order for\par
+    isolines. But at least KFLog can understand both the old and the\par
+    new format. We'll have to fix this once support for the old format\par
+    ceases.\par
+  * Updated URLs in the Tips of the Day\par
+\par
+2009-04-21 Constantijn Neeteson <kflog@neeteson.net>\par
+\par
+  * Bugfix in mapcalc.cpp: the time is now always shown in UTC,\par
+    regardless of the timezone\par
+  * Bugfix in flight.cpp: the first and last flightstage are now\par
+    shown in the evaluation dialog\par
+  * GUI improvement in handling flightgroups\par
+\par
+2009-03-22 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * <ctrl>-o actually opens a flight now.\par
+  * Support for the new terrain and ground file format. The new files\par
+    will have the elevation index stored in the "sort" field (which\par
+    we didn't use previously).\par
+\par
+2009-03-17 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * If KFLog was closed in another mode than map view (i.e. viewing\par
+    the waypoint list or the evaluation window) it started downloading\par
+    lots of map files after the next startup. This is fixed now.\par
+\par
+2009-02-01 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Basic support for changing glider and pilot information in\par
+    Cambridge 300 series flight recorders\par
+\par
+2008-12-29 Constantijn Neeteson <kflog@neeteson.net>\par
+\par
+  * Further improvements in circling detection and the calculation\par
+    of the bearings\par
+  * Gardown/Garmin files must now be opened instead of imported\par
+  * Removed FlightGear filetype support\par
+  * Updated Dutch language file\par
+\par
+2008-11-25 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Bugfix for printing configuration of double railways\par
+\par
+2008-11-24 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Improvement of the flight path display\par
+    (patch by Constantijn Neeteson)\par
+\par
+2008-07-08 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * A number of bugfixes in the openairparser\par
+\par
+2008-07-04 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Major improvement to the circling detection for flight evaluation\par
+    (patch by Constantijn Neeteson)\par
+\par
+2008-06-21 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Support for WELT2000 airfield files. Old airfield files are not\par
+    supported anymore.\par
+  * Changed mapdata directory stucture\par
+  * More cleanup, Cambridge 300 stuff, ...\par
+\par
+2008-06-05 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Improved flight evaluation (patch by Constantijn Neeteson)\par
+  * Improvements for Cambridge 300 series flight recorder support\par
+\par
+2008-04-11 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Support for OpenAir airspace files. The old airspace format\par
+    is not supported anymore.\par
+  * Improvements for Cambridge 300 series flight recorder support\par
+  * Repository cleanup\par
+\par
+2008-04-01 Hendrik Hoeth <hoeth@linta.de>\par
+\par
+  * Repository cleanup and bugfixes\par
+  * Make kflog 64-bit aware\par
+  * Basic support for Cambridge 300 series flight recorders\par
+\par
+2005-01-01 Andr  Somers <andre@kflog.org>\par
+\par
+  * Runway information: runways are now stored when read, and used when\par
+    waypoints are imported from the map.\par
+\par
+  * Unknown objects in the waypoint list, for which there is no translation\par
+    no longer cause a crash.\par
+\par
+  * Don't show frequency in the waypoint list if the frequency is < 1.\par
+\par
+2005-04-03 Heiner Lamprecht <heiner@kflog.org>\par
+\par
+  * Fixed a bug in map.cpp:  The tooltipinfo is now displayed at the\par
+    currect position.\par
+\par
+2005-04-02 Heiner Lamprecht <heiner@kflog.org>\par
+\par
+  * Did some code-cleanups to reduce comiler warnings due to type casts.\par
+\par
+2005-03-26 Florian Ehinger <florian@kflog.org>\par
+\par
+  * Added support for landmarks.\par
+\par
+2004-03-14 Heiner Lamprecht <heiner@kflog.org>\par
+\par
+  * Changed the behavior of the startup process. Now the process\par
+    is interrupted, if no mapdirectory is defined.\par
+\par
+  * Made some minor changes to reduce compiler warnings.\par
+\par
+\par
+2003-11-24 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * added automatic detection of transfer speed for filser devices.\par
+\par
+  * added supported transfer speeds to capabilies for all recorders\par
+\par
+\par
+2003-08-22 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * bugfix in dataview.cpp: prevent crash when MapContents::getFlight() returns NULL.\par
+\par
+  * enabled up/download of task buffers to/from lx devices\par
+\par
+\par
+2003-08-01 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * added up/download for waypoint data to/from Filser recorder\par
+\par
+\par
+2003-07-26 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * added import/export for filser txt and da4 waypoint files\par
+\par
+\par
+2003-07-12 Florian Ehinger <florian@kflog.org>\par
+\par
+  * added status windows during downloads / uploads to the recorder\par
+    (not perfect yet!)\par
+\par
+\par
+2003-07-11 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * added edit/delete waypoints to the map context menu\par
+\par
+  * suppressed the rename/overwrite warning if nothing has changed\par
+\par
+  * don't start the context menu timer when in planning mode\par
+\par
+2003-07-10 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * added the waypoint list to the mapinfo that is displayed when activated\par
+    by context menu or by tooltip popup\par
+\par
+  * Bugfix: if waypoints are deleted, this has immediat effect on the map display now.\par
+\par
+\par
+2003-07-09 Heiner Lamprecht <heiner@kflog.org>\par
+\par
+  * Fixed a bug in EvaluationFrame::slotScale(), which could crash KFLog,\par
+    if no flight was loaded.\par
+\par
+\par
+2003-07-09 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * Updated german translation\par
+\par
+\par
+2003-06-24 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * backported architecture independant code for Filser plugin from kflogembedded\par
+\par
+\par
+2003-07-07 Andr  Somers <andre@kflog.org>\par
+\par
+  * Made it possible to rename a waypoint if a waypoint with the same name is allready\par
+    in the catalog and you try to add a new one. This also fixes the weird situation that\par
+    there was no functional difference between the No and the Cancel options and the fact\par
+    that Yes, No, and Cancel were not appropriate button labels.\par
+\par
+\par
+2003-07-05 Andr  Somers <andre@kflog.org>\par
+\par
+  * Made the mapinfo boxes appear as popups (like tooltips) if you hold the mouse over an\par
+    interesting object on the map. The mapinfo is also accessible through the new context\par
+    menu.\par
+\par
+\par
+2003-07-04 Andr  Somers <andre@kflog.org>\par
+\par
+  * Added a contextmenu to the map\par
+\par
+  * Added the KFLogBrowser that replaces the old Tasks list\par
+\par
+  * Added a pointer to the evaluation dialog that indicates the position currently\par
+    selected on the map. Also very nice in animations!\par
+\par
+  * Fixed a small bug in the Evaluation dialog\par
+\par
+  * Tasks are treated as normal documents now too, so they show up in the Recent Documents\par
+    list and can be dragged & dropped into the map or the KFLogBrowser, just like you can\par
+    with flights.\par
+\par
+\par
+2003-06-12 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * Bugfix: coordinates during flight animation are shown correctly now in status bar\par
+\par
+\par
+2003-06-04 Heiner Lamprecht <heiner@kflog.org>\par
+\par
+  * Changed the fonts in the printout of the flightdata.\par
+\par
+  * Repaired the map-printing.\par
+\par
+\par
+2003-06-05 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * improved Filser interface, tested with different versions of lx devices\par
+\par
+  * fixed bug: last entry in flight list is not doubled anymore\par
+\par
+  * added duration column in flight list\par
+\par
+\par
+2003-05-29 Florian Ehinger <florian@kflog.org>\par
+\par
+  * Fixed Bugs in EvaluationDialog\par
+    (Flags in the map are shown again, cursor text is shown again)\par
+\par
+  * it's no longer possible to move cursor1 behind cursor2\par
+\par
+  * Changed the evaluation Dialog to a KDockwiget\par
+\par
+\par
+2003-05-27 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * Extended flight recorder capabilities for basic data\par
+    like serial number, pilot name, glider type, competition id and more.\par
+    All these data can now be fetched by new function getBasicData.\par
+\par
+\par
+2003-05-23 Andr  Somers <andre@kflog.org>\par
+\par
+  * Added separate desktop entry for SDI posigraph\par
+\par
+\par
+2003-05-21 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * Bugfix: list of waypoints in OLCDialog was sorted wrong if more than 9 entries\par
+\par
+  * Optimization: several class parameters are now const class&\par
+\par
+  * more optimizations have been backported from Cumulus\par
+\par
+\par
+2003-05-20 Helmut Rohs <helmut@kflog.org>\par
+\par
+  * Add ENL facility, display a white track on the map for engine powered flight\par
+\par
+  * Changed time base type to analyse flights crossing the 0:00 UTC boarder\par
+\par
+\par
+2003-05-20 Eggert Ehmke <eggert@kflog.org>\par
+\par
+  * Added a wait cursor for time consuming operations in RecorderDialog\par
+\par
+  * Improved display of serial number of Filser recorders\par
+\par
+  * Improved GCC 3.3 / ISO C++ compatibility\par
+\par
+\par
+2003-05-03 Andr  Somers <andre@kflog.org>\par
+\par
+  * Added a Tip of the Day\par
+\par
+  * First step to implement new KFLog Browser\par
+\par
+\par
+2003-05-01 Heiner <heiner@kflog.org>\par
+\par
+  * Tagged and prepared Release 2.1.0\par
+\par
+\par
+2003-04-29 Andr  <andre@kflog.org>\par
+\par
+  * Addition: implict start of dragZoom. Just start dragging anywhere on\par
+    the map and it will automaticly start\par
+\par
+  * Fix: could not drag in north-west direction\par
+\par
+  * Fix: rectangle too small to zoom to was not removed from map\par
+\par
+\par
+2003-04-28 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed some problem in evaluating over-night-flights.\par
+\par
+\par
+2003-04-27 Heiner <heiner@kflog.org>\par
+\par
+  * Completed the mouse-zoomig. Now the side-ratio of the current map-window\par
+    is used and no additional border is added to the rectangle.\par
+\par
+\par
+2003-04-27 Andr  <andre@kflog.org>\par
+\par
+  * Cleaned up and fixed handling of new waypoints.\par
+\par
+  * Fixed crash on changing the projection with loaded tasks.\par
+\par
+\par
+2003-04-26 Andr  <andre@kflog.org>\par
+\par
+  * Removed bug where KFLog would crash if you tried to add a waypoint from\par
+    the map and there was no catalog opened. Fixed by creating a new catalog\par
+    if this happens.\par
+\par
+\par
+2003-04-26 Heiner <heiner@kflog.org>\par
+\par
+  * Updated the messages-catalog\par
+\par
+  * Merged the different actions for map-moving into one set.\par
+\par
+  * Added drawing a rubberband for mouse-zooming.\par
+\par
+\par
+2003-04-26 Christof <christof@kflog.org>\par
+\par
+  * Automatic download of map tiles\par
+\par
+  * Optimization for OLC contest ({\field{\*\fldinst{HYPERLINK "www.onlinecontest.org"}}{\fldrslt{\ul\cf1 www.onlinecontest.org}}}\f0\fs22 )\par
+\par
+  * Added keyboard shortcuts for panning & zooming with numpad (NumLock=on)\par
+\par
+  * Free rectangular zoom added\par
+\par
+\par
+2003-04-25 Florian <florian@kflog.org>\par
+\par
+  * Changed the MapdirectorySelect Dialog to a KFileDialog\par
+    looks nicer ;-)\par
+    The Dialog will no longer appears two times\par
+\par
+\par
+2003-04-25 Andr  <andre@kflog.org>\par
+\par
+  * Removed bug where flight and task were not drawn in the correct\par
+    position after a change in the projection.\par
+\par
+  * Fixed spelling of my name in the about dialog (figured out how to\par
+    make an '  there :) )\par
+\par
+\par
+2003-04-24 Florian <florian@kflog.org>\par
+\par
+  * some adjustments for the default layout\par
+\par
+  * added (hopefully) all authors in the about dialog / AUTHORS File\par
+\par
+  * added default keys for map handling\par
+\par
+\par
+2003-04-12 Andr  <andre@kflog.org>\par
+\par
+  * Waypoints can now be copied and moved between catalogs.\par
+\par
+\par
+2003-04-10 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed a small bug in RecorderDialog, which occurred while downloading a\par
+    flight when no default flight directory was configured.\par
+\par
+\par
+2003-04-09 Florian <florian@kflog.org>\par
+\par
+  * Added Helpwindow.\par
+\par
+  * Changed the printer-dialog the way, that the configuration-tabs are opened.\par
+\par
+\par
+2003-03-09 Andr  <andre@kflog.org>\par
+\par
+  * Added a legend for the elevations.\par
+\par
+\par
+2003-02-28 Harry <harry@kflog.org>\par
+\par
+  * Replaced wayPoint struct with Waypoint class\par
+\par
+\par
+2003-02-24 Heiner <heiner@kflog.org>\par
+\par
+  * The evaluation-dialog saves the window-size in the config-files and\par
+    redas it\par
+\par
+\par
+2003-02-19 Harry <harry@kflog.org>\par
+\par
+  * Support for SoaringPilot added\par
+\par
+\par
+2003-01-21 Harry <harry@kflog.org>\par
+\par
+  * Fixed bug in draw empty FAI Areas, show TC in Dataview and TaskDialog\par
+\par
+\par
+2003-01-20 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed the zero-value-detection, so that the altitude is not checked.\par
+\par
+\par
+2003-01-15 Harry <harry@kflog.org>\par
+\par
+  * Configuration of FAI Areas\par
+\par
+\par
+2003-01-02 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed a small bug in KFLogApp::saveOptions(), which could crash KFLog,\par
+    if no waypoint-catalog has been opened.\par
+\par
+  * Ignoring zero-value-points in MapContents::loadFlight().\par
+\par
+\par
+2003-01-01 Eggert <eggert@kflog.org>\par
+\par
+  * Some updates to compile with gcc 3.2\par
+\par
+\par
+2002-12-28 Harry <harry@kflog.org>\par
+\par
+  * Integration of Volkslogger with new API definition\par
+\par
+\par
+2002-11-30 Andre <andre@kflog.org>\par
+\par
+  * Add icons to the waypointlist\par
+\par
+  * Add reading and writing of waypoint in binairy format\par
+\par
+\par
+2002-08-06 Thomas <thomas@kflog.org>\par
+\par
+  * Add commandline option to specify and load WaypointCatalog\par
+\par
+\par
+2002-08-01 Harry <harry@kflog.org>\par
+\par
+  * Activate area based planning\par
+\par
+\par
+2002-07-15 Harry <harry@kflog.org>\par
+\par
+  * Added task editing dialog\par
+\par
+\par
+2002-07-11 Thomas <thomas@kflog.org>\par
+\par
+  * Added automagical panning of map when stepping through flight.\par
+\par
+  * Added help-dialog to 3D view.\par
+\par
+\par
+2002-07-11 Heiner <heiner@kflog.org>\par
+\par
+  * Prepared release 2.0.7\par
+\par
+\par
+2002-07-06 Florian <florian@kflog.org>\par
+\par
+  * Added more mapelement-types.\par
+\par
+\par
+2002-07-04 Heiner <heiner@kflog.org>\par
+\par
+  * Added recognition of mapfile-format-version and defined\par
+    the new format wich more element-types and fields.\par
+\par
+\par
+2002-07-01 Florian <florian@kflog.org>\par
+\par
+  * Made some Modifications relating the handling of new\par
+    Waypoints by clicking into the map\par
+\par
+\par
+2002-06-30 Heiner <heiner@kflog.org>\par
+\par
+  * Added Andrees patch (CenterToDialog) to HEAD.\par
+\par
+\par
+2002-06-26 Harry <harry@kflog.org>\par
+\par
+  * Dock Widget for task handling added\par
+    Saving and loading of task files\par
+\par
+  * Redraw waypoint markers on map when adding/updating\par
+    a waypoint\par
+\par
+\par
+2002-06-22 Heiner <heiner@kflog.org>\par
+\par
+  * Changed the sources to new versions of autoconf and automake.\par
+    Now, we need at least autoconf 2.52 and automake 1.5.\par
+\par
+  * Made KFLog compile under KDE 3.0!\par
+\par
+\par
+2002-06-15 Thomas <thomas@kflog.org>\par
+\par
+  * Added printing of waypoints from active WaypointCatalog.\par
+\par
+  * Added printing of planned task.\par
+\par
+\par
+2002-06-13 Thomas <thomas@kflog.org>\par
+\par
+  * Click on waypoint from WaypointCatalog in map to add to task.\par
+\par
+\par
+2002-06-12 Thomas <thomas@kflog.org>\par
+\par
+  * Added drawing of waypoints for active WaypointCatalog.\par
+\par
+\par
+2002-05-21 Heiner <heiner@kflog.org>\par
+\par
+  * Added methods for changing and configuring the map-projection.\par
+\par
+\par
+2002-05-20 Heiner <heiner@kflog.org>\par
+\par
+  * Added classes for projection-handling.\par
+\par
+\par
+2002-05-19 Harry <harry@kflog.org>\par
+\par
+  * Added flight selection dialog\par
+\par
+  * select flights for flightgroup\par
+\par
+\par
+2002-05-18 Heiner <heiner@kflog.org>\par
+\par
+  * Added dutch translation. Thanks to Andr Somers\par
+\par
+\par
+2002-05-15 Thomas <thomas@kflog.org>\par
+\par
+  * Added import of FlightGear files.\par
+\par
+  * Added import of Gardown files.\par
+\par
+  * Fixed bug with QLists in ~MapContents().\par
+\par
+\par
+2002-05-01 Heiner <heiner@kflog.org>\par
+\par
+  * Prepared and release bugfix-release\par
+\par
+\par
+2002-04-30 Harry <harry@kflog.org>\par
+\par
+  * Fix switched lat/long in waypoint handling\par
+\par
+\par
+2002-04-27 Heiner <heiner@kflog.org>\par
+\par
+  * Prepared the next release and tagged it.\par
+\par
+\par
+2002-04-27 Florian <florian@kflog.org>\par
+\par
+  * Cleaned up graphical planning.\par
+\par
+\par
+2002-04-27 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed some minor bugs in planning\par
+\par
+  * Completed german translation.\par
+\par
+\par
+2002-04-25 Heiner <heiner@kflog.org>\par
+\par
+  * Created the class WGSPoint, which is derived from QPoint and\par
+    provides easy-to-understand position-access.\par
+\par
+\par
+2002-04-23 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed some bugs in kfrgcs. Now the correct waypoint-position\par
+    is written to the recorder.\par
+\par
+\par
+2002-04-22 Heiner <heiner@kflog.org>\par
+\par
+  * Added task-writing to the recorder-dialog and kfrgcs.\par
+\par
+\par
+2002-04-19 Harry <harry@kflog.org>\par
+\par
+  * Adding free waypoint to graphical planning\par
+\par
+  * format display of task in dataview\par
+\par
+\par
+2002-04-16 Harry <harry@kflog.org>\par
+\par
+  * Show current flight in 3D\par
+\par
+  * Size Evaluation Dialog\par
+\par
+\par
+2002-04-14 Florian <florian@kflog.org>\par
+\par
+  * Extended graphical planing.\par
+\par
+\par
+2002-04-10 Harry <harry@kflog.org>\par
+\par
+  * Cleanup of old classes\par
+\par
+  * Rename TaskAndWaypoint to Waypoints\par
+\par
+\par
+2002-04-09 Thomas <thomas@kflog.org>\par
+\par
+  * Corrected handling of igcfiles not containing waypoints\par
+\par
+  * Fixed bug in drawing of flight\par
+\par
+\par
+2002-04-09 Heiner <heiner@kflog.org>\par
+\par
+  * Added first flush of Volkslogger-support and the RecorderDialog.\par
+\par
+\par
+2002-04-08 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed handling of the path to the installed mapfiles.\par
+\par
+\par
+2002-04-08 Harry <harry@kflog.org>\par
+\par
+  * Fixed bug in setting animation index\par
+\par
+\par
+2002-04-05 Thomas <thomas@kflog.org>\par
+\par
+  * Added indicator showing current point in flight animation.\par
+\par
+  * Flight information updated on statusbar while animating.\par
+\par
+\par
+2002-03-26 Thomas <thomas@kflog.org>\par
+\par
+  * Rewrite and optimize animation code with new class-structure.\par
+\par
+\par
+2002-03-26 Harry <harry@kflog.org>\par
+\par
+  * Introduction of BaseFlightElement for all flight types\par
+\par
+  * Switch active flight\par
+\par
+\par
+2002-03-16 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed a bug in main(). Now the splash-screen disappears after all\par
+    flight are loaded, when the user calls KFLog with igc-files as\par
+    arguments.\par
+\par
+\par
+2002-03-10 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed a bug in MapContents::loadFlight(), that causes KFLog to crash\par
+    after loading an igc-file, that does not contain a flight.\par
+\par
+  * Added recognition of the recorder-manufactorer and ID, as given in\par
+    the igc-file.\par
+\par
+\par
+2002-03-04 Harry <harry@kflog.org>\par
+\par
+  * Some improvements in waypoint handling/filtering\par
+\par
+  * First version of task dialog\par
+\par
+\par
+2002-02-24 Heiner <heiner@kflog.org>\par
+\par
+  * Tagged and released KFLog 2.0.4\par
+\par
+\par
+2002-02-22 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed a bug in Map::mousePressEvent()\par
+\par
+\par
+2002-02-17 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed a bug in KFLogApp::slotFileQuit(), that caused KFLog to crash\par
+    on exiting.\par
+\par
+\par
+2002-02-14 Florian <florian@kflog.org>\par
+\par
+  * Added basically functions for graphical Task Planning\par
+\par
+  * Fixed crash of EvaluationDialog when loading a flight without a task.\par
+\par
+\par
+2002-02-13 Harry <harry@kflog.org>\par
+\par
+  * Added waypoints as dockable widget\par
+\par
+  * Added filter for import and display of waypoints\par
+\par
+\par
+2002-02-12 Thomas <thomas@kflog.org>\par
+\par
+  * Added zoom, tilt and rotate functionallity to 3DIgc dialog.\par
+\par
+\par
+2002-02-10 Heiner <heiner@kflog.org>\par
+\par
+  * Created the class FlightTask and moved all task-related stuff\par
+    there from Flight.\par
+\par
+  * Added optimization of the task.\par
+\par
+\par
+2002-02-09 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed MapContents and IDCPreview to support logger, that produce\par
+    some strange igc-header.\par
+\par
+  * Added drag'n drop. The user now can drag an igc-file onto the map.\par
+\par
+\par
+2002-02-04 Thomas <thomas@kflog.org>\par
+\par
+  * Integrated 3DIgc by Jan Max Krueger into KFlog.\par
+\par
+\par
+2002-02-03 Heiner <heiner@kflog.org>\par
+\par
+  * Integrated mapprinting into kde-printing-framework.\par
+\par
+  * Added printing of the flight and the task. The printout\par
+    can be centered to the flight or the task.\par
+\par
+\par
+2002-02-01 Harry <harry@kflog.org>\par
+\par
+  * Added import waypoints from map\par
+\par
+\par
+2002-01-27 Heiner <heiner@kflog.org>\par
+\par
+  * Changed drawing of airspaces slightly.\par
+\par
+  * Started to integrate the printing-dialog into the standard\par
+    KPrinterDialog.\par
+\par
+\par
+2002-01-26 Thomas <thomas@kflog.org>\par
+\par
+  * Process animation keystrokes using KActions and slots.\par
+\par
+\par
+2002-01-25 Florian <florian@kflog.org>\par
+\par
+  * Added Airspace A and Airspace B in the map and in the\par
+    configuration-dialog.\par
+\par
+\par
+2002-01-24 Thomas <thomas@kflog.org>\par
+\par
+  * Added start/stop of animation of current flight using F12/F11 keys.\par
+\par
+  * Jump to start/end of flight with Home/End keys.\par
+\par
+  * Enabled multi-stepping through flight using PgUp/PgDn keys.\par
+\par
+\par
+2002-01-24 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed two minor bugs: Whenever the map-scale or -size is changed,\par
+    the mapcontrolwidget updates his data. And when the mouse leaves\par
+    the map, the cursor on the flight-track is removed.\par
+\par
+\par
+2002-01-23 Thomas <thomas@kflog.org>\par
+\par
+  * Enabled stepping through flight using arrowkeys.\par
+\par
+\par
+2002-01-18 Heiner <heiner@kflog.org>\par
+\par
+  * Tagged version 2.0.3 and released it.\par
+\par
+\par
+2002-01-16 Florian <florian@kflog.or>\par
+\par
+  * Made usable default drawing-values for the airspaces.\par
+\par
+\par
+2002-01-16 Helmut <helmut@kflog.org>\par
+\par
+  * Added first flush of french translation.\par
+\par
+\par
+2002-01-05 Heiner <heiner@kflog.org>\par
+\par
+  * Added function for reading binary airport- and airfield-files.\par
+\par
+  * Reactivated splash-screen and added transparency.\par
+\par
+\par
+2002-01-04 Harry <harry@kflog.org>\par
+\par
+  * Added first version of waypoint-dialog and -handling.\par
+\par
+\par
+2001-12-28 Heiner <heiner@kflog.org>\par
+\par
+  * Did some api-documentation.\par
+\par
+\par
+2001-12-26 Heiner <heiner@kflog.org>\par
+\par
+  * Changed the flight-drawing slightly, so that the line looks a bit\par
+    smoother.\par
+\par
+  * Did some garbage-collection throughout the code and changed some\par
+    member-functions into slots to make communication between classes\par
+    easier.\par
+\par
+\par
+2001-12-25 Heiner <heiner@kflog.org>\par
+\par
+  * Added configuration of print-styles.\par
+\par
+  * Made MapConfig a global object.\par
+\par
+  * Now, different values of a flight-point can be displayed in the map.\par
+    The type can be selected via menu. Possible types are: altitude,\par
+    cycling, speed and vario.\par
+\par
+\par
+2001-12-23 Heiner <heiner@kflog.org>\par
+\par
+  * Added proofe of mapcontents before printing, so that new mapsection\par
+    will be loaded if neaded.\par
+\par
+\par
+2001-12-20 Florian <florian@kflog.org>\par
+\par
+  * Added saving of window- and drawing-settings of the evaluation-dialog.\par
+\par
+\par
+2001-12-20 Heiner <heiner@kflog.org>\par
+\par
+  * Added preview of the igc-file in the open-file-dialog. Only the\par
+    file-header (date, pilot, glider, task) is displayed. The preview\par
+    only appears on local files.\par
+\par
+  * Fixed a bug in MapContents::degreeToNum()\par
+\par
+\par
+2001-12-18 Heiner <heiner@kflog.org>\par
+\par
+  * Tagged 2.0.2\par
+\par
+\par
+2001-12-16 Heiner <heiner@kflog.org>\par
+\par
+  * Added Map::slotCenterToWaypoint(). When the user selects a waypoint\par
+    in the dataview, the map is centered to the selected waypoint and\par
+    zoomed to the lower scale-limit.\par
+\par
+\par
+2001-12-15 Heiner <heiner@kflog.org>\par
+\par
+  * Added tooltips for the waypoints.\par
+\par
+\par
+2001-12-14 Heiner <heiner@kflog.org>\par
+\par
+  * Added reloading the mapscale after configuring KFLog. Also fixed\par
+    a minor bug in MapMatrix::initMatrix(), so that the current scale\par
+    will only change if the lower limit is larger or the upper limit\par
+    is smaler as the current scale.\par
+\par
+\par
+2001-12-09 Heiner <heiner@kflog.org>\par
+\par
+  * Reduced the number of pixmaps used for drawing. "allSites", "airports"\par
+    and "glider" are drawn into the same pixmap now.\par
+\par
+  * Now, the position and size of the dockwidgets will be saved and\par
+    restored, so that the user will get the same window-layout again\par
+    the next time he starts KFLog.\par
+\par
+\par
+2001-12-07 Heiner <heiner@kflog.org>\par
+\par
+  * Added all airspace-types to kflogconfig.\par
+\par
+  * Reactivated printing. By now, all elements are printed the same way as\par
+    displayed on the screen. We should add a seperate way to configure the\par
+    printing.\par
+\par
+\par
+2001-12-06 Heiner <heiner@kflog.org>\par
+\par
+  * Added more airspaces to the config-dialog. The default-values\par
+    for pens and brushes need to be fixed.\par
+\par
+\par
+2001-12-04 Heiner <heiner@kflog.org>\par
+\par
+  * Changed the meaning of the configdata for cities. From now on,\par
+    "Color [1234]" is used for the outline, not for filling. Filling\par
+    is configured by "Brush Color [1234]". Therfore, we must look at the\par
+    version of the configfile. Due to the way, cities are drawn, one can\par
+    not set brushstyle or penstyle.\par
+\par
+  * Changed the way, cities will be drawn into the map. Now a city\par
+    is drawn only one time without having mistakes even when the city\par
+    lies at the edge of a map-section.\par
+\par
+\par
+2001-12-02 Heiner <heiner@kflog.org>\par
+\par
+  * Extended configuration-dialog and added widgets for configure penstyle\par
+    and brushes.\par
+\par
+\par
+2001-12-02 Florian <florian@kflog.org>\par
+\par
+  * Extended the evaluation-dialog. Added two splitters to allow the\par
+    user to change the size of the text below the graph.\par
+\par
+  * Added the waypoints to the evaluation-graph.\par
+\par
+\par
+2001-12-01 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed a bug in map.cpp, that could crash the X-Server.\par
+\par
+\par
+2001-11-27 Heiner <heiner@kflog.org>\par
+\par
+  * Added MapConfig as central configuration-object.\par
+\par
+\par
+2001-11-25 Heiner <heiner@kflog.org>\par
+\par
+  * Added recognition of point-validation. Now the validation-flag of the\par
+    logger will be read. Non-valid points will be ignored in calculation\par
+    distance and speed.\par
+\par
+  * Fixed some bugs in parsing an igc-file. Now a negative height will be\par
+    read without generating an syntax-error.\par
+\par
+\par
+2001-11-18 G an K lqvist <kjellqvist@nordkalak.se>\par
+\par
+  * Added swedish translation\par
+\par
+\par
+2001-11-17 Thomas Nielsen <thomanie@stud.ntnu.no>\par
+\par
+  * Added norwegian translation\par
+\par
+\par
+2001-11-17 Heiner <heiner@kflog.org>\par
+\par
+  * Fixed some minor bugs.\par
+\par
+\par
+2001-11-14 Heiner <heiner@kflog.org>\par
+\par
+  * Released KFLog 2.0.1\par
+}
+ 
