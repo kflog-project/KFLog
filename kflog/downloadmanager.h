@@ -85,7 +85,7 @@ class DownloadManager : public QObject
 #ifndef _WIN32
   double getFreeUserSpace( QString& path );
 #else
-  ulong getFreeUserSpace( QString& path );
+  double getFreeUserSpace( QString& path );
 #endif
 
  private slots:

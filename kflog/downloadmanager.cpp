@@ -304,7 +304,7 @@ double DownloadManager::getFreeUserSpace( QString& path )
       return 0;
   }
 
-  return double(FreeSpace.QuadPart) / double(1024 * 1024);
+  return double((FreeSpace.QuadPart) / (1024 * 1024));
 }
 
 #endif
