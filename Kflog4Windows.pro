@@ -4,7 +4,7 @@
 
 TEMPLATE = app
 TARGET = 
-CONFIG += qt
+CONFIG += qt rtti
 DEPENDPATH += . \
               geodata \
               kflog \
