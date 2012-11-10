@@ -1237,6 +1237,11 @@ void WaypointTreeView::getFilterData()
       lat = importFilterDlg->getAirfieldRef().lat();
       lon = importFilterDlg->getAirfieldRef().lon();
       break;
+
+  default:
+      lat=0;
+      lon=0;
+      break;
   }
 
   currentWaypointCatalog->setCenterPoint( QPoint(lat, lon) );
