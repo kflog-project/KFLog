@@ -103,8 +103,8 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   FlightPoint newPoint;
   QList<FlightPoint*> flightRoute;
   QList<Waypoint*> wpList;
-  Waypoint* newWP;
-  Waypoint* preWP;
+  Waypoint* newWP=NULL;
+  Waypoint* preWP=NULL;
 
   QList<bOption> options;
 
@@ -365,7 +365,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
                   newWP->origP = WGSPoint(latTemp, lonTemp);
                   newWP->projP = _globalMapMatrix->wgsToMap(newWP->origP);
                   newWP->type = Flight::NotSet;
-                  if(isFirstWP)
+                  if(isFirstWP || NULL == preWP)
                       newWP->distance = 0;
                   else
                       newWP->distance = dist(newWP, preWP);
