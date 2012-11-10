@@ -86,7 +86,7 @@ bool DownloadManager::downloadRequest( QString &url, QString &destination )
   // download is rejected.
   if( getFreeUserSpace( destDir ) < MinFsSpace )
     {
-      qWarning( "DownloadManager(%d): Free space on %s less than %ldMB!",
+      qWarning( "DownloadManager(%d): Free space on %s less than %lfMB!",
                 __LINE__, destDir.toLatin1().data(), MinFsSpace/(1024*1024) );
 
       mutex.unlock();
@@ -211,7 +211,7 @@ void DownloadManager::slotFinished( QString &urlIn, QNetworkReply::NetworkError 
   // download is not executed.
   if( getFreeUserSpace( destDir ) < MinFsSpace )
     {
-      qWarning( "DownloadManager(%d): Free space on %s less than %ldMB!",
+      qWarning( "DownloadManager(%d): Free space on %s less than %lfMB!",
                 __LINE__, destDir.toLatin1().data(), MinFsSpace/(1024*1024) );
 
       mutex.unlock();
