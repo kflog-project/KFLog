@@ -83,6 +83,10 @@ SectionEnd
 
 Section "Uninstall"
   
+    MessageBox MB_YESNO|MB_ICONQUESTION "Would you like to remove the user settings directory $PROFILE\KFlog and all of its contents?$\r$\nThis will also delete all manually downloaded files like tiles or airspace files." IDNO NoDelete
+    Delete "$PROFILE\KFlog\*.*"
+    RMDir /r "$PROFILE\KFlog" ; skipped if no
+NoDelete:
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\KFlog"
   DeleteRegKey HKLM SOFTWARE\KFlog
