@@ -24,14 +24,20 @@ InstallDirRegKey HKLM "Software\KFlog" "Install_Dir"
 RequestExecutionLevel highest
 
 
-LicenseText "Welcome to KFlog 4.6.2 Setup"
+
+LicenseText "Welcome to KFlog 4.7.0 BETA Setup"
 LicenseData "License.rtf"
 ;--------------------------------
 
 ; Pages
+PageEx license
+   LicenseData license_beta.txt
+   LicenseForceSelection checkbox
+PageExEnd
 Page license 
 Page components
 Page directory
+
 Page instfiles
 
 UninstPage uninstConfirm
@@ -41,6 +47,8 @@ UninstPage instfiles
 
 ; The stuff to install
 Section "KFlog program (required)"
+
+
 
   SectionIn RO
   

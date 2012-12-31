@@ -1,0 +1,6 @@
+"Please note that this is a BETA setup.
+
+This means some features may 
+- not work as expected.
+- cause unexpected behaviour.
+This setup will overwrite all existing KFlog installations."
