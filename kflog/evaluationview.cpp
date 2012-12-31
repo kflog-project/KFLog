@@ -42,7 +42,6 @@ EvaluationView::EvaluationView(QScrollArea* parent, EvaluationDialog* dialog) :
   QWidget(parent),
   cursor1(0),
   cursor2(0),
-  cursor_alt(0),
   startTime(0),
   secWidth(5),
   speedScale(0),
@@ -119,13 +118,11 @@ void EvaluationView::mousePressEvent(QMouseEvent* event)
     {
       mouseB = event->button() | Reached;
       leftB = 1;
-      cursor_alt = cursor1;
     }
   else if(event->pos().x() < x2 + 5 && event->pos().x() > x2 - 5)
     {
       mouseB = event->button() | Reached;
       leftB = 2;
-      cursor_alt = cursor2;
     }
   else
     {
@@ -275,11 +272,24 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
       __drawCursor( ( cursor  - startTime ) / secWidth + X_DISTANCE, true, movedCursor );
       repaint();
 
-      cursor_alt = flight->getPointByTime((time_t)((event->pos().x() - X_DISTANCE ) *
-                          secWidth + startTime)).time;
-
       evalDialog->updateText(flight->getPointIndexByTime(cursor_1),
                              flight->getPointIndexByTime(cursor_2));
+    }
+}
+
+void EvaluationView::slotSetCursors(Flight * theFlight, time_t NewCursor1, time_t NewCursor2)
+{
+    if ( NULL != flight && theFlight == flight && NewCursor1 <= NewCursor2)
+    {
+        cursor1 = NewCursor1;
+        cursor2 = NewCursor2;
+
+        __drawCursor( ( cursor1  - startTime ) / secWidth + X_DISTANCE, true, 0 );
+        __drawCursor( ( cursor2  - startTime ) / secWidth + X_DISTANCE, true, 1 );
+        flight->setTaskByTimes(cursor1, cursor2);
+        repaint();
+        evalDialog->updateText(flight->getPointIndexByTime(cursor1),
+                               flight->getPointIndexByTime(cursor2));
     }
 }
 

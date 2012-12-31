@@ -657,15 +657,20 @@ void MainWindow::createMenuBar()
   varioAction->setCheckable( true );
   varioAction->setData( 3 );
 
+  airspaceAction = new QAction( tr("Airspace Violations"), this );
+  airspaceAction->setCheckable( true );
+  airspaceAction->setData( 4 );
+
   solidAction = new QAction( tr("Solid"), this );
   solidAction->setCheckable( true );
-  solidAction->setData( 4 );
+  solidAction->setData( 5 );
 
   flightDataTypeGroupAction = new QActionGroup( this );
   flightDataTypeGroupAction->addAction( altitudeAction );
   flightDataTypeGroupAction->addAction( cyclingAction );
   flightDataTypeGroupAction->addAction( speedAction );
   flightDataTypeGroupAction->addAction( varioAction );
+  flightDataTypeGroupAction->addAction( airspaceAction );
   flightDataTypeGroupAction->addAction( solidAction );
 
   selectFlightDataAction( _settings.value( "/Flight/DrawType",
@@ -757,6 +762,7 @@ void MainWindow::createMenuBar()
   fdtMenu->addAction( cyclingAction );
   fdtMenu->addAction( speedAction );
   fdtMenu->addAction( varioAction );
+  fdtMenu->addAction( airspaceAction );
   fdtMenu->addAction( solidAction );
 
   fm->addAction( flightIgc3DAction );
@@ -1543,6 +1549,7 @@ void MainWindow::selectFlightDataAction( const int index )
         cyclingAction->setChecked( false );
         speedAction->setChecked( false );
         varioAction->setChecked( false );
+        airspaceAction->setChecked( false );
         solidAction->setChecked( false );
         break;
       case MapConfig::Cycling:     // Cycling
@@ -1550,6 +1557,7 @@ void MainWindow::selectFlightDataAction( const int index )
         cyclingAction->setChecked( true );
         speedAction->setChecked( false );
         varioAction->setChecked( false );
+        airspaceAction->setChecked( false );
         solidAction->setChecked( false );
         break;
       case MapConfig::Speed:       // Speed
@@ -1557,6 +1565,7 @@ void MainWindow::selectFlightDataAction( const int index )
         cyclingAction->setChecked( false );
         speedAction->setChecked( true );
         varioAction->setChecked( false );
+        airspaceAction->setChecked( false );
         solidAction->setChecked( false );
         break;
       case MapConfig::Vario:       // Vario
@@ -1564,6 +1573,15 @@ void MainWindow::selectFlightDataAction( const int index )
         cyclingAction->setChecked( false );
         speedAction->setChecked( false );
         varioAction->setChecked( true );
+        airspaceAction->setChecked( false );
+        solidAction->setChecked( false );
+        break;
+      case MapConfig::Airspace:       // Solid color
+        altitudeAction->setChecked( false );
+        cyclingAction->setChecked( false );
+        speedAction->setChecked( false );
+        varioAction->setChecked( false );
+        airspaceAction->setChecked( true );
         solidAction->setChecked( false );
         break;
       case MapConfig::Solid:       // Solid color
@@ -1571,6 +1589,7 @@ void MainWindow::selectFlightDataAction( const int index )
         cyclingAction->setChecked( false );
         speedAction->setChecked( false );
         varioAction->setChecked( false );
+        airspaceAction->setChecked( false );
         solidAction->setChecked( true );
         break;
 
@@ -1598,6 +1617,9 @@ void MainWindow::slotSelectFlightData( const int index )
         break;
       case MapConfig::Vario:       // Vario
         emit flightDataTypeChanged(MapConfig::Vario);
+        break;
+      case MapConfig::Airspace:       // Airspace Violation
+        emit flightDataTypeChanged(MapConfig::Airspace);
         break;
       case MapConfig::Solid:       // Solid color
         emit flightDataTypeChanged(MapConfig::Solid);

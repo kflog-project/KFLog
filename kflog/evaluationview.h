@@ -68,11 +68,11 @@ public:
 
   enum CursorStatus { Reached = 8, NotReached = 16};
 
-  // Cursor Positions
-  time_t cursor1;
-  time_t cursor2;
-  time_t cursor_alt;
+    void slotSetCursors(Flight * theFlight, time_t NewCursor1, time_t NewCursor2);
 
+    // Cursor Positions
+    time_t cursor1;
+    time_t cursor2;
 protected:
 
   virtual void paintEvent(QPaintEvent* event);

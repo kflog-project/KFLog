@@ -593,7 +593,48 @@ QPen MapConfig::getDrawPen(FlightPoint* fP, float va_min/*=-10*/, float va_max/*
               break;
           }
         break;
+      case MapConfig::Airspace:
+          {
+               AirspaceWarningDistance awd;
+               awd.verAboveClose.setMeters(150);
+               awd.verBelowClose.setMeters(150);
+               awd.verAboveVeryClose.setMeters(50);
+               awd.verBelowVeryClose.setMeters(50);
 
+               Airspace::ConflictType HighestConflict = Airspace::None;
+
+               for ( int k = 0 ; k < fP->Airspaces.count() ; k++)
+               {
+                   struct AltitudeCollection AltitudeColl;
+                   AltitudeColl.gpsAltitude = ::Altitude(fP->gpsHeight);
+                   AltitudeColl.gndAltitude = ::Altitude((fP->gpsHeight) - (fP->surfaceHeight));
+                   AltitudeColl.gndAltitudeError = ::Altitude(0);
+                   AltitudeColl.stdAltitude.setStdAltitude(fP->gpsHeight,1013);
+#warning FixME: hard-coded QNH of 1013
+                   Airspace::ConflictType Current = fP->Airspaces[k].conflicts(AltitudeColl,awd);
+                   HighestConflict = (Current > HighestConflict)?Current:HighestConflict;
+               }
+               switch (HighestConflict)
+               {
+               case Airspace::Inside:
+                   color = QColor(255, 0, 0);
+                   break;
+               case Airspace::VeryNearBelow:
+               case Airspace::VeryNearAbove:
+                   color = QColor(255,255, 0);
+                   break;
+               case Airspace::NearBelow:
+               case Airspace::NearAbove:
+                   color = QColor(0,255, 0);
+                   break;
+               case Airspace::None:
+               default:
+                   color = QColor(0,0, 255);
+                   break;
+               }
+               width = _settings.value("/FlightPathLine/Solid", FlightPathLineWidth).toInt();
+          }
+          break;
       case MapConfig::Solid:
       default:
 

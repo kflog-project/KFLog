@@ -1,5 +1,15 @@
 $Id$
 
+2012-12-31 Matthias Degenkolb <matthias.degenkolb@googlemail.com>
+  * added airspace checking (partly backport from Cumulus)
+  
+  * airspaces shown in browser window
+  
+  * added airspace data view
+  
+  Still open:
+  * QNH is currently hard-coded to 1013 hPa, therefore airspace checking is not fully precise...
+
 2012-10-29 Axel Pauli <axel@kflog.org>
 
   * KFLog 4.6.2 released.

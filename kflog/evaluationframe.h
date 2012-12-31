@@ -68,6 +68,11 @@ class EvaluationFrame : public QWidget
         return flight;
       };
 
+    inline EvaluationView* getEvalView(){ return evalView;};
+public slots:
+    /** */
+    void slotShowFlight( Flight* newFlight );
+
   private slots:
     /** */
     void slotVarioSmoothness(int s);
@@ -81,8 +86,6 @@ class EvaluationFrame : public QWidget
     void slotScaleSpeed(int newScale);
     /** */
     void slotScaleVario(int newScale);
-    /** */
-    void slotShowFlight( Flight* newFlight );
     /** */
     void slotShowGraph();
     /** */

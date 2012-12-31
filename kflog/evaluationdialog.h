@@ -66,6 +66,7 @@ private:
       return evalFrame->getTaskEnd();
     };
 
+  inline EvaluationFrame* getEvalFrame(){ return evalFrame;}
  protected:
 
   virtual void hideEvent( QHideEvent* event );

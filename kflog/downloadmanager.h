@@ -82,11 +82,7 @@ class DownloadManager : public QObject
   /**
    * Returns the free size of the file system in MB for non root users.
    */
-#ifndef _WIN32
   double getFreeUserSpace( QString& path );
-#else
-  double getFreeUserSpace( QString& path );
-#endif
 
  private slots:
 

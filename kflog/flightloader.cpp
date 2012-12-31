@@ -19,6 +19,8 @@
 
 #include <QtGui>
 
+#include "airspace.h"
+#include "openairparser.h"
 #include "elevationfinder.h"
 #include "flight.h"
 #include "flightloader.h"
@@ -98,6 +100,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   int lat, latmin, latTemp, lon, lonmin, lonTemp, baroAltTemp, gpsAltTemp;
   int hh = 0, mm = 0, ss = 0;
   time_t curTime = 0, preTime = 0, timeOfFlightDay = 0;
+
   int cClass = Flight::NotSet;
 
   FlightPoint newPoint;
@@ -107,6 +110,13 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   Waypoint* preWP=NULL;
 
   QList<bOption> options;
+
+  // load airspaces
+  QList<Airspace> AllAirSpaces;
+  OpenAirParser oap;
+  oap.load(AllAirSpaces);
+
+
 
   //
   // This regexp is used to check the syntax of the position-lines in
@@ -319,6 +329,20 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           newPoint.surfaceHeight = ef->elevation(newPoint.origP, newPoint.projP);
           newPoint.height = baroAltTemp;
           newPoint.gpsHeight = gpsAltTemp;
+          newPoint.Airspaces.clear();
+          // get airspaces at this coordinate
+          for (int i = 0 ; i < AllAirSpaces.count(); i++)
+          {
+              const QPolygon & CandidatePolygon = AllAirSpaces[i].getPolygon();
+              if (!CandidatePolygon.empty())
+              {
+                  if (CandidatePolygon.containsPoint(newPoint.projP,Qt::OddEvenFill))
+                  {
+                      newPoint.Airspaces.append(AllAirSpaces[i]);
+                  }
+              }
+
+          }
 
           if(s.mid(24,1) == "V") //isValid = false;
             continue;

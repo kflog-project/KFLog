@@ -31,6 +31,7 @@
 #include "flighttask.h"
 #include "map.h"
 #include "optimization.h"
+#include "airspace.h"
 
 struct statePoint
 {
@@ -63,6 +64,21 @@ struct statePoint
 class Flight : public BaseFlightElement
 {
   public:
+    class AirSpaceIntersection
+    {
+    public:
+        AirSpaceIntersection(Airspace& AirSpace,int First, int Last, Airspace::ConflictType Type);
+        AirSpaceIntersection(const AirSpaceIntersection & other);
+        inline const Airspace & AirSpace() { return m_AirSpace; }
+        inline const Airspace::ConflictType Type(){ return m_TypeOfIntersection; }
+        inline int FirstIndexPointinRoute(){ return m_FirstPointIndexinRoute; }
+        inline int LastIndexPointinRoute(){ return m_LastPointIndexinRoute; }
+    protected:
+        Airspace m_AirSpace;
+        Airspace::ConflictType m_TypeOfIntersection;
+        int m_FirstPointIndexinRoute;
+        int m_LastPointIndexinRoute;
+    };
 
   /**
    * Creates a new flight-object.
@@ -183,6 +199,11 @@ class Flight : public BaseFlightElement
    *              is 0, the last point of the flight will be used.
    */
   QList<statePoint*> getFlightStates(unsigned int start = 0, unsigned int end = 0);
+  /**
+   * detect and return all airspace intersections and/or violations
+   * @return a list of airspace intersections
+   */
+  QList<AirSpaceIntersection> getFlightAirSpaceIntersections(unsigned int start = 0, unsigned int end = 0, AirspaceWarningDistance * awd = NULL);
   /**
    * @return the date of the flight.
    */

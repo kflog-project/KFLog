@@ -39,6 +39,7 @@
 #include <QString>
 
 #include "wgspoint.h"
+#include "airspace.h"
 
 class FlightPoint
 {
@@ -119,6 +120,11 @@ public:
   /** Straight = 0, LeftTurn = 1, RightTurn = 2, MixedTurn = 3
   *   set by flight.cpp */
   unsigned int f_state;
+
+  /** all airspaces at this coordinate, may also be above or below the point
+    */
+  QList<Airspace> Airspaces;
+
 };
 
 #endif

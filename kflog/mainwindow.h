@@ -108,6 +108,8 @@ public:
    */
   void selectFlightDataAction( const int index );
 
+  inline EvaluationDialog* getEvaluationWindow(){return evaluationWindow;}
+
 signals:
 
   /**
@@ -386,6 +388,7 @@ private:
   QAction *altitudeAction;
   QAction *cyclingAction;
   QAction *speedAction;
+  QAction *airspaceAction;
   QAction *varioAction;
   QAction *solidAction;
 

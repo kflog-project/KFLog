@@ -67,7 +67,7 @@ public:
    *
    * @see #slotSetFlightDataType
    */
-  enum DrawFlightPoint { Altitude=0, Cycling=1, Speed=2, Vario=3, Solid=4 };
+  enum DrawFlightPoint { Altitude=0, Cycling=1, Speed=2, Vario=3, Airspace=4, Solid=5 };
 
   /**
    * Creates a new MapConfig object.

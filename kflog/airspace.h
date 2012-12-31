@@ -24,7 +24,7 @@
  * \brief Class to handle airspaces.
  *
  * This class is used for the several airspaces. The object can be
- * one of: AirC, AirD, ControlD, AirE, WaveWindow,
+ * one of: AirC, AirCtemp, AirD, AirDtemp, ControlD, AirElow, WaveWindow,
  * AirF, Restricted, Danger, LowFlight ...
  *
  * Due to the cross pointer reference to the air region this class do not
@@ -34,8 +34,10 @@
  *
  */
 
-#ifndef AIR_SPACE_H
-#define AIR_SPACE_H
+#ifndef AIRSPACE_H
+#define AIRSPACE_H
+
+#include <math.h>
 
 #include <QDateTime>
 #include <QPolygon>
@@ -45,11 +47,13 @@
 
 #include "altitude.h"
 #include "lineelement.h"
+#include "airspacewarningdistance.h"
 
 class Airspace : public LineElement
 {
 
 public:
+  enum ConflictType { None, NearAbove, NearBelow, VeryNearAbove, VeryNearBelow, Inside };
 
   /**
    * Creates a new Airspace object.
@@ -62,14 +66,9 @@ public:
    * \param lower The lower altitude limit of the airspace
    * \param lowerType The lower altitude reference
    */
-  Airspace( QString n, BaseMapElement::objectType oType, QPolygon pP,
+  Airspace( QString name, BaseMapElement::objectType oType, QPolygon pP,
             int upper, BaseMapElement::elevationType upperType,
             int lower, BaseMapElement::elevationType lowerType);
-
-  /**
-   * Destructor
-   */
-  virtual ~Airspace();
 
   /**
    * Tells the caller, if the airspace is drawable or not
@@ -133,15 +132,21 @@ public:
    * the type and the borders.
    * @return the infostring
    */
-  QString getInfoString();
+  QString getInfoString(bool ExtendedHTMLFormat = true) const;
 
   /**
    * Returns a text representing the type of the airspace
    */
   static QString getTypeName (objectType);
 
-
   /**
+   * Returns true if the given altitude conflicts with the airspace properties
+   */
+  ConflictType conflicts (const AltitudeCollection& alt,
+                          const AirspaceWarningDistance& dist) const;
+
+
+  /*
    * Compares two items, in this case, Airspaces.
    * The items are compared on their levels. Because kflog provides a view
    * where the user looks down on the map, the first airspace you'll see is the
@@ -154,6 +159,8 @@ public:
    * transparent airspaces. By sorting the airspaces like this, the lower ones
    * will be drawn first, and the higher ones on top of them.
    */
+  bool operator == (const Airspace& other) const;
+
   bool operator < (const Airspace& other) const;
 
 private:

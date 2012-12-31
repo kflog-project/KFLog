@@ -21,6 +21,7 @@
 
 #include "flightgrouplistviewitem.h"
 #include "flightlistviewitem.h"
+#include "airspacelistviewitem.h"
 #include "flightselectiondialog.h"
 #include "mapcontents.h"
 #include "objecttree.h"
@@ -89,6 +90,9 @@ ObjectTree::ObjectTree( QWidget *parent ) :
 
   connect( this, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
            SLOT(slotSelectionChanged(QTreeWidgetItem *, int)) );
+
+  connect( this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+           SLOT(slotItemDoubleClicked(QTreeWidgetItem*,int)));
 
   connect( this, SIGNAL(rightButtonPressed( QTreeWidgetItem *, const QPoint&)),
            SLOT(slotShowObjectTreeMenu( QTreeWidgetItem*, const QPoint&)) );
@@ -161,13 +165,33 @@ void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
       case TASK_LIST_VIEW_ITEM_TYPEID:
         bfe = ((TaskListViewItem*) item)->task;
         break;
+      case AIRSPACE_FLAG_LIST_VIEW_ITEM_TYPEID:
+        bfe = ((AirSpaceListViewItem::AirSpaceFlagListViewItem*) item)->getFlight();
+        break;
       default:
         bfe = static_cast<BaseFlightElement *>(0);
+        break;
     }
 
   if( bfe && bfe != MapContents::instance()->getFlight() )
     {
       emit newFlightSelected( bfe );
+    }
+}
+
+void ObjectTree::slotItemDoubleClicked( QTreeWidgetItem *item, int column )
+{
+    switch( item->type() )
+      {
+    case AIRSPACE_FLAG_LIST_VIEW_ITEM_TYPEID:
+    {
+        AirSpaceListViewItem::AirSpaceFlagListViewItem * pItem = (AirSpaceListViewItem::AirSpaceFlagListViewItem *) item;
+        pItem->Activate();
+    }
+        break;
+    default:
+        // empty
+        break;
     }
 }
 

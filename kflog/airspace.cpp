@@ -19,10 +19,16 @@
 
 #include "airspace.h"
 
-Airspace::Airspace(QString name, BaseMapElement::objectType oType, QPolygon pP,
-                   int upper, BaseMapElement::elevationType uType,
-                   int lower, BaseMapElement::elevationType lType) :
-  LineElement(name, oType, pP), lLimitType(lType), uLimitType(uType)
+Airspace::Airspace( QString name,
+                       BaseMapElement::objectType oType,
+                       QPolygon pP,
+                       int upper,
+                       BaseMapElement::elevationType uType,
+                       int lower,
+                       BaseMapElement::elevationType lType) :
+  LineElement(name, oType, pP),
+  lLimitType(lType),
+  uLimitType(uType)
 {
   // All Airspaces are closed regions ...
   closed = true;
@@ -71,13 +77,10 @@ Airspace::Airspace(QString name, BaseMapElement::objectType oType, QPolygon pP,
       break;
     default:
       uLim=0.0;
-  }
+    break;
+  };
 
   uLimit.setMeters( uLim );
-}
-
-Airspace::~Airspace()
-{
 }
 
 /**
@@ -200,7 +203,7 @@ QString Airspace::getTypeName (objectType type)
   }
 }
 
-QString Airspace::getInfoString()
+QString Airspace::getInfoString(bool ExtendedHTMLFormat) const
 {
   QString text, tempL, tempU;
 
@@ -225,6 +228,7 @@ QString Airspace::getInfoString()
       break;
     case UNLTD:
       tempL = QObject::tr("Unlimited");
+    break;
     default:
       break;
   }
@@ -251,13 +255,131 @@ QString Airspace::getInfoString()
     default:
       break;
   }
+  if (ExtendedHTMLFormat)
+  {
+      text = getTypeName(typeID);
 
-  text = getTypeName(typeID);
-
-  text += " " + name + "<BR>" +
-          "<FONT SIZE=-1>" + tempL + " / " + tempU + "</FONT>";
+      text += " " + name + "<BR>" +
+              "<FONT SIZE=-1>" + tempL + " / " + tempU + "</FONT>";
+  }
+  else
+  {
+      text +=  tempL + " / " + tempU ;
+  }
 
   return text;
+}
+
+/**
+ * Returns true if the given altitude conflicts with the airspace
+ * properties. Only the altitude is considered not the current
+ * position.
+ */
+Airspace::ConflictType Airspace::conflicts( const AltitudeCollection& alt,
+                                               const AirspaceWarningDistance& dist ) const
+{
+  Altitude lowerAlt(0);
+  Altitude upperAlt(0);
+
+  //set which altitude to use from our range of available altitudes,
+  //and apply uncertainty margins
+
+  //#warning FIXME: we should take our GPS error into account
+  switch (lLimitType)
+    {
+      case NotSet:
+        break;
+      case MSL:
+        lowerAlt = alt.gpsAltitude;
+        break;
+      case GND:
+        lowerAlt = alt.gndAltitude + alt.gndAltitudeError; // we need to use a conservative estimate
+        if (lLimit == 0)
+          lowerAlt.setMeters(1); // we're always above ground
+        break;
+      case FL:
+      case STD:
+        lowerAlt = alt.stdAltitude; // flight levels are always at pressure altitude!
+        break;
+      case UNLTD:
+        return None;
+    }
+
+  switch (uLimitType)
+    {
+      case NotSet:
+        upperAlt.setMeters(100000);
+        break;
+      case MSL:
+        upperAlt = alt.gpsAltitude;
+        break;
+      case GND:
+        upperAlt = alt.gndAltitude - alt.gndAltitudeError; //we need to use a conservative estimate
+        break;
+      case FL:
+      case STD:
+        upperAlt = alt.stdAltitude;
+        break;
+      case UNLTD:
+        upperAlt = uLimit - 1; //we are always below the upper border of an Unlimited airspace
+        break;
+    }
+
+  //check to see if we're inside the airspace
+  if ((lowerAlt.getMeters() >= lLimit.getMeters()) &&
+      (upperAlt.getMeters() <= uLimit.getMeters()))
+    {
+      // qDebug("vertical conflict: %d, airspace: %s", _lastVConflict, getName().latin1());
+      return Inside;
+    }
+
+  // @AP: very near and near will not work, if you use the defined
+  // operators. Changed it to the getMeters method, that will work
+  // fine.
+
+  //not inside. Check to see if we're very near to the airspace
+  if ((lowerAlt.getMeters() >= (lLimit.getMeters() - dist.verBelowVeryClose.getMeters())) &&
+      (upperAlt.getMeters() <= (uLimit.getMeters() + dist.verAboveVeryClose.getMeters())))
+    {
+      // VeryNear;
+      // Divide between Above and below:
+      // - check for below
+      // - rest is either
+      //   - inside (but handled in if-clause above)
+      //   - above
+      if ((lowerAlt.getMeters() >= (lLimit.getMeters() - dist.verBelowVeryClose.getMeters())) &&
+         ((lowerAlt.getMeters() < lLimit.getMeters()) ))
+      {
+            return VeryNearBelow;
+      }
+      else
+      {
+            return VeryNearAbove;
+      }
+    }
+
+  //not very near. Just near then?
+  if ((lowerAlt.getMeters() >= (lLimit.getMeters() - dist.verBelowClose.getMeters())) &&
+      (upperAlt.getMeters() < (uLimit.getMeters() + dist.verAboveClose.getMeters())))
+    {
+      // Near;
+      // Divide between Above and below:
+      // - check for below
+      // - rest is either
+      //   - inside (but handled in if-clause above)
+      //   - above
+      if ( (lowerAlt.getMeters() >= (lLimit.getMeters() - dist.verBelowClose.getMeters())) && (lowerAlt.getMeters() < (lLimit.getMeters() - dist.verBelowVeryClose.getMeters())) )
+      {
+              return NearBelow;
+      }
+      else
+      {
+              return NearAbove;
+      }
+    }
+
+  //nope, we're not even near.
+  return None;
 }
 
 bool Airspace::operator < (const Airspace& other) const
@@ -277,4 +399,15 @@ bool Airspace::operator < (const Airspace& other) const
       int a1F = getLowerL(), a2F = other.getLowerL();
       return (a1F < a2F);
     }
+}
+
+bool Airspace::operator == (const Airspace& other) const
+{
+    if (getName() == other.getName() &&
+           getObjectType() == other.getObjectType() )
+    {
+        return true;
+    }
+    else
+        return false;
 }

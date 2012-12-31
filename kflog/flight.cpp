@@ -25,6 +25,7 @@
 #include <cmath>
 #include <cstdlib>
 
+#include <QtDebug>
 #include <QtGui>
 
 #include "flight.h"
@@ -1353,4 +1354,107 @@ void Flight::reProject()
 
   origTask.reProject();
   optimizedTask.reProject();
+}
+
+Flight::AirSpaceIntersection::AirSpaceIntersection(Airspace &AirSpace, int First, int Last, Airspace::ConflictType Type):m_AirSpace(AirSpace), m_TypeOfIntersection(Type),m_FirstPointIndexinRoute(First),m_LastPointIndexinRoute(Last)
+{}
+
+Flight::AirSpaceIntersection::AirSpaceIntersection(const AirSpaceIntersection & other):
+m_AirSpace(other.m_AirSpace), m_TypeOfIntersection(other.m_TypeOfIntersection),
+m_FirstPointIndexinRoute(other.m_FirstPointIndexinRoute),m_LastPointIndexinRoute(other.m_LastPointIndexinRoute)
+{}
+
+
+QList<Flight::AirSpaceIntersection> Flight::getFlightAirSpaceIntersections(unsigned int start, unsigned int end, AirspaceWarningDistance * awd)
+{
+    QList<Flight::AirSpaceIntersection> RetVal;
+    RetVal.clear();
+
+    if ((end <= start && end != 0) || route.empty())
+    {
+        // dummy : unexpected request and/or no route given
+        return RetVal;
+    }
+
+    // route is list of flight points
+    // flight points contain list of all airspaces at this coordinate
+    // ==> do a reverse search
+    for ( int i = 0 ; i < route.count(); i++)
+    {
+        AltitudeCollection AltitudesForI;
+        AltitudesForI.gpsAltitude = Altitude(route[i]->gpsHeight);
+        AltitudesForI.gndAltitude = Altitude((route[i]->gpsHeight) - (route[i]->surfaceHeight));
+        AltitudesForI.gndAltitudeError = Altitude(0);
+        AltitudesForI.stdAltitude.setStdAltitude(route[i]->gpsHeight,1013);
+#warning FixME: hard-coded QNH of 1013
+
+        for (int j = 0 ; j < route[i]->Airspaces.count() ; j++)
+        {
+            Airspace & Candidate = route[i]->Airspaces[j];
+            Airspace::ConflictType CandidateConflict = Candidate.conflicts(AltitudesForI,*awd);
+            bool bFoundInList = false;
+            for ( int k = 0 ; k < RetVal.count() ; k++)
+            {
+                // check if the current Airspace is already in the list
+                AirSpaceIntersection & CurrentIntersection = RetVal[k];
+                if (CurrentIntersection.FirstIndexPointinRoute()<= i &&
+                        CurrentIntersection.LastIndexPointinRoute() >= i &&
+                        Candidate == CurrentIntersection.AirSpace())
+                {
+                    if ((NULL == awd) || (CurrentIntersection.Type() == CandidateConflict))
+                    {
+                        bFoundInList = true;
+                        break;
+                    }
+                }
+            }
+            if (!bFoundInList)
+            {
+                // we don't know about the airspace yet
+                // find the last point that contains this airspace
+                // and insert a new item then
+                int First = i;
+                int Last = route.count()-1;
+                bool bFound = false;
+                for ( int m = 1+i; m < route.count(); m++ )
+                {
+                    bFound = false;
+                    AltitudeCollection AltitudesForM;
+                    AltitudesForM.gpsAltitude = Altitude(route[m]->gpsHeight);
+                    AltitudesForM.gndAltitude = Altitude((route[m]->gpsHeight) - (route[m]->surfaceHeight));
+                    AltitudesForM.gndAltitudeError = Altitude(0);
+                    AltitudesForM.stdAltitude.setStdAltitude(route[m]->gpsHeight,1013);
+
+                    for ( int n = 0 ; n < route[m]->Airspaces.count() ; n++)
+                    {
+                        Airspace & Current = route[m]->Airspaces[n];
+                        if (Candidate == Current &&
+                                ( Candidate.getLowerL() == Current.getLowerL() ) &&
+                                ( Candidate.getLowerT() == Current.getLowerT() ) &&
+                                ( Candidate.getUpperL() == Current.getUpperL() ) &&
+                                ( Candidate.getUpperT() == Current.getUpperT() ) &&
+                                ((NULL == awd) || ( CandidateConflict ==  Current.conflicts(AltitudesForM,*awd)))
+                                )
+                        {
+                           bFound=true;
+                           break;
+                        }
+                    }
+                    if (false == bFound)
+                    {
+                        Last = m-1;
+                        break;
+                    }
+                    // else
+                    //      Point was found -> test the next point
+                }
+
+                Airspace::ConflictType ConflictType = (NULL != awd)?(CandidateConflict):Airspace::None;
+
+                RetVal.append(AirSpaceIntersection(Candidate,First,Last,ConflictType));
+            }
+        }
+    }
+
+    return RetVal;
 }

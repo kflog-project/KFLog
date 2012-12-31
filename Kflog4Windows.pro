@@ -21,7 +21,8 @@ INCLUDEPATH += .
 # Input
 HEADERS += kflog/aboutwidget.h \
            kflog/airfield.h \
-           kflog/airspace.h \
+           kflog/airspace.h \ 
+		   kflog/airspacewarningdistance.h \
            kflog/altitude.h \
            kflog/authdialog.h \
            kflog/baseflightelement.h \
@@ -102,11 +103,12 @@ HEADERS += kflog/aboutwidget.h \
            kflog/kfrgmn/garmintypes.h \
            kflog/kfrxsp/soaringpilot.h \
            kflog/opengl_igc/glview.h \
-           kflog/opengl_igc/openglwidget.h
+           kflog/opengl_igc/openglwidget.h \
+    kflog/airspacelistviewitem.h
 SOURCES += \
            kflog/aboutwidget.cpp \
            kflog/airfield.cpp \
-           kflog/airspace.cpp \
+		   kflog/airspace.cpp \
            kflog/altitude.cpp \
            kflog/authdialog.cpp \
            kflog/baseflightelement.cpp \
@@ -178,7 +180,8 @@ SOURCES += \
            kflog/whatsthat.cpp \
            kflog/opengl_igc/glview.cpp \
            kflog/opengl_igc/opengl_igc.cpp \
-           kflog/opengl_igc/openglwidget.cpp
+           kflog/opengl_igc/openglwidget.cpp \
+    kflog/airspacelistviewitem.cpp
 RESOURCES += kflog/kflog.qrc
 QT += xml network opengl
 LIBS += -lopengl32

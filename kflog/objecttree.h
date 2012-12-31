@@ -162,6 +162,7 @@ private slots:
    * Called if the selection has been changed.
    */
   void slotSelectionChanged( QTreeWidgetItem *item, int column );
+  void slotItemDoubleClicked( QTreeWidgetItem *item, int column );
 
 signals:
   /**

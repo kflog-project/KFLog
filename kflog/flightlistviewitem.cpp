@@ -18,6 +18,7 @@
 
 #include <QtGui>
 
+#include "airspacelistviewitem.h"
 #include "flightlistviewitem.h"
 #include "tasklistviewitem.h"
 #include "flight.h"
@@ -107,6 +108,9 @@ void FlightListViewItem::createChildren()
   subItem->setIcon(0, _mainWindow->getPixmap("task_16.png") );
   subItem->setFlags( Qt::ItemIsEnabled );
 
+  subItem = new AirSpaceListViewItem( this, flight );
+  subItem->setIcon(0, _mainWindow->getPixmap("kde_vectorgfx_16.png") );
+  subItem->setFlags( Qt::ItemIsEnabled );
 
   if( flight->isOptimized() )
     {

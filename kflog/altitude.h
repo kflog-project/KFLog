@@ -221,6 +221,11 @@ public:
          return *this;
     };
 
+    /**
+     * implements setting std altitude by given MSL altitude + QNH
+     */
+    void setStdAltitude(const Altitude& MSLAltitude, int QNH);
+
 protected:
 
     static altitudeUnit _altitudeUnit;
@@ -252,13 +257,13 @@ struct AltitudeCollection
      * Given in STD.
      */
     Altitude stdAltitude;
-
+#if 0   // not used in KFlog
     /**
      * The pressure altitude (if available, else it should be deduced from the GPS altitude).
      * Given in MSL.
      */
     Altitude pressureAltitude;
-
+#endif
     /**
      * Average altitude above terrain (GND). Based on pressure altitude.
      * Because our terrain data does not return the exact terrain height for a given point, but
@@ -273,7 +278,7 @@ struct AltitudeCollection
      * @see gndAltitude, @see gpsAltitudeError
      */
     Distance gndAltitudeError;
-
+#if 0   // not used in KFlog
     /**
      * The estimation for the error in the GPS measurement for the altitude. This data is taken from
      * the GPS if available.
@@ -281,7 +286,7 @@ struct AltitudeCollection
      * @see gndAltitude, @see gndAltitudeError
      */
     Distance gpsAltitudeError;
-
+#endif
 };
 
 #endif

@@ -152,3 +152,22 @@ QString Altitude::getUnitText()
 
   return unit;
 }
+
+void Altitude::setStdAltitude(const Altitude& MSLAltitude, int QNH)
+{
+  // adapted from Cumulus GpsNmea::calcStdAltitude
+  int qnhDiff = 1013 - QNH;
+
+  if( qnhDiff != 0 )
+    {
+      // Calculate altitude correction in meters from pressure difference.
+      // The common approach is to expect a pressure difference of 1 hPa per
+      // 30ft until 18.000ft. 30ft are 9.1437m
+      int delta = (int) rint( qnhDiff * 9.1437 );
+      setMeters( MSLAltitude.getMeters() + delta );
+    }
+  else
+    {
+      setMeters(MSLAltitude.getMeters());
+    }
+}
