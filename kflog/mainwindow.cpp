@@ -1848,7 +1848,7 @@ void MainWindow::slotShowAbout()
   aw->setWindowTitle( tr( "About KFLog") );
   aw->setHeaderIcon( getPixmap("kflog_16.png") );
 
-  QString header( tr("<html>KFLog %1, &copy; 2000-2011, The KFLog-Team</html>").arg( QCoreApplication::applicationVersion() ) );
+  QString header( tr("<html>KFLog %1, &copy; 2000-2013, The KFLog-Team</html>").arg( QCoreApplication::applicationVersion() ) );
 
   aw->setHeaderText( header );
 
@@ -1882,7 +1882,8 @@ void MainWindow::slotShowAbout()
       "Eggert Ehmke (Developer)<br>"
       "Harald Maier (Developer, Waypoint-Dialog, Task-handling)<br>"
       "Thomas Nielsen (Developer, 3D-Dialog)<br>"
-      "Jan Kr&uuml;ger (Developer, 3D-Dialog)"
+      "Jan Kr&uuml;ger (Developer, 3D-Dialog)<br>"
+      "Matthias Degenkolb (Developer, MS-Windows portage)"
       "</blockquote>"
       "<b>Server Sponsor</b>"
       "<blockquote>"
