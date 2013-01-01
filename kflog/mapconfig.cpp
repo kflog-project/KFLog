@@ -609,8 +609,7 @@ QPen MapConfig::getDrawPen(FlightPoint* fP, float va_min/*=-10*/, float va_max/*
                    AltitudeColl.gpsAltitude = ::Altitude(fP->gpsHeight);
                    AltitudeColl.gndAltitude = ::Altitude((fP->gpsHeight) - (fP->surfaceHeight));
                    AltitudeColl.gndAltitudeError = ::Altitude(0);
-                   AltitudeColl.stdAltitude.setStdAltitude(fP->gpsHeight,1013);
-#warning FixME: hard-coded QNH of 1013
+                   AltitudeColl.stdAltitude.setStdAltitude(fP->gpsHeight,fP->QNH);
                    Airspace::ConflictType Current = fP->Airspaces[k].conflicts(AltitudeColl,awd);
                    HighestConflict = (Current > HighestConflict)?Current:HighestConflict;
                }

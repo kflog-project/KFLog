@@ -18,6 +18,7 @@
 ***********************************************************************/
 
 #include <QtGui>
+#include <QInputDialog>
 
 #include "airspace.h"
 #include "openairparser.h"
@@ -115,6 +116,13 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   QList<Airspace> AllAirSpaces;
   OpenAirParser oap;
   oap.load(AllAirSpaces);
+
+  int QNH = 0;
+  bool bRet= loadQNH(igcFile.fileName(),QNH);
+  if (!bRet)
+  {
+      bRet = getQNHFromUser(igcFile.fileName(),QNH)              ;
+  }
 
 
 
@@ -329,6 +337,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           newPoint.surfaceHeight = ef->elevation(newPoint.origP, newPoint.projP);
           newPoint.height = baroAltTemp;
           newPoint.gpsHeight = gpsAltTemp;
+          newPoint.QNH = QNH;
           newPoint.Airspaces.clear();
           // get airspaces at this coordinate
           for (int i = 0 ; i < AllAirSpaces.count(); i++)
@@ -471,6 +480,13 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
   QList<FlightPoint*> flightRoute;
   QList<Waypoint*> wpList;
 
+  int QNH = 0;
+  bool bRet= loadQNH(gardownFile.fileName(),QNH);
+  if (!bRet)
+  {
+      bRet = getQNHFromUser(gardownFile.fileName(),QNH)              ;
+  }
+
   //
   // This regexp is used to check the syntax of the position-lines in
   // the file.
@@ -577,6 +593,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
           newPoint->surfaceHeight = ef->elevation(newPoint->origP, newPoint->projP);
           newPoint->height = height;
           newPoint->gpsHeight = height;
+          newPoint->QNH = QNH;
 
           flightRoute.append(newPoint);
         }
@@ -606,4 +623,90 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
   _globalMapContents->appendFlight(new Flight(gardownFile.fileName(), recorderID, flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
   return true;
 
+}
+
+bool FlightLoader::loadQNH(QString SettingsFileName, int & result)
+{
+    if (0 == SettingsFileName.length())
+    {
+           return false;
+    }
+    SettingsFileName += ".kfp";
+    QSettings SettingsFile (SettingsFileName,QSettings::IniFormat);
+
+    SettingsFile.beginGroup("Overall");
+    QVariant Version = SettingsFile.value("FileVersion");
+    if (Version.isNull() || !Version.canConvert(QVariant::Int) || Version.toInt() > 1)
+    {
+        // file empty or unsupported
+        return false;
+    }
+    SettingsFile.endGroup();
+
+    SettingsFile.beginGroup("QNH");
+    QVariant CurrentQNH = SettingsFile.value("StaticValue");
+    SettingsFile.endGroup();
+
+    if (CurrentQNH.isNull() || !Version.canConvert(QVariant::Int) )
+    {
+        QMessageBox::warning(0, QObject::tr("File contains no flight"),
+            "<html>" + QObject::tr("The selected file<BR><B>%1</B><BR>exists but contains no QNH value").arg(SettingsFileName) + "</html>", QMessageBox::Ok, 0);
+
+        return false;
+    }
+    result = CurrentQNH.toInt();
+    if ( result < 900 || result > 1100)
+    {
+        return getQNHFromUser(SettingsFileName, result);
+    }
+    else
+    {
+        return true;
+    }
+}
+
+bool FlightLoader::saveQNH(QString OriginalFileName, int QNH)
+{
+    QString SettingsFileName = OriginalFileName;
+    if (0 == SettingsFileName.length())
+    {
+           return false;
+    }
+    SettingsFileName += ".kfp";
+    QSettings SettingsFile (SettingsFileName,QSettings::IniFormat);
+
+    SettingsFile.beginGroup("Overall");
+    QVariant Version = SettingsFile.value("FileVersion");
+    if ( Version.isValid() && (!Version.canConvert(QVariant::Int) || Version.toInt() > 1))
+    {
+        QMessageBox::warning(0, QObject::tr("File contains no flight"),
+            "<html>" + QObject::tr("The selected file<BR><B>%1</B><BR>is empty or unsupported").arg(SettingsFileName) + "</html>", QMessageBox::Ok, 0);
+
+        return false;
+    }
+    Version = (int) 1;
+    SettingsFile.setValue("FileVersion",Version);
+    SettingsFile.endGroup();
+
+    SettingsFile.beginGroup("QNH");
+    SettingsFile.setValue("StaticValue",QNH);
+    SettingsFile.endGroup();
+    SettingsFile.sync();
+
+    return true;
+}
+
+bool FlightLoader::getQNHFromUser(QString OriginalFileName, int & result)
+{
+    QInputDialog QNHQueryDialog;
+    bool bOK = false;
+    int QNH = QNHQueryDialog.getInt(NULL,"KFlog","Please enter the QNH of the flight (900-1100 hPa). <br>If you cancel 1013 hPa will be used.",1013,900,1100,1,&bOK);
+    if (!bOK)
+    {
+        QNH = 1013;
+    }
+    bool bOK2 = saveQNH(OriginalFileName, QNH);
+    result = QNH;
+
+    return bOK && bOK2;
 }

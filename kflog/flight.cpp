@@ -1385,8 +1385,7 @@ QList<Flight::AirSpaceIntersection> Flight::getFlightAirSpaceIntersections(unsig
         AltitudesForI.gpsAltitude = Altitude(route[i]->gpsHeight);
         AltitudesForI.gndAltitude = Altitude((route[i]->gpsHeight) - (route[i]->surfaceHeight));
         AltitudesForI.gndAltitudeError = Altitude(0);
-        AltitudesForI.stdAltitude.setStdAltitude(route[i]->gpsHeight,1013);
-#warning FixME: hard-coded QNH of 1013
+        AltitudesForI.stdAltitude.setStdAltitude(route[i]->gpsHeight,route[i]->QNH);
 
         for (int j = 0 ; j < route[i]->Airspaces.count() ; j++)
         {

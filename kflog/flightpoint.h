@@ -85,6 +85,10 @@ public:
   *   set by flightloader.cpp */
   int surfaceHeight;
 
+  /** The current QNH
+  *   set by flightloader.cpp */
+  int QNH;
+
   /** The time, the point was registered by the logger.
   *   set by flightloader.cpp */
   time_t time;

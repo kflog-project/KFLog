@@ -48,6 +48,9 @@ class FlightLoader
   bool openGardownFile(QFile&, QFileInfo&);
 
   private:
+  bool loadQNH(QString OriginalFileName, int & result);
+  bool saveQNH(QString OriginalFileName, int QNH);
+  bool getQNHFromUser(QString OriginalFileName, int & result);
 
   // Short structure to handle the optional entries in an igc file
   class bOption
