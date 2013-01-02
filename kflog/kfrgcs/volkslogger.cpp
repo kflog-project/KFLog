@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Harald Maier
-**                   2011 by Axel Pauli
+**                   2011-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -34,8 +34,6 @@
  */
 char* portName = '\0';
 int portID = -1;
-
-extern int breakTransfer;
 
 /**
  * holds the port-settings at start of the application
