@@ -26,12 +26,12 @@
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.849476411" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.1995706606" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.305883875" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/usr/include/c++/4.5"/>
 									<listOptionValue builtIn="false" value="/usr/include/qt4/Qt"/>
 									<listOptionValue builtIn="false" value="/usr/include/qt4/QtCore"/>
 									<listOptionValue builtIn="false" value="/usr/include/qt4/QtGui"/>
 									<listOptionValue builtIn="false" value="/usr/include/qt4/QtNetwork"/>
 									<listOptionValue builtIn="false" value="/usr/include/qt4/QtXml"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.7"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.2080728338" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
