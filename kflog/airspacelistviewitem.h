@@ -27,7 +27,7 @@
   *
   * \date 2013
   *
-  * \version $Id
+  * \version $Id$
   */
 
 #ifndef AIRSPACE_LIST_VIEW_ITEM_H
