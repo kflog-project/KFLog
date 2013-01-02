@@ -138,6 +138,7 @@ int SoaringPilot::readFile(QStringList &file)
 
               default:
                 s.append( inbyte );
+                break;
             }
         }
       else if( start )
