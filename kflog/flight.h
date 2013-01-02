@@ -20,7 +20,7 @@
 #ifndef FLIGHT_H
 #define FLIGHT_H
 
-#include <time.h>
+#include <ctime>
 
 #include <QDateTime>
 #include <QList>
@@ -69,10 +69,15 @@ class Flight : public BaseFlightElement
     public:
         AirSpaceIntersection(Airspace& AirSpace,int First, int Last, Airspace::ConflictType Type);
         AirSpaceIntersection(const AirSpaceIntersection & other);
-        inline const Airspace & AirSpace() { return m_AirSpace; }
-        inline const Airspace::ConflictType Type(){ return m_TypeOfIntersection; }
-        inline int FirstIndexPointinRoute(){ return m_FirstPointIndexinRoute; }
-        inline int LastIndexPointinRoute(){ return m_LastPointIndexinRoute; }
+        Airspace& AirSpace()
+          { return m_AirSpace; };
+        Airspace::ConflictType Type()
+          { return m_TypeOfIntersection; };
+        int FirstIndexPointinRoute() const
+          { return m_FirstPointIndexinRoute; };
+        int LastIndexPointinRoute() const
+          { return m_LastPointIndexinRoute; };
+
     protected:
         Airspace m_AirSpace;
         Airspace::ConflictType m_TypeOfIntersection;

@@ -6,18 +6,18 @@
 **
 ************************************************************************
 **
-**   Copyright (c):      2012 by Matthias Degenkolb
+**   Copyright (c): 2013 by Matthias Degenkolb
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id: AirSpaceListViewItem.cpp
+**   $Id$
 **
 ***********************************************************************/
 
 #include <QtGui>
 
-#include "AirSpaceListViewItem.h"
+#include "airspacelistviewitem.h"
 #include "flight.h"
 #include "waypoint.h"
 #include "mainwindow.h"
@@ -28,15 +28,16 @@
 extern MainWindow *_mainWindow;
 
 AirSpaceListViewItem::AirSpaceListViewItem( QTreeWidgetItem* parent,
-                                    Flight* theFlight ) :
+                                            Flight* theFlight ) :
   QTreeWidgetItem( parent, AIRSPACE_LIST_VIEW_ITEM_TYPEID ),
- m_Flight(theFlight)
+  m_Flight(theFlight)
 {
   createChildren();
   setExpanded( true );
 }
 
-AirSpaceListViewItem::~AirSpaceListViewItem(){
+AirSpaceListViewItem::~AirSpaceListViewItem()
+{
 }
 
 /**
@@ -65,129 +66,131 @@ void AirSpaceListViewItem::update()
 void AirSpaceListViewItem::createChildren()
 {
 //#define AIRSPACELISTVIEWITEM_EXTENDED_TRACE
-    if (m_Flight != NULL)
+  if( m_Flight != 0 )
     {
-        setText(0 , QString("AirSpace") );
-        setText(1 , QString("violations / intersections") );
+      setText( 0, QString( "AirSpace" ) );
+      setText( 1, QString( "violations / intersections" ) );
 
-        // Goal of awd: in vertical view glider is either
-        // - below
-        // - inside
-        // - above
-        // (bogus of 40000m should be sufficient)
-        AirspaceWarningDistance awd;
-        awd.horClose.setMeters(0);
-        awd.horVeryClose.setMeters(0);
-        awd.verAboveClose.setMeters(40000);
-        awd.verAboveVeryClose.setMeters(0);
-        awd.verBelowClose.setMeters(40000);
-        awd.verBelowVeryClose.setMeters(0);
+      // Goal of awd: in vertical view glider is either
+      // - below
+      // - inside
+      // - above
+      // (bogus of 40000m should be sufficient)
+      AirspaceWarningDistance awd;
+      awd.horClose.setMeters( 0 );
+      awd.horVeryClose.setMeters( 0 );
+      awd.verAboveClose.setMeters( 40000 );
+      awd.verAboveVeryClose.setMeters( 0 );
+      awd.verBelowClose.setMeters( 40000 );
+      awd.verBelowVeryClose.setMeters( 0 );
 
-        QList<Flight::AirSpaceIntersection> Violations = m_Flight->getFlightAirSpaceIntersections(2038,0,&awd);
-        if (Violations.count() > 0)
+      QList<Flight::AirSpaceIntersection> Violations =
+          m_Flight->getFlightAirSpaceIntersections( 2038, 0, &awd );
+      if( Violations.count() > 0 )
         {
-            for (int i = 0 ; i < Violations.count() ; i++)
+          for( int i = 0; i < Violations.count(); i++ )
             {
-                QString AirSpaceName;
-                AirSpaceName +=  Airspace::getTypeName(Violations[i].AirSpace().getObjectType());
-                 AirSpaceName +=  " ";
-                 AirSpaceName +=  Violations[i].AirSpace().getName();
+              QString AirSpaceName;
+              AirSpaceName += Airspace::getTypeName( Violations[i].AirSpace().getObjectType() );
+              AirSpaceName += " ";
+              AirSpaceName += Violations[i].AirSpace().getName();
 
+              QStringList sl = (QStringList() << QString( "Name" ) << AirSpaceName);
+              QTreeWidgetItem* subItem = new QTreeWidgetItem( this, sl );
+              subItem->setFlags( Qt::ItemIsEnabled );
+              QBrush col1 = subItem->foreground( 0 );
+              QBrush col2 = subItem->foreground( 1 );
 
-                QStringList sl = (QStringList() << QString("Name") << AirSpaceName );
-                QTreeWidgetItem* subItem = new QTreeWidgetItem( this, sl );
-                subItem->setFlags( Qt::ItemIsEnabled );
-               QBrush col1 = subItem->foreground(0);
-               QBrush col2 = subItem->foreground(1);
+              QString ViolationType;
 
-                QString ViolationType;
-                switch (Violations[i].Type())
+              switch( Violations[i].Type() )
                 {
                 case Airspace::Inside:
-                    ViolationType = "INSIDE";
-                    col1=QBrush(Qt::red);
-                    col2=QBrush(Qt::red);
-                    break;
+                  ViolationType = "INSIDE";
+                  col1 = QBrush( Qt::red );
+                  col2 = QBrush( Qt::red );
+                  break;
                 case Airspace::NearBelow:
                 case Airspace::VeryNearBelow:
-                    ViolationType = "Below";
-                    break;
+                  ViolationType = "Below";
+                  break;
                 case Airspace::NearAbove:
                 case Airspace::VeryNearAbove:
-                    ViolationType = "Above";
-                    break;
+                  ViolationType = "Above";
+                  break;
                 case Airspace::None:
                 default:
-                    ViolationType = "None";
-                    break;
+                  ViolationType = "None";
+                  break;
                 }
-                subItem->setForeground(0,col1);
-                subItem->setForeground(1,col2);
+              subItem->setForeground( 0, col1 );
+              subItem->setForeground( 1, col2 );
 
-                QString InfoString;
-                InfoString = Violations[i].AirSpace().getInfoString(false);
-                sl = (QStringList() << QString("Airspace Range") << InfoString);
-                QTreeWidgetItem* subsubItem = new QTreeWidgetItem( subItem, sl );
-                subsubItem->setFlags( Qt::ItemIsEnabled );
-                subsubItem->setForeground(0,col1);
-                subsubItem->setForeground(1,col2);
+              QString InfoString;
+              InfoString = Violations[i].AirSpace().getInfoString( false );
+              sl = (QStringList() << QString( "Airspace Range" ) << InfoString);
+              QTreeWidgetItem* subsubItem = new QTreeWidgetItem( subItem, sl );
+              subsubItem->setFlags( Qt::ItemIsEnabled );
+              subsubItem->setForeground( 0, col1 );
+              subsubItem->setForeground( 1, col2 );
 
-                sl = (QStringList() << QString("Type of Contact") << ViolationType);
-                subsubItem = new QTreeWidgetItem( subItem, sl );
-                subsubItem->setFlags( Qt::ItemIsEnabled );
-                subsubItem->setForeground(0,col1);
-                subsubItem->setForeground(1,col2);
+              sl = (QStringList() << QString( "Type of Contact" ) << ViolationType);
+              subsubItem = new QTreeWidgetItem( subItem, sl );
+              subsubItem->setFlags( Qt::ItemIsEnabled );
+              subsubItem->setForeground( 0, col1 );
+              subsubItem->setForeground( 1, col2 );
 
-                sl = (QStringList() << QString ("<<Doubleclick here to show>>"));
-                subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem( subItem, sl, Violations[i],m_Flight);
-                subsubItem->setIcon(0,_mainWindow->getPixmap("kde_info_16.png"));
-                subsubItem->setFlags( Qt::ItemIsEnabled );
-                subsubItem->setForeground(0,col1);
-                subsubItem->setForeground(1,col2);
+              sl = (QStringList() << QString( "<<Doubleclick here to show>>" ));
+              subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
+              subsubItem->setIcon( 0, _mainWindow->getPixmap( "kde_info_16.png" ) );
+              subsubItem->setFlags( Qt::ItemIsEnabled );
+              subsubItem->setForeground( 0, col1 );
+              subsubItem->setForeground( 1, col2 );
 
-
-                QDateTime Start;
-                Start.setTime_t( m_Flight->getPoint(Violations[i].FirstIndexPointinRoute()).time);
-                sl = (QStringList() << QString("Start") << Start.toString(QString("dd-MM-yyyy hh:mm:ss")));
-                subsubItem = new QTreeWidgetItem( subItem, sl );
-                subsubItem->setFlags( Qt::ItemIsEnabled );
-                subsubItem->setForeground(0,col1);
-                subsubItem->setForeground(1,col2);
+              QDateTime Start;
+              Start.setTime_t(m_Flight->getPoint( Violations[i].FirstIndexPointinRoute() ).time );
+              sl = (QStringList() << QString( "Start" )
+                  << Start.toString( QString( "dd-MM-yyyy hh:mm:ss" ) ));
+              subsubItem = new QTreeWidgetItem( subItem, sl );
+              subsubItem->setFlags( Qt::ItemIsEnabled );
+              subsubItem->setForeground( 0, col1 );
+              subsubItem->setForeground( 1, col2 );
 
 #ifdef AIRSPACELISTVIEWITEM_EXTENDED_TRACE
-                QString FirstID;
-                FirstID.sprintf("%d",Violations[i].FirstIndexPointinRoute());
-                sl = (QStringList() << QString("First ID") << FirstID);
-                subsubItem = new QTreeWidgetItem( subItem, sl );
-                subsubItem->setFlags( Qt::ItemIsEnabled );
-                subsubItem->setForeground(0,col1);
-                subsubItem->setForeground(1,col2);
+              QString FirstID;
+              FirstID.sprintf("%d",Violations[i].FirstIndexPointinRoute());
+              sl = (QStringList() << QString("First ID") << FirstID);
+              subsubItem = new QTreeWidgetItem( subItem, sl );
+              subsubItem->setFlags( Qt::ItemIsEnabled );
+              subsubItem->setForeground(0,col1);
+              subsubItem->setForeground(1,col2);
 #endif
 
-                QDateTime End;
-                End.setTime_t( m_Flight->getPoint(Violations[i].LastIndexPointinRoute()).time);
-                sl = (QStringList() << QString("End") << End.toString(QString("dd-MM-yyyy hh:mm:ss")));
-                subsubItem = new QTreeWidgetItem( subItem, sl );
-                subsubItem->setFlags( Qt::ItemIsEnabled );
-                subsubItem->setForeground(0,col1);
-                subsubItem->setForeground(1,col2);
+              QDateTime End;
+              End.setTime_t(m_Flight->getPoint( Violations[i].LastIndexPointinRoute() ).time );
+              sl = (QStringList() << QString( "End" )
+                  << End.toString( QString( "dd-MM-yyyy hh:mm:ss" ) ));
+              subsubItem = new QTreeWidgetItem( subItem, sl );
+              subsubItem->setFlags( Qt::ItemIsEnabled );
+              subsubItem->setForeground( 0, col1 );
+              subsubItem->setForeground( 1, col2 );
 
 #ifdef AIRSPACELISTVIEWITEM_EXTENDED_TRACE
-                QString LastID;
-                LastID.sprintf("%d",Violations[i].LastIndexPointinRoute());
-                sl = (QStringList() << QString("Last ID") << LastID);
-                subsubItem = new QTreeWidgetItem( subItem, sl );
-                subsubItem->setFlags( Qt::ItemIsEnabled );
-                subsubItem->setForeground(0,col1);
-                subsubItem->setForeground(1,col2);
+              QString LastID;
+              LastID.sprintf("%d",Violations[i].LastIndexPointinRoute());
+              sl = (QStringList() << QString("Last ID") << LastID);
+              subsubItem = new QTreeWidgetItem( subItem, sl );
+              subsubItem->setFlags( Qt::ItemIsEnabled );
+              subsubItem->setForeground(0,col1);
+              subsubItem->setForeground(1,col2);
 #endif
             }
         }
-        else
+      else
         {
-            QStringList sl = (QStringList() << QString("<<none found>>") );
-            QTreeWidgetItem* subItem = new QTreeWidgetItem( this, sl );
-            subItem->setFlags( Qt::ItemIsEnabled );
+          QStringList sl = (QStringList() << QString( "<<none found>>" ));
+          QTreeWidgetItem* subItem = new QTreeWidgetItem( this, sl );
+          subItem->setFlags( Qt::ItemIsEnabled );
         }
     }
 }
@@ -198,35 +201,34 @@ AirSpaceListViewItem::AirSpaceFlagListViewItem::AirSpaceFlagListViewItem( QTreeW
 
 void AirSpaceListViewItem::AirSpaceFlagListViewItem::Activate()
 {
-    // - richtiger FLug muss aktiviert werden
-    // - beide Cursors an Anfang und Ende des Luftraums setzen.
-    if (m_Flight != NULL )
+  // - richtiger FLug muss aktiviert werden
+  // - beide Cursors an Anfang und Ende des Luftraums setzen.
+  if( m_Flight != 0 )
     {
-        QList<FlightPoint*> Route = m_Flight->getRoute();
-        time_t cursor1 = Route[m_ItemToActivate.FirstIndexPointinRoute()]->time;
-        time_t cursor2 = Route[m_ItemToActivate.LastIndexPointinRoute()]->time;
+      QList<FlightPoint*> Route = m_Flight->getRoute();
+      time_t cursor1 = Route[m_ItemToActivate.FirstIndexPointinRoute()]->time;
+      time_t cursor2 = Route[m_ItemToActivate.LastIndexPointinRoute()]->time;
 
-        EvaluationFrame * EvalFrame = NULL;
-        EvaluationView * EvalView = NULL;
-        if (NULL != _mainWindow)
+      EvaluationFrame * EvalFrame = 0;
+      EvaluationView * EvalView = 0;
+
+      if( 0 != _mainWindow )
         {
-            if ( NULL != _mainWindow->getEvaluationWindow())
+          if( 0 != _mainWindow->getEvaluationWindow() )
             {
-                EvalFrame = _mainWindow->getEvaluationWindow()->getEvalFrame();
-                if ( NULL != EvalFrame)
+              EvalFrame = _mainWindow->getEvaluationWindow()->getEvalFrame();
+
+              if( 0 != EvalFrame )
                 {
-                    EvalView= _mainWindow->getEvaluationWindow()->getEvalFrame()->getEvalView();
+                  EvalView = _mainWindow->getEvaluationWindow()->getEvalFrame()->getEvalView();
                 }
             }
         }
-        if ( NULL == EvalView )
+
+      if( 0 != EvalView )
         {
-            qDebug("NULL == EvalView");
-        }
-        else
-        {
-            EvalFrame->slotShowFlight(m_Flight);
-            EvalView->slotSetCursors(m_Flight,cursor1,cursor2);
+          EvalFrame->slotShowFlight( m_Flight );
+          EvalView->slotSetCursors( m_Flight, cursor1, cursor2 );
         }
     }
 }

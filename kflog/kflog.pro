@@ -29,7 +29,7 @@ SOURCES = \
     aboutwidget.cpp \
     airfield.cpp \
     airspace.cpp \
-	airspacelistviewitem.cpp \
+	  airspacelistviewitem.cpp \
     altitude.cpp \
     authdialog.cpp \
     baseflightelement.cpp \
@@ -103,8 +103,8 @@ HEADERS = \
     aboutwidget.h \
     airfield.h \
     airspace.h \
-	airspacelistviewitem.h \
-	airspacewarningdistance.h \
+	  airspacelistviewitem.h \
+	  airspacewarningdistance.h \
     altitude.h \
     authdialog.h \
     baseflightelement.h \
