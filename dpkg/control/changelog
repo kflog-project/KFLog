@@ -1,3 +1,15 @@
+kflog (4.7.0) unstable; urgency=low
+
+  * added airspace checking (partly backport from Cumulus) by Matthias Degenkolb
+  
+  * airspaces shown in browser window
+  
+  * added airspace data view
+  
+  * Still open: QNH is currently hard-coded to 1013 hPa, therefore airspace checking is not fully precise...
+
+ -- Axel Pauli <kflog.cumulus@gmail.com>  Wed, 02 Jan 2013 19:30:18 +0100
+
 kflog (4.6.2) unstable; urgency=low
 
   * Build with Ubuntu 12.10 and Qt4.8.3
