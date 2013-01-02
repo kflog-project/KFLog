@@ -179,7 +179,7 @@ void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
     }
 }
 
-void ObjectTree::slotItemDoubleClicked( QTreeWidgetItem *item, int column )
+void ObjectTree::slotItemDoubleClicked( QTreeWidgetItem *item, int /* column */ )
 {
     switch( item->type() )
       {
@@ -259,6 +259,7 @@ void ObjectTree::slotFlightChanged()
 
           default:
             qWarning("ObjectTree::slotFlightChanged(): List view item of unknown type!");
+            break;
         }
 
       slotResizeColumns2Content();
