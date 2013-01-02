@@ -2,12 +2,12 @@
 **
 **   filser.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog4.
 **
 ************************************************************************
 **
 **   Copyright (c):  2003 by Christian Fughe, Harald Maier, Eggert Ehmke
-**                   2011 by Axel Pauli
+**                   2011-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -24,10 +24,11 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 #include <unistd.h>
+#include <cstdio>
 #include <cstdlib>
 #include <ctype.h>
 #include <cmath>
-#include <string.h>
+#include <cstring>
 
 #include <QtCore>
 
@@ -651,10 +652,10 @@ int Filser::openRecorder(const QString& pName, int baud)
     struct sigaction sact;
 
     sact.sa_handler = releaseTTY;
-    sigaction(SIGHUP, &sact, NULL);
-    sigaction(SIGINT, &sact, NULL);
-    sigaction(SIGPIPE, &sact, NULL);
-    sigaction(SIGTERM, &sact, NULL);
+    sigaction(SIGHUP, &sact, 0);
+    sigaction(SIGINT, &sact, 0);
+    sigaction(SIGPIPE, &sact, 0);
+    sigaction(SIGTERM, &sact, 0);
 
     /*
      * Set the terminal mode of the serial line
@@ -665,21 +666,21 @@ int Filser::openRecorder(const QString& pName, int baud)
 
     // storing the port-settings to restore them ...
     oldTermEnv = newTermEnv;
-    
+
     /*
      * Do some common settup
      */
     newTermEnv.c_iflag = IGNPAR;
     newTermEnv.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL | IXON);
     newTermEnv.c_oflag &= ~OPOST;
-    newTermEnv.c_oflag |= ONLCR; 
+    newTermEnv.c_oflag |= ONLCR;
     newTermEnv.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
     /*
      * No flow control at all :-(
      */
     newTermEnv.c_cflag &= ~(CSIZE | PARENB | CSTOPB | CRTSCTS | IXON | IXOFF);
     newTermEnv.c_cflag |= (CS8 | CLOCAL | CREAD);
-    
+
     // control characters
     newTermEnv.c_cc[VMIN] = 0; // don't wait for a character
     newTermEnv.c_cc[VTIME] = 1; // wait at least 1 msec.
@@ -854,12 +855,12 @@ bool Filser::getLoggerData(unsigned char *memSection, int sectionSize)
 bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p_last)
 {
   int i, j, l, ftab[16], etab[16], time = 0, time_orig = 0, fix_lat, fix_lat_orig = 0, fix_lon, fix_lon_orig = 0, tp;
-  unsigned char flight_no = 0, *fil_p_ev = NULL;
+  unsigned char flight_no = 0, *fil_p_ev = 0;
 
   unsigned int ext_dat;
   char HFDTE[256], fix_ext_num = 0, ext_num = 0, ev = 0, fix_stat;
   unsigned int flt_id;
-  char *flt_pilot = NULL, *flt_glider = NULL, *flt_reg = NULL, *flt_comp = NULL, *flt_observer = NULL, *flt_gps = NULL;
+  char *flt_pilot = 0, *flt_glider = 0, *flt_reg = 0, *flt_comp = 0, *flt_observer = 0, *flt_gps = 0;
   unsigned char flt_class_id = 0, flt_gps_datum = 0, flt_fix_accuracy = 0;
 
   struct task {
@@ -1621,7 +1622,7 @@ bool Filser::AutoBaud()
   // medicine for my LX20 not to whistle. Tcflush belongs after while() and
   // before wb(SYN).
 
-  t1 = time(NULL);
+  t1 = time(0);
   while (!breakTransfer) {
     tcflush(portID, TCIOFLUSH); // Make sure the next ACK comes from the
                                 // following wb(SYN). And remove the
@@ -1644,7 +1645,7 @@ bool Filser::AutoBaud()
     else {
       // waiting 10 secs. for response
 //      qDebug ("ret = %x", ret);
-      if (time(NULL) - t1 > 10) {
+      if (time(0) - t1 > 10) {
         _errorinfo = tr("No response from recorder within 10 seconds!\nDid you press WRITE/RTE?");
         rc = false;
         break;
@@ -1726,7 +1727,7 @@ bool Filser::check4Device()
   // medicine for my LX20 not to whistle. Tcflush belongs after while() and
   // before wb(SYN).
 
-  t1 = time(NULL);
+  t1 = time(0);
   while (!breakTransfer) {
     tcflush(portID, TCIOFLUSH); // Make sure the next ACK comes from the
                                 // following wb(SYN). And remove the
@@ -1749,7 +1750,7 @@ bool Filser::check4Device()
     else {
       // waiting 10 secs. for response
 //      qDebug ("ret = %x", ret);
-      if (time(NULL) - t1 > 10) {
+      if (time(0) - t1 > 10) {
         _errorinfo = tr("No response from recorder within 10 seconds!\nDid you press WRITE/RTE?");
         rc = false;
         break;
