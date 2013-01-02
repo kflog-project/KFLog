@@ -161,6 +161,8 @@ public slots:
   void slotOpenRecentFile( QAction *action );
   /** */
   void slotOpenRecorderDialog();
+  /** re-set current QNH*/
+  void slotsetFlightQNH();
   /** optimize flight for OLC declaration*/
   void slotOptimizeFlightOLC();
   /** */
@@ -370,6 +372,7 @@ private:
    * Actions for the menu Flight
    */
   QAction* flightEvaluationWindowAction;
+  QAction* flightSetQNHAction;
   QAction* flightOptimizationAction;
   QAction* flightOptimizationOLCAction;
   QAction* flightIgc3DAction;

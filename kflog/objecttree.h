@@ -108,6 +108,7 @@ private:
   QAction* actionFlightGroupNew;
   QAction* actionFlightGroupEdit;
   QAction* actionFlightClose;
+  QAction* actionFlightSetQNH;
   QAction* actionFlightOptimize;
   QAction* actionFlightOptimizeOLC;
 
@@ -197,6 +198,10 @@ signals:
    * Indicate that a file should be opened
    */
   void openFile(const QUrl&);
+  /**
+   * Set the current flight's QNH
+   */
+  void setFlightQNH();
   /**
    * Indicate that the current flight should be optimized
    */

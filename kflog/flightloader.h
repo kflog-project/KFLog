@@ -46,11 +46,18 @@ class FlightLoader
    * @return "true", when the file has successfully been loaded
    */
   bool openGardownFile(QFile&, QFileInfo&);
+  /**
+  * Imports a file downloaded with Gardown in DOS
+  *
+  * @param  OriginalFileName  The name of the original file
+  * @return "true", when the QNH has sucessfully been reset
+  */
+  bool resetQNH(QString OriginalFileName);
 
   private:
   bool loadQNH(QString OriginalFileName, int & result);
   bool saveQNH(QString OriginalFileName, int QNH);
-  bool getQNHFromUser(QString OriginalFileName, int & result);
+  bool getQNHFromUser(QString OriginalFileName, int & result, int startValue = 1013);
 
   // Short structure to handle the optional entries in an igc file
   class bOption

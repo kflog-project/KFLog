@@ -420,6 +420,12 @@ void ObjectTree::createMenu()
                                               this,
                                               SIGNAL(optimizeFlight()) );
 
+  actionFlightSetQNH = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
+                                              tr("Set &QNH"),
+                                              this,
+                                              SIGNAL(setFlightQNH()) );
+
+
   actionFlightOptimizeOLC = objectTreeMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
                                                  tr("O&ptimize flight for OLC"),
                                                  this,

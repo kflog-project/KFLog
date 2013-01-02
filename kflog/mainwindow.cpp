@@ -174,6 +174,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(objectTree, SIGNAL(editFlightGroup()), _globalMapContents, SLOT(slotEditFlightGroup()));
   connect(objectTree, SIGNAL(openFlight()), this, SLOT(slotOpenFile()));
   connect(objectTree, SIGNAL(openFile(const QUrl&)), this, SLOT(slotOpenFile(const QUrl&)));
+  connect(objectTree, SIGNAL(setFlightQNH()), this, SLOT(slotsetFlightQNH()));
   connect(objectTree, SIGNAL(optimizeFlight()), this, SLOT(slotOptimizeFlight()));
   connect(objectTree, SIGNAL(optimizeFlightOLC()), this, SLOT(slotOptimizeFlightOLC()));
 
@@ -628,6 +629,13 @@ void MainWindow::createMenuBar()
   connect( evaluationWindowDock, SIGNAL(visibilityChanged(bool)),
            flightEvaluationWindowAction, SLOT(setDisabled(bool)) );
 
+  flightSetQNHAction = new QAction( getPixmap("kde_reload_16.png"),
+                                          tr("Set QNH"), this );
+  flightSetQNHAction->setEnabled(true);
+  connect( flightSetQNHAction, SIGNAL(triggered()),
+           this, SLOT(slotsetFlightQNH()) );
+
+
   flightOptimizationAction = new QAction( getPixmap("kde_wizard_16.png"),
                                           tr("Optimize"), this );
   flightOptimizationAction->setEnabled(true);
@@ -754,6 +762,7 @@ void MainWindow::createMenuBar()
   //----------------------------------------------------------------------------
   QMenu *fm = menuBar()->addMenu( tr("F&light") );
   fm->addAction( flightEvaluationWindowAction );
+  fm->addAction( flightSetQNHAction );
   fm->addAction( flightOptimizationAction );
   fm->addAction( flightOptimizationOLCAction );
 
@@ -1924,4 +1933,22 @@ void MainWindow::slotElevation(int height)
     QString text;
     text.sprintf(" %4d m MSL",height);
     statusTerrainElevation->setText(text);
+}
+
+void MainWindow::slotsetFlightQNH()
+{
+    Flight *flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
+
+    if( flight != 0 && flight->getObjectType() == BaseMapElement::Flight )
+      {
+        FlightLoader fl;
+        if (fl.resetQNH(flight->getFileName()))
+        {
+            // Okay, update flight data and redraw the map
+            dataView->slotSetFlightData();
+            evaluationWindow->slotShowFlightData();
+            map->slotRedrawFlight();
+            objectTree->slotFlightChanged();
+        }
+      }
 }

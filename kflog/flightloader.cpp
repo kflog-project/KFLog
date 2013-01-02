@@ -43,6 +43,13 @@ bool FlightLoader::openFlight(QFile& flightFile)
       return false;
     }
 
+  if( fInfo.suffix().toLower() == "kfp")
+  {
+      QMessageBox::warning(_mainWindow, QObject::tr("File is empty"),
+          "<html>" + QObject::tr("Cannot open the selected file<BR><B>%1</B><BR>directly. Please open the flight file instead.").arg(flightFile.fileName()) + "</html>", QMessageBox::Ok);
+      return false;
+  }
+
   if(!flightFile.size())
     {
       QMessageBox::warning(_mainWindow, QObject::tr("File is empty"),
@@ -696,17 +703,28 @@ bool FlightLoader::saveQNH(QString OriginalFileName, int QNH)
     return true;
 }
 
-bool FlightLoader::getQNHFromUser(QString OriginalFileName, int & result)
+bool FlightLoader::getQNHFromUser(QString OriginalFileName, int & result, int startValue)
 {
     QInputDialog QNHQueryDialog;
     bool bOK = false;
-    int QNH = QNHQueryDialog.getInt(NULL,"KFlog","Please enter the QNH of the flight (900-1100 hPa). <br>If you cancel 1013 hPa will be used.",1013,900,1100,1,&bOK);
+    int QNH = QNHQueryDialog.getInt(NULL,"KFlog","Please enter the QNH of the flight (900-1100 hPa). <br>If you cancel 1013 hPa will be used.",startValue,900,1100,1,&bOK);
     if (!bOK)
     {
-        QNH = 1013;
+        QNH = startValue;
     }
     bool bOK2 = saveQNH(OriginalFileName, QNH);
     result = QNH;
 
     return bOK && bOK2;
+}
+
+bool FlightLoader::resetQNH(QString OriginalFileName)
+{
+    if ( OriginalFileName.length() == 0)
+    {
+        return false;
+    }
+    int QNH=1013;
+    loadQNH(OriginalFileName,QNH);
+    return getQNHFromUser(OriginalFileName,QNH,QNH);
 }
