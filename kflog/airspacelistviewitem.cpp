@@ -96,7 +96,7 @@ void AirSpaceListViewItem::createChildren()
               AirSpaceName += Violations[i].AirSpace().getName();
 
               QStringList sl = (QStringList() << QString( "Name" ) << AirSpaceName);
-              QTreeWidgetItem* subItem = new QTreeWidgetItem( this, sl );
+              QTreeWidgetItem* subItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(this, sl, Violations[i], m_Flight );
               subItem->setFlags( Qt::ItemIsEnabled );
               QBrush col1 = subItem->foreground( 0 );
               QBrush col2 = subItem->foreground( 1 );
@@ -129,20 +129,13 @@ void AirSpaceListViewItem::createChildren()
               QString InfoString;
               InfoString = Violations[i].AirSpace().getInfoString( false );
               sl = (QStringList() << QString( "Airspace Range" ) << InfoString);
-              QTreeWidgetItem* subsubItem = new QTreeWidgetItem( subItem, sl );
+              QTreeWidgetItem* subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );
               subsubItem->setForeground( 0, col1 );
               subsubItem->setForeground( 1, col2 );
 
               sl = (QStringList() << QString( "Type of Contact" ) << ViolationType);
-              subsubItem = new QTreeWidgetItem( subItem, sl );
-              subsubItem->setFlags( Qt::ItemIsEnabled );
-              subsubItem->setForeground( 0, col1 );
-              subsubItem->setForeground( 1, col2 );
-
-              sl = (QStringList() << QString( "<<Doubleclick here to show>>" ));
               subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
-              subsubItem->setIcon( 0, _mainWindow->getPixmap( "kde_info_16.png" ) );
               subsubItem->setFlags( Qt::ItemIsEnabled );
               subsubItem->setForeground( 0, col1 );
               subsubItem->setForeground( 1, col2 );
@@ -151,7 +144,7 @@ void AirSpaceListViewItem::createChildren()
               Start.setTime_t(m_Flight->getPoint( Violations[i].FirstIndexPointinRoute() ).time );
               sl = (QStringList() << QString( "Start" )
                   << Start.toString( QString( "dd-MM-yyyy hh:mm:ss" ) ));
-              subsubItem = new QTreeWidgetItem( subItem, sl );
+              subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );
               subsubItem->setForeground( 0, col1 );
               subsubItem->setForeground( 1, col2 );
@@ -160,7 +153,7 @@ void AirSpaceListViewItem::createChildren()
               QString FirstID;
               FirstID.sprintf("%d",Violations[i].FirstIndexPointinRoute());
               sl = (QStringList() << QString("First ID") << FirstID);
-              subsubItem = new QTreeWidgetItem( subItem, sl );
+              subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );
               subsubItem->setForeground(0,col1);
               subsubItem->setForeground(1,col2);
@@ -170,7 +163,7 @@ void AirSpaceListViewItem::createChildren()
               End.setTime_t(m_Flight->getPoint( Violations[i].LastIndexPointinRoute() ).time );
               sl = (QStringList() << QString( "End" )
                   << End.toString( QString( "dd-MM-yyyy hh:mm:ss" ) ));
-              subsubItem = new QTreeWidgetItem( subItem, sl );
+              subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );
               subsubItem->setForeground( 0, col1 );
               subsubItem->setForeground( 1, col2 );
@@ -179,7 +172,7 @@ void AirSpaceListViewItem::createChildren()
               QString LastID;
               LastID.sprintf("%d",Violations[i].LastIndexPointinRoute());
               sl = (QStringList() << QString("Last ID") << LastID);
-              subsubItem = new QTreeWidgetItem( subItem, sl );
+              subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );
               subsubItem->setForeground(0,col1);
               subsubItem->setForeground(1,col2);
