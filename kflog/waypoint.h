@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Heiner Lamprecht
-**                   2011 by Axel Pauli
+**                   2011-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -19,7 +19,7 @@
 #ifndef WAYPOINT_H
 #define WAYPOINT_H
 
-#include <time.h>
+#include <ctime>
 
 #include <QPair>
 #include <QPoint>
@@ -29,34 +29,46 @@
 #include "wgspoint.h"
 
 /**
-  * @short Class to contain waypoints
+  * @short Class to contain waypoint data.
   *
   * This class is used to store a waypoint.
   *
   * @author Heiner Lamprecht, Axel Pauli
   *
-  * @date 2003-2011
+  * @date 2003-2013
   *
   * @version $Id$
   */
 
 class Waypoint
 {
-public:
 
-  Waypoint( QString nam = "",
-            WGSPoint oP = WGSPoint(),
-            int typ = -1,
-            int tpType = 0,
-            QString _icao = "",
-            QString _comment = "",
-            QString _country = "",
-            enum Runway::SurfaceType surf=Runway::Unknown,
-            QPair<ushort, ushort> runw = (QPair<ushort, ushort>(0, 0)),
-            float leng = 0.0,
+ public:
+
+  Waypoint() :
+    sector1(0),
+    sector2(0),
+    sectorFAI(0),
+    angle(0.0),
+    type(-1),
+    tpType(0),
+    distance(0.0),
+    elevation(0.0),
+    frequency(0.0),
+    importance(2),
+    fixTime(0)
+    {
+    };
+
+  Waypoint( QString name,
+            WGSPoint oP,
+            int typ,
+            int tpType,
+            QString _icao,
+            QString _comment,
+            QString _country,
             float elev = 0.0,
             float freq = 0.0,
-            bool isLand = false,
             QPoint pP = QPoint(),
             time_t s1 = 0,
             time_t s2 = 0,
@@ -82,7 +94,7 @@ public:
    */
   QString name;
   /**
-   * The original lat/lon-position of the waypoint.
+   * The original WGS84 lat/lon-position of the waypoint.
    */
   WGSPoint origP;
   /**
@@ -123,42 +135,37 @@ public:
    * long name or description (internal only)
    */
   QString description;
+
   /**
    * ICAO name
    */
   QString icao;
+
   /**
    * Comment
    */
   QString comment;
+
   /**
-   * Country where waypoint is located.
+   * Country as two letter code where waypoint is located.
    */
   QString country;
+
   /**
-   * internal surface id
+   * A list of runways is managed by the waypoint object.
    */
-  enum Runway::SurfaceType surface;
+  QList<Runway> rwyList;
+
   /**
-   *
-   */
-  QPair<ushort, ushort> runway;
-  /**
-   *
-   */
-  float length;
-  /**
-   *
+   * Elevation of waypoint.
    */
   float elevation;
+
   /**
-   *
+   * Frequency of waypoint.
    */
   float frequency;
-  /**
-   * flag for landable
-   */
-  bool isLandable;
+
   /**
     * contains an importance indication for the waypoint
     * 0=low

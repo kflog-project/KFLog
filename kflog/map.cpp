@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  1999-2000 by Heiner Lamprecht, Florian Ehinger
-**                   2010-2011 by Axel Pauli
+**                   2010-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -944,6 +944,8 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
         emit taskPlanningEnd();
         emit setStatusBarMsg( tr( "Ready." ) );
 
+        break;
+
       default:
         // Should never happen
         return;
@@ -1161,7 +1163,7 @@ void Map::mousePressEvent(QMouseEvent* event)
                     w->icao = hitElement->getICAO();
                     w->frequency = hitElement->getFrequency();
                     w->country = hitElement->getCountry();
-                    w->isLandable = true;
+                    w->rwyList = hitElement->getRunwayList();
 
                     // That adds the found item to the current waypoint list.
                     emit waypointSelected(w);
@@ -1202,6 +1204,12 @@ void Map::mousePressEvent(QMouseEvent* event)
  */
 void Map::paintEvent( QPaintEvent* event )
 {
+  if( pixBuffer.isNull() )
+    {
+      qWarning() << "Map::paintEvent: Reject paintEvent pixBuffer is Null!";
+      return;
+    }
+
   QPainter painter(this);
 
   painter.drawPixmap( event->rect().left(),
@@ -1211,7 +1219,7 @@ void Map::paintEvent( QPaintEvent* event )
                       event->rect().height() );
 
   // Redraw the flight cursors on request.
-  if( drawFlightCursors == true )
+  if( drawFlightCursors == true && pixFlightCursors.isNull() == false )
     {
       painter.drawPixmap( event->rect().left(),
                           event->rect().top(),
@@ -1221,13 +1229,13 @@ void Map::paintEvent( QPaintEvent* event )
     }
 
   // Draw the flight step cursor at the map on request.
-  if( drawFlightStepCursor == true )
+  if( drawFlightStepCursor == true && pixCursor.isNull() == false )
     {
       painter.drawPixmap( preStepPos.x() - 20, preStepPos.y() - 20, pixCursor );
       drawFlightStepCursor = false;
     }
 
-  if( ! pixZoomRect.isNull() && isDragZoomActive == true )
+  if( isDragZoomActive == true && pixZoomRect.isNull() == false )
     {
       // Draws the zooming rectangle
       painter.drawPixmap( event->rect().left(),
@@ -1592,8 +1600,6 @@ void Map::resizeEvent(QResizeEvent* event)
 {
   if( ! event->size().isEmpty() )
     {
-      pixBuffer = QPixmap( event->size() );
-      pixBuffer.fill(Qt::transparent);
       __redrawMap();
     }
 }
@@ -1620,8 +1626,6 @@ void Map::__redrawMap()
 {
   static QSize lastSize;
 
-  // qDebug() << "Map::__redrawMap()";
-
   if( isDrawing )
     {
       // Queue the redraw request
@@ -1635,6 +1639,8 @@ void Map::__redrawMap()
   if( ! lastSize.isValid() || lastSize != size() )
     {
       lastSize = size();
+      pixBuffer = QPixmap( size() );
+      pixBuffer.fill(Qt::transparent);
       pixAero = QPixmap( size() );
       pixAirspace = QPixmap( size() );
       pixFlight = QPixmap( size() );
@@ -1677,9 +1683,8 @@ void Map::__redrawMap()
 
   if( redrawRequest == true )
     {
-      qDebug( "Map::__redrawMap(): queued redraw event found, schedule Redraw" );
-
       redrawMapTimer->start(500);
+      redrawRequest = false;
     }
 
   isDrawing = false;
@@ -2571,20 +2576,8 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
                   wp->icao = hitElement->getICAO();
                   wp->frequency = hitElement->getFrequency();
                   wp->country = hitElement->getCountry();
-                  wp->runway.first = 0;
-                  wp->runway.second = 0;
-                  wp->length = -1;
-                  wp->surface = Runway::Unknown;
-
-                  if( hitElement->getRunwayNumber() )
-                    {
-                      wp->runway = hitElement->getRunway(0)->getRunwayDirection();
-                      wp->length = hitElement->getRunway(0)->length;
-                      wp->surface = hitElement->getRunway(0)->surface;
-                    }
-
+                  wp->rwyList = hitElement->getRunwayList();
                   wp->comment = hitElement->getComment();
-                  wp->isLandable = hitElement->isLandable();
 
                   found = true;
                   break;
@@ -3009,20 +3002,8 @@ void Map::slotMpNewWaypoint()
               w->icao = hitElement->getICAO();
               w->frequency = hitElement->getFrequency();
               w->country = hitElement->getCountry();
-              w->runway.first = 0;
-              w->runway.second = 0;
-              w->length = 0;
-              w->surface = Runway::Unknown;
-
-              if( hitElement->getRunwayNumber() )
-                {
-                  w->runway = hitElement->getRunway( 0 )->getRunwayDirection();
-                  w->length = hitElement->getRunway( 0 )->length;
-                  w->surface = hitElement->getRunway( 0 )->surface;
-                }
-
+              w->rwyList = hitElement->getRunwayList();
               w->comment = hitElement->getComment();
-              w->isLandable = hitElement->isLandable();
 
               emit waypointSelected( w );
               return;

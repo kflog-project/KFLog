@@ -7,7 +7,7 @@
 
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier
-                               2011 by Axel Pauli
+                               2011-2013 by Axel Pauli
 
     email                : harry@kflog.org
 
@@ -334,7 +334,7 @@ void WaypointTreeView::slotOpenWaypointCatalog()
                                          _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
-  filter.append(tr("All formats") + " (welt2000.txt WELT2000.TXT *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
+  filter.append(tr("All formats") + " (welt2000.txt WELT2000.TXT *.da4 *.DA4 *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
   filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
   filter.append(tr("Cumulus") + " (*.kwp *.KWP);;");
   filter.append(tr("Cambridge") + " (*.dat *.DAT);;");
@@ -532,13 +532,21 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
     }
 
   waypointDlg->frequency->setText( tmp );
-  waypointDlg->runway->setCurrentIndex( w->runway.first );
-  waypointDlg->length->setText(QString("%1").arg(w->length, 0, 'f', 0) );
+
+  Runway rwy;
+
+  if( w->rwyList.size() > 0 )
+    {
+      rwy = w->rwyList[0];
+    }
+
+  waypointDlg->runway->setCurrentIndex( rwy.headings.first );
+  waypointDlg->length->setText(QString("%1").arg(rwy.length, 0, 'f', 0) );
 
   // translate to id
-  waypointDlg->setSurface(w->surface);
+  waypointDlg->setSurface(rwy.surface);
   waypointDlg->comment->setText(w->comment);
-  waypointDlg->isLandable->setChecked(w->isLandable);
+  waypointDlg->isLandable->setChecked(rwy.isOpen);
   waypointDlg->edit = true;
 
   if( waypointDlg->exec() == QDialog::Accepted )
@@ -554,33 +562,40 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
           w->elevation = waypointDlg->getElevation();
           w->icao = waypointDlg->icao->text().toUpper();
           w->frequency = waypointDlg->frequency->text().toFloat();
-          w->runway.first = waypointDlg->runway->currentIndex();
 
-          if( w->runway.first > 0 )
+          rwy.headings.first = waypointDlg->runway->currentIndex();
+
+          if( rwy.headings.first > 0 )
             {
-              int rw1 = w->runway.first;
+              int rw1 = rwy.headings.first;
 
-              w->runway.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18);
+              rwy.headings.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18);
             }
           else
             {
-              w->runway = QPair<ushort, ushort> ( 0, 0 );
+              rwy.headings = QPair<ushort, ushort> ( 0, 0 );
             }
 
           tmp = waypointDlg->length->text();
 
           if( !tmp.isEmpty() )
             {
-              w->length = tmp.toFloat();
+              rwy.length = tmp.toFloat();
             }
           else
             {
-              w->length = 0.0;
+              rwy.length = 0.0;
             }
 
-          w->surface = (enum Runway::SurfaceType) waypointDlg->getSurface();
+          rwy.surface = (enum Runway::SurfaceType) waypointDlg->getSurface();
           w->comment = waypointDlg->comment->text();
-          w->isLandable = waypointDlg->isLandable->isChecked();
+          rwy.isOpen = waypointDlg->isLandable->isChecked();
+
+          if( w->rwyList.size() > 0 )
+            {
+              w->rwyList.removeFirst();
+              w->rwyList.insert(0, rwy);
+            }
 
           currentWaypointCatalog->modified = true;
           slotFillWaypoints();
@@ -787,23 +802,30 @@ void WaypointTreeView::slotFillWaypoints()
 
     item->setText(colFrequency, tmp);
 
-    item->setText(colLandable, w->isLandable == true ? tr("Yes") : "");
+    Runway rwy;
 
-    if( w->runway.first > 0 )
+    if( w->rwyList.size() > 0 )
       {
-        tmp.sprintf( "%02d/%02d", w->runway.first, w->runway.second );
+        rwy = w->rwyList[0];
+      }
+
+    item->setText(colLandable, rwy.isOpen == true ? tr("Yes") : "");
+
+    if( rwy.headings.first > 0 )
+      {
+        tmp.sprintf( "%02d/%02d", rwy.headings.first, rwy.headings.second );
         item->setText(colRunway, tmp);
       }
 
-    if( w->length > 0 )
+    if( rwy.length > 0 )
       {
-        tmp.sprintf( "%.0f m", w->length );
+        tmp.sprintf( "%.0f m", rwy.length );
         item->setText(colLength, tmp);
       }
 
-    if( w->runway.first > 0 )
+    if( rwy.headings.first > 0 )
       {
-        item->setText( colSurface, Runway::item2Text( w->surface ) );
+        item->setText( colSurface, Runway::item2Text( rwy.surface ) );
       }
 
     item->setText(colComment, w->comment);
@@ -1062,27 +1084,17 @@ void WaypointTreeView::slotImportWaypointFromMap()
 
           w->icao = ((Airfield *) s)->getICAO();
           w->frequency = ((Airfield *) s)->getFrequency();
-          w->isLandable = true;
-          a = dynamic_cast<Airfield*>(s); //try casting to an airfield
+          a = dynamic_cast<Airfield*>(s); // try casting to an airfield
 
           if( a )
             {
-              if( a->getRunwayNumber() )
-                {
-                  Runway* runway = a->getRunway( 0 );
-
-                  if( runway )
-                    {
-                      w->runway = runway->getRunwayDirection();
-                      w->length = runway->length;
-                      w->surface = runway->surface;
-                    }
-                }
-          }
+              w->rwyList = a->getRunwayList();
+            }
 
           break;
+
         default:
-          w->isLandable = false;
+
           break;
         }
 

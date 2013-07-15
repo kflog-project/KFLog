@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Eggert Ehmke
-**                   2011 by Axel Pauli
+**                   2011-2013 by Axel Pauli
 **
 **   Parts are derived from LoggerFil
 **   Copyright (C) 2003 Christian Fughe
@@ -20,6 +20,7 @@
 ***********************************************************************/
 
 #include <cmath>
+#include <cstring>
 
 #include <QtCore>
 
@@ -217,26 +218,31 @@ void DA4WPRecord::setTC ()
 
 Waypoint* DA4WPRecord::newWaypoint () const
 {
-  Waypoint* wp = new Waypoint;
+  Waypoint* wp = new Waypoint();
 
   wp->type = type();
   wp->tpType = 0;
   wp->name = name();
   wp->description = "";
   wp->icao = "";
-  wp->origP.setLat((int)(lat() * 600000.0));
-  wp->origP.setLon((int)(lon() * 600000.0));
-  wp->elevation = (int)(elev() * 0.3048); // don't we have conversion constants ?
+  wp->origP.setLat((int)(rint(lat() * 600000.0)));
+  wp->origP.setLon((int)(rint(lon() * 600000.0)));
+  wp->elevation = (rint(elev() * 0.3048)); // don't we have conversion constants ?
   wp->frequency = freq();
-  wp->isLandable = false;
-  wp->length = len(); // length ?!
-#warning "Check if runway is set right!"
-  wp->runway.first = dir(); // direction ?!
-  wp->runway.second = wp->runway.first <= 18 ? wp->runway.first + 18 : wp->runway.first - 18;
-  wp->surface = surface();
   wp->comment = QObject::tr("Imported from Filser");
   wp->importance = 3;
 
+  QPair<ushort, ushort> headings;
+  headings.first = dir();
+  headings.second = ( (dir() > 18) ? dir() - 18 : dir() + 18 );
+
+  Runway rwy( len(),
+              headings,
+              surface(),
+              (headings.first > 0 ? true : false),
+              0.0 );
+
+  wp->rwyList.append(rwy);
   return wp;
 }
 
@@ -248,10 +254,17 @@ void DA4WPRecord::setWaypoint (Waypoint* wp)
   setLon (wp->origP.lon()/600000.0);
   setElev ((short int)round(wp->elevation/0.3048));
   setFreq(wp->frequency);
-  setLen(wp->length);
-#warning "Check if runway is set right!"
-  setDir(wp->runway.first);
-  setSurface((Runway::SurfaceType)wp->surface);
+
+  Runway rwy;
+
+  if( wp->rwyList.size() > 0 )
+    {
+      rwy = wp->rwyList[0];
+    }
+
+  setLen((short) rwy.length);
+  setDir( (short) rwy.getRunwayHeadings().first );
+  setSurface( rwy.surface );
   setTC();
 }
 

@@ -23,34 +23,36 @@
 QHash<int, QString> Runway::surfaceTranslations;
 QStringList Runway::sortedTranslations;
 
-Runway::Runway( const unsigned short len,
-                const QPair<ushort, ushort> dir,
+Runway::Runway( const float len,
+                const QPair<ushort, ushort> headings,
                 const enum SurfaceType surf,
-                const bool open ) :
+                const bool open,
+                const float width ) :
   length(len),
+  width(width),
   surface(surf),
   isOpen(open),
   rwShift(9),
-  direction(dir)
+  headings(headings)
 {
   // Calculate the real runway shift in 1/10 degrees. Used by drawing to find
   // the right icon.
-  if( direction.first <= 36 )
+  if( headings.first <= 36 )
     {
-      rwShift = ( direction.first >= 18 ? direction.first-18 : direction.first );
+      rwShift = ( headings.first >= 18 ? headings.first-18 : headings.first );
     }
 }
 
-void Runway::setRunwayDirections( const QPair<ushort, ushort>& newRwDir )
+void Runway::setRunwayHeadings( const QPair<ushort, ushort>& newRwyHeadings )
 {
   // Calculate the real runway shift in 1/10 degrees. Used by drawing to find
   // the right icon.
-  if( newRwDir.first <= 36 )
+  if( newRwyHeadings.first <= 36 )
     {
-      rwShift = ( direction.first >= 18 ? direction.first-18 : direction.first );
+      rwShift = ( headings.first >= 18 ? headings.first-18 : headings.first );
     }
 
-  direction = newRwDir;
+  headings = newRwyHeadings;
 }
 
 /**

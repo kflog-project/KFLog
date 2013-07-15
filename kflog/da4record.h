@@ -49,9 +49,9 @@ struct DA4WPStruct
   short altitude;
   float f;
   short rw;
-  char rwdir;
-  char rwtype;
-  char tcdir;
+  unsigned char rwdir;
+  unsigned char rwtype;
+  unsigned char tcdir;
   short tc;
 } __attribute__ ((packed));
   

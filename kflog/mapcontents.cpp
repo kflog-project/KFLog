@@ -1813,18 +1813,20 @@ bool MapContents::loadTask(QFile& path)
               w->projP = _globalMapMatrix->wgsToMap(w->origP);
               w->elevation = nm.namedItem("Elevation").toAttr().value().toInt();
               w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
-              w->isLandable = nm.namedItem("Landable").toAttr().value().toInt();
-              w->runway.first = nm.namedItem("Runway").toAttr().value().toInt();
-              w->length = nm.namedItem("Length").toAttr().value().toInt();
-              w->surface = (enum Runway::SurfaceType) nm.namedItem("Surface").toAttr().value().toInt();
               w->comment = nm.namedItem("Comment").toAttr().value();
 
-              if (w->runway.first == 0 && w->length == 0)
-                {
-                  w->runway.first = 0;
-                  w->runway.second = 0;
-                  w->length = -1;
-                }
+              QPair<ushort, ushort> rwyHeadings = QPair<ushort, ushort>(0, 0);
+
+              ushort rwyHeading = nm.namedItem("Runway").toAttr().value().toUShort();
+              rwyHeadings.first = rwyHeading >> 8;
+              rwyHeadings.second = rwyHeading & 0xff;
+
+              bool isLandable = nm.namedItem("Landable").toAttr().value().toInt();
+              int rwyLength = nm.namedItem("Length").toAttr().value().toInt();
+              enum Runway::SurfaceType rwySfc = (enum Runway::SurfaceType) nm.namedItem("Surface").toAttr().value().toInt();
+
+              Runway rwy( rwyLength, rwyHeadings, rwySfc, isLandable );
+              w->rwyList.append( rwy );
 
               wpList.append(w);
             }

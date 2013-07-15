@@ -330,6 +330,7 @@ void WaypointDialog::slotAddWaypoint()
   Waypoint *w = new Waypoint;
   w->name = name->text().left(8).toUpper();
   w->description = description->text();
+  w->comment = comment->text();
   w->country = country->text().toUpper();
   w->type = getWaypointType();
   w->origP.setLat(latitude->KFLogDegree());
@@ -344,29 +345,28 @@ void WaypointDialog::slotAddWaypoint()
 
   w->icao = icao->text().toUpper();
   w->frequency = frequency->text().toFloat();
-  w->runway.first = runway->currentIndex();
+
+  Runway rwy;
+  w->rwyList.append(rwy);
+
+  rwy.headings.first = runway->currentIndex();
 
   if( runway->currentIndex() > 0 )
     {
-      int rw1 = w->runway.first;
+      int rw1 = rwy.headings.first;
 
-      w->runway.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18 );
+      rwy.headings.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18 );
     }
 
   text = length->text();
 
   if( !text.isEmpty() )
     {
-      w->length = text.toFloat();
-    }
-  else
-    {
-      w->length = 0.0;
+      rwy.length = text.toFloat();
     }
 
-  w->surface = getSurface();
-  w->isLandable = isLandable->isChecked();
-  w->comment = comment->text();
+  rwy.surface = getSurface();
+  rwy.isOpen = isLandable->isChecked();
 
   emit addWaypoint(w);
   // clear should not be called when apply was pressed ...

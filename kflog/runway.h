@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c): 2008-2011 Axel Pauli
+**   Copyright (c): 2008-2013 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,7 +25,7 @@
  * This class is used for defining a runway together with its surface and the
  * translation types.
  *
- * \date 2008-2011
+ * \date 2008-2013
  *
  * $Id$
  *
@@ -49,10 +49,24 @@ public:
    */
   enum SurfaceType {Unknown = 0, Grass = 1, Asphalt = 2, Concrete = 3, Sand = 4};
 
-  Runway( const unsigned short len,
-          const QPair<ushort, ushort> dir,
+  /**
+   * Default constructor.
+   */
+  Runway() :
+    length(0.0),
+    width(0.0),
+    surface(Unknown),
+    isOpen(false),
+    rwShift(9),
+    headings(QPair<ushort, ushort> (0, 0))
+    {
+    };
+
+  Runway( const float length,
+          const QPair<ushort, ushort> headings,
           const enum SurfaceType surf,
-          const bool open );
+          const bool open=false,
+          const float width=0.0 );
 
   virtual ~Runway() {};
 
@@ -74,7 +88,12 @@ public:
   /**
    * The length of the runway, given in meters.
    */
-  unsigned short length;
+  float length;
+
+  /**
+   * The width of the runway, given in meters.
+   */
+  float width;
 
   /**
    * The surface of the runway, one of SurfaceType, see above.
@@ -92,26 +111,26 @@ public:
   unsigned short rwShift;
 
   /**
-   * \return The runway directions as pair.
+   * \return The runway headings as pair.
    */
-  QPair<ushort, ushort> getRunwayDirection()
+  QPair<ushort, ushort> getRunwayHeadings()
     {
-      return direction;
+      return headings;
     }
 
   /**
-   * Sets the runway directions.
+   * Sets the runway headings.
    *
-   * \param New Runway directions as pair.
+   * \param New Runway headings as pair.
    */
-  void setRunwayDirections( const QPair<ushort, ushort>& rwDir );
-
-private:
+  void setRunwayHeadings( const QPair<ushort, ushort>& rwyHeadings );
 
   /**
-   * The direction of the runway, given in steps of 1/10 degree (1-36).
+   * The headings of the runway, given in steps of 1/10 degree (1-36).
    */
-  QPair<ushort, ushort> direction;
+  QPair<ushort, ushort> headings;
+
+private:
 
   /**
    * Static pointer to surface translations

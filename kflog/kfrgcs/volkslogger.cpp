@@ -412,15 +412,21 @@ int Volkslogger::readWaypoints(QList<Waypoint*> *waypoints)
 
   for (n = 0; n < vl.database.nwpts; n++) {
     wp = &(vl.database.wpts[n]);
+    Runway rwy;
     frWp = new Waypoint;
+    frWp->rwyList.append(rwy);
     frWp->name = wp->name;
     frWp->name = frWp->name.trimmed();
 
     frWp->origP.setPos((int)(wp->lat * 600000.0), (int)(wp->lon * 600000.0));
-    frWp->isLandable = (wp->typ & VLAPI_DATA::WPT::WPTTYP_L) > 0;
-    if (frWp->isLandable) {
-      frWp->surface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0 ? Runway::Asphalt : Runway::Grass;
+
+    bool isLandable = (wp->typ & VLAPI_DATA::WPT::WPTTYP_L) > 0;
+
+    if (isLandable) {
+      rwy.isOpen = true;
+      rwy.surface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0 ? Runway::Asphalt : Runway::Grass;
     }
+
     frWp->type = (wp->typ & VLAPI_DATA::WPT::WPTTYP_A) > 0 ? BaseMapElement::Airfield : -1;
 
     waypoints->append(frWp);
@@ -450,6 +456,7 @@ int Volkslogger::writeWaypoints(QList<Waypoint*> *waypoints)
   vl.database.wpts = new VLAPI_DATA::WPT[vl.database.nwpts];
 
   wpCnt = 0;
+
   foreach(frWp, *waypoints) {
     // should never happen
     if (wpCnt >= _capabilities.maxNrWaypoints) {
@@ -459,9 +466,17 @@ int Volkslogger::writeWaypoints(QList<Waypoint*> *waypoints)
     strcpy(wp->name, frWp->name.leftJustified(6, ' ', true).toLatin1().data());
     wp->lat = frWp->origP.lat() / 600000.0;
     wp->lon = frWp->origP.lon() / 600000.0;
+
+    Runway rwy;
+
+    if( frWp->rwyList.size() > 0 )
+      {
+        rwy = frWp->rwyList[0];
+      }
+
     wp->typ =
-      (frWp->isLandable ? VLAPI_DATA::WPT::WPTTYP_L : 0) |
-      (frWp->surface == Runway::Asphalt || frWp->surface == Runway::Concrete ? VLAPI_DATA::WPT::WPTTYP_H : 0) |
+      (rwy.isOpen ? VLAPI_DATA::WPT::WPTTYP_L : 0) |
+      (rwy.surface == Runway::Asphalt || rwy.surface == Runway::Concrete ? VLAPI_DATA::WPT::WPTTYP_H : 0) |
       (frWp->type == BaseMapElement::Airfield || frWp->type == BaseMapElement::Gliderfield ||
        frWp->type == BaseMapElement::Airport || frWp->type == BaseMapElement::IntAirport ||
        frWp->type == BaseMapElement::MilAirport || frWp->type == BaseMapElement::CivMilAirport ? VLAPI_DATA::WPT::WPTTYP_A : 0);

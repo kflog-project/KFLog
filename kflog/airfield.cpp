@@ -96,8 +96,8 @@ QString Airfield::getInfoString()
 
           Runway *rw = getRunway(i);
 
-          text += QString("<b>%1/%2</b>").arg( rw->getRunwayDirection().first, 2, 10, QChar('0') )
-                                         .arg( rw->getRunwayDirection().second, 2, 10, QChar('0') );
+          text += QString("<b>%1/%2</b>").arg( rw->getRunwayHeadings().first, 2, 10, QChar('0') )
+                                         .arg( rw->getRunwayHeadings().second, 2, 10, QChar('0') );
           text += " (" + Runway::item2Text( rw->surface ) + ")";
           text += "</td><td>" + QObject::tr("Length:") + "</td><td><b>" +
                   QString("%1 m").arg(rw->length) + "</b><td></tr>";

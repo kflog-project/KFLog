@@ -1,7 +1,7 @@
 ################################################################################
 # Makefile to build a KFLog release based on X11 and Qt4.8.x
 #
-# Copyright (c): 2010-2012 by Axel Pauli (axel@kflog.org)
+# Copyright (c): 2010-2013 by Axel Pauli (axel@kflog.org)
 # 
 # $Id$
 #
@@ -13,13 +13,14 @@
 # Version is determined from the header file target.h
 VERSION=$(shell cat kflog/target.h | grep KFLOG_VERSION | cut -d '"' -f 2)
 
-# current Ubuntu release, used in package name
-UBUNTU_REL=12.10
+# current Linux release, used in package name
+DIST_NAME=$(shell lsb_release -s -i)
+DIST_REL=$(shell lsb_release -s -r)
 
 KFLOG_REL=kflog-$(VERSION)
 
 # Debian package build directories
-KFLOG_DEB_ROOT=dpkg
+KFLOG_DEB_ROOT=dpkg/$(DIST_NAME)
 KFLOG_DEB=$(KFLOG_DEB_ROOT)/$(KFLOG_REL)
 
 QTVERSION=$(shell qmake -query QT_VERSION)
@@ -133,8 +134,8 @@ dpkg_install:
 .PHONY : copy2web
 
 copy2web:
-	-scp -C ChangeLog web31_axel@kflog.org:/srv/www/web31/web/fileadmin/user_upload/kflog_downloads/src/ChangeLog_$(VERSION)_`date '+%F'`
-	scp -C dpkg/kflog_$(VERSION)_i386.changes \
-	       web31_axel@kflog.org:/srv/www/web31/web/fileadmin/user_upload/kflog_downloads/src/kflog_$(VERSION)_Ubuntu$(UBUNTU_REL)_i386.changes
-	scp -C dpkg/kflog_$(VERSION)_i386.deb \
-               web31_axel@kflog.org:/srv/www/web31/web/fileadmin/user_upload/kflog_downloads/src/kflog_$(VERSION)_Ubuntu$(UBUNTU_REL)_i386.deb
+	-scp -C ChangeLog web31_axel@kflog.org:/srv/www/web31/web/fileadmin/user_upload/kflog_downloads/src/ChangeLog
+	scp -C $(KFLOG_DEB_ROOT)/kflog_$(VERSION)_i386.changes \
+	       web31_axel@kflog.org:/srv/www/web31/web/fileadmin/user_upload/kflog_downloads/src/kflog_$(VERSION)_$(DIST_NAME)$(DIST_REL)_i386.changes
+	scp -C $(KFLOG_DEB_ROOT)/kflog_$(VERSION)_i386.deb \
+         web31_axel@kflog.org:/srv/www/web31/web/fileadmin/user_upload/kflog_downloads/src/kflog_$(VERSION)_$(DIST_NAME)$(DIST_REL)_i386.deb

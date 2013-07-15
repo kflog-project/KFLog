@@ -791,7 +791,7 @@ int Cambridge::readWaypoints(QList<Waypoint*> *waypoints)
     frWp->origP.setPos(lat, lon);
     frWp->elevation = elv;
     frWp->type = type;
-    frWp->isLandable = landable;
+    // frWp->isLandable = landable;
     waypoints->append(frWp);
   }
   return FR_OK;

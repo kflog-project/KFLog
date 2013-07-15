@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by André Somers
-**                   2011 by Axel Pauli
+**                   2011-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -564,11 +564,19 @@ void ObjectTree::slotSaveTask()
     child.setAttribute("Longitude", w->origP.lon());
     child.setAttribute("Elevation", w->elevation);
     child.setAttribute("Frequency", w->frequency);
-    child.setAttribute("Landable", w->isLandable);
-    child.setAttribute("Runway", w->runway.first);
-    child.setAttribute("Length", w->length);
-    child.setAttribute("Surface", w->surface);
     child.setAttribute("Comment", w->comment);
+
+    Runway rwy;
+
+    if( w->rwyList.size() > 0 )
+      {
+        rwy = w->rwyList[0];
+      }
+
+    child.setAttribute("Landable", rwy.isOpen);
+    child.setAttribute("Runway", rwy.headings.first * 256 + rwy.headings.second);
+    child.setAttribute("Length", (int) rwy.length);
+    child.setAttribute("Surface", rwy.surface);
 
     t.appendChild(child);
   }
@@ -648,11 +656,19 @@ void ObjectTree::slotSaveAllTask()
         child.setAttribute("Longitude", w->origP.lon());
         child.setAttribute("Elevation", w->elevation);
         child.setAttribute("Frequency", w->frequency);
-        child.setAttribute("Landable", w->isLandable);
-        child.setAttribute("Runway", w->runway.first);
-        child.setAttribute("Length", w->length);
-        child.setAttribute("Surface", w->surface);
         child.setAttribute("Comment", w->comment);
+
+        Runway rwy;
+
+        if( w->rwyList.size() > 0 )
+          {
+            rwy = w->rwyList[0];
+          }
+
+        child.setAttribute("Landable", rwy.isOpen);
+        child.setAttribute("Runway", rwy.headings.first * 256 + rwy.headings.second);
+        child.setAttribute("Length", (int) rwy.length);
+        child.setAttribute("Surface", rwy.surface);
 
         t.appendChild(child);
       }
