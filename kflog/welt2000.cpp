@@ -6,7 +6,7 @@
  **
  ************************************************************************
  **
- **   Copyright (c):  2006-2012 by Axel Pauli, axel@kflog.org
+ **   Copyright (c):  2006-2013 by Axel Pauli, axel@kflog.org
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -52,7 +52,8 @@ extern QSettings _settings;
 extern MapContents*  _globalMapContents;
 extern MapMatrix*    _globalMapMatrix;
 
-Welt2000::Welt2000()
+Welt2000::Welt2000() :
+  c_homeRadius(0.0)
 {
   // prepare base mappings of KFLog
   c_baseTypeMap.insert( "IntAirport", BaseMapElement::IntAirport );
@@ -75,8 +76,18 @@ Welt2000::~Welt2000()
 
 bool Welt2000::check4update()
 {
+  static bool hasCalled = false;
+
+  if( hasCalled == true )
+    {
+      // This method is callable only once to avoid a call dead lock.
+      return false;
+    }
+
+  hasCalled = true;
+
   // Update check string for Welt2000, must be adapted after every Welt2000 update!
-  const char* w2000CheckString = "$ UPDATED AT: 12.SEP.2012";
+  const char* w2000CheckString = "$ UPDATED AT: 03.FEB.2013";
 
   // Line number in welt2000 file, on which the w2000CheckString is expected.
   // Note! Line counting starts with 1.
