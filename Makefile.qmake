@@ -102,7 +102,7 @@ dpkg_make:
 	cd $(KFLOG_DEB); \
 	export DEBEMAIL='hoeth@linta.de'; \
 	export DEBFULLNAME='Hendrik Hoeth'; \
-	echo '\n' | dh_make --packagename $(KFLOG_REL) -c GPL -s --native $(DH_MAKE_OPT)
+	echo '\n' | dh_make --packagename $(KFLOG_REL) -c GPL -s --native -us -uc $(DH_MAKE_OPT)
 	cd $(KFLOG_DEB)/dpkg/control; \
 	cp control rules prerm postinst ../../debian/; \
 	sed -e "s/__VERSION__/$(VERSION)/g" -e "s/__DATE__/$(DATE)/g" copyright > ../../debian/copyright; \
