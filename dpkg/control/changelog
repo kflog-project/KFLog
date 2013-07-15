@@ -1,3 +1,22 @@
+kflog (4.7.1) unstable; urgency=low
+
+  * Bugfix: Endless loop fixed in Welt2000 update procedure.
+  
+  * Waypoint class modified. All runway attributes are put into a Runway class 
+    object and the single Runway objects into a runway list. Therefore a waypoint
+    can have several runways.
+    
+  * Default constructor added to Waypoint class.
+    
+  * WaypointCatalog class, methods read/write binary adapted to latest Cumulus
+    release 5.5.2.
+    
+  * Default constructor added to Runway class.
+
+  * Build with Ubuntu 13.04 and Qt4.8.4
+
+ -- Axel Pauli <kflog.cumulus@gmail.com>  Mon, 15 Jul 2013 20:05:12 +0200
+
 kflog (4.7.0) unstable; urgency=low
 
   * added airspace checking (partly backport from Cumulus) by Matthias Degenkolb
