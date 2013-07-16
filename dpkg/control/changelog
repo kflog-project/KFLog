@@ -13,7 +13,9 @@ kflog (4.7.1) unstable; urgency=low
     
   * Default constructor added to Runway class.
 
-  * Build with Ubuntu 13.04 and Qt4.8.4
+  * Build with Linux Ubuntu 13.04 and Qt4.8.4
+  
+  * Build with Linux Debian 7.1 and Qt4.8.2
 
  -- Axel Pauli <kflog.cumulus@gmail.com>  Mon, 15 Jul 2013 20:05:12 +0200
 
