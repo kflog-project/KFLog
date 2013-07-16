@@ -1382,16 +1382,18 @@ QList<Flight::AirSpaceIntersection> Flight::getFlightAirSpaceIntersections(unsig
     for ( int i = 0 ; i < route.count(); i++)
     {
         AltitudeCollection AltitudesForI;
-        AltitudesForI.gpsAltitude = Altitude(route[i]->gpsHeight);
-        AltitudesForI.gndAltitude = Altitude((route[i]->gpsHeight) - (route[i]->surfaceHeight));
+        AltitudesForI.gpsAltitude = Altitude(route[i]->height);
+        AltitudesForI.gndAltitude = Altitude((route[i]->height) - (route[i]->surfaceHeight));
         AltitudesForI.gndAltitudeError = Altitude(0);
-        AltitudesForI.stdAltitude.setStdAltitude(route[i]->gpsHeight,route[i]->QNH);
+        AltitudesForI.stdAltitude.setStdAltitude(route[i]->height,route[i]->qnh);
 
-        for (int j = 0 ; j < route[i]->Airspaces.count() ; j++)
+        for (int j = 0 ; j < route[i]->airspaces.count() ; j++)
         {
-            Airspace & Candidate = route[i]->Airspaces[j];
+            Airspace& Candidate = route[i]->airspaces[j];
             Airspace::ConflictType CandidateConflict = Candidate.conflicts(AltitudesForI,*awd);
+
             bool bFoundInList = false;
+
             for ( int k = 0 ; k < RetVal.count() ; k++)
             {
                 // check if the current Airspace is already in the list
@@ -1400,13 +1402,14 @@ QList<Flight::AirSpaceIntersection> Flight::getFlightAirSpaceIntersections(unsig
                         CurrentIntersection.LastIndexPointinRoute() >= i &&
                         Candidate == CurrentIntersection.AirSpace())
                 {
-                    if ((NULL == awd) || (CurrentIntersection.Type() == CandidateConflict))
+                    if ((0 == awd) || (CurrentIntersection.Type() == CandidateConflict))
                     {
                         bFoundInList = true;
                         break;
                     }
                 }
             }
+
             if (!bFoundInList)
             {
                 // we don't know about the airspace yet
@@ -1419,14 +1422,15 @@ QList<Flight::AirSpaceIntersection> Flight::getFlightAirSpaceIntersections(unsig
                 {
                     bFound = false;
                     AltitudeCollection AltitudesForM;
-                    AltitudesForM.gpsAltitude = Altitude(route[m]->gpsHeight);
-                    AltitudesForM.gndAltitude = Altitude((route[m]->gpsHeight) - (route[m]->surfaceHeight));
+                    AltitudesForM.gpsAltitude = Altitude(route[m]->height);
+                    AltitudesForM.gndAltitude = Altitude((route[m]->height) - (route[m]->surfaceHeight));
                     AltitudesForM.gndAltitudeError = Altitude(0);
-                    AltitudesForM.stdAltitude.setStdAltitude(route[m]->gpsHeight,1013);
+                    AltitudesForM.stdAltitude.setStdAltitude(route[m]->height, 1013);
 
-                    for ( int n = 0 ; n < route[m]->Airspaces.count() ; n++)
+                    for ( int n = 0 ; n < route[m]->airspaces.count() ; n++)
                     {
-                        Airspace & Current = route[m]->Airspaces[n];
+                        Airspace& Current = route[m]->airspaces[n];
+
                         if (Candidate == Current &&
                                 ( Candidate.getLowerL() == Current.getLowerL() ) &&
                                 ( Candidate.getLowerT() == Current.getLowerT() ) &&
@@ -1439,6 +1443,7 @@ QList<Flight::AirSpaceIntersection> Flight::getFlightAirSpaceIntersections(unsig
                            break;
                         }
                     }
+
                     if (false == bFound)
                     {
                         Last = m-1;
@@ -1448,12 +1453,12 @@ QList<Flight::AirSpaceIntersection> Flight::getFlightAirSpaceIntersections(unsig
                     //      Point was found -> test the next point
                 }
 
-                Airspace::ConflictType ConflictType = (NULL != awd)?(CandidateConflict):Airspace::None;
+                Airspace::ConflictType ConflictType = (0 != awd) ? (CandidateConflict) : Airspace::None;
 
-                RetVal.append(AirSpaceIntersection(Candidate,First,Last,ConflictType));
+                RetVal.append(AirSpaceIntersection(Candidate, First, Last, ConflictType));
             }
         }
     }
 
-    return RetVal;
+  return RetVal;
 }

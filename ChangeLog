@@ -1,21 +1,31 @@
 $Id$
 
-2013-07-15 Axel Pauli <kflog.cumulus@gmail.com>
+2013-07-16 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Bugfix: Endless loop fixed in Welt2000 update procedure.
   
   * Waypoint class modified. All runway attributes are put into a Runway class 
-    object and the single Runway objects into a runway list. Therefore a waypoint
+    object and the single Runway objects into a runway list. Now a waypoint
     can have several runways.
     
   * Default constructor added to Waypoint class.
     
   * WaypointCatalog class, methods read/write binary adapted to latest Cumulus
     release 5.5.2.
+
+  * Bugfix: Waypoint file selection dialog did not contain *.da4 filter entry for
+    all items.
+    
+  * Bugfix: Airspace violations must be calculated with the barometical altitude
+    and not with the GPS altitude. Airspace contacts limited to violations all
+    other can become too much. Altitude info added to begin and end of airspace
+    violation.
     
   * Default constructor added to Runway class.
 
-  * Build with Ubuntu 13.04 and Qt4.8.4
+  * Build with Linux Ubuntu 13.04 and Qt4.8.4
+  
+  * Build with Linux Debian 7.1 and Qt4.8.2
 
 2013-01-02 Matthias Degenkolb <matthias.degenkolb@googlemail.com>
   

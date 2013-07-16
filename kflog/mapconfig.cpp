@@ -603,14 +603,14 @@ QPen MapConfig::getDrawPen(FlightPoint* fP, float va_min/*=-10*/, float va_max/*
 
                Airspace::ConflictType HighestConflict = Airspace::None;
 
-               for ( int k = 0 ; k < fP->Airspaces.count() ; k++)
+               for ( int k = 0 ; k < fP->airspaces.count() ; k++)
                {
                    struct AltitudeCollection AltitudeColl;
                    AltitudeColl.gpsAltitude = ::Altitude(fP->gpsHeight);
                    AltitudeColl.gndAltitude = ::Altitude((fP->gpsHeight) - (fP->surfaceHeight));
                    AltitudeColl.gndAltitudeError = ::Altitude(0);
-                   AltitudeColl.stdAltitude.setStdAltitude(fP->gpsHeight,fP->QNH);
-                   Airspace::ConflictType Current = fP->Airspaces[k].conflicts(AltitudeColl,awd);
+                   AltitudeColl.stdAltitude.setStdAltitude(fP->gpsHeight,fP->qnh);
+                   Airspace::ConflictType Current = fP->airspaces[k].conflicts(AltitudeColl,awd);
                    HighestConflict = (Current > HighestConflict)?Current:HighestConflict;
                }
                switch (HighestConflict)

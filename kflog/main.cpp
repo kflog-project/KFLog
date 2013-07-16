@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001      by Heiner Lamprecht
-**                   2010-2011 by Axel Pauli
+**                   2010-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -22,14 +22,14 @@
  * \brief Main of KFLog
  *
  * This file contains the start procedure of the KFLog GUI. KFLog is a C++
- * Application built with the QT/X11 SDK from Nokia. Qt is a cross-platform
+ * Application built with the QT/X11 SDK from Digia. Qt is a cross-platform
  * application and UI framework. See here for more information:
  *
- * http://qt.nokia.com
+ * http://qt-project.org/
  *
- * KFLog is built with the release 4.7.x.
+ * KFLog is built with the release 4.8.x.
  *
- * \date 2001-2011
+ * \date 2001-2013
  *
  * \version $Id$
  */

@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  1999-2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011      by Axel Pauli
+**                   2011-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,7 +25,7 @@
  *
  * This class defines all attributes of one flight point.
  *
- * \date 1999-2011
+ * \date 1999-2013
  *
  * \version $Id$
  */
@@ -51,6 +51,7 @@ public:
     gpsHeight(0),
     engineNoise(-1),
     surfaceHeight(-1),
+    qnh(0),
     time(0),
     dH(0),
     dT(0),
@@ -87,7 +88,7 @@ public:
 
   /** The current QNH
   *   set by flightloader.cpp */
-  int QNH;
+  int qnh;
 
   /** The time, the point was registered by the logger.
   *   set by flightloader.cpp */
@@ -127,8 +128,7 @@ public:
 
   /** all airspaces at this coordinate, may also be above or below the point
     */
-  QList<Airspace> Airspaces;
-
+  QList<Airspace> airspaces;
 };
 
 #endif

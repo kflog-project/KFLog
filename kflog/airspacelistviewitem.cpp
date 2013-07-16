@@ -68,8 +68,8 @@ void AirSpaceListViewItem::createChildren()
 //#define AIRSPACELISTVIEWITEM_EXTENDED_TRACE
   if( m_Flight != 0 )
     {
-      setText( 0, QString( "AirSpace" ) );
-      setText( 1, QString( "violations / intersections" ) );
+      setText( 0, QObject::tr( "Airspace" ) );
+      setText( 1, QObject::tr( "Violations / Contacts" ) );
 
       // Goal of awd: in vertical view glider is either
       // - below
@@ -86,64 +86,79 @@ void AirSpaceListViewItem::createChildren()
 
       QList<Flight::AirSpaceIntersection> Violations =
           m_Flight->getFlightAirSpaceIntersections( 2038, 0, &awd );
+
       if( Violations.count() > 0 )
         {
           for( int i = 0; i < Violations.count(); i++ )
             {
               QString AirSpaceName;
+
               AirSpaceName += Airspace::getTypeName( Violations[i].AirSpace().getObjectType() );
               AirSpaceName += " ";
               AirSpaceName += Violations[i].AirSpace().getName();
-
-              QStringList sl = (QStringList() << QString( "Name" ) << AirSpaceName);
-              QTreeWidgetItem* subItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(this, sl, Violations[i], m_Flight );
-              subItem->setFlags( Qt::ItemIsEnabled );
-              QBrush col1 = subItem->foreground( 0 );
-              QBrush col2 = subItem->foreground( 1 );
 
               QString ViolationType;
 
               switch( Violations[i].Type() )
                 {
                 case Airspace::Inside:
-                  ViolationType = "INSIDE";
-                  col1 = QBrush( Qt::red );
-                  col2 = QBrush( Qt::red );
+                  ViolationType = QObject::tr("Inside");
                   break;
                 case Airspace::NearBelow:
                 case Airspace::VeryNearBelow:
-                  ViolationType = "Below";
+                  ViolationType = QObject::tr("Below");
+                  continue;
                   break;
                 case Airspace::NearAbove:
                 case Airspace::VeryNearAbove:
-                  ViolationType = "Above";
+                  ViolationType = QObject::tr("Above");
+                  continue;
                   break;
                 case Airspace::None:
                 default:
-                  ViolationType = "None";
+                  ViolationType = QObject::tr("None");
+                  continue;
                   break;
                 }
+
+              QStringList sl = (QStringList() << QObject::tr( "Name" ) << AirSpaceName);
+              QTreeWidgetItem* subItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(this, sl, Violations[i], m_Flight );
+              subItem->setFlags( Qt::ItemIsEnabled );
+
+              QBrush col1 = subItem->foreground( 0 );
+              QBrush col2 = subItem->foreground( 1 );
+
+              if( Violations[i].Type() == Airspace::Inside )
+                {
+                  col1 = QBrush( Qt::red );
+                  col2 = QBrush( Qt::red );
+                }
+
               subItem->setForeground( 0, col1 );
               subItem->setForeground( 1, col2 );
 
               QString InfoString;
               InfoString = Violations[i].AirSpace().getInfoString( false );
-              sl = (QStringList() << QString( "Airspace Range" ) << InfoString);
+              sl = (QStringList() << QObject::tr( "Range" ) << InfoString);
               QTreeWidgetItem* subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );
               subsubItem->setForeground( 0, col1 );
               subsubItem->setForeground( 1, col2 );
 
-              sl = (QStringList() << QString( "Type of Contact" ) << ViolationType);
+              sl = (QStringList() << QObject::tr( "Kind" ) << ViolationType);
               subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );
               subsubItem->setForeground( 0, col1 );
               subsubItem->setForeground( 1, col2 );
 
-              QDateTime Start;
-              Start.setTime_t(m_Flight->getPoint( Violations[i].FirstIndexPointinRoute() ).time );
-              sl = (QStringList() << QString( "Start" )
-                  << Start.toString( QString( "dd-MM-yyyy hh:mm:ss" ) ));
+              QDateTime Begin;
+              Begin.setTime_t(m_Flight->getPoint( Violations[i].FirstIndexPointinRoute() ).time );
+              Altitude altBegin(m_Flight->getPoint( Violations[i].FirstIndexPointinRoute() ).height);
+
+              sl = (QStringList() << QObject::tr( "Begin" )
+                                  << Begin.toString( QString( "dd-MM-yyyy hh:mm:ss" ) )
+                                  + QObject::tr( " at " ) + altBegin.getText(true, 0) );
+
               subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );
               subsubItem->setForeground( 0, col1 );
@@ -152,7 +167,7 @@ void AirSpaceListViewItem::createChildren()
 #ifdef AIRSPACELISTVIEWITEM_EXTENDED_TRACE
               QString FirstID;
               FirstID.sprintf("%d",Violations[i].FirstIndexPointinRoute());
-              sl = (QStringList() << QString("First ID") << FirstID);
+              sl = (QStringList() << QObject::tr("First ID") << FirstID);
               subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );
               subsubItem->setForeground(0,col1);
@@ -161,8 +176,12 @@ void AirSpaceListViewItem::createChildren()
 
               QDateTime End;
               End.setTime_t(m_Flight->getPoint( Violations[i].LastIndexPointinRoute() ).time );
-              sl = (QStringList() << QString( "End" )
-                  << End.toString( QString( "dd-MM-yyyy hh:mm:ss" ) ));
+              Altitude altEnd(m_Flight->getPoint( Violations[i].LastIndexPointinRoute() ).height);
+
+              sl = (QStringList() << QObject::tr( "End" )
+                                  << End.toString( QString( "dd-MM-yyyy hh:mm:ss" ) )
+                                  + QObject::tr( " at " ) + altEnd.getText(true, 0) );
+
               subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );
               subsubItem->setForeground( 0, col1 );
@@ -171,7 +190,7 @@ void AirSpaceListViewItem::createChildren()
 #ifdef AIRSPACELISTVIEWITEM_EXTENDED_TRACE
               QString LastID;
               LastID.sprintf("%d",Violations[i].LastIndexPointinRoute());
-              sl = (QStringList() << QString("Last ID") << LastID);
+              sl = (QStringList() << QObject::tr("Last ID") << LastID);
               subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );
               subsubItem->setForeground(0,col1);
@@ -181,7 +200,7 @@ void AirSpaceListViewItem::createChildren()
         }
       else
         {
-          QStringList sl = (QStringList() << QString( "<<none found>>" ));
+          QStringList sl = (QStringList() << QObject::tr( "<<none found>>" ));
           QTreeWidgetItem* subItem = new QTreeWidgetItem( this, sl );
           subItem->setFlags( Qt::ItemIsEnabled );
         }

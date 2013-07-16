@@ -55,6 +55,7 @@ class FlightLoader
   bool resetQNH(QString OriginalFileName);
 
   private:
+
   bool loadQNH(QString OriginalFileName, int & result);
   bool saveQNH(QString OriginalFileName, int QNH);
   bool getQNHFromUser(QString OriginalFileName, int & result, int startValue = 1013);
