@@ -20,6 +20,10 @@ contains(QT_VERSION, ^4\\.[6]\\..*) {
     
 TEMPLATE = app
 
+# Put all generated objects into an extra directory
+OBJECTS_DIR = .obj
+MOC_DIR     = .obj
+
 LIBS += -ldl
 
 # Map and GUI icons are handled by the Qt resource system
