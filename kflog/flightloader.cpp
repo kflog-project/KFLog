@@ -348,17 +348,17 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
           // get airspaces at this coordinate
           for (int i = 0 ; i < loadedAirspaces.count(); i++)
-          {
+            {
               const QPolygon& CandidatePolygon = loadedAirspaces[i].getPolygon();
 
               if (!CandidatePolygon.empty())
-              {
+                {
                   if (CandidatePolygon.containsPoint(newPoint.projP, Qt::OddEvenFill))
-                  {
+                    {
                       newPoint.airspaces.append(loadedAirspaces[i]);
-                  }
-              }
-          }
+                    }
+                }
+            }
 
           if(s.mid(24,1) == "V") //isValid = false;
             {

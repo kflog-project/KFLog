@@ -1364,7 +1364,6 @@ m_AirSpace(other.m_AirSpace), m_TypeOfIntersection(other.m_TypeOfIntersection),
 m_FirstPointIndexinRoute(other.m_FirstPointIndexinRoute),m_LastPointIndexinRoute(other.m_LastPointIndexinRoute)
 {}
 
-
 QList<Flight::AirSpaceIntersection> Flight::getFlightAirSpaceIntersections(unsigned int start, unsigned int end, AirspaceWarningDistance * awd)
 {
     QList<Flight::AirSpaceIntersection> RetVal;

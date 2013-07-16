@@ -208,7 +208,9 @@ class Flight : public BaseFlightElement
    * detect and return all airspace intersections and/or violations
    * @return a list of airspace intersections
    */
-  QList<AirSpaceIntersection> getFlightAirSpaceIntersections(unsigned int start = 0, unsigned int end = 0, AirspaceWarningDistance * awd = NULL);
+  QList<AirSpaceIntersection> getFlightAirSpaceIntersections(unsigned int start = 0,
+                                                             unsigned int end = 0,
+                                                             AirspaceWarningDistance* awd = 0);
   /**
    * @return the date of the flight.
    */
