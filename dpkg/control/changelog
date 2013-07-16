@@ -17,8 +17,9 @@ kflog (4.7.1) unstable; urgency=low
   * Bugfix: Airspace violations must be calculated with the barometical altitude
     and not with the GPS altitude. Airspace contacts limited to violations all
     other can become too much. Altitude info added to begin and end of airspace
-    violation.
-    
+    violation. Airspaces must be loaded again, reuse already loaded airspaces
+    from MapContent.
+     
   * Default constructor added to Runway class.
 
   * Build with Linux Ubuntu 13.04 and Qt4.8.4

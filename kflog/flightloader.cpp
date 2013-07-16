@@ -31,6 +31,7 @@
 
 extern MainWindow* _mainWindow;
 extern QSettings   _settings;
+extern MapContents* _globalMapContents;
 
 bool FlightLoader::openFlight(QFile& flightFile)
 {
@@ -119,12 +120,8 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
   QList<bOption> options;
 
-  // TODO airspaces are already loaded, take them
-
-  // load airspaces
-  QList<Airspace> AllAirSpaces;
-  OpenAirParser oap;
-  oap.load(AllAirSpaces);
+  // Get all loaded airspaces from MapContent.
+  SortableAirspaceList& loadedAirspaces = _globalMapContents->getAirspaceList();
 
   int QNH = 0;
 
@@ -348,18 +345,19 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           newPoint.gpsHeight = gpsAltTemp;
           newPoint.qnh = QNH;
           newPoint.airspaces.clear();
+
           // get airspaces at this coordinate
-          for (int i = 0 ; i < AllAirSpaces.count(); i++)
+          for (int i = 0 ; i < loadedAirspaces.count(); i++)
           {
-              const QPolygon & CandidatePolygon = AllAirSpaces[i].getPolygon();
+              const QPolygon& CandidatePolygon = loadedAirspaces[i].getPolygon();
+
               if (!CandidatePolygon.empty())
               {
-                  if (CandidatePolygon.containsPoint(newPoint.projP,Qt::OddEvenFill))
+                  if (CandidatePolygon.containsPoint(newPoint.projP, Qt::OddEvenFill))
                   {
-                      newPoint.airspaces.append(AllAirSpaces[i]);
+                      newPoint.airspaces.append(loadedAirspaces[i]);
                   }
               }
-
           }
 
           if(s.mid(24,1) == "V") //isValid = false;
