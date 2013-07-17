@@ -13,7 +13,7 @@
 **
 **                :  2008, 2009 Improvements by Constantijn Neeteson
 **
-**                :  2011 Portage to Qt4 by Axel Pauli
+**                :  2011-2013 Portage to Qt4 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,11 +25,13 @@
 #include <cmath>
 #include <cstdlib>
 
-#include <QtDebug>
 #include <QtGui>
 
+#include "airspace.h"
+#include "airspacewarningdistance.h"
 #include "flight.h"
 #include "mapcalc.h"
+#include "mapcontents.h"
 #include "mapmatrix.h"
 #include "optimizationwizard.h"
 #include "wgspoint.h"
@@ -70,6 +72,8 @@
       wpL.last()->angle = -100; \
       wpL.last()->fixTime = route.at( a )->time;
 
+extern MapContents* _globalMapContents;
+
 Flight::Flight( const QString& fName,
                 const QString& recID,
                 const QList<FlightPoint*>& r,
@@ -78,8 +82,7 @@ Flight::Flight( const QString& fName,
                 const QString& gID,
                 int cClass,
                 const QList<Waypoint*>& wpL,
-                const QDate& d,
-                QList<AirSpaceIntersection>& asiList )
+                const QDate& d )
   : BaseFlightElement("flight", BaseMapElement::Flight, fName),
     recorderID(recID),
     pilotName(pName),
@@ -101,13 +104,14 @@ Flight::Flight( const QString& fName,
     optimized(false),
     nAnimationIndex(0),
     bAnimationActive(false),
-    m_airspaceIntersections(asiList)
+    taskTimesSet(false)
 {
   origTask.checkWaypoints(route, gliderType);
 
   __calculateBasicInformation();
   __checkMaxMin();
   __flightState();
+  calAirSpaceIntersections();
 
   header.append(pilotName);
   header.append(gliderID);
@@ -118,7 +122,6 @@ Flight::Flight( const QString& fName,
   header.append(getDistance());
   header.append(getPoints());
   header.append(recorderID);
-  taskTimesSet=false;
 }
 
 Flight::~Flight()
@@ -405,11 +408,6 @@ unsigned int Flight::__calculateBestTask( unsigned int start[],
   return numSteps;
 }
 
-bool Flight::__isVisible() const
-{
-  return true;
-}
-
 void Flight::printMapElement(QPainter* targetPainter, bool isText)
 {
   // qDebug() << "Flight::printMapElement()";
@@ -457,7 +455,7 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
 
 bool Flight::drawMapElement( QPainter* targetPainter )
 {
-  if( !__isVisible() )
+  if( ! isVisible() )
     {
       return false;
     }
@@ -890,8 +888,6 @@ QString Flight::getPoints(bool isOrig)
 int Flight::getCompetitionClass() const  { return competitionClass; }
 
 time_t Flight::getLandTime() const { return landTime; }
-
-QString Flight::getPilot() const { return pilotName; }
 
 time_t Flight::getStartTime() const { return startTime; }
 
@@ -1356,4 +1352,117 @@ void Flight::reProject()
 
   origTask.reProject();
   optimizedTask.reProject();
+  calAirSpaceIntersections();
+}
+
+void Flight::calAirSpaceIntersections()
+{
+  // List with finished airspace intersections
+  m_airspaceIntersections.clear();
+
+  if( route.size() == 0 )
+    {
+      return;
+    }
+
+  // Get all loaded airspaces from MapContent.
+  SortableAirspaceList& loadedAirspaces = _globalMapContents->getAirspaceList();
+
+  // List with started airspace intersections
+  QList<Flight::AirSpaceIntersection> asStartIntersections;
+
+  for( int ridx = 0; ridx < route.size(); ridx++ )
+    {
+      FlightPoint* fp = route.at(ridx);
+
+      // Check for airspace violations at the current coordinate.
+      AltitudeCollection altitudesForI;
+      altitudesForI.pressureAltitude = Altitude(fp->height);
+      altitudesForI.gpsAltitude = Altitude(fp->gpsHeight);
+      altitudesForI.gndAltitude = Altitude((fp->height) - (fp->surfaceHeight));
+      altitudesForI.gndAltitudeError = Altitude(0);
+      altitudesForI.stdAltitude.setStdAltitude(fp->height, fp->qnh);
+
+      AirspaceWarningDistance awdForI;
+
+      // look for violated airspaces
+      for ( int i = 0 ; i < loadedAirspaces.count(); i++ )
+        {
+          bool insideAs = false;
+
+          Airspace& as = loadedAirspaces[i];
+
+          // At first check, if the projected coordinate lays inside the
+          // airspace polygon.
+          if( as.isProjectedPointInside( fp->projP ) )
+            {
+              Airspace::ConflictType conflict =
+                  loadedAirspaces[i].conflicts( altitudesForI, awdForI );
+
+              if( conflict == Airspace::Inside )
+                {
+                  insideAs = true;
+                }
+            }
+
+          if( insideAs == true )
+            {
+              fp->isAirspaceIntersected = true;
+
+              bool violationIsKnown = false;
+
+              // Check, if violated airspace is already handled by us.
+              for( int i = 0; i < asStartIntersections.size(); i++ )
+                {
+                  Flight::AirSpaceIntersection& asi = asStartIntersections[i];
+
+                  if( asi.AirSpace() == &as )
+                    {
+                      // update end point
+                      asi.SetLastIndexPointinRoute(ridx);
+                      violationIsKnown = true;
+                      break;
+                    }
+                }
+
+              if( violationIsKnown == false )
+                {
+                  // Unknown violation, add it to the start list
+                  Flight::AirSpaceIntersection newAsi( &as, ridx, ridx );
+                  asStartIntersections.append( newAsi );
+                }
+            }
+          else
+            {
+              fp->isAirspaceIntersected = false;
+
+              // Not or not more inside. Look in start list, if airspace
+              // conflicts can be closed.
+              for( int i = asStartIntersections.size() - 1; i >= 0; i-- )
+                {
+                  Flight::AirSpaceIntersection& asi = asStartIntersections[i];
+
+                  if( asi.AirSpace() == &as )
+                    {
+                      // Take conflict from the start list and put it in the
+                      // finished list.
+                      m_airspaceIntersections.append( asStartIntersections.takeAt(i) );
+                      break;
+                    }
+                }
+            }
+        }
+      }
+
+  // Close all still open airspace conflicts.
+  for( int i = asStartIntersections.size() - 1; i >= 0; i-- )
+    {
+      Flight::AirSpaceIntersection& asi = asStartIntersections[i];
+
+      // update end point
+      asi.SetLastIndexPointinRoute( route.size() - 1 );
+
+      // Get conflict from the start list and put it in the finished list.
+      m_airspaceIntersections.append( asi );
+    }
 }

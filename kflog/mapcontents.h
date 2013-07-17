@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2010-2011 by Axel Pauli
+**                   2010-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -27,7 +27,7 @@
  * It takes control over loading all needed map-files.
  * The class contains several QPtrLists holding the map elements.
  *
- * \date 2000-2011
+ * \date 2000-2013
  *
  * \version $Id$
  */
@@ -313,8 +313,12 @@ class MapContents : public QObject
   void slotEditFlightGroup();
   /** */
   void slotReloadMapData();
+
    /** Re-projects any flights and tasks that may be loaded. */
   void reProject();
+
+  /** Update airspace intersections in all flight. */
+  void updateFlightAirspaceIntersections();
 
   /**
    * This slot is called to download the Welt2000 file from the Internet.
@@ -393,6 +397,11 @@ class MapContents : public QObject
    * Emitted to the map, if the current flight is closed.
    */
   void clearFlightCursor();
+
+  /**
+   * Emitted, if airspaces have been loaded.
+   */
+  void airspacesLoaded();
 
  private:
 

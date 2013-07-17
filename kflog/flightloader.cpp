@@ -20,10 +20,7 @@
 #include <QtGui>
 #include <QInputDialog>
 
-#include "airspace.h"
-#include "airspacewarningdistance.h"
 #include "altitude.h"
-#include "openairparser.h"
 #include "elevationfinder.h"
 #include "flight.h"
 #include "flightloader.h"
@@ -121,15 +118,6 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   Waypoint* preWP = 0;
 
   QList<bOption> options;
-
-  // Get all loaded airspaces from MapContent.
-  SortableAirspaceList& loadedAirspaces = _globalMapContents->getAirspaceList();
-
-  // List with finished airspace intersections
-  QList<Flight::AirSpaceIntersection> asFinishedIntersections;
-
-  // List with started airspace intersections
-  QList<Flight::AirSpaceIntersection> asStartIntersections;
 
   int QNH = 0;
 
@@ -379,84 +367,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
           FlightPoint* point = new FlightPoint;
           *point = newPoint;
-
-          const int routeIdx = flightRoute.size();
-
           flightRoute.append( point );
-
-          // Check for airspace violations at the current coordinate.
-          AltitudeCollection altitudesForI;
-          altitudesForI.pressureAltitude = Altitude(newPoint.height);
-          altitudesForI.gpsAltitude = Altitude(newPoint.gpsHeight);
-          altitudesForI.gndAltitude = Altitude((newPoint.height) - (newPoint.surfaceHeight));
-          altitudesForI.gndAltitudeError = Altitude(0);
-          altitudesForI.stdAltitude.setStdAltitude(newPoint.height, newPoint.qnh);
-
-          AirspaceWarningDistance awdForI;
-
-          // look for violated airspaces
-          for ( int i = 0 ; i < loadedAirspaces.count(); i++ )
-            {
-              bool insideAs = false;
-
-              Airspace& as = loadedAirspaces[i];
-
-              // At first check, if the projected coordinate lays inside the
-              // airspace polygon.
-              if( as.isProjectedPointInside( newPoint.projP ) )
-                {
-                  Airspace::ConflictType conflict =
-                      loadedAirspaces[i].conflicts( altitudesForI, awdForI );
-
-                  if( conflict == Airspace::Inside )
-                    {
-                      insideAs = true;
-                    }
-                }
-
-              if( insideAs == true )
-                {
-                  bool violationIsKnown = false;
-
-                  // Check, if violated airspace is already handled by us.
-                  for( int i = 0; i < asStartIntersections.size(); i++ )
-                    {
-                      Flight::AirSpaceIntersection& asi = asStartIntersections[i];
-
-                      if( asi.AirSpace() == &as )
-                        {
-                          // update end point
-                          asi.SetLastIndexPointinRoute( routeIdx);
-                          violationIsKnown = true;
-                          break;
-                        }
-                    }
-
-                  if( violationIsKnown == false )
-                    {
-                      // Unknown violation, add it to the start list
-                      Flight::AirSpaceIntersection newAsi( &as, routeIdx, routeIdx );
-                      asStartIntersections.append( newAsi );
-                    }
-                }
-              else
-                {
-                  // Not or not more inside. Look in start list, if airspace
-                  // conflicts can be closed.
-                  for( int i = asStartIntersections.size() - 1; i >= 0; i-- )
-                    {
-                      Flight::AirSpaceIntersection& asi = asStartIntersections[i];
-
-                      if( asi.AirSpace() == &as )
-                        {
-                          // Take conflict from the start list and put it in the
-                          // finished list.
-                          asFinishedIntersections.append( asStartIntersections.takeAt(i) );
-                          break;
-                        }
-                    }
-                }
-            }
         }
       else if(s.mid(0,1) == "C" && isHeader)
         {
@@ -532,18 +443,6 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
       return false;
     }
 
-  // Close all still open airspace conflicts.
-  for( int i = asStartIntersections.size() - 1; i >= 0; i-- )
-    {
-      Flight::AirSpaceIntersection& asi = asStartIntersections[i];
-
-      // update end point
-      asi.SetLastIndexPointinRoute( flightRoute.size() - 1 );
-
-      // Get conflict from the start list and put it in the finished list.
-      asFinishedIntersections.append( asi );
-    }
-
   Flight* newFlight = new Flight( igcFile.fileName(),
                                   recorderID,
                                   flightRoute,
@@ -552,11 +451,9 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
                                   gliderID,
                                   cClass,
                                   wpList,
-                                  date,
-                                  asFinishedIntersections );
+                                  date );
 
   _globalMapContents->appendFlight( newFlight) ;
-
   return true;
 }
 
@@ -735,9 +632,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
   gliderID   = "gardown";
   cClass     = Flight::NotSet;
 
-  QList<Flight::AirSpaceIntersection> asiList;
-
-  _globalMapContents->appendFlight(new Flight(gardownFile.fileName(), recorderID, flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date, asiList));
+  _globalMapContents->appendFlight(new Flight(gardownFile.fileName(), recorderID, flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
   return true;
 }
 

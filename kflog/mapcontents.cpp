@@ -1092,6 +1092,10 @@ void MapContents::proofeSection(bool isPrint)
 
       // finally, sort the airspaces
       airspaceList.sort();
+
+      // Say the world that airspaces have been changed.
+      updateFlightAirspaceIntersections();
+      emit airspacesLoaded();
     }
 
   // Checking for Airfield, Gliderfield and Outlanding data
@@ -1926,7 +1930,29 @@ void MapContents::reProject()
   BaseFlightElement *flight;
 
   foreach(flight, flightList)
+    {
       flight->reProject();
+    }
+}
+
+/** Update airspace intersections in all flight. */
+void MapContents::updateFlightAirspaceIntersections()
+{
+  // If airspaces are updated we must update too the airspace intersections,
+  // because pointers to airspaces have become invalid.
+  BaseFlightElement *bfe;
+
+  foreach(bfe, flightList)
+    {
+      Flight *flight = dynamic_cast<class Flight *> (bfe);
+
+      if( ! flight )
+        {
+          continue;
+        }
+
+      flight->calAirSpaceIntersections();
+    }
 }
 
 /** coorMap coordinates are expected as map based!. */

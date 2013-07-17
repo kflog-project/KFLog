@@ -593,52 +593,24 @@ QPen MapConfig::getDrawPen(FlightPoint* fP, float va_min/*=-10*/, float va_max/*
               break;
           }
         break;
+
       case MapConfig::Airspace:
           {
-#warning "Airspace violation drawing must be solve in a better way!"
 
-#if 0
-               AirspaceWarningDistance awd;
-               awd.verAboveClose.setMeters(150);
-               awd.verBelowClose.setMeters(150);
-               awd.verAboveVeryClose.setMeters(50);
-               awd.verBelowVeryClose.setMeters(50);
+            if( fP->isAirspaceIntersected == true )
+              {
+                color = Qt::red;
+              }
+            else
+              {
+                color = Qt::black;
+              }
 
-               Airspace::ConflictType HighestConflict = Airspace::None;
-
-               for ( int k = 0 ; k < fP->airspaces.count() ; k++)
-               {
-                   struct AltitudeCollection AltitudeColl;
-                   AltitudeColl.gpsAltitude = ::Altitude(fP->gpsHeight);
-                   AltitudeColl.gndAltitude = ::Altitude((fP->gpsHeight) - (fP->surfaceHeight));
-                   AltitudeColl.gndAltitudeError = ::Altitude(0);
-                   AltitudeColl.stdAltitude.setStdAltitude(fP->gpsHeight,fP->qnh);
-                   Airspace::ConflictType Current = fP->airspaces[k].conflicts(AltitudeColl,awd);
-                   HighestConflict = (Current > HighestConflict)?Current:HighestConflict;
-               }
-               switch (HighestConflict)
-               {
-               case Airspace::Inside:
-                   color = QColor(255, 0, 0);
-                   break;
-               case Airspace::VeryNearBelow:
-               case Airspace::VeryNearAbove:
-                   color = QColor(255,255, 0);
-                   break;
-               case Airspace::NearBelow:
-               case Airspace::NearAbove:
-                   color = QColor(0,255, 0);
-                   break;
-               case Airspace::None:
-               default:
-                   color = QColor(0,0, 255);
-                   break;
-               }
-               width = _settings.value("/FlightPathLine/Solid", FlightPathLineWidth).toInt();
-#endif
+            width = _settings.value("/FlightPathLine/Solid", FlightPathLineWidth).toInt();
           }
 
           break;
+
       case MapConfig::Solid:
       default:
 
@@ -655,7 +627,6 @@ QPen MapConfig::getDrawPen(FlightPoint* fP, float va_min/*=-10*/, float va_max/*
       color = _settings.value( "/FlightColor/EngineNoise",
                                FlightTypeEngineNoiseColor.name() ).value<QColor>();
     }
-
 
   return QPen(color, width);
 }

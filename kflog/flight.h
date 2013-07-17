@@ -57,7 +57,7 @@ struct statePoint
  *
  * Contains the logged flight data.
  *
- * \date 2001-2011
+ * \date 2001-2013
  *
  * \version $Id$
  */
@@ -65,7 +65,7 @@ class Flight : public BaseFlightElement
 {
   public:
 
-    class AirSpaceIntersection
+  class AirSpaceIntersection
     {
     public:
       AirSpaceIntersection( Airspace* AirSpace,
@@ -129,8 +129,7 @@ class Flight : public BaseFlightElement
           const QString& gID,
           int cClass,
           const QList<Waypoint*>& wpL,
-          const QDate& date,
-          QList<AirSpaceIntersection>& asiList );
+          const QDate& date );
   /**
    * Destroys the flight-object.
    */
@@ -138,7 +137,10 @@ class Flight : public BaseFlightElement
   /**
    * @return the name of the pilot.
    */
-  QString getPilot() const;
+  QString getPilot() const
+  {
+    return pilotName;
+  };
   /**
    * @return the type of the glider.
    */
@@ -183,10 +185,6 @@ class Flight : public BaseFlightElement
    */
   time_t getStartTime() const;
   /**
-   * @return the start-site.
-   */
-  QString getStartSite() const;
-  /**
    * @return the landing time.
    */
   time_t getLandTime() const;
@@ -206,10 +204,7 @@ class Flight : public BaseFlightElement
    * @return the number of logged points.
    */
   int getRouteLength() const { return route.size(); }
-  /**
-   * @return the site, where the glider has landed.
-   */
-  QString getLandSite() const;
+
   /**
    * Creates a string list, that contains several info about the part
    * between the two given points.
@@ -280,10 +275,7 @@ class Flight : public BaseFlightElement
          * @return the original list of waypoints
    */
   QList<Waypoint*> getOriginalWPList();
-  /**
-   * @return the type of the task
-   */
-  unsigned int getTaskType() const;
+
   /**
    * Optimizes the task.
    * @return  "true", if the user wants to use the optimized task.
@@ -390,6 +382,11 @@ class Flight : public BaseFlightElement
       OpenClass = 7, HGFlexWing = 8, HGRigidWing = 9, ParaGlider = 10,
       ParaOpen = 11, ParaSport = 12, ParaTandem = 13};
 
+  /**
+   * Calculate the airspace intersections of this flight.
+   */
+  void calAirSpaceIntersections();
+
 private:
 
   /** */
@@ -408,12 +405,13 @@ private:
                                    FlightPoint* fp3);
     /** */
   void __checkMaxMin();
-  /** */
-  virtual bool __isVisible() const;
+
   /** Kreisflug?? */
   void __flightState();
+
   /** calculate the basic en-route information, like dT, dH, dS, dBearing and bearing */
   void __calculateBasicInformation();
+
   /** calculates the smallest difference of two angles */
   float __diffAngle(float firstAngle, float secondAngle);
 
