@@ -58,7 +58,8 @@ public:
     dS(0),
     bearing(0.),
     dBearing(0.),
-    f_state(0)
+    f_state(0),
+    isAirspaceIntersected(false)
   {};
 
   /** The original position of the point. Given in the internal format.
@@ -125,6 +126,11 @@ public:
   /** Straight = 0, LeftTurn = 1, RightTurn = 2, MixedTurn = 3
   *   set by flight.cpp */
   unsigned int f_state;
+
+  /**
+   * Flag to signal, if an airspace has been intersected or not.
+   */
+  bool isAirspaceIntersected;
 };
 
 #endif
