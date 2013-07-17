@@ -595,6 +595,9 @@ QPen MapConfig::getDrawPen(FlightPoint* fP, float va_min/*=-10*/, float va_max/*
         break;
       case MapConfig::Airspace:
           {
+#warning "Airspace violation drawing must be solve in a better way!"
+
+#if 0
                AirspaceWarningDistance awd;
                awd.verAboveClose.setMeters(150);
                awd.verBelowClose.setMeters(150);
@@ -632,7 +635,9 @@ QPen MapConfig::getDrawPen(FlightPoint* fP, float va_min/*=-10*/, float va_max/*
                    break;
                }
                width = _settings.value("/FlightPathLine/Solid", FlightPathLineWidth).toInt();
+#endif
           }
+
           break;
       case MapConfig::Solid:
       default:

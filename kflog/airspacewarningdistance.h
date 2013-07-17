@@ -6,7 +6,8 @@
 **
 ************************************************************************
 **
-**   Copyright (c): André Somers, 2009 Axel Pauli
+**   Copyright (c): André Somers
+**                  2009-2013 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,7 +26,9 @@
  * This class holds a set of six distances to airspaces, used to warn the user
  * if he's getting too close to an airspace.
  *
- * \date 2009-2010
+ * \date 2009-2013
+ *
+ * \version $Id$
  *
  */
 
@@ -45,22 +48,36 @@ public:
   Distance verBelowClose;
   Distance verBelowVeryClose;
 
-  bool operator==(const AirspaceWarningDistance& x) const {
-      return (
-              horClose == x.horClose &&
-              horVeryClose == x.horVeryClose &&
-              verAboveClose == x.verAboveClose &&
-              verAboveVeryClose == x.verAboveVeryClose &&
-              verBelowClose == x.verBelowClose &&
-              verBelowVeryClose == x.verBelowVeryClose
-             );
-  }
+  /**
+   * Default constructor sets all distances to zero.
+   */
+  AirspaceWarningDistance() :
+    horClose(0),
+    horVeryClose(0),
+    verAboveClose(0),
+    verAboveVeryClose(0),
+    verBelowClose(0),
+    verBelowVeryClose(0)
+  {
+  };
 
-  bool operator!=(const AirspaceWarningDistance& x) const {
-      return !operator==(x);
-  }
+  bool operator==(const AirspaceWarningDistance& x) const
+  {
+    return (
+            horClose == x.horClose &&
+            horVeryClose == x.horVeryClose &&
+            verAboveClose == x.verAboveClose &&
+            verAboveVeryClose == x.verAboveVeryClose &&
+            verBelowClose == x.verBelowClose &&
+            verBelowVeryClose == x.verBelowVeryClose
+           );
+  };
+
+  bool operator!=(const AirspaceWarningDistance& x) const
+  {
+    return !operator==(x);
+  };
 
 };
 
 #endif
-

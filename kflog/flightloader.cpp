@@ -9,7 +9,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2008 by Constantijn Neeteson
-**                   2011 by Axel Pauli
+**                   2011-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -21,6 +21,8 @@
 #include <QInputDialog>
 
 #include "airspace.h"
+#include "airspacewarningdistance.h"
+#include "altitude.h"
 #include "openairparser.h"
 #include "elevationfinder.h"
 #include "flight.h"
@@ -115,13 +117,19 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   FlightPoint newPoint;
   QList<FlightPoint*> flightRoute;
   QList<Waypoint*> wpList;
-  Waypoint* newWP=NULL;
-  Waypoint* preWP=NULL;
+  Waypoint* newWP = 0;
+  Waypoint* preWP = 0;
 
   QList<bOption> options;
 
   // Get all loaded airspaces from MapContent.
   SortableAirspaceList& loadedAirspaces = _globalMapContents->getAirspaceList();
+
+  // List with finished airspace intersections
+  QList<Flight::AirSpaceIntersection> asFinishedIntersections;
+
+  // List with started airspace intersections
+  QList<Flight::AirSpaceIntersection> asStartIntersections;
 
   int QNH = 0;
 
@@ -306,6 +314,17 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
                         lineCount, igcFile.fileName().toLatin1().data() );
               return false;
             }
+
+          if(s.mid(24,1) == "V") // void, not valid;
+            {
+              continue;
+            }
+          else if(s.mid(24,1) != "A") //isValid = true;
+            {
+              qWarning("KFLog: Wrong value found in igc-line!");
+              continue;
+            }
+
           sscanf(s.mid(1,23).toAscii().data(), "%2d%2d%2d%2d%5d%1c%3d%5d%1c",
               &hh, &mm, &ss, &lat, &latmin, &latChar, &lon, &lonmin, &lonChar);
           latTemp = lat * 600000 + latmin * 10;
@@ -333,7 +352,9 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
           // Ignoring a wrong point ...
           if( latTemp == 0 && lonTemp == 0 )
-            continue;
+            {
+              continue;
+            }
 
           curTime = timeOfFlightDay + 3600 * hh + 60 * mm + ss;
 
@@ -344,33 +365,8 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           newPoint.height = baroAltTemp;
           newPoint.gpsHeight = gpsAltTemp;
           newPoint.qnh = QNH;
-          newPoint.airspaces.clear();
 
-          // get airspaces at this coordinate
-          for (int i = 0 ; i < loadedAirspaces.count(); i++)
-            {
-              const QPolygon& CandidatePolygon = loadedAirspaces[i].getPolygon();
-
-              if (!CandidatePolygon.empty())
-                {
-                  if (CandidatePolygon.containsPoint(newPoint.projP, Qt::OddEvenFill))
-                    {
-                      newPoint.airspaces.append(loadedAirspaces[i]);
-                    }
-                }
-            }
-
-          if(s.mid(24,1) == "V") //isValid = false;
-            {
-              continue;
-            }
-          else if(s.mid(24,1) != "A") //isValid = true;
-            {
-              qWarning("KFLog: Wrong value found in igc-line!");
-              continue;
-            }
-
-          if(curTime < preTime)
+          if( curTime < preTime )
             {
               // The new fix as a smaller time stamp. Therefore we assume, that
               // we have an overnight-flight. So we must add one day (e.g. 86400 sec.)
@@ -379,12 +375,88 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
               newPoint.time = curTime;
             }
 
+          preTime = curTime;
+
           FlightPoint* point = new FlightPoint;
           *point = newPoint;
 
+          const int routeIdx = flightRoute.size();
+
           flightRoute.append( point );
 
-          preTime = curTime;
+          // Check for airspace violations at the current coordinate.
+          AltitudeCollection altitudesForI;
+          altitudesForI.pressureAltitude = Altitude(newPoint.height);
+          altitudesForI.gpsAltitude = Altitude(newPoint.gpsHeight);
+          altitudesForI.gndAltitude = Altitude((newPoint.height) - (newPoint.surfaceHeight));
+          altitudesForI.gndAltitudeError = Altitude(0);
+          altitudesForI.stdAltitude.setStdAltitude(newPoint.height, newPoint.qnh);
+
+          AirspaceWarningDistance awdForI;
+
+          // look for violated airspaces
+          for ( int i = 0 ; i < loadedAirspaces.count(); i++ )
+            {
+              bool insideAs = false;
+
+              Airspace& as = loadedAirspaces[i];
+
+              // At first check, if the projected coordinate lays inside the
+              // airspace polygon.
+              if( as.isProjectedPointInside( newPoint.projP ) )
+                {
+                  Airspace::ConflictType conflict =
+                      loadedAirspaces[i].conflicts( altitudesForI, awdForI );
+
+                  if( conflict == Airspace::Inside )
+                    {
+                      insideAs = true;
+                    }
+                }
+
+              if( insideAs == true )
+                {
+                  bool violationIsKnown = false;
+
+                  // Check, if violated airspace is already handled by us.
+                  for( int i = 0; i < asStartIntersections.size(); i++ )
+                    {
+                      Flight::AirSpaceIntersection& asi = asStartIntersections[i];
+
+                      if( asi.AirSpace() == &as )
+                        {
+                          // update end point
+                          asi.SetLastIndexPointinRoute( routeIdx);
+                          violationIsKnown = true;
+                          break;
+                        }
+                    }
+
+                  if( violationIsKnown == false )
+                    {
+                      // Unknown violation, add it to the start list
+                      Flight::AirSpaceIntersection newAsi( &as, routeIdx, routeIdx );
+                      asStartIntersections.append( newAsi );
+                    }
+                }
+              else
+                {
+                  // Not or not more inside. Look in start list, if airspace
+                  // conflicts can be closed.
+                  for( int i = asStartIntersections.size() - 1; i >= 0; i-- )
+                    {
+                      Flight::AirSpaceIntersection& asi = asStartIntersections[i];
+
+                      if( asi.AirSpace() == &as )
+                        {
+                          // Take conflict from the start list and put it in the
+                          // finished list.
+                          asFinishedIntersections.append( asStartIntersections.takeAt(i) );
+                          break;
+                        }
+                    }
+                }
+            }
         }
       else if(s.mid(0,1) == "C" && isHeader)
         {
@@ -448,14 +520,42 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   igcFile.close();
   importProgress.close();
 
-  if(!flightRoute.count())
+  if( flightRoute.count() == 0 )
     {
-      QMessageBox::warning(0, QObject::tr("File contains no flight"),
-          "<html>" + QObject::tr("The selected file<BR><B>%1</B><BR>contains no flight!").arg(igcFile.fileName()) + "</html>", QMessageBox::Ok, 0);
+      QMessageBox::warning( 0,
+                            QObject::tr("File contains no flight"),
+                            "<html>" +
+                            QObject::tr("The selected file<BR><B>%1</B><BR>contains no flight!").arg(igcFile.fileName()) +
+                            "</html>",
+                            QMessageBox::Ok,
+                            0);
       return false;
     }
 
-  _globalMapContents->appendFlight(new Flight(igcFile.fileName(), recorderID, flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
+  // Close all still open airspace conflicts.
+  for( int i = asStartIntersections.size() - 1; i >= 0; i-- )
+    {
+      Flight::AirSpaceIntersection& asi = asStartIntersections[i];
+
+      // update end point
+      asi.SetLastIndexPointinRoute( flightRoute.size() - 1 );
+
+      // Get conflict from the start list and put it in the finished list.
+      asFinishedIntersections.append( asi );
+    }
+
+  Flight* newFlight = new Flight( igcFile.fileName(),
+                                  recorderID,
+                                  flightRoute,
+                                  pilotName,
+                                  gliderType,
+                                  gliderID,
+                                  cClass,
+                                  wpList,
+                                  date,
+                                  asFinishedIntersections );
+
+  _globalMapContents->appendFlight( newFlight) ;
 
   return true;
 }
@@ -635,7 +735,9 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
   gliderID   = "gardown";
   cClass     = Flight::NotSet;
 
-  _globalMapContents->appendFlight(new Flight(gardownFile.fileName(), recorderID, flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
+  QList<Flight::AirSpaceIntersection> asiList;
+
+  _globalMapContents->appendFlight(new Flight(gardownFile.fileName(), recorderID, flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date, asiList));
   return true;
 }
 

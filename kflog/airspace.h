@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
-**                   2009-2011 by Axel Pauli
+**                   2009-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -30,14 +30,12 @@
  * Due to the cross pointer reference to the air region this class do not
  * allow copies and assignments of an existing instance.
  *
- * \date 2000-2011
+ * \date 2000-2013
  *
  */
 
 #ifndef AIRSPACE_H
 #define AIRSPACE_H
-
-#include <math.h>
 
 #include <QDateTime>
 #include <QPolygon>
@@ -46,13 +44,15 @@
 #include <QRect>
 
 #include "altitude.h"
-#include "lineelement.h"
 #include "airspacewarningdistance.h"
+#include "lineelement.h"
+#include "wgspoint.h"
 
 class Airspace : public LineElement
 {
 
 public:
+
   enum ConflictType { None, NearAbove, NearBelow, VeryNearAbove, VeryNearBelow, Inside };
 
   /**
@@ -76,6 +76,18 @@ public:
   bool isDrawable() const;
 
   /**
+   * Returns true, if the passed WGS coordinate point lays inside the airspace
+   * polygon.
+   */
+  bool isWgsPointInside( WGSPoint& point );
+
+  /**
+   * Returns true, if the passed projected coordinate point lays inside the
+   * airspace polygon.
+   */
+  bool isProjectedPointInside( QPoint& point );
+
+  /**
    * Draws the airspace into the given painter.
    * Return a pointer to the drawn region or 0.
    *
@@ -86,8 +98,7 @@ public:
   void drawRegion( QPainter* targetP, const QRect &viewRect );
 
   /**
-   * Return a pointer to the mapped airspace region data. The caller takes
-   * the ownership about the returned object.
+   * Return a painter path to the mapped airspace region data.
    */
   QPainterPath createRegion();
 

@@ -8,7 +8,7 @@
 **
 **   Copyright (c):  2001 Heiner Lamprecht, Florian Ehinger, Jan Max Walter Krueger
 **                :  2008 Constantijn Neeteson
-**                :  2011 Axel Pauli
+**                :  2011-2013 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -64,25 +64,51 @@ struct statePoint
 class Flight : public BaseFlightElement
 {
   public:
+
     class AirSpaceIntersection
     {
     public:
-        AirSpaceIntersection(Airspace& AirSpace,int First, int Last, Airspace::ConflictType Type);
-        AirSpaceIntersection(const AirSpaceIntersection & other);
-        Airspace& AirSpace()
-          { return m_AirSpace; };
-        Airspace::ConflictType Type()
-          { return m_TypeOfIntersection; };
-        int FirstIndexPointinRoute() const
-          { return m_FirstPointIndexinRoute; };
-        int LastIndexPointinRoute() const
-          { return m_LastPointIndexinRoute; };
+      AirSpaceIntersection( Airspace* AirSpace,
+                            const int First,
+                            const int Last,
+                            Airspace::ConflictType Type=Airspace::Inside ) :
+        m_AirSpace(AirSpace),
+        m_TypeOfIntersection(Type),
+        m_FirstPointIndexinRoute(First),
+        m_LastPointIndexinRoute(Last)
+      {};
+
+      AirSpaceIntersection(const AirSpaceIntersection& other) :
+        m_AirSpace(other.m_AirSpace),
+        m_TypeOfIntersection(other.m_TypeOfIntersection),
+        m_FirstPointIndexinRoute(other.m_FirstPointIndexinRoute),
+        m_LastPointIndexinRoute(other.m_LastPointIndexinRoute)
+      {};
+
+      Airspace* AirSpace()
+        { return m_AirSpace; };
+
+      Airspace::ConflictType Type()
+        { return m_TypeOfIntersection; };
+
+      int FirstIndexPointinRoute() const
+        { return m_FirstPointIndexinRoute; };
+
+      void setFirstIndexPointinRoute( const int idx )
+        { m_FirstPointIndexinRoute = idx; };
+
+      int LastIndexPointinRoute() const
+        { return m_LastPointIndexinRoute; };
+
+      void SetLastIndexPointinRoute( const int idx )
+        { m_LastPointIndexinRoute = idx; };
 
     protected:
-        Airspace m_AirSpace;
-        Airspace::ConflictType m_TypeOfIntersection;
-        int m_FirstPointIndexinRoute;
-        int m_LastPointIndexinRoute;
+
+      Airspace* m_AirSpace;
+      Airspace::ConflictType m_TypeOfIntersection;
+      int m_FirstPointIndexinRoute;
+      int m_LastPointIndexinRoute;
     };
 
   /**
@@ -103,7 +129,8 @@ class Flight : public BaseFlightElement
           const QString& gID,
           int cClass,
           const QList<Waypoint*>& wpL,
-          const QDate& date );
+          const QDate& date,
+          QList<AirSpaceIntersection>& asiList );
   /**
    * Destroys the flight-object.
    */
@@ -204,13 +231,15 @@ class Flight : public BaseFlightElement
    *              is 0, the last point of the flight will be used.
    */
   QList<statePoint*> getFlightStates(unsigned int start = 0, unsigned int end = 0);
+
   /**
-   * detect and return all airspace intersections and/or violations
-   * @return a list of airspace intersections
+   * @return a list of airspace intersections found in this flight.
    */
-  QList<AirSpaceIntersection> getFlightAirSpaceIntersections(unsigned int start = 0,
-                                                             unsigned int end = 0,
-                                                             AirspaceWarningDistance* awd = 0);
+  QList<AirSpaceIntersection>& getFlightAirSpaceIntersections()
+    {
+      return m_airspaceIntersections;
+    };
+
   /**
    * @return the date of the flight.
    */
@@ -427,6 +456,9 @@ private:
   QPixmap pixAnimate;
   /** */
   QStringList header;
+
+  /** List with airspaces, which were intersected during the flight. */
+  QList<AirSpaceIntersection> m_airspaceIntersections;
 };
 
 #endif

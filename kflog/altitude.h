@@ -247,8 +247,7 @@ protected:
 struct AltitudeCollection
 {
     /**
-     * The altitude according to the GPS.
-     * Given in MSL.
+     * The altitude according to the GPS given in MSL.
      */
     Altitude gpsAltitude;
 
@@ -257,13 +256,12 @@ struct AltitudeCollection
      * Given in STD.
      */
     Altitude stdAltitude;
-#if 0   // not used in KFlog
+
     /**
-     * The pressure altitude (if available, else it should be deduced from the GPS altitude).
-     * Given in MSL.
+     * The pressure altitude given in MSL.
      */
     Altitude pressureAltitude;
-#endif
+
     /**
      * Average altitude above terrain (GND). Based on pressure altitude.
      * Because our terrain data does not return the exact terrain height for a given point, but

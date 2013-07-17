@@ -17,15 +17,20 @@
  **
  ***********************************************************************/
 
+#include <cmath>
+
 #include "airspace.h"
+#include "mapmatrix.h"
+
+extern MapMatrix* _globalMapMatrix;
 
 Airspace::Airspace( QString name,
-                       BaseMapElement::objectType oType,
-                       QPolygon pP,
-                       int upper,
-                       BaseMapElement::elevationType uType,
-                       int lower,
-                       BaseMapElement::elevationType lType) :
+                    BaseMapElement::objectType oType,
+                    QPolygon pP,
+                    int upper,
+                    BaseMapElement::elevationType uType,
+                    int lower,
+                    BaseMapElement::elevationType lType) :
   LineElement(name, oType, pP),
   lLimitType(lType),
   uLimitType(uType)
@@ -91,6 +96,26 @@ bool Airspace::isDrawable() const
   return ( glConfig->isBorder(typeID) && isVisible() );
 }
 
+bool Airspace::isWgsPointInside( WGSPoint& point )
+{
+  // project point to map
+  QPoint pPoint = _globalMapMatrix->wgsToMap(point);
+
+  return isProjectedPointInside( pPoint );
+}
+
+bool Airspace::isProjectedPointInside( QPoint& point )
+{
+  const QPolygon& pPolygon = getPolygon();
+
+  if( pPolygon.isEmpty() )
+    {
+      return false;
+    }
+
+  return pPolygon.containsPoint( point, Qt::OddEvenFill );
+}
+
 void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect )
 {
   // qDebug("Airspace::drawRegion(): TypeId=%d, opacity=%f, Name=%s",
@@ -146,8 +171,7 @@ void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect )
 }
 
 /**
- * Return a pointer to the mapped airspace region data. The caller takes
- * the ownership about the returned object.
+ * Return a painter path to the mapped airspace region data.
  */
 QPainterPath Airspace::createRegion()
 {
@@ -252,6 +276,7 @@ QString Airspace::getInfoString(bool ExtendedHTMLFormat) const
       break;
     case UNLTD:
       tempU = QObject::tr("Unlimited");
+      break;
     default:
       break;
   }
@@ -276,7 +301,7 @@ QString Airspace::getInfoString(bool ExtendedHTMLFormat) const
  * position.
  */
 Airspace::ConflictType Airspace::conflicts( const AltitudeCollection& alt,
-                                               const AirspaceWarningDistance& dist ) const
+                                            const AirspaceWarningDistance& dist ) const
 {
   Altitude lowerAlt(0);
   Altitude upperAlt(0);
@@ -284,13 +309,12 @@ Airspace::ConflictType Airspace::conflicts( const AltitudeCollection& alt,
   //set which altitude to use from our range of available altitudes,
   //and apply uncertainty margins
 
-  //#warning FIXME: we should take our GPS error into account
   switch (lLimitType)
     {
       case NotSet:
         break;
       case MSL:
-        lowerAlt = alt.gpsAltitude;
+        lowerAlt = alt.pressureAltitude;
         break;
       case GND:
         lowerAlt = alt.gndAltitude + alt.gndAltitudeError; // we need to use a conservative estimate
@@ -311,7 +335,7 @@ Airspace::ConflictType Airspace::conflicts( const AltitudeCollection& alt,
         upperAlt.setMeters(100000);
         break;
       case MSL:
-        upperAlt = alt.gpsAltitude;
+        upperAlt = alt.pressureAltitude;
         break;
       case GND:
         upperAlt = alt.gndAltitude - alt.gndAltitudeError; //we need to use a conservative estimate
@@ -368,7 +392,8 @@ Airspace::ConflictType Airspace::conflicts( const AltitudeCollection& alt,
       // - rest is either
       //   - inside (but handled in if-clause above)
       //   - above
-      if ( (lowerAlt.getMeters() >= (lLimit.getMeters() - dist.verBelowClose.getMeters())) && (lowerAlt.getMeters() < (lLimit.getMeters() - dist.verBelowVeryClose.getMeters())) )
+      if ( (lowerAlt.getMeters() >= (lLimit.getMeters() - dist.verBelowClose.getMeters())) &&
+          (lowerAlt.getMeters() < (lLimit.getMeters() - dist.verBelowVeryClose.getMeters())) )
       {
               return NearBelow;
       }
@@ -403,11 +428,12 @@ bool Airspace::operator < (const Airspace& other) const
 
 bool Airspace::operator == (const Airspace& other) const
 {
-    if (getName() == other.getName() &&
-           getObjectType() == other.getObjectType() )
+  if ( getName() == other.getName() && getObjectType() == other.getObjectType() )
     {
-        return true;
+      return true;
     }
-    else
-        return false;
+  else
+    {
+      return false;
+    }
 }
