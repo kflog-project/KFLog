@@ -65,6 +65,11 @@ class FlightListViewItem : public QTreeWidgetItem
    */
   void update();
 
+  /**
+   * Called to activate a redraw of the flight.
+   */
+  void activate();
+
  protected:
   /**
    * Creates the child nodes for this flight node.

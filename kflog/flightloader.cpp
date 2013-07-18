@@ -18,19 +18,25 @@
 ***********************************************************************/
 
 #include <QtGui>
-#include <QInputDialog>
 
 #include "altitude.h"
 #include "elevationfinder.h"
 #include "flight.h"
 #include "flightloader.h"
+#include "mainwindow.h"
 #include "mapcontents.h"
 #include "mapmatrix.h"
-#include "mainwindow.h"
 
 extern MainWindow* _mainWindow;
 extern QSettings   _settings;
-extern MapContents* _globalMapContents;
+
+FlightLoader::FlightLoader( QObject *parent ) : QObject(parent)
+{
+}
+
+FlightLoader::~FlightLoader()
+{
+}
 
 bool FlightLoader::openFlight(QFile& flightFile)
 {
@@ -68,19 +74,21 @@ bool FlightLoader::openFlight(QFile& flightFile)
   // We need a better format-identification then only the extension ...
   //
   if( fInfo.suffix().toLower() == "igc")
-  {
+    {
       return openIGC(flightFile, fInfo);
-  }
+    }
   else if( fInfo.suffix().toLower() == "gdn" || fInfo.suffix().toLower() == "trk")
-  {
+    {
       return openGardownFile(flightFile, fInfo);
-  }
+    }
   else
-  {
+    {
       QMessageBox::warning(_mainWindow, QObject::tr("Unknown file extension"),
           "<html>" + QObject::tr("Couldn't open the file, because it has an unknown file extension") + "</html>", QMessageBox::Ok);
       return false;
-  }
+    }
+
+  return false;
 }
 
 /** Parses an igc-file */
@@ -92,13 +100,16 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   importProgress.setLabelText(
       "<html>" + QObject::tr("Please wait while loading file<BR><B>%1</B>").arg(igcFile.fileName()) + "</html>");
   importProgress.setMinimumWidth(importProgress.sizeHint().width() + 45);
-  importProgress.setRange(0, 200);
+  importProgress.setRange(0, 100);
   importProgress.setVisible(true);
-  importProgress.setMinimumDuration(0);
+  //importProgress.setMinimumDuration(0);
   importProgress.setValue(0);
 
+  // The cancel method of QProgressDialog did not work, if signal canceled is
+  // not catched!
+  connect(&importProgress, SIGNAL(canceled()), this, SLOT(slot_CancelLoad()));
+
   unsigned int fileLength = fInfo.size();
-  unsigned int filePos = 0;
   QTextStream stream(&igcFile);
 
   QString pilotName, gliderType, gliderID, recorderID;
@@ -198,97 +209,49 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   // G : Digital signature of the file
   //
 
+  int lastProgress = 0;
+  int readChar     = 0;
+
   while (!stream.atEnd())
     {
-      if(importProgress.wasCanceled())
+      QCoreApplication::processEvents();
+
+      if( importProgress.wasCanceled() )
         {
+          importProgress.close();
+          igcFile.close();
           return false;
         }
 
       lineCount++;
 
       QString s = stream.readLine();
-      filePos += s.length();
 
-      importProgress.setValue(( filePos * 200 ) / fileLength);
+      readChar += s.length();
 
-      if(s.mid(0,1) == "A" && isHeader)
+      if( s.trimmed().isEmpty() )
         {
-          // We have an manufacturer identifier
-          recorderID = _settings.value("/ManufactorerID/"+s.mid(1,3).toUpper(),
-                                       QObject::tr("unknown manufacturer")).toString();
-          recorderID = recorderID + " (" + s.mid(4,3) + ")";
+          continue;
         }
-      else if(s.mid(0,1) == "H" && isHeader)
+
+      int progress = readChar * 100 / fileLength;
+
+      if( lastProgress != progress  )
         {
-          // We have a headline
-          if(s.mid(1, 4).toUpper() == "FPLT")
-              pilotName = s.mid(s.indexOf(':')+1,100);
-          else if(s.mid(1, 4).toUpper() == "FGTY")
-              gliderType = s.mid(s.indexOf(':')+1,100);
-          else if(s.mid(1, 4).toUpper() == "FGID")
-              gliderID = s.mid(s.indexOf(':')+1,100);
-          else if(s.mid(1, 4).toUpper() == "FDTE")
-            {
-              if(s.mid(9, 2).toInt() < 50)
-                  date.setYMD(2000 + s.mid(9, 2).toInt(),
-                      s.mid(7, 2).toInt(), s.mid(5, 2).toInt());
-              else
-                  date.setYMD(s.mid(9, 2).toInt(),
-                      s.mid(7, 2).toInt(), s.mid(5, 2).toInt());
-
-              timeOfFlightDay = timeToDay(date.year(), date.month(), date.day());
-
-            }
-          else if(s.mid(1, 4).toUpper() == "FCCL")
-            {
-              // Searching the config-file for the Competition-Class
-              cClass = _settings.value( "/CompetitionClasses/"+s.mid(s.indexOf(':')+1,100).toUpper(),
-                                        Flight::Unknown).toInt();
-            }
+          lastProgress = progress;
+          importProgress.setValue( progress > 100 ? 100 : progress );
         }
-      else if ( s.mid(0,1) == "I" )
+
+      // First character of the read line is the key.
+      QChar key = s.at(0);
+
+      if( key == 'B' )
         {
-          // This record defines the extension of the mandatory fix B Record. Only one I record is allowed in each file.
-          // This record has to be located before the first B Record, immediately after the H record.
-          // Format of I Record:
-          //    I N N S S F F M M M S S F F M M M CR LF
-          // Description             Size          Element   Remarks
-          //   # of  extensions        2 bytes       NN        Valid characters 0-9
-          //   Start byte number       2 bytes       SS        Valid characters 0-9
-          //   Finish byte number      2 bytes       FF        Valid characters 0-9
-          //   Mnemonic                3 bytes       MMM       Valid characters alphanumeric
-          // The byte count starts from the beginning of the B Record starting at 1.
-
-          int nrOfOpts = s.mid(1, 2).toInt();
-          bOption opt;
-
-          if ( nrOfOpts < 1 || nrOfOpts > 10 )
-          {
-            // Must be wrong
-            qWarning("KFLog: Too much options in line %d of igc-file %s",
-                     lineCount, igcFile.fileName().toLatin1().data() );
-          }
-
-          // Select the options announced in this igc file
-          options.clear();
-
-          for (int i = 0; i < nrOfOpts; i++ )
-          {
-            sscanf(s.mid(3+i*7, 7).toAscii().data(), "%2d%2d%3s", &opt.begin, &opt.length, opt.mnemonic);
-            opt.begin -= 1; // B record starts with 1!
-            opt.length = opt.length - opt.begin;
-            options.append(opt);
-          }
-        }
-      else if(s.mid(0,1) == "B")
-        {
-          isHeader = false;
-
           //
           // We have a point.
           // But we must proof the line syntax first.
           //
+
           if(bRecord.indexIn(s) == -1)
             {
               // IO-Error !!!
@@ -296,18 +259,21 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
               QMessageBox::warning(0, QObject::tr("Syntax-error in IGC-file"),
                   "<html>" + QObject::tr("Syntax-error while loading igc-file"
-                      "<BR><B>%1</B><BR>Aborting!").arg(igcFile.fileName()) + "</html>", QMessageBox::Ok);
+                  "<BR><B>%1</B><BR>Aborting!").arg(igcFile.fileName()) + "</html>",
+                  QMessageBox::Ok);
 
               qWarning( "KFLog: Error in reading line %d in igc-file %s",
                         lineCount, igcFile.fileName().toLatin1().data() );
               return false;
             }
 
-          if(s.mid(24,1) == "V") // void, not valid;
+          QChar valid = s.at(24);
+
+          if( valid == 'V') // void, not valid;
             {
               continue;
             }
-          else if(s.mid(24,1) != "A") //isValid = true;
+          else if( valid != 'A') //isValid = true;
             {
               qWarning("KFLog: Wrong value found in igc-line!");
               continue;
@@ -369,7 +335,82 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           *point = newPoint;
           flightRoute.append( point );
         }
-      else if(s.mid(0,1) == "C" && isHeader)
+      else if( key == 'A' )
+        {
+          // We have an manufacturer identifier
+          recorderID = _settings.value("/ManufactorerID/" + s.mid(1,3).toUpper(),
+                                       QObject::tr("unknown manufacturer")).toString();
+
+          recorderID = recorderID + " (" + s.mid(4,3) + ")";
+        }
+      else if( key == 'H' )
+        {
+          // We have a headline
+          // The general format of the H-Record is: H, data source (S), subtype (CCC), subtype long name,
+          // colon, text string. The long name and text string are intended as an aid for people reading the file.
+
+          QString htype = s.mid(1, 4).toUpper();
+
+          if( htype == "FPLT" ) // pilot in charge
+              pilotName = s.mid(s.indexOf(':') + 1,100);
+          else if( htype== "FGTY" ) // glider type
+              gliderType = s.mid(s.indexOf(':')+1,100);
+          else if( htype == "FGID" ) // gilder Id
+              gliderID = s.mid(s.indexOf(':')+1,100);
+          else if( htype == "FDTE") // date of flight
+            {
+              if(s.mid(9, 2).toInt() < 50)
+                  date.setYMD(2000 + s.mid(9, 2).toInt(),
+                      s.mid(7, 2).toInt(), s.mid(5, 2).toInt());
+              else
+                  date.setYMD(s.mid(9, 2).toInt(),
+                      s.mid(7, 2).toInt(), s.mid(5, 2).toInt());
+
+              timeOfFlightDay = timeToDay(date.year(), date.month(), date.day());
+
+            }
+          else if( htype == "FCCL" )
+            {
+              // Searching the config-file for the Competition-Class
+              cClass = _settings.value( "/CompetitionClasses/"+s.mid(s.indexOf(':')+1,100).toUpper(),
+                                        Flight::Unknown).toInt();
+            }
+        }
+      else if ( key == 'I' )
+        {
+          // This record defines the extension of the mandatory fix B Record. Only one I record is allowed in each file.
+          // This record has to be located before the first B Record, immediately after the H record.
+          // Format of I Record:
+          //    I N N S S F F M M M S S F F M M M CR LF
+          // Description             Size          Element   Remarks
+          //   # of  extensions        2 bytes       NN        Valid characters 0-9
+          //   Start byte number       2 bytes       SS        Valid characters 0-9
+          //   Finish byte number      2 bytes       FF        Valid characters 0-9
+          //   Mnemonic                3 bytes       MMM       Valid characters alphanumeric
+          // The byte count starts from the beginning of the B Record starting at 1.
+
+          int nrOfOpts = s.mid(1, 2).toInt();
+          bOption opt;
+
+          if ( nrOfOpts < 1 || nrOfOpts > 10 )
+          {
+            // Must be wrong
+            qWarning("KFLog: Too much options in line %d of igc-file %s",
+                     lineCount, igcFile.fileName().toLatin1().data() );
+          }
+
+          // Select the options announced in this igc file
+          options.clear();
+
+          for (int i = 0; i < nrOfOpts; i++ )
+          {
+            sscanf(s.mid(3+i*7, 7).toAscii().data(), "%2d%2d%3s", &opt.begin, &opt.length, opt.mnemonic);
+            opt.begin -= 1; // B record starts with 1!
+            opt.length = opt.length - opt.begin;
+            options.append(opt);
+          }
+        }
+      else if( key == 'C' && isHeader)
         {
           if( ( ( ( s.mid( 8,1) == "N" ) || ( s.mid( 8,1) == "S" ) ) ||
                 ( ( s.mid(17,1) == "W" ) || ( s.mid(17,1) == "E" ) ) ))
@@ -418,18 +459,17 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
               wp_count++;
             }
         }
-      else if(s.mid(0,1) == "L")
+
+#if 0
+      else if(s.at(0) == 'L')
         {
-          if(s.mid(13,16) == "TAKEOFF DETECTED")
-            {
-              // Der Logger hat den Start erkannt !
-              continue;
-            }
+          // comment lines in IGC file
         }
+#endif
+
     }
 
   igcFile.close();
-  importProgress.close();
 
   if( flightRoute.count() == 0 )
     {
@@ -443,6 +483,12 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
       return false;
     }
 
+  importProgress.setLabelText(
+        "<html>" + QObject::tr("Please wait while checking airspaces") + "</html>");
+
+  importProgress.repaint();
+  QCoreApplication::processEvents();
+
   Flight* newFlight = new Flight( igcFile.fileName(),
                                   recorderID,
                                   flightRoute,
@@ -455,6 +501,11 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
   _globalMapContents->appendFlight( newFlight) ;
   return true;
+}
+
+void FlightLoader::slot_CancelLoad()
+{
+  // This slot is needed to get set the cancel flag of the progress dialog.
 }
 
 /** Parses a file downloaded with Gardown in DOS or a Garmin *.trk file */
@@ -499,8 +550,6 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
   // the file.
   //
   //  Format spec:
-  //
-  // TODO
   //
   QRegExp bRecord("^[$]GPRMC,[0-9][0-9][0-9][0-9][0-9][0-9],[AV],[0-9][0-9][0-9][0-9]\\.[0-9][0-9][0-9],[NS],[0-9][0-9][0-9][0-9][0-9]\\.[0-9][0-9][0-9],[EW],[0-9][0-9][0-9]\\.[0-9],[0-9][0-9][0-9]\\.[0-9],[0-9][0-9][0-9][0-9][0-9][0-9][0-9],[0-9][0-9][0-9]\\.[0-9],[EW],[*][0-9][0-9]$");
 
@@ -633,6 +682,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
   cClass     = Flight::NotSet;
 
   _globalMapContents->appendFlight(new Flight(gardownFile.fileName(), recorderID, flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
+
   return true;
 }
 
@@ -680,10 +730,8 @@ bool FlightLoader::loadQNH(QString SettingsFileName, int& result)
     {
       return getQNHFromUser(SettingsFileName, result);
     }
-  else
-    {
-      return true;
-    }
+
+  return true;
 }
 
 bool FlightLoader::saveQNH(QString OriginalFileName, int QNH)

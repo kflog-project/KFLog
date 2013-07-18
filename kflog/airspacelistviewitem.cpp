@@ -19,11 +19,13 @@
 
 #include "airspacelistviewitem.h"
 #include "flight.h"
-#include "waypoint.h"
-#include "mainwindow.h"
 #include "evaluationframe.h"
 #include "evaluationdialog.h"
 #include "evaluationview.h"
+#include "mainwindow.h"
+#include "map.h"
+#include "mapcontents.h"
+#include "waypoint.h"
 
 extern MainWindow *_mainWindow;
 
@@ -163,6 +165,7 @@ void AirSpaceListViewItem::createChildren()
 
               QDateTime End;
               End.setTime_t(m_Flight->getPoint( Violations[i].LastIndexPointinRoute() ).time );
+
               Altitude altEnd(m_Flight->getPoint( Violations[i].LastIndexPointinRoute() ).height);
 
               sl = (QStringList() << QObject::tr( "End" )
@@ -203,13 +206,13 @@ AirSpaceListViewItem::AirSpaceFlagListViewItem::AirSpaceFlagListViewItem( QTreeW
   m_Flight(theFlight)
 {}
 
-void AirSpaceListViewItem::AirSpaceFlagListViewItem::Activate()
+void AirSpaceListViewItem::AirSpaceFlagListViewItem::activate()
 {
   // - richtiger FLug muss aktiviert werden
   // - beide Cursors an Anfang und Ende des Luftraums setzen.
   if( m_Flight != 0 )
     {
-      QList<FlightPoint*> Route = m_Flight->getRoute();
+      QList<FlightPoint*>& Route = m_Flight->getRoute();
       time_t cursor1 = Route[m_ItemToActivate.FirstIndexPointinRoute()]->time;
       time_t cursor2 = Route[m_ItemToActivate.LastIndexPointinRoute()]->time;
 
@@ -234,5 +237,14 @@ void AirSpaceListViewItem::AirSpaceFlagListViewItem::Activate()
           EvalFrame->slotShowFlight( m_Flight );
           EvalView->slotSetCursors( m_Flight, cursor1, cursor2 );
         }
+
+      extern Map *_globalMap;
+
+      _mainWindow->slotSelectFlightData(MapConfig::Airspace);
+
+      QPoint p1 = Route[m_ItemToActivate.FirstIndexPointinRoute()]->projP;
+      QPoint p2 = Route[m_ItemToActivate.LastIndexPointinRoute()]->projP;
+
+      _globalMap->slotDrawCursor( p1, p2 );
     }
 }

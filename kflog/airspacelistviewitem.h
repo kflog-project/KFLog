@@ -21,8 +21,8 @@
   *
   * \brief List view item that contains an airspace intersection.
   *
-  * This class represents a task in the object tree. It manages it's own
-  * children, all you need to do is invoke it with the
+  * This class represents a airspace intersection in the object tree. It manages
+  * it's own children, all you need to do is invoke it with the
   * @ref AirSpaceListViewItem(QTreeWidgetItem* parent, Flight* flight) constructor.
   *
   * \date 2013
@@ -34,6 +34,7 @@
 #define AIRSPACE_LIST_VIEW_ITEM_H
 
 #include <QTreeWidgetItem>
+
 #include "flight.h"
 
 #define AIRSPACE_LIST_VIEW_ITEM_TYPEID 10008
@@ -54,14 +55,19 @@ class AirSpaceListViewItem : public QTreeWidgetItem
          * @param task Reference to @ref FlightTask object to display
          */
         AirSpaceFlagListViewItem( QTreeWidgetItem* parent,
-                                  const QStringList & Strings,
+                                  const QStringList& Strings,
                                   Flight::AirSpaceIntersection theFlightIntersection,
-                                  Flight * theFlight );
-        void Activate();
+                                  Flight* theFlight );
+        void activate();
 
         Flight* getFlight()
         {
           return m_Flight;
+        };
+
+        Flight::AirSpaceIntersection& getAirspaceIntersection()
+        {
+          return m_ItemToActivate;
         };
 
       private:
@@ -69,7 +75,7 @@ class AirSpaceListViewItem : public QTreeWidgetItem
          * Contains reference to the @ref FlightTask this @ref QTreeWidgetItem is representing
          */
         Flight::AirSpaceIntersection m_ItemToActivate;
-        Flight * m_Flight;
+        Flight* m_Flight;
     };
     /**
      * Constructor.

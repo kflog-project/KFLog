@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by André Somers
-**                   2011 by Axel Pauli
+**                   2011-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -28,7 +28,7 @@
   * possibly more in the future. The loaded objects are represented in a
   * tree view, giving easy access to each object to the user.
   *
-  * \date 2003-2011
+  * \date 2003-2013
   *
   * \version $Id$
   */
@@ -144,6 +144,10 @@ public slots:
    * remove the item from the list.
    */
   void slotCloseFlight(BaseFlightElement*);
+  /**
+   * Called, if all flight nodes shall be updated.
+   */
+  void slotUpdateAllFlights();
 
 private slots:
 

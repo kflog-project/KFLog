@@ -19,12 +19,25 @@
 #ifndef FLIGHT_LOADER_H
 #define FLIGHT_LOADER_H
 
+#include <QObject>
+
 #include <QFile>
 #include <QFileInfo>
 
-class FlightLoader
+class FlightLoader : public QObject
 {
+  Q_OBJECT
+
+  private:
+
+  Q_DISABLE_COPY ( FlightLoader )
+
   public:
+
+  FlightLoader( QObject *parent=0 );
+
+  virtual ~FlightLoader();
+
    /**
    * Loads a new flight-file.
    *
@@ -54,6 +67,10 @@ class FlightLoader
   */
   bool resetQNH(QString OriginalFileName);
 
+  private slots:
+
+  void slot_CancelLoad();
+
   private:
 
   bool loadQNH(QString OriginalFileName, int & result);
@@ -67,6 +84,7 @@ class FlightLoader
       int begin, length;
       char mnemonic[4];
   };
+
 };
 
 #endif

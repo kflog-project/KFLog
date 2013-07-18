@@ -119,3 +119,13 @@ void FlightListViewItem::createChildren()
       subItem->setFlags( Qt::ItemIsEnabled );
    }
 }
+
+void FlightListViewItem::activate()
+{
+  if( ! flight )
+    {
+      return;
+    }
+
+  _mainWindow->slotSelectFlightData(MapConfig::Altitude);
+}

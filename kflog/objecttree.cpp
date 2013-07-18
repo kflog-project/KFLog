@@ -183,13 +183,27 @@ void ObjectTree::slotItemDoubleClicked( QTreeWidgetItem *item, int /* column */ 
 {
     switch( item->type() )
       {
-    case AIRSPACE_FLAG_LIST_VIEW_ITEM_TYPEID:
-    {
-        AirSpaceListViewItem::AirSpaceFlagListViewItem * pItem = (AirSpaceListViewItem::AirSpaceFlagListViewItem *) item;
-        pItem->Activate();
-    }
+        case AIRSPACE_FLAG_LIST_VIEW_ITEM_TYPEID:
+          {
+            AirSpaceListViewItem::AirSpaceFlagListViewItem * aItem = (AirSpaceListViewItem::AirSpaceFlagListViewItem *) item;
+            _mainWindow->slotSelectFlightData(MapConfig::Airspace);
+            emit newFlightSelected( aItem->getFlight() );
+            //aItem->activate();
+          }
+
         break;
-    default:
+
+        case FLIGHT_LIST_VIEW_ITEM_TYPEID:
+          {
+            FlightListViewItem * fItem = (FlightListViewItem *) item;
+            _mainWindow->slotSelectFlightData(MapConfig::Altitude);
+            emit newFlightSelected( fItem->flight );
+            //fItem->activate();
+          }
+
+        break;
+
+        default:
         // empty
         break;
     }
@@ -601,6 +615,33 @@ void ObjectTree::slotSaveTask()
     }
 
   QApplication::restoreOverrideCursor();
+}
+
+void ObjectTree::slotUpdateAllFlights()
+{
+  for( int i = 0; i < FlightRoot->childCount(); i++ )
+    {
+      QTreeWidgetItem* childItem = FlightRoot->child( i );
+
+      FlightListViewItem* flvi = dynamic_cast<FlightListViewItem*>(childItem);
+
+      if( flvi )
+        {
+          flvi->update();
+        }
+    }
+
+  // A flight can be contained in a flight group. So all flight groups
+  // need an update too.
+  for( int i = 0; i < FlightGroupRoot->childCount(); i++ )
+    {
+      QTreeWidgetItem* item = FlightGroupRoot->child( i );
+
+      if( item->type() == FLIGHT_GROUP_LIST_VIEW_ITEM_TYPEID )
+        {
+          static_cast<FlightGroupListViewItem *>(item)->update();
+        }
+    }
 }
 
 void ObjectTree::slotSaveAllTask()

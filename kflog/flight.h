@@ -199,11 +199,14 @@ class Flight : public BaseFlightElement
  /**
   * @return the route
   */
-  QList<FlightPoint*> getRoute() const;
+  QList<FlightPoint*>& getRoute()
+    {
+      return route;
+    };
   /**
    * @return the number of logged points.
    */
-  int getRouteLength() const { return route.size(); }
+  int getRouteLength() const { return route.size(); };
 
   /**
    * Creates a string list, that contains several info about the part

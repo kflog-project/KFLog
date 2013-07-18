@@ -27,7 +27,9 @@ MapConfig::MapConfig( QObject* object ) :
   QObject(object),
   scaleIndex(0),
   printScaleIndex(0),
-  isSwitch(false)
+  isSwitch(false),
+  drawFType(Altitude),
+  _drawWpLabelScale(WPLABEL)
 {
   defaultOpacity[0] = AS_OPACITY_1;
   defaultOpacity[1] = AS_OPACITY_2;
@@ -489,7 +491,7 @@ void MapConfig::slotReadConfig()
       FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4,
       PRINT_FAI_HIGH_500_BRUSH_STYLE_1, PRINT_FAI_HIGH_500_BRUSH_STYLE_2);
 
-  drawFType = _settings.value("/Flight/DrawType", MapConfig::Speed).toInt();
+  drawFType = _settings.value("/Flight/DrawType", MapConfig::Altitude).toInt();
 
   _drawWpLabelScale = _settings.value("/Scale/WaypointLabel", WPLABEL).toInt();
 
@@ -596,10 +598,9 @@ QPen MapConfig::getDrawPen(FlightPoint* fP, float va_min/*=-10*/, float va_max/*
 
       case MapConfig::Airspace:
           {
-
             if( fP->isAirspaceIntersected == true )
               {
-                color = Qt::red;
+                color = Qt::magenta;
               }
             else
               {

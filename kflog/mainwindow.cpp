@@ -152,11 +152,12 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), map, SLOT(slotShowCurrentFlight()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), objectTree, SLOT(slotSelectedFlightChanged()));
   connect(_globalMapContents, SIGNAL(clearFlightCursor()), map, SLOT(slotClearCursor()));
-
+  connect(_globalMapContents, SIGNAL(airspacesLoaded()), objectTree, SLOT(slotUpdateAllFlights()));
   connect(_globalMapContents, SIGNAL(newFlightAdded(Flight*)), objectTree, SLOT(slotNewFlightAdded(Flight*)));
   connect(_globalMapContents, SIGNAL(newFlightGroupAdded(FlightGroup*)), objectTree, SLOT(slotNewFlightGroupAdded(FlightGroup*)));
   connect(_globalMapContents, SIGNAL(newTaskAdded(FlightTask*)), objectTree, SLOT(slotNewTaskAdded(FlightTask*)));
   connect(_globalMapContents, SIGNAL(taskHelp(QString&)), helpWindow, SLOT(slotShowHelpText(QString&)) );
+
   connect(_globalMapMatrix, SIGNAL(displayMatrixValues(int, bool)), _globalMapConfig, SLOT(slotSetMatrixValues(int, bool)));
   connect(_globalMapMatrix, SIGNAL(matrixChanged()), map, SLOT(slotScheduleRedrawMap()));
   connect(_globalMapMatrix, SIGNAL(printMatrixValues(int)), _globalMapConfig, SLOT(slotSetPrintMatrixValues(int)));

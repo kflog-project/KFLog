@@ -582,11 +582,6 @@ int Flight::getPointIndexByTime(time_t time)
   return ep;
 }
 
-QList<FlightPoint*> Flight::getRoute() const
-{
-  return route;
-}
-
 FlightPoint Flight::getPoint(int n)
 {
   if( n >= 0 && n < route.count() )
@@ -1375,6 +1370,8 @@ void Flight::calAirSpaceIntersections()
     {
       FlightPoint* fp = route.at(ridx);
 
+      fp->isAirspaceIntersected = false;
+
       // Check for airspace violations at the current coordinate.
       AltitudeCollection altitudesForI;
       altitudesForI.pressureAltitude = Altitude(fp->height);
@@ -1434,8 +1431,6 @@ void Flight::calAirSpaceIntersections()
             }
           else
             {
-              fp->isAirspaceIntersected = false;
-
               // Not or not more inside. Look in start list, if airspace
               // conflicts can be closed.
               for( int i = asStartIntersections.size() - 1; i >= 0; i-- )
@@ -1452,7 +1447,7 @@ void Flight::calAirSpaceIntersections()
                 }
             }
         }
-      }
+    }
 
   // Close all still open airspace conflicts.
   for( int i = asStartIntersections.size() - 1; i >= 0; i-- )
