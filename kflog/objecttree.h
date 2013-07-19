@@ -167,7 +167,13 @@ private slots:
    * Called if the selection has been changed.
    */
   void slotSelectionChanged( QTreeWidgetItem *item, int column );
+
   void slotItemDoubleClicked( QTreeWidgetItem *item, int column );
+
+  /**
+   * Called if an item is expanded.
+   */
+  void slotItemExpanded( QTreeWidgetItem* item );
 
 signals:
   /**
@@ -214,6 +220,11 @@ signals:
    * Indicate that the current flight should be optimized for OLC declaration
    */
   void optimizeFlightOLC();
+
+  /**
+   * Emitted to draw the current selected flight at the map.
+   */
+  void showCurrentFlight();
 
 protected:
 

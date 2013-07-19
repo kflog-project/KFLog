@@ -79,7 +79,7 @@ public:
    * Returns true, if the passed WGS coordinate point lays inside the airspace
    * polygon.
    */
-  bool isWgsPointInside( WGSPoint& point );
+  bool isWgsPointInside( QPoint& point );
 
   /**
    * Returns true, if the passed projected coordinate point lays inside the
@@ -197,6 +197,11 @@ private:
    * @see #getUpperT
    */
   BaseMapElement::elevationType uLimitType;
+
+  /**
+   * The airspace data as QPainterPath object in WGS84 coordinates.
+   */
+  QPainterPath m_airspaceRegion;
 };
 
 /**

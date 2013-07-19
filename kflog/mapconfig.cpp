@@ -28,7 +28,6 @@ MapConfig::MapConfig( QObject* object ) :
   scaleIndex(0),
   printScaleIndex(0),
   isSwitch(false),
-  drawFType(Altitude),
   _drawWpLabelScale(WPLABEL)
 {
   defaultOpacity[0] = AS_OPACITY_1;
@@ -491,17 +490,9 @@ void MapConfig::slotReadConfig()
       FAI_HIGH_500_BRUSH_STYLE_3, FAI_HIGH_500_BRUSH_STYLE_4,
       PRINT_FAI_HIGH_500_BRUSH_STYLE_1, PRINT_FAI_HIGH_500_BRUSH_STYLE_2);
 
-  drawFType = _settings.value("/Flight/DrawType", MapConfig::Altitude).toInt();
-
   _drawWpLabelScale = _settings.value("/Scale/WaypointLabel", WPLABEL).toInt();
 
   emit configChanged();
-}
-
-void MapConfig::slotSetFlightDataType( int type )
-{
-  drawFType = type;
-  _settings.setValue("/Flight/DrawType", type);
 }
 
 void MapConfig::slotSetMatrixValues(int index, bool sw)
@@ -521,7 +512,12 @@ QPen& MapConfig::getPrintPen(unsigned int typeID)
   return __getPen(typeID, printScaleIndex);
 }
 
-QPen MapConfig::getDrawPen(FlightPoint* fP, float va_min/*=-10*/, float va_max/*=10*/, int altitude_max/*= 5000*/, float speed_max/*=80*/)
+QPen MapConfig::getDrawPen( FlightPoint* fP,
+                            float va_min/*=-10*/,
+                            float va_max/*=10*/,
+                            int altitude_max/*= 5000*/,
+                            float speed_max/*=80*/,
+                            enum MapConfig::DrawFlightPointType dfpt )
 {
   //
   // Dynamische Farben im Flug:
@@ -538,7 +534,7 @@ QPen MapConfig::getDrawPen(FlightPoint* fP, float va_min/*=-10*/, float va_max/*
   float vario_range;
   QColor color;
 
-  switch( drawFType )
+  switch( dfpt )
     {
       case MapConfig::Vario:
 

@@ -277,19 +277,19 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
     }
 }
 
-void EvaluationView::slotSetCursors(Flight * theFlight, time_t NewCursor1, time_t NewCursor2)
+void EvaluationView::slotSetCursors(Flight* theFlight, time_t NewCursor1, time_t NewCursor2)
 {
-    if ( NULL != flight && theFlight == flight && NewCursor1 <= NewCursor2)
+    if ( 0 != flight && theFlight == flight && NewCursor1 <= NewCursor2)
     {
         cursor1 = NewCursor1;
         cursor2 = NewCursor2;
 
-        __drawCursor( ( cursor1  - startTime ) / secWidth + X_DISTANCE, true, 0 );
-        __drawCursor( ( cursor2  - startTime ) / secWidth + X_DISTANCE, true, 1 );
         flight->setTaskByTimes(cursor1, cursor2);
-        repaint();
+
         evalDialog->updateText(flight->getPointIndexByTime(cursor1),
                                flight->getPointIndexByTime(cursor2));
+        __draw();
+        repaint();
     }
 }
 

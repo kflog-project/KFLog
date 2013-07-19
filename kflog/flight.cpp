@@ -31,6 +31,7 @@
 #include "airspacewarningdistance.h"
 #include "flight.h"
 #include "mapcalc.h"
+#include "mapconfig.h"
 #include "mapcontents.h"
 #include "mapmatrix.h"
 #include "optimizationwizard.h"
@@ -104,7 +105,8 @@ Flight::Flight( const QString& fName,
     optimized(false),
     nAnimationIndex(0),
     bAnimationActive(false),
-    taskTimesSet(false)
+    taskTimesSet(false),
+    m_dfpt(MapConfig::Altitude)
 {
   origTask.checkWaypoints(route, gliderType);
 
@@ -443,7 +445,12 @@ void Flight::printMapElement(QPainter* targetPainter, bool isText)
       bBoxFlight.setRight(qMax(curPointB.x(), bBoxFlight.right()));
       bBoxFlight.setBottom(qMin(curPointB.y(), bBoxFlight.bottom()));
 
-      QPen drawP = glConfig->getDrawPen(pointB, vario_min, vario_max, altitude_max, speed_max);
+      QPen drawP = glConfig->getDrawPen( pointB,
+                                         vario_min,
+                                         vario_max,
+                                         altitude_max,
+                                         speed_max,
+                                         m_dfpt );
       drawP.setCapStyle(Qt::SquareCap);
       targetPainter->setPen(drawP);
 
@@ -507,7 +514,7 @@ bool Flight::drawMapElement( QPainter* targetPainter )
       bBoxFlight.setRight(qMax(curPointB.x(), bBoxFlight.right()));
       bBoxFlight.setBottom(qMin(curPointB.y(), bBoxFlight.bottom()));
 
-      QPen drawP = glConfig->getDrawPen(pointB, vario_min, vario_max, altitude_max, speed_max);
+      QPen drawP = glConfig->getDrawPen(pointB, vario_min, vario_max, altitude_max, speed_max, m_dfpt);
       drawP.setCapStyle(Qt::SquareCap);
       targetPainter->setPen(drawP);
       targetPainter->drawLine(curPointA, curPointB);

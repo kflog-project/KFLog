@@ -55,11 +55,6 @@ class FlightListViewItem : public QTreeWidgetItem
    */
   virtual ~FlightListViewItem();
   /**
-   * Contains reference to the @ref Flight this @ref QTreeWidgetItem
-   * is representing
-   */
-  Flight* flight;
-  /**
    * Called to make the item update itself, for example because the flight
    * was optimized.
    */
@@ -70,11 +65,25 @@ class FlightListViewItem : public QTreeWidgetItem
    */
   void activate();
 
+  /**
+   * Returns the flight.
+   */
+  Flight* getFlight()
+   {
+     return m_flight;
+   };
+
  protected:
   /**
    * Creates the child nodes for this flight node.
    */
   void createChildren();
+
+  /**
+   * Contains reference to the @ref Flight this @ref QTreeWidgetItem
+   * is representing
+   */
+  Flight* m_flight;
 };
 
 #endif

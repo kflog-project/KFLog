@@ -86,6 +86,10 @@ Airspace::Airspace( QString name,
   };
 
   uLimit.setMeters( uLim );
+
+  // create a QPainterPath object from the projected airspace.
+  m_airspaceRegion.addPolygon(projPolygon);
+  m_airspaceRegion.closeSubpath();
 }
 
 /**
@@ -96,24 +100,21 @@ bool Airspace::isDrawable() const
   return ( glConfig->isBorder(typeID) && isVisible() );
 }
 
-bool Airspace::isWgsPointInside( WGSPoint& point )
+bool Airspace::isWgsPointInside( QPoint& point )
 {
-  // project point to map
-  QPoint pPoint = _globalMapMatrix->wgsToMap(point);
+  QPoint pp = glMapMatrix->wgsToMap( point );
 
-  return isProjectedPointInside( pPoint );
+  return isProjectedPointInside( pp );
 }
 
 bool Airspace::isProjectedPointInside( QPoint& point )
 {
-  const QPolygon& pPolygon = getPolygon();
-
-  if( pPolygon.isEmpty() )
+  if( m_airspaceRegion.isEmpty() )
     {
       return false;
     }
 
-  return pPolygon.containsPoint( point, Qt::OddEvenFill );
+  return m_airspaceRegion.contains( point );
 }
 
 void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect )

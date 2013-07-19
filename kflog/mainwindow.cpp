@@ -178,13 +178,12 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(objectTree, SIGNAL(setFlightQNH()), this, SLOT(slotsetFlightQNH()));
   connect(objectTree, SIGNAL(optimizeFlight()), this, SLOT(slotOptimizeFlight()));
   connect(objectTree, SIGNAL(optimizeFlightOLC()), this, SLOT(slotOptimizeFlightOLC()));
+  connect(objectTree, SIGNAL(showCurrentFlight()), map, SLOT(slotShowCurrentFlight()));
 
   connect( evaluationWindow, SIGNAL(showCursor(const QPoint&, const QPoint&)),
            map, SLOT(slotDrawCursor(const QPoint&, const QPoint&)) );
   connect( evaluationWindow, SIGNAL(evaluationHelp(QString&)),
            helpWindow, SLOT(slotShowHelpText(QString&)) );
-
-  connect(this, SIGNAL(flightDataTypeChanged(int)), _globalMapConfig, SLOT(slotSetFlightDataType(int)));
 
   slotModifyMenu();
 }
@@ -1541,13 +1540,10 @@ void MainWindow::slotSavePixmap(QUrl url, int width, int height)
   map->slotSavePixmap(url, width, height);
 }
 
-void MainWindow::slotFlightDataTypeGroupAction( QAction *action )
+void MainWindow::slotFlightDataTypeGroupAction( QAction* )
 {
   // Get index from action
-  int index = action->data().toInt();
-
-  // Select indexed action
-  slotSelectFlightData( index );
+  // int index = action->data().toInt();
 }
 
 void MainWindow::selectFlightDataAction( const int index )
@@ -1608,40 +1604,6 @@ void MainWindow::selectFlightDataAction( const int index )
                    << index;
         break;
     }
-}
-
-void MainWindow::slotSelectFlightData( const int index )
-{
-  selectFlightDataAction( index );
-
-  switch( index )
-    {
-      case MapConfig::Altitude:    // Altitude
-        emit flightDataTypeChanged(MapConfig::Altitude);
-        break;
-      case MapConfig::Cycling:     // Cycling
-       emit flightDataTypeChanged(MapConfig::Cycling);
-        break;
-      case MapConfig::Speed:       // Speed
-        emit flightDataTypeChanged(MapConfig::Speed);
-        break;
-      case MapConfig::Vario:       // Vario
-        emit flightDataTypeChanged(MapConfig::Vario);
-        break;
-      case MapConfig::Airspace:       // Airspace Violation
-        emit flightDataTypeChanged(MapConfig::Airspace);
-        break;
-      case MapConfig::Solid:       // Solid color
-        emit flightDataTypeChanged(MapConfig::Solid);
-        break;
-
-      default:
-        qWarning() << "MainWindow::slotSelectFlightData: Unknown identifier"
-                   << index;
-        break;
-    }
-
-  map->slotRedrawFlight();
 }
 
 void MainWindow::slotSetCurrentFile( const QString &fileName )
@@ -1753,8 +1715,6 @@ void MainWindow::slotConfigureKFLog()
   connect(confDlg, SIGNAL(configOk()), map, SLOT(slotRedrawMap()));
 
   connect(confDlg, SIGNAL(configOk()), waypointTreeView, SLOT(slotFillWaypoints()));
-
-  connect(confDlg, SIGNAL(newDrawType(int)), this, SLOT(slotSelectFlightData(int)));
 
   connect( confDlg, SIGNAL(downloadWelt2000()),
            _globalMapContents, SLOT(slotDownloadWelt2000()) );

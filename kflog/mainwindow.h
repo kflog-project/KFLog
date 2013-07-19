@@ -171,15 +171,6 @@ public slots:
   void slotRegisterWaypointDialog(QWidget * dialog);
 
   /**
-   * Called, when the user selects a data type from the menu. Emits
-   * flightDataTypeChanged(int)
-   *
-   * @param  index  The index of the selected list item.
-   *
-   * @see #flightDataTypeChanged(int)
-   */
-  void slotSelectFlightData( const int index );
-  /**
    * Updates the recent file list.
    */
   void slotSetCurrentFile(const QString &fileName);

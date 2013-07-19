@@ -142,6 +142,7 @@ void AirSpaceListViewItem::createChildren()
 
               QDateTime Begin;
               Begin.setTime_t(m_Flight->getPoint( Violations[i].FirstIndexPointinRoute() ).time );
+              Begin = Begin.toUTC();
               Altitude altBegin(m_Flight->getPoint( Violations[i].FirstIndexPointinRoute() ).height);
 
               sl = (QStringList() << QObject::tr( "Begin" )
@@ -165,7 +166,7 @@ void AirSpaceListViewItem::createChildren()
 
               QDateTime End;
               End.setTime_t(m_Flight->getPoint( Violations[i].LastIndexPointinRoute() ).time );
-
+              End = End.toUTC();
               Altitude altEnd(m_Flight->getPoint( Violations[i].LastIndexPointinRoute() ).height);
 
               sl = (QStringList() << QObject::tr( "End" )
@@ -212,9 +213,9 @@ void AirSpaceListViewItem::AirSpaceFlagListViewItem::activate()
   // - beide Cursors an Anfang und Ende des Luftraums setzen.
   if( m_Flight != 0 )
     {
-      QList<FlightPoint*>& Route = m_Flight->getRoute();
-      time_t cursor1 = Route[m_ItemToActivate.FirstIndexPointinRoute()]->time;
-      time_t cursor2 = Route[m_ItemToActivate.LastIndexPointinRoute()]->time;
+      QList<FlightPoint*>& route = m_Flight->getRoute();
+      time_t cursor1 = route[m_ItemToActivate.FirstIndexPointinRoute()]->time;
+      time_t cursor2 = route[m_ItemToActivate.LastIndexPointinRoute()]->time;
 
       EvaluationFrame * EvalFrame = 0;
       EvaluationView * EvalView = 0;
@@ -232,19 +233,16 @@ void AirSpaceListViewItem::AirSpaceFlagListViewItem::activate()
             }
         }
 
-      if( 0 != EvalView )
+      if( EvalFrame != 0 && EvalView != 0 )
         {
           EvalFrame->slotShowFlight( m_Flight );
           EvalView->slotSetCursors( m_Flight, cursor1, cursor2 );
         }
 
+      QPoint& p1 = route.at(m_ItemToActivate.FirstIndexPointinRoute())->projP;
+      QPoint& p2 = route.at(m_ItemToActivate.LastIndexPointinRoute())->projP;
+
       extern Map *_globalMap;
-
-      _mainWindow->slotSelectFlightData(MapConfig::Airspace);
-
-      QPoint p1 = Route[m_ItemToActivate.FirstIndexPointinRoute()]->projP;
-      QPoint p2 = Route[m_ItemToActivate.LastIndexPointinRoute()]->projP;
-
       _globalMap->slotDrawCursor( p1, p2 );
     }
 }

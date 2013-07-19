@@ -141,6 +141,17 @@ class Flight : public BaseFlightElement
   {
     return pilotName;
   };
+
+  void setCopilotName( QString& name )
+  {
+    coPilotName = name;
+  };
+
+  QString& getCopilotName()
+  {
+    return coPilotName;
+  };
+
   /**
    * @return the type of the glider.
    */
@@ -368,6 +379,23 @@ class Flight : public BaseFlightElement
   void setTaskByTimes(int timeBegin,int timeEnd);
   /** Re-calculates all projections for this flight. */
   void reProject();
+
+  /**
+   * Set the flight draw type. Selects the draw pen color and width.
+   */
+  enum MapConfig::DrawFlightPointType getDrawFlightPointType() const
+  {
+    return m_dfpt;
+  };
+
+  /**
+   * Get the flight draw type. Selects the draw pen color and width.
+   */
+  void setDrawFlightPointType( const enum MapConfig::DrawFlightPointType newType )
+  {
+    m_dfpt = newType;
+  };
+
   /**
    * Return values for the Min/Max Points
    */
@@ -420,13 +448,12 @@ private:
 
   QString recorderID;
   QString pilotName;
+  QString coPilotName;
   QString gliderType;
   QString gliderID;
   QDate date;
-  int competitionClass;
+  ushort competitionClass;
 
-  FlightPoint* drawRoute;
-  unsigned int drawLength;
   unsigned int v_max;
   unsigned int h_max;
   unsigned int va_min;
@@ -460,6 +487,9 @@ private:
 
   /** List with airspaces, which were intersected during the flight. */
   QList<AirSpaceIntersection> m_airspaceIntersections;
+
+  /* The data type to be used for flight drawing. */
+  enum MapConfig::DrawFlightPointType m_dfpt;
 };
 
 #endif

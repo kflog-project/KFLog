@@ -67,7 +67,7 @@ public:
    *
    * @see #slotSetFlightDataType
    */
-  enum DrawFlightPoint { Altitude=0, Cycling=1, Speed=2, Vario=3, Airspace=4, Solid=5 };
+  enum DrawFlightPointType { Altitude=0, Cycling=1, Speed=2, Vario=3, Airspace=4, Solid=5 };
 
   /**
    * Creates a new MapConfig object.
@@ -104,9 +104,15 @@ public:
    * @param  va_max       [m/s] maximum vario reading of the whole flight
    * @param  altitude_max [m]   maximum altitude of the whole flight (minimum altitude is assumed to be 0 m)
    * @param  speed_max    [m/s] maximum velocity during the whole flight
+   * @param  dftp         draw type of flight point
    * @return the pen for drawing a line between two flight points of a flight.
    */
-  QPen getDrawPen(FlightPoint* fP, float va_min=-10, float va_max=10, int altitude_max = 5000, float speed_max=80);
+  QPen getDrawPen( FlightPoint* fP,
+                   float va_min=-10,
+                   float va_max=10,
+                   int altitude_max = 5000,
+                   float speed_max=80,
+                   enum MapConfig::DrawFlightPointType dfpt=MapConfig::Altitude );
   /**
    * @param  c  A value between 0.0 and 1.0
    * @return Color from dark red(0.0)->red->yellow->green->cyan->blue->dark blue(1.0)
@@ -224,13 +230,7 @@ public slots:
    * Forces MapConfig to read the configuration data.
    */
   void slotReadConfig();
-  /**
-   * Sets the datatype to be used for drawing flights.
-   *
-   * @param  type  The datattype
-   * @see #DrawFlightPoint
-   */
-  void slotSetFlightDataType(int type);
+
   /**
    * Sets the scaleindex an the flag for small icons. Called from
    * MapMatrix.
@@ -496,12 +496,6 @@ private:
    * each time, the map is zoomed.
    */
   bool isSwitch;
-  /**
-   * The data type to be used for drawing flights.
-   *
-   * @see #slotSetFlightDataType
-   */
-  int drawFType;
 
   int _drawWpLabelScale;
 };

@@ -112,7 +112,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   unsigned int fileLength = fInfo.size();
   QTextStream stream(&igcFile);
 
-  QString pilotName, gliderType, gliderID, recorderID;
+  QString pilotName, copilotName, gliderType, gliderID, recorderID;
   QDate date;
   char latChar, lonChar;
   bool isFirstWP = true;
@@ -353,6 +353,15 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
           if( htype == "FPLT" ) // pilot in charge
               pilotName = s.mid(s.indexOf(':') + 1,100);
+          else if( htype == "PCM2" ) // copilot
+            {
+              int idx = s.indexOf(':');
+
+              if( idx + 1 < s.size())
+                {
+                  copilotName = s.mid(s.indexOf(':') + 1,100);
+                }
+            }
           else if( htype== "FGTY" ) // glider type
               gliderType = s.mid(s.indexOf(':')+1,100);
           else if( htype == "FGID" ) // gilder Id
@@ -498,6 +507,11 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
                                   cClass,
                                   wpList,
                                   date );
+
+  if( copilotName.size() > 0 )
+    {
+      newFlight->setCopilotName( copilotName );
+    }
 
   _globalMapContents->appendFlight( newFlight) ;
   return true;

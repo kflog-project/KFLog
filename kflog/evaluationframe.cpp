@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011 by Axel Pauli
+**                   2011-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -26,7 +26,6 @@
 
 #define X_DISTANCE 100
 
-extern MapContents *_globalMapContents;
 extern QSettings _settings;
 
 EvaluationFrame::EvaluationFrame(QWidget* parent, EvaluationDialog* dlg) :

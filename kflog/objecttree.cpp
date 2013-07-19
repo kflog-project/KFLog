@@ -99,6 +99,9 @@ ObjectTree::ObjectTree( QWidget *parent ) :
 
   connect( this, SIGNAL(itemExpanded(QTreeWidgetItem *)),
            SLOT(slotResizeColumns2Content()) );
+
+  connect( this, SIGNAL(itemExpanded(QTreeWidgetItem *)),
+           SLOT(slotItemExpanded(QTreeWidgetItem *)) );
 }
 
 ObjectTree::~ObjectTree()
@@ -157,7 +160,7 @@ void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
       // The Run Time Type Identification is used, to see what kind of
       // list view item we are dealing with:
       case FLIGHT_LIST_VIEW_ITEM_TYPEID:
-        bfe = ((FlightListViewItem*) item)->flight;
+        bfe = ((FlightListViewItem*) item)->getFlight();
         break;
       case FLIGHT_GROUP_LIST_VIEW_ITEM_TYPEID:
         bfe = ((FlightGroupListViewItem*) item)->flightGroup;
@@ -176,36 +179,78 @@ void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
   if( bfe && bfe != MapContents::instance()->getFlight() )
     {
       emit newFlightSelected( bfe );
+      return;
+    }
+
+  // Check, if current flight is drawn in altitude mode. If not make a
+  // flight redrawing.
+  if( item && item->type() == FLIGHT_LIST_VIEW_ITEM_TYPEID )
+    {
+      FlightListViewItem * fItem = (FlightListViewItem *) item;
+
+      if( fItem->getFlight()->getDrawFlightPointType() != MapConfig::Altitude )
+        {
+          fItem->getFlight()->setDrawFlightPointType( MapConfig::Altitude );
+          emit showCurrentFlight();
+          fItem->activate();
+          return;
+        }
+    }
+
+  if( item && item->type() == AIRSPACE_FLAG_LIST_VIEW_ITEM_TYPEID )
+    {
+      // If the item is selected, we update the flight according to the item data.
+      AirSpaceListViewItem::AirSpaceFlagListViewItem* aItem = (AirSpaceListViewItem::AirSpaceFlagListViewItem *) item;
+
+      aItem->getFlight()->setDrawFlightPointType( MapConfig::Airspace );
+      emit showCurrentFlight();
+      aItem->activate();
+      return;
     }
 }
 
 void ObjectTree::slotItemDoubleClicked( QTreeWidgetItem *item, int /* column */ )
 {
-    switch( item->type() )
-      {
-        case AIRSPACE_FLAG_LIST_VIEW_ITEM_TYPEID:
-          {
-            AirSpaceListViewItem::AirSpaceFlagListViewItem * aItem = (AirSpaceListViewItem::AirSpaceFlagListViewItem *) item;
-            _mainWindow->slotSelectFlightData(MapConfig::Airspace);
-            emit newFlightSelected( aItem->getFlight() );
-            //aItem->activate();
-          }
+  switch( item->type() )
+    {
+      case FLIGHT_LIST_VIEW_ITEM_TYPEID:
+        {
+          FlightListViewItem * fItem = (FlightListViewItem *) item;
 
-        break;
+          if( fItem->getFlight() != currentFlightElement )
+            {
+              // Flight selection was changed, do noting in this case.
+              return;
+            }
 
-        case FLIGHT_LIST_VIEW_ITEM_TYPEID:
-          {
-            FlightListViewItem * fItem = (FlightListViewItem *) item;
-            _mainWindow->slotSelectFlightData(MapConfig::Altitude);
-            emit newFlightSelected( fItem->flight );
-            //fItem->activate();
-          }
+          fItem->getFlight()->setDrawFlightPointType( MapConfig::Altitude );
+          emit showCurrentFlight();
+          fItem->activate();
+        }
 
-        break;
+      break;
 
-        default:
-        // empty
-        break;
+      default:
+      break;
+  }
+}
+
+void ObjectTree::slotItemExpanded( QTreeWidgetItem* item )
+{
+  if( item && item->type() == AIRSPACE_FLAG_LIST_VIEW_ITEM_TYPEID )
+    {
+      // If the item is expanded, we update the flight according to the item data.
+      AirSpaceListViewItem::AirSpaceFlagListViewItem* aItem = (AirSpaceListViewItem::AirSpaceFlagListViewItem *) item;
+
+      if( aItem->getFlight() != currentFlightElement )
+        {
+          // Flight selection was changed, do noting in this case.
+          return;
+        }
+
+      aItem->getFlight()->setDrawFlightPointType( MapConfig::Airspace );
+      emit showCurrentFlight();
+      aItem->activate();
     }
 }
 
@@ -291,7 +336,7 @@ QTreeWidgetItem* ObjectTree::findFlightElement( BaseFlightElement* bfe )
     {
       QTreeWidgetItem* childItem = FlightRoot->child( i );
 
-      if( ((FlightListViewItem*) childItem)->flight == bfe )
+      if( ((FlightListViewItem*) childItem)->getFlight() == bfe )
         {
           return childItem;
         }
@@ -301,7 +346,7 @@ QTreeWidgetItem* ObjectTree::findFlightElement( BaseFlightElement* bfe )
     {
       QTreeWidgetItem* childItem = FlightGroupRoot->child( i );
 
-      if( ((FlightListViewItem*) childItem)->flight == bfe )
+      if( ((FlightListViewItem*) childItem)->getFlight() == bfe )
         {
           return childItem;
         }
