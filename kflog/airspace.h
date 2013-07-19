@@ -73,19 +73,39 @@ public:
   /**
    * Tells the caller, if the airspace is drawable or not
    */
-  bool isDrawable() const;
+  bool isDrawable() const
+  {
+    return ( glConfig->isBorder(typeID) && isVisible() );
+  };
 
   /**
-   * Returns true, if the passed WGS coordinate point lays inside the airspace
+   * Returns true, if the passed WGS84 coordinate point lays inside the airspace
    * polygon.
    */
-  bool isWgsPointInside( QPoint& point );
+  bool isWgsPointInside( const QPoint& point )
+  {
+    if( m_airspaceRegion.isEmpty() )
+      {
+        return false;
+      }
+
+    QPoint pp = glMapMatrix->wgsToMap( point );
+    return m_airspaceRegion.contains( pp );
+  };
 
   /**
    * Returns true, if the passed projected coordinate point lays inside the
    * airspace polygon.
    */
-  bool isProjectedPointInside( QPoint& point );
+  bool isProjectedPointInside( const QPoint& point )
+  {
+    if( m_airspaceRegion.isEmpty() )
+      {
+        return false;
+      }
+
+    return m_airspaceRegion.contains( point );
+  };
 
   /**
    * Draws the airspace into the given painter.

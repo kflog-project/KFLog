@@ -17,12 +17,7 @@
  **
  ***********************************************************************/
 
-#include <cmath>
-
 #include "airspace.h"
-#include "mapmatrix.h"
-
-extern MapMatrix* _globalMapMatrix;
 
 Airspace::Airspace( QString name,
                     BaseMapElement::objectType oType,
@@ -90,31 +85,6 @@ Airspace::Airspace( QString name,
   // create a QPainterPath object from the projected airspace.
   m_airspaceRegion.addPolygon(projPolygon);
   m_airspaceRegion.closeSubpath();
-}
-
-/**
- * Tells the caller, if the airspace is drawable or not
- */
-bool Airspace::isDrawable() const
-{
-  return ( glConfig->isBorder(typeID) && isVisible() );
-}
-
-bool Airspace::isWgsPointInside( QPoint& point )
-{
-  QPoint pp = glMapMatrix->wgsToMap( point );
-
-  return isProjectedPointInside( pp );
-}
-
-bool Airspace::isProjectedPointInside( QPoint& point )
-{
-  if( m_airspaceRegion.isEmpty() )
-    {
-      return false;
-    }
-
-  return m_airspaceRegion.contains( point );
 }
 
 void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect )
