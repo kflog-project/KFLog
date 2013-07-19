@@ -32,6 +32,8 @@
  *
  * \date 2000-2013
  *
+ * \version $Id$
+ *
  */
 
 #ifndef AIRSPACE_H
