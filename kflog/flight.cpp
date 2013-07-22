@@ -76,21 +76,10 @@
 extern MapContents* _globalMapContents;
 
 Flight::Flight( const QString& fName,
-                const QString& recID,
                 const QList<FlightPoint*>& r,
-                const QString& pName,
-                const QString& gType,
-                const QString& gID,
-                int cClass,
-                const QList<Waypoint*>& wpL,
-                const QDate& d )
+                const FlightStaticData& flightStaticData )
   : BaseFlightElement("flight", BaseMapElement::Flight, fName),
-    recorderID(recID),
-    pilotName(pName),
-    gliderType(gType),
-    gliderID(gID),
-    date(d),
-    competitionClass(cClass),
+    m_flightStaticData(flightStaticData),
     v_max(0),
     h_max(0),
     va_min(0),
@@ -100,7 +89,7 @@ Flight::Flight( const QString& fName,
     landTime(route.last()->time),
     startIndex(0),
     landIndex(route.count()-1),
-    origTask(FlightTask(wpL, true, QObject::tr("Original task"))),
+    origTask(FlightTask(flightStaticData.waypoints, true, QObject::tr("Original task"))),
     optimizedTask(FlightTask(QObject::tr("Optimized task"))),
     optimized(false),
     nAnimationIndex(0),
@@ -108,22 +97,22 @@ Flight::Flight( const QString& fName,
     taskTimesSet(false),
     m_dfpt(MapConfig::Altitude)
 {
-  origTask.checkWaypoints(route, gliderType);
+  origTask.checkWaypoints(route, flightStaticData.gliderType);
 
   __calculateBasicInformation();
   __checkMaxMin();
   __flightState();
   calAirSpaceIntersections();
 
-  header.append(pilotName);
-  header.append(gliderID);
-  header.append(gliderType);
-  header.append(date.toString(Qt::LocalDate));
+  header.append(flightStaticData.pilot);
+  header.append(flightStaticData.gliderRegistration);
+  header.append(flightStaticData.gliderType);
+  header.append(flightStaticData.date);
   header.append(printTime(route.last()->time - route.at(0)->time));
   header.append(getTaskTypeString());
   header.append(getDistance());
   header.append(getPoints());
-  header.append(recorderID);
+  header.append(flightStaticData.frRecorderId);
 }
 
 Flight::~Flight()
@@ -527,11 +516,6 @@ bool Flight::drawMapElement( QPainter* targetPainter )
   return true;
 }
 
-QString Flight::getID() const
-{
-  return gliderID;
-}
-
 QString Flight::getTaskTypeString( bool isOrig ) const
 {
   if(isOrig || !optimized)
@@ -887,7 +871,7 @@ QString Flight::getPoints(bool isOrig)
       return optimizedTask.getPointsString();
 }
 
-int Flight::getCompetitionClass() const  { return competitionClass; }
+int Flight::getCompetitionClass() const  { return m_flightStaticData.competitionClass; }
 
 time_t Flight::getLandTime() const { return landTime; }
 
@@ -896,12 +880,6 @@ time_t Flight::getStartTime() const { return startTime; }
 int Flight::getStartIndex() const { return startIndex; }
 
 int Flight::getLandIndex() const { return landIndex; }
-
-QString Flight::getType() const { return gliderType; }
-
-QDate Flight::getDate() const { return date; }
-
-bool Flight::isOptimized() const { return optimized; }
 
 int Flight::searchPoint(const QPoint& cPoint, FlightPoint& searchPoint)
 {
@@ -1048,7 +1026,7 @@ bool Flight::optimizeTaskOLC( Map* map )
       route.at(idList[8])), QObject::tr("Landing"))
 
   optimizedTask.setWaypointList(wpL);
-  optimizedTask.checkWaypoints(route, gliderType);
+  optimizedTask.checkWaypoints(route, m_flightStaticData.gliderType);
   optimizedTask.setOptimizedTask(points,distance);
   optimized = true;
 
@@ -1219,7 +1197,7 @@ bool Flight::optimizeTask()
       APPEND_WAYPOINT(0, 0, QObject::tr("Landing"))
 
       optimizedTask.setWaypointList(wpL);
-      optimizedTask.checkWaypoints(route, gliderType);
+      optimizedTask.checkWaypoints(route, m_flightStaticData.gliderType);
       optimized = true;
 
       return true;

@@ -28,10 +28,34 @@
 #include "mapmatrix.h"
 
 extern MainWindow* _mainWindow;
-extern QSettings   _settings;
+
+QHash<QString, QString> FlightLoader::m_manufactures;
 
 FlightLoader::FlightLoader( QObject *parent ) : QObject(parent)
 {
+  if( m_manufactures.size() == 0 )
+    {
+      m_manufactures.insert( "GCS", "Garrecht" );
+      m_manufactures.insert( "CAM", "Cambridge Aero Instruments" );
+      m_manufactures.insert( "DSX", "Data Swan/DSX" );
+      m_manufactures.insert( "EWA", "EW Avionics" );
+      m_manufactures.insert( "FIL", "Filser" );
+      m_manufactures.insert( "FLA", "Flarm" );
+      m_manufactures.insert( "SCH", "Scheffel" );
+      m_manufactures.insert( "ACT", "Aircotec" );
+      m_manufactures.insert( "NKL", "Nielsen Kellerman" );
+      m_manufactures.insert( "LXN", "LX Navigation" );
+      m_manufactures.insert( "IMI", "IMI Gliding Equipment" );
+      m_manufactures.insert( "NTE", "New Technologies s.r.l." );
+      m_manufactures.insert( "PES", "Peschges" );
+      m_manufactures.insert( "PRT", "Print Technik" );
+      m_manufactures.insert( "SDI", "Streamline Data Instruments" );
+      m_manufactures.insert( "TRI", "Triadis Engineering GmbH" );
+      m_manufactures.insert( "LXV", "LXNAV d.o.o." );
+      m_manufactures.insert( "WES", "Westerboer" );
+      m_manufactures.insert( "ZAN", "Zander" );
+      m_manufactures.insert( "XXX", QObject::tr("unknow manufacture") );
+    }
 }
 
 FlightLoader::~FlightLoader()
@@ -112,19 +136,16 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   unsigned int fileLength = fInfo.size();
   QTextStream stream(&igcFile);
 
-  QString pilotName, copilotName, gliderType, gliderID, recorderID;
-  QDate date;
+  Flight::FlightStaticData fsd;
+
   char latChar, lonChar;
   bool isFirstWP = true;
   int lat, latmin, latTemp, lon, lonmin, lonTemp, baroAltTemp, gpsAltTemp;
   int hh = 0, mm = 0, ss = 0;
   time_t curTime = 0, preTime = 0, timeOfFlightDay = 0;
 
-  int cClass = Flight::NotSet;
-
   FlightPoint newPoint;
   QList<FlightPoint*> flightRoute;
-  QList<Waypoint*> wpList;
   Waypoint* newWP = 0;
   Waypoint* preWP = 0;
 
@@ -338,10 +359,30 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
       else if( key == 'A' )
         {
           // We have an manufacturer identifier
-          recorderID = _settings.value("/ManufactorerID/" + s.mid(1,3).toUpper(),
-                                       QObject::tr("unknown manufacturer")).toString();
+          QString manufactureCode = s.mid(1,3).toUpper();
 
-          recorderID = recorderID + " (" + s.mid(4,3) + ")";
+          if( s.at(1) == QChar('X') )
+            {
+              manufactureCode = "XXX";
+            }
+
+          if( m_manufactures.contains( manufactureCode ) )
+            {
+              fsd.frManufacture = m_manufactures.value( manufactureCode );
+            }
+          else
+            {
+              fsd.frManufacture = QObject::tr("unknown manufacturer");
+            }
+
+          fsd.frManufacture += " (" + manufactureCode + ")";
+
+          QString id = s.mid(4,3).toUpper();
+
+          if( id.isEmpty() == false )
+            {
+              fsd.frManufacture += ", " + id;
+            }
         }
       else if( key == 'H' )
         {
@@ -352,37 +393,32 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           QString htype = s.mid(1, 4).toUpper();
 
           if( htype == "FPLT" ) // pilot in charge
-              pilotName = s.mid(s.indexOf(':') + 1,100);
+              fsd.pilot = s.mid(s.indexOf(':') + 1);
           else if( htype == "PCM2" ) // copilot
-            {
-              int idx = s.indexOf(':');
-
-              if( idx + 1 < s.size())
-                {
-                  copilotName = s.mid(s.indexOf(':') + 1,100);
-                }
-            }
+              fsd.copilot = s.mid(s.indexOf(':') + 1);
           else if( htype== "FGTY" ) // glider type
-              gliderType = s.mid(s.indexOf(':')+1,100);
+              fsd.gliderType = s.mid(s.indexOf(':')+1);
           else if( htype == "FGID" ) // gilder Id
-              gliderID = s.mid(s.indexOf(':')+1,100);
+              fsd.gliderRegistration = s.mid(s.indexOf(':')+1);
+          else if( htype == "FRFW" ) // firmeware version
+              fsd.firmewareVersion = s.mid(s.indexOf(':')+1);
+          else if( htype == "FRHW" ) // hardware version
+              fsd.hardwareVersion = s.mid(s.indexOf(':')+1);
+          else if( htype == "FFTY" ) // flight recorder type
+              fsd.frType = s.mid(s.indexOf(':')+1);
+          else if( htype == "FGPS" ) // GPS manufacture
+              fsd.gpsManufacture = s.mid(5);
+          else if( htype == "FDTM" ) // GPS datum
+              fsd.gpsDatum = s.mid(s.indexOf(':')+1);
+          else if( htype == "FPRS" ) // pressure sensor
+               fsd.altitudePressorSensor = s.mid(s.indexOf(':')+1);
           else if( htype == "FDTE") // date of flight
             {
-              if(s.mid(9, 2).toInt() < 50)
-                  date.setYMD(2000 + s.mid(9, 2).toInt(),
-                      s.mid(7, 2).toInt(), s.mid(5, 2).toInt());
-              else
-                  date.setYMD(s.mid(9, 2).toInt(),
-                      s.mid(7, 2).toInt(), s.mid(5, 2).toInt());
-
-              timeOfFlightDay = timeToDay(date.year(), date.month(), date.day());
-
+              fsd.date = "20" + s.mid(9, 2) + "-" + s.mid(7, 2) + "-" + s.mid(5, 2);
             }
           else if( htype == "FCCL" )
             {
-              // Searching the config-file for the Competition-Class
-              cClass = _settings.value( "/CompetitionClasses/"+s.mid(s.indexOf(':')+1,100).toUpper(),
-                                        Flight::Unknown).toInt();
+              fsd.competitionClass = s.mid(s.indexOf(':') +1).toInt();
             }
         }
       else if ( key == 'I' )
@@ -446,7 +482,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
                   else
                       newWP->distance = dist(newWP, preWP);
 
-                  wpList.append(newWP);
+                  fsd.waypoints.append(newWP);
                   isFirstWP = false;
                   preWP = newWP;
                 }
@@ -461,7 +497,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
                       newWP->origP = preWP->origP;
                       newWP->projP = preWP->projP;
 
-                      wpList.append(newWP);
+                      fsd.waypoints.append(newWP);
                     }
                   last0 = wp_count;
                 }
@@ -499,19 +535,8 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   QCoreApplication::processEvents();
 
   Flight* newFlight = new Flight( igcFile.fileName(),
-                                  recorderID,
                                   flightRoute,
-                                  pilotName,
-                                  gliderType,
-                                  gliderID,
-                                  cClass,
-                                  wpList,
-                                  date );
-
-  if( copilotName.size() > 0 )
-    {
-      newFlight->setCopilotName( copilotName );
-    }
+                                  fsd );
 
   _globalMapContents->appendFlight( newFlight) ;
   return true;
@@ -547,7 +572,6 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
   int lat, latmin, latTemp, lon, lonmin, lonTemp;
   int hh = 0, mm = 0, ss = 0, height;
   time_t curTime = 0, timeOfFlightDay = 0;
-  int cClass;
 
   QList<FlightPoint*> flightRoute;
   QList<Waypoint*> wpList;
@@ -693,9 +717,18 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
   pilotName  = "gardown";
   gliderType = "gardown";
   gliderID   = "gardown";
-  cClass     = Flight::NotSet;
 
-  _globalMapContents->appendFlight(new Flight(gardownFile.fileName(), recorderID, flightRoute, pilotName, gliderType, gliderID, cClass, wpList, date));
+  Flight::FlightStaticData fsd;
+
+  fsd.frRecorderId       = "gardown";
+  fsd.pilot              = "gardown";
+  fsd.gliderType         = "gardown";
+  fsd.gliderRegistration = "gardown";
+
+
+  _globalMapContents->appendFlight( new Flight(gardownFile.fileName(),
+                                               flightRoute,
+                                               fsd) );
 
   return true;
 }

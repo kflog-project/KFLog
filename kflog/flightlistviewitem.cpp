@@ -66,33 +66,42 @@ void FlightListViewItem::update()
 void FlightListViewItem::createChildren()
 {
   setText( 0, QFileInfo(m_flight->getFileName()).fileName() );
-  setText( 1, m_flight->getDate().toString(Qt::LocalDate) + ": " + m_flight->getPilot() );
+  setText( 1, m_flight->getDate() + ": " + m_flight->getPilot() );
 
   QStringList sl = (QStringList() << QObject::tr("Pilot") << m_flight->getPilot() );
   QTreeWidgetItem* subItem = new QTreeWidgetItem( sl );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
-  if( ! m_flight->getCopilotName().isEmpty() )
+  if( ! m_flight->getCopilot().isEmpty() )
     {
       sl = (QStringList() << QObject::tr("Copilot")
-                          << m_flight->getCopilotName() );
+                          << m_flight->getCopilot() );
       subItem = new QTreeWidgetItem( sl );
       subItem->setFlags( Qt::ItemIsEnabled );
       addChild( subItem );
     }
 
   sl = (QStringList() << QObject::tr("Date")
-                      << m_flight->getDate().toString(Qt::LocalDate) );
+                      << m_flight->getDate());
   subItem = new QTreeWidgetItem( sl );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
   sl = (QStringList() << QObject::tr("Glider")
-                      << m_flight->getType() + ", " + m_flight->getID() );
+                      << m_flight->getGliderType() + ", " + m_flight->getGliderRegistration() );
   subItem = new QTreeWidgetItem( sl );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
+
+  if( m_flight->getFlightStaticData().competitionClass != -1 )
+    {
+      sl = (QStringList() << QObject::tr("Competition class")
+                          << QString::number(m_flight->getFlightStaticData().competitionClass ));
+      subItem = new QTreeWidgetItem( sl );
+      subItem->setFlags( Qt::ItemIsEnabled );
+      addChild( subItem );
+    }
 
   sl = (QStringList() << QObject::tr("Points")
                       << m_flight->getPoints(true) );
@@ -113,6 +122,65 @@ void FlightListViewItem::createChildren()
   sl = (QStringList() << QObject::tr("Total distance")
                       << m_flight->getDistance(true) );
   subItem = new QTreeWidgetItem( sl );
+  subItem->setFlags( Qt::ItemIsEnabled );
+  addChild( subItem );
+
+  // Flight recorder data
+  subItem = new QTreeWidgetItem( sl );
+  subItem->setText(0, QObject::tr("FR-Device") );
+  subItem->setText(1, QObject::tr("Data") );
+  subItem->setFlags( Qt::ItemIsEnabled );
+  subItem->setIcon(0, _mainWindow->getPixmap("kde_configure_16.png") );
+  addChild( subItem );
+
+  QTreeWidgetItem* parent = subItem;
+
+  sl = (QStringList() << QObject::tr("Manufacture")
+                      << m_flight->getFlightStaticData().frManufacture );
+
+  subItem = new QTreeWidgetItem( parent, sl );
+  subItem->setFlags( Qt::ItemIsEnabled );
+  addChild( subItem );
+
+  sl = (QStringList() << QObject::tr("FR-Type")
+                      << m_flight->getFlightStaticData().frType );
+
+  subItem = new QTreeWidgetItem( parent, sl );
+  subItem->setFlags( Qt::ItemIsEnabled );
+  addChild( subItem );
+
+  sl = (QStringList() << QObject::tr("Firmware version")
+                      << m_flight->getFlightStaticData().firmewareVersion );
+
+  subItem = new QTreeWidgetItem( parent, sl );
+  subItem->setFlags( Qt::ItemIsEnabled );
+  addChild( subItem );
+
+  sl = (QStringList() << QObject::tr("Hardware version")
+                      << m_flight->getFlightStaticData().hardwareVersion );
+
+  subItem = new QTreeWidgetItem( parent, sl );
+  subItem->setFlags( Qt::ItemIsEnabled );
+  addChild( subItem );
+
+  sl = (QStringList() << QObject::tr("Pressure altitude sensor")
+                      << m_flight->getFlightStaticData().altitudePressorSensor );
+
+  subItem = new QTreeWidgetItem( parent, sl );
+  subItem->setFlags( Qt::ItemIsEnabled );
+  addChild( subItem );
+
+  sl = (QStringList() << QObject::tr("GPS manufacture")
+                      << m_flight->getFlightStaticData().gpsManufacture );
+
+  subItem = new QTreeWidgetItem( parent, sl );
+  subItem->setFlags( Qt::ItemIsEnabled );
+  addChild( subItem );
+
+  sl = (QStringList() << QObject::tr("GPS Datum")
+                      << m_flight->getFlightStaticData().gpsDatum );
+
+  subItem = new QTreeWidgetItem( parent, sl );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
@@ -160,6 +228,8 @@ void FlightListViewItem::activate()
     {
       if( 0 != _mainWindow->getEvaluationWindow() )
         {
+          // _mainWindow->getEvaluationWindow()->slotShowFlightData();
+
           EvalFrame = _mainWindow->getEvaluationWindow()->getEvalFrame();
 
           if( 0 != EvalFrame )
@@ -172,7 +242,7 @@ void FlightListViewItem::activate()
   // Reset cursors in evaluation dialog
   if( EvalFrame != 0 && EvalView != 0 )
     {
-      EvalFrame->slotShowFlight( m_flight );
+      // EvalFrame->slotShowFlight( m_flight );
       EvalView->slotSetCursors( m_flight, cursor1, cursor2 );
     }
 

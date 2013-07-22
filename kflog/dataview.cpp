@@ -309,7 +309,7 @@ void DataView::slotSetFlightData()
 
                 htmlText += "<TR><TD><A HREF=" + idString + ">" +
                             fi.fileName() + "</A></TD><TD ALIGN=right>" +
-                            flight->getDate().toString(Qt::LocalDate) + "</TD></TR>\
+                            flight->getDate() + "</TD></TR>\
                             <TR><TD>" + flight->getDistance() + "</TD><TD ALIGN=right>" +
                             printTime(flight->getLandTime() - flight->getStartTime()) +
                             "</TD></TR>";

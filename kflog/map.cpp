@@ -1744,9 +1744,9 @@ void Map::slotSavePixmap(QUrl fUrl, int width, int height)
 
       QString text = tr( "%1 with %2 (%3) on %4" )
                     .arg( flight->getPilot() )
-                    .arg( flight->getType() )
-                    .arg( flight->getID() )
-                    .arg( flight->getDate().toString() );
+                    .arg( flight->getGliderType() )
+                    .arg( flight->getGliderRegistration() )
+                    .arg( flight->getDate() );
 
       bufferP.drawText( 10 + strWidth + 20, 30, text );
     }

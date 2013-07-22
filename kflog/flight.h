@@ -111,55 +111,73 @@ class Flight : public BaseFlightElement
       int m_LastPointIndexinRoute;
     };
 
+  class FlightStaticData
+  {
+    public:
+
+    FlightStaticData() :
+      competitionClass(-1)
+      {
+      };
+
+    QString date;
+    QString pilot;
+    QString copilot;
+    QString gliderType;
+    QString gliderRegistration;
+    int  competitionClass;
+    QString competitionId;
+    QString frManufacture;
+    QString frRecorderId;
+    QString frType;
+    QString gpsDatum;
+    QString gpsManufacture;
+    QString firmewareVersion;
+    QString hardwareVersion;
+    QString altitudePressorSensor;
+    QList<Waypoint*> waypoints;
+  };
+
   /**
    * Creates a new flight-object.
    * @param  fileName  The name of the igc-file
    * @param  route  The logged flight-points
-   * @param  pName  The name of the pilot
-   * @param  gType  The type of the glider
-   * @param  gIG  The id of the glider
-   * @param  wpL  The list of waypoints of the task
-   * @param  date  The date of the flight
+   * @param  flightData  The static data of the flight
    */
   Flight( const QString& fileName,
-          const QString& recID,
           const QList<FlightPoint*>& route,
-          const QString& pName,
-          const QString& gType,
-          const QString& gID,
-          int cClass,
-          const QList<Waypoint*>& wpL,
-          const QDate& date );
+          const FlightStaticData& flightStaticData );
   /**
    * Destroys the flight-object.
    */
   virtual ~Flight();
+
   /**
-   * @return the name of the pilot.
+   * @return The name of the pilot
    */
   QString getPilot() const
-  {
-    return pilotName;
-  };
+  { return m_flightStaticData.pilot; }
 
-  void setCopilotName( QString& name )
-  {
-    coPilotName = name;
-  };
-
-  QString& getCopilotName()
-  {
-    return coPilotName;
-  };
+  /**
+   * @return The name of the copilot
+   */
+  QString getCopilot() const
+  { return m_flightStaticData.copilot; }
 
   /**
    * @return the type of the glider.
    */
-  QString getType() const;
+  QString getGliderType() const
+  { return m_flightStaticData.gliderType; }
+
   /**
-   * @return the id of the glider.
+   * @return the registration of the glider.
    */
-  QString getID() const;
+  QString getGliderRegistration() const
+  {
+    return m_flightStaticData.gliderRegistration;
+  };
+
   /**
    * @param  isOrig  "true", if the original-task should be returned.
    *                 The default is "false". If the flight has not been
@@ -252,7 +270,11 @@ class Flight : public BaseFlightElement
   /**
    * @return the date of the flight.
    */
-  QDate getDate() const;
+  QString getDate() const
+  {
+    return m_flightStaticData.date;
+  };
+
   /**
    * Searches the point of the flight, which time is the nearest
    * to the given time.
@@ -329,7 +351,11 @@ class Flight : public BaseFlightElement
   /**
    * @return "true" if the flight has been optimized.
    */
-  bool isOptimized() const;
+  bool isOptimized() const
+  {
+    return optimized;
+  };
+
   /**
    * @return the bounding-box of the flight.
    */
@@ -404,19 +430,19 @@ class Flight : public BaseFlightElement
    *  Flight State
    */
   enum FlightState {Straight = 0, LeftTurn = 1, RightTurn = 2, MixedTurn = 3};
-  /**
-   * "Unknown" is used, when there is an unrecognized competition class in
-   * the igc-file. If there is no class given, "NotSet" is used.
-   */
-  enum CompetitionClass {Unknown = -1, NotSet = 0,  PW5 = 1, Club = 2,
-      Standard = 3, FifteenMeter = 4, EightteenMeter = 5, DoubleSitter = 6,
-      OpenClass = 7, HGFlexWing = 8, HGRigidWing = 9, ParaGlider = 10,
-      ParaOpen = 11, ParaSport = 12, ParaTandem = 13};
 
   /**
    * Calculate the airspace intersections of this flight.
    */
   void calAirSpaceIntersections();
+
+  /**
+   * \return The data of the stored flight.
+   */
+  FlightStaticData& getFlightStaticData()
+  {
+    return m_flightStaticData;
+  };
 
 private:
 
@@ -446,13 +472,8 @@ private:
   /** calculates the smallest difference of two angles */
   float __diffAngle(float firstAngle, float secondAngle);
 
-  QString recorderID;
-  QString pilotName;
-  QString coPilotName;
-  QString gliderType;
-  QString gliderID;
-  QDate date;
-  ushort competitionClass;
+  /** The static data of the flight. */
+  FlightStaticData m_flightStaticData;
 
   unsigned int v_max;
   unsigned int h_max;

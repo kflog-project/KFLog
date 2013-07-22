@@ -405,7 +405,7 @@ void EvaluationDialog::slotShowFlightData()
           parent->setWindowTitle( tr( "Flight Evaluation" ) + ": [" +
                                   QFileInfo(flight->getFileName()).fileName() + "] " +
                                   flight->getPilot() + ", " +
-                                  flight->getDate().toString() );
+                                  flight->getDate() );
         }
       else
         {

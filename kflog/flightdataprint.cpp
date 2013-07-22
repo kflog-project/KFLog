@@ -87,11 +87,11 @@ FlightDataPrint::FlightDataPrint(Flight* currentFlight)
   font.setItalic( false );
   painter.setFont( font );
   painter.drawText(50, 100, QObject::tr("Date") + ":");
-  painter.drawText(125, 100, currentFlight->getDate().toString());
+  painter.drawText(125, 100, currentFlight->getDate());
   painter.drawText(50, 115, QObject::tr("Pilot") + ":");
   painter.drawText(125, 115, currentFlight->getPilot());
   painter.drawText(50, 130, QObject::tr("Glider") + ":");
-  painter.drawText(125, 130, currentFlight->getType() + " / " + currentFlight->getID());
+  painter.drawText(125, 130, currentFlight->getGliderType() + " / " + currentFlight->getGliderRegistration());
 
   painter.setPen(QPen(Qt::black, 2));
   painter.drawLine(50, 175, 545, 175);

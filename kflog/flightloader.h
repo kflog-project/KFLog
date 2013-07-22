@@ -23,6 +23,7 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QHash>
 
 class FlightLoader : public QObject
 {
@@ -84,6 +85,9 @@ class FlightLoader : public QObject
       int begin, length;
       char mnemonic[4];
   };
+
+  /** Flight recorder manufactures. */
+  static QHash<QString, QString> m_manufactures;
 
 };
 

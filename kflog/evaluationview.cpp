@@ -936,7 +936,7 @@ void EvaluationView::__draw()
 
       painter.setPen(QPen(QColor(100, 100, 255), 1));
       painter.drawPolyline(baroArray);
-    }
+  }
 
   painter.end();
 
