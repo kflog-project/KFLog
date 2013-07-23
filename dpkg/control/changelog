@@ -1,7 +1,5 @@
 kflog (4.7.1) unstable; urgency=low
 
-2013-07-22 Axel Pauli <kflog.cumulus@gmail.com>
-
   * Flight recorder data added to flight's objecttree.
 
   * Bugfix: Endless loop fixed in Welt2000 update procedure.
@@ -34,7 +32,7 @@ kflog (4.7.1) unstable; urgency=low
   
   * Build with Linux Debian 7.1 and Qt4.8.2
 
- -- Axel Pauli <kflog.cumulus@gmail.com>  Mon, 22 Jul 2013 20:05:12 +0200
+ -- Axel Pauli <kflog.cumulus@gmail.com>  Mon, 23 Jul 2013 20:05:12 +0200
 
 kflog (4.7.0) unstable; urgency=low
 
