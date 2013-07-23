@@ -129,7 +129,13 @@ dpkg_install:
 	install --mode=755 release/bin/kflog $(DESTDIR)/$(INSTALL_ROOT)/bin
 	cp -d release/lib/* $(DESTDIR)/$(INSTALL_ROOT)/lib
 	$(MAKE) INSTALL_ROOT=$(DESTDIR)/$(INSTALL_ROOT) -f Makefile install
-	
+
+# create a tar file from the kflog tree in $Home
+.PHONY : make_tar
+
+make_tar:	distclean
+	tar jcf $(HOME)/kflog.tar.bz2 .
+
 # copies change log and debian package to kflog web page
 .PHONY : copy2web
 

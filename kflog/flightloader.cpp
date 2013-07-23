@@ -368,20 +368,20 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
           if( m_manufactures.contains( manufactureCode ) )
             {
-              fsd.frManufacture = m_manufactures.value( manufactureCode );
+              fsd.frManufacturer = m_manufactures.value( manufactureCode );
             }
           else
             {
-              fsd.frManufacture = QObject::tr("unknown manufacturer");
+              fsd.frManufacturer = QObject::tr("unknown manufacturer");
             }
 
-          fsd.frManufacture += " (" + manufactureCode + ")";
+          fsd.frManufacturer += " (" + manufactureCode + ")";
 
           QString id = s.mid(4,3).toUpper();
 
           if( id.isEmpty() == false )
             {
-              fsd.frManufacture += ", " + id;
+              fsd.frManufacturer += ", " + id;
             }
         }
       else if( key == 'H' )
@@ -407,18 +407,33 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           else if( htype == "FFTY" ) // flight recorder type
               fsd.frType = s.mid(s.indexOf(':')+1);
           else if( htype == "FGPS" ) // GPS manufacture
-              fsd.gpsManufacture = s.mid(5);
+              fsd.gpsManufacturer = s.mid(5);
           else if( htype == "FDTM" ) // GPS datum
               fsd.gpsDatum = s.mid(s.indexOf(':')+1);
           else if( htype == "FPRS" ) // pressure sensor
-               fsd.altitudePressorSensor = s.mid(s.indexOf(':')+1);
+               fsd.altitudePressureSensor = s.mid(s.indexOf(':')+1);
           else if( htype == "FDTE") // date of flight
             {
-              fsd.date = "20" + s.mid(9, 2) + "-" + s.mid(7, 2) + "-" + s.mid(5, 2);
+              bool ok = false;
+              int year = s.mid(9, 2).toInt(&ok);
+
+              QString century = "20";
+
+              if( ok && year > 80 )
+                {
+                  // seems to be an old flight
+                  century = "19";
+                }
+
+              fsd.date = century + s.mid(9, 2) + "-" + s.mid(7, 2) + "-" + s.mid(5, 2);
+            }
+          else if( htype == "FCID" )
+            {
+              fsd.competitionId = s.mid(s.indexOf(':') +1);
             }
           else if( htype == "FCCL" )
             {
-              fsd.competitionClass = s.mid(s.indexOf(':') +1).toInt();
+              fsd.competitionClass = s.mid(s.indexOf(':') +1);
             }
         }
       else if ( key == 'I' )

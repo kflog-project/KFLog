@@ -1,4 +1,4 @@
 This directory is used for the airspace files.
 
-Airspace files in OpenAir format are supported.
-The file name must end with ".txt".
+Airspace files are supported only in OpenAir format.
+The file name must end with the extension ".txt".

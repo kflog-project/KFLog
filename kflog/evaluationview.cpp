@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011 by Axel Pauli
+**                   2011-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -286,8 +286,9 @@ void EvaluationView::slotSetCursors(Flight* theFlight, time_t NewCursor1, time_t
 
         flight->setTaskByTimes(cursor1, cursor2);
 
-        evalDialog->updateText(flight->getPointIndexByTime(cursor1),
-                               flight->getPointIndexByTime(cursor2));
+        evalDialog->updateText( flight->getPointIndexByTime(cursor1),
+                                flight->getPointIndexByTime(cursor2),
+                                true );
         __draw();
         repaint();
     }

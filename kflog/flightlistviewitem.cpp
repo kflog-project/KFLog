@@ -20,8 +20,6 @@
 
 #include "airspacelistviewitem.h"
 #include "evaluationdialog.h"
-#include "evaluationframe.h"
-#include "evaluationview.h"
 #include "flightlistviewitem.h"
 #include "tasklistviewitem.h"
 #include "flight.h"
@@ -94,10 +92,19 @@ void FlightListViewItem::createChildren()
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
-  if( m_flight->getFlightStaticData().competitionClass != -1 )
+  if( m_flight->getFlightStaticData().competitionId.isEmpty() == false )
+    {
+      sl = (QStringList() << QObject::tr("Competition Id")
+                          << m_flight->getFlightStaticData().competitionId );
+      subItem = new QTreeWidgetItem( sl );
+      subItem->setFlags( Qt::ItemIsEnabled );
+      addChild( subItem );
+    }
+
+  if( m_flight->getFlightStaticData().competitionClass.isEmpty() == false )
     {
       sl = (QStringList() << QObject::tr("Competition class")
-                          << QString::number(m_flight->getFlightStaticData().competitionClass ));
+                          << m_flight->getFlightStaticData().competitionClass );
       subItem = new QTreeWidgetItem( sl );
       subItem->setFlags( Qt::ItemIsEnabled );
       addChild( subItem );
@@ -130,13 +137,13 @@ void FlightListViewItem::createChildren()
   subItem->setText(0, QObject::tr("FR-Device") );
   subItem->setText(1, QObject::tr("Data") );
   subItem->setFlags( Qt::ItemIsEnabled );
-  subItem->setIcon(0, _mainWindow->getPixmap("kde_configure_16.png") );
+  subItem->setIcon(0, _mainWindow->getPixmap("recorder_icon_32.png") );
   addChild( subItem );
 
   QTreeWidgetItem* parent = subItem;
 
-  sl = (QStringList() << QObject::tr("Manufacture")
-                      << m_flight->getFlightStaticData().frManufacture );
+  sl = (QStringList() << QObject::tr("Manufacturer")
+                      << m_flight->getFlightStaticData().frManufacturer );
 
   subItem = new QTreeWidgetItem( parent, sl );
   subItem->setFlags( Qt::ItemIsEnabled );
@@ -164,14 +171,14 @@ void FlightListViewItem::createChildren()
   addChild( subItem );
 
   sl = (QStringList() << QObject::tr("Pressure altitude sensor")
-                      << m_flight->getFlightStaticData().altitudePressorSensor );
+                      << m_flight->getFlightStaticData().altitudePressureSensor );
 
   subItem = new QTreeWidgetItem( parent, sl );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
-  sl = (QStringList() << QObject::tr("GPS manufacture")
-                      << m_flight->getFlightStaticData().gpsManufacture );
+  sl = (QStringList() << QObject::tr("GPS manufacturer")
+                      << m_flight->getFlightStaticData().gpsManufacturer );
 
   subItem = new QTreeWidgetItem( parent, sl );
   subItem->setFlags( Qt::ItemIsEnabled );
@@ -221,29 +228,17 @@ void FlightListViewItem::activate()
   time_t cursor1 = route.first()->time;
   time_t cursor2 = route.last()->time;
 
-  EvaluationFrame * EvalFrame = 0;
-  EvaluationView * EvalView = 0;
+  EvaluationDialog* evalDialog = 0;
 
-  if( 0 != _mainWindow )
+  if( _mainWindow )
     {
-      if( 0 != _mainWindow->getEvaluationWindow() )
+      evalDialog = _mainWindow->getEvaluationWindow();
+
+      if( evalDialog )
         {
-          // _mainWindow->getEvaluationWindow()->slotShowFlightData();
-
-          EvalFrame = _mainWindow->getEvaluationWindow()->getEvalFrame();
-
-          if( 0 != EvalFrame )
-            {
-              EvalView = _mainWindow->getEvaluationWindow()->getEvalFrame()->getEvalView();
-            }
+          evalDialog->slotShowFlightData();
+          evalDialog->slotSetCursors( cursor1, cursor2 );
         }
-    }
-
-  // Reset cursors in evaluation dialog
-  if( EvalFrame != 0 && EvalView != 0 )
-    {
-      // EvalFrame->slotShowFlight( m_flight );
-      EvalView->slotSetCursors( m_flight, cursor1, cursor2 );
     }
 
   // Reset flight flags at the map

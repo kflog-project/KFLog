@@ -125,16 +125,16 @@ class Flight : public BaseFlightElement
     QString copilot;
     QString gliderType;
     QString gliderRegistration;
-    int  competitionClass;
+    QString competitionClass;
     QString competitionId;
-    QString frManufacture;
+    QString frManufacturer;
     QString frRecorderId;
     QString frType;
     QString gpsDatum;
-    QString gpsManufacture;
+    QString gpsManufacturer;
     QString firmewareVersion;
     QString hardwareVersion;
-    QString altitudePressorSensor;
+    QString altitudePressureSensor;
     QList<Waypoint*> waypoints;
   };
 
@@ -176,6 +176,22 @@ class Flight : public BaseFlightElement
   QString getGliderRegistration() const
   {
     return m_flightStaticData.gliderRegistration;
+  };
+
+  /**
+   * @return the competition class of the glider.
+   */
+  QString getCompetitionClass() const
+  {
+    return m_flightStaticData.competitionClass;
+  };
+
+  /**
+   * @return the competition identifier of the glider.
+   */
+  QString getCompetitionId() const
+  {
+    return m_flightStaticData.competitionId;
   };
 
   /**
@@ -368,8 +384,6 @@ class Flight : public BaseFlightElement
    * @return the header-info of the igc-file (date, pilot-name, ...)
    */
   QStringList getHeader();
-  /** @return the competition-class */
-  int getCompetitionClass() const;
   /**
    * Increments the nAnimationIndex member
    */

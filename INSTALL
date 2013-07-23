@@ -4,12 +4,16 @@
 A Basic Test Installation
 =========================
 
-Preconditions for self compiling KFlog4 under Ubuntu 12.04:
+Preconditions for self compiling KFlog4 under Ubuntu 13.04:
 
   1. It should be installed the following Qt 4.8.x packages:
   
   qt4-dev-tools, qt4-qmake, libqt4-dev, libqt4-network, libqt4-xml,
   libqtcore4, libqtgui4
+  
+  If some packages are missing, install them with the following command:
+  
+  sudo apt-get install <package-name> ...
 
 The simplest way to compile this package in Ubuntu 13.04 is:
 

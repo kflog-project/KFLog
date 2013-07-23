@@ -19,9 +19,7 @@
 
 #include "airspacelistviewitem.h"
 #include "flight.h"
-#include "evaluationframe.h"
 #include "evaluationdialog.h"
-#include "evaluationview.h"
 #include "mainwindow.h"
 #include "map.h"
 #include "mapcontents.h"
@@ -217,26 +215,17 @@ void AirSpaceListViewItem::AirSpaceFlagListViewItem::activate()
       time_t cursor1 = route[m_ItemToActivate.FirstIndexPointinRoute()]->time;
       time_t cursor2 = route[m_ItemToActivate.LastIndexPointinRoute()]->time;
 
-      EvaluationFrame * EvalFrame = 0;
-      EvaluationView * EvalView = 0;
+      EvaluationDialog* evalDialog = 0;
 
-      if( 0 != _mainWindow )
+      if( _mainWindow )
         {
-          if( 0 != _mainWindow->getEvaluationWindow() )
+          evalDialog = _mainWindow->getEvaluationWindow();
+
+          if( evalDialog )
             {
-              EvalFrame = _mainWindow->getEvaluationWindow()->getEvalFrame();
-
-              if( 0 != EvalFrame )
-                {
-                  EvalView = _mainWindow->getEvaluationWindow()->getEvalFrame()->getEvalView();
-                }
+              evalDialog->slotShowFlightData();
+              evalDialog->slotSetCursors( cursor1, cursor2 );
             }
-        }
-
-      if( EvalFrame != 0 && EvalView != 0 )
-        {
-          EvalFrame->slotShowFlight( m_Flight );
-          EvalView->slotSetCursors( m_Flight, cursor1, cursor2 );
         }
 
       QPoint& p1 = route.at(m_ItemToActivate.FirstIndexPointinRoute())->projP;

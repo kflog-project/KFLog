@@ -871,8 +871,6 @@ QString Flight::getPoints(bool isOrig)
       return optimizedTask.getPointsString();
 }
 
-int Flight::getCompetitionClass() const  { return m_flightStaticData.competitionClass; }
-
 time_t Flight::getLandTime() const { return landTime; }
 
 time_t Flight::getStartTime() const { return startTime; }
@@ -1434,7 +1432,7 @@ void Flight::calAirSpaceIntersections()
         }
     }
 
-  // Close all still open airspace conflicts.
+  // Close all still open airspace conflicts at the end of the flight.
   for( int i = asStartIntersections.size() - 1; i >= 0; i-- )
     {
       Flight::AirSpaceIntersection& asi = asStartIntersections[i];

@@ -8,7 +8,7 @@
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
 **                :  2008 by Constantijn Neeteson
-**                :  2011 by Axel Pauli
+**                :  2011-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -41,17 +41,17 @@ EvaluationDialog::EvaluationDialog( QWidget *parent ) : QWidget( parent )
   QSplitter* textSplitter = new QSplitter( Qt::Vertical, this );
 
   // upper diagram widget
-  evalFrame = new EvaluationFrame( textSplitter, this );
+  m_evalFrame = new EvaluationFrame( textSplitter, this );
 
   connect( this, SIGNAL(flightChanged(Flight *)),
-           evalFrame, SLOT(slotShowFlight(Flight *)));
+           m_evalFrame, SLOT(slotShowFlight(Flight *)));
 
   connect( this, SIGNAL(textChanged(QString)),
-           evalFrame, SLOT(slotUpdateCursorText(QString)));
+           m_evalFrame, SLOT(slotUpdateCursorText(QString)));
 
   // lower text display
-  textDisplay = new QTextBrowser( textSplitter );
-  textDisplay->setMinimumHeight( 5 );
+  m_textDisplay = new QTextBrowser( textSplitter );
+  m_textDisplay->setMinimumHeight( 5 );
 
   QVBoxLayout* layout = new QVBoxLayout( this );
   layout->setMargin( 5 );
@@ -113,21 +113,21 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
   FlightPoint p1;
   FlightPoint p2;
 
-  if ( ! flight )
+  if ( ! m_flight )
   {
     // Clear last displayed text
-    textDisplay->clear();
+    m_textDisplay->clear();
     emit textChanged(htmlText);
     return;
   }
 
-  switch(flight->getObjectType())
+  switch(m_flight->getObjectType())
   {
 
   case BaseMapElement::Flight:
 
-    p1 = flight->getPoint(index1);
-    p2 = flight->getPoint(index2);
+    p1 = m_flight->getPoint(index1);
+    p2 = m_flight->getPoint(index2);
 
     htmlText = QString("<HTML><TABLE WIDTH=\"100%\" BORDER=0 CELLPADDING=3 CELLSPACING=0>")+
               "<TR><TD ALIGN=left><FONT COLOR=#00bb00>" +
@@ -190,7 +190,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
 
     if(updateAll)
       {
-        QStringList erg = flight->getFlightValues(index1, index2);
+        QStringList erg = m_flight->getFlightValues(index1, index2);
 
         htmlText = QString( "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0>" ) +
                             "<TR><TH align='left'>" + tr("Circling") + "&nbsp;</TH>" +
@@ -268,7 +268,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
 
         QList<statePoint*> state_list;
         QString text = "";
-        state_list = flight->getFlightStates(index1, index2);
+        state_list = m_flight->getFlightStates(index1, index2);
 
         htmlText +=  "<TABLE border='0' cellpadding='3' cellspacing='0'> \
                       <TR><TH align=left colspan=11>" + tr("Flight sections") + "</TH></TR>";
@@ -365,7 +365,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
         htmlText += "</TABLE>";
       }
 
-    emit showCursor(p1.projP,p2.projP);
+    emit showCursor(p1.projP, p2.projP);
     break;
 
   case BaseMapElement::Task:
@@ -382,7 +382,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
     break;
   }
 
-  textDisplay->setHtml(htmlText);
+  m_textDisplay->setHtml(htmlText);
 }
 
 
@@ -394,18 +394,18 @@ void EvaluationDialog::resizeEvent(QResizeEvent* event)
 
 void EvaluationDialog::slotShowFlightData()
 {
-  flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
+  m_flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
   QWidget* parent = parentWidget();
 
-  if( flight != static_cast<Flight *> (0) )
+  if( m_flight != static_cast<Flight *> (0) )
     {
-      if( flight->getObjectType() == BaseMapElement::Flight && parent )
+      if( m_flight->getObjectType() == BaseMapElement::Flight && parent )
         {
           parent->setWindowTitle( tr( "Flight Evaluation" ) + ": [" +
-                                  QFileInfo(flight->getFileName()).fileName() + "] " +
-                                  flight->getPilot() + ", " +
-                                  flight->getDate() );
+                                  QFileInfo(m_flight->getFileName()).fileName() + "] " +
+                                  m_flight->getPilot() + ", " +
+                                  m_flight->getDate() );
         }
       else
         {
@@ -413,7 +413,7 @@ void EvaluationDialog::slotShowFlightData()
         }
 
       // set defaults
-      updateText( 0, flight->getRouteLength() - 1, true );
+      updateText( 0, m_flight->getRouteLength() - 1, true );
     }
   else
     {
@@ -421,18 +421,14 @@ void EvaluationDialog::slotShowFlightData()
       updateText( 0, 0, false );
     }
 
-  emit flightChanged( flight );
+  emit flightChanged( m_flight );
 }
 
-Flight* EvaluationDialog::getFlight()
+void EvaluationDialog::slotSetCursors(time_t NewCursor1, time_t NewCursor2)
 {
-  if( flight && flight->getObjectType() == BaseMapElement::Flight )
+  if( getFlight() )
     {
-      return flight;
-    }
-  else
-    {
-      return 0;
+      m_evalFrame->getEvalView()->slotSetCursors( m_flight, NewCursor1, NewCursor2 );
     }
 }
 

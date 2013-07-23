@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011 by Axel Pauli
+**                   2011-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -19,12 +19,15 @@
 #ifndef EVALUATION_DIALOG_H
 #define EVALUATION_DIALOG_H
 
+#include <ctime>
+
 #include <QPoint>
 #include <QString>
 #include <QTextBrowser>
 #include <QWidget>
 
 #include "evaluationframe.h"
+#include "flight.h"
 #include "flightpoint.h"
 
 class Flight;
@@ -34,7 +37,7 @@ class Flight;
  *
  * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
  *
- * \date 2000-2011
+ * \date 2000-2013
  *
  * \version $Id$
  */
@@ -54,19 +57,33 @@ private:
 
   void updateText(int index1, int index2, bool updateAll = false);
 
-  Flight* getFlight();
+  Flight* getFlight()
+    {
+      if( m_flight && m_flight->getObjectType() == BaseMapElement::Flight )
+        {
+          return m_flight;
+        }
+      else
+        {
+          return static_cast<Flight *>(0);
+        }
+    };
 
   unsigned int getTaskStart()
     {
-      return evalFrame->getTaskStart();
+      return m_evalFrame->getTaskStart();
     };
 
   unsigned int getTaskEnd()
     {
-      return evalFrame->getTaskEnd();
+      return m_evalFrame->getTaskEnd();
     };
 
-  inline EvaluationFrame* getEvalFrame(){ return evalFrame;}
+  EvaluationFrame* getEvalFrame()
+  {
+    return m_evalFrame;
+  }
+
  protected:
 
   virtual void hideEvent( QHideEvent* event );
@@ -74,6 +91,7 @@ private:
   virtual void showEvent( QShowEvent* event );
 
  signals:
+
   /** */
   void showCursor(const QPoint& p1, const QPoint& p2);
   /** */
@@ -92,6 +110,10 @@ private:
  public slots:
 
   void slotShowFlightData();
+
+  /** Set the cursors in the EvaluationFrame object. */
+  void slotSetCursors(time_t NewCursor1, time_t NewCursor2);
+
   /** No descriptions */
   void slotShowFlightPoint(const QPoint&, const FlightPoint&);
   /** No descriptions */
@@ -103,9 +125,9 @@ private:
 
  private:
 
-  QTextBrowser* textDisplay;
-  Flight* flight;
-  EvaluationFrame* evalFrame;
+  QTextBrowser* m_textDisplay;
+  Flight* m_flight;
+  EvaluationFrame* m_evalFrame;
 };
 
 #endif

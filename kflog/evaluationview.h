@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011 by Axel Pauli
+**                   2011-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -38,7 +38,7 @@ class EvaluationDialog;
  *
  * \brief Draws the flight evaluation.
  *
- * \date 2000-2011
+ * \date 2000-2013
  *
  * \version $Id$
  */
@@ -68,11 +68,18 @@ public:
 
   enum CursorStatus { Reached = 8, NotReached = 16};
 
-    void slotSetCursors(Flight * theFlight, time_t NewCursor1, time_t NewCursor2);
+  void slotSetCursors(Flight * theFlight, time_t NewCursor1, time_t NewCursor2);
 
-    // Cursor Positions
-    time_t cursor1;
-    time_t cursor2;
+  time_t getCursor1()
+  {
+    return cursor1;
+  };
+
+  time_t getCursor2()
+  {
+    return cursor2;
+  };
+
 protected:
 
   virtual void paintEvent(QPaintEvent* event);
@@ -136,7 +143,13 @@ private:
   /** Draw y-axis */
   void __drawYAxis();
 
-/**
+  // Class variables -----------------------------------------------------------
+
+  // Cursor Positions
+  time_t cursor1;
+  time_t cursor2;
+
+   /**
    * Coordinates of last pointer position
    */
   QPoint lastPointerPosition;

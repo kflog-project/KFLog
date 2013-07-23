@@ -1,5 +1,7 @@
 kflog (4.7.1) unstable; urgency=low
 
+2013-07-22 Axel Pauli <kflog.cumulus@gmail.com>
+
   * Flight recorder data added to flight's objecttree.
 
   * Bugfix: Endless loop fixed in Welt2000 update procedure.
@@ -9,20 +11,24 @@ kflog (4.7.1) unstable; urgency=low
     can have several runways.
     
   * Default constructor added to Waypoint class.
+  
+  * Default constructor added to Runway class.
     
   * WaypointCatalog class, methods read/write binary adapted to latest Cumulus
     release 5.5.2.
-    
+
   * Bugfix: Waypoint file selection dialog did not contain *.da4 filter entry for
     all items.
     
   * Bugfix: Airspace violations must be calculated with the barometical altitude
-    and not with the GPS altitude. Airspace contacts limited to violations all
+    and not with the GPS altitude. Airspace contacts limited to violations, all
     other can become too much. Altitude info added to begin and end of airspace
-    violation. Airspaces must be loaded again, reuse already loaded airspaces
+    violation. Airspaces must not be loaded again, reuse already loaded airspaces
     from MapContent.
-     
-  * Default constructor added to Runway class.
+    
+  * Airspace contact check execution time crucial reduced by using QPainterPath
+    class. Airspace contacts are stored only once as list in the Flight object
+    and not more in every FlightPoint object.
 
   * Build with Linux Ubuntu 13.04 and Qt4.8.4
   

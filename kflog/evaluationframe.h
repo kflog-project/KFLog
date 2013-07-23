@@ -68,7 +68,11 @@ class EvaluationFrame : public QWidget
         return flight;
       };
 
-    inline EvaluationView* getEvalView(){ return evalView;};
+    EvaluationView* getEvalView()
+      {
+        return evalView;
+      };
+
 public slots:
     /** */
     void slotShowFlight( Flight* newFlight );

@@ -343,7 +343,7 @@ unsigned int EvaluationFrame::getTaskStart()
       return 0;
     }
 
-  return flight->getPointIndexByTime(evalView->cursor1);
+  return flight->getPointIndexByTime(evalView->getCursor1());
 }
 
 unsigned int EvaluationFrame::getTaskEnd()
@@ -353,5 +353,5 @@ unsigned int EvaluationFrame::getTaskEnd()
       return 0;
     }
 
-  return flight->getPointIndexByTime(evalView->cursor2);
+  return flight->getPointIndexByTime(evalView->getCursor2());
 }
