@@ -370,7 +370,7 @@ void DataView::slotWPSelected(const QUrl &link)
           }
         else
           {
-            emit flightSelected((BaseFlightElement *) url.toUInt());
+            emit flightSelected((BaseFlightElement *) e);
           }
 
         break;
