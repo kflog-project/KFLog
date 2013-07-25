@@ -1,6 +1,3 @@
-"Please note that this is a BETA setup.
+This is the Installer for KFlog on Windows port.
 
-This means some features may 
-- not work as expected.
-- cause unexpected behaviour.
-This setup will overwrite all existing KFlog installations."
+see http://www.kflog.org/kflog/ for more information.
