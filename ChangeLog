@@ -1,5 +1,10 @@
 $Id$
 
+2013-07-26 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Welt2000 update check modified. Once per day it is checked, if a Welt2000
+    update is available to overcome the hard coded date compare.
+
 2013-07-24 Axel Pauli <kflog.cumulus@gmail.com>
 
   * KFLog 4.7.1 released.

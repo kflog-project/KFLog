@@ -86,13 +86,6 @@ bool Welt2000::check4update()
 
   hasCalled = true;
 
-  // Update check string for Welt2000, must be adapted after every Welt2000 update!
-  const char* w2000CheckString = "$ UPDATED AT: 03.FEB.2013";
-
-  // Line number in welt2000 file, on which the w2000CheckString is expected.
-  // Note! Line counting starts with 1.
-  const int ckeckLineNo = 17;
-
   QString wl = "welt2000.txt";
   QString wu = "WELT2000.TXT";
   QString sd = "/airfields/";
@@ -121,59 +114,19 @@ bool Welt2000::check4update()
       path2File = pu;
     }
 
-  QFile in(path2File);
-
-  if( ! in.open(QIODevice::ReadOnly) )
+  if( test.lastModified().date() == QDate::currentDate() )
     {
+      // The file was already updated today. Don't allow further updates.
       return false;
     }
 
-  QTextStream ins(&in);
-  ins.setCodec( "ISO 8859-15" );
-
-  bool ret = false;
-  int lineNo = 0;
-
-  while( ! ins.atEnd() )
-    {
-      QString line;
-      line = ins.readLine(128);
-      lineNo++;
-
-      // The constant ckeckLineNo addresses a line which contains the
-      // expected string to be compared.
-      if( lineNo < ckeckLineNo )
-        {
-          continue;
-        }
-
-      if( line.startsWith(w2000CheckString) == false )
-        {
-          // The expected data is not to find in the line of the read file.
-          // We assume, that this is an older Welt2000 file. This assumption
-          // is not right, if the user has installed a newer file as we expect.
-          qDebug() << "W2000: Update is available!";
-          ret = true;
-        }
-
-      break;
-    }
-
-  in.close();
-
-  if( lineNo < ckeckLineNo )
-    {
-      // The file seems to be empty or has too less lines. We trigger a reload
-      // in this case.
-      ret = true;
-    }
-
-  return ret;
+  // Only one update try per day is initiated.
+  return true;
 }
 
 /**
  * search on default places a welt2000 file and load it. A source can
- * be the original ascii file or a compiled version of it. The results
+ * be the original ASCII file or a compiled version of it. The results
  * are put in the passed lists
  */
 bool Welt2000::load( QList<Airfield>& airfieldList,

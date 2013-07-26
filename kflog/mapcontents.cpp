@@ -288,7 +288,7 @@ void MapContents::slotDownloadWelt2000()
     }
 
   connect( downloadManger, SIGNAL(welt2000Downloaded()),
-           this, SLOT(slotReloadWelt2000Data()) );
+           this, SLOT(slotWelt2000Downloaded()) );
 
   QString welt2000FileName = _settings.value( "/Welt2000/FileName", "WELT2000.TXT").toString();
   QString welt2000Link     = _settings.value( "/Welt2000/Link", "http://www.segelflug.de/vereine/welt2000/download").toString();
@@ -297,14 +297,93 @@ void MapContents::slotDownloadWelt2000()
   _settings.setValue( "/Welt2000/Link", welt2000Link );
 
   QString url  = welt2000Link + "/" + welt2000FileName;
-  QString dest = getMapRootDirectory() + "/airfields/welt2000.txt";
+  QString dest = getMapRootDirectory() + "/airfields/welt2000.txt.new";
 
   downloadManger->downloadRequest( url, dest );
 }
 
 /**
+ * Called, if the Welt2000 file download is finished successfully.
+ */
+void MapContents::slotWelt2000Downloaded()
+{
+  // Check, if the file content of the new Welt2000 file has been changed.
+  QString curW2000 = getMapRootDirectory() + "/airfields/welt2000.txt";
+  QString newW2000 = getMapRootDirectory() + "/airfields/welt2000.txt.new";
+
+  QFileInfo curFi(curW2000);
+  QFileInfo newFi(newW2000);
+
+  if( newFi.exists() == false )
+    {
+      // No new file available, abort further processing.
+      return;
+    }
+
+  if( curFi.exists() == false || curFi.size() != newFi.size() )
+    {
+      // Current file is not available or file sizes are different.
+      // Rename new file and initiate a load of it.
+      QFile::rename( newW2000, curW2000 );
+      slotReloadWelt2000Data();
+      return;
+    }
+
+  // Compare both files, line by line
+  QFile curFile(curW2000);
+  QFile newFile(newW2000);
+
+  bool differ = false;
+
+  bool curOk = curFile.open( QIODevice::ReadOnly );
+
+  if( curOk == false )
+    {
+      return;
+    }
+
+  bool newOk = newFile.open( QIODevice::ReadOnly );
+
+  if( newOk == false )
+    {
+      curFile.close();
+      return;
+    }
+
+  while( true )
+    {
+      QByteArray curBA = curFile.readLine();
+      QByteArray newBA = newFile.readLine();
+
+      if( curBA.size() == 0 || newBA.size() == 0 )
+        {
+          // EOF or error, do break only
+          break;
+        }
+
+      if( curBA.contains(newBA) == false )
+        {
+          // both do differ, do break
+          differ = true;
+          break;
+        }
+    }
+
+  curFile.close();
+  newFile.close();
+
+  if( differ == true )
+    {
+      QFile::rename( newW2000, curW2000 );
+      slotReloadWelt2000Data();
+    }
+
+  return;
+}
+
+/**
  * Reload Welt2000 data file. Can be called after a configuration change or
- * a dowonload.
+ * a download update.
  */
 void MapContents::slotReloadWelt2000Data()
 {

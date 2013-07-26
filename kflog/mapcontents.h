@@ -326,8 +326,13 @@ class MapContents : public QObject
   void slotDownloadWelt2000();
 
   /**
+   * Called, if the Welt2000 file download is finished successfully.
+   */
+  void slotWelt2000Downloaded();
+
+  /**
    * Reload Welt2000 data file. Can be called after a configuration change or
-   * a dowonload.
+   * after a download update.
    */
   void slotReloadWelt2000Data();
 
