@@ -1,7 +1,7 @@
 ################################################################################
 # Makefile to build a KFLog release based on X11 and Qt4.8.x
 #
-# Copyright (c): 2010-2014 by Axel Pauli (axel@kflog.org)
+# Copyright (c): 2010-2014 by Axel Pauli (kflog.cumulus@gmail.com)
 # 
 # $Id$
 #
@@ -103,8 +103,8 @@ dpkg_prepare:
 # cause problems in other shell commands, if they not expanded before.
 dpkg_make:
 	cd $(KFLOG_DEB); \
-	export DEBEMAIL='hoeth@linta.de'; \
-	export DEBFULLNAME='Hendrik Hoeth'; \
+	export DEBEMAIL='kflog.cumulus@gmail.com'; \
+	export DEBFULLNAME='Axel Pauli'; \
 	echo '\n' | dh_make --packagename $(KFLOG_REL) -c GPL -s --native $(DH_MAKE_OPT)
 	cd $(KFLOG_DEB)/dpkg/control; \
 	cp control rules prerm postinst ../../debian/; \
