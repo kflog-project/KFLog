@@ -1,3 +1,13 @@
+kflog (4.7.2) unstable; urgency=low
+
+  * Build with Linux Ubuntu 14.04 and Qt4.8.6
+  
+  * Build with Linux Debian 7.5 and Qt4.8.2
+  
+  * Software archive hosting switched to GitHub
+  
+ -- Axel Pauli <kflog.cumulus@gmail.com>  Mon, 26 May 2014 20:25:05 +0200
+
 kflog (4.7.1) unstable; urgency=low
 
   * Flight recorder data added to flight's objecttree.
