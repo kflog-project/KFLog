@@ -1840,7 +1840,7 @@ void MainWindow::slotShowAbout()
   aw->setWindowTitle( tr( "About KFLog") );
   aw->setHeaderIcon( getPixmap("kflog_16.png") );
 
-  QString header( tr("<html>KFLog %1, &copy; 2000-2013, The KFLog-Team</html>").arg( QCoreApplication::applicationVersion() ) );
+  QString header( tr("<html>KFLog %1, &copy; 2000-2014, The KFLog-Team</html>").arg( QCoreApplication::applicationVersion() ) );
 
   aw->setHeaderText( header );
 
@@ -1848,8 +1848,8 @@ void MainWindow::slotShowAbout()
           "<hml>"
           "KFLog %1, compiled at %2 with QT %3<br><br>"
           "Homepage: <a href=\"http://www.kflog.org/kflog/\">www.kflog.org/kflog/</a><br><br>"
-          "Software Repository: <a href=\"https://svn.kflog.org/svn/repos/kflog2/qt4\">https://svn.kflog.org/svn/repos/kflog2/qt4</a><br><br>"
-          "Report bugs to: <a href=\"mailto:kflog-user&#64;kflog.org\">kflog.user&#64;kflog.org</a><br><br>"
+          "GitHub Software Repository: <a href=\"https://github.com/kflog-project/KFLog\">https://github.com/kflog-project/KFLog</a><br><br>"
+          "Report bugs to: <a href=\"https://github.com/kflog-project/KFLog/issues\">kflog-project/KFLog/issues</a><br><br>"
           "Published under the <a href=\"http://www.gnu.org/licenses/licenses.html#GPL\">GPL</a>"
           "</html>" ).arg( QCoreApplication::applicationVersion() )
                      .arg( _settings.value( "/Main/CompileDate", "" ).toString() )
@@ -1865,7 +1865,7 @@ void MainWindow::slotShowAbout()
       "</blockquote>"
       "<b>Developers, Maintainers</b>"
       "<blockquote>"
-      "Axel Pauli (Developer, Portage to Qt4)<br>"
+      "Axel Pauli (Developer, Portage to Qt4), &lt;<a href=\"mailto:kflog.cumulus&#64;gmail.com\">kflog.cumulus&#64;gmail.com</a>&gt;<br>"
       "Constantijn Neeteson (Maintenance, Core-developer)<br>"
       "Florian Ehinger (Maintenance, Core-developer, Mapdata)<br>"
       "Heiner Lamprecht (Maintenance, Core-developer)<br>"
