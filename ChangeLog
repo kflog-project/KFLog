@@ -1,5 +1,9 @@
 $Id$
 
+2014-05-29 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * KFLog 4.7.2 released for Debian and Ubuntu after move to GitHub
+
 2013-07-26 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Welt2000 update check modified. Once per day it is checked, if a Welt2000
