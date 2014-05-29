@@ -31,15 +31,13 @@ The simplest way to compile this package in Ubuntu 13.04 is:
   3. You can remove the program binaries and object files from the
      source code directory by typing 'make -f Makefile.qmake distclean'.
      
-You can checkout the latest sources by using subversion. Use the following
-command to do that:
+You can use the following command to get the sources of KFLog as git repository.
 
-  svn co https://svn.kflog.org/svn/repos/kflog2/qt4/trunk
+  git clone https://github.com/kflog-project/KFLog.git
 
-Please report found bugs on our KFLog mailing list. Under the link
+Please report found bugs on GitHub: https://github.com/kflog-project/KFLog/issues
 
-http://www.kflog.org/kflog
 
-you can find for more information about KFLog.
+You can find for more information about KFLog at www.kflog.org.
 
 Have fun with KFlog ...
