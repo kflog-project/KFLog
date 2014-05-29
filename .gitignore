@@ -34,3 +34,4 @@ moc_*.cpp
 /kflog/kfrgmn/Makefile
 /kflog/kfrxsp/Makefile
 /kflog/opengl_igc/Makefile
+/Kflog4Windows.pro
