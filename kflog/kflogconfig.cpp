@@ -13,7 +13,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -192,11 +192,23 @@ void KFLogConfig::slotPageClicked( QTreeWidgetItem* item, int column )
 
 void KFLogConfig::slotOk()
 {
+  qDebug() << "KFLogConfig::slotOk()";
+
   setVisible( false );
 
   slotSelectProjection( ProjectionBase::Unknown );
 
-  _settings.setValue( "/GeneralOptions/Version", "4.0" );
+  // check for home latitude change
+  bool homeLatitudeChanged =
+      (homeLatE->KFLogDegree() != _settings.value("/Homesite/Latitude", HOME_DEFAULT_LAT).toInt());
+
+  qDebug() << "homeLatE->KFLogDegree()"
+           << homeLatE->KFLogDegree()
+           << "_settings.value(/Homesite/Latitude)"
+           << _settings.value("/Homesite/Latitude", HOME_DEFAULT_LAT).toInt()
+           << "homeLatitudeChanged" << homeLatitudeChanged;
+
+  _settings.setValue( "/GeneralOptions/Version", "4.1" );
 
   _settings.setValue( "/Path/DefaultFlightDirectory", igcPathE->text() );
   _settings.setValue( "/Path/DefaultTaskDirectory", taskPathE->text() );
@@ -262,6 +274,16 @@ void KFLogConfig::slotOk()
   Altitude::setUnit( static_cast<enum Altitude::altitudeUnit>(altUnit) );
   Distance::setUnit( static_cast<enum Distance::distanceUnit>(distUnit) );
   WGSPoint::setFormat( static_cast<enum WGSPoint::Format>(posUnit) );
+
+  // If Home latitude was changed and map projection is cylinder we take over
+  // the new home latitude as parallel for the map projection.
+  if( homeLatitudeChanged == true && currentProjType == ProjectionBase::Cylindric )
+    {
+      qDebug() << "homeLatitudeChanged && ProjectionBase::Cylindric";
+
+      cylinPar = homeLatE->KFLogDegree();
+      _settings.setValue( "/CylindricalProjection/Parallel", cylinPar );
+    }
 
   QTableWidgetItem* asItem = asFileTable->item( 0, 0 );
 
@@ -476,8 +498,8 @@ void KFLogConfig::slotDefaultProjection()
 
   currentProjType = ProjectionBase::Unknown;
 
-  projectionSelect->setCurrentIndex( ProjectionBase::Lambert );
-  slotSelectProjection( ProjectionBase::Lambert );
+  projectionSelect->setCurrentIndex( ProjectionBase::Cylindric );
+  slotSelectProjection( ProjectionBase::Cylindric );
 }
 
 void KFLogConfig::slotDefaultScale()
@@ -963,7 +985,7 @@ void KFLogConfig::__addProjectionTab()
   lambertV2     = _settings.value("/LambertProjection/Parallel2", 30000000).toInt();
   lambertOrigin = _settings.value("/LambertProjection/Origin", 0).toInt();
   cylinPar      = _settings.value("/CylindricalProjection/Parallel", 27000000).toInt();
-  int projIndex = _settings.value("/MapData/ProjectionType", ProjectionBase::Lambert).toInt();
+  int projIndex = _settings.value("/MapData/ProjectionType", ProjectionBase::Cylindric).toInt();
 
   projectionSelect->setCurrentIndex( projIndex );
   slotSelectProjection( projIndex );
