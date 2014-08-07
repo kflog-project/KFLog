@@ -9,7 +9,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
- **                   2010-2012 by Axel Pauli
+ **                   2010-2014 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -324,6 +324,7 @@ void MapContents::slotWelt2000Downloaded()
     {
       // Current file is not available or file sizes are different.
       // Rename new file and initiate a load of it.
+      QFile::remove( curW2000 );
       QFile::rename( newW2000, curW2000 );
       slotReloadWelt2000Data();
       return;
@@ -372,9 +373,11 @@ void MapContents::slotWelt2000Downloaded()
   curFile.close();
   newFile.close();
 
+  QFile::remove( curW2000 );
+  QFile::rename( newW2000, curW2000 );
+
   if( differ == true )
     {
-      QFile::rename( newW2000, curW2000 );
       slotReloadWelt2000Data();
     }
 

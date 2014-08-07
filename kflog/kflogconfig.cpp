@@ -196,17 +196,14 @@ void KFLogConfig::slotOk()
 
   setVisible( false );
 
+  // Save current projection
+  int usedMapProjection = currentProjType;
+
   slotSelectProjection( ProjectionBase::Unknown );
 
   // check for home latitude change
   bool homeLatitudeChanged =
       (homeLatE->KFLogDegree() != _settings.value("/Homesite/Latitude", HOME_DEFAULT_LAT).toInt());
-
-  qDebug() << "homeLatE->KFLogDegree()"
-           << homeLatE->KFLogDegree()
-           << "_settings.value(/Homesite/Latitude)"
-           << _settings.value("/Homesite/Latitude", HOME_DEFAULT_LAT).toInt()
-           << "homeLatitudeChanged" << homeLatitudeChanged;
 
   _settings.setValue( "/GeneralOptions/Version", "4.1" );
 
@@ -276,11 +273,9 @@ void KFLogConfig::slotOk()
   WGSPoint::setFormat( static_cast<enum WGSPoint::Format>(posUnit) );
 
   // If Home latitude was changed and map projection is cylinder we take over
-  // the new home latitude as parallel for the map projection.
-  if( homeLatitudeChanged == true && currentProjType == ProjectionBase::Cylindric )
+  // the new home latitude as parallel for the cylinder map projection.
+  if( homeLatitudeChanged == true && usedMapProjection == ProjectionBase::Cylindric )
     {
-      qDebug() << "homeLatitudeChanged && ProjectionBase::Cylindric";
-
       cylinPar = homeLatE->KFLogDegree();
       _settings.setValue( "/CylindricalProjection/Parallel", cylinPar );
     }
