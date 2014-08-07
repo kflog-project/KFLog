@@ -6,8 +6,8 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
-**                   2010-2011 by Axel Pauli
+**   Copyright (c):  1999-2000 by Heiner Lamprecht, Florian Ehinger
+**                   2010-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -135,6 +135,8 @@
 #define EMPTY_POINT      67 // used by cumulus for empty points
 #define PROHIBITED       68 // Prohibited airspace
 #define WAVE_WINDOW      69
+#define AIR_FIR          70 // Flight Information Region
+#define AIR_UKN          71 // unknown airspace
 /*
  * In einigen ASCII-Dateien taucht der Typ 71 für Kanäle auf,
  * ausserdem gibt es einen Typ für Grenzen in Seen!
