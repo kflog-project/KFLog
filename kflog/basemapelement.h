@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
-**                   2008-2011 by Axel Pauli
+**                   2008-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -29,7 +29,7 @@
  * the class provides two enumerations for the element-type and the type of
  * elevation-values.
  *
- * \date 2000-2011
+ * \date 2000-2014
  */
 
 #ifndef BASE_MAP_ELEMENT_H
@@ -54,21 +54,56 @@ public:
    */
   enum objectType {
     NotSelected = NOT_SELECTED,
-    IntAirport = INT_AIRPORT, Airport = AIRPORT, MilAirport = MIL_AIRPORT, CivMilAirport = CIVMIL_AIRPORT,
-    Airfield = AIRFIELD, ClosedAirfield = CLOSED_AIRFIELD, CivHeliport = CIV_HELIPORT,
-    MilHeliport = MIL_HELIPORT, AmbHeliport = AMB_HELIPORT, Gliderfield = GLIDERFIELD, UltraLight = ULTRALIGHT,
-    HangGlider = HANGGLIDER, Parachute = PARACHUTE, Balloon = BALLOON, Outlanding = OUTLANDING, Vor = VOR,
-    VorDme = VORDME, VorTac = VORTAC, Ndb = NDB, CompPoint = COMPPOINT,
-    AirA = AIR_A, AirB = AIR_B, AirC = AIR_C, AirD = AIR_D, AirElow = AIR_E_LOW, AirE = AIR_E, WaveWindow = WAVE_WINDOW,
-    AirF = AIR_F, ControlC = CONTROL_C, ControlD = CONTROL_D, Danger = DANGER,
-    LowFlight = LOW_FLIGHT, Restricted = RESTRICTED, Prohibited = PROHIBITED, Tmz = TMZ, GliderSector = GLIDER_SECTOR, Obstacle = OBSTACLE,
+    IntAirport = INT_AIRPORT,
+    Airport = AIRPORT,
+    MilAirport = MIL_AIRPORT,
+    CivMilAirport = CIVMIL_AIRPORT,
+    Airfield = AIRFIELD,
+    ClosedAirfield = CLOSED_AIRFIELD,
+    CivHeliport = CIV_HELIPORT,
+    MilHeliport = MIL_HELIPORT,
+    AmbHeliport = AMB_HELIPORT,
+    Gliderfield = GLIDERFIELD,
+    UltraLight = ULTRALIGHT,
+    HangGlider = HANGGLIDER,
+    Parachute = PARACHUTE,
+    Balloon = BALLOON,
+    Outlanding = OUTLANDING,
+    Vor = VOR,
+    VorDme = VORDME,
+    VorTac = VORTAC,
+    Ndb = NDB,
+    CompPoint = COMPPOINT,
+    AirA = AIR_A,
+    AirB = AIR_B,
+    AirC = AIR_C,
+    AirD = AIR_D,
+    AirElow = AIR_E_LOW,
+    AirE = AIR_E,
+    AirF = AIR_F,
+    AirFir = AIR_FIR,
+    AirUkn = AIR_UKN,
+    ControlC = CONTROL_C,
+    ControlD = CONTROL_D,
+    Danger = DANGER,
+    LowFlight = LOW_FLIGHT,
+    Restricted = RESTRICTED,
+    Prohibited = PROHIBITED,
+    Tmz = TMZ,
+    WaveWindow = WAVE_WINDOW,
+    GliderSector = GLIDER_SECTOR,
+    Obstacle = OBSTACLE,
     LightObstacle = LIGHT_OBSTACLE, ObstacleGroup = OBSTACLE_GROUP, LightObstacleGroup = LIGHT_OBSTACLE_GROUP,
     Spot = SPOT, Isohypse = ISOHYPSE, Glacier = GLACIER, PackIce = PACK_ICE, Border = BORDER, City = CITY,
     Village = VILLAGE, Landmark = LANDMARK, Motorway = MOTORWAY, Road = ROAD, Railway = RAILWAY,
     AerialRailway = AERIAL_CABLE, Lake = LAKE, River = RIVER, Canal = CANAL, Flight = FLIGHT, Task = FLIGHT_TASK,
     Trail = TRAIL, Railway_D = RAILWAY_D, Aerial_Cable = AERIAL_CABLE, River_T = RIVER_T, Lake_T = LAKE_T,
-    Forest = FOREST, Turnpoint = TURNPOINT, Thermal = THERMAL,
-    FlightGroup = FLIGHT_GROUP, FAIAreaLow500 = FAI_AREA_LOW, FAIAreaHigh500 = FAI_AREA_HIGH,
+    Forest = FOREST,
+    Turnpoint = TURNPOINT,
+    Thermal = THERMAL,
+    FlightGroup = FLIGHT_GROUP,
+    FAIAreaLow500 = FAI_AREA_LOW,
+    FAIAreaHigh500 = FAI_AREA_HIGH,
     EmptyPoint = EMPTY_POINT,  // new type for nothing to draw
     objectTypeSize /* leave this at the end */};
 
