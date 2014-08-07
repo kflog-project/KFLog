@@ -1,10 +1,17 @@
-$Id$
+# KFLog changelog file
 
-2014-05-29 Axel Pauli <kflog.cumulus@gmail.com>
+  * Default map projection changed from Lambert to Cylinder projection.
+  
+  * If the home latitude is set or modified by the user and the cylinder map
+    projection is active, the cylinder map projection standard parallel is set
+    automatically to the home latitude value to ensure the best map projection.
+    For the lambert map projection this is not realized due to more effort.
+
+2014-08-07 Axel Pauli <kflog.cumulus@gmail.com>
 
   * KFLog 4.7.2 released for Debian and Ubuntu after move to GitHub
 
-2013-07-26 Axel Pauli <kflog.cumulus@gmail.com>
+2014-06-01 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Welt2000 update check modified. Once per day it is checked, if a Welt2000
     update is available to overcome the hard coded date compare.
