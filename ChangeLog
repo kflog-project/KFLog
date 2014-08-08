@@ -1,4 +1,12 @@
-# KFLog changelog file
+################################################################################
+#
+# KFLog Changelog file
+#
+################################################################################
+
+  * KFLog 4.7.3 released for Debian and Ubuntu
+
+2014-08-07 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Default map projection changed from Lambert to Cylinder projection.
   
