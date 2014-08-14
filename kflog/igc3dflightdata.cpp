@@ -389,7 +389,7 @@ void Igc3DFlightData::load(Flight* flight)
 
   reset();
 
-  if( flight && flight->getObjectType() == BaseMapElement::Flight )
+  if( flight && flight->getTypeID() == BaseMapElement::Flight )
     {
       for( int i = 0; i < flight->getRouteLength() - 2; i++ )
         {

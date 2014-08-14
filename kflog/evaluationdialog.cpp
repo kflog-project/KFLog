@@ -121,7 +121,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
     return;
   }
 
-  switch(m_flight->getObjectType())
+  switch(m_flight->getTypeID())
   {
 
   case BaseMapElement::Flight:
@@ -400,7 +400,7 @@ void EvaluationDialog::slotShowFlightData()
 
   if( m_flight != static_cast<Flight *> (0) )
     {
-      if( m_flight->getObjectType() == BaseMapElement::Flight && parent )
+      if( m_flight->getTypeID() == BaseMapElement::Flight && parent )
         {
           parent->setWindowTitle( tr( "Flight Evaluation" ) + ": [" +
                                   QFileInfo(m_flight->getFileName()).fileName() + "] " +

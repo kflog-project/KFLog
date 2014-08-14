@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
-**                   2008-2010 by Axel Pauli
+**                   2008-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -30,12 +30,15 @@
  *
  * \see BaseMapElement#objectType
  *
- * \date 2000-2010
+ * \date 2000-2014
  *
  */
 class LineElement : public BaseMapElement
 {
 public:
+
+  LineElement();
+
   /**
    * Creates a new line map element.
    *
@@ -44,12 +47,14 @@ public:
    * @param  pP    The point array containing the positions
    * @param  isVal True, if the element is a "valley".
    * @param  secID The number of the map segment.
+   * @param  country The country of the element as two letter code
    */
   LineElement( const QString& name,
                const BaseMapElement::objectType type,
                const QPolygon& pP,
                const bool isVal = false,
-               const unsigned short secID=0 );
+               const unsigned short secID=0,
+               const QString& country="" );
 
   /**
    * Destructor.
@@ -99,10 +104,22 @@ public:
   /**
    * \return The projected positions of the line element.
    */
-  const QPolygon& getPolygon() const
+  const QPolygon& getProjectedPolygon() const
     {
       return projPolygon;
     }
+
+  /**
+   * Sets the polygon of the line element containing the projected positions
+   * of the line element.
+   *
+   * \param newPolygon Polygon with projected coordinate points.
+   */
+  void setProjectedPolygon( const QPolygon& newPolygon )
+  {
+    projPolygon = newPolygon;
+    bBox = newPolygon.boundingRect();
+  };
 
   /**
    * \return A HTML formated string containing the element name.

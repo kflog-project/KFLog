@@ -1741,7 +1741,7 @@ void MapContents::slotNewFlightGroup()
     {
       f = flightList.value(i);
 
-      if (f->getObjectType() == BaseMapElement::Flight)
+      if (f->getTypeID() == BaseMapElement::Flight)
         {
           fsd->availableFlights.append(f);
         }
@@ -1810,7 +1810,7 @@ void MapContents::slotEditFlightGroup()
     {
       BaseFlightElement *f = flightList.at(i);
 
-      if (f->getObjectType() == BaseMapElement::Flight)
+      if (f->getTypeID() == BaseMapElement::Flight)
         {
           if (fl.contains(dynamic_cast<Flight *>(f)) )
             {

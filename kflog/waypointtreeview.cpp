@@ -1068,7 +1068,7 @@ void WaypointTreeView::slotImportWaypointFromMap()
 
         w->description = s->getName();
         w->country = s->getCountry();
-        w->type = s->getObjectType();
+        w->type = s->getTypeID();
         w->origP = s->getWGSPosition();
         w->elevation = s->getElevation();
         w->comment = s->getComment();

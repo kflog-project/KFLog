@@ -8,7 +8,7 @@
  **
  **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
  **   Modified:       2008      by Josua Dietze
- **                   2008-2013 by Axel Pauli
+ **                   2008-2014 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -19,14 +19,23 @@
 
 #include "airspace.h"
 
+Airspace::Airspace() :
+  lLimitType(BaseMapElement::NotSet),
+  uLimitType(BaseMapElement::NotSet)
+{
+  // All Airspaces are closed regions ...
+  closed = true;
+}
+
 Airspace::Airspace( QString name,
                     BaseMapElement::objectType oType,
                     QPolygon pP,
-                    int upper,
+                    const float upper,
                     BaseMapElement::elevationType uType,
-                    int lower,
-                    BaseMapElement::elevationType lType) :
-  LineElement(name, oType, pP),
+                    const float lower,
+                    BaseMapElement::elevationType lType,
+                    QString country ) :
+  LineElement( name, oType, pP, false, 0, country ),
   lLimitType(lType),
   uLimitType(uType)
 {
@@ -85,6 +94,23 @@ Airspace::Airspace( QString name,
   // create a QPainterPath object from the projected airspace.
   m_airspaceRegion.addPolygon(projPolygon);
   m_airspaceRegion.closeSubpath();
+}
+
+Airspace* Airspace::createAirspaceObject()
+{
+  // We need that method because the default constructor cannot setup a
+  // complete airspace. The default constructor is only used as a collection
+  // container during parsing of airspace source file.
+  Airspace* as = new Airspace( getName(),
+                               getTypeID(),
+                               getProjectedPolygon(),
+                               uLimit.getFeet(),
+                               uLimitType,
+                               lLimit.getFeet(),
+                               lLimitType,
+                               getCountry() );
+
+  return as;
 }
 
 void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect )
@@ -399,7 +425,7 @@ bool Airspace::operator < (const Airspace& other) const
 
 bool Airspace::operator == (const Airspace& other) const
 {
-  if ( getName() == other.getName() && getObjectType() == other.getObjectType() )
+  if ( getName() == other.getName() && getTypeID() == other.getTypeID() )
     {
       return true;
     }

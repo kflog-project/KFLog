@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -569,6 +569,7 @@
 #define AS_EL "Airspace-E-Low"
 #define AS_E "Airspace-E"
 #define AS_F "Airspace-F"
+#define AS_FIR "Airspace-FIR"
 #define AS_LF "Airspace-Low-Flight"
 #define AS_DANGER "Airspace-Danger"
 #define AS_RESTRICTED "Airspace-Restricted"
@@ -863,6 +864,47 @@
 
 #define PRINT_AIRF_BRUSH_STYLE_1 Qt::SolidPattern
 #define PRINT_AIRF_BRUSH_STYLE_2 Qt::SolidPattern
+
+// [Airspace FIR]
+#define AIRFIR_PEN_1 4
+#define AIRFIR_PEN_2 3
+#define AIRFIR_PEN_3 3
+#define AIRFIR_PEN_4 2
+
+#define AIRFIR_PEN_STYLE_1 Qt::DotLine
+#define AIRFIR_PEN_STYLE_2 Qt::DotLine
+#define AIRFIR_PEN_STYLE_3 Qt::DotLine
+#define AIRFIR_PEN_STYLE_4 Qt::DotLine
+
+#define AIRFIR_COLOR_1 QColor(50,205,50)
+#define AIRFIR_COLOR_2 QColor(50,205,50)
+#define AIRFIR_COLOR_3 QColor(50,205,50)
+#define AIRFIR_COLOR_4 QColor(50,205,50)
+
+#define AIRFIR_BRUSH_COLOR_1 QColor(50,205,50)
+#define AIRFIR_BRUSH_COLOR_2 QColor(50,205,50)
+#define AIRFIR_BRUSH_COLOR_3 QColor(50,205,50)
+#define AIRFIR_BRUSH_COLOR_4 QColor(50,205,50)
+
+#define AIRFIR_BRUSH_STYLE_1 Qt::NoBrush
+#define AIRFIR_BRUSH_STYLE_2 Qt::NoBrush
+#define AIRFIR_BRUSH_STYLE_3 Qt::NoBrush
+#define AIRFIR_BRUSH_STYLE_4 Qt::NoBrush
+
+#define PRINT_AIRFIR_PEN_1 4
+#define PRINT_AIRFIR_PEN_2 3
+
+#define PRINT_AIRFIR_PEN_STYLE_1 Qt::DotLine
+#define PRINT_AIRFIR_PEN_STYLE_2 Qt::DotLine
+
+#define PRINT_AIRFIR_COLOR_1 QColor(50,205,50)
+#define PRINT_AIRFIR_COLOR_2 QColor(50,205,50)
+
+#define PRINT_AIRFIR_BRUSH_COLOR_1 QColor(50,205,50)
+#define PRINT_AIRFIR_BRUSH_COLOR_2 QColor(50,205,50)
+
+#define PRINT_AIRFIR_BRUSH_STYLE_1 Qt::NoBrush
+#define PRINT_AIRFIR_BRUSH_STYLE_2 Qt::NoBrush
 
 // [Control C]
 #define CTRC_PEN_1 4

@@ -80,7 +80,7 @@ void AirSpaceListViewItem::createChildren()
             {
               QString AirSpaceName;
 
-              AirSpaceName += Airspace::getTypeName( Violations[i].AirSpace()->getObjectType() );
+              AirSpaceName += Airspace::getTypeName( Violations[i].AirSpace()->getTypeID() );
               AirSpaceName += " ";
               AirSpaceName += Violations[i].AirSpace()->getName();
 

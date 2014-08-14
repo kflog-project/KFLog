@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -487,6 +487,15 @@ void ConfigMapElement::__readMapItems()
   __readBorder(AS_F, airFBorder);
   __readAsOpacity(AS_F, airFOpacityList);
 
+  __readPen(AS_FIR, airFirPenList, AIRFIR_COLOR_1, AIRFIR_COLOR_2, AIRFIR_COLOR_3,
+        AIRFIR_COLOR_4, AIRFIR_PEN_1, AIRFIR_PEN_2, AIRFIR_PEN_3, AIRFIR_PEN_4,
+        AIRFIR_PEN_STYLE_1, AIRFIR_PEN_STYLE_2, AIRFIR_PEN_STYLE_3, AIRFIR_PEN_STYLE_4);
+  __readBrush(AS_FIR, airFirBrushList, AIRFIR_BRUSH_COLOR_1, AIRFIR_BRUSH_COLOR_2,
+        AIRFIR_BRUSH_COLOR_3, AIRFIR_BRUSH_COLOR_4, AIRFIR_BRUSH_STYLE_1,
+        AIRFIR_BRUSH_STYLE_2, AIRFIR_BRUSH_STYLE_3, AIRFIR_BRUSH_STYLE_4);
+  __readBorder(AS_FIR, airFirBorder);
+  __readAsOpacity(AS_FIR, airFirOpacityList);
+
   __readPen(AS_CTR_C, ctrCPenList, CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
         CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
         CTRC_PEN_STYLE_1, CTRC_PEN_STYLE_2, CTRC_PEN_STYLE_3, CTRC_PEN_STYLE_4);
@@ -732,6 +741,15 @@ void ConfigMapElement::__readPrintItems()
   __readBorder(AS_F, airFBorder);
   __readAsOpacity(AS_F, airFOpacityList);
 
+  __readPen(AS_FIR, airFirPenList, PRINT_AIRFIR_COLOR_1, PRINT_AIRFIR_COLOR_2, PRINT_AIRFIR_COLOR_2,
+        PRINT_AIRFIR_COLOR_2, PRINT_AIRFIR_PEN_1, PRINT_AIRFIR_PEN_2, PRINT_AIRFIR_PEN_2, PRINT_AIRFIR_PEN_2,
+        PRINT_AIRFIR_PEN_STYLE_1, PRINT_AIRFIR_PEN_STYLE_2, PRINT_AIRFIR_PEN_STYLE_2, PRINT_AIRFIR_PEN_STYLE_2);
+  __readBrush(AS_FIR, airFirBrushList, PRINT_AIRFIR_BRUSH_COLOR_1, PRINT_AIRFIR_BRUSH_COLOR_2,
+        PRINT_AIRFIR_BRUSH_COLOR_2, PRINT_AIRFIR_BRUSH_COLOR_2, PRINT_AIRFIR_BRUSH_STYLE_1,
+        PRINT_AIRFIR_BRUSH_STYLE_2, PRINT_AIRFIR_BRUSH_STYLE_2, PRINT_AIRFIR_BRUSH_STYLE_2);
+  __readBorder(AS_FIR, airFirBorder);
+  __readAsOpacity(AS_FIR, airFirOpacityList);
+
   __readPen(AS_CTR_C, ctrCPenList, PRINT_CTRC_COLOR_1, PRINT_CTRC_COLOR_2, PRINT_CTRC_COLOR_2, PRINT_CTRC_COLOR_2,
         PRINT_CTRC_PEN_1, PRINT_CTRC_PEN_2, PRINT_CTRC_PEN_2, PRINT_CTRC_PEN_2,
         PRINT_CTRC_PEN_STYLE_1, PRINT_CTRC_PEN_STYLE_2, PRINT_CTRC_PEN_STYLE_2, PRINT_CTRC_PEN_STYLE_2);
@@ -856,6 +874,8 @@ void ConfigMapElement::slotOk()
 
   __writeBrush(AS_F, airFBrushList, airFPenList, airFBorder);
 
+  __writeBrush(AS_FIR, airFirBrushList, airFirPenList, airFirBorder);
+
   __writeBrush(AS_CTR_C, ctrCBrushList, ctrCPenList, ctrCBorder);
 
   __writeBrush(AS_CTR_D, ctrDBrushList, ctrDPenList, ctrDBorder);
@@ -893,6 +913,7 @@ void ConfigMapElement::slotOk()
   __writeAsOpacity( AS_EL, airElOpacityList );
   __writeAsOpacity( AS_E, airEhOpacityList );
   __writeAsOpacity( AS_F, airFOpacityList );
+  __writeAsOpacity( AS_FIR, airFirOpacityList );
   __writeAsOpacity( AS_CTR_C, ctrCOpacityList );
   __writeAsOpacity( AS_CTR_D, ctrDOpacityList );
   __writeAsOpacity( AS_LF, lowFOpacityList );
@@ -921,6 +942,7 @@ void ConfigMapElement::slotDefaultElements()
   __defaultAsOpacity( airElOpacityList );
   __defaultAsOpacity( airEhOpacityList );
   __defaultAsOpacity( airFOpacityList );
+  __defaultAsOpacity( airFirOpacityList );
   __defaultAsOpacity( ctrCOpacityList );
   __defaultAsOpacity( ctrDOpacityList );
   __defaultAsOpacity( lowFOpacityList );
@@ -1067,6 +1089,14 @@ void ConfigMapElement::__readDefaultMapItems()
       AIRF_BRUSH_COLOR_2, AIRF_BRUSH_COLOR_2,
       AIRF_BRUSH_STYLE_1, AIRF_BRUSH_STYLE_2,
       AIRF_BRUSH_STYLE_2, AIRF_BRUSH_STYLE_2);
+
+  __defaultPenBrush(airFirPenList, airFirBorder, airFirBrushList,
+      AIRFIR_COLOR_1, AIRFIR_COLOR_2, AIRFIR_COLOR_2, AIRFIR_COLOR_2,
+      AIRFIR_PEN_1, AIRFIR_PEN_2, AIRFIR_PEN_2, AIRFIR_PEN_2,
+      AIRFIR_BRUSH_COLOR_1, AIRFIR_BRUSH_COLOR_2,
+      AIRFIR_BRUSH_COLOR_2, AIRFIR_BRUSH_COLOR_2,
+      AIRFIR_BRUSH_STYLE_1, AIRFIR_BRUSH_STYLE_2,
+      AIRFIR_BRUSH_STYLE_2, AIRFIR_BRUSH_STYLE_2);
 
   __defaultPenBrush(ctrCPenList, ctrCBorder, ctrCBrushList,
       CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
@@ -1278,6 +1308,14 @@ void ConfigMapElement::__readDefaultPrintItems()
       PRINT_AIRF_BRUSH_COLOR_2, PRINT_AIRF_BRUSH_COLOR_2,
       PRINT_AIRF_BRUSH_STYLE_1, PRINT_AIRF_BRUSH_STYLE_2,
       PRINT_AIRF_BRUSH_STYLE_2, PRINT_AIRF_BRUSH_STYLE_2);
+
+  __defaultPenBrush(airFirPenList, airFirBorder, airFirBrushList,
+      PRINT_AIRFIR_COLOR_1, PRINT_AIRFIR_COLOR_2, PRINT_AIRFIR_COLOR_2, PRINT_AIRFIR_COLOR_2,
+      PRINT_AIRFIR_PEN_1, PRINT_AIRFIR_PEN_2, PRINT_AIRFIR_PEN_2, PRINT_AIRFIR_PEN_2,
+      PRINT_AIRFIR_BRUSH_COLOR_1, PRINT_AIRFIR_BRUSH_COLOR_2,
+      PRINT_AIRFIR_BRUSH_COLOR_2, PRINT_AIRFIR_BRUSH_COLOR_2,
+      PRINT_AIRFIR_BRUSH_STYLE_1, PRINT_AIRFIR_BRUSH_STYLE_2,
+      PRINT_AIRFIR_BRUSH_STYLE_2, PRINT_AIRFIR_BRUSH_STYLE_2);
 
   __defaultPenBrush(ctrCPenList, ctrCBorder, ctrCBrushList,
       PRINT_CTRC_COLOR_1, PRINT_CTRC_COLOR_2, PRINT_CTRC_COLOR_2, PRINT_CTRC_COLOR_2,
@@ -1628,6 +1666,11 @@ void ConfigMapElement::slotSelectElement(int elementID)
         __saveBrush(airFBrushList);
         __saveAsOpacity( airFOpacityList );
         break;
+      case KFLogConfig::AirFir:
+        __savePen(airFirPenList, airFirBorder);
+        __saveBrush(airFirBrushList);
+        __saveAsOpacity( airFirOpacityList );
+        break;
       case KFLogConfig::ControlC:
         __savePen(ctrCPenList, ctrCBorder);
         __saveBrush(ctrCBrushList);
@@ -1764,6 +1807,11 @@ void ConfigMapElement::slotSelectElement(int elementID)
         __showBrush(airFBrushList);
         __showAsOpacity(airFOpacityList);
         break;
+      case KFLogConfig::AirFir:
+        __showPen(airFirPenList, airFirBorder);
+        __showBrush(airFirBrushList);
+        __showAsOpacity(airFirOpacityList);
+        break;
       case KFLogConfig::ControlC:
          __showPen(ctrCPenList, ctrCBorder);
          __showBrush(ctrCBrushList);
@@ -1854,6 +1902,7 @@ void ConfigMapElement::slotToggleFirst(bool toggle)
       case KFLogConfig::AirElow:
       case KFLogConfig::AirE:
       case KFLogConfig::AirF:
+      case KFLogConfig::AirFir:
       case KFLogConfig::ControlC:
       case KFLogConfig::ControlD:
       case KFLogConfig::LowFlight:
@@ -1921,6 +1970,7 @@ void ConfigMapElement::slotToggleSecond( bool toggle )
       case KFLogConfig::AirElow:
       case KFLogConfig::AirE:
       case KFLogConfig::AirF:
+      case KFLogConfig::AirFir:
       case KFLogConfig::ControlC:
       case KFLogConfig::ControlD:
       case KFLogConfig::LowFlight:
@@ -1988,6 +2038,7 @@ void ConfigMapElement::slotToggleThird(bool toggle)
       case KFLogConfig::AirElow:
       case KFLogConfig::AirE:
       case KFLogConfig::AirF:
+      case KFLogConfig::AirFir:
       case KFLogConfig::ControlC:
       case KFLogConfig::ControlD:
       case KFLogConfig::LowFlight:
@@ -2053,6 +2104,7 @@ void ConfigMapElement::slotToggleForth(bool toggle)
       case KFLogConfig::AirElow:
       case KFLogConfig::AirE:
       case KFLogConfig::AirF:
+      case KFLogConfig::AirFir:
       case KFLogConfig::ControlC:
       case KFLogConfig::ControlD:
       case KFLogConfig::LowFlight:

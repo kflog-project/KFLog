@@ -113,15 +113,22 @@ public:
   enum elevationType { NotSet, MSL, GND, FL, STD, UNLTD };
 
   /**
+   * Default constructor
+   */
+  BaseMapElement();
+
+  /**
    * Creates a new (virtual) map element.
    *
    * @param  name  The name of the element.
    * @param  typeID  The type id of the element.
    * @param  secID The number of the map segment.
+   * @param  country Country as two letter code, where the element is located
    */
   BaseMapElement( const QString& name,
                   const objectType typeID = NotSelected,
-                  const unsigned short secID=0 );
+                  const unsigned short secID=0,
+                  const QString& country="" );
 
   /**
    * Destructor
@@ -167,11 +174,27 @@ public:
   };
 
   /**
+   * @param value The new name of the element.
+   */
+  virtual void setName( QString value )
+  {
+    name = value;
+  };
+
+  /**
    * @return the object type of the element.
    */
-  virtual objectType getObjectType() const
+  virtual objectType getTypeID() const
   {
     return typeID;
+  };
+
+  /**
+   * @param The new typeID of the element.
+   */
+  virtual void setTypeID( const objectType value )
+  {
+    typeID = value;
   };
 
   /**
@@ -222,6 +245,24 @@ public:
     };
 
   /**
+   * @return the country of the element.
+   */
+  virtual QString getCountry() const
+    {
+      return country;
+    };
+
+  /**
+   * Sets the country code of the element.
+   *
+   * @param newValue New country code of the point.
+   */
+  virtual void setCountry( QString value )
+    {
+      country = value.toUpper().left(2);
+    };
+
+  /**
    * Compare two map elements by their names
    */
   bool operator < (const BaseMapElement& other) const
@@ -250,6 +291,11 @@ protected:
    * @see #objectType
    */
   objectType typeID;
+
+  /**
+   * Country as two letter code, where the element is located.
+   */
+  QString country;
 
   /**
    * Static pointer to object translation relations

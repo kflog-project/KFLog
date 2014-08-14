@@ -4,6 +4,11 @@
 #
 ################################################################################
 
+
+  * Map configuraion extensions introduced for airspace FIR.
+
+2014-08-14 Axel Pauli <kflog.cumulus@gmail.com>
+
   * KFLog 4.7.3 released for Debian and Ubuntu
 
 2014-08-07 Axel Pauli <kflog.cumulus@gmail.com>

@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
-**                   2008-2009 by Axel Pauli
+**                   2008-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -26,11 +26,22 @@ MapConfig* BaseMapElement::glConfig    = 0;
 QHash<int, QString> BaseMapElement::objectTranslations;
 QStringList         BaseMapElement::sortedTranslations;
 
+
+BaseMapElement::BaseMapElement() :
+  name("???"),
+  typeID(NotSelected),
+  country("??"),
+  MapSegment(0)
+{
+}
+
 BaseMapElement::BaseMapElement( const QString& name,
                                 const objectType oType,
-                                const unsigned short secID ) :
+                                const unsigned short secID,
+                                const QString& countryIn ) :
   name(name),
   typeID(oType),
+  country(countryIn.toUpper().left(2) ),
   MapSegment(secID)
 {
 }
