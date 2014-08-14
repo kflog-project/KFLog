@@ -1541,6 +1541,35 @@ void KFLogConfig::__addAirspaceTab()
   //----------------------------------------------------------------------------
   QVBoxLayout *topLayout = new QVBoxLayout;
 
+  QGroupBox* openAipGroup = new QGroupBox( tr("openAIP Airspaces") );
+
+  // Check input with a validator. Country codes are consist of 2 letters and
+  // are separated by space, comma or semicolon.
+  QRegExp rx("[A-Za-z]{2}([ ,;][A-Za-z]{2})*");
+  QValidator *validator = new QRegExpValidator(rx, this);
+
+  countriesOpenAipAS = new QLineEdit();
+  countriesOpenAipAS->setMinimumWidth( 150 );
+  countriesOpenAipAS->setValidator( validator );
+  countriesOpenAipAS->setToolTip( tr("Add countries to be downloaded as 2 letter code according to ISO 3166-1-alpha-2.") );
+
+  QPushButton* downloadAs = new QPushButton( tr("Download") );
+  downloadAs->setToolTip( tr("Press button to download the desired openAIP airspace files.") );
+  downloadAs->setMaximumWidth(downloadAs->sizeHint().width() + 10);
+  downloadAs->setMinimumHeight(downloadAs->sizeHint().height() + 2);
+  connect( downloadAs, SIGNAL(clicked()), this, SLOT(slotDownloadOpenAipAS()) );
+
+  QFormLayout* openAipFormLayout = new QFormLayout();
+  openAipFormLayout->setSpacing( 10 );
+  openAipFormLayout->addRow( tr( "Countries" ) + ":", countriesOpenAipAS );
+
+  QVBoxLayout* openAipLayout = new QVBoxLayout;
+  openAipLayout->addLayout( openAipFormLayout );
+  openAipLayout->addWidget( downloadAs, Qt::AlignLeft );
+  openAipGroup->setLayout( openAipLayout );
+
+  topLayout->addWidget( openAipGroup );
+
   asFileTable = new QTableWidget( 0, 1, this );
   asFileTable->setToolTip( tr("Use check boxes to activate or deactivate airspace file loading.") );
   asFileTable->setSelectionBehavior( QAbstractItemView::SelectRows );
@@ -1552,7 +1581,7 @@ void KFLogConfig::__addAirspaceTab()
   QHeaderView* hHeader = asFileTable->horizontalHeader();
   hHeader->setStretchLastSection( true );
 
-  topLayout->addWidget( asFileTable );
+  topLayout->addWidget( asFileTable, 10 );
   airspacePage->setLayout( topLayout );
 }
 
@@ -1752,6 +1781,11 @@ void KFLogConfig::slotSelectFlightTypeColor( int buttonIdentifier )
 void KFLogConfig::slotDownloadWelt2000()
 {
   emit downloadWelt2000();
+}
+
+void KFLogConfig::slotDownloadOpenAipAS()
+{
+  // TODO something here
 }
 
 /**

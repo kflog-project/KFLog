@@ -176,6 +176,11 @@ class KFLogConfig : public QDialog
    */
   void slotDownloadWelt2000();
 
+  /**
+   * Called if openAIP airspace files shall be downloaded.
+   */
+  void slotDownloadOpenAipAS();
+
  private slots:
 
  /**
@@ -275,6 +280,8 @@ class KFLogConfig : public QDialog
   QLineEdit* filterWelt2000;
   QSpinBox* homeRadiusWelt2000;
   QCheckBox* readOlWelt2000;
+
+  QLineEdit* countriesOpenAipAS;
 
   /**
    * Initial value of home radius.
