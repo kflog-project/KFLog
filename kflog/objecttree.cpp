@@ -377,7 +377,7 @@ int ObjectTree::currentFlightElementType()
     }
   else
     {
-      return currentFlightElement->getObjectType();
+      return currentFlightElement->getTypeID();
     }
 }
 
@@ -394,7 +394,7 @@ void ObjectTree::slotCloseFlight( BaseFlightElement* bfe )
 
   // If a flight was deleted, all flight groups must be updated too because
   // the flight could be contained in one or all of them.
-  if( bfe->getObjectType() == BaseMapElement::Flight )
+  if( bfe->getTypeID() == BaseMapElement::Flight )
     {
       for( int i = 0; i < FlightGroupRoot->childCount(); i++ )
         {
@@ -532,7 +532,7 @@ void ObjectTree::slotEditTask()
 {
   if( currentFlightElement != 0 )
     {
-      if( currentFlightElement->getObjectType() == BaseMapElement::Task )
+      if( currentFlightElement->getTypeID() == BaseMapElement::Task )
         {
           FlightTask *ft = dynamic_cast<FlightTask *> (currentFlightElement);
 

@@ -170,7 +170,7 @@ QList<Flight *> Map::getFlightList()
       return fl;
     }
 
-  switch( bfe->getObjectType() )
+  switch( bfe->getTypeID() )
     {
       case BaseMapElement::Flight:
 
@@ -627,7 +627,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 
   BaseFlightElement *baseFlight = _globalMapContents->getFlight();
 
-  if(baseFlight && baseFlight->getObjectType() == BaseMapElement::Flight)
+  if(baseFlight && baseFlight->getTypeID() == BaseMapElement::Flight)
     {
       QList<Waypoint*> wpList = baseFlight->getWPList();
 
@@ -727,7 +727,7 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
           // The mouse position must be converted to map coordinates.
           const QPoint mapPos = _globalMapMatrix->invertToMap(current);
 
-          if( city->getPolygon().containsPoint( mapPos, Qt::OddEvenFill ) )
+          if( city->getProjectedPolygon().containsPoint( mapPos, Qt::OddEvenFill ) )
             {
               text = city->getInfoString();
               WhatsThat* box = new WhatsThat( this, text, timeout, mapToGlobal( current ) );
@@ -1157,7 +1157,7 @@ void Map::mousePressEvent(QMouseEvent* event)
                     QString name = hitElement->getName();
                     w->name = name.left(8).toUpper();
                     w->description = hitElement->getName();
-                    w->type = hitElement->getObjectType();hitElement->getName();
+                    w->type = hitElement->getTypeID();hitElement->getName();
                     w->origP = hitElement->getWGSPosition();
                     w->elevation = hitElement->getElevation();
                     w->icao = hitElement->getICAO();
@@ -1574,7 +1574,7 @@ void Map::__drawPlannedTask( bool solid )
       task->reProject();
     }
 
-  if( task && task->getObjectType() == BaseMapElement::Task )
+  if( task && task->getTypeID() == BaseMapElement::Task )
     {
       QList<Waypoint*> WPList = task->getWPList();
 
@@ -1960,7 +1960,7 @@ void Map::slotCenterToFlight()
 
   QRect r0, r1;
 
-  switch( bfe->getObjectType() )
+  switch( bfe->getTypeID() )
     {
       case BaseMapElement::Flight:
 
@@ -2007,7 +2007,7 @@ void Map::slotCenterToTask()
 
   QRect r0, r1;
 
-  switch( bfe->getObjectType() )
+  switch( bfe->getTypeID() )
     {
       case BaseMapElement::Flight:
 
@@ -2452,7 +2452,7 @@ void Map::slotShowCurrentFlight()
 
   planning = 0;
 
-  if( bfe && bfe->getObjectType() == BaseMapElement::Task )
+  if( bfe && bfe->getTypeID() == BaseMapElement::Task )
     {
       if( bfe->getWPList().count() == 0 )
         {
@@ -2469,7 +2469,7 @@ void Map::slotShowCurrentFlight()
 
   if( bfe )
     {
-      switch( bfe->getObjectType() )
+      switch( bfe->getTypeID() )
         {
           case BaseMapElement::Flight:
           case BaseMapElement::FlightGroup:
@@ -2496,7 +2496,7 @@ void Map::slotAppendWaypoint2Task( Waypoint *p )
 
   FlightTask *ft = dynamic_cast<FlightTask *> ( _globalMapContents->getFlight() );
 
-  if( ft && ft->getObjectType() == BaseMapElement::Task && planning )
+  if( ft && ft->getTypeID() == BaseMapElement::Task && planning )
     {
       QList<Waypoint*> taskPointList = ft->getWPList();
 
@@ -2571,7 +2571,7 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
                   wp->elevation = hitElement->getElevation();
                   wp->projP = hitElement->getPosition();
                   wp->description = hitElement->getName();
-                  wp->type = hitElement->getObjectType();
+                  wp->type = hitElement->getTypeID();
                   wp->elevation = hitElement->getElevation();
                   wp->icao = hitElement->getICAO();
                   wp->frequency = hitElement->getFrequency();
@@ -2712,7 +2712,7 @@ void Map::__drawCityLabels( QPixmap& pixmap )
       if( ! set.contains( city->getName() ) )
         {
           // map polygon to the screen
-          QPolygon mP( _globalMapMatrix->map( city->getPolygon() ) );
+          QPolygon mP( _globalMapMatrix->map( city->getProjectedPolygon() ) );
 
           QRect bRect = mP.boundingRect();
 
@@ -2996,7 +2996,7 @@ void Map::slotMpNewWaypoint()
               QString name = hitElement->getName();
               w->name = name.replace( blank, "" ).left( 8 ).toUpper();
               w->description = hitElement->getName();
-              w->type = hitElement->getObjectType();
+              w->type = hitElement->getTypeID();
               w->origP = hitElement->getWGSPosition();
               w->elevation = hitElement->getElevation();
               w->icao = hitElement->getICAO();

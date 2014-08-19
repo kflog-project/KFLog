@@ -60,7 +60,7 @@ RecorderDialog::RecorderDialog( QWidget *parent ) :
     {
       BaseFlightElement* element = tList->at(i);
 
-      if( element->getObjectType() == BaseMapElement::Task )
+      if( element->getTypeID() == BaseMapElement::Task )
         {
           tasks.append( dynamic_cast<FlightTask *> (element) );
         }

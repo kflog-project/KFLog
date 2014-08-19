@@ -59,7 +59,7 @@ private:
 
   Flight* getFlight()
     {
-      if( m_flight && m_flight->getObjectType() == BaseMapElement::Flight )
+      if( m_flight && m_flight->getTypeID() == BaseMapElement::Flight )
         {
           return m_flight;
         }

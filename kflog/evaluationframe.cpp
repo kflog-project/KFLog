@@ -251,7 +251,7 @@ void EvaluationFrame::slotShowGraph()
                        speedScale,
                        varioScale );
 
-  if( flight && flight->getObjectType() == BaseMapElement::Flight )
+  if( flight && flight->getTypeID() == BaseMapElement::Flight )
     {
       int contentsX = ((centerTime - flight->getStartTime()) / timeScale) + X_DISTANCE;
       graphFrame->ensureVisible( contentsX, 0 );

@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2010 by Constantijn Neeteson, Heiner Lamprecht, Florian Ehinger
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,7 +25,7 @@
  *
  * \author Heiner Lamprecht, Florian Ehinger, Constantijn Neeteson, Axel Pauli
  *
- * \date 2000-2011
+ * \date 2000-2014
  *
  * @version $Id$
  */
@@ -68,7 +68,7 @@ class KFLogConfig : public QDialog
 
   /** */
   enum ElementType { Road = 0, Motorway, Railway, River, Canal, City,
-      AirA, AirB, AirC, AirD, AirElow, AirE, AirF, ControlC, ControlD, Danger,
+      AirA, AirB, AirC, AirD, AirElow, AirE, AirF, AirFir, ControlC, ControlD, Danger,
       LowFlight, Restricted, Prohibited, Tmz, GliderSector, WaveWindow,
       Forest, Trail, Railway_D, Aerial_Cable, River_T,
       Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500, Separator };
@@ -176,6 +176,11 @@ class KFLogConfig : public QDialog
    */
   void slotDownloadWelt2000();
 
+  /**
+   * Called if openAIP airspace files shall be downloaded.
+   */
+  void slotDownloadOpenAipAS();
+
  private slots:
 
  /**
@@ -275,6 +280,8 @@ class KFLogConfig : public QDialog
   QLineEdit* filterWelt2000;
   QSpinBox* homeRadiusWelt2000;
   QCheckBox* readOlWelt2000;
+
+  QLineEdit* countriesOpenAipAS;
 
   /**
    * Initial value of home radius.

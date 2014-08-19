@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,7 +25,7 @@
  *
  * Configuration widget for map and print items.
  *
- * \date 2001-2011
+ * \date 2001-2014
  *
  * \version $Id$
  */
@@ -302,6 +302,10 @@ class ConfigMapElement : public QWidget
   QList<QBrush> airFBrushList;
   QList<int> airFOpacityList;
 
+  QList<QPen> airFirPenList;
+  QList<QBrush> airFirBrushList;
+  QList<int> airFirOpacityList;
+
   QList<QPen> ctrCPenList;
   QList<QBrush> ctrCBrushList;
   QList<int> ctrCOpacityList;
@@ -373,6 +377,7 @@ class ConfigMapElement : public QWidget
   bool airElBorder[4];
   bool airEhBorder[4];
   bool airFBorder[4];
+  bool airFirBorder[4];
   bool ctrCBorder[4];
   bool ctrDBorder[4];
   bool dangerBorder[4];

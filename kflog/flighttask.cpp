@@ -495,7 +495,7 @@ bool FlightTask::drawMapElement( QPainter* targetPainter )
       sect = FAISectList.at(loop);
       sect->pos->drawMapElement(targetPainter);
       label = sect->pos->getName();
-      QPolygon pp = glMapMatrix->map(sect->pos->getPolygon());
+      QPolygon pp = glMapMatrix->map(sect->pos->getProjectedPolygon());
 
       if (label == "FAILow500Sector" || label == "FAIHigh500Sector") {
         label.sprintf("%.0f km", sect->dist);
@@ -661,7 +661,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool /*isText*/)
       label = sect->pos->getName();
       if (label == "FAILow500Sector" || label == "FAIHigh500Sector") {
         label.sprintf("%.0f km", sect->dist);
-        QPolygon pp = sect->pos->getPolygon();
+        QPolygon pp = sect->pos->getProjectedPolygon();
         tempP = glMapMatrix->print(pp[0]);
         targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
         targetPainter->setBrush(QBrush(QColor(0, 255, 128)));
@@ -1286,7 +1286,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool /*isText*/, doubl
       label = sect->pos->getName();
       if(label == "FAILow500Sector" || label == "FAIHigh500Sector") {
         label.sprintf("%.0f km", sect->dist);
-        QPolygon pp = sect->pos->getPolygon();
+        QPolygon pp = sect->pos->getProjectedPolygon();
         tempP = glMapMatrix->print(pp[0]);
         targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
         targetPainter->setBrush(QBrush(QColor(0, 255, 128)));

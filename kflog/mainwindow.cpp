@@ -1186,7 +1186,7 @@ void MainWindow::slotModifyMenu()
       // Added check above to if clause.
       windowMenu->setEnabled(true);
 
-      switch(_globalMapContents->getFlight()->getObjectType())
+      switch(_globalMapContents->getFlight()->getTypeID())
         {
           case BaseMapElement::Flight:
             fileCloseAction->setEnabled(true);
@@ -1479,7 +1479,7 @@ void MainWindow::slotOptimizeFlight()
 {
   Flight *flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
-  if( flight != 0 && flight->getObjectType() == BaseMapElement::Flight )
+  if( flight != 0 && flight->getTypeID() == BaseMapElement::Flight )
     {
       if( flight->optimizeTask() )
         {
@@ -1496,7 +1496,7 @@ void MainWindow::slotOptimizeFlightOLC()
 {
   Flight *flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
-  if( flight != 0 && flight->getObjectType() == BaseMapElement::Flight )
+  if( flight != 0 && flight->getTypeID() == BaseMapElement::Flight )
     {
       if( flight->optimizeTaskOLC(map) )
         {
@@ -1783,7 +1783,7 @@ void MainWindow::slotPrintFlight()
 
   if(f)
     {
-      switch (f->getObjectType())
+      switch (f->getTypeID())
         {
           case BaseMapElement::Flight:
             slotSetStatusMsg(tr("Printing flight ..."));
@@ -1794,7 +1794,7 @@ void MainWindow::slotPrintFlight()
             TaskDataPrint((FlightTask*)f);
             break;
           default:
-            QString tmp(tr("Not yet available for type: %1").arg(f->getObjectType()));
+            QString tmp(tr("Not yet available for type: %1").arg(f->getTypeID()));
             QMessageBox::warning(0, tr("Type not available"), tmp, QMessageBox::Ok);
         }
     }
@@ -1903,7 +1903,7 @@ void MainWindow::slotsetFlightQNH()
 {
     Flight *flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
 
-    if( flight != 0 && flight->getObjectType() == BaseMapElement::Flight )
+    if( flight != 0 && flight->getTypeID() == BaseMapElement::Flight )
       {
         FlightLoader fl;
         if (fl.resetQNH(flight->getFileName()))

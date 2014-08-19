@@ -246,7 +246,7 @@ void DataView::slotSetFlightData()
       return;
     }
 
-  switch (e->getObjectType())
+  switch (e->getTypeID())
     {
       case BaseMapElement::Flight:
         {
@@ -341,7 +341,7 @@ void DataView::slotWPSelected(const QUrl &link)
 
   QString url = link.toString();
 
-  switch (e->getObjectType())
+  switch (e->getTypeID())
     {
       case BaseMapElement::Flight:
 

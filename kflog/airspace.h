@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
-**                   2009-2013 by Axel Pauli
+**                   2009-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -30,7 +30,7 @@
  * Due to the cross pointer reference to the air region this class do not
  * allow copies and assignments of an existing instance.
  *
- * \date 2000-2013
+ * \date 2000-2014
  *
  * \version $Id$
  *
@@ -52,10 +52,11 @@
 
 class Airspace : public LineElement
 {
-
 public:
 
   enum ConflictType { None, NearAbove, NearBelow, VeryNearAbove, VeryNearBelow, Inside };
+
+  Airspace();
 
   /**
    * Creates a new Airspace object.
@@ -68,9 +69,19 @@ public:
    * \param lower The lower altitude limit of the airspace
    * \param lowerType The lower altitude reference
    */
-  Airspace( QString name, BaseMapElement::objectType oType, QPolygon pP,
-            int upper, BaseMapElement::elevationType upperType,
-            int lower, BaseMapElement::elevationType lowerType);
+  Airspace( QString name,
+            BaseMapElement::objectType oType,
+            QPolygon pP,
+            const float upper,
+            const BaseMapElement::elevationType upperType,
+            const float lower,
+            const BaseMapElement::elevationType lowerType,
+            QString country="" );
+
+  /**
+   * Creates a new airspace object using the current set airspace data.
+   */
+  Airspace* createAirspaceObject();
 
   /**
    * Tells the caller, if the airspace is drawable or not
@@ -125,6 +136,14 @@ public:
   QPainterPath createRegion();
 
   /**
+   * Sets the upper limit of the airspace.
+   */
+  void setUpperL( const Altitude& alt )
+  {
+    uLimit = alt;
+  };
+
+  /**
    * Returns the upper limit of the airspace.
    */
   unsigned int getUpperL() const
@@ -133,11 +152,35 @@ public:
   };
 
   /**
+   * Returns the upper limit of the airspace.
+   */
+  const Altitude& getUpperAltitude() const
+  {
+    return uLimit;
+  };
+
+  /**
+   * Sets the lower limit of the airspace.
+   */
+  void setLowerL( const Altitude& alt )
+  {
+    lLimit = alt;
+  };
+
+  /**
    * Returns the lower limit of the airspace.
    */
   unsigned int getLowerL() const
   {
     return (unsigned int) rint(lLimit.getMeters());
+  };
+
+  /**
+   * Returns the lower limit of the airspace.
+   */
+  const Altitude& getLowerAltitude() const
+  {
+    return lLimit;
   };
 
   /**
@@ -177,7 +220,6 @@ public:
    */
   ConflictType conflicts (const AltitudeCollection& alt,
                           const AirspaceWarningDistance& dist) const;
-
 
   /*
    * Compares two items, in this case, Airspaces.
