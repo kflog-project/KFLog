@@ -1300,7 +1300,7 @@ void MainWindow::slotOpenFile()
   QFileDialog* fd = new QFileDialog( this );
   fd->setWindowTitle( tr( "Open Flight" ) );
   fd->setDirectory( getApplicationFlightDirectory() );
-  fd->setFileMode( QFileDialog::ExistingFile );
+  fd->setFileMode( QFileDialog::ExistingFiles );
 
   QStringList filter;
   filter.append(tr("All types") + " (*.igc *.flightgear *.trk *.gdn)");
@@ -1322,16 +1322,19 @@ void MainWindow::slotOpenFile()
           return;
         }
 
-      QFile file( fNames[0] );
+      for (int i = 0; i < fNames.size(); i++)
+      {
+          QFile file( fNames[i] );
 
-      flightDir = fd->directory().canonicalPath();
+          flightDir = fd->directory().canonicalPath();
 
-      FlightLoader flightLoader;
+          FlightLoader flightLoader;
 
-      if( flightLoader.openFlight(file) )
-        {
-          slotSetCurrentFile( fNames[0] );
-        }
+          if( flightLoader.openFlight(file) )
+            {
+              slotSetCurrentFile( fNames[0] );
+            }
+      }
     }
 
   slotSetStatusMsg( tr( "Ready." ) );
