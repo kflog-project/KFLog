@@ -4,7 +4,9 @@
 # $Id$
 ###############################################################################
 
-QMAKE_LFLAGS += -rdynamic
+!win32 {
+    QMAKE_LFLAGS += -rdynamic
+}
 
 QT += network \
       xml
@@ -24,7 +26,9 @@ TEMPLATE = app
 OBJECTS_DIR = .obj
 MOC_DIR     = .obj
 
-LIBS += -ldl
+!win32 {
+    LIBS += -ldl
+}
 
 # Map and GUI icons are handled by the Qt resource system
 RESOURCES = kflog.qrc
