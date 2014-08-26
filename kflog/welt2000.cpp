@@ -87,7 +87,7 @@ bool Welt2000::check4update()
   hasCalled = true;
 
   QString wl = "welt2000.txt";
-  QString wu = "WELT2000.TXT";
+  QString wu = "WELT2000.TXT_";
   QString sd = "/airfields/";
 
   QString mapDir = _globalMapContents->getMapRootDirectory();
@@ -135,7 +135,7 @@ bool Welt2000::load( QList<Airfield>& airfieldList,
 {
   // Rename WELT2000.TXT -> welt2000.txt.
   QString wl = "welt2000.txt";
-  QString wu = "WELT2000.TXT";
+  QString wu = "WELT2000.TXT_";
   QString sd = "/airfields/";
 
   QString mapDir = _globalMapContents->getMapRootDirectory();
