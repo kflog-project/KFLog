@@ -22,11 +22,16 @@ contains(QT_VERSION, ^4\\.[78]\\..*) {
 
 TEMPLATE = subdirs
 
-SUBDIRS =   kflog \
-            kflog/kfrcai \
-            kflog/kfrfil \
-            kflog/kfrfla \
-            kflog/kfrgcs \
-            kflog/kfrgmn \
-            kflog/kfrxsp \
-            kflog/opengl_igc
+!win32 {
+    SUBDIRS =   kflog \
+                kflog/kfrcai \
+                kflog/kfrfil \
+                kflog/kfrfla \
+                kflog/kfrgcs \
+                kflog/kfrgmn \
+                kflog/kfrxsp \
+                kflog/opengl_igc
+}
+win32 {
+    SUBDIRS =   kflog
+}
