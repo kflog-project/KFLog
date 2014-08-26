@@ -2,6 +2,8 @@ kflog (4.8.0) unstable, urgency=low
 
   * enable loading multiple files on File -> Open Flight
 
+  * Bugfix: loop during downloading WELT2000.TXT on Windows
+
 kflog (4.7.3) unstable; urgency=low
 
   * Default map projection changed from Lambert to Cylinder projection.
